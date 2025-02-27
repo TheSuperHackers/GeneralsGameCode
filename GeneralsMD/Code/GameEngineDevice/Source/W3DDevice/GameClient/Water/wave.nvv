@@ -1,0 +1,72 @@
+;
+;	Command & Conquer Generals Zero Hour(tm)
+;	Copyright 2025 Electronic Arts Inc.
+;
+;	This program is free software: you can redistribute it and/or modify
+;	it under the terms of the GNU General Public License as published by
+;	the Free Software Foundation, either version 3 of the License, or
+;	(at your option) any later version.
+;
+;	This program is distributed in the hope that it will be useful,
+;	but WITHOUT ANY WARRANTY; without even the implied warranty of
+;	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;	GNU General Public License for more details.
+;
+;	You should have received a copy of the GNU General Public License
+;	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+;
+
+;////////////////////////////////////////////////////////////////////////////////
+;//																																					   //
+;//  (c) 2001-2003 Electronic Arts Inc.																				 //
+;//																																						 //
+;////////////////////////////////////////////////////////////////////////////////
+
+; Waves vertex shader
+; Kenny Mitchell April 2001
+; Modified July 2001 Mark Wilczynski
+
+#define CV_ZERO 0
+#define CV_ONE 1
+
+#define CV_WORLDVIEWPROJ_0 2
+#define CV_WORLDVIEWPROJ_1 3
+#define CV_WORLDVIEWPROJ_2 4
+#define CV_WORLDVIEWPROJ_3 5
+
+#define CV_TEXPROJ_0 6
+#define CV_TEXPROJ_1 7
+#define CV_TEXPROJ_2 8
+#define CV_TEXPROJ_3 9
+#define CV_PATCH_SCALE_OFFSET 10
+
+#define V_POSITION v0
+#define V_DIFFUSE v1
+#define V_TEXTURE v2
+#define V_TEXTURE2 v3
+
+vs.1.1
+
+; Below is Kenny's new optimized version
+; Transform position to clip space and output it
+dp4 r0.x, V_POSITION, c[CV_WORLDVIEWPROJ_0]
+dp4 r0.y, V_POSITION, c[CV_WORLDVIEWPROJ_1]
+dp4 r0.z, V_POSITION, c[CV_WORLDVIEWPROJ_2]
+dp4 r0.w, V_POSITION, c[CV_WORLDVIEWPROJ_3]
+
+mov oPos, r0
+
+; get 1/w and multiply it onto x and y
+rcp r1.w, r0.w
+mul r1.xy, r0.xy, r1.w
+
+; scale/flip/offset tex coords to screen
+mad oT1.xy, r1.xy, c[CV_TEXPROJ_0].xy,c[CV_TEXPROJ_0].zw
+
+mov oT0, V_TEXTURE
+mov oD0, V_DIFFUSE
+
+#ifdef DO_WATER_ALPHA_TEXTURE
+;generate uv coordinates for a third texture (alpha channel)
+mad oT2.xy,v0.xz,c[CV_PATCH_SCALE_OFFSET].zw,c[CV_PATCH_SCALE_OFFSET].xy
+#endif

@@ -1,0 +1,1 @@
+@copy debug\debugWindow.dll ..\..\..\Run

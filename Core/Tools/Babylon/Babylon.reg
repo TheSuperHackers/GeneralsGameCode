@@ -1,0 +1,13 @@
+REGEDIT
+; This .REG file may be used by your SETUP program.
+;   If a SETUP program is not available, the entries below will be
+;   registered in your InitInstance automatically with a call to
+;   CWinApp::RegisterShellFileTypes and COleObjectFactory::UpdateRegistryAll.
+
+
+HKEY_CLASSES_ROOT\Babylon.Application = Babylon Application
+HKEY_CLASSES_ROOT\Babylon.Application\CLSID = {2BF31246-3BA1-11D3-B9DA-006097B90D93}
+
+HKEY_CLASSES_ROOT\CLSID\{2BF31246-3BA1-11D3-B9DA-006097B90D93} = Babylon Application
+HKEY_CLASSES_ROOT\CLSID\{2BF31246-3BA1-11D3-B9DA-006097B90D93}\ProgId = Babylon.Application
+HKEY_CLASSES_ROOT\CLSID\{2BF31246-3BA1-11D3-B9DA-006097B90D93}\LocalServer32 = BABYLON.EXE

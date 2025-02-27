@@ -1,0 +1,25 @@
+This document is going to be a place to put descriptions of our reasoning for any "confusing" design decisions made during the conversion to DX8.
+
+TODO: WRITE PROPER DESCRIPTIONS FOR ALL OF THE FOLLOWING!!!
+
+Lighting
+--------
+The user has two choices regarding lighting.  SimpleSceneClass will just install the first four LightClasses
+into DX8 and let them affect all objects.  Otherwise, you need to implement a SceneClass which wraps each
+top-level render object and associates a LightEnvironmentClass with it.  In your 'Customized_Render' function
+you need to update each object's LightEnvironment object from the lights around it.
+
+Mesh Rendering System
+---------------------
+Grouped by FVF format and material settings.  Many meshes can share a single VB and IB...
+
+MeshModel Sharing
+-----------------
+It would be nice if MeshClass just Add_Ref'd the same mesh model whenever we re-use a mesh.  The problems with 
+this are:
+- the transform which is used during deffered rendering and during decal rendering
+- instance specific light environment pointer is in the mesh model class
+- lots of other stuff <-- FILL THIS IN!
+
+
+

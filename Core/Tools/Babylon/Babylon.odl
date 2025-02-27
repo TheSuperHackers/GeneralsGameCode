@@ -1,0 +1,42 @@
+// Babylon.odl : type library source for Babylon.exe
+
+// This file will be processed by the MIDL compiler to produce the
+// type library (Babylon.tlb).
+
+[ uuid(2BF31247-3BA1-11D3-B9DA-006097B90D93), version(1.0) ]
+library Babylon
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+
+	//  Primary dispatch interface for CBabylonDoc
+	
+	[ uuid(2BF31248-3BA1-11D3-B9DA-006097B90D93) ]
+	dispinterface IBabylon
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CBabylonDlgAutoProxy)
+			//}}AFX_ODL_PROP
+			
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CBabylonDlgAutoProxy)
+			//}}AFX_ODL_METHOD
+
+	};
+
+	//  Class information for CBabylonDoc
+	
+	[ uuid(2BF31246-3BA1-11D3-B9DA-006097B90D93) ]
+	coclass Babylon
+	{
+		[default] dispinterface IBabylon;
+	};
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};

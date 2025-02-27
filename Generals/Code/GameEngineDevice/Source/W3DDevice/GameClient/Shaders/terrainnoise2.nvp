@@ -1,0 +1,39 @@
+;
+;	Command & Conquer Generals(tm)
+;	Copyright 2025 Electronic Arts Inc.
+;
+;	This program is free software: you can redistribute it and/or modify
+;	it under the terms of the GNU General Public License as published by
+;	the Free Software Foundation, either version 3 of the License, or
+;	(at your option) any later version.
+;
+;	This program is distributed in the hope that it will be useful,
+;	but WITHOUT ANY WARRANTY; without even the implied warranty of
+;	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;	GNU General Public License for more details.
+;
+;	You should have received a copy of the GNU General Public License
+;	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+;
+
+;////////////////////////////////////////////////////////////////////////////////
+;//																																						 //
+;//  (c) 2001-2003 Electronic Arts Inc.																				 //
+;//																																						 //
+;////////////////////////////////////////////////////////////////////////////////
+
+; Terrain pixel shader
+; Created:   Mark Wilczynski, August 2001
+
+; Declare pixel shader version 1.1
+ps.1.1
+
+tex t0	; get texture 0
+tex t1	; get texture 1
+tex	t2	; get texture 2
+tex t3	; get texture 3
+
+lrp r0, v0.a, t1, t0	;alpha blend between 2 textures
+mul r0, r0, v0			;apply diffuse lighting
+mul r0, r0, t2			;modulate with texture 2
+mul r0, r0, t3			;modulate with texture 3

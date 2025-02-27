@@ -1,0 +1,25 @@
+HY 2/14/01 Created.
+
+Polygons are rendered via:
+A. The Mesh packet renderer
+B. Render object's render method
+C. Alpha sorting pipeline
+
+NB. Shaders and Vertex Mateirals have presets that you can use to set state
+
+Guidelines for B type polygons:
+
+1. Always set the World matrix
+2. Always use a Shader (Shader.Apply())
+3. Always use a VertexMaterial (VertexMaterial.Apply())
+4. If there is a Texture, use Texture.Apply()
+
+For any other render state, save the initial state, set your state, render then
+restore the original state.
+
+e.g. save the VIEW matrix if you're nuking it, then restore it after you're done.
+
+Guidelines for C type polygons:
+
+1. All vertices submitted must be in View Coordinates
+2. All states submitted must be entirely contained in Shader,VertexMaterial & Texture

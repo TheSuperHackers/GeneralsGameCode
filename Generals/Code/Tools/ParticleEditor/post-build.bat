@@ -1,0 +1,1 @@
+@copy debug\particleEditor.dll ..\..\..\Run

@@ -1,0 +1,866 @@
+--- stl/_algobase.h	Sun Feb  3 01:12:02 2002
++++ stl/_algobase.h	Wed Dec 17 22:01:22 2003
+@@ -267,4 +267,4 @@
+ #ifdef _STLP_LONG_LONG
+-_STLP_DECLARE_COPY_TRIVIAL(long long)
+-_STLP_DECLARE_COPY_TRIVIAL(unsigned long long)
++_STLP_DECLARE_COPY_TRIVIAL(_STLP_LONG_LONG)	// JKMCD: Changed this from long long to use the macro STLP_LONG_LONG
++_STLP_DECLARE_COPY_TRIVIAL(unsigned _STLP_LONG_LONG) // JKMCD: Changed this from long long to use the macro STLP_LONG_LONG
+ #endif 
+--- stl/_alloc.h	Sun Feb  3 01:12:02 2002
++++ stl/_alloc.h	Wed Dec 17 22:01:22 2003
+@@ -262,3 +262,7 @@
+ _STLP_EXPORT_TEMPLATE_CLASS __debug_alloc<_Node_alloc>;
++#if defined(_STLP_USE_CUSTOM_NEWALLOC)
++_STLP_EXPORT_TEMPLATE_CLASS __debug_alloc<_STLP_USE_CUSTOM_NEWALLOC>;
++#else
+ _STLP_EXPORT_TEMPLATE_CLASS __debug_alloc<__new_alloc>;
++#endif
+ _STLP_EXPORT_TEMPLATE_CLASS __debug_alloc<__malloc_alloc<0> >;
+@@ -287,9 +291,22 @@
+ #  if defined ( _STLP_DEBUG_ALLOC )
++#if defined(_STLP_USE_CUSTOM_NEWALLOC)
++typedef __debug_alloc<_STLP_USE_CUSTOM_NEWALLOC> __sgi_alloc;
++#else
+ typedef __debug_alloc<__new_alloc> __sgi_alloc;
++#endif
++#  else
++#if defined(_STLP_USE_CUSTOM_NEWALLOC)
++typedef _STLP_USE_CUSTOM_NEWALLOC __sgi_alloc;
+ #  else
+ typedef __new_alloc __sgi_alloc;
++#endif
+ #  endif /* _STLP_DEBUG_ALLOC */
+ 
++#if defined(_STLP_USE_CUSTOM_NEWALLOC)
++typedef _STLP_USE_CUSTOM_NEWALLOC __single_client_alloc;
++typedef _STLP_USE_CUSTOM_NEWALLOC __multithreaded_alloc;
++#else
+ typedef __new_alloc __single_client_alloc;
+ typedef __new_alloc __multithreaded_alloc;
++#endif
+ 
+--- config/_epilog.h	Thu Sep  6 01:11:36 2001
++++ config/_epilog.h	Wed Dec 17 22:01:18 2003
+@@ -7,3 +7,3 @@
+ #  if !(defined (_STLP_MSVC) && (_STLP_MSVC < 1200))
+-#   pragma warning (pop)
++//#   pragma warning (pop)	MSVC misbehaves with this (jkmcd)
+ #  endif
+--- config/_msvc_warnings_off.h	Sun Sep 30 07:58:58 2001
++++ config/_msvc_warnings_off.h	Wed Dec 17 22:01:18 2003
+@@ -14,2 +14,3 @@
+ #  pragma warning ( disable : 4245 4514 4660) // conversion from enum to unsigned int signed/unsigned mismatch
++#  pragma warning ( disable : 4103)	// #pragma pack used. This one is informational. Why doesn't it show up on my box?
+ #  if (_MSC_VER > 1200)
+--- config/_prolog.h	Sun Oct 28 22:26:44 2001
++++ config/_prolog.h	Wed Dec 17 22:01:18 2003
+@@ -9,3 +9,3 @@
+ # if !(defined (_STLP_MSVC) && (_STLP_MSVC < 1200))
+-#  pragma warning(push)
++//#  pragma warning(push)	MSVC misbehaves with this (jkmcd)
+ # endif
+--- stl/_site_config.h	Thu Jan 10 20:42:02 2002
++++ stl/_site_config.h	Wed Dec 17 22:01:25 2003
+@@ -82,3 +82,3 @@
+ // #  define _STLP_USE_OWN_NAMESPACE 1
+-// #  define _STLP_NO_OWN_NAMESPACE  1
++#  define _STLP_NO_OWN_NAMESPACE  1
+ 
+@@ -89,3 +89,4 @@
+  */
+-// #define   _STLP_USE_NEWALLOC   1
++#define   _STLP_USE_NEWALLOC				1
++//#define _STLP_USE_CUSTOM_NEWALLOC		STLSpecialAlloc
+ 
+--- algorithm	Sat Jan 27 03:39:34 2001
++++ algorithm	Wed Dec 17 22:01:16 2003
+@@ -25,2 +25,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_ALGORITHM
+--- bitset	Sat Jan 27 03:39:34 2001
++++ bitset	Wed Dec 17 22:01:18 2003
+@@ -17,2 +17,5 @@
+  */
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
+ 
+--- cassert	Thu Jan 10 20:41:54 2002
++++ cassert	Wed Dec 17 22:01:18 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_CASSERT
+--- cctype	Sat Jan 27 03:39:36 2001
++++ cctype	Wed Dec 17 22:01:18 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_CCTYPE
+--- cerrno	Thu Jan 10 20:41:54 2002
++++ cerrno	Wed Dec 17 22:01:18 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_CERRNO
+--- cfloat	Sat Jan 27 03:39:36 2001
++++ cfloat	Wed Dec 17 22:01:18 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_CFLOAT
+--- climits	Sat Jan 27 03:39:36 2001
++++ climits	Wed Dec 17 22:01:18 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_CLIMITS
+--- clocale	Thu Jan 10 20:41:54 2002
++++ clocale	Wed Dec 17 22:01:18 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_CLOCALE
+--- cmath	Tue Sep 18 00:45:22 2001
++++ cmath	Wed Dec 17 22:01:18 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_CMATH
+--- complex	Tue Feb  6 03:41:52 2001
++++ complex	Wed Dec 17 22:01:18 2003
+@@ -18,2 +18,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_template_complex
+--- csetjmp	Sat Jan 27 03:39:38 2001
++++ csetjmp	Wed Dec 17 22:01:19 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_CSETJMP
+--- csignal	Sat Jan 27 03:39:38 2001
++++ csignal	Wed Dec 17 22:01:19 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_CSIGNAL
+--- cstdarg	Sat Jan 27 03:39:40 2001
++++ cstdarg	Wed Dec 17 22:01:19 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_CSTDARG
+--- cstddef	Thu Jan 10 20:41:54 2002
++++ cstddef	Wed Dec 17 22:01:19 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_CSTDDEF
+--- cstdio	Thu Jan 10 20:41:56 2002
++++ cstdio	Wed Dec 17 22:01:19 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_CSTDIO
+--- cstdlib	Fri Aug 24 00:51:54 2001
++++ cstdlib	Wed Dec 17 22:01:20 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_CSTDLIB
+--- cstring	Sat Jan 27 03:39:42 2001
++++ cstring	Wed Dec 17 22:01:20 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_CSTRING
+--- ctime	Thu Jan 10 20:41:56 2002
++++ ctime	Wed Dec 17 22:01:20 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_CTIME
+--- ctype.h	Sat Jan 27 03:39:42 2001
++++ ctype.h	Wed Dec 17 22:01:20 2003
+@@ -15,2 +15,7 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
++
+ # if !defined (_STLP_OUTERMOST_HEADER_ID)
+--- cwchar	Thu Jan 10 20:41:56 2002
++++ cwchar	Wed Dec 17 22:01:20 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_CWCHAR
+--- cwctype	Sun Feb  3 01:11:58 2002
++++ cwctype	Wed Dec 17 22:01:20 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_CWCTYPE
+--- deque	Wed Aug  1 03:45:58 2001
++++ deque	Wed Dec 17 22:01:20 2003
+@@ -25,2 +25,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_DEQUE
+--- exception	Fri Jul  6 07:16:16 2001
++++ exception	Wed Dec 17 22:01:20 2003
+@@ -31,2 +31,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ # if !defined (_STLP_OUTERMOST_HEADER_ID)
+--- exception.h	Sat Sep  1 02:28:40 2001
++++ exception.h	Wed Dec 17 22:01:20 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_OLDSTD_exception
+--- fstream	Tue Feb  6 03:41:54 2001
++++ fstream	Wed Dec 17 22:01:20 2003
+@@ -18,2 +18,5 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
+ 
+--- fstream.h	Fri Aug 24 10:55:44 2001
++++ fstream.h	Wed Dec 17 22:01:20 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_FSTREAM_H
+--- functional	Sat Jan 27 03:39:46 2001
++++ functional	Wed Dec 17 22:01:20 2003
+@@ -18,2 +18,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_FUNCTIONAL
+--- hash_map	Sat Jan 27 03:39:46 2001
++++ hash_map	Wed Dec 17 22:01:20 2003
+@@ -18,2 +18,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_HASH_MAP
+--- hash_set	Sat Jan 27 03:39:46 2001
++++ hash_set	Wed Dec 17 22:01:20 2003
+@@ -18,2 +18,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_HASH_SET
+--- iomanip	Tue May 15 10:31:58 2001
++++ iomanip	Wed Dec 17 22:01:20 2003
+@@ -18,2 +18,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_IOMANIP
+--- iomanip.h	Wed Oct 10 01:50:16 2001
++++ iomanip.h	Wed Dec 17 22:01:20 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_IOMANIP_H
+--- ios	Sat Jan 27 03:39:48 2001
++++ ios	Wed Dec 17 22:01:20 2003
+@@ -18,2 +18,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_IOS
+--- ios.h	Fri Aug 24 10:55:44 2001
++++ ios.h	Wed Dec 17 22:01:20 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_IOS_H
+--- iosfwd	Tue Feb  6 03:41:54 2001
++++ iosfwd	Wed Dec 17 22:01:20 2003
+@@ -18,2 +18,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_IOSFWD
+--- iostream	Thu Mar  1 05:43:34 2001
++++ iostream	Wed Dec 17 22:01:20 2003
+@@ -18,2 +18,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_IOSTREAM
+--- iostream.h	Fri Aug 24 10:55:44 2001
++++ iostream.h	Wed Dec 17 22:01:20 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_IOSTREAM_H
+--- istream	Tue Feb  6 03:41:54 2001
++++ istream	Wed Dec 17 22:01:20 2003
+@@ -18,2 +18,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_ISTREAM
+--- istream.h	Mon Mar 19 09:01:02 2001
++++ istream.h	Wed Dec 17 22:01:20 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_ISTREAM_H
+--- iterator	Sat May 26 01:34:16 2001
++++ iterator	Wed Dec 17 22:01:20 2003
+@@ -25,2 +25,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_ITERATOR
+--- limits	Sat Jan 27 03:39:50 2001
++++ limits	Wed Dec 17 22:01:20 2003
+@@ -18,2 +18,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_LIMITS
+--- list	Wed Aug  1 03:45:58 2001
++++ list	Wed Dec 17 22:01:20 2003
+@@ -25,2 +25,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_LIST
+--- locale	Sat Jan 27 03:39:52 2001
++++ locale	Wed Dec 17 22:01:20 2003
+@@ -17,2 +17,7 @@
+  */ 
++
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_LOCALE
+--- locale.h	Sat Jan 27 03:39:52 2001
++++ locale.h	Wed Dec 17 22:01:20 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ # if !defined (_STLP_OUTERMOST_HEADER_ID)
+--- map	Wed Aug  1 03:45:58 2001
++++ map	Wed Dec 17 22:01:20 2003
+@@ -25,2 +25,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_MAP
+--- math.h	Wed Jul 25 22:39:02 2001
++++ math.h	Wed Dec 17 22:01:20 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ # if !defined (_STLP_OUTERMOST_HEADER_ID)
+--- mem.h	Sat Jan 27 03:39:54 2001
++++ mem.h	Wed Dec 17 22:01:20 2003
+@@ -17,2 +17,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_mem_h
+--- memory	Sat Jan 27 03:39:54 2001
++++ memory	Wed Dec 17 22:01:20 2003
+@@ -18,2 +18,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_MEMORY
+--- new	Thu Jan 10 20:41:56 2002
++++ new	Wed Dec 17 22:01:21 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_NEW_HEADER
+--- new.h	Sat Sep  1 00:39:12 2001
++++ new.h	Wed Dec 17 22:01:21 2003
+@@ -15,2 +15,5 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
+ 
+--- numeric	Sat Jan 27 03:39:54 2001
++++ numeric	Wed Dec 17 22:01:21 2003
+@@ -22,2 +22,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_NUMERIC
+--- ostream	Tue Feb  6 03:41:54 2001
++++ ostream	Wed Dec 17 22:01:22 2003
+@@ -17,2 +17,7 @@
+  */ 
++
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_OSTREAM
+--- ostream.h	Fri Aug 24 10:55:44 2001
++++ ostream.h	Wed Dec 17 22:01:22 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_OSTREAM_H
+--- pthread.h	Sun Feb  3 01:11:58 2002
++++ pthread.h	Wed Dec 17 22:01:22 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ # if !defined (_STLP_OUTERMOST_HEADER_ID)
+--- pthread_alloc	Sat Jan 27 03:39:56 2001
++++ pthread_alloc	Wed Dec 17 22:01:22 2003
+@@ -25,2 +25,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_PTHREAD_ALLOC
+--- queue	Sat Jan 27 03:39:56 2001
++++ queue	Wed Dec 17 22:01:22 2003
+@@ -25,2 +25,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_QUEUE
+--- rlocks.h	Tue May 22 03:50:22 2001
++++ rlocks.h	Wed Dec 17 22:01:22 2003
+@@ -1 +1,6 @@
++
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_misc_rlocks_h
+--- rope	Sat Jan 27 03:39:56 2001
++++ rope	Wed Dec 17 22:01:22 2003
+@@ -13,2 +13,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_ROPE
+--- set	Wed Aug  1 03:45:58 2001
++++ set	Wed Dec 17 22:01:22 2003
+@@ -25,2 +25,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_SET
+--- setjmp.h	Sat Jan 27 03:39:58 2001
++++ setjmp.h	Wed Dec 17 22:01:22 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ # if !defined (_STLP_OUTERMOST_HEADER_ID)
+--- signal.h	Sat Jan 27 03:39:58 2001
++++ signal.h	Wed Dec 17 22:01:22 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ # if !defined (_STLP_OUTERMOST_HEADER_ID)
+--- slist	Wed Aug  1 03:45:58 2001
++++ slist	Wed Dec 17 22:01:22 2003
+@@ -14,2 +14,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_SLIST
+--- sstream	Tue Feb  6 03:41:56 2001
++++ sstream	Wed Dec 17 22:01:22 2003
+@@ -22,2 +22,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_SSTREAM
+--- stack	Wed Aug  1 03:45:58 2001
++++ stack	Wed Dec 17 22:01:22 2003
+@@ -25,2 +25,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_STACK
+--- stdarg.h	Sat Jan 27 03:40:00 2001
++++ stdarg.h	Wed Dec 17 22:01:22 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ # if !defined (_STLP_OUTERMOST_HEADER_ID)
+--- stddef.h	Sat Jan 27 03:40:00 2001
++++ stddef.h	Wed Dec 17 22:01:22 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ # ifndef _STLP_OUTERMOST_HEADER_ID
+--- stdexcept	Tue May 22 03:50:22 2001
++++ stdexcept	Wed Dec 17 22:01:22 2003
+@@ -18,2 +18,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_STDEXCEPT
+--- stdio.h	Sat Jan 27 03:40:00 2001
++++ stdio.h	Wed Dec 17 22:01:22 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ # ifndef _STLP_OUTERMOST_HEADER_ID
+--- stdio_streambuf	Thu Jan 10 20:41:56 2002
++++ stdio_streambuf	Wed Dec 17 22:01:22 2003
+@@ -35,2 +35,5 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
+ 
+--- stdiostream.h	Tue May 22 03:50:22 2001
++++ stdiostream.h	Wed Dec 17 22:01:22 2003
+@@ -1 +1,5 @@
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_misc_stdiostream_h
+--- stdlib.h	Sat Jan 27 03:40:02 2001
++++ stdlib.h	Wed Dec 17 22:01:22 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ # if !defined (_STLP_OUTERMOST_HEADER_ID)
+--- config/stl_msvc.h	Thu Jan 10 20:41:58 2002
++++ config/stl_msvc.h	Wed Dec 17 22:01:19 2003
+@@ -25,2 +25,4 @@
+ #  define _STLP_LONG_LONG  __int64
++# else
++#  error "Long Long already defined. - (WW) See JKMCD"
+ # endif
+@@ -64,2 +66,3 @@
+ #   define _STLP_DEFAULTCHAR __stl_char
++#   define _STLP_USE_PRAGMA_ONCE	1
+ #  endif /* (_STLP_MSVC < 1100 ) */
+@@ -74,4 +77,5 @@
+ //#  endif
++#  define _STLP_DONT_SIMULATE_PARTIAL_SPEC_FOR_TYPE_TRAITS 1
+ #  define _STLP_NO_FUNCTION_TMPL_PARTIAL_ORDER 1
+-#  define _STLP_NO_CLASS_PARTIAL_SPECIALIZATION 1
++#  define _STLP_NO_CLASS_PARTIAL_SPECIALIZATION 1	// JKMCD: Turning this off because it instantiates lots of extra templates.
+ #  define _STLP_NO_FRIEND_TEMPLATES
+--- stl_user_config.h	Thu Nov 29 21:26:22 2001
++++ stl_user_config.h	Wed Dec 17 22:01:27 2003
+@@ -27,2 +27,5 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
+ 
+@@ -44,3 +47,3 @@
+ 
+-// # define   _STLP_NO_OWN_IOSTREAMS	1
++# define   _STLP_NO_OWN_IOSTREAMS	1
+ 
+@@ -58,3 +61,3 @@
+ 
+-// #define   _STLP_NO_NEW_IOSTREAMS	1
++#define   _STLP_NO_NEW_IOSTREAMS	1
+ 
+--- streambuf	Tue Feb  6 03:41:56 2001
++++ streambuf	Wed Dec 17 22:01:27 2003
+@@ -17,2 +17,7 @@
+  */ 
++
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_STREAMBUF
+--- streambuf.h	Fri Aug 24 10:55:44 2001
++++ streambuf.h	Wed Dec 17 22:01:27 2003
+@@ -17,2 +17,7 @@
+  */ 
++
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_STREAMBUF_H
+--- string	Thu Mar 22 01:43:18 2001
++++ string	Wed Dec 17 22:01:27 2003
+@@ -18,2 +18,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_STRING
+--- string.h	Sun Sep 30 07:58:56 2001
++++ string.h	Wed Dec 17 22:01:27 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ # ifndef _STLP_OUTERMOST_HEADER_ID
+--- strstream	Sat Jan 27 03:40:02 2001
++++ strstream	Wed Dec 17 22:01:27 2003
+@@ -22,2 +22,5 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
+ 
+--- strstream.h	Fri Aug 24 10:55:44 2001
++++ strstream.h	Wed Dec 17 22:01:27 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_STRSTREAM_H
+--- time.h	Thu Jan 10 20:41:56 2002
++++ time.h	Wed Dec 17 22:01:27 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ # if !defined (_STLP_OUTERMOST_HEADER_ID)
+--- typeinfo	Thu Jan 10 20:41:56 2002
++++ typeinfo	Wed Dec 17 22:01:27 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_TYPEINFO
+--- typeinfo.h	Sat May 19 06:04:22 2001
++++ typeinfo.h	Wed Dec 17 22:01:27 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_OLDSTD_typeinfo
+--- utility	Sat Jan 27 03:40:06 2001
++++ utility	Wed Dec 17 22:01:28 2003
+@@ -22,2 +22,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_UTILITY
+--- valarray	Wed Aug  1 03:45:58 2001
++++ valarray	Wed Dec 17 22:01:28 2003
+@@ -18,2 +18,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_VALARRAY
+--- vector	Sat Jan 27 03:40:06 2001
++++ vector	Wed Dec 17 22:01:28 2003
+@@ -22,2 +22,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ #ifndef _STLP_VECTOR
+--- wchar.h	Sun Sep 30 07:58:58 2001
++++ wchar.h	Wed Dec 17 22:01:28 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ # if !defined (_STLP_OUTERMOST_HEADER_ID)
+--- wctype.h	Sat Jan 27 03:40:06 2001
++++ wctype.h	Wed Dec 17 22:01:28 2003
+@@ -15,2 +15,6 @@
+ 
++#ifdef _STLP_USE_PRAGMA_ONCE
++#pragma once	// JKMCD should speed up compile times.
++#endif
++
+ # if !defined (_STLP_OUTERMOST_HEADER_ID)

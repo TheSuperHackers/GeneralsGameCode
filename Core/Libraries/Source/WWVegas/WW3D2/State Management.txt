@@ -1,0 +1,173 @@
+State Management Responsibilities
+
+Key:
+G	- Global
+DX8W	- DX8 Wrapper
+LE	- Wrapper::Set Light Environment
+DX8R	- DX8 Renderer (affects meshes only)
+Shader	- ShaderClass
+VM	- VertexMaterial
+Map	- Mapper (part of VertexMaterial)
+Texture	- TextureClass
+WW3D
+
+_D3DRENDERSTATETYPE {
+ZENABLE                   =   7,
+FILLMODE                  =   8, WW3D
+SHADEMODE                 =   9,
+LINEPATTERN               =  10,
+ZWRITEENABLE              =  14, Shader
+ALPHATESTENABLE           =  15, Shader
+LASTPIXEL                 =  16,
+SRCBLEND                  =  19, Shader
+DESTBLEND                 =  20, Shader
+CULLMODE                  =  22, Shader
+ZFUNC                     =  23, Shader
+ALPHAREF                  =  24, Shader
+ALPHAFUNC                 =  25, Shader
+DITHERENABLE              =  26, G
+ALPHABLENDENABLE          =  27, Shader
+FOGENABLE                 =  28, Shader
+SPECULARENABLE            =  29, Shader
+ZVISIBLE                  =  30,
+FOGCOLOR                  =  34, Shader
+FOGTABLEMODE              =  35, G
+FOGSTART                  =  36, Scene
+FOGEND                    =  37, Scene
+FOGDENSITY                =  38,
+EDGEANTIALIAS             =  40,
+ZBIAS                     =  47, G (set to zero after device is initted)
+RANGEFOGENABLE            =  48, G
+
+STENCILENABLE             =  52,
+STENCILFAIL               =  53,
+STENCILZFAIL              =  54,
+STENCILPASS               =  55,
+STENCILFUNC               =  56,
+STENCILREF                =  57,
+STENCILMASK               =  58,
+STENCILWRITEMASK          =  59,
+TEXTUREFACTOR             =  60,
+
+WRAP0                     = 128,
+WRAP1                     = 129,
+WRAP2                     = 130,
+WRAP3                     = 131,
+WRAP4                     = 132,
+WRAP5                     = 133,
+WRAP6                     = 134,
+WRAP7                     = 135,
+CLIPPING                  = 136,
+LIGHTING                  = 137, VM
+AMBIENT                   = 139, LE
+FOGVERTEXMODE             = 140, G
+COLORVERTEX               = 141, G
+LOCALVIEWER               = 142,
+NORMALIZENORMALS          = 143,
+DIFFUSEMATERIALSOURCE     = 145, VM
+SPECULARMATERIALSOURCE    = 146, G
+AMBIENTMATERIALSOURCE     = 147, VM, set to same setting as diffuse material source
+EMISSIVEMATERIALSOURCE    = 148, VM
+VERTEXBLEND               = 151,
+CLIPPLANEENABLE           = 152,
+
+SOFTWAREVERTEXPROCESSING  = 153, G
+
+POINTSIZE                 = 154,
+POINTSIZE_MIN             = 155,
+POINTSPRITEENABLE         = 156,
+
+POINTSCALEENABLE          = 157,
+POINTSCALE_A              = 158,
+POINTSCALE_B              = 159,
+POINTSCALE_C              = 160,
+
+MULTISAMPLEANTIALIAS      = 161,
+MULTISAMPLEMASK           = 162,
+
+PATCHEDGESTYLE            = 163,
+PATCHSEGMENTS             = 164,
+
+DEBUGMONITORTOKEN         = 165,
+POINTSIZE_MAX             = 166,
+INDEXEDVERTEXBLENDENABLE  = 167,
+COLORWRITEENABLE          = 168,
+TWEENFACTOR               = 170,
+BLENDOP                   = 171,
+
+FORCE_DWORD               = 0x7fffffff
+} D3DRENDERSTATETYPE;
+
+_D3DTEXTURESTAGESTATETYPE {
+COLOROP               =  1, Shader stages 0,1 only
+COLORARG1             =  2, Shader stages 0,1 only
+COLORARG2             =  3, Shader stages 0,1 only
+ALPHAOP               =  4, Shader stages 0,1 only
+ALPHAARG1             =  5, Shader stages 0,1 only
+ALPHAARG2             =  6, Shader stages 0,1 only
+BUMPENVMAT00          =  7,
+BUMPENVMAT01          =  8,
+BUMPENVMAT10          =  9,
+BUMPENVMAT11          = 10,
+TEXCOORDINDEX         = 11, DX8R, Map
+ADDRESSU              = 13, Texture
+ADDRESSV              = 14, Texture
+BORDERCOLOR           = 15,
+MAGFILTER             = 16, Texture
+MINFILTER             = 17, Texture
+MIPFILTER             = 18, Texture
+MIPMAPLODBIAS         = 19,
+MAXMIPLEVEL           = 20,
+MAXANISOTROPY         = 21,
+BUMPENVLSCALE         = 22,
+BUMPENVLOFFSET        = 23,
+TEXTURETRANSFORMFLAGS = 24, Map
+ADDRESSW              = 25,
+COLORARG0             = 26,
+ALPHAARG0             = 27,
+RESULTARG             = 28,
+
+FORCE_DWORD           = 0x7fffffff
+} D3DTEXTURESTAGESTATETYPE;
+
+Variables
+
+_D3DTRANSFORMSTATETYPE {
+    D3DTS_VIEW            =  2, Pointgroup (restores), Camera
+    D3DTS_PROJECTION      =  3, Camera
+    D3DTS_TEXTURE0        = 16,
+    D3DTS_TEXTURE1        = 17,
+    D3DTS_TEXTURE2        = 18,
+    D3DTS_TEXTURE3        = 19,
+    D3DTS_TEXTURE4        = 20,
+    D3DTS_TEXTURE5        = 21,
+    D3DTS_TEXTURE6        = 22,
+    D3DTS_TEXTURE7        = 23,
+
+    D3DTS_FORCE_DWORD     = 0x7fffffff
+
+    D3DTS_WORLDMATRIX(0)  = box, pointgroup, camera
+} D3DTRANSFORMSTATETYPE;
+
+Clip Planes		= 
+Clip Status		=
+Current Texture Palette	=
+Cursor Position		=
+Cursor Properties	=
+Gamma Ramp		=
+Indices			= DX8W
+Light			= LE
+Material		= VM
+Palette Entries		=
+Pixel Shader		=
+Pixel Shader Const	=
+Render Target		=
+Stream Source		= DX8W
+Texture			= DX8W
+WORLD Transform		= box, DX8R, pointgr
+VIEW  Transform		= pointgr 
+PROJECTION Transform	= camera
+TEXTURE Transform	= Map
+Vertex Shader		= DX8W
+Vertex Shader Const	=
+Viewport		= Camera, WW3D

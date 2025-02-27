@@ -1,0 +1,6 @@
+; DebugWindow.def : Declares the module parameters for the DLL.
+
+LIBRARY      "DebugWindow"
+DESCRIPTION  'DebugWindow Windows Dynamic Link Library'
+
+EXPORTS

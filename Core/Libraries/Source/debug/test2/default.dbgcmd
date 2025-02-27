@@ -1,0 +1,3 @@
+; test dbgcmd file
+
+debug.io con add        ; send output to CON I/O window

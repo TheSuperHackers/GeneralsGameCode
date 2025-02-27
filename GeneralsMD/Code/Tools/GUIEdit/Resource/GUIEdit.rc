@@ -1,0 +1,1441 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+#include "resource.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+GUIEDIT_LARGE_ICON      ICON    DISCARDABLE     "GUIEdit.ICO"
+GUIEDIT_SMALL_ICON      ICON    DISCARDABLE     "SMALL.ICO"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+GUIEDIT_MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New ...\t[Ctrl+N]",          MENU_NEW
+        MENUITEM "&Open ...\t[Ctrl+O]",         MENU_OPEN
+        MENUITEM "&Save\t[Ctrl+S]",             MENU_SAVE
+        MENUITEM "Save &As ...\t[Ctrl+A]",      MENU_SAVEAS
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit\t[Ctrl+Q]",             MENU_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Copy\t[Ctrl+C]",             MENU_COPY
+        MENUITEM "Cu&t\t[Ctrl+X]",              MENU_CUT
+        MENUITEM SEPARATOR
+        MENUITEM "&Paste\t[Ctrl+V]",            MENU_PASTE
+        MENUITEM SEPARATOR
+        MENUITEM "Edit C&allbacks",             MENU_CALLBACKS
+    END
+    POPUP "&Settings"
+    BEGIN
+        MENUITEM "&Test Mode\tCtrl+T",          MENU_TEST_MODE
+        MENUITEM SEPARATOR
+        MENUITEM "&Background Color ...",       MENU_BACKGROUND_COLOR
+        MENUITEM "&Grid Settings ...",          MENU_GRID_SETTINGS
+        MENUITEM SEPARATOR
+        MENUITEM "Show Outlines of Hidden Windows", 
+                                                MENU_SHOW_HIDDEN_OUTLINES
+        , CHECKED
+        MENUITEM "Show Outlines of See-Thru Windows", 
+                                                MENU_SHOW_SEE_THRU_OUTLINES
+        , CHECKED
+        MENUITEM SEPARATOR
+        MENUITEM "Layout Schemes ...",          MENU_SCHEME
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About ...",                  MENU_ABOUT
+    END
+END
+
+POPUP_MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "Popup Menu"
+    BEGIN
+        POPUP "Create &New"
+        BEGIN
+            MENUITEM "Generic Window",              POPUP_MENU_NEW_WINDOW
+            MENUITEM SEPARATOR
+            MENUITEM "Push Button",                 POPUP_MENU_NEW_PUSH_BUTTON
+
+            MENUITEM "Check Box",                   POPUP_MENU_NEW_CHECK_BOX
+            MENUITEM "Radio Button",                POPUP_MENU_NEW_RADIO_BUTTON
+
+            MENUITEM SEPARATOR
+            MENUITEM "Listbox",                     POPUP_MENU_NEW_LISTBOX
+            MENUITEM "Combo Box",                   POPUP_MENU_NEW_COMBO_BOX
+            MENUITEM SEPARATOR
+            MENUITEM "Horizontal Slider",           POPUP_MENU_NEW_HORIZONTAL_SLIDER
+
+            MENUITEM "Vertical Slider",             POPUP_MENU_NEW_VERTICAL_SLIDER
+
+            MENUITEM "Progress Bar",                POPUP_MENU_NEW_PROGRESS_BAR
+
+            MENUITEM SEPARATOR
+            MENUITEM "Text Entry",                  POPUP_MENU_NEW_TEXT_ENTRY
+
+            MENUITEM "Static Text",                 POPUP_MENU_NEW_STATIC_TEXT
+
+            MENUITEM SEPARATOR
+            MENUITEM "Tab Control",                 POPUP_MENU_NEW_TAB_CONTROL
+
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Bring &Forward",              POPUP_MENU_BRING_TO_TOP
+        MENUITEM "&Delete",                     POPUP_MENU_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "&Properties ...",             POPUP_MENU_PROPERTIES
+    END
+END
+
+HIERARCHY_POPUP_MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "Hierarchy Popup Menu"
+    BEGIN
+        MENUITEM "Move",                        HIERARCHY_POPUP_MOVE
+        MENUITEM SEPARATOR
+        MENUITEM "Delete",                      HIERARCHY_POPUP_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "Properties",                  HIERARCHY_POPUP_PROPERTIES
+    END
+END
+
+HIERARCHY_DRAG_DROP_MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "Hierarchy Drag and Drop Menu"
+    BEGIN
+        MENUITEM "Move Here",                   MENU_HIERARCHY_MOVE_HERE
+        MENUITEM "Make Child Of ...",           HIERARCHY_MAKE_CHILD_HERE
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+GUIEDIT_ACCELERATORS ACCELERATORS MOVEABLE PURE 
+BEGIN
+    "/",            IDM_ABOUT,              ASCII,  ALT, NOINVERT
+    "?",            IDM_ABOUT,              ASCII,  ALT, NOINVERT
+    "A",            MENU_SAVEAS,            VIRTKEY, CONTROL, NOINVERT
+    "C",            MENU_COPY,              VIRTKEY, CONTROL, NOINVERT
+    "N",            MENU_NEW,               VIRTKEY, CONTROL, NOINVERT
+    "O",            MENU_OPEN,              VIRTKEY, CONTROL, NOINVERT
+    "Q",            MENU_EXIT,              VIRTKEY, CONTROL, NOINVERT
+    "S",            MENU_SAVE,              VIRTKEY, CONTROL, NOINVERT
+    "T",            MENU_TEST_MODE,         VIRTKEY, CONTROL, NOINVERT
+    "V",            MENU_PASTE,             VIRTKEY, CONTROL, NOINVERT
+    "X",            MENU_CUT,               VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+ABOUT_DIALOG DIALOG DISCARDABLE  22, 17, 230, 75
+STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
+CAPTION "About"
+FONT 8, "System"
+BEGIN
+    ICON            GUIEDIT_LARGE_ICON,IDC_MYICON,14,9,16,16
+    LTEXT           "GUIEdit Version 1.0",IDC_STATIC,49,10,119,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2001",IDC_STATIC,49,20,119,8
+    DEFPUSHBUTTON   "OK",IDOK,195,6,30,11,WS_GROUP
+END
+
+HIERARCHY_DIALOG DIALOGEX 0, 0, 200, 234
+STYLE WS_CHILD | WS_CAPTION | WS_THICKFRAME
+EXSTYLE WS_EX_CLIENTEDGE
+CAPTION "Hierarchy View"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "Tree1",TREE_HIERARCHY,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_HASLINES | TVS_LINESATROOT | TVS_NOTOOLTIPS | 
+                    TVS_TRACKSELECT | WS_BORDER | WS_TABSTOP,4,4,192,224
+END
+
+NEW_LAYOUT_DIALOG DIALOG DISCARDABLE  0, 0, 216, 121
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "New Layout"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,52,96,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,112,96,50,14
+    CTEXT           "Future options of the new layout here!",IDC_STATIC,20,
+                    12,180,56,SS_CENTERIMAGE
+END
+
+GENERIC_PROPERTIES_DIALOG DIALOGEX 0, 0, 476, 261
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Window Properties"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,272,208,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,328,208,50,14
+    GROUPBOX        "Enabled",IDC_STATIC,152,8,156,56
+    RTEXT           "Image",IDC_STATIC,160,20,28,8,SS_CENTERIMAGE
+    RTEXT           "Color",IDC_STATIC,160,42,28,8,SS_CENTERIMAGE
+    RTEXT           "Border Color",IDC_STATIC,224,42,44,8,SS_CENTERIMAGE
+    COMBOBOX        COMBO_ENABLED_IMAGE,192,21,104,156,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "",BUTTON_ENABLED_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,196,37,25,22,WS_EX_DLGMODALFRAME
+    CONTROL         "",BUTTON_ENABLED_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,272,37,25,22,WS_EX_DLGMODALFRAME
+    GROUPBOX        "Disabled",IDC_STATIC,312,8,156,56
+    RTEXT           "Image",IDC_STATIC,320,20,28,8,SS_CENTERIMAGE
+    RTEXT           "Color",IDC_STATIC,320,42,28,8,SS_CENTERIMAGE
+    RTEXT           "Border Color",IDC_STATIC,384,42,44,8,SS_CENTERIMAGE
+    COMBOBOX        COMBO_DISABLED_IMAGE,352,22,104,156,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "",BUTTON_DISABLED_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,356,37,25,22,WS_EX_DLGMODALFRAME
+    CONTROL         "",BUTTON_DISABLED_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,432,37,25,22,WS_EX_DLGMODALFRAME
+    GROUPBOX        "Highlight",IDC_STATIC,152,68,156,56
+    RTEXT           "Image",IDC_STATIC,160,81,28,8,SS_CENTERIMAGE
+    RTEXT           "Color",IDC_STATIC,160,102,28,8,SS_CENTERIMAGE
+    RTEXT           "Border Color",IDC_STATIC,224,102,44,8,SS_CENTERIMAGE
+    COMBOBOX        COMBO_HILITE_IMAGE,192,81,104,156,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "",BUTTON_HILITE_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,196,97,25,22,WS_EX_DLGMODALFRAME
+    CONTROL         "",BUTTON_HILITE_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,272,97,25,22,WS_EX_DLGMODALFRAME
+    GROUPBOX        "Text Options",IDC_STATIC,4,4,144,100
+    CONTROL         "",BUTTON_TEXT_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,
+                    12,79,25,22,WS_EX_DLGMODALFRAME
+    LTEXT           "Text",IDC_STATIC,40,79,28,20,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,72,79,25,22,WS_EX_DLGMODALFRAME
+    LTEXT           "Shadow",IDC_STATIC,100,79,32,20,SS_CENTERIMAGE
+    COMBOBOX        COMBO_TEXT_STATE,60,65,72,64,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Text State",IDC_STATIC,12,65,44,12,SS_CENTERIMAGE
+    COMBOBOX        COMBO_FONT,12,49,124,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Font",IDC_STATIC,12,39,76,8
+    GROUPBOX        "Internal Identification",IDC_STATIC,151,134,308,44
+    EDITTEXT        EDIT_NAME,199,146,244,12,ES_AUTOHSCROLL
+    RTEXT           "Window Name",IDC_STATIC,163,147,28,23
+    LTEXT           "Name length + layout filename length (.wnd) must not exceed 'X' characters",
+                    STATIC_NAME_MAX,199,160,244,12,SS_CENTERIMAGE
+    GROUPBOX        "Window Status",IDC_STATIC,4,108,144,70
+    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,120,45,10
+    CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,132,42,10
+    CONTROL         "Hidden",CHECK_HIDDEN,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,144,39,10
+    CONTROL         "No Input",CHECK_NO_INPUT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,156,43,10
+    CONTROL         "No Focus",CHECK_NO_FOCUS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,76,120,47,10
+    CONTROL         "Border",CHECK_BORDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,76,132,37,10
+    CONTROL         "Image",CHECK_IMAGE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,76,144,35,10
+    CONTROL         "See Thru",CHECK_SEE_THRU,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,76,156,45,10
+    GROUPBOX        "Callbacks",IDC_STATIC,3,181,204,80
+    COMBOBOX        COMBO_SYSTEM,59,193,136,216,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "System",IDC_STATIC,7,197,44,8
+    RTEXT           "Input",IDC_STATIC,7,213,44,8
+    RTEXT           "Tooltip",IDC_STATIC,7,229,44,8
+    RTEXT           "Draw",IDC_STATIC,7,245,44,8
+    COMBOBOX        COMBO_TOOLTIP,59,225,136,216,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        COMBO_INPUT,59,209,136,216,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        COMBO_DRAW,59,241,136,216,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Tooltip",IDC_STATIC,312,68,145,65
+    EDITTEXT        EDIT_TOOLTIP_TEXT,320,87,128,14,ES_AUTOHSCROLL
+    LTEXT           "Enter the default Tooltip to be displayed",IDC_STATIC,
+                    320,76,128,8
+    CONTROL         "Wrap Centered",CHECK_WRAP_CENTERED,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,8,167,64,10
+    LTEXT           "Tooltip delay (ms, -1 for default)",IDC_STATIC,332,104,
+                    103,8
+    EDITTEXT        EDIT_TOOLTIP_DELAY,331,114,100,14,ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    COMBOBOX        COMBO_HEADER,9,25,128,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Display Header Template",IDC_STATIC,9,14,128,8
+END
+
+COLOR_SELECT_DIALOG DIALOGEX 0, 0, 244, 141
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Color Select"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,68,112,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,132,112,50,14
+    LTEXT           "Static",LABEL_COLOR1,208,14,30,8,SS_CENTERIMAGE
+    LTEXT           "Static",LABEL_COLOR2,208,38,30,8,SS_CENTERIMAGE
+    LTEXT           "Static",LABEL_COLOR3,208,62,30,8,SS_CENTERIMAGE
+    PUSHBUTTON      "Switch To RGB",BUTTON_RGB_HSV,8,4,68,13
+    CONTROL         "",BUTTON_COLORBAR1,"Button",BS_OWNERDRAW | BS_FLAT | 
+                    WS_DISABLED | WS_TABSTOP,98,4,90,9,WS_EX_STATICEDGE
+    CONTROL         "",BUTTON_COLORBAR2,"Button",BS_OWNERDRAW | BS_FLAT | 
+                    WS_DISABLED | WS_TABSTOP,98,28,90,9,WS_EX_STATICEDGE
+    CONTROL         "",BUTTON_COLORBAR3,"Button",BS_OWNERDRAW | BS_FLAT | 
+                    WS_DISABLED | WS_TABSTOP,98,52,90,9,WS_EX_STATICEDGE
+    SCROLLBAR       SCROLL_COLOR1,83,13,119,9,WS_TABSTOP
+    SCROLLBAR       SCROLL_COLOR2,83,37,119,9,WS_TABSTOP
+    SCROLLBAR       SCROLL_COLOR3,83,61,119,9,WS_TABSTOP
+    LTEXT           "Preview",IDC_STATIC,28,88,31,8
+    CONTROL         "",BUTTON_PREVIEW,"Button",BS_OWNERDRAW | BS_FLAT | 
+                    WS_DISABLED | WS_TABSTOP,8,24,68,60,WS_EX_STATICEDGE
+    LTEXT           "Alpha",LABEL_ALPHA,208,84,32,8,SS_CENTERIMAGE
+    SCROLLBAR       SCROLL_ALPHA,83,83,119,9,WS_TABSTOP
+    CTEXT           "Alpha",IDC_STATIC,100,74,88,8,SS_CENTERIMAGE
+END
+
+PUSH_BUTTON_PROPERTIES_DIALOG DIALOGEX 0, 0, 464, 204
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Push Button Properties"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Push Button Display Text",IDC_STATIC,12,16,128,8
+    DEFPUSHBUTTON   "OK",IDOK,332,167,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,389,167,50,14
+    GROUPBOX        "Text Colors",IDC_STATIC,12,100,128,49
+    LTEXT           "Text",IDC_STATIC,48,124,22,20,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,74,124,25,22,WS_EX_DLGMODALFRAME
+    LTEXT           "Shadow",IDC_STATIC,102,124,32,20,SS_CENTERIMAGE
+    COMBOBOX        COMBO_TEXT_STATE,56,106,68,64,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,20,106,32,12,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,
+                    21,124,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_FONT,12,86,128,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Push Button Data",IDC_STATIC,4,4,144,148
+    EDITTEXT        EDIT_TEXT_LABEL,12,28,128,14,ES_AUTOHSCROLL
+    LTEXT           "Display Font",IDC_STATIC,12,74,128,8
+    GROUPBOX        "Internal Identification",IDC_STATIC,152,108,308,44
+    EDITTEXT        EDIT_NAME,200,120,244,12,ES_AUTOHSCROLL
+    RTEXT           "Window Name",IDC_STATIC,164,121,28,23
+    LTEXT           "Name length + layout filename length (.wnd) must not exceed 'X' characters",
+                    STATIC_NAME_MAX,200,135,244,12,SS_CENTERIMAGE
+    GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
+    GROUPBOX        "Images and Colors",IDC_STATIC,268,4,192,100
+    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,17,45,10
+    CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,31,42,10
+    RTEXT           "Image",IDC_STATIC,276,44,23,12,SS_CENTERIMAGE
+    CONTROL         "Hidden",CHECK_HIDDEN,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,18,39,10
+    RTEXT           "Color",IDC_STATIC,312,75,28,8,SS_CENTERIMAGE
+    CONTROL         "No Input",CHECK_NO_INPUT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,45,43,10
+    RTEXT           "Border Color",IDC_STATIC,376,75,44,8,SS_CENTERIMAGE
+    CONTROL         "No Focus",CHECK_NO_FOCUS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,59,47,10
+    COMBOBOX        COMBO_IMAGE,304,46,148,156,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Border",CHECK_BORDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,31,37,10
+    CONTROL         "",BUTTON_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,348,
+                    68,25,22,WS_EX_DLGMODALFRAME
+    CONTROL         "Image",CHECK_IMAGE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,45,35,10
+    CONTROL         "",BUTTON_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,424,68,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_STATE,304,19,148,168,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,272,20,27,12,SS_CENTERIMAGE
+    CONTROL         "See Thru",CHECK_SEE_THRU,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,59,45,10
+    CONTROL         "RightClick",CHECK_RIGHT_CLICK,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,73,48,10
+    GROUPBOX        "Tooltip",IDC_STATIC,4,154,251,39
+    EDITTEXT        EDIT_TOOLTIP_TEXT,11,175,128,14,ES_AUTOHSCROLL
+    LTEXT           "Enter the default Tooltip to be displayed",IDC_STATIC,
+                    12,165,128,8
+    CONTROL         "Wrap Centered",CHECK_WRAP_CENTERED,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,160,87,64,10
+    LTEXT           "Tooltip delay (ms, -1 for default)",IDC_STATIC,146,164,
+                    103,8
+    EDITTEXT        EDIT_TOOLTIP_DELAY,145,174,100,14,ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    CONTROL         "Check-like",CHECK_CHECK_LIKE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,74,49,10
+    COMBOBOX        COMBO_HEADER,9,57,128,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Display Header Template",IDC_STATIC,9,46,128,8
+END
+
+RADIO_BUTTON_PROPERTIES_DIALOG DIALOGEX 0, 0, 464, 237
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Radio Button Properties"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,339,209,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,399,209,50,14
+    RTEXT           "Radio Group ID",IDC_STATIC,13,16,60,16,SS_CENTERIMAGE
+    PUSHBUTTON      "Clear Group",BUTTON_CLEAR_GROUP,49,37,50,14
+    COMBOBOX        COMBO_GROUP,78,18,48,96,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Text Colors",IDC_STATIC,15,142,128,64
+    LTEXT           "Text",IDC_STATIC,51,173,22,20,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,77,173,25,22,WS_EX_DLGMODALFRAME
+    LTEXT           "Shadow",IDC_STATIC,105,173,32,20,SS_CENTERIMAGE
+    COMBOBOX        COMBO_TEXT_STATE,59,155,68,64,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,23,155,32,12,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,
+                    25,173,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_FONT,13,130,128,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Radio Button Data",IDC_STATIC,4,4,144,206
+    EDITTEXT        EDIT_TEXT_LABEL,12,73,128,14,ES_AUTOHSCROLL
+    LTEXT           "Radio Button Display Text",IDC_STATIC,12,60,128,8
+    LTEXT           "Display Font",IDC_STATIC,13,118,128,8
+    GROUPBOX        "Internal Identification",IDC_STATIC,152,108,308,44
+    EDITTEXT        EDIT_NAME,200,120,244,12,ES_AUTOHSCROLL
+    RTEXT           "Window Name",IDC_STATIC,164,121,28,23
+    LTEXT           "Name length + layout filename length (.wnd) must not exceed 'X' characters",
+                    STATIC_NAME_MAX,200,135,244,12,SS_CENTERIMAGE
+    GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
+    GROUPBOX        "Images and Colors",IDC_STATIC,268,4,192,100
+    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,20,45,10
+    CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,40,42,10
+    RTEXT           "Image",IDC_STATIC,276,44,23,12,SS_CENTERIMAGE
+    CONTROL         "Hidden",CHECK_HIDDEN,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,20,39,10
+    RTEXT           "Color",IDC_STATIC,312,75,28,8,SS_CENTERIMAGE
+    CONTROL         "No Input",CHECK_NO_INPUT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,60,43,10
+    RTEXT           "Border Color",IDC_STATIC,376,75,44,8,SS_CENTERIMAGE
+    CONTROL         "No Focus",CHECK_NO_FOCUS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,80,47,10
+    COMBOBOX        COMBO_IMAGE,304,46,148,156,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Border",CHECK_BORDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,40,37,10
+    CONTROL         "",BUTTON_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,348,
+                    68,25,22,WS_EX_DLGMODALFRAME
+    CONTROL         "Image",CHECK_IMAGE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,60,35,10
+    CONTROL         "",BUTTON_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,424,68,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_STATE,304,19,148,168,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,272,20,27,12,SS_CENTERIMAGE
+    CONTROL         "See Thru",CHECK_SEE_THRU,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,80,45,10
+    CONTROL         "Wrap Centered",CHECK_WRAP_CENTERED,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,160,92,64,10
+    GROUPBOX        "Tooltip",IDC_STATIC,152,156,251,39
+    EDITTEXT        EDIT_TOOLTIP_TEXT,159,177,128,14,ES_AUTOHSCROLL
+    LTEXT           "Enter the default Tooltip to be displayed",IDC_STATIC,
+                    160,167,128,8
+    LTEXT           "Tooltip delay (ms, -1 for default)",IDC_STATIC,294,167,
+                    103,8
+    EDITTEXT        EDIT_TOOLTIP_DELAY,293,177,100,14,ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    COMBOBOX        COMBO_HEADER,11,102,128,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Display Header Template",IDC_STATIC,11,91,128,8
+END
+
+CHECK_BOX_PROPERTIES_DIALOG DIALOGEX 0, 0, 464, 199
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Check Box Properties"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,339,166,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,395,166,50,14
+    GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
+    GROUPBOX        "Images and Colors",IDC_STATIC,268,4,192,100
+    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,20,45,10
+    CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,40,42,10
+    RTEXT           "Image",IDC_STATIC,276,44,23,12,SS_CENTERIMAGE
+    CONTROL         "Hidden",CHECK_HIDDEN,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,20,39,10
+    RTEXT           "Color",IDC_STATIC,312,75,28,8,SS_CENTERIMAGE
+    CONTROL         "No Input",CHECK_NO_INPUT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,60,43,10
+    RTEXT           "Border Color",IDC_STATIC,376,75,44,8,SS_CENTERIMAGE
+    CONTROL         "No Focus",CHECK_NO_FOCUS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,80,47,10
+    COMBOBOX        COMBO_IMAGE,304,46,148,156,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Border",CHECK_BORDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,40,37,10
+    CONTROL         "",BUTTON_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,348,
+                    68,25,22,WS_EX_DLGMODALFRAME
+    CONTROL         "Image",CHECK_IMAGE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,60,35,10
+    CONTROL         "",BUTTON_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,424,68,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_STATE,304,19,148,168,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,272,20,27,12,SS_CENTERIMAGE
+    GROUPBOX        "Text Colors",IDC_STATIC,12,97,128,51
+    LTEXT           "Text",IDC_STATIC,48,122,22,20,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,74,122,25,22,WS_EX_DLGMODALFRAME
+    LTEXT           "Shadow",IDC_STATIC,102,122,32,20,SS_CENTERIMAGE
+    COMBOBOX        COMBO_TEXT_STATE,56,104,68,64,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,20,104,32,12,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,
+                    21,122,25,22,WS_EX_DLGMODALFRAME
+    GROUPBOX        "Internal Identification",IDC_STATIC,152,108,308,44
+    EDITTEXT        EDIT_NAME,200,120,244,12,ES_AUTOHSCROLL
+    RTEXT           "Window Name",IDC_STATIC,164,121,28,23
+    LTEXT           "Name length + layout filename length (.wnd) must not exceed 'X' characters",
+                    STATIC_NAME_MAX,200,135,244,12,SS_CENTERIMAGE
+    COMBOBOX        COMBO_FONT,12,83,128,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Check Box Data",IDC_STATIC,4,4,144,148
+    EDITTEXT        EDIT_TEXT_LABEL,12,28,128,14,ES_AUTOHSCROLL
+    LTEXT           "Check Box Display Text",IDC_STATIC,12,16,128,8
+    LTEXT           "Display Font",IDC_STATIC,12,71,128,8
+    CONTROL         "See Thru",CHECK_SEE_THRU,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,80,45,10
+    CONTROL         "Wrap Centered",CHECK_WRAP_CENTERED,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,160,92,64,10
+    GROUPBOX        "Tooltip",IDC_STATIC,4,155,251,39
+    EDITTEXT        EDIT_TOOLTIP_TEXT,11,175,128,14,ES_AUTOHSCROLL
+    LTEXT           "Enter the default Tooltip to be displayed",IDC_STATIC,
+                    12,165,128,8
+    LTEXT           "Tooltip delay (ms, -1 for default)",IDC_STATIC,146,164,
+                    103,8
+    EDITTEXT        EDIT_TOOLTIP_DELAY,145,174,100,14,ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    COMBOBOX        COMBO_HEADER,9,56,128,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Display Header Template",IDC_STATIC,9,45,128,8
+END
+
+SLIDER_PROPERTIES_DIALOG DIALOGEX 0, 0, 424, 233
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Slider Properties"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,303,194,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,361,194,50,14
+    RTEXT           "Min Value",IDC_STATIC,11,18,40,8
+    GROUPBOX        "Slider Data",IDC_STATIC,4,4,104,56
+    RTEXT           "Max Value",IDC_STATIC,11,39,40,8
+    EDITTEXT        EDIT_SLIDER_MIN,57,16,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        EDIT_SLIDER_MAX,57,36,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    GROUPBOX        "Internal Identification",IDC_STATIC,112,132,308,44
+    EDITTEXT        EDIT_NAME,160,144,244,12,ES_AUTOHSCROLL
+    RTEXT           "Window Name",IDC_STATIC,124,145,28,23
+    LTEXT           "Name length + layout filename length (.wnd) must not exceed 'X' characters",
+                    STATIC_NAME_MAX,160,159,244,12,SS_CENTERIMAGE
+    GROUPBOX        "Window Status",IDC_STATIC,112,4,108,124
+    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,120,20,45,10
+    CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,120,40,42,10
+    CONTROL         "Hidden",CHECK_HIDDEN,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,169,20,39,10
+    CONTROL         "No Input",CHECK_NO_INPUT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,120,60,43,10
+    CONTROL         "No Focus",CHECK_NO_FOCUS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,120,80,47,10
+    CONTROL         "Border",CHECK_BORDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,169,40,37,10
+    CONTROL         "Image",CHECK_IMAGE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,169,60,35,10
+    CONTROL         "See Thru",CHECK_SEE_THRU,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,169,80,45,10
+    GROUPBOX        "Images and Colors",IDC_STATIC,224,4,192,124
+    RTEXT           "Image",IDC_STATIC,232,36,23,12,SS_CENTERIMAGE
+    RTEXT           "Color",IDC_STATIC,268,67,28,8,SS_CENTERIMAGE
+    RTEXT           "Border Color",IDC_STATIC,332,67,44,8,SS_CENTERIMAGE
+    COMBOBOX        COMBO_IMAGE,260,38,148,156,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "",BUTTON_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,304,
+                    60,25,22,WS_EX_DLGMODALFRAME
+    CONTROL         "",BUTTON_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,380,60,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_STATE,260,19,148,168,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,228,20,27,12,SS_CENTERIMAGE
+    PUSHBUTTON      "Sub-Control Colors",BUTTON_SUBCONTROL_COLOR,332,100,76,
+                    14
+    LTEXT           "Auto assign colors to sub controls based on [Slider] colors",
+                    IDC_STATIC,244,96,80,28
+    CONTROL         "Wrap Centered",CHECK_WRAP_CENTERED,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,120,92,64,10
+    GROUPBOX        "Tooltip",IDC_STATIC,10,180,251,39
+    EDITTEXT        EDIT_TOOLTIP_TEXT,17,201,128,14,ES_AUTOHSCROLL
+    LTEXT           "Enter the default Tooltip to be displayed",IDC_STATIC,
+                    18,191,128,8
+    LTEXT           "Tooltip delay (ms, -1 for default)",IDC_STATIC,152,191,
+                    103,8
+    EDITTEXT        EDIT_TOOLTIP_DELAY,151,201,100,14,ES_AUTOHSCROLL | 
+                    ES_NUMBER
+END
+
+LISTBOX_PROPERTIES_DIALOG DIALOGEX 0, 0, 468, 266
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Listbox Properties"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,339,238,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,399,238,50,14
+    CONTROL         "Auto-Scroll when new line added",CHECK_AUTO_SCROLL,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,96,119,10
+    CONTROL         "Auto-Scroll if looking at end",CHECK_SCROLL_IF_AT_END,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,72,119,10
+    CONTROL         "Auto-Purge top entry when full",CHECK_AUTO_PURGE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,13,84,111,10
+    CONTROL         "Has Scrollbar",CHECK_HAS_SCROLLBAR,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,13,36,58,10
+    CONTROL         "Multi-Select",CHECK_MULTI_SELECT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,13,48,53,10
+    CONTROL         "Force Select",CHECK_FORCE_SELECT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,13,60,56,10
+    LTEXT           "Max Items",IDC_STATIC,44,16,42,16,SS_CENTERIMAGE
+    EDITTEXT        EDIT_MAX_ITEMS,12,18,28,14,ES_RIGHT | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    GROUPBOX        "Text Colors",IDC_STATIC,12,199,128,50
+    LTEXT           "Text",IDC_STATIC,48,223,22,20,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,74,223,25,22,WS_EX_DLGMODALFRAME
+    LTEXT           "Shadow",IDC_STATIC,102,223,32,20,SS_CENTERIMAGE
+    COMBOBOX        COMBO_TEXT_STATE,56,206,68,64,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,20,205,32,12,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,
+                    21,223,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_FONT,12,184,128,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Listbox Data",IDC_STATIC,7,7,144,245
+    LTEXT           "Display Font",IDC_STATIC,12,175,128,8
+    GROUPBOX        "Internal Identification",IDC_STATIC,153,133,308,44
+    EDITTEXT        EDIT_NAME,200,143,244,12,ES_AUTOHSCROLL
+    RTEXT           "Window Name",IDC_STATIC,164,144,28,23
+    LTEXT           "Name length + layout filename length (.wnd) must not exceed 'X' characters",
+                    STATIC_NAME_MAX,200,158,244,12,SS_CENTERIMAGE
+    GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
+    GROUPBOX        "Images and Colors",IDC_STATIC,269,7,192,124
+    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,20,45,10
+    CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,40,42,10
+    RTEXT           "Image",IDC_STATIC,276,36,23,12,SS_CENTERIMAGE
+    CONTROL         "Hidden",CHECK_HIDDEN,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,20,39,10
+    RTEXT           "Color",IDC_STATIC,312,67,28,8,SS_CENTERIMAGE
+    CONTROL         "No Input",CHECK_NO_INPUT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,60,43,10
+    RTEXT           "Border Color",IDC_STATIC,376,67,44,8,SS_CENTERIMAGE
+    CONTROL         "No Focus",CHECK_NO_FOCUS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,80,47,10
+    COMBOBOX        COMBO_IMAGE,304,38,148,156,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Border",CHECK_BORDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,40,37,10
+    CONTROL         "",BUTTON_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,348,
+                    60,25,22,WS_EX_DLGMODALFRAME
+    CONTROL         "Image",CHECK_IMAGE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,60,35,10
+    CONTROL         "",BUTTON_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,424,60,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_STATE,304,19,148,168,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,272,20,27,12,SS_CENTERIMAGE
+    CONTROL         "See Thru",CHECK_SEE_THRU,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,80,45,10
+    PUSHBUTTON      "Sub-Control Colors",BUTTON_SUBCONTROL_COLOR,376,100,76,
+                    14
+    LTEXT           "Auto assign colors to sub controls based on [Listbox] colors",
+                    IDC_STATIC,280,92,96,28
+    EDITTEXT        EDIT_NUM_COLUMNS,73,107,22,12,ES_RIGHT | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    LTEXT           "# of Columns",IDC_STATIC,99,107,48,13,SS_CENTERIMAGE
+    LTEXT           "Comma Separate Column Width %s:",IDC_STATIC,13,124,128,
+                    8,SS_CENTERIMAGE
+    EDITTEXT        EDIT_COLUMN_PERCENT,13,134,127,12,ES_AUTOHSCROLL
+    CONTROL         "One Line Only",CHECK_NO_WORDWRAP,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,13,108,61,10
+    CONTROL         "Wrap Centered",CHECK_WRAP_CENTERED,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,160,92,64,10
+    GROUPBOX        "Tooltip",IDC_STATIC,153,182,251,39
+    EDITTEXT        EDIT_TOOLTIP_TEXT,161,203,128,14,ES_AUTOHSCROLL
+    LTEXT           "Enter the default Tooltip to be displayed",IDC_STATIC,
+                    161,193,128,8
+    LTEXT           "Tooltip delay (ms, -1 for default)",IDC_STATIC,295,193,
+                    103,8
+    EDITTEXT        EDIT_TOOLTIP_DELAY,295,202,100,14,ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    COMBOBOX        COMBO_HEADER,12,160,128,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Display Header Template",IDC_STATIC,12,149,128,8
+END
+
+PROGRESS_BAR_PROPERTIES_DIALOG DIALOGEX 0, 0, 464, 198
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Progress Bar Properties"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,24,174,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,84,174,50,14
+    GROUPBOX        "Text Colors",IDC_STATIC,4,4,144,90
+    CONTROL         "",BUTTON_TEXT_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,
+                    12,35,25,22,WS_EX_DLGMODALFRAME
+    LTEXT           "Text",IDC_STATIC,40,35,28,20,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,72,35,25,22,WS_EX_DLGMODALFRAME
+    LTEXT           "Shadow",IDC_STATIC,100,35,32,20,SS_CENTERIMAGE
+    COMBOBOX        COMBO_TEXT_STATE,60,17,84,64,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Text State",IDC_STATIC,8,17,48,12,SS_CENTERIMAGE
+    GROUPBOX        "Internal Identification",IDC_STATIC,152,108,308,44
+    EDITTEXT        EDIT_NAME,200,120,244,12,ES_AUTOHSCROLL
+    RTEXT           "Window Name",IDC_STATIC,164,121,28,23
+    LTEXT           "Name length + layout filename length (.wnd) must not exceed 'X' characters",
+                    STATIC_NAME_MAX,200,135,244,12,SS_CENTERIMAGE
+    GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
+    GROUPBOX        "Images and Colors",IDC_STATIC,268,4,192,100
+    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,20,45,10
+    CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,40,42,10
+    RTEXT           "Image",IDC_STATIC,276,44,23,12,SS_CENTERIMAGE
+    CONTROL         "Hidden",CHECK_HIDDEN,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,20,39,10
+    RTEXT           "Color",IDC_STATIC,312,75,28,8,SS_CENTERIMAGE
+    CONTROL         "No Input",CHECK_NO_INPUT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,60,43,10
+    RTEXT           "Border Color",IDC_STATIC,376,75,44,8,SS_CENTERIMAGE
+    CONTROL         "No Focus",CHECK_NO_FOCUS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,80,47,10
+    COMBOBOX        COMBO_IMAGE,304,46,148,156,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Border",CHECK_BORDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,40,37,10
+    CONTROL         "",BUTTON_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,348,
+                    68,25,22,WS_EX_DLGMODALFRAME
+    CONTROL         "Image",CHECK_IMAGE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,60,35,10
+    CONTROL         "",BUTTON_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,424,68,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_STATE,304,19,148,168,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,272,20,27,12,SS_CENTERIMAGE
+    CONTROL         "See Thru",CHECK_SEE_THRU,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,80,45,10
+    GROUPBOX        "Tooltip",IDC_STATIC,3,95,145,64
+    EDITTEXT        EDIT_TOOLTIP_TEXT,11,113,128,14,ES_AUTOHSCROLL
+    LTEXT           "Enter the default Tooltip to be displayed",IDC_STATIC,
+                    11,103,128,8
+    CONTROL         "Wrap Centered",CHECK_WRAP_CENTERED,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,160,92,64,10
+    LTEXT           "Tooltip delay (ms, -1 for default)",IDC_STATIC,24,130,
+                    105,8
+    EDITTEXT        EDIT_TOOLTIP_DELAY,23,140,102,14,ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    COMBOBOX        COMBO_HEADER,11,74,128,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Display Header Template",IDC_STATIC,11,63,128,8
+END
+
+STATIC_TEXT_PROPERTIES_DIALOG DIALOGEX 0, 0, 464, 205
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Static Text Properties"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,313,169,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,373,169,50,14
+    RTEXT           "Centered Text",IDC_STATIC,12,16,60,16,SS_CENTERIMAGE
+    PUSHBUTTON      "Centered",BUTTON_CENTERED,77,16,50,16
+    GROUPBOX        "Text Colors",IDC_STATIC,12,108,128,49
+    LTEXT           "Text",IDC_STATIC,48,133,22,20,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,74,133,25,22,WS_EX_DLGMODALFRAME
+    LTEXT           "Shadow",IDC_STATIC,102,133,32,20,SS_CENTERIMAGE
+    COMBOBOX        COMBO_TEXT_STATE,56,115,68,64,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,20,115,32,12,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,
+                    21,133,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_FONT,13,96,128,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Static Text Data",IDC_STATIC,4,0,144,160
+    EDITTEXT        EDIT_TEXT_LABEL,12,47,128,14,ES_AUTOHSCROLL
+    LTEXT           "Display Text",IDC_STATIC,12,35,128,8
+    LTEXT           "Display Font",IDC_STATIC,13,86,128,8
+    GROUPBOX        "Internal Identification",IDC_STATIC,152,108,308,44
+    EDITTEXT        EDIT_NAME,200,120,244,12,ES_AUTOHSCROLL
+    RTEXT           "Window Name",IDC_STATIC,164,121,28,23
+    LTEXT           "Name length + layout filename length (.wnd) must not exceed 'X' characters",
+                    STATIC_NAME_MAX,200,135,244,12,SS_CENTERIMAGE
+    GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
+    GROUPBOX        "Images and Colors",IDC_STATIC,268,4,192,100
+    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,20,45,10
+    CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,40,42,10
+    RTEXT           "Image",IDC_STATIC,276,44,23,12,SS_CENTERIMAGE
+    CONTROL         "Hidden",CHECK_HIDDEN,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,20,39,10
+    RTEXT           "Color",IDC_STATIC,312,75,28,8,SS_CENTERIMAGE
+    CONTROL         "No Input",CHECK_NO_INPUT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,60,43,10
+    RTEXT           "Border Color",IDC_STATIC,376,75,44,8,SS_CENTERIMAGE
+    CONTROL         "No Focus",CHECK_NO_FOCUS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,80,47,10
+    COMBOBOX        COMBO_IMAGE,304,46,148,156,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Border",CHECK_BORDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,40,37,10
+    CONTROL         "",BUTTON_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,348,
+                    68,25,22,WS_EX_DLGMODALFRAME
+    CONTROL         "Image",CHECK_IMAGE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,60,35,10
+    CONTROL         "",BUTTON_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,424,68,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_STATE,304,19,148,168,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,272,20,27,12,SS_CENTERIMAGE
+    CONTROL         "See Thru",CHECK_SEE_THRU,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,80,45,10
+    CONTROL         "Wrap Centered",CHECK_WRAP_CENTERED,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,160,92,64,10
+    GROUPBOX        "Tooltip",IDC_STATIC,4,162,251,39
+    EDITTEXT        EDIT_TOOLTIP_TEXT,12,183,128,14,ES_AUTOHSCROLL
+    LTEXT           "Enter the default Tooltip to be displayed",IDC_STATIC,
+                    12,173,128,8
+    LTEXT           "Tooltip delay (ms, -1 for default)",IDC_STATIC,146,173,
+                    103,8
+    EDITTEXT        EDIT_TOOLTIP_DELAY,146,182,100,14,ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    COMBOBOX        COMBO_HEADER,10,73,128,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Display Header Template",IDC_STATIC,10,62,128,8
+END
+
+TEXT_ENTRY_PROPERTIES_DIALOG DIALOGEX 0, 0, 468, 257
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Text Entry Properties"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,215,214,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,273,214,50,14
+    LTEXT           "Max Characters",IDC_STATIC,50,20,68,12,SS_CENTERIMAGE
+    CONTROL         "Password (Hide Real Characters)",CHECK_SECRET_TEXT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,39,120,10
+    CONTROL         "Letters and Numbers Only",RADIO_LETTERS_AND_NUMBERS,
+                    "Button",BS_AUTORADIOBUTTON,23,95,97,10
+    CONTROL         "Numbers Only",RADIO_NUMBERS,"Button",BS_AUTORADIOBUTTON,
+                    23,111,60,10
+    EDITTEXT        EDIT_MAX_CHARS,12,20,36,14,ES_CENTER | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    CONTROL         "It's All Good!",RADIO_ANY_TEXT,"Button",
+                    BS_AUTORADIOBUTTON,23,79,55,10
+    GROUPBOX        "Allowed Text",IDC_STATIC,12,71,124,51
+    CONTROL         "ASCII Characters Only",CHECK_ASCII_TEXT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,13,53,86,10
+    GROUPBOX        "Internal Identification",IDC_STATIC,152,108,308,44
+    EDITTEXT        EDIT_NAME,200,120,244,12,ES_AUTOHSCROLL
+    RTEXT           "Window Name",IDC_STATIC,164,121,28,23
+    LTEXT           "Name length + layout filename length (.wnd) must not exceed 'X' characters",
+                    STATIC_NAME_MAX,200,135,244,12,SS_CENTERIMAGE
+    GROUPBOX        "Text Colors",IDC_STATIC,12,178,128,64
+    LTEXT           "Text",IDC_STATIC,48,209,22,20,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,74,209,25,22,WS_EX_DLGMODALFRAME
+    LTEXT           "Shadow",IDC_STATIC,102,209,32,20,SS_CENTERIMAGE
+    COMBOBOX        COMBO_TEXT_STATE,56,191,68,64,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,20,191,32,12,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,
+                    21,209,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_FONT,12,156,128,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Text Entry Data",IDC_STATIC,4,4,144,248
+    LTEXT           "Display Font",IDC_STATIC,14,146,128,8
+    GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
+    GROUPBOX        "Images and Colors",IDC_STATIC,268,4,192,100
+    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,20,45,10
+    CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,40,42,10
+    RTEXT           "Image",IDC_STATIC,276,44,23,12,SS_CENTERIMAGE
+    CONTROL         "Hidden",CHECK_HIDDEN,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,20,39,10
+    RTEXT           "Color",IDC_STATIC,312,75,28,8,SS_CENTERIMAGE
+    CONTROL         "No Input",CHECK_NO_INPUT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,60,43,10
+    RTEXT           "Border Color",IDC_STATIC,376,75,44,8,SS_CENTERIMAGE
+    CONTROL         "No Focus",CHECK_NO_FOCUS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,80,47,10
+    COMBOBOX        COMBO_IMAGE,304,46,148,156,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Border",CHECK_BORDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,40,37,10
+    CONTROL         "",BUTTON_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,348,
+                    68,25,22,WS_EX_DLGMODALFRAME
+    CONTROL         "Image",CHECK_IMAGE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,60,35,10
+    CONTROL         "",BUTTON_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,424,68,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_STATE,304,19,148,168,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,272,20,27,12,SS_CENTERIMAGE
+    CONTROL         "See Thru",CHECK_SEE_THRU,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,80,45,10
+    CONTROL         "Wrap Centered",CHECK_WRAP_CENTERED,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,160,92,64,10
+    GROUPBOX        "Tooltip",IDC_STATIC,152,157,251,39
+    EDITTEXT        EDIT_TOOLTIP_TEXT,159,178,128,14,ES_AUTOHSCROLL
+    LTEXT           "Enter the default Tooltip to be displayed",IDC_STATIC,
+                    160,168,128,8
+    LTEXT           "Tooltip delay (ms, -1 for default)",IDC_STATIC,294,167,
+                    103,8
+    EDITTEXT        EDIT_TOOLTIP_DELAY,293,177,100,14,ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    COMBOBOX        COMBO_HEADER,13,133,128,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Display Header Template",IDC_STATIC,13,122,128,8
+END
+
+GRID_SETTINGS_DIALOG DIALOGEX 0, 0, 192, 153
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Grid Settings"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,80,80,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,136,80,50,14
+    CTEXT           "Pixels Between Marks",IDC_STATIC,12,18,80,12,
+                    SS_CENTERIMAGE
+    EDITTEXT        EDIT_RESOLUTION,28,30,44,14,ES_CENTER | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    GROUPBOX        "Resolution",IDC_STATIC,4,4,96,56
+    GROUPBOX        "Style",IDC_STATIC,4,64,68,84
+    CONTROL         "Dots",RADIO_DOTS,"Button",BS_AUTORADIOBUTTON | 
+                    WS_DISABLED,16,76,44,10
+    CONTROL         "Lines",RADIO_LINES,"Button",BS_AUTORADIOBUTTON,16,88,44,
+                    10
+    GROUPBOX        "Properties",IDC_STATIC,104,4,84,56
+    CONTROL         "Grid Visible",CHECK_VISIBLE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,115,21,51,10
+    CONTROL         "Snap To Grid",CHECK_SNAP_TO_GRID,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,115,37,64,10
+    CTEXT           "Color",IDC_STATIC,20,103,28,12,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,22,
+                    115,25,22,WS_EX_DLGMODALFRAME
+END
+
+LAYOUT_SCHEME_DIALOG DIALOGEX 0, 0, 220, 313
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Layout Schemes"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Save and Close",IDOK,40,292,66,14
+    PUSHBUTTON      "Cancel",IDCANCEL,116,292,64,14
+    LTEXT           "Current Layout Scheme:",IDC_STATIC,8,4,88,12,
+                    SS_CENTERIMAGE
+    LTEXT           "Static",STATIC_CURRENT_SCHEME,8,20,204,16,
+                    SS_CENTERIMAGE,WS_EX_CLIENTEDGE | WS_EX_STATICEDGE
+    PUSHBUTTON      "Load Scheme",BUTTON_LOAD,12,44,92,14
+    PUSHBUTTON      "Save Scheme As",BUTTON_SAVE,112,44,92,14
+    GROUPBOX        "Current Scheme Settings",IDC_STATIC,8,68,204,216
+    RTEXT           "Image",IDC_STATIC,20,126,23,12,SS_CENTERIMAGE
+    RTEXT           "Color",IDC_STATIC,36,155,28,8,SS_CENTERIMAGE
+    RTEXT           "Border Color",IDC_STATIC,100,155,44,8,SS_CENTERIMAGE
+    COMBOBOX        COMBO_IMAGE,48,126,148,156,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "",BUTTON_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,72,
+                    148,25,22,WS_EX_DLGMODALFRAME
+    CONTROL         "",BUTTON_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,148,148,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_STATE,48,108,148,168,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,16,110,27,12,SS_CENTERIMAGE
+    GROUPBOX        "Text State Colors",IDC_STATIC,20,177,180,64
+    LTEXT           "Text",IDC_STATIC,71,212,22,20,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,112,212,25,22,WS_EX_DLGMODALFRAME
+    LTEXT           "Shadow",IDC_STATIC,140,212,32,20,SS_CENTERIMAGE
+    COMBOBOX        COMBO_TEXT_STATE,64,190,116,64,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,28,190,32,12,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,
+                    44,212,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_FONT,20,260,180,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Display Font",IDC_STATIC,20,249,128,8
+    PUSHBUTTON      "Apply This Scheme To Current Layout",
+                    BUTTON_APPLY_SCHEME,16,84,184,14
+END
+
+CALLBACK_EDITOR_DIALOG DIALOGEX 0, 0, 396, 269
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
+CAPTION "User Window Callbacks"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "I'm DONE!",IDOK,248,156,92,28
+    LISTBOX         LIST_WINDOWS,12,136,176,120,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Window Callbacks",IDC_STATIC,4,4,192,260
+    GROUPBOX        "Callbacks",IDC_STATIC,12,16,176,104
+    COMBOBOX        COMBO_SYSTEM,52,48,128,216,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "System",IDC_STATIC,20,50,24,8
+    RTEXT           "Input",IDC_STATIC,20,66,24,8
+    RTEXT           "Tooltip",IDC_STATIC,20,82,24,8
+    RTEXT           "Draw",IDC_STATIC,20,98,24,8
+    COMBOBOX        COMBO_TOOLTIP,52,80,128,216,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        COMBO_INPUT,52,64,128,216,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        COMBO_DRAW,52,96,128,216,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "User Windows",IDC_STATIC,12,128,128,8
+    RTEXT           "Window Name",IDC_STATIC,16,32,52,12,SS_CENTERIMAGE
+    LTEXT           "No Window",STATIC_WINDOW,72,32,108,12,SS_CENTERIMAGE,
+                    WS_EX_STATICEDGE
+    GROUPBOX        "Layout Callbacks",IDC_STATIC,200,8,188,72
+    COMBOBOX        COMBO_INIT,252,20,128,216,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Init",IDC_STATIC,208,22,32,8
+    RTEXT           "Update",IDC_STATIC,208,38,32,8
+    RTEXT           "Shutdown",IDC_STATIC,208,54,32,8
+    COMBOBOX        COMBO_SHUTDOWN,252,52,128,216,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        COMBO_UPDATE,252,36,128,216,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+END
+
+TAB_CONTROL_PROPERTIES_DIALOG DIALOGEX 0, 0, 487, 217
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Tab Control Properties"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,412,161,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,411,180,50,14
+    GROUPBOX        "Tab Control Data",IDC_STATIC,7,4,144,194
+    GROUPBOX        "Internal Identification",IDC_STATIC,152,108,308,44
+    EDITTEXT        EDIT_NAME,200,120,244,12,ES_AUTOHSCROLL
+    RTEXT           "Window Name",IDC_STATIC,164,121,28,23
+    LTEXT           "Name length + layout filename length (.wnd) must not exceed 'X' characters",
+                    STATIC_NAME_MAX,200,135,244,12,SS_CENTERIMAGE
+    GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
+    GROUPBOX        "Images and Colors",IDC_STATIC,268,4,192,100
+    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,20,45,10
+    CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,40,42,10
+    RTEXT           "Image",IDC_STATIC,276,44,23,12,SS_CENTERIMAGE
+    CONTROL         "Hidden",CHECK_HIDDEN,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,20,39,10
+    RTEXT           "Color",IDC_STATIC,312,75,28,8,SS_CENTERIMAGE
+    CONTROL         "No Input",CHECK_NO_INPUT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,60,43,10
+    RTEXT           "Border Color",IDC_STATIC,376,75,44,8,SS_CENTERIMAGE
+    CONTROL         "No Focus",CHECK_NO_FOCUS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,80,47,10
+    COMBOBOX        COMBO_IMAGE,304,46,148,156,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Border",CHECK_BORDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,40,37,10
+    CONTROL         "",BUTTON_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,348,
+                    68,25,22,WS_EX_DLGMODALFRAME
+    CONTROL         "Image",CHECK_IMAGE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,60,35,10
+    CONTROL         "",BUTTON_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,424,68,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_STATE,304,19,148,168,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,272,20,27,12,SS_CENTERIMAGE
+    CONTROL         "See Thru",CHECK_SEE_THRU,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,80,45,10
+    CONTROL         "Left/Top",LEFT_JUSTIFY,"Button",BS_AUTORADIOBUTTON,13,
+                    27,55,11
+    CONTROL         "Center",CENTER_JUSTIFY,"Button",BS_AUTORADIOBUTTON,13,
+                    42,55,11
+    CONTROL         "Right/Bottom",RIGHT_JUSTIFY,"Button",BS_AUTORADIOBUTTON,
+                    13,57,55,11
+    GROUPBOX        "Justification",IDC_STATIC,7,17,66,58
+    CONTROL         "Left",LEFT_SIDE,"Button",BS_AUTORADIOBUTTON | WS_GROUP,
+                    83,27,55,11
+    CONTROL         "Right",RIGHT_SIDE,"Button",BS_AUTORADIOBUTTON,83,42,55,
+                    11
+    CONTROL         "Top",TOP_SIDE,"Button",BS_AUTORADIOBUTTON,83,57,55,11
+    GROUPBOX        "Position",IDC_STATIC,79,17,62,71
+    CONTROL         "Bottom",BOTTOM_SIDE,"Button",BS_AUTORADIOBUTTON,83,72,
+                    55,11
+    EDITTEXT        TAB_WIDTH,13,90,40,13,ES_CENTER | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    LTEXT           "Tab Width",IDC_STATIC,13,80,50,9
+    EDITTEXT        TAB_HEIGHT,13,115,40,13,ES_CENTER | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    LTEXT           "Tab Height",IDC_STATIC,13,105,41,9
+    EDITTEXT        TAB_COUNT,13,140,40,13,ES_CENTER | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    LTEXT           "Tab Count",IDC_STATIC,13,130,40,9
+    EDITTEXT        BORDER_WIDTH,13,165,40,13,ES_CENTER | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    LTEXT           "Border Width",IDC_STATIC,13,155,44,9
+    LTEXT           "Active Tab for Viewing",IDC_STATIC,61,92,40,19
+    EDITTEXT        ACTIVE_TAB,100,95,40,13,ES_CENTER | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    CONTROL         "Disable Tab 0",DISABLE_TAB_0,"Button",BS_AUTOCHECKBOX | 
+                    BS_LEFTTEXT | WS_TABSTOP,70,110,60,10
+    CONTROL         "Disable Tab 1",DISABLE_TAB_1,"Button",BS_AUTOCHECKBOX | 
+                    BS_LEFTTEXT | WS_TABSTOP,70,120,60,10
+    CONTROL         "Disable Tab 2",DISABLE_TAB_2,"Button",BS_AUTOCHECKBOX | 
+                    BS_LEFTTEXT | WS_TABSTOP,70,130,60,10
+    CONTROL         "Disable Tab 3",DISABLE_TAB_3,"Button",BS_AUTOCHECKBOX | 
+                    BS_LEFTTEXT | WS_TABSTOP,70,140,60,10
+    CONTROL         "Disable Tab 4",DISABLE_TAB_4,"Button",BS_AUTOCHECKBOX | 
+                    BS_LEFTTEXT | WS_TABSTOP,70,150,60,10
+    CONTROL         "Disable Tab 5",DISABLE_TAB_5,"Button",BS_AUTOCHECKBOX | 
+                    BS_LEFTTEXT | WS_TABSTOP,70,160,60,10
+    CONTROL         "Disable Tab 6",DISABLE_TAB_6,"Button",BS_AUTOCHECKBOX | 
+                    BS_LEFTTEXT | WS_TABSTOP,70,170,60,10
+    CONTROL         "Disable Tab 7",DISABLE_TAB_7,"Button",BS_AUTOCHECKBOX | 
+                    BS_LEFTTEXT | WS_TABSTOP,70,180,60,10
+    CONTROL         "Wrap Centered",CHECK_WRAP_CENTERED,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,160,92,64,10
+    GROUPBOX        "Tooltip",IDC_STATIC,152,156,251,39
+    EDITTEXT        EDIT_TOOLTIP_TEXT,159,177,128,14,ES_AUTOHSCROLL
+    LTEXT           "Enter the default Tooltip to be displayed",IDC_STATIC,
+                    160,167,128,8
+    LTEXT           "Tooltip delay (ms, -1 for default)",IDC_STATIC,294,167,
+                    103,8
+    EDITTEXT        EDIT_TOOLTIP_DELAY,293,177,100,14,ES_AUTOHSCROLL | 
+                    ES_NUMBER
+END
+
+COMBO_BOX_PROPERTIES_DIALOG DIALOGEX 0, 0, 468, 247
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Combo Box Properties"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Max Items Displayed Before Scroll bar appears",
+                    IDC_STATIC,43,16,93,16
+    EDITTEXT        EDIT_MAX_ITEMS_DISPLAYED,14,18,17,14,ES_RIGHT | 
+                    ES_AUTOHSCROLL | ES_NUMBER
+    GROUPBOX        "Text Colors",IDC_STATIC,12,179,128,55
+    LTEXT           "Text",IDC_STATIC,48,208,22,20,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,74,208,25,22,WS_EX_DLGMODALFRAME
+    LTEXT           "Shadow",IDC_STATIC,102,208,32,20,SS_CENTERIMAGE
+    COMBOBOX        COMBO_TEXT_STATE,56,193,68,64,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,20,192,32,12,SS_CENTERIMAGE
+    CONTROL         "",BUTTON_TEXT_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,
+                    21,208,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_FONT,12,161,128,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Combo Box Data",IDC_STATIC,4,4,144,233
+    LTEXT           "Display Font",IDC_STATIC,12,152,128,8
+    GROUPBOX        "Window Status",IDC_STATIC,152,4,108,100
+    CONTROL         "Dragable",CHECK_DRAGABLE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,20,45,10
+    CONTROL         "Enabled",CHECK_ENABLED,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,40,42,10
+    CONTROL         "Hidden",CHECK_HIDDEN,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,20,39,10
+    CONTROL         "No Input",CHECK_NO_INPUT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,60,43,10
+    CONTROL         "No Focus",CHECK_NO_FOCUS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,160,80,47,10
+    CONTROL         "Border",CHECK_BORDER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,40,37,10
+    CONTROL         "Image",CHECK_IMAGE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,60,35,10
+    CONTROL         "See Thru",CHECK_SEE_THRU,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,209,80,45,10
+    GROUPBOX        "Internal Identification",IDC_STATIC,152,132,308,44
+    EDITTEXT        EDIT_NAME,200,144,244,12,ES_AUTOHSCROLL
+    RTEXT           "Window Name",IDC_STATIC,164,145,28,23
+    LTEXT           "Name length + layout filename length (.wnd) must not exceed 'X' characters",
+                    STATIC_NAME_MAX,200,159,244,12,SS_CENTERIMAGE
+    GROUPBOX        "Images and Colors",IDC_STATIC,269,7,192,124
+    RTEXT           "Image",IDC_STATIC,276,36,23,12,SS_CENTERIMAGE
+    RTEXT           "Color",IDC_STATIC,312,67,28,8,SS_CENTERIMAGE
+    RTEXT           "Border Color",IDC_STATIC,376,67,44,8,SS_CENTERIMAGE
+    COMBOBOX        COMBO_IMAGE,304,38,148,156,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "",BUTTON_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,348,
+                    60,25,22,WS_EX_DLGMODALFRAME
+    CONTROL         "",BUTTON_BORDER_COLOR,"Button",BS_OWNERDRAW | 
+                    WS_TABSTOP,424,60,25,22,WS_EX_DLGMODALFRAME
+    COMBOBOX        COMBO_STATE,304,19,148,168,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "State",IDC_STATIC,272,20,27,12,SS_CENTERIMAGE
+    PUSHBUTTON      "Sub-Control Colors",BUTTON_SUBCONTROL_COLOR,376,100,76,
+                    14
+    LTEXT           "Auto assign colors to sub controls based on [ComboBox] colors",
+                    IDC_STATIC,280,92,92,28
+    CONTROL         "Is Editable",CHECK_IS_EDITABLE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,13,56,49,10
+    LTEXT           "Max Characters",IDC_STATIC,45,37,68,12,SS_CENTERIMAGE
+    EDITTEXT        EDIT_MAX_CHARS,13,37,17,14,ES_RIGHT | ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    LTEXT           "If not checked, the combo box will become a drop select box.",
+                    IDC_STATIC,66,56,75,33
+    CONTROL         "ASCII Characters Only",CHECK_ASCII_TEXT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,13,93,86,10
+    CONTROL         "Letters and Numbers Only",CHECK_LETTERS_AND_NUMBERS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,107,97,10
+    CONTROL         "Wrap Centered",CHECK_WRAP_CENTERED,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,160,92,64,10
+    GROUPBOX        "Tooltip",IDC_STATIC,151,177,251,39
+    EDITTEXT        EDIT_TOOLTIP_TEXT,159,198,128,14,ES_AUTOHSCROLL
+    LTEXT           "Enter the default Tooltip to be displayed",IDC_STATIC,
+                    159,188,128,8
+    LTEXT           "Tooltip delay (ms, -1 for default)",IDC_STATIC,293,188,
+                    103,8
+    EDITTEXT        EDIT_TOOLTIP_DELAY,293,198,100,14,ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    DEFPUSHBUTTON   "OK",IDOK,336,223,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,396,223,50,14
+    COMBOBOX        COMBO_HEADER,12,138,128,136,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Display Header Template",IDC_STATIC,12,127,128,8
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""resource.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    HIERARCHY_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 193
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 227
+    END
+
+    NEW_LAYOUT_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 209
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 114
+    END
+
+    GENERIC_PROPERTIES_DIALOG, DIALOG
+    BEGIN
+        RIGHTMARGIN, 469
+        TOPMARGIN, 7
+    END
+
+    COLOR_SELECT_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 237
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 134
+    END
+
+    PUSH_BUTTON_PROPERTIES_DIALOG, DIALOG
+    BEGIN
+        RIGHTMARGIN, 457
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 193
+    END
+
+    RADIO_BUTTON_PROPERTIES_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 457
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 223
+    END
+
+    CHECK_BOX_PROPERTIES_DIALOG, DIALOG
+    BEGIN
+        RIGHTMARGIN, 457
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 194
+    END
+
+    SLIDER_PROPERTIES_DIALOG, DIALOG
+    BEGIN
+        RIGHTMARGIN, 417
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 213
+    END
+
+    LISTBOX_PROPERTIES_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 461
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 252
+    END
+
+    PROGRESS_BAR_PROPERTIES_DIALOG, DIALOG
+    BEGIN
+        RIGHTMARGIN, 457
+        TOPMARGIN, 7
+    END
+
+    STATIC_TEXT_PROPERTIES_DIALOG, DIALOG
+    BEGIN
+        RIGHTMARGIN, 457
+        TOPMARGIN, 7
+    END
+
+    TEXT_ENTRY_PROPERTIES_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 461
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 250
+    END
+
+    GRID_SETTINGS_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 185
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 146
+    END
+
+    LAYOUT_SCHEME_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 213
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 306
+    END
+
+    CALLBACK_EDITOR_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 389
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 262
+    END
+
+    TAB_CONTROL_PROPERTIES_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 480
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 210
+    END
+
+    COMBO_BOX_PROPERTIES_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 461
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 237
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_APP_TITLE           "GUIEdit"
+    IDS_HELLO               "GUI Edit App!"
+    IDC_GUIEDIT             "GUIEDIT"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
