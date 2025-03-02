@@ -1,0 +1,31 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-and-test:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          choco install -y llvm
+          echo "Installed Clang-Tidy and Clang-Format"
+
+      - name: Run clang-tidy
+        run: clang-tidy --version # Replace with actual lint command
+
+      - name: Run clang-format
+        run: Get-ChildItem -Recurse -Include *.cpp,*.h | ForEach-Object { clang-format -n --Werror $_ }
+
+      # - name: Run unit tests
+      #   run: |
+      #     mkdir build && cd build
+      #     cmake .. -G "Visual Studio 17 2022"
+      #     cmake --build . --config Release
+      #     ctest --output-on-failure

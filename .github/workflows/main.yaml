@@ -1,0 +1,40 @@
+name: Main Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  regression-and-release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: choco install -y cmake
+
+      - name: Run regression tests
+        run: |
+          mkdir build && cd build
+          cmake .. -G "Visual Studio 17 2022"
+          cmake --build . --config Release
+          ctest --output-on-failure
+
+      - name: Determine semantic version
+        id: versioning
+        run: echo "VERSION=$(git describe --tags --abbrev=0)" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      # - name: Build release binary
+      #   run: |
+      #     mkdir build && cd build
+      #     cmake .. -G "Visual Studio 17 2022"
+      #     cmake --build . --config Release
+      #     cp "Release/mybinary.exe" ../mybinary.exe
+
+      # - name: Upload release binary
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: release-build
+      #     path: mybinary.exe
