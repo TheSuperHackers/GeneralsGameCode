@@ -42,7 +42,7 @@
 #ifndef TAGBLOCK_H
 #define TAGBLOCK_H
 
-#include "slist.h"
+#include "SLIST.H"
 #include "crc.h"
 #include "rawfile.h"
 

@@ -22,7 +22,7 @@
 #include "txt.h"
 #include "bsurface.h"
 #include "texture.h"
-#include "font.h"
+#include "FONT.H"
 #include "nstrdup.h"
 
 TextTextureClass::TextTextureClass(void) :

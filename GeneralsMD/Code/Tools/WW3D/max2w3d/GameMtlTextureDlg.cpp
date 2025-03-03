@@ -46,7 +46,7 @@
 
 
 #include "GameMtlTextureDlg.h"
-#include "GameMtl.h"
+#include "gamemtl.h"
 #include "dllmain.h"
 #include "resource.h"
 #include <Max.h>

@@ -34,7 +34,7 @@
 #include <stdio.h>
 
 #include "Lib/BaseType.h"
-#include "WWLib/RefCount.h"
+#include "WWLib/refcount.h"
 #include "Common/AsciiString.h"
 
 typedef struct {

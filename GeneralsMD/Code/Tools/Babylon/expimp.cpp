@@ -20,10 +20,10 @@
 // expimp.cpp
 //
 
-#include "stdAfx.h"
-#include "transDB.h"
+#include "StdAfx.h"
+#include "TransDB.h"
 #include "XLStuff.h"
-#include "Babylondlg.h"
+#include "BabylonDlg.h"
 #include "VerifyTextDlg.h"
 #include "Babylon.h"
 #include "expimp.h"

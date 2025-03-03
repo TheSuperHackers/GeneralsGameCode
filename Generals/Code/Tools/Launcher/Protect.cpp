@@ -37,7 +37,7 @@
 
 #ifdef COPY_PROTECT
 
-#include "BFish.h"
+#include "BFISH.H"
 #include <Support\UString.h>
 #include <Support\RefPtr.h>
 #include <Storage\File.h>
@@ -47,7 +47,7 @@
 #include <stdio.h>
 #include <Debug\DebugPrint.h>
 
-#include "SafeDisk\CdaPfn.h"
+#include "SafeDisk/CdaPfn.h"
 
 // This GUID should be unique for each product. (CHANGE IT WHEN DOING THE
 // NEXT PRODUCT) Note that the game will need to agree on this GUID also, so

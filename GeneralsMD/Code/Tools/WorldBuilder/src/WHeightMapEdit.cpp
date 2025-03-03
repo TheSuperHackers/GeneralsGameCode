@@ -28,7 +28,7 @@
 #include "W3DDevice/GameClient/TerrainTex.h"
 #include "TerrainModal.h"
 #include "Common/Debug.h"
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 #include "Common/MapReaderWriterInfo.h"
 #include "Common/FileSystem.h"
 #include "Common/TerrainTypes.h"
@@ -41,7 +41,7 @@
 #include "mapobjectprops.h"
 #include "LayersList.h"
 
-#include "common/DataChunk.h"
+#include "Common/DataChunk.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...

@@ -21,8 +21,8 @@
 
 #define DEFINE_EDITOR_SORTING_NAMES
 
-#include "stdafx.h"
-#include "worldbuilder.h"
+#include "StdAfx.h"
+#include "WorldBuilder.h"
 #include "EditObjectParameter.h"
 #include "EditParameter.h"
 

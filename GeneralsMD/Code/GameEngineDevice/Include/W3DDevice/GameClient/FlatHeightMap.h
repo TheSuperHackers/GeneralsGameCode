@@ -37,7 +37,7 @@
 #include "shader.h"
 #include "vertmaterial.h"
 #include "Lib/BaseType.h"
-#include "common/GameType.h"
+#include "Common/GameType.h"
 #include "WorldHeightMap.h"
 #include "BaseHeightMap.h"
 

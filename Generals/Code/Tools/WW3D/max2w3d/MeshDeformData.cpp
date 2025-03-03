@@ -35,9 +35,9 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "MeshDeformData.H"
-#include "Util.H"
-#include "MeshDeformSaveDefs.H"
+#include "MeshDeformData.h"
+#include "util.h"
+#include "MeshDeformSaveDefs.h"
 
 
 ///////////////////////////////////////////////////////////////////////////

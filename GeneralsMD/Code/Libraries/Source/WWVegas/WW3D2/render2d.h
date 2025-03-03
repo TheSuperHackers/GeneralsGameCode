@@ -44,7 +44,7 @@
 
 #include "always.h"
 //#include "simplevec.h"
-#include "vector.h"
+#include "Vector.H"
 #include "vector2.h"
 
 #include "shader.h"

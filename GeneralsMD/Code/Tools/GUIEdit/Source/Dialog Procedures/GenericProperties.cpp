@@ -55,7 +55,7 @@
 #include "Common/FunctionLexicon.h"
 #include "GUIEdit.h"
 #include "Properties.h"
-#include "Resource.h"
+#include "resource.h"
 #include "EditWindow.h"
 
 // DEFINES ////////////////////////////////////////////////////////////////////

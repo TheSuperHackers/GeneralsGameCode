@@ -40,7 +40,7 @@
 
 #include <Max.h>
 #include "Vector.H"
-#include "MeshDeformDefs.H"
+#include "MeshDeformDefs.h"
 
 
 // Forward declarations

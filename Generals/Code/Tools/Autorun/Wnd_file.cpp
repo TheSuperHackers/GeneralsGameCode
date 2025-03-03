@@ -44,8 +44,8 @@
 #include "windows.h"
 #include <stdio.h>
 #include <sys/stat.h>
-#include "wnd_file.h"
-#include "winfix.h"
+#include "Wnd_File.h"
+#include "WinFix.H"
 //#include "autorun.h"
 
 

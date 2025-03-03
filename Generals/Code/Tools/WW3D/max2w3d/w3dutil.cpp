@@ -43,7 +43,7 @@
 #include "nodelist.h"
 #include "tchar.h"
 #include "gamemtl.h"
-#include "notify.h"
+#include "Notify.h"
 #include "gennamesdialog.h"
 #include "genmtlnamesdialog.h"
 #include "genlodextensiondialog.h"

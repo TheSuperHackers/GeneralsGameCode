@@ -36,7 +36,7 @@
 #ifndef __W3DSHADERMANAGER_H_
 #define __W3DSHADERMANAGER_H_
 
-#include "WW3D2/Texture.h"
+#include "WW3D2/texture.h"
 enum FilterTypes;
 enum CustomScenePassModes;
 enum StaticGameLODLevel;

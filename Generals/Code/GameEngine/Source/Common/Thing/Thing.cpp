@@ -43,7 +43,7 @@
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Team.h"
-#include "Lib/Trig.h"
+#include "Lib/trig.h"
 #include "GameLogic/TerrainLogic.h"
 
 #ifdef _INTERNAL

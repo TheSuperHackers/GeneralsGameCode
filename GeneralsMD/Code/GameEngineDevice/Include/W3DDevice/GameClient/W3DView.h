@@ -43,7 +43,7 @@
 #include "Common/STLTypedefs.h"
 #include "GameClient/ParabolicEase.h"
 #include "GameClient/View.h"
-#include "WW3D2/Camera.h"
+#include "WW3D2/camera.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Drawable;

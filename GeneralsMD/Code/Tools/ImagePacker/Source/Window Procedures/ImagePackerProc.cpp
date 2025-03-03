@@ -43,7 +43,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "ImagePacker.h"
-#include "Resource.h"
+#include "resource.h"
 #include "WindowProc.h"
 #include "WinMain.h"
 

@@ -46,7 +46,7 @@
 #endif
 
 #include "mutex.h"
-#include "vector.h"
+#include "Vector.H"
 #include "wwstring.h"
 
 /*

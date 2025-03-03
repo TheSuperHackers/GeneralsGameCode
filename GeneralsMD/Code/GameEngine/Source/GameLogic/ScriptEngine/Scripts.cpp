@@ -60,7 +60,7 @@
 
 #include "GameClient/ShellHooks.h"
 
-#include "GameLogic/Ai.h"
+#include "GameLogic/AI.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/SidesList.h"

@@ -36,13 +36,13 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "MeshDeform.H"
-#include "MeshDeformData.H"
-#include "MeshDeformPanel.H"
-#include "MeshDeformUndo.H"
-#include "DLLMain.H"
-#include "Resource.H"
-#include "Util.H"
+#include "MeshDeform.h"
+#include "MeshDeformData.h"
+#include "MeshDeformPanel.h"
+#include "MeshDeformUndo.h"
+#include "dllmain.h"
+#include "resource.h"
+#include "util.h"
 
 #if defined W3D_MAX4		//defined as in the project (.dsp)
 static GenSubObjType _SubObjectTypeVertex(1);

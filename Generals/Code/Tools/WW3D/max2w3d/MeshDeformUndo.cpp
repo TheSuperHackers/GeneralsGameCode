@@ -34,11 +34,11 @@
  * Functions:                                                                                  * 
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "MeshDeformUndo.H"
-#include "Util.H"
-#include "MeshDeformData.H"
-#include "MeshDeformSet.H"
-#include "MeshDeform.H"
+#include "MeshDeformUndo.h"
+#include "util.h"
+#include "MeshDeformData.h"
+#include "MeshDeformSet.h"
+#include "MeshDeform.h"
 
 
 ///////////////////////////////////////////////////////////////////////////

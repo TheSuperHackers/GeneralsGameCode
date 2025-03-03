@@ -19,11 +19,11 @@
 // ViewDBsDlg.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "noxstring.h"
-#include "noxstringdlg.h"
+#include "noxstringDlg.h"
 #include "VIEWDBSII.h"
-#include "transdb.h"
+#include "TransDB.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

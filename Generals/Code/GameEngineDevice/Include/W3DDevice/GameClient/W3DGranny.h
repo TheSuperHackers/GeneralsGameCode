@@ -26,7 +26,7 @@
 #include "hanim.h"
 #include "proto.h"
 #include "rendobj.h"
-#include "LightEnvironment.h"
+#include "lightenvironment.h"
 #include "w3d_file.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"

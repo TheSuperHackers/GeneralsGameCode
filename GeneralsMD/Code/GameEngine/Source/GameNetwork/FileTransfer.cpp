@@ -33,7 +33,7 @@
 #include "GameClient/LoadScreen.h"
 #include "GameClient/Shell.h"
 #include "GameNetwork/FileTransfer.h"
-#include "GameNetwork/NetworkUtil.h"
+#include "GameNetwork/networkutil.h"
 
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------

@@ -52,7 +52,7 @@
 #include "dx8wrapper.h"
 #include "dx8caps.h"
 #include "missingtexture.h"
-#include "targa.h"
+#include "TARGA.H"
 #include <D3dx8tex.h>
 #include <cstdio>
 #include "wwmemlog.h"

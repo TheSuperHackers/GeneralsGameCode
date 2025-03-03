@@ -38,7 +38,7 @@
 
 #include "GameLogic/Damage.h"
 
-#include "WWMath/Matrix3D.h"
+#include "WWMath/matrix3d.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 struct FieldParse;

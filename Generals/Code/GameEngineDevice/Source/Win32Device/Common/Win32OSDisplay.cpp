@@ -31,7 +31,7 @@
 #include "Common/OSDisplay.h"
 
 #include "Common/SubsystemInterface.h"
-#include "Common/STLTypeDefs.h"
+#include "Common/STLTypedefs.h"
 #include "Common/AsciiString.h"
 #include "Common/SystemInfo.h"
 #include "Common/UnicodeString.h"

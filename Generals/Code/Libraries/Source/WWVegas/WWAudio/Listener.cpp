@@ -35,9 +35,9 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "listener.h"
-#include "wwaudio.h"
-#include "utils.h"
+#include "Listener.h"
+#include "WWAudio.h"
+#include "Utils.h"
 #include "soundhandle.h"
 
 

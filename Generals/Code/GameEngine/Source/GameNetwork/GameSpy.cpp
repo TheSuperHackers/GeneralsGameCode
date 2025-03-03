@@ -44,7 +44,7 @@
 #include "GameClient/MessageBox.h"
 #include "GameClient/GameText.h"
 #include "GameClient/MapUtil.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 #include "Common/MultiplayerSettings.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/RandomValue.h"

@@ -25,7 +25,7 @@
 #define __BIN_H
 
 #include "list.h"
-#include "OLEString.h"
+#include "olestring.h"
 
 class BinItem: public ListNode
 {

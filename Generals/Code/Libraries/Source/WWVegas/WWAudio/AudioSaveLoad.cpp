@@ -35,11 +35,11 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "always.h"
-#include "audiosaveload.h"
+#include "AudioSaveLoad.h"
 #include "persist.h"
 #include "persistfactory.h"
 #include "definition.h"
-#include "soundchunkids.h"
+#include "SoundChunkIDs.h"
 #include "chunkio.h"
 #include "SoundScene.h"
 #include "wwmemlog.h"

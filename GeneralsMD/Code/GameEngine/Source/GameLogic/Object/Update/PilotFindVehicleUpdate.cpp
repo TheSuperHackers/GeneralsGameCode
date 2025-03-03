@@ -32,7 +32,7 @@
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 
-#include "GameClient\Drawable.h"
+#include "GameClient/Drawable.h"
 
 #include "Common/ActionManager.h"
 #include "Common/Player.h"
@@ -40,13 +40,13 @@
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
 
-#include "GameLogic\GameLogic.h"
-#include "GameLogic\PartitionManager.h"
-#include "GameLogic\Object.h"
-#include "GameLogic\ObjectIter.h"
-#include "GameLogic\Module\PilotFindVehicleUpdate.h"
-#include "GameLogic\Module\AIUpdate.h"
-#include "GameLogic\Module\CollideModule.h"
+#include "GameLogic/GameLogic.h"
+#include "GameLogic/PartitionManager.h"
+#include "GameLogic/Object.h"
+#include "GameLogic/ObjectIter.h"
+#include "GameLogic/Module/PilotFindVehicleUpdate.h"
+#include "GameLogic/Module/AIUpdate.h"
+#include "GameLogic/Module/CollideModule.h"
 
 
 

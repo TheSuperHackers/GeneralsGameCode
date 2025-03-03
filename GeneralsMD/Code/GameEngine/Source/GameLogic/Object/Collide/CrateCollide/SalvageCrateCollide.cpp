@@ -34,7 +34,7 @@
 
 #include "Common/AudioEventRTS.h"
 #include "Common/MiscAudio.h"
-#include "Common/Kindof.h"
+#include "Common/KindOf.h"
 #include "Common/RandomValue.h"
 #include "Common/Player.h"
 #include "Common/ThingTemplate.h"

@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "bfish.h"
-#include "SafeDisk\CdaPfn.h"
+#include "SafeDisk/CdaPfn.h"
 #include <Debug\DebugPrint.h>
 
 void __cdecl doIt(void);

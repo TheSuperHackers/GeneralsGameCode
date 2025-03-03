@@ -39,7 +39,7 @@
 #include "Common/UserPreferences.h"
 #include "Common/GameLOD.h"
 #include "Common/Registry.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 
 #include "GameClient/GameClient.h"
 #include "GameClient/InGameUI.h"

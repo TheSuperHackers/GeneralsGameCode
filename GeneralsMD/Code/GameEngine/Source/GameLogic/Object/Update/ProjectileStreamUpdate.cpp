@@ -34,7 +34,7 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/ProjectileStreamUpdate.h"
-#include "WWMath/Vector3.h"
+#include "WWMath/vector3.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...

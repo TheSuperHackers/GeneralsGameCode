@@ -49,7 +49,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "GUIEdit.h"
-#include "Resource.h"
+#include "resource.h"
 #include "GUIEditColor.h"
 #include "Properties.h"
 #include "Common/Debug.h"
