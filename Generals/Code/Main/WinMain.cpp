@@ -75,6 +75,12 @@
 HINSTANCE ApplicationHInstance = NULL;  ///< our application instance
 HWND ApplicationHWnd = NULL;  ///< our application window handle
 Bool ApplicationIsWindowed = false;
+
+	//  =================== Community Fix Start =================
+	//	Borderless Support - PR #327 //
+Bool ApplicationIsBorderless = false;
+	//  =================== Community Fix End =================
+
 Win32Mouse *TheWin32Mouse= NULL;  ///< for the WndProc() only
 DWORD TheMessageTime = 0;	///< For getting the time that a message was posted from Windows.
 
@@ -674,7 +680,12 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
    // Create our main window
 	windowStyle =  WS_POPUP|WS_VISIBLE;
 	if (runWindowed) 
-		windowStyle |= WS_DLGFRAME | WS_CAPTION | WS_SYSMENU;
+		//  =================== Community Fix Start =================
+		//	Borderless Support - PR #327 //
+		if(!ApplicationIsBorderless)
+			windowStyle |= WS_DLGFRAME | WS_CAPTION | WS_SYSMENU;
+		//  =================== Community Fix End =================
+
 	else
 		windowStyle |= WS_EX_TOPMOST | WS_SYSMENU;
 
@@ -901,6 +912,12 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			//added a preparse step for this flag because it affects window creation style
 			if (stricmp(token,"-win")==0)
 				ApplicationIsWindowed=true;
+			//  =================== Community Fix Start =================
+			//	Borderless Support - PR #327 //
+			if(stricmp(token,"-noborder")==0)
+				ApplicationIsBorderless=true;
+			//  =================== Community Fix End =================
+
 			token = nextParam(NULL, "\" ");	   
 		}
 
