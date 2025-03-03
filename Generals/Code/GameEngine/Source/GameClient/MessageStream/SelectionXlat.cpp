@@ -1105,6 +1105,18 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				else
 				{
 
+					//  =================== Community Fix Start =================
+					//	Backported Zero Hour 1.03 scud storm exploit fix //
+					Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
+					if( draw && draw->isKindOf( KINDOF_STRUCTURE ) )
+					{
+						//Kris: Jan 12, 2005
+						//Can't select other units if you have a structure selected. So deselect the structure to prevent
+						//group force attack exploit.
+						TheInGameUI->deselectAllDrawables();
+					}
+					//  =================== Community Fix End =================
+					
 					// no need to send two messages for selecting the same group.
 					TheMessageStream->appendMessage((GameMessage::Type)(GameMessage::MSG_ADD_TEAM0 + group));
 					Player *player = ThePlayerList->getLocalPlayer();
