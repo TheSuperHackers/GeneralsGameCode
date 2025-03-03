@@ -511,9 +511,9 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 				// Yay. Either select across the screen or the world depending on selectAcrossMap
 				if (selectAcrossMap)
-					TheInGameUI->selectAcrossMap();
+					TheInGameUI->selectAcrossMap(); //Changed to selectMatchingAcrossMap() in Zero Hour.
 				else 
-					TheInGameUI->selectAcrossScreen();
+					TheInGameUI->selectAcrossScreen(); //Changed to selectMatchingAcrossScreen() in Zero Hour
 
 				// emit "picked" message
 				GameMessage *pickMsg = TheMessageStream->appendMessage( GameMessage::MSG_AREA_SELECTION );
@@ -870,6 +870,33 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				buildRegion( &m_selectFeedbackAnchor, &msg->getArgument(0)->pixel, &selectionRegion );
 				dragMsg->appendPixelRegionArgument( selectionRegion );
 			}
+			//  =================== Community Fix Start =================
+			//	Backport Zero Hour Left Click Deselect in Alt Mouse Control Mode //
+			else
+			{
+				// left click behavior (not right drag)
+
+				//Added support to cancel the GUI command without deselecting the unit(s) involved
+				//when you right click.
+				if( !TheInGameUI->getGUICommand() && !TheKeyboard->isShift() && !TheKeyboard->isCtrl() && !TheKeyboard->isAlt() )
+				{
+					//No GUI command mode, so deselect everyone if we're in alternate mouse mode.
+					if( TheGlobalData->m_useAlternateMouse && TheInGameUI->getPendingPlaceSourceObjectID() == INVALID_ID )
+					{
+						if( !TheInGameUI->getPreventLeftClickDeselectionInAlternateMouseModeForOneClick() )
+						{
+							deselectAll();
+						}
+						else
+						{
+							//Prevent deselection of unit if it just issued some type of UI order such as attack move, guard, 
+							//initiating construction of a new structure.
+							TheInGameUI->setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( FALSE );
+						}
+					}
+				}
+			}
+			//  =================== Community Fix End =================
 
 			break;
 		}
