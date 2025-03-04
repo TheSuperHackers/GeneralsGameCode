@@ -905,10 +905,7 @@ InGameUI::InGameUI()
 		m_placeIcon[ i ] = NULL;
 	m_pendingPlaceType = NULL;
 	m_pendingPlaceSourceObjectID = INVALID_ID;
-				//  =================== Community Fix Start =================
-				//	Backport Zero Hour Left Click Deselect in Alt Mouse Control Mode //
-	m_preventLeftClickDeselectionInAlternateMouseModeForOneClick = FALSE;
-				// =================== Community Fix End =================
+	m_preventLeftClickDeselectionInAlternateMouseModeForOneClick = FALSE; // TheSuperHackers @feature @ShizCalev 04/04/2025 - Backports Zero Hour's alt-mouse mode's left click deselect functionality
 	m_placeAnchorStart.x = m_placeAnchorStart.y = 0;
 	m_placeAnchorEnd.x = m_placeAnchorEnd.y = 0;
 	m_placeAnchorInProgress = FALSE;
@@ -2882,12 +2879,11 @@ void InGameUI::placeBuildAvailable( const ThingTemplate *build, Drawable *buildD
 	// place something, it is overwritten
 	//
 	m_pendingPlaceType = build;
-			//  =================== Community Fix Start =================
-			//	Backport Zero Hour Left Click Deselect in Alt Mouse Control Mode //
+	// TheSuperHackers @feature @ShizCalev 04/04/2025 - Backports Zero Hour's alt-mouse mode's left click deselect functionality
+	
 	//Keep the prev pending place for left click deselection prevention in alternate mouse mode.
 	//We want to keep our dozer selected after initiating construction.
 	setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( m_pendingPlaceSourceObjectID != INVALID_ID );
-			// =================== Community Fix End =================
 	m_pendingPlaceSourceObjectID = INVALID_ID;
 
 	Object *sourceObject = NULL;

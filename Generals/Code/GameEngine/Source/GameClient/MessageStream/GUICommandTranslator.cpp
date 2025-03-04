@@ -493,13 +493,8 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 				// get out of GUI command mode if we completed the command one way or another
 				if( commandStatus == COMMAND_COMPLETE )
 				{
-					//  =================== Community Fix Start =================
-					//	Backport Zero Hour Left Click Deselect in Alt Mouse Control Mode //
-					TheInGameUI->setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( TRUE );
-					//  =================== Community Fix End =================
-
+					TheInGameUI->setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( TRUE ); // TheSuperHackers @feature @ShizCalev 04/04/2025 - Backports Zero Hour's alt-mouse mode's left click deselect functionality
 					TheInGameUI->setGUICommand( NULL );
-					
 				}
 			}  // end if
 

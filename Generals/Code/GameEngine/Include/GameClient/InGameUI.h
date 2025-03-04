@@ -416,11 +416,9 @@ public:  // ********************************************************************
 	virtual void placeBuildAvailable( const ThingTemplate *build, Drawable *buildDrawable );				///< built thing being placed
 	virtual const ThingTemplate *getPendingPlaceType( void );					///< get item we're trying to place
 	virtual const ObjectID getPendingPlaceSourceObjectID( void );			///< get producing object
-			//  =================== Community Fix Start =================
-			//	Backport Zero Hour Left Click Deselect in Alt Mouse Control Mode //
+			// TheSuperHackers @feature @ShizCalev 04/04/2025 - Backports Zero Hour's alt-mouse mode's left click deselect functionality
 	virtual Bool getPreventLeftClickDeselectionInAlternateMouseModeForOneClick() const { return m_preventLeftClickDeselectionInAlternateMouseModeForOneClick; }
 	virtual void setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( Bool set ) { m_preventLeftClickDeselectionInAlternateMouseModeForOneClick = set; }
-			// =================== Community Fix End =================
 	virtual void setPlacementStart( const ICoord2D *start );					///< placement anchor point (for choosing angles)
 	virtual void setPlacementEnd( const ICoord2D *end );							///< set target placement point (for choosing angles)
 	virtual Bool isPlacementAnchored( void );													///< is placement arrow anchor set
@@ -697,10 +695,7 @@ protected:
 	BuildProgress								m_buildProgress[ MAX_BUILD_PROGRESS ];	///< progress for building units
 	const ThingTemplate *				m_pendingPlaceType;											///< type of built thing we're trying to place
 	ObjectID										m_pendingPlaceSourceObjectID;						///< source object of the thing constructing the item
-				//  =================== Community Fix Start =================
-				//	Backport Zero Hour Left Click Deselect in Alt Mouse Control Mode //
-	Bool										m_preventLeftClickDeselectionInAlternateMouseModeForOneClick;
-				// =================== Community Fix End =================
+	Bool										m_preventLeftClickDeselectionInAlternateMouseModeForOneClick; // TheSuperHackers @feature @ShizCalev 04/04/2025 - Backports Zero Hour's alt-mouse mode's left click deselect functionality
 	Drawable **									m_placeIcon;														///< array for drawables to appear at the cursor when building in the world
 	Bool												m_placeAnchorInProgress;								///< is place angle interface for placement active
 	ICoord2D										m_placeAnchorStart;											///< place angle anchor start
