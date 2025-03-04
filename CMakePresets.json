@@ -1,0 +1,99 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 25,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "vc6",
+            "displayName": "Build Zero Hour Binaries with NMake",
+            "generator": "NMake Makefiles",
+            "hidden": false,
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL",    
+                "CMAKE_BUILD_TYPE": "Release",
+                "GENZH_FLAGS": "/W3"
+            }
+        },
+        {
+            "name": "default",
+            "displayName": "Default Config",
+            "generator": "Ninja Multi-Config",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "$<$<CONFIG:Release,Debug,RelWithDebInfo>:Embedded>",
+                "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
+            }
+        },
+        {
+            "name": "win32",
+            "architecture": "Win32",
+            "inherits": "default",
+            "hidden": false,
+            "displayName": "Win32 build",
+            "cacheVariables": {
+                "GENZH_FLAGS": "/W3"
+            }
+        },
+        {
+            "name": "unix",
+            "inherits": "default",
+            "hidden": false,
+            "displayName": "Non-Windows build",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS_RELEASE": "-O2 -g -DNDEBUG",
+                "CMAKE_C_FLAGS_RELEASE": "-O2 -g -DNDEBUG"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "win32",
+            "configurePreset": "win32",
+            "displayName": "Build Windows build",
+            "description": "Build Windows build",
+            "configuration": "Release"
+        },
+        {
+            "name": "unix",
+            "configurePreset": "unix",
+            "displayName": "Build non-Windows build",
+            "description": "Build non-Windows build",
+            "configuration": "Release"
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "win32",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "win32"
+                },
+                {
+                    "type": "build",
+                    "name": "win32"
+                }
+            ]
+        },
+        {
+            "name": "unix",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "unix"
+                },
+                {
+                    "type": "build",
+                    "name": "unix"
+                }
+            ]
+        }
+    ]
+}

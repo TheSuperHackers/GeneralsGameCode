@@ -43,3 +43,4 @@ thumbs.db
 /.cache
 .clang-format
 /.vscode
+/Dependencies/MaxSDK/maxsdk

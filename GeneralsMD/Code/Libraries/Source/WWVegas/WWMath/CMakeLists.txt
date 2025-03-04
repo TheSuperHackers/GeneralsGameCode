@@ -1,0 +1,90 @@
+set(WWMATH_SRC
+    aabox.cpp
+    aabtreecull.cpp
+    cardinalspline.cpp
+    catmullromspline.cpp
+    colmath.cpp
+    colmathaabox.cpp
+    colmathaabtri.cpp
+    colmathfrustum.cpp
+    colmathline.cpp
+    colmathobbobb.cpp
+    colmathobbox.cpp
+    colmathobbtri.cpp
+    colmathplane.cpp
+    colmathsphere.cpp
+    cullsys.cpp
+    curve.cpp
+    euler.cpp
+    frustum.cpp
+    gridcull.cpp
+    hermitespline.cpp
+    lineseg.cpp
+    lookuptable.cpp
+    matrix3.cpp
+    matrix3d.cpp
+    matrix4.cpp
+    obbox.cpp
+    ode.cpp
+    pot.cpp
+    quat.cpp
+    tcbspline.cpp
+    tri.cpp
+    v3_rnd.cpp
+    vehiclecurve.cpp
+    vp.cpp
+    wwmath.cpp
+    aabox.h
+    aabtreecull.h
+    aaplane.h
+    cardinalspline.h
+    castres.h
+    catmullromspline.h
+    colmath.h
+    colmathaabox.h
+    colmathfrustum.h
+    colmathinlines.h
+    colmathline.h
+    colmathplane.h
+    cullsys.h
+    culltype.h
+    curve.h
+    euler.h
+    frustum.h
+    gridcull.h
+    hermitespline.h
+    lineseg.h
+    lookuptable.h
+    matrix3.h
+    matrix3d.h
+    matrix4.h
+    obbox.h
+    ode.h
+    plane.h
+    pot.h
+    quat.h
+    rect.h
+    sphere.h
+    tcbspline.h
+    tri.h
+    v3_rnd.h
+    vector2.h
+    vector2i.h
+    vector3.h
+    Vector3i.h
+    vector4.h
+    vehiclecurve.h
+    vp.h
+    wwmath.h
+    wwmathids.h
+)
+
+# Targets to build.
+add_library(z_wwmath STATIC)
+set_target_properties(z_wwmath PROPERTIES OUTPUT_NAME wwmath)
+
+target_sources(z_wwmath PRIVATE ${WWMATH_SRC})
+
+target_link_libraries(z_wwmath PRIVATE
+    z_wwcommon
+)

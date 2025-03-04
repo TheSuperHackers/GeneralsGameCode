@@ -4,9 +4,9 @@
 
 # Build output folders
 [Rr]elease*
-[Pp]rofile*
+#[Pp]rofile*
 [Ii]nternal*
-[Dd]ebug*
+#[Dd]ebug*
 [Hh]ybrid*
 [Ee]nglish
 [Ff]rench
