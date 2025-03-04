@@ -234,10 +234,8 @@ Object *ResourceGatheringManager::findBestSupplyCenter( Object *queryObject )
 
 		if( currentCenter == NULL )
 		{
-			//  =================== Community Fix Start =================
-			//	Corrected wrong list being used - issue #342 //
+			// TheSuperHackers @bugfix @ShizCalev 04/03/2025 Corrected wrong list being used - issue #342
 			iterator = m_supplyCenters.erase( iterator );
-			//  =================== Community Fix End =================
 		}
 		else
 		{
