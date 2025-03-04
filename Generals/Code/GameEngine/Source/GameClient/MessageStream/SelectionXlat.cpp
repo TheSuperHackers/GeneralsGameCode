@@ -511,9 +511,9 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 				// Yay. Either select across the screen or the world depending on selectAcrossMap
 				if (selectAcrossMap)
-					TheInGameUI->selectAcrossMap(); //Changed to selectMatchingAcrossMap() in Zero Hour.
+					TheInGameUI->selectAcrossMap();
 				else 
-					TheInGameUI->selectAcrossScreen(); //Changed to selectMatchingAcrossScreen() in Zero Hour
+					TheInGameUI->selectAcrossScreen();
 
 				// emit "picked" message
 				GameMessage *pickMsg = TheMessageStream->appendMessage( GameMessage::MSG_AREA_SELECTION );
@@ -870,8 +870,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				buildRegion( &m_selectFeedbackAnchor, &msg->getArgument(0)->pixel, &selectionRegion );
 				dragMsg->appendPixelRegionArgument( selectionRegion );
 			}
-			//  =================== Community Fix Start =================
-			//	Backport Zero Hour Left Click Deselect in Alt Mouse Control Mode //
+			// TheSuperHackers @feature @ShizCalev 04/04/2025 - Backports Zero Hour's alt-mouse mode's left click deselect functionality
 			else
 			{
 				// left click behavior (not right drag)
@@ -896,7 +895,6 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 					}
 				}
 			}
-			//  =================== Community Fix End =================
 
 			break;
 		}
