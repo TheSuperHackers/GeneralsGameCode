@@ -1105,8 +1105,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				else
 				{
 
-					//  =================== Community Fix Start =================
-					//	Backported Zero Hour 1.03 scud storm exploit fix //
+					// TheSuperHackers @bugfix @ShizCalev 04/04/2025 - Backported Zero Hour 1.03 scud storm exploit fix
 					Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
 					if( draw && draw->isKindOf( KINDOF_STRUCTURE ) )
 					{
@@ -1115,7 +1114,6 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 						//group force attack exploit.
 						TheInGameUI->deselectAllDrawables();
 					}
-					//  =================== Community Fix End =================
 					
 					// no need to send two messages for selecting the same group.
 					TheMessageStream->appendMessage((GameMessage::Type)(GameMessage::MSG_ADD_TEAM0 + group));

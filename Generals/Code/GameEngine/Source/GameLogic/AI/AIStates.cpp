@@ -5264,8 +5264,7 @@ StateReturnType AIAttackState::onEnter()
 		return STATE_SUCCESS;
 
 		
-					//  =================== Community Fix Start =================
-					//	Backported Zero Hour 1.03 scud storm exploit fix //
+	// TheSuperHackers @bugfix @ShizCalev 04/04/2025 - Backported Zero Hour 1.03 scud storm exploit fix
 	//Kris: Jan 12, 2005
 	//Don't allow units under construction to attack! The selection/action manager system was responsible for preventing this
 	//from ever happening, but failed in two cases which I fixed. This is an extra check to mitigate cheats.
@@ -5273,7 +5272,6 @@ StateReturnType AIAttackState::onEnter()
 	{
 		return STATE_FAILURE;
 	}
-					//  =================== Community Fix End =================
 
 	
 	// if all of our weapons are out of ammo, can't attack.
