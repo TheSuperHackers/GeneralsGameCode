@@ -4208,6 +4208,12 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic )
 	
 	if(paused)
 	{
+		// TheSuperHackers @bugfix @ShizCalev 04/03/2025 - Prevents monitors from going to sleep during long periods of inactivity while the game is running - pr #281
+		#ifdef _WIN32
+			SetThreadExecutionState(ES_CONTINUOUS);
+		#endif
+		
+
 		// remember the state of the mouse/input so we can return to the same state once we "unpause"
 		m_inputEnabledMemory = TheInGameUI->getInputEnabled();
 		m_mouseVisibleMemory = TheMouse->getVisibility();
@@ -4239,6 +4245,13 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic )
 	}
 	else
 	{
+		// TheSuperHackers @bugfix @ShizCalev 04/03/2025 - Prevents monitors from going to sleep during long periods of inactivity while the game is running - pr #281
+		#ifdef _WIN32
+			if(isInGame())
+				SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
+		#endif
+		
+		
 		// set the mouse/input states to what they were before we paused.
 		TheMouse->setVisibility(m_mouseVisibleMemory);
 		if(m_inputEnabledMemory)

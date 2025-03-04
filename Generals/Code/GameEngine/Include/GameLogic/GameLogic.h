@@ -39,6 +39,10 @@
 #include "GameNetwork/NetworkDefs.h"
 #include "Common/STLTypedefs.h"
 #include "GameLogic/Module/UpdateModule.h"	// needed for DIRECT_UPDATEMODULE_ACCESS
+// TheSuperHackers @bugfix @ShizCalev 04/03/2025 - Prevents monitors from going to sleep during long periods of inactivity while the game is running - pr #281
+#ifdef _WIN32
+ #include <WinBase.h>
+#endif
 
 /*
 	At one time, we distinguished between sleepy and nonsleepy
@@ -376,7 +380,20 @@ inline Real GameLogic::getHeight( void ) { return m_height; }
 inline UnsignedInt GameLogic::getFrame( void ) { return m_frame; }
 
 inline Bool GameLogic::isInGame( void ) { return !(m_gameMode == GAME_NONE); }
-inline void GameLogic::setGameMode( Int mode ) { m_gameMode = mode; }
+
+	// TheSuperHackers @bugfix @ShizCalev 04/03/2025 - Prevents monitors from going to sleep during long periods of inactivity while the game is running - pr #281
+inline void GameLogic::setGameMode( Int mode ) 
+{ 
+	m_gameMode = mode;
+	#ifdef _WIN32	
+		if(!isInGame())
+			SetThreadExecutionState(ES_CONTINUOUS);
+			return;
+		
+		SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
+	#endif	
+}
+
 inline Int  GameLogic::getGameMode( void ) { return m_gameMode; }
 #if !defined(_PLAYTEST)
 inline Bool GameLogic::isInLanGame( void ) { return (m_gameMode == GAME_LAN); }
