@@ -174,7 +174,7 @@ static void ListGroupRoomsCallback ( PEER peer, PEERBool success, int groupID, S
 	}
 }
 
-static void ConnectCallback ( PEER peer, PEERBool success, void * param)
+static void ConnectCallback ( PEER peer, PEERBool success, int failureReason, void * param )
 {
 	MatcherClass *matcher = (MatcherClass *)param;
 	if (matcher)
@@ -188,7 +188,7 @@ static void JoinCallback ( PEER peer, PEERBool success, PEERJoinResult result, R
 		matcher->handleJoin( success == PEERTrue );
 }
 
-static void NickErrorCallback ( PEER peer, int type, const char * badNick, void * param)
+static void NickErrorCallback ( PEER peer, int type, const char * badNick, int numSuggestedNicks, const const char ** suggestedNicks, void * param)
 {
 	ERRMSG("Nick error with " << badNick);
 

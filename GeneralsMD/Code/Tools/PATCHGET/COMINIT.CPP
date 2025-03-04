@@ -25,6 +25,9 @@
 #include <windows.h>
 #include <objbase.h>
 
+namespace patchget
+{
+
 ComInit::ComInit()
 {
   HRESULT hRes = CoInitialize(NULL);
@@ -44,3 +47,4 @@ ComInit::~ComInit()
 // Creating this instance will setup all COM stuff & do cleanup on program exit
 ComInit  Global_COM_Initializer;
 
+} // namespace patchget

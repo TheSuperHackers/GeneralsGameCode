@@ -27,6 +27,9 @@
 
 #include <string>
 
+namespace patchget
+{
+
 /**
 	* Get a string from the registry
 	*/
@@ -46,5 +49,7 @@ bool SetStringInRegistry(std::string path, std::string key, std::string val);
 	* Store an unsigned int in the registry - returns true on success
 	*/
 bool SetUnsignedIntInRegistry(std::string path, std::string key, unsigned int val);
+
+} // namespace patchget
 
 #endif // __REGISTRY_H__

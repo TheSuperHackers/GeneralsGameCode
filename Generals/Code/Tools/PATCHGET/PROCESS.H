@@ -22,6 +22,9 @@
 #include <windows.h>
 #include "wstypes.h"
 
+namespace patchget
+{
+
 class Process
 {
  public:
@@ -38,5 +41,6 @@ class Process
 bit8 Create_Process(Process &process);
 bit8 Wait_Process(Process &process, DWORD *exit_code=NULL);
 
+} // namespace patchget
 
 #endif

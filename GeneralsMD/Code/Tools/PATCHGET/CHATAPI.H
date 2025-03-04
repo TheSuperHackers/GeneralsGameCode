@@ -34,11 +34,17 @@
 #define	ARRAY_SIZE(x)		int(sizeof(x)/sizeof(x[0]))
 #define size_of(typ,id) sizeof(((typ*)0)->id)
 
+namespace patchget
+{
+
+int main(int argc, char *argv[]);
 
 void Startup_Chat(void);
 void Shutdown_Chat(void);
 void Update_If_Required(void);
 
 char const * Fetch_String(int id);
+
+} // namespace patchget
 
 #endif

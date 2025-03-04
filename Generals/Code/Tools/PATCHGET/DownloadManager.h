@@ -31,6 +31,10 @@
 #include <list>
 
 class CDownload;
+
+namespace patchget
+{
+
 class QueuedDownload
 {
 public:
@@ -90,5 +94,7 @@ protected:
 };
 
 extern DownloadManager *TheDownloadManager;
+
+} // namespace patchget
 
 #endif // __DOWNLOADMANAGER_H__

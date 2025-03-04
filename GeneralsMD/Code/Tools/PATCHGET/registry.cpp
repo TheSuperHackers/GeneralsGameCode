@@ -27,6 +27,9 @@
 
 #include "Registry.h"
 
+namespace patchget
+{
+
 bool  getStringFromRegistry(HKEY root, std::string path, std::string key, std::string& val)
 {
 	HKEY handle;
@@ -134,3 +137,5 @@ bool GetUnsignedIntFromRegistry(std::string path, std::string key, unsigned int&
 
 	return getUnsignedIntFromRegistry(HKEY_CURRENT_USER, fullPath.c_str(), key.c_str(), val);
 }
+
+} // namespace patchget

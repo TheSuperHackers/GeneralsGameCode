@@ -22,7 +22,11 @@
 
 #include <windows.h>
 #include "debug.h"
+#include <cstdarg>
 #include <cstdio>
+
+namespace patchget
+{
 
 char* TheCurrentIgnoreCrashPtr;
 
@@ -110,3 +114,5 @@ void DebugCrash(const char *format, ...)
 }
 
 #endif
+
+} // namespace patchget

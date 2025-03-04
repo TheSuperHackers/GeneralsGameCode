@@ -40,6 +40,9 @@
 #include "WWDownload/urlBuilder.h"
 #include "debug.h"
 
+namespace patchget
+{
+
 enum EVENT_TYPES
 {
   NOUPDATE_EVENT=0,    // don't need to update
@@ -386,7 +389,7 @@ static void queuePatch(bool mandatory, std::string downloadURL)
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool patchCheckCallback( GHTTPRequest request, GHTTPResult result, char * buffer, int bufferLen, void * param )
+static GHTTPBool patchCheckCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, void * param )
 {
 	--checksLeft;
 	DEBUG_ASSERTCRASH(checksLeft>=0, ("Too many callbacks"));
@@ -1792,3 +1795,5 @@ STDMETHODIMP CChatEventSink::OnSquadInfo(HRESULT, unsigned long, Squad *)
 }
 
 */
+
+} // namespace patchget

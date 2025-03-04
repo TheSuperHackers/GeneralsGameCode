@@ -18,6 +18,9 @@
 
 #include "process.h"
 
+namespace patchget
+{
+
 Process::Process()
 { 
   directory[0]=0;
@@ -99,3 +102,5 @@ bit8 Read_Process_Info(ConfigFile &config,OUT Process &info)
  return(TRUE);
 }
 *****************/
+
+} // namespace patchget

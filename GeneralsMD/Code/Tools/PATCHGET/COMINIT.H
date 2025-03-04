@@ -19,6 +19,9 @@
 #ifndef COMINIT_HEADER
 #define COMINIT_HEADER
 
+namespace patchget
+{
+
 //
 // Link with this to automatically initialize COM at startup
 //  - See cominit.cpp for more info
@@ -30,5 +33,7 @@ class ComInit
          ComInit();
         ~ComInit();
 };
+
+} // namespace patchget
 
 #endif

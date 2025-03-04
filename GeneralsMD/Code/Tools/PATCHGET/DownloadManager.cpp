@@ -25,6 +25,9 @@
 #include "DownloadManager.h"
 #include "resource.h"
 
+namespace patchget
+{
+
 DownloadManager *TheDownloadManager = NULL;
 
 DownloadManager::DownloadManager()
@@ -208,3 +211,5 @@ HRESULT DownloadManager::OnStatusUpdate( int status )
 	DEBUG_LOG(("DownloadManager::OnStatusUpdate(): %s(%d)\n", s.c_str(), status));
 	return S_OK;
 }
+
+} // namespace patchget
