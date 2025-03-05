@@ -202,7 +202,7 @@ void FlammableUpdate::tryToIgnite()
 		startBurningSound();
 
 		// bleah. this sucks. (srj)
-		static const NameKeyType key_FireSpreadUpdate = NAMEKEY("FireSpreadUpdate");
+		static const NameKeyType key_FireSpreadUpdate = NAMEKEY(NAMEKEY_FireSpreadUpdate);
 		FireSpreadUpdate* fu = (FireSpreadUpdate*)getObject()->findUpdateModule(key_FireSpreadUpdate);
 		if (fu != NULL)
 		{

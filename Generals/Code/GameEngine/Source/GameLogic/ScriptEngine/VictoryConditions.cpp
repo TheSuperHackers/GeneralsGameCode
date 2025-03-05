@@ -309,7 +309,7 @@ void VictoryConditions::cachePlayerPtrs( void )
 		return;
 
 	Int playerCount = 0;
-	const PlayerTemplate *civTemplate = ThePlayerTemplateStore->findPlayerTemplate( NAMEKEY("FactionCivilian") );
+	const PlayerTemplate *civTemplate = ThePlayerTemplateStore->findPlayerTemplate( NAMEKEY(NAMEKEY_FactionCivilian) );
 	for (Int i=0; i<MAX_PLAYER_COUNT; ++i)
 	{
 		Player *player = ThePlayerList->getNthPlayer(i);

@@ -1620,7 +1620,7 @@ void AIGroup::groupMoveToPosition( const Coord3D *pos, Bool addWaypoint, Command
 				//Not stealthed, not detected -- so do auto-acquire while stealthed?
 				if( !ai->canAutoAcquireWhileStealthed() )
 				{
-					static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
+					static NameKeyType key_StealthUpdate = NAMEKEY( NAMEKEY_StealthUpdate );
 					StealthUpdate* stealth = (StealthUpdate*)theUnit->findUpdateModule( key_StealthUpdate );
 					if( stealth )
 					{
@@ -1915,7 +1915,7 @@ void AIGroup::groupIdle(CommandSourceType cmdSource)
 					//Not stealthed, not detected -- so do auto-acquire while stealthed?
 					if( !ai->canAutoAcquireWhileStealthed() )
 					{
-						static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
+						static NameKeyType key_StealthUpdate = NAMEKEY( NAMEKEY_StealthUpdate );
 						StealthUpdate* stealth = (StealthUpdate*)obj->findUpdateModule( key_StealthUpdate );
 						if( stealth )
 						{

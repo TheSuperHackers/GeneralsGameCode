@@ -483,7 +483,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 	/// @todo srj -- this is evil, we shouldn't look at the module name directly!
 			if (thingTemplate->isKindOf(KINDOF_SHRUBBERY) && 
 					!TheGlobalData->m_useTreeSway &&
-					cuMI.getNthName(modIdx).compareNoCase("SwayClientUpdate") == 0)
+					cuMI.getNthName(modIdx).compareNoCase(NAMEKEY_SwayClientUpdate) == 0)
 				continue;
 
 			*m++ = TheModuleFactory->newModule(this, cuMI.getNthName(modIdx), newModData, MODULETYPE_CLIENT_UPDATE);

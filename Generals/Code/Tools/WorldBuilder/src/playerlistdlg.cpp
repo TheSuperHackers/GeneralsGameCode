@@ -840,8 +840,8 @@ void PlayerListDlg::OnAddskirmishplayers()
 {
 	// PlyrCivilian
 
-	AsciiString addedPTName = "FactionCivilian";
-	AsciiString pname = "PlyrCivilian";
+	AsciiString addedPTName = NAMEKEY_FactionCivilian;
+	AsciiString pname = NAMEKEY_PlyrCivilian;
 	UnicodeString pnameu;
 	pnameu = L"PlyrCivilian";
 
@@ -862,7 +862,7 @@ void PlayerListDlg::OnAddskirmishplayers()
 		DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::OnNewplayer"));
 	}
 
-	addedPTName = "FactionAmerica";
+	addedPTName = NAMEKEY_FactionAmerica;
 	pname = "SkirmishAmerica";
 	pnameu = L"SkirmishAmerica";
 
@@ -883,7 +883,7 @@ void PlayerListDlg::OnAddskirmishplayers()
 		DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::OnNewplayer"));
 	}
 
-	addedPTName = "FactionChina";
+	addedPTName = NAMEKEY_FactionChina;
 	pname = "SkirmishChina";
 	pnameu = L"SkirmishChina";
 
@@ -904,7 +904,7 @@ void PlayerListDlg::OnAddskirmishplayers()
 		DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::OnNewplayer"));
 	}
 
-	addedPTName = "FactionGLA";
+	addedPTName = NAMEKEY_FactionGLA;
 	pname = "SkirmishGLA";
 	pnameu = L"SkirmishGLA";
 

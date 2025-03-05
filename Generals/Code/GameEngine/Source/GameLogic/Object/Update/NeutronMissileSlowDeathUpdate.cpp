@@ -437,7 +437,7 @@ void NeutronMissileSlowDeathBehavior::doScorchBlast( const BlastInfo *blastInfo 
 					
 			// set things aflame
 			///@todo can't to this now, flames eat too many particles
-	//		static NameKeyType flammableKey = NAMEKEY( "FlammableUpdate" );
+	//		static NameKeyType flammableKey = NAMEKEY( NAMEKEY_FlammableUpdate );
 	//		FlammableUpdate *update = (FlammableUpdate *)other->findUpdateModule( flammableKey );
 	//		if( update )
 	//			update->tryToIgnite();

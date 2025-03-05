@@ -1334,7 +1334,7 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 	if (lSlot->getPlayerTemplate() >= 0)
 		pt = ThePlayerTemplateStore->getNthPlayerTemplate(lSlot->getPlayerTemplate());
 	else
-		pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey("FactionObserver") );
+		pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey(NAMEKEY_FactionObserver) );
 //	const Image *loadScreenImage = TheMappedImageCollection->findImageByName(pt->getLoadScreen());
 
 	// add portrait, features, and name for the local player's general
@@ -1350,11 +1350,11 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 	{
 		// the main original factions don't have associated generals
 		AsciiString imageName;
-		if (pt->getName() == "FactionAmerica")
+		if (pt->getName() == NAMEKEY_FactionAmerica)
 			portrait = TheMappedImageCollection->findImageByName("SAFactionLogoLg_US");
-		else if (pt->getName() == "FactionGLA")
+		else if (pt->getName() == NAMEKEY_FactionGLA)
 			portrait = TheMappedImageCollection->findImageByName("SUFactionLogoLg_GLA");
-		else if (pt->getName() == "FactionChina")
+		else if (pt->getName() == NAMEKEY_FactionChina)
 			portrait = TheMappedImageCollection->findImageByName("SNFactionLogoLg_China");
 		else
 			DEBUG_ASSERTCRASH(NULL, ("Unexpected player template"));
@@ -1602,7 +1602,7 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 	if (lSlot->getPlayerTemplate() >= 0)
 		pt = ThePlayerTemplateStore->getNthPlayerTemplate(lSlot->getPlayerTemplate());
 	else
-		pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey("FactionObserver") );
+		pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey(NAMEKEY_FactionObserver) );
 //	const Image *loadScreenImage = TheMappedImageCollection->findImageByName(pt->getLoadScreen());
 //	if(loadScreenImage)
 //		m_loadScreen->winSetEnabledImage(0, loadScreenImage);
@@ -1620,11 +1620,11 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 	{
 		// the main original factions don't have associated generals
 		AsciiString imageName;
-		if (pt->getName() == "FactionAmerica")
+		if (pt->getName() == NAMEKEY_FactionAmerica)
 			portrait = TheMappedImageCollection->findImageByName("SAFactionLogo144_US");
-		else if (pt->getName() == "FactionGLA")
+		else if (pt->getName() == NAMEKEY_FactionGLA)
 			portrait = TheMappedImageCollection->findImageByName("SUFactionLogo144_GLA");
-		else if (pt->getName() == "FactionChina")
+		else if (pt->getName() == NAMEKEY_FactionChina)
 			portrait = TheMappedImageCollection->findImageByName("SNFactionLogo144_China");
 		else
 			DEBUG_ASSERTCRASH(NULL, ("Unexpected player template"));

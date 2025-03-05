@@ -152,7 +152,7 @@ Object *ResourceGatheringManager::findBestSupplyWarehouse( Object *queryObject )
 		Object *dock = TheGameLogic->findObjectByID(dockID);
 		if( dock )
 		{
-			static const NameKeyType key_warehouseUpdate = NAMEKEY("SupplyWarehouseDockUpdate");
+			static const NameKeyType key_warehouseUpdate = NAMEKEY(NAMEKEY_SupplyWarehouseDockUpdate);
 			SupplyWarehouseDockUpdate *warehouseModule = (SupplyWarehouseDockUpdate*)dock->findUpdateModule( key_warehouseUpdate );
 			//If remotely okay, let User win.
 			if( warehouseModule && computeRelativeCost( queryObject, dock, NULL ) != FLT_MAX )
@@ -212,7 +212,7 @@ Object *ResourceGatheringManager::findBestSupplyCenter( Object *queryObject )
 		Object *dock = TheGameLogic->findObjectByID(dockID);
 		if( dock )
 		{
-			static const NameKeyType key_centerUpdate = NAMEKEY("SupplyCenterDockUpdate");
+			static const NameKeyType key_centerUpdate = NAMEKEY(NAMEKEY_SupplyCenterDockUpdate);
 			SupplyWarehouseDockUpdate *centerModule = (SupplyWarehouseDockUpdate*)dock->findUpdateModule( key_centerUpdate );
 			//If remotely okay, let User win.
 			if( centerModule && computeRelativeCost( queryObject, dock, NULL ) != FLT_MAX )

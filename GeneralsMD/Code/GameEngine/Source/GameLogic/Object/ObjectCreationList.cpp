@@ -416,7 +416,7 @@ public:
 					die->setCreator(INVALID_ID);
 			}
 
-			static NameKeyType key_DeliverPayloadAIUpdate = NAMEKEY("DeliverPayloadAIUpdate");
+			static NameKeyType key_DeliverPayloadAIUpdate = NAMEKEY(NAMEKEY_DeliverPayloadAIUpdate);
 			DeliverPayloadAIUpdate *ai = (DeliverPayloadAIUpdate*)transport->findUpdateModule(key_DeliverPayloadAIUpdate);
 			if( ai )
 			{

@@ -523,7 +523,7 @@ void ControlBarScheme::init(void)
 		win->winSetPosition(x,y );
 		win->winSetSize((m_optionsLR.x - m_optionsUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_optionsLR.y - m_optionsUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
 	}
-	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonPlaceBeacon" ) );
+	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( NAMEKEY_ControlBar.wnd:ButtonPlaceBeacon ) );
 	if(win)	
 	{
 		GadgetButtonSetEnabledImage(win, m_beaconButtonEnable);

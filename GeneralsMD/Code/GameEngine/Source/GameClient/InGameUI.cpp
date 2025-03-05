@@ -2411,7 +2411,7 @@ void InGameUI::createMouseoverHint( const GameMessage *msg )
 #endif
 			UnicodeString warehouseFeedback;
 			// Add on dollar amount of warehouse contents so people don't freak out until the art is hooked up
-			static const NameKeyType warehouseModuleKey = TheNameKeyGenerator->nameToKey( "SupplyWarehouseDockUpdate" );
+			static const NameKeyType warehouseModuleKey = TheNameKeyGenerator->nameToKey( NAMEKEY_SupplyWarehouseDockUpdate );
 			SupplyWarehouseDockUpdate *warehouseModule = (SupplyWarehouseDockUpdate *)obj->findUpdateModule( warehouseModuleKey );
 			if( warehouseModule != NULL )
 			{

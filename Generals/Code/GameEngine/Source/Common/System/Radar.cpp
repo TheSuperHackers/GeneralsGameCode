@@ -426,7 +426,7 @@ void Radar::addObject( Object *obj )
 		//Because we have support for disguised units pretending to be units from another
 		//team, we need to intercept it here and make sure it's rendered appropriately
 		//based on which client is rendering it.
-		static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
+		static NameKeyType key_StealthUpdate = NAMEKEY( NAMEKEY_StealthUpdate );
 		StealthUpdate *update = (StealthUpdate*)obj->findUpdateModule( key_StealthUpdate );
 		if( update )
 		{

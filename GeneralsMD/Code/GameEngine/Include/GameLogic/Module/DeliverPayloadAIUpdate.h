@@ -314,7 +314,7 @@ public:
 //-------------------------------------------------------------------------------------------------
 class DeliverPayloadAIUpdate : public AIUpdateInterface
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( DeliverPayloadAIUpdate, "DeliverPayloadAIUpdate"  )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( DeliverPayloadAIUpdate, NAMEKEY_DeliverPayloadAIUpdate  )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( DeliverPayloadAIUpdate, DeliverPayloadAIUpdateModuleData )
 
 private:

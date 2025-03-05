@@ -76,7 +76,7 @@ private:
 class FlammableUpdate : public UpdateModule, public DamageModuleInterface
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( FlammableUpdate, "FlammableUpdate" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( FlammableUpdate, NAMEKEY_FlammableUpdate )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( FlammableUpdate, FlammableUpdateModuleData )
 
 public:

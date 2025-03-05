@@ -1037,7 +1037,7 @@ void Player::becomingTeamMember(Object *obj, Bool yes)
 	// if so, award the cash bonus
 	if(this != ThePlayerList->getNeutralPlayer() && yes)
 	{
-		NameKeyType key_AutoDepositUpdate = NAMEKEY("AutoDepositUpdate");
+		NameKeyType key_AutoDepositUpdate = NAMEKEY(NAMEKEY_AutoDepositUpdate);
 		AutoDepositUpdate *adu = (AutoDepositUpdate *)obj->findUpdateModule(key_AutoDepositUpdate);
 		if (adu != NULL) {
 			adu->awardInitialCaptureBonus( this );
@@ -1107,7 +1107,7 @@ void Player::becomingLocalPlayer(Bool yes)
 					Drawable *draw = object->getDrawable();
 					if( draw )
 					{
-						static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
+						static NameKeyType key_StealthUpdate = NAMEKEY( NAMEKEY_StealthUpdate );
 						StealthUpdate *update = (StealthUpdate*)object->findUpdateModule( key_StealthUpdate );
 						if( update && update->isDisguised() )
 						{
@@ -1737,7 +1737,7 @@ void Player::killPlayer(void)
 			}
 			else
 			{
-				TheControlBar->setControlBarSchemeByPlayerTemplate(ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY("FactionObserver")));
+				TheControlBar->setControlBarSchemeByPlayerTemplate(ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(NAMEKEY_FactionObserver)));
 			}
 		}
 

@@ -75,7 +75,7 @@ class OverchargeBehavior : public UpdateModule,
 													 public OverchargeBehaviorInterface
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( OverchargeBehavior, "OverchargeBehavior" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( OverchargeBehavior, NAMEKEY_OverchargeBehavior )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( OverchargeBehavior, OverchargeBehaviorModuleData )
 
 public:

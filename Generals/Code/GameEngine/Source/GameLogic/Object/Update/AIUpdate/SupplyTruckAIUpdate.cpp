@@ -218,12 +218,12 @@ void SupplyTruckAIUpdate::privateDock( Object *dock, CommandSourceType cmdSource
 UnsignedInt SupplyTruckAIUpdate::getActionDelayForDock( Object *dock )
 {
 	// Decide whether to use my Center or Warehouse delay time
-	static const NameKeyType key_warehouseUpdate = NAMEKEY("SupplyWarehouseDockUpdate");
+	static const NameKeyType key_warehouseUpdate = NAMEKEY(NAMEKEY_SupplyWarehouseDockUpdate);
 	SupplyWarehouseDockUpdate *warehouseModule = (SupplyWarehouseDockUpdate*) dock->findUpdateModule( key_warehouseUpdate );
 	if (warehouseModule) {
 		return getSupplyTruckAIUpdateModuleData()->m_warehouseDelay;
 	}
-	static const NameKeyType key_centerUpdate = NAMEKEY("SupplyCenterDockUpdate");
+	static const NameKeyType key_centerUpdate = NAMEKEY(NAMEKEY_SupplyCenterDockUpdate);
 	SupplyCenterDockUpdate *centerModule = (SupplyCenterDockUpdate*) dock->findUpdateModule( key_centerUpdate );
 	if (centerModule) {
 		return getSupplyTruckAIUpdateModuleData()->m_centerDelay;

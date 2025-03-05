@@ -383,7 +383,7 @@ WindowMsgHandledType ControlBarSystem( GameWindow *window, UnsignedInt msg,
 		case GBM_SELECTED_RIGHT:
 		{
 			GameWindow *control = (GameWindow *)mData1;
-			static NameKeyType beaconPlacementButtonID = NAMEKEY("ControlBar.wnd:ButtonPlaceBeacon");
+			static NameKeyType beaconPlacementButtonID = NAMEKEY(NAMEKEY_ControlBar.wnd:ButtonPlaceBeacon);
 			static NameKeyType beaconDeleteButtonID = NAMEKEY("ControlBar.wnd:ButtonDeleteBeacon");
 			static NameKeyType beaconClearTextButtonID = NAMEKEY("ControlBar.wnd:ButtonClearBeaconText");
 			static NameKeyType beaconGeneralButtonID = NAMEKEY("ControlBar.wnd:ButtonGeneral");

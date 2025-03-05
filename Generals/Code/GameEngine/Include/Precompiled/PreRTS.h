@@ -102,6 +102,7 @@ class STLSpecialAlloc;
 //------------------------------------------------------------------------------------ RTS Includes
 // Icky. These have to be in this order.
 #include "Lib/Basetype.h"
+#include "Common/_DEFINES/NameKeys.h" // TheSuperHackers @refactor @ShizCalev 04/05/2025 Switching a lot of strings to defines, first up: namekeys.
 #include "Common/STLTypedefs.h"
 #include "Common/Errors.h"
 #include "Common/Debug.h"

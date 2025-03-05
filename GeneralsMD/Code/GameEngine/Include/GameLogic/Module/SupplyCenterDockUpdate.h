@@ -53,7 +53,7 @@ public:
 class SupplyCenterDockUpdate : public DockUpdate
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SupplyCenterDockUpdate, "SupplyCenterDockUpdate" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SupplyCenterDockUpdate, NAMEKEY_SupplyCenterDockUpdate )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SupplyCenterDockUpdate, SupplyCenterDockUpdateModuleData )
 
 public:

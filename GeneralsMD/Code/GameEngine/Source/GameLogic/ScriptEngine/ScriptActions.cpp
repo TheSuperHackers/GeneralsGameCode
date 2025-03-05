@@ -557,7 +557,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 
 	//Check to see if we have a transport, and if our transport has paradrop capabilities. If this is the
 	//case, we'll need to create each unit inside "parachute containers".
-	static NameKeyType key_DeliverPayloadAIUpdate = NAMEKEY("DeliverPayloadAIUpdate");
+	static NameKeyType key_DeliverPayloadAIUpdate = NAMEKEY(NAMEKEY_DeliverPayloadAIUpdate);
 	DeliverPayloadAIUpdate *dp = NULL;
 	if( transport )
 	{
@@ -5110,7 +5110,7 @@ void ScriptActions::doSetWarehouseValue( const AsciiString& warehouseName, Int c
 		return;
 	}
 
-	static const NameKeyType warehouseModuleKey = TheNameKeyGenerator->nameToKey( "SupplyWarehouseDockUpdate" );
+	static const NameKeyType warehouseModuleKey = TheNameKeyGenerator->nameToKey( NAMEKEY_SupplyWarehouseDockUpdate );
 	SupplyWarehouseDockUpdate *warehouseModule = (SupplyWarehouseDockUpdate *)obj->findUpdateModule( warehouseModuleKey );
 	if( warehouseModule == NULL )
 		return;
@@ -6388,7 +6388,7 @@ void ScriptActions::doNamedSetTrainHeld( const AsciiString &locoName, const Bool
 	if( obj ) 
 	{
 
-		static const NameKeyType rrkey = NAMEKEY( "RailroadBehavior" );
+		static const NameKeyType rrkey = NAMEKEY( NAMEKEY_RailroadBehavior );
 		RailroadBehavior *rBehavior = (RailroadBehavior*)obj->findUpdateModule( rrkey );
 
     if ( rBehavior )

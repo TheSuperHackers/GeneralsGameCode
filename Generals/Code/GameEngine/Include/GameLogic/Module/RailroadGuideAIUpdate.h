@@ -189,7 +189,7 @@ private:
 class RailroadBehavior	: public PhysicsBehavior
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( RailroadBehavior, "RailroadBehavior" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( RailroadBehavior, NAMEKEY_RailroadBehavior )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( RailroadBehavior, RailroadBehaviorModuleData )
 
 public:

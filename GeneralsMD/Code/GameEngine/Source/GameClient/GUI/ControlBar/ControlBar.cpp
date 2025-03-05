@@ -1205,7 +1205,7 @@ void ControlBar::init( void )
 			setControlCommand(win, findCommandButton("NonCommand_IdleWorker") );
 			win->winSetTooltipFunc(commandButtonTooltip);
 		}
-		win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonPlaceBeacon"));
+		win = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey(NAMEKEY_ControlBar.wnd:ButtonPlaceBeacon));
 		if(win)
 		{
 			setControlCommand(win, findCommandButton("NonCommand_Beacon") );
@@ -1513,7 +1513,7 @@ void ControlBar::update( void )
 		Int count;
 		const ThingTemplate *thing = TheThingFactory->findTemplate( ThePlayerList->getLocalPlayer()->getPlayerTemplate()->getBeaconTemplate() );
 		ThePlayerList->getLocalPlayer()->countObjectsByThingTemplate( 1, &thing, false, &count );
-		static NameKeyType beaconPlacementButtonID = NAMEKEY("ControlBar.wnd:ButtonPlaceBeacon");
+		static NameKeyType beaconPlacementButtonID = NAMEKEY(NAMEKEY_ControlBar.wnd:ButtonPlaceBeacon);
 		GameWindow *win = TheWindowManager->winGetWindowFromId(NULL, beaconPlacementButtonID);
 		if (win)
 		{
@@ -2752,7 +2752,7 @@ void ControlBar::setControlBarSchemeByPlayer(Player *p)
 	if(m_controlBarSchemeManager)
 		m_controlBarSchemeManager->setControlBarSchemeByPlayer(p);
 
-	static NameKeyType buttonPlaceBeaconID = NAMEKEY( "ControlBar.wnd:ButtonPlaceBeacon" );
+	static NameKeyType buttonPlaceBeaconID = NAMEKEY( NAMEKEY_ControlBar.wnd:ButtonPlaceBeacon );
 	static NameKeyType buttonIdleWorkerID = NAMEKEY("ControlBar.wnd:ButtonIdleWorker");
 	static NameKeyType buttonGeneralID = NAMEKEY("ControlBar.wnd:ButtonGeneral");
 	GameWindow *buttonPlaceBeacon = TheWindowManager->winGetWindowFromId( NULL, buttonPlaceBeaconID );
@@ -2797,14 +2797,14 @@ void ControlBar::setControlBarSchemeByPlayerTemplate( const PlayerTemplate *pt)
 	if(m_controlBarSchemeManager)
 		m_controlBarSchemeManager->setControlBarSchemeByPlayerTemplate(pt);
 
-	static NameKeyType buttonPlaceBeaconID = NAMEKEY( "ControlBar.wnd:ButtonPlaceBeacon" );
+	static NameKeyType buttonPlaceBeaconID = NAMEKEY( NAMEKEY_ControlBar.wnd:ButtonPlaceBeacon );
 	static NameKeyType buttonIdleWorkerID = NAMEKEY("ControlBar.wnd:ButtonIdleWorker");
 	static NameKeyType buttonGeneralID = NAMEKEY("ControlBar.wnd:ButtonGeneral");
 	GameWindow *buttonPlaceBeacon = TheWindowManager->winGetWindowFromId( NULL, buttonPlaceBeaconID );
 	GameWindow *buttonIdleWorker = TheWindowManager->winGetWindowFromId( NULL, buttonIdleWorkerID );
 	GameWindow *buttonGeneral = TheWindowManager->winGetWindowFromId( NULL, buttonGeneralID );
 
-	if(pt == ThePlayerTemplateStore->findPlayerTemplate(TheNameKeyGenerator->nameToKey("FactionObserver")))
+	if(pt == ThePlayerTemplateStore->findPlayerTemplate(TheNameKeyGenerator->nameToKey(NAMEKEY_FactionObserver)))
 	{
 		m_isObserverCommandBar = TRUE;
 		switchToContext( CB_CONTEXT_OBSERVER_LIST, NULL );

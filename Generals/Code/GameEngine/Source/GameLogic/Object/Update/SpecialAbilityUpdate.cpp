@@ -580,7 +580,7 @@ Bool SpecialAbilityUpdate::handlePackingProcessing()
 		if( getSpecialAbilityUpdateModuleData()->m_loseStealthOnTrigger &&
 			m_animFrames < getSpecialAbilityUpdateModuleData()->m_preTriggerUnstealthFrames)
 		{
-			static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
+			static NameKeyType key_StealthUpdate = NAMEKEY( NAMEKEY_StealthUpdate );
 			StealthUpdate* stealth = (StealthUpdate*)getObject()->findUpdateModule( key_StealthUpdate );
 			if( stealth )
 			{
@@ -1440,7 +1440,7 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
 		case SPECIAL_DISGUISE_AS_VEHICLE:
 		{
 			Object *target = TheGameLogic->findObjectByID( m_targetID );
-			static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
+			static NameKeyType key_StealthUpdate = NAMEKEY( NAMEKEY_StealthUpdate );
 			if( target )
 			{
 				StealthUpdate *update = (StealthUpdate*)object->findUpdateModule( key_StealthUpdate );
@@ -1456,7 +1456,7 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
 
 	if( data->m_loseStealthOnTrigger && okToLoseStealth)
 	{
-		static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
+		static NameKeyType key_StealthUpdate = NAMEKEY( NAMEKEY_StealthUpdate );
 		StealthUpdate* stealth = (StealthUpdate*)object->findUpdateModule( key_StealthUpdate );
 		if( stealth )
 		{

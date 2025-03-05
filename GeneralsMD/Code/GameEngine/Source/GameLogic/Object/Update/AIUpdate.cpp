@@ -3071,7 +3071,7 @@ void AIUpdateInterface::privateMoveToAndEvacuateAndExit( const Coord3D *pos, Com
 	m_isBlockedAndStuck = FALSE;
 	setLastCommandSource( cmdSource );
 
-	static NameKeyType key_DeliverPayloadAIUpdate = NAMEKEY("DeliverPayloadAIUpdate");
+	static NameKeyType key_DeliverPayloadAIUpdate = NAMEKEY(NAMEKEY_DeliverPayloadAIUpdate);
 	DeliverPayloadAIUpdate *dp = (DeliverPayloadAIUpdate*)getObject()->findUpdateModule( key_DeliverPayloadAIUpdate );
 	if( dp )
 	{
@@ -4150,7 +4150,7 @@ void AIUpdateInterface::privateHackInternet( CommandSourceType cmdSource )
 	getStateMachine()->clear();
 	setLastCommandSource( cmdSource );
 
-	static NameKeyType key_HackInternetAIUpdate = NAMEKEY("HackInternetAIUpdate");
+	static NameKeyType key_HackInternetAIUpdate = NAMEKEY(NAMEKEY_HackInternetAIUpdate);
 	HackInternetAIUpdate *ai = (HackInternetAIUpdate*)getObject()->findUpdateModule( key_HackInternetAIUpdate );
 	if( ai )
 	{

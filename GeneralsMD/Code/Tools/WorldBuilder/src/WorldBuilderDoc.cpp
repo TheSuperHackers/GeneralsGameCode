@@ -477,8 +477,8 @@ AsciiString ConvertFaction(AsciiString name)
 	char oldName[256];
 	char newName[256];
 	strcpy(oldName, name.str());
-	strcpy(newName, "FactionGLA");
-	strcat(newName, oldName+strlen("FactionFundamentalist"));
+	strcpy(newName, NAMEKEY_FactionGLA);
+	strcat(newName, oldName+strlen(NAMEKEY_FactionFundamentalist));
 	AsciiString swapName;
 	swapName.set(newName);
 	const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(swapName));
@@ -510,7 +510,7 @@ void CWorldBuilderDoc::validate(void)
 		const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
 		if (!pt) {
 			DEBUG_LOG(("Player '%s' Faction '%s' could not be found in sides list!\n", playername.str(), tmplname.str()));
-			if (tmplname.startsWith("FactionFundamentalist")) {
+			if (tmplname.startsWith(NAMEKEY_FactionFundamentalist)) {
 				swapName = ConvertFaction(tmplname);
 				if (swapName != AsciiString::TheEmptyString) {
 					DEBUG_LOG(("Changing Faction from %s to %s\n", tmplname.str(), swapName.str()));
@@ -648,7 +648,7 @@ void CWorldBuilderDoc::validate(void)
 					const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
 					if (!pt) {
 						DEBUG_LOG(("Player '%s' Faction '%s' could not be found in sides list!\n", playername.str(), tmplname.str()));
-						if (tmplname.startsWith("FactionFundamentalist")) {
+						if (tmplname.startsWith(NAMEKEY_FactionFundamentalist)) {
 							swapName = ConvertFaction(tmplname);
 							if (swapName != AsciiString::TheEmptyString) {
 								DEBUG_LOG(("Changing Faction from %s to %s\n", tmplname.str(), swapName.str()));

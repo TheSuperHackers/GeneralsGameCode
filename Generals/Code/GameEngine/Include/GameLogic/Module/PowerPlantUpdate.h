@@ -80,7 +80,7 @@ class PowerPlantUpdate : public UpdateModule,
 												 public PowerPlantUpdateInterface
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( PowerPlantUpdate, "PowerPlantUpdate" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( PowerPlantUpdate, NAMEKEY_PowerPlantUpdate )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( PowerPlantUpdate, PowerPlantUpdateModuleData );
 
 public:

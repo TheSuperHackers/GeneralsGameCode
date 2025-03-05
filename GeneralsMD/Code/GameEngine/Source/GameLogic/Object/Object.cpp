@@ -3831,7 +3831,7 @@ void Object::onDisabledEdge(Bool becomingDisabled)
 	{
 		//@todo jkmcd - Colin suggested we rewrite this to use the interface stuff. I agree, but need
 		// to get some more bugs fixed today. 
-		static NameKeyType radar = NAMEKEY("RadarUpgrade");
+		static NameKeyType radar = NAMEKEY(NAMEKEY_RadarUpgrade);
 		Module *mod = mod = findModule(radar);
 		if (mod) {
 			RadarUpgrade *radarMod = (RadarUpgrade*) mod;
@@ -3854,8 +3854,8 @@ void Object::onDisabledEdge(Bool becomingDisabled)
 		// We can't affect something that consumes, or else we go low power which removes the consumption
 		// which makes us not low power so we add the consumption so we go low power...
 		// This check also guaards the IsDisabled in friend_adjustPower above
-		static NameKeyType powerPlant = NAMEKEY("PowerPlantUpgrade");
-		static NameKeyType overCharge = NAMEKEY("OverchargeBehavior");
+		static NameKeyType powerPlant = NAMEKEY(NAMEKEY_PowerPlantUpgrade);
+		static NameKeyType overCharge = NAMEKEY(NAMEKEY_OverchargeBehavior);
 		
 		Module* mod = findModule(powerPlant);
 		if (mod) {

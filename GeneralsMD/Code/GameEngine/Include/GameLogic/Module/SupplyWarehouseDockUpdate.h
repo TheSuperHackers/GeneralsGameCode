@@ -55,7 +55,7 @@ public:
 class SupplyWarehouseDockUpdate : public DockUpdate
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SupplyWarehouseDockUpdate, "SupplyWarehouseDockUpdate" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SupplyWarehouseDockUpdate, NAMEKEY_SupplyWarehouseDockUpdate )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( SupplyWarehouseDockUpdate, SupplyWarehouseDockUpdateModuleData )
 
 public:

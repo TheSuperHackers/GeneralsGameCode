@@ -1662,7 +1662,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				{
 
 					Int updateCount = 0;
-					static NameKeyType nameKeyClientUpdate = NAMEKEY("BeaconClientUpdate");
+					static NameKeyType nameKeyClientUpdate = NAMEKEY(NAMEKEY_BeaconClientUpdate);
 					ClientUpdateModule ** clientModules = object->getDrawable()->getClientUpdateModules();
 					if (clientModules)
 					{
@@ -1725,7 +1725,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 								if (beaconDrawable)
 								{
 
-									static NameKeyType nameKeyClientUpdate = NAMEKEY("BeaconClientUpdate");
+									static NameKeyType nameKeyClientUpdate = NAMEKEY(NAMEKEY_BeaconClientUpdate);
 									ClientUpdateModule ** clientModules = beaconDrawable->getClientUpdateModules();
 									if (clientModules)
 									{

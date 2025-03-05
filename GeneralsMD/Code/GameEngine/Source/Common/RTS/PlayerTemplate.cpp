@@ -307,23 +307,23 @@ Int PlayerTemplateStore::getTemplateNumByName(AsciiString name) const
 const PlayerTemplate* PlayerTemplateStore::findPlayerTemplate(NameKeyType namekey) const
 {
 // begin ugly, hokey code to quietly load old maps...
-	static NameKeyType a0 = NAMEKEY("FactionAmerica");
-	static NameKeyType a1 = NAMEKEY("FactionAmericaChooseAGeneral");
-	static NameKeyType a2 = NAMEKEY("FactionAmericaTankCommand");
-	static NameKeyType a3 = NAMEKEY("FactionAmericaSpecialForces");
-	static NameKeyType a4 = NAMEKEY("FactionAmericaAirForce");
+	static NameKeyType a0 = NAMEKEY(NAMEKEY_FactionAmerica);
+	static NameKeyType a1 = NAMEKEY(NAMEKEY_FactionAmericaChooseAGeneral);
+	static NameKeyType a2 = NAMEKEY(NAMEKEY_FactionAmericaTankCommand);
+	static NameKeyType a3 = NAMEKEY(NAMEKEY_FactionAmericaSpecialForces);
+	static NameKeyType a4 = NAMEKEY(NAMEKEY_FactionAmericaAirForce);
 
-	static NameKeyType c0 = NAMEKEY("FactionChina");
-	static NameKeyType c1 = NAMEKEY("FactionChinaChooseAGeneral");
-	static NameKeyType c2 = NAMEKEY("FactionChinaRedArmy");
-	static NameKeyType c3 = NAMEKEY("FactionChinaSpecialWeapons");
-	static NameKeyType c4 = NAMEKEY("FactionChinaSecretPolice");
+	static NameKeyType c0 = NAMEKEY(NAMEKEY_FactionChina);
+	static NameKeyType c1 = NAMEKEY(NAMEKEY_FactionChinaChooseAGeneral);
+	static NameKeyType c2 = NAMEKEY(NAMEKEY_FactionChinaRedArmy);
+	static NameKeyType c3 = NAMEKEY(NAMEKEY_FactionChinaSpecialWeapons);
+	static NameKeyType c4 = NAMEKEY(NAMEKEY_FactionChinaSecretPolice);
 
-	static NameKeyType g0 = NAMEKEY("FactionGLA");
-	static NameKeyType g1 = NAMEKEY("FactionGLAChooseAGeneral");
-	static NameKeyType g2 = NAMEKEY("FactionGLATerrorCell");
-	static NameKeyType g3 = NAMEKEY("FactionGLABiowarCommand");
-	static NameKeyType g4 = NAMEKEY("FactionGLAWarlordCommand");
+	static NameKeyType g0 = NAMEKEY(NAMEKEY_FactionGLA);
+	static NameKeyType g1 = NAMEKEY(NAMEKEY_FactionGLAChooseAGeneral);
+	static NameKeyType g2 = NAMEKEY(NAMEKEY_FactionGLATerrorCell);
+	static NameKeyType g3 = NAMEKEY(NAMEKEY_FactionGLABiowarCommand);
+	static NameKeyType g4 = NAMEKEY(NAMEKEY_FactionGLAWarlordCommand);
 
 	if (namekey == a1 || namekey == a2 || namekey == a3 || namekey == a4)
 		namekey = a0;
