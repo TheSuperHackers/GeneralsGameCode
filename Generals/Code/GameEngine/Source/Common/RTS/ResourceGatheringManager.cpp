@@ -213,7 +213,7 @@ Object *ResourceGatheringManager::findBestSupplyCenter( Object *queryObject )
 		if( dock )
 		{
 			static const NameKeyType key_centerUpdate = NAMEKEY("SupplyCenterDockUpdate");
-			SupplyWarehouseDockUpdate *centerModule = (SupplyWarehouseDockUpdate*)dock->findUpdateModule( key_centerUpdate );
+			SupplyCenterDockUpdate *centerModule = (SupplyCenterDockUpdate*)dock->findUpdateModule( key_centerUpdate ); // TheSuperHackers @bugfix @ShizCalev 04/03/2025 Corrected wrong list being used - issue #342
 			//If remotely okay, let User win.
 			if( centerModule && computeRelativeCost( queryObject, dock, NULL ) != FLT_MAX )
 				return dock;
@@ -234,8 +234,7 @@ Object *ResourceGatheringManager::findBestSupplyCenter( Object *queryObject )
 
 		if( currentCenter == NULL )
 		{
-			// TheSuperHackers @bugfix @ShizCalev 04/03/2025 Corrected wrong list being used - issue #342
-			iterator = m_supplyCenters.erase( iterator );
+			iterator = m_supplyCenters.erase( iterator ); // TheSuperHackers @bugfix @ShizCalev 04/03/2025 Corrected wrong list being used - issue #342
 		}
 		else
 		{
