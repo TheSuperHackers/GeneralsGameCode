@@ -24,9 +24,7 @@
 //																																						//
 ////////////////////////////////////////////////////////////////////////////////
 
-// This file contains all the header files that shouldn't change frequently.
-// Be careful what you stick in here, because putting files that change often in here will 
-// tend to cheese people's goats.
+// This file contains various namekey strings.
 
 	// Factions
 #define NAMEKEY_FactionAmerica	"FactionAmerica"
@@ -47,7 +45,6 @@
 #define NAMEKEY_FactionGLATerrorCell	"FactionGLATerrorCell"
 #define NAMEKEY_FactionGLAWarlordCommand	"FactionGLAWarlordCommand"
 #define NAMEKEY_FactionObserver	"FactionObserver"
-#define NAMEKEY_ThePlayer "ThePlayer"
 
 
 	// Misc
