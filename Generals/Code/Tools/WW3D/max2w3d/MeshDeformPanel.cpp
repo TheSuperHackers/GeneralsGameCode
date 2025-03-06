@@ -35,10 +35,10 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "MeshDeformPanel.H"
-#include "Resource.H"
-#include "Util.H"
-#include "MeshDeform.H"
+#include "MeshDeformPanel.h"
+#include "resource.h"
+#include "util.h"
+#include "MeshDeform.h"
 
 ///////////////////////////////////////////////////////////////////////////
 //

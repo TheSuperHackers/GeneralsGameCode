@@ -33,7 +33,7 @@
 #include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameNetwork/GameSpy/GSConfig.h"
 #include "Common/GameState.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/PlayerTemplate.h"
 #include "GameClient/GameText.h"

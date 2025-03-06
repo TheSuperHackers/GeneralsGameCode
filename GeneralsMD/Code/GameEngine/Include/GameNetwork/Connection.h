@@ -40,7 +40,7 @@
 
 #include "GameNetwork/NetCommandList.h"
 #include "GameNetwork/User.h"
-#include "GameNetwork/transport.h"
+#include "GameNetwork/Transport.h"
 #include "GameNetwork/NetPacket.h"
 
 #define CONNECTION_LATENCY_HISTORY_LENGTH 200

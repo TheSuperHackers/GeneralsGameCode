@@ -19,9 +19,9 @@
 // EditParameter.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "worldbuilder.h"
+#include "WorldBuilder.h"
 
 // This is used to allow sounds to be played via PlaySound
 #include <mmsystem.h>
@@ -37,7 +37,7 @@
 
 #include "Common/AudioEventInfo.h"
 #include "Common/BorderColors.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/GameAudio.h"
 #include "Common/Player.h"
@@ -55,7 +55,7 @@
 #include "GameClient/Anim2D.h"
 #include "GameClient/ShellHooks.h"
 
-#include "GameLogic/Ai.h"
+#include "GameLogic/AI.h"
 #include "GameLogic/PolygonTrigger.h"
 #include "GameLogic/Scripts.h"
 #include "GameLogic/SidesList.h"

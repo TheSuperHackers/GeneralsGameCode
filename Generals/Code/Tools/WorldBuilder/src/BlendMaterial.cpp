@@ -21,9 +21,9 @@
 
 #define DEFINE_TERRAIN_TYPE_NAMES
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "Lib\BaseType.h"
+#include "Lib/BaseType.h"
 #include "BlendMaterial.h"
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"

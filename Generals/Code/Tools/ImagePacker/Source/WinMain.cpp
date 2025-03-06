@@ -46,7 +46,7 @@
 #include "Common/GameMemory.h"
 #include "Common/Debug.h"
 #include "ImagePacker.h"
-#include "Resource.h"
+#include "resource.h"
 #include "WindowProc.h"
 
 // DEFINES ////////////////////////////////////////////////////////////////////

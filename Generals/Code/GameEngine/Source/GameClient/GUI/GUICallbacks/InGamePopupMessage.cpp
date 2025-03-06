@@ -54,7 +54,7 @@
 
 #include "Common/GlobalData.h"
 #include "Common/NameKeyGenerator.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 #include "Common/MessageStream.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"

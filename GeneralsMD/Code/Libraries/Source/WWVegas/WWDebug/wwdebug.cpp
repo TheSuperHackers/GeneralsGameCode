@@ -51,7 +51,7 @@
 #include <assert.h>
 #include <string.h>
 #include <signal.h>
-#include "except.h"
+#include "Except.h"
 
 
 static PrintFunc			_CurMessageHandler = NULL;

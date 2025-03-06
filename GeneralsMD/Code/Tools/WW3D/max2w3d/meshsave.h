@@ -47,12 +47,12 @@
 #include "bittype.h"
 #include "w3d_file.h"
 #include "chunkio.h"
-#include "progress.h"
+#include "PROGRESS.H"
 #include "nodelist.h"
 #include "util.h"
 #include "w3dmtl.h"
 #include "meshbuild.h"
-#include "MeshDeformSave.H"
+#include "MeshDeformSave.h"
 #include "w3dappdata.h"
 
 class HierarchySaveClass;

@@ -29,7 +29,7 @@
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
 #include "WorldBuilderView.h"
-#include "BrushOptions.h"
+#include "brushoptions.h"
 #include "DrawObject.h"
 //
 // BrushTool class.

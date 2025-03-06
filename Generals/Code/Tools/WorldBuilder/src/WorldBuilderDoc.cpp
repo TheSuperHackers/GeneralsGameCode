@@ -19,7 +19,7 @@
 // WorldBuilderDoc.cpp : implementation of the CWorldBuilderDoc class
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "WorldBuilder.h"
 
 #include <direct.h>
@@ -52,7 +52,7 @@
 #include "ScriptDialog.h"
 #include "TerrainMaterial.h"
 #include "W3DDevice/GameClient/HeightMap.h"
-#include "WbView3d.h"
+#include "wbview3d.h"
 #include "wbview.h"
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"

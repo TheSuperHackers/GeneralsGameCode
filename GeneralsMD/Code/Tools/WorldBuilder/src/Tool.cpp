@@ -25,7 +25,7 @@
 #include "MainFrm.h"
 #include "DrawObject.h"
 #include "WorldBuilderDoc.h"
-#include "common/MapObject.h"
+#include "Common/MapObject.h"
 
 #include "Tool.h"
 //

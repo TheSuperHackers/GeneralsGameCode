@@ -21,7 +21,7 @@
 
 #define DEFINE_EDITOR_SORTING_NAMES
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
 #include "PickUnitDialog.h"
 

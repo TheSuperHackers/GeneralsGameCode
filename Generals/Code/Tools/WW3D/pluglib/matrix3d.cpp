@@ -58,7 +58,7 @@
 #include <stdlib.h>
 //#include <stdio.h>
 #include "vector3.h"
-#include "wwmatrix3.h"
+#include "WWmatrix3.h"
 #include "matrix4.h"
 #include "w3dquat.h"
 

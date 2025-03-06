@@ -27,9 +27,9 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "lib/BaseType.h"
+#include "Lib/BaseType.h"
 #include "MyToolbar.h"
-#include "BrushOptions.h"
+#include "brushoptions.h"
 #include "FeatherOptions.h"
 #include "CellWidth.h"
 #include "TerrainMaterial.h"
@@ -43,7 +43,7 @@
 #include "WaypointOptions.h"
 #include "WaterOptions.h"
 #include "LightOptions.h"
-#include "MapObjectProps.h"
+#include "mapobjectprops.h"
 #include "GroveOptions.h"
 #include "RampOptions.h"
 #include "GlobalLightOptions.h"

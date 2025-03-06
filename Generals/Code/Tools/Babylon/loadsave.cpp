@@ -20,10 +20,10 @@
 // loadsave.cpp
 //
 
-#include "stdAfx.h"
+#include "StdAfx.h"
 #include "iff.h"
 #include "TransDB.h"
-#include "noxstringdlg.h"
+#include "noxstringDlg.h"
 
 #define FORM_NOXDB			MakeID ('N','X','D','B')
 #define FORM_LABEL			MakeID ('N','L','B','L')

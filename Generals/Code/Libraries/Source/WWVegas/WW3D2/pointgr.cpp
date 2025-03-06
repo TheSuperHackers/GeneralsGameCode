@@ -74,7 +74,7 @@
 #include "statistics.h"
 #include "simplevec.h"
 #include "texture.h"
-#include "vector.h"
+#include "Vector.H"
 #include "vp.h"
 #include "matrix4.h"
 #include "dx8wrapper.h"

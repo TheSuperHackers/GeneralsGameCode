@@ -26,7 +26,7 @@
 //
 
 #include "TerrainSwatches.h"
-#include "common/AsciiString.h"
+#include "Common/AsciiString.h"
 class WorldHeightMapEdit;
 /////////////////////////////////////////////////////////////////////////////
 // TerrainModal dialog

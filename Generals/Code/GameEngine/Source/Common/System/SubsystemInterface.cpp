@@ -36,7 +36,7 @@
 #endif
 
 #ifdef DUMP_PERF_STATS
-#include "GameLogic\GameLogic.h"
+#include "GameLogic/GameLogic.h"
 #include "Common/PerfTimer.h"
 
 Real SubsystemInterface::s_msConsumed = 0;

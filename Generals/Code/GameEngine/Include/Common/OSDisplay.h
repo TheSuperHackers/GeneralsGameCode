@@ -31,7 +31,7 @@
 #ifndef __OSDISPLAY_H__
 #define __OSDISPLAY_H__
 
-#include "Lib/Basetype.h"
+#include "Lib/BaseType.h"
 
 class AsciiString;
 

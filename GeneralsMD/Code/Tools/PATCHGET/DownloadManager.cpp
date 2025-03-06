@@ -21,7 +21,7 @@
 // Author: Matthew D. Campbell, July 2002
 
 #include "debug.h"
-#include "chatapi.h"
+#include "CHATAPI.H"
 #include "DownloadManager.h"
 #include "resource.h"
 

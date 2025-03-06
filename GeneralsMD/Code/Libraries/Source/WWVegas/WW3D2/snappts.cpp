@@ -34,7 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "snappts.h"
+#include "snapPts.h"
 #include "chunkio.h"
 #include "w3d_file.h"
 #include "w3derr.h"

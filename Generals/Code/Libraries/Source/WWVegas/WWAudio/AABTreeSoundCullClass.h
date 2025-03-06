@@ -42,7 +42,7 @@
 #ifndef __AABTREESOUNDCULLCLASS_H
 #define __AABTREESOUNDCULLCLASS_H
 
-#include "AABTreeCull.H"
+#include "aabtreecull.h"
 
 
 /////////////////////////////////////////////////////////////////////////////////

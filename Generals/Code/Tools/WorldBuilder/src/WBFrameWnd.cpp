@@ -19,13 +19,13 @@
 // WBFrameWnd.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "worldbuilder.h"
+#include "StdAfx.h"
+#include "WorldBuilder.h"
 #include "MainFrm.h"
 #include "WBFrameWnd.h"
 #include "WorldBuilderDoc.h"
 #include "WHeightMapEdit.h"
-#include "WbView3d.h"
+#include "wbview3d.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CWBFrameWnd

@@ -20,7 +20,7 @@
 // transcs.cpp
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <windows.h>
 #include <winnls.h>
 #include <stdio.h>

@@ -52,7 +52,7 @@
 #include "GameClient/GameWindowManager.h"
 #include "GUIEdit.h"
 #include "Properties.h"
-#include "Resource.h"
+#include "resource.h"
 #include "GameClient/GadgetRadioButton.h"
 #include "GameClient/Gadget.h"
 

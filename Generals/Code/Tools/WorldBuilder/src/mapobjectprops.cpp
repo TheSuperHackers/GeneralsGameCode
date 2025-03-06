@@ -19,13 +19,13 @@
 // mapobjectprops.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "worldbuilder.h"
+#include "StdAfx.h"
+#include "WorldBuilder.h"
 #include "WorldBuilderDoc.h"
 #include "wbview.h"
 #include "mapobjectprops.h"
 #include "propedit.h"
-#include "cundoable.h"
+#include "CUndoable.h"
 #include "EditParameter.h"
 
 #include "Common/ThingTemplate.h"
