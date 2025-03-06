@@ -59,7 +59,7 @@ private:
 class FireSpreadUpdate : public UpdateModule
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( FireSpreadUpdate, "FireSpreadUpdate" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( FireSpreadUpdate, NAMEKEY_FireSpreadUpdate )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( FireSpreadUpdate, FireSpreadUpdateModuleData )
 
 public:

@@ -59,7 +59,7 @@ public:
 class RadarUpgrade : public UpgradeModule
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( RadarUpgrade, "RadarUpgrade" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( RadarUpgrade, NAMEKEY_RadarUpgrade )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( RadarUpgrade, RadarUpgradeModuleData );
 
 public:

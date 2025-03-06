@@ -485,7 +485,7 @@ void SidesList::prepareForMP_or_Skirmish(void)
 	{
 		m_skirmishSides[m_numSkirmishSides] = m_sides[i];
 		m_numSkirmishSides++;
-		if (m_sides[i].getDict()->getAsciiString(TheKey_playerFaction) == "FactionCivilian") {
+		if (m_sides[i].getDict()->getAsciiString(TheKey_playerFaction) == NAMEKEY_FactionCivilian) {
 			// Don't remove FactionCivilian.
 			continue;
 		}
@@ -495,7 +495,7 @@ void SidesList::prepareForMP_or_Skirmish(void)
 	}
 	Bool gotScripts = false;
 	for (i=0; i<m_numSkirmishSides; i++) {
-		if (m_skirmishSides[i].getDict()->getAsciiString(TheKey_playerFaction) == "FactionCivilian") {
+		if (m_skirmishSides[i].getDict()->getAsciiString(TheKey_playerFaction) == NAMEKEY_FactionCivilian) {
 			// Don't consider FactionCivilian.
 			continue;
 		}
@@ -685,7 +685,7 @@ void SidesList::addPlayerByTemplate(AsciiString playerTemplateName)
 		playerDisplayName.translate(playerName);
 		isHuman = true;
 		// special-case "civilian"...
-		if (playerName == "PlyrCivilian")
+		if (playerName == NAMEKEY_PlyrCivilian)
 			isHuman = false;
 	}
 

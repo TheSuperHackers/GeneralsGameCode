@@ -647,7 +647,7 @@ void StealthUpdate::disguiseAsObject( const Object *target )
 	const StealthUpdateModuleData *data = getStealthUpdateModuleData();
 	if( target && target->getControllingPlayer() )
 	{
-		static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
+		static NameKeyType key_StealthUpdate = NAMEKEY( NAMEKEY_StealthUpdate );
 		StealthUpdate* stealth = (StealthUpdate*)target->findUpdateModule( key_StealthUpdate );
 		if( stealth && stealth->getDisguisedTemplate() )
 		{
