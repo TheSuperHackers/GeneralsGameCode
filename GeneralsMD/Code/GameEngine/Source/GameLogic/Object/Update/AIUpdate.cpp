@@ -4735,27 +4735,31 @@ void AIUpdateInterface::evaluateMoraleBonus( void )
 		//if ( draw && !us->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 		//	draw->setTerrainDecal(TERRAIN_DECAL_NONE);
 
+		// TheSuperHackers @bugfix @GeneralCamo 06/03/2025 Corrected nationalism being applied regardless of horde status - issue #173
 		// horde
-		if( horde )
-		{
-			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
-
-		}  // end if
-		else
-			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
-
-		// nationalism
-		if( nationalism )
-    {
-			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
-      // fanaticism
-      if ( fanaticism )
-        us->setWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );// FOR THE NEW GC INFANTRY GENERAL
-      else 
-        us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
-    }
-		else
-			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
+		if (horde) {
+			us->setWeaponBonusCondition(WEAPONBONUSCONDITION_HORDE);
+		
+			// nationalism
+			if (nationalism) {
+				us->setWeaponBonusCondition(WEAPONBONUSCONDITION_NATIONALISM);
+			} else {
+				us->clearWeaponBonusCondition(WEAPONBONUSCONDITION_NATIONALISM);
+			}
+		
+			// fanaticism
+			if (fanaticism) {
+				us->setWeaponBonusCondition(WEAPONBONUSCONDITION_FANATICISM);// FOR THE NEW GC INFANTRY GENERAL
+			} else {
+				us->clearWeaponBonusCondition(WEAPONBONUSCONDITION_FANATICISM);
+			}
+		
+		} else {
+			us->clearWeaponBonusCondition(WEAPONBONUSCONDITION_HORDE);
+			us->clearWeaponBonusCondition(WEAPONBONUSCONDITION_NATIONALISM);
+			us->clearWeaponBonusCondition(WEAPONBONUSCONDITION_FANATICISM);
+		}
+		// end @bugfix
 
 
 
