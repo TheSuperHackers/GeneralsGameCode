@@ -4466,7 +4466,7 @@ void AIUpdateInterface::evaluateMoraleBonus( void )
 		//if ( draw && !us->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 		//	draw->setTerrainDecal(TERRAIN_DECAL_NONE);
 
-		// TheSuperHackers @bugfix @GeneralCamo 06/03/2025 Corrected nationalism being applied regardless of horde status - issue #173
+		// TheSuperHackers @bugfix GeneralCamo 06/03/2025 Corrected nationalism being applied regardless of horde status - issue #173
 		// horde
 		if ( horde ) {
 			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
