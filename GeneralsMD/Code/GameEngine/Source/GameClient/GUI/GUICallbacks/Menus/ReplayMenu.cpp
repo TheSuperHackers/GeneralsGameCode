@@ -181,7 +181,8 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 				const MapMetaData *md = TheMapCache->findMap(info.getMap());
 				if (!md)
 				{
-					mapStr.translate(info.getMap());
+					const char* filename = info.getMap().reverseFind('\\');
+					mapStr.translate(filename ? filename + 1 : info.getMap());
 				}
 				else
 				{
