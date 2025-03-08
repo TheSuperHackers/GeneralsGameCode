@@ -181,7 +181,10 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 				const MapMetaData *md = TheMapCache->findMap(info.getMap());
 				if (!md)
 				{
-					mapStr.translate(info.getMap());
+					// TheSuperHackers @bugfix helmutbuhler 08/03/2025 Just use the filename.
+					// Displaying a long map path string would break the map list gui.
+					const char* filename = info.getMap().reverseFind('\\');
+					mapStr.translate(filename ? filename + 1 : info.getMap());
 				}
 				else
 				{
