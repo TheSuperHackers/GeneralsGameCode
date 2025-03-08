@@ -254,8 +254,17 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 						color = colors[COLOR_SP_CRC_MISMATCH];
 					}
 				}
-				
+
 				Int insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
+				if (insertionIndex == -1)
+				{
+					// The list originally has a maximum length of 100. If we fail here we probably
+					// exceeded that and just double the max here and try again.
+					Int length = GadgetListBoxGetNumEntries(listbox);
+					GadgetListBoxSetListLength(listbox, length * 2);
+
+					insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
+				}
 				GadgetListBoxAddEntryText(listbox, displayTimeBuffer, color, insertionIndex, 1);
 				GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 2);
 				GadgetListBoxAddEntryText(listbox, mapStr, color, insertionIndex, 3);
