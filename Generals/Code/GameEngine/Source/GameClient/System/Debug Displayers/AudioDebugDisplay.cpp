@@ -108,7 +108,9 @@ static void printFunc( char *text )
 #if defined(_DEBUG) || defined(_INTERNAL)
 void AudioDebugDisplay ( DebugDisplayInterface *dd, void *, FILE *fp = NULL )
 {
+#ifdef HAS_BINK
 	TheAudio->audioDebugDisplay( dd, NULL, fp );
+#endif
 }
 #endif
 

@@ -145,7 +145,7 @@ void CaveSystem::xfer( Xfer *xfer )
 	xfer->xferVersion( &version, currentVersion );
 
 	// tunnel tracker size and data
-	UnsignedShort count = m_tunnelTrackerVector.size();
+	UnsignedShort count = (uint16_t)m_tunnelTrackerVector.size();
 	xfer->xferUnsignedShort( &count );
 	TunnelTracker *tracker;
 	if( xfer->getXferMode() == XFER_SAVE )

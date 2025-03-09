@@ -725,7 +725,7 @@ public:
 
 	typedef std::list<ParticleSystem*> ParticleSystemList;
 	typedef std::list<ParticleSystem*>::iterator ParticleSystemListIt;
-	typedef std::hash_map<AsciiString, ParticleSystemTemplate *, rts::hash<AsciiString>, rts::equal_to<AsciiString> > TemplateMap;
+	typedef std::unordered_map<AsciiString, ParticleSystemTemplate *, rts::hash<AsciiString>, rts::equal_to<AsciiString> > TemplateMap;
 
 	ParticleSystemManager( void );
 	virtual ~ParticleSystemManager();

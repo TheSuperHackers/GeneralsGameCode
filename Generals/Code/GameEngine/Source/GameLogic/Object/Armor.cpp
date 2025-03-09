@@ -86,7 +86,7 @@ Real ArmorTemplate::adjustDamage(DamageType t, Real damage) const
 	const char* damageName = ini->getNextToken();
 	Real pct = INI::scanPercentToReal(ini->getNextToken());
 
-	if (stricmp(damageName, "Default") == 0)
+	if (_stricmp(damageName, "Default") == 0)
 	{
 		for (Int i = 0; i < DAMAGE_NUM_TYPES; i++)
 		{

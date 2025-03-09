@@ -157,11 +157,13 @@ Bool WaveGuideUpdate::startMoving( void )
 {
 	Object *waveGuide = getObject();
 	Waypoint *waypoint;
+#ifdef HAS_BINK
 	const WaveGuideUpdateModuleData *data = getWaveGuideUpdateModuleData();
 
 	AudioEventRTS loopingSound = data->m_loopingSound;
 	loopingSound.setObjectID( getObject()->getID() );
 	TheAudio->addAudioEvent( &loopingSound );
+#endif
 
 	waypoint = TheTerrainLogic->getWaypointByName( "WaveGuide1" );
 	if( waypoint )
@@ -617,7 +619,7 @@ void WaveGuideUpdate::doDamage( void )
 			{
 
 				// if object was not wet before we kill it and play effects
-				if( BitTest( obj->getStatusBits(), OBJECT_STATUS_WET ) == FALSE )
+				if( BitTestWW( obj->getStatusBits(), OBJECT_STATUS_WET ) == FALSE )
 				{
 					static const ParticleSystemTemplate *splash = TheParticleSystemManager->findTemplate( "WaveHit01" );
 					ParticleSystem *particleSystem;
@@ -814,9 +816,11 @@ UpdateSleepTime WaveGuideUpdate::update( void )
 		// pick a random number and play according to frequency
 		if( GameLogicRandomValue( 1, 100 ) > modData->m_randomSplashSoundFrequency )  
 		{
+#ifdef HAS_BINK
 			AudioEventRTS randomSplash(modData->m_randomSplashSound);
 			randomSplash.setObjectID(waveGuide->getID());
 			TheAudio->addAudioEvent(&randomSplash);
+#endif
 		}  // end if
 	}  // end if
 

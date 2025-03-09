@@ -195,8 +195,10 @@ void VictoryConditions::update( void )
 				
 				TheInGameUI->message("GUI:PlayerHasBeenDefeated", p->getPlayerDisplayName().str() );
 				// People are boneheads. Also play a sound
+#ifdef HAS_BINK
 				static AudioEventRTS leftGameSound("GUIMessageReceived");
 				TheAudio->addAudioEvent(&leftGameSound);
+#endif
 			}
 
 			for (Int idx = 0; idx < MAX_SLOTS; ++idx)

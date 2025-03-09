@@ -401,8 +401,8 @@ Bool Mouse::isClick(const ICoord2D *anchor, const ICoord2D *dest, UnsignedInt pr
 
 	// if the mouse hasn't moved further than the tolerance distance
 	// or the click took less than the tolerance duration
-	if (	abs(delta.x) > m_dragTolerance
-		||	abs(delta.y) > m_dragTolerance
+	if (	abs(delta.x) > (int)m_dragTolerance
+		||	abs(delta.y) > (int)m_dragTolerance
 		||	currentMouseClick - previousMouseClick > m_dragToleranceMS)
 	{
 		return FALSE;
@@ -679,7 +679,7 @@ void Mouse::createStreamMessages( void )
   if(m_tooltipDelay >= 0 )
      delay = m_tooltipDelay;
   
-	if( now - m_stillTime >= delay )
+	if( now - m_stillTime >= (uint32_t)delay )
 	{
 		if (!m_displayTooltip)
 		{
@@ -840,9 +840,9 @@ void Mouse::setCursorTooltip( UnicodeString tooltip, Int delay, const RGBColor *
 		{
 			widthInPixels = 120;
 		}
-		else if (widthInPixels > TheDisplay->getWidth())
+		else if (widthInPixels > (int)TheDisplay->getWidth())
 		{
-			widthInPixels = TheDisplay->getWidth();
+			widthInPixels = (int)TheDisplay->getWidth();
 		}
 		//DEBUG_LOG(("Setting tooltip width to %d pixels (%g%% of the normal tooltip width)\n", widthInPixels, width*100));
 		m_tooltipDisplayString->setWordWrap( widthInPixels );

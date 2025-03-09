@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Internal|Win32">
+      <Configuration>Internal</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Internal|x64">
+      <Configuration>Internal</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Profile|Win32">
+      <Configuration>Profile</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Profile|x64">
+      <Configuration>Profile</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Template|Win32">
+      <Configuration>Template</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Template|x64">
+      <Configuration>Template</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <SccProjectName>"$/Commando/Code/wwlib", KOGAAAAA</SccProjectName>
+    <SccLocalPath>.</SccLocalPath>
+    <ProjectGuid>{B5B02821-7DE5-4AD4-BA09-B747BBE2FD43}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Template|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Internal|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Internal|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Template|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Internal|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Internal|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Internal|Win32'">
+    <OutDir>.\Internal\</OutDir>
+    <IntDir>.\Internal\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Internal|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
+    <OutDir>.\Profile\</OutDir>
+    <IntDir>.\Profile\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>.\Debug\</OutDir>
+    <IntDir>.\Debug\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>.\Release\</OutDir>
+    <IntDir>.\Release\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Internal|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\wwdebug;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;WIN32;REGEX_MALLOC;STDC_HEADERS;_INTERNAL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Internal\</AssemblerListingLocation>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderOutputFile>.\Internal\wwlib.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Internal\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Internal\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Internal\wwlib.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\WWLibInternal.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Internal|x64'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\wwdebug;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;WIN32;REGEX_MALLOC;STDC_HEADERS;_INTERNAL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Internal\</AssemblerListingLocation>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderOutputFile>.\Internal\wwlib.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Internal\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Internal\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Internal\wwlib.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\WWLibInternal.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\wwdebug;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;WWDEBUG;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;WIN32;REGEX_MALLOC;STDC_HEADERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Profile\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>.\Profile\wwlib.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Profile\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Profile\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Profile\wwlib.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\WWLibProfile.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\wwdebug;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;WWDEBUG;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;WIN32;REGEX_MALLOC;STDC_HEADERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Profile\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>.\Profile\wwlib.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Profile\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Profile\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Profile\wwlib.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\WWLibProfile.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\wwdebug;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;WIN32;REGEX_MALLOC;STDC_HEADERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Debug\</AssemblerListingLocation>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderOutputFile>.\Debug\wwlib.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Debug\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Debug\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Debug\wwlib.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\WWLibdebug.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>Disabled</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\wwdebug;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;WIN32;REGEX_MALLOC;STDC_HEADERS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Debug\</AssemblerListingLocation>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderOutputFile>.\Debug\wwlib.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Debug\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Debug\</ProgramDataBaseFileName>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+      <LanguageStandard>Default</LanguageStandard>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Debug\wwlib.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\WWLibdebug.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\wwdebug;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;REGEX_MALLOC;STDC_HEADERS;NDEBUG;WIN32;IG_DEBUG_STACKTRACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Release\</AssemblerListingLocation>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderOutputFile>.\Release\wwlib.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Release\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Release\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Release\wwlib.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\WWLib.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\wwdebug;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;REGEX_MALLOC;STDC_HEADERS;NDEBUG;WIN32;IG_DEBUG_STACKTRACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Release\</AssemblerListingLocation>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderOutputFile>.\Release\wwlib.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Release\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Release\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Release\wwlib.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\WWLib.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="b64pipe.cpp" />
+    <ClCompile Include="b64straw.cpp" />
+    <ClCompile Include="base64.cpp" />
+    <ClCompile Include="blit.cpp" />
+    <ClCompile Include="blowfish.cpp" />
+    <ClCompile Include="buff.cpp" />
+    <ClCompile Include="bufffile.cpp" />
+    <ClCompile Include="chunkio.cpp" />
+    <ClCompile Include="convert.cpp" />
+    <ClCompile Include="cpudetect.cpp" />
+    <ClCompile Include="crc.cpp" />
+    <ClCompile Include="cstraw.cpp" />
+    <ClCompile Include="data.cpp" />
+    <ClCompile Include="ddraw.cpp" />
+    <ClCompile Include="dsurface.cpp" />
+    <ClCompile Include="ffactory.cpp" />
+    <ClCompile Include="gcd_lcm.cpp" />
+    <ClCompile Include="hash.cpp" />
+    <ClCompile Include="hsv.cpp" />
+    <ClCompile Include="ini.cpp" />
+    <ClCompile Include="int.cpp" />
+    <ClCompile Include="jshell.cpp" />
+    <ClCompile Include="keyboard.cpp" />
+    <ClCompile Include="LaunchWeb.cpp" />
+    <ClCompile Include="lcw.cpp" />
+    <ClCompile Include="load.cpp" />
+    <ClCompile Include="mono.cpp" />
+    <ClCompile Include="mpmath.cpp" />
+    <ClCompile Include="mpu.cpp" />
+    <ClCompile Include="msgloop.cpp" />
+    <ClCompile Include="multilist.cpp" />
+    <ClCompile Include="mutex.cpp" />
+    <ClCompile Include="nstrdup.cpp" />
+    <ClCompile Include="palette.cpp" />
+    <ClCompile Include="pcx.cpp" />
+    <ClCompile Include="pipe.cpp" />
+    <ClCompile Include="pk.cpp" />
+    <ClCompile Include="ramfile.cpp" />
+    <ClCompile Include="random.cpp" />
+    <ClCompile Include="rawfile.cpp" />
+    <ClCompile Include="rc4.cpp" />
+    <ClCompile Include="rcfile.cpp" />
+    <ClCompile Include="readline.cpp" />
+    <ClCompile Include="realcrc.cpp" />
+    <ClCompile Include="refcount.cpp" />
+    <ClCompile Include="registry.cpp" />
+    <ClCompile Include="rgb.cpp" />
+    <ClCompile Include="rle.cpp" />
+    <ClCompile Include="rndstrng.cpp" />
+    <ClCompile Include="sampler.cpp" />
+    <ClCompile Include="sha.cpp" />
+    <ClCompile Include="slnode.cpp" />
+    <ClCompile Include="srandom.cpp" />
+    <ClCompile Include="stimer.cpp" />
+    <ClCompile Include="straw.cpp" />
+    <ClCompile Include="strtok_r.cpp" />
+    <ClCompile Include="systimer.cpp" />
+    <ClCompile Include="tagblock.cpp" />
+    <ClCompile Include="TARGA.CPP" />
+    <ClCompile Include="textfile.cpp" />
+    <ClCompile Include="thread.cpp" />
+    <ClCompile Include="trim.cpp" />
+    <ClCompile Include="vector.cpp" />
+    <ClCompile Include="widestring.cpp" />
+    <ClCompile Include="win.cpp" />
+    <ClCompile Include="WWCOMUtil.cpp" />
+    <ClCompile Include="wwfile.cpp" />
+    <ClCompile Include="wwfont.cpp" />
+    <ClCompile Include="wwstring.cpp" />
+    <ClCompile Include="xpipe.cpp" />
+    <ClCompile Include="xstraw.cpp" />
+    <ClCompile Include="xsurface.cpp" />
+    <ClCompile Include="_convert.cpp" />
+    <ClCompile Include="_mono.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="always.h" />
+    <ClInclude Include="argv.h" />
+    <ClInclude Include="b64pipe.h" />
+    <ClInclude Include="b64straw.h" />
+    <ClInclude Include="base64.h" />
+    <ClInclude Include="binheap.h" />
+    <ClInclude Include="bittype.h" />
+    <ClInclude Include="blit.h" />
+    <ClInclude Include="blitblit.h" />
+    <ClInclude Include="blitter.h" />
+    <ClInclude Include="bool.h" />
+    <ClInclude Include="borlandc.h" />
+    <ClInclude Include="bound.h" />
+    <ClInclude Include="BSEARCH.H" />
+    <ClInclude Include="bsurface.h" />
+    <ClInclude Include="BUFF.H" />
+    <ClInclude Include="bufffile.h" />
+    <ClInclude Include="CallbackHook.h" />
+    <ClInclude Include="chunkio.h" />
+    <ClInclude Include="Convert.h" />
+    <ClInclude Include="cpudetect.h" />
+    <ClInclude Include="CRC.H" />
+    <ClInclude Include="cstraw.h" />
+    <ClInclude Include="data.h" />
+    <ClInclude Include="dsurface.h" />
+    <ClInclude Include="ffactory.h" />
+    <ClInclude Include="FONT.H" />
+    <ClInclude Include="gcd_lcm.h" />
+    <ClInclude Include="growmix.h" />
+    <ClInclude Include="hash.h" />
+    <ClInclude Include="hashcalc.h" />
+    <ClInclude Include="HASHLIST.H" />
+    <ClInclude Include="hashtemplate.h" />
+    <ClInclude Include="IFF.H" />
+    <ClInclude Include="INDEX.H" />
+    <ClInclude Include="INI.H" />
+    <ClInclude Include="inisup.h" />
+    <ClInclude Include="INT.H" />
+    <ClInclude Include="iostruct.h" />
+    <ClInclude Include="keyboard.h" />
+    <ClInclude Include="LaunchWeb.h" />
+    <ClInclude Include="LCW.H" />
+    <ClInclude Include="LISTNODE.H" />
+    <ClInclude Include="mempool.h" />
+    <ClInclude Include="mixfile.h" />
+    <ClInclude Include="MONO.H" />
+    <ClInclude Include="MONODRVR.H" />
+    <ClInclude Include="MPMATH.H" />
+    <ClInclude Include="MPU.H" />
+    <ClInclude Include="msgloop.h" />
+    <ClInclude Include="multilist.h" />
+    <ClInclude Include="mutex.h" />
+    <ClInclude Include="Notify.h" />
+    <ClInclude Include="nstrdup.h" />
+    <ClInclude Include="ntree.h" />
+    <ClInclude Include="PALETTE.H" />
+    <ClInclude Include="pcx.H" />
+    <ClInclude Include="PIPE.H" />
+    <ClInclude Include="PK.H" />
+    <ClInclude Include="Point.h" />
+    <ClInclude Include="RAMFILE.H" />
+    <ClInclude Include="RANDOM.H" />
+    <ClInclude Include="RAWFILE.H" />
+    <ClInclude Include="rc4.h" />
+    <ClInclude Include="rcfile.h" />
+    <ClInclude Include="readline.h" />
+    <ClInclude Include="realcrc.h" />
+    <ClInclude Include="refcount.h" />
+    <ClInclude Include="ref_ptr.h" />
+    <ClInclude Include="registry.h" />
+    <ClInclude Include="RGB.H" />
+    <ClInclude Include="RLE.H" />
+    <ClInclude Include="RNDSTRAW.H" />
+    <ClInclude Include="rndstrng.h" />
+    <ClInclude Include="rng.h" />
+    <ClInclude Include="rsacrypt.h" />
+    <ClInclude Include="sampler.h" />
+    <ClInclude Include="sha.h" />
+    <ClInclude Include="shapeset.h" />
+    <ClInclude Include="sharebuf.h" />
+    <ClInclude Include="Signaler.h" />
+    <ClInclude Include="simplevec.h" />
+    <ClInclude Include="SLIST.H" />
+    <ClInclude Include="SLNODE.H" />
+    <ClInclude Include="srandom.h" />
+    <ClInclude Include="stl.h" />
+    <ClInclude Include="STRAW.H" />
+    <ClInclude Include="strtok_r.h" />
+    <ClInclude Include="Surface.h" />
+    <ClInclude Include="surfrect.h" />
+    <ClInclude Include="systimer.h" />
+    <ClInclude Include="TagBlock.h" />
+    <ClInclude Include="TARGA.H" />
+    <ClInclude Include="textfile.h" />
+    <ClInclude Include="thread.h" />
+    <ClInclude Include="timer.h" />
+    <ClInclude Include="trackwin.h" />
+    <ClInclude Include="trect.h" />
+    <ClInclude Include="trim.h" />
+    <ClInclude Include="uarray.h" />
+    <ClInclude Include="Vector.H" />
+    <ClInclude Include="verchk.h" />
+    <ClInclude Include="visualc.h" />
+    <ClInclude Include="WATCOM.H" />
+    <ClInclude Include="widestring.h" />
+    <ClInclude Include="win.h" />
+    <ClInclude Include="WWCOMUtil.h" />
+    <ClInclude Include="WWFILE.H" />
+    <ClInclude Include="wwstring.h" />
+    <ClInclude Include="xmouse.h" />
+    <ClInclude Include="XPIPE.H" />
+    <ClInclude Include="XSTRAW.H" />
+    <ClInclude Include="xsurface.h" />
+    <ClInclude Include="_mono.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

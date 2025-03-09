@@ -24,19 +24,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "bfish.h"
-#include "SafeDisk\CdaPfn.h"
+//#include "SafeDisk\CdaPfn.h"
 #include <Debug\DebugPrint.h>
 
 void __cdecl doIt(void);
 
-CDAPFN_DECLARE_GLOBAL(doIt, CDAPFN_OVERHEAD_L5, CDAPFN_CONSTRAINT_NONE);
+//CDAPFN_DECLARE_GLOBAL(doIt, CDAPFN_OVERHEAD_L5, CDAPFN_CONSTRAINT_NONE);
 
 static void doIt(void)
 {
 	// Generate passkey
 	char passKey[128];
 	passKey[0] = '\0';
-	unsigned char installPath[MAX_PATH] = "";
+	unsigned char installPath[MAX_PATH] = R"(C:\Repos\CnC_Generals_Zero_Hour\Generals\Run)";
 
 	// Get game information
 	HKEY hKey;
@@ -44,7 +44,9 @@ static void doIt(void)
 	LONG result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\Electronic Arts\\EA Games\\Generals", 0, KEY_READ, &hKey);
 	if (result != ERROR_SUCCESS)
 	{
-		result = RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\Electronic Arts\\EA Games\\Generals", 0, KEY_READ, &hKey);
+		result = RegOpenKeyEx(HKEY_CURRENT_USER, //"Software\\Electronic Arts\\EA Games\\Generals"
+			"Software\\Valve\\Steam\\Apps\\2229870"
+			, 0, KEY_READ, &hKey);
 		usesHKeycurrentUser = true;
 	}
 	assert((result == ERROR_SUCCESS) && "Failed to open game registry key");
@@ -57,9 +59,9 @@ static void doIt(void)
 	// Retrieve install path
 	DWORD type;
 	DWORD sizeOfBuffer = sizeof(installPath);
-	result = RegQueryValueEx(hKey, "InstallPath", NULL, &type, installPath, &sizeOfBuffer);
+	//result = RegQueryValueEx(hKey, "InstallPath", NULL, &type, installPath, &sizeOfBuffer);
 
-	assert((result == ERROR_SUCCESS) && "Failed to obtain game install path!");
+	//assert((result == ERROR_SUCCESS) && "Failed to obtain game install path!");
 	assert((strlen((const char*)installPath) > 0) && "Game install path invalid!");
 	DebugPrint("Game install path: %s\n", installPath);
 
@@ -176,7 +178,7 @@ static void doIt(void)
 		fclose(fp);
 	}
 
-	CDAPFN_ENDMARK(doIt);
+	//CDAPFN_ENDMARK(doIt);
 }
 
 int APIENTRY WinMain(HINSTANCE hInstance,

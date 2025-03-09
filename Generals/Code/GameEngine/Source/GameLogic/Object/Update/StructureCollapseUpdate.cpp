@@ -309,7 +309,7 @@ void StructureCollapseUpdate::doPhaseStuff(StructureCollapsePhaseType scphase, c
 	Int i, idx, count, listSize;
 	Int idxList[MAX_IDX];
 
-	listSize = d->m_fxs[scphase].size();
+	listSize = (int)d->m_fxs[scphase].size();
 	if (listSize > 0)
 	{
 		count = d->m_fxCount[scphase];
@@ -324,7 +324,7 @@ void StructureCollapseUpdate::doPhaseStuff(StructureCollapsePhaseType scphase, c
 		}
 	}
 
-	listSize = d->m_ocls[scphase].size();
+	listSize = (int)d->m_ocls[scphase].size();
 	if (listSize > 0)
 	{
 		count = d->m_oclCount[scphase];

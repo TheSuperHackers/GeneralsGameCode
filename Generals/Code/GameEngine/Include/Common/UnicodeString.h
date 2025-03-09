@@ -316,7 +316,7 @@ inline UnicodeString::~UnicodeString()
 inline int UnicodeString::getLength() const
 {
 	validate();
-	return m_data ? wcslen(peek()) : 0;
+	return m_data ? (int)wcslen(peek()) : 0;
 }
 
 // -----------------------------------------------------

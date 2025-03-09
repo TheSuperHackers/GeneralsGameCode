@@ -583,9 +583,10 @@ void W3DRadar::drawEvents( Int pixelX, Int pixelY, Int width, Int height )
 			// if we haven't played the sound for this event, do it now that we can see it
 			if( m_event[ i ].soundPlayed == FALSE && m_event[i].type != RADAR_EVENT_BEACON_PULSE )
 			{
+#ifdef HAS_BINK
 				static AudioEventRTS eventSound("RadarEvent");
 				TheAudio->addAudioEvent( &eventSound );
-
+#endif
 			}  // end if
 
 			m_event[ i ].soundPlayed = TRUE;
@@ -885,12 +886,12 @@ void W3DRadar::init( void )
 
 	// allocate our terrain texture
 	// poolify
-	m_terrainTexture = MSGNEW("TextureClass") TextureClass( m_textureWidth, m_textureHeight, 
+	m_terrainTexture = new TextureClass( m_textureWidth, m_textureHeight, 
 																			 m_terrainTextureFormat, TextureClass::MIP_LEVELS_1 );
 	DEBUG_ASSERTCRASH( m_terrainTexture, ("W3DRadar: Unable to allocate terrain texture\n") );
 
 	// allocate our overlay texture
-	m_overlayTexture = MSGNEW("TextureClass") TextureClass( m_textureWidth, m_textureHeight,
+	m_overlayTexture = new TextureClass( m_textureWidth, m_textureHeight,
 																			 m_overlayTextureFormat, TextureClass::MIP_LEVELS_1 );
 	DEBUG_ASSERTCRASH( m_overlayTexture, ("W3DRadar: Unable to allocate overlay texture\n") );
 
@@ -899,7 +900,7 @@ void W3DRadar::init( void )
 //	m_overlayTexture->Set_Mag_Filter( TextureClass::FILTER_TYPE_NONE );
 
 	// allocate our shroud texture
-	m_shroudTexture = MSGNEW("TextureClass") TextureClass( m_textureWidth, m_textureHeight,
+	m_shroudTexture = new TextureClass( m_textureWidth, m_textureHeight,
 																			 m_shroudTextureFormat, TextureClass::MIP_LEVELS_1 );
 	DEBUG_ASSERTCRASH( m_shroudTexture, ("W3DRadar: Unable to allocate shroud texture\n") );
 	m_shroudTexture->Set_Min_Filter( TextureClass::FILTER_TYPE_DEFAULT );

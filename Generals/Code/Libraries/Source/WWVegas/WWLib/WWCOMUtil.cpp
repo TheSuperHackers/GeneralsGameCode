@@ -188,7 +188,7 @@ bool RegisterCOMServer(const char* dllName)
 
 		if (regServerProc != NULL)
 			{
-			HRESULT hr = regServerProc();
+			HRESULT hr = (int)regServerProc();
 			success = SUCCEEDED(hr);
 			}
 
@@ -227,7 +227,7 @@ bool UnregisterCOMServer(const char* dllName)
 
 		if (unregServerProc != NULL)
 			{
-			HRESULT hr = unregServerProc();
+			HRESULT hr = (int)unregServerProc();
 			success = SUCCEEDED(hr);
 			}
 

@@ -526,7 +526,7 @@ PrototypeClass * GrannyLoaderClass::Load_W3D(const char *filename)
 		}
 
 		// ok, accept this model! 
-		GrannyPrototypeClass * hproto = NEW GrannyPrototypeClass(File);
+		GrannyPrototypeClass * hproto = new GrannyPrototypeClass(File);
 		_splitpath(filename, drive, dir, fname, ext );
 		hproto->Set_Name(strcat(fname,ext));
 		hproto->setBoundingBox(box);
@@ -560,8 +560,8 @@ GrannyLoaderClass::~GrannyLoaderClass(void)
 GrannyAnimManagerClass::GrannyAnimManagerClass(void) 
 {
 	// Create the hash tables
-	AnimPtrTable = NEW HashTableClass( 2048 );
-	MissingAnimTable = NEW HashTableClass( 2048 );
+	AnimPtrTable = new HashTableClass( 2048 );
+	MissingAnimTable = new HashTableClass( 2048 );
 }
 
 GrannyAnimManagerClass::~GrannyAnimManagerClass(void)
@@ -637,7 +637,7 @@ Bool	GrannyAnimManagerClass::Is_Missing( const char * name )
 /** Load an animation from disk and add to cache */
 int GrannyAnimManagerClass::Load_Anim(const char * name)
 {
-	GrannyAnimClass * newanim = NEW GrannyAnimClass;
+	GrannyAnimClass * newanim = new GrannyAnimClass;
 
 	if (newanim == NULL) {
 		goto Error;

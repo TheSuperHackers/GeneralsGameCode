@@ -124,7 +124,7 @@ const VecObjectPtr& Squad::getLiveObjects(void)
 // getSizeOfGroup /////////////////////////////////////////////////////////////////////////////////
 Int Squad::getSizeOfGroup(void) const
 {
-	return m_objectIDs.size();
+	return (int)m_objectIDs.size();
 }
 
 // isOnSquad //////////////////////////////////////////////////////////////////////////////////////
@@ -214,7 +214,7 @@ void Squad::xfer( Xfer *xfer )
 	xfer->xferVersion( &version, currentVersion );
 
 	// length of object ID list
-	UnsignedShort objectCount = m_objectIDs.size();
+	UnsignedShort objectCount = (uint32_t)m_objectIDs.size();
 	xfer->xferUnsignedShort( &objectCount );
 
 	// object id elements

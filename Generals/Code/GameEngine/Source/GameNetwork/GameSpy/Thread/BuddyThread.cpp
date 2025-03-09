@@ -121,7 +121,7 @@ private:
 	std::string m_nick, m_email, m_pass;
 };
 
-static enum CallbackType
+enum CallbackType
 {
 	CALLBACK_CONNECT,
 	CALLBACK_ERROR,
@@ -133,7 +133,7 @@ static enum CallbackType
 
 void callbackWrapper( GPConnection *con, void *arg, void *param )
 {
-	CallbackType info = (CallbackType)(Int)param;
+	CallbackType info = (CallbackType)(Int)(intptr_t)param;
 	BuddyThreadClass *thread = MESSAGE_QUEUE->getThread() ? MESSAGE_QUEUE->getThread() : NULL /*(TheGameSpyBuddyMessageQueue)?TheGameSpyBuddyMessageQueue->getThread():NULL*/;
 	if (!thread)
 		return;
@@ -267,10 +267,10 @@ GPProfile GameSpyBuddyMessageQueue::getLocalProfileID( void )
 void BuddyThreadClass::Thread_Function()
 {
 	try {
-	_set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
+	//_set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
 	GPConnection gpCon;
 	GPConnection *con = &gpCon;
-	gpInitialize( con, 0 );
+	gpInitialize( con, 0,0, 0 );
 	m_isConnected = m_isConnecting = false;
 
 	gpSetCallback( con, GP_ERROR,								callbackWrapper,	(void *)CALLBACK_ERROR );
@@ -308,7 +308,7 @@ void BuddyThreadClass::Thread_Function()
 				break;
 			case BuddyRequest::BUDDYREQUEST_DELETEACCT:
 				m_isdeleting =  true;
-				gpDeleteProfile( con );
+				gpDeleteProfile( con, 0, 0); //TODO: added two zeo params. Check this.
 				break;
 			case BuddyRequest::BUDDYREQUEST_LOGOUT:
 				m_isConnecting = m_isConnected = false;
@@ -328,8 +328,23 @@ void BuddyThreadClass::Thread_Function()
 					m_email = incomingRequest.arg.login.email;
 					m_pass = incomingRequest.arg.login.password;
 					m_isNewAccount = TRUE;
-					m_isConnected = (gpConnectNewUser( con, incomingRequest.arg.login.nick, incomingRequest.arg.login.email,
-						incomingRequest.arg.login.password, (incomingRequest.arg.login.hasFirewall)?GP_FIREWALL:GP_NO_FIREWALL,
+/*
+
+	GPConnection * connection,
+	const gsi_char nick[GP_NICK_LEN],
+	const gsi_char uniquenick[GP_UNIQUENICK_LEN],
+	const gsi_char email[GP_EMAIL_LEN],
+	const gsi_char password[GP_PASSWORD_LEN],
+	const gsi_char cdkey[GP_CDKEY_LEN],
+	GPEnum firewall,
+	GPEnum blocking,
+	GPCallback callback,
+	void * param
+*/
+					//TODO: Set unique nick toregular nick
+					//TODO: Set CD key to zero. Figure out a proper solution
+					m_isConnected = (gpConnectNewUser( con, incomingRequest.arg.login.nick, incomingRequest.arg.login.nick, incomingRequest.arg.login.email,
+						incomingRequest.arg.login.password, 0, (incomingRequest.arg.login.hasFirewall)?GP_FIREWALL:GP_NO_FIREWALL,
 						GP_BLOCKING, callbackWrapper, (void *)CALLBACK_CONNECT ) == GP_NO_ERROR);
 					if (m_isNewAccount) // if we didn't re-login
 					{

@@ -43,7 +43,7 @@ CrateSystem::CrateSystem()
 
 CrateSystem::~CrateSystem()
 {
-	Int count = m_crateTemplateVector.size();
+	Int count = (int)m_crateTemplateVector.size();
 	for( Int templateIndex = 0; templateIndex < count; templateIndex ++ )
 	{
 		CrateTemplate *currentTemplate = m_crateTemplateVector[templateIndex];

@@ -636,7 +636,7 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 								else if((total > 100 ) || (total < 100 && !token ))
 								{
 									Char *whoopsMsg = new char[250];
-									sprintf(whoopsMsg,"Please Double check to make sure your percentages add up to 100.", newColumns, i - 1);
+									sprintf(whoopsMsg,"Please Double check to make sure your percentages add up to 100. %d %d", newColumns, i - 1);
 									MessageBox(NULL, whoopsMsg,"Whoops",MB_OK | MB_ICONSTOP | MB_APPLMODAL);
 									return 0;
 								}
@@ -947,13 +947,13 @@ HWND InitListboxPropertiesDialog( GameWindow *window )
 		for(Int i = 1; i < listData->columns; i++ )
 		{
 			strcat(percentages,",");
-			strcat(percentages,itoa(listData->columnWidthPercentage[i],tempStr,10));
+			strcat(percentages,_itoa(listData->columnWidthPercentage[i],tempStr,10));
 		}
 		SetDlgItemText(dialog,EDIT_COLUMN_PERCENT,percentages);
 
 	}
 	// WordWrap Check Box
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ONE_LINE ) )
+	if( BitTestWW( window->winGetStatus(), WIN_STATUS_ONE_LINE ) )
 		CheckDlgButton( dialog, CHECK_NO_WORDWRAP, BST_CHECKED );
 
 

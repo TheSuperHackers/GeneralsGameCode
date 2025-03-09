@@ -66,16 +66,16 @@ public:
 variety of sources, such as FILE* or CFile. */
 class InputStream {
 public:
-	virtual Int read(void *pData, Int numBytes) = 0;
+	virtual intptr_t read(void *pData, intptr_t numBytes) = 0;
 };
 
 /** Virtual helper class, so that we can read in tile and map data from a
 variety of sources, such as FILE* or CFile. */
 class ChunkInputStream : public InputStream{
 public:
-	virtual Int read(void *pData, Int numBytes) = 0;
-	virtual UnsignedInt tell(void) = 0;
-	virtual Bool absoluteSeek(UnsignedInt pos) = 0;
+	virtual intptr_t read(void *pData, intptr_t numBytes) = 0;
+	virtual intptr_t tell(void) = 0;
+	virtual Bool absoluteSeek(intptr_t pos) = 0;
 	virtual Bool eof(void) = 0;
 };
 
@@ -83,17 +83,17 @@ public:
 class CachedFileInputStream : public ChunkInputStream
 {
 protected:
-	int m_size;
+	intptr_t m_size;
 	char* m_buffer;
-	int m_pos;
+	intptr_t m_pos;
 public:
 	CachedFileInputStream(void);
 	~CachedFileInputStream(void);
 	Bool open(AsciiString path);	///< Returns true if open succeeded.
 	void close(void);  ///< Explict close.  Destructor closes if file is left open.
-	virtual Int read(void *pData, Int numBytes);
-	virtual UnsignedInt tell(void);
-	virtual Bool absoluteSeek(UnsignedInt pos);
+	virtual intptr_t read(void *pData, intptr_t numBytes);
+	virtual intptr_t tell(void);
+	virtual Bool absoluteSeek(intptr_t pos);
 	virtual Bool eof(void);
 	void rewind(void);
 };

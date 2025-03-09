@@ -124,7 +124,7 @@ void W3DTracerDraw::doDrawModule(const Matrix3D* transformMtx)
 
 		// create tracer render object for us to manipulate
 		// poolify
-		m_theTracer = NEW Line3DClass( start,
+		m_theTracer = new Line3DClass( start,
 																	 stop,
 																	 m_width,  // width
 																	 m_color.red,  // red

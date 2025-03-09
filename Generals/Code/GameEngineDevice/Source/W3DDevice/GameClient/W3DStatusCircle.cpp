@@ -128,7 +128,7 @@ Int W3DStatusCircle::Class_ID(void) const
 
 RenderObjClass * W3DStatusCircle::Clone(void) const
 {
-	return NEW W3DStatusCircle(*this);
+	return new W3DStatusCircle(*this);
 }
 
 

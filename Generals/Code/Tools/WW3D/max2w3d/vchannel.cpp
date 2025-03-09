@@ -459,7 +459,8 @@ bool VectorChannelClass::SaveAdaptiveDelta(ChunkSaveClass & csave, BitChannelCla
 	float work[4];
 
 	// Fetch initial value
-	for (int i=0; i < VectorLen; i++) {
+	int i = 0;
+	for (; i < VectorLen; i++) {
 		work[i] = initial[i] = get_value(0, i);
 	}
 
@@ -987,8 +988,9 @@ static  float32 tempvec[MAX_VECTOR_SIZE];
         float32 tRecreate = *pTcOriginal;
         float32 tEnd      = *pTcDst; 
         float32 tRatio    = (tRecreate - tStart) / (tEnd - tStart);
-        																		
-        for (uint32 idx=0; idx < c->VectorLen; idx++)  {
+        	
+		uint32 idx = 0;
+        for (; idx < c->VectorLen; idx++)  {
         
         	tempvec[ idx ] = WWMath::Lerp(pVecSrc[idx], pVecDst[idx], tRatio);
           	
@@ -1230,8 +1232,9 @@ static  float32 tempvec[MAX_VECTOR_SIZE];
 				float32 tRecreate = *pTcOriginal;
 				float32 tEnd      = *pTcDst; 
 				float32 tRatio    = (tRecreate - tStart) / (tEnd - tStart);
-        		 																	
-				for (uint32 idx=0; idx < c->VectorLen; idx++)  {
+        		 	
+				uint32 idx = 0;
+				for (; idx < c->VectorLen; idx++)  {
         
         		 tempvec[ idx ] = WWMath::Lerp(pVecSrc[idx], pVecDst[idx], tRatio);
           	 	

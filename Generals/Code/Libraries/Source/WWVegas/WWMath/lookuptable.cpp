@@ -145,7 +145,7 @@ LookupTableClass * LookupTableMgrClass::Get_Table(const char * name,bool try_to_
 	// check if we already have this table loaded...
 	RefMultiListIterator<LookupTableClass> it(&Tables);
 	for (it.First(); !it.Is_Done(); it.Next()) {
-		if (stricmp(it.Peek_Obj()->Get_Name(),name) == 0) {
+		if (_stricmp(it.Peek_Obj()->Get_Name(),name) == 0) {
 			return it.Get_Obj(); // add a reference for the user...
 		}
 	}

@@ -369,12 +369,12 @@ void WeaponTemplate::reset( void )
 
 	const char* token = ini->getNextTokenOrNull(ini->getSepsColon());
 
-	if( stricmp(token, MIN_LABEL) == 0 )
+	if( _stricmp(token, MIN_LABEL) == 0 )
 	{
 		// Two entry min/max
 		self->m_minDelayBetweenShots = INI::scanInt(ini->getNextToken(ini->getSepsColon()));
 		token = ini->getNextTokenOrNull(ini->getSepsColon());
-		if( stricmp(token, MAX_LABEL) != 0 )
+		if( _stricmp(token, MAX_LABEL) != 0 )
 		{
 			// Messed up double entry
 			self->m_maxDelayBetweenShots = self->m_minDelayBetweenShots;
@@ -1346,7 +1346,7 @@ void WeaponStore::createAndFireTempWeapon(const WeaponTemplate* wt, const Object
 //-------------------------------------------------------------------------------------------------
 const WeaponTemplate *WeaponStore::findWeaponTemplate( AsciiString name ) const 
 { 
-	if (stricmp(name.str(), "None") == 0)
+	if (_stricmp(name.str(), "None") == 0)
 		return NULL;
 	const WeaponTemplate * wt = findWeaponTemplatePrivate( TheNameKeyGenerator->nameToKey( name ) );
 	DEBUG_ASSERTCRASH(wt != NULL, ("Weapon %s not found!\n",name.str()));
@@ -1405,7 +1405,7 @@ void WeaponStore::update()
 		if (curFrame >= ddi->m_delayDamageFrame)
 		{
 			// we never do projectile-detonation-damage via this code path.
-			const isProjectileDetonation = false;
+			const bool isProjectileDetonation = false;
 			ddi->m_delayedWeapon->dealDamageInternal(ddi->m_delaySourceID, ddi->m_delayIntendedVictimID, &ddi->m_delayDamagePos, ddi->m_bonus, isProjectileDetonation);
 			ddi = m_weaponDDI.erase(ddi);
 		}
@@ -1519,10 +1519,12 @@ void WeaponStore::postProcessLoad()
 		weapon->m_projectileName.clear();
 
 #if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef HAS_BINK
 	if (!weapon->getFireSound().getEventName().isEmpty() && weapon->getFireSound().getEventName().compareNoCase("NoSound") != 0) 
 	{ 
 		DEBUG_ASSERTCRASH(TheAudio->isValidAudioEvent(&weapon->getFireSound()), ("Invalid FireSound %s in Weapon '%s'.", weapon->getFireSound().getEventName().str(), weapon->getName().str())); 
 	}
+#endif
 #endif
 
 }
@@ -1650,7 +1652,7 @@ void Weapon::setClipPercentFull(Real percent, Bool allowReduction)
 		return;
 
 	Int ammo = REAL_TO_INT_FLOOR(m_template->getClipSize() * percent);
-	if (ammo > m_ammoInClip || (allowReduction && ammo < m_ammoInClip))
+	if (ammo > (int)m_ammoInClip || (allowReduction && ammo < (int)m_ammoInClip))
 	{
 		m_ammoInClip = ammo;
 		m_status = m_ammoInClip ? OUT_OF_AMMO : READY_TO_FIRE;
@@ -1666,7 +1668,7 @@ void Weapon::setClipPercentFull(Real percent, Bool allowReduction)
 void Weapon::rebuildScatterTargets()
 {
 	m_scatterTargetsUnused.clear();
-	Int scatterTargetsCount = m_template->getScatterTargetsVector().size();
+	Int scatterTargetsCount = (int)m_template->getScatterTargetsVector().size();
 	if (scatterTargetsCount)
 	{
 		// When I reload, I need to rebuild the list of ScatterTargets to shoot at.
@@ -2335,7 +2337,7 @@ Bool Weapon::privateFireWeapon(
 				victimObj = NULL;
 			}
 			Coord3D targetPos = *victimPos; // need to copy, as this pointer is actually inside somebody potentially
-			Int randomPick = GameLogicRandomValue( 0, m_scatterTargetsUnused.size() - 1 );
+			Int randomPick = GameLogicRandomValue( 0, (int)m_scatterTargetsUnused.size() - 1 );
 			Int targetIndex = m_scatterTargetsUnused[randomPick];
 
 			Real scatterTargetScalar = getScatterTargetScalar();// essentially a radius, but operates only on this scatterTarget table
@@ -2568,7 +2570,7 @@ Int Weapon::getPreAttackDelay( const Object *source, const Object *victim ) cons
 	WeaponPrefireType type = m_template->getPrefireType();
 	if( type == PREFIRE_PER_CLIP )
 	{
-		if( m_template->getClipSize() > 0  &&  m_ammoInClip < m_template->getClipSize() )
+		if( m_template->getClipSize() > 0  && (int)m_ammoInClip < m_template->getClipSize() )
 			return 0;// I only delay once a clip, and this is not the first shot
 	}
 	else if( type == PREFIRE_PER_ATTACK )
@@ -3001,7 +3003,7 @@ void Weapon::crc( Xfer *xfer )
 #endif // DEBUG_CRC
 
 	// scatter targets unused
-	UnsignedShort scatterCount = m_scatterTargetsUnused.size();
+	UnsignedShort scatterCount = (uint16_t)m_scatterTargetsUnused.size();
 	xfer->xferUnsignedShort( &scatterCount );
 #ifdef DEBUG_CRC
 	if (doLogging)
@@ -3128,7 +3130,7 @@ void Weapon::xfer( Xfer *xfer )
 	xfer->xferInt( &m_numShotsForCurBarrel );
 
 	// scatter targets unused
-	UnsignedShort scatterCount = m_scatterTargetsUnused.size();
+	UnsignedShort scatterCount = (uint16_t)m_scatterTargetsUnused.size();
 	xfer->xferUnsignedShort( &scatterCount );
 	Int intData;
 	if( xfer->getXferMode() == XFER_SAVE )	

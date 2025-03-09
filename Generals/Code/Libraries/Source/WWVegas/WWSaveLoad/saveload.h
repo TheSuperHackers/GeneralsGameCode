@@ -48,14 +48,6 @@
 #include "bittype.h"
 #include "slist.h"
 
-class RefCountClass;
-class SaveLoadSubSystemClass;
-class PersistFactoryClass;
-class PersistClass;
-class PostLoadableClass;
-class ChunkSaveClass;
-class ChunkLoadClass;
-
 
 //////////////////////////////////////////////////////////////////////////////////
 //
@@ -138,6 +130,11 @@ class ChunkLoadClass;
 //	SaveLoadSystemClass
 //
 //////////////////////////////////////////////////////////////////////////////////
+class ChunkSaveClass;
+class ChunkLoadClass;
+class SaveLoadSubSystemClass;
+class PostLoadableClass;
+class PersistFactoryClass;
 class SaveLoadSystemClass
 {
 public:

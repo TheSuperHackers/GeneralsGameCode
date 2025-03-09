@@ -170,7 +170,7 @@ Dict::DictPair *Dict::ensureUnique(int numPairsNeeded, Bool preserveData, DictPa
 		// type BOOL, key INVALID, value FALSE.
 		newData = (Dict::DictPairData*)TheDynamicMemoryAllocator->allocateBytes(actualBytes, "Dict::ensureUnique");
 		newData->m_refCount = 1;
-		newData->m_numPairsAllocated = (actualBytes - sizeof(Dict::DictPairData))/sizeof(Dict::DictPair);
+		newData->m_numPairsAllocated = (uint16_t)(actualBytes - sizeof(Dict::DictPairData))/sizeof(Dict::DictPair);
 		newData->m_numPairsUsed = 0;
 
 		if (preserveData && m_data)

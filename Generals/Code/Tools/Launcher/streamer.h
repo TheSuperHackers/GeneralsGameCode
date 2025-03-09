@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <iostream.h>
+#include <iostream>
 #include <string.h>
 
 #include "odevice.h"
@@ -36,7 +36,7 @@
 
 
 // Provide a streambuf interface for a class that can 'print'
-class Streamer : public streambuf
+class Streamer : public std::streambuf
 {
  public:
                Streamer();

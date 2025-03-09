@@ -164,9 +164,11 @@ static void doSetRallyPoint( Object *obj, const Coord3D& pos )
 			TheInGameUI->message( TheGameText->fetch( "GUI:RallyPointNoPath" ) );
 
 			// play the no can do sound
+#ifdef HAS_BINK
 			static AudioEventRTS rallyNotSet("UnableToSetRallyPoint");
 			rallyNotSet.setPosition(&pos);
 			TheAudio->addAudioEvent(&rallyNotSet);
+#endif
 
 		}  // end if
 
@@ -185,10 +187,12 @@ static void doSetRallyPoint( Object *obj, const Coord3D& pos )
 		TheInGameUI->message( info );
 
 		// play a sound for setting the rally point
+#ifdef HAS_BINK
 		static AudioEventRTS rallyPointSet("RallyPointSet");
 		rallyPointSet.setPosition(&pos);
 		rallyPointSet.setPlayerIndex(obj->getControllingPlayer()->getPlayerIndex());
 		TheAudio->addAudioEvent(&rallyPointSet);
+#endif
 
 		// mark the UI as dirty so that we re-evaluate the selection and show the rally point
 		Drawable *draw = obj->getDrawable();
@@ -343,7 +347,7 @@ void GameLogic::prepareNewGame( Int gameMode, GameDifficulty diff, Int rankPoint
 void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 {
 #ifdef _DEBUG
-	DEBUG_ASSERTCRASH(msg != NULL && msg != (GameMessage*)0xdeadbeef, ("bad msg"));
+	DEBUG_ASSERTCRASH(msg != NULL && msg != (GameMessage*)(uintptr_t)0xdeadbeef, ("bad msg"));
 #endif
 
 	Player *thisPlayer = ThePlayerList->getNthPlayer( msg->getPlayerIndex() );
@@ -1394,9 +1398,11 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			// place the sound for putting a building down
 
+#ifdef HAS_BINK
 			static AudioEventRTS placeBuilding(AsciiString("PlaceBuilding"));
 			placeBuilding.setObjectID(constructorObject->getID());
 			TheAudio->addAudioEvent( &placeBuilding );
+#endif
 
 
 // no, this is bad, don't do here, do when POSTING message
@@ -1597,10 +1603,12 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 						TheInGameUI->message( TheGameText->fetch("GUI:TooManyBeacons") );
 
 						// play a sound
+#ifdef HAS_BINK
 						static AudioEventRTS aSound("BeaconPlacementFailed");
 						aSound.setPosition(&pos);
 						aSound.setPlayerIndex(thisPlayer->getPlayerIndex());
 						TheAudio->addAudioEvent(&aSound);
+#endif
 					}
 
 					break;
@@ -1617,10 +1625,12 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					TheInGameUI->message( s );
 
 					// play a sound
+#ifdef HAS_BINK
 					static AudioEventRTS aSound("BeaconPlaced");
 					aSound.setPlayerIndex(thisPlayer->getPlayerIndex());
 					aSound.setPosition(&pos);
 					TheAudio->addAudioEvent(&aSound);
+#endif
 
 					// beacons are a rare event; play a nifty radar event thingie
 					TheRadar->createEvent( object->getPosition(), RADAR_EVENT_INFORMATION );
@@ -1659,10 +1669,12 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				TheInGameUI->message( TheGameText->fetch("GUI:BeaconPlacementFailed") );
 
 				// play a sound
+#ifdef HAS_BINK
 				static AudioEventRTS aSound("BeaconPlacementFailed");
 				aSound.setPosition(&pos);
 				aSound.setPlayerIndex(thisPlayer->getPlayerIndex());
 				TheAudio->addAudioEvent(&aSound);
+#endif
 			}
 			break;
 		} // end beacon placement
@@ -1760,7 +1772,8 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			if (msg->getArgument(0)->boolean)
 			{
 				// transfer control to any living ally
-				for (Int i=0; i<ThePlayerList->getPlayerCount(); ++i)
+				Int i = 0;
+				for (; i<ThePlayerList->getPlayerCount(); ++i)
 				{
 					if (i != msg->getPlayerIndex())
 					{

@@ -77,7 +77,7 @@
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/GameClient/W3DView.h"
-#include "D3dx8math.h"
+#include "D3dx9math.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 #include "W3DDevice/GameClient/W3DCustomScene.h"
@@ -1921,7 +1921,7 @@ Drawable *W3DView::pickDrawable( const ICoord2D *screen, Bool forceAttack, PickT
 	while (window)
 	{
 		// check to see if it or any of its parents are opaque.  If so, we can't select anything.
-		if (!BitTest( window->winGetStatus(), WIN_STATUS_SEE_THRU ))
+		if (!BitTestWW( window->winGetStatus(), WIN_STATUS_SEE_THRU ))
 			return NULL;
 
 		window = window->winGetParent();
@@ -1979,7 +1979,7 @@ void W3DView::screenToTerrain( const ICoord2D *screen, Coord3D *world )
 
 	// We insert them at the end for speed (no copies needed), but using the princ of locality, we should 
 	// start searching where we most recently inserted
-	for (int i = m_locationRequests.size() - 1; i >= 0; --i) {
+	for (int i = (int)m_locationRequests.size() - 1; i >= 0; --i) {
 		if (m_locationRequests[i].first.x == screen->x && m_locationRequests[i].first.y == screen->y) {
 			(*world) = m_locationRequests[i].second;
 			return;

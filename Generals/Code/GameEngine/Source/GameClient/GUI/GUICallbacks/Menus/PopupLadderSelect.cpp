@@ -135,7 +135,7 @@ static void populateLadderListBox( void )
 	GadgetListBoxGetSelected(listboxLadderSelect, &selIndex);
 	if (selIndex < 0)
 		return;
-	selID = (Int)GadgetListBoxGetItemData(listboxLadderSelect, selIndex);
+	selID = (Int)(intptr_t)GadgetListBoxGetItemData(listboxLadderSelect, selIndex);
 	if (!selID)
 		return;
 	updateLadderDetails(selID, staticTextLadderName, listboxLadderDetails);
@@ -291,7 +291,7 @@ WindowMsgHandledType PopupLadderSelectInput( GameWindow *window, UnsignedInt msg
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitTestWW( state, KEY_STATE_UP ) )
 					{
 						switch (s_currentMode)
 						{
@@ -378,7 +378,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 				if (selectPos < 0)
 					break;
 
-				ladderIndex = (Int)GadgetListBoxGetItemData( listboxLadderSelect, selectPos, 0 );
+				ladderIndex = (Int)(intptr_t)GadgetListBoxGetItemData( listboxLadderSelect, selectPos, 0 );
 				const LadderInfo *li = TheLadderList->findLadderByIndex( ladderIndex );
 				if (li && li->cryptedPassword.isNotEmpty())
 				{
@@ -444,7 +444,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 			if (selIndex < 0)
 				break;
 
-			selID = (Int)GadgetListBoxGetItemData(listboxLadderSelect, selIndex);
+			selID = (Int)(intptr_t)GadgetListBoxGetItemData(listboxLadderSelect, selIndex);
 			if (!selID)
 				break;
 
@@ -557,7 +557,8 @@ static void updateLadderDetails( Int selID, GameWindow *staticTextLadderName, Ga
 
 	// factions
 	AsciiStringList validFactions = info->validFactions;
-	for (AsciiStringListIterator it = validFactions.begin(); it != validFactions.end(); ++it)
+	AsciiStringListIterator it = validFactions.begin();
+	for (; it != validFactions.end(); ++it)
 	{
 		AsciiString marker;
 		marker.format("INI:Faction%s", it->str());
@@ -635,7 +636,7 @@ WindowMsgHandledType RCGameDetailsMenuSystem( GameWindow *window, UnsignedInt ms
 			{
 				GameWindow *control = (GameWindow *)mData1;
 				Int controlID = control->winGetWindowId();
-				Int selectedID = (Int)window->winGetUserData();
+				Int selectedID = (Int)(intptr_t)window->winGetUserData();
 				if(!selectedID)
 					break;
 				closeRightClickMenu(window);
@@ -661,7 +662,7 @@ WindowMsgHandledType RCGameDetailsMenuSystem( GameWindow *window, UnsignedInt ms
 							rcMenu->winBringToTop();
 							rcMenu->winHide(FALSE);
 							
-							rcMenu->winSetUserData((void *)selectedID);
+							rcMenu->winSetUserData((void *)(intptr_t)selectedID);
 							TheWindowManager->winSetLoneWindow(rcMenu);
 
 							GameWindow *st = TheWindowManager->winGetWindowFromId(NULL,

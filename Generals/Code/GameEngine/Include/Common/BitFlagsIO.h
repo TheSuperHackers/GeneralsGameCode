@@ -79,7 +79,7 @@ void BitFlags<NUMBITS>::parse(INI* ini, AsciiString* str)
 			str->concat(token);
 		}
 
-		if (stricmp(token, "NONE") == 0)
+		if (_stricmp(token, "NONE") == 0)
 		{
 			if (foundNormal || foundAddOrSub)
 			{

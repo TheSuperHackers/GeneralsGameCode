@@ -317,12 +317,12 @@ Int WaterTracksObj::render(DX8VertexBufferClass	*vertexBuffer, Int batchStart)
 
 	if (batchStart < (WATER_VB_PAGES*WATER_STRIP_X*WATER_STRIP_Y-m_x*m_y))
 	{	//we have room in current VB, append new verts
-		if(vertexBuffer->Get_DX8_Vertex_Buffer()->Lock(batchStart*vertexBuffer->FVF_Info().Get_FVF_Size(),m_x*m_y*vertexBuffer->FVF_Info().Get_FVF_Size(),(unsigned char**)&vb,D3DLOCK_NOOVERWRITE) != D3D_OK)
+		if(vertexBuffer->Get_DX8_Vertex_Buffer()->Lock(batchStart*vertexBuffer->FVF_Info().Get_FVF_Size(),m_x*m_y*vertexBuffer->FVF_Info().Get_FVF_Size(),(void**)&vb,D3DLOCK_NOOVERWRITE) != D3D_OK)
 			return batchStart;
 	}
 	else
 	{	//ran out of room in last VB, request a substitute VB.
-		if(vertexBuffer->Get_DX8_Vertex_Buffer()->Lock(0,m_x*m_y*vertexBuffer->FVF_Info().Get_FVF_Size(),(unsigned char**)&vb,D3DLOCK_DISCARD) != D3D_OK)
+		if(vertexBuffer->Get_DX8_Vertex_Buffer()->Lock(0,m_x*m_y*vertexBuffer->FVF_Info().Get_FVF_Size(),(void**)&vb,D3DLOCK_DISCARD) != D3D_OK)
 			return batchStart;
 		batchStart=0;	//reset start of page to first vertex
 	}
@@ -734,7 +734,7 @@ void WaterTracksRenderSystem::init(void)
 	for( i = 0; i < numModules; i++ )
 	{
 
-		mod = NEW WaterTracksObj;
+		mod = new WaterTracksObj;
 
 		if( mod == NULL )
 		{
@@ -901,7 +901,7 @@ Try improving the fit to vertical surfaces like cliffs.
 	DX8Wrapper::Set_Shader(m_shaderClass);
 
 	DX8Wrapper::Set_Vertex_Buffer(m_vertexBuffer);
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZBIAS,8);
+	DX8Wrapper::Set_DX8_Render_State(D3DRS_DEPTHBIAS,8 * -0.000005f);
 
 	Int LastTextureType=-1;
 
@@ -919,7 +919,7 @@ Try improving the fit to vertical surfaces like cliffs.
 		mod = mod->m_nextSystem;
 	}	//while (mod)
 
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZBIAS,0);
+	DX8Wrapper::Set_DX8_Render_State(D3DRS_DEPTHBIAS,0);
 }
 
 WaterTracksObj *WaterTracksRenderSystem::findTrack(Vector2 &start, Vector2 &end, waveType type)
@@ -946,7 +946,7 @@ void WaterTracksRenderSystem::saveTracks(void)
 	char path[256];
 
 	strcpy(path,fileName.str());
-	Int len=strlen(path);
+	Int len=(int)strlen(path);
 
 	strcpy(path+len-4,".wak");
 
@@ -984,7 +984,7 @@ void WaterTracksRenderSystem::loadTracks(void)
 	char path[256];
 
 	strcpy(path,fileName.str());
-	Int len=strlen(path);
+	Int len=(int)strlen(path);
 
 	strcpy(path+len-4,".wak");
 
@@ -1098,7 +1098,7 @@ static void TestWaterUpdate(void)
 	{	//create the system
 		doInit=0;
 
-//		TheWaterTracksRenderSystem = NEW (WaterTracksRenderSystem);
+//		TheWaterTracksRenderSystem = new (WaterTracksRenderSystem);
 //		TheWaterTracksRenderSystem->init();
 
 		//create a dummy track

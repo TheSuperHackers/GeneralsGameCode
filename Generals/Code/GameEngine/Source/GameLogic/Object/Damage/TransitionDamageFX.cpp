@@ -86,7 +86,7 @@ static void parseFXLocInfo( INI *ini, void *instance, FXLocInfo *locInfo )
 {
 	const char *token = ini->getNextToken( ini->getSepsColon() );
 
-	if( stricmp( token, "bone" ) == 0 )
+	if( _stricmp( token, "bone" ) == 0 )
 	{
 
 		// save bone name and location type
@@ -99,7 +99,7 @@ static void parseFXLocInfo( INI *ini, void *instance, FXLocInfo *locInfo )
 		// when picking an effect position.  If it's no, the bone name is assumed to be explicit
 		//
 		token = ini->getNextToken( ini->getSepsColon() );
-		if( stricmp( token, "randombone" ) != 0 )
+		if( _stricmp( token, "randombone" ) != 0 )
 		{
 
 			DEBUG_CRASH(( "parseFXLocInfo: Bone name not followed by RandomBone specifier\nPress IGNORE to see which INI file and line # is incorrect." ));
@@ -111,7 +111,7 @@ static void parseFXLocInfo( INI *ini, void *instance, FXLocInfo *locInfo )
 		ini->parseBool( ini, instance, &locInfo->randomBone, NULL );
 
 	}  // end if
-	else if( stricmp( token, "loc" ) == 0 )
+	else if( _stricmp( token, "loc" ) == 0 )
 	{
 
 		// save location and location type
@@ -146,7 +146,7 @@ void TransitionDamageFXModuleData::parseFXList( INI *ini, void *instance,
 
 	// make sure we have an "FXList:" token
 	token = ini->getNextToken( ini->getSepsColon() );
-	if( stricmp( token, "fxlist" ) != 0 )
+	if( _stricmp( token, "fxlist" ) != 0 )
 	{
 
 		// error
@@ -174,7 +174,7 @@ void TransitionDamageFXModuleData::parseObjectCreationList( INI *ini, void *inst
 
 	// make sure we have an "OCL:" token
 	token = ini->getNextToken( ini->getSepsColon() );
-	if( stricmp( token, "ocl" ) != 0 )
+	if( _stricmp( token, "ocl" ) != 0 )
 	{
 
 		// error
@@ -202,7 +202,7 @@ void TransitionDamageFXModuleData::parseParticleSystem( INI *ini, void *instance
 
 	// make sure we have an "PSys:" token
 	token = ini->getNextToken( ini->getSepsColon() );
-	if( stricmp( token, "psys" ) != 0 )
+	if( _stricmp( token, "psys" ) != 0 )
 	{
 
 		// error

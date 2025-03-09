@@ -48,7 +48,9 @@
 #include "W3DDevice/GameClient/W3DGameWindowManager.h"
 #include "W3DDevice/GameClient/W3DGameFont.h"
 #include "W3DDevice/GameClient/W3DDisplayStringManager.h"
+#ifdef HAS_BINK
 #include "VideoDevice/Bink/BinkVideoPlayer.h"
+#endif
 #include "Win32Device/GameClient/Win32DIKeyboard.h"
 #include "Win32Device/GameClient/Win32DIMouse.h"
 #include "Win32Device/GameClient/Win32Mouse.h"
@@ -110,7 +112,9 @@ protected:
   /// Manager for display strings
 	virtual DisplayStringManager *createDisplayStringManager( void ) { return NEW W3DDisplayStringManager; }
 
+#if HAS_BINK
 	virtual VideoPlayerInterface *createVideoPlayer( void ) { return NEW BinkVideoPlayer; }
+#endif
 	/// factory for creating the TerrainVisual
 	virtual TerrainVisual *createTerrainVisual( void ) { return NEW W3DTerrainVisual; }
 
@@ -122,7 +126,7 @@ inline Keyboard *W3DGameClient::createKeyboard( void ) { return NEW DirectInputK
 inline Mouse *W3DGameClient::createMouse( void )
 {
 	//return new DirectInputMouse;
-	Win32Mouse * mouse = NEW W3DMouse;
+	Win32Mouse * mouse = new W3DMouse;
 	TheWin32Mouse = mouse;   ///< global cheat for the WndProc()
 	return mouse;
 }

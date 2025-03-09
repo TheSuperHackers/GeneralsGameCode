@@ -310,7 +310,7 @@ public:
 			CWy = dx * s + dy * c + dy;
 		}
 		
-		for( Int formationIndex = 0; formationIndex < m_formationSize; formationIndex++ )
+		for( Int formationIndex = 0; formationIndex < (int)m_formationSize; formationIndex++ )
 		{
 			Coord3D offset;
 			offset.zero();
@@ -934,7 +934,7 @@ protected:
 					di->setModelName(modelName, m_okToChangeModelColor ? obj->getIndicatorColor() : 0, m_shadowType);
 					if (m_animSets.size() > 0)
 					{
-						Int which = GameLogicRandomValue(0, m_animSets.size()-1);
+						Int which = GameLogicRandomValue(0, (int)m_animSets.size()-1);
 						di->setAnimNames(m_animSets[which].m_animInitial, m_animSets[which].m_animFlying, m_animSets[which].m_animFinal, m_fxFinal);
 					}
 				}
@@ -1001,7 +1001,7 @@ protected:
 			obj->goInvulnerable( m_invulnerableTime ); 
 		}
 
-		if( BitTest( m_disposition, INHERIT_VELOCITY ) && sourceObj )
+		if( BitTestWW( m_disposition, INHERIT_VELOCITY ) && sourceObj )
 		{
 			const PhysicsBehavior *sourcePhysics = sourceObj->getPhysics();
 			PhysicsBehavior *objectPhysics = obj->getPhysics();
@@ -1011,7 +1011,7 @@ protected:
 			}
 		}
 
-		if( BitTest( m_disposition, LIKE_EXISTING ) )
+		if( BitTestWW( m_disposition, LIKE_EXISTING ) )
 		{
 			if (mtx)
 				obj->setTransformMatrix(mtx);
@@ -1026,7 +1026,7 @@ protected:
 			}	
 		}
 
-		if( BitTest( m_disposition, ON_GROUND_ALIGNED ) )
+		if( BitTestWW( m_disposition, ON_GROUND_ALIGNED ) )
 		{
 			chunkPos.z = 99999.0f;
 			PathfindLayerEnum layer = TheTerrainLogic->getHighestLayerForDestination(&chunkPos);
@@ -1039,7 +1039,7 @@ protected:
 			obj->setPosition(&chunkPos);
 		}
 
-		if( BitTest( m_disposition, SEND_IT_OUT ) )
+		if( BitTestWW( m_disposition, SEND_IT_OUT ) )
 		{
 			obj->setOrientation(GameLogicRandomValueReal(0.0f, 2 * PI));
 			chunkPos.z = TheTerrainLogic->getGroundHeight( chunkPos.x, chunkPos.y );
@@ -1066,7 +1066,7 @@ protected:
 			}
 		}
 
-		if( BitTest( m_disposition, SEND_IT_FLYING | SEND_IT_UP | RANDOM_FORCE ) )
+		if( BitTestWW( m_disposition, SEND_IT_FLYING | SEND_IT_UP | RANDOM_FORCE ) )
 		{
 			if (mtx)
 			{
@@ -1114,7 +1114,7 @@ protected:
 				DUMPREAL(pitch);
 
 				Coord3D force;
-				if( BitTest( m_disposition, SEND_IT_FLYING ) )
+				if( BitTestWW( m_disposition, SEND_IT_FLYING ) )
 				{
 					Real horizForce = 4.0f * m_dispositionIntensity;		// 2
 					Real vertForce = 3.0f * m_dispositionIntensity;		// 3
@@ -1125,7 +1125,7 @@ protected:
 					DUMPREAL(vertForce);
 					DUMPCOORD3D(&force);
 				}
-				else if (BitTest(m_disposition, SEND_IT_UP) )
+				else if (BitTestWW(m_disposition, SEND_IT_UP) )
 				{
 					Real horizForce = 2.0f * m_dispositionIntensity;
 					Real vertForce = 4.0f * m_dispositionIntensity;	
@@ -1162,7 +1162,7 @@ protected:
 
 			}
 		}
-		if( BitTest( m_disposition, WHIRLING ) )
+		if( BitTestWW( m_disposition, WHIRLING ) )
 		{
 			PhysicsBehavior* objUp = obj->getPhysics();
 			if (objUp)
@@ -1177,7 +1177,7 @@ protected:
 			}
 		}
 		
-		if( BitTest( m_disposition, FLOATING ) )
+		if( BitTestWW( m_disposition, FLOATING ) )
 		{
 			static NameKeyType key = NAMEKEY( "FloatUpdate" );
 			FloatUpdate *floatUpdate = (FloatUpdate *)obj->findUpdateModule( key );
@@ -1235,7 +1235,7 @@ protected:
 
 		for (Int nn = 0; nn < m_debrisToGenerate; nn++)
 		{
-			Int pick = GameLogicRandomValue(0, m_names.size() - 1);
+			Int pick = GameLogicRandomValue(0, (int)m_names.size() - 1);
 
 			const ThingTemplate* tmpl;
 			if (m_nameAreObjects)
@@ -1285,6 +1285,7 @@ protected:
 				doStuffToObj( debris, m_names[pick], pos, mtx, orientation, sourceObj, lifetimeFrames );
 			}
 
+#ifdef HAS_BINK
 			if (m_fadeIn) 
 			{
 				AudioEventRTS fadeAudioEvent(m_fadeSoundName);
@@ -1300,6 +1301,7 @@ protected:
 				TheAudio->addAudioEvent(&fadeAudioEvent);
 				debris->getDrawable()->fadeOut(m_fadeFrames);
 			}
+#endif
 		}
 
 		if (container)
@@ -1456,7 +1458,7 @@ ObjectCreationListStore::~ObjectCreationListStore()
 //-------------------------------------------------------------------------------------------------
 const ObjectCreationList *ObjectCreationListStore::findObjectCreationList(const char* name) const
 {
-	if (stricmp(name, "None") == 0)
+	if (_stricmp(name, "None") == 0)
 		return NULL;
 
   ObjectCreationListMap::const_iterator it = m_ocls.find(NAMEKEY(name));

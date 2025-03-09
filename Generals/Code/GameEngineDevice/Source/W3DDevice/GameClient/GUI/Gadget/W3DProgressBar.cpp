@@ -76,21 +76,21 @@ void W3DGadgetProgressBarDraw( GameWindow *window, WinInstanceData *instData )
 {
 	ICoord2D origin, size, start, end;
 	Color backColor, backBorder, barColor, barBorder;
-	Int progress = (Int)window->winGetUserData();
+	intptr_t progress = (intptr_t)window->winGetUserData();
 
 	// get window size and position
   window->winGetScreenPosition( &origin.x, &origin.y );
 	window->winGetSize( &size.x, &size.y );
 
 	// get the right colors to use
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitTestWW( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 		backColor		= GadgetProgressBarGetDisabledColor( window );
 		backBorder	= GadgetProgressBarGetDisabledBorderColor( window );
 		barColor		= GadgetProgressBarGetDisabledBarColor( window );
 		barBorder		= GadgetProgressBarGetDisabledBarBorderColor( window );
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitTestWW( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		backColor		= GadgetProgressBarGetHiliteColor( window );
 		backBorder	= GadgetProgressBarGetHiliteBorderColor( window );
@@ -186,7 +186,7 @@ void W3DGadgetProgressBarImageDrawA( GameWindow *window, WinInstanceData *instDa
 {
 	ICoord2D origin, size;
 	const Image *barCenter, *barRight, *left, *right, *center;
-	Int progress = (Int)window->winGetUserData();
+	intptr_t progress = (intptr_t)window->winGetUserData();
 	Int xOffset, yOffset;
 	Int i;
 	// get window size and position
@@ -229,7 +229,7 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 	ICoord2D origin, size, start, end;
 	const Image *backLeft, *backRight, *backCenter, 
 				 *barRight, *barCenter;//*backSmallCenter,*barLeft,, *barSmallCenter;
-	Int progress = (Int)window->winGetUserData();
+	intptr_t progress = (intptr_t)window->winGetUserData();
 	Int xOffset, yOffset;
 	Int i;
 
@@ -242,7 +242,7 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 	yOffset = instData->m_imageOffset.y;
 
 	// get the right images to use
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitTestWW( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 
 		backLeft				= GadgetProgressBarGetDisabledImageLeft( window );
@@ -255,7 +255,7 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 		//barSmallCenter	= GadgetProgressBarGetDisabledBarImageSmallCenter( window );
 
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitTestWW( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
 		backLeft				= GadgetProgressBarGetHiliteImageLeft( window );

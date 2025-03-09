@@ -377,10 +377,10 @@ void HLodDefClass::Initialize(HLodClass &src_lod)
 	Free ();
 
 	// Copy the name and hierarcy name from the source object
-	Name = ::strdup (src_lod.Get_Name ());
+	Name = (char*)::_strdup (src_lod.Get_Name ());
 	const HTreeClass *phtree = src_lod.Get_HTree ();
 	if (phtree != NULL) {
-		HierarchyTreeName = ::strdup (phtree->Get_Name ());
+		HierarchyTreeName = ::_strdup (phtree->Get_Name ());
 	}
 
 	// Determine the number of LODs in the src object
@@ -406,7 +406,7 @@ void HLodDefClass::Initialize(HLodClass &src_lod)
 				// Record information about this model (if possible)
 				RenderObjClass *prender_obj = src_lod.Peek_Lod_Model (index, model_index);
 				if (prender_obj != NULL) {
-					model_names[model_index] = ::strdup (prender_obj->Get_Name ());
+					model_names[model_index] = ::_strdup (prender_obj->Get_Name ());
 					bone_indicies[model_index] = src_lod.Get_Lod_Model_Bone (index, model_index);
 				} else {
 					model_names[model_index] = NULL;
@@ -659,7 +659,7 @@ bool HLodDefClass::read_header(ChunkLoadClass & cload)
 
 	// Copy the name into our internal variable
 	Name = ::_strdup(header.Name);
-	HierarchyTreeName = ::strdup(header.HierarchyName);
+	HierarchyTreeName = ::_strdup(header.HierarchyName);
 	LodCount = header.LodCount;
 	Lod = W3DNEWARRAY SubObjectArrayClass[LodCount];
 	return true;
@@ -828,7 +828,7 @@ bool HLodDefClass::SubObjectArrayClass::Load_W3D(ChunkLoadClass & cload)
 
 		if (!cload.Close_Chunk()) return false;
 
-		ModelName[imodel] = strdup(subobjdef.Name);
+		ModelName[imodel] = _strdup(subobjdef.Name);
 		BoneIndex[imodel] = subobjdef.BoneIndex;
 	}
 	return true;
@@ -3433,7 +3433,7 @@ void HLodClass::Update_Obj_Space_Bounding_Volumes(void)
 			//
 			//	Does the name match the designator we are looking for?
 			//
-			if (::stricmp (name, "BOUNDINGBOX") == 0) {				
+			if (::_stricmp (name, "BOUNDINGBOX") == 0) {				
 				BoundingBoxIndex = index;
 			}
 		}

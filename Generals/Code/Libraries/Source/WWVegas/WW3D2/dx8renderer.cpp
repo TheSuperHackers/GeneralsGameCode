@@ -269,7 +269,8 @@ void DX8TextureCategoryClass::Remove_Polygon_Renderer(DX8PolygonRendererClass* p
 
 void DX8FVFCategoryContainer::Remove_Texture_Category(DX8TextureCategoryClass* tex_category)
 {
-	for (unsigned pass=0;pass<passes;++pass) {
+	unsigned pass;
+	for (pass=0;pass<passes;++pass) {
 		texture_category_list[pass].Remove(tex_category);
 	}
 	for (pass=0; pass<passes; pass++) {
@@ -2032,7 +2033,8 @@ void DX8MeshRendererClass::Register_Mesh_Type(MeshModelClass* mmc)
 			/*
 			** Search for an existing FVF Category Container that matches this mesh
 			*/
-			for (int i=0;i<texture_category_container_lists_rigid.Count();++i) {
+			int i;
+			for (i=0;i<texture_category_container_lists_rigid.Count();++i) {
 				FVFCategoryList * list=texture_category_container_lists_rigid[i];
 				WWASSERT(list);
 				DX8FVFCategoryContainer * container=list->Peek_Head();
@@ -2119,7 +2121,7 @@ void DX8MeshRendererClass::Add_To_Render_List(DecalMeshClass * decalmesh)
 
 void DX8MeshRendererClass::Render_Decal_Meshes(void)
 {
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZBIAS,8);
+	DX8Wrapper::Set_DX8_Render_State(D3DRS_DEPTHBIAS,8 * -0.000005f);
 	
 	DecalMeshClass * decal_mesh = visible_decal_meshes;
 	while (decal_mesh != NULL) {
@@ -2128,7 +2130,7 @@ void DX8MeshRendererClass::Render_Decal_Meshes(void)
 	}
 	visible_decal_meshes = NULL;
 
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_ZBIAS,0);
+	DX8Wrapper::Set_DX8_Render_State(D3DRS_DEPTHBIAS,0);
 }
 
 // ----------------------------------------------------------------------------

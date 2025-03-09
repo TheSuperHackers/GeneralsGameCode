@@ -94,7 +94,7 @@ public:
 	void	Deleta_All_Values( void );
 
 private:
-	int	Key;
+	intptr_t	Key;
 	bool	IsValid;
 };
 

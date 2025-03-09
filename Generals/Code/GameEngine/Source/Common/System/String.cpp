@@ -166,7 +166,7 @@ const WSYS_String&	WSYS_String::operator= (const Char *string)
 
 const WSYS_String&	WSYS_String::operator+= (const WSYS_String &string)
 {
-	Char *buffer = MSGNEW("WSYS_String") Char [ length() + string.length() + 1 ];		// pool[]ify
+	Char *buffer = new Char [ length() + string.length() + 1 ];		// pool[]ify
 
 	if ( buffer != NULL )
 	{
@@ -187,7 +187,7 @@ const WSYS_String&	WSYS_String::operator+= (const Char *string)
 {
 	if ( string != NULL )
 	{
-		Char *buffer = MSGNEW("WSYS_String") Char [ length() + strlen( string ) + 1 ];	
+		Char *buffer = new Char [ length() + strlen( string ) + 1 ];	
 
 		if ( buffer != NULL )
 		{
@@ -241,7 +241,7 @@ WSYS_String	operator+ (const WSYS_String &string1, const Char *string2)
 
 Int WSYS_String::length(void) const
 {
-	return strlen( m_data );
+	return (int)strlen( m_data );
 }
 
 //============================================================================
@@ -260,7 +260,7 @@ Bool WSYS_String::isEmpty(void) const
 Int _cdecl WSYS_String::format(const Char *format, ...)
 {
 	Int result = 0;
-	char *buffer = MSGNEW("WSYS_String") char[100*1024];
+	char *buffer = new char[100*1024];
 
 	if ( buffer )
 	{
@@ -292,7 +292,7 @@ void WSYS_String::set( const Char *string )
 		string = "";
 	}
 
-	m_data = MSGNEW("WSYS_String") Char [ strlen(string) + 1];
+	m_data = new Char [ strlen(string) + 1];
 	strcpy ( m_data, string );
 }
 

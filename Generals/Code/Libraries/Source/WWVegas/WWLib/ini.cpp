@@ -437,7 +437,7 @@ int INIClass::Load(Straw & ffile)
 			char * ptr = strchr(buffer, ']');
 			if (ptr != NULL) *ptr = '\0';
 			strtrim(buffer);
-			INISection * secptr = W3DNEW INISection(strdup(buffer));
+			INISection * secptr = W3DNEW INISection(_strdup(buffer));
 			if (secptr == NULL) {
 				Clear();
 				return(false);
@@ -483,7 +483,7 @@ int INIClass::Load(Straw & ffile)
 					divider = " ";
 
 
-				INIEntry * entryptr = W3DNEW INIEntry(strdup(buffer), strdup(divider));
+				INIEntry * entryptr = W3DNEW INIEntry(_strdup(buffer), _strdup(divider));
 				if (entryptr == NULL) {
 					delete secptr;
 					Clear();
@@ -600,19 +600,19 @@ int INIClass::Save(Pipe & pipe) const
 		**	Output the section identifier.
 		*/
 		total += pipe.Put("[", 1);
-		total += pipe.Put(secptr->Section, strlen(secptr->Section));
+		total += pipe.Put(secptr->Section, (int)strlen(secptr->Section));
 		total += pipe.Put("]", 1);
-		total += pipe.Put(EOL, strlen(EOL));
+		total += pipe.Put(EOL, (int)strlen(EOL));
 
 		/*
 		**	Output all the entries and values in this section.
 		*/
 		INIEntry * entryptr = secptr->EntryList.First();
 		while (entryptr && entryptr->Is_Valid()) {
-			total += pipe.Put(entryptr->Entry, strlen(entryptr->Entry));
+			total += pipe.Put(entryptr->Entry, (int)strlen(entryptr->Entry));
 			total += pipe.Put("=", 1);
-			total += pipe.Put(entryptr->Value, strlen(entryptr->Value));
-			total += pipe.Put(EOL, strlen(EOL));
+			total += pipe.Put(entryptr->Value, (int)strlen(entryptr->Value));
+			total += pipe.Put(EOL, (int)strlen(EOL));
 
 			entryptr = entryptr->Next();
 		}
@@ -621,7 +621,7 @@ int INIClass::Save(Pipe & pipe) const
 		**	After the last entry in this section, output an extra
 		**	blank line for readability purposes.
 		*/
-		total += pipe.Put(EOL, strlen(EOL));
+		total += pipe.Put(EOL, (int)strlen(EOL));
 
 		secptr = secptr->Next();
 	}
@@ -947,7 +947,7 @@ bool INIClass::Put_TextBlock(char const * section, char const * text)
 		/*
 		**	Scan backward looking for a good break position.
 		*/
-		int count = strlen(buffer);
+		int count = (int)strlen(buffer);
 		if (count > 0) {
 			if (count >= 75) {
 				while (count) {
@@ -1021,7 +1021,7 @@ int INIClass::Get_TextBlock(char const * section, char * buffer, int len) const
 
 		Get_String(section, Get_Entry(section, index), "", buffer, len);
 
-		int partial = strlen(buffer);
+		int partial = (int)strlen(buffer);
 		total += partial;
 		buffer += partial;
 		len -= partial;
@@ -1349,7 +1349,7 @@ bool INIClass::Put_String(char const * section, char const * entry, char const *
 	INISection * secptr = Find_Section(section);
 
 	if (secptr == NULL) {
-		secptr = W3DNEW INISection(strdup(section));
+		secptr = W3DNEW INISection(_strdup(section));
 		if (secptr == NULL) return(false);
 		SectionList->Add_Tail(secptr);
 		SectionIndex->Add_Index(secptr->Index_ID(), secptr);
@@ -1375,7 +1375,7 @@ bool INIClass::Put_String(char const * section, char const * entry, char const *
 	**	Create and add the new entry.
 	*/
 	if (string != NULL && strlen(string) > 0) {
-		entryptr = W3DNEW INIEntry(strdup(entry), strdup(string));
+		entryptr = W3DNEW INIEntry(_strdup(entry), _strdup(string));
 
 		if (entryptr == NULL) {
 			return(false);
@@ -1442,7 +1442,7 @@ int INIClass::Get_String(char const * section, char const * entry, char const * 
 		strncpy(buffer, defvalue, size);
 		buffer[size-1] = '\0';
 		strtrim(buffer);
-		return(strlen(buffer));
+		return((int)strlen(buffer));
 	}
 }
 
@@ -1509,7 +1509,7 @@ char *INIClass::Get_Alloc_String(char const * section, char const * entry, char 
 	}
 
 	if (defvalue == NULL) return NULL;
-	return(strdup(defvalue));
+	return(_strdup(defvalue));
 }
 
 int INIClass::Get_List_Index(char const * section, char const * entry, int const defvalue, char *list[])
@@ -1522,7 +1522,7 @@ int INIClass::Get_List_Index(char const * section, char const * entry, int const
 	}
 
 	for (int lp = 0; list[lp]; lp++) {
-		if (stricmp(entryptr->Value, list[lp]) == 0) {
+		if (_stricmp(entryptr->Value, list[lp]) == 0) {
 			return lp;
 		}
 		assert(lp < 1000);
@@ -1541,14 +1541,14 @@ int INIClass::Get_Int_Bitfield(char const * section, char const * entry, int def
 	// get the bitfield value for each piece.
 	// int count	= 0; (gth) initailized but not referenced...
 	int retval	= 0;
-	char *str	= strdup(entryptr->Value);
+	char *str	= _strdup(entryptr->Value);
 
    int lp; 
 	for (char *token = strtok(str, "|+"); token; token = strtok(NULL, "|+")) {
 		for (lp = 0; list[lp]; lp++) {
 			// if this list entry matches our string token then we need
 			// to set this bit.
-			if (stricmp(token, list[lp]) == 0) {
+			if (_stricmp(token, list[lp]) == 0) {
 				retval |= (1 << lp);
 				break;
 			}
@@ -1576,7 +1576,7 @@ int *	INIClass::Get_Alloc_Int_Array(char const * section, char const * entry, in
 	// count all the tokens in the string.  Each token should represent an
 	// integer number.
 	int count = 0;
-	char *str = strdup(entryptr->Value);
+	char *str = _strdup(entryptr->Value);
 	char *token;
 	for (token = strtok(str, " "); token; token = strtok(NULL, " ")) {
 		count++;
@@ -1587,7 +1587,7 @@ int *	INIClass::Get_Alloc_Int_Array(char const * section, char const * entry, in
 	// array to hold the tokens and parse out the actual values.
 	retval	= W3DNEWARRAY int[count+1];
 	count		= 0;
-	str		= strdup(entryptr->Value);
+	str		= _strdup(entryptr->Value);
 	for (token = strtok(str, " "); token; token = strtok(NULL, " ")) {
 		retval[count] = atoi(token);
 		count++;

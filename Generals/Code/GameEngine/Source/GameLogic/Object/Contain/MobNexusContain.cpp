@@ -187,7 +187,7 @@ Bool MobNexusContain::isValidContainerFor(const Object* rider, Bool checkCapacit
 
 	if (checkCapacity)
 	{
-		return (m_extraSlotsInUse + getContainCount() + mobNexusSlotCount <= getContainMax());
+		return ((int)(m_extraSlotsInUse + getContainCount() + mobNexusSlotCount) <= getContainMax());
 	}
 	else
 	{
@@ -208,7 +208,7 @@ void MobNexusContain::onContaining( Object *rider )
 
 	DEBUG_ASSERTCRASH(mobNexusSlotCount > 0, ("Hmm, this object isnt MobNexusable"));
 	m_extraSlotsInUse += mobNexusSlotCount - 1;
-	DEBUG_ASSERTCRASH(m_extraSlotsInUse >= 0 && m_extraSlotsInUse + getContainCount() <= getContainMax(), ("Hmm, bad slot count"));
+	DEBUG_ASSERTCRASH(m_extraSlotsInUse >= 0 && (int)(m_extraSlotsInUse + getContainCount()) <= getContainMax(), ("Hmm, bad slot count"));
 
 	//
 	// when we go from holding nothing to holding something we have a model condition
@@ -279,7 +279,7 @@ void MobNexusContain::onRemoving( Object *rider )
 	Int mobNexusSlotCount = rider->getTransportSlotCount();
 	DEBUG_ASSERTCRASH(mobNexusSlotCount > 0, ("This object isnt MobNexusable"));
 	m_extraSlotsInUse -= mobNexusSlotCount - 1;
-	DEBUG_ASSERTCRASH(m_extraSlotsInUse >= 0 && m_extraSlotsInUse + getContainCount() <= getContainMax(), ("Bad slot count, MobNexus"));
+	DEBUG_ASSERTCRASH(m_extraSlotsInUse >= 0 && (int)(m_extraSlotsInUse + getContainCount()) <= getContainMax(), ("Bad slot count, MobNexus"));
 
 	// when we are empty again, clear the model condition for loaded
 	if( getContainCount() == 0 )

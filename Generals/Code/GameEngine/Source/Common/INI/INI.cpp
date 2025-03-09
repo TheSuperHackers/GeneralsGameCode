@@ -129,7 +129,9 @@ static const BlockParse theTypeTable[] =
 	{ "ShellMenuScheme",		INI::parseShellMenuSchemeDefinition },
 	{ "Terrain",						INI::parseTerrainDefinition },
 	{ "Upgrade",						INI::parseUpgradeDefinition },
+#ifdef HAS_BINK
 	{ "Video",							INI::parseVideoDefinition },
+#endif
 	{ "WaterSet",						INI::parseWaterSettingDefinition },
 	{ "WaterTransparency",	INI::parseWaterTransparencyDefinition},
 	{ "Weapon",							INI::parseWeaponTemplateDefinition },
@@ -153,7 +155,7 @@ Bool INI::isValidINIFilename( const char *filename )
 	if( filename == NULL )
 		return FALSE;
 
-	Int len = strlen( filename );
+	Int len = (int)strlen( filename );
 	if( len < 3 )
 		return FALSE;
 
@@ -314,14 +316,15 @@ static INIBlockParse findBlockParse(const char* token)
 }
 
 //-------------------------------------------------------------------------------------------------
-static INIFieldParseProc findFieldParse(const FieldParse* parseTable, const char* token, int& offset, const void*& userData)
+static INIFieldParseProc findFieldParse(const FieldParse* parseTable, const char* token, int& offset, void*& userData)
 {
-	for (const FieldParse* parse = parseTable; parse->token; ++parse)
+	const FieldParse* parse = parseTable;
+	for (; parse->token; ++parse)
 	{
 		if (strcmp( parse->token, token ) == 0)
 		{
 			offset = parse->offset;
-			userData = parse->userData;
+			userData = (void*)parse->userData;
 			return parse->parse;
 		}
 	}
@@ -329,7 +332,7 @@ static INIFieldParseProc findFieldParse(const FieldParse* parseTable, const char
 	if (!parse->token && parse->parse) 
 	{
 		offset = parse->offset;
-		userData = token;
+		userData = (void*)token;
 		return parse->parse;
 	}
 	else
@@ -489,7 +492,7 @@ void INI::readLine( void )
 
 	if (s_xfer)
 	{
-		s_xfer->xferUser( m_buffer, sizeof( char ) * strlen( m_buffer ) );
+		s_xfer->xferUser( m_buffer, (int)(sizeof( char ) * strlen( m_buffer )) );
 		//DEBUG_LOG(("Xfer val is now 0x%8.8X in %s, line %s\n", ((XferCRC *)s_xfer)->getCRC(),
 			//m_filename.str(), m_buffer));
 	}
@@ -629,7 +632,7 @@ void INI::parseBool( INI* ini, void * /*instance*/, void *store, const void* /*u
 void INI::parseBitInInt32( INI *ini, void *instance, void *store, const void* userData )
 {
 	UnsignedInt* s = (UnsignedInt*)store;
-	UnsignedInt mask = (UnsignedInt)userData;
+	UnsignedInt mask = (UnsignedInt)(uintptr_t)userData;
 
 	if (INI::scanBool(ini->getNextToken()))
 		*s |= mask;
@@ -642,9 +645,9 @@ void INI::parseBitInInt32( INI *ini, void *instance, void *store, const void* us
 /*static*/ Bool INI::scanBool(const char* token)
 {
 	// translate string yes/no into TRUE/FALSE
-	if( stricmp( token, "yes" ) == 0 )
+	if( _stricmp( token, "yes" ) == 0 )
 		return TRUE;
-	else if( stricmp( token, "no" ) == 0 )
+	else if( _stricmp( token, "no" ) == 0 )
 		return FALSE;
 	else
 	{
@@ -709,7 +712,7 @@ void INI::parseAsciiStringVectorAppend( INI* ini, void * /*instance*/, void *sto
 	asv->clear();
 	for (const char *token = ini->getNextTokenOrNull(); token != NULL; token = ini->getNextTokenOrNull())
 	{
-		if (stricmp(token, "None") == 0)
+		if (_stricmp(token, "None") == 0)
 		{
 			asv->clear();
 			return;
@@ -723,7 +726,7 @@ void INI::parseAsciiStringVectorAppend( INI* ini, void * /*instance*/, void *sto
 AsciiString INI::getNextQuotedAsciiString()
 {
 	AsciiString result;
-	char buff[INI_MAX_CHARS_PER_LINE];
+	char buff[INI_MAX_CHARS_PER_LINE] = { 0 };
 
 	const char *token = getNextTokenOrNull();	// if null, just leave an empty string
 	if (token != NULL)
@@ -736,7 +739,7 @@ AsciiString INI::getNextQuotedAsciiString()
 		else
 		{	int strLen=0;
 			Bool done=FALSE;
-			if ((strLen=strlen(token)) > 1)
+			if ((strLen=(int)strlen(token)) > 1)
 			{
 				strcpy(buff, &token[1]);	//skip the starting quote
 				//Check for end of quoted string.  Checking here fixes cases where quoted string on same line with other data.
@@ -756,7 +759,7 @@ AsciiString INI::getNextQuotedAsciiString()
 					strcat(buff, token);
 				}
 				else
-				{	Int buflen=strlen(buff);
+				{	Int buflen=(int)strlen(buff);
 					if (buff[buflen-1]=='\"')
 						buff[buflen-1]='\0';
 				}
@@ -918,7 +921,7 @@ void INI::parseBitString32( INI* ini, void * /*instance*/, void *store, const vo
 	// loop through all tokens
 	for (const char *token = ini->getNextTokenOrNull(); token != NULL; token = ini->getNextTokenOrNull())
 	{
-		if (stricmp(token, "NONE") == 0)
+		if (_stricmp(token, "NONE") == 0)
 		{
 			if (foundNormal || foundAddOrSub)
 			{
@@ -1024,7 +1027,7 @@ void INI::parseRGBAColorInt( INI* ini, void * /*instance*/, void *store, const v
 		else
 		{
 			// if present, the token must match.
-			if (stricmp(token, names[i]) != 0)
+			if (_stricmp(token, names[i]) != 0)
 			{
 				throw INI_INVALID_DATA;				
 			}
@@ -1076,7 +1079,7 @@ void INI::parseColorInt( INI* ini, void * /*instance*/, void *store, const void*
 		else
 		{
 			// if present, the token must match.
-			if (stricmp(token, names[i]) != 0)
+			if (_stricmp(token, names[i]) != 0)
 			{
 				throw INI_INVALID_DATA;				
 			}
@@ -1146,7 +1149,7 @@ void INI::parseDynamicAudioEventRTS( INI *ini, void * /*instance*/, void *store,
 	DynamicAudioEventRTS** theSound = (DynamicAudioEventRTS**)store;
 	
 	// translate the string into a sound
-	if (stricmp(token, "NoSound") == 0) 
+	if (_stricmp(token, "NoSound") == 0) 
 	{
 		if (*theSound)
 		{
@@ -1160,9 +1163,11 @@ void INI::parseDynamicAudioEventRTS( INI *ini, void * /*instance*/, void *store,
 			*theSound = newInstance(DynamicAudioEventRTS);
 		(*theSound)->m_event.setEventName(AsciiString(token));
 	}
-	
+
+#ifdef HAS_BINK
 	if (*theSound)
 		TheAudio->getInfoForAudioEvent(&(*theSound)->m_event);
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1175,11 +1180,13 @@ void INI::parseAudioEventRTS( INI *ini, void * /*instance*/, void *store, const 
 	AudioEventRTS *theSound = (AudioEventRTS*)store;
 	
 	// translate the string into a sound
-	if (stricmp(token, "NoSound") != 0) {
+	if (_stricmp(token, "NoSound") != 0) {
 		theSound->setEventName(AsciiString(token));
 	}
 
+#ifdef HAS_BINK
 	TheAudio->getInfoForAudioEvent(theSound);
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1198,7 +1205,7 @@ void INI::parseThingTemplate( INI* ini, void * /*instance*/, void *store, const 
 	typedef const ThingTemplate *ConstThingTemplatePtr;
 	ConstThingTemplatePtr* theThingTemplate = (ConstThingTemplatePtr*)store;		
 
-	if (stricmp(token, "None") == 0)
+	if (_stricmp(token, "None") == 0)
 	{
 		*theThingTemplate = NULL;
 	}
@@ -1222,7 +1229,7 @@ void INI::parseArmorTemplate( INI* ini, void * /*instance*/, void *store, const 
 	typedef const ArmorTemplate *ConstArmorTemplatePtr;
 	ConstArmorTemplatePtr* theArmorTemplate = (ConstArmorTemplatePtr*)store;		
 
-	if (stricmp(token, "None") == 0)
+	if (_stricmp(token, "None") == 0)
 	{
 		*theArmorTemplate = NULL;
 	}
@@ -1247,7 +1254,7 @@ void INI::parseWeaponTemplate( INI* ini, void * /*instance*/, void *store, const
 	ConstWeaponTemplatePtr* theWeaponTemplate = (ConstWeaponTemplatePtr*)store;		
 
 	const WeaponTemplate *tt = TheWeaponStore->findWeaponTemplate(token);	// could be null!
-	DEBUG_ASSERTCRASH(tt || stricmp(token, "None") == 0, ("WeaponTemplate %s not found!\n",token));
+	DEBUG_ASSERTCRASH(tt || _stricmp(token, "None") == 0, ("WeaponTemplate %s not found!\n",token));
 	// assign it, even if null!
 	*theWeaponTemplate = tt;
 
@@ -1264,7 +1271,7 @@ void INI::parseFXList( INI* ini, void * /*instance*/, void *store, const void* /
 	ConstFXListPtr* theFXList = (ConstFXListPtr*)store;		
 
 	const FXList *fxl = TheFXListStore->findFXList(token);	// could be null!
-	DEBUG_ASSERTCRASH(fxl != NULL || stricmp(token, "None") == 0, ("FXList %s not found!\n",token));
+	DEBUG_ASSERTCRASH(fxl != NULL || _stricmp(token, "None") == 0, ("FXList %s not found!\n",token));
 	// assign it, even if null!
 	*theFXList = fxl;
 
@@ -1278,7 +1285,7 @@ void INI::parseParticleSystemTemplate( INI *ini, void * /*instance*/, void *stor
 	const char *token = ini->getNextToken();
 
 	const ParticleSystemTemplate *pSystemT = TheParticleSystemManager->findTemplate( AsciiString( token ) );
-	DEBUG_ASSERTCRASH( pSystemT || stricmp( token, "None" ) == 0, ("ParticleSystem %s not found!\n",token) );
+	DEBUG_ASSERTCRASH( pSystemT || _stricmp( token, "None" ) == 0, ("ParticleSystem %s not found!\n",token) );
 
 	typedef const ParticleSystemTemplate* ConstParticleSystemTemplatePtr;
 	ConstParticleSystemTemplatePtr* theParticleSystemTemplate = (ConstParticleSystemTemplatePtr*)store;		
@@ -1297,7 +1304,7 @@ void INI::parseDamageFX( INI* ini, void * /*instance*/, void *store, const void*
 	typedef const DamageFX *ConstDamageFXPtr;
 	ConstDamageFXPtr* theDamageFX = (ConstDamageFXPtr*)store;		
 
-	if (stricmp(token, "None") == 0)
+	if (_stricmp(token, "None") == 0)
 	{
 		*theDamageFX = NULL;
 	}
@@ -1322,7 +1329,7 @@ void INI::parseObjectCreationList( INI* ini, void * /*instance*/, void *store, c
 	ConstObjectCreationListPtr* theObjectCreationList = (ConstObjectCreationListPtr*)store;		
 
 	const ObjectCreationList *ocl = TheObjectCreationListStore->findObjectCreationList(token);	// could be null!
-	DEBUG_ASSERTCRASH(ocl || stricmp(token, "None") == 0, ("ObjectCreationList %s not found!\n",token));
+	DEBUG_ASSERTCRASH(ocl || _stricmp(token, "None") == 0, ("ObjectCreationList %s not found!\n",token));
 	// assign it, even if null!
 	*theObjectCreationList = ocl;
 
@@ -1342,7 +1349,7 @@ void INI::parseUpgradeTemplate( INI* ini, void * /*instance*/, void *store, cons
 	}
 
 	const UpgradeTemplate *uu = TheUpgradeCenter->findUpgrade( AsciiString( token ) );
-	DEBUG_ASSERTCRASH( uu || stricmp( token, "None" ) == 0, ("Upgrade %s not found!\n",token) );
+	DEBUG_ASSERTCRASH( uu || _stricmp( token, "None" ) == 0, ("Upgrade %s not found!\n",token) );
 
 	typedef const UpgradeTemplate* ConstUpgradeTemplatePtr;
 	ConstUpgradeTemplatePtr* theUpgradeTemplate = (ConstUpgradeTemplatePtr *)store;		
@@ -1363,7 +1370,7 @@ void INI::parseSpecialPowerTemplate( INI* ini, void * /*instance*/, void *store,
 	}
 
 	const SpecialPowerTemplate *sPowerT = TheSpecialPowerStore->findSpecialPowerTemplate( AsciiString( token ) );
-	DEBUG_ASSERTCRASH( sPowerT || stricmp( token, "None" ) == 0, ("Specialpower %s not found!\n",token) );
+	DEBUG_ASSERTCRASH( sPowerT || _stricmp( token, "None" ) == 0, ("Specialpower %s not found!\n",token) );
 
 	typedef const SpecialPowerTemplate* ConstSpecialPowerTemplatePtr;
 	ConstSpecialPowerTemplatePtr* theSpecialPowerTemplate = (ConstSpecialPowerTemplatePtr *)store;		
@@ -1492,7 +1499,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 		if( field )
 		{
 
-			if( stricmp( field, m_blockEndToken ) == 0 )
+			if( _stricmp( field, m_blockEndToken ) == 0 )
 			{
 				done = TRUE;
 			}
@@ -1628,7 +1635,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 	Int count = 0;
 	for(ConstCharPtrArray name = nameList; *name; name++, count++ )
 	{
-		if( stricmp( *name, token ) == 0 )
+		if( _stricmp( *name, token ) == 0 )
 		{
 			return count;
 		}
@@ -1652,7 +1659,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 	Bool found = false;
 	for( const LookupListRec* lookup = &lookupList[0]; lookup->name; lookup++ )
 	{
-		if( stricmp( lookup->name, token ) == 0 )
+		if( _stricmp( lookup->name, token ) == 0 )
 		{
 			return lookup->value;
 			found = true;
@@ -1670,7 +1677,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 const char* INI::getNextSubToken(const char* expected)
 {
 	const char* token = getNextToken(getSepsColon());
-	if (stricmp(token, expected) != 0)
+	if (_stricmp(token, expected) != 0)
 		throw INI_INVALID_DATA;
 	return getNextToken(getSepsColon());
 }
@@ -1751,12 +1758,12 @@ void INI::parseVeterancyLevelFlags(INI* ini, void* /*instance*/, void* store, co
 	VeterancyLevelFlags flags = VETERANCY_LEVEL_FLAGS_ALL;
 	for (const char* token = ini->getNextToken(); token; token = ini->getNextTokenOrNull())
 	{
-		if (stricmp(token, "ALL") == 0)
+		if (_stricmp(token, "ALL") == 0)
 		{
 			flags = VETERANCY_LEVEL_FLAGS_ALL;
 			continue;
 		}
-		else if (stricmp(token, "NONE") == 0)
+		else if (_stricmp(token, "NONE") == 0)
 		{
 			flags = VETERANCY_LEVEL_FLAGS_NONE;
 			continue;
@@ -1804,12 +1811,12 @@ void INI::parseDamageTypeFlags(INI* ini, void* /*instance*/, void* store, const 
 	DamageTypeFlags flags = DAMAGE_TYPE_FLAGS_ALL;
 	for (const char* token = ini->getNextToken(); token; token = ini->getNextTokenOrNull())
 	{
-		if (stricmp(token, "ALL") == 0)
+		if (_stricmp(token, "ALL") == 0)
 		{
 			flags = DAMAGE_TYPE_FLAGS_ALL;
 			continue;
 		}
-		if (stricmp(token, "NONE") == 0)
+		if (_stricmp(token, "NONE") == 0)
 		{
 			flags = DAMAGE_TYPE_FLAGS_NONE;
 			continue;
@@ -1838,12 +1845,12 @@ void INI::parseDeathTypeFlags(INI* ini, void* /*instance*/, void* store, const v
 	DeathTypeFlags flags = DEATH_TYPE_FLAGS_ALL;
 	for (const char* token = ini->getNextToken(); token; token = ini->getNextTokenOrNull())
 	{
-		if (stricmp(token, "ALL") == 0)
+		if (_stricmp(token, "ALL") == 0)
 		{
 			flags = DEATH_TYPE_FLAGS_ALL;
 			continue;
 		}
-		if (stricmp(token, "NONE") == 0)
+		if (_stricmp(token, "NONE") == 0)
 		{
 			flags = DEATH_TYPE_FLAGS_NONE;
 			continue;
@@ -1892,7 +1899,7 @@ Bool INI::isDeclarationOfType( AsciiString blockType, AsciiString blockName, cha
 		restoreChar = tempBuff[blockTypeLength];
 		tempBuff[blockTypeLength] = 0;
 		
-		if (stricmp(blockType.str(), tempBuff) != 0) {
+		if (_stricmp(blockType.str(), tempBuff) != 0) {
 			retVal = false;
 		}
 
@@ -1910,7 +1917,7 @@ Bool INI::isDeclarationOfType( AsciiString blockType, AsciiString blockName, cha
 		restoreChar = tempBuff[blockNameLength];
 		tempBuff[blockNameLength] = 0;
 		
-		if (stricmp(blockName.str(), tempBuff) != 0) {
+		if (_stricmp(blockName.str(), tempBuff) != 0) {
 			retVal = false;
 		}
 
@@ -1943,7 +1950,7 @@ Bool INI::isEndOfBlock( char *bufferToCheck )
 	// it is important to get through all the checks.
 	
 	static const char* endString = "End";
-	int endStringLength = strlen(endString);
+	int endStringLength = (int)strlen(endString);
 	char restoreChar;
 	char *tempBuff = bufferToCheck;
 	
@@ -1956,7 +1963,7 @@ Bool INI::isEndOfBlock( char *bufferToCheck )
 		restoreChar = tempBuff[endStringLength];
 		tempBuff[endStringLength] = 0;
 		
-		if (stricmp(endString, tempBuff) != 0) {
+		if (_stricmp(endString, tempBuff) != 0) {
 			retVal = false;
 		}
 

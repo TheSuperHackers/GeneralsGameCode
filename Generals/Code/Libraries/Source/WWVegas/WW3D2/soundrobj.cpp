@@ -34,6 +34,7 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#ifdef HAS_BINK
 
 #include "soundrobj.h"
 #include "audiblesound.h"
@@ -765,4 +766,5 @@ SoundRenderObjLoaderClass::Load_W3D (ChunkLoadClass &cload)
 	return prototype;
 }
 
+#endif
 

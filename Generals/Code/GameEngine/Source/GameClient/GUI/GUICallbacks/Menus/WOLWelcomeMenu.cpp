@@ -31,7 +31,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "GameSpy/peer/peer.h"
+#include "peer/peer.h"
 
 #include "Common/GameEngine.h"
 #include "Common/GameSpyMiscPreferences.h"
@@ -716,7 +716,7 @@ WindowMsgHandledType WOLWelcomeMenuInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitTestWW( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
 																							(WindowMsgData)buttonBack, buttonBackID );

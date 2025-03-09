@@ -182,9 +182,11 @@ void CrushDie::onDie( const DamageInfo * damageInfo )
 			// MDC: moving to GameLogicRandomValue.  This does not need to be synced, but having it so makes searches *so* much nicer.
 			if (GameLogicRandomValue(0, 99) < getCrushDieModuleData()->m_crushSoundPercent[crushType])
 			{
+#ifdef HAS_BINK
 				AudioEventRTS crushSound(getCrushDieModuleData()->m_crushSounds[crushType]);
 				crushSound.setObjectID(getObject()->getID());
 				TheAudio->addAudioEvent(&crushSound);
+#endif
 			}
 		}
 		{

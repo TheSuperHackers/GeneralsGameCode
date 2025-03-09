@@ -79,7 +79,7 @@ protected:
 
 private:
 	static void __cdecl Internal_Thread_Function(void*);
-	volatile unsigned long handle;
+	volatile uintptr_t handle;
 	int thread_priority;
 };
 

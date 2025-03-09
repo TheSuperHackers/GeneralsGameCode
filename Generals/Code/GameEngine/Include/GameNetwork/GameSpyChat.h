@@ -31,7 +31,7 @@
 #ifndef __GAMESPYCHAT_H__
 #define __GAMESPYCHAT_H__
 
-#include "GameSpy/Peer/Peer.h"
+#include "Peer/Peer.h"
 
 class GameWindow;
 class WindowLayout;

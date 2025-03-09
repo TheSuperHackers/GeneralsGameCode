@@ -225,7 +225,7 @@ Bool ImagePacker::packImages( void )
 		image = m_imageList[ i ];
 
 		// ignore images that we cannot process
-		if( BitTest( image->m_status, ImageInfo::CANTPROCESS) )
+		if( BitTestWW( image->m_status, ImageInfo::CANTPROCESS) )
 			continue;
 
 		// try to put image on each page
@@ -389,7 +389,7 @@ void ImagePacker::addImagesInDirectory( char *dir )
 				strcmp( item.cFileName, ".." ) )
 		{
 
-			len = strlen( item.cFileName );
+			len = (int)strlen( item.cFileName );
 			if( len > 4 && 
 					item.cFileName[ len - 4 ] == '.' &&
 					(item.cFileName[ len - 3 ] == 't' || item.cFileName[ len - 3 ] == 'T') &&
@@ -414,7 +414,7 @@ void ImagePacker::addImagesInDirectory( char *dir )
 					strcmp( item.cFileName, ".." ) )
 			{
 
-				len = strlen( item.cFileName );
+				len = (int)strlen( item.cFileName );
 				if( len > 4 && 
 						item.cFileName[ len - 4 ] == '.' &&
 						(item.cFileName[ len - 3 ] == 't' || item.cFileName[ len - 3 ] == 'T') &&
@@ -632,7 +632,7 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 	// check to see if path is already in list
 	ImageDirectory *dir;
 	for( dir = m_dirList; dir; dir = dir->m_next )
-		if( stricmp( dir->m_path, path ) == 0 )
+		if( _stricmp( dir->m_path, path ) == 0 )
 			return;  // already in list
 
 	// save our current directory
@@ -654,7 +654,7 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 	}  // end if
 
 	// allocate space for the path
-	Int len = strlen( path );
+	Int len = (int)strlen( path );
 	dir->m_path = new char[ len + 1 ];
 	strcpy( dir->m_path, path );
 	if( dir->m_path == NULL )
@@ -692,7 +692,7 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 				strcmp( item.cFileName, ".." ) )
 		{
 
-			len = strlen( item.cFileName );
+			len = (int)strlen( item.cFileName );
 			if( len > 4 && 
 					item.cFileName[ len - 4 ] == '.' &&
 					(item.cFileName[ len - 3 ] == 't' || item.cFileName[ len - 3 ] == 'T') &&
@@ -712,7 +712,7 @@ void ImagePacker::addDirectory( char *path, Bool subDirs )
 					strcmp( item.cFileName, ".." ) )
 			{
 
-				len = strlen( item.cFileName );
+				len = (int)strlen( item.cFileName );
 				if( len > 4 && 
 						item.cFileName[ len - 4 ] == '.' &&
 						(item.cFileName[ len - 3 ] == 't' || item.cFileName[ len - 3 ] == 'T') &&
@@ -804,7 +804,7 @@ void ImagePacker::addImage( char *path )
 	}  // end if
 
 	// allocate space for the path
-	Int len = strlen( path );
+	Int len = (int)strlen( path );
 	info->m_path = new char[ len + 1 ];
 	strcpy( info->m_path, path );
 	if( info->m_path == NULL )
@@ -840,7 +840,7 @@ void ImagePacker::addImage( char *path )
 
 	}  // end for i
 
-	Int nameLen = strlen( c );
+	Int nameLen = (int)strlen( c );
 	info->m_filenameOnly = new char[ nameLen + 1 ];
 	strcpy( info->m_filenameOnly, c );
 
@@ -899,7 +899,7 @@ Bool ImagePacker::generateINIFile( void )
 	{
 
 		// ignore texture pages that generated errors
-		if( BitTest( page->m_status, TexturePage::PAGE_ERROR ) )
+		if( BitTestWW( page->m_status, TexturePage::PAGE_ERROR ) )
 			continue;
 
 		// go through each image on this page
@@ -922,7 +922,7 @@ Bool ImagePacker::generateINIFile( void )
 							 image->m_pagePos.lo.x, image->m_pagePos.lo.y,
 							 image->m_pagePos.hi.x + 1, image->m_pagePos.hi.y + 1 );
 			fprintf( fp, "  Status = %s\n", 
-							 BitTest( image->m_status, ImageInfo::ROTATED90C ) ? 
+							 BitTestWW( image->m_status, ImageInfo::ROTATED90C ) ? 
 												"ROTATED_90_CLOCKWISE" : "NONE" );
 			fprintf( fp, "End\n\n" );
 
@@ -961,7 +961,7 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 
 		size = GetDlgItemInt( dialog, EDIT_WIDTH, NULL, FALSE );
 		for( val = size; val; val >>= 1 )
-			if( BitTest( val, 0x1 ) )
+			if( BitTestWW( val, 0x1 ) )
 				bitCount++;
 
 		//
@@ -1038,11 +1038,11 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 	GetDlgItemText( dialog, EDIT_FILENAME, m_outputFile, MAX_OUTPUT_FILE_LEN - 1 );
 	
 	// check for illegal characters in the output name
-	Int len = strlen( m_outputFile );
+	Int len = (int)strlen( m_outputFile );
 	for( i = 0; i < len; i++ )
 	{
 		char *illegal = "/\\:*?<>|";
-		Int illegalLen = strlen( illegal );
+		Int illegalLen = (int)strlen( illegal );
 		
 		for( Int j = 0; j < illegalLen; j++ )
 		{
@@ -1072,7 +1072,7 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 	statusMessage( "Gathering Directory Information, Please Wait ..." );
 
 	// add all the image directories specified in the folder listbox
-	Int count = SendDlgItemMessage( dialog, LIST_FOLDERS, LB_GETCOUNT, 0, 0 );
+	LRESULT count = SendDlgItemMessage( dialog, LIST_FOLDERS, LB_GETCOUNT, 0, 0 );
 	char buffer[ _MAX_PATH ];
 	for( i = 0; i < count; i++ )
 	{

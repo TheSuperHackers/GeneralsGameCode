@@ -75,7 +75,7 @@ enum { WIN_COLOR_UNDEFINED = GAME_COLOR_UNDEFINED };
 
 // WindowMsgData --------------------------------------------------------------
 //-----------------------------------------------------------------------------
-typedef UnsignedInt WindowMsgData;
+typedef uintptr_t WindowMsgData;
 
 //-----------------------------------------------------------------------------
 enum WindowMsgHandledType { MSG_IGNORED, MSG_HANDLED };

@@ -73,7 +73,7 @@ protected:
 	File* m_file;
 public:
 	GDIFileStream(File* pFile):m_file(pFile) {};
-	virtual Int read(void *pData, Int numBytes) {
+	virtual intptr_t read(void *pData, intptr_t numBytes) {
 			return(m_file->read(pData, numBytes));
 	};
 };
@@ -743,7 +743,7 @@ Bool WorldHeightMap::ParseHeightMapData(DataChunkInput &file, DataChunkInfo *inf
 	}
 
 	m_dataSize = file.readInt();
-	m_data = MSGNEW("WorldHeightMap_ParseHeightMapData") UnsignedByte[m_dataSize];
+	m_data = new UnsignedByte[m_dataSize];
 	if (m_dataSize <= 0 || (m_dataSize != (m_width*m_height))) {
 		throw ERROR_CORRUPT_FILE_FORMAT	;
 	}
@@ -807,7 +807,7 @@ Bool WorldHeightMap::ParseSizeOnly(DataChunkInput &file, DataChunkInfo *info, vo
 	}
 
 	m_dataSize = file.readInt();
-	m_data = MSGNEW("WorldHeightMap_ParseSizeOnly") UnsignedByte[m_dataSize];
+	m_data = new UnsignedByte[m_dataSize];
 	if (m_dataSize <= 0 || (m_dataSize != (m_width*m_height))) {
 		throw ERROR_CORRUPT_FILE_FORMAT	;
 	}
@@ -896,10 +896,10 @@ Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *inf
 	if (m_dataSize != len) {
 		throw ERROR_CORRUPT_FILE_FORMAT	;
 	}
-	m_tileNdxes = MSGNEW("WorldHeightMap_ParseBlendTileData") Short[m_dataSize];
-	m_cliffInfoNdxes = MSGNEW("WorldHeightMap_ParseBlendTileData") Short[m_dataSize]; 
-	m_blendTileNdxes = MSGNEW("WorldHeightMap_ParseBlendTileData") Short[m_dataSize];
-	m_extraBlendTileNdxes = MSGNEW("WorldHeightMap_ParseBlendTileData") Short[m_dataSize];
+	m_tileNdxes = new  Short[m_dataSize];
+	m_cliffInfoNdxes = new Short[m_dataSize];
+	m_blendTileNdxes = new Short[m_dataSize];
+	m_extraBlendTileNdxes = new Short[m_dataSize];
 	// Note - we have one less cell than the width & height. But for paranoia, allocate
 	// extra row. jba.
 	// 
@@ -908,8 +908,8 @@ Bool WorldHeightMap::ParseBlendTileData(DataChunkInput &file, DataChunkInfo *inf
 
 	m_flipStateWidth=numBytesX;
 
-	m_cellFlipState	= MSGNEW("WorldHeightMap_getTerrainTexture") UnsignedByte[numBytesX*numBytesY];
-	m_cellCliffState	= MSGNEW("WorldHeightMap_getTerrainTexture") UnsignedByte[numBytesX*numBytesY];
+	m_cellFlipState	= new UnsignedByte[numBytesX*numBytesY];
+	m_cellCliffState	= new UnsignedByte[numBytesX*numBytesY];
 	memset(m_cellFlipState,0,numBytesX*numBytesY);	//clear all flags
 	memset(m_cellCliffState,0,numBytesX*numBytesY);	//clear all flags
 
@@ -1203,7 +1203,7 @@ Bool WorldHeightMap::readTiles(InputStream *pStr, TileData **tiles, Int numRows)
 	int i;
 	for (i=0; i<numRows*numRows; i++) {
 		if (tiles[i] == NULL) 
-			tiles[i] = MSGNEW("WorldHeightMap_readTiles") TileData;	
+			tiles[i] = new TileData;	
 	}
 	UnsignedByte buf[4];
 	int repeatCount = 0;
@@ -1956,20 +1956,20 @@ TextureClass *WorldHeightMap::getTerrainTexture(void)
 			pow2Height *=2;
 		}
 		REF_PTR_RELEASE(m_terrainTex);
-		m_terrainTex = MSGNEW("WorldHeightMap_getTerrainTexture") TerrainTextureClass(pow2Height);
+		m_terrainTex = new TerrainTextureClass(pow2Height);
 		m_terrainTexHeight = m_terrainTex->update(this);
 		char buf[64];
 		sprintf(buf, "Base tex height %d\n", pow2Height);
 		DEBUG_LOG((buf));
 		REF_PTR_RELEASE(m_alphaTerrainTex);
-		m_alphaTerrainTex = MSGNEW("WorldHeightMap_getTerrainTexture") AlphaTerrainTextureClass(m_terrainTex);
+		m_alphaTerrainTex = new AlphaTerrainTextureClass(m_terrainTex);
 
 		pow2Height = 1;
 		while (pow2Height<edgeHeight) {
 			pow2Height *=2;
 		}
 		REF_PTR_RELEASE(m_alphaEdgeTex);
-		m_alphaEdgeTex = MSGNEW("WorldHeightMap_getTerrainTexture") AlphaEdgeTextureClass(pow2Height);
+		m_alphaEdgeTex = new AlphaEdgeTextureClass(pow2Height);
 		m_alphaEdgeHeight = m_alphaEdgeTex->update(this);
 
 		//Generate lookup table for determining triangle order in each terrain cell.

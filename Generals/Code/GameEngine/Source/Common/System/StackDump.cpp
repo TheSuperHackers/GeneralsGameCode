@@ -52,7 +52,7 @@ static Bool gsInit=FALSE;
 BOOL (__stdcall *gsSymGetLineFromAddr)(
 		IN  HANDLE                  hProcess,
 		IN  DWORD                   dwAddr,
-		OUT PDWORD                  pdwDisplacement,
+		OUT uintptr_t                  pdwDisplacement,
 		OUT PIMAGEHLP_LINE          Line
 			);
 
@@ -69,6 +69,7 @@ void StackDumpDefaultHandler(const char*line)
 //*****************************************************************************
 void StackDump(void (*callback)(const char*))
 {
+#if 0
 	if (callback == NULL) 
 	{
 		callback = StackDumpDefaultHandler;
@@ -78,6 +79,7 @@ void StackDump(void (*callback)(const char*))
 
 	DWORD myeip,myesp,myebp;
 
+#if 0
 _asm
 {
 MYEIP1:
@@ -88,9 +90,13 @@ MYEIP1:
  mov eax, ebp
  mov dword ptr [myebp] , eax
 }
+#else
+	assert(false);
+#endif
 
 
 	MakeStackTrace(myeip,myesp,myebp, 2, callback);
+#endif
 }
 
 
@@ -113,6 +119,7 @@ void StackDumpFromContext(DWORD eip,DWORD esp,DWORD ebp, void (*callback)(const 
 //*****************************************************************************
 BOOL InitSymbolInfo()
 {
+#if 0
 	if (gsInit == TRUE) 
 		return TRUE;
 
@@ -158,7 +165,7 @@ BOOL InitSymbolInfo()
 		}
 		::SymCleanup(process);
 	}
-
+#endif
 	return(FALSE);
 }
 
@@ -258,6 +265,7 @@ stack_frame.AddrFrame.Offset = myebp;
 //*****************************************************************************
 void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* linenumber, unsigned int* address)
 {
+#if 0
 	InitSymbolInfo();
 	if (name)
 	{
@@ -276,7 +284,7 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
 		*address = 0xFFFFFFFF;
 	}
 
-	ULONG displacement = 0;
+	uintptr_t displacement = 0;
 
     HANDLE process = ::GetCurrentProcess();
 
@@ -287,7 +295,7 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
     psymbol->SizeOfStruct = sizeof(symbol_buffer);
     psymbol->MaxNameLength = 512;
 
-    if (SymGetSymFromAddr(process, (DWORD) pointer, &displacement, psymbol))
+    if (SymGetSymFromAddr(process, (uintptr_t) pointer, &displacement, psymbol))
     {
 		if (name)
 		{
@@ -305,7 +313,7 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
 			line.SizeOfStruct = sizeof(line);
 
 		
-			if (gsSymGetLineFromAddr(process, (DWORD) pointer, &displacement, &line))
+			if (gsSymGetLineFromAddr(process, (uintptr_t) pointer, &displacement, &line))
 			{
 				if (filename)
 				{
@@ -322,6 +330,7 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
 			} 					
 		}
     }
+#endif
 }
 
 
@@ -330,6 +339,7 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
 //*****************************************************************************
 void FillStackAddresses(void**addresses, unsigned int count, unsigned int skip)
 {
+#if 0
 	InitSymbolInfo();
 
 	STACKFRAME	stack_frame;
@@ -342,6 +352,7 @@ void FillStackAddresses(void**addresses, unsigned int count, unsigned int skip)
     gsContext.ContextFlags = CONTEXT_FULL;
 
 	DWORD myeip,myesp,myebp;
+#if 0
 _asm
 {
 MYEIP2:
@@ -353,6 +364,9 @@ MYEIP2:
  mov dword ptr [myebp] , eax
  xor eax,eax
 }
+#else
+	assert(false);
+#endif
 memset(&stack_frame, 0, sizeof(STACKFRAME));
 stack_frame.AddrPC.Mode = AddrModeFlat;
 stack_frame.AddrPC.Offset = myeip;
@@ -426,6 +440,7 @@ stack_frame.AddrFrame.Offset = myebp;
 		memset(addresses,NULL,count*sizeof(void*));
 	}
 */	
+#endif
 }
 
 
@@ -475,6 +490,7 @@ void WriteStackLine(void*address, void (*callback)(const char*))
 //*****************************************************************************
 void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 {
+#if 0
    DEBUG_LOG(( "\n********** EXCEPTION DUMP ****************\n" ));
 	/*
 	** List of possible exceptions
@@ -559,7 +575,8 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 	/*
 	** Match the exception type with the error string and print it out
 	*/
-	for ( int i=0 ; _codes[i] != 0xffffffff ; i++ )
+	int i = 0;
+	for (  ; _codes[i] != 0xffffffff ; i++ )
 	{
 		if ( _codes[i] == e_info->ExceptionRecord->ExceptionCode )
 		{
@@ -625,6 +642,7 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 	strcat (scrap, "\n");
 	DOUBLE_DEBUG ( ( (scrap)));
   DEBUG_LOG(( "********** END EXCEPTION DUMP ****************\n\n" ));
+#endif
 }																									 
 
 

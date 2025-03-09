@@ -98,7 +98,9 @@ protected:
 	virtual Radar *createRadar( void ) = 0;											///< Factory for radar
 	virtual WebBrowser *createWebBrowser( void ) = 0;						///< Factory for embedded browser
 	virtual ParticleSystemManager* createParticleSystemManager( void ) = 0;
+#ifdef HAS_BINK
 	virtual AudioManager *createAudioManager( void ) = 0;				///< Factory for Audio Manager
+#endif
 
 	Int m_maxFPS;																									///< Maximum frames per second allowed
   Bool m_quitting;  ///< true when we need to quit the game

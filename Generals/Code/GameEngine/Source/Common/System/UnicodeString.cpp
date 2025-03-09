@@ -100,7 +100,7 @@ void UnicodeString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveDa
 	int actualBytes = TheDynamicMemoryAllocator->getActualAllocationSize(minBytes);
 	UnicodeStringData* newData = (UnicodeStringData*)TheDynamicMemoryAllocator->allocateBytesDoNotZero(actualBytes, "STR_UnicodeString::ensureUniqueBufferOfSize");
 	newData->m_refCount = 1;
-	newData->m_numCharsAllocated = (actualBytes - sizeof(UnicodeStringData))/sizeof(WideChar);
+	newData->m_numCharsAllocated = (uint16_t)(actualBytes - sizeof(UnicodeStringData))/sizeof(WideChar);
 #if defined(_DEBUG) || defined(_INTERNAL)
 	newData->m_debugptr = newData->peek();	// just makes it easier to read in the debugger
 #endif
@@ -143,7 +143,7 @@ void UnicodeString::releaseBuffer()
 // -----------------------------------------------------
 UnicodeString::UnicodeString(const WideChar* s) : m_data(0)
 {
-	int len = wcslen(s);
+	int len = (int)wcslen(s);
 	if (len)
 	{
 		ensureUniqueBufferOfSize(len + 1, false, s, NULL);
@@ -173,7 +173,7 @@ void UnicodeString::set(const WideChar* s)
 	validate();
 	if (!m_data || s != peek())
 	{
-		int len = s ? wcslen(s) : 0;
+		int len = s ? (int)wcslen(s) : 0;
 		if (len)
 		{
 			ensureUniqueBufferOfSize(len + 1, false, s, NULL);
@@ -212,7 +212,7 @@ void UnicodeString::translate(const AsciiString& stringSrc)
 void UnicodeString::concat(const WideChar* s)
 {
 	validate();
-	int addlen = wcslen(s);
+	int addlen = (int)wcslen(s);
 	if (addlen == 0)
 		return;	// my, that was easy
 
@@ -249,7 +249,7 @@ void UnicodeString::trim()
 		if (m_data) // another check, because the previous set() could erase m_data
 		{
 			//	Clip trailing white space from the string.
-			int len = wcslen(peek());
+			int len = (int)wcslen(peek());
 			for (int index = len-1; index >= 0; index--)
 			{
 				if (iswspace(getCharAt(index)))
@@ -272,7 +272,7 @@ void UnicodeString::removeLastChar()
 	validate();
 	if (m_data)
 	{
-		int len = wcslen(peek());
+		int len = (int)wcslen(peek());
 		if (len > 0)
 		{
 			ensureUniqueBufferOfSize(len+1, true, NULL, NULL);
@@ -337,10 +337,10 @@ Bool UnicodeString::nextToken(UnicodeString* tok, UnicodeString delimiters)
 
 	Int offset;
 
-	offset = wcsspn(peek(), delimiters.str());
+	offset = (int)wcsspn(peek(), delimiters.str());
 	WideChar* start = peek() + offset;
 
-	offset = wcscspn(start, delimiters.str());
+	offset = (int)wcscspn(start, delimiters.str());
 	WideChar* end = start + offset;
 
 	if (end > start)

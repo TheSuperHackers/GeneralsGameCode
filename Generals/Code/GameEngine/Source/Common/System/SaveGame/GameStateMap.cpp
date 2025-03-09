@@ -484,7 +484,7 @@ void GameStateMap::clearScratchPadMaps( void )
 
 			// see if there is a ".map" at end of this filename
 			Char *c = strrchr( item.cFileName, '.' );
-			if( c && stricmp( c, ".map" ) == 0 )
+			if( c && _stricmp( c, ".map" ) == 0 )
 				fileToDelete.set( item.cFileName );  // we want to delete this one
 
 		}  // end if

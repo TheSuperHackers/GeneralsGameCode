@@ -47,7 +47,7 @@ LPCSTR cMiscUtil::Get_Text_Time(void)
    // Note: BoundsChecker reports 2 memory leaks in ctime here.
 	//
 
-	long time_now = ::time(NULL);
+	time_t time_now = ::time(NULL);
    char * time_str = ::ctime(&time_now);
    time_str[::strlen(time_str) - 1] = 0; // remove \n
    return time_str; 
@@ -77,7 +77,7 @@ bool cMiscUtil::Is_String_Same(LPCSTR str1, LPCSTR str2)
    WWASSERT(str1 != NULL);
    WWASSERT(str2 != NULL);
 
-   return(::stricmp(str1, str2) == 0);
+   return(::_stricmp(str1, str2) == 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -86,7 +86,7 @@ bool cMiscUtil::Is_String_Different(LPCSTR str1, LPCSTR str2)
    WWASSERT(str1 != NULL);
    WWASSERT(str2 != NULL);
 
-   return(::stricmp(str1, str2) != 0);
+   return(::_stricmp(str1, str2) != 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -152,7 +152,7 @@ void cMiscUtil::Trim_Trailing_Whitespace(char * text)
 {	
    WWASSERT(text != NULL);
 
-	int length = ::strlen(text);
+	int length = (int)::strlen(text);
 	while (length > 0 && Is_Whitespace(text[length - 1])) {
 		text[--length] = 0;
 	}
@@ -194,7 +194,7 @@ void cMiscUtil::Get_File_Id_String(LPCSTR filename, StringClass & str)
 
 	char working_filename[500];
 	strcpy(working_filename, filename);
-	::strupr(working_filename);
+	::_strupr(working_filename);
 
    //
    // Strip path off filename

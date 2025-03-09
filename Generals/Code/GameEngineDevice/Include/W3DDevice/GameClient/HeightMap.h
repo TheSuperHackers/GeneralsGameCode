@@ -271,7 +271,7 @@ protected:
 
 	DX8IndexBufferClass			*m_indexBuffer;	///<indices defining triangles in a VB tile.
 #ifdef PRE_TRANSFORM_VERTEX
-	IDirect3DVertexBuffer8 **m_xformedVertexBuffer;
+	IDirect3DVertexBuffer9 **m_xformedVertexBuffer;
 #endif
 	ShaderClass m_shaderClass; ///<shader or rendering state for heightmap
 	VertexMaterialClass	  	  *m_vertexMaterialClass;	///< vertex shader (lighting) for terrain

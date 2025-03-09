@@ -73,6 +73,8 @@ inline void WWProfile_Get_Ticks(_int64 * ticks)
 {
 #ifdef _UNIX
 	*ticks = 0;
+#elif 1
+	* ticks = 0;
 #else 
 	__asm
 	{

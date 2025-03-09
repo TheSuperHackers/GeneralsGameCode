@@ -941,12 +941,12 @@ Bool ScriptConditions::evaluatePlayerHasCredits(Parameter *pCreditsParm, Paramet
 	if (pPlayer && pPlayer->getMoney()) {
 		switch (pComparisonParm->getInt())
 		{
-			case Parameter::LESS_THAN :			return (pCreditsParm->getInt() < pPlayer->getMoney()->countMoney()); break;
-			case Parameter::LESS_EQUAL :		return (pCreditsParm->getInt() <= pPlayer->getMoney()->countMoney()); break;
-			case Parameter::EQUAL :					return (pCreditsParm->getInt() == pPlayer->getMoney()->countMoney()); break;
-			case Parameter::GREATER_EQUAL :	return (pCreditsParm->getInt() >= pPlayer->getMoney()->countMoney()); break;
-			case Parameter::GREATER :				return (pCreditsParm->getInt() > pPlayer->getMoney()->countMoney()); break;
-			case Parameter::NOT_EQUAL :			return (pCreditsParm->getInt() != pPlayer->getMoney()->countMoney()); break;
+			case Parameter::LESS_THAN :			return (pCreditsParm->getInt() < (int)pPlayer->getMoney()->countMoney()); break;
+			case Parameter::LESS_EQUAL :		return (pCreditsParm->getInt() <= (int)pPlayer->getMoney()->countMoney()); break;
+			case Parameter::EQUAL :					return (pCreditsParm->getInt() == (int)pPlayer->getMoney()->countMoney()); break;
+			case Parameter::GREATER_EQUAL :	return (pCreditsParm->getInt() >= (int)pPlayer->getMoney()->countMoney()); break;
+			case Parameter::GREATER :				return (pCreditsParm->getInt() > (int)pPlayer->getMoney()->countMoney()); break;
+			case Parameter::NOT_EQUAL :			return (pCreditsParm->getInt() != (int)pPlayer->getMoney()->countMoney()); break;
 		}
 	}
 
@@ -1128,8 +1128,8 @@ Bool ScriptConditions::evaluateNamedDiscovered(Parameter *pItemParm, Parameter* 
 	}
 
 	// If we are stealthed we are not visible.
-	if (BitTest( theObj->getStatusBits(), OBJECT_STATUS_STEALTHED) && 
-		!BitTest( theObj->getStatusBits(), OBJECT_STATUS_DETECTED)) {
+	if (BitTestWW( theObj->getStatusBits(), OBJECT_STATUS_STEALTHED) && 
+		!BitTestWW( theObj->getStatusBits(), OBJECT_STATUS_DETECTED)) {
 		return false;
 	}
 	ObjectShroudStatus shroud = theObj->getShroudedStatus(pPlayer->getPlayerIndex());
@@ -1164,8 +1164,8 @@ Bool ScriptConditions::evaluateTeamDiscovered(Parameter *pTeamParm, Parameter *p
 		}
 		
 		// If we are stealthed we are not visible.
-		if (BitTest( pObj->getStatusBits(), OBJECT_STATUS_STEALTHED) && 
-			!BitTest( pObj->getStatusBits(), OBJECT_STATUS_DETECTED)) {
+		if (BitTestWW( pObj->getStatusBits(), OBJECT_STATUS_STEALTHED) && 
+			!BitTestWW( pObj->getStatusBits(), OBJECT_STATUS_DETECTED)) {
 			continue;
 		}
 		ObjectShroudStatus shroud = pObj->getShroudedStatus(pPlayer->getPlayerIndex());
@@ -1804,7 +1804,7 @@ Bool ScriptConditions::evaluatePlayerHasComparisonValueExcessPower(Parameter *pP
 Bool ScriptConditions::evaluateSkirmishSpecialPowerIsReady(Parameter *pSkirmishPlayerParm, Parameter *pPower)
 {
 	if (pPower->getInt() == -1) return false;
-	if (pPower->getInt()>0 && pPower->getInt()>TheGameLogic->getFrame()) {
+	if (pPower->getInt()>0 && pPower->getInt()> (int)TheGameLogic->getFrame()) {
 		return false;
 	}
 	Int nextFrame = TheGameLogic->getFrame() + 10*LOGICFRAMES_PER_SECOND;
@@ -1826,7 +1826,7 @@ Bool ScriptConditions::evaluateSkirmishSpecialPowerIsReady(Parameter *pSkirmishP
 			for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
 				Object *pObj = iter.cur();
 				if (!pObj) continue;
-				if ( BitTest( pObj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) || pObj->isDisabled() )
+				if ( BitTestWW( pObj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) || pObj->isDisabled() )
 				{
 					continue; // can't fire if under construction or disabled.
 				}
@@ -1838,7 +1838,7 @@ Bool ScriptConditions::evaluateSkirmishSpecialPowerIsReady(Parameter *pSkirmishP
 					}
 					found = true;
 					if (mod->isReady()) return true;
-					if (mod->getReadyFrame()<nextFrame) nextFrame = mod->getReadyFrame();
+					if ((int)mod->getReadyFrame()<nextFrame) nextFrame = mod->getReadyFrame();
 				}
 
 			}
@@ -2569,7 +2569,11 @@ Bool ScriptConditions::evaluateSkirmishPlayerHasDiscoveredPlayer(Parameter *pSki
 Bool ScriptConditions::evaluateMusicHasCompleted(Parameter *pMusicParm, Parameter *pIntParm)
 {
 	AsciiString str = pMusicParm->getString();
+#ifdef HAS_BINK
 	return TheAudio->hasMusicTrackCompleted(str, pIntParm->getInt());
+#else
+	return true;
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------

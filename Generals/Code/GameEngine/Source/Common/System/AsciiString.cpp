@@ -144,7 +144,7 @@ void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData
 	int actualBytes = TheDynamicMemoryAllocator->getActualAllocationSize(minBytes);
 	AsciiStringData* newData = (AsciiStringData*)TheDynamicMemoryAllocator->allocateBytesDoNotZero(actualBytes, "STR_AsciiString::ensureUniqueBufferOfSize");
 	newData->m_refCount = 1;
-	newData->m_numCharsAllocated = (actualBytes - sizeof(AsciiStringData))/sizeof(char);
+	newData->m_numCharsAllocated = (unsigned short)(actualBytes - sizeof(AsciiStringData))/sizeof(char);
 #if defined(_DEBUG) || defined(_INTERNAL)
 	newData->m_debugptr = newData->peek();	// just makes it easier to read in the debugger
 #endif
@@ -189,7 +189,7 @@ void AsciiString::releaseBuffer()
 AsciiString::AsciiString(const char* s) : m_data(0)
 {
 	//DEBUG_ASSERTCRASH(isMemoryManagerOfficiallyInited(), ("Initializing AsciiStrings prior to main (ie, as static vars) can cause memory leak reporting problems. Are you sure you want to do this?\n"));
-	int len = (s)?strlen(s):0;
+	int len = (s)? (int)strlen(s):0;
 	if (len)
 	{
 		ensureUniqueBufferOfSize(len + 1, false, s, NULL);
@@ -219,7 +219,7 @@ void AsciiString::set(const char* s)
 	validate();
 	if (!m_data || s != peek())
 	{
-		int len = s ? strlen(s) : 0;
+		int len = s ? (int)strlen(s) : 0;
 		if (len)
 		{
 			ensureUniqueBufferOfSize(len + 1, false, s, NULL);
@@ -258,7 +258,7 @@ void AsciiString::translate(const UnicodeString& stringSrc)
 void AsciiString::concat(const char* s)
 {
 	validate();
-	int addlen = strlen(s);
+	int addlen = (int)strlen(s);
 	if (addlen == 0)
 		return;	// my, that was easy
 
@@ -292,7 +292,7 @@ void AsciiString::trim()
 		if (m_data) // another check, because the previous set() could erase m_data
 		{
 			//	Clip trailing white space from the string.
-			int len = strlen(peek());
+			int len = (int)strlen(peek());
 			for (int index = len-1; index >= 0; index--)
 			{
 				if (isspace(getCharAt(index)))
@@ -335,7 +335,7 @@ void AsciiString::removeLastChar()
 	validate();
 	if (m_data)
 	{
-		int len = strlen(peek());
+		int len = (int)strlen(peek());
 		if (len > 0)
 		{
 			ensureUniqueBufferOfSize(len+1, true, NULL, NULL);
@@ -396,7 +396,7 @@ Bool AsciiString::startsWith(const char* p) const
 		return true;	// everything starts with the empty string
 
 	int lenThis = getLength();
-	int lenThat = strlen(p);
+	int lenThat = (int)strlen(p);
 	if (lenThis < lenThat)
 		return false;	// that must be smaller than this
 
@@ -410,11 +410,11 @@ Bool AsciiString::startsWithNoCase(const char* p) const
 		return true;	// everything starts with the empty string
 
 	int lenThis = getLength();
-	int lenThat = strlen(p);
+	int lenThat = (int)strlen(p);
 	if (lenThis < lenThat)
 		return false;	// that must be smaller than this
 
-	return strnicmp(peek(), p, lenThat) == 0;
+	return _strnicmp(peek(), p, lenThat) == 0;
 }
 
 // -----------------------------------------------------
@@ -424,7 +424,7 @@ Bool AsciiString::endsWith(const char* p) const
 		return true;	// everything ends with the empty string
 
 	int lenThis = getLength();
-	int lenThat = strlen(p);
+	int lenThat = (int)strlen(p);
 	if (lenThis < lenThat)
 		return false;	// that must be smaller than this
 
@@ -438,17 +438,17 @@ Bool AsciiString::endsWithNoCase(const char* p) const
 		return true;	// everything ends with the empty string
 
 	int lenThis = getLength();
-	int lenThat = strlen(p);
+	int lenThat = (int)strlen(p);
 	if (lenThis < lenThat)
 		return false;	// that must be smaller than this
 
-	return strnicmp(peek() + lenThis - lenThat, p, lenThat) == 0;
+	return _strnicmp(peek() + lenThis - lenThat, p, lenThat) == 0;
 }
 
 //-----------------------------------------------------------------------------
 Bool AsciiString::isNone() const
 {
-	return m_data && stricmp(peek(), "None") == 0;
+	return m_data && _stricmp(peek(), "None") == 0;
 }
 
 //-----------------------------------------------------------------------------

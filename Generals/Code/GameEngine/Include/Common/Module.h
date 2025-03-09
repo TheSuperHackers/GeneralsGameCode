@@ -159,7 +159,7 @@ private: \
 public: \
 	static ModuleData* friend_newModuleData(INI* ini) \
 	{ \
-		clsmd* data = MSGNEW( "AllModuleData" ) clsmd; \
+		clsmd* data = new clsmd; \
 		if (ini) ini->initFromINIMultiProc(data, clsmd::buildFieldParse); \
 		return data; \
 	}

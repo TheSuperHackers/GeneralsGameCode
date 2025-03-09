@@ -231,7 +231,7 @@ inline
 WideStringClass::WideStringClass (const WCHAR *string, bool hint_temporary)
 	:	m_Buffer (m_EmptyString)
 {
-	int len=string ? wcslen(string) : 0;
+	int len=string ? (int)wcslen(string) : 0;
 	if (hint_temporary || len>0) {
 		Get_String (len+1, hint_temporary);
 	}
@@ -249,7 +249,7 @@ WideStringClass::WideStringClass (const char *string, bool hint_temporary)
 	:	m_Buffer (m_EmptyString)
 {
 	if (hint_temporary || (string && strlen(string)>0)) {
-		Get_String (strlen(string) + 1, hint_temporary);
+		Get_String ((int)strlen(string) + 1, hint_temporary);
 	}
 
 	(*this) = string;
@@ -395,7 +395,7 @@ WideStringClass::Erase (int start_index, int char_count)
 						&m_Buffer[start_index + char_count],
 						(len - (start_index + char_count) + 1) * sizeof (WCHAR));
 
-		Store_Length( wcslen(m_Buffer) );
+		Store_Length( (int)wcslen(m_Buffer) );
 	}
 
 	return ;
@@ -409,7 +409,7 @@ WideStringClass::operator= (const WCHAR *string)
 {
 	if (string != 0) {
 
-		int len = wcslen (string);
+		int len = (int)wcslen (string);
 		Uninitialised_Grow (len + 1);
 		Store_Length (len);
 
@@ -456,7 +456,7 @@ WideStringClass::operator+= (const WCHAR *string)
 	WWASSERT (string != NULL);
 
 	int cur_len = Get_Length ();
-	int src_len = wcslen (string);
+	int src_len = (int)wcslen (string);
 	int new_len = cur_len + src_len;
 
 	//
@@ -617,7 +617,7 @@ WideStringClass::Get_Length (void) const
 		// we better manually get the string length.
 		//
 		if (length == 0) {
-			length = wcslen (m_Buffer);
+			length = (int)wcslen (m_Buffer);
 			((WideStringClass *)this)->Store_Length (length);
 		}
 	}
@@ -726,7 +726,7 @@ WideStringClass::Store_Length (int length)
 inline void	
 WideStringClass::Convert_From(const char * text)
 {
-	int len = ::strlen ( text );
+	int len = (int)::strlen ( text );
 	Uninitialised_Grow ( len + 1 );
 	if ( len != 0 ) {
 		WCHAR * ptr = m_Buffer;

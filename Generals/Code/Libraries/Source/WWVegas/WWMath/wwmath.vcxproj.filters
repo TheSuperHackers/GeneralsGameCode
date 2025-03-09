@@ -1,0 +1,251 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{d1eefe78-caee-4434-ad87-ab8665921d4c}</UniqueIdentifier>
+      <Extensions>c;cpp</Extensions>
+    </Filter>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{aeb2318f-231b-4c61-8509-a6a3700c91f2}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="aabox.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="aabtreecull.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="cardinalspline.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="catmullromspline.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="colmath.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="colmathaabox.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="colmathaabtri.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="colmathfrustum.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="colmathline.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="colmathobbobb.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="colmathobbox.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="colmathobbtri.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="colmathplane.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="colmathsphere.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="cullsys.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="curve.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="euler.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="frustum.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="gridcull.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="hermitespline.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="lineseg.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="lookuptable.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="matrix3.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="matrix3d.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="matrix4.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="obbox.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ode.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="pot.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="quat.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="tcbspline.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="tri.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="v3_rnd.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vehiclecurve.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vp.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="wwmath.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="aabox.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="aabtreecull.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="aaplane.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="cardinalspline.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="castres.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="catmullromspline.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="colmath.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="colmathaabox.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="colmathfrustum.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="colmathinlines.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="colmathline.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="colmathplane.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="cullsys.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="culltype.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="curve.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="euler.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="frustum.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="gridcull.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="hermitespline.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="lineseg.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="lookuptable.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="matrix3.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="matrix3d.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="matrix4.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="obbox.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ode.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="plane.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="pot.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="quat.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="rect.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="sphere.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="tcbspline.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="tri.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="v3_rnd.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="vector2.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="vector2i.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="vector3.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3i.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="vector4.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="vehiclecurve.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="vp.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="wwmath.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="wwmathids.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

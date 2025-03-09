@@ -41,10 +41,14 @@
 #ifndef __WWAUDIO_H
 #define __WWAUDIO_H
 
+#ifdef HAS_BINK
+
 #include "always.h"
+
 #pragma warning (push, 3)
 #include "Mss.H"
 #pragma warning (pop)
+
 
 #include "Vector.H"
 #include "SoundBuffer.H"
@@ -149,11 +153,13 @@ public:
 		DRIVER3D_COUNT
 	} DRIVER_TYPE_3D;
 
+#ifdef HAS_BINK
 	typedef struct _DRIVER_INFO_STRUCT
 	{
 		HPROVIDER	driver;
 		char *		name;
 	} DRIVER_INFO_STRUCT;
+#endif
 
 	//////////////////////////////////////////////////////////////////////
 	//	Friend classes
@@ -582,5 +588,6 @@ private:
 	int													m_ReverbRoomType;
 };
 
+#endif
 
 #endif //__WWAUDIO_H

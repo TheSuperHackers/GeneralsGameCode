@@ -136,7 +136,7 @@ char const * GameFileClass::Set_Name( char const *filename )
 	char extension[EXT_LEN];
 	extension[0] = 0;
 	strcpy(name, filename);
-	Int i = strlen(name);
+	Int i = (int)strlen(name);
 	i--;
 	Int extLen = 1;
 	while(i>0 && extLen < EXT_LEN) {

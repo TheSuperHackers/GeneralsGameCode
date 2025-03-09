@@ -110,7 +110,7 @@ static Bool doFileTransfer( AsciiString filename, MapTransferLoadScreen *ls, Int
 			}
 
 			Int now = timeGetTime();
-			if (now > startTime + timeoutPeriod) // bail if we don't finish in a reasonable amount of time
+			if (now > (int)(startTime + timeoutPeriod)) // bail if we don't finish in a reasonable amount of time
 			{
 				DEBUG_LOG(("Timing out file transfer\n"));
 				break;

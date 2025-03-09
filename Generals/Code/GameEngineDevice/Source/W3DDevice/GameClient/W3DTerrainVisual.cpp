@@ -119,16 +119,16 @@ void W3DTerrainVisual::init( void )
 	TheTerrainRenderObject = m_terrainRenderObject;
 
 	// initialize track drawing system
-	TheTerrainTracksRenderObjClassSystem = NEW TerrainTracksRenderObjClassSystem;
+	TheTerrainTracksRenderObjClassSystem = new TerrainTracksRenderObjClassSystem;
 	TheTerrainTracksRenderObjClassSystem->init(W3DDisplay::m_3DScene);
 
 #ifdef	INCLUDE_GRANNY_IN_BUILD
 	// initialize Granny model drawing system
-	TheGrannyRenderObjSystem = NEW GrannyRenderObjSystem;
+	TheGrannyRenderObjSystem = new GrannyRenderObjSystem;
 #endif
 
 	// initialize object shadow drawing system
-	TheW3DShadowManager = NEW W3DShadowManager;
+	TheW3DShadowManager = new W3DShadowManager;
  	TheW3DShadowManager->init();
 	
 	// create a water plane render object
@@ -272,7 +272,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 	REF_PTR_RELEASE( m_terrainHeightMap );
 	ChunkInputStream *pStrm = &fileStrm;
 	// allocate new height map data to read from file
-	m_terrainHeightMap = NEW WorldHeightMap(pStrm);
+	m_terrainHeightMap = new WorldHeightMap(pStrm);
 
 	// Add any lights loaded by map.
 	MapObject *pMapObj = MapObject::getFirstMapObject();
@@ -322,7 +322,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 
 #if defined _DEBUG || defined _INTERNAL
 	// Icon drawing utility object for pathfinding.
-	W3DDebugIcons *icons = NEW W3DDebugIcons;
+	W3DDebugIcons *icons = new W3DDebugIcons;
  	W3DDisplay::m_3DScene->Add_Render_Object( icons );
 	icons->Release_Ref(); // belongs to scene.
 #endif

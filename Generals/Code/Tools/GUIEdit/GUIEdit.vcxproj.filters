@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{97087dd1-8353-4b5d-beca-96437181441d}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Dialog Procedures">
+      <UniqueIdentifier>{73364e2b-1f88-4e83-9516-95f8a50b88bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{20a933f6-dfaa-480d-9df6-ae3d23982c57}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{3da5abb0-f924-46f3-85c4-75d2d1d6be6a}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Dialog Procedures\CallbackEditor.cpp">
+      <Filter>Source Files\Dialog Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Dialog Procedures\CheckBoxProperties.cpp">
+      <Filter>Source Files\Dialog Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Dialog Procedures\ColorDialog.cpp">
+      <Filter>Source Files\Dialog Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Dialog Procedures\ComboBoxProperties.cpp">
+      <Filter>Source Files\Dialog Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Dialog Procedures\GenericProperties.cpp">
+      <Filter>Source Files\Dialog Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Dialog Procedures\GridSettings.cpp">
+      <Filter>Source Files\Dialog Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Dialog Procedures\ListboxProperties.cpp">
+      <Filter>Source Files\Dialog Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Dialog Procedures\NewLayoutDialog.cpp">
+      <Filter>Source Files\Dialog Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Dialog Procedures\ProgressBarProperties.cpp">
+      <Filter>Source Files\Dialog Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Dialog Procedures\PushButtonProperties.cpp">
+      <Filter>Source Files\Dialog Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Dialog Procedures\RadioButtonProperties.cpp">
+      <Filter>Source Files\Dialog Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Dialog Procedures\SliderProperties.cpp">
+      <Filter>Source Files\Dialog Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Dialog Procedures\StaticTextProperties.cpp">
+      <Filter>Source Files\Dialog Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Dialog Procedures\TabControlProperties.cpp">
+      <Filter>Source Files\Dialog Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Dialog Procedures\TextEntryProperties.cpp">
+      <Filter>Source Files\Dialog Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EditWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GUIEdit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GUIEditDisplay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GUIEditWindowManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\HierarchyView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LayoutScheme.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Properties.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Save.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WinMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\DialogProc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\EditWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\GUIEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\GUIEditColor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\GUIEditDisplay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\GUIEditWindowManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\HierarchyView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\LayoutScheme.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Properties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\WinMain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resource\GUIEdit.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\icon1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\small.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource\GUIEdit.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Resource\cursor1.cur">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

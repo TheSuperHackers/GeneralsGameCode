@@ -274,7 +274,7 @@ void GameEngine::init( int argc, char *argv[] )
 		
 		m_maxFPS = DEFAULT_MAX_FPS;
 
-		TheSubsystemList = MSGNEW("GameEngineSubsystem") SubsystemInterfaceList;
+		TheSubsystemList = new SubsystemInterfaceList;
 		
 		TheSubsystemList->addSubsystem(this);
 
@@ -285,11 +285,11 @@ void GameEngine::init( int argc, char *argv[] )
 		TheFileSystem = createFileSystem();
 
 		// not part of the subsystem list, because it should normally never be reset!
-		TheNameKeyGenerator = MSGNEW("GameEngineSubsystem") NameKeyGenerator;
+		TheNameKeyGenerator = new NameKeyGenerator;
 		TheNameKeyGenerator->init();
 
 		// not part of the subsystem list, because it should normally never be reset!
-		TheCommandList = MSGNEW("GameEngineSubsystem") CommandList;
+		TheCommandList = new CommandList;
 		TheCommandList->init();
 
 		XferCRC xferCRC;
@@ -297,7 +297,7 @@ void GameEngine::init( int argc, char *argv[] )
 
 		initSubsystem(TheLocalFileSystem, "TheLocalFileSystem", createLocalFileSystem(), NULL);
 		initSubsystem(TheArchiveFileSystem, "TheArchiveFileSystem", createArchiveFileSystem(), NULL); // this MUST come after TheLocalFileSystem creation
-		initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", MSGNEW("GameEngineSubsystem") GlobalData(), &xferCRC, "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
+		initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", new GlobalData(), &xferCRC, "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
 
 	#if defined(_DEBUG) || defined(_INTERNAL)
 		// If we're in Debug or Internal, load the Debug info as well.
@@ -308,7 +308,7 @@ void GameEngine::init( int argc, char *argv[] )
 		parseCommandLine(argc, argv);
 
 		// doesn't require resets so just create a single instance here.
-		TheGameLODManager = MSGNEW("GameEngineSubsystem") GameLODManager;
+		TheGameLODManager = new GameLODManager;
 		TheGameLODManager->init();
 		
 		// after parsing the command line, we may want to perform dds stuff. Do that here.
@@ -330,58 +330,60 @@ void GameEngine::init( int argc, char *argv[] )
 		ini.load( AsciiString( "Data\\INI\\Water.ini" ), INI_LOAD_OVERWRITE, &xferCRC );
 
 #ifdef DEBUG_CRC
-		initSubsystem(TheDeepCRCSanityCheck, "TheDeepCRCSanityCheck", MSGNEW("GameEngineSubystem") DeepCRCSanityCheck, NULL, NULL, NULL, NULL);
+		initSubsystem(TheDeepCRCSanityCheck, "TheDeepCRCSanityCheck", new DeepCRCSanityCheck, NULL, NULL, NULL, NULL);
 #endif // DEBUG_CRC
 		initSubsystem(TheGameText, "TheGameText", CreateGameTextInterface(), NULL);
-		initSubsystem(TheScienceStore,"TheScienceStore", MSGNEW("GameEngineSubsystem") ScienceStore(), &xferCRC, "Data\\INI\\Default\\Science.ini", "Data\\INI\\Science.ini");
-		initSubsystem(TheMultiplayerSettings,"TheMultiplayerSettings", MSGNEW("GameEngineSubsystem") MultiplayerSettings(), &xferCRC, "Data\\INI\\Default\\Multiplayer.ini", "Data\\INI\\Multiplayer.ini");
-		initSubsystem(TheTerrainTypes,"TheTerrainTypes", MSGNEW("GameEngineSubsystem") TerrainTypeCollection(), &xferCRC, "Data\\INI\\Default\\Terrain.ini", "Data\\INI\\Terrain.ini");
-		initSubsystem(TheTerrainRoads,"TheTerrainRoads", MSGNEW("GameEngineSubsystem") TerrainRoadCollection(), &xferCRC, "Data\\INI\\Default\\Roads.ini", "Data\\INI\\Roads.ini");
-		initSubsystem(TheGlobalLanguageData,"TheGlobalLanguageData",MSGNEW("GameEngineSubsystem") GlobalLanguage, NULL); // must be before the game text
+		initSubsystem(TheScienceStore, "TheScienceStore", new ScienceStore(), &xferCRC, "Data\\INI\\Default\\Science.ini", "Data\\INI\\Science.ini");
+		initSubsystem(TheMultiplayerSettings, "TheMultiplayerSettings", new MultiplayerSettings(), &xferCRC, "Data\\INI\\Default\\Multiplayer.ini", "Data\\INI\\Multiplayer.ini");
+		initSubsystem(TheTerrainTypes, "TheTerrainTypes", new TerrainTypeCollection(), &xferCRC, "Data\\INI\\Default\\Terrain.ini", "Data\\INI\\Terrain.ini");
+		initSubsystem(TheTerrainRoads, "TheTerrainRoads", new  TerrainRoadCollection(), &xferCRC, "Data\\INI\\Default\\Roads.ini", "Data\\INI\\Roads.ini");
+		initSubsystem(TheGlobalLanguageData,"TheGlobalLanguageData",new GlobalLanguage, NULL); // must be before the game text
 		initSubsystem(TheCDManager,"TheCDManager", CreateCDManager(), NULL);
+#ifdef HAS_BINK
 		initSubsystem(TheAudio,"TheAudio", createAudioManager(), NULL);
 		if (!TheAudio->isMusicAlreadyLoaded())
 			setQuitting(TRUE);
+#endif
 		initSubsystem(TheFunctionLexicon,"TheFunctionLexicon", createFunctionLexicon(), NULL);
 		initSubsystem(TheModuleFactory,"TheModuleFactory", createModuleFactory(), NULL);
 		initSubsystem(TheMessageStream,"TheMessageStream", createMessageStream(), NULL);
-		initSubsystem(TheSidesList,"TheSidesList", MSGNEW("GameEngineSubsystem") SidesList(), NULL);
-		initSubsystem(TheCaveSystem,"TheCaveSystem", MSGNEW("GameEngineSubsystem") CaveSystem(), NULL);
-		initSubsystem(TheRankInfoStore,"TheRankInfoStore", MSGNEW("GameEngineSubsystem") RankInfoStore(), &xferCRC, NULL, "Data\\INI\\Rank.ini");
-		initSubsystem(ThePlayerTemplateStore,"ThePlayerTemplateStore", MSGNEW("GameEngineSubsystem") PlayerTemplateStore(), &xferCRC, "Data\\INI\\Default\\PlayerTemplate.ini", "Data\\INI\\PlayerTemplate.ini");
+		initSubsystem(TheSidesList,"TheSidesList", new SidesList(), NULL);
+		initSubsystem(TheCaveSystem,"TheCaveSystem", new CaveSystem(), NULL);
+		initSubsystem(TheRankInfoStore, "TheRankInfoStore", new RankInfoStore(), &xferCRC, NULL, "Data\\INI\\Rank.ini");
+		initSubsystem(ThePlayerTemplateStore, "ThePlayerTemplateStore", new PlayerTemplateStore(), &xferCRC, "Data\\INI\\Default\\PlayerTemplate.ini", "Data\\INI\\PlayerTemplate.ini");
 		initSubsystem(TheParticleSystemManager,"TheParticleSystemManager", createParticleSystemManager(), NULL);
-		initSubsystem(TheFXListStore,"TheFXListStore", MSGNEW("GameEngineSubsystem") FXListStore(), &xferCRC, "Data\\INI\\Default\\FXList.ini", "Data\\INI\\FXList.ini");
-		initSubsystem(TheWeaponStore,"TheWeaponStore", MSGNEW("GameEngineSubsystem") WeaponStore(), &xferCRC, NULL, "Data\\INI\\Weapon.ini");
-		initSubsystem(TheObjectCreationListStore,"TheObjectCreationListStore", MSGNEW("GameEngineSubsystem") ObjectCreationListStore(), &xferCRC, "Data\\INI\\Default\\ObjectCreationList.ini", "Data\\INI\\ObjectCreationList.ini");
-		initSubsystem(TheLocomotorStore,"TheLocomotorStore", MSGNEW("GameEngineSubsystem") LocomotorStore(), &xferCRC, NULL, "Data\\INI\\Locomotor.ini");
-		initSubsystem(TheSpecialPowerStore,"TheSpecialPowerStore", MSGNEW("GameEngineSubsystem") SpecialPowerStore(), &xferCRC, "Data\\INI\\Default\\SpecialPower.ini", "Data\\INI\\SpecialPower.ini");
-		initSubsystem(TheDamageFXStore,"TheDamageFXStore", MSGNEW("GameEngineSubsystem") DamageFXStore(), &xferCRC, NULL, "Data\\INI\\DamageFX.ini");
-		initSubsystem(TheArmorStore,"TheArmorStore", MSGNEW("GameEngineSubsystem") ArmorStore(), &xferCRC, NULL, "Data\\INI\\Armor.ini");
-		initSubsystem(TheBuildAssistant,"TheBuildAssistant", MSGNEW("GameEngineSubsystem") BuildAssistant, NULL);
+		initSubsystem(TheFXListStore, "TheFXListStore", new FXListStore(), &xferCRC, "Data\\INI\\Default\\FXList.ini", "Data\\INI\\FXList.ini");
+		initSubsystem(TheWeaponStore, "TheWeaponStore", new WeaponStore(), &xferCRC, NULL, "Data\\INI\\Weapon.ini");
+		initSubsystem(TheObjectCreationListStore, "TheObjectCreationListStore", new ObjectCreationListStore(), &xferCRC, "Data\\INI\\Default\\ObjectCreationList.ini", "Data\\INI\\ObjectCreationList.ini");
+		initSubsystem(TheLocomotorStore, "TheLocomotorStore", new LocomotorStore(), &xferCRC, NULL, "Data\\INI\\Locomotor.ini");
+		initSubsystem(TheSpecialPowerStore, "TheSpecialPowerStore", new SpecialPowerStore(), &xferCRC, "Data\\INI\\Default\\SpecialPower.ini", "Data\\INI\\SpecialPower.ini");
+		initSubsystem(TheDamageFXStore, "TheDamageFXStore", new DamageFXStore(), &xferCRC, NULL, "Data\\INI\\DamageFX.ini");
+		initSubsystem(TheArmorStore, "TheArmorStore", new ArmorStore(), &xferCRC, NULL, "Data\\INI\\Armor.ini");
+		initSubsystem(TheBuildAssistant,"TheBuildAssistant", new BuildAssistant, NULL);
 		initSubsystem(TheThingFactory,"TheThingFactory", createThingFactory(), &xferCRC, "Data\\INI\\Default\\Object.ini", NULL, "Data\\INI\\Object");
-		initSubsystem(TheUpgradeCenter,"TheUpgradeCenter", MSGNEW("GameEngineSubsystem") UpgradeCenter, &xferCRC, "Data\\INI\\Default\\Upgrade.ini", "Data\\INI\\Upgrade.ini");
+		initSubsystem(TheUpgradeCenter, "TheUpgradeCenter", new UpgradeCenter, &xferCRC, "Data\\INI\\Default\\Upgrade.ini", "Data\\INI\\Upgrade.ini");
 		initSubsystem(TheGameClient,"TheGameClient", createGameClient(), NULL);
-		initSubsystem(TheAI,"TheAI", MSGNEW("GameEngineSubsystem") AI(), &xferCRC,  "Data\\INI\\Default\\AIData.ini", "Data\\INI\\AIData.ini");
+		initSubsystem(TheAI, "TheAI", new AI(), &xferCRC, "Data\\INI\\Default\\AIData.ini", "Data\\INI\\AIData.ini");
 		initSubsystem(TheGameLogic,"TheGameLogic", createGameLogic(), NULL);
-		initSubsystem(TheTeamFactory,"TheTeamFactory", MSGNEW("GameEngineSubsystem") TeamFactory(), NULL);
-		initSubsystem(TheCrateSystem,"TheCrateSystem", MSGNEW("GameEngineSubsystem") CrateSystem(), &xferCRC, "Data\\INI\\Default\\Crate.ini", "Data\\INI\\Crate.ini");
-		initSubsystem(ThePlayerList,"ThePlayerList", MSGNEW("GameEngineSubsystem") PlayerList(), NULL);
+		initSubsystem(TheTeamFactory,"TheTeamFactory", new TeamFactory(), NULL);
+		initSubsystem(TheCrateSystem, "TheCrateSystem", new CrateSystem(), &xferCRC, "Data\\INI\\Default\\Crate.ini", "Data\\INI\\Crate.ini");
+		initSubsystem(ThePlayerList,"ThePlayerList", new PlayerList(), NULL);
 		initSubsystem(TheRecorder,"TheRecorder", createRecorder(), NULL);
 		initSubsystem(TheRadar,"TheRadar", createRadar(), NULL);
 		initSubsystem(TheVictoryConditions,"TheVictoryConditions", createVictoryConditions(), NULL);
 
 		AsciiString fname;
 		fname.format("Data\\%s\\CommandMap.ini", GetRegistryLanguage().str());
-		initSubsystem(TheMetaMap,"TheMetaMap", MSGNEW("GameEngineSubsystem") MetaMap(), NULL, fname.str(), "Data\\INI\\CommandMap.ini");
+		initSubsystem(TheMetaMap, "TheMetaMap", new MetaMap(), NULL, fname.str(), "Data\\INI\\CommandMap.ini");
 
 #if defined(_DEBUG) || defined(_INTERNAL)
 		ini.load("Data\\INI\\CommandMapDebug.ini", INI_LOAD_MULTIFILE, NULL);
 #endif
 
-		initSubsystem(TheActionManager,"TheActionManager", MSGNEW("GameEngineSubsystem") ActionManager(), NULL);
+		initSubsystem(TheActionManager,"TheActionManager", new ActionManager(), NULL);
 		//initSubsystem((CComObject<WebBrowser> *)TheWebBrowser,"(CComObject<WebBrowser> *)TheWebBrowser", (CComObject<WebBrowser> *)createWebBrowser(), NULL);
-		initSubsystem(TheGameStateMap,"TheGameStateMap", MSGNEW("GameEngineSubsystem") GameStateMap, NULL, NULL, NULL );
-		initSubsystem(TheGameState,"TheGameState", MSGNEW("GameEngineSubsystem") GameState, NULL, NULL, NULL );
+		initSubsystem(TheGameStateMap,"TheGameStateMap", new GameStateMap, NULL, NULL, NULL );
+		initSubsystem(TheGameState,"TheGameState", new GameState, NULL, NULL, NULL );
 
 		// Create the interface for sending game results
 		initSubsystem(TheGameResultsQueue,"TheGameResultsQueue", GameResultsInterface::createNewGameResultsInterface(), NULL, NULL, NULL, NULL);
@@ -394,10 +396,12 @@ void GameEngine::init( int argc, char *argv[] )
 
 		setFramesPerSecondLimit(TheGlobalData->m_framesPerSecondLimit);
 
+#ifdef HAS_BINK
 		TheAudio->setOn(TheGlobalData->m_audioOn && TheGlobalData->m_musicOn, AudioAffect_Music);
 		TheAudio->setOn(TheGlobalData->m_audioOn && TheGlobalData->m_soundsOn, AudioAffect_Sound);
 		TheAudio->setOn(TheGlobalData->m_audioOn && TheGlobalData->m_sounds3DOn, AudioAffect_Sound3D);
 		TheAudio->setOn(TheGlobalData->m_audioOn && TheGlobalData->m_speechOn, AudioAffect_Speech);
+#endif
 			
 		// We're not in a network game yet, so set the network singleton to NULL.
 		TheNetwork = NULL;
@@ -433,7 +437,7 @@ void GameEngine::init( int argc, char *argv[] )
 		}
 
 		// initialize the MapCache
-		TheMapCache = MSGNEW("GameEngineSubsystem") MapCache;
+		TheMapCache = new MapCache;
 		TheMapCache->updateCache();
 
 		if (TheGlobalData->m_buildMapCache)
@@ -577,8 +581,10 @@ void GameEngine::update( void )
 			TheRadar->UPDATE();
 
 			/// @todo Move audio init, update, etc, into GameClient update
-			
+
+#ifdef HAS_BINK
 			TheAudio->UPDATE();
+#endif
 			TheGameClient->UPDATE();
 			TheMessageStream->propagateMessages();
 
@@ -634,7 +640,7 @@ void GameEngine::execute( void )
 				if (TheGlobalData->m_benchmarkTimer > 0)
 				{
 					DWORD currentTime = timeGetTime() / 1000;
-					if (TheGlobalData->m_benchmarkTimer < currentTime - startTime)
+					if (TheGlobalData->m_benchmarkTimer < (int)(currentTime - startTime))
 					{
 						if (TheGameLogic->isInGame())
 						{
@@ -727,13 +733,13 @@ MessageStream *GameEngine::createMessageStream( void )
 {
 	// if you change this update the tools that use the engine systems
 	// like GUIEdit, it creates a message stream to run in "test" mode
-	return MSGNEW("GameEngineSubsystem") MessageStream;
+	return new MessageStream;
 }
 
 //-------------------------------------------------------------------------------------------------
 FileSystem *GameEngine::createFileSystem( void )
 {
-	return MSGNEW("GameEngineSubsystem") FileSystem;
+	return new FileSystem;
 }
 
 //-------------------------------------------------------------------------------------------------

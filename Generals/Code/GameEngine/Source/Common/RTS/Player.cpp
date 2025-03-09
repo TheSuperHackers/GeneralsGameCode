@@ -244,7 +244,7 @@ void PlayerRelationMap::xfer( Xfer *xfer )
 
 	// player relation count
 	PlayerRelationMapType::iterator playerRelationIt;
-	UnsignedShort playerRelationCount = m_map.size();
+	UnsignedShort playerRelationCount = (uint16_t)m_map.size();
 	xfer->xferUnsignedShort( &playerRelationCount );
 
 	// player relations
@@ -1028,7 +1028,7 @@ void Player::becomingTeamMember(Object *obj, Bool yes)
 		return;	
 
 	// energy production/consumption hooks, note we ignore things that are UNDER_CONSTRUCTION
-	if( BitTest( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE )
+	if( BitTestWW( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE )
 	{
 		obj->friend_adjustPowerForPlayer(yes);
 	}  // end if
@@ -1698,7 +1698,8 @@ void Player::setUnitsShouldHunt(Bool unitsShouldHunt, CommandSourceType source)
 //=============================================================================
 void Player::killPlayer(void)
 {
-	for (PlayerTeamList::iterator it = m_playerTeamPrototypes.begin(); it != m_playerTeamPrototypes.end(); ++it) {
+	PlayerTeamList::iterator it = m_playerTeamPrototypes.begin();
+	for (; it != m_playerTeamPrototypes.end(); ++it) {
 		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
 			Team *team = iter.cur();
 			if (!team) {
@@ -2239,7 +2240,7 @@ Bool Player::attemptToPurchaseScience(ScienceType science)
 {
 	if (!isCapableOfPurchasingScience(science))
 	{
-		DEBUG_CRASH(("isCapableOfPurchasingScience: need other prereqs/points to purchase, request is ignored!\n"));
+		DEBUG_WARNING(("isCapableOfPurchasingScience: need other prereqs/points to purchase, request is ignored!\n"));
 		return false;
 	}
 
@@ -2254,7 +2255,7 @@ Bool Player::grantScience(ScienceType science)
 {
 	if (!TheScienceStore->isScienceGrantable(science))
 	{
-		DEBUG_CRASH(("Cannot grant science %s, since it is marked as nonGrantable.\n",TheScienceStore->getInternalNameForScience(science).str()));
+		DEBUG_WARNING(("Cannot grant science %s, since it is marked as nonGrantable.\n",TheScienceStore->getInternalNameForScience(science).str()));
 		return false;	// it's not grantable, so tough, can't have it, even via this method.
 	}
 
@@ -2515,7 +2516,7 @@ Bool Player::canAffordBuild( const ThingTemplate *whatToBuild ) const
 {
 	// make sure we have enough money to build this
 	const Money *money = getMoney();
-	if( whatToBuild->calcCostToBuild( this ) <= money->countMoney() )
+	if( whatToBuild->calcCostToBuild( this ) <= (int)money->countMoney() )
 	{
 		return true;
 	}
@@ -2574,7 +2575,7 @@ Bool Player::hasUpgradeComplete( const UpgradeTemplate *upgradeTemplate )
 //=================================================================================================
 Bool Player::hasUpgradeComplete( Int64 testMask )
 {
-	return BitTest( m_upgradesCompleted, testMask );
+	return BitTestWW( m_upgradesCompleted, testMask );
 }
 
 //=================================================================================================
@@ -2583,7 +2584,7 @@ Bool Player::hasUpgradeComplete( Int64 testMask )
 Bool Player::hasUpgradeInProduction( const UpgradeTemplate *upgradeTemplate )
 {
 	Int64 testMask = upgradeTemplate->getUpgradeMask();
-	return BitTest( m_upgradesInProgress, testMask );
+	return BitTestWW( m_upgradesInProgress, testMask );
 }
 
 //=================================================================================================
@@ -2719,9 +2720,11 @@ void Player::addRadar( Bool disableProof )
 	if( !hadRadar && hasRadar()	&& okToPlayRadarEdgeSound() )
 	{
 		// This player just got radar, so play the "You have Radar!" sound
+#ifdef HAS_BINK
 		AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_radarOnlineSound;
 		soundToPlay.setPlayerIndex(getPlayerIndex());
 		TheAudio->addAudioEvent(&soundToPlay);
+#endif
 	}
 }  // end addRadar
 
@@ -2742,9 +2745,11 @@ void Player::removeRadar( Bool disableProof )
 	if( hadRadar && !hasRadar()	&& okToPlayRadarEdgeSound() ) 
 	{
 		// This player just lost radar, so play the "You lost Radar!" sound
+#ifdef HAS_BINK
 		AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_radarOfflineSound;
 		soundToPlay.setPlayerIndex(getPlayerIndex());
 		TheAudio->addAudioEvent(&soundToPlay);
+#endif
 	}
 }  // end removeRadar
 
@@ -2758,9 +2763,11 @@ void Player::disableRadar()
 		&& !hasRadar() && okToPlayRadarEdgeSound() ) 
 	{
 		// This player just lost radar, so play the "You lost Radar!" sound
+#ifdef HAS_BINK
 		AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_radarOfflineSound;
 		soundToPlay.setPlayerIndex(getPlayerIndex());
 		TheAudio->addAudioEvent(&soundToPlay);
+#endif
 	}
 }
 
@@ -2773,9 +2780,11 @@ void Player::enableRadar()
 	if( !hadRadar && hasRadar() && okToPlayRadarEdgeSound() )  
 	{
 		// This player just got radar, so play the "You have Radar!" sound
+#ifdef HAS_BINK
 		AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_radarOnlineSound;
 		soundToPlay.setPlayerIndex(getPlayerIndex());
 		TheAudio->addAudioEvent(&soundToPlay);
+#endif
 	}
 }
 
@@ -3207,7 +3216,7 @@ void Player::processCreateTeamGameMessage(Int hotkeyNum, GameMessage *msg) {
 	// GameMessage arguments are the object ID's of the objects that are to be in this team.
 
 	if ((hotkeyNum < 0) || (hotkeyNum >= NUM_HOTKEY_SQUADS)) {
-		DEBUG_CRASH(("processCreateTeamGameMessage got an invalid hotkey number"));
+		DEBUG_WARNING(("processCreateTeamGameMessage got an invalid hotkey number"));
 		return;
 	}
 
@@ -3230,7 +3239,7 @@ void Player::processCreateTeamGameMessage(Int hotkeyNum, GameMessage *msg) {
 //-------------------------------------------------------------------------------------------------
 void Player::processSelectTeamGameMessage(Int hotkeyNum, GameMessage *msg) {
 	if ((hotkeyNum < 0) || (hotkeyNum >= NUM_HOTKEY_SQUADS)) {
-		DEBUG_CRASH(("processSelectTeamGameMessage got an invalid hotkey number"));
+		DEBUG_WARNING(("processSelectTeamGameMessage got an invalid hotkey number"));
 		return;
 	}
 
@@ -3241,7 +3250,7 @@ void Player::processSelectTeamGameMessage(Int hotkeyNum, GameMessage *msg) {
 	m_currentSelection->clearSquad();
 
 	VecObjectPtr objectList = m_squads[hotkeyNum]->getLiveObjects();
-	Int numObjs = objectList.size();
+	Int numObjs = (int)objectList.size();
 	
 	for (Int i = 0; i < numObjs; ++i) {
 		m_currentSelection->addObject(objectList[i]);
@@ -3253,7 +3262,7 @@ void Player::processSelectTeamGameMessage(Int hotkeyNum, GameMessage *msg) {
 //-------------------------------------------------------------------------------------------------
 void Player::processAddTeamGameMessage(Int hotkeyNum, GameMessage *msg) {
 	if ((hotkeyNum < 0) || (hotkeyNum >= NUM_HOTKEY_SQUADS)) {
-		DEBUG_CRASH(("processAddTeamGameMessage got an invalid hotkey number"));
+		DEBUG_WARNING(("processAddTeamGameMessage got an invalid hotkey number"));
 		return;
 	}
 
@@ -3266,7 +3275,7 @@ void Player::processAddTeamGameMessage(Int hotkeyNum, GameMessage *msg) {
 	}
 
 	VecObjectPtr objectList = m_squads[hotkeyNum]->getLiveObjects();
-	Int numObjs = objectList.size();
+	Int numObjs = (int)objectList.size();
 
 	for (Int i = 0; i < numObjs; ++i) {
 		m_currentSelection->addObject(objectList[i]);
@@ -3350,7 +3359,7 @@ void Player::addAIGroupToCurrentSelection(AIGroup *group) {
 	}
 	
 	VecObjectID objectIDVec = group->getAllIDs();
-	Int numObjs = objectIDVec.size();
+	Int numObjs = (int)objectIDVec.size();
 	for (Int i = 0; i < numObjs; ++i) {
 		m_currentSelection->addObjectID(objectIDVec[i]);
 	}
@@ -3665,7 +3674,7 @@ void Player::xfer( Xfer *xfer )
 	// team prototypes ... this is only the fact that team prototypes are on this player
 	// it is not the team prototype data itself
 	//
-	UnsignedShort prototypeCount = m_playerTeamPrototypes.size();
+	UnsignedShort prototypeCount = (uint16_t)m_playerTeamPrototypes.size();
 	xfer->xferUnsignedShort( &prototypeCount );
 	TeamPrototypeID prototypeID;
 	TeamPrototype *prototype;
@@ -3836,7 +3845,7 @@ void Player::xfer( Xfer *xfer )
 			This code is WRONG WRONG WRONG and must not be used or mimicked; it
 			is present for backwards "compatibility" only. (srj)
 		*/
-		UnsignedShort scienceCount = m_sciences.size();
+		UnsignedShort scienceCount = (uint16_t)m_sciences.size();
 		xfer->xferUnsignedShort( &scienceCount );
 		ScienceType science;
 		if( xfer->getXferMode() == XFER_SAVE )
@@ -3936,7 +3945,7 @@ void Player::xfer( Xfer *xfer )
 
 
 	// size of and data for kindof percent production change list
-	UnsignedShort percentProductionChangeCount = m_kindOfPercentProductionChangeList.size();
+	UnsignedShort percentProductionChangeCount = (uint16_t)m_kindOfPercentProductionChangeList.size();
 	xfer->xferUnsignedShort( &percentProductionChangeCount );
 	KindOfPercentProductionChange *entry;
 	if( xfer->getXferMode() == XFER_SAVE )
@@ -4005,7 +4014,7 @@ void Player::xfer( Xfer *xfer )
 	}
 	else
 	{
-		UnsignedShort timerListSize = m_specialPowerReadyTimerList.size();
+		UnsignedShort timerListSize = (uint16_t)m_specialPowerReadyTimerList.size();
 		xfer->xferUnsignedShort( &timerListSize );// HANDY LITTLE SHORT TO SIZE MY LIST
 		if( xfer->getXferMode() == XFER_SAVE )
 		{

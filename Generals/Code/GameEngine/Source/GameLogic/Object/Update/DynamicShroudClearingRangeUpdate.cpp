@@ -222,11 +222,11 @@ UpdateSleepTime DynamicShroudClearingRangeUpdate::update( void )
 
 	if( m_stateCountDown <= 0 || currentFrame > m_doneForeverFrame )
 		m_state = DSCRU_DONE_FOREVER;
-	else if ( m_stateCountDown <= m_shrinkStartDeadline  )
+	else if ( m_stateCountDown <= (int)m_shrinkStartDeadline  )
 		m_state = DSCRU_SHRINKING;
-	else if ( m_stateCountDown <= m_sustainDeadline )
+	else if ( m_stateCountDown <= (int)m_sustainDeadline )
 		m_state = DSCRU_SUSTAINING;
-	else if ( m_stateCountDown <= m_growStartDeadline )
+	else if ( m_stateCountDown <= (int)m_growStartDeadline )
 		m_state = DSCRU_GROWING;
 
 

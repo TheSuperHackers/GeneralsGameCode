@@ -57,9 +57,11 @@ Bool ShroudCrateCollide::executeCrateBehavior( Object *other )
 	ThePartitionManager->revealMapForPlayer( cratePlayer->getPlayerIndex() );
 
 	//Play a crate pickup sound.
+#ifdef HAS_BINK
 	AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateShroud;
 	soundToPlay.setObjectID( other->getID() );
 	TheAudio->addAudioEvent(&soundToPlay);
+#endif
 
 	return TRUE;
 }

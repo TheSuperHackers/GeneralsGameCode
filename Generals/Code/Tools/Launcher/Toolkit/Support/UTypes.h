@@ -68,7 +68,7 @@ typedef char Char;
 typedef unsigned char UChar;
 
 //! Wide character (Unicode)
-typedef unsigned short WChar;
+typedef wchar_t WChar;
 
 //! 32bit floating point value
 typedef float Float32;

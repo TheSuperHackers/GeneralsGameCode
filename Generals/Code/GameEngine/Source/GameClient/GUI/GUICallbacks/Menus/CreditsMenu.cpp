@@ -103,11 +103,12 @@ void CreditsMenuInit( WindowLayout *layout, void *userData )
 
 
 
+#ifdef HAS_BINK
 	TheAudio->removeAudioEvent( AHSV_StopTheMusicFade );
 	AudioEventRTS event( AsciiString( "Credits" ) );
 	event.setShouldFade( TRUE );
 	TheAudio->addAudioEvent( &event );
-
+#endif
 
 }  // end CreditsMenuInit
 
@@ -127,7 +128,9 @@ void CreditsMenuShutdown( WindowLayout *layout, void *userData )
 	// our shutdown is complete
 	TheShell->shutdownComplete( layout );
 
+#ifdef HAS_BINK
 	TheAudio->removeAudioEvent( AHSV_StopTheMusicFade );
+#endif
 
 }  // end CreditsMenuShutdown
 
@@ -176,7 +179,7 @@ WindowMsgHandledType CreditsMenuInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitTestWW( state, KEY_STATE_UP ) )
 					{
 
 						TheShell->pop();

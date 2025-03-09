@@ -836,12 +836,12 @@ Bool GameTextManager::getStringCount( const char *filename, Int& textCount )
 
 		if( m_buffer[0] == '"' )
 		{
-				Int len = strlen(m_buffer);
+				Int len = (int)strlen(m_buffer);
 				m_buffer[ len ] = '\n';
 				m_buffer[ len+1] = 0;
 			readToEndOfQuote( file, &m_buffer[1], m_buffer2, m_buffer3, MAX_UITEXT_LENGTH );
 		}
-		else if( !stricmp( m_buffer, "END") )
+		else if( !_stricmp( m_buffer, "END") )
 		{
 			textCount++;
 		}
@@ -1052,14 +1052,14 @@ Bool GameTextManager::parseStringFile( const char *filename )
 
 		for ( Int i = 0; i < listCount; i++ )
 		{
-			if ( !stricmp ( m_stringInfo[i].label.str(), m_buffer ))
+			if ( !_stricmp( m_stringInfo[i].label.str(), m_buffer ))
 			{
 				DEBUG_ASSERTCRASH ( FALSE, ("String label '%s' multiply defined!", m_buffer ));
 			}
 		}
 
 		m_stringInfo[listCount].label = m_buffer;
-		len = strlen ( m_buffer );
+		len = (int)strlen ( m_buffer );
 
 
 		if ( len > m_maxLabelLen )
@@ -1081,7 +1081,7 @@ Bool GameTextManager::parseStringFile( const char *filename )
 
 			if( m_buffer[0] == '"' )
 			{
-				len = strlen(m_buffer);
+				len = (int)strlen(m_buffer);
 				m_buffer[ len ] = '\n';
 				m_buffer[ len+1] = 0;
 				readToEndOfQuote( file, &m_buffer[1], m_buffer2, m_buffer3, MAX_UITEXT_LENGTH );
@@ -1103,7 +1103,7 @@ Bool GameTextManager::parseStringFile( const char *filename )
 					readString = TRUE;
 				}
 			}
-			else if ( !stricmp ( m_buffer, "END" ))
+			else if ( !_stricmp( m_buffer, "END" ))
 			{
 				break;
 			}
@@ -1183,14 +1183,14 @@ Bool GameTextManager::parseMapStringFile( const char *filename )
 
 		for ( Int i = 0; i < listCount; i++ )
 		{
-			if ( !stricmp ( m_mapStringInfo[i].label.str(), m_buffer ))
+			if ( !_stricmp( m_mapStringInfo[i].label.str(), m_buffer ))
 			{
 				DEBUG_ASSERTCRASH ( FALSE, ("String label '%s' multiply defined!", m_buffer ));
 			}
 		}
 
 		m_mapStringInfo[listCount].label = m_buffer;
-		len = strlen ( m_buffer );
+		len = (int)strlen ( m_buffer );
 
 
 		if ( len > m_maxLabelLen )
@@ -1212,7 +1212,7 @@ Bool GameTextManager::parseMapStringFile( const char *filename )
 
 			if( m_buffer[0] == '"' )
 			{
-				len = strlen(m_buffer);
+				len = (int)strlen(m_buffer);
 				m_buffer[ len ] = '\n';
 				m_buffer[ len+1] = 0;
 				readToEndOfQuote( file, &m_buffer[1], m_buffer2, m_buffer3, MAX_UITEXT_LENGTH );
@@ -1238,7 +1238,7 @@ Bool GameTextManager::parseMapStringFile( const char *filename )
 					readString = TRUE;
 				}
 			}
-			else if ( !stricmp ( m_buffer, "END" ))
+			else if ( !_stricmp( m_buffer, "END" ))
 			{
 				break;
 			}
@@ -1402,5 +1402,5 @@ static int __cdecl compareLUT ( const void *i1,  const void*i2)
 	StringLookUp *lut1 = (StringLookUp*) i1;
 	StringLookUp *lut2 = (StringLookUp*) i2;
 
-	return stricmp( lut1->label->str(), lut2->label->str());
+	return _stricmp( lut1->label->str(), lut2->label->str());
 }

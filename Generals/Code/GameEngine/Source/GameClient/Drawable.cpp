@@ -206,7 +206,7 @@ static DrawableIconType drawableIconNameToIndex( const char *iconName )
 	DEBUG_ASSERTCRASH( iconName != NULL, ("drawableIconNameToIndex - Illegal name\n") );
 
 	for( Int i = ICON_FIRST; i < MAX_ICONS; ++i )
-		if( stricmp( TheDrawableIconNames[ i ], iconName ) == 0 )
+		if( _stricmp( TheDrawableIconNames[ i ], iconName ) == 0 )
 			return (DrawableIconType)i;
 
 	return ICON_INVALID;
@@ -424,7 +424,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 	Module** m;
 
 	const ModuleInfo& drawMI = thingTemplate->getDrawModuleInfo();
-	m_modules[MODULETYPE_DRAW - FIRST_DRAWABLE_MODULE_TYPE] = MSGNEW("ModulePtrs") Module*[drawMI.getCount()+1];	// pool[]ify
+	m_modules[MODULETYPE_DRAW - FIRST_DRAWABLE_MODULE_TYPE] = new Module*[drawMI.getCount()+1];	// pool[]ify
 	m = m_modules[MODULETYPE_DRAW - FIRST_DRAWABLE_MODULE_TYPE];
 	for (modIdx = 0; modIdx < drawMI.getCount(); ++modIdx)
 	{
@@ -440,7 +440,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 	if (cuMI.getCount())
 	{
 		// since most things don't have CU modules, we allow this to be null!
-		m_modules[MODULETYPE_CLIENT_UPDATE - FIRST_DRAWABLE_MODULE_TYPE] = MSGNEW("ModulePtrs") Module*[cuMI.getCount()+1];	// pool[]ify
+		m_modules[MODULETYPE_CLIENT_UPDATE - FIRST_DRAWABLE_MODULE_TYPE] = new Module*[cuMI.getCount()+1];	// pool[]ify
 		m = m_modules[MODULETYPE_CLIENT_UPDATE - FIRST_DRAWABLE_MODULE_TYPE];
 		for (modIdx = 0; modIdx < cuMI.getCount(); ++modIdx)
 		{
@@ -2750,7 +2750,7 @@ void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 	const Object *obj = getObject();			
 
 	// we do show show icons for things that explicitly forbid it
-	if( obj->isKindOf( KINDOF_NO_HEAL_ICON ) || BitTest( obj->getStatusBits(), OBJECT_STATUS_SOLD ))
+	if( obj->isKindOf( KINDOF_NO_HEAL_ICON ) || BitTestWW( obj->getStatusBits(), OBJECT_STATUS_SOLD ))
 		return;
 
 
@@ -3204,8 +3204,8 @@ void Drawable::drawConstructPercent( const IRegion2D *healthBarRegion )
 	// this data is in an attached object
 	Object *obj = getObject();
 
-	if( obj == NULL || BitTest( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE ||
-			BitTest( obj->getStatusBits(), OBJECT_STATUS_SOLD ) == TRUE )
+	if( obj == NULL || BitTestWW( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE ||
+			BitTestWW( obj->getStatusBits(), OBJECT_STATUS_SOLD ) == TRUE )
 	{
 		// no object, or we are now complete get rid of the string if we have one
 		if( m_constructDisplayString )
@@ -3395,7 +3395,7 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 		//
 
 		Color color, outlineColor;
-		if( BitTest( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) || (obj->isDisabled() && !obj->isDisabledByType(DISABLED_HELD)) )
+		if( BitTestWW( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) || (obj->isDisabled() && !obj->isDisabledByType(DISABLED_HELD)) )
 		{
 			color = GameMakeColor( 0, healthRatio * 255.0f, 255, 255 );//blue to cyan
 			outlineColor = GameMakeColor( 0, healthRatio * 128.0f, 128, 255 );//dark blue to dark cyan
@@ -3888,12 +3888,13 @@ void Drawable::startAmbientSound(BodyDamageType dt, TimeOfDay tod)
 		}
 	}
 	
+#ifdef HAS_BINK
 	if( trySound && m_ambientSound )
 	{
 		const AudioEventInfo *info = m_ambientSound->m_event.getAudioEventInfo();
 		if( info )
 		{
-			if( BitTest( info->m_type, ST_GLOBAL) || info->m_priority == AP_CRITICAL )
+			if( BitTestWW( info->m_type, ST_GLOBAL) || info->m_priority == AP_CRITICAL )
 			{
 				//Play it anyways.
 				m_ambientSound->m_event.setDrawableID(getID());
@@ -3916,11 +3917,12 @@ void Drawable::startAmbientSound(BodyDamageType dt, TimeOfDay tod)
 		}
 		else
 		{
-			DEBUG_CRASH( ("Ambient sound %s missing! Skipping...", m_ambientSound->m_event.getEventName().str() ) );
+			DEBUG_WARNING( ("Ambient sound %s missing! Skipping...", m_ambientSound->m_event.getEventName().str() ) );
 			m_ambientSound->deleteInstance();
 			m_ambientSound = NULL;
 		}
 	}
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3943,8 +3945,10 @@ void Drawable::startAmbientSound()
 //-------------------------------------------------------------------------------------------------
 void	Drawable::stopAmbientSound( void )
 {
+#ifdef HAS_BINK
 	if (m_ambientSound)
 		TheAudio->removeAudioEvent(m_ambientSound->m_event.getPlayingHandle());
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4277,9 +4281,11 @@ void Drawable::xfer( Xfer *xfer )
 	//and restore it in loadPostProcess().
 	if( xfer->getXferMode() == XFER_LOAD && m_ambientSound )
 	{
+#ifdef HAS_BINK
 		TheAudio->killAudioEventImmediately( m_ambientSound->m_event.getPlayingHandle() );
 		m_ambientSound->deleteInstance();
 		m_ambientSound = NULL;
+#endif
 	}
 
 	// drawable id

@@ -448,7 +448,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 	// apply changes to this window
 	ImageAndColorInfo *info;
 
-	if( BitTest( root->winGetStyle(), GWS_PUSH_BUTTON ) )
+	if( BitTestWW( root->winGetStyle(), GWS_PUSH_BUTTON ) )
 	{
 
 		info = GetStateInfo( BUTTON_ENABLED );
@@ -479,7 +479,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetButtonSetHiliteSelectedBorderColor( root, info->borderColor );
 
 	}  // end if
-	else if( BitTest( root->winGetStyle(), GWS_RADIO_BUTTON ) )
+	else if( BitTestWW( root->winGetStyle(), GWS_RADIO_BUTTON ) )
 	{
 
 		info = GetStateInfo( RADIO_ENABLED );
@@ -522,7 +522,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetRadioSetHiliteCheckedBoxBorderColor( root, info->borderColor );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_CHECK_BOX ) )
+	else if( BitTestWW( root->winGetStyle(), GWS_CHECK_BOX ) )
 	{
 
 		info = GetStateInfo( CHECK_BOX_ENABLED );
@@ -565,7 +565,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetCheckBoxSetHiliteCheckedBoxBorderColor( root, info->borderColor );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_VERT_SLIDER ) )
+	else if( BitTestWW( root->winGetStyle(), GWS_VERT_SLIDER ) )
 	{
 
 		info = GetStateInfo( VSLIDER_ENABLED_TOP );
@@ -629,7 +629,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetSliderSetHiliteSelectedThumbBorderColor( root, info->borderColor );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_HORZ_SLIDER ) )
+	else if( BitTestWW( root->winGetStyle(), GWS_HORZ_SLIDER ) )
 	{
 
 		info = GetStateInfo( HSLIDER_ENABLED_LEFT );
@@ -693,7 +693,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetSliderSetHiliteSelectedThumbBorderColor( root, info->borderColor );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_SCROLL_LISTBOX ) )
+	else if( BitTestWW( root->winGetStyle(), GWS_SCROLL_LISTBOX ) )
 	{
 
 		info = GetStateInfo( LISTBOX_ENABLED );
@@ -874,7 +874,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		}  // end if
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_COMBO_BOX ) )
+	else if( BitTestWW( root->winGetStyle(), GWS_COMBO_BOX ) )
 	{
 		info = GetStateInfo( COMBOBOX_ENABLED );
 		GadgetListBoxSetEnabledImage( root, info->image );
@@ -1170,7 +1170,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 			}  // end if
 		}// end if (combo listbox)
 	}// end if
-	else if( BitTest( root->winGetStyle(), GWS_ENTRY_FIELD ) )
+	else if( BitTestWW( root->winGetStyle(), GWS_ENTRY_FIELD ) )
 	{
 
 		info = GetStateInfo( TEXT_ENTRY_ENABLED_LEFT );
@@ -1207,7 +1207,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetTextEntrySetHiliteImageSmallCenter( root, info->image );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_STATIC_TEXT ) )
+	else if( BitTestWW( root->winGetStyle(), GWS_STATIC_TEXT ) )
 	{
 
 		info = GetStateInfo( STATIC_TEXT_ENABLED );
@@ -1226,7 +1226,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetStaticTextSetHiliteBorderColor( root, info->borderColor );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_PROGRESS_BAR ) )
+	else if( BitTestWW( root->winGetStyle(), GWS_PROGRESS_BAR ) )
 	{
 
 		info = GetStateInfo( PROGRESS_BAR_ENABLED_LEFT );
@@ -1293,7 +1293,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetProgressBarSetHiliteBarImageSmallCenter( root, info->image );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_TAB_CONTROL ) )
+	else if( BitTestWW( root->winGetStyle(), GWS_TAB_CONTROL ) )
 	{
 		info = GetStateInfo( TC_TAB_0_ENABLED );
 		GadgetTabControlSetEnabledImageTabZero( root, info->image );
@@ -2359,19 +2359,19 @@ Bool LayoutScheme::loadScheme( char *filename )
 	}  // end if
 
 	// default text colors
-	fscanf( fp, "Enabled Text: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
+	fscanf( fp, "Enabled Text: (%hhd,%hhd,%hhd,%hhd)\n", &colorR, &colorG, &colorB, &colorA );
 	m_enabledText.color = GameMakeColor( colorR, colorG, colorB, colorA );
-	fscanf( fp, "Enabled Text Border: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
+	fscanf( fp, "Enabled Text Border: (%hhd,%hhd,%hhd,%hhd)\n", &colorR, &colorG, &colorB, &colorA );
 	m_enabledText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
 
-	fscanf( fp, "Disabled Text: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
+	fscanf( fp, "Disabled Text: (%hhd,%hhd,%hhd,%hhd)\n", &colorR, &colorG, &colorB, &colorA );
 	m_disabledText.color = GameMakeColor( colorR, colorG, colorB, colorA );
-	fscanf( fp, "Disabled Text Border: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
+	fscanf( fp, "Disabled Text Border: (%hhd,%hhd,%hhd,%hhd)\n", &colorR, &colorG, &colorB, &colorA );
 	m_disabledText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
 
-	fscanf( fp, "Hilite Text: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
+	fscanf( fp, "Hilite Text: (%hhd,%hhd,%hhd,%hhd)\n", &colorR, &colorG, &colorB, &colorA );
 	m_hiliteText.color = GameMakeColor( colorR, colorG, colorB, colorA );
-	fscanf( fp, "Hilite Text Border: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
+	fscanf( fp, "Hilite Text Border: (%hhd,%hhd,%hhd,%hhd)\n", &colorR, &colorG, &colorB, &colorA );
 	m_hiliteText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
 
 	// default font
@@ -2410,7 +2410,7 @@ Bool LayoutScheme::loadScheme( char *filename )
 	{
 
 		// read all the data
-		fscanf( fp, "%d: Image: %s Color: (%d,%d,%d,%d) Border: (%d,%d,%d,%d)\n",
+		fscanf( fp, "%d: Image: %s Color: (%hhd,%hhd,%hhd,%hhd) Border: (%hhd,%hhd,%hhd,%hhd)\n",
 						&state, imageBuffer, &colorR, &colorG, &colorB, &colorA,
 						&bColorR, &bColorG, &bColorB, &bColorA );
 

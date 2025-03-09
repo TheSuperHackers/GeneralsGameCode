@@ -47,7 +47,7 @@ Bool DecompressFile		(char *infile, char *outfile)
 	char *outBlock	= NULL;
 	LZHL_DHANDLE decompress;
 	Int ok = 0;
-	UnsignedInt srcSz, dstSz;
+	size_t srcSz, dstSz;
 
 	// Parameter checking
 	 
@@ -165,7 +165,7 @@ Bool CompressFile			(char *infile, char *outfile)
 		for ( i = 0; i < rawSize; i += BLOCKSIZE )
 		{
 			blocklen = min((UnsignedInt)BLOCKSIZE, rawSize - i);
-			compressed = LZHLCompress(compressor, outBlock + compressedSize, inBlock + i, blocklen);
+			compressed = (unsigned int)LZHLCompress(compressor, outBlock + compressedSize, inBlock + i, blocklen);
 			compressedSize += compressed;
 		}
 
@@ -212,7 +212,7 @@ Bool DecompressPacket	(char *inPacket, char *outPacket)
 }
 
 
-UnsignedInt CalcNewSize		(UnsignedInt rawSize)
+size_t CalcNewSize		(size_t rawSize)
 {
 	return LZHLCompressorCalcMaxBuf(rawSize);
 }
@@ -224,7 +224,7 @@ Bool DecompressMemory		(void *inBufferVoid, Int inSize, void *outBufferVoid, Int
 	UnsignedInt	rawSize = 0, compressedSize = 0;
 	LZHL_DHANDLE decompress;
 	Int ok = 0;
-	UnsignedInt srcSz, dstSz;
+	size_t srcSz, dstSz;
 
 	// Parameter checking
 	 
@@ -285,7 +285,7 @@ Bool CompressMemory			(void *inBufferVoid, Int inSize, void *outBufferVoid, Int&
 	for ( i = 0; i < rawSize; i += BLOCKSIZE )
 	{
 		blocklen = min((UnsignedInt)BLOCKSIZE, rawSize - i);
-		compressed = LZHLCompress(compressor, outBuffer + compressedSize, inBuffer + i, blocklen);
+		compressed = (unsigned int)LZHLCompress(compressor, outBuffer + compressedSize, inBuffer + i, blocklen);
 		compressedSize += compressed;
 	}
 

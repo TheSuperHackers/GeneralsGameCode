@@ -152,7 +152,7 @@ RenderObjClass * W3DPrototypeClass::Create(void)
 W3DAssetManager::W3DAssetManager(void)
 {
 #ifdef	INCLUDE_GRANNY_IN_BUILD
-	m_GrannyAnimManager = NEW GrannyAnimManagerClass;
+	m_GrannyAnimManager = new GrannyAnimManagerClass;
 #endif
 }
 
@@ -410,7 +410,8 @@ static void remapTexture16Bit(Int dx, Int dy, Int pitch, SurfaceClass::SurfaceDe
 	Vector3 rgb,v_color((float)((color>>16)&0xff)/255.0f/255.0f,(float)((color>>8)&0xff)/255.0f/255.0f,(float)(color&0xff)/255.0f/255.0f);
 
 	//Generate a new color gradient palette based on reference color
-	for (Int y=0; y<TEAM_COLOR_PALETTE_SIZE; y++)
+	Int y = 0;
+	for (; y<TEAM_COLOR_PALETTE_SIZE; y++)
 	{	
 		rgb.X=(Real)houseColorScale[y]*v_color.X;
 		rgb.Y=(Real)houseColorScale[y]*v_color.Y;
@@ -513,7 +514,8 @@ static void remapTexture32Bit(Int dx, Int dy, Int pitch, SurfaceClass::SurfaceDe
 	Vector3 rgb,v_color((float)((color>>16)&0xff)/255.0f/255.0f,(float)((color>>8)&0xff)/255.0f/255.0f,(float)(color&0xff)/255.0f/255.0f);
 
 	//Generate a new color gradient palette based on reference color
-	for (Int y=0; y<TEAM_COLOR_PALETTE_SIZE; y++)
+	Int y = 0;
+	for (; y<TEAM_COLOR_PALETTE_SIZE; y++)
 	{	
 		rgb.X=(Real)houseColorScale[y]*v_color.X;
 		rgb.Y=(Real)houseColorScale[y]*v_color.Y;
@@ -766,10 +768,10 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	{	
 		// If we didn't find one, try to load on demand
 		char filename [MAX_PATH];
-		char *mesh_name = ::strchr (name, '.');
+		const char *mesh_name = ::strchr (name, '.');
 		if (mesh_name != NULL) 
 		{
-			::lstrcpyn(filename, name, ((int)mesh_name) - ((int)name) + 1);
+			::lstrcpyn(filename, name, ((intptr_t)mesh_name) - ((intptr_t)name) + 1);
 #ifdef	INCLUDE_GRANNY_IN_BUILD
 			if (isGranny)
 				::lstrcat(filename, ".gr2");
@@ -1512,7 +1514,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scal
 		return rendobj;
 	}
 
-	W3DPrototypeClass *w3dproto=NEW W3DPrototypeClass(rendobj,newname);
+	W3DPrototypeClass *w3dproto=new W3DPrototypeClass(rendobj,newname);
 	rendobj->Release_Ref();
 	Add_Prototype(w3dproto);
 

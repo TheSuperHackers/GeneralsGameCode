@@ -331,7 +331,7 @@ void RecorderClass::cleanUpReplayFile( void )
 				fseek(ifp, fileSize-MAX_DEBUG_SIZE, SEEK_SET);
 				char buf[4096];
 				Int len;
-				while ( (len=fread(buf, 1, 4096, ifp)) > 0 )
+				while ( (len=(int)fread(buf, 1, 4096, ifp)) > 0 )
 				{
 					fwrite(buf, 1, len, ofp);
 				}
@@ -1162,7 +1162,7 @@ Bool RecorderClass::playbackFile(AsciiString filename)
  * Read a unicode string from the current file position. The string is assumed to be 0-terminated.
  */
 UnicodeString RecorderClass::readUnicodeString() {
-	UnsignedShort str[1024] = L"";
+	wchar_t str[1024] = L"";
 	Int index = 0;
 
 	Int c = fgetwc(m_file);
@@ -1219,7 +1219,7 @@ AsciiString RecorderClass::readAsciiString() {
  * is stopped and the next frame is said to be -1.
  */
 void RecorderClass::readNextFrame() {
-	Int retcode = fread(&m_nextFrame, sizeof(m_nextFrame), 1, m_file);
+	Int retcode = (int)fread(&m_nextFrame, sizeof(m_nextFrame), 1, m_file);
 	if (retcode != 1) {
 		DEBUG_LOG(("RecorderClass::readNextFrame - fread failed on frame %d\n", TheGameLogic->getFrame()));
 		m_nextFrame = -1;
@@ -1232,7 +1232,7 @@ void RecorderClass::readNextFrame() {
  */
 void RecorderClass::appendNextCommand() {
 	GameMessage::Type type;
-	Int retcode = fread(&type, sizeof(type), 1, m_file);
+	Int retcode = (int)fread(&type, sizeof(type), 1, m_file);
 	if (retcode != 1) {
 		DEBUG_LOG(("RecorderClass::appendNextCommand - fread failed on frame %d\n", m_nextFrame/*TheGameLogic->getFrame()*/));
 		return;

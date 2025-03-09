@@ -1,0 +1,495 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{d224d31e-0c5b-4454-b7a3-a730e5bca030}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;hpj;bat;for;f90</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{33206324-9218-41c1-95ba-1d386efa81f4}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;fi;fd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{8d8e5e91-794c-488a-bf5f-1c767a96ff30}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="MAXScript Extensions">
+      <UniqueIdentifier>{7f528bdc-76af-4e45-b66f-4219c3e92617}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MAXScripts">
+      <UniqueIdentifier>{28eb4502-8e62-4171-a9cf-b7a7213325f5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="aabtreebuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AlphaModifier.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="animationcompressionsettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bchannel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="boneicon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bpick.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="colboxsave.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dazzlesave.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="exportlog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="floaterdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FormClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gamemaps.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMtl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMtlDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMtlForm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMtlPassDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMtlShaderDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMtlTextureDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMtlVertexMaterialDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="genlodextensiondialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="genmtlnamesdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gennamesdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="geometryexporttask.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gridsnapmodifier.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hiersave.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hlodsave.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="logdlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="maxworldinfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="meshbuild.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="meshcon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshDeform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshDeformData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshDeformPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshDeformSave.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshDeformSaveSet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshDeformSet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshDeformUndo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="meshsave.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="motion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="namedsel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nullsave.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PCToPS2Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="presetexportoptionsdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PS2GameMtl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PS2GameMtlShaderDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rcmenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="simpdib.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="skin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="skindata.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SnapPoints.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TARGA.CPP">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vchannel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vxl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vxldbg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vxllayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="w3dappdata.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="w3ddesc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="w3ddlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="w3dexp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="w3dmtl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="w3dutil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\pluglib\realcrc.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AppData.cpp">
+      <Filter>MAXScript Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="ExportAll.cpp">
+      <Filter>MAXScript Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="ExportAllDlg.cpp">
+      <Filter>MAXScript Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="InputDlg.cpp">
+      <Filter>MAXScript Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneSetup.cpp">
+      <Filter>MAXScript Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneSetupDlg.cpp">
+      <Filter>MAXScript Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinCopy.cpp">
+      <Filter>MAXScript Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility.cpp">
+      <Filter>MAXScript Extensions</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="aabtreebuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AlphaModifier.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="animationcompressionsettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bchannel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="boneicon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bpick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="colboxsave.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dazzlesave.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dllmain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="exportlog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="floaterdialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FormClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gamemaps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gamemtl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMtlDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMtlForm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMtlPassDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMtlShaderDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMtlTextureDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMtlVertexMaterialDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="genlodextensiondialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="genmtlnamesdialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gennamesdialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="geometryexportcontext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="geometryexporttask.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gridsnapmodifier.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hiersave.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hlodsave.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="logdlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="maxworldinfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="meshbuild.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="meshcon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshDeform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshDeformData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshDeformDefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshDeformPanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshDeformSave.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshDeformSaveDefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshDeformSaveSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshDeformSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshDeformUndo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="meshsave.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="motion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="namedsel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nullsave.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="presetexportoptionsdialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PS2GameMtlShaderDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rcmenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="simpdib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="skin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="skindata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SnapPoints.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TARGA.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vchannel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vxl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vxldbg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vxllayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="w3d_file.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="w3d_obsolete.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="w3dappdata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="w3ddesc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="w3ddlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="w3dexp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="w3dmtl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="w3dutil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExportAllDlg.h">
+      <Filter>MAXScript Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="InputDlg.h">
+      <Filter>MAXScript Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneSetupDlg.h">
+      <Filter>MAXScript Extensions</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Res\DISK12.ICO">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Res\one.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Res\orig.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Res\orig1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Res\two.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Res\ww3d.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="max2w3d.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="changes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="max2w3d.def">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Export.ms">
+      <Filter>MAXScripts</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ResetAndCollapse.ms">
+      <Filter>MAXScripts</Filter>
+    </CustomBuild>
+    <CustomBuild Include="SceneSetup.ms">
+      <Filter>MAXScripts</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

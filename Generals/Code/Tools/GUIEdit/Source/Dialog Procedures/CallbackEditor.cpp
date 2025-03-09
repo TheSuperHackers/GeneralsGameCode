@@ -88,7 +88,7 @@ void SaveCallbacks( GameWindow *window, HWND dialog )
 	DEBUG_ASSERTCRASH( editData, ("No edit data for window saving callbacks!\n") );
 
 	// get the currently selected item from each of the combos and save
-	Int index;
+	LRESULT index;
 	char buffer[ 256 ];
 
 	// system
@@ -216,7 +216,7 @@ static void loadUserWindows( HWND listbox, GameWindow *root )
 	if( TheEditor->windowIsGadget( root ) == FALSE )
 	{
 		WinInstanceData *instData = root->winGetInstanceData();
-		Int index;
+		LRESULT index;
 
 		AsciiString name;
 		//
@@ -248,7 +248,7 @@ static void loadUserWindows( HWND listbox, GameWindow *root )
 static void saveLayoutCallbacks( HWND dialog )
 {
 	char buffer[ MAX_LAYOUT_FUNC_LEN ];
-	Int sel;
+	LRESULT sel;
 
 	// layout init
 	sel = SendDlgItemMessage( dialog, COMBO_INIT, CB_GETCURSEL, 0, 0 );
@@ -274,7 +274,7 @@ static void saveLayoutCallbacks( HWND dialog )
 // CallbackEditorDialogProc ===================================================
 /** Dialog procedure for grid settings dialog */
 //=============================================================================
-BOOL CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message, 
+INT_PTR CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message, 
 																				WPARAM wParam, LPARAM lParam )
 {
 
@@ -325,7 +325,7 @@ BOOL CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message,
 						// ----------------------------------------------------------------
 						case LBN_SELCHANGE:
 						{
-							Int selected;
+							LRESULT selected;
 							GameWindow *win;
 
 							// get the current selection of the window list

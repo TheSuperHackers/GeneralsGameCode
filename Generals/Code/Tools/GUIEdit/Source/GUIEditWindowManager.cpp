@@ -504,7 +504,7 @@ void GUIEditWindowManager::incrementName( GameWindow *window )
 	char name[MAX_WINDOW_NAME_LEN];
 	strcpy(name, instData->m_decoratedNameString.str());
 
-	Int len = strlen( name );
+	Int len = (int)strlen( name );
 	char numberBuffer[ MAX_WINDOW_NAME_LEN ];
 	Int i, j;
 	char c;
@@ -564,10 +564,10 @@ void GUIEditWindowManager::incrementName( GameWindow *window )
 		number++;
 
 		// turn number back into string
-		itoa( number, numberBuffer, 10 );
+		_itoa( number, numberBuffer, 10 );
 
 		// put number string OVER the original number string in the name
-		len = strlen( numberBuffer );
+		len = (int)strlen( numberBuffer );
 		charsAdded = 0;
 		for( i = 0; i < len; i++ )
 		{
@@ -814,7 +814,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 	source->winGetSize( &size.x, &size.y );
 
 	// create a new window or gadget of the appropriate type
-	if( BitTest( style, GWS_PUSH_BUTTON ) )
+	if( BitTestWW( style, GWS_PUSH_BUTTON ) )
 	{
 
 		duplicate = 
@@ -829,7 +829,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 																							FALSE );
 
 	}  // end if
-	else if( BitTest( style, GWS_RADIO_BUTTON ) )
+	else if( BitTestWW( style, GWS_RADIO_BUTTON ) )
 	{
 		RadioButtonData *radioData = (RadioButtonData *)source->winGetUserData();
 		RadioButtonData radioDataCopy;
@@ -850,7 +850,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 																							 FALSE );
 
 	}  // end else if
-	else if( BitTest( style, GWS_CHECK_BOX ) )
+	else if( BitTestWW( style, GWS_CHECK_BOX ) )
 	{
 
 		duplicate = 
@@ -865,7 +865,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 																						FALSE );
 
 	}  // end else if
-	else if( BitTest( style, GWS_HORZ_SLIDER | GWS_VERT_SLIDER ) )
+	else if( BitTestWW( style, GWS_HORZ_SLIDER | GWS_VERT_SLIDER ) )
 	{
 		SliderData *sliderData = (SliderData *)source->winGetUserData();
 		SliderData sliderDataCopy;
@@ -918,7 +918,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 		}  // end if
 
 	}  // end else if
-	else if( BitTest( style, GWS_COMBO_BOX ) )
+	else if( BitTestWW( style, GWS_COMBO_BOX ) )
 	{
 		ComboBoxData *comboData = (ComboBoxData *)source->winGetUserData();
 		ComboBoxData comboDataCopy;
@@ -1106,7 +1106,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 		}  // end if
 
 	}  // end else if
-	else if( BitTest( style, GWS_SCROLL_LISTBOX ) )
+	else if( BitTestWW( style, GWS_SCROLL_LISTBOX ) )
 	{
 		ListboxData *listData = (ListboxData *)source->winGetUserData();
 		ListboxData listDataCopy;
@@ -1256,7 +1256,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 		}  // end if
 
 	}  // end else if
-	else if( BitTest( style, GWS_ENTRY_FIELD ) )
+	else if( BitTestWW( style, GWS_ENTRY_FIELD ) )
 	{
 		EntryData *entryData = (EntryData *)source->winGetUserData();
 		EntryData entryDataCopy;
@@ -1281,7 +1281,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 																						 FALSE );
 
 	}  // end else if
-	else if( BitTest( style, GWS_STATIC_TEXT ) )
+	else if( BitTestWW( style, GWS_STATIC_TEXT ) )
 	{
 		TextData *textData = (TextData *)source->winGetUserData();
 		TextData textDataCopy;
@@ -1301,7 +1301,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 																							FALSE );
 
 	}  // end else if
-	else if( BitTest( style, GWS_PROGRESS_BAR ) )
+	else if( BitTestWW( style, GWS_PROGRESS_BAR ) )
 	{
 		
 		duplicate = 
@@ -1316,7 +1316,7 @@ GameWindow *GUIEditWindowManager::duplicateWindow( GameWindow *source,
 																							 FALSE );
 
 	}  // end else if
-	else if( BitTest( style, GWS_USER_WINDOW ) )
+	else if( BitTestWW( style, GWS_USER_WINDOW ) )
 	{
 
 		// create plain ol generic window

@@ -63,7 +63,7 @@ Bool UnitCrateCollide::executeCrateBehavior( Object *other )
 		return FALSE;
 	}
 
-	for( Int unitIndex = 0; unitIndex < unitCount; unitIndex++ )
+	for( Int unitIndex = 0; unitIndex < (int)unitCount; unitIndex++ )
 	{
 		Team *creationTeam = other->getControllingPlayer()->getDefaultTeam();
 		Object *newObj = TheThingFactory->newObject( unitType, creationTeam );
@@ -84,9 +84,11 @@ Bool UnitCrateCollide::executeCrateBehavior( Object *other )
 	}
 
 	//Play a crate pickup sound.
+#ifdef HAS_BINK
 	AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateFreeUnit;
 	soundToPlay.setObjectID( other->getID() );
 	TheAudio->addAudioEvent(&soundToPlay);
+#endif
 
 	return TRUE;
 }

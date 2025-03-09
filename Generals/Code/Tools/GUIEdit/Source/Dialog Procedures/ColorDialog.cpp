@@ -245,7 +245,7 @@ RGBColorReal hsvToRGB( HSVColorReal hsvColor )
 }  // end hsvToRGB
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////
-BOOL CALLBACK SelectColorDlgProc( HWND hWnd, UINT uMsg, 
+INT_PTR CALLBACK SelectColorDlgProc( HWND hWnd, UINT uMsg, 
                                   WPARAM wParam, LPARAM lParam );
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -283,7 +283,7 @@ RGBColorInt *SelectColor( Int red, Int green, Int blue, Int alpha,
 // SelectColorDlgProc =========================================================
 /** Dialog procedure for color selector dialog */
 // ============================================================================
-BOOL CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg, 
+INT_PTR CALLBACK SelectColorDlgProc( HWND hWndDlg, UINT uMsg, 
                                   WPARAM wParam, LPARAM lParam )
 {
   static HWND hWndScrollColor1;  // red / hue

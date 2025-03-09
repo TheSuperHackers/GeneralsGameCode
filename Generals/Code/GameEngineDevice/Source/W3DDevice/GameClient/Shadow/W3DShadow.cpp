@@ -43,7 +43,7 @@
 #include "Lib/BaseType.h"
 #include "W3DDevice/GameClient/W3DGranny.h"
 #include "W3DDevice/GameClient/Heightmap.h"
-#include "D3dx8math.h"
+#include "D3dx9math.h"
 #include "common/GlobalData.h"
 #include "W3DDevice/GameClient/W3DVolumetricShadow.h"
 #include "W3DDevice/GameClient/W3DProjectedShadow.h"
@@ -109,8 +109,8 @@ W3DShadowManager::W3DShadowManager( void )
 
 	LightPosWorld[0]=lightRay*SUN_DISTANCE_FROM_GROUND;
 
-	TheW3DVolumetricShadowManager = NEW W3DVolumetricShadowManager;
-	TheProjectedShadowManager = TheW3DProjectedShadowManager = NEW W3DProjectedShadowManager;
+	TheW3DVolumetricShadowManager = new W3DVolumetricShadowManager;
+	TheProjectedShadowManager = TheW3DProjectedShadowManager = new W3DProjectedShadowManager;
 }
 
 W3DShadowManager::~W3DShadowManager( void )

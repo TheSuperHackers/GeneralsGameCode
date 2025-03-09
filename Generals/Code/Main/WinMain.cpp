@@ -49,7 +49,7 @@
 #include "Common/GameSounds.h"
 #include "Common/Debug.h"
 #include "Common/GameMemory.h"
-#include "Common/SafeDisc/CdaPfn.h"
+//#include "Common/SafeDisc/CdaPfn.h"
 #include "Common/StackDump.h"
 #include "Common/MessageStream.h"
 #include "Common/Team.h"
@@ -61,8 +61,8 @@
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "Win32Device/Common/Win32GameEngine.h"
 #include "Common/Version.h"
-#include "BuildVersion.h"
-#include "GeneratedVersion.h"
+//#include "BuildVersion.h"
+//#include "GeneratedVersion.h"
 #include "Resource.h"
 
 #ifdef _INTERNAL
@@ -454,16 +454,20 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 				{
 
 					ClipCursor( NULL );
+#ifdef HAS_BINK
 					if (TheAudio)
 						TheAudio->loseFocus();
+#endif
 				}  // end if
 				else
 				{
 					if( TheMouse )
 						TheMouse->setMouseLimits();
 
+#ifdef HAS_BINK
 					if (TheAudio)
 						TheAudio->regainFocus();
+#endif
 
 				}  // end else
 				break;
@@ -734,12 +738,14 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 
 }  // end initializeAppWindows
 
+#if 0
 void munkeeFunc(void);
 CDAPFN_DECLARE_GLOBAL(munkeeFunc, CDAPFN_OVERHEAD_L5, CDAPFN_CONSTRAINT_NONE);
 void munkeeFunc(void)
 {
 	CDAPFN_ENDMARK(munkeeFunc);
 }
+#endif
 
 void checkProtection(void)
 {
@@ -774,7 +780,7 @@ static char* strtrim(char* buffer)
 		}
 
 		//	Clip trailing white space from the string.
-		for (int index = strlen(buffer)-1; index >= 0; index--)
+		for (int index = (int)strlen(buffer)-1; index >= 0; index--)
 		{
 			if ((*source != 0) && ((unsigned char)buffer[index] <= 32))
 			{
@@ -856,7 +862,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	try {
 
-		_set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
+		//_set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
 		//
 		// there is something about checkin in and out the .dsp and .dsw files 
 		// that blows the working directory information away on each of the 
@@ -899,7 +905,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		while (argc < 20 && token != NULL) {
 			argv[argc++] = strtrim(token);
 			//added a preparse step for this flag because it affects window creation style
-			if (stricmp(token,"-win")==0)
+			if (_stricmp(token,"-win")==0)
 				ApplicationIsWindowed=true;
 			token = nextParam(NULL, "\" ");	   
 		}
@@ -914,7 +920,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 				char name[_MAX_PATH], file[_MAX_PATH];
 				unsigned int line;
 				unsigned int addr;
-				GetFunctionDetails((void*)pc, name, file, &line, &addr);
+				GetFunctionDetails((void*)(intptr_t)pc, name, file, &line, &addr);
 				DEBUG_LOG(("0x%x - %s, %s, line %d address 0x%x\n", pc, name, file, line, addr));
 			}
 			DEBUG_LOG(("\n--- END OF DX STACK DUMP\n"));
@@ -959,9 +965,11 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
  
 		// Set up version info
 		TheVersion = NEW Version;
+#if 0
 		TheVersion->setVersion(VERSION_MAJOR, VERSION_MINOR, VERSION_BUILDNUM, VERSION_LOCALBUILDNUM,
 			AsciiString(VERSION_BUILDUSER), AsciiString(VERSION_BUILDLOC),
 			AsciiString(__TIME__), AsciiString(__DATE__));
+#endif
 
 #ifdef DO_COPY_PROTECTION
 		if (!CopyProtect::isLauncherRunning())

@@ -102,7 +102,7 @@ void TeamRelationMap::xfer( Xfer *xfer )
 
 	// team relation count
 	TeamRelationMapType::iterator teamRelationIt;
-	UnsignedShort teamRelationCount = m_map.size();
+	UnsignedShort teamRelationCount = (uint16_t)m_map.size();
 	xfer->xferUnsignedShort( &teamRelationCount );
 
 	// team relations
@@ -442,7 +442,7 @@ void TeamFactory::xfer( Xfer *xfer )
 	xfer->xferUser( &m_uniqueTeamID, sizeof( TeamID ) );
 
 	// how many team prototypes of data do we have to write
-	UnsignedShort prototypeCount = m_prototypes.size();
+	UnsignedShort prototypeCount = (uint16_t)m_prototypes.size();
 	xfer->xferUnsignedShort( &prototypeCount );
 
 	//
@@ -1623,7 +1623,7 @@ void Team::countObjectsByThingTemplate(Int numTmplates, const ThingTemplate* con
 			if (ignoreDead && iter.cur()->isEffectivelyDead())
 				continue;
 
-			if( ignoreUnderConstruction && (BitTest(iter.cur()->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION) == TRUE) )
+			if( ignoreUnderConstruction && (BitTestWW(iter.cur()->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION) == TRUE) )
 				continue;
 
 			counts[i] += 1;

@@ -70,7 +70,7 @@ enum DrawableID;
 
 #include <algorithm>
 #include <bitset>
-#include <hash_map>
+#include <unordered_map>
 #include <list>
 #include <map>
 #include <queue>
@@ -190,10 +190,12 @@ namespace rts
 
 	template<> struct hash<AsciiString>
 	{
-		size_t operator()(AsciiString ast) const
-		{ 
-			std::hash<const char *> tmp;
-			return tmp((const char *) ast.str());
+		size_t operator()(const AsciiString& ast) const
+		{
+#pragma message("Figure out the upgrade to C++17 or add a string hashing algorithm")
+			std::hash<std::string> tmp;
+			const char* str = (const char*) ast.str();
+			return tmp(str);
 		}
 	};
 

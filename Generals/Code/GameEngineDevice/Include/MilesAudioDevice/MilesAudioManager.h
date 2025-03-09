@@ -20,6 +20,7 @@
 // MilesAudioManager implementation
 // Author: John K. McDonald, July 2002
 
+#if HAS_BINK
 #include "Common/AsciiString.h"
 #include "Common/GameAudio.h"
 #include "MSS/MSS.h"
@@ -97,7 +98,7 @@ struct OpenAudioFile
 	const AudioEventInfo *m_eventInfo;	// Not mutable, unlike the one on AudioEventRTS.
 };
 
-typedef std::hash_map< AsciiString, OpenAudioFile, rts::hash<AsciiString>, rts::equal_to<AsciiString> > OpenFilesHash;
+typedef std::unordered_map< AsciiString, OpenAudioFile, rts::hash<AsciiString>, rts::equal_to<AsciiString> > OpenFilesHash;
 typedef OpenFilesHash::iterator OpenFilesHashIt;
 
 class AudioFileCache
@@ -314,7 +315,9 @@ class MilesAudioManager : public AudioManager
 		std::list<PlayingAudio *> m_stoppedAudio;
 
 		AudioFileCache *m_audioCache;
+#if HAS_BINK
 		PlayingAudio *m_binkHandle;
+#endif
 		UnsignedInt m_num2DSamples;
 		UnsignedInt m_num3DSamples;
 		UnsignedInt m_numStreams;
@@ -327,4 +330,5 @@ class MilesAudioManager : public AudioManager
 #endif
 
 };
+#endif
 

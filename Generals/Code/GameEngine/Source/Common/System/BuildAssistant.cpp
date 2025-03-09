@@ -419,10 +419,12 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 		{
 			owningPlayer->onUnitCreated( constructorObject, obj );
 
+#ifdef HAS_BINK
 			//Call the voice created for the 1st object -- because it's possible to create multiple objects like redguards!
 			AudioEventRTS sound = *obj->getTemplate()->getPerUnitSound( "VoiceCreated" );
 			sound.setObjectID( obj->getID() );
 			TheAudio->addAudioEvent( &sound );
+#endif
 		}
 
 		// Now onCreates were called at the constructor.  This magically created
@@ -854,7 +856,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 
 	// check shroud level
 	// This should be the first check, since returning other errors for shrouded areas could be used to game the system
-	if( BitTest( options, SHROUD_REVEALED ) )
+	if( BitTestWW( options, SHROUD_REVEALED ) )
 	{
 		{
 			Int x, y;
@@ -875,7 +877,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 	// any immobile objects, or an enemy object.  Friendly objects should politely 
 	// "move out of the way" when you build something where they're standing
 	//
-	if( BitTest( options, NO_OBJECT_OVERLAP ) )
+	if( BitTestWW( options, NO_OBJECT_OVERLAP ) )
 	{
 		if (!isLocationClearOfObjects(worldPos, build, angle, builderObject, NO_OBJECT_OVERLAP, player)) 
 		{
@@ -887,7 +889,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 	// if NO_ENEMY_OBJECT_OVERLAP is set, we are not allowed to construct 'build' if it would overlap
 	// any enemy objects.  Friendly objects are ignored.
 	//
-	if( BitTest( options, NO_ENEMY_OBJECT_OVERLAP ) )
+	if( BitTestWW( options, NO_ENEMY_OBJECT_OVERLAP ) )
 	{
 		if (!isLocationClearOfObjects(worldPos, build, angle, builderObject, NO_ENEMY_OBJECT_OVERLAP, player)) 
 		{
@@ -925,7 +927,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 	}
 
 	// if clear path is requestsed check to see if the builder object can get there
-	if( BitTest( options, CLEAR_PATH ) && builderObject )
+	if( BitTestWW( options, CLEAR_PATH ) && builderObject )
 	{
 		AIUpdateInterface *ai = builderObject->getAIUpdateInterface();
 
@@ -943,7 +945,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 		// check for an available path using one of two methods (the quick less accurate one,
 		// or the slow more accurate one)
 		//
-		if( BitTest( options, USE_QUICK_PATHFIND ) )
+		if( BitTestWW( options, USE_QUICK_PATHFIND ) )
 		{
 
 			if( ai->isQuickPathAvailable( worldPos ) == FALSE )
@@ -961,7 +963,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 	}  // end if
 
 	// check basic terrain restrctions
-	if( BitTest( options, TERRAIN_RESTRICTIONS ) )
+	if( BitTestWW( options, TERRAIN_RESTRICTIONS ) )
 	{
 
 		//
@@ -1296,7 +1298,7 @@ CanMakeType BuildAssistant::canMakeUnit( Object *builder, const ThingTemplate *w
 	// make sure we have enough money to build this
 	Player *player = builder->getControllingPlayer();
 	Money *money = player->getMoney();
-	if( whatToBuild->calcCostToBuild( player ) > money->countMoney() )
+	if( whatToBuild->calcCostToBuild( player ) > (int)money->countMoney() )
 		return CANMAKE_NO_MONEY;
 
 	// make sure we're not maxed out for this type of unit.
@@ -1306,7 +1308,7 @@ CanMakeType BuildAssistant::canMakeUnit( Object *builder, const ThingTemplate *w
 		const Bool ignoreUnderConstruction = FALSE;// Most people don't want to count under construction, but I totally do
 		Int existingCount;
 		player->countObjectsByThingTemplate(1, &whatToBuild, ignoreDead, &existingCount, ignoreUnderConstruction);
-		if (existingCount >= whatToBuild->getMaxSimultaneousOfType())
+		if (existingCount >= (int)whatToBuild->getMaxSimultaneousOfType())
 			return CANMAKE_MAXED_OUT_FOR_PLAYER;
 
 		// also check objects that are in production

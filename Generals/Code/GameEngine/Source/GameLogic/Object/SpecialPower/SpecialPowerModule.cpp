@@ -106,7 +106,7 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 	// we won't be able to use the power for X number of frames now
 
 	// if we're pre-built, start counting down
-	if( BitTest( getObject()->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE )
+	if( BitTestWW( getObject()->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE )
 	{
 		//A sharedNSync special only startPowerRecharges when first scienced or when executed,
 		//Since a new modue with same SPTemplates may construct at any time.
@@ -503,6 +503,7 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
 	//}
 
 	// get module data
+#ifdef HAS_BINK
 	const SpecialPowerModuleData *modData = getSpecialPowerModuleData();
 
 	// play our initiate sound if we have one
@@ -520,6 +521,7 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
 		TheAudio->addAudioEvent( &soundAtLocation );
 
 	}  // end if
+#endif
 
 }
 

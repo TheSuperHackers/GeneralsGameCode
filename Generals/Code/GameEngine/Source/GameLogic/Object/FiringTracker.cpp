@@ -64,7 +64,9 @@ FiringTracker::FiringTracker(Thing* thing, const ModuleData *modData) : UpdateMo
 FiringTracker::~FiringTracker()
 {
 	// no need to protect this.
+#ifdef HAS_BINK
 	TheAudio->removeAudioEvent( m_audioHandle );
+#endif
 	m_audioHandle = AHSV_NoSound;
 }
 
@@ -144,19 +146,23 @@ void FiringTracker::shotFired(const Weapon* weaponFired, ObjectID victimID)
 	if (fireSoundLoopTime != 0)
 	{
 		// If the sound has stopped playing, then we need to re-add it.
+#ifdef HAS_BINK
 		if (m_frameToStopLoopingSound == 0 || !TheAudio->isCurrentlyPlaying(m_audioHandle))
 		{
 			AudioEventRTS audio = weaponFired->getFireSound();
 			audio.setObjectID(getObject()->getID());
 			m_audioHandle = TheAudio->addAudioEvent( &audio );
 		}
+#endif
 		m_frameToStopLoopingSound = now + fireSoundLoopTime;
 	}
 	else
 	{
+#ifdef HAS_BINK
 		AudioEventRTS fireAndForgetSound = weaponFired->getFireSound();
 		fireAndForgetSound.setObjectID(getObject()->getID());
 		TheAudio->addAudioEvent(&fireAndForgetSound);
+#endif
 		m_frameToStopLoopingSound = 0;
 	}
 
@@ -185,7 +191,9 @@ UpdateSleepTime FiringTracker::update()
 	{
 		if (now >= m_frameToStopLoopingSound)
 		{
+#ifdef HAS_BINK
 			TheAudio->removeAudioEvent( m_audioHandle );
+#endif
 			m_audioHandle = AHSV_NoSound;
 			m_frameToStopLoopingSound = 0;
 		}
@@ -254,10 +262,12 @@ void FiringTracker::speedUp()
 	}
 	else if(self->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN ) )
 	{
+#ifdef HAS_BINK
 		const AudioEventRTS *soundToPlayPtr = self->getTemplate()->getPerUnitSound( "VoiceRapidFire" );
 		AudioEventRTS soundToPlay = *soundToPlayPtr;
 		soundToPlay.setObjectID( self->getID() );
 		TheAudio->addAudioEvent( &soundToPlay );
+#endif
 
 		// These flags are exclusive, not cumulative
 		self->setWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST );

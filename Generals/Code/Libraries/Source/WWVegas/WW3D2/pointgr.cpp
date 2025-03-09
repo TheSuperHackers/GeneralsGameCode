@@ -83,7 +83,7 @@
 #include "rinfo.h"
 #include "camera.h"
 #include "dx8fvf.h"
-#include "D3DXMath.h"
+#include "D3DX9Math.h"
 #include "sortingrenderer.h"
 
 // Upgraded to DX8 2/2/01 HY
@@ -1690,7 +1690,7 @@ void PointGroupClass::RenderVolumeParticle(RenderInfoClass &rinfo, unsigned int 
 
 
 	//// VOLUME_PARTICLE LOOP ///////////////
-	for ( int t = 0; t < depth; ++t )
+	for ( unsigned int t = 0; t < depth; ++t )
 	{
 
 

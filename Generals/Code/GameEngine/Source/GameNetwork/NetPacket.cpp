@@ -158,7 +158,7 @@ NetPacketList NetPacket::ConstructBigCommandPacketList(NetCommandRef *ref) {
 
 	if (!DoesCommandRequireACommandID(msg->getNetCommandType())) {
 		DEBUG_CRASH(("Trying to wrap a command that doesn't have a unique command ID"));
-		return NULL;
+		return {};
 	}
 
 	UnsignedInt bufferSize = GetBufferSizeNeededForCommand(msg);  // need to implement.  I have a drinking problem.
@@ -321,27 +321,27 @@ UnsignedInt NetPacket::GetGameCommandSize(NetCommandMsg *msg) {
 		msglen += 2 * sizeof(UnsignedByte); // for the type and number of args of that type declaration.
 		GameMessageArgumentDataType type = arg->getType();
 		if (type == ARGUMENTDATATYPE_INTEGER) {
-			msglen += arg->getArgCount() * sizeof(Int);
+			msglen += (uint16_t)arg->getArgCount() * sizeof(Int);
 		} else if (type == ARGUMENTDATATYPE_REAL) {
-			msglen += arg->getArgCount() * sizeof(Real);
+			msglen += (uint16_t)arg->getArgCount() * sizeof(Real);
 		} else if (type == ARGUMENTDATATYPE_BOOLEAN) {
-			msglen += arg->getArgCount() * sizeof(Bool);
+			msglen += (uint16_t)arg->getArgCount() * sizeof(Bool);
 		} else if (type == ARGUMENTDATATYPE_OBJECTID) {
-			msglen += arg->getArgCount() * sizeof(ObjectID);
+			msglen += (uint16_t)arg->getArgCount() * sizeof(ObjectID);
 		} else if (type == ARGUMENTDATATYPE_DRAWABLEID) {
-			msglen += arg->getArgCount() * sizeof(DrawableID);
+			msglen += (uint16_t)arg->getArgCount() * sizeof(DrawableID);
 		} else if (type == ARGUMENTDATATYPE_TEAMID) {
-			msglen += arg->getArgCount() * sizeof(UnsignedInt);
+			msglen += (uint16_t)arg->getArgCount() * sizeof(UnsignedInt);
 		} else if (type == ARGUMENTDATATYPE_LOCATION) {
-			msglen += arg->getArgCount() * sizeof(Coord3D);
+			msglen += (uint16_t)arg->getArgCount() * sizeof(Coord3D);
 		} else if (type == ARGUMENTDATATYPE_PIXEL) {
-			msglen += arg->getArgCount() * sizeof(ICoord2D);
+			msglen += (uint16_t)arg->getArgCount() * sizeof(ICoord2D);
 		} else if (type == ARGUMENTDATATYPE_PIXELREGION) {
-			msglen += arg->getArgCount() * sizeof(IRegion2D);
+			msglen += (uint16_t)arg->getArgCount() * sizeof(IRegion2D);
 		} else if (type == ARGUMENTDATATYPE_TIMESTAMP) {
-			msglen += arg->getArgCount() * sizeof(UnsignedInt);
+			msglen += (uint16_t)arg->getArgCount() * sizeof(UnsignedInt);
 		} else if (type == ARGUMENTDATATYPE_WIDECHAR) {
-			msglen += arg->getArgCount() * sizeof(WideChar);
+			msglen += (uint16_t)arg->getArgCount() * sizeof(WideChar);
 		}
 		arg = arg->getNext();
 	}
@@ -5219,7 +5219,8 @@ NetCommandMsg * NetPacket::readGameMessage(UnsignedByte *data, Int &i)
 	// Get the types and the number of arguments of those types.
 	Int totalArgCount = 0;
 	GameMessageParser *parser = newInstance(GameMessageParser)();
-	for (Int j = 0; j < numArgTypes; ++j) {
+	Int j = 0;
+	for (; j < numArgTypes; ++j) {
 		UnsignedByte type = (UnsignedByte)ARGUMENTDATATYPE_UNKNOWN;
 		memcpy(&type, data + i, sizeof(type));
 		i += sizeof(type);
@@ -5560,7 +5561,7 @@ NetCommandMsg * NetPacket::readPacketRouterAckMessage(UnsignedByte *data, Int &i
 NetCommandMsg * NetPacket::readDisconnectChatMessage(UnsignedByte *data, Int &i) {
 	NetDisconnectChatCommandMsg *msg = newInstance(NetDisconnectChatCommandMsg);
 
-	UnsignedShort text[256];
+	wchar_t text[256];
 	UnsignedByte length;
 	memcpy(&length, data + i, sizeof(UnsignedByte));
 	++i;
@@ -5583,7 +5584,7 @@ NetCommandMsg * NetPacket::readDisconnectChatMessage(UnsignedByte *data, Int &i)
 NetCommandMsg * NetPacket::readChatMessage(UnsignedByte *data, Int &i) {
 	NetChatCommandMsg *msg = newInstance(NetChatCommandMsg);
 
-	UnsignedShort text[256];
+	wchar_t text[256];
 	UnsignedByte length;
 	Int playerMask;
 	memcpy(&length, data + i, sizeof(UnsignedByte));

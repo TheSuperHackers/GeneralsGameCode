@@ -91,7 +91,7 @@ void W3DRopeDraw::buildSegments()
 		Real axis = GameClientRandomValueReal(0, 2*PI);
 		info.wobbleAxisX = Cos(axis);
 		info.wobbleAxisY = Sin(axis);
-		info.line = NEW Line3DClass( Vector3(pos.x,pos.y,pos.z),
+		info.line = new Line3DClass( Vector3(pos.x,pos.y,pos.z),
 																	 Vector3(pos.x,pos.y,pos.z+eachLen),
 																	 m_width * 0.5f,  // width
 																	 m_color.red,  // red
@@ -99,7 +99,7 @@ void W3DRopeDraw::buildSegments()
 																	 m_color.blue,  // blue
 																	 1.0f );  // transparency
 
-		info.softLine = NEW Line3DClass( Vector3(pos.x,pos.y,pos.z),
+		info.softLine = new Line3DClass( Vector3(pos.x,pos.y,pos.z),
 																	 Vector3(pos.x,pos.y,pos.z+eachLen),
 																	 m_width,  // width
 																	 m_color.red,  // red

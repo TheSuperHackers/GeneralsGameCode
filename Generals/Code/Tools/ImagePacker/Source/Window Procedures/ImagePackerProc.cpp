@@ -147,9 +147,9 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 
 			// set option checks for gap method
 			UnsignedInt gapOptions = TheImagePacker->getGapMethod();
-			if( BitTest( gapOptions, ImagePacker::GAP_METHOD_EXTEND_RGB ) )
+			if( BitTestWW( gapOptions, ImagePacker::GAP_METHOD_EXTEND_RGB ) )
 				CheckDlgButton( hWndDialog, CHECK_GAP_EXTEND_RGB, BST_CHECKED );
-			if( BitTest( gapOptions, ImagePacker::GAP_METHOD_GUTTER ) )
+			if( BitTestWW( gapOptions, ImagePacker::GAP_METHOD_GUTTER ) )
 				CheckDlgButton( hWndDialog, CHECK_GAP_GUTTER, BST_CHECKED );
 
 			return TRUE;
@@ -292,7 +292,7 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 						break;;
 
 					// get the selected item in the folder listbox
-					Int selCount;
+					LRESULT selCount;
 					selCount = SendMessage( folderList, LB_GETSELCOUNT, 0, 0 );
 					if( selCount == 0 )
 					{
@@ -307,8 +307,8 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 					// start at the end of the listbox, delete any items that
 					// are selected
 					//
-					Int itemCount = SendMessage( folderList, LB_GETCOUNT, 0, 0 );
-					for( Int i = itemCount - 1; i >= 0; i-- )
+					LRESULT itemCount = SendMessage( folderList, LB_GETCOUNT, 0, 0 );
+					for(LRESULT i = itemCount - 1; i >= 0; i-- )
 						if( SendMessage( folderList, LB_GETSEL, i, 0 )  > 0 )
 							SendMessage( folderList, LB_DELETESTRING, i, 0 );
 

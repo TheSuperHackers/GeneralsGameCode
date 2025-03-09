@@ -41,6 +41,8 @@
 #ifndef __SOUNDROBJ_H
 #define __SOUNDROBJ_H
 
+#ifdef HAS_BINK
+
 #include "rendobj.h"
 #include "wwstring.h"
 #include "proto.h"
@@ -274,6 +276,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////////////
 extern SoundRenderObjLoaderClass		_SoundRenderObjLoader;
 
+#endif
 
 #endif //__SOUNDROBJ_H
 

@@ -216,20 +216,20 @@ void SceneClass::Render(RenderInfoClass & rinfo)
 	else {
 		bool old_enable=WW3D::Is_Texturing_Enabled();
 
-		DX8Wrapper::Set_DX8_Render_State (D3DRS_ZBIAS, 0);
+		DX8Wrapper::Set_DX8_Render_State (D3DRS_DEPTHBIAS, 0);
 		Customized_Render(rinfo);
 		switch (Get_Extra_Pass_Polygon_Mode()) {
 		case EXTRA_PASS_LINE:
 			WW3D::Enable_Texturing(false);
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
-			DX8Wrapper::Set_DX8_Render_State (D3DRS_ZBIAS, 7);
+			DX8Wrapper::Set_DX8_Render_State (D3DRS_DEPTHBIAS, 7 * -0.000005f);
 			Customized_Render(rinfo);
 			break;
 		case EXTRA_PASS_CLEAR_LINE:
 			DX8Wrapper::Clear(true, false, Vector3(0.0f,0.0f,0.0f));	// Clear color but not z
 			WW3D::Enable_Texturing(false);
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
-			DX8Wrapper::Set_DX8_Render_State (D3DRS_ZBIAS, 7);
+			DX8Wrapper::Set_DX8_Render_State (D3DRS_DEPTHBIAS, 7 * -0.000005f);
 			Customized_Render(rinfo);
 			break;
 		}

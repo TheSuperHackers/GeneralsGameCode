@@ -86,18 +86,18 @@ bool LaunchWebBrowser(const char* url)
 	// Write generic contents
 	const char* contents = "<title>ViewHTML</title>";
 	DWORD written;
-	WriteFile(file, contents, strlen(contents), &written, NULL);
+	WriteFile(file, contents, (int)strlen(contents), &written, NULL);
 	CloseHandle(file);
 
 	// Find the executable that can launch this file
 	char exeName[MAX_PATH];
 	HINSTANCE hInst = FindExecutable(filename, NULL, exeName);
-	assert(((int)hInst > 32) && "Unable to find executable that will display HTML files.");
+	assert(((intptr_t)hInst > 32) && "Unable to find executable that will display HTML files.");
 
 	// Delete temporary file
 	DeleteFile(filename);
 
-	if ((int)hInst <= 32)
+	if ((intptr_t)hInst <= 32)
 		{
 		return false;
 		}

@@ -171,27 +171,31 @@ Bool HotKeyManager::executeHotKey( const AsciiString& keyIn )
 	GameWindow *win = it->second.m_win;
 	if( !win )
 		return FALSE;
-	if( !BitTest( win->winGetStatus(), WIN_STATUS_HIDDEN ) )
+	if( !BitTestWW( win->winGetStatus(), WIN_STATUS_HIDDEN ) )
 	{
-		if( BitTest( win->winGetStatus(), WIN_STATUS_ENABLED ) )
+		if( BitTestWW( win->winGetStatus(), WIN_STATUS_ENABLED ) )
  		{
  			TheWindowManager->winSendSystemMsg( win->winGetParent(), GBM_SELECTED, (WindowMsgData)win, win->winGetWindowId() );
  
  			// here we make the same click sound that the GUI uses when you click a button
  			AudioEventRTS buttonClick("GUIClick");
- 
+
+#ifdef HAS_BINK
  			if( TheAudio )
  			{
  				TheAudio->addAudioEvent( &buttonClick );
  			}  // end if
+#endif
 			return TRUE;
  		}
 
 		AudioEventRTS disabledClick( "GUIClickDisabled" );
+#ifdef HAS_BINK
 		if( TheAudio )
 		{
 			TheAudio->addAudioEvent( &disabledClick );
 		}
+#endif
 	}
 	return FALSE;
 }

@@ -75,7 +75,8 @@ ConnectionManager::~ConnectionManager(void)
 		m_transport = NULL;
 	}
 
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
+	Int i = 0;
+	for (; i < MAX_SLOTS; ++i) {
 		if (m_frameData[i] != NULL) {
 			m_frameData[i]->deleteInstance();
 			m_frameData[i] = NULL;
@@ -151,7 +152,8 @@ void ConnectionManager::init()
 //	}
 //	m_transport->reset();
 
-	for (UnsignedInt i = 0; i < NUM_CONNECTIONS; ++i) {
+	UnsignedInt i = 0;
+	for (; i < NUM_CONNECTIONS; ++i) {
 		m_connections[i] = NULL;
 	}
 
@@ -229,7 +231,8 @@ void ConnectionManager::reset()
 		m_transport = NULL;
 	}
 
-	for (Int i = 0; i < NUM_CONNECTIONS; ++i) {
+	Int i = 0;
+	for (; i < NUM_CONNECTIONS; ++i) {
 		if (m_connections[i] != NULL) {
 			m_connections[i]->deleteInstance();
 			m_connections[i] = NULL;
@@ -268,10 +271,10 @@ void ConnectionManager::reset()
 #endif
 	m_packetRouterSlot = -1;
 
-	for (i = 0; i < TheGlobalData->m_networkFPSHistoryLength; ++i) {
+	for (i = 0; i < (int)TheGlobalData->m_networkFPSHistoryLength; ++i) {
 		m_fpsAverages[i] = -1;
 	}
-	for (i = 0; i < TheGlobalData->m_networkLatencyHistoryLength; ++i) {
+	for (i = 0; i < (int)TheGlobalData->m_networkLatencyHistoryLength; ++i) {
 		m_latencyAverages[i] = 0.0;
 	}
 
@@ -672,8 +675,10 @@ void ConnectionManager::processChat(NetChatCommandMsg *msg)
 		TheInGameUI->messageColor(&rgb, UnicodeString(L"%ls"), unitext.str());
 
 		// feedback for received chat messages in-game
+#ifdef HAS_BINK
 		AudioEventRTS audioEvent("GUICommunicatorIncoming");
 		TheAudio->addAudioEvent(&audioEvent);
+#endif
 	}
 }
 
@@ -1272,7 +1277,7 @@ void ConnectionManager::updateRunAhead(Int oldRunAhead, Int frameRate, Bool didS
 			// didn't change for the first time till frame 31.  This creates an extra command
 			// for frame 56 that isn't accounted for in the frame command count that is sent
 			// out in the NetFrameCommandMsg.  sheesh.
-			if (nextExecutionFrame > (TheGameLogic->getFrame() + oldRunAhead)) {
+			if (nextExecutionFrame > (int)(TheGameLogic->getFrame() + oldRunAhead)) {
 				msg->setExecutionFrame(nextExecutionFrame);
 			} else {
 				msg->setExecutionFrame(TheGameLogic->getFrame() + oldRunAhead);
@@ -1304,7 +1309,7 @@ void ConnectionManager::updateRunAhead(Int oldRunAhead, Int frameRate, Bool didS
 //				msg2->setID(GenerateNextCommandID());
 				msg2->setID(msg->getID());
 			}
-			if (nextExecutionFrame > (TheGameLogic->getFrame() + oldRunAhead)) {
+			if (nextExecutionFrame > (int)(TheGameLogic->getFrame() + oldRunAhead)) {
 				msg2->setExecutionFrame(nextExecutionFrame);
 			} else {
 				msg2->setExecutionFrame(TheGameLogic->getFrame() + oldRunAhead);
@@ -1553,7 +1558,8 @@ Bool ConnectionManager::allCommandsReady(UnsignedInt frame, Bool justTesting /* 
 	Bool retval = TRUE;
 	FrameDataReturnType frameRetVal;
 //	retval = FALSE;  // ****for testing purposes only!!!!!!****
-	for (Int i = 0; (i < MAX_SLOTS) && retval; ++i) {
+	Int i = 0;
+	for (; (i < MAX_SLOTS) && retval; ++i) {
 		if ((m_frameData[i] != NULL) && (m_frameData[i]->getIsQuitting() == FALSE)) {
 /*
 			if (!(m_frameData[i]->allCommandsReady(frame, (frame != commandsReadyDebugSpewage) && (justTesting == FALSE)))) {
@@ -1618,7 +1624,7 @@ NetCommandList *ConnectionManager::getFrameCommandList(UnsignedInt frame)
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
 		if (m_frameData[i] != NULL) {
 			retlist->appendList(m_frameData[i]->getFrameCommandList(frame));
-			if (frame > FRAMES_TO_KEEP) {
+			if ((int)frame > FRAMES_TO_KEEP) {
 				m_frameData[i]->resetFrame(frame - FRAMES_TO_KEEP);	// After getting the commands for that frame from this
 													// FrameDataManager object, we need to tell it that we're
 													// done with the messages for that frame.
@@ -1720,8 +1726,10 @@ PlayerLeaveCode ConnectionManager::disconnectPlayer(Int slot) {
 		TheInGameUI->message("Network:PlayerLeftGame", unicodeName.str());
 
 		// People are boneheads. Also play a sound
+#ifdef HAS_BINK
 		static AudioEventRTS leftGameSound("GUIMessageReceived");
 		TheAudio->addAudioEvent(&leftGameSound);
+#endif
 	}
 
 	if ((m_frameData[slot] != NULL) && (m_frameData[slot]->getIsQuitting() == FALSE)) {

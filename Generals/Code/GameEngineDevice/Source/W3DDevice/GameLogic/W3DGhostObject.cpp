@@ -349,7 +349,7 @@ void W3DGhostObject::snapShot(int playerIndex)
 			{
 				if (snap == NULL)
 				{	
-					snap = NEW W3DRenderObjectSnapshot(robj, &m_drawableInfo);	// poolify
+					snap = new W3DRenderObjectSnapshot(robj, &m_drawableInfo);	// poolify
 					if (prevSnap)
 						prevSnap->m_next=snap;
 					else
@@ -732,7 +732,7 @@ void W3DGhostObject::xfer( Xfer *xfer )
 				disableUVAnimations(renderObject);
 
 				// we're loading, allocate new snapshot
-				objectSnapshot = NEW W3DRenderObjectSnapshot( renderObject, &m_drawableInfo, FALSE );
+				objectSnapshot = new W3DRenderObjectSnapshot( renderObject, &m_drawableInfo, FALSE );
 
 				// attach to list
 				if( prevObjectSnapshot )
@@ -960,7 +960,7 @@ GhostObject *W3DGhostObjectManager::addGhostObject(Object *object, PartitionData
 	}
 	else
 	{
-		mod = NEW W3DGhostObject;	// poolify
+		mod = new W3DGhostObject;	// poolify
 	}
 
 	mod->m_prevSystem = NULL;

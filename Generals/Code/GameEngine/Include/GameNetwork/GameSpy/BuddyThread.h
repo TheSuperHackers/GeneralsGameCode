@@ -31,7 +31,7 @@
 #ifndef __BUDDYTHREAD_H__
 #define __BUDDYTHREAD_H__
 
-#include "GameSpy/GP/GP.h"
+#include "GP/GP.h"
 
 #define MAX_BUDDY_CHAT_LEN 128
 

@@ -41,6 +41,7 @@
 #ifndef __SOUNDOBJ_H
 #define __SOUNDOBJ_H
 
+#ifdef HAS_BINK
 #pragma warning (push, 3)
 #include "mss.h"
 #pragma warning (pop)
@@ -460,5 +461,6 @@ protected:
 	Vector3				m_AttenuationSphereColor;
 };
 
+#endif
 
 #endif //__SOUNDOBJ_H

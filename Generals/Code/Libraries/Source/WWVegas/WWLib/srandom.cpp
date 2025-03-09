@@ -188,7 +188,7 @@ void SecureRandomClass::Generate_Seed(void)
 		if ((i % 4) == 0)
 			int_seeds[i]^=time(NULL);
 		else if ((i % 4) == 1)
-			int_seeds[i]^=getpid();
+			int_seeds[i]^=_getpid();
 		else if ((i % 4) == 2)
 			int_seeds[i]^=GetTickCount();
 		else if ((i % 4) == 3)

@@ -59,9 +59,11 @@ Bool MoneyCrateCollide::executeCrateBehavior( Object *other )
 	other->getControllingPlayer()->getScoreKeeper()->addMoneyEarned( money );
 
 	//Play a crate pickup sound.
+#ifdef HAS_BINK
 	AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateMoney;
 	soundToPlay.setObjectID( other->getID() );
 	TheAudio->addAudioEvent(&soundToPlay);
+#endif
 	
 	return TRUE;
 }

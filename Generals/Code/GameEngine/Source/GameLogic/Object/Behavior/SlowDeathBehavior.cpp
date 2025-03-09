@@ -317,10 +317,10 @@ void SlowDeathBehavior::beginSlowDeath(const DamageInfo *damageInfo)
 			// we don't need to wake up immediately, but only when the first of these
 			// counters wants to trigger....
 			Int whenToWakeTime = m_sinkFrame;
-			if (whenToWakeTime > m_destructionFrame) 
-				whenToWakeTime = m_destructionFrame;
-			if (whenToWakeTime > m_midpointFrame) 
-				whenToWakeTime = m_midpointFrame;
+			if (whenToWakeTime > (int)m_destructionFrame)
+				whenToWakeTime = (int)m_destructionFrame;
+			if (whenToWakeTime > (int)m_midpointFrame)
+				whenToWakeTime = (int)m_midpointFrame;
 			setWakeFrame(obj, UPDATE_SLEEP(whenToWakeTime));
 		}
 		m_sinkFrame += now;
@@ -344,7 +344,7 @@ void SlowDeathBehavior::doPhaseStuff(SlowDeathPhaseType sdphase)
 	if (!d->m_maskOfLoadedEffects)
 		return;	//has no ocl, fx, or weapons.
 
-	listSize = d->m_fx[sdphase].size();
+	listSize = (int)d->m_fx[sdphase].size();
 	if (listSize > 0)
 	{
 		idx = GameLogicRandomValue(0, listSize-1);
@@ -354,7 +354,7 @@ void SlowDeathBehavior::doPhaseStuff(SlowDeathPhaseType sdphase)
 		FXList::doFXObj(fxl, getObject(), NULL);
 	}
 
-	listSize = d->m_ocls[sdphase].size();
+	listSize = (int)d->m_ocls[sdphase].size();
 	if (listSize > 0)
 	{
 		idx = GameLogicRandomValue(0, listSize-1);
@@ -364,7 +364,7 @@ void SlowDeathBehavior::doPhaseStuff(SlowDeathPhaseType sdphase)
 		ObjectCreationList::create(ocl, getObject(), NULL);
 	}
 
-	listSize = d->m_weapons[sdphase].size();
+	listSize = (int)d->m_weapons[sdphase].size();
 	if (listSize > 0)
 	{
 		idx = GameLogicRandomValue(0, listSize-1);
@@ -495,7 +495,8 @@ void SlowDeathBehavior::onDie( const DamageInfo *damageInfo )
 	TheGameLogic->deselectObject(getObject(), PLAYERMASK_ALL, TRUE);
 
 	Int total = 0;
-	for (BehaviorModule** update = getObject()->getBehaviorModules(); *update; ++update)
+	BehaviorModule** update = getObject()->getBehaviorModules();
+	for (; *update; ++update)
 	{
 		SlowDeathBehaviorInterface* sdu = (*update)->getSlowDeathBehaviorInterface();
 		if (sdu != NULL && sdu->isDieApplicable(damageInfo))

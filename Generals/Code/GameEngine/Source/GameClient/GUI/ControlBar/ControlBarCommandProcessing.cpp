@@ -144,7 +144,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 	//@todo Kris -- Special case code so convoy trucks can detonate nuke trucks -- if other things need this,
 	//rethink it.
-	if( obj && BitTest( commandButton->getOptions(), SINGLE_USE_COMMAND ) )
+	if( obj && BitTestWW( commandButton->getOptions(), SINGLE_USE_COMMAND ) )
 	{
 		/** @todo Added obj check because Single Use and Multi Select crash when used together, but with this check
 			* they just won't work.  When the "rethinking" occurs, this can get fixed.  Right now it is unused.
@@ -164,12 +164,14 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 	Player *player = ThePlayerList->getLocalPlayer();
 	if( player )
 	{
+#ifdef HAS_BINK
 		AudioEventRTS sound = *commandButton->getUnitSpecificSound();
 		sound.setPlayerIndex( player->getPlayerIndex() );
 		TheAudio->addAudioEvent( &sound );
+#endif
 	}
 
-	if( BitTest( commandButton->getOptions(), COMMAND_OPTION_NEED_TARGET ) )
+	if( BitTestWW( commandButton->getOptions(), COMMAND_OPTION_NEED_TARGET ) )
 	{
 		if (commandButton->getOptions() & USES_MINE_CLEARING_WEAPONSET)
 		{
@@ -553,7 +555,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			// Cancel GUI command mode.
 			TheInGameUI->setGUICommand( NULL );
 
-			if (BitTest(commandButton->getOptions(), NEED_TARGET_POS) == FALSE) {
+			if (BitTestWW(commandButton->getOptions(), NEED_TARGET_POS) == FALSE) {
 				pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_EVACUATE );
 				TheMessageStream->appendMessage( GameMessage::MSG_EVACUATE );
 			}

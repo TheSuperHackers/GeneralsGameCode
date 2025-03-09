@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{59056447-9873-47b0-b528-eb1261c7e300}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Window Procedures">
+      <UniqueIdentifier>{8f86c0bb-1d3b-4881-b3ea-b8f8c6d9fdc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{51cdadb8-6d3e-4bc1-a2fa-98cfe6ab9575}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{8d0c1e29-718b-4ff7-a959-dc2eb9160b6f}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Window Procedures\DirectorySelect.cpp">
+      <Filter>Source Files\Window Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Window Procedures\ImageErrorProc.cpp">
+      <Filter>Source Files\Window Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Window Procedures\ImagePackerProc.cpp">
+      <Filter>Source Files\Window Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Window Procedures\PageErrorProc.cpp">
+      <Filter>Source Files\Window Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Window Procedures\PreviewProc.cpp">
+      <Filter>Source Files\Window Procedures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ImageInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ImagePacker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TexturePage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WinMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\ImageDirectory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ImageInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ImagePacker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\TexturePage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\WindowProc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\WinMain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Resource.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource\ImagePacker.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

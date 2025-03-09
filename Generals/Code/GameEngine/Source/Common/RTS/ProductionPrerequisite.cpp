@@ -105,7 +105,7 @@ void ProductionPrerequisite::resolveNames()
 Int ProductionPrerequisite::calcNumPrereqUnitsOwned(const Player *player, Int counts[MAX_PREREQ]) const
 {
 	const ThingTemplate *tmpls[MAX_PREREQ];
-	Int cnt = m_prereqUnits.size();
+	Int cnt = (int)m_prereqUnits.size();
 	if (cnt > MAX_PREREQ)
 		cnt = MAX_PREREQ;
 	for (int i = 0; i < cnt; i++)

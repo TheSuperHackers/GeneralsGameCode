@@ -238,7 +238,7 @@ void EMPUpdate::doDisableAttack( void )
 
 					UnsignedInt emitterCount = MAX(15, REAL_TO_INT_CEIL(data->m_sparksPerCubicFoot * victimVolume));
 
-					for (Int e = 0 ; e < emitterCount; ++e)
+					for (Int e = 0 ; e < (int)emitterCount; ++e)
 					{
 
 						ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(tmp);

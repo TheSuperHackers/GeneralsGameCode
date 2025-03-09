@@ -49,6 +49,7 @@
 #include "WW3D2/texture.h"
 #include "WW3D2/textureloader.h"
 #include "W3DDevice/GameClient/W3DVideoBuffer.h"
+#ifdef HAS_BINK
 
 //----------------------------------------------------------------------------
 //         Externals                                                     
@@ -279,3 +280,5 @@ VideoBuffer::Type W3DVideoBuffer::W3DFormatToType( WW3DFormat w3dFormat )
 
 	return format;
 }
+
+#endif

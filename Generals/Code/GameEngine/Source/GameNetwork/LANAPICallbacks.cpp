@@ -104,8 +104,8 @@ void LANAPI::OnAccept( UnsignedInt playerIP, Bool status )
 { 
 	if( AmIHost() )
 	{
-		
-		for (Int i = 0; i < MAX_SLOTS; i++)
+		Int i = 0;
+		for (; i < MAX_SLOTS; i++)
 		{
 			if (m_currentGame->getIP(i) == playerIP)
 			{
@@ -138,8 +138,8 @@ void LANAPI::OnHasMap( UnsignedInt playerIP, Bool status )
 { 
 	if( AmIHost() )
 	{
-		
-		for (Int i = 0; i < MAX_SLOTS; i++)
+		Int i = 0;
+		for (; i < MAX_SLOTS; i++)
 		{
 			if (m_currentGame->getIP(i) == playerIP)
 			{
@@ -638,7 +638,7 @@ void LANAPI::OnPlayerList( LANPlayer *playerList )
 		GadgetListBoxGetSelected(listboxPlayers, &selectedIndex);
 		
 		if (selectedIndex != -1 )
-			selectedIP = (UnsignedInt) GadgetListBoxGetItemData(listboxPlayers, selectedIndex, 0);
+			selectedIP = (UnsignedInt) (uintptr_t)GadgetListBoxGetItemData(listboxPlayers, selectedIndex, 0);
 
 		GadgetListBoxReset(listboxPlayers);
 
@@ -646,7 +646,7 @@ void LANAPI::OnPlayerList( LANPlayer *playerList )
 		while (player)
 		{
 			Int addedIndex = GadgetListBoxAddEntryText(listboxPlayers, player->getName(), playerColor, -1, -1);
-			GadgetListBoxSetItemData(listboxPlayers, (void *)player->getIP(),addedIndex, 0 );
+			GadgetListBoxSetItemData(listboxPlayers, (void *)(uintptr_t)player->getIP(),addedIndex, 0 );
 
 			if (selectedIP == player->getIP())
 				indexToSelect = addedIndex;

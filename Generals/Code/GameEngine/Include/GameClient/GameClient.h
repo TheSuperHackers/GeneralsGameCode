@@ -57,7 +57,7 @@ struct RayEffectData;
 
 /// Function pointers for use by GameClient callback functions.
 typedef void (*GameClientFuncPtr)( Drawable *draw, void *userData ); 
-typedef std::hash_map<DrawableID, Drawable *, rts::hash<DrawableID>, rts::equal_to<DrawableID> > DrawablePtrHash;
+typedef std::unordered_map<DrawableID, Drawable *, rts::hash<DrawableID>, rts::equal_to<DrawableID> > DrawablePtrHash;
 typedef DrawablePtrHash::iterator DrawablePtrHashIt;
 
 //-----------------------------------------------------------------------------
@@ -179,7 +179,9 @@ private:
 	virtual GameWindowManager *createWindowManager( void ) = 0; ///< Factory to window manager
 	virtual FontLibrary *createFontLibrary( void ) = 0;					///< Factory for font library
 	virtual DisplayStringManager *createDisplayStringManager( void ) = 0;  ///< Factory for display strings
+#ifdef HAS_BINK
 	virtual VideoPlayerInterface *createVideoPlayer( void ) = 0;///< Factory for video device
+#endif
 	virtual TerrainVisual *createTerrainVisual( void ) = 0;			///< Factory for TerrainVisual classes. Called during init to instance TheTerrainVisual
 	virtual Keyboard *createKeyboard( void ) = 0;								///< factory for the keyboard
 	virtual Mouse *createMouse( void ) = 0;											///< factory for the mouse

@@ -641,9 +641,11 @@ void SlavedUpdate::setRepairState( RepairStates repairState )
 							Real time = (Real)(m_framesToWait * LOGICFRAMES_PER_SECOND);
 							weldingSys->setLifetimeRange( time, time );
 
+#ifdef HAS_BINK
 							AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_repairSparks;	
 							soundToPlay.setPosition( &pos );
 							TheAudio->addAudioEvent( &soundToPlay );
+#endif
 						}
 					}
 				}

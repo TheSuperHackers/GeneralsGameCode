@@ -208,7 +208,7 @@ Bool GameResultsQueue::areGameResultsBeingSent( void )
 
 //-------------------------------------------------------------------------
 // Wrap ladder results in HTTP POST
-static WrapHTTP( const std::string& hostname, std::string& results )
+static void WrapHTTP( const std::string& hostname, std::string& results )
 {
 	const char HEADER[] =
 		"PUT / HTTP/1.1\r\n"
@@ -228,7 +228,9 @@ static WrapHTTP( const std::string& hostname, std::string& results )
 void GameResultsThreadClass::Thread_Function()
 {
 	try {
+#if 0
 	_set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
+#endif
 	GameResultsRequest req;
 
 	WSADATA wsaData;
@@ -393,7 +395,7 @@ Int GameResultsThreadClass::sendGameResults( UnsignedInt IP, UnsignedShort port,
 		}
 	}
 
-	if (send( sock, results.c_str(), results.length(), 0 ) == SOCKET_ERROR)
+	if (send( sock, results.c_str(), (int)results.length(), 0 ) == SOCKET_ERROR)
 	{
 		error = WSAGetLastError();
 		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - send() returned %d(%s)\n", error, getWSAErrorString(error)));
@@ -403,7 +405,7 @@ Int GameResultsThreadClass::sendGameResults( UnsignedInt IP, UnsignedShort port,
 
 	closesocket(sock);
 
-	return results.length();
+	return (int)results.length();
 }
 
 

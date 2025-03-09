@@ -704,7 +704,7 @@ bool TextureFileCache::Open_Texture_Handle(const char *fname)
 		Close_Texture_Handle();
 	}
 	if (!CurrentTexture) {
-		CurrentTexture = strdup(fname);
+		CurrentTexture = _strdup(fname);
 	}			  
 			
 	#if 0					 

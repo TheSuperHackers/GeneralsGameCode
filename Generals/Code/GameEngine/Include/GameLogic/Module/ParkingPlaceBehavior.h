@@ -131,7 +131,7 @@ public:
 	void releaseSpace(ObjectID id); 
 	Bool reserveRunway(ObjectID id, Bool forLanding);
 	void releaseRunway(ObjectID id); 
-	Int getRunwayCount() const { return m_runways.size(); }
+	Int getRunwayCount() const { return (int)m_runways.size(); }
 	ObjectID getRunwayReservation(Int r);
 	void transferRunwayReservationToNextInLineForTakeoff(ObjectID id);
 	Real getApproachHeight() const { return getParkingPlaceBehaviorModuleData()->m_approachHeight; }

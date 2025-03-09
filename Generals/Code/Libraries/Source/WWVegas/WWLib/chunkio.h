@@ -303,7 +303,7 @@ private:
 
 #define WRITE_MICRO_CHUNK_STRING(csave,id,var) { \
 	csave.Begin_Micro_Chunk(id); \
-	csave.Write(var, strlen(var) + 1); \
+	csave.Write(var, (uint32_t)(strlen(var) + 1)); \
 	csave.End_Micro_Chunk(); }
 
 #define WRITE_MICRO_CHUNK_WWSTRING(csave,id,var) { \

@@ -74,7 +74,7 @@
 #ifndef _OPERATOR_NEW_DEFINED_
 
 	#define _OPERATOR_NEW_DEFINED_
-
+#if 0
 	extern void * __cdecl operator new		(size_t size);
 	extern void __cdecl operator delete		(void *p);
 
@@ -87,26 +87,26 @@
 
 	extern void* __cdecl operator new[]		(size_t nSize, const char *, int);
 	extern void __cdecl operator delete[]	(void *, const char *, int);
-
+#endif
 	// additional overloads for 'placement new'
 	//inline void* __cdecl operator new							(size_t s, void *p) { return p; }
 	//inline void __cdecl operator delete						(void *, void *p)		{ }
-	inline void* __cdecl operator new[]						(size_t s, void *p) { return p; }
-	inline void __cdecl operator delete[]					(void *, void *p)		{ }
-
+	//inline void* __cdecl operator new[]						(size_t s, void *p) { return p; }
+	//inline void __cdecl operator delete[]					(void *, void *p)		{ }
+#include <new>
 #endif
 
-#if (defined(_DEBUG) || defined(_INTERNAL)) 
-	#define MSGW3DNEW(MSG)					new( MSG, 0 )
-	#define MSGW3DNEWARRAY(MSG)			new( MSG, 0 )
-	#define W3DNEW									new("W3D_" __FILE__, 0)
-	#define W3DNEWARRAY							new("W3A_" __FILE__, 0)
-#else
+//#if (defined(_DEBUG) || defined(_INTERNAL)) 
+//	#define MSGW3DNEW(MSG)					new( MSG, 0 )
+//	#define MSGW3DNEWARRAY(MSG)			new( MSG, 0 )
+//	#define W3DNEW									new("W3D_" __FILE__, 0)
+//	#define W3DNEWARRAY							new("W3A_" __FILE__, 0)
+//#else
 	#define MSGW3DNEW(MSG)					new
 	#define MSGW3DNEWARRAY(MSG)			new
 	#define W3DNEW									new
 	#define W3DNEWARRAY							new
-#endif
+//#endif
 
 // ----------------------------------------------------------------------------
 extern void* createW3DMemPool(const char *poolName, int allocationSize);
@@ -131,9 +131,9 @@ private: \
 protected: \
 	virtual int glueEnforcer() const { return sizeof(this); } \
 public: \
-	inline void* operator new(size_t s) { return allocateFromW3DMemPool(getClassMemoryPool(), s); } \
+	inline void* operator new(size_t s) { return allocateFromW3DMemPool(getClassMemoryPool(), (int)s); } \
 	inline void operator delete(void *p) { freeFromW3DMemPool(getClassMemoryPool(), p); } \
-	inline void* operator new(size_t s, const char* msg, int unused) { return allocateFromW3DMemPool(getClassMemoryPool(), s, msg, unused); } \
+	inline void* operator new(size_t s, const char* msg, int unused) { return allocateFromW3DMemPool(getClassMemoryPool(), (int)s, msg, unused); } \
 	inline void operator delete(void *p, const char* msg, int unused) { freeFromW3DMemPool(getClassMemoryPool(), p); } \
 
 // ----------------------------------------------------------------------------

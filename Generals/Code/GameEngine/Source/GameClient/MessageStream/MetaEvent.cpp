@@ -538,8 +538,8 @@ GameMessageDisposition MetaEventTranslator::translateGameMessage(const GameMessa
 
 				IRegion2D pixelRegion;
 				buildRegion( &m_mouseDownPosition[index], &location, &pixelRegion );
-				if (abs(pixelRegion.hi.x - pixelRegion.lo.x) < TheMouse->m_dragTolerance &&
-						abs(pixelRegion.hi.y - pixelRegion.lo.y) < TheMouse->m_dragTolerance)
+				if (abs(pixelRegion.hi.x - pixelRegion.lo.x) < (int)TheMouse->m_dragTolerance &&
+						abs(pixelRegion.hi.y - pixelRegion.lo.y) < (int)TheMouse->m_dragTolerance)
 				{
 					pixelRegion.hi.x = pixelRegion.lo.x;
 					pixelRegion.hi.y = pixelRegion.lo.y;
@@ -584,7 +584,7 @@ MetaMap::~MetaMap()
 GameMessage::Type MetaMap::findGameMessageMetaType(const char* name)
 {
 	for (const LookupListRec* metaNames = GameMessageMetaTypeNames; metaNames->name; metaNames++)
-		if (stricmp(metaNames->name, name) == 0)
+		if (_stricmp(metaNames->name, name) == 0)
 			return (GameMessage::Type)metaNames->value;
 
 	DEBUG_CRASH(("MetaTypeName %s not found -- did you remember to add it to GameMessageMetaTypeNames[] ?", name));

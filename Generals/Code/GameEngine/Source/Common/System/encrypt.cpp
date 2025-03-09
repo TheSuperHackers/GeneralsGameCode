@@ -61,7 +61,7 @@ const char *EncryptString(const char *String)
 	//unsigned long Temp_high = 0;              /* 32 bit storage value */
 	//unsigned long Temp_low  = 0;              /* 32 bit storage value */
 	unsigned int UpCnt = 0, DnCnt = 0, Cnt = 0;
-	unsigned int Length = strlen(String);
+	unsigned int Length = (uint32_t)strlen(String);
 
 	/* Ok, here is the algorithm:                    */
 	/*                                               */

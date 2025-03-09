@@ -155,13 +155,13 @@ Int W3DDebugIcons::Class_ID(void) const
 
 RenderObjClass * W3DDebugIcons::Clone(void) const
 {
-	return NEW W3DDebugIcons(*this);	// poolify
+	return new W3DDebugIcons(*this);	// poolify
 }
 
 
 void W3DDebugIcons::allocateIconsArray(void) 
 {
-	m_debugIcons = NEW DebugIcon[MAX_ICONS];
+	m_debugIcons = new DebugIcon[MAX_ICONS];
 	m_numDebugIcons = 0; 
 }
 
@@ -170,9 +170,9 @@ void W3DDebugIcons::compressIconsArray(void)
 {
 	if (m_debugIcons && m_numDebugIcons > 0) {
 		Int newNum = 0;
-		Int i;
+		int i;
 		for (i=0; i<m_numDebugIcons; i++) {
-			if (m_debugIcons[i].endFrame >= TheGameLogic->getFrame() && i>newNum) {
+			if (m_debugIcons[i].endFrame >= (int)TheGameLogic->getFrame() && i>newNum) {
 				m_debugIcons[newNum] = m_debugIcons[i];
 				newNum++;
 			}

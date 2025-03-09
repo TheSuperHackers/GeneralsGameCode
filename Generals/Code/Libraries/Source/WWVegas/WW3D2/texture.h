@@ -50,7 +50,7 @@
 #include "wwstring.h"
 
 class DX8Wrapper;
-struct IDirect3DTexture8;
+struct IDirect3DTexture9;
 class TextureLoader;
 class LoaderThreadClass;
 class DX8TextureManagerClass;
@@ -134,7 +134,7 @@ class TextureClass : public W3DMPO, public RefCountClass
 			SurfaceClass *surface, 
 			MipCountType mip_level_count=MIP_LEVELS_ALL);		
 
-		TextureClass(IDirect3DTexture8* d3d_texture);
+		TextureClass(IDirect3DTexture9* d3d_texture);
 
 		virtual ~TextureClass(void);
 
@@ -198,7 +198,7 @@ class TextureClass : public W3DMPO, public RefCountClass
 		// This utility function processes the texture reduction (used during rendering)
 		void Invalidate();
 
-		IDirect3DTexture8 *Peek_DX8_Texture()
+		IDirect3DTexture9 *Peek_DX8_Texture()
 		{
 			return D3DTexture;
 		}
@@ -231,7 +231,7 @@ class TextureClass : public W3DMPO, public RefCountClass
 		TxtAddrMode VAddressMode;
 
 		// Direct3D texture object
-		IDirect3DTexture8 *D3DTexture;
+		IDirect3DTexture9 *D3DTexture;
 		bool Initialized;
 
 		// Name

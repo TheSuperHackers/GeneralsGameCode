@@ -108,7 +108,7 @@ void Anim2DTemplate::parseNumImages( INI *ini, void *instance, void *store, cons
 
 	// animations must have a minimum # of frames
 	Int minimumFrames = 1;
-	if( numFrames < minimumFrames )
+	if((int)numFrames < minimumFrames )
 	{
 
 		DEBUG_CRASH(( "Anim2DTemplate::parseNumImages - Invalid animation '%s', animations must have '%d' or more frames defined\n",
@@ -506,7 +506,7 @@ void Anim2D::tryNextFrame( void )
 			case ANIM_2D_PING_PONG_BACKWARDS:
 			{
 
-				if( BitTest( m_status, ANIM_2D_STATUS_REVERSED ) )
+				if( BitTestWW( m_status, ANIM_2D_STATUS_REVERSED ) )
 				{
 					//
 					// decrement frame, unless we're at frame 0 in which case we
@@ -645,7 +645,7 @@ void Anim2D::draw( Int x, Int y )
 	// frame numbers for animation instances that are registered with a system as the
 	// system will update them during its update phase
 	//
- 	if( m_collectionSystem == NULL && BitTest( m_status, ANIM_2D_STATUS_FROZEN ) == FALSE )
+ 	if( m_collectionSystem == NULL && BitTestWW( m_status, ANIM_2D_STATUS_FROZEN ) == FALSE )
 		tryNextFrame();
 
 }  // end draw
@@ -673,7 +673,7 @@ void Anim2D::draw( Int x, Int y, Int width, Int height )
 	// frame numbers for animation instances that are registered with a system as the
 	// system will update them during its update phase
 	//
- 	if( m_collectionSystem == NULL && BitTest( m_status, ANIM_2D_STATUS_FROZEN ) == FALSE )
+ 	if( m_collectionSystem == NULL && BitTestWW( m_status, ANIM_2D_STATUS_FROZEN ) == FALSE )
 		tryNextFrame();
 
 }  // end draw
@@ -776,7 +776,7 @@ void Anim2DCollection::update( void )
 	{
 
 		// try to update the frame
-		if( BitTest( anim->getStatus(), ANIM_2D_STATUS_FROZEN ) == FALSE )	
+		if( BitTestWW( anim->getStatus(), ANIM_2D_STATUS_FROZEN ) == FALSE )	
 			anim->tryNextFrame();
 
 	}  // end for, anim

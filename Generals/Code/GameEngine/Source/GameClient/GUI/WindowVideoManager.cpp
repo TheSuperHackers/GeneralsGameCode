@@ -96,14 +96,15 @@ WindowVideo::~WindowVideo( void )
 	if(m_win)
 		m_win->winGetInstanceData()->setVideoBuffer( NULL );
 	m_win = NULL;
-	
+
+#ifdef HAS_BINK	
 	delete m_videoBuffer;
 	m_videoBuffer = NULL;
 
 	if ( m_videoStream )
 		m_videoStream->close();
 	m_videoStream = NULL;
-
+#endif
 }
 	
 void WindowVideo::init( GameWindow *win, AsciiString movieName, 
@@ -227,6 +228,7 @@ void WindowVideoManager::update( void )
 		}
 
 		// Get the Stream and the buffer to update for each animation
+#ifdef HAS_BINK
 		VideoStreamInterface *videoStream = winVid->getVideoStream();
 		VideoBuffer *videoBuffer = winVid->getVideoBuffer();
 		
@@ -248,6 +250,7 @@ void WindowVideoManager::update( void )
 				}
 			}
 		}
+#endif
 		
 		it++;
 	}
@@ -259,6 +262,7 @@ void WindowVideoManager::playMovie( GameWindow *win, AsciiString movieName, Wind
 	stopAndRemoveMovie( win );
 	
 	// create the new stream
+#ifdef HAS_BINK
 	VideoStreamInterface *videoStream = TheVideoPlayer->open( movieName );
 	if ( videoStream == NULL )
 	{
@@ -291,6 +295,7 @@ void WindowVideoManager::playMovie( GameWindow *win, AsciiString movieName, Wind
 
 	// add it to our map.
 	m_playingVideos[win] = winVid;
+#endif
 
 	m_pauseAllMovies = FALSE;
 	m_stopAllMovies = FALSE;

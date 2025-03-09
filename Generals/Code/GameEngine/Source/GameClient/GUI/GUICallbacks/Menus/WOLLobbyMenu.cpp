@@ -163,9 +163,11 @@ Bool handleLobbySlashCommands(UnicodeString uText)
 
 	if (token == "host")
 	{
+#if 0 //No idea what getQR2HostingStatus is supposed to come from
 		UnicodeString s;
 		s.format(L"Hosting qr2:%d thread:%d", getQR2HostingStatus(), isThreadHosting);
 		TheGameSpyInfo->addText(s, GameSpyColor[GSCOLOR_DEFAULT], NULL);
+#endif
 		return TRUE; // was a slash command
 	}
 	else if (token == "me" && uText.getLength()>4)
@@ -353,13 +355,13 @@ static void populateGroupRoomListbox(GameWindow *lb)
 			if (room.m_groupID == TheGameSpyInfo->getCurrentGroupRoom())
 			{
 				Int selected = GadgetComboBoxAddEntry(lb, room.m_translatedName, GameSpyColor[GSCOLOR_CURRENTROOM]);
-				GadgetComboBoxSetItemData(lb, selected, (void *)(room.m_groupID));
+				GadgetComboBoxSetItemData(lb, selected, (void *)(intptr_t)(room.m_groupID));
 				indexToSelect = selected;
 			}
 			else
 			{
 				Int selected = GadgetComboBoxAddEntry(lb, room.m_translatedName, GameSpyColor[GSCOLOR_ROOM]);
-				GadgetComboBoxSetItemData(lb, selected, (void *)(room.m_groupID));
+				GadgetComboBoxSetItemData(lb, selected, (void *)(intptr_t)(room.m_groupID));
 			}
 		}
 		else
@@ -492,7 +494,8 @@ void PopulateLobbyPlayerListbox(void)
 		std::set<Int> indicesToSelect;
 		UnicodeString uStr;
 		Int numSelected = 0;
-		for (Int i=0; i<maxSelectedItems; ++i)
+		Int i = 0;
+		for (; i<maxSelectedItems; ++i)
 		{
 			if (selectedIndices[i] < 0)
 			{
@@ -574,7 +577,7 @@ void PopulateLobbyPlayerListbox(void)
 				newIndices[i] = *indexIt;
 				DEBUG_LOG(("Queueing up index %d to re-select\n", *indexIt));
 			}
-			GadgetListBoxSetSelected(listboxLobbyPlayers, newIndices, indicesToSelect.size());
+			GadgetListBoxSetSelected(listboxLobbyPlayers, newIndices, (int)indicesToSelect.size());
 			delete[] newIndices;
 		}
 
@@ -639,7 +642,7 @@ void WOLLobbyMenuInit( WindowLayout *layout, void *userData )
 	comboLobbyGroupRoomsID = TheNameKeyGenerator->nameToKey(AsciiString("WOLCustomLobby.wnd:ComboBoxGroupRooms"));
 	comboLobbyGroupRooms = TheWindowManager->winGetWindowFromId(parent, comboLobbyGroupRoomsID);
 
-	GadgetTextEntrySetText(textEntryChat, UnicodeString.TheEmptyString);
+	GadgetTextEntrySetText(textEntryChat, UnicodeString::TheEmptyString);
 
 	populateGroupRoomListbox(comboLobbyGroupRooms);
 
@@ -1336,7 +1339,7 @@ WindowMsgHandledType WOLLobbyMenuInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitTestWW( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
 																							(WindowMsgData)buttonBack, buttonBackID );
@@ -1461,7 +1464,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 
 						PeerRequest req;
 						req.peerRequestType = PeerRequest::PEERREQUEST_GETEXTENDEDSTAGINGROOMINFO;
-						req.stagingRoom.id = (Int)GadgetListBoxGetItemData(control, rowSelected, 0);
+						req.stagingRoom.id = (Int)(intptr_t)GadgetListBoxGetItemData(control, rowSelected, 0);
 
 						if (lastID != req.stagingRoom.id || now > lastFrame + 60)
 						{
@@ -1539,7 +1542,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					GadgetListBoxGetSelected(GetGameListBox(), &selected);
 					if (selected >= 0)
 					{
-						Int selectedID = (Int)GadgetListBoxGetItemData(GetGameListBox(), selected);
+						Int selectedID = (Int)(intptr_t)GadgetListBoxGetItemData(GetGameListBox(), selected);
 						if (selectedID > 0)
 						{
 							StagingRoomMap *srm = TheGameSpyInfo->getStagingRoomList();
@@ -1650,7 +1653,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					if (rowSelected >= 0)
 					{
 						Int groupID;
-						groupID = (Int)GadgetComboBoxGetItemData(comboLobbyGroupRooms, rowSelected);
+						groupID = (Int)(intptr_t)GadgetComboBoxGetItemData(comboLobbyGroupRooms, rowSelected);
 						DEBUG_LOG(("ItemData was %d, current Group Room is %d\n", groupID, TheGameSpyInfo->getCurrentGroupRoom()));
 						if (groupID && groupID != TheGameSpyInfo->getCurrentGroupRoom())
 						{
@@ -1751,9 +1754,9 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					rcMenu->winGetSize(&rcSize.x, &rcSize.y);
 					rcPos.x = rc->mouseX;
 					rcPos.y = rc->mouseY;
-					if(rc->mouseX + rcSize.x > TheDisplay->getWidth())
+					if(rc->mouseX + rcSize.x > (int)TheDisplay->getWidth())
 						rcPos.x = TheDisplay->getWidth() - rcSize.x;
-					if(rc->mouseY + rcSize.y > TheDisplay->getHeight())
+					if(rc->mouseY + rcSize.y > (int)TheDisplay->getHeight())
 						rcPos.y = TheDisplay->getHeight() - rcSize.y;
 					rcMenu->winSetPosition(rcPos.x, rcPos.y);
 					
@@ -1775,7 +1778,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 						break;
 					}
 
-					Int selectedID = (Int)GadgetListBoxGetItemData(control, rc->pos);
+					Int selectedID = (Int)(intptr_t)GadgetListBoxGetItemData(control, rc->pos);
 					if (selectedID > 0)
 					{
 						StagingRoomMap *srm = TheGameSpyInfo->getStagingRoomList();
@@ -1800,7 +1803,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 								rcMenu->winHide(FALSE);
 								rcMenu->winSetPosition(rc->mouseX, rc->mouseY);
 								
-								rcMenu->winSetUserData((void *)selectedID);
+								rcMenu->winSetUserData((void *)(intptr_t)selectedID);
 								TheWindowManager->winSetLoneWindow(rcMenu);
 							}
 						}

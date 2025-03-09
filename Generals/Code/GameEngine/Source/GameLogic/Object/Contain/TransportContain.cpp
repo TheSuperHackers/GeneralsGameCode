@@ -198,7 +198,7 @@ Bool TransportContain::isValidContainerFor(const Object* rider, Bool checkCapaci
 
 	if (checkCapacity)
 	{
-		return (m_extraSlotsInUse + getContainCount() + transportSlotCount <= getContainMax());
+		return ((int)(m_extraSlotsInUse + getContainCount() + transportSlotCount) <= getContainMax());
 	}
 	else
 	{
@@ -219,7 +219,7 @@ void TransportContain::onContaining( Object *rider )
 
 	DEBUG_ASSERTCRASH(transportSlotCount > 0, ("Hmm, this object isnt transportable"));
 	m_extraSlotsInUse += transportSlotCount - 1;
-	DEBUG_ASSERTCRASH(m_extraSlotsInUse >= 0 && m_extraSlotsInUse + getContainCount() <= getContainMax(), ("Hmm, bad slot count"));
+	DEBUG_ASSERTCRASH(m_extraSlotsInUse >= 0 && (int)(m_extraSlotsInUse + getContainCount()) <= getContainMax(), ("Hmm, bad slot count"));
 
 	//
 	// when we go from holding nothing to holding something we have a model condition
@@ -287,7 +287,7 @@ void TransportContain::onRemoving( Object *rider )
 	Int transportSlotCount = rider->getTransportSlotCount();
 	DEBUG_ASSERTCRASH(transportSlotCount > 0, ("Hmm, this object isnt transportable"));
 	m_extraSlotsInUse -= transportSlotCount - 1;
-	DEBUG_ASSERTCRASH(m_extraSlotsInUse >= 0 && m_extraSlotsInUse + getContainCount() <= getContainMax(), ("Hmm, bad slot count"));
+	DEBUG_ASSERTCRASH(m_extraSlotsInUse >= 0 && (int)(m_extraSlotsInUse + getContainCount()) <= getContainMax(), ("Hmm, bad slot count"));
 
 	// when we are empty again, clear the model condition for loaded
 	if( getContainCount() == 0 )

@@ -366,7 +366,7 @@ inline AsciiString::~AsciiString()
 inline int AsciiString::getLength() const
 {
 	validate();
-	return m_data ? strlen(peek()) : 0;
+	return m_data ? (int)strlen(peek()) : 0;
 }
 
 // -----------------------------------------------------

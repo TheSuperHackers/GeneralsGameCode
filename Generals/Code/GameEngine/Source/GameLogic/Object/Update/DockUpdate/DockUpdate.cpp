@@ -145,8 +145,8 @@ Bool DockUpdate::reserveApproachPosition( Object* docker, Coord3D *position, Int
 		return FALSE;
 
 	ObjectID dockerID = docker->getID();
-
-	for( Int positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
+	Int positionIndex = 0;
+	for( ; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
 	{
 		if( m_approachPositionOwners[positionIndex] == dockerID )
 		{
@@ -174,7 +174,7 @@ Bool DockUpdate::reserveApproachPosition( Object* docker, Coord3D *position, Int
 
 		loadDockPositions();// refresh this new one
 
-		positionIndex = m_approachPositionOwners.size() - 1;// The new last spot
+		positionIndex = (int)m_approachPositionOwners.size() - 1;// The new last spot
 		m_approachPositionOwners[positionIndex] = dockerID;
 		*position = computeApproachPosition( positionIndex, docker );
 		*index = positionIndex;
@@ -565,10 +565,11 @@ void DockUpdate::xfer( Xfer *xfer )
 	xfer->xferBool( &m_positionsLoaded );
 
 	// approach positions
-	Int vectorSize = m_approachPositions.size();
+	Int vectorSize = (int)m_approachPositions.size();
 	xfer->xferInt( &vectorSize );
 	m_approachPositions.resize(vectorSize);
-	for( Int vectorIndex = 0; vectorIndex < vectorSize; ++vectorIndex )
+	Int vectorIndex = 0;
+	for( ; vectorIndex < vectorSize; ++vectorIndex )
 	{
 		// Okay, this is cool.  On save, the size and a bunch of coords will be written.
 		// on load, vectorSize will be at 0 from the .size, but will then get set
@@ -577,7 +578,7 @@ void DockUpdate::xfer( Xfer *xfer )
 	}
 
 	// approach position owners
-	vectorSize = m_approachPositionOwners.size();
+	vectorSize = (int)m_approachPositionOwners.size();
 	xfer->xferInt( &vectorSize );
 	m_approachPositionOwners.resize(vectorSize);
 	for( vectorIndex = 0; vectorIndex < vectorSize; ++vectorIndex )
@@ -586,7 +587,7 @@ void DockUpdate::xfer( Xfer *xfer )
 	}
 
 	// approach positions reached
-	vectorSize = m_approachPositionReached.size();
+	vectorSize = (int)m_approachPositionReached.size();
 	xfer->xferInt( &vectorSize );
 	m_approachPositionReached.resize(vectorSize);
 	for( vectorIndex = 0; vectorIndex < vectorSize; ++vectorIndex )

@@ -104,7 +104,11 @@ public:
 	/*
 	** Transpose and Inverse
 	*/
+#ifndef _DEBUG
 	WWINLINE Matrix4 Transpose(void) const;
+#else
+	Matrix4 Transpose(void) const;
+#endif
 	WWINLINE Matrix4 Inverse(void) const;
 
 	/*
@@ -465,6 +469,7 @@ WWINLINE void Matrix4::Init_Perspective
  * HISTORY:                                                                                    * 
  *   06/02/1997 GH  : Created.                                                                 * 
  *=============================================================================================*/
+#ifndef _DEBUG
 WWINLINE Matrix4 Matrix4::Transpose() const
 {
     return Matrix4(
@@ -474,6 +479,7 @@ WWINLINE Matrix4 Matrix4::Transpose() const
 			Vector4(Row[0][3], Row[1][3], Row[2][3], Row[3][3])
 	);
 }
+#endif
 
 /*********************************************************************************************** 
  * Matrix4::Inverse -- returns the inverse of the matrix                                       * 

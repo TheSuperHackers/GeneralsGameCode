@@ -164,7 +164,7 @@ inline Real deg2rad(Real rad) { return rad * (PI/180); }
 //-----------------------------------------------------------------------------
 // For twiddling bits
 //-----------------------------------------------------------------------------
-#define BitTest( x, i ) ( ( (x) & (i) ) != 0 )
+#define BitTestWW( x, i ) ( ( (x) & (i) ) != 0 )
 #define BitSet( x, i ) ( (x) |= (i) )
 #define BitClear( x, i ) ( (x ) &= ~(i) )
 #define BitToggle( x, i ) ( (x) ^= (i) )
@@ -174,17 +174,20 @@ inline Real deg2rad(Real rad) { return rad * (PI/180); }
 // note, this function depends on the cpu rounding mode, which we set to CHOP every frame, 
 // but apparently tends to be left in unpredictable modes by various system bits of
 // code, so use this function with caution -- it might not round in the way you want.
+#if 1
 __forceinline long fast_float2long_round(float f)
 {
 	long i;
 
-	__asm {
-		fld [f]
-		fistp [i]
-	}
+	//__asm {
+	//	fld [f]
+	//	fistp [i]
+	//}
 
+	i = (long)f;
 	return i;
 }
+#endif
 
 //-------------------------------------------------------------------------------------------------
 #define REAL_TO_INT(x)						((Int)(x))

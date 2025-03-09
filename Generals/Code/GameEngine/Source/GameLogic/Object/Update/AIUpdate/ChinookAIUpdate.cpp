@@ -427,7 +427,7 @@ protected:
 		XferVersion version = currentVersion;
 		xfer->xferVersion( &version, currentVersion );
 
-		Int numRopes = m_ropes.size();
+		Int numRopes = (int)m_ropes.size();
 		xfer->xferInt(&numRopes);
 
 		if (version >= 2)

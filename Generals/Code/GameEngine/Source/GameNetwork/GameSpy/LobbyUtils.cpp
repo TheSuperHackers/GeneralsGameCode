@@ -69,7 +69,7 @@
 #endif
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
-static enum {
+enum {
 	COLUMN_NAME = 0,
 	COLUMN_MAP,
 	COLUMN_LADDER,
@@ -210,7 +210,7 @@ static void gameTooltip(GameWindow *window,
 		return;
 	}
 
-	Int gameID = (Int)GadgetListBoxGetItemData(window, row, 0);
+	Int gameID = (Int)(intptr_t)GadgetListBoxGetItemData(window, row, 0);
 	GameSpyStagingRoom *room = TheGameSpyInfo->findStagingRoomByID(gameID);
 	if (!room)
 	{
@@ -459,7 +459,7 @@ static void clearBuddyGames(void)
 
 struct GameSortStruct
 {
-	bool operator()(GameSpyStagingRoom *g1, GameSpyStagingRoom *g2)
+	bool operator()(const GameSpyStagingRoom *g1, const GameSpyStagingRoom *g2) const
 	{
 		// sort CRC mismatches to the bottom
 		Bool g1Good = (g1->getExeCRC() != TheGlobalData->m_exeCRC || g1->getIniCRC() != TheGlobalData->m_iniCRC);
@@ -487,8 +487,8 @@ struct GameSortStruct
 
 		if (sortBuddies)
 		{
-			Bool g1HasBuddies = (theBuddyGames->find(g1) != theBuddyGames->end());
-			Bool g2HasBuddies = (theBuddyGames->find(g2) != theBuddyGames->end());
+			const Bool g1HasBuddies = (theBuddyGames->find((GameSpyStagingRoom*)g1) != theBuddyGames->cend());
+			const Bool g2HasBuddies = (theBuddyGames->find((GameSpyStagingRoom*)g2) != theBuddyGames->cend());
 			if ( g1HasBuddies ^ g2HasBuddies )
 			{
 				return g1HasBuddies;
@@ -558,7 +558,7 @@ static Int insertGame( GameWindow *win, GameSpyStagingRoom *game, Bool showMap )
 
 
 	Int index = GadgetListBoxAddEntryText(win, game->getGameName(), gameColor, -1, COLUMN_NAME);
-	GadgetListBoxSetItemData(win, (void *)game->getID(), index);
+	GadgetListBoxSetItemData(win, (void *)(intptr_t)game->getID(), index);
 
 	UnicodeString s;
 
@@ -672,7 +672,7 @@ void RefreshGameListBox( GameWindow *win, Bool showMap )
 	GadgetListBoxGetSelected(win, &selectedIndex);
 	if (selectedIndex != -1 )
 	{
-		selectedID = (Int)GadgetListBoxGetItemData(win, selectedIndex);
+		selectedID = (Int)(intptr_t)GadgetListBoxGetItemData(win, selectedIndex);
 	}
 	int prevPos = GadgetListBoxGetTopVisibleEntry( win );
 

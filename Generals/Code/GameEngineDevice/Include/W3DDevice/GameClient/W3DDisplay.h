@@ -115,11 +115,13 @@ public:
 	virtual void drawImage( const Image *image, Int startX, Int startY, 
 													Int endX, Int endY, Color color = 0xFFFFFFFF, DrawImageMode mode=DRAW_IMAGE_ALPHA);
 
+#ifdef HAS_BINK
 	/// draw a video buffer fit within the screen coordinates
 	virtual void drawVideoBuffer( VideoBuffer *buffer, Int startX, Int startY, 
 													Int endX, Int endY );
 
 	virtual VideoBuffer*	createVideoBuffer( void ) ;							///< Create a video buffer that can be used for this display
+#endif
 
 	virtual void takeScreenShot(void);						//save screenshot to file
 	virtual void toggleMovieCapture(void);			//enable AVI or frame capture mode.

@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{6b0018eb-7465-456e-b513-f591b8311e9a}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{7e0e7def-cb84-47ce-9028-5ff264b5c7dc}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="definition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="definitionfactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="definitionfactorymgr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="definitionmgr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="parameter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="persistfactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pointerremap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="saveload.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="saveloadstatus.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="saveloadsubsystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="twiddler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wwsaveload.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="definition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="definitionclassids.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="definitionfactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="definitionfactorymgr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="definitionmgr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="editable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="parameter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="parameterlist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="parametertypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="persist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="persistfactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pointerremap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="postloadable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="saveload.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="saveloadids.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="saveloadstatus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="saveloadsubsystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="simpledefinitionfactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="simpleparameter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="twiddler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wwsaveload.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

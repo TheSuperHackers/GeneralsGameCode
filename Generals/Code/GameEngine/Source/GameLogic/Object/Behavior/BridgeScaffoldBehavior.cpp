@@ -164,7 +164,7 @@ UpdateSleepTime BridgeScaffoldBehavior::update( void )
 
 	// depending on our motion type, we move at different speeds
 	Real topSpeed = 1.0f;
-	Coord3D *start, *end;
+	Coord3D *start = 0, *end = 0;
 	switch( m_targetMotion )
 	{
 

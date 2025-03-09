@@ -230,7 +230,7 @@ Error:
 int HTreeManagerClass::Get_Tree_ID(const char * name)
 {
 	for (int i=0; i<NumTrees; i++) {
-		if (TreePtr[i] && (stricmp(name,TreePtr[i]->Get_Name()) == 0)) {
+		if (TreePtr[i] && (_stricmp(name,TreePtr[i]->Get_Name()) == 0)) {
 			return i;
 		}
 	}
@@ -277,7 +277,7 @@ char *HTreeManagerClass::Get_Tree_Name(const int idx)
 HTreeClass * HTreeManagerClass::Get_Tree(const char * name)
 {
 	for (int i=0; i<NumTrees; i++) {
-		if (TreePtr[i] && (stricmp(name,TreePtr[i]->Get_Name()) == 0)) {
+		if (TreePtr[i] && (_stricmp(name,TreePtr[i]->Get_Name()) == 0)) {
 
 			return TreePtr[i];
 		}

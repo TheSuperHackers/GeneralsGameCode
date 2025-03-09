@@ -283,7 +283,7 @@ public:
 
 	Int getCount() const 
 	{ 
-		return m_info.size(); 
+		return (int)m_info.size(); 
 	}
 	
 #if defined(_DEBUG) || defined(_INTERNAL)
@@ -548,7 +548,7 @@ public:
 
 	BuildableStatus getBuildable() const;
 	
-	Int getPrereqCount() const { return m_prereqInfo.size(); }
+	Int getPrereqCount() const { return (int)m_prereqInfo.size(); }
 	const ProductionPrerequisite *getNthPrereq(Int i) const { return &m_prereqInfo[i]; }
 
 	/** 

@@ -112,7 +112,7 @@ void CachedFileInputStream::close(void)
 	m_size=0;
 }
 
-Int CachedFileInputStream::read(void *pData, Int numBytes)
+intptr_t CachedFileInputStream::read(void *pData, intptr_t numBytes)
 {
 	if (m_buffer) {
 		if ((numBytes+m_pos)>m_size) {
@@ -127,12 +127,12 @@ Int CachedFileInputStream::read(void *pData, Int numBytes)
 	return 0;
 }
 
-UnsignedInt CachedFileInputStream::tell(void)
+intptr_t CachedFileInputStream::tell(void)
 {
 	return m_pos;
 }
 
-Bool CachedFileInputStream::absoluteSeek(UnsignedInt pos)
+Bool CachedFileInputStream::absoluteSeek(intptr_t pos)
 {
 	if (pos<0) return false;
 	if (pos>m_size) {
@@ -268,7 +268,7 @@ DataChunkOutput::~DataChunkOutput()
 	while( len == 256 )
 	{
 		// copy data from the temp m_tmp_file to the output m_tmp_file
-		len = ::fread( buffer, 1, 256, m_tmp_file );
+		len = (int)::fread( buffer, 1, 256, m_tmp_file );
 		m_pOut->write( buffer, len );
 	}
 

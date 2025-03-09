@@ -263,7 +263,7 @@ void RoadSegment::SetVertexBuffer(VertexFormatXYZDUV1 *vb, Int numVertex)
 	}
 	Vector3 verts[MAX_SEG_VERTEX];
 	if (numVertex<1 || numVertex > MAX_SEG_VERTEX) return;
-	m_vb = NEW VertexFormatXYZDUV1[numVertex];	// pool[]ify
+	m_vb = new VertexFormatXYZDUV1[numVertex];	// pool[]ify
 	if (!m_vb) return;
 	m_numVertex = numVertex;
 	memcpy(m_vb, vb, numVertex*sizeof(VertexFormatXYZDUV1));
@@ -290,7 +290,7 @@ void RoadSegment::SetIndexBuffer(UnsignedShort *ib, Int numIndex)
 		m_numIndex = 0;
 	}
 	if (numIndex < 1 || numIndex > MAX_SEG_INDEX) return;
-	m_ib = NEW UnsignedShort[numIndex];
+	m_ib = new UnsignedShort[numIndex];
 	if (!m_ib) return;
 	m_numIndex = numIndex;
 	memcpy(m_ib, ib, numIndex*sizeof(UnsignedShort));
@@ -3102,8 +3102,8 @@ void W3DRoadBuffer::allocateRoadBuffers(void)
 
 	m_curNumRoadVertices=0;
 	m_curNumRoadIndices=0;
-	m_roads = MSGNEW("RoadBuffer") RoadSegment[m_maxRoadSegments];
-	m_roadTypes = MSGNEW("RoadBuffer") RoadType[m_maxRoadTypes];
+	m_roads = new RoadSegment[m_maxRoadSegments];
+	m_roadTypes = new RoadType[m_maxRoadTypes];
 
 	// load roads from INI
 	TerrainRoadType *road;

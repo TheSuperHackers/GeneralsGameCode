@@ -111,7 +111,7 @@ Int ObjectTypes::prepForPlayerCounting( std::vector<const ThingTemplate *>& temp
 		}
 	}
 
-	Int retVal = templates.size();
+	Int retVal = (int)templates.size();
 	counts.resize(retVal);
 
 	return retVal;
@@ -154,7 +154,7 @@ void ObjectTypes::xfer(Xfer *xfer)
 	xfer->xferAsciiString( &m_listName );
 
 	// size of object types vector
-	UnsignedShort objectTypesCount = m_objectTypes.size();
+	UnsignedShort objectTypesCount = (uint32_t)m_objectTypes.size();
 	xfer->xferUnsignedShort( &objectTypesCount );
 
 	// object types data

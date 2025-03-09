@@ -35,7 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"blitblit.h"
+//#include	"blitblit.h"
 #include	"convert.h"
 #include	"dsurface.h"
 #include	"hsv.h"
@@ -44,6 +44,7 @@
 
 ConvertClass::ConvertClass(PaletteClass const & artpalette, PaletteClass const & screenpalette, Surface const & surface) :
 	BBP(surface.Bytes_Per_Pixel()),
+#if 0
 	PlainBlitter(NULL),
 	TransBlitter(NULL),
 	ShadowBlitter(NULL),
@@ -51,6 +52,7 @@ ConvertClass::ConvertClass(PaletteClass const & artpalette, PaletteClass const &
 	Translucent1Blitter(NULL),
 	Translucent2Blitter(NULL),
 	Translucent3Blitter(NULL),
+#endif
 	RLETransBlitter(NULL),
 	RLEShadowBlitter(NULL),
 	RLERemapBlitter(NULL),
@@ -95,13 +97,13 @@ ConvertClass::ConvertClass(PaletteClass const & artpalette, PaletteClass const &
 		**	Construct all the blitter objects necessary to support the functionality
 		**	required for the draw permutations.
 		*/
-		PlainBlitter = W3DNEW BlitPlainXlat<unsigned char>((unsigned char const *)Translator);
-		TransBlitter = W3DNEW BlitTransXlat<unsigned char>((unsigned char const *)Translator);
-		RemapBlitter = W3DNEW BlitTransZRemapXlat<unsigned char>(&RemapTable, (unsigned char const *)Translator);
-		ShadowBlitter = W3DNEW BlitTransRemapDest<unsigned char>(ShadowTable);
-		Translucent1Blitter = W3DNEW BlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
-		Translucent2Blitter = W3DNEW BlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
-		Translucent3Blitter = W3DNEW BlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+		//PlainBlitter = W3DNEW BlitPlainXlat<unsigned char>((unsigned char const *)Translator);
+		//TransBlitter = W3DNEW BlitTransXlat<unsigned char>((unsigned char const *)Translator);
+		//RemapBlitter = W3DNEW BlitTransZRemapXlat<unsigned char>(&RemapTable, (unsigned char const *)Translator);
+		//ShadowBlitter = W3DNEW BlitTransRemapDest<unsigned char>(ShadowTable);
+		//Translucent1Blitter = W3DNEW BlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+		//Translucent2Blitter = W3DNEW BlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
+		//Translucent3Blitter = W3DNEW BlitTransRemapXlat<unsigned char>(ShadowTable, (unsigned char const *)Translator);
 
 		/*
 		**	Create the RLE aware blitter objects.
@@ -134,13 +136,13 @@ ConvertClass::ConvertClass(PaletteClass const & artpalette, PaletteClass const &
 		**	Construct all the blitter objects necessary to support the functionality
 		**	required for the draw permutations.
 		*/
-		PlainBlitter = W3DNEW BlitPlainXlat<unsigned short>((unsigned short const *)Translator);
-		TransBlitter = W3DNEW BlitTransXlat<unsigned short>((unsigned short const *)Translator);
-		RemapBlitter = W3DNEW BlitTransZRemapXlat<unsigned short>(&RemapTable, (unsigned short const *)Translator);
-		ShadowBlitter = W3DNEW BlitTransDarken<unsigned short>((unsigned short)maskhalf);
-		Translucent1Blitter = W3DNEW BlitTransLucent75<unsigned short>((unsigned short const *)Translator, (unsigned short)maskquarter);
-		Translucent2Blitter = W3DNEW BlitTransLucent50<unsigned short>((unsigned short const *)Translator, (unsigned short)maskhalf);
-		Translucent3Blitter = W3DNEW BlitTransLucent25<unsigned short>((unsigned short const *)Translator, (unsigned short)maskquarter);
+		//PlainBlitter = W3DNEW BlitPlainXlat<unsigned short>((unsigned short const *)Translator);
+		//TransBlitter = W3DNEW BlitTransXlat<unsigned short>((unsigned short const *)Translator);
+		//RemapBlitter = W3DNEW BlitTransZRemapXlat<unsigned short>(&RemapTable, (unsigned short const *)Translator);
+		//ShadowBlitter = W3DNEW BlitTransDarken<unsigned short>((unsigned short)maskhalf);
+		//Translucent1Blitter = W3DNEW BlitTransLucent75<unsigned short>((unsigned short const *)Translator, (unsigned short)maskquarter);
+		//Translucent2Blitter = W3DNEW BlitTransLucent50<unsigned short>((unsigned short const *)Translator, (unsigned short)maskhalf);
+		//Translucent3Blitter = W3DNEW BlitTransLucent25<unsigned short>((unsigned short const *)Translator, (unsigned short)maskquarter);
 
 		/*
 		**	Create the RLE aware blitter objects.
@@ -157,6 +159,7 @@ ConvertClass::ConvertClass(PaletteClass const & artpalette, PaletteClass const &
 
 ConvertClass::~ConvertClass(void)
 {
+#if 0
 	delete PlainBlitter;
 	PlainBlitter = NULL;
 
@@ -177,6 +180,7 @@ ConvertClass::~ConvertClass(void)
 
 	delete Translucent3Blitter;
 	Translucent3Blitter = NULL;
+#endif
 
 	delete [] Translator;
 	Translator = NULL;
@@ -203,7 +207,7 @@ ConvertClass::~ConvertClass(void)
 	RLETranslucent3Blitter = NULL;
 }
 
-
+#if 0
 Blitter const * ConvertClass::Blitter_From_Flags(ShapeFlags_Type flags) const
 {
 	if (flags & SHAPE_REMAP) return(RemapBlitter);
@@ -260,7 +264,7 @@ RLEBlitter const * ConvertClass::RLEBlitter_From_Flags(ShapeFlags_Type flags) co
 
 	return(RLETransBlitter);
 }
-
+#endif
 
 
 

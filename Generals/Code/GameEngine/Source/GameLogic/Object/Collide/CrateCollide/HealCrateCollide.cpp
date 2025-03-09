@@ -57,10 +57,11 @@ Bool HealCrateCollide::executeCrateBehavior( Object *other )
 	cratePlayer->healAllObjects();
 
 	//Play a crate pickup sound.
+#ifdef HAS_BINK
 	AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateHeal;
 	soundToPlay.setPosition( other->getPosition() );
 	TheAudio->addAudioEvent(&soundToPlay);
-	
+#endif
 	return TRUE;
 }
 

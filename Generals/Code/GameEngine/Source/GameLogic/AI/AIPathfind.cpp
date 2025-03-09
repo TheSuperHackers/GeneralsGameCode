@@ -907,7 +907,7 @@ void Path::computePointOnPath(
 		// projected position on the path.  If we are very far off the path, we will move 
 		// directly towards the nearest point on the path, and not the next path node.
 		const Real maxPathError = 3.0f * PATHFIND_CELL_SIZE_F;
-		const Real maxPathErrorInv = 1.0 / maxPathError;
+		const Real maxPathErrorInv = 1.0f / maxPathError;
 		Real k = offsetDist * maxPathErrorInv;
 		if (k > 1.0f)
 			k = 1.0f;
@@ -1093,7 +1093,7 @@ PathfindCellInfo *PathfindCellInfo::s_firstFree = NULL;
 void PathfindCellInfo::allocateCellInfos(void) 
 {
 	releaseCellInfos();
-	s_infoArray = MSGNEW("PathfindCellInfo") PathfindCellInfo[CELL_INFOS_TO_ALLOCATE];	// pool[]ify
+	s_infoArray = new PathfindCellInfo[CELL_INFOS_TO_ALLOCATE];	// pool[]ify
 	s_infoArray[CELL_INFOS_TO_ALLOCATE-1].m_pathParent = NULL;
 	s_infoArray[CELL_INFOS_TO_ALLOCATE-1].m_isFree = true;
 	s_firstFree = s_infoArray;
@@ -1184,7 +1184,7 @@ PathfindCell::~PathfindCell( void )
 { 	
 	if (m_info) PathfindCellInfo::releaseACellInfo(m_info);
 	m_info = NULL;
-	static warn = true;
+	static bool warn = true;
 	if (warn) {
 		warn = false;
 		DEBUG_LOG( ("PathfindCell::~PathfindCell m_info Allocated."));
@@ -2119,10 +2119,10 @@ void ZoneBlock::allocateZones(void)
 		m_zonesAllocated *= 2;
 	}
 	// pool[]ify
-	m_groundCliffZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
-	m_groundWaterZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
-	m_groundRubbleZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
-	m_crusherZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
+	m_groundCliffZones = new UnsignedShort[m_zonesAllocated];
+	m_groundWaterZones = new UnsignedShort[m_zonesAllocated];
+	m_groundRubbleZones = new UnsignedShort[m_zonesAllocated];
+	m_crusherZones = new UnsignedShort[m_zonesAllocated];
 }
 
 
@@ -2209,12 +2209,12 @@ void PathfindZoneManager::allocateZones(void)
 	}
 	DEBUG_LOG(("Allocating zone tables of size %d\n", m_zonesAllocated));
 	// pool[]ify
-	m_groundCliffZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
-	m_groundWaterZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
-	m_groundRubbleZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
-	m_terrainZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
-	m_crusherZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
-	m_hierarchicalZones = MSGNEW("PathfindZoneInfo") UnsignedShort[m_zonesAllocated];
+	m_groundCliffZones = new UnsignedShort[m_zonesAllocated];
+	m_groundWaterZones = new UnsignedShort[m_zonesAllocated];
+	m_groundRubbleZones = new UnsignedShort[m_zonesAllocated];
+	m_terrainZones = new UnsignedShort[m_zonesAllocated];
+	m_crusherZones = new UnsignedShort[m_zonesAllocated];
+	m_hierarchicalZones = new UnsignedShort[m_zonesAllocated];
 }
 
 /* Allocate zone blocks for hierarchical pathfinding.   */
@@ -2225,8 +2225,8 @@ void PathfindZoneManager::allocateBlocks(const IRegion2D &globalBounds)
 	m_zoneBlockExtent.x = (globalBounds.hi.x-globalBounds.lo.x+1+ZONE_BLOCK_SIZE-1)/ZONE_BLOCK_SIZE;
 	m_zoneBlockExtent.y = (globalBounds.hi.y-globalBounds.lo.y+1+ZONE_BLOCK_SIZE-1)/ZONE_BLOCK_SIZE;
 
-	m_blockOfZoneBlocks = MSGNEW("PathfindZoneBlocks") ZoneBlock[(m_zoneBlockExtent.x)*(m_zoneBlockExtent.y)];
-	m_zoneBlocks = MSGNEW("PathfindZoneBlocks") ZoneBlockP[m_zoneBlockExtent.x];
+	m_blockOfZoneBlocks = new ZoneBlock[(m_zoneBlockExtent.x)*(m_zoneBlockExtent.y)];
+	m_zoneBlocks = new ZoneBlockP[m_zoneBlockExtent.x];
 	Int i;
 	for (i=0; i<m_zoneBlockExtent.x; i++) {
 		m_zoneBlocks[i] = &m_blockOfZoneBlocks[i*(m_zoneBlockExtent.y)];
@@ -2278,7 +2278,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 	Int xCount = (globalBounds.hi.x-globalBounds.lo.x+1+ZONE_BLOCK_SIZE-1)/ZONE_BLOCK_SIZE;
 	Int yCount = (globalBounds.hi.y-globalBounds.lo.y+1+ZONE_BLOCK_SIZE-1)/ZONE_BLOCK_SIZE;
 
-	Int xBlock, yBlock;
+	Int xBlock, yBlock = 0;
 	for (xBlock = 0; xBlock<xCount; xBlock++) {
 		for (yBlock=0; yBlock<yCount; yBlock++) {
 			IRegion2D bounds;
@@ -2955,8 +2955,8 @@ void PathfindLayer::allocateCells(const IRegion2D *extent)
 
 	// Allocate cells.
 	// pool[]ify
-	m_blockOfMapCells = MSGNEW("PathfindMapCells") PathfindCell[m_width*m_height];
-	m_layerCells = MSGNEW("PathfindMapCells") PathfindCellP[m_width];
+	m_blockOfMapCells = new PathfindCell[m_width*m_height];
+	m_layerCells = new PathfindCellP[m_width];
 	Int i;
 	for (i=0; i<m_width; i++) {
 		m_layerCells[i] = &m_blockOfMapCells[i*m_height];
@@ -3013,8 +3013,8 @@ void PathfindLayer::allocateCellsForWallLayer(const IRegion2D *extent, ObjectID 
 	m_height = maxY - m_yOrigin;
 
 	// Allocate cells.
-	m_blockOfMapCells = MSGNEW("PathfindMapCells") PathfindCell[m_width*m_height];
-	m_layerCells = MSGNEW("PathfindMapCells") PathfindCellP[m_width];
+	m_blockOfMapCells = new PathfindCell[m_width*m_height];
+	m_layerCells = new PathfindCellP[m_width];
 
 	for (i=0; i<m_width; i++) {
 		m_layerCells[i] = &m_blockOfMapCells[i*m_height];
@@ -4085,8 +4085,8 @@ void Pathfinder::newMap( void )
 		DEBUG_ASSERTCRASH(m_map == NULL, ("Can't reallocate pathfind cells."));
  		m_zoneManager.allocateBlocks(m_extent);
 		// Allocate cells.
-		m_blockOfMapCells = MSGNEW("PathfindMapCells") PathfindCell[(bounds.hi.x+1)*(bounds.hi.y+1)];
-		m_map = MSGNEW("PathfindMapCells") PathfindCellP[bounds.hi.x+1];
+		m_blockOfMapCells = new PathfindCell[(bounds.hi.x+1)*(bounds.hi.y+1)];
+		m_map = new PathfindCellP[bounds.hi.x+1];
 		Int i;
 		for (i=0; i<=bounds.hi.x; i++) {
 			m_map[i] = &m_blockOfMapCells[i*(bounds.hi.y+1)];
@@ -6291,7 +6291,8 @@ Path *Pathfinder::buildGroundPath(Bool isCrusher, const Coord3D *fromPos, Pathfi
 		color.blue = 0;
 		color.red = color.green = 1;
 		Coord3D pos;
-		for( PathNode *node = path->getFirstNode(); node; node = node->getNext() )
+		PathNode* node = path->getFirstNode();
+		for( ; node; node = node->getNext() )
 		{
 
 			// create objects to show path - they decay
@@ -6641,7 +6642,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
 		Bool neighborFlags[8] = {false, false, false, false, false, false, false};
 
-		UnsignedInt newCostSoFar;
+		UnsignedInt newCostSoFar = 0;
 
 		for( int i=0; i<numNeighbors; i++ )
 		{
@@ -8379,7 +8380,8 @@ Path *Pathfinder::buildActualPath( const Object *obj, LocomotorSurfaceTypeMask a
 		color.blue = 0;
 		color.red = color.green = 1;
 		Coord3D pos;
-		for( PathNode *node = path->getFirstNode(); node; node = node->getNext() )
+		PathNode* node = path->getFirstNode();
+		for( ; node; node = node->getNext() )
 		{
 
 			// create objects to show path - they decay

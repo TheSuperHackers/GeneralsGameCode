@@ -201,7 +201,9 @@ void HelicopterSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 	if (m_deathSound.getEventName().isEmpty() == false)
 	{
 		m_deathSound.setObjectID(getObject()->getID());
+#ifdef HAS_BINK
 		m_deathSound.setPlayingHandle(TheAudio->addAudioEvent(&m_deathSound));
+#endif
 	}
 
 
@@ -468,7 +470,9 @@ UpdateSleepTime HelicopterSlowDeathBehavior::update( void )
 				draw->setModelConditionState( MODELCONDITION_SPECIAL_DAMAGED );
 
 			// Stop the sound from playing.
+#ifdef HAS_BINK
 			TheAudio->removeAudioEvent(m_deathSound.getPlayingHandle());
+#endif
 
 		}  // end if
 	}

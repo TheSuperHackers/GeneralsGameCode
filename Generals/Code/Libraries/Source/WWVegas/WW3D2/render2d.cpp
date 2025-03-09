@@ -544,7 +544,7 @@ void Render2DClass::Render(void)
 	//
 	//	Configure the viewport for entire screen
 	//
-	D3DVIEWPORT8 vp = { 0 };
+	D3DVIEWPORT9 vp = { 0 };
 	vp.X			= (DWORD)ScreenResolution.Left;
 	vp.Y			= (DWORD)ScreenResolution.Top;
 	vp.Width		= (DWORD)ScreenResolution.Width ();
