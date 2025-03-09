@@ -931,7 +931,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 				ApplicationIsWindowed=true;
 			// TheSuperHackers @feature @ShizCalev 04/04/2025 - Borderless Windowed support
 			if(stricmp(token,"-noborder")==0)
-				ApplicationIsBorderless=true;)
+				ApplicationIsBorderless=true;
 			token = nextParam(NULL, "\" ");	   
 		}
 
