@@ -187,13 +187,15 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 		COLOR_SP_CRC_MISMATCH,
 		COLOR_MP,
 		COLOR_MP_CRC_MISMATCH,
+		COLOR_MAP_NOT_PRESENT,
 		COLOR_MAX
 	};
 	Color colors[COLOR_MAX] = {
 		GameMakeColor( 255, 255, 255, 255 ),
 		GameMakeColor( 128, 128, 128, 255 ),
 		GameMakeColor( 255, 255, 255, 255 ),
-		GameMakeColor( 128, 128, 128, 255 )
+		GameMakeColor( 128, 128, 128, 255 ),
+		GameMakeColor( 140,  50,  50, 255 )
 	};
 
 	AsciiString asciistr;
@@ -303,7 +305,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 			Int insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
 			GadgetListBoxAddEntryText(listbox, displayTimeBuffer, color, insertionIndex, 1);
 			GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 2);
-			GadgetListBoxAddEntryText(listbox, mapStr, color, insertionIndex, 3);
+			GadgetListBoxAddEntryText(listbox, mapStr, mapData ? color : colors[COLOR_MAP_NOT_PRESENT], insertionIndex, 3);
 			//GadgetListBoxAddEntryText(listbox, extraStr, color, insertionIndex, 4);
 		}
 	}
