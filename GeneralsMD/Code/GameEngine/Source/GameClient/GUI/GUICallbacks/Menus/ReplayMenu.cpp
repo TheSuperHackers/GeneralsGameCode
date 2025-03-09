@@ -519,11 +519,26 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 
 						AsciiString asciiFilename;
 						asciiFilename.translate(filename);
-						TheRecorder->playbackFile(asciiFilename);
 
-						if(parentReplayMenu != NULL)
+						const MapMetaData *md;
+						Bool success = GetMapInfo(asciiFilename, NULL, NULL, &md);
+
+						if(!success || md == NULL)
 						{
-							parentReplayMenu->winHide(TRUE);
+							MessageBoxOk(UnicodeString(L"MAP NOT FOUND"), UnicodeString(L"This replay cannot be loaded because the map is not present."), NULL);
+						}
+						else if(TheRecorder->testVersionPlayback(asciiFilename))
+						{
+							MessageBoxOkCancel(TheGameText->fetch("GUI:OlderReplayVersionTitle"), TheGameText->fetch("GUI:OlderReplayVersion"),reallyLoadReplay ,NULL);
+						}
+						else
+						{
+							TheRecorder->playbackFile(asciiFilename);
+
+							if(parentReplayMenu != NULL)
+							{
+								parentReplayMenu->winHide(TRUE);
+							}
 						}
 					}
 				}
@@ -581,7 +596,14 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 					AsciiString asciiFilename;
 					asciiFilename.translate(filename);
 
-					if(TheRecorder->testVersionPlayback(asciiFilename))
+					const MapMetaData *md;
+					Bool success = GetMapInfo(asciiFilename, NULL, NULL, &md);
+
+					if(!success || md == NULL)
+					{
+						MessageBoxOk(UnicodeString(L"MAP NOT FOUND"), UnicodeString(L"This replay cannot be loaded because the map is not present."), NULL);
+					}
+					else if(TheRecorder->testVersionPlayback(asciiFilename))
 					{
 						MessageBoxOkCancel(TheGameText->fetch("GUI:OlderReplayVersionTitle"), TheGameText->fetch("GUI:OlderReplayVersion"),reallyLoadReplay ,NULL);
 					}
