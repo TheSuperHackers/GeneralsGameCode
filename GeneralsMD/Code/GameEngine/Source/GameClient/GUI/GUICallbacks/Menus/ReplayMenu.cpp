@@ -102,7 +102,31 @@ UnicodeString GetReplayFilenameFromListbox(GameWindow *listbox, Int index)
 	return fname;
 }
 
+Bool GetMapInfo(const AsciiString& filename, RecorderClass::ReplayHeader *headerOut, ReplayGameInfo *infoOut, const MapMetaData **mdOut)
+{
+	// lets get some info about the replay
+	RecorderClass::ReplayHeader header;
+	header.forPlayback = FALSE;
+	header.filename = filename;
+	Bool success = TheRecorder && TheMapCache && TheRecorder->readReplayHeader( header );
+	if (!success)
+		return false;
 
+	ReplayGameInfo info;
+	if (!ParseAsciiStringToGameInfo( &info, header.gameOptions ))
+		return false;
+
+	header.replayName.translate(filename);
+	for (Int tmp=0; tmp < TheRecorder->getReplayExtention().getLength(); ++tmp)
+		header.replayName.removeLastChar();
+
+	if (headerOut) *headerOut = header;
+	if (infoOut) *infoOut = info;
+
+	if (mdOut)
+		*mdOut = TheMapCache->findMap(info.getMap());
+	return true;
+}
 //-------------------------------------------------------------------------------------------------
 /** Populate the listbox with the names of the available replay files */
 //-------------------------------------------------------------------------------------------------
@@ -144,132 +168,122 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 	{
 		// just want the filename
 		asciistr.set((*it).reverseFind('\\') + 1);
-
-		// lets get some info about the replay
 		RecorderClass::ReplayHeader header;
-		header.forPlayback = FALSE;
-		header.filename = asciistr;
-		Bool success = TheRecorder && TheMapCache && TheRecorder->readReplayHeader( header );
+		ReplayGameInfo info;
+		const MapMetaData *md;
+		Bool success = GetMapInfo(asciistr, &header, &info, &md);
+
 		if (success)
 		{
-			ReplayGameInfo info;
-			if (ParseAsciiStringToGameInfo( &info, header.gameOptions ))
+			// columns are: name, date, version, map, extra
+
+			// name
+
+			UnicodeString replayNameToShow = header.replayName;
+
+			AsciiString lastReplayFName = TheRecorder->getLastReplayFileName();
+			lastReplayFName.concat(TheRecorder->getReplayExtention());
+			if (lastReplayFName.compareNoCase(asciistr) == 0)
+				replayNameToShow = TheGameText->fetch("GUI:LastReplay");
+
+			UnicodeString displayTimeBuffer = getUnicodeTimeBuffer(header.timeVal);
+
+			//displayTimeBuffer.format( L"%ls", timeBuffer);
+
+			// version (no-op)
+
+			// map
+			UnicodeString mapStr;
+			if (!md)
 			{
+				const char* filename = info.getMap().reverseFind('\\');
+				mapStr.translate(filename ? filename + 1 : info.getMap());
+			}
+			else
+			{
+				mapStr = md->m_displayName;
+			}
 
-				// columns are: name, date, version, map, extra
-
-				// name
-				header.replayName.translate(asciistr);
-				for (Int tmp=0; tmp < TheRecorder->getReplayExtention().getLength(); ++tmp)
-					header.replayName.removeLastChar();
-
-				UnicodeString replayNameToShow = header.replayName;
-
-				AsciiString lastReplayFName = TheRecorder->getLastReplayFileName();
-				lastReplayFName.concat(TheRecorder->getReplayExtention());
-				if (lastReplayFName.compareNoCase(asciistr) == 0)
-					replayNameToShow = TheGameText->fetch("GUI:LastReplay");
-
-				UnicodeString displayTimeBuffer = getUnicodeTimeBuffer(header.timeVal);
-
-				//displayTimeBuffer.format( L"%ls", timeBuffer);
-
-				// version (no-op)
-
-				// map
-				UnicodeString mapStr;
-				const MapMetaData *md = TheMapCache->findMap(info.getMap());
-				if (!md)
-				{
-					const char* filename = info.getMap().reverseFind('\\');
-					mapStr.translate(filename ? filename + 1 : info.getMap());
-				}
-				else
-				{
-					mapStr = md->m_displayName;
-				}
-
-//				// extra
-//				UnicodeString extraStr;
-//				if (header.localPlayerIndex >= 0)
-//				{
-//					// MP game
-//					time_t totalSeconds = header.endTime - header.startTime;
-//					Int mins = totalSeconds/60;
-//					Int secs = totalSeconds%60;
-//					Real fps = header.frameDuration/totalSeconds;
-//					extraStr.format(L"%d:%d (%g fps) %hs", mins, secs, fps, header.desyncGame?"OOS ":"");
+//			// extra
+//			UnicodeString extraStr;
+//			if (header.localPlayerIndex >= 0)
+//			{
+//				// MP game
+//				time_t totalSeconds = header.endTime - header.startTime;
+//				Int mins = totalSeconds/60;
+//				Int secs = totalSeconds%60;
+//				Real fps = header.frameDuration/totalSeconds;
+//				extraStr.format(L"%d:%d (%g fps) %hs", mins, secs, fps, header.desyncGame?"OOS ":"");
 //
-//					for (Int i=0; i<MAX_SLOTS; ++i)
+//				for (Int i=0; i<MAX_SLOTS; ++i)
+//				{
+//					const GameSlot *slot = info.getConstSlot(i);
+//					if (slot && slot->isHuman())
 //					{
-//						const GameSlot *slot = info.getConstSlot(i);
-//						if (slot && slot->isHuman())
-//						{
-//							if (i)
-//								extraStr.concat(L", ");
-//							if (header.playerDiscons[i])
-//								extraStr.concat(L'*');
-//							extraStr.concat(info.getConstSlot(i)->getName());
-//						}
+//						if (i)
+//							extraStr.concat(L", ");
+//						if (header.playerDiscons[i])
+//							extraStr.concat(L'*');
+//						extraStr.concat(info.getConstSlot(i)->getName());
 //					}
 //				}
-//				else
-//				{
-//					// solo game
-//					time_t totalSeconds = header.endTime - header.startTime;
-//					Int mins = totalSeconds/60;
-//					Int secs = totalSeconds%60;
-//					Real fps = header.frameDuration/totalSeconds;
-//					extraStr.format(L"%d:%d (%g fps)", mins, secs, fps);
-//				}
+//			}
+//			else
+//			{
+//				// solo game
+//				time_t totalSeconds = header.endTime - header.startTime;
+//				Int mins = totalSeconds/60;
+//				Int secs = totalSeconds%60;
+//				Real fps = header.frameDuration/totalSeconds;
+//				extraStr.format(L"%d:%d (%g fps)", mins, secs, fps);
+//			}
 
-				// pick a color
-				Color color;
-				if (header.versionString == TheVersion->getUnicodeVersion() && header.versionNumber == TheVersion->getVersionNumber() &&
-					header.exeCRC == TheGlobalData->m_exeCRC && header.iniCRC == TheGlobalData->m_iniCRC)
+			// pick a color
+			Color color;
+			if (header.versionString == TheVersion->getUnicodeVersion() && header.versionNumber == TheVersion->getVersionNumber() &&
+				header.exeCRC == TheGlobalData->m_exeCRC && header.iniCRC == TheGlobalData->m_iniCRC)
+			{
+				// good version
+				if (header.localPlayerIndex >= 0)
 				{
-					// good version
-					if (header.localPlayerIndex >= 0)
-					{
-						// MP
-						color = colors[COLOR_MP];
-					}
-					else
-					{
-						// SP
-						color = colors[COLOR_SP];
-					}
+					// MP
+					color = colors[COLOR_MP];
 				}
 				else
 				{
-					// bad version
-					if (header.localPlayerIndex >= 0)
-					{
-						// MP
-						color = colors[COLOR_MP_CRC_MISMATCH];
-					}
-					else
-					{
-						// SP
-						color = colors[COLOR_SP_CRC_MISMATCH];
-					}
+					// SP
+					color = colors[COLOR_SP];
 				}
-
-				Int insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
-				if (insertionIndex == -1)
-				{
-					// The list originally has a maximum length of 100. If we fail here we probably
-					// exceeded that and just double the max here and try again.
-					Int length = GadgetListBoxGetNumEntries(listbox);
-					GadgetListBoxSetListLength(listbox, length * 2);
-
-					insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
-				}
-				GadgetListBoxAddEntryText(listbox, displayTimeBuffer, color, insertionIndex, 1);
-				GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 2);
-				GadgetListBoxAddEntryText(listbox, mapStr, color, insertionIndex, 3);
-				//GadgetListBoxAddEntryText(listbox, extraStr, color, insertionIndex, 4);
 			}
+			else
+			{
+				// bad version
+				if (header.localPlayerIndex >= 0)
+				{
+					// MP
+					color = colors[COLOR_MP_CRC_MISMATCH];
+				}
+				else
+				{
+					// SP
+					color = colors[COLOR_SP_CRC_MISMATCH];
+				}
+			}
+
+			Int insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
+			if (insertionIndex == -1)
+			{
+				// The list originally has a maximum length of 100. If we fail here we probably
+				// exceeded that and just double the max here and try again.
+				Int length = GadgetListBoxGetNumEntries(listbox);
+				GadgetListBoxSetListLength(listbox, length * 2);
+
+				insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
+			}
+			GadgetListBoxAddEntryText(listbox, displayTimeBuffer, color, insertionIndex, 1);
+			GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 2);
+			GadgetListBoxAddEntryText(listbox, mapStr, color, insertionIndex, 3);
+			//GadgetListBoxAddEntryText(listbox, extraStr, color, insertionIndex, 4);
 		}
 	}
 	GadgetListBoxSetSelected(listbox, 0);
