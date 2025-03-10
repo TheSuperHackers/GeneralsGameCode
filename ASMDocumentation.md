@@ -318,6 +318,1002 @@ implementation, suggestions are welcome if this method requires further investig
 ---
 
 <details>
+<summary>Generals/Code/Libraries/Source/WWVegas/WWLib/cpudetect.cpp</summary>
+
+This file includes the following assembly clocks:
+
+<details>
+<summary>ASM_RDTSC</summary>
+
+```c++
+#define ASM_RDTSC _asm _emit 0x0f _asm _emit 0x31
+```
+
+This code just emits the RDTSC instruction, which is a two byte instruction, `0x0F31`.
+
+This is identical to:
+
+```c++
+#define ASM_RDTSC RDTSC
+```
+
+And it is identical, in Win32; to:
+
+```c++
+#include <intrin.h>
+
+#define ASM_RDTSC __rdtsc();
+```
+
+This may have been done for obfuscation? Some parts of the code do use the `RDTSC` instruction directly and other parts
+use the bytecodes instead, it's not exactly consistent.
+
+</details>
+
+<details>
+<summary>Calculate_Processor_Speed</summary>
+
+> **NOTE**: This code has been very slightly modified to allow it to work on modern MSVC inline assembly.
+
+```c++
+static unsigned Calculate_Processor_Speed(__int64& ticks_per_second)
+{
+	struct {
+		unsigned timer0_h;
+		unsigned timer0_l;
+		unsigned timer1_h;
+		unsigned timer1_l;
+	} Time;
+
+#ifdef WIN32
+   __asm {
+      ASM_RDTSC1:
+      mov Time.timer0_h, eax
+      mov Time.timer0_l, edx
+   }
+#elif defined(_UNIX)
+      __asm__("rdtsc");
+      __asm__("mov %eax, __Time.timer1_h");
+      __asm__("mov %edx, __Time.timer1_l");
+#endif
+
+	unsigned start=TIMEGETTIME();
+	unsigned elapsed;
+	while ((elapsed=TIMEGETTIME()-start)<200) {
+#ifdef WIN32
+      __asm {
+         ASM_RDTSC2:
+         mov Time.timer1_h, eax
+         mov Time.timer1_l, edx
+      }
+#elif defined(_UNIX)
+      __asm__ ("rdtsc");
+      __asm__("mov %eax, __Time.timer1_h");
+      __asm__("mov %edx, __Time.timer1_l");
+#endif
+	}
+
+	__int64 t=*(__int64*)&Time.timer1_h-*(__int64*)&Time.timer0_h;
+	ticks_per_second=(__int64)((1000.0/(double)elapsed)*(double)t);	// Ticks per second
+	return unsigned((double)t/(double)(elapsed*1000));
+}
+```
+
+This is uses cross-platform inline assembly to calculate processor speed.
+
+My goto equivalent is:
+
+```c++
+#ifdef _WIN32
+#include <windows.h>
+#include <intrin.h>
+#elif defined(_UNIX)
+#include <ia32intrin.h>
+#endif
+
+#define TIMEGETTIME timeGetTime
+
+static unsigned Calculate_Processor_Speed(__int64& ticks_per_second)
+{
+	struct {
+		unsigned timer0_h;
+		unsigned timer0_l;
+		unsigned timer1_h;
+		unsigned timer1_l;
+	} Time;
+
+#ifdef _WIN32
+    unsigned __int64 timeStampCounter = __rdtsc();
+    Time.timer0_l = (unsigned)timeStampCounter;
+    Time.timer0_h = (unsigned)(timeStampCounter >> 32);
+#elif defined(_UNIX)
+    unsigned long long tsc = __rdtsc();
+    Time.timer1_l = (unsigned)timeStampCounter;
+    Time.timer1_h = (unsigned)(timeStampCounter >> 32);
+    // Is this a bug? is this supposed to be 0_l and 0_h? Because they are about to be overwritten
+#endif
+
+	unsigned start=TIMEGETTIME();
+	unsigned elapsed;
+	while ((elapsed=TIMEGETTIME()-start)<200) {
+#ifdef _WIN32
+    timeStampCounter = __rdtsc();
+    Time.timer1_l = (unsigned)timeStampCounter;
+    Time.timer1_h = (unsigned)(timeStampCounter >> 32);
+#elif defined(_UNIX)
+    tsc = __rdtsc();
+    Time.timer1_l = (unsigned)timeStampCounter;
+    Time.timer1_h = (unsigned)(timeStampCounter >> 32);
+    // Is this a bug? is this supposed to be 0_l and 0_h? Because these just overwrote the previously set values
+#endif
+	}
+
+	__int64 t=*(__int64*)&Time.timer1_h-*(__int64*)&Time.timer0_h;
+	ticks_per_second=(__int64)((1000.0/(double)elapsed)*(double)t);	// Ticks per second
+	return unsigned((double)t/(double)(elapsed*1000));
+}
+```
+
+<table>
+<tr>
+<th>With Inline Assembly</th>
+<th>Without Inline Assembly</th>
+</tr>
+<td>
+
+```asm
+__xmm@41f00000000000000000000000000000 DB 00H, 00H, 00H, 00H, 00H, 00H, 00H
+        DB      00H, 00H, 00H, 00H, 00H, 00H, 00H, 0f0H, 'A'
+__real@408f400000000000 DQ 0408f400000000000r   ; 1000
+voltbl  SEGMENT
+_volmd  DD  0ffffffffH
+        DDSymXIndex:    FLAT:unsigned int Calculate_Processor_Speed(__int64 &)
+        DD      0dH
+        DD      0cfH
+voltbl  ENDS
+
+tv148 = -52                                   ; size = 8
+_start$ = -44                                     ; size = 4
+_t$ = -40                                         ; size = 8
+tv140 = -32                                   ; size = 4
+tv87 = -28                                          ; size = 4
+_elapsed$ = -24                               ; size = 4
+_Time$ = -20                                            ; size = 16
+__$ArrayPad$ = -4                                 ; size = 4
+_ticks_per_second$ = 8                              ; size = 4
+unsigned int Calculate_Processor_Speed(__int64 &) PROC          ; Calculate_Processor_Speed
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 52                             ; 00000034H
+        mov     eax, DWORD PTR ___security_cookie
+        xor     eax, ebp
+        mov     DWORD PTR __$ArrayPad$[ebp], eax
+$ASM_RDTSC1$5:
+        mov     DWORD PTR _Time$[ebp], eax
+        mov     DWORD PTR _Time$[ebp+4], edx
+        call    DWORD PTR __imp__timeGetTime@0
+        mov     DWORD PTR _start$[ebp], eax
+$LN2@Calculate_:
+        call    DWORD PTR __imp__timeGetTime@0
+        sub     eax, DWORD PTR _start$[ebp]
+        mov     DWORD PTR _elapsed$[ebp], eax
+        cmp     DWORD PTR _elapsed$[ebp], 200       ; 000000c8H
+        jae     SHORT $LN3@Calculate_
+$ASM_RDTSC2$6:
+        mov     DWORD PTR _Time$[ebp+8], eax
+        mov     DWORD PTR _Time$[ebp+12], edx
+        jmp     SHORT $LN2@Calculate_
+$LN3@Calculate_:
+        mov     eax, DWORD PTR _Time$[ebp+8]
+        sub     eax, DWORD PTR _Time$[ebp]
+        mov     ecx, DWORD PTR _Time$[ebp+12]
+        sbb     ecx, DWORD PTR _Time$[ebp+4]
+        mov     DWORD PTR _t$[ebp], eax
+        mov     DWORD PTR _t$[ebp+4], ecx
+        mov     edx, DWORD PTR _elapsed$[ebp]
+        mov     DWORD PTR tv87[ebp], edx
+        cvtsi2sd xmm0, DWORD PTR tv87[ebp]
+        mov     eax, DWORD PTR tv87[ebp]
+        shr     eax, 31                             ; 0000001fH
+        addsd   xmm0, QWORD PTR __xmm@41f00000000000000000000000000000[eax*8]
+        movsd   xmm1, QWORD PTR __real@408f400000000000
+        divsd   xmm1, xmm0
+        mov     edx, DWORD PTR _t$[ebp+4]
+        mov     ecx, DWORD PTR _t$[ebp]
+        movsd   QWORD PTR tv148[ebp], xmm1
+        call    __ltod3
+        movsd   xmm1, QWORD PTR tv148[ebp]
+        mulsd   xmm1, xmm0
+        movaps  xmm0, xmm1
+        call    __dtol3
+        mov     ecx, DWORD PTR _ticks_per_second$[ebp]
+        mov     DWORD PTR [ecx], eax
+        mov     DWORD PTR [ecx+4], edx
+        mov     edx, DWORD PTR _t$[ebp+4]
+        mov     ecx, DWORD PTR _t$[ebp]
+        call    __ltod3
+        imul    edx, DWORD PTR _elapsed$[ebp], 1000
+        mov     DWORD PTR tv140[ebp], edx
+        cvtsi2sd xmm1, DWORD PTR tv140[ebp]
+        mov     eax, DWORD PTR tv140[ebp]
+        shr     eax, 31                             ; 0000001fH
+        addsd   xmm1, QWORD PTR __xmm@41f00000000000000000000000000000[eax*8]
+        divsd   xmm0, xmm1
+        call    __dtol3
+        mov     ecx, DWORD PTR __$ArrayPad$[ebp]
+        xor     ecx, ebp
+        call    @__security_check_cookie@4
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+unsigned int Calculate_Processor_Speed(__int64 &) ENDP          ; Calculate_Processor_Speed
+```
+
+</td>
+<td>
+
+```asm
+__xmm@41f00000000000000000000000000000 DB 00H, 00H, 00H, 00H, 00H, 00H, 00H
+        DB      00H, 00H, 00H, 00H, 00H, 00H, 00H, 0f0H, 'A'
+__real@408f400000000000 DQ 0408f400000000000r   ; 1000
+voltbl  SEGMENT
+_volmd  DD  0ffffffffH
+        DDSymXIndex:    FLAT:unsigned int Calculate_Processor_Speed(__int64 &)
+        DD      0dH
+        DD      0ffH
+voltbl  ENDS
+
+tv182 = -60                                   ; size = 8
+_start$ = -52                                     ; size = 4
+_t$ = -48                                         ; size = 8
+tv174 = -40                                   ; size = 4
+tv153 = -36                                   ; size = 4
+_elapsed$ = -32                               ; size = 4
+_timeStampCounter$ = -28                                ; size = 8
+_Time$ = -20                                            ; size = 16
+__$ArrayPad$ = -4                                 ; size = 4
+_ticks_per_second$ = 8                              ; size = 4
+unsigned int Calculate_Processor_Speed(__int64 &) PROC          ; Calculate_Processor_Speed
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 60                             ; 0000003cH
+        mov     eax, DWORD PTR ___security_cookie
+        xor     eax, ebp
+        mov     DWORD PTR __$ArrayPad$[ebp], eax
+        rdtsc
+        mov     DWORD PTR _timeStampCounter$[ebp], eax
+        mov     DWORD PTR _timeStampCounter$[ebp+4], edx
+        mov     eax, DWORD PTR _timeStampCounter$[ebp]
+        mov     DWORD PTR _Time$[ebp+4], eax
+        mov     eax, DWORD PTR _timeStampCounter$[ebp]
+        mov     edx, DWORD PTR _timeStampCounter$[ebp+4]
+        mov     cl, 32                                    ; 00000020H
+        call    __aullshr
+        mov     DWORD PTR _Time$[ebp], eax
+        call    DWORD PTR __imp__timeGetTime@0
+        mov     DWORD PTR _start$[ebp], eax
+$LN2@Calculate_:
+        call    DWORD PTR __imp__timeGetTime@0
+        sub     eax, DWORD PTR _start$[ebp]
+        mov     DWORD PTR _elapsed$[ebp], eax
+        cmp     DWORD PTR _elapsed$[ebp], 200       ; 000000c8H
+        jae     SHORT $LN3@Calculate_
+        rdtsc
+        mov     DWORD PTR _timeStampCounter$[ebp], eax
+        mov     DWORD PTR _timeStampCounter$[ebp+4], edx
+        mov     ecx, DWORD PTR _timeStampCounter$[ebp]
+        mov     DWORD PTR _Time$[ebp+12], ecx
+        mov     eax, DWORD PTR _timeStampCounter$[ebp]
+        mov     edx, DWORD PTR _timeStampCounter$[ebp+4]
+        mov     cl, 32                                    ; 00000020H
+        call    __aullshr
+        mov     DWORD PTR _Time$[ebp+8], eax
+        jmp     SHORT $LN2@Calculate_
+$LN3@Calculate_:
+        mov     edx, DWORD PTR _Time$[ebp+8]
+        sub     edx, DWORD PTR _Time$[ebp]
+        mov     eax, DWORD PTR _Time$[ebp+12]
+        sbb     eax, DWORD PTR _Time$[ebp+4]
+        mov     DWORD PTR _t$[ebp], edx
+        mov     DWORD PTR _t$[ebp+4], eax
+        mov     ecx, DWORD PTR _elapsed$[ebp]
+        mov     DWORD PTR tv153[ebp], ecx
+        cvtsi2sd xmm0, DWORD PTR tv153[ebp]
+        mov     edx, DWORD PTR tv153[ebp]
+        shr     edx, 31                             ; 0000001fH
+        addsd   xmm0, QWORD PTR __xmm@41f00000000000000000000000000000[edx*8]
+        movsd   xmm1, QWORD PTR __real@408f400000000000
+        divsd   xmm1, xmm0
+        mov     edx, DWORD PTR _t$[ebp+4]
+        mov     ecx, DWORD PTR _t$[ebp]
+        movsd   QWORD PTR tv182[ebp], xmm1
+        call    __ltod3
+        movsd   xmm1, QWORD PTR tv182[ebp]
+        mulsd   xmm1, xmm0
+        movaps  xmm0, xmm1
+        call    __dtol3
+        mov     ecx, DWORD PTR _ticks_per_second$[ebp]
+        mov     DWORD PTR [ecx], eax
+        mov     DWORD PTR [ecx+4], edx
+        mov     edx, DWORD PTR _t$[ebp+4]
+        mov     ecx, DWORD PTR _t$[ebp]
+        call    __ltod3
+        imul    edx, DWORD PTR _elapsed$[ebp], 1000
+        mov     DWORD PTR tv174[ebp], edx
+        cvtsi2sd xmm1, DWORD PTR tv174[ebp]
+        mov     eax, DWORD PTR tv174[ebp]
+        shr     eax, 31                             ; 0000001fH
+        addsd   xmm1, QWORD PTR __xmm@41f00000000000000000000000000000[eax*8]
+        divsd   xmm0, xmm1
+        call    __dtol3
+        mov     ecx, DWORD PTR __$ArrayPad$[ebp]
+        xor     ecx, ebp
+        call    @__security_check_cookie@4
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+unsigned int Calculate_Processor_Speed(__int64 &) ENDP          ; Calculate_Processor_Speed
+```
+
+</td>
+</table>
+
+The generated assemblies are quite different due to the fact that C++ code is importing and using the `__rdtsc()`
+intrinsics, but the result is the same. As with others, which one will be more efficient is to be tested. Or if with
+optimizations assembly is even worth it with modern compilers.
+
+> **NOTE**: Using modern C++ with the STL will probably be simply better for this.
+
+```diff
+@@ -5,28 +5,36 @@ voltbl  SEGMENT
+ _volmd  DD  0ffffffffH
+         DDSymXIndex:    FLAT:unsigned int Calculate_Processor_Speed(__int64 &)
+         DD      0dH
+-        DD      0cfH
++        DD      0ffH
+ voltbl  ENDS
+ 
+-tv148 = -52                                   ; size = 8
+-_start$ = -44                                     ; size = 4
+-_t$ = -40                                         ; size = 8
+-tv140 = -32                                   ; size = 4
+-tv87 = -28                                          ; size = 4
+-_elapsed$ = -24                               ; size = 4
++tv182 = -60                                   ; size = 8
++_start$ = -52                                     ; size = 4
++_t$ = -48                                         ; size = 8
++tv174 = -40                                   ; size = 4
++tv153 = -36                                   ; size = 4
++_elapsed$ = -32                               ; size = 4
++_timeStampCounter$ = -28                                ; size = 8
+ _Time$ = -20                                            ; size = 16
+ __$ArrayPad$ = -4                                 ; size = 4
+ _ticks_per_second$ = 8                              ; size = 4
+ unsigned int Calculate_Processor_Speed(__int64 &) PROC          ; Calculate_Processor_Speed
+         push    ebp
+         mov     ebp, esp
+-        sub     esp, 52                             ; 00000034H
++        sub     esp, 60                             ; 0000003cH
+         mov     eax, DWORD PTR ___security_cookie
+         xor     eax, ebp
+         mov     DWORD PTR __$ArrayPad$[ebp], eax
+-$ASM_RDTSC1$5:
++        rdtsc
++        mov     DWORD PTR _timeStampCounter$[ebp], eax
++        mov     DWORD PTR _timeStampCounter$[ebp+4], edx
++        mov     eax, DWORD PTR _timeStampCounter$[ebp]
++        mov     DWORD PTR _Time$[ebp+4], eax
++        mov     eax, DWORD PTR _timeStampCounter$[ebp]
++        mov     edx, DWORD PTR _timeStampCounter$[ebp+4]
++        mov     cl, 32                                    ; 00000020H
++        call    __aullshr
+         mov     DWORD PTR _Time$[ebp], eax
+-        mov     DWORD PTR _Time$[ebp+4], edx
+         call    DWORD PTR __imp__timeGetTime@0
+         mov     DWORD PTR _start$[ebp], eax
+ $LN2@Calculate_:
+@@ -35,30 +43,37 @@ $LN2@Calculate_:
+         mov     DWORD PTR _elapsed$[ebp], eax
+         cmp     DWORD PTR _elapsed$[ebp], 200       ; 000000c8H
+         jae     SHORT $LN3@Calculate_
+-$ASM_RDTSC2$6:
++        rdtsc
++        mov     DWORD PTR _timeStampCounter$[ebp], eax
++        mov     DWORD PTR _timeStampCounter$[ebp+4], edx
++        mov     ecx, DWORD PTR _timeStampCounter$[ebp]
++        mov     DWORD PTR _Time$[ebp+12], ecx
++        mov     eax, DWORD PTR _timeStampCounter$[ebp]
++        mov     edx, DWORD PTR _timeStampCounter$[ebp+4]
++        mov     cl, 32                                    ; 00000020H
++        call    __aullshr
+         mov     DWORD PTR _Time$[ebp+8], eax
+-        mov     DWORD PTR _Time$[ebp+12], edx
+         jmp     SHORT $LN2@Calculate_
+ $LN3@Calculate_:
+-        mov     eax, DWORD PTR _Time$[ebp+8]
+-        sub     eax, DWORD PTR _Time$[ebp]
+-        mov     ecx, DWORD PTR _Time$[ebp+12]
+-        sbb     ecx, DWORD PTR _Time$[ebp+4]
+-        mov     DWORD PTR _t$[ebp], eax
+-        mov     DWORD PTR _t$[ebp+4], ecx
+-        mov     edx, DWORD PTR _elapsed$[ebp]
+-        mov     DWORD PTR tv87[ebp], edx
+-        cvtsi2sd xmm0, DWORD PTR tv87[ebp]
+-        mov     eax, DWORD PTR tv87[ebp]
+-        shr     eax, 31                             ; 0000001fH
+-        addsd   xmm0, QWORD PTR __xmm@41f00000000000000000000000000000[eax*8]
++        mov     edx, DWORD PTR _Time$[ebp+8]
++        sub     edx, DWORD PTR _Time$[ebp]
++        mov     eax, DWORD PTR _Time$[ebp+12]
++        sbb     eax, DWORD PTR _Time$[ebp+4]
++        mov     DWORD PTR _t$[ebp], edx
++        mov     DWORD PTR _t$[ebp+4], eax
++        mov     ecx, DWORD PTR _elapsed$[ebp]
++        mov     DWORD PTR tv153[ebp], ecx
++        cvtsi2sd xmm0, DWORD PTR tv153[ebp]
++        mov     edx, DWORD PTR tv153[ebp]
++        shr     edx, 31                             ; 0000001fH
++        addsd   xmm0, QWORD PTR __xmm@41f00000000000000000000000000000[edx*8]
+         movsd   xmm1, QWORD PTR __real@408f400000000000
+         divsd   xmm1, xmm0
+         mov     edx, DWORD PTR _t$[ebp+4]
+         mov     ecx, DWORD PTR _t$[ebp]
+-        movsd   QWORD PTR tv148[ebp], xmm1
++        movsd   QWORD PTR tv182[ebp], xmm1
+         call    __ltod3
+-        movsd   xmm1, QWORD PTR tv148[ebp]
++        movsd   xmm1, QWORD PTR tv182[ebp]
+         mulsd   xmm1, xmm0
+         movaps  xmm0, xmm1
+         call    __dtol3
+@@ -69,9 +84,9 @@ $LN3@Calculate_:
+         mov     ecx, DWORD PTR _t$[ebp]
+         call    __ltod3
+         imul    edx, DWORD PTR _elapsed$[ebp], 1000
+-        mov     DWORD PTR tv140[ebp], edx
+-        cvtsi2sd xmm1, DWORD PTR tv140[ebp]
+-        mov     eax, DWORD PTR tv140[ebp]
++        mov     DWORD PTR tv174[ebp], edx
++        cvtsi2sd xmm1, DWORD PTR tv174[ebp]
++        mov     eax, DWORD PTR tv174[ebp]
+         shr     eax, 31                             ; 0000001fH
+         addsd   xmm1, QWORD PTR __xmm@41f00000000000000000000000000000[eax*8]
+         divsd   xmm0, xmm1
+```
+
+</details>
+
+<details>
+<summary>CPUDetectClass::Init_CPUID_Instruction</summary>
+
+```c++
+void CPUDetectClass::Init_CPUID_Instruction()
+{
+	unsigned long cpuid_available=0;
+
+   // The pushfd/popfd commands are done using emits
+   // because CodeWarrior seems to have problems with
+   // the command (huh?)
+
+#ifdef WIN32
+   __asm
+   {
+      mov cpuid_available, 0	// clear flag
+      push ebx
+      pushfd
+      pop eax
+      mov ebx, eax
+      xor eax, 0x00200000
+      push eax
+      popfd
+      pushfd
+      pop eax
+      xor eax, ebx
+      je done
+      mov cpuid_available, 1
+   done:
+      push ebx
+      popfd
+      pop ebx
+   }
+#elif defined(_UNIX)
+     __asm__(" mov $0, __cpuid_available");  // clear flag
+     __asm__(" push %ebx");
+     __asm__(" pushfd");
+     __asm__(" pop %eax");
+     __asm__(" mov %eax, %ebx");
+     __asm__(" xor 0x00200000, %eax");
+     __asm__(" push %eax");
+     __asm__(" popfd");
+     __asm__(" pushfd");
+     __asm__(" pop %eax");
+     __asm__(" xor %ebx, %eax");
+     __asm__(" je done");
+     __asm__(" mov $1, __cpuid_available");
+     goto done;  // just to shut the compiler up
+   done:
+     __asm__(" push %ebx");
+     __asm__(" popfd");
+     __asm__(" pop %ebx");
+#endif
+	HasCPUIDInstruction=!!cpuid_available;
+}
+```
+
+This code is attempting to check if the CPU has the `CPUID` instruction.
+
+My goto equivalent is:
+
+```c++
+#if _WIN32
+#include <intrin.h>
+#endif
+
+class CPUDetectClass {
+    public:
+    void Init_CPUID_Instruction();
+    private:
+    bool HasCPUIDInstruction = false;
+};
+
+#if _WIN32
+#include <intrin.h>
+#endif
+
+void CPUDetectClass::Init_CPUID_Instruction()
+{
+	unsigned long cpuid_available=0;
+    unsigned int mask = 0x00200000;
+
+#ifdef _WIN32
+    unsigned int eflags = __readeflags();
+    unsigned int modifiedEflags = eflags ^ mask; // Flip the 21st bit (ID flag) of EFLAGS
+    __writeeflags(modifiedEflags);
+    
+    // Compare the original and new EFLAGS value at bit 21
+    cpuid_available = (unsigned long)((__readeflags() ^ eflags) & mask);
+#elif defined(_UNIX)
+    unsigned int eflags;
+    // GCC/Clang require inline assembly, sorry :(
+    // Save current EFLAGS to eflags
+    asm volatile("push\n\t"
+                 "pop %0"
+                 : "=r"(eflags));
+
+    unsigned int modifiedEflags = eflags ^ mask; // Flip the 21st bit (ID flag) of EFLAGS
+    // Write the modified EFLAGS
+    asm volatile("push %0\n\t"
+                 "popf"
+                 :
+                 : "r"(modifiedEflags));
+
+    // Read back the current EFLAGS to see if the ID flag changed
+    unsigned int newEflags;
+    asm volatile("pushf\n\t"
+                 "pop %0"
+                 : "=r"(newEflags));
+    
+    // Compare the original and new EFLAGS value at bit 21
+    cpuid_available = (unsigned long)((newEflags ^ eflags) & mask);
+#endif
+	HasCPUIDInstruction=!!cpuid_available;
+}
+```
+
+<table>
+<tr>
+<th>With Inline Assembly</th>
+<th>Without Inline Assembly</th>
+</tr>
+<td>
+
+```asm
+_this$ = -12                                            ; size = 4
+tv66 = -8                                         ; size = 4
+_cpuid_available$ = -4                              ; size = 4
+void CPUDetectClass::Init_CPUID_Instruction(void) PROC     ; CPUDetectClass::Init_CPUID_Instruction
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 12                             ; 0000000cH
+        push    ebx
+        mov     DWORD PTR _this$[ebp], ecx
+        mov     DWORD PTR _cpuid_available$[ebp], 0
+        mov     DWORD PTR _cpuid_available$[ebp], 0
+        push    ebx
+        pushfd
+        pop     eax
+        mov     ebx, eax
+        xor     eax, 2097152                          ; 00200000H
+        push    eax
+        popfd
+        pushfd
+        pop     eax
+        xor     eax, ebx
+        je      SHORT $done$5
+        mov     DWORD PTR _cpuid_available$[ebp], 1
+$done$5:
+        push    ebx
+        popfd
+        pop     ebx
+        cmp     DWORD PTR _cpuid_available$[ebp], 0
+        je      SHORT $LN3@Init_CPUID
+        mov     DWORD PTR tv66[ebp], 1
+        jmp     SHORT $LN4@Init_CPUID
+$LN3@Init_CPUID:
+        mov     DWORD PTR tv66[ebp], 0
+$LN4@Init_CPUID:
+        mov     eax, DWORD PTR _this$[ebp]
+        mov     cl, BYTE PTR tv66[ebp]
+        mov     BYTE PTR [eax], cl
+        pop     ebx
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+void CPUDetectClass::Init_CPUID_Instruction(void) ENDP     ; CPUDetectClass::Init_CPUID_Instruction
+```
+
+</td>
+<td>
+
+```asm
+_this$ = -24                                            ; size = 4
+_modifiedEflags$ = -20                              ; size = 4
+tv72 = -16                                          ; size = 4
+_cpuid_available$ = -12                       ; size = 4
+_mask$ = -8                                   ; size = 4
+_eflags$ = -4                                     ; size = 4
+void CPUDetectClass::Init_CPUID_Instruction(void) PROC     ; CPUDetectClass::Init_CPUID_Instruction
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 24                             ; 00000018H
+        mov     DWORD PTR _this$[ebp], ecx
+        mov     DWORD PTR _cpuid_available$[ebp], 0
+        mov     DWORD PTR _mask$[ebp], 2097152            ; 00200000H
+        pushfd
+        pop     eax
+        mov     DWORD PTR _eflags$[ebp], eax
+        mov     ecx, DWORD PTR _eflags$[ebp]
+        xor     ecx, DWORD PTR _mask$[ebp]
+        mov     DWORD PTR _modifiedEflags$[ebp], ecx
+        mov     edx, DWORD PTR _modifiedEflags$[ebp]
+        push    edx
+        popfd
+        pushfd
+        pop     eax
+        xor     eax, DWORD PTR _eflags$[ebp]
+        and     eax, DWORD PTR _mask$[ebp]
+        mov     DWORD PTR _cpuid_available$[ebp], eax
+        je      SHORT $LN3@Init_CPUID
+        mov     DWORD PTR tv72[ebp], 1
+        jmp     SHORT $LN4@Init_CPUID
+$LN3@Init_CPUID:
+        mov     DWORD PTR tv72[ebp], 0
+$LN4@Init_CPUID:
+        mov     ecx, DWORD PTR _this$[ebp]
+        mov     dl, BYTE PTR tv72[ebp]
+        mov     BYTE PTR [ecx], dl
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+void CPUDetectClass::Init_CPUID_Instruction(void) ENDP     ; CPUDetectClass::Init_CPUID_Instruction
+```
+
+</td>
+</table>
+
+The assemblies are only slightly different due to the calls to Win32 intrinsics, but both accomplish the same. Modern
+compilers with optimizations may be faster than only inline assembly.
+
+> **NOTE** GCC/Clang don't have `EFLAGS` intrinsics and inline assembly is required for them.
+
+```diff
+@@ -1,41 +1,39 @@
+-_this$ = -12                                            ; size = 4
+-tv66 = -8                                         ; size = 4
+-_cpuid_available$ = -4                              ; size = 4
++_this$ = -24                                            ; size = 4
++_modifiedEflags$ = -20                              ; size = 4
++tv72 = -16                                          ; size = 4
++_cpuid_available$ = -12                       ; size = 4
++_mask$ = -8                                   ; size = 4
++_eflags$ = -4                                     ; size = 4
+ void CPUDetectClass::Init_CPUID_Instruction(void) PROC     ; CPUDetectClass::Init_CPUID_Instruction
+         push    ebp
+         mov     ebp, esp
+-        sub     esp, 12                             ; 0000000cH
+-        push    ebx
++        sub     esp, 24                             ; 00000018H
+         mov     DWORD PTR _this$[ebp], ecx
+         mov     DWORD PTR _cpuid_available$[ebp], 0
+-        mov     DWORD PTR _cpuid_available$[ebp], 0
+-        push    ebx
++        mov     DWORD PTR _mask$[ebp], 2097152            ; 00200000H
+         pushfd
+         pop     eax
+-        mov     ebx, eax
+-        xor     eax, 2097152                          ; 00200000H
+-        push    eax
++        mov     DWORD PTR _eflags$[ebp], eax
++        mov     ecx, DWORD PTR _eflags$[ebp]
++        xor     ecx, DWORD PTR _mask$[ebp]
++        mov     DWORD PTR _modifiedEflags$[ebp], ecx
++        mov     edx, DWORD PTR _modifiedEflags$[ebp]
++        push    edx
+         popfd
+         pushfd
+         pop     eax
+-        xor     eax, ebx
+-        je      SHORT $done$5
+-        mov     DWORD PTR _cpuid_available$[ebp], 1
+-$done$5:
+-        push    ebx
+-        popfd
+-        pop     ebx
+-        cmp     DWORD PTR _cpuid_available$[ebp], 0
++        xor     eax, DWORD PTR _eflags$[ebp]
++        and     eax, DWORD PTR _mask$[ebp]
++        mov     DWORD PTR _cpuid_available$[ebp], eax
+         je      SHORT $LN3@Init_CPUID
+-        mov     DWORD PTR tv66[ebp], 1
++        mov     DWORD PTR tv72[ebp], 1
+         jmp     SHORT $LN4@Init_CPUID
+ $LN3@Init_CPUID:
+-        mov     DWORD PTR tv66[ebp], 0
++        mov     DWORD PTR tv72[ebp], 0
+ $LN4@Init_CPUID:
+-        mov     eax, DWORD PTR _this$[ebp]
+-        mov     cl, BYTE PTR tv66[ebp]
+-        mov     BYTE PTR [eax], cl
+-        pop     ebx
++        mov     ecx, DWORD PTR _this$[ebp]
++        mov     dl, BYTE PTR tv72[ebp]
++        mov     BYTE PTR [ecx], dl
+         mov     esp, ebp
+         pop     ebp
+         ret     0
+```
+
+</details>
+
+<details>
+<summary>CPUDetectClass::CPUID</summary>
+
+```c++
+bool CPUDetectClass::CPUID(
+	unsigned& u_eax_,
+	unsigned& u_ebx_,
+	unsigned& u_ecx_,
+	unsigned& u_edx_,
+	unsigned cpuid_type)
+{
+	if (!Has_CPUID_Instruction()) return false;	// Most processors since 486 have CPUID...
+
+	unsigned u_eax;
+	unsigned u_ebx;
+	unsigned u_ecx;
+	unsigned u_edx;
+
+#ifdef WIN32
+   __asm
+   {
+      pushad
+      mov	eax, [cpuid_type]
+      xor	ebx, ebx
+      xor	ecx, ecx
+      xor	edx, edx
+      cpuid
+      mov	[u_eax], eax
+      mov	[u_ebx], ebx
+      mov	[u_ecx], ecx
+      mov	[u_edx], edx
+      popad
+   }
+#elif defined(_UNIX)
+   __asm__("pusha");
+   __asm__("mov	__cpuid_type, %eax");
+   __asm__("xor	%ebx, %ebx");
+   __asm__("xor	%ecx, %ecx");
+   __asm__("xor	%edx, %edx");
+   __asm__("cpuid");
+   __asm__("mov	%eax, __u_eax");
+   __asm__("mov	%ebx, __u_ebx");
+   __asm__("mov	%ecx, __u_ecx");
+   __asm__("mov	%edx, __u_edx");
+   __asm__("popa");
+#endif
+
+	u_eax_=u_eax;
+	u_ebx_=u_ebx;
+	u_ecx_=u_ecx;
+	u_edx_=u_edx;
+
+	return true;
+}
+```
+
+This is attempting to get information from the `CPUID` instruction.
+
+My goto equivalent is:
+
+```c++
+#if _WIN32
+#include <intrin.h>
+#elif defined(_UNIX)
+#include <cpuid.h>
+#endif
+
+class CPUDetectClass {
+    public:
+    bool Has_CPUID_Instruction();
+    bool CPUID(unsigned& u_eax_,
+	            unsigned& u_ebx_,
+	            unsigned& u_ecx_,
+	            unsigned& u_edx_,
+	            unsigned cpuid_type);
+
+    private:
+    bool HasCPUIDInstruction = false;
+};
+
+#if _WIN32
+#include <intrin.h>
+#endif
+
+bool CPUDetectClass::CPUID(
+	unsigned& u_eax_,
+	unsigned& u_ebx_,
+	unsigned& u_ecx_,
+	unsigned& u_edx_,
+	unsigned cpuid_type)
+{
+	if (!Has_CPUID_Instruction()) return false;	// Most processors since 486 have CPUID...
+
+	unsigned u_eax;
+	unsigned u_ebx;
+	unsigned u_ecx;
+	unsigned u_edx;
+
+#ifdef WIN32
+    int cpuInfo[4]; // The CPUID output
+    __cpuid(cpuInfo, cpuid_type);
+    u_eax = cpuInfo[0];
+    u_ebx = cpuInfo[1];
+    u_ecx = cpuInfo[2];
+    u_edx = cpuInfo[3];
+#elif defined(_UNIX)
+    unsigned int eax, ebx, ecx, edx;
+    if (__get_cpuid(cpuid_type, &eax, &ebx, &ecx, &edx))
+    {
+        u_eax = eax;
+        u_ebx = ebx;
+        u_ecx = ecx;
+        u_edx = edx;
+    }
+    else
+    {
+        u_eax = u_ebx = u_ecx = u_edx = 0;
+    }
+#endif
+
+	u_eax_=u_eax;
+	u_ebx_=u_ebx;
+	u_ecx_=u_ecx;
+	u_edx_=u_edx;
+
+	return true;
+}
+```
+
+<table>
+<tr>
+<th>With Inline Assembly</th>
+<th>Without Inline Assembly</th>
+</tr>
+<td>
+
+```asm
+_u_edx$ = -20                                     ; size = 4
+_u_ecx$ = -16                                     ; size = 4
+_u_ebx$ = -12                                     ; size = 4
+_u_eax$ = -8                                            ; size = 4
+_this$ = -4                                   ; size = 4
+_u_eax_$ = 8                                            ; size = 4
+_u_ebx_$ = 12                                     ; size = 4
+_u_ecx_$ = 16                                     ; size = 4
+_u_edx_$ = 20                                     ; size = 4
+_cpuid_type$ = 24                                 ; size = 4
+bool CPUDetectClass::CPUID(unsigned int &,unsigned int &,unsigned int &,unsigned int &,unsigned int) PROC          ; CPUDetectClass::CPUID
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 20                             ; 00000014H
+        mov     DWORD PTR _this$[ebp], ecx
+        mov     ecx, DWORD PTR _this$[ebp]
+        call    bool CPUDetectClass::Has_CPUID_Instruction(void) ; CPUDetectClass::Has_CPUID_Instruction
+        movzx   eax, al
+        test    eax, eax
+        jne     SHORT $LN2@CPUID
+        xor     al, al
+        jmp     SHORT $LN1@CPUID
+$LN2@CPUID:
+        mov     ecx, DWORD PTR _u_eax_$[ebp]
+        mov     edx, DWORD PTR _u_eax$[ebp]
+        mov     DWORD PTR [ecx], edx
+        mov     eax, DWORD PTR _u_ebx_$[ebp]
+        mov     ecx, DWORD PTR _u_ebx$[ebp]
+        mov     DWORD PTR [eax], ecx
+        mov     edx, DWORD PTR _u_ecx_$[ebp]
+        mov     eax, DWORD PTR _u_ecx$[ebp]
+        mov     DWORD PTR [edx], eax
+        mov     ecx, DWORD PTR _u_edx_$[ebp]
+        mov     edx, DWORD PTR _u_edx$[ebp]
+        mov     DWORD PTR [ecx], edx
+        mov     al, 1
+$LN1@CPUID:
+        mov     esp, ebp
+        pop     ebp
+        ret     20                                        ; 00000014H
+bool CPUDetectClass::CPUID(unsigned int &,unsigned int &,unsigned int &,unsigned int &,unsigned int) ENDP          ; CPUDetectClass::CPUID
+```
+
+</td>
+<td>
+
+```asm
+_u_edx$ = -20                                     ; size = 4
+_u_ecx$ = -16                                     ; size = 4
+_u_ebx$ = -12                                     ; size = 4
+_u_eax$ = -8                                            ; size = 4
+_this$ = -4                                   ; size = 4
+_u_eax_$ = 8                                            ; size = 4
+_u_ebx_$ = 12                                     ; size = 4
+_u_ecx_$ = 16                                     ; size = 4
+_u_edx_$ = 20                                     ; size = 4
+_cpuid_type$ = 24                                 ; size = 4
+bool CPUDetectClass::CPUID(unsigned int &,unsigned int &,unsigned int &,unsigned int &,unsigned int) PROC          ; CPUDetectClass::CPUID
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 20                             ; 00000014H
+        mov     DWORD PTR _this$[ebp], ecx
+        mov     ecx, DWORD PTR _this$[ebp]
+        call    bool CPUDetectClass::Has_CPUID_Instruction(void) ; CPUDetectClass::Has_CPUID_Instruction
+        movzx   eax, al
+        test    eax, eax
+        jne     SHORT $LN2@CPUID
+        xor     al, al
+        jmp     SHORT $LN1@CPUID
+$LN2@CPUID:
+        mov     ecx, DWORD PTR _u_eax_$[ebp]
+        mov     edx, DWORD PTR _u_eax$[ebp]
+        mov     DWORD PTR [ecx], edx
+        mov     eax, DWORD PTR _u_ebx_$[ebp]
+        mov     ecx, DWORD PTR _u_ebx$[ebp]
+        mov     DWORD PTR [eax], ecx
+        mov     edx, DWORD PTR _u_ecx_$[ebp]
+        mov     eax, DWORD PTR _u_ecx$[ebp]
+        mov     DWORD PTR [edx], eax
+        mov     ecx, DWORD PTR _u_edx_$[ebp]
+        mov     edx, DWORD PTR _u_edx$[ebp]
+        mov     DWORD PTR [ecx], edx
+        mov     al, 1
+$LN1@CPUID:
+        mov     esp, ebp
+        pop     ebp
+        ret     20                                        ; 00000014H
+bool CPUDetectClass::CPUID(unsigned int &,unsigned int &,unsigned int &,unsigned int &,unsigned int) ENDP          ; CPUDetectClass::CPUID
+```
+
+</td>
+</table>
+
+The generated assemblies have **no** difference.
+
+</details>
+
+</details>
+
+---
+
+<details>
 <summary>Generals/Code/Libraries/Source/WWVegas/WW3D2/dx8wrapper.h</summary>
 
 This file includes the following assembly blocks:

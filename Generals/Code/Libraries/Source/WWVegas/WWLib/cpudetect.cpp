@@ -165,47 +165,6 @@ static unsigned Calculate_Processor_Speed(__int64& ticks_per_second)
 	__int64 t=*(__int64*)&Time.timer1_h-*(__int64*)&Time.timer0_h;
 	ticks_per_second=(__int64)((1000.0/(double)elapsed)*(double)t);	// Ticks per second
 	return unsigned((double)t/(double)(elapsed*1000));
-    // Equivalent code (NOTE: I am using modern C++ here):
-	// #include <chrono>
-	// #ifdef _WIN32
-	// #include <intrin.h>
-	// #elif defined(__GNUC__)
-	// #include <x86intrin.h>
-	// #endif
-	//
-	// static unsigned Calculate_Processor_Speed(__int64& ticks_per_second)
-	// {
-	//	   // To store TSC values at the start and end of the measurement
-	//	   __int64 tsc_start = 0;
-	//	   __int64 tsc_end = 0;
-	//
-	//	   // Capture the initial TSC value
-	//	   tsc_start = __rdtsc(); // MSVC, GCC and Clang provide this intrinsic
-	//
-	//	   // Record the starting time using a high-resolution clock
-	//	   auto start_time = std::chrono::high_resolution_clock::now();
-	//
-	//	   // Busy-wait loop for approximately 200 milliseconds
-	//	   unsigned elapsed_ms = 0;
-	//	   do {
-	//		   auto current_time = std::chrono::high_resolution_clock::now();
-	//		   elapsed_ms = static_cast<unsigned>(
-	//			   std::chrono::duration_cast<std::chrono::milliseconds>(current_time - start_time).count());
-	//	   } while (elapsed_ms < 200);
-	//
-	//	   // Capture the ending TSC value
-	//	   tsc_start = __rdtsc(); // MSVC, GCC and Clang provide this intrinsic
-	//
-	//	   // Calculate the difference in TSC values
-	//	   __int64 tsc_delta = tsc_end - tsc_start;
-	//
-	//	   // Calculate ticks per second
-	//	   // Multiply by 1000.0 to normalize the elapsed time to seconds
-	//	   ticks_per_second = static_cast<__int64>((1000.0 / elapsed_ms) * static_cast<double>(tsc_delta));
-	//
-	//	   // Return processor speed in MHz (ticks per millisecond)
-	//	   return static_cast<unsigned>(static_cast<double>(tsc_delta) / (elapsed_ms * 1000.0));
-	// }
 }
 
 void CPUDetectClass::Init_Processor_Speed()
@@ -861,10 +820,6 @@ void CPUDetectClass::Init_Processor_String()
 
 void CPUDetectClass::Init_CPUID_Instruction()
 {
-	// I don't think you can get rid of ALL assembly here. But SDL_cpuinfo.h has this done for us, this is a cross platform __cpuid.
-	// Only modern compilers (specially from GCC) support __cpuid, so you'd end up using assembly yourself like they do in SDL_cpuinfo.h
-    // What this is doing is checking the EFLAGS register for the presence of the CPUID bit.
-
 	unsigned long cpuid_available=0;
 
    // The pushfd/popfd commands are done using emits
@@ -913,78 +868,6 @@ void CPUDetectClass::Init_CPUID_Instruction()
      __asm__(" pop %ebx");
 #endif
 	HasCPUIDInstruction=!!cpuid_available;
-    // A somewhat satisfactory equivalent:
-	// #ifdef _WIN32
-	// #include <intrin.h>
-	// #elif defined(__GNUC__)
-	// #include <x86intrin.h>
-	// #endif
-    //
-	// void CPUDetectClass::Init_CPUID_Instruction()
-	// {
-	//     unsigned long cpuid_available = 0;
-	//
-	//     // EFLAGS handling using standard C++ and avoiding assembly entirely
-	//     uint32_t eflags_original = 0;
-	//     uint32_t eflags_test = 0;
-	//
-	//     // Read the original EFLAGS register value (this is a lambda)
-	//     auto read_eflags = []() -> uint32_t {
-	// #ifdef _MSC_VER
-	//     // Use MSVC intrinsic for reading EFLAGS
-	//     return __readeflags();
-	// #elif defined(__GNUC__) || defined(__clang__)
-	//     uint32_t flags = 0;
-	//     asm volatile(
-	//     	   "pushf\n\t"       // Push EFLAGS onto the stack
-	//         "pop %0\n\t"      // Pop into the flags variable
-	//         : "=r"(flags)
-	//         :
-	//         : "memory");
-	//    return flags;
-	// #else
-	//    #error Unsupported compiler for reading and writing EFLAGS
-	// #endif
-	//    };
-	//
-	//    // Write modified EFLAGS register value
-	//    auto write_eflags = [](uint32_t eflags) {
-	// #ifdef _MSC_VER
-	//    // Use MSVC intrinsic for writing EFLAGS
-	//    __writeeflags(eflags);
-	// #elif defined(__GNUC__) || defined(__clang__)
-	//    asm volatile(
-	//        "push %0\n\t"     // Push the modified flags value onto the stack
-	//        "popf\n\t"        // Pop it back into EFLAGS
-	//        :                 // No output
-	//        : "r"(eflags)
-	//        : "cc", "memory");
-	// #else
-	//    #error Unsupported compiler for reading and writing EFLAGS
-	// #endif
-	//    }; // End of write_eflags() lambda
-	//
-	//    // Read the original EFLAGS
-	//    eflags_original = read_eflags();
-	//
-	//    // Flip bit 21 (ID bit) in EFLAGS
-	//    eflags_test = eflags_original ^ 0x00200000;
-	//    write_eflags(eflags_test);
-	//
-	//    // Read back the EFLAGS to see if the ID bit changed
-	//    uint32_t eflags_result = read_eflags();
-	//
-	//    // If the ID bit changed, the CPU supports the CPUID instruction
-	//    if ((eflags_original ^ eflags_result) & 0x00200000) {
-	//        cpuid_available = 1;
-	//    }
-	//
-	//    // Restore the original EFLAGS (clean-up)
-	//    write_eflags(eflags_original);
-	//
-	//    // Set the result
-	//    HasCPUIDInstruction=!!cpuid_available;
-	// }
 }
 
 void CPUDetectClass::Init_Processor_Features()
