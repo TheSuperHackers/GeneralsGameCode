@@ -536,6 +536,45 @@ transparent:
 	}
 
 fini:;
+	// Equivalent to:
+	// void RLEBlitTransZRemapXlat<unsigned short>::Blit(void* dest, void const* source, int len, int leadskip) const
+	// {
+	//	   const unsigned char* remapper = *RemapTable;
+	//	   const unsigned short* transtable = TranslateTable;
+	//
+	//	   auto* dst = reinterpret_cast<unsigned short*>(dest);
+	//	   const unsigned char* src = reinterpret_cast<const unsigned char*>(source);
+	//
+	//	   // Skip leading pixels
+	//	   while (leadskip > 0) {
+	//		   unsigned char skip_value = *src++;
+	//		   if (skip_value == 0) { // Transparent pixel run
+	//			   unsigned char run_length = *src++;
+	//			   leadskip -= run_length;
+	//			   if (leadskip <= 0) {
+	//				   len += leadskip; // Adjust len to account for skipped rows
+	//				   dst += run_length + leadskip;
+	//				   break;
+	//			   }
+	//		   } else { // Opaque run
+	//			   --leadskip;
+	//		   }
+	//	   }
+	//
+	//	   // Process remaining data
+	//	   while (len > 0) {
+	//		   unsigned char run_value = *src++;
+	//		   if (run_value == 0) { // Transparent pixel run
+	//			   unsigned char run_length = *src++;
+	//			   len -= run_length;
+	//			   dst += run_length;
+	//		   } else { // Opaque pixel
+	//			   unsigned char remapped = remapper[run_value];
+	//			   *dst++ = transtable[remapped];
+	//			   --len;
+	//		   }
+	//	   }
+	// }
 }
 
 
@@ -620,6 +659,52 @@ transparent:
 	}
 
 fini:;
+	// Equivalent to:
+	// void RLEBlitTransRemapXlat<unsigned short>::Blit(void* dest, void const* source, int len, int leadskip) const
+	// {
+	//	   const unsigned char* remapper = RemapTable;
+	//	   const unsigned short* transtable = TranslateTable;
+	//
+	//	   // Prepare destination and source pointers
+	//	   auto* dst = reinterpret_cast<unsigned short*>(dest);
+	//	   const unsigned char* src = reinterpret_cast<const unsigned char*>(source);
+	//
+	//	   // Process the leading pixel skip
+	//	   while (leadskip > 0) {
+	//		   unsigned char value = *src++;
+	//		   if (value == 0) { // Transparent segment
+	//			   unsigned char runLength = *src++;
+	//			   leadskip -= runLength;
+	//			   if (leadskip <= 0) {
+	//				   len += leadskip; // Adjust len for skipped pixels
+	//				   dst += runLength + leadskip;
+	//				   break;
+	//			   }
+	//		   } else { // Opaque segment
+	//			   --leadskip;
+	//		   }
+	//	   }
+	//
+	//	   // Handle any remaining transparent pixels from leadskip
+	//	   if (leadskip < 0) {
+	//		   len += leadskip; // Reduce the work length
+	//		   dst += (-leadskip); // Move the destination forward
+	//	   }
+	//
+	//	   // Process the remaining RLE data
+	//	   while (len > 0) {
+	//		   unsigned char runValue = *src++;
+	//		   if (runValue == 0) { // Transparent run
+	//			   unsigned char runLength = *src++;
+	//			   len -= runLength;
+	//			   dst += runLength; // Skip destination memory
+	//		   } else { // Opaque pixel
+	//			   unsigned char remappedValue = remapper[runValue];
+	//			   *dst++ = transtable[remappedValue];
+	//			   --len;
+	//		   }
+	//	   }
+	// }
 }
 
 
@@ -701,6 +786,49 @@ transparent:
 	}
 
 fini:;
+	// Equivalent to:
+	// void RLEBlitTransXlat<unsigned short>::Blit(void* dest, void const* source, int len, int leadskip) const {
+	//	   const unsigned short* transtable = TranslateTable;
+	//
+	//	   // Prepare destinations and sources for RLE processing
+	//	   auto* dst = reinterpret_cast<unsigned short*>(dest);
+	//	   const unsigned char* src = reinterpret_cast<const unsigned char*>(source);
+	//
+	//	   // Process the leading pixel skip
+	//	   while (leadskip > 0) {
+	//		   unsigned char value = *src++;
+	//		   if (value == 0) { // Transparent run
+	//			   unsigned char runLength = *src++;
+	//			   leadskip -= runLength;
+	//			   if (leadskip <= 0) {
+	//				   len += leadskip; // Adjust the remaining pixel count
+	//				   dst += runLength + leadskip;
+	//				   break;
+	//			   }
+	//		   } else { // Opaque pixel
+	//			   --leadskip;
+	//		   }
+	//	   }
+	//
+	//	   // Account for leftover transparent pixels after skipping
+	//	   if (leadskip < 0) {
+	//		   len += leadskip; // Adjust length after skipping
+	//		   dst += (-leadskip); // Adjust destination address
+	//	   }
+	//
+	//	   // Output the pixel data to the destination
+	//	   while (len > 0) {
+	//		   unsigned char runValue = *src++;
+	//		   if (runValue == 0) { // Transparent pixel run
+	//			   unsigned char runLength = *src++;
+	//			   len -= runLength;
+	//			   dst += runLength; // Skip the destination
+	//		   } else { // Opaque pixel
+	//			   *dst++ = transtable[runValue];
+	//			   --len; // Reduce number of pixels left
+	//		   }
+	//	   }
+	// }
 }
 
 #endif

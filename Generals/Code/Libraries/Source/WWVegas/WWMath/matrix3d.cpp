@@ -691,6 +691,7 @@ void Matrix3D::Multiply(const Matrix3D & A,const Matrix3D & B,Matrix3D * set_res
 }
 
 #if 0
+// This assembly is alread documented with C code
 void Matrix3D::Multiply(const Matrix3D & A,const Matrix3D & B,Matrix3D * set_res)
 {
 	assert(set_res != NULL);

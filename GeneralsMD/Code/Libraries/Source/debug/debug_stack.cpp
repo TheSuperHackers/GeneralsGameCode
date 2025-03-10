@@ -388,4 +388,66 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
   }
 
 	return sig.m_numAddr;
+    // Equivalent to:
+    // int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx) {
+    //     InitDbghelp();
+    //
+    //     sig.m_numAddr = 0;
+    //
+    //     // Bail out if no stack walk function is available
+    //     if (!gDbg._StackWalk) {
+    //         return 0;
+    //     }
+    //
+    //     // Set up the stack frame structure for the start point of the stack walk (i.e., here).
+    //     STACKFRAME stackFrame;
+    //     std::memset(&stackFrame, 0, sizeof(stackFrame));
+    //
+    //     stackFrame.AddrPC.Mode = AddrModeFlat;
+    //     stackFrame.AddrStack.Mode = AddrModeFlat;
+    //     stackFrame.AddrFrame.Mode = AddrModeFlat;
+    //
+    //     // Use the provided context structure if it exists.
+    //     if (ctx) {
+    //         stackFrame.AddrPC.Offset = ctx->Eip;
+    //         stackFrame.AddrStack.Offset = ctx->Esp;
+    //         stackFrame.AddrFrame.Offset = ctx->Ebp;
+    //     } else {
+    //         // Walk stack back using the current call chain
+    //         DWORD reg_eip = 0, reg_ebp = 0, reg_esp = 0;
+    //
+    // #if defined(_MSC_VER)
+    //         // Use MSVC intrinsics to get EIP, EBP, and ESP
+    //         reg_eip = reinterpret_cast<DWORD>(_ReturnAddress());
+    //         reg_esp = reinterpret_cast<DWORD>(_AddressOfReturnAddress()) + sizeof(void*);
+    //         reg_ebp = reinterpret_cast<DWORD>(_AddressOfReturnAddress()) - sizeof(void*);
+    // #elif defined(__GNUC__) || defined(__clang__)
+    //         // Use GCC/Clang built-in functions for portable access
+    //         reg_eip = reinterpret_cast<DWORD>(__builtin_return_address(0));
+    //         reg_esp = reinterpret_cast<DWORD>(__builtin_frame_address(0)) + sizeof(void*);
+    //         reg_ebp = reinterpret_cast<DWORD>(__builtin_frame_address(0));
+    // #else
+    //     #error Unsupported compiler. Please provide equivalent intrinsics.
+    // #endif
+    //
+    //         stackFrame.AddrPC.Offset = reg_eip;
+    //         stackFrame.AddrStack.Offset = reg_esp;
+    //         stackFrame.AddrFrame.Offset = reg_ebp;
+    //     }
+    //
+    //     // Walk the stack by the requested number of return address iterations.
+    //     bool skipFirst = (ctx == nullptr);
+    //     while (sig.m_numAddr < Signature::MAX_ADDR &&
+    //            gDbg._StackWalk(IMAGE_FILE_MACHINE_I386, GetCurrentProcess(), GetCurrentThread(),
+    //                            &stackFrame, nullptr, nullptr, gDbg._SymFunctionTableAccess,
+    //                            gDbg._SymGetModuleBase, nullptr)) {
+    //         if (skipFirst) {
+    //             skipFirst = false;
+    //         } else {
+    //             sig.m_addr[sig.m_numAddr++] = stackFrame.AddrPC.Offset;
+    //         }
+    //     }
+    //
+    //     return sig.m_numAddr;
+    // }
 }

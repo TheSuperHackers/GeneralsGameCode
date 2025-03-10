@@ -173,5 +173,48 @@ public:
 
   friend class LockClass;
 };
+// No perfect equivalent that I can think of, but in modern C++:
+// #include <atomic>
+// #include <cassert>
+// #include <thread>
+//
+// class ThreadClass {
+// public:
+//	   static void Switch_Thread() {
+//		   // Yield to other threads as an equivalent to the `Switch_Thread()` logic
+//		   std::this_thread::yield();
+//	   }
+//   };
+//
+//   class FastCriticalSectionClass {
+//	   std::atomic_flag Flag = ATOMIC_FLAG_INIT; // Atomic flag as a lightweight lock
+//
+// public:
+//	   FastCriticalSectionClass() = default;
+//
+//	   class LockClass {
+//		   FastCriticalSectionClass& cs;
+//
+//	   public:
+//		   explicit LockClass(FastCriticalSectionClass& critical_section)
+//			   : cs(critical_section)
+//		   {
+//			   while (cs.Flag.test_and_set(std::memory_order_acquire)) {
+//				   // If the flag is already set, yield and retry
+//				   ThreadClass::Switch_Thread();
+//		      }
+//	       }
+//
+//	       ~LockClass() {
+//		       cs.Flag.clear(std::memory_order_release); // Release the lock
+//	       }
+//
+// private:
+//	      LockClass& operator=(const LockClass&) = delete; // Prevent copying
+//	      LockClass(const LockClass&) = delete;           // Prevent copying
+//    };
+//
+//    friend class LockClass;
+// };
 
 #endif

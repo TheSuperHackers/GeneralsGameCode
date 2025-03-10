@@ -438,6 +438,83 @@ outofhere:
 	}
 #endif
 	return(retval);
+    // !!! IMPORTANT !!! I am not great at algorithms, the objective is to "perform LCW compression on a block of data"
+    // !!! IMPORTANT !!! Check my math/algorithm for errors or for inacuracies
+    // Equivalent to:
+    // int LCW_Comp(const void* source, void* dest, int datasize) {
+    //    auto* src = static_cast<const uint8_t*>(source);
+    //    auto* dst = static_cast<uint8_t*>(dest);
+    //    int retval = 0;
+    //
+    //    const uint8_t* end_of_data = src + datasize;	// Pointer to the end of input data
+    //    uint8_t* dest_start = dst;                 	// Save the original destination pointer
+    //    uint8_t* length_offset = dst;              	// Pointer to the length byte
+    //
+    //    // Write the initial length byte (length flag set to 1)
+    //    *dst++ = 0x81;
+    //    *dst++ = *src++; // Copy first byte from source to dest
+    //
+    //    // Loop to compress the rest of the data
+    //    while (src < end_of_data) {
+    //        uint8_t* match_offset = nullptr; // Save match offset
+    //        int max_match_length = 0;        // Length of the longest match
+    //
+    //        // Search for repeated sequences within a limited range
+    //        for (const uint8_t* s = src - 64; s < src; ++s) {
+    //            if (s < (const uint8_t*)source) continue; // Safeguard against out-of-bounds
+    //
+    //            int match_length = 0;
+    //            while (src + match_length < end_of_data && *(s + match_length) == *(src + match_length)) {
+    //                match_length++;
+    //                if (match_length >= 64) break; // Limit matches to 64 bytes for medium-length runs
+    //            }
+    //
+    //            if (match_length > max_match_length) {
+    //                max_match_length = match_length;
+    //                match_offset = const_cast<uint8_t*>(s); // Save match start position
+    //            }
+    //        }
+    //
+    //        // If max_match_length > 2, we found a run worth encoding
+    //        if (max_match_length > 2) {
+    //            int run_distance = src - match_offset;
+    //
+    //            if (max_match_length <= 10 && run_distance < 0xFFF) { // Short run
+    //                uint8_t run_code = ((max_match_length - 3) << 4) | ((run_distance >> 8) & 0xF);
+    //                *dst++ = run_code;
+    //                *dst++ = run_distance & 0xFF;
+    //            } else if (max_match_length <= 64) { // Medium-length run
+    //                uint8_t run_code = 0xC0 | (max_match_length - 3);
+    //                *dst++ = run_code;
+    //                memcpy(dst, src, max_match_length);
+    //                dst += max_match_length;
+    //            } else { // Long run
+    //                *dst++ = 0xFF;
+    //                *dst++ = max_match_length;
+    //                *dst++ = run_distance & 0xFF;
+    //                *dst++ = (run_distance >> 8) & 0xFF;
+    //            }
+    //
+    //            // Skip over compressed data in the source buffer
+    //            src += max_match_length;
+    //        } else { // No match found – literal copy
+    //	           if (*length_offset == 0x80) { // Start a new literal run
+    //	               length_offset = dst++;
+    //	               *length_offset = 0x80;
+    //	           }
+    //
+    //	           *dst++ = *src++;
+    //	           (*length_offset)++;
+    //	       }
+    //	   }
+    //
+    //	   // Finish the compressed data stream
+    //	   *dst++ = 0x80; // End of data marker
+    //
+    //	   // Calculate the size of the compressed data
+    //	   retval = dst - dest_start;
+    //     return retval;
+    // }
 }
 #endif
 

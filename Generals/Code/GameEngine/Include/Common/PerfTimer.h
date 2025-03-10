@@ -82,6 +82,22 @@ __forceinline void GetPrecisionTimer(Int64* t)
 		MOV [ECX+4], EDX
 	}
 #endif
+	// Equivalent to:
+	// #ifdef _WIN32
+	// #include <intrin.h>
+	// #elif defined(__GNUC__)
+	// #include <x86intrin.h>
+	// #endif
+    //
+	// __forceinline void GetPrecisionTimer(Int64* t)
+	// #ifdef USE_QPF
+	//     QueryPerformanceCounter((LARGE_INTEGER*)t);
+    // #else
+	// {
+    //     // __cpuid(something, something); <- it is commented out, so it may as well not matter what the values were
+	// 	   t = __rdtsc();
+	// }
+    // #endif
 }
 #endif
 

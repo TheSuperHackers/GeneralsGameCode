@@ -332,6 +332,50 @@ WWINLINE void Lock_Mem_Log_Mutex(void)
 	__asm jc  The_Bit_Was_Previously_Set_So_Try_Again
 
 #endif
+    // Equivalent to, using modern C++:
+// #include <thread>
+// #include <atomic>
+// #include <cassert>
+// #include <Windows.h> // For Windows synchronization primitives if needed
+//
+// // Mock definitions of used global variables and utilities
+// std::atomic_flag _MemLogSemaphore = ATOMIC_FLAG_INIT; // Simulating fast critical sections
+// CRITICAL_SECTION _MemLogCriticalSectionHandle;        // Assuming critical section is initialized elsewhere
+// void* Get_Mem_Log_Mutex();                            // Mocked function to retrieve a mutex handle
+// void WWASSERT(bool condition);                        // Mocked assertion function
+// void Switch_Thread();                                 // Placeholder for thread switching logic
+// int _MemLogLockCounter = 0;                           // Counter for logging
+//
+// void Lock_Mem_Log_Mutex(void) {
+// #if MEMLOG_USE_MUTEX
+//
+//	   void* mutex = Get_Mem_Log_Mutex();
+// #ifdef DEBUG_CRASHING
+//	   int res =
+// #endif
+//	   WaitForSingleObject(mutex, INFINITE);
+//	   WWASSERT(res == WAIT_OBJECT_0);
+//	   _MemLogLockCounter++;
+//
+// #endif
+//
+// #if MEMLOG_USE_CRITICALSECTION
+//
+//	   Get_Mem_Log_Mutex();
+//	   EnterCriticalSection((CRITICAL_SECTION*)_MemLogCriticalSectionHandle);
+//
+// #endif
+//
+// #if MEMLOG_USE_FASTCRITICALSECTION
+//
+//	   // Using a more portable and modern implementation for fast critical section
+//	   while (_MemLogSemaphore.test_and_set(std::memory_order_acquire)) {
+//		   // If the flag is already set, yield the CPU to let other threads progress
+//		   Switch_Thread();
+//	   }
+//
+// #endif
+// }
 }
 
 WWINLINE void Unlock_Mem_Log_Mutex(void)
