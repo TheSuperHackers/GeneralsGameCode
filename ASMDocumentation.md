@@ -1392,3 +1392,321 @@ These are **not** different.
 </details>
 
 ---
+
+<details>
+<summary>GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug/wwdebug.cpp</summary>
+
+This file includes the following assembly block:
+
+```c++
+void WWDebug_Assert_Fail(const char * expr,const char * file, int line)
+{
+	if (_CurAssertHandler != NULL) {
+
+		char buffer[4096];
+		sprintf(buffer,"%s (%d) Assert: %s\n",file,line,expr);
+		_CurAssertHandler(buffer);
+
+	} else {
+
+		/*
+		// If the exception handler is try to quit the game then don't show an assert.
+		*/
+		if (Is_Trying_To_Exit()) {
+			ExitProcess(0);
+		}
+
+      char assertbuf[4096];
+		sprintf(assertbuf, "Assert failed\n\n. File %s Line %d", file, line);
+
+      int code = MessageBoxA(NULL, assertbuf, "WWDebug_Assert_Fail", MB_ABORTRETRYIGNORE|MB_ICONHAND|MB_SETFOREGROUND|MB_TASKMODAL);
+
+      if (code == IDABORT) {
+      	raise(SIGABRT);
+      	_exit(3);
+      }
+
+		if (code == IDRETRY) {
+			_asm int 3;
+      	return;
+		}
+   }
+}
+```
+
+This is simply triggering a debugger breakpoint if `code == IDRETRY`.
+
+My goto equivalent is:
+
+```c++
+#include <intrin.h>
+
+void WWDebug_Assert_Fail(const char * expr,const char * file, int line)
+{
+	if (_CurAssertHandler != NULL) {
+
+		char buffer[4096];
+		sprintf(buffer,"%s (%d) Assert: %s\n",file,line,expr);
+		_CurAssertHandler(buffer);
+
+	} else {
+
+		/*
+		// If the exception handler is try to quit the game then don't show an assert.
+		*/
+		if (Is_Trying_To_Exit()) {
+			ExitProcess(0);
+		}
+
+      char assertbuf[4096];
+		sprintf(assertbuf, "Assert failed\n\n. File %s Line %d", file, line);
+
+      int code = MessageBoxA(NULL, assertbuf, "WWDebug_Assert_Fail", MB_ABORTRETRYIGNORE|MB_ICONHAND|MB_SETFOREGROUND|MB_TASKMODAL);
+
+      if (code == IDABORT) {
+      	raise(SIGABRT);
+      	_exit(3);
+      }
+
+		if (code == IDRETRY) {
+			__debugbreak();
+      	return;
+		}
+   }
+}
+```
+
+The generated assemblies are:
+
+<table>
+<tr>
+<th>With Inline Assembly</th>
+<th>Without Inline Assembly</th>
+</tr>
+<td>
+
+```asm
+$SG123482 DB    '%s (%d) Assert: %s', 0aH, 00H
+$SG123484 DB    'Assert failed', 0aH, 0aH, '. File %s Line %d', 00H
+        ORG $+3
+$SG123485 DB    'WWDebug_Assert_Fail', 00H
+unsigned __int64 `__local_stdio_printf_options'::`2'::_OptionsStorage DQ 01H DUP (?) ; `__local_stdio_printf_options'::`2'::_OptionsStorage
+void (__cdecl* _CurAssertHandler)(char const *) DD 01H DUP (?)      ; _CurAssertHandler
+voltbl  SEGMENT
+_volmd  DD  0ffffffffH
+        DDSymXIndex:    FLAT:void WWDebug_Assert_Fail(char const *,char const *,int)
+        DD      014H
+        DD      0c7H
+voltbl  ENDS
+
+_code$1 = -8200                               ; size = 4
+_assertbuf$2 = -8196                                    ; size = 4096
+_buffer$3 = -4100                                 ; size = 4096
+__$ArrayPad$ = -4                                 ; size = 4
+_expr$ = 8                                          ; size = 4
+_file$ = 12                                   ; size = 4
+_line$ = 16                                   ; size = 4
+void WWDebug_Assert_Fail(char const *,char const *,int) PROC             ; WWDebug_Assert_Fail
+        push    ebp
+        mov     ebp, esp
+        mov     eax, 8200               ; 00002008H
+        call    __chkstk
+        mov     eax, DWORD PTR ___security_cookie
+        xor     eax, ebp
+        mov     DWORD PTR __$ArrayPad$[ebp], eax
+        cmp     DWORD PTR void (__cdecl* _CurAssertHandler)(char const *), 0
+        je      SHORT $LN2@WWDebug_As
+        mov     eax, DWORD PTR _expr$[ebp]
+        push    eax
+        mov     ecx, DWORD PTR _line$[ebp]
+        push    ecx
+        mov     edx, DWORD PTR _file$[ebp]
+        push    edx
+        push    OFFSET $SG123482
+        lea     eax, DWORD PTR _buffer$3[ebp]
+        push    eax
+        call    _sprintf
+        add     esp, 20                             ; 00000014H
+        lea     ecx, DWORD PTR _buffer$3[ebp]
+        push    ecx
+        call    DWORD PTR void (__cdecl* _CurAssertHandler)(char const *)
+        add     esp, 4
+        jmp     SHORT $LN7@WWDebug_As
+$LN2@WWDebug_As:
+        call    bool Is_Trying_To_Exit(void)          ; Is_Trying_To_Exit
+        movzx   edx, al
+        test    edx, edx
+        je      SHORT $LN4@WWDebug_As
+        push    0
+        call    DWORD PTR __imp__ExitProcess@4
+        npad    1
+$LN4@WWDebug_As:
+        mov     eax, DWORD PTR _line$[ebp]
+        push    eax
+        mov     ecx, DWORD PTR _file$[ebp]
+        push    ecx
+        push    OFFSET $SG123484
+        lea     edx, DWORD PTR _assertbuf$2[ebp]
+        push    edx
+        call    _sprintf
+        add     esp, 16                             ; 00000010H
+        push    73746                             ; 00012012H
+        push    OFFSET $SG123485
+        lea     eax, DWORD PTR _assertbuf$2[ebp]
+        push    eax
+        push    0
+        call    DWORD PTR __imp__MessageBoxA@16
+        mov     DWORD PTR _code$1[ebp], eax
+        cmp     DWORD PTR _code$1[ebp], 3
+        jne     SHORT $LN5@WWDebug_As
+        push    22                                  ; 00000016H
+        call    _raise
+        add     esp, 4
+        push    3
+        call    __exit
+        npad    1
+$LN5@WWDebug_As:
+        cmp     DWORD PTR _code$1[ebp], 4
+        jne     SHORT $LN7@WWDebug_As
+        int     3
+$LN7@WWDebug_As:
+        mov     ecx, DWORD PTR __$ArrayPad$[ebp]
+        xor     ecx, ebp
+        call    @__security_check_cookie@4
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+void WWDebug_Assert_Fail(char const *,char const *,int) ENDP             ; WWDebug_Assert_Fail
+```
+
+</td>
+<td>
+
+```asm
+$SG123482 DB    '%s (%d) Assert: %s', 0aH, 00H
+$SG123484 DB    'Assert failed', 0aH, 0aH, '. File %s Line %d', 00H
+        ORG $+3
+$SG123485 DB    'WWDebug_Assert_Fail', 00H
+unsigned __int64 `__local_stdio_printf_options'::`2'::_OptionsStorage DQ 01H DUP (?) ; `__local_stdio_printf_options'::`2'::_OptionsStorage
+void (__cdecl* _CurAssertHandler)(char const *) DD 01H DUP (?)      ; _CurAssertHandler
+voltbl  SEGMENT
+_volmd  DD  0ffffffffH
+        DDSymXIndex:    FLAT:void WWDebug_Assert_Fail(char const *,char const *,int)
+        DD      014H
+        DD      0c7H
+voltbl  ENDS
+
+_code$1 = -8200                               ; size = 4
+_assertbuf$2 = -8196                                    ; size = 4096
+_buffer$3 = -4100                                 ; size = 4096
+__$ArrayPad$ = -4                                 ; size = 4
+_expr$ = 8                                          ; size = 4
+_file$ = 12                                   ; size = 4
+_line$ = 16                                   ; size = 4
+void WWDebug_Assert_Fail(char const *,char const *,int) PROC             ; WWDebug_Assert_Fail
+        push    ebp
+        mov     ebp, esp
+        mov     eax, 8200               ; 00002008H
+        call    __chkstk
+        mov     eax, DWORD PTR ___security_cookie
+        xor     eax, ebp
+        mov     DWORD PTR __$ArrayPad$[ebp], eax
+        cmp     DWORD PTR void (__cdecl* _CurAssertHandler)(char const *), 0
+        je      SHORT $LN2@WWDebug_As
+        mov     eax, DWORD PTR _expr$[ebp]
+        push    eax
+        mov     ecx, DWORD PTR _line$[ebp]
+        push    ecx
+        mov     edx, DWORD PTR _file$[ebp]
+        push    edx
+        push    OFFSET $SG123482
+        lea     eax, DWORD PTR _buffer$3[ebp]
+        push    eax
+        call    _sprintf
+        add     esp, 20                             ; 00000014H
+        lea     ecx, DWORD PTR _buffer$3[ebp]
+        push    ecx
+        call    DWORD PTR void (__cdecl* _CurAssertHandler)(char const *)
+        add     esp, 4
+        jmp     SHORT $LN6@WWDebug_As
+$LN2@WWDebug_As:
+        call    bool Is_Trying_To_Exit(void)          ; Is_Trying_To_Exit
+        movzx   edx, al
+        test    edx, edx
+        je      SHORT $LN4@WWDebug_As
+        push    0
+        call    DWORD PTR __imp__ExitProcess@4
+        npad    1
+$LN4@WWDebug_As:
+        mov     eax, DWORD PTR _line$[ebp]
+        push    eax
+        mov     ecx, DWORD PTR _file$[ebp]
+        push    ecx
+        push    OFFSET $SG123484
+        lea     edx, DWORD PTR _assertbuf$2[ebp]
+        push    edx
+        call    _sprintf
+        add     esp, 16                             ; 00000010H
+        push    73746                             ; 00012012H
+        push    OFFSET $SG123485
+        lea     eax, DWORD PTR _assertbuf$2[ebp]
+        push    eax
+        push    0
+        call    DWORD PTR __imp__MessageBoxA@16
+        mov     DWORD PTR _code$1[ebp], eax
+        cmp     DWORD PTR _code$1[ebp], 3
+        jne     SHORT $LN5@WWDebug_As
+        push    22                                  ; 00000016H
+        call    _raise
+        add     esp, 4
+        push    3
+        call    __exit
+        npad    1
+$LN5@WWDebug_As:
+        cmp     DWORD PTR _code$1[ebp], 4
+        jne     SHORT $LN6@WWDebug_As
+        int     3
+$LN6@WWDebug_As:
+$LN1@WWDebug_As:
+        mov     ecx, DWORD PTR __$ArrayPad$[ebp]
+        xor     ecx, ebp
+        call    @__security_check_cookie@4
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+void WWDebug_Assert_Fail(char const *,char const *,int) ENDP             ; WWDebug_Assert_Fail
+```
+
+</td>
+</table>
+
+While the produced assemblies are mildly different, the effect is identical.
+
+```diff
+@@ -43,7 +43,7 @@ void WWDebug_Assert_Fail(char const *,char const *,int) PROC             ; WWDeb
+         push    ecx
+         call    DWORD PTR void (__cdecl* _CurAssertHandler)(char const *)
+         add     esp, 4
+-        jmp     SHORT $LN7@WWDebug_As
++        jmp     SHORT $LN6@WWDebug_As
+ $LN2@WWDebug_As:
+         call    bool Is_Trying_To_Exit(void)          ; Is_Trying_To_Exit
+         movzx   edx, al
+@@ -79,9 +79,10 @@ $LN4@WWDebug_As:
+         npad    1
+ $LN5@WWDebug_As:
+         cmp     DWORD PTR _code$1[ebp], 4
+-        jne     SHORT $LN7@WWDebug_As
++        jne     SHORT $LN6@WWDebug_As
+         int     3
+-$LN7@WWDebug_As:
++$LN6@WWDebug_As:
++$LN1@WWDebug_As:
+         mov     ecx, DWORD PTR __$ArrayPad$[ebp]
+         xor     ecx, ebp
+         call    @__security_check_cookie@4
+```
+
+</details>
+
+---
