@@ -251,6 +251,8 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 			}
 #endif
 			
+// TheSuperHackers @tweak Disables the duplicate serial check
+#if 0
 			// check for a duplicate serial
 			AsciiString s;
 			for (player = 0; canJoin && player<MAX_SLOTS; ++player)
@@ -286,6 +288,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 					}
 				}
 			}
+#endif
 
 			// We're the host, so see if he has a duplicate name
 			for (player = 0; canJoin && player<MAX_SLOTS; ++player)
