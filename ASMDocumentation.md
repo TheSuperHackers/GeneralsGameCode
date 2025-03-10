@@ -1710,3 +1710,134 @@ While the produced assemblies are mildly different, the effect is identical.
 </details>
 
 ---
+
+<details>
+<summary>Generals/Code/Libraries/Source/WWVegas/WWDebug/wwprofile.cpp</summary>
+
+This file includes the following assembly block:
+
+```c++
+inline void WWProfile_Get_Ticks(_int64 * ticks)
+{
+#ifdef _UNIX
+	*ticks = 0;
+#else 
+	__asm
+	{
+		push edx;
+		push ecx;
+		mov ecx,ticks;
+		_emit 0Fh
+		_emit 31h
+		mov [ecx],eax;
+		mov [ecx+4],edx;
+		pop ecx;
+		pop edx;
+	}
+#endif
+}
+```
+
+This assembly block is trying to get the current ticks using the [RDTSC](https://www.aldeid.com/wiki/X86-assembly/Instructions/rdtsc)
+instruction.
+
+My goto equivalent is:
+
+```c++
+#include <intrin.h>
+
+inline void WWProfile_Get_Ticks(_int64 * ticks)
+{
+#ifdef _UNIX
+	*ticks = 0;
+#else 
+	*ticks = __rdtsc();
+#endif
+}
+```
+
+The generated assemblies are:
+
+<table>
+<tr>
+<th>With Inline Assembly</th>
+<th>Without Inline Assembly</th>
+</tr>
+<td>
+
+```asm
+_ticks$ = 8                                   ; size = 4
+void WWProfile_Get_Ticks(__int64 *) PROC                    ; WWProfile_Get_Ticks
+        push    ebp
+        mov     ebp, esp
+        push    ebx
+        push    esi
+        push    edi
+        push    edx
+        push    ecx
+        mov     ecx, DWORD PTR _ticks$[ebp]
+        DB      15                              ; 0000000fH
+        DB      49                              ; 00000031H
+        mov     DWORD PTR [ecx], eax
+        mov     DWORD PTR [ecx+4], edx
+        pop     ecx
+        pop     edx
+        pop     edi
+        pop     esi
+        pop     ebx
+        pop     ebp
+        ret     0
+void WWProfile_Get_Ticks(__int64 *) ENDP                    ; WWProfile_Get_Ticks
+```
+
+</td>
+<td>
+
+```asm
+_ticks$ = 8                                   ; size = 4
+void WWProfile_Get_Ticks(__int64 *) PROC                    ; WWProfile_Get_Ticks
+        push    ebp
+        mov     ebp, esp
+        rdtsc
+        mov     ecx, DWORD PTR _ticks$[ebp]
+        mov     DWORD PTR [ecx], eax
+        mov     DWORD PTR [ecx+4], edx
+        pop     ebp
+        ret     0
+void WWProfile_Get_Ticks(__int64 *) ENDP                    ; WWProfile_Get_Ticks
+```
+
+</td>
+</table>
+
+Using the modern intrinsics actually allows for a smaller assembly in this case.
+
+```diff
+@@ -2,21 +2,10 @@ _ticks$ = 8                                   ; size = 4
+ void WWProfile_Get_Ticks(__int64 *) PROC                    ; WWProfile_Get_Ticks
+         push    ebp
+         mov     ebp, esp
+-        push    ebx
+-        push    esi
+-        push    edi
+-        push    edx
+-        push    ecx
++        rdtsc
+         mov     ecx, DWORD PTR _ticks$[ebp]
+-        DB      15                              ; 0000000fH
+-        DB      49                              ; 00000031H
+         mov     DWORD PTR [ecx], eax
+         mov     DWORD PTR [ecx+4], edx
+-        pop     ecx
+-        pop     edx
+-        pop     edi
+-        pop     esi
+-        pop     ebx
+         pop     ebp
+         ret     0
+ void WWProfile_Get_Ticks(__int64 *) ENDP                    ; WWProfile_Get_Ticks
+```
+
+</details>
+
+---
