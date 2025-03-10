@@ -1,12 +1,12 @@
 # Documenting the Inline Assembly
 
-This document includes **all** assembly blocks. I am aware that many will not be ported and many others will not be
-included at all, but as the repository is now, I will document all available inline assembly.
-
-Thanks to [xezon](https://github.com/xezon) for suggesting using [godbolt](https://godbolt.org/) to compare assembly
-outputs.
+Thanks to [xezon](https://github.com/TheSuperHackers/GeneralsGameCode/pull/405#issuecomment-2709737713) for suggesting
+using [godbolt](https://godbolt.org/) to compare assembly outputs.
 
 All generated code uses the latest version of MSVC 19 x86, as available in godbolt.
+
+As recommended by [tomson26](https://github.com/TheSuperHackers/GeneralsGameCode/pull/405#issuecomment-2710604104), I am
+not including `blitblit`, `rlerle`, `lcw` or `mpu`.
 
 ## List of Documented Inline ASM
 
