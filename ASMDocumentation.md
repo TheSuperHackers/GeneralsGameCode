@@ -8,7 +8,120 @@ All generated code uses the latest version of MSVC 19 x86, as available in godbo
 As recommended by [tomson26](https://github.com/TheSuperHackers/GeneralsGameCode/pull/405#issuecomment-2710604104), I am
 not including `blitblit`, `rlerle`, `lcw` or `mpu`.
 
+The `crc` assembly block is already extensively documented in source.
+
 ## List of Documented Inline ASM
+
+---
+
+<details>
+<summary>GeneralsMD/Code/GameEngine/Source/Common/PerfTimer.cpp</summary>
+
+This file includes the following assembly block:
+
+```c++
+__forceinline void ProfileGetTime(__int64 &t)
+{
+  _asm
+  {
+    mov ecx,[t]
+    push eax
+    push edx
+    rdtsc
+    mov [ecx],eax
+    mov [ecx+4],edx
+    pop edx
+    pop eax
+  };
+}
+```
+
+This is using the assembly block to retrieve the value of [RDTSC](https://www.aldeid.com/wiki/X86-assembly/Instructions/rdtsc)
+and move it to `t`.
+
+My goto equivalent is:
+
+```c++
+#include <windows.h>
+#include <intrin.h>
+
+__forceinline void ProfileGetTime(__int64 &t)
+{
+  t = __rdtsc();
+}
+```
+
+The generated assemblies are:
+
+<table>
+<tr>
+<th>With Inline Assembly</th>
+<th>Without Inline Assembly</th>
+</tr>
+<td>
+
+```asm
+_t$ = 8                                       ; size = 4
+void ProfileGetTime(__int64 &) PROC               ; ProfileGetTime
+        push    ebp
+        mov     ebp, esp
+        mov     ecx, DWORD PTR _t$[ebp]
+        push    eax
+        push    edx
+        rdtsc
+        mov     DWORD PTR [ecx], eax
+        mov     DWORD PTR [ecx+4], edx
+        pop     edx
+        pop     eax
+        pop     ebp
+        ret     0
+void ProfileGetTime(__int64 &) ENDP               ; ProfileGetTime
+```
+
+</td>
+<td>
+
+```asm
+_t$ = 8                                       ; size = 4
+void ProfileGetTime(__int64 &) PROC               ; ProfileGetTime
+        push    ebp
+        mov     ebp, esp
+        rdtsc
+        mov     ecx, DWORD PTR _t$[ebp]
+        mov     DWORD PTR [ecx], eax
+        mov     DWORD PTR [ecx+4], edx
+        pop     ebp
+        ret     0
+void ProfileGetTime(__int64 &) ENDP               ; ProfileGetTime
+```
+
+</td>
+</table>
+
+</details>
+
+The assemblies are different in structure but equal in result. The intrinsic version appears shorter.
+
+```diff
+--- a/a.asm
++++ b/b.asm
+@@ -2,14 +2,10 @@ _t$ = 8                                       ; size = 4
+ void ProfileGetTime(__int64 &) PROC               ; ProfileGetTime
+         push    ebp
+         mov     ebp, esp
+-        mov     ecx, DWORD PTR _t$[ebp]
+-        push    eax
+-        push    edx
+         rdtsc
++        mov     ecx, DWORD PTR _t$[ebp]
+         mov     DWORD PTR [ecx], eax
+         mov     DWORD PTR [ecx+4], edx
+-        pop     edx
+-        pop     eax
+         pop     ebp
+         ret     0
+ void ProfileGetTime(__int64 &) ENDP               ; ProfileGetTime
+```
 
 ---
 
