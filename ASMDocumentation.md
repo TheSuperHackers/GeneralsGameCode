@@ -13,8 +13,12 @@ The `crc` assembly block is already extensively documented in source.
 > **NOTE**: For methods with `__forceinline`, this is removed in godbolt to allow the compiler to only emit the function
 > assembly and not other, unrelated assembly to keep the function from being removed.
 
-> **NOTE**: All the code is compiled **without** optimization. Optimized code will result in smaller assemblies in
-> modern compilers regardless.
+> **NOTE**: All the code is compiled **without** optimization. Optimized code will result in smaller and more optimized
+> assemblies in modern compilers.
+
+> **NOTE**: Classes and structures, as well as functions that don't exist, will be replicated in godbolt in their most
+> basic necessity to compile, and the comparison from original to equivalent codes has the same stubs to ensure parity
+> in the assembly that is being generated.
 
 ## List of Documented Inline ASM
 
@@ -1152,6 +1156,95 @@ just as, if not more, performant.
 ```
 
 </details>
+
+</details>
+
+---
+
+<details>
+<summary>Generals/Code/GameEngine/Include/Common/PerfTimer.h</summary>
+
+This file includes the following assembly block:
+
+```c++
+__forceinline void GetPrecisionTimer(Int64* t)
+{
+#ifdef USE_QPF
+	QueryPerformanceCounter((LARGE_INTEGER*)t);
+#else
+	// CPUID is needed to force serialization of any previous instructions. 
+	__asm 
+	{
+		// for now, I am commenting this out. It throws the timings off a bit more (up to .001%) jkmcd
+		//		CPUID
+		RDTSC
+		MOV ECX,[t]
+		MOV [ECX], EAX
+		MOV [ECX+4], EDX
+	}
+#endif
+}
+```
+
+This is using the [RDTSC](https://www.aldeid.com/wiki/X86-assembly/Instructions/rdtsc) instruction to get a precision timer.
+
+My goto equivalent is:
+
+```c++
+#include <intrin.h>
+
+__forceinline void GetPrecisionTimer(Int64* t)
+{
+#ifdef USE_QPF
+	QueryPerformanceCounter((LARGE_INTEGER*)t);
+#else
+	*t = __rdtsc();
+#endif
+}
+```
+
+<table>
+<tr>
+<th>With Inline Assembly</th>
+<th>Without Inline Assembly</th>
+</tr>
+<td>
+
+```asm
+_t$ = 8                                       ; size = 4
+void GetPrecisionTimer(__int64 *) PROC                  ; GetPrecisionTimer
+        push    ebp
+        mov     ebp, esp
+        rdtsc
+        mov     ecx, DWORD PTR _t$[ebp]
+        mov     DWORD PTR [ecx], eax
+        mov     DWORD PTR [ecx+4], edx
+        pop     ebp
+        ret     0
+void GetPrecisionTimer(__int64 *) ENDP                  ; GetPrecisionTimer
+```
+
+</td>
+<td>
+
+```asm
+_t$ = 8                                       ; size = 4
+void GetPrecisionTimer(__int64 *) PROC                  ; GetPrecisionTimer
+        push    ebp
+        mov     ebp, esp
+        rdtsc
+        mov     ecx, DWORD PTR _t$[ebp]
+        mov     DWORD PTR [ecx], eax
+        mov     DWORD PTR [ecx+4], edx
+        pop     ebp
+        ret     0
+void GetPrecisionTimer(__int64 *) ENDP                  ; GetPrecisionTimer
+```
+
+</td>
+</table>
+
+The output assemblies are identical.
 
 </details>
 
