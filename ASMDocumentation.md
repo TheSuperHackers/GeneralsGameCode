@@ -856,10 +856,6 @@ class CPUDetectClass {
     bool HasCPUIDInstruction = false;
 };
 
-#if _WIN32
-#include <intrin.h>
-#endif
-
 void CPUDetectClass::Init_CPUID_Instruction()
 {
 	unsigned long cpuid_available=0;
@@ -1154,10 +1150,6 @@ class CPUDetectClass {
     private:
     bool HasCPUIDInstruction = false;
 };
-
-#if _WIN32
-#include <intrin.h>
-#endif
 
 bool CPUDetectClass::CPUID(
 	unsigned& u_eax_,
