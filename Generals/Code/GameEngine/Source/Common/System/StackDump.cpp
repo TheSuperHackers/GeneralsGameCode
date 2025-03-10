@@ -91,47 +91,6 @@ MYEIP1:
 
 
 	MakeStackTrace(myeip,myesp,myebp, 2, callback);
-    // You can't get rid of assembly, I don't think? At least not if you want to keep the exact functionality on all compilers
-    // Only Clang or GCC have equivalent code for this assembly, so this would be equivalent to:
-	// void StackDump(void (*callback)(const char*)) {
-	//	   // Use the default callback if nullptr
-	//	   if (callback == nullptr) {
-	//		   callback = StackDumpDefaultHandler;
-	//	   }
-	//
-	//	   // Initialize symbol information
-	//	   InitSymbolInfo();
-	//
-	//	   // Variables to hold instruction pointer, stack pointer, and base pointer
-	//	   uint32_t myeip = 0, myesp = 0, myebp = 0;
-	//
-	// #if defined(_MSVC)
-	// _asm
-	// {
-	// MYEIP1:
-	//  mov eax, MYEIP1
-	//  mov dword ptr [myeip] , eax
-	//  mov eax, esp
-	//  mov dword ptr [myesp] , eax
-	//  mov eax, ebp
-	//  mov dword ptr [myebp] , eax
-	// }
-	// #elif defined(__GNUC__) || defined(__clang__)
-	//	   // Use built-in functions to retrieve stack-related registers
-	//	   myesp = reinterpret_cast<uint32_t>(__builtin_frame_address(0)); // Get stack pointer
-	//	   myebp = reinterpret_cast<uint32_t>(__builtin_frame_address(1)); // Get base pointer
-	//
-	//	   // Get EIP using inline assembly (only GCC/Clang support this variant)
-	//	   __asm__("call 1f\n"  // Push the next instruction address onto the stack
-	//			   "1: pop %0"  // Pop the current EIP into myeip
-	//			   : "=r" (myeip));
-	// #else
-	// #error Unsupported compiler. This code requires GCC or Clang for built-in functionality.
-	// #endif
-	//
-	//	   // Create the stack trace starting at the current frame
-	//	   MakeStackTrace(myeip, myesp, myebp, 2, callback);
-	// }
 }
 
 
