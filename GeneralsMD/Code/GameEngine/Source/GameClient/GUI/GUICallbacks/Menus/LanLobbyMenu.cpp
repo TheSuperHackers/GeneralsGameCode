@@ -334,7 +334,7 @@ static void playerTooltip(GameWindow *window,
 		return;
 	}
 	UnicodeString tooltip;
-	tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getName().str(), player->getLogin().str(), player->getHost().str());
+	tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getLogin().str(), player->getHost().str());
 	TheMouse->setCursorTooltip( tooltip );
 }
 
@@ -400,7 +400,15 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 	// Choose an IP address, then initialize the LAN singleton
 	UnsignedInt IP = TheGlobalData->m_defaultIP;
 	IPEnumeration IPs;
-
+	const WideChar* IPSource;
+#if ENABLE_FAKE_IP
+	if (getFakeIPNo())
+	{
+		IP = getFakeIPNo();
+		IPSource = L"Using Fake IP";
+	}
+	else
+#endif
 	if (!IP)
 	{
 		EnumeratedIP *IPlist = IPs.getAddresses();
@@ -416,23 +424,18 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 			/// @todo: display error and exit lan lobby if no IPs are found
 		}
 
-		//UnicodeString str;
-		//str.format(L"Local IP chosen: %hs", IPlist->getIPstring().str());
-		//GadgetListBoxAddEntryText(listboxChatWindow, str, chatSystemColor, -1, 0);
+		IPSource = L"Local IP chosen";
 		IP = IPlist->getIP();
 	}
 	else
 	{
-		/*
-		UnicodeString str;
-		str.format(L"Default local IP: %d.%d.%d.%d",
-			(IP >> 24),
-			(IP >> 16) & 0xFF,
-			(IP >> 8) & 0xFF,
-			IP & 0xFF);
-		GadgetListBoxAddEntryText(listboxChatWindow, str, chatSystemColor, -1, 0);
-		*/
+		IPSource = L"Default local IP";
 	}
+#if defined(_DEBUG) || defined(_INTERNAL)
+	UnicodeString str;
+	str.format(L"%s: %d.%d.%d.%d", IPSource, PRINT_IP_HELPER(IP));
+	GadgetListBoxAddEntryText(listboxChatWindow, str, chatSystemColor, -1, 0);
+#endif
 
 	// TheLAN->init() sets us to be in a LAN menu screen automatically.
 	TheLAN->init();
