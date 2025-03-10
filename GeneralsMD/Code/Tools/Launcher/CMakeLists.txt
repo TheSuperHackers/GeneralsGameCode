@@ -1,0 +1,72 @@
+add_subdirectory(DatGen)
+
+set(LAUNCHER_SRC
+    "BFISH.CPP"
+    "BFISH.H"
+    "configfile.cpp"
+    "configfile.h"
+    "dialog.cpp"
+    "dialog.h"
+    "dictionary.h"
+    "filed.h"
+    "findpatch.cpp"
+    "findpatch.h"
+    "loadbmp.cpp"
+    "loadbmp.h"
+    "main.cpp"
+    "monod.cpp"
+    "monod.h"
+    "odevice.h"
+    "patch.cpp"
+    "patch.h"
+    "process.cpp"
+    "process.h"
+    "Protect.cpp"
+    "Protect.h"
+    "resource.h"
+    "streamer.cpp"
+    "streamer.h"
+    "wdebug.cpp"
+    "wdebug.h"
+    "winblows.cpp"
+    "winblows.h"
+    "wstring.cpp"
+    "wstring.h"
+    "wstypes.h"
+    "Toolkit/Debug/DebugPrint.cpp"
+    "Toolkit/Debug/DebugPrint.h"
+    "Toolkit/Storage/File.cpp"
+    "Toolkit/Storage/File.h"
+    "Toolkit/Storage/Rights.h"
+    "Toolkit/Storage/Stream.h"
+    "Toolkit/Support/RefCounted.h"
+    "Toolkit/Support/RefPtr.h"
+    "Toolkit/Support/StringConvert.cpp"
+    "Toolkit/Support/StringConvert.h"
+    "Toolkit/Support/UString.cpp"
+    "Toolkit/Support/UString.h"
+    "Toolkit/Support/UTypes.h"
+    "Toolkit/Support/Visualc.h"
+)
+
+add_executable(launcher WIN32)
+
+target_include_directories(launcher PRIVATE
+    Toolkit
+)
+
+target_compile_definitions(launcher PRIVATE
+    USE_NOTEPAD
+    $<$<CONFIG:Debug>:USE_GAMEDIR_FROM_LCF>
+)
+
+target_link_libraries(launcher PRIVATE
+    comctl32
+    safedisc
+)
+
+if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
+    target_sources(launcher PRIVATE launcher1.rc)
+endif()
+
+target_sources(launcher PRIVATE ${LAUNCHER_SRC})

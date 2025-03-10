@@ -266,6 +266,9 @@ Bool FileSystem::createDirectory(AsciiString directory)
 //============================================================================
 Bool FileSystem::areMusicFilesOnCD()
 {
+#if 1
+    return TRUE;
+#else
 	if (!TheCDManager) {
 		DEBUG_LOG(("FileSystem::areMusicFilesOnCD() - No CD Manager; returning false\n"));
 		return FALSE;
@@ -294,6 +297,7 @@ Bool FileSystem::areMusicFilesOnCD()
 		}
 	}
 	return FALSE;
+#endif
 }
 //============================================================================
 // FileSystem::loadMusicFilesFromCD

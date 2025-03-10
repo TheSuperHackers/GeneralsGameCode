@@ -388,7 +388,7 @@ static void queuePatch(bool mandatory, std::string downloadURL)
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool patchCheckCallback( GHTTPRequest request, GHTTPResult result, char * buffer, int bufferLen, void * param )
+static GHTTPBool patchCheckCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, void * param )
 {
 	--checksLeft;
 	DEBUG_ASSERTCRASH(checksLeft>=0, ("Too many callbacks"));

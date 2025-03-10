@@ -61,7 +61,7 @@ IDI_ApplicationIcon     ICON    DISCARDABLE     "Generals.ico"
 // Bitmap
 //
 
-IDB_LOAD_SCREEN         BITMAP  DISCARDABLE     "Install_Final.bmp"
+// IDB_LOAD_SCREEN         BITMAP  DISCARDABLE     "Install_Final.bmp"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -72,7 +72,7 @@ IDB_LOAD_SCREEN         BITMAP  DISCARDABLE     "Install_Final.bmp"
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-1 TYPELIB "../Libraries/Include/EABrowserDispatch/BrowserDispatch.tlb"
+// 1 TYPELIB "../Libraries/Include/EABrowserDispatch/BrowserDispatch.tlb"
 
 
 /////////////////////////////////////////////////////////////////////////////

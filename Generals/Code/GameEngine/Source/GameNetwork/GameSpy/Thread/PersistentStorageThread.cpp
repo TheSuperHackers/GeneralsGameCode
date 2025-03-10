@@ -660,7 +660,7 @@ Bool PSThreadClass::tryLogin( Int id, std::string nick, std::string password, st
 	return m_loginOK;
 }
 
-static void getPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, char *data, int len, void *instance)
+static void getPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, time_t modified, char *data, int len, void *instance)
 {
 	DEBUG_LOG(("Data get callback: localid: %d profileid: %d success: %d len: %d data: %s\n",localid, profileid, success, len, data));
 	PSThreadClass *t = (PSThreadClass *)instance;
@@ -753,7 +753,7 @@ static void getPersistentDataCallback(int localid, int profileid, persisttype_t 
 	TheGameSpyPSMessageQueue->addResponse(resp);
 }
 
-static void setPersistentDataLocaleCallback(int localid, int profileid, persisttype_t type, int index, int success, void *instance)
+static void setPersistentDataLocaleCallback(int localid, int profileid, persisttype_t type, int index, int success, time_t modified, void *instance)
 {
 	DEBUG_LOG(("Data save callback: localid: %d profileid: %d success: %d\n", localid, profileid, success));
 
@@ -764,7 +764,7 @@ static void setPersistentDataLocaleCallback(int localid, int profileid, persistt
 	t->decrOpCount();
 }
 
-static void setPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, void *instance)
+static void setPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, time_t modified, void *instance)
 {
 	DEBUG_LOG(("Data save callback: localid: %d profileid: %d success: %d\n", localid, profileid, success));
 
@@ -802,7 +802,7 @@ void preAuthCDCallback(int localid, int profileid, int authenticated, char *errm
 	authInfo->id = profileid;
 }
 
-static void getPreorderCallback(int localid, int profileid, persisttype_t type, int index, int success, char *data, int len, void *instance)
+static void getPreorderCallback(int localid, int profileid, persisttype_t type, int index, int success, time_t modified, char *data, int len, void *instance)
 {
 	PSThreadClass *t = (PSThreadClass *)instance;
 	if (!t)

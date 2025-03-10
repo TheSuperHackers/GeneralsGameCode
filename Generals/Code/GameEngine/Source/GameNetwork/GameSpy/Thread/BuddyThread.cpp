@@ -270,7 +270,7 @@ void BuddyThreadClass::Thread_Function()
 	_set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
 	GPConnection gpCon;
 	GPConnection *con = &gpCon;
-	gpInitialize( con, 0 );
+	gpInitialize( con, 675, 0, GP_PARTNERID_GAMESPY );
 	m_isConnected = m_isConnecting = false;
 
 	gpSetCallback( con, GP_ERROR,								callbackWrapper,	(void *)CALLBACK_ERROR );
@@ -308,7 +308,8 @@ void BuddyThreadClass::Thread_Function()
 				break;
 			case BuddyRequest::BUDDYREQUEST_DELETEACCT:
 				m_isdeleting =  true;
-				gpDeleteProfile( con );
+				// TheSuperHackers @tweak OmniBlade API was updated since Generals released to require a callback. Passing -1 will make our wrapper ignore this.
+				gpDeleteProfile( con, callbackWrapper, (void *)(-1) );
 				break;
 			case BuddyRequest::BUDDYREQUEST_LOGOUT:
 				m_isConnecting = m_isConnected = false;
@@ -328,8 +329,9 @@ void BuddyThreadClass::Thread_Function()
 					m_email = incomingRequest.arg.login.email;
 					m_pass = incomingRequest.arg.login.password;
 					m_isNewAccount = TRUE;
-					m_isConnected = (gpConnectNewUser( con, incomingRequest.arg.login.nick, incomingRequest.arg.login.email,
-						incomingRequest.arg.login.password, (incomingRequest.arg.login.hasFirewall)?GP_FIREWALL:GP_NO_FIREWALL,
+					// TheSuperHackers @tweak OmniBlade API was updated since Generals release to require uniquenick which is the same as nick and cdkey is an empty string here.
+					m_isConnected = (gpConnectNewUser( con, incomingRequest.arg.login.nick, incomingRequest.arg.login.nick, incomingRequest.arg.login.email,
+						incomingRequest.arg.login.password, "", (incomingRequest.arg.login.hasFirewall)?GP_FIREWALL:GP_NO_FIREWALL,
 						GP_BLOCKING, callbackWrapper, (void *)CALLBACK_CONNECT ) == GP_NO_ERROR);
 					if (m_isNewAccount) // if we didn't re-login
 					{
