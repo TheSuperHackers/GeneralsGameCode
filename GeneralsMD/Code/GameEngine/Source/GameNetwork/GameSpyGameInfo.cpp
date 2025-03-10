@@ -537,10 +537,7 @@ void GameSpyLaunchGame( void )
 				*/
 				{
 				user.format(",%s@%d.%d.%d.%d:%d", tmpUserName.str(),
-					((ip & 0xff000000) >> 24),
-					((ip & 0xff0000) >> 16),
-					((ip & 0xff00) >> 8),
-					((ip & 0xff)),
+					PRINT_IP_HELPER(ip),
 					TheNAT->getSlotPort(i)
 					);
 				}
