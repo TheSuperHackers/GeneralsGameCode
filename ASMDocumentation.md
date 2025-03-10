@@ -13,6 +13,9 @@ The `crc` assembly block is already extensively documented in source.
 > **NOTE**: For methods with `__forceinline`, this is removed in godbolt to allow the compiler to only emit the function
 > assembly and not other, unrelated assembly to keep the function from being removed.
 
+> **NOTE**: All the code is compiled **without** optimization. Optimized code will result in smaller assemblies in
+> modern compilers regardless.
+
 ## List of Documented Inline ASM
 
 ---
@@ -302,6 +305,850 @@ implementation, suggestions are welcome if this method requires further investig
          pop     ebp
          ret     0
  float fast_float_trunc(float) ENDP                      ; fast_float_trunc
+```
+
+</details>
+
+</details>
+
+---
+
+<details>
+<summary>Generals/Code/Libraries/Source/WWVegas/WW3D2/dx8wrapper.h</summary>
+
+This file includes the following assembly blocks:
+
+<details>
+<summary>DX8Wrapper::Convert_Color</summary>
+
+```c++
+WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector3& color,float alpha)
+{
+	const float scale = 255.0;
+	unsigned int col;
+
+	// Multiply r, g, b and a components (0.0,...,1.0) by 255 and convert to integer. Or the integer values togerher
+	// such that 32 bit ingeger has AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB.
+	__asm
+	{
+		sub	esp,20					// space for a, r, g and b float plus fpu rounding mode
+
+		// Store the fpu rounding mode
+
+		fwait
+		fstcw		[esp+16]				// store control word to stack
+		mov		eax,[esp+16]		// load it to eax
+		mov		edi,eax				// take copy
+		and		eax,~(1024|2048)	// mask out certain bits
+		or			eax,(1024|2048)	// or with precision control value "truncate"
+		sub		edi,eax				// did it change?
+		jz			skip					// .. if not, skip
+		mov		[esp],eax			// .. change control word
+		fldcw		[esp]
+skip:
+
+		// Convert the color
+
+		mov	esi,dword ptr color
+		fld	dword ptr[scale]
+
+		fld	dword ptr[esi]			// r
+		fld	dword ptr[esi+4]		// g
+		fld	dword ptr[esi+8]		// b
+		fld	dword ptr[alpha]		// a
+		fld	st(4)
+		fmul	st(4),st
+		fmul	st(3),st
+		fmul	st(2),st
+		fmulp	st(1),st
+		fistp	dword ptr[esp+0]		// a
+		fistp	dword ptr[esp+4]		// b
+		fistp	dword ptr[esp+8]		// g
+		fistp	dword ptr[esp+12]		// r
+		mov	ecx,[esp]				// a
+		mov	eax,[esp+4]				// b
+		mov	edx,[esp+8]				// g
+		mov	ebx,[esp+12]			// r
+		shl	ecx,24					// a << 24
+		shl	ebx,16					// r << 16
+		shl	edx,8						//	g << 8
+		or		eax,ecx					// (a << 24) | b
+		or		eax,ebx					// (a << 24) | (r << 16) | b
+		or		eax,edx					// (a << 24) | (r << 16) | (g << 8) | b
+		
+		fstp	st(0)
+
+		// Restore fpu rounding mode
+
+		cmp	edi,0					// did we change the value?
+		je		not_changed			// nope... skip now...
+		fwait
+		fldcw	[esp+16];
+not_changed:
+		add	esp,20
+
+		mov	col,eax
+	}
+	return col;
+}
+```
+
+This is converting a Vector3 color (RGB) and return an unsigned integer in the form ARGB.
+
+My goto equivalent is:
+
+```c++
+#include <math.h>
+
+WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector3& color,float alpha)
+{
+	const float scale = 255.0;
+
+	// Multiply r, g, b and a components (0.0,...,1.0) by 255 and convert to integer. Or the integer values togerher
+	// such that 32 bit ingeger has AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB.
+    unsigned int r = (unsigned int)(floor(color.x * scale));
+    unsigned int g = (unsigned int)(floor(color.y * scale));
+    unsigned int b = (unsigned int)(floor(color.z * scale));
+    unsigned int a = (unsigned int)(floor(alpha * scale));
+    
+    return (a << 24) | (r << 16) | (g << 8) | b;
+}
+```
+
+The generated assemblies are:
+
+<table>
+<tr>
+<th>With Inline Assembly</th>
+<th>Without Inline Assembly</th>
+</tr>
+<td>
+
+```asm
+__real@437f0000 DD 0437f0000r             ; 255
+
+_this$ = -12                                            ; size = 4
+_col$ = -8                                          ; size = 4
+_scale$ = -4                                            ; size = 4
+_color$ = 8                                   ; size = 4
+_alpha$ = 12                                            ; size = 4
+unsigned int DX8Wrapper::Convert_Color(Vector3 const &,float) PROC     ; DX8Wrapper::Convert_Color
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 12                             ; 0000000cH
+        push    ebx
+        push    esi
+        push    edi
+        mov     DWORD PTR _this$[ebp], ecx
+        movss   xmm0, DWORD PTR __real@437f0000
+        movss   DWORD PTR _scale$[ebp], xmm0
+        sub     esp, 20                             ; 00000014H
+        fwait
+        fstcw   TBYTE PTR [esp+16]
+        mov     eax, DWORD PTR [esp+16]
+        mov     edi, eax
+        and     eax, -3073                                ; fffff3ffH
+        or      eax, 3072                     ; 00000c00H
+        sub     edi, eax
+        je      SHORT $skip$3
+        mov     DWORD PTR [esp], eax
+        fldcw   TBYTE PTR [esp]
+$skip$3:
+        mov     esi, DWORD PTR _color$[ebp]
+        fld     DWORD PTR _scale$[ebp]
+        fld     DWORD PTR [esi]
+        fld     DWORD PTR [esi+4]
+        fld     DWORD PTR [esi+8]
+        fld     DWORD PTR _alpha$[ebp]
+        fld     ST(4)
+        fmul    ST(4), ST(0)
+        fmul    ST(3), ST(0)
+        fmul    ST(2), ST(0)
+        fmulp   ST(1), ST(0)
+        fistp   DWORD PTR [esp]
+        fistp   DWORD PTR [esp+4]
+        fistp   DWORD PTR [esp+8]
+        fistp   DWORD PTR [esp+12]
+        mov     ecx, DWORD PTR [esp]
+        mov     eax, DWORD PTR [esp+4]
+        mov     edx, DWORD PTR [esp+8]
+        mov     ebx, DWORD PTR [esp+12]
+        shl     ecx, 24                             ; 00000018H
+        shl     ebx, 16                             ; 00000010H
+        shl     edx, 8
+        or      eax, ecx
+        or      eax, ebx
+        or      eax, edx
+        fstp    ST(0)
+        cmp     edi, 0
+        je      SHORT $not_changed$4
+        fwait
+        fldcw   TBYTE PTR [esp+16]
+$not_changed$4:
+        add     esp, 20                             ; 00000014H
+        mov     DWORD PTR _col$[ebp], eax
+        mov     eax, DWORD PTR _col$[ebp]
+        pop     edi
+        pop     esi
+        pop     ebx
+        mov     esp, ebp
+        pop     ebp
+        ret     8
+unsigned int DX8Wrapper::Convert_Color(Vector3 const &,float) ENDP     ; DX8Wrapper::Convert_Color
+```
+
+</td>
+<td>
+
+```asm
+__real@437f0000 DD 0437f0000r             ; 255
+
+_scale$ = -24                                     ; size = 4
+_this$ = -20                                            ; size = 4
+_b$ = -16                                         ; size = 4
+_g$ = -12                                         ; size = 4
+_r$ = -8                                                ; size = 4
+_a$ = -4                                                ; size = 4
+_color$ = 8                                   ; size = 4
+_alpha$ = 12                                            ; size = 4
+unsigned int DX8Wrapper::Convert_Color(Vector3 const &,float) PROC     ; DX8Wrapper::Convert_Color
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 24                             ; 00000018H
+        mov     DWORD PTR _this$[ebp], ecx
+        movss   xmm0, DWORD PTR __real@437f0000
+        movss   DWORD PTR _scale$[ebp], xmm0
+        mov     eax, DWORD PTR _color$[ebp]
+        movss   xmm0, DWORD PTR [eax]
+        mulss   xmm0, DWORD PTR __real@437f0000
+        cvtss2sd xmm0, xmm0
+        sub     esp, 8
+        movsd   QWORD PTR [esp], xmm0
+        call    _floor
+        add     esp, 8
+        call    __ftol2
+        mov     DWORD PTR _r$[ebp], eax
+        mov     ecx, DWORD PTR _color$[ebp]
+        movss   xmm0, DWORD PTR [ecx+4]
+        mulss   xmm0, DWORD PTR __real@437f0000
+        cvtss2sd xmm0, xmm0
+        sub     esp, 8
+        movsd   QWORD PTR [esp], xmm0
+        call    _floor
+        add     esp, 8
+        call    __ftol2
+        mov     DWORD PTR _g$[ebp], eax
+        mov     edx, DWORD PTR _color$[ebp]
+        movss   xmm0, DWORD PTR [edx+8]
+        mulss   xmm0, DWORD PTR __real@437f0000
+        cvtss2sd xmm0, xmm0
+        sub     esp, 8
+        movsd   QWORD PTR [esp], xmm0
+        call    _floor
+        add     esp, 8
+        call    __ftol2
+        mov     DWORD PTR _b$[ebp], eax
+        movss   xmm0, DWORD PTR _alpha$[ebp]
+        mulss   xmm0, DWORD PTR __real@437f0000
+        cvtss2sd xmm0, xmm0
+        sub     esp, 8
+        movsd   QWORD PTR [esp], xmm0
+        call    _floor
+        add     esp, 8
+        call    __ftol2
+        mov     DWORD PTR _a$[ebp], eax
+        mov     eax, DWORD PTR _a$[ebp]
+        shl     eax, 24                             ; 00000018H
+        mov     ecx, DWORD PTR _r$[ebp]
+        shl     ecx, 16                             ; 00000010H
+        or      eax, ecx
+        mov     edx, DWORD PTR _g$[ebp]
+        shl     edx, 8
+        or      eax, edx
+        or      eax, DWORD PTR _b$[ebp]
+        mov     esp, ebp
+        pop     ebp
+        ret     8
+unsigned int DX8Wrapper::Convert_Color(Vector3 const &,float) ENDP     ; DX8Wrapper::Convert_Color
+```
+
+</td>
+</table>
+
+While both assemblies are very different, they reach the same output. It would be worth investigating which is more
+efficient in modern architectures, or even if the efficiency difference is worth it. I am calling `floor` because of the
+`fld` in assembly, it will be the way to make it work the same, even if it changes the assembly output.
+
+```diff
+@@ -1,69 +1,68 @@
+ __real@437f0000 DD 0437f0000r             ; 255
+ 
+-_this$ = -12                                            ; size = 4
+-_col$ = -8                                          ; size = 4
+-_scale$ = -4                                            ; size = 4
++_scale$ = -24                                     ; size = 4
++_this$ = -20                                            ; size = 4
++_b$ = -16                                         ; size = 4
++_g$ = -12                                         ; size = 4
++_r$ = -8                                                ; size = 4
++_a$ = -4                                                ; size = 4
+ _color$ = 8                                   ; size = 4
+ _alpha$ = 12                                            ; size = 4
+ unsigned int DX8Wrapper::Convert_Color(Vector3 const &,float) PROC     ; DX8Wrapper::Convert_Color
+         push    ebp
+         mov     ebp, esp
+-        sub     esp, 12                             ; 0000000cH
+-        push    ebx
+-        push    esi
+-        push    edi
++        sub     esp, 24                             ; 00000018H
+         mov     DWORD PTR _this$[ebp], ecx
+         movss   xmm0, DWORD PTR __real@437f0000
+         movss   DWORD PTR _scale$[ebp], xmm0
+-        sub     esp, 20                             ; 00000014H
+-        fwait
+-        fstcw   TBYTE PTR [esp+16]
+-        mov     eax, DWORD PTR [esp+16]
+-        mov     edi, eax
+-        and     eax, -3073                                ; fffff3ffH
+-        or      eax, 3072                     ; 00000c00H
+-        sub     edi, eax
+-        je      SHORT $skip$3
+-        mov     DWORD PTR [esp], eax
+-        fldcw   TBYTE PTR [esp]
+-$skip$3:
+-        mov     esi, DWORD PTR _color$[ebp]
+-        fld     DWORD PTR _scale$[ebp]
+-        fld     DWORD PTR [esi]
+-        fld     DWORD PTR [esi+4]
+-        fld     DWORD PTR [esi+8]
+-        fld     DWORD PTR _alpha$[ebp]
+-        fld     ST(4)
+-        fmul    ST(4), ST(0)
+-        fmul    ST(3), ST(0)
+-        fmul    ST(2), ST(0)
+-        fmulp   ST(1), ST(0)
+-        fistp   DWORD PTR [esp]
+-        fistp   DWORD PTR [esp+4]
+-        fistp   DWORD PTR [esp+8]
+-        fistp   DWORD PTR [esp+12]
+-        mov     ecx, DWORD PTR [esp]
+-        mov     eax, DWORD PTR [esp+4]
+-        mov     edx, DWORD PTR [esp+8]
+-        mov     ebx, DWORD PTR [esp+12]
+-        shl     ecx, 24                             ; 00000018H
+-        shl     ebx, 16                             ; 00000010H
+-        shl     edx, 8
++        mov     eax, DWORD PTR _color$[ebp]
++        movss   xmm0, DWORD PTR [eax]
++        mulss   xmm0, DWORD PTR __real@437f0000
++        cvtss2sd xmm0, xmm0
++        sub     esp, 8
++        movsd   QWORD PTR [esp], xmm0
++        call    _floor
++        add     esp, 8
++        call    __ftol2
++        mov     DWORD PTR _r$[ebp], eax
++        mov     ecx, DWORD PTR _color$[ebp]
++        movss   xmm0, DWORD PTR [ecx+4]
++        mulss   xmm0, DWORD PTR __real@437f0000
++        cvtss2sd xmm0, xmm0
++        sub     esp, 8
++        movsd   QWORD PTR [esp], xmm0
++        call    _floor
++        add     esp, 8
++        call    __ftol2
++        mov     DWORD PTR _g$[ebp], eax
++        mov     edx, DWORD PTR _color$[ebp]
++        movss   xmm0, DWORD PTR [edx+8]
++        mulss   xmm0, DWORD PTR __real@437f0000
++        cvtss2sd xmm0, xmm0
++        sub     esp, 8
++        movsd   QWORD PTR [esp], xmm0
++        call    _floor
++        add     esp, 8
++        call    __ftol2
++        mov     DWORD PTR _b$[ebp], eax
++        movss   xmm0, DWORD PTR _alpha$[ebp]
++        mulss   xmm0, DWORD PTR __real@437f0000
++        cvtss2sd xmm0, xmm0
++        sub     esp, 8
++        movsd   QWORD PTR [esp], xmm0
++        call    _floor
++        add     esp, 8
++        call    __ftol2
++        mov     DWORD PTR _a$[ebp], eax
++        mov     eax, DWORD PTR _a$[ebp]
++        shl     eax, 24                             ; 00000018H
++        mov     ecx, DWORD PTR _r$[ebp]
++        shl     ecx, 16                             ; 00000010H
+         or      eax, ecx
+-        or      eax, ebx
++        mov     edx, DWORD PTR _g$[ebp]
++        shl     edx, 8
+         or      eax, edx
+-        fstp    ST(0)
+-        cmp     edi, 0
+-        je      SHORT $not_changed$4
+-        fwait
+-        fldcw   TBYTE PTR [esp+16]
+-$not_changed$4:
+-        add     esp, 20                             ; 00000014H
+-        mov     DWORD PTR _col$[ebp], eax
+-        mov     eax, DWORD PTR _col$[ebp]
+-        pop     edi
+-        pop     esi
+-        pop     ebx
++        or      eax, DWORD PTR _b$[ebp]
+         mov     esp, ebp
+         pop     ebp
+         ret     8
+```
+
+</details>
+
+<details>
+<summary>DX8Wrapper::Clamp_Color</summary>
+
+```c++
+WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
+{
+	if (!CPUDetectClass::Has_CMOV_Instruction()) {
+		for (int i=0;i<4;++i) {
+			float f=(color[i]<0.0f) ? 0.0f : color[i];
+			color[i]=(f>1.0f) ? 1.0f : f;
+		}
+		return;
+	}
+
+	__asm
+	{
+		mov	esi,dword ptr color
+
+		mov edx,0x3f800000
+
+		mov edi,dword ptr[esi]
+		mov ebx,edi
+		sar edi,31
+		not edi			// mask is now zero if negative value
+		and edi,ebx
+		cmp edi,edx		// if no less than 1.0 set to 1.0
+		cmovnb edi,edx
+		mov dword ptr[esi],edi
+
+		mov edi,dword ptr[esi+4]
+		mov ebx,edi
+		sar edi,31
+		not edi			// mask is now zero if negative value
+		and edi,ebx
+		cmp edi,edx		// if no less than 1.0 set to 1.0
+		cmovnb edi,edx
+		mov dword ptr[esi+4],edi
+
+		mov edi,dword ptr[esi+8]
+		mov ebx,edi
+		sar edi,31
+		not edi			// mask is now zero if negative value
+		and edi,ebx
+		cmp edi,edx		// if no less than 1.0 set to 1.0
+		cmovnb edi,edx
+		mov dword ptr[esi+8],edi
+
+		mov edi,dword ptr[esi+12]
+		mov ebx,edi
+		sar edi,31
+		not edi			// mask is now zero if negative value
+		and edi,ebx
+		cmp edi,edx		// if no less than 1.0 set to 1.0
+		cmovnb edi,edx
+		mov dword ptr[esi+12],edi
+	}
+}
+```
+
+This block of assembly is used to clamp the colors between 0F and 1F, as long as the CMOV instruction is available.
+Modern C++ compilers should call this instruction automatically if it is available, which makes the code simpler.
+
+My goto equivalent is:
+
+```c++
+WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
+{
+    for (int i=0;i<4;++i) {
+        float f=(color[i]<0.0f) ? 0.0f : color[i];
+        color[i]=(f>1.0f) ? 1.0f : f;
+    }
+}
+```
+
+<table>
+<tr>
+<th>With Inline Assembly</th>
+<th>Without Inline Assembly</th>
+</tr>
+<td>
+
+```asm
+__real@3f800000 DD 03f800000r             ; 1
+
+_this$ = -4                                   ; size = 4
+_i$ = 8                                       ; size = 4
+float & Vector4::operator[](int) PROC                          ; Vector4::operator[], COMDAT
+        push    ebp
+        mov     ebp, esp
+        push    ecx
+        mov     DWORD PTR _this$[ebp], ecx
+        mov     eax, DWORD PTR _i$[ebp]
+        mov     ecx, DWORD PTR _this$[ebp]
+        lea     eax, DWORD PTR [ecx+eax*4]
+        mov     esp, ebp
+        pop     ebp
+        ret     4
+float & Vector4::operator[](int) ENDP                          ; Vector4::operator[]
+
+_this$ = -20                                            ; size = 4
+tv81 = -16                                          ; size = 4
+_f$1 = -12                                          ; size = 4
+tv76 = -8                                         ; size = 4
+_i$2 = -4                                         ; size = 4
+_color$ = 8                                   ; size = 4
+void DX8Wrapper::Clamp_Color(Vector4 &) PROC        ; DX8Wrapper::Clamp_Color
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 20                             ; 00000014H
+        push    ebx
+        push    esi
+        push    edi
+        mov     DWORD PTR _this$[ebp], ecx
+        call    static bool CPUDetectClass::Has_CMOV_Instruction(void) ; CPUDetectClass::Has_CMOV_Instruction
+        movzx   eax, al
+        test    eax, eax
+        jne     $LN5@Clamp_Colo
+        mov     DWORD PTR _i$2[ebp], 0
+        jmp     SHORT $LN4@Clamp_Colo
+$LN2@Clamp_Colo:
+        mov     ecx, DWORD PTR _i$2[ebp]
+        add     ecx, 1
+        mov     DWORD PTR _i$2[ebp], ecx
+$LN4@Clamp_Colo:
+        cmp     DWORD PTR _i$2[ebp], 4
+        jge     SHORT $LN3@Clamp_Colo
+        mov     edx, DWORD PTR _i$2[ebp]
+        push    edx
+        mov     ecx, DWORD PTR _color$[ebp]
+        call    float & Vector4::operator[](int)             ; Vector4::operator[]
+        xorps   xmm0, xmm0
+        comiss  xmm0, DWORD PTR [eax]
+        jbe     SHORT $LN7@Clamp_Colo
+        xorps   xmm0, xmm0
+        movss   DWORD PTR tv76[ebp], xmm0
+        jmp     SHORT $LN8@Clamp_Colo
+$LN7@Clamp_Colo:
+        mov     eax, DWORD PTR _i$2[ebp]
+        push    eax
+        mov     ecx, DWORD PTR _color$[ebp]
+        call    float & Vector4::operator[](int)             ; Vector4::operator[]
+        movss   xmm0, DWORD PTR [eax]
+        movss   DWORD PTR tv76[ebp], xmm0
+$LN8@Clamp_Colo:
+        movss   xmm0, DWORD PTR tv76[ebp]
+        movss   DWORD PTR _f$1[ebp], xmm0
+        movss   xmm0, DWORD PTR _f$1[ebp]
+        comiss  xmm0, DWORD PTR __real@3f800000
+        jbe     SHORT $LN9@Clamp_Colo
+        movss   xmm0, DWORD PTR __real@3f800000
+        movss   DWORD PTR tv81[ebp], xmm0
+        jmp     SHORT $LN10@Clamp_Colo
+$LN9@Clamp_Colo:
+        movss   xmm0, DWORD PTR _f$1[ebp]
+        movss   DWORD PTR tv81[ebp], xmm0
+$LN10@Clamp_Colo:
+        mov     ecx, DWORD PTR _i$2[ebp]
+        push    ecx
+        mov     ecx, DWORD PTR _color$[ebp]
+        call    float & Vector4::operator[](int)             ; Vector4::operator[]
+        movss   xmm0, DWORD PTR tv81[ebp]
+        movss   DWORD PTR [eax], xmm0
+        jmp     $LN2@Clamp_Colo
+$LN3@Clamp_Colo:
+        jmp     SHORT $LN1@Clamp_Colo
+$LN5@Clamp_Colo:
+        mov     esi, DWORD PTR _color$[ebp]
+        mov     edx, 1065353216                     ; 3f800000H
+        mov     edi, DWORD PTR [esi]
+        mov     ebx, edi
+        sar     edi, 31                             ; 0000001fH
+        not     edi
+        and     edi, ebx
+        cmp     edi, edx
+        cmovae  edi, edx
+        mov     DWORD PTR [esi], edi
+        mov     edi, DWORD PTR [esi+4]
+        mov     ebx, edi
+        sar     edi, 31                             ; 0000001fH
+        not     edi
+        and     edi, ebx
+        cmp     edi, edx
+        cmovae  edi, edx
+        mov     DWORD PTR [esi+4], edi
+        mov     edi, DWORD PTR [esi+8]
+        mov     ebx, edi
+        sar     edi, 31                             ; 0000001fH
+        not     edi
+        and     edi, ebx
+        cmp     edi, edx
+        cmovae  edi, edx
+        mov     DWORD PTR [esi+8], edi
+        mov     edi, DWORD PTR [esi+12]
+        mov     ebx, edi
+        sar     edi, 31                             ; 0000001fH
+        not     edi
+        and     edi, ebx
+        cmp     edi, edx
+        cmovae  edi, edx
+        mov     DWORD PTR [esi+12], edi
+$LN1@Clamp_Colo:
+        pop     edi
+        pop     esi
+        pop     ebx
+        mov     esp, ebp
+        pop     ebp
+        ret     4
+void DX8Wrapper::Clamp_Color(Vector4 &) ENDP        ; DX8Wrapper::Clamp_Color
+```
+
+</td>
+<td>
+
+```asm
+__real@3f800000 DD 03f800000r             ; 1
+
+_this$ = -4                                   ; size = 4
+_i$ = 8                                       ; size = 4
+float & Vector4::operator[](int) PROC                          ; Vector4::operator[], COMDAT
+        push    ebp
+        mov     ebp, esp
+        push    ecx
+        mov     DWORD PTR _this$[ebp], ecx
+        mov     eax, DWORD PTR _i$[ebp]
+        mov     ecx, DWORD PTR _this$[ebp]
+        lea     eax, DWORD PTR [ecx+eax*4]
+        mov     esp, ebp
+        pop     ebp
+        ret     4
+float & Vector4::operator[](int) ENDP                          ; Vector4::operator[]
+
+_this$ = -20                                            ; size = 4
+tv78 = -16                                          ; size = 4
+_f$1 = -12                                          ; size = 4
+tv73 = -8                                         ; size = 4
+_i$2 = -4                                         ; size = 4
+_color$ = 8                                   ; size = 4
+void DX8Wrapper::Clamp_Color(Vector4 &) PROC        ; DX8Wrapper::Clamp_Color
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 20                             ; 00000014H
+        mov     DWORD PTR _this$[ebp], ecx
+        mov     DWORD PTR _i$2[ebp], 0
+        jmp     SHORT $LN4@Clamp_Colo
+$LN2@Clamp_Colo:
+        mov     eax, DWORD PTR _i$2[ebp]
+        add     eax, 1
+        mov     DWORD PTR _i$2[ebp], eax
+$LN4@Clamp_Colo:
+        cmp     DWORD PTR _i$2[ebp], 4
+        jge     SHORT $LN3@Clamp_Colo
+        mov     ecx, DWORD PTR _i$2[ebp]
+        push    ecx
+        mov     ecx, DWORD PTR _color$[ebp]
+        call    float & Vector4::operator[](int)             ; Vector4::operator[]
+        xorps   xmm0, xmm0
+        comiss  xmm0, DWORD PTR [eax]
+        jbe     SHORT $LN6@Clamp_Colo
+        xorps   xmm0, xmm0
+        movss   DWORD PTR tv73[ebp], xmm0
+        jmp     SHORT $LN7@Clamp_Colo
+$LN6@Clamp_Colo:
+        mov     edx, DWORD PTR _i$2[ebp]
+        push    edx
+        mov     ecx, DWORD PTR _color$[ebp]
+        call    float & Vector4::operator[](int)             ; Vector4::operator[]
+        movss   xmm0, DWORD PTR [eax]
+        movss   DWORD PTR tv73[ebp], xmm0
+$LN7@Clamp_Colo:
+        movss   xmm0, DWORD PTR tv73[ebp]
+        movss   DWORD PTR _f$1[ebp], xmm0
+        movss   xmm0, DWORD PTR _f$1[ebp]
+        comiss  xmm0, DWORD PTR __real@3f800000
+        jbe     SHORT $LN8@Clamp_Colo
+        movss   xmm0, DWORD PTR __real@3f800000
+        movss   DWORD PTR tv78[ebp], xmm0
+        jmp     SHORT $LN9@Clamp_Colo
+$LN8@Clamp_Colo:
+        movss   xmm0, DWORD PTR _f$1[ebp]
+        movss   DWORD PTR tv78[ebp], xmm0
+$LN9@Clamp_Colo:
+        mov     eax, DWORD PTR _i$2[ebp]
+        push    eax
+        mov     ecx, DWORD PTR _color$[ebp]
+        call    float & Vector4::operator[](int)             ; Vector4::operator[]
+        movss   xmm0, DWORD PTR tv78[ebp]
+        movss   DWORD PTR [eax], xmm0
+        jmp     $LN2@Clamp_Colo
+$LN3@Clamp_Colo:
+        mov     esp, ebp
+        pop     ebp
+        ret     4
+void DX8Wrapper::Clamp_Color(Vector4 &) ENDP        ; DX8Wrapper::Clamp_Color
+```
+
+</td>
+</table>
+
+While the assemblies are different and the C++ solution doesn't use the `CMOV` instruction, both reach the same result.
+Either use inline assembly like in the original for the `CMOV` or use optimizations in a modern compiler, which will
+further help with more than just `CMOV`.
+
+Even then, the modern compiler has generated a smaller assembly output than the original, and with `/O2` it should be
+just as, if not more, performant.
+
+```diff
+@@ -16,110 +16,63 @@ float & Vector4::operator[](int) PROC                          ; Vector4::operat
+ float & Vector4::operator[](int) ENDP                          ; Vector4::operator[]
+ 
+ _this$ = -20                                            ; size = 4
+-tv81 = -16                                          ; size = 4
++tv78 = -16                                          ; size = 4
+ _f$1 = -12                                          ; size = 4
+-tv76 = -8                                         ; size = 4
++tv73 = -8                                         ; size = 4
+ _i$2 = -4                                         ; size = 4
+ _color$ = 8                                   ; size = 4
+ void DX8Wrapper::Clamp_Color(Vector4 &) PROC        ; DX8Wrapper::Clamp_Color
+         push    ebp
+         mov     ebp, esp
+         sub     esp, 20                             ; 00000014H
+-        push    ebx
+-        push    esi
+-        push    edi
+         mov     DWORD PTR _this$[ebp], ecx
+-        call    static bool CPUDetectClass::Has_CMOV_Instruction(void) ; CPUDetectClass::Has_CMOV_Instruction
+-        movzx   eax, al
+-        test    eax, eax
+-        jne     $LN5@Clamp_Colo
+         mov     DWORD PTR _i$2[ebp], 0
+         jmp     SHORT $LN4@Clamp_Colo
+ $LN2@Clamp_Colo:
+-        mov     ecx, DWORD PTR _i$2[ebp]
+-        add     ecx, 1
+-        mov     DWORD PTR _i$2[ebp], ecx
++        mov     eax, DWORD PTR _i$2[ebp]
++        add     eax, 1
++        mov     DWORD PTR _i$2[ebp], eax
+ $LN4@Clamp_Colo:
+         cmp     DWORD PTR _i$2[ebp], 4
+         jge     SHORT $LN3@Clamp_Colo
+-        mov     edx, DWORD PTR _i$2[ebp]
+-        push    edx
++        mov     ecx, DWORD PTR _i$2[ebp]
++        push    ecx
+         mov     ecx, DWORD PTR _color$[ebp]
+         call    float & Vector4::operator[](int)             ; Vector4::operator[]
+         xorps   xmm0, xmm0
+         comiss  xmm0, DWORD PTR [eax]
+-        jbe     SHORT $LN7@Clamp_Colo
++        jbe     SHORT $LN6@Clamp_Colo
+         xorps   xmm0, xmm0
+-        movss   DWORD PTR tv76[ebp], xmm0
+-        jmp     SHORT $LN8@Clamp_Colo
+-$LN7@Clamp_Colo:
+-        mov     eax, DWORD PTR _i$2[ebp]
+-        push    eax
++        movss   DWORD PTR tv73[ebp], xmm0
++        jmp     SHORT $LN7@Clamp_Colo
++$LN6@Clamp_Colo:
++        mov     edx, DWORD PTR _i$2[ebp]
++        push    edx
+         mov     ecx, DWORD PTR _color$[ebp]
+         call    float & Vector4::operator[](int)             ; Vector4::operator[]
+         movss   xmm0, DWORD PTR [eax]
+-        movss   DWORD PTR tv76[ebp], xmm0
+-$LN8@Clamp_Colo:
+-        movss   xmm0, DWORD PTR tv76[ebp]
++        movss   DWORD PTR tv73[ebp], xmm0
++$LN7@Clamp_Colo:
++        movss   xmm0, DWORD PTR tv73[ebp]
+         movss   DWORD PTR _f$1[ebp], xmm0
+         movss   xmm0, DWORD PTR _f$1[ebp]
+         comiss  xmm0, DWORD PTR __real@3f800000
+-        jbe     SHORT $LN9@Clamp_Colo
++        jbe     SHORT $LN8@Clamp_Colo
+         movss   xmm0, DWORD PTR __real@3f800000
+-        movss   DWORD PTR tv81[ebp], xmm0
+-        jmp     SHORT $LN10@Clamp_Colo
+-$LN9@Clamp_Colo:
++        movss   DWORD PTR tv78[ebp], xmm0
++        jmp     SHORT $LN9@Clamp_Colo
++$LN8@Clamp_Colo:
+         movss   xmm0, DWORD PTR _f$1[ebp]
+-        movss   DWORD PTR tv81[ebp], xmm0
+-$LN10@Clamp_Colo:
+-        mov     ecx, DWORD PTR _i$2[ebp]
+-        push    ecx
++        movss   DWORD PTR tv78[ebp], xmm0
++$LN9@Clamp_Colo:
++        mov     eax, DWORD PTR _i$2[ebp]
++        push    eax
+         mov     ecx, DWORD PTR _color$[ebp]
+         call    float & Vector4::operator[](int)             ; Vector4::operator[]
+-        movss   xmm0, DWORD PTR tv81[ebp]
++        movss   xmm0, DWORD PTR tv78[ebp]
+         movss   DWORD PTR [eax], xmm0
+         jmp     $LN2@Clamp_Colo
+ $LN3@Clamp_Colo:
+-        jmp     SHORT $LN1@Clamp_Colo
+-$LN5@Clamp_Colo:
+-        mov     esi, DWORD PTR _color$[ebp]
+-        mov     edx, 1065353216                     ; 3f800000H
+-        mov     edi, DWORD PTR [esi]
+-        mov     ebx, edi
+-        sar     edi, 31                             ; 0000001fH
+-        not     edi
+-        and     edi, ebx
+-        cmp     edi, edx
+-        cmovae  edi, edx
+-        mov     DWORD PTR [esi], edi
+-        mov     edi, DWORD PTR [esi+4]
+-        mov     ebx, edi
+-        sar     edi, 31                             ; 0000001fH
+-        not     edi
+-        and     edi, ebx
+-        cmp     edi, edx
+-        cmovae  edi, edx
+-        mov     DWORD PTR [esi+4], edi
+-        mov     edi, DWORD PTR [esi+8]
+-        mov     ebx, edi
+-        sar     edi, 31                             ; 0000001fH
+-        not     edi
+-        and     edi, ebx
+-        cmp     edi, edx
+-        cmovae  edi, edx
+-        mov     DWORD PTR [esi+8], edi
+-        mov     edi, DWORD PTR [esi+12]
+-        mov     ebx, edi
+-        sar     edi, 31                             ; 0000001fH
+-        not     edi
+-        and     edi, ebx
+-        cmp     edi, edx
+-        cmovae  edi, edx
+-        mov     DWORD PTR [esi+12], edi
+-$LN1@Clamp_Colo:
+-        pop     edi
+-        pop     esi
+-        pop     ebx
+         mov     esp, ebp
+         pop     ebp
+         ret     4
 ```
 
 </details>
