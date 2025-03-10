@@ -1186,7 +1186,8 @@ __forceinline void GetPrecisionTimer(Int64* t)
 }
 ```
 
-This is using the [RDTSC](https://www.aldeid.com/wiki/X86-assembly/Instructions/rdtsc) instruction to get a precision timer.
+This is using the [RDTSC](https://www.aldeid.com/wiki/X86-assembly/Instructions/rdtsc) instruction to get a precision
+timer.
 
 My goto equivalent is:
 
@@ -1272,8 +1273,8 @@ __forceinline void ProfileGetTime(__int64 &t)
 }
 ```
 
-This is using the assembly block to retrieve the value of [RDTSC](https://www.aldeid.com/wiki/X86-assembly/Instructions/rdtsc)
-and move it to `t`.
+This is using the assembly block to retrieve the value
+of [RDTSC](https://www.aldeid.com/wiki/X86-assembly/Instructions/rdtsc) and move it to `t`.
 
 My goto equivalent is:
 
@@ -2334,6 +2335,81 @@ These are **not** different.
 ---
 
 <details>
+<summary>Generals/Code/Libraries/Source/WWVegas/WWDebug/wwdebug.h</summary>
+
+This header defines the following with assembly:
+
+```c++
+#ifdef WWDEBUG
+#define WWDEBUG_BREAK							_asm int 0x03
+#else
+#define WWDEBUG_BREAK							_asm int 0x03
+#endif
+```
+
+This is redundant as it is, but `_asm int 0x03` is equivalent to `__debugbreak();` on Win32:
+
+```c++
+#include <intrin.h>
+
+#define WWDEBUG_BREAK __debugbreak();
+```
+
+> **NOTE**: Observe that for this program:
+>
+> ```c++
+> #include <intrin.h>
+> 
+> #define WWDEBUG_BREAK							_asm int 0x03
+> 
+> void first() {
+>     WWDEBUG_BREAK;
+> }
+> 
+> void second() {
+>     __debugbreak();
+> }
+> ```
+>
+> The resulting assembly is:
+>
+> ```asm
+> void first(void) PROC                                  ; first
+>         push    ebp
+>         mov     ebp, esp
+>         int     3
+>         pop     ebp
+>         ret     0
+> void first(void) ENDP                                  ; first
+> 
+> void second(void) PROC                           ; second
+>         push    ebp
+>         mov     ebp, esp
+>         int     3
+>         pop     ebp
+>         ret     0
+> void second(void) ENDP                           ; second
+> ```
+>
+> These `#ifdef` blocks will be useful for cross-platform compatibility:
+>
+> ```c++
+> #ifdef _WIN32
+> #include <intrin.h>
+> 
+> #define WWDEBUG_BREAK __debugbreak();
+> #else
+> #include <signal.h>
+> 
+> #define WWDEBUG_BREAK raise(SIGTRAP);
+> #endif
+> ```
+
+</details>
+
+---
+
+<details>
 <summary>GeneralsMD/Code/Libraries/Source/WWVegas/WWDebug/wwdebug.cpp</summary>
 
 This file includes the following assembly block:
@@ -2678,7 +2754,8 @@ inline void WWProfile_Get_Ticks(_int64 * ticks)
 }
 ```
 
-This assembly block is trying to get the current ticks using the [RDTSC](https://www.aldeid.com/wiki/X86-assembly/Instructions/rdtsc)
+This assembly block is trying to get the current ticks using
+the [RDTSC](https://www.aldeid.com/wiki/X86-assembly/Instructions/rdtsc)
 instruction.
 
 My goto equivalent is:
