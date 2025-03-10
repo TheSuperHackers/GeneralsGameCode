@@ -126,7 +126,7 @@ The assemblies are different in structure but equal in result. The intrinsic ver
 ---
 
 <details>
-<summary>Generals/Code/GameEngine/Source/Common/System/StackDump.cpp</summary>
+<summary>Generals(MD)/Code/GameEngine/Source/Common/System/StackDump.cpp</summary>
 
 This file includes the following assembly blocks:
 
