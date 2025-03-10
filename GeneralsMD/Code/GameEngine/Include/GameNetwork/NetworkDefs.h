@@ -79,6 +79,10 @@ struct TransportMessageHeader
 {
 	UnsignedInt crc;											///< packet-level CRC (must be first in packet)
 	UnsignedShort magic;									///< Magic number identifying Generals packets
+#if ENABLE_FAKE_IP
+	// In Fake IP mode, we send the involved ips directly with the network packets
+	UnsignedInt from, to;
+#endif
 //	Int id;
 //	NetMessageFlags flags;
 };
@@ -175,7 +179,12 @@ enum PlayerLeaveCode {
 };
 
 // Magic number for identifying a Generals packet.
+#if ENABLE_FAKE_IP
+// If fake ips are enabled, the message format changes. Change magic to avoid conflicts
+static const UnsignedShort GENERALS_MAGIC_NUMBER = 0xF00D+1;
+#else
 static const UnsignedShort GENERALS_MAGIC_NUMBER = 0xF00D;
+#endif
 
 // The number of fps history entries.
 //static const Int NETWORK_FPS_HISTORY_LENGTH = 30;

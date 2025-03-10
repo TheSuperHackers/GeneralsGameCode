@@ -1562,7 +1562,14 @@ AsciiString RecorderClass::getLastReplayFileName()
 		}
 	}
 #endif
-	return AsciiString(lastReplayFileName);
+	AsciiString filename = lastReplayFileName;
+#if ENABLE_FAKE_IP
+	// Adjust replay name when multiple instances run on the same machine
+	// so there are no conflicts
+	if (getFakeIPNo())
+		filename.format("%s_%d", lastReplayFileName, getFakeIPNo());
+#endif
+	return filename;
 }
 
 /**

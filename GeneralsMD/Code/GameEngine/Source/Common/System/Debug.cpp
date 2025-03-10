@@ -105,6 +105,7 @@ static FILE *theLogFile = NULL;
 static char theBuffer[ LARGE_BUFFER ];	// make it big to avoid weird overflow bugs in debug mode
 static int theDebugFlags = 0;
 static DWORD theMainThreadID = 0;
+static int theFakeIPNo = -1;
 // ----------------------------------------------------------------------------
 // PUBLIC DATA 
 // ----------------------------------------------------------------------------
@@ -311,9 +312,41 @@ static void whackFunnyCharacters(char *buf)
 	}
 }
 
+#if ENABLE_FAKE_IP
+static int getFakeIPNoFromCommandline()
+{
+    LPWSTR cmdLine = GetCommandLineW();
+    int fakeIPNo = 0;
+
+    wchar_t *token = wcstok(cmdLine, L" ");
+    while (token != NULL)
+	{
+        if (wcscmp(token, L"-fakeip") == 0)
+		{
+            token = wcstok(NULL, L" ");
+            if (token != NULL)
+			{
+                fakeIPNo = _wtoi(token);
+                break;
+            }
+        }
+        token = wcstok(NULL, L" ");
+    }
+	return fakeIPNo;
+}
+#endif
+
 // ----------------------------------------------------------------------------
 // PUBLIC FUNCTIONS 
 // ----------------------------------------------------------------------------
+#if ENABLE_FAKE_IP
+int getFakeIPNo()
+{
+	if (theFakeIPNo == -1)
+		theFakeIPNo = getFakeIPNoFromCommandline();
+	return theFakeIPNo;
+}
+#endif
 
 // ----------------------------------------------------------------------------
 // DebugInit 
@@ -357,9 +390,18 @@ void DebugInit(int flags)
 		strcpy(prevbuf, dirbuf);
 		strcat(prevbuf, gAppPrefix);
 		strcat(prevbuf, DEBUG_FILE_NAME_PREV);
+#if ENABLE_FAKE_IP
+		if (getFakeIPNo())
+			sprintf(prevbuf+strlen(prevbuf)-4, "_%d.txt", getFakeIPNo());
+#endif
+
 		strcpy(curbuf, dirbuf);
 		strcat(curbuf, gAppPrefix);
 		strcat(curbuf, DEBUG_FILE_NAME);
+#if ENABLE_FAKE_IP
+		if (getFakeIPNo())
+			sprintf(curbuf+strlen(curbuf)-4, "_%d.txt", getFakeIPNo());
+#endif
 
  		remove(prevbuf);
 		rename(curbuf, prevbuf);

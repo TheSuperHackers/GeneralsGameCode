@@ -84,6 +84,15 @@ LANPreferences::~LANPreferences()
 UnicodeString LANPreferences::getUserName(void)
 {
 	UnicodeString ret;
+#if ENABLE_FAKE_IP
+	if (getFakeIPNo())
+	{
+		// Set user to fake ip number as a convenience
+		ret.format(L"fake_ip_%d", getFakeIPNo());
+		return ret;
+	}
+#endif
+
 	LANPreferences::const_iterator it = find("UserName");
 	if (it == end())
 	{

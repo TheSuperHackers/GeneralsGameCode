@@ -152,6 +152,9 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 	m_lastSecond = timeGetTime();
 
 	m_port = port;
+#if ENABLE_FAKE_IP
+	m_localIP = ip;
+#endif
 
 #if defined(_DEBUG) || defined(_INTERNAL)
 	if (TheGlobalData->m_latencyAverage > 0 || TheGlobalData->m_latencyNoise)
@@ -323,6 +326,14 @@ Bool Transport::doRecv()
 			m_unknownBytes[m_statisticsSlot] += len;
 			continue;
 		}
+#if ENABLE_FAKE_IP
+		if (incomingMessage.header.to != m_localIP && incomingMessage.header.to != -1)
+		{
+			DEBUG_LOG(("Transport::doRecv got message for %d.%d.%d.%d, I'm %d.%d.%d.%d. Ignoring!\n",
+				PRINT_IP_HELPER(incomingMessage.header.to), PRINT_IP_HELPER(m_localIP)));
+			continue;
+		}
+#endif
 
 		// Something there; stick it somewhere
 //		DEBUG_LOG(("Saw %d bytes from %d:%d\n", len, ntohl(from.sin_addr.S_un.S_addr), ntohs(from.sin_port)));
@@ -357,6 +368,9 @@ Bool Transport::doRecv()
 					// Empty slot; use it
 					m_inBuffer[i].length = incomingMessage.length;
 					m_inBuffer[i].addr = ntohl(from.sin_addr.S_un.S_addr);
+#if ENABLE_FAKE_IP
+					m_inBuffer[i].addr = incomingMessage.header.from;
+#endif
 					m_inBuffer[i].port = ntohs(from.sin_port);
 					memcpy(&m_inBuffer[i], buf, len);
 					break;
@@ -399,6 +413,11 @@ Bool Transport::queueSend(UnsignedInt addr, UnsignedShort port, const UnsignedBy
 //			m_outBuffer[i].header.flags = flags;
 //			m_outBuffer[i].header.id = id;
 			m_outBuffer[i].header.magic = GENERALS_MAGIC_NUMBER;
+#if ENABLE_FAKE_IP
+			m_outBuffer[i].addr = -1; // broadcast it instead of sending to the fake ip
+			m_outBuffer[i].header.from = m_localIP;
+			m_outBuffer[i].header.to = addr;
+#endif
 
 			CRC crc;
 			crc.computeCRC( (unsigned char *)(&(m_outBuffer[i].header.magic)), m_outBuffer[i].length + sizeof(TransportMessageHeader) - sizeof(UnsignedInt) );
