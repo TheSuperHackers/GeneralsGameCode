@@ -10,7 +10,303 @@ not including `blitblit`, `rlerle`, `lcw` or `mpu`.
 
 The `crc` assembly block is already extensively documented in source.
 
+> **NOTE**: For methods with `__forceinline`, this is removed in godbolt to allow the compiler to only emit the function
+> assembly and not other, unrelated assembly to keep the function from being removed.
+
 ## List of Documented Inline ASM
+
+---
+
+<details>
+<summary>GeneralsMD/Code/Libraries/Include/Lib/BaseType.h</summary>
+
+This file includes the following assembly blocks:
+
+<details>
+<summary>fast_float2long_round</summary>
+
+```c++
+__forceinline long fast_float2long_round(float f)
+{
+	long i;
+
+	__asm {
+		fld [f]
+		fistp [i]
+	}
+
+	return i;
+}
+```
+
+This is using assembly to do a fast round and conversion from `float` to `long`.
+
+My goto equivalent is:
+
+```c++
+#include <math.h>
+
+__froceinline float fast_float_trunc(float f) {
+    return lround(f);
+}
+```
+
+The generated assemblies are:
+
+<table>
+<tr>
+<th>With Inline Assembly</th>
+<th>Without Inline Assembly</th>
+</tr>
+<td>
+
+```asm
+_i$ = -4                                                ; size = 4
+_f$ = 8                                       ; size = 4
+long fast_float2long_round(float) PROC           ; fast_float2long_round
+        push    ebp
+        mov     ebp, esp
+        push    ecx
+        fld     DWORD PTR _f$[ebp]
+        fistp   DWORD PTR _i$[ebp]
+        mov     eax, DWORD PTR _i$[ebp]
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+long fast_float2long_round(float) ENDP           ; fast_float2long_round
+```
+
+</td>
+<td>
+
+```asm
+_f$ = 8                                       ; size = 4
+long fast_float2long_round(float) PROC           ; fast_float2long_round
+        push    ebp
+        mov     ebp, esp
+        cvtss2sd xmm0, DWORD PTR _f$[ebp]
+        sub     esp, 8
+        movsd   QWORD PTR [esp], xmm0
+        call    _lround
+        add     esp, 8
+        pop     ebp
+        ret     0
+long fast_float2long_round(float) ENDP           ; fast_float2long_round
+```
+
+</td>
+</table>
+
+While the assemblies are different, the `lround` method is very efficient as well. Refer to its implementation for more
+details.
+
+```diff
+@@ -1,13 +1,12 @@
+-_i$ = -4                                                ; size = 4
+ _f$ = 8                                       ; size = 4
+ long fast_float2long_round(float) PROC           ; fast_float2long_round
+         push    ebp
+         mov     ebp, esp
+-        push    ecx
+-        fld     DWORD PTR _f$[ebp]
+-        fistp   DWORD PTR _i$[ebp]
+-        mov     eax, DWORD PTR _i$[ebp]
+-        mov     esp, ebp
++        cvtss2sd xmm0, DWORD PTR _f$[ebp]
++        sub     esp, 8
++        movsd   QWORD PTR [esp], xmm0
++        call    _lround
++        add     esp, 8
+         pop     ebp
+         ret     0
+ long fast_float2long_round(float) ENDP           ; fast_float2long_round
+```
+
+</details>
+
+<details>
+<summary>fast_float_trunc</summary>
+
+```c++
+__forceinline float fast_float_trunc(float f)
+{
+  _asm
+  {
+    mov ecx,[f]
+    shr ecx,23
+    mov eax,0xff800000
+    xor ebx,ebx
+    sub cl,127
+    cmovc eax,ebx
+    sar eax,cl
+    and [f],eax
+  }
+  return f;
+}
+```
+
+This is using assembly to do a fast truncation of the given float number.
+
+My goto equivalent is:
+
+```c++
+__froceinline float fast_float_trunc(float f) {
+    // Constants
+    const int exponentBias = 127; // Bias for single precision float
+    const int exponentMask = 0x7F800000; // Mask for exponent bits
+    const int signMask = 0x80000000; // Mask for sign bit
+    const int signShift = 23; // Shift for extracting the exponent
+    // Extract exponent from the input float
+    int exponent = (*(int*)&f & exponentMask) >> signShift;
+    // Prepare the sign bit
+    int sign = -8388608; // 0xff800000
+    int temp = 0;
+    // Calculate the shift amount
+    exponent -= exponentBias; // Adjust exponent to find the actual exponent value
+    if (exponent < 0) {
+        temp = sign; // If the exponent is negative, set temp to sign
+    }
+    // Apply the sign if necessary
+    temp = (temp & (*(int*)&f)); // Mask the input float with temp
+    // Cast input to float and return
+    return *(float*)&temp; // Return the truncated float
+}
+```
+
+The generated assemblies are:
+
+<table>
+<tr>
+<th>With Inline Assembly</th>
+<th>Without Inline Assembly</th>
+</tr>
+<td>
+
+```asm
+_f$ = 8                                       ; size = 4
+float fast_float_trunc(float) PROC                      ; fast_float_trunc
+        push    ebp
+        mov     ebp, esp
+        push    ebx
+        mov     ecx, DWORD PTR _f$[ebp]
+        shr     ecx, 23                             ; 00000017H
+        mov     eax, -8388608                   ; ff800000H
+        xor     ebx, ebx
+        sub     cl, 127                             ; 0000007fH
+        cmovb   eax, ebx
+        sar     eax, cl
+        and     DWORD PTR _f$[ebp], eax
+        fld     DWORD PTR _f$[ebp]
+        pop     ebx
+        pop     ebp
+        ret     0
+float fast_float_trunc(float) ENDP                      ; fast_float_trunc
+```
+
+</td>
+<td>
+
+```asm
+_signShift$ = -28                                 ; size = 4
+_signMask$ = -24                                        ; size = 4
+_exponentMask$ = -20                                    ; size = 4
+_exponentBias$ = -16                                    ; size = 4
+_sign$ = -12                                            ; size = 4
+_exponent$ = -8                               ; size = 4
+_temp$ = -4                                   ; size = 4
+_f$ = 8                                       ; size = 4
+float fast_float_trunc(float) PROC                      ; fast_float_trunc
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 28                             ; 0000001cH
+        mov     DWORD PTR _exponentBias$[ebp], 127        ; 0000007fH
+        mov     DWORD PTR _exponentMask$[ebp], 2139095040 ; 7f800000H
+        mov     DWORD PTR _signMask$[ebp], -2147483648    ; 80000000H
+        mov     DWORD PTR _signShift$[ebp], 23            ; 00000017H
+        mov     eax, DWORD PTR _f$[ebp]
+        and     eax, 2139095040                     ; 7f800000H
+        sar     eax, 23                             ; 00000017H
+        mov     DWORD PTR _exponent$[ebp], eax
+        mov     DWORD PTR _sign$[ebp], -8388608         ; ff800000H
+        mov     DWORD PTR _temp$[ebp], 0
+        mov     ecx, DWORD PTR _exponent$[ebp]
+        sub     ecx, 127                      ; 0000007fH
+        mov     DWORD PTR _exponent$[ebp], ecx
+        jns     SHORT $LN2@fast_float
+        mov     edx, DWORD PTR _sign$[ebp]
+        mov     DWORD PTR _temp$[ebp], edx
+$LN2@fast_float:
+        mov     eax, DWORD PTR _temp$[ebp]
+        and     eax, DWORD PTR _f$[ebp]
+        mov     DWORD PTR _temp$[ebp], eax
+        fld     DWORD PTR _temp$[ebp]
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+float fast_float_trunc(float) ENDP                      ; fast_float_trunc
+```
+
+</td>
+</table>
+
+While both assemblies are very different, they both reach the same result. I cannot see a better or shorter C++
+implementation, suggestions are welcome if this method requires further investigation.
+
+```diff
+@@ -1,18 +1,37 @@
++_signShift$ = -28                                 ; size = 4
++_signMask$ = -24                                        ; size = 4
++_exponentMask$ = -20                                    ; size = 4
++_exponentBias$ = -16                                    ; size = 4
++_sign$ = -12                                            ; size = 4
++_exponent$ = -8                               ; size = 4
++_temp$ = -4                                   ; size = 4
+ _f$ = 8                                       ; size = 4
+ float fast_float_trunc(float) PROC                      ; fast_float_trunc
+         push    ebp
+         mov     ebp, esp
+-        push    ebx
+-        mov     ecx, DWORD PTR _f$[ebp]
+-        shr     ecx, 23                             ; 00000017H
+-        mov     eax, -8388608                   ; ff800000H
+-        xor     ebx, ebx
+-        sub     cl, 127                             ; 0000007fH
+-        cmovb   eax, ebx
+-        sar     eax, cl
+-        and     DWORD PTR _f$[ebp], eax
+-        fld     DWORD PTR _f$[ebp]
+-        pop     ebx
++        sub     esp, 28                             ; 0000001cH
++        mov     DWORD PTR _exponentBias$[ebp], 127        ; 0000007fH
++        mov     DWORD PTR _exponentMask$[ebp], 2139095040 ; 7f800000H
++        mov     DWORD PTR _signMask$[ebp], -2147483648    ; 80000000H
++        mov     DWORD PTR _signShift$[ebp], 23            ; 00000017H
++        mov     eax, DWORD PTR _f$[ebp]
++        and     eax, 2139095040                     ; 7f800000H
++        sar     eax, 23                             ; 00000017H
++        mov     DWORD PTR _exponent$[ebp], eax
++        mov     DWORD PTR _sign$[ebp], -8388608         ; ff800000H
++        mov     DWORD PTR _temp$[ebp], 0
++        mov     ecx, DWORD PTR _exponent$[ebp]
++        sub     ecx, 127                      ; 0000007fH
++        mov     DWORD PTR _exponent$[ebp], ecx
++        jns     SHORT $LN2@fast_float
++        mov     edx, DWORD PTR _sign$[ebp]
++        mov     DWORD PTR _temp$[ebp], edx
++$LN2@fast_float:
++        mov     eax, DWORD PTR _temp$[ebp]
++        and     eax, DWORD PTR _f$[ebp]
++        mov     DWORD PTR _temp$[ebp], eax
++        fld     DWORD PTR _temp$[ebp]
++        mov     esp, ebp
+         pop     ebp
+         ret     0
+ float fast_float_trunc(float) ENDP                      ; fast_float_trunc
+```
+
+</details>
+
+</details>
 
 ---
 
@@ -101,8 +397,6 @@ void ProfileGetTime(__int64 &) ENDP               ; ProfileGetTime
 The assemblies are different in structure but equal in result. The intrinsic version appears shorter.
 
 ```diff
---- a/a.asm
-+++ b/b.asm
 @@ -2,14 +2,10 @@ _t$ = 8                                       ; size = 4
  void ProfileGetTime(__int64 &) PROC               ; ProfileGetTime
          push    ebp
@@ -291,8 +585,6 @@ a lighter implementation than the C++ alternative since it doesn't use intrinsic
 directly.
 
 ```diff
---- a/a.asm
-+++ b/b.asm
 @@ -1,6 +1,7 @@
  _myeip$ = -12                                     ; size = 4
  _myesp$ = -8                                            ; size = 4
@@ -883,8 +1175,6 @@ a lighter implementation than the C++ alternative since it doesn't use intrinsic
 directly.
 
 ```diff
---- a/a.asm
-+++ b/b.asm
 @@ -3,19 +3,20 @@ voltbl  SEGMENT
  _volmd  DD  0ffffffffH
          DDSymXIndex:    FLAT:void FillStackAddresses(void * *,unsigned int,unsigned int)
