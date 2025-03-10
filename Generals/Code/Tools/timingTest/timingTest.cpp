@@ -33,13 +33,7 @@ char buffer[1024];
 //-------------------------------------------------------------------------------------------------
 void GetPrecisionTimer(INT64* t)
 {
-	// !! THIS COMMENT FROM EA BELOW: It is an obvious copy/paste of the code and comment from the file Generals/Code/GameEngine/Include/Common/PerfTimer.h
-	// !! The function GetPrecisionTimer(Int64*) contains the exact same code and the ASM instruction CPUID (__cpuid(int[4],int) in Win32 API) commented out
-	// !! It explains why it was commented out there
-	// |
-	// |
-	// v
-	// CPUID is needed to force serialization of any previous instructions. 
+	// CPUID is needed to force serialization of any previous instructions.
 	__asm 
 	{
 		RDTSC
@@ -47,17 +41,6 @@ void GetPrecisionTimer(INT64* t)
 		MOV [ECX], EAX
 		MOV [ECX+4], EDX
 	}
-	// Equivalent to:
-	// #ifdef _WIN32
-	// #include <intrin.h>
-	// #elif defined(__GNUC__)
-	// #include <x86intrin.h>
-	// #endif
-	//
-	// void GetPrevisionTimer(INT64* t)
-	// {
-	// 		t = __rdtsc();
-	// }
 }
 
 //-------------------------------------------------------------------------------------------------
