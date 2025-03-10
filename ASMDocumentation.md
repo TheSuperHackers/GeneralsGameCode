@@ -177,6 +177,40 @@ While these assemblies **are** different, the functionalities are **not** differ
 a lighter implementation than the C++ alternative since it doesn't use intrinsic functions, but accesses the registers
 directly.
 
+```diff
+--- a/a.asm
++++ b/b.asm
+@@ -1,6 +1,7 @@
+ _myeip$ = -12                                     ; size = 4
+ _myesp$ = -8                                            ; size = 4
+ _myebp$ = -4                                            ; size = 4
++__$ReturnAddr$ = 4                                  ; size = 4
+ _callback$ = 8                                      ; size = 4
+ void StackDump(void (__cdecl*)(char const *)) PROC               ; StackDump
+         push    ebp
+@@ -11,13 +12,14 @@ void StackDump(void (__cdecl*)(char const *)) PROC               ; StackDump
+         mov     DWORD PTR _callback$[ebp], OFFSET void StackDumpDefaultHandler(char const *) ; StackDumpDefaultHandler
+ $LN2@StackDump:
+         call    void InitSymbolInfo(void)              ; InitSymbolInfo
+-$MYEIP1$4:
+-        mov     eax, OFFSET $MYEIP1$4
++        mov     eax, DWORD PTR __$ReturnAddr$[ebp]
+         mov     DWORD PTR _myeip$[ebp], eax
+-        mov     eax, esp
+-        mov     DWORD PTR _myesp$[ebp], eax
+-        mov     eax, ebp
+-        mov     DWORD PTR _myebp$[ebp], eax
++        lea     ecx, DWORD PTR __$ReturnAddr$[ebp]
++        add     ecx, 4
++        mov     DWORD PTR _myesp$[ebp], ecx
++        lea     edx, DWORD PTR __$ReturnAddr$[ebp]
++        sub     edx, 4
++        mov     DWORD PTR _myebp$[ebp], edx
+         mov     eax, DWORD PTR _callback$[ebp]
+         push    eax
+         push    2
+```
+
 </details>
 
 <details>
@@ -735,6 +769,139 @@ While these assemblies **are** different, the functionalities are **not** differ
 a lighter implementation than the C++ alternative since it doesn't use intrinsic functions, but accesses the registers
 directly.
 
+```diff
+--- a/a.asm
++++ b/b.asm
+@@ -3,19 +3,20 @@ voltbl  SEGMENT
+ _volmd  DD  0ffffffffH
+         DDSymXIndex:    FLAT:void FillStackAddresses(void * *,unsigned int,unsigned int)
+         DD      010H
+-        DD      01fcH
++        DD      0200H
+ voltbl  ENDS
+ 
+ _myebp$ = -200                                      ; size = 4
+ _myesp$ = -196                                      ; size = 4
+ _myeip$ = -192                                      ; size = 4
+-tv132 = -188                                            ; size = 4
++tv137 = -188                                            ; size = 4
+ _process$ = -184                                        ; size = 4
+ _thread$ = -180                               ; size = 4
+-tv85 = -176                                   ; size = 4
++tv90 = -176                                   ; size = 4
+ _stillgoing$1 = -172                                    ; size = 4
+ _stack_frame$ = -168                                    ; size = 164
+ __$ArrayPad$ = -4                                 ; size = 4
++__$ReturnAddr$ = 4                                  ; size = 4
+ _addresses$ = 8                               ; size = 4
+ _count$ = 12                                            ; size = 4
+ _skip$ = 16                                   ; size = 4
+@@ -37,14 +38,14 @@ void FillStackAddresses(void * *,unsigned int,unsigned int) PROC              ;
+         call    _memset
+         add     esp, 12                             ; 0000000cH
+         mov     DWORD PTR _CONTEXT gsContext, 65543 ; 00010007H
+-$MYEIP2$14:
+-        mov     eax, OFFSET $MYEIP2$14
++        mov     eax, DWORD PTR __$ReturnAddr$[ebp]
+         mov     DWORD PTR _myeip$[ebp], eax
+-        mov     eax, esp
+-        mov     DWORD PTR _myesp$[ebp], eax
+-        mov     eax, ebp
+-        mov     DWORD PTR _myebp$[ebp], eax
+-        xor     eax, eax
++        lea     ecx, DWORD PTR __$ReturnAddr$[ebp]
++        add     ecx, 4
++        mov     DWORD PTR _myesp$[ebp], ecx
++        lea     edx, DWORD PTR __$ReturnAddr$[ebp]
++        sub     edx, 4
++        mov     DWORD PTR _myebp$[ebp], edx
+         push    164                           ; 000000a4H
+         push    0
+         lea     eax, DWORD PTR _stack_frame$[ebp]
+@@ -63,9 +64,9 @@ $MYEIP2$14:
+         mov     DWORD PTR _stillgoing$1[ebp], 1
+ $LN2@FillStackA:
+         cmp     DWORD PTR _stillgoing$1[ebp], 0
+-        je      SHORT $LN4@FillStackA
++        je      SHORT $LN3@FillStackA
+         cmp     DWORD PTR _skip$[ebp], 0
+-        je      SHORT $LN4@FillStackA
++        je      SHORT $LN3@FillStackA
+         push    0
+         mov     ecx, DWORD PTR __imp__SymGetModuleBase@8
+         push    ecx
+@@ -83,22 +84,22 @@ $LN2@FillStackA:
+         call    DWORD PTR __imp__StackWalk@36
+         test    eax, eax
+         je      SHORT $LN10@FillStackA
+-        mov     DWORD PTR tv85[ebp], 1
++        mov     DWORD PTR tv90[ebp], 1
+         jmp     SHORT $LN11@FillStackA
+ $LN10@FillStackA:
+-        mov     DWORD PTR tv85[ebp], 0
++        mov     DWORD PTR tv90[ebp], 0
+ $LN11@FillStackA:
+-        mov     eax, DWORD PTR tv85[ebp]
++        mov     eax, DWORD PTR tv90[ebp]
+         mov     DWORD PTR _stillgoing$1[ebp], eax
+         mov     ecx, DWORD PTR _skip$[ebp]
+         sub     ecx, 1
+         mov     DWORD PTR _skip$[ebp], ecx
+         jmp     SHORT $LN2@FillStackA
+-$LN4@FillStackA:
++$LN3@FillStackA:
+         cmp     DWORD PTR _stillgoing$1[ebp], 0
+-        je      $LN6@FillStackA
++        je      $LN5@FillStackA
+         cmp     DWORD PTR _count$[ebp], 0
+-        je      $LN6@FillStackA
++        je      $LN5@FillStackA
+         push    0
+         mov     edx, DWORD PTR __imp__SymGetModuleBase@8
+         push    edx
+@@ -116,12 +117,12 @@ $LN4@FillStackA:
+         call    DWORD PTR __imp__StackWalk@36
+         test    eax, eax
+         je      SHORT $LN12@FillStackA
+-        mov     DWORD PTR tv132[ebp], 1
++        mov     DWORD PTR tv137[ebp], 1
+         jmp     SHORT $LN13@FillStackA
+ $LN12@FillStackA:
+-        mov     DWORD PTR tv132[ebp], 0
++        mov     DWORD PTR tv137[ebp], 0
+ $LN13@FillStackA:
+-        mov     ecx, DWORD PTR tv132[ebp]
++        mov     ecx, DWORD PTR tv137[ebp]
+         mov     DWORD PTR _stillgoing$1[ebp], ecx
+         cmp     DWORD PTR _stillgoing$1[ebp], 0
+         je      SHORT $LN8@FillStackA
+@@ -135,10 +136,10 @@ $LN13@FillStackA:
+         sub     edx, 1
+         mov     DWORD PTR _count$[ebp], edx
+ $LN8@FillStackA:
+-        jmp     $LN4@FillStackA
+-$LN6@FillStackA:
++        jmp     $LN3@FillStackA
++$LN5@FillStackA:
+         cmp     DWORD PTR _count$[ebp], 0
+-        je      SHORT $LN1@FillStackA
++        je      SHORT $LN7@FillStackA
+         mov     eax, DWORD PTR _addresses$[ebp]
+         mov     DWORD PTR [eax], 0
+         mov     ecx, DWORD PTR _addresses$[ebp]
+@@ -147,8 +148,8 @@ $LN6@FillStackA:
+         mov     edx, DWORD PTR _count$[ebp]
+         sub     edx, 1
+         mov     DWORD PTR _count$[ebp], edx
+-        jmp     SHORT $LN6@FillStackA
+-$LN1@FillStackA:
++        jmp     SHORT $LN5@FillStackA
++$LN7@FillStackA:
+         mov     ecx, DWORD PTR __$ArrayPad$[ebp]
+         xor     ecx, ebp
+         call    @__security_check_cookie@4
+```
+
 </details>
 
 </details>
@@ -768,7 +935,7 @@ My goto equivalent is:
 ```c++
 #include <intrin.h>
 
-void GetPrevisionTimer(__int64* t)
+void GetPrecisionTimer(__int64* t)
 {
     *t = (__int64)__rdtsc();
 }
@@ -802,7 +969,7 @@ void GetPrecisionTimer(__int64 *) ENDP                  ; GetPrecisionTimer
 
 ```asm
 _t$ = 8                                       ; size = 4
-void GetPrevisionTimer(__int64 *) PROC                  ; GetPrevisionTimer
+void GetPrecisionTimer(__int64 *) PROC                  ; GetPrecisionTimer
         push    ebp
         mov     ebp, esp
         rdtsc
@@ -811,7 +978,7 @@ void GetPrevisionTimer(__int64 *) PROC                  ; GetPrevisionTimer
         mov     DWORD PTR [ecx+4], edx
         pop     ebp
         ret     0
-void GetPrevisionTimer(__int64 *) ENDP                  ; GetPrevisionTimer
+void GetPrecisionTimer(__int64 *) ENDP                  ; GetPrecisionTimer
 ```
 
 </td>
