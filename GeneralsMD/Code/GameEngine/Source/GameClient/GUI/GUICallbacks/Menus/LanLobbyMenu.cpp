@@ -334,7 +334,7 @@ static void playerTooltip(GameWindow *window,
 		return;
 	}
 	UnicodeString tooltip;
-	tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getName().str(), player->getLogin().str(), player->getHost().str());
+	tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getLogin().str(), player->getHost().str());
 	TheMouse->setCursorTooltip( tooltip );
 }
 
