@@ -98,8 +98,6 @@ void ProfileGetTime(__int64 &) ENDP               ; ProfileGetTime
 </td>
 </table>
 
-</details>
-
 The assemblies are different in structure but equal in result. The intrinsic version appears shorter.
 
 ```diff
@@ -122,6 +120,8 @@ The assemblies are different in structure but equal in result. The intrinsic ver
          ret     0
  void ProfileGetTime(__int64 &) ENDP               ; ProfileGetTime
 ```
+
+</details>
 
 ---
 
