@@ -335,6 +335,11 @@ static void playerTooltip(GameWindow *window,
 	}
 	UnicodeString tooltip;
 	tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getLogin().str(), player->getHost().str());
+#if defined(_DEBUG) || defined(_INTERNAL)
+	UnicodeString ip;
+	ip.format(L" - %d.%d.%d.%d", PRINT_IP_HELPER(player->getIP()));
+	tooltip.concat(ip);
+#endif
 	TheMouse->setCursorTooltip( tooltip );
 }
 
