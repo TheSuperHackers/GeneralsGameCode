@@ -44,17 +44,6 @@
 
 #define SHUFFLE(x, y, z, w)	(((x)&3)<< 6|((y)&3)<<4|((z)&3)<< 2|((w)&3))
 #define	BROADCAST(XMM, INDEX)	__asm	shufps	XMM,XMM,(((INDEX)&3)<< 6|((INDEX)&3)<<4|((INDEX)&3)<< 2|((INDEX)&3))
-// Equivalent to:
-// #include <xmmintrin.h>
-//
-// inline void ShufflePS(__m128& xmm, int index)
-// {
-//     // Create the shuffle control mask
-//     int shuffleMask = ((index & 3) << 6) | ((index & 3) << 4) | ((index & 3) << 2) | (index & 3);
-//
-//     // Perform the shuffle operation on the xmm register
-//     xmm = _mm_shuffle_ps(xmm, xmm, shuffleMask);
-// }
 
 #define TRANSPOSE(BX, BY, BZ, BW, TV)					\
 		__asm	movaps		TV,BZ						\
@@ -69,30 +58,6 @@
 		__asm	movaps		BZ,BW						\
 		__asm	shufps		BZ,TV,SHUFFLE(1, 0, 1, 0)	\
 		__asm	shufps		BW,TV,SHUFFLE(3, 2, 3, 2)
-// Equivalent to:
-// #include <xmmintrin.h>
-//
-// inline void Transpose4x4(__m128& BX, __m128& BY, __m128& BZ, __m128& BW) {
-//	   __m128 TV;
-//
-//	   // Step 1: Unpack the lower and upper halves row-wise
-//	   TV = BZ;
-//	   BZ = _mm_unpacklo_ps(BZ, BW); // Interleave lower halves of BZ and BW
-//	   TV = _mm_unpackhi_ps(TV, BW); // Interleave upper halves of BZ and BW
-//
-//	   BW = BX;
-//	   BX = _mm_unpacklo_ps(BX, BY); // Interleave lower halves of BX and BY
-//	   BW = _mm_unpackhi_ps(BW, BY); // Interleave upper halves of BX and BY
-//
-//	   // Step 2: Shuffle to rearrange rows and columns
-//	   BY = BX;
-//	   BX = _mm_shuffle_ps(BX, BZ, _MM_SHUFFLE(1, 0, 1, 0)); // Shuffle: Row 0 (from BX+BZ)
-//	   BY = _mm_shuffle_ps(BY, BZ, _MM_SHUFFLE(3, 2, 3, 2)); // Shuffle: Row 1 (from BY+BZ)
-//
-//	   BZ = BW;
-//	   BZ = _mm_shuffle_ps(BZ, TV, _MM_SHUFFLE(1, 0, 1, 0)); // Shuffle: Row 2 (from BW+TV)
-//	   BW = _mm_shuffle_ps(BW, TV, _MM_SHUFFLE(3, 2, 3, 2)); // Shuffle: Row 3 (from BW+TV)
-// }
 
 
 // This is a NOOP :D
@@ -343,43 +308,6 @@ void VectorProcessorClass::Transform (Vector3* dst,const Vector3 *src, const Mat
 	{
 		mtx.mulVector3Array(src, dst, count);
 	}
-	// Equivalent to:
-	// void VectorProcessorClass::Transform(Vector3* dst, const Vector3* src, const Matrix3D& mtx, const int count) {
-	//	   if (count <= 0) return;
-	//
-	// #if defined (__ICL)    // Detect Intel compiler
-	//	   if (CPUDetectClass::_Has_SSE_Instruction_Set()) {
-	//		   __m128 row0 = mtx.rows[0];
-	//		   __m128 row1 = mtx.rows[1];
-	//		   __m128 row2 = mtx.rows[2];
-	//		   __m128 row3 = mtx.rows[3]; // Assume the matrix has the last "row" for affine transformations
-	//
-	//		   // SIMD loop for processing vectors
-	//		   for (int i = 0; i < count; i++) {
-	//			   __m128 vec = _mm_loadu_ps(reinterpret_cast<const float*>(&src[i])); // Load the vector (x, y, z, unused)
-	//
-	//			   // Broadcast components of the vector
-	//			   __m128 vecX = _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(0, 0, 0, 0)); // Broadcast x
-	//			   __m128 vecY = _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(1, 1, 1, 1)); // Broadcast y
-	//			   __m128 vecZ = _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(2, 2, 2, 2)); // Broadcast z
-	//
-	//			   // Perform matrix multiplication
-	//			   __m128 res = _mm_mul_ps(row0, vecX); // Multiply by first row
-	//			   res = _mm_add_ps(res, _mm_mul_ps(row1, vecY)); // Multiply by second row and add
-	//			   res = _mm_add_ps(res, _mm_mul_ps(row2, vecZ)); // Multiply by third row and add
-	//			   res = _mm_add_ps(res, row3); // Add the affine translation row (if applicable)
-	//
-	//			   // Store the result back to the destination array
-	//			   _mm_storeu_ps(reinterpret_cast<float*>(&dst[i]), res);
-	//		   }
-	//	   }
-	//	   else
-	// #endif
-	//	   {
-	//		   // Fallback to scalar implementation
-	//		   mtx.mulVector3Array(src, dst, count);
-	//	   }
-	// }
 }
 
 void VectorProcessorClass::Transform(Vector4* dst,const Vector3 *src, const Matrix4& matrix, const int count)

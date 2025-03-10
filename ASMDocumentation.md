@@ -2150,6 +2150,18 @@ just as, if not more, performant.
 ---
 
 <details>
+<summary>Generals/Code/Libraries/Source/WWVegas/WWMath/matrix3d.cpp</summary>
+
+This file includes the following assembly blocks:
+
+<details>Matrix3D::Multiply</details>
+
+This block is already documented in the source file by the authors.
+</details>
+
+---
+
+<details>
 <summary>Generals/Code/GameEngine/Include/Common/PerfTimer.h</summary>
 
 This file includes the following assembly block:
@@ -2343,6 +2355,15 @@ The assemblies are different in structure but equal in result. The intrinsic ver
          ret     0
  void ProfileGetTime(__int64 &) ENDP               ; ProfileGetTime
 ```
+
+</details>
+
+---
+
+<details>
+<summary>Generals/Code/Libraries/Source/WWVegas/WWMath/quat.cpp</summary>
+
+`Fast_Slerp` is already documented within the assembly block by the authors.
 
 </details>
 
@@ -3317,6 +3338,404 @@ void GetPrecisionTimer(__int64 *) ENDP                  ; GetPrecisionTimer
 </table>
 
 These are **not** different.
+
+</details>
+
+---
+
+<details>
+<summary>Generals/Code/Libraries/Source/WWVegas/WWMath/vp.cpp</summary>
+
+This file defines the following assembly blocks:
+
+<details>
+<summary>BROADCAST</summary>
+
+Defined as:
+
+```c++
+#define	BROADCAST(XMM, INDEX)	__asm	shufps	XMM,XMM,(((INDEX)&3)<< 6|((INDEX)&3)<<4|((INDEX)&3)<< 2|((INDEX)&3))
+```
+
+This is equivalent to the following function:
+
+```c++
+#include <xmmintrin.h>
+
+template<int index>
+void BROADCAST(__m128& xmm)
+{
+    // Create the shuffle control mask
+    constexpr int shuffleMask = (index & 3 << 6) | (index & 3 << 4) | (index & 3 << 2) | index & 3;
+
+
+    // Perform the shuffle operation on the xmm register
+    xmm = _mm_shuffle_ps(xmm, xmm, shuffleMask);
+}
+
+int main()
+{
+    __m128 test;
+    BROADCAST<1>(test);
+    return 0;
+}
+```
+
+> **NOTE:** While the equality is correct, YOU CANNOT compile this in x86 MSVC for `shuffleMask` must be constant.
+> An alternative would be to make it a compile time constant, but I can't generate this without a main function. I
+> cannot compile the version with the `#define BROADCAST` block in modern MSVC, so I can't show a diff for the
+> generated assemblies
+
+</details>
+
+<details>
+<summary>TRANSPOSE</summary>
+
+```c++
+#define TRANSPOSE(BX, BY, BZ, BW, TV)					\
+		__asm	movaps		TV,BZ						\
+		__asm	unpcklps	BZ,BW						\
+		__asm	unpckhps	TV,BW						\
+		__asm	movaps		BW,BX						\
+		__asm	unpcklps	BX,BY						\
+		__asm	unpckhps	BW,BY						\
+		__asm	movaps		BY,BX						\
+		__asm	shufps		BX,BZ,SHUFFLE(1, 0, 1, 0)	\
+		__asm	shufps		BY,BZ,SHUFFLE(3, 2, 3, 2)	\
+		__asm	movaps		BZ,BW						\
+		__asm	shufps		BZ,TV,SHUFFLE(1, 0, 1, 0)	\
+		__asm	shufps		BW,TV,SHUFFLE(3, 2, 3, 2)
+```
+
+This is shuffling the given `__m128` values.
+
+My goto equivalent is:
+
+```c++
+#include <xmmintrin.h>
+
+void TRANSPOSE(__m128& BX, __m128& BY, __m128& BZ, __m128& BW) {
+	   __m128 TV;
+
+	   // Step 1: Unpack the lower and upper halves row-wise
+	   TV = BZ;
+	   BZ = _mm_unpacklo_ps(BZ, BW); // Interleave lower halves of BZ and BW
+	   TV = _mm_unpackhi_ps(TV, BW); // Interleave upper halves of BZ and BW
+
+	   BW = BX;
+	   BX = _mm_unpacklo_ps(BX, BY); // Interleave lower halves of BX and BY
+	   BW = _mm_unpackhi_ps(BW, BY); // Interleave upper halves of BX and BY
+
+	   // Step 2: Shuffle to rearrange rows and columns
+	   BY = BX;
+	   BX = _mm_shuffle_ps(BX, BZ, _MM_SHUFFLE(1, 0, 1, 0)); // Shuffle: Row 0 (from BX+BZ)
+	   BY = _mm_shuffle_ps(BY, BZ, _MM_SHUFFLE(3, 2, 3, 2)); // Shuffle: Row 1 (from BY+BZ)
+
+	   BZ = BW;
+	   BZ = _mm_shuffle_ps(BZ, TV, _MM_SHUFFLE(1, 0, 1, 0)); // Shuffle: Row 2 (from BW+TV)
+	   BW = _mm_shuffle_ps(BW, TV, _MM_SHUFFLE(3, 2, 3, 2)); // Shuffle: Row 3 (from BW+TV)
+}
+```
+
+> **NOTE:** While the equality is correct, I cannot generate the `#define TRANSPOSE` block in modern MSVC x86 and I will
+> not be able to show the compared assemblies.
+
+</details>
+
+<details>
+<summary>VectorProcessorClass::Transform</summary>
+
+```c++
+static Vector4 lastrow(0.0f,0.0f,0.0f,1.0f);
+void VectorProcessorClass::Transform (Vector3* dst,const Vector3 *src, const Matrix3D& mtx, const int count)
+{
+	if (count<=0) return;
+
+#if defined (__ICL)    // Detect Intel compiler
+	if (CPUDetectClass::_Has_SSE_Instruction_Set()) {
+
+		__asm	{
+			mov		edx,dst
+			mov		eax,src
+			mov		ebx,mtx
+			mov		edi,count
+
+			movups	xmm4,[ebx+0]
+			movups	xmm5,[ebx+16]
+			movups	xmm6,[ebx+32]
+			movups	xmm7,lastrow	//[ebx+48]
+
+			TRANSPOSE(xmm4, xmm5, xmm6, xmm7, xmm0);
+
+			shufps	xmm4,xmm4,SHUFFLE(2,1,0,0)
+			shufps	xmm5,xmm5,SHUFFLE(2,1,0,0)
+			shufps	xmm6,xmm6,SHUFFLE(2,1,0,0)
+			shufps	xmm7,xmm7,SHUFFLE(2,1,0,0)
+
+			mov		esi,edx
+		_lp:
+			test	edi,edi
+			jz		_ulos
+			test	esi,0xf
+			jz		_aligned
+			movss	xmm0,[eax]
+			movss	xmm1,[eax+4]
+			movss	xmm2,[eax+8]
+			BROADCAST(xmm0,0)
+			BROADCAST(xmm1,0)
+			BROADCAST(xmm2,0)
+			mulps	xmm0,xmm4
+			mulps	xmm1,xmm5
+			mulps	xmm2,xmm6
+			addps	xmm0,xmm1
+			addps	xmm0,xmm2
+			addps	xmm0,xmm7
+			movss	[edx],xmm0
+			movhps	[edx+4],xmm0
+			add		eax,12
+			add		edx,12
+			add		esi,12
+			dec		edi
+			jmp		_lp
+		_aligned:
+
+			mov		esi,1
+		
+			mov		ecx,edi
+			and		edi,3
+			and		ecx,~3
+			jz		_lp
+			
+			lea		ecx,[ecx+ecx*2]
+			shl		ecx,2
+			add		eax,ecx
+			add		edx,ecx
+			neg		ecx
+
+			cmp		dword ptr [ebx+12],0
+			jne		_xlatelp
+			cmp		dword ptr [ebx+28],0
+			jne		_xlatelp
+			cmp		dword ptr [ebx+44],0
+			jne		_xlatelp
+			jmp		_noxlatelp
+
+			align	16
+
+			_noxlatelp:
+				prefetchnta	[eax+ecx+48]
+				prefetchnta	[eax+ecx+48+32]
+
+				movss	xmm0,[eax+ecx]
+				BROADCAST(xmm0,0)
+				movss	xmm1,[eax+ecx+4]
+				BROADCAST(xmm1,0)
+				movss	xmm2,[eax+ecx+8]
+				BROADCAST(xmm2,0)
+				mulps	xmm0,xmm4
+				mulps	xmm1,xmm5
+				mulps	xmm2,xmm6
+				addps	xmm0,xmm1
+				addps	xmm0,xmm2
+
+				movss	xmm1,[eax+ecx+12]
+				BROADCAST(xmm1,0)
+				movss	xmm2,[eax+ecx+16]
+				BROADCAST(xmm2,0)
+				movss	xmm3,[eax+ecx+20]
+				BROADCAST(xmm3,0)
+				mulps	xmm1,xmm4
+				mulps	xmm2,xmm5
+				mulps	xmm3,xmm6
+				addps	xmm1,xmm2
+				addps	xmm3,xmm1
+
+				movss	xmm0,xmm3
+				shufps	xmm0,xmm0,SHUFFLE(0,3,2,1)
+
+				movaps	[edx+ecx],xmm0
+
+				prefetcht0	[edx+ecx+48]
+				prefetcht0	[edx+ecx+48+32]
+
+				movss	xmm0,[eax+ecx+24]
+				BROADCAST(xmm0,0)
+				movss	xmm1,[eax+ecx+24+4]
+				BROADCAST(xmm1,0)
+				movss	xmm2,[eax+ecx+24+8]
+				BROADCAST(xmm2,0)
+				mulps	xmm0,xmm4
+				mulps	xmm1,xmm5
+				mulps	xmm2,xmm6
+				addps	xmm0,xmm1
+				addps	xmm0,xmm2
+
+				shufps	xmm3,xmm0,SHUFFLE(2,1,3,2)
+				movaps	[edx+ecx+16],xmm3
+
+				movss	xmm1,[eax+ecx+24+12]
+				BROADCAST(xmm1,0)
+				movss	xmm2,[eax+ecx+24+16]
+				BROADCAST(xmm2,0)
+				movss	xmm3,[eax+ecx+24+20]
+				BROADCAST(xmm3,0)
+				mulps	xmm1,xmm4
+				mulps	xmm2,xmm5
+				mulps	xmm3,xmm6
+				addps	xmm1,xmm2
+				addps	xmm1,xmm3
+
+				shufps	xmm0,xmm0,SHUFFLE(2,1,0,3)
+				movss	xmm1,xmm0
+				movaps	[edx+ecx+32],xmm1
+
+				add		ecx,48
+				js		_noxlatelp
+
+			jmp	_lp
+
+			align	16
+
+			_xlatelp:
+				prefetchnta	[eax+ecx+48]
+				prefetchnta	[eax+ecx+48+32]
+
+				movss	xmm0,[eax+ecx]
+				BROADCAST(xmm0,0)
+				movss	xmm1,[eax+ecx+4]
+				BROADCAST(xmm1,0)
+				movss	xmm2,[eax+ecx+8]
+				BROADCAST(xmm2,0)
+				mulps	xmm0,xmm4
+				mulps	xmm1,xmm5
+				mulps	xmm2,xmm6
+				addps	xmm0,xmm1
+				addps	xmm0,xmm2
+				addps	xmm0,xmm7
+
+				movss	xmm1,[eax+ecx+12]
+				BROADCAST(xmm1,0)
+				movss	xmm2,[eax+ecx+16]
+				BROADCAST(xmm2,0)
+				movss	xmm3,[eax+ecx+20]
+				BROADCAST(xmm3,0)
+				mulps	xmm1,xmm4
+				mulps	xmm2,xmm5
+				mulps	xmm3,xmm6
+				addps	xmm1,xmm2
+				addps	xmm3,xmm1
+				addps	xmm3,xmm7
+
+				movss	xmm0,xmm3
+				shufps	xmm0,xmm0,SHUFFLE(0,3,2,1)
+				movaps	[edx+ecx],xmm0
+
+				prefetcht0	[edx+ecx+48]
+				prefetcht0	[edx+ecx+48+32]
+
+				movss	xmm0,[eax+ecx+24]
+				BROADCAST(xmm0,0)
+				movss	xmm1,[eax+ecx+24+4]
+				BROADCAST(xmm1,0)
+				movss	xmm2,[eax+ecx+24+8]
+				BROADCAST(xmm2,0)
+				mulps	xmm0,xmm4
+				mulps	xmm1,xmm5
+				mulps	xmm2,xmm6
+				addps	xmm0,xmm1
+				addps	xmm0,xmm2
+				addps	xmm0,xmm7
+
+				shufps	xmm3,xmm0,SHUFFLE(2,1,3,2)
+				movaps	[edx+ecx+16],xmm3
+
+				movss	xmm1,[eax+ecx+24+12]
+				BROADCAST(xmm1,0)
+				movss	xmm2,[eax+ecx+24+16]
+				BROADCAST(xmm2,0)
+				movss	xmm3,[eax+ecx+24+20]
+				BROADCAST(xmm3,0)
+				mulps	xmm1,xmm4
+				mulps	xmm2,xmm5
+				mulps	xmm3,xmm6
+				addps	xmm1,xmm2
+				addps	xmm1,xmm3
+				addps	xmm1,xmm7
+
+				shufps	xmm0,xmm0,SHUFFLE(2,1,0,3)
+				movss	xmm1,xmm0
+
+				movaps	[edx+ecx+32],xmm1
+				
+				add		ecx,48
+				js		_xlatelp
+
+			jmp	_lp
+		_ulos:
+		}
+
+	}
+	else
+#endif
+	{
+		mtx.mulVector3Array(src, dst, count);
+	}
+}
+```
+
+This assembly code is trying to do an efficient vector transform.
+
+My goto equivalent is:
+
+```c++
+#include <xmmintrin.h>
+#include <emmintrin.h>
+
+static Vector4 lastrow(0.0f,0.0f,0.0f,1.0f);
+void VectorProcessorClass::Transform (Vector3* dst,const Vector3 *src, const Matrix3D& mtx, const int count)
+{
+	if (count<=0) return;
+
+#if defined (__ICL)    // Detect Intel compiler
+	if (CPUDetectClass::_Has_SSE_Instruction_Set()) {
+        // Load rows of the matrix into SSE registers.
+        __m128 row1 = __mm_loadu_ps((const float*)(&mtx[0]));
+        __m128 row2 = __mm_loadu_ps((const float*)(&mtx[1]));
+        __m128 row3 = __mm_loadu_ps((const float*)(&mtx[2]));
+        __m128 row4 = __mm_set_ps(1.F, 0.F, 0.F, 0.F);
+
+        // Iterate over the count of vectors to process.
+        for (int i = 0; i < count; ++i) {
+            // Load source vector components into SSE registers
+            __m128 src_x = __mm_set1_ps(src[i].X); // Broadcast src[i].X to all elements
+            __m128 src_y = _mm_set1_ps(src[i].Y); // Broadcast src[i].Y to all elements
+            __m128 src_z = _mm_set1_ps(src[i].Z); // Broadcast src[i].Z to all elements
+
+            // Perform matrix multiplication for X, Y, Z (and W is assumed to be 1)
+            __m128 result = _mm_mul_ps(src_x, row1);
+            result = _mm_add_ps(result, _mm_mul_ps(src_y, row2));
+            result = _mm_add_ps(result, _mm_mul_ps(src_z, row3));
+            result = _mm_add_ps(result, row4);
+
+            // Store the resulting vector into the destination array
+            _mm_store_ss(&dst[i].X, result); // Store X
+            result = _mm_shuffle_ps(result, result, _MM_SHUFFLE(3, 2, 1, 1)); // Rotate for Y
+            _mm_store_ss(&dst[i].Y, result); // Store Y
+            result = _mm_shuffle_ps(result, result, _MM_SHUFFLE(3, 2, 1, 2)); // Rotate for Z
+            _mm_store_ss(&dst[i].Z, result); // Store Z
+        }
+	}
+	else
+#endif
+	{
+		mtx.mulVector3Array(src, dst, count);
+	}
+}
+```
+
+> **NOTE**: I don't have access to the Intel compiler; so I can't show the assembly output from this.
+
+</details>
 
 </details>
 
