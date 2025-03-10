@@ -96,6 +96,23 @@ unsigned long Get_CPU_Clock(unsigned long & high)
 	}
 	high = h;
 	return(l);
+	// Equivalent to:
+	// #ifdef _WIN32
+	// #include <intrin.h>
+	// #elif defined(__GNUC__)
+	// #include <x86intrin.h>
+	// #endif
+	//
+	// unsigned long void Get_CPU_Clock(unsigned long & high)
+	// {
+	//     int h;
+	//     int l;
+	//	   __int64 ticks = __rdtsc();
+	//     h = (int)(ticks >> 32);
+	//     l = (int)ticks;
+	//     high = h;
+	//     return(l);
+	// }
 }
 
 

@@ -86,7 +86,22 @@ inline void WWProfile_Get_Ticks(_int64 * ticks)
 		pop ecx;
 		pop edx;
 	}
+    // This just sets the RDTSC value into the ticks variable
+	// It also preserves whatever was saved in the EDX and ECX registers (probably for the profiling to not trample something set somewhere else?)
+    // The saving of EDX and ECX will need further investigation
 #endif
+	// Equivalent to:
+	// #ifdef _WIN32
+	// #include <intrin.h>
+	// #elif defined(__GNUC__)
+	// #include <x86intrin.h>
+	// #endif
+	//
+	// inline void WWProfile_Get_Ticks(_int64* ticks)
+	// {
+	// 		ticks = __rdtsc();
+    //		// This function would require to be modified to somehow preserve the EDX and ECX registers, if this is actually a problem outside of assembly.
+	// }
 }
 
 

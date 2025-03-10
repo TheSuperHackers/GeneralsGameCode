@@ -184,6 +184,12 @@ __forceinline long fast_float2long_round(float f)
 	}
 
 	return i;
+    // Equivalent to (but apparently faster in assembly, probably truer back when this was made):
+    // __forceinline long fast_float2long_round(float f)
+    // {
+    //     return (long)f;
+    // }
+    // Maybe use one of the SIMD instructions for speed?
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -290,7 +290,7 @@ WWINLINE bool WWMath::Is_Valid_Double(double x)
 // Float to long
 // ----------------------------------------------------------------------------
 
-#if defined(_MSC_VER) && defined(_M_IX86)
+#if defined(_MSC_VER) && defined(_M_IX86) // Look at the #else for equivalent
 WWINLINE long WWMath::Float_To_Long(float f)
 {
 	long i;
@@ -309,7 +309,7 @@ WWINLINE long WWMath::Float_To_Long(float f)
 }
 #endif
 
-WWINLINE long WWMath::Float_To_Long(double f)	
+WWINLINE long WWMath::Float_To_Long(double f) // Look at the #else for equivalent
 {
 #if defined(_MSC_VER) && defined(_M_IX86)
 	long retval;
@@ -326,7 +326,7 @@ WWINLINE long WWMath::Float_To_Long(double f)
 // ----------------------------------------------------------------------------
 
 #if defined(_MSC_VER) && defined(_M_IX86)
-WWINLINE float WWMath::Cos(float val)
+WWINLINE float WWMath::Cos(float val) // Look at the #else for equivalent
 {
 	float retval;
 	__asm {
@@ -348,7 +348,7 @@ WWINLINE float WWMath::Cos(float val)
 // ----------------------------------------------------------------------------
 
 #if defined(_MSC_VER) && defined(_M_IX86)
-WWINLINE float WWMath::Sin(float val)
+WWINLINE float WWMath::Sin(float val) // Look at the #else for equivalent
 {
 	float retval;
 	__asm {
@@ -630,6 +630,28 @@ WWINLINE __declspec(naked) float __fastcall WWMath::Inv_Sqrt(float a)
 		fmulp	st(1), st
 		ret 4
 	}
+    // This is a fast inverse square root algorithm, like in DOOM ^_^
+    // Equivalent to:
+	// float WWMath::Inv_Sqrt(float a) {
+	//	   if (a == 0.0f) return 0.0f;
+	//
+	//	   // Initial approximation using bit manipulation
+	//	   uint32_t i = *reinterpret_cast<uint32_t*>(&a); // Interpret float as integer for bitwise operations
+	//	   i = 0x5f3759df - (i >> 1);                    // Magic number adjustment for inverse square root
+	//	   float r = *reinterpret_cast<float*>(&i);      // Convert back to float (approximation for 1/sqrt(a))
+	//
+	//	   // First Newton-Raphson iteration
+	//	   float y = a * 0.5f;   // y = a / 2
+	//	   r = r * (1.5f - (y * r * r)); // r1 = r * (1.5 - 0.5 * a * r^2)
+	//
+	//	   // Second Newton-Raphson iteration
+	//	   r = r * (1.5f - (y * r * r)); // r2 = r1 * (1.5 - 0.5 * a * r1^2)
+	//
+	//	   // Optional: Third iteration for better precision
+	//	   r = r * (1.5f - (y * r * r)); // r3 = r2 * (1.5 - 0.5 * a * r2^2)
+	//
+	//	   return r;
+	// }
 }
 #else
 WWINLINE float WWMath::Inv_Sqrt(float val)
