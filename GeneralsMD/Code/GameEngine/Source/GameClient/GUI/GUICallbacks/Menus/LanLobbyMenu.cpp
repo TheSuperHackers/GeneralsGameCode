@@ -400,7 +400,14 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 	// Choose an IP address, then initialize the LAN singleton
 	UnsignedInt IP = TheGlobalData->m_defaultIP;
 	IPEnumeration IPs;
-
+#if ENABLE_FAKE_IP
+	if (getFakeIPNo())
+	{
+		IP = getFakeIPNo();
+		//IPSource = L"Using Fake IP";
+	}
+	else
+#endif
 	if (!IP)
 	{
 		EnumeratedIP *IPlist = IPs.getAddresses();
