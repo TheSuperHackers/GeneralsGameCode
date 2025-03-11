@@ -183,7 +183,7 @@ Bool RAMFile::open( File *file )
 
 	// read whole file in to memory
 	m_size = file->size();
-	m_data = MSGNEW("RAMFILE") char [ m_size ];	// pool[]ify
+	m_data = new char [ m_size ];	// pool[]ify
 
 	if ( m_data == NULL )
 	{
@@ -222,7 +222,7 @@ Bool RAMFile::openFromArchive(File *archiveFile, const AsciiString& filename, In
 		delete[] m_data;
 		m_data = NULL;
 	}
-	m_data = MSGNEW("RAMFILE") Char [size];	// pool[]ify
+	m_data = new Char [size];	// pool[]ify
 	m_size = size;
 
 	if (archiveFile->seek(offset, File::START) != offset) {

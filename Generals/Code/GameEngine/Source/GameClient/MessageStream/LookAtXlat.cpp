@@ -54,7 +54,7 @@
 
 LookAtTranslator *TheLookAtTranslator = NULL;
 
-static enum
+enum
 {
 	DIR_UP = 0,
 	DIR_DOWN,
@@ -174,7 +174,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			// get key and state from args
 			UnsignedByte key		= msg->getArgument( 0 )->integer;
 			UnsignedByte state	= msg->getArgument( 1 )->integer;
-			Bool isPressed = !(BitTest( state, KEY_STATE_UP ));
+			Bool isPressed = !(BitTestWW( state, KEY_STATE_UP ));
 			
 			if (TheShell && TheShell->isShellActive())
 				break;
@@ -303,14 +303,15 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			{
 				if (m_isScrolling)
 				{
-					if ( m_scrollType == SCROLL_SCREENEDGE && (m_currentPos.x >= edgeScrollSize && m_currentPos.y >= edgeScrollSize && m_currentPos.y < height-edgeScrollSize && m_currentPos.x < width-edgeScrollSize) )
+					if ( m_scrollType == SCROLL_SCREENEDGE && (m_currentPos.x >= edgeScrollSize && m_currentPos.y >= edgeScrollSize 
+						&& m_currentPos.y < ((int)height) -edgeScrollSize && m_currentPos.x < ((int)width) -edgeScrollSize) )
 					{
 						stopScrolling();
 					}
 				}
 				else
 				{
-					if ( m_currentPos.x < edgeScrollSize || m_currentPos.y < edgeScrollSize || m_currentPos.y >= height-edgeScrollSize || m_currentPos.x >= width-edgeScrollSize )
+					if ( m_currentPos.x < edgeScrollSize || m_currentPos.y < edgeScrollSize || m_currentPos.y >= ((int)height) -edgeScrollSize || m_currentPos.x >= ((int)width)-edgeScrollSize )
 					{
 						setScrolling(SCROLL_SCREENEDGE);
 					}
@@ -457,7 +458,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 						{
 							offset.y -= TheGlobalData->m_verticalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
-						if (m_currentPos.y >= height-edgeScrollSize)
+						if (m_currentPos.y >= ((int)height) -edgeScrollSize)
 						{
 							offset.y += TheGlobalData->m_verticalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
@@ -465,7 +466,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 						{
 							offset.x -= TheGlobalData->m_horizontalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
-						if (m_currentPos.x >= width-edgeScrollSize)
+						if (m_currentPos.x >= ((int)width)-edgeScrollSize)
 						{
 							offset.x += TheGlobalData->m_horizontalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}

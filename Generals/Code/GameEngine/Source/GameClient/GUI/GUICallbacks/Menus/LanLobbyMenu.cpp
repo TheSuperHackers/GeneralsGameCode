@@ -151,7 +151,7 @@ Bool LANPreferences::usesSystemMapDir(void)
 	if (it == end())
 		return TRUE;
 
-	if (stricmp(it->second.str(), "yes") == 0) {
+	if (_stricmp(it->second.str(), "yes") == 0) {
 		return TRUE;
 	}
 	return FALSE;
@@ -283,7 +283,7 @@ static void playerTooltip(GameWindow *window,
 		return;
 	}
 
-	UnsignedInt playerIP = (UnsignedInt)GadgetListBoxGetItemData( window, row, col );
+	UnsignedInt playerIP = (UnsignedInt)(uintptr_t)GadgetListBoxGetItemData( window, row, col );
 	LANPlayer *player = TheLAN->LookupPlayer(playerIP);
 	if (!player)
 	{
@@ -600,7 +600,7 @@ WindowMsgHandledType LanLobbyMenuInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitTestWW( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
 																							(WindowMsgData)buttonBack, buttonBackID );

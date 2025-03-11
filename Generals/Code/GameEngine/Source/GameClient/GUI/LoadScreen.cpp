@@ -188,6 +188,7 @@ SinglePlayerLoadScreen::~SinglePlayerLoadScreen( void )
 	m_objectiveWin = NULL;
 	for(Int i = 0; i < MAX_OBJECTIVE_LINES; ++i)
 		m_objectiveLines[i] = NULL;
+#ifdef HAS_BINK
 	if(m_videoBuffer)
 		delete m_videoBuffer;
 	m_videoBuffer = NULL;
@@ -197,6 +198,7 @@ SinglePlayerLoadScreen::~SinglePlayerLoadScreen( void )
 	m_videoStream = NULL;
 	
 	TheAudio->removeAudioEvent( m_ambientLoopHandle );
+#endif
 	m_ambientLoopHandle = NULL;
 	
 }
@@ -225,7 +227,9 @@ void SinglePlayerLoadScreen::moveWindows( Int frame )
 	if( frame == STATE_BEGIN_BREIFING)
 	{
 		// add sound support here
+#ifdef HAS_BINK
 		TheAudio->friend_forcePlayAudioEventRTS(&TheCampaignManager->getCurrentMission()->m_briefingVoice);
+#endif
 	}
 
 	if( frame == STATE_BEGIN_ANIMATING_TEXT)
@@ -400,7 +404,8 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 	
 	Mission *mission = TheCampaignManager->getCurrentMission();
 	AsciiString lineName;
-	for(Int i = 0; i < MAX_OBJECTIVE_LINES; ++i)
+	Int i = 0;
+	for(; i < MAX_OBJECTIVE_LINES; ++i)
 	{
 		lineName.format("SinglePlayerLoadScreen.wnd:StaticTextLine%d",i);
 		m_objectiveLines[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( lineName ));
@@ -465,6 +470,7 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 */
 	m_ambientLoop.setEventName("LoadScreenAmbient");
 	// create the new stream
+#ifdef HAS_BINK
 	m_videoStream = TheVideoPlayer->open( TheCampaignManager->getCurrentMission()->m_movieLabel );
 	if ( m_videoStream == NULL )
 	{
@@ -582,9 +588,12 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 		TheDisplay->draw();
 
 	}
+#endif
 	setFPMode();
 	m_percent->winHide(TRUE);
+#ifdef HAS_BINK
 	m_ambientLoopHandle = TheAudio->addAudioEvent(&m_ambientLoop);
+#endif
 	
 }
 
@@ -766,8 +775,10 @@ MultiPlayerLoadScreen::~MultiPlayerLoadScreen( void )
 		m_playerLookup[i] = -1;
 	}
 
+#ifdef HAS_BINK
 	TheAudio->removeAudioEvent( AHSV_StopTheMusicFade );
 //	TheAudio->stopAudio( AudioAffect_Music );
+#endif
 }
 
 void MultiPlayerLoadScreen::init( GameInfo *game )
@@ -790,12 +801,14 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 	AsciiString musicName = pt->getLoadScreenMusic();
 	if ( ! musicName.isEmpty() )
 	{
+#ifdef HAS_BINK
 		TheAudio->removeAudioEvent( AHSV_StopTheMusicFade );
 		AudioEventRTS event( musicName );
 		event.setShouldFade( TRUE );
 
 		TheAudio->addAudioEvent( &event );
 		TheAudio->update();//Since GameEngine::update() is suspended until after I am gone... 
+#endif
 
 	}
 
@@ -806,7 +819,8 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 	//DEBUG_LOG(("NumPlayers %d\n", TheNetwork->getNumPlayers()));
 
 	GameWindow *teamWin[MAX_SLOTS];
-	for (Int i = 0; i < MAX_SLOTS; ++i)
+	Int i = 0;
+	for (; i < MAX_SLOTS; ++i)
 	{
 		teamWin[i] = NULL;
 	}
@@ -1018,7 +1032,8 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 		m_loadScreen->winSetEnabledImage(0, loadScreenImage);
 
 	GameWindow *teamWin[MAX_SLOTS];
-	for (Int i = 0; i < MAX_SLOTS; ++i)
+	Int i = 0;
+	for (; i < MAX_SLOTS; ++i)
 	{
 		teamWin[i] = NULL;
 	}
@@ -1132,7 +1147,7 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 		Int favorite = 0;
 		for(it =stats.games.begin(); it != stats.games.end(); ++it)
 		{
-			if(it->second >= numGames)
+			if((int)it->second >= numGames)
 			{
 				numGames = it->second;
 				favorite = it->first;

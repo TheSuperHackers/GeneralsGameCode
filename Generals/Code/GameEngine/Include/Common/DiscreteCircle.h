@@ -67,7 +67,7 @@ class DiscreteCircle
 	public:
 		DiscreteCircle(Int xCenter, Int yCenter, Int radius);
 		__inline const VecHorzLine &getEdges(void) const { return m_edges; }
-		__inline Int getEdgeCount(void) const { return m_edges.size(); }
+		__inline Int getEdgeCount(void) const { return (int)m_edges.size(); }
 		void drawCircle(ScanlineDrawFunc functionToDrawWith, void *parmToPass);
 		
 	protected:

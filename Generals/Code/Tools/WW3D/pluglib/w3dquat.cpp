@@ -55,7 +55,7 @@
 #include "wwmath.h"
 
 #include <stdio.h>
-//#include <iostream.h>
+//#include <iostream>
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>

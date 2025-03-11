@@ -37,9 +37,9 @@
 
 #include "texture.h"
 
-#include <d3d8.h>
+#include <d3d9.h>
 #include <stdio.h>
-#include <D3dx8core.h>
+#include <D3dx9core.h>
 #include "dx8wrapper.h"
 #include "targa.h"
 #include <nstrdup.h>
@@ -70,12 +70,12 @@ static int Calculate_Texture_Memory_Usage(const TextureClass* texture,int red_fa
 	// Set performance statistics
 
 	int size=0;
-	IDirect3DTexture8* d3d_texture=const_cast<TextureClass*>(texture)->Peek_DX8_Texture();
+	IDirect3DTexture9* d3d_texture=const_cast<TextureClass*>(texture)->Peek_DX8_Texture();
 	if (!d3d_texture) return 0;
 	for (unsigned i=red_factor;i<d3d_texture->GetLevelCount();++i) {
 		D3DSURFACE_DESC desc;
 		DX8_ErrorCode(d3d_texture->GetLevelDesc(i,&desc));
-		size+=desc.Size;
+		size+=desc.Width*desc.Height;
 	}
 	return size;
 }
@@ -199,7 +199,7 @@ TextureClass::TextureClass(
 	}
 
 	WWASSERT_PRINT(name && name[0], "TextureClass CTor: NULL or empty texture name\n");
-	int len=strlen(name);
+	int len=(int)strlen(name);
 	for (int i=0;i<len;++i) {
 		if (name[i]=='+') {
 			IsLightmap=true;
@@ -274,7 +274,7 @@ TextureClass::TextureClass(SurfaceClass *surface, MipCountType mip_level_count)
 
 // ----------------------------------------------------------------------------
 
-TextureClass::TextureClass(IDirect3DTexture8* d3d_texture)
+TextureClass::TextureClass(IDirect3DTexture9* d3d_texture)
 	:
 	D3DTexture(d3d_texture),
 	texture_id(unused_texture_id++),
@@ -294,7 +294,7 @@ TextureClass::TextureClass(IDirect3DTexture8* d3d_texture)
 	TextureLoadTask(NULL)
 {
 	D3DTexture->AddRef();
-	IDirect3DSurface8* surface;
+	IDirect3DSurface9* surface;
 	DX8_ErrorCode(D3DTexture->GetSurfaceLevel(0,&surface));
 	D3DSURFACE_DESC d3d_desc;
 	::ZeroMemory(&d3d_desc, sizeof(D3DSURFACE_DESC));
@@ -388,7 +388,7 @@ void TextureClass::Load_Locked_Surface()
 bool TextureClass::Is_Missing_Texture()
 {
 	bool flag = false;
-	IDirect3DTexture8 *missing_texture = MissingTexture::_Get_Missing_Texture();
+	IDirect3DTexture9 *missing_texture = MissingTexture::_Get_Missing_Texture();
 	
 	if(D3DTexture == missing_texture)
 		flag = true;
@@ -437,7 +437,7 @@ void TextureClass::Get_Level_Description(SurfaceClass::SurfaceDescription &surfa
 
 SurfaceClass *TextureClass::Get_Surface_Level(unsigned int level)
 {
-	IDirect3DSurface8 *d3d_surface = NULL;
+	IDirect3DSurface9 *d3d_surface = NULL;
 	DX8_ErrorCode(D3DTexture->GetSurfaceLevel(level, &d3d_surface));
 	SurfaceClass *surface = W3DNEW SurfaceClass(d3d_surface);
 	d3d_surface->Release();
@@ -508,18 +508,18 @@ void TextureClass::Apply(unsigned int stage)
 		DX8Wrapper::Set_DX8_Texture(stage, NULL);
 	}
 
-	DX8Wrapper::Set_DX8_Texture_Stage_State(stage,D3DTSS_MINFILTER,_MinTextureFilters[TextureMinFilter]);
-	DX8Wrapper::Set_DX8_Texture_Stage_State(stage,D3DTSS_MAGFILTER,_MagTextureFilters[TextureMagFilter]);
-	DX8Wrapper::Set_DX8_Texture_Stage_State(stage,D3DTSS_MIPFILTER,_MipMapFilters[MipMapFilter]);
+	DX8Wrapper::Set_DX8_Sampler_Stage_State( stage, D3DSAMP_MINFILTER,_MinTextureFilters[TextureMinFilter]);
+	DX8Wrapper::Set_DX8_Sampler_Stage_State( stage, D3DSAMP_MAGFILTER,_MagTextureFilters[TextureMagFilter]);
+	DX8Wrapper::Set_DX8_Sampler_Stage_State( stage, D3DSAMP_MIPFILTER,_MipMapFilters[MipMapFilter]);
 
 	switch (Get_U_Addr_Mode()) {
 
 		case TEXTURE_ADDRESS_REPEAT:
-			DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
+			DX8Wrapper::Set_DX8_Sampler_Stage_State( stage, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 			break;
 
 		case TEXTURE_ADDRESS_CLAMP:
-			DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
+			DX8Wrapper::Set_DX8_Sampler_Stage_State( stage, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
 			break;
 
 	}
@@ -527,11 +527,11 @@ void TextureClass::Apply(unsigned int stage)
 	switch (Get_V_Addr_Mode()) {
 
 		case TEXTURE_ADDRESS_REPEAT:
-			DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
+			DX8Wrapper::Set_DX8_Sampler_Stage_State( stage, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 			break;
 
 		case TEXTURE_ADDRESS_CLAMP:
-			DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
+			DX8Wrapper::Set_DX8_Sampler_Stage_State( stage, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 			break;
 
 	}
@@ -555,7 +555,7 @@ void TextureClass::Apply_New_Surface(bool initialized)
 	if (initialized) Initialized=true;
 
 	WWASSERT(D3DTexture);
-	IDirect3DSurface8* surface;
+	IDirect3DSurface9* surface;
 	DX8_ErrorCode(D3DTexture->GetSurfaceLevel(0,&surface));
 	D3DSURFACE_DESC d3d_desc;
 	::ZeroMemory(&d3d_desc, sizeof(D3DSURFACE_DESC));
@@ -724,9 +724,9 @@ bool Validate_Filters(unsigned type)
 	ShaderClass shader=ShaderClass::_PresetOpaqueShader;
 	shader.Apply();
 	DX8Wrapper::Set_DX8_Texture(0, MissingTexture::_Get_Missing_Texture());
-	DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_MINFILTER,_MinTextureFilters[type]);
-	DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_MAGFILTER,_MagTextureFilters[type]);
-	DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_MIPFILTER,_MipMapFilters[type]);
+	DX8Wrapper::Set_DX8_Sampler_Stage_State( 0, D3DSAMP_MINFILTER,_MinTextureFilters[type]);
+	DX8Wrapper::Set_DX8_Sampler_Stage_State( 0, D3DSAMP_MAGFILTER,_MagTextureFilters[type]);
+	DX8Wrapper::Set_DX8_Sampler_Stage_State( 0, D3DSAMP_MIPFILTER,_MipMapFilters[type]);
 	unsigned long passes;
 	HRESULT hres=DX8Wrapper::_Get_D3D_Device8()->ValidateDevice(&passes);
 	return !FAILED(hres);
@@ -734,7 +734,7 @@ bool Validate_Filters(unsigned type)
 */
 void TextureClass::_Init_Filters()
 {
-	const D3DCAPS8& dx8caps=DX8Caps::Get_Default_Caps();
+	const D3DCAPS9& dx8caps=DX8Caps::Get_Default_Caps();
 
 	_MinTextureFilters[FILTER_TYPE_NONE]=D3DTEXF_POINT;
 	_MagTextureFilters[FILTER_TYPE_NONE]=D3DTEXF_POINT;
@@ -745,9 +745,9 @@ void TextureClass::_Init_Filters()
 	_MipMapFilters[FILTER_TYPE_FAST]=D3DTEXF_POINT;
 
 	// Jani: Disabling anisotropic filtering as it doesn't seem to work with the latest nVidia drivers.
-	if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFAFLATCUBIC) _MagTextureFilters[FILTER_TYPE_BEST]=D3DTEXF_FLATCUBIC;
+	if (dx8caps.TextureFilterCaps& D3DPTFILTERCAPS_MAGFPYRAMIDALQUAD) _MagTextureFilters[FILTER_TYPE_BEST]= D3DTEXF_PYRAMIDALQUAD;
 	else if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFANISOTROPIC) _MagTextureFilters[FILTER_TYPE_BEST]=D3DTEXF_ANISOTROPIC;
-	else if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFGAUSSIANCUBIC) _MagTextureFilters[FILTER_TYPE_BEST]=D3DTEXF_GAUSSIANCUBIC;
+	else if (dx8caps.TextureFilterCaps& D3DPTFILTERCAPS_MAGFGAUSSIANQUAD) _MagTextureFilters[FILTER_TYPE_BEST]= D3DTEXF_GAUSSIANQUAD;
 	else if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFLINEAR) _MagTextureFilters[FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
 	else if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFPOINT) _MagTextureFilters[FILTER_TYPE_BEST]=D3DTEXF_POINT;
 	else {
@@ -775,7 +775,7 @@ void TextureClass::_Init_Filters()
 	_MipMapFilters[FILTER_TYPE_DEFAULT]=_MipMapFilters[FILTER_TYPE_BEST];
 
 	for (int stage=0;stage<MeshMatDescClass::MAX_TEX_STAGES;++stage) {
-		DX8Wrapper::Set_DX8_Texture_Stage_State(stage,D3DTSS_MAXANISOTROPY,2);
+		DX8Wrapper::Set_DX8_Sampler_Stage_State(stage,D3DSAMP_MAXANISOTROPY,2);
 	}
 
 
@@ -926,7 +926,7 @@ void Save_Texture(TextureClass * texture,ChunkSaveClass & csave)
 	setup_texture_attributes(texture, &texinfo);
 
 	csave.Begin_Chunk(W3D_CHUNK_TEXTURE_NAME);
-	csave.Write(filename,strlen(filename)+1);
+	csave.Write(filename, (uint32)strlen(filename)+1);
 	csave.End_Chunk();
 
 	if ((texinfo.Attributes != 0) || (texinfo.AnimType != 0) || (texinfo.FrameCount != 0)) {

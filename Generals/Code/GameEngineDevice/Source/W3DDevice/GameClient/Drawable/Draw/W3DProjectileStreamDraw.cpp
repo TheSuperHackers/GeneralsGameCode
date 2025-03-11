@@ -198,7 +198,7 @@ void W3DProjectileStreamDraw::makeOrUpdateLine( Vector3 *points, UnsignedInt poi
 	if( m_allLines[lineIndex] == NULL )
 	{
 		//Need a new one if this is blank, otherwise I'll reset the existing one
-		m_allLines[lineIndex] = NEW SegmentedLineClass;
+		m_allLines[lineIndex] = new SegmentedLineClass;
 		m_linesValid++;
 		newLine = TRUE;
 	}

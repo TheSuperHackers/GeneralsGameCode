@@ -56,7 +56,9 @@ void W3DCameoMovieDraw( GameWindow *window, WinInstanceData *instData )
 		window->winGetScreenPosition( &pos.x, &pos.y );
 		window->winGetSize( &size.x, &size.y );
 
+#ifdef HAS_BINK
 		TheDisplay->drawVideoBuffer( video, pos.x, pos.y, pos.x + size.x, pos.y + size.y );
+#endif
 	}
 }  // end W3DLeftHUDDraw
 
@@ -75,7 +77,9 @@ void W3DLeftHUDDraw( GameWindow *window, WinInstanceData *instData )
 		window->winGetScreenPosition( &pos.x, &pos.y );
 		window->winGetSize( &size.x, &size.y );
 
+#ifdef HAS_BINK
 		TheDisplay->drawVideoBuffer( video, pos.x, pos.y, pos.x + size.x, pos.y + size.y );
+#endif
 	}
 	else if( TheRadar->isRadarForced() || ( TheRadar->isRadarHidden() == false && player->hasRadar() ) )
 	{
@@ -99,7 +103,7 @@ void W3DRightHUDDraw( GameWindow *window, WinInstanceData *instData )
 {
 
 	// draw the default stuff
-	if( BitTest(window->winGetStatus(), WIN_STATUS_IMAGE ))
+	if( BitTestWW(window->winGetStatus(), WIN_STATUS_IMAGE ))
 		W3DGameWinDefaultDraw( window, instData );
 	
 }  // end W3DRightHUDDraw
@@ -465,7 +469,7 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 
 void W3DCommandBarGridDraw( GameWindow *window, WinInstanceData *instData )
 {
-	if( BitTest(window->winGetStatus(), WIN_STATUS_IMAGE ))
+	if( BitTestWW(window->winGetStatus(), WIN_STATUS_IMAGE ))
 	{
 		W3DGameWinDefaultDraw( window, instData );
 		return;
@@ -744,7 +748,7 @@ void W3DDrawMapPreview( GameWindow *window, WinInstanceData *instData)
 
 	}  // end else
 
-	if(!BitTest(window->winGetStatus(), WIN_STATUS_IMAGE) || !window->winGetEnabledImage(0))
+	if(!BitTestWW(window->winGetStatus(), WIN_STATUS_IMAGE) || !window->winGetEnabledImage(0))
 		TheDisplay->drawFillRect(ul.x, ul.y, lr.x -ul.x, lr.y-ul.y, lineColor);
 	else
 		TheDisplay->drawImage(window->winGetEnabledImage(0) , ul.x, ul.y, lr.x, lr.y );

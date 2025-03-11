@@ -873,10 +873,10 @@ static inline float eval_side(float ab,float side)
  *=============================================================================================*/
 static inline void compute_contact_point(ObbCollisionStruct & context,CastResultStruct * result)
 {
-	int i,j;
-	float x[3];		// box0 parameters
-	float y[3];		// box1 parameters
-	float den;
+	int i = 0,j =0;
+	float x[3] = {};		// box0 parameters
+	float y[3] = {};		// box1 parameters
+	float den = 0.f;
 	Vector3 dcnew(0,0,0);
 
 //again:

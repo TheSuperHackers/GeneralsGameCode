@@ -64,7 +64,7 @@
 //-----------------------------------------------------------------------------
 // AnimateWindow PUBLIC FUNCTIONS /////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-AnimateWindow::AnimateWindow( void )
+AnimateWindowWW::AnimateWindowWW( void )
 {
 	m_delay = 0;
 	m_startPos.x = m_startPos.y = 0;
@@ -80,12 +80,12 @@ AnimateWindow::AnimateWindow( void )
 	m_endTime = 0;
 	m_startTime = 0;
 }
-AnimateWindow::~AnimateWindow( void )
+AnimateWindowWW::~AnimateWindowWW( void )
 {
 	m_win = NULL;
 }
 
-void AnimateWindow::setAnimData( 	ICoord2D startPos, ICoord2D endPos, 
+void AnimateWindowWW::setAnimData( 	ICoord2D startPos, ICoord2D endPos, 
 																	ICoord2D curPos, ICoord2D restPos,
 																	Coord2D vel, UnsignedInt startTime,
 																	UnsignedInt endTime )
@@ -107,7 +107,7 @@ void AnimateWindow::setAnimData( 	ICoord2D startPos, ICoord2D endPos,
 
 static void clearWinList(AnimateWindowList &winList)
 {
-	AnimateWindow *win = NULL;
+	AnimateWindowWW *win = NULL;
 	while (!winList.empty())
 	{
 		win = *(winList.begin());
@@ -190,7 +190,7 @@ void AnimateWindowManager::update( void )
 		
 		while (it != m_winMustFinishList.end())
 		{
-			AnimateWindow *animWin = *it;
+			AnimateWindowWW *animWin = *it;
 			if (!animWin)
 			{
 				DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
@@ -219,7 +219,7 @@ void AnimateWindowManager::update( void )
 		
 	while (it != m_winList.end())
 	{
-		AnimateWindow *animWin = *it;
+		AnimateWindowWW *animWin = *it;
 		if (!animWin)
 		{
 			DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
@@ -255,7 +255,7 @@ void AnimateWindowManager::registerGameWindow(GameWindow *win, AnimTypes animTyp
 	}
 
 	// Create a new AnimateWindow class and fill in it's data.
-	AnimateWindow *animWin = newInstance(AnimateWindow);	
+	AnimateWindowWW *animWin = newInstance(AnimateWindowWW);	
 	animWin->setGameWindow(win);
 	animWin->setAnimType(animType);
 	animWin->setNeedsToFinish(needsToFinish);
@@ -330,7 +330,7 @@ void AnimateWindowManager::reverseAnimateWindow( void )
 	AnimateWindowList::iterator it = m_winMustFinishList.begin();
 	while (it != m_winMustFinishList.end())
 	{
-		AnimateWindow *animWin = *it;
+		AnimateWindowWW *animWin = *it;
 		if (!animWin)
 		{
 			DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
@@ -344,7 +344,7 @@ void AnimateWindowManager::reverseAnimateWindow( void )
 	it = m_winMustFinishList.begin();
 	while (it != m_winMustFinishList.end())
 	{
-		AnimateWindow *animWin = *it;
+		AnimateWindowWW *animWin = *it;
 		if (!animWin)
 		{
 			DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
@@ -365,7 +365,7 @@ void AnimateWindowManager::reverseAnimateWindow( void )
 		
 	while (it != m_winList.end())
 	{
-		AnimateWindow *animWin = *it;
+		AnimateWindowWW *animWin = *it;
 		if (!animWin)
 		{
 			DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
@@ -390,7 +390,7 @@ void AnimateWindowManager::resetToRestPosition( void )
 	AnimateWindowList::iterator it = m_winMustFinishList.begin();
 	while (it != m_winMustFinishList.end())
 	{
-		AnimateWindow *animWin = *it;
+		AnimateWindowWW *animWin = *it;
 		if (!animWin)
 		{
 			DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));
@@ -405,7 +405,7 @@ void AnimateWindowManager::resetToRestPosition( void )
 	it = 	m_winList.begin();
 	while (it != m_winList.end())
 	{
-		AnimateWindow *animWin = *it;
+		AnimateWindowWW *animWin = *it;
 		if (!animWin)
 		{
 			DEBUG_CRASH(("There's No AnimateWindow in the AnimateWindow List"));

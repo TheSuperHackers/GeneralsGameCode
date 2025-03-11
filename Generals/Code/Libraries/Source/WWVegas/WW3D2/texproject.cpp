@@ -1146,7 +1146,7 @@ bool TexProjectClass::Compute_Texture(RenderObjClass * model,SpecialRenderInfoCl
 		WW3D::Render(*model,*context);
 		WW3D::End_Render(false);
 
-		DX8Wrapper::Set_Render_Target((IDirect3DSurface8 *)NULL);
+		DX8Wrapper::Set_Render_Target((IDirect3DSurface9 *)NULL);
 	}
 
 #if 0

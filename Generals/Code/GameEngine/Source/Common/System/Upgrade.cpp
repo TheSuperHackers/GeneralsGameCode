@@ -429,7 +429,7 @@ Bool UpgradeCenter::canAffordUpgrade( Player *player, const UpgradeTemplate *upg
 
 	// money check
 	Money *money = player->getMoney();
-	if( money->countMoney() < upgradeTemplate->calcCostToBuild( player ) )
+	if((int)money->countMoney() < upgradeTemplate->calcCostToBuild( player ) )
 	{
 		//Post reason why we can't make upgrade!
 		if( displayReason )

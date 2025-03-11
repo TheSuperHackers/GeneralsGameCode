@@ -183,7 +183,13 @@ public:
 	void setExtraFriction(Real b) { m_extraFriction = b; }
 
 	void setBounceSound(const AudioEventRTS* bounceSound);
-	const AudioEventRTS* getBounceSound() { return m_bounceSound ? &m_bounceSound->m_event : TheAudio->getValidSilentAudioEvent(); }
+	const AudioEventRTS* getBounceSound() {
+#ifdef HAS_BINK
+		return m_bounceSound ? &m_bounceSound->m_event : TheAudio->getValidSilentAudioEvent(); 
+#else
+		return nullptr;
+#endif
+	}
 	
 	/**
 		Reset all values (vel, accel, etc) to starting values.

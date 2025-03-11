@@ -32,7 +32,7 @@ Bool DecompressFile		(char *infile, char *outfile);
 Bool CompressFile			(char *infile, char *outfile);
 Bool CompressPacket		(char *inPacket, char *outPacket);
 Bool DecompressPacket	(char *inPacket, char *outPacket);
-UnsignedInt CalcNewSize		(UnsignedInt rawSize);
+size_t CalcNewSize(size_t rawSize);
 
 Bool DecompressMemory		(void *inBufferVoid, Int inSize, void *outBufferVoid, Int& outSize);
 Bool CompressMemory			(void *inBufferVoid, Int inSize, void *outBufferVoid, Int& outSize);

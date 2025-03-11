@@ -69,7 +69,7 @@ struct AudioRequest;
 struct AudioSettings;
 struct MiscAudio;
 
-typedef std::hash_map<AsciiString, AudioEventInfo*, rts::hash<AsciiString>, rts::equal_to<AsciiString> > AudioEventInfoHash;
+typedef std::unordered_map<AsciiString, AudioEventInfo*, rts::hash<AsciiString>, rts::equal_to<AsciiString> > AudioEventInfoHash;
 typedef AudioEventInfoHash::iterator AudioEventInfoHashIt;
 typedef UnsignedInt AudioHandle;
 
@@ -367,6 +367,8 @@ class AudioManager : public SubsystemInterface
 		Bool m_disallowSpeech			: 1;
 };
 
+#ifdef HAS_BINK
 extern AudioManager *TheAudio;
+#endif
 
 #endif // __COMMON_GAMEAUDIO_H_

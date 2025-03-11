@@ -53,7 +53,8 @@
 **	The value entries for the INI file are stored as objects of this type.
 **	The entry identifier and value string are combined into this object.
 */
-struct INIEntry : public Node<INIEntry *> {
+class INIEntry : public Node<INIEntry *> {
+public:
 	INIEntry(char * entry = NULL, char * value = NULL) : Entry(entry), Value(value) {}
 	~INIEntry(void);
 //	~INIEntry(void) {free(Entry);Entry = NULL;free(Value);Value = NULL;}
@@ -68,7 +69,8 @@ struct INIEntry : public Node<INIEntry *> {
 **	Each section (bracketed) is represented by an object of this type. All entries
 **	subordinate to this section are attached.
 */
-struct INISection : public Node<INISection *> {
+class INISection : public Node<INISection *> {
+public:
 		INISection(char * section) : Section(section) {}
 		~INISection(void);
 //		~INISection(void) {free(Section);Section = 0;EntryList.Delete();}

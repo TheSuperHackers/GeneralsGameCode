@@ -111,7 +111,7 @@ Filename_From_Asset_Name (const char *asset_name)
 		//
 		// Do we need to strip off the model's suffix?
 		//
-		char *suffix = ::strchr (filename, '.');
+		char *suffix = (char*)::strchr (filename, '.');
 		if (suffix != NULL) {
 			suffix[0] = 0;
 		}
@@ -522,7 +522,7 @@ RenderObjClass * RenderObjClass::Get_Sub_Object_By_Name(const char * name, int *
 	for (i=0; i<Get_Num_Sub_Objects(); i++) {
 		RenderObjClass * robj = Get_Sub_Object(i);
 		if (robj) {
-			if (stricmp(robj->Get_Name(),name) == 0) {
+			if (_stricmp(robj->Get_Name(),name) == 0) {
 				if (index) *index=i;
 				return robj;
 			} else {
@@ -543,7 +543,7 @@ RenderObjClass * RenderObjClass::Get_Sub_Object_By_Name(const char * name, int *
 				subobjname = subobjname+1;
 			}
 
-			if (stricmp(subobjname,name) == 0) {
+			if (_stricmp(subobjname,name) == 0) {
 				if (index) *index=i;
 				return robj;
 			} else {

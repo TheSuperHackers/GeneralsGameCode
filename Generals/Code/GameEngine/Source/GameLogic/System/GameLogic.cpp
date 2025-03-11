@@ -203,7 +203,7 @@ void setFPMode( void )
 	//newVal = (newVal & ~_MCW_RC) | (_RC_CHOP & _MCW_RC);
 	newVal = (newVal & ~_MCW_PC) | (_PC_24   & _MCW_PC);
 
-	_controlfp(newVal, _MCW_PC | _MCW_RC);
+	//_controlfp(newVal, _MCW_PC | _MCW_RC);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -423,7 +423,7 @@ void GameLogic::reset( void )
 
 	// set the hash to be rather large. We need to optimize this value later.
 	m_objHash.clear();
-	m_objHash.resize(OBJ_HASH_SIZE);
+	//m_objHash.resize(OBJ_HASH_SIZE);
 	m_gamePaused = FALSE;
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
@@ -719,7 +719,7 @@ static void populateRandomSideAndColor( GameInfo *game )
 			// get a few values at random to get rid of the dreck.
 			// there's no mathematical basis for this, but empirically, it helps a lot.
 			UnsignedInt silly = GetGameLogicRandomSeed() % 7;
-			for (Int poo = 0; poo < silly; ++poo) 
+			for (UnsignedInt poo = 0; poo < silly; ++poo)
 			{
 				GameLogicRandomValue(0, 1);	// ignore result
 			}
@@ -1690,7 +1690,7 @@ void GameLogic::startNewGame( Bool saveGame )
 
 			}  // end if
 		
-			if(timeGetTime() > timer + 500)
+			if((int)timeGetTime() > timer + 500)
 			{
 				if(progressCount < LOAD_PROGRESS_MAX_ALL_THE_FREAKN_OBJECTS)
 					progressCount ++;
@@ -2094,7 +2094,7 @@ void GameLogic::loadMapINI( AsciiString mapName )
 		strcpy( filename, TheGameState->getSaveGameInfo()->pristineMapName.str() );
 
 	// sanity
-	int length = strlen(filename);
+	int length = (int)strlen(filename);
 	if (length < 4) { 
 		return;
 	}
@@ -2228,7 +2228,7 @@ void GameLogic::processCommandList( CommandList *list )
 	for( msg = list->getFirstMessage(); msg; msg = msg->next() )
 	{
 #ifdef _DEBUG
-		DEBUG_ASSERTCRASH(msg != NULL && msg != (GameMessage*)0xdeadbeef, ("bad msg"));
+		DEBUG_ASSERTCRASH(msg != NULL && msg != (GameMessage*)(intptr_t)0xdeadbeef, ("bad msg"));
 #endif
 		logicMessageDispatcher( msg, NULL );
 	}
@@ -2393,7 +2393,7 @@ inline void GameLogic::validateSleepyUpdate() const
 	#define SLEEPY_DEBUG
 #endif
 #ifdef SLEEPY_DEBUG
-	int sz = m_sleepyUpdates.size();
+	int sz = (int)m_sleepyUpdates.size();
 	if (sz == 0)
 		return;
 
@@ -2439,7 +2439,7 @@ void GameLogic::eraseSleepyUpdate(Int i)
 	// swap with the final item, toss the final item, then rebalance
 	m_sleepyUpdates[i]->friend_setIndexInLogic(-1);
 
-	Int final = m_sleepyUpdates.size() - 1;
+	Int final = (int)m_sleepyUpdates.size() - 1;
 	if (i < final)
 	{
 		m_sleepyUpdates[i] = m_sleepyUpdates[final];
@@ -2507,8 +2507,8 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 
 	// our children are i*2 and i*2+1
   Int child = ((i+1)<<1)-1;
-	UpdateModulePtr* pChild = &m_sleepyUpdates[child];
-	UpdateModulePtr* pSZ = &m_sleepyUpdates[m_sleepyUpdates.size()];	// yes, this is off the end.
+	UpdateModulePtr* pChild = m_sleepyUpdates.data() + child;
+	UpdateModulePtr* pSZ = m_sleepyUpdates.data() + m_sleepyUpdates.size();	// yes, this is off the end.
 
   while (pChild < pSZ) 
 	{
@@ -2539,7 +2539,7 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 		pI = pChild;
 
 		child = ((i+1)<<1)-1;
-		pChild = &m_sleepyUpdates[child];
+		pChild = m_sleepyUpdates.data() + child;
   }
 #else
 	// our children are i*2 and i*2+1
@@ -2587,7 +2587,7 @@ void GameLogic::remakeSleepyUpdate()
 {
 	USE_PERF_TIMER(SleepyMaintenance)
 
-	Int parent = m_sleepyUpdates.size() / 2;
+	Int parent = (int)m_sleepyUpdates.size() / 2;
   while (true) 
 	{
     rebalanceChildSleepyUpdate(parent);
@@ -2607,9 +2607,9 @@ void GameLogic::pushSleepyUpdate(UpdateModulePtr u)
 	DEBUG_ASSERTCRASH(u != NULL, ("You may not pass null for sleepy update info"));
 
 	m_sleepyUpdates.push_back(u);
-	u->friend_setIndexInLogic(m_sleepyUpdates.size() - 1);
+	u->friend_setIndexInLogic((int)m_sleepyUpdates.size() - 1);
 	
-	rebalanceParentSleepyUpdate(m_sleepyUpdates.size()-1);
+	rebalanceParentSleepyUpdate((int)m_sleepyUpdates.size()-1);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2627,7 +2627,7 @@ void GameLogic::popSleepyUpdate()
 {
 	USE_PERF_TIMER(SleepyMaintenance)
 
-	Int sz = m_sleepyUpdates.size();
+	Int sz = (int)m_sleepyUpdates.size();
 	if (sz == 0)
 	{
 		DEBUG_CRASH(("should not happen"));
@@ -3122,7 +3122,7 @@ void GameLogic::update( void )
 //#if defined(_DEBUG) || defined(_INTERNAL)
 #ifdef DEBUG_CRC
 	Bool generateForSolo = isSoloGameOrReplay && ((m_frame && (m_frame%100 == 0)) ||
-		(getFrame() > TheCRCFirstFrameToLog && getFrame() < TheCRCLastFrameToLog && ((m_frame % REPLAY_CRC_INTERVAL) == 0)));
+		((int)getFrame() > TheCRCFirstFrameToLog && (int)getFrame() < TheCRCLastFrameToLog && ((m_frame % REPLAY_CRC_INTERVAL) == 0)));
 #else
 	Bool generateForSolo = isSoloGameOrReplay && ((m_frame % REPLAY_CRC_INTERVAL) == 0);
 #endif // DEBUG_CRC
@@ -3653,7 +3653,9 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic )
 
 	m_gamePaused = paused; 
 
+#ifdef HAS_BINK
 	AudioAffect audToAffect = (AudioAffect)(pauseMusic ? AudioAffect_All : (AudioAffect_All & ~AudioAffect_Music));
+#endif
 	
 	if(paused)
 	{
@@ -3670,7 +3672,9 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic )
 		{
 			TheInGameUI->setInputEnabled(FALSE);
 		}
+#ifdef HAS_BINK
 		TheAudio->pauseAudio(audToAffect);
+#endif
 
 		//Stop all ambient sounds!
 		Drawable *drawable = TheGameClient->getDrawableList();
@@ -3686,14 +3690,18 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic )
 		TheMouse->setVisibility(m_mouseVisibleMemory);
 		if(m_inputEnabledMemory)
 			TheInGameUI->setInputEnabled(TRUE);
+#ifdef HAS_BINK
 		TheAudio->resumeAudio(audToAffect);
+#endif
 
 		//Start all ambient sounds!
 		Drawable *drawable = TheGameClient->getDrawableList();
 		while( drawable )
 		{
 			drawable->startAmbientSound();
+#ifdef HAS_BINK
 			TheAudio->stopAllAmbientsBy( drawable );
+#endif
 			drawable = drawable->getNextDrawable();
 		}
 	}
@@ -4514,7 +4522,7 @@ void GameLogic::loadPostProcess( void )
 #endif
 			{
 				m_sleepyUpdates.push_back(u);
-				u->friend_setIndexInLogic(m_sleepyUpdates.size() - 1);
+				u->friend_setIndexInLogic((int)m_sleepyUpdates.size() - 1);
 			}
 				
 		}  // end for, u

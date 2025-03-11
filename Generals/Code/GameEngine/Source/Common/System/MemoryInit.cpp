@@ -661,7 +661,7 @@ static PoolSizeRec sizes[] =
 	{ "SortingIndexBufferClass", 32, 32 },
 	{ "DX8VertexBufferClass", 128, 32 },
 	{ "SortingVertexBufferClass", 32, 32 },
-	{ "DynD3DMATERIAL8", 8192, 32 }, 
+	{ "DynD3DMATERIAL9", 8192, 32 }, 
 	{ "DynamicMatrix3D", 512, 32 },
 	{ "MeshGeometryClass", 32, 32 },
 	{ "DynamicMeshModel", 32, 32 },
@@ -738,7 +738,7 @@ void userMemoryManagerInitPools()
 			{
 				for (PoolSizeRec* p = sizes; p->name != NULL; ++p)
 				{
-					if (stricmp(p->name, poolName) == 0)
+					if (_stricmp(p->name, poolName) == 0)
 					{
 						// currently, these must be multiples of 4. so round up.
 						p->initial = roundUpMemBound(initial);

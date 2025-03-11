@@ -55,11 +55,11 @@ static unsigned int unique=1;
 VertexMaterialClass* VertexMaterialClass::Presets[VertexMaterialClass::PRESET_COUNT];
 
 #ifdef DYN_MAT8
-class DynD3DMATERIAL8 : public W3DMPO
+class DynD3DMATERIAL9 : public W3DMPO
 {
-	W3DMPO_GLUE(DynD3DMATERIAL8)
+	W3DMPO_GLUE(DynD3DMATERIAL9)
 public:
-	D3DMATERIAL8 Mat;
+	D3DMATERIAL9 Mat;
 };
 #define Material				(&MaterialDyn->Mat)
 #define SRCMATPTR(src)	(&(src)->MaterialDyn->Mat)
@@ -94,11 +94,11 @@ VertexMaterialClass::VertexMaterialClass(void):
 	}	
 
 #ifdef DYN_MAT8
-	MaterialDyn=W3DNEW DynD3DMATERIAL8;
+	MaterialDyn=W3DNEW DynD3DMATERIAL9;
 #else
-	MaterialOld=W3DNEW D3DMATERIAL8;
+	MaterialOld=W3DNEW D3DMATERIAL9;
 #endif
-	memset(Material,0,sizeof(D3DMATERIAL8));
+	memset(Material,0,sizeof(D3DMATERIAL9));
 	Set_Ambient(1.0f,1.0f,1.0f);
 	Set_Diffuse(1.0f,1.0f,1.0f);
 
@@ -135,11 +135,11 @@ VertexMaterialClass::VertexMaterialClass(const VertexMaterialClass & src) :
 	}	
 
 #ifdef DYN_MAT8
-	MaterialDyn=W3DNEW DynD3DMATERIAL8;
+	MaterialDyn=W3DNEW DynD3DMATERIAL9;
 #else
-	MaterialOld=W3DNEW D3DMATERIAL8;
+	MaterialOld=W3DNEW D3DMATERIAL9;
 #endif
-	memcpy(Material, SRCMATPTR(&src), sizeof(D3DMATERIAL8));
+	memcpy(Material, SRCMATPTR(&src), sizeof(D3DMATERIAL9));
 }
 
 void VertexMaterialClass::Make_Unique()
@@ -209,7 +209,7 @@ unsigned long VertexMaterialClass::Compute_CRC(void) const
 // don't include the name when determining whether two vertex materials match
 //	crc = CRC_Memory(reinterpret_cast<const unsigned char *>(Name.Peek_Buffer()),sizeof(char)*strlen(Name),crc);
 
-	crc = CRC_Memory(reinterpret_cast<const unsigned char *>(Material),sizeof(D3DMATERIAL8),crc);
+	crc = CRC_Memory(reinterpret_cast<const unsigned char *>(Material),sizeof(D3DMATERIAL9),crc);
 	crc = CRC_Memory(reinterpret_cast<const unsigned char *>(&Flags),sizeof(Flags),crc);
 	crc = CRC_Memory(reinterpret_cast<const unsigned char *>(&DiffuseColorSource),sizeof(DiffuseColorSource),crc);
 	crc = CRC_Memory(reinterpret_cast<const unsigned char *>(&AmbientColorSource),sizeof(AmbientColorSource),crc);
@@ -513,7 +513,7 @@ WW3DErrorType VertexMaterialClass::Load_W3D(ChunkLoadClass & cload)
 
 		char *extended_arg_buffer = MSGW3DNEWARRAY("VertexMaterialClassTemp") char[mapping0_arg_len + 10];
 		sprintf(extended_arg_buffer, "[Args]\n%s", mapping0_arg_buffer);
-		mapping0_arg_len = strlen(extended_arg_buffer) + 1;
+		mapping0_arg_len = (unsigned int)(strlen(extended_arg_buffer) + 1);
 
 		delete [] mapping0_arg_buffer;
 		mapping0_arg_buffer = NULL;
@@ -530,7 +530,7 @@ WW3DErrorType VertexMaterialClass::Load_W3D(ChunkLoadClass & cload)
 
 		char *extended_arg_buffer = MSGW3DNEWARRAY("VertexMaterialClassTemp") char[mapping1_arg_len + 20];
 		sprintf(extended_arg_buffer, "[Args]\n%s", mapping1_arg_buffer);
-		mapping1_arg_len = strlen(extended_arg_buffer) + 1;
+		mapping1_arg_len = (unsigned int)(strlen(extended_arg_buffer) + 1);
 
 		delete [] mapping1_arg_buffer;
 		mapping1_arg_buffer = NULL;
@@ -926,7 +926,7 @@ void VertexMaterialClass::Apply(void) const
 void VertexMaterialClass::Apply_Null(void)
 {
 	int i;
-	static D3DMATERIAL8 default_settings = 
+	static D3DMATERIAL9 default_settings = 
 	{
 		{ 1.0f, 1.0f, 1.0f, 1.0f },	// diffuse
 		{ 1.0f, 1.0f, 1.0f, 1.0f },	// ambient

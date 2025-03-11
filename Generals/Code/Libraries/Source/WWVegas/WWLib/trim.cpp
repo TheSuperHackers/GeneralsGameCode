@@ -77,7 +77,7 @@ char * strtrim(char * buffer)
 		/*
 		**	Clip trailing white space from the string.
 		*/
-		for (int index = strlen(buffer)-1; index >= 0; index--) {
+		for (int index = (int)strlen(buffer)-1; index >= 0; index--) {
 			if (isspace(buffer[index])) {
 				buffer[index] = '\0';
 			} else {
@@ -106,7 +106,7 @@ wchar_t * wcstrim(wchar_t * buffer)
 		/*
 		**	Clip trailing white space from the string.
 		*/
-		for (int index = wcslen(buffer)-1; index >= 0; index--) {
+		for (int index = (int)wcslen(buffer)-1; index >= 0; index--) {
 			if (iswspace(buffer[index])) {
 				buffer[index] = L'\0';
 			} else {

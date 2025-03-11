@@ -331,7 +331,7 @@ char const * RawFileClass::Set_Name(char const * filename)
 
 	Bias(0);
 
-	char *nameptr = strdup(filename);
+	char *nameptr = _strdup(filename);
 	if (nameptr == NULL) {
 		Error(ENOMEM, false, filename);
 	}

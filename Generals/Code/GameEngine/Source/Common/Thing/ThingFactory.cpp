@@ -111,7 +111,7 @@ ThingFactory::ThingFactory()
 	m_firstTemplate = NULL;
 	m_nextTemplateID = 1;	// not zero!
 
-	m_templateHashMap.resize( TEMPLATE_HASH_SIZE );
+	//m_templateHashMap.resize( TEMPLATE_HASH_SIZE );
 }  // end ThingFactory
 
 //-------------------------------------------------------------------------------------------------
@@ -307,7 +307,7 @@ Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, Objec
 	const std::vector<AsciiString>& asv = tmplate->getBuildVariations();
 	if (!asv.empty())
 	{
-		Int which = GameLogicRandomValue(0, asv.size()-1);
+		Int which = GameLogicRandomValue(0, (int)asv.size()-1);
 		const ThingTemplate* tmp = findTemplate( asv[which] );
 		if (tmp != NULL)
 			tmplate = tmp;

@@ -198,7 +198,7 @@ void CompositeRenderObjClass::Set_Name(const char * name)
 		Name = NULL;
 	}
 	if (name) {
-		Name = strdup(name);
+		Name = _strdup(name);
 	}
 }
 
@@ -225,7 +225,7 @@ void CompositeRenderObjClass::Set_Base_Model_Name(const char *name)
 	}
 
 	if (name) {
-		BaseModelName = ::strdup(name);
+		BaseModelName = ::_strdup(name);
 	}
 	
 	return ;

@@ -735,7 +735,7 @@ static inline void obbtri_compute_contact_point
 )
 {
 	int i;
-	float x[3];
+	float x[3] = {};
 
 	if (context.AxisId >= AXIS_A0E0) {
 		Vector3 newc = context.Box.Center + result->Fraction * context.BoxMove;

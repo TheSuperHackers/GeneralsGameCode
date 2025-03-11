@@ -321,9 +321,11 @@ UpdateSleepTime ParachuteContain::update( void )
 				rider->clearAndSetModelConditionState(MODELCONDITION_FREEFALL, MODELCONDITION_PARACHUTING);
 				m_needToUpdateRiderBones = true;
 
+#ifdef HAS_BINK
 				AudioEventRTS soundToPlay = d->m_parachuteOpenSound;
 				soundToPlay.setObjectID( rider->getID() );
 				TheAudio->addAudioEvent( &soundToPlay );
+#endif
 			}
 			
 

@@ -608,7 +608,7 @@ private: \
 	
 // ----------------------------------------------------------------------------
 #define MEMORY_POOL_GLUE_WITHOUT_GCMP(ARGCLASS) \
-protected: \
+public: \
 	virtual ~ARGCLASS(); \
 public: \
 	enum ARGCLASS##MagicEnum { ARGCLASS##_GLUE_NOT_IMPLEMENTED = 0 }; \
@@ -862,6 +862,8 @@ extern void userMemoryAdjustPoolSize(const char *poolName, Int& initialAllocatio
 
 	#define _OPERATOR_NEW_DEFINED_
 
+#include <new>
+
 	extern void * __cdecl operator new		(size_t size);
 	extern void __cdecl operator delete		(void *p);
 
@@ -878,13 +880,13 @@ extern void userMemoryAdjustPoolSize(const char *poolName, Int& initialAllocatio
 	// additional overloads for 'placement new'
 	//inline void* __cdecl operator new							(size_t s, void *p) { return p; }
 	//inline void __cdecl operator delete						(void *, void *p)		{ }
-	inline void* __cdecl operator new[]						(size_t s, void *p) { return p; }
-	inline void __cdecl operator delete[]					(void *, void *p)		{ }
+	//inline void* __cdecl operator new[]						(size_t s, void *p) { return p; }
+	//inline void __cdecl operator delete[]					(void *, void *p)		{ }
 
 #endif
 
 #ifdef MEMORYPOOL_DEBUG_CUSTOM_NEW
-	#define MSGNEW(MSG)		new(MSG, 0)
+	#define MSGNEW(MSG)		new MSG{}
 	#define NEW						new(__FILE__, __LINE__)
 #else
 	#define MSGNEW(MSG)		new

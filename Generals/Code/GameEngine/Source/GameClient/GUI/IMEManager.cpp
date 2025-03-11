@@ -1062,7 +1062,7 @@ WideChar IMEManager::convertCharToWide( WPARAM wParam )
 
 	WideChar uniString[2];
 
-	if ( MultiByteToWideChar( CP_ACP, 0, dcbsString, strlen( dcbsString ), uniString, 1 ) == 1 )
+	if ( MultiByteToWideChar( CP_ACP, 0, dcbsString, (int)strlen( dcbsString ), uniString, 1 ) == 1 )
 	{
 		return uniString[0];
 	}
@@ -1136,13 +1136,13 @@ void IMEManager::updateCompositionString( void )
 				else
 				{
 					m_compositionCursorPos = (ImmGetCompositionString( m_context, GCS_CURSORPOS, NULL, 0) & 0xffff );
-					convRes = GameStrlen ( m_compositionString );
+					convRes = (int)GameStrlen ( m_compositionString );
 				}
 			
 				// m_compositionCursorPos is in DBCS characters, need to convert it to Wide characters
 			
 				//msg_assert ( (int)strlen(tempBuf) >= convRes ,("bad DBCS string: DBCS = %d chars, Wide = %d chars", strlen(tempBuf), convRes));
-				m_compositionCursorPos = _mbsnccnt ( (unsigned char *) tempBuf, m_compositionCursorPos );
+				m_compositionCursorPos = (int)_mbsnccnt ( (unsigned char *) tempBuf, m_compositionCursorPos );
 			
 				m_compositionString[convRes] = 0;
 				m_compositionStringLength = convRes;
@@ -1192,7 +1192,7 @@ void IMEManager::getResultsString ( void )
 			{
 				tempBuf[ result ] = '\0';
 			
-				int convRes = MultiByteToWideChar( CP_ACP, 0, tempBuf, strlen(tempBuf), m_resultsString, MAX_COMPSTRINGLEN );
+				int convRes = MultiByteToWideChar( CP_ACP, 0, tempBuf, (int)strlen(tempBuf), m_resultsString, MAX_COMPSTRINGLEN );
 			
 				if ( convRes < 0)
 				{
@@ -1214,7 +1214,7 @@ void IMEManager::getResultsString ( void )
 
 void IMEManager::convertToUnicode ( Char *mbcs, UnicodeString &unicode )
 {
- 	int size = MultiByteToWideChar( CP_ACP, 0, mbcs, strlen(mbcs), NULL, 0 );
+ 	int size = MultiByteToWideChar( CP_ACP, 0, mbcs, (int)strlen(mbcs), NULL, 0 );
 
 	unicode.clear();
 
@@ -1227,7 +1227,7 @@ void IMEManager::convertToUnicode ( Char *mbcs, UnicodeString &unicode )
 
 	if ( buffer )
 	{
-		size = MultiByteToWideChar( CP_ACP, 0, mbcs, strlen(mbcs), buffer, size );
+		size = MultiByteToWideChar( CP_ACP, 0, mbcs, (int)strlen(mbcs), buffer, size );
 		
 		if ( size <= 0 )
 		{
@@ -1446,7 +1446,7 @@ void IMEManager::updateCandidateList( Int candidateFlags  )
 
 						for( i=0; i < m_candidateCount; i++ )
 						{
-							Char *string = (Char*) ((UnsignedInt) clist + (UnsignedInt) clist->dwOffset[i]);
+							Char *string = (Char*) ((uintptr_t) clist + clist->dwOffset[i]);
 							if ( unicode )
 							{
 								m_candidateString[i].set( (WideChar *) string);

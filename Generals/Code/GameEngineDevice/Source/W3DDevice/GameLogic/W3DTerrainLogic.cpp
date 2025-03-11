@@ -128,7 +128,7 @@ Bool W3DTerrainLogic::loadMap( AsciiString filename , Bool query )
 
 	strcpy(tempBuf, filename.str());
 
-	length = strlen( tempBuf );
+	length = (int)strlen( tempBuf );
 	if( length >= 4 )
 	{
 		memset( filenameBuf, '\0', _MAX_PATH);
@@ -149,7 +149,7 @@ Bool W3DTerrainLogic::loadMap( AsciiString filename , Bool query )
 
 	// allocate new height map data to read from file
 	// this will be a dummy object only containing logical map data
-	terrainHeightMap = NEW WorldHeightMap(pStrm, true);
+	terrainHeightMap = new WorldHeightMap(pStrm, true);
 
 	if (terrainHeightMap)
 	{	//copy loaded data

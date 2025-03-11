@@ -375,7 +375,7 @@ void Xfer::xferSTLObjectIDList( std::list< ObjectID > *objectIDListData )
 	xferVersion( &version, currentVersion );
 
 	// xfer the count of the list
-	UnsignedShort listCount = objectIDListData->size();
+	UnsignedShort listCount = (uint16_t)objectIDListData->size();
 	xferUnsignedShort( &listCount );
 	
 	// xfer list data
@@ -441,7 +441,7 @@ void Xfer::xferSTLIntList( std::list< Int > *intListData )
 	xferVersion( &version, currentVersion );
 
 	// xfer the count of the list
-	UnsignedShort listCount = intListData->size();
+	UnsignedShort listCount = (uint16_t)intListData->size();
 	xferUnsignedShort( &listCount );
 	
 	// xfer list data
@@ -555,7 +555,7 @@ void Xfer::xferScienceVec( ScienceVec *scienceVec )
 	xferVersion( &version, currentVersion );
 
 	// count of vector
-	UnsignedShort count = scienceVec->size();
+	UnsignedShort count = (uint16_t)scienceVec->size();
 	xferUnsignedShort( &count );
 
 	if( getXferMode() == XFER_SAVE )
@@ -678,7 +678,7 @@ void Xfer::xferUpgradeMask( Int64 *upgradeMaskData )
 		{
 
 			// if the mask of this upgrade is set, it counts
-			if( BitTest( *upgradeMaskData, upgradeTemplate->getUpgradeMask() ) )
+			if( BitTestWW( *upgradeMaskData, upgradeTemplate->getUpgradeMask() ) )
 				count++;
 
 		}  // end for, upgradeTemplate
@@ -693,7 +693,7 @@ void Xfer::xferUpgradeMask( Int64 *upgradeMaskData )
 		{
 
 			// if the mask of this upgrade is set, it counts
-			if( BitTest( *upgradeMaskData, upgradeTemplate->getUpgradeMask() ) )
+			if( BitTestWW( *upgradeMaskData, upgradeTemplate->getUpgradeMask() ) )
 			{
 
 				upgradeName = upgradeTemplate->getUpgradeName();

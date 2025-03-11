@@ -42,6 +42,7 @@ AudioEventInfo::~AudioEventInfo()
 //-------------------------------------------------------------------------------------------------
 void INI::parseMusicTrackDefinition( INI* ini )
 {
+#ifdef HAS_BINK
 	AsciiString name;
 	AudioEventInfo *track;
 
@@ -65,12 +66,16 @@ void INI::parseMusicTrackDefinition( INI* ini )
 
 	// parse the ini definition
 	ini->initFromINI( track, track->getFieldParse() );
+#else
+	return;
+#endif
 }  // end parseMusicTrackDefinition
 
 //-------------------------------------------------------------------------------------------------
 void INI::parseAudioEventDefinition( INI* ini )
 {
 	AsciiString name;
+#ifdef HAS_BINK
 	AudioEventInfo *track;
 
 	// read the name
@@ -92,11 +97,13 @@ void INI::parseAudioEventDefinition( INI* ini )
 
 	// parse the ini definition
 	ini->initFromINI( track, track->getFieldParse() );
+#endif
 }  // end parseAudioEventDefinition
 
 //-------------------------------------------------------------------------------------------------
 void INI::parseDialogDefinition( INI* ini )
 {
+#ifdef HAS_BINK
 	AsciiString name;
 	AudioEventInfo *track;
 
@@ -119,6 +126,7 @@ void INI::parseDialogDefinition( INI* ini )
 
 	// parse the ini definition
 	ini->initFromINI( track, track->getFieldParse() );
+#endif
 }  // end parseAudioEventDefinition
 
 

@@ -357,7 +357,7 @@ HAnimClass* W3DAnimationInfo::getAnimHandle() const
 	return m_handle;
 #else
 	HAnimClass* handle = W3DDisplay::m_assetManager->Get_HAnim(m_name.str());
-	DEBUG_ASSERTCRASH(handle, ("*** ASSET ERROR: animation %s not found\n",m_name.str()));
+	//DEBUG_ASSERTCRASH(handle, ("*** ASSET ERROR: animation %s not found\n",m_name.str()));
 	if (handle != NULL && m_naturalDurationInMsec < 0)
 	{
 		m_naturalDurationInMsec = handle->Get_Num_Frames() * 1000.0f / handle->Get_Frame_Rate();
@@ -1047,7 +1047,8 @@ void W3DModelDrawModuleData::validateStuffForTimeAndWeather(const Drawable* draw
 
 	m_validated |= mode;
 
-	for (ModelConditionVector::iterator c_it = m_conditionStates.begin(); c_it != m_conditionStates.end(); ++c_it)
+	ModelConditionVector::iterator c_it = m_conditionStates.begin();
+	for (; c_it != m_conditionStates.end(); ++c_it)
 	{
 		if (!c_it->matchesMode(false, false) && !c_it->matchesMode(night, snowy))
 			continue;
@@ -1203,7 +1204,7 @@ enum AnimParseType
 //-------------------------------------------------------------------------------------------------
 static void parseAnimation(INI* ini, void *instance, void * /*store*/, const void* userData)
 {
-	AnimParseType animType = (AnimParseType)(UnsignedInt)userData;
+	AnimParseType animType = (AnimParseType)(uintptr_t)userData;
 
 	AsciiString animName = ini->getNextAsciiString();
 	animName.toLower();
@@ -1256,7 +1257,7 @@ static void parseShowHideSubObject(INI* ini, void *instance, void *store, const 
 		Bool found = false;
 		for (std::vector<ModelConditionInfo::HideShowSubObjInfo>::iterator it = vec->begin(); it != vec->end(); ++it)
 		{
-			if (stricmp(it->subObjName.str(), subObjName.str()) == 0)
+			if (_stricmp(it->subObjName.str(), subObjName.str()) == 0)
 			{
 				it->hide = (userData != NULL);
 				found = true;
@@ -1283,7 +1284,7 @@ void W3DModelDraw::showSubObject( const AsciiString& name, Bool show )
 		Bool found = false;
 		for( std::vector<ModelConditionInfo::HideShowSubObjInfo>::iterator it = m_subObjectVec.begin(); it != m_subObjectVec.end(); ++it )
 		{
-			if( stricmp( it->subObjName.str(), name.str() ) == 0 )
+			if( _stricmp( it->subObjName.str(), name.str() ) == 0 )
 			{
 				it->hide = !show;
 				found = true;
@@ -1417,7 +1418,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 
 	ModelConditionInfo info;
 	W3DModelDrawModuleData* self = (W3DModelDrawModuleData*)instance;
-	ParseCondStateType cst = (ParseCondStateType)(UnsignedInt)userData;
+	ParseCondStateType cst = (ParseCondStateType)(uintptr_t)userData;
 	switch (cst)
 	{
 		case PARSE_DEFAULT:
@@ -1441,7 +1442,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 				}
 
 				// note, this is size(), not size()-1, since we haven't actually modified the list yet
-				self->m_defaultState = self->m_conditionStates.size();
+				self->m_defaultState = (int)self->m_conditionStates.size();
 				//DEBUG_LOG(("set default state to %d\n",self->m_defaultState));
 
 				// add an empty conditionstateflag set
@@ -2110,7 +2111,7 @@ void W3DModelDraw::adjustAnimation(const ModelConditionInfo* prevState, Real pre
 		return;
 
 	// if the current state has m_animations associated, do the right thing
-	Int numAnims = m_curState->m_animations.size();
+	Int numAnims = (int)m_curState->m_animations.size();
 	if (numAnims > 0)
 	{
 		if (numAnims == 1)
@@ -2287,7 +2288,7 @@ void ModelConditionInfo::WeaponBarrelInfo::setMuzzleFlashHidden(RenderObjClass *
 		}
 		else
 		{
-			DEBUG_CRASH(("*** ASSET ERROR: childObject %s not found in setMuzzleFlashHidden()\n",m_muzzleFlashBoneName.str()));
+			DEBUG_WARNING(("*** ASSET ERROR: childObject %s not found in setMuzzleFlashHidden()\n",m_muzzleFlashBoneName.str()));
 		}
 	}
 }
@@ -2321,7 +2322,7 @@ void W3DModelDraw::doHideShowSubObjs(const std::vector<ModelConditionInfo::HideS
 			}
 			else
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: SubObject %s not found (%s)!\n",it->subObjName.str(),getDrawable()->getTemplate()->getName().str()));
+				//DEBUG_CRASH(("*** ASSET ERROR: SubObject %s not found (%s)!\n",it->subObjName.str(),getDrawable()->getTemplate()->getName().str()));
 			}
 		}
 	}
@@ -2458,8 +2459,8 @@ void W3DModelDraw::handleClientRecoil()
 
 		const ModelConditionInfo::WeaponBarrelInfoVec& barrels = m_curState->m_weaponBarrelInfoVec[wslot];
 		WeaponRecoilInfoVec& recoils = m_weaponRecoilInfoVec[wslot];
-		Int count = barrels.size();
-		Int recoilCount = recoils.size();
+		Int count = (int)barrels.size();
+		Int recoilCount = (int)recoils.size();
 		DEBUG_ASSERTCRASH(count == recoilCount, ("Barrel count != recoil count!"));
 		count = (count>recoilCount)?recoilCount:count;
 		for (Int i = 0; i < count; ++i)
@@ -3388,7 +3389,8 @@ Int W3DModelDraw::getPristineBonePositionsForConditionState(
 	Int posCount = 0;
 	Int endIndex = (startIndex == 0) ? 0 : 99;	
 	char buffer[256];
-	for (Int i = startIndex; i <= endIndex; ++i)
+	Int i = startIndex;
+	for (; i <= endIndex; ++i)
 	{
 		if (i == 0)
 			strcpy(buffer, boneNamePrefix);
@@ -3502,7 +3504,8 @@ Int W3DModelDraw::getCurrentBonePositions(
 	Int posCount = 0;
 	Int endIndex = (startIndex == 0) ? 0 : 99;	
 	char buffer[256];
-	for (Int i = startIndex; i <= endIndex; ++i)
+	Int i = startIndex;
+	for (; i <= endIndex; ++i)
 	{
 		if (i == 0)
 			strcpy(buffer, boneNamePrefix);
@@ -3587,7 +3590,7 @@ const ModelConditionInfo* W3DModelDraw::findBestInfo(const ModelConditionFlags& 
 Int W3DModelDraw::getBarrelCount(WeaponSlotType wslot) const
 {
 	return (m_curState && (m_curState->m_validStuff & ModelConditionInfo::BARRELS_VALID)) ?
-		m_curState->m_weaponBarrelInfoVec[wslot].size() : 0;
+		(int)m_curState->m_weaponBarrelInfoVec[wslot].size() : 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -3772,7 +3775,7 @@ void W3DModelDraw::rebuildWeaponRecoilInfo(const ModelConditionInfo* state)
 	{
 		for (wslot = 0; wslot < WEAPONSLOT_COUNT; ++wslot)
 		{
-			Int ncount = state->m_weaponBarrelInfoVec[wslot].size();
+			Int ncount = (int)state->m_weaponBarrelInfoVec[wslot].size();
 			if (m_weaponRecoilInfoVec[wslot].size() != ncount)
 			{
 				WeaponRecoilInfo tmp;
@@ -3842,7 +3845,7 @@ void W3DModelDraw::doHideShowProjectileObjects( UnsignedInt showCount, UnsignedI
 	ModelConditionInfo::HideShowSubObjInfo oneEntry;
 	if (m_curState->m_weaponProjectileHideShowName[slot].isEmpty())
 	{
-		for( Int projectileIndex = 0; projectileIndex < maxCount; projectileIndex++ )
+		for( Int projectileIndex = 0; projectileIndex < (int)maxCount; projectileIndex++ )
 		{
 			oneEntry.subObjName.format("%s%02d", m_curState->m_weaponProjectileLaunchBoneName[slot].str(), (projectileIndex + 1));
 			oneEntry.hide = (projectileIndex < hideCount);
@@ -3931,7 +3934,7 @@ void W3DModelDraw::xfer( Xfer *xfer )
 	{
 
 		// count of data here
-		recoilInfoCount = m_weaponRecoilInfoVec[ i ].size();
+		recoilInfoCount = (UnsignedByte)m_weaponRecoilInfoVec[ i ].size();
 		xfer->xferUnsignedByte( &recoilInfoCount );
 		if( xfer->getXferMode() == XFER_SAVE )
 		{
@@ -3984,7 +3987,7 @@ void W3DModelDraw::xfer( Xfer *xfer )
 	}  // end for, i
 
 	// sub object vector
-	UnsignedByte subObjectCount = m_subObjectVec.size();
+	UnsignedByte subObjectCount = (UnsignedByte)m_subObjectVec.size();
 	xfer->xferUnsignedByte( &subObjectCount );
 	ModelConditionInfo::HideShowSubObjInfo hideShowSubObjInfo;
 	if( xfer->getXferMode() == XFER_SAVE )
@@ -4189,7 +4192,8 @@ void W3DModelDrawModuleData::xfer( Xfer *x )
 				x->xferInt(&(bone->boneIndex));
 				x->xferUser(&(bone->mtx), sizeof(Matrix3D));
 			}
-			for (Int i=0; i<MAX_TURRETS; ++i)
+			Int i = 0;
+			for (; i<MAX_TURRETS; ++i)
 			{
 				x->xferInt(&(info->m_turrets[i].m_turretAngleBone));
 				x->xferInt(&(info->m_turrets[i].m_turretPitchBone));

@@ -103,7 +103,7 @@ public:
 	inline Int getNumColors( void ) 
 	{
 		if (m_numColors == 0) {
-			m_numColors = m_colorList.size();
+			m_numColors = (int)m_colorList.size();
 		}
 		return m_numColors;
 	}

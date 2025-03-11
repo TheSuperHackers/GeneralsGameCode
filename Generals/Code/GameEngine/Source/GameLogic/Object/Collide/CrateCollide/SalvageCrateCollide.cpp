@@ -79,9 +79,11 @@ Bool SalvageCrateCollide::executeCrateBehavior( Object *other )
 		doWeaponSet( other );
 
 		//Play the salvage installation crate pickup sound.
+#ifdef HAS_BINK
 		AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateSalvage;	
 		soundToPlay.setObjectID( other->getID() );
 		TheAudio->addAudioEvent( &soundToPlay );
+#endif
 		
 		//Play the unit voice acknowledgement for upgrading weapons.
 		//Already handled by the "move order"
@@ -100,9 +102,11 @@ Bool SalvageCrateCollide::executeCrateBehavior( Object *other )
 	else // just assume the testMoneyChance
 	{
 		doMoney( other );
+#ifdef HAS_BINK
 		AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_crateMoney;	
 		soundToPlay.setObjectID( other->getID() );
 		TheAudio->addAudioEvent(&soundToPlay);
+#endif
 	}
 
 

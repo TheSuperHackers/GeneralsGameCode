@@ -78,6 +78,7 @@
 //         Public Data                                                      
 //----------------------------------------------------------------------------
 
+#ifdef HAS_BINK
 VideoPlayerInterface *TheVideoPlayer = NULL;
 
 //----------------------------------------------------------------------------
@@ -341,7 +342,7 @@ void VideoPlayer::removeVideo( Video* videoToRemove )
 //============================================================================
 Int VideoPlayer::getNumVideos( void )
 {
-	return mVideosAvailableForPlay.size();
+	return (int)mVideosAvailableForPlay.size();
 }
 
 //============================================================================
@@ -510,3 +511,5 @@ const FieldParse VideoPlayer::m_videoFieldParseTable[] =
 	{ NULL,											NULL,																NULL, 0 },
 };
 
+
+#endif

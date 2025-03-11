@@ -1808,7 +1808,11 @@ WWINLINE void	Matrix3D::Inverse_Rotate_Vector(const Matrix3D & A,const Vector3 &
 
 class DynamicMatrix3D : public W3DMPO
 {
+#if 0
 	W3DMPO_GLUE(DynamicMatrix3D)
+#else
+	W3DMPO_GLUE(DynamicMatrix3D)
+#endif
 public:
 	Matrix3D Mat;
 };

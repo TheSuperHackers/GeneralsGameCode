@@ -162,7 +162,7 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
 
     if (regRetval==ERROR_SUCCESS)
     {
-      RegSetValueEx(regKey,"EXEPatch",0,REG_SZ,(const uint8*)patchfile,strlen(patchfile)+1);
+      RegSetValueEx(regKey,"EXEPatch",0,REG_SZ,(const uint8*)patchfile,(DWORD)strlen(patchfile)+1);
 
       char message[256];
       LoadString(NULL,IDS_SYS_RESTART,message,256);

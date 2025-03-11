@@ -434,13 +434,13 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 
 	// We've got a winner!
 	AsciiString side = ThePlayerList->getLocalPlayer()->getSide();
-	Int numSides = storedIt->m_evaInfo->m_evaSideSounds.size();
+	Int numSides = (int)storedIt->m_evaInfo->m_evaSideSounds.size();
 
 	for (Int i = 0; i < numSides; ++i) {
 		if (side.compareNoCase(storedIt->m_evaInfo->m_evaSideSounds[i].m_side) == 0) {
 			// Its this one.
 			if (storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames.size() > 0) {
-				Int soundToPlay = GameClientRandomValue(0, storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames.size() - 1);
+				Int soundToPlay = (int)GameClientRandomValue(0, (int)storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames.size() - 1);
 				m_evaSpeech.setEventName(storedIt->m_evaInfo->m_evaSideSounds[i].m_soundNames[soundToPlay]);
 			} else {
 				// clear it.
@@ -457,7 +457,9 @@ void Eva::processPlayingMessages(UnsignedInt currentFrame)
 	// sound to the local player.
 	m_evaSpeech.setPlayerIndex(m_localPlayer->getPlayerIndex());
 
+#ifdef HAS_BINK
 	m_evaSpeech.setPlayingHandle(TheAudio->addAudioEvent(&m_evaSpeech));
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -55,13 +55,13 @@ class RGBClass
 		RGBClass(void) : Red(0), Green(0), Blue(0) {}
 		RGBClass(unsigned char red, unsigned char green, unsigned char blue) : Red(red), Green(green), Blue(blue) {}
 		operator HSVClass (void) const;
-		RGBClass & operator = (RGBClass const & rgb) {
-			if (this == &rgb) return(*this);
+		void operator=(RGBClass const & rgb) {
+			//if (this == &rgb) return(*this);
 
 			Red = rgb.Red;
 			Green = rgb.Green;
 			Blue = rgb.Blue;
-			return(*this);
+			return;
 		}
 
 		enum {

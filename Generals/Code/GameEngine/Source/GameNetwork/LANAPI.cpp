@@ -278,7 +278,7 @@ void LANAPI::checkMOTD( void )
 		Int len;
 		if (fp)
 		{
-			while( (len = fread(buf, 1, 4096, fp)) > 0 )
+			while( (len = (int)fread(buf, 1, 4096, fp)) > 0 )
 			{
 				buf[len] = 0;
 				asciiMOTD.concat(buf);

@@ -1,0 +1,11 @@
+NVASM
+https://web.archive.org/web/20061006093538/http://developer.nvidia.com/object/nvasm.html
+
+GameSpy
+https://github.com/GameProgressive/UniSpySDK
+
+LZHL (under libs/_lzhl
+https://github.com/mistydemeo/quickbms/tree/5752a6a2a38e16211952553fcffa59570855ac42
+
+DirectX 8
+https://github.com/edgeforce/directx8

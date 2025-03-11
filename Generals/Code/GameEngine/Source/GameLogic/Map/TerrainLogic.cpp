@@ -1183,7 +1183,7 @@ void TerrainLogic::enableWaterGrid( Bool enable )
 			//
 			AsciiString strippedMapNameOnly;
 			AsciiString strippedCompareMapNameOnly;
-			char *c;
+			const char *c;
 
 			// create stripped map name
 			c = strrchr( TheGlobalData->m_mapName.str(), '\\' );
@@ -2884,7 +2884,7 @@ void TerrainLogic::xfer( Xfer *xfer )
 		xfer->xferInt( &m_numWaterToUpdate );
 
 		// water update entry data
-		for( UnsignedInt i = 0; i < m_numWaterToUpdate; ++i )
+		for( UnsignedInt i = 0; (int)i < m_numWaterToUpdate; ++i )
 		{
 
 			// water handle

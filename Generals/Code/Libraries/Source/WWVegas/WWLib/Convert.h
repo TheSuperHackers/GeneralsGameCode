@@ -100,8 +100,8 @@ class ConvertClass
 		**	Fetch a blitter object to use according to the draw flags
 		**	specified.
 		*/
-		Blitter const * Blitter_From_Flags(ShapeFlags_Type flags) const;
-		RLEBlitter const * RLEBlitter_From_Flags(ShapeFlags_Type flags) const;
+		//Blitter const * Blitter_From_Flags(ShapeFlags_Type flags) const;
+		//RLEBlitter const * RLEBlitter_From_Flags(ShapeFlags_Type flags) const;
 
 		/*
 		**	This returns the bytes per pixel. Use this to determine how to index
@@ -131,13 +131,13 @@ class ConvertClass
 		**	These are the blitter objects used to handle all the draw styles that this
 		**	drawing dispatcher implements.
 		*/
-		Blitter * PlainBlitter;					// No transparency (rarely used).
-		Blitter * TransBlitter;					// Skips transparent pixels.
-		Blitter * ShadowBlitter;				// Shadowizes the destination pixels.
-		Blitter * RemapBlitter;					//	Remaps source pixels then draws with transparency.
-		Blitter * Translucent1Blitter;		// 25% translucent.
-		Blitter * Translucent2Blitter;		// 50% translucent.
-		Blitter * Translucent3Blitter;		//	75% translucent.
+		//Blitter * PlainBlitter;					// No transparency (rarely used).
+		//Blitter * TransBlitter;					// Skips transparent pixels.
+		//Blitter * ShadowBlitter;				// Shadowizes the destination pixels.
+		//Blitter * RemapBlitter;					//	Remaps source pixels then draws with transparency.
+		//Blitter * Translucent1Blitter;		// 25% translucent.
+		//Blitter * Translucent2Blitter;		// 50% translucent.
+		//Blitter * Translucent3Blitter;		//	75% translucent.
 
 		/*
 		**	These are the RLE aware blitters to handle all drawing styles that may

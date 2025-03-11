@@ -422,7 +422,7 @@ void INI::parseStaticGameLODLevel( INI* ini, void * , void *store, const void*)
 {
 	const char *tok=ini->getNextToken();
 	for (Int i=0; i<STATIC_GAME_LOD_COUNT; i++)
-		if( stricmp(tok, StaticGameLODNames[i]) == 0 )
+		if( _stricmp(tok, StaticGameLODNames[i]) == 0 )
 		{	*(StaticGameLODLevel*)store = (StaticGameLODLevel)i;
 			return;
 		}
@@ -614,7 +614,7 @@ void INI::parseDynamicGameLODLevel( INI* ini, void * , void *store, const void*)
 {
 	const char *tok=ini->getNextToken();
 	for (Int i=0; i<DYNAMIC_GAME_LOD_COUNT; i++)
-		if( stricmp(tok, DynamicGameLODNames[i]) == 0 )
+		if(_stricmp(tok, DynamicGameLODNames[i]) == 0 )
 		{	*(DynamicGameLODLevel*)store = (DynamicGameLODLevel)i;
 			return;
 		}

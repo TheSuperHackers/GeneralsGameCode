@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{ab2343d5-5ca4-40b7-90e3-4851c6fb8ea6}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;hpj;bat;for;f90</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{bcd51cbe-d883-4f15-81d1-b16c72e80910}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;fi;fd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{1f6a58da-ca44-4776-8608-a8693933266b}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="chunkio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EULER.CPP">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HSV.CPP">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JShell.CPP">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="matrix3d.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="matrix4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nodefilt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nodelist.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PALETTE.CPP">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RAWFILE.CPP">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="realcrc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RGB.CPP">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector.CPP">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="w3dquat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wwmath.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WWmatrix3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="aaplane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="always.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="borlandc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="chunkio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="errclass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EULER.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hsv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="iostruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="matrix3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="matrix4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nodefilt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nodelist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="palette.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PROGRESS.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rawfile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="realcrc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rgb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vector2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vector3i.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="visualc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="w3dquat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="watcom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="win.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wwfile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wwmath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WWmatrix3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

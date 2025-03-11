@@ -1709,7 +1709,7 @@ void MPEXPORT XMP_Decode_ASCII(char const * str, digit * mpn, int precision)
 	**	No string or zero length is considered '0'.
 	*/
 	if (!str) return;
-	int i = strlen(str);
+	int i = (int)strlen(str);
 	if (i == 0) return;
 
 	unsigned short radix;		/* base 2-16 */

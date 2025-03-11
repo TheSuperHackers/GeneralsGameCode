@@ -180,7 +180,7 @@ const LocomotorTemplateVector* AIUpdateModuleData::findLocomotorTemplateVector(L
 	self->m_locomotorTemplates[set].clear();
 	for (const char* locoName = ini->getNextToken(); locoName; locoName = ini->getNextTokenOrNull())
 	{
-		if (!*locoName || !stricmp(locoName, "None"))
+		if (!*locoName || !_stricmp(locoName, "None"))
 			continue;
 
 		NameKeyType locoKey = NAMEKEY(locoName);
@@ -1073,7 +1073,7 @@ UpdateSleepTime AIUpdateInterface::update( void )
 		else
 		{
 			UnsignedInt sleepForPathDelta = m_queueForPathFrame - now;
-			if (sleepForPathDelta < subMachineSleep)
+			if ((int)sleepForPathDelta < subMachineSleep)
 				subMachineSleep = UPDATE_SLEEP(sleepForPathDelta);
 		}
 	}
@@ -4104,7 +4104,7 @@ UnsignedInt AIUpdateInterface::getMoodMatrixValue( void ) const
 		switch (getAttitude())
 		{
 			case AI_SLEEP:			returnVal |= MM_Mood_Sleep; break;
-			case AI_PASSIVE:		returnVal |= MM_Mood_Passive; break;
+			case AI_PASSIVEWW:		returnVal |= MM_Mood_Passive; break;
 			case AI_NORMAL:			returnVal |= MM_Mood_Normal; break;
 			case AI_ALERT:			returnVal |= MM_Mood_Alert; break;
 			case AI_AGGRESSIVE:	returnVal |= MM_Mood_Aggressive; break;
@@ -4272,7 +4272,7 @@ Object* AIUpdateInterface::getNextMoodTarget( Bool calledByAI, Bool calledDuring
 	}
 
 // srj sez: this should ignore calledDuringIdle, despite what the name of the bit implies.
-	if (isAttacking() && BitTest(d->m_autoAcquireEnemiesWhenIdle, AAS_Idle_Not_While_Attacking))
+	if (isAttacking() && BitTestWW(d->m_autoAcquireEnemiesWhenIdle, AAS_Idle_Not_While_Attacking))
 	{
 		return NULL;
 	}

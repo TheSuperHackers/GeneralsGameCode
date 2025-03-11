@@ -2024,10 +2024,10 @@ Bool PartitionManager::geomCollidesWithGeom(const Coord3D* pos1,
 //-----------------------------------------------------------------------------
 void PartitionData::updateCellsTouched()
 {
-	GeometryType geom;
-	Bool isSmall;
-	Coord3D pos;
-	Real angle,majorRadius,minorRadius;
+	GeometryType geom = {};
+	Bool isSmall = {};
+	Coord3D pos = {};
+	Real angle = {},majorRadius = {},minorRadius = {};
 
 
 	Object *obj = getObject();
@@ -2209,7 +2209,7 @@ void PartitionData::allocCoiArray()
 	DEBUG_ASSERTCRASH(m_coiArrayCount == 0 && m_coiArray == NULL, ("hmm, coi should probably be null here"));
 	DEBUG_ASSERTCRASH(m_coiInUseCount == 0, ("hmm, coi count mismatch"));
 	m_coiArrayCount = calcMaxCoiForObject();
-	m_coiArray = MSGNEW("PartitionManager_COI") CellAndObjectIntersection[m_coiArrayCount];	// may throw!
+	m_coiArray = new CellAndObjectIntersection[m_coiArrayCount];	// may throw!
 	m_coiInUseCount = 0;
 	makeDirty(true);
 }
@@ -2301,7 +2301,7 @@ void PartitionData::attachToGhostObject(GhostObject* object)
 	freeCoiArray();
 
 	m_coiArrayCount = calcMaxCoiForShape(object->getGeometryType(), object->getGeometryMajorRadius(), object->getGeometryMinorRadius(),object->getGeometrySmall());
-	m_coiArray = MSGNEW("PartitionManager_COI") CellAndObjectIntersection[m_coiArrayCount];	// may throw!
+	m_coiArray = new CellAndObjectIntersection[m_coiArrayCount];	// may throw!
 	m_coiInUseCount = 0;
 	makeDirty(true);
 
@@ -2610,7 +2610,7 @@ void PartitionManager::init()
 		m_cellCountX = REAL_TO_INT_CEIL(m_worldExtents.width() * m_cellSizeInv);
 		m_cellCountY = REAL_TO_INT_CEIL(m_worldExtents.height() * m_cellSizeInv);
 		m_totalCellCount = m_cellCountX * m_cellCountY;
-		m_cells = MSGNEW("PartitionManager_Cells") PartitionCell[m_totalCellCount];
+		m_cells = new PartitionCell[m_totalCellCount];
 		for (Int x = 0; x < m_cellCountX; x++)
 		{
 			for (Int y = 0; y < m_cellCountY; y++)
@@ -3156,7 +3156,7 @@ void PartitionManager::calcRadiusVec()
 	Int total = 0;
 	for (Int i = 0; i <= m_maxGcoRadius; ++i)
 	{
-		total += m_radiusVec[i].size();
+		total += (int)m_radiusVec[i].size();
 		//DEBUG_LOG(("radius %d has %d entries\n",i,m_radiusVec[i].size()));
 	}
 	DEBUG_ASSERTCRASH(total == (cx*2-1)*(cy*2-1),("expected %d, got %d\n",(cx*2-1)*(cy*2-1),total));
@@ -3221,7 +3221,7 @@ Object *PartitionManager::getClosestObjects(
 
 	Object* closestObj = NULL;
 	Real closestDistSqr = maxDist * maxDist;	// if it's not closer than this, we shouldn't consider it anyway...
-	Coord3D closestVec;
+	Coord3D closestVec = {};
 
 #ifdef FASTER_GCO
 
@@ -3728,7 +3728,7 @@ Bool PartitionManager::tryPosition( const Coord3D *center,
 	// we don't usually find positions in the water unless we explicitly say that's OK,
 	// or if the option is set we can only pick position underwater
 	//
-	if( BitTest( options->flags, FPF_IGNORE_WATER ) == FALSE )
+	if( BitTestWW( options->flags, FPF_IGNORE_WATER ) == FALSE )
 	{
 		Bool isUnderwater = TheTerrainLogic->isUnderwater( pos.x, pos.y );
 
@@ -3736,7 +3736,7 @@ Bool PartitionManager::tryPosition( const Coord3D *center,
 		// if we want water spots only and this is underwater it's no good, otherwise we want
 		// the default behavior where underwater spots are invalid
 		//
-		if( BitTest( options->flags, FPF_WATER_ONLY ) && (isUnderwater == FALSE || layer != LAYER_GROUND) )
+		if( BitTestWW( options->flags, FPF_WATER_ONLY ) && (isUnderwater == FALSE || layer != LAYER_GROUND) )
 			return FALSE;
 		else if( isUnderwater == TRUE && layer == LAYER_GROUND )
 			return FALSE;
@@ -3744,7 +3744,7 @@ Bool PartitionManager::tryPosition( const Coord3D *center,
 	}  // end if
 
 	// object checks
-	if( BitTest( options->flags, FPF_IGNORE_ALL_OBJECTS ) == FALSE )
+	if( BitTestWW( options->flags, FPF_IGNORE_ALL_OBJECTS ) == FALSE )
 	{
 
 		//
@@ -3768,25 +3768,25 @@ Bool PartitionManager::tryPosition( const Coord3D *center,
 			{
 
 				// if this is an ally/neutral unit and we ignore those, do so
-				if( BitTest( options->flags, FPF_IGNORE_ALLY_OR_NEUTRAL_UNITS ) == TRUE &&
+				if( BitTestWW( options->flags, FPF_IGNORE_ALLY_OR_NEUTRAL_UNITS ) == TRUE &&
 						options->relationshipObject->getRelationship( them ) != ENEMIES &&
 						(them->isKindOf( KINDOF_INFANTRY ) || them->isKindOf( KINDOF_VEHICLE )) )
 					continue;
 
 				// if this is an ally/neutral structure and we ignore those, do so
-				if( BitTest( options->flags, FPF_IGNORE_ALLY_OR_NEUTRAL_STRUCTURES ) == TRUE &&
+				if( BitTestWW( options->flags, FPF_IGNORE_ALLY_OR_NEUTRAL_STRUCTURES ) == TRUE &&
 						options->relationshipObject->getRelationship( them ) != ENEMIES &&
 						them->isKindOf( KINDOF_STRUCTURE ) )
 					continue;
 
 				// if this is an enemy unit and we ignore those, do so
-				if( BitTest( options->flags, FPF_IGNORE_ENEMY_UNITS ) == TRUE &&
+				if( BitTestWW( options->flags, FPF_IGNORE_ENEMY_UNITS ) == TRUE &&
 						options->relationshipObject->getRelationship( them ) == ENEMIES &&
 						(them->isKindOf( KINDOF_INFANTRY ) || them->isKindOf( KINDOF_VEHICLE )) )
 					continue;
 
 				// if this is an enemy structure and we ignore those, do so
-				if( BitTest( options->flags, FPF_IGNORE_ENEMY_STRUCTURES ) == TRUE &&
+				if( BitTestWW( options->flags, FPF_IGNORE_ENEMY_STRUCTURES ) == TRUE &&
 						options->relationshipObject->getRelationship( them ) == ENEMIES &&
 						them->isKindOf( KINDOF_STRUCTURE ) )
 					continue;
@@ -3865,8 +3865,8 @@ Bool PartitionManager::findPositionAround( const Coord3D *center,
 		return true;
 	}
 	// sanity, FPF_IGNORE_WATER and FPF_WATER_ONLY are mutually exclusive
-	DEBUG_ASSERTCRASH( !(BitTest( options->flags, FPF_IGNORE_WATER ) == TRUE &&
-										   BitTest( options->flags, FPF_WATER_ONLY ) == TRUE),
+	DEBUG_ASSERTCRASH( !(BitTestWW( options->flags, FPF_IGNORE_WATER ) == TRUE &&
+										   BitTestWW( options->flags, FPF_WATER_ONLY ) == TRUE),
 										 ("PartitionManager::findPositionAround - The options FPF_WATER_ONLY and FPF_IGNORE_WATER are mutually exclusive.  You cannot use them together\n") );
 
 	// pick a random angle from the center location to start at
@@ -3945,9 +3945,9 @@ void PartitionManager::doShroudReveal(Real centerX, Real centerY, Real radius, P
 		// Object's Look is the one who knows about allies.  Anyone can pask a player mask to me and all
 		// of those players will have an active looker applied to a bunch of cells
 		const Player *currentPlayer = ThePlayerList->getNthPlayer( currentIndex );
-		if( BitTest( playerMask, currentPlayer->getPlayerMask() ) )
+		if( BitTestWW( playerMask, currentPlayer->getPlayerMask() ) )
 		{
-			circle.drawCircle(hLineAddLooker, (void*)currentIndex);
+			circle.drawCircle(hLineAddLooker, (void*)(uintptr_t)currentIndex);
 		}
 	}
 }
@@ -4010,9 +4010,9 @@ void PartitionManager::undoShroudReveal(Real centerX, Real centerY, Real radius,
 	for( Int currentIndex = ThePlayerList->getPlayerCount() - 1; currentIndex >=0; currentIndex-- )
 	{
 		const Player *currentPlayer = ThePlayerList->getNthPlayer( currentIndex );
-		if( BitTest( playerMask, currentPlayer->getPlayerMask() ) )
+		if( BitTestWW( playerMask, currentPlayer->getPlayerMask() ) )
 		{
-			circle.drawCircle(hLineRemoveLooker, (void*)currentIndex);
+			circle.drawCircle(hLineRemoveLooker, (void*)(uintptr_t)currentIndex);
 		}
 	}
 }
@@ -4049,9 +4049,9 @@ void PartitionManager::doShroudCover(Real centerX, Real centerY, Real radius, Pl
 		// Object's Shroud is the one who knows about allies.  Anyone can pask a player mask to me and all
 		// of those players will have an active shrouder applied to a bunch of cells
 		const Player *currentPlayer = ThePlayerList->getNthPlayer( currentIndex );
-		if( BitTest( playerMask, currentPlayer->getPlayerMask() ) )
+		if( BitTestWW( playerMask, currentPlayer->getPlayerMask() ) )
 		{
-			circle.drawCircle(hLineAddShrouder, (void*)currentIndex);
+			circle.drawCircle(hLineAddShrouder, (void*)(uintptr_t)currentIndex);
 		}
 	}
 }
@@ -4071,9 +4071,9 @@ void PartitionManager::undoShroudCover(Real centerX, Real centerY, Real radius, 
 	for( Int currentIndex = ThePlayerList->getPlayerCount() - 1; currentIndex >=0; currentIndex-- )
 	{
 		const Player *currentPlayer = ThePlayerList->getNthPlayer( currentIndex );
-		if( BitTest( playerMask, currentPlayer->getPlayerMask() ) )
+		if( BitTestWW( playerMask, currentPlayer->getPlayerMask() ) )
 		{
-			circle.drawCircle(hLineRemoveShrouder, (void*)currentIndex);
+			circle.drawCircle(hLineRemoveShrouder, (void*)(uintptr_t)currentIndex);
 		}
 	}
 }
@@ -4103,7 +4103,7 @@ void PartitionManager::doThreatAffect( Real centerX, Real centerY, Real radius, 
 	for( Int currentIndex = ThePlayerList->getPlayerCount() - 1; currentIndex >=0; currentIndex-- )
 	{
 		const Player *currentPlayer = ThePlayerList->getNthPlayer( currentIndex );
-		if( BitTest( playerMask, currentPlayer->getPlayerMask() ) )
+		if( BitTestWW( playerMask, currentPlayer->getPlayerMask() ) )
 		{
 			parms.playerIndex = currentIndex;
 			circle.drawCircle(hLineAddThreat, &parms);
@@ -4136,7 +4136,7 @@ void PartitionManager::undoThreatAffect( Real centerX, Real centerY, Real radius
 	for( Int currentIndex = ThePlayerList->getPlayerCount() - 1; currentIndex >=0; currentIndex-- )
 	{
 		const Player *currentPlayer = ThePlayerList->getNthPlayer( currentIndex );
-		if( BitTest( playerMask, currentPlayer->getPlayerMask() ) )
+		if( BitTestWW( playerMask, currentPlayer->getPlayerMask() ) )
 		{
 			parms.playerIndex = currentIndex;
 			circle.drawCircle(hLineRemoveThreat, &parms);
@@ -4169,7 +4169,7 @@ void PartitionManager::doValueAffect( Real centerX, Real centerY, Real radius, U
 	for( Int currentIndex = ThePlayerList->getPlayerCount() - 1; currentIndex >=0; currentIndex-- )
 	{
 		const Player *currentPlayer = ThePlayerList->getNthPlayer( currentIndex );
-		if( BitTest( playerMask, currentPlayer->getPlayerMask() ) )
+		if( BitTestWW( playerMask, currentPlayer->getPlayerMask() ) )
 		{
 			parms.playerIndex = currentIndex;
 			circle.drawCircle(hLineAddValue, &parms);
@@ -4202,7 +4202,7 @@ void PartitionManager::undoValueAffect( Real centerX, Real centerY, Real radius,
 	for( Int currentIndex = ThePlayerList->getPlayerCount() - 1; currentIndex >=0; currentIndex-- )
 	{
 		const Player *currentPlayer = ThePlayerList->getNthPlayer( currentIndex );
-		if( BitTest( playerMask, currentPlayer->getPlayerMask() ) )
+		if( BitTestWW( playerMask, currentPlayer->getPlayerMask() ) )
 		{
 			parms.playerIndex = currentIndex;
 			circle.drawCircle(hLineRemoveValue, &parms);
@@ -4616,7 +4616,7 @@ void PartitionManager::xfer( Xfer *xfer )
 
 	if( version >= 2 )
 	{
-		Int queueSize = m_pendingUndoShroudReveals.size();
+		Int queueSize = (int)m_pendingUndoShroudReveals.size();
 		xfer->xferInt(&queueSize);
 		// This xfer thing is still cool.  On save, I just wrote the number of elements.  On load, the first line 
 		// above was a decoy, and the second found out the size.
@@ -4727,7 +4727,7 @@ void PartitionManager::getMostValuableLocation( Int playerIndex, UnsignedInt whi
 		Int cellValue = 0;
 
 		for (Int player = 0; player < MAX_PLAYER_COUNT; ++player) {
-			if (BitTest(allPlayerMasks[player], playerMask)) {
+			if (BitTestWW(allPlayerMasks[player], playerMask)) {
 				if (valType == VOT_CashValue) {
 					cellValue += m_cells[i].getCashValue(player);
 				} else {
@@ -4841,7 +4841,7 @@ void PartitionManager::restoreFoggedCells(const ShroudStatusStoreRestore &inPart
 	Int i, j, p;
 
 	Int storeWidth = inPartitionStore.m_cellsWide;
-	Int storeHeight = inPartitionStore.m_foggedOrRevealed[0].size() / storeWidth;
+	Int storeHeight = (int)inPartitionStore.m_foggedOrRevealed[0].size() / storeWidth;
 
 	for (p = 0; p < MAX_PLAYER_COUNT; ++p) {
 		for (j = 0; j < storeHeight; ++j) {
@@ -5435,7 +5435,7 @@ Bool PartitionFilterStealthedAndUndetected::allow( Object *objOther )
 {
 	// objOther is guaranteed to be non-null, so we don't need to check (srj)
 
-	if( BitTest( objOther->getStatusBits(), OBJECT_STATUS_STEALTHED ) && !BitTest( objOther->getStatusBits(), OBJECT_STATUS_DETECTED ) )
+	if( BitTestWW( objOther->getStatusBits(), OBJECT_STATUS_STEALTHED ) && !BitTestWW( objOther->getStatusBits(), OBJECT_STATUS_DETECTED ) )
 	{
 		if( !objOther->isKindOf( KINDOF_DISGUISER ) )
 		{
@@ -5476,12 +5476,12 @@ Bool PartitionFilterStealthedAndUndetected::allow( Object *objOther )
 		{
 			const Player* victimApparentController = contain->getApparentControllingPlayer( m_obj->getControllingPlayer() );
 			//Check if it's stealthed!
-			if( contain->getStealthUnitsContained() == contain->getContainCount() )
+			if( contain->getStealthUnitsContained() == contain->getContainCount() && contain->getContainCount() > 0 )
 			{
 				//Check if the first object inside is detected (if one is detected, all are detected).
 				ContainedItemsList::const_iterator it = contain->getContainedItemsList()->begin();
 				Object *member = (*it);
-				if( member && !BitTest( (*it)->getStatusBits(), OBJECT_STATUS_DETECTED ) )
+				if( member && !BitTestWW( (*it)->getStatusBits(), OBJECT_STATUS_DETECTED ) )
 				{
 					//Finally check the relationship!
 					if( victimApparentController && m_obj->getTeam()->getRelationship( victimApparentController->getDefaultTeam() ) == ENEMIES )
@@ -5508,7 +5508,7 @@ static int cellValueProc(PartitionCell* cell, void* userData)
 
 	UnsignedInt val = 0;
 	for (Int i = 0; i < MAX_PLAYER_COUNT; ++i) {
-		if (BitTest(parms->allowedPlayersMasks, parms->allPlayersMask[i])) {
+		if (BitTestWW(parms->allowedPlayersMasks, parms->allPlayersMask[i])) {
 			if (parms->valueType == VOT_CashValue) {
 				val += cell->getCashValue(i);
 			} else {
@@ -5517,8 +5517,8 @@ static int cellValueProc(PartitionCell* cell, void* userData)
 		}
 	}
 
-	if ((val > parms->valueRequired && parms->greaterThan) || 
-			(val < parms->valueRequired && !parms->greaterThan)) {
+	if (((int)val > parms->valueRequired && parms->greaterThan) ||
+			((int)val < parms->valueRequired && !parms->greaterThan)) {
 		return 1;
 	}
 
@@ -5531,7 +5531,7 @@ static void hLineAddLooker(Int x1, Int x2, Int y, void *playerIndexVoid)
 	if (y < 0 || y >= ThePartitionManager->m_cellCountY || x1 >= ThePartitionManager->m_cellCountX || x2 < 0)
 		return;
 
-	Int playerIndex = (Int)(playerIndexVoid);
+	Int playerIndex = (Int)(uintptr_t)(playerIndexVoid);
 
 	PartitionCell* cell = &ThePartitionManager->m_cells[y * ThePartitionManager->m_cellCountX + x1];	// yes, this could be invalid. we'll skip the bad ones.
 	for (Int x = x1; x <= x2; ++x, ++cell)
@@ -5548,7 +5548,7 @@ static void hLineRemoveLooker(Int x1, Int x2, Int y, void *playerIndexVoid)
 	if (y < 0 || y >= ThePartitionManager->m_cellCountY || x1 >= ThePartitionManager->m_cellCountX || x2 < 0)
 		return;
 
-	Int playerIndex = (Int)(playerIndexVoid);
+	Int playerIndex = (Int)(uintptr_t)(playerIndexVoid);
 
 	PartitionCell* cell = &ThePartitionManager->m_cells[y * ThePartitionManager->m_cellCountX + x1];	// yes, this could be invalid. we'll skip the bad ones.
 	for (Int x = x1; x <= x2; ++x, ++cell)
@@ -5565,7 +5565,7 @@ static void hLineAddShrouder(Int x1, Int x2, Int y, void *playerIndexVoid)
 	if (y < 0 || y >= ThePartitionManager->m_cellCountY || x1 >= ThePartitionManager->m_cellCountX || x2 < 0)
 		return;
 
-	Int playerIndex = (Int)(playerIndexVoid);
+	Int playerIndex = (Int)(uintptr_t)(playerIndexVoid);
 
 	PartitionCell* cell = &ThePartitionManager->m_cells[y * ThePartitionManager->m_cellCountX + x1];	// yes, this could be invalid. we'll skip the bad ones.
 	for (Int x = x1; x <= x2; ++x, ++cell)
@@ -5582,7 +5582,7 @@ static void hLineRemoveShrouder(Int x1, Int x2, Int y, void *playerIndexVoid)
 	if (y < 0 || y >= ThePartitionManager->m_cellCountY || x1 >= ThePartitionManager->m_cellCountX || x2 < 0)
 		return;
 
-	Int playerIndex = (Int)(playerIndexVoid);
+	Int playerIndex = (Int)(uintptr_t)(playerIndexVoid);
 
 	PartitionCell* cell = &ThePartitionManager->m_cells[y * ThePartitionManager->m_cellCountX + x1];	// yes, this could be invalid. we'll skip the bad ones.
 	for (Int x = x1; x <= x2; ++x, ++cell)

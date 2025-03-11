@@ -101,7 +101,7 @@ static void initGridSettings( HWND hWndDialog )
 // GridSettingsDialogProc =====================================================
 /** Dialog procedure for grid settings dialog */
 //=============================================================================
-BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message, 
+INT_PTR CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message, 
 																			WPARAM wParam, LPARAM lParam )
 {
 

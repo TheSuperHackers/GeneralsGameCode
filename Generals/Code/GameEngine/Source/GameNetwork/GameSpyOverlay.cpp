@@ -211,10 +211,12 @@ void GameSpyOpenOverlay( GSOverlayType overlay )
 		}
 		AudioEventRTS buttonClick("GUICommunicatorOpen");
 
+#ifdef HAS_BINK
 		if( TheAudio )
 		{
 			TheAudio->addAudioEvent( &buttonClick );
 		}  // end if
+#endif
 	}
 	if (overlayLayouts[overlay])
 	{

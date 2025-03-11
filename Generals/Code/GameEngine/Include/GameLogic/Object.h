@@ -243,12 +243,12 @@ public:
 	Bool isLocallyControlled() const;
 	Bool isNeutralControlled() const;
 	
-	Bool getIsUndetectedDefector(void) const { return BitTest(m_privateStatus, UNDETECTED_DEFECTOR); }
+	Bool getIsUndetectedDefector(void) const { return BitTestWW(m_privateStatus, UNDETECTED_DEFECTOR); }
 	void friend_setUndetectedDefector(Bool status);
 
-	inline Bool isOffMap() const { return BitTest(m_privateStatus, OFF_MAP); }
+	inline Bool isOffMap() const { return BitTestWW(m_privateStatus, OFF_MAP); }
 
-	inline Bool isCaptured() const { return BitTest(m_privateStatus, CAPTURED); }
+	inline Bool isCaptured() const { return BitTestWW(m_privateStatus, CAPTURED); }
 	void setCaptured(Bool isCaptured);
 
 	inline const GeometryInfo& getGeometryInfo() const { return m_geometryInfo; }
@@ -322,7 +322,7 @@ public:
 	void forceRefreshSubObjectUpgradeStatus();
 
 	// Useful for status bits that can be set by the scripting system
-	inline Bool testScriptStatusBit(ObjectScriptStatusBit b) const { return BitTest(m_scriptStatus, b); }
+	inline Bool testScriptStatusBit(ObjectScriptStatusBit b) const { return BitTestWW(m_scriptStatus, b); }
 	void setScriptStatus( ObjectScriptStatusBit bit, Bool set = true );
 	inline void clearScriptStatus( ObjectScriptStatusBit bit ) { setScriptStatus(bit, false); }
 
@@ -712,7 +712,108 @@ private:
 	Coord3D												m_healthBoxOffset; ///< generally zero, except for special amorphous ones like angry mob
 	
 	/// @todo srj -- convert to non-DLINK list, after it is once again possible to test the change
+#if 0
 	MAKE_DLINK(Object, TeamMemberList)			///< other Things that are members of the same team
+#else
+	public: Object* dlink_prev_TeamMemberList() const {
+		return m_dlink_TeamMemberList.m_prev;
+	} Object* dlink_next_TeamMemberList() const {
+		return m_dlink_TeamMemberList.m_next;
+	} void dlink_swapLinks_TeamMemberList() {
+		Object* originalNext = m_dlink_TeamMemberList.m_next; m_dlink_TeamMemberList.m_next = m_dlink_TeamMemberList.m_prev; m_dlink_TeamMemberList.m_prev = originalNext;
+	} Bool dlink_isInList_TeamMemberList(Object* const* pListHead) const {
+		do {
+			{
+				if (!(!((((uintptr_t)(*pListHead)) & 1) != 0) && !((((uintptr_t)(m_dlink_TeamMemberList.m_next)) & 1) != 0) && !((((uintptr_t)(m_dlink_TeamMemberList.m_prev)) & 1) != 0))) do {
+					{
+						static char ignoreCrash = 0; if (!ignoreCrash) {
+							TheCurrentIgnoreCrashPtr = &ignoreCrash; DebugCrash("bogus ptrs"); TheCurrentIgnoreCrashPtr = 0;
+						}
+					}
+				} while (0);
+			}
+		} while (0); return *pListHead == this || m_dlink_TeamMemberList.m_prev || m_dlink_TeamMemberList.m_next;
+	} void dlink_prependTo_TeamMemberList(Object** pListHead) {
+		do {
+			{
+				if (!(!dlink_isInList_TeamMemberList(pListHead))) do {
+					{
+						static char ignoreCrash = 0; if (!ignoreCrash) {
+							TheCurrentIgnoreCrashPtr = &ignoreCrash; DebugCrash("already in list " "TeamMemberList"); TheCurrentIgnoreCrashPtr = 0;
+						}
+					}
+				} while (0);
+			}
+		} while (0); do {
+			{
+				if (!(!((((uintptr_t)(*pListHead)) & 1) != 0) && !((((uintptr_t)(m_dlink_TeamMemberList.m_next)) & 1) != 0) && !((((uintptr_t)(m_dlink_TeamMemberList.m_prev)) & 1) != 0))) do {
+					{
+						static char ignoreCrash = 0; if (!ignoreCrash) {
+							TheCurrentIgnoreCrashPtr = &ignoreCrash; DebugCrash("bogus ptrs"); TheCurrentIgnoreCrashPtr = 0;
+						}
+					}
+				} while (0);
+			}
+		} while (0); m_dlink_TeamMemberList.m_next = *pListHead; if (*pListHead) (*pListHead)->m_dlink_TeamMemberList.m_prev = this; *pListHead = this; do {
+			{
+				if (!(!((((uintptr_t)(*pListHead)) & 1) != 0) && !((((uintptr_t)(m_dlink_TeamMemberList.m_next)) & 1) != 0) && !((((uintptr_t)(m_dlink_TeamMemberList.m_prev)) & 1) != 0))) do {
+					{
+						static char ignoreCrash = 0; if (!ignoreCrash) {
+							TheCurrentIgnoreCrashPtr = &ignoreCrash; DebugCrash("bogus ptrs"); TheCurrentIgnoreCrashPtr = 0;
+						}
+					}
+				} while (0);
+			}
+		} while (0);
+	} void dlink_removeFrom_TeamMemberList(Object** pListHead) {
+		do {
+			{
+				if (!(dlink_isInList_TeamMemberList(pListHead))) do {
+					{
+						static char ignoreCrash = 0; if (!ignoreCrash) {
+							TheCurrentIgnoreCrashPtr = &ignoreCrash; DebugCrash("not in list" "TeamMemberList"); TheCurrentIgnoreCrashPtr = 0;
+						}
+					}
+				} while (0);
+			}
+		} while (0); do {
+			{
+				if (!(!((((uintptr_t)(*pListHead)) & 1) != 0) && !((((uintptr_t)(m_dlink_TeamMemberList.m_next)) & 1) != 0) && !((((uintptr_t)(m_dlink_TeamMemberList.m_prev)) & 1) != 0))) do {
+					{
+						static char ignoreCrash = 0; if (!ignoreCrash) {
+							TheCurrentIgnoreCrashPtr = &ignoreCrash; DebugCrash("bogus ptrs"); TheCurrentIgnoreCrashPtr = 0;
+						}
+					}
+				} while (0);
+			}
+		} while (0); if (m_dlink_TeamMemberList.m_next) m_dlink_TeamMemberList.m_next->m_dlink_TeamMemberList.m_prev = m_dlink_TeamMemberList.m_prev; if (m_dlink_TeamMemberList.m_prev) m_dlink_TeamMemberList.m_prev->m_dlink_TeamMemberList.m_next = m_dlink_TeamMemberList.m_next; else *pListHead = m_dlink_TeamMemberList.m_next; m_dlink_TeamMemberList.m_prev = 0; m_dlink_TeamMemberList.m_next = 0; do {
+			{
+				if (!(!((((uintptr_t)(*pListHead)) & 1) != 0) && !((((uintptr_t)(m_dlink_TeamMemberList.m_next)) & 1) != 0) && !((((uintptr_t)(m_dlink_TeamMemberList.m_prev)) & 1) != 0))) do {
+					{
+						static char ignoreCrash = 0; if (!ignoreCrash) {
+							TheCurrentIgnoreCrashPtr = &ignoreCrash; DebugCrash("bogus ptrs"); TheCurrentIgnoreCrashPtr = 0;
+						}
+					}
+				} while (0);
+			}
+		} while (0);
+	} private: struct DLINK_TeamMemberList {
+	public: Object* m_prev; Object* m_next; inline DLINK_TeamMemberList() : m_prev(0), m_next(0) {
+	} inline ~DLINK_TeamMemberList() {
+		do {
+			{
+				if (!(!m_prev && !m_next)) do {
+					{
+						static char ignoreCrash = 0; if (!ignoreCrash) {
+							TheCurrentIgnoreCrashPtr = &ignoreCrash; DebugCrash("destroying dlink still in a list " "TeamMemberList"); TheCurrentIgnoreCrashPtr = 0;
+						}
+					}
+				} while (0);
+			}
+		} while (0);
+	}
+	}; DLINK_TeamMemberList m_dlink_TeamMemberList;			///< other Things that are members of the same team
+#endif
 
 	// Weapons & Damage -------------------------------------------------------------------------------------------------
 	WeaponSet											m_weaponSet;

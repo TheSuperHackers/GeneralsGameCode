@@ -380,11 +380,13 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	// need this before TheAudio in case we're running off of CD - TheAudio can try to open Music.big on the CD...
 	initSubsystem(TheCDManager, CreateCDManager(), NULL);
+#ifdef HAS_BINK
 	initSubsystem(TheAudio, (AudioManager*)new MilesAudioManager());
 	if (!TheAudio->isMusicAlreadyLoaded())
 		return FALSE;
 
 	initSubsystem(TheVideoPlayer, (VideoPlayerInterface*)(new VideoPlayer()));
+#endif
 	initSubsystem(TheModuleFactory, (ModuleFactory*)(new W3DModuleFactory()));
 	initSubsystem(TheSidesList, new SidesList());
 	initSubsystem(TheCaveSystem, new CaveSystem());

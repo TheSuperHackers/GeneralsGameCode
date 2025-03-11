@@ -172,3 +172,15 @@ void Matrix4::Multiply(const Matrix4 & a,const Matrix3D & b,Matrix4 * res)
 	#undef ROWCOL
 	#undef ROWCOL4
 }
+
+#ifdef _DEBUG
+Matrix4 Matrix4::Transpose() const
+{
+	return Matrix4(
+		Vector4(Row[0][0], Row[1][0], Row[2][0], Row[3][0]),
+		Vector4(Row[0][1], Row[1][1], Row[2][1], Row[3][1]),
+		Vector4(Row[0][2], Row[1][2], Row[2][2], Row[3][2]),
+		Vector4(Row[0][3], Row[1][3], Row[2][3], Row[3][3])
+	);
+}
+#endif

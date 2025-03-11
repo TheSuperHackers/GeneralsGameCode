@@ -243,7 +243,9 @@ void FlammableUpdate::startBurningSound()
 	const FlammableUpdateModuleData *data = getFlammableUpdateModuleData();
 
 	AudioEventRTS audio(data->m_burningSoundName, getObject()->getID());
+#ifdef HAS_BINK
 	m_audioHandle = TheAudio->addAudioEvent( &audio );
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -252,7 +254,9 @@ void FlammableUpdate::stopBurningSound()
 {
 	if (m_audioHandle)
 	{
+#ifdef HAS_BINK
 		TheAudio->removeAudioEvent( m_audioHandle );
+#endif
 		m_audioHandle = NULL;
 	}
 }

@@ -1904,7 +1904,7 @@ AsciiString Parameter::getUiText(void) const
 		case AI_MOOD:
 			switch (m_int) {
 				case AI_SLEEP: uiText.format("Sleep"); break;
-				case AI_PASSIVE: uiText.format("Passive"); break;
+				case AI_PASSIVEWW: uiText.format("Passive"); break;
 				case AI_NORMAL: uiText.format("Normal"); break;
 				case AI_ALERT: uiText.format("Alert"); break;
 				case AI_AGGRESSIVE: uiText.format("Aggressive"); break;

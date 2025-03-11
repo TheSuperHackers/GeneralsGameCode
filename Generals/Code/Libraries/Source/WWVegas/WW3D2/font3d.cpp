@@ -56,8 +56,8 @@ Font3DDataClass::Font3DDataClass( const char *filename )
 {
 	Texture = NULL;
 	Load_Font_Image( filename);
-	Name = strdup( filename);
-	Name = strupr( Name);
+	Name = _strdup( filename);
+	Name = _strupr( Name);
 }
 
 

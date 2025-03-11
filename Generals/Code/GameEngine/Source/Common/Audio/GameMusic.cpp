@@ -96,19 +96,23 @@ MusicManager::~MusicManager()
 //-------------------------------------------------------------------------------------------------
 void MusicManager::playTrack( AudioEventRTS *eventToUse )
 {
+#ifdef HAS_BINK
 	AudioRequest *audioRequest = TheAudio->allocateAudioRequest( true );
 	audioRequest->m_pendingEvent = eventToUse;
 	audioRequest->m_request = AR_Play;
 	TheAudio->appendAudioRequest( audioRequest );
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
 void MusicManager::stopTrack( AudioHandle eventToRemove )
 {
+#ifdef HAS_BINK
 	AudioRequest *audioRequest = TheAudio->allocateAudioRequest( false );
 	audioRequest->m_handleToInteractOn = eventToRemove;
 	audioRequest->m_request = AR_Stop;
 	TheAudio->appendAudioRequest( audioRequest );
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------

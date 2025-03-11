@@ -163,7 +163,7 @@ Bool CanSelectDrawable( const Drawable *draw, Bool dragSelecting )
 	while (window)
 	{
 		// check to see if it or any of its parents are opaque.  If so, we can't select anything.
-		if (!BitTest( window->winGetStatus(), WIN_STATUS_SEE_THRU ))
+		if (!BitTestWW( window->winGetStatus(), WIN_STATUS_SEE_THRU ))
 		{
 			return FALSE;
 		}
@@ -188,7 +188,7 @@ Bool CanSelectDrawable( const Drawable *draw, Bool dragSelecting )
 	}
 
 	// You cannot select something that has a logic override of unselectability or masked
-	if( BitTest( obj->getStatusBits(), OBJECT_STATUS_UNSELECTABLE | OBJECT_STATUS_MASKED ) )
+	if( BitTestWW( obj->getStatusBits(), OBJECT_STATUS_UNSELECTABLE | OBJECT_STATUS_MASKED ) )
 	{
 		return FALSE;
 	}
@@ -412,7 +412,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				delta.y = abs(pixel.y - m_selectFeedbackAnchor.y);
 
 				// if mouse has moved while left button is down, begin drag selection
-				if (delta.x > TheMouse->m_dragTolerance || delta.y > TheMouse->m_dragTolerance)
+				if (delta.x > (int)TheMouse->m_dragTolerance || delta.y > (int)TheMouse->m_dragTolerance)
 				{
 					if (m_dragSelecting == false)
 					{
@@ -478,7 +478,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			// Single point. If there's a unit in there, double click will select all of them.
 			if (region.height() == 0 && region.width() == 0) 
 			{
-				Bool selectAcrossMap = (BitTest(modifiers, KEY_STATE_ALT) ? TRUE : FALSE);
+				Bool selectAcrossMap = (BitTestWW(modifiers, KEY_STATE_ALT) ? TRUE : FALSE);
 
 				// only allow things that are selectable. Also, we aren't allowed to 
 				Drawable *picked = TheTacticalView->pickDrawable( &region.lo, FALSE, PICK_TYPE_SELECTABLE);
@@ -789,7 +789,9 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 						Object* obj = draw->getObject();
 						if (obj)
 						{
+#ifdef HAS_BINK
 							TheAudio->addAudioEvent(&TheAudio->getMiscAudio()->m_noCanDoSound);
+#endif
 							GameMessage* msg = TheMessageStream->appendMessage( GameMessage::MSG_DEBUG_KILL_OBJECT );
 							msg->appendObjectIDArgument(obj->getID());
 						}
@@ -801,7 +803,9 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 						Object* obj = draw->getObject();
 						if (obj)
 						{
+#ifdef HAS_BINK
 							TheAudio->addAudioEvent(&TheAudio->getMiscAudio()->m_noCanDoSound);
+#endif
 							GameMessage* msg = TheMessageStream->appendMessage( GameMessage::MSG_DEBUG_HURT_OBJECT );
 							msg->appendObjectIDArgument(obj->getID());
 						}
@@ -906,14 +910,14 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 			Bool isClick = TRUE;
 			if (isClick && 
-					abs(delta.x) > TheMouse->m_dragTolerance || 
-					abs(delta.y) > TheMouse->m_dragTolerance)
+					abs(delta.x) > (int)TheMouse->m_dragTolerance ||
+					abs(delta.y) > (int)TheMouse->m_dragTolerance)
 			{
 				isClick = FALSE;
 			}
 
 			if (isClick && 
-					currentTime - m_lastClick > TheMouse->m_dragToleranceMS)
+					currentTime - m_lastClick > (int)TheMouse->m_dragToleranceMS)
 			{
 				isClick = FALSE;
 			}
@@ -1018,7 +1022,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 						if (selectedSquad != NULL)
 						{
 							VecObjectPtr objlist = selectedSquad->getLiveObjects();
-							Int numObjs = objlist.size();
+							Int numObjs = (int)objlist.size();
 							if (numObjs > 0)
 							{
 								// if theres someone in the group, center the camera on them.
@@ -1040,7 +1044,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 						if (selectedSquad != NULL)
 						{
 							VecObjectPtr objlist = selectedSquad->getLiveObjects();
-							Int numObjs = objlist.size();
+							Int numObjs = (int)objlist.size();
 							for (Int i = 0; i < numObjs; ++i)
 							{
 								if( objlist[i]->getControllingPlayer() == player )
@@ -1092,7 +1096,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 						if (selectedSquad != NULL)
 						{
 							VecObjectPtr objlist = selectedSquad->getLiveObjects();
-							Int numObjs = objlist.size();
+							Int numObjs = (int)objlist.size();
 							if (numObjs > 0)
 							{
 								// if theres someone in the group, center the camera on them.
@@ -1114,7 +1118,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 						if (selectedSquad != NULL)
 						{
 							VecObjectPtr objlist = selectedSquad->getLiveObjects();
-							Int numObjs = objlist.size();
+							Int numObjs = (int)objlist.size();
 							for (Int i = 0; i < numObjs; ++i)
 							{
 								TheInGameUI->selectDrawable(objlist[i]->getDrawable());
@@ -1152,7 +1156,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 					if (selectedSquad != NULL) 
 					{
 						VecObjectPtr objlist = selectedSquad->getLiveObjects();
-						Int numObjs = objlist.size();
+						Int numObjs = (int)objlist.size();
 						if (numObjs > 0) 
 						{
 							// if theres someone in the group, center the camera on them.

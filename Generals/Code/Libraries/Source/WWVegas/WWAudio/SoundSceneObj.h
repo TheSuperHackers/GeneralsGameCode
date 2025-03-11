@@ -39,6 +39,8 @@
 #ifndef __SOUND_SCENE_OBJ_H
 #define __SOUND_SCENE_OBJ_H
 
+#ifdef HAS_BINK
+
 #include "Refcount.H"
 #include "WWAudio.H"
 #include "BitType.H"
@@ -273,7 +275,7 @@ SoundSceneObjClass::Register_Callback
 	return ;
 }
 
-
+#endif
 
 #endif //__SOUND_SCENE_OBJ_H
 

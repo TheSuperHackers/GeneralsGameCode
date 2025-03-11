@@ -40,6 +40,7 @@
 #include "wwprofile.h"
 #include "wwmemlog.h"
 #include "dx8wrapper.h"
+#include <algorithm>
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -379,7 +380,8 @@ Render2DSentenceClass::Build_Textures (void)
 		//
 		//	Create the new texture
 		//
-		TextureClass *new_texture = W3DNEW TextureClass (desc.Width, desc.Width, WW3D_FORMAT_A4R4G4B4, TextureClass::MIP_LEVELS_1);
+		TextureClass *new_texture = W3DNEW TextureClass (desc.Width, desc.Width, WW3D_FORMAT_A4R4G4B4, 
+			TextureClass::MIP_LEVELS_1, TextureClass::POOL_DEFAULT);
 		SurfaceClass *texture_surface = new_texture->Get_Surface_Level ();
 
 		new_texture->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
@@ -391,7 +393,8 @@ Render2DSentenceClass::Build_Textures (void)
 		//
 		//	Copy the contents of the texture from the surface
 		//
-		DX8Wrapper::_Copy_DX8_Rects (curr_surface->Peek_D3D_Surface (), NULL, 0, texture_surface->Peek_D3D_Surface (), NULL);
+		DX8Wrapper::_Copy_DX8_Rects(curr_surface->Peek_D3D_Surface(), NULL, 0, texture_surface->Peek_D3D_Surface(), NULL);
+		//DX8Wrapper::_Stretch_DX9_Rects (curr_surface->Peek_D3D_Surface (), NULL, 0, texture_surface->Peek_D3D_Surface (), NULL, D3DTEXF_LINEAR);
 		REF_PTR_RELEASE (texture_surface);
 	
 		//
@@ -1720,8 +1723,8 @@ FontCharsClass::Grow_Unicode_Array (WCHAR ch)
 		return ;
 	} 
 
-	uint16 first_index	= min( FirstUnicodeChar, ch );
-	uint16 last_index		= max( LastUnicodeChar, ch );
+	uint16 first_index	= min( FirstUnicodeChar, (uint16)ch );
+	uint16 last_index		= max( LastUnicodeChar, (uint16)ch );
 	uint16 count			= (last_index - first_index) + 1;
 
 	//

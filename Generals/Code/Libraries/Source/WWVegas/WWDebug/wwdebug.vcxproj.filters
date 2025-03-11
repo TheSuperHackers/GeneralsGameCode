@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{39de54e6-ecc9-412a-9bf2-67d16f27044e}</UniqueIdentifier>
+      <Extensions>cpp;c</Extensions>
+    </Filter>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{e25d61e5-eee4-49cc-908d-4657442ff8c7}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="wwdebug.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="wwmemlog.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="wwprofile.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="wwdebug.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="wwhack.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="wwmemlog.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="wwprofile.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

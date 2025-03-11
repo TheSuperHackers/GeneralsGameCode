@@ -28,8 +28,8 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "GameSpy/GP/GP.h"
-#include "GameSpy/gstats/gpersist.h"
+#include "GP/GP.h"
+#include "gstats/gpersist.h"
 
 #include "GameNetwork/FirewallHelper.h"
 #include "GameNetwork/GameSpy.h"
@@ -519,8 +519,11 @@ void ReadyChangedCallback(PEER peer, const char * nick,
 	}
 }
 
-void GameStartedCallback(PEER peer, unsigned int IP,
-												 const char * message, void * param)
+void GameStartedCallback(PEER peer,  // The peer object.
+	SBServer server,  // A server object representing this host.
+	const gsi_char* message,  // A message that was passed into peerStartGame().
+	void* param  // User-data. 
+)
 {
 	GameSpyStartGame();
 }

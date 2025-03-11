@@ -88,6 +88,7 @@ EjectPilotDie::~EjectPilotDie( void )
 
 	ObjectCreationList::create(ocl, dyingObject, damageDealer);
 
+#ifdef HAS_BINK
 	AudioEventRTS voiceEject = *(dyingObject->getTemplate()->getPerUnitSound("VoiceEject"));
 	voiceEject.setPosition( dyingObject->getPosition() );
 	voiceEject.setPlayerIndex( dyingObject->getControllingPlayer()->getPlayerIndex() );
@@ -96,6 +97,7 @@ EjectPilotDie::~EjectPilotDie( void )
 	AudioEventRTS soundEject = *(dyingObject->getTemplate()->getPerUnitSound("SoundEject"));
 	soundEject.setPosition( dyingObject->getPosition() );
 	TheAudio->addAudioEvent(&soundEject);
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------

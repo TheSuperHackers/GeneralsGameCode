@@ -251,7 +251,7 @@ void UpdateStartButton(void)
 	Int index;
 	Int selected;
 	GadgetComboBoxGetSelectedPos( comboBoxLadder, &selected );
-	index = (Int)GadgetComboBoxGetItemData( comboBoxLadder, selected );
+	index = (Int)(intptr_t)GadgetComboBoxGetItemData( comboBoxLadder, selected );
 	const LadderInfo *li = TheLadderList->findLadderByIndex( index );
 	if (li)
 	{
@@ -292,7 +292,7 @@ static void populateQMColorComboBox(QuickMatchPreferences& pref)
 
 		colorName = TheGameText->fetch(def->getTooltipName().str());
 		newIndex = GadgetComboBoxAddEntry(comboBoxColor, colorName, def->getColor());
-		GadgetComboBoxSetItemData(comboBoxColor, newIndex, (void *)c);
+		GadgetComboBoxSetItemData(comboBoxColor, newIndex, (void *)(intptr_t)c);
 	}
 	GadgetComboBoxSetSelectedPos(comboBoxColor, pref.getColor());
 }
@@ -337,7 +337,7 @@ static void populateQMSideComboBox(Int favSide, const LadderInfo *li = NULL)
 		seenSides.insert(side);
 
 		newIndex = GadgetComboBoxAddEntry(comboBoxSide, TheGameText->fetch(side), def->getColor());
-		GadgetComboBoxSetItemData(comboBoxSide, newIndex, (void *)c);
+		GadgetComboBoxSetItemData(comboBoxSide, newIndex, (void *)(intptr_t)c);
 
 		if (c == favSide)
 			entryToSelect = newIndex;
@@ -432,7 +432,7 @@ void PopulateQMLadderListBox( GameWindow *win )
 	{
 		usedLadders.insert(info);
 		index = GadgetListBoxAddEntryText( win, info->name, favoriteColor, -1 );
-		GadgetListBoxSetItemData( win, (void *)(info->index), index );
+		GadgetListBoxSetItemData( win, (void *)(intptr_t)(info->index), index );
 		selectedPos = index;
 	}
 
@@ -451,7 +451,7 @@ void PopulateQMLadderListBox( GameWindow *win )
 		{
 			usedLadders.insert(info);
 			index = GadgetListBoxAddEntryText( win, info->name, favoriteColor, -1 );
-			GadgetListBoxSetItemData( win, (void *)(info->index), index );
+			GadgetListBoxSetItemData( win, (void *)(intptr_t)(info->index), index );
 		}
 	}
 
@@ -465,7 +465,7 @@ void PopulateQMLadderListBox( GameWindow *win )
 		{
 			usedLadders.insert(info);
 			index = GadgetListBoxAddEntryText( win, info->name, specialColor, -1 );
-			GadgetListBoxSetItemData( win, (void *)(info->index), index );
+			GadgetListBoxSetItemData( win, (void *)(intptr_t)(info->index), index );
 		}
 	}
 
@@ -478,7 +478,7 @@ void PopulateQMLadderListBox( GameWindow *win )
 		{
 			usedLadders.insert(info);
 			index = GadgetListBoxAddEntryText( win, info->name, normalColor, -1 );
-			GadgetListBoxSetItemData( win, (void *)(info->index), index );
+			GadgetListBoxSetItemData( win, (void *)(intptr_t)(info->index), index );
 		}
 	}
 
@@ -491,7 +491,7 @@ static const LadderInfo * getLadderInfo( void )
 	Int index;
 	Int selected;
 	GadgetComboBoxGetSelectedPos( comboBoxLadder, &selected );
-	index = (Int)GadgetComboBoxGetItemData( comboBoxLadder, selected );
+	index = (Int)(intptr_t)GadgetComboBoxGetItemData( comboBoxLadder, selected );
 	const LadderInfo *li = TheLadderList->findLadderByIndex( index );
 	return li;
 }
@@ -523,7 +523,7 @@ void PopulateQMLadderComboBox( void )
 	{
 		usedLadders.insert(info);
 		index = GadgetComboBoxAddEntry( comboBoxLadder, info->name, specialColor );
-		GadgetComboBoxSetItemData( comboBoxLadder, index, (void *)(info->index) );
+		GadgetComboBoxSetItemData( comboBoxLadder, index, (void *)(intptr_t)(info->index) );
 		selectedPos = index;
 
 		// we selected a ladder?  No game size choice for us...
@@ -549,7 +549,7 @@ void PopulateQMLadderComboBox( void )
 		{
 			usedLadders.insert(info);
 			index = GadgetComboBoxAddEntry( comboBoxLadder, info->name, normalColor );
-			GadgetComboBoxSetItemData( comboBoxLadder, index, (void *)(info->index) );
+			GadgetComboBoxSetItemData( comboBoxLadder, index, (void *)(intptr_t)(info->index) );
 		}
 	}
 
@@ -570,7 +570,7 @@ static void populateQuickMatchMapSelectListbox( QuickMatchPreferences& pref )
 	Int index;
 	Int selected;
 	GadgetComboBoxGetSelectedPos( comboBoxLadder, &selected );
-	index = (Int)GadgetComboBoxGetItemData( comboBoxLadder, selected );
+	index = (Int)(intptr_t)GadgetComboBoxGetItemData( comboBoxLadder, selected );
 	const LadderInfo *li = TheLadderList->findLadderByIndex( index );
 	//listboxMapSelect->winEnable( li == NULL || li->randomMaps == FALSE );
 
@@ -645,7 +645,7 @@ static void saveQuickMatchOptions( void )
 	Int index;
 	Int selected;
 	GadgetComboBoxGetSelectedPos( comboBoxLadder, &selected );
-	index = (Int)GadgetComboBoxGetItemData( comboBoxLadder, selected );
+	index = (Int)(intptr_t)GadgetComboBoxGetItemData( comboBoxLadder, selected );
 	const LadderInfo *li = TheLadderList->findLadderByIndex( index );
 	Int numPlayers = 0;
 
@@ -701,7 +701,7 @@ static void saveQuickMatchOptions( void )
 
 	Int item;
 	GadgetComboBoxGetSelectedPos(comboBoxSide, &selected);
-	item = (Int)GadgetComboBoxGetItemData(comboBoxSide, selected);
+	item = (Int)(intptr_t)GadgetComboBoxGetItemData(comboBoxSide, selected);
 	pref.setSide(max(0, item));
 	GadgetComboBoxGetSelectedPos(comboBoxColor, &selected);
 	pref.setColor(max(0, selected));
@@ -1140,7 +1140,7 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 			{
 			case PeerResponse::PEERRESPONSE_PLAYERUTM:
 				{
-					if (!stricmp(resp.command.c_str(), "STATS"))
+					if (!_stricmp(resp.command.c_str(), "STATS"))
 					{
 						DEBUG_LOG(("Saw STATS from %s, data was '%s'\n", resp.nick.c_str(), resp.commandOptions.c_str()));
 						AsciiString data = resp.commandOptions.c_str();
@@ -1169,7 +1169,7 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 						}
 					}
 					Int slotNum = TheGameSpyGame->getSlotNum(resp.nick.c_str());
-					if ((slotNum >= 0) && (slotNum < MAX_SLOTS) && (!stricmp(resp.command.c_str(), "NAT"))) {
+					if ((slotNum >= 0) && (slotNum < MAX_SLOTS) && (!_stricmp(resp.command.c_str(), "NAT"))) {
 						// this is a command for NAT negotiations, pass if off to TheNAT
 						sawImportantMessage = TRUE;
 						if (TheNAT != NULL) {
@@ -1429,7 +1429,7 @@ WindowMsgHandledType WOLQuickMatchMenuInput( GameWindow *window, UnsignedInt msg
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitTestWW( state, KEY_STATE_UP ) )
 					{
 						if(!buttonBack->winIsHidden())
 							TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
@@ -1498,7 +1498,7 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 					if (pos >= 0)
 					{
 						QuickMatchPreferences pref;
-						Int ladderID = (Int)GadgetComboBoxGetItemData(control, pos);
+						Int ladderID = (Int)(intptr_t)GadgetComboBoxGetItemData(control, pos);
 						if (ladderID == 0)
 						{
 							// no ladder selected - enable buttons
@@ -1640,7 +1640,7 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 
 					Int ladderIndex, index, selected;
 					GadgetComboBoxGetSelectedPos( comboBoxLadder, &selected );
-					ladderIndex = (Int)GadgetComboBoxGetItemData( comboBoxLadder, selected );
+					ladderIndex = (Int)(intptr_t)GadgetComboBoxGetItemData( comboBoxLadder, selected );
 					const LadderInfo *ladderInfo = NULL;
 					if (ladderIndex < 0)
 					{
@@ -1661,11 +1661,11 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 					index = -1;
 					GadgetComboBoxGetSelectedPos( comboBoxSide, &selected );
 					if (selected >= 0)
-						index = (Int)GadgetComboBoxGetItemData( comboBoxSide, selected );
+						index = (Int)(intptr_t)GadgetComboBoxGetItemData( comboBoxSide, selected );
 					req.QM.side = index;
 					if (ladderInfo && ladderInfo->randomFactions)
 					{
-						Int sideNum = GameClientRandomValue(0, ladderInfo->validFactions.size()-1);
+						Int sideNum = GameClientRandomValue(0, (int)ladderInfo->validFactions.size()-1);
 						DEBUG_LOG(("Looking for %d out of %d random sides\n", sideNum, ladderInfo->validFactions.size()));
 						AsciiStringListConstIterator cit = ladderInfo->validFactions.begin();
 						while (sideNum)
@@ -1694,7 +1694,7 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 					index = -1;
 					GadgetComboBoxGetSelectedPos( comboBoxColor, &selected );
 					if (selected >= 0)
-						index = (Int)GadgetComboBoxGetItemData( comboBoxColor, selected );
+						index = (Int)(intptr_t)GadgetComboBoxGetItemData( comboBoxColor, selected );
 					req.QM.color = index;
 
 					OptionPreferences natPref;

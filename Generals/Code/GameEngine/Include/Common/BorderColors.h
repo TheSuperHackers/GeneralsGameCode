@@ -28,14 +28,14 @@ struct BorderColor
 
 const BorderColor BORDER_COLORS[] = 
 {
-	{ "Orange",					0xFFFF8700, },
-	{ "Green",					0xFF00FF00, },
-	{ "Blue",						0xFF0000FF, },
-	{ "Cyan",						0xFF00FFFF, },
-	{ "Magenta",				0xFFFF00FF, },
-	{ "Yellow",					0xFFFFFF00, },
-	{ "Purple",					0xFF9E00FF, },
-	{ "Pink",						0xFFFF8670, },
+	{ "Orange",					(int)0xFFFF8700, },
+	{ "Green",					(int)0xFF00FF00, },
+	{ "Blue",						(int)0xFF0000FF, },
+	{ "Cyan",						(int)0xFF00FFFF, },
+	{ "Magenta",				(int)0xFFFF00FF, },
+	{ "Yellow",					(int)0xFFFFFF00, },
+	{ "Purple",					(int)0xFF9E00FF, },
+	{ "Pink",						(int)0xFFFF8670, },
 };
 
 const long BORDER_COLORS_SIZE = sizeof(BORDER_COLORS) / sizeof (BORDER_COLORS[0]);

@@ -86,14 +86,16 @@ unsigned long Get_CPU_Rate(unsigned long & high)
 
 unsigned long Get_CPU_Clock(unsigned long & high)
 {
-	int h;
-	int l;
+	int h = 0;
+	int l = 0;
+#if 0
 	__asm {
 		_emit 0Fh
 		_emit 31h
 		mov	[h],edx
 		mov	[l],eax
 	}
+#endif
 	high = h;
 	return(l);
 }
@@ -126,17 +128,20 @@ static unsigned long TSC_High;
 
 void RDTSC(void)
 {
+#if 0
     _asm
     {
         ASM_RDTSC;
         mov     TSC_Low, eax
         mov     TSC_High, edx
     }
+#endif
 }
 
 
 int Get_RDTSC_CPU_Speed(void)
 {
+#if 0
 	LARGE_INTEGER t0,t1;
 	DWORD	freq=0;						// Most current freq. calc.
 	DWORD	freq2=0;						// 2nd most current freq. calc.
@@ -254,7 +259,8 @@ int Get_RDTSC_CPU_Speed(void)
 	if ( (freq3 - freq) >= ROUND_THRESHOLD ) norm_freq++;
 
 	return (norm_freq);
-
+#endif
+	return 0;
 }
 
 

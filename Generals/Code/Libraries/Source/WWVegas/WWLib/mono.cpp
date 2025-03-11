@@ -443,7 +443,7 @@ void MonoClass::Print(char const * ptr)
 #ifdef _WINDOWS
 	if ( Enabled && (Handle != INVALID_HANDLE_VALUE) ) {
 		unsigned long retval;
-		WriteFile(Handle, ptr, strlen(ptr), &retval, NULL);
+		WriteFile(Handle, ptr, (int)strlen(ptr), &retval, NULL);
 	}
 #endif
 }

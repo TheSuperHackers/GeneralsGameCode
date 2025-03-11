@@ -230,7 +230,19 @@ class AIUpdateInterface : public UpdateModule, public AICommandInterface
 {
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AIUpdateInterface, "AIUpdateInterface" )
+#if 1
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( AIUpdateInterface, AIUpdateModuleData )
+#else
+public: static Module* friend_newModuleInstance(Thing* thing, const ModuleData* moduleData) {
+		return new(AIUpdateInterface::AIUpdateInterface_GLUE_NOT_IMPLEMENTED, "C:\\Repos\\CnC_Generals_Zero_Hour\\Generals\\Code\\GameEngine\\Include\\GameLogic\\Module\\AIUpdate.h") AIUpdateInterface(thing, moduleData);
+	} virtual NameKeyType getModuleNameKey() const {
+		static NameKeyType nk = NAMEKEY("AIUpdateInterface"); return nk;
+	} protected: virtual void crc(Xfer* xfer); virtual void xfer(Xfer* xfer); virtual void loadPostProcess(void); private: const AIUpdateModuleData* getAIUpdateModuleData() const {
+		return (AIUpdateModuleData*)getModuleData();
+	} public: static ModuleData* friend_newModuleData(INI* ini) {
+		AIUpdateModuleData* data = new AIUpdateModuleData; if (ini) ini->initFromINIMultiProc(data, AIUpdateModuleData::buildFieldParse); return data;
+	}
+#endif
 
 protected:
 

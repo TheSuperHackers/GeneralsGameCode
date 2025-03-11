@@ -41,6 +41,8 @@
 #ifndef __SOUND3DOBJ_H
 #define __SOUND3DOBJ_H
 
+#ifdef HAS_BINK
+
 #include "AudibleSound.H"
 #include "mempool.h"
 
@@ -197,5 +199,6 @@ class Sound3DClass : public AudibleSoundClass
 		unsigned int			m_LastUpdate;
 };
 
+#endif
 
 #endif //__SOUND3DOBJ_H

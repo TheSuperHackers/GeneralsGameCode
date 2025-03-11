@@ -49,12 +49,12 @@ class STLSpecialAlloc;
 #include <direct.h>
 #include <EXCPT.H>
 #include <float.h>
-#include <fstream.h>
+#include <fstream>
 #include <imagehlp.h>
 #include <io.h>
 #include <limits.h>
 #include <lmcons.h>
-#include <mapicode.h>
+//#include <mapicode.h>
 #include <math.h>
 #include <memory.h>
 #include <mmsystem.h>

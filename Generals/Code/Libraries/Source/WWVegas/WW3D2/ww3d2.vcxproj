@@ -1,0 +1,857 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DebugE|Win32">
+      <Configuration>DebugE</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DebugE|x64">
+      <Configuration>DebugE</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Internal|Win32">
+      <Configuration>Internal</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Internal|x64">
+      <Configuration>Internal</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ProfileE|Win32">
+      <Configuration>ProfileE</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ProfileE|x64">
+      <Configuration>ProfileE</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Profile|Win32">
+      <Configuration>Profile</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Profile|x64">
+      <Configuration>Profile</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Template|Win32">
+      <Configuration>Template</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Template|x64">
+      <Configuration>Template</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <SccProjectName>"$/Commando/Code/ww3d2", QFBEAAAA</SccProjectName>
+    <SccLocalPath>.</SccLocalPath>
+    <ProjectGuid>{44ACBBE7-78B0-496D-975C-EB8A47381450}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Template|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Template|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ProfileE|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ProfileE|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Internal|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Internal|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugE|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugE|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Template|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ProfileE|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ProfileE|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Internal|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Internal|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugE|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugE|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugE|Win32'">
+    <OutDir>.\DebugE\</OutDir>
+    <IntDir>.\DebugE\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugE|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Internal|Win32'">
+    <OutDir>.\Internal\</OutDir>
+    <IntDir>.\Internal\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Internal|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ProfileE|Win32'">
+    <OutDir>.\ProfileE\</OutDir>
+    <IntDir>.\ProfileE\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ProfileE|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
+    <OutDir>.\Profile\</OutDir>
+    <IntDir>.\Profile\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>.\Debug\</OutDir>
+    <IntDir>.\Debug\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>.\Release\</OutDir>
+    <IntDir>.\Release\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugE|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <Optimization>Disabled</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <MinimalRebuild>true</MinimalRebuild>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <AdditionalIncludeDirectories>..\srsdk1x\include;..\wwlib;..\wwmath;..\wwdebug;..\wwcpuid;..\wwsaveload;..\wwaudio;..\miles6\include;%(AdditionalIncludeDirectories);$(SolutionDir)\Libraries\DX90SDK\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;WWDEBUG;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;WIN32;PARAM_EDITING_ON;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\DebugE\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>.\DebugE\ww3d2.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\DebugE\</ObjectFileName>
+      <ProgramDataBaseFileName>.\DebugE\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\DebugE\ww3d2.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\ww3d2DebugE.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugE|x64'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <Optimization>Disabled</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>..\srsdk1x\include;..\wwlib;..\wwmath;..\wwdebug;..\wwcpuid;..\wwsaveload;..\wwaudio;..\miles6\include;%(AdditionalIncludeDirectories);$(SolutionDir)\Libraries\DX90SDK\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;WWDEBUG;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;WIN32;PARAM_EDITING_ON;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\DebugE\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>.\DebugE\ww3d2.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\DebugE\</ObjectFileName>
+      <ProgramDataBaseFileName>.\DebugE\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\DebugE\ww3d2.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\ww3d2DebugE.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Internal|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\wwlib;..\wwmath;..\wwdebug;..\wwcpuid;..\wwsaveload;..\wwaudio;..\miles6\include;%(AdditionalIncludeDirectories);$(SolutionDir)\Libraries\DX90SDK\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;WIN32;_INTERNAL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Internal\</AssemblerListingLocation>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderOutputFile>.\Internal\ww3d2.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Internal\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Internal\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Internal\ww3d2.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\ww3d2Internal.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Internal|x64'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\wwlib;..\wwmath;..\wwdebug;..\wwcpuid;..\wwsaveload;..\wwaudio;..\miles6\include;%(AdditionalIncludeDirectories);$(SolutionDir)\Libraries\DX90SDK\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;WIN32;_INTERNAL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Internal\</AssemblerListingLocation>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderOutputFile>.\Internal\ww3d2.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Internal\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Internal\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Internal\ww3d2.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\ww3d2Internal.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ProfileE|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <MinimalRebuild>true</MinimalRebuild>
+      <AdditionalIncludeDirectories>..\srsdk1x\include;..\wwlib;..\wwmath;..\wwdebug;..\wwcpuid;..\wwsaveload;..\wwaudio;..\miles6\include;%(AdditionalIncludeDirectories);$(SolutionDir)\Libraries\DX90SDK\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;WWDEBUG;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;WIN32;PARAM_EDITING_ON;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\ProfileE\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>.\ProfileE\ww3d2.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\ProfileE\</ObjectFileName>
+      <ProgramDataBaseFileName>.\ProfileE\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\ProfileE\ww3d2.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\ww3d2ProfileE.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ProfileE|x64'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\srsdk1x\include;..\wwlib;..\wwmath;..\wwdebug;..\wwcpuid;..\wwsaveload;..\wwaudio;..\miles6\include;%(AdditionalIncludeDirectories);$(SolutionDir)\Libraries\DX90SDK\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;WWDEBUG;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;WIN32;PARAM_EDITING_ON;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\ProfileE\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>.\ProfileE\ww3d2.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\ProfileE\</ObjectFileName>
+      <ProgramDataBaseFileName>.\ProfileE\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\ProfileE\ww3d2.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\ww3d2ProfileE.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\srsdk1x\include;..\wwlib;..\wwmath;..\wwdebug;..\wwcpuid;..\wwsaveload;..\wwaudio;..\miles6\include;%(AdditionalIncludeDirectories);$(SolutionDir)\Libraries\DX90SDK\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;WWDEBUG;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Profile\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>.\Profile\ww3d2.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Profile\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Profile\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Profile\ww3d2.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\ww3d2Profile.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\srsdk1x\include;..\wwlib;..\wwmath;..\wwdebug;..\wwcpuid;..\wwsaveload;..\wwaudio;..\miles6\include;%(AdditionalIncludeDirectories);$(SolutionDir)\Libraries\DX90SDK\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;WWDEBUG;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Profile\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>.\Profile\ww3d2.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Profile\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Profile\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Profile\ww3d2.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\ww3d2Profile.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\wwlib;..\wwmath;..\wwdebug;..\wwcpuid;..\wwsaveload;..\wwaudio;..\miles6\include;%(AdditionalIncludeDirectories);$(SolutionDir)\Libraries\DX90SDK\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Debug\</AssemblerListingLocation>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderOutputFile>.\Debug\ww3d2.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Debug\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Debug\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Debug\ww3d2.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\ww3d2Debug.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>Disabled</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\wwlib;..\wwmath;..\wwdebug;..\wwcpuid;..\wwsaveload;..\wwaudio;..\miles6\include;$(SolutionDir)\Libraries\DX90SDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;WIN32;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Debug\</AssemblerListingLocation>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderOutputFile>.\Debug\ww3d2.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Debug\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Debug\</ProgramDataBaseFileName>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <LanguageStandard>Default</LanguageStandard>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Debug\ww3d2.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>$(SolutionDir)\Libraries\Lib\ww3d2Debug.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\wwlib;..\wwmath;..\wwdebug;..\wwcpuid;..\wwsaveload;..\wwaudio;..\miles6\include;%(AdditionalIncludeDirectories);$(SolutionDir)\Libraries\DX90SDK\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;NDEBUG;WIN32;IG_DEBUG_STACKTRACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Release\</AssemblerListingLocation>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderOutputFile>.\Release\ww3d2.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Release\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Release\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Release\ww3d2.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\ww3d2.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\wwlib;..\wwmath;..\wwdebug;..\wwcpuid;..\wwsaveload;..\wwaudio;..\miles6\include;%(AdditionalIncludeDirectories);$(SolutionDir)\Libraries\DX90SDK\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WINVER=0x400;_WINDOWS;WIN32_LEAN_AND_MEAN;NDEBUG;WIN32;IG_DEBUG_STACKTRACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Release\</AssemblerListingLocation>
+      <BrowseInformation>true</BrowseInformation>
+      <PrecompiledHeaderOutputFile>.\Release\ww3d2.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Release\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Release\</ProgramDataBaseFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Release\ww3d2.bsc</OutputFile>
+    </Bscmake>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>..\..\..\Lib\ww3d2.lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>;$(SolutionDir)\Libraries\DX90SDK\include</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Template|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>;$(SolutionDir)\Libraries\DX90SDK\include</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="aabtree.cpp" />
+    <ClCompile Include="aabtreebuilder.cpp" />
+    <ClCompile Include="agg_def.cpp" />
+    <ClCompile Include="animobj.cpp" />
+    <ClCompile Include="assetmgr.cpp" />
+    <ClCompile Include="bitmaphandler.cpp" />
+    <ClCompile Include="bmp2d.cpp" />
+    <ClCompile Include="boxrobj.cpp" />
+    <ClCompile Include="bwrender.cpp" />
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="collect.cpp" />
+    <ClCompile Include="coltest.cpp" />
+    <ClCompile Include="composite.cpp" />
+    <ClCompile Include="dazzle.cpp" />
+    <ClCompile Include="ddsfile.cpp" />
+    <ClCompile Include="decalmsh.cpp" />
+    <ClCompile Include="decalsys.cpp" />
+    <ClCompile Include="distlod.cpp" />
+    <ClCompile Include="dx8caps.cpp" />
+    <ClCompile Include="dx8fvf.cpp" />
+    <ClCompile Include="dx8indexbuffer.cpp" />
+    <ClCompile Include="dx8polygonrenderer.cpp" />
+    <ClCompile Include="dx8renderer.cpp" />
+    <ClCompile Include="dx8texman.cpp" />
+    <ClCompile Include="dx8vertexbuffer.cpp" />
+    <ClCompile Include="dx8webbrowser.cpp" />
+    <ClCompile Include="dx8wrapper.cpp" />
+    <ClCompile Include="dynamesh.cpp" />
+    <ClCompile Include="font3d.cpp" />
+    <ClCompile Include="formconv.cpp" />
+    <ClCompile Include="FramGrab.cpp" />
+    <ClCompile Include="hanim.cpp" />
+    <ClCompile Include="hanimmgr.cpp" />
+    <ClCompile Include="hcanim.cpp" />
+    <ClCompile Include="hlod.cpp" />
+    <ClCompile Include="hmdldef.cpp" />
+    <ClCompile Include="hmorphanim.cpp" />
+    <ClCompile Include="hrawanim.cpp" />
+    <ClCompile Include="htree.cpp" />
+    <ClCompile Include="htreemgr.cpp" />
+    <ClCompile Include="intersec.cpp" />
+    <ClCompile Include="layer.cpp" />
+    <ClCompile Include="light.cpp" />
+    <ClCompile Include="lightenvironment.cpp" />
+    <ClCompile Include="line3d.cpp" />
+    <ClCompile Include="mapper.cpp" />
+    <ClCompile Include="matinfo.cpp" />
+    <ClCompile Include="matpass.cpp" />
+    <ClCompile Include="matrixmapper.cpp" />
+    <ClCompile Include="mesh.cpp" />
+    <ClCompile Include="meshbuild.cpp" />
+    <ClCompile Include="meshdam.cpp" />
+    <ClCompile Include="meshgeometry.cpp" />
+    <ClCompile Include="meshmatdesc.cpp" />
+    <ClCompile Include="meshmdl.cpp" />
+    <ClCompile Include="meshmdlio.cpp" />
+    <ClCompile Include="metalmap.cpp" />
+    <ClCompile Include="missingtexture.cpp" />
+    <ClCompile Include="motchan.cpp" />
+    <ClCompile Include="nullrobj.cpp" />
+    <ClCompile Include="part_buf.cpp" />
+    <ClCompile Include="part_emt.cpp" />
+    <ClCompile Include="part_ldr.cpp" />
+    <ClCompile Include="pivot.cpp" />
+    <ClCompile Include="pointgr.cpp" />
+    <ClCompile Include="polyinfo.cpp" />
+    <ClCompile Include="predlod.cpp" />
+    <ClCompile Include="prim_anim.cpp" />
+    <ClCompile Include="projector.cpp" />
+    <ClCompile Include="proto.cpp" />
+    <ClCompile Include="render2d.cpp" />
+    <ClCompile Include="render2dsentence.cpp" />
+    <ClCompile Include="renderobjectrecycler.cpp" />
+    <ClCompile Include="rendobj.cpp" />
+    <ClCompile Include="rinfo.cpp" />
+    <ClCompile Include="ringobj.cpp" />
+    <ClCompile Include="scene.cpp" />
+    <ClCompile Include="segline.cpp" />
+    <ClCompile Include="seglinerenderer.cpp" />
+    <ClCompile Include="shader.cpp" />
+    <ClCompile Include="shattersystem.cpp" />
+    <ClCompile Include="snappts.cpp" />
+    <ClCompile Include="sortingrenderer.cpp" />
+    <ClCompile Include="soundrobj.cpp" />
+    <ClCompile Include="sphereobj.cpp" />
+    <ClCompile Include="statistics.cpp" />
+    <ClCompile Include="streak.cpp" />
+    <ClCompile Include="streakRender.cpp" />
+    <ClCompile Include="stripoptimizer.cpp" />
+    <ClCompile Include="surfaceclass.cpp" />
+    <ClCompile Include="texfcach.cpp" />
+    <ClCompile Include="texproject.cpp" />
+    <ClCompile Include="texture.cpp" />
+    <ClCompile Include="textureloader.cpp" />
+    <ClCompile Include="texturethumbnail.cpp" />
+    <ClCompile Include="txt.cpp" />
+    <ClCompile Include="vertmaterial.cpp" />
+    <ClCompile Include="visrasterizer.cpp" />
+    <ClCompile Include="w3dexclusionlist.cpp" />
+    <ClCompile Include="w3d_dep.cpp" />
+    <ClCompile Include="w3d_util.cpp" />
+    <ClCompile Include="ww3d.cpp" />
+    <ClCompile Include="ww3dformat.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="aabtree.h" />
+    <ClInclude Include="aabtreebuilder.h" />
+    <ClInclude Include="agg_def.h" />
+    <ClInclude Include="animobj.h" />
+    <ClInclude Include="assetmgr.h" />
+    <ClInclude Include="bitmaphandler.h" />
+    <ClInclude Include="bmp2d.h" />
+    <ClInclude Include="boxrobj.h" />
+    <ClInclude Include="bwrender.h" />
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="collect.h" />
+    <ClInclude Include="colorspace.h" />
+    <ClInclude Include="coltest.h" />
+    <ClInclude Include="coltype.h" />
+    <ClInclude Include="composite.h" />
+    <ClInclude Include="dazzle.h" />
+    <ClInclude Include="ddsfile.h" />
+    <ClInclude Include="decalmsh.h" />
+    <ClInclude Include="decalsys.h" />
+    <ClInclude Include="distlod.h" />
+    <ClInclude Include="dllist.h" />
+    <ClInclude Include="dx8caps.h" />
+    <ClInclude Include="dx8fvf.h" />
+    <ClInclude Include="dx8indexbuffer.h" />
+    <ClInclude Include="dx8list.h" />
+    <ClInclude Include="dx8polygonrenderer.h" />
+    <ClInclude Include="dx8renderer.h" />
+    <ClInclude Include="dx8texman.h" />
+    <ClInclude Include="dx8vertexbuffer.h" />
+    <ClInclude Include="dx8webbrowser.h" />
+    <ClInclude Include="dx8wrapper.h" />
+    <ClInclude Include="dynamesh.h" />
+    <ClInclude Include="font3d.h" />
+    <ClInclude Include="formconv.h" />
+    <ClInclude Include="framgrab.h" />
+    <ClInclude Include="hanim.h" />
+    <ClInclude Include="hanimmgr.h" />
+    <ClInclude Include="hcanim.h" />
+    <ClInclude Include="hlod.h" />
+    <ClInclude Include="hmdldef.H" />
+    <ClInclude Include="hmorphanim.h" />
+    <ClInclude Include="hrawanim.h" />
+    <ClInclude Include="htree.h" />
+    <ClInclude Include="htreemgr.h" />
+    <ClInclude Include="intersec.h" />
+    <ClInclude Include="inttest.h" />
+    <ClInclude Include="layer.h" />
+    <ClInclude Include="light.h" />
+    <ClInclude Include="lightenvironment.h" />
+    <ClInclude Include="line3d.h" />
+    <ClInclude Include="mapper.h" />
+    <ClInclude Include="matinfo.h" />
+    <ClInclude Include="matpass.h" />
+    <ClInclude Include="matrixmapper.h" />
+    <ClInclude Include="mesh.h" />
+    <ClInclude Include="meshbuild.h" />
+    <ClInclude Include="meshdam.h" />
+    <ClInclude Include="meshgeometry.h" />
+    <ClInclude Include="meshmatdesc.h" />
+    <ClInclude Include="meshmdl.h" />
+    <ClInclude Include="metalmap.h" />
+    <ClInclude Include="missingtexture.h" />
+    <ClInclude Include="motchan.h" />
+    <ClInclude Include="nullrobj.h" />
+    <ClInclude Include="part_buf.h" />
+    <ClInclude Include="part_emt.h" />
+    <ClInclude Include="part_ldr.h" />
+    <ClInclude Include="pivot.h" />
+    <ClInclude Include="pointgr.h" />
+    <ClInclude Include="polyinfo.h" />
+    <ClInclude Include="predlod.h" />
+    <ClInclude Include="prim_anim.h" />
+    <ClInclude Include="projector.h" />
+    <ClInclude Include="proto.h" />
+    <ClInclude Include="proxy.h" />
+    <ClInclude Include="rddesc.h" />
+    <ClInclude Include="render2d.h" />
+    <ClInclude Include="render2dsentence.h" />
+    <ClInclude Include="renderobjectrecycler.h" />
+    <ClInclude Include="rendobj.h" />
+    <ClInclude Include="rinfo.h" />
+    <ClInclude Include="ringobj.h" />
+    <ClInclude Include="robjlist.h" />
+    <ClInclude Include="scene.h" />
+    <ClInclude Include="segline.h" />
+    <ClInclude Include="seglinerenderer.h" />
+    <ClInclude Include="shader.h" />
+    <ClInclude Include="shattersystem.h" />
+    <ClInclude Include="snapPts.h" />
+    <ClInclude Include="sortingrenderer.h" />
+    <ClInclude Include="soundrobj.h" />
+    <ClInclude Include="sphereobj.h" />
+    <ClInclude Include="statistics.h" />
+    <ClInclude Include="streak.h" />
+    <ClInclude Include="streakRender.h" />
+    <ClInclude Include="stripoptimizer.h" />
+    <ClInclude Include="surfaceclass.h" />
+    <ClInclude Include="texfcach.h" />
+    <ClInclude Include="texproject.h" />
+    <ClInclude Include="texture.h" />
+    <ClInclude Include="textureloader.h" />
+    <ClInclude Include="texturethumbnail.h" />
+    <ClInclude Include="txt.h" />
+    <ClInclude Include="vertmaterial.h" />
+    <ClInclude Include="visrasterizer.h" />
+    <ClInclude Include="w3derr.h" />
+    <ClInclude Include="w3dexclusionlist.h" />
+    <ClInclude Include="w3d_dep.h" />
+    <ClInclude Include="w3d_file.h" />
+    <ClInclude Include="w3d_obsolete.h" />
+    <ClInclude Include="w3d_util.h" />
+    <ClInclude Include="ww3d.h" />
+    <ClInclude Include="ww3dformat.h" />
+    <ClInclude Include="ww3dids.h" />
+    <ClInclude Include="ww3dtrig.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="intersec.inl" />
+    <CustomBuild Include="RequiredAssets\Dazzle.INI" />
+    <CustomBuild Include="RequiredAssets\ShatterAVel.tbl" />
+    <CustomBuild Include="RequiredAssets\ShatterPlanes0.w3d" />
+    <CustomBuild Include="RequiredAssets\ShatterVel.tbl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="RequiredAssets\AddProjectorGradient.tga" />
+    <Image Include="RequiredAssets\MultProjectorGradient.tga" />
+    <Image Include="RequiredAssets\w3d_missing_texture.tga" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="DX8 Rationalizations.txt" />
+    <Text Include="DX8 Status.txt" />
+    <Text Include="DX8ToolModifications.txt" />
+    <Text Include="MAPPERS.TXT" />
+    <Text Include="RenderObjectGuide.txt" />
+    <Text Include="State Management.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

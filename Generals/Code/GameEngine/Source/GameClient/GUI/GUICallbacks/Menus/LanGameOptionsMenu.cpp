@@ -196,7 +196,8 @@ static void playerTooltip(GameWindow *window,
 													UnsignedInt mouse)
 {
 	Int idx = -1;
-	for (Int i=0; i<MAX_SLOTS; ++i)
+	Int i = 0;
+	for (; i<MAX_SLOTS; ++i)
 	{
 		if (window && window == GadgetComboBoxGetEditBox(comboBoxPlayer[i]))
 		{
@@ -399,7 +400,7 @@ static void handleColorSelection(int index)
 	GameWindow *combo = comboBoxColor[index];
 	Int color, selIndex;
 	GadgetComboBoxGetSelectedPos(combo, &selIndex);
-	color = (Int)GadgetComboBoxGetItemData(combo, selIndex);
+	color = (Int)(uintptr_t)GadgetComboBoxGetItemData(combo, selIndex);
 
 	LANGameInfo *myGame = TheLAN->GetMyGame();
 
@@ -457,7 +458,7 @@ static void handlePlayerTemplateSelection(int index)
 	GameWindow *combo = comboBoxPlayerTemplate[index];
 	Int playerTemplate, selIndex;
 	GadgetComboBoxGetSelectedPos(combo, &selIndex);
-	playerTemplate = (Int)GadgetComboBoxGetItemData(combo, selIndex);
+	playerTemplate = (Int)(uintptr_t)GadgetComboBoxGetItemData(combo, selIndex);
 	LANGameInfo *myGame = TheLAN->GetMyGame();
 
 	if (myGame)
@@ -569,7 +570,7 @@ static void handleTeamSelection(int index)
 	GameWindow *combo = comboBoxTeam[index];
 	Int team, selIndex;
 	GadgetComboBoxGetSelectedPos(combo, &selIndex);
-	team = (Int)GadgetComboBoxGetItemData(combo, selIndex);
+	team = (Int)(uintptr_t)GadgetComboBoxGetItemData(combo, selIndex);
 	LANGameInfo *myGame = TheLAN->GetMyGame();
 
 	if (myGame)
@@ -996,7 +997,7 @@ WindowMsgHandledType LanGameOptionsMenuInput( GameWindow *window, UnsignedInt ms
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitTestWW( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
 																							(WindowMsgData)buttonBack, buttonBackID );

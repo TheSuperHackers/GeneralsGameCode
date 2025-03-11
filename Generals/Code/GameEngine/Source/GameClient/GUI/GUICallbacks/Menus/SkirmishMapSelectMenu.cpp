@@ -96,7 +96,7 @@ static void mapListTooltipFunc(GameWindow *window,
 		return;
 	}
 
-	Int imageItemData = (Int)GadgetListBoxGetItemData(window, row, 1);
+	Int imageItemData = (Int)(uintptr_t)GadgetListBoxGetItemData(window, row, 1);
 	UnicodeString tooltip;
 	switch (imageItemData)
 	{
@@ -363,7 +363,7 @@ WindowMsgHandledType SkirmishMapSelectMenuInput( GameWindow *window, UnsignedInt
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitTestWW( state, KEY_STATE_UP ) )
 					{
 						AsciiString buttonName( "SkirmishMapSelectMenu.wnd:ButtonBack" );
 						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );

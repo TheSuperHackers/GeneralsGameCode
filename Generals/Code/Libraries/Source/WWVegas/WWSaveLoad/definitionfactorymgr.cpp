@@ -99,7 +99,7 @@ DefinitionFactoryMgrClass::Find_Factory (const char *name)
 		//
 		//	Is this the factory we were looking for?
 		//
-		if (::stricmp (curr_factory->Get_Name (), name) == 0) {
+		if (::_stricmp (curr_factory->Get_Name (), name) == 0) {
 			factory = curr_factory;
 		}
 	}

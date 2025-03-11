@@ -177,7 +177,7 @@ void InitBuddyControls(Int type)
 		buddyControls.listboxChatID = TheNameKeyGenerator->nameToKey( AsciiString( "WOLBuddyOverlay.wnd:ListboxBuddyChat" ) );
 		buddyControls.listboxBuddies = TheWindowManager->winGetWindowFromId( NULL,  buddyControls.listboxBuddiesID );
 		buddyControls.listboxChat = TheWindowManager->winGetWindowFromId( NULL,  buddyControls.listboxChatID);
-		GadgetTextEntrySetText(buddyControls.textEntryEdit, UnicodeString.TheEmptyString);
+		GadgetTextEntrySetText(buddyControls.textEntryEdit, UnicodeString::TheEmptyString);
 		buddyControls.isInit = TRUE;
 		break;
 	case BUDDY_WINDOW_DIPLOMACY:
@@ -187,7 +187,7 @@ void InitBuddyControls(Int type)
 		buddyControls.listboxChatID = TheNameKeyGenerator->nameToKey( AsciiString( "Diplomacy.wnd:ListboxBuddyChat" ) );
 		buddyControls.listboxBuddies = TheWindowManager->winGetWindowFromId( NULL,  buddyControls.listboxBuddiesID );
 		buddyControls.listboxChat = TheWindowManager->winGetWindowFromId( NULL,  buddyControls.listboxChatID);
-		GadgetTextEntrySetText(buddyControls.textEntryEdit, UnicodeString.TheEmptyString);
+		GadgetTextEntrySetText(buddyControls.textEntryEdit, UnicodeString::TheEmptyString);
 		buddyControls.isInit = TRUE;
 		break;
 	case BUDDY_WINDOW_WELCOME_SCREEN:
@@ -220,8 +220,8 @@ WindowMsgHandledType BuddyControlSystem( GameWindow *window, UnsignedInt msg,
 					if(rc->pos < 0)
 						break;
 
-					GPProfile profileID = (GPProfile)GadgetListBoxGetItemData(control, rc->pos, 0);
-					RCItemType itemType = (RCItemType)(Int)GadgetListBoxGetItemData(control, rc->pos, 1);
+					GPProfile profileID = (GPProfile)(intptr_t)GadgetListBoxGetItemData(control, rc->pos, 0);
+					RCItemType itemType = (RCItemType)(Int)(intptr_t)GadgetListBoxGetItemData(control, rc->pos, 1);
 					UnicodeString nick = GadgetListBoxGetText(control, rc->pos);
 
 					GadgetListBoxSetSelected(control, rc->pos);
@@ -241,9 +241,9 @@ WindowMsgHandledType BuddyControlSystem( GameWindow *window, UnsignedInt msg,
 					rcMenu->winGetSize(&rcSize.x, &rcSize.y);
 					rcPos.x = rc->mouseX;
 					rcPos.y = rc->mouseY;
-					if(rc->mouseX + rcSize.x > TheDisplay->getWidth())
+					if(rc->mouseX + rcSize.x > (int)TheDisplay->getWidth())
 						rcPos.x = TheDisplay->getWidth() - rcSize.x;
-					if(rc->mouseY + rcSize.y > TheDisplay->getHeight())
+					if(rc->mouseY + rcSize.y > (int)TheDisplay->getHeight())
 						rcPos.y = TheDisplay->getHeight() - rcSize.y;
 					rcMenu->winSetPosition(rcPos.x, rcPos.y);
 
@@ -272,7 +272,7 @@ WindowMsgHandledType BuddyControlSystem( GameWindow *window, UnsignedInt msg,
 				GadgetListBoxGetSelected(buddyControls.listboxBuddies, &selected);
 				if (selected >= 0)
 				{
-					GPProfile selectedProfile = (GPProfile)GadgetListBoxGetItemData(buddyControls.listboxBuddies, selected);
+					GPProfile selectedProfile = (GPProfile)(intptr_t)GadgetListBoxGetItemData(buddyControls.listboxBuddies, selected);
 					BuddyInfoMap *m = TheGameSpyInfo->getBuddyMap();
 					BuddyInfoMap::iterator recipIt = m->find(selectedProfile);
 					if (recipIt == m->end())
@@ -399,7 +399,7 @@ void updateBuddyInfo( void )
 
 	GadgetListBoxGetSelected(buddyControls.listboxBuddies, &selected);
 	if (selected >= 0)
-		selectedProfile = (GPProfile)GadgetListBoxGetItemData(buddyControls.listboxBuddies, selected);
+		selectedProfile = (GPProfile)(intptr_t)GadgetListBoxGetItemData(buddyControls.listboxBuddies, selected);
 
 	selected = -1;
 	GadgetListBoxReset(buddyControls.listboxBuddies);
@@ -451,8 +451,8 @@ void updateBuddyInfo( void )
 			formatStr = info.m_statusString;
 		}
 		GadgetListBoxAddEntryText(buddyControls.listboxBuddies, formatStr, GameSpyColor[GSCOLOR_DEFAULT], index, 1);
-		GadgetListBoxSetItemData(buddyControls.listboxBuddies, (void *)(profileID), index, 0 );
-		GadgetListBoxSetItemData(buddyControls.listboxBuddies, (void *)(ITEM_BUDDY), index, 1 );
+		GadgetListBoxSetItemData(buddyControls.listboxBuddies, (void *)(intptr_t)(profileID), index, 0 );
+		GadgetListBoxSetItemData(buddyControls.listboxBuddies, (void *)(intptr_t)(ITEM_BUDDY), index, 1 );
 
 		if (profileID == selectedProfile)
 			selected = index;
@@ -469,12 +469,12 @@ void updateBuddyInfo( void )
 		UnicodeString formatStr;
 		formatStr.translate(info.m_name.str());
 		int index = GadgetListBoxAddEntryText(buddyControls.listboxBuddies, formatStr, GameSpyColor[GSCOLOR_DEFAULT], -1, -1);
-		GadgetListBoxSetItemData(buddyControls.listboxBuddies, (void *)(profileID), index, 0 );
+		GadgetListBoxSetItemData(buddyControls.listboxBuddies, (void *)(intptr_t)(profileID), index, 0 );
 
 		// insert status into box
 		formatStr = TheGameText->fetch("GUI:BuddyAddReq");
 		GadgetListBoxAddEntryText(buddyControls.listboxBuddies, formatStr, GameSpyColor[GSCOLOR_DEFAULT], index, 1);
-		GadgetListBoxSetItemData(buddyControls.listboxBuddies, (void *)(ITEM_REQUEST), index, 1 );
+		GadgetListBoxSetItemData(buddyControls.listboxBuddies, (void *)(intptr_t)(ITEM_REQUEST), index, 1 );
 
 		if (profileID == selectedProfile)
 			selected = index;
@@ -548,11 +548,13 @@ void HandleBuddyResponses( void )
 					insertChat(message);
 					
 					// play audio notification
+#ifdef HAS_BINK
 					AudioEventRTS buddyMsgAudio("GUIMessageReceived");
 					if( TheAudio )
 					{
 						TheAudio->addAudioEvent( &buddyMsgAudio );
 					}  // end if
+#endif
 
 					UnicodeString snippet = message.m_message;
 					while (snippet.getLength() > 11)
@@ -680,12 +682,14 @@ void showNotificationBox( AsciiString nick, UnicodeString message)
 	noticeExpires = timeGetTime() + NOTIFICATION_EXPIRES;
 	noticeLayout->bringForward();
 
+#ifdef HAS_BINK
 	AudioEventRTS buttonClick("GUICommunicatorIncoming");
 
 	if( TheAudio )
 	{
 		TheAudio->addAudioEvent( &buttonClick );
 	}  // end if
+#endif
 
 }
 
@@ -754,7 +758,7 @@ void WOLBuddyOverlayInit( WindowLayout *layout, void *userData )
 	parentBuddies->winHide(FALSE);
 	parentIgnore->winHide(TRUE);
 
-	//GadgetTextEntrySetText(textEntry, UnicodeString.TheEmptyString);
+	//GadgetTextEntrySetText(textEntry, UnicodeString::TheEmptyString);
 
 	PopulateOldBuddyMessages();
 
@@ -824,7 +828,7 @@ WindowMsgHandledType WOLBuddyOverlayInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitTestWW( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
 																							(WindowMsgData)buttonHide, buttonHideID );
@@ -892,7 +896,7 @@ WindowMsgHandledType WOLBuddyOverlaySystem( GameWindow *window, UnsignedInt msg,
 						break;
 
 					Bool isBuddy = false, isRequest = false;
-					GPProfile profileID = (GPProfile)GadgetListBoxGetItemData(control, rc->pos);
+					GPProfile profileID = (GPProfile)(intptr_t)GadgetListBoxGetItemData(control, rc->pos);
 					UnicodeString nick = GadgetListBoxGetText(control, rc->pos);
 					BuddyInfoMap *buddies = TheGameSpyInfo->getBuddyMap();
 					BuddyInfoMap::iterator bIt;
@@ -1224,11 +1228,13 @@ void RequestBuddyAdd(Int profileID, AsciiString nick)
 	insertChat(message);
 	
 	// play audio notification
+#ifdef HAS_BINK
 	AudioEventRTS buddyMsgAudio("GUIMessageReceived");
 	if( TheAudio )
 	{
 		TheAudio->addAudioEvent( &buddyMsgAudio );
 	}  // end if
+#endif
 
 	lastNotificationWasStatus = FALSE;
 	numOnlineInNotification = 0;
@@ -1428,7 +1434,7 @@ void refreshIgnoreList( void )
 		UnicodeString name;
 		name.translate(it->second);
 		Int pos = GadgetListBoxAddEntryText(listboxIgnore, name, GameMakeColor(255,100,100,255),-1);
-		GadgetListBoxSetItemData(listboxIgnore, (void *)it->first,pos );
+		GadgetListBoxSetItemData(listboxIgnore, (void *)(intptr_t)it->first,pos );
 		++it;
 	}
 	IgnoreList tempList;

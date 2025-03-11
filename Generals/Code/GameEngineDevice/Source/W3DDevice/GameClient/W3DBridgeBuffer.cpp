@@ -723,7 +723,7 @@ void W3DBridgeBuffer::allocateBridgeBuffers(void)
 	m_indexBridge=NEW_REF(DX8IndexBufferClass,(MAX_BRIDGE_INDEX+4, DX8IndexBufferClass::USAGE_DYNAMIC));
 	m_vertexMaterial=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 #ifdef USE_BRIDGE_NORMALS
-	m_vertexMaterial= NEW VertexMaterialClass();
+	m_vertexMaterial= new VertexMaterialClass();
 	m_vertexMaterial->Set_Shininess(0.0);
 	m_vertexMaterial->Set_Ambient(1,1,1);		  
 	m_vertexMaterial->Set_Diffuse(1,1,1);

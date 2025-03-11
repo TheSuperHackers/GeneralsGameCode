@@ -95,11 +95,11 @@ enum AnimTypes
 } ;
 
 //-----------------------------------------------------------------------------
-class AnimateWindow : public MemoryPoolObject
+class AnimateWindowWW : public MemoryPoolObject
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AnimateWindow, "AnimateWindow")		
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AnimateWindowWW, "AnimateWindow")		
 public:
-	AnimateWindow( void );
+	AnimateWindowWW( void );
 	//~AnimateWindow( void );
 	
 	void setAnimData( ICoord2D startPos, ICoord2D endPos, ICoord2D curPos, ICoord2D restPos, Coord2D vel, UnsignedInt startTime, UnsignedInt endTime);
@@ -150,7 +150,7 @@ private:
 
 
 //-----------------------------------------------------------------------------
-typedef	std::list<AnimateWindow *>	AnimateWindowList;
+typedef	std::list<AnimateWindowWW *>	AnimateWindowList;
 
 //-----------------------------------------------------------------------------
 class AnimateWindowManager : public SubsystemInterface
@@ -171,7 +171,7 @@ public:
 	void resetToRestPosition( void );						///< Reset all windows to their rest position
 	Bool isReversed( void );										///< Returns whether or not we're in our reversed state.
 	Bool isEmpty( void );
-private:
+protected:
 	AnimateWindowList	m_winList;								///< A list of AnimationWindows that we don't care if their finished animating
 	AnimateWindowList m_winMustFinishList;			///< A list of AnimationWindows that we do care about
 	Bool m_needsUpdate;													///< If we're done animating all our monitored windows, then this will be false
@@ -191,32 +191,32 @@ private:
 //-----------------------------------------------------------------------------
 // INLINING ///////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-	inline ICoord2D			AnimateWindow::getStartPos( void )	{ return m_startPos; };
-	inline ICoord2D			AnimateWindow::getCurPos( void )		{ return m_curPos; };
-	inline ICoord2D			AnimateWindow::getEndPos( void )		{ return m_endPos; };
-	inline ICoord2D			AnimateWindow::getRestPos( void )		{ return m_restPos; };
-	inline GameWindow  *AnimateWindow::getGameWindow( void ){ return m_win; };
-	inline AnimTypes		AnimateWindow::getAnimType( void )	{ return m_animType; };
-	inline UnsignedInt	AnimateWindow::getDelay( void )			{ return m_delay; };
-	inline Coord2D			AnimateWindow::getVel( void )				{ return m_vel; };
-	inline UnsignedInt	AnimateWindow::getStartTime( void )	{ return m_startTime; };
-	inline UnsignedInt	AnimateWindow::getEndTime( void )		{ return m_endTime; };
+	inline ICoord2D			AnimateWindowWW::getStartPos( void )	{ return m_startPos; };
+	inline ICoord2D			AnimateWindowWW::getCurPos( void )		{ return m_curPos; };
+	inline ICoord2D			AnimateWindowWW::getEndPos( void )		{ return m_endPos; };
+	inline ICoord2D			AnimateWindowWW::getRestPos( void )		{ return m_restPos; };
+	inline GameWindow  *AnimateWindowWW::getGameWindow( void ){ return m_win; };
+	inline AnimTypes		AnimateWindowWW::getAnimType( void )	{ return m_animType; };
+	inline UnsignedInt	AnimateWindowWW::getDelay( void )			{ return m_delay; };
+	inline Coord2D			AnimateWindowWW::getVel( void )				{ return m_vel; };
+	inline UnsignedInt	AnimateWindowWW::getStartTime( void )	{ return m_startTime; };
+	inline UnsignedInt	AnimateWindowWW::getEndTime( void )		{ return m_endTime; };
 
-	inline void	AnimateWindow::setStartPos( ICoord2D startPos)		{ m_startPos = startPos; };
-	inline void	AnimateWindow::setCurPos( ICoord2D curPos)				{ m_curPos = curPos; };
-	inline void	AnimateWindow::setEndPos( ICoord2D endPos)				{ m_endPos = endPos; };
-	inline void	AnimateWindow::setRestPos( ICoord2D restPos)			{ m_restPos = restPos; };
-	inline void	AnimateWindow::setGameWindow( GameWindow *win)		{ m_win = win; };
-	inline void	AnimateWindow::setAnimType( AnimTypes animType)		{ m_animType = animType; };
-	inline void	AnimateWindow::setDelay( UnsignedInt delay)				{ m_delay = delay; };
-	inline void	AnimateWindow::setVel( Coord2D vel)								{ m_vel = vel; };
-	inline void	AnimateWindow::setStartTime( UnsignedInt t )			{ m_startTime = t; }
-	inline void	AnimateWindow::setEndTime( UnsignedInt t )				{ m_endTime = t; }
+	inline void	AnimateWindowWW::setStartPos( ICoord2D startPos)		{ m_startPos = startPos; };
+	inline void	AnimateWindowWW::setCurPos( ICoord2D curPos)				{ m_curPos = curPos; };
+	inline void	AnimateWindowWW::setEndPos( ICoord2D endPos)				{ m_endPos = endPos; };
+	inline void	AnimateWindowWW::setRestPos( ICoord2D restPos)			{ m_restPos = restPos; };
+	inline void	AnimateWindowWW::setGameWindow( GameWindow *win)		{ m_win = win; };
+	inline void	AnimateWindowWW::setAnimType( AnimTypes animType)		{ m_animType = animType; };
+	inline void	AnimateWindowWW::setDelay( UnsignedInt delay)				{ m_delay = delay; };
+	inline void	AnimateWindowWW::setVel( Coord2D vel)								{ m_vel = vel; };
+	inline void	AnimateWindowWW::setStartTime( UnsignedInt t )			{ m_startTime = t; }
+	inline void	AnimateWindowWW::setEndTime( UnsignedInt t )				{ m_endTime = t; }
 
-	inline void	AnimateWindow::setFinished( Bool finished)				{ m_isFinished = finished; };
-	inline Bool	AnimateWindow::isFinished( void )									{ return m_isFinished; };
-	inline void	AnimateWindow::setNeedsToFinish( Bool needsToFinish)		{ m_needsToFinish = needsToFinish; };
-	inline Bool	AnimateWindow::needsToFinish( void )							{ return m_needsToFinish; };
+	inline void	AnimateWindowWW::setFinished( Bool finished)				{ m_isFinished = finished; };
+	inline Bool	AnimateWindowWW::isFinished( void )									{ return m_isFinished; };
+	inline void	AnimateWindowWW::setNeedsToFinish( Bool needsToFinish)		{ m_needsToFinish = needsToFinish; };
+	inline Bool	AnimateWindowWW::needsToFinish( void )							{ return m_needsToFinish; };
 	
 	inline Bool AnimateWindowManager::isFinished( void )					{ return !m_needsUpdate;	};
 	inline Bool AnimateWindowManager::isReversed( void )						{ return m_reverse;	};

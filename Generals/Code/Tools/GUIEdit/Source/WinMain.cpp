@@ -484,7 +484,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 		{
 			Int virtualKey = wParam;
 //			Int keyData = lParam;	
-			Bool controlDown = BitTest( GetKeyState( VK_CONTROL ), 0x1000 );
+			Bool controlDown = BitTestWW( GetKeyState( VK_CONTROL ), 0x1000 );
 
 			switch( virtualKey )
 			{

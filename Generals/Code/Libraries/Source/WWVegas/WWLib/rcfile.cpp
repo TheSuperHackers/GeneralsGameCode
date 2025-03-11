@@ -76,7 +76,7 @@ char const * ResourceFileClass::Set_Name(char const *filename)
 		ResourceName = NULL;
 	}
 	if (filename) {
-		ResourceName = strdup(filename);
+		ResourceName = _strdup(filename);
 	} 
 	return ResourceName;
 }

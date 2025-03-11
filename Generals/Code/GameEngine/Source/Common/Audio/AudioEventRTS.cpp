@@ -340,15 +340,15 @@ void AudioEventRTS::generateFilename( void )
 
 
 		
-		if (BitTest(m_eventInfo->m_control, AC_RANDOM)) 
+		if (BitTestWW(m_eventInfo->m_control, AC_RANDOM)) 
 		{ 
 			if (m_isLogicalAudio) 
 			{
-				which = GameLogicRandomValue(0, m_eventInfo->m_sounds.size() - 1);
+				which = GameLogicRandomValue(0, (int)m_eventInfo->m_sounds.size() - 1);
 			} 
 			else 
 			{
-				which = GameAudioRandomValue(0, m_eventInfo->m_sounds.size() - 1);
+				which = GameAudioRandomValue(0, (int)m_eventInfo->m_sounds.size() - 1);
 			}
 
 			if (which == m_playingAudioIndex && m_eventInfo->m_sounds.size() > 2)
@@ -386,7 +386,7 @@ void AudioEventRTS::generatePlayInfo( void )
 	m_loopCount = m_eventInfo->m_loopCount;
 	
 	m_portionToPlayNext = PP_Attack;
-	Int attackSize = m_eventInfo->m_attackSounds.size();
+	Int attackSize = (int)m_eventInfo->m_attackSounds.size();
 	if (attackSize > 0) {
 		m_attackName = generateFilenamePrefix(m_eventInfo->m_soundType, false);
 		// needs to be logic because it needs to be the same on all systems.
@@ -404,7 +404,7 @@ void AudioEventRTS::generatePlayInfo( void )
 		m_portionToPlayNext = PP_Sound;
 	}
 
-	Int decaySize = m_eventInfo->m_decaySounds.size();
+	Int decaySize = (int)m_eventInfo->m_decaySounds.size();
 	if (decaySize > 0) {
 		m_decayName = generateFilenamePrefix(m_eventInfo->m_soundType, false);
 		// needs to be logic because it needs to be the same on all systems.
@@ -474,7 +474,7 @@ void AudioEventRTS::advanceNextPlayPortion( void )
 			m_portionToPlayNext = PP_Sound;
 			break;
 		case PP_Sound:
-			if (m_eventInfo && BitTest(m_eventInfo->m_control, AC_ALL)) 
+			if (m_eventInfo && BitTestWW(m_eventInfo->m_control, AC_ALL)) 
 			{
 				if (m_allCount == m_eventInfo->m_sounds.size()) {
 					m_portionToPlayNext = PP_Decay;
@@ -671,7 +671,7 @@ Bool AudioEventRTS::isPositionalAudio( void ) const
 {
 	if( m_eventInfo ) 
 	{
-		if( !BitTest( m_eventInfo->m_type, ST_WORLD ) ) 
+		if( !BitTestWW( m_eventInfo->m_type, ST_WORLD ) ) 
 		{
 			return FALSE;
 		}
@@ -689,7 +689,11 @@ Bool AudioEventRTS::isPositionalAudio( void ) const
 //-------------------------------------------------------------------------------------------------
 Bool AudioEventRTS::isCurrentlyPlaying( void ) const
 {
+#ifdef HAS_BINK
 	return TheAudio->isCurrentlyPlaying(m_playingHandle);
+#else
+	return false;
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -770,6 +774,7 @@ const Coord3D *AudioEventRTS::getCurrentPosition( void )
 AsciiString AudioEventRTS::generateFilenamePrefix( AudioType audioTypeToPlay, Bool localized )
 {
 	AsciiString retStr;
+#ifdef HAS_BINK
 	retStr = TheAudio->getAudioSettings()->m_audioRoot;
 	retStr.concat("\\");
 	if (audioTypeToPlay == AT_Music) {
@@ -780,6 +785,7 @@ AsciiString AudioEventRTS::generateFilenamePrefix( AudioType audioTypeToPlay, Bo
 		retStr.concat(TheAudio->getAudioSettings()->m_soundsFolder);
 	}
 	retStr.concat("\\");
+#endif
 
 	if (localized) {
 		retStr.concat(GetRegistryLanguage());
@@ -793,10 +799,12 @@ AsciiString AudioEventRTS::generateFilenamePrefix( AudioType audioTypeToPlay, Bo
 AsciiString AudioEventRTS::generateFilenameExtension( AudioType audioTypeToPlay )
 {
 	AsciiString retStr = AsciiString::TheEmptyString;
+#ifdef HAS_BINK
 	if (audioTypeToPlay != AT_Music) {
 		retStr = ".";
 		retStr.concat(TheAudio->getAudioSettings()->m_soundsExtension);
 	}
+#endif
 
 	return retStr;
 }

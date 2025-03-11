@@ -101,7 +101,7 @@ class TagBlockFile : protected RawFileClass
 			return(blockoffset + sizeof(BlockHeader));
 		}
 		static int Calc_Data_Offset(int blockoffset, const char *tagname)  {
-			return(Calc_Tag_Offset(blockoffset) + strlen(tagname) + 1);
+			return (int)(Calc_Tag_Offset(blockoffset) + strlen(tagname) + 1);
 			
 		}
 	protected:

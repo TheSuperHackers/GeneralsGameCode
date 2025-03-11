@@ -199,7 +199,7 @@ public:
 
 	const PlayerTemplate* getNthPlayerTemplate(Int i) const;
 	const PlayerTemplate* findPlayerTemplate(NameKeyType namekey) const;
-	inline Int getPlayerTemplateCount() const { return m_playerTemplates.size(); }
+	inline Int getPlayerTemplateCount() const { return (int)m_playerTemplates.size(); }
 
 	
 	// This function will fill outStringList with all the sides found in all the templates

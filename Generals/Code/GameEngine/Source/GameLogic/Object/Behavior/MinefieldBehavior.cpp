@@ -459,13 +459,13 @@ void MinefieldBehavior::onDamage( DamageInfo *damageInfo )
 			damageInfo->in.m_damageType == DAMAGE_HEALING ?
 			REAL_TO_INT_FLOOR(virtualMinesExpectedF) :
 			REAL_TO_INT_CEIL(virtualMinesExpectedF);
-		if (virtualMinesExpected > d->m_numVirtualMines)
-			virtualMinesExpected = d->m_numVirtualMines;
-		if (m_virtualMinesRemaining < virtualMinesExpected)
+		if (virtualMinesExpected > (int)d->m_numVirtualMines)
+			virtualMinesExpected = (int)d->m_numVirtualMines;
+		if ((int)m_virtualMinesRemaining < virtualMinesExpected)
 		{
 			m_virtualMinesRemaining = virtualMinesExpected;
 		}
-		else if (m_virtualMinesRemaining > virtualMinesExpected)
+		else if ((int)m_virtualMinesRemaining > virtualMinesExpected)
 		{
 			if (m_draining && 
 						damageInfo->in.m_sourceID == getObject()->getID() &&

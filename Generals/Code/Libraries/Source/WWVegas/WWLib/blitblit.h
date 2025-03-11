@@ -451,6 +451,7 @@ class BlitTransLucent75 : public Blitter {
 **	It will still compile, it just generates warning messages.
 */
 #if defined(_MSC_VER)
+#if 0
 
 inline void BlitTrans<unsigned char>::BlitForward(void * dest, void const * source, int len) const
 {
@@ -606,6 +607,7 @@ again:
 		jnz	again
 	}
 }
+#endif
 
 
 #endif

@@ -141,7 +141,7 @@ Int CompressionManager::getMaxCompressedSize( Int uncompressedLen, CompressionTy
 	switch (compType)
 	{
 		case COMPRESSION_NOXLZH:
-			return CalcNewSize(uncompressedLen) + 8;
+			return (int)CalcNewSize(uncompressedLen) + 8;
 
 		case COMPRESSION_BTREE:   // guessing here
 		case COMPRESSION_HUFF:    // guessing here

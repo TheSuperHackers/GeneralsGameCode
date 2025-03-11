@@ -109,7 +109,7 @@
 #include <ini.h>
 #include <windows.h>
 #include <stdio.h>
-#include <D3dx8core.h>
+#include <D3dx9core.h>
 
 #include "texture.h"
 #include "wwprofile.h"
@@ -302,7 +302,7 @@ static void Log_Textures(bool inited,unsigned& total_count, unsigned& total_mem)
 		if (tex->Is_Initialized()!=inited) continue;
 
 		D3DSURFACE_DESC desc;
-		IDirect3DTexture8* d3d_texture=tex->Peek_DX8_Texture();
+		IDirect3DTexture9* d3d_texture=tex->Peek_DX8_Texture();
 		if (!d3d_texture) continue;
 		DX8_ErrorCode(d3d_texture->GetLevelDesc(0,&desc));
 
@@ -329,7 +329,7 @@ static void Log_Textures(bool inited,unsigned& total_count, unsigned& total_mem)
 		case D3DFMT_X8L8V8U8: tex_format="D3DFMT_X8L8V8U8"; break;
 		case D3DFMT_Q8W8V8U8: tex_format="D3DFMT_Q8W8V8U8"; break;
 		case D3DFMT_V16U16: tex_format="D3DFMT_V16U16"; break;
-		case D3DFMT_W11V11U10: tex_format="D3DFMT_W11V11U10"; break;
+		//case D3DFMT_W11V11U10: tex_format="D3DFMT_W11V11U10"; break;
 		case D3DFMT_UYVY: tex_format="D3DFMT_UYVY"; break;
 		case D3DFMT_YUY2: tex_format="D3DFMT_YUY2"; break;
 		case D3DFMT_DXT1: tex_format="D3DFMT_DXT1"; break;
@@ -548,7 +548,7 @@ void WW3DAssetManager::Free_Assets_With_Exclusion_List(const DynamicVectorClass<
 	memset(PrototypeHashTable,0,sizeof(PrototypeClass *) * PROTOTYPE_HASH_TABLE_SIZE);	
 
 	// re-add the prototypes that we saved
-	for (i=0; i<exclude_array.Count(); i++) {
+	for (int i=0; i<exclude_array.Count(); i++) {
 		Add_Prototype(exclude_array[i]);
 	}
 
@@ -790,9 +790,9 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 
 	if (WW3D_Load_On_Demand && proto == NULL) {	// If we didn't find one, try to load on demand
 		char filename [MAX_PATH];
-		char *mesh_name = ::strchr (name, '.');
+		const char *mesh_name = ::strchr (name, '.');
 		if (mesh_name != NULL) {
-			::lstrcpyn (filename, name, ((int)mesh_name) - ((int)name) + 1);
+			::lstrcpyn (filename, name, (int)((uintptr_t)mesh_name) - ((uintptr_t)name) + 1);
 			::lstrcat (filename, ".w3d");
 		} else {
 			sprintf( filename, "%s.w3d", name);
@@ -967,7 +967,7 @@ HAnimClass *	WW3DAssetManager::Get_HAnim(const char * name)
 		if ( !HAnimManager.Is_Missing( name ) ) {	// if this is NOT a known missing anim
 
 			char filename[ MAX_PATH ];
-			char *animname = strchr( name, '.');
+			const char *animname = strchr( name, '.');
 			if (animname != NULL) {
 				sprintf( filename, "%s.w3d", animname+1);
 			} else {
@@ -1347,7 +1347,7 @@ Font3DDataClass * WW3DAssetManager::Get_Font3DData( const char *name )
 	// loop through and see if the Font3D we are looking for has already been
 	// allocated and thus we can just return it.
 	for (	SLNode<Font3DDataClass> *node = Font3DDatas.Head(); node; node = node->Next()) {
-		if (!stricmp(name, node->Data()->Name)) {
+		if (!_stricmp(name, node->Data()->Name)) {
 			node->Data()->Add_Ref();
 			return node->Data();
 		}
@@ -1595,7 +1595,7 @@ void WW3DAssetManager::Remove_Prototype(PrototypeClass *proto)
 			  test = test->friend_getNextHash()) {
 			
 			// Is this the prototype?
-			if (::stricmp (test->Get_Name(), pname) == 0) {
+			if (::_stricmp (test->Get_Name(), pname) == 0) {
 				
 				// Remove this prototype from the linked list for this hash index.
 				if (prev == NULL) {
@@ -1667,7 +1667,7 @@ void WW3DAssetManager::Remove_Prototype(const char *name)
 PrototypeClass * WW3DAssetManager::Find_Prototype(const char * name)
 {
 	// Special case Null render object.  So we always have it...
-	if (stricmp(name,"NULL") == 0) {
+	if (_stricmp(name,"NULL") == 0) {
 		return &(_NullPrototype);
 	}
 	
@@ -1676,7 +1676,7 @@ PrototypeClass * WW3DAssetManager::Find_Prototype(const char * name)
 	PrototypeClass * test = PrototypeHashTable[hash];
 
 	while (test != NULL) {
-		if (stricmp(test->Get_Name(),name) == 0) {
+		if (_stricmp(test->Get_Name(),name) == 0) {
 			return test;
 		}
 		test = test->friend_getNextHash();

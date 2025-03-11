@@ -385,7 +385,7 @@ void myChdir(char *path)
 	abc = (unsigned)( toupper( filepath[0] ) - 'A' + 1 ); 
 	if ( !_chdrive( abc )) 
 	{
-		abc = chdir( filepath );  // Will fail with ending '\\'
+		abc = _chdir( filepath );  // Will fail with ending '\\'
 	}
 	// should be in proper folder now....
 }

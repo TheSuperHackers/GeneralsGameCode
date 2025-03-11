@@ -141,7 +141,7 @@ MultiplayerColorDefinition * MultiplayerSettings::newMultiplayerColorDefinition(
 	Int numColors = getNumColors();
 
 	m_colorList[numColors] = tmp;
-	m_numColors = m_colorList.size();
+	m_numColors = (int)m_colorList.size();
 
 	return &m_colorList[numColors];
 }

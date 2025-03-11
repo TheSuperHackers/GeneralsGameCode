@@ -124,17 +124,14 @@ typedef VecNamedReveal::iterator VecNamedRevealIt;
 
 class AttackPriorityInfo : public MemoryPoolObject, public Snapshot
 {
+public:
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AttackPriorityInfo, "AttackPriorityInfo")		
 
 // friend bad for MPOs. (srj)
 //friend class ScriptEngine;
 
 public:
-
 	AttackPriorityInfo();
-	//~AttackPriorityInfo();
-
-public:
 
 	void setPriority(const ThingTemplate *tThing, Int priority);
 	Int getPriority(const ThingTemplate *tThing) const;

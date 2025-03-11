@@ -364,6 +364,7 @@ void DeployStyleAIUpdate::setMyState( DeployStateTypes stateID )
 			m_frameToWakeForDeploy += TheGameLogic->getFrame();	// convert to absolute frame
 
 			//Play deploy sound
+#ifdef HAS_BINK
 			const ThingTemplate *thing = self->getTemplate();
 			const AudioEventRTS* soundToPlayPtr = thing->getPerUnitSound( "Deploy" );
 			if( soundToPlayPtr )
@@ -372,6 +373,7 @@ void DeployStyleAIUpdate::setMyState( DeployStateTypes stateID )
 				soundToPlay.setObjectID( self->getID() );
 				TheAudio->addAudioEvent( &soundToPlay );
 			}
+#endif
 			
 			break;
 		}
@@ -396,6 +398,7 @@ void DeployStyleAIUpdate::setMyState( DeployStateTypes stateID )
 			}
 			
 			//Play undeploy sound
+#ifdef HAS_BINK
 			const ThingTemplate *thing = self->getTemplate();
 			const AudioEventRTS* soundToPlayPtr = thing->getPerUnitSound( "Undeploy" );
 			if( soundToPlayPtr )
@@ -404,6 +407,7 @@ void DeployStyleAIUpdate::setMyState( DeployStateTypes stateID )
 				soundToPlay.setObjectID( self->getID() );
 				TheAudio->addAudioEvent( &soundToPlay );
 			}
+#endif
 
 			break;
 		}

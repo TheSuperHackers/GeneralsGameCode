@@ -61,17 +61,17 @@ char *strtok_r(char *strptr, const char *delimiters, char **lasts)
 	//
 	// Note: strcspn & strspn are both called, they're opposites
 	//
-	int dstart=strcspn(*lasts, delimiters);  // find first char of string in delimiters
+	int dstart=(int)strcspn(*lasts, delimiters);  // find first char of string in delimiters
 
 	if (dstart == 0)  // string starts with a delimiter
 	{
-		int dend=strspn(*lasts, delimiters);     // find last char of string NOT in delimiters
+		int dend=(int)strspn(*lasts, delimiters);     // find last char of string NOT in delimiters
 		*lasts+=dend;
 
 		if ((*lasts)[0]==0)  // 0 length string?
 			return(NULL);
 
-		dstart=strcspn(*lasts, delimiters);
+		dstart=(int)strcspn(*lasts, delimiters);
 	}
 	char *retval=*lasts;
 

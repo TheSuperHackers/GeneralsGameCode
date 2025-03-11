@@ -27,7 +27,7 @@
 #include "texture.h"
 
 class StringClass;
-struct IDirect3DTexture8;
+struct IDirect3DTexture9;
 class TextureLoadTaskClass;
 
 class TextureLoader
@@ -48,12 +48,12 @@ public:
 	// when it's been completed. The texture will be refreshed on the next
 	// update call after appearing to the finished tasks list.
 	static void Add_Load_Task(TextureClass* tc);
-	static IDirect3DTexture8* Load_Thumbnail(
+	static IDirect3DTexture9* Load_Thumbnail(
 		const StringClass& filename,
 		WW3DFormat texture_format);	// Pass WW3D_FORMAT_UNKNOWN if you don't care
 	static void Load_Mipmap_Levels(TextureLoadTaskClass* texture);
 
-	static IDirect3DSurface8* Load_Surface_Immediate(
+	static IDirect3DSurface9* Load_Surface_Immediate(
 		const StringClass& filename,
 		WW3DFormat surface_format,		// Pass WW3D_FORMAT_UNKNOWN if you don't care
 		bool allow_compression);
@@ -69,7 +69,7 @@ public:
 	static void Update();
 	static void Flush_Pending_Load_Tasks();
 
-	static IDirect3DTexture8* Generate_Bumpmap(TextureClass* texture);
+	static IDirect3DTexture9* Generate_Bumpmap(TextureClass* texture);
 
 };
 
@@ -86,7 +86,7 @@ class TextureLoadTaskClass : public W3DMPO
 	static TextureLoadTaskClass* FreeTaskListHead;
 
 	TextureClass* Texture;
-	IDirect3DTexture8 *D3DTexture;
+	IDirect3DTexture9 *D3DTexture;
 	unsigned Width;
 	unsigned Height;
 	WW3DFormat Format;
@@ -132,9 +132,9 @@ public:
 	void Set_Succ(TextureLoadTaskClass* succ);
 
 	TextureClass* Peek_Texture() { return Texture; }
-	IDirect3DTexture8* Peek_D3D_Texture() { return D3DTexture; }
+	IDirect3DTexture9* Peek_D3D_Texture() { return D3DTexture; }
 
-	void Set_D3D_Texture(IDirect3DTexture8* texture);
+	void Set_D3D_Texture(IDirect3DTexture9* texture);
 };
 
 #endif

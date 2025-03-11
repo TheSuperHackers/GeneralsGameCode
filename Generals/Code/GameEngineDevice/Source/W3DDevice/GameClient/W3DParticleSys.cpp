@@ -53,9 +53,9 @@ W3DParticleSystemManager::W3DParticleSystemManager()
 
 	m_onScreenParticleCount = 0;
 
-	m_pointGroup = NEW PointGroupClass();
+	m_pointGroup = new PointGroupClass();
 	//m_streakLine = NULL;
-	m_streakLine = NEW StreakLineClass();
+	m_streakLine = new StreakLineClass();
 	
 	m_posBuffer = NEW_REF( ShareBufferClass<Vector3>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_posBuffer") );
 	m_RGBABuffer = NEW_REF( ShareBufferClass<Vector4>, (MAX_POINTS_PER_GROUP, "W3DParticleSystemManager::m_RGBABuffer") );

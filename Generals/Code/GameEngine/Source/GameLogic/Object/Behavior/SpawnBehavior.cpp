@@ -253,7 +253,7 @@ UpdateSleepTime SpawnBehavior::update( void )
 		{
 			Int replacementTime = *iterator;
 			UnsignedInt currentTime = TheGameLogic->getFrame();
-			if( currentTime > replacementTime )
+			if( (int)currentTime > replacementTime )
 			{
 				//If you create one, you pop the number off the list
 				if( createSpawn() )	
@@ -786,7 +786,7 @@ Bool SpawnBehavior::shouldTryToSpawn()
 	// Not if we are turned off
 	if( !m_active )
 		return FALSE;
-	if( BitTest( getObject()-> getStatusBits(), OBJECT_STATUS_RECONSTRUCTING ) &&
+	if( BitTestWW( getObject()-> getStatusBits(), OBJECT_STATUS_RECONSTRUCTING ) &&
 			modData->m_isOneShotData == TRUE )
 	{
 		// If we are a Hole rebuild, not only should we not, but we should never ask again.

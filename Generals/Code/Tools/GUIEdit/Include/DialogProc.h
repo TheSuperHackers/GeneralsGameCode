@@ -65,9 +65,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 extern LRESULT CALLBACK NewLayoutDialogProc( HWND hWndDialog, UINT message, 
 																						 WPARAM wParam, LPARAM lParam );
-extern BOOL CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message, 
+extern INT_PTR CALLBACK GridSettingsDialogProc( HWND hWndDialog, UINT message, 
 																						 WPARAM wParam, LPARAM lParam );
-extern BOOL CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message, 
+extern INT_PTR CALLBACK CallbackEditorDialogProc( HWND hWndDialog, UINT message,
 																							 WPARAM wParam, LPARAM lParam );
 
 #endif // __DIALOGPROC_H_

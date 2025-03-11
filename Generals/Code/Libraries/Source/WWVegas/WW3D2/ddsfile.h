@@ -27,7 +27,7 @@
 #include "ww3dformat.h"
 #include "wwstring.h"
 
-struct IDirect3DSurface8;
+struct IDirect3DSurface9;
 
 // ----------------------------------------------------------------------------
 //
@@ -134,7 +134,7 @@ struct LegacyDDSURFACEDESC2 {
 		unsigned RefreshRate;
 	};
 	unsigned AlphaBitDepth;
-	unsigned Reserved;
+	//unsigned Reserved;
 	void* Surface;
 	union
 	{
@@ -147,6 +147,7 @@ struct LegacyDDSURFACEDESC2 {
 	LegacyDDPIXELFORMAT PixelFormat;
 	LegacyDDSCAPS2 Caps;
 	unsigned TextureStage;
+	unsigned Reserved;
 };
 
 // ----------------------------------------------------------------------------
@@ -190,7 +191,7 @@ public:
 	WW3DFormat Get_Format() const { return Format; }
 
 	// Copy pixels to the destination surface.
-	void Copy_Level_To_Surface(unsigned level,IDirect3DSurface8* d3d_surface);
+	void Copy_Level_To_Surface(unsigned level,IDirect3DSurface9* d3d_surface);
 	void Copy_Level_To_Surface(
 		unsigned level,
 		WW3DFormat dest_format, 

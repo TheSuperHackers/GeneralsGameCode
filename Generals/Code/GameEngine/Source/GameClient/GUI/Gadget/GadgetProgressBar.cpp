@@ -84,7 +84,7 @@ WindowMsgHandledType GadgetProgressBarSystem( GameWindow *window, UnsignedInt ms
       if (newPos < 0 || newPos > 100)
         break;
 
-      window->winSetUserData( (void *)newPos );
+      window->winSetUserData( (void *)(uintptr_t)newPos );
 
 			break;
 

@@ -1010,7 +1010,8 @@ void Radar::createEvent( const Coord3D *world, RadarEventType type, Real seconds
 
 	// lookup the colors we are to used based on the event 
 	RGBAColorInt color[ 2 ];
-	for( Int i = 0; radarColorLookupTable[ i ].event != RADAR_EVENT_INVALID; ++i )
+	Int i = 0;
+	for( ; radarColorLookupTable[ i ].event != RADAR_EVENT_INVALID; ++i )
 	{
 
 		if( radarColorLookupTable[ i ].event == type )
@@ -1186,7 +1187,9 @@ void Radar::tryUnderAttackEvent( const Object *obj )
 				TheInGameUI->message( "RADAR:HarvesterUnderAttack" );
 
 				// play special audio event
+#ifdef HAS_BINK
 				unitAttackSound = TheAudio->getMiscAudio()->m_radarHarvesterUnderAttackSound;
+#endif
 			}
 			else
 			{
@@ -1194,10 +1197,14 @@ void Radar::tryUnderAttackEvent( const Object *obj )
 				TheInGameUI->message( "RADAR:UnitUnderAttack" );
 				
 				// play audio event
+#ifdef HAS_BINK
 				unitAttackSound = TheAudio->getMiscAudio()->m_radarStructureUnderAttackSound;
+#endif
 			}
 			unitAttackSound.setPlayerIndex(player->getPlayerIndex());
+#ifdef HAS_BINK
 			TheAudio->addAudioEvent( &unitAttackSound );
+#endif
 
 		}  // end if
 		else if( obj->isKindOf( KINDOF_STRUCTURE ) && obj->isKindOf( KINDOF_MP_COUNT_FOR_VICTORY ) )
@@ -1212,10 +1219,11 @@ void Radar::tryUnderAttackEvent( const Object *obj )
 			TheInGameUI->message( "RADAR:StructureUnderAttack" );
 
 			// play audio event
+#ifdef HAS_BINK
 			static AudioEventRTS structureAttackSound = TheAudio->getMiscAudio()->m_radarStructureUnderAttackSound;
 			structureAttackSound.setPlayerIndex(player->getPlayerIndex());
 			TheAudio->addAudioEvent( &structureAttackSound );
-
+#endif
 		}  // end else if
 		else
 		{
@@ -1224,10 +1232,11 @@ void Radar::tryUnderAttackEvent( const Object *obj )
 			TheInGameUI->message( "RADAR:UnderAttack" );
 
 			// play audio event
+#ifdef HAS_BINK
 			static AudioEventRTS underAttackSound = TheAudio->getMiscAudio()->m_radarStructureUnderAttackSound;
 			underAttackSound.setPlayerIndex(player->getPlayerIndex());
 			TheAudio->addAudioEvent( &underAttackSound );
-
+#endif
 		}  // end else
 
 	}  // end if
@@ -1248,6 +1257,12 @@ void Radar::tryInfiltrationEvent( const Object *obj )
 	// create the radar event
 	createEvent( obj->getPosition(), RADAR_EVENT_INFILTRATION );
 
+	// display message
+	TheInGameUI->message( "RADAR:Infiltration" );
+
+	// play audio event
+#ifdef HAS_BINK
+
 	//
 	///@todo Should make an INI data driven table for radar event strings, and audio events
 	//
@@ -1255,14 +1270,10 @@ void Radar::tryInfiltrationEvent( const Object *obj )
 	// queues even if we don't have a radar)
 	//
 	Player *player = ThePlayerList->getLocalPlayer();
-
-	// display message
-	TheInGameUI->message( "RADAR:Infiltration" );
-
-	// play audio event
 	static AudioEventRTS infiltrationWarningSound = TheAudio->getMiscAudio()->m_radarInfiltrationSound;
 	infiltrationWarningSound.setPlayerIndex(player->getPlayerIndex());
 	TheAudio->addAudioEvent( &infiltrationWarningSound );
+#endif
 
 }  // end tryInfiltrationEvent
 

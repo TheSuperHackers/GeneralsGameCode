@@ -127,6 +127,7 @@ const char* CPUDetectClass::Get_Processor_Manufacturer_Name()
 
 static unsigned Calculate_Processor_Speed(__int64& ticks_per_second)
 {
+#if 0
 	struct {
 		unsigned timer0_h;
 		unsigned timer0_l;
@@ -165,6 +166,8 @@ static unsigned Calculate_Processor_Speed(__int64& ticks_per_second)
 	__int64 t=*(__int64*)&Time.timer1_h-*(__int64*)&Time.timer0_h;
 	ticks_per_second=(__int64)((1000.0/(double)elapsed)*(double)t);	// Ticks per second
 	return unsigned((double)t/(double)(elapsed*1000));
+#endif
+	return 1;
 }
 
 void CPUDetectClass::Init_Processor_Speed()
@@ -206,15 +209,15 @@ void CPUDetectClass::Init_Processor_Manufacturer()
 
 	ProcessorManufacturer = MANUFACTURER_UNKNOWN;
 
-	if (stricmp(VendorID, "GenuineIntel") == 0) ProcessorManufacturer = MANUFACTURER_INTEL;
-	else if (stricmp(VendorID, "AuthenticAMD") == 0) ProcessorManufacturer = MANUFACTURER_AMD;
-	else if (stricmp(VendorID, "AMD ISBETTER") == 0) ProcessorManufacturer = MANUFACTURER_AMD;
-	else if (stricmp(VendorID, "UMC UMC UMC") == 0) ProcessorManufacturer = MANUFACTURER_UMC;
-	else if (stricmp(VendorID, "CyrixInstead") == 0) ProcessorManufacturer = MANUFACTURER_CYRIX;
-	else if (stricmp(VendorID, "NexGenDriven") == 0) ProcessorManufacturer = MANUFACTURER_NEXTGEN;
-	else if (stricmp(VendorID, "CentaurHauls") == 0) ProcessorManufacturer = MANUFACTURER_VIA;
-	else if (stricmp(VendorID, "RiseRiseRise") == 0) ProcessorManufacturer = MANUFACTURER_RISE;
-	else if (stricmp(VendorID, "GenuineTMx86") == 0) ProcessorManufacturer = MANUFACTURER_TRANSMETA;
+	if (_stricmp(VendorID, "GenuineIntel") == 0) ProcessorManufacturer = MANUFACTURER_INTEL;
+	else if (_stricmp(VendorID, "AuthenticAMD") == 0) ProcessorManufacturer = MANUFACTURER_AMD;
+	else if (_stricmp(VendorID, "AMD ISBETTER") == 0) ProcessorManufacturer = MANUFACTURER_AMD;
+	else if (_stricmp(VendorID, "UMC UMC UMC") == 0) ProcessorManufacturer = MANUFACTURER_UMC;
+	else if (_stricmp(VendorID, "CyrixInstead") == 0) ProcessorManufacturer = MANUFACTURER_CYRIX;
+	else if (_stricmp(VendorID, "NexGenDriven") == 0) ProcessorManufacturer = MANUFACTURER_NEXTGEN;
+	else if (_stricmp(VendorID, "CentaurHauls") == 0) ProcessorManufacturer = MANUFACTURER_VIA;
+	else if (_stricmp(VendorID, "RiseRiseRise") == 0) ProcessorManufacturer = MANUFACTURER_RISE;
+	else if (_stricmp(VendorID, "GenuineTMx86") == 0) ProcessorManufacturer = MANUFACTURER_TRANSMETA;
 }
 
 void CPUDetectClass::Process_Cache_Info(unsigned value)
@@ -825,7 +828,7 @@ void CPUDetectClass::Init_CPUID_Instruction()
    // The pushfd/popfd commands are done using emits
    // because CodeWarrior seems to have problems with
    // the command (huh?)
-
+#if 0
 #ifdef WIN32
    __asm
    {
@@ -866,6 +869,7 @@ void CPUDetectClass::Init_CPUID_Instruction()
      __asm__(" push %ebx");
      __asm__(" popfd");
      __asm__(" pop %ebx");
+#endif
 #endif
 	HasCPUIDInstruction=!!cpuid_available;
 }
@@ -939,6 +943,7 @@ bool CPUDetectClass::CPUID(
 	unsigned& u_edx_,
 	unsigned cpuid_type)
 {
+#if 0
 	if (!Has_CPUID_Instruction()) return false;	// Most processors since 486 have CPUID...
 
 	unsigned u_eax;
@@ -981,6 +986,8 @@ bool CPUDetectClass::CPUID(
 	u_edx_=u_edx;
 
 	return true;
+#endif
+	return false;
 }
 
 #define SYSLOG(n) work.Format n ; CPUDetectClass::ProcessorLog+=work;
@@ -1112,7 +1119,7 @@ void CPUDetectClass::Init_Compact_Log()
 	Get_OS_Info(os_info,OSVersionPlatformId,OSVersionNumberMajor,OSVersionNumberMinor,OSVersionBuildNumber);
 	COMPACTLOG(("%s\t",os_info.Code));
 
-	if (!stricmp(os_info.SubCode,"UNKNOWN")) {
+	if (!_stricmp(os_info.SubCode,"UNKNOWN")) {
 		COMPACTLOG(("%d\t",OSVersionBuildNumber&0xffff));
 	}
 	else {

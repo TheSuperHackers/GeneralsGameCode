@@ -282,7 +282,7 @@ Object::Object( const ThingTemplate *tt, ObjectStatusBits statusBits, Team *team
 
 	// allocate the publicModule arrays
 // pool[]ify
-	m_behaviors = MSGNEW("ModulePtrs") BehaviorModule*[totalModules + 1];
+	m_behaviors = new BehaviorModule*[totalModules + 1];
 	BehaviorModule** curB = m_behaviors;
 
 	// set m_team to null before the first call, to avoid naughtiness...
@@ -1673,7 +1673,7 @@ void Object::attemptDamage( DamageInfo *damageInfo )
 	if( damageInfo->out.m_actualDamageDealt > 0.0f &&
 			damageInfo->in.m_damageType != DAMAGE_PENALTY &&
 			damageInfo->in.m_damageType != DAMAGE_HEALING &&
-			!BitTest(damageInfo->in.m_sourcePlayerMask, getControllingPlayer()->getPlayerMask()) && 
+			!BitTestWW(damageInfo->in.m_sourcePlayerMask, getControllingPlayer()->getPlayerMask()) && 
 			m_radarData != NULL &&
 			getControllingPlayer() == ThePlayerList->getLocalPlayer() )
 		TheRadar->tryUnderAttackEvent( this );
@@ -1866,9 +1866,11 @@ void Object::setDisabledUntil( DisabledType type, UnsignedInt frame )
 	if( type == DISABLED_UNMANNED && !isKindOf( KINDOF_DRONE ) )
 	{
 		//We've been sniped! Play a splatter sound for the pilot losing his face.
+#ifdef HAS_BINK
 		sound = TheAudio->getMiscAudio()->m_splatterVehiclePilotsBrain;
 		sound.setPosition( getPosition() );
 		TheAudio->addAudioEvent( &sound );
+#endif
 	}
 	else if( type == DISABLED_UNDERPOWERED || type == DISABLED_EMP || type == DISABLED_HACKED )
 	{
@@ -1878,6 +1880,7 @@ void Object::setDisabledUntil( DisabledType type, UnsignedInt frame )
 				!isDisabledByType( DISABLED_EMP ) &&
 				!isDisabledByType( DISABLED_HACKED ) )
 		{
+#ifdef HAS_BINK
 			if( isKindOf( KINDOF_STRUCTURE ) )
 			{
 				sound = TheAudio->getMiscAudio()->m_buildingDisabled;
@@ -1890,6 +1893,7 @@ void Object::setDisabledUntil( DisabledType type, UnsignedInt frame )
 				sound.setPosition( getPosition() );
 				TheAudio->addAudioEvent( &sound );
 			}
+#endif
 		}
 	}
 
@@ -1996,6 +2000,7 @@ Bool Object::clearDisabled( DisabledType type )
 				(!isDisabledByType( DISABLED_EMP ) || type == DISABLED_EMP ) &&
 				(!isDisabledByType( DISABLED_HACKED ) || type == DISABLED_HACKED ) )
 		{
+#ifdef HAS_BINK
 			if( isKindOf( KINDOF_STRUCTURE ) )
 			{
 				sound = TheAudio->getMiscAudio()->m_buildingReenabled;
@@ -2008,6 +2013,7 @@ Bool Object::clearDisabled( DisabledType type )
 				sound.setPosition( getPosition() );
 				TheAudio->addAudioEvent( &sound );
 			}
+#endif
 		}
 	}
 
@@ -2837,9 +2843,11 @@ void Object::onVeterancyLevelChanged( VeterancyLevel oldLevel, VeterancyLevel ne
 																			TheGlobalData->m_levelGainAnimationZRisePerSecond);
 		}
 
+#ifdef HAS_BINK
 		AudioEventRTS soundToPlay = TheAudio->getMiscAudio()->m_unitPromoted;	
 		soundToPlay.setObjectID( getID() );
 		TheAudio->addAudioEvent( &soundToPlay );
+#endif
 	}
 
 }
@@ -3888,7 +3896,7 @@ void Object::loadPostProcess()
 //-------------------------------------------------------------------------------------------------
 Bool Object::hasUpgrade( const UpgradeTemplate *upgradeT ) const 
 {
-	return BitTest( m_objectUpgradesCompleted, upgradeT->getUpgradeMask() );
+	return BitTestWW( m_objectUpgradesCompleted, upgradeT->getUpgradeMask() );
 }  // end hasUpgrade
 
 //-------------------------------------------------------------------------------------------------
@@ -4039,6 +4047,7 @@ void Object::onDie( DamageInfo *damageInfo )
 		m_team->notifyTeamOfObjectDeath();
 	// Play death sound here.
 
+#ifdef HAS_BINK
 	AudioEventRTS deathSound = *getTemplate()->getSoundDie();
 	// If we were killed by fire, or by poison, we should play those die sounds instead of the usual
 	// sound
@@ -4058,6 +4067,7 @@ void Object::onDie( DamageInfo *damageInfo )
 	PlayerIndex index = getControllingPlayer() ? getControllingPlayer()->getPlayerIndex() : 0;
 	deathSound.setPlayerIndex( index );
 	TheAudio->addAudioEvent(&deathSound);
+#endif
 	
 	if (isLocallyControlled() && !selfInflicted) // wasLocallyControlled? :-)
 	{
@@ -5277,18 +5287,22 @@ void Object::defect( Team* newTeam, UnsignedInt detectionTime )
 	}
 
 	// Play our sound indicating we've been defected. (weird verbage, but true.)
+#ifdef HAS_BINK
 	AudioEventRTS voiceDefect = *getTemplate()->getVoiceDefect();
 	voiceDefect.setObjectID(getID());
 	TheAudio->addAudioEvent(&voiceDefect);
+#endif
 
 	//make the new recruit the only selected thing, awaiting new command to move, attack, etc...
 	Drawable *dr = getDrawable();
 	if (dr)
 	{
 		dr->flashAsSelected(); //This is the first of several flashes which get cue'd by doDefectorUpdateStuff()
+#ifdef HAS_BINK
 		AudioEventRTS defectorTimerSound = TheAudio->getMiscAudio()->m_defectorTimerTickSound;
 		defectorTimerSound.setObjectID( getID() );
 		TheAudio->addAudioEvent(&defectorTimerSound);
+#endif
 	}
 	
 	ContainModuleInterface *ct = getContain();

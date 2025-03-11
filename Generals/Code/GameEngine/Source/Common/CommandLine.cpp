@@ -1222,11 +1222,11 @@ void parseCommandLine(int argc, char *argv[])
 		found = false;
 		for (param=0; !found && param<sizeof(params)/sizeof(params[0]); ++param)
 		{
-			int len = strlen(params[param].name);
-			int len2 = strlen(argv[arg]);
+			int len = (int)strlen(params[param].name);
+			int len2 = (int)strlen(argv[arg]);
 			if (len2 != len)
 				continue;
-			if (!strnicmp(argv[arg], params[param].name, len))
+			if (!_strnicmp(argv[arg], params[param].name, len))
 			{
 				arg += params[param].func(argv+arg, argc-arg);
 				found = true;

@@ -110,7 +110,7 @@ protected:
 	Real m_cellWidth;						///<spacing between adjacent cells
 	Real m_cellHeight;						///<spacing between adjacent cells
 	Byte *m_shroudData;						///<holds amount of shroud per cell.
-	IDirect3DSurface8 *m_pSrcTexture;		///<stores sysmem copy of visible shroud.
+	IDirect3DSurface9 *m_pSrcTexture;		///<stores sysmem copy of visible shroud.
 	void *m_srcTextureData;					///<pointer to shroud data
 	UnsignedInt m_srcTexturePitch;			///<width (in bytes) of shroud data buffer.
 	TextureClass *m_pDstTexture;			///<stores vidmem copy of visible shroud.

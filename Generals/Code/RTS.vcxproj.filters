@@ -1,0 +1,549 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Main">
+      <UniqueIdentifier>{d269ec09-8ac6-435b-8b0c-f31a3c4e6720}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="INI Files">
+      <UniqueIdentifier>{bdc21a7b-dbb5-41a7-8697-9602ac79e6d6}</UniqueIdentifier>
+      <Extensions>*.ini</Extensions>
+    </Filter>
+    <Filter Include="INI Files\Default">
+      <UniqueIdentifier>{6828624e-ce69-4d97-a515-e37c677e9856}</UniqueIdentifier>
+      <Extensions>*.ini</Extensions>
+    </Filter>
+    <Filter Include="INI Files\MappedImages">
+      <UniqueIdentifier>{08079d11-e0ee-41b8-b072-cea19a20422f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="INI Files\Object">
+      <UniqueIdentifier>{8b896eb0-8754-44d2-b794-5e9e4c22d6f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Window">
+      <UniqueIdentifier>{40ec89b5-a1e6-49b7-86ea-98baf4daac4c}</UniqueIdentifier>
+      <Extensions>.wnd</Extensions>
+    </Filter>
+    <Filter Include="Window\Menu">
+      <UniqueIdentifier>{da52c58b-3bea-49d1-8fad-765eeb04ef1d}</UniqueIdentifier>
+      <Extensions>.wnd</Extensions>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{130a51b7-f5c8-4a52-a1e2-ba4367e7263d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Main\buildVersion.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\WinMain.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\resource.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main\WinMain.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Main\Generals.ico">
+      <Filter>Resources</Filter>
+    </Image>
+    <Image Include="Main\Install_Final.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Main\RTS.RC">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Main\generatedVersion.h">
+      <Filter>Main</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\AIData.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\ButtonSets.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\CommandButton.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\CommandMap.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\ControlBarScheme.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\Crate.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\FXList.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\GameData.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\multiplayer.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\Music.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\Object.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\ObjectCreationList.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\PlayerTemplate.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\Roads.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\Science.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\ShellMenuScheme.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\SoundEffects.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\SpecialPower.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\Speech.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\Terrain.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\Upgrade.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\Video.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\Voice.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\Water.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Default\Webpages.ini">
+      <Filter>INI Files\Default</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\MappedImages\HandCreated\HandCreatedMappedImages.INI">
+      <Filter>INI Files\MappedImages</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\MappedImages\TextureSize_512\SAUserInterface512.INI">
+      <Filter>INI Files\MappedImages</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\MappedImages\TextureSize_512\SCUserInterface512.INI">
+      <Filter>INI Files\MappedImages</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\MappedImages\TextureSize_512\SNUserInterface512.INI">
+      <Filter>INI Files\MappedImages</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\MappedImages\TextureSize_512\SSUserInterface512.INI">
+      <Filter>INI Files\MappedImages</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\MappedImages\TextureSize_512\SUUserInterface512.INI">
+      <Filter>INI Files\MappedImages</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Object\CivilianBuilding.ini">
+      <Filter>INI Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Object\CivilianProp.ini">
+      <Filter>INI Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Object\CivilianUnit.ini">
+      <Filter>INI Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Object\FactionBuilding.ini">
+      <Filter>INI Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Object\FactionProp.ini">
+      <Filter>INI Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Object\FactionUnit.ini">
+      <Filter>INI Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Object\NatureProp.ini">
+      <Filter>INI Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Object\NatureUnit.ini">
+      <Filter>INI Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Object\System.ini">
+      <Filter>INI Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\AIData.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Animation2D.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Armor.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\AudioSettings.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Campaign.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\CommandButton.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\CommandMap.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\CommandMapDebug.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\CommandSet.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\ControlBarResizer.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\ControlBarScheme.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Crate.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Credits.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\DamageFX.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\DrawGroupInfo.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Eva.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\FXList.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\GameData.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\GameDataDebug.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\GameLOD.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\GameLODPresets.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\English\HeaderTemplate.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\InGameUI.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\English\Language.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Locomotor.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\MiscAudio.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Mouse.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Multiplayer.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Music.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\ObjectCreationList.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\ParticleSystem.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\PlayerTemplate.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Rank.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Roads.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Science.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\ShellMenuScheme.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\SoundEffects.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\SpecialPower.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Speech.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Terrain.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Upgrade.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Video.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Voice.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Water.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Weapon.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\Webpages.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\INI\WindowTransitions.ini">
+      <Filter>INI Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\BlankWindow.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\CRCMismatch.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\CreditsMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\Defeat.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\DifficultySelect.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\DisconnectScreen.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\DownloadMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\EstablishConnectionsScreen.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\GameInfoWindow.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\GameSpyGameOptionsMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\GameSpyLoadScreen.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\GameSpyLoginProfile.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\GameSpyLoginQuick.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\LanGameOptionsMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\LanLobbyMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\LanMapSelectMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\LocalDefeat.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\MainMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\MapSelectMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\MapTransferScreen.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\MessageBox.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\MultiplayerLoadScreen.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\NetworkDirectConnect.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\ObserverQuit.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\OptionsMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\PopupCommunicator.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\PopupGameSpyCreateGame.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\PopupHostGame.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\PopupJoinGame.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\PopupLadderDetails.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\PopupLadderSelect.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\PopupLocaleSelect.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\PopupPlayerInfo.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\PopupReplay.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\PopupSaveLoad.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\QuitMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\QuitMessageBox.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\QuitNoSave.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\RCBuddiesMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\RCBuddyRequestMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\RCGameDetailsMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\RCLocalPlayerMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\RCNonBuddiesMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\RCNoProfileMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\ReplayMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\SaveLoad.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\ScoreScreen.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\ShellGameLoadScreen.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\SinglePlayerLoadScreen.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\SinglePlayerMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\SkirmishGameOptionsMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\SkirmishMapSelectMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\Victorious.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\WOLBuddyOverlay.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\WOLCustomLobby.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\WOLLadderScreen.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\WOLLoginMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\WOLMapSelectMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\WOLMessageWindow.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\WOLQuickMatchMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\WOLStatusMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Menus\WOLWelcomeMenu.wnd">
+      <Filter>Window\Menu</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\ControlBar.wnd">
+      <Filter>Window</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\ControlBarPopupDescription.wnd">
+      <Filter>Window</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\Diplomacy.wnd">
+      <Filter>Window</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\GeneralsExpPoints.wnd">
+      <Filter>Window</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\GenPowersShortcutBarChina.wnd">
+      <Filter>Window</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\GenPowersShortcutBarGLA.wnd">
+      <Filter>Window</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\GenPowersShortcutBarUS.wnd">
+      <Filter>Window</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\IMECandidateWindow.wnd">
+      <Filter>Window</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\IMEStatusWindow.wnd">
+      <Filter>Window</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\InGamePopupMessage.wnd">
+      <Filter>Window</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\MOTD.wnd">
+      <Filter>Window</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Window\ReplayControl.wnd">
+      <Filter>Window</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\Run\Data\Generals.str" />
+  </ItemGroup>
+</Project>

@@ -50,7 +50,7 @@ static Int numDebugStrings = 0;
 //static Int numDumpStrings = 0;
 
 #define IS_FRAME_OK_TO_LOG TheGameLogic->isInGame() && !TheGameLogic->isInShellGame() && !TheDebugIgnoreSyncErrors && \
-	TheCRCFirstFrameToLog >= 0 && TheCRCFirstFrameToLog <= TheGameLogic->getFrame() \
+	TheCRCFirstFrameToLog >= 0 && TheCRCFirstFrameToLog <= (int)TheGameLogic->getFrame() \
 	&& TheGameLogic->getFrame() <= TheCRCLastFrameToLog
 
 CRCVerification::CRCVerification()
@@ -100,7 +100,8 @@ void outputCRCDebugLines( void )
 	IPEnumeration ips;
 	AsciiString fname;
 	fname.format("crcDebug%s.txt", ips.getMachineName().str());
-	FILE *fp = fopen(fname.str(), "wt");
+	FILE* fp;
+	fopen_s(&fp, fname.str(), "wt");
 	int start = 0;
 	int end = nextDebugString;
 	if (numDebugStrings >= MaxStrings)
@@ -154,9 +155,9 @@ void addCRCDebugLine(const char *fmt, ...)
 			lastCRCDebugIndex = 0;
 		}
 
-		sprintf(DebugStrings[nextDebugString], "%d:%d ",  TheGameLogic->getFrame(), lastCRCDebugIndex++);
+		sprintf_s(DebugStrings[nextDebugString], "%d:%d ",  TheGameLogic->getFrame(), lastCRCDebugIndex++);
 		//DebugStrings[nextDebugString][0] = 0;
-		Int len = strlen(DebugStrings[nextDebugString]);
+		Int len = (int)strlen(DebugStrings[nextDebugString]);
 
 		va_list va;
 		va_start( va, fmt );

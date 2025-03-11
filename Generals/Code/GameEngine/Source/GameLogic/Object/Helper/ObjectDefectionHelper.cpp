@@ -72,10 +72,12 @@ UpdateSleepTime ObjectDefectionHelper::update()
 			if (draw)
 				draw->flashAsSelected( &white ); //Whew! that's easier, now, isn't it!
 
-		
+
+#ifdef HAS_BINK
 			AudioEventRTS defectorVulnerableSound = TheAudio->getMiscAudio()->m_defectorTimerDingSound;
 			defectorVulnerableSound.setObjectID( obj->getID() );
 			TheAudio->addAudioEvent(&defectorVulnerableSound);
+#endif
 		}
 		return UPDATE_SLEEP_FOREVER;	// hey, we're done. 
 	}
@@ -102,10 +104,11 @@ UpdateSleepTime ObjectDefectionHelper::update()
 		{
 			draw->flashAsSelected(); //Whew! that's easier, now, isn't it!
 
+#ifdef HAS_BINK
 			AudioEventRTS defectorTimerSound = TheAudio->getMiscAudio()->m_defectorTimerTickSound;
 			defectorTimerSound.setObjectID( obj->getID() );
 			TheAudio->addAudioEvent(&defectorTimerSound);
-
+#endif
 		}
 	}
 

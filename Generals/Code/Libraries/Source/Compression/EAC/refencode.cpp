@@ -41,14 +41,14 @@ static unsigned int matchlen(unsigned char *s,unsigned char *d, unsigned int max
 
 #define HASH(cptr) (int)((((unsigned int)(unsigned char)cptr[0]<<8) | ((unsigned int)(unsigned char)cptr[2])) ^ ((unsigned int)(unsigned char)cptr[1]<<4))
 
-static int refcompress(unsigned char *from, int len, unsigned char *dest, int maxback, int quick)
+static intptr_t refcompress(unsigned char *from, int len, unsigned char *dest, int maxback, int quick)
 {
     unsigned int tlen;
     unsigned int tcost;
 //    unsigned int ccost;    // context cost
     unsigned int run;
-    unsigned int toffset;
-    unsigned int boffset;
+    uintptr_t toffset;
+    uintptr_t boffset;
     unsigned int blen;
     unsigned int bcost;
     unsigned int mlen;
@@ -60,12 +60,12 @@ static int refcompress(unsigned char *from, int len, unsigned char *dest, int ma
     int countshort=0;
     int countint=0;
     int countvint=0;
-    int hash;
-    int hoffset;
-    int minhoffset;
+    intptr_t hash;
+    intptr_t hoffset;
+    intptr_t minhoffset;
     int i;
-    int *link;
-    int *hashtbl;
+    intptr_t *link;
+    intptr_t *hashtbl;
 
     to = dest;
     run = 0;
@@ -74,10 +74,10 @@ static int refcompress(unsigned char *from, int len, unsigned char *dest, int ma
     if ((unsigned int)maxback > (unsigned int)131071)
         maxback = 131071;
 
-	hashtbl = (int *) galloc(65536L*sizeof(int));
+	hashtbl = (intptr_t *) galloc(65536L*sizeof(int));
 	if (!hashtbl)
         return(0);
-	link = (int *) galloc(131072L*sizeof(int));
+	link = (intptr_t *) galloc(131072L*sizeof(int));
 	if (!link)
         return(0);
 
@@ -238,7 +238,7 @@ int GCALL REF_encode(void *compresseddata, const void *source, int sourcesize, i
 {
     int    maxback=131072;
     int     quick=0;
-    int    plen;
+    intptr_t    plen;
     int    hlen;
 
 
@@ -257,7 +257,7 @@ int GCALL REF_encode(void *compresseddata, const void *source, int sourcesize, i
         hlen = 5L;
     }
     plen = hlen+refcompress((unsigned char *)source, sourcesize, (unsigned char *)compresseddata+hlen, maxback, quick);
-    return(plen);
+    return(int)(plen);
 }
 
 #endif

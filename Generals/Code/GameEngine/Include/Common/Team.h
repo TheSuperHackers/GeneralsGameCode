@@ -34,6 +34,7 @@
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
 #include "Common/Thing.h"
+#include "Common/GameCommon.h"
 #include "GameLogic/Object.h"
 
 // ------------------------------------------------------------------------------------------------
@@ -45,7 +46,7 @@ typedef UnsignedInt TeamPrototypeID;
 #define TEAM_PROTOTYPE_ID_INVALID 0
 
 // ------------------------------------------------------------------------------------------------
-typedef std::hash_map< TeamID, Relationship, std::hash<TeamID>, std::equal_to<TeamID> > TeamRelationMapType;
+typedef std::unordered_map< TeamID, Relationship, std::hash<TeamID>, std::equal_to<TeamID> > TeamRelationMapType;
 class TeamRelationMap : public MemoryPoolObject,
 												public Snapshot
 {
@@ -191,7 +192,108 @@ private:
 
 	// lists we own
 	/// @todo srj -- convert to non-DLINK list, after it is once again possible to test the change
+#if 1
 	MAKE_DLINK_HEAD(Object, TeamMemberList)		///< the members of this team
+#else
+public: inline DLINK_ITERATOR<Object> iterate_TeamMemberList() const {
+	do {
+		{
+			if (!(!((((uintptr_t)(m_dlinkhead_TeamMemberList.m_head)) & 1) != 0))) do {
+				{
+					static char ignoreCrash = 0; if (!ignoreCrash) {
+						TheCurrentIgnoreCrashPtr = &ignoreCrash; DebugCrash("bogus head ptr"); TheCurrentIgnoreCrashPtr = 0;
+					}
+				}
+			} while (0);
+		}
+	} while (0); 
+	return 
+		DLINK_ITERATOR<Object>(
+			(Object*)m_dlinkhead_TeamMemberList.m_head, 
+			&Object::dlink_next_TeamMemberList);
+} inline Object* getFirstItemIn_TeamMemberList() const {
+	do {
+		{
+			if (!(!((((uintptr_t)(m_dlinkhead_TeamMemberList.m_head)) & 1) != 0))) do {
+				{
+					static char ignoreCrash = 0; if (!ignoreCrash) {
+						TheCurrentIgnoreCrashPtr = &ignoreCrash; DebugCrash("bogus head ptr"); TheCurrentIgnoreCrashPtr = 0;
+					}
+				}
+			} while (0);
+		}
+	} while (0); return m_dlinkhead_TeamMemberList.m_head;
+} inline Bool isInList_TeamMemberList(Object* o) const {
+	do {
+		{
+			if (!(!((((uintptr_t)(m_dlinkhead_TeamMemberList.m_head)) & 1) != 0))) do {
+				{
+					static char ignoreCrash = 0; if (!ignoreCrash) {
+						TheCurrentIgnoreCrashPtr = &ignoreCrash; DebugCrash("bogus head ptr"); TheCurrentIgnoreCrashPtr = 0;
+					}
+				}
+			} while (0);
+		}
+	} while (0); return o->dlink_isInList_TeamMemberList(&m_dlinkhead_TeamMemberList.m_head);
+} inline void prependTo_TeamMemberList(Object* o) {
+	do {
+		{
+			if (!(!((((uintptr_t)(m_dlinkhead_TeamMemberList.m_head)) & 1) != 0))) do {
+				{
+					static char ignoreCrash = 0; if (!ignoreCrash) {
+						TheCurrentIgnoreCrashPtr = &ignoreCrash; DebugCrash("bogus head ptr"); TheCurrentIgnoreCrashPtr = 0;
+					}
+				}
+			} while (0);
+		}
+	} while (0); if (!isInList_TeamMemberList(o)) o->dlink_prependTo_TeamMemberList(&m_dlinkhead_TeamMemberList.m_head);
+} inline void removeFrom_TeamMemberList(Object* o) {
+	do {
+		{
+			if (!(!((((uintptr_t)(m_dlinkhead_TeamMemberList.m_head)) & 1) != 0))) do {
+				{
+					static char ignoreCrash = 0; if (!ignoreCrash) {
+						TheCurrentIgnoreCrashPtr = &ignoreCrash; DebugCrash("bogus head ptr"); TheCurrentIgnoreCrashPtr = 0;
+					}
+				}
+			} while (0);
+		}
+	} while (0); if (isInList_TeamMemberList(o)) o->dlink_removeFrom_TeamMemberList(&m_dlinkhead_TeamMemberList.m_head);
+} typedef void (*RemoveAllProc_TeamMemberList)(Object* o); inline void removeAll_TeamMemberList(RemoveAllProc_TeamMemberList p = 0) {
+	while (m_dlinkhead_TeamMemberList.m_head) {
+		do {
+			{
+				if (!(!((((uintptr_t)(m_dlinkhead_TeamMemberList.m_head)) & 1) != 0))) do {
+					{
+						static char ignoreCrash = 0; if (!ignoreCrash) {
+							TheCurrentIgnoreCrashPtr = &ignoreCrash; DebugCrash("bogus head ptr"); TheCurrentIgnoreCrashPtr = 0;
+						}
+					}
+				} while (0);
+			}
+		} while (0); Object* tmp = m_dlinkhead_TeamMemberList.m_head; removeFrom_TeamMemberList(tmp); if (p) (*p)(tmp);
+	}
+} inline void reverse_TeamMemberList() {
+	Object* cur = m_dlinkhead_TeamMemberList.m_head; Object* prev = 0; while (cur) {
+		Object* originalNext = cur->dlink_next_TeamMemberList(); cur->dlink_swapLinks_TeamMemberList(); prev = cur; cur = originalNext;
+	} m_dlinkhead_TeamMemberList.m_head = prev;
+} private: struct DLINKHEAD_TeamMemberList {
+public: Object* m_head; inline DLINKHEAD_TeamMemberList() : m_head(0) {
+} inline ~DLINKHEAD_TeamMemberList() {
+	do {
+		{
+			if (!(!m_head)) do {
+				{
+					static char ignoreCrash = 0; if (!ignoreCrash) {
+						TheCurrentIgnoreCrashPtr = &ignoreCrash; DebugCrash("destroying dlinkhead still in a list " "TeamMemberList"); TheCurrentIgnoreCrashPtr = 0;
+					}
+				}
+			} while (0);
+		}
+	} while (0);
+}
+}; DLINKHEAD_TeamMemberList m_dlinkhead_TeamMemberList;		///< the members of this team
+#endif
 
 	// lists we are members of
 	/// @todo srj -- convert to non-DLINK list, after it is once again possible to test the change

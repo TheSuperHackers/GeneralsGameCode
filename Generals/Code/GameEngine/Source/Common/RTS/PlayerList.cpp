@@ -99,7 +99,7 @@ Player *PlayerList::getNthPlayer(Int i)
 { 
 	if( i < 0 || i >= MAX_PLAYER_COUNT )
 	{
-//		DEBUG_CRASH( ("Illegal player index\n") );
+		DEBUG_WARNING( ("Illegal player index\n") );
 		return NULL;
 	}
 	return m_players[i]; 
@@ -301,7 +301,7 @@ Team *PlayerList::validateTeam( AsciiString owner )
 	}	
 	else
 	{
-		DEBUG_CRASH(("no team or player named %s could be found!\n", owner.str()));
+		DEBUG_WARNING(("no team or player named %s could be found!\n", owner.str()));
 		t = getNeutralPlayer()->getDefaultTeam();
 	}
 	return t;
@@ -380,14 +380,14 @@ Player *PlayerList::getEachPlayerFromMask( PlayerMaskType& maskToAdjust )
 	{
 		
 		player = getNthPlayer( i );
-		if ( player && BitTest(player->getPlayerMask(), maskToAdjust ))
+		if ( player && BitTestWW(player->getPlayerMask(), maskToAdjust ))
 		{
 			maskToAdjust &= (~player->getPlayerMask());
 			return player;
 		}
 	}  // end for i
 
-	DEBUG_CRASH( ("No players found that contain any matching masks.\n") );
+	DEBUG_WARNING( ("No players found that contain any matching masks.\n") );
 	maskToAdjust = 0;
 	return NULL; // mask not found
 }
@@ -405,7 +405,7 @@ PlayerMaskType PlayerList::getPlayersWithRelationship( Int srcPlayerIndex, Unsig
 	if (!srcPlayer)
 		return retVal;
 
-	if (BitTest(allowedRelationships, ALLOW_SAME_PLAYER))
+	if (BitTestWW(allowedRelationships, ALLOW_SAME_PLAYER))
 		BitSet(retVal, srcPlayer->getPlayerMask());
 
 	for ( Int i = 0; i < getPlayerCount(); ++i )
@@ -420,15 +420,15 @@ PlayerMaskType PlayerList::getPlayersWithRelationship( Int srcPlayerIndex, Unsig
 		switch (srcPlayer->getRelationship(player->getDefaultTeam()))
 		{
 			case ENEMIES:
-				if (BitTest(allowedRelationships, ALLOW_ENEMIES))
+				if (BitTestWW(allowedRelationships, ALLOW_ENEMIES))
 					BitSet(retVal, player->getPlayerMask());
 				break;
 			case ALLIES:
-				if (BitTest(allowedRelationships, ALLOW_ALLIES))
+				if (BitTestWW(allowedRelationships, ALLOW_ALLIES))
 					BitSet(retVal, player->getPlayerMask());
 				break;
 			case NEUTRAL:
-				if (BitTest(allowedRelationships, ALLOW_NEUTRAL))
+				if (BitTestWW(allowedRelationships, ALLOW_NEUTRAL))
 					BitSet(retVal, player->getPlayerMask());
 				break;
 		}

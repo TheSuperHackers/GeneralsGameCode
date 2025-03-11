@@ -135,7 +135,7 @@ struct PristineBoneInfo
 	Matrix3D mtx;
 	Int boneIndex;
 };
-typedef std::hash_map< NameKeyType, PristineBoneInfo, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > PristineBoneInfoMap;
+typedef std::unordered_map< NameKeyType, PristineBoneInfo, rts::hash<NameKeyType>, rts::equal_to<NameKeyType> > PristineBoneInfoMap;
 
 //-------------------------------------------------------------------------------------------------
 
@@ -246,7 +246,7 @@ struct ModelConditionInfo
 	void loadAnimations() const;
 	void preloadAssets( TimeOfDay timeOfDay, Real scale );			///< preload any assets for time of day
 
-	inline Int getConditionsYesCount() const { DEBUG_ASSERTCRASH(m_conditionsYesVec.size() > 0, ("empty m_conditionsYesVec.size(), see srj")); return m_conditionsYesVec.size(); }
+	inline Int getConditionsYesCount() const { DEBUG_ASSERTCRASH(m_conditionsYesVec.size() > 0, ("empty m_conditionsYesVec.size(), see srj")); return (int)m_conditionsYesVec.size(); }
 	inline const ModelConditionFlags& getNthConditionsYes(Int i) const { return m_conditionsYesVec[i]; }
 #if defined(_DEBUG) || defined(_INTERNAL)
 	inline AsciiString getDescription() const { return m_description; }
@@ -267,7 +267,7 @@ private:
 typedef std::vector<ModelConditionInfo> ModelConditionVector;
 
 //-------------------------------------------------------------------------------------------------
-typedef std::hash_map< TransitionSig, ModelConditionInfo, std::hash<TransitionSig>, std::equal_to<TransitionSig> > TransitionMap;
+typedef std::unordered_map< TransitionSig, ModelConditionInfo, std::hash<TransitionSig>, std::equal_to<TransitionSig> > TransitionMap;
 
 //-------------------------------------------------------------------------------------------------
 // this is more efficient and also helps solve a projectile-launch-offset problem for double-upgraded

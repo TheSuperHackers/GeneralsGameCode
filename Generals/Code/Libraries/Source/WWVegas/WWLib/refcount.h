@@ -51,23 +51,23 @@
 class RefCountClass;
 
 
-#ifndef NDEBUG
-
+//#ifndef NDEBUG
+//
 struct ActiveRefStruct
 {
 	char *					File;
 	int						Line;
 };
-
-#define	NEW_REF( C, P )						( (C*)RefCountClass::Set_Ref_Owner( W3DNEW C P, __FILE__, __LINE__ ) )
-#define	SET_REF_OWNER( P )				(		RefCountClass::Set_Ref_Owner( P,       __FILE__, __LINE__ ) )
-
-#else
+//
+//#define	NEW_REF( C, P )						( (C*)RefCountClass::Set_Ref_Owner( W3DNEW C P, __FILE__, __LINE__ ) )
+//#define	SET_REF_OWNER( P )				(		RefCountClass::Set_Ref_Owner( P,       __FILE__, __LINE__ ) )
+//
+//#else
 
 #define	NEW_REF( C, P )					( W3DNEW C P )
 #define	SET_REF_OWNER( P )			P
 
-#endif
+//#endif
 
 
 /*

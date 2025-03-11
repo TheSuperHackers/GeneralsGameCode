@@ -112,7 +112,7 @@ Bool OCLUpdate::shouldCreate()
 	if( TheGameLogic->getFrame() < m_nextCreationFrame )
 		return FALSE;//too soon
 
-	if( BitTest( getObject()->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
+	if( BitTestWW( getObject()->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
 		return FALSE;// not built yet
 
 	return TRUE;

@@ -303,7 +303,7 @@ const Vector2 DazzleINIClass::Get_Vector2(char const *section, char const *entry
 		INIEntry * entryptr = Find_Entry(section, entry);
 		if (entryptr && entryptr->Value != NULL) {
 			Vector2	ret;
-			if ( sscanf( entryptr->Value, "%f,%f", &ret[0], &ret[1], &ret[2] ) == 2 ) {
+			if ( sscanf( entryptr->Value, "%f,%f", &ret[0], &ret[1] ) == 2 ) {
 				return ret;
 			}
 		}
@@ -665,9 +665,9 @@ void DazzleRenderObjClass::Init_Type(const DazzleInitClass& i)
 	Init_Shaders();
 
 	if (i.type>=type_count) {
-		unsigned new_count=i.type+1;
+		unsigned new_count=i.type+1,a;
 		DazzleTypeClass** new_types=W3DNEWARRAY DazzleTypeClass*[new_count];
-		for (unsigned a=0;a<type_count;++a) {
+		for (a=0;a<type_count;++a) {
 			new_types[a]=types[a];
 		}
 		for (;a<new_count;++a) {
@@ -688,9 +688,9 @@ void DazzleRenderObjClass::Init_Lensflare(const LensflareInitClass& i)
 	Init_Shaders();
 
 	if (i.type>=lensflare_count) {
-		unsigned new_count=i.type+1;
+		unsigned new_count=i.type+1, a;
 		LensflareTypeClass** new_lensflares=W3DNEWARRAY LensflareTypeClass*[new_count];
-		for (unsigned a=0;a<lensflare_count;++a) {
+		for (a=0;a<lensflare_count;++a) {
 			new_lensflares[a]=lensflares[a];
 		}
 		for (;a<new_count;++a) {

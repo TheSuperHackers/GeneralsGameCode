@@ -97,7 +97,7 @@ static UnsignedInt calcCRC( AsciiString dirName, AsciiString fname )
 	char	filenameBuf[_MAX_PATH];
 	int length = 0;
 	strcpy(tempBuf, fname.str());
-	length = strlen( tempBuf );
+	length = (int)strlen( tempBuf );
 	if( length >= 4 )
 	{
 		memset( filenameBuf, '\0', _MAX_PATH);
@@ -244,7 +244,7 @@ static Bool loadMap( AsciiString filename )
 
 	strcpy(tempBuf, filename.str());
 
-	length = strlen( tempBuf );
+	length = (int)strlen( tempBuf );
 	if( length >= 4 )
 	{
 		memset( filenameBuf, '\0', _MAX_PATH);
@@ -903,7 +903,7 @@ typedef MapDisplayToFileNameList::iterator MapDisplayToFileNameListIter;
 
 				if (numColumns > 1)
 				{
-					GadgetListBoxSetItemData( listbox, (void *)imageItemData, index, 1 );
+					GadgetListBoxSetItemData( listbox, (void *)(uintptr_t)imageItemData, index, 1 );
 				}
 			}
 			++tempit;

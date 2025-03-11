@@ -33,7 +33,7 @@
 #ifndef __GAMESPYGAMEINFO_H__
 #define __GAMESPYGAMEINFO_H__
 
-#include "GameSpy/Peer/Peer.h"
+#include "Peer/Peer.h"
 
 #include "GameNetwork/GameInfo.h"
 

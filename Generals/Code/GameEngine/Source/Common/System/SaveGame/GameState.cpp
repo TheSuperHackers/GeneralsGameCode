@@ -789,7 +789,7 @@ Bool GameState::isInSaveDirectory(const AsciiString& path) const
 // ------------------------------------------------------------------------------------------------
 AsciiString GameState::getMapLeafName(const AsciiString& in) const
 {
-	char* p = strrchr(in.str(), '\\');
+	const char* p = strrchr(in.str(), '\\');
 	if (p)
 	{
 		//
@@ -1023,7 +1023,7 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 			blockSize = xferLoad.beginBlock();
 
 			// is this the block of game info data
-			if( stricmp( token.str(), GAME_STATE_BLOCK_STRING ) == 0 )
+			if( _stricmp( token.str(), GAME_STATE_BLOCK_STRING ) == 0 )
 			{
 				GameState tempGameState;
 
@@ -1288,7 +1288,7 @@ void GameState::iterateSaveFiles( IterateSaveFileCallback callback, void *userDa
 
 			// see if there is a ".sav" at end of this filename
 			Char *c = strrchr( item.cFileName, '.' );
-			if( c && stricmp( c, ".sav" ) == 0 )
+			if( c && _stricmp( c, ".sav" ) == 0 )
 			{
 
 				// construction asciistring filename

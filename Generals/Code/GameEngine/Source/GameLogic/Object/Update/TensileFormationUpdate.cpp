@@ -243,10 +243,11 @@ UpdateSleepTime TensileFormationUpdate::update( void )
 			TheAI->pathfinder()->removeWallFromMyFootprint( getObject() );  // Undo createAWallFromMyFootprint.
 
 
+#ifdef HAS_BINK
 			//ALert players of disaster happening
 			if ( ! m_crackSound.isCurrentlyPlaying())
 				m_crackSound.setPlayingHandle(TheAudio->addAudioEvent( &m_crackSound ));
-
+#endif
 		}
 		else
 			return UPDATE_SLEEP(30);

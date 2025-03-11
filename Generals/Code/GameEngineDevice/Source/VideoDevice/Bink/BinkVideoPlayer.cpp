@@ -45,6 +45,7 @@
 //         Includes                                                      
 //----------------------------------------------------------------------------
 
+#ifdef HAS_BINK
 #include "Lib/BaseType.h"
 #include "VideoDevice/Bink/BinkVideoPlayer.h"
 #include "Common/AudioAffect.h"
@@ -192,7 +193,7 @@ VideoStreamInterface* BinkVideoPlayer::createStream( HBINK handle )
 		return NULL;
 	}
 
-	BinkVideoStream *stream = NEW BinkVideoStream;
+	BinkVideoStream *stream = new BinkVideoStream;
 
 	if ( stream )
 	{
@@ -446,3 +447,5 @@ Int		BinkVideoStream::width( void )
 
 
 
+
+#endif

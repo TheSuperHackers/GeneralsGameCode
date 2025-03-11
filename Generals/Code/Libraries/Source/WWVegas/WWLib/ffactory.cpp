@@ -136,7 +136,7 @@ void SimpleFileFactoryClass::Set_Sub_Directory( const char * sub_directory )
 
 void SimpleFileFactoryClass::Prepend_Sub_Directory( const char * sub_directory )
 {
-	int sub_len = strlen(sub_directory);
+	int sub_len = (int)strlen(sub_directory);
 	// Overflow prevention
 	if (sub_len > 1021) {
 		WWASSERT(0);
@@ -171,7 +171,7 @@ void SimpleFileFactoryClass::Prepend_Sub_Directory( const char * sub_directory )
 
 void SimpleFileFactoryClass::Append_Sub_Directory( const char * sub_directory )
 {
-	int sub_len = strlen(sub_directory);
+	int sub_len = (int)strlen(sub_directory);
 	// Overflow prevention
 	if (sub_len > 1022) {
 		WWASSERT(0);

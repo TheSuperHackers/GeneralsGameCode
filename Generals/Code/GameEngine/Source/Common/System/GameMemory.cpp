@@ -1655,7 +1655,8 @@ void* MemoryPool::allocateBlockDoNotZeroImplementation(DECLARE_LITERALSTRING_ARG
 	{
 		// hmm... the current 'free' blob has nothing available. look and see if there
 		// are any other existing blobs with freespace.
-		for (MemoryPoolBlob *blob = m_firstBlob; blob != NULL; blob = blob->getNextInList()) 
+		MemoryPoolBlob* blob = m_firstBlob;
+		for (; blob != NULL; blob = blob->getNextInList()) 
 		{
 			if (blob->hasAnyFreeBlocks())
 			 	break;
@@ -3149,7 +3150,8 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 		DEBUG_LOG(("------------------------------------------\n"));
 		DEBUG_LOG(("Begin Pool Overflow Report\n"));
 		DEBUG_LOG(("------------------------------------------\n"));
-		for (MemoryPool *pool = m_firstPoolInFactory; pool; pool = pool->getNextPoolInList())
+		MemoryPool* pool = m_firstPoolInFactory;
+		for (; pool; pool = pool->getNextPoolInList())
 		{
 			if (pool->getPeakBlockCount() > pool->getInitialBlockCount())
 			{
@@ -3264,7 +3266,7 @@ void* STLSpecialAlloc::allocate(size_t __n)
 	++theLinkTester;
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager before calling global operator new"));
-	return TheDynamicMemoryAllocator->allocateBytes(__n, "STL_"); 
+	return TheDynamicMemoryAllocator->allocateBytes((int)__n, "STL_");
 }
 
 //-----------------------------------------------------------------------------
@@ -3285,7 +3287,7 @@ void *operator new(size_t size)
 	++theLinkTester;
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager before calling global operator new"));
-	return TheDynamicMemoryAllocator->allocateBytes(size, "global operator new");
+	return TheDynamicMemoryAllocator->allocateBytes((int)size, "global operator new");
 }
 
 //-----------------------------------------------------------------------------
@@ -3297,7 +3299,7 @@ void *operator new[](size_t size)
 	++theLinkTester;
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager before calling global operator new"));
-	return TheDynamicMemoryAllocator->allocateBytes(size, "global operator new[]");
+	return TheDynamicMemoryAllocator->allocateBytes((int)size, "global operator new[]");
 }
  
 //-----------------------------------------------------------------------------
@@ -3334,7 +3336,7 @@ void* operator new(size_t size, const char * fname, int)
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager before calling global operator new"));
 #ifdef MEMORYPOOL_DEBUG
-	return TheDynamicMemoryAllocator->allocateBytesImplementation(size, fname);
+	return TheDynamicMemoryAllocator->allocateBytesImplementation((int)size, fname);
 #else
 	return TheDynamicMemoryAllocator->allocateBytesImplementation(size);
 #endif
@@ -3362,7 +3364,7 @@ void* operator new[](size_t size, const char * fname, int)
 	preMainInitMemoryManager();
 	DEBUG_ASSERTCRASH(TheDynamicMemoryAllocator != NULL, ("must init memory manager before calling global operator new"));
 #ifdef MEMORYPOOL_DEBUG
-	return TheDynamicMemoryAllocator->allocateBytesImplementation(size, fname);
+	return TheDynamicMemoryAllocator->allocateBytesImplementation((int)size, fname);
 #else
 	return TheDynamicMemoryAllocator->allocateBytesImplementation(size);
 #endif
@@ -3461,7 +3463,7 @@ void initMemoryManager()
 	linktest = new char[8];
 	delete [] linktest;
 
-	linktest = new char("",1);
+	linktest = new char(1);
 	delete linktest;
 
 #ifdef MEMORYPOOL_OVERRIDE_MALLOC

@@ -7,7 +7,7 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#include "afxres.h"
+#include "windows.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -61,7 +61,7 @@ IDI_ApplicationIcon     ICON    DISCARDABLE     "Generals.ico"
 // Bitmap
 //
 
-IDB_LOAD_SCREEN         BITMAP  DISCARDABLE     "Install_Final.bmp"
+IDB_LOAD_SCREEN         BITMAP  DISCARDABLE     "Install.bmp"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 

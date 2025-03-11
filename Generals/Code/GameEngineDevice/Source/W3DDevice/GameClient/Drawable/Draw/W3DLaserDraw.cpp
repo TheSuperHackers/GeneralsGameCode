@@ -151,9 +151,9 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 #endif
 
 	//Allocate an array of lines equal to the number of beams * segments
-	m_line3D = NEW SegmentedLineClass *[ data->m_numBeams * data->m_segments ];
+	m_line3D = new SegmentedLineClass *[ data->m_numBeams * data->m_segments ];
 
-	for( int segment = 0; segment < data->m_segments; segment++ )
+	for( int segment = 0; segment < (int)data->m_segments; segment++ )
 	{
 		//We don't care about segment positioning yet until we actually set the position
 		
@@ -186,7 +186,7 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 				blue		= innerBlue								+ scale * (outerBlue - innerBlue) * innerAlpha;
 			}
 
-			m_line3D[ index ] = NEW SegmentedLineClass;
+			m_line3D[ index ] = new SegmentedLineClass;
 			
 			SegmentedLineClass *line = m_line3D[ index ];
 			if( line )
@@ -222,7 +222,7 @@ W3DLaserDraw::~W3DLaserDraw( void )
 {
 	const W3DLaserDrawModuleData *data = getW3DLaserDrawModuleData();
 
-	for( int i = 0; i < data->m_numBeams * data->m_segments; i++ )
+	for( uint32_t i = 0; i < data->m_numBeams * data->m_segments; i++ )
 	{
 
 		// remove line from scene
@@ -269,7 +269,7 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 
 		Vector3 laserPoints[ 2 ];
 
-		for( int segment = 0; segment < data->m_segments; segment++ )
+		for( uint32_t segment = 0; segment < data->m_segments; segment++ )
 		{
 			if( data->m_arcHeight > 0.0f && data->m_segments > 1 )
 			{

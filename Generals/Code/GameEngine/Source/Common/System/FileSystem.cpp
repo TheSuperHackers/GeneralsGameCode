@@ -316,9 +316,11 @@ void FileSystem::loadMusicFilesFromCD()
 //============================================================================
 void FileSystem::unloadMusicFilesFromCD()
 {
+#ifdef HAS_BINK
 	if (!(TheAudio && TheAudio->isMusicPlayingFromCD())) {
 		return;
 	}
+#endif
 
 	TheArchiveFileSystem->closeArchiveFile( MUSIC_BIG );
 }

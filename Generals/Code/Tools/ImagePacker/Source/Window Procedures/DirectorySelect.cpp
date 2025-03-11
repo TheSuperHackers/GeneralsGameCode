@@ -84,7 +84,7 @@ static void selectDrive( HWND dialog )
 	sprintf( string, "[-%c-]", drive );
 
 	// select the string in the combo
-	Int index;
+	LRESULT index;
 	index = SendDlgItemMessage( dialog, COMBO_DRIVE, 
 															CB_FINDSTRINGEXACT, -1, (LPARAM)string );
 	if( index != CB_ERR )
@@ -156,7 +156,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 				// --------------------------------------------------------------------
 				case BUTTON_ADD:
 				{
-					Int count;
+					LRESULT count;
 					char text[ _MAX_PATH ];
 					char toAdd[ _MAX_PATH ];
 
@@ -164,7 +164,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 					count = SendDlgItemMessage( hWndDialog, LIST_DIR, LB_GETCOUNT, 0, 0 );
 
 					// for each selected item add that directory
-					for( Int i = 0; i < count; i++ )
+					for(LRESULT i = 0; i < count; i++ )
 					{
 
 						// is this item selected
@@ -176,7 +176,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 																	i, (LPARAM)text );
 
 							// remove the brackets on the text
-							Int j, len = strlen( text );
+							Int j, len = (int)strlen( text );
 							for( j = 0; j < len - 1; j++ )
 								text[ j ] = text[ j + 1 ];
 							text[ len - 2 ] = '\0';
@@ -236,7 +236,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 
 					if( notifyCode == CBN_SELCHANGE )
 					{
-						Int selected;
+						LRESULT selected;
 
 						// get selected index
 						selected = SendDlgItemMessage( hWndDialog, COMBO_DRIVE, 
@@ -289,7 +289,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 
 					if( notifyCode == LBN_SELCHANGE )
 					{
-						Int selCount;
+						LRESULT selCount;
 						Bool enable;
 
 						// get selected count
@@ -330,7 +330,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 					}  // end if
 					if( notifyCode == LBN_DBLCLK )
 					{
-						Int selected;
+						LRESULT selected;
 						char text[ _MAX_PATH ];
 										
 						// get currently selected item
@@ -342,7 +342,7 @@ BOOL CALLBACK DirectorySelectProc( HWND hWndDialog, UINT message,
 																selected, (LPARAM)text );
 
 						// strip the backets off the directory listing
-						Int len = strlen( text );
+						Int len = (int)strlen( text );
 						for( Int i = 0; i < len - 1; i++ )
 							text[ i ] = text[ i + 1 ];
 						text[ len - 2 ] = '\0';

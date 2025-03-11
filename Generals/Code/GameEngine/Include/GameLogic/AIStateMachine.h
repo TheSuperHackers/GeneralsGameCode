@@ -145,7 +145,7 @@ public:
 	void setGoalPath( const std::vector<Coord3D>* path );
 	void addToGoalPath( const Coord3D *pathPoint );
 	const Coord3D *getGoalPathPosition( Int i ) const;		///< return path position at index "i"
-	Int getGoalPathSize() const { return m_goalPath.size(); }
+	Int getGoalPathSize() const { return (int)m_goalPath.size(); }
 
 
 	void setGoalWaypoint( const Waypoint *way );		///< move toward this waypoint, continue if connected

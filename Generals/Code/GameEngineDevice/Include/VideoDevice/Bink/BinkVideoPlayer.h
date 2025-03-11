@@ -44,6 +44,7 @@
 #ifndef __VIDEODEVICE_BINKDEVICE_H_
 #define __VIDEODEVICE_BINKDEVICE_H_
 
+#ifdef HAS_BINK
 
 //----------------------------------------------------------------------------
 //           Includes                                                      
@@ -138,6 +139,6 @@ class BinkVideoPlayer : public VideoPlayer
 //----------------------------------------------------------------------------
 //           Inlining                                                       
 //----------------------------------------------------------------------------
-
+#endif
 
 #endif // __VIDEODEVICE_BINKDEVICE_H_

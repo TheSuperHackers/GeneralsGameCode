@@ -301,7 +301,7 @@ TagBlockHandle *TagBlockFile::Create_Tag(const char *tagname)
 	// Write out the block header and the tag.
 	Seek(index->Get_BlockOffset(), SEEK_SET);
 	Write(blockheader, sizeof(*blockheader));
-	Write(tagname, strlen(tagname) + 1);
+	Write(tagname, (int)strlen(tagname) + 1);
 
 	// Now that we have all that we need, create the 
 	CreateHandle = W3DNEW TagBlockHandle(this, index, blockheader);
@@ -471,7 +471,7 @@ TagBlockIndex *TagBlockFile::Find_Block(const char *tagname)
 			// Is it a match?
          assert(name != NULL);
          assert(tagname != NULL);
-			if (!strcmpi(name, tagname)) {
+			if (!_strcmpi(name, tagname)) {
 				return(cur);
 			}
 		}

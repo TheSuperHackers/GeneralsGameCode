@@ -138,7 +138,7 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 
 	Int idx, listSize;
 
-	listSize = d->m_fx.size();
+	listSize = (int)d->m_fx.size();
 	if (listSize > 0)
 	{
 		idx = GameLogicRandomValue(0, listSize-1);
@@ -148,7 +148,7 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 		FXList::doFXObj(fxl, getObject(), NULL);
 	}
 
-	listSize = d->m_ocls.size();
+	listSize = (int)d->m_ocls.size();
 	if (listSize > 0)
 	{
 		idx = GameLogicRandomValue(0, listSize-1);
@@ -158,7 +158,7 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 		ObjectCreationList::create(ocl, getObject(), NULL);
 	}
 
-	listSize = d->m_weapons.size();
+	listSize = (int)d->m_weapons.size();
 	if (listSize > 0)
 	{
 		idx = GameLogicRandomValue(0, listSize-1);

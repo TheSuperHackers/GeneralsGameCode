@@ -57,7 +57,7 @@
 #include <coltest.h>
 #include <rinfo.h>
 #include <camera.h>
-#include <d3dx8core.h>
+#include <D3dx9core.h>
 #include "Common/GlobalData.h"
 #include "Common/PerfTimer.h"
 
@@ -1096,7 +1096,7 @@ void HeightMapRenderObjClass::doPartialUpdate(const IRegion2D &partialRange, Wor
 
 	if (!m_extraBlendTilePositions)
 	{	//Need to allocate memory
-		m_extraBlendTilePositions = NEW Int[DEFAULT_MAX_MAP_EXTRABLEND_TILES];
+		m_extraBlendTilePositions = new Int[DEFAULT_MAX_MAP_EXTRABLEND_TILES];
 		m_extraBlendTilePositionsSize = DEFAULT_MAX_MAP_EXTRABLEND_TILES;
 	}
 	
@@ -1127,7 +1127,7 @@ void HeightMapRenderObjClass::doPartialUpdate(const IRegion2D &partialRange, Wor
 			if (htMap->getExtraAlphaUVData(i,j,U,V,alpha,&flipState, &cliffState))
 			{	if (m_numExtraBlendTiles >= m_extraBlendTilePositionsSize)
 				{	//no more room to store extra blend tiles so enlarge the buffer.
-					Int *tempPositions=NEW Int[m_extraBlendTilePositionsSize+512];
+					Int *tempPositions= new Int[m_extraBlendTilePositionsSize+512];
 					memcpy(tempPositions, m_extraBlendTilePositions, m_extraBlendTilePositionsSize*sizeof(Int));
 					delete [] m_extraBlendTilePositions;
 					//enlarge by more tiles to reduce memory trashing
@@ -1339,20 +1339,20 @@ HeightMapRenderObjClass::HeightMapRenderObjClass(void)
 	m_disableTextures = false;
 	TheTerrainRenderObject = this;
 	m_treeBuffer = NULL;
-	m_treeBuffer = NEW W3DTreeBuffer;
+	m_treeBuffer = new W3DTreeBuffer;
 	m_bibBuffer = NULL;
-	m_bibBuffer = NEW W3DBibBuffer;
+	m_bibBuffer = new W3DBibBuffer;
 	m_curImpassableSlope = 45.0f;	// default to 45 degrees.
 #ifdef TEST_CUSTOM_EDGING
 	m_customEdging = NULL;
-	m_customEdging = NEW W3DCustomEdging;
+	m_customEdging = new W3DCustomEdging;
 #endif
 	m_bridgeBuffer = NULL;
-	m_bridgeBuffer = NEW W3DBridgeBuffer;
-	m_waypointBuffer = NEW W3DWaypointBuffer;
+	m_bridgeBuffer = new W3DBridgeBuffer;
+	m_waypointBuffer = new W3DWaypointBuffer;
 #ifdef DO_ROADS
 	m_roadBuffer = NULL;
-	m_roadBuffer = NEW W3DRoadBuffer;
+	m_roadBuffer = new W3DRoadBuffer;
 #endif
 #ifdef DO_SCORCH
 	m_vertexScorch = NULL;
@@ -1362,11 +1362,11 @@ HeightMapRenderObjClass::HeightMapRenderObjClass(void)
 #endif
 #if defined(_DEBUG) || defined(_INTERNAL)
 	if (TheGlobalData->m_shroudOn)
-		m_shroud = NEW W3DShroud;
+		m_shroud = new W3DShroud;
 	else
 		m_shroud = NULL;
 #else
-	m_shroud = NEW W3DShroud;
+	m_shroud = new W3DShroud;
 #endif
 	DX8Wrapper::SetCleanupHook(this);
 }
@@ -1562,7 +1562,7 @@ void HeightMapRenderObjClass::updateMacroTexture(AsciiString textureName)
 	// Release texture.
 	REF_PTR_RELEASE(m_stageThreeTexture);
 	// Reallocate texture.
-	m_stageThreeTexture=NEW LightMapTerrainTextureClass(m_macroTextureName);	
+	m_stageThreeTexture=new LightMapTerrainTextureClass(m_macroTextureName);	
 }
 
 //=============================================================================
@@ -2438,7 +2438,7 @@ void HeightMapRenderObjClass::updateShorelineTiles(Int minX, Int minY, Int maxX,
 
 	if (!m_shoreLineTilePositions)
 	{	//Need to allocate memory
-		m_shoreLineTilePositions = NEW shoreLineTileInfo[DEFAULT_MAX_MAP_SHORELINE_TILES];
+		m_shoreLineTilePositions = new shoreLineTileInfo[DEFAULT_MAX_MAP_SHORELINE_TILES];
 		m_shoreLineTilePositionsSize = DEFAULT_MAX_MAP_SHORELINE_TILES;
 	}
 	
@@ -2446,7 +2446,8 @@ void HeightMapRenderObjClass::updateShorelineTiles(Int minX, Int minY, Int maxX,
 	//over the same tile and require an extra render pass.
 
 	//First remove any existing extra blend tiles within this partial region
-	for (Int j=0; j<m_numShoreLineTiles; j++)
+	Int j = 0;
+	for (; j<m_numShoreLineTiles; j++)
 	{	Int x = m_shoreLineTilePositions[j].m_xy & 0xffff;
 		Int y = m_shoreLineTilePositions[j].m_xy >> 16;
 		if (x >= minX && x < maxX &&
@@ -2488,7 +2489,7 @@ void HeightMapRenderObjClass::updateShorelineTiles(Int minX, Int minY, Int maxX,
 				{	//add tile to set that needs shoreline blending.
 					if (m_numShoreLineTiles >= m_shoreLineTilePositionsSize)
 					{	//no more room to store extra blend tiles so enlarge the buffer.
-						shoreLineTileInfo *tempPositions=NEW shoreLineTileInfo[m_shoreLineTilePositionsSize+512];
+						shoreLineTileInfo *tempPositions=new shoreLineTileInfo[m_shoreLineTilePositionsSize+512];
 						memcpy(tempPositions, m_shoreLineTilePositions, m_shoreLineTilePositionsSize*sizeof(shoreLineTileInfo));
 						delete [] m_shoreLineTilePositions;
 						//enlarge by more tiles to reduce memory trashing
@@ -2621,7 +2622,7 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 
 		if (!m_extraBlendTilePositions)
 		{	//Need to allocate memory
-			m_extraBlendTilePositions = NEW Int[DEFAULT_MAX_MAP_EXTRABLEND_TILES];
+			m_extraBlendTilePositions = new Int[DEFAULT_MAX_MAP_EXTRABLEND_TILES];
 			m_extraBlendTilePositionsSize = DEFAULT_MAX_MAP_EXTRABLEND_TILES;
 		}
 		
@@ -2636,7 +2637,7 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 				if (pMap->getExtraAlphaUVData(i,j,U,V,alpha,&flipState, &cliffState))
 				{	if (m_numExtraBlendTiles >= m_extraBlendTilePositionsSize)
 					{	//no more room to store extra blend tiles so enlarge the buffer.
-						Int *tempPositions=NEW Int[m_extraBlendTilePositionsSize+512];
+						Int *tempPositions=new Int[m_extraBlendTilePositionsSize+512];
 						memcpy(tempPositions, m_extraBlendTilePositions, m_extraBlendTilePositionsSize*sizeof(Int));
 						delete [] m_extraBlendTilePositions;
 						//enlarge by more tiles to reduce memory trashing
@@ -2675,9 +2676,9 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 		//allocate a new one.
 		freeMapResources();	//free old data and ib/vb
 		REF_PTR_SET(m_map,pMap);	//update our heightmap pointer in case it changed since last call.
-		m_stageTwoTexture=NEW CloudMapTerrainTextureClass;
-		m_stageThreeTexture=NEW LightMapTerrainTextureClass(m_macroTextureName);
-		m_destAlphaTexture=MSGNEW("TextureClass") TextureClass(256,1,WW3D_FORMAT_A8R8G8B8,TextureClass::MIP_LEVELS_1);
+		m_stageTwoTexture=new CloudMapTerrainTextureClass;
+		m_stageThreeTexture=new LightMapTerrainTextureClass(m_macroTextureName);
+		m_destAlphaTexture= new TextureClass(256,1,WW3D_FORMAT_A8R8G8B8,TextureClass::MIP_LEVELS_1);
 		initDestAlphaLUT();
 #ifdef DO_SCORCH
 		allocateScorchBuffers();
@@ -2726,8 +2727,8 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 		m_numVertexBufferTiles=m_numVBTilesX*m_numVBTilesY;
 		m_x=x;
 		m_y=y;
-		m_vertexBufferTiles = NEW DX8VertexBufferClass*[m_numVertexBufferTiles];
-		m_vertexBufferBackup = NEW char *[m_numVertexBufferTiles];
+		m_vertexBufferTiles = new DX8VertexBufferClass*[m_numVertexBufferTiles];
+		m_vertexBufferBackup = new char *[m_numVertexBufferTiles];
 
 		Int numVertex = VERTEX_BUFFER_TILE_LENGTH*2*VERTEX_BUFFER_TILE_LENGTH*2;
 
@@ -2736,7 +2737,7 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 		DX8Wrapper::_Get_D3D_Device8()->GetCreationParameters(&parms);
 		Bool softwareVertexProcessing = 0!=(parms.BehaviorFlags&D3DCREATE_SOFTWARE_VERTEXPROCESSING);
 		if (m_xformedVertexBuffer == NULL && softwareVertexProcessing) {
-			m_xformedVertexBuffer = NEW IDirect3DVertexBuffer8*[m_numVertexBufferTiles];
+			m_xformedVertexBuffer = new IDirect3DVertexBuffer9*[m_numVertexBufferTiles];
 		}
 #endif
 
@@ -2746,7 +2747,7 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 #else
 			m_vertexBufferTiles[i]=NEW_REF(DX8VertexBufferClass,(DX8_VERTEX_FORMAT,numVertex,DX8VertexBufferClass::USAGE_DEFAULT));
 #endif
-			m_vertexBufferBackup[i] = NEW char[numVertex*sizeof(VERTEX_FORMAT)];
+			m_vertexBufferBackup[i] = new char[numVertex*sizeof(VERTEX_FORMAT)];
 #ifdef PRE_TRANSFORM_VERTEX
 			if (m_xformedVertexBuffer) {
 				DX8Wrapper::_Get_D3D_Device8()->CreateVertexBuffer(
@@ -2761,7 +2762,7 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 
 		//go with a preset material for now.
 #ifdef USE_NORMALS
-		m_vertexMaterialClass= NEW VertexMaterialClass();
+		m_vertexMaterialClass= new VertexMaterialClass();
 		m_vertexMaterialClass->Set_Shininess(0.0);
 		m_vertexMaterialClass->Set_Ambient(1,1,1);		  
 		m_vertexMaterialClass->Set_Diffuse(1,1,1);
@@ -2802,7 +2803,7 @@ void HeightMapRenderObjClass::allocateScorchBuffers(void)
 {
 	m_vertexScorch=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZDUV1,MAX_SCORCH_VERTEX,DX8VertexBufferClass::USAGE_DEFAULT));
 	m_indexScorch=NEW_REF(DX8IndexBufferClass,(MAX_SCORCH_INDEX));
-	m_scorchTexture=NEW ScorchTextureClass;
+	m_scorchTexture=new ScorchTextureClass;
 	m_scorchesInBuffer = 0; // If we just allocated the buffers, we got no scorches in the buffer.
 	m_curNumScorchVertices=0;
 	m_curNumScorchIndices=0;
@@ -3975,7 +3976,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 						0,
 						m_xformedVertexBuffer[j*m_numVBTilesX+i],
 						D3DXGetFVFVertexSize(D3DFVF_XYZRHW |D3DFVF_DIFFUSE|D3DFVF_TEX2));
-					DX8Wrapper::_Get_D3D_Device8()->SetVertexShader(D3DFVF_XYZRHW |D3DFVF_DIFFUSE|D3DFVF_TEX2);
+					DX8Wrapper::_Get_D3D_Device8()->SetFVF(D3DFVF_XYZRHW |D3DFVF_DIFFUSE|D3DFVF_TEX2);
 				}
 #endif				
 				if (Is_Hidden() == 0) {
@@ -4250,7 +4251,7 @@ void HeightMapRenderObjClass::renderTerrainPass(CameraClass *pCamera)
 					0,
 					m_xformedVertexBuffer[j*m_numVBTilesX+i],
 					D3DXGetFVFVertexSize(D3DFVF_XYZRHW |D3DFVF_DIFFUSE|D3DFVF_TEX2));
-				DX8Wrapper::_Get_D3D_Device8()->SetVertexShader(D3DFVF_XYZRHW |D3DFVF_DIFFUSE|D3DFVF_TEX2);
+				DX8Wrapper::_Get_D3D_Device8()->SetFVF(D3DFVF_XYZRHW |D3DFVF_DIFFUSE|D3DFVF_TEX2);
 			}
 #endif				
 			if (Is_Hidden() == 0) {

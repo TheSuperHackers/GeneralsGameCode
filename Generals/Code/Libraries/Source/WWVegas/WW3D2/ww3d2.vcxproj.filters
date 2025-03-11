@@ -1,0 +1,711 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{c4b318e5-3525-492e-9d66-cb1eb2d8a4b2}</UniqueIdentifier>
+      <Extensions>cpp;c</Extensions>
+    </Filter>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{aab1a90c-2da5-43bf-baa5-0bc795556b6a}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+    <Filter Include="RequiredAssets">
+      <UniqueIdentifier>{a433b707-4b45-4b00-8f30-606be516255c}</UniqueIdentifier>
+      <Extensions>*.tga;*.w3d</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="aabtree.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="aabtreebuilder.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="agg_def.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="animobj.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="assetmgr.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="bitmaphandler.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="bmp2d.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="boxrobj.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="bwrender.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="collect.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="coltest.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="composite.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="dazzle.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ddsfile.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="decalmsh.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="decalsys.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="distlod.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="dx8caps.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="dx8fvf.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="dx8indexbuffer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="dx8polygonrenderer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="dx8renderer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="dx8texman.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="dx8vertexbuffer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="dx8webbrowser.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="dx8wrapper.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="dynamesh.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="font3d.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="formconv.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="FramGrab.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="hanim.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="hanimmgr.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="hcanim.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="hlod.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="hmdldef.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="hmorphanim.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="hrawanim.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="htree.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="htreemgr.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="intersec.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="layer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="light.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="lightenvironment.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="line3d.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="mapper.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="matinfo.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="matpass.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="matrixmapper.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="mesh.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="meshbuild.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="meshdam.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="meshgeometry.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="meshmatdesc.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="meshmdl.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="meshmdlio.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="metalmap.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="missingtexture.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="motchan.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="nullrobj.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="part_buf.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="part_emt.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="part_ldr.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="pivot.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="pointgr.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="polyinfo.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="predlod.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="prim_anim.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="projector.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="proto.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="render2d.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="render2dsentence.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="renderobjectrecycler.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="rendobj.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="rinfo.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ringobj.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="scene.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="segline.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="seglinerenderer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="shader.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="shattersystem.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="snappts.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="sortingrenderer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="soundrobj.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="sphereobj.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="statistics.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="streak.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="streakRender.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="stripoptimizer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="surfaceclass.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="texfcach.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="texproject.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="texture.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="textureloader.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="texturethumbnail.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="txt.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="vertmaterial.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="visrasterizer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="w3d_dep.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="w3d_util.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="w3dexclusionlist.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ww3d.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ww3dformat.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="aabtree.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="aabtreebuilder.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="agg_def.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="animobj.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="assetmgr.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="bitmaphandler.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="bmp2d.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="boxrobj.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="bwrender.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="collect.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="colorspace.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="coltest.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="coltype.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="composite.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="dazzle.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ddsfile.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="decalmsh.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="decalsys.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="distlod.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="dllist.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="dx8caps.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="dx8fvf.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="dx8indexbuffer.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="dx8list.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="dx8polygonrenderer.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="dx8renderer.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="dx8texman.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="dx8vertexbuffer.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="dx8webbrowser.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="dx8wrapper.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="dynamesh.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="font3d.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="formconv.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="framgrab.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="hanim.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="hanimmgr.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="hcanim.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="hlod.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="hmdldef.H">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="hmorphanim.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="hrawanim.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="htree.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="htreemgr.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="intersec.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="inttest.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="layer.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="light.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="lightenvironment.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="line3d.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="mapper.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="matinfo.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="matpass.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="matrixmapper.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="meshbuild.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="meshdam.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="meshgeometry.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="meshmatdesc.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="meshmdl.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="metalmap.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="missingtexture.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="motchan.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="nullrobj.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="part_buf.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="part_emt.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="part_ldr.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="pivot.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="pointgr.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="polyinfo.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="predlod.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="prim_anim.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="projector.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="proto.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="proxy.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="rddesc.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="render2d.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="render2dsentence.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="renderobjectrecycler.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="rendobj.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="rinfo.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ringobj.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="robjlist.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="scene.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="segline.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="seglinerenderer.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="shader.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="shattersystem.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="snapPts.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="sortingrenderer.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="soundrobj.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="sphereobj.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="statistics.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="streak.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="streakRender.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="stripoptimizer.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="surfaceclass.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="texfcach.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="texproject.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="texture.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="textureloader.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="texturethumbnail.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="txt.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="vertmaterial.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="visrasterizer.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="w3d_dep.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="w3d_file.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="w3d_obsolete.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="w3d_util.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="w3derr.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="w3dexclusionlist.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ww3d.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ww3dformat.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ww3dids.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ww3dtrig.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="RequiredAssets\AddProjectorGradient.tga">
+      <Filter>RequiredAssets</Filter>
+    </Image>
+    <Image Include="RequiredAssets\MultProjectorGradient.tga">
+      <Filter>RequiredAssets</Filter>
+    </Image>
+    <Image Include="RequiredAssets\w3d_missing_texture.tga">
+      <Filter>RequiredAssets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="DX8 Rationalizations.txt" />
+    <Text Include="DX8 Status.txt" />
+    <Text Include="DX8ToolModifications.txt" />
+    <Text Include="MAPPERS.TXT" />
+    <Text Include="RenderObjectGuide.txt" />
+    <Text Include="State Management.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="intersec.inl">
+      <Filter>Headers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="RequiredAssets\Dazzle.INI">
+      <Filter>RequiredAssets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="RequiredAssets\ShatterAVel.tbl">
+      <Filter>RequiredAssets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="RequiredAssets\ShatterPlanes0.w3d">
+      <Filter>RequiredAssets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="RequiredAssets\ShatterVel.tbl">
+      <Filter>RequiredAssets</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

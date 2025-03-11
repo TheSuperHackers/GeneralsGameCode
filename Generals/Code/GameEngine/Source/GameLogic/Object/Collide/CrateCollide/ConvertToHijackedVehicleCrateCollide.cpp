@@ -174,7 +174,9 @@ Bool ConvertToHijackedVehicleCrateCollide::executeCrateBehavior( Object *other )
 	}
 
 	AudioEventRTS hijackEvent( "HijackDriver", obj->getID() );
+#ifdef HAS_BINK
 	TheAudio->addAudioEvent( &hijackEvent );
+#endif
 
 	//In order to make things easier for the designers, we are going to transfer the hijacker's name
 	//to the car... so the designer can control the car with their scripts.

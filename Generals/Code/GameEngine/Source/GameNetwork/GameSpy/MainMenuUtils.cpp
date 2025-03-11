@@ -43,7 +43,7 @@
 
 #include "GameClient/ShellHooks.h"
 
-#include "GameSpy/ghttp/ghttp.h"
+#include "ghttp/ghttp.h"
 
 #include "GameNetwork/DownloadManager.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
@@ -316,9 +316,9 @@ static void queuePatch(Bool mandatory, AsciiString downloadURL)
 ///////////////////////////////////////////////////////////////////////////////////////
 
 static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
-															char * buffer, int bufferLen, void * param )
+															char * buffer, GHTTPByteCount bufferLen, char* headers, void * param )
 {
-	Int run = (Int)param;
+	Int run = (Int)(intptr_t)param;
 	if (run != timeThroughOnline)
 	{
 		DEBUG_CRASH(("Old callback being called!"));
@@ -354,11 +354,20 @@ static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
-
+/*
+typedef GHTTPBool (* ghttpCompletedCallback)(
+	GHTTPRequest	request,     // The request.
+	GHTTPResult		result,      // The result (success or an error).
+	char			* buffer,    // The file's bytes (only valid if ghttpGetFile[Ex] was used).
+	GHTTPByteCount	bufferLen,   // The file's length.
+	char			* headers,
+	void			* param      // User-data.
+);
+*/
 static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
-																char * buffer, int bufferLen, void * param )
+	char* buffer, GHTTPByteCount bufferLen, char* headers, void* param)
 {
-	Int run = (Int)param;
+	Int run = (Int)(intptr_t)param;
 	if (run != timeThroughOnline)
 	{
 		DEBUG_CRASH(("Old callback being called!"));
@@ -421,9 +430,9 @@ static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
 ///////////////////////////////////////////////////////////////////////////////////////
 
 static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
-																		char * buffer, int bufferLen, void * param )
+																		char * buffer, GHTTPByteCount bufferLen, char* headers, void * param )
 {
-	Int run = (Int)param;
+	Int run = (Int)(intptr_t)param;
 	if (run != timeThroughOnline)
 	{
 		DEBUG_CRASH(("Old callback being called!"));
@@ -508,9 +517,9 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool gamePatchCheckCallback( GHTTPRequest request, GHTTPResult result, char * buffer, int bufferLen, void * param )
+static GHTTPBool gamePatchCheckCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, char* headers, void * param )
 {
-	Int run = (Int)param;
+	Int run = (Int)(intptr_t)param;
 	if (run != timeThroughOnline)
 	{
 		DEBUG_CRASH(("Old callback being called!"));
@@ -598,7 +607,8 @@ void CancelPatchCheckCallback( void )
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result, char * buffer, int bufferLen, void * param )
+static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen,
+	char* headers, void * param )
 {
 	DEBUG_LOG(("overallStatsCallback() - Result=%d, len=%d\n", result, bufferLen));
 	if (result != GHTTPSuccess)
@@ -680,7 +690,17 @@ static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result,
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool numPlayersOnlineCallback( GHTTPRequest request, GHTTPResult result, char * buffer, int bufferLen, void * param )
+/*
+typedef GHTTPBool (* ghttpCompletedCallback)(
+	GHTTPRequest	request,     // The request.
+	GHTTPResult		result,      // The result (success or an error).
+	char			* buffer,    // The file's bytes (only valid if ghttpGetFile[Ex] was used).
+	GHTTPByteCount	bufferLen,   // The file's length.
+	char			* headers,
+	void			* param      // User-data.
+);
+*/
+static GHTTPBool numPlayersOnlineCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, char* headers, void * param )
 {
 	DEBUG_LOG(("numPlayersOnlineCallback() - Result=%d, buffer=[%s], len=%d\n", result, buffer, bufferLen));
 	if (result != GHTTPSuccess)
@@ -880,10 +900,10 @@ static void reallyStartPatchCheck( void )
 	DEBUG_LOG(("Map patch check: [%s]\n", mapURL.c_str()));
 	DEBUG_LOG(("Config: [%s]\n", configURL.c_str()));
 	DEBUG_LOG(("MOTD: [%s]\n", motdURL.c_str()));
-	ghttpGet(gameURL.c_str(), GHTTPFalse, gamePatchCheckCallback, (void *)timeThroughOnline);
-	ghttpGet(mapURL.c_str(), GHTTPFalse, gamePatchCheckCallback, (void *)timeThroughOnline);
-	ghttpHead(configURL.c_str(), GHTTPFalse, configHeadCallback, (void *)timeThroughOnline);
-	ghttpGet(motdURL.c_str(), GHTTPFalse, motdCallback, (void *)timeThroughOnline);
+	ghttpGet(gameURL.c_str(), GHTTPFalse, gamePatchCheckCallback, (void *)(intptr_t)timeThroughOnline);
+	ghttpGet(mapURL.c_str(), GHTTPFalse, gamePatchCheckCallback, (void *)(intptr_t)timeThroughOnline);
+	ghttpHead(configURL.c_str(), GHTTPFalse, configHeadCallback, (void *)(intptr_t)timeThroughOnline);
+	ghttpGet(motdURL.c_str(), GHTTPFalse, motdCallback, (void *)(intptr_t)timeThroughOnline);
 	
 	// check total game stats
 	CheckOverallStats();

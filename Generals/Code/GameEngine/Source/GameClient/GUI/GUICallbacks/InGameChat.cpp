@@ -178,9 +178,11 @@ Bool handleInGameSlashCommands(UnicodeString uText)
 
 	if (token == "host")
 	{
+#if 0 //No idea what getQR2HostingStatus is supposed to come from
 		UnicodeString s;
 		s.format(L"Hosting qr2:%d thread:%d", getQR2HostingStatus(), isThreadHosting);
 		TheInGameUI->message(s);
+#endif
 		return TRUE; // was a slash command
 	}
 

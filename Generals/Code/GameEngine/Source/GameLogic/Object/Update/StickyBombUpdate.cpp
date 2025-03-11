@@ -185,9 +185,11 @@ UpdateSleepTime StickyBombUpdate::update( void )
 		m_nextPingFrame += LOGICFRAMES_PER_SECOND;
 
 		//Play the "ping" sound.
+#ifdef HAS_BINK
 		AudioEventRTS sound = *self->getTemplate()->getPerUnitSound( "UnitBombPing" );
 		sound.setObjectID( self->getID() );
 		TheAudio->addAudioEvent( &sound );
+#endif
 	}
 
 	return UPDATE_SLEEP_NONE;

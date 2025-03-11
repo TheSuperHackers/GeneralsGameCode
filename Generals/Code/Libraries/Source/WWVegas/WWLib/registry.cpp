@@ -52,7 +52,7 @@ RegistryClass::RegistryClass( const char * sub_key ) :
 			0, NULL, 0, KEY_ALL_ACCESS, NULL,
 			&key, &disposition ) == ERROR_SUCCESS) {
 		IsValid = true;
-		Key = (int)key;
+		Key = (intptr_t)key;
 	}
 }
 
@@ -196,7 +196,7 @@ char *RegistryClass::Get_String( const char * name, char *value, int value_size,
 void	RegistryClass::Set_String( const char * name, const char *value )
 {
 	assert( IsValid );
-   int size = strlen( value ) + 1; // must include NULL
+   int size = (int)strlen( value ) + 1; // must include NULL
 	if (::RegSetValueEx( (HKEY)Key, name, 0, REG_SZ, (LPBYTE)value, size ) != 
 		ERROR_SUCCESS ) {
 	}
@@ -281,7 +281,7 @@ void	RegistryClass::Set_String( const WCHAR * name, const WCHAR *value )
    //
 	//	Determine the size
 	//
-	int size = wcslen( value ) + 1;
+	int size = (int)wcslen( value ) + 1;
 	size		= size * 2;
 	
 	//

@@ -205,7 +205,7 @@ static Bool parseBitFlag( const char *flagString, UnsignedInt *bits,
 	for( i = 0, c = flagList; *c; i++, c++ )
 	{
 
-		if( !stricmp( *c, flagString ) )
+		if( !_stricmp( *c, flagString ) )
 		{
 			*bits |= (1 << i);
 			return TRUE;
@@ -839,7 +839,7 @@ static Bool parseListboxData( char *token, WinInstanceData *instData,
 
 	// "SCROLLIFATEND" (optional)
 	c = strtok( NULL, seps );  // label
-	if ( !stricmp(c, "ScrollIfAtEnd") )
+	if ( !_stricmp(c, "ScrollIfAtEnd") )
 	{
 		c = strtok( NULL, seps );  // value
 		scanBool( c, listData->scrollIfAtEnd );
@@ -1585,15 +1585,15 @@ static void setWindowText( GameWindow *window, AsciiString textLabel )
 	//Translate the text
 	theText = TheGameText->fetch( (char *)textLabel.str());
 	// set the text in the window based on what it is
-	if( BitTest( window->winGetStyle(), GWS_PUSH_BUTTON ) )
+	if( BitTestWW( window->winGetStyle(), GWS_PUSH_BUTTON ) )
 		GadgetButtonSetText( window, theText );
-	else if( BitTest( window->winGetStyle(), GWS_RADIO_BUTTON ) )
+	else if( BitTestWW( window->winGetStyle(), GWS_RADIO_BUTTON ) )
 		GadgetRadioSetText( window, theText );
-	else if( BitTest( window->winGetStyle(), GWS_CHECK_BOX ) )
+	else if( BitTestWW( window->winGetStyle(), GWS_CHECK_BOX ) )
 		GadgetCheckBoxSetText( window, theText );
-	else if( BitTest( window->winGetStyle(), GWS_STATIC_TEXT ) )
+	else if( BitTestWW( window->winGetStyle(), GWS_STATIC_TEXT ) )
 		GadgetStaticTextSetText( window, theText );
-	else if( BitTest( window->winGetStyle(), GWS_ENTRY_FIELD ) )
+	else if( BitTestWW( window->winGetStyle(), GWS_ENTRY_FIELD ) )
 	{
 		entryText.translate(textLabel);
 		GadgetTextEntrySetText( window, entryText );
@@ -2139,7 +2139,7 @@ static Bool parseChildWindows( GameWindow *window,
 
 	//The gadget with children needs to delete its default created children in favor
 	//of the ones from the script file.  So kill them before reading.
-	if( BitTest( window->winGetStyle(), GWS_TAB_CONTROL ) )
+	if( BitTestWW( window->winGetStyle(), GWS_TAB_CONTROL ) )
 	{
 		GameWindow *nextWindow = NULL;
 		for( GameWindow *myChild = window->winGetChild(); myChild; myChild = nextWindow )
@@ -2236,7 +2236,7 @@ static Bool parseChildWindows( GameWindow *window,
 
   }
 
-	if( BitTest( window->winGetStyle(), GWS_TAB_CONTROL ) )
+	if( BitTestWW( window->winGetStyle(), GWS_TAB_CONTROL ) )
 		GadgetTabControlFixupSubPaneList( window );//all children created, so re-fill SubPane array with children
 
   return TRUE;
@@ -2729,7 +2729,7 @@ GameWindow *GameWindowManager::winCreateFromScript( AsciiString filenameString,
 
 	// read the file version
 	Int version;
-	inFile->read(NULL, strlen("FILE_VERSION = "));
+	inFile->read(NULL, (int)strlen("FILE_VERSION = "));
 	inFile->scanInt(version);
 	inFile->nextLine();
 

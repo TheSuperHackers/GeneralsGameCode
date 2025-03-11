@@ -223,7 +223,7 @@ ParameterClass::Set_Name (const char *new_name)
 	}
 
 	if (new_name != NULL) {
-		m_Name = ::strdup (new_name);
+		m_Name = ::_strdup (new_name);
 	}
 
 	return ;
