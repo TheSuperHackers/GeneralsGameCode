@@ -474,19 +474,6 @@ again:
 		jmp	again
 	}
 fini:;
-	// Equivalent to:
-	// inline void BlitTrans<unsigned char>::BlitForward(void* dest, void const* source, int len) const
-	// {
-	//     unsigned char* dst = static_cast<unsigned char*>(dest);
-	//	   const unsigned char* src = static_cast<const unsigned char*>(source);
-	//
-	//	   for (int i = 0; i < len; ++i) {
-	//	       unsigned char value = src[i];
-	//		   if (value != 0) { // Only copy non-zero values
-	//			   *dst++ = value;
-	//		   }
-	//	   }
-	//	}
 }
 
 
@@ -517,20 +504,6 @@ again:
 		jmp	again
 	}
 over:;
-	// Equivalent to:
-	// inline void BlitTransXlat<unsigned short>::BlitForward(void* dest, void const* source, int len) const
-	// {
-	//     unsigned short const* xlator = TranslateTable; // Translation table
-	//	   unsigned short* dst = static_cast<unsigned short*>(dest); // Destination pointer
-	//	   const unsigned char* src = static_cast<const unsigned char*>(source); // Source pointer
-	//
-	//	   for (int i = 0; i < len; ++i) {
-	//		   unsigned char value = src[i]; // Read a byte from the source
-	//		   if (value != 0) { // Skip zero values
-	//			   *dst++ = xlator[value]; // Translate and store in destination
-	//	       }
-	//     }
-	// }
 }
 
 
@@ -568,23 +541,6 @@ again:
 		jmp	again
 	}
 over:;
-	// Equivalent to:
-	// inline void BlitTransRemapXlat<unsigned short>::BlitForward(void* dest, void const* source, int len) const
-	// {
-	//     unsigned short const* translator = TranslateTable; // Pointer to TranslateTable
-	//	   unsigned char const* remapper = RemapTable;        // Pointer to RemapTable
-	//
-	//	   unsigned short* dst = static_cast<unsigned short*>(dest); // Destination pointer
-	//	   const unsigned char* src = static_cast<const unsigned char*>(source); // Source pointer
-	//
-	//	   for (int i = 0; i < len; ++i) {
-	//		   unsigned char value = *src++; // Get next byte from the source
-	//		   if (value != 0) {             // Skip zero (transparent) values
-	//			   unsigned char remapped = remapper[value]; // First remap (8-bit to 8-bit)
-	//			   *dst++ = translator[remapped];           // Second remap (8-bit to 16-bit)
-	//		   }
-	//	   }
-	// }
 }
 
 
@@ -622,24 +578,6 @@ again:
 		jmp	again
 	}
 over:;
-	// Equivalent to:
-	// inline void BlitTransZRemapXlat<unsigned short>::BlitForward(void* dest, void const* source, int len) const
-	// {
-	//	   unsigned short const* translator = TranslateTable;  // Pointer to TranslateTable
-	//	   unsigned char const* remapper = *RemapTable;        // Pointer to RemapTable
-	//
-	//	   unsigned short* dst = static_cast<unsigned short*>(dest);  // Destination pointer (16-bit values)
-	//	   const unsigned char* src = static_cast<const unsigned char*>(source);  // Source pointer (8-bit values)
-	//
-	//	   for (int i = 0; i < len; ++i) {
-	//		   unsigned char value = *src++;  // Read next byte from source
-	//		   if (value != 0) {              // Skip transparent pixels (value == 0)
-	//			   unsigned char remapped = remapper[value];  // First remap (8-bit to 8-bit)
-	//			   *dst = translator[remapped];             // Second remap (8-bit to 16-bit)
-	//		   }
-	//		   ++dst;  // Increment destination pointer, even if pixel is transparent
-	//    }
-	// }
 }
 
 
@@ -667,19 +605,6 @@ again:
 		dec	ecx
 		jnz	again
 	}
-	// Equivalent to:
-	// inline void BlitPlainXlat<unsigned short>::BlitForward(void* dest, void const* source, int len) const
-	// {
-	// 	   unsigned short const* remapper = TranslateTable; // Pointer to the translation table
-	//
-	// 	   unsigned short* dst = static_cast<unsigned short*>(dest); // Destination buffer (16-bit values)
-	// 	   const unsigned char* src = static_cast<const unsigned char*>(source); // Source buffer (8-bit values)
-	//
-	// 	   for (int i = 0; i < len; ++i) {
-	// 		   unsigned char value = *src++;       // Read one byte from the source
-	// 		   *dst++ = remapper[value];          // Map the 8-bit value to a 16-bit value using the remapper table
-	// 	   }
-	// }
 }
 
 

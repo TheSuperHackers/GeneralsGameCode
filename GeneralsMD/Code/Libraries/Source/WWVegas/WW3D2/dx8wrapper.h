@@ -1144,15 +1144,6 @@ WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
 		cmovnb edi,edx
 		mov dword ptr[esi+12],edi
 	}
-	// Equivalent to:
-	// #include <algorithm>
-	// WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
-	// {
-	//	   for (int i = 0; i < 4; ++i) {
-	//		   // Clamp each component to be between 0.0f and 1.0f
-	//		   color[i] = std::max(0.0f, std::min(1.0f, color[i]));
-	//	   }
-	// }
 }
 
 // ----------------------------------------------------------------------------

@@ -4119,7 +4119,7 @@ directly.
 ---
 
 <details>
-<summary>Generals/Code/Tools/timingTest/timingTest.cpp</summary>
+<summary>Generals(MD)/Code/Tools/timingTest/timingTest.cpp</summary>
 
 This file includes the following assembly block:
 
@@ -4201,7 +4201,7 @@ These are **not** different.
 ---
 
 <details>
-<summary>Generals/Code/Libraries/Source/WWVegas/WWMath/vp.cpp</summary>
+<summary>Generals(MD)/Code/Libraries/Source/WWVegas/WWMath/vp.cpp</summary>
 
 This file defines the following assembly blocks:
 
