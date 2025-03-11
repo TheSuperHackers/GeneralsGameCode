@@ -47,7 +47,7 @@
 //----------------------------------------------------------------------------
 
 #ifndef __WSYS_FILE_H
-#include "wsys_file.h"
+#include "WSYS_file.h"
 #endif
 
 

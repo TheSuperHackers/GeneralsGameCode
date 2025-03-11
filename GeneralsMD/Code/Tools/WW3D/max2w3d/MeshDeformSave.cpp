@@ -35,15 +35,15 @@
  * Functions:                                                                                  * 
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "MeshDeform.H"
-#include "MeshDeformSave.H"
-#include "MeshDeformData.H"
-#include "MeshDeformSet.H"
-#include "MeshDeformSaveSet.H"
-#include "Util.H"
+#include "MeshDeform.h"
+#include "MeshDeformSave.h"
+#include "MeshDeformData.h"
+#include "MeshDeformSet.h"
+#include "MeshDeformSaveSet.h"
+#include "util.h"
 #include "ModStack.H"
-#include "MeshBuild.H"
-#include "MeshSave.H"
+#include "meshbuild.h"
+#include "meshsave.h"
 
 ///////////////////////////////////////////////////////////////////////////
 //

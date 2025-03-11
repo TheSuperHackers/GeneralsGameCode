@@ -46,7 +46,7 @@
 #include "always.h"
 #include "bittype.h"
 #include "simplevec.h"
-#include "vector.h"
+#include "Vector.H"
 #include "vector2.h"
 #include "vector3.h"
 #include "vector3i.h"

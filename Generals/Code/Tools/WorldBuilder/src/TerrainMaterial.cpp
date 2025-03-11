@@ -21,14 +21,14 @@
 
 #define DEFINE_TERRAIN_TYPE_NAMES
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "Lib\BaseType.h"
-#include "terrainmaterial.h"
+#include "Lib/BaseType.h"
+#include "TerrainMaterial.h"
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
 #include "TileTool.h"				
-#include "WBView3D.h"
+#include "wbview3d.h"
 #include "Common/TerrainTypes.h"
 #include "W3DDevice/GameClient/TerrainTex.h"	  
 #include "W3DDevice/GameClient/HeightMap.h"

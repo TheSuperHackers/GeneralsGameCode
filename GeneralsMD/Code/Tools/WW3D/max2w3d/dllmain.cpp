@@ -51,7 +51,7 @@
 #include "skin.h"
 #include "gamemtl.h"
 #include "gamemaps.h"
-#include "MeshDeform.H"
+#include "MeshDeform.h"
 #include "AlphaModifier.h"
 #include "gridsnapmodifier.h"
 

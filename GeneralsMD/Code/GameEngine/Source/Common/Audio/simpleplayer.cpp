@@ -17,8 +17,8 @@
 */
 
 
-#include "Common/SimplePlayer.h"
-#include "Common/URLLaunch.h"
+#include "Common/simpleplayer.h"
+#include "Common/urllaunch.h"
 
 
 ///////////////////////////////////////////////////////////////////////////////

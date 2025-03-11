@@ -39,7 +39,7 @@
 #include "Common/NameKeyGenerator.h"
 #include "Common/RandomValue.h"
 #include "Common/UserPreferences.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 #include "GameClient/AnimateWindowManager.h"
 #include "GameClient/ExtendedMessageBox.h"
 #include "GameClient/MessageBox.h"

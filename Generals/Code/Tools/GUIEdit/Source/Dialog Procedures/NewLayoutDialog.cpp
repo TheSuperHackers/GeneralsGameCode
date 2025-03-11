@@ -48,7 +48,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
-#include "Resource.h"
+#include "resource.h"
 #include "EditWindow.h"
 #include "GUIEdit.h"
 

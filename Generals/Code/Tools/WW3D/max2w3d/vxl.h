@@ -54,7 +54,7 @@
 #endif
 
 #ifndef PROGRESS_H
-#include "progress.h"
+#include "PROGRESS.H"
 #endif
 
 

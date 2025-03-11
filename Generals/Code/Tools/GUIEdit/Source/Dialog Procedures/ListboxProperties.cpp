@@ -49,10 +49,10 @@
 #include "GUIEdit.h"
 #include "Properties.h"
 #include "LayoutScheme.h"
-#include "Resource.h"
+#include "resource.h"
 #include "GameClient/GadgetListBox.h"
 #include "GameClient/GadgetPushButton.h"
-#include "Gameclient/GadgetSlider.h"
+#include "GameClient/GadgetSlider.h"
 #include "GameClient/GameWindowManager.h"
 
 // DEFINES ////////////////////////////////////////////////////////////////////

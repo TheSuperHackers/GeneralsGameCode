@@ -32,7 +32,7 @@
 #define __BEZIERSEGMENT_H__
 
 #include <D3DX8Math.h>
-#include "Common/STLTypeDefs.h"
+#include "Common/STLTypedefs.h"
 
 #define USUAL_TOLERANCE 1.0f
 

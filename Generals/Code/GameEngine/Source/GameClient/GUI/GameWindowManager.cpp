@@ -38,7 +38,7 @@
 #include "GameClient/GameWindow.h"
 #include "GameClient/Mouse.h"
 #include "GameClient/DisplayStringManager.h"
-#include "Gameclient/WindowLayout.h"
+#include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/GameWindowGlobal.h"
 #include "GameClient/GadgetListBox.h"

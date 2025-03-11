@@ -50,11 +50,11 @@
 #include "W3DDevice/GameClient/W3DTerrainTracks.h"
 #include "W3DDevice/GameClient/W3DGranny.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
-#include "W3DDevice/GameClient/heightmap.h"
-#include "WW3D2/Light.h"
-#include "WW3D2/RendObj.h"
-#include "WW3D2/ColType.h"
-#include "WW3D2/ColTest.h"
+#include "W3DDevice/GameClient/HeightMap.h"
+#include "WW3D2/light.h"
+#include "WW3D2/rendobj.h"
+#include "WW3D2/coltype.h"
+#include "WW3D2/coltest.h"
 #include "WW3D2/assetmgr.h"
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.		 

@@ -50,8 +50,8 @@
 #include "matrix3d.h"
 #include "refcount.h"
 #include "rawfile.h"
-#include "soundsceneobj.h"
-#include "vector.h"
+#include "SoundSceneObj.h"
+#include "Vector.H"
 #include "wwstring.h"
 #include "definition.h"
 

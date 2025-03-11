@@ -73,7 +73,7 @@
 #include "skin.h"
 #include "skindata.h"
 #include "meshbuild.h"
-#include "alphamodifier.h"
+#include "AlphaModifier.h"
 #include "aabtreebuilder.h"
 #include "exportlog.h"
 

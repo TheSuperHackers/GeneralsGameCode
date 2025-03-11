@@ -118,7 +118,7 @@ FILE *g_UT_timingLog=NULL;
 FILE *g_UT_commaLog=NULL;
 // Note - this is only for gathering timing data!  DO NOT DO THIS IN REGULAR CODE!!!  JBA
 #define BRUTAL_TIMING_HACK
-#include "../../gameenginedevice/include/W3DDevice/GameClient/Module/W3DModelDraw.h"
+#include "../../GameEngineDevice/Include/W3DDevice/GameClient/Module/W3DModelDraw.h"
 #endif
 
 

@@ -25,7 +25,7 @@
 // RetranslateDlg.h : header file
 //
 
-#include "transdb.h"
+#include "TransDB.h"
 #define IDSKIP		100
 /////////////////////////////////////////////////////////////////////////////
 // RetranslateDlg dialog

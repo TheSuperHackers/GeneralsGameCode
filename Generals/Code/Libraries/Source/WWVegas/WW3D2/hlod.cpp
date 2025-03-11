@@ -128,7 +128,7 @@
 
 #include "hlod.h"
 #include "assetmgr.h"
-#include "hmdldef.h"
+#include "hmdldef.H"
 #include "w3derr.h"
 #include "chunkio.h"
 #include "predlod.h"

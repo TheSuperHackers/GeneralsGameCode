@@ -27,9 +27,9 @@
 // Debug module - Test 2 (Checking commands, CON I/O, cmddbg file)
 //////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "..\debug.h"
+#include "../debug.h"
 
 #define MAX_LOADSTRING 100
 

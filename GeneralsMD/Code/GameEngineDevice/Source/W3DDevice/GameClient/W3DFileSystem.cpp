@@ -41,7 +41,7 @@
 // #define MAINTAIN_LEGACY_FILES
 
 #include "Common/Debug.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/GlobalData.h"
 #include "Common/MapObject.h"

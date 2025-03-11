@@ -39,8 +39,8 @@
 //         Includes                                                      
 //----------------------------------------------------------------------------
 
-#include "wsys_StdFileSystem.h"
-#include "wsys_StdFile.h"
+#include "WSYS_StdFileSystem.h"
+#include "WSYS_StdFile.h"
 
 //----------------------------------------------------------------------------
 //         Externals                                                     

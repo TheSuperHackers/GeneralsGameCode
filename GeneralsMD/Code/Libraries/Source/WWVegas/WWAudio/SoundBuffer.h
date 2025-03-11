@@ -46,7 +46,7 @@
 #include "Mss.H"
 #pragma warning (pop)
 
-#include "RefCount.H"
+#include "refcount.h"
 
 
 // Forward declarations

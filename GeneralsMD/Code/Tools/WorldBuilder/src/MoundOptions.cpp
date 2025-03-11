@@ -19,9 +19,9 @@
 // MoundOptions.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "Lib\BaseType.h"
+#include "Lib/BaseType.h"
 #include "MoundOptions.h"
 #include "WorldBuilderView.h"
 #include "MoundTool.h"

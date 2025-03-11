@@ -20,9 +20,9 @@
 // TransDB.cpp
 //
 
-#include "stdAfx.h"
-#include "transdb.h"
-#include "Babylondlg.h"
+#include "StdAfx.h"
+#include "TransDB.h"
+#include "BabylonDlg.h"
 #include "Babylon.h"
 #include "assert.h"
 #include "bin.h"

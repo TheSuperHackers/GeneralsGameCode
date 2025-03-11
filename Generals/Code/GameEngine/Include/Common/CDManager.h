@@ -52,7 +52,7 @@
 //----------------------------------------------------------------------------
 
 #include "Common/List.h"
-#include "Common/SubSystemInterface.h"
+#include "Common/SubsystemInterface.h"
 #include "Common/AsciiString.h"
 
 

@@ -33,7 +33,7 @@
 #define DYNAMICAUDIOEVENTINFO_H_INCLUDED
 
 #include "Common/AudioEventInfo.h"
-#include "Common/Bitflags.h"
+#include "Common/BitFlags.h"
 
 class AsciiString;
 class Xfer;

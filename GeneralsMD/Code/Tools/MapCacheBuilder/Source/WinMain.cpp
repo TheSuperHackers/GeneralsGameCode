@@ -48,13 +48,13 @@
 #include "Common/GameMemory.h"
 #include "Common/GlobalData.h"
 #include "Common/NameKeyGenerator.h"
-#include "Resource.h"
+#include "resource.h"
 
 #include "Common/ThingFactory.h"
 #include "Common/FileSystem.h"
 #include "Win32Device/Common/Win32LocalFileSystem.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
-#include "Common/SubSystemInterface.h"
+#include "Common/SubsystemInterface.h"
 #include "GameClient/MapUtil.h"
 #include "W3DDevice/Common/W3DModuleFactory.h"
 
@@ -100,7 +100,7 @@
 #include "MilesAudioDevice/MilesAudioManager.h"
 
 #include <io.h>
-#include "win32device/GameClient/Win32Mouse.h"
+#include "Win32Device/GameClient/Win32Mouse.h"
 #include "Win32Device/Common/Win32LocalFileSystem.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
 

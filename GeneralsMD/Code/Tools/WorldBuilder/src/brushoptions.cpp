@@ -19,9 +19,9 @@
 // brushoptions.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "Lib\BaseType.h"
+#include "Lib/BaseType.h"
 #include "brushoptions.h"
 #include "WorldBuilderView.h"
 #include "BrushTool.h"

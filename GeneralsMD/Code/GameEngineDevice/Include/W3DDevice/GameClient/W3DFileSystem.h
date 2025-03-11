@@ -39,8 +39,8 @@
 #ifndef __W3DFILESYSTEM_H_
 #define __W3DFILESYSTEM_H_
 
-#include "WWLIB/ffactory.h"
-#include "Common/File.h"
+#include "WWLib/ffactory.h"
+#include "Common/file.h"
 
 //-------------------------------------------------------------------------------------------------
 /** Game file access.  At present this allows us to access test assets, assets from

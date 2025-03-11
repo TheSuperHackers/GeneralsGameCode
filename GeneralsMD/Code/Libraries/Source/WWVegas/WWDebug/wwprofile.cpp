@@ -51,7 +51,7 @@
 
 #include "always.h"
 #include "wwprofile.h"
-#include "fastallocator.h"
+#include "FastAllocator.h"
 #include "wwdebug.h"
 #include <windows.h>
 //#include "systimer.h"

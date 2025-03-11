@@ -39,7 +39,7 @@
 
 #include <Max.h>
 #include "Vector.H"
-#include "MeshDeformSet.H"
+#include "MeshDeformSet.h"
 
 
 ///////////////////////////////////////////////////////////////////////////

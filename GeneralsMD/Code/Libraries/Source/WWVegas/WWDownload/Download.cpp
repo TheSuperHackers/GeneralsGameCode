@@ -18,7 +18,7 @@
 
 // Download.cpp : Implementation of CDownload
 #include "DownloadDebug.h"
-#include "download.h"
+#include "Download.h"
 #include <mmsystem.h>
 #include <assert.h>
 #include <direct.h>

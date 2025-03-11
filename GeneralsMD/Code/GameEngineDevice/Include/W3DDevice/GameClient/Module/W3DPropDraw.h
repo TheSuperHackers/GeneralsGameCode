@@ -34,7 +34,7 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/DrawModule.h"
-#include "WW3D2/Line3D.h"
+#include "WW3D2/line3d.h"
 
 //-------------------------------------------------------------------------------------------------
 class W3DPropDrawModuleData : public ModuleData
