@@ -329,8 +329,8 @@ Bool Transport::doRecv()
 #if ENABLE_FAKE_IP
 		if (incomingMessage.header.to != m_localIP && incomingMessage.header.to != -1)
 		{
-			DEBUG_LOG(("Transport::doRecv got message for %d.%d.%d.%d, I'm %d.%d.%d.%d. Ignoring!\n",
-				PRINT_IP_HELPER(incomingMessage.header.to), PRINT_IP_HELPER(m_localIP)));
+			//DEBUG_LOG(("Transport::doRecv got message for %d.%d.%d.%d, I'm %d.%d.%d.%d. Ignoring!\n",
+			//	PRINT_IP_HELPER(incomingMessage.header.to), PRINT_IP_HELPER(m_localIP)));
 			continue;
 		}
 #endif
