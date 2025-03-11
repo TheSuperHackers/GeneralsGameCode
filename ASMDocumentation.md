@@ -4599,6 +4599,440 @@ void VectorProcessorClass::Transform (Vector3* dst,const Vector3 *src, const Mat
 ---
 
 <details>
+<summary>GeneralsMD/Code/Libraries/Source/WWVegas/WWLib/mutex.h</summary>
+
+```c++
+class FastCriticalSectionClass
+{
+	unsigned Flag;
+
+public:
+	// Name can (and usually should) be NULL. Use name only if you wish to create a globally unique mutex
+	FastCriticalSectionClass() : Flag(0) {}
+
+	class LockClass
+	{
+		FastCriticalSectionClass& cs;
+	public:
+		__forceinline LockClass(FastCriticalSectionClass& critical_section) : cs(critical_section)
+		{
+		  unsigned& nFlag=cs.Flag;
+
+		  #define ts_lock _emit 0xF0
+		  assert(((unsigned)&nFlag % 4) == 0);
+
+      // I'm terribly sorry for these emits in here but
+      // VC won't inline any functions that have labels in them...
+
+      // Had to remove the emits back to normal
+      // ASM statements because sometimes the jump
+      // would be 1 byte off....
+      
+		  __asm mov ebx, [nFlag]
+		  __asm ts_lock
+		  __asm bts dword ptr [ebx], 0
+		  __asm jnc BitSet
+      //__asm _emit 0x73
+      //__asm _emit 0x0f
+
+		  The_Bit_Was_Previously_Set_So_Try_Again:
+		    ThreadClass::Switch_Thread();
+		  __asm mov ebx, [nFlag]
+		  __asm ts_lock
+		  __asm bts dword ptr [ebx], 0
+		  __asm jc  The_Bit_Was_Previously_Set_So_Try_Again
+      //_asm _emit 0x72
+      //_asm _emit 0xf1
+
+      BitSet:
+        ;
+		}
+
+		~LockClass()
+		{
+      cs.Flag=0;
+		}
+    
+	private:
+		LockClass &operator=(const LockClass&);
+    LockClass(const LockClass&);
+	};
+
+  friend class LockClass;
+};
+```
+
+This assembly block is a pre-`std::atomic` atomic value access and modification.
+
+My goto equivalent is:
+
+```c++
+#include <atomic>
+#include <assert.h>
+
+class ThreadClass {
+public:
+    static void Switch_Thread();
+};
+
+class FastCriticalSectionClass
+{
+    unsigned Flag;
+    public:
+
+    class LockClass {
+    private:
+        FastCriticalSectionClass& cs;
+
+    public:
+        LockClass(FastCriticalSectionClass& critical_section) : cs(critical_section) {
+            std::atomic<unsigned>& nFlag = (std::atomic<unsigned>&)(cs.Flag);
+
+            // Ensure the address is properly aligned to 4 bytes (as in the `assert` from the original code).
+            assert((uintptr_t)(&nFlag) % 4 == 0);
+
+            while (true) {
+                unsigned expected = nFlag.load(std::memory_order_relaxed); // Load the current value of the flag.
+                // Try to atomically set the 0th bit using compare-and-swap.
+                if (nFlag.compare_exchange_weak(expected, expected | 1, std::memory_order_acquire)) {
+                    // If `compare_exchange_weak` succeeded, the 0th bit was successfully set.
+                    break;
+                } else {
+                    // If the 0th bit was already set, switch threads.
+                    if (expected & 1) {
+                        ThreadClass::Switch_Thread();
+                    }
+                }
+            }
+        }
+    };
+};
+
+int main()
+{
+    FastCriticalSectionClass criticalSection;
+    FastCriticalSectionClass::LockClass lock(criticalSection);
+}
+```
+
+<table>
+<tr>
+<th>With Inline Assembly</th>
+<th>Without Inline Assembly</th>
+</tr>
+<td>
+
+```asm
+`string' DB '('
+        DB      00H, '(', 00H, 'u', 00H, 'n', 00H, 's', 00H, 'i', 00H, 'g', 00H
+        DB      'n', 00H, 'e', 00H, 'd', 00H, ')', 00H, '&', 00H, 'n', 00H, 'F'
+        DB      00H, 'l', 00H, 'a', 00H, 'g', 00H, ' ', 00H, '%', 00H, ' ', 00H
+        DB      '4', 00H, ')', 00H, ' ', 00H, '=', 00H, '=', 00H, ' ', 00H, '0'
+        DB      00H, 00H, 00H                         ; `string'
+`string' DB 'C'
+        DB      00H, ':', 00H, '\', 00H, 'W', 00H, 'i', 00H, 'n', 00H, 'd', 00H
+        DB      'o', 00H, 'w', 00H, 's', 00H, '\', 00H, 'T', 00H, 'E', 00H, 'M'
+        DB      00H, 'P', 00H, '\', 00H, 'c', 00H, 'o', 00H, 'm', 00H, 'p', 00H
+        DB      'i', 00H, 'l', 00H, 'e', 00H, 'r', 00H, '-', 00H, 'e', 00H, 'x'
+        DB      00H, 'p', 00H, 'l', 00H, 'o', 00H, 'r', 00H, 'e', 00H, 'r', 00H
+        DB      '-', 00H, 'c', 00H, 'o', 00H, 'm', 00H, 'p', 00H, 'i', 00H, 'l'
+        DB      00H, 'e', 00H, 'r', 00H, '8', 00H, 'J', 00H, 'Z', 00H, 'U', 00H
+        DB      '1', 00H, 's', 00H, '\', 00H, 'e', 00H, 'x', 00H, 'a', 00H, 'm'
+        DB      00H, 'p', 00H, 'l', 00H, 'e', 00H, '.', 00H, 'c', 00H, 'p', 00H
+        DB      'p', 00H, 00H, 00H                      ; `string'
+
+_this$ = -8                                   ; size = 4
+_nFlag$ = -4                                            ; size = 4
+_critical_section$ = 8                              ; size = 4
+FastCriticalSectionClass::LockClass::LockClass(FastCriticalSectionClass &) PROC ; FastCriticalSectionClass::LockClass::LockClass, COMDAT
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 8
+        push    ebx
+        push    esi
+        push    edi
+        mov     DWORD PTR _this$[ebp], ecx
+        mov     eax, DWORD PTR _this$[ebp]
+        mov     ecx, DWORD PTR _critical_section$[ebp]
+        mov     DWORD PTR [eax], ecx
+        mov     edx, DWORD PTR _this$[ebp]
+        mov     eax, DWORD PTR [edx]
+        mov     DWORD PTR _nFlag$[ebp], eax
+        mov     eax, DWORD PTR _nFlag$[ebp]
+        xor     edx, edx
+        mov     ecx, 4
+        div     ecx
+        test    edx, edx
+        je      SHORT $LN3@LockClass
+        push    23                                  ; 00000017H
+        push    OFFSET `string'
+        push    OFFSET `string'
+        call    __wassert
+        add     esp, 12                             ; 0000000cH
+$LN3@LockClass:
+        mov     ebx, DWORD PTR _nFlag$[ebp]
+        DB      -16                       ; fffffff0H
+        bts     DWORD PTR [ebx], 0
+        jae     SHORT $BitSet$4
+$The_Bit_Was_Previously_Set_So_Try_Again$5:
+        call    static void ThreadClass::Switch_Thread(void)       ; ThreadClass::Switch_Thread
+        mov     ebx, DWORD PTR _nFlag$[ebp]
+        DB      -16                       ; fffffff0H
+        bts     DWORD PTR [ebx], 0
+        jb      SHORT $The_Bit_Was_Previously_Set_So_Try_Again$5
+$BitSet$4:
+        mov     eax, DWORD PTR _this$[ebp]
+        pop     edi
+        pop     esi
+        pop     ebx
+        mov     esp, ebp
+        pop     ebp
+        ret     4
+FastCriticalSectionClass::LockClass::LockClass(FastCriticalSectionClass &) ENDP ; FastCriticalSectionClass::LockClass::LockClass
+
+_lock$ = -8                                   ; size = 4
+_criticalSection$ = -4                              ; size = 4
+_main   PROC
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 8
+        lea     eax, DWORD PTR _criticalSection$[ebp]
+        push    eax
+        lea     ecx, DWORD PTR _lock$[ebp]
+        call    FastCriticalSectionClass::LockClass::LockClass(FastCriticalSectionClass &) ; FastCriticalSectionClass::LockClass::LockClass
+        npad    1
+        xor     eax, eax
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+_main   ENDP
+```
+
+</td>
+<td>
+
+```asm
+`string' DB '('
+        DB      00H, 'u', 00H, 'i', 00H, 'n', 00H, 't', 00H, 'p', 00H, 't', 00H
+        DB      'r', 00H, '_', 00H, 't', 00H, ')', 00H, '(', 00H, '&', 00H, 'n'
+        DB      00H, 'F', 00H, 'l', 00H, 'a', 00H, 'g', 00H, ')', 00H, ' ', 00H
+        DB      '%', 00H, ' ', 00H, '4', 00H, ' ', 00H, '=', 00H, '=', 00H, ' '
+        DB      00H, '0', 00H, 00H, 00H           ; `string'
+`string' DB 'C'
+        DB      00H, ':', 00H, '\', 00H, 'W', 00H, 'i', 00H, 'n', 00H, 'd', 00H
+        DB      'o', 00H, 'w', 00H, 's', 00H, '\', 00H, 'T', 00H, 'E', 00H, 'M'
+        DB      00H, 'P', 00H, '\', 00H, 'c', 00H, 'o', 00H, 'm', 00H, 'p', 00H
+        DB      'i', 00H, 'l', 00H, 'e', 00H, 'r', 00H, '-', 00H, 'e', 00H, 'x'
+        DB      00H, 'p', 00H, 'l', 00H, 'o', 00H, 'r', 00H, 'e', 00H, 'r', 00H
+        DB      '-', 00H, 'c', 00H, 'o', 00H, 'm', 00H, 'p', 00H, 'i', 00H, 'l'
+        DB      00H, 'e', 00H, 'r', 00H, 'E', 00H, 'b', 00H, '9', 00H, 'W', 00H
+        DB      'b', 00H, 'c', 00H, '\', 00H, 'e', 00H, 'x', 00H, 'a', 00H, 'm'
+        DB      00H, 'p', 00H, 'l', 00H, 'e', 00H, '.', 00H, 'c', 00H, 'p', 00H
+        DB      'p', 00H, 00H, 00H                      ; `string'
+voltbl  SEGMENT
+_volmd  DB  01bH
+        DB      03cH
+voltbl  ENDS
+
+_this$ = -12                                            ; size = 4
+_expected$1 = -8                                        ; size = 4
+_nFlag$ = -4                                            ; size = 4
+_critical_section$ = 8                              ; size = 4
+FastCriticalSectionClass::LockClass::LockClass(FastCriticalSectionClass &) PROC ; FastCriticalSectionClass::LockClass::LockClass, COMDAT
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 12                             ; 0000000cH
+        mov     DWORD PTR _this$[ebp], ecx
+        mov     eax, DWORD PTR _this$[ebp]
+        mov     ecx, DWORD PTR _critical_section$[ebp]
+        mov     DWORD PTR [eax], ecx
+        mov     edx, DWORD PTR _this$[ebp]
+        mov     eax, DWORD PTR [edx]
+        mov     DWORD PTR _nFlag$[ebp], eax
+        mov     eax, DWORD PTR _nFlag$[ebp]
+        xor     edx, edx
+        mov     ecx, 4
+        div     ecx
+        test    edx, edx
+        je      SHORT $LN8@LockClass
+        push    23                                  ; 00000017H
+        push    OFFSET `string'
+        push    OFFSET `string'
+        call    __wassert
+        add     esp, 12                             ; 0000000cH
+$LN8@LockClass:
+        mov     eax, 1
+        test    eax, eax
+        je      SHORT $LN3@LockClass
+        push    0
+        mov     ecx, DWORD PTR _nFlag$[ebp]
+        call    unsigned int std::_Atomic_storage<unsigned int,4>::load(std::memory_order)const  ; std::_Atomic_storage<unsigned int,4>::load
+        mov     DWORD PTR _expected$1[ebp], eax
+        push    2
+        mov     ecx, DWORD PTR _expected$1[ebp]
+        or      ecx, 1
+        push    ecx
+        lea     edx, DWORD PTR _expected$1[ebp]
+        push    edx
+        mov     ecx, DWORD PTR _nFlag$[ebp]
+        call    bool std::atomic<unsigned int>::compare_exchange_weak(unsigned int &,unsigned int,std::memory_order) ; std::atomic<unsigned int>::compare_exchange_weak
+        movzx   eax, al
+        test    eax, eax
+        je      SHORT $LN4@LockClass
+        jmp     SHORT $LN3@LockClass
+        jmp     SHORT $LN6@LockClass
+$LN4@LockClass:
+        mov     ecx, DWORD PTR _expected$1[ebp]
+        and     ecx, 1
+        je      SHORT $LN6@LockClass
+        call    static void ThreadClass::Switch_Thread(void)       ; ThreadClass::Switch_Thread
+        npad    1
+$LN6@LockClass:
+        jmp     SHORT $LN8@LockClass
+$LN3@LockClass:
+        mov     eax, DWORD PTR _this$[ebp]
+        mov     esp, ebp
+        pop     ebp
+        ret     4
+FastCriticalSectionClass::LockClass::LockClass(FastCriticalSectionClass &) ENDP ; FastCriticalSectionClass::LockClass::LockClass
+
+_lock$ = -8                                   ; size = 4
+_criticalSection$ = -4                              ; size = 4
+_main   PROC
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 8
+        lea     eax, DWORD PTR _criticalSection$[ebp]
+        push    eax
+        lea     ecx, DWORD PTR _lock$[ebp]
+        call    FastCriticalSectionClass::LockClass::LockClass(FastCriticalSectionClass &) ; FastCriticalSectionClass::LockClass::LockClass
+        npad    1
+        xor     eax, eax
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+_main   ENDP
+```
+
+</td>
+</table>
+
+These assemblies can't be identical due to the differences in atomic access. It is probable that this method can be
+further improved by creating a class specifically tailored for modern C++ atomics.
+
+```diff
+@@ -1,9 +1,9 @@
+ `string' DB '('
+-        DB      00H, '(', 00H, 'u', 00H, 'n', 00H, 's', 00H, 'i', 00H, 'g', 00H
+-        DB      'n', 00H, 'e', 00H, 'd', 00H, ')', 00H, '&', 00H, 'n', 00H, 'F'
+-        DB      00H, 'l', 00H, 'a', 00H, 'g', 00H, ' ', 00H, '%', 00H, ' ', 00H
+-        DB      '4', 00H, ')', 00H, ' ', 00H, '=', 00H, '=', 00H, ' ', 00H, '0'
+-        DB      00H, 00H, 00H                         ; `string'
++        DB      00H, 'u', 00H, 'i', 00H, 'n', 00H, 't', 00H, 'p', 00H, 't', 00H
++        DB      'r', 00H, '_', 00H, 't', 00H, ')', 00H, '(', 00H, '&', 00H, 'n'
++        DB      00H, 'F', 00H, 'l', 00H, 'a', 00H, 'g', 00H, ')', 00H, ' ', 00H
++        DB      '%', 00H, ' ', 00H, '4', 00H, ' ', 00H, '=', 00H, '=', 00H, ' '
++        DB      00H, '0', 00H, 00H, 00H           ; `string'
+ `string' DB 'C'
+         DB      00H, ':', 00H, '\', 00H, 'W', 00H, 'i', 00H, 'n', 00H, 'd', 00H
+         DB      'o', 00H, 'w', 00H, 's', 00H, '\', 00H, 'T', 00H, 'E', 00H, 'M'
+@@ -11,21 +11,23 @@
+         DB      'i', 00H, 'l', 00H, 'e', 00H, 'r', 00H, '-', 00H, 'e', 00H, 'x'
+         DB      00H, 'p', 00H, 'l', 00H, 'o', 00H, 'r', 00H, 'e', 00H, 'r', 00H
+         DB      '-', 00H, 'c', 00H, 'o', 00H, 'm', 00H, 'p', 00H, 'i', 00H, 'l'
+-        DB      00H, 'e', 00H, 'r', 00H, '8', 00H, 'J', 00H, 'Z', 00H, 'U', 00H
+-        DB      '1', 00H, 's', 00H, '\', 00H, 'e', 00H, 'x', 00H, 'a', 00H, 'm'
++        DB      00H, 'e', 00H, 'r', 00H, 'E', 00H, 'b', 00H, '9', 00H, 'W', 00H
++        DB      'b', 00H, 'c', 00H, '\', 00H, 'e', 00H, 'x', 00H, 'a', 00H, 'm'
+         DB      00H, 'p', 00H, 'l', 00H, 'e', 00H, '.', 00H, 'c', 00H, 'p', 00H
+         DB      'p', 00H, 00H, 00H                      ; `string'
++voltbl  SEGMENT
++_volmd  DB  01bH
++        DB      03cH
++voltbl  ENDS
+ 
+-_this$ = -8                                   ; size = 4
++_this$ = -12                                            ; size = 4
++_expected$1 = -8                                        ; size = 4
+ _nFlag$ = -4                                            ; size = 4
+ _critical_section$ = 8                              ; size = 4
+ FastCriticalSectionClass::LockClass::LockClass(FastCriticalSectionClass &) PROC ; FastCriticalSectionClass::LockClass::LockClass, COMDAT
+         push    ebp
+         mov     ebp, esp
+-        sub     esp, 8
+-        push    ebx
+-        push    esi
+-        push    edi
++        sub     esp, 12                             ; 0000000cH
+         mov     DWORD PTR _this$[ebp], ecx
+         mov     eax, DWORD PTR _this$[ebp]
+         mov     ecx, DWORD PTR _critical_section$[ebp]
+@@ -38,28 +40,43 @@ FastCriticalSectionClass::LockClass::LockClass(FastCriticalSectionClass &) PROC
+         mov     ecx, 4
+         div     ecx
+         test    edx, edx
+-        je      SHORT $LN3@LockClass
++        je      SHORT $LN8@LockClass
+         push    23                                  ; 00000017H
+         push    OFFSET `string'
+         push    OFFSET `string'
+         call    __wassert
+         add     esp, 12                             ; 0000000cH
+-$LN3@LockClass:
+-        mov     ebx, DWORD PTR _nFlag$[ebp]
+-        DB      -16                       ; fffffff0H
+-        bts     DWORD PTR [ebx], 0
+-        jae     SHORT $BitSet$4
+-$The_Bit_Was_Previously_Set_So_Try_Again$5:
++$LN8@LockClass:
++        mov     eax, 1
++        test    eax, eax
++        je      SHORT $LN3@LockClass
++        push    0
++        mov     ecx, DWORD PTR _nFlag$[ebp]
++        call    unsigned int std::_Atomic_storage<unsigned int,4>::load(std::memory_order)const  ; std::_Atomic_storage<unsigned int,4>::load
++        mov     DWORD PTR _expected$1[ebp], eax
++        push    2
++        mov     ecx, DWORD PTR _expected$1[ebp]
++        or      ecx, 1
++        push    ecx
++        lea     edx, DWORD PTR _expected$1[ebp]
++        push    edx
++        mov     ecx, DWORD PTR _nFlag$[ebp]
++        call    bool std::atomic<unsigned int>::compare_exchange_weak(unsigned int &,unsigned int,std::memory_order) ; std::atomic<unsigned int>::compare_exchange_weak
++        movzx   eax, al
++        test    eax, eax
++        je      SHORT $LN4@LockClass
++        jmp     SHORT $LN3@LockClass
++        jmp     SHORT $LN6@LockClass
++$LN4@LockClass:
++        mov     ecx, DWORD PTR _expected$1[ebp]
++        and     ecx, 1
++        je      SHORT $LN6@LockClass
+         call    static void ThreadClass::Switch_Thread(void)       ; ThreadClass::Switch_Thread
+-        mov     ebx, DWORD PTR _nFlag$[ebp]
+-        DB      -16                       ; fffffff0H
+-        bts     DWORD PTR [ebx], 0
+-        jb      SHORT $The_Bit_Was_Previously_Set_So_Try_Again$5
+-$BitSet$4:
++        npad    1
++$LN6@LockClass:
++        jmp     SHORT $LN8@LockClass
++$LN3@LockClass:
+         mov     eax, DWORD PTR _this$[ebp]
+-        pop     edi
+-        pop     esi
+-        pop     ebx
+         mov     esp, ebp
+         pop     ebp
+         ret     4
+```
+
+</details>
+
+---
+
+<details>
 <summary>Generals/Code/Libraries/Source/WWVegas/WWDebug/wwdebug.h</summary>
 
 This header defines the following with assembly:
