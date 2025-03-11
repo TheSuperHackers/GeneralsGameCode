@@ -406,14 +406,6 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 	UnsignedInt IP = TheGlobalData->m_defaultIP;
 	IPEnumeration IPs;
 	const WideChar* IPSource;
-#if ENABLE_FAKE_IP
-	if (getFakeIPNo())
-	{
-		IP = getFakeIPNo();
-		IPSource = L"Using Fake IP";
-	}
-	else
-#endif
 	if (!IP)
 	{
 		EnumeratedIP *IPlist = IPs.getAddresses();
