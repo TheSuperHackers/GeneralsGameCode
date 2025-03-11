@@ -2150,6 +2150,463 @@ just as, if not more, performant.
 ---
 
 <details>
+<summary>GeneralsMD/Code/Libraries/Source/WWVegas/WWLib/Except.cpp</summary>
+
+This file contains the following inline assembly blocks:
+
+<details>
+<summary>_purecall</summary>
+
+```c++
+int __cdecl _purecall(void)
+{
+	int return_code = 0;
+
+#ifdef WWDEBUG
+	/*
+	** Use int3 to cause an exception.
+	*/
+	WWDEBUG_SAY(("Pure Virtual Function call. Oh No!\n"));
+	_asm int 0x03;
+#endif	//_DEBUG_ASSERT
+
+	return(return_code);
+}
+```
+
+While I can't generate this in godbolt due to the `WWDEBUG` def, `_asm int 0x03` is simply a `__debugbreak()`:
+
+```c++
+#include <intrin.h>
+
+int __cdecl _purecall(void)
+{
+	int return_code = 0;
+
+#ifdef WWDEBUG
+	/*
+	** Use int3 to cause an exception.
+	*/
+	WWDEBUG_SAY(("Pure Virtual Function call. Oh No!\n"));
+	__debugbreak();
+#endif	//_DEBUG_ASSERT
+
+	return(return_code);
+}
+```
+
+</details>
+
+<details>
+<summary>Dump_Exception_Info</summary>
+
+```c++
+void Dump_Exception_Info()
+{
+	// ...
+
+    void *fp_data_ptr = 0;
+    double fp_value;
+
+    /*
+    ** Convert FP dump from temporary real value (10 bytes) to double (8 bytes).
+    */
+    _asm {
+        push	eax
+        mov	eax,fp_data_ptr
+        fld   tbyte ptr [eax]
+        fstp	qword ptr [fp_value]
+        pop	eax
+    }
+
+	// ...
+}
+```
+
+The assembly block here is being used to efficiently truncate a data pointer into a double value.
+
+My goto equivalent is:
+
+```c++
+void Dump_Exception_Info()
+{
+	// ...
+
+    void *fp_data_ptr = 0;
+    const long double* longDoublePtr = (const long double*)fp_data_ptr;
+    double fp_value = (double)(*longDoublePtr);
+
+	// ...
+}
+```
+
+<table>
+<tr>
+<th>With Inline Assembly</th>
+<th>Without Inline Assembly</th>
+</tr>
+<td>
+
+```asm
+_fp_value$ = -12                                        ; size = 8
+_fp_data_ptr$ = -4                                  ; size = 4
+void Dump_Exception_Info(void) PROC                        ; Dump_Exception_Info
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 12                             ; 0000000cH
+        mov     DWORD PTR _fp_data_ptr$[ebp], 0
+        push    eax
+        mov     eax, DWORD PTR _fp_data_ptr$[ebp]
+        fld     TBYTE PTR [eax]
+        fstp    QWORD PTR _fp_value$[ebp]
+        pop     eax
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+void Dump_Exception_Info(void) ENDP                        ; Dump_Exception_Info
+```
+
+</td>
+<td>
+
+```asm
+_fp_value$ = -16                                        ; size = 8
+_longDoublePtr$ = -8                                    ; size = 4
+_fp_data_ptr$ = -4                                  ; size = 4
+void Dump_Exception_Info(void) PROC                        ; Dump_Exception_Info
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 16                             ; 00000010H
+        mov     DWORD PTR _fp_data_ptr$[ebp], 0
+        mov     eax, DWORD PTR _fp_data_ptr$[ebp]
+        mov     DWORD PTR _longDoublePtr$[ebp], eax
+        mov     ecx, DWORD PTR _longDoublePtr$[ebp]
+        movsd   xmm0, QWORD PTR [ecx]
+        movsd   QWORD PTR _fp_value$[ebp], xmm0
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+void Dump_Exception_Info(void) ENDP                        ; Dump_Exception_Info
+```
+
+</td>
+</table>
+
+While there are minor differences in the assembly, the result is identical other than possible differences in
+performance:
+
+```diff
+@@ -1,15 +1,16 @@
+-_fp_value$ = -12                                        ; size = 8
++_fp_value$ = -16                                        ; size = 8
++_longDoublePtr$ = -8                                    ; size = 4
+ _fp_data_ptr$ = -4                                  ; size = 4
+ void Dump_Exception_Info(void) PROC                        ; Dump_Exception_Info
+         push    ebp
+         mov     ebp, esp
+-        sub     esp, 12                             ; 0000000cH
++        sub     esp, 16                             ; 00000010H
+         mov     DWORD PTR _fp_data_ptr$[ebp], 0
+-        push    eax
+         mov     eax, DWORD PTR _fp_data_ptr$[ebp]
+-        fld     TBYTE PTR [eax]
+-        fstp    QWORD PTR _fp_value$[ebp]
+-        pop     eax
++        mov     DWORD PTR _longDoublePtr$[ebp], eax
++        mov     ecx, DWORD PTR _longDoublePtr$[ebp]
++        movsd   xmm0, QWORD PTR [ecx]
++        movsd   QWORD PTR _fp_value$[ebp], xmm0
+         mov     esp, ebp
+         pop     ebp
+         ret     0
+```
+
+</details>
+
+<details>
+<summary>Stack_Walk</summary>
+
+```c++
+int Stack_Walk(unsigned long *return_addresses, int num_addresses, CONTEXT *context)
+{
+	// ...
+
+STACKFRAME stack_frame;
+	memset(&stack_frame, 0, sizeof(stack_frame));
+
+	unsigned long reg_eip, reg_ebp, reg_esp;
+
+	__asm {
+here:
+		lea	eax,here
+		mov	reg_eip,eax
+		mov	reg_ebp,ebp
+		mov	reg_esp,esp
+	}
+
+	stack_frame.AddrPC.Mode = AddrModeFlat;
+	stack_frame.AddrPC.Offset = reg_eip;
+	stack_frame.AddrStack.Mode = AddrModeFlat;
+	stack_frame.AddrStack.Offset = reg_esp;
+	stack_frame.AddrFrame.Mode = AddrModeFlat;
+	stack_frame.AddrFrame.Offset = reg_ebp;
+
+    // ...
+    
+    // return pointer_index;
+    return 1;
+}
+```
+
+This assembly is trying to capture the values of the registers `EIP`, `EBP` and `ESP`.
+
+My goto equivalent is:
+
+```c++
+#include <windows.h>
+#include <dbghelp.h>
+#include <string.h>
+
+int Stack_Walk(unsigned long *return_addresses, int num_addresses, CONTEXT *context)
+{
+	// ...
+
+	STACKFRAME stack_frame;
+    memset(&stack_frame, 0, sizeof(stack_frame));
+
+    CONTEXT local_context;
+    if (!context) {
+        // If no context is provided, capture the current thread's execution context.
+        memset(&local_context, 0, sizeof(local_context));
+        local_context.ContextFlags = CONTEXT_CONTROL; // Request EIP, ESP, EBP.
+
+        RtlCaptureContext(&local_context);
+        context = &local_context;
+    }
+
+    // Assign the starting register values from the provided or captured context.
+    stack_frame.AddrPC.Mode = AddrModeFlat;
+    stack_frame.AddrPC.Offset = context->Eip;
+
+    stack_frame.AddrStack.Mode = AddrModeFlat;
+    stack_frame.AddrStack.Offset = context->Esp;
+
+    stack_frame.AddrFrame.Mode = AddrModeFlat;
+    stack_frame.AddrFrame.Offset = context->Ebp;
+
+
+here:
+	// ...
+
+    // return pointer_index;
+    return 1;
+}
+```
+
+<table>
+<tr>
+<th>With Inline Assembly</th>
+<th>Without Inline Assembly</th>
+</tr>
+<td>
+
+```asm
+voltbl  SEGMENT
+        DDSymXIndex:    FLAT:int Stack_Walk(unsigned long *,int,_CONTEXT *)
+voltbl  ENDS
+
+_reg_ebp$ = -180                                        ; size = 4
+_reg_esp$ = -176                                        ; size = 4
+_reg_eip$ = -172                                        ; size = 4
+_stack_frame$ = -168                                    ; size = 164
+__$ArrayPad$ = -4                                 ; size = 4
+_return_addresses$ = 8                              ; size = 4
+_num_addresses$ = 12                                    ; size = 4
+_context$ = 16                                      ; size = 4
+int Stack_Walk(unsigned long *,int,_CONTEXT *) PROC                ; Stack_Walk
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 180                      ; 000000b4H
+        mov     eax, DWORD PTR ___security_cookie
+        xor     eax, ebp
+        mov     DWORD PTR __$ArrayPad$[ebp], eax
+        push    164                           ; 000000a4H
+        push    0
+        lea     eax, DWORD PTR _stack_frame$[ebp]
+        push    eax
+        call    _memset
+        add     esp, 12                             ; 0000000cH
+$here$3:
+        lea     eax, OFFSET $here$3
+        mov     DWORD PTR _reg_eip$[ebp], eax
+        mov     DWORD PTR _reg_ebp$[ebp], ebp
+        mov     DWORD PTR _reg_esp$[ebp], esp
+        mov     DWORD PTR _stack_frame$[ebp+8], 3
+        mov     ecx, DWORD PTR _reg_eip$[ebp]
+        mov     DWORD PTR _stack_frame$[ebp], ecx
+        mov     DWORD PTR _stack_frame$[ebp+44], 3
+        mov     edx, DWORD PTR _reg_esp$[ebp]
+        mov     DWORD PTR _stack_frame$[ebp+36], edx
+        mov     DWORD PTR _stack_frame$[ebp+32], 3
+        mov     eax, DWORD PTR _reg_ebp$[ebp]
+        mov     DWORD PTR _stack_frame$[ebp+24], eax
+        mov     eax, 1
+        mov     ecx, DWORD PTR __$ArrayPad$[ebp]
+        xor     ecx, ebp
+        call    @__security_check_cookie@4
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+int Stack_Walk(unsigned long *,int,_CONTEXT *) ENDP                ; Stack_Walk
+```
+
+</td>
+<td>
+
+```asm
+voltbl  SEGMENT
+        DDSymXIndex:    FLAT:int Stack_Walk(unsigned long *,int,_CONTEXT *)
+voltbl  ENDS
+
+_local_context$ = -884                              ; size = 716
+_stack_frame$ = -168                                    ; size = 164
+__$ArrayPad$ = -4                                 ; size = 4
+_return_addresses$ = 8                              ; size = 4
+_num_addresses$ = 12                                    ; size = 4
+_context$ = 16                                      ; size = 4
+int Stack_Walk(unsigned long *,int,_CONTEXT *) PROC                ; Stack_Walk
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 884                      ; 00000374H
+        mov     eax, DWORD PTR ___security_cookie
+        xor     eax, ebp
+        mov     DWORD PTR __$ArrayPad$[ebp], eax
+        push    164                           ; 000000a4H
+        push    0
+        lea     eax, DWORD PTR _stack_frame$[ebp]
+        push    eax
+        call    _memset
+        add     esp, 12                             ; 0000000cH
+        cmp     DWORD PTR _context$[ebp], 0
+        jne     SHORT $LN2@Stack_Walk
+        push    716                           ; 000002ccH
+        push    0
+        lea     ecx, DWORD PTR _local_context$[ebp]
+        push    ecx
+        call    _memset
+        add     esp, 12                             ; 0000000cH
+        mov     DWORD PTR _local_context$[ebp], 65537     ; 00010001H
+        lea     edx, DWORD PTR _local_context$[ebp]
+        push    edx
+        call    DWORD PTR __imp__RtlCaptureContext@4
+        lea     eax, DWORD PTR _local_context$[ebp]
+        mov     DWORD PTR _context$[ebp], eax
+$LN2@Stack_Walk:
+        mov     DWORD PTR _stack_frame$[ebp+8], 3
+        mov     ecx, DWORD PTR _context$[ebp]
+        mov     edx, DWORD PTR [ecx+184]
+        mov     DWORD PTR _stack_frame$[ebp], edx
+        mov     DWORD PTR _stack_frame$[ebp+44], 3
+        mov     eax, DWORD PTR _context$[ebp]
+        mov     ecx, DWORD PTR [eax+196]
+        mov     DWORD PTR _stack_frame$[ebp+36], ecx
+        mov     DWORD PTR _stack_frame$[ebp+32], 3
+        mov     edx, DWORD PTR _context$[ebp]
+        mov     eax, DWORD PTR [edx+180]
+        mov     DWORD PTR _stack_frame$[ebp+24], eax
+$here$4:
+        mov     eax, 1
+        mov     ecx, DWORD PTR __$ArrayPad$[ebp]
+        xor     ecx, ebp
+        call    @__security_check_cookie@4
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+int Stack_Walk(unsigned long *,int,_CONTEXT *) ENDP                ; Stack_Walk
+```
+
+</td>
+</table>
+
+I think it is clear why inline assembly was used, the WIN32 API was probably not as performant and was definitely
+generating a bigger assembly. It may be the case that with modern compilers and optimizations on, this isn't as
+important.
+
+```diff
+@@ -2,9 +2,7 @@ voltbl  SEGMENT
+         DDSymXIndex:    FLAT:int Stack_Walk(unsigned long *,int,_CONTEXT *)
+ voltbl  ENDS
+ 
+-_reg_ebp$ = -180                                        ; size = 4
+-_reg_esp$ = -176                                        ; size = 4
+-_reg_eip$ = -172                                        ; size = 4
++_local_context$ = -884                              ; size = 716
+ _stack_frame$ = -168                                    ; size = 164
+ __$ArrayPad$ = -4                                 ; size = 4
+ _return_addresses$ = 8                              ; size = 4
+@@ -13,7 +11,7 @@ _context$ = 16                                      ; size = 4
+ int Stack_Walk(unsigned long *,int,_CONTEXT *) PROC                ; Stack_Walk
+         push    ebp
+         mov     ebp, esp
+-        sub     esp, 180                      ; 000000b4H
++        sub     esp, 884                      ; 00000374H
+         mov     eax, DWORD PTR ___security_cookie
+         xor     eax, ebp
+         mov     DWORD PTR __$ArrayPad$[ebp], eax
+@@ -23,20 +21,34 @@ int Stack_Walk(unsigned long *,int,_CONTEXT *) PROC                ; Stack_Walk
+         push    eax
+         call    _memset
+         add     esp, 12                             ; 0000000cH
+-$here$3:
+-        lea     eax, OFFSET $here$3
+-        mov     DWORD PTR _reg_eip$[ebp], eax
+-        mov     DWORD PTR _reg_ebp$[ebp], ebp
+-        mov     DWORD PTR _reg_esp$[ebp], esp
++        cmp     DWORD PTR _context$[ebp], 0
++        jne     SHORT $LN2@Stack_Walk
++        push    716                           ; 000002ccH
++        push    0
++        lea     ecx, DWORD PTR _local_context$[ebp]
++        push    ecx
++        call    _memset
++        add     esp, 12                             ; 0000000cH
++        mov     DWORD PTR _local_context$[ebp], 65537     ; 00010001H
++        lea     edx, DWORD PTR _local_context$[ebp]
++        push    edx
++        call    DWORD PTR __imp__RtlCaptureContext@4
++        lea     eax, DWORD PTR _local_context$[ebp]
++        mov     DWORD PTR _context$[ebp], eax
++$LN2@Stack_Walk:
+         mov     DWORD PTR _stack_frame$[ebp+8], 3
+-        mov     ecx, DWORD PTR _reg_eip$[ebp]
+-        mov     DWORD PTR _stack_frame$[ebp], ecx
++        mov     ecx, DWORD PTR _context$[ebp]
++        mov     edx, DWORD PTR [ecx+184]
++        mov     DWORD PTR _stack_frame$[ebp], edx
+         mov     DWORD PTR _stack_frame$[ebp+44], 3
+-        mov     edx, DWORD PTR _reg_esp$[ebp]
+-        mov     DWORD PTR _stack_frame$[ebp+36], edx
++        mov     eax, DWORD PTR _context$[ebp]
++        mov     ecx, DWORD PTR [eax+196]
++        mov     DWORD PTR _stack_frame$[ebp+36], ecx
+         mov     DWORD PTR _stack_frame$[ebp+32], 3
+-        mov     eax, DWORD PTR _reg_ebp$[ebp]
++        mov     edx, DWORD PTR _context$[ebp]
++        mov     eax, DWORD PTR [edx+180]
+         mov     DWORD PTR _stack_frame$[ebp+24], eax
++$here$4:
+         mov     eax, 1
+         mov     ecx, DWORD PTR __$ArrayPad$[ebp]
+         xor     ecx, ebp
+```
+
+</details>
+
+</details>
+
+---
+
+<details>
 <summary>Generals/Code/Libraries/Source/WWVegas/WWMath/matrix3d.cpp</summary>
 
 This file includes the following assembly blocks:
