@@ -630,28 +630,6 @@ WWINLINE __declspec(naked) float __fastcall WWMath::Inv_Sqrt(float a)
 		fmulp	st(1), st
 		ret 4
 	}
-    // This is a fast inverse square root algorithm, like in DOOM ^_^
-    // Equivalent to:
-	// float WWMath::Inv_Sqrt(float a) {
-	//	   if (a == 0.0f) return 0.0f;
-	//
-	//	   // Initial approximation using bit manipulation
-	//	   uint32_t i = *reinterpret_cast<uint32_t*>(&a); // Interpret float as integer for bitwise operations
-	//	   i = 0x5f3759df - (i >> 1);                    // Magic number adjustment for inverse square root
-	//	   float r = *reinterpret_cast<float*>(&i);      // Convert back to float (approximation for 1/sqrt(a))
-	//
-	//	   // First Newton-Raphson iteration
-	//	   float y = a * 0.5f;   // y = a / 2
-	//	   r = r * (1.5f - (y * r * r)); // r1 = r * (1.5 - 0.5 * a * r^2)
-	//
-	//	   // Second Newton-Raphson iteration
-	//	   r = r * (1.5f - (y * r * r)); // r2 = r1 * (1.5 - 0.5 * a * r1^2)
-	//
-	//	   // Optional: Third iteration for better precision
-	//	   r = r * (1.5f - (y * r * r)); // r3 = r2 * (1.5 - 0.5 * a * r2^2)
-	//
-	//	   return r;
-	// }
 }
 #else
 WWINLINE float WWMath::Inv_Sqrt(float val)

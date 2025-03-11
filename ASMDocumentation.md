@@ -1516,21 +1516,21 @@ This assembly is trying to get the values of the registers `EIP`, `ESP` and `EBP
 > **NOTE**: I have extracted the assembly code to its own function:
 > #include <windows.h>
 > #include <dbghelp.h>
-> 
+>
 > void CaptureStackInfo(CONTEXT& threadContext, STACKFRAME& stackFrame) {
->   // walk stack back using current call chain
->   unsigned long reg_eip, reg_ebp, reg_esp;
->   __asm
->   {
->   here:
->       lea	eax,here
->       mov	reg_eip,eax
->       mov	reg_ebp,ebp
->       mov	reg_esp,esp
->   };
->   stackFrame.AddrPC.Offset = reg_eip;
->   stackFrame.AddrStack.Offset = reg_esp;
->   stackFrame.AddrFrame.Offset = reg_ebp;
+> // walk stack back using current call chain
+> unsigned long reg_eip, reg_ebp, reg_esp;
+> __asm
+> {
+> here:
+> lea eax,here
+> mov reg_eip,eax
+> mov reg_ebp,ebp
+> mov reg_esp,esp
+> };
+> stackFrame.AddrPC.Offset = reg_eip;
+> stackFrame.AddrStack.Offset = reg_esp;
+> stackFrame.AddrFrame.Offset = reg_ebp;
 > }
 
 My goto equivalent is:
@@ -4985,6 +4985,289 @@ While the produced assemblies are mildly different, the effect is identical.
          mov     ecx, DWORD PTR __$ArrayPad$[ebp]
          xor     ecx, ebp
          call    @__security_check_cookie@4
+```
+
+</details>
+
+---
+
+<details>
+<summary>Generals/Code/Libraries/Source/WWVegas/WWMath/wwmath.h</summary>
+
+```c++
+#if defined(_MSC_VER) && defined(_M_IX86)
+WWINLINE __declspec(naked) float __fastcall WWMath::Inv_Sqrt(float a)
+{
+	__asm {
+		mov		eax, 0be6eb508h
+		mov		DWORD PTR [esp-12],03fc00000h ;  1.5 on the stack
+		sub		eax, DWORD PTR [esp+4]; a
+		sub		DWORD PTR [esp+4], 800000h ; a/2 a=Y0
+		shr		eax, 1     ; firs approx in eax=R0
+		mov		DWORD PTR [esp-8], eax
+
+		fld		DWORD PTR [esp-8] ;r
+		fmul	st, st            ;r*r
+		fld		DWORD PTR [esp-8] ;r
+		fxch	st(1)
+		fmul	DWORD PTR [esp+4];a ;r*r*y0
+		fld		DWORD PTR [esp-12];load 1.5
+		fld		st(0)
+		fsub	st,st(2)			   ;r1 = 1.5 - y1
+		;x1 = st(3)
+		;y1 = st(2)
+		;1.5 = st(1)
+		;r1 = st(0)
+
+		fld		st(1)
+		fxch	st(1)
+		fmul	st(3),st			; y2=y1*r1*...
+		fmul	st(3),st			; y2=y1*r1*r1
+		fmulp	st(4),st            ; x2=x1*r1
+		fsub	st,st(2)               ; r2=1.5-y2
+		;x2=st(3)
+		;y2=st(2)
+		;1.5=st(1)
+		;r2 = st(0)
+
+		fmul	st(2),st			;y3=y2*r2*...
+		fmul	st(3),st			;x3=x2*r2
+		fmulp	st(2),st			;y3=y2*r2*r2
+		fxch	st(1)
+		fsubp	st(1),st			;r3= 1.5 - y3
+		;x3 = st(1)
+		;r3 = st(0)
+		fmulp	st(1), st
+		ret 4
+	}
+}
+#else
+WWINLINE float WWMath::Inv_Sqrt(float val)
+{
+	return 1.0f / (float)sqrt(val);
+}
+#endif
+```
+
+This is the [fast inverse square root from Id Software](https://en.wikipedia.org/wiki/Fast_inverse_square_root).
+
+My goto equivalent is:
+
+```c++
+class WWMath {
+    public:
+    inline float __fastcall Inv_Sqrt(float a);
+};
+
+#if defined(_MSC_VER) && defined(_M_IX86)
+inline float __fastcall WWMath::Inv_Sqrt(float a)
+{
+	if (a == 0.0f) return 0.0f;
+
+   long i;
+	float x2, y;
+	const float threehalfs = 1.5F;
+
+	x2 = a * 0.5F;
+	y  = a;
+	i  = * ( long * ) &y;                       // evil floating point bit level hacking
+	i  = 0x5f3759df - ( i >> 1 );               // what the fuck?
+	y  = * ( float * ) &i;
+	y  = y * ( threehalfs - ( x2 * y * y ) );   // 1st iteration
+
+	return y;
+}
+#else
+inline float WWMath::Inv_Sqrt(float val)
+{
+	return 1.0f / (float)sqrt(val);
+}
+#endif
+```
+
+<table>
+<tr>
+<th>With Inline Assembly</th>
+<th>Without Inline Assembly</th>
+</tr>
+<td>
+
+```asm
+_a$ = 8                                       ; size = 4
+float WWMath::Inv_Sqrt(float) PROC                      ; WWMath::Inv_Sqrt
+        mov     eax, -1100040952              ; be6eb508H
+        mov     DWORD PTR [esp-12], 1069547520            ; 3fc00000H
+        sub     eax, DWORD PTR [esp+4]
+        sub     DWORD PTR [esp+4], 8388608                ; 00800000H
+        shr     eax, 1
+        mov     DWORD PTR [esp-8], eax
+        fld     DWORD PTR [esp-8]
+        fmul    ST(0), ST(0)
+        fld     DWORD PTR [esp-8]
+        fxch    ST(1)
+        fmul    DWORD PTR [esp+4]
+        fld     DWORD PTR [esp-12]
+        fld     ST(0)
+        fsub    ST(0), ST(2)
+        fld     ST(1)
+        fxch    ST(1)
+        fmul    ST(3), ST(0)
+        fmul    ST(3), ST(0)
+        fmulp   ST(4), ST(0)
+        fsub    ST(0), ST(2)
+        fmul    ST(2), ST(0)
+        fmul    ST(3), ST(0)
+        fmulp   ST(2), ST(0)
+        fxch    ST(1)
+        fsubp   ST(1), ST(0)
+        fmulp   ST(1), ST(0)
+        ret     4
+float WWMath::Inv_Sqrt(float) ENDP                      ; WWMath::Inv_Sqrt
+```
+
+</td>
+<td>
+
+```asm
+__real@3fc00000 DD 03fc00000r             ; 1.5
+__real@3f000000 DD 03f000000r             ; 0.5
+__real@00000000 DD 000000000r             ; 0
+
+_threehalfs$ = -20                                  ; size = 4
+_this$ = -16                                            ; size = 4
+_x2$ = -12                                          ; size = 4
+_i$ = -8                                                ; size = 4
+_y$ = -4                                                ; size = 4
+_a$ = 8                                       ; size = 4
+float WWMath::Inv_Sqrt(float) PROC                      ; WWMath::Inv_Sqrt
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 20                             ; 00000014H
+        mov     DWORD PTR _this$[ebp], ecx
+        movss   xmm0, DWORD PTR _a$[ebp]
+        ucomiss xmm0, DWORD PTR __real@00000000
+        lahf
+        test    ah, 68                              ; 00000044H
+        jp      SHORT $LN2@Inv_Sqrt
+        fldz
+        jmp     SHORT $LN1@Inv_Sqrt
+$LN2@Inv_Sqrt:
+        movss   xmm0, DWORD PTR __real@3fc00000
+        movss   DWORD PTR _threehalfs$[ebp], xmm0
+        movss   xmm0, DWORD PTR _a$[ebp]
+        mulss   xmm0, DWORD PTR __real@3f000000
+        movss   DWORD PTR _x2$[ebp], xmm0
+        movss   xmm0, DWORD PTR _a$[ebp]
+        movss   DWORD PTR _y$[ebp], xmm0
+        mov     eax, DWORD PTR _y$[ebp]
+        mov     DWORD PTR _i$[ebp], eax
+        mov     ecx, DWORD PTR _i$[ebp]
+        sar     ecx, 1
+        mov     edx, 1597463007                     ; 5f3759dfH
+        sub     edx, ecx
+        mov     DWORD PTR _i$[ebp], edx
+        movss   xmm0, DWORD PTR _i$[ebp]
+        movss   DWORD PTR _y$[ebp], xmm0
+        movss   xmm0, DWORD PTR _x2$[ebp]
+        mulss   xmm0, DWORD PTR _y$[ebp]
+        mulss   xmm0, DWORD PTR _y$[ebp]
+        movss   xmm1, DWORD PTR __real@3fc00000
+        subss   xmm1, xmm0
+        mulss   xmm1, DWORD PTR _y$[ebp]
+        movss   DWORD PTR _y$[ebp], xmm1
+        fld     DWORD PTR _y$[ebp]
+$LN1@Inv_Sqrt:
+        mov     esp, ebp
+        pop     ebp
+        ret     4
+float WWMath::Inv_Sqrt(float) ENDP                      ; WWMath::Inv_Sqrt
+```
+
+</td>
+</table>
+
+This will definitely be slower/bigger unless you enable `/O2` and equivalents.
+
+```diff
+@@ -1,30 +1,52 @@
++__real@3fc00000 DD 03fc00000r             ; 1.5
++__real@3f000000 DD 03f000000r             ; 0.5
++__real@00000000 DD 000000000r             ; 0
++
++_threehalfs$ = -20                                  ; size = 4
++_this$ = -16                                            ; size = 4
++_x2$ = -12                                          ; size = 4
++_i$ = -8                                                ; size = 4
++_y$ = -4                                                ; size = 4
+ _a$ = 8                                       ; size = 4
+ float WWMath::Inv_Sqrt(float) PROC                      ; WWMath::Inv_Sqrt
+-        mov     eax, -1100040952              ; be6eb508H
+-        mov     DWORD PTR [esp-12], 1069547520            ; 3fc00000H
+-        sub     eax, DWORD PTR [esp+4]
+-        sub     DWORD PTR [esp+4], 8388608                ; 00800000H
+-        shr     eax, 1
+-        mov     DWORD PTR [esp-8], eax
+-        fld     DWORD PTR [esp-8]
+-        fmul    ST(0), ST(0)
+-        fld     DWORD PTR [esp-8]
+-        fxch    ST(1)
+-        fmul    DWORD PTR [esp+4]
+-        fld     DWORD PTR [esp-12]
+-        fld     ST(0)
+-        fsub    ST(0), ST(2)
+-        fld     ST(1)
+-        fxch    ST(1)
+-        fmul    ST(3), ST(0)
+-        fmul    ST(3), ST(0)
+-        fmulp   ST(4), ST(0)
+-        fsub    ST(0), ST(2)
+-        fmul    ST(2), ST(0)
+-        fmul    ST(3), ST(0)
+-        fmulp   ST(2), ST(0)
+-        fxch    ST(1)
+-        fsubp   ST(1), ST(0)
+-        fmulp   ST(1), ST(0)
++        push    ebp
++        mov     ebp, esp
++        sub     esp, 20                             ; 00000014H
++        mov     DWORD PTR _this$[ebp], ecx
++        movss   xmm0, DWORD PTR _a$[ebp]
++        ucomiss xmm0, DWORD PTR __real@00000000
++        lahf
++        test    ah, 68                              ; 00000044H
++        jp      SHORT $LN2@Inv_Sqrt
++        fldz
++        jmp     SHORT $LN1@Inv_Sqrt
++$LN2@Inv_Sqrt:
++        movss   xmm0, DWORD PTR __real@3fc00000
++        movss   DWORD PTR _threehalfs$[ebp], xmm0
++        movss   xmm0, DWORD PTR _a$[ebp]
++        mulss   xmm0, DWORD PTR __real@3f000000
++        movss   DWORD PTR _x2$[ebp], xmm0
++        movss   xmm0, DWORD PTR _a$[ebp]
++        movss   DWORD PTR _y$[ebp], xmm0
++        mov     eax, DWORD PTR _y$[ebp]
++        mov     DWORD PTR _i$[ebp], eax
++        mov     ecx, DWORD PTR _i$[ebp]
++        sar     ecx, 1
++        mov     edx, 1597463007                     ; 5f3759dfH
++        sub     edx, ecx
++        mov     DWORD PTR _i$[ebp], edx
++        movss   xmm0, DWORD PTR _i$[ebp]
++        movss   DWORD PTR _y$[ebp], xmm0
++        movss   xmm0, DWORD PTR _x2$[ebp]
++        mulss   xmm0, DWORD PTR _y$[ebp]
++        mulss   xmm0, DWORD PTR _y$[ebp]
++        movss   xmm1, DWORD PTR __real@3fc00000
++        subss   xmm1, xmm0
++        mulss   xmm1, DWORD PTR _y$[ebp]
++        movss   DWORD PTR _y$[ebp], xmm1
++        fld     DWORD PTR _y$[ebp]
++$LN1@Inv_Sqrt:
++        mov     esp, ebp
++        pop     ebp
+         ret     4
+ float WWMath::Inv_Sqrt(float) ENDP                      ; WWMath::Inv_Sqrt
 ```
 
 </details>
