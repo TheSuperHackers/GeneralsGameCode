@@ -1306,6 +1306,406 @@ The generated assemblies have **no** difference.
 ---
 
 <details>
+<summary>GeneralsMD/Code/Libraries/Source/debug/debug_except.cpp</summary>
+
+```c++
+void DebugExceptionhandler::LogFPURegisters(Debug &dbg, struct _EXCEPTION_POINTERS *exptr)
+{
+  struct _CONTEXT &ctx=*exptr->ContextRecord;
+
+  if (!(ctx.ContextFlags&CONTEXT_FLOATING_POINT))
+  {
+    dbg << "FP registers not available\n";
+    return;
+  }
+
+  FLOATING_SAVE_AREA &flt=ctx.FloatSave;
+  dbg << Debug::Bin() << Debug::FillChar('0')
+      << "CW:" << Debug::Width(16) << (flt.ControlWord&0xffff) << "\n"
+      << "SW:" << Debug::Width(16) << (flt.StatusWord&0xffff) << "\n"
+      << "TW:" << Debug::Width(16) << (flt.TagWord&0xffff) << "\n"
+      << Debug::Hex() 
+      << "ErrOfs:      " << Debug::Width(8) << flt.ErrorOffset
+      << " ErrSel:  "    << Debug::Width(8) << flt.ErrorSelector << "\n"
+      << "DataOfs:     " << Debug::Width(8) << flt.DataOffset
+      << " DataSel: "    << Debug::Width(8) << flt.DataSelector << "\n"
+      << "Cr0NpxState: " << Debug::Width(8) << flt.Cr0NpxState << "\n";
+
+  for (unsigned k=0;k<SIZE_OF_80387_REGISTERS/10;++k)
+  {
+    dbg << Debug::Dec() << "ST(" << k << ") ";
+    dbg.SetPrefixAndRadix("",16);
+
+    BYTE *value=flt.RegisterArea+k*10;
+    for (unsigned i=0;i<10;i++)
+      dbg << Debug::Width(2) << value[i];
+
+    double fpVal;
+
+    // convert from temporary real (10 byte) to double
+    _asm
+    {
+      mov eax,value
+      fld tbyte ptr [eax]
+      fstp qword ptr [fpVal]
+    }
+
+    dbg << " " << fpVal << "\n";
+  }
+  dbg << Debug::FillChar() << Debug::Dec();
+}
+```
+
+This is doing a fast conversion from a `long double` to a `double`.
+
+> **NOTE**: I have extracted the assembly code to its own function:
+> ```c++
+> #include <string.h>
+>
+> void ConvertToDouble(const long double* value, double* fpVal) {
+>   _asm
+>   {
+>   mov eax,value
+>   fld tbyte ptr [eax]
+>   fstp qword ptr [fpVal]
+>   }
+> }
+>
+> ```
+
+My goto equivalent is:
+
+```c++
+#include <string.h>
+
+void ConvertToDouble(const long double* value, double* fpVal) {
+    *fpVal = static_cast<double>(*value);
+}
+```
+
+<table>
+<tr>
+<th>With Inline Assembly</th>
+<th>Without Inline Assembly</th>
+</tr>
+<td>
+
+```asm
+_value$ = 8                                   ; size = 4
+_fpVal$ = 12                                            ; size = 4
+void ConvertToDouble(long double const *,double *) PROC                  ; ConvertToDouble
+        push    ebp
+        mov     ebp, esp
+        mov     eax, DWORD PTR _value$[ebp]
+        fld     TBYTE PTR [eax]
+        fstp    QWORD PTR _fpVal$[ebp]
+        pop     ebp
+        ret     0
+void ConvertToDouble(long double const *,double *) ENDP                  ; ConvertToDouble
+```
+
+</td>
+<td>
+
+```asm
+_value$ = 8                                   ; size = 4
+_fpVal$ = 12                                            ; size = 4
+void ConvertToDouble(long double const *,double *) PROC                  ; ConvertToDouble
+        push    ebp
+        mov     ebp, esp
+        mov     eax, DWORD PTR _fpVal$[ebp]
+        mov     ecx, DWORD PTR _value$[ebp]
+        movsd   xmm0, QWORD PTR [ecx]
+        movsd   QWORD PTR [eax], xmm0
+        pop     ebp
+        ret     0
+void ConvertToDouble(long double const *,double *) ENDP                  ; ConvertToDouble
+```
+
+I don't think I will be able to make this identical, but the modern compilers seem to do a great job at optimizing even
+without optimization flags.
+
+```diff
+@@ -3,9 +3,10 @@ _fpVal$ = 12                                            ; size = 4
+ void ConvertToDouble(long double const *,double *) PROC                  ; ConvertToDouble
+         push    ebp
+         mov     ebp, esp
+-        mov     eax, DWORD PTR _value$[ebp]
+-        fld     TBYTE PTR [eax]
+-        fstp    QWORD PTR _fpVal$[ebp]
++        mov     eax, DWORD PTR _fpVal$[ebp]
++        mov     ecx, DWORD PTR _value$[ebp]
++        movsd   xmm0, QWORD PTR [ecx]
++        movsd   QWORD PTR [eax], xmm0
+         pop     ebp
+         ret     0
+ void ConvertToDouble(long double const *,double *) ENDP                  ; ConvertToDouble
+```
+
+</td>
+</table>
+
+</details>
+
+---
+
+<details>
+<summary>GeneralsMD/Code/Libraries/Source/debug/debug_stack.cpp</summary>
+
+```c++
+int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
+{
+  InitDbghelp();
+
+  sig.m_numAddr=0;
+
+  // bail out if no stack walk available
+  if (!gDbg._StackWalk)
+    return 0;
+
+	// Set up the stack frame structure for the start point of the stack walk (i.e. here).
+	STACKFRAME stackFrame;
+	memset(&stackFrame,0,sizeof(stackFrame));
+
+	stackFrame.AddrPC.Mode = AddrModeFlat;
+	stackFrame.AddrStack.Mode = AddrModeFlat;
+	stackFrame.AddrFrame.Mode = AddrModeFlat;
+
+	// Use the context struct if it was provided.
+	if (ctx) 
+  {
+		stackFrame.AddrPC.Offset = ctx->Eip;
+		stackFrame.AddrStack.Offset = ctx->Esp;
+		stackFrame.AddrFrame.Offset = ctx->Ebp;
+	}
+  else
+  {
+    // walk stack back using current call chain
+	  unsigned long reg_eip, reg_ebp, reg_esp;
+	  __asm 
+    {
+    here:
+		  lea	eax,here
+		  mov	reg_eip,eax
+		  mov	reg_ebp,ebp
+		  mov	reg_esp,esp
+	  };
+	  stackFrame.AddrPC.Offset = reg_eip;
+	  stackFrame.AddrStack.Offset = reg_esp;
+	  stackFrame.AddrFrame.Offset = reg_ebp;
+  }
+
+	// Walk the stack by the requested number of return address iterations.
+  bool skipFirst=!ctx;
+  while (sig.m_numAddr<Signature::MAX_ADDR&&
+		     gDbg._StackWalk(IMAGE_FILE_MACHINE_I386,GetCurrentProcess(),GetCurrentThread(),
+                         &stackFrame,NULL,NULL,gDbg._SymFunctionTableAccess,gDbg._SymGetModuleBase,NULL))
+  {
+    if (skipFirst)
+      skipFirst=false;
+    else
+      sig.m_addr[sig.m_numAddr++]=stackFrame.AddrPC.Offset;
+  }
+
+	return sig.m_numAddr;
+}
+```
+
+This assembly is trying to get the values of the registers `EIP`, `ESP` and `EBP`.
+
+> **NOTE**: I have extracted the assembly code to its own function:
+> #include <windows.h>
+> #include <dbghelp.h>
+> 
+> void CaptureStackInfo(CONTEXT& threadContext, STACKFRAME& stackFrame) {
+>   // walk stack back using current call chain
+>   unsigned long reg_eip, reg_ebp, reg_esp;
+>   __asm
+>   {
+>   here:
+>       lea	eax,here
+>       mov	reg_eip,eax
+>       mov	reg_ebp,ebp
+>       mov	reg_esp,esp
+>   };
+>   stackFrame.AddrPC.Offset = reg_eip;
+>   stackFrame.AddrStack.Offset = reg_esp;
+>   stackFrame.AddrFrame.Offset = reg_ebp;
+> }
+
+My goto equivalent is:
+
+```c++
+#include <windows.h>
+#include <dbghelp.h>
+
+void CaptureStackInfo(CONTEXT& threadContext, STACKFRAME& stackFrame) {
+    // Capture the current thread's context to extract EIP, ESP, and EBP registers.
+    memset(&threadContext, 0, sizeof(CONTEXT));
+    threadContext.ContextFlags = CONTEXT_CONTROL;
+
+    RtlCaptureContext(&threadContext); // Retrieves the current thread's register state.
+
+    // Assign values to the stack frame.
+    stackFrame.AddrPC.Offset = threadContext.Eip;      // Program Counter (EIP)
+    stackFrame.AddrPC.Mode = AddrModeFlat;
+
+    stackFrame.AddrStack.Offset = threadContext.Esp;   // Stack Pointer (ESP)
+    stackFrame.AddrStack.Mode = AddrModeFlat;
+
+    stackFrame.AddrFrame.Offset = threadContext.Ebp;   // Base Pointer (EBP)
+    stackFrame.AddrFrame.Mode = AddrModeFlat;
+}
+```
+
+<table>
+<tr>
+<th>With Inline Assembly</th>
+<th>Without Inline Assembly</th>
+</tr>
+<td>
+
+```asm
+_reg_ebp$ = -12                               ; size = 4
+_reg_esp$ = -8                                      ; size = 4
+_reg_eip$ = -4                                      ; size = 4
+_threadContext$ = 8                           ; size = 4
+_stackFrame$ = 12                                 ; size = 4
+void CaptureStackInfo(_CONTEXT &,_tagSTACKFRAME &) PROC ; CaptureStackInfo
+        push    ebp
+        mov     ebp, esp
+        sub     esp, 12                             ; 0000000cH
+$here$3:
+        lea     eax, OFFSET $here$3
+        mov     DWORD PTR _reg_eip$[ebp], eax
+        mov     DWORD PTR _reg_ebp$[ebp], ebp
+        mov     DWORD PTR _reg_esp$[ebp], esp
+        mov     eax, DWORD PTR _stackFrame$[ebp]
+        mov     ecx, DWORD PTR _reg_eip$[ebp]
+        mov     DWORD PTR [eax], ecx
+        mov     edx, DWORD PTR _stackFrame$[ebp]
+        mov     eax, DWORD PTR _reg_esp$[ebp]
+        mov     DWORD PTR [edx+36], eax
+        mov     ecx, DWORD PTR _stackFrame$[ebp]
+        mov     edx, DWORD PTR _reg_ebp$[ebp]
+        mov     DWORD PTR [ecx+24], edx
+        mov     esp, ebp
+        pop     ebp
+        ret     0
+void CaptureStackInfo(_CONTEXT &,_tagSTACKFRAME &) ENDP ; CaptureStackInfo
+```
+
+</td>
+<td>
+
+```asm
+_threadContext$ = 8                           ; size = 4
+_stackFrame$ = 12                                 ; size = 4
+void CaptureStackInfo(_CONTEXT &,_tagSTACKFRAME &) PROC ; CaptureStackInfo
+        push    ebp
+        mov     ebp, esp
+        push    716                           ; 000002ccH
+        push    0
+        mov     eax, DWORD PTR _threadContext$[ebp]
+        push    eax
+        call    _memset
+        add     esp, 12                             ; 0000000cH
+        mov     ecx, DWORD PTR _threadContext$[ebp]
+        mov     DWORD PTR [ecx], 65537                    ; 00010001H
+        mov     edx, DWORD PTR _threadContext$[ebp]
+        push    edx
+        call    DWORD PTR __imp__RtlCaptureContext@4
+        mov     eax, DWORD PTR _stackFrame$[ebp]
+        mov     ecx, DWORD PTR _threadContext$[ebp]
+        mov     edx, DWORD PTR [ecx+184]
+        mov     DWORD PTR [eax], edx
+        mov     eax, DWORD PTR _stackFrame$[ebp]
+        mov     DWORD PTR [eax+8], 3
+        mov     ecx, DWORD PTR _stackFrame$[ebp]
+        mov     edx, DWORD PTR _threadContext$[ebp]
+        mov     eax, DWORD PTR [edx+196]
+        mov     DWORD PTR [ecx+36], eax
+        mov     ecx, DWORD PTR _stackFrame$[ebp]
+        mov     DWORD PTR [ecx+44], 3
+        mov     edx, DWORD PTR _stackFrame$[ebp]
+        mov     eax, DWORD PTR _threadContext$[ebp]
+        mov     ecx, DWORD PTR [eax+180]
+        mov     DWORD PTR [edx+24], ecx
+        mov     edx, DWORD PTR _stackFrame$[ebp]
+        mov     DWORD PTR [edx+32], 3
+        pop     ebp
+        ret     0
+void CaptureStackInfo(_CONTEXT &,_tagSTACKFRAME &) ENDP ; CaptureStackInfo
+```
+
+I don't think I will be able to make this identical, but the modern compilers optimizations might help.
+
+```diff
+@@ -1,27 +1,37 @@
+-_reg_ebp$ = -12                               ; size = 4
+-_reg_esp$ = -8                                      ; size = 4
+-_reg_eip$ = -4                                      ; size = 4
+ _threadContext$ = 8                           ; size = 4
+ _stackFrame$ = 12                                 ; size = 4
+ void CaptureStackInfo(_CONTEXT &,_tagSTACKFRAME &) PROC ; CaptureStackInfo
+         push    ebp
+         mov     ebp, esp
+-        sub     esp, 12                             ; 0000000cH
+-$here$3:
+-        lea     eax, OFFSET $here$3
+-        mov     DWORD PTR _reg_eip$[ebp], eax
+-        mov     DWORD PTR _reg_ebp$[ebp], ebp
+-        mov     DWORD PTR _reg_esp$[ebp], esp
++        push    716                           ; 000002ccH
++        push    0
++        mov     eax, DWORD PTR _threadContext$[ebp]
++        push    eax
++        call    _memset
++        add     esp, 12                             ; 0000000cH
++        mov     ecx, DWORD PTR _threadContext$[ebp]
++        mov     DWORD PTR [ecx], 65537                    ; 00010001H
++        mov     edx, DWORD PTR _threadContext$[ebp]
++        push    edx
++        call    DWORD PTR __imp__RtlCaptureContext@4
+         mov     eax, DWORD PTR _stackFrame$[ebp]
+-        mov     ecx, DWORD PTR _reg_eip$[ebp]
+-        mov     DWORD PTR [eax], ecx
+-        mov     edx, DWORD PTR _stackFrame$[ebp]
+-        mov     eax, DWORD PTR _reg_esp$[ebp]
+-        mov     DWORD PTR [edx+36], eax
++        mov     ecx, DWORD PTR _threadContext$[ebp]
++        mov     edx, DWORD PTR [ecx+184]
++        mov     DWORD PTR [eax], edx
++        mov     eax, DWORD PTR _stackFrame$[ebp]
++        mov     DWORD PTR [eax+8], 3
++        mov     ecx, DWORD PTR _stackFrame$[ebp]
++        mov     edx, DWORD PTR _threadContext$[ebp]
++        mov     eax, DWORD PTR [edx+196]
++        mov     DWORD PTR [ecx+36], eax
+         mov     ecx, DWORD PTR _stackFrame$[ebp]
+-        mov     edx, DWORD PTR _reg_ebp$[ebp]
+-        mov     DWORD PTR [ecx+24], edx
+-        mov     esp, ebp
++        mov     DWORD PTR [ecx+44], 3
++        mov     edx, DWORD PTR _stackFrame$[ebp]
++        mov     eax, DWORD PTR _threadContext$[ebp]
++        mov     ecx, DWORD PTR [eax+180]
++        mov     DWORD PTR [edx+24], ecx
++        mov     edx, DWORD PTR _stackFrame$[ebp]
++        mov     DWORD PTR [edx+32], 3
+         pop     ebp
+         ret     0
+ void CaptureStackInfo(_CONTEXT &,_tagSTACKFRAME &) ENDP ; CaptureStackInfo
+```
+
+</td>
+</table>
+
+</details>
+
+---
+
+<details>
 <summary>Generals/Code/Libraries/Source/WWVegas/WW3D2/dx8wrapper.h</summary>
 
 This file includes the following assembly blocks:
