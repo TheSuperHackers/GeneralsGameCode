@@ -783,7 +783,7 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 	if (lSlot->getPlayerTemplate() >= 0)
 		pt = ThePlayerTemplateStore->getNthPlayerTemplate(lSlot->getPlayerTemplate());
 	else
-		pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey("FactionObserver") );
+		pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey(NAMEKEY_FactionObserver) );
 	const Image *loadScreenImage = TheMappedImageCollection->findImageByName(pt->getLoadScreen());
 
 
@@ -1012,7 +1012,7 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 	if (lSlot->getPlayerTemplate() >= 0)
 		pt = ThePlayerTemplateStore->getNthPlayerTemplate(lSlot->getPlayerTemplate());
 	else
-		pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey("FactionObserver") );
+		pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey(NAMEKEY_FactionObserver) );
 	const Image *loadScreenImage = TheMappedImageCollection->findImageByName(pt->getLoadScreen());
 	if(loadScreenImage)
 		m_loadScreen->winSetEnabledImage(0, loadScreenImage);

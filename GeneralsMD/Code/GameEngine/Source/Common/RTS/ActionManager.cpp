@@ -239,7 +239,7 @@ Bool ActionManager::canTransferSuppliesAt( const Object *obj, const Object *tran
 		return FALSE;
 
 	// If it is a warehouse, it must have boxes left and not be an enemy
-	static const NameKeyType key_warehouseUpdate = NAMEKEY("SupplyWarehouseDockUpdate");
+	static const NameKeyType key_warehouseUpdate = NAMEKEY(NAMEKEY_SupplyWarehouseDockUpdate);
 	SupplyWarehouseDockUpdate *warehouseModule = (SupplyWarehouseDockUpdate*)transferDest->findUpdateModule( key_warehouseUpdate );
 	if( warehouseModule )
 		if( warehouseModule->getBoxesStored() == 0 || transferDest->getRelationship( obj ) == ENEMIES )
@@ -247,7 +247,7 @@ Bool ActionManager::canTransferSuppliesAt( const Object *obj, const Object *tran
 
 	// if it is a supply center, I must have boxes, and must be controlled by the same player
 	// (not merely an ally... otherwise you may find yourself funding your allies. ick.)
-	static const NameKeyType key_centerUpdate = NAMEKEY("SupplyCenterDockUpdate");
+	static const NameKeyType key_centerUpdate = NAMEKEY(NAMEKEY_SupplyCenterDockUpdate);
 	SupplyCenterDockUpdate *centerModule = (SupplyCenterDockUpdate*)transferDest->findUpdateModule( key_centerUpdate );
 	if( centerModule  )
 		if( supplyTruck->getNumberBoxes() == 0  || transferDest->getControllingPlayer() != obj->getControllingPlayer() )
@@ -1707,7 +1707,7 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 					{
 						//Don't allow it to disguise as a train -- they don't have KINDOF_TRAIN yet, but
 						//if added, please change this code so it'll be faster!
-						static const NameKeyType key = NAMEKEY( "RailroadBehavior" );
+						static const NameKeyType key = NAMEKEY( NAMEKEY_RailroadBehavior );
 						RailroadBehavior *rBehavior = (RailroadBehavior*)target->findUpdateModule( key );
 						if( !rBehavior )
 						{

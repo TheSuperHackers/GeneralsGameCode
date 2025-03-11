@@ -44,7 +44,7 @@ class Thing;
 class SwayClientUpdate : public ClientUpdateModule
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SwayClientUpdate, "SwayClientUpdate" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SwayClientUpdate, NAMEKEY_SwayClientUpdate )
 	MAKE_STANDARD_MODULE_MACRO( SwayClientUpdate );
 
 public:

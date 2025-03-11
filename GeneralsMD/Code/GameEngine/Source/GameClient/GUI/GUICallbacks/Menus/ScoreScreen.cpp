@@ -440,7 +440,7 @@ void ScoreScreenUpdate( WindowLayout * layout, void *userData)
 		if (lSlot && lSlot->getPlayerTemplate() >= 0)
 			pt = ThePlayerTemplateStore->getNthPlayerTemplate(lSlot->getPlayerTemplate());
 		else
-			pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey("FactionObserver") );
+			pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey(NAMEKEY_FactionObserver) );
 		AsciiString musicName = pt->getScoreScreenMusic();
 		if ( !musicName.isEmpty() )
 		{
