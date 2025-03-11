@@ -44,7 +44,8 @@
 //#define CREATE_DX8_MULTI_THREADED
 //#define CREATE_DX8_FPU_PRESERVE
 #define WW3D_DEVTYPE D3DDEVTYPE_HAL
-
+#undef WINVER
+#define WINVER 0x0500
 #include "dx8wrapper.h"
 #include "dx8webbrowser.h"
 #include "dx8fvf.h"
@@ -948,13 +949,22 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 			if (!windowed)
 				::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, rect.right-rect.left, rect.bottom-rect.top,SWP_NOSIZE |SWP_NOMOVE);
 			else
+			{
+				MONITORINFO mi = {sizeof(MONITORINFO)};
+				GetMonitorInfo(MonitorFromWindow(_Hwnd, MONITOR_DEFAULTTOPRIMARY), &mi);
+				int width = rect.right-rect.left;
+				int height = rect.bottom-rect.top;
+				int left = (mi.rcWork.left + mi.rcWork.right - width) / 2;
+				int top  = (mi.rcWork.top + mi.rcWork.bottom - height) / 2;
+				if (top < 0) top = 0;
 				::SetWindowPos (_Hwnd,
 								 NULL,
-								 0,
-								 0,
-								 rect.right-rect.left,
-								 rect.bottom-rect.top,
-								 SWP_NOZORDER | SWP_NOMOVE);
+								 left,
+								 top,
+								 width,
+								 height,
+								 SWP_NOZORDER);
+			}
 		}
 	}
 #endif
