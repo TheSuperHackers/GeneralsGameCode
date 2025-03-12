@@ -956,7 +956,6 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 				int height = rect.bottom-rect.top;
 				int left = (mi.rcWork.left + mi.rcWork.right - width) / 2;
 				int top  = (mi.rcWork.top + mi.rcWork.bottom - height) / 2;
-				if (top < 0) top = 0;
 				::SetWindowPos (_Hwnd,
 								 NULL,
 								 left,
