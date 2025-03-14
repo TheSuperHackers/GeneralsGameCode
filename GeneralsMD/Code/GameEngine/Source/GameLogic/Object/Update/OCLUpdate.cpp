@@ -123,8 +123,15 @@ OCLUpdate::~OCLUpdate( void )
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime OCLUpdate::update( void )
 {
-	if( getObject()->isDisabled() )
+	if(m_nextCreationFrame == 0 ) 
 	{
+		setNextCreationFrame();
+		return UPDATE_SLEEP_NONE;
+	}
+
+	if( getObject()->isDisabled() || getObject()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	{
+		// if( getObject()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ) return UPDATE_SLEEP_NONE;// not built yet	
 		m_nextCreationFrame++;
 		return UPDATE_SLEEP_NONE;
 	}
