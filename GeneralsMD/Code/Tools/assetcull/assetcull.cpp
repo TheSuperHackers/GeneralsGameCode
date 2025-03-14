@@ -25,12 +25,33 @@
 // ©2003 Electronic Arts
 //
 // simple recursive directory compare tool for asset culling
+/////////////////////////////////////////////////////////////////////////TheSuperHackers-V2
+// $File: //depot/GeneralsMD/code/Tools/assetcull/assetcull.cpp $
+// $Contributor: DevGeniusCode $
+// $Revision: #2 $
+// $DateTime: 2025/03/14 $
+//
+// Enhancements:
+// - Replaced `_findfirst` and `_findnext` with `std::filesystem` for modern, cross-platform directory iteration.
+// - Switched from `fopen` to `std::ifstream` for more efficient and safer file comparisons.
+// - Changed from fixed-size buffers (16384 bytes) to iterators for more efficient and modern file comparison.
+// - Improved code readability with range-based `for` loops and `std::string`.
+//
+// Bug Fixes:
+// - Ensured proper file permissions `std::filesystem::permissions` before deletion to avoid errors.
+//
+// Other Improvements:
+// - Cleaned up batch file creation logic for better formatting and handling of file paths.
 //////////////////////////////////////////////////////////////////////////////
+
+
 #include <string>
 #include <vector>
-#include <sys/stat.h>
-#include <stdio.h>
-#include <io.h>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+
+namespace fs = std::filesystem;
 
 /*
   Usage: assetcull <dir1> <dir2> <bat-file>
@@ -41,139 +62,92 @@
     and a corresponding DEL line is written to the given batch file.
 */
 
-static bool filesEqual(const char *fn1, const char *fn2)
-{
-  // make sure both files exist and are of same size
-  struct _stat s1,s2;
-  if (_stat(fn1,&s1)||
-      _stat(fn2,&s2))
-    return false;
-  if (s1.st_size!=s2.st_size)
-    return false;
+static bool filesEqual(const std::string &fn1, const std::string &fn2) {
+    // Check if both files exist and are of the same size
+    std::ifstream f1(fn1, std::ios::binary);
+    std::ifstream f2(fn2, std::ios::binary);
 
-  // must compare byte-by-byte
-  FILE *f1=fopen(fn1,"rb");
-  if (!f1)
-    return false;
-  FILE *f2=fopen(fn2,"rb");
-  if (!f2)
-    return false;
+    if (!f1 || !f2) return false;
 
-  static char buf1[16384],buf2[16384];
-  for (unsigned k=0;k<s1.st_size;)
-  {
-    unsigned cur=s1.st_size-k;
-    if (cur>sizeof(buf1))
-      cur=sizeof(buf1);
-    if (fread(buf1,cur,1,f1)!=1||
-        fread(buf2,cur,1,f2)!=1)
-      break;
-    if (memcmp(buf1,buf2,cur))
-      break;
-    k+=cur;
-  }
-  fclose(f1);
-  fclose(f2);
-  return k==s1.st_size;
+    // Check file sizes
+    f1.seekg(0, std::ios::end);
+    f2.seekg(0, std::ios::end);
+    if (f1.tellg() != f2.tellg()) return false;
+
+    // Compare files byte-by-byte
+    f1.seekg(0, std::ios::beg);
+    f2.seekg(0, std::ios::beg);
+    return std::equal(std::istreambuf_iterator<char>(f1), std::istreambuf_iterator<char>(),
+                      std::istreambuf_iterator<char>(f2));
 }
 
-static int recursiveCull(FILE *batchFile,
-                         const char *dir1, const char *dir2,
-                         const char *relDir)
-{
-  // sub directory must exist both in dir1 and dir2
-  // (but we're walking dir2 only later)
-  std::string work;
-  work=dir1; work+=relDir; work+="*.*";
-  _finddata_t fd;
-  long h=_findfirst(work.c_str(),&fd);
-  if (h==-1)
-    return 0;
-  _findclose(h);
+static int recursiveCull(std::ofstream &batchFile, const fs::path &dir1, const fs::path &dir2, const fs::path &relDir) {
+    // Ensure both directories exist
+    fs::path dir1Path = dir1 / relDir;
+    fs::path dir2Path = dir2 / relDir;
 
-  work=dir2; work+=relDir; work+="*.*";
-  h=_findfirst(work.c_str(),&fd);
-  if (h==-1)
-    return 0;
+    if (!fs::exists(dir1Path) || !fs::exists(dir2Path)) return 0;
 
-  // walk dir2, collect sub directories and check for duplicate
-  // files
-  std::vector<std::string> subdir,dupfiles;
-  int deleted=0;
-  for (;;)
-  {
-    if (fd.attrib&_A_SUBDIR)
-    {
-      if (strcmp(fd.name,".")&&
-          strcmp(fd.name,".."))
-        subdir.push_back(fd.name);
+    std::vector<fs::path> subdir, dupfiles;
+    int deleted = 0;
+
+    // Walk through dir2, collect subdirectories and check for duplicate files
+    for (const auto &entry : fs::directory_iterator(dir2Path)) {
+        if (entry.is_directory()) {
+            // Ignore "." and ".."
+            if (entry.path().filename() != "." && entry.path().filename() != "..") {
+                subdir.push_back(entry.path().filename());
+            }
+        } else {
+            fs::path file1 = dir1Path / entry.path().filename();
+            fs::path file2 = entry.path();
+            if (filesEqual(file1.string(), file2.string())) {
+                dupfiles.push_back(entry.path().filename());
+            }
+        }
     }
-    else
-    {
-      std::string work1,work2;
-      work1=dir1; work1+=relDir; work1+=fd.name;
-      work2=dir2; work2+=relDir; work2+=fd.name;
-      if (filesEqual(work1.c_str(),work2.c_str()))
-        dupfiles.push_back(fd.name);
+
+    // Remove duplicate files and write to batch file
+    for (const auto &file : dupfiles) {
+        fs::path fullPath = dir1Path / file;
+        std::error_code ec;
+        fs::permissions(fullPath, fs::perms::owner_write, ec);  // Ensure write permissions
+        if (fs::remove(fullPath)) {
+            ++deleted;
+            batchFile << "attrib -r \"" << fullPath.string() << "\"\n";
+            batchFile << "del -r \"" << fullPath.string() << "\"\n";
+        } else {
+            std::cerr << "Error: Can't delete " << fullPath.string() << std::endl;
+        }
     }
-    if (_findnext(h,&fd))
-      break;
-  }
-  _findclose(h);
 
-  // remove duplicate files, at to batch file
-  // (we can't just delete them inside the find loop because - at
-  // least theoretically - that could screw up that find process...)
-  for (std::vector<std::string>::iterator i=dupfiles.begin();i!=dupfiles.end();++i)
-  {
-    std::string work;
-    work=dir1; work+=relDir; work+=*i;
-    _chmod(work.c_str(),_S_IREAD|_S_IWRITE);
-    if (_unlink(work.c_str()))
-      fprintf(stderr,"Error: Can't delete %s\n",work.c_str());
-    else
-      deleted++;
-    fprintf(batchFile,"attrib -r \"%s\"\n",work.c_str());
-    fprintf(batchFile,"del -r \"%s\"\n",work.c_str());
-  }
+    // Recursively walk subdirectories
+    for (const auto &sub : subdir) {
+        deleted += recursiveCull(batchFile, dir1, dir2, relDir / sub);
+    }
 
-  // walk subdirectories
-  for (i=subdir.begin();i!=subdir.end();++i)
-  {
-    std::string work;
-    work=relDir;
-    work+=*i;
-    work+="\\";
-    deleted+=recursiveCull(batchFile,dir1,dir2,work.c_str());
-  }
-
-  // done!
-  return deleted;
+    return deleted;
 }
 
-int main(int argc, char *argv[])
-{
-  if (argc!=4)
-  {
-    printf("Usage: assetcull <dir1> <dir2> <bat-file>\n\n"
-           "Description:\n"
-           "  All files in <dir1> and <dir2> (and subdirectories) are compared\n"
-           "  binary. If an identical file exists it is removed from <dir1>\n"
-           "  and a corresponding DEL line is written to the given batch file.\n"
-          );
-    return 10;
-  }
+int main(int argc, char *argv[]) {
+    if (argc != 4) {
+        std::cout << "Usage: assetcull <dir1> <dir2> <bat-file>\n\n"
+                  << "Description:\n"
+                  << "  All files in <dir1> and <dir2> (and subdirectories) are compared\n"
+                  << "  binary. If an identical file exists it is removed from <dir1>\n"
+                  << "  and a corresponding DEL line is written to the given batch file.\n";
+        return 10;
+    }
 
-  FILE *f=fopen(argv[3],"wt");
-  if (!f)
-  {
-    printf("Error: Can't create %s\n",argv[3]);
-    return 10;
-  }
+    std::ofstream batchFile(argv[3]);
+    if (!batchFile) {
+        std::cout << "Error: Can't create " << argv[3] << std::endl;
+        return 10;
+    }
 
-  int n=recursiveCull(f,argv[1],argv[2],"\\.\\");
-  fclose(f);
-  printf("assetcull: %i files culled.\n",n);
+    int n = recursiveCull(batchFile, argv[1], argv[2], ".");
+    batchFile.close();
+    std::cout << "assetcull: " << n << " files culled." << std::endl;
 
-  return 0;
+    return 0;
 }
