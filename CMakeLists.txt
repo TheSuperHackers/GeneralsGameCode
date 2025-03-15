@@ -61,7 +61,11 @@ include(FetchContent)
 if((WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows") AND ${CMAKE_SIZEOF_VOID_P} EQUAL 4)
     include(cmake/miles.cmake)
     include(cmake/bink.cmake)
-    include(cmake/stlport.cmake)
+    if (IS_VS6_BUILD)
+        include(cmake/stlport.cmake)
+    else()
+        add_library(stlport INTERFACE) # Do not use stlport
+    endif()
     include(cmake/dx8.cmake)
     include(cmake/dbghelp.cmake)
 endif()
@@ -72,6 +76,13 @@ include(cmake/zlib.cmake)
 add_subdirectory(Dependencies/Benchmark)
 add_subdirectory(Dependencies/SafeDisc)
 add_subdirectory(Dependencies/MaxSDK)
+
+if (NOT IS_VS6_BUILD)
+    if (MSVC)
+        # Multithreaded build.
+        add_compile_options(/MP)
+    endif()
+endif()
 
 # Do we want to build extra SDK stuff or just the game binary?
 option(GENZH_BUILD_ZEROHOUR "Build Zero Hour code." ON)

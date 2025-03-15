@@ -5,3 +5,4 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(stlport)
+target_compile_definitions(stlport INTERFACE USING_STLPORT=1)
