@@ -504,7 +504,7 @@ void MilesAudioManager::stopAudio( AudioAffect which )
 	std::list<PlayingAudio *>::iterator it;
 
 	PlayingAudio *playing = NULL;
-	if (BitTest(which, AudioAffect_Sound)) {
+	if (BitIsSet(which, AudioAffect_Sound)) {
 		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it) {
 			playing = *it;
 			if (playing) {
@@ -515,7 +515,7 @@ void MilesAudioManager::stopAudio( AudioAffect which )
 		}
 	}
 
-	if (BitTest(which, AudioAffect_Sound3D)) {
+	if (BitIsSet(which, AudioAffect_Sound3D)) {
 		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it) {
 			playing = *it;
 			if (playing) {
@@ -526,16 +526,16 @@ void MilesAudioManager::stopAudio( AudioAffect which )
 		}
 	}
 
-	if (BitTest(which, AudioAffect_Speech | AudioAffect_Music)) {
+	if (BitIsSet(which, AudioAffect_Speech | AudioAffect_Music)) {
 		for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
 			playing = *it;
 			if (playing) {
 				if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music) {
-					if (!BitTest(which, AudioAffect_Music)) {
+					if (!BitIsSet(which, AudioAffect_Music)) {
 						continue;
 					}
 				} else {
-					if (!BitTest(which, AudioAffect_Speech)) {
+					if (!BitIsSet(which, AudioAffect_Speech)) {
 						continue;
 					}
 				}
@@ -553,7 +553,7 @@ void MilesAudioManager::pauseAudio( AudioAffect which )
 	std::list<PlayingAudio *>::iterator it;
 
 	PlayingAudio *playing = NULL;
-	if (BitTest(which, AudioAffect_Sound)) {
+	if (BitIsSet(which, AudioAffect_Sound)) {
 		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it) {
 			playing = *it;
 			if (playing) {
@@ -562,7 +562,7 @@ void MilesAudioManager::pauseAudio( AudioAffect which )
 		}
 	}
 
-	if (BitTest(which, AudioAffect_Sound3D)) {
+	if (BitIsSet(which, AudioAffect_Sound3D)) {
 		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it) {
 			playing = *it;
 			if (playing) {
@@ -571,16 +571,16 @@ void MilesAudioManager::pauseAudio( AudioAffect which )
 		}
 	}
 
-	if (BitTest(which, AudioAffect_Speech | AudioAffect_Music)) {
+	if (BitIsSet(which, AudioAffect_Speech | AudioAffect_Music)) {
 		for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
 			playing = *it;
 			if (playing) {
 				if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music) {
-					if (!BitTest(which, AudioAffect_Music)) {
+					if (!BitIsSet(which, AudioAffect_Music)) {
 						continue;
 					}
 				} else {
-					if (!BitTest(which, AudioAffect_Speech)) {
+					if (!BitIsSet(which, AudioAffect_Speech)) {
 						continue;
 					}
 				}
@@ -614,7 +614,7 @@ void MilesAudioManager::resumeAudio( AudioAffect which )
 	std::list<PlayingAudio *>::iterator it;
 
 	PlayingAudio *playing = NULL;
-	if (BitTest(which, AudioAffect_Sound)) {
+	if (BitIsSet(which, AudioAffect_Sound)) {
 		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it) {
 			playing = *it;
 			if (playing) {
@@ -623,7 +623,7 @@ void MilesAudioManager::resumeAudio( AudioAffect which )
 		}
 	}
 
-	if (BitTest(which, AudioAffect_Sound3D)) {
+	if (BitIsSet(which, AudioAffect_Sound3D)) {
 		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it) {
 			playing = *it;
 			if (playing) {
@@ -632,16 +632,16 @@ void MilesAudioManager::resumeAudio( AudioAffect which )
 		}
 	}
 
-	if (BitTest(which, AudioAffect_Speech | AudioAffect_Music)) {
+	if (BitIsSet(which, AudioAffect_Speech | AudioAffect_Music)) {
 		for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
 			playing = *it;
 			if (playing) {
 				if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music) {
-					if (!BitTest(which, AudioAffect_Music)) {
+					if (!BitIsSet(which, AudioAffect_Music)) {
 						continue;
 					}
 				} else {
-					if (!BitTest(which, AudioAffect_Speech)) {
+					if (!BitIsSet(which, AudioAffect_Speech)) {
 						continue;
 					}
 				}
@@ -2330,7 +2330,7 @@ void MilesAudioManager::processPlayingList( void )
 				{
 					Real volForConsideration = getEffectiveVolume(playing->m_audioEventRTS);
 					volForConsideration /= (m_sound3DVolume > 0.0f ? m_soundVolume : 1.0f);
-					Bool playAnyways = BitTest( playing->m_audioEventRTS->getAudioEventInfo()->m_type, ST_GLOBAL) || playing->m_audioEventRTS->getAudioEventInfo()->m_priority == AP_CRITICAL;
+					Bool playAnyways = BitIsSet( playing->m_audioEventRTS->getAudioEventInfo()->m_type, ST_GLOBAL) || playing->m_audioEventRTS->getAudioEventInfo()->m_priority == AP_CRITICAL;
 					if( volForConsideration < m_audioSettings->m_minVolume && !playAnyways ) 
 					{
 						// don't want to get an additional callback for this sample

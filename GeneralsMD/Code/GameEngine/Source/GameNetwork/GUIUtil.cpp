@@ -439,14 +439,14 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 				//Color In the little accepted boxes
 					if(slot->isAccepted())
 					{
-						if(BitTest(buttonAccept[i]->winGetStatus(), WIN_STATUS_IMAGE	))
+						if(BitIsSet(buttonAccept[i]->winGetStatus(), WIN_STATUS_IMAGE	))
 							buttonAccept[i]->winEnable(TRUE);
 						else
 							GadgetButtonSetEnabledColor(buttonAccept[i], acceptTrueColor );
 					}
 					else
 					{
-						if(BitTest(buttonAccept[i]->winGetStatus(), WIN_STATUS_IMAGE	))
+						if(BitIsSet(buttonAccept[i]->winGetStatus(), WIN_STATUS_IMAGE	))
 							buttonAccept[i]->winEnable(FALSE);
 						else
 							GadgetButtonSetEnabledColor(buttonAccept[i], acceptFalseColor );
@@ -471,7 +471,7 @@ void UpdateSlotList( GameInfo *myGame, GameWindow *comboPlayer[],
 					comboPlayer[i]->winEnable( FALSE );
 			}
 			//if( i == myGame->getLocalSlotNum())
-      if((comboColor[i] != NULL) && BitTest(comboColor[i]->winGetStatus(), WIN_STATUS_ENABLED))
+      if((comboColor[i] != NULL) && BitIsSet(comboColor[i]->winGetStatus(), WIN_STATUS_ENABLED))
 				PopulateColorComboBox(i, comboColor, myGame, myGame->getConstSlot(i)->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER);
 			Int max, idx;
 			if (comboColor[i] != NULL) {

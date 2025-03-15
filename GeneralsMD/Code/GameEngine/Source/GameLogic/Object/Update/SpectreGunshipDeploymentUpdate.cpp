@@ -154,7 +154,7 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 
 //	getObject()->getControllingPlayer()->getAcademyStats()->recordSpecialPowerUsed( specialPowerTemplate );
 	
-	if( !BitTest( commandOptions, COMMAND_FIRED_BY_SCRIPT ) )
+	if( !BitIsSet( commandOptions, COMMAND_FIRED_BY_SCRIPT ) )
 	{
 /******CHANGE*******/		m_initialTargetPosition.set( targetPos );
 	}

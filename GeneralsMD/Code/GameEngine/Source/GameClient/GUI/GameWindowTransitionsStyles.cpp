@@ -2198,7 +2198,7 @@ static void drawTypeText( GameWindow *window, DisplayString *str)
 	wordWrap = size.x - 10;
 	text->setWordWrap(wordWrap);	
 	str->setWordWrap(wordWrap);
-	if( BitTest(window->winGetStatus(), WIN_STATUS_WRAP_CENTERED)		)
+	if( BitIsSet(window->winGetStatus(), WIN_STATUS_WRAP_CENTERED)		)
 	{
 		str->setWordWrapCentered(TRUE);
 		text->setWordWrapCentered(TRUE);

@@ -240,7 +240,7 @@ static void loadExistingGroupsCombo( HWND combo, GameWindow *window )
 		return;
 
 	// if this is a radio button get the group
-	if( BitTest( window->winGetStyle(), GWS_RADIO_BUTTON ) )
+	if( BitIsSet( window->winGetStyle(), GWS_RADIO_BUTTON ) )
 	{
 		RadioButtonData *radioData = (RadioButtonData *)window->winGetUserData();
 		char buffer[ 64 ];

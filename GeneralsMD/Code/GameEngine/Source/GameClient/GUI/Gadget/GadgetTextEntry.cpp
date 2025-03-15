@@ -149,7 +149,7 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 		}
 		// ------------------------------------------------------------------------
 		case GWM_CHAR:
-			if ( BitTest( mData2, KEY_STATE_DOWN ) && BitTest( mData2, KEY_STATE_ALT | KEY_STATE_CONTROL ) )
+			if ( BitIsSet( mData2, KEY_STATE_DOWN ) && BitIsSet( mData2, KEY_STATE_ALT | KEY_STATE_CONTROL ) )
 			{
 				return MSG_IGNORED; // text extries shouldn't care about CTRL+* or ALT+*
 			}
@@ -161,7 +161,7 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 				case KEY_KPENTER:
 				case KEY_ENTER:
 					// Done with this edit
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 					{
 						if( e->receivedUnichar == FALSE )
 						{
@@ -202,11 +202,11 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 				case KEY_RIGHT:
 				case KEY_TAB:
 
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 					{
 						GameWindow *parent;
 						parent = window->winGetParent();
-						if(parent && !BitTest(parent->winGetStyle(), GWS_COMBO_BOX))
+						if(parent && !BitIsSet(parent->winGetStyle(), GWS_COMBO_BOX))
 							parent = NULL;
 						if(parent)
 							TheWindowManager->winNextTab(parent);
@@ -220,11 +220,11 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 				case KEY_UP:
 				case KEY_LEFT:
 
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 					{
 						GameWindow *parent;
 						parent = window->winGetParent();
-						if(parent && !BitTest(parent->winGetStyle(), GWS_COMBO_BOX))
+						if(parent && !BitIsSet(parent->winGetStyle(), GWS_COMBO_BOX))
 							parent = NULL;
 						if(parent)
 							TheWindowManager->winPrevTab(parent);
@@ -236,7 +236,7 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 				// --------------------------------------------------------------------
 				case KEY_BACKSPACE:
 
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 					{
 						// if conCharPos != 0 this will fall through to next case.
 						// it should be noted that conCharPos can only != 0 in Jap & Kor
@@ -270,7 +270,7 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 		// ------------------------------------------------------------------------
 		case GWM_MOUSE_ENTERING:
 
-			if (BitTest( instData->getStyle(), GWS_MOUSE_TRACK ) )
+			if (BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
 			{
 
 				BitSet( instData->m_state, WIN_STATE_HILITED );
@@ -285,7 +285,7 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 		// ------------------------------------------------------------------------
 		case GWM_MOUSE_LEAVING:
 
-			if( BitTest( instData->getStyle(), GWS_MOUSE_TRACK ) )
+			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
 			{
 
 				BitClear( instData->m_state, WIN_STATE_HILITED );
@@ -298,7 +298,7 @@ WindowMsgHandledType GadgetTextEntryInput( GameWindow *window, UnsignedInt msg,
 		// ------------------------------------------------------------------------
 		case GWM_LEFT_DRAG:
 
-			if( BitTest( instData->getStyle(), GWS_MOUSE_TRACK ) )
+			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
 				TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
 																						GGM_LEFT_DRAG,
 																						(WindowMsgData)window, 0 );
@@ -577,7 +577,7 @@ UnicodeString GadgetTextEntryGetText( GameWindow *textentry )
 		return UnicodeString::TheEmptyString;
 
 	// verify that this is a list box
-	if( BitTest( textentry->winGetStyle(), GWS_ENTRY_FIELD ) == FALSE )
+	if( BitIsSet( textentry->winGetStyle(), GWS_ENTRY_FIELD ) == FALSE )
 		return UnicodeString::TheEmptyString;
 
 	UnicodeString result;

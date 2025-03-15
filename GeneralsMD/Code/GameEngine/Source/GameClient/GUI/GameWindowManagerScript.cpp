@@ -1600,15 +1600,15 @@ static void setWindowText( GameWindow *window, AsciiString textLabel )
 	//Translate the text
 	theText = TheGameText->fetch( (char *)textLabel.str());
 	// set the text in the window based on what it is
-	if( BitTest( window->winGetStyle(), GWS_PUSH_BUTTON ) )
+	if( BitIsSet( window->winGetStyle(), GWS_PUSH_BUTTON ) )
 		GadgetButtonSetText( window, theText );
-	else if( BitTest( window->winGetStyle(), GWS_RADIO_BUTTON ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_RADIO_BUTTON ) )
 		GadgetRadioSetText( window, theText );
-	else if( BitTest( window->winGetStyle(), GWS_CHECK_BOX ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_CHECK_BOX ) )
 		GadgetCheckBoxSetText( window, theText );
-	else if( BitTest( window->winGetStyle(), GWS_STATIC_TEXT ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_STATIC_TEXT ) )
 		GadgetStaticTextSetText( window, theText );
-	else if( BitTest( window->winGetStyle(), GWS_ENTRY_FIELD ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_ENTRY_FIELD ) )
 	{
 		entryText.translate(textLabel);
 		GadgetTextEntrySetText( window, entryText );
@@ -2154,7 +2154,7 @@ static Bool parseChildWindows( GameWindow *window,
 
 	//The gadget with children needs to delete its default created children in favor
 	//of the ones from the script file.  So kill them before reading.
-	if( BitTest( window->winGetStyle(), GWS_TAB_CONTROL ) )
+	if( BitIsSet( window->winGetStyle(), GWS_TAB_CONTROL ) )
 	{
 		GameWindow *nextWindow = NULL;
 		for( GameWindow *myChild = window->winGetChild(); myChild; myChild = nextWindow )
@@ -2251,7 +2251,7 @@ static Bool parseChildWindows( GameWindow *window,
 
   }
 
-	if( BitTest( window->winGetStyle(), GWS_TAB_CONTROL ) )
+	if( BitIsSet( window->winGetStyle(), GWS_TAB_CONTROL ) )
 		GadgetTabControlFixupSubPaneList( window );//all children created, so re-fill SubPane array with children
 
   return TRUE;

@@ -120,7 +120,7 @@ void Image::parseImageStatus( INI* ini, void *instance, void *store, const void*
 	// (see ImagePacker tool for more details)
 	//
 	UnsignedInt *theStatusBits = (UnsignedInt *)store;
-	if( BitTest( *theStatusBits, IMAGE_STATUS_ROTATED_90_CLOCKWISE ) )
+	if( BitIsSet( *theStatusBits, IMAGE_STATUS_ROTATED_90_CLOCKWISE ) )
 	{
 		Image *theImage = (Image *)instance;
 		ICoord2D imageSize;

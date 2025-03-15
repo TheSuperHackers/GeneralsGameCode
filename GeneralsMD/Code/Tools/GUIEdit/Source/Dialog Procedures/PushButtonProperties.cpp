@@ -255,7 +255,7 @@ HWND InitPushButtonPropertiesDialog( GameWindow *window )
 	// initialize the dialog with values from the window
 	//
 
-	if( BitTest( window->winGetStatus(), WIN_STATUS_RIGHT_CLICK ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_RIGHT_CLICK ) )
 		CheckDlgButton( dialog, CHECK_RIGHT_CLICK, BST_CHECKED );
 
 	return dialog;

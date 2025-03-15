@@ -93,7 +93,7 @@ void TexturePage::extendToRowIfOpen( char *src,
 	// a border to extend into
 	//
 	if( srcY < imageHeight / 2 &&
-			(srcY != 0 || BitTest( fitBits,	ImageInfo::FIT_YBORDER_TOP )) )
+			(srcY != 0 || BitIsSet( fitBits,	ImageInfo::FIT_YBORDER_TOP )) )
 	{
 
 		// try to extend pixel "up" if that pixel is "open"
@@ -103,7 +103,7 @@ void TexturePage::extendToRowIfOpen( char *src,
 	}  // end if
 	else if( srcY >= imageHeight / 2 &&
 					 (srcY != imageHeight - 1 || 
-						BitTest( fitBits, ImageInfo::FIT_YBORDER_BOTTOM )) )
+						BitIsSet( fitBits, ImageInfo::FIT_YBORDER_BOTTOM )) )
 	{
 
 		// try to extend pixel "down" if that pixel is "open"
@@ -238,7 +238,7 @@ void TexturePage::extendImageEdges( Byte *destBuffer,
 	// account whether or not the destination image was rotated or not
 	//
 	Int imageWidth, imageHeight;
-	if( BitTest( image->m_status, ImageInfo::ROTATED90C ) )
+	if( BitIsSet( image->m_status, ImageInfo::ROTATED90C ) )
 	{
 
 		imageWidth = image->m_size.y;
@@ -319,7 +319,7 @@ void TexturePage::extendImageEdges( Byte *destBuffer,
 			// extended into when we detect an edge change moving across x
 			//
 			if( currPixel == TRUE && x == imageWidth - 1 &&
-					BitTest( image->m_fitBits, ImageInfo::FIT_XBORDER_RIGHT ) )
+					BitIsSet( image->m_fitBits, ImageInfo::FIT_XBORDER_RIGHT ) )
 			{
 
 				//
@@ -367,7 +367,7 @@ void TexturePage::extendImageEdges( Byte *destBuffer,
 				// pixel to the position of previous pixel.  Note this is not allowed
 				// when we're at the left edge and we DON'T have a border to copy into
 				//
-				if( x != 0 || BitTest( image->m_fitBits, ImageInfo::FIT_XBORDER_LEFT ) )
+				if( x != 0 || BitIsSet( image->m_fitBits, ImageInfo::FIT_XBORDER_LEFT ) )
 				{
 
 					// extend our current pixel to the previous location
@@ -430,26 +430,26 @@ void TexturePage::extendImageEdges( Byte *destBuffer,
 
 				// top left corner
 				if( x == 0 && y == 0 && 
-						BitTest( image->m_fitBits, ImageInfo::FIT_XBORDER_LEFT ) &&
-						BitTest( image->m_fitBits, ImageInfo::FIT_YBORDER_TOP ) )
+						BitIsSet( image->m_fitBits, ImageInfo::FIT_XBORDER_LEFT ) &&
+						BitIsSet( image->m_fitBits, ImageInfo::FIT_YBORDER_TOP ) )
 					dst = (ptr + (destWidth * destBPP)) - destBPP;
 
 				// top right corner
 				else if( x == imageWidth - 1 && y == 0 &&
-								 BitTest( image->m_fitBits, ImageInfo::FIT_XBORDER_RIGHT ) &&
-								 BitTest( image->m_fitBits, ImageInfo::FIT_YBORDER_TOP ) )
+								 BitIsSet( image->m_fitBits, ImageInfo::FIT_XBORDER_RIGHT ) &&
+								 BitIsSet( image->m_fitBits, ImageInfo::FIT_YBORDER_TOP ) )
 					dst = (ptr + (destWidth * destBPP)) + destBPP;
 
 				// bottom right corner
 				else if( x == imageWidth - 1 && y == imageHeight - 1 &&
-								 BitTest( image->m_fitBits, ImageInfo::FIT_XBORDER_RIGHT ) &&
-								 BitTest( image->m_fitBits, ImageInfo::FIT_YBORDER_BOTTOM ) )
+								 BitIsSet( image->m_fitBits, ImageInfo::FIT_XBORDER_RIGHT ) &&
+								 BitIsSet( image->m_fitBits, ImageInfo::FIT_YBORDER_BOTTOM ) )
 					dst = (ptr - (destWidth * destBPP)) + destBPP;
 
 				// bottom left corner
 				else if( x == 0 && y == imageHeight - 1 &&
-								 BitTest( image->m_fitBits, ImageInfo::FIT_XBORDER_LEFT ) &&
-								 BitTest( image->m_fitBits, ImageInfo::FIT_YBORDER_BOTTOM ) )
+								 BitIsSet( image->m_fitBits, ImageInfo::FIT_XBORDER_LEFT ) &&
+								 BitIsSet( image->m_fitBits, ImageInfo::FIT_YBORDER_BOTTOM ) )
 					dst = (ptr - (destWidth * destBPP)) - destBPP;
 
 				// copy the pixel at 'ptr' to 'dst' for the diagonal extend
@@ -546,7 +546,7 @@ Bool TexturePage::addImageData( Byte *destBuffer,
 	Int count;
 	Int x, y;
 
-	if( BitTest( image->m_status, ImageInfo::ROTATED90C ) == FALSE )
+	if( BitIsSet( image->m_status, ImageInfo::ROTATED90C ) == FALSE )
 	{
 
 		//
@@ -669,7 +669,7 @@ Bool TexturePage::addImageData( Byte *destBuffer,
 	// the image we just copied into the texture page and "bleed" the edges outward
 	// and if a border is present, into the border
 	//
-	if( BitTest( TheImagePacker->getGapMethod(), 
+	if( BitIsSet( TheImagePacker->getGapMethod(), 
 							 ImagePacker::GAP_METHOD_EXTEND_RGB ) )
 		extendImageEdges( destBuffer,
 											destWidth,
@@ -906,9 +906,9 @@ Bool TexturePage::addImage( ImageInfo *image )
 
 	// get our options for fitting
 	Bool useGutter, useRGBExtend;
-	useGutter = BitTest( TheImagePacker->getGapMethod(), 
+	useGutter = BitIsSet( TheImagePacker->getGapMethod(), 
 											 ImagePacker::GAP_METHOD_GUTTER );
-	useRGBExtend = BitTest( TheImagePacker->getGapMethod(),
+	useRGBExtend = BitIsSet( TheImagePacker->getGapMethod(),
 													ImagePacker::GAP_METHOD_EXTEND_RGB );
 
 	//
@@ -1136,17 +1136,17 @@ Bool TexturePage::addImage( ImageInfo *image )
 				// on the texture page
 				//
 				image->m_pagePos = region;
-				if( BitTest( fitBits, ImageInfo::FIT_XBORDER_LEFT ) )
+				if( BitIsSet( fitBits, ImageInfo::FIT_XBORDER_LEFT ) )
 					image->m_pagePos.lo.x++;
-				if( BitTest( fitBits, ImageInfo::FIT_YBORDER_TOP ) )
+				if( BitIsSet( fitBits, ImageInfo::FIT_YBORDER_TOP ) )
 					image->m_pagePos.lo.y++;
-				if( BitTest( fitBits, ImageInfo::FIT_XBORDER_RIGHT ) )
+				if( BitIsSet( fitBits, ImageInfo::FIT_XBORDER_RIGHT ) )
 					image->m_pagePos.hi.x--;
-				if( BitTest( fitBits, ImageInfo::FIT_YBORDER_BOTTOM ) )
+				if( BitIsSet( fitBits, ImageInfo::FIT_YBORDER_BOTTOM ) )
 					image->m_pagePos.hi.y--;
-				if( BitTest( fitBits, ImageInfo::FIT_XGUTTER ) )
+				if( BitIsSet( fitBits, ImageInfo::FIT_XGUTTER ) )
 					image->m_pagePos.hi.x -= xGutter;
-				if( BitTest( fitBits, ImageInfo::FIT_YGUTTER ) )	
+				if( BitIsSet( fitBits, ImageInfo::FIT_YGUTTER ) )	
 					image->m_pagePos.hi.y -= yGutter;
 
 				// link this image to the texture page

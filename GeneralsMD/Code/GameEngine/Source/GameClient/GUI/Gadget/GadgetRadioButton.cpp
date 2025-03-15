@@ -76,7 +76,7 @@ static void doRadioUnselect( GameWindow *window, Int group, Int screen,
 	// if this is a radio button we have something to consider, but we
 	// will ignore the except window
 	//
-	if( window != except && BitTest( window->winGetStyle(), GWS_RADIO_BUTTON ) )
+	if( window != except && BitIsSet( window->winGetStyle(), GWS_RADIO_BUTTON ) )
 	{
 		RadioButtonData *radioData = (RadioButtonData *)window->winGetUserData();
 
@@ -132,7 +132,7 @@ WindowMsgHandledType GadgetRadioButtonInput( GameWindow *window, UnsignedInt msg
 		case GWM_MOUSE_ENTERING:
 		{
 
-			if( BitTest( instData->getStyle(), GWS_MOUSE_TRACK ) ) 
+			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) ) 
 			{
 
 				BitSet( instData->m_state, WIN_STATE_HILITED );
@@ -152,7 +152,7 @@ WindowMsgHandledType GadgetRadioButtonInput( GameWindow *window, UnsignedInt msg
 		case GWM_MOUSE_LEAVING:
 		{
 
-			if( BitTest( instData->getStyle(), GWS_MOUSE_TRACK ) ) 
+			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) ) 
 			{
 
 				BitClear( instData->m_state, WIN_STATE_HILITED );
@@ -188,7 +188,7 @@ WindowMsgHandledType GadgetRadioButtonInput( GameWindow *window, UnsignedInt msg
 		case GWM_LEFT_UP:
 		{
 
-			if( BitTest( instData->getState(), WIN_STATE_SELECTED ) == FALSE )
+			if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) == FALSE )
 			{
 				RadioButtonData *radioData = (RadioButtonData *)window->winGetUserData();
 
@@ -208,7 +208,7 @@ WindowMsgHandledType GadgetRadioButtonInput( GameWindow *window, UnsignedInt msg
 				BitSet( instData->m_state, WIN_STATE_SELECTED );
 
 			}  // end if, not selected
-			else if( BitTest( instData->getState(), WIN_STATE_HILITED ) == FALSE )
+			else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) == FALSE )
 			{
 
 				// this up click was not meant for this button
@@ -230,10 +230,10 @@ WindowMsgHandledType GadgetRadioButtonInput( GameWindow *window, UnsignedInt msg
 				// --------------------------------------------------------------------
 				case KEY_ENTER:
 				case KEY_SPACE:
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 					{
 
-						if( BitTest( instData->getState(), WIN_STATE_SELECTED ) == FALSE )
+						if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) == FALSE )
 						{
 							RadioButtonData *radioData = (RadioButtonData *)window->winGetUserData();
 
@@ -264,7 +264,7 @@ WindowMsgHandledType GadgetRadioButtonInput( GameWindow *window, UnsignedInt msg
 				case KEY_TAB:
 				{
 
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 						window->winNextTab();
 					break;
 
@@ -275,7 +275,7 @@ WindowMsgHandledType GadgetRadioButtonInput( GameWindow *window, UnsignedInt msg
 				case KEY_LEFT:
 				{
 
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 						window->winPrevTab();
 					break;
 
@@ -324,7 +324,7 @@ WindowMsgHandledType GadgetRadioButtonSystem( GameWindow *window, UnsignedInt ms
 		case GBM_SET_SELECTION:
 		{
 
-			if( BitTest( instData->getState(), WIN_STATE_SELECTED ) == FALSE )
+			if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) == FALSE )
 			{
 
 				// do we want to send a selected message?

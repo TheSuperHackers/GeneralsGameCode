@@ -128,7 +128,7 @@ void ControlBar::addCommonCommands( Drawable *draw, Bool firstDrawable )
 			command = commandSet->getCommandButton(i);
 
 			// add if present and can be used in a multi select
-			if( command && BitTest( command->getOptions(), OK_FOR_MULTI_SELECT ) == TRUE )
+			if( command && BitIsSet( command->getOptions(), OK_FOR_MULTI_SELECT ) == TRUE )
 			{
 
 				// put it in the common command set
@@ -387,7 +387,7 @@ void ControlBar::updateContextMultiSelect( void )
 			}
 
 			//If button is a CHECK_LIKE, then update it's status now.
-			if( BitTest( command->getOptions(), CHECK_LIKE ) )
+			if( BitIsSet( command->getOptions(), CHECK_LIKE ) )
 			{
 				GadgetCheckLikeButtonSetVisualCheck( win, availability == COMMAND_ACTIVE );
 			}

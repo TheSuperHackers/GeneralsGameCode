@@ -106,7 +106,7 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 					Bool vert = FALSE;
 
 					if( window )
-						vert = BitTest( window->winGetStyle(), GWS_VERT_SLIDER );
+						vert = BitIsSet( window->winGetStyle(), GWS_VERT_SLIDER );
 
 					//
 					// using the current colors in the base of the slider, assign a
@@ -158,7 +158,7 @@ static LRESULT CALLBACK sliderPropertiesCallback( HWND hWndDialog,
 					if( window )
 					{
 						ImageAndColorInfo *info;
-						Bool vert = BitTest( window->winGetStyle(), GWS_VERT_SLIDER );
+						Bool vert = BitIsSet( window->winGetStyle(), GWS_VERT_SLIDER );
 
 						// save the common properties
 						if( SaveCommonDialogProperties( hWndDialog, window ) == FALSE )
@@ -367,7 +367,7 @@ HWND InitSliderPropertiesDialog( GameWindow *window )
 	//
 	const Image *image;
 	Color color, borderColor;
-	Bool vert = BitTest( window->winGetStyle(), GWS_VERT_SLIDER );
+	Bool vert = BitIsSet( window->winGetStyle(), GWS_VERT_SLIDER );
 
 	// --------------------------------------------------------------------------
 	if( vert )

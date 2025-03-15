@@ -857,31 +857,31 @@ char *HierarchyView::getWindowTreeName( GameWindow *window )
 
 	// no name available, construct one based on type
 	Int style = window->winGetStyle();
-	if( BitTest( style, GWS_PUSH_BUTTON ) )
+	if( BitIsSet( style, GWS_PUSH_BUTTON ) )
 		strcpy( buffer, "Button" );
-	else if( BitTest( style, GWS_RADIO_BUTTON ) )
+	else if( BitIsSet( style, GWS_RADIO_BUTTON ) )
 		strcpy( buffer, "Radio Button" );
-	else if( BitTest( style, GWS_TAB_CONTROL ) )
+	else if( BitIsSet( style, GWS_TAB_CONTROL ) )
 		strcpy( buffer, "Tab Control" );
-	else if( BitTest( style, GWS_CHECK_BOX ) )
+	else if( BitIsSet( style, GWS_CHECK_BOX ) )
 		strcpy( buffer, "Check Box" );
-	else if( BitTest( style, GWS_HORZ_SLIDER ) )
+	else if( BitIsSet( style, GWS_HORZ_SLIDER ) )
 		strcpy( buffer, "Horizontal Slider" );
-	else if( BitTest( style, GWS_VERT_SLIDER ) )
+	else if( BitIsSet( style, GWS_VERT_SLIDER ) )
 		strcpy( buffer, "Vertical Slider" );
-	else if( BitTest( style, GWS_STATIC_TEXT ) )
+	else if( BitIsSet( style, GWS_STATIC_TEXT ) )
 		strcpy( buffer, "Static Text" );
-	else if( BitTest( style, GWS_ENTRY_FIELD ) )
+	else if( BitIsSet( style, GWS_ENTRY_FIELD ) )
 		strcpy( buffer, "Text Entry" );
-	else if( BitTest( style, GWS_SCROLL_LISTBOX ) )
+	else if( BitIsSet( style, GWS_SCROLL_LISTBOX ) )
 		strcpy( buffer, "Listbox" );
-	else if( BitTest( style, GWS_PROGRESS_BAR ) )	
+	else if( BitIsSet( style, GWS_PROGRESS_BAR ) )	
 		strcpy( buffer, "Progress Bar" );
-	else if( BitTest( style, GWS_USER_WINDOW ) )
+	else if( BitIsSet( style, GWS_USER_WINDOW ) )
 		strcpy( buffer, "User Window" );
-	else if( BitTest( style, GWS_TAB_PANE ) )
+	else if( BitIsSet( style, GWS_TAB_PANE ) )
 		strcpy( buffer, "Tab Pane" );
-	else if( BitTest( style, GWS_COMBO_BOX ) )
+	else if( BitIsSet( style, GWS_COMBO_BOX ) )
 		strcpy( buffer, "Combo Box" );
 	else
 		strcpy( buffer, "Undefined" );

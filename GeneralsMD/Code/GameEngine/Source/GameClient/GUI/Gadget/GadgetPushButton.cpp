@@ -74,10 +74,10 @@
 static Bool buttonTriggersOnMouseDown(GameWindow *window)
 {
 	// Buttons with the on down status set trigger on mouse down. jba. [8/6/2003]
-	Bool onDown = BitTest( window->winGetStatus(), WIN_STATUS_ON_MOUSE_DOWN);
+	Bool onDown = BitIsSet( window->winGetStatus(), WIN_STATUS_ON_MOUSE_DOWN);
 
 	// Checkboxes always trigger on mouse down. jba [8/6/2003]
-	if (BitTest( window->winGetStatus(), WIN_STATUS_CHECK_LIKE )) {
+	if (BitIsSet( window->winGetStatus(), WIN_STATUS_CHECK_LIKE )) {
 		onDown = true;
 	}
 	return onDown;
@@ -100,7 +100,7 @@ WindowMsgHandledType GadgetPushButtonInput( GameWindow *window,
 		case GWM_MOUSE_ENTERING:
 		{
 
-			if( BitTest( instData->getStyle(), GWS_MOUSE_TRACK ) ) 
+			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) ) 
 			{
 				BitSet( instData->m_state, WIN_STATE_HILITED );
 
@@ -111,7 +111,7 @@ WindowMsgHandledType GadgetPushButtonInput( GameWindow *window,
 
 				//TheWindowManager->winSetFocus( window );
 			}
-			if(window->winGetParent() && BitTest(window->winGetParent()->winGetStyle(),GWS_HORZ_SLIDER) )
+			if(window->winGetParent() && BitIsSet(window->winGetParent()->winGetStyle(),GWS_HORZ_SLIDER) )
 			{
 				WinInstanceData *instDataParent = window->winGetParent()->winGetInstanceData();
 				BitSet(instDataParent->m_state, WIN_STATE_HILITED);
@@ -124,7 +124,7 @@ WindowMsgHandledType GadgetPushButtonInput( GameWindow *window,
 		case GWM_MOUSE_LEAVING:
 		{
 
-			if(BitTest( instData->getStyle(), GWS_MOUSE_TRACK ) ) 
+			if(BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) ) 
 			{
 				BitClear( instData->m_state, WIN_STATE_HILITED );
 				TheWindowManager->winSendSystemMsg( instData->getOwner(), 
@@ -137,11 +137,11 @@ WindowMsgHandledType GadgetPushButtonInput( GameWindow *window,
 			// if this is not a check-like button, clear any selected state when the
 			// move leaves the window area
 			//
-			if( BitTest( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) == FALSE )
-				if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+			if( BitIsSet( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) == FALSE )
+				if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 					BitClear( instData->m_state, WIN_STATE_SELECTED );
 			//TheWindowManager->winSetFocus( NULL );
-			if(window->winGetParent() && BitTest(window->winGetParent()->winGetStyle(),GWS_HORZ_SLIDER) )
+			if(window->winGetParent() && BitIsSet(window->winGetParent()->winGetStyle(),GWS_HORZ_SLIDER) )
 			{
 				WinInstanceData *instDataParent = window->winGetParent()->winGetInstanceData();
 				BitClear(instDataParent->m_state, WIN_STATE_HILITED);
@@ -180,10 +180,10 @@ WindowMsgHandledType GadgetPushButtonInput( GameWindow *window,
 			// in that case instead of just turning it on like normal ... also note
 			// that selected messages are sent immediately
 			//
-			if( BitTest( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) )
+			if( BitIsSet( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) )
 			{
 				
-				if( BitTest( instData->m_state, WIN_STATE_SELECTED ) )
+				if( BitIsSet( instData->m_state, WIN_STATE_SELECTED ) )
 					BitClear( instData->m_state, WIN_STATE_SELECTED );
 				else
 					BitSet( instData->m_state, WIN_STATE_SELECTED );
@@ -214,8 +214,8 @@ WindowMsgHandledType GadgetPushButtonInput( GameWindow *window,
 			// note check like selected messages aren't sent here ... they are sent
 			// on the down press
 			//
-			if( BitTest( instData->getState(), WIN_STATE_SELECTED ) &&
-					BitTest( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) == FALSE )
+			if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) &&
+					BitIsSet( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) == FALSE )
 			{
 
 				if (!buttonTriggersOnMouseDown(window)) {
@@ -250,7 +250,7 @@ WindowMsgHandledType GadgetPushButtonInput( GameWindow *window,
 				buttonClick.setEventName("GUIClick");
 				
 
-			if( BitTest( instData->getStatus(), WIN_STATUS_RIGHT_CLICK ) )
+			if( BitIsSet( instData->getStatus(), WIN_STATUS_RIGHT_CLICK ) )
 			{
 				// Need to be specially marked to care about right mouse events
 				if( TheAudio )
@@ -263,10 +263,10 @@ WindowMsgHandledType GadgetPushButtonInput( GameWindow *window,
 				// in that case instead of just turning it on like normal ... also note
 				// that selected messages are sent immediately
 				//
-				if( BitTest( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) )
+				if( BitIsSet( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) )
 				{
 					
-					if( BitTest( instData->m_state, WIN_STATE_SELECTED ) )
+					if( BitIsSet( instData->m_state, WIN_STATE_SELECTED ) )
 						BitClear( instData->m_state, WIN_STATE_SELECTED );
 					else
 						BitSet( instData->m_state, WIN_STATE_SELECTED );
@@ -296,15 +296,15 @@ WindowMsgHandledType GadgetPushButtonInput( GameWindow *window,
 		case GWM_RIGHT_UP:
 		{
 			
-			if( BitTest( instData->getStatus(), WIN_STATUS_RIGHT_CLICK ) )
+			if( BitIsSet( instData->getStatus(), WIN_STATUS_RIGHT_CLICK ) )
 			{
 
 				//
 				// note check like selected messages aren't sent here ... they are sent
 				// on the down press
 				//
-				if( BitTest( instData->getState(), WIN_STATE_SELECTED ) &&
-						BitTest( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) == FALSE )
+				if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) &&
+						BitIsSet( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) == FALSE )
 				{
 
 					TheWindowManager->winSendSystemMsg( instData->getOwner(), GBM_SELECTED_RIGHT,
@@ -342,15 +342,15 @@ WindowMsgHandledType GadgetPushButtonInput( GameWindow *window,
 				case KEY_SPACE:
 				{
 
-					if( BitTest( mData2, KEY_STATE_UP ) )
+					if( BitIsSet( mData2, KEY_STATE_UP ) )
 					{
 
 						//
 						// note check like selected messages aren't sent here ... they are sent
 						// on the down press
 						//
-						if( BitTest( instData->getState(), WIN_STATE_SELECTED ) &&
-								BitTest( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) == FALSE )
+						if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) &&
+								BitIsSet( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) == FALSE )
 						{
 
 							TheWindowManager->winSendSystemMsg( instData->getOwner(), GBM_SELECTED,
@@ -369,10 +369,10 @@ WindowMsgHandledType GadgetPushButtonInput( GameWindow *window,
 						// in that case instead of just turning it on like normal ... also note
 						// that selected messages are sent immediately
 						//
-						if( BitTest( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) )
+						if( BitIsSet( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) )
 						{
 							
-							if( BitTest( instData->m_state, WIN_STATE_SELECTED ) )
+							if( BitIsSet( instData->m_state, WIN_STATE_SELECTED ) )
 								BitClear( instData->m_state, WIN_STATE_SELECTED );
 							else
 								BitSet( instData->m_state, WIN_STATE_SELECTED );
@@ -402,7 +402,7 @@ WindowMsgHandledType GadgetPushButtonInput( GameWindow *window,
 				case KEY_TAB:
 				{
 
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 						TheWindowManager->winNextTab(window);
 					break;
 				
@@ -413,7 +413,7 @@ WindowMsgHandledType GadgetPushButtonInput( GameWindow *window,
 				case KEY_LEFT:
 				{
 
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 						TheWindowManager->winPrevTab(window);
 					break;
 
@@ -516,7 +516,7 @@ void GadgetCheckLikeButtonSetVisualCheck( GameWindow *g, Bool checked )
 		return;
 
 	// sanity, must be a check like button
-	if( BitTest( g->winGetStatus(), WIN_STATUS_CHECK_LIKE ) == FALSE )
+	if( BitIsSet( g->winGetStatus(), WIN_STATUS_CHECK_LIKE ) == FALSE )
 	{
 
 		DEBUG_CRASH(( "GadgetCheckLikeButtonSetVisualCheck: Window is not 'CHECK-LIKE'\n" ));
@@ -552,7 +552,7 @@ Bool GadgetCheckLikeButtonIsChecked( GameWindow *g )
 		return FALSE;
 
 	// we just hold this "check like dual state thingie" using the selected state
-	return BitTest( instData->m_state, WIN_STATE_SELECTED );
+	return BitIsSet( instData->m_state, WIN_STATE_SELECTED );
 
 }  // end GadgetCheckLikeButtonIsChecked
 
