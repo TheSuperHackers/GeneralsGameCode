@@ -105,12 +105,12 @@ BOOL CALLBACK ImageErrorProc( HWND hWndDialog, UINT message,
 					continue;
 
 				// if image can't be processed find out why
-				if( BitTest( image->m_status, ImageInfo::CANTPROCESS ) )
+				if( BitIsSet( image->m_status, ImageInfo::CANTPROCESS ) )
 				{
 					
-					if( BitTest( image->m_status, ImageInfo::TOOBIG ) )
+					if( BitIsSet( image->m_status, ImageInfo::TOOBIG ) )
 						sprintf( reason, "Too Big" );
-					else if( BitTest( image->m_status, ImageInfo::INVALIDCOLORDEPTH ) )
+					else if( BitIsSet( image->m_status, ImageInfo::INVALIDCOLORDEPTH ) )
 						sprintf( reason, "Unsupported Color Depth" );
 					else
 						sprintf( reason, "Unknown Reason" );

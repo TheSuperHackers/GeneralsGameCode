@@ -89,7 +89,7 @@ WindowMsgHandledType GadgetHorizontalSliderInput( GameWindow *window, UnsignedIn
 		case GWM_MOUSE_ENTERING:
 		{
 
-			if( BitTest( instData->getStyle(), GWS_MOUSE_TRACK ) ) 
+			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) ) 
 			{
 
 				BitSet( instData->m_state, WIN_STATE_HILITED );
@@ -101,7 +101,7 @@ WindowMsgHandledType GadgetHorizontalSliderInput( GameWindow *window, UnsignedIn
 
 			}  // end if
 			
-			if(window->winGetChild() && BitTest(window->winGetChild()->winGetStyle(),GWS_PUSH_BUTTON) )
+			if(window->winGetChild() && BitIsSet(window->winGetChild()->winGetStyle(),GWS_PUSH_BUTTON) )
 			{
 				WinInstanceData *instDataChild = window->winGetChild()->winGetInstanceData();
 				BitSet(instDataChild->m_state, WIN_STATE_HILITED);
@@ -115,7 +115,7 @@ WindowMsgHandledType GadgetHorizontalSliderInput( GameWindow *window, UnsignedIn
 		case GWM_MOUSE_LEAVING:
 		{
 
-			if( BitTest( instData->getStyle(), GWS_MOUSE_TRACK )) 
+			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK )) 
 			{
 
 				BitClear( instData->m_state, WIN_STATE_HILITED );
@@ -124,7 +124,7 @@ WindowMsgHandledType GadgetHorizontalSliderInput( GameWindow *window, UnsignedIn
 																						(WindowMsgData)window, 
 																						0 );
 			}  // end if
-			if(window->winGetChild() && BitTest(window->winGetChild()->winGetStyle(),GWS_PUSH_BUTTON) )
+			if(window->winGetChild() && BitIsSet(window->winGetChild()->winGetStyle(),GWS_PUSH_BUTTON) )
 			{
 				WinInstanceData *instDataChild = window->winGetChild()->winGetInstanceData();
 				BitClear(instDataChild->m_state, WIN_STATE_HILITED);
@@ -137,7 +137,7 @@ WindowMsgHandledType GadgetHorizontalSliderInput( GameWindow *window, UnsignedIn
 		// ------------------------------------------------------------------------	
 		case GWM_LEFT_DRAG:
 
-			if( BitTest( instData->getStyle(), GWS_MOUSE_TRACK ) )
+			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
 				TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
 																						GGM_LEFT_DRAG,
 																						(WindowMsgData)window, 
@@ -210,7 +210,7 @@ WindowMsgHandledType GadgetHorizontalSliderInput( GameWindow *window, UnsignedIn
 
 				// --------------------------------------------------------------------
 				case KEY_RIGHT:
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 					{
 
 						if( s->position > s->minVal + 1 ) 
@@ -235,7 +235,7 @@ WindowMsgHandledType GadgetHorizontalSliderInput( GameWindow *window, UnsignedIn
 				// --------------------------------------------------------------------
 				case KEY_LEFT:
 
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 					{
 
 						if( s->position < s->maxVal - 1 ) 
@@ -261,14 +261,14 @@ WindowMsgHandledType GadgetHorizontalSliderInput( GameWindow *window, UnsignedIn
 				case KEY_DOWN:
 				case KEY_TAB:
 
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 						window->winNextTab();
 					break;
 
 				// --------------------------------------------------------------------
 				case KEY_UP:
 
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 						window->winPrevTab();
 					break;
 

@@ -380,7 +380,7 @@ Player *PlayerList::getEachPlayerFromMask( PlayerMaskType& maskToAdjust )
 	{
 		
 		player = getNthPlayer( i );
-		if ( player && BitTest(player->getPlayerMask(), maskToAdjust ))
+		if ( player && BitIsSet(player->getPlayerMask(), maskToAdjust ))
 		{
 			maskToAdjust &= (~player->getPlayerMask());
 			return player;
@@ -405,7 +405,7 @@ PlayerMaskType PlayerList::getPlayersWithRelationship( Int srcPlayerIndex, Unsig
 	if (!srcPlayer)
 		return retVal;
 
-	if (BitTest(allowedRelationships, ALLOW_SAME_PLAYER))
+	if (BitIsSet(allowedRelationships, ALLOW_SAME_PLAYER))
 		BitSet(retVal, srcPlayer->getPlayerMask());
 
 	for ( Int i = 0; i < getPlayerCount(); ++i )
@@ -420,15 +420,15 @@ PlayerMaskType PlayerList::getPlayersWithRelationship( Int srcPlayerIndex, Unsig
 		switch (srcPlayer->getRelationship(player->getDefaultTeam()))
 		{
 			case ENEMIES:
-				if (BitTest(allowedRelationships, ALLOW_ENEMIES))
+				if (BitIsSet(allowedRelationships, ALLOW_ENEMIES))
 					BitSet(retVal, player->getPlayerMask());
 				break;
 			case ALLIES:
-				if (BitTest(allowedRelationships, ALLOW_ALLIES))
+				if (BitIsSet(allowedRelationships, ALLOW_ALLIES))
 					BitSet(retVal, player->getPlayerMask());
 				break;
 			case NEUTRAL:
-				if (BitTest(allowedRelationships, ALLOW_NEUTRAL))
+				if (BitIsSet(allowedRelationships, ALLOW_NEUTRAL))
 					BitSet(retVal, player->getPlayerMask());
 				break;
 		}

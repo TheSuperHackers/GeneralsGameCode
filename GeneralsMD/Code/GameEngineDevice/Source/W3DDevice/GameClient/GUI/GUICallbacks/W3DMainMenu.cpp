@@ -576,10 +576,10 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 	// get pointer to image we want to draw depending on our state,
 	// see GadgetPushButton.h for info
 	//
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 
-		if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 		{
 			leftImage					= GadgetButtonGetLeftDisabledSelectedImage( window );
 			rightImage				= GadgetButtonGetRightDisabledSelectedImage( window );
@@ -595,10 +595,10 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 		}
 
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
-		if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 		{
 			leftImage					= GadgetButtonGetLeftHiliteSelectedImage( window );
 			rightImage				= GadgetButtonGetRightHiliteSelectedImage( window );
@@ -617,7 +617,7 @@ void W3DMainMenuButtonDropShadowDraw( GameWindow *window,
 	else
 	{
 
-		if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 		{
 			leftImage					= GadgetButtonGetLeftEnabledSelectedImage( window );
 			rightImage				= GadgetButtonGetRightEnabledSelectedImage( window );
@@ -794,15 +794,15 @@ static void drawText( GameWindow *window, WinInstanceData *instData )
 	window->winGetSize( &size.x, &size.y );
 
 	// set whether or not we center the wrapped text
-	text->setWordWrapCentered( BitTest( instData->getStatus(), WIN_STATUS_WRAP_CENTERED ));
+	text->setWordWrapCentered( BitIsSet( instData->getStatus(), WIN_STATUS_WRAP_CENTERED ));
 	text->setWordWrap(size.x);
 	// get the right text color
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 		textColor = window->winGetDisabledTextColor();
 		dropColor = window->winGetDisabledTextBorderColor();
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		textColor = window->winGetHiliteTextColor();
 		dropColor = window->winGetHiliteTextBorderColor();

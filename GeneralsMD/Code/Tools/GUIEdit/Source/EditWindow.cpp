@@ -554,7 +554,7 @@ void EditWindow::mouseEvent( UnsignedInt windowsMessage,
 {
 	Int x = LOWORD( lParam );
 	Int y = HIWORD( lParam );
-	Bool controlDown = BitTest( GetKeyState( VK_CONTROL ), 0x1000 );
+	Bool controlDown = BitIsSet( GetKeyState( VK_CONTROL ), 0x1000 );
 	ICoord2D mouse;
 
 	// setup mouse in nice struct
@@ -1121,7 +1121,7 @@ void EditWindow::drawSeeThruOutlines( GameWindow *windowList, Color c )
 		return;
 
 	// draw outline for this window
-	if( BitTest( windowList->winGetStatus(), WIN_STATUS_SEE_THRU ) )
+	if( BitIsSet( windowList->winGetStatus(), WIN_STATUS_SEE_THRU ) )
 	{
 		ICoord2D pos;
 		ICoord2D size;
@@ -1165,12 +1165,12 @@ void EditWindow::drawHiddenOutlines( GameWindow *windowList, Color c )
 	while( parent )
 	{
 
-		if( BitTest( parent->winGetStatus(), WIN_STATUS_HIDDEN ) )
+		if( BitIsSet( parent->winGetStatus(), WIN_STATUS_HIDDEN ) )
 			hidden = TRUE;
 		parent = parent->winGetParent();
 
 	}  // end while
-	if( BitTest( windowList->winGetStatus(), WIN_STATUS_HIDDEN ) )
+	if( BitIsSet( windowList->winGetStatus(), WIN_STATUS_HIDDEN ) )
 		hidden = TRUE;
 	if( hidden )
 	{
@@ -1693,7 +1693,7 @@ void EditWindow::drawImage( const Image *image,
 	}
 
 	// if rotated 90 degrees clockwise we have to adjust the uv coords
-	if( BitTest( image->getStatus(), IMAGE_STATUS_ROTATED_90_CLOCKWISE ) )
+	if( BitIsSet( image->getStatus(), IMAGE_STATUS_ROTATED_90_CLOCKWISE ) )
 	{
 
 		m_2DRender->Add_Tri( Vector2( screen_rect.Left, screen_rect.Top ), 

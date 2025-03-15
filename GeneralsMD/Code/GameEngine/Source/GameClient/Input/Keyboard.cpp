@@ -60,14 +60,14 @@ void Keyboard::createStreamMessages( void )
 	{
 
 		// add message to stream
-		if( BitTest( key->state, KEY_STATE_DOWN ) )
+		if( BitIsSet( key->state, KEY_STATE_DOWN ) )
 		{
 
 			msg = TheMessageStream->appendMessage( GameMessage::MSG_RAW_KEY_DOWN );
 			DEBUG_ASSERTCRASH( msg, ("Unable to append key down message to stream\n") );
 
 		}  // end if
-		else if( BitTest( key->state, KEY_STATE_UP ) )
+		else if( BitIsSet( key->state, KEY_STATE_UP ) )
 		{
 
 			msg = TheMessageStream->appendMessage( GameMessage::MSG_RAW_KEY_UP );
@@ -144,8 +144,8 @@ void Keyboard::updateKeys( void )
 		// prevent ALT-TAB from causing a TAB event
 		if( m_keys[ index ].key == KEY_TAB )
 		{
-			if( BitTest( m_keyStatus[ KEY_LALT ].state, KEY_STATE_DOWN ) ||
-					BitTest( m_keyStatus[ KEY_RALT ].state, KEY_STATE_DOWN ) )
+			if( BitIsSet( m_keyStatus[ KEY_LALT ].state, KEY_STATE_DOWN ) ||
+					BitIsSet( m_keyStatus[ KEY_RALT ].state, KEY_STATE_DOWN ) )
 			{
 				m_keys[index].status = KeyboardIO::STATUS_USED;
 			}
@@ -216,7 +216,7 @@ Bool Keyboard::checkKeyRepeat( void )
 	for( key = 0; key < 256; key++ )
 	{
 
-		if( BitTest( m_keyStatus[ key ].state, KEY_STATE_DOWN ) )
+		if( BitIsSet( m_keyStatus[ key ].state, KEY_STATE_DOWN ) )
 		{
 
 			if( (m_inputFrame - m_keyStatus[ key ].sequence) > Keyboard::KEY_REPEAT_DELAY )

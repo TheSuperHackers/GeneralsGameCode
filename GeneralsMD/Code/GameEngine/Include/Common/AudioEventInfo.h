@@ -128,7 +128,7 @@ public:
 
   /// Is this a permenant sound? That is, if I start this sound up, will it ever end
   /// "on its own" or only if I explicitly kill it?
-  Bool isPermanentSound() const { return BitTest( m_control, AC_LOOP ) && (m_loopCount == 0 );  }
+  Bool isPermanentSound() const { return BitIsSet( m_control, AC_LOOP ) && (m_loopCount == 0 );  }
   
 	static const FieldParse m_audioEventInfo[];		///< the parse table for INI definition
 	const FieldParse *getFieldParse( void ) const { return m_audioEventInfo; }

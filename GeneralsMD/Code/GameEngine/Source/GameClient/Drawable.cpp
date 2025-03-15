@@ -4515,7 +4515,7 @@ void Drawable::startAmbientSound(BodyDamageType dt, TimeOfDay tod, Bool onlyIfPe
 		{
       if ( !onlyIfPermanent || info->isPermanentSound() )
       {
-			  if( BitTest( info->m_type, ST_GLOBAL) || info->m_priority == AP_CRITICAL )
+			  if( BitIsSet( info->m_type, ST_GLOBAL) || info->m_priority == AP_CRITICAL )
 			  {
 				  //Play it anyways.
 				  m_ambientSound->m_event.setDrawableID(getID());

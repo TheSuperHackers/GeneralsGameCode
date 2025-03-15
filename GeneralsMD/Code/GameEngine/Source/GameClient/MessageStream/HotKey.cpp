@@ -171,9 +171,9 @@ Bool HotKeyManager::executeHotKey( const AsciiString& keyIn )
 	GameWindow *win = it->second.m_win;
 	if( !win )
 		return FALSE;
-	if( !BitTest( win->winGetStatus(), WIN_STATUS_HIDDEN ) )
+	if( !BitIsSet( win->winGetStatus(), WIN_STATUS_HIDDEN ) )
 	{
-		if( BitTest( win->winGetStatus(), WIN_STATUS_ENABLED ) )
+		if( BitIsSet( win->winGetStatus(), WIN_STATUS_ENABLED ) )
  		{
  			TheWindowManager->winSendSystemMsg( win->winGetParent(), GBM_SELECTED, (WindowMsgData)win, win->winGetWindowId() );
  

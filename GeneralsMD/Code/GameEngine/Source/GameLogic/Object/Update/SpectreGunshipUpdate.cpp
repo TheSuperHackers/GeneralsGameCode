@@ -196,7 +196,7 @@ Bool SpectreGunshipUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemp
 		return FALSE;
 	}
 
-	if( !BitTest( commandOptions, COMMAND_FIRED_BY_SCRIPT ) )
+	if( !BitIsSet( commandOptions, COMMAND_FIRED_BY_SCRIPT ) )
 	{
 		m_initialTargetPosition.set( targetPos );
 		m_overrideTargetDestination.set( targetPos );

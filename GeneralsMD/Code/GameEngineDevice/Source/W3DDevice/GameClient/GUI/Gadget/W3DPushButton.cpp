@@ -99,15 +99,15 @@ static void drawButtonText( GameWindow *window, WinInstanceData *instData )
 	window->winGetSize( &size.x, &size.y );
 
 	// set whether or not we center the wrapped text
-	text->setWordWrapCentered( BitTest( instData->getStatus(), WIN_STATUS_WRAP_CENTERED ));
+	text->setWordWrapCentered( BitIsSet( instData->getStatus(), WIN_STATUS_WRAP_CENTERED ));
 	text->setWordWrap(size.x);
 	// get the right text color
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 		textColor = window->winGetDisabledTextColor();
 		dropColor = window->winGetDisabledTextBorderColor();
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		textColor = window->winGetHiliteTextColor();
 		dropColor = window->winGetHiliteTextBorderColor();
@@ -126,7 +126,7 @@ static void drawButtonText( GameWindow *window, WinInstanceData *instData )
 	text->getSize( &width, &height );
 
 	// where to draw
-	if( BitTest( window->winGetStatus(), WIN_STATUS_SHORTCUT_BUTTON ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_SHORTCUT_BUTTON ) )
 	{
 		// Oh god... this is a total hack for shortcut buttons to handle rendering text top left corner...
 		textPos.x = origin.x + 2;
@@ -163,10 +163,10 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 	// get pointer to image we want to draw depending on our state,
 	// see GadgetPushButton.h for info
 	//
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 
-		if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 		{
 			color			= GadgetButtonGetDisabledSelectedColor( window );
 			border		= GadgetButtonGetDisabledSelectedBorderColor( window );
@@ -178,10 +178,10 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 		}
 
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
-		if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 		{
 			color			= GadgetButtonGetHiliteSelectedColor( window );
 			border		= GadgetButtonGetHiliteSelectedBorderColor( window );
@@ -196,7 +196,7 @@ void W3DGadgetPushButtonDraw( GameWindow *window, WinInstanceData *instData )
 	else
 	{
 
-		if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 		{
 			color			= GadgetButtonGetEnabledSelectedColor( window );
 			border		= GadgetButtonGetEnabledSelectedBorderColor( window );
@@ -291,7 +291,7 @@ void W3DGadgetPushButtonImageDraw( GameWindow *window,
 	// then we'll call the 3 picture drawing code
 	if( GadgetButtonGetMiddleEnabledImage( window ) ) 
 	{
-		if( BitTest( instData->getState(), WIN_STATUS_USE_OVERLAY_STATES ) )
+		if( BitIsSet( instData->getState(), WIN_STATUS_USE_OVERLAY_STATES ) )
 		{
 			ICoord2D size, start;
 			// get window position
@@ -327,23 +327,23 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 	//
 	image = GadgetButtonGetEnabledImage( window );
 
-	if( !BitTest( window->winGetStatus(), WIN_STATUS_USE_OVERLAY_STATES ) )
+	if( !BitIsSet( window->winGetStatus(), WIN_STATUS_USE_OVERLAY_STATES ) )
 	{
 		//Certain buttons have the option to specify specific images for
 		//altered states. If they do, then we won't render the auto-overlay versions.
-		if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+		if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 		{
 
-			if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+			if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 				image			= GadgetButtonGetDisabledSelectedImage( window );
 			else
 				image			= GadgetButtonGetDisabledImage( window );
 
 		}  // end if, disabled
-		else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+		else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 		{
 
-			if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+			if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 				image			= GadgetButtonGetHiliteSelectedImage( window );
 			else
 				image			= GadgetButtonGetHiliteImage( window );
@@ -352,7 +352,7 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 		else
 		{
 
-			if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+			if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 				image			= GadgetButtonGetHiliteSelectedImage( window );
 		}  // end else, enabled only
 	}
@@ -378,16 +378,16 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 		Display::DrawImageMode	drawMode=Display::DRAW_IMAGE_ALPHA;
 		Int colorMultiplier = 0xffffffff;
 
-		if(BitTest( window->winGetStatus(), WIN_STATUS_USE_OVERLAY_STATES ) )
+		if(BitIsSet( window->winGetStatus(), WIN_STATUS_USE_OVERLAY_STATES ) )
 		{	
 			//we're using a new drawing system which does "grayscale" disabled buttons using original color artwork.
-			if( !BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) )
+			if( !BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) )
 			{
-				if( !BitTest( window->winGetStatus(), WIN_STATUS_NOT_READY ) )
+				if( !BitIsSet( window->winGetStatus(), WIN_STATUS_NOT_READY ) )
 				{
 					//The button is disabled -- but if the button isn't "ready", we don't want to do this because
 					//we want to show the button in color with just the clock overlay.
-					if( !BitTest( window->winGetStatus(), WIN_STATUS_ALWAYS_COLOR ) )
+					if( !BitIsSet( window->winGetStatus(), WIN_STATUS_ALWAYS_COLOR ) )
 					{
 						drawMode=Display::DRAW_IMAGE_GRAYSCALE;
 					}
@@ -449,25 +449,25 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 
 	//Now render overlays that pertain to the correct state.
 
-	if( BitTest( window->winGetStatus(), WIN_STATUS_FLASHING ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_FLASHING ) )
 	{
 		//Handle cameo flashing (let the flashing stack with overlay states)
 		static const Image *hilitedOverlayIcon = TheMappedImageCollection->findImageByName( "Cameo_push" );
 		TheDisplay->drawImage( hilitedOverlayIcon, start.x, start.y, start.x + size.x, start.y + size.y );
 	}
 	
-	if( BitTest( window->winGetStatus(), WIN_STATUS_USE_OVERLAY_STATES ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_USE_OVERLAY_STATES ) )
 	{
 		image = NULL;
 		static const Image *pushedOverlayIcon	= TheMappedImageCollection->findImageByName( "Cameo_push" );
 		static const Image *hilitedOverlayIcon = TheMappedImageCollection->findImageByName( "Cameo_hilited" );
 		if( pushedOverlayIcon && hilitedOverlayIcon )
 		{
-			if(BitTest(window->winGetStatus(), WIN_STATUS_ENABLED))
+			if(BitIsSet(window->winGetStatus(), WIN_STATUS_ENABLED))
 			{
-				if (BitTest( instData->getState(), WIN_STATE_HILITED ))
+				if (BitIsSet( instData->getState(), WIN_STATE_HILITED ))
 				{
-					if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+					if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 					{
 						//The button is hilited and pushed
 						TheDisplay->drawImage( pushedOverlayIcon, start.x, start.y, start.x + size.x, start.y + size.y );
@@ -478,7 +478,7 @@ void W3DGadgetPushButtonImageDrawOne( GameWindow *window,
 						TheDisplay->drawImage( hilitedOverlayIcon, start.x, start.y, start.x + size.x, start.y + size.y );
 					}
 				}
-  			else if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+  			else if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
  				{
  					//The button appears to be pushed -- CHECK_LIKE buttons that are on.
  					TheDisplay->drawImage( pushedOverlayIcon, start.x, start.y, start.x + size.x, start.y + size.y );
@@ -510,10 +510,10 @@ void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *inst
 	// get pointer to image we want to draw depending on our state,
 	// see GadgetPushButton.h for info
 	//
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 
-		if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 		{
 			leftImage					= GadgetButtonGetLeftDisabledSelectedImage( window );
 			rightImage				= GadgetButtonGetRightDisabledSelectedImage( window );
@@ -529,10 +529,10 @@ void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *inst
 		}
 
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
-		if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 		{
 			leftImage					= GadgetButtonGetLeftHiliteSelectedImage( window );
 			rightImage				= GadgetButtonGetRightHiliteSelectedImage( window );
@@ -551,7 +551,7 @@ void W3DGadgetPushButtonImageDrawThree(GameWindow *window, WinInstanceData *inst
 	else
 	{
 
-		if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 		{
 			leftImage					= GadgetButtonGetLeftEnabledSelectedImage( window );
 			rightImage				= GadgetButtonGetRightEnabledSelectedImage( window );

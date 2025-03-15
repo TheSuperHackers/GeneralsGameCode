@@ -2044,7 +2044,7 @@ void ScriptActions::doTeamHuntWithCommandButton(const AsciiString& teamName, con
 			case GUI_COMMAND_SPECIAL_POWER:
 				if( commandButton->getSpecialPowerTemplate() )
 				{
-					if (BitTest( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET )) 
+					if (BitIsSet( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET )) 
 					{
 						// OK, we can hunt with a power that targets an object.
 						break;
