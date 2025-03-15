@@ -2251,7 +2251,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 	{
 		if (render_state_changed&mask) 
 		{
-			SNAPSHOT_SAY(("DX8 - apply texture %d (%s)\n",i,render_state.Textures[i] ? render_state.Textures[i]->Get_Full_Path() : "NULL"));
+			SNAPSHOT_SAY(("DX8 - apply texture %d (%s)\n",i,render_state.Textures[i] ? render_state.Textures[i]->Get_Full_Path().Peek_Buffer() : "NULL"));
 
 			if (render_state.Textures[i]) 
 			{
