@@ -95,13 +95,21 @@ enum AnimTypes
 } ;
 
 //-----------------------------------------------------------------------------
+// TheSuperHackers @compile xezon 14/03/2025 Puts class into namespace to avoid name collision with AnimateWindow function in WinUser.h
+namespace wnd
+{
 class AnimateWindow : public MemoryPoolObject
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AnimateWindow, "AnimateWindow")		
 public:
 	AnimateWindow( void );
 	//~AnimateWindow( void );
-	
+
+	static AnimateWindow* createNewInstance()
+	{
+		return newInstance(AnimateWindow);
+	}
+
 	void setAnimData( ICoord2D startPos, ICoord2D endPos, ICoord2D curPos, ICoord2D restPos, Coord2D vel, UnsignedInt startTime, UnsignedInt endTime);
 
 	ICoord2D		getStartPos( void );							///< Get the Start Position 2D coord
@@ -146,11 +154,12 @@ private:
 	Bool m_needsToFinish;													///< Flag to tell the manager if we need to finish before it's done with it's animation
 	Bool m_isFinished;														///< We're finished
 };
+} // namespace wnd
 
 
 
 //-----------------------------------------------------------------------------
-typedef	std::list<AnimateWindow *>	AnimateWindowList;
+typedef	std::list<wnd::AnimateWindow *>	AnimateWindowList;
 
 //-----------------------------------------------------------------------------
 class AnimateWindowManager : public SubsystemInterface
@@ -191,6 +200,8 @@ private:
 //-----------------------------------------------------------------------------
 // INLINING ///////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
+namespace wnd
+{
 	inline ICoord2D			AnimateWindow::getStartPos( void )	{ return m_startPos; };
 	inline ICoord2D			AnimateWindow::getCurPos( void )		{ return m_curPos; };
 	inline ICoord2D			AnimateWindow::getEndPos( void )		{ return m_endPos; };
@@ -217,6 +228,7 @@ private:
 	inline Bool	AnimateWindow::isFinished( void )									{ return m_isFinished; };
 	inline void	AnimateWindow::setNeedsToFinish( Bool needsToFinish)		{ m_needsToFinish = needsToFinish; };
 	inline Bool	AnimateWindow::needsToFinish( void )							{ return m_needsToFinish; };
+} // namespace wnd
 	
 	inline Bool AnimateWindowManager::isFinished( void )					{ return !m_needsUpdate;	};
 	inline Bool AnimateWindowManager::isReversed( void )						{ return m_reverse;	};

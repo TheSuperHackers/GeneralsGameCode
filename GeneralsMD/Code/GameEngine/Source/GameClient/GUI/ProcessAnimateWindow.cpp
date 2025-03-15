@@ -88,7 +88,7 @@ ProcessAnimateWindowSlideFromRight::ProcessAnimateWindowSlideFromRight( void )
 ProcessAnimateWindowSlideFromRight::~ProcessAnimateWindowSlideFromRight( void ) { }
 
 //-----------------------------------------------------------------------------
-void ProcessAnimateWindowSlideFromRight::initReverseAnimateWindow( AnimateWindow *animWin, UnsignedInt maxDelay )
+void ProcessAnimateWindowSlideFromRight::initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay )
 {
 	if(!animWin)
 	{
@@ -106,7 +106,7 @@ void ProcessAnimateWindowSlideFromRight::initReverseAnimateWindow( AnimateWindow
 }
 
 //-----------------------------------------------------------------------------
-void ProcessAnimateWindowSlideFromRight::initAnimateWindow( AnimateWindow *animWin )
+void ProcessAnimateWindowSlideFromRight::initAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
@@ -151,7 +151,7 @@ void ProcessAnimateWindowSlideFromRight::initAnimateWindow( AnimateWindow *animW
 
 
 //-----------------------------------------------------------------------------
-Bool ProcessAnimateWindowSlideFromRight::updateAnimateWindow( AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromRight::updateAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	
 	if(!animWin)
@@ -199,7 +199,7 @@ Bool ProcessAnimateWindowSlideFromRight::updateAnimateWindow( AnimateWindow *ani
 	return FALSE;
 }
 
-Bool ProcessAnimateWindowSlideFromRight::reverseAnimateWindow( AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromRight::reverseAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	
 	if(!animWin)
@@ -272,7 +272,7 @@ ProcessAnimateWindowSlideFromLeft::ProcessAnimateWindowSlideFromLeft( void )
 
 ProcessAnimateWindowSlideFromLeft::~ProcessAnimateWindowSlideFromLeft( void ) { }
 
-void ProcessAnimateWindowSlideFromLeft::initReverseAnimateWindow( AnimateWindow *animWin, UnsignedInt maxDelay )
+void ProcessAnimateWindowSlideFromLeft::initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay )
 {
 	if(!animWin)
 	{
@@ -288,7 +288,7 @@ void ProcessAnimateWindowSlideFromLeft::initReverseAnimateWindow( AnimateWindow 
 
 }
 
-void ProcessAnimateWindowSlideFromLeft::initAnimateWindow( AnimateWindow *animWin )
+void ProcessAnimateWindowSlideFromLeft::initAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
@@ -328,7 +328,7 @@ void ProcessAnimateWindowSlideFromLeft::initAnimateWindow( AnimateWindow *animWi
 	animWin->setAnimData(startPos, endPos, curPos, restPos, vel, timeGetTime() + animWin->getDelay(), 0);
 }
 
-Bool ProcessAnimateWindowSlideFromLeft::updateAnimateWindow( AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromLeft::updateAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	
 	if(!animWin)
@@ -377,7 +377,7 @@ Bool ProcessAnimateWindowSlideFromLeft::updateAnimateWindow( AnimateWindow *anim
 	return FALSE;
 }
 
-Bool ProcessAnimateWindowSlideFromLeft::reverseAnimateWindow( AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromLeft::reverseAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	
 	if(!animWin)
@@ -450,7 +450,7 @@ ProcessAnimateWindowSlideFromTop::ProcessAnimateWindowSlideFromTop( void )
 
 ProcessAnimateWindowSlideFromTop::~ProcessAnimateWindowSlideFromTop( void ) { }
 
-void ProcessAnimateWindowSlideFromTop::initReverseAnimateWindow( AnimateWindow *animWin, UnsignedInt maxDelay )
+void ProcessAnimateWindowSlideFromTop::initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay )
 {
 	if(!animWin)
 	{
@@ -466,7 +466,7 @@ void ProcessAnimateWindowSlideFromTop::initReverseAnimateWindow( AnimateWindow *
 
 }
 
-void ProcessAnimateWindowSlideFromTop::initAnimateWindow( AnimateWindow *animWin )
+void ProcessAnimateWindowSlideFromTop::initAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
@@ -506,7 +506,7 @@ void ProcessAnimateWindowSlideFromTop::initAnimateWindow( AnimateWindow *animWin
 	animWin->setAnimData(startPos, endPos, curPos, restPos, vel, timeGetTime() + animWin->getDelay(), 0);
 }
 
-Bool ProcessAnimateWindowSlideFromTop::updateAnimateWindow( AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromTop::updateAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	
 	if(!animWin)
@@ -556,7 +556,7 @@ Bool ProcessAnimateWindowSlideFromTop::updateAnimateWindow( AnimateWindow *animW
 	return FALSE;
 }
 
-Bool ProcessAnimateWindowSlideFromTop::reverseAnimateWindow( AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromTop::reverseAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	
 	if(!animWin)
@@ -629,7 +629,7 @@ ProcessAnimateWindowSlideFromBottom::ProcessAnimateWindowSlideFromBottom( void )
 
 ProcessAnimateWindowSlideFromBottom::~ProcessAnimateWindowSlideFromBottom( void ) { }
 
-void ProcessAnimateWindowSlideFromBottom::initReverseAnimateWindow( AnimateWindow *animWin, UnsignedInt maxDelay )
+void ProcessAnimateWindowSlideFromBottom::initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay )
 {
 	if(!animWin)
 	{
@@ -646,7 +646,7 @@ void ProcessAnimateWindowSlideFromBottom::initReverseAnimateWindow( AnimateWindo
 }
 
 
-void ProcessAnimateWindowSlideFromBottom::initAnimateWindow( AnimateWindow *animWin )
+void ProcessAnimateWindowSlideFromBottom::initAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
@@ -686,7 +686,7 @@ void ProcessAnimateWindowSlideFromBottom::initAnimateWindow( AnimateWindow *anim
 	animWin->setAnimData(startPos, endPos, curPos, restPos, vel, timeGetTime() + animWin->getDelay(), 0);
 }
 
-Bool ProcessAnimateWindowSlideFromBottom::updateAnimateWindow( AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromBottom::updateAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	
 	if(!animWin)
@@ -736,7 +736,7 @@ Bool ProcessAnimateWindowSlideFromBottom::updateAnimateWindow( AnimateWindow *an
 	return FALSE;
 }
 
-Bool ProcessAnimateWindowSlideFromBottom::reverseAnimateWindow( AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromBottom::reverseAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	
 	if(!animWin)
@@ -804,7 +804,7 @@ ProcessAnimateWindowSlideFromBottomTimed::ProcessAnimateWindowSlideFromBottomTim
 
 ProcessAnimateWindowSlideFromBottomTimed::~ProcessAnimateWindowSlideFromBottomTimed( void ) { }
 
-void ProcessAnimateWindowSlideFromBottomTimed::initReverseAnimateWindow( AnimateWindow *animWin, UnsignedInt maxDelay )
+void ProcessAnimateWindowSlideFromBottomTimed::initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay )
 {
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
@@ -845,7 +845,7 @@ void ProcessAnimateWindowSlideFromBottomTimed::initReverseAnimateWindow( Animate
 }
 
 
-void ProcessAnimateWindowSlideFromBottomTimed::initAnimateWindow( AnimateWindow *animWin )
+void ProcessAnimateWindowSlideFromBottomTimed::initAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
@@ -886,7 +886,7 @@ void ProcessAnimateWindowSlideFromBottomTimed::initAnimateWindow( AnimateWindow 
 	animWin->setAnimData(startPos, endPos, curPos, restPos, vel, now + delay, now + m_maxDuration + delay);
 }
 
-Bool ProcessAnimateWindowSlideFromBottomTimed::updateAnimateWindow( AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromBottomTimed::updateAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	
 	if(!animWin)
@@ -942,7 +942,7 @@ Bool ProcessAnimateWindowSlideFromBottomTimed::updateAnimateWindow( AnimateWindo
 	return FALSE;
 }
 
-Bool ProcessAnimateWindowSlideFromBottomTimed::reverseAnimateWindow( AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromBottomTimed::reverseAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	return updateAnimateWindow(animWin);
 }
@@ -962,7 +962,7 @@ ProcessAnimateWindowSpiral::ProcessAnimateWindowSpiral( void )
 ProcessAnimateWindowSpiral::~ProcessAnimateWindowSpiral( void ) { }
 
 //-----------------------------------------------------------------------------
-void ProcessAnimateWindowSpiral::initReverseAnimateWindow( AnimateWindow *animWin, UnsignedInt maxDelay )
+void ProcessAnimateWindowSpiral::initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay )
 {
 	if(!animWin)
 	{
@@ -979,7 +979,7 @@ void ProcessAnimateWindowSpiral::initReverseAnimateWindow( AnimateWindow *animWi
 }
 
 //-----------------------------------------------------------------------------
-void ProcessAnimateWindowSpiral::initAnimateWindow( AnimateWindow *animWin )
+void ProcessAnimateWindowSpiral::initAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
@@ -1020,7 +1020,7 @@ void ProcessAnimateWindowSpiral::initAnimateWindow( AnimateWindow *animWin )
 }
 
 //-----------------------------------------------------------------------------
-Bool ProcessAnimateWindowSpiral::updateAnimateWindow( AnimateWindow *animWin )
+Bool ProcessAnimateWindowSpiral::updateAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	
 	if(!animWin)
@@ -1074,7 +1074,7 @@ Bool ProcessAnimateWindowSpiral::updateAnimateWindow( AnimateWindow *animWin )
 }
 
 //-----------------------------------------------------------------------------
-Bool ProcessAnimateWindowSpiral::reverseAnimateWindow( AnimateWindow *animWin )
+Bool ProcessAnimateWindowSpiral::reverseAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	
 	if(!animWin)
@@ -1143,7 +1143,7 @@ ProcessAnimateWindowSlideFromTopFast::ProcessAnimateWindowSlideFromTopFast( void
 
 ProcessAnimateWindowSlideFromTopFast::~ProcessAnimateWindowSlideFromTopFast( void ) { }
 
-void ProcessAnimateWindowSlideFromTopFast::initReverseAnimateWindow( AnimateWindow *animWin, UnsignedInt maxDelay )
+void ProcessAnimateWindowSlideFromTopFast::initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay )
 {
 	if(!animWin)
 	{
@@ -1159,7 +1159,7 @@ void ProcessAnimateWindowSlideFromTopFast::initReverseAnimateWindow( AnimateWind
 
 }
 
-void ProcessAnimateWindowSlideFromTopFast::initAnimateWindow( AnimateWindow *animWin )
+void ProcessAnimateWindowSlideFromTopFast::initAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
@@ -1202,7 +1202,7 @@ void ProcessAnimateWindowSlideFromTopFast::initAnimateWindow( AnimateWindow *ani
 	animWin->setAnimData(startPos, endPos, curPos, restPos, vel, timeGetTime() + animWin->getDelay(), 0);
 }
 
-Bool ProcessAnimateWindowSlideFromTopFast::updateAnimateWindow( AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromTopFast::updateAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	
 	if(!animWin)
@@ -1252,7 +1252,7 @@ Bool ProcessAnimateWindowSlideFromTopFast::updateAnimateWindow( AnimateWindow *a
 	return FALSE;
 }
 
-Bool ProcessAnimateWindowSlideFromTopFast::reverseAnimateWindow( AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromTopFast::reverseAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	
 	if(!animWin)
@@ -1328,7 +1328,7 @@ ProcessAnimateWindowSlideFromRightFast::ProcessAnimateWindowSlideFromRightFast( 
 ProcessAnimateWindowSlideFromRightFast::~ProcessAnimateWindowSlideFromRightFast( void ) { }
 
 //-----------------------------------------------------------------------------
-void ProcessAnimateWindowSlideFromRightFast::initReverseAnimateWindow( AnimateWindow *animWin, UnsignedInt maxDelay )
+void ProcessAnimateWindowSlideFromRightFast::initReverseAnimateWindow( wnd::AnimateWindow *animWin, UnsignedInt maxDelay )
 {
 	if(!animWin)
 	{
@@ -1363,7 +1363,7 @@ void ProcessAnimateWindowSlideFromRightFast::initReverseAnimateWindow( AnimateWi
 }
 
 //-----------------------------------------------------------------------------
-void ProcessAnimateWindowSlideFromRightFast::initAnimateWindow( AnimateWindow *animWin )
+void ProcessAnimateWindowSlideFromRightFast::initAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	ICoord2D restPos = {0,0};
 	ICoord2D startPos = {0,0};
@@ -1410,7 +1410,7 @@ void ProcessAnimateWindowSlideFromRightFast::initAnimateWindow( AnimateWindow *a
 
 
 //-----------------------------------------------------------------------------
-Bool ProcessAnimateWindowSlideFromRightFast::updateAnimateWindow( AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromRightFast::updateAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	
 	if(!animWin)
@@ -1458,7 +1458,7 @@ Bool ProcessAnimateWindowSlideFromRightFast::updateAnimateWindow( AnimateWindow 
 	return FALSE;
 }
 
-Bool ProcessAnimateWindowSlideFromRightFast::reverseAnimateWindow( AnimateWindow *animWin )
+Bool ProcessAnimateWindowSlideFromRightFast::reverseAnimateWindow( wnd::AnimateWindow *animWin )
 {
 	
 	if(!animWin)
