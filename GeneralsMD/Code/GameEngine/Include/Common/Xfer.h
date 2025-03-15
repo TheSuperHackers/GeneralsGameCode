@@ -35,8 +35,6 @@
 #define __XFER_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "Common/STLTypedefs.h"
-#include "Common/ModelState.h"
 #include "Common/Science.h"
 #include "Common/Upgrade.h"
 

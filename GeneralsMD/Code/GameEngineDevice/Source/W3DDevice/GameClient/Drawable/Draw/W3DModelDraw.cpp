@@ -34,6 +34,8 @@
 
 #define NO_DEBUG_CRC
 
+#include <Windows.h>
+
 #include "Common/CRC.h"
 #include "Common/CRCDebug.h"
 #include "Common/GameState.h"
@@ -43,7 +45,6 @@
 #include "Common/ThingTemplate.h"
 #include "Common/GameLOD.h"
 #include "Common/Xfer.h"
-#include "Common/GameState.h"
 #include "Common/QuickTrig.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/FXList.h"
