@@ -38,6 +38,7 @@
 #endif // _MSC_VER >= 1000
 
 #ifndef GCD_LCM_H
+#define GCD_LCM_H
 
 #include "always.h"
 
@@ -49,4 +50,4 @@ unsigned int Greatest_Common_Divisor(unsigned int a, unsigned int b);
 // positive integers are divisors.
 unsigned int Least_Common_Multiple(unsigned int a, unsigned int b);
 
-#endif
+#endif // GCD_LCM_H

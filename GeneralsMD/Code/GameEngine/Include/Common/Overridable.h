@@ -31,6 +31,8 @@
 #ifndef _OVERRIDABLE_H_
 #define _OVERRIDABLE_H_
 
+#include "Common/GameMemory.h"
+
 /*
 	In order for something to live in an OVERRIDE<> object, it must be derived from Overridable 
 	(publicly). 
