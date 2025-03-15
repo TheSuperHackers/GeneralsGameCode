@@ -158,7 +158,10 @@ void DebugExceptionhandler::LogFPURegisters(Debug &dbg, struct _EXCEPTION_POINTE
       << " ErrSel:  "    << Debug::Width(8) << flt.ErrorSelector << "\n"
       << "DataOfs:     " << Debug::Width(8) << flt.DataOffset
       << " DataSel: "    << Debug::Width(8) << flt.DataSelector << "\n"
-      << "Cr0NpxState: " << Debug::Width(8) << flt.Cr0NpxState << "\n";
+#if !defined(WOW64_SIZE_OF_80387_REGISTERS)
+      << "Cr0NpxState: " << Debug::Width(8) << flt.Cr0NpxState << "\n"
+#endif
+  ;
 
   for (unsigned k=0;k<SIZE_OF_80387_REGISTERS/10;++k)
   {

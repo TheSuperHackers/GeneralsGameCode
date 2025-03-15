@@ -2575,7 +2575,8 @@ void ScriptActions::doDisplayCinematicText(const AsciiString& displayText, const
 	char buf[256];
 	char *c;
 	strcpy(buf, fontType.str());
-	for( c = buf; c != '\0'; *c++ )
+	// TheSuperHackers @fix xezon 16/03/2025 Fixes potential buffer overrun via prior c!='\0' test.
+	for( c = buf; *c != '\0'; c++ )
 	{
 		if( *c != ' ' && *c++ != '-' ) 
 			fontName.concat(c);
@@ -2583,12 +2584,12 @@ void ScriptActions::doDisplayCinematicText(const AsciiString& displayText, const
 			break;
 	}
 	while( *c != ':' )
-		*c++;
-	*c++;  // eat through " - Size:"
+		c++;
+	c++;  // eat through " - Size:"
 
 	// get font size
 	AsciiString fontSize = AsciiString::TheEmptyString;
-	for( ; *c != '\0'; *c++ )
+	for( ; *c != '\0'; c++ )
 	{
 		if( *c != '\0' && *c != ' ' )
 		{

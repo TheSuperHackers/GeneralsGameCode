@@ -1557,7 +1557,7 @@ void W3DDisplay::drawCurrentDebugDisplay( void )
 		if ( m_debugDisplay && m_debugDisplayCallback )
 		{
 			m_debugDisplay->reset();
-			m_debugDisplayCallback( m_debugDisplay, m_debugDisplayUserData );
+			m_debugDisplayCallback( m_debugDisplay, m_debugDisplayUserData, NULL );
 		}
 	}
 }  // end drawCurrentDebugDisplay

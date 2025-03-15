@@ -253,7 +253,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 
 	Player *player = ThePlayerList->getLocalPlayer();
 	UnicodeString name, cost, descrip;
-	UnicodeString requires = UnicodeString::TheEmptyString, requiresList;
+	UnicodeString requiresFormat = UnicodeString::TheEmptyString, requiresList;
 	Bool firstRequirement = true;
 	const ProductionPrerequisite *prereq;
 	Bool fireScienceButton = false;
@@ -425,17 +425,17 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 					if (firstRequirement)
 						firstRequirement = false;
 					else
-						requires.concat(L", ");
+						requiresFormat.concat(L", ");
 				}
-				requires.concat(requiresList);
+				requiresFormat.concat(requiresList);
 			}
-			if( !requires.isEmpty() )
+			if( !requiresFormat.isEmpty() )
 			{
 				UnicodeString requireFormat = TheGameText->fetch("CONTROLBAR:Requirements");
-				requires.format(requireFormat.str(), requires.str());
+				requiresFormat.format(requireFormat.str(), requiresFormat.str());
 				if(!descrip.isEmpty())
 					descrip.concat(L"\n");
-				descrip.concat(requires);
+				descrip.concat(requiresFormat);
 
 			}
 		}
@@ -514,8 +514,8 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 				{
 					if( !descrip.isEmpty() )
 						descrip.concat(L"\n");
-					requires.format( TheGameText->fetch( "CONTROLBAR:Requirements" ).str(), TheGameText->fetch( "CONTROLBAR:GeneralsPromotion" ).str() );
-					descrip.concat( requires );
+					requiresFormat.format( TheGameText->fetch( "CONTROLBAR:Requirements" ).str(), TheGameText->fetch( "CONTROLBAR:GeneralsPromotion" ).str() );
+					descrip.concat( requiresFormat );
 				}
 			}
 		}	
@@ -543,17 +543,17 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 						if (firstRequirement)
 							firstRequirement = false;
 						else
-							requires.concat(L", ");
+							requiresFormat.concat(L", ");
 					}
-					requires.concat(requiresList);
+					requiresFormat.concat(requiresList);
 				}
-				if( !requires.isEmpty() )
+				if( !requiresFormat.isEmpty() )
 				{
 					UnicodeString requireFormat = TheGameText->fetch("CONTROLBAR:Requirements");
-					requires.format(requireFormat.str(), requires.str());
+					requiresFormat.format(requireFormat.str(), requiresFormat.str());
 					if(!descrip.isEmpty())
 						descrip.concat(L"\n");
-					descrip.concat(requires);
+					descrip.concat(requiresFormat);
 				}
 			}
 

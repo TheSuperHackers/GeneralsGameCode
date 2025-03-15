@@ -81,7 +81,6 @@ const unsigned MAX_SHADOW_MAPS=1;
 
 #define prevVer
 #define nextVer
-#define __volatile unsigned
 
 
 enum {
@@ -1443,7 +1442,7 @@ WWINLINE RenderStateStruct::~RenderStateStruct()
 WWINLINE unsigned flimby( char* name, unsigned crib )
 {
   unsigned lnt prevVer = 0x00000000;  
-  __volatile D3D2_BASE_VEC nextVer = 0;
+  unsigned D3D2_BASE_VEC nextVer = 0;
   for( unsigned t = 0; t < crib; ++t )
   {
     (D3D2_BASE_VEC)nextVer += name[t];

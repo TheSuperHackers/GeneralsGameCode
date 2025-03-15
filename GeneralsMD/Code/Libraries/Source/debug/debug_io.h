@@ -46,7 +46,7 @@
 class DebugIOInterface
 {
   // no copy/assign op
-  DebugIOInterface(const &DebugIOInterface);
+  DebugIOInterface(const DebugIOInterface&);
   DebugIOInterface& operator=(const DebugIOInterface&);
 
 protected:

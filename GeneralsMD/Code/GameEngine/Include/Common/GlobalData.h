@@ -44,7 +44,7 @@
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 struct FieldParse;
-typedef enum _TerrainLOD;
+enum _TerrainLOD;
 class GlobalData;
 class INI;
 class WeaponBonusSet;
