@@ -66,7 +66,7 @@ void ShdHWShader::Shell_Run(char* cmd)
 
 	if (!found)
 	{
-		char* shader_path="\\shaders\\";
+		const char* shader_path="\\shaders\\";
 
 		::GetCurrentDirectory(_MAX_PATH,work_dir);
 		strcat(work_dir,shader_path);

@@ -222,7 +222,7 @@ void Debug::StaticExit(void)
     }
 }
 
-Debug& Debug::operator<<(RepeatChar &c)
+Debug& Debug::operator<<(RepeatChar c)
 {
   if (c.m_count>=10)
   {

@@ -809,7 +809,7 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 		AssetStatusClass::Peek_Instance()->Report_Load_On_Demand_RObj(name);
 
 		char filename [MAX_PATH];
-		char *mesh_name = ::strchr (name, '.');
+		const char *mesh_name = ::strchr (name, '.');
 		if (mesh_name != NULL) {
 			::lstrcpyn (filename, name, ((int)mesh_name) - ((int)name) + 1);
 			::lstrcat (filename, ".w3d");
@@ -990,7 +990,7 @@ HAnimClass *	WW3DAssetManager::Get_HAnim(const char * name)
 			AssetStatusClass::Peek_Instance()->Report_Load_On_Demand_HAnim(name);
 
 			char filename[ MAX_PATH ];
-			char *animname = strchr( name, '.');
+			const char *animname = strchr( name, '.');
 			if (animname != NULL) {
 				sprintf( filename, "%s.w3d", animname+1);
 			} else {

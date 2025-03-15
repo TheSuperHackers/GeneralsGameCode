@@ -912,7 +912,7 @@ void WaterRenderObjClass::ReAcquireResources(void)
 	if (W3DShaderManager::getChipset() >= DC_GENERIC_PIXEL_SHADER_1_1)
 	{
 		ID3DXBuffer *compiledShader;
-		char *shader = 
+		const char *shader = 
 			"ps.1.1\n \
 			tex t0 \n\
 			tex t1	\n\

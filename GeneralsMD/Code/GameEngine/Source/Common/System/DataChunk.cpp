@@ -275,7 +275,7 @@ DataChunkOutput::~DataChunkOutput()
 	::fclose(m_tmp_file);
 }
 
-void DataChunkOutput::openDataChunk( char *name, DataChunkVersionType ver )
+void DataChunkOutput::openDataChunk( const char *name, DataChunkVersionType ver )
 {
 	// allocate (or get existing) ID from the table of m_contents
 	UnsignedInt id = m_contents.allocateID( AsciiString(name) );

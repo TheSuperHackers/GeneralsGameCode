@@ -717,7 +717,8 @@ void HTTPThinkWrapper( void )
 {
 	if (s_asyncDNSLookupInProgress)
 	{
-		Int ret = asyncGethostbyname("servserv.generals.ea.com");
+		Char hostname[] = "servserv.generals.ea.com";
+		Int ret = asyncGethostbyname(hostname);
 		switch(ret)
 		{
 		case LOOKUP_FAILED:
@@ -774,7 +775,8 @@ void StartPatchCheck( void )
 		TheGameText->fetch("GUI:CheckingForPatches"), CancelPatchCheckCallbackAndReopenDropdown);
 
 	s_asyncDNSLookupInProgress = TRUE;
-	Int ret = asyncGethostbyname("servserv.generals.ea.com");
+	Char hostname[] = "servserv.generals.ea.com";
+	Int ret = asyncGethostbyname(hostname);
 	switch(ret)
 	{
 	case LOOKUP_FAILED:

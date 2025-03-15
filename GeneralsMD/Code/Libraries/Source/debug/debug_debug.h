@@ -207,7 +207,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   class Hex {};
   
   /// \internal Performs actual switch to hexadecimal format. 
-  Debug& operator<<(Hex &)
+  Debug& operator<<(const Hex)
   {
     SetPrefixAndRadix("0x",16);
     return *this;
@@ -219,7 +219,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   class Dec {};
 
   /// \internal Performs actuals switch to decimal format
-  Debug& operator<<(Dec &)
+  Debug& operator<<(const Dec)
   {
     SetPrefixAndRadix("",10);
     return *this;
@@ -231,7 +231,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   class Bin {};
 
   /// \internal Performs actuals switch to binary format
-  Debug& operator<<(Bin &)
+  Debug& operator<<(const Bin)
   {
     SetPrefixAndRadix("%",2);
     return *this;
@@ -253,7 +253,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   };
 
   /// \internal Performs actuals width switch
-  Debug& operator<<(Width &w)
+  Debug& operator<<(const Width w)
   {
     m_width=w.m_width;
     return *this;
@@ -275,7 +275,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   };
 
   /// \internal Performs actuals setting of fill char
-  Debug& operator<<(FillChar &c)
+  Debug& operator<<(const FillChar c)
   {
     m_fillChar=c.m_fill;
     return *this;
@@ -298,7 +298,7 @@ DLOG( "My HResult is: " << Debug::HResult(SomeHRESULTValue) << "\n" );
   };
 
   /// \internal Performs actuals repeating of char
-  Debug& operator<<(RepeatChar &c);
+  Debug& operator<<(RepeatChar c);
 
   /**
     \brief Old printf style formatting.

@@ -22,7 +22,7 @@
 
 struct BorderColor
 {
-	char *m_colorName;
+	const char *m_colorName;
 	long m_borderColor;
 };
 
