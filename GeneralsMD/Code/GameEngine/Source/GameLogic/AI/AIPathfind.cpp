@@ -1201,7 +1201,7 @@ PathfindCell::~PathfindCell( void )
 { 	
 	if (m_info) PathfindCellInfo::releaseACellInfo(m_info);
 	m_info = NULL;
-	static warn = true;
+	static Bool warn = true;
 	if (warn) {
 		warn = false;
 		DEBUG_LOG( ("PathfindCell::~PathfindCell m_info Allocated."));

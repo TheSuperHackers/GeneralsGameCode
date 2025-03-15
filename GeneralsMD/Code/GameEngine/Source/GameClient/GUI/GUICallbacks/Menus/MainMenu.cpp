@@ -197,7 +197,7 @@ enum
 	SHOW_FRAMES_LIMIT = 20
 };
 
-static showFade = FALSE;
+static Int showFade = FALSE;
 static Int dropDown = DROPDOWN_NONE;
 static Int pendingDropDown = DROPDOWN_NONE;
 static AnimateWindowManager *localAnimateWindowManager = NULL;
@@ -214,7 +214,7 @@ static Bool launchChallengeMenu = FALSE;
 static Bool dontAllowTransitions = FALSE;
 
 //Added by Saad
-const /*Int TIME_OUT = 15,*/ CORNER = 10;
+const Int /*TIME_OUT = 15,*/ CORNER = 10;
 void AcceptResolution();
 void DeclineResolution();
 GameWindow *resAcceptMenu = NULL;

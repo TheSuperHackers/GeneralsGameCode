@@ -1618,7 +1618,7 @@ void WeaponStore::update()
 		if (curFrame >= ddi->m_delayDamageFrame)
 		{
 			// we never do projectile-detonation-damage via this code path.
-			const isProjectileDetonation = false;
+			const Bool isProjectileDetonation = false;
 			ddi->m_delayedWeapon->dealDamageInternal(ddi->m_delaySourceID, ddi->m_delayIntendedVictimID, &ddi->m_delayDamagePos, ddi->m_bonus, isProjectileDetonation);
 			ddi = m_weaponDDI.erase(ddi);
 		}
