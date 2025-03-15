@@ -71,6 +71,13 @@ add_subdirectory(Dependencies/Benchmark)
 add_subdirectory(Dependencies/SafeDisc)
 add_subdirectory(Dependencies/MaxSDK)
 
+if (NOT IS_VS6_BUILD)
+    if (MSVC)
+        # Multithreaded build.
+        add_compile_options(/MP)
+    endif()
+endif()
+
 # Do we want to build extra SDK stuff or just the game binary?
 option(GENZH_BUILD_ZEROHOUR "Build Zero Hour code." ON)
 option(GENZH_BUILD_GENERALS "Build Generals code." ON)
