@@ -471,7 +471,7 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 			if ( comboData->listBox )
 				GadgetListBoxReset(comboData->listBox);
 			if ( comboData->editBox )
-				GadgetTextEntrySetText(comboData->editBox, UnicodeString.TheEmptyString );
+				GadgetTextEntrySetText(comboData->editBox, UnicodeString::TheEmptyString );
 			comboData->entryCount = 0;
 			//HideListBox(window);	
 			break;
