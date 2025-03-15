@@ -22,6 +22,7 @@ set(GAMEENGINE_SRC
     Include/Common/ClientUpdateModule.h
     Include/Common/CommandLine.h
     Include/Common/CopyProtection.h
+    Include/Common/CppMacros.h
     Include/Common/crc.h
     Include/Common/CRCDebug.h
     Include/Common/CriticalSection.h
