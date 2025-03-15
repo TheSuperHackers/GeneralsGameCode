@@ -1291,7 +1291,7 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 			if(pos->x >= list->columns || pos->y >= list->listLength || 
 					list->listData[pos->y].cell[pos->x].cellType != LISTBOX_TEXT)
 			{
-				tAndC->string = UnicodeString.TheEmptyString;
+				tAndC->string = UnicodeString::TheEmptyString;
 				tAndC->color = 0;				
 			}
 			else
