@@ -16,7 +16,7 @@ target_link_libraries(z_compress PRIVATE
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
-    if(MSVC_VERSION LESS 1300) # VS6
+    if(IS_VS6_BUILD)
         target_compile_definitions(z_compress PRIVATE vsnprintf=_vsnprintf)
     endif()
     target_link_options(z_compress PRIVATE /subsystem:console)

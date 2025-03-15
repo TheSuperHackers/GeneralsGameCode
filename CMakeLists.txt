@@ -33,6 +33,22 @@ endif()
 # Top level project, doesn't really affect anything.
 project(genzh LANGUAGES C CXX)
 
+# Print some information
+message(STATUS "CMAKE_CXX_COMPILER: ${CMAKE_CXX_COMPILER}")
+message(STATUS "CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
+message(STATUS "CMAKE_CXX_COMPILER_VERSION: ${CMAKE_CXX_COMPILER_VERSION}")
+message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
+if (DEFINED MSVC_VERSION)
+    message(STATUS "MSVC_VERSION: ${MSVC_VERSION}")
+endif()
+
+# Set variable for VS6 to handle special cases.
+if (DEFINED MSVC_VERSION AND MSVC_VERSION LESS 1300)
+    set(IS_VS6_BUILD TRUE)
+else()
+    set(IS_VS6_BUILD FALSE)
+endif()
+
 # Create PDB for Release as long as debug info was generated during compile.
 if(MSVC)
     string(APPEND CMAKE_EXE_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF")
