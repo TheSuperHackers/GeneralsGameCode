@@ -1585,7 +1585,8 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	AsciiString selectedAliasingMode = (*pref)["AntiAliasing"];
 	GadgetComboBoxReset(comboBoxAntiAliasing);
 	AsciiString temp;
-	for (Int i=0; i < NUM_ALIASING_MODES; ++i)
+	Int i=0;
+	for (; i < NUM_ALIASING_MODES; ++i)
 	{
 		temp.format("GUI:AntiAliasing%d", i);
 		str = TheGameText->fetch( temp );

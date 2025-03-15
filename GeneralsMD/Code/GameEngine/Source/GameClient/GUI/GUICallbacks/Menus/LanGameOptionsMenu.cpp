@@ -203,7 +203,8 @@ static void playerTooltip(GameWindow *window,
 													UnsignedInt mouse)
 {
 	Int idx = -1;
-	for (Int i=0; i<MAX_SLOTS; ++i)
+	Int i=0;
+	for (; i<MAX_SLOTS; ++i)
 	{
 		if (window && window == GadgetComboBoxGetEditBox(comboBoxPlayer[i]))
 		{
@@ -977,7 +978,8 @@ void updateGameOptions( void )
 
     GadgetCheckBoxSetChecked( checkboxLimitSuperweapons, theGame->getSuperweaponRestriction() != 0 );
 		Int itemCount = GadgetComboBoxGetLength(comboBoxStartingCash);
-    for ( Int index = 0; index < itemCount; index++ )
+    Int index = 0;
+    for ( ; index < itemCount; index++ )
     {
       Int value  = (Int)GadgetComboBoxGetItemData(comboBoxStartingCash, index);
       if ( value == theGame->getStartingCash().countMoney() )

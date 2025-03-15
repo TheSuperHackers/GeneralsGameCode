@@ -716,7 +716,8 @@ WindowMsgHandledType GadgetListBoxInput( GameWindow *window, UnsignedInt msg,
 								
 								ListEntryCell *cell = NULL;
 								// go through the columns until we find a column with text
-								for(Int j = 0; j < list->columns; ++j)
+								Int j = 0;
+								for(; j < list->columns; ++j)
 								{
 									cell = &list->listData[position].cell[j];
 									if(cell && cell->cellType == LISTBOX_TEXT && cell->data)
@@ -1633,7 +1634,8 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 			if( list->multiSelect )
 			{
 				// forced selections override the entire selection list.
-				for (Int i=0; i<selectCount && i<list->endPos; ++i)
+				Int i=0;
+				for (; i<selectCount && i<list->endPos; ++i)
 				{
 					// don't select off the end
 					if (list->listLength <= selectList[i])
@@ -1716,7 +1718,8 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 			// the position mData1 contains
 			//
 			ListEntryCell *cells = NULL;
-			for (Int i = 0; i < (Int)mData1; i++)
+			Int i = 0;
+			for (; i < (Int)mData1; i++)
 			{
 				cells = list->listData[i].cell;
 				

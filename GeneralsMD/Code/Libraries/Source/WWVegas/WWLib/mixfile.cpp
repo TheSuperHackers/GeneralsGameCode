@@ -334,7 +334,8 @@ MixFileFactoryClass::Flush_Changes (void)
 		//
 		//	Add all the remaining files from our file set
 		//
-		for (int index = 0; index < FilenameList.Count (); index ++) {
+		int index = 0;
+		for (; index < FilenameList.Count (); index ++) {
 			StringClass &filename = FilenameList[index];
 
 			//
@@ -438,7 +439,8 @@ bool	MixFileFactoryClass::Build_Ordered_Filename_List (DynamicVectorClass<String
 	// associate offset with each name and add to list
 	DynamicVectorClass<FileOffsetStruct>	local_file_info;
 	local_file_info.Resize( name_list.Count());
-	for (int i = 0; i < name_list.Count(); ++i) {
+	int i = 0;
+	for (; i < name_list.Count(); ++i) {
 		// Here, we have to assume that the names in the list are in CRC order, just like FileInfo is.
 		FileOffsetStruct temp;
 		temp.Filename	= name_list[i];

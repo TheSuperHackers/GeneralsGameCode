@@ -48,7 +48,8 @@ void ProfileResultFileCSV::WriteThread(ProfileFuncLevel::Thread &thread)
 
   // CSV file header
   fprintf(f,"Function\tFile\tCall count\tPTT (all)\tGTT (all)\tPT/C (all)\tGT/C (all)\tCaller (all)");
-  for (unsigned k=0;k<Profile::GetFrameCount();k++)
+  unsigned k=0;
+  for (;k<Profile::GetFrameCount();k++)
   {
     const char *s=Profile::GetFrameName(k);
     fprintf(f,"\tCall (%s)\tPTT (%s)\tGTT (%s)\tPT/C (%s)\tGT/C (%s)\tCaller (%s)",s,s,s,s,s,s);
@@ -103,7 +104,8 @@ void ProfileResultFileCSV::WriteThread(ProfileFuncLevel::Thread &thread)
 void ProfileResultFileCSV::WriteResults(void)
 {
   ProfileFuncLevel::Thread t;
-  for (unsigned k=0;ProfileFuncLevel::EnumThreads(k,t);k++)
+  unsigned k=0;
+  for (;ProfileFuncLevel::EnumThreads(k,t);k++)
     WriteThread(t);
 
   FILE *f=fopen("profile-high.csv","wt");
@@ -171,7 +173,8 @@ void ProfileResultFileDOT::WriteResults(void)
     return;
 
   unsigned curMax=0;
-  for (unsigned k=1;ProfileFuncLevel::EnumThreads(k,t);k++)
+  unsigned k=1;
+  for (;ProfileFuncLevel::EnumThreads(k,t);k++)
   {
     for (;curMax++;)
     {
@@ -226,7 +229,8 @@ void ProfileResultFileDOT::WriteResults(void)
     for (k=0;tMax.EnumProfile(k,id);k++)
     {
       const char *source=id.GetSource();
-      for (FoldHelper *cur=fold;cur;cur=cur->next)
+      FoldHelper *cur=fold;
+      for (;cur;cur=cur->next)
         if (!strcmp(source,cur->source))
         {
           if (cur->numId<MAX_FUNCTIONS_PER_FILE)
@@ -247,7 +251,8 @@ void ProfileResultFileDOT::WriteResults(void)
     // now write data
     for (FoldHelper *cur=fold;cur;cur=cur->next)
     {
-      for (FoldHelper *cur2=fold;cur2;cur2=cur2->next)
+      FoldHelper *cur2=fold;
+      for (;cur2;cur2=cur2->next)
         cur2->mark=false;
       
       for (k=0;k<cur->numId;k++)

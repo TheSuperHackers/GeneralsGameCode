@@ -6806,7 +6806,8 @@ Path *Pathfinder::buildGroundPath(Bool isCrusher, const Coord3D *fromPos, Pathfi
 		color.blue = 0;
 		color.red = color.green = 1;
 		Coord3D pos;
-		for( PathNode *node = path->getFirstNode(); node; node = node->getNext() )
+		PathNode *node = path->getFirstNode();
+		for( ; node; node = node->getNext() )
 		{
 
 			// create objects to show path - they decay
@@ -8999,7 +9000,8 @@ Path *Pathfinder::buildActualPath( const Object *obj, LocomotorSurfaceTypeMask a
 		color.blue = 0;
 		color.red = color.green = 1;
 		Coord3D pos;
-		for( PathNode *node = path->getFirstNode(); node; node = node->getNext() )
+		PathNode *node = path->getFirstNode();
+		for( ; node; node = node->getNext() )
 		{
 
 			// create objects to show path - they decay

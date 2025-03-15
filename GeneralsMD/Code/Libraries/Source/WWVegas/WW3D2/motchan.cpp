@@ -1280,7 +1280,8 @@ return;
 	float value_min=FLT_MAX;
 	float value_max=-FLT_MAX;
 	int count=datasize/sizeof(float);
-	for (int i=0;i<count;i++) {
+	int i=0;
+	for (;i<count;i++) {
 		float value=Data[i];
 		if (_isnan(value)) value=0.0f;
 		if (value>100000.0f) value=0.0f;

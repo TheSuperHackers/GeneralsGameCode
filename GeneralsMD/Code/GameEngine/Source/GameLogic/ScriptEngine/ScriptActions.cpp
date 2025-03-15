@@ -5252,7 +5252,8 @@ void ScriptActions::doMoveTeamTowardsNearest( const AsciiString& teamName, const
 
 	//Get the first object (to use in the partition filter checks).
 	Object *teamObj = NULL;
-	for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance())
+	DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList();
+	for (; !iter.done(); iter.advance())
 	{
 		teamObj = iter.cur();
 		if( teamObj ) 

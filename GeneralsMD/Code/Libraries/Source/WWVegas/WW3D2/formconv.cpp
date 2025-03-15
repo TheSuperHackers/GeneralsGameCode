@@ -205,7 +205,8 @@ WW3DZFormat D3DFormat_To_WW3DZFormat(D3DFORMAT d3d_format)
 */
 void Init_D3D_To_WW3_Conversion()
 {
-	for (int i=0;i<HIGHEST_SUPPORTED_D3DFORMAT;++i) {
+	int i=0;
+	for (;i<HIGHEST_SUPPORTED_D3DFORMAT;++i) {
 		D3DFormatToWW3DFormatConversionArray[i]=WW3D_FORMAT_UNKNOWN;
 	}
 
