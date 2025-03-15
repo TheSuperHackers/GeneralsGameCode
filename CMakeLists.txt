@@ -74,13 +74,21 @@ include(cmake/gamespy.cmake)
 include(cmake/lzhl.cmake)
 include(cmake/zlib.cmake)
 add_subdirectory(Dependencies/Benchmark)
-add_subdirectory(Dependencies/SafeDisc)
 add_subdirectory(Dependencies/MaxSDK)
+add_subdirectory(Dependencies/SafeDisc)
+add_subdirectory(Dependencies/Utility)
 
 if (NOT IS_VS6_BUILD)
+    # Set C++ standard
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)  # Ensures only ISO features are used
+
     if (MSVC)
         # Multithreaded build.
         add_compile_options(/MP)
+        # Enforce strict __cplusplus version
+        add_compile_options(/Zc:__cplusplus)
     endif()
 endif()
 

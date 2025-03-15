@@ -1165,6 +1165,7 @@ target_link_libraries(z_gameengine PUBLIC
     d3d8lib
     gamespy::gamespy
     gz_config
+    gz_utility
     stlport
     z_browserdispatch
     z_compression
