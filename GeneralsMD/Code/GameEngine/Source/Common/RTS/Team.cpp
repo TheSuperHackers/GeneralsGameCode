@@ -713,7 +713,7 @@ TeamTemplateInfo::TeamTemplateInfo(Dict *d) :
 	m_automaticallyReinforce = d->getBool(TheKey_teamAutoReinforce, &exists);
 
 	Int interact	= d->getInt(TheKey_teamAggressiveness, &exists);
-	m_initialTeamAttitude = AI_NORMAL;
+	m_initialTeamAttitude = ATTITUDE_NORMAL;
 	if (exists) {
 		m_initialTeamAttitude = (AttitudeType) interact;
 	}
