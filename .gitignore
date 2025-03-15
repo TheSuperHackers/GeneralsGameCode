@@ -2,6 +2,7 @@
 .*
 !.gitignore
 !.gitattributes
+!.github
 
 *.user
 *.ncb
