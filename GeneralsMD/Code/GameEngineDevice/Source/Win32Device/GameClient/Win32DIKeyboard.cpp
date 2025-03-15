@@ -45,7 +45,7 @@ enum { KEYBOARD_BUFFER_SIZE = 256 };
 struct ErrorLookup
 {
 	HRESULT error;
-	char *string;
+	const char *string;
 };
 static ErrorLookup errorLookup[] = 
 {

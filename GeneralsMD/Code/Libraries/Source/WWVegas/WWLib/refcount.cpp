@@ -87,7 +87,7 @@ RefCountClass *	RefCountClass::Add_Active_Ref(RefCountClass *obj)
  * HISTORY:                                                                                    *
  *   3/16/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-RefCountClass *	RefCountClass::Set_Ref_Owner(RefCountClass *obj,char * file,int line) 
+RefCountClass *	RefCountClass::Set_Ref_Owner(RefCountClass *obj,const char * file,int line) 
 { 
 //	static RefCountClass *hunt = (RefCountClass *)0x06558890;
 	static RefCountClass *hunt = (RefCountClass *)0x0;

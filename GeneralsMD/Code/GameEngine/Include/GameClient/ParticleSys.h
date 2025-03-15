@@ -251,33 +251,33 @@ public:
 
 /**** NOTE: These MUST be kept in sync with the enumerations below *****/
 
-static char *ParticleShaderTypeNames[] = 
+static const char *ParticleShaderTypeNames[] = 
 {
 	"NONE", "ADDITIVE", "ALPHA", "ALPHA_TEST", "MULTIPLY", NULL
 };
 
-static char *ParticleTypeNames[] = 
+static const char *ParticleTypeNames[] = 
 {
 	"NONE", "PARTICLE", "DRAWABLE", "STREAK", "VOLUME_PARTICLE","SMUDGE", NULL
 };
 
-static char *EmissionVelocityTypeNames[] =
+static const char *EmissionVelocityTypeNames[] =
 {
 	"NONE", "ORTHO", "SPHERICAL", "HEMISPHERICAL", "CYLINDRICAL", "OUTWARD", NULL
 };
 
-static char *EmissionVolumeTypeNames[] =
+static const char *EmissionVolumeTypeNames[] =
 {
 	"NONE", "POINT", "LINE", "BOX", "SPHERE", "CYLINDER", NULL
 };
 
 //"NONE", "FLUFF", "DEBRIS", "NATURE", "WEAPON", "DAMAGE", "SPECIAL"
-static char *ParticlePriorityNames[] = 
+static const char *ParticlePriorityNames[] = 
 {
 	"NONE", "WEAPON_EXPLOSION","SCORCHMARK","DUST_TRAIL","BUILDUP","DEBRIS_TRAIL","UNIT_DAMAGE_FX","DEATH_EXPLOSION","SEMI_CONSTANT","CONSTANT","WEAPON_TRAIL","AREA_EFFECT","CRITICAL", "ALWAYS_RENDER", NULL
 };
 
-static char *WindMotionNames[] = 
+static const char *WindMotionNames[] = 
 {
 	"NONE", "Unused", "PingPong", "Circular", NULL
 };

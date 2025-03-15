@@ -39,7 +39,7 @@
 W3DWebBrowser::W3DWebBrowser() : WebBrowser() {
 }
 
-Bool W3DWebBrowser::createBrowserWindow(char *tag, GameWindow *win) 
+Bool W3DWebBrowser::createBrowserWindow(const char *tag, GameWindow *win) 
 {
 
 	WinInstanceData *winData = win->winGetInstanceData();

@@ -159,7 +159,7 @@ const char *ArgvClass::Find_Again(const char *arg)
  *   06/17/1999 SKB : Created.                                                                 * 
  *   07/15/2001 SKB : Put file arguements in the correct order they were included.             * 
  *=============================================================================================*/
-int ArgvClass::Init(char *lpCmdLine, char *fileprefix)
+int ArgvClass::Init(char *lpCmdLine, const char *fileprefix)
 {
 	// Get pointer to command line.
    char	*ptr = lpCmdLine; 

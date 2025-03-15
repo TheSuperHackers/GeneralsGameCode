@@ -56,7 +56,7 @@ enum Anim2DMode
 
 };
 #ifdef DEFINE_ANIM_2D_MODE_NAMES
-static char *Anim2DModeNames[] = 
+static const char *Anim2DModeNames[] = 
 {
 	"NONE",
 	"ONCE",

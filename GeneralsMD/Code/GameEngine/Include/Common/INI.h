@@ -99,7 +99,7 @@ typedef void (*INIFieldParseProc)( INI *ini, void *instance, void *store, const 
 
 //-------------------------------------------------------------------------------------------------
 typedef const char* ConstCharPtr;
-typedef const ConstCharPtr* ConstCharPtrArray;
+typedef ConstCharPtr* ConstCharPtrArray;
 
 //-------------------------------------------------------------------------------------------------
 struct LookupListRec

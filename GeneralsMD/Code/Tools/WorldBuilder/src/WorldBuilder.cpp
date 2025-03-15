@@ -103,7 +103,7 @@ void initSubsystem(SUBSYSTEM*& sysref, SUBSYSTEM* sys, const char* path1 = NULL,
 #define OPEN_FILE_DIR "OpenDirectory"
 
 Win32Mouse *TheWin32Mouse = NULL;
-char *gAppPrefix = "wb_"; /// So WB can have a different debug log file name.
+const char *gAppPrefix = "wb_"; /// So WB can have a different debug log file name.
 const Char *g_strFile = "data\\Generals.str";
 const Char *g_csfFile = "data\\%s\\Generals.csf";
 

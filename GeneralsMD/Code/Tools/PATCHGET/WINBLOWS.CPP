@@ -34,7 +34,7 @@ HINSTANCE ApplicationHInstance = NULL;  ///< our application instance
 HWND ApplicationHWnd = NULL;
 const char *g_strFile = "data\\Generals.str";
 const char *g_csfFile = "data\\%s\\Generals.csf";
-char *gAppPrefix = "patchget_"; // prefix to the debug log.
+const char *gAppPrefix = "patchget_"; // prefix to the debug log.
 
 
 HINSTANCE Global_instance;
