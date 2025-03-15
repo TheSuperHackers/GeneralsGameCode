@@ -206,7 +206,7 @@ inline double	WWMath::Lerp(double a, double b, float lerp )
 }
 
 
-inline long WWMath::Float_To_Long	(float f)	
+inline long WWMath::Float_To_Long	(float f) // Look at the #else for equivalent
 {
 #if defined(_MSC_VER) && defined(_M_IX86)
 	long retval;
@@ -218,7 +218,7 @@ inline long WWMath::Float_To_Long	(float f)
 #endif
 }
 
-inline long WWMath::Float_To_Long	(double f)	
+inline long WWMath::Float_To_Long	(double f) // Look at the #else for equivalent
 {
 #if defined(_MSC_VER) && defined(_M_IX86)
 	long retval;
