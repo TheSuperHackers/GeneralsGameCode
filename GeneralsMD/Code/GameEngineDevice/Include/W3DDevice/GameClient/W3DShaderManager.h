@@ -82,7 +82,7 @@ public:
 	static void shutdown(void);	///<release resources used by shaders
 	static ChipsetType getChipset(void);	///<return current device chipset.
 	static GraphicsVenderID getCurrentVendor(void) {return m_currentVendor;}	///<return current card vendor.
-	static getCurrentDriverVersion(void) {return m_driverVersion; }	///<return current driver version.
+	static __int64 getCurrentDriverVersion(void) {return m_driverVersion; }	///<return current driver version.
 	static Int getShaderPasses(ShaderTypes shader);	///<rendering passes required for shader
 	static Int setShader(ShaderTypes shader, Int pass);	///<enable specific shader pass.
 	static Int setShroudTex(Int stage);	///<Set shroud in a texture stage.
