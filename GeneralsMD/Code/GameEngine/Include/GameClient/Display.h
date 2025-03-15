@@ -67,7 +67,7 @@ public:
 		DRAW_IMAGE_ADDITIVE	//additive blend the image into frame buffer
 	};
 
-	typedef void (DebugDisplayCallback)( DebugDisplayInterface *debugDisplay, void *userData, FILE *fp = NULL );
+	typedef void (DebugDisplayCallback)( DebugDisplayInterface *debugDisplay, void *userData, FILE *fp );
 
 	Display();
 	virtual ~Display();

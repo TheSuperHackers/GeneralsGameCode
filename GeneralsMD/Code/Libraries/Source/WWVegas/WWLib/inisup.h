@@ -82,7 +82,7 @@ struct INISection : public Node<INISection *> {
 
 	private:
 		INISection(INISection const & rvalue);
-		INISection operator = (INISection const & rvalue);
+		INISection& operator = (INISection const & rvalue);
 };
 
 

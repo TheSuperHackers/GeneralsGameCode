@@ -122,17 +122,14 @@ typedef AllObjectTypes::iterator AllObjectTypesIt;
 typedef std::vector<NamedReveal> VecNamedReveal;
 typedef VecNamedReveal::iterator VecNamedRevealIt;
 
-class AttackPriorityInfo : public MemoryPoolObject, public Snapshot
+// TheSuperHackers @compile xezon 17/03/2025 Fixes destructor visibility by removing MemoryPoolObject base class.
+// MemoryPoolObject looks to be unnecessary because it is never dynamically allocated.
+class AttackPriorityInfo : public Snapshot
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AttackPriorityInfo, "AttackPriorityInfo")		
-
-// friend bad for MPOs. (srj)
-//friend class ScriptEngine;
-
 public:
 
 	AttackPriorityInfo();
-	//~AttackPriorityInfo();
+	~AttackPriorityInfo();
 
 public:
 
@@ -150,7 +147,7 @@ public:
 
 protected:
 
-	// sanapshot methods
+	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess( void );
