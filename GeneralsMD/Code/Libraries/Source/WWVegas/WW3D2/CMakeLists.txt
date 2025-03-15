@@ -240,6 +240,13 @@ set_target_properties(z_ww3d2 PROPERTIES OUTPUT_NAME ww3d2)
 
 target_sources(z_ww3d2 PRIVATE ${WW3D2_SRC})
 
+if (NOT IS_VS6_BUILD)
+    target_link_libraries(z_ww3d2 PUBLIC
+        comsuppw
+    )
+endif()
+
 target_link_libraries(z_ww3d2 PRIVATE
+    z_browserengine
     z_wwcommon
 )
