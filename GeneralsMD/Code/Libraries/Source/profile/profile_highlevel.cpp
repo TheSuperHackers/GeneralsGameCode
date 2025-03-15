@@ -217,7 +217,8 @@ int ProfileId::FrameStart(void)
 {
   ProfileFastCS::Lock lock(cs);
 
-  for (unsigned i=0;i<MAX_FRAME_RECORDS;i++)
+  unsigned i=0;
+  for (;i<MAX_FRAME_RECORDS;i++)
     if (!(frameRecordMask&(1<<i)))
       break;
   if (i==MAX_FRAME_RECORDS)
@@ -311,7 +312,8 @@ ProfileHighLevel::Id ProfileHighLevel::AddProfile(const char *name, const char *
 bool ProfileHighLevel::EnumProfile(unsigned index, Id &id)
 {
   ProfileFastCS::Lock lock(cs);
-  for (ProfileId *cur=ProfileId::GetFirst();cur&&index--;cur=cur->GetNext());
+  ProfileId *cur=ProfileId::GetFirst();
+  for (;cur&&index--;cur=cur->GetNext());
   id.m_idPtr=cur;
   return cur!=NULL;
 }

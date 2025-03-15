@@ -838,7 +838,8 @@ static void StartPressed(void)
 		mapDisplayName.format(L"%hs", myGame->getMap().str());
 		willTransfer = WouldMapTransfer(myGame->getMap());
 	}
-	for( int i = 0; i < MAX_SLOTS; i++ )
+	int i = 0;
+	for( ; i < MAX_SLOTS; i++ )
 	{
 		if ((myGame->getSlot(i)->isAccepted() == FALSE) && (myGame->getSlot(i)->isHuman() == TRUE))
 		{
@@ -1023,7 +1024,8 @@ void WOLDisplayGameOptions( void )
     GadgetCheckBoxSetChecked( checkBoxLimitSuperweapons, limitSuperweapons );
   
   Int itemCount = GadgetComboBoxGetLength(comboBoxStartingCash);
-  for ( Int index = 0; index < itemCount; index++ )
+  Int index = 0;
+  for ( ; index < itemCount; index++ )
   {
     Int value  = (Int)GadgetComboBoxGetItemData(comboBoxStartingCash, index);
     if ( value == theGame->getStartingCash().countMoney() )

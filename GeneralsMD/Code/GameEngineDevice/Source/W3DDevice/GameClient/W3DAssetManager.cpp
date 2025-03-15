@@ -440,7 +440,8 @@ static void remapTexture16Bit(Int dx, Int dy, Int pitch, SurfaceClass::SurfaceDe
 	Vector3 rgb,v_color((float)((color>>16)&0xff)/255.0f/255.0f,(float)((color>>8)&0xff)/255.0f/255.0f,(float)(color&0xff)/255.0f/255.0f);
 
 	//Generate a new color gradient palette based on reference color
-	for (Int y=0; y<TEAM_COLOR_PALETTE_SIZE; y++)
+	Int y=0;
+	for (; y<TEAM_COLOR_PALETTE_SIZE; y++)
 	{	
 		rgb.X=(Real)houseColorScale[y]*v_color.X;
 		rgb.Y=(Real)houseColorScale[y]*v_color.Y;
@@ -543,7 +544,8 @@ static void remapTexture32Bit(Int dx, Int dy, Int pitch, SurfaceClass::SurfaceDe
 	Vector3 rgb,v_color((float)((color>>16)&0xff)/255.0f/255.0f,(float)((color>>8)&0xff)/255.0f/255.0f,(float)(color&0xff)/255.0f/255.0f);
 
 	//Generate a new color gradient palette based on reference color
-	for (Int y=0; y<TEAM_COLOR_PALETTE_SIZE; y++)
+	Int y=0;
+	for (; y<TEAM_COLOR_PALETTE_SIZE; y++)
 	{	
 		rgb.X=(Real)houseColorScale[y]*v_color.X;
 		rgb.Y=(Real)houseColorScale[y]*v_color.Y;
@@ -796,7 +798,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	{	
 		// If we didn't find one, try to load on demand
 		char filename [MAX_PATH];
-		char *mesh_name = ::strchr (name, '.');
+		const char *mesh_name = ::strchr (name, '.');
 		if (mesh_name != NULL) 
 		{
 			::lstrcpyn(filename, name, ((int)mesh_name) - ((int)name) + 1);
@@ -1005,7 +1007,7 @@ void W3DAssetManager::Recolor_Vertex_Material(VertexMaterialClass *vmat, const i
 
 #ifdef DUMP_PERF_STATS
 __int64 Total_Load_3D_Assets=0;
-static Load_3D_Asset_Recursions=0;
+static Int Load_3D_Asset_Recursions=0;
 #endif
 //---------------------------------------------------------------------
 bool W3DAssetManager::Load_3D_Assets( const char * filename )
@@ -1107,7 +1109,7 @@ bool W3DAssetManager::Load_3D_Assets( const char * filename )
 
 #ifdef DUMP_PERF_STATS
 __int64 Total_Get_HAnim_Time=0;
-static HAnim_Recursions=0;
+static Int HAnim_Recursions=0;
 #endif
 //---------------------------------------------------------------------
 HAnimClass *	W3DAssetManager::Get_HAnim(const char * name)

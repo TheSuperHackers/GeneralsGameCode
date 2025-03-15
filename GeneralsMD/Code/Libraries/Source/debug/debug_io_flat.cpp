@@ -306,7 +306,8 @@ DebugIOFlat::~DebugIOFlat()
 
 void DebugIOFlat::Write(StringType type, const char *src, const char *str)
 {
-  for (SplitListEntry *cur=m_firstSplit;cur;cur=cur->next)
+  SplitListEntry *cur=m_firstSplit;
+  for (;cur;cur=cur->next)
   {
     if (!(cur->stringTypes&(1<<type)))
       continue;
@@ -468,7 +469,8 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
       // create our filename, search for stream with same filename
       char fn[256];
       ExpandMagic(m_baseFilename,cur->name,fn);
-      for (StreamListEntry *stream=m_firstStream;stream;stream=stream->next)
+      StreamListEntry *stream=m_firstStream;
+      for (;stream;stream=stream->next)
         if (!strcmp(stream->stream->GetFilename(),fn))
           break;
       if (!stream)
@@ -526,7 +528,8 @@ void DebugIOFlat::Execute(class Debug& dbg, const char *cmd, bool structuredCmd,
     // must fixup m_lastSplitPtr now
     if (m_firstSplit)
     {
-      for (SplitListEntry *cur=m_firstSplit;cur->next;cur=cur->next);
+      SplitListEntry *cur=m_firstSplit;
+      for (;cur->next;cur=cur->next);
       m_firstSplit=cur;
     }
     else

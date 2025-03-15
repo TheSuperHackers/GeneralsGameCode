@@ -777,7 +777,8 @@ void positionStartSpots( AsciiString mapName, GameWindow *buttonMapStartPosition
 		positionAdditionalImages(&mmd, mapWindow, TRUE);
 
 		AsciiString waypointName;				
-		for(Int i = 0; i < mmd.m_numPlayers && mmd.m_isMultiplayer; ++i )
+		Int i = 0;
+		for(; i < mmd.m_numPlayers && mmd.m_isMultiplayer; ++i )
 		{
 			waypointName.format("Player_%d_Start", i+1); // start pos waypoints are 1-based
 			WaypointMap::iterator wmIt = mmd.m_waypoints.find(waypointName);
@@ -843,7 +844,8 @@ void updateMapStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[
 	}
 	MapMetaData mmd = it->second;
 
-	for(Int i = 0; i < MAX_SLOTS; ++i)
+	Int i = 0;
+	for(; i < MAX_SLOTS; ++i)
 	{
     if ( buttonMapStartPositions[i] != NULL )
     {
@@ -1107,7 +1109,8 @@ void InitSkirmishGameGadgets( void )
 
 	windowMap->winSetTooltipFunc(MapSelectorTooltip);
 
-	for (Int i = 0; i < MAX_SLOTS; i++)
+	Int i = 0;
+	for (; i < MAX_SLOTS; i++)
 	{
 		AsciiString tmpString;
 		tmpString.format("SkirmishGameOptionsMenu.wnd:ComboBoxPlayer%d", i);
@@ -1277,7 +1280,8 @@ void updateSkirmishGameOptions( void )
 
   GadgetCheckBoxSetChecked( checkBoxLimitSuperweapons, TheSkirmishGameInfo->getSuperweaponRestriction() != 0 );
   Int itemCount = GadgetComboBoxGetLength(comboBoxStartingCash);
-  for ( Int index = 0; index < itemCount; index++ )
+  Int index = 0;
+  for ( ; index < itemCount; index++ )
   {
     Int value  = (Int)GadgetComboBoxGetItemData(comboBoxStartingCash, index);
     if ( value == TheSkirmishGameInfo->getStartingCash().countMoney() )

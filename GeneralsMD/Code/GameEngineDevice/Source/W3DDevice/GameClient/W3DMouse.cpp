@@ -244,7 +244,8 @@ void W3DMouse::initD3DAssets(void)
 void W3DMouse::freeD3DAssets(void)
 {
 	//free pointers to texture surfaces.
-	for (Int i=0; i<MAX_2D_CURSOR_ANIM_FRAMES; i++)
+	Int i=0;
+	for (; i<MAX_2D_CURSOR_ANIM_FRAMES; i++)
 		REF_PTR_RELEASE(m_currentD3DSurface[i]);
 
 	//free textures.

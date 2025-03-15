@@ -604,7 +604,8 @@ WW3DErrorType ShdMeshClass::Load_W3D(ChunkLoadClass& cload)
 	// next are the sub meshes
 	Free();
 	SubMeshes.Resize(hdr.NumSubMeshes);
-	for (int i=0;i<SubMeshes.Length(); ) 
+	int i=0;
+	for (;i<SubMeshes.Length(); ) 
 	{
 		cload.Open_Chunk();
 

@@ -665,7 +665,8 @@ void MeshModelClass::Init_For_NPatch_Rendering()
 	DuplicateLocationHash.Remove_All();
 	SideHash.Remove_All();
 
-	for (unsigned i=0;i<vertex_count;++i) {
+	unsigned i=0;
+	for (;i<vertex_count;++i) {
 		if (LocationHash.Exists(locations[i])) {
 			if (!DuplicateLocationHash.Exists(locations[i])) {
 				DuplicateLocationHash.Insert(locations[i],i);

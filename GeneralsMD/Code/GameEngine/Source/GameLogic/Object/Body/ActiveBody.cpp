@@ -1023,7 +1023,8 @@ void ActiveBody::createParticleSystems( const AsciiString &boneBaseName,
 
 		// find the actual bone location to use and mark that bone index as used
 		Int count = 0;
-		for( Int j = 0; j < numBones; j++ )
+		Int j = 0;
+		for( ; j < numBones; j++ )
 		{
 
 			// ignore bone positions that have already been used
