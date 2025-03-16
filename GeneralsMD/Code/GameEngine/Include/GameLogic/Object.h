@@ -330,8 +330,8 @@ public:
 	SpecialPowerUpdateInterface* findSpecialPowerWithOverridableDestinationActive( SpecialPowerType type = SPECIAL_INVALID ) const;
 	SpecialPowerUpdateInterface* findSpecialPowerWithOverridableDestination( SpecialPowerType type = SPECIAL_INVALID ) const;
 
-	CountermeasuresBehaviorInterface* Object::getCountermeasuresBehaviorInterface();
-	const CountermeasuresBehaviorInterface* Object::getCountermeasuresBehaviorInterface() const;
+	CountermeasuresBehaviorInterface* getCountermeasuresBehaviorInterface();
+	const CountermeasuresBehaviorInterface* getCountermeasuresBehaviorInterface() const;
 
 	inline ObjectStatusMaskType getStatusBits() const { return m_status; }
 	inline Bool testStatus( ObjectStatusTypes bit ) const { return m_status.test( bit ); }
@@ -467,7 +467,7 @@ public:
 	void setCommandSetStringOverride( AsciiString newCommandSetString ) { m_commandSetStringOverride = newCommandSetString; }
 
 	/// People are faking their commandsets, and, Surprise!, they are authoritative.  Challenge everything.
-	Bool Object::canProduceUpgrade( const UpgradeTemplate *upgrade ); 
+	Bool canProduceUpgrade( const UpgradeTemplate *upgrade ); 
 
 
 	// Weapons & Damage -------------------------------------------------------------------------------------------------

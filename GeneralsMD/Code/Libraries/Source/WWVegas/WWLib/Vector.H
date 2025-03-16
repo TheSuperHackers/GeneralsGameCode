@@ -486,6 +486,13 @@ bool VectorClass<T>::Resize(int newsize, T const * array)
 template<class T>
 class DynamicVectorClass : public VectorClass<T>
 {
+	protected:
+		using VectorClass<T>::IsAllocated;
+		using VectorClass<T>::Vector;
+		using VectorClass<T>::VectorMax;
+	public:
+		using VectorClass<T>::Length;
+
 	public:
 		DynamicVectorClass(unsigned size=0, T const * array=0);
 
