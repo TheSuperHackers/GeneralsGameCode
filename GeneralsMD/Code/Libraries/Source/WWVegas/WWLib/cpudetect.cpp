@@ -1129,7 +1129,7 @@ void CPUDetectClass::Init_Compact_Log()
 static class CPUDetectInitClass
 {
 public:
-	CPUDetectInitClass::CPUDetectInitClass()
+	CPUDetectInitClass()
 	{
 		CPUDetectClass::Init_CPUID_Instruction();
 		// We pretty much need CPUID, but let's not crash if it doesn't exist.

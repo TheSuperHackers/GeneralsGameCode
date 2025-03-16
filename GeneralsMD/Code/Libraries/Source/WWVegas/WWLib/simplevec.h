@@ -254,6 +254,11 @@ inline bool SimpleVecClass<T>::Uninitialised_Grow(int newsize)
 */
 template <class T> class SimpleDynVecClass : public SimpleVecClass<T>
 {
+protected:
+	using SimpleVecClass<T>::Vector;
+	using SimpleVecClass<T>::VectorMax;
+	using SimpleVecClass<T>::Length;
+
 public:
 
 	SimpleDynVecClass(int size = 0);

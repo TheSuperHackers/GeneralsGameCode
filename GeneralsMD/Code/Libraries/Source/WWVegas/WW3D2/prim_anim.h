@@ -160,6 +160,10 @@ protected:
 template<class T>
 class LERPAnimationChannelClass : public PrimitiveAnimationChannelClass<T>
 {
+	using PrimitiveAnimationChannelClass<T>::m_Data;
+	using PrimitiveAnimationChannelClass<T>::m_LastIndex;
+	using PrimitiveAnimationChannelClass<T>::KeyClass;
+
 public:
 
 	/////////////////////////////////////////////////////////

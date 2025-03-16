@@ -238,7 +238,7 @@ public:
 
 	RenderObjClass(void);
 	RenderObjClass(const RenderObjClass & src);
-	RenderObjClass & RenderObjClass::operator = (const RenderObjClass &);
+	RenderObjClass & operator = (const RenderObjClass &);
 	virtual ~RenderObjClass(void)																					{ if (RenderHook) delete RenderHook; }
 
 

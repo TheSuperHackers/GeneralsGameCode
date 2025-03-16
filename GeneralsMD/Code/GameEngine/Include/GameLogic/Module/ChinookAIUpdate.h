@@ -110,7 +110,7 @@ public:
 	void recordOriginalPosition( const Coord3D &pos ) { m_originalPos.set( &pos ); }
 	const Coord3D* getOriginalPosition() const { return &m_originalPos; }
 	
-	Int ChinookAIUpdate::getUpgradedSupplyBoost() const;
+	Int getUpgradedSupplyBoost() const;
 
 protected:
 

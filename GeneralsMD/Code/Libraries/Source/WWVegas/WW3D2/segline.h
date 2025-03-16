@@ -58,7 +58,7 @@ class SegmentedLineClass : public RenderObjClass
 
 		SegmentedLineClass(void);
 		SegmentedLineClass(const SegmentedLineClass & src);
-		SegmentedLineClass & SegmentedLineClass::operator = (const SegmentedLineClass &that);
+		SegmentedLineClass & operator = (const SegmentedLineClass &that);
 		virtual ~SegmentedLineClass(void);
 
 		void					Reset_Line(void);
