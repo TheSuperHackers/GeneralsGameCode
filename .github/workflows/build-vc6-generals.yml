@@ -31,15 +31,6 @@ concurrency:
 
 jobs:
   generals:
-    # Only run for:
-    # 1. Pushes to main
-    # 2. Manual workflow runs
-    # 3. PRs from the main repository (not forks)
-    # 4. PRs that have the 'ci' label
-    if: |
-      github.event_name == 'push' ||
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request' && (github.event.pull_request.head.repo.full_name == github.repository || contains(github.event.pull_request.labels.*.name, 'ci')))
     uses: ./.github/workflows/build-vc6-common.yml
     with:
       game: "generals"

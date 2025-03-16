@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Setup build variables
         id: vars
@@ -128,7 +128,7 @@ jobs:
         with:
           name: ${{ inputs.game }}
           path: build/vc6/${{ env.SOURCE_DIR }}/generals.exe
-          retention-days: 3
+          retention-days: 30
           if-no-files-found: error
 
       - name: Upload ${{ inputs.game }} tools
@@ -136,5 +136,5 @@ jobs:
         with:
           name: ${{ inputs.game }}-tools
           path: build/vc6/${{ env.SOURCE_DIR }}/Tools
-          retention-days: 3
+          retention-days: 30
           if-no-files-found: error
