@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     steps:
       - name: Setup build variables
         id: vars
@@ -107,9 +107,9 @@ jobs:
           
           # Set build flags based on game
           if ("${{ inputs.game }}" -eq "generals") {
-            $buildFlags = "-DGENZH_BUILD_ZEROHOUR=OFF -DGENZH_BUILD_GENERALS=ON -DGENZH_BUILD_GENERALS_TOOLS=ON"
+            $buildFlags = @("-DGENZH_BUILD_ZEROHOUR=OFF", "-DGENZH_BUILD_GENERALS=ON", "-DGENZH_BUILD_GENERALS_TOOLS=ON")
           } else {
-            $buildFlags = "-DGENZH_BUILD_ZEROHOUR=ON -DGENZH_BUILD_GENERALS=OFF -DGENZH_BUILD_ZEROHOUR_TOOLS=ON"
+            $buildFlags = @("-DGENZH_BUILD_ZEROHOUR=ON", "-DGENZH_BUILD_GENERALS=OFF", "-DGENZH_BUILD_ZEROHOUR_TOOLS=ON")
           }
           
           cmake --preset vc6 $buildFlags
@@ -121,7 +121,7 @@ jobs:
           Write-Host "Collecting ${{ inputs.game }} tools"
           $toolsDir = New-Item -ItemType Directory -Force -Path ".\$env:SOURCE_DIR\Tools"
           $files = Get-ChildItem -Path .\$env:SOURCE_DIR -File | Where-Object { ($_.Extension -eq ".exe" -or $_.Extension -eq ".dll") -and $_.Name -ne "generals.exe" }
-          $files | ForEach-Object { $_.FullName } | Move-Item -Destination $toolsDir.FullName
+          $files | Move-Item -Destination $toolsDir
 
       - name: Upload ${{ inputs.game }} executable
         uses: actions/upload-artifact@v4
