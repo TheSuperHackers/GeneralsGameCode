@@ -33,5 +33,5 @@ jobs:
   generals:
     uses: ./.github/workflows/build-vc6-common.yml
     with:
-      game: "generals"
+      game: "Generals"
     secrets: inherit

@@ -33,5 +33,5 @@ jobs:
   zerohour:
     uses: ./.github/workflows/build-vc6-common.yml
     with:
-      game: "zerohour"
+      game: "GeneralsMD"
     secrets: inherit

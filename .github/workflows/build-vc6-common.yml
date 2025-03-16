@@ -6,28 +6,13 @@ on:
       game:
         required: true
         type: string
-        description: "Game to build (generals or zerohour)"
+        description: "Game to build (Generals or GeneralsMD)"
 
 jobs:
   build:
     runs-on: windows-latest
     timeout-minutes: 15
-    steps:
-      - name: Setup build variables
-        id: vars
-        shell: pwsh
-        run: |
-          $game = "${{ inputs.game }}"
-          
-          if ($game -eq "generals") {
-            "SOURCE_DIR=Generals" >> $env:GITHUB_ENV
-          } elseif ($game -eq "zerohour") {
-            "SOURCE_DIR=GeneralsMD" >> $env:GITHUB_ENV
-          } else {
-            Write-Error "Unknown game: $game"
-            exit 1
-          }
-          
+    steps:       
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -106,7 +91,7 @@ jobs:
           Write-Host "Configuring project with CMake using VC6 preset - building only ${{ inputs.game }}"
           
           # Set build flags based on game
-          if ("${{ inputs.game }}" -eq "generals") {
+          if ("${{ inputs.game }}" -eq "Generals") {
             $buildFlags = @("-DGENZH_BUILD_ZEROHOUR=OFF", "-DGENZH_BUILD_GENERALS=ON", "-DGENZH_BUILD_GENERALS_TOOLS=ON")
           } else {
             $buildFlags = @("-DGENZH_BUILD_ZEROHOUR=ON", "-DGENZH_BUILD_GENERALS=OFF", "-DGENZH_BUILD_ZEROHOUR_TOOLS=ON")
@@ -119,22 +104,22 @@ jobs:
           nmake
 
           Write-Host "Collecting ${{ inputs.game }} tools"
-          $toolsDir = New-Item -ItemType Directory -Force -Path ".\$env:SOURCE_DIR\Tools"
-          $files = Get-ChildItem -Path .\$env:SOURCE_DIR -File | Where-Object { ($_.Extension -eq ".exe" -or $_.Extension -eq ".dll") -and $_.Name -ne "generals.exe" }
+          $toolsDir = New-Item -ItemType Directory -Force -Path ".\${{ inputs.game }}\Tools"
+          $files = Get-ChildItem -Path .\${{ inputs.game }} -File | Where-Object { ($_.Extension -eq ".exe" -or $_.Extension -eq ".dll") -and $_.Name -ne "generals.exe" }
           $files | Move-Item -Destination $toolsDir
 
       - name: Upload ${{ inputs.game }} executable
         uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.game }}
-          path: build/vc6/${{ env.SOURCE_DIR }}/generals.exe
+          path: build/vc6/${{ inputs.game }}/generals.exe
           retention-days: 30
           if-no-files-found: error
 
       - name: Upload ${{ inputs.game }} tools
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.game }}-tools
-          path: build/vc6/${{ env.SOURCE_DIR }}/Tools
+          name: ${{ inputs.game }}-Tools
+          path: build/vc6/${{ inputs.game }}/Tools
           retention-days: 30
           if-no-files-found: error
