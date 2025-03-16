@@ -117,16 +117,29 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "Configuring project with CMake using VC6 preset - building only Zero Hour"
-          cmake --preset vc6 -DGENZH_BUILD_ZEROHOUR=ON -DGENZH_BUILD_GENERALS=OFF
+          cmake --preset vc6 -DGENZH_BUILD_ZEROHOUR=ON -DGENZH_BUILD_GENERALS=OFF -DGENZH_BUILD_ZEROHOUR_TOOLS=ON
 
           Write-Host "Building project with NMake"
           cd build\vc6
           nmake
+
+          Write-Host "Collecting Zero Hour tools"
+          $toolsDir = New-Item -ItemType Directory -Force -Path ".\GeneralsMD\Tools"
+          $files = Get-ChildItem -Path .\GeneralsMD -File | Where-Object { ($_.Extension -eq ".exe" -or $_.Extension -eq ".dll") -and $_.Name -ne "generals.exe" }
+          $files | ForEach-Object { $_.FullName } | Move-Item -Destination $toolsDir.FullName
 
       - name: Upload Zero Hour executable
         uses: actions/upload-artifact@v4
         with:
           name: zerohour
           path: build/vc6/GeneralsMD/generals.exe
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: Upload Zero Hour tools
+        uses: actions/upload-artifact@v4
+        with:
+          name: zerohour-tools
+          path: build/vc6/GeneralsMD/Tools
           retention-days: 3
           if-no-files-found: error

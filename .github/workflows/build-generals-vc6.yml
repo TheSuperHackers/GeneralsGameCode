@@ -117,16 +117,29 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "Configuring project with CMake using VC6 preset - building only Generals"
-          cmake --preset vc6 -DGENZH_BUILD_ZEROHOUR=OFF -DGENZH_BUILD_GENERALS=ON
+          cmake --preset vc6 -DGENZH_BUILD_ZEROHOUR=OFF -DGENZH_BUILD_GENERALS=ON -DGENZH_BUILD_GENERALS_TOOLS=ON
 
           Write-Host "Building project with NMake"
           cd build\vc6
           nmake
+
+          Write-Host "Collecting Generals tools"
+          $toolsDir = New-Item -ItemType Directory -Force -Path ".\Generals\Tools"
+          $files = Get-ChildItem -Path .\Generals -File | Where-Object { ($_.Extension -eq ".exe" -or $_.Extension -eq ".dll") -and $_.Name -ne "generals.exe" }
+          $files | ForEach-Object { $_.FullName } | Move-Item -Destination $toolsDir.FullName
 
       - name: Upload Generals executable
         uses: actions/upload-artifact@v4
         with:
           name: generals
           path: build/vc6/Generals/generals.exe
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: Upload Generals tools
+        uses: actions/upload-artifact@v4
+        with:
+          name: generals-tools
+          path: build/vc6/Generals/Tools
           retention-days: 3
           if-no-files-found: error
