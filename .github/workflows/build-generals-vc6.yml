@@ -8,7 +8,8 @@ on:
       - "Generals/**"
       - "Dependencies/**"
       - "cmake/**"
-      - "**/CMakeLists.txt"
+      - "CMakeLists.txt"
+      - "CMakePresets.json"
       - ".github/workflows/build-generals-vc6.yml"
   pull_request:
     branches:
@@ -17,7 +18,8 @@ on:
       - "Generals/**"
       - "Dependencies/**"
       - "cmake/**"
-      - "**/CMakeLists.txt"
+      - "CMakeLists.txt"
+      - "CMakePresets.json"
       - ".github/workflows/build-generals-vc6.yml"
   workflow_dispatch:
 
