@@ -1485,14 +1485,18 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
         return;
       }
 
-      //Steal a thousand cash from the other team!
+      //Steal cash from the other team!
       Money *targetMoney = target->getControllingPlayer()->getMoney();
       Money *objectMoney = object->getControllingPlayer()->getMoney();
       if( targetMoney && objectMoney )
       {
         UnsignedInt cash = targetMoney->countMoney();
+#if RETAIL_COMPATIBLE_CRC
         UnsignedInt desiredAmount = 1000;
-        //Check to see if they have 1000 cash, otherwise, take the remainder!
+#else
+        UnsignedInt desiredAmount = data->m_effectValue;
+#endif
+        //Check to see if they have the cash, otherwise, take the remainder!
         cash = min( desiredAmount, cash );
         if( cash > 0 )
         {
