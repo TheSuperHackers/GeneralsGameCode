@@ -1,46 +1,33 @@
-name: Build Generals with VC6
+name: Build Game with VC6
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "Generals/**"
-      - "Dependencies/**"
-      - "cmake/**"
-      - "CMakeLists.txt"
-      - "CMakePresets.json"
-      - ".github/workflows/build-generals-vc6.yml"
-  pull_request:
-    branches:
-      - main
-    paths:
-      - "Generals/**"
-      - "Dependencies/**"
-      - "cmake/**"
-      - "CMakeLists.txt"
-      - "CMakePresets.json"
-      - ".github/workflows/build-generals-vc6.yml"
-  workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  workflow_call:
+    inputs:
+      game:
+        required: true
+        type: string
+        description: "Game to build (generals or zerohour)"
 
 jobs:
   build:
-    # Only run for:
-    # 1. Pushes to main
-    # 2. Manual workflow runs
-    # 3. PRs from the main repository (not forks)
-    # 4. PRs that have the 'ci' label
-    if: |
-      github.event_name == 'push' ||
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request' && (github.event.pull_request.head.repo.full_name == github.repository || contains(github.event.pull_request.labels.*.name, 'ci')))
     runs-on: windows-latest
     timeout-minutes: 15
     steps:
+      - name: Setup build variables
+        id: vars
+        shell: pwsh
+        run: |
+          $game = "${{ inputs.game }}"
+          
+          if ($game -eq "generals") {
+            "SOURCE_DIR=Generals" >> $env:GITHUB_ENV
+          } elseif ($game -eq "zerohour") {
+            "SOURCE_DIR=GeneralsMD" >> $env:GITHUB_ENV
+          } else {
+            Write-Error "Unknown game: $game"
+            exit 1
+          }
+          
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -116,30 +103,38 @@ jobs:
       - name: Build with CMake using VC6 preset
         shell: pwsh
         run: |
-          Write-Host "Configuring project with CMake using VC6 preset - building only Generals"
-          cmake --preset vc6 -DGENZH_BUILD_ZEROHOUR=OFF -DGENZH_BUILD_GENERALS=ON -DGENZH_BUILD_GENERALS_TOOLS=ON
+          Write-Host "Configuring project with CMake using VC6 preset - building only ${{ inputs.game }}"
+          
+          # Set build flags based on game
+          if ("${{ inputs.game }}" -eq "generals") {
+            $buildFlags = "-DGENZH_BUILD_ZEROHOUR=OFF -DGENZH_BUILD_GENERALS=ON -DGENZH_BUILD_GENERALS_TOOLS=ON"
+          } else {
+            $buildFlags = "-DGENZH_BUILD_ZEROHOUR=ON -DGENZH_BUILD_GENERALS=OFF -DGENZH_BUILD_ZEROHOUR_TOOLS=ON"
+          }
+          
+          cmake --preset vc6 $buildFlags
 
           Write-Host "Building project with NMake"
           cd build\vc6
           nmake
 
-          Write-Host "Collecting Generals tools"
-          $toolsDir = New-Item -ItemType Directory -Force -Path ".\Generals\Tools"
-          $files = Get-ChildItem -Path .\Generals -File | Where-Object { ($_.Extension -eq ".exe" -or $_.Extension -eq ".dll") -and $_.Name -ne "generals.exe" }
+          Write-Host "Collecting ${{ inputs.game }} tools"
+          $toolsDir = New-Item -ItemType Directory -Force -Path ".\$env:SOURCE_DIR\Tools"
+          $files = Get-ChildItem -Path .\$env:SOURCE_DIR -File | Where-Object { ($_.Extension -eq ".exe" -or $_.Extension -eq ".dll") -and $_.Name -ne "generals.exe" }
           $files | ForEach-Object { $_.FullName } | Move-Item -Destination $toolsDir.FullName
 
-      - name: Upload Generals executable
+      - name: Upload ${{ inputs.game }} executable
         uses: actions/upload-artifact@v4
         with:
-          name: generals
-          path: build/vc6/Generals/generals.exe
+          name: ${{ inputs.game }}
+          path: build/vc6/${{ env.SOURCE_DIR }}/generals.exe
           retention-days: 3
           if-no-files-found: error
 
-      - name: Upload Generals tools
+      - name: Upload ${{ inputs.game }} tools
         uses: actions/upload-artifact@v4
         with:
-          name: generals-tools
-          path: build/vc6/Generals/Tools
+          name: ${{ inputs.game }}-tools
+          path: build/vc6/${{ env.SOURCE_DIR }}/Tools
           retention-days: 3
           if-no-files-found: error
