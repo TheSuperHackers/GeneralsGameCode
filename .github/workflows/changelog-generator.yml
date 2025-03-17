@@ -1,0 +1,73 @@
+name: Changelog Generation
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "The branch to generate the changelog from."
+        required: false
+        default: "main"
+      file_name:
+        description: "The name of the changelog file."
+        required: false
+        default: "CHANGELOG.md"
+      use_pull_requests:
+        description: "Use pull requests to generate the changelog."
+        required: false
+        type: boolean
+        default: true
+      use_commits:
+        description: "Use commit messages to generate the changelog."
+        required: false
+        type: boolean
+        default: true
+      insert_position:
+        description: "The position to insert the changelog entry."
+        required: false
+        type: choice
+        default: "above_previous"
+        options:
+          - above_previous
+          - below_previous
+          - top
+          - bottom
+      release:
+        description: "Generate a release changelog."
+        required: false
+        type: boolean
+        default: false
+      draft:
+        description: "Mark release as draft. Requires release to be true."
+        required: false
+        type: boolean
+        default: false
+      prerelease:
+        description: "Mark release as prerelease. Requires release to be true."
+        required: false
+        type: boolean
+        default: false
+      dry_run:
+        description: "Run the script without making any changes."
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install -r .github/workflows/scripts/Changelog-Generator/requirements.txt
+
+      - name: Run changelog generator
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: python .github/workflows/scripts/Changelog-Generator/src/main.py --repo ${{ github.repository}} -b ${{ github.event.inputs.branch }} --file-name ${{ github.event.inputs.file_name }} -pr ${{ github.event.inputs.use_pull_requests }} -c ${{ github.event.inputs.use_commits }} --insert-position ${{ github.event.inputs.insert_position }} -r ${{ github.event.inputs.release }} --draft ${{ github.event.inputs.draft }} --prerelease ${{ github.event.inputs.prerelease }} --dry-run ${{ github.event.inputs.dry_run }}
