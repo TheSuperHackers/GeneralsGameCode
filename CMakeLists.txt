@@ -33,6 +33,12 @@ endif()
 # Top level project, doesn't really affect anything.
 project(genzh LANGUAGES C CXX)
 
+# Create PDB for Release as long as debug info was generated during compile.
+if(MSVC)
+    string(APPEND CMAKE_EXE_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF")
+    string(APPEND CMAKE_SHARED_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF")
+endif()
+
 include(FetchContent)
 
 # Find/Add build dependencies and stubs shared by all projects
@@ -51,15 +57,11 @@ add_subdirectory(Dependencies/Benchmark)
 add_subdirectory(Dependencies/SafeDisc)
 add_subdirectory(Dependencies/MaxSDK)
 
-# EA Compression library, shared between games (diff is comments only)
-#add_subdirectory(GeneralsMD/Code/Libraries/Source/Compression)
-
-# BrowserDispatch COM object interface (No difference)
-#add_subdirectory(GeneralsMD/Code/Libraries/Source/EABrowserDispatch)
-
 # Do we want to build extra SDK stuff or just the game binary?
 option(GENZH_BUILD_ZEROHOUR "Build Zero Hour code." ON)
 option(GENZH_BUILD_GENERALS "Build Generals code." ON)
+option(GENZH_BUILD_INTERNAL "Build code with the \"Internal\" configuration." OFF)
+option(GENZH_BUILD_PROFILE "Build code with the \"Profile\" configuration." OFF)
 
 if(NOT GENZH_BUILD_ZEROHOUR AND NOT GENZH_BUILD_GENERALS)
     set(GENZH_BUILD_ZEROHOUR TRUE)
@@ -68,6 +70,27 @@ endif()
 
 add_feature_info(ZeroHourStuff GENZH_BUILD_ZEROHOUR "Build Zero Hour code")
 add_feature_info(GeneralsStuff GENZH_BUILD_GENERALS "Build Generals code")
+add_feature_info(InternalBuild GENZH_BUILD_INTERNAL "Building as an \"Internal\" build")
+add_feature_info(ProfileBuild GENZH_BUILD_PROFILE "Building as a \"Profile\" build")
+
+add_library(gz_config INTERFACE)
+
+target_compile_options(gz_config INTERFACE ${GENZH_FLAGS})
+
+target_compile_definitions(gz_config INTERFACE $<IF:$<CONFIG:Debug>,_DEBUG WWDEBUG DEBUG,_RELEASE>)
+
+# This disables a lot of warnings steering developers to use windows only functions/function names.
+if(MSVC)
+    target_compile_definitions(gz_config INTERFACE _CRT_NONSTDC_NO_WARNINGS _CRT_SECURE_NO_WARNINGS)
+endif()
+
+if(GENZH_BUILD_PROFILE)
+    target_compile_definitions(gz_config INTERFACE _PROFILE)
+endif()
+
+if(GENZH_BUILD_INTERNAL)
+    target_compile_definitions(gz_config INTERFACE _INTERNAL)
+endif()
 
 # Add main build targets
 if(GENZH_BUILD_ZEROHOUR)

@@ -1143,6 +1143,14 @@ set(GAMEENGINE_SRC
 add_library(z_gameengine STATIC)
 set_target_properties(z_gameengine PROPERTIES OUTPUT_NAME $<IF:$<CONFIG:Debug>,gameenginedebug,gameengine>)
 
+if(GENZH_BUILD_DEBUG)
+    set_target_properties(z_gameengine PROPERTIES OUTPUT_NAME gameenginedebug)
+elseif(GENZH_BUILD_INTERNAL)
+    set_target_properties(z_gameengine PROPERTIES OUTPUT_NAME gameengineinternal)
+else()
+    set_target_properties(z_gameengine PROPERTIES OUTPUT_NAME gameengine)
+endif()
+
 target_sources(z_gameengine PRIVATE ${GAMEENGINE_SRC})
 
 target_include_directories(z_gameengine PUBLIC
@@ -1161,21 +1169,13 @@ target_link_libraries(z_gameengine PRIVATE
 target_link_libraries(z_gameengine PUBLIC
     d3d8lib
     gamespy::gamespy
+    gz_config
     stlport
     z_browserdispatch
     z_compression
     z_wwvegas
 )
 
-target_compile_options(z_gameengine INTERFACE
-    ${GENZH_FLAGS}
-)
-
 target_compile_definitions(z_gameengine PRIVATE
     IG_DEBUG_STACKTRACE
-)
-
-target_compile_definitions(z_gameengine PUBLIC
-    $<$<CONFIG:Debug>:_DEBUG>
-    $<$<CONFIG:Debug>:DEBUG>
 )

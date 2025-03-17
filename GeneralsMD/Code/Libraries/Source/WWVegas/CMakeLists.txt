@@ -4,16 +4,11 @@ add_library(z_wwcommon INTERFACE)
 target_compile_definitions(z_wwcommon INTERFACE
     #NOMINMAX
     WIN32_LEAN_AND_MEAN
-    $<$<CONFIG:Debug>:WWDEBUG>
-    $<$<CONFIG:Debug>:_DEBUG>
-)
-
-target_compile_options(z_wwcommon INTERFACE
-    ${GENZH_FLAGS}
 )
 
 target_link_libraries(z_wwcommon INTERFACE
     d3d8lib
+    gz_config
     milesstub
     stlport
 )

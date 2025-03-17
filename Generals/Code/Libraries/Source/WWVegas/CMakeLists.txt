@@ -1,19 +1,9 @@
 # Interface libraries to set common defines and includes, avoid duplication later
 add_library(g_wwcommon INTERFACE)
 
-target_compile_definitions(g_wwcommon INTERFACE
-    #NOMINMAX
-    WIN32_LEAN_AND_MEAN
-    $<$<CONFIG:Debug>:WWDEBUG>
-    $<$<CONFIG:Debug>:_DEBUG>
-)
-
-target_compile_options(g_wwcommon INTERFACE
-    ${WARNING_FLAGS}
-)
-
 target_link_libraries(g_wwcommon INTERFACE
     d3d8lib
+    gz_config
     milesstub
     stlport
 )

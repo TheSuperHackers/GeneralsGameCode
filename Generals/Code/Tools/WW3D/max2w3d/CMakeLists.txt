@@ -164,8 +164,8 @@ target_link_libraries(g_max2w3d PRIVATE
     # The headers typedef INT_PTR to different types, but maxsdk expects it
     # typedef'ed to int, otherwise throws linker errors.
     d3d8lib
+    g_pluglib
     maxsdk
-    pluglib
     winmm
 )
 
