@@ -1094,3 +1094,5 @@ target_link_libraries(g_gameengine PUBLIC
 target_compile_definitions(g_gameengine PRIVATE
     IG_DEBUG_STACKTRACE
 )
+
+target_precompile_headers(g_gameengine PRIVATE Include/Precompiled/PreRTS.h)
