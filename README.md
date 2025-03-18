@@ -44,16 +44,6 @@ Windows has a policy where executables that contain words “version”, “upda
 STLport will require changes to successfully compile this source code. The file [stlport.diff](stlport.diff) has been provided for you so you can review and apply these changes. Please make sure you are using STLport 4.5.3 before attempting to apply the patch.
 
 
-## Contributing
-
-This repository will not be accepting contributions (pull requests, issues, etc). If you wish to create changes to the source code and encourage collaboration, please create a fork of the repository under your GitHub user/organization space.
-
-
-## Support
-
-This repository is for preservation purposes only and is archived without support. 
-
-
 ## License
 
 This repository and its contents are licensed under the GPL v3 license, with additional terms applied. Please see [LICENSE.md](LICENSE.md) for details.
