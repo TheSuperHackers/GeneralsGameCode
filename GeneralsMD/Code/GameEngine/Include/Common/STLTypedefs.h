@@ -190,10 +190,16 @@ namespace rts
 
 	template<> struct hash<AsciiString>
 	{
-		size_t operator()(AsciiString ast) const
-		{ 
+		size_t operator()(const AsciiString& ast) const
+		{
+#ifdef USING_STLPORT
 			std::hash<const char *> tmp;
 			return tmp((const char *) ast.str());
+#else
+			// TheSuperHackers @bugfix xezon 16/03/2024 Re-implements hash function that works with non-STLPort.
+			std::hash<std::string_view> hasher;
+			return hasher(std::string_view(ast.str(), ast.getLength()));
+#endif
 		}
 	};
 
