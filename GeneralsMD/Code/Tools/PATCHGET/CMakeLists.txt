@@ -27,6 +27,7 @@ macro(setup_patchgrabber appname)
         imm32
         vfw32
         winmm
+        z_debug
         z_gameengine
         z_gameenginedevice
         z_profile

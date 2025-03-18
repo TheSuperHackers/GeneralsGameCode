@@ -43,6 +43,7 @@ target_link_libraries(z_particleeditor PRIVATE
     stlport
     vfw32
     winmm
+    z_debug
     z_profile
     zi_gameengine_include
     zi_libraries_include

@@ -216,6 +216,7 @@ target_link_libraries(z_worldbuilder PRIVATE
     vfw32
     winmm
     z_browserdispatch
+    z_debug
     z_gameengine
     z_gameenginedevice
     z_profile
