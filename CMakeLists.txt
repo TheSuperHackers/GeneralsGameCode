@@ -58,6 +58,7 @@ add_subdirectory(Dependencies/Benchmark)
 add_subdirectory(Dependencies/MaxSDK)
 add_subdirectory(Dependencies/SafeDisc)
 add_subdirectory(Dependencies/Utility)
+add_subdirectory(resources)
 
 # Do we want to build extra SDK stuff or just the game binary?
 option(GENZH_BUILD_ZEROHOUR "Build Zero Hour code." ON)
