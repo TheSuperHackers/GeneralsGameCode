@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <Type Name="_STL::_List_iterator&lt;*&gt;">
+        <AlternativeType Name="_STL::_List_const_iterator&lt;*&gt;" />
+        <DisplayString>{((_Node*)_M_node)-&gt;_M_data}</DisplayString>
+        <Expand>
+            <Item Name="[data]">((_Node*)_M_node)-&gt;_M_data</Item>
+        </Expand>
+    </Type>
+    <Type Name="_STL::_List_base&lt;*&gt;">
+        <DisplayString Condition="_M_node._M_data-&gt;_M_next == _M_node._M_data">{{ Empty List }}</DisplayString>
+        <DisplayString Condition="_M_node._M_data-&gt;_M_next != _M_node._M_data">{{ List }}</DisplayString>
+        <Expand>
+            <CustomListItems>
+                <Variable Name="begin" InitialValue="_M_node._M_data-&gt;_M_next"/>
+                <Variable Name="end" InitialValue="_M_node._M_data"/>
+                <Loop>
+                    <Break Condition="begin == end"/>
+                    <Item>((_Node*)begin)-&gt;_M_data</Item>
+                    <Exec>begin = begin-&gt;_M_next</Exec>
+                </Loop>
+            </CustomListItems>
+        </Expand>
+    </Type>
+</AutoVisualizer>
