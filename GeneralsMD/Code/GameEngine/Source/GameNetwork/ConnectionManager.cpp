@@ -1928,10 +1928,7 @@ void ConnectionManager::parseUserList(const GameInfo *game)
 	char *listPos;
 
 	DEBUG_LOG(("ConnectionManager::parseUserList - looking for local user at %d.%d.%d.%d:%d\n",
-		(m_localAddr >> 24) & 0xff,
-		(m_localAddr >> 16) & 0xff,
-		(m_localAddr >> 8) & 0xff,
-		m_localAddr & 0xff,
+		PRINT_IP_HELPER(m_localAddr),
 		m_localPort));
 
 	int numUsers = 0;
