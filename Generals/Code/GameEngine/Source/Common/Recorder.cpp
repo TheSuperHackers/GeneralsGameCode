@@ -26,7 +26,7 @@
 
 #include "Common/Recorder.h"
 #include "Common/FileSystem.h"
-#include "Common/playerlist.h"
+#include "Common/PlayerList.h"
 #include "Common/Player.h"
 #include "Common/GlobalData.h"
 #include "Common/GameEngine.h"
@@ -39,11 +39,11 @@
 #include "GameNetwork/LANAPICallbacks.h"
 #include "GameNetwork/GameMessageParser.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
-#include "GameNetwork/NetworkUtil.h"
+#include "GameNetwork/networkutil.h"
 #include "GameLogic/GameLogic.h"
 #include "Common/RandomValue.h"
 #include "Common/CRCDebug.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...

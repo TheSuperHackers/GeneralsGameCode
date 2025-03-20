@@ -36,7 +36,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"crc.h"
+#include	"CRC.H"
 #include	"obscure.h"
 #include	<ctype.h>
 #include	<string.h>

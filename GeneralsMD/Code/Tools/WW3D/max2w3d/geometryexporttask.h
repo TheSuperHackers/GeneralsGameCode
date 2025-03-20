@@ -40,9 +40,9 @@
 #define GEOMETRYEXPORTTASK_H
 
 #include <string.h>
-#include <Max.h>
+#include <max.h>
 #include "w3d_file.h"
-#include "vector.h"
+#include "Vector.H"
 
 
 class GeometryExportContextClass;

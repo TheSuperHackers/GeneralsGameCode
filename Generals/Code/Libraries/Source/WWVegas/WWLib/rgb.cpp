@@ -39,8 +39,8 @@
 
 #include	"always.h"
 #include	"hsv.h"
-#include	"palette.h"
-#include	"rgb.h"
+#include	"PALETTE.H"
+#include	"RGB.H"
 
 RGBClass const BlackColor(0, 0, 0);
 

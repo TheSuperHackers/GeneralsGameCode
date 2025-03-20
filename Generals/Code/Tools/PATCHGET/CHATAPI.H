@@ -19,7 +19,7 @@
 #ifndef CHATAPI_HEADER
 #define CHATAPI_HEADER
 
-#include "cominit.h"
+#include "COMINIT.H"
 #include <stdio.h>
 #include <windows.h>
 #include <commctrl.h>

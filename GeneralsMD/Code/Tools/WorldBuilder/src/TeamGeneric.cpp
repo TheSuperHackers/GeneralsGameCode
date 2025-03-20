@@ -18,7 +18,7 @@
 
 
 #include "StdAfx.h"
-#include "Resource.h"
+#include "resource.h"
 
 #include "TeamGeneric.h"
 #include "EditParameter.h"

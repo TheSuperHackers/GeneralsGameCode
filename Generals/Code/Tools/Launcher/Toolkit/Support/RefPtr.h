@@ -68,7 +68,7 @@
 #ifndef REFPTR_H
 #define REFPTR_H
 
-#include "VisualC.h"
+#include "Visualc.h"
 #include "RefCounted.h"
 #include <stddef.h>
 #include <assert.h>

@@ -23,8 +23,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "winblows.h"
-#include "CHATAPI.h"
+#include "WINBLOWS.H"
+#include "CHATAPI.H"
 
 
 // TheSuperHackers @fix xezon 13/03/2025 Fix debug linker errors by

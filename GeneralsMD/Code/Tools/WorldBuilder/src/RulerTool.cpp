@@ -26,7 +26,7 @@
 #include "MainFrm.h"
 #include "WorldBuilderDoc.h"
 #include "WorldBuilderView.h"
-#include "WBView3D.h"
+#include "wbview3d.h"
 #include "ObjectTool.h"
 
 

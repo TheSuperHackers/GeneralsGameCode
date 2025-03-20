@@ -44,7 +44,7 @@
 //----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "Lib/Basetype.h"
+#include "Lib/BaseType.h"
 #include "Common/GameSounds.h"
 
 #include "Common/AudioEventInfo.h"

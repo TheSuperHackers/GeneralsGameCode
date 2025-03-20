@@ -19,9 +19,9 @@
 // MeshMoldOptions.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "worldbuilder.h"
-#include "worldbuilderDoc.h"
+#include "StdAfx.h"
+#include "WorldBuilder.h"
+#include "WorldBuilderDoc.h"
 #include "MeshMoldOptions.h"
 #include "Common/FileSystem.h"
 

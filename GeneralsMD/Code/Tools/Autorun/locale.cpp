@@ -22,7 +22,7 @@
 #include <assert.h>
 #include "gimex.h"      /* for file and memory IO only */
 #include "locale.h" 
-#include "wnd_file.h"
+#include "Wnd_File.h"
 
 /*************************************************************************/
 /* File Format Structures                                                */

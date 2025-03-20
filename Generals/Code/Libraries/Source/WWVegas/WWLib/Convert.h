@@ -41,8 +41,8 @@
 #define CONVERT_H
 
 #include	"blitter.h"
-#include	"palette.h"
-#include	"surface.h"
+#include	"PALETTE.H"
+#include	"Surface.h"
 
 /*
 **	Flags used to fetch the appropriate blitter object.

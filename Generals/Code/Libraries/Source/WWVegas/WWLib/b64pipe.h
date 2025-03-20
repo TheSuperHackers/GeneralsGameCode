@@ -40,7 +40,7 @@
 #ifndef B64PIPE_H
 #define B64PIPE_H
 
-#include	"pipe.h"
+#include	"PIPE.H"
 
 /*
 **	This class performs Base64 encoding/decoding to the data that is piped through. Note that

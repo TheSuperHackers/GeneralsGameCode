@@ -34,7 +34,7 @@
 *
 ******************************************************************************/
 
-#include "VisualC.h"
+#include "Visualc.h"
 #include "UString.h"
 #include "StringConvert.h"
 #include <string.h>

@@ -38,7 +38,7 @@
 
 #include "lookuptable.h"
 #include "curve.h"
-#include "wwfile.h"
+#include "WWFILE.H"
 #include "ffactory.h"
 #include "chunkio.h"
 #include "persistfactory.h"

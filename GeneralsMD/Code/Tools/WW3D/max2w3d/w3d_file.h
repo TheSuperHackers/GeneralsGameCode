@@ -44,7 +44,7 @@
 #define W3D_FILE_H
 
 #include "always.h"
-#include "bittype.h"
+#include "BITTYPE.H"
 #include "iostruct.h"
 #include <limits.h>
 

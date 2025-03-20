@@ -27,9 +27,9 @@ so forth is all handled in the object options panel.  jba. */
 
 #define DEFINE_EDITOR_SORTING_NAMES
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "Lib\BaseType.h"
+#include "Lib/BaseType.h"
 #include "FenceOptions.h"
 #include "ObjectOptions.h"
 #include "WHeightMapEdit.h"

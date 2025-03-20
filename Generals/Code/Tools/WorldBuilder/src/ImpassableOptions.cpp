@@ -24,7 +24,7 @@
 
 #include "ImpassableOptions.h"
 #include "W3DDevice/GameClient/HeightMap.h"
-#include "WbView3d.h"
+#include "wbview3d.h"
 #include "WorldBuilderDoc.h"
 
 //-------------------------------------------------------------------------------------------------

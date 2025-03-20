@@ -51,13 +51,13 @@
 #include <string.h>
 #include <assetmgr.h>
 #include <texture.h>
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 #include "GameClient/View.h"
 #include "W3DDevice/GameClient/TerrainTex.h"
 #include "W3DDevice/GameClient/HeightMap.h"
-#include "WW3D2/DX8Wrapper.h"
-#include "WW3D2/DX8Renderer.h"
-#include "WW3D2/Camera.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/dx8renderer.h"
+#include "WW3D2/camera.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...

@@ -41,10 +41,10 @@
 #define PK_H
 
 #ifndef STRAW_H
-#include "straw.h"
+#include "STRAW.H"
 #endif
 
-#include	"int.h"
+#include	"INT.H"
 
 /*
 **	This class holds a public or private key used in Public Key Cryptography. It also serves

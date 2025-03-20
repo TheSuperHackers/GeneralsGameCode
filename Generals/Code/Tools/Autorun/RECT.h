@@ -42,7 +42,7 @@
 #define RECT_H
 
 #include	<stddef.h>
-#include	"point.h"
+#include	"POINT.h"
 
 
 /*

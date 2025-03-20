@@ -46,7 +46,7 @@
 #define IOSTRUCT_H
 
 #ifndef BITTYPE_H
-#include "bittype.h"
+#include "BITTYPE.H"
 #endif
 
 /*

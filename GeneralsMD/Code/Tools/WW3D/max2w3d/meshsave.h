@@ -43,16 +43,16 @@
 #define MESHSAVE_H
 
 #include "rawfile.h"	// have to include this before Max.h
-#include <Max.h>
-#include "bittype.h"
+#include <max.h>
+#include "BITTYPE.H"
 #include "w3d_file.h"
 #include "chunkio.h"
-#include "progress.h"
+#include "PROGRESS.H"
 #include "nodelist.h"
 #include "util.h"
 #include "w3dmtl.h"
 #include "meshbuild.h"
-#include "MeshDeformSave.H"
+#include "MeshDeformSave.h"
 #include "w3dappdata.h"
 
 class HierarchySaveClass;

@@ -48,7 +48,7 @@
 #include "ww3d.h"
 #include "wwdebug.h"
 #include "shader.h"
-#include "vector.h"
+#include "Vector.H"
 #include "matrix3d.h"
 #include "matrix4.h"
 

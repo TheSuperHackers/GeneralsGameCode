@@ -39,7 +39,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"rle.h"
+#include	"RLE.H"
 #include	<assert.h>
 #include	<stdlib.h>
 

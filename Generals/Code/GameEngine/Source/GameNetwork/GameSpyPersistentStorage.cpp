@@ -28,7 +28,7 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "GameSpy/gstats/gpersist.h"
+#include "gamespy/gstats/gpersist.h"
 
 #include "GameClient/Shell.h"
 #include "GameClient/MessageBox.h"

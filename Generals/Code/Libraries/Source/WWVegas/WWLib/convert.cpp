@@ -36,7 +36,7 @@
 
 #include	"always.h"
 #include	"blitblit.h"
-#include	"convert.h"
+#include	"Convert.h"
 #include	"dsurface.h"
 #include	"hsv.h"
 #include	"rlerle.h"

@@ -53,7 +53,7 @@
 #include "w3d_file.h"
 #include "vchannel.h"
 #include "bchannel.h"
-#include "euler.h"
+#include "EULER.H"
 #include "util.h"
 #include "errclass.h"
 #include "w3dutil.h"

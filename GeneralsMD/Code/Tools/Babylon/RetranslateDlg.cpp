@@ -19,7 +19,7 @@
 // RetranslateDlg.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "Babylon.h"
 #include "RetranslateDlg.h"
 

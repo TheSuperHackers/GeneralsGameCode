@@ -45,7 +45,7 @@
 #include "shader.h"
 #include "simplevec.h"
 #include "seglinerenderer.h"
-#include "streakrender.h"
+#include "streakRender.h"
 
 class TextureClass;
 

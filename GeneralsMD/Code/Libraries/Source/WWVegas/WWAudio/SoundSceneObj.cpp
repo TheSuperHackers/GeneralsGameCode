@@ -38,7 +38,7 @@
 #include "rendobj.h"
 #include "persistfactory.h"
 #include "SoundChunkIDs.h"
-#include "utils.h"
+#include "Utils.h"
 
 
 //////////////////////////////////////////////////////////////////////////////////

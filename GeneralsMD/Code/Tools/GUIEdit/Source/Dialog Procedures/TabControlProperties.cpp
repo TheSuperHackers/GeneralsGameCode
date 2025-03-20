@@ -52,7 +52,7 @@
 #include "GUIEdit.h"
 #include "HierarchyView.h"
 #include "Properties.h"
-#include "Resource.h"
+#include "resource.h"
 #include "GameClient/GadgetTabControl.h"
 #include "GameClient/Gadget.h"
 

@@ -77,17 +77,17 @@
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/GameClient/W3DView.h"
-#include "D3dx8math.h"
+#include "d3dx8math.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 
-#include "WW3D2/DX8Renderer.h"
-#include "WW3D2/Light.h"
-#include "WW3D2/Camera.h"
-#include "WW3D2/Coltype.h"
-#include "WW3D2/PredLod.h"
-#include "WW3D2/WW3D.h"
+#include "WW3D2/dx8renderer.h"
+#include "WW3D2/light.h"
+#include "WW3D2/camera.h"
+#include "WW3D2/coltype.h"
+#include "WW3D2/predlod.h"
+#include "WW3D2/ww3d.h"
 
 #include "WinMain.h"  /** @todo Remove this, it's only here because we
 													are using timeGetTime, but we can remove that

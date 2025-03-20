@@ -19,7 +19,7 @@
 // DlgProxy.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "noxstring.h"
 #include "DlgProxy.h"
 #include "noxstringDlg.h"

@@ -45,7 +45,7 @@
 #include "GameClient/GadgetTextEntry.h"
 #include "GameClient/GadgetStaticText.h"
 #include "GameClient/GadgetPushButton.h"
-#include "GameClient/GadgetCheckbox.h"
+#include "GameClient/GadgetCheckBox.h"
 #include "GameClient/MapUtil.h"
 #include "GameClient/Mouse.h"
 #include "GameClient/GameWindowTransitions.h"

@@ -35,8 +35,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"int.h"
-#include	"mpmath.h"
+#include	"INT.H"
+#include	"MPMATH.H"
 #include	"rng.h"
 
 int bignum::Error = 0;

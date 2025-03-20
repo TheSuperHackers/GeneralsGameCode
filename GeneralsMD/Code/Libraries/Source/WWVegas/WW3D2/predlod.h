@@ -50,7 +50,7 @@
 
 #include "rendobj.h"
 #include "float.h"
-#include "vector.h"
+#include "Vector.H"
 
 class LODHeapNode;
 

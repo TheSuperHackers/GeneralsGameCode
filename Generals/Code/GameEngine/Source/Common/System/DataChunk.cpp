@@ -32,7 +32,7 @@
 #include "string.h"
 #include "Compression.h"
 #include "Common/DataChunk.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 
 // If verbose, lots of debug logging.

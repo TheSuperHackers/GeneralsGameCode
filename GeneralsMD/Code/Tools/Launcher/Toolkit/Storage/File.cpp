@@ -35,7 +35,7 @@
 ******************************************************************************/
 
 #include "File.h"
-#include <Debug\DebugPrint.h>
+#include <Debug/DebugPrint.h>
 #include <assert.h>
 
 // This should be whatever the file system uses for invalid files

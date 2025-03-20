@@ -41,8 +41,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"iff.h"
-#include	"lcw.h"
+#include	"IFF.H"
+#include	"LCW.H"
 #include	<string.h>
 
 

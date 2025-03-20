@@ -43,7 +43,7 @@
 #include "always.h"
 #endif
 
-#include <Max.h>
+#include <max.h>
 
 #include "skin.h"
 #include "nodelist.h"

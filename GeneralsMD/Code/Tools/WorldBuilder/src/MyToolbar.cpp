@@ -22,8 +22,8 @@
 
 #include "StdAfx.h" 
 
-#include "Lib\BaseType.h"
-#include "MyToolBar.h"
+#include "Lib/BaseType.h"
+#include "MyToolbar.h"
 #include "resource.h"
 #include "WorldBuilderView.h"
 #include "WorldBuilderDoc.h"

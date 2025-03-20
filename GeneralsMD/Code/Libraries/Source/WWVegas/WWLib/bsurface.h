@@ -40,7 +40,7 @@
 #ifndef BSURFACE_H
 #define BSURFACE_H
 
-#include	"buff.h"
+#include	"BUFF.H"
 #include	"xsurface.h"
 
 /*

@@ -35,7 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"pcx.h"
+#include	"pcx.H"
 #include <stdlib.h>
 
 

@@ -39,7 +39,7 @@
 #ifndef GAMEMTLVERTEXMATERIALDLG_H
 #define GAMEMTLVERTEXMATERIALDLG_H
 
-#include <Max.h>
+#include <max.h>
 #include "GameMtlForm.h"
 
 class GameMtl;

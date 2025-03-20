@@ -35,7 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "txt2d.h"
-#include "font.h"
+#include "FONT.H"
 #include "assetmgr.h"
 #include "ww3d.h"
 #include "pot.h"

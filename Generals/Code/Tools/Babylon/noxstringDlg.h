@@ -27,7 +27,7 @@
 #endif // _MSC_VER > 1000
 
 #include "resource.h"
-#include "transdb.h"
+#include "TransDB.h"
 
 typedef enum 
 {	

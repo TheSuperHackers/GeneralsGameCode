@@ -39,7 +39,7 @@
 
 #include "always.h"
 #include "bsurface.h"
-#include "palette.h"
+#include "PALETTE.H"
 #include "win.h"
 
 

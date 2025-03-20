@@ -35,7 +35,7 @@
 #ifndef _H_PARTICLETYPEPANELS_
 #define _H_PARTICLETYPEPANELS_
 
-#include "resource.h"
+#include "Resource.h"
 #include "ISwapablePanel.h"
 
 // DEFINES ////////////////////////////////////////////////////////////////////

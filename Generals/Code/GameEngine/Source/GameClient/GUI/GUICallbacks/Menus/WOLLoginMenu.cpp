@@ -33,7 +33,7 @@
 
 #include "Common/STLTypedefs.h"
 
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/GameEngine.h"
 #include "Common/GameSpyMiscPreferences.h"

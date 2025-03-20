@@ -44,7 +44,7 @@
 #define __cdecl
 #endif
 
-#include	"buff.h"
+#include	"BUFF.H"
 #include	<stddef.h>
 
 #define LZW_SUPPORTED			FALSE

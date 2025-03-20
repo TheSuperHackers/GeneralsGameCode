@@ -42,7 +42,7 @@
 #include "GameClient/GameWindow.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetPushButton.h"
-#include "GameClient/Hotkey.h"
+#include "GameClient/HotKey.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...

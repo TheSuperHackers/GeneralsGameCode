@@ -34,7 +34,7 @@
 #include "Threads.h"
 #include "refcount.h"
 #include "Utils.h"
-#include <Process.h>
+#include <process.h>
 #include "wwdebug.h"
 
 

@@ -37,7 +37,7 @@
 #ifndef __MESH_DEFORM_DEFS_H
 #define __MESH_DEFORM_DEFS_H
 
-#include <Max.H>
+#include <max.h>
 #include "Vector.H"
 
 ///////////////////////////////////////////////////////////////////////////

@@ -65,7 +65,7 @@
 #include "GameClient/DisplayStringManager.h"
 #include "GameClient/GadgetPushButton.h"
 #include "GameClient/GadgetStaticText.h"
-#include "GameClient/Controlbar.h"
+#include "GameClient/ControlBar.h"
 
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////

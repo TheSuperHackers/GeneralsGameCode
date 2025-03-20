@@ -40,10 +40,10 @@
 #ifndef DATA_H
 #define DATA_H
 
-#include	"buff.h"
-#include	"iff.h"
+#include	"BUFF.H"
+#include	"IFF.H"
 #include	"win.h"
-#include	"wwfile.h"
+#include	"WWFILE.H"
 
 #define TXT_NONE	0
 

@@ -40,9 +40,9 @@
 ** extensions to the MAXScript language.
 */
 
-#include <MaxScrpt.h>	// Main MAXScript header
-#include <MaxObj.h>		// MAX* Wrapper objects
-#include <Strings.h>		// MAX String class
+#include <maxscrpt.h>	// Main MAXScript header
+#include <maxobj.h>		// MAX* Wrapper objects
+#include <strings.h>		// MAX String class
 #include <definsfn.h>	// def_* functions to create static function headers
 
 #include "w3dutil.h"	// W3DAppData*Struct accessor functions!

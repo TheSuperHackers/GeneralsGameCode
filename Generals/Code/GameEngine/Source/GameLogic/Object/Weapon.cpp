@@ -39,7 +39,7 @@
 #define DEFINE_WEAPONRELOAD_NAMES
 #define DEFINE_WEAPONPREFIRE_NAMES
 
-#include "Common/CRC.h"
+#include "Common/crc.h"
 #include "Common/CRCDebug.h"
 #include "Common/GameAudio.h"
 #include "Common/GameState.h"

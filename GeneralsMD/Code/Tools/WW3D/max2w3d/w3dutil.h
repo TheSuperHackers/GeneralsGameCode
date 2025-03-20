@@ -39,7 +39,7 @@
 #ifndef W3DUTIL_H
 #define W3DUTIL_H
 
-#include <Max.h>
+#include <max.h>
 #include "utilapi.h"
 #include "dllmain.h"
 #include "resource.h"

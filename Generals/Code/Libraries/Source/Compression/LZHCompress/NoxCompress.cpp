@@ -22,8 +22,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "Lib/basetype.h"
-#include "Noxcompress.h"
+#include "Lib/BaseType.h"
+#include "NoxCompress.h"
 #include "CompLibHeader/lzhl.h"
 
 #ifdef _INTERNAL

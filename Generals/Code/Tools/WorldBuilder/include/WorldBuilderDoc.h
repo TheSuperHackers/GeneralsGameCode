@@ -27,7 +27,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "lib/BaseType.h"
+#include "Lib/BaseType.h"
 #include "Common/MapObject.h"
 #include "Tool.h"
 

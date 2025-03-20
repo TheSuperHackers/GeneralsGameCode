@@ -35,7 +35,7 @@
 
 //#include "Common/Registry.h"
 #include "Common/UserPreferences.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 #include "GameClient/GameText.h"
 #include "GameClient/MessageBox.h"
 #include "GameClient/Shell.h"
@@ -43,7 +43,7 @@
 
 #include "GameClient/ShellHooks.h"
 
-#include "GameSpy/ghttp/ghttp.h"
+#include "gamespy/ghttp/ghttp.h"
 
 #include "GameNetwork/DownloadManager.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
@@ -52,7 +52,7 @@
 #include "GameNetwork/GameSpy/PeerThread.h"
 
 #include "WWDownload/Registry.h"
-#include "WWDownload/URLBuilder.h"
+#include "WWDownload/urlBuilder.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...

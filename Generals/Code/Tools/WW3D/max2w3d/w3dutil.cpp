@@ -48,7 +48,7 @@
 #include "genmtlnamesdialog.h"
 #include "genlodextensiondialog.h"
 #include "floaterdialog.h"
-#include <StdMat.h>
+#include <stdmat.h>
 
 
 #define DAZZLE_SETTINGS_FILENAME		"dazzle.ini"

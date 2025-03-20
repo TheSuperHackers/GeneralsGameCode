@@ -43,7 +43,7 @@
 #include "always.h"
 #endif
 
-#include <Max.h>
+#include <max.h>
 
 #ifndef NODELIST_H
 #include "nodelist.h"
@@ -54,7 +54,7 @@
 #endif
 
 #ifndef PROGRESS_H
-#include "progress.h"
+#include "PROGRESS.H"
 #endif
 
 

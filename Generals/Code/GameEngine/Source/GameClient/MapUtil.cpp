@@ -30,10 +30,10 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "Common/CRC.h"
+#include "Common/crc.h"
 #include "Common/FileSystem.h"
 #include "Common/LocalFileSystem.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/GlobalData.h"
 #include "Common/GameState.h"
 #include "Common/GameEngine.h"

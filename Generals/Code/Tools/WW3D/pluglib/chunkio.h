@@ -46,7 +46,7 @@
 #endif
 
 #ifndef BITTYPE_H
-#include "bittype.h"
+#include "BITTYPE.H"
 #endif
 
 #ifndef WWFILE_H

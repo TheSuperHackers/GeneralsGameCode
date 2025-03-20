@@ -39,7 +39,7 @@
 #ifndef BPICK_H
 #define BPICK_H
 
-#include "Max.h"
+#include "max.h"
 //#include "dllmain.h"
 //#include "resource.h"
 

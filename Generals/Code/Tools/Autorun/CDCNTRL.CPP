@@ -61,9 +61,9 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"assert.h"
-#include	"cdcntrl.h"
-#include	"winfix.h"
-#include	"wnd_file.h"
+#include	"CDCNTRL.H"
+#include	"WinFix.H"
+#include	"Wnd_File.h"
 #pragma	warning(disable : 4201)
 #include	<winioctl.h>
 #include	<tchar.h>

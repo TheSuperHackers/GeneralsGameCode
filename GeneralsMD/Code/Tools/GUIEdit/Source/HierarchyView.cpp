@@ -51,7 +51,7 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"
 #include "GameClient/Gadget.h"
-#include "Resource.h"
+#include "resource.h"
 #include "HierarchyView.h"
 #include "WinMain.h"
 #include "GUIEdit.h"

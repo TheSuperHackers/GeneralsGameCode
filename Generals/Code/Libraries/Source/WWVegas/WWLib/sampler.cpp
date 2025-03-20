@@ -47,7 +47,7 @@
 
 #include "always.h"
 #include "sampler.h"
-#include "random.h"
+#include "RANDOM.H"
 #include <math.h>
 #include <assert.h>
 #include <memory.h>

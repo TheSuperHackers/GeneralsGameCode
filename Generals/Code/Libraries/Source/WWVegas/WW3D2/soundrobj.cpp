@@ -36,11 +36,11 @@
 
 
 #include "soundrobj.h"
-#include "audiblesound.h"
-#include "sound3d.h"
-#include "wwaudio.h"
+#include "AudibleSound.h"
+#include "Sound3D.h"
+#include "WWAudio.h"
 #include "ffactory.h"
-#include "wwfile.h"
+#include "WWFILE.H"
 #include "chunkio.h"
 #include "scene.h"
 
