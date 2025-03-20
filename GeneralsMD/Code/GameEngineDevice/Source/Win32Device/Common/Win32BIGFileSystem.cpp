@@ -155,7 +155,7 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 		} while (buffer[pathIndex] != 0);
 
 		Int filenameIndex = pathIndex;
-		while ((buffer[filenameIndex] != '\\') && (buffer[filenameIndex] != '/') && (filenameIndex >= 0)) {
+		while ((filenameIndex >= 0) && (buffer[filenameIndex] != '\\') && (buffer[filenameIndex] != '/')) {
 			--filenameIndex;
 		}
 
