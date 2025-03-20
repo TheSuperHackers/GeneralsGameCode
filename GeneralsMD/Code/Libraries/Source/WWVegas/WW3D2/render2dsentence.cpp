@@ -1220,7 +1220,7 @@ FontCharsClass::FontCharsClass (void) :
 FontCharsClass::~FontCharsClass (void) 
 {
 	while ( BufferList.Count() ) {
-		delete [] BufferList[0];
+		delete BufferList[0];
 		BufferList.Delete(0);
 	}
 
