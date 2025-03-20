@@ -136,7 +136,7 @@ Real SoundManager::getCameraAudibleDistance( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-void SoundManager::addAudioEvent(AudioEventRTS *eventToAdd)
+bool SoundManager::addAudioEvent(AudioEventRTS *eventToAdd)
 {
 	if (m_num2DSamples == 0 && m_num3DSamples == 0) {
 		m_num2DSamples = TheAudio->getNum2DSamples();
@@ -151,8 +151,10 @@ void SoundManager::addAudioEvent(AudioEventRTS *eventToAdd)
 		audioRequest->m_pendingEvent = eventToAdd;
 		audioRequest->m_request = AR_Play;
 		TheAudio->appendAudioRequest(audioRequest);
+		return true;
 	} else {
 		TheAudio->releaseAudioEventRTS(eventToAdd);
+		return false;
 	}
 }
 
