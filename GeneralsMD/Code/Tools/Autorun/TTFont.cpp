@@ -52,13 +52,13 @@
 #include <assert.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include "args.h"
+#include "ARGS.H"
 #include "autorun.h"
-#include "rect.h"
-#include "wnd_file.h"
-#include "ttfont.h"
-#include "jsupport.h"		// [OYO]
-#include "locale_api.h"
+#include "RECT.h"
+#include "Wnd_File.h"
+#include "TTFont.h"
+#include "JSUPPORT.H"		// [OYO]
+#include "Locale_API.h"
 
 
 #define FONTINFOMAXHEIGHT		4

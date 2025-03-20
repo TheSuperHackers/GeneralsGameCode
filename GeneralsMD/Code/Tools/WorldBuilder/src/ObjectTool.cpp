@@ -27,7 +27,7 @@
 #include "CUndoable.h"
 #include "DrawObject.h"
 #include "MainFrm.h"
-#include "WbView3d.h"
+#include "wbview3d.h"
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
 #include "WorldBuilderView.h"

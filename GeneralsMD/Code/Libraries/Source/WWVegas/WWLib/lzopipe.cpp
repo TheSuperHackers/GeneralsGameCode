@@ -40,7 +40,7 @@
 
 
 #include	"always.h"
-#include	"buff.h"
+#include	"BUFF.H"
 #include	"lzo.h"
 #include	"lzopipe.h"
 #include	<assert.h>

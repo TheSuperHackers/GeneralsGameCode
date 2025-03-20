@@ -32,6 +32,6 @@
 #ifndef PROXY_DEBUG_H // Include guard
 #define PROXY_DEBUG_H
 
-#include "../../source/debug/debug.h"
+#include "../../Source/debug/debug.h"
 
 #endif // PROXY_DEBUG_H

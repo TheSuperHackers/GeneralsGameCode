@@ -19,8 +19,8 @@
 // TeamBehavior.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "worldbuilder.h"
+#include "StdAfx.h"
+#include "WorldBuilder.h"
 #include "TeamBehavior.h"
 #include "EditParameter.h"
 #include "Common/WellKnownKeys.h"

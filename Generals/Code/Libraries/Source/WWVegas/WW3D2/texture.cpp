@@ -39,9 +39,9 @@
 
 #include <d3d8.h>
 #include <stdio.h>
-#include <D3dx8core.h>
+#include <d3dx8core.h>
 #include "dx8wrapper.h"
-#include "targa.h"
+#include "TARGA.H"
 #include <nstrdup.h>
 #include "w3d_file.h"
 #include "assetmgr.h"

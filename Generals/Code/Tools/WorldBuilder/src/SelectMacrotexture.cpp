@@ -19,11 +19,11 @@
 // SelectMacrotexture.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "worldbuilder.h"
+#include "StdAfx.h"
+#include "WorldBuilder.h"
 #include "SelectMacrotexture.h"
 #include "Common/FileSystem.h"
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 
 /////////////////////////////////////////////////////////////////////////////

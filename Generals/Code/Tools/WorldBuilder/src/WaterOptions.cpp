@@ -19,15 +19,15 @@
 // WaterOptions.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "Lib\BaseType.h"
+#include "Lib/BaseType.h"
 #include "CUndoable.h"
 #include "WaterOptions.h"
 #include "WaypointOptions.h"
 #include "WorldBuilder.h"
 #include "WorldBuilderDoc.h"
-#include "WbView3d.h"
+#include "wbview3d.h"
 #include "PolygonTool.h"
 #include "WaypointTool.h"
 #include "GameLogic/PolygonTrigger.h"

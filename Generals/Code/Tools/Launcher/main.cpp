@@ -65,7 +65,7 @@
 #ifdef COPY_PROTECT
 #include "Protect.h"
 #endif
-#include <Debug\DebugPrint.h>
+#include <Debug/DebugPrint.h>
 
 #define UPDATE_RETVAL 123456789  // if a program returns this it means it wants to check for patches
 

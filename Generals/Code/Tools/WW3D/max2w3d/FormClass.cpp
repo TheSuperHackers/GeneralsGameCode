@@ -39,8 +39,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "FormClass.H"
-#include "Dllmain.H"
+#include "FormClass.h"
+#include "dllmain.h"
 
 // hard-coded resource id which VC special cases for MFC... >:-) 
 #define RT_DLGINIT  MAKEINTRESOURCE(240)

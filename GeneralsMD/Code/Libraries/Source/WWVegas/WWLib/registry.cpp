@@ -34,8 +34,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "registry.h"
-#include "rawfile.h"
-#include "ini.h"
+#include "RAWFILE.H"
+#include "INI.H"
 #include "inisup.h"
 #include <assert.h>
 #include <windows.h>

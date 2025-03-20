@@ -37,7 +37,7 @@
 #include "GameClient/TerrainRoads.h"
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DamageModule.h"
-#include "GameLogic/Module/Diemodule.h"
+#include "GameLogic/Module/DieModule.h"
 #include "GameLogic/Module/UpdateModule.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////

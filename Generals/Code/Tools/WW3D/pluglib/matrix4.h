@@ -63,7 +63,7 @@
 #include "always.h"
 #include "vector4.h"
 #include "matrix3d.h"
-#include "wwmatrix3.h"
+#include "WWmatrix3.h"
 
 
 class Matrix4

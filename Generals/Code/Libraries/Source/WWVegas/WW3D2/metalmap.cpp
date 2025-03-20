@@ -47,8 +47,8 @@
 #include "texture.h"
 #include "ww3dformat.h"
 #include <vp.h>
-#include <ini.h>
-#include <point.h>
+#include <INI.H>
+#include <Point.h>
 #include <stdio.h>
 #include <hashtemplate.h>
 #include <wwstring.h>

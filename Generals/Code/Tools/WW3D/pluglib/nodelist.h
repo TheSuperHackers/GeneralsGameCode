@@ -40,7 +40,7 @@
 #define NODELIST_H
 
 #include "always.h"
-#include <Max.h>
+#include <max.h>
 
 #ifndef NODEFILT_H
 #include "nodefilt.h"

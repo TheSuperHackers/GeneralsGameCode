@@ -42,7 +42,7 @@
 #ifndef SNAPPOINTS_H
 #define SNAPPOINTS_H
 
-#include "Max.h"
+#include "max.h"
 
 class ChunkSaveClass;
 class INode;

@@ -32,6 +32,6 @@
 #ifndef PROXY_PROFILE_H // Include guard
 #define PROXY_PROFILE_H
 
-#include "../../source/profile/profile.h"
+#include "../../Source/profile/profile.h"
 
 #endif // PROXY_PROFILE_H

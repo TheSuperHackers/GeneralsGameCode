@@ -75,7 +75,7 @@
 #include "chunkio.h"
 #include "camera.h"
 #include "wwdebug.h"
-#include "snappts.h"
+#include "snapPts.h"
 #include "assetmgr.h"
 #include "ww3d.h"
 #include "w3derr.h"

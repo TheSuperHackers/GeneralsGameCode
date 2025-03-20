@@ -43,7 +43,7 @@
 
 
 #include <stdio.h>
-#include <Max.h>
+#include <max.h>
 #include "dllmain.h"
 #include "w3ddesc.h"
 #include "w3dexp.h"
@@ -51,7 +51,7 @@
 #include "skin.h"
 #include "gamemtl.h"
 #include "gamemaps.h"
-#include "MeshDeform.H"
+#include "MeshDeform.h"
 #include "AlphaModifier.h"
 #include "gridsnapmodifier.h"
 

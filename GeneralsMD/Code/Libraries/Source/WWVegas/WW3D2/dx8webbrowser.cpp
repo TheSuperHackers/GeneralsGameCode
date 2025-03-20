@@ -42,7 +42,7 @@
 // BGC, the path for the dll file is pretty odd, no?
 //      I'll leave it like this till I can figure out a
 //      better way.
-#import "..\..\..\..\..\run\BrowserEngine.DLL" no_namespace
+#import "../../../../../Run/BrowserEngine.dll" no_namespace
 
 #else
 

@@ -47,7 +47,7 @@
 #include "shader.h"
 #include "proto.h"
 #include "obbox.h"
-#include	"vector3i.h"
+#include	"Vector3i.h"
 #include	"quat.h"
 #include "prim_anim.h"
 #include "meshgeometry.h"

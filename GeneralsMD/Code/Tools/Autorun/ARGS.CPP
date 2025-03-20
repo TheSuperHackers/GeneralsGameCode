@@ -40,7 +40,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "args.h"
+#include "ARGS.H"
 
 //-----------------------------------------------------------------------------
 // GLOBALS

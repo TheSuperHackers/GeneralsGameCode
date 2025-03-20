@@ -61,8 +61,8 @@
 
 #include	"always.h"
 #include	"data.h"
-#include	"mono.h"
-#include	"monodrvr.h"
+#include	"MONO.H"
+#include	"MONODRVR.H"
 #include	<stdio.h>
 
 

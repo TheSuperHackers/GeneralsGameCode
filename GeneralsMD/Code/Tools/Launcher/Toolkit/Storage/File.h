@@ -37,10 +37,10 @@
 #ifndef FILE_H
 #define FILE_H
 
-#include <Support\UTypes.h>
+#include <Support/UTypes.h>
 #include "Stream.h"
 #include "Rights.h"
-#include <Support\UString.h>
+#include <Support/UString.h>
 #include <windows.h>
 
 class File : public Stream

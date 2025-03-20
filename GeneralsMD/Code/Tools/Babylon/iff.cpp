@@ -17,7 +17,7 @@
 */
 
 
-#include "stdAfx.h"
+#include "StdAfx.h"
 #include "sys/stat.h"
 #include "iff.h"
 #include <fcntl.h>      

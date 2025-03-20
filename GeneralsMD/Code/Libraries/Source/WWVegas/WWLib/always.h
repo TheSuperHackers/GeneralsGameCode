@@ -238,7 +238,7 @@ template <class T> T max(T a,T b)
 #endif
 
 #if defined(__WATCOMC__)
-#include	"watcom.h"
+#include	"WATCOM.H"
 #endif
 
 

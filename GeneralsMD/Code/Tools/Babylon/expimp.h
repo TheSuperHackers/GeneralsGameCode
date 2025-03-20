@@ -23,8 +23,8 @@
 #ifndef __EXPIMP_H
 #define __EXPIMP_H
 
-#include "transDB.h"
-#include "Babylondlg.h"
+#include "TransDB.h"
+#include "BabylonDlg.h"
 
 typedef enum
 {

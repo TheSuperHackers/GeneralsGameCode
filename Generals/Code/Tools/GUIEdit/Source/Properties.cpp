@@ -65,7 +65,7 @@
 #include "GUIEdit.h"
 #include "Properties.h"
 #include "EditWindow.h"
-#include "Resource.h"
+#include "resource.h"
 #include "HierarchyView.h"
 #include "GameClient/GameText.h"
 

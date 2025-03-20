@@ -57,8 +57,8 @@
 #include "Lib/BaseType.h"
 #include "GameClient/Image.h"
 #include "GameClient/GameWindow.h"
-#include "WW3D2/AssetMgr.h"
-#include "WW3D2/Render2D.h"
+#include "WW3D2/assetmgr.h"
+#include "WW3D2/render2d.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 

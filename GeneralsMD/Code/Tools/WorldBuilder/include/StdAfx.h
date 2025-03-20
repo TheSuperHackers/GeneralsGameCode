@@ -32,7 +32,7 @@
 
 
 // To prevent pragma errors.
-#include "lib/Basetype.h"
+#include "Lib/BaseType.h"
 
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions

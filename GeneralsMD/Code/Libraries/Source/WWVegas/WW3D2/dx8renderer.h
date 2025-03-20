@@ -49,7 +49,7 @@
 #include "wwstring.h"
 #include "simplevec.h"
 #include "refcount.h"
-#include "vector.h"
+#include "Vector.H"
 #include "dx8list.h"
 #include "shader.h"
 #include "dx8wrapper.h"

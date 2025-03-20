@@ -31,7 +31,7 @@
 #endif
 
 #include "resource.h"		// main symbols
-#include "transdb.h"
+#include "TransDB.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CBabylonApp:

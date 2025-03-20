@@ -45,7 +45,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"rndstraw.h"
+#include	"RNDSTRAW.H"
 #include	"sha.h"
 #include	<limits.h>
 #include	<string.h>

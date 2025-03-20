@@ -59,7 +59,7 @@
 
 
 #include "meshsave.h"
-#include <Max.h>
+#include <max.h>
 #include <stdmat.h>
 #include <modstack.h>
 #include "gamemtl.h"
@@ -73,7 +73,7 @@
 #include "skin.h"
 #include "skindata.h"
 #include "meshbuild.h"
-#include "alphamodifier.h"
+#include "AlphaModifier.h"
 #include "aabtreebuilder.h"
 #include "exportlog.h"
 

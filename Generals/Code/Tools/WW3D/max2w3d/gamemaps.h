@@ -39,7 +39,7 @@
 #ifndef GAMEMAPS_H
 #define GAMEMAPS_H
 
-#include <Max.h>
+#include <max.h>
 #include "stdmat.h"
 
 

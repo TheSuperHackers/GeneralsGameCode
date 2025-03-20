@@ -38,7 +38,7 @@
 
 
 
-#include "Max.h"
+#include "max.h"
 #include "resource.h"
 #include "simpmod.h"
 #include "dllmain.h"

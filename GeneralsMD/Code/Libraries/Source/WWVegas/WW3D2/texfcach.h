@@ -44,7 +44,7 @@
 #include "always.h"
 
 #include <assert.h>
-#include <tagblock.h>
+#include <TagBlock.h>
 
 #ifdef WW3D_DX8
 

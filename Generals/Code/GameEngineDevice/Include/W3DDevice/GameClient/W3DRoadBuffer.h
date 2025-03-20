@@ -60,7 +60,7 @@
 //#include "common/GameFileSystem.h"
 #include "Common/FileSystem.h" // for LOAD_TEST_ASSETS
 #include "Lib/BaseType.h"
-#include "common/GameType.h"
+#include "Common/GameType.h"
 #include "Common/AsciiString.h"
 
 //-----------------------------------------------------------------------------

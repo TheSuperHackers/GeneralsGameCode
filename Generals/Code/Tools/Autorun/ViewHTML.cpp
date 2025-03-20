@@ -39,7 +39,7 @@
 //#include "..\win.h"
 #include <stdio.h>
 //#include "debugprint.h"
-#include "wnd_file.h"
+#include "Wnd_File.h"
 
 
 /******************************************************************************

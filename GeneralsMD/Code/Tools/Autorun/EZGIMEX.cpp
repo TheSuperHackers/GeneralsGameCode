@@ -57,7 +57,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "gimex.h"
-#include "wnd_file.h"
+#include "Wnd_File.h"
 
 /* Memory Functions */
 

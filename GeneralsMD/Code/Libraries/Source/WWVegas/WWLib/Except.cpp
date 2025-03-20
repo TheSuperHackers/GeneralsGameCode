@@ -53,9 +53,9 @@
 #include <windows.h>
 #include	"assert.h"
 #include "cpudetect.h"
-#include	"except.h"
+#include	"Except.h"
 //#include "debug.h"
-#include "mpu.h"
+#include "MPU.H"
 //#include "commando\nat.h"
 #include "thread.h"
 #include "wwdebug.h"

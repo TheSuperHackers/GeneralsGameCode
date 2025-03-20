@@ -48,7 +48,7 @@
 #include "proto.h"
 #include "w3d_file.h"
 #include "w3derr.h"
-#include "audiblesound.h"
+#include "AudibleSound.h"
 
 
 //////////////////////////////////////////////////////////////////////////////////

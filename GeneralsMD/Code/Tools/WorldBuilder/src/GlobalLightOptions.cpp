@@ -19,13 +19,13 @@
 // GlobalLightOptions.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "Lib\BaseType.h"
+#include "Lib/BaseType.h"
 #include "GlobalLightOptions.h"
 #include "WorldBuilderDoc.h"
-#include "common/GlobalData.h"
-#include "WbView3D.h"
+#include "Common/GlobalData.h"
+#include "wbview3d.h"
 
 /////////////////////////////////////////////////////////////////////////////
 /// GlobalLightOptions dialog trivial construstor - Create does the real work.

@@ -39,7 +39,7 @@
 #define W3DDESC_H
 
 #include "always.h"
-#include <Max.h>
+#include <max.h>
 
 /*****************************************************************************
 *

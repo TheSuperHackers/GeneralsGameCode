@@ -34,7 +34,7 @@ extern CComModule _Module;  // Required for COM - must be between atlbase.h and 
 #include <stdarg.h>
 
 #include "wolSetup.h"
-#include "wolapi/wolapi.h"
+#include "WOLAPI/wolapi.h"
 
 unsigned long g_wolapiRegistryVersion = 0;
 unsigned long g_wolapiRealVersion = 0;

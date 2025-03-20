@@ -39,7 +39,7 @@
 #ifndef GAMEMTLSHADERDLG_H
 #define GAMEMTLSHADERDLG_H
 
-#include <Max.h>
+#include <max.h>
 #include "GameMtlForm.h"
 
 

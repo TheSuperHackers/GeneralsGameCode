@@ -39,7 +39,7 @@
 #ifndef W3DAPPDATA_H
 #define W3DAPPDATA_H
 
-#include <Max.h>
+#include <max.h>
 
 /*
 ** The W3DUtilityClass uses several app-data chunks to store user-options for INodes

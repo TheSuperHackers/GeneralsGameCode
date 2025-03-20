@@ -35,5 +35,5 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"surface.h"
+#include	"Surface.h"
 

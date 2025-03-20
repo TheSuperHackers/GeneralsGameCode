@@ -54,7 +54,7 @@
 
 #include "Common/GlobalData.h"
 #include "Common/NameKeyGenerator.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/GameText.h"
@@ -64,7 +64,7 @@
 #include "GameClient/GadgetComboBox.h"
 #include "GameClient/GadgetListBox.h"
 #include "GameNetwork/GameSpy/GSConfig.h"
-#include "GameNetwork/GameSpy/Peerdefs.h"
+#include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameNetwork/GameSpy/PeerThread.h"
 #include "GameNetwork/GameSpyOverlay.h"
 

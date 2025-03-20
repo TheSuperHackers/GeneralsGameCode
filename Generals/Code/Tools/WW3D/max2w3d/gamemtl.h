@@ -39,7 +39,7 @@
 #ifndef GAMEMTL_H
 #define GAMEMTL_H
 
-#include <Max.h>
+#include <max.h>
 #include "w3dmtl.h"
 #include "w3d_file.h"
 

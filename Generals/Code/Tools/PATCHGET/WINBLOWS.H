@@ -24,7 +24,7 @@
 #include <windowsx.h>
 #include <stdlib.h>
 
-#include"wstypes.h"
+#include"WSTYPES.H"
 
   extern HINSTANCE Global_instance;
   extern LPSTR     Global_commandline;

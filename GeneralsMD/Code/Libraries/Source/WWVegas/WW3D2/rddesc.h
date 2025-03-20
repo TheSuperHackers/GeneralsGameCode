@@ -42,7 +42,7 @@
 #ifndef RDDESC_H
 #define RDDESC_H
 
-#include "vector.h"
+#include "Vector.H"
 #include "wwstring.h"
 #include <d3d8types.h>
 #include <d3d8caps.h>

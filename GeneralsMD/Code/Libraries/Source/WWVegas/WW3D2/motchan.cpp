@@ -47,7 +47,7 @@
 #include "motchan.h"
 #include "w3d_file.h"
 #include "chunkio.h"
-#include "vector.h"
+#include "Vector.H"
 #include "wwmath.h"
 #include "quat.h"
 #include "wwmath.h"

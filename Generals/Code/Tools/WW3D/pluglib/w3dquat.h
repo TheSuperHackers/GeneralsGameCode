@@ -44,7 +44,7 @@
 
 #include "always.h"
 #include "wwmath.h"
-#include "wwmatrix3.h"
+#include "WWmatrix3.h"
 #include "vector3.h"
 
 

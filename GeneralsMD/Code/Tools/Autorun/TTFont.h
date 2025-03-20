@@ -41,8 +41,8 @@
 #define TTFONT_H
 
 #include	<stddef.h>
-#include	"point.h"
-#include	"rect.h"
+#include	"POINT.h"
+#include	"RECT.h"
 
 
 /******************************************************************************

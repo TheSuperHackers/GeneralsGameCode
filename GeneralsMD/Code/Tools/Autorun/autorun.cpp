@@ -88,27 +88,27 @@
 #include <string.h>
 #include <stdio.h>
 #include <strstrea.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include <time.h>
 #include <winuser.h>
-#include "args.h"
+#include "ARGS.H"
 #include "autorun.h"
-#include "drawbutton.h"
+#include "DrawButton.h"
 #include "resource.h"
-#include "wnd_file.h" 
+#include "Wnd_File.h" 
 //#include "visualc.h"
-#include "winfix.h"
-#include "cdcntrl.h"
-#include "igr.h"
-#include "viewhtml.h"
+#include "WinFix.H"
+#include "CDCNTRL.H"
+#include "IGR.h"
+#include "ViewHTML.h"
 
-#include "utils.h"
-#include "locale_api.h"
+#include "Utils.h"
+#include "Locale_API.h"
 //#include "resources.h"
-#include "getcd.h"
+#include "GetCD.h"
 
 #include "WSYS_FileSystem.h"
-#include "WSYS_STDFileSystem.h"
+#include "WSYS_StdFileSystem.h"
 
 #include <string>
 #include "GameText.h"

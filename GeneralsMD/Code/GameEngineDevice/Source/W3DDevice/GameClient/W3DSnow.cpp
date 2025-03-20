@@ -19,7 +19,7 @@
 // FILE: W3DSnow.h /////////////////////////////////////////////////////////
 
 #include "W3DDevice/GameClient/W3DSnow.h"
-#include "W3DDevice/GameClient/heightmap.h"
+#include "W3DDevice/GameClient/HeightMap.h"
 #include "GameClient/View.h"
 #include "WW3D2/dx8wrapper.h"
 #include "WW3D2/rinfo.h"

@@ -40,10 +40,10 @@
 #define MAXWORLDINFO_H
 
 
-#include <Max.h>
+#include <max.h>
 #include "meshbuild.h"
 #include "nodelist.h"
-#include "vector.h"
+#include "Vector.H"
 
 
 class GeometryExportTaskClass;

@@ -19,7 +19,7 @@
 // WBPopupSlider.cpp implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
 #include "Lib/BaseType.h"
 #include "WBPopupSlider.h"

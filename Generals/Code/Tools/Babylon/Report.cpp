@@ -19,7 +19,7 @@
 // Report.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "noxstring.h"
 #include "Report.h"
 #include <limits.h>

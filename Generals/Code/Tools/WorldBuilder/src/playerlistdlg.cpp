@@ -19,13 +19,13 @@
 // playerlistdlg.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "worldbuilder.h"
+#include "StdAfx.h"
+#include "WorldBuilder.h"
 #include "playerlistdlg.h"
-#include "MapObjectProps.h"
+#include "mapobjectprops.h"
 #include "WorldBuilderDoc.h"
-#include "cundoable.h"
-#include "AddPlayerDialog.h"
+#include "CUndoable.h"
+#include "addplayerdialog.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/MultiplayerSettings.h"

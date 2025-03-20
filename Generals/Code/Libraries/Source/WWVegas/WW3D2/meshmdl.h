@@ -45,7 +45,7 @@
 #include "vector2.h"
 #include "vector3.h"
 #include "vector4.h"
-#include "vector3i.h"
+#include "Vector3i.h"
 #include "sharebuf.h"
 #include "shader.h"
 #include "wwdebug.h"

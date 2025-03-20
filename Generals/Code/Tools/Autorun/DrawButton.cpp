@@ -45,9 +45,9 @@
 #include <windows.h>
 #include <windowsx.h>
 #include "autorun.h"
-#include "drawbutton.h"
-#include "locale_api.h"
-#include "wnd_file.h"
+#include "DrawButton.h"
+#include "Locale_API.h"
+#include "Wnd_File.h"
 
 
 

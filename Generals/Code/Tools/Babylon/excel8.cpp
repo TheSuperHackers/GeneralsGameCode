@@ -18,7 +18,7 @@
 
 // Machine generated IDispatch wrapper class(es) created with ClassWizard
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

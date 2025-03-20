@@ -48,7 +48,7 @@
 #endif
 
 #include "always.h"
-#include "vector.h"
+#include "Vector.H"
 
 class RefCountClass;
 

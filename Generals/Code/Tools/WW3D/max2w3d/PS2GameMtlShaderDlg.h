@@ -38,7 +38,7 @@
 #ifndef PS2GAMEMTLSHADERDLG_H
 #define PS2GAMEMTLSHADERDLG_H
 
-#include <Max.h>
+#include <max.h>
 #include "GameMtlForm.h"
 
 // This class was taken from GTH's GameMtlShaderDlg. 

@@ -39,7 +39,7 @@
 
 
 #include	"sha.h"
-#include	"straw.h"
+#include	"STRAW.H"
 
 /*
 **	This class serves as a straw that generates a Secure Hash from the data stream that flows

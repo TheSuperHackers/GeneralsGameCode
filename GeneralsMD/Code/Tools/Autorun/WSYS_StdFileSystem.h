@@ -47,11 +47,11 @@
 //----------------------------------------------------------------------------
 
 #ifndef __WSYS_FILE_H
-#include "wsys_File.h"
+#include "WSYS_file.h"
 #endif
 
 #ifndef __WSYS_FILESYSTEM_H
-#include "wsys_FileSystem.h"
+#include "WSYS_FileSystem.h"
 #endif
 
 

@@ -20,7 +20,7 @@
 // Bin.cpp
 //
 
-#include "stdAfx.h"
+#include "StdAfx.h"
 #include "bin.h"
 #include "assert.h"
 #include "list.h"

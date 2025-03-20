@@ -39,7 +39,7 @@
 #define W3DEXP_H
 
 #include "always.h"
-#include <Max.h>
+#include <max.h>
 #include "dllmain.h"
 #include "hiersave.h"
 #include "w3dutil.h"

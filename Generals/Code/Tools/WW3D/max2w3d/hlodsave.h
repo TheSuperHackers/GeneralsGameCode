@@ -40,11 +40,11 @@
 
 #include "always.h"
 
-#include <Max.h>
+#include <max.h>
 #include <stdio.h>
 
 #include "w3d_file.h"
-#include "progress.h"
+#include "PROGRESS.H"
 #include "chunkio.h"
 #include "meshcon.h"
 

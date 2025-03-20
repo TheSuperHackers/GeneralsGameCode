@@ -43,8 +43,8 @@
 #include "dx8wrapper.h"
 #include "sortingrenderer.h"
 #include "vp.h"
-#include "vector3i.h"
-#include "random.h"
+#include "Vector3i.h"
+#include "RANDOM.H"
 #include "v3_rnd.h"
 #include "meshgeometry.h"
 

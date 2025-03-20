@@ -40,8 +40,8 @@
 #ifndef INT_H
 #define INT_H
 
-#include	"mpmath.h"
-#include	"straw.h"
+#include	"MPMATH.H"
+#include	"STRAW.H"
 #include	<assert.h>
 #include	<limits.h>
 #include	<memory.h>

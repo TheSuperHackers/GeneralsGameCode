@@ -20,11 +20,11 @@
 //	XLStuff.cpp
 //
 //
-#include "stdAfx.h"
+#include "StdAfx.h"
 #include "noxstring.h"
 #include "resource.h"				 
 #include <stdio.h>
-#include "xlstuff.h"
+#include "XLStuff.h"
 #include <assert.h>
 #include <comdef.h>
 

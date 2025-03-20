@@ -43,7 +43,7 @@
 #endif
 
 #ifndef BITTYPE_H
-#include "bittype.h"
+#include "BITTYPE.H"
 #endif
 
 #ifndef CHUNKIO_H
@@ -51,7 +51,7 @@
 #endif
 
 #ifndef VECTOR_H
-#include "vector.h"
+#include "Vector.H"
 #endif
 
 #ifndef W3D_FILE_H

@@ -50,7 +50,7 @@
 #endif
 
 #ifndef WWFILE_H
-#include "wwfile.h"
+#include "WWFILE.H"
 #endif
 
 #ifndef IOSTRUCT_H

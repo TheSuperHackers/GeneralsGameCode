@@ -19,7 +19,7 @@
 #include "texturethumbnail.h"
 #include "hashtemplate.h"
 #include "missingtexture.h"
-#include "targa.h"
+#include "TARGA.H"
 #include "ww3dformat.h"
 #include "ddsfile.h"
 #include "textureloader.h"

@@ -19,7 +19,7 @@
 // ExportDlg.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "Babylon.h"
 #include "ExportDlg.h"
 #include "direct.h"

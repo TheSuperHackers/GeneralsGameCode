@@ -19,7 +19,7 @@
 // GenerateDlg.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "Babylon.h"
 #include "GenerateDlg.h"
 #include "direct.h"

@@ -53,7 +53,7 @@
 #include <wpaudio/cache.h>
 #include <wpaudio/profiler.h>
 
-#include <wsys/File.h>
+#include <wsys/file.h>
 
 // 'assignment within condition expression'.
 #pragma warning(disable : 4706)

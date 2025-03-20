@@ -40,7 +40,7 @@
 
 
 #include	"always.h"
-#include	"lcw.h"
+#include	"LCW.H"
 #include	"lcwpipe.h"
 #include	<assert.h>
 #include	<string.h>

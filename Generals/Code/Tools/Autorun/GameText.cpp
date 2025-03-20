@@ -55,7 +55,7 @@
 //#include <Common/std::wstring.h>
 //#include <Common/std::string.h>
 //#include <Common/GlobalData.h>
-#include "WSYS_File.h"
+#include "WSYS_file.h"
 #include "WSYS_RAMFile.h"
 
 

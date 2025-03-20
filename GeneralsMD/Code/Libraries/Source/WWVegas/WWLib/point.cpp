@@ -39,7 +39,7 @@
 
 
 #include	"always.h"
-#include	"point.h"
+#include	"Point.h"
 #include	"rect.h"
 
 

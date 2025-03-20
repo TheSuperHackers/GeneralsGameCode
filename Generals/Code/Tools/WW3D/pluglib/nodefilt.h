@@ -40,7 +40,7 @@
 #define NODEFILT_H
 
 #include "always.h"
-#include <Max.h>
+#include <max.h>
 
 /***************************************************************
 *

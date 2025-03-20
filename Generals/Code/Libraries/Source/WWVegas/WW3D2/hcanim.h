@@ -47,8 +47,8 @@
 #include "quat.h"
 #include "refcount.h"
 #include "w3d_file.h"
-#include "slist.h"
-#include "vector.h"
+#include "SLIST.H"
+#include "Vector.H"
 #include "hanim.h"
 
 struct NodeCompressedMotionStruct;

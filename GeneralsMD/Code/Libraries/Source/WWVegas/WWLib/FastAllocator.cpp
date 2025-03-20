@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "fastallocator.h"
+#include "FastAllocator.h"
 #include <new.h>
 
 static FastAllocatorGeneral* generalAllocator; //This general allocator will do all allocations for us.

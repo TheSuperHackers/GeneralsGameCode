@@ -40,7 +40,7 @@
 #ifndef GAMEMTLPASSDLG_H
 #define GAMEMTLPASSDLG_H
 
-#include <Max.h>
+#include <max.h>
 
 class GameMtl;
 class GameMtlFormClass;

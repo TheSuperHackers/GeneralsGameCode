@@ -36,8 +36,8 @@
 
 
 #include "w3dmtl.h"
-#include <Max.h>
-#include <StdMat.h>
+#include <max.h>
+#include <stdmat.h>
 #include "gamemtl.h"
 #include "realcrc.h"
 

@@ -39,7 +39,7 @@
 #define NAMEDSEL_H
 
 
-#include "Max.h"
+#include "max.h"
 
 /*
 ** This is a class for containing bit arrays for

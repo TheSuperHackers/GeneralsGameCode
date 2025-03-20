@@ -42,7 +42,7 @@
 //
 
 #include "dllmain.h"
-#include "Resource.h"
+#include "resource.h"
 
 
 class Interface;

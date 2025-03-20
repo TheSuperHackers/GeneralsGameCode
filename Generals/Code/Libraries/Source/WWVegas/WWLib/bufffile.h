@@ -45,7 +45,7 @@
 #ifndef BUFFFILE_H
 #define BUFFFILE_H
 
-#include	"rawfile.h"
+#include	"RAWFILE.H"
 
 
 /*

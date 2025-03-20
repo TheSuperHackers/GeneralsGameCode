@@ -44,7 +44,7 @@
 
 #include "PS2GameMtlShaderDlg.h"
 #include "GameMtlDlg.h"
-#include "GameMtl.h"
+#include "gamemtl.h"
 #include "resource.h"
 
 

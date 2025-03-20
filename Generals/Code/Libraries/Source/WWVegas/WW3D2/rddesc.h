@@ -42,7 +42,7 @@
 #ifndef RDDESC_H
 #define RDDESC_H
 
-#include "vector.h"
+#include "Vector.H"
 #include <stdlib.h>
 #include <string.h>
 

@@ -37,7 +37,7 @@
 #ifndef BLOWPIPE_H
 #define BLOWPIPE_H
 
-#include	"pipe.h"
+#include	"PIPE.H"
 #include	"blowfish.h"
 
 /*

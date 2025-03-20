@@ -19,11 +19,11 @@
 // ScorchOptions.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
 #include "ScorchOptions.h"
 #include "CUndoable.h"
-#include "WbView3d.h"
+#include "wbview3d.h"
 #include "Common/WellKnownKeys.h"
 #include "WorldBuilderDoc.h"
 

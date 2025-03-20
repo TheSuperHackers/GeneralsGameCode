@@ -26,15 +26,15 @@
 // July 2002 Bryan Cleveland
 
 #include "W3DDevice/GameClient/W3DWebBrowser.h"
-#include "WW3D2/Texture.h"
-#include "WW3D2/TextureLoader.h"
-#include "WW3D2/SurfaceClass.h"
+#include "WW3D2/texture.h"
+#include "WW3D2/textureloader.h"
+#include "WW3D2/surfaceclass.h"
 #include "GameClient/Image.h"
 #include "GameClient/GameWindow.h"
 #include "vector2i.h"
 #include <d3dx8.h>
 #include "WW3D2/dx8wrapper.h"
-#include "WW3D2/dx8WebBrowser.h"
+#include "WW3D2/dx8webbrowser.h"
 
 W3DWebBrowser::W3DWebBrowser() : WebBrowser() {
 }

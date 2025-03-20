@@ -19,10 +19,10 @@
 // Babylon.cpp : Defines the class behaviors for the application.
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "Babylon.h"
 #include "BabylonDlg.h"
-#include "xlstuff.h"
+#include "XLStuff.h"
 
 #include <direct.h>
 #include <stdlib.h>

@@ -52,7 +52,7 @@
 #include "Common/CriticalSection.h"
 #endif
 #include "Common/Debug.h"
-#include "Common/registry.h"
+#include "Common/Registry.h"
 #include "Common/SystemInfo.h"
 #include "Common/UnicodeString.h"
 #include "GameClient/GameText.h"

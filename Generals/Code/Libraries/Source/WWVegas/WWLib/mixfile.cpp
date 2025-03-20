@@ -37,9 +37,9 @@
 #include "mixfile.h"
 #include "wwdebug.h"
 #include "ffactory.h"
-#include "wwfile.h"
+#include "WWFILE.H"
 #include "realcrc.h"
-#include "rawfile.h"
+#include "RAWFILE.H"
 #include "win.h"
 #include "bittype.h"
 

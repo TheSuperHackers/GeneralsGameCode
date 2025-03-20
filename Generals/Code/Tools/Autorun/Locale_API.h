@@ -39,7 +39,7 @@
 #ifndef  LOCALE_API_H
 #define  LOCALE_API_H
 
-#include <STDLIB.H>
+#include <stdlib.h>
 
 /****************************************************************************/
 /* GLOBAL VARIABLES                                                         */

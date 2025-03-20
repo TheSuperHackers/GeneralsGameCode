@@ -83,7 +83,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"mpmath.h"
+#include	"MPMATH.H"
 #include	"win.h"
 #include	<assert.h>
 #include	<ctype.h>

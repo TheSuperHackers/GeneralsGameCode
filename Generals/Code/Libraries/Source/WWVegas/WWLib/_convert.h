@@ -37,7 +37,7 @@
 #ifndef _CONVERT_H
 #define _CONVERT_H
 
-#include	"convert.h"
+#include	"Convert.h"
 
 extern ConvertClass * VoxelDrawer;
 extern ConvertClass * UnitDrawer;

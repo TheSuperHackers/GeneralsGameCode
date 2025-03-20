@@ -39,7 +39,7 @@
 #include "ww3dformat.h"
 #include "vector4.h"
 #include "wwdebug.h"
-#include "targa.h"
+#include "TARGA.H"
 #include "dx8wrapper.h"
 #include "dx8caps.h"
 #include <d3d8.h>

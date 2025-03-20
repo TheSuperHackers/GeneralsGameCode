@@ -36,7 +36,7 @@
 
 #include <tchar.h>
 #include <stdlib.h>
-#include "ttfont.h"
+#include "TTFont.h"
 
 
 //-------------------------------------------------------------------------

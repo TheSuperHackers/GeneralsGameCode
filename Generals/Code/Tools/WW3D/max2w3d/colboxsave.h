@@ -42,10 +42,10 @@
 #ifndef COLBOXSAVE_H
 #define COLBOXSAVE_H
 
-#include <Max.h>
+#include <max.h>
 #include "w3d_file.h"
 #include "chunkio.h"
-#include "progress.h"
+#include "PROGRESS.H"
 
 
 /*******************************************************************************************

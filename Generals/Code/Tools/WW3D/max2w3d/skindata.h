@@ -39,7 +39,7 @@
 #ifndef SKINDATA_H
 #define SKINDATA_H
 
-#include "Max.h"
+#include "max.h"
 #include "namedsel.h"
 
 /*

@@ -37,7 +37,7 @@
 #ifndef DSURFACE_H
 #define DSURFACE_H
 
-#include	"palette.h"
+#include	"PALETTE.H"
 #include	"win.h"
 #include	"xsurface.h"
 #include	<ddraw.h>

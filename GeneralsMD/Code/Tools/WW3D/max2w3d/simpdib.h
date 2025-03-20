@@ -41,7 +41,7 @@
 #include "always.h"
 #endif
 
-#include <Max.h>
+#include <max.h>
 
 #ifndef WIN_H
 #include "win.h"

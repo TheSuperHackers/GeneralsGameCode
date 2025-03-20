@@ -46,7 +46,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "parametertypes.h"
-#include "vector.h"
+#include "Vector.H"
 #include "wwstring.h"
 #include "bittype.h"
 #include "obbox.h"

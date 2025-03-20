@@ -48,7 +48,7 @@
 #include "GameMtlPassDlg.h"
 #include "dllmain.h"
 #include "resource.h"
-#include "GameMtl.h"
+#include "gamemtl.h"
 #include "GameMtlDlg.h"
 #include "GameMtlShaderDlg.h"
 #include "PS2GameMtlShaderDlg.h"

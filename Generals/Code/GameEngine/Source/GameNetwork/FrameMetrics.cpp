@@ -28,7 +28,7 @@
 
 #include "GameNetwork/FrameMetrics.h"
 #include "GameClient/Display.h"
-#include "GameNetwork/NetworkUtil.h"
+#include "GameNetwork/networkutil.h"
 
 FrameMetrics::FrameMetrics() 
 {

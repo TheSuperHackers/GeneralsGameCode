@@ -53,7 +53,7 @@
 
 
 #include	"always.h"
-#include	"rawfile.h"
+#include	"RAWFILE.H"
 #include	<direct.h>
 //#include	<share.h>
 #include	<stddef.h>

@@ -41,7 +41,7 @@
 #ifndef __SOUND3DOBJ_H
 #define __SOUND3DOBJ_H
 
-#include "AudibleSound.H"
+#include "AudibleSound.h"
 #include "mempool.h"
 
 

@@ -44,11 +44,11 @@
 
 #include "aabtreecull.h"
 #include "gridcull.h"
-#include "listener.h"
-#include "vector.h"
-#include "priorityvector.h"
-#include "soundcullobj.h"
-#include "logicallistener.h"
+#include "Listener.h"
+#include "Vector.H"
+#include "PriorityVector.h"
+#include "SoundCullObj.h"
+#include "LogicalListener.h"
 #include "multilist.h"
 
 // Forward declarations

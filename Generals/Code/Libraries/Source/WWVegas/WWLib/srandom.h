@@ -19,7 +19,7 @@
 #ifndef SRANDOM_H
 #define SRANDOM_H
 
-#include "random.h"	// for the helper RNG
+#include "RANDOM.H"	// for the helper RNG
 
 //
 //	SecureRandomClass - Generate random values that are suitable for use in cryptographic

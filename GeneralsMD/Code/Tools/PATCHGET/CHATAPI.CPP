@@ -21,10 +21,10 @@
 //
 
 #include <list>
-#include "GameSpy/ghttp/ghttp.h"
-#include "downloadManager.h"
+#include "gamespy/ghttp/ghttp.h"
+#include "DownloadManager.h"
 
-#include "chatapi.h"
+#include "CHATAPI.H"
 
 //#include "api/wolapi_i.c"  // This should only be in one .cpp file
 #include <objbase.h>
@@ -32,11 +32,11 @@
 #include <initguid.h>
 #include <olectl.h>
 #include <mapicode.h>
-#include "resource.h"
-#include "winblows.h"
+#include "RESOURCE.H"
+#include "WINBLOWS.H"
 #include <crtdbg.h>
 #include "process.h"
-#include "WWDownload/registry.h"
+#include "WWDownload/Registry.h"
 #include "WWDownload/urlBuilder.h"
 #include "debug.h"
 

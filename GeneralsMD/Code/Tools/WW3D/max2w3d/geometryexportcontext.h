@@ -40,7 +40,7 @@
 #ifndef GEOMETRYEXPORTCONTEXT_H
 #define GEOMETRYEXPORTCONTEXT_H
 
-#include <Max.h>
+#include <max.h>
 
 class ChunkSaveClass;
 class MaxWorldInfoClass;

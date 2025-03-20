@@ -51,12 +51,12 @@
 
 #include "always.h"
 #include "wwprofile.h"
-#include "fastallocator.h"
+#include "FastAllocator.h"
 #include "wwdebug.h"
 #include <windows.h>
 //#include "systimer.h"
 #include "systimer.h"
-#include "rawfile.h"
+#include "RAWFILE.H"
 #include "ffactory.h"
 #include "simplevec.h"
 #include "cpudetect.h"

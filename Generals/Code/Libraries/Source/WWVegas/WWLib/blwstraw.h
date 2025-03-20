@@ -37,7 +37,7 @@
 #ifndef BLWSTRAW_H
 #define BLWSTRAW_H
 
-#include	"straw.h"
+#include	"STRAW.H"
 #include	"blowfish.h"
 
 

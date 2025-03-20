@@ -53,7 +53,7 @@
 #include "GameClient/Gadget.h"
 #include "GameClient/GameWindowManager.h"
 #include "GUIEdit.h"
-#include "Resource.h"
+#include "resource.h"
 #include "Properties.h"
 
 // DEFINES ////////////////////////////////////////////////////////////////////

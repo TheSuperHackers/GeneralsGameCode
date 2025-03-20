@@ -42,7 +42,7 @@
 #include "always.h"
 
 #ifndef BITTYPE_H
-#include "bittype.h"
+#include "BITTYPE.H"
 #endif
 
 

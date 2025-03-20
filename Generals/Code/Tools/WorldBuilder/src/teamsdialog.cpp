@@ -19,8 +19,8 @@
 // teamsdialog.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "worldbuilder.h"
+#include "StdAfx.h"
+#include "WorldBuilder.h"
 #include "teamsdialog.h"
 #include "CFixTeamOwnerDialog.h"
 
@@ -31,8 +31,8 @@
 #include "TeamIdentity.h"
 #include "TeamReinforcement.h"
 #include "WorldBuilderDoc.h"
-#include "cundoable.h"
-#include "WBView3d.h"
+#include "CUndoable.h"
+#include "wbview3d.h"
 
 static Int thePrevCurTeam = 0;
 

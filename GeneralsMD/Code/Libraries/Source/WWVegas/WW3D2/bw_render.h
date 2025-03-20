@@ -46,7 +46,7 @@
 #include "always.h"
 #include "vector2.h"
 #include "vector3.h"
-#include "vector3i.h"
+#include "Vector3i.h"
 
 class BW_Render
 {

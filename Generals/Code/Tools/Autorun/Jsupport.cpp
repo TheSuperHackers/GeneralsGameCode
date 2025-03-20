@@ -20,7 +20,7 @@
 // DBCS Support Codes
 
 #include <windows.h>
-#include "jsupport.h"
+#include "JSUPPORT.H"
 
 // ‘O’u‹Ö‘¥•¶Žš
 // Can't set these characters on top of line

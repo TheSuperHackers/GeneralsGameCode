@@ -20,7 +20,7 @@
 #define PROCESS_HEADER
 
 #include <windows.h>
-#include "wstypes.h"
+#include "WSTYPES.H"
 
 namespace patchget
 {

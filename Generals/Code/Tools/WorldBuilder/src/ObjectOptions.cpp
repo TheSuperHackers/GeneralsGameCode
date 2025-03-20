@@ -21,12 +21,12 @@
 
 #define DEFINE_EDITOR_SORTING_NAMES
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "Lib\BaseType.h"
+#include "Lib/BaseType.h"
 #include "ObjectOptions.h"
 #include "WHeightMapEdit.h"
-#include "AddPlayerDialog.h"
+#include "addplayerdialog.h"
 #include "WorldBuilderDoc.h"
 #include "CUndoable.h"
 #include "W3DDevice/GameClient/HeightMap.h"

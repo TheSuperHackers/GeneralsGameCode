@@ -39,11 +39,11 @@
 #ifndef VXLLAYER_H
 #define VXLLAYER_H
 
-#include <Max.h>
+#include <max.h>
 
 
 #ifndef BITTYPE_H
-#include "bittype.h"
+#include "BITTYPE.H"
 #endif
 
 #ifndef NODELIST_H

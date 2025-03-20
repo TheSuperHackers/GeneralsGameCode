@@ -30,7 +30,7 @@
 #include "ObjectTool.h"
 #include "PointerTool.h"
 #include "PickUnitDialog.h"
-#include "WbView3D.h"
+#include "wbview3d.h"
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
 #include "WorldBuilderView.h"

@@ -38,7 +38,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
-#include	"xstraw.h"
+#include	"XSTRAW.H"
 #include	<stddef.h>
 #include	<string.h>
 

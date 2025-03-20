@@ -47,7 +47,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"
-#include "WWLib/Targa.h"
+#include "WWLib/TARGA.H"
 #include "Resource.h"
 #include "ImagePacker.h"
 #include "WinMain.h"

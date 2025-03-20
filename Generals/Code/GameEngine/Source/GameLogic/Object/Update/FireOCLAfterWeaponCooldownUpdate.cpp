@@ -44,7 +44,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ObjectCreationList.h"
 #include "GameLogic/Weapon.h"
-#include "GameLogic/Weaponset.h"
+#include "GameLogic/WeaponSet.h"
 
 #include "GameLogic/Module/FireOCLAfterWeaponCooldownUpdate.h"
 #include "GameLogic/Module/LifetimeUpdate.h"

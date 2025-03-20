@@ -20,12 +20,12 @@
 // expimp.cpp
 //
 
-#include "stdAfx.h"
-#include "transDB.h"
+#include "StdAfx.h"
+#include "TransDB.h"
 #include "XLStuff.h"
-#include "Noxstringdlg.h"
+#include "noxstringDlg.h"
 #include "VerifyTextDlg.h"
-#include "Noxstring.h"
+#include "noxstring.h"
 #include "expimp.h"
 #include "direct.h"
 #include "fileops.h"

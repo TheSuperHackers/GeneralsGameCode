@@ -77,7 +77,7 @@
 #include "statistics.h"
 #include "simplevec.h"
 #include "texture.h"
-#include "vector.h"
+#include "Vector.H"
 #include "vp.h"
 #include "matrix4.h"
 #include "dx8wrapper.h"
@@ -86,7 +86,7 @@
 #include "rinfo.h"
 #include "camera.h"
 #include "dx8fvf.h"
-#include "D3DX8Math.h"
+#include "d3dx8math.h"
 #include "sortingrenderer.h"
 
 // Upgraded to DX8 2/2/01 HY

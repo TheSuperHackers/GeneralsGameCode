@@ -134,7 +134,7 @@ typedef bool							Bool;							//
 typedef __int64						Int64;							// 8 bytes 
 typedef unsigned __int64	UnsignedInt64;	  	// 8 bytes 
 
-#include "Lib/Trig.h"
+#include "Lib/trig.h"
 
 //-----------------------------------------------------------------------------
 typedef wchar_t WideChar;  ///< multi-byte character representations

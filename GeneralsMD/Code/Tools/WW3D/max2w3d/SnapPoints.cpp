@@ -41,7 +41,7 @@
 
 #include "SnapPoints.h"
 #include "chunkio.h"
-#include "Max.h"
+#include "max.h"
 #include "nodelist.h"
 #include "w3d_file.h"
 

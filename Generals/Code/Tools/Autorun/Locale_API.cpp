@@ -35,9 +35,9 @@
 *****************************************************************************/
 
 #include "locale.h"
-#include "locale_api.h"
-#include "utils.h"
-#include "wnd_file.h"
+#include "Locale_API.h"
+#include "Utils.h"
+#include "Wnd_File.h"
 //#include "resources.h"
 
 #include "GameText.h"

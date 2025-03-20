@@ -21,7 +21,7 @@
 // Author: John Ahlquist, April 2001
 
 #include "StdAfx.h" 
-#include "Resource.h"
+#include "resource.h"
 
 #include "CUndoable.h"
 #include "PointerTool.h"
@@ -35,7 +35,7 @@
 #include "mapobjectprops.h"
 #include "ObjectOptions.h"
 #include "BuildList.h"
-#include "WbView3D.h"
+#include "wbview3d.h"
 #include "LayersList.h"
 #include "Common/WellKnownKeys.h"
 #include "WorldBuilder.h"	// for MAX_OBJECTS_IN_MAP 

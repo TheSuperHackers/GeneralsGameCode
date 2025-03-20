@@ -45,7 +45,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#include "wsys_StdFile.h"
+#include "WSYS_StdFile.h"
 									
 
 //----------------------------------------------------------------------------

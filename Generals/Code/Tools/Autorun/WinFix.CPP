@@ -45,8 +45,8 @@
 //#include <winuser.h>
 #include <assert.h>
 #include <stdio.h>
-#include "winfix.h"
-#include "wnd_file.h"
+#include "WinFix.H"
+#include "Wnd_File.h"
 
 /***************************************************************************
 ** Windows Version Info global object.

@@ -43,7 +43,7 @@
 #include "always.h"
 #endif
 
-#include <Max.h>
+#include <max.h>
 
 #ifndef SIMPDIB_H
 #include "simpdib.h"

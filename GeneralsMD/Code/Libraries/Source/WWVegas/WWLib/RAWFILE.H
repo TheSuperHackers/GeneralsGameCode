@@ -58,7 +58,7 @@
   #define	HANDLE_TYPE		HANDLE
 #endif
 
-#include	"wwfile.h"
+#include	"WWFILE.H"
 #include "wwstring.h"
 
 

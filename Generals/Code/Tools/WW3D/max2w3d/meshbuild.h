@@ -44,7 +44,7 @@
 #include	"always.h"
 #include "vector2.h"
 #include "vector3.h"
-#include "bittype.h"
+#include "BITTYPE.H"
 
 #include <assert.h>
 

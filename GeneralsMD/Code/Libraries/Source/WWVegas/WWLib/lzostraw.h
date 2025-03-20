@@ -38,7 +38,7 @@
 #define LZOSTRAW_H
 
 
-#include	"straw.h"
+#include	"STRAW.H"
 
 /*
 **	This class handles LZO compression/decompression to the data stream that is drawn through

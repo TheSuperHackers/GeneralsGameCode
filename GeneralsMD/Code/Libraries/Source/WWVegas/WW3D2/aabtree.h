@@ -48,7 +48,7 @@
 #include "refcount.h"
 #include "simplevec.h"
 #include "vector3.h"
-#include "vector3i.h"
+#include "Vector3i.h"
 #include "aaplane.h"
 #include "bittype.h"
 #include "colmath.h"
