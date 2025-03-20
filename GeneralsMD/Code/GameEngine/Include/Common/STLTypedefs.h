@@ -190,10 +190,17 @@ namespace rts
 
 	template<> struct hash<AsciiString>
 	{
-		size_t operator()(AsciiString ast) const
-		{ 
+		size_t operator()(const AsciiString& ast) const
+		{
+#ifdef USING_STLPORT
 			std::hash<const char *> tmp;
 			return tmp((const char *) ast.str());
+#else
+			// TheSuperHackers @bugfix xezon 16/03/2024 std::hash implementation for STLPort does not work here.
+			// Use string view to capture c string and pass that to the hash function. No allocation.
+			std::hash<std::string_view> hasher;
+			return hasher(std::string_view(ast.str(), ast.getLength()));
+#endif
 		}
 	};
 
