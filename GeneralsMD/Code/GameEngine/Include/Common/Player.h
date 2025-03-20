@@ -220,6 +220,8 @@ public:
 	void initFromDict(const Dict* d);
 	void setDefaultTeam(void);
 
+	void deletePlayerAI();
+
 	inline UnicodeString getPlayerDisplayName() { return m_playerDisplayName; }
 	inline NameKeyType getPlayerNameKey() const { return m_playerNameKey; }
 
