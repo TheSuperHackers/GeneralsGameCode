@@ -1090,7 +1090,7 @@ AudioHandle AudioManager::allocateNewHandle( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-void AudioManager::releaseAudioEventRTS( AudioEventRTS *eventToRelease )
+void AudioManager::releaseAudioEventRTS( AudioEventRTS *&eventToRelease )
 {
 	if( eventToRelease )
 	{

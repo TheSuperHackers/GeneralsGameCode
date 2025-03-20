@@ -262,7 +262,7 @@ class AudioManager : public SubsystemInterface
 		const MiscAudio *getMiscAudio( void ) const;
 
 		// This function should only be called by AudioManager, MusicManager and SoundManager
-		virtual void releaseAudioEventRTS( AudioEventRTS *eventToRelease );
+		virtual void releaseAudioEventRTS( AudioEventRTS *&eventToRelease );
 
 		// For INI
 		AudioSettings *friend_getAudioSettings( void );
