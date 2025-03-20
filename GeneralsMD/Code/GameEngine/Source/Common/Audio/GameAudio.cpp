@@ -488,7 +488,10 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 	else 
 	{
 		//Possible to nuke audioEvent inside.
-		m_sound->addAudioEvent(audioEvent);
+		if (!m_sound->addAudioEvent(audioEvent))
+		{
+			return AHSV_NoSound;
+		}
 	}
 
 	if( audioEvent )
