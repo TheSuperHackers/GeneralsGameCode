@@ -189,7 +189,7 @@ public:
 //-------------------------------------------------------------------------------------------------
 class HackInternetAIUpdate : public AIUpdateInterface, public HackInternetAIInterface
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( HackInternetAIUpdate, "HackInternetAIUpdate"  )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( HackInternetAIUpdate, NAMEKEY_HackInternetAIUpdate  )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( HackInternetAIUpdate, HackInternetAIUpdateModuleData )
 
 private:

@@ -47,7 +47,7 @@ class BoneFXDamage : public DamageModule
 {
 
 	MAKE_STANDARD_MODULE_MACRO( BoneFXDamage );
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( BoneFXDamage, "BoneFXDamage" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( BoneFXDamage, NAMEKEY_BoneFXDamage )
 
 public:
 

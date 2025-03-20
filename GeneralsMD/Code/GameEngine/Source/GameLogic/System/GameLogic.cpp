@@ -1342,7 +1342,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 			if (slot->getPlayerTemplate() >= 0)
 				pt = ThePlayerTemplateStore->getNthPlayerTemplate(slot->getPlayerTemplate());
 			else
-				pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey("FactionObserver") );
+				pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey(NAMEKEY_FactionObserver) );
 			if (pt)
 			{
 				d.setAsciiString(TheKey_playerFaction, KEYNAME(pt->getNameKey()));
@@ -1463,7 +1463,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		d.setBool(TheKey_playerIsHuman, TRUE);
 		d.setUnicodeString(TheKey_playerDisplayName, UnicodeString(L"Observer"));
 		const PlayerTemplate* pt;
-		pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey("FactionObserver") );
+		pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey(NAMEKEY_FactionObserver) );
 		if (pt)
 		{
 			d.setAsciiString(TheKey_playerFaction, KEYNAME(pt->getNameKey()));
@@ -1950,7 +1950,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 			if (slot->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER)
 			{
 				slot->setPlayerTemplate(0);
-				const PlayerTemplate *pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey("FactionObserver") );
+				const PlayerTemplate *pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey(NAMEKEY_FactionObserver) );
 				if (pt)
 				{
 					for (Int j=0; j<ThePlayerTemplateStore->getPlayerTemplateCount(); ++j)
@@ -2097,16 +2097,16 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	if ( isChallengeCampaign )
 	{
 		// Establish local player relationships with other teams as
-		// they're set up for "ThePlayer" in challenge mode map.
-		// Some designers have used "ThePlayer" as an empty player for Generals' 
+		// they're set up for THE_PLAYER in challenge mode map.
+		// Some designers have used THE_PLAYER as an empty player for Generals' 
 		// Challenge maps which they reference in script and by which they set 
 		// player relationships.  The skirmish local player will receive these
-		// relationships.  If there is no "ThePlayer", we have to assume that
+		// relationships.  If there is no THE_PLAYER, we have to assume that
 		// all players on the map are the local player's enemy, except neutral
 		// and civilian players.
 		Player *localPlayer = ThePlayerList->getLocalPlayer();
 		DEBUG_ASSERTCRASH(localPlayer, ("Local player has not been established for Challenge map."));
-		Player *placeholderThePlayer = ThePlayerList->findPlayerWithNameKey(NAMEKEY("ThePlayer"));
+		Player *placeholderThePlayer = ThePlayerList->findPlayerWithNameKey(NAMEKEY(THE_PLAYER));
 		DEBUG_ASSERTCRASH(placeholderThePlayer, ("Challenge maps without player \"ThePlayer\" assume that the local player is mutual enemies with all other players except the neutral and civilian players."));
 
 		if (placeholderThePlayer)
@@ -2114,7 +2114,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 			PlayerMaskType thePlayerEnemysMask = ThePlayerList->getPlayersWithRelationship(placeholderThePlayer->getPlayerIndex(), ALLOW_ENEMIES);
 			while( thePlayerEnemysMask )
 			{
-				// set local player enemy relationships based on "ThePlayer" enemy relationships
+				// set local player enemy relationships based on THE_PLAYER enemy relationships
 				Player *thePlayerEnemy = ThePlayerList->getEachPlayerFromMask(thePlayerEnemysMask);
 				thePlayerEnemy->setPlayerRelationship(localPlayer, ENEMIES);
 				localPlayer->setPlayerRelationship(thePlayerEnemy, ENEMIES);
@@ -2122,7 +2122,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		} 
 		else 
 		{
-			// This map has no "ThePlayer" by which to model the local player's 
+			// This map has no THE_PLAYER by which to model the local player's 
 			// relationships, so make assumptions.
 			for (Int i = 0; i < ThePlayerList->getPlayerCount(); i++)
 			{
@@ -2133,7 +2133,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 					rel = ALLIES;
 				} 
 				else if (thatPlayer != ThePlayerList->getNeutralPlayer()
-					&& thatPlayer != ThePlayerList->findPlayerWithNameKey(NAMEKEY("PlyrCivilian")))
+					&& thatPlayer != ThePlayerList->findPlayerWithNameKey(NAMEKEY(NAMEKEY_PlyrCivilian)))
 				{
 					rel = ENEMIES;
 				} 

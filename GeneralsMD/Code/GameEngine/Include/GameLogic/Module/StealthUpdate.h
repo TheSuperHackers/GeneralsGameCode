@@ -109,7 +109,7 @@ public:
 class StealthUpdate : public UpdateModule
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( StealthUpdate, "StealthUpdate" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( StealthUpdate, NAMEKEY_StealthUpdate )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( StealthUpdate, StealthUpdateModuleData );
 
 public:

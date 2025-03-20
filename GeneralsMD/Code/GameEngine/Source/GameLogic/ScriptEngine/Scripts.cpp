@@ -1667,7 +1667,7 @@ void Condition::WriteConditionDataChunk(DataChunkOutput &chunkWriter, Condition	
 				chunkWriter.writeNameKey(ct->m_internalNameKey);
 			}	else {
 				DEBUG_CRASH(("Invalid condition."));
-				chunkWriter.writeNameKey(NAMEKEY("Bogus"));
+				chunkWriter.writeNameKey(NAMEKEY(NAMEKEY_Bogus));
 			}
 			chunkWriter.writeInt(pCondition->m_numParms);
 			Int i;
@@ -2427,7 +2427,7 @@ void ScriptAction::WriteActionDataChunk(DataChunkOutput &chunkWriter, ScriptActi
 				chunkWriter.writeNameKey(at->m_internalNameKey);
 			}	else {
 				DEBUG_CRASH(("Invalid action."));
-				chunkWriter.writeNameKey(NAMEKEY("Bogus"));
+				chunkWriter.writeNameKey(NAMEKEY(NAMEKEY_Bogus));
 			}
 			chunkWriter.writeInt(pScriptAction->m_numParms);
 			Int i;
@@ -2664,7 +2664,7 @@ void ScriptAction::WriteActionFalseDataChunk(DataChunkOutput &chunkWriter, Scrip
 				chunkWriter.writeNameKey(at->m_internalNameKey);
 			}	else {
 				DEBUG_CRASH(("Invalid action."));
-				chunkWriter.writeNameKey(NAMEKEY("Bogus"));
+				chunkWriter.writeNameKey(NAMEKEY(NAMEKEY_Bogus));
 			}
 			chunkWriter.writeInt(pScriptAction->m_numParms);
 			Int i;

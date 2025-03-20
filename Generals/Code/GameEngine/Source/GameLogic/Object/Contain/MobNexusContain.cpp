@@ -442,7 +442,7 @@ Bool MobNexusContain::tryToEvacuate( Bool exposeStealthedUnits )
 
 			if( obj->isKindOf( KINDOF_STEALTH_GARRISON ) && exposeStealthedUnits )
 			{
-				static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
+				static NameKeyType key_StealthUpdate = NAMEKEY( NAMEKEY_StealthUpdate );
 				StealthUpdate* stealth = (StealthUpdate*)obj->findUpdateModule( key_StealthUpdate );
 				if( stealth )
 				{

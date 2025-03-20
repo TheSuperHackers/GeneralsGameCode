@@ -43,7 +43,7 @@ class Thing;
 class SupplyCenterCreate : public CreateModule
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SupplyCenterCreate, "SupplyCenterCreate" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( SupplyCenterCreate, NAMEKEY_SupplyCenterCreate )
 	MAKE_STANDARD_MODULE_MACRO( SupplyCenterCreate )
 
 public:
