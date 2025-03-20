@@ -1,6 +1,11 @@
 add_executable(g_generals WIN32)
 
-set_target_properties(g_generals PROPERTIES OUTPUT_NAME generals)
+# Use a binary name that doesn't conflict with original game.
+if("${CMAKE_SYSTEM}" MATCHES "Windows")
+    set_target_properties(g_generals PROPERTIES OUTPUT_NAME generalsv)
+else()
+    set_target_properties(g_generals PROPERTIES OUTPUT_NAME generalsv)
+endif()
 
 target_link_libraries(g_generals PRIVATE
     binkstub

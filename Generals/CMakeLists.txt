@@ -12,5 +12,33 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 # Add main build targets
 add_subdirectory(Code)
 
+# If we are building on windows for windows, try and get the game install path from the registry.
+if("${CMAKE_HOST_SYSTEM}" MATCHES "Windows" AND "${CMAKE_SYSTEM}" MATCHES "Windows")
+    # Check the CD registry path
+    if(NOT GENZH_GENERALS_INSTALL_PREFIX)
+        get_filename_component(GENZH_GENERALS_INSTALL_PREFIX  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\EA Games\\Generals;InstallPath]" ABSOLUTE CACHE)
+    endif()
+
+    # Check the "First Decade" registry path
+    if(NOT GENZH_GENERALS_INSTALL_PREFIX OR "${GENZH_GENERALS_INSTALL_PREFIX}" STREQUAL "/registry")
+        get_filename_component(GENZH_GENERALS_INSTALL_PREFIX  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer The First Decade;gr_folder]" ABSOLUTE CACHE)
+    endif()
+
+    # Check the Steam registry path
+    if(NOT GENZH_GENERALS_INSTALL_PREFIX OR "${GENZH_GENERALS_INSTALL_PREFIX}" STREQUAL "/registry")
+        get_filename_component(GENZH_GENERALS_INSTALL_PREFIX  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Electronic Arts\\EA Games\\Generals;installPath]" ABSOLUTE CACHE)
+    endif()
+endif()
+
+if(GENZH_GENERALS_INSTALL_PREFIX AND NOT "${GENZH_GENERALS_INSTALL_PREFIX}" STREQUAL "/registry")
+    install(TARGETS g_generals RUNTIME DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}")
+    install(FILES $<TARGET_PDB_FILE:g_generals> DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}" OPTIONAL)
+    
+    if(TARGET g_worldbuilder)
+        install(TARGETS g_worldbuilder RUNTIME DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}" OPTIONAL)
+        install(FILES $<TARGET_PDB_FILE:g_worldbuilder> DESTINATION "${GENZH_GENERALS_INSTALL_PREFIX}" OPTIONAL)
+    endif()
+endif()
+
 feature_summary(WHAT ENABLED_FEATURES DESCRIPTION "Enabled features:")
 feature_summary(WHAT DISABLED_FEATURES DESCRIPTION "Disabled features:")

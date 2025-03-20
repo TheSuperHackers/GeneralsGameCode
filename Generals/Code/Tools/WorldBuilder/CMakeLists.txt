@@ -224,9 +224,9 @@ if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     target_link_options(g_worldbuilder PRIVATE /NODEFAULTLIB:libci.lib /NODEFAULTLIB:libc.lib)
 
     target_sources(g_worldbuilder PRIVATE res/WorldBuilder.rc)
-    set_target_properties(g_worldbuilder PROPERTIES OUTPUT_NAME WorldBuilder)
+    set_target_properties(g_worldbuilder PROPERTIES OUTPUT_NAME WorldBuilderV)
 else()
-    set_target_properties(g_worldbuilder PROPERTIES OUTPUT_NAME worldbuilder)
+    set_target_properties(g_worldbuilder PROPERTIES OUTPUT_NAME worldbuilderv)
 endif()
 
 target_sources(g_worldbuilder PRIVATE ${WORLDBUILDER_SRC})
