@@ -60,6 +60,7 @@
 		__asm	shufps		BW,TV,SHUFFLE(3, 2, 3, 2)
 
 
+// This is a NOOP :D
 void VectorProcessorClass::Prefetch(void* address)
 {
 #if defined (__ICL)    // Detect Intel compiler
