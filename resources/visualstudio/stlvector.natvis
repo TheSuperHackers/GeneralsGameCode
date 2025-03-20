@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <Type Name="_STL::_Vector_base&lt;*&gt;">
+        <DisplayString>{{ size={_M_finish - _M_start} }}</DisplayString>
+        <Expand>
+            <Item Name="[size]" ExcludeView="simple" >_M_finish - _M_start</Item>
+            <Item Name="[capacity]" ExcludeView="simple">_M_end_of_storage._M_data - _M_start</Item>
+            <ArrayItems>
+                <Size>_M_finish - _M_start</Size>
+                <ValuePointer>_M_start</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+</AutoVisualizer>

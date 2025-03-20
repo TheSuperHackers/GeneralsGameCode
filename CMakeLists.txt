@@ -57,6 +57,16 @@ add_subdirectory(Dependencies/Benchmark)
 add_subdirectory(Dependencies/SafeDisc)
 add_subdirectory(Dependencies/MaxSDK)
 
+# Add resources (optional)
+if (MSVC_IDE)
+    add_library(resources INTERFACE
+        resources/visualstudio/asciistring.natvis
+        resources/visualstudio/stllist.natvis
+        resources/visualstudio/stlvector.natvis
+        resources/visualstudio/unicodestring.natvis
+    )
+endif()
+
 # Do we want to build extra SDK stuff or just the game binary?
 option(GENZH_BUILD_ZEROHOUR "Build Zero Hour code." ON)
 option(GENZH_BUILD_GENERALS "Build Generals code." ON)
