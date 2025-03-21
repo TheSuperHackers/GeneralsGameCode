@@ -1004,6 +1004,7 @@ WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector4& color)
 
 WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector3& color,float alpha)
 {
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	const float scale = 255.0;
 	unsigned int col;
 
@@ -1070,16 +1071,20 @@ not_changed:
 		mov	col,eax
 	}
 	return col;
+#else
+	return color.Convert_To_ARGB(alpha);
+#endif // defined(_MSC_VER) && _MSC_VER < 1300
 }
 
 // ----------------------------------------------------------------------------
 //
-// Clamp color vertor to [0...1] range
+// Clamp color vector to [0...1] range
 //
 // ----------------------------------------------------------------------------
 
 WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
 {
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	if (!CPUDetectClass::Has_CMOV_Instruction()) {
 		for (int i=0;i<4;++i) {
 			float f=(color[i]<0.0f) ? 0.0f : color[i];
@@ -1130,6 +1135,12 @@ WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
 		cmovnb edi,edx
 		mov dword ptr[esi+12],edi
 	}
+#else
+	for (int i=0;i<4;++i) {
+		float f=(color[i]<0.0f) ? 0.0f : color[i];
+		color[i]=(f>1.0f) ? 1.0f : f;
+	}
+#endif // defined(_MSC_VER) && _MSC_VER < 1300
 }
 
 // ----------------------------------------------------------------------------

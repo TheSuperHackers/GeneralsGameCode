@@ -183,18 +183,43 @@ __forceinline long fast_float2long_round(float f)
 {
 	long i;
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	__asm {
 		fld [f]
 		fistp [i]
 	}
+#else
+	// TheSuperHackers @fix Use simple C code instead of inline assembly
+	i = lroundf(f);
+#endif
 
 	return i;
 }
+
+#if !(defined(_MSC_VER) && _MSC_VER < 1300)
+__forceinline unsigned int x86_shift_right_emu(unsigned int value, unsigned int shift, bool shift_ones)
+{
+	// This is what the CPU does
+	shift %= 32;
+	if (shift_ones)
+	{
+		// shift in ones
+		unsigned int ones = ((0xFFFFFFFFULL << (32 - shift)) & 0xFFFFFFFF);
+		return (value >> shift) | ones;
+	}
+	else
+	{
+		return value >> shift;
+	}
+	return value;
+}
+#endif
 
 // super fast float trunc routine, works always (independent of any FPU modes)
 // code courtesy of Martin Hoffesommer (grin)
 __forceinline float fast_float_trunc(float f)
 {
+#if defined(_MSC_VER) && _MSC_VER < 1300
   _asm
   {
     mov ecx,[f]
@@ -207,6 +232,25 @@ __forceinline float fast_float_trunc(float f)
     and [f],eax
   }
   return f;
+#else
+	unsigned int value_as_int = *(unsigned int *)&f;
+	// Mask to only keep exponent and sign
+	unsigned int mantissa_mask = 0xff800000;
+
+	unsigned int sign_and_exponent = value_as_int >> 23;
+	unsigned char exponent = sign_and_exponent & 0xff;
+	bool shift_ones = true;
+	if (exponent < 127)
+	{
+		mantissa_mask = 0;
+		shift_ones = false;
+	}
+	exponent -= 127;
+	// Arithmetic shift right
+	mantissa_mask = x86_shift_right_emu(mantissa_mask, exponent, shift_ones);
+	value_as_int &= mantissa_mask;
+	return *(float *)&value_as_int;
+#endif
 }
 
 // same here, fast floor function
