@@ -27,7 +27,7 @@
 // Stack walker
 //////////////////////////////////////////////////////////////////////////////
 #include "_pch.h"
-#include "dbghelp.h"
+#include <imagehlp.h>
 
 // Definitions to allow run-time linking to the dbghelp.dll functions.
 

@@ -19,7 +19,7 @@ set(PROFILE_SRC
 )
 
 add_library(z_profile STATIC)
-set_target_properties(z_profile PROPERTIES OUTPUT_NAME profile)
+set_target_properties(z_profile PROPERTIES OUTPUT_NAME $<IF:$<CONFIG:Debug>,profiledebug,$<IF:$<BOOL:${GENZH_BUILD_INTERNAL}>,profileinternal,$<IF:$<BOOL:${GENZH_BUILD_PROFILE}>,profileprofile,profile>>>)
 
 target_sources(z_profile PRIVATE ${PROFILE_SRC})
 
@@ -28,13 +28,6 @@ target_include_directories(z_profile INTERFACE
 )
 
 target_link_libraries(z_profile PRIVATE
+    gz_config
     zi_libraries_include
 )
-
-if(GENZH_BUILD_DEBUG)
-    set_target_properties(z_profile PROPERTIES OUTPUT_NAME profiledebug)
-elseif(GENZH_BUILD_INTERNAL)
-    set_target_properties(z_profile PROPERTIES OUTPUT_NAME profileinternal)
-else()
-    set_target_properties(z_profile PROPERTIES OUTPUT_NAME profile)
-endif()

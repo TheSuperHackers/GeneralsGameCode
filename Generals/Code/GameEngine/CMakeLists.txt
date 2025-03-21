@@ -1059,13 +1059,9 @@ set(GAMEENGINE_SRC
 
 add_library(g_gameengine STATIC)
 
-if(GENZH_BUILD_DEBUG)
-    set_target_properties(g_gameengine PROPERTIES OUTPUT_NAME gameenginedebug)
-elseif(GENZH_BUILD_INTERNAL)
-    set_target_properties(g_gameengine PROPERTIES OUTPUT_NAME gameengineinternal)
-else()
-    set_target_properties(g_gameengine PROPERTIES OUTPUT_NAME gameengine)
-endif()
+set_target_properties(g_gameengine PROPERTIES OUTPUT_NAME
+    $<IF:$<CONFIG:Debug>,gameenginedebug,$<IF:$<BOOL:${GENZH_BUILD_INTERNAL}>,gameengineinternal,gameengine>>
+)
 
 target_sources(g_gameengine PRIVATE ${GAMEENGINE_SRC})
 
