@@ -31,6 +31,8 @@
 #ifndef __PERFTIMER_H__
 #define __PERFTIMER_H__
 
+#include "Lib/intrin_compat.h"
+
 #if defined(_DEBUG) || defined(_INTERNAL)
 	/*
 		NOTE NOTE NOTE: never check this in with this enabled, since there is a nonzero time penalty
@@ -71,6 +73,7 @@ __forceinline void GetPrecisionTimer(Int64* t)
 #ifdef USE_QPF
 	QueryPerformanceCounter((LARGE_INTEGER*)t);
 #else
+# if defined(_MSC_VER) && _MSC_VER < 1300
 	// CPUID is needed to force serialization of any previous instructions. 
 	__asm 
 	{
@@ -81,6 +84,9 @@ __forceinline void GetPrecisionTimer(Int64* t)
 		MOV [ECX], EAX
 		MOV [ECX+4], EDX
 	}
+# else
+	*t = _rdtsc();
+# endif
 #endif
 }
 #endif
