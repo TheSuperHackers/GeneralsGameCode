@@ -1252,5 +1252,24 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 
 	TheWritableGlobalData->m_xResolution = xres;
 	TheWritableGlobalData->m_yResolution = yres;
+
+	// TheSuperHackers @tweak valeronm 21/03/2025 Increase camera height for wide resolutions
+	// Change camera height based on xezon code from https://github.com/TheSuperHackers/GeneralsGameCode/issues/78
+	static const Real aspect_4_3 = 4.f / 3.f;
+	static const Real aspect_16_9 = 16.f / 9.f;
+	Real aspect = static_cast<Real>(xres) / static_cast<Real>(yres);
+
+	// Resolution must be greater than 4:3
+	// Screen width must be greater 640px and height greater 480
+	if (aspect > aspect_4_3 && xres >= 640 && yres >= 480) {
+		if (aspect > aspect_16_9)
+			aspect = aspect_16_9;
+		const Real multi = aspect - aspect_4_3 + 1.0f;
+		const Real nerf = 1.0f - (aspect - aspect_4_3) / 12.0f;
+
+		TheWritableGlobalData->m_maxCameraHeight *= multi * nerf;
+		TheWritableGlobalData->m_minCameraHeight *= multi * nerf;
+		TheWritableGlobalData->m_drawEntireTerrain = TRUE;
+	}
 }
 
