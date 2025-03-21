@@ -168,7 +168,7 @@ int LCW_Uncomp(void const * source, void * dest, unsigned long )
 }
 
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && defined(_M_IX86)
 
 
 /*********************************************************************************************** 
@@ -439,6 +439,6 @@ outofhere:
 #endif
 	return(retval);
 }
-#endif
+#endif // defined(_MSC_VER) && defined(_M_IX86)
 
 
