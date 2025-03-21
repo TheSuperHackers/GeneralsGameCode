@@ -23,7 +23,7 @@
 #include "vertmaterial.h"
 #include "texture.h"
 #include "d3d8.h"
-#include "D3dx8math.h"
+#include "d3dx8math.h"
 #include "statistics.h"
 
 bool SortingRendererClass::_EnableTriangleDraw=true;

@@ -36,7 +36,7 @@
 #include "Common/DrawModule.h"
 #include "W3DDevice/GameClient/Module/W3DTruckDraw.h"
 #include "W3DDevice/GameClient/W3DDynamicLight.h"
-#include "WW3D2/Line3D.h"
+#include "WW3D2/line3d.h"
 
 //-------------------------------------------------------------------------------------------------
 /** W3D police car draw */

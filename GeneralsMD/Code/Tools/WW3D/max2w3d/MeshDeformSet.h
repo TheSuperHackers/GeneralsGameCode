@@ -38,9 +38,9 @@
 #ifndef __MESH_DEFORM_SET_H
 #define __MESH_DEFORM_SET_H
 
-#include <Max.h>
+#include <max.h>
 #include "Vector.H"
-#include "MeshDeformDefs.H"
+#include "MeshDeformDefs.h"
 
 
 // Forward declarations

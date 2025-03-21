@@ -31,7 +31,7 @@
 #ifndef __GAMESPYGP_H__
 #define __GAMESPYGP_H__
 
-#include "GameSpy/GP/GP.h"
+#include "gamespy/gp/gp.h"
 
 void GPRecvBuddyRequestCallback(GPConnection * connection, GPRecvBuddyRequestArg * arg, void * param);
 void GPRecvBuddyMessageCallback(GPConnection * pconnection, GPRecvBuddyMessageArg * arg, void * param);

@@ -68,7 +68,7 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/TerrainLogic.h"
 
-#include "WWMath/Matrix3D.h"
+#include "WWMath/matrix3d.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #ifdef _INTERNAL

@@ -87,13 +87,13 @@
 #include "Win32Device/Common/Win32LocalFileSystem.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
 
-#include "Resource.h"
+#include "resource.h"
 #include "WinMain.h"
 #include "GUIEdit.h"
 #include "HierarchyView.h"
 #include "EditWindow.h"
 #include "GUIEditWindowManager.h"
-#include "GUIEditDisplay.H"
+#include "GUIEditDisplay.h"
 #include "DialogProc.h"
 #include "LayoutScheme.h"
 

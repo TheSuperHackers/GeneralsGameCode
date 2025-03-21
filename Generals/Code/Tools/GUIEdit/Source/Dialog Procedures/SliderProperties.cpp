@@ -48,7 +48,7 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "GUIEdit.h"
 #include "Properties.h"
-#include "Resource.h"
+#include "resource.h"
 #include "GameClient/GadgetSlider.h"
 #include "GameClient/Gadget.h"
 

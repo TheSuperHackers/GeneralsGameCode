@@ -40,8 +40,8 @@
 #ifndef READLINE_H
 #define READLINE_H
 
-#include	"straw.h"
-#include	"wwfile.h"
+#include	"STRAW.H"
+#include	"WWFILE.H"
 #include <wchar.h>
 
 int Read_Line(FileClass & file, char * buffer, int len, bool & eof);

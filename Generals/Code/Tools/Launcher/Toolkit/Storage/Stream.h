@@ -37,7 +37,7 @@
 #ifndef STREAM_H
 #define STREAM_H
 
-#include <Support\UTypes.h>
+#include <Support/UTypes.h>
 
 class Stream
 	{

@@ -38,7 +38,7 @@
 #ifndef RCMENU_H
 #define RCMENU_H
 
-#include "Max.h"
+#include "max.h"
 #include "dllmain.h"
 #include "resource.h"
 #include "istdplug.h"

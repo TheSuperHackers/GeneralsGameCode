@@ -55,7 +55,7 @@
 #ifndef INDEX_H
 #define INDEX_H
 
-#include	"bsearch.h"
+#include	"BSEARCH.H"
 
 #if !defined(__BORLANDC__) || !defined(_USERENTRY)
 #define	_USERENTRY

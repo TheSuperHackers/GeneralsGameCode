@@ -45,7 +45,7 @@
 #endif
 
 #ifndef LISTNODE_H
-#include "listnode.h"
+#include "LISTNODE.H"
 #endif
 
 class RefCountClass;

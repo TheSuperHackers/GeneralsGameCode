@@ -39,9 +39,9 @@
 #include "GameClient/FXList.h"
 #include "GameLogic/TerrainLogic.h"
 
-#include "WW3D2/HAnim.h"
-#include "WW3D2/HLod.h"
-#include "WW3D2/RendObj.h"
+#include "WW3D2/hanim.h"
+#include "WW3D2/hlod.h"
+#include "WW3D2/rendobj.h"
 #include "W3DDevice/GameClient/Module/W3DDefaultDraw.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"

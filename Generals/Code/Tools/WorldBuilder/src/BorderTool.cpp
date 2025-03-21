@@ -17,12 +17,12 @@
 */
 
 #include "StdAfx.h"
-#include "Resource.h"
+#include "resource.h"
 
 #include "BorderTool.h"
 #include "DrawObject.h"
 #include "MainFrm.h"
-#include "WbView3d.h"
+#include "wbview3d.h"
 #include "WorldBuilderDoc.h"
 
 const long BOUNDARY_PICK_DISTANCE = 5.0f;

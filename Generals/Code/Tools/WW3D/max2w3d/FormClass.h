@@ -42,7 +42,7 @@
 #ifndef __FORMCLASS_H
 #define __FORMCLASS_H
 
-#include <Max.h>
+#include <max.h>
 
 
 class FormClass : public ParamDlg

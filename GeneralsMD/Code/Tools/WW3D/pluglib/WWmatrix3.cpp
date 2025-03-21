@@ -35,7 +35,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "wwmatrix3.h"
+#include "WWmatrix3.h"
 #include "matrix3d.h"
 #include "matrix4.h"
 #include "w3dquat.h"

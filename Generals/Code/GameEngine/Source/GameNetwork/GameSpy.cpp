@@ -28,8 +28,8 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "GameSpy/GP/GP.h"
-#include "GameSpy/gstats/gpersist.h"
+#include "gamespy/gp/gp.h"
+#include "gamespy/gstats/gpersist.h"
 
 #include "GameNetwork/FirewallHelper.h"
 #include "GameNetwork/GameSpy.h"
@@ -44,7 +44,7 @@
 #include "GameClient/MessageBox.h"
 #include "GameClient/GameText.h"
 #include "GameClient/MapUtil.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 #include "Common/MultiplayerSettings.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/RandomValue.h"

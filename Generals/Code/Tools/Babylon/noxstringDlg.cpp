@@ -20,24 +20,24 @@
 // noxstringDlg.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "noxstring.h"
 #include "noxstringDlg.h"
 #include "VIEWDBSII.h"
-#include "verifydlg.h"
-#include "exportdlg.h"
-#include "report.h"
-#include "matchdlg.h"
-#include "retranslatedlg.h"
-#include "generatedlg.h"
+#include "VerifyDlg.h"
+#include "ExportDlg.h"
+#include "Report.h"
+#include "MatchDlg.h"
+#include "RetranslateDlg.h"
+#include "GenerateDlg.h"
 #include "DlgProxy.h"
-#include "xlstuff.h"
+#include "XLStuff.h"
 #include "fileops.h"
 #include <time.h>
 #include "iff.h"
 #include "loadsave.h"
 #include "expimp.h"
-#include "proceeddlg.h"
+#include "ProceedDlg.h"
 #include "transcs.h"
 
 #ifdef _DEBUG

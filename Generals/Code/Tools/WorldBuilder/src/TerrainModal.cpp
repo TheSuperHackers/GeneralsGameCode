@@ -21,11 +21,11 @@
 
 #define DEFINE_TERRAIN_TYPE_NAMES
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "Lib\BaseType.h"
+#include "Lib/BaseType.h"
 #include "TerrainModal.h"
-#include "terrainmaterial.h"
+#include "TerrainMaterial.h"
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
 #include "Common/TerrainTypes.h"

@@ -58,7 +58,7 @@
 #include "shader.h"
 #include "vertmaterial.h"
 #include "Lib/BaseType.h"
-#include "common/GameType.h"
+#include "Common/GameType.h"
 #include "Common/Dict.h"
 #include "Common/AsciiString.h"
 

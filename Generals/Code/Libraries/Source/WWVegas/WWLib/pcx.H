@@ -38,8 +38,8 @@
 #define PCX_H
 
 #include	"bsurface.h"
-#include	"palette.h"
-#include	"wwfile.h"
+#include	"PALETTE.H"
+#include	"WWFILE.H"
 #include	<string.h>
 
 

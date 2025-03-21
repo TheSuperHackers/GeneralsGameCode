@@ -46,7 +46,7 @@
 #include "always.h"
 #include "matrix3d.h"
 #include "matrix4.h"
-#include "vector3i.h"
+#include "Vector3i.h"
 #include "vector3.h"
 #include "simplevec.h"
 #include "bittype.h"

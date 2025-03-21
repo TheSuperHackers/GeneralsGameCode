@@ -40,7 +40,7 @@
 #ifndef PALETTE_H
 #define PALETTE_H
 
-#include	"rgb.h"
+#include	"RGB.H"
 
 /*
 **	The palette class is used to manipulate a palette as a whole. All 256 colors are

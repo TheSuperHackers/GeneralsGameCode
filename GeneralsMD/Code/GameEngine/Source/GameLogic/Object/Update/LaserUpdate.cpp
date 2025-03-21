@@ -30,8 +30,8 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "Common\Player.h"
-#include "Common\PlayerList.h"
+#include "Common/Player.h"
+#include "Common/PlayerList.h"
 #include "Common/Xfer.h"
 #include "Common/DrawModule.h"
 #include "Common/ThingTemplate.h"
@@ -41,7 +41,7 @@
 #include "GameLogic/Object.h" 
 #include "GameLogic/GameLogic.h" // For frame number
 #include "GameLogic/Module/LaserUpdate.h"
-#include "WWMath/Vector3.h"
+#include "WWMath/vector3.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...

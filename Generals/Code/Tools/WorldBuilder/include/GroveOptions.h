@@ -23,7 +23,7 @@
 
 #include <map>
 #include <vector>
-#include "worldbuilder.h"
+#include "WorldBuilder.h"
 #include "OptionsPanel.h"
 #include "Common/STLTypedefs.h"
 

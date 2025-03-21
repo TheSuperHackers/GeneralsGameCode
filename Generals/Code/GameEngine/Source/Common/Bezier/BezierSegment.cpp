@@ -27,7 +27,7 @@
 #include "Common/BezierSegment.h"
 #include "Common/BezFwdIterator.h"
 
-#include <D3DX8Math.h>
+#include <d3dx8math.h>
 
 //-------------------------------------------------------------------------------------------------
 BezierSegment::BezierSegment()

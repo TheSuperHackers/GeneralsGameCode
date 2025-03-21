@@ -40,7 +40,7 @@
 
 #include	"always.h"
 #include	"hsv.h"
-#include	"rgb.h"
+#include	"RGB.H"
 
 HSVClass const HSVClass::BlackColor(0, 0, 0);
 

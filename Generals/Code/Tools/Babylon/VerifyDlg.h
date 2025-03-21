@@ -25,7 +25,7 @@
 // VerifyDlg.h : header file
 //
 
-#include "transDB.h"
+#include "TransDB.h"
 #define IDSKIP		100
 
 /////////////////////////////////////////////////////////////////////////////

@@ -55,7 +55,7 @@
 #include "GameClient/MetaEvent.h"
 #include "GameClient/GameWindow.h"
 #include "GameClient/GameWindowManager.h"
-#include "GameClient/keyboard.h"
+#include "GameClient/Keyboard.h"
 #include "GameClient/GameText.h"
 #include "Common/AudioEventRTS.h"
 //-----------------------------------------------------------------------------

@@ -52,7 +52,7 @@
 #pragma warning (push)
 #pragma warning (disable: 4786)
 																  
-#include "listnode.h"
+#include "LISTNODE.H"
 #include <memory.h>
 
 #ifndef NULL

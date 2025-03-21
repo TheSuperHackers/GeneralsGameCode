@@ -39,7 +39,7 @@
 #ifndef EULER_H
 #define EULER_H
 
-#include <Max.h>
+#include <max.h>
 
 
 /*********************************************************************

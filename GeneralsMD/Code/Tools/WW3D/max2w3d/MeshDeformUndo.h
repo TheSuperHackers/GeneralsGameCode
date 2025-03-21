@@ -37,9 +37,9 @@
 #ifndef __MESH_DEFORM_UNDO_H
 #define __MESH_DEFORM_UNDO_H
 
-#include <Max.H>
+#include <max.h>
 #include "Vector.H"
-#include "MeshDeformDefs.H"
+#include "MeshDeformDefs.h"
 
 // Forward declarations
 class MeshDeformClass;

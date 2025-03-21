@@ -33,11 +33,11 @@
 #include	<windows.h>
 #include	<string.h>
 //#include	"always.h"
-#include	"getcd.h"
+#include	"GetCD.h"
 //#include	"timer.h"
-#include	"wnd_file.h"
+#include	"Wnd_File.h"
 //#include	"missiondisk.h"
-#include	"winfix.h"
+#include	"WinFix.H"
 
 #ifndef ROR_NOT_READY
 #define ROR_NOT_READY		21

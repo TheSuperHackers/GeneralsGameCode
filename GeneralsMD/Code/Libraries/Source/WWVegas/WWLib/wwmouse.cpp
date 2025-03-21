@@ -66,7 +66,7 @@
 #include	"bsurface.h"
 #include	"draw.h"
 #include	"shapeset.h"
-#include	"surface.h"
+#include	"Surface.h"
 #include	"win.h"
 #include	"wwmouse.h"
 #include	<assert.h>

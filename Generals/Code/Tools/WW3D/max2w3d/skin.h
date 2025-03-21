@@ -38,7 +38,7 @@
 #ifndef SKIN_H
 #define SKIN_H
 
-#include <Max.h>
+#include <max.h>
 #include "simpmod.h"
 #include "simpobj.h"
 #include "bpick.h"

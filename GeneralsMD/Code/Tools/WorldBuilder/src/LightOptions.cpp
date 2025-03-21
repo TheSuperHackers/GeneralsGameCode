@@ -19,13 +19,13 @@
 // LightOptions.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "Lib\BaseType.h"
+#include "Lib/BaseType.h"
 #include "LightOptions.h"
 #include "WorldBuilderView.h"
 #include "WorldBuilderDoc.h"
-#include "WbView3D.h"
+#include "wbview3d.h"
 #include "Common/WellKnownKeys.h"
 
 LightOptions *LightOptions::m_staticThis = NULL;

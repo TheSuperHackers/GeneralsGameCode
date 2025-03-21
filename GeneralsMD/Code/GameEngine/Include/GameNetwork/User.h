@@ -31,7 +31,7 @@
 #ifndef __USER_H
 #define __USER_H
 
-#include "GameNetwork/networkdefs.h"
+#include "GameNetwork/NetworkDefs.h"
 #include "Common/UnicodeString.h"
 
 class User : public MemoryPoolObject

@@ -42,7 +42,7 @@
 #define RCFILE_H
 
 #include "always.h"
-#include "wwfile.h"
+#include "WWFILE.H"
 #include "win.h"
 
 /*

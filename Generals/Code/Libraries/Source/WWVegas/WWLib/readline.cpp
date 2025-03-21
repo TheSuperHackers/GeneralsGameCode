@@ -40,8 +40,8 @@
 #include	"always.h"
 #include	"readline.h"
 #include	"trim.h"
-#include	"wwfile.h"
-#include	"xstraw.h"
+#include	"WWFILE.H"
+#include	"XSTRAW.H"
 //#include	<ctype.h>
 #include	<string.h>
 

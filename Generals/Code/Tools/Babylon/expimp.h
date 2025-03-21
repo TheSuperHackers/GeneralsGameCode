@@ -23,8 +23,8 @@
 #ifndef __EXPIMP_H
 #define __EXPIMP_H
 
-#include "transDB.h"
-#include "noxstringdlg.h"
+#include "TransDB.h"
+#include "noxstringDlg.h"
 
 typedef enum
 {

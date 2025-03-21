@@ -40,7 +40,7 @@
 #ifndef GAMEMTLTEXTUREDLG_H
 #define GAMEMTLTEXTUREDLG_H
 
-#include <Max.h>
+#include <max.h>
 #include "GameMtlForm.h"
 
 class GameMtl;

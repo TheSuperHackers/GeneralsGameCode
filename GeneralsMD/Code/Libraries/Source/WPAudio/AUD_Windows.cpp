@@ -47,7 +47,7 @@
 #include <wpaudio/thread.h>
 #include <wpaudio/memory.h>
 #include <wpaudio/Source.h>
-#include <wsys/File.h>
+#include <wsys/file.h>
 #include <wpaudio/device.h>
 #include <wpaudio/profiler.h>
 #include <wpaudio/win32.h>

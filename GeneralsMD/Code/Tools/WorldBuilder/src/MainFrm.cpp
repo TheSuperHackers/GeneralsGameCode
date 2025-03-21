@@ -19,15 +19,15 @@
 // MainFrm.cpp : implementation of the CMainFrame class
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "MainFrm.h"
 
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 
 #include "DrawObject.h"
 #include "LayersList.h"
 #include "WHeightMapEdit.h"
-#include "WbView3d.h"
+#include "wbview3d.h"
 #include "WorldBuilder.h"
 #include "WorldBuilderDoc.h"
 #include "WorldBuilderView.h"

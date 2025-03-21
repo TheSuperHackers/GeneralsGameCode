@@ -37,7 +37,7 @@
 
 #include "mapper.h"
 #include "ww3d.h"
-#include "ini.h"
+#include "INI.H"
 #include "chunkio.h"
 #include "w3derr.h"
 #include "meshmatdesc.h"
@@ -46,7 +46,7 @@
 #include "matinfo.h"
 #include "rendobj.h"
 #include "mesh.h"
-#include <random.h>
+#include <RANDOM.H>
 #include <bound.h>
 
 Random4Class rand4;

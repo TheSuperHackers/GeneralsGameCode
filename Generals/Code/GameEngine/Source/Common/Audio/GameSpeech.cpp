@@ -39,7 +39,7 @@
 
 #include "wpaudio/attributes.h"
 
-#include "wsys/File.h"
+#include "wsys/file.h"
 #include "wsys/List.h"
 #include "wpaudio/Streamer.h"
 #include "wpaudio/Time.h"

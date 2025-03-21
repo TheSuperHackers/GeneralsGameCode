@@ -61,10 +61,10 @@
 #include "GameClient/IMEManager.h"
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "Win32Device/Common/Win32GameEngine.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 #include "BuildVersion.h"
 #include "GeneratedVersion.h"
-#include "Resource.h"
+#include "resource.h"
 
 #include <rts/profile.h>
 

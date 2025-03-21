@@ -20,10 +20,10 @@
 // loadsave.cpp
 //
 
-#include "stdAfx.h"
+#include "StdAfx.h"
 #include "iff.h"
 #include "TransDB.h"
-#include "Babylondlg.h"
+#include "BabylonDlg.h"
 
 #define FORM_BABYLONDB			MakeID ('N','X','D','B')
 #define FORM_LABEL			MakeID ('N','L','B','L')

@@ -37,7 +37,7 @@
 #ifndef SHAPIPE_H
 #define SHAPIPE_H
 
-#include	"pipe.h"
+#include	"PIPE.H"
 #include	"sha.h"
 
 /*

@@ -18,7 +18,7 @@
 
 #include <string>
 #include <stdio.h>
-#include "registry.h"
+#include "Registry.h"
 
 void FormatURLFromRegistry( std::string& gamePatchURL, std::string& mapPatchURL,
 													 std::string& configURL, std::string& motdURL )

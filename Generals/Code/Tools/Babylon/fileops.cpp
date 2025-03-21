@@ -20,7 +20,7 @@
 // fileops.cpp
 //
 
-#include "stdAfx.h"
+#include "StdAfx.h"
 #include "fileops.h"
 
 

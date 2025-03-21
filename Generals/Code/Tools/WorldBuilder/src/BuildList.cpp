@@ -19,9 +19,9 @@
 // BuildList.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "Lib\BaseType.h"
+#include "Lib/BaseType.h"
 #include "BuildList.h"
 #include "BuildListTool.h"
 #include "BaseBuildProps.h"
@@ -35,7 +35,7 @@
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
 #include "Common/WellKnownKeys.h"
-#include "WbView3D.h"
+#include "wbview3d.h"
 
 BuildList *BuildList::m_staticThis = NULL;
 Bool BuildList::m_updating = false;

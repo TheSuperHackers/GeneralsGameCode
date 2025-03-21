@@ -38,7 +38,7 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/LaserUpdate.h"
-#include "WWMath/Vector3.h"
+#include "WWMath/vector3.h"
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

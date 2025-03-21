@@ -42,7 +42,7 @@
 
 
 #include	"always.h"
-#include	"palette.h"
+#include	"PALETTE.H"
 #include	<string.h>
 
 

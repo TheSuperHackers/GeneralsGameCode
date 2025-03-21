@@ -92,7 +92,7 @@
 #include "dx8indexbuffer.h"
 #include "dx8vertexbuffer.h"
 #include "sortingrenderer.h"
-#include "vector3i.h"
+#include "Vector3i.h"
 #include "visrasterizer.h"
 
 

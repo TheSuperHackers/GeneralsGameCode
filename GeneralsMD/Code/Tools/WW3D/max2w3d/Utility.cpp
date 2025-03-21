@@ -43,9 +43,9 @@
 */
 
 
-#include <MaxScrpt.h>
-#include <Arrays.h>
-#include <Strings.h>
+#include <maxscrpt.h>
+#include <arrays.h>
+#include <strings.h>
 #include <definsfn.h>
 
 #include "util.h"

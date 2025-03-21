@@ -37,8 +37,8 @@
 #ifndef WWFONT_H
 #define WWFONT_H
 
-#include	"font.h"
-#include	"surface.h"
+#include	"FONT.H"
+#include	"Surface.h"
 
 class ConvertClass;
 

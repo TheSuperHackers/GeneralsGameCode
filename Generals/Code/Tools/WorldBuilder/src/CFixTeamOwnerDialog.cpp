@@ -17,10 +17,10 @@
 */
 
 #include "StdAfx.h"
-#include "Resource.h"
+#include "resource.h"
 #include "CFixTeamOwnerDialog.h"
 #include "GameLogic/SidesList.h"
-#include "Common/WellknownKeys.h"
+#include "Common/WellKnownKeys.h"
 #include "GameLogic/SidesList.h"
 
 static const char* NEUTRAL_NAME_STR = "(neutral)";

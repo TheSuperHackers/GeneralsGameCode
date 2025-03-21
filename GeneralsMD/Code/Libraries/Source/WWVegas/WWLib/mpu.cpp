@@ -37,7 +37,7 @@
 
 #include	"always.h"
 #include	"win.h"
-#include	"mpu.h"
+#include	"MPU.H"
 #include "math.h"
 #include <assert.h>
 

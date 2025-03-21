@@ -30,8 +30,8 @@
 #include "W3DDevice/GameClient/W3DParticleSys.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
-#include "W3DDevice/GameClient/heightmap.h"
-#include "WW3D2/Camera.h"
+#include "W3DDevice/GameClient/HeightMap.h"
+#include "WW3D2/camera.h"
 
 //------------------------------------------------------------------------------ Performance Timers 
 //#include "Common/PerfMetrics.h"

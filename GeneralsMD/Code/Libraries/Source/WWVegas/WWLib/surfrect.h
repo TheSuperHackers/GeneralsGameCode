@@ -39,9 +39,9 @@
 
 #ifdef NEVER
 
-#include	"surface.h"
+#include	"Surface.h"
 #include	"trect.h"
-#include	"point.h"
+#include	"Point.h"
 #include	<assert.h>
 
 

@@ -43,7 +43,7 @@
 #include	"always.h"
 #include	"blwstraw.h"
 #include	"pkstraw.h"
-#include	"rndstraw.h"
+#include	"RNDSTRAW.H"
 #include	<string.h>
 
 

@@ -42,9 +42,9 @@
 #ifndef TAGBLOCK_H
 #define TAGBLOCK_H
 
-#include "slist.h"
-#include "crc.h"
-#include "rawfile.h"
+#include "SLIST.H"
+#include "CRC.H"
+#include "RAWFILE.H"
 
 #include <string.h>
 

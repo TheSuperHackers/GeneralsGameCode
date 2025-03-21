@@ -50,7 +50,7 @@
 #include "wwdebug.h"
 #include "wwstring.h"
 #include "hashtemplate.h"
-#include "vector.h"
+#include "Vector.H"
 
 
 // Forward declarations

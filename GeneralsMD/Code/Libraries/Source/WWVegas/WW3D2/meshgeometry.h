@@ -46,7 +46,7 @@
 #include "sharebuf.h"
 #include "w3derr.h"
 #include "vector3.h"
-#include "vector3i.h"
+#include "Vector3i.h"
 #include "vector4.h"
 #include "wwdebug.h"
 #include "multilist.h"

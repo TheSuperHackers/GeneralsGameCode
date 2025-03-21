@@ -45,7 +45,7 @@
 #include "texture.h"
 #include "dx8wrapper.h"
 #include "vp.h"
-#include "vector3i.h"
+#include "Vector3i.h"
 #include "sortingrenderer.h"
 
 static SegLineRendererClass _LineRenderer;

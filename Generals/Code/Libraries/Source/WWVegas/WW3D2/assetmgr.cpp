@@ -106,10 +106,10 @@
 #include "dx8renderer.h"
 #include "metalmap.h"
 #include "w3dexclusionlist.h"
-#include <ini.h>
+#include <INI.H>
 #include <windows.h>
 #include <stdio.h>
-#include <D3dx8core.h>
+#include <d3dx8core.h>
 
 #include "texture.h"
 #include "wwprofile.h"
