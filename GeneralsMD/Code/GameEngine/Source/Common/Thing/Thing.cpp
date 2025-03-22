@@ -43,6 +43,7 @@
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Team.h"
+#include "Common/CRCDebug.h"
 #include "Lib/Trig.h"
 #include "GameLogic/TerrainLogic.h"
 
@@ -151,7 +152,7 @@ void Thing::setPositionZ( Real z )
 			m_cachedAltitudeAboveTerrainOrWater += (z - oldPos.z);
 		}
 
-		reactToTransformChange(&oldMtx, &oldPos, oldAngle);
+		myReactToTransformChange(&oldMtx, &oldPos, oldAngle);
 	}
 	else
 	{
@@ -182,7 +183,7 @@ void Thing::setPosition( const Coord3D *pos )
 		m_cachedPos = *pos;
 		m_cacheFlags &= ~(VALID_ALTITUDE_TERRAIN | VALID_ALTITUDE_SEALEVEL);	// but don't clear the dir flags.
 
-		reactToTransformChange(&oldMtx, &oldPos, oldAngle);
+		myReactToTransformChange(&oldMtx, &oldPos, oldAngle);
 	}
 	else
 	{
@@ -227,8 +228,22 @@ void Thing::setOrientation( Real angle )
 		u.y = Sin(angle);
 		u.z = 0.0f;
 
+#if SIMULATE_VC6_OPTIMIZATION
+		y.x = -u.y;
+		y.y = u.x;
+		y.z = 0;
+
+		x.x = y.y;
+		x.y = -y.x;
+		x.z = 0;
+#else
 		y.crossProduct( &z, &u, &y );
 		x.crossProduct( &y, &z, &x );
+#endif
+
+		CRCDEBUG_LOG(("angle: 0x%08X. sin: 0x%08X cos: 0x%08X  Y: (0x%08X,0x%08X,0x%08X) \n",
+			AS_INT(angle), AS_INT(u.y), AS_INT(u.x),
+			AS_INT(y.x), AS_INT(y.y), AS_INT(y.z)));
 
 		m_transform.Set(  x.x, y.x, z.x, pos.x,
 											x.y, y.y, z.y, pos.y,
@@ -240,10 +255,23 @@ void Thing::setOrientation( Real angle )
 	m_cachedPos = pos;
 	m_cacheFlags &= ~VALID_DIRVECTOR;	// but don't clear the altitude flags.
 
-	reactToTransformChange(&oldMtx, &oldPos, oldAngle);
+	myReactToTransformChange(&oldMtx, &oldPos, oldAngle);
 	DEBUG_ASSERTCRASH(!(_isnan(getPosition()->x) || _isnan(getPosition()->y) || _isnan(getPosition()->z)), ("Drawable/Object position NAN! '%s'\n", m_template->getName().str() ));
 }
 
+	
+void Thing::myReactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle)
+{
+	CRCDEBUG_LOG(("Matrix of Thing %s changed. Old angle 0x%08X. New angle 0x%08X\n",
+		getTemplate()->getName().str(), AS_INT(oldAngle), AS_INT(m_cachedAngle)));
+	DUMPMATRIX3D(&m_transform);
+	reactToTransformChange(oldMtx, oldPos, oldAngle);
+}
+extern Vector3 g_dir0;
+extern Vector3 g_dir1;
+extern Vector3 g_dir2;
+extern Vector3 g_dir3;
+extern Vector3 g_dir4;
 //=============================================================================
 /** Set the world transformation matrix */
 //=============================================================================
@@ -261,7 +289,16 @@ void Thing::setTransformMatrix( const Matrix3D *mx )
 	m_cachedAngle = m_transform.Get_Z_Rotation();
 	m_cacheFlags = 0;
 
-	reactToTransformChange(&oldMtx, &oldPos, oldAngle);
+	DUMPVECTOR3(&g_dir0);
+	DUMPVECTOR3(&g_dir1);
+	DUMPVECTOR3(&g_dir2);
+	DUMPVECTOR3(&g_dir3);
+	DUMPVECTOR3(&g_dir4);
+	CRCDEBUG_LOG(("Set Matrix of Thing %s. Old angle 0x%08X. New angle 0x%08X\n",
+		getTemplate()->getName().str(), AS_INT(oldAngle), AS_INT(m_cachedAngle)));
+	DUMPMATRIX3D(mx);
+
+	myReactToTransformChange(&oldMtx, &oldPos, oldAngle);
 	DEBUG_ASSERTCRASH(!(_isnan(getPosition()->x) || _isnan(getPosition()->y) || _isnan(getPosition()->z)), ("Drawable/Object position NAN! '%s'\n", m_template->getName().str() ));
 }
 
@@ -347,6 +384,8 @@ void Thing::convertBonePosToWorldPos(const Coord3D* bonePos, const Matrix3D* bon
 #else
 		worldTransform->mul(m_transform, *boneTransform);
 #endif
+		DUMPMATRIX3D(&m_transform);
+		DUMPMATRIX3D(boneTransform);
 	}
 	if (worldPos)
 	{

@@ -54,6 +54,14 @@ class AsciiString;
 	#error "Only one at a time of these should ever be defined"
 #endif
 
+// This define enables some code that imitates the gamelogic optimizations applied
+// by the VC6 optimizer to the floating point math.
+// Ideally, this allows you to replay release games in debug mode and may even allow
+// you to compile the game on newer compilers without breaking compatibility.
+// Sadly, there are quite a few places to fix, and I only managed to make a very short replay
+// work in debug mode. So this isn't quite finished (and probably never will).
+#define SIMULATE_VC6_OPTIMIZATION 0
+
 #define NO_RELEASE_DEBUG_LOGGING
 
 #ifdef RELEASE_DEBUG_LOGGING  ///< Creates a DebugLogFile.txt (No I or D) with all the debug log goodness.  Good for startup problems.

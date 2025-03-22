@@ -35,6 +35,7 @@
 #include "Common/RandomValue.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
+#include "Common/CRCDebug.h"
 
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/AIUpdate.h"
@@ -307,6 +308,7 @@ TurretAI::TurretAI(Object* owner, const TurretAIData* data, WhichTurretType tur)
 	}
 	m_angle = getNaturalTurretAngle();
 	m_pitch = getNaturalTurretPitch();
+	DUMPREAL(m_pitch);
 
 #ifdef _DEBUG
 	char smbuf[256];
@@ -428,18 +430,45 @@ Bool TurretAI::friend_turnTowardsAngle(Real desiredAngle, Real rateModifier, Rea
 	return aligned;
 }
 
+Real g_pitch1;
+Real g_pitch2;
+Real g_pitch3;
+Real g_pitch4;
+Real g_pitch5;
+Real g_pitch6;
+Real g_xxx1;
+Real g_xxx2;
+Real g_xxx3;
+Real g_xxx4;
+Real g_xxx5;
+
 //----------------------------------------------------------------------------------------------------------
 Bool TurretAI::friend_turnTowardsPitch(Real desiredPitch, Real rateModifier)
 {
+	DUMPREAL(g_pitch1);
+	DUMPREAL(g_pitch2);
+	DUMPREAL(g_pitch3);
+	DUMPREAL(g_pitch4);
+	DUMPREAL(g_pitch5);
+	DUMPREAL(g_pitch6);
+	DUMPREAL(g_xxx1);
+	DUMPREAL(g_xxx2);
+	DUMPREAL(g_xxx3);
+	DUMPREAL(g_xxx4);
+	DUMPREAL(g_xxx5);
+	DUMPREAL(m_pitch);
+	DUMPREAL(desiredPitch);
 	if (!isAllowsPitch())
 		return true;
 
 	desiredPitch = normalizeAngle(desiredPitch);
+	DUMPREAL(desiredPitch);
 
 	// rotate turret back to zero angle
 	Real actualPitch = getTurretPitch();
 	Real pitchRate = getPitchRate() * rateModifier;
 	Real pitchDiff = normalizeAngle(desiredPitch - actualPitch);
+	DUMPREAL(pitchDiff);
 
 	if (fabs(pitchDiff) < pitchRate)
 	{
@@ -455,7 +484,9 @@ Bool TurretAI::friend_turnTowardsPitch(Real desiredPitch, Real rateModifier)
 		m_playPitchSound = true;
 	}
 
+	DUMPREAL(actualPitch);
 	m_pitch = normalizeAngle(actualPitch);
+	DUMPREAL(m_pitch);
 
 	return (m_pitch == desiredPitch);
 }
@@ -1115,6 +1146,7 @@ StateReturnType TurretAIAimTurretState::update()
 		if( turret->getFirePitch() > 0 )
 		{
 			desiredPitch = turret->getFirePitch();
+			g_pitch1 = desiredPitch;
 		}
 		else
 		{
@@ -1127,17 +1159,32 @@ StateReturnType TurretAIAimTurretState::update()
 			v.z -= obj->getGeometryInfo().getMaxHeightAbovePosition() / 2; // I kinda hate our logic/client split.  
 			//The point to fire from should be intrinsic to the turret, but in reality it is very slow to look it up.
 
+			g_xxx1 = v.x;
+			g_xxx2 = v.y;
+			g_xxx3 = v.z;
+			g_xxx4 = 0;
  			Real actualPitch;
+#if SIMULATE_VC6_OPTIMIZATION
  			if( v.length() > 0 )
+			{
+				double x1 = v.y*v.y + v.z*v.z + v.x*v.x;
+				double x2 = double(v.z) / sqrt(x1);
+ 				actualPitch = asin( x2 ); 
+			}
+#else
+			if( v.length() > 0 )
  				actualPitch = ASin( v.z / v.length() ); 
+#endif
  			else
  				actualPitch = 0;// Don't point at NAN, just point at 0 if they are right on us
  
 			desiredPitch = actualPitch;
+			g_pitch2 = desiredPitch;
 			if( desiredPitch < turret->getMinPitch() )
 			{
 				desiredPitch = turret->getMinPitch();
 			}
+			g_pitch3 = (desiredPitch);
 			if (turret->getGroundUnitPitch() > 0) {
 				Bool adjust = false;
 				if (!enemy) {
@@ -1155,10 +1202,13 @@ StateReturnType TurretAIAimTurretState::update()
 					if (range<1) range = 1; // paranoia. jba.		 
 					// As the unit gets closer, reduce the pitch so we don't shoot over him.
 					Real groundPitch = turret->getGroundUnitPitch() * (dist/range);
+					g_pitch4 = (groundPitch);
 					desiredPitch = actualPitch+groundPitch;
+					g_pitch5 = (desiredPitch);
 					if (desiredPitch < turret->getMinPitch()) {
 						desiredPitch = turret->getMinPitch();
 					}
+					g_pitch6 = (desiredPitch);
 				}
 			}
 

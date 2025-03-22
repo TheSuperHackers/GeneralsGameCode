@@ -821,9 +821,10 @@ void ActiveBody::attemptHealing( DamageInfo *damageInfo )
 	// initialize these, just in case we bail out early
 	damageInfo->out.m_actualDamageDealt = 0.0f;
 	damageInfo->out.m_actualDamageClipped = 0.0f;
-
+	
+	DUMPREAL(damageInfo->in.m_amount);
 	Real amount = m_curArmor.adjustDamage(damageInfo->in.m_damageType, damageInfo->in.m_amount);
-
+	DUMPREAL(amount);
 	// sanity check the damage value -- can't apply negative healing
 	if( amount > 0.0f )
 	{
@@ -897,7 +898,9 @@ void ActiveBody::setInitialHealth(Int initialPercent)
 void ActiveBody::setMaxHealth( Real maxHealth, MaxHealthChangeType healthChangeType )
 {
 	Real prevMaxHealth = m_maxHealth;
+	DUMPREAL(m_maxHealth);
 	m_maxHealth = maxHealth;
+	DUMPREAL(m_maxHealth);
 	m_initialHealth = maxHealth;
 
 	switch( healthChangeType )
@@ -1213,9 +1216,10 @@ void ActiveBody::internalChangeHealth( Real delta )
 {
 	// save the current health as the previous health
 	m_prevHealth = m_currentHealth;
-
+	DUMPREAL(m_currentHealth);
 	// change the health by the delta, it can be positive or negative
 	m_currentHealth += delta;
+	DUMPREAL(m_currentHealth);
 
 	// high end cap
 	Real maxHealth = m_maxHealth;
@@ -1226,6 +1230,7 @@ void ActiveBody::internalChangeHealth( Real delta )
 	const Real lowEndCap = 0.0f;  // low end cap for health, don't go below this
 	if( m_currentHealth < lowEndCap )
 		m_currentHealth = lowEndCap;
+	DUMPREAL(m_currentHealth);
 
 	// recalc the damage state
 	BodyDamageType oldState = m_curDamageState;

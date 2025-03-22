@@ -200,8 +200,10 @@ public:
 	);
 
 	WWINLINE void Set(const Vector3 & axis,float angle);
+	WWINLINE void Set2(const Vector3 & axis,float angle);
 
 	WWINLINE void Set(const Vector3 & axis,float sine,float cosine);
+	WWINLINE void Set2(const Vector3 & axis,double sine,double cosine);
 
 	void Set(const Matrix3x3 & rotation,const Vector3 & position);
 
@@ -278,8 +280,11 @@ public:
 	WWINLINE void	Pre_Rotate_Y(float s,float c);
 	WWINLINE void	Pre_Rotate_Z(float s,float c);
 	WWINLINE void	In_Place_Pre_Rotate_X(float theta);
+	WWINLINE void	In_Place_Pre_Rotate_X2(float theta);//unused
 	WWINLINE void	In_Place_Pre_Rotate_Y(float theta);
+	WWINLINE void	In_Place_Pre_Rotate_Y2(float theta);
 	WWINLINE void 	In_Place_Pre_Rotate_Z(float theta);
+	WWINLINE void 	In_Place_Pre_Rotate_Z2(float theta);
 	WWINLINE void	In_Place_Pre_Rotate_X(float s,float c);
 	WWINLINE void	In_Place_Pre_Rotate_Y(float s,float c);
 	WWINLINE void	In_Place_Pre_Rotate_Z(float s,float c);
@@ -380,7 +385,7 @@ public:
 	static const Matrix3D		RotateZ180;
 	static const Matrix3D		RotateZ270;
 
-protected:
+//protected: // todo hack!
 
 	Vector4			Row[3];
 
@@ -576,6 +581,14 @@ WWINLINE void Matrix3D::Set(const Vector3 & axis,float angle)
 	Set(axis,s,c);
 }
 
+WWINLINE void Matrix3D::Set2(const Vector3 & axis,float angle)
+{
+	double c = cos(angle);
+	double s = sin(angle);
+
+	Set2(axis,s,c);
+}
+
 /***********************************************************************************************
  * Matrix3D::Set -- init a matrix to be a rotation about the given axis                        *
  *                                                                                             *
@@ -609,6 +622,32 @@ WWINLINE void Matrix3D::Set(const Vector3 & axis,float s,float c)
 	Row[2].Set(
 		(float)(axis[2]*axis[0]*(1.0f - c) - axis[1]*s),
 		(float)(axis[1]*axis[2]*(1.0f - c) + axis[0]*s),
+		(float)(axis[2]*axis[2] + c*(1 - axis[2]*axis[2])),
+		0.0f
+	);
+}
+
+WWINLINE void Matrix3D::Set2(const Vector3 & axis,double s,double c)
+{
+	assert(WWMath::Fabs(axis.Length2() - 1.0f) < 0.001f);
+
+	Row[0].Set(
+		(float)(axis[0]*axis[0] + c*(1.0 - axis[0]*axis[0])),
+		(float)(axis[0]*axis[1]*(1.0 - c) - axis[2]*s),
+		(float)(axis[2]*axis[0]*(1.0 - c) + axis[1]*s),
+		0.0f
+	);
+
+	Row[1].Set(
+		(float)(axis[0]*axis[1]*(1.0 - c) + axis[2]*s),
+		(float)(axis[1]*axis[1] + c*(1.0 - axis[1]*axis[1])),
+		(float)(axis[1]*axis[2]*(1.0 - c) - axis[0]*s),
+		0.0f
+	);
+
+	Row[2].Set(
+		(float)(axis[2]*axis[0]*(1.0 - c) - axis[1]*s),
+		(float)(axis[1]*axis[2]*(1.0 - c) + axis[0]*s),
 		(float)(axis[2]*axis[2] + c*(1 - axis[2]*axis[2])),
 		0.0f
 	);
@@ -1294,6 +1333,27 @@ WWINLINE void Matrix3D::In_Place_Pre_Rotate_X(float theta)
 	Row[2][2] = (float)(s*tmp1 + c*tmp2);
 }
 
+WWINLINE void Matrix3D::In_Place_Pre_Rotate_X2(float theta)
+{
+	double tmp1,tmp2;
+	double c,s;
+
+	c = cos(theta);
+	s = sin(theta);
+
+	tmp1 = Row[1][0]; tmp2 = Row[2][0];
+	Row[1][0] = (float)(c*tmp1 - s*tmp2);
+	Row[2][0] = (float)(s*tmp1 + c*tmp2);
+
+	tmp1 = Row[1][1]; tmp2 = Row[2][1];
+	Row[1][1] = (float)(c*tmp1 - s*tmp2);
+	Row[2][1] = (float)(s*tmp1 + c*tmp2);
+
+	tmp1 = Row[1][2]; tmp2 = Row[2][2];
+	Row[1][2] = (float)(c*tmp1 - s*tmp2);
+	Row[2][2] = (float)(s*tmp1 + c*tmp2);
+}
+
 /*********************************************************************************************** 
  * M3DC::In_Place_Pre_Rotate_Y -- Pre-multiplies rotation part of matrix by a rotation about Y * 
  *                                                                                             * 
@@ -1314,6 +1374,26 @@ WWINLINE void Matrix3D::In_Place_Pre_Rotate_Y(float theta)
 
 	c = cosf(theta);
 	s = sinf(theta);
+
+	tmp1 = Row[0][0]; tmp2 = Row[2][0];
+	Row[0][0] = (float)( c*tmp1 + s*tmp2);
+	Row[2][0] = (float)(-s*tmp1 + c*tmp2);
+
+	tmp1 = Row[0][1]; tmp2 = Row[2][1];
+	Row[0][1] = (float)( c*tmp1 + s*tmp2);
+	Row[2][1] = (float)(-s*tmp1 + c*tmp2);
+
+	tmp1 = Row[0][2]; tmp2 = Row[2][2];
+	Row[0][2] = (float)( c*tmp1 + s*tmp2);
+	Row[2][2] = (float)(-s*tmp1 + c*tmp2);
+}
+WWINLINE void Matrix3D::In_Place_Pre_Rotate_Y2(float theta)
+{
+	double tmp1,tmp2;
+	double c,s;
+
+	c = cos(theta);
+	s = sin(theta);
 
 	tmp1 = Row[0][0]; tmp2 = Row[2][0];
 	Row[0][0] = (float)( c*tmp1 + s*tmp2);
@@ -1348,6 +1428,27 @@ WWINLINE void Matrix3D::In_Place_Pre_Rotate_Z(float theta)
 
 	c = cosf(theta);
 	s = sinf(theta);
+
+	tmp1 = Row[0][0]; tmp2 = Row[1][0];
+	Row[0][0] = (float)(c*tmp1 - s*tmp2);
+	Row[1][0] = (float)(s*tmp1 + c*tmp2);
+
+	tmp1 = Row[0][1]; tmp2 = Row[1][1];
+	Row[0][1] = (float)(c*tmp1 - s*tmp2);
+	Row[1][1] = (float)(s*tmp1 + c*tmp2);
+
+	tmp1 = Row[0][2]; tmp2 = Row[1][2];
+	Row[0][2] = (float)(c*tmp1 - s*tmp2);
+	Row[1][2] = (float)(s*tmp1 + c*tmp2);
+}
+
+WWINLINE void Matrix3D::In_Place_Pre_Rotate_Z2(float theta)
+{
+	double tmp1,tmp2;
+	double c,s;
+
+	c = cos(theta);
+	s = sin(theta);
 
 	tmp1 = Row[0][0]; tmp2 = Row[1][0];
 	Row[0][0] = (float)(c*tmp1 - s*tmp2);

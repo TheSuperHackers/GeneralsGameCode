@@ -1743,6 +1743,9 @@ inline Bool isAngleDifferent(Real a, Real b)
 //-------------------------------------------------------------------------------------------------
 void Object::reactToTurretChange( WhichTurretType turret, Real oldRotation, Real oldPitch )
 {
+	DUMPREAL(oldRotation);
+	DUMPREAL(oldPitch);
+
 	Real currentRotation = 0.0f;
 	Real currentPitch = 0.0f;
 	if( getAI() )
@@ -1927,6 +1930,7 @@ Bool Object::attemptHealingFromSoleBenefactor ( Real amount, const Object* sourc
 			damageInfo.in.m_deathType = DEATH_NONE;
 			damageInfo.in.m_sourceID = source ? source->getID() : INVALID_ID;
 			damageInfo.in.m_amount = amount;
+			DUMPREAL(amount);
 			body->attemptHealing( &damageInfo );
 		}
 

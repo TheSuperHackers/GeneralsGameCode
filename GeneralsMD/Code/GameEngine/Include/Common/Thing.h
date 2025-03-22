@@ -156,6 +156,8 @@ protected:
 	virtual void reactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle) = 0;
 
 private:
+	
+	void myReactToTransformChange(const Matrix3D* oldMtx, const Coord3D* oldPos, Real oldAngle);
 
 	// note that it is declared 'const' -- the assumption being that
 	// since ThingTemplates are shared between many, many Things, the Thing
