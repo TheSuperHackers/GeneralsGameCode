@@ -1617,7 +1617,7 @@ void W3DView::setDefaultView(Real pitch, Real angle, Real maxHeight)
 	// MDC - we no longer want to rotate maps (design made all of them right to begin with)
 	//	m_defaultAngle = angle * M_PI/180.0f;
 	m_defaultPitchAngle = pitch;
-	m_maxHeightAboveGround = TheGlobalData->m_maxCameraHeight*maxHeight;
+	m_maxHeightAboveGround = TheGlobalData->m_maxCameraHeight * TheGlobalData->m_cameraHeightAspectRatioMultiplier * maxHeight;
 	if (m_minHeightAboveGround > m_maxHeightAboveGround)
 		m_maxHeightAboveGround = m_minHeightAboveGround;
 }

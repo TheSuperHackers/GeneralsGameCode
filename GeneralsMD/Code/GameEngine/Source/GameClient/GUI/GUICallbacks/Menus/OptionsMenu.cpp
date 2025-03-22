@@ -1086,8 +1086,7 @@ static void saveOptions( void )
 			if (TheDisplay->setDisplayMode(xres,yres,bitDepth,TheDisplay->getWindowed()))
 			{
 				dispChanged = TRUE;
-				TheWritableGlobalData->m_xResolution = xres;
-				TheWritableGlobalData->m_yResolution = yres;
+				TheWritableGlobalData->setResolution(xres, yres);
 
 				TheHeaderTemplateManager->headerNotifyResolutionChange();
 				TheMouse->mouseNotifyResolutionChange();

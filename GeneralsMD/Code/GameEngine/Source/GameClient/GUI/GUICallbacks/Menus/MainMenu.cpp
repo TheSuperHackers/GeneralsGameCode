@@ -747,8 +747,7 @@ void DeclineResolution()
 		dispChanged = FALSE;
 		newDispSettings = oldDispSettings;
 
-		TheWritableGlobalData->m_xResolution = newDispSettings.xRes;
-		TheWritableGlobalData->m_yResolution = newDispSettings.yRes;
+		TheWritableGlobalData->setResolution(newDispSettings.xRes, newDispSettings.yRes);
 		
 		TheHeaderTemplateManager->headerNotifyResolutionChange();
 		TheMouse->mouseNotifyResolutionChange();
