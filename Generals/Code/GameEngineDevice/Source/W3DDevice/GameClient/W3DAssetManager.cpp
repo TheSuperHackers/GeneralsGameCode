@@ -973,7 +973,7 @@ void W3DAssetManager::Recolor_Vertex_Material(VertexMaterialClass *vmat, const i
 
 #ifdef DUMP_PERF_STATS
 __int64 Total_Load_3D_Assets=0;
-static Load_3D_Asset_Recursions=0;
+static Int Load_3D_Asset_Recursions=0;
 #endif
 //---------------------------------------------------------------------
 bool W3DAssetManager::Load_3D_Assets( const char * filename )
@@ -1075,7 +1075,7 @@ bool W3DAssetManager::Load_3D_Assets( const char * filename )
 
 #ifdef DUMP_PERF_STATS
 __int64 Total_Get_HAnim_Time=0;
-static HAnim_Recursions=0;
+static Int HAnim_Recursions=0;
 #endif
 //---------------------------------------------------------------------
 HAnimClass *	W3DAssetManager::Get_HAnim(const char * name)

@@ -2395,7 +2395,7 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 														 WindowMsgData mData1, WindowMsgData mData2 )
 {
 	UnicodeString txtInput;
-	static buttonCommunicatorID = NAMEKEY_INVALID;
+	static Int buttonCommunicatorID = NAMEKEY_INVALID;
 	switch( msg )
 	{
 		//-------------------------------------------------------------------------------------------------	
@@ -2495,7 +2495,7 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 
 				GameWindow *control = (GameWindow *)mData1;
 				Int controlID = control->winGetWindowId();
-				static buttonCommunicatorID = NAMEKEY("GameSpyGameOptionsMenu.wnd:ButtonCommunicator");
+				static Int buttonCommunicatorID = NAMEKEY("GameSpyGameOptionsMenu.wnd:ButtonCommunicator");
 
 				if ( controlID == buttonBackID )
 				{

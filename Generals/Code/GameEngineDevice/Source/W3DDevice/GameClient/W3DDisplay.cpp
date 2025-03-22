@@ -1374,7 +1374,7 @@ void W3DDisplay::gatherDebugStats( void )
 
 			unibuffer.concat( L"\nModelStates: " );
 			ModelConditionFlags mcFlags = draw->getModelConditionFlags();
-			const numEntriesPerLine = 4;
+			const int numEntriesPerLine = 4;
 			int lineCount = 0;
 
 			for( int i = 0; i < MODELCONDITION_COUNT; i++ )

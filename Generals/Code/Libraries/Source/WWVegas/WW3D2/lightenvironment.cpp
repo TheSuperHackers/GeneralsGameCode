@@ -52,8 +52,10 @@ const float DIFFUSE_TO_AMBIENT_FRACTION = 1.0f;
 /*
 ** Static variables
 */
-static _LightingLODCutoff			= 0.5f;	
-static _LightingLODCutoff2			= 0.5f * 0.5f;
+// TheSuperHackers @fix xezon 13/03/2025 Set integer type as per the original.
+// TODO: Investigate if it should be a float.
+static int _LightingLODCutoff			= 0.5f;	
+static int _LightingLODCutoff2			= 0.5f * 0.5f;
 
 
 /************************************************************************************************
