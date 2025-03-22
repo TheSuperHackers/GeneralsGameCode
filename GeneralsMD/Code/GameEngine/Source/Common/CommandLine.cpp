@@ -397,7 +397,7 @@ Int parseXRes(char *args[], int num)
 {
 	if (TheWritableGlobalData && num > 1)
 	{
-		TheWritableGlobalData->m_xResolution = atoi(args[1]);
+		TheWritableGlobalData->setResolution(atoi(args[1]), TheWritableGlobalData->m_yResolution);
 		return 2;
 	}
 	return 1;
@@ -407,7 +407,7 @@ Int parseYRes(char *args[], int num)
 {
 	if (TheWritableGlobalData && num > 1)
 	{
-		TheWritableGlobalData->m_yResolution = atoi(args[1]);
+		TheWritableGlobalData->setResolution(TheWritableGlobalData->m_xResolution, atoi(args[1]));
 		return 2;
 	}
 	return 1;

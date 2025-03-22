@@ -72,6 +72,7 @@ public:
 	void update() { }
 
 	Bool setTimeOfDay( TimeOfDay tod );		///< Use this function to set the Time of day;
+	void setResolution(Int xres, Int yres);
 
 	static void parseGameDataDefinition( INI* ini );
 
@@ -159,6 +160,7 @@ public:
 	Real m_cameraHeight;
 	Real m_maxCameraHeight;
 	Real m_minCameraHeight;
+	Real m_cameraHeightAspectRatioMultiplier;
 	Real m_terrainHeightAtEdgeOfMap;
 	Real m_unitDamagedThresh;
 	Real m_unitReallyDamagedThresh;
