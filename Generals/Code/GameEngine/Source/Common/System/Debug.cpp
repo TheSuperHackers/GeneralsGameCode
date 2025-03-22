@@ -700,7 +700,7 @@ void ReleaseCrash(const char *reason)
 
 	if (!GetRegistryLanguage().compareNoCase("german2") || !GetRegistryLanguage().compareNoCase("german") )
 	{
-		::MessageBox(NULL, "Es ist ein gravierender Fehler aufgetreten. Solche Fehler k\xf6nnen durch viele verschiedene Dinge wie Viren, \xfcberhitzte Hardware und Hardware, die den Mindestanforderungen des Spiels nicht entspricht, ausgel\xf6st werden. Tipps zur Vorgehensweise findest du in den Foren unter www.generals.ea.com, Informationen zum Technischen Kundendienst im Handbuch zum Spiel.", "Fehler...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
+		::MessageBox(NULL, "Es ist ein gravierender Fehler aufgetreten. Solche Fehler k\xf6nnen durch viele verschiedene Dinge wie Viren, \u00FCrhitzte Hardware und Hardware, die den Mindestanforderungen des Spiels nicht entspricht, ausgel\xf6st werden. Tipps zur Vorgehensweise findest du in den Foren unter www.generals.ea.com, Informationen zum Technischen Kundendienst im Handbuch zum Spiel.", "Fehler...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
 	} 
 	else
 	{
