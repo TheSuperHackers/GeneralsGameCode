@@ -29,7 +29,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 // please talk to MDC (x36804) before taking this out
-#define NO_DEBUG_CRC
+//#define NO_DEBUG_CRC
 
 #include "Common/PerfTimer.h"
 #include "Common/ThingTemplate.h"
@@ -321,6 +321,7 @@ Real PhysicsBehavior::getZFriction() const
  */
 void PhysicsBehavior::applyForce( const Coord3D *force )
 {
+	DUMPCOORD3D(force);
 	DEBUG_ASSERTCRASH(!(_isnan(force->x) || _isnan(force->y) || _isnan(force->z)), ("PhysicsBehavior::applyForce force NAN!\n"));
 	if (_isnan(force->x) || _isnan(force->y) || _isnan(force->z)) {
 		return;
@@ -338,9 +339,11 @@ void PhysicsBehavior::applyForce( const Coord3D *force )
 	}
 
 	Real massInv = 1.0f / mass;
+	DUMPCOORD3D(&m_accel);
 	m_accel.x += modForce.x * massInv;
 	m_accel.y += modForce.y * massInv;
 	m_accel.z += modForce.z * massInv;
+	DUMPCOORD3D(&m_accel);
 
 	//DEBUG_ASSERTCRASH(!(_isnan(m_accel.x) || _isnan(m_accel.y) || _isnan(m_accel.z)), ("PhysicsBehavior::applyForce accel NAN!\n"));
 	//DEBUG_ASSERTCRASH(!(_isnan(m_vel.x) || _isnan(m_vel.y) || _isnan(m_vel.z)), ("PhysicsBehavior::applyForce vel NAN!\n"));
@@ -365,6 +368,7 @@ void PhysicsBehavior::applyForce( const Coord3D *force )
  */
 void PhysicsBehavior::applyShock( const Coord3D *force )
 {
+	DUMPCOORD3D(force);
 	Coord3D resistedForce = *force;
 	resistedForce.scale( 1.0f - min( 1.0f, max( 0.0f, getPhysicsBehaviorModuleData()->m_shockResistance ) ) );
 
@@ -418,6 +422,7 @@ Bool PhysicsBehavior::isMotive() const
 //-------------------------------------------------------------------------------------------------
 void PhysicsBehavior::applyMotiveForce( const Coord3D *force )
 {
+	DUMPCOORD3D(force);
 	m_motiveForceExpires = 0; // make it accept this force unquestioningly :)
 	applyForce(force);
 	m_motiveForceExpires = TheGameLogic->getFrame() + MOTIVE_FRAMES;
@@ -474,6 +479,7 @@ void PhysicsBehavior::applyFrictionalForces()
 			accel.x = -(lf * lateralVel_x);
 			accel.y = -(lf * lateralVel_y);
 			accel.z = 0.0f;
+			DUMPCOORD3D(&accel);
 
 			if (!isMotive())
 			{
@@ -623,6 +629,75 @@ void PhysicsBehavior::setBounceSound(const AudioEventRTS* bounceSound)
  * @todo Currently, only translations are integrated. Rotations should also be integrated. (MSB)
  */
 
+#if SIMULATE_VC6_OPTIMIZATION
+void Rotate_X2(Matrix3D* m, float theta)
+{
+	double tmp1,tmp2;
+	double s,c;
+
+	s = sin(theta);
+	c = cos(theta);
+
+	tmp1 = m->Row[0][1]; tmp2 = m->Row[0][2];
+	m->Row[0][1] = (float)( c*tmp1 + s*tmp2);
+	m->Row[0][2] = (float)(-s*tmp1 + c*tmp2);
+	DUMPMATRIX3D(m);
+
+	tmp1 = m->Row[1][1]; tmp2 = m->Row[1][2];
+	m->Row[1][1] = (float)( c*tmp1 + s*tmp2);
+	m->Row[1][2] = (float)(-s*tmp1 + c*tmp2);
+	DUMPMATRIX3D(m);
+
+	tmp1 = m->Row[2][1]; tmp2 = m->Row[2][2];
+	m->Row[2][1] = (float)( c*tmp1 + s*tmp2);
+	m->Row[2][2] = (float)(-s*tmp1 + c*tmp2);
+}
+void Rotate_Y2(Matrix3D* m, float theta)
+{
+	double tmp1,tmp2;
+	double s,c;
+
+	s = sin(theta);
+	c = cos(theta);
+
+	tmp1 = m->Row[0][0]; tmp2 = m->Row[0][2];
+	m->Row[0][0] = (float)(c*tmp1 - s*tmp2);
+	m->Row[0][2] = (float)(s*tmp1 + c*tmp2);
+	DUMPMATRIX3D(m);
+
+	tmp1 = m->Row[1][0]; tmp2 = m->Row[1][2];
+	m->Row[1][0] = (float)(c*tmp1 - s*tmp2);
+	m->Row[1][2] = (float)(s*tmp1 + c*tmp2);
+	DUMPMATRIX3D(m);
+	
+	tmp1 = m->Row[2][0]; tmp2 = m->Row[2][2];
+	m->Row[2][0] = (float)(c*tmp1 - s*tmp2);
+	m->Row[2][2] = (float)(s*tmp1 + c*tmp2);
+}
+void Rotate_Z2(Matrix3D* m, float theta)
+{
+	double tmp1,tmp2;
+	double c,s;
+
+	c = cos(theta);
+	s = sin(theta);
+
+	tmp1 = m->Row[0][0]; tmp2 = m->Row[0][1];
+	m->Row[0][0] = (float)( c*tmp1 + s*tmp2);
+	m->Row[0][1] = (float)(-s*tmp1 + c*tmp2);
+	DUMPMATRIX3D(m);
+
+	tmp1 = m->Row[1][0]; tmp2 = m->Row[1][1];
+	m->Row[1][0] = (float)( c*tmp1 + s*tmp2);
+	m->Row[1][1] = (float)(-s*tmp1 + c*tmp2);
+	DUMPMATRIX3D(m);
+
+	tmp1 = m->Row[2][0]; tmp2 = m->Row[2][1];
+	m->Row[2][0] = (float)( c*tmp1 + s*tmp2);
+	m->Row[2][1] = (float)(-s*tmp1 + c*tmp2);
+}
+#endif
+
 DECLARE_PERF_TIMER(PhysicsBehavior)
 UpdateSleepTime PhysicsBehavior::update()
 {
@@ -646,10 +721,12 @@ UpdateSleepTime PhysicsBehavior::update()
 
 	Coord3D prevPos = *obj->getPosition();
 	m_prevAccel = m_accel;
+	DUMPCOORD3D(&m_accel);
 
 	if (!obj->isDisabledByType(DISABLED_HELD))
 	{
 		Matrix3D mtx = *obj->getTransformMatrix();
+		DUMPMATRIX3D(&mtx);
 
 		applyGravitationalForces();
 		applyFrictionalForces();
@@ -658,12 +735,14 @@ UpdateSleepTime PhysicsBehavior::update()
 		m_vel.x += m_accel.x;
 		m_vel.y += m_accel.y;
 		m_vel.z += m_accel.z;
+		DUMPCOORD3D(&m_vel);
 
 		// when vel gets tiny, just clamp to zero
 		const Real THRESH = 0.001f;
 		if (fabsf(m_vel.x) < THRESH) m_vel.x = 0.0f;
 		if (fabsf(m_vel.y) < THRESH) m_vel.y = 0.0f;
 		if (fabsf(m_vel.z) < THRESH) m_vel.z = 0.0f;
+		DUMPCOORD3D(&m_vel);
 
 		m_velMag = INVALID_VEL_MAG;
 
@@ -682,9 +761,12 @@ UpdateSleepTime PhysicsBehavior::update()
 		else 
 		{
 			mtx.Adjust_X_Translation(m_vel.x);
+			DUMPMATRIX3D(&mtx);
 			mtx.Adjust_Y_Translation(m_vel.y);
+			DUMPMATRIX3D(&mtx);
 			mtx.Adjust_Z_Translation(m_vel.z);
 		}
+		DUMPMATRIX3D(&mtx);
 
 		if (_isnan(mtx.Get_X_Translation()) || _isnan(mtx.Get_Y_Translation()) ||
 			_isnan(mtx.Get_Z_Translation())) {
@@ -707,6 +789,7 @@ UpdateSleepTime PhysicsBehavior::update()
 
     }
 
+		DUMPMATRIX3D(&mtx);
 		if (getFlag(HAS_PITCHROLLYAW))
 		{
 
@@ -738,6 +821,10 @@ UpdateSleepTime PhysicsBehavior::update()
 
 			// With a center of mass listing, pitchRate needs to dampen towards straight down/straight up
 			Real offset = getCenterOfMassOffset();
+			DUMPREAL(yawRateToUse);
+			DUMPREAL(pitchRateToUse);
+			DUMPREAL(rollRateToUse);
+			DUMPREAL(offset);
 
 			// Magnitude sets initial rate, here we care about sign
 			if (offset != 0.0f)
@@ -748,16 +835,30 @@ UpdateSleepTime PhysicsBehavior::update()
 				Real remainingAngle = (offset > 0) ? ((PI/2) - pitchAngle) : (-(PI/2) + pitchAngle);
 				Real s = Sin(remainingAngle);
 				pitchRateToUse *= s;
+				DUMPREAL(xy);
+				DUMPREAL(pitchAngle);
+				DUMPREAL(remainingAngle);
+				DUMPREAL(s);
+				DUMPREAL(pitchRateToUse);
 			}
 
 			// update rotation
 			/// @todo Rotation should use torques, and integrate just like forces (MSB)
 			// note, we DON'T want to Pre-rotate (either inplace or not),
 			// since we want to add our mods to the existing matrix.
+#if SIMULATE_VC6_OPTIMIZATION
+			Rotate_X2(&mtx, rollRateToUse);
+			DUMPMATRIX3D(&mtx);
+			Rotate_Y2(&mtx, pitchRateToUse);
+			DUMPMATRIX3D(&mtx);
+			Rotate_Z2(&mtx, yawRateToUse);
+#else
 			mtx.Rotate_X(rollRateToUse);
 			mtx.Rotate_Y(pitchRateToUse);
 			mtx.Rotate_Z(yawRateToUse);
+#endif
 		}
+		DUMPMATRIX3D(&mtx);
 
 		// do not allow object to pass through the ground
 		Real groundZ = TheTerrainLogic->getLayerHeight(mtx.Get_X_Translation(), mtx.Get_Y_Translation(), obj->getLayer());
@@ -766,6 +867,8 @@ UpdateSleepTime PhysicsBehavior::update()
 			groundZ += obj->getCarrierDeckHeight(); 
 		}
 		gotBounceForce = handleBounce(oldPosZ, mtx.Get_Z_Translation(), groundZ, &bounceForce);
+		
+		DUMPMATRIX3D(&mtx);
 
 		// remember our z-vel prior to doing ground-slam adjustment
 		activeVelZ = m_vel.z;
@@ -805,15 +908,17 @@ UpdateSleepTime PhysicsBehavior::update()
 				mtx.Set_Z_Translation(groundZ);
 			}
 		}
-
+		DUMPMATRIX3D(&mtx);
 		if (gotBounceForce)
 		{
 			// Right the object after the bounce since the pitch and roll may have been affected
 			Real yawAngle = getObject()->getTransformMatrix()->Get_Z_Rotation();
+			DUMPREAL(yawAngle);
 			setAngles(yawAngle, 0.0f, 0.0f);
 
 			// Set the translation of the after bounce matrix to the one calculated above
 			Matrix3D afterBounceMatrix = *getObject()->getTransformMatrix();
+			DUMPMATRIX3D(&afterBounceMatrix);
 			afterBounceMatrix.Set_Translation(mtx.Get_Translation());
 
 			// Set the result of the after bounce matrix as the object's final matrix
@@ -1298,23 +1403,34 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 	delta.x = themCenter.x - usCenter.x;
 	delta.y = themCenter.y - usCenter.y;
 	delta.z = themCenter.z - usCenter.z;
+	DUMPCOORD3D(&delta);
 
 	Real distSqr, usRadius, themRadius;
 	if (obj->isAboveTerrain())
 	{
 		// do 3d testing.
 		usRadius = obj->getGeometryInfo().getBoundingSphereRadius();
+		DUMPREAL(usRadius);
 		themRadius = other->getGeometryInfo().getBoundingSphereRadius();
+#if SIMULATE_VC6_OPTIMIZATION
+		distSqr = sqr(delta.x) + (sqr(delta.y) + sqr(delta.z));
+#else
 		distSqr = sqr(delta.x) + sqr(delta.y) + sqr(delta.z);
+#endif
 	}
 	else
 	{
 		// do 2d testing.
 		usRadius = obj->getGeometryInfo().getBoundingCircleRadius();
+		DUMPREAL(usRadius);
 		themRadius = other->getGeometryInfo().getBoundingCircleRadius();
 		distSqr = sqr(delta.x) + sqr(delta.y);
 		delta.z = 0;
 	}
+	DUMPREAL(themRadius);
+	DUMPREAL(distSqr);
+	DUMPREAL(usRadius);
+	DUMPREAL(themRadius);
 
 	if (distSqr > sqr(usRadius + themRadius))
 	{
@@ -1327,6 +1443,8 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 
 	Real dist = sqrtf(distSqr);
 	Real overlap = usRadius + themRadius - dist;
+	DUMPREAL(dist);
+	DUMPREAL(overlap);
 
 	// if objects are coincident, dist is zero, so force would be infinite -- clearly
 	// not what we want. so just cap it here for now. (srj)
@@ -1413,10 +1531,33 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 				overlap = 5.0f;
 			factor = -overlap;
 		}
+		DUMPREAL(factor);
+		DUMPREAL(dist);
+		DUMPCOORD3D(&delta);
 
+#if SIMULATE_VC6_OPTIMIZATION
+		// todo: this isn't quite correct yet
+		force.x = factor * delta.x;
+		DUMPREAL(force.x);
+		force.x = force.x / dist;
+		DUMPREAL(force.x);
+
+		force.y = factor * delta.y;
+		DUMPREAL(force.y);
+		force.y = force.y / dist;
+		DUMPREAL(force.y);
+
+		force.z = factor * delta.z;
+		DUMPREAL(force.z);
+		force.z = force.z / dist;
+		DUMPREAL(force.z);
+#else
 		force.x = factor * delta.x / dist;
 		force.y = factor * delta.y / dist;
 		force.z = factor * delta.z / dist;	// will be zero for 2d case.
+#endif
+		DUMPCOORD3D(&force);
+		DUMPCOORD3D(&delta);
 		DEBUG_ASSERTCRASH(!(_isnan(force.x) || _isnan(force.y) || _isnan(force.z)), ("PhysicsBehavior::onCollide force NAN!\n"));
 
 		applyForce( &force );

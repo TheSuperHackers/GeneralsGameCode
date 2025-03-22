@@ -43,6 +43,7 @@
 #include "Common/GameState.h"
 #include "Common/GlobalData.h"
 #include "Common/Xfer.h"
+#include "Common/CRCDebug.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/GameText.h"
 #include "GameLogic/AIPathfind.h"
@@ -716,8 +717,13 @@ StateReturnType DozerActionDoActionState::update( void )
 				{
 
 					// figure out how much health we will restore this frame
+#if SIMULATE_VC6_OPTIMIZATION
+					Real health = body->getMaxHealth() * dozerAI->getRepairHealthPerSecond() * (1.0f / LOGICFRAMES_PER_SECOND);
+#else
 					Real health = body->getMaxHealth() * dozerAI->getRepairHealthPerSecond() /
 												LOGICFRAMES_PER_SECOND;
+#endif
+					DUMPREAL(health);
 
 					// try to give it a little bit-o-health
 					if ( ! goalObject->attemptHealingFromSoleBenefactor(health, dozer, 2) )//this frame and the next

@@ -32,6 +32,7 @@
 #include "Common/ThingTemplate.h"
 #include "Common/RandomValue.h"
 #include "Common/BitFlagsIO.h"
+#include "Common/CRCDebug.h"
 
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/ExperienceTracker.h"
@@ -202,13 +203,39 @@ void MissileAIUpdate::projectileLaunchAtObjectOrPosition(
 	m_extraBonusFlags = launcher ? launcher->getWeaponBonusCondition() : 0;
 
 	Weapon::positionProjectileForLaunch(getObject(), launcher, wslot, specificBarrelToUse);
-
+	DUMPCOORD3D(victimPos);
 	projectileFireAtObjectOrPosition( victim, victimPos, detWeap, exhaustSysOverride );
 
 }
 
 #define APPROACH_HEIGHT 10.0f
 
+#if SIMULATE_VC6_OPTIMIZATION
+static void Vec3Normalize(Vector3& v)
+{
+	//v.Normalize();
+	//float len2 = objCrossGoal.Length2();
+	float len2 = v.Y*v.Y;
+	//DUMPREAL(len2);
+	len2 += v.Z*v.Z;
+	//DUMPREAL(len2);
+	len2 += v.X*v.X;
+	//DUMPREAL(len2);
+	if (len2 != 0.0f) 
+	{
+		float oolen = WWMath::Inv_Sqrt(len2);
+		//DUMPREAL(oolen);
+		v.X *= oolen;
+		v.Y *= oolen;
+		v.Z *= oolen;
+	}
+}
+#endif
+Vector3 g_dir0;
+Vector3 g_dir1;
+Vector3 g_dir2;
+Vector3 g_dir3;
+Vector3 g_dir4;
 //-------------------------------------------------------------------------------------------------
 // The actual firing of the missile once setup.
 //-------------------------------------------------------------------------------------------------
@@ -243,12 +270,22 @@ void MissileAIUpdate::projectileFireAtObjectOrPosition( const Object *victim, co
 	if (deltaZ>0) {
 		zFactor = deltaZ/xyDist;
 	}
+	g_dir0.X = dx;
+	g_dir0.Y = dy;
+	g_dir0.Z = deltaZ;
 
 
 	Vector3 dir = getObject()->getTransformMatrix()->Get_X_Vector();
+	g_dir1 = dir;
+#if SIMULATE_VC6_OPTIMIZATION
+	Vec3Normalize(dir);
+#else
 	dir.Normalize();
+#endif
+	g_dir2 = dir;
 	dir.Z += 2*zFactor;
 	dir.Normalize();
+	g_dir3 = dir;
 	PhysicsBehavior* physics = getObject()->getPhysics();
 	if (physics && initialVelToUse > 0)
 	{
@@ -263,6 +300,7 @@ void MissileAIUpdate::projectileFireAtObjectOrPosition( const Object *victim, co
 	}
 
 	Vector3 objPos(obj->getPosition()->x, obj->getPosition()->y, obj->getPosition()->z);
+	g_dir4 = objPos;
 
 	Matrix3D newXform;
 	newXform.buildTransformMatrix( objPos, dir );

@@ -33,6 +33,7 @@
 #include "Common/MiscAudio.h"
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
+#include "Common/CRCDebug.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/GameClient.h"
 #include "GameLogic/ExperienceTracker.h"
@@ -522,7 +523,13 @@ public:
 		Coord3D intermedPt;
 		Bool intermed = false;
 		Real orient = atan2(ppinfo.runwayPrep.y - ppinfo.parkingSpace.y, ppinfo.runwayPrep.x - ppinfo.parkingSpace.x);
+#if SIMULATE_VC6_OPTIMIZATION
+		Real diff = stdAngleDiff(orient, ppinfo.parkingOrientation);
+		DUMPREAL(diff);
+		if (fabs(diff) > PI/128)
+#else
 		if (fabs(stdAngleDiff(orient, ppinfo.parkingOrientation)) > PI/128)
+#endif
 		{
 			intermedPt.z = (ppinfo.parkingSpace.z + ppinfo.runwayPrep.z) * 0.5f;
 			intermed = intersectInfiniteLine2D(

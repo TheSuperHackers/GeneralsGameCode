@@ -793,7 +793,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 	#endif
 	//end -extraLogging 
 
-	//CRCDEBUG_LOG(("WeaponTemplate::fireWeaponTemplate() from %s\n", DescribeObject(sourceObj).str()));
+	CRCDEBUG_LOG(("WeaponTemplate::fireWeaponTemplate() from %s\n", DescribeObject(sourceObj).str()));
 	DEBUG_ASSERTCRASH(specificBarrelToUse >= 0, ("specificBarrelToUse should no longer be -1\n"));
 
 	if (sourceObj == NULL || (victimObj == NULL && victimPos == NULL))
@@ -2933,6 +2933,72 @@ void Weapon::processRequestAssistance( const Object *requestingObject, Object *v
 	ourPlayer->iterateObjects( makeAssistanceRequest, &requestData );
 }
 
+#if SIMULATE_VC6_OPTIMIZATION
+WWINLINE void In_Place_Pre_Rotate_Y2(Matrix3D* m, float theta)
+{
+	double tmp1,tmp2;
+	double c,s;
+
+	c = cos(theta);
+	s = sin(theta);
+	DUMPREAL((Real)c);
+	DUMPREAL((Real)s);
+
+	tmp1 = m->Row[0][0]; tmp2 = m->Row[2][0];
+	m->Row[0][0] = (float)( c*tmp1 + s*tmp2);
+	m->Row[2][0] = (float)(-s*tmp1 + c*tmp2);
+
+	tmp1 = m->Row[0][1]; tmp2 = m->Row[2][1];
+	m->Row[0][1] = (float)( c*tmp1 + s*tmp2);
+	m->Row[2][1] = (float)(-s*tmp1 + c*tmp2);
+
+	tmp1 = m->Row[0][2]; tmp2 = m->Row[2][2];
+	m->Row[0][2] = (float)( c*tmp1 + s*tmp2);
+	m->Row[2][2] = (float)(-s*tmp1 + c*tmp2);
+}
+float submul2(const Vector4& row, float tmp1, float tmp2, float tmp3)
+{
+  return row.Y * tmp2 + row.Z * tmp3 + row.X * tmp1;
+}
+void postMul2(Matrix3D* m, const Matrix3D& that)
+{
+	float tmpX, tmpY, tmpZ, tmpW;
+
+	tmpX = submul2(m->Row[0], that.Row[0].X, that.Row[1].X, that.Row[2].X);
+	tmpY = submul2(m->Row[0], that.Row[0].Y, that.Row[1].Y, that.Row[2].Y);
+	tmpZ = submul2(m->Row[0], that.Row[0].Z, that.Row[1].Z, that.Row[2].Z);
+	tmpW = submul2(m->Row[0], that.Row[0].W, that.Row[1].W, that.Row[2].W);
+	DUMPREAL(tmpW);
+
+	m->Row[0].X = tmpX;
+	m->Row[0].Y = tmpY;
+	m->Row[0].Z = tmpZ;
+	m->Row[0].W += tmpW;
+	DUMPMATRIX3D(m);
+
+	tmpX = submul2(m->Row[1], that.Row[0].X, that.Row[1].X, that.Row[2].X);
+	tmpY = submul2(m->Row[1], that.Row[0].Y, that.Row[1].Y, that.Row[2].Y);
+	tmpZ = submul2(m->Row[1], that.Row[0].Z, that.Row[1].Z, that.Row[2].Z);
+	tmpW = submul2(m->Row[1], that.Row[0].W, that.Row[1].W, that.Row[2].W);
+
+	m->Row[1].X = tmpX;
+	m->Row[1].Y = tmpY;
+	m->Row[1].Z = tmpZ;
+	m->Row[1].W += tmpW;
+	DUMPMATRIX3D(m);
+
+	tmpX = submul2(m->Row[2], that.Row[0].X, that.Row[1].X, that.Row[2].X);
+	tmpY = submul2(m->Row[2], that.Row[0].Y, that.Row[1].Y, that.Row[2].Y);
+	tmpZ = submul2(m->Row[2], that.Row[0].Z, that.Row[1].Z, that.Row[2].Z);
+	tmpW = submul2(m->Row[2], that.Row[0].W, that.Row[1].W, that.Row[2].W);
+
+	m->Row[2].X = tmpX;
+	m->Row[2].Y = tmpY;
+	m->Row[2].Z = tmpZ;
+	m->Row[2].W += tmpW;
+}
+#endif
+
 //-------------------------------------------------------------------------------------------------
 /*static*/ void Weapon::calcProjectileLaunchPosition(
 	const Object* launcher, 
@@ -2962,6 +3028,7 @@ void Weapon::processRequestAssistance( const Object *requestingObject, Object *v
 	const AIUpdateInterface* ai = launcher->getAIUpdateInterface();
 	WhichTurretType tur = ai ? ai->getWhichTurretForWeaponSlot(wslot, &turretAngle, &turretPitch) : TURRET_INVALID;
 	//CRCDEBUG_LOG(("calcProjectileLaunchPosition(): Turret %d, slot %d, barrel %d for %s\n", tur, wslot, specificBarrelToUse, DescribeObject(launcher).str()));
+	DUMPREAL(turretPitch);
 
 	Matrix3D attachTransform(true);
 	Coord3D turretRotPos = {0.0f, 0.0f, 0.0f};
@@ -2976,6 +3043,7 @@ void Weapon::processRequestAssistance( const Object *requestingObject, Object *v
 		turretRotPos.zero();
 		turretPitchPos.zero();
 	}
+	DUMPMATRIX3D(&attachTransform);
 	if (tur != TURRET_INVALID)
 	{
 		// The attach transform is the pristine front and center position of the fire point
@@ -2987,21 +3055,41 @@ void Weapon::processRequestAssistance( const Object *requestingObject, Object *v
 		// To rotate about a point, move that point to 0,0, rotate, then move it back.
 		// Pre rotate will keep the first twist from screwing the angle of the second pitch
 		pitchAdjustment.Translate( turretPitchPos.x, turretPitchPos.y, turretPitchPos.z );
+		DUMPMATRIX3D(&pitchAdjustment);
+#if SIMULATE_VC6_OPTIMIZATION
+		In_Place_Pre_Rotate_Y2(&pitchAdjustment, -turretPitch);
+#else
 		pitchAdjustment.In_Place_Pre_Rotate_Y(-turretPitch);
+#endif
+		DUMPMATRIX3D(&pitchAdjustment);
 		pitchAdjustment.Translate( -turretPitchPos.x, -turretPitchPos.y, -turretPitchPos.z );
+		DUMPMATRIX3D(&pitchAdjustment);
 
 		turnAdjustment.Translate( turretRotPos.x, turretRotPos.y, turretRotPos.z );
+		DUMPMATRIX3D(&turnAdjustment);
+#if SIMULATE_VC6_OPTIMIZATION
+		turnAdjustment.In_Place_Pre_Rotate_Z2(turretAngle);
+#else
 		turnAdjustment.In_Place_Pre_Rotate_Z(turretAngle);
+#endif
+		DUMPMATRIX3D(&turnAdjustment);
 		turnAdjustment.Translate( -turretRotPos.x, -turretRotPos.y, -turretRotPos.z );
+		DUMPMATRIX3D(&turnAdjustment);
 
 #ifdef ALLOW_TEMPORARIES
 		attachTransform = turnAdjustment * pitchAdjustment * attachTransform;
 #else
 		Matrix3D tmp = attachTransform;
 		attachTransform.mul(turnAdjustment, pitchAdjustment);
+		DUMPMATRIX3D(&attachTransform);
+#if SIMULATE_VC6_OPTIMIZATION
+		postMul2(&attachTransform, tmp);
+#else
 		attachTransform.postMul(tmp);
 #endif
+#endif
 	}
+	DUMPMATRIX3D(&attachTransform);
 
 //#if defined(_DEBUG) || defined(_INTERNAL)
 //  Real muzzleHeight = attachTransform.Get_Z_Translation();

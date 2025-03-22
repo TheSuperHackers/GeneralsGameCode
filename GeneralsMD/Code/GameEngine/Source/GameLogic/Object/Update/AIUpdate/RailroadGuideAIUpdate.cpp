@@ -32,6 +32,7 @@
 #include "Common/Player.h"
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
+#include "Common/CRCDebug.h"
 
 #include "GameLogic/Locomotor.h"
 #include "GameLogic/Module/RailroadGuideAIUpdate.h"
@@ -1310,6 +1311,7 @@ void RailroadBehavior::updatePositionTrackDistance( PullInfo *pullerInfo, PullIn
 
 
 	Real relAngle = stdAngleDiff(desiredAngle, obj->getTransformMatrix()->Get_Z_Rotation());
+	DUMPREAL(relAngle);
 
 
 	Matrix3D mtx;
