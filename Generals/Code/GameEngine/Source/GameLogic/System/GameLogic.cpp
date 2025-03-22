@@ -423,7 +423,11 @@ void GameLogic::reset( void )
 
 	// set the hash to be rather large. We need to optimize this value later.
 	m_objHash.clear();
+#if USING_STLPORT
 	m_objHash.resize(OBJ_HASH_SIZE);
+#else
+	m_objHash.reserve(OBJ_HASH_SIZE);
+#endif
 	m_gamePaused = FALSE;
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;

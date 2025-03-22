@@ -431,7 +431,11 @@ void GameClient::reset( void )
 {
 	Drawable *draw, *nextDraw;
 	m_drawableHash.clear();
+#if USING_STLPORT
 	m_drawableHash.resize(DRAWABLE_HASH_SIZE);
+#else
+	m_drawableHash.reserve(DRAWABLE_HASH_SIZE);
+#endif
 	
 	// need to reset the in game UI to clear drawables before they are destroyed
 	TheInGameUI->reset();
