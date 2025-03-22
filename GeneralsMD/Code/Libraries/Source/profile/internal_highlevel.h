@@ -22,7 +22,7 @@
 // $Revision: #2 $
 // $DateTime: 2003/08/14 13:43:29 $
 //
-// ©2003 Electronic Arts
+// (c) 2003 Electronic Arts
 //
 // High level profiling (internal header)
 //////////////////////////////////////////////////////////////////////////////

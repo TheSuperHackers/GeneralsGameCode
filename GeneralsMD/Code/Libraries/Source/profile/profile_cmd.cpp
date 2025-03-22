@@ -22,7 +22,7 @@
 // $Revision: #2 $
 // $DateTime: 2003/08/12 15:05:00 $
 //
-// ©2003 Electronic Arts
+// (c) 2003 Electronic Arts
 //
 // Profile module command interface
 //////////////////////////////////////////////////////////////////////////////

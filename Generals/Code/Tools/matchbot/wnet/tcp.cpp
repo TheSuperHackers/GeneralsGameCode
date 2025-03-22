@@ -45,7 +45,7 @@ TCP tcp(CLIENT);
 
 tcp.Bind((uint32)0,(uint16)0); // let system pick local IP and a Port for you 
 tcp.Connect("tango",13);       // can connect by name or "10.1.1.10"
-                               // or the integerﬂin host byte order
+                               // or the integer in host byte order
 
 fdSet=tcp.Wait(10,0);          // wait for UP TO 10 sec and 0 microseconds
 if (FD_ISSET(tcp.GetFD(),fdSet))   // Is there something to read?

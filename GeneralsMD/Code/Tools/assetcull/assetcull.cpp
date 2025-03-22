@@ -22,7 +22,7 @@
 // $Revision: #1 $
 // $DateTime: 2003/07/28 14:54:04 $
 //
-// ©2003 Electronic Arts
+// (c) 2003 Electronic Arts
 //
 // simple recursive directory compare tool for asset culling
 //////////////////////////////////////////////////////////////////////////////

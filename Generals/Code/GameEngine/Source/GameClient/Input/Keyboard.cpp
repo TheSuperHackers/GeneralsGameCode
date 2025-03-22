@@ -447,8 +447,8 @@ void Keyboard::initKeyNames( void )
 
 			_set_keyname_(L'1',				L'!',				L'\0',	KEY_1  );
 			_set_keyname_(L'2',				L'\"',			L'\0',	KEY_2  );
-			_set_keyname_(L'3',				0x00A3,			L'\0',	KEY_3  );	//£
-			_set_keyname_(L'4',				L'$',				L'€',		KEY_4  );
+			_set_keyname_(L'3',				0x00A3,			L'\0',	KEY_3  );	//Â£ GBP SIGN
+			_set_keyname_(L'4',				L'$',				L'\x20ac',		KEY_4  ); // â‚¬ EUR SIGN
 			_set_keyname_(L'5',				L'%',				L'\0',	KEY_5  );
 			_set_keyname_(L'6',				L'^',				L'\0',	KEY_6  );
 			_set_keyname_(L'7',				L'&',				L'\0',	KEY_7  );
@@ -465,7 +465,7 @@ void Keyboard::initKeyNames( void )
 
 			_set_keyname_(L';',				L':',				L'\0',	KEY_SEMICOLON  );
 			_set_keyname_(L'\'',			L'@',				L'\0',	KEY_APOSTROPHE  );
-			_set_keyname_(L'`',				0x00AC,			0x00A6,	KEY_TICK  );	//¬¦
+			_set_keyname_(L'`',				0x00AC,			0x00A6,	KEY_TICK  );	//Â¬Â¦ (not, broken bar)
 			_set_keyname_(L'#',				L'~',				L'\0',	KEY_BACKSLASH  );
 
 			_set_keyname_(L'-',				L'_',				L'\0',	KEY_MINUS  );
@@ -496,7 +496,7 @@ void Keyboard::initKeyNames( void )
 			_set_keyname_(L'j',				L'J',				L'\0',	KEY_J  );
 			_set_keyname_(L'k',				L'K',				L'\0',	KEY_K  );
 			_set_keyname_(L'l',				L'L',				L'\0',	KEY_L  );
-			_set_keyname_(L'm',				L'M',				0x00B5,	KEY_M  );	//µ
+			_set_keyname_(L'm',				L'M',				0x00B5,	KEY_M  );	//Âµ (micro)
 			_set_keyname_(L'n',				L'N',				L'\0',	KEY_N  );
 			_set_keyname_(L'o',				L'O',				L'\0',	KEY_O  );
 			_set_keyname_(L'p',				L'P',				L'\0',	KEY_P  );
@@ -512,8 +512,8 @@ void Keyboard::initKeyNames( void )
 			_set_keyname_(L'y',				L'Y',				L'\0',	KEY_Z  );
 
 			_set_keyname_(L'1',				L'!',				L'\0',	KEY_1  );
-			_set_keyname_(L'2',				L'"',				0x00B2,	KEY_2  );	//²
-			_set_keyname_(L'3',				0x00A7,			0x00B3,	KEY_3  );	//§³
+			_set_keyname_(L'2',				L'"',				0x00B2,	KEY_2  );	//Â² (superscript 2)
+			_set_keyname_(L'3',				0x00A7,			0x00B3,	KEY_3  );	//Â§Â³ (section cubed)
 			_set_keyname_(L'4',				L'$',				L'\0',	KEY_4  );
 			_set_keyname_(L'5',				L'%',				L'\0',	KEY_5  );
 			_set_keyname_(L'6',				L'&',				L'\0',	KEY_6  );
@@ -526,16 +526,16 @@ void Keyboard::initKeyNames( void )
 			_set_keyname_(L'.',				L':',				L'\0',	KEY_PERIOD  );
 			_set_keyname_(L'-',				L'_',				L'\0',	KEY_SLASH  );
 
-			_set_keyname_(0x00FC,			0x00DC,			L'\0',	KEY_LBRACKET  );		//üÜ
+			_set_keyname_(0x00FC,			0x00DC,			L'\0',	KEY_LBRACKET  );		//Ã¼Ãœ (umlaut u)
 			_set_keyname_(L'+',				L'*',				L'~',		KEY_RBRACKET  );
 
-			_set_keyname_(0x00F6,			0x00D6,			L'\0',	KEY_SEMICOLON  );		//öÖ
-			_set_keyname_(0x00E4,			0x00C4,			L'\0',	KEY_APOSTROPHE  );	//äÄ
-			_set_keyname_(L'^',				0x00B0,			L'\0',	KEY_TICK  );				//°
+			_set_keyname_(0x00F6,			0x00D6,			L'\0',	KEY_SEMICOLON  );		//Ã¶Ã– (umlaut o)
+			_set_keyname_(0x00E4,			0x00C4,			L'\0',	KEY_APOSTROPHE  );	//Ã¤Ã„ (umlaut a)
+			_set_keyname_(L'^',				0x00B0,			L'\0',	KEY_TICK  );				//Â° (degree)
 			_set_keyname_(L'#',				L'\'',			L'\0',	KEY_BACKSLASH  );
 
-			_set_keyname_(0x00DF,			L'?',				L'\\',	KEY_MINUS  );				//ß
-			_set_keyname_(0x00B4,			L'`',				L'\0',	KEY_EQUAL  );				//´
+			_set_keyname_(0x00DF,			L'?',				L'\\',	KEY_MINUS  );				//ÃŸ (sharp s)
+			_set_keyname_(0x00B4,			L'`',				L'\0',	KEY_EQUAL  );				//Â´ (acute)
 
 			_set_keyname_(L'<',				L'>',				L'|',		KEY_102  );
 
@@ -578,29 +578,29 @@ void Keyboard::initKeyNames( void )
 			_set_keyname_(L'w',				L'W',				L'\0',	KEY_Z  );
 
 			_set_keyname_(L'&',				L'1',				L'\0',	KEY_1  );
-			_set_keyname_(0x00E9,			L'2',				L'~',		KEY_2  );	//é
+			_set_keyname_(0x00E9,			L'2',				L'~',		KEY_2  );	//Ã© (acute)
 			_set_keyname_(L'"',				L'3',				L'#',		KEY_3  );
 			_set_keyname_(L'\'',			L'4',				L'{',		KEY_4  );
 			_set_keyname_(L'(',				L'5',				L'[',		KEY_5  );
 			_set_keyname_(L'-',				L'6',				L'|',		KEY_6  );
-			_set_keyname_(0x00E8,			L'7',				L'`',		KEY_7  );	//è
+			_set_keyname_(0x00E8,			L'7',				L'`',		KEY_7  );	//Ã¨ (grave)
 			_set_keyname_(L'_',				L'8',				L'\\',	KEY_8  );
-			_set_keyname_(0x00E7,			L'9',				L'\0',	KEY_9  );	//ç
-			_set_keyname_(0x00E0,			L'0',				L'@',		KEY_0  );	//à
+			_set_keyname_(0x00E7,			L'9',				L'\0',	KEY_9  );	//Ã§ (cedilla)
+			_set_keyname_(0x00E0,			L'0',				L'@',		KEY_0  );	//Ã  (grave)
 
 			_set_keyname_(L';',				L'.',				L'\0',	KEY_COMMA  );
 			_set_keyname_(L':',				L'/',				L'\0',	KEY_PERIOD  );
-			_set_keyname_(L'!',				0x00A7,			L'\0',	KEY_SLASH  );				//§
+			_set_keyname_(L'!',				0x00A7,			L'\0',	KEY_SLASH  );				//Â§ (section)
 
-			_set_keyname_(L'^',				0x00A8,			L'\0',	KEY_LBRACKET  );		//¨
-			_set_keyname_(L'$',				0x00A3,			0x00A4,	KEY_RBRACKET  );		//£¤
+			_set_keyname_(L'^',				0x00A8,			L'\0',	KEY_LBRACKET  );		//Â¨ (diaeresis)
+			_set_keyname_(L'$',				0x00A3,			0x00A4,	KEY_RBRACKET  );		//Â£Â¤ (pound currency)
 
 			_set_keyname_(L'm',				L'M',				L'\0',	KEY_SEMICOLON  );
-			_set_keyname_(0x00F9,			L'%',				L'\0',	KEY_APOSTROPHE  );	//ù
-			_set_keyname_(0x00B2,			L'\0',			L'\0',	KEY_TICK  );				//²
-			_set_keyname_(L'*',				0x00B5,			L'\0',	KEY_BACKSLASH  );		//µ
+			_set_keyname_(0x00F9,			L'%',				L'\0',	KEY_APOSTROPHE  );	//Ã¹ (grave)
+			_set_keyname_(0x00B2,			L'\0',			L'\0',	KEY_TICK  );				//Â² (superscript 2)
+			_set_keyname_(L'*',				0x00B5,			L'\0',	KEY_BACKSLASH  );		//Âµ (micro)
 
-			_set_keyname_(L')',				0x00B0,			L']',		KEY_MINUS  );				//°
+			_set_keyname_(L')',				0x00B0,			L']',		KEY_MINUS  );				//Â° (degree)
 			_set_keyname_(L'=',				L'+',				L'}',		KEY_EQUAL  );
 
 			_set_keyname_(L'<',				L'>',				L'\0',	KEY_102  );
@@ -645,7 +645,7 @@ void Keyboard::initKeyNames( void )
 
 			_set_keyname_(L'1',				L'!',				L'\0',	KEY_1  );
 			_set_keyname_(L'2',				L'"',				L'\0',	KEY_2  );
-			_set_keyname_(L'3',				0x00A3,			L'\0',	KEY_3  );		//£
+			_set_keyname_(L'3',				0x00A3,			L'\0',	KEY_3  );		//Â£ GBP SIGN
 			_set_keyname_(L'4',				L'$',				L'\0',	KEY_4  );
 			_set_keyname_(L'5',				L'%',				L'\0',	KEY_5  );
 			_set_keyname_(L'6',				L'&',				L'\0',	KEY_6  );
@@ -658,16 +658,16 @@ void Keyboard::initKeyNames( void )
 			_set_keyname_(L'.',				L':',				L'\0',	KEY_PERIOD  );
 			_set_keyname_(L'-',				L'_',				L'\0',	KEY_SLASH  );
 
-			_set_keyname_(0x00E8,			0x00E9,			L'[',		KEY_LBRACKET  );		//èé
+			_set_keyname_(0x00E8,			0x00E9,			L'[',		KEY_LBRACKET  );		//Ã¨Ã© (grave acute)
 			_set_keyname_(L'+',				L'*',				L']',		KEY_RBRACKET  );
 
-			_set_keyname_(0x00F2,			0x00E7,			L'@',		KEY_SEMICOLON  );		//òç
-			_set_keyname_(0x00E0,			0x00B0,			L'#',		KEY_APOSTROPHE  );	//à°
+			_set_keyname_(0x00F2,			0x00E7,			L'@',		KEY_SEMICOLON  );		//Ã²Ã§ (grave cedilla)
+			_set_keyname_(0x00E0,			0x00B0,			L'#',		KEY_APOSTROPHE  );	//Ã Â° (grave degree)
 			_set_keyname_(L'\\',			L'|',				L'\0',	KEY_TICK  );
-			_set_keyname_(0x00F9,			0x00A7,			L'\0',	KEY_BACKSLASH  );		//ù§
+			_set_keyname_(0x00F9,			0x00A7,			L'\0',	KEY_BACKSLASH  );		//Ã¹Â§ (grave section)
 
 			_set_keyname_(L'\'',			L'?',				L'\0',	KEY_MINUS  );
-			_set_keyname_(0x00EC,			L'^',				L'\0',	KEY_EQUAL  );				//ì
+			_set_keyname_(0x00EC,			L'^',				L'\0',	KEY_EQUAL  );				//Ã¬ (grave)
 
 			_set_keyname_(L'<',				L'>',				L'\0',	KEY_102  );
 
