@@ -2820,7 +2820,7 @@ void AIGroup::setAttitude( AttitudeType tude )
  */
 AttitudeType AIGroup::getAttitude( void ) const
 {
-	return AI_PASSIVE;
+	return ATTITUDE_PASSIVE;
 }
 
 void AIGroup::setMineClearingDetail( Bool set )

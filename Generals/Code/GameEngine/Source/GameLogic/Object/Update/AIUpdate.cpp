@@ -253,7 +253,7 @@ AIUpdateInterface::AIUpdateInterface( Thing *thing, const ModuleData* moduleData
 	for (i = 0; i < MAX_TURRETS; i++)
 		m_turretAI[i] = NULL;
 	m_turretSyncFlag = TURRET_INVALID;
-	m_attitude = AI_NORMAL;
+	m_attitude = ATTITUDE_NORMAL;
 	m_nextMoodCheckTime = 0;
 #ifdef ALLOW_DEMORALIZE
 	m_demoralizedFramesLeft = 0;
@@ -4103,11 +4103,11 @@ UnsignedInt AIUpdateInterface::getMoodMatrixValue( void ) const
 		returnVal |= MM_Controller_AI;
 		switch (getAttitude())
 		{
-			case AI_SLEEP:			returnVal |= MM_Mood_Sleep; break;
-			case AI_PASSIVE:		returnVal |= MM_Mood_Passive; break;
-			case AI_NORMAL:			returnVal |= MM_Mood_Normal; break;
-			case AI_ALERT:			returnVal |= MM_Mood_Alert; break;
-			case AI_AGGRESSIVE:	returnVal |= MM_Mood_Aggressive; break;
+			case ATTITUDE_SLEEP:			returnVal |= MM_Mood_Sleep; break;
+			case ATTITUDE_PASSIVE:		returnVal |= MM_Mood_Passive; break;
+			case ATTITUDE_NORMAL:			returnVal |= MM_Mood_Normal; break;
+			case ATTITUDE_ALERT:			returnVal |= MM_Mood_Alert; break;
+			case ATTITUDE_AGGRESSIVE:	returnVal |= MM_Mood_Aggressive; break;
 			default: 
 				DEBUG_CRASH(("Unknown mood '%d' in getMoodMatrixValue. (Team '%s'). Using normal. (jkmcd)", getAttitude(), getObject()->getTeam()->getName().str() ));
 				returnVal |= MM_Mood_Normal;
@@ -4308,7 +4308,7 @@ Object* AIUpdateInterface::getNextMoodTarget( Bool calledByAI, Bool calledDuring
 	if (calledByAI && obj->getTeam()->getPrototype()->getTemplateInfo()->m_attackCommonTarget) 
 	{
 		teamVictim = obj->getTeam()->getTeamTargetObject();
-		if (teamVictim && getAttitude()>=AI_NORMAL) 
+		if (teamVictim && getAttitude()>=ATTITUDE_NORMAL) 
 			return teamVictim;
 	}
 

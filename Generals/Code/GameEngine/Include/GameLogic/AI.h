@@ -304,8 +304,17 @@ class Waypoint;
 class Team;
 class Weapon;
 
+// TheSuperHackers @compile xezon 22/03/2025 Renames AI_PASSIVE to not conflict with macro in ws2def.h
+
 // Note - written out in save/load xfer and .map files, don't change these numbers.  
-enum AttitudeType { AI_SLEEP = -2, AI_PASSIVE=-1, AI_NORMAL=0, AI_ALERT=1, AI_AGGRESSIVE=2, AI_INVALID=3 };		///< AI "attitude" behavior modifiers
+enum AttitudeType {
+	ATTITUDE_SLEEP = -2,
+	ATTITUDE_PASSIVE=-1,
+	ATTITUDE_NORMAL=0,
+	ATTITUDE_ALERT=1,
+	ATTITUDE_AGGRESSIVE=2,
+	ATTITUDE_INVALID=3
+};		///< AI "attitude" behavior modifiers
 
 enum CommandSourceType;
 
@@ -380,7 +389,7 @@ enum AICommandType	// Stored in save file, do not reorder/renumber.  jba.
 	AICMD_FOLLOW_WAYPOINT_PATH_AS_TEAM_EXACT,
 	AICMD_MOVE_AWAY_FROM_UNIT,
 	AICMD_FOLLOW_PATH_APPEND,
-	AICMD_MOVE_TO_POSITION_EVEN_IF_SLEEPING,	// same as AICMD_MOVE_TO_POSITION, but even AI_SLEEP units respond.
+	AICMD_MOVE_TO_POSITION_EVEN_IF_SLEEPING,	// same as AICMD_MOVE_TO_POSITION, but even ATTITUDE_SLEEP units respond.
 	AICMD_GUARD_TUNNEL_NETWORK,
 
 	AICMD_NUM_COMMANDS	// keep last
