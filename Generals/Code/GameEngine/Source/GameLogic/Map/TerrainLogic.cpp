@@ -1183,7 +1183,7 @@ void TerrainLogic::enableWaterGrid( Bool enable )
 			//
 			AsciiString strippedMapNameOnly;
 			AsciiString strippedCompareMapNameOnly;
-			char *c;
+			const char *c;
 
 			// create stripped map name
 			c = strrchr( TheGlobalData->m_mapName.str(), '\\' );

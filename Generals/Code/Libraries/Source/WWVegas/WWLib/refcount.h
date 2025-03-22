@@ -55,7 +55,7 @@ class RefCountClass;
 
 struct ActiveRefStruct
 {
-	char *					File;
+	const char *	File;
 	int						Line;
 };
 
@@ -235,7 +235,7 @@ public:
 	/*
 	** Updates the owner file/line for the given ref obj in the active ref list
 	*/
-	static RefCountClass *			Set_Ref_Owner(RefCountClass *obj,char * file,int line);
+	static RefCountClass *			Set_Ref_Owner(RefCountClass *obj,const char * file,int line);
 
 	/*
 	** Remove the ref obj from the active ref list

@@ -2742,7 +2742,7 @@ ChipsetType W3DShaderManager::getChipset( void )
 //=============================================================================
 /** Loads and creates a D3D pixel or vertex shader.*/
 //=============================================================================
-HRESULT W3DShaderManager::LoadAndCreateD3DShader(char* strFilePath, const DWORD* pDeclaration, DWORD Usage, Bool ShaderType, DWORD* pHandle)
+HRESULT W3DShaderManager::LoadAndCreateD3DShader(const char* strFilePath, const DWORD* pDeclaration, DWORD Usage, Bool ShaderType, DWORD* pHandle)
 {
 	try
 	{

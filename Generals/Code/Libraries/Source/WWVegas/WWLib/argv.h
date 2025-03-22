@@ -67,7 +67,7 @@ class ArgvClass
 		// As passed into WinMain.
 		// Should be called before any objects are created.
 		// This can be called multible times.
-		static int Init(char *lpCmdLine, char *fileprefix = "@");
+		static int Init(char *lpCmdLine, const char *fileprefix = "@");
 		static bool Load_File(const char *fname);
 		static void Free();
 

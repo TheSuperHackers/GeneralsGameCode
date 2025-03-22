@@ -135,7 +135,7 @@ class W3DProjectedShadow	: public Shadow
 		W3DProjectedShadow(void);
 		~W3DProjectedShadow(void);
 		void setRenderObject( RenderObjClass	*robj) {m_robj=robj;}
-		void setObjPosHistory(Vector3 &pos)	{m_lastObjPosition=pos;}	///<position of object when projection matrix was updated.
+		void setObjPosHistory(const Vector3 &pos)	{m_lastObjPosition=pos;}	///<position of object when projection matrix was updated.
 		void setTexture(Int lightIndex,W3DShadowTexture *texture)	{m_shadowTexture[lightIndex]=texture;}	///<textur with light's shadow
 		void update(void);	///<updates the texture and/or projection parameters when the object or light moves.
 		void init(void);		///<allocates local member variables used for projection

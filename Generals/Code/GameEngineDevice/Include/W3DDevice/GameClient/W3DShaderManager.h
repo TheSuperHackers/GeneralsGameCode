@@ -85,7 +85,7 @@ public:
 	///Return last activated shader.
 	static inline ShaderTypes getCurrentShader(void) {return m_currentShader;}
 	/// Loads a .vso file and creates a vertex shader for it
-	static HRESULT LoadAndCreateD3DShader(char* strFilePath, const DWORD* pDeclaration, DWORD Usage, Bool ShaderType, DWORD* pHandle);
+	static HRESULT LoadAndCreateD3DShader(const char* strFilePath, const DWORD* pDeclaration, DWORD Usage, Bool ShaderType, DWORD* pHandle);
 
 	static Bool testMinimumRequirements(ChipsetType *videoChipType, CpuType *cpuType, Int *cpuFreq, Int *numRAM, Real *intBenchIndex, Real *floatBenchIndex, Real *memBenchIndex);
 	static StaticGameLODLevel getGPUPerformanceIndex(void);

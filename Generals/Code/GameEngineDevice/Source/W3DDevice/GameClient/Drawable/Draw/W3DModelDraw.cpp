@@ -272,7 +272,7 @@ inline Bool isCommonMaintainFrameFlagSet(Int a, Int b)
 // Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
 // existing values!
 //
-static char *TerrainDecalTextureName[TERRAIN_DECAL_MAX-1]=
+static const char *TerrainDecalTextureName[TERRAIN_DECAL_MAX-1]=
 {
 #ifdef ALLOW_DEMORALIZE
 	"DM_RING",//demoralized

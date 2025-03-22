@@ -308,7 +308,7 @@ HINSTANCE ApplicationHInstance;				///< main application instance
 const char *g_strFile = "Autorun.str";
 const char *g_csfFile = "Autorun.csf";
 
-char *gAppPrefix = "ar_"; // prefix to the debug log.
+const char *gAppPrefix = "ar_"; // prefix to the debug log.
 
 int			FlickerPositions[ NUM_FLICKER_POSITIONS ][2];
 

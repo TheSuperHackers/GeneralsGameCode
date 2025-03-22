@@ -482,7 +482,7 @@ class BumpEnvTextureMapperClass : public LinearOffsetTextureMapperClass
 	W3DMPO_GLUE(BumpEnvTextureMapperClass)
 public:
 	BumpEnvTextureMapperClass(float rad_per_sec, float scale_factor, const Vector2 & offset_per_sec, const Vector2 &scale, unsigned int stage);
-	BumpEnvTextureMapperClass(INIClass &ini, char *section, unsigned int stage);
+	BumpEnvTextureMapperClass(INIClass &ini, const char *section, unsigned int stage);
 	BumpEnvTextureMapperClass(const BumpEnvTextureMapperClass & src);
 
 	virtual int	Mapper_ID(void) const { return MAPPER_ID_BUMPENV;}

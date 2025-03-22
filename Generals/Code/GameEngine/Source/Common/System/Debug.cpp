@@ -64,7 +64,7 @@
 extern bool DX8Wrapper_IsWindowed;
 extern HWND ApplicationHWnd;
 
-extern char *gAppPrefix; /// So WB can have a different log file name.
+extern const char *gAppPrefix; /// So WB can have a different log file name.
 
 #ifdef _INTERNAL
 // this should ALWAYS be present

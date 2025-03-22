@@ -54,7 +54,7 @@
 #include "WindowProc.h"
 
 // DEFINES ////////////////////////////////////////////////////////////////////
-char *gAppPrefix = "ip_";	// So IP can have a different debug log file name if we need it.
+const char *gAppPrefix = "ip_";	// So IP can have a different debug log file name if we need it.
 
 // PRIVATE TYPES //////////////////////////////////////////////////////////////
 

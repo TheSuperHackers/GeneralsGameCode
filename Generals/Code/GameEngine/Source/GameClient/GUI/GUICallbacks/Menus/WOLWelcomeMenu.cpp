@@ -75,7 +75,7 @@
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 static Bool isShuttingDown = FALSE;
 static Bool buttonPushed = FALSE;
-static char *nextScreen = NULL;
+static const char *nextScreen = NULL;
 
 // window ids ------------------------------------------------------------------------------
 static NameKeyType parentWOLWelcomeID = NAMEKEY_INVALID;

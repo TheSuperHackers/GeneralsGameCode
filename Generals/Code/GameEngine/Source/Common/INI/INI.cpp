@@ -1502,7 +1502,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 				for (int ptIdx = 0; ptIdx < parseTableList.getCount(); ++ptIdx)
 				{
 					int offset = 0;
-					void* userData = 0;
+					const void* userData = 0;
 					INIFieldParseProc parse = findFieldParse(parseTableList.getNthFieldParse(ptIdx), field, offset, userData);
 					if (parse)
 					{

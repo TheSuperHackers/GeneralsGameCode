@@ -389,7 +389,7 @@ struct Coord3D
 						z == r.z);
 	}
 
-	Bool operator==( const Coord3D &r )
+	Bool operator==( const Coord3D &r ) const
 	{
 		return (x == r.x &&
 						y == r.y &&

@@ -104,7 +104,7 @@ enum UpgradeType
 	NUM_UPGRADE_TYPES,		// keep this last
 };
 #ifdef DEFINE_UPGRADE_TYPE_NAMES
-static Char *UpgradeTypeNames[] = 
+static const Char *UpgradeTypeNames[] = 
 {
 	"PLAYER",
 	"OBJECT",
