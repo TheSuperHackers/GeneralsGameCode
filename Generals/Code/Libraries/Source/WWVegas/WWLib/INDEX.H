@@ -695,7 +695,7 @@ template<class INDEX, class T>
 #ifdef __BORLANDC__
 NodeElement const * IndexClass<INDEX, T>::Search_For_Node(INDEX const & id) const
 #else
-IndexClass<INDEX, T>::NodeElement const * IndexClass<INDEX, T>::Search_For_Node(INDEX const & id) const
+typename IndexClass<INDEX, T>::NodeElement const * IndexClass<INDEX, T>::Search_For_Node(INDEX const & id) const
 #endif
 {
 	/*

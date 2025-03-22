@@ -300,6 +300,27 @@ void RawFileClass::Reset(void)
 }
 
 /***********************************************************************************************
+ * RawFileClass::File_Name -- Returns with the filename associate with the file object.        *
+ *                                                                                             *
+ *    Use this routine to determine what filename is associated with this file object. If no   *
+ *    filename has yet been assigned, then this routing will return NULL.                      *
+ *                                                                                             *
+ * INPUT:   none                                                                               *
+ *                                                                                             *
+ * OUTPUT:  Returns with a pointer to the file name associated with this file object or NULL   *
+ *          if one doesn't exist.                                                              *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   10/18/1994 JLB : Created.                                                                 *
+ *=============================================================================================*/
+char const * RawFileClass::File_Name(void) const
+{
+	return(Filename);
+}
+
+/***********************************************************************************************
  * RawFileClass::Set_Name -- Manually sets the name for a file object.                         *
  *                                                                                             *
  *    This routine will set the name for the file object to the name specified. This name is   *

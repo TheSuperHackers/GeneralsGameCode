@@ -333,6 +333,14 @@ inline Real maxReal(Real a, Real b)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
+static void hLineAddLooker(Int x1, Int x2, Int y, void *playerIndexVoid);
+static void hLineRemoveLooker(Int x1, Int x2, Int y, void *playerIndexVoid);
+static void hLineAddShrouder(Int x1, Int x2, Int y, void *playerIndexVoid);
+static void hLineRemoveShrouder(Int x1, Int x2, Int y, void *playerIndexVoid);
+static void hLineAddThreat(Int x1, Int x2, Int y, void *threatValueParms);
+static void hLineRemoveThreat(Int x1, Int x2, Int y, void *threatValueParms);
+static void hLineAddValue(Int x1, Int x2, Int y, void *threatValueParms);
+static void hLineRemoveValue(Int x1, Int x2, Int y, void *threatValueParms);
 
 static void projectCoord3D(Coord3D *coord, const Coord3D *unitDir, Real dist);
 static void flipCoord3D(Coord3D *coord);
