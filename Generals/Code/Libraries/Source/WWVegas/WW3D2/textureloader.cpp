@@ -91,7 +91,7 @@ static class LoaderThreadClass : public ThreadClass
 	static void Add_Task_To_Finished_List(TextureLoadTaskClass* task);
 
 public:
-	LoaderThreadClass::LoaderThreadClass() : ThreadClass() {}
+	LoaderThreadClass() : ThreadClass() {}
 
 	void Thread_Function();
 

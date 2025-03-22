@@ -273,8 +273,8 @@ class W3DShadowGeometryMesh
 	friend class W3DVolumetricShadow;
 	
 public:
-	W3DShadowGeometryMesh::W3DShadowGeometryMesh( void );
-	W3DShadowGeometryMesh::~W3DShadowGeometryMesh( void );
+	W3DShadowGeometryMesh( void );
+	~W3DShadowGeometryMesh( void );
 
 	/// @todo: Cache/Store face normals someplace so they are not recomputed when lights move.
 	Vector3 *GetPolygonNormal (long dwPolyNormId, Vector3 *pvNorm)

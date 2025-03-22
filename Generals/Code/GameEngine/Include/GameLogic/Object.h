@@ -435,7 +435,7 @@ public:
 	void setCommandSetStringOverride( AsciiString newCommandSetString ) { m_commandSetStringOverride = newCommandSetString; }
 
  	/// People are faking their commandsets, and, Suprise!, they are authoritative.  Challenge everything.
- 	Bool Object::canProduceUpgrade( const UpgradeTemplate *upgrade );
+ 	Bool canProduceUpgrade( const UpgradeTemplate *upgrade );
 
 	// Weapons & Damage -------------------------------------------------------------------------------------------------
 	void reloadAllAmmo(Bool now);

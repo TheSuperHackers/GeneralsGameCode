@@ -257,8 +257,8 @@ protected:
 	void cleanupJbaWaterShader(void);
 
 	//Methods used for GeForce3 specific water
-	HRESULT WaterRenderObjClass::generateIndexBuffer(int sizeX, int sizeY);	///<Generate static index buufer
-	HRESULT WaterRenderObjClass::generateVertexBuffer( Int sizeX, Int sizeY, Int vertexSize, Bool doFill);///<Generate static vertex buffer
+	HRESULT generateIndexBuffer(int sizeX, int sizeY);	///<Generate static index buufer
+	HRESULT generateVertexBuffer( Int sizeX, Int sizeY, Int vertexSize, Bool doFill);///<Generate static vertex buffer
 
 	// snapshot methods for save/load
 	virtual void crc( Xfer *xfer );
@@ -267,7 +267,7 @@ protected:
 
 };
 
-//Public inline function declerations
+//Public inline function declarations
 inline Bool WaterRenderObjClass::worldToGridSpace(Real worldX, Real worldY, Real &gridX, Real &gridY)
 {
 	Real dx,dy;
