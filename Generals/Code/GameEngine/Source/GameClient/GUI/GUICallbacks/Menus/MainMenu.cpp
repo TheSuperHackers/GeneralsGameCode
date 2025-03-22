@@ -434,7 +434,8 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	startGame = FALSE;
 	dropDown = DROPDOWN_NONE;
 	pendingDropDown = DROPDOWN_NONE;
-	for(Int i = 0; i < DROPDOWN_COUNT; ++i)
+	Int i = 0;
+	for(; i < DROPDOWN_COUNT; ++i)
 		dropDownWindows[i] = NULL;
 
 	// get ids for our windows

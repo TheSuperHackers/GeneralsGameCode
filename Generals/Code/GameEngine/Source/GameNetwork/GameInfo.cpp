@@ -755,7 +755,8 @@ void GameInfo::adjustSlotsForMap()
 		Int numPlayerSlots = 0;
 
 		// first get the number of occupied slots.
-		for (Int i = 0; i < MAX_SLOTS; ++i)
+		Int i = 0;
+		for (; i < MAX_SLOTS; ++i)
 		{
 			GameSlot *tempSlot = getSlot(i);
 			if (tempSlot->isOccupied())

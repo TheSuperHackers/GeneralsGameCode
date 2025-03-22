@@ -723,7 +723,8 @@ void positionStartSpots( AsciiString mapName, GameWindow *buttonMapStartPosition
 		positionAdditionalImages(&mmd, mapWindow, TRUE);
 
 		AsciiString waypointName;				
-		for(Int i = 0; i < mmd.m_numPlayers && mmd.m_isMultiplayer; ++i )
+		Int i = 0;
+		for(; i < mmd.m_numPlayers && mmd.m_isMultiplayer; ++i )
 		{
 			waypointName.format("Player_%d_Start", i+1); // start pos waypoints are 1-based
 			WaypointMap::iterator wmIt = mmd.m_waypoints.find(waypointName);
@@ -784,7 +785,8 @@ void updateMapStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[
 	}
 	MapMetaData mmd = it->second;
 
-	for(Int i = 0; i < MAX_SLOTS; ++i)
+	Int i = 0;
+	for(; i < MAX_SLOTS; ++i)
 	{
 		GadgetButtonSetText(buttonMapStartPositions[i], UnicodeString::TheEmptyString);
 		if (!onLoadScreen)
@@ -999,7 +1001,8 @@ void InitSkirmishGameGadgets( void )
 
 	windowMap->winSetTooltipFunc(MapSelectorTooltip);
 
-	for (Int i = 0; i < MAX_SLOTS; i++)
+	Int i = 0;
+	for (; i < MAX_SLOTS; i++)
 	{
 		AsciiString tmpString;
 		tmpString.format("SkirmishGameOptionsMenu.wnd:ComboBoxPlayer%d", i);

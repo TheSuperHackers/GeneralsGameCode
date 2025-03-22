@@ -5219,7 +5219,8 @@ NetCommandMsg * NetPacket::readGameMessage(UnsignedByte *data, Int &i)
 	// Get the types and the number of arguments of those types.
 	Int totalArgCount = 0;
 	GameMessageParser *parser = newInstance(GameMessageParser)();
-	for (Int j = 0; j < numArgTypes; ++j) {
+	Int j = 0;
+	for (; j < numArgTypes; ++j) {
 		UnsignedByte type = (UnsignedByte)ARGUMENTDATATYPE_UNKNOWN;
 		memcpy(&type, data + i, sizeof(type));
 		i += sizeof(type);

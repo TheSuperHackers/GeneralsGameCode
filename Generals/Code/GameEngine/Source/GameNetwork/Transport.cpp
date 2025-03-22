@@ -131,7 +131,8 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 	}
 
 	// ------- Clear buffers --------
-	for (int i=0; i<MAX_MESSAGES; ++i)
+	int i=0;
+	for (; i<MAX_MESSAGES; ++i)
 	{
 		m_outBuffer[i].length = 0;
 		m_inBuffer[i].length = 0;

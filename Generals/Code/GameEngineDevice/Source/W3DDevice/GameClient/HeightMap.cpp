@@ -2446,7 +2446,8 @@ void HeightMapRenderObjClass::updateShorelineTiles(Int minX, Int minY, Int maxX,
 	//over the same tile and require an extra render pass.
 
 	//First remove any existing extra blend tiles within this partial region
-	for (Int j=0; j<m_numShoreLineTiles; j++)
+	Int j=0;
+	for (; j<m_numShoreLineTiles; j++)
 	{	Int x = m_shoreLineTilePositions[j].m_xy & 0xffff;
 		Int y = m_shoreLineTilePositions[j].m_xy >> 16;
 		if (x >= minX && x < maxX &&

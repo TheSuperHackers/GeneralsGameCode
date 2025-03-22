@@ -559,7 +559,8 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 	/*
 	** Match the exception type with the error string and print it out
 	*/
-	for ( int i=0 ; _codes[i] != 0xffffffff ; i++ )
+	int i=0;
+	for ( ; _codes[i] != 0xffffffff ; i++ )
 	{
 		if ( _codes[i] == e_info->ExceptionRecord->ExceptionCode )
 		{

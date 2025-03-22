@@ -556,7 +556,8 @@ void SortingRendererClass::Flush_Sorting_Pool()
 			D3DXMATRIX d3d_mtx=(D3DXMATRIX&)state->sorting_state.world*(D3DXMATRIX&)state->sorting_state.view;
 			D3DXMatrixTranspose(&d3d_mtx,&d3d_mtx);
 			const Matrix4& mtx=(const Matrix4&)d3d_mtx;
-			for (unsigned i=0;i<state->vertex_count;++i,++src_verts) {
+			unsigned i=0;
+			for (;i<state->vertex_count;++i,++src_verts) {
 				vertex_z_array[i] = (mtx[2][0] * src_verts->x + mtx[2][1] * src_verts->y + mtx[2][2] * src_verts->z + mtx[2][3]);
 				*dest_verts++=*src_verts;
 			}
@@ -599,7 +600,8 @@ void SortingRendererClass::Flush_Sorting_Pool()
 	}
 
 	TempIndexStruct* tis=Get_Temp_Index_Array(overlapping_polygon_count);
-	for (unsigned a=0;a<overlapping_polygon_count;++a) {
+	unsigned a=0;
+	for (;a<overlapping_polygon_count;++a) {
 		tis[a]=TempIndexStruct(polygon_idx_array[a],node_id_array[a]);
 	}
 	Sort<TempIndexStruct,float>(tis,polygon_z_array,overlapping_polygon_count);

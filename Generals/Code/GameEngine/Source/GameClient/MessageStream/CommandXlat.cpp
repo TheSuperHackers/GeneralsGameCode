@@ -3624,7 +3624,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_BW_VIEW:
 		{   //We're not testing BW mode anymore, so use this message for toggling wireframe mode.
-			static mode=0;
+			static Int mode=0;
 			if (mode == 0)
 			{	//First turn on wireframe
 				TheTacticalView->set3DWireFrameMode(TRUE);

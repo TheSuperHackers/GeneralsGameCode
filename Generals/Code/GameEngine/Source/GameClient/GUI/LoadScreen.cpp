@@ -400,7 +400,8 @@ void SinglePlayerLoadScreen::init( GameInfo *game )
 	
 	Mission *mission = TheCampaignManager->getCurrentMission();
 	AsciiString lineName;
-	for(Int i = 0; i < MAX_OBJECTIVE_LINES; ++i)
+	Int i = 0;
+	for(; i < MAX_OBJECTIVE_LINES; ++i)
 	{
 		lineName.format("SinglePlayerLoadScreen.wnd:StaticTextLine%d",i);
 		m_objectiveLines[i] = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( lineName ));
@@ -806,7 +807,8 @@ void MultiPlayerLoadScreen::init( GameInfo *game )
 	//DEBUG_LOG(("NumPlayers %d\n", TheNetwork->getNumPlayers()));
 
 	GameWindow *teamWin[MAX_SLOTS];
-	for (Int i = 0; i < MAX_SLOTS; ++i)
+	Int i = 0;
+	for (; i < MAX_SLOTS; ++i)
 	{
 		teamWin[i] = NULL;
 	}
@@ -1018,7 +1020,8 @@ GameSlot *lSlot = game->getSlot(game->getLocalSlotNum());
 		m_loadScreen->winSetEnabledImage(0, loadScreenImage);
 
 	GameWindow *teamWin[MAX_SLOTS];
-	for (Int i = 0; i < MAX_SLOTS; ++i)
+	Int i = 0;
+	for (; i < MAX_SLOTS; ++i)
 	{
 		teamWin[i] = NULL;
 	}

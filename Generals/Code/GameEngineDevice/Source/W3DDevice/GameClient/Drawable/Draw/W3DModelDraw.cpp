@@ -1048,7 +1048,8 @@ void W3DModelDrawModuleData::validateStuffForTimeAndWeather(const Drawable* draw
 
 	m_validated |= mode;
 
-	for (ModelConditionVector::iterator c_it = m_conditionStates.begin(); c_it != m_conditionStates.end(); ++c_it)
+	ModelConditionVector::iterator c_it = m_conditionStates.begin();
+	for (; c_it != m_conditionStates.end(); ++c_it)
 	{
 		if (!c_it->matchesMode(false, false) && !c_it->matchesMode(night, snowy))
 			continue;
@@ -3389,7 +3390,8 @@ Int W3DModelDraw::getPristineBonePositionsForConditionState(
 	Int posCount = 0;
 	Int endIndex = (startIndex == 0) ? 0 : 99;	
 	char buffer[256];
-	for (Int i = startIndex; i <= endIndex; ++i)
+	Int i = startIndex;
+	for (; i <= endIndex; ++i)
 	{
 		if (i == 0)
 			strcpy(buffer, boneNamePrefix);
@@ -3503,7 +3505,8 @@ Int W3DModelDraw::getCurrentBonePositions(
 	Int posCount = 0;
 	Int endIndex = (startIndex == 0) ? 0 : 99;	
 	char buffer[256];
-	for (Int i = startIndex; i <= endIndex; ++i)
+	Int i = startIndex;
+	for (; i <= endIndex; ++i)
 	{
 		if (i == 0)
 			strcpy(buffer, boneNamePrefix);
@@ -4190,7 +4193,8 @@ void W3DModelDrawModuleData::xfer( Xfer *x )
 				x->xferInt(&(bone->boneIndex));
 				x->xferUser(&(bone->mtx), sizeof(Matrix3D));
 			}
-			for (Int i=0; i<MAX_TURRETS; ++i)
+			Int i=0;
+			for (; i<MAX_TURRETS; ++i)
 			{
 				x->xferInt(&(info->m_turrets[i].m_turretAngleBone));
 				x->xferInt(&(info->m_turrets[i].m_turretPitchBone));

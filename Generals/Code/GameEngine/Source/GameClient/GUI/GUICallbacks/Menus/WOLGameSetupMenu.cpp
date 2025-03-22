@@ -776,7 +776,8 @@ static void StartPressed(void)
 		mapDisplayName.format(L"%hs", myGame->getMap().str());
 		willTransfer = WouldMapTransfer(myGame->getMap());
 	}
-	for( int i = 0; i < MAX_SLOTS; i++ )
+	int i = 0;
+	for( ; i < MAX_SLOTS; i++ )
 	{
 		if ((myGame->getSlot(i)->isAccepted() == FALSE) && (myGame->getSlot(i)->isHuman() == TRUE))
 		{

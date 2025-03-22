@@ -557,7 +557,8 @@ static void updateLadderDetails( Int selID, GameWindow *staticTextLadderName, Ga
 
 	// factions
 	AsciiStringList validFactions = info->validFactions;
-	for (AsciiStringListIterator it = validFactions.begin(); it != validFactions.end(); ++it)
+	AsciiStringListIterator it = validFactions.begin();
+	for (; it != validFactions.end(); ++it)
 	{
 		AsciiString marker;
 		marker.format("INI:Faction%s", it->str());

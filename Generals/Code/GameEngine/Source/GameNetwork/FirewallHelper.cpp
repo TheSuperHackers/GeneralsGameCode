@@ -102,7 +102,8 @@ FirewallHelperClass::FirewallHelperClass(void)
 	m_lastBehavior = FIREWALL_TYPE_UNKNOWN;
 	m_sourcePortAllocationDelta = 0;
 	m_lastSourcePortAllocationDelta = 0;
-	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
+	Int i = 0;
+	for (; i < MAX_SPARE_SOCKETS; ++i) {
 		m_spareSockets[i].port = 0;
 		m_messages[i].length = 0;
 		m_mangledPorts[i] = 0;
@@ -446,7 +447,8 @@ UnsignedShort FirewallHelperClass::getManglerResponse(UnsignedShort packetID, In
 
 	sockaddr_in addr;
 
-	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
+	Int i = 0;
+	for (; i < MAX_SPARE_SOCKETS; ++i) {
 		if (m_spareSockets[i].udp != NULL) {
 			ManglerMessage *message = findEmptyMessage();
 			if (message == NULL) {
@@ -910,7 +912,8 @@ Bool FirewallHelperClass::detectionTest3Update() {
 		** We should use a non-linear set of source ports so we can detect the NAT32 relative offset
 		** case.
 		*/
-		for (Int i=0 ; i<NUM_TEST_PORTS ; i++) {
+		Int i=0;
+		for (; i<NUM_TEST_PORTS ; i++) {
 			m_sparePorts[i] = getNextTemporarySourcePort(i);
 			if (!openSpareSocket(m_sparePorts[i])) {
 
@@ -957,7 +960,8 @@ Bool FirewallHelperClass::detectionTest3Update() {
 }
 
 Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
-	for (Int i = 0; i < NUM_TEST_PORTS; ++i) {
+	Int i = 0;
+	for (; i < NUM_TEST_PORTS; ++i) {
 		if (m_mangledPorts[i] == 0) {
 			m_mangledPorts[i] = getManglerResponse(m_packetID + i);
 			if (m_mangledPorts[i] != 0) {
@@ -1526,7 +1530,8 @@ Int FirewallHelperClass::getFirewallRetries(FirewallBehaviorType behavior)
  *  returns TRUE if successful, FALSE otherwise.
  */
 Bool FirewallHelperClass::openSpareSocket(UnsignedShort port) {
-	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
+	Int i = 0;
+	for (; i < MAX_SPARE_SOCKETS; ++i) {
 		if (m_spareSockets[i].port == 0) {
 			break;
 		}

@@ -319,7 +319,8 @@ Particle::Particle( ParticleSystem *system, const ParticleInfo *info )
 	m_sizeRateDamping = info->m_sizeRateDamping;
 
 	// set up alpha
-	for( int i=0; i<MAX_KEYFRAMES; i++ )
+	int i=0;
+	for( ; i<MAX_KEYFRAMES; i++ )
 		m_alphaKey[i] = info->m_alphaKey[i];
 
 	m_alpha = m_alphaKey[0].value;
@@ -1183,7 +1184,8 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 	m_sizeRate = sysTemplate->m_sizeRate;
 	m_sizeRateDamping = sysTemplate->m_sizeRateDamping;
 
-	for( int i=0; i<MAX_KEYFRAMES; i++ )
+	int i=0;
+	for( ; i<MAX_KEYFRAMES; i++ )
 		m_alphaKey[i] = sysTemplate->m_alphaKey[i];
 
 	for( i=0; i<MAX_KEYFRAMES; i++ )
@@ -1917,7 +1919,8 @@ const ParticleInfo *ParticleSystem::generateParticleInfo( Int particleNum, Int p
 	if( m_accumulatedSizeBonus )
 		m_accumulatedSizeBonus = min( m_accumulatedSizeBonus, (float)MAX_SIZE_BONUS );
 
-	for( int i=0; i<MAX_KEYFRAMES; i++ )
+	int i=0;
+	for( ; i<MAX_KEYFRAMES; i++ )
 	{
 		info.m_alphaKey[i].value = m_alphaKey[i].var.getValue();
 		info.m_alphaKey[i].frame = m_alphaKey[i].frame;
@@ -2417,7 +2420,8 @@ ParticleInfo ParticleSystem::mergeRelatedParticleSystems( ParticleSystem *master
 	mergeInfo.m_angularRateZ = info->m_angularRateZ;
 	mergeInfo.m_angularDamping = info->m_angularDamping;
 
-	for( int i=0; i<MAX_KEYFRAMES; i++ )
+	int i=0;
+	for( ; i<MAX_KEYFRAMES; i++ )
 		mergeInfo.m_alphaKey[i] = info->m_alphaKey[i];
 
 	for( i=0; i<MAX_KEYFRAMES; i++ )

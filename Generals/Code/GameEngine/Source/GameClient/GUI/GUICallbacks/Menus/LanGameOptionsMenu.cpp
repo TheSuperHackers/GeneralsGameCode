@@ -196,7 +196,8 @@ static void playerTooltip(GameWindow *window,
 													UnsignedInt mouse)
 {
 	Int idx = -1;
-	for (Int i=0; i<MAX_SLOTS; ++i)
+	Int i=0;
+	for (; i<MAX_SLOTS; ++i)
 	{
 		if (window && window == GadgetComboBoxGetEditBox(comboBoxPlayer[i]))
 		{

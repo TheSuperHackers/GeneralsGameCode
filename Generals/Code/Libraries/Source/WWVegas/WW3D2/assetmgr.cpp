@@ -524,7 +524,8 @@ void WW3DAssetManager::Free_Assets_With_Exclusion_List(const DynamicVectorClass<
 	exclude_array.Set_Growth_Step(DEFAULT_EXCLUDE_ARRAY_SIZE);
 
 	// iterate the array of prototypes saving each one that should be excluded from deletion
-	for (int i=0; i<Prototypes.Count(); i++) {
+	int i=0;
+	for (; i<Prototypes.Count(); i++) {
 
 		PrototypeClass * proto = Prototypes[i];
 		if (proto != NULL) {		

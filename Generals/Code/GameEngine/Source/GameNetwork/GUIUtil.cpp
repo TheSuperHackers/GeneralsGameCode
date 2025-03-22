@@ -190,7 +190,8 @@ void PopulateColorComboBox(Int comboBox, GameWindow *comboArray[], GameInfo *myG
 	UnicodeString colorName;
 	std::vector<bool> availableColors;
 
-	for (Int i = 0; i < numColors; i++)
+	Int i = 0;
+	for (; i < numColors; i++)
 		availableColors.push_back(true);
 
 	for (i = 0; i < MAX_SLOTS; i++)

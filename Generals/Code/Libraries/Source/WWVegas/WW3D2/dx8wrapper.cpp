@@ -614,7 +614,8 @@ void DX8Wrapper::Enumerate_Devices()
 bool DX8Wrapper::Set_Any_Render_Device(void)
 {
 	// Try windowed first
-	for (int dev_number = 0; dev_number < _RenderDeviceNameTable.Count(); dev_number++) {
+	int dev_number = 0;
+	for (; dev_number < _RenderDeviceNameTable.Count(); dev_number++) {
 		if (Set_Render_Device(dev_number,-1,-1,-1,1,false)) {
 			return true;
 		}
@@ -1210,7 +1211,8 @@ bool DX8Wrapper::Find_Color_And_Z_Mode(int resx,int resy,int bitdepth,D3DFORMAT 
 	bool found = false;
 	unsigned int mode = 0;
 
-	for (int format_index=0; format_index < format_count; format_index++) {
+	int format_index=0;
+	for (; format_index < format_count; format_index++) {
 		found |= Find_Color_Mode(format_table[format_index],resx,resy,&mode);
 		if (found) break;
 	}
@@ -2281,7 +2283,8 @@ void DX8Wrapper::Set_Light_Environment(LightEnvironmentClass* light_env)
 		}
 
 		D3DLIGHT8 light;		
-		for (int l=0;l<light_count;++l) {
+		int l=0;
+		for (;l<light_count;++l) {
 			::ZeroMemory(&light, sizeof(D3DLIGHT8));
 			light.Type=D3DLIGHT_DIRECTIONAL;
 			(Vector3&)light.Diffuse=light_env->Get_Light_Diffuse(l);
