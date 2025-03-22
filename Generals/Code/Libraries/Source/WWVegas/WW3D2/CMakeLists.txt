@@ -227,6 +227,13 @@ set_target_properties(g_ww3d2 PROPERTIES OUTPUT_NAME ww3d2)
 
 target_sources(g_ww3d2 PRIVATE ${WW3D2_SRC})
 
+if (NOT IS_VS6_BUILD)
+    target_link_libraries(g_ww3d2 PUBLIC
+        comsuppw
+    )
+endif()
+
 target_link_libraries(g_ww3d2 PRIVATE
+    g_browserengine
     g_wwcommon
 )
