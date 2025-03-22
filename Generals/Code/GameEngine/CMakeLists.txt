@@ -1083,6 +1083,7 @@ target_link_libraries(g_gameengine PUBLIC
     g_compression
     g_wwvegas
     gz_config
+    gz_utility
     gamespy::gamespy
     stlport
 )
