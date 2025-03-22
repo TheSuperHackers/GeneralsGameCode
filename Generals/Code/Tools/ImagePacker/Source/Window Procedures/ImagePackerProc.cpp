@@ -147,9 +147,9 @@ BOOL CALLBACK ImagePackerProc( HWND hWndDialog, UINT message,
 
 			// set option checks for gap method
 			UnsignedInt gapOptions = TheImagePacker->getGapMethod();
-			if( BitTest( gapOptions, ImagePacker::GAP_METHOD_EXTEND_RGB ) )
+			if( BitIsSet( gapOptions, ImagePacker::GAP_METHOD_EXTEND_RGB ) )
 				CheckDlgButton( hWndDialog, CHECK_GAP_EXTEND_RGB, BST_CHECKED );
-			if( BitTest( gapOptions, ImagePacker::GAP_METHOD_GUTTER ) )
+			if( BitIsSet( gapOptions, ImagePacker::GAP_METHOD_GUTTER ) )
 				CheckDlgButton( hWndDialog, CHECK_GAP_GUTTER, BST_CHECKED );
 
 			return TRUE;

@@ -743,7 +743,7 @@ void AIPlayer::processBaseBuilding( void )
 				}	else {
 					if (bldg->getControllingPlayer() == m_player) {
 						// Check for built or dozer missing.
-						if( BitTest( bldg->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE) {
+						if( BitIsSet( bldg->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE) {
 							// make sure dozer is working on him.
 							ObjectID builder = bldg->getBuilderID();
 							Object* myDozer = TheGameLogic->findObjectByID(builder);
@@ -1682,9 +1682,9 @@ void AIPlayer::buildUpgrade(const AsciiString &upgrade)
 		Object *factory = TheGameLogic->findObjectByID( info->getObjectID() );
 		if( factory )
 		{
-			if( BitTest( factory->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
+			if( BitIsSet( factory->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
 				continue;
-			if( BitTest( factory->getStatusBits(), OBJECT_STATUS_SOLD ) == TRUE )
+			if( BitIsSet( factory->getStatusBits(), OBJECT_STATUS_SOLD ) == TRUE )
 				continue;
 			Bool canUpgradeHere = false;
 			const CommandSet *commandSet = TheControlBar->findCommandSet( factory->getCommandSetString() );

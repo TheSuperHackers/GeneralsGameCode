@@ -225,7 +225,7 @@ Bool ImagePacker::packImages( void )
 		image = m_imageList[ i ];
 
 		// ignore images that we cannot process
-		if( BitTest( image->m_status, ImageInfo::CANTPROCESS) )
+		if( BitIsSet( image->m_status, ImageInfo::CANTPROCESS) )
 			continue;
 
 		// try to put image on each page
@@ -899,7 +899,7 @@ Bool ImagePacker::generateINIFile( void )
 	{
 
 		// ignore texture pages that generated errors
-		if( BitTest( page->m_status, TexturePage::PAGE_ERROR ) )
+		if( BitIsSet( page->m_status, TexturePage::PAGE_ERROR ) )
 			continue;
 
 		// go through each image on this page
@@ -922,7 +922,7 @@ Bool ImagePacker::generateINIFile( void )
 							 image->m_pagePos.lo.x, image->m_pagePos.lo.y,
 							 image->m_pagePos.hi.x + 1, image->m_pagePos.hi.y + 1 );
 			fprintf( fp, "  Status = %s\n", 
-							 BitTest( image->m_status, ImageInfo::ROTATED90C ) ? 
+							 BitIsSet( image->m_status, ImageInfo::ROTATED90C ) ? 
 												"ROTATED_90_CLOCKWISE" : "NONE" );
 			fprintf( fp, "End\n\n" );
 
@@ -961,7 +961,7 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 
 		size = GetDlgItemInt( dialog, EDIT_WIDTH, NULL, FALSE );
 		for( val = size; val; val >>= 1 )
-			if( BitTest( val, 0x1 ) )
+			if( BitIsSet( val, 0x1 ) )
 				bitCount++;
 
 		//

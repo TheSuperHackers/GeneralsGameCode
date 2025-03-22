@@ -273,15 +273,15 @@ void BattlePlanUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate
 	}
 
 	//Set the desired status based on the command button option!
-	if( BitTest( commandOptions, OPTION_ONE ) )
+	if( BitIsSet( commandOptions, OPTION_ONE ) )
 	{
 		m_desiredPlan = PLANSTATUS_BOMBARDMENT;
 	}
-	else if( BitTest( commandOptions, OPTION_TWO ) )
+	else if( BitIsSet( commandOptions, OPTION_TWO ) )
 	{
 		m_desiredPlan = PLANSTATUS_HOLDTHELINE;
 	}
-	else if( BitTest( commandOptions, OPTION_THREE ) )
+	else if( BitIsSet( commandOptions, OPTION_THREE ) )
 	{
 		m_desiredPlan = PLANSTATUS_SEARCHANDDESTROY;
 	}

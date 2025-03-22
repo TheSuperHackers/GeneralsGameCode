@@ -1828,7 +1828,7 @@ void DozerAIUpdate::privateRepair( Object *obj, CommandSourceType cmdSource )
   //
 	//	Object *bridge = TheGameLogic->findObjectByID( btbi->getBridgeID() );
 	//	DEBUG_ASSERTCRASH( bridge, ("Unable to find bridge object\n") );
-	//	if( BitTest( bridge->getStatusBits(), OBJECT_STATUS_UNDERGOING_REPAIR ) == TRUE )
+	//	if( BitIsSet( bridge->getStatusBits(), OBJECT_STATUS_UNDERGOING_REPAIR ) == TRUE )
 	//		return;
   //
 	//}  // end if

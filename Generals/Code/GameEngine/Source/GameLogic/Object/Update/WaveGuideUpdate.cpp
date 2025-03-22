@@ -617,7 +617,7 @@ void WaveGuideUpdate::doDamage( void )
 			{
 
 				// if object was not wet before we kill it and play effects
-				if( BitTest( obj->getStatusBits(), OBJECT_STATUS_WET ) == FALSE )
+				if( BitIsSet( obj->getStatusBits(), OBJECT_STATUS_WET ) == FALSE )
 				{
 					static const ParticleSystemTemplate *splash = TheParticleSystemManager->findTemplate( "WaveHit01" );
 					ParticleSystem *particleSystem;

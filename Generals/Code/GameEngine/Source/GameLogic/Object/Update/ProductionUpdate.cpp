@@ -667,7 +667,7 @@ UpdateSleepTime ProductionUpdate::update( void )
 	// Actually, there will be nothing in the queue since everything gets cancel/refunded
 	// at the start of sell, but we still don't want to do anything here.
 	//
-	if( BitTest( us->getStatusBits(), OBJECT_STATUS_SOLD ) )
+	if( BitIsSet( us->getStatusBits(), OBJECT_STATUS_SOLD ) )
 		return UPDATE_SLEEP_NONE;
 
 	// get the player that is building this thing

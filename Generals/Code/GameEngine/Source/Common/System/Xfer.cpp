@@ -678,7 +678,7 @@ void Xfer::xferUpgradeMask( Int64 *upgradeMaskData )
 		{
 
 			// if the mask of this upgrade is set, it counts
-			if( BitTest( *upgradeMaskData, upgradeTemplate->getUpgradeMask() ) )
+			if( BitIsSet( *upgradeMaskData, upgradeTemplate->getUpgradeMask() ) )
 				count++;
 
 		}  // end for, upgradeTemplate
@@ -693,7 +693,7 @@ void Xfer::xferUpgradeMask( Int64 *upgradeMaskData )
 		{
 
 			// if the mask of this upgrade is set, it counts
-			if( BitTest( *upgradeMaskData, upgradeTemplate->getUpgradeMask() ) )
+			if( BitIsSet( *upgradeMaskData, upgradeTemplate->getUpgradeMask() ) )
 			{
 
 				upgradeName = upgradeTemplate->getUpgradeName();

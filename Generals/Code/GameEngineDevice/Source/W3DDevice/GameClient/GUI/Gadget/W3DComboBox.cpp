@@ -96,14 +96,14 @@ void W3DGadgetComboBoxDraw( GameWindow *window, WinInstanceData *instData )
 	height = size.y;
 
 	// get the right colors
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 		background		= GadgetComboBoxGetDisabledColor( window );
 		border				= GadgetComboBoxGetDisabledBorderColor( window );
 		titleColor		= window->winGetDisabledTextColor();
 		titleBorder		= window->winGetDisabledTextBorderColor();
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		background		= GadgetComboBoxGetHiliteColor( window );
 		border				= GadgetComboBoxGetHiliteBorderColor( window );
@@ -168,13 +168,13 @@ void W3DGadgetComboBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 	height = size.y;
 
 	// get the image
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 		image				= GadgetComboBoxGetDisabledImage( window );
 		titleColor	= window->winGetDisabledTextColor();
 		titleBorder = window->winGetDisabledTextBorderColor();
 	}
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		image				= GadgetComboBoxGetHiliteImage( window );
 		titleColor	= window->winGetHiliteTextColor();

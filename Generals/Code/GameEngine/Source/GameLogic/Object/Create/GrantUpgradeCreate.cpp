@@ -86,9 +86,9 @@ void GrantUpgradeCreate::onCreate( void )
 
 	ObjectStatusBits exemptStatus = (ObjectStatusBits)getGrantUpgradeCreateModuleData()->m_exemptStatus;
 	ObjectStatusBits currentStatus = (ObjectStatusBits)getObject()->getStatusBits();
-	if( BitTest( exemptStatus, OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
+	if( BitIsSet( exemptStatus, OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
 	{
-		if(	BitTest( currentStatus, OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE ) 
+		if(	BitIsSet( currentStatus, OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE ) 
 		{
 			const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( getGrantUpgradeCreateModuleData()->m_upgradeName );
 			if( !upgradeTemplate )

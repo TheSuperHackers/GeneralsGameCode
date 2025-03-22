@@ -108,7 +108,7 @@ void ControlBar::updateContextUnderConstruction( void )
 	Object *obj = m_currentSelectedDrawable->getObject();
 
 	// if the object is no longer under construction switch to a new appropriate context
-	if( BitTest( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE )
+	if( BitIsSet( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE )
 	{
 
 		evaluateContextUI();

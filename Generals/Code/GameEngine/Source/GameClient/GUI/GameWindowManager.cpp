@@ -436,7 +436,7 @@ Bool GameWindowManager::isEnabled( GameWindow *win )
 	if( win == NULL )
 		return FALSE;
 	
-	if( BitTest( win->m_status, WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( win->m_status, WIN_STATUS_ENABLED ) == FALSE )
 	{
 		return FALSE;
 	}
@@ -444,7 +444,7 @@ Bool GameWindowManager::isEnabled( GameWindow *win )
 	while( win->m_parent )
 	{
 		win = win->m_parent;
-		if( BitTest( win->m_status, WIN_STATUS_ENABLED ) == FALSE )
+		if( BitIsSet( win->m_status, WIN_STATUS_ENABLED ) == FALSE )
 		{
 			return FALSE;
 		}
@@ -464,7 +464,7 @@ Bool GameWindowManager::isHidden( GameWindow *win )
 	if( win == NULL )
 		return TRUE;
 	
-	if( BitTest( win->m_status, WIN_STATUS_HIDDEN ))
+	if( BitIsSet( win->m_status, WIN_STATUS_HIDDEN ))
 	{
 		return TRUE;
 	}
@@ -472,7 +472,7 @@ Bool GameWindowManager::isHidden( GameWindow *win )
 	while( win->m_parent )
 	{
 		win = win->m_parent;
-		if( BitTest( win->m_status, WIN_STATUS_HIDDEN ))
+		if( BitIsSet( win->m_status, WIN_STATUS_HIDDEN ))
 		{
 			return TRUE;
 		}
@@ -703,7 +703,7 @@ WindowMsgHandledType GameWindowManager::winSendSystemMsg( GameWindow *window,
 	if( window == NULL)
 		return MSG_IGNORED;
 
-	if( msg != GWM_DESTROY && BitTest( window->m_status, WIN_STATUS_DESTROYED ) )
+	if( msg != GWM_DESTROY && BitIsSet( window->m_status, WIN_STATUS_DESTROYED ) )
 		return MSG_IGNORED;
 
 	return window->m_system( window, msg, mData1, mData2 );
@@ -722,7 +722,7 @@ WindowMsgHandledType GameWindowManager::winSendInputMsg( GameWindow *window,
 	if( window == NULL )
 		return MSG_IGNORED;
 
-	if( msg != GWM_DESTROY && BitTest( window->m_status, WIN_STATUS_DESTROYED ) )
+	if( msg != GWM_DESTROY && BitIsSet( window->m_status, WIN_STATUS_DESTROYED ) )
 		return MSG_IGNORED;
 
 	return window->m_input( window, msg, mData1, mData2 );
@@ -748,7 +748,7 @@ Int GameWindowManager::winSetFocus( GameWindow *window )
 
 	// if a window doesn't want keyboard focus don't give it
 	if( window )
-		if( BitTest( window->winGetStatus(), WIN_STATUS_NO_FOCUS) )
+		if( BitIsSet( window->winGetStatus(), WIN_STATUS_NO_FOCUS) )
 			return 0;
 
 	//
@@ -922,7 +922,7 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent( GameWindowMessage ms
 					BitClear( m_grabWindow->m_status, WIN_STATUS_ACTIVE );
 					if( m_grabWindow->winPointInWindow( mousePos->x, mousePos->y ) )
 						winSendInputMsg( m_grabWindow, GWM_LEFT_UP, packedMouseCoords, 0 );
-					else if( BitTest( m_grabWindow->m_status, WIN_STATUS_DRAGABLE ))
+					else if( BitIsSet( m_grabWindow->m_status, WIN_STATUS_DRAGABLE ))
 					{
 						winSendInputMsg( m_grabWindow, GWM_LEFT_UP, packedMouseCoords, 0 );
 					}
@@ -937,7 +937,7 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent( GameWindowMessage ms
 				case GWM_LEFT_DRAG:
 				{
 
-					if( BitTest( m_grabWindow->m_status, WIN_STATUS_DRAGABLE ) )
+					if( BitIsSet( m_grabWindow->m_status, WIN_STATUS_DRAGABLE ) )
 					{
 						ICoord2D *mouseDelta = (ICoord2D *)data;
 						dx = mouseDelta->x;
@@ -1017,8 +1017,8 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent( GameWindowMessage ms
 				for( window = m_windowList; window; window = window->m_next )
 				{
 
-					if( BitTest( window->m_status, WIN_STATUS_ABOVE ) &&
-							!BitTest( window->m_status, WIN_STATUS_HIDDEN ) &&
+					if( BitIsSet( window->m_status, WIN_STATUS_ABOVE ) &&
+							!BitIsSet( window->m_status, WIN_STATUS_HIDDEN ) &&
 							mousePos->x >= window->m_region.lo.x &&
 							mousePos->x <= window->m_region.hi.x &&
 							mousePos->y >= window->m_region.lo.y &&
@@ -1034,7 +1034,7 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent( GameWindowMessage ms
 								toolTipWindow = childWindow;
 							}
 						}
-						if( BitTest( window->m_status, WIN_STATUS_ENABLED ) )
+						if( BitIsSet( window->m_status, WIN_STATUS_ENABLED ) )
 						{
 							// determine which child window the mouse is in
 							window = window->winPointInChild( mousePos->x, mousePos->y );
@@ -1052,7 +1052,7 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent( GameWindowMessage ms
 					for( window = m_windowList; window; window = window->m_next )
 					{
 
-						if( !BitTest( window->m_status, WIN_STATUS_ABOVE | 
+						if( !BitIsSet( window->m_status, WIN_STATUS_ABOVE | 
 																						WIN_STATUS_BELOW | 
 																						WIN_STATUS_HIDDEN ) &&
 								mousePos->x >= window->m_region.lo.x &&
@@ -1070,7 +1070,7 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent( GameWindowMessage ms
 									toolTipWindow = childWindow;
 								}
 							}
-							if( BitTest( window->m_status, WIN_STATUS_ENABLED ))
+							if( BitIsSet( window->m_status, WIN_STATUS_ENABLED ))
 							{								
 								// determine which child window the mouse is in
 								window = window->winPointInChild( mousePos->x, mousePos->y );
@@ -1087,8 +1087,8 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent( GameWindowMessage ms
 					for( window = m_windowList; window; window = window->m_next )
 					{
 
-						if( BitTest( window->m_status, WIN_STATUS_BELOW ) &&
-								!BitTest( window->m_status, WIN_STATUS_HIDDEN ) &&
+						if( BitIsSet( window->m_status, WIN_STATUS_BELOW ) &&
+								!BitIsSet( window->m_status, WIN_STATUS_HIDDEN ) &&
 								mousePos->x >= window->m_region.lo.x &&
 								mousePos->x <= window->m_region.hi.x &&
 								mousePos->y >= window->m_region.lo.y &&
@@ -1104,7 +1104,7 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent( GameWindowMessage ms
 									toolTipWindow = childWindow;
 								}
 							}
-							if( BitTest( window->m_status, WIN_STATUS_ENABLED ))
+							if( BitIsSet( window->m_status, WIN_STATUS_ENABLED ))
 							{
 								// determine which child window the mouse is in
 								window = window->winPointInChild( mousePos->x, mousePos->y );
@@ -1117,9 +1117,9 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent( GameWindowMessage ms
 			}  // end else, no modal head
 
 			if( window )
-				if( BitTest( window->m_status, WIN_STATUS_NO_INPUT ) )
+				if( BitIsSet( window->m_status, WIN_STATUS_NO_INPUT ) )
 				{
-					if(window->winGetParent() && BitTest( window->winGetParent()->winGetInstanceData()->getStyle(), GWS_COMBO_BOX ))
+					if(window->winGetParent() && BitIsSet( window->winGetParent()->winGetInstanceData()->getStyle(), GWS_COMBO_BOX ))
 						window = window->winGetParent();
 					else
 						window = NULL;
@@ -1207,7 +1207,7 @@ WinInputReturnCode GameWindowManager::winProcessMouseEvent( GameWindowMessage ms
 			Bool tooltipsOn = TRUE;
 			if( tooltipsOn )
 			{
-//				if( toolTipWindow && toolTipWindow->winGetParent() && BitTest( toolTipWindow->winGetParent()->winGetInstanceData()->getStyle(), GWS_COMBO_BOX ))
+//				if( toolTipWindow && toolTipWindow->winGetParent() && BitIsSet( toolTipWindow->winGetParent()->winGetInstanceData()->getStyle(), GWS_COMBO_BOX ))
 //					toolTipWindow = toolTipWindow->winGetParent();
 				if( toolTipWindow )
 				{
@@ -1291,17 +1291,17 @@ Int GameWindowManager::drawWindow( GameWindow *window )
 	if( window == NULL )
 		return WIN_ERR_INVALID_WINDOW;
 
-	if( BitTest( window->m_status, WIN_STATUS_HIDDEN ) == FALSE )
+	if( BitIsSet( window->m_status, WIN_STATUS_HIDDEN ) == FALSE )
 	{
 
-		if( !BitTest( window->m_status, WIN_STATUS_SEE_THRU ) && window->m_draw )
+		if( !BitIsSet( window->m_status, WIN_STATUS_SEE_THRU ) && window->m_draw )
 			window->m_draw( window, &window->m_instData );
 
 		/// @todo visit list boxes and borders, this is stupid!
 		// for list boxes only draw the borders BEFORE the children
-		if( BitTest( window->winGetStyle(), GWS_SCROLL_LISTBOX ) )
-			if( BitTest( window->m_status, WIN_STATUS_BORDER ) == TRUE &&
-					!BitTest( window->m_status, WIN_STATUS_SEE_THRU ) )
+		if( BitIsSet( window->winGetStyle(), GWS_SCROLL_LISTBOX ) )
+			if( BitIsSet( window->m_status, WIN_STATUS_BORDER ) == TRUE &&
+					!BitIsSet( window->m_status, WIN_STATUS_SEE_THRU ) )
 				window->winDrawBorder();
 
 		// draw children in reverse order just like the window list
@@ -1316,9 +1316,9 @@ Int GameWindowManager::drawWindow( GameWindow *window )
 		// draw the border for the window AFTER the window contents AND the
 		// children contents have drawn
 		//
-		if( !BitTest( window->winGetStyle(), GWS_SCROLL_LISTBOX ) )
-			if( BitTest( window->m_status, WIN_STATUS_BORDER ) == TRUE &&
-					!BitTest( window->m_status, WIN_STATUS_SEE_THRU ) )
+		if( !BitIsSet( window->winGetStyle(), GWS_SCROLL_LISTBOX ) )
+			if( BitIsSet( window->m_status, WIN_STATUS_BORDER ) == TRUE &&
+					!BitIsSet( window->m_status, WIN_STATUS_SEE_THRU ) )
 				window->winDrawBorder();
 
 	}  // end if
@@ -1339,7 +1339,7 @@ void GameWindowManager::winRepaint( void )
 	{
 		next = window->m_prev;
 
-		if( BitTest( window->m_status, WIN_STATUS_BELOW ) )
+		if( BitIsSet( window->m_status, WIN_STATUS_BELOW ) )
 			drawWindow( window );
 	}
 
@@ -1348,7 +1348,7 @@ void GameWindowManager::winRepaint( void )
 	{
 		next = window->m_prev;
 
-		if (BitTest( window->m_status, WIN_STATUS_ABOVE | 
+		if (BitIsSet( window->m_status, WIN_STATUS_ABOVE | 
 																	 WIN_STATUS_BELOW ) == FALSE)
 			drawWindow( window );
 	}
@@ -1358,7 +1358,7 @@ void GameWindowManager::winRepaint( void )
 	{
 		next = window->m_prev;
 
-		if( BitTest( window->m_status, WIN_STATUS_ABOVE ) )
+		if( BitIsSet( window->m_status, WIN_STATUS_ABOVE ) )
 			drawWindow( window );
 	}
 
@@ -1475,7 +1475,7 @@ Int GameWindowManager::winDestroy( GameWindow *window )
 	DEBUG_ASSERTCRASH( window->winGetEditData() == NULL,
 										 ("winDestroy(): edit data should NOT be present!\n") );
 
-	if( BitTest( window->m_status, WIN_STATUS_DESTROYED ) )
+	if( BitIsSet( window->m_status, WIN_STATUS_DESTROYED ) )
 		return WIN_ERR_OK;
 
 	BitSet( window->m_status, WIN_STATUS_DESTROYED );
@@ -1849,7 +1849,7 @@ GameWindow *GameWindowManager::gogoGadgetPushButton( GameWindow *parent,
 	GameWindow *button;
 
 	// we MUST have a push button style window to do this
-	if( BitTest( instData->getStyle(), GWS_PUSH_BUTTON ) == FALSE )
+	if( BitIsSet( instData->getStyle(), GWS_PUSH_BUTTON ) == FALSE )
 	{
 
 		DEBUG_LOG(( "Cann't create button gadget, instance data not button type\n" ));
@@ -1879,7 +1879,7 @@ GameWindow *GameWindowManager::gogoGadgetPushButton( GameWindow *parent,
 	// assign draw function, the draw functions must actually be implemented
 	// on the device level of the engine
 	//
-	if( BitTest( button->winGetStatus(), WIN_STATUS_IMAGE ) )
+	if( BitIsSet( button->winGetStatus(), WIN_STATUS_IMAGE ) )
 		button->winSetDrawFunc( getPushButtonImageDrawFunc() );
 	else
 		button->winSetDrawFunc( getPushButtonDrawFunc() );
@@ -1917,7 +1917,7 @@ GameWindow *GameWindowManager::gogoGadgetCheckbox( GameWindow *parent,
 	GameWindow *checkbox;
 
 	// we MUST have a push button style window to do this
-	if( BitTest( instData->getStyle(), GWS_CHECK_BOX ) == FALSE )
+	if( BitIsSet( instData->getStyle(), GWS_CHECK_BOX ) == FALSE )
 	{
 
 		DEBUG_LOG(( "Cann't create checkbox gadget, instance data not checkbox type\n" ));
@@ -1947,7 +1947,7 @@ GameWindow *GameWindowManager::gogoGadgetCheckbox( GameWindow *parent,
 	// assign draw function, the draw functions must actually be implemented
 	// on the device level of the engine
 	//
-	if( BitTest( checkbox->winGetStatus(), WIN_STATUS_IMAGE ) )
+	if( BitIsSet( checkbox->winGetStatus(), WIN_STATUS_IMAGE ) )
 		checkbox->winSetDrawFunc( getCheckBoxImageDrawFunc() );
 	else
 		checkbox->winSetDrawFunc( getCheckBoxDrawFunc() );
@@ -1984,7 +1984,7 @@ GameWindow *GameWindowManager::gogoGadgetRadioButton( GameWindow *parent,
 	RadioButtonData *radioData;
 
 	// we MUST have a push button style window to do this
-	if( BitTest( instData->getStyle(), GWS_RADIO_BUTTON ) == FALSE )
+	if( BitIsSet( instData->getStyle(), GWS_RADIO_BUTTON ) == FALSE )
 	{
 
 		DEBUG_LOG(( "Cann't create radioButton gadget, instance data not radioButton type\n" ));
@@ -2019,7 +2019,7 @@ GameWindow *GameWindowManager::gogoGadgetRadioButton( GameWindow *parent,
 	// assign draw function, the draw functions must actually be implemented
 	// on the device level of the engine
 	//
-	if( BitTest( radioButton->winGetStatus(), WIN_STATUS_IMAGE ) )
+	if( BitIsSet( radioButton->winGetStatus(), WIN_STATUS_IMAGE ) )
 		radioButton->winSetDrawFunc( getRadioButtonImageDrawFunc() );
 	else
 		radioButton->winSetDrawFunc( getRadioButtonDrawFunc() );
@@ -2056,7 +2056,7 @@ GameWindow *GameWindowManager::gogoGadgetTabControl( GameWindow *parent,
 	TabControlData *tabData;
 
 	// we MUST have a tab control style window to do this
-	if( BitTest( instData->getStyle(), GWS_TAB_CONTROL ) == FALSE )
+	if( BitIsSet( instData->getStyle(), GWS_TAB_CONTROL ) == FALSE )
 	{
 
 		DEBUG_LOG(( "Cann't create tabControl gadget, instance data not tabControl type\n" ));
@@ -2095,7 +2095,7 @@ GameWindow *GameWindowManager::gogoGadgetTabControl( GameWindow *parent,
 	// assign draw function, the draw functions must actually be implemented
 	// on the device level of the engine
 	//
-	if( BitTest( tabControl->winGetStatus(), WIN_STATUS_IMAGE ) )
+	if( BitIsSet( tabControl->winGetStatus(), WIN_STATUS_IMAGE ) )
 		tabControl->winSetDrawFunc( getTabControlImageDrawFunc() );
 	else
 		tabControl->winSetDrawFunc( getTabControlDrawFunc() );
@@ -2128,7 +2128,7 @@ GameWindow *GameWindowManager::gogoGadgetListBox( GameWindow *parent,
 	Bool title = FALSE;
 
 	// we MUST have a push button style window to do this
-	if( BitTest( instData->getStyle(), GWS_SCROLL_LISTBOX ) == FALSE )
+	if( BitIsSet( instData->getStyle(), GWS_SCROLL_LISTBOX ) == FALSE )
 	{
 
 		DEBUG_LOG(( "Cann't create listbox gadget, instance data not listbox type\n" ));
@@ -2166,7 +2166,7 @@ GameWindow *GameWindowManager::gogoGadgetListBox( GameWindow *parent,
 		title = TRUE;
 
 	// Set up list box redraw callbacks
-	if( BitTest( listbox->winGetStatus(), WIN_STATUS_IMAGE ))
+	if( BitIsSet( listbox->winGetStatus(), WIN_STATUS_IMAGE ))
 		listbox->winSetDrawFunc( getListBoxImageDrawFunc() );
 	else
 		listbox->winSetDrawFunc( getListBoxDrawFunc() );
@@ -2278,7 +2278,7 @@ GameWindow *GameWindowManager::gogoGadgetSlider( GameWindow *parent,
 	//
 	BitSet( status, WIN_STATUS_TAB_STOP );
 
-	if( BitTest( instData->getStyle(), GWS_HORZ_SLIDER ) ) 
+	if( BitIsSet( instData->getStyle(), GWS_HORZ_SLIDER ) ) 
 	{
 
 		slider = winCreate( parent, status, x, y, width, height, 
@@ -2286,13 +2286,13 @@ GameWindow *GameWindowManager::gogoGadgetSlider( GameWindow *parent,
 
 		// Set up horizontal slider callbacks
 		slider->winSetInputFunc( GadgetHorizontalSliderInput );
-		if( BitTest( slider->winGetStatus(), WIN_STATUS_IMAGE ) )
+		if( BitIsSet( slider->winGetStatus(), WIN_STATUS_IMAGE ) )
 			slider->winSetDrawFunc( getHorizontalSliderImageDrawFunc() );
 		else
 			slider->winSetDrawFunc( getHorizontalSliderDrawFunc() );
 
 	}  // end if
-	else if ( BitTest( instData->getStyle(), GWS_VERT_SLIDER ) ) 
+	else if ( BitIsSet( instData->getStyle(), GWS_VERT_SLIDER ) ) 
 	{
 
 		slider = winCreate( parent, status, x, y, width, height, 
@@ -2301,7 +2301,7 @@ GameWindow *GameWindowManager::gogoGadgetSlider( GameWindow *parent,
 		// Set up vertical slider callbacks
 		slider->winSetInputFunc( GadgetVerticalSliderInput );
 		
-		if( BitTest( slider->winGetStatus(), WIN_STATUS_IMAGE ) && !(parent && BitTest(parent->winGetStyle(), GWS_SCROLL_LISTBOX)))
+		if( BitIsSet( slider->winGetStatus(), WIN_STATUS_IMAGE ) && !(parent && BitIsSet(parent->winGetStyle(), GWS_SCROLL_LISTBOX)))
 			slider->winSetDrawFunc( getVerticalSliderImageDrawFunc() );
 		else
 			slider->winSetDrawFunc( getVerticalSliderDrawFunc() );
@@ -2342,10 +2342,10 @@ GameWindow *GameWindowManager::gogoGadgetSlider( GameWindow *parent,
 	buttonInstData.m_style = GWS_PUSH_BUTTON;
 
 	// if slider tracks, so will this sub control
-	if( BitTest( instData->getStyle(), GWS_MOUSE_TRACK ) )
+	if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
 		BitSet( buttonInstData.m_style, GWS_MOUSE_TRACK );
 
-	if( BitTest( instData->getStyle(), GWS_HORZ_SLIDER ) )
+	if( BitIsSet( instData->getStyle(), GWS_HORZ_SLIDER ) )
 		button = gogoGadgetPushButton( slider, statusFlags, 0, HORIZONTAL_SLIDER_THUMB_POSITION,
 											 						 HORIZONTAL_SLIDER_THUMB_WIDTH, HORIZONTAL_SLIDER_THUMB_HEIGHT, &buttonInstData, NULL, TRUE );
 	else
@@ -2356,7 +2356,7 @@ GameWindow *GameWindowManager::gogoGadgetSlider( GameWindow *parent,
 	if( sliderData->maxVal == sliderData->minVal )
 		sliderData->maxVal = sliderData->minVal + 1;
 
-	if( BitTest( instData->getStyle(), GWS_HORZ_SLIDER ) ) 
+	if( BitIsSet( instData->getStyle(), GWS_HORZ_SLIDER ) ) 
 	{
 		sliderData->numTicks = (float)(width - HORIZONTAL_SLIDER_THUMB_WIDTH) /
 													 (float)(sliderData->maxVal - sliderData->minVal);
@@ -2396,7 +2396,7 @@ GameWindow *GameWindowManager::gogoGadgetComboBox( GameWindow *parent,
 	Bool title = FALSE;
 
 	// we MUST have a push button style window to do this
-	if( BitTest( instData->getStyle(), GWS_COMBO_BOX) == FALSE )
+	if( BitIsSet( instData->getStyle(), GWS_COMBO_BOX) == FALSE )
 	{
 
 		DEBUG_LOG(( "Cann't create ComboBox gadget, instance data not ComboBox type\n" ));
@@ -2435,7 +2435,7 @@ GameWindow *GameWindowManager::gogoGadgetComboBox( GameWindow *parent,
 		title = TRUE;
 
 	// Set up list box redraw callbacks
-	if( BitTest( comboBox->winGetStatus(), WIN_STATUS_IMAGE ))
+	if( BitIsSet( comboBox->winGetStatus(), WIN_STATUS_IMAGE ))
 		comboBox->winSetDrawFunc( getComboBoxImageDrawFunc() );
 	else
 		comboBox->winSetDrawFunc( getComboBoxDrawFunc() );
@@ -2479,7 +2479,7 @@ GameWindow *GameWindowManager::gogoGadgetComboBox( GameWindow *parent,
 	winInstData.m_style = GWS_PUSH_BUTTON;
 
 	// if listbox tracks, so will this sub control
-	if( BitTest( comboBox->winGetStyle(), GWS_MOUSE_TRACK ) )
+	if( BitIsSet( comboBox->winGetStyle(), GWS_MOUSE_TRACK ) )
 		BitSet( winInstData.m_style, GWS_MOUSE_TRACK );
 	
 	comboBoxData->dropDownButton =
@@ -2500,7 +2500,7 @@ GameWindow *GameWindowManager::gogoGadgetComboBox( GameWindow *parent,
 	winInstData.m_owner = comboBox;
   winInstData.m_style |= GWS_ENTRY_FIELD;
 	winInstData.m_textLabelString = "Entry";
-	if( BitTest( comboBox->winGetStyle(), GWS_MOUSE_TRACK ) )
+	if( BitIsSet( comboBox->winGetStyle(), GWS_MOUSE_TRACK ) )
 		BitSet( winInstData.m_style, GWS_MOUSE_TRACK );
 	if( comboBoxData->isEditable)
 	{
@@ -2528,7 +2528,7 @@ GameWindow *GameWindowManager::gogoGadgetComboBox( GameWindow *parent,
 	winInstData.init();
 	
 	winInstData.m_owner = comboBox;
-  if( BitTest( comboBox->winGetStyle(), GWS_MOUSE_TRACK ) )
+  if( BitIsSet( comboBox->winGetStyle(), GWS_MOUSE_TRACK ) )
 		BitSet( winInstData.m_style, GWS_MOUSE_TRACK );
 	BitSet( winInstData.m_style, WIN_STATUS_HIDDEN );
   winInstData.m_style |= GWS_SCROLL_LISTBOX; 
@@ -2600,7 +2600,7 @@ GameWindow *GameWindowManager::gogoGadgetProgressBar( GameWindow *parent,
 	GameWindow *progressBar;
 
 	// we MUST have a push button style window to do this
-	if( BitTest( instData->getStyle(), GWS_PROGRESS_BAR ) == FALSE )
+	if( BitIsSet( instData->getStyle(), GWS_PROGRESS_BAR ) == FALSE )
 	{
 
 		DEBUG_LOG(( "Cann't create progressBar gadget, instance data not progressBar type\n" ));
@@ -2627,7 +2627,7 @@ GameWindow *GameWindowManager::gogoGadgetProgressBar( GameWindow *parent,
 	// assign draw function, the draw functions must actually be implemented
 	// on the device level of the engine
 	//
-	if( BitTest( progressBar->winGetStatus(), WIN_STATUS_IMAGE ) )
+	if( BitIsSet( progressBar->winGetStatus(), WIN_STATUS_IMAGE ) )
 		progressBar->winSetDrawFunc( getProgressBarImageDrawFunc() );
 	else
 		progressBar->winSetDrawFunc( getProgressBarDrawFunc() );
@@ -2662,7 +2662,7 @@ GameWindow *GameWindowManager::gogoGadgetStaticText( GameWindow *parent,
 	// Static Text can not be a Tab Stop
 	BitClear( instData->m_style, GWS_TAB_STOP );
 
-  if( BitTest( instData->getStyle(), GWS_STATIC_TEXT ) ) 
+  if( BitIsSet( instData->getStyle(), GWS_STATIC_TEXT ) ) 
 	{
     textWin = winCreate( parent, status, x, y, width, height, 
 												 GadgetStaticTextSystem, instData );
@@ -2681,7 +2681,7 @@ GameWindow *GameWindowManager::gogoGadgetStaticText( GameWindow *parent,
 
 		// assign callbacks
 		textWin->winSetInputFunc( GadgetStaticTextInput );
-		if( BitTest( textWin->winGetStatus(), WIN_STATUS_IMAGE ) )
+		if( BitIsSet( textWin->winGetStatus(), WIN_STATUS_IMAGE ) )
 			textWin->winSetDrawFunc( getStaticTextImageDrawFunc() );
 		else
 			textWin->winSetDrawFunc( getStaticTextDrawFunc() );
@@ -2693,7 +2693,7 @@ GameWindow *GameWindowManager::gogoGadgetStaticText( GameWindow *parent,
 		// allocate a display string for the tet
 		data->text = TheDisplayStringManager->newDisplayString();
 		// set whether or not we center the wrapped text
-		data->text->setWordWrapCentered( BitTest( instData->getStatus(), WIN_STATUS_WRAP_CENTERED ));
+		data->text->setWordWrapCentered( BitIsSet( instData->getStatus(), WIN_STATUS_WRAP_CENTERED ));
     // Add the entry field data struct to the window's class data
     textWin->winSetUserData( data );
 
@@ -2728,7 +2728,7 @@ GameWindow *GameWindowManager::gogoGadgetTextEntry( GameWindow *parent,
 	GameWindow *entry;
 	EntryData *data;
 
-	if( BitTest( instData->getStyle(), GWS_ENTRY_FIELD ) == FALSE )
+	if( BitIsSet( instData->getStyle(), GWS_ENTRY_FIELD ) == FALSE )
 	{
 
 		DEBUG_LOG(( "Unable to create text entry, style not entry type\n" ));
@@ -2754,7 +2754,7 @@ GameWindow *GameWindowManager::gogoGadgetTextEntry( GameWindow *parent,
 
 	// assign callbacks
 	entry->winSetInputFunc( GadgetTextEntryInput );
-	if( BitTest( entry->winGetStatus(), WIN_STATUS_IMAGE ) )
+	if( BitIsSet( entry->winGetStatus(), WIN_STATUS_IMAGE ) )
 		entry->winSetDrawFunc( getTextEntryImageDrawFunc() );
 	else
 		entry->winSetDrawFunc( getTextEntryDrawFunc() );
@@ -2927,7 +2927,7 @@ void GameWindowManager::assignDefaultGadgetLook( GameWindow *gadget,
 		return;
 
 	// create images for the correct gadget type
-	if( BitTest( instData->getStyle(), GWS_PUSH_BUTTON ) )
+	if( BitIsSet( instData->getStyle(), GWS_PUSH_BUTTON ) )
 	{
 
 		// enabled background
@@ -2964,7 +2964,7 @@ void GameWindowManager::assignDefaultGadgetLook( GameWindow *gadget,
 		gadget->winSetIMECompositeTextColors( imeCompositeText, imeCompositeTextBorder );
 
 	}  // end if
-	else if( BitTest( instData->getStyle(), GWS_CHECK_BOX ) )
+	else if( BitIsSet( instData->getStyle(), GWS_CHECK_BOX ) )
 	{
 
 		// enabled background
@@ -3013,7 +3013,7 @@ void GameWindowManager::assignDefaultGadgetLook( GameWindow *gadget,
 		gadget->winSetIMECompositeTextColors( imeCompositeText, imeCompositeTextBorder );
 
 	}  // end else if
-	else if( BitTest( instData->getStyle(), GWS_RADIO_BUTTON ) )
+	else if( BitIsSet( instData->getStyle(), GWS_RADIO_BUTTON ) )
 	{
 
 		// enabled background
@@ -3062,7 +3062,7 @@ void GameWindowManager::assignDefaultGadgetLook( GameWindow *gadget,
 		gadget->winSetIMECompositeTextColors( imeCompositeText, imeCompositeTextBorder );
 
 	}  // end else if
-	else if( BitTest( instData->getStyle(), GWS_HORZ_SLIDER ) )
+	else if( BitIsSet( instData->getStyle(), GWS_HORZ_SLIDER ) )
 	{
 
 		// enabled
@@ -3124,7 +3124,7 @@ void GameWindowManager::assignDefaultGadgetLook( GameWindow *gadget,
 
 
 	}  // end if
-	else if( BitTest( instData->getStyle(), GWS_VERT_SLIDER ) )
+	else if( BitIsSet( instData->getStyle(), GWS_VERT_SLIDER ) )
 	{
 		// enabled
 		GadgetSliderSetEnabledImageTop( gadget, winFindImage( "VSliderEnabledTopEnd" ) );
@@ -3184,7 +3184,7 @@ void GameWindowManager::assignDefaultGadgetLook( GameWindow *gadget,
 		GadgetSliderSetHiliteSelectedThumbBorderColor( gadget, GadgetSliderGetHiliteColor( gadget ) );
 
 	}  // end else if
-	else if( BitTest( instData->getStyle(), GWS_SCROLL_LISTBOX ) )
+	else if( BitIsSet( instData->getStyle(), GWS_SCROLL_LISTBOX ) )
 	{
 		ListboxData *listboxData = (ListboxData *)gadget->winGetUserData();
 
@@ -3291,7 +3291,7 @@ void GameWindowManager::assignDefaultGadgetLook( GameWindow *gadget,
 		}  // end if
 
 	}  // end else if
-	else if( BitTest( instData->getStyle(), GWS_COMBO_BOX ) )
+	else if( BitIsSet( instData->getStyle(), GWS_COMBO_BOX ) )
 	{
 //		ComboBoxData *comboBoxData = (ComboBoxData *)gadget->winGetUserData();
 
@@ -3471,7 +3471,7 @@ void GameWindowManager::assignDefaultGadgetLook( GameWindow *gadget,
 			}  // end if
 		}
 	}  // end else if
-	else if( BitTest( instData->getStyle(), GWS_PROGRESS_BAR ) )
+	else if( BitIsSet( instData->getStyle(), GWS_PROGRESS_BAR ) )
 	{
 
 		// enabled
@@ -3517,7 +3517,7 @@ void GameWindowManager::assignDefaultGadgetLook( GameWindow *gadget,
 		GadgetProgressBarSetHiliteBarImageSmallCenter( gadget, winFindImage( "ProgressBarHiliteBarSmallRepeatingCenter" ) );
 
 	}  // end else if
-	else if( BitTest( instData->getStyle(), GWS_STATIC_TEXT ) )
+	else if( BitIsSet( instData->getStyle(), GWS_STATIC_TEXT ) )
 	{
 
 		// enabled
@@ -3542,7 +3542,7 @@ void GameWindowManager::assignDefaultGadgetLook( GameWindow *gadget,
 		gadget->winSetIMECompositeTextColors( imeCompositeText, imeCompositeTextBorder );
 
 	}  // end else if
-	else if( BitTest( instData->getStyle(), GWS_ENTRY_FIELD ) )
+	else if( BitIsSet( instData->getStyle(), GWS_ENTRY_FIELD ) )
 	{
 
 		// enabled
@@ -3625,14 +3625,14 @@ GameWindow *GameWindowManager::getWindowUnderCursor( Int x, Int y, Bool ignoreEn
 		for( window = m_windowList; window; window = window->m_next )
 		{
 
-			if( BitTest( window->m_status, WIN_STATUS_ABOVE ) &&
-					!BitTest( window->m_status, WIN_STATUS_HIDDEN ) &&
+			if( BitIsSet( window->m_status, WIN_STATUS_ABOVE ) &&
+					!BitIsSet( window->m_status, WIN_STATUS_HIDDEN ) &&
 					x >= window->m_region.lo.x &&
 					x <= window->m_region.hi.x &&
 					y >= window->m_region.lo.y &&
 					y <= window->m_region.hi.y)
 			{
-				if( BitTest( window->m_status, WIN_STATUS_ENABLED ) || ignoreEnabled )
+				if( BitIsSet( window->m_status, WIN_STATUS_ENABLED ) || ignoreEnabled )
 				{
 					// determine which child window the mouse is in
 					window = window->winPointInChild( x, y, ignoreEnabled );
@@ -3646,7 +3646,7 @@ GameWindow *GameWindowManager::getWindowUnderCursor( Int x, Int y, Bool ignoreEn
 		{
 			for( window = m_windowList; window; window = window->m_next )
 			{
-				if( !BitTest( window->m_status, WIN_STATUS_ABOVE | 
+				if( !BitIsSet( window->m_status, WIN_STATUS_ABOVE | 
 																				WIN_STATUS_BELOW | 
 																				WIN_STATUS_HIDDEN ) &&
 						x >= window->m_region.lo.x &&
@@ -3654,7 +3654,7 @@ GameWindow *GameWindowManager::getWindowUnderCursor( Int x, Int y, Bool ignoreEn
 						y >= window->m_region.lo.y &&
 						y <= window->m_region.hi.y)
 				{
-					if( BitTest( window->m_status, WIN_STATUS_ENABLED )|| ignoreEnabled)
+					if( BitIsSet( window->m_status, WIN_STATUS_ENABLED )|| ignoreEnabled)
 					{								
 						// determine which child window the mouse is in
 						window = window->winPointInChild( x, y, ignoreEnabled );
@@ -3669,14 +3669,14 @@ GameWindow *GameWindowManager::getWindowUnderCursor( Int x, Int y, Bool ignoreEn
 		{
 			for( window = m_windowList; window; window = window->m_next )
 			{
-				if( BitTest( window->m_status, WIN_STATUS_BELOW ) &&
-						!BitTest( window->m_status, WIN_STATUS_HIDDEN ) &&
+				if( BitIsSet( window->m_status, WIN_STATUS_BELOW ) &&
+						!BitIsSet( window->m_status, WIN_STATUS_HIDDEN ) &&
 						x >= window->m_region.lo.x &&
 						x <= window->m_region.hi.x &&
 						y >= window->m_region.lo.y &&
 						y <= window->m_region.hi.y)
 				{
-					if( BitTest( window->m_status, WIN_STATUS_ENABLED )|| ignoreEnabled)
+					if( BitIsSet( window->m_status, WIN_STATUS_ENABLED )|| ignoreEnabled)
 					{
 						// determine which child window the mouse is in
 						window = window->winPointInChild( x, y, ignoreEnabled );
@@ -3689,12 +3689,12 @@ GameWindow *GameWindowManager::getWindowUnderCursor( Int x, Int y, Bool ignoreEn
 
 	if( window )
 	{
-		if( BitTest( window->m_status, WIN_STATUS_NO_INPUT ))
+		if( BitIsSet( window->m_status, WIN_STATUS_NO_INPUT ))
 		{
 			// this window does not accept input, discard
 			window = NULL;
 		}
-		else if( ignoreEnabled && !( BitTest( window->m_status, WIN_STATUS_ENABLED ) ))
+		else if( ignoreEnabled && !( BitIsSet( window->m_status, WIN_STATUS_ENABLED ) ))
 		{
 			window = NULL;
 		}

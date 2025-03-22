@@ -1609,13 +1609,13 @@ void AIGroup::groupMoveToPosition( const Coord3D *pos, Bool addWaypoint, Command
 		}
 		computeIndividualDestination( &dest, &goalPos, theUnit, &center, isFormation );
 
-		if( cmdSource == CMD_FROM_PLAYER && BitTest( theUnit->getStatusBits(), OBJECT_STATUS_CAN_STEALTH ) && ai->canAutoAcquire() )
+		if( cmdSource == CMD_FROM_PLAYER && BitIsSet( theUnit->getStatusBits(), OBJECT_STATUS_CAN_STEALTH ) && ai->canAutoAcquire() )
 		{
 			//When ordering a combat stealth unit to move, there is a single special case we want to handle.
 			//When a stealth unit is currently not stealthed and doesn't autoacquire while stealthed,
 			//then when the player specifically orders the unit to stop, we want to not autoacquire until
 			//he is able to stealth again. Of course, if he's detected, then don't bother trying.
-			if( !BitTest( theUnit->getStatusBits(), OBJECT_STATUS_STEALTHED ) && !BitTest( theUnit->getStatusBits(), OBJECT_STATUS_DETECTED ) )
+			if( !BitIsSet( theUnit->getStatusBits(), OBJECT_STATUS_STEALTHED ) && !BitIsSet( theUnit->getStatusBits(), OBJECT_STATUS_DETECTED ) )
 			{
 				//Not stealthed, not detected -- so do auto-acquire while stealthed?
 				if( !ai->canAutoAcquireWhileStealthed() )
@@ -1904,13 +1904,13 @@ void AIGroup::groupIdle(CommandSourceType cmdSource)
 		{
 			ai->aiIdle(cmdSource);
 
-			if( cmdSource == CMD_FROM_PLAYER && BitTest( obj->getStatusBits(), OBJECT_STATUS_CAN_STEALTH ) && ai->canAutoAcquire() )
+			if( cmdSource == CMD_FROM_PLAYER && BitIsSet( obj->getStatusBits(), OBJECT_STATUS_CAN_STEALTH ) && ai->canAutoAcquire() )
 			{
 				//When ordering a combat stealth unit to stop, there is a single special case we want to handle.
 				//When a stealth unit is currently not stealthed and doesn't autoacquire while stealthed,
 				//then when the player specifically orders the unit to stop, we want to not autoacquire until
 				//he is able to stealth again. Of course, if he's detected, then don't bother trying.
-				if( !BitTest( obj->getStatusBits(), OBJECT_STATUS_STEALTHED ) && !BitTest( obj->getStatusBits(), OBJECT_STATUS_DETECTED ) )
+				if( !BitIsSet( obj->getStatusBits(), OBJECT_STATUS_STEALTHED ) && !BitIsSet( obj->getStatusBits(), OBJECT_STATUS_DETECTED ) )
 				{
 					//Not stealthed, not detected -- so do auto-acquire while stealthed?
 					if( !ai->canAutoAcquireWhileStealthed() )

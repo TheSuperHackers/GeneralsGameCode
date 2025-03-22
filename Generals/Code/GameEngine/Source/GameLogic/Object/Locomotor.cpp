@@ -965,7 +965,7 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 	// do not allow for invalid positions that the pathfinder cannot handle ... for airborne
 	// objects we don't need the pathfinder so we'll ignore this
 	//
-	if( BitTest( m_template->m_surfaces, LOCOMOTORSURFACE_AIR ) == false &&
+	if( BitIsSet( m_template->m_surfaces, LOCOMOTORSURFACE_AIR ) == false &&
 			!TheAI->pathfinder()->validMovementTerrain(obj->getLayer(), this, obj->getPosition()) && 
 			!getFlag(ALLOW_INVALID_POSITION)) 
 	{
@@ -1014,7 +1014,7 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 		{
 			*blocked = false;
 		}
-		if (treatAsAirborne && BitTest( m_template->m_surfaces, LOCOMOTORSURFACE_AIR ) ) 
+		if (treatAsAirborne && BitIsSet( m_template->m_surfaces, LOCOMOTORSURFACE_AIR ) ) 
 		{
 			// Airborne flying objects don't collide for now.  jba.
 			*blocked = false;
@@ -1044,7 +1044,7 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 		setFlag(IS_BRAKING, false);
 	}
 
-	Bool wasBraking = BitTest( obj->getStatusBits(), OBJECT_STATUS_BRAKING );
+	Bool wasBraking = BitIsSet( obj->getStatusBits(), OBJECT_STATUS_BRAKING );
 
 	physics->setTurning(TURN_NONE);
 	if (getAllowMotiveForceWhileAirborne() || !treatAsAirborne)
@@ -1949,7 +1949,7 @@ void Locomotor::moveTowardsPositionThrust(Object* obj, PhysicsBehavior *physics,
 		const Coord3D* veltmp = physics->getVelocity();
 		Vector3 vel(veltmp->x, veltmp->y, veltmp->z);
 		Bool adjust = true;
-		if (BitTest( obj->getStatusBits(), OBJECT_STATUS_BRAKING )) {
+		if (BitIsSet( obj->getStatusBits(), OBJECT_STATUS_BRAKING )) {
 			// align to target, cause that's where we're going anyway.
 
 			vel.Set(goalPos.x - pos.x, goalPos.y-pos.y, goalPos.z-pos.z);

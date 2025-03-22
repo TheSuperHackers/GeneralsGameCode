@@ -600,22 +600,22 @@ Bool CommandButton::isValidToUseOn(const Object *sourceObj, const Object *target
 		return false;
 	}
 
-	if( BitTest( m_options, COMMAND_OPTION_NEED_OBJECT_TARGET ) && !targetObj ) 
+	if( BitIsSet( m_options, COMMAND_OPTION_NEED_OBJECT_TARGET ) && !targetObj ) 
 	{
 		return false;
 	}
 
-	if( BitTest( m_options, NEED_TARGET_POS ) && !targetLocation ) 
+	if( BitIsSet( m_options, NEED_TARGET_POS ) && !targetLocation ) 
 	{
 		return false;
 	}
 	
-	if( BitTest( m_options, COMMAND_OPTION_NEED_OBJECT_TARGET ) ) 
+	if( BitIsSet( m_options, COMMAND_OPTION_NEED_OBJECT_TARGET ) ) 
 	{
 		return TheActionManager->canDoSpecialPowerAtObject( sourceObj, targetObj, commandSource, m_specialPower, m_options, false );
 	}
 
-	if( BitTest( m_options, NEED_TARGET_POS ) ) 
+	if( BitIsSet( m_options, NEED_TARGET_POS ) ) 
 	{
 		return TheActionManager->canDoSpecialPowerAtLocation( sourceObj, targetLocation, commandSource, m_specialPower, NULL, m_options, false );
 	}
@@ -672,7 +672,7 @@ const FieldParse CommandSet::m_commandSetFieldParseTable[] =
 //-------------------------------------------------------------------------------------------------
 Bool CommandButton::isContextCommand() const
 {
-	return BitTest( m_options, CONTEXTMODE_COMMAND );
+	return BitIsSet( m_options, CONTEXTMODE_COMMAND );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1744,7 +1744,7 @@ void ControlBar::evaluateContextUI( void )
 			return;
 
 		// we show no interface for objects being sold
-		if( BitTest( obj->getStatusBits(), OBJECT_STATUS_SOLD ) )
+		if( BitIsSet( obj->getStatusBits(), OBJECT_STATUS_SOLD ) )
 			return;
 
 		static const NameKeyType key_OCLUpdate = NAMEKEY( "OCLUpdate" );
@@ -1756,7 +1756,7 @@ void ControlBar::evaluateContextUI( void )
 		// more important than anything
 		//
 		Bool contextSelected = FALSE;
-		if( BitTest( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+		if( BitIsSet( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 		{
 
 			switchToContext( CB_CONTEXT_UNDER_CONSTRUCTION, drawToEvaluateFor );
@@ -2338,7 +2338,7 @@ void ControlBar::setControlCommand( GameWindow *button, const CommandButton *com
 	// set the button gadget control to be a normal button or a check like button if
 	// the command says it needs one
 	//
-	if( BitTest( commandButton->getOptions(), CHECK_LIKE ))
+	if( BitIsSet( commandButton->getOptions(), CHECK_LIKE ))
 		GadgetButtonEnableCheckLike( button, TRUE, FALSE );
 	else
 		GadgetButtonEnableCheckLike( button, FALSE, FALSE );
@@ -3068,7 +3068,7 @@ void ControlBar::triggerRadarAttackGlow( void )
 		return;
 	m_radarAttackGlowOn = TRUE;
 	m_remainingRadarAttackGlowFrames = RADAR_ATTACK_GLOW_FRAMES;
-	if(BitTest(m_radarAttackGlowWindow->winGetStatus(),WIN_STATUS_ENABLED) == TRUE)
+	if(BitIsSet(m_radarAttackGlowWindow->winGetStatus(),WIN_STATUS_ENABLED) == TRUE)
 		m_radarAttackGlowWindow->winEnable(FALSE);
 }
 
@@ -3086,7 +3086,7 @@ void ControlBar::updateRadarAttackGlow ( void )
 	
 	if(m_remainingRadarAttackGlowFrames % RADAR_ATTACK_GLOW_NUM_TIMES == 0)
 	{
-		m_radarAttackGlowWindow->winEnable(!BitTest(m_radarAttackGlowWindow->winGetStatus(),WIN_STATUS_ENABLED));
+		m_radarAttackGlowWindow->winEnable(!BitIsSet(m_radarAttackGlowWindow->winGetStatus(),WIN_STATUS_ENABLED));
 	}
 
 	
@@ -3200,7 +3200,7 @@ void ControlBar::populateSpecialPowerShortcut( Player *player)
 				// commands that require sciences we don't have are hidden so they never show up
 				// cause we can never pick "another" general technology throughout the game
 				//
-				if( BitTest( commandButton->getOptions(), NEED_SPECIAL_POWER_SCIENCE ) )
+				if( BitIsSet( commandButton->getOptions(), NEED_SPECIAL_POWER_SCIENCE ) )
 				{
 					const SpecialPowerTemplate *power = commandButton->getSpecialPowerTemplate();
 

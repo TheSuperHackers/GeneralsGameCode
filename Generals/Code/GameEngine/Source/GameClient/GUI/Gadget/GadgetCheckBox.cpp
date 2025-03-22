@@ -83,7 +83,7 @@ WindowMsgHandledType GadgetCheckBoxInput( GameWindow *window, UnsignedInt msg,
 		case GWM_MOUSE_ENTERING:
 		{
 
-			if( BitTest( instData->getStyle(), GWS_MOUSE_TRACK ) ) 
+			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) ) 
 			{
 
 				BitSet( instData->m_state, WIN_STATE_HILITED );
@@ -102,7 +102,7 @@ WindowMsgHandledType GadgetCheckBoxInput( GameWindow *window, UnsignedInt msg,
 		case GWM_MOUSE_LEAVING:
 		{
 
-			if( BitTest( instData->getStyle(), GWS_MOUSE_TRACK ) ) 
+			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) ) 
 			{
 
 				BitClear( instData->m_state, WIN_STATE_HILITED );
@@ -137,7 +137,7 @@ WindowMsgHandledType GadgetCheckBoxInput( GameWindow *window, UnsignedInt msg,
 		case GWM_LEFT_UP:
 		{
 
-			if( BitTest( instData->getState(), WIN_STATE_HILITED ) == FALSE )
+			if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) == FALSE )
 			{
 				// this up click was not meant for this button
 				return MSG_IGNORED;
@@ -165,7 +165,7 @@ WindowMsgHandledType GadgetCheckBoxInput( GameWindow *window, UnsignedInt msg,
 		case GWM_RIGHT_UP:
 		{
 			// Need to be specially marked to care about right mouse events
-			if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+			if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 			{
 				TheWindowManager->winSendSystemMsg( instData->getOwner(), GBM_SELECTED_RIGHT,
 																						(WindowMsgData)window, mData1 );
@@ -192,7 +192,7 @@ WindowMsgHandledType GadgetCheckBoxInput( GameWindow *window, UnsignedInt msg,
 				case KEY_SPACE:
 				{
 
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 					{
 						// Toggle the check state
 						instData->m_state ^= WIN_STATE_SELECTED;
@@ -212,7 +212,7 @@ WindowMsgHandledType GadgetCheckBoxInput( GameWindow *window, UnsignedInt msg,
 				case KEY_TAB:
 				{
 
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 						TheWindowManager->winNextTab(window);
 					break;
 
@@ -223,7 +223,7 @@ WindowMsgHandledType GadgetCheckBoxInput( GameWindow *window, UnsignedInt msg,
 				case KEY_LEFT:
 				{
 
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 						TheWindowManager->winPrevTab(window);
 					break;
 
@@ -349,5 +349,5 @@ void GadgetCheckBoxSetChecked( GameWindow *g, Bool isChecked)
 Bool GadgetCheckBoxIsChecked( GameWindow *g )
 {
 	WinInstanceData *instData = g->winGetInstanceData();
-	return (BitTest(instData->m_state, WIN_STATE_SELECTED));
+	return (BitIsSet(instData->m_state, WIN_STATE_SELECTED));
 }

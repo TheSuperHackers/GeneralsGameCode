@@ -176,7 +176,7 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 	
 	//Sep 27, 2002 (Kris): Added this code to prevent the tower from working while under construction.
 	Object *self = getObject();
-	if( BitTest( self->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	if( BitIsSet( self->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 		return UPDATE_SLEEP_NONE;
 
 	if( self->testStatus(OBJECT_STATUS_SOLD) )

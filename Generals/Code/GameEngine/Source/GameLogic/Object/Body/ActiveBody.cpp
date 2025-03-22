@@ -991,7 +991,7 @@ void ActiveBody::internalChangeHealth( Real delta )
 		// for damage states when things are under construction because we just don't have
 		// all the art states for that during buildup animation
 		//
-		if( BitTest( getObject()->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE)
+		if( BitIsSet( getObject()->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE)
 			evaluateVisualCondition();
 
 	}  // end if

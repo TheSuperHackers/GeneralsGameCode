@@ -1028,7 +1028,7 @@ void Player::becomingTeamMember(Object *obj, Bool yes)
 		return;	
 
 	// energy production/consumption hooks, note we ignore things that are UNDER_CONSTRUCTION
-	if( BitTest( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE )
+	if( BitIsSet( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE )
 	{
 		obj->friend_adjustPowerForPlayer(yes);
 	}  // end if
@@ -2574,7 +2574,7 @@ Bool Player::hasUpgradeComplete( const UpgradeTemplate *upgradeTemplate )
 //=================================================================================================
 Bool Player::hasUpgradeComplete( Int64 testMask )
 {
-	return BitTest( m_upgradesCompleted, testMask );
+	return BitIsSet( m_upgradesCompleted, testMask );
 }
 
 //=================================================================================================
@@ -2583,7 +2583,7 @@ Bool Player::hasUpgradeComplete( Int64 testMask )
 Bool Player::hasUpgradeInProduction( const UpgradeTemplate *upgradeTemplate )
 {
 	Int64 testMask = upgradeTemplate->getUpgradeMask();
-	return BitTest( m_upgradesInProgress, testMask );
+	return BitIsSet( m_upgradesInProgress, testMask );
 }
 
 //=================================================================================================

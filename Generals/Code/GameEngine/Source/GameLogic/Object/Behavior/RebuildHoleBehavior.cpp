@@ -317,7 +317,7 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 
 	// when re-construction is complete, we remove this hole and worker
 	if( reconstructing && 
-			BitTest( reconstructing->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE )
+			BitIsSet( reconstructing->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE )
 	{
 		// Transfer hole name to new building
 		TheScriptEngine->transferObjectName( hole->getName(), reconstructing );

@@ -161,8 +161,8 @@ Bool ActionManager::canGetRepairedAt( const Object *obj, const Object *repairDes
 		return FALSE;
 
 	// nothing can be done with things that are under construction
-	if( BitTest( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE ||
-			BitTest( repairDest->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
+	if( BitIsSet( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE ||
+			BitIsSet( repairDest->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
 		return FALSE;
 
 	// Can't get repaired at something being sold
@@ -217,8 +217,8 @@ Bool ActionManager::canTransferSuppliesAt( const Object *obj, const Object *tran
 	}
 
 	// nothing can be done with things that are under construction
-	if( BitTest( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE ||
-			BitTest( transferDest->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
+	if( BitIsSet( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE ||
+			BitIsSet( transferDest->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
 		return FALSE;
 
 	// Can't transfer at something being sold
@@ -342,8 +342,8 @@ Bool ActionManager::canGetHealedAt( const Object *obj, const Object *healDest, C
 		return FALSE;
 
 	// nothing can be done with things that are under construction
-	if( BitTest( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE ||
-			BitTest( healDest->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
+	if( BitIsSet( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE ||
+			BitIsSet( healDest->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
 		return FALSE;
 
 	// Can't get healed at something being sold
@@ -406,8 +406,8 @@ Bool ActionManager::canRepairObject( const Object *obj, const Object *objectToRe
 		return FALSE;
 
 	// nothing can be done with things that are under construction
-	if( BitTest( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE ||
-			BitTest( objectToRepair->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
+	if( BitIsSet( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE ||
+			BitIsSet( objectToRepair->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
 		return FALSE;
 
 	// we cannot manually repair things that are regeneration holes
@@ -466,7 +466,7 @@ Bool ActionManager::canResumeConstructionOf( const Object *obj,
 		return FALSE;
 
 	// if the objectBeingConstructed is not actually under construction we can't resume that!
-	if( BitTest( objectBeingConstructed->getStatusBits(), 
+	if( BitIsSet( objectBeingConstructed->getStatusBits(), 
 							 OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE )
 		return FALSE;
 
@@ -542,8 +542,8 @@ Bool ActionManager::canEnterObject( const Object *obj, const Object *objectToEnt
 		return FALSE;
 
 	// nothing can be done with things that are under construction
-	if( BitTest( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE ||
-			BitTest( objectToEnter->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
+	if( BitIsSet( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE ||
+			BitIsSet( objectToEnter->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
 	{
 		return FALSE;
 	}
@@ -1166,7 +1166,7 @@ Bool ActionManager::canStealCashViaHacking( const Object *obj, const Object *obj
 		return FALSE;
 	}
 
-	if( BitTest( objectToHack->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
+	if( BitIsSet( objectToHack->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
 	{
 		return FALSE;
 	}
@@ -1528,7 +1528,7 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 					}
 					
 					//Can't cash hack a building that's under construction.
-					if( BitTest( target->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+					if( BitIsSet( target->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 					{
 						return FALSE;
 					}
