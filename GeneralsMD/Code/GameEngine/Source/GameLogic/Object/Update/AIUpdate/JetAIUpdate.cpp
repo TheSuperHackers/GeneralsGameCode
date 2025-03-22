@@ -549,7 +549,7 @@ public:
 					std::vector<Coord3D>::const_iterator it;
 					for( it = pTaxiLocations->begin(); it != pTaxiLocations->end(); it++ )
 					{
-						movePath->appendNode( it, LAYER_GROUND );
+						movePath->appendNode( &(*it), LAYER_GROUND );
 					}
 				}
 
@@ -617,7 +617,7 @@ public:
 							firstNode = FALSE;
 							continue;
 						}
-						movePath->appendNode( it, LAYER_GROUND );
+						movePath->appendNode( &(*it), LAYER_GROUND );
 					}
 					movePath->appendNode( &ppinfo.runwayPrep, LAYER_GROUND );
 				}

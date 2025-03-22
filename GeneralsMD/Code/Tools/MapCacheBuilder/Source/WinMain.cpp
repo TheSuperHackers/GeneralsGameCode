@@ -134,7 +134,7 @@ HINSTANCE ApplicationHInstance = NULL;  ///< our application instance
 /// just to satisfy the game libraries we link to
 HWND ApplicationHWnd = NULL;
 
-char *gAppPrefix = "MC_";
+const char *gAppPrefix = "MC_";
 
 // Where are the default string files?
 const Char *g_strFile = "data\\Generals.str";

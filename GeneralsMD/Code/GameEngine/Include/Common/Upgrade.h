@@ -36,6 +36,7 @@
 #include "Common/AudioEventRTS.h"
 #include "Common/INI.h"
 #include "Common/Snapshot.h"
+#include "Common/BitFlags.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Player;

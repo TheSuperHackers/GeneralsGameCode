@@ -64,7 +64,7 @@ public:
 	CollectionClass(void);
 	CollectionClass(const CollectionDefClass & def);
 	CollectionClass(const CollectionClass & src);
-	CollectionClass & CollectionClass::operator = (const CollectionClass &);
+	CollectionClass & operator = (const CollectionClass &);
 	virtual ~CollectionClass(void);
 	virtual RenderObjClass *	Clone(void) const;		
 	

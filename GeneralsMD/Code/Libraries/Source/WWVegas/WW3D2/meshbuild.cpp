@@ -184,7 +184,7 @@ public:
 		delete[] HashTable;
 	}
 
-	void VertexArrayClass::Set_Bounds(const Vector3 & minv,const Vector3 & maxv)
+	void Set_Bounds(const Vector3 & minv,const Vector3 & maxv)
 	{
 		Extent = (maxv - minv) / 2.0f;
 		Center = (maxv + minv) / 2.0f;
@@ -296,7 +296,8 @@ public:
 		}
 
 		// colors, and material id's must match for all passes
-		for (int pass=0; pass < MeshBuilderClass::MAX_PASSES; pass++) {
+		int pass=0;
+		for (; pass < MeshBuilderClass::MAX_PASSES; pass++) {
 
 			if (v0.DiffuseColor[pass] != v1.DiffuseColor[pass]) return 0;
 			if (v0.SpecularColor[pass] != v1.SpecularColor[pass]) return 0;

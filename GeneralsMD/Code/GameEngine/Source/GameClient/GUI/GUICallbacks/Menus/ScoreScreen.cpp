@@ -481,7 +481,7 @@ WindowMsgHandledType ScoreScreenInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
@@ -1663,7 +1663,8 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 					Bool sawAnyDisconnects = FALSE;
 					Bool anyNonAI = FALSE;
 					Bool anyAI = FALSE;
-					for (Int i=0; i<MAX_SLOTS; ++i)
+					Int i=0;
+					for (; i<MAX_SLOTS; ++i)
 					{
 						const GameSlot *slot = TheGameInfo->getConstSlot(i);
 						if (slot->isOccupied() && i != localSlotNum )

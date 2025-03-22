@@ -237,7 +237,7 @@ WebBrowserURL * WebBrowser::makeNewURL(AsciiString tag)
 *
 ******************************************************************************/
 
-STDMETHODIMP WebBrowser::QueryInterface(REFIID iid, void** ppv)
+STDMETHODIMP WebBrowser::QueryInterface(REFIID iid, void** ppv) NOEXCEPT_17
 {
 	*ppv = NULL;
 
@@ -270,7 +270,7 @@ STDMETHODIMP WebBrowser::QueryInterface(REFIID iid, void** ppv)
 *
 ******************************************************************************/
 
-ULONG STDMETHODCALLTYPE WebBrowser::AddRef(void)
+ULONG STDMETHODCALLTYPE WebBrowser::AddRef(void) NOEXCEPT_17
 {
 	return ++mRefCount;
 }
@@ -290,7 +290,7 @@ ULONG STDMETHODCALLTYPE WebBrowser::AddRef(void)
 *
 ******************************************************************************/
 
-ULONG STDMETHODCALLTYPE WebBrowser::Release(void)
+ULONG STDMETHODCALLTYPE WebBrowser::Release(void) NOEXCEPT_17
 {
 	DEBUG_ASSERTCRASH(mRefCount > 0, ("Negative reference count"));
 	--mRefCount;

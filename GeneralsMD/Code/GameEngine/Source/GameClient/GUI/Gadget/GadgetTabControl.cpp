@@ -315,7 +315,7 @@ void GadgetTabControlCreateSubPanes( GameWindow *tabControl )///< Create User Wi
 			sprintf( buffer, "Pane %d", paneIndex );
 			instData->m_decoratedNameString = buffer;
 			//set enabled status to that of Parent
-			tabData->subPanes[paneIndex]->winEnable( BitTest(tabControl->winGetStatus(), WIN_STATUS_ENABLED) );
+			tabData->subPanes[paneIndex]->winEnable( BitIsSet(tabControl->winGetStatus(), WIN_STATUS_ENABLED) );
 		}
 		else//this one exists, tabCount will control keeping extra panes perma-hidden
 		{

@@ -116,7 +116,7 @@ enum FilterModes
 class PickAndPlayInfo
 {
 public:
-	PickAndPlayInfo::PickAndPlayInfo(); //INITIALIZE THE CONSTRUCTOR IN CPP
+	PickAndPlayInfo(); //INITIALIZE THE CONSTRUCTOR IN CPP
 
 	Bool						m_air;					//Are we attacking an airborned target?
 	Drawable				*m_drawTarget;	//Do we have an override draw target?

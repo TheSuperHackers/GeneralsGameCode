@@ -2222,7 +2222,7 @@ Drawable *W3DView::pickDrawable( const ICoord2D *screen, Bool forceAttack, PickT
 	while (window)
 	{
 		// check to see if it or any of its parents are opaque.  If so, we can't select anything.
-		if (!BitTest( window->winGetStatus(), WIN_STATUS_SEE_THRU ))
+		if (!BitIsSet( window->winGetStatus(), WIN_STATUS_SEE_THRU ))
 			return NULL;
 
 		window = window->winGetParent();

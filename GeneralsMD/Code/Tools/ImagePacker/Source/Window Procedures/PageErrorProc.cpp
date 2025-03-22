@@ -98,16 +98,16 @@ BOOL CALLBACK PageErrorProc( HWND hWndDialog, UINT message,
 			{
 
 				// if image can't be processed find out why
-				if( BitTest( page->m_status, TexturePage::PAGE_ERROR ) )
+				if( BitIsSet( page->m_status, TexturePage::PAGE_ERROR ) )
 				{
 					
-					if( BitTest( page->m_status, TexturePage::CANT_ALLOCATE_PACKED_IMAGE ) )
+					if( BitIsSet( page->m_status, TexturePage::CANT_ALLOCATE_PACKED_IMAGE ) )
 						sprintf( reason, "Can't allocate image memory" );
-					else if( BitTest( page->m_status, TexturePage::CANT_ADD_IMAGE_DATA ) )
+					else if( BitIsSet( page->m_status, TexturePage::CANT_ADD_IMAGE_DATA ) )
 						sprintf( reason, "Can't add image(s) data" );
-					else if( BitTest( page->m_status, TexturePage::NO_TEXTURE_DATA ) )
+					else if( BitIsSet( page->m_status, TexturePage::NO_TEXTURE_DATA ) )
 						sprintf( reason, "No texture data to write" );
-					else if( BitTest( page->m_status, TexturePage::ERROR_DURING_SAVE ) )
+					else if( BitIsSet( page->m_status, TexturePage::ERROR_DURING_SAVE ) )
 						sprintf( reason, "Error writing texture file" );
 					else
 						sprintf( reason, "Unknown Reason" );

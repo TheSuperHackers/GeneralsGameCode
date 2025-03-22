@@ -52,7 +52,8 @@ void		WWMath::Init(void)
 {
 	LookupTableMgrClass::Init();
 
-	for (int a=0;a<ARC_TABLE_SIZE;++a) {
+	int a=0;
+	for (;a<ARC_TABLE_SIZE;++a) {
 		float cv=float(a-ARC_TABLE_SIZE/2)*(1.0f/(ARC_TABLE_SIZE/2));
 		_FastAcosTable[a]=acos(cv);
 		_FastAsinTable[a]=asin(cv);

@@ -517,7 +517,8 @@ public:
 
 	inline Int wasSeenByAnyPlayers() const	///<check if a player in the game has seen the object but is now looking at fogged version.
 	{	
-		for (Int i=0; i<MAX_PLAYER_COUNT; i++)
+		Int i=0;
+		for (; i<MAX_PLAYER_COUNT; i++)
 			if (m_everSeenByPlayer[i] && m_shroudedness[i] == OBJECTSHROUD_FOGGED)
 				return i;
 		return i;
@@ -1263,7 +1264,7 @@ protected:
 		This is an internal function that is used to implement the public 
 		getClosestObject and iterateObjects calls. 
 	*/
-	Object *PartitionManager::getClosestObjects(
+	Object *getClosestObjects(
 		const Object *obj, 
 		const Coord3D *pos, 
 		Real maxDist, 

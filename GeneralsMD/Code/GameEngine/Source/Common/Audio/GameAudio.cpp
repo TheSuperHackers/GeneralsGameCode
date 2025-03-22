@@ -1034,18 +1034,18 @@ Bool AudioManager::shouldPlayLocally(const AudioEventRTS *audioEvent)
 		return TRUE;
 	}
 
-	if (!BitTest(ei->m_type, (ST_PLAYER | ST_ALLIES | ST_ENEMIES | ST_EVERYONE))) {
+	if (!BitIsSet(ei->m_type, (ST_PLAYER | ST_ALLIES | ST_ENEMIES | ST_EVERYONE))) {
 		DEBUG_CRASH(("No player restrictions specified for '%s'. Using Everyone.\n", ei->m_audioName.str()));
 		return TRUE;
 	}
 
-	if (BitTest(ei->m_type, ST_EVERYONE)) {
+	if (BitIsSet(ei->m_type, ST_EVERYONE)) {
 		return TRUE;
 	}
 
 	Player *owningPlayer = ThePlayerList->getNthPlayer(audioEvent->getPlayerIndex());
 
-	if (BitTest(ei->m_type, ST_PLAYER) && BitTest(ei->m_type, ST_UI) && owningPlayer == NULL) {
+	if (BitIsSet(ei->m_type, ST_PLAYER) && BitIsSet(ei->m_type, ST_UI) && owningPlayer == NULL) {
 		DEBUG_ASSERTCRASH(!TheGameLogic->isInGameLogicUpdate(), ("Playing %s sound -- player-based UI sound without specifying a player.\n"));
 		return TRUE;
 	}
@@ -1065,17 +1065,17 @@ Bool AudioManager::shouldPlayLocally(const AudioEventRTS *audioEvent)
 		return FALSE;
 	}
 
-	if (BitTest(ei->m_type, ST_PLAYER))  {
+	if (BitIsSet(ei->m_type, ST_PLAYER))  {
 		return owningPlayer == localPlayer;
 	}
 
-	if (BitTest(ei->m_type, ST_ALLIES)) { 
+	if (BitIsSet(ei->m_type, ST_ALLIES)) { 
 		// We have to also check that the owning player isn't the local player, because PLAYER 
 		// wasn't specified, or we wouldn't have gotten here.
 		return (owningPlayer != localPlayer) && owningPlayer->getRelationship(localTeam) == ALLIES;
 	}
 
-	if (BitTest(ei->m_type, ST_ENEMIES)) {
+	if (BitIsSet(ei->m_type, ST_ENEMIES)) {
 		return owningPlayer->getRelationship(localTeam) == ENEMIES;
 	}
 	

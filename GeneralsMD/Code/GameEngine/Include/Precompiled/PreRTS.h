@@ -49,12 +49,18 @@ class STLSpecialAlloc;
 #include <direct.h>
 #include <EXCPT.H>
 #include <float.h>
+#ifdef USING_STLPORT
 #include <fstream.h>
+#else
+#include <fstream>
+#endif
 #include <imagehlp.h>
 #include <io.h>
 #include <limits.h>
 #include <lmcons.h>
+#if defined(_MSC_VER) && _MSC_VER < 1300
 #include <mapicode.h>
+#endif
 #include <math.h>
 #include <memory.h>
 #include <mmsystem.h>

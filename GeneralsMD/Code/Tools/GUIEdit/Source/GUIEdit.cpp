@@ -1161,7 +1161,7 @@ static GameWindow *pointInChild( Int x, Int y , GameWindow *win)
 		child->winGetSize(&tempX,&tempY);
 		if( x >= origin.x && x <= origin.x + tempX &&
 				y >= origin.y && y <= origin.y + tempY &&
-				BitTest( child->winGetStatus(), WIN_STATUS_HIDDEN ) == FALSE)
+				BitIsSet( child->winGetStatus(), WIN_STATUS_HIDDEN ) == FALSE)
 			return child->winPointInChild( x, y );
 
 	}  // end for child
@@ -1204,7 +1204,7 @@ static GameWindow *pointInAnyChild( Int x, Int y, Bool ignoreHidden, GameWindow 
 				y >= origin.y && y <= origin.y + tempY )
 		{
 
-			if( !(ignoreHidden == TRUE &&	BitTest( child->winGetStatus(), WIN_STATUS_HIDDEN )) )
+			if( !(ignoreHidden == TRUE &&	BitIsSet( child->winGetStatus(), WIN_STATUS_HIDDEN )) )
 				return pointInChild( x, y , child);
 
 		}  // end if
@@ -1262,7 +1262,7 @@ GameWindow *GUIEdit::getWindowAtPos( Int x, Int y )
 		if( parent )
 		{
 		
-			if( BitTest( parent->winGetStyle(), GWS_VERT_SLIDER |
+			if( BitIsSet( parent->winGetStyle(), GWS_VERT_SLIDER |
 																					GWS_HORZ_SLIDER |
 																					GWS_SCROLL_LISTBOX |
 																					GWS_COMBO_BOX |
@@ -1280,22 +1280,22 @@ GameWindow *GUIEdit::getWindowAtPos( Int x, Int y )
 				// a slider, therefore in that situation only we want to return the
 				// parent of the slider
 				//
-				if( BitTest( parent->winGetStyle(), GWS_HORZ_SLIDER | 
+				if( BitIsSet( parent->winGetStyle(), GWS_HORZ_SLIDER | 
 																						GWS_VERT_SLIDER ) )
 				{
 					GameWindow *grandParent = parent->winGetParent();
 
-					if( grandParent && BitTest( grandParent->winGetStyle(),
+					if( grandParent && BitIsSet( grandParent->winGetStyle(),
 																			GWS_SCROLL_LISTBOX ) )
 						pick = grandParent;
 
 				}  // end if
 
 				//must check to see of the parent of a scroll box is a combo box
-				if(BitTest(pick->winGetStyle(), GWS_SCROLL_LISTBOX))
+				if(BitIsSet(pick->winGetStyle(), GWS_SCROLL_LISTBOX))
 				{
 					GameWindow *grandParent = pick->winGetParent();
-					if( grandParent && BitTest( grandParent->winGetStyle(), GWS_COMBO_BOX))
+					if( grandParent && BitIsSet( grandParent->winGetStyle(), GWS_COMBO_BOX))
 						pick = grandParent;
 				}					
 			}  // end if
@@ -4551,7 +4551,7 @@ Bool GUIEdit::windowIsGadget( GameWindow *window )
 	if( window == NULL )
 		return FALSE;
 
-	return BitTest( window->winGetStyle(), GWS_GADGET_WINDOW );
+	return BitIsSet( window->winGetStyle(), GWS_GADGET_WINDOW );
 
 }  // end windowIsGadget
 

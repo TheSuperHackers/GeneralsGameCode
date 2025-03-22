@@ -323,7 +323,7 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 			// If we're in a movie, we want to be able to escape out of it
 			if(returnCode != WIN_INPUT_USED 
 				&& (key == KEY_ESC) 
-				&& (BitTest( state, KEY_STATE_UP ))
+				&& (BitIsSet( state, KEY_STATE_UP ))
 				&& TheDisplay->isMoviePlaying()
 				&& TheGlobalData->m_allowExitOutOfMovies == TRUE )
 			{
@@ -333,7 +333,7 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 
 			if(returnCode != WIN_INPUT_USED 
 				&& (key == KEY_ESC) 
-				&& (BitTest( state, KEY_STATE_UP ))
+				&& (BitIsSet( state, KEY_STATE_UP ))
 				&& (TheInGameUI && (TheInGameUI->getInputEnabled() == FALSE)) )
 			{
 				returnCode = WIN_INPUT_USED;

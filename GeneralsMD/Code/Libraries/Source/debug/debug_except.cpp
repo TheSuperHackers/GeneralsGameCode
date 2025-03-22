@@ -158,7 +158,10 @@ void DebugExceptionhandler::LogFPURegisters(Debug &dbg, struct _EXCEPTION_POINTE
       << " ErrSel:  "    << Debug::Width(8) << flt.ErrorSelector << "\n"
       << "DataOfs:     " << Debug::Width(8) << flt.DataOffset
       << " DataSel: "    << Debug::Width(8) << flt.DataSelector << "\n"
-      << "Cr0NpxState: " << Debug::Width(8) << flt.Cr0NpxState << "\n";
+#if !defined(WOW64_SIZE_OF_80387_REGISTERS)
+      << "Cr0NpxState: " << Debug::Width(8) << flt.Cr0NpxState << "\n"
+#endif
+  ;
 
   for (unsigned k=0;k<SIZE_OF_80387_REGISTERS/10;++k)
   {
@@ -252,7 +255,8 @@ static BOOL CALLBACK ExceptionDlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
   {
     LVCOLUMN c;
     c.mask=LVCF_TEXT|LVCF_WIDTH;
-    c.pszText="";
+    char columnText[] = "";
+    c.pszText=columnText;
     c.cx=690;
     ListView_InsertColumn(list,0,&c);
 
@@ -260,7 +264,8 @@ static BOOL CALLBACK ExceptionDlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
     item.iItem=0;
     item.iSubItem=0;
     item.mask=LVIF_TEXT;
-    item.pszText="No stack data available - check for dbghelp.dll";
+    char itemText[] = "No stack data available - check for dbghelp.dll";
+    item.pszText=itemText;
 
     item.iItem=ListView_InsertItem(list,&item);
   }
@@ -269,30 +274,36 @@ static BOOL CALLBACK ExceptionDlgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
     // add columns first
     LVCOLUMN c;
     c.mask=LVCF_TEXT|LVCF_WIDTH;
-    c.pszText="";
+    char columnText1[] = "";
+    c.pszText=columnText1;
     c.cx=0; // first column is empty (can't right-align 1st column)
     ListView_InsertColumn(list,0,&c);
 
     c.mask=LVCF_TEXT|LVCF_WIDTH|LVCF_FMT;
-    c.pszText="Address";
+    char columnText2[] = "Address";
+    c.pszText=columnText2;
     c.cx=60;
     c.fmt=LVCFMT_RIGHT;
     ListView_InsertColumn(list,1,&c);
 
     c.mask=LVCF_TEXT|LVCF_WIDTH;
-    c.pszText="Module";
+    char columnText3[] = "Module";
+    c.pszText=columnText3;
     c.cx=120;
     ListView_InsertColumn(list,2,&c);
 
-    c.pszText="Symbol";
+    char columnText4[] = "Symbol";
+    c.pszText=columnText4;
     c.cx=300;
     ListView_InsertColumn(list,3,&c);
 
-    c.pszText="File";
+    char columnText5[] = "File";
+    c.pszText=columnText5;
     c.cx=130;
     ListView_InsertColumn(list,4,&c);
 
-    c.pszText="Line";
+    char columnText6[] = "Line";
+    c.pszText=columnText6;
     c.cx=80;
     ListView_InsertColumn(list,5,&c);
 

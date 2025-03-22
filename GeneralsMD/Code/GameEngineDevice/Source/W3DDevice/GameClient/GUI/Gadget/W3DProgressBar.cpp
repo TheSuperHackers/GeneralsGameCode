@@ -83,14 +83,14 @@ void W3DGadgetProgressBarDraw( GameWindow *window, WinInstanceData *instData )
 	window->winGetSize( &size.x, &size.y );
 
 	// get the right colors to use
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 		backColor		= GadgetProgressBarGetDisabledColor( window );
 		backBorder	= GadgetProgressBarGetDisabledBorderColor( window );
 		barColor		= GadgetProgressBarGetDisabledBarColor( window );
 		barBorder		= GadgetProgressBarGetDisabledBarBorderColor( window );
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		backColor		= GadgetProgressBarGetHiliteColor( window );
 		backBorder	= GadgetProgressBarGetHiliteBorderColor( window );
@@ -242,7 +242,7 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 	yOffset = instData->m_imageOffset.y;
 
 	// get the right images to use
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 
 		backLeft				= GadgetProgressBarGetDisabledImageLeft( window );
@@ -255,7 +255,7 @@ void W3DGadgetProgressBarImageDraw( GameWindow *window, WinInstanceData *instDat
 		//barSmallCenter	= GadgetProgressBarGetDisabledBarImageSmallCenter( window );
 
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
 		backLeft				= GadgetProgressBarGetHiliteImageLeft( window );

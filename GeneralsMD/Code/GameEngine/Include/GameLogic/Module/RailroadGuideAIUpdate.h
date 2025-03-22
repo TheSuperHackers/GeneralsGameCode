@@ -265,7 +265,6 @@ protected:
 	void FindPosByPathDistance( Coord3D *pos, const Real dist, const Real length, Bool setState = FALSE );
 	void playImpactSound(Object *victim, const Coord3D *impactPosition);
 
-	TemplateNameIterator m_carriageTemplateNameIterator;
 	StationTask m_nextStationTask;
 	ObjectID m_trailerID; ///< the ID of the object I am directly pulling
 	PullInfo conductorPullInfo;

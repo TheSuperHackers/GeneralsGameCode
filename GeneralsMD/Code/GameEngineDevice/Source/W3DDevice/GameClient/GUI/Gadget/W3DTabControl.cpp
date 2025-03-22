@@ -83,8 +83,8 @@ void W3DGadgetTabControlDraw( GameWindow *tabControl, WinInstanceData *instData 
 
 	W3DGameWinDefaultDraw(tabControl, instData);//draw the background
 
-	if( BitTest( tabControl->winGetStatus(), WIN_STATUS_BORDER ) == TRUE &&
-			!BitTest( tabControl->winGetStatus(), WIN_STATUS_SEE_THRU ) )
+	if( BitIsSet( tabControl->winGetStatus(), WIN_STATUS_BORDER ) == TRUE &&
+			!BitIsSet( tabControl->winGetStatus(), WIN_STATUS_SEE_THRU ) )
 	{//draw border if desired
 		tabControl->winDrawBorder();
 	}
@@ -394,8 +394,8 @@ void W3DGadgetTabControlImageDraw( GameWindow *tabControl,
 
 	W3DGameWinDefaultDraw(tabControl, instData);//draw the background
 
-	if( BitTest( tabControl->winGetStatus(), WIN_STATUS_BORDER ) == TRUE &&
-			!BitTest( tabControl->winGetStatus(), WIN_STATUS_SEE_THRU ) )
+	if( BitIsSet( tabControl->winGetStatus(), WIN_STATUS_BORDER ) == TRUE &&
+			!BitIsSet( tabControl->winGetStatus(), WIN_STATUS_SEE_THRU ) )
 	{//draw border if desired
 		tabControl->winDrawBorder();
 	}

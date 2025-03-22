@@ -448,7 +448,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 	// apply changes to this window
 	ImageAndColorInfo *info;
 
-	if( BitTest( root->winGetStyle(), GWS_PUSH_BUTTON ) )
+	if( BitIsSet( root->winGetStyle(), GWS_PUSH_BUTTON ) )
 	{
 
 		info = GetStateInfo( BUTTON_ENABLED );
@@ -479,7 +479,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetButtonSetHiliteSelectedBorderColor( root, info->borderColor );
 
 	}  // end if
-	else if( BitTest( root->winGetStyle(), GWS_RADIO_BUTTON ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_RADIO_BUTTON ) )
 	{
 
 		info = GetStateInfo( RADIO_ENABLED );
@@ -522,7 +522,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetRadioSetHiliteCheckedBoxBorderColor( root, info->borderColor );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_CHECK_BOX ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_CHECK_BOX ) )
 	{
 
 		info = GetStateInfo( CHECK_BOX_ENABLED );
@@ -565,7 +565,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetCheckBoxSetHiliteCheckedBoxBorderColor( root, info->borderColor );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_VERT_SLIDER ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_VERT_SLIDER ) )
 	{
 
 		info = GetStateInfo( VSLIDER_ENABLED_TOP );
@@ -629,7 +629,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetSliderSetHiliteSelectedThumbBorderColor( root, info->borderColor );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_HORZ_SLIDER ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_HORZ_SLIDER ) )
 	{
 
 		info = GetStateInfo( HSLIDER_ENABLED_LEFT );
@@ -693,7 +693,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetSliderSetHiliteSelectedThumbBorderColor( root, info->borderColor );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_SCROLL_LISTBOX ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_SCROLL_LISTBOX ) )
 	{
 
 		info = GetStateInfo( LISTBOX_ENABLED );
@@ -874,7 +874,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		}  // end if
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_COMBO_BOX ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_COMBO_BOX ) )
 	{
 		info = GetStateInfo( COMBOBOX_ENABLED );
 		GadgetListBoxSetEnabledImage( root, info->image );
@@ -1170,7 +1170,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 			}  // end if
 		}// end if (combo listbox)
 	}// end if
-	else if( BitTest( root->winGetStyle(), GWS_ENTRY_FIELD ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_ENTRY_FIELD ) )
 	{
 
 		info = GetStateInfo( TEXT_ENTRY_ENABLED_LEFT );
@@ -1207,7 +1207,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetTextEntrySetHiliteImageSmallCenter( root, info->image );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_STATIC_TEXT ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_STATIC_TEXT ) )
 	{
 
 		info = GetStateInfo( STATIC_TEXT_ENABLED );
@@ -1226,7 +1226,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetStaticTextSetHiliteBorderColor( root, info->borderColor );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_PROGRESS_BAR ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_PROGRESS_BAR ) )
 	{
 
 		info = GetStateInfo( PROGRESS_BAR_ENABLED_LEFT );
@@ -1293,7 +1293,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetProgressBarSetHiliteBarImageSmallCenter( root, info->image );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_TAB_CONTROL ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_TAB_CONTROL ) )
 	{
 		info = GetStateInfo( TC_TAB_0_ENABLED );
 		GadgetTabControlSetEnabledImageTabZero( root, info->image );

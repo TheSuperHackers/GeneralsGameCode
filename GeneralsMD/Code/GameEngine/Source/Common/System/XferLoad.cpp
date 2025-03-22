@@ -186,7 +186,7 @@ void XferLoad::xferSnapshot( Snapshot *snapshot )
 	snapshot->xfer( this );
 
 	// add this snapshot to the game state for later post processing if not restricted
-	if( BitTest( getOptions(), XO_NO_POST_PROCESSING ) == FALSE )
+	if( BitIsSet( getOptions(), XO_NO_POST_PROCESSING ) == FALSE )
 		TheGameState->addPostProcessSnapshot( snapshot );
 
 }  // end xferSnapshot

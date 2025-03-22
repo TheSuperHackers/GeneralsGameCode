@@ -80,7 +80,7 @@ enum
 	SHELL_SCRIPT_HOOK_TOTAL			// Keep this guy last!
 };
 
-extern char *TheShellHookNames[];				///< Contains a list of the text representation of the shell hooks Used in WorldBuilder and in the shell.
+extern const char *TheShellHookNames[];				///< Contains a list of the text representation of the shell hooks Used in WorldBuilder and in the shell.
 void SignalUIInteraction(Int interaction);
 
 #endif SHELLHOOKS_H

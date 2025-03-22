@@ -77,7 +77,7 @@ enum TimeOfDay
 	TIME_OF_DAY_COUNT					// keep this last
 };
 
-extern char *TimeOfDayNames[];
+extern const char *TimeOfDayNames[];
 // defined in Common/GameType.cpp
 
 //-------------------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ enum Weather
 	WEATHER_COUNT					// keep this last
 };
 
-extern char *WeatherNames[];
+extern const char *WeatherNames[];
 
 enum Scorches
 {

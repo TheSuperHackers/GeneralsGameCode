@@ -48,7 +48,7 @@ enum AudioType
 	AT_SoundEffect
 };
 
-extern char *theAudioPriorityNames[];
+extern const char *theAudioPriorityNames[];
 enum AudioPriority
 {
 	AP_LOWEST,
@@ -58,7 +58,7 @@ enum AudioPriority
 	AP_CRITICAL
 };
 
-extern char *theSoundTypeNames[];
+extern const char *theSoundTypeNames[];
 enum SoundType
 {
 	ST_UI										= 0x0001,
@@ -72,7 +72,7 @@ enum SoundType
 	ST_EVERYONE							= 0x0100,	
 };
 
-extern char *theAudioControlNames[];
+extern const char *theAudioControlNames[];
 enum AudioControl
 {
 	AC_LOOP									= 0x0001,
@@ -128,7 +128,7 @@ public:
 
   /// Is this a permenant sound? That is, if I start this sound up, will it ever end
   /// "on its own" or only if I explicitly kill it?
-  Bool isPermanentSound() const { return BitTest( m_control, AC_LOOP ) && (m_loopCount == 0 );  }
+  Bool isPermanentSound() const { return BitIsSet( m_control, AC_LOOP ) && (m_loopCount == 0 );  }
   
 	static const FieldParse m_audioEventInfo[];		///< the parse table for INI definition
 	const FieldParse *getFieldParse( void ) const { return m_audioEventInfo; }

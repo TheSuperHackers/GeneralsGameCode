@@ -405,25 +405,25 @@ void InitPropertiesDialog( GameWindow *window, Int x, Int y )
 	ClientToScreen( TheEditWindow->getWindowHandle(), &screen );
 
 	// bring up the right dialog
-	if( BitTest( window->winGetStyle(), GWS_PUSH_BUTTON ) )
+	if( BitIsSet( window->winGetStyle(), GWS_PUSH_BUTTON ) )
 		dialog = InitPushButtonPropertiesDialog( window );
-	else if( BitTest( window->winGetStyle(), GWS_RADIO_BUTTON ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_RADIO_BUTTON ) )
 		dialog = InitRadioButtonPropertiesDialog( window );
-	else if( BitTest( window->winGetStyle(), GWS_TAB_CONTROL ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_TAB_CONTROL ) )
 		dialog = InitTabControlPropertiesDialog( window );
-	else if( BitTest( window->winGetStyle(), GWS_CHECK_BOX ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_CHECK_BOX ) )
 		dialog = InitCheckBoxPropertiesDialog( window );
-	else if( BitTest( window->winGetStyle(), GWS_SCROLL_LISTBOX ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_SCROLL_LISTBOX ) )
 		dialog = InitListboxPropertiesDialog( window );
-	else if( BitTest( window->winGetStyle(), GWS_PROGRESS_BAR ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_PROGRESS_BAR ) )
 		dialog = InitProgressBarPropertiesDialog( window );
-	else if( BitTest( window->winGetStyle(), GWS_STATIC_TEXT ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_STATIC_TEXT ) )
 		dialog = InitStaticTextPropertiesDialog( window );
-	else if( BitTest( window->winGetStyle(), GWS_ENTRY_FIELD ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_ENTRY_FIELD ) )
 		dialog = InitTextEntryPropertiesDialog( window );
-	else if( BitTest( window->winGetStyle(), GWS_ALL_SLIDER ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_ALL_SLIDER ) )
 		dialog = InitSliderPropertiesDialog( window );
-	else if( BitTest( window->winGetStyle(), GWS_COMBO_BOX ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_COMBO_BOX ) )
 		dialog = InitComboBoxPropertiesDialog( window );
 	else
 		dialog = InitUserWinPropertiesDialog( window );
@@ -709,15 +709,15 @@ static void saveTextLabel( HWND edit, GameWindow *window )
 	text = TheGameText->fetch( (char *)instData->m_textLabelString.str()); //TheWindowManager->winTextLabelToText( instData->m_textLabelString );
 	
 	UnsignedInt style = window->winGetStyle();
-	if( BitTest( style, GWS_PUSH_BUTTON ) )
+	if( BitIsSet( style, GWS_PUSH_BUTTON ) )
 		GadgetButtonSetText( window, text );
-	else if( BitTest( style, GWS_CHECK_BOX ) )
+	else if( BitIsSet( style, GWS_CHECK_BOX ) )
 		GadgetCheckBoxSetText( window, text );
-	else if( BitTest( style, GWS_RADIO_BUTTON ) )
+	else if( BitIsSet( style, GWS_RADIO_BUTTON ) )
 		GadgetRadioSetText( window, text );
-	else if( BitTest( style, GWS_STATIC_TEXT ) )
+	else if( BitIsSet( style, GWS_STATIC_TEXT ) )
 		GadgetStaticTextSetText( window, text );
-	else if( BitTest( style, GWS_ENTRY_FIELD ) )
+	else if( BitIsSet( style, GWS_ENTRY_FIELD ) )
 		GadgetTextEntrySetText( window, text );
 	else
 		window->winSetText( text );
@@ -777,7 +777,7 @@ void LoadStateCombo( UnsignedInt style, HWND comboBox )
 	for( entry = imageAndColorTable; entry->stateName; entry++ )
 	{
 
-		if( BitTest( entry->windowType, style ) )
+		if( BitIsSet( entry->windowType, style ) )
 		{
 			
 			// add string
@@ -807,25 +807,25 @@ void CommonDialogInitialize( GameWindow *window, HWND dialog )
 	instData = window->winGetInstanceData();
 
 	// populate common properties
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) )
 		CheckDlgButton( dialog, CHECK_ENABLED, BST_CHECKED );
-	if( BitTest( window->winGetStatus(), WIN_STATUS_DRAGABLE ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_DRAGABLE ) )
 		CheckDlgButton( dialog, CHECK_DRAGABLE, BST_CHECKED );
-	if( BitTest( window->winGetStatus(), WIN_STATUS_HIDDEN ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_HIDDEN ) )
 		CheckDlgButton( dialog, CHECK_HIDDEN, BST_CHECKED );
-	if( BitTest( window->winGetStatus(), WIN_STATUS_NO_INPUT ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_NO_INPUT ) )
 		CheckDlgButton( dialog, CHECK_NO_INPUT, BST_CHECKED );
-	if( BitTest( window->winGetStatus(), WIN_STATUS_NO_FOCUS ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_NO_FOCUS ) )
 		CheckDlgButton( dialog, CHECK_NO_FOCUS, BST_CHECKED );
-	if( BitTest( window->winGetStatus(), WIN_STATUS_BORDER ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_BORDER ) )
 		CheckDlgButton( dialog, CHECK_BORDER, BST_CHECKED );
-	if( BitTest( window->winGetStatus(), WIN_STATUS_IMAGE ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_IMAGE ) )
 		CheckDlgButton( dialog, CHECK_IMAGE, BST_CHECKED );
-	if( BitTest( window->winGetStatus(), WIN_STATUS_SEE_THRU ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_SEE_THRU ) )
 		CheckDlgButton( dialog, CHECK_SEE_THRU, BST_CHECKED );
-	if( BitTest( window->winGetStatus(), WIN_STATUS_WRAP_CENTERED ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_WRAP_CENTERED ) )
 		CheckDlgButton( dialog, CHECK_WRAP_CENTERED, BST_CHECKED );
-	if( BitTest( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_CHECK_LIKE ) )
 		CheckDlgButton( dialog, CHECK_CHECK_LIKE, BST_CHECKED );
 		
 	//
@@ -958,27 +958,27 @@ static void adjustGadgetDrawMethods( Bool useImages, GameWindow *window )
 		if( useImages )
 		{
 
-			if( BitTest( style, GWS_PUSH_BUTTON ) )
+			if( BitIsSet( style, GWS_PUSH_BUTTON ) )
 				window->winSetDrawFunc( TheWindowManager->getPushButtonImageDrawFunc() );
-			else if( BitTest( style, GWS_RADIO_BUTTON ) )
+			else if( BitIsSet( style, GWS_RADIO_BUTTON ) )
 				window->winSetDrawFunc( TheWindowManager->getRadioButtonImageDrawFunc() );
-			else if( BitTest( style, GWS_TAB_CONTROL ) )
+			else if( BitIsSet( style, GWS_TAB_CONTROL ) )
 				window->winSetDrawFunc( TheWindowManager->getTabControlImageDrawFunc() );
-			else if( BitTest( style, GWS_CHECK_BOX ) )
+			else if( BitIsSet( style, GWS_CHECK_BOX ) )
 				window->winSetDrawFunc( TheWindowManager->getCheckBoxImageDrawFunc() );
-			else if( BitTest( style, GWS_SCROLL_LISTBOX ) )
+			else if( BitIsSet( style, GWS_SCROLL_LISTBOX ) )
 				window->winSetDrawFunc( TheWindowManager->getListBoxImageDrawFunc() );
-			else if( BitTest( style, GWS_COMBO_BOX ) )
+			else if( BitIsSet( style, GWS_COMBO_BOX ) )
 				window->winSetDrawFunc( TheWindowManager->getComboBoxImageDrawFunc() );
-			else if( BitTest( style, GWS_PROGRESS_BAR ) )
+			else if( BitIsSet( style, GWS_PROGRESS_BAR ) )
 				window->winSetDrawFunc( TheWindowManager->getProgressBarImageDrawFunc() );
-			else if( BitTest( style, GWS_HORZ_SLIDER ) )
+			else if( BitIsSet( style, GWS_HORZ_SLIDER ) )
 				window->winSetDrawFunc( TheWindowManager->getHorizontalSliderImageDrawFunc() );
-			else if( BitTest( style, GWS_VERT_SLIDER ) )
+			else if( BitIsSet( style, GWS_VERT_SLIDER ) )
 				window->winSetDrawFunc( TheWindowManager->getVerticalSliderImageDrawFunc() );
-			else if( BitTest( style, GWS_STATIC_TEXT ) )
+			else if( BitIsSet( style, GWS_STATIC_TEXT ) )
 				window->winSetDrawFunc( TheWindowManager->getStaticTextImageDrawFunc() );
-			else if( BitTest( style, GWS_ENTRY_FIELD ) )
+			else if( BitIsSet( style, GWS_ENTRY_FIELD ) )
 				window->winSetDrawFunc( TheWindowManager->getTextEntryImageDrawFunc() );
 			else
 			{
@@ -996,27 +996,27 @@ static void adjustGadgetDrawMethods( Bool useImages, GameWindow *window )
 		else
 		{
 
-			if( BitTest( style, GWS_PUSH_BUTTON ) )
+			if( BitIsSet( style, GWS_PUSH_BUTTON ) )
 				window->winSetDrawFunc( TheWindowManager->getPushButtonDrawFunc() );
-			else if( BitTest( style, GWS_RADIO_BUTTON ) )
+			else if( BitIsSet( style, GWS_RADIO_BUTTON ) )
 				window->winSetDrawFunc( TheWindowManager->getRadioButtonDrawFunc() );
-			else if( BitTest( style, GWS_TAB_CONTROL ) )
+			else if( BitIsSet( style, GWS_TAB_CONTROL ) )
 				window->winSetDrawFunc( TheWindowManager->getTabControlDrawFunc() );
-			else if( BitTest( style, GWS_CHECK_BOX ) )
+			else if( BitIsSet( style, GWS_CHECK_BOX ) )
 				window->winSetDrawFunc( TheWindowManager->getCheckBoxDrawFunc() );
-			else if( BitTest( style, GWS_SCROLL_LISTBOX ) )
+			else if( BitIsSet( style, GWS_SCROLL_LISTBOX ) )
 				window->winSetDrawFunc( TheWindowManager->getListBoxDrawFunc() );
-			else if( BitTest( style, GWS_COMBO_BOX ) )
+			else if( BitIsSet( style, GWS_COMBO_BOX ) )
 				window->winSetDrawFunc( TheWindowManager->getComboBoxDrawFunc() );
-			else if( BitTest( style, GWS_PROGRESS_BAR ) )
+			else if( BitIsSet( style, GWS_PROGRESS_BAR ) )
 				window->winSetDrawFunc( TheWindowManager->getProgressBarDrawFunc() );
-			else if( BitTest( style, GWS_HORZ_SLIDER ) )
+			else if( BitIsSet( style, GWS_HORZ_SLIDER ) )
 				window->winSetDrawFunc( TheWindowManager->getHorizontalSliderDrawFunc() );
-			else if( BitTest( style, GWS_VERT_SLIDER ) )
+			else if( BitIsSet( style, GWS_VERT_SLIDER ) )
 				window->winSetDrawFunc( TheWindowManager->getVerticalSliderDrawFunc() );
-			else if( BitTest( style, GWS_STATIC_TEXT ) )
+			else if( BitIsSet( style, GWS_STATIC_TEXT ) )
 				window->winSetDrawFunc( TheWindowManager->getStaticTextDrawFunc() );
-			else if( BitTest( style, GWS_ENTRY_FIELD ) )
+			else if( BitIsSet( style, GWS_ENTRY_FIELD ) )
 				window->winSetDrawFunc( TheWindowManager->getTextEntryDrawFunc() );
 			else
 			{
@@ -1119,7 +1119,7 @@ Bool SaveCommonDialogProperties( HWND dialog, GameWindow *window )
 	// or not
 	//
 	if( TheEditor->windowIsGadget( window ) )
-		adjustGadgetDrawMethods( BitTest( window->winGetStatus(), WIN_STATUS_IMAGE ),
+		adjustGadgetDrawMethods( BitIsSet( window->winGetStatus(), WIN_STATUS_IMAGE ),
 														 window );
 
 	// save colors

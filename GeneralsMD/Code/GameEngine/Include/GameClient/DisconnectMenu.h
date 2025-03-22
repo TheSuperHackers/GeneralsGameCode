@@ -69,13 +69,13 @@ protected:
 	DisconnectManager *m_disconnectManager;		///< For retrieving status updates from the disconnect manager.
 	DisconnectMenuStateType m_menuState;			///< The current state of the menu screen.
 
-	static char *m_playerNameTextControlNames[MAX_SLOTS];	///< names of the player name controls in the window.
-	static char *m_playerTimeoutTextControlNames[MAX_SLOTS]; ///< names of the timeout controls in the window.
-	static char *m_playerVoteButtonControlNames[MAX_SLOTS];	///< names of the vote button controls in the window.
-	static char *m_playerVoteCountControlNames[MAX_SLOTS];	///< names of the vote count static text controls in the window.
-	static char *m_packetRouterTimeoutControlName;	///< name of the packet router timeout control window.
-	static char *m_packetRouterTimeoutLabelControlName; ///< name of the packet router timeout label control window.
-	static char *m_textDisplayControlName;	///< name of the text display listbox control window.
+	static const char *m_playerNameTextControlNames[MAX_SLOTS];	///< names of the player name controls in the window.
+	static const char *m_playerTimeoutTextControlNames[MAX_SLOTS]; ///< names of the timeout controls in the window.
+	static const char *m_playerVoteButtonControlNames[MAX_SLOTS];	///< names of the vote button controls in the window.
+	static const char *m_playerVoteCountControlNames[MAX_SLOTS];	///< names of the vote count static text controls in the window.
+	static const char *m_packetRouterTimeoutControlName;	///< name of the packet router timeout control window.
+	static const char *m_packetRouterTimeoutLabelControlName; ///< name of the packet router timeout label control window.
+	static const char *m_textDisplayControlName;	///< name of the text display listbox control window.
 };
 
 extern DisconnectMenu *TheDisconnectMenu;

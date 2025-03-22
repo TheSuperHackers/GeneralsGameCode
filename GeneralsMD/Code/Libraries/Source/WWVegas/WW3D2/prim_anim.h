@@ -160,6 +160,10 @@ protected:
 template<class T>
 class LERPAnimationChannelClass : public PrimitiveAnimationChannelClass<T>
 {
+	using PrimitiveAnimationChannelClass<T>::m_Data;
+	using PrimitiveAnimationChannelClass<T>::m_LastIndex;
+	using PrimitiveAnimationChannelClass<T>::KeyClass;
+
 public:
 
 	/////////////////////////////////////////////////////////
@@ -182,7 +186,7 @@ int PrimitiveAnimationChannelClass<T>::Get_Key_Count (void) const
 //	Set_Key_Value
 /////////////////////////////////////////////////////////
 template<class T>
-const PrimitiveAnimationChannelClass<T>::KeyClass &PrimitiveAnimationChannelClass<T>::Get_Key (int index) const
+typename const PrimitiveAnimationChannelClass<T>::KeyClass &PrimitiveAnimationChannelClass<T>::Get_Key (int index) const
 {
 	return m_Data[index];
 }

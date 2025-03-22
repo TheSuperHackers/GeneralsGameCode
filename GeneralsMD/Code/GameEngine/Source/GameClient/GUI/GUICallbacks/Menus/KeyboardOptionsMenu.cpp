@@ -497,7 +497,7 @@ WindowMsgHandledType KeyboardOptionsMenuInput( GameWindow *window, UnsignedInt m
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 						AsciiString buttonName( "KeyboardOptionsMenu.wnd:ButtonBack" );
 						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
@@ -826,7 +826,7 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 				case KEY_KPENTER:
 				case KEY_ENTER:
 					// Done with this edit
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 					{
 						if( e->receivedUnichar == FALSE )
 						{
@@ -845,7 +845,7 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 
 				case KEY_LCTRL:
 				{
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 					{
 						UnicodeString mod = ctrl;
 						doKeyDown( e, mod );
@@ -856,7 +856,7 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 
 						return MSG_HANDLED;
 					}
-					if( BitTest(mData2, KEY_STATE_UP ) )
+					if( BitIsSet(mData2, KEY_STATE_UP ) )
 					{
 							UnicodeString mod = ctrl;
 							doKeyUp( e, mod );
@@ -873,7 +873,7 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 				case KEY_RSHIFT:
 				case KEY_LSHIFT:
 				{
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 					{
 						UnicodeString mod = shift;
 						doKeyDown( e, mod );
@@ -885,7 +885,7 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 						return MSG_HANDLED;
 
 					}
-					if( BitTest( mData2, KEY_STATE_UP ) )
+					if( BitIsSet( mData2, KEY_STATE_UP ) )
 					{
 						UnicodeString mod = shift;
 						doKeyUp(e, mod );
@@ -903,7 +903,7 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 
 				case KEY_LALT:
 				{
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 					{
 						UnicodeString mod = alt;
 						doKeyDown( e, mod );
@@ -916,7 +916,7 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 						return MSG_HANDLED;
 
 					}
-					if( BitTest(mData2, KEY_STATE_UP ) )
+					if( BitIsSet(mData2, KEY_STATE_UP ) )
 					{
 						UnicodeString mod = alt;
 						doKeyUp( e, mod );
@@ -960,7 +960,7 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 				case KEY_RIGHT:
 				case KEY_TAB:
 
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 						window->winNextTab();
 					break;
 
@@ -968,7 +968,7 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 				case KEY_UP:
 				case KEY_LEFT:
 
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 						window->winPrevTab();
 					break;
 
@@ -991,7 +991,7 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 				case KEY_DEL:
 				{
 
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
 					{
 						// if conCharPos != 0 this will fall through to next case.
 						// it should be noted that conCharPos can only != 0 in Jap & Kor
@@ -1018,7 +1018,7 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 				/*default:
 				{
 					char ch = mData1;
-					if( ch && ( BitTest( mData2, KEY_STATE_DOWN ) ) )
+					if( ch && ( BitIsSet( mData2, KEY_STATE_DOWN ) ) )
 					{
 						// Constrain keys based on rules for entry box.
 						if( e->numericalOnly )
@@ -1115,7 +1115,7 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 		// ------------------------------------------------------------------------
 		case GWM_MOUSE_ENTERING:
 
-			if (BitTest( instData->getStyle(), GWS_MOUSE_TRACK ) )
+			if (BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
 			{
 
 				BitSet( instData->m_state, WIN_STATE_HILITED );
@@ -1130,7 +1130,7 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 		// ------------------------------------------------------------------------
 		case GWM_MOUSE_LEAVING:
 
-			if( BitTest( instData->getStyle(), GWS_MOUSE_TRACK ) )
+			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
 			{
 
 				BitClear( instData->m_state, WIN_STATE_HILITED );
@@ -1143,7 +1143,7 @@ WindowMsgHandledType KeyboardTextEntryInput( GameWindow *window, UnsignedInt msg
 		// ------------------------------------------------------------------------
 		case GWM_LEFT_DRAG:
 
-			if( BitTest( instData->getStyle(), GWS_MOUSE_TRACK ) )
+			if( BitIsSet( instData->getStyle(), GWS_MOUSE_TRACK ) )
 				TheWindowManager->winSendSystemMsg( window->winGetOwner(), 
 																						GGM_LEFT_DRAG,
 																						(WindowMsgData)window, 0 );

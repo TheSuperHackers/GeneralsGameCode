@@ -1165,7 +1165,7 @@ Bool RecorderClass::playbackFile(AsciiString filename)
  * Read a unicode string from the current file position. The string is assumed to be 0-terminated.
  */
 UnicodeString RecorderClass::readUnicodeString() {
-	UnsignedShort str[1024] = L"";
+	WideChar str[1024] = L"";
 	Int index = 0;
 
 	Int c = fgetwc(m_file);

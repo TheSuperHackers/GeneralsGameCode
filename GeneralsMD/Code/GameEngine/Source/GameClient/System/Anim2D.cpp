@@ -506,7 +506,7 @@ void Anim2D::tryNextFrame( void )
 			case ANIM_2D_PING_PONG_BACKWARDS:
 			{
 
-				if( BitTest( m_status, ANIM_2D_STATUS_REVERSED ) )
+				if( BitIsSet( m_status, ANIM_2D_STATUS_REVERSED ) )
 				{
 					//
 					// decrement frame, unless we're at frame 0 in which case we
@@ -645,7 +645,7 @@ void Anim2D::draw( Int x, Int y )
 	// frame numbers for animation instances that are registered with a system as the
 	// system will update them during its update phase
 	//
- 	if( m_collectionSystem == NULL && BitTest( m_status, ANIM_2D_STATUS_FROZEN ) == FALSE )
+ 	if( m_collectionSystem == NULL && BitIsSet( m_status, ANIM_2D_STATUS_FROZEN ) == FALSE )
 		tryNextFrame();
 
 }  // end draw
@@ -673,7 +673,7 @@ void Anim2D::draw( Int x, Int y, Int width, Int height )
 	// frame numbers for animation instances that are registered with a system as the
 	// system will update them during its update phase
 	//
- 	if( m_collectionSystem == NULL && BitTest( m_status, ANIM_2D_STATUS_FROZEN ) == FALSE )
+ 	if( m_collectionSystem == NULL && BitIsSet( m_status, ANIM_2D_STATUS_FROZEN ) == FALSE )
 		tryNextFrame();
 
 }  // end draw
@@ -776,7 +776,7 @@ void Anim2DCollection::update( void )
 	{
 
 		// try to update the frame
-		if( BitTest( anim->getStatus(), ANIM_2D_STATUS_FROZEN ) == FALSE )	
+		if( BitIsSet( anim->getStatus(), ANIM_2D_STATUS_FROZEN ) == FALSE )	
 			anim->tryNextFrame();
 
 	}  // end for, anim

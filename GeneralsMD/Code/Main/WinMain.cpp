@@ -83,7 +83,7 @@ DWORD TheMessageTime = 0;	///< For getting the time that a message was posted fr
 
 const Char *g_strFile = "data\\Generals.str";
 const Char *g_csfFile = "data\\%s\\Generals.csf";
-char *gAppPrefix = ""; /// So WB can have a different debug log file name.
+const char *gAppPrefix = ""; /// So WB can have a different debug log file name.
 
 static HANDLE GeneralsMutex = NULL;
 #define GENERALS_GUID "685EAFF2-3216-4265-B047-251C5F4B82F3"
@@ -812,7 +812,7 @@ static char* strtrim(char* buffer)
 	return buffer;
 }
 
-char *nextParam(char *newSource, char *seps)
+char *nextParam(char *newSource, const char *seps)
 {
 	static char *source = NULL;
 	if (newSource)
@@ -966,7 +966,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 			// check both localized directory and root dir
 		char filePath[_MAX_PATH];
-		char *fileName = "Install_Final.bmp";
+		const char *fileName = "Install_Final.bmp";
 		static const char *localizedPathFormat = "Data/%s/";
 		sprintf(filePath,localizedPathFormat, GetRegistryLanguage().str());
 		strcat( filePath, fileName );

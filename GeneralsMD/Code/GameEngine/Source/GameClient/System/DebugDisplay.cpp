@@ -195,7 +195,7 @@ void	DebugDisplay::setLeftMargin( Int leftPos )
 // DebugDisplay::printf
 //============================================================================
 
-void	DebugDisplay::printf( Char *format, ...)
+void	DebugDisplay::printf( const Char *format, ...)
 {
 	va_list args;
 	int result;

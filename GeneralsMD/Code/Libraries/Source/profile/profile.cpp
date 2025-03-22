@@ -165,7 +165,8 @@ void Profile::StartRange(const char *range)
     range="frame";
 
   // known name?
-  for (unsigned k=0;k<m_names;++k)
+  unsigned k=0;
+  for (;k<m_names;++k)
     if (!strcmp(range,m_frameNames[k].name))
       break;
   if (k==m_names)
@@ -219,7 +220,8 @@ void Profile::AppendRange(const char *range)
     range="frame";
 
   // known name?
-  for (unsigned k=0;k<m_names;++k)
+  unsigned k=0;
+  for (;k<m_names;++k)
     if (!strcmp(range,m_frameNames[k].name))
       break;
   if (k==m_names)
@@ -269,7 +271,8 @@ void Profile::StopRange(const char *range)
     range="frame";
 
   // known name?
-  for (unsigned k=0;k<m_names;++k)
+  unsigned k=0;
+  for (;k<m_names;++k)
     if (!strcmp(range,m_frameNames[k].name))
       break;
   DFAIL_IF(k==m_names) return;

@@ -170,9 +170,10 @@ SeismicSimulationFilterBase::SeismicSimStatusCode DomeStyleSeismicFilter::filter
 
     for ( Real *t = workspace; t < workspaceEnd; ++t ) *t = 0.0f;// clear the workspace
 
-    for (Int x = 0; x < radius; ++x)
+    Int x, y;
+    for (x = 0; x < radius; ++x)
     {
-      for (Int y = 0; y < radius; ++y)
+      for (y = 0; y < radius; ++y)
       {
 
         Real distance = sqrt( sqr(x) + sqr(y) );//Pythagoras
@@ -198,7 +199,7 @@ SeismicSimulationFilterBase::SeismicSimStatusCode DomeStyleSeismicFilter::filter
 
     // stuff the values from the workspace into the heightmap's velocities
     for (x = 0; x < workspaceWidth; ++x)
-      for (Int y = 0; y < workspaceWidth; ++y)
+      for (y = 0; y < workspaceWidth; ++y)
     		heightMap->setSeismicZVelocity( centerX - radius + x, centerY - radius + y,  MIN( 9.0f, workspace[  x + workspaceWidth * y ])  );
 
     delete [] workspace;

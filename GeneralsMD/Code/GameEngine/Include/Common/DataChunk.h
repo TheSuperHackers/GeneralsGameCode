@@ -126,7 +126,7 @@ public:
 	DataChunkOutput(  OutputStream *pOut  );
 	~DataChunkOutput();
 
-	void openDataChunk( char *name, DataChunkVersionType ver );
+	void openDataChunk( const char *name, DataChunkVersionType ver );
 	void closeDataChunk( void );
 
 	void writeReal(Real r);

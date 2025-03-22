@@ -2044,7 +2044,7 @@ void ScriptActions::doTeamHuntWithCommandButton(const AsciiString& teamName, con
 			case GUI_COMMAND_SPECIAL_POWER:
 				if( commandButton->getSpecialPowerTemplate() )
 				{
-					if (BitTest( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET )) 
+					if (BitIsSet( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET )) 
 					{
 						// OK, we can hunt with a power that targets an object.
 						break;
@@ -2575,7 +2575,8 @@ void ScriptActions::doDisplayCinematicText(const AsciiString& displayText, const
 	char buf[256];
 	char *c;
 	strcpy(buf, fontType.str());
-	for( c = buf; c != '\0'; *c++ )
+	// TheSuperHackers @fix xezon 16/03/2025 Fixes potential buffer overrun via prior c!='\0' test.
+	for( c = buf; *c != '\0'; c++ )
 	{
 		if( *c != ' ' && *c++ != '-' ) 
 			fontName.concat(c);
@@ -2583,12 +2584,12 @@ void ScriptActions::doDisplayCinematicText(const AsciiString& displayText, const
 			break;
 	}
 	while( *c != ':' )
-		*c++;
-	*c++;  // eat through " - Size:"
+		c++;
+	c++;  // eat through " - Size:"
 
 	// get font size
 	AsciiString fontSize = AsciiString::TheEmptyString;
-	for( ; *c != '\0'; *c++ )
+	for( ; *c != '\0'; c++ )
 	{
 		if( *c != '\0' && *c != ' ' )
 		{
@@ -5252,7 +5253,8 @@ void ScriptActions::doMoveTeamTowardsNearest( const AsciiString& teamName, const
 
 	//Get the first object (to use in the partition filter checks).
 	Object *teamObj = NULL;
-	for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance())
+	DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList();
+	for (; !iter.done(); iter.advance())
 	{
 		teamObj = iter.cur();
 		if( teamObj ) 

@@ -200,7 +200,7 @@ static void drawTextEntryText( GameWindow *window, WinInstanceData *instData,
 	// draw blinking cursor
 	GameWindow *parent;
 	parent = window->winGetParent();
-	if(parent && !BitTest(parent->winGetStyle(), GWS_COMBO_BOX))
+	if(parent && !BitIsSet(parent->winGetStyle(), GWS_COMBO_BOX))
 		parent = NULL;
 
 	if( (window == TheWindowManager->winGetFocus() || (parent && parent == TheWindowManager->winGetFocus())) && ((drawCnt++ >> 3) & 0x1) )
@@ -233,7 +233,7 @@ void W3DGadgetTextEntryDraw( GameWindow *window, WinInstanceData *instData )
 	window->winGetSize( &size.x, &size.y );
 
 	// get the right colors
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 
 		compositeColor	= window->winGetDisabledTextColor();
@@ -244,7 +244,7 @@ void W3DGadgetTextEntryDraw( GameWindow *window, WinInstanceData *instData )
 		backBorder	= GadgetTextEntryGetDisabledBorderColor( window );
 
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
 		compositeColor	= window->winGetIMECompositeTextColor();
@@ -300,7 +300,7 @@ void W3DGadgetTextEntryDraw( GameWindow *window, WinInstanceData *instData )
 
 	width = size.x - (2 * startOffset);
 	start.x = origin.x + startOffset;  // offset a little bit into the entry
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ONE_LINE ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ONE_LINE ) )
 		start.y = size.y / 2 - fontHeight / 2;
 	else
 		start.y = origin.y + startOffset;  // offset a little bit into the entry
@@ -338,7 +338,7 @@ void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData 
 	yOffset = instData->m_imageOffset.y;
 
 	// get the right colors
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 
 		textColor					= window->winGetDisabledTextColor();
@@ -351,7 +351,7 @@ void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData 
 		smallCenterImage	= GadgetTextEntryGetDisabledImageSmallCenter( window );
 
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
 		textColor					= window->winGetHiliteTextColor();
@@ -454,7 +454,7 @@ void W3DGadgetTextEntryImageDraw( GameWindow *window, WinInstanceData *instData 
 
 	width = size.x - (2 * startOffset);
 	start.x = origin.x + startOffset;  // offset a little bit into the entry
-		if( BitTest( window->winGetStatus(), WIN_STATUS_ONE_LINE ) )
+		if( BitIsSet( window->winGetStatus(), WIN_STATUS_ONE_LINE ) )
 		start.y = size.y / 2 - fontHeight / 2;
 	else
 		start.y = origin.y + startOffset;  // offset a little bit into the entry

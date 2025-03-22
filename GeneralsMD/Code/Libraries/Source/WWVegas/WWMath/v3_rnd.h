@@ -129,7 +129,7 @@ class Vector3SolidBoxRandomizer : public Vector3Randomizer {
 	private:
 
 		// Derived classes should have a private dummy assignment operator to block usage
-		Vector3SolidBoxRandomizer & Vector3SolidBoxRandomizer::operator = (const Vector3SolidBoxRandomizer &that) { that; return *this; }
+		Vector3SolidBoxRandomizer & operator = (const Vector3SolidBoxRandomizer &that) { that; return *this; }
 
 		Vector3	Extents;
 };
@@ -160,7 +160,7 @@ class Vector3SolidSphereRandomizer : public Vector3Randomizer {
 	private:
 
 		// Derived classes should have a private dummy assignment operator to block usage
-		Vector3SolidSphereRandomizer & Vector3SolidSphereRandomizer::operator = (const Vector3SolidSphereRandomizer &that) { that; return *this; }
+		Vector3SolidSphereRandomizer & operator = (const Vector3SolidSphereRandomizer &that) { that; return *this; }
 
 		float	Radius;
 };
@@ -191,7 +191,7 @@ class Vector3HollowSphereRandomizer : public Vector3Randomizer {
 	private:
 
 		// Derived classes should have a private dummy assignment operator to block usage
-		Vector3HollowSphereRandomizer & Vector3HollowSphereRandomizer::operator = (const Vector3HollowSphereRandomizer &that) { that; return *this; }
+		Vector3HollowSphereRandomizer & operator = (const Vector3HollowSphereRandomizer &that) { that; return *this; }
 
 		float	Radius;
 };
@@ -223,7 +223,7 @@ class Vector3SolidCylinderRandomizer : public Vector3Randomizer {
 	private:
 
 		// Derived classes should have a private dummy assignment operator to block usage
-		Vector3SolidCylinderRandomizer & Vector3SolidCylinderRandomizer::operator = (const Vector3SolidCylinderRandomizer &that) { that; return *this; }
+		Vector3SolidCylinderRandomizer & operator = (const Vector3SolidCylinderRandomizer &that) { that; return *this; }
 
 		float	Extent;
 		float	Radius;

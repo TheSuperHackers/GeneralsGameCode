@@ -69,7 +69,7 @@
 
 //-------------------------------------------------------------------------------
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
-static char *mapExtension = ".map";
+static const char *mapExtension = ".map";
 
 static Int m_width = 0;						///< Height map width.
 static Int m_height = 0;					///< Height map height (y size of array).

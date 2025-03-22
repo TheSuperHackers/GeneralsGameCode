@@ -82,12 +82,12 @@ static void drawCheckBoxText( GameWindow *window, WinInstanceData *instData )
 	window->winGetSize( &size.x, &size.y );
 
 	// get the right text color
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 		textColor = window->winGetDisabledTextColor();
 		dropColor = window->winGetDisabledTextBorderColor();
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		textColor = window->winGetHiliteTextColor();
 		dropColor = window->winGetHiliteTextBorderColor();
@@ -143,7 +143,7 @@ void W3DGadgetCheckBoxDraw( GameWindow *window, WinInstanceData *instData )
 	// get the colors we should be using to draw, see GadgetCheckBox.h
 	// draw appropriate state, see GadgetCheckBox.h for info
 	//
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 
 		// disabled background
@@ -151,7 +151,7 @@ void W3DGadgetCheckBoxDraw( GameWindow *window, WinInstanceData *instData )
 		backBorder		= GadgetCheckBoxGetDisabledBorderColor( window );
 
 		// check box
-		if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 		{
 				boxColor		= GadgetCheckBoxGetDisabledCheckedBoxColor( window );
 				boxBorder		= GadgetCheckBoxGetDisabledCheckedBoxBorderColor( window );
@@ -163,7 +163,7 @@ void W3DGadgetCheckBoxDraw( GameWindow *window, WinInstanceData *instData )
 		}
 
 	}  // end if
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
 		// hilited background 
@@ -171,7 +171,7 @@ void W3DGadgetCheckBoxDraw( GameWindow *window, WinInstanceData *instData )
 		backBorder		= GadgetCheckBoxGetHiliteBorderColor( window );
 
 		// check box
-		if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 		{
 			boxColor		= GadgetCheckBoxGetHiliteCheckedBoxColor( window );
 			boxBorder		= GadgetCheckBoxGetHiliteCheckedBoxBorderColor( window );
@@ -191,7 +191,7 @@ void W3DGadgetCheckBoxDraw( GameWindow *window, WinInstanceData *instData )
 		backBorder		= GadgetCheckBoxGetEnabledBorderColor( window );
 
 		// check box
-		if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 		{
 			boxColor		= GadgetCheckBoxGetEnabledCheckedBoxColor( window );
 			boxBorder		= GadgetCheckBoxGetEnabledCheckedBoxBorderColor( window );
@@ -271,27 +271,27 @@ void W3DGadgetCheckBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 	// get the colors we should be using to draw, see GadgetCheckBoxButton.h
 	// draw appropriate state, see GadgetCheckBoxButton.h for info
 	//
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 
 		// disabled background
 //		backgroundImage	= GadgetCheckBoxGetDisabledImage( window );
 
 		// check box
-		if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 				boxImage		= GadgetCheckBoxGetDisabledCheckedBoxImage( window );
 		else
 				boxImage		= GadgetCheckBoxGetDisabledUncheckedBoxImage( window );
 
 	}  // end if
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
 		// hilited background 
 //		backgroundImage	= GadgetCheckBoxGetHiliteImage( window );
 
 		// check box
-		if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 			boxImage		= GadgetCheckBoxGetHiliteCheckedBoxImage( window );
 		else
 			boxImage		= GadgetCheckBoxGetHiliteUncheckedBoxImage( window );
@@ -304,7 +304,7 @@ void W3DGadgetCheckBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 //		backgroundImage	= GadgetCheckBoxGetEnabledImage( window );
 
 		// check box
-		if( BitTest( instData->getState(), WIN_STATE_SELECTED ) )
+		if( BitIsSet( instData->getState(), WIN_STATE_SELECTED ) )
 			boxImage		= GadgetCheckBoxGetEnabledCheckedBoxImage( window );
 		else
 			boxImage		= GadgetCheckBoxGetEnabledUncheckedBoxImage( window );

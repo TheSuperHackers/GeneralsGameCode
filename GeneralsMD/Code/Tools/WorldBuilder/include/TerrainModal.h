@@ -70,7 +70,7 @@ protected:
 
 protected:
 	void addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent);
-	HTREEITEM findOrAdd(HTREEITEM parent, char *pLabel);
+	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
 	void updateLabel(void);
 	void updateTextures(void);
 	Bool setTerrainTreeViewSelection(HTREEITEM parent, Int selection);

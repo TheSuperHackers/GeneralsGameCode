@@ -953,7 +953,7 @@ HWND InitListboxPropertiesDialog( GameWindow *window )
 
 	}
 	// WordWrap Check Box
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ONE_LINE ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ONE_LINE ) )
 		CheckDlgButton( dialog, CHECK_NO_WORDWRAP, BST_CHECKED );
 
 

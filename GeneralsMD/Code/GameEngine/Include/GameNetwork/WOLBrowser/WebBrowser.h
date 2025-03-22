@@ -45,6 +45,7 @@
 #ifndef __WEBBROWSER_H__
 #define __WEBBROWSER_H__
 
+#include "Common/CppMacros.h"
 #include "Common/SubsystemInterface.h"
 #include <atlbase.h>
 #include <windows.h>
@@ -86,7 +87,7 @@ class WebBrowser :
 		void update( void );
 
 		// Create an instance of the embedded browser for Dune Emperor.
-		virtual Bool createBrowserWindow(char *tag, GameWindow *win) = 0;
+		virtual Bool createBrowserWindow(const char *tag, GameWindow *win) = 0;
 		virtual void closeBrowserWindow(GameWindow *win) = 0;
 
 		WebBrowserURL *makeNewURL(AsciiString tag);
@@ -112,9 +113,9 @@ class WebBrowser :
 	// IUnknown methods
 	//---------------------------------------------------------------------------
 	protected:
-		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-		ULONG STDMETHODCALLTYPE AddRef(void);
-		ULONG STDMETHODCALLTYPE Release(void);
+		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject) NOEXCEPT_17;
+		ULONG STDMETHODCALLTYPE AddRef(void) NOEXCEPT_17;
+		ULONG STDMETHODCALLTYPE Release(void) NOEXCEPT_17;
 
 	//---------------------------------------------------------------------------
 	// IBrowserDispatch methods

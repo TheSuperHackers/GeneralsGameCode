@@ -153,7 +153,7 @@ BOOL TeamBehavior::OnInitDialog()
 	pWnd->SetWindowText(description.str());
 
 	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_ENEMY_INTERACTIONS);
-	pCombo->SetCurSel(m_teamDict->getInt(TheKey_teamAggressiveness, &exists) - AI_SLEEP);
+	pCombo->SetCurSel(m_teamDict->getInt(TheKey_teamAggressiveness, &exists) - ATTITUDE_SLEEP);
 
 
 	return FALSE;  // return TRUE unless you set the focus to a control
@@ -247,7 +247,7 @@ void TeamBehavior::OnSelchangeEnemyInteractions()
 	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_ENEMY_INTERACTIONS);
 	Int mode = pCombo->GetCurSel();
 	if (mode >= 0) { 
-		m_teamDict->setInt(TheKey_teamAggressiveness, mode + AI_SLEEP);
+		m_teamDict->setInt(TheKey_teamAggressiveness, mode + ATTITUDE_SLEEP);
 	}
 }
 

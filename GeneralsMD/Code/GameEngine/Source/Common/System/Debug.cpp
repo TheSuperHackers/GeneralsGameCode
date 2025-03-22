@@ -65,7 +65,7 @@
 extern bool DX8Wrapper_IsWindowed;
 extern HWND ApplicationHWnd;
 
-extern char *gAppPrefix; /// So WB can have a different log file name.
+extern const char *gAppPrefix; /// So WB can have a different log file name.
 
 #ifdef _INTERNAL
 // this should ALWAYS be present
@@ -771,7 +771,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 	theReleaseCrashLogFile = fopen(curbuf, "w");
 	if (theReleaseCrashLogFile)
 	{
-		fprintf(theReleaseCrashLogFile, "Release Crash at %s; Reason %s\n", getCurrentTimeString(), mesg.str());
+		fprintf(theReleaseCrashLogFile, "Release Crash at %s; Reason %ls\n", getCurrentTimeString(), mesg.str());
 
 		const int STACKTRACE_SIZE	= 12;
 		const int STACKTRACE_SKIP = 6;

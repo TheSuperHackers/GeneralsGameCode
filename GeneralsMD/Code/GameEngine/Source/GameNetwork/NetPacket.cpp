@@ -158,7 +158,7 @@ NetPacketList NetPacket::ConstructBigCommandPacketList(NetCommandRef *ref) {
 
 	if (!DoesCommandRequireACommandID(msg->getNetCommandType())) {
 		DEBUG_CRASH(("Trying to wrap a command that doesn't have a unique command ID"));
-		return NULL;
+		return NetPacketList();
 	}
 
 	UnsignedInt bufferSize = GetBufferSizeNeededForCommand(msg);  // need to implement.  I have a drinking problem.
@@ -5219,7 +5219,8 @@ NetCommandMsg * NetPacket::readGameMessage(UnsignedByte *data, Int &i)
 	// Get the types and the number of arguments of those types.
 	Int totalArgCount = 0;
 	GameMessageParser *parser = newInstance(GameMessageParser)();
-	for (Int j = 0; j < numArgTypes; ++j) {
+	Int j = 0;
+	for (; j < numArgTypes; ++j) {
 		UnsignedByte type = (UnsignedByte)ARGUMENTDATATYPE_UNKNOWN;
 		memcpy(&type, data + i, sizeof(type));
 		i += sizeof(type);
@@ -5560,12 +5561,12 @@ NetCommandMsg * NetPacket::readPacketRouterAckMessage(UnsignedByte *data, Int &i
 NetCommandMsg * NetPacket::readDisconnectChatMessage(UnsignedByte *data, Int &i) {
 	NetDisconnectChatCommandMsg *msg = newInstance(NetDisconnectChatCommandMsg);
 
-	UnsignedShort text[256];
+	WideChar text[256];
 	UnsignedByte length;
 	memcpy(&length, data + i, sizeof(UnsignedByte));
 	++i;
-	memcpy(text, data + i, length * sizeof(UnsignedShort));
-	i += length * sizeof(UnsignedShort);
+	memcpy(text, data + i, length * sizeof(WideChar));
+	i += length * sizeof(WideChar);
 	text[length] = 0;
 
 	UnicodeString unitext;
@@ -5583,13 +5584,13 @@ NetCommandMsg * NetPacket::readDisconnectChatMessage(UnsignedByte *data, Int &i)
 NetCommandMsg * NetPacket::readChatMessage(UnsignedByte *data, Int &i) {
 	NetChatCommandMsg *msg = newInstance(NetChatCommandMsg);
 
-	UnsignedShort text[256];
+	WideChar text[256];
 	UnsignedByte length;
 	Int playerMask;
 	memcpy(&length, data + i, sizeof(UnsignedByte));
 	++i;
-	memcpy(text, data + i, length * sizeof(UnsignedShort));
-	i += length * sizeof(UnsignedShort);
+	memcpy(text, data + i, length * sizeof(WideChar));
+	i += length * sizeof(WideChar);
 	text[length] = 0;
 	memcpy(&playerMask, data + i, sizeof(Int));
 	i += sizeof(Int);

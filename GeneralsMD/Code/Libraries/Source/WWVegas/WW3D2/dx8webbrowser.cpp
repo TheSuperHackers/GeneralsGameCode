@@ -36,11 +36,24 @@
 
 #if ENABLE_EMBEDDED_BROWSER
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
+
 // Import the Browser Type Library
 // BGC, the path for the dll file is pretty odd, no?
 //      I'll leave it like this till I can figure out a
 //      better way.
 #import "..\..\..\..\..\run\BrowserEngine.DLL" no_namespace
+
+#else
+
+#include <comutil.h>
+#include <comip.h>
+
+#include "EABrowserEngine/BrowserEngine.h"
+
+typedef _com_ptr_t<_com_IIID<IFEBrowserEngine2, &__uuidof(IFEBrowserEngine2)>> IFEBrowserEngine2Ptr;
+
+#endif
 
 static	IFEBrowserEngine2Ptr	pBrowser = 0;
 
@@ -219,7 +232,12 @@ void	DX8WebBrowser::DestroyBrowser(const char* browsername)
 bool	DX8WebBrowser::Is_Browser_Open(const char* browsername)
 {
 	if(pBrowser == 0) return false;
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	return (pBrowser->IsOpen(_bstr_t(browsername)) != 0);
+#else
+	long isOpen;
+	return (pBrowser->IsOpen(_bstr_t(browsername), &isOpen) != 0);
+#endif
 }
 
 // ******************************************************************************************

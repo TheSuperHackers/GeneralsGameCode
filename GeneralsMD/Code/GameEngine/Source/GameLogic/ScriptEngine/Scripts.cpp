@@ -81,7 +81,7 @@ static ScriptGroup *s_mtGroup = NULL;
 // These strings must be in the same order as they are in their definitions 
 // (See SHELL_SCRIPT_HOOK_* )
 //
-char *TheShellHookNames[]=
+const char *TheShellHookNames[]=
 {
 	"ShellMainMenuCampaignPushed", //SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_SELECTED,
 	"ShellMainMenuCampaignHighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_HIGHLIGHTED,
@@ -1967,11 +1967,11 @@ AsciiString Parameter::getUiText(void) const
 
 		case AI_MOOD:
 			switch (m_int) {
-				case AI_SLEEP: uiText.format("Sleep"); break;
-				case AI_PASSIVE: uiText.format("Passive"); break;
-				case AI_NORMAL: uiText.format("Normal"); break;
-				case AI_ALERT: uiText.format("Alert"); break;
-				case AI_AGGRESSIVE: uiText.format("Aggressive"); break;
+				case ATTITUDE_SLEEP: uiText.format("Sleep"); break;
+				case ATTITUDE_PASSIVE: uiText.format("Passive"); break;
+				case ATTITUDE_NORMAL: uiText.format("Normal"); break;
+				case ATTITUDE_ALERT: uiText.format("Alert"); break;
+				case ATTITUDE_AGGRESSIVE: uiText.format("Aggressive"); break;
 				default : DEBUG_CRASH(("Unknown AI Mood type."));
 			}
 			break;
