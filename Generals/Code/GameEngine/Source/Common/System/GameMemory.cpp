@@ -3461,7 +3461,7 @@ void initMemoryManager()
 	linktest = new char[8];
 	delete [] linktest;
 
-	linktest = new char("",1);
+	linktest = new char('\0');
 	delete linktest;
 
 #ifdef MEMORYPOOL_OVERRIDE_MALLOC
