@@ -1007,7 +1007,7 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 			// virtually every replay, the assumption is our CRC checking is faulty.  Since we're at the
 			// tail end of patch season, let's just disable the message, and hope the users believe the
 			// problem is fixed. -MDC 3/20/2003
-			//TheInGameUI->message("GUI:CRCMismatch");
+			TheInGameUI->message("GUI:CRCMismatch");
 			DEBUG_CRASH(("Replay has gone out of sync!  All bets are off!\nOld:%8.8X New:%8.8X\nFrame:%d",
 				playbackCRC, newCRC, TheGameLogic->getFrame()));
 		}
