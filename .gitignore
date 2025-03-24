@@ -3,6 +3,7 @@
 !.gitignore
 !.gitattributes
 !.github
+!.clang-format
 
 *.user
 *.ncb
@@ -42,6 +43,5 @@ CPackSourceConfig.cmake
 thumbs.db
 /CMakeUserPresets.json
 /.cache
-.clang-format
 /.vscode
 /Dependencies/MaxSDK/maxsdk
