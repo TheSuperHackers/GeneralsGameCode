@@ -40,7 +40,7 @@
 // ST - 2/1/01 12:46PM
 bool BigEndian = false;
 
-unsigned long ResolveIP(char *Server)
+unsigned long ResolveIP(const char *Server)
 {
   char serverName[100];
   struct hostent *serverStruct;

@@ -1504,10 +1504,11 @@ LayoutScheme::~LayoutScheme( void )
 	for( i = 0; i < NUM_STATE_IDENTIFIERS; i++ )
 	{
 
-		if( m_imageAndColorTable[ i ].stateName )
+		if( m_imageAndColorTable[ i ].stateNameBuffer )
 		{
 			
-			delete [] m_imageAndColorTable[ i ].stateName;
+			delete [] m_imageAndColorTable[ i ].stateNameBuffer;
+			m_imageAndColorTable[ i ].stateNameBuffer = NULL;
 			m_imageAndColorTable[ i ].stateName = NULL;
 
 		}  // end if
@@ -1536,8 +1537,9 @@ void LayoutScheme::init( void )
 		m_imageAndColorTable[ i ].image = info->image;
 		m_imageAndColorTable[ i ].color = info->color;
 		m_imageAndColorTable[ i ].borderColor = info->borderColor;
-		m_imageAndColorTable[ i ].stateName = new char[strlen( info->stateName ) + 1];
-		strcpy(m_imageAndColorTable[ i ].stateName, info->stateName );
+		m_imageAndColorTable[ i ].stateNameBuffer = new char[strlen( info->stateName ) + 1];
+		m_imageAndColorTable[ i ].stateName = m_imageAndColorTable[ i ].stateNameBuffer;
+		strcpy(m_imageAndColorTable[ i ].stateNameBuffer, info->stateName );
 
 	}  // end for i
 

@@ -363,7 +363,8 @@ struct ImageAndColorInfo
 
 	UnsignedInt windowType;  ///< this entry applies to these kind of windows
 	StateIdentifier stateID;  ///< state identifier
-	char *stateName;  ///< string state name that this affects
+	const char *stateName;  ///< string state name that this affects
+	char* stateNameBuffer; ///< optional buffer for state name string
 	const Image *image;  ///< the image for this entry
 	Color color;  ///< color for this entry
 	Color borderColor;   ///< border color for this entry

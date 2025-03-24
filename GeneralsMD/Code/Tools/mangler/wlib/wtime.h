@@ -72,7 +72,7 @@ class Wtime
     void      SetUsec(uint32 newusec);
     void      Set(uint32 newsec,uint32 newusec);
     bit8      ParseDate(char *in);
-    bit8      FormatTime(char *out, char *format);
+    bit8      FormatTime(char *out, const char *format);
 
     struct timeval   *GetTimeval(void);
     void              GetTimevalMT(struct timeval &tv);

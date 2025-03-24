@@ -417,7 +417,7 @@ void WorldHeightMapEdit::loadBaseImages(void)
 }
 
 /// Loads all the images in a directory (including subdirectories)
-void WorldHeightMapEdit::loadDirectoryOfImages(char *pFilePath) 
+void WorldHeightMapEdit::loadDirectoryOfImages(const char *pFilePath) 
 {
 	char				dirBuf[_MAX_PATH];
 	char				findBuf[_MAX_PATH];

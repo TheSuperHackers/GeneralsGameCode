@@ -60,7 +60,7 @@
 *
 ******************************************************************************/
 
-bool ViewHTML(const char* url, bool wait, CallbackHook& callback)
+bool ViewHTML(const char* url, bool wait, const CallbackHook& callback)
 	{
 //	DebugPrint("ViewHTML()\n");
 	Msg( __LINE__, TEXT(__FILE__), TEXT("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" ));

@@ -878,7 +878,7 @@ char const * Fetch_String(int id)
 
 
 
-void LogMsg(char *msg)
+void LogMsg(const char *msg)
 {
 #ifdef _DEBUG
   FILE *out=fopen("register.log","a");

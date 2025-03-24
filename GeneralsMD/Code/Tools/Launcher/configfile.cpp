@@ -90,7 +90,7 @@ bit8 ConfigFile::getString(Wstring &key,Wstring &value)
 } 
 
 // Get a config entry as a string
-bit8 ConfigFile::getString(char *key,Wstring &value)
+bit8 ConfigFile::getString(const char *key,Wstring &value)
 {
   Wstring sKey;
   sKey.set(key);
@@ -109,7 +109,7 @@ bit8 ConfigFile::getInt(Wstring &key,sint32 &value)
 }
 
 // Get a config entry as an integer
-bit8 ConfigFile::getInt(char *key,sint32 &value)
+bit8 ConfigFile::getInt(const char *key,sint32 &value)
 {
   Wstring sKey;
   sKey.set(key);
@@ -130,7 +130,7 @@ bit8 ConfigFile::getInt(Wstring &key,sint16 &value)
 }
  
 // Get a config entry as an integer
-bit8 ConfigFile::getInt(char *key,sint16 &value)
+bit8 ConfigFile::getInt(const char *key,sint16 &value)
 {
   Wstring sKey;
   sKey.set(key);

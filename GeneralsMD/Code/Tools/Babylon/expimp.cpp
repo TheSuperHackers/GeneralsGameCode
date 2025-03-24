@@ -420,7 +420,7 @@ int ExportTranslations ( TransDB *db, const char *filename, LangID langid, TROPT
 
 	if ( (progress_dlg = dlg) )
 	{
-		char *format;
+		const char *format;
 		dlg->InitProgress ( exports );
 
 		dlg->Log ("");
@@ -991,7 +991,7 @@ static int generate_Babylonstr ( TransDB *db, const char *filename, LangID langi
 				
 			while ( text )
 			{
-				char *string;
+				const char *string;
 
 				trans = text->GetTranslation ( langid );
 
@@ -1008,7 +1008,7 @@ static int generate_Babylonstr ( TransDB *db, const char *filename, LangID langi
 							if ( options->untranslated == GN_USEIDS )
 							{
 								string = buffer2;
-								sprintf ( string, "%d", text->ID ());
+								sprintf (buffer2, "%d", text->ID ());
 							}
 							else
 							{
@@ -1085,7 +1085,7 @@ static int writeCSFLabel ( FILE *file, BabylonLabel *label )
 	return TRUE;
 }
 
-static int writeCSFString ( FILE *file, OLECHAR *string, char *wave, LANGINFO *linfo )
+static int writeCSFString ( FILE *file, const OLECHAR *string, char *wave, LANGINFO *linfo )
 {
 	int id = CSF_STRING;
 	int len ;
@@ -1191,7 +1191,7 @@ static int generate_csf ( TransDB *db, const char *filename, LangID langid, GNOP
 				
 			while ( text )
 			{
-				OLECHAR *string;
+				const OLECHAR *string;
 
 				trans = text->GetTranslation ( langid );
 
@@ -1208,7 +1208,7 @@ static int generate_csf ( TransDB *db, const char *filename, LangID langid, GNOP
 							if ( options->untranslated == GN_USEIDS )
 							{
 								string = olebuf2;
-								swprintf ( string, L"%d", text->ID ());
+								swprintf (olebuf2, L"%d", text->ID ());
 							}
 							else
 							{
@@ -1504,7 +1504,7 @@ int GenerateReport ( TransDB *db, const char *filename, RPOPTIONS *options, Lang
 	{
 		static char buffer[500];
 
-		sprintf ( "Unable to open file \"%s\".\n\nCannot create report!", filename);
+		sprintf ( buffer, "Unable to open file \"%s\".\n\nCannot create report!", filename);
 		AfxMessageBox ( buffer );
 
 		if ( dlg )

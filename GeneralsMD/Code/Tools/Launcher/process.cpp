@@ -96,7 +96,7 @@ bit8 Wait_Process(Process &process, DWORD *exit_code)
 //
 // Get the process to run from the config object
 //
-bit8 Read_Process_Info(ConfigFile &config,OUT Process &info, IN char *key)
+bit8 Read_Process_Info(ConfigFile &config,OUT Process &info, IN const char *key)
 {
 
  Wstring keyStr = "RUN";

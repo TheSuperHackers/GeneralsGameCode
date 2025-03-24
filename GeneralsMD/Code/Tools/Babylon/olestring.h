@@ -38,7 +38,7 @@ class OLEString
 	OLEString ( void ) ;
 	~OLEString ();
 	void		Set ( OLECHAR *new_ole );
-	void		Set ( char *new_sb );
+	void		Set ( const char *new_sb );
 	OLECHAR*Get ( void ) { return ole; };
 	int			Len ( void ) { return len; };
 	char*		GetSB ( void ) { return sb; };

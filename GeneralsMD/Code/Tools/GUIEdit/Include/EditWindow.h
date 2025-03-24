@@ -155,7 +155,7 @@ protected:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	static Bool m_classRegistered;  ///< TRUE when we've register with OS
-	static char *m_className;  ///< name for windows class
+	static const char *m_className;  ///< name for windows class
 
 	ICoord2D m_size;  ///< width and height of edit window	
 	UnsignedByte m_bitDepth;  ///< bit depth for edit window

@@ -125,7 +125,7 @@ static void clearBufferToSpaces( void )
 //=============================================================================
 static Bool saveType( GameWindow *window, FILE *fp, Int dataIndent )
 {
-	char *type;
+	const char *type;
 
 	if( BitIsSet( window->winGetStyle(), GWS_PUSH_BUTTON ) )
 		type = "PUSHBUTTON";
@@ -486,7 +486,7 @@ static Bool saveTextColor( GameWindow *window, FILE *fp, Int dataIndent )
 // tokenIsEnabledData =========================================================
 /** Token refers to enabled draw data */
 //=============================================================================
-static Bool tokenIsEnabledData( char *token )
+static Bool tokenIsEnabledData( const char *token )
 {
 
 
@@ -507,7 +507,7 @@ static Bool tokenIsEnabledData( char *token )
 // tokenIsDisabledData ========================================================
 /** Token refers to Disabled draw data */
 //=============================================================================
-static Bool tokenIsDisabledData( char *token )
+static Bool tokenIsDisabledData( const char *token )
 {
 
 	if( strcmp( token, "DISABLEDDRAWDATA" ) == 0 ||
@@ -527,7 +527,7 @@ static Bool tokenIsDisabledData( char *token )
 // tokenIsHiliteData ==========================================================
 /** Token refers to Hilite draw data */
 //=============================================================================
-static Bool tokenIsHiliteData( char *token )
+static Bool tokenIsHiliteData( const char *token )
 {
 
 	if( strcmp( token, "HILITEDRAWDATA" ) == 0 ||
@@ -547,7 +547,7 @@ static Bool tokenIsHiliteData( char *token )
 // saveDrawData ===============================================================
 /** Save the draw data array */
 //=============================================================================
-static Bool saveDrawData( char *token, GameWindow *window, 
+static Bool saveDrawData( const char *token, GameWindow *window, 
 													FILE *fp, Int dataIndent )
 {
 	Int i;

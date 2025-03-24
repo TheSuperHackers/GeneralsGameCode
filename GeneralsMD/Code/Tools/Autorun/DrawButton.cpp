@@ -84,7 +84,7 @@
 //      07/15/1996  MML : Created.                                            
 //=============================================================================
 
-DrawButton::DrawButton ( int id, RECT button_rect, char *normal, char *focus, char *pressed, const char * string, TTFontClass *fontptr )
+DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const char *focus, const char *pressed, const char * string, TTFontClass *fontptr )
 {
 	Id = id;
 
@@ -153,7 +153,7 @@ DrawButton::DrawButton ( int id, RECT button_rect, char *normal, char *focus, ch
 	Msg( __LINE__, TEXT(__FILE__), TEXT("	MyRect	= [%d,%d,%d,%d]"), MyRect.X, MyRect.Y, MyRect.Width, MyRect.Height );
 }
 
-DrawButton::DrawButton ( int id, RECT button_rect, char *normal, char *focus, char *pressed, const wchar_t *string, TTFontClass *fontptr )
+DrawButton::DrawButton ( int id, RECT button_rect, const char *normal, const char *focus, const char *pressed, const wchar_t *string, TTFontClass *fontptr )
 {
 	Id = id;
 

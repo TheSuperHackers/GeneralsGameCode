@@ -42,11 +42,11 @@ template int IsFormatTypeChar<OLECHAR> ( OLECHAR  string );
 
 
 
-static char *format_type = "cCdiouxXeEfgGnpsS"; // printf type as in %<width>.<presicion>{h|l|i64|L}<type>
+static const char *format_type = "cCdiouxXeEfgGnpsS"; // printf type as in %<width>.<presicion>{h|l|i64|L}<type>
 
 template <typename text>int IsFormatTypeChar ( text ch )
 {
-	char *ptr = format_type;
+	const char *ptr = format_type;
 
 	while ( *ptr )
 	{
@@ -102,7 +102,7 @@ void OLEString::Set ( OLECHAR *new_ole )
 
 }
 
-void OLEString::Set ( char *new_sb )
+void OLEString::Set ( const char *new_sb )
 {
 
 	if ( !locked )

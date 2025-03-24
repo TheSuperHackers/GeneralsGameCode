@@ -181,7 +181,7 @@ static char* strtrim(char* buffer)
 	return buffer;
 }
 
-static char *nextParam(char *newSource, char *seps)
+static char *nextParam(char *newSource, const char *seps)
 {
 	static char *source = NULL;
 	if (newSource)

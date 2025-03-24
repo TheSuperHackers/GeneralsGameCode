@@ -37,53 +37,53 @@ class Wstring
 {
  public: 
            Wstring();
-           Wstring(IN Wstring &other);
-           Wstring(IN char *string);
+           Wstring(const Wstring &other);
+           Wstring(const char *string);
           ~Wstring();
 
    void    clear(void);
 
-   bit8    cat(IN char *string);
-   bit8    cat(uint32 size,IN char *string);
-   bit8    cat(IN Wstring &string);
+   bit8    cat(const char *string);
+   bit8    cat(uint32 size,const char *string);
+   bit8    cat(const Wstring &string);
 
    void    cellCopy(OUT char *dest, uint32 len);
    char    remove(sint32 pos, sint32 count);
    bit8    removeChar(char c);
    void    removeSpaces(void);
-   char   *get(void) RO;
-   char    get(uint32 index) RO;
-   uint32  length(void) RO;
+   const char *get(void) const;
+   char    get(uint32 index) const;
+   uint32  length(void) const;
    bit8    insert(char c, uint32 pos);
-   bit8    insert(char *instring, uint32 pos);
+   bit8    insert(const char *instring, uint32 pos);
    bit8    beautifyNumber();
-   bit8    replace(IN char *replaceThis,IN char *withThis);
-   char    set(IN char *str);
-   char    set(uint32 size,IN char *str);
+   bit8    replace(const char *replaceThis,const char *withThis);
+   char    set(const char *str);
+   char    set(uint32 size,const char *str);
    bit8    set(char c, uint32 index);
-   char    setFormatted(IN char *str, ...);		// Added by Joe Howes
+   char    setFormatted(const char *str, ...);		// Added by Joe Howes
    void    setSize(sint32 bytes);  // create an empty string
    void    toLower(void);
    void    toUpper(void);
    bit8    truncate(uint32 len);
    bit8    truncate(char c);  // trunc after char c
-   sint32  getToken(int offset,char *delim,Wstring &out) RO;
+   sint32  getToken(int offset,const char *delim,Wstring &out) const;
    sint32  getLine(int offset, Wstring &out);
    void    strgrow(int length);
 
-   bit8    operator==(IN char *other) RO;
-   bit8    operator==(IN Wstring &other) RO;
-   bit8    operator!=(IN char *other) RO;
-   bit8    operator!=(IN Wstring &other) RO;
+   bit8    operator==(const char *other) const;
+   bit8    operator==(const Wstring &other) const;
+   bit8    operator!=(const char *other) const;
+   bit8    operator!=(const Wstring &other) const;
 
-   Wstring  &operator=(IN char *other);
-   Wstring  &operator=(IN Wstring &other);
-   Wstring  &operator+=(IN char *other);
-   Wstring  &operator+=(IN Wstring &other);
-   Wstring   operator+(IN char *other);
-   Wstring   operator+(IN Wstring &other);
+   Wstring  &operator=(const char *other);
+   Wstring  &operator=(const Wstring &other);
+   Wstring  &operator+=(const char *other);
+   Wstring  &operator+=(const Wstring &other);
+   Wstring   operator+(const char *other);
+   Wstring   operator+(const Wstring &other);
 
-   bool operator<(IN Wstring &other) RO;
+   bool operator<(const Wstring &other) const;
 
  private:
    char    *str;      // Pointer to allocated string.

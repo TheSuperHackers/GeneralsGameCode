@@ -172,7 +172,7 @@ LRESULT CALLBACK PreviewProc( HWND hWnd, UINT message,
 HWND MakePreviewDisplay( void )
 {
 	WNDCLASSEX wcex;
-	char *className = "PreviewDisplay";
+	const char *className = "PreviewDisplay";
 	HWND hWnd;
 
 	wcex.cbSize = sizeof( WNDCLASSEX ); 
