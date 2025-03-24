@@ -1141,6 +1141,10 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	fread(&maxFPS, sizeof(maxFPS), 1, m_file);
 
 	DEBUG_LOG(("RecorderClass::playbackFile() - original game was mode %d\n", m_originalGameMode));
+	
+	// In case we restart a replay, we need to clear the command list.
+	// Otherwise a crc message remains and messes up the crc calculation on the restarted replay.
+	TheCommandList->reset();
 
 	readNextFrame();
 
