@@ -1,21 +1,3 @@
-/*
-**	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 Electronic Arts Inc.
-**
-**	This program is free software: you can redistribute it and/or modify
-**	it under the terms of the GNU General Public License as published by
-**	the Free Software Foundation, either version 3 of the License, or
-**	(at your option) any later version.
-**
-**	This program is distributed in the hope that it will be useful,
-**	but WITHOUT ANY WARRANTY; without even the implied warranty of
-**	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-**	GNU General Public License for more details.
-**
-**	You should have received a copy of the GNU General Public License
-**	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 //{{NO_DEPENDENCIES}}
 // Microsoft Developer Studio generated include file.
 // Used by WorldBuilder.rc
@@ -575,6 +557,8 @@
 #define IDC_STATIC_MAPOBJECT_SOUND      1381
 #define IDC_STATIC_MAPOBJECT_VISUAL     1382
 #define IDC_MAPOBJECT_DISTANCE          1383
+#define IDC_HELP_CAPTION                1384
+#define IDC_HELP_TEXT                   1385
 #define ID_BRUSH_TOOL                   32771
 #define IDM_ShowGrid                    32772
 #define ID_FEATHERTOOL                  32791
