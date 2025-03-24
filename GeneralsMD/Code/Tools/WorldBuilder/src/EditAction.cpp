@@ -127,6 +127,7 @@ BOOL EditAction::OnInitDialog()
 		const ActionTemplate *pTemplate = TheScriptEngine->getActionTemplate(i);
 		char prefix[_MAX_PATH];
 		const char *name = pTemplate->getName().str();
+		const char *helpText = pTemplate->getHelpText().str();
 
 		Int count = 0;
 		HTREEITEM parent = TVI_ROOT;
@@ -162,6 +163,7 @@ BOOL EditAction::OnInitDialog()
 		HTREEITEM item = m_actionTreeView.InsertItem(&ins);
 		if (i == m_action->getActionType()) {
 			selItem = item;
+			GetDlgItem(IDC_HELP_TEXT)->SetWindowText(helpText);
 		}
 
 		name = pTemplate->getName2().str();
@@ -322,6 +324,11 @@ BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 					m_action->setActionType( actionType );
 					m_myEditCtrl.SetWindowText(m_action->getUiText().str());
 					formatScriptActionText(0);
+					
+					// Adriane [Deathscythe] (24-03-2025) : -- Support for the new help text group box
+					const ActionTemplate *pTemplate = TheScriptEngine->getActionTemplate(actionType);
+					const char *helpText = pTemplate->getHelpText().str();
+					GetDlgItem(IDC_HELP_TEXT)->SetWindowText(helpText);
 				}
 			}	
 		} else if (pHdr->hdr.code == TVN_KEYDOWN) {

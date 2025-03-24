@@ -1062,6 +1062,7 @@ public:
 	AsciiString getName(void) const {return m_uiName;}
 	AsciiString getName2(void) const {return m_uiName2;}
 	Int getUiStrings(AsciiString strings[MAX_PARMS]) const;
+	AsciiString getHelpText(void) const {return m_helpText;}
 	Int getNumParameters(void) const {return m_numParameters;}
 	enum Parameter::ParameterType getParameterType(Int ndx) const;
 };

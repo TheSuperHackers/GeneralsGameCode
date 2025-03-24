@@ -139,6 +139,7 @@ BOOL EditCondition::OnInitDialog()
 		const ConditionTemplate *pTemplate = TheScriptEngine->getConditionTemplate(i);
 		char prefix[_MAX_PATH];
 		const char *name = pTemplate->getName().str();
+		const char *helpText = pTemplate->getHelpText().str();
 
 		Int count = 0;
 		HTREEITEM parent = TVI_ROOT;
@@ -174,6 +175,7 @@ BOOL EditCondition::OnInitDialog()
 		HTREEITEM item = m_conditionTreeView.InsertItem(&ins);
 		if (i == m_condition->getConditionType()) {
 			selItem = item;
+			GetDlgItem(IDC_HELP_TEXT)->SetWindowText(helpText);
 		}
 
 		name = pTemplate->getName2().str();
@@ -334,6 +336,11 @@ BOOL EditCondition::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 					m_condition->setConditionType( conditionType );
 					m_myEditCtrl.SetWindowText(m_condition->getUiText().str());
 					formatConditionText(0);
+
+					// Adriane [Deathscythe] (24-03-2025) : -- Support for the new help text group box
+					const ConditionTemplate *pTemplate = TheScriptEngine->getConditionTemplate(conditionType);
+					const char *helpText = pTemplate->getHelpText().str();
+					GetDlgItem(IDC_HELP_TEXT)->SetWindowText(helpText);
 				}
 			}	
 		} else if (pHdr->hdr.code == TVN_KEYDOWN) {
