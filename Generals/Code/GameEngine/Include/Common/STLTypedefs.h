@@ -204,10 +204,15 @@ namespace rts
 
 	template<> struct hash<AsciiString>
 	{
-		size_t operator()(AsciiString ast) const
-		{ 
-			std::hash<const char *> tmp;
-			return tmp((const char *) ast.str());
+		size_t operator()(const AsciiString& ast) const
+		{
+#ifdef USING_STLPORT
+			std::hash<const char*> tmp;
+			return tmp((const char*)ast.str());
+#else
+			std::hash<std::string_view> hasher;
+			return hasher(std::string_view(ast.str(), ast.getLength()));
+#endif
 		}
 	};
 
