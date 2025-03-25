@@ -55,7 +55,11 @@ include(cmake/gamespy.cmake)
 include(cmake/lzhl.cmake)
 include(cmake/zlib.cmake)
 add_subdirectory(Dependencies/Benchmark)
-add_subdirectory(Dependencies/MaxSDK)
+if (IS_VS6_BUILD)
+    # The original max sdk does not compile against a modern compiler.
+    # If there is a desire to make this work, then a fixed max sdk needs to be created.
+    add_subdirectory(Dependencies/MaxSDK)
+endif()
 add_subdirectory(Dependencies/SafeDisc)
 add_subdirectory(Dependencies/Utility)
 add_subdirectory(resources)
