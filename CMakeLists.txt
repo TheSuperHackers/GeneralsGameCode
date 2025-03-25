@@ -64,6 +64,7 @@ option(GENZH_BUILD_ZEROHOUR "Build Zero Hour code." ON)
 option(GENZH_BUILD_GENERALS "Build Generals code." ON)
 option(GENZH_BUILD_INTERNAL "Build code with the \"Internal\" configuration." OFF)
 option(GENZH_BUILD_PROFILE "Build code with the \"Profile\" configuration." OFF)
+option(GENZH_BUILD_DEBUG "Build code with the \"Debug\" configuration." OFF)
 
 if(NOT GENZH_BUILD_ZEROHOUR AND NOT GENZH_BUILD_GENERALS)
     set(GENZH_BUILD_ZEROHOUR TRUE)
@@ -74,6 +75,7 @@ add_feature_info(ZeroHourStuff GENZH_BUILD_ZEROHOUR "Build Zero Hour code")
 add_feature_info(GeneralsStuff GENZH_BUILD_GENERALS "Build Generals code")
 add_feature_info(InternalBuild GENZH_BUILD_INTERNAL "Building as an \"Internal\" build")
 add_feature_info(ProfileBuild GENZH_BUILD_PROFILE "Building as a \"Profile\" build")
+add_feature_info(DebugBuild GENZH_BUILD_DEBUG "Building as a \"Debug\" build")
 
 add_library(gz_config INTERFACE)
 
@@ -84,19 +86,21 @@ endif()
 
 target_compile_options(gz_config INTERFACE ${GENZH_FLAGS})
 
-target_compile_definitions(gz_config INTERFACE $<IF:$<CONFIG:Debug>,_DEBUG WWDEBUG DEBUG,_RELEASE>)
-
 # This disables a lot of warnings steering developers to use windows only functions/function names.
 if(MSVC)
-    target_compile_definitions(gz_config INTERFACE _CRT_NONSTDC_NO_WARNINGS _CRT_SECURE_NO_WARNINGS)
+    target_compile_definitions(gz_config INTERFACE _CRT_NONSTDC_NO_WARNINGS _CRT_SECURE_NO_WARNINGS $<$<CONFIG:DEBUG>:_DEBUG_CRT>)
 endif()
 
-if(GENZH_BUILD_PROFILE)
-    target_compile_definitions(gz_config INTERFACE _PROFILE)
-endif()
-
-if(GENZH_BUILD_INTERNAL)
-    target_compile_definitions(gz_config INTERFACE _INTERNAL)
+if(GENZH_BUILD_DEBUG)
+    target_compile_definitions(gz_config INTERFACE _DEBUG WWDEBUG DEBUG)
+else()
+    target_compile_definitions(gz_config INTERFACE _RELEASE)
+    
+    if(GENZH_BUILD_INTERNAL)
+        target_compile_definitions(gz_config INTERFACE _INTERNAL)
+    elseif(GENZH_BUILD_PROFILE)
+        target_compile_definitions(gz_config INTERFACE _PROFILE)
+    endif()
 endif()
 
 # Add main build targets

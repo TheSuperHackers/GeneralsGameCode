@@ -57,7 +57,7 @@ jobs:
             tools: true
           - preset: "vc6int"
             tools: true
-          - preset: "vc6debug"
+          - preset: "vc6dbg"
             tools: true
       fail-fast: false
     uses: ./.github/workflows/toolchain-common.yml
@@ -80,7 +80,7 @@ jobs:
             tools: true
           - preset: "vc6int"
             tools: true
-          - preset: "vc6debug"
+          - preset: "vc6dbg"
             tools: true
       fail-fast: false
     uses: ./.github/workflows/toolchain-common.yml

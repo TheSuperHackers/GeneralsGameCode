@@ -18,6 +18,11 @@
                 "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "$<$<CONFIG:Release,Debug,RelWithDebInfo>:ProgramDatabase>",
                 "CMAKE_BUILD_TYPE": "Release",
                 "GENZH_FLAGS": "/W3"
+            },
+            "vendor": {
+                "jetbrains.com/clion": {
+                    "toolchain": "Visual Studio 6"
+                }
             }
         },
         {
@@ -38,12 +43,13 @@
             }
         },
         {
-            "name": "vc6debug",
+            "name": "vc6dbg",
             "displayName": "Build Debug Binaries with NMake",
             "hidden": false,
             "inherits": "vc6",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "GENZH_BUILD_DEBUG": "ON"
             }
         },
         {
@@ -59,58 +65,52 @@
             }
         },
         {
-            "name": "msvc32",
-            "architecture": "Win32",
+            "name": "win32",
             "inherits": "default",
-            "generator": "Visual Studio 17 2022",
             "hidden": false,
-            "displayName": "Visual Studio Win32 build",
+            "displayName": "Windows 32bit build",
+            "architecture": {
+                "value": "Win32",
+                "strategy": "external"
+            },
             "cacheVariables": {
                 "GENZH_FLAGS": "/W3"
+            },
+            "vendor": {
+                "jetbrains.com/clion": {
+                    "toolchain": "Visual Studio"
+                }
             }
         },
         {
-            "name": "msvc32prof",
-            "inherits": "msvc32",
-            "displayName": "Visual Studio Win32 Profile build",
+            "name": "win32prof",
+            "inherits": "win32",
+            "displayName": "Windows 32bit Profile build",
             "cacheVariables": {
                 "GENZH_BUILD_PROFILE": "ON"
             }
         },
         {
-            "name": "msvc32int",
-            "inherits": "msvc32",
-            "displayName": "Visual Studio Win32 Internal build",
+            "name": "win32int",
+            "inherits": "win32",
+            "displayName": "Windows 32bit Internal build",
             "cacheVariables": {
                 "GENZH_BUILD_INTERNAL": "ON"
             }
         },
         {
-            "name": "msvc32debug",
-            "inherits": "msvc32",
-            "displayName": "Visual Studio Win32 Debug build",
+            "name": "win32dbg",
+            "inherits": "win32",
+            "displayName": "Windows 32bit Debug build",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-        {
-            "name": "win32",
-            "inherits": "default",
-            "hidden": false,
-            "displayName": "Win32 build",
-            "cacheVariables": {
-                "GENZH_FLAGS": "/W3"
+                "GENZH_BUILD_DEBUG": "ON"
             }
         },
         {
             "name": "unix",
             "inherits": "default",
             "hidden": false,
-            "displayName": "Non-Windows build",
-            "cacheVariables": {
-                "CMAKE_CXX_FLAGS_RELEASE": "-O2 -g -DNDEBUG",
-                "CMAKE_C_FLAGS_RELEASE": "-O2 -g -DNDEBUG"
-            }
+            "displayName": "Non-Windows build"
         }
     ],
     "buildPresets": [
@@ -121,11 +121,50 @@
             "description": "Build VC6 Windows build"
         },
         {
+            "name": "vc6int",
+            "configurePreset": "vc6int",
+            "displayName": "Build VC6 Windows Internal build",
+            "description": "Build VC6 Windows Internal build"
+        },
+        {
+            "name": "vc6prof",
+            "configurePreset": "vc6prof",
+            "displayName": "Build VC6 Windows Profile build",
+            "description": "Build VC6 Windows Profile build"
+        },
+        {
+            "name": "vc6dbg",
+            "configurePreset": "vc6dbg",
+            "displayName": "Build VC6 Windows Debug build",
+            "description": "Build VC6 Windows Debug build"
+        },
+        {
             "name": "win32",
             "configurePreset": "win32",
             "displayName": "Build Windows build",
             "description": "Build Windows build",
             "configuration": "Release"
+        },
+        {
+            "name": "win32int",
+            "configurePreset": "win32int",
+            "displayName": "Build Windows Internal build",
+            "description": "Build Windows Internal build",
+            "configuration": "Release"
+        },
+        {
+            "name": "win32prof",
+            "configurePreset": "win32prof",
+            "displayName": "Build Windows Profiling build",
+            "description": "Build Windows Profiling build",
+            "configuration": "Release"
+        },
+        {
+            "name": "win32dbg",
+            "configurePreset": "win32dbg",
+            "displayName": "Build Windows Debug build",
+            "description": "Build Windows Debug build",
+            "configuration": "Debug"
         },
         {
             "name": "unix",
@@ -150,6 +189,45 @@
             ]
         },
         {
+            "name": "vc6dbg",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "vc6dbg"
+                },
+                {
+                    "type": "build",
+                    "name": "vc6dbg"
+                }
+            ]
+        },
+        {
+            "name": "vc6int",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "vc6int"
+                },
+                {
+                    "type": "build",
+                    "name": "vc6int"
+                }
+            ]
+        },
+        {
+            "name": "vc6prof",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "vc6prof"
+                },
+                {
+                    "type": "build",
+                    "name": "vc6prof"
+                }
+            ]
+        },
+        {
             "name": "win32",
             "steps": [
                 {
@@ -159,6 +237,45 @@
                 {
                     "type": "build",
                     "name": "win32"
+                }
+            ]
+        },
+        {
+            "name": "win32int",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "win32int"
+                },
+                {
+                    "type": "build",
+                    "name": "win32int"
+                }
+            ]
+        },
+        {
+            "name": "win32prof",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "win32prof"
+                },
+                {
+                    "type": "build",
+                    "name": "win32prof"
+                }
+            ]
+        },
+        {
+            "name": "win32dbg",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "win32dbg"
+                },
+                {
+                    "type": "build",
+                    "name": "win32dbg"
                 }
             ]
         },
