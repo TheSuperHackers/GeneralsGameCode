@@ -90,22 +90,18 @@
 
 // Define which libraries to use. 
 #if defined(_INTERNAL)
-#  pragma comment (lib,"debuginternal.lib")
 #  define HAS_ASSERTS
 #  define HAS_LOGS
 #  define HAS_OPT
 #elif defined(_DEBUG)
-#  pragma comment (lib,"debugdebug.lib")
 #  define HAS_ASSERTS
 #  define HAS_LOGS
 #elif defined(_PROFILE)
-#  pragma comment (lib,"debugprofile.lib")
 #  define HAS_ASSERTS
 #  define HAS_LOGS
 #  define HAS_OPT
 #  define HAS_PROFILE
 #else
-#  pragma comment (lib,"debug.lib")
 #  define HAS_OPT
 #endif
 

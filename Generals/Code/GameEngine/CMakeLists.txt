@@ -1059,10 +1059,6 @@ set(GAMEENGINE_SRC
 
 add_library(g_gameengine STATIC)
 
-set_target_properties(g_gameengine PROPERTIES OUTPUT_NAME
-    $<IF:$<CONFIG:Debug>,gameenginedebug,$<IF:$<BOOL:${GENZH_BUILD_INTERNAL}>,gameengineinternal,gameengine>>
-)
-
 target_sources(g_gameengine PRIVATE ${GAMEENGINE_SRC})
 
 target_include_directories(g_gameengine PUBLIC

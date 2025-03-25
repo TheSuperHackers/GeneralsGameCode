@@ -34,8 +34,6 @@
 
 // Pardon my coding here but this is for testing only...
 
-#pragma comment (lib,"comctl32")
-
 BOOL CALLBACK DialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   switch(uMsg)

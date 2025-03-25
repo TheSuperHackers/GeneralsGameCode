@@ -28,8 +28,6 @@
 
 #pragma pack(push, 8)
 
-#pragma comment(linker, "/defaultlib:Dbghelp.lib")
-
 #include "Common/StackDump.h"
 #include "Common/Debug.h"
 

@@ -29,8 +29,6 @@
 #include "_pch.h"
 #include <commctrl.h>
 
-#pragma comment (lib,"comctl32")
-
 DebugExceptionhandler::DebugExceptionhandler(void)
 {
   // don't do anything here!

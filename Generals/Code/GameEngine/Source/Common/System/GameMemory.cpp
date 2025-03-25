@@ -3242,23 +3242,6 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 // GLOBAL FUNCTIONS
 //-----------------------------------------------------------------------------
 
-/*
-	This is a trick that is intended to force MSVC to link this file (and thus,
-	these definitions of new/delete) ahead of all others. (We do debug checking
-	to ensure that's the case)
-*/
-#if defined(_DEBUG)
-	#pragma comment(lib, "GameEngineDebug")
-#elif defined(_INTERNAL)
-	#pragma comment(lib, "GameEngineInternal")
-#else
-	#pragma comment(lib, "GameEngine")
-#endif
-
-#ifdef MEMORYPOOL_OVERRIDE_MALLOC
-	#pragma comment(linker, "/force:multiple")
-#endif
-
 static int theLinkTester = 0;
 
 //-----------------------------------------------------------------------------

@@ -32,10 +32,6 @@
 #ifndef DEBUG_DEBUG_H // Include guard
 #define DEBUG_DEBUG_H
 
-// this makes sure that whenever this header is included
-// the accompanying OBJ file is linked in as well
-#pragma comment(linker,"/include:___DebugIncludeInLink1")
-
 /**
   \class Debug debug.h <rts/debug.h>
   

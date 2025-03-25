@@ -9,6 +9,7 @@ endif()
 
 target_link_libraries(z_generals PRIVATE
     binkstub
+    comctl32
     d3d8
     d3dx8
     dbghelplib

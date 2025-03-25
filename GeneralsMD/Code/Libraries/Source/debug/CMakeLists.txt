@@ -25,8 +25,6 @@ set(DEBUG_SRC
 )
 
 add_library(z_debug STATIC)
-# pragma comment statements force linking certain libraries require this monster of a generator statement.
-set_target_properties(z_debug PROPERTIES OUTPUT_NAME $<IF:$<CONFIG:Debug>,debugdebug,$<IF:$<BOOL:${GENZH_BUILD_INTERNAL}>,debuginternal,$<IF:$<BOOL:${GENZH_BUILD_PROFILE}>,debugprofile,debug>>>)
 
 target_sources(z_debug PRIVATE ${DEBUG_SRC})
 
