@@ -22,11 +22,20 @@
   #include <windows.h>
 #endif
 
+#if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
+#define STREAMER_UNBUFFERED unbuffered()
+#else
+#define STREAMER_UNBUFFERED 0
+#endif
 
-Streamer::Streamer() : streambuf()
+Streamer::Streamer() : streambuf(), Output_Device(NULL), Buf(NULL)
 {
+#if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
   int state=unbuffered();
   unbuffered(0);  // 0 = buffered, 1 = unbuffered
+#else
+  static_assert(STREAMER_UNBUFFERED==0, "std::streambuf is assumed to be buffered by default");
+#endif
 }
  
 Streamer::~Streamer()
@@ -34,7 +43,8 @@ Streamer::~Streamer()
   ///////// calling sync seems to cause crashes here on Win32
   //sync();
   /////////
-  delete[](base());
+  if (Buf)
+    delete[] Buf;
 }
 
 int Streamer::setOutputDevice(OutputDevice *device)
@@ -75,7 +85,7 @@ int Streamer::overflow(int c)
     return(EOF);
   else {
     sputc(c);
-    if ((unbuffered() && c=='\n' || pptr() >= epptr())
+    if ((STREAMER_UNBUFFERED && c=='\n' || pptr() >= epptr())
         && sync()==EOF) {
       return(EOF);
     }
@@ -91,26 +101,30 @@ int Streamer::underflow(void)
 
 int Streamer::doallocate()
 {
-  if (base()==NULL)
+  if (Buf==NULL)
   {
-    char *buf=new char[(2*STREAMER_BUFSIZ)];   // deleted by destructor
-    memset(buf,0,2*STREAMER_BUFSIZ);
+    Buf=new char[(2*STREAMER_BUFSIZ)];   // deleted by destructor
+    memset(Buf,0,2*STREAMER_BUFSIZ);
 
     // Buffer
+#if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
     setb(
-       buf,         // base pointer
-       buf+STREAMER_BUFSIZ,  // ebuf pointer (end of buffer);
+       Buf,         // base pointer
+       Buf+STREAMER_BUFSIZ,  // ebuf pointer (end of buffer);
        0);          // 0 = manual deletion of buff 
+#else
+    pubsetbuf(Buf, 2*STREAMER_BUFSIZ);
+#endif
 
     // Get area
     setg(
-        buf,   // eback 
-        buf,   // gptr
-        buf);  // egptr
+        Buf,   // eback 
+        Buf,   // gptr
+        Buf);  // egptr
 
-    buf+=STREAMER_BUFSIZ;
+    Buf+=STREAMER_BUFSIZ;
     // Put area
-    setp(buf,buf+STREAMER_BUFSIZ);
+    setp(Buf,Buf+STREAMER_BUFSIZ);
     return(1);
   }
   else
@@ -131,7 +145,7 @@ int Streamer::sync()
     Output_Device->print(pbase(),wlen);
   }
 
-  if (unbuffered()) {
+  if (STREAMER_UNBUFFERED) {
     setp(pbase(),pbase());
   }
   else {

@@ -53,7 +53,7 @@ will you be ready to leave grasshopper.
 #ifndef WDEBUG_HEADER
 #define WDEBUG_HEADER
 
-#include <iostream.h>
+#include <Utility/iostream_adapter.h>
 #include "odevice.h"
 #include "streamer.h"
 #include <time.h>

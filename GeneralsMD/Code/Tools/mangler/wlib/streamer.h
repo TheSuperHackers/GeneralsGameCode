@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <iostream.h>
+#include <Utility/iostream_adapter.h>
 #include <string.h>
 
 // Windows headers have a tendency to redefine IN
@@ -61,6 +61,7 @@ class Streamer : public streambuf
 
 
     OutputDevice  *Output_Device;
+    char* Buf;
 };
 
 #endif
