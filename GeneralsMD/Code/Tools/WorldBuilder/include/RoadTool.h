@@ -42,7 +42,7 @@ protected:
 	MapObject *m_mapObj;
 
 private:
-	MapObject* RoadTool::findSegment(const Coord3D *pLoc, Coord3D *outLoc);
+	MapObject* findSegment(const Coord3D *pLoc, Coord3D *outLoc);
 
 public:
 	RoadTool(void);
