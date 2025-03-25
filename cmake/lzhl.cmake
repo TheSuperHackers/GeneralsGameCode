@@ -14,8 +14,8 @@ target_sources(liblzhl PRIVATE
     "${LZHL_DIR}/_lzhl.h"
     "${LZHL_DIR}/Huff.cpp"
     "${LZHL_DIR}/Lz.cpp"
-    "${LZHL_DIR}/Lzhl_tcp.cpp"
-    "${LZHL_DIR}/Lzhl_tcp.h"
+    #"${LZHL_DIR}/Lzhl_tcp.cpp"
+    #"${LZHL_DIR}/Lzhl_tcp.h"
     "${LZHL_DIR}/Lzhl.cpp"
     "${LZHL_DIR}/lzhl.h"
 )
