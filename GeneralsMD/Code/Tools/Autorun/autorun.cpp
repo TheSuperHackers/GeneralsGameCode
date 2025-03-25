@@ -2985,7 +2985,8 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				//-----------------------------------------------------------------------
 				// For each button...
 				//-----------------------------------------------------------------------
-				for( int index = i; index < NUM_BUTTONS; index++ ) {
+				int index = i;
+				for( ; index < NUM_BUTTONS; index++ ) {
 
 					//-------------------------------------------------------------------
 					// Make areas between the buttons.

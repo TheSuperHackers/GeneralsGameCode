@@ -60,7 +60,8 @@ static bool filesEqual(const char *fn1, const char *fn2)
     return false;
 
   static char buf1[16384],buf2[16384];
-  for (unsigned k=0;k<s1.st_size;)
+  unsigned k=0;
+  for (;k<s1.st_size;)
   {
     unsigned cur=s1.st_size-k;
     if (cur>sizeof(buf1))
@@ -124,7 +125,8 @@ static int recursiveCull(FILE *batchFile,
   // remove duplicate files, at to batch file
   // (we can't just delete them inside the find loop because - at
   // least theoretically - that could screw up that find process...)
-  for (std::vector<std::string>::iterator i=dupfiles.begin();i!=dupfiles.end();++i)
+  std::vector<std::string>::iterator i=dupfiles.begin();
+  for (;i!=dupfiles.end();++i)
   {
     std::string work;
     work=dir1; work+=relDir; work+=*i;
