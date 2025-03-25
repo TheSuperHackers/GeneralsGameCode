@@ -841,7 +841,7 @@ void PlayerListDlg::OnChangePlayerdisplayname()
 }
 
 static void addSide(SidesList *sides, AsciiString faction, 
-										AsciiString playerName, UnsignedShort *playerUName)
+										AsciiString playerName, const wchar_t *playerUName)
 {
 	if (!sides->findSideInfo(playerName)) {
 

@@ -50,7 +50,7 @@ BuildListTool::BuildListTool(void) :
 	m_moveCursor(NULL),
 	m_created(false)
 {
-	m_curObject = false;
+	m_curObject = NULL;
 }
 	
 /// Destructor
