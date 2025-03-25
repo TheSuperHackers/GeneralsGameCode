@@ -3363,7 +3363,7 @@ void WorldHeightMapEdit::removeLastBoundary(void)
 		return;
 	}
 	
-	m_boundaries.erase(&m_boundaries.back());
+	m_boundaries.pop_back();
 }
 
 void WorldHeightMapEdit::findBoundaryNear(Coord3D *pt, float okDistance, Int *outNdx, Int *outHandle)

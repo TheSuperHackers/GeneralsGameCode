@@ -278,7 +278,7 @@ void MapObjectProps::_TeamToDict(void)
   {
     Dict newDict;
     newDict.setAsciiString(TheKey_originalOwner, AsciiString(buf));
-    DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+    DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
     pDoc->AddAndDoUndoable(pUndo);
     REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
     // Update is called by Do
@@ -301,7 +301,7 @@ void MapObjectProps::_NameToDict(void)
   {
     Dict newDict;
     newDict.setAsciiString(TheKey_objectName, cstr.GetBuffer(0));
-    DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+    DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
     pDoc->AddAndDoUndoable(pUndo);
     REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
     // Update is called by Do																																																						
@@ -322,7 +322,7 @@ void MapObjectProps::_ScriptToDict(void)
   {
     Dict newDict;
     newDict.setAsciiString(TheKey_objectScriptAttachment, AsciiString(buf));
-    DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+    DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
     pDoc->AddAndDoUndoable(pUndo);
     REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
     // Update is called by Do	
@@ -410,7 +410,7 @@ void MapObjectProps::_WeatherToDict(void)
   {
     Dict newDict;
     newDict.setInt(TheKey_objectWeather, curSel);
-    DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+    DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
     pDoc->AddAndDoUndoable(pUndo);
     REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
     // Update is called by Do	
@@ -431,7 +431,7 @@ void MapObjectProps::_TimeToDict(void)
   {
     Dict newDict;
     newDict.setInt(TheKey_objectTime, curSel);
-    DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+    DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
     pDoc->AddAndDoUndoable(pUndo);
     REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
     // Update is called by Do	
@@ -465,7 +465,7 @@ void MapObjectProps::_ScaleToDict(void)
     } else {
       newDict.setReal(TheKey_objectPrototypeScale, m_scale);
     }
-    DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+    DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
     pDoc->AddAndDoUndoable(pUndo);
     REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
     // Update is called by Do
@@ -748,7 +748,7 @@ void MapObjectProps::_PrebuiltUpgradesToDict(void)
   CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
   if ( pDoc != NULL )
   {
-    DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, NAMEKEY_INVALID, m_allSelectedDicts.size(), pDoc, true);
+    DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, NAMEKEY_INVALID, m_allSelectedDicts.size(), pDoc, true);
     pDoc->AddAndDoUndoable(pUndo);
     REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
   }
@@ -1171,7 +1171,7 @@ void MapObjectProps::_HealthToDict(void)
   {
 	  Dict newDict;
 	  newDict.setInt(TheKey_objectInitialHealth, value);
-	  DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+	  DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
 	  pDoc->AddAndDoUndoable(pUndo);
 	  REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	  // Update is called by Do
@@ -1192,7 +1192,7 @@ void MapObjectProps::_EnabledToDict(void)
   {
 	  Dict newDict;
 	  newDict.setBool(TheKey_objectEnabled, isChecked);
-	  DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	  DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	  pDoc->AddAndDoUndoable(pUndo);
 	  REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	  // Update is called by Do
@@ -1212,7 +1212,7 @@ void MapObjectProps::_IndestructibleToDict(void)
   {
 	  Dict newDict;
 	  newDict.setBool(TheKey_objectIndestructible, isChecked);
-	  DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	  DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	  pDoc->AddAndDoUndoable(pUndo);
 	  REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	  // Update is called by Do	
@@ -1232,7 +1232,7 @@ void MapObjectProps::_UnsellableToDict(void)
   {
 	  Dict newDict;
 	  newDict.setBool(TheKey_objectUnsellable, isChecked);
-	  DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	  DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	  pDoc->AddAndDoUndoable(pUndo);
 	  REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	  // Update is called by Do
@@ -1252,7 +1252,7 @@ void MapObjectProps::_TargetableToDict()
   {
 	  Dict newDict;
 	  newDict.setBool( TheKey_objectTargetable, isChecked );
-	  DictItemUndoable *pUndo = new DictItemUndoable( m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size() );
+	  DictItemUndoable *pUndo = new DictItemUndoable( &m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size() );
 	  pDoc->AddAndDoUndoable( pUndo );
 	  REF_PTR_RELEASE( pUndo ); // belongs to pDoc now.
 	  // Update is called by Do
@@ -1273,7 +1273,7 @@ void MapObjectProps::_PoweredToDict(void)
   {
 	  Dict newDict;
 	  newDict.setBool(TheKey_objectPowered, isChecked);
-	  DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	  DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	  pDoc->AddAndDoUndoable(pUndo);
 	  REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	  // Update is called by Do
@@ -1307,7 +1307,7 @@ void MapObjectProps::_AggressivenessToDict(void)
   {
 	  Dict newDict;
 	  newDict.setInt(TheKey_objectAggressiveness, value);
-	  DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	  DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	  pDoc->AddAndDoUndoable(pUndo);
 	  REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	  // Update is called by Do		
@@ -1335,7 +1335,7 @@ void MapObjectProps::_VisibilityToDict(void)
 	  if (value != -1) {
 		  newDict.setInt(TheKey_objectVisualRange, value);
 	  }
-	  DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, TheKey_objectVisualRange, m_allSelectedDicts.size());
+	  DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, TheKey_objectVisualRange, m_allSelectedDicts.size());
 	  pDoc->AddAndDoUndoable(pUndo);
 	  REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	  // Update is called by Do
@@ -1360,7 +1360,7 @@ void MapObjectProps::_VeterancyToDict(void)
   {
 	  Dict newDict;
 	  newDict.setInt(TheKey_objectVeterancy, value);
-	  DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+	  DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
 	  pDoc->AddAndDoUndoable(pUndo);
 	  REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	  // Update is called by Do	
@@ -1388,7 +1388,7 @@ void MapObjectProps::_ShroudClearingDistanceToDict(void)
 	  if (value != -1) {
 		  newDict.setInt(TheKey_objectShroudClearingDistance, value);
 	  }
-	  DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, TheKey_objectShroudClearingDistance, m_allSelectedDicts.size());
+	  DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, TheKey_objectShroudClearingDistance, m_allSelectedDicts.size());
 	  pDoc->AddAndDoUndoable(pUndo);
 	  REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	  // Update is called by Do
@@ -1408,7 +1408,7 @@ void MapObjectProps::_RecruitableAIToDict(void)
   {
 	  Dict newDict;
 	  newDict.setBool(TheKey_objectRecruitableAI, isChecked);
-	  DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	  DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	  pDoc->AddAndDoUndoable(pUndo);
 	  REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	  // Update is called by Do
@@ -1433,7 +1433,7 @@ void MapObjectProps::_SelectableToDict(void)
 	  } else {
 		  newDict.setBool(TheKey_objectSelectable, isChecked);
 	  }
-	  DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	  DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	  pDoc->AddAndDoUndoable(pUndo);
 	  REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	  // Update is called by Do
@@ -1460,7 +1460,7 @@ void MapObjectProps::_HPsToDict()
     Dict newDict;
 
 	  newDict.setInt(TheKey_objectMaxHPs, value);
-	  DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	  DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	  pDoc->AddAndDoUndoable(pUndo);
 	  REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
   }
@@ -1487,7 +1487,7 @@ void MapObjectProps::_StoppingDistanceToDict(void)
   {
 	  Dict newDict;
 	  newDict.setReal(TheKey_objectStoppingDistance, value);
-	  DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+	  DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
 	  pDoc->AddAndDoUndoable(pUndo);
 	  REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	  // Update is called by Doc
@@ -1748,37 +1748,37 @@ void MapObjectProps::clearCustomizeFlag( CWorldBuilderDoc* pDoc, MultipleUndoabl
 {
   Dict empty;
 
-  DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), empty, TheKey_objectSoundAmbientCustomized, m_allSelectedDicts.size(), pDoc, true);
+  DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), empty, TheKey_objectSoundAmbientCustomized, m_allSelectedDicts.size(), pDoc, true);
   ownerUndoable->addUndoable(pUndo);
   REF_PTR_RELEASE(pUndo); // belongs to ownerUndoable now.
 
   // Note: we can set all the undoes in between the first and last undo to not invalidate,
   // since the first (last for doing) and last invalidate after these changes anyway
-  pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), empty, TheKey_objectSoundAmbientMaxRange, m_allSelectedDicts.size(), pDoc, false);
+  pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), empty, TheKey_objectSoundAmbientMaxRange, m_allSelectedDicts.size(), pDoc, false);
   ownerUndoable->addUndoable(pUndo);
   REF_PTR_RELEASE(pUndo); // belongs to ownerUndoable now.
   
-  pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), empty, TheKey_objectSoundAmbientMinVolume, m_allSelectedDicts.size(), pDoc, false);
+  pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), empty, TheKey_objectSoundAmbientMinVolume, m_allSelectedDicts.size(), pDoc, false);
   ownerUndoable->addUndoable(pUndo);
   REF_PTR_RELEASE(pUndo); // belongs to ownerUndoable now.
   
-  pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), empty, TheKey_objectSoundAmbientVolume, m_allSelectedDicts.size(), pDoc, false);
+  pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), empty, TheKey_objectSoundAmbientVolume, m_allSelectedDicts.size(), pDoc, false);
   ownerUndoable->addUndoable(pUndo);
   REF_PTR_RELEASE(pUndo); // belongs to ownerUndoable now.
   
-  pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), empty, TheKey_objectSoundAmbientMinRange, m_allSelectedDicts.size(), pDoc, false);
+  pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), empty, TheKey_objectSoundAmbientMinRange, m_allSelectedDicts.size(), pDoc, false);
   ownerUndoable->addUndoable(pUndo);
   REF_PTR_RELEASE(pUndo); // belongs to ownerUndoable now.
 
-  pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), empty, TheKey_objectSoundAmbientLooping, m_allSelectedDicts.size(), pDoc, false);
+  pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), empty, TheKey_objectSoundAmbientLooping, m_allSelectedDicts.size(), pDoc, false);
   ownerUndoable->addUndoable(pUndo);
   REF_PTR_RELEASE(pUndo); // belongs to ownerUndoable now.
 
-  pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), empty, TheKey_objectSoundAmbientLoopCount, m_allSelectedDicts.size(), pDoc, false);
+  pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), empty, TheKey_objectSoundAmbientLoopCount, m_allSelectedDicts.size(), pDoc, false);
   ownerUndoable->addUndoable(pUndo);
   REF_PTR_RELEASE(pUndo); // belongs to ownerUndoable now.
 
-  pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), empty, TheKey_objectSoundAmbientPriority, m_allSelectedDicts.size(), pDoc, true);
+  pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), empty, TheKey_objectSoundAmbientPriority, m_allSelectedDicts.size(), pDoc, true);
   ownerUndoable->addUndoable(pUndo);
   REF_PTR_RELEASE(pUndo); // belongs to ownerUndoable now.
 }
@@ -1821,7 +1821,7 @@ void MapObjectProps::attachedSoundToDict(void)
       clearCustomizeFlag( pDoc, pUndo );
     }
 
-    DictItemUndoable *pDictUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, TheKey_objectSoundAmbient, m_allSelectedDicts.size(), pDoc, true);
+    DictItemUndoable *pDictUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, TheKey_objectSoundAmbient, m_allSelectedDicts.size(), pDoc, true);
     pUndo->addUndoable( pDictUndo );
     pDoc->AddAndDoUndoable( pUndo );
     REF_PTR_RELEASE( pDictUndo ); // belongs to pUndo
@@ -1848,7 +1848,7 @@ void MapObjectProps::customizeToDict(void)
     if ( customizeCheckbox->GetCheck() == 1 )
     {
       newDict.setBool( TheKey_objectSoundAmbientCustomized, true );
-      DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, TheKey_objectSoundAmbientCustomized, m_allSelectedDicts.size(), pDoc, true);
+      DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, TheKey_objectSoundAmbientCustomized, m_allSelectedDicts.size(), pDoc, true);
       pDoc->AddAndDoUndoable(pUndo);
       REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
       // Update is called by Doc
@@ -1880,7 +1880,7 @@ void MapObjectProps::enabledToDict(void)
     
     newDict.setBool( TheKey_objectSoundAmbientEnabled, enabledCheckbox->GetCheck() != 0 );
     
-    DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+    DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
     pDoc->AddAndDoUndoable(pUndo);
     REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
     // Update is called by Doc
@@ -1903,7 +1903,7 @@ void MapObjectProps::loopingToDict(void)
     
     newDict.setBool( TheKey_objectSoundAmbientLooping, loopingCheckbox->GetCheck() != 0 );
     
-    DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+    DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
     pDoc->AddAndDoUndoable(pUndo);
     REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
     // Update is called by Doc
@@ -1929,7 +1929,7 @@ void MapObjectProps::loopCountToDict(void)
     
     newDict.setInt( TheKey_objectSoundAmbientLoopCount, atoi( loopCountString ) );
     
-    DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+    DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
     pDoc->AddAndDoUndoable(pUndo);
     REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
     // Update is called by Doc
@@ -1956,7 +1956,7 @@ void MapObjectProps::minVolumeToDict(void)
     // Note: min volume is stored as Real between 0.0 and 1.0, but displayed as a percentage from 0 to 100
     newDict.setReal( TheKey_objectSoundAmbientMinVolume, INT_TO_REAL( atoi( minVolumeString ) ) / 100.0f );
     
-    DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+    DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
     pDoc->AddAndDoUndoable(pUndo);
     REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
     // Update is called by Doc
@@ -1983,7 +1983,7 @@ void MapObjectProps::volumeToDict(void)
     // Note: volume is stored as Real between 0.0 and 1.0, but displayed as a percentage from 0 to 100
     newDict.setReal( TheKey_objectSoundAmbientVolume, INT_TO_REAL( atoi( volumeString ) ) / 100.0f );
     
-    DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+    DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
     pDoc->AddAndDoUndoable(pUndo);
     REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
     // Update is called by Doc
@@ -2010,7 +2010,7 @@ void MapObjectProps::minRangeToDict(void)
     
     newDict.setReal( TheKey_objectSoundAmbientMinRange, INT_TO_REAL( atoi( minRangeString ) ) );
     
-    DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+    DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
     pDoc->AddAndDoUndoable(pUndo);
     REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
     // Update is called by Doc
@@ -2036,7 +2036,7 @@ void MapObjectProps::maxRangeToDict(void)
     
     newDict.setReal( TheKey_objectSoundAmbientMaxRange, INT_TO_REAL( atoi( maxRangeString ) ) );
     
-    DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+    DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
     pDoc->AddAndDoUndoable(pUndo);
     REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
     // Update is called by Doc
@@ -2059,7 +2059,7 @@ void MapObjectProps::priorityToDict(void)
     
     newDict.setInt( TheKey_objectSoundAmbientPriority, priorityComboBox->GetCurSel() );
     
-    DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+    DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
     pDoc->AddAndDoUndoable(pUndo);
     REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
     // Update is called by Doc
