@@ -70,21 +70,7 @@ enum DrawableID;
 
 #include <algorithm>
 #include <bitset>
-#ifdef USING_STLPORT
-#include <hash_map>
-#else
-#include <unordered_map>
-namespace std
-{
-template <
-	class _Kty,
-	class _Ty,
-	class _Hasher = hash<_Kty>,
-	class _Keyeq = equal_to<_Kty>,
-	class _Alloc = allocator<pair<const _Kty, _Ty>>>
-using hash_map = unordered_map<_Kty, _Ty, _Hasher, _Keyeq, _Alloc>;
-}
-#endif
+#include <Utility/hash_map_adapter.h>
 #include <list>
 #include <map>
 #include <queue>
