@@ -33,27 +33,8 @@ endif()
 # Top level project, doesn't really affect anything.
 project(genzh LANGUAGES C CXX)
 
-# Print some information
-message(STATUS "CMAKE_CXX_COMPILER: ${CMAKE_CXX_COMPILER}")
-message(STATUS "CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
-message(STATUS "CMAKE_CXX_COMPILER_VERSION: ${CMAKE_CXX_COMPILER_VERSION}")
-message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
-if (DEFINED MSVC_VERSION)
-    message(STATUS "MSVC_VERSION: ${MSVC_VERSION}")
-endif()
-
-# Set variable for VS6 to handle special cases.
-if (DEFINED MSVC_VERSION AND MSVC_VERSION LESS 1300)
-    set(IS_VS6_BUILD TRUE)
-else()
-    set(IS_VS6_BUILD FALSE)
-endif()
-
-# Create PDB for Release as long as debug info was generated during compile.
-if(MSVC)
-    string(APPEND CMAKE_EXE_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF")
-    string(APPEND CMAKE_SHARED_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF")
-endif()
+# This file handles extra settings wanted/needed for different compilers.
+include(cmake/compilers.cmake)
 
 include(FetchContent)
 
@@ -78,20 +59,6 @@ add_subdirectory(Dependencies/MaxSDK)
 add_subdirectory(Dependencies/SafeDisc)
 add_subdirectory(Dependencies/Utility)
 
-if (NOT IS_VS6_BUILD)
-    # Set C++ standard
-    set(CMAKE_CXX_STANDARD 20)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-    set(CMAKE_CXX_EXTENSIONS OFF)  # Ensures only ISO features are used
-
-    if (MSVC)
-        # Multithreaded build.
-        add_compile_options(/MP)
-        # Enforce strict __cplusplus version
-        add_compile_options(/Zc:__cplusplus)
-    endif()
-endif()
-
 # Do we want to build extra SDK stuff or just the game binary?
 option(GENZH_BUILD_ZEROHOUR "Build Zero Hour code." ON)
 option(GENZH_BUILD_GENERALS "Build Generals code." ON)
@@ -109,6 +76,11 @@ add_feature_info(InternalBuild GENZH_BUILD_INTERNAL "Building as an \"Internal\"
 add_feature_info(ProfileBuild GENZH_BUILD_PROFILE "Building as a \"Profile\" build")
 
 add_library(gz_config INTERFACE)
+
+if(NOT IS_VS6_BUILD)
+    # Because we set CMAKE_CXX_STANDARD_REQUIRED and CMAKE_CXX_EXTENSIONS in the compilers.cmake this should be enforced.
+    target_compile_features(gz_config INTERFACE cxx_std_20)
+endif()
 
 target_compile_options(gz_config INTERFACE ${GENZH_FLAGS})
 
