@@ -5833,8 +5833,8 @@ Player *ScriptEngine::getPlayerFromAsciiString(const AsciiString& playerString)
 {
 	Bool is_GeneralsChallengeContext = TheCampaignManager->getCurrentCampaign() && TheCampaignManager->getCurrentCampaign()->m_isChallengeCampaign;
 	if (playerString == LOCAL_PLAYER || (playerString == THE_PLAYER && is_GeneralsChallengeContext))
-		// Designers have built their Generals' Challenge maps, referencing "ThePlayer" meaning the local player.
-		// However, they've also built many of their single player maps with this string, where "ThePlayer" is not intended as an alias.
+		// Designers have built their Generals' Challenge maps, referencing THE_PLAYER meaning the local player.
+		// However, they've also built many of their single player maps with this string, where THE_PLAYER is not intended as an alias.
 		return ThePlayerList->getLocalPlayer();
 	if (playerString == THIS_PLAYER)
 		return getCurrentPlayer();

@@ -68,7 +68,7 @@ private:
 class DemoTrapUpdate : public UpdateModule
 {
 
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( DemoTrapUpdate, "DemoTrapUpdate" )
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( DemoTrapUpdate, NAMEKEY_DemoTrapUpdate )
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( DemoTrapUpdate, DemoTrapUpdateModuleData );
 
 public:

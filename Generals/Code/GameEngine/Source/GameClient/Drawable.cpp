@@ -449,7 +449,7 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 	/// @todo srj -- this is evil, we shouldn't look at the module name directly!
 			if (thingTemplate->isKindOf(KINDOF_SHRUBBERY) && 
 					!TheGlobalData->m_useTreeSway &&
-					cuMI.getNthName(modIdx).compareNoCase("SwayClientUpdate") == 0)
+					cuMI.getNthName(modIdx).compareNoCase(NAMEKEY_SwayClientUpdate) == 0)
 				continue;
 
 			*m++ = TheModuleFactory->newModule(this, cuMI.getNthName(modIdx), newModData, MODULETYPE_CLIENT_UPDATE);
@@ -2126,7 +2126,7 @@ void Drawable::setStealthLook(StealthLookType look)
 				if( obj )
 				{
 					//Try to get the stealthupdate module and see if the opacity value is overriden.
-					static NameKeyType key_StealthUpdate = NAMEKEY("StealthUpdate");
+					static NameKeyType key_StealthUpdate = NAMEKEY(NAMEKEY_StealthUpdate);
 					StealthUpdate* stealth = (StealthUpdate *)obj->findUpdateModule(key_StealthUpdate);
 					if( stealth )
 					{

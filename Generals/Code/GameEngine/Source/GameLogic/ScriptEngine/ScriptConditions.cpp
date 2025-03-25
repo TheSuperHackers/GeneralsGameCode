@@ -2131,7 +2131,7 @@ Bool ScriptConditions::evaluateSkirmishSuppliesWithinDistancePerimeter(Parameter
 
 	Real maxValue = 0;
 	for (Object *them = iter->first(); them; them = iter->next()) {
-		static const NameKeyType key_warehouseUpdate = NAMEKEY("SupplyWarehouseDockUpdate");
+		static const NameKeyType key_warehouseUpdate = NAMEKEY(NAMEKEY_SupplyWarehouseDockUpdate);
 		SupplyWarehouseDockUpdate *warehouseModule = (SupplyWarehouseDockUpdate*) them->findUpdateModule( key_warehouseUpdate );
 		if (!warehouseModule) {
 			continue;

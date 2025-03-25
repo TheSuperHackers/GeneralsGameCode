@@ -1187,7 +1187,7 @@ void GameLogic::startNewGame( Bool saveGame )
 			if (slot->getPlayerTemplate() >= 0)
 				pt = ThePlayerTemplateStore->getNthPlayerTemplate(slot->getPlayerTemplate());
 			else
-				pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey("FactionObserver") );
+				pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey(NAMEKEY_FactionObserver) );
 			if (pt)
 			{
 				d.setAsciiString(TheKey_playerFaction, KEYNAME(pt->getNameKey()));
@@ -1308,7 +1308,7 @@ void GameLogic::startNewGame( Bool saveGame )
 		d.setBool(TheKey_playerIsHuman, TRUE);
 		d.setUnicodeString(TheKey_playerDisplayName, UnicodeString(L"Observer"));
 		const PlayerTemplate* pt;
-		pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey("FactionObserver") );
+		pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey(NAMEKEY_FactionObserver) );
 		if (pt)
 		{
 			d.setAsciiString(TheKey_playerFaction, KEYNAME(pt->getNameKey()));
@@ -1730,7 +1730,7 @@ void GameLogic::startNewGame( Bool saveGame )
 			if (slot->getPlayerTemplate() == PLAYERTEMPLATE_OBSERVER)
 			{
 				slot->setPlayerTemplate(0);
-				const PlayerTemplate *pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey("FactionObserver") );
+				const PlayerTemplate *pt = ThePlayerTemplateStore->findPlayerTemplate( TheNameKeyGenerator->nameToKey(NAMEKEY_FactionObserver) );
 				if (pt)
 				{
 					for (Int j=0; j<ThePlayerTemplateStore->getPlayerTemplateCount(); ++j)

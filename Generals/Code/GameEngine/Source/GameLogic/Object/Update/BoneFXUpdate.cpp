@@ -95,7 +95,7 @@ BoneFXUpdate::BoneFXUpdate( Thing *thing, const ModuleData* moduleData ) : Updat
 //-------------------------------------------------------------------------------------------------
 void BoneFXUpdate::onObjectCreated()
 {
-	static NameKeyType key_BoneFXDamage = NAMEKEY("BoneFXDamage");
+	static NameKeyType key_BoneFXDamage = NAMEKEY(NAMEKEY_BoneFXDamage);
 	BoneFXDamage* bfxd = (BoneFXDamage*)getObject()->findDamageModule(key_BoneFXDamage);
 	if (bfxd == NULL)
 	{

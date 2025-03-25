@@ -425,7 +425,7 @@ Bool WeaponSet::isAnyWithinTargetPitch(const Object* obj, const Object* victim) 
 //-------------------------------------------------------------------------------------------------
 CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attackType, const Object* source, const Object* victim, CommandSourceType commandSource ) const
 {
-  static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
+  static NameKeyType key_StealthUpdate = NAMEKEY( NAMEKEY_StealthUpdate );
 
 	// basic sanity checks.
 	if (!source || 

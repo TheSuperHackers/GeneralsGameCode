@@ -865,10 +865,10 @@ void PlayerListDlg::OnAddskirmishplayers()
 {
 	// PlyrCivilian
 
-	addSide(&m_sides, "FactionCivilian", "PlyrCivilian", L"PlyrCivilian");
-	addSide(&m_sides, "FactionAmerica", "SkirmishAmerica", L"SkirmishAmerica");
-	addSide(&m_sides, "FactionChina", "SkirmishChina", L"SkirmishChina");
-	addSide(&m_sides, "FactionGLA", "SkirmishGLA", L"SkirmishGLA");
+	addSide(&m_sides, NAMEKEY_FactionCivilian, "PlyrCivilian", L"PlyrCivilian");
+	addSide(&m_sides, NAMEKEY_FactionAmerica, "SkirmishAmerica", L"SkirmishAmerica");
+	addSide(&m_sides, NAMEKEY_FactionChina, "SkirmishChina", L"SkirmishChina");
+	addSide(&m_sides, NAMEKEY_FactionGLA, "SkirmishGLA", L"SkirmishGLA");
 
 	addSide(&m_sides, "FactionAmericaAirForceGeneral", "SkirmishAmericaAirForceGeneral", L"SkirmishAmericaAirForceGeneral");
 	addSide(&m_sides, "FactionAmericaLaserGeneral", "SkirmishAmericaLaserGeneral", L"SkirmishAmericaLaserGeneral");
