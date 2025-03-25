@@ -31,7 +31,9 @@
 #include <windows.h>
 #include <initguid.h>
 #include <olectl.h>
+#if defined(_MSC_VER) && _MSC_VER < 1300
 #include <mapicode.h>
+#endif
 #include "RESOURCE.H"
 #include "WINBLOWS.H"
 #include <crtdbg.h>
