@@ -54,6 +54,7 @@ add_executable(${appname} WIN32)
 target_sources(${appname} PRIVATE ${AUTORUN_SRC})
 
 target_link_libraries(${appname} PRIVATE
+    gz_utility
     winmm
     zi_libraries_include
 )
