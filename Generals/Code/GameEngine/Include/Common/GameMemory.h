@@ -62,7 +62,17 @@
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
-#include <new.h>
+// Added platform-specific macro for clarity and Win64 support.
+#if defined(_WIN64)
+	#define WIN_PLATFORM "Win64"
+#elif defined(_WIN32)
+	#define WIN_PLATFORM "Win32"
+#else
+	#define WIN_PLATFORM "Unknown"
+#endif
+
+// Improved portability: use standard <new> header instead of <new.h>
+#include <new>
 #include <stdio.h>
 #ifdef MEMORYPOOL_OVERRIDE_MALLOC
 	#include <malloc.h>
@@ -88,19 +98,20 @@
 		#define MEMORYPOOL_BOUNDINGWALL
 	#endif
 
-	#define DECLARE_LITERALSTRING_ARG1										const char * debugLiteralTagString
-	#define PASS_LITERALSTRING_ARG1												debugLiteralTagString
-	#define DECLARE_LITERALSTRING_ARG2										, const char * debugLiteralTagString
-	#define PASS_LITERALSTRING_ARG2												, debugLiteralTagString
+	// Retained same macro definitions, but aligned for readability.
+	#define DECLARE_LITERALSTRING_ARG1            const char * debugLiteralTagString
+	#define PASS_LITERALSTRING_ARG1               debugLiteralTagString
+	#define DECLARE_LITERALSTRING_ARG2            , const char * debugLiteralTagString
+	#define PASS_LITERALSTRING_ARG2               , debugLiteralTagString
 
-	#define MP_LOC_SUFFIX																/*" [" DEBUG_FILENLINE "]"*/
+	#define MP_LOC_SUFFIX                         /*" [" DEBUG_FILENLINE "]"*/
 
-	#define allocateBlock(ARGLITERAL)										allocateBlockImplementation(ARGLITERAL MP_LOC_SUFFIX)
-	#define allocateBlockDoNotZero(ARGLITERAL)					allocateBlockDoNotZeroImplementation(ARGLITERAL MP_LOC_SUFFIX)
-	#define allocateBytes(ARGCOUNT,ARGLITERAL)					allocateBytesImplementation(ARGCOUNT, ARGLITERAL MP_LOC_SUFFIX)
-	#define allocateBytesDoNotZero(ARGCOUNT,ARGLITERAL)	allocateBytesDoNotZeroImplementation(ARGCOUNT, ARGLITERAL MP_LOC_SUFFIX)
-	#define newInstanceDesc(ARGCLASS,ARGLITERAL)				new(ARGCLASS::ARGCLASS##_GLUE_NOT_IMPLEMENTED, ARGLITERAL MP_LOC_SUFFIX) ARGCLASS
-	#define newInstance(ARGCLASS)												new(ARGCLASS::ARGCLASS##_GLUE_NOT_IMPLEMENTED, __FILE__) ARGCLASS
+	#define allocateBlock(ARGLITERAL)             allocateBlockImplementation(ARGLITERAL MP_LOC_SUFFIX)
+	#define allocateBlockDoNotZero(ARGLITERAL)      allocateBlockDoNotZeroImplementation(ARGLITERAL MP_LOC_SUFFIX)
+	#define allocateBytes(ARGCOUNT,ARGLITERAL)      allocateBytesImplementation(ARGCOUNT, ARGLITERAL MP_LOC_SUFFIX)
+	#define allocateBytesDoNotZero(ARGCOUNT,ARGLITERAL)  allocateBytesDoNotZeroImplementation(ARGCOUNT, ARGLITERAL MP_LOC_SUFFIX)
+	#define newInstanceDesc(ARGCLASS,ARGLITERAL)    new(ARGCLASS::ARGCLASS##_GLUE_NOT_IMPLEMENTED, ARGLITERAL MP_LOC_SUFFIX) ARGCLASS
+	#define newInstance(ARGCLASS)                   new(ARGCLASS::ARGCLASS##_GLUE_NOT_IMPLEMENTED, __FILE__) ARGCLASS
 
 	#if !defined(MEMORYPOOL_STACKTRACE) && !defined(DISABLE_MEMORYPOOL_STACKTRACE)
 		#define MEMORYPOOL_STACKTRACE
