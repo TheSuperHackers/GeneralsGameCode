@@ -121,14 +121,19 @@ public:
 class FastCriticalSectionClass
 {
 #if defined(_MSC_VER) && _MSC_VER < 1300
-	unsigned Flag;
+	// TheSuperHackers @info Mauller 30/03/2025 Added volatile to prevent reordering of critical sections if inlined
+	volatile unsigned Flag;
 #else
-	std::atomic<unsigned> Flag;
+	std::atomic_flag Flag{};
 #endif
 
 public:
 	// Name can (and usually should) be NULL. Use name only if you wish to create a globally unique mutex
-	FastCriticalSectionClass() : Flag(0) {}
+	FastCriticalSectionClass()
+#if defined(_MSC_VER) && _MSC_VER < 1300
+		: Flag(0)
+#endif
+	{}
 
 	class LockClass
 	{
@@ -136,8 +141,19 @@ public:
 	public:
 		__forceinline LockClass(FastCriticalSectionClass& critical_section) : cs(critical_section)
 		{
+			lock();
+		}
+
+		~LockClass()
+		{
+			unlock();
+		}
+    
+	private:
+
+    void lock() {
 #if defined(_MSC_VER) && _MSC_VER < 1300
-		  unsigned& nFlag=cs.Flag;
+		  volatile unsigned& nFlag=cs.Flag;
 
 		  #define ts_lock _emit 0xF0
 		  assert(((unsigned)&nFlag % 4) == 0);
@@ -168,20 +184,21 @@ public:
       BitSet:
         ;
 #else
-			unsigned nFlag=0;
-			while (cs.Flag.compare_exchange_strong(nFlag, 1) == false)
-			{
-				ThreadClass::Switch_Thread();
-			}
+        while (cs.Flag.test_and_set(std::memory_order_acquire)) {
+            cs.Flag.wait(true, std::memory_order_relaxed);
+        }
 #endif
-		}
+    }
 
-		~LockClass()
-		{
+    void unlock() {
+#if defined(_MSC_VER) && _MSC_VER < 1300
       cs.Flag=0;
-		}
-    
-	private:
+#else
+      cs.Flag.clear(std::memory_order_release);
+      cs.Flag.notify_one();
+#endif
+    }
+
 		LockClass &operator=(const LockClass&);
     LockClass(const LockClass&);
 	};
