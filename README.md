@@ -1,7 +1,7 @@
 [![Build Status](https://github.com/TheSuperHackers/GeneralsGameCode/actions/workflows/build-games.yml/badge.svg?branch=main)](https://github.com/TheSuperHackers/GeneralsGameCode/actions/workflows/build-games.yml)
 [![GitHub Repo stars](https://img.shields.io/github/stars/TheSuperHackers/GeneralsGameCode?style=flat&logo=github&label=Stars&color=%23FFD700)](https://github.com/TheSuperHackers/GeneralsGameCode)
-[![Discord](https://img.shields.io/discord/951133504605917224?style=flat&logo=discord&label=Discord&labelColor=%239b8ff2)](https://www.community-outpost.com/discord)
-[![YouTube Channel Views](https://img.shields.io/youtube/channel/views/UCi0AO7Bzth2NN8A9z7Gi40Q?style=flat&logo=youtube&logoColor=red&label=Views&labelColor=%23fcc5c5&color=red)](https://www.youtube.com/@xezon0/videos)
+[![Discord](https://img.shields.io/discord/951133504605917224?style=flat&logo=discord&logoColor=6A5ACD&label=Discord&labelColor=D0CBEF&color=6A5ACD)](https://www.community-outpost.com/discord)
+[![YouTube Channel Views](https://img.shields.io/youtube/channel/views/UCi0AO7Bzth2NN8A9z7Gi40Q?style=flat&logo=youtube&logoColor=red&label=Views&labelColor=FFBCBC&color=red)](https://www.youtube.com/@xezon0/videos)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fwww.gamereplays.org%2F&style=flat&label=GameReplays.org&labelColor=%233d77eb)](https://www.gamereplays.org/community/-cnc_zero_hour-Section.html)
 
 [![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/bug?style=flat&label=Bug%20Issues&labelColor=%23c4c4c4&color=%23424242)](https://github.com/TheSuperHackers/GeneralsGameCode/issues?q=label%3ABug)
@@ -17,7 +17,7 @@ Conquer: Generals* and its expansion *Zero Hour*. This repository contains the s
 and *Zero Hour*, with a primary focus on *Zero Hour*.
 
 Additionally, there is a separate repository for managing game assets such as graphics, localization files, and more.
-You can find it [here](https://github.com/TheSuperHackers/GeneralsGamepatch/) and contribute to it as well.
+You can find it [here](https://github.com/TheSuperHackers/GeneralsGamePatch/) and contribute to it as well.
 
 ## Project Overview
 
@@ -37,9 +37,12 @@ Here's an overview of our current focus and future plans
 - **Modernizing the Codebase**: Transitioning to modern C++ standards and refactoring old code.
 - **Critical Bug Fixes**: Fixing game-breaking issues (e.g., fullscreen crash).
 - **Minor Bug Fixes**: Addressing minor bugs (e.g., UI issues, graphical glitches).
+- **Cross-Platform Support**: Adding support for more platforms (e.g., Linux, macOS).
+- **Engine Improvements**: Enhancing the game engine to improve performance and stability.
 - **Client-Side Features**: Enhancing the game’s client with features such as an improved replay viewer and UI updates.
 - **New Gameplay Features**: Adding new in-game features (e.g., new units, balance changes).
 - **Multiplayer Improvements**: Implementing a new game server and an upgraded matchmaking lobby.
+- **Tooling Improvements**: Developing new or improving existing tools for modding and game development.
 - **Community-Driven Improvements**: Once the community grows, we plan to incorporate more features, updates, and
   changes based on player feedback.
 
@@ -78,19 +81,14 @@ for building with Docker, CLion, and links to forks supporting additional versio
 ## Contributing
 
 We welcome contributions to the project! If you’re interested in contributing, you should have some knowledge of C++ and
-Visual Studio. Join the developer chat on Discord for more information on how to get started. You can also check out
+Visual Studio. We also allow this to be built without Visual Studio. Join the developer chat on Discord for more
+information on how to get started. You can also check out
 the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki) for more detailed documentation.
 
 ## Modding
 
 Interested in creating your own mods? Check out
 our [modding guide](https://github.com/TheSuperHackers/GeneralsGameCode/wiki/Modding).
-
-## Support
-
-- Sponsor a server.
-- Improve graphic assest.
-- More information about donation options [here](https://github.com/TheSuperHackers/GeneralsGameCode/wiki/donation).
 
 ## License & Legal Disclaimer
 
