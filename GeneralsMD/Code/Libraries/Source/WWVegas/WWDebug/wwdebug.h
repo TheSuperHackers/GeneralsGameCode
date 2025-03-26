@@ -42,7 +42,7 @@
 #define WWDEBUG_H
 
 #ifdef WWDEBUG
-#include <Lib/intrin_compat.h>
+#include <Utility/intrin_compat.h>
 #endif
 
 // The macro MESSAGE allows user to put:
