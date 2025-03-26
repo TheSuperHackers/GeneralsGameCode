@@ -95,10 +95,11 @@ if(GENZH_BUILD_DEBUG)
     target_compile_definitions(gz_config INTERFACE _DEBUG WWDEBUG DEBUG)
 else()
     target_compile_definitions(gz_config INTERFACE _RELEASE)
-    
+
     if(GENZH_BUILD_INTERNAL)
         target_compile_definitions(gz_config INTERFACE _INTERNAL)
-    elseif(GENZH_BUILD_PROFILE)
+    endif()
+    if(GENZH_BUILD_PROFILE)
         target_compile_definitions(gz_config INTERFACE _PROFILE)
     endif()
 endif()

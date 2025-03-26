@@ -257,7 +257,7 @@ unsigned ProfileFuncLevelTracer::Leave(unsigned esp)
       break;
 
     // emit warning
-    DCRASH("ESP " << Debug::Hex() << esp << " does not match " << stack[usedStack].esp << Debug>>Dec());
+    DCRASH("ESP " << Debug::Hex() << esp << " does not match " << stack[usedStack].esp << Debug::Dec());
   }
 
   DLOG_GROUP(profile_stack,Debug::RepeatChar(' ',usedStack-1) 
@@ -286,7 +286,8 @@ int ProfileFuncLevelTracer::FrameStart(void)
 {
   ProfileFastCS::Lock lock(cs);
 
-  for (unsigned i=0;i<MAX_FRAME_RECORDS;i++)
+  unsigned i=0;
+  for (;i<MAX_FRAME_RECORDS;i++)
     if (!(frameRecordMask&(1<<i)))
       break;
   if (i==MAX_FRAME_RECORDS)
@@ -389,7 +390,8 @@ void ProfileFuncLevelTracer::UnsignedMap::_Insert(unsigned at, unsigned val, int
     delta=unsigned(e)-delta;
     if (used&&delta)
     {
-      for (unsigned k=0;k<HASH_SIZE;k++)
+      unsigned k=0;
+      for (;k<HASH_SIZE;k++)
         if (hash[k])
           ((unsigned &)hash[k])+=delta;
       for (k=0;k<used;k++)
@@ -457,7 +459,8 @@ ProfileFuncLevelTracer::ProfileMap::~ProfileMap()
 
 ProfileFuncLevelTracer::Profile *ProfileFuncLevelTracer::ProfileMap::Find(int frame)
 {
-  for (List *p=root;p&&p->frame<frame;p=p->next);
+  List *p=root;
+  for (;p&&p->frame<frame;p=p->next);
   return p&&p->frame==frame?&p->p:NULL;
 }
 
@@ -475,7 +478,8 @@ void ProfileFuncLevelTracer::ProfileMap::Append(int frame, const Profile &p)
 void ProfileFuncLevelTracer::ProfileMap::MixIn(int frame, const Profile &p)
 {
   // search correct list entry
-  for (List *oldEntry=root;oldEntry;oldEntry=oldEntry->next)
+  List *oldEntry=root;
+  for (;oldEntry;oldEntry=oldEntry->next)
     if (oldEntry->frame==frame)
       break;
   if (!oldEntry)
@@ -514,7 +518,8 @@ void ProfileFuncLevelTracer::FunctionMap::Insert(Function *funcPtr)
     delta=unsigned(e)-delta;
     if (used&&delta)
     {
-      for (unsigned k=0;k<HASH_SIZE;k++)
+      unsigned k=0;
+      for (;k<HASH_SIZE;k++)
         if (hash[k])
           ((unsigned &)hash[k])+=delta;
       for (k=0;k<used;k++)
@@ -704,7 +709,8 @@ bool ProfileFuncLevel::EnumThreads(unsigned index, Thread &thread)
 {
   ProfileFastCS::Lock lock(cs);
 
-  for (ProfileFuncLevelTracer *p=ProfileFuncLevelTracer::GetFirst();p;p=p->GetNext())
+  ProfileFuncLevelTracer *p=ProfileFuncLevelTracer::GetFirst();
+  for (;p;p=p->GetNext())
     if (!index--)
       break;
   if (p)

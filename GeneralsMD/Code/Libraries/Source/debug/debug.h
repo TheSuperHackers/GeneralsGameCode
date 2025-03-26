@@ -89,20 +89,17 @@
 #endif
 
 // Define which libraries to use. 
-#if defined(_INTERNAL)
+#if defined(_INTERNAL) || defined(_DEBUG) || defined(_PROFILE)
 #  define HAS_ASSERTS
 #  define HAS_LOGS
+#endif
+
+#if !defined(_DEBUG)
 #  define HAS_OPT
-#elif defined(_DEBUG)
-#  define HAS_ASSERTS
-#  define HAS_LOGS
-#elif defined(_PROFILE)
-#  define HAS_ASSERTS
-#  define HAS_LOGS
-#  define HAS_OPT
+#endif
+
+#if defined(_PROFILE)
 #  define HAS_PROFILE
-#else
-#  define HAS_OPT
 #endif
 
 // include all our public header files (use double quotes here)
