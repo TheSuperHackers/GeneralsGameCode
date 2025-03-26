@@ -31,8 +31,8 @@ Details:
 Script tries to find included file in include paths. (first relative to source
 file's directory, then in specified include paths). First it tries
 case-sensitive search in all paths. If that fails, it tries case-insensitive
-search in all include paths (excpet for nofix paths). If it succseeds, it fixes
-filename in include directory as necessary. If it fails no change is done.
+search in all include paths (except for nofix paths). If it succeeds, it fixes
+filename in include directory as necessary. If it fails, no change is done.
 Slashes are fixed either way, if necessary ( \\ -> / ).
 
 Limitations:
@@ -43,14 +43,14 @@ except for fixing slashes.
 OPTIONS:
 -I [PATH]
 --include-path [PATH]
-    include path, where to search included files. Also used to fix filename
+    Include path, where to search included files. Also used to fix filename
     case as necessary, if possible. This argument can be specified
     more than once.
 
 -N [PATH]
 --include-paths-nofix [PATH]
-    similar include-path, but files here are not considered when trying to fix
-    case (only in search, if file exists) This argument can be specified
+    Similar include-path, but files here are not considered when trying to fix
+    case (only in search, if file exists). This argument can be specified
     more than once.
 EOF
 exit 0
@@ -63,39 +63,39 @@ ignoredIncludes=""
 fixFile() {
     file="$1"
     regex='^[[:space:]]*#[[:space:]]*include[[:space:]]*["<](.*[.][hH])[">].*$'
-    includeLines="$( cat "$file" | grep -E "$regex" )" || :
+    includeLines="$(grep -E "$regex" "$file")" || :
     if [ -z "${includeLines}" ] ; then
         return
     fi
     dir="$(dirname "${file}" )"
 
     printf "%s\n" "${includeLines}" | while IFS='' read -r includeL ; do
-        includeOrig="$( echo "$includeL" | sed -E "s;${regex};\\1;g" )"
-        include="$( echo "$includeOrig" | sed -E 's;\\+;/;g' )"
+        includeOrig="$(echo "$includeL" | sed -E "s;${regex};\\1;g")"
+        include="$(echo "$includeOrig" | sed -E 's;\\+;/;g')"
 
         if echo "${ignoredIncludes:-}" | grep -qi "^${include}\$" ; then
             continue
         fi
         found=0
-        for path in "$( dirname "${file}" )" ${includePaths:-} ${includePathsNofix:-} ; do
+        for path in "$(dirname "${file}")" ${includePaths:-} ${includePathsNofix:-} ; do
             if [ -e "${path}/${include}" ] ; then
                 found=1
                 break
             fi
         done
-        includeOrigEscaped="$( echo "${includeOrig}" | sed 's;\\;[\\];g' )"
+        includeOrigEscaped="$(echo "${includeOrig}" | sed 's;\\;[\\];g')"
         updated=0
         if [ $found -eq 0 ]; then
             echo "Srcfile: ${file}"
             echo "missing: ${include}"
 
-            includeLower="$( echo "${include}" | tr '[:upper:]' '[:lower:]' )"
-            for path in "$( dirname "${file}" )" ${includePaths:-} ; do
-                for testedFile in $( find "${path}" -iname "$( basename "${include}" )" ) ; do
-                    testedLower="$( echo "${testedFile}" | tr '[:upper:]' '[:lower:]' )"
+            includeLower="$(echo "${include}" | tr '[:upper:]' '[:lower:]')"
+            for path in "$(dirname "${file}")" ${includePaths:-} ; do
+                for testedFile in $(find "${path}" -iname "$(basename "${include}")") ; do
+                    testedLower="$(echo "${testedFile}" | tr '[:upper:]' '[:lower:]')"
                     if echo "${testedLower}" | grep -q "${includeLower}\$" ; then
                         fixed="${testedFile#${path}/}"
-                        fixedLower="$( echo "$fixed" | tr '[:upper:]' '[:lower:]' )"
+                        fixedLower="$(echo "$fixed" | tr '[:upper:]' '[:lower:]')"
                         if [ "${includeLower}" = "${fixedLower}" ] ; then
                             echo "fix: ${testedFile#${path}/}"
                             updated=1
@@ -132,16 +132,16 @@ main() {
                 printHelp
                 ;;
             -I|--include-path)
-                includePaths="$( printf '%s\nx' "${includePaths:-}$2" )"
+                includePaths="$(printf '%s\nx' "${includePaths:-}$2")"
                 includePaths="${includePaths%x}" # to keep newline
-                shift;
-                shift;
+                shift
+                shift
                 ;;
             -N|--include-paths-nofix)
-                includePathsNofix="$( printf '%s\nx' "${includePathsNofix:-}$2" )"
+                includePathsNofix="$(printf '%s\nx' "${includePathsNofix:-}$2")"
                 includePathsNofix="${includePathsNofix%x}" # to keep newline
-                shift;
-                shift;
+                shift
+                shift
                 ;;
             *)
                 printf "SRC_DIR:\n%s\n" "$@"
@@ -153,7 +153,7 @@ main() {
                 fi
                 echo
                 fixTree "$@"
-                break;
+                break
                 ;;
         esac
     done
