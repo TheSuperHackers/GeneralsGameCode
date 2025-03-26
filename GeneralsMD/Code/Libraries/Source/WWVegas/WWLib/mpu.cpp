@@ -85,20 +85,23 @@ unsigned long Get_CPU_Rate(unsigned long & high)
 }
 
 
-// unused
 unsigned long Get_CPU_Clock(unsigned long & high)
 {
 	int h;
 	int l;
-#if defined(_MSC_VER) && defined(_M_IX86)
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	__asm {
 		_emit 0Fh
 		_emit 31h
 		mov	[h],edx
 		mov	[l],eax
 	}
-#endif
 	high = h;
+#else
+	auto tsc = _rdtsc();
+	h = tsc >> 32;
+	l = tsc & 0xFFFFFFFF;
+#endif
 	return(l);
 }
 
