@@ -76,6 +76,8 @@
 #include <sys/stat.h>
 #endif
 
+#include <algorithm>
+#include <utility>
 
 /****************************************************************************
 *
@@ -867,14 +869,9 @@ static __forceinline void _swapBytes(char *p1, char *p2, unsigned count)
   done:
   }
 #else
-	char *p1end=p1+count;
-	while (p1<p1end)
+	for (unsigned i = 0; i < count; ++i)
 	{
-		char tmp=*p1;
-		*p1=*p2;
-		*p2=tmp;
-		++p1;
-		++p2;
+		std::swap(p1[i], p2[i]);
 	}
 #endif
 }
