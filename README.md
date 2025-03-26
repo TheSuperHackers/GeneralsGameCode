@@ -1,6 +1,14 @@
-![Generals Game Code Logo](path/to/logo.png)
+[![Build Status](https://github.com/TheSuperHackers/GeneralsGameCode/actions/workflows/build-games.yml/badge.svg?branch=main)](https://github.com/TheSuperHackers/GeneralsGameCode/actions/workflows/build-games.yml)
+![GitHub Repo stars](https://img.shields.io/github/stars/TheSuperHackers/GeneralsGameCode?style=flat&logo=github&label=Stars&color=%23FFD700)
+![Discord](https://img.shields.io/discord/951133504605917224?style=flat&logo=discord&label=Discord&labelColor=%239b8ff2)
+![YouTube Channel Views](https://img.shields.io/youtube/channel/views/UCi0AO7Bzth2NN8A9z7Gi40Q?style=flat&logo=youtube&logoColor=red&label=Views&labelColor=%23fcc5c5&color=red)
+![Website](https://img.shields.io/website?url=https%3A%2F%2Fwww.gamereplays.org%2F&style=flat&label=GameReplays.org&labelColor=%233d77eb)
 
-[Build Status][badge 2][Discord][badge 3][Xezon youtube]
+![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/bug?style=flat&label=Bug%20Issues&labelColor=%233d77eb&color=%23fcc5c5)
+![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/enhancement?style=flat&label=Enhancement%20Issues&labelColor=%233d77eb&color=%23fcc5c5)
+![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/blocker?style=flat&label=Blocker%20Issues&labelColor=%233d77eb&color=%23fcc5c5)
+![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/critical?style=flat&label=Critical%20Issues&labelColor=%233d77eb&color=%23fcc5c5)
+![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/major?style=flat&label=Major%20Issues&labelColor=%233d77eb&color=%23fcc5c5)
 
 # Welcome to the Generals Game Code Project
 
@@ -22,8 +30,8 @@ fixes and the addition of new features.
 
 ## Current Focus and Future Plans
 
-This project is in the early stages and heavily work in progress, with ongoing work on bug fixes and enhancements. Here's an overview of our current
-focus and future plans
+This project is in the early stages and heavily work in progress, with ongoing work on bug fixes and enhancements.
+Here's an overview of our current focus and future plans
 
 - **Modernizing the Codebase**: Transitioning to modern C++ standards and refactoring old code.
 - **Critical Bug Fixes**: Fixing game-breaking issues (e.g., fullscreen crash).
@@ -36,37 +44,35 @@ focus and future plans
 
 ## Running the Game
 
-To run *Zero Hour* using this project, you need to have the original *Command & Conquer: Generals and Zero Hour* game installed. The
-easiest way to get it is through *Command & Conquer The Ultimate Collection*
-on [Steam](https://store.steampowered.com/bundle/39394)
-
-Once the game is ready, download the latest version of the project
-from [GitHub Releases](https://github.com/TheSuperHackers/GeneralsGameCode/releases), extract the necessary files, and
-follow the instructions in the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki).
+To run *Zero Hour* using this project, you need to have the original *Command & Conquer: Generals and Zero Hour* game
+installed. The easiest way to get it is through *Command & Conquer The Ultimate Collection*
+on [Steam](https://store.steampowered.com/bundle/39394). Once the game is ready, download the latest version of the
+project from [GitHub Releases](https://github.com/TheSuperHackers/GeneralsGameCode/releases), extract the necessary 
+files, and follow the instructions in the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki).
 
 ### Disclaimer
 
-The current builds may have bugs or unexpected behavior. We will aim to release stable versions that are as free from bugs as possible,
-but even those may have some unexpected behaviors.
+The current builds may have bugs or unexpected behavior. We will aim to release stable versions that are as free from
+bugs as possible, but even those may have some unexpected behaviors.
 
-### Anti-virus Warning
+### Antivirus Warning
 
-Some anti-virus software may mistakenly flag this project as a false positive (e.g., Windows Defender). We assure you
+Some antivirus software may mistakenly flag this project as a false positive (e.g., Windows Defender). We assure you
 that the project is fully safe to use. However, if you have concerns, you can
 always [build it yourself](#building-the-game-yourself).
 
 ## Joining the Community
 
-You can chat and discuss the development of the project on our [Discord channel](https://discord.gg/yourchannel) or on our [Gamereplays forum](https://www.gamereplays.org/community/index.php?showforum=132). Join us to get the latest updates, report bugs, and contribute to the project!
+You can chat and discuss the development of the project on our
+[Discord channel](https://www.community-outpost.com/discord) or on 
+our [GameReplays forum](https://www.gamereplays.org/community/index.php?showforum=132). Join us to get the latest
+updates, report bugs, and contribute to the project!
 
 ## Building the Game Yourself
 
-We provide support for building the project using Visual Studio 6 (VS6) and Visual Studio 2022. For detailed build instructions,
-check the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki), which also includes guides for building with Docker,
-CLion, and links to forks supporting additional versions.
-
-If you're interested in testing on other platforms, it's possible to build a standalone binary. Follow the instructions
-on the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki) for further details.
+We provide support for building the project using Visual Studio 6 (VS6) and Visual Studio 2022. For detailed build
+instructions, check the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki//build_guides), which also includes guides
+for building with Docker, CLion, and links to forks supporting additional versions.
 
 ## Contributing
 
@@ -86,6 +92,9 @@ our [modding guide](https://github.com/TheSuperHackers/GeneralsGameCode/wiki/Mod
 - More information about donation options [here](https://github.com/TheSuperHackers/GeneralsGameCode/wiki/donation).
 
 ## License & Legal Disclaimer
-This project is not affiliated with, nor endorsed by, Electronic Arts in any way. All trademarks are the property of their respective owners.
 
-This project is licensed under the [GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.html), which allows you to freely modify and distribute the source code under the terms of this license.
+This project is not affiliated with, nor endorsed by, Electronic Arts in any way. All trademarks are the property of
+their respective owners.
+
+This project is licensed under the [GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.html), which allows you to
+freely modify and distribute the source code under the terms of this license.
