@@ -1,14 +1,14 @@
 [![Build Status](https://github.com/TheSuperHackers/GeneralsGameCode/actions/workflows/build-games.yml/badge.svg?branch=main)](https://github.com/TheSuperHackers/GeneralsGameCode/actions/workflows/build-games.yml)
-![GitHub Repo stars](https://img.shields.io/github/stars/TheSuperHackers/GeneralsGameCode?style=flat&logo=github&label=Stars&color=%23FFD700)
-![Discord](https://img.shields.io/discord/951133504605917224?style=flat&logo=discord&label=Discord&labelColor=%239b8ff2)
-![YouTube Channel Views](https://img.shields.io/youtube/channel/views/UCi0AO7Bzth2NN8A9z7Gi40Q?style=flat&logo=youtube&logoColor=red&label=Views&labelColor=%23fcc5c5&color=red)
-![Website](https://img.shields.io/website?url=https%3A%2F%2Fwww.gamereplays.org%2F&style=flat&label=GameReplays.org&labelColor=%233d77eb)
+[![GitHub Repo stars](https://img.shields.io/github/stars/TheSuperHackers/GeneralsGameCode?style=flat&logo=github&label=Stars&color=%23FFD700)](https://github.com/TheSuperHackers/GeneralsGameCode)
+[![Discord](https://img.shields.io/discord/951133504605917224?style=flat&logo=discord&label=Discord&labelColor=%239b8ff2)](https://www.community-outpost.com/discord)
+[![YouTube Channel Views](https://img.shields.io/youtube/channel/views/UCi0AO7Bzth2NN8A9z7Gi40Q?style=flat&logo=youtube&logoColor=red&label=Views&labelColor=%23fcc5c5&color=red)](https://www.youtube.com/@xezon0/videos)
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fwww.gamereplays.org%2F&style=flat&label=GameReplays.org&labelColor=%233d77eb)](https://www.gamereplays.org/community/-cnc_zero_hour-Section.html)
 
-![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/bug?style=flat&label=Bug%20Issues&labelColor=%23c4c4c4&color=%23424242)
-![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/enhancement?style=flat&label=Enhancement%20Issues&labelColo=%23c4c4c4&color=%23424242)
-![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/blocker?style=flat&label=Blocker%20Issues&labelColor=%23c4c4c4&color=%23424242)
-![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/critical?style=flat&label=Critical%20Issues&labelColor=%23c4c4c4&color=%23424242)
-![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/major?style=flat&label=Major%20Issues&labelColor=%23c4c4c4&color=%23424242)
+[![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/bug?style=flat&label=Bug%20Issues&labelColor=%23c4c4c4&color=%23424242)](https://github.com/TheSuperHackers/GeneralsGameCode/issues?q=label%3ABug)
+[![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/enhancement?style=flat&label=Enhancement%20Issues&labelColo=%23c4c4c4&color=%23424242)](https://github.com/TheSuperHackers/GeneralsGameCode/issues?q=label%3AEnhancement)
+[![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/blocker?style=flat&label=Blocker%20Issues&labelColor=%23c4c4c4&color=%23424242)](https://github.com/TheSuperHackers/GeneralsGameCode/issues?q=label%3ABlocker)
+[![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/critical?style=flat&label=Critical%20Issues&labelColor=%23c4c4c4&color=%23424242)](https://github.com/TheSuperHackers/GeneralsGameCode/issues?q=label%3ACritical)
+[![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/major?style=flat&label=Major%20Issues&labelColor=%23c4c4c4&color=%23424242)](https://github.com/TheSuperHackers/GeneralsGameCode/issues?q=label%3AMajor)
 
 # Welcome to the Generals Game Code Project
 
