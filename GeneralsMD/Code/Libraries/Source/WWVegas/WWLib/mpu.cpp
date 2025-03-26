@@ -40,7 +40,7 @@
 #include	"MPU.H"
 #include "math.h"
 #include <assert.h>
-#include <Lib/intrin_compat.h>
+#include <Utility/intrin_compat.h>
 
 typedef union {
 	LARGE_INTEGER LargeInt;

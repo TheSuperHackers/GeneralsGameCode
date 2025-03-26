@@ -31,7 +31,7 @@
 #ifndef __PERFTIMER_H__
 #define __PERFTIMER_H__
 
-#include "Lib/intrin_compat.h"
+#include "Utility/intrin_compat.h"
 
 #if defined(_DEBUG) || defined(_INTERNAL)
 	/*
