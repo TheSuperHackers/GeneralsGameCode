@@ -1084,14 +1084,7 @@ not_changed:
 WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
 {
 #if defined(_MSC_VER) && _MSC_VER < 1300
-	if (!CPUDetectClass::Has_CMOV_Instruction()) {
-		for (int i=0;i<4;++i) {
-			float f=(color[i]<0.0f) ? 0.0f : color[i];
-			color[i]=(f>1.0f) ? 1.0f : f;
-		}
-		return;
-	}
-
+	if (CPUDetectClass::Has_CMOV_Instruction()) {
 	__asm
 	{
 		mov	esi,dword ptr color
@@ -1134,12 +1127,14 @@ WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
 		cmovnb edi,edx
 		mov dword ptr[esi+12],edi
 	}
-#else
+	return;
+	}
+#endif // defined(_MSC_VER) && _MSC_VER < 1300
+
 	for (int i=0;i<4;++i) {
 		float f=(color[i]<0.0f) ? 0.0f : color[i];
 		color[i]=(f>1.0f) ? 1.0f : f;
 	}
-#endif // defined(_MSC_VER) && _MSC_VER < 1300
 }
 
 // ----------------------------------------------------------------------------
