@@ -72,7 +72,7 @@ updates, report bugs, and contribute to the project!
 ## Building the Game Yourself
 
 We provide support for building the project using Visual Studio 6 (VS6) and Visual Studio 2022. For detailed build
-instructions, check the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki//build_guides), which also
+instructions, check the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki/build_guides), which also
 includes guides for building with Docker, CLion, and links to forks supporting additional versions.
 
 ## Contributing
