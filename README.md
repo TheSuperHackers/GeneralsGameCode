@@ -13,7 +13,8 @@
 # Welcome to the Generals Game Code Project
 
 GeneralsGameCode is a community-driven project aimed at maintaining and improving the classic RTS game, *Command &
-Conquer: Generals* and its expansion *Zero Hour*. This repository contains the source code for both games, with a primary focus on *Zero Hour*.
+Conquer: Generals* and its expansion *Zero Hour*. This repository contains the source code for both games, with a
+primary focus on *Zero Hour*.
 
 Additionally, there is a separate repository for managing game assets such as graphics, localization files, and more.
 You can find it [here](https://github.com/TheSuperHackers/GeneralsGamePatch/) and contribute to it as well.
@@ -74,8 +75,8 @@ updates, report bugs, and contribute to the project!
 ## Building the Game Yourself
 
 We provide support for building the project using Visual Studio 6 (VS6) and Visual Studio 2022. For detailed build
-instructions, check the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki//build_guides), which also includes guides
-for building with Docker, CLion, and links to forks supporting additional versions.
+instructions, check the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki//build_guides), which also
+includes guides for building with Docker, CLion, and links to forks supporting additional versions.
 
 ## Contributing
 
