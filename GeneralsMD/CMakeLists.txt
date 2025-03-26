@@ -3,8 +3,10 @@ cmake_minimum_required(VERSION 3.25)
 project(z_generals LANGUAGES C CXX)
 
 # Do we want to build extra SDK stuff or just the game binary?
-option(GENZH_BUILD_ZEROHOUR_TOOLS "Build tools for Zero Hour" OFF)
+option(GENZH_BUILD_ZEROHOUR_TOOLS "Build tools for Zero Hour" ON)
 add_feature_info(ZeroHourTools GENZH_BUILD_ZEROHOUR_TOOLS "Build Zero Hour Mod Tools")
+option(GENZH_BUILD_ZEROHOUR_EXTRAS "Build extra tools/tests for Zero Hour" OFF)
+add_feature_info(ZeroHourExtras GENZH_BUILD_ZEROHOUR_EXTRAS "Build Zero Hour Extra Tools/Tests")
 
 # Set where the build results will end up
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
@@ -34,7 +36,32 @@ if(GENZH_ZEROHOUR_INSTALL_PREFIX AND NOT "${GENZH_ZEROHOUR_INSTALL_PREFIX}" STRE
     install(FILES $<TARGET_PDB_FILE:z_generals> DESTINATION "${GENZH_ZEROHOUR_INSTALL_PREFIX}" OPTIONAL)
     
     if(TARGET z_worldbuilder)
-        install(TARGETS z_worldbuilder RUNTIME DESTINATION "${GENZH_ZEROHOUR_INSTALL_PREFIX}" OPTIONAL)
+        install(TARGETS z_worldbuilder RUNTIME DESTINATION "${GENZH_ZEROHOUR_INSTALL_PREFIX}")
         install(FILES $<TARGET_PDB_FILE:z_worldbuilder> DESTINATION "${GENZH_ZEROHOUR_INSTALL_PREFIX}" OPTIONAL)
+    endif()
+
+    if(TARGET z_particleeditor)
+        install(TARGETS z_particleeditor RUNTIME DESTINATION "${GENZH_ZEROHOUR_INSTALL_PREFIX}")
+        install(FILES $<TARGET_PDB_FILE:z_particleeditor> DESTINATION "${GENZH_ZEROHOUR_INSTALL_PREFIX}" OPTIONAL)
+    endif()
+
+    if(TARGET z_debugwindow)
+        install(TARGETS z_debugwindow RUNTIME DESTINATION "${GENZH_ZEROHOUR_INSTALL_PREFIX}")
+        install(FILES $<TARGET_PDB_FILE:z_debugwindow> DESTINATION "${GENZH_ZEROHOUR_INSTALL_PREFIX}" OPTIONAL)
+    endif()
+
+    if(TARGET z_guiedit)
+        install(TARGETS z_guiedit RUNTIME DESTINATION "${GENZH_ZEROHOUR_INSTALL_PREFIX}")
+        install(FILES $<TARGET_PDB_FILE:z_guiedit> DESTINATION "${GENZH_ZEROHOUR_INSTALL_PREFIX}" OPTIONAL)
+    endif()
+
+    if(TARGET z_imagepacker)
+        install(TARGETS z_imagepacker RUNTIME DESTINATION "${GENZH_ZEROHOUR_INSTALL_PREFIX}")
+        install(FILES $<TARGET_PDB_FILE:z_imagepacker> DESTINATION "${GENZH_ZEROHOUR_INSTALL_PREFIX}" OPTIONAL)
+    endif()
+
+    if(TARGET z_mapcachebuilder)
+        install(TARGETS z_mapcachebuilder RUNTIME DESTINATION "${GENZH_ZEROHOUR_INSTALL_PREFIX}")
+        install(FILES $<TARGET_PDB_FILE:z_mapcachebuilder> DESTINATION "${GENZH_ZEROHOUR_INSTALL_PREFIX}" OPTIONAL)
     endif()
 endif()
