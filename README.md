@@ -13,8 +13,7 @@
 # Welcome to the Generals Game Code Project
 
 GeneralsGameCode is a community-driven project aimed at maintaining and improving the classic RTS game, *Command &
-Conquer: Generals* and its expansion *Zero Hour*. This repository contains the source code for both the original game
-and *Zero Hour*, with a primary focus on *Zero Hour*.
+Conquer: Generals* and its expansion *Zero Hour*. This repository contains the source code for both games, with a primary focus on *Zero Hour*.
 
 Additionally, there is a separate repository for managing game assets such as graphics, localization files, and more.
 You can find it [here](https://github.com/TheSuperHackers/GeneralsGamePatch/) and contribute to it as well.
@@ -22,7 +21,7 @@ You can find it [here](https://github.com/TheSuperHackers/GeneralsGamePatch/) an
 ## Project Overview
 
 The game was originally developed using Visual Studio 6 and C++98. We've updated the code to be compatible with Visual
-Studio 2022 and C++20 to improve the development experience and take advantage of modern C++ features.
+Studio 2022 and C++20.
 
 The main goal of this project is to fix critical bugs and implement improvements while maintaining compatibility with
 the original *Zero Hour* version 1.04 in the initial stages. We'll focus on resolving critical bugs, with future plans
@@ -92,8 +91,8 @@ our [modding guide](https://github.com/TheSuperHackers/GeneralsGameCode/wiki/Mod
 
 ## License & Legal Disclaimer
 
-This project is not affiliated with, nor endorsed by, Electronic Arts in any way. All trademarks are the property of
-their respective owners.
+This project is not affiliated with, nor endorsed by, Electronic Arts in any way. EA has not endorsed and does not
+support this product. All trademarks are the property of their respective owners.
 
 This project is licensed under the [GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.html), which allows you to
 freely modify and distribute the source code under the terms of this license. Please see [LICENSE.md](LICENSE.md) 
