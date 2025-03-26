@@ -4,11 +4,11 @@
 ![YouTube Channel Views](https://img.shields.io/youtube/channel/views/UCi0AO7Bzth2NN8A9z7Gi40Q?style=flat&logo=youtube&logoColor=red&label=Views&labelColor=%23fcc5c5&color=red)
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Fwww.gamereplays.org%2F&style=flat&label=GameReplays.org&labelColor=%233d77eb)
 
-![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/bug?style=flat&label=Bug%20Issues&labelColor=%233d77eb&color=%23fcc5c5)
-![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/enhancement?style=flat&label=Enhancement%20Issues&labelColor=%233d77eb&color=%23fcc5c5)
-![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/blocker?style=flat&label=Blocker%20Issues&labelColor=%233d77eb&color=%23fcc5c5)
-![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/critical?style=flat&label=Critical%20Issues&labelColor=%233d77eb&color=%23fcc5c5)
-![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/major?style=flat&label=Major%20Issues&labelColor=%233d77eb&color=%23fcc5c5)
+![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/bug?style=flat&label=Bug%20Issues&labelColor=%23c4c4c4&color=%23424242)
+![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/enhancement?style=flat&label=Enhancement%20Issues&labelColo=%23c4c4c4&color=%23424242)
+![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/blocker?style=flat&label=Blocker%20Issues&labelColor=%23c4c4c4&color=%23424242)
+![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/critical?style=flat&label=Critical%20Issues&labelColor=%23c4c4c4&color=%23424242)
+![GitHub issues by-label](https://img.shields.io/github/issues/TheSuperHackers/GeneralsGameCode/major?style=flat&label=Major%20Issues&labelColor=%23c4c4c4&color=%23424242)
 
 # Welcome to the Generals Game Code Project
 
@@ -17,6 +17,7 @@ Conquer: Generals* and its expansion *Zero Hour*. This repository contains the s
 and *Zero Hour*, with a primary focus on *Zero Hour*.
 
 Additionally, there is a separate repository for managing game assets such as graphics, localization files, and more.
+You can find it [here](https://github.com/TheSuperHackers/GeneralsGamepatch/) and contribute to it as well.
 
 ## Project Overview
 
@@ -97,4 +98,5 @@ This project is not affiliated with, nor endorsed by, Electronic Arts in any way
 their respective owners.
 
 This project is licensed under the [GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.html), which allows you to
-freely modify and distribute the source code under the terms of this license.
+freely modify and distribute the source code under the terms of this license. Please see [LICENSE.md](LICENSE.md) 
+for details.
