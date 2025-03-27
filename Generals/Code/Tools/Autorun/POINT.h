@@ -170,6 +170,10 @@ class TPoint3D : public TPoint2D<T> {
 		typedef TPoint2D<T> BASECLASS;
 
 	public:
+		using BASECLASS::X;
+		using BASECLASS::Y;
+
+	public:
 		TPoint3D(void) {}		// Default constructor does nothing by design.
 		TPoint3D(T x, T y, T z) : BASECLASS(x, y), Z(z) {}
 		TPoint3D(BASECLASS const & rvalue, T z /*= 0*/) : BASECLASS(rvalue), Z(z) {}
