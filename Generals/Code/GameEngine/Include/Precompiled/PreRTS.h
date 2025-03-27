@@ -49,11 +49,7 @@ class STLSpecialAlloc;
 #include <direct.h>
 #include <excpt.h>
 #include <float.h>
-#ifdef USING_STLPORT
-#include <fstream.h>
-#else
-#include <fstream>
-#endif
+#include <Utility/fstream_adapter.h>
 #include <imagehlp.h>
 #include <io.h>
 #include <limits.h>
