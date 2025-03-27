@@ -49,19 +49,20 @@ set(AUTORUN_SRC
 )
 
 macro(setup_autorun appname)
-add_executable(${appname} WIN32)
+    add_executable(${appname} WIN32)
 
-target_sources(${appname} PRIVATE ${AUTORUN_SRC})
+    target_sources(${appname} PRIVATE ${AUTORUN_SRC})
 
-target_link_libraries(${appname} PRIVATE
-    gz_utility
-    winmm
-    zi_libraries_include
-)
+    target_link_libraries(${appname} PRIVATE
+        gz_config
+        gz_utility
+        winmm
+        zi_libraries_include
+    )
 
-if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
-    target_sources(${appname} PRIVATE AUTORUN.RC)
-endif()
+    if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
+        target_sources(${appname} PRIVATE AUTORUN.RC)
+    endif()
 endmacro()
 
 setup_autorun(z_autorun_en)

@@ -62,7 +62,10 @@ set_target_properties(z_manglerlib PROPERTIES OUTPUT_NAME manglerlib)
 target_sources(z_manglerlib PUBLIC ${MANGLERLIB_SRC})
 target_include_directories(z_manglerlib PRIVATE . wlib wnet)
 target_link_libraries(z_manglerlib PRIVATE wsock32)
-target_link_libraries(z_manglerlib PUBLIC gz_utility)
+target_link_libraries(z_manglerlib PUBLIC
+    gz_config
+    gz_utility
+)
 
 # mangler app
 
