@@ -20,7 +20,7 @@
 #include "expander.h"
 #include "KVPair.h"
 #include "misc.h"
-#include <iostream>
+#include <Utility/iostream_adapter.h>
 #include <list>
 #include <stdlib.h>
 #include <stdio.h>

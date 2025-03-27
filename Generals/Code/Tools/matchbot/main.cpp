@@ -21,7 +21,7 @@
 #endif
 #include <cstdlib>
 #include <csignal>
-#include <iostream>
+#include <Utility/iostream_adapter.h>
 
 #ifdef _WIN32
 #include <direct.h>

@@ -57,12 +57,7 @@ will you be ready to leave grasshopper.
 
 #include "wstypes.h"
 
-#ifdef _WINDOWS
-#include <iostream.h>
-#include <strstrea.h>
-#else
-#include <iostream>
-#endif
+#include <Utility/iostream_adapter.h>
 
 #ifdef USE_SEM
 #include "sem4.h"
