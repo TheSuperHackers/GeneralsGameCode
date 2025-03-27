@@ -83,14 +83,14 @@ typedef enum
 typedef struct 
 { 
 	LangID langid; 
-	char *name; 
-	char *initials ;	// two character identifier
-	char *character;	// single character identifier
+	const char *name;
+	const char *initials ;	// two character identifier
+	const char *character;	// single character identifier
 
 } LANGINFO; 
 
 LANGINFO*	GetLangInfo ( LangID langid );
-char*			GetLangName ( LangID langid );
+const char*	GetLangName ( LangID langid );
 LANGINFO*	GetLangInfo ( int index );
 LANGINFO*	GetLangInfo ( char *language );
 
@@ -183,7 +183,7 @@ class Translation : public DBAttribs
 	int						Revision		( void )									{ return revision; };
 	void					SetRevision	( int new_rev )						{ revision = new_rev; Changed(); };
 	LangID				GetLangID		( void )									{ return langid; };
-	char*					Language		( void )									{ return GetLangName ( langid );};
+	const char*		Language		( void )									{ return GetLangName ( langid );};
 	void					AddToTree		( CTreeCtrl *tc, HTREEITEM parent, int changes = FALSE );
 	int						TooLong			( int maxlen );
 	int						ValidateFormat ( NoxText *text );
@@ -357,7 +357,7 @@ class TransDB : public DBAttribs
 
 	public:
 
-	TransDB ( char *name = "no name" );
+	TransDB ( const char *name = "no name" );
 	~TransDB ( );
 
 	void					InvalidateDialog( LangID langid );

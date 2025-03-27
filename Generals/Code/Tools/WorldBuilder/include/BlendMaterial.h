@@ -74,7 +74,7 @@ protected:
 protected:
 	void updateTextures(void);
 	void addTerrain(const char *pPath, Int terrainNdx, HTREEITEM parent);
-	HTREEITEM findOrAdd(HTREEITEM parent, char *pLabel);
+	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
 
 public:
 	static Int getBlendTexClass(void) {return m_currentBlendTexture;}

@@ -55,13 +55,13 @@
 //-----------------------------------------------------------------------------
 #if ( MISSION_DISK )
 
-static char * _CD_Volume_Label[] = {
+static const char * _CD_Volume_Label[] = {
 	"Renegade Mission",		// Yuri's Revenge (mission disk)
 };
 
 #else
 
-static char * _CD_Volume_Label[] = {
+static const char * _CD_Volume_Label[] = {
 	"Renegade Game",		// Red Alert 2
 	"Renegade Data",		// Red Alert 2
 };
@@ -161,7 +161,7 @@ GetCDClass::~GetCDClass(void)
  *   10/18/2000 MML: Created.													*
  *==============================================================================*/
 
-int	GetCDClass::Get_CD_Drive_For_This_Volume ( char *volume_label )
+int	GetCDClass::Get_CD_Drive_For_This_Volume ( const char *volume_label )
 {
 	char		volume_name[128] = "";
 	int			count = 0;
@@ -241,7 +241,7 @@ int	GetCDClass::Get_CD_Drive_For_This_Volume ( char *volume_label )
  *   10/31/2000 MML: Created.	* Happy Halloween! *							*
  *==============================================================================*/
 
-char * GetCDClass::Get_Volume_Label	( int index )
+const char * GetCDClass::Get_Volume_Label	( int index )
 {
 	if( index >= 0 && index < _Num_Volumes ) {
 		return( _CD_Volume_Label[ index ]);
@@ -263,7 +263,7 @@ char * GetCDClass::Get_Volume_Label	( int index )
  *   10/31/2000 MML: Created.	* Happy Halloween! *							*
  *==============================================================================*/
 
-char *GetCDClass::Get_Volume_For_This_CD_Drive ( char *path, char *volume_name )
+const char *GetCDClass::Get_Volume_For_This_CD_Drive ( const char *path, char *volume_name )
 {
 	char			buffer[128];
 	unsigned		misc_dword;

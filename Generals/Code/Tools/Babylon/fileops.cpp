@@ -65,7 +65,8 @@ int					 		FileAttribs ( const char *filename )
 
 static void make_bk_name ( char *bkname, const char *filename )
 {
-	char *ext, *ext1;
+	const char *ext;
+	char *ext1;
 
 	strcpy ( bkname, filename );
 	

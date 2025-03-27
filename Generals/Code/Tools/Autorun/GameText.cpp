@@ -248,8 +248,8 @@ extern char szArgvPath[];
 
 void GameTextManager::init( void )
 {
-	Char *strFile = "autorun.str";
-	Char *csfFile = "autorun.csf";
+	const Char *strFile = "autorun.str";
+	const Char *csfFile = "autorun.csf";
 	Int format;
 
 	Char realStrFile[_MAX_PATH];

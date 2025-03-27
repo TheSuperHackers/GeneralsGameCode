@@ -51,10 +51,10 @@ public:
 	
    void	Wait_OK();	// wait for user to hit OK
    
-   void	printf(char *, ...);
-	void	printf(char * text, const va_list & args);
-	void  rprintf(char *, ...);
-	void	rprintf(char *text, const va_list & args);
+   void	printf(const char *, ...);
+	void	printf(const char * text, const va_list & args);
+	void  rprintf(const char *, ...);
+	void	rprintf(const char *text, const va_list & args);
 	
 	void	updatebar(float position, float total);
    

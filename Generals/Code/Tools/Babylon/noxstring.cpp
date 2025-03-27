@@ -37,7 +37,7 @@ static char THIS_FILE[] = __FILE__;
 char AppTitle[200];
 CNoxstringDlg *MainDLG = NULL;
 
-static char *AppName = "Babylon:";
+static const char *AppName = "Babylon:";
 static int AlreadyRunning( void );
 static HWND FoundWindow = NULL;
 /////////////////////////////////////////////////////////////////////////////
@@ -167,7 +167,7 @@ BOOL CNoxstringApp::InitInstance()
 
 static BOOL CALLBACK EnumAllWindowsProc(HWND hWnd, LPARAM lParam);
 static BOOL CALLBACK EnumAllWindowsProcExact(HWND hWnd, LPARAM lParam);
-static char *szSearchTitle;
+static const char *szSearchTitle;
 
 static int AlreadyRunning( void )
 {

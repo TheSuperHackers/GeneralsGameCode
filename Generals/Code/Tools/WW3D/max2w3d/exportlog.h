@@ -52,8 +52,8 @@ public:
 	static void Init(HWND parent);
 	static void Shutdown(bool wait_for_ok);
 
-   static void	printf(char *, ...);
-	static void rprintf(char *, ...);
+   static void	printf(const char *, ...);
+	static void rprintf(const char *, ...);
 	static void	updatebar(float position, float total);
 };
 

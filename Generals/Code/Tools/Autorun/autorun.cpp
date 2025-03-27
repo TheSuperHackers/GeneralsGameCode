@@ -320,20 +320,20 @@ char		szCDDrive[ MAX_PATH ];
 //-----------------------------------------------------------------------------
 // Global Function Definitions
 //-----------------------------------------------------------------------------
-void 		Cant_Find_MessageBox		( HINSTANCE hInstance, char *szPath );
+void 		Cant_Find_MessageBox		( HINSTANCE hInstance, const char *szPath );
 HPALETTE	CreateDIBPalette 			( LPBITMAPINFO lpbmi, LPINT lpiNumColors );
 void		Debug_Date_And_Time_Stamp	( void );
 
-void 		Error_Message				( HINSTANCE hInstance, int title, int string, char *path );
-void 		Error_Message				( HINSTANCE hInstance, const char * title, const char * string, char *path );
+void 		Error_Message				( HINSTANCE hInstance, int title, int string, const char *path );
+void 		Error_Message				( HINSTANCE hInstance, const char * title, const char * string, const char *path );
 
-bool		Is_On_CD					( char * );
-HBITMAP 	LoadResourceBitmap			( HMODULE hInstance, char *lpString, HPALETTE FAR *lphPalette, bool loading_a_button=FALSE );
-HBITMAP 	LoadResourceButton			( HMODULE hInstance, char *lpString, HPALETTE FAR lphPalette );
+bool		Is_On_CD					( const char * );
+HBITMAP 	LoadResourceBitmap			( HMODULE hInstance, LPCTSTR lpString, HPALETTE FAR *lphPalette, bool loading_a_button=FALSE );
+HBITMAP 	LoadResourceButton			( HMODULE hInstance, LPCTSTR lpString, HPALETTE FAR lphPalette );
 BOOL 		Options						( Command_Line_Arguments *Orgs );
 void		Prog_End					( void );
 bool		Prompt_For_CD				( HWND window_handle, char *volume_name, const char * message1, const char * message2, int *cd_drive );
-void		Reformat_Volume_Name		( char *volume_name, char *new_volume_name );
+void		Reformat_Volume_Name		( const char *volume_name, char *new_volume_name );
 int			Show_Message				( HWND window_handle, const char * message_num1, const char * message_num2 );
 int			Show_Message				( HWND window_handle, int message_num1 );
 void		Stop_Sound_Playing			( void );
@@ -1412,7 +1412,7 @@ BOOL MainWindow::Is_Product_Registered( void )
 //		06/04/1996  MML : Created.                                            
 //=============================================================================
 
-BOOL MainWindow::Run_Explorer( char *szString, HWND hWnd, RECT *rect )
+BOOL MainWindow::Run_Explorer( const char *szString, HWND hWnd, RECT *rect )
 {
 	char 	szWindowsPath	[ _MAX_PATH ];
 	char 	szPath			[ _MAX_PATH ];
@@ -4819,7 +4819,7 @@ BOOL Valid_Environment ( void )
 // 	09/26/1996  MML : Created.                                            
 //=============================================================================
 
-HBITMAP LoadResourceBitmap( HINSTANCE hInstance, LPTSTR lpString, HPALETTE FAR *lphPalette, bool loading_a_button )
+HBITMAP LoadResourceBitmap( HINSTANCE hInstance, LPCTSTR lpString, HPALETTE FAR *lphPalette, bool loading_a_button )
 {
 //	HDC 		hdc;
 	int 		iNumColors;
@@ -4958,7 +4958,7 @@ HPALETTE CreateDIBPalette ( LPBITMAPINFO lpbmi, LPINT lpiNumColors )
 // HISTORY: Found this routine on MS Developmemt CD, July 1996.
 // 	09/26/1996  MML : Created.                                            
 //=============================================================================
-HBITMAP LoadResourceButton( HINSTANCE hInstance, LPTSTR lpString, HPALETTE FAR lphPalette )
+HBITMAP LoadResourceButton( HINSTANCE hInstance, LPCTSTR lpString, HPALETTE FAR lphPalette )
 {
 	HDC 		hdc;
 	int 		iNumColors;
@@ -5035,7 +5035,7 @@ HBITMAP LoadResourceButton( HINSTANCE hInstance, LPTSTR lpString, HPALETTE FAR l
 // 	09/26/1996  MML : Created.                                            
 //=============================================================================
 
-void Cant_Find_MessageBox ( HINSTANCE hInstance, char *szPath )
+void Cant_Find_MessageBox ( HINSTANCE hInstance, const char *szPath )
 {
 
 #ifdef LEAN_AND_MEAN
@@ -5099,7 +5099,7 @@ void Cant_Find_MessageBox ( HINSTANCE hInstance, char *szPath )
  *   08/14/1998 MML : Created.                                                
  *============================================================================*/
 
-void Error_Message ( HINSTANCE hInstance, const char * title, const char * string, char *path )
+void Error_Message ( HINSTANCE hInstance, const char * title, const char * string, const char *path )
 {
 
 #ifndef LEAN_AND_MEAN
@@ -5262,7 +5262,7 @@ void Debug_Date_And_Time_Stamp ( void )
 	//	tm_wday	- Day of week (0 - 6; Sunday = 0)
 	//	tm_yday	- Day of year (0 - 365; January 1 = 0)
 	//-------------------------------------------------------------------------
-	static char *Month_Strings[ 12 ] = {
+	static const char *Month_Strings[ 12 ] = {
 		"January",
 		"February",
 		"March",
@@ -5277,7 +5277,7 @@ void Debug_Date_And_Time_Stamp ( void )
 		"December"
 	};
 
-	static char *Week_Day_Strings[ 7 ] = {
+	static const char *Week_Day_Strings[ 7 ] = {
 		"Sunday",
 		"Monday",
 		"Tuesday",
@@ -5323,7 +5323,7 @@ void Debug_Date_And_Time_Stamp ( void )
 }
 
 
-bool Is_On_CD ( char *volume_name )
+bool Is_On_CD ( const char *volume_name )
 {
 	char volume_to_match[ MAX_PATH ];
 
@@ -5419,7 +5419,7 @@ int Show_Message ( HWND window_handle, const char * message1, const char * messa
 }
 
 
-void Reformat_Volume_Name ( char *volume_name, char *new_volume_name )
+void Reformat_Volume_Name ( const char *volume_name, char *new_volume_name )
 {
 	char temp_volume_name[ MAX_PATH ];
 

@@ -38,7 +38,7 @@ class Process
 	DWORD dwThreadID;
 };
 
-bit8 Read_Process_Info(ConfigFile &config,OUT Process &info, IN char *key = NULL);
+bit8 Read_Process_Info(ConfigFile &config,OUT Process &info, IN const char *key = NULL);
 bit8 Create_Process(Process &process);
 bit8 Wait_Process(Process &process, DWORD *exit_code=NULL);
 

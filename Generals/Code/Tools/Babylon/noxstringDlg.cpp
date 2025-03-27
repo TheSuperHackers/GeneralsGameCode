@@ -696,7 +696,7 @@ int CNoxstringDlg::SaveLog()
 	}
 
 	{
-		char *buffer = "\nLOG START ******************\n\n";
+		const char *buffer = "\nLOG START ******************\n\n";
 		fwrite ( buffer, 1, strlen ( buffer ), log );
 	}
 
@@ -713,7 +713,7 @@ int CNoxstringDlg::SaveLog()
 	}
 
 	{
-		char *buffer = "\nQuiting Babylon\n\nLOG END ******************\n\n";
+		const char *buffer = "\nQuiting Babylon\n\nLOG END ******************\n\n";
 		fwrite ( buffer, 1, strlen ( buffer ), log );
 	}
 
@@ -1196,7 +1196,7 @@ int		CNoxstringDlg::CanOperate ( void )
 
 	if ( NoxstrDB->IsChanged() || NoxstrDB->HasErrors () )
 	{
-		char *string = "Unknown problem!\n\n\nProceed anyway?";
+		const char *string = "Unknown problem!\n\n\nProceed anyway?";
 
 		if ( NoxstrDB->HasErrors ())
 		{
@@ -2160,7 +2160,7 @@ int CNoxstringDlg::ValidateStrFile( const char *filename)
 {
 	STARTUPINFO StartupInfo = { 0 };
 	PROCESS_INFORMATION ProcessInfo;
-	char *results = "strcheck.rst";
+	const char *results = "strcheck.rst";
 	int errors = 0;
 	FILE *file = NULL;
 

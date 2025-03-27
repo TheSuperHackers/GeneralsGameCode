@@ -87,7 +87,7 @@ protected:
 
 protected:
 	void addRoad(char *pPath, Int objectNdx, HTREEITEM parent);
-	HTREEITEM findOrAdd(HTREEITEM parent, char *pLabel);
+	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
 	Bool findAndSelect(HTREEITEM parent, AsciiString label);
 	Bool setRoadTreeViewSelection(HTREEITEM parent, Int selection);
 	void updateLabel(void);

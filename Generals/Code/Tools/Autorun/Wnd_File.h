@@ -95,8 +95,8 @@
 
 
 #ifdef _DEBUG
-void __cdecl Msg( int line, char *file, char *fmt, ... );
-void __cdecl Msg( int line, char *filename, wchar_t *fmt, unsigned int codepage=1252, ... );
+void __cdecl Msg( int line, const char *file, const char *fmt, ... );
+void __cdecl Msg( int line, const char *filename, const wchar_t *fmt, unsigned int codepage=1252, ... );
 void 	Delete_Msg_File( void );
 #else
 #define Msg

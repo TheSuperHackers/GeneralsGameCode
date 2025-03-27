@@ -117,7 +117,7 @@ void ExportLog::Shutdown(bool wait_for_ok)
  * HISTORY:                                                                                    *
  *   10/30/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-void ExportLog::printf(char * format, ...)
+void ExportLog::printf(const char * format, ...)
 {
 	if (_LogDialog != NULL) {
 		va_list arguments;
@@ -139,7 +139,7 @@ void ExportLog::printf(char * format, ...)
  * HISTORY:                                                                                    *
  *   10/30/2000 gth : Created.                                                                 *
  *=============================================================================================*/
-void ExportLog::rprintf(char * format, ...)
+void ExportLog::rprintf(const char * format, ...)
 {
 	if (_LogDialog != NULL) {
 		va_list arguments;

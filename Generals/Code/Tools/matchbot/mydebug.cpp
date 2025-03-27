@@ -75,7 +75,7 @@ ostream *MyMsgManager::paranoidStream(void)
 }
 
 
-int MyMsgManager::ReplaceAllStreams(FileD * output_device, char *device_filename, char *copy_filename)
+int MyMsgManager::ReplaceAllStreams(FileD * output_device, const char *device_filename, const char *copy_filename)
 {
 	MYDEBUGLOCK;
 

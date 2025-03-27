@@ -100,13 +100,13 @@ LogDataDialogClass::~LogDataDialogClass(void)
  * HISTORY:                                                                                    * 
  *   02/11/2000 JGA  : Created.                                                                 * 
  *=============================================================================================*/
-void LogDataDialogClass::printf(char *text, ...)
+void LogDataDialogClass::printf(const char *text, ...)
 {
 	va_list arguments;
 	va_start(arguments, text);
 }	// printf
 
-void LogDataDialogClass::printf(char * text, const va_list & args)
+void LogDataDialogClass::printf(const char * text, const va_list & args)
 {
 	static char string_buffer[256];
 
@@ -143,7 +143,7 @@ void LogDataDialogClass::printf(char * text, const va_list & args)
  * HISTORY:                                                                                    * 
  *   02/14/2000 JGA  : Created.                                                                 * 
  *=============================================================================================*/
-void LogDataDialogClass::rprintf(char *text, ...)
+void LogDataDialogClass::rprintf(const char *text, ...)
 {
 	va_list arguments;
 	va_start(arguments, text);
@@ -151,7 +151,7 @@ void LogDataDialogClass::rprintf(char *text, ...)
 	rprintf(text,arguments);
 }
 
-void LogDataDialogClass::rprintf(char *text, const va_list & args)
+void LogDataDialogClass::rprintf(const char *text, const va_list & args)
 {
 	static char string_buffer[256];
 	vsprintf(string_buffer, text, args);

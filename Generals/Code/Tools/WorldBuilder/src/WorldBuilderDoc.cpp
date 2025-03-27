@@ -304,7 +304,7 @@ void CWorldBuilderDoc::Serialize(CArchive& ar)
 			chunkWriter = NULL;
 			theStream.flush();
 		} catch(...) {
-			char *msg = "WorldHeightMapEdit::WorldHeightMapEdit  height map file write failed: ";
+			const char *msg = "WorldHeightMapEdit::WorldHeightMapEdit  height map file write failed: ";
 			AfxMessageBox(msg);
 			return;
 		}
@@ -2085,8 +2085,8 @@ static void fprintUnit(FILE *theLogFile, Dict *teamDict, NameKeyType keyMinUnit,
 void CWorldBuilderDoc::OnDumpDocToText(void) 
 {
 	MapObject *pMapObj = NULL; 
-	char* vetStrings[] = {"Green", "Regular", "Veteran", "Elite"};
-	char* aggroStrings[] = {"Passive", "Normal", "Guard", "Hunt", "Agressive", "Sleep"};
+	const char* vetStrings[] = {"Green", "Regular", "Veteran", "Elite"};
+	const char* aggroStrings[] = {"Passive", "Normal", "Guard", "Hunt", "Agressive", "Sleep"};
 	AsciiString noOwner = "No Owner";
 	static FILE *theLogFile = NULL;
 	Bool open = false;

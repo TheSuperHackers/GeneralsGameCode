@@ -143,8 +143,9 @@ void setupGenerals( const char *genPath, const char *genSerial )
 	unsigned long type;
 	unsigned long returnValue;
 	int size;
+	char lpClass[] = "REG_NONE";
 
-	if (RegCreateKeyEx( HKEY_LOCAL_MACHINE, GENERALS_REG_KEY_PATH, 0, "REG_NONE", REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &handle, NULL ) == ERROR_SUCCESS) {
+	if (RegCreateKeyEx( HKEY_LOCAL_MACHINE, GENERALS_REG_KEY_PATH, 0, lpClass, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &handle, NULL ) == ERROR_SUCCESS) {
 
 		type = REG_SZ;
 		size = strlen(genPath)+1;

@@ -52,7 +52,7 @@ using namespace std;
 #define sleep(x) Sleep(1000 * (x))
 #endif
 
-static char *Program_Usage = "A config filename can be given on the command line (default=matchbot.cfg)\n";
+static const char *Program_Usage = "A config filename can be given on the command line (default=matchbot.cfg)\n";
 void logMonitor(void *);
 void paranoidLogMonitor(void *);
 

@@ -69,7 +69,7 @@
 
 #define UPDATE_RETVAL 123456789  // if a program returns this it means it wants to check for patches
 
-void CreatePrimaryWin(char *prefix);
+void CreatePrimaryWin(const char *prefix);
 void myChdir(char *path);
 
 void RunGame(char *thePath, ConfigFile &config, Process &proc)
@@ -313,7 +313,7 @@ int main(int argc, char *argv[])
 //
 // Create a primary window
 //
-void CreatePrimaryWin(char *prefix)
+void CreatePrimaryWin(const char *prefix)
 {
 	char name[256];
 	sprintf(name, "launcher_%s", prefix);

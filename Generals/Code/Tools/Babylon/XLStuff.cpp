@@ -83,7 +83,7 @@ error:
 }
 
 
-int PutCell ( int row, int column, OLECHAR *string, int val )
+int PutCell ( int row, int column, const OLECHAR *string, int val )
 {
 	VARIANT cell;
 	VARIANT newValue;

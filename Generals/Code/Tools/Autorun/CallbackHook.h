@@ -45,7 +45,7 @@ class CallbackHook
 		virtual ~CallbackHook()
 			{}
 		
-		virtual bool DoCallback(void)
+		virtual bool DoCallback(void) const
 			{return false;}
 
 	protected:
@@ -67,7 +67,7 @@ template<class T> class Callback : public CallbackHook
 			{
 			}
 
-		virtual bool DoCallback(void)
+		virtual bool DoCallback(void) const
 			{
 			if (mCallback != NULL)
 				{
