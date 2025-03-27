@@ -217,13 +217,13 @@ protected:
 int W3dExportClass::DoExport
 (
 	const TCHAR *filename,
-	ExpInterface *export,
+	ExpInterface *do_export,
 	Interface *max, 
 	BOOL suppressPrompts, 
 	DWORD options
 )
 {
-	ExportInterface = export;
+	ExportInterface = do_export;
 	MaxInterface = max;
 	RootNode = NULL;
 	OriginList = NULL;
