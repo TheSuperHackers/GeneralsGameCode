@@ -3,6 +3,7 @@
 # Build useful tool binaries.
 if(GENZH_BUILD_ZEROHOUR_TOOLS)
     add_subdirectory(DebugWindow)
+    add_subdirectory(GenBIG)
     add_subdirectory(GUIEdit)
     add_subdirectory(ImagePacker)
     add_subdirectory(MapCacheBuilder)
