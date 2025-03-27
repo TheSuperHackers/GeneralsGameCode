@@ -5,7 +5,7 @@ add_subdirectory(Source/WWVegas)
 add_subdirectory(Source/profile)
 
 # debugging library
-add_subdirectory(Source/debug)
+add_subdirectory(Source/Debug)
 
 add_subdirectory(Source/EABrowserDispatch)
 add_subdirectory(Source/EABrowserEngine)

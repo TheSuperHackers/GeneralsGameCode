@@ -11,7 +11,7 @@ target_sources(g_compress PRIVATE ${COMRPESS_SRC})
 
 target_link_libraries(g_compress PRIVATE
     g_compression
-    gi_libraries_include
+    gi_utility
     gi_libraries_source
     gz_config
 )

@@ -19,7 +19,7 @@ target_link_libraries(g_mapcachebuilder PRIVATE
     dbghelplib
     g_gameengine
     g_gameenginedevice
-    gi_libraries_include
+    gi_utility
     imm32
     vfw32
     winmm

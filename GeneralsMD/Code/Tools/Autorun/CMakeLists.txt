@@ -57,7 +57,7 @@ macro(setup_autorun appname)
         gz_config
         gz_utility
         winmm
-        zi_libraries_include
+        zi_utility
     )
 
     if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

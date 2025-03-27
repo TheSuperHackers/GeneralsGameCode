@@ -176,7 +176,7 @@ set(WORLDBUILDER_SRC
     "include/TeamIdentity.h"
     "include/TeamReinforcement.h"
     "include/teamsdialog.h"
-    "include/terrainmaterial.h"
+    "include/TerrainMaterial.h"
     "include/TerrainModal.h"
     "include/TerrainSwatches.h"
     "include/TileTool.h"
@@ -214,7 +214,7 @@ target_link_libraries(g_worldbuilder PRIVATE
     g_gameenginedevice
     gi_gameengine_include
     gi_gameenginedevice_include
-    gi_libraries_include
+    gi_utility
     imm32
     vfw32
     winmm

@@ -1069,7 +1069,7 @@ target_include_directories(g_gameengine PRIVATE
 )
 
 target_link_libraries(g_gameengine PRIVATE
-    gi_libraries_include
+    gi_utility
     gi_libraries_source
 )
 

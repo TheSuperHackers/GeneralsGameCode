@@ -66,6 +66,10 @@ if(MSVC)
     target_compile_definitions(gz_config INTERFACE _CRT_NONSTDC_NO_WARNINGS _CRT_SECURE_NO_WARNINGS $<$<CONFIG:DEBUG>:_DEBUG_CRT>)
 endif()
 
+if(UNIX)
+    target_compile_definitions(gz_config INTERFACE _UNIX)
+endif()
+
 if(GENZH_BUILD_DEBUG)
     target_compile_definitions(gz_config INTERFACE _DEBUG WWDEBUG DEBUG)
 else()

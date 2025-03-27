@@ -43,6 +43,9 @@
 // Disable warning about exception handling not being enabled. It's used as part of STL - in a part of STL we don't use.
 #pragma warning(disable : 4530)
 
+// SuperHackers: Utility macros for cross-platform compatibility
+#include "CompatMacros.h"
+
 /*
 ** Define for debug memory allocation to include __FILE__ and __LINE__ for every memory allocation.
 ** This helps find leaks.
