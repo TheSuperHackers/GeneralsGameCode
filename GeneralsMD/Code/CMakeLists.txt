@@ -11,6 +11,7 @@ add_library(zi_libraries_source_wwvegas_wwlib INTERFACE)
 add_library(zi_libraries_source_wwvegas_wwmath INTERFACE)
 add_library(zi_libraries_source_wwvegas_wwsaveload INTERFACE)
 add_library(zi_main INTERFACE)
+add_library(zi_utility INTERFACE)
 
 target_include_directories(zi_gameengine INTERFACE "GameEngine")
 target_include_directories(zi_gameengine_include INTERFACE "GameEngine/Include")
@@ -24,6 +25,10 @@ target_include_directories(zi_libraries_source_wwvegas_wwlib INTERFACE "Librarie
 target_include_directories(zi_libraries_source_wwvegas_wwmath INTERFACE "Libraries/Source/WWVegas/WWMath")
 target_include_directories(zi_libraries_source_wwvegas_wwsaveload INTERFACE "Libraries/Source/WWVegas/WWSaveLoad")
 target_include_directories(zi_main INTERFACE "Main")
+target_link_libraries(zi_utility INTERFACE
+    zi_libraries_include
+    gz_utility
+)
 
 # Contains internal libraries
 add_subdirectory(Libraries)

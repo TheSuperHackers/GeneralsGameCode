@@ -48,7 +48,7 @@ target_link_libraries(z_particleeditor PRIVATE
     z_debug
     z_profile
     zi_gameengine_include
-    zi_libraries_include
+    zi_utility
     zi_libraries_source_wwvegas
     zi_libraries_source_wwvegas_wwlib
 )

@@ -8,3 +8,6 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(gamespy)
+if(UNIX AND NOT APPLE)
+    target_compile_definitions(gscommon PUBLIC -D_LINUX)
+endif()
