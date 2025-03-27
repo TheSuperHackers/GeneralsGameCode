@@ -780,7 +780,8 @@ void WorldHeightMapEdit::saveToFile(DataChunkOutput &chunkWriter)
 			chunkWriter.writeReal(TheGlobalData->m_terrainObjectsLighting[i+TIME_OF_DAY_FIRST][0].lightPos.y);
 			chunkWriter.writeReal(TheGlobalData->m_terrainObjectsLighting[i+TIME_OF_DAY_FIRST][0].lightPos.z);
 
-			for (Int j=1; j<MAX_GLOBAL_LIGHTS; j++)
+			Int j=1;
+			for (; j<MAX_GLOBAL_LIGHTS; j++)
 			{	//save state of new lights added in version 3.
 				chunkWriter.writeReal(TheGlobalData->m_terrainObjectsLighting[i+TIME_OF_DAY_FIRST][j].ambient.red);
 				chunkWriter.writeReal(TheGlobalData->m_terrainObjectsLighting[i+TIME_OF_DAY_FIRST][j].ambient.green);
