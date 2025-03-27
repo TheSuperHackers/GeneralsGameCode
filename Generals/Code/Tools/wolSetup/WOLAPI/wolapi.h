@@ -433,7 +433,9 @@ void __RPC_STUB IRTPatcherEvent_OnTermination_Stub(
 /* interface IChat */
 /* [object][unique][helpstring][uuid] */ 
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
 typedef long time_t;
+#endif
 
 typedef 
 enum Locale

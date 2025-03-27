@@ -39,7 +39,8 @@ extern char g_wolapiRealFilename[MAX_PATH];
 extern char g_generalsFilename[MAX_PATH];
 extern char g_generalsSerial[];
 
-static MAJOR(unsigned long x) { return (((x) & 0xffff0000) >> 16); }
-static MINOR(unsigned long x) { return ((x) & 0xffff); }
+// TheSuperHackers @todo Check if this should be returning unsigned long.
+static int MAJOR(unsigned long x) { return (((x) & 0xffff0000) >> 16); }
+static int MINOR(unsigned long x) { return ((x) & 0xffff); }
 
 #endif // __WOLSETUP_H__
