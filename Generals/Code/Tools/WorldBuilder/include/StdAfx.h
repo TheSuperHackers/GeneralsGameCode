@@ -34,6 +34,9 @@
 // To prevent pragma errors.
 #include "Lib/BaseType.h"
 
+// TheSuperHackers @compile xezon 24/03/2025 Prevent afxwin.h from loading d3d9types.h, colliding with our own DirectX library.
+#define _d3d9TYPES_H_
+
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions
 #include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
