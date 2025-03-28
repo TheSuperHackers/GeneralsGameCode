@@ -24,6 +24,7 @@
 #include <windows.h>
 #include <mmsystem.h>
 #include <Utility/iostream_adapter.h>
+#include <Utility/intrin_compat.h>
 #include <string.h>
 
 double s_ticksPerSec = 0.0f;
@@ -33,6 +34,7 @@ char buffer[1024];
 //-------------------------------------------------------------------------------------------------
 void GetPrecisionTimer(INT64* t)
 {
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	// CPUID is needed to force serialization of any previous instructions. 
 	__asm 
 	{
@@ -41,6 +43,9 @@ void GetPrecisionTimer(INT64* t)
 		MOV [ECX], EAX
 		MOV [ECX+4], EDX
 	}
+#else
+	*t = _rdtsc();
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
