@@ -58,6 +58,7 @@ will you be ready to leave grasshopper.
 #include "wstypes.h"
 
 #include <Utility/iostream_adapter.h>
+#include <Utility/sstream_adapter.h>
 
 #ifdef USE_SEM
 #include "sem4.h"
