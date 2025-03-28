@@ -38,11 +38,14 @@
 #define MISC_H
 
 #include	"win.h"
+#ifdef _WIN32
 #include	"ddraw.h"
+#endif
 
 extern unsigned char CurrentPalette[768];
 extern bool Debug_Windowed;
 
+#ifdef _WIN32
 extern	LPDIRECTDRAWSURFACE	PaletteSurface;
 
 /*========================= C++ Routines ==================================*/
@@ -53,6 +56,7 @@ extern	LPDIRECTDRAWSURFACE	PaletteSurface;
 void Prep_Direct_Draw(void);
 void 		Process_DD_Result(HRESULT result, int display_ok_msg);
 bool 		Set_Video_Mode(HWND hwnd, int w, int h, int bits_per_pixel);
+#endif
 void 		Reset_Video_Mode(void);
 unsigned 	Get_Free_Video_Memory(void);
 void 		Wait_Blit(void);
@@ -147,8 +151,8 @@ void __cdecl Shake_Screen(int shakes);
 /* The following prototypes are for the file: DETPROC.ASM						*/
 /*=========================================================================*/
 
-extern WORD __cdecl  Processor(void);
-extern WORD __cdecl Operating_System(void);
+extern short __cdecl  Processor(void);
+extern short __cdecl Operating_System(void);
 
 extern int __cdecl Clip_Rect ( int * x , int * y , int * dw , int * dh ,
 	       	   			 int width , int height ) ;
@@ -161,7 +165,7 @@ extern int __cdecl Confine_Rect ( int * x , int * y , int dw , int dh ,
 /* The following prototypes are for the file: OPSYS.ASM							*/
 /*=========================================================================*/
 
-extern WORD OperationgSystem;
+extern short OperationgSystem;
 
 #ifdef __cplusplus
 }

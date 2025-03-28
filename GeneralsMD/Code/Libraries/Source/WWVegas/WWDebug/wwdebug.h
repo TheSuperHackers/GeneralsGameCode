@@ -43,7 +43,7 @@
 
 // TheSuperHackers @todo Recover WWDEBUG?
 #ifdef WWDEBUG
-#include <Utility/intrin_compat.h>
+#include <Utility/IntrinCompat.h>
 #endif
 
 // The macro MESSAGE allows user to put:

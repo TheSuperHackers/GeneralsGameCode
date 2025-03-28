@@ -40,6 +40,8 @@
 #include	"always.h"
 #include	"data.h"
 
+// SuperHackers: Add include for memmove
+#include <string.h>
 
 /***********************************************************************************************
  * Load_Alloc_Data -- Allocates a buffer and loads the file into it.                           *

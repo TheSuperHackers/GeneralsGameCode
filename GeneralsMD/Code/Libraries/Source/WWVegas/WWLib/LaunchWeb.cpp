@@ -32,10 +32,13 @@
 ******************************************************************************/
 
 #include "LaunchWeb.h"
-#include <windows.h>
-#include <shellapi.h>
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
+#ifdef _WIN32
+#include <windows.h>
+#include <shellapi.h>
+#endif
 
 /******************************************************************************
 *
@@ -63,6 +66,7 @@ bool LaunchWebBrowser(const char* url)
 		return false;
 		}
 
+#ifdef _WIN32
 	// Create a temporary file with HTML content
 	char tempPath[MAX_PATH];
 	GetWindowsDirectory(tempPath, MAX_PATH);
@@ -117,4 +121,7 @@ bool LaunchWebBrowser(const char* url)
 	assert(createSuccess && "Failed to launch default WebBrowser.");
 
 	return (TRUE == createSuccess);
+#else
+	return false;
+#endif
 	}

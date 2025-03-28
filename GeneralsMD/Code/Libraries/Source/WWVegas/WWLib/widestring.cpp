@@ -244,7 +244,7 @@ WideStringClass::Free_String (void)
 //
 ///////////////////////////////////////////////////////////////////
 int _cdecl
-WideStringClass::Format_Args (const WCHAR *format, const va_list & arg_list )
+WideStringClass::Format_Args (const WCHAR *format, va_list arg_list )
 {
 	if (format == NULL) {
 		return 0;
