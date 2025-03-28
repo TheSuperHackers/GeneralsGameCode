@@ -28,7 +28,7 @@ on:
 
 jobs:
   build:
-    name: Preset ${{ inputs.preset }}${{ inputs.tools == true && (inputs.extras == true && '+te' || '+t') || (inputs.extras == true && '+e' || '') }}
+    name: Preset ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
     runs-on: windows-latest
     timeout-minutes: 20
     steps:
@@ -102,35 +102,28 @@ jobs:
         with:
           arch: x86
 
-      - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools == true && (inputs.extras == true && '+te' || '+t') || (inputs.extras == true && '+e' || '') }} Preset
+      - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
         shell: pwsh
         run: |
-          if ("${{ inputs.game }}" -eq "Generals") {
-            $buildFlags = @("-DGENZH_BUILD_ZEROHOUR=OFF", "-DGENZH_BUILD_GENERALS=ON")
-            if ("${{ inputs.tools }}" -eq "false") {
-              $buildFlags += "-DGENZH_BUILD_GENERALS_TOOLS=OFF"
-            }
-            if ("${{ inputs.extras }}" -eq "true") {
-              $buildFlags += "-DGENZH_BUILD_GENERALS_EXTRAS=ON"
-            }
-          } else {
-            $buildFlags = @("-DGENZH_BUILD_ZEROHOUR=ON", "-DGENZH_BUILD_GENERALS=OFF")
-            if ("${{ inputs.tools }}" -eq "false") {
-              $buildFlags += "-DGENZH_BUILD_ZEROHOUR_TOOLS=OFF"
-            }
-            if ("${{ inputs.extras }}" -eq "true") {
-              $buildFlags += "-DGENZH_BUILD_ZEROHOUR_EXTRAS=ON"
-            }
-          }
+          $buildFlags = @(
+          "-DGENZH_BUILD_ZEROHOUR=${{ inputs.game == 'GeneralsMD' && 'ON' || 'OFF' }}",
+          "-DGENZH_BUILD_GENERALS=${{ inputs.game == 'Generals' && 'ON' || 'OFF' }}"
+          )
+
+          $gamePrefix = "${{ inputs.game == 'Generals' && 'GENERALS' || 'ZEROHOUR' }}"
+          $buildFlags += "-DGENZH_BUILD_${gamePrefix}_TOOLS=${{ inputs.tools && 'ON' || 'OFF' }}"
+          $buildFlags += "-DGENZH_BUILD_${gamePrefix}_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }}"
+
+          Write-Host "Build flags: $buildFlags"
 
           cmake --preset ${{ inputs.preset }} $buildFlags
 
-      - name: Build ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools == true && (inputs.extras == true && '+te' || '+t') || (inputs.extras == true && '+e' || '') }} Preset
+      - name: Build ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
         shell: pwsh
         run: |
           cmake --build --preset ${{ inputs.preset }}
 
-      - name: Collect ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools == true && (inputs.extras == true && '+te' || '+t') || (inputs.extras == true && '+e' || '') }} Artifact
+      - name: Collect ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
         shell: pwsh
         run: |
           $buildDir = "build\${{ inputs.preset }}"
@@ -145,10 +138,10 @@ jobs:
           }
           $files | Move-Item -Destination $artifactsDir -Verbose
 
-      - name: Upload ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools == true && (inputs.extras == true && '+te' || '+t') || (inputs.extras == true && '+e' || '') }} Artifact
+      - name: Upload ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.game }}-${{ inputs.preset }}${{ inputs.tools == true && (inputs.extras == true && '+te' || '+t') || (inputs.extras == true && '+e' || '') }}
+          name: ${{ inputs.game }}-${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
           path: build\${{ inputs.preset }}\${{ inputs.game }}\artifacts
           retention-days: 30
           if-no-files-found: error
