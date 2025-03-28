@@ -75,17 +75,17 @@ jobs:
             tools: true
             extras: true
           - preset: "win32"
-            tools: false
-            extras: false
+            tools: true
+            extras: true
           - preset: "win32prof"
-            tools: false
-            extras: false
+            tools: true
+            extras: true
           - preset: "win32int"
-            tools: false
-            extras: false
+            tools: true
+            extras: true
           - preset: "win32dbg"
-            tools: false
-            extras: false
+            tools: true
+            extras: true
       fail-fast: false
     uses: ./.github/workflows/build-toolchain.yml
     with:
