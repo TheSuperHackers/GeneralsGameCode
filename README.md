@@ -51,23 +51,11 @@ on [Steam](https://store.steampowered.com/bundle/39394). Once the game is ready,
 project from [GitHub Releases](https://github.com/TheSuperHackers/GeneralsGameCode/releases), extract the necessary 
 files, and follow the instructions in the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki).
 
-### Disclaimer
-
-The current builds may have bugs or unexpected behavior. We will aim to release stable versions that are as free from
-bugs as possible, but even those may have some unexpected behaviors.
-
-### Antivirus Warning
-
-Some antivirus software may mistakenly flag this project as a false positive (e.g., Windows Defender). We assure you
-that the project is fully safe to use. However, if you have concerns, you can
-always [build it yourself](#building-the-game-yourself).
 
 ## Joining the Community
 
-You can chat and discuss the development of the project on our
-[Discord channel](https://www.community-outpost.com/discord) or on 
-our [GameReplays forum](https://www.gamereplays.org/community/index.php?showforum=132). Join us to get the latest
-updates, report bugs, and contribute to the project!
+You can chat and discuss the development of the project on our [Discord channel](https://www.community-outpost.com/discord) to get the latest updates,
+report bugs, and contribute to the project!
 
 ## Building the Game Yourself
 
@@ -77,20 +65,14 @@ includes guides for building with Docker, CLion, and links to forks supporting a
 
 ## Contributing
 
-We welcome contributions to the project! If you’re interested in contributing, you should have some knowledge of C++ and
-Visual Studio. We also allow this to be built without Visual Studio. Join the developer chat on Discord for more
-information on how to get started. You can also check out
+We welcome contributions to the project! If you’re interested in contributing, you should have knowledge of C++. Join
+the developer chat on Discord for more information on how to get started. You can also check out 
 the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki) for more detailed documentation.
 
-## Modding
-
-Interested in creating your own mods? Check out
-our [modding guide](https://github.com/TheSuperHackers/GeneralsGameCode/wiki/Modding).
 
 ## License & Legal Disclaimer
 
-This project is not affiliated with, nor endorsed by, Electronic Arts in any way. EA has not endorsed and does not
-support this product. All trademarks are the property of their respective owners.
+EA has not endorsed and does not support this product. All trademarks are the property of their respective owners.
 
 This project is licensed under the [GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.html), which allows you to
 freely modify and distribute the source code under the terms of this license. Please see [LICENSE.md](LICENSE.md) 
