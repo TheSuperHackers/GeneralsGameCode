@@ -33,6 +33,10 @@ endif()
 # Top level project, doesn't really affect anything.
 project(genzh LANGUAGES C CXX)
 
+# Set up a format target to do automated clang format checking.
+find_package(ClangFormat)
+include(ClangFormat)
+
 # This file handles extra settings wanted/needed for different compilers.
 include(cmake/compilers.cmake)
 
