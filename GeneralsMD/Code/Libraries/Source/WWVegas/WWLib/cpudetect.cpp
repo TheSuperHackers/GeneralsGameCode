@@ -21,13 +21,15 @@
 #include "wwdebug.h"
 #include "thread.h"
 #include "MPU.H"
-#pragma warning (disable : 4201)	// Nonstandard extension - nameless struct
-#include <windows.h>
 #include "systimer.h"
 #include <Utility/intrin_compat.h>
 
 #ifdef _UNIX
-# include <time.h>  // for time(), localtime() and timezone variable.
+#include <time.h>  // for time(), localtime() and timezone variable.
+#include <cpuid.h>
+#else
+#pragma warning (disable : 4201)	// Nonstandard extension - nameless struct
+#include <windows.h>
 #endif
 
 struct OSInfoStruct {
@@ -58,7 +60,7 @@ int CPUDetectClass::ProcessorFamily;
 int CPUDetectClass::ProcessorModel;
 int CPUDetectClass::ProcessorRevision;
 int CPUDetectClass::ProcessorSpeed;
-__int64 CPUDetectClass::ProcessorTicksPerSecond;	// Ticks per second
+sint64 CPUDetectClass::ProcessorTicksPerSecond;	// Ticks per second
 double CPUDetectClass::InvProcessorTicksPerSecond;	// 1.0 / Ticks per second
 
 unsigned CPUDetectClass::FeatureBits;
@@ -126,7 +128,7 @@ const char* CPUDetectClass::Get_Processor_Manufacturer_Name()
 
 #define ASM_RDTSC _asm _emit 0x0f _asm _emit 0x31
 
-static unsigned Calculate_Processor_Speed(__int64& ticks_per_second)
+static unsigned Calculate_Processor_Speed(sint64& ticks_per_second)
 {
 	struct {
 		unsigned timer0_h;
@@ -175,8 +177,8 @@ static unsigned Calculate_Processor_Speed(__int64& ticks_per_second)
 #endif
 	}
 
-	__int64 t=*(__int64*)&Time.timer1_h-*(__int64*)&Time.timer0_h;
-	ticks_per_second=(__int64)((1000.0/(double)elapsed)*(double)t);	// Ticks per second
+	sint64 t=*(sint64*)&Time.timer1_h-*(sint64*)&Time.timer0_h;
+	ticks_per_second=(sint64)((1000.0/(double)elapsed)*(double)t);	// Ticks per second
 	return unsigned((double)t/(double)(elapsed*1000));
 }
 
@@ -861,7 +863,7 @@ void CPUDetectClass::Init_CPUID_Instruction()
       popfd
       pop ebx
    }
-#elif defined(_UNIX)
+#elif defined(_UNIX) && defined(__i386__)
      __asm__(" mov $0, __cpuid_available");  // clear flag
      __asm__(" push %ebx");
      __asm__(" pushfd");
@@ -880,6 +882,8 @@ void CPUDetectClass::Init_CPUID_Instruction()
      __asm__(" push %ebx");
      __asm__(" popfd");
      __asm__(" pop %ebx");
+#else // _UNIX && __x86_64__
+	cpuid_available=1;
 #endif
 	HasCPUIDInstruction=!!cpuid_available;
 #else
@@ -935,8 +939,8 @@ void CPUDetectClass::Init_Memory()
 
 void CPUDetectClass::Init_OS()
 {
-	OSVERSIONINFO os;
 #ifdef WIN32
+	OSVERSIONINFO os;
    os.dwOSVersionInfoSize = sizeof(os);
 	GetVersionEx(&os);
 
@@ -989,17 +993,7 @@ bool CPUDetectClass::CPUID(
 	u_edx = regs[3];
 #endif // defined(_MSC_VER) && _MSC_VER < 1300
 #elif defined(_UNIX)
-   __asm__("pusha");
-   __asm__("mov	__cpuid_type, %eax");
-   __asm__("xor	%ebx, %ebx");
-   __asm__("xor	%ecx, %ecx");
-   __asm__("xor	%edx, %edx");
-   __asm__("cpuid");
-   __asm__("mov	%eax, __u_eax");
-   __asm__("mov	%ebx, __u_ebx");
-   __asm__("mov	%ecx, __u_ecx");
-   __asm__("mov	%edx, __u_edx");
-   __asm__("popa");
+	__get_cpuid(cpuid_type, &u_eax, &u_ebx, &u_ecx, &u_edx);
 #endif
 
 	u_eax_=u_eax;
@@ -1018,9 +1012,11 @@ void CPUDetectClass::Init_Processor_Log()
 
 	SYSLOG(("Operating System: "));
 	switch (OSVersionPlatformId) {
+#ifdef _WIN32
 	case VER_PLATFORM_WIN32s: SYSLOG(("Windows 3.1")); break;
 	case VER_PLATFORM_WIN32_WINDOWS: SYSLOG(("Windows 9x")); break;
 	case VER_PLATFORM_WIN32_NT: SYSLOG(("Windows NT")); break;
+#endif
 	}
 	SYSLOG(("\r\n"));
 
@@ -1301,6 +1297,7 @@ void Get_OS_Info(
 	switch (OSVersionPlatformId) {
 	default:
 		break;
+#ifdef _WIN32
 	case VER_PLATFORM_WIN32_WINDOWS:
 		{
 			for(int i=0;i<sizeof(Windows9xVersionTable)/sizeof(os_info);++i) {
@@ -1382,5 +1379,6 @@ void Get_OS_Info(
 
 		// No more-specific version detected; fallback to XX
 		os_info.Code="WINXX";
+#endif
 	}
 }

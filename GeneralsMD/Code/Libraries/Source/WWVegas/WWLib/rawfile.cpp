@@ -54,7 +54,6 @@
 
 #include	"always.h"
 #include	"RAWFILE.H"
-#include	<direct.h>
 //#include	<share.h>
 #include	<stddef.h>
 #include	<stdio.h>
@@ -66,6 +65,8 @@
 #ifdef _UNIX
 #include <sys/types.h>
 #include <sys/stat.h>
+#else 
+#include	<direct.h>
 #endif
 
 
@@ -554,12 +555,16 @@ bool RawFileClass::Is_Available(int forced)
 	*/
 	int closeok;
 	#ifdef _UNIX
-		closeok=((fclose(Handle)==0)?TRUE:FALSE);
+		closeok=((fclose(Handle)==0)?true:false);
 	#else
 		closeok=CloseHandle(Handle);
 	#endif
 	if (! closeok) {
+	#ifdef _UNIX
+		Error(errno, false, Filename);
+	#else
 		Error(GetLastError(), false, Filename);
+	#endif
 	}
 	Handle = NULL_HANDLE;
 
@@ -595,13 +600,17 @@ void RawFileClass::Close(void)
 		*/
 		int closeok;
 		#ifdef _UNIX
-			closeok=(fclose(Handle)==0)?TRUE:FALSE;	
+			closeok=(fclose(Handle)==0)?true:false;	
 		#else
 			closeok=CloseHandle(Handle);
 		#endif
 
 		if (!closeok) {
+		#ifdef _UNIX
+			Error(errno, false, Filename);
+		#else
 			Error(GetLastError(), false, Filename);
+		#endif
 		}
 
 		/*
@@ -667,10 +676,10 @@ int RawFileClass::Read(void * buffer, int size)
 	while (size > 0) {
 		bytesread = 0;
 
-		int readok=TRUE;
+		int readok=true;
 
 		#ifdef _UNIX
-			readok=TRUE;
+			readok=true;
 			bytesread=fread(buffer,1,size,Handle);
 			if ((bytesread == 0)&&( ! feof(Handle)))
 				readok=ferror(Handle);
@@ -682,7 +691,11 @@ int RawFileClass::Read(void * buffer, int size)
 		if (! readok) {
 			size -= bytesread;
 			total += bytesread;
+			#ifdef _UNIX
+			Error(errno, true, Filename);
+			#else
 			Error(GetLastError(), true, Filename);
+			#endif
 			continue;
 		}
 		size -= bytesread;
@@ -735,17 +748,21 @@ int RawFileClass::Write(void const * buffer, int size)
 		opened = true;
 	}
 
-   int writeok=TRUE;
+   int writeok=true;
    #ifdef _UNIX
 		byteswritten = fwrite(buffer, 1, size, Handle);
 		if (byteswritten != size)
-			writeok = FALSE;
+			writeok = false;
 	#else
 		writeok=WriteFile(Handle, buffer, size, &(unsigned long&)byteswritten, NULL);
 	#endif
 
 	if (! writeok) {
+	#ifdef _UNIX
+		Error(errno, true, Filename);
+	#else
 		Error(GetLastError(), false, Filename);
+	#endif
 	}
 
 	/*
@@ -878,18 +895,18 @@ int RawFileClass::Size(void)
 	*/
 	if (Is_Open()) {
 
-      #ifdef _UNIX
-			fpos_t curpos,startpos,endpos;
-			fgetpos(Handle,&curpos);	
+		#ifdef _UNIX
+			long curpos,startpos,endpos;
+			curpos = ftell(Handle);
 
 			fseek(Handle,0,SEEK_SET);
-			fgetpos(Handle,&startpos);	
+			startpos = ftell(Handle);
 
 			fseek(Handle,0,SEEK_END);
-			fgetpos(Handle,&endpos);	
+			endpos = ftell(Handle);
 
 			size=endpos-startpos;
-			fsetpos(Handle,&curpos);
+			fseek(Handle,curpos, SEEK_SET);
 		#else
 			size = GetFileSize(Handle, NULL);
 		#endif
@@ -898,7 +915,11 @@ int RawFileClass::Size(void)
 		**	If there was in internal error, then call the error function.
 		*/
 		if (size == 0xFFFFFFFF) {
+		#ifdef _UNIX
+			Error(errno, false, Filename);
+		#else
 			Error(GetLastError(), false, Filename);
+		#endif
 		}
 
 	} else {
@@ -1010,13 +1031,17 @@ int RawFileClass::Delete(void)
 
 		int deleteok;
 		#ifdef _UNIX
-			deleteok=(unlink(Filename)==0)?TRUE:FALSE;
+			deleteok=(unlink(Filename)==0)?true:false;
 		#else
 			deleteok=DeleteFile(Filename);
 		#endif
 
 		if (! deleteok) {
+		#ifdef _UNIX
+			Error(errno, false, Filename);
+		#else
 			Error(GetLastError(), false, Filename);
+		#endif
 			return(false);
 		}
 		break;
@@ -1225,7 +1250,11 @@ int RawFileClass::Raw_Seek(int pos, int dir)
 	**	If there was an error in the seek, then bail with an error condition.
 	*/
 	if (pos == 0xFFFFFFFF) {
+	#ifdef _UNIX
+		Error(errno, false, Filename);
+	#else
 		Error(GetLastError(), false, Filename);
+	#endif
 	}
 
 	/*

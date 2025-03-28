@@ -320,7 +320,9 @@ MixFileFactoryClass::Flush_Changes (void)
 	//
 	char drive[_MAX_DRIVE] = { 0 };
 	char dir[_MAX_DIR] = { 0 };
+	#ifdef _WIN32
 	::_splitpath (MixFilename, drive, dir, NULL, NULL);
+	#endif
 	StringClass path	= drive;
 	path					+= dir;
 
@@ -370,8 +372,10 @@ MixFileFactoryClass::Flush_Changes (void)
 	//
 	//	Delete the old mix file and rename the new one
 	//
+	#ifdef _WIN32
 	::DeleteFile (MixFilename);
 	::MoveFile (full_path, MixFilename);
+	#endif
 
 	//
 	//	Reset the lists
@@ -398,10 +402,12 @@ MixFileFactoryClass::Get_Temp_Filename (const char *path, StringClass &full_path
 	//
 	for (int index = 0; index < 20; index ++) {
 		full_path.Format ("%s%.2d.dat", (const char *)temp_path, index + 1);
+		#ifdef _WIN32
 		if (GetFileAttributes (full_path) == 0xFFFFFFFF) {
 			retval = true;
 			break;
 		}
+		#endif
 	}
 
 	return retval;
@@ -657,6 +663,7 @@ void	MixFileCreator::Add_File( const char * filename, FileClass *file )
 */
 void	Add_Files( const char * dir, MixFileCreator & mix )
 {
+#ifdef _WIN32
 	BOOL bcontinue = TRUE;
 	HANDLE hfile_find;
 	WIN32_FIND_DATA find_info = {0};
@@ -682,6 +689,9 @@ void	Add_Files( const char * dir, MixFileCreator & mix )
 //			WWDEBUG_SAY(( "Adding file from %s %s\n", source, name ));
 		}
 	}
+#else
+	#pragma message("Add_Files not implemented for this platform")
+#endif
 }
 
 void	Setup_Mix_File( void )

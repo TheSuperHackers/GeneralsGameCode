@@ -34,8 +34,8 @@
 
 #include <math.h>
 #include <string.h>
-// SuperHackers: Standard integer types & utility macros for cross-platform compatibility
-#include <Utility/CompatMacros.h>
+// SuperHackers: utility macros for cross-platform compatibility
+#include <Utility/Compat.h>
 
 /*
 **	Turn off some unneeded warnings.

@@ -28,7 +28,6 @@
 #ifdef _UNIX
 #include "osdep.h"
 #include <linux/kernel.h>
-#include <linux/sys.h>
 
 extern "C" {
 	int sysinfo(struct sysinfo *info);

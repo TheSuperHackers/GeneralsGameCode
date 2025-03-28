@@ -1,7 +1,12 @@
 #pragma once
 
-#if !(defined(_MSC_VER) && _MSC_VER < 1300)
+// VC6 macros
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#define __debugbreak() __asm { int 3 }
+#endif
 
+// Non-VC6 macros
+#if !(defined(_MSC_VER) && _MSC_VER < 1300)
 #include <cstdint>
 
 #if !defined(_lrotl) && !defined(_WIN32)

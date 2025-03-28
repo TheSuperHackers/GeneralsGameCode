@@ -39,6 +39,9 @@
 #include <memory.h>
 #include "WWFILE.H"
 
+// SuperHackers: For _vsnprintf
+#include <Utility/Compat.h>
+
 #pragma warning(disable : 4514)
 
 int FileClass::Printf(char *str, ...)
