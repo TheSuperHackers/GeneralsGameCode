@@ -186,7 +186,7 @@ int PrimitiveAnimationChannelClass<T>::Get_Key_Count (void) const
 //	Set_Key_Value
 /////////////////////////////////////////////////////////
 template<class T>
-typename const PrimitiveAnimationChannelClass<T>::KeyClass &PrimitiveAnimationChannelClass<T>::Get_Key (int index) const
+const typename PrimitiveAnimationChannelClass<T>::KeyClass &PrimitiveAnimationChannelClass<T>::Get_Key (int index) const
 {
 	return m_Data[index];
 }
@@ -361,8 +361,8 @@ LERPAnimationChannelClass<T>::Evaluate (float time)
 			this->m_LastIndex = 0;
 		}
 
-		KeyClass *key1 = &m_Data[m_LastIndex];
-		KeyClass *key2 = &m_Data[key_count - 1];
+		typename PrimitiveAnimationChannelClass<T>::KeyClass *key1 = &m_Data[m_LastIndex];
+		typename PrimitiveAnimationChannelClass<T>::KeyClass *key2 = &m_Data[key_count - 1];
 
 		//
 		// Search, using last_key as our starting point
