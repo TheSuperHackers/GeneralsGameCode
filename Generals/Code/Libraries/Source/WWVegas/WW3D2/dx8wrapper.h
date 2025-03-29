@@ -750,6 +750,7 @@ WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector4& color)
 
 WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector3& color,float alpha)
 {
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	const float scale = 255.0;
 	unsigned int col;
 
@@ -801,7 +802,6 @@ skip:
 		or		eax,ecx					// (a << 24) | b
 		or		eax,ebx					// (a << 24) | (r << 16) | b
 		or		eax,edx					// (a << 24) | (r << 16) | (g << 8) | b
-		
 		fstp	st(0)
 
 		// Restore fpu rounding mode
@@ -816,6 +816,9 @@ not_changed:
 		mov	col,eax
 	}
 	return col;
+#else
+	return color.Convert_To_ARGB(alpha);
+#endif // defined(_MSC_VER) && _MSC_VER < 1300
 }
 
 // ----------------------------------------------------------------------------
@@ -826,14 +829,8 @@ not_changed:
 
 WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
 {
-	if (!CPUDetectClass::Has_CMOV_Instruction()) {
-		for (int i=0;i<4;++i) {
-			float f=(color[i]<0.0f) ? 0.0f : color[i];
-			color[i]=(f>1.0f) ? 1.0f : f;
-		}
-		return;
-	}
-
+#if defined(_MSC_VER) && _MSC_VER < 1300
+	if (CPUDetectClass::Has_CMOV_Instruction()) {
 	__asm
 	{
 		mov	esi,dword ptr color
@@ -875,6 +872,14 @@ WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
 		cmp edi,edx		// if no less than 1.0 set to 1.0
 		cmovnb edi,edx
 		mov dword ptr[esi+12],edi
+	}
+	return;
+	}
+#endif // defined(_MSC_VER) && _MSC_VER < 1300
+
+	for (int i=0;i<4;++i) {
+		float f=(color[i]<0.0f) ? 0.0f : color[i];
+		color[i]=(f>1.0f) ? 1.0f : f;
 	}
 }
 

@@ -139,9 +139,13 @@ void					WWDebug_DBWin32_Message_Handler( const char * message);
 ** the debugger...
 */
 #ifdef WWDEBUG
-#define WWDEBUG_BREAK							_asm int 0x03
+# if defined(_MSC_VER) && _MSC_VER < 1300
+# define WWDEBUG_BREAK _asm int 0x03
+# else
+# define WWDEBUG_BREAK __debugbreak();
+# endif
 #else
-#define WWDEBUG_BREAK							_asm int 0x03
+#define WWDEBUG_BREAK
 #endif
 
 /*
