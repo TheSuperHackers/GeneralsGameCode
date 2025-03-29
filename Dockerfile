@@ -1,4 +1,8 @@
-FROM debian:12.9-slim
+FROM debian:12.10-slim
+
+# Build arguments
+ARG CMAKE_VERSION="3.31.6"
+ARG GIT_VERSION="2.49.0"
 
 WORKDIR /build
 
@@ -21,13 +25,13 @@ RUN apt clean \
 WORKDIR /build/tools/
 
 # Install cmake windows
-RUN wget https://github.com/Kitware/CMake/releases/download/v3.31.6/cmake-3.31.6-windows-x86_64.zip \
-    && unzip cmake-3.31.6-windows-x86_64.zip -d /build/tools/ \
-    && mv /build/tools/cmake-3.31.6-windows-x86_64 /build/tools/cmake
+RUN wget https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-windows-x86_64.zip \
+    && unzip cmake-${CMAKE_VERSION}-windows-x86_64.zip -d /build/tools/ \
+    && mv /build/tools/cmake-${CMAKE_VERSION}-windows-x86_64 /build/tools/cmake
 
 # Install git windows
-RUN wget https://github.com/git-for-windows/git/releases/download/v2.49.0-rc1.windows.1/MinGit-2.49.0-rc1-64-bit.zip \
-    && unzip MinGit-2.49.0-rc1-64-bit.zip -d /build/tools/ \
+RUN wget https://github.com/git-for-windows/git/releases/download/v${GIT_VERSION}.windows.1/MinGit-${GIT_VERSION}-64-bit.zip \
+    && unzip MinGit-${GIT_VERSION}-64-bit.zip -d /build/tools/ \
     && mv /build/tools/cmd /build/tools/git
 
 # Install Visual Studio 6 Portable
@@ -77,10 +81,12 @@ ENV GIT_VERSION_STRING="2.49.0"
 WORKDIR /build/cnc
 VOLUME /build/cnc
 
+ENV PRESET=vc6
+
 # Compile
 CMD wineboot \
     && wine /build/tools/cmake/bin/cmake.exe \
-        --preset vc6 \
+        --preset ${PRESET} \
         -DCMAKE_SYSTEM="Windows" \
         -DCMAKE_SYSTEM_NAME="Windows" \
         -DCMAKE_SIZEOF_VOID_P=4 \
