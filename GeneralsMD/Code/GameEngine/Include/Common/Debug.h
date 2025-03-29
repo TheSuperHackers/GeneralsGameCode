@@ -95,6 +95,26 @@ class AsciiString;
 	#define DEBUG_EXTERN_C extern
 #endif
 
+// The following define controls whether fake ips are enabled
+// If it's enabled, it changes the behavior of the game in some ways:
+// - The game can be started multiple times on the same machine.
+// - It can be called with the commandline -fakeip 1 (or some other number),
+//   assigning it a fake ip.
+// - Multiple instances with fake ips can communicate with each other on the
+//   same machine, as if they are communicating in a LAN.
+// - The replay is saved to a separate file for each instance (00000000_42.rep for ip 42)
+// - The logfile (if one is created) is also saved with the ip name in the filename.
+// So, if you want to use this to debug network functionality on a single computer
+// you can enable this define and start the game multiple times, each time passing a different
+// fake ip.
+// WARNING: If this define is set (even if no fake ip is supplied):
+// - all network communication works internally via broadcasts (not just in the lobby room).
+//   so you might wanna disconnect from your network while using this.
+// - the network protocol becomes incompatible with the original.
+//
+// Note that this define is currently in Debug.h. That's because the logfile is created
+// before the commandline is parsed, and we need to create the log file with the correct name.
+#define ENABLE_FAKE_IP 0
 
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 
@@ -112,6 +132,10 @@ class AsciiString;
 #define DEBUG_STRING_IT(b)	#b
 #define DEBUG_TOKEN_IT(a)		DEBUG_STRING_IT(a)
 #define DEBUG_FILENLINE			__FILE__ ":" DEBUG_TOKEN_IT(__LINE__)
+
+#if ENABLE_FAKE_IP
+	DEBUG_EXTERN_C int getFakeIPNo();
+#endif
 
 #ifdef ALLOW_DEBUG_UTILS
 
