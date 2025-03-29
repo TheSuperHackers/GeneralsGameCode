@@ -190,7 +190,6 @@ __forceinline long fast_float2long_round(float f)
 		fistp [i]
 	}
 #else
-	// TheSuperHackers @fix Use simple C code instead of inline assembly
 	i = lroundf(f);
 #endif
 
