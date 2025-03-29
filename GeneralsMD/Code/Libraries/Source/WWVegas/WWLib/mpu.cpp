@@ -96,12 +96,12 @@ unsigned long Get_CPU_Clock(unsigned long & high)
 		mov	[h],edx
 		mov	[l],eax
 	}
-	high = h;
 #else
 	auto tsc = _rdtsc();
 	h = tsc >> 32;
 	l = tsc & 0xFFFFFFFF;
 #endif
+	high = h;
 	return(l);
 }
 
