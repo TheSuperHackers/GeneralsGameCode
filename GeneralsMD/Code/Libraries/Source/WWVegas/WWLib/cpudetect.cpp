@@ -1266,7 +1266,7 @@ void Get_OS_Info(
 	unsigned build_sub=(OSVersionBuildNumber&0xffff);
 
 	// TheSuperHackers @bugfix JAJames 17/03/2025 Fix uninitialized memory access and add more Windows versions.
-	os_info = {0};
+	memset(&os_info,0,sizeof(os_info));
 	os_info.Code="UNKNOWN";
 	os_info.SubCode="UNKNOWN";
 	os_info.VersionString="UNKNOWN";
