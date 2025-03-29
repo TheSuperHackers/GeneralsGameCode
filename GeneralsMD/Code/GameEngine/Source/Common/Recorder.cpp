@@ -924,12 +924,19 @@ AsciiString RecorderClass::getCurrentReplayFilename( void )
 	return AsciiString::TheEmptyString;
 }
 
+// For some strange reason, the CRC in the replay isn't saved for the frame it is generated on.
+// Instead, our CRC message that is received from ourself is saved to the replay as the game is played.
+// And that message is a few frames late. In order to check the CRC at playback time, we need to
+// queue up our local CRCs, so that we can check it with the crc messages that come later.
+// This class is basically that queue.
 class CRCInfo
 {
 public:
-	CRCInfo();
+	CRCInfo(UnsignedInt localPlayer, Bool isMultiplayer);
 	void addCRC(UnsignedInt val);
 	UnsignedInt readCRC(void);
+
+	int GetQueueSize() { return m_data.size(); }
 
 	void setLocalPlayer(UnsignedInt index) { m_localPlayer = index; }
 	UnsignedInt getLocalPlayer(void) { return m_localPlayer; }
@@ -945,20 +952,24 @@ protected:
 	UnsignedInt m_localPlayer;
 };
 
-CRCInfo::CRCInfo()
+CRCInfo::CRCInfo(UnsignedInt localPlayer, Bool isMultiplayer)
 {
-	m_localPlayer = ~0;
-	m_skippedOne = FALSE;
+	m_localPlayer = localPlayer;
+	m_skippedOne = !isMultiplayer;
 	m_sawCRCMismatch = FALSE;
 }
 
 void CRCInfo::addCRC(UnsignedInt val)
 {
-	//if (!m_skippedOne)
-	//{
-	//	m_skippedOne = TRUE;
-	//	return;
-	//}
+	// In Multiplayer, the first MSG_LOGIC_CRC message somehow doesn't make it through the network.
+	// It's probably because the network isn't set up yet on frame 0, but I'm not sure.
+	// So we also don't queue up the first local crc message, otherwise the crc
+	// messages wouldn't match up anymore and we'd desync immediately during playback.
+	if (!m_skippedOne)
+	{
+		m_skippedOne = TRUE;
+		return;
+	}
 
 	m_data.push_back(val);
 	//DEBUG_LOG(("CRCInfo::addCRC() - crc %8.8X pushes list to %d entries (full=%d)\n", val, m_data.size(), !m_data.empty()));
@@ -968,7 +979,7 @@ UnsignedInt CRCInfo::readCRC(void)
 {
 	if (m_data.empty())
 	{
-		//DEBUG_LOG(("CRCInfo::readCRC() - bailing, full=0, size=%d\n", m_data.size()));
+		DEBUG_LOG(("CRCInfo::readCRC() - bailing, full=0, size=%d\n", m_data.size()));
 		return 0;
 	}
 
@@ -997,7 +1008,8 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 	if (samePlayer || (localPlayerIndex < 0))
 	{
 		UnsignedInt playbackCRC = m_crcInfo->readCRC();
-		//DEBUG_LOG(("RecorderClass::handleCRCMessage() - Comparing CRCs of %8.8X/%8.8X from %d\n", newCRC, playbackCRC, playerIndex));
+		//DEBUG_LOG(("RecorderClass::handleCRCMessage() - Comparing CRCs of InGame:%8.8X Replay:%8.8X Frame:%d from Player %d\n",
+		//	playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1, playerIndex));
 		if (TheGameLogic->getFrame() > 0 && newCRC != playbackCRC && !m_crcInfo->sawCRCMismatch())
 		{
 			m_crcInfo->setSawCRCMismatch();
@@ -1008,8 +1020,8 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 			// tail end of patch season, let's just disable the message, and hope the users believe the
 			// problem is fixed. -MDC 3/20/2003
 			TheInGameUI->message("GUI:CRCMismatch");
-			DEBUG_CRASH(("Replay has gone out of sync!  All bets are off!\nOld:%8.8X New:%8.8X\nFrame:%d",
-				playbackCRC, newCRC, TheGameLogic->getFrame()));
+			DEBUG_CRASH(("Replay has gone out of sync!  All bets are off!\nInGame:%8.8X Replay:%8.8X\nFrame:%d",
+				playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1));
 		}
 		return;
 	}
@@ -1124,8 +1136,8 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	}
 #endif
 
-	m_crcInfo = NEW CRCInfo;
-	m_crcInfo->setLocalPlayer(header.localPlayerIndex);
+	Bool isMultiplayer = m_gameInfo.getSlot(header.localPlayerIndex)->getIP() != 0;
+	m_crcInfo = NEW CRCInfo(header.localPlayerIndex, isMultiplayer);
 	REPLAY_CRC_INTERVAL = m_gameInfo.getCRCInterval();
 	DEBUG_LOG(("Player index is %d, replay CRC interval is %d\n", m_crcInfo->getLocalPlayer(), REPLAY_CRC_INTERVAL));
 
