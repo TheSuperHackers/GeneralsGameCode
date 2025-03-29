@@ -196,4 +196,5 @@ target_sources(g_wwlib PRIVATE ${WWLIB_SRC})
 
 target_link_libraries(g_wwlib PRIVATE
     g_wwcommon
+    gi_libraries_include
 )
