@@ -52,7 +52,7 @@ void __cdecl ThreadClass::Internal_Thread_Function(void* params)
 	tc->running=true;
 	tc->ThreadID = GetCurrentThreadId();
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__GNUC__)
 	Register_Thread_ID(tc->ThreadID, tc->ThreadName);
 
 	if (tc->ExceptionHandler != NULL) {
@@ -67,7 +67,7 @@ void __cdecl ThreadClass::Internal_Thread_Function(void* params)
 	tc->Thread_Function();
 #endif //_WIN32
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__GNUC__)
 	Unregister_Thread_ID(tc->ThreadID, tc->ThreadName);
 #endif // _WIN32
 	tc->handle=0;
