@@ -10,6 +10,7 @@ sections:
     pattern: "^(\\w+): (.+)"
     yaml_key: "changes"
     processor: "key_value"
+    example: "- fix: Description of change"
     required: true
     allowed_keywords:
       - fix
@@ -28,6 +29,7 @@ sections:
     pattern: "@?(\\w+)"
     yaml_key: "authors"
     default: "$pr_creator"
+    example: "@username"
     merge_with: ["$pr_creator"]
     processor: "flat_list"
 
@@ -36,6 +38,7 @@ sections:
     header: "Fixes Issue\\(s\\)"
     pattern: "([Cc]loses|[Ff]ixes|[Rr]esolves) (#?\\d+)"
     yaml_key: "fixes_issues"
+    example: "- closes #123 or - fixes https://github.com/.../issues/456"
     processor: "structured_links"
     link_type: "issue"
 
@@ -44,6 +47,7 @@ sections:
     header: "Updates PR\\(s\\)"
     pattern: "([Uu]pdates|[Cc]ontinues) (#?\\d+)"
     yaml_key: "updates_prs"
+    example: "- Updates #2"
     processor: "structured_links"
     link_type: "pr"
 
@@ -52,6 +56,7 @@ title_processing:
   scope_pattern: "^\\[([\\w\/]+)\\]"  # Pattern to extract scopes from title
   scope_key: "affects"                # YAML key for extracted scopes
   clean_title: true                   # Whether to remove scopes from final title
+  example: "[GEN] short description, or [GEN/ZH] short description"  # Example title format
   allowed_scopes:                     # Validate title prefixes
     - GEN
     - ZH
