@@ -274,7 +274,7 @@ float	TextDrawClass::Print( Font3DInstanceClass *font, char ch, float screen_x, 
 	/*
 	** Set the triangles' texture
 	*/
-	Set_Texture( font->Peek_Texture( ch ) );
+	Set_Texture( font->Peek_Texture(/* ch */) );
 
 	/*
 	** Draw the quad
@@ -338,7 +338,7 @@ void	TextDrawClass::Show_Font( Font3DInstanceClass *font, float screen_x, float 
    float size_x = PixelSize.X * 256;
    float size_y = PixelSize.Y * 256;
 
-	Set_Texture( font->Peek_Texture('A') );
+	Set_Texture( font->Peek_Texture(/* 'A' */) );
 
 	Quad( screen_x, screen_y, screen_x + size_x, screen_y + size_y * WWMath::Sign( -TranslateScale.Y ) );
 }
