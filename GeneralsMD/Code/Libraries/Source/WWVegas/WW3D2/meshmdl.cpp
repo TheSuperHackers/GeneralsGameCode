@@ -133,9 +133,9 @@ MeshModelClass & MeshModelClass::operator = (const MeshModelClass & that)
 		*DefMatDesc = *(that.DefMatDesc);
 		CurMatDesc = DefMatDesc;
 
-		if (AlternateMatDesc != NULL) {
-			delete AlternateMatDesc;
-			AlternateMatDesc = NULL;
+		if (this->AlternateMatDesc != NULL) {
+			delete this->AlternateMatDesc;
+			this->AlternateMatDesc = NULL;
 		}
 
 		if (that.AlternateMatDesc != NULL) {

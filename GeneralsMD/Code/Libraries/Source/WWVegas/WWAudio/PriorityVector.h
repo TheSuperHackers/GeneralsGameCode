@@ -69,18 +69,18 @@ template <class T>
 __inline bool PriorityVectorClass<T>::Process_Head (T &object)
 {
 	bool retval = false;	
-	if (Vector != NULL) {
+	if (this->Vector != NULL) {
 		
 		// Pass the object back to the caller
-		object = Vector[0];
+		object = this->Vector[0];
 
 		//
 		//	Move the head object to the end of the list
 		//
-		for (int index = 1; index < ActiveCount; index ++) {
-			Vector[index - 1] = Vector[index];
+		for (int index = 1; index < this->ActiveCount; index ++) {
+			this->Vector[index - 1] = this->Vector[index];
 		}
-		Vector[ActiveCount - 1] = object;
+		this->Vector[this->ActiveCount - 1] = object;
 
 		// Success!
 		retval = true;
