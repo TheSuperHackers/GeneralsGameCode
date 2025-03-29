@@ -34,6 +34,8 @@
 
 #include <math.h>
 #include <string.h>
+// SuperHackers: utility macros for cross-platform compatibility
+#include <Utility/Compat.h>
 
 /*
 **	Turn off some unneeded warnings.
@@ -131,8 +133,13 @@ typedef char							Byte;							// 1 byte		USED TO BE "SignedByte"
 typedef char							Char;							// 1 byte of text
 typedef bool							Bool;							// 
 // note, the types below should use "long long", but MSVC doesn't support it yet
+#ifdef _MSC_VER
 typedef __int64						Int64;							// 8 bytes 
 typedef unsigned __int64	UnsignedInt64;	  	// 8 bytes 
+#else
+typedef long long						Int64;							// 8 bytes 
+typedef unsigned long long	UnsignedInt64;	  	// 8 bytes 
+#endif
 
 #include "Lib/trig.h"
 
@@ -184,10 +191,15 @@ __forceinline long fast_float2long_round(float f)
 {
 	long i;
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	__asm {
 		fld [f]
 		fistp [i]
 	}
+#else
+	// TheSuperHackers @fix Use simple C code instead of inline assembly
+	i = lroundf(f);
+#endif
 
 	return i;
 }
@@ -196,6 +208,7 @@ __forceinline long fast_float2long_round(float f)
 // code courtesy of Martin Hoffesommer (grin)
 __forceinline float fast_float_trunc(float f)
 {
+#if defined(_MSC_VER) && _MSC_VER < 1300
   _asm
   {
     mov ecx,[f]
@@ -208,6 +221,15 @@ __forceinline float fast_float_trunc(float f)
     and [f],eax
   }
   return f;
+#else
+  unsigned x = *(unsigned *)&f;
+  unsigned char exp = x >> 23;
+  int mask = exp < 127 ? 0 : 0xff800000;
+  exp -= 127;
+  mask >>= exp & 31;
+  x &= mask;
+  return *(float *)&x;
+#endif
 }
 
 // same here, fast floor function

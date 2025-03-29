@@ -53,7 +53,9 @@
 #include "wwprofile.h"
 #include "FastAllocator.h"
 #include "wwdebug.h"
+#ifdef _WIN32
 #include <windows.h>
+#endif
 //#include "systimer.h"
 #include "systimer.h"
 #include "RAWFILE.H"

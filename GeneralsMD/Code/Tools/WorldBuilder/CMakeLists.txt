@@ -180,7 +180,7 @@ set(WORLDBUILDER_SRC
     "include/TeamIdentity.h"
     "include/TeamReinforcement.h"
     "include/teamsdialog.h"
-    "include/terrainmaterial.h"
+    "include/TerrainMaterial.h"
     "include/TerrainModal.h"
     "include/TerrainSwatches.h"
     "include/TileTool.h"
@@ -222,7 +222,7 @@ target_link_libraries(z_worldbuilder PRIVATE
     z_profile
     zi_gameengine_include
     zi_gameenginedevice_include
-    zi_libraries_include
+    zi_utility
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

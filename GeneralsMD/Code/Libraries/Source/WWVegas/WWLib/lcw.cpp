@@ -124,7 +124,7 @@ int LCW_Uncomp(void const * source, void * dest, unsigned long )
 					word_data  = (word_data << 24) + (word_data << 16) + (word_data << 8) + word_data;
 					source_ptr += 3;
 
-					copy_ptr = dest_ptr + 4 - ((unsigned) dest_ptr & 0x3);
+					copy_ptr = dest_ptr + 4 - ((unsigned long) dest_ptr & 0x3);
 					count -= (copy_ptr - dest_ptr);
 					while (dest_ptr < copy_ptr) *dest_ptr++ = data;
 
@@ -168,7 +168,7 @@ int LCW_Uncomp(void const * source, void * dest, unsigned long )
 }
 
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && defined(_M_IX86)
 
 
 /*********************************************************************************************** 
@@ -195,6 +195,7 @@ int LCW_Uncomp(void const * source, void * dest, unsigned long )
  *   05/20/1997 JLB : Created.                                                                 * 
  *=============================================================================================*/
 /*ARGSUSED*/
+// unused
 int LCW_Comp(void const * source, void * dest, int datasize)
 {
 	int retval = 0;
@@ -439,6 +440,6 @@ outofhere:
 #endif
 	return(retval);
 }
-#endif
+#endif // defined(_MSC_VER) && defined(_M_IX86)
 
 

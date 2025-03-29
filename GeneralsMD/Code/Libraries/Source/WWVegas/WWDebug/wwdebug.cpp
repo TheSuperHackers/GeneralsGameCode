@@ -43,7 +43,11 @@
 
 
 #include "wwdebug.h"
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <errno.h>
+#endif
 //#include "win.h" can use this if allowed to see wwlib
 #include <stdlib.h>
 #include <stdarg.h>
@@ -79,7 +83,11 @@ void Convert_System_Error_To_String(int id, char* buffer, int buf_len)
 
 int Get_Last_System_Error()
 {
+#ifndef _UNIX
 	return GetLastError();
+#else
+	return errno;
+#endif
 }
 
 /***********************************************************************************************
@@ -313,7 +321,7 @@ void WWDebug_Assert_Fail(const char * expr,const char * file, int line)
       }
 
 		if (code == IDRETRY) {
-			_asm int 3;
+			WWDEBUG_BREAK
       	return;
 		}
    }

@@ -17,7 +17,7 @@ target_link_libraries(g_generals PRIVATE
     dxguid
     g_gameengine
     g_gameenginedevice
-    gi_libraries_include
+    gi_utility
     gi_libraries_source
     imm32
     milesstub
