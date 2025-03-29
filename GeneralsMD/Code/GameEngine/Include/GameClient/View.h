@@ -232,6 +232,8 @@ public:
 	virtual void forceCameraConstraintRecalc(void) {}
 	virtual void setGuardBandBias( const Coord2D *gb ) = 0;
 
+	virtual void adjustFovToAspectRatio(const Int width, const Int height) { };
+
 protected:
 
 	friend class Display;
