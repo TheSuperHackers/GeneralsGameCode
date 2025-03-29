@@ -1,7 +1,6 @@
 # Set source files
 set(WWLIB_SRC
     _convert.cpp
-    _mono.cpp
     b64pipe.cpp
     b64straw.cpp
     base64.cpp
@@ -15,8 +14,6 @@ set(WWLIB_SRC
     crc.cpp
     cstraw.cpp
     data.cpp
-    ddraw.cpp
-    dsurface.cpp
     ffactory.cpp
     gcd_lcm.cpp
     hash.cpp
@@ -24,14 +21,10 @@ set(WWLIB_SRC
     ini.cpp
     int.cpp
     jshell.cpp
-    keyboard.cpp
     LaunchWeb.cpp
     lcw.cpp
     load.cpp
-    mono.cpp
     mpmath.cpp
-    mpu.cpp
-    msgloop.cpp
     multilist.cpp
     mutex.cpp
     nstrdup.cpp
@@ -43,11 +36,9 @@ set(WWLIB_SRC
     random.cpp
     rawfile.cpp
     rc4.cpp
-    rcfile.cpp
     readline.cpp
     realcrc.cpp
     refcount.cpp
-    registry.cpp
     rgb.cpp
     rle.cpp
     rndstrng.cpp
@@ -66,15 +57,12 @@ set(WWLIB_SRC
     trim.cpp
     vector.cpp
     widestring.cpp
-    win.cpp
-    WWCOMUtil.cpp
     wwfile.cpp
     wwfont.cpp
     wwstring.cpp
     xpipe.cpp
     xstraw.cpp
     xsurface.cpp
-    _mono.h
     always.h
     argv.h
     b64pipe.h
@@ -98,7 +86,6 @@ set(WWLIB_SRC
     CRC.H
     cstraw.h
     data.h
-    dsurface.h
     ffactory.h
     FONT.H
     gcd_lcm.h
@@ -112,17 +99,13 @@ set(WWLIB_SRC
     inisup.h
     INT.H
     iostruct.h
-    keyboard.h
     LaunchWeb.h
     LCW.H
     LISTNODE.H
     mempool.h
     mixfile.h
-    MONO.H
     MONODRVR.H
     MPMATH.H
-    MPU.H
-    msgloop.h
     multilist.h
     mutex.h
     Notify.h
@@ -137,12 +120,10 @@ set(WWLIB_SRC
     RANDOM.H
     RAWFILE.H
     rc4.h
-    rcfile.h
     readline.h
     realcrc.h
     ref_ptr.h
     refcount.h
-    registry.h
     RGB.H
     RLE.H
     RNDSTRAW.H
@@ -178,8 +159,6 @@ set(WWLIB_SRC
     visualc.h
     WATCOM.H
     widestring.h
-    win.h
-    WWCOMUtil.h
     WWFILE.H
     wwstring.h
     xmouse.h
@@ -187,6 +166,31 @@ set(WWLIB_SRC
     XSTRAW.H
     xsurface.h
 )
+
+if(WIN32)
+    list(APPEND WWLIB_SRC
+        ddraw.cpp
+        dsurface.cpp
+        dsurface.h
+        keyboard.cpp
+        keyboard.h
+        mono.cpp
+        _mono.cpp
+        _mono.h
+        mpu.cpp
+        MPU.H
+        msgloop.cpp
+        msgloop.h
+        rcfile.cpp
+        rcfile.h
+        registry.cpp
+        registry.h
+        WWCOMUtil.cpp
+        WWCOMUtil.h
+        win.cpp
+        win.h
+    )
+endif()
 
 # Targets to build.
 add_library(g_wwlib STATIC)

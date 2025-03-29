@@ -43,7 +43,7 @@
 **	November of '94. Until the compiler supports this, use the following
 **	definition.
 */
-#include <new.h>
+#include <new>
 #include "always.h"
 #include	"bool.h"
 #include	<stdio.h>

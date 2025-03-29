@@ -20,11 +20,13 @@
 
 #include "thread.h"
 #include "wwdebug.h"
+#ifdef _WIN32
 #include <process.h>
 #include <windows.h>
+#endif
 #pragma warning ( push )
 #pragma warning ( disable : 4201 ) 
-#include <mmsystem.h>
+#include "systimer.h"
 #pragma warning ( pop )
 
 ThreadClass::ThreadClass() : handle(0), running(false), thread_priority(0)
@@ -74,9 +76,9 @@ void ThreadClass::Stop(unsigned ms)
 		return;
 	#else
 		running=false;
-		unsigned time=timeGetTime();
+		unsigned time=TIMEGETTIME();
 		while (handle) {
-			if ((timeGetTime()-time)>ms) {
+			if ((TIMEGETTIME()-time)>ms) {
 				int res=TerminateThread((HANDLE)handle,0);
 				res;	// just to silence compiler warnings
 				WWASSERT(res);	// Thread still not killed!
