@@ -1548,7 +1548,7 @@ Int ThingTemplate::calcCostToBuild( const Player* player) const
 //-------------------------------------------------------------------------------------------------
 Int ThingTemplate::calcTimeToBuild( const Player* player) const
 {
-	Int buildTime = getBuildTime() * LOGICFRAMES_PER_SECOND;
+	Int buildTime = getBuildTime() * static_cast<Real>(LOGICFRAMES_PER_SECOND);
 	buildTime *= player->getHandicap()->getHandicap(Handicap::BUILDTIME, this);
 
 	Real factionModifier = 1 + player->getProductionTimeChangePercent( getName() );

@@ -260,7 +260,7 @@ UpdateSleepTime MinefieldBehavior::update()
 	if (m_draining)
 	{
 		DamageInfo damageInfo;
-		damageInfo.in.m_amount = (obj->getBodyModule()->getMaxHealth() * d->m_healthPercentToDrainPerSecond) / LOGICFRAMES_PER_SECOND;
+		damageInfo.in.m_amount = (obj->getBodyModule()->getMaxHealth() * d->m_healthPercentToDrainPerSecond) / static_cast<Real>(LOGICFRAMES_PER_SECOND);
 		damageInfo.in.m_sourceID = obj->getID();
 		damageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
 		damageInfo.in.m_deathType = DEATH_NORMAL;

@@ -342,8 +342,8 @@ Int W3DTreeBuffer::getPartitionBucket(const Coord3D &pos) const
 	if (y<m_bounds.lo.y) y = m_bounds.lo.y;
 	if (x>m_bounds.hi.x) x = m_bounds.hi.x;
 	if (y>m_bounds.hi.y) y = m_bounds.hi.y;
-	Int xIndex = REAL_TO_INT_FLOOR ( (x/(m_bounds.hi.x-m_bounds.lo.x)) * (PARTITION_WIDTH_HEIGHT-0.1f) );
-	Int yIndex = REAL_TO_INT_FLOOR ( (y/(m_bounds.hi.y-m_bounds.lo.y)) * (PARTITION_WIDTH_HEIGHT-0.1f) );
+	Int xIndex = REAL_TO_INT_FLOOR ( (x/(m_bounds.hi.x-m_bounds.lo.x)) * (static_cast<Real>(PARTITION_WIDTH_HEIGHT)-0.1f) );
+	Int yIndex = REAL_TO_INT_FLOOR ( (y/(m_bounds.hi.y-m_bounds.lo.y)) * (static_cast<Real>(PARTITION_WIDTH_HEIGHT)-0.1f) );
 	DEBUG_ASSERTCRASH(xIndex>=0 && yIndex>=0 && xIndex<PARTITION_WIDTH_HEIGHT && yIndex<PARTITION_WIDTH_HEIGHT, ("Invalid range."));
 	return yIndex*PARTITION_WIDTH_HEIGHT + xIndex;
 }
@@ -358,7 +358,7 @@ void W3DTreeBuffer::updateSway(const BreezeInfo& info)
 {
 	Int i;
 	for	(i=0; i<NUM_SWAY_ENTRIES; i++) {
-		Real factor = Cos(i*2.0f*PI/(NUM_SWAY_ENTRIES+1.0f));
+		Real factor = Cos(i*2.0f*PI/(static_cast<Real>(NUM_SWAY_ENTRIES)+1.0f));
 		Real angle = info.m_lean + (info.m_intensity  * factor);
 		Real S = Sin(angle);
 		Real C = Cos(angle);
@@ -372,7 +372,7 @@ void W3DTreeBuffer::updateSway(const BreezeInfo& info)
 		m_trees[i].swayType = 1+GameClientRandomValue(0, MAX_SWAY_TYPES-1);
 	}
 	for (i=0; i<MAX_SWAY_TYPES; i++) {
-		m_curSwayStep[i] = NUM_SWAY_ENTRIES / (Real)info.m_breezePeriod;
+		m_curSwayStep[i] = static_cast<Real>(NUM_SWAY_ENTRIES) / (Real)info.m_breezePeriod;
 		m_curSwayStep[i]	*= GameClientRandomValueReal(1.0f-delta, 1.0f+delta);
 		if (m_curSwayStep[i]<0.0f) {
 			m_curSwayStep[i] = 0.0f;
@@ -1177,8 +1177,8 @@ void W3DTreeBuffer::unitMoved(Object *unit)
 	if (y<m_bounds.lo.y) y = m_bounds.lo.y;
 	if (x>m_bounds.hi.x) x = m_bounds.hi.x;
 	if (y>m_bounds.hi.y) y = m_bounds.hi.y;
-	Int xIndex = REAL_TO_INT_FLOOR ( (x/(m_bounds.hi.x-m_bounds.lo.x)) * (PARTITION_WIDTH_HEIGHT-0.1f) );
-	Int yIndex = REAL_TO_INT_FLOOR ( (y/(m_bounds.hi.y-m_bounds.lo.y)) * (PARTITION_WIDTH_HEIGHT-0.1f) );
+	Int xIndex = REAL_TO_INT_FLOOR ( (x/(m_bounds.hi.x-m_bounds.lo.x)) * (static_cast<Real>(PARTITION_WIDTH_HEIGHT)-0.1f) );
+	Int yIndex = REAL_TO_INT_FLOOR ( (y/(m_bounds.hi.y-m_bounds.lo.y)) * (static_cast<Real>(PARTITION_WIDTH_HEIGHT)-0.1f) );
 	DEBUG_ASSERTCRASH(xIndex>=0 && yIndex>=0 && xIndex<PARTITION_WIDTH_HEIGHT && yIndex<PARTITION_WIDTH_HEIGHT, ("Invalid range."));
 
 	x = pos.x+radius;
@@ -1187,8 +1187,8 @@ void W3DTreeBuffer::unitMoved(Object *unit)
 	if (y<m_bounds.lo.y) y = m_bounds.lo.y;
 	if (x>m_bounds.hi.x) x = m_bounds.hi.x;
 	if (y>m_bounds.hi.y) y = m_bounds.hi.y;
-	Int xMax = REAL_TO_INT_CEIL ( (x/(m_bounds.hi.x-m_bounds.lo.x)) * (PARTITION_WIDTH_HEIGHT-0.1f) );
-	Int yMax = REAL_TO_INT_CEIL ( (y/(m_bounds.hi.y-m_bounds.lo.y)) * (PARTITION_WIDTH_HEIGHT-0.1f) );
+	Int xMax = REAL_TO_INT_CEIL ( (x/(m_bounds.hi.x-m_bounds.lo.x)) * (static_cast<Real>(PARTITION_WIDTH_HEIGHT)-0.1f) );
+	Int yMax = REAL_TO_INT_CEIL ( (y/(m_bounds.hi.y-m_bounds.lo.y)) * (static_cast<Real>(PARTITION_WIDTH_HEIGHT)-0.1f) );
 	DEBUG_ASSERTCRASH(xMax>=0 && yMax>=0 && xMax<=PARTITION_WIDTH_HEIGHT && yMax<=PARTITION_WIDTH_HEIGHT, ("Invalid range."));
 	Int i, j;
 	for (i=xIndex; i<xMax; i++) {

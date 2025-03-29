@@ -2278,8 +2278,8 @@ UpdateSleepTime AIUpdateInterface::doLocomotor( void )
 							{
 								Real dist = sqrtf(dSqr);
 								if (dist<1) dist = 1;
-								pos.x += 2*PATHFIND_CELL_SIZE_F*dx/(dist*LOGICFRAMES_PER_SECOND);
-								pos.y += 2*PATHFIND_CELL_SIZE_F*dy/(dist*LOGICFRAMES_PER_SECOND);
+								pos.x += 2*PATHFIND_CELL_SIZE_F*dx/(dist* static_cast<Real>(LOGICFRAMES_PER_SECOND));
+								pos.y += 2*PATHFIND_CELL_SIZE_F*dy/(dist* static_cast<Real>(LOGICFRAMES_PER_SECOND));
 								if (onGround)
 									pos.z = TheTerrainLogic->getGroundHeight( pos.x, pos.y );
 								getObject()->setPosition(&pos);

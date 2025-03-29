@@ -417,7 +417,7 @@ inline Object* GameLogic::findObjectByID( ObjectID id )
 //		return NULL;
 //	
 //	return (*it).second;
-	if( (Int)id < m_objVector.size() )
+	if( (UnsignedInt)id < m_objVector.size() )
 		return m_objVector[(Int)id];
 
 	return NULL;

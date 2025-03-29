@@ -193,8 +193,8 @@ void W3DRadar::reconstructViewBox( void )
 	{
 
 		// first convert to radar cells
- 		radar[ i ].x = world[ i ].x / (m_mapExtent.width() / RADAR_CELL_WIDTH);
- 		radar[ i ].y = world[ i ].y / (m_mapExtent.height() / RADAR_CELL_HEIGHT);
+ 		radar[ i ].x = world[ i ].x / (m_mapExtent.width() / static_cast<Real>(RADAR_CELL_WIDTH));
+ 		radar[ i ].y = world[ i ].y / (m_mapExtent.height() / static_cast<Real>(RADAR_CELL_HEIGHT));
 
 		//
 		// store these points in the view box array which contains a first position
@@ -259,8 +259,8 @@ void W3DRadar::drawHeroIcon( Int pixelX, Int pixelY, Int width, Int height, cons
 	{
 		// convert world to radar coords
 		ICoord2D ulRadar; 
-		ulRadar.x = pos->x / (m_mapExtent.width() / RADAR_CELL_WIDTH);
-		ulRadar.y = pos->y / (m_mapExtent.height() / RADAR_CELL_HEIGHT);
+		ulRadar.x = pos->x / (m_mapExtent.width() / static_cast<Real>(RADAR_CELL_WIDTH));
+		ulRadar.y = pos->y / (m_mapExtent.height() / static_cast<Real>(RADAR_CELL_HEIGHT));
 
 		// convert radar to screen coords
 		ICoord2D offsetScreen;
@@ -311,8 +311,8 @@ void W3DRadar::drawViewBox( Int pixelX, Int pixelY, Int width, Int height )
 	TheTacticalView->screenToWorldAtZ( &ulScreen, &ulWorld, getTerrainAverageZ() );
 
 	// convert world to radar coords
- 	ulRadar.x = ulWorld.x / (m_mapExtent.width() / RADAR_CELL_WIDTH);
- 	ulRadar.y = ulWorld.y / (m_mapExtent.height() / RADAR_CELL_HEIGHT);
+ 	ulRadar.x = ulWorld.x / (m_mapExtent.width() / static_cast<Real>(RADAR_CELL_WIDTH));
+ 	ulRadar.y = ulWorld.y / (m_mapExtent.height() / static_cast<Real>(RADAR_CELL_HEIGHT));
 
 	//
 	// convert radar point to actual pixel coords on the screen, shifted
@@ -381,7 +381,7 @@ void W3DRadar::drawSingleBeaconEvent( Int pixelX, Int pixelY, Int width, Int hei
 	Real maxEventSize = width / 10.0f;   // max size of the event marker
 	Int minEventSize = 6;     // min size of the event marker
 	Int eventSize;									 // current size of a marker to draw
-	const Real TIME_FROM_FULL_SIZE_TO_SMALL_SIZE = LOGICFRAMES_PER_SECOND * 1.5;
+	const Real TIME_FROM_FULL_SIZE_TO_SMALL_SIZE = static_cast<Real>(LOGICFRAMES_PER_SECOND) * 1.5;
 	Real totalAnglesToSpin = 2.0f * PI;  ///< spin around this many angles going from big to small
 	UnsignedByte r, g, b, a;
 
@@ -480,7 +480,7 @@ void W3DRadar::drawSingleGenericEvent( Int pixelX, Int pixelY, Int width, Int he
 	Real maxEventSize = width / 2.0f;   // max size of the event marker
 	Int minEventSize = 6;     // min size of the event marker
 	Int eventSize;									 // current size of a marker to draw
-	const Real TIME_FROM_FULL_SIZE_TO_SMALL_SIZE = LOGICFRAMES_PER_SECOND * 1.5;
+	const Real TIME_FROM_FULL_SIZE_TO_SMALL_SIZE = static_cast<Real>(LOGICFRAMES_PER_SECOND) * 1.5;
 	Real totalAnglesToSpin = 2.0f * PI;  ///< spin around this many angles going from big to small
 	UnsignedByte r, g, b, a;
 
@@ -677,8 +677,8 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 		const Coord3D *pos = obj->getPosition();
 
 		// compute object position as a radar blip
-		radarPoint.x = pos->x / (m_mapExtent.width() / RADAR_CELL_WIDTH);
-		radarPoint.y = pos->y / (m_mapExtent.height() / RADAR_CELL_HEIGHT);
+		radarPoint.x = pos->x / (m_mapExtent.width() / static_cast<Real>(RADAR_CELL_WIDTH));
+		radarPoint.y = pos->y / (m_mapExtent.height() / static_cast<Real>(RADAR_CELL_HEIGHT));
 
 
     if ( skip )

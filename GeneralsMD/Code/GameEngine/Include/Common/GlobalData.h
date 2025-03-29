@@ -531,9 +531,14 @@ private:
 	GlobalData *newOverride( void );		/** create a new override, copy data from previous
 																			override, and return it */
 
-
+	// TheSuperHackers @buildwarningfix Mauller 28/03/2024 incomplete copy constructors causing uninitialised variable warnings in compilation.
+	#if defined(_MSC_VER) && _MSC_VER < 1300
 	GlobalData(const GlobalData& that) { DEBUG_CRASH(("unimplemented")); }
 	GlobalData& operator=(const GlobalData& that) { DEBUG_CRASH(("unimplemented")); return *this; }
+    #else
+	GlobalData(const GlobalData& that) = delete;
+	GlobalData& operator=(const GlobalData& that) = default;	//Copy constructor is actually used by the new override function.
+	#endif
 
 };
 

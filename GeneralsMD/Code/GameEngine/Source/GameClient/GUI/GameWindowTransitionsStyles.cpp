@@ -1702,8 +1702,8 @@ void ControlBarArrowTransition::init( GameWindow *win )
 	m_isFinished = FALSE;
 	m_isForward = TRUE;
 
-	m_percent = 1.0f / CONTROLBARARROWTRANSITION_BEGIN_FADE;
-	m_fadePercent = 1.0f/ (CONTROLBARARROWTRANSITION_END - CONTROLBARARROWTRANSITION_BEGIN_FADE);
+	m_percent = 1.0f / static_cast<Real>(CONTROLBARARROWTRANSITION_BEGIN_FADE);
+	m_fadePercent = 1.0f/ (static_cast<Real>(CONTROLBARARROWTRANSITION_END) - static_cast<Real>(CONTROLBARARROWTRANSITION_BEGIN_FADE));
 	
 	m_arrowImage = TheControlBar->getArrowImage();
 	GameWindow *twin = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey("ControlBar.wnd:ButtonGeneral"));

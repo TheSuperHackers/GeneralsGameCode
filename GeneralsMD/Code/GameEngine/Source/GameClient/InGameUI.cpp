@@ -5300,7 +5300,7 @@ void InGameUI::addWorldAnimation( Anim2DTemplate *animTemplate,
 
 	// assign all data
 	wad->m_anim = anim;
-	wad->m_expireFrame = TheGameLogic->getFrame() + (durationInSeconds * LOGICFRAMES_PER_SECOND);
+	wad->m_expireFrame = TheGameLogic->getFrame() + (durationInSeconds * static_cast<Real>(LOGICFRAMES_PER_SECOND));
 	wad->m_options = options;
 	wad->m_worldPos = *pos;
 	wad->m_zRisePerSecond = zRisePerSecond;
@@ -5379,7 +5379,7 @@ void InGameUI::updateAndDrawWorldAnimations( void )
 
 			// update the Z value
 			if( wad->m_zRisePerSecond )
-				wad->m_worldPos.z += wad->m_zRisePerSecond / LOGICFRAMES_PER_SECOND;
+				wad->m_worldPos.z += wad->m_zRisePerSecond / static_cast<Real>(LOGICFRAMES_PER_SECOND);
 
 		}  // end if
 

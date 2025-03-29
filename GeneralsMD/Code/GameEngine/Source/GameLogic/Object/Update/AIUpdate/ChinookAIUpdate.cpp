@@ -881,7 +881,7 @@ ChinookAIUpdateModuleData::ChinookAIUpdateModuleData()
 	m_minDropHeight = 30.0f;
 	m_ropeFinalHeight = 0.0f;
 	m_ropeDropSpeed = 1e10f;		// um, fast.
-	m_rappelSpeed = fabs(TheGlobalData->m_gravity) * LOGICFRAMES_PER_SECOND * 0.5f;
+	m_rappelSpeed = fabs(TheGlobalData->m_gravity) * static_cast<Real>(LOGICFRAMES_PER_SECOND) * 0.5f;
 	m_ropeWobbleLen = 10.0f;
 	m_ropeWobbleAmp = 1.0f;
 	m_ropeWobbleRate = 0.1f;

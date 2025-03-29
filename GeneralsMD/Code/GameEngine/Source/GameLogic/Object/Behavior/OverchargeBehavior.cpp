@@ -117,7 +117,7 @@ UpdateSleepTime OverchargeBehavior::update( void )
 		// do some damage
 		BodyModuleInterface *body = us->getBodyModule();
 		DamageInfo damageInfo;
-		damageInfo.in.m_amount = (body->getMaxHealth() * modData->m_healthPercentToDrainPerSecond) / LOGICFRAMES_PER_SECOND;
+		damageInfo.in.m_amount = (body->getMaxHealth() * modData->m_healthPercentToDrainPerSecond) / static_cast<Real>(LOGICFRAMES_PER_SECOND);
 		damageInfo.in.m_sourceID = us->getID();
 		damageInfo.in.m_damageType = DAMAGE_PENALTY;
 		damageInfo.in.m_deathType = DEATH_NORMAL;

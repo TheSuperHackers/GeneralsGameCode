@@ -52,6 +52,8 @@
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.	
 
+#include "Utility/CppMacros.h" // for the REGISTER macro
+
 
 #define no_INTENSE_DEBUG
 
@@ -2641,7 +2643,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 //		//	DEBUG_ASSERTCRASH(map[i][j].getZone() != 0, ("Cleared the zone."));
 //		}
 //	}
-  register UnsignedInt maxZone = m_maxZone;
+REGISTER UnsignedInt maxZone = m_maxZone;
 	j=globalBounds.lo.y;
   while( j <= globalBounds.hi.y )	
   {
@@ -2754,7 +2756,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
   //FLATTEN HIERARCHICAL ZONES
   {
 	  i = 1;
-    register Int zone;  
+REGISTER Int zone;  
     while ( i < maxZone ) 
     {		// Flatten hierarchical zones.
 		  zone = m_hierarchicalZones[i];
@@ -6847,11 +6849,11 @@ Path *Pathfinder::buildHierachicalPath( const Coord3D *fromPos, PathfindCell *go
 	// This allows the unit to get around friendly units that may be near it.
 	Coord3D pos = *path->getFirstNode()->getPosition();
 	Coord3D minPos = pos;
-	minPos.x -= PathfindZoneManager::ZONE_BLOCK_SIZE*PATHFIND_CELL_SIZE_F;
-	minPos.y -= PathfindZoneManager::ZONE_BLOCK_SIZE*PATHFIND_CELL_SIZE_F;
+	minPos.x -= static_cast<Real>(PathfindZoneManager::ZONE_BLOCK_SIZE)*PATHFIND_CELL_SIZE_F;
+	minPos.y -= static_cast<Real>(PathfindZoneManager::ZONE_BLOCK_SIZE)*PATHFIND_CELL_SIZE_F;
 	Coord3D maxPos = pos;
-	maxPos.x += PathfindZoneManager::ZONE_BLOCK_SIZE*PATHFIND_CELL_SIZE_F;
-	maxPos.y += PathfindZoneManager::ZONE_BLOCK_SIZE*PATHFIND_CELL_SIZE_F;
+	maxPos.x += static_cast<Real>(PathfindZoneManager::ZONE_BLOCK_SIZE)*PATHFIND_CELL_SIZE_F;
+	maxPos.y += static_cast<Real>(PathfindZoneManager::ZONE_BLOCK_SIZE)*PATHFIND_CELL_SIZE_F;
 	ICoord2D cellNdxMin, cellNdxMax;
 	worldToCell(&minPos, &cellNdxMin);
 	worldToCell(&maxPos, &cellNdxMax);

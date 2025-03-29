@@ -310,7 +310,7 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 		DamageInfo healingInfo;
 
 		// do some healing
-		healingInfo.in.m_amount = (modData->m_holeHealthRegenPercentPerSecond / LOGICFRAMES_PER_SECOND) * 
+		healingInfo.in.m_amount = (modData->m_holeHealthRegenPercentPerSecond / static_cast<Real>(LOGICFRAMES_PER_SECOND)) *
 															body->getMaxHealth();
 		healingInfo.in.m_sourceID = hole->getID();
 		healingInfo.in.m_damageType = DAMAGE_HEALING;

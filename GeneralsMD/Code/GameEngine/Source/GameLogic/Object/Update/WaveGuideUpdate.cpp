@@ -805,7 +805,7 @@ UpdateSleepTime WaveGuideUpdate::update( void )
 	}  // end if
 
 	// every half second we try to play a random spash sound
-	if( TheGameLogic->getFrame() - m_splashSoundFrame > LOGICFRAMES_PER_SECOND / 2.0f )
+	if( TheGameLogic->getFrame() - m_splashSoundFrame > static_cast<Real>(LOGICFRAMES_PER_SECOND) / 2.0f )
 	{
 
 		// mark that we've had the opportunity to play

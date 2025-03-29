@@ -2463,7 +2463,7 @@ void TerrainLogic::changeWaterHeightOverTime( const WaterHandle *water,
 	// add the entry into the array of water to update
 	m_waterToUpdate[ m_numWaterToUpdate ].waterTable = water;
 	m_waterToUpdate[ m_numWaterToUpdate ].changePerFrame = (finalHeight - currentHeight) / 
-																												 (LOGICFRAMES_PER_SECOND * transitionTimeInSeconds);
+		(static_cast<Real>(LOGICFRAMES_PER_SECOND) * transitionTimeInSeconds);
 	m_waterToUpdate[ m_numWaterToUpdate ].targetHeight = finalHeight;
 	m_waterToUpdate[ m_numWaterToUpdate ].damageAmount = damageAmount;
 	m_waterToUpdate[ m_numWaterToUpdate ].currentHeight = currentHeight;

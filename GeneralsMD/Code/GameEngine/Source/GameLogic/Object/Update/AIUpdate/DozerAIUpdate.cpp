@@ -717,7 +717,7 @@ StateReturnType DozerActionDoActionState::update( void )
 
 					// figure out how much health we will restore this frame
 					Real health = body->getMaxHealth() * dozerAI->getRepairHealthPerSecond() /
-												LOGICFRAMES_PER_SECOND;
+						static_cast<Real>(LOGICFRAMES_PER_SECOND);
 
 					// try to give it a little bit-o-health
 					if ( ! goalObject->attemptHealingFromSoleBenefactor(health, dozer, 2) )//this frame and the next

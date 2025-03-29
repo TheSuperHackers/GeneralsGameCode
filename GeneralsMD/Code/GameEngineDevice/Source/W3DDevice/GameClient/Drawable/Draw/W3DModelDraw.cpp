@@ -3332,7 +3332,7 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 	}
 	else
 	{
-		if (specificBarrelToUse < 0 || specificBarrelToUse >= wbvec.size())
+		if (specificBarrelToUse < 0 || specificBarrelToUse >= static_cast<long>(wbvec.size()))
 			specificBarrelToUse = 0;
 
 		if (launchPos)

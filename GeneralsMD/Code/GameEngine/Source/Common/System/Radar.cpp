@@ -63,7 +63,7 @@
 Radar *TheRadar = NULL;  ///< the radar global singleton
 
 // PRIVATE ////////////////////////////////////////////////////////////////////////////////////////
-#define RADAR_QUEUE_TERRAIN_REFRESH_DELAY (LOGICFRAMES_PER_SECOND * 3.0f)
+#define RADAR_QUEUE_TERRAIN_REFRESH_DELAY (static_cast<Real>(LOGICFRAMES_PER_SECOND) * 3.0f)
 
 //-------------------------------------------------------------------------------------------------
 /** Delete list resources used by the radar and return them to the memory pools */
@@ -345,8 +345,8 @@ void Radar::newMap( TerrainLogic *terrain )
 	terrain->getExtent( &m_mapExtent );
 
 	// we will sample at these intervals across the map
-	m_xSample = m_mapExtent.width() / RADAR_CELL_WIDTH;
-	m_ySample = m_mapExtent.height() / RADAR_CELL_HEIGHT;
+	m_xSample = m_mapExtent.width() / static_cast<Real>(RADAR_CELL_WIDTH);
+	m_ySample = m_mapExtent.height() / static_cast<Real>(RADAR_CELL_HEIGHT);
 
 	// find the "middle" height for the terrain (most used value) and water table
 	Int x, y;
@@ -1119,8 +1119,8 @@ void Radar::internalCreateEvent( const Coord3D *world, RadarEventType type, Real
 	m_event[ m_nextFreeRadarEvent ].type = type;
 	m_event[ m_nextFreeRadarEvent ].active = TRUE;
 	m_event[ m_nextFreeRadarEvent ].createFrame = TheGameLogic->getFrame();
-	m_event[ m_nextFreeRadarEvent ].dieFrame = TheGameLogic->getFrame() + LOGICFRAMES_PER_SECOND * secondsToLive;
-	m_event[ m_nextFreeRadarEvent ].fadeFrame = m_event[ m_nextFreeRadarEvent ].dieFrame - LOGICFRAMES_PER_SECOND * secondsBeforeDieToFade;
+	m_event[ m_nextFreeRadarEvent ].dieFrame = TheGameLogic->getFrame() + (Real)LOGICFRAMES_PER_SECOND * secondsToLive;
+	m_event[ m_nextFreeRadarEvent ].fadeFrame = m_event[ m_nextFreeRadarEvent ].dieFrame - (Real)LOGICFRAMES_PER_SECOND * secondsBeforeDieToFade;
 	m_event[ m_nextFreeRadarEvent ].color1 = *color1;
 	m_event[ m_nextFreeRadarEvent ].color2 = *color2;
 	m_event[ m_nextFreeRadarEvent ].worldLoc = *world;

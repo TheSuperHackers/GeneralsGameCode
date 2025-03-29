@@ -562,7 +562,7 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				}
 
 				//Convert speed to speed per frame.
-				speed /= LOGICFRAMES_PER_SECOND;
+				speed /= static_cast<Real>(LOGICFRAMES_PER_SECOND);
 
 				//Calculate the distance from our current position to our target dest.
 				Coord3D vector = m_overrideTargetDestination;

@@ -1369,7 +1369,7 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 			// huh huh, he said "stiff"
 			
 			Real mag = getVelocityMagnitude();
-			const Real MINBOUNCESPEED = 1.0f/(LOGICFRAMES_PER_SECOND*5.0f);
+			const Real MINBOUNCESPEED = 1.0f/(static_cast<Real>(LOGICFRAMES_PER_SECOND)*5.0f);
 			if (mag < MINBOUNCESPEED) 
 				mag = MINBOUNCESPEED;
 			factor = -mag * getMass() * stiffness;
