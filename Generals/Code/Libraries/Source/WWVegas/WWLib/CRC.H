@@ -45,6 +45,9 @@
 	#include "osdep.h"
 #endif
 
+// SuperHackers: Use IntrinCompat for _lrotl
+#include <Utility/IntrinCompat.h>
+
 /*
 **	This is a CRC engine class. It will process submitted data and generate a CRC from it.
 **	Well, actually, the value returned is not a true CRC. However, it shares the same strength

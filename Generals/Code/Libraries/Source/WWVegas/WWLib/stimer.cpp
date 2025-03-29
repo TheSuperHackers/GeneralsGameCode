@@ -42,7 +42,7 @@
 #pragma warning (push,3)
 #endif
 
-#include <mmsystem.h>
+#include "systimer.h"
 
 #ifdef _MSC_VER
 #pragma warning (pop)
@@ -51,11 +51,11 @@
 
 long SystemTimerClass::operator () (void) const
 {
-	return timeGetTime()/16;
+	return TIMEGETTIME()/16;
 }
 
 
 SystemTimerClass::operator long (void) const
 {
-	return timeGetTime()/16;
+	return TIMEGETTIME()/16;
 }
