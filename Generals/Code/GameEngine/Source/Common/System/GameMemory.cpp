@@ -181,7 +181,6 @@ DECLARE_PERF_TIMER(MemoryPoolInitFilling)
 	Int theWastedDMA = 0;
 	Int thePeakWastedDMA = 0;
 
-#define NO_INTENSE_DMA_BOOKKEEPING
 #ifdef INTENSE_DMA_BOOKKEEPING
 	struct UsedNPeak
 	{
@@ -2298,6 +2297,9 @@ void DynamicMemoryAllocator::freeBytes(void* pBlockPtr)
 	MemoryPoolSingleBlock *block = MemoryPoolSingleBlock::recoverBlockFromUserData(pBlockPtr);
 #ifdef MEMORYPOOL_DEBUG
 	Int waste = 0, used = 0;
+#ifdef INTENSE_DMA_BOOKKEEPING
+	const char* tagString;
+#endif
 	{
 		USE_PERF_TIMER(MemoryPoolDebugging)
 		waste = 0;
@@ -2306,7 +2308,7 @@ void DynamicMemoryAllocator::freeBytes(void* pBlockPtr)
 		if (thePeakDMA < theTotalDMA)
 			thePeakDMA = theTotalDMA;
 	#ifdef INTENSE_DMA_BOOKKEEPING
-		const char* tagString = block->debugGetLiteralTagString();
+		tagString = block->debugGetLiteralTagString();
 	#endif
 	}
 #endif MEMORYPOOL_DEBUG

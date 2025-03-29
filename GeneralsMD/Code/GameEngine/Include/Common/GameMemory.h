@@ -49,7 +49,9 @@
 #define _GAME_MEMORY_H_
 
 // Turn off memory pool checkpointing for now.
-#define DISABLE_MEMORYPOOL_CHECKPOINTING 1
+#ifndef DISABLE_MEMORYPOOL_CHECKPOINTING
+	#define DISABLE_MEMORYPOOL_CHECKPOINTING 1
+#endif
 
 #if (defined(_DEBUG) || defined(_INTERNAL)) && !defined(MEMORYPOOL_DEBUG_CUSTOM_NEW) && !defined(DISABLE_MEMORYPOOL_DEBUG_CUSTOM_NEW)
 	#define MEMORYPOOL_DEBUG_CUSTOM_NEW
@@ -79,7 +81,7 @@
 #ifdef MEMORYPOOL_DEBUG
 
 	// by default, enable free-block-retention for checkpointing in debug mode
-	#ifndef DISABLE_MEMORYPOOL_CHECKPOINTING
+	#if !defined(DISABLE_MEMORYPOOL_CHECKPOINTING) || DISABLE_MEMORYPOOL_CHECKPOINTING == 0
 		#define MEMORYPOOL_CHECKPOINTING
 	#endif
 
@@ -127,7 +129,7 @@
 		// ------------------------------------------------------
 #endif // MEMORYPOOL_CHECKPOINTING
 
-#ifdef MEMORYPOOL_STACKTRACE
+#ifdef MEMORYPOOL_CHECKPOINTING
 		/** display the stacktrace for allocation location for all blocks found. 
 			this bit may be mixed-n-matched with any other flag.
 		*/
