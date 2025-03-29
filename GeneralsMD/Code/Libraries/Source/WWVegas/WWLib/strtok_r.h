@@ -44,7 +44,7 @@
 #ifndef __STRTOK_R_H__
 #define __STRTOK_R_H__
 
-#ifndef _UNIX
+#if !defined(_UNIX) && !defined(__MINGW32__)
 char *strtok_r(char *strptr, const char *delimiters, char **lasts);
 #endif
 
