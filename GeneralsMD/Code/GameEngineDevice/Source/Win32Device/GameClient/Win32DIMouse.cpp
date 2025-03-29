@@ -201,7 +201,7 @@ UnsignedByte DirectInputMouse::getMouseEvent( MouseIO *result, Bool flush )
 	DWORD num;
 
 	/* set these to defaults */
-	result->leftState = result->middleState = result->rightState = FALSE;
+	result->leftState = result->middleState = result->rightState = MBS_Up;
 	result->leftFrame = result->middleFrame = result->rightFrame = 0;
 	result->pos.x = result->pos.y = result->wheelPos = 0;
 
@@ -282,17 +282,17 @@ void DirectInputMouse::mapDirectInputMouse( MouseIO *mouse,
 	switch( mdat->dwOfs )
 	{
 		case DIMOFS_BUTTON0:
-			mouse->leftState = (( mdat->dwData & 0x0080 ) ? TRUE : FALSE);
+			mouse->leftState = (( mdat->dwData & 0x0080 ) ? MBS_Down : MBS_Up);
 			mouse->leftFrame = mdat->dwSequence;
 			break;
 
 		case DIMOFS_BUTTON1:
-			mouse->rightState = (( mdat->dwData & 0x0080 ) ? TRUE : FALSE);
+			mouse->rightState = (( mdat->dwData & 0x0080 ) ? MBS_Down : MBS_Up);
 			mouse->rightFrame = mdat->dwSequence;
 			break;
 
 		case DIMOFS_BUTTON2:
-			mouse->middleState = (( mdat->dwData & 0x0080 ) ? TRUE : FALSE);
+			mouse->middleState = (( mdat->dwData & 0x0080 ) ? MBS_Down : MBS_Up);
 			mouse->middleFrame = mdat->dwSequence;
 			break;
 
