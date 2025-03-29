@@ -17,4 +17,5 @@ target_sources(z_wwdebug PRIVATE ${WWDEBUG_SRC})
 
 target_link_libraries(z_wwdebug PRIVATE
     z_wwcommon
+    zi_libraries_include
 )

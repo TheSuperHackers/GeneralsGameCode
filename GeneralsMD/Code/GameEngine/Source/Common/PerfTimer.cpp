@@ -37,6 +37,7 @@
 
 __forceinline void ProfileGetTime(__int64 &t)
 {
+#if defined(_MSC_VER) && _MSC_VER < 1300
   _asm
   {
     mov ecx,[t]
@@ -48,6 +49,9 @@ __forceinline void ProfileGetTime(__int64 &t)
     pop edx
     pop eax
   };
+#else
+	t = _rdtsc();
+#endif
 }
 
 #ifdef _INTERNAL
