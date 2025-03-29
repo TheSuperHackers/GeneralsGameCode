@@ -40,6 +40,7 @@
 #include	"MPU.H"
 #include "math.h"
 #include <assert.h>
+#include <Utility/intrin_compat.h>
 
 typedef union {
 	LARGE_INTEGER LargeInt;
@@ -88,12 +89,11 @@ unsigned long Get_CPU_Clock(unsigned long & high)
 {
 	int h;
 	int l;
-	__asm {
-		_emit 0Fh
-		_emit 31h
-		mov	[h],edx
-		mov	[l],eax
-	}
+
+	auto tsc = _rdtsc();
+	h = tsc >> 32;
+	l = tsc & 0xFFFFFFFF;
+
 	high = h;
 	return(l);
 }
@@ -126,12 +126,9 @@ static unsigned long TSC_High;
 
 void RDTSC(void)
 {
-    _asm
-    {
-        ASM_RDTSC;
-        mov     TSC_Low, eax
-        mov     TSC_High, edx
-    }
+    auto TSC = _rdtsc();
+    TSC_Low = TSC & 0xFFFFFFFF;
+    TSC_High = TSC >> 32;
 }
 
 
@@ -197,8 +194,7 @@ int Get_RDTSC_CPU_Speed(void)
 			QueryPerformanceCounter(&t1);
 		}
 
-		ASM_RDTSC;
-		_asm	mov	stamp0, EAX
+		stamp0 = _rdtsc();
 
 		t0.LowPart = t1.LowPart;		// Reset Initial Time
 		t0.HighPart = t1.HighPart;
@@ -211,9 +207,7 @@ int Get_RDTSC_CPU_Speed(void)
 			QueryPerformanceCounter(&t1);
 		}
 
-		ASM_RDTSC;
-		_asm	mov	stamp1, EAX
-
+		stamp1 = _rdtsc();
 
 		cycles = stamp1 - stamp0;					// # of cycles passed between reads
 
