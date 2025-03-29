@@ -50,7 +50,7 @@
 #include        "yvals.h"
 #define bool    unsigned
 
-#elif defined(_UNIX)
+#elif defined(_UNIX) ||  defined(__GNUC__)
 
 /////#define bool    unsigned
 
