@@ -157,10 +157,14 @@ private:
 ** Macro to declare the allocator for your class.  Put this in the cpp file for
 ** the class.
 */
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#define DEFINE_AUTO_POOL(T,BLOCKSIZE) \
+ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator
+#else
 #define DEFINE_AUTO_POOL(T,BLOCKSIZE) \
 template<>\
-ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator;
-
+ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator = {}
+#endif
 
 /***********************************************************************************************
  * ObjectPoolClass::ObjectPoolClass -- constructor for ObjectPoolClass                         *

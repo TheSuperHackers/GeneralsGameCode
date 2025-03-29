@@ -46,8 +46,11 @@ bool bignum::Carry = false;
 template<>
 bool bignum::Borrow = false;
 template<>
+#if defined(_MSC_VER) && _MSC_VER < 1300
 bignum bignum::Remainder;
-
+#else
+bignum bignum::Remainder = {};
+#endif
 
 
 //BigInt Gcd(const BigInt & a, const BigInt & n);
