@@ -290,7 +290,7 @@ WWINLINE bool WWMath::Is_Valid_Double(double x)
 // Float to long
 // ----------------------------------------------------------------------------
 
-#if defined(_MSC_VER) && defined(_M_IX86)
+#if defined(_MSC_VER) && defined(_M_IX86) // Look at the #else for equivalent
 WWINLINE long WWMath::Float_To_Long(float f)
 {
 	long i;
@@ -309,7 +309,7 @@ WWINLINE long WWMath::Float_To_Long(float f)
 }
 #endif
 
-WWINLINE long WWMath::Float_To_Long(double f)	
+WWINLINE long WWMath::Float_To_Long(double f) // Look at the #else for equivalent
 {
 #if defined(_MSC_VER) && defined(_M_IX86)
 	long retval;
@@ -326,7 +326,7 @@ WWINLINE long WWMath::Float_To_Long(double f)
 // ----------------------------------------------------------------------------
 
 #if defined(_MSC_VER) && defined(_M_IX86)
-WWINLINE float WWMath::Cos(float val)
+WWINLINE float WWMath::Cos(float val) // Look at the #else for equivalent
 {
 	float retval;
 	__asm {
@@ -348,7 +348,7 @@ WWINLINE float WWMath::Cos(float val)
 // ----------------------------------------------------------------------------
 
 #if defined(_MSC_VER) && defined(_M_IX86)
-WWINLINE float WWMath::Sin(float val)
+WWINLINE float WWMath::Sin(float val) // Look at the #else for equivalent
 {
 	float retval;
 	__asm {

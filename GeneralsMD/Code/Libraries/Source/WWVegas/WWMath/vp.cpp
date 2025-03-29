@@ -48,6 +48,7 @@
 #define SHUFFLE(x, y, z, w)	(((x)&3)<< 6|((y)&3)<<4|((z)&3)<< 2|((w)&3))
 #define	BROADCAST(XMM, INDEX)	__asm	shufps	XMM,XMM,(((INDEX)&3)<< 6|((INDEX)&3)<<4|((INDEX)&3)<< 2|((INDEX)&3))
 
+
 #define TRANSPOSE(BX, BY, BZ, BW, TV)					\
 		__asm	movaps		TV,BZ						\
 		__asm	unpcklps	BZ,BW						\
@@ -63,6 +64,7 @@
 		__asm	shufps		BW,TV,SHUFFLE(3, 2, 3, 2)
 
 
+// This is a NOOP :D
 void VectorProcessorClass::Prefetch(void* address)
 {
 #if defined (__ICL)    // Detect Intel compiler

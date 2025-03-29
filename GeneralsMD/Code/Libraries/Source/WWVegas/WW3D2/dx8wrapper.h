@@ -1069,6 +1069,20 @@ not_changed:
 		mov	col,eax
 	}
 	return col;
+	// An equivalent could be:
+	// WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector3& color, float alpha)
+	// {
+	//     const float scale = 255.0f;
+	//
+	// 	   // Clamp and scale each color component and alpha
+	// 	   unsigned int r = static_cast<unsigned int>(std::max(0.0f, std::min(1.0f, color.x)) * scale);
+	// 	   unsigned int g = static_cast<unsigned int>(std::max(0.0f, std::min(1.0f, color.y)) * scale);
+	// 	   unsigned int b = static_cast<unsigned int>(std::max(0.0f, std::min(1.0f, color.z)) * scale);
+	// 	   unsigned int a = static_cast<unsigned int>(std::max(0.0f, std::min(1.0f, alpha)) * scale);
+	//
+	// 	   // Pack the components into a single 32-bit integer: AAAAAAAARRRRRRRRGGGGGGGGBBBBBBBB
+	// 	   return (a << 24) | (r << 16) | (g << 8) | b;
+	// }
 }
 
 // ----------------------------------------------------------------------------

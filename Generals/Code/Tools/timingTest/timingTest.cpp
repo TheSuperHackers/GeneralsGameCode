@@ -33,7 +33,7 @@ char buffer[1024];
 //-------------------------------------------------------------------------------------------------
 void GetPrecisionTimer(INT64* t)
 {
-	// CPUID is needed to force serialization of any previous instructions. 
+	// CPUID is needed to force serialization of any previous instructions.
 	__asm 
 	{
 		RDTSC
