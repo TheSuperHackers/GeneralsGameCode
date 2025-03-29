@@ -148,7 +148,7 @@ void DirectInputMouse::openMouse( void )
 		// keep some data about the mouse we care about
 		m_numButtons = (UnsignedByte)diDevCaps.dwButtons;
 		m_numAxes = (UnsignedByte)diDevCaps.dwAxes;
-		m_forceFeedback = BitTest( diDevCaps.dwFlags, DIDC_FORCEFEEDBACK );
+		m_forceFeedback = BitIsSet( diDevCaps.dwFlags, DIDC_FORCEFEEDBACK );
 
 		DEBUG_LOG(( "OK - Mouse info: Buttons = '%d', Force Feedback = '%s', Axes = '%d'\n",
 						 m_numButtons, m_forceFeedback ? "Yes" : "No", m_numAxes ));
