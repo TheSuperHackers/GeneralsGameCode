@@ -34,6 +34,8 @@
 #include "GameNetwork/udp.h"
 #include "GameNetwork/NetworkDefs.h"
 
+#define PRINT_IP_HELPER(ip) ((ip) >> 24) & 0xff, ((ip) >> 16) & 0xff, ((ip) >> 8 ) & 0xff, (ip) & 0xff
+
 /**
  * The transport layer handles the UDP socket for the game, and will packetize and
  * de-packetize multiple ACK/CommandPacket/etc packets into larger aggregates.
