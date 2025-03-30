@@ -49,11 +49,11 @@
 #define _MAX_PATH 255
 #endif
 
-#include "MemCompat.h"
-#include "StringCompat.h"
-#include "TCharCompat.h"
-#include "WCharCompat.h"
-#include "TimeCompat.h"
-#include "ThreadCompat.h"
+#include "mem_compat.h"
+#include "string_compat.h"
+#include "tchar_compat.h"
+#include "wchar_compat.h"
+#include "time_compat.h"
+#include "thread_compat.h"
 
 #endif

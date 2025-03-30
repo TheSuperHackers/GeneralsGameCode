@@ -41,7 +41,7 @@
 
 #include "refcount.h"
 // SuperHackers: Cross-platform __debugbreak() implementation
-#include <Utility/IntrinCompat.h>
+#include <Utility/intrin_compat.h>
 
 #ifndef NDEBUG
 

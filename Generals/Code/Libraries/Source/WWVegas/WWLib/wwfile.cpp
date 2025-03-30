@@ -40,7 +40,7 @@
 #include "WWFILE.H"
 
 // SuperHackers: For _vsnprintf
-#include <Utility/Compat.h>
+#include <Utility/compat.h>
 
 #pragma warning(disable : 4514)
 

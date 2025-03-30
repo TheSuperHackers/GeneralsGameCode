@@ -46,7 +46,7 @@
 #endif
 
 // SuperHackers: Use IntrinCompat for _lrotl
-#include <Utility/IntrinCompat.h>
+#include <Utility/intrin_compat.h>
 
 /*
 **	This is a CRC engine class. It will process submitted data and generate a CRC from it.
