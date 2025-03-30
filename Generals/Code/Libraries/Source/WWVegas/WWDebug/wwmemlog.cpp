@@ -38,11 +38,13 @@
  *   WWMemoryLogClass::Release_Memory -- frees memory                                          *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
+#include "always.h"
 #include "wwmemlog.h"
 #include "wwdebug.h"
 #include "Vector.H"
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
 #if (STEVES_NEW_CATCHER || PARAM_EDITING_ON)
 	#define DISABLE_MEMLOG	1
@@ -214,15 +216,20 @@ static bool							_MemLogAllocated = false;
 */
 void * Get_Mem_Log_Mutex(void)
 {
+#ifdef _WIN32
 	if (_MemLogMutex == NULL) {
 		_MemLogMutex=CreateMutex(NULL,false,NULL);
 		WWASSERT(_MemLogMutex);
 	}
 	return _MemLogMutex;
+#else
+	return NULL;
+#endif
 }
 
 void Lock_Mem_Log_Mutex(void)
 {
+#ifdef _WIN32
 	void * mutex = Get_Mem_Log_Mutex();
 #ifdef DEBUG_CRASHING
 	int res =
@@ -230,10 +237,12 @@ void Lock_Mem_Log_Mutex(void)
 		WaitForSingleObject(mutex,INFINITE);
 	WWASSERT(res==WAIT_OBJECT_0);
 	_MemLogLockCounter++;
+#endif
 }
 
 void Unlock_Mem_Log_Mutex(void)
 {
+#ifdef _WIN32
 	void * mutex = Get_Mem_Log_Mutex();
 	_MemLogLockCounter--;
 #ifdef DEBUG_CRASHING
@@ -241,6 +250,7 @@ void Unlock_Mem_Log_Mutex(void)
 #endif
 		ReleaseMutex(mutex);
 	WWASSERT(res);
+#endif
 }
 
 class MemLogMutexLockClass

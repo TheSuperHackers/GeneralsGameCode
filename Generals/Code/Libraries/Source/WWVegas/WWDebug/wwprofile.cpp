@@ -53,8 +53,9 @@
 #include "always.h"
 #include "wwprofile.h"
 #include "wwdebug.h"
+#ifdef _WIN32
 #include <windows.h>
-
+#endif
 
 
 /***********************************************************************************************
