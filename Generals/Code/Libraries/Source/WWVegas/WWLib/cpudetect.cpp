@@ -24,6 +24,7 @@
 #pragma warning (disable : 4201)	// Nonstandard extension - nameless struct
 #include <windows.h>
 #include "systimer.h"
+#include <Utility/intrin_compat.h>
 
 #ifdef _UNIX
 # include <time.h>  // for time(), localtime() and timezone variable.
@@ -127,42 +128,18 @@ const char* CPUDetectClass::Get_Processor_Manufacturer_Name()
 
 static unsigned Calculate_Processor_Speed(__int64& ticks_per_second)
 {
-	struct {
-		unsigned timer0_h;
-		unsigned timer0_l;
-		unsigned timer1_h;
-		unsigned timer1_l;
-	} Time;
+	unsigned __int64 timer0=0;
+	unsigned __int64 timer1=0;
 
-#ifdef WIN32
-   __asm {
-      ASM_RDTSC;
-      mov Time.timer0_h, eax
-      mov Time.timer0_l, edx
-   }
-#elif defined(_UNIX)
-      __asm__("rdtsc");
-      __asm__("mov %eax, __Time.timer1_h");
-      __asm__("mov %edx, __Time.timer1_l");
-#endif
+	timer0=_rdtsc();
 
 	unsigned start=TIMEGETTIME();
 	unsigned elapsed;
 	while ((elapsed=TIMEGETTIME()-start)<200) {
-#ifdef WIN32
-      __asm {
-         ASM_RDTSC;
-         mov Time.timer1_h, eax
-         mov Time.timer1_l, edx
-      }
-#elif defined(_UNIX)
-      __asm__ ("rdtsc");
-      __asm__("mov %eax, __Time.timer1_h");
-      __asm__("mov %edx, __Time.timer1_l");
-#endif
+		timer1=_rdtsc();
 	}
 
-	__int64 t=*(__int64*)&Time.timer1_h-*(__int64*)&Time.timer0_h;
+	__int64 t=timer1-timer0;
 	ticks_per_second=(__int64)((1000.0/(double)elapsed)*(double)t);	// Ticks per second
 	return unsigned((double)t/(double)(elapsed*1000));
 }
@@ -826,6 +803,7 @@ void CPUDetectClass::Init_CPUID_Instruction()
    // because CodeWarrior seems to have problems with
    // the command (huh?)
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
 #ifdef WIN32
    __asm
    {
@@ -868,6 +846,10 @@ void CPUDetectClass::Init_CPUID_Instruction()
      __asm__(" pop %ebx");
 #endif
 	HasCPUIDInstruction=!!cpuid_available;
+#else
+	// TheSuperHackers @info Mauller 30/3/2020 All modern CPUs have the CPUID instruction, VS22 code will not run on a cpu that doesn't.
+	HasCPUIDInstruction = true;
+#endif	// defined(_MSC_VER) && _MSC_VER < 1300
 }
 
 void CPUDetectClass::Init_Processor_Features()
@@ -941,44 +923,12 @@ bool CPUDetectClass::CPUID(
 {
 	if (!Has_CPUID_Instruction()) return false;	// Most processors since 486 have CPUID...
 
-	unsigned u_eax;
-	unsigned u_ebx;
-	unsigned u_ecx;
-	unsigned u_edx;
-
-#ifdef WIN32
-   __asm
-   {
-      pushad
-      mov	eax, [cpuid_type]
-      xor	ebx, ebx
-      xor	ecx, ecx
-      xor	edx, edx
-      cpuid
-      mov	[u_eax], eax
-      mov	[u_ebx], ebx
-      mov	[u_ecx], ecx
-      mov	[u_edx], edx
-      popad
-   }
-#elif defined(_UNIX)
-   __asm__("pusha");
-   __asm__("mov	__cpuid_type, %eax");
-   __asm__("xor	%ebx, %ebx");
-   __asm__("xor	%ecx, %ecx");
-   __asm__("xor	%edx, %edx");
-   __asm__("cpuid");
-   __asm__("mov	%eax, __u_eax");
-   __asm__("mov	%ebx, __u_ebx");
-   __asm__("mov	%ecx, __u_ecx");
-   __asm__("mov	%edx, __u_edx");
-   __asm__("popa");
-#endif
-
-	u_eax_=u_eax;
-	u_ebx_=u_ebx;
-	u_ecx_=u_ecx;
-	u_edx_=u_edx;
+	unsigned int regs[4];
+	cpuid(regs, cpuid_type);
+	u_eax_ = regs[0];
+	u_ebx_ = regs[1];
+	u_ecx_ = regs[2];
+	u_edx_ = regs[3];
 
 	return true;
 }
