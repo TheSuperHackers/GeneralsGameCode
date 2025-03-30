@@ -62,7 +62,9 @@
 #include "matrix3.h"
 #include "matrix4.h"
 #include "quat.h"
+#ifdef _WIN32
 #include "d3dx8math.h"
+#endif
 
 // some static matrices which are sometimes useful
 const Matrix3D Matrix3D::Identity
@@ -517,7 +519,9 @@ void Matrix3D::Get_Inverse(Matrix3D & inv) const
 	Matrix4	mat4Inv;
 
 	float det;
+#ifdef _WIN32
 	D3DXMatrixInverse((D3DXMATRIX *)&mat4Inv, &det, (D3DXMATRIX*)&mat4);
+#endif
 
 	inv.Row[0][0]=mat4Inv[0][0];
 	inv.Row[0][1]=mat4Inv[0][1];
