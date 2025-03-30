@@ -203,6 +203,7 @@ set_target_properties(z_wwlib PROPERTIES OUTPUT_NAME wwlib)
 target_sources(z_wwlib PRIVATE ${WWLIB_SRC})
 
 target_link_libraries(z_wwlib PRIVATE
+    gz_utility
     z_wwcommon
     zi_libraries_include
 )

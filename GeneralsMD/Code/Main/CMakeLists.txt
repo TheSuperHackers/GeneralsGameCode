@@ -20,6 +20,7 @@ target_link_libraries(z_generals PRIVATE
     safedisc
     vfw32
     winmm
+    gz_utility
     z_debug
     z_gameengine
     z_gameenginedevice

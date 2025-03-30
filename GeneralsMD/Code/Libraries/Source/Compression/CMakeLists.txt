@@ -30,6 +30,7 @@ target_include_directories(z_compression INTERFACE
 
 target_link_libraries(z_compression PRIVATE
     gz_config
+    gz_utility
     zi_libraries_include
 )
 

@@ -34,6 +34,7 @@
 
 #include <math.h>
 #include <string.h>
+#include <Utility/CppMacros.h>
 
 /*
 **	Turn off some unneeded warnings.

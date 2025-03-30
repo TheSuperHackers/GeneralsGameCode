@@ -16,6 +16,7 @@ set_target_properties(z_wwdebug PROPERTIES OUTPUT_NAME wwdebug)
 target_sources(z_wwdebug PRIVATE ${WWDEBUG_SRC})
 
 target_link_libraries(z_wwdebug PRIVATE
+    gz_utility
     z_wwcommon
     zi_libraries_include
 )

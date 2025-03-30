@@ -11,6 +11,7 @@ target_sources(z_compress PRIVATE ${COMRPESS_SRC})
 
 target_link_libraries(z_compress PRIVATE
     gz_config
+    gz_utility
     z_compression
     zi_libraries_include
     zi_libraries_source

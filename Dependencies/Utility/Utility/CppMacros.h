@@ -8,3 +8,9 @@
 #else
 #define NOEXCEPT_17
 #endif
+
+#if __cplusplus >= 201103L
+    #define CPP_11(code) code
+#else
+    #define CPP_11(code)
+#endif

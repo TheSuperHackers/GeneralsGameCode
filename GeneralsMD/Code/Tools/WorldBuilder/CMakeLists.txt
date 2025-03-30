@@ -215,6 +215,7 @@ target_link_libraries(z_worldbuilder PRIVATE
     imm32
     vfw32
     winmm
+    gz_utility
     z_browserdispatch
     z_debug
     z_gameengine

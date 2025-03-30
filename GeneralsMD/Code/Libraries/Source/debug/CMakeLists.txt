@@ -34,5 +34,6 @@ target_include_directories(z_debug INTERFACE
 
 target_link_libraries(z_debug PRIVATE
     gz_config
+    gz_utility
     zi_libraries_include
 )
