@@ -89,18 +89,11 @@ unsigned long Get_CPU_Clock(unsigned long & high)
 {
 	int h;
 	int l;
-#if defined(_MSC_VER) && _MSC_VER < 1300
-	__asm {
-		_emit 0Fh
-		_emit 31h
-		mov	[h],edx
-		mov	[l],eax
-	}
-#else
+
 	auto tsc = _rdtsc();
 	h = tsc >> 32;
 	l = tsc & 0xFFFFFFFF;
-#endif
+
 	high = h;
 	return(l);
 }
@@ -133,18 +126,9 @@ static unsigned long TSC_High;
 
 void RDTSC(void)
 {
-#if defined(_MSC_VER) && _MSC_VER < 1300
-    _asm
-    {
-        ASM_RDTSC;
-        mov     TSC_Low, eax
-        mov     TSC_High, edx
-    }
-#else
     auto TSC = _rdtsc();
     TSC_Low = TSC & 0xFFFFFFFF;
     TSC_High = TSC >> 32;
-#endif
 }
 
 
@@ -210,12 +194,7 @@ int Get_RDTSC_CPU_Speed(void)
 			QueryPerformanceCounter(&t1);
 		}
 
-#if defined(_MSC_VER) && _MSC_VER < 1300
-		ASM_RDTSC;
-		_asm	mov	stamp0, EAX
-#else
 		stamp0 = _rdtsc();
-#endif
 
 		t0.LowPart = t1.LowPart;		// Reset Initial Time
 		t0.HighPart = t1.HighPart;
@@ -228,12 +207,7 @@ int Get_RDTSC_CPU_Speed(void)
 			QueryPerformanceCounter(&t1);
 		}
 
-#if defined(_MSC_VER) && _MSC_VER < 1300
-		ASM_RDTSC;
-		_asm	mov	stamp1, EAX
-#else
 		stamp1 = _rdtsc();
-#endif
 
 		cycles = stamp1 - stamp0;					// # of cycles passed between reads
 
