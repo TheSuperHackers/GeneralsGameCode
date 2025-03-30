@@ -62,6 +62,7 @@
 #include "cpudetect.h"
 #include "hashtemplate.h"
 #include <stdio.h>
+#include <Utility/intrin_compat.h>
 
 static SimpleDynVecClass<WWProfileHierachyNodeClass*> ProfileCollectVector;
 static double TotalFrameTimes;
@@ -101,6 +102,7 @@ inline void WWProfile_Get_Ticks(_int64 * ticks)
 #ifdef _UNIX
        *ticks = TIMEGETTIME();
 #else
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	__asm
 	{
 		push edx;
@@ -115,6 +117,9 @@ inline void WWProfile_Get_Ticks(_int64 * ticks)
 		pop ecx;
 		pop edx;
 	}
+#else
+	*ticks = _rdtsc();
+#endif // defined(_MSC_VER) && _MSC_VER < 1300
 #endif
 }
 

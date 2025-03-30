@@ -24,6 +24,7 @@
 #pragma warning (disable : 4201)	// Nonstandard extension - nameless struct
 #include <windows.h>
 #include "systimer.h"
+#include <Utility/intrin_compat.h>
 
 #ifdef _UNIX
 # include <time.h>  // for time(), localtime() and timezone variable.
@@ -135,11 +136,17 @@ static unsigned Calculate_Processor_Speed(__int64& ticks_per_second)
 	} Time;
 
 #ifdef WIN32
+#if defined(_MSC_VER) && _MSC_VER < 1300
    __asm {
       ASM_RDTSC;
       mov Time.timer0_h, eax
       mov Time.timer0_l, edx
    }
+#else
+	uint64_t long_timer = _rdtsc();
+	Time.timer0_h = long_timer >> 32;
+	Time.timer0_l = long_timer & 0xFFFFFFFF;
+#endif // defined(_MSC_VER) && _MSC_VER < 1300
 #elif defined(_UNIX)
       __asm__("rdtsc");
       __asm__("mov %eax, __Time.timer1_h");
@@ -150,11 +157,17 @@ static unsigned Calculate_Processor_Speed(__int64& ticks_per_second)
 	unsigned elapsed;
 	while ((elapsed=TIMEGETTIME()-start)<200) {
 #ifdef WIN32
+#if defined(_MSC_VER) && _MSC_VER < 1300
       __asm {
          ASM_RDTSC;
          mov Time.timer1_h, eax
          mov Time.timer1_l, edx
       }
+#else
+	long_timer = _rdtsc();
+	Time.timer1_h = long_timer >> 32;
+	Time.timer1_l = long_timer & 0xFFFFFFFF;
+#endif // defined(_MSC_VER) && _MSC_VER < 1300
 #elif defined(_UNIX)
       __asm__ ("rdtsc");
       __asm__("mov %eax, __Time.timer1_h");
@@ -826,6 +839,7 @@ void CPUDetectClass::Init_CPUID_Instruction()
    // because CodeWarrior seems to have problems with
    // the command (huh?)
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
 #ifdef WIN32
    __asm
    {
@@ -868,6 +882,10 @@ void CPUDetectClass::Init_CPUID_Instruction()
      __asm__(" pop %ebx");
 #endif
 	HasCPUIDInstruction=!!cpuid_available;
+#else
+	// TheSuperHackers @info Mauller 30/3/2020 All modern CPUs have the CPUID instruction, VS22 code will not run on a cpu that doesn't.
+	HasCPUIDInstruction = true;
+#endif	// defined(_MSC_VER) && _MSC_VER < 1300
 }
 
 void CPUDetectClass::Init_Processor_Features()
@@ -947,6 +965,7 @@ bool CPUDetectClass::CPUID(
 	unsigned u_edx;
 
 #ifdef WIN32
+#if defined(_MSC_VER) && _MSC_VER < 1300
    __asm
    {
       pushad
@@ -961,6 +980,14 @@ bool CPUDetectClass::CPUID(
       mov	[u_edx], edx
       popad
    }
+#else
+	volatile uint32_t regs[4];
+	__cpuidex((int*)regs, (int)cpuid_type, (int)0x00);
+	u_eax = regs[0];
+	u_ebx = regs[1];
+	u_ecx = regs[2];
+	u_edx = regs[3];
+#endif // defined(_MSC_VER) && _MSC_VER < 1300
 #elif defined(_UNIX)
    __asm__("pusha");
    __asm__("mov	__cpuid_type, %eax");
