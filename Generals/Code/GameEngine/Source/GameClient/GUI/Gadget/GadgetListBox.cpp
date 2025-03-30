@@ -202,17 +202,17 @@ static Int getListboxBottomEntry( ListboxData *list )
 {
 	Int entry;
 
-	// determin which entry is at the top of the display area
+	// determine which entry is at the top of the display area
 	for( entry=list->endPos - 1; ; entry-- )
 	{
+		if( entry < 0 )
+			return 0;
 		if( list->listData[entry].listHeight == list->displayPos + list->displayHeight )
 			return entry;
 		if( list->listData[entry].listHeight < list->displayPos + list->displayHeight && entry != list->endPos - 1)
 			return entry + 1;
 		if( list->listData[entry].listHeight < list->displayPos + list->displayHeight)
 			return entry;
-		if( entry < 0 )
-			return 0;
 	}
 
 	return 0;
