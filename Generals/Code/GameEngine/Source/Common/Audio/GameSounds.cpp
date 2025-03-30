@@ -136,7 +136,7 @@ Real SoundManager::getCameraAudibleDistance( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-void SoundManager::addAudioEvent(AudioEventRTS *eventToAdd)
+void SoundManager::addAudioEvent(AudioEventRTS *&eventToAdd)
 {
 	if (m_num2DSamples == 0 && m_num3DSamples == 0) {
 		m_num2DSamples = TheAudio->getNum2DSamples();
