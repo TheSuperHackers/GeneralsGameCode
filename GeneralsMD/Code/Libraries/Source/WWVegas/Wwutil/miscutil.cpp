@@ -119,8 +119,14 @@ bool cMiscUtil::File_Is_Read_Only(LPCSTR filename)
 {
    WWASSERT(filename != NULL);
 
+#if _WIN32
 	DWORD attributes = ::GetFileAttributes(filename);
 	return ((attributes != 0xFFFFFFFF) && (attributes & FILE_ATTRIBUTE_READONLY));
+#else
+	bool readable = access(filename, R_OK) == 0;
+	bool writable = access(filename, W_OK) == 0;
+	return (readable && !writable);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -165,6 +171,7 @@ void cMiscUtil::Get_File_Id_String(LPCSTR filename, StringClass & str)
 
 //	WWDEBUG_SAY(("cMiscUtil::Get_File_Id_String for %s\n", filename));
 
+#if _WIN32
    //
    // Get size
    //
@@ -211,7 +218,7 @@ void cMiscUtil::Get_File_Id_String(LPCSTR filename, StringClass & str)
 	// Put all this data into a string
 	//
 	str.Format("%s %d %d", working_filename, filesize, time_date_stamp);
-
+#endif
 	//WWDEBUG_SAY(("File id string: %s\n", str));
 }
 
@@ -220,7 +227,11 @@ void cMiscUtil::Remove_File(LPCSTR filename)
 {
    WWASSERT(filename != NULL);
 
+#if _WIN32
 	::DeleteFile(filename);
+#else
+	::remove(filename);
+#endif
 }
 
 

@@ -44,8 +44,10 @@
 ** This header just includes mmsystem.h with warning 4201 disabled
 */
 
+#ifdef _WIN32
 #pragma warning(disable:4201)
 #include <mmsystem.h>
 #pragma warning(default:4201)
+#endif
 
 #endif // MMSYS_H
