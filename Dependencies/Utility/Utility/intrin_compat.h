@@ -29,7 +29,7 @@ static inline uint32_t _lrotl(uint32_t value, int shift)
 
 static inline uint64_t _rdtsc()
 {
-#if _WIN32
+#ifdef _WIN32
     return __rdtsc();
 #elif defined(__has_builtin) && __has_builtin(__builtin_readcyclecounter)
     return __builtin_readcyclecounter();
