@@ -52,7 +52,7 @@ target_link_libraries(g_guiedit PRIVATE
     dbghelplib
     g_gameengine
     g_gameenginedevice
-    g_wwvegas
+    gz_wwvegas
     gi_libraries_include
     imm32
     stlport

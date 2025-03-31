@@ -1426,7 +1426,7 @@ Int W3DProjectedShadowManager::renderShadows(RenderInfoClass & rinfo)
 					iter = ThePartitionManager->iterateObjectsInRange((const Coord3D*)&sphere.Center,sphere.Radius, FROM_CENTER_3D);
 					MemoryPoolObjectHolder hold( iter );
 
-					AABoxIntersectionTestClass boxtest(aaBox,COLLISION_TYPE_ALL);
+					AABoxIntersectionTestClass boxtest(aaBox,COLL_TYPE_ALL);
 
 					for( obj = iter->first(); obj; obj = iter->next() )
 					{

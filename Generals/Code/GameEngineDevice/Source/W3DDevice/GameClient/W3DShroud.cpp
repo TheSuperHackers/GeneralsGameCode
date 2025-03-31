@@ -663,10 +663,10 @@ void W3DShroud::render(CameraClass *cam)
 
 	pSurface->Unlock();
 */
-	if (m_pDstTexture->Get_Mag_Filter() != m_shroudFilter)
+	if (m_pDstTexture->Get_Filter().Get_Mag_Filter() != m_shroudFilter)
 	{
-		m_pDstTexture->Set_Mag_Filter(m_shroudFilter);
-		m_pDstTexture->Set_Min_Filter(m_shroudFilter);
+		m_pDstTexture->Get_Filter().Set_Mag_Filter(m_shroudFilter);
+		m_pDstTexture->Get_Filter().Set_Min_Filter(m_shroudFilter);
 	}
 
 	//Update video memory texture with sysmem copy

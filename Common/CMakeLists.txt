@@ -1,9 +1,21 @@
 # c stands for common, i stands for Interface
 add_library(ci_libraries_include INTERFACE)
 add_library(ci_libraries_source INTERFACE)
+add_library(ci_libraries_source_wwvegas INTERFACE)
+add_library(ci_libraries_source_wwvegas_ww3d2 INTERFACE)
+add_library(ci_libraries_source_wwvegas_wwdebug INTERFACE)
+add_library(ci_libraries_source_wwvegas_wwlib INTERFACE)
+add_library(ci_libraries_source_wwvegas_wwmath INTERFACE)
+add_library(ci_libraries_source_wwvegas_wwsaveload INTERFACE)
 
 target_include_directories(ci_libraries_include INTERFACE "Libraries/Include")
 target_include_directories(ci_libraries_source INTERFACE "Libraries/Source")
+target_include_directories(ci_libraries_source_wwvegas INTERFACE "Libraries/Source/WWVegas")
+target_include_directories(ci_libraries_source_wwvegas_ww3d2 INTERFACE "Libraries/Source/WWVegas/WW3D2")
+target_include_directories(ci_libraries_source_wwvegas_wwdebug INTERFACE "Libraries/Source/WWVegas/WWDebug")
+target_include_directories(ci_libraries_source_wwvegas_wwlib INTERFACE "Libraries/Source/WWVegas/WWLib")
+target_include_directories(ci_libraries_source_wwvegas_wwmath INTERFACE "Libraries/Source/WWVegas/WWMath")
+target_include_directories(ci_libraries_source_wwvegas_wwsaveload INTERFACE "Libraries/Source/WWVegas/WWSaveLoad")
 
 # Do we want to build extra SDK stuff or just the game binary?
 option(GENZH_BUILD_COMMON_TOOLS "Build tools for Generals/Zero Hour" ON)

@@ -1163,7 +1163,7 @@ target_link_libraries(z_gameengine PUBLIC
     stlport
     gz_browserdispatch
     gz_compression
-    z_wwvegas
+    gz_wwvegas
 )
 
 target_compile_definitions(z_gameengine PRIVATE

@@ -58,7 +58,7 @@ target_link_libraries(z_guiedit PRIVATE
     z_gameengine
     z_gameenginedevice
     z_profile
-    z_wwvegas
+    gz_wwvegas
     zi_libraries_include
 )
 

@@ -25,7 +25,7 @@ macro(setup_patchgrabber appname)
         dbghelplib
         g_gameengine
         g_gameenginedevice
-        g_wwvegas
+        gz_wwvegas
         gamespy::gamespy
         gi_libraries_include
         imm32

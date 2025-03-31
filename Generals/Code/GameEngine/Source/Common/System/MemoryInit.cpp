@@ -667,7 +667,7 @@ static PoolSizeRec sizes[] =
 	{ "DynamicMeshModel", 32, 32 },
 	{ "GapFillerClass", 32, 32 },
 	{ "FontCharsClass", 64, 32 },
-
+	{ "ThumbnailManagerClass", 32, 32},
 	{ 0, 0, 0 }
 };
 

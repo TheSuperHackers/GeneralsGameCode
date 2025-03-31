@@ -1557,7 +1557,7 @@ MapObject *WbView3d::picked3dObjectInView(CPoint viewPt)
 		this->GetClientRect(&client);
 		float logX = (Real)viewPt.x / (Real)client.Width();
 		float logY = (Real)viewPt.y / (Real)client.Height();
-		//m_intersector->Result.CollisionType = COLLISION_TYPE_0|COLLISION_TYPE_1;
+		//m_intersector->Result.CollisionType = COLL_TYPE_0|COLL_TYPE_1;
 		// do the intersection using W3D intersector class
 		Bool hit = m_intersector->Intersect_Screen_Point_Layer( logX, logY, *m_layer );
 		if( hit )

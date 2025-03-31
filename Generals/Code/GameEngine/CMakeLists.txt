@@ -1076,7 +1076,7 @@ target_link_libraries(g_gameengine PUBLIC
     d3d8lib
     gz_browserdispatch
     gz_compression
-    g_wwvegas
+    gz_wwvegas
     gz_config
     gz_utility
     gamespy::gamespy

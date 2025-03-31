@@ -45,8 +45,8 @@ target_link_libraries(g_particleeditor PRIVATE
     dbghelplib
     gi_gameengine_include
     gi_libraries_include
-    gi_libraries_source_wwvegas
-    gi_libraries_source_wwvegas_wwlib
+    ci_libraries_source_wwvegas
+    ci_libraries_source_wwvegas_wwlib
     gz_config
     gz_utility
     imm32
