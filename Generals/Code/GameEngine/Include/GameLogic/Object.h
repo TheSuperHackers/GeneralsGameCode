@@ -37,6 +37,7 @@
 #include "Common/SpecialPowerMaskType.h"
 #include "Common/DisabledTypes.h"
 #include "Common/Thing.h"
+#include "Common/Upgrade.h"
 
 #include "GameClient/Color.h"
 
@@ -311,7 +312,7 @@ public:
 	void setStatus( ObjectStatusBits bits, Bool set = true );
 	inline void clearStatus( ObjectStatusBits bits ) { setStatus(bits, false); }
 	void updateUpgradeModules();	///< We need to go through our Upgrade Modules and see which should be activated
-	Int64 getObjectCompletedUpgradeMask() const { return m_objectUpgradesCompleted; } ///< Upgrades I complete locally
+	UpgradeMaskType getObjectCompletedUpgradeMask() const { return m_objectUpgradesCompleted; } ///< Upgrades I complete locally
 
 	//This function sucks.
 	//It was added for objects that can disguise as other objects and contain upgraded subobject overrides. 
@@ -703,7 +704,7 @@ private:
 	UnsignedInt										m_containedByFrame;	///< frame we were contained by m_containedBy
 
 	Real													m_constructionPercent;			///< for objects being built ... this is the amount completed (0.0 to 100.0)
-	Int64													m_objectUpgradesCompleted;	///< Bit field of upgrades locally completed.
+	UpgradeMaskType								m_objectUpgradesCompleted;	///< Bit field of upgrades locally completed.
 
 	Team*													m_team;								///< team that is current owner of this guy
 	AsciiString										m_originalTeamName;		///< team that was the original ("birth") team of this guy

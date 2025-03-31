@@ -656,7 +656,7 @@ void Xfer::xferKindOf( KindOfType *kindOfData )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void Xfer::xferUpgradeMask( Int64 *upgradeMaskData )
+void Xfer::xferUpgradeMask( UpgradeMaskType *upgradeMaskData )
 {
 
 	// this deserves a version number
@@ -743,7 +743,7 @@ void Xfer::xferUpgradeMask( Int64 *upgradeMaskData )
 	{
 
 		// just xfer implementation the data itself
-		xferImplementation( upgradeMaskData, sizeof( Int64 ) );
+		xferImplementation( upgradeMaskData, sizeof( UpgradeMaskType ) );
 
 	}  // end else if, crc
 	else

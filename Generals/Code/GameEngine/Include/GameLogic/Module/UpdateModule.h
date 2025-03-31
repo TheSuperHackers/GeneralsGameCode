@@ -35,6 +35,7 @@
 #include "Common/Module.h"
 #include "Common/GameType.h"
 #include "Common/DisabledTypes.h"
+#include "Common/Upgrade.h"
 #include "GameLogic/Module/BehaviorModule.h"
 
 #define DIRECT_UPDATEMODULE_ACCESS
@@ -381,7 +382,7 @@ public:
 class DelayedUpgradeUpdateInterface
 {
 public:
-	virtual Bool isTriggeredBy( Int64 potentialMask ) = 0;	///< If you were an upgrade, would you trigger for this?
+	virtual Bool isTriggeredBy( UpgradeMaskType potentialMask ) = 0;	///< If you were an upgrade, would you trigger for this?
 	virtual void setDelay( UnsignedInt startingDelay ) = 0;	///< Start the upgrade doing countdown
 };
 

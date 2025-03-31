@@ -2564,7 +2564,7 @@ Upgrade *Player::findUpgrade( const UpgradeTemplate *upgradeTemplate )
 //=================================================================================================
 Bool Player::hasUpgradeComplete( const UpgradeTemplate *upgradeTemplate )
 {
-	Int64 testMask = upgradeTemplate->getUpgradeMask();
+	UpgradeMaskType testMask = upgradeTemplate->getUpgradeMask();
 	return hasUpgradeComplete( testMask );
 } 
 
@@ -2573,7 +2573,7 @@ Bool Player::hasUpgradeComplete( const UpgradeTemplate *upgradeTemplate )
 	Does the player have this completed upgrade.  This form is exposed so Objects can do quick lookups.
 */
 //=================================================================================================
-Bool Player::hasUpgradeComplete( Int64 testMask )
+Bool Player::hasUpgradeComplete( UpgradeMaskType testMask )
 {
 	return BitIsSet( m_upgradesCompleted, testMask );
 }
@@ -2583,7 +2583,7 @@ Bool Player::hasUpgradeComplete( Int64 testMask )
 //=================================================================================================
 Bool Player::hasUpgradeInProduction( const UpgradeTemplate *upgradeTemplate )
 {
-	Int64 testMask = upgradeTemplate->getUpgradeMask();
+	UpgradeMaskType testMask = upgradeTemplate->getUpgradeMask();
 	return BitIsSet( m_upgradesInProgress, testMask );
 }
 
@@ -2614,7 +2614,7 @@ Upgrade *Player::addUpgrade( const UpgradeTemplate *upgradeTemplate, UpgradeStat
 	u->setStatus( status );
 
 	// Update our Bitmasks
-	Int64 newMask = upgradeTemplate->getUpgradeMask();
+	UpgradeMaskType newMask = upgradeTemplate->getUpgradeMask();
 	if( status == UPGRADE_STATUS_IN_PRODUCTION )
 	{
 		BitSet( m_upgradesInProgress, newMask );
@@ -2680,7 +2680,7 @@ void Player::removeUpgrade( const UpgradeTemplate *upgradeTemplate )
 			m_upgradeList = upgrade->friend_getNext();
 
 		// Clear this upgrade's bits from our mind
-		Int64 oldMask = upgradeTemplate->getUpgradeMask();
+		UpgradeMaskType oldMask = upgradeTemplate->getUpgradeMask();
 		BitClear( m_upgradesInProgress, oldMask );
 		BitClear( m_upgradesCompleted, oldMask );
 

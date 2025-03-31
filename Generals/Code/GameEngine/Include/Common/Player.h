@@ -62,6 +62,7 @@
 #include "Common/ScoreKeeper.h"
 #include "Common/Team.h"
 #include "Common/STLTypedefs.h"
+#include "Common/Upgrade.h"
 
 // ----------------------------------------------------------------------------------------------
 
@@ -289,8 +290,8 @@ public:
 	Bool hasPrereqsForScience(ScienceType t) const;
 
 	Bool hasUpgradeComplete( const UpgradeTemplate *upgradeTemplate );		///< does player have totally done and produced upgrade
-	Bool hasUpgradeComplete( Int64 testMask );		///< does player have totally done and produced upgrade
-	Int64 getCompletedUpgradeMask() const { return m_upgradesCompleted; }	///< get list of upgrades that are completed
+	Bool hasUpgradeComplete( UpgradeMaskType testMask );		///< does player have totally done and produced upgrade
+	UpgradeMaskType getCompletedUpgradeMask() const { return m_upgradesCompleted; }	///< get list of upgrades that are completed
 	Bool hasUpgradeInProduction( const UpgradeTemplate *upgradeTemplate );		///< does player have this upgrade in progress right now
 	Upgrade *addUpgrade( const UpgradeTemplate *upgradeTemplate,
 											 UpgradeStatusType status );		///< add upgrade, or update existing upgrade status
@@ -717,8 +718,8 @@ private:
 	Int													m_holdTheLineBattlePlans;			///< Number of strategy centers with active hold the line plan
 	Int													m_searchAndDestroyBattlePlans;///< Number of strategy centers with active search and destroy plan
 	BattlePlanBonuses*					m_battlePlanBonuses;
-	Int64												m_upgradesInProgress;					///< Bit field of In Production status upgrades
-	Int64												m_upgradesCompleted;					///< Bit field of upgrades completed.  Bits are assigned by UpgradeCenter
+	UpgradeMaskType										m_upgradesInProgress;					///< Bit field of in Production status upgrades
+	UpgradeMaskType										m_upgradesCompleted;					///< Bit field of upgrades completed.  Bits are assigned by UpgradeCenter
 	Energy											m_energy;											///< current energy production & consumption
 	MissionStats								m_stats;											///< stats about the current mission (units destroyed, etc)
 	BuildListInfo*							m_pBuildList;									///< linked list of buildings for PLAYER_COMPUTER.
