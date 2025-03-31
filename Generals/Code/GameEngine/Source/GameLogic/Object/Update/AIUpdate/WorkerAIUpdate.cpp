@@ -391,7 +391,7 @@ Object *WorkerAIUpdate::construct( const ThingTemplate *what,
 	}  // end if
 
 	// what will our initial status bits
-	UnsignedInt statusBits = OBJECT_STATUS_UNDER_CONSTRUCTION;
+	ObjectStatusMaskType statusBits = OBJECT_STATUS_UNDER_CONSTRUCTION;
 	if( isRebuild )
 		BitSet( statusBits, OBJECT_STATUS_RECONSTRUCTING );
 

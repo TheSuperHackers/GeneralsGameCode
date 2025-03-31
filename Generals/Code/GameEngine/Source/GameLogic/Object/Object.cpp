@@ -859,7 +859,7 @@ void Object::setOrRestoreTeam( Team* team, Bool restoring )
 //=============================================================================
 void Object::setStatus( ObjectStatusBits bits, Bool set )
 {
-	UnsignedInt oldStatus = m_status;
+	ObjectStatusMaskType oldStatus = m_status;
 
 	if (set)
 		m_status |= bits;

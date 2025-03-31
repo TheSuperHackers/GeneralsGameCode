@@ -1684,7 +1684,7 @@ Object *DozerAIUpdate::construct( const ThingTemplate *what,
 	// what will our initial status bits be, it is important to do this early
 	// before the hooks add/subtract power from a player are executed
 	//
-	UnsignedInt statusBits = OBJECT_STATUS_UNDER_CONSTRUCTION;
+	ObjectStatusMaskType statusBits = OBJECT_STATUS_UNDER_CONSTRUCTION;
 	if( isRebuild )
 		BitSet( statusBits, OBJECT_STATUS_RECONSTRUCTING );
 

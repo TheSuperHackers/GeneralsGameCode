@@ -44,8 +44,8 @@ class FireWeaponCollideModuleData : public CollideModuleData
 {
 public:
 	const WeaponTemplate* m_collideWeaponTemplate;
-	UnsignedInt m_requiredStatus;
-	UnsignedInt m_forbiddenStatus;
+	ObjectStatusMaskType m_requiredStatus;
+	ObjectStatusMaskType m_forbiddenStatus;
 	Bool m_fireOnce;
 
 	FireWeaponCollideModuleData()

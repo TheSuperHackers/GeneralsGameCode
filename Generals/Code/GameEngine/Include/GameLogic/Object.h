@@ -37,6 +37,7 @@
 #include "Common/SpecialPowerMaskType.h"
 #include "Common/DisabledTypes.h"
 #include "Common/Thing.h"
+#include "GameLogic/ObjectStatusBits.h"
 #include "Common/Upgrade.h"
 
 #include "GameClient/Color.h"
@@ -307,7 +308,7 @@ public:
 	SpecialPowerCompletionDie* findSpecialPowerCompletionDie() const;
 	SpecialPowerUpdateInterface* findSpecialPowerWithOverridableDestinationActive( SpecialPowerType type = SPECIAL_INVALID ) const;
 
-	inline UnsignedInt getStatusBits() const { return m_status; }
+	inline ObjectStatusMaskType getStatusBits() const { return m_status; }
 	inline Bool testStatus(ObjectStatusBits bit) const { return (m_status & bit) != 0; }
 	void setStatus( ObjectStatusBits bits, Bool set = true );
 	inline void clearStatus( ObjectStatusBits bits ) { setStatus(bits, false); }
@@ -656,7 +657,7 @@ private:
 
 	Object *			m_next;
 	Object *			m_prev;
-	UnsignedInt		m_status;									///< status bits (see ObjectStatusBits enum)
+	ObjectStatusMaskType		m_status;									///< status bits (see ObjectStatusMaskType)
 
 	GeometryInfo	m_geometryInfo;
 
