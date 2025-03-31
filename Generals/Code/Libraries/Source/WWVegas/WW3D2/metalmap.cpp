@@ -131,9 +131,9 @@ MetalMapManagerClass::MetalMapManagerClass(INIClass &ini) :
 
 	for (int i = 0; i < lp; i++) {		
 		// Create texture. NOTE: we should add code here to ensure we use a native texture format
-		Textures[i]=NEW_REF(TextureClass,(METALMAP_SIZE,METALMAP_SIZE,WW3D_FORMAT_A8R8G8B8,TextureClass::MIP_LEVELS_1));
-		Textures[i]->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-		Textures[i]->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
+		Textures[i]=NEW_REF(TextureClass,(METALMAP_SIZE,METALMAP_SIZE,WW3D_FORMAT_A8R8G8B8,MIP_LEVELS_1));
+		Textures[i]->Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		Textures[i]->Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		StringClass tex_name;
 		tex_name.Format("!m%02d.tga", i);		
 		Textures[i]->Set_Texture_Name(tex_name);		

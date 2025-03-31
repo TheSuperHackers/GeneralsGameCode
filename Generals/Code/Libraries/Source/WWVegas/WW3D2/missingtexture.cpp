@@ -64,7 +64,7 @@ void MissingTexture::_Init()
 		missing_image_width,
 		missing_image_height,
 		WW3D_FORMAT_A8R8G8B8,
-		TextureClass::MIP_LEVELS_ALL);
+		MIP_LEVELS_ALL);
 
 	D3DLOCKED_RECT locked_rect;
 	RECT rect;

@@ -1162,7 +1162,7 @@ Image *getMapPreviewImage( AsciiString mapName )
 	mapPreviewImage->setStatus(IMAGE_STATUS_RAW_TEXTURE);
 // allocate our terrain texture
 	TextureClass * texture = new TextureClass( size.x, size.y, 
-																			 WW3D_FORMAT_X8R8G8B8, TextureClass::MIP_LEVELS_1 );
+																			 WW3D_FORMAT_X8R8G8B8, MIP_LEVELS_1 );
 	uv.lo.x = 0.0f;
 	uv.lo.y = 1.0f;
 	uv.hi.x = 1.0f;

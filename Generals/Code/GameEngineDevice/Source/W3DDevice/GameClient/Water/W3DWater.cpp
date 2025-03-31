@@ -201,9 +201,9 @@ void WaterRenderObjClass::setupJbaWaterShader(void)
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 	DX8Wrapper::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);
-	m_riverTexture->Set_Mag_Filter(TextureClass::FILTER_TYPE_BEST);
-	m_riverTexture->Set_Min_Filter(TextureClass::FILTER_TYPE_BEST);
-	m_riverTexture->Set_Mip_Mapping(TextureClass::FILTER_TYPE_BEST);
+	m_riverTexture->Set_Mag_Filter(TextureFilterClass::FILTER_TYPE_BEST);
+	m_riverTexture->Set_Min_Filter(TextureFilterClass::FILTER_TYPE_BEST);
+	m_riverTexture->Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_BEST);
 
 
 //	Setting *setting=&m_settings[m_tod];	
@@ -440,7 +440,7 @@ HRESULT WaterRenderObjClass::initBumpMap(LPDIRECT3DTEXTURE8 *pTex, TextureClass 
 		return S_OK;
 	} 
 
-	pTex[0]=DX8Wrapper::_Create_DX8_Texture(d3dsd.Width,d3dsd.Height,WW3D_FORMAT_U8V8,TextureClass::MIP_LEVELS_ALL,D3DPOOL_MANAGED,false);
+	pTex[0]=DX8Wrapper::_Create_DX8_Texture(d3dsd.Width,d3dsd.Height,WW3D_FORMAT_U8V8,MIP_LEVELS_ALL,D3DPOOL_MANAGED,false);
 
 	for (Int level=0; level < numLevels; level++)
 	{
@@ -526,7 +526,7 @@ HRESULT WaterRenderObjClass::initBumpMap(LPDIRECT3DTEXTURE8 *pTex, TextureClass 
 	pSrc=(unsigned char *)surf->Lock((int *)&dwSrcPitch);
 
     // Create the bumpmap's surface and texture objects
-	m_pBumpTexture[i]=DX8Wrapper::_Create_DX8_Texture(d3dsd.Width,d3dsd.Height,WW3D_FORMAT_U8V8,TextureClass::MIP_LEVELS_1,D3DPOOL_MANAGED,false);
+	m_pBumpTexture[i]=DX8Wrapper::_Create_DX8_Texture(d3dsd.Width,d3dsd.Height,WW3D_FORMAT_U8V8,MIP_LEVELS_1,D3DPOOL_MANAGED,false);
 
     // Fill the bits of the new texture surface with bits from
     // a private format.
@@ -1073,8 +1073,8 @@ Int WaterRenderObjClass::init(Real waterLevel, Real dx, Real dy, SceneClass *par
 		{
 			if (material->Peek_Texture(i))
 			{		
-				material->Peek_Texture(i)->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-				material->Peek_Texture(i)->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
+				material->Peek_Texture(i)->Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+				material->Peek_Texture(i)->Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			}
 		}
 	}
@@ -1082,7 +1082,7 @@ Int WaterRenderObjClass::init(Real waterLevel, Real dx, Real dy, SceneClass *par
 	m_riverTexture=WW3DAssetManager::Get_Instance()->Get_Texture("TWWater01.tga"); 
 	
 	//For some reason setting a NULL texture does not result in 0xffffffff for pixel shaders so using explicit "white" texture.
-	m_whiteTexture=MSGNEW("TextureClass") TextureClass(1,1,WW3D_FORMAT_A4R4G4B4,TextureClass::MIP_LEVELS_1);
+	m_whiteTexture=MSGNEW("TextureClass") TextureClass(1,1,WW3D_FORMAT_A4R4G4B4,MIP_LEVELS_1);
 	SurfaceClass *surface=m_whiteTexture->Get_Surface_Level();
 	surface->DrawPixel(0,0,0xffffffff);
 	REF_PTR_RELEASE(surface);
@@ -1296,8 +1296,8 @@ void WaterRenderObjClass::replaceSkyboxTexture(const AsciiString& oldTexName, co
 		{
 			if (material->Peek_Texture(i))
 			{		
-				material->Peek_Texture(i)->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-				material->Peek_Texture(i)->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
+				material->Peek_Texture(i)->Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+				material->Peek_Texture(i)->Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			}
 		}
 	}
@@ -1617,11 +1617,11 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 				DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHATESTENABLE, true);	//test pixels if transparent(clipped) before rendering.
 
 				// Set clipping texture
-				m_alphaClippingTexture->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-				m_alphaClippingTexture->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-				m_alphaClippingTexture->Set_Min_Filter(TextureClass::FILTER_TYPE_NONE);
-				m_alphaClippingTexture->Set_Mag_Filter(TextureClass::FILTER_TYPE_NONE);
-				m_alphaClippingTexture->Set_Mip_Mapping(TextureClass::FILTER_TYPE_NONE);
+				m_alphaClippingTexture->Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+				m_alphaClippingTexture->Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+				m_alphaClippingTexture->Set_Min_Filter(TextureFilterClass::FILTER_TYPE_NONE);
+				m_alphaClippingTexture->Set_Mag_Filter(TextureFilterClass::FILTER_TYPE_NONE);
+				m_alphaClippingTexture->Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_NONE);
 
 				DX8Wrapper::Set_Texture(0,m_alphaClippingTexture);
 
@@ -2899,9 +2899,9 @@ void WaterRenderObjClass::setupFlatWaterShader(void)
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 	DX8Wrapper::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);
-	m_riverTexture->Set_Mag_Filter(TextureClass::FILTER_TYPE_BEST);
-	m_riverTexture->Set_Min_Filter(TextureClass::FILTER_TYPE_BEST);
-	m_riverTexture->Set_Mip_Mapping(TextureClass::FILTER_TYPE_BEST);
+	m_riverTexture->Set_Mag_Filter(TextureFilterClass::FILTER_TYPE_BEST);
+	m_riverTexture->Set_Min_Filter(TextureFilterClass::FILTER_TYPE_BEST);
+	m_riverTexture->Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_BEST);
 
 	DX8Wrapper::Apply_Render_State_Changes();	//force update of view and projection matrices
 

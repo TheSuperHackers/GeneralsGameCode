@@ -93,6 +93,7 @@ set(WW3D2_SRC
     texfcach.cpp
     texproject.cpp
     texture.cpp
+    texturefilter.cpp
     textureloader.cpp
     texturethumbnail.cpp
     txt.cpp
@@ -204,6 +205,7 @@ set(WW3D2_SRC
     texfcach.h
     texproject.h
     texture.h
+    texturefilter.h
     textureloader.h
     texturethumbnail.h
     txt.h

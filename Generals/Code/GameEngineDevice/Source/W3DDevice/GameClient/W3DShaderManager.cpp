@@ -559,9 +559,9 @@ Int ScreenCrossFadeFilter::init(void)
 	m_fadePatternTexture=WW3DAssetManager::Get_Instance()->Get_Texture("exmask_g.tga");
 	if (!m_fadePatternTexture)
 		return FALSE;
-	m_fadePatternTexture->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-	m_fadePatternTexture->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-	m_fadePatternTexture->Set_Mip_Mapping(TextureClass::FILTER_TYPE_NONE);
+	m_fadePatternTexture->Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+	m_fadePatternTexture->Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+	m_fadePatternTexture->Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_NONE);
 
 	W3DFilters[FT_VIEW_CROSSFADE]=&screenCrossFadeFilter;
 

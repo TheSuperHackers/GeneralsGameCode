@@ -58,7 +58,7 @@ class DX8TextureTrackerClass : public MultiListObjectClass
 friend DX8TextureManagerClass;
 public:
 	DX8TextureTrackerClass(unsigned int w, unsigned int h, WW3DFormat format,
-		TextureClass::MipCountType count,bool rt,
+		MipCountType count,bool rt,
 		TextureClass *tex):
 	Width(w),
 	Height(h),
@@ -72,7 +72,7 @@ private:
 	unsigned int Width;
 	unsigned int Height;
 	WW3DFormat Format;
-	TextureClass::MipCountType Mip_level_count;
+	MipCountType Mip_level_count;
 	bool RenderTarget;
 	TextureClass *Texture;
 };

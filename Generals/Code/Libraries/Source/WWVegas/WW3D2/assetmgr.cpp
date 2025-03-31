@@ -1085,7 +1085,7 @@ TextureClass* WW3DAssetManager::Get_Bumpmap_Based_On_Texture(TextureClass* textu
  *=============================================================================================*/
 TextureClass * WW3DAssetManager::Get_Texture(
 	const char * filename, 
-	TextureClass::MipCountType mip_level_count,
+	MipCountType mip_level_count,
 	WW3DFormat texture_format,
 	bool allow_compression)
 {

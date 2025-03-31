@@ -989,7 +989,7 @@ up the "sliding" parameters for the clouds to slide over the terrain. */
 CloudMapTerrainTextureClass::CloudMapTerrainTextureClass(MipCountType mipLevelCount) :
 	TextureClass("TSCloudMed.tga","TSCloudMed.tga", mipLevelCount )
 { 
-	Set_Mip_Mapping( FILTER_TYPE_FAST );
+	Set_Mip_Mapping( TextureFilterClass::FILTER_TYPE_FAST );
 	m_xSlidePerSecond = -0.02f;	 
 	m_ySlidePerSecond =  1.50f * m_xSlidePerSecond;
 	m_curTick = 0;

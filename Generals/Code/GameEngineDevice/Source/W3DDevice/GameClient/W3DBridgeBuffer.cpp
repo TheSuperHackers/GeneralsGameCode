@@ -242,7 +242,7 @@ Bool W3DBridge::load(enum BodyDamageType curDamageState)
 	strcpy(right, modelName);
 	strcat(right, ".BRIDGE_RIGHT");
 
-	m_bridgeTexture = pMgr->Get_Texture(textureFile,  TextureClass::MIP_LEVELS_3); 
+	m_bridgeTexture = pMgr->Get_Texture(textureFile,  MIP_LEVELS_3); 
 	m_leftMtx.Make_Identity();
 	m_rightMtx.Make_Identity();
 	m_sectionMtx.Make_Identity();

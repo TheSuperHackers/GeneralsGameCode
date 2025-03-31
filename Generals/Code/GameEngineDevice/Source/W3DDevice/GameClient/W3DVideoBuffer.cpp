@@ -131,7 +131,7 @@ Bool W3DVideoBuffer::allocate( UnsignedInt width, UnsignedInt height )
 		return NULL;	
 	}
 
-	m_texture  = MSGNEW("TextureClass") TextureClass ( m_textureWidth, m_textureHeight, w3dFormat, TextureClass::MIP_LEVELS_1 );
+	m_texture  = MSGNEW("TextureClass") TextureClass ( m_textureWidth, m_textureHeight, w3dFormat, MIP_LEVELS_1 );
 
 	if ( m_texture == NULL )
 	{

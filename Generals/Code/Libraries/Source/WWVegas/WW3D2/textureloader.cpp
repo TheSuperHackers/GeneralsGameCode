@@ -198,7 +198,7 @@ IDirect3DTexture8* TextureLoader::Load_Thumbnail(const StringClass& filename,WW3
 		thumb->Get_Width(),
 		thumb->Get_Height(),
 		dest_format,
-		TextureClass::MIP_LEVELS_ALL);
+		MIP_LEVELS_ALL);
 
 	unsigned level=0;
 	D3DLOCKED_RECT locked_rects[12];
@@ -265,7 +265,7 @@ static bool Is_Power_Of_Two(unsigned i)
 IDirect3DTexture8* Load_Compressed_Texture(
 	const StringClass& filename, 
 	unsigned reduction_factor,
-	TextureClass::MipCountType mip_level_count,
+	MipCountType mip_level_count,
 	WW3DFormat dest_format)
 {
 	// If DDS file isn't available, use TGA file to convert to DDS.
@@ -286,7 +286,7 @@ IDirect3DTexture8* Load_Compressed_Texture(
 		width,
 		height,
 		dest_format,
-		(TextureClass::MipCountType)mips);
+		(MipCountType)mips);
 
 	for (unsigned level=0;level<mips;++level) {
 		IDirect3DSurface8* d3d_surface=NULL;
@@ -313,7 +313,7 @@ IDirect3DSurface8* TextureLoader::Load_Surface_Immediate(
 	bool compressed=Is_Format_Compressed(texture_format,allow_compression);
 
 	if (compressed) {
-		IDirect3DTexture8* comp_tex=Load_Compressed_Texture(filename,0,TextureClass::MIP_LEVELS_1,WW3D_FORMAT_UNKNOWN);
+		IDirect3DTexture8* comp_tex=Load_Compressed_Texture(filename,0,MIP_LEVELS_1,WW3D_FORMAT_UNKNOWN);
 		if (comp_tex) {
 			IDirect3DSurface8* d3d_surface=NULL;
 			DX8_ErrorCode(comp_tex->GetSurfaceLevel(0,&d3d_surface));
@@ -795,7 +795,7 @@ IDirect3DTexture8* TextureLoader::Generate_Bumpmap(TextureClass* texture)
 		width,
 		height,
 		bump_format,
-		TextureClass::MIP_LEVELS_1);
+		MIP_LEVELS_1);
 
 	D3DLOCKED_RECT src_locked_rect;
 	DX8_ErrorCode(
@@ -924,7 +924,7 @@ void TextureLoader::Add_Load_Task(TextureClass* tc)
 
 void TextureLoader::Request_High_Priority_Loading(
 	TextureClass* tc,
-	TextureClass::MipCountType mip_level_count)
+	MipCountType mip_level_count)
 {
 	TextureLoadTaskClass* task=TextureLoadTaskClass::Get_Instance(tc,true);
 	task->Begin_Texture_Load();
@@ -994,7 +994,7 @@ void TextureLoadTaskClass::Init(TextureClass* tc,bool high_priority)
 	Format=Texture->Get_Texture_Format();
 
 	Texture->TextureLoadTask=this;
-	for (int i=0;i<TextureClass::MIP_LEVELS_MAX;++i) {
+	for (int i=0;i<MIP_LEVELS_MAX;++i) {
 		LockedSurfacePtr[i]=NULL;
 		LockedSurfacePitch[i]=0;
 	}
@@ -1005,7 +1005,7 @@ void TextureLoadTaskClass::Deinit()
 	WWASSERT(Succ==NULL);
 	WWASSERT(D3DTexture==NULL);
 	WWASSERT(IsLoading==false);
-	for (int i=0;i<TextureClass::MIP_LEVELS_MAX;++i) {
+	for (int i=0;i<MIP_LEVELS_MAX;++i) {
 		WWASSERT(LockedSurfacePtr[i]==NULL);
 	}
 	if (Texture) {
@@ -1077,7 +1077,7 @@ void TextureLoadTaskClass::Begin_Texture_Load()
 				}
 				if (mip_level_count>max_mip_level_count) mip_level_count=max_mip_level_count;
 
-				D3DTexture=DX8Wrapper::_Create_DX8_Texture(Width,Height,Format,(TextureClass::MipCountType)mip_level_count);
+				D3DTexture=DX8Wrapper::_Create_DX8_Texture(Width,Height,Format,(MipCountType)mip_level_count);
 				MipLevelCount=mip_level_count;
 				//Texture->MipLevelCount);
 				loaded=true;

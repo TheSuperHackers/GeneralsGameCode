@@ -109,7 +109,7 @@ void Render2DClass::Set_Texture(TextureClass* tex)
 
 void Render2DClass::Set_Texture( const char * filename)
 {
-	TextureClass * tex = WW3DAssetManager::Get_Instance()->Get_Texture( filename, TextureClass::MIP_LEVELS_1 );
+	TextureClass * tex = WW3DAssetManager::Get_Instance()->Get_Texture( filename, MIP_LEVELS_1 );
 	Set_Texture( tex );
 	if ( tex != NULL ) {
 		SET_REF_OWNER( tex );

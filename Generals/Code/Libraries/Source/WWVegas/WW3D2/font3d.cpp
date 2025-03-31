@@ -333,7 +333,7 @@ bool	Font3DDataClass::Load_Font_Image( const char *filename )
 
 	// create the texture
 	if ( _surface ) {
-		Texture = NEW_REF(TextureClass,(_surface,TextureClass::MIP_LEVELS_1));
+		Texture = NEW_REF(TextureClass,(_surface,MIP_LEVELS_1));
 		REF_PTR_RELEASE(_surface);
 	}
 

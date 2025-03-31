@@ -317,7 +317,7 @@ void W3DCustomEdging::allocateEdgingBuffers(void)
 	m_indexEdging=NEW_REF(DX8IndexBufferClass,(2*MAX_EDGE_INDEX+4, DX8IndexBufferClass::USAGE_DYNAMIC));
 	m_curNumEdgingVertices=0;
 	m_curNumEdgingIndices=0;
-	//m_edgeTexture = MSGNEW("TextureClass") TextureClass("EdgingTemplate.tga","EdgingTemplate.tga", TextureClass::MIP_LEVELS_3);
+	//m_edgeTexture = MSGNEW("TextureClass") TextureClass("EdgingTemplate.tga","EdgingTemplate.tga", MIP_LEVELS_3);
 }
 
 //=============================================================================

@@ -53,6 +53,7 @@
 #include "shader.h"
 #include "vector4.h"
 #include "cpudetect.h"
+#include "dx8caps.h"
 
 #include "texture.h"
 #include "dx8vertexbuffer.h"
@@ -332,11 +333,11 @@ public:
 		unsigned int width, 
 		unsigned int height, 
 		WW3DFormat format, 
-		TextureClass::MipCountType mip_level_count,
+		MipCountType mip_level_count,
 		D3DPOOL pool=D3DPOOL_MANAGED,
 		bool rendertarget=false);
-	static IDirect3DTexture8 * _Create_DX8_Texture(const char *filename, TextureClass::MipCountType mip_level_count);
-	static IDirect3DTexture8 * _Create_DX8_Texture(IDirect3DSurface8 *surface, TextureClass::MipCountType mip_level_count);
+	static IDirect3DTexture8 * _Create_DX8_Texture(const char *filename, MipCountType mip_level_count);
+	static IDirect3DTexture8 * _Create_DX8_Texture(IDirect3DSurface8 *surface, MipCountType mip_level_count);
 
 	static IDirect3DSurface8 * _Create_DX8_Surface(unsigned int width, unsigned int height, WW3DFormat format);
 	static IDirect3DSurface8 * _Create_DX8_Surface(const char *filename);
