@@ -90,20 +90,6 @@
 		#define MEMORYPOOL_BOUNDINGWALL
 	#endif
 
-	#define DECLARE_LITERALSTRING_ARG1										const char * debugLiteralTagString
-	#define PASS_LITERALSTRING_ARG1												debugLiteralTagString
-	#define DECLARE_LITERALSTRING_ARG2										, const char * debugLiteralTagString
-	#define PASS_LITERALSTRING_ARG2												, debugLiteralTagString
-
-	#define MP_LOC_SUFFIX																/*" [" DEBUG_FILENLINE "]"*/
-
-	#define allocateBlock(ARGLITERAL)										allocateBlockImplementation(ARGLITERAL MP_LOC_SUFFIX)
-	#define allocateBlockDoNotZero(ARGLITERAL)					allocateBlockDoNotZeroImplementation(ARGLITERAL MP_LOC_SUFFIX)
-	#define allocateBytes(ARGCOUNT,ARGLITERAL)					allocateBytesImplementation(ARGCOUNT, ARGLITERAL MP_LOC_SUFFIX)
-	#define allocateBytesDoNotZero(ARGCOUNT,ARGLITERAL)	allocateBytesDoNotZeroImplementation(ARGCOUNT, ARGLITERAL MP_LOC_SUFFIX)
-	#define newInstanceDesc(ARGCLASS,ARGLITERAL)				new(ARGCLASS::ARGCLASS##_GLUE_NOT_IMPLEMENTED, ARGLITERAL MP_LOC_SUFFIX) ARGCLASS
-	#define newInstance(ARGCLASS)												new(ARGCLASS::ARGCLASS##_GLUE_NOT_IMPLEMENTED, __FILE__) ARGCLASS
-
 	#if !defined(MEMORYPOOL_STACKTRACE) && !defined(DISABLE_MEMORYPOOL_STACKTRACE)
 		#define MEMORYPOOL_STACKTRACE
 	#endif
@@ -190,6 +176,31 @@
 #endif // MEMORYPOOL_CHECKPOINTING
 		
 	};
+
+#endif // MEMORYPOOL_DEBUG
+
+// TheSuperHackers @compile xezon 30/03/2025 Define DISABLE_GAMEMEMORY to use a null implementations for Game Memory.
+// Useful for address sanitizer checks and other investigations.
+// Is included below the macros so that memory pool debug code can still be used.
+#ifdef DISABLE_GAMEMEMORY
+#include "GameMemoryNull.h"
+#else
+
+#ifdef MEMORYPOOL_DEBUG
+
+	#define DECLARE_LITERALSTRING_ARG1										const char * debugLiteralTagString
+	#define PASS_LITERALSTRING_ARG1												debugLiteralTagString
+	#define DECLARE_LITERALSTRING_ARG2										, const char * debugLiteralTagString
+	#define PASS_LITERALSTRING_ARG2												, debugLiteralTagString
+
+	#define MP_LOC_SUFFIX																/*" [" DEBUG_FILENLINE "]"*/
+
+	#define allocateBlock(ARGLITERAL)										allocateBlockImplementation(ARGLITERAL MP_LOC_SUFFIX)
+	#define allocateBlockDoNotZero(ARGLITERAL)					allocateBlockDoNotZeroImplementation(ARGLITERAL MP_LOC_SUFFIX)
+	#define allocateBytes(ARGCOUNT,ARGLITERAL)					allocateBytesImplementation(ARGCOUNT, ARGLITERAL MP_LOC_SUFFIX)
+	#define allocateBytesDoNotZero(ARGCOUNT,ARGLITERAL)	allocateBytesDoNotZeroImplementation(ARGCOUNT, ARGLITERAL MP_LOC_SUFFIX)
+	#define newInstanceDesc(ARGCLASS,ARGLITERAL)				new(ARGCLASS::ARGCLASS##_GLUE_NOT_IMPLEMENTED, ARGLITERAL MP_LOC_SUFFIX) ARGCLASS
+	#define newInstance(ARGCLASS)												new(ARGCLASS::ARGCLASS##_GLUE_NOT_IMPLEMENTED, __FILE__) ARGCLASS
 
 #else
 
@@ -718,17 +729,6 @@ private: \
 	} \
 public: /* include this line at the end to reset visibility to 'public' */ 
 
-// ----------------------------------------------------------------------------
-/**
-	Sometimes you want to make a class's destructor protected so that it can only
-	be destroyed under special circumstances. MemoryPoolObject short-circuits this
-	by making the destructor always be protected, and the true delete technique
-	(namely, deleteInstance) always public by default. You can simulate the behavior
-	you really want by including this macro 
-*/
-#define MEMORY_POOL_DELETEINSTANCE_VISIBILITY(ARGVIS)\
-ARGVIS:	void deleteInstance() { MemoryPoolObject::deleteInstance(); } public: 
-
 
 // ----------------------------------------------------------------------------
 /**
@@ -766,22 +766,6 @@ public:
 	} 
 };
 
-// ----------------------------------------------------------------------------
-/**
-	A simple utility class to ensure exception safety; this holds a MemoryPoolObject
-	and deletes it in its destructor. Especially useful for iterators!
-*/
-class MemoryPoolObjectHolder
-{
-private:
-	MemoryPoolObject *m_mpo;
-public:
-	MemoryPoolObjectHolder(MemoryPoolObject *mpo = NULL) : m_mpo(mpo) { }
-	void hold(MemoryPoolObject *mpo) { DEBUG_ASSERTCRASH(!m_mpo, ("already holding")); m_mpo = mpo; }
-	void release() { m_mpo = NULL; }
-	~MemoryPoolObjectHolder() { m_mpo->deleteInstance(); }
-};
-
 
 // INLINING ///////////////////////////////////////////////////////////////////
 
@@ -800,39 +784,6 @@ inline Int MemoryPool::getInitialBlockCount() { return m_initialAllocationCount;
 inline DynamicMemoryAllocator *DynamicMemoryAllocator::getNextDmaInList() { return m_nextDmaInFactory; }
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
-
-/**
-	Initialize the memory manager. Construct a new MemoryPoolFactory and 
-	DynamicMemoryAllocator and store 'em in the singletons of the relevant
-	names. 
-*/
-extern void initMemoryManager();
-
-/**
-	return true if initMemoryManager() has been called.
-	return false if only preMainInitMemoryManager() has been called.
-*/
-extern Bool isMemoryManagerOfficiallyInited();
-
-/**
-	similar to initMemoryManager, but this should be used if the memory manager must be initialized
-	prior to main() (e.g., from a static constructor). If preMainInitMemoryManager() is called prior
-	to initMemoryManager(), then subsequent calls to either are quietly ignored, AS IS any subsequent
-	call to shutdownMemoryManager() [since there's no safe way to ensure that shutdownMemoryManager
-	will execute after all static destructors].
-
-	(Note: this function is actually not externally visible, but is documented here for clarity.)
-*/
-/* extern void preMainInitMemoryManager(); */
-
-/**
-	Shut down the memory manager. Throw away TheMemoryPoolFactory and 
-	TheDynamicMemoryAllocator.
-*/
-extern void shutdownMemoryManager();
-
-extern MemoryPoolFactory *TheMemoryPoolFactory;
-extern DynamicMemoryAllocator *TheDynamicMemoryAllocator;
 
 /**
 	This function is declared in this header, but is not defined anywhere -- you must provide
@@ -904,6 +855,71 @@ public:
 	static void deallocate(void* __p, size_t);
 };
 
+#endif // DISABLE_GAMEMEMORY
+
+
+/**
+	Initialize the memory manager. Construct a new MemoryPoolFactory and 
+	DynamicMemoryAllocator and store 'em in the singletons of the relevant
+	names. 
+*/
+extern void initMemoryManager();
+
+/**
+	return true if initMemoryManager() has been called.
+	return false if only preMainInitMemoryManager() has been called.
+*/
+extern Bool isMemoryManagerOfficiallyInited();
+
+/**
+	similar to initMemoryManager, but this should be used if the memory manager must be initialized
+	prior to main() (e.g., from a static constructor). If preMainInitMemoryManager() is called prior
+	to initMemoryManager(), then subsequent calls to either are quietly ignored, AS IS any subsequent
+	call to shutdownMemoryManager() [since there's no safe way to ensure that shutdownMemoryManager
+	will execute after all static destructors].
+
+	(Note: this function is actually not externally visible, but is documented here for clarity.)
+*/
+/* extern void preMainInitMemoryManager(); */
+
+/**
+	Shut down the memory manager. Throw away TheMemoryPoolFactory and 
+	TheDynamicMemoryAllocator.
+*/
+extern void shutdownMemoryManager();
+
+extern MemoryPoolFactory *TheMemoryPoolFactory;
+extern DynamicMemoryAllocator *TheDynamicMemoryAllocator;
+
+
+/**
+	A simple utility class to ensure exception safety; this holds a MemoryPoolObject
+	and deletes it in its destructor. Especially useful for iterators!
+*/
+class MemoryPoolObjectHolder
+{
+private:
+	MemoryPoolObject *m_mpo;
+public:
+	MemoryPoolObjectHolder(MemoryPoolObject *mpo = NULL) : m_mpo(mpo) { }
+	void hold(MemoryPoolObject *mpo) { DEBUG_ASSERTCRASH(!m_mpo, ("already holding")); m_mpo = mpo; }
+	void release() { m_mpo = NULL; }
+	~MemoryPoolObjectHolder() { m_mpo->deleteInstance(); }
+};
+
+
+/**
+	Sometimes you want to make a class's destructor protected so that it can only
+	be destroyed under special circumstances. MemoryPoolObject short-circuits this
+	by making the destructor always be protected, and the true delete technique
+	(namely, deleteInstance) always public by default. You can simulate the behavior
+	you really want by including this macro 
+*/
+#define MEMORY_POOL_DELETEINSTANCE_VISIBILITY(ARGVIS)\
+ARGVIS:	void deleteInstance() { MemoryPoolObject::deleteInstance(); } public: 
+
+
 #define EMPTY_DTOR(CLASS) inline CLASS::~CLASS() { }
+
 
 #endif // _GAME_MEMORY_H_

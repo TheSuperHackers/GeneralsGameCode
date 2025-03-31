@@ -72,7 +72,7 @@
 #endif	//_MSC_VER
 #endif	//_DEBUG
 
-#if 1 // (gth) killing the Generals Memory Manager!
+#if !defined(DISABLE_GAMEMEMORY) // (gth) killing the Generals Memory Manager!
 
 #ifndef _OPERATOR_NEW_DEFINED_
 

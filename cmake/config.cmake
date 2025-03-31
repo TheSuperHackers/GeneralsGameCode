@@ -19,9 +19,10 @@ add_feature_info(ProfileBuild GENZH_BUILD_PROFILE "Building as a \"Profile\" bui
 add_feature_info(DebugBuild GENZH_BUILD_DEBUG "Building as a \"Debug\" build")
 
 
-### MEMORY POOL OPTIONS ###
+### GAME MEMORY OPTIONS ###
 
 # Memory pool features
+option(GENZH_GAMEMEMORY_ENABLE "Enables the memory pool and dynamic memory allocator." ON)
 option(GENZH_MEMORYPOOL_OVERRIDE_MALLOC "Enables the Dynamic Memory Allocator for malloc calls." OFF)
 option(GENZH_MEMORYPOOL_MPSB_DLINK "Adds a backlink to MemoryPoolSingleBlock. Makes it faster to free raw DMA blocks, but increases memory consumption." ON)
 
@@ -80,6 +81,10 @@ else()
 endif()
 
 # Memory pool features
+if(NOT GENZH_GAMEMEMORY_ENABLE)
+    target_compile_definitions(gz_config INTERFACE DISABLE_GAMEMEMORY=1)
+endif()
+
 if(GENZH_MEMORYPOOL_OVERRIDE_MALLOC)
     target_compile_definitions(gz_config INTERFACE MEMORYPOOL_OVERRIDE_MALLOC=1)
 endif()
