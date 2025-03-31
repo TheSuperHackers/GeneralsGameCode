@@ -49,6 +49,10 @@ class PathfindZoneManager;
 
 #define INFANTRY_MOVES_THROUGH_INFANTRY
 
+
+  typedef UnsignedShort zoneStorageType;
+
+
 //----------------------------------------------------------------------------------------------------------
 
 /**
@@ -341,8 +345,8 @@ public:
 	Bool allocateInfo(const ICoord2D &pos);
 	void releaseInfo(void);
 	Bool hasInfo(void) const {return m_info!=NULL;}
-	UnsignedShort getZone(void) const {return m_zone;}
-	void setZone(UnsignedShort zone) {m_zone = zone;}
+	zoneStorageType getZone(void) const {return m_zone;}
+	void setZone(zoneStorageType zone) {m_zone = zone;}
 	void setGoalUnit(ObjectID unit, const ICoord2D &pos );
 	void setGoalAircraft(ObjectID unit, const ICoord2D &pos );
 	void setPosUnit(ObjectID unit, const ICoord2D &pos );
@@ -360,7 +364,7 @@ public:
 
 private:
 	PathfindCellInfo *m_info;
-	UnsignedShort m_zone:14;			///< Zone. Each zone is a set of adjacent terrain type.  If from & to in the same zone, you can successfully pathfind.  If not,
+	zoneStorageType m_zone:14;			///< Zone. Each zone is a set of adjacent terrain type.  If from & to in the same zone, you can successfully pathfind.  If not,
 														// you still may be able to if you can cross multiple terrain types.
 	UnsignedShort m_aircraftGoal:1; //< This is an aircraft goal cell.
 	UnsignedShort m_pinched:1; //< This cell is surrounded by obstacle cells.
@@ -451,7 +455,7 @@ public:
 	~ZoneBlock();  // not virtual, please don't override without making virtual.  jba.
 
 	void blockCalculateZones(	PathfindCell **map, PathfindLayer layers[], const IRegion2D &bounds);	///< Does zone calculations.  
-	UnsignedShort getEffectiveZone(LocomotorSurfaceTypeMask acceptableSurfaces, Bool crusher, UnsignedShort zone) const;
+	zoneStorageType getEffectiveZone(LocomotorSurfaceTypeMask acceptableSurfaces, Bool crusher, zoneStorageType zone) const;
 
 	void clearMarkedPassable(void) {m_markedPassable = false;}
 	Bool isPassable(void) {return m_markedPassable;}
@@ -467,15 +471,15 @@ protected:
 protected:
 	ICoord2D		m_cellOrigin;
 
-	UnsignedShort m_firstZone; // First zone in this block.
+	zoneStorageType m_firstZone; // First zone in this block.
 	UnsignedShort m_numZones;	 // Number of zones in this block.  If == 1, there is only one zone, and 
 														 // no zone equivalency arrays will be allocated.
 
 	UnsignedShort m_zonesAllocated;
-	UnsignedShort *m_groundCliffZones;
-	UnsignedShort *m_groundWaterZones;
-	UnsignedShort *m_groundRubbleZones;
-	UnsignedShort *m_crusherZones;
+	zoneStorageType *m_groundCliffZones;
+	zoneStorageType *m_groundWaterZones;
+	zoneStorageType *m_groundRubbleZones;
+	zoneStorageType *m_crusherZones;
 	Bool					m_interactsWithBridge;
 	Bool					m_markedPassable;
 };
@@ -503,13 +507,13 @@ public:
 	Bool needToCalculateZones(void) const {return m_needToCalculateZones;} ///< Returns true if the zones need to be recalculated.
 	void markZonesDirty(void) ; ///< Called when the zones need to be recalculated.
 	void calculateZones(	PathfindCell **map, PathfindLayer layers[], const IRegion2D &bounds);	///< Does zone calculations.  
-	UnsignedShort getEffectiveZone(LocomotorSurfaceTypeMask acceptableSurfaces, Bool crusher, UnsignedShort zone) const;
-	UnsignedShort getEffectiveTerrainZone(UnsignedShort zone) const;
+	zoneStorageType getEffectiveZone(LocomotorSurfaceTypeMask acceptableSurfaces, Bool crusher, zoneStorageType zone) const;
+	zoneStorageType getEffectiveTerrainZone(zoneStorageType zone) const;
 
 	void getExtent(ICoord2D &extent) const {extent = m_zoneBlockExtent;}
 
 	/// return zone relative the the block zone that this cell resides in.
-	UnsignedShort getBlockZone(LocomotorSurfaceTypeMask acceptableSurfaces, Bool crusher, Int cellX, Int cellY, PathfindCell **map) const;
+	zoneStorageType getBlockZone(LocomotorSurfaceTypeMask acceptableSurfaces, Bool crusher, Int cellX, Int cellY, PathfindCell **map) const;
 	void allocateBlocks(const IRegion2D &globalBounds);
 
 	void clearPassableFlags(void);
@@ -535,12 +539,12 @@ protected:
 	UnsignedShort m_maxZone;								///< Max zone used.
 	Bool					m_needToCalculateZones;		///< True if terrain has changed.
 	UnsignedShort m_zonesAllocated;
-	UnsignedShort *m_groundCliffZones;
-	UnsignedShort *m_groundWaterZones;
-	UnsignedShort *m_groundRubbleZones;
-	UnsignedShort *m_terrainZones;
-	UnsignedShort *m_crusherZones;
-	UnsignedShort *m_hierarchicalZones;
+	zoneStorageType *m_groundCliffZones;
+	zoneStorageType *m_groundWaterZones;
+	zoneStorageType *m_groundRubbleZones;
+	zoneStorageType *m_terrainZones;
+	zoneStorageType *m_crusherZones;
+	zoneStorageType *m_hierarchicalZones;
 };
 
 /** 
@@ -726,8 +730,8 @@ protected:
 	Path *internal_findHierarchicalPath( Bool isHuman, const LocomotorSurfaceTypeMask locomotorSurface, const Coord3D *from, const Coord3D *to, Bool crusher, Bool closestOK);	
 	void processHierarchicalCell( const ICoord2D &scanCell, const ICoord2D &deltaPathfindCell,
 																PathfindCell *parentCell, 
-																PathfindCell *goalCell, UnsignedShort parentZone, 
-																UnsignedShort *examinedZones, Int &numExZones,
+																PathfindCell *goalCell, zoneStorageType parentZone, 
+																zoneStorageType *examinedZones, Int &numExZones,
 																Bool crusher, Int &cellCount);
 	Bool checkForAdjust(Object *, const LocomotorSet& locomotorSet, Bool isHuman, Int cellX, Int cellY, 
 		PathfindLayerEnum layer, Int iRadius, Bool center,Coord3D *dest, const Coord3D *groupDest) ;
