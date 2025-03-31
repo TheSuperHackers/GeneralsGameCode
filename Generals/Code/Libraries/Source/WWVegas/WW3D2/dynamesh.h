@@ -112,7 +112,7 @@ public:
 	}
 
 	// New geometry accessors (non-const)
-	Vector3i *	Get_Non_Const_Polygon_Array(void);
+	TriIndex *	Get_Non_Const_Polygon_Array(void);
 	Vector3 *	Get_Non_Const_Vertex_Normal_Array(void);
 
 private:
@@ -449,7 +449,7 @@ inline Vector3 * DynamicMeshModel::Get_Non_Const_Vertex_Normal_Array(void)
 	return get_vert_normals(); 
 }
 
-inline Vector3i * DynamicMeshModel::Get_Non_Const_Polygon_Array(void)
+inline TriIndex * DynamicMeshModel::Get_Non_Const_Polygon_Array(void)
 {
 	return get_polys();
 }

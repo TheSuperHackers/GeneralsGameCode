@@ -959,7 +959,7 @@ void ShatterSystem::Shatter_Mesh(MeshClass * mesh,const Vector3 & point,const Ve
 	** Grab the arrays out of the mesh and transform verts and vnorms
 	** into "shatter-space"
 	*/
-	const Vector3i * polys = model->Get_Polygon_Array();
+	const TriIndex * polys = model->Get_Polygon_Array();
 	const Vector3 * src_verts = model->Get_Vertex_Array();
 	const Vector3 * src_vnorms = model->Get_Vertex_Normal_Array();
 

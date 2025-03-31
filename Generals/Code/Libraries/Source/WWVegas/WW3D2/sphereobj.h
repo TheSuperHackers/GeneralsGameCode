@@ -50,6 +50,7 @@
 #include	"Vector3i.h"
 #include	"quat.h"
 #include "prim_anim.h"
+#include "meshgeometry.h"
 
 class TextureClass;
 
@@ -194,7 +195,7 @@ private:
 	int		fan_size;		// size of each fan
 	int		*fans;			// array of vertex indices for each fan (# of fans by fan_size)
 
-	Vector3i	*tri_poly;		// array of triangle poly's, vertex indices  (can be discard if switched to strips + fans)
+	TriIndex	*tri_poly;		// array of triangle poly's, vertex indices  (can be discard if switched to strips + fans)
 
 };
 

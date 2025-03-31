@@ -1498,9 +1498,9 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 
 	// Generate Tri-Poly Indices
 
-	tri_poly		= W3DNEWARRAY Vector3i[face_ct];	// 3 indices per triangle
+	tri_poly		= W3DNEWARRAY TriIndex[face_ct];	// 3 indices per triangle
 
-	Vector3i *out = tri_poly;
+	TriIndex *out = tri_poly;
 	int	   *in;
 
 	for (stacks = 0; stacks < strip_ct; stacks++) {

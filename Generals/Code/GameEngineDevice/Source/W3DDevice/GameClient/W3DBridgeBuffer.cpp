@@ -593,7 +593,7 @@ Int W3DBridge::getModelIndices(UnsignedShort *destination_ib, Int curIndex, Int 
 	if (pMesh == NULL) 
 		return(0);
 	Int numPoly = pMesh->Peek_Model()->Get_Polygon_Count();
-	const Vector3i *pPoly =pMesh->Peek_Model()->Get_Polygon_Array();
+	const TriIndex *pPoly =pMesh->Peek_Model()->Get_Polygon_Array();
 	if (curIndex+3*numPoly+6 >= W3DBridgeBuffer::MAX_BRIDGE_INDEX) {
 		return(0);
 	}

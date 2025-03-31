@@ -53,6 +53,7 @@
 #include "vector4.h"
 #include "shader.h"
 #include "vertmaterial.h"
+#include "meshgeometry.h"
 
 class MeshClass;
 class RenderInfoClass;
@@ -148,7 +149,7 @@ protected:
 	/*
 	** Connectivity
 	*/
-	SimpleDynVecClass<Vector3i>						Polys;
+	SimpleDynVecClass<TriIndex>						Polys;
 
 	/*
 	** Geometry
@@ -213,7 +214,7 @@ protected:
 	/*
 	** Connectivity
 	*/
-	SimpleDynVecClass<Vector3i>						Polys;
+	SimpleDynVecClass<TriIndex>						Polys;
 
 	/*
 	** Indirected vertex indices (for copying dynamically updated mesh geometry)

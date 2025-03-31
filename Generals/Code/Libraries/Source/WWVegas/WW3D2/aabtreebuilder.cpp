@@ -64,6 +64,7 @@
 #include <string.h>
 #include <assert.h>
 
+#undef WWASSERT
 #define WWASSERT	assert					// can't use WWASSERT because we use this module in the MAX plugin...
 const float COINCIDENCE_EPSILON = 0.001f;
 
@@ -149,7 +150,7 @@ void AABTreeBuilderClass::Reset(void)
  * HISTORY:                                                                                    *
  *   6/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-void AABTreeBuilderClass::Build_AABTree(int polycount,Vector3i * polys,int vertcount,Vector3 * verts)
+void AABTreeBuilderClass::Build_AABTree(int polycount,TriIndex * polys,int vertcount,Vector3 * verts)
 {
 	WWASSERT(polycount > 0);
 	WWASSERT(vertcount > 0);
@@ -167,7 +168,7 @@ void AABTreeBuilderClass::Build_AABTree(int polycount,Vector3i * polys,int vertc
 	VertCount = vertcount;
 	PolyCount = polycount;
 	Verts = W3DNEWARRAY Vector3[VertCount];
-	Polys = W3DNEWARRAY Vector3i[PolyCount];
+	Polys = W3DNEWARRAY TriIndex[PolyCount];
 
 	for (int vi=0; vi<VertCount; vi++) {
 		Verts[vi] = verts[vi];
@@ -326,7 +327,7 @@ AABTreeBuilderClass::Select_Splitting_Plane(int polycount,int * polyindices)
 		*/
 		int poly_index = polyindices[rand() % polycount];
 		int vert_index = rand() % 3;
-		const Vector3i * polyverts = Polys + poly_index;
+		const TriIndex * polyverts = Polys + poly_index;
 		const Vector3 * vert = Verts + (*polyverts)[vert_index];
 		
 		/*
@@ -732,7 +733,7 @@ void AABTreeBuilderClass::Update_Min(int poly_index,Vector3 & min)
 {
 	for (int vert_index = 0; vert_index < 3; vert_index++) {
 
-		const Vector3i * polyverts = Polys + poly_index;
+		const TriIndex * polyverts = Polys + poly_index;
 		const Vector3 * point = Verts + (*polyverts)[vert_index];
 
 		if (point->X  < min.X) min.X = point->X;
@@ -758,7 +759,7 @@ void AABTreeBuilderClass::Update_Max(int poly_index,Vector3 & max)
 {
 	for (int vert_index = 0; vert_index < 3; vert_index++) {
 
-		const Vector3i * polyverts = Polys + poly_index;
+		const TriIndex * polyverts = Polys + poly_index;
 		const Vector3 * point = Verts + (*polyverts)[vert_index];
 
 		if (point->X  > max.X) max.X = point->X;
@@ -784,7 +785,7 @@ void	AABTreeBuilderClass::Update_Min_Max(int poly_index, Vector3 & min, Vector3 
 {
 	for (int vert_index = 0; vert_index < 3; vert_index++) {
 
-		const Vector3i * polyverts = Polys + poly_index;
+		const TriIndex * polyverts = Polys + poly_index;
 		const Vector3 * point = Verts + (*polyverts)[vert_index];
 
 		if (point->X  < min.X) min.X = point->X;

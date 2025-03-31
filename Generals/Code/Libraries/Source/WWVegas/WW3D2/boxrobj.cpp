@@ -103,26 +103,27 @@
 #include "dx8fvf.h"
 #include "sortingrenderer.h"
 #include "visrasterizer.h"
+#include "meshgeometry.h"
 
 
 #define NUM_BOX_VERTS	8
 #define NUM_BOX_FACES	12
 
 // Face Connectivity
-static Vector3i					_BoxFaces[NUM_BOX_FACES] = 
+static TriIndex					_BoxFaces[NUM_BOX_FACES] = 
 {
-	Vector3i( 0,1,2 ),		// +z faces
-	Vector3i( 0,2,3 ),		
-	Vector3i( 4,7,6 ),		// -z faces
-	Vector3i( 4,6,5 ),
-	Vector3i( 0,3,7 ),		// +x faces
-	Vector3i( 0,7,4 ),
-	Vector3i( 1,5,6 ),		// -x faces
-	Vector3i( 1,6,2 ),
-	Vector3i( 4,5,1 ),		// +y faces
-	Vector3i( 4,1,0 ),
-	Vector3i( 3,2,6 ),		// -y faces
-	Vector3i( 3,6,7 )
+	TriIndex( 0,1,2 ),		// +z faces
+	TriIndex( 0,2,3 ),		
+	TriIndex( 4,7,6 ),		// -z faces
+	TriIndex( 4,6,5 ),
+	TriIndex( 0,3,7 ),		// +x faces
+	TriIndex( 0,7,4 ),
+	TriIndex( 1,5,6 ),		// -x faces
+	TriIndex( 1,6,2 ),
+	TriIndex( 4,5,1 ),		// +y faces
+	TriIndex( 4,1,0 ),
+	TriIndex( 3,2,6 ),		// -y faces
+	TriIndex( 3,6,7 )
 };
 
 // Vertex Positions as a function of the box extents

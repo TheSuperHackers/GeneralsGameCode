@@ -826,7 +826,7 @@ WW3DErrorType MeshModelClass::read_per_tri_materials(ChunkLoadClass & cload,Mesh
 {
 	if (context->Header.NumMaterials == 1) return WW3D_ERROR_OK;
 
-	Vector3i * polys = get_polys();
+	TriIndex * polys = get_polys();
 
 	bool multi_mtl = (context->Vertex_Material_Count() > 1);
 	bool multi_tex = (context->Texture_Count() > 1);
@@ -1114,7 +1114,6 @@ WW3DErrorType MeshModelClass::read_vertex_material_ids(ChunkLoadClass & cload,Me
 	** with the length equal to the vertex count.
 	*/
 	uint32 vmat;
-
 #if (!MESH_SINGLE_MATERIAL_HACK)
 	if (cload.Cur_Chunk_Length() == 1*sizeof(uint32)) {
 		
@@ -1128,13 +1127,10 @@ WW3DErrorType MeshModelClass::read_vertex_material_ids(ChunkLoadClass & cload,Me
 			matdesc->Set_Material(i,context->Peek_Vertex_Material(vmat),context->CurPass);
 		}
 	}
-
 #else
-
 #pragma message ("(gth) Hacking to make Generals behave as if all meshes have 1 material")
 		cload.Read(&vmat,sizeof(uint32));
 		matdesc->Set_Single_Material(context->Peek_Vertex_Material(vmat),context->CurPass);
-
 #endif //0
 
 	return WW3D_ERROR_OK;
@@ -1168,7 +1164,6 @@ WW3DErrorType MeshModelClass::read_shader_ids(ChunkLoadClass & cload,MeshLoadCon
 	** Read in the shader id's and plug in the appropriate shader
 	*/
 	uint32 shaderid;
-
 #if (!MESH_SINGLE_MATERIAL_HACK)
 	if (cload.Cur_Chunk_Length() == 1*sizeof(uint32)) {
 		
@@ -2353,7 +2348,7 @@ WW3DErrorType MeshModelClass::write_triangles(ChunkSaveClass & csave,MeshSaveCon
 		return WW3D_ERROR_LOAD_FAILED;
 	}
 
-	Vector3i	* poly_verts = Poly->Get_Array();
+	TriIndex	* poly_verts = Poly->Get_Array();
 	Vector4 * poly_eq = (PlaneEq ? PlaneEq->Get_Array() : NULL);
 
 	for (int i=0; i<Get_Polygon_Count(); i++) {

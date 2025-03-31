@@ -47,6 +47,7 @@
 #include "Vector3i.h"
 #include "RANDOM.H"
 #include "v3_rnd.h"
+#include "meshgeometry.h"
 
 
 /* We have chunking logic which handles N segments at a time. To simplify the subdivision logic,
@@ -891,8 +892,8 @@ void SegLineRendererClass::Render
 
 		// Configure vertex array and setup renderer.
 		unsigned int vnum = num_intersections[TOP_EDGE] + num_intersections[BOTTOM_EDGE];		
-		VertexFormatXYZDUV1 *vArray=W3DNEWARRAY VertexFormatXYZDUV1[vnum];		
-		Vector3i v_index_array[MAX_SEGLINE_POLY_BUFFER_SIZE];
+		VertexFormatXYZDUV1 *vArray = W3DNEWARRAY VertexFormatXYZDUV1[vnum];
+		TriIndex v_index_array[MAX_SEGLINE_POLY_BUFFER_SIZE];
 		
 		// Vertex and triangle indices
 		unsigned int vidx = 0;

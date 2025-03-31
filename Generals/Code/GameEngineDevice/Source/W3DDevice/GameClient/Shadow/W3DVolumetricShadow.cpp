@@ -326,7 +326,7 @@ protected:
 	int GetNumVertex (void)	{	return m_numVerts;}
 	///Get indices to the 3 vertices of this face.
 	virtual int GetPolygonIndex (long dwPolyId, short *psIndexList, int dwNSize) const
-	{	const Vector3i *polyi=&m_polygons[dwPolyId];
+	{	const TriIndex *polyi=&m_polygons[dwPolyId];
 		*psIndexList++ = m_parentVerts[polyi->I];
 		*psIndexList++ = m_parentVerts[polyi->J];
 		*psIndexList++ = m_parentVerts[polyi->K];
@@ -344,7 +344,7 @@ protected:
 	Vector3	*m_polygonNormals;	///<array of face normals
 	Int m_numVerts;	 ///< number of actual vertices after duplicates are removed.
 	Int m_numPolygons; ///<number of polygons in source geometry
-	const Vector3i	*m_polygons;	///<array of 3 vertex indices per face
+	const TriIndex	*m_polygons;	///<array of 3 vertex indices per face
 	UnsignedShort *m_parentVerts;	///<array of parent vertex indices for each vertex.
 	/// the neighbor info indexed by polygon id
 	PolyNeighbor *m_polyNeighbors;

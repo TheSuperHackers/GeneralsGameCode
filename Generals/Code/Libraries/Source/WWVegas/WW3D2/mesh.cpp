@@ -879,7 +879,7 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 			{
 				DynamicIBAccessClass::WriteLockClass lock(&dynamic_ib);
 				unsigned short * indices = lock.Get_Index_Array();
-				const Vector3i * polys = Model->Get_Polygon_Array();
+				const TriIndex * polys = Model->Get_Polygon_Array();
 
 				for (int i=0; i < _apt.Count(); i++)
 				{

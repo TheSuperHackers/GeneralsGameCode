@@ -59,7 +59,6 @@
 #include "stripoptimizer.h"
 #include "meshgeometry.h"
 
-
 /*
 ** Global Instance of the DX8MeshRender
 */
@@ -73,16 +72,6 @@ static DynamicVectorClass<Vector3>				_TempNormalBuffer;
 static MultiListClass<MeshModelClass>			_RegisteredMeshList;
 static TextureCategoryList							texture_category_delete_list;
 static FVFCategoryList								fvf_category_container_delete_list;
-
-//void Whatever(const Vector3* locations,unsigned vertex_count,const Vector3i* polygon_indices,unsigned polygon_count);
-void Whatever(
-	Vector3i* added_polygon_indices,
-	unsigned& added_polygon_count,
-	const Vector3* locations,
-	unsigned vertex_count,
-	const Vector3i* polygon_indices,
-	unsigned polygon_count);
-
 
 // helper data structure
 class PolyRemover : public MultiListObjectClass
@@ -810,7 +799,7 @@ class Vertex_Split_Table
 	MeshModelClass* mmc;
 	bool npatch_enable;
 	unsigned polygon_count;
-	Vector3i* polygon_array;
+	TriIndex* polygon_array;
 
 	bool allocated_polygon_array;
 
@@ -832,20 +821,20 @@ public:
 		if (gap_filler) polygon_count+=gap_filler->Get_Polygon_Count();
 //		if (mmc->Get_Gap_Filler_Polygon_Count()) {
 			allocated_polygon_array=true;
-			polygon_array=W3DNEWARRAY Vector3i[polygon_count];
+			polygon_array=W3DNEWARRAY TriIndex[polygon_count];
 			memcpy(
 				polygon_array,
 				mmc->Get_Polygon_Array(),
-				mmc->Get_Polygon_Count()*sizeof(Vector3i));
+				mmc->Get_Polygon_Count()*sizeof(TriIndex));
 			if (gap_filler) {
 				memcpy(
 					polygon_array+mmc->Get_Polygon_Count(),
 					gap_filler->Get_Polygon_Array(),
-					gap_filler->Get_Polygon_Count()*sizeof(Vector3i));
+					gap_filler->Get_Polygon_Count()*sizeof(TriIndex));
 			}
 //		}
 //		else {
-//			polygon_array=const_cast<Vector3i*>(mmc->Get_Polygon_Array());
+//			polygon_array=const_cast<TriIndex*>(mmc->Get_Polygon_Array());
 //		}
 
 	}
@@ -1500,7 +1489,7 @@ unsigned DX8TextureCategoryClass::Add_Mesh(
 			stripify=false;
 		}
 #endif;
-		const Vector3i* src_indices=(const Vector3i*)split_table.Get_Polygon_Array(pass);//mmc->Get_Polygon_Array();
+		const TriIndex* src_indices=(const TriIndex*)split_table.Get_Polygon_Array(pass);//mmc->Get_Polygon_Array();
 
 		if (stripify) {
 			int* triangles=W3DNEWARRAY int[index_count];

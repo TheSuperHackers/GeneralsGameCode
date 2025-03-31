@@ -207,8 +207,8 @@ void VisRasterizerClass::Update_MV_Transform(void)
 
 const Matrix3D & VisRasterizerClass::Get_MV_Transform(void)
 {
-// TODO: optimize this
-Update_MV_Transform();  // the user can and does mess with the camera directly!
+	// TODO: optimize this
+	Update_MV_Transform();  // the user can and does mess with the camera directly!
 	return MVTransform;
 }
 
@@ -223,7 +223,7 @@ bool VisRasterizerClass::Render_Triangles
 (
 	const Vector3 * verts,
 	int vcount,
-	const Vector3i * tris, 
+	const TriIndex * tris, 
 	int tcount,const 
 	AABoxClass & bounds
 )
@@ -248,7 +248,7 @@ bool VisRasterizerClass::Render_Triangles_No_Clip
 (
 	const Vector3 * verts,
 	int vcount,
-	const Vector3i * tris, 
+	const TriIndex * tris, 
 	int tcount
 )
 {
@@ -271,7 +271,7 @@ bool VisRasterizerClass::Render_Triangles_No_Clip
 	*/
 	for (int tri_index=0; tri_index<tcount; tri_index++) {
 		
-		const Vector3i & tri = tris[tri_index];
+		const TriIndex & tri = tris[tri_index];
 		pixel_passed |= IDBuffer.Render_Triangle(tverts[tri.I],tverts[tri.J],tverts[tri.K]);
 		if (pixel_passed && (IDBuffer.Get_Render_Mode() == IDBufferClass::NON_OCCLUDER_MODE)) {
 			return true;
@@ -285,7 +285,7 @@ bool VisRasterizerClass::Render_Triangles_Clip
 (
 	const Vector3 * verts,
 	int vcount,
-	const Vector3i * tris, 
+	const TriIndex * tris, 
 	int tcount
 )
 {

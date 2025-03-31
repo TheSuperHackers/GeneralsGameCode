@@ -51,6 +51,7 @@
 #include "simplevec.h"
 #include "bittype.h"
 #include "plane.h"
+#include "meshgeometry.h"
 
 
 class CameraClass;
@@ -181,7 +182,7 @@ public:
 	CameraClass *		Peek_Camera(void);
 
 	void					Clear(void)							{ IDBuffer.Clear(); }
-	bool					Render_Triangles(const Vector3 * verts,int vcount,const Vector3i * tris, int tcount,const AABoxClass & bounds);
+	bool					Render_Triangles(const Vector3 * verts,int vcount,const TriIndex * tris, int tcount,const AABoxClass & bounds);
 	const uint32 *		Get_Pixel_Row(int y,int min_x,int max_x) { return IDBuffer.Get_Pixel_Row(y,min_x,max_x); }
 
 protected:
@@ -189,13 +190,13 @@ protected:
 	void					Update_MV_Transform(void);
 	const Matrix3D &	Get_MV_Transform(void);
 	Vector3 *			Get_Temp_Vertex_Buffer(int count);
-	bool					Render_Triangles_Clip(const Vector3 * verts,int vcount,const Vector3i * tris, int tcount);
-	bool					Render_Triangles_No_Clip(const Vector3 * verts,int vcount,const Vector3i * tris, int tcount);
+	bool					Render_Triangles_Clip(const Vector3 * verts,int vcount,const TriIndex * tris, int tcount);
+	bool					Render_Triangles_No_Clip(const Vector3 * verts,int vcount,const TriIndex * tris, int tcount);
 	
 	Matrix3D				ModelTransform;			// AKA "World Transform"
 	CameraClass *		Camera;
 	Matrix3D				MVTransform;
-	
+
 	IDBufferClass		IDBuffer;	
 
 	SimpleVecClass<Vector3>	TempVertexBuffer;
