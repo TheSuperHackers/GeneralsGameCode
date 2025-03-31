@@ -411,7 +411,7 @@ void WorldHeightMapEdit::loadBaseImages(void)
 }
 
 /// Loads all the images in a directory (including subdirectories)
-void WorldHeightMapEdit::loadDirectoryOfImages(char *pFilePath) 
+void WorldHeightMapEdit::loadDirectoryOfImages(const char *pFilePath)
 {
 	char				dirBuf[_MAX_PATH];
 	char				findBuf[_MAX_PATH];
@@ -780,7 +780,8 @@ void WorldHeightMapEdit::saveToFile(DataChunkOutput &chunkWriter)
 			chunkWriter.writeReal(TheGlobalData->m_terrainObjectsLighting[i+TIME_OF_DAY_FIRST][0].lightPos.y);
 			chunkWriter.writeReal(TheGlobalData->m_terrainObjectsLighting[i+TIME_OF_DAY_FIRST][0].lightPos.z);
 
-			for (Int j=1; j<MAX_GLOBAL_LIGHTS; j++)
+			Int j=1;
+			for (; j<MAX_GLOBAL_LIGHTS; j++)
 			{	//save state of new lights added in version 3.
 				chunkWriter.writeReal(TheGlobalData->m_terrainObjectsLighting[i+TIME_OF_DAY_FIRST][j].ambient.red);
 				chunkWriter.writeReal(TheGlobalData->m_terrainObjectsLighting[i+TIME_OF_DAY_FIRST][j].ambient.green);
@@ -3385,7 +3386,7 @@ void WorldHeightMapEdit::removeLastBoundary(void)
 		return;
 	}
 	
-	m_boundaries.erase(&m_boundaries.back());
+	m_boundaries.pop_back();
 }
 
 void WorldHeightMapEdit::findBoundaryNear(Coord3D *pt, float okDistance, Int *outNdx, Int *outHandle)

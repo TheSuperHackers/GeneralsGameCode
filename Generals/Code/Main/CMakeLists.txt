@@ -9,6 +9,7 @@ endif()
 
 target_link_libraries(g_generals PRIVATE
     binkstub
+    comctl32
     d3d8
     d3dx8
     dbghelplib
@@ -40,7 +41,7 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h
 "#pragma once
 
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 4
+#define VERSION_MINOR 8
 #define VERSION_BUILDNUM 601
 "
 )

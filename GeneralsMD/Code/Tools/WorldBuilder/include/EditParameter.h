@@ -68,7 +68,7 @@ protected:
 	static Bool loadTriggerAreas(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
 	static Bool loadCommandButtons(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
 	static Bool loadFontNames(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
-	static void readFontFile( char *filename );
+	static void readFontFile( const char *filename );
 	static Bool loadTeams(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString); 
 	static Bool loadTeamOrUnit(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString); 
 	static Bool loadUnits(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString); 

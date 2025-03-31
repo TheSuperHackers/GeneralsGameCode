@@ -1280,7 +1280,7 @@ Bool EditParameter::loadFontNames(CComboBox *pCombo, AsciiString match)
 // EditParameter::readFontFile ======================================================
 /** Read the font file defintitions and load them */
 //=============================================================================
-void EditParameter::readFontFile( char *filename )
+void EditParameter::readFontFile( const char *filename )
 {
 	File *fp;
 

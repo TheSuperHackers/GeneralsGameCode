@@ -33,27 +33,8 @@ endif()
 # Top level project, doesn't really affect anything.
 project(genzh LANGUAGES C CXX)
 
-# Print some information
-message(STATUS "CMAKE_CXX_COMPILER: ${CMAKE_CXX_COMPILER}")
-message(STATUS "CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
-message(STATUS "CMAKE_CXX_COMPILER_VERSION: ${CMAKE_CXX_COMPILER_VERSION}")
-message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
-if (DEFINED MSVC_VERSION)
-    message(STATUS "MSVC_VERSION: ${MSVC_VERSION}")
-endif()
-
-# Set variable for VS6 to handle special cases.
-if (DEFINED MSVC_VERSION AND MSVC_VERSION LESS 1300)
-    set(IS_VS6_BUILD TRUE)
-else()
-    set(IS_VS6_BUILD FALSE)
-endif()
-
-# Create PDB for Release as long as debug info was generated during compile.
-if(MSVC)
-    string(APPEND CMAKE_EXE_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF")
-    string(APPEND CMAKE_SHARED_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF")
-endif()
+# This file handles extra settings wanted/needed for different compilers.
+include(cmake/compilers.cmake)
 
 include(FetchContent)
 
@@ -70,62 +51,20 @@ if((WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows") AND ${CMAKE_SIZEOF_VOID_P} EQU
     include(cmake/dbghelp.cmake)
 endif()
 
+include(cmake/config.cmake)
 include(cmake/gamespy.cmake)
 include(cmake/lzhl.cmake)
 include(cmake/zlib.cmake)
+
 add_subdirectory(Dependencies/Benchmark)
-add_subdirectory(Dependencies/MaxSDK)
+if (IS_VS6_BUILD)
+    # The original max sdk does not compile against a modern compiler.
+    # If there is a desire to make this work, then a fixed max sdk needs to be created.
+    add_subdirectory(Dependencies/MaxSDK)
+endif()
 add_subdirectory(Dependencies/SafeDisc)
 add_subdirectory(Dependencies/Utility)
-
-if (NOT IS_VS6_BUILD)
-    # Set C++ standard
-    set(CMAKE_CXX_STANDARD 20)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-    set(CMAKE_CXX_EXTENSIONS OFF)  # Ensures only ISO features are used
-
-    if (MSVC)
-        # Multithreaded build.
-        add_compile_options(/MP)
-        # Enforce strict __cplusplus version
-        add_compile_options(/Zc:__cplusplus)
-    endif()
-endif()
-
-# Do we want to build extra SDK stuff or just the game binary?
-option(GENZH_BUILD_ZEROHOUR "Build Zero Hour code." ON)
-option(GENZH_BUILD_GENERALS "Build Generals code." ON)
-option(GENZH_BUILD_INTERNAL "Build code with the \"Internal\" configuration." OFF)
-option(GENZH_BUILD_PROFILE "Build code with the \"Profile\" configuration." OFF)
-
-if(NOT GENZH_BUILD_ZEROHOUR AND NOT GENZH_BUILD_GENERALS)
-    set(GENZH_BUILD_ZEROHOUR TRUE)
-    message("You must select one project to build, building Zero Hour by default.")
-endif()
-
-add_feature_info(ZeroHourStuff GENZH_BUILD_ZEROHOUR "Build Zero Hour code")
-add_feature_info(GeneralsStuff GENZH_BUILD_GENERALS "Build Generals code")
-add_feature_info(InternalBuild GENZH_BUILD_INTERNAL "Building as an \"Internal\" build")
-add_feature_info(ProfileBuild GENZH_BUILD_PROFILE "Building as a \"Profile\" build")
-
-add_library(gz_config INTERFACE)
-
-target_compile_options(gz_config INTERFACE ${GENZH_FLAGS})
-
-target_compile_definitions(gz_config INTERFACE $<IF:$<CONFIG:Debug>,_DEBUG WWDEBUG DEBUG,_RELEASE>)
-
-# This disables a lot of warnings steering developers to use windows only functions/function names.
-if(MSVC)
-    target_compile_definitions(gz_config INTERFACE _CRT_NONSTDC_NO_WARNINGS _CRT_SECURE_NO_WARNINGS)
-endif()
-
-if(GENZH_BUILD_PROFILE)
-    target_compile_definitions(gz_config INTERFACE _PROFILE)
-endif()
-
-if(GENZH_BUILD_INTERNAL)
-    target_compile_definitions(gz_config INTERFACE _INTERNAL)
-endif()
+add_subdirectory(resources)
 
 # Add main build targets
 if(GENZH_BUILD_ZEROHOUR)

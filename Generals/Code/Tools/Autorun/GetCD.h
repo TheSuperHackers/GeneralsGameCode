@@ -35,7 +35,7 @@
 #define GETCD_H
 
 
-extern char *	_CD_Volume_Label[];
+extern const char *	_CD_Volume_Label[];
 extern int		_Num_Volumes;
 
 
@@ -209,9 +209,9 @@ class	GetCDClass
 		inline	int		Get_Index				( void )	{ return( CDIndex ); };
 		inline	void	Reset_Index				( void )	{ CDIndex = 0; };
 
-		int		Get_CD_Drive_For_This_Volume	( char *volume_name );
-		char *	Get_Volume_For_This_CD_Drive	( char *path, char *volume_name );
-		char *	Get_Volume_Label				( int index );
+		int		Get_CD_Drive_For_This_Volume	( const char *volume_name );
+		const char *	Get_Volume_For_This_CD_Drive	( const char *path, char *volume_name );
+		const char *	Get_Volume_Label				( int index );
 
 	protected:
 

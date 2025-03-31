@@ -810,7 +810,7 @@ void MapObjectProps::_TeamToDict(void)
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Dict newDict;
 	newDict.setAsciiString(TheKey_originalOwner, AsciiString(buf));
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do
@@ -827,7 +827,7 @@ void MapObjectProps::_NameToDict(void)
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Dict newDict;
 	newDict.setAsciiString(TheKey_objectName, cstr.GetBuffer(0));
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do
@@ -865,7 +865,7 @@ void MapObjectProps::_HealthToDict(void)
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Dict newDict;
 	newDict.setInt(TheKey_objectInitialHealth, value);
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do
@@ -929,7 +929,7 @@ void MapObjectProps::_PrebuiltUpgradesToDict(void)
 
 	// Now, do the Undoable
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, NAMEKEY_INVALID, m_allSelectedDicts.size(), pDoc, true);
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, NAMEKEY_INVALID, m_allSelectedDicts.size(), pDoc, true);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 }
@@ -944,7 +944,7 @@ void MapObjectProps::_EnabledToDict(void)
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Dict newDict;
 	newDict.setBool(TheKey_objectEnabled, isChecked);
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do
@@ -961,7 +961,7 @@ void MapObjectProps::_ScriptToDict(void)
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Dict newDict;
 	newDict.setAsciiString(TheKey_objectScriptAttachment, AsciiString(buf));
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do	
@@ -977,7 +977,7 @@ void MapObjectProps::_IndestructibleToDict(void)
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Dict newDict;
 	newDict.setBool(TheKey_objectIndestructible, isChecked);
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do	
@@ -993,7 +993,7 @@ void MapObjectProps::_UnsellableToDict(void)
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Dict newDict;
 	newDict.setBool(TheKey_objectUnsellable, isChecked);
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do
@@ -1010,7 +1010,7 @@ void MapObjectProps::_TargetableToDict()
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Dict newDict;
 	newDict.setBool( TheKey_objectTargetable, isChecked );
-	DictItemUndoable *pUndo = new DictItemUndoable( m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size() );
+	DictItemUndoable *pUndo = new DictItemUndoable( &m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size() );
 	pDoc->AddAndDoUndoable( pUndo );
 	REF_PTR_RELEASE( pUndo ); // belongs to pDoc now.
 	// Update is called by Do
@@ -1027,7 +1027,7 @@ void MapObjectProps::_PoweredToDict(void)
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Dict newDict;
 	newDict.setBool(TheKey_objectPowered, isChecked);
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do
@@ -1058,7 +1058,7 @@ void MapObjectProps::_AggressivenessToDict(void)
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Dict newDict;
 	newDict.setInt(TheKey_objectAggressiveness, value);
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do		
@@ -1082,7 +1082,7 @@ void MapObjectProps::_VisibilityToDict(void)
 	if (value != -1) {
 		newDict.setInt(TheKey_objectVisualRange, value);
 	}
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, TheKey_objectVisualRange, m_allSelectedDicts.size());
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, TheKey_objectVisualRange, m_allSelectedDicts.size());
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do
@@ -1103,7 +1103,7 @@ void MapObjectProps::_VeterancyToDict(void)
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Dict newDict;
 	newDict.setInt(TheKey_objectVeterancy, value);
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do	
@@ -1121,7 +1121,7 @@ void MapObjectProps::_WeatherToDict(void)
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Dict newDict;
 	newDict.setInt(TheKey_objectWeather, curSel);
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do	
@@ -1139,7 +1139,7 @@ void MapObjectProps::_TimeToDict(void)
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Dict newDict;
 	newDict.setInt(TheKey_objectTime, curSel);
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do	
@@ -1164,7 +1164,7 @@ void MapObjectProps::_ShroudClearingDistanceToDict(void)
 	if (value != -1) {
 		newDict.setInt(TheKey_objectShroudClearingDistance, value);
 	}
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, TheKey_objectShroudClearingDistance, m_allSelectedDicts.size());
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, TheKey_objectShroudClearingDistance, m_allSelectedDicts.size());
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do
@@ -1180,7 +1180,7 @@ void MapObjectProps::_RecruitableAIToDict(void)
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Dict newDict;
 	newDict.setBool(TheKey_objectRecruitableAI, isChecked);
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do
@@ -1196,7 +1196,7 @@ void MapObjectProps::_SelectableToDict(void)
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Dict newDict;
 	newDict.setBool(TheKey_objectSelectable, isChecked);
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do
@@ -1219,7 +1219,7 @@ void MapObjectProps::_HPsToDict()
 	Dict newDict;
 
 	newDict.setInt(TheKey_objectMaxHPs, value);
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 }
@@ -1242,7 +1242,7 @@ void MapObjectProps::_StoppingDistanceToDict(void)
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Dict newDict;
 	newDict.setReal(TheKey_objectStoppingDistance, value);
-	DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
+	DictItemUndoable *pUndo = new DictItemUndoable(&m_allSelectedDicts.front(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size(), pDoc, true);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	// Update is called by Do

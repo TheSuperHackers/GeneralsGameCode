@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <iostream.h>
+#include <Utility/iostream_adapter.h>
 #include <string.h>
 
 #include "odevice.h"
@@ -55,6 +55,7 @@ class Streamer : public streambuf
 
 
     OutputDevice  *Output_Device;
+    char *Buf;
 };
 
 #endif

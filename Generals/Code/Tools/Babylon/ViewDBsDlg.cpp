@@ -80,7 +80,7 @@ HTREEITEM VIEWDBSII::create_full_view ( void )
 	HTREEITEM	root;
 	TransDB	*db;
 	int count = 0;
-	char *title = "Building database view...";
+	const char *title = "Building database view...";
 
 	MainDLG->Log ("");
 	MainDLG->Status ( title );
@@ -124,7 +124,7 @@ HTREEITEM VIEWDBSII::create_changes_view ( void )
 	HTREEITEM	root;
 	TransDB	*db;
 	int count = 0;
-	char *title = "Building changes view...";
+	const char *title = "Building changes view...";
 
 	MainDLG->Log ("");
 	MainDLG->Status ( title );

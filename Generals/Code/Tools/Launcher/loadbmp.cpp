@@ -35,7 +35,7 @@ LoadBmp::~LoadBmp()
 //
 //  Load a specified bitmap for later display on a window
 //
-bit8 LoadBmp::init(char *filename,HWND hwnd)
+bit8 LoadBmp::init(const char *filename,HWND hwnd)
 {
   int                  i;
   HANDLE               hBitmapFile;

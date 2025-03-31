@@ -44,7 +44,7 @@
 
 #define MISSING_STRING_HINTS_MAX (20)
 
-wchar_t *localeStringsMissing[ MISSING_STRING_HINTS_MAX ] =
+const wchar_t *localeStringsMissing[ MISSING_STRING_HINTS_MAX ] =
 {
 	{ L"0 MissingInstall"		},
 	{ L"1 MissingExplore"		},

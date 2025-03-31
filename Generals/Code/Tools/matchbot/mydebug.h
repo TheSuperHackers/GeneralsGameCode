@@ -57,12 +57,8 @@ will you be ready to leave grasshopper.
 
 #include "wstypes.h"
 
-#ifdef _WINDOWS
-#include <iostream.h>
-#include <strstrea.h>
-#else
-#include <iostream>
-#endif
+#include <Utility/iostream_adapter.h>
+#include <Utility/sstream_adapter.h>
 
 #ifdef USE_SEM
 #include "sem4.h"
@@ -128,7 +124,7 @@ protected:
 public:
 	static int                 setAllStreams(OutputDevice *device);
 	static int                 setParanoidStream(OutputDevice *device);
-	static int                 ReplaceAllStreams(FileD *output_device, char *device_filename, char *copy_filename);
+	static int                 ReplaceAllStreams(FileD *output_device, const char *device_filename, const char *copy_filename);
 
 	static void                enableParanoid(int flag);
 

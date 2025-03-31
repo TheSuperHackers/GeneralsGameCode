@@ -114,9 +114,16 @@ bit8 ConfigFile::readFile(FILE *in)
     value.truncate('\n');
     value.truncate('#');
 
+    // TheSuperHackers @compile xezon 25/03/2025 Re-implement algorithm to avoid writing into string buffer directly.
     // Remove trailing spaces
-    while(isgraph(value.get()[strlen(value.get())-1])==0)
-      value.get()[strlen(value.get())-1]=0;
+    {
+      const char* valueStr = value.get();
+      const uint32 valueLen = value.length();
+      uint32 spaceIdx = valueLen;
+      for (; spaceIdx > 0 && isgraph(valueStr[spaceIdx - 1])==0; --spaceIdx);
+      if (spaceIdx != valueLen)
+        value.truncate(spaceIdx);
+    }
 
     Critsec_.lock();
     Dictionary_.add(key,value);

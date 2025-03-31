@@ -15,6 +15,7 @@ target_include_directories(z_mapcachebuilder PRIVATE
 )
 #
 target_link_libraries(z_mapcachebuilder PRIVATE
+    comctl32
     dbghelplib
     imm32
     vfw32

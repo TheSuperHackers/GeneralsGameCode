@@ -15,6 +15,7 @@ target_include_directories(z_datgen PRIVATE
 )
 
 target_link_libraries(z_datgen PRIVATE
+    gz_config
     safedisc
 )
 

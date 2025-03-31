@@ -125,7 +125,8 @@ void EditObjectParameter::addObject( const ThingTemplate *thingTemplate  )
 		parent = findOrAdd( parent, buffer );
 
 		// next tier uses the editor sorting that design can specify in the INI
-		for( EditorSortingType i = ES_FIRST; 
+		EditorSortingType i = ES_FIRST;
+		for( ;
 				 i < ES_NUM_SORTING_TYPES;
 				 i = (EditorSortingType)(i + 1) )
 		{

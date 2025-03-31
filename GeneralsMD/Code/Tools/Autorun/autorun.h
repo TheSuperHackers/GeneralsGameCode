@@ -229,7 +229,7 @@ class MainWindow : public Window
 		void	 		Create_Buttons	  		( HWND hWnd, RECT *dlg_rect );
 		unsigned int	Run_Auto_Update			( HWND hWnd, RECT *rect );
 		unsigned int	Run_Demo 		  		( HWND hWnd, RECT *rect, int cd_drive );
-		BOOL			Run_Explorer	  		( char *, HWND hWnd, RECT *rect );
+		BOOL			Run_Explorer	  		( const char *, HWND hWnd, RECT *rect );
 		unsigned int	Run_Game 		  		( HWND hWnd, RECT *rect );
 		unsigned int	Run_WorldBuilder	( HWND hWnd, RECT *rect );
 		unsigned int	Run_PatchGet			( HWND hWnd, RECT *rect );

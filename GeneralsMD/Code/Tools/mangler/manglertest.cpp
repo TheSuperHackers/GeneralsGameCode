@@ -17,7 +17,8 @@
 */
 
 
-#include <iostream.h>
+#include <Utility/iostream_adapter.h>
+
 #include <signal.h>
 #ifdef _WINDOWS
 #include <process.h> // *MUST* be included before ANY Wnet/Wlib headers if _REENTRANT is defined
@@ -40,7 +41,7 @@
 // ST - 2/1/01 12:46PM
 bool BigEndian = false;
 
-unsigned long ResolveIP(char *Server)
+unsigned long ResolveIP(const char *Server)
 {
   char serverName[100];
   struct hostent *serverStruct;

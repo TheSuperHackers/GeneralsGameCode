@@ -37,6 +37,6 @@
 
 #include "CallbackHook.h"
 
-bool ViewHTML(const char* url, bool wait = false, CallbackHook& callback = CallbackHook());
+bool ViewHTML(const char* url, bool wait = false, const CallbackHook& callback = CallbackHook());
 
 #endif // VIEWHTML_H

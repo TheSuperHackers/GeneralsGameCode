@@ -197,7 +197,6 @@ set(GAMEENGINEDEVICE_SRC
 )
 
 add_library(z_gameenginedevice STATIC)
-set_target_properties(z_gameenginedevice PROPERTIES OUTPUT_NAME gameenginedevice)
 
 target_sources(z_gameenginedevice PRIVATE ${GAMEENGINEDEVICE_SRC})
 

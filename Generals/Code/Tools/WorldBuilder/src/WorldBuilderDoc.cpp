@@ -304,7 +304,7 @@ void CWorldBuilderDoc::Serialize(CArchive& ar)
 			chunkWriter = NULL;
 			theStream.flush();
 		} catch(...) {
-			char *msg = "WorldHeightMapEdit::WorldHeightMapEdit  height map file write failed: ";
+			const char *msg = "WorldHeightMapEdit::WorldHeightMapEdit  height map file write failed: ";
 			AfxMessageBox(msg);
 			return;
 		}
@@ -2085,8 +2085,8 @@ static void fprintUnit(FILE *theLogFile, Dict *teamDict, NameKeyType keyMinUnit,
 void CWorldBuilderDoc::OnDumpDocToText(void) 
 {
 	MapObject *pMapObj = NULL; 
-	char* vetStrings[] = {"Green", "Regular", "Veteran", "Elite"};
-	char* aggroStrings[] = {"Passive", "Normal", "Guard", "Hunt", "Agressive", "Sleep"};
+	const char* vetStrings[] = {"Green", "Regular", "Veteran", "Elite"};
+	const char* aggroStrings[] = {"Passive", "Normal", "Guard", "Hunt", "Agressive", "Sleep"};
 	AsciiString noOwner = "No Owner";
 	static FILE *theLogFile = NULL;
 	Bool open = false;
@@ -2359,7 +2359,7 @@ writeRawDict( theLogFile, "TeamInfo",ti->getDict() );
 					AsciiString trigger = ti->getDict()->getAsciiString(TheKey_teamProductionCondition, &exists);
 
 					fprintf(theLogFile, "TEAM %s home '%s', priority %s, condition '%s',\n", teamName.str(),
-						waypoint.str(), pri, trigger.str());
+						waypoint.str(), static_cast<LPCSTR>(pri), trigger.str());
 					fprintf(theLogFile, "  UNITS:");
 					fprintUnit(theLogFile, ti->getDict(), TheKey_teamUnitMinCount1, TheKey_teamUnitMaxCount1, TheKey_teamUnitType1);
 					fprintUnit(theLogFile, ti->getDict(), TheKey_teamUnitMinCount2, TheKey_teamUnitMaxCount2, TheKey_teamUnitType2);

@@ -23,7 +23,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <mmsystem.h>
-#include <iostream.h>
+#include <Utility/iostream_adapter.h>
 #include <string.h>
 
 double s_ticksPerSec = 0.0f;

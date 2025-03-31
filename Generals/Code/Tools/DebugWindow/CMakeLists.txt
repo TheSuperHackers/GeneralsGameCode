@@ -13,6 +13,10 @@ set_target_properties(g_debugwindow PROPERTIES OUTPUT_NAME debugwindow)
 
 target_sources(g_debugwindow PRIVATE ${DEBUGWINDOW_SRC})
 
+target_link_libraries(g_debugwindow PRIVATE
+    gz_config
+)
+
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     target_compile_definitions(g_debugwindow PRIVATE _AFXDLL)
     target_sources(g_debugwindow PRIVATE

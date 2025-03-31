@@ -57,18 +57,15 @@ will you be ready to leave grasshopper.
 
 #include "wstypes.h"
 
-#ifdef _WINDOWS
-#include <iostream.h>
-#include <strstrea.h>
-#else
-#include <iostream>
+#include <Utility/iostream_adapter.h>
+#include <Utility/sstream_adapter.h>
 
+#if !defined(_WINDOWS)
 // Windows headers have a tendency to redefine IN
 #ifdef IN
 #undef IN
 #endif
 #define IN const
-
 #endif
 
 #ifdef USE_DEBUG_SEM
@@ -199,7 +196,7 @@ extern CritSec DebugLibSemaphore;
   strstream __s;\
   __s << __FILE__ << "[" << __LINE__ << \
        "]: " << ##V << " = " << V << '\n' << '\0';\
-  OutputDebugString(__s.str());\
+  OutputDebugString(STRSTREAM_CSTR(__s));\
   DEBUGUNLOCK; \
 }
 
@@ -213,7 +210,7 @@ extern CritSec DebugLibSemaphore;
   strstream __s;\
   __s << "DBG [" << __FILE__ <<  \
     " " << __LINE__ << "] " << X << '\n' << '\0';\
-  OutputDebugString(__s.str());\
+  OutputDebugString(STRSTREAM_CSTR(__s));\
   DEBUGUNLOCK; \
 }
 
@@ -225,7 +222,7 @@ extern CritSec DebugLibSemaphore;
     (*(MsgManager::debugStream())) << X;\
   strstream __s;\
   __s << X << '\0';\
-  OutputDebugString(__s.str());\
+  OutputDebugString(STRSTREAM_CSTR(__s));\
   DEBUGUNLOCK; \
 }    
 
@@ -239,7 +236,7 @@ extern CritSec DebugLibSemaphore;
   strstream __s;\
   __s  << __FILE__ << "[" << __LINE__ << \
      "]: " << ##X << '\n' << '\0';\
-  OutputDebugString(__s.str());\
+  OutputDebugString(STRSTREAM_CSTR(__s));\
   DEBUGUNLOCK; \
 }
 

@@ -200,7 +200,7 @@ void CExportDlg::OnSelchangeCombolang()
 	// TODO: Add your control notification handler code here
 	LANGINFO *info = NULL;
 	int index;
-	CButton *export = (CButton *) GetDlgItem ( IDOK );
+	CButton *export_button = (CButton *) GetDlgItem ( IDOK );
 	CComboBox *combo = (CComboBox *) GetDlgItem ( IDC_COMBOLANG );
 	CEdit *edit = (CEdit *) GetDlgItem ( IDC_FILENAME );
 
@@ -217,7 +217,7 @@ void CExportDlg::OnSelchangeCombolang()
 		edit->EnableWindow ( TRUE );
 		sprintf ( buffer, "Generals_%s", info->initials );
 		edit->SetWindowText ( buffer );
-		export->EnableWindow ( TRUE );
+		export_button->EnableWindow ( TRUE );
 		langid = info->langid;
 		if ( !got_lang )
 		{
@@ -230,7 +230,7 @@ void CExportDlg::OnSelchangeCombolang()
 	{
 		edit->SetWindowText ("");
 		edit->EnableWindow ( FALSE );
-		export->EnableWindow ( FALSE );
+		export_button->EnableWindow ( FALSE );
 		langid = LANGID_UNKNOWN;
 	}
 

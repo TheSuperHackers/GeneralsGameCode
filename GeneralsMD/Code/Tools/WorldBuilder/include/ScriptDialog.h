@@ -88,7 +88,7 @@ public:
 	static void updateScriptWarning(Script *pScript);
 
 	static void patchScriptParametersForGC(Script *pScript);
-	static void ScriptDialog::checkParametersForGC(void);
+	static void checkParametersForGC(void);
 
 
 	/// To allow CSDTreeCtrl access to these member functions of ScriptDialog

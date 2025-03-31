@@ -13,6 +13,7 @@ target_link_libraries(g_compress PRIVATE
     g_compression
     gi_libraries_include
     gi_libraries_source
+    gz_config
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

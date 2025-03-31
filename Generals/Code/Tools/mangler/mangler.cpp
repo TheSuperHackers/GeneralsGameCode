@@ -17,7 +17,8 @@
 */
 
 
-#include <iostream.h>
+#include <Utility/iostream_adapter.h>
+
 #include <signal.h>
 #ifdef _WINDOWS
 #include <process.h> // *MUST* be included before ANY Wnet/Wlib headers if _REENTRANT is defined

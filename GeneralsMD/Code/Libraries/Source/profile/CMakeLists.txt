@@ -19,7 +19,6 @@ set(PROFILE_SRC
 )
 
 add_library(z_profile STATIC)
-set_target_properties(z_profile PROPERTIES OUTPUT_NAME $<IF:$<CONFIG:Debug>,profiledebug,$<IF:$<BOOL:${GENZH_BUILD_INTERNAL}>,profileinternal,$<IF:$<BOOL:${GENZH_BUILD_PROFILE}>,profileprofile,profile>>>)
 
 target_sources(z_profile PRIVATE ${PROFILE_SRC})
 

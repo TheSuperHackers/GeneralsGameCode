@@ -34,15 +34,15 @@ long long after you'll be dead.
 #endif
 #include "xtime.h"
 
-static char *DAYS[]={"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
+static const char *DAYS[]={"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
 
-static char *FULLDAYS[]={"Sunday","Monday","Tuesday","Wednesday","Thursday",
+static const char *FULLDAYS[]={"Sunday","Monday","Tuesday","Wednesday","Thursday",
                "Friday","Saturday"};
 
-static char *MONTHS[]={"Jan","Feb","Mar","Apr","May","Jun","Jul",
+static const char *MONTHS[]={"Jan","Feb","Mar","Apr","May","Jun","Jul",
                "Aug","Sep","Oct","Nov","Dec"};
 
-static char *FULLMONTHS[]={"January","February","March","April","May","June",
+static const char *FULLMONTHS[]={"January","February","March","April","May","June",
                "July","August","September","October","November","December"};
 
 
@@ -312,12 +312,12 @@ void Xtime::update(void)
 // To specify 12-hour format, use "aa" instead of "hh".
 // The hours will be 12 hour and the string will be
 // appended with " AM" or " PM".
-bit8 Xtime::FormatTime(char *out, char *format)
+bit8 Xtime::FormatTime(char *out, const char *format)
 {
   int lastWasH=0;
   int ampmflag = 0;
   out[0]=0;
-  char *ptr=format;
+  const char *ptr=format;
  
   if (*ptr=='"') ptr++;  // skip past open quote if exists
  

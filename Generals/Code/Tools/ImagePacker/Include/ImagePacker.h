@@ -90,7 +90,7 @@ public:
 	Int getTargetWidth( void );  ///< get target width
 	Int getTargetHeight( void );  ///< bet target height
 
-	void statusMessage( char *message );  ///< set a status message
+	void statusMessage( const char *message );  ///< set a status message
 
 	UnsignedInt getImageCount( void );  ///< get image count
 	ImageInfo *getImage( Int index );  ///< get image

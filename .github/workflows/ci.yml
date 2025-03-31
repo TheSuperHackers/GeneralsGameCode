@@ -1,0 +1,136 @@
+name: GenCI
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detect-changes:
+    name: Detect File Changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      generals: ${{ steps.filter.outputs.generals }}
+      generalsmd: ${{ steps.filter.outputs.generalsmd }}
+      shared: ${{ steps.filter.outputs.shared }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Filter Changed Paths
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          token: ''
+          filters: |
+            generals:
+              - 'Generals/**'
+            generalsmd:
+              - 'GeneralsMD/**'
+            shared:
+              - 'Dependencies/**'
+              - 'cmake/**'
+              - 'CMakeLists.txt'
+              - 'CMakePresets.json'
+              - ".github/workflows/ci.yml"
+              - '.github/workflows/build-toolchain.yml'
+
+      - name: Changes Summary
+        run: |
+          echo "### 🔍 File Changes Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- Generals: ${{ steps.filter.outputs.generals == 'true' && '✅' || '❌' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- GeneralsMD: ${{ steps.filter.outputs.generalsmd == 'true' && '✅' || '❌' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Shared: ${{ steps.filter.outputs.shared == 'true' && '✅' || '❌' }}" >> $GITHUB_STEP_SUMMARY
+
+  build-generals:
+    name: Build Generals${{ matrix.preset && '' }}
+    needs: detect-changes
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generals == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    strategy:
+      matrix:
+        include:
+          - preset: "vc6"
+            tools: true
+            extras: true
+          - preset: "vc6prof"
+            tools: true
+            extras: true
+          - preset: "vc6int"
+            tools: true
+            extras: true
+          - preset: "vc6dbg"
+            tools: true
+            extras: true
+          - preset: "win32"
+            tools: true
+            extras: true
+          - preset: "win32prof"
+            tools: true
+            extras: true
+          - preset: "win32int"
+            tools: true
+            extras: true
+          - preset: "win32dbg"
+            tools: true
+            extras: true
+      fail-fast: false
+    uses: ./.github/workflows/build-toolchain.yml
+    with:
+      game: "Generals"
+      preset: ${{ matrix.preset }}
+      tools: ${{ matrix.tools }}
+      extras: ${{ matrix.extras }}
+    secrets: inherit
+
+  build-generalsmd:
+    name: Build GeneralsMD${{ matrix.preset && '' }}
+    needs: detect-changes
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    strategy:
+      matrix:
+        include:
+          - preset: "vc6"
+            tools: true
+            extras: true
+          - preset: "vc6prof"
+            tools: true
+            extras: true
+          - preset: "vc6int"
+            tools: true
+            extras: true
+          - preset: "vc6dbg"
+            tools: true
+            extras: true
+          - preset: "win32"
+            tools: true
+            extras: true
+          - preset: "win32prof"
+            tools: true
+            extras: true
+          - preset: "win32int"
+            tools: true
+            extras: true
+          - preset: "win32dbg"
+            tools: true
+            extras: true
+      fail-fast: false
+    uses: ./.github/workflows/build-toolchain.yml
+    with:
+      game: "GeneralsMD"
+      preset: ${{ matrix.preset }}
+      tools: ${{ matrix.tools }}
+      extras: ${{ matrix.extras }}
+    secrets: inherit

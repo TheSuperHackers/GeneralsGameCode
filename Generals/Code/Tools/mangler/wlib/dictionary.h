@@ -44,6 +44,7 @@ your hashing function is good.
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <crtdbg.h>
 
 #include "wstypes.h"
 

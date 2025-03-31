@@ -149,11 +149,13 @@ void Apply_Patch(char *patchfile,ConfigFile &config,int skuIndex)
     HKEY   regKey;
     LONG   regRetval;
     DWORD  regPrevious;
+    char lpClass[] = "";
+
     regRetval=RegCreateKeyEx(
       HKEY_LOCAL_MACHINE,
       "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
       0,
-      "",
+      lpClass,
       REG_OPTION_NON_VOLATILE,
       KEY_ALL_ACCESS,
       NULL,
@@ -417,7 +419,8 @@ __declspec(dllexport) LPVOID CALLBACK PatchCallBack(UINT Id, LPVOID Param)
       break;
   }
 
-  LPVOID RetVal="";
+  static char null[] = "";
+  LPVOID RetVal=null;
   bit8 Abort=FALSE;
 
   //// using the global Dialog pointer, set the current "error" code
@@ -466,9 +469,12 @@ __declspec(dllexport) LPVOID CALLBACK PatchCallBack(UINT Id, LPVOID Param)
 	break;
 
 	case 0xc:
+		{
 	  // copyright message
 		// Need to return this so Foreign Lang chars don't mess up.
-		return "ANSI";
+		static char ansi[] = "ANSI";
+		return ansi;
+		}
 
     case 5:
 	  // % completed

@@ -337,7 +337,7 @@ void WaypointOptions::OnChangeSelectedWaypoint()
 	Bool foundWaypoint = false;
 	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
 		if (pMapObj->isWaypoint()) {
-			if (pMapObj->getWaypointName() != AsciiString.TheEmptyString) {
+			if (pMapObj->getWaypointName() != AsciiString::TheEmptyString) {
 				if (pMapObj->getWaypointName() == name) {
 					foundWaypoint = true;
 					waypt = pMapObj;

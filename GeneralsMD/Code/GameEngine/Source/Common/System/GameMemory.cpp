@@ -80,7 +80,9 @@ DECLARE_PERF_TIMER(MemoryPoolInitFilling)
 	faster to free raw DMA blocks. 
 	@todo verify this speedup is enough to be worth the extra space
 */
-#define MPSB_DLINK
+#ifndef DISABLE_MEMORYPOOL_MPSB_DLINK
+	#define MPSB_DLINK
+#endif
 
 #ifdef MEMORYPOOL_DEBUG
 
@@ -181,7 +183,6 @@ DECLARE_PERF_TIMER(MemoryPoolInitFilling)
 	Int theWastedDMA = 0;
 	Int thePeakWastedDMA = 0;
 
-#define NO_INTENSE_DMA_BOOKKEEPING
 #ifdef INTENSE_DMA_BOOKKEEPING
 	struct UsedNPeak
 	{
@@ -2287,6 +2288,9 @@ void DynamicMemoryAllocator::freeBytes(void* pBlockPtr)
 	MemoryPoolSingleBlock *block = MemoryPoolSingleBlock::recoverBlockFromUserData(pBlockPtr);
 #ifdef MEMORYPOOL_DEBUG
 	Int waste = 0, used = 0;
+#ifdef INTENSE_DMA_BOOKKEEPING
+	const char* tagString;
+#endif
 	{
 		USE_PERF_TIMER(MemoryPoolDebugging)
 		waste = 0;
@@ -2295,7 +2299,7 @@ void DynamicMemoryAllocator::freeBytes(void* pBlockPtr)
 		if (thePeakDMA < theTotalDMA)
 			thePeakDMA = theTotalDMA;
 	#ifdef INTENSE_DMA_BOOKKEEPING
-		const char* tagString = block->debugGetLiteralTagString();
+		tagString = block->debugGetLiteralTagString();
 	#endif
 	}
 #endif MEMORYPOOL_DEBUG
@@ -3229,23 +3233,6 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 //-----------------------------------------------------------------------------
 // GLOBAL FUNCTIONS
 //-----------------------------------------------------------------------------
-
-/*
-	This is a trick that is intended to force MSVC to link this file (and thus,
-	these definitions of new/delete) ahead of all others. (We do debug checking
-	to ensure that's the case)
-*/
-#if defined(_DEBUG)
-	#pragma comment(lib, "GameEngineDebug")
-#elif defined(_INTERNAL)
-	#pragma comment(lib, "GameEngineInternal")
-#else
-	#pragma comment(lib, "GameEngine")
-#endif
-
-#ifdef MEMORYPOOL_OVERRIDE_MALLOC
-	#pragma comment(linker, "/force:multiple")
-#endif
 
 static int theLinkTester = 0;
 

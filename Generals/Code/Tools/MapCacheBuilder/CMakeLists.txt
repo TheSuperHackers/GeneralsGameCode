@@ -15,6 +15,7 @@ target_include_directories(g_mapcachebuilder PRIVATE
 )
 #
 target_link_libraries(g_mapcachebuilder PRIVATE
+    comctl32
     dbghelplib
     g_gameengine
     g_gameenginedevice

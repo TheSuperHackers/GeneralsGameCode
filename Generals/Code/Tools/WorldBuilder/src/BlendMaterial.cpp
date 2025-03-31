@@ -138,7 +138,7 @@ BOOL BlendMaterial::OnInitDialog()
 
 /** Locate the child item in tree item parent with name pLabel.  If not
 found, add it.  Either way, return child. */
-HTREEITEM BlendMaterial::findOrAdd(HTREEITEM parent, char *pLabel)
+HTREEITEM BlendMaterial::findOrAdd(HTREEITEM parent, const char *pLabel)
 {
 	TVINSERTSTRUCT ins;
 	char buffer[_MAX_PATH];
@@ -162,7 +162,7 @@ HTREEITEM BlendMaterial::findOrAdd(HTREEITEM parent, char *pLabel)
 	ins.hInsertAfter = TVI_LAST;
 	ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 	ins.item.lParam = -1;
-	ins.item.pszText = pLabel;
+	ins.item.pszText = const_cast<char*>(pLabel);
 	ins.item.cchTextMax = strlen(pLabel);				
 	child = m_terrainTreeView.InsertItem(&ins);
 	return(child);

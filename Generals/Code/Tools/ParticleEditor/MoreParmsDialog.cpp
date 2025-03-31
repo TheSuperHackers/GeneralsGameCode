@@ -454,7 +454,7 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 				std::list<std::string>::const_iterator cit;
 				const std::list<std::string> &r = pParent->getAllParticleSystems();
 				for (cit = r.begin(); cit != r.end(); ++cit) {
-					pCombo->AddString(cit->begin());
+					pCombo->AddString(cit->c_str());
 				}
 			}
 
@@ -489,7 +489,7 @@ void MoreParmsDialog::performUpdate( IN Bool toUI )
 				std::list<std::string>::const_iterator cit;
 				const std::list<std::string> &r = pParent->getAllParticleSystems();
 				for (cit = r.begin(); cit != r.end(); ++cit) {
-					pCombo->AddString(cit->begin());
+					pCombo->AddString(cit->c_str());
 				}
 			}
 

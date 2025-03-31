@@ -13,6 +13,10 @@ set_target_properties(z_debugwindow PROPERTIES OUTPUT_NAME debugwindow)
 
 target_sources(z_debugwindow PRIVATE ${DEBUGWINDOW_SRC})
 
+target_link_libraries(z_debugwindow PRIVATE
+    gz_config
+)
+
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     target_compile_definitions(z_debugwindow PRIVATE _AFXDLL)
     target_sources(z_debugwindow PRIVATE

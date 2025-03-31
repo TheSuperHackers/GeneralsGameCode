@@ -32,7 +32,8 @@
 #include <bitset>
 #include <vector>
 #include <map>
-#include <hash_map>
+#include <Utility/hash_map_adapter.h>
+
 typedef std::vector<bool> MapBitSet;
 
 // =====================================================================

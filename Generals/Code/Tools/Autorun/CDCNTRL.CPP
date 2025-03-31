@@ -73,7 +73,7 @@
 CDControlClass CDControl;
 
 
-void Last_Error_Text ( LPTSTR szPrefix, HRESULT hr );
+void Last_Error_Text ( LPCTSTR szPrefix, HRESULT hr );
 
 
 /***********************************************************************************************
@@ -1079,7 +1079,7 @@ bool WINAPI CDControlClass::Unlock_Logical_Volume (HANDLE vwin32, char drive)
  *   6/24/99 4:44PM MML : Created																*
  *==============================================================================================*/
 
-void Last_Error_Text ( LPTSTR szPrefix, HRESULT hr ) 
+void Last_Error_Text ( LPCTSTR szPrefix, HRESULT hr )
 {
 	LPVOID		szMessage; 
 	char		szDisplay[1000];

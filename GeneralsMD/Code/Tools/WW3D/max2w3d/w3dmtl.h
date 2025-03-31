@@ -254,7 +254,7 @@ private:
 		VertMatClass(void);
 		~VertMatClass(void);
 
-		VertMatClass & VertMatClass::operator = (const VertMatClass & that);
+		VertMatClass & operator = (const VertMatClass & that);
 		bool operator != (const VertMatClass & that);
 		bool operator == (const VertMatClass & that);
 		void Set_Name(const char * name);

@@ -52,8 +52,8 @@ class DrawButton
    			FOCUS_STATE
 		};
 
-		DrawButton ( int id, RECT button_rect,  char *normal, char *focus, char *pressed, const char *string, TTFontClass *fontptr );
-		DrawButton ( int id, RECT button_rect,  char *normal, char *focus, char *pressed, const wchar_t *string, TTFontClass *fontptr );
+		DrawButton ( int id, RECT button_rect, const char *normal, const char *focus, const char *pressed, const char *string, TTFontClass *fontptr );
+		DrawButton ( int id, RECT button_rect, const char *normal, const char *focus, const char *pressed, const wchar_t *string, TTFontClass *fontptr );
 
 		char			*Return_Normal_Bitmap	( void )						{ return NormalBitmap;	};
 		char			*Return_Pressed_Bitmap	( void )						{ return PressedBitmap; };

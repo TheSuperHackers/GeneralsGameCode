@@ -923,7 +923,7 @@ void WbView::OnValidationFixTeams()
 
 	// Now, do the Undoable
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
-	DictItemUndoable *pUndo = new DictItemUndoable(allTeamDicts.begin(), newDict, newDict.getNthKey(0), allTeamDicts.size(), pDoc, true);
+	DictItemUndoable *pUndo = new DictItemUndoable(&allTeamDicts.front(), newDict, newDict.getNthKey(0), allTeamDicts.size(), pDoc, true);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	

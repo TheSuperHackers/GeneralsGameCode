@@ -340,7 +340,7 @@ void *Load_File ( char *filename, long *filesize )
  *   10/08/2001  MML : Created.                                    			*
  *==========================================================================*/
 
-char *Make_Current_Path_To ( char *filename, char *path )
+char *Make_Current_Path_To ( const char *filename, char *path )
 {
 	char	szPath	[ _MAX_PATH ];
 	char	drive	[ _MAX_DRIVE];
@@ -358,7 +358,7 @@ char *Make_Current_Path_To ( char *filename, char *path )
 	return( path );
 }
 
-wchar_t *Make_Current_Path_To ( wchar_t *filename, wchar_t *path )
+wchar_t *Make_Current_Path_To ( const wchar_t *filename, wchar_t *path )
 {
 	wchar_t	szPath	[ _MAX_PATH ];
 	wchar_t	drive	[ _MAX_DRIVE];

@@ -1041,7 +1041,7 @@ Bool ImagePacker::getSettingsFromDialog( HWND dialog )
 	Int len = strlen( m_outputFile );
 	for( i = 0; i < len; i++ )
 	{
-		char *illegal = "/\\:*?<>|";
+		const char *illegal = "/\\:*?<>|";
 		Int illegalLen = strlen( illegal );
 		
 		for( Int j = 0; j < illegalLen; j++ )
@@ -1168,7 +1168,7 @@ Bool ImagePacker::init( void )
 // ImagePacker::statusMessage =================================================
 /** Status message for the program */
 //=============================================================================
-void ImagePacker::statusMessage( char *message )
+void ImagePacker::statusMessage( const char *message )
 {
 
 	SetDlgItemText( getWindowHandle(), STATIC_STATUS, message );

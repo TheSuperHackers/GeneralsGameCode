@@ -30,8 +30,6 @@
 #include <new>
 #include "mmsystem.h"
 
-#pragma comment (lib,"winmm")
-
 // yuk, I'm doing this so weird because the destructor
 // of cmd must never be called...
 static ProfileCmdInterface &cmd=*(ProfileCmdInterface *)new 

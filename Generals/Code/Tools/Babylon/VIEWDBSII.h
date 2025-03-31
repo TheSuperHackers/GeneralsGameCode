@@ -37,7 +37,7 @@ public:
 	void OnClose();
 	BOOL OnInitDialog();
 	HTREEITEM create_changes_view ( void );
-	HTREEITEM VIEWDBSII::create_full_view ( void );
+	HTREEITEM create_full_view ( void );
 
 // Dialog Data
 	//{{AFX_DATA(VIEWDBSII)

@@ -87,7 +87,7 @@ class Xtime
 
     void      set(sint32 newday, sint32 newmsec);
     bit8      ParseDate(char *in);
-    bit8      FormatTime(char *out, char *format);
+    bit8      FormatTime(char *out, const char *format);
 
     bit8      getTimeval(struct timeval &tv);
 

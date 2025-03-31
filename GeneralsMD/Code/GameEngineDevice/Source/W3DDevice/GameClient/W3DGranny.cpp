@@ -54,8 +54,6 @@
 #include "WW3D2/dx8wrapper.h"
 #include "WW3D2/scene.h"
 
-#pragma comment( lib, "granny2" )
-
 static granny_pnt332_vertex g_blendingBuffer[4096];	///<temporary workspace for granny (all models < 4096 verts).
 
 /** Local function used to find animation matching the given model */

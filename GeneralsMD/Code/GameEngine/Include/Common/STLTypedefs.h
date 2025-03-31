@@ -70,21 +70,7 @@ enum DrawableID;
 
 #include <algorithm>
 #include <bitset>
-#ifdef USING_STLPORT
-#include <hash_map>
-#else
-#include <unordered_map>
-namespace std
-{
-template <
-	class _Kty,
-	class _Ty,
-	class _Hasher = hash<_Kty>,
-	class _Keyeq = equal_to<_Kty>,
-	class _Alloc = allocator<pair<const _Kty, _Ty>>>
-using hash_map = unordered_map<_Kty, _Ty, _Hasher, _Keyeq, _Alloc>;
-}
-#endif
+#include <Utility/hash_map_adapter.h>
 #include <list>
 #include <map>
 #include <queue>
@@ -204,10 +190,16 @@ namespace rts
 
 	template<> struct hash<AsciiString>
 	{
-		size_t operator()(AsciiString ast) const
-		{ 
+		size_t operator()(const AsciiString& ast) const
+		{
+#ifdef USING_STLPORT
 			std::hash<const char *> tmp;
 			return tmp((const char *) ast.str());
+#else
+			// TheSuperHackers @bugfix xezon 16/03/2024 Re-implements hash function that works with non-STLPort.
+			std::hash<std::string_view> hasher;
+			return hasher(std::string_view(ast.str(), ast.getLength()));
+#endif
 		}
 	};
 

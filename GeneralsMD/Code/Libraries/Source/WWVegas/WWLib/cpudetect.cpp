@@ -1265,12 +1265,14 @@ void Get_OS_Info(
 	unsigned build_minor=(OSVersionBuildNumber&0xff0000)>>16;
 	unsigned build_sub=(OSVersionBuildNumber&0xffff);
 
+	// TheSuperHackers @bugfix JAJames 17/03/2025 Fix uninitialized memory access and add more Windows versions.
+	memset(&os_info,0,sizeof(os_info));
+	os_info.Code="UNKNOWN";
+	os_info.SubCode="UNKNOWN";
+	os_info.VersionString="UNKNOWN";
+
 	switch (OSVersionPlatformId) {
 	default:
-		memset(&os_info,0,sizeof(os_info));
-		os_info.Code="UNKNOWN";
-		os_info.SubCode="UNKNOWN";
-		os_info.VersionString="UNKNOWN";
 		break;
 	case VER_PLATFORM_WIN32_WINDOWS:
 		{
@@ -1325,8 +1327,33 @@ void Get_OS_Info(
 				os_info.Code="WINXP";
 				return;
 			}
-			os_info.Code="WINXX";
+		}
+		if (OSVersionNumberMajor==6) {
+			if (OSVersionNumberMinor==0) {
+				os_info.Code="WINVS"; // Vista
+				return;
+			}
+			if (OSVersionNumberMinor==1) {
+				os_info.Code="WIN70"; // Win 7
+				return;
+			}
+			if (OSVersionNumberMinor==2) {
+				os_info.Code="WIN80"; // Win 8.0
+				return;
+			}
+			if (OSVersionNumberMinor==3) {
+				os_info.Code="WIN81"; // Win 8.1
+				return;
+			}
+		}
+		if (OSVersionNumberMinor==10) {
+			os_info.Code="WIN1X"; // Win 10, Win 11, Server 2016, Server 2019, Server 2022
 			return;
 		}
+		// Reference 1: https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-osversioninfoa#remarks
+		// Reference 2: https://learn.microsoft.com/en-us/windows/win32/sysinfo/operating-system-version
+
+		// No more-specific version detected; fallback to XX
+		os_info.Code="WINXX";
 	}
 }

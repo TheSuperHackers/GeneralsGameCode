@@ -107,7 +107,7 @@ void 	Delete_Msg_File ( void )  { };
  *   08/19/1998   MML : Created.											*
  *==========================================================================*/
 
-void __cdecl Msg( int line, char *filename, char *fmt, ... )
+void __cdecl Msg( int line, const char *filename, const char *fmt, ... )
 {
 	char     szBuffer1[ MAX_PATH * 3 ];
 	char     szBuffer2[ MAX_PATH * 2 ];
@@ -131,7 +131,7 @@ void __cdecl Msg( int line, char *filename, char *fmt, ... )
 	//----------------------------------------------------------------------
 	// Make filename.
 	//----------------------------------------------------------------------
-	char *temp = strrchr( filename, '\\' );
+	const char *temp = strrchr( filename, '\\' );
 	if ( temp != NULL || temp[0] != '\0' ) {
 		temp++;
 		strcpy( szFile, temp );
@@ -181,7 +181,7 @@ void __cdecl Msg( int line, char *filename, char *fmt, ... )
  *   08/19/1998   MML : Created.											*
  *==========================================================================*/
 
-void __cdecl Msg( int line, char *filename, wchar_t *fmt, UINT codepage, ... )
+void __cdecl Msg( int line, const char *filename, const wchar_t *fmt, UINT codepage, ... )
 {
 	wchar_t		szBuffer1[ MAX_PATH * 3 ];
 	wchar_t		szBuffer2[ MAX_PATH * 3 ];
@@ -213,7 +213,7 @@ void __cdecl Msg( int line, char *filename, wchar_t *fmt, UINT codepage, ... )
 	//----------------------------------------------------------------------
 	// Make filename.
 	//----------------------------------------------------------------------
-	char *temp = strrchr( filename, '\\' );
+	const char *temp = strrchr( filename, '\\' );
 	if ( temp != NULL || temp[0] != '\0' ) {
 		temp++;
 		length = strlen( temp );
@@ -364,7 +364,7 @@ StandardFileClass::~StandardFileClass( void )
 bool StandardFileClass::Open( const char *no_path_file_name, int open_mode )
 {
 	int test;
-	char *attributes;
+	const char *attributes;
 	char pathed_file_name[ MAX_PATH_SIZE ];
 
 	//
