@@ -66,6 +66,9 @@ add_subdirectory(Dependencies/SafeDisc)
 add_subdirectory(Dependencies/Utility)
 add_subdirectory(resources)
 
+# Add the common build targets
+add_subdirectory(Common)
+
 # Add main build targets
 if(GENZH_BUILD_ZEROHOUR)
     add_subdirectory(GeneralsMD)

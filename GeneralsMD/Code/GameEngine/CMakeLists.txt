@@ -1162,7 +1162,7 @@ target_link_libraries(z_gameengine PUBLIC
     gz_utility
     stlport
     z_browserdispatch
-    z_compression
+    gz_compression
     z_wwvegas
 )
 

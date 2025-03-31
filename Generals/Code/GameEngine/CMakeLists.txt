@@ -1075,7 +1075,7 @@ target_link_libraries(g_gameengine PRIVATE
 target_link_libraries(g_gameengine PUBLIC
     d3d8lib
     g_browserdispatch
-    g_compression
+    gz_compression
     g_wwvegas
     gz_config
     gz_utility

@@ -1,0 +1,10 @@
+# Build tools
+
+# Build useful tool binaries.
+if(GENZH_BUILD_COMMOM_TOOLS)
+endif()
+
+# Build less useful tool/test binaries.
+if(GENZH_BUILD_COMMON_EXTRAS)
+    add_subdirectory(Compress)
+endif()
