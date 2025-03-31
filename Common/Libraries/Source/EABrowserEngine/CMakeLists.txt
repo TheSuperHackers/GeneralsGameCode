@@ -1,4 +1,4 @@
-add_library(z_browserengine INTERFACE)
+add_library(gz_browserengine INTERFACE)
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     add_custom_command(
@@ -8,9 +8,9 @@ if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
         DEPENDS "${CMAKE_CURRENT_LIST_DIR}/BrowserEngine.idl"
         VERBATIM
     )
-    add_library(z_browserenginewin STATIC BrowserEngine_i.c)
-    set_target_properties(z_browserenginewin PROPERTIES OUTPUT_NAME browserenginewin)
-    target_link_libraries(z_browserengine INTERFACE z_browserenginewin)
+    add_library(gz_browserenginewin STATIC BrowserEngine_i.c)
+    set_target_properties(gz_browserenginewin PROPERTIES OUTPUT_NAME browserenginewin)
+    target_link_libraries(gz_browserengine INTERFACE gz_browserenginewin)
 endif()
 
-target_include_directories(z_browserengine INTERFACE ${CMAKE_CURRENT_BINARY_DIR}/..)
+target_include_directories(gz_browserengine INTERFACE ${CMAKE_CURRENT_BINARY_DIR}/..)
