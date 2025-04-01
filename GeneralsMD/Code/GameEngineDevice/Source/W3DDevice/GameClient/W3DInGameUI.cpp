@@ -194,7 +194,7 @@ void DebugHintObject::initData(void)
 	m_vertexMaterialClass = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 
 	//use a multi-texture shader: (text1*diffuse)*text2.
-	m_shaderClass = ShaderClass::ShaderClass(SC_ALPHA);
+	m_shaderClass = ShaderClass(SC_ALPHA);
 }
 
 void DebugHintObject::setLocAndColorAndSize(const Coord3D *loc, Int argb, Int size)
