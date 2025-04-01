@@ -187,7 +187,9 @@ public:
 ** I'm relpacing all occurances of 'min' and 'max with 'MIN' and 'MAX'.  For code which
 ** is out of our domain (e.g. Max sdk) I'm declaring template functions for 'min' and 'max'
 */
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 
 #ifndef MAX
 #define MAX(a,b)            (((a) > (b)) ? (a) : (b))

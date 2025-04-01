@@ -97,12 +97,12 @@
 //#define abs(x) (((x) < 0) ? -(x) : (x))
 //#endif
 
-#ifndef min
-#define min(x,y) (((x)<(y)) ? (x) : (y))
+#ifndef MIN
+#define MIN(x,y) (((x)<(y)) ? (x) : (y))
 #endif
 
-#ifndef max
-#define max(x,y) (((x)>(y)) ? (x) : (y))
+#ifndef MAX
+#define MAX(x,y) (((x)>(y)) ? (x) : (y))
 #endif
 
 #ifndef TRUE
@@ -278,8 +278,8 @@ struct RealRange
 	// both ranges
 	void combine( RealRange &other )
 	{
-		lo = min( lo, other.lo );
-		hi = max( hi, other.hi );
+		lo = MIN( lo, other.lo );
+		hi = MAX( hi, other.hi );
 	}
 };
 

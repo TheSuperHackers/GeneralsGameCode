@@ -64,7 +64,7 @@
 // (DRM 05/07/01) Temporarily eliminated _fastcall
 // on non-Microsoft compatible compilers. Jani
 // should be replacing this soon.
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__GNUC__)
 #define __fastcall
 #endif // _MSC_VER
 
