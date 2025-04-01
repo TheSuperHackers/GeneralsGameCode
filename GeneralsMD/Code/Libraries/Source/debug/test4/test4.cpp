@@ -28,7 +28,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "../debug.h"
 
-void main(void)
+int main(void)
 {
   for (int i=0;i<30;i++)
     DCHECK_MSG(i>100,"run#" << i);
@@ -39,4 +39,5 @@ void main(void)
     DASSERT_MSG(k<1,"k must be less than 1...");
     Debug::Command("list a");
   }
+  return 0;
 }

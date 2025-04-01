@@ -78,7 +78,7 @@ void showResults(void)
     printf("%-16s%-6s %s\n",id.GetName(),id.GetTotalValue(),id.GetUnit());
 }
 
-void main(void)
+int main(void)
 {
   for (int k=0;k<100;k++)
     if (k%2&&k>80)
@@ -89,6 +89,7 @@ void main(void)
   recursionShell();
   
   showResults();
+  return 0;
 }
 
 int q;

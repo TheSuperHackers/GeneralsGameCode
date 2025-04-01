@@ -44,6 +44,7 @@ bool crash(void)
 
 bool thisWillCrash=crash();
 
-void main(void)
+int main(void)
 {
+  return 0;
 }

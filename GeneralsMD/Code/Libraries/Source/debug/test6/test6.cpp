@@ -46,7 +46,7 @@ void func3(void)
   func2();
 }
 
-void main(void)
+int main(void)
 {
   try
   {
@@ -56,4 +56,5 @@ void main(void)
   {
     printf("This catch clause should not be executed.\n");
   }
+  return 0;
 }
