@@ -19,6 +19,9 @@
 
 #include "Common/simpleplayer.h"
 #include "Common/urllaunch.h"
+#include "Common/Debug.h"
+#include <nserror.h>
+#include <wchar.h>
 
 
 ///////////////////////////////////////////////////////////////////////////////

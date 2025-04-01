@@ -32,6 +32,8 @@
 #ifndef INTERNAL_FUNCLEVEL_H // Include guard
 #define INTERNAL_FUNCLEVEL_H
 
+#include <stdlib.h>
+
 class ProfileFuncLevelTracer
 {
   friend class ProfileCmdInterface;

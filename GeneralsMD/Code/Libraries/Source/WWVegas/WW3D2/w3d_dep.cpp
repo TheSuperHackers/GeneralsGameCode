@@ -48,6 +48,8 @@
  *   Make_W3D_Filename -- Converts a W3D object name into a W3D filename.                      *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include <stddef.h>
+
 //-----------------------------------------------------------------------------
 // srj sez: hack festival :-(
 class STLSpecialAlloc

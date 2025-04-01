@@ -21,6 +21,7 @@
 #define SIMPLEPLAYER_H
 
 #include "wmsdk.h"
+#include <tchar.h>
 
 //
 // we preserve a list of "ready-to-free" list of wave headers for the

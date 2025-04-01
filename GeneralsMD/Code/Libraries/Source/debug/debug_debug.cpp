@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <new>      // needed for placement new prototype
+#include <eh.h>
 
 // a little dummy variable that makes the linker actually include
 // us...

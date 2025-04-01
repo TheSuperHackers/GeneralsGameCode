@@ -207,6 +207,8 @@ DEBUG_EXTERN_C void ReleaseCrashLocalized(const AsciiString& p, const AsciiStrin
 
 #ifdef DEBUG_PROFILE
 
+#include <stdlib.h>
+
 class SimpleProfiler
 {
 private:

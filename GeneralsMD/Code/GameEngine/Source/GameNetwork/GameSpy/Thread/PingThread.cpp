@@ -33,6 +33,7 @@
 #include "GameNetwork/GameSpy/PingThread.h"
 #include "mutex.h"
 #include "thread.h"
+#include <eh.h>
 
 #include "Common/StackDump.h"
 #include "Common/SubsystemInterface.h"

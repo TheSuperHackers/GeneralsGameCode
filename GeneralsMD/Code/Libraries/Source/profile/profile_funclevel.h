@@ -32,6 +32,8 @@
 #ifndef PROFILE_FUNCLEVEL_H // Include guard
 #define PROFILE_FUNCLEVEL_H
 
+#include <stdlib.h>
+
 /**
   \brief The function level profiler.
 

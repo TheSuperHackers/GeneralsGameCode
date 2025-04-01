@@ -44,6 +44,8 @@
 #ifndef WWMEMLOG_H
 #define WWMEMLOG_H
 
+#include <stddef.h>
+
 #define LOG_MEMORY	// Comment this out to disable memlog compiling in
 
 class MemLogClass;

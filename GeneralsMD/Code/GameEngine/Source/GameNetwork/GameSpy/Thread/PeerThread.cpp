@@ -45,6 +45,7 @@
 #include "strtok_r.h"
 #include "mutex.h"
 #include "thread.h"
+#include <eh.h>
 
 #include "Common/MiniLog.h"
 

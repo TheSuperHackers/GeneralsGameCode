@@ -18,6 +18,8 @@
 
 
 #include "Common/urllaunch.h"
+#include <tchar.h>
+#include <wchar.h>
 
 #define FILE_PREFIX     L"file://"
 

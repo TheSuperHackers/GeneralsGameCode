@@ -40,6 +40,7 @@
 
 #include "mutex.h"
 #include "thread.h"
+#include <eh.h>
 
 #ifdef _INTERNAL
 // for occasional debugging...

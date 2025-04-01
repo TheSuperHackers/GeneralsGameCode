@@ -39,6 +39,7 @@
 
 #include	"win.h"
 #include	"xmouse.h"
+#include    <vfw.h>
 
 class BSurface;
 

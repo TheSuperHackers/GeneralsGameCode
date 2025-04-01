@@ -32,6 +32,8 @@
 #ifndef PROFILE_HIGHLEVEL_H // Include guard
 #define PROFILE_HIGHLEVEL_H
 
+#include <stdlib.h>
+
 /// \internal internal Id representation
 class ProfileId;
 

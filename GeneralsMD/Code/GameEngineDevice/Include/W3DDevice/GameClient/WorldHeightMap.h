@@ -36,6 +36,7 @@
 #include "WWLib/refcount.h"
 #include "WWMath/vector3.h"
 #include "W3DDevice/GameClient/TileData.h"
+#include "W3DDevice/GameClient/TerrainTex.h"
 #include "../../GameEngine/Include/Common/MapObject.h"
 
 #include "Common/STLTypedefs.h"

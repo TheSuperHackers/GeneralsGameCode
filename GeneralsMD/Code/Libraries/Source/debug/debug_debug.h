@@ -32,6 +32,8 @@
 #ifndef DEBUG_DEBUG_H // Include guard
 #define DEBUG_DEBUG_H
 
+#include <stdlib.h>
+
 /**
   \class Debug debug.h <rts/debug.h>
   
