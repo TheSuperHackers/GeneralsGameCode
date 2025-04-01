@@ -94,14 +94,18 @@ public:
 	void ThreadSafeSetFlag()
 	{
 		while (Flag.test_and_set(std::memory_order_acquire)) {
+#if defined(__cpp_lib_atomic_wait) && __cpp_lib_atomic_wait >= 201907L
 			Flag.wait(true, std::memory_order_relaxed);
+#endif
 		}
 	}
 
 	void ThreadSafeClearFlag()
 	{
 		Flag.clear(std::memory_order_release);
+#if defined(__cpp_lib_atomic_wait) && __cpp_lib_atomic_wait >= 201907L
 		Flag.notify_one();
+#endif
 	}
 
 public:
