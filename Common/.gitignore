@@ -1,0 +1,3 @@
+# Generated shader headers
+*.vsh_code.h
+*.psh_code.h

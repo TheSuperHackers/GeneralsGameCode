@@ -105,6 +105,7 @@ public:
 	void load(void);	///< load/setup any map dependent features
 	void update( void ); ///< update phase of the water
 	void enableWaterGrid(Bool state);	///< used to active custom water for special maps. (i.e DAM).
+	void updateMapOverrides(void);	///< used to update any map specific map overrides for water appearance.
 	void setTimeOfDay(TimeOfDay tod); ///<change sky/water for time of day
 	void toggleCloudLayer(Bool state)	{	m_useCloudLayer=state;}	///<enables/disables the cloud layer
 	void updateRenderTargetTextures(CameraClass *cam);	///< renders into any required textures.	

@@ -70,7 +70,9 @@ public:
 		const char * filename, 
 		MipCountType mip_level_count=MIP_LEVELS_ALL,
 		WW3DFormat texture_format=WW3D_FORMAT_UNKNOWN,
-		bool allow_compression=true);
+		bool allow_compression=true,
+		TextureBaseClass::TexAssetType type=TextureBaseClass::TEX_REGULAR,
+		bool allow_reduction=true);
 
 	//'Generals' customizations
 	void Report_Used_Assets(void);
@@ -107,7 +109,7 @@ private:
 
 	//'E&B' customizations
 /*	virtual RenderObjClass * Create_Render_Obj(const char * name, float scale, const Vector3 &hsv_shift);	
-	TextureClass * Get_Texture_With_HSV_Shift(const char * filename, const Vector3 &hsv_shift, MipCountType mip_level_count = MIP_LEVELS_ALL);
+	TextureClass * Get_Texture_With_HSV_Shift(const char * filename, const Vector3 &hsv_shift, TextureClass::MipCountType mip_level_count = TextureClass::MIP_LEVELS_ALL);
 	void Recolor_Vertex_Material(VertexMaterialClass *vmat, const Vector3 &hsv_shift);
 	void Recolor_Vertices(unsigned int *color, int count, const Vector3 &hsv_shift);	
 	void Recolor_Mesh(RenderObjClass *robj, const Vector3 &hsv_shift);

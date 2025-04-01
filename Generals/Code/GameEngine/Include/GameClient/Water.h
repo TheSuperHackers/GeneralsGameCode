@@ -81,6 +81,10 @@ class WaterTransparencySetting : public Overridable
 	public:
 		Real m_transparentWaterDepth;
 		Real m_minWaterOpacity;
+		RGBColor m_standingWaterColor;
+		RGBColor m_radarColor;
+		Bool m_additiveBlend;
+		AsciiString m_standingWaterTexture;
 		
 		AsciiString m_skyboxTextureN;
 		AsciiString m_skyboxTextureE;
@@ -93,6 +97,15 @@ class WaterTransparencySetting : public Overridable
 		{
 			m_transparentWaterDepth = 3.0f;
 			m_minWaterOpacity = 1.0f;
+			m_standingWaterColor.red = 1.0f;
+			m_standingWaterColor.green = 1.0f;
+			m_standingWaterColor.blue = 1.0f;
+			m_radarColor.red = 140;
+			m_radarColor.green = 140;
+			m_radarColor.blue = 255;
+			m_standingWaterTexture = "TWWater01.tga";
+			m_additiveBlend = FALSE;
+
 			m_skyboxTextureN = "TSMorningN.tga";
 			m_skyboxTextureE = "TSMorningE.tga";
 			m_skyboxTextureS = "TSMorningS.tga";

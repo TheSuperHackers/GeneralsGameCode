@@ -60,7 +60,7 @@
 //-------------------------------------------------------------------------------------------------
 typedef enum
 {
-	FILE_TYPE_UNKNOWN = 0,
+	FILE_TYPE_COMPLETELY_UNKNOWN = 0,	// MBL 08.15.2002 - compile error with FILE_TYPE_UNKNOWN, is constant
 	FILE_TYPE_W3D,
 	FILE_TYPE_TGA,
 	FILE_TYPE_DDS,
@@ -120,7 +120,22 @@ inline static Bool isImageFileType( GameFileType fileType )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Sets the file name, and finds the GDI asset if present. */
+/** 
+	Sets the file name, and finds the GDI asset if present. 
+
+
+	Well, that is the worst comment ever for the most important function there is.
+	Everything comes through this.  This builds the directory and tests for the file
+	in several different places.  
+
+	First we look in Language subfolders so that our Perforce	build can handle files that have 
+	been localized but were in Generals.  
+
+	Then we do the normal TheFileSystem lookup.  In there it does LocalFile (Art/Textures) then it does
+	big files (which internally are also Art/Textures).  
+	
+	Finally we try UserData.
+*/
 //-------------------------------------------------------------------------------------------------
 char const * GameFileClass::Set_Name( char const *filename )
 {
@@ -159,7 +174,7 @@ char const * GameFileClass::Set_Name( char const *filename )
 	name[j] = 0;
 
 	// test the extension to recognize a few key file types
-	GameFileType fileType = FILE_TYPE_UNKNOWN;
+	GameFileType fileType = FILE_TYPE_COMPLETELY_UNKNOWN;  // MBL FILE_TYPE_UNKNOWN change due to compile error
 	if( stricmp( extension, ".w3d" ) == 0 )
 		fileType = FILE_TYPE_W3D;
 	else if( stricmp( extension, ".tga" ) == 0 )
@@ -167,26 +182,52 @@ char const * GameFileClass::Set_Name( char const *filename )
 	else if( stricmp( extension, ".dds" ) == 0 )
 		fileType = FILE_TYPE_DDS;
 
-	// all .w3d files are in W3D_DIR_PATH, all .tga files are in TGA_DIR_PATH
+
+	// We need to be able to grab w3d's from a localization dir, since Germany hates exploding people units.
 	if( fileType == FILE_TYPE_W3D )
 	{
-
-		strcpy( m_filePath, W3D_DIR_PATH );
+		static const char *localizedPathFormat = "Data/%s/Art/W3D/";
+		sprintf(m_filePath,localizedPathFormat, GetRegistryLanguage().str());
 		strcat( m_filePath, filename );
 
 	}  // end if
-	else if( isImageFileType(fileType) )
-	{
 
-		strcpy( m_filePath, TGA_DIR_PATH );
+	// We need to be able to grab images from a localization dir, because Art has a fetish for baked-in text.  Munkee.
+	if( isImageFileType(fileType) )
+	{
+		static const char *localizedPathFormat = "Data/%s/Art/Textures/";
+		sprintf(m_filePath,localizedPathFormat, GetRegistryLanguage().str());
 		strcat( m_filePath, filename );
 
 	}  // end else if
-	else
-		strcpy( m_filePath, filename );
 
 	// see if the file exists
 	m_fileExists = TheFileSystem->doesFileExist( m_filePath );
+
+	// Now try the main lookup of hitting local files and big files
+	if( m_fileExists == FALSE )
+	{
+		// all .w3d files are in W3D_DIR_PATH, all .tga files are in TGA_DIR_PATH
+		if( fileType == FILE_TYPE_W3D )
+		{
+			
+			strcpy( m_filePath, W3D_DIR_PATH );
+			strcat( m_filePath, filename );
+			
+		}  // end if
+		else if( isImageFileType(fileType) )
+		{
+			
+			strcpy( m_filePath, TGA_DIR_PATH );
+			strcat( m_filePath, filename );
+			
+		}  // end else if
+		else
+			strcpy( m_filePath, filename );
+		
+		// see if the file exists
+		m_fileExists = TheFileSystem->doesFileExist( m_filePath );
+	}
 
 	// maintain legacy compatibility directories for now
 	#ifdef MAINTAIN_LEGACY_FILES
@@ -279,24 +320,6 @@ char const * GameFileClass::Set_Name( char const *filename )
 		m_fileExists = TheFileSystem->doesFileExist( m_filePath );
 
 	}  // end if
-
-	// We need to be able to grab images from a localization dir, because Art has a fetish for baked-in text.  Munkee.
-	if( m_fileExists == FALSE )
-	{
-		if( isImageFileType(fileType) )
-		{
-			static const char *localizedPathFormat = "Data/%s/Art/Textures/";
-			sprintf(m_filePath,localizedPathFormat, GetRegistryLanguage().str());
-			strcat( m_filePath, filename );
-
-		}  // end else if
-
-		// see if the file exists
-		m_fileExists = TheFileSystem->doesFileExist( m_filePath );
-
-	}  // end if
-
-
 
 	return m_filename;
 

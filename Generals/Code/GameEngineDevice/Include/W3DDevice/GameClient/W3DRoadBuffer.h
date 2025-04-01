@@ -126,6 +126,7 @@ public:
 	Real			m_scale;				///< Scale.
 	Real			m_widthInTexture; ///< Width of the road in the texture.
 	Int				m_uniqueID;			///< Road type.
+	Bool			m_visible;
 protected:
 	Int										m_numVertex;
 	VertexFormatXYZDUV1*	m_vb;
@@ -193,7 +194,7 @@ class WorldHeightMap;
 //
 class W3DRoadBuffer 
 {	
-friend class HeightMapRenderObjClass;
+friend class BaseHeightMapRenderObjClass;
 public:
 
 	W3DRoadBuffer(void);
@@ -209,6 +210,8 @@ public:
 	void setMap(WorldHeightMap *pMap);
 	/// Updates the diffuse lighting in the buffers.
 	void updateLighting(void);
+	/// Notifies that the camera moved.
+	void updateCenter(void);
 
 protected:
 	RoadType *m_roadTypes;	///<Roads texture
@@ -217,7 +220,6 @@ protected:
 	Bool		m_initialized;		///< True if the subsystem initialized.
 	WorldHeightMap *m_map;		///< Pointer to the height map data.
 	RefRenderObjListIterator *m_lightsIterator;	///< Lighting iterator.
-	Int m_minX, m_maxX, m_minY, m_maxY; ///< Bounds on the terrain to be rendered.
 	Int m_curUniqueID;				///< Road type we are rendering at this pass.
 	Int m_curRoadType;
 #ifdef LOAD_TEST_ASSETS
@@ -231,6 +233,8 @@ protected:
 	Int m_maxRoadTypes;			///< Size of m_roadTypes.
 	Int			m_curNumRoadVertices; ///<Number of vertices used in current road type.
 	Int			m_curNumRoadIndices;	///<Number of indices used in current road type;
+
+	Bool m_updateBuffers; ///< If true, update the vertex buffers.
 
 	void addMapObjects(void);
 	void addMapObject(RoadSegment *pRoad, Bool updateTheCounts);
@@ -274,7 +278,7 @@ protected:
 	void loadRoadSegment(UnsignedShort *ib, VertexFormatXYZDUV1 *vb, RoadSegment *pRoad); ///< Fills the index and vertex buffers for drawing 1 segment.
 	void allocateRoadBuffers(void);							 ///< Allocates the buffers.
 	void freeRoadBuffers(void);									 ///< Frees the index and vertex buffers.
-
+	Bool visibilityChanged(const IRegion2D &bounds);								///< Returns true if some roads are now visible that weren't, or vice versa.
 	void rotateAbout(Vector2 *ptP, Vector2 center, Real angle);
 };
 

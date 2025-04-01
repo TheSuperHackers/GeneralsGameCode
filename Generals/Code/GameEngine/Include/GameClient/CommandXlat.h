@@ -52,14 +52,14 @@ private:
 
 	Int m_objective;
 	Bool m_teamExists;				///< is there a currently selected "team"?
-  
- 	// these are for determining if a drag occurred or it wasjust a sloppy click
- 	ICoord2D m_mouseRightDragAnchor;		// the location of a possible mouse drag start
- 	ICoord2D m_mouseRightDragLift;			// the location of a possible mouse drag end
- 	UnsignedInt m_mouseRightDown;	// when the mouse down happened
- 	UnsignedInt m_mouseRightUp;		// when the mouse up happened
 
-  	GameMessage::Type createMoveToLocationMessage( Drawable *draw, const Coord3D *dest, CommandEvaluateType commandType );
+	// these are for determining if a drag occurred or it wasjust a sloppy click
+	ICoord2D m_mouseRightDragAnchor;		// the location of a possible mouse drag start
+	ICoord2D m_mouseRightDragLift;			// the location of a possible mouse drag end
+	UnsignedInt m_mouseRightDown;	// when the mouse down happened
+	UnsignedInt m_mouseRightUp;		// when the mouse up happened
+  
+	GameMessage::Type createMoveToLocationMessage( Drawable *draw, const Coord3D *dest, CommandEvaluateType commandType );
 	GameMessage::Type createAttackMessage( Drawable *draw, Drawable *other, CommandEvaluateType commandType );
 	GameMessage::Type createEnterMessage( Drawable *enter, CommandEvaluateType commandType );
 	GameMessage::Type issueMoveToLocationCommand( const Coord3D *pos, Drawable *drawableInWay, CommandEvaluateType commandType );
@@ -79,6 +79,7 @@ enum FilterTypes
 	FT_VIEW_BW_FILTER,		//filter to apply a black & white filter to the screen.
 	FT_VIEW_MOTION_BLUR_FILTER, //filter to apply motion blur filter to screen.
 	FT_VIEW_CROSSFADE,				///<filter to apply a cross blend between previous/current views.
+	FT_VIEW_DEFAULT,				///<default filter mode for default filter.
 	FT_MAX
 };
 
@@ -104,7 +105,7 @@ enum FilterModes
 	FM_VIEW_MB_OUT_SATURATE, // Motion blur filter out saturated blur
 	FM_VIEW_MB_END_PAN_ALPHA, // Moton blur on screen pan (for camera tracks object mode)
 
-	
+	FM_VIEW_DEFAULT,	//Default filter that's enabled when all others are off.
 	
 	// NOTE: This has to be the last entry in this enum.
 	// Add new entries before this one.  jba.

@@ -149,7 +149,7 @@ public:
 //
 class W3DBridgeBuffer 
 {	
-friend class HeightMapRenderObjClass;
+friend class BaseHeightMapRenderObjClass;
 public:
 
 	W3DBridgeBuffer(void);

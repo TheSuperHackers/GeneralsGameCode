@@ -52,6 +52,7 @@ static void drawFramerateBar(void);
 #include "Common/GameLOD.h"
 #include "Common/DrawModule.h"
 #include "GameLogic/AIPathfind.h"
+#include "GameLogic/Module/PhysicsUpdate.h"
 
 #include "GameClient/Drawable.h"
 #include "GameClient/GameText.h"
@@ -139,7 +140,7 @@ class StatDumpClass
 public:
 	StatDumpClass( const char *fname );
 	~StatDumpClass();
-	void dumpStats();
+	void dumpStats( Bool brief = FALSE, Bool flagSpikes = FALSE );
 
 protected:
 	FILE *m_fp;
@@ -189,34 +190,63 @@ static const char *getCurrentTimeString(void)
 //=============================================================================
 //Dump the stats
 //=============================================================================
-void StatDumpClass::dumpStats()
+
+
+static Bool s_notFirstDump = FALSE;
+
+void StatDumpClass::dumpStats( Bool brief, Bool flagSpikes )
 {
 	if( !m_fp )
 	{
 		return;
 	}
 
-	//static char buf[1024];
+  
+  Bool beBrief = brief & s_notFirstDump;
+  s_notFirstDump = TRUE;
+
 	fprintf( m_fp, "----------------------------------------------------------------\n" );
 	fprintf( m_fp, "Performance Statistical Dump -- Frame %d\n", TheGameLogic->getFrame() );
-	fprintf( m_fp, "Time:\t%s", getCurrentTimeString() );
-	fprintf( m_fp, "Map:\t%s\n", TheGlobalData->m_mapName.str());
-	fprintf( m_fp, "Side:\t%s\n", ThePlayerList->getLocalPlayer()->getSide().str());
-	fprintf( m_fp, "----------------------------------------------------------------\n" );
+  if ( ! beBrief )
+  {
+	  //static char buf[1024];
+	  fprintf( m_fp, "Time:\t%s", getCurrentTimeString() );
+	  fprintf( m_fp, "Map:\t%s\n", TheGlobalData->m_mapName.str());
+	  fprintf( m_fp, "Side:\t%s\n", ThePlayerList->getLocalPlayer()->getSide().str());
+	  fprintf( m_fp, "----------------------------------------------------------------\n" );
+  }
 
 	//FPS
 	Real fps = TheDisplay->getAverageFPS();
 	fprintf( m_fp, "Average FPS: %.1f (%.5f msec)\n", fps, 1000.0f / fps );
+  if ( flagSpikes && fps<20.0f )
+  	fprintf( m_fp, "                                                                      FPS OUT OF TOLERANCE\n" );
+
 
 	//Rendering stats
-	fprintf( m_fp, "Draws: %d Skins: %d SortedPolys: %d SkinPolys: %d\n",(Int)Debug_Statistics::Get_Draw_Calls(),
+	fprintf( m_fp, "Draws: %d \nSkins: %d \nSortedPolys: %d \nSkinPolys: %d\n",(Int)Debug_Statistics::Get_Draw_Calls(),
 		(Int)Debug_Statistics::Get_DX8_Skin_Renders(),
 		(Int)Debug_Statistics::Get_Sorting_Polygons(), (Int)Debug_Statistics::Get_DX8_Skin_Polygons());
+
+	Int onScreenParticleCount = TheParticleSystemManager->getOnScreenParticleCount();
+
+  if ( flagSpikes )
+  {
+    if ( Debug_Statistics::Get_Draw_Calls()>2000 )
+  	  fprintf( m_fp, "                                                                      DRAWS OUT OF TOLERANCE(2000)\n" );
+    if ( Debug_Statistics::Get_Sorting_Polygons() > (onScreenParticleCount*2) + 300 )
+  	  fprintf( m_fp, "                                                                      NON-PARTICLE-SORTS OUT OF TOLERANCE(300)\n" );
+    if ( Debug_Statistics::Get_DX8_Skin_Renders()>100 )
+  	  fprintf( m_fp, "                                                                      SKINS OUT OF TOLERANCE(100)\n" );
+  }
+
 
 	//Object stats
 	UnsignedInt objCount = TheGameLogic->getObjectCount();
 	UnsignedInt objScreenCount = TheGameClient->getRenderedObjectCount();
 	fprintf( m_fp, "Objects: %d in world (%d onscreen)\n", objCount, objScreenCount );
+  if ( flagSpikes && objCount > 800 )
+  	fprintf( m_fp, "                                                                      OBJS OUT OF TOLERANCE(800)\n" );
 
 	//AI stats
 	UnsignedInt numAI, numMoving, numAttacking, numWaitingForPath, overallFailedPathfinds;
@@ -228,6 +258,8 @@ void StatDumpClass::dumpStats()
 	fprintf( m_fp, "    -attacking: %d\n", numAttacking );
 	fprintf( m_fp, "    -waiting for path: %d\n", numWaitingForPath );
 	fprintf( m_fp, "  Total failed pathfinds: %d\n", overallFailedPathfinds );
+  if ( flagSpikes && overallFailedPathfinds > 0 )
+  	fprintf( m_fp, "                                                                      FAILEDPATHFINDS OUT OF TOLERANCE(0)\n" );
 	fprintf( m_fp, "\n" );
 
 	// Script stats
@@ -236,8 +268,10 @@ void StatDumpClass::dumpStats()
 	fprintf( m_fp, "\n" );
 	fprintf( m_fp, "Script Engine Statistics:\n" );
 	fprintf( m_fp, "  Total time last frame: %.5f msec\n", timeLastFrame*1000 );
-	fprintf( m_fp, "    -Slowest 2 scripts %s\n", slowScripts.str() );
+	fprintf( m_fp, "    -Slowest 2 scripts      %s\n", slowScripts.str() );
 	fprintf( m_fp, "    -Slowest 2 script times %.5f msec, %.5f msec \n", slowScript1*1000, slowScript2*1000 );
+  if ( flagSpikes && slowScript1*1000 > 0.2f || slowScript2*1000 > 0.2f )
+  	fprintf( m_fp, "                                                                      SLOW SCRIPT OUT OF TOLERANCE(0.2)\n" );
 	fprintf( m_fp, "\n" );
 
 
@@ -257,8 +291,13 @@ void StatDumpClass::dumpStats()
 	//Particle system stats
 	fprintf( m_fp, "  Particle Systems: %d\n", TheParticleSystemManager->getParticleSystemCount() );
 	Int totalParticles = TheParticleSystemManager->getParticleCount();
-	Int onScreenParticleCount = TheParticleSystemManager->getOnScreenParticleCount();
 	fprintf( m_fp, "  Particles: %d in world (%d onscreen)\n", totalParticles, onScreenParticleCount );
+
+  if ( flagSpikes && totalParticles > TheGlobalData->m_maxParticleCount - 10 )
+  	fprintf( m_fp, "                                                                      PARTICLES OUT OF TOLERANCE(CAP-10)\n" );
+  if ( flagSpikes && onScreenParticleCount > TheGlobalData->m_maxParticleCount - 10 )
+  	fprintf( m_fp, "                                                                      ON_SCREEN_PARTICLES OUT OF TOLERANCE(CAP-10)\n" );
+
 
 	// polygons this frame	
 	Int polyPerFrame = Debug_Statistics::Get_DX8_Polygons();
@@ -275,28 +314,39 @@ void StatDumpClass::dumpStats()
 	fprintf( m_fp, "  Video RAM: %d\n", Debug_Statistics::Get_Record_Texture_Size() - 1376256 );
 
 	// terrain stats
-	fprintf( m_fp, "  3-Way Blends: %d, Shoreline Blends: %d\n", TheTerrainRenderObject->getNumExtraBlendTiles(), TheTerrainRenderObject->getNumShoreLineTiles() );
+	fprintf( m_fp, "  3-Way Blends: %d/%d, \n Shoreline Blends: %d/%d\n", TheTerrainRenderObject->getNumExtraBlendTiles(TRUE),TheTerrainRenderObject->getNumExtraBlendTiles(FALSE), TheTerrainRenderObject->getNumShoreLineTiles(TRUE),TheTerrainRenderObject->getNumShoreLineTiles(FALSE));
+  if ( flagSpikes && TheTerrainRenderObject->getNumExtraBlendTiles(TRUE) > 2000 )
+  	fprintf( m_fp, "                                                                      3-WAYS OUT OF TOLERANCE(2000)\n" );
+  if ( flagSpikes && TheTerrainRenderObject->getNumShoreLineTiles(TRUE) > 2000 )
+  	fprintf( m_fp, "                                                                      SHORELINES OUT OF TOLERANCE(2000)\n" );
 
 	fprintf( m_fp, "\n" );
 
 #if defined(_DEBUG) || defined(_INTERNAL)
-	TheAudio->audioDebugDisplay( NULL, NULL, m_fp );
-	fprintf( m_fp, "\n" );
+  if ( ! beBrief )
+  {
+    TheAudio->audioDebugDisplay( NULL, NULL, m_fp );
+	  fprintf( m_fp, "\n" );
+  }
 #endif
 	
 #ifdef MEMORYPOOL_DEBUG
 	//Report memory usage.
 	TheMemoryPoolFactory->debugMemoryReport( REPORT_FACTORYINFO | REPORT_POOLINFO, 0, 0, m_fp );
 #else
-	fprintf( m_fp, "Memory Report -- unavailable (build doesn't have MEMORYPOOL_DEBUG defined)\n" );
+	fprintf( m_fp, "Memory Report -- unavailable \n(build doesn't have MEMORYPOOL_DEBUG defined)\n" );
 #endif
 	fprintf( m_fp, "\n" );
 
 	fprintf( m_fp, "%s", TheSubsystemList->dumpTimesForAll().str());
 
-	fprintf( m_fp, "----------------------------------------------------------------\n" );
-	fprintf( m_fp, "END -- Frame %d\n", TheGameLogic->getFrame() );
-	fprintf( m_fp, "----------------------------------------------------------------\n\n\n" );
+  if ( ! beBrief )
+  {
+	  fprintf( m_fp, "----------------------------------------------------------------\n" );
+	  fprintf( m_fp, "END -- Frame %d\n", TheGameLogic->getFrame() );
+	  fprintf( m_fp, "----------------------------------------------------------------\n" );
+  }
+	fprintf( m_fp, "\n\n" );
 	fflush(m_fp);
 }
 
@@ -407,7 +457,6 @@ W3DDisplay::~W3DDisplay()
 
 	// shutdown
 	Debug_Statistics::Shutdown_Statistics();
-	TextureLoadTaskClass::shutdown();
 	W3DShaderManager::shutdown();
 	m_assetManager->Free_Assets();
 	delete m_assetManager;
@@ -418,6 +467,21 @@ W3DDisplay::~W3DDisplay()
 	TheW3DFileSystem = NULL;
 
 }  // end ~W3DDisplay
+
+#define MIN_DISPLAY_RESOLUTION_X	800
+#define MIN_DISPLAY_RESOLUTOIN_Y	600
+
+
+Bool IS_FOUR_BY_THREE_ASPECT( Real x, Real y )
+{
+  if ( y == 0 )
+    return FALSE;
+  
+  Real aspectRatio = fabs( x / y ); 
+  return (( aspectRatio > 1.332f) && ( aspectRatio < 1.334f));
+  
+}
+
 
 /*Return number of screen modes supported by the current device*/
 Int W3DDisplay::getDisplayModeCount(void)
@@ -442,7 +506,8 @@ Int W3DDisplay::getDisplayModeCount(void)
 	for (int res = 0; res < resolutions.Count ();  res ++)
 	{
 		// Is this the resolution we are looking for?
-		if (resolutions[res].BitDepth >= 24 && resolutions[res].Width >= 800 && (fabs((Real)resolutions[res].Width/(Real)resolutions[res].Height - 1.3333f)) < 0.01f)	//only accept 4:3 aspect ratio modes.
+		if (resolutions[res].BitDepth >= 24 && resolutions[res].Width >= MIN_DISPLAY_RESOLUTION_X 
+      && IS_FOUR_BY_THREE_ASPECT( (Real)resolutions[res].Width, (Real)resolutions[res].Height ) )	//only accept 4:3 aspect ratio modes.
 		{	
 			numResolutions++;
 		}
@@ -460,7 +525,8 @@ void W3DDisplay::getDisplayModeDescription(Int modeIndex, Int *xres, Int *yres, 
 	for (int res = 0; res < resolutions.Count ();  res ++)
 	{
 		// Is this the resolution we are looking for?
-		if (resolutions[res].BitDepth >= 24 && resolutions[res].Width >= 800 && (fabs((Real)resolutions[res].Width/(Real)resolutions[res].Height - 1.3333f)) < 0.01f)	//only accept 4:3 aspect ratio modes.
+		if ( resolutions[res].BitDepth >= 24 && resolutions[res].Width >= MIN_DISPLAY_RESOLUTION_X 
+      && IS_FOUR_BY_THREE_ASPECT( (Real)resolutions[res].Width, (Real)resolutions[res].Height ) )	//only accept 4:3 aspect ratio modes.
 		{	
 			if (numResolutions == modeIndex)
 			{	//found the mode
@@ -670,9 +736,9 @@ void W3DDisplay::init( void )
 	WW3D::Set_Prelit_Mode( WW3D::PRELIT_MODE_LIGHTMAP_MULTI_PASS );
 	WW3D::Set_Collision_Box_Display_Mask(0x00);	///<set to 0xff to make collision boxes visible
 	WW3D::Enable_Static_Sort_Lists(true);
-	WW3D::Set_Texture_Compression_Mode(WW3D::TEXTURE_COMPRESSION_ENABLE);
-	WW3D::Set_Texture_Thumbnail_Mode(WW3D::TEXTURE_THUMBNAIL_MODE_OFF);
+	WW3D::Set_Thumbnail_Enabled(false);
 	WW3D::Set_Screen_UV_Bias( TRUE );  ///< this makes text look good :)
+	WW3D::Set_Texture_Bitdepth(32);
 			
 	setWindowed( TheGlobalData->m_windowed );
 
@@ -721,7 +787,7 @@ void W3DDisplay::init( void )
 		//which needs to be applied here.
 		Int txtReduction=TheWritableGlobalData->m_textureReductionFactor;
 		if (txtReduction > 0)
-		{		WW3D::Set_Texture_Reduction(txtReduction,6);
+		{		WW3D::Set_Texture_Reduction(txtReduction,32);
 				//Tell LOD manager that texture reduction was applied.
 				TheGameLODManager->setCurrentTextureReduction(txtReduction);
 		}
@@ -961,15 +1027,15 @@ void W3DDisplay::gatherDebugStats( void )
 		double cumuFPS = (numFrames > 0 && cumuTime > 0.0) ? (numFrames / cumuTime) : 0.0;
 		double skinPolysPerFrame = Debug_Statistics::Get_DX8_Skin_Polygons();
 
-		//Int LOD = TheGlobalData->m_terrainLOD;
+		Int LOD = TheGlobalData->m_terrainLOD;
 		//unibuffer.format( L"FPS: %.2f, %.2fms mapLOD=%d [cumu FPS=%.2f] draws: %.2f sort: %.2f", fps, ms, LOD, cumuFPS, drawsPerFrame,sortPolysPerFrame);
 		if (TheGlobalData->m_useFpsLimit) 
 				unibuffer.format( L"%.2f/%d FPS, ", fps, TheGameEngine->getFramesPerSecondLimit());
 		else
 				unibuffer.format( L"%.2f FPS, ", fps);
 
-				unibuffer2.format( L"%.2fms [cumuFPS=%.2f] draws: %d skins: %d sortP: %d skinP: %d", ms, cumuFPS, (Int)drawsPerFrame,(Int)skinDrawsPerFrame,(Int)sortPolysPerFrame, (Int)skinPolysPerFrame);
-				unibuffer.concat(unibuffer2);
+		unibuffer2.format( L"%.2fms [cumuFPS=%.2f] draws: %d skins: %d sortP: %d skinP: %d LOD %d", ms, cumuFPS, (Int)drawsPerFrame,(Int)skinDrawsPerFrame,(Int)sortPolysPerFrame, (Int)skinPolysPerFrame, LOD);
+		unibuffer.concat(unibuffer2);
 #else
 		//Int LOD = TheGlobalData->m_terrainLOD;
 		//unibuffer.format( L"FPS: %.2f, %.2fms mapLOD=%d draws: %.2f sort %.2f", fps, ms, LOD, drawsPerFrame,sortPolysPerFrame);
@@ -1158,9 +1224,11 @@ void W3DDisplay::gatherDebugStats( void )
 		s_sortedPolysSinceLastUpdate = 0;
 
 		// terrain stats
-		unibuffer.format( L"3-Way Blends: %d, Shoreline Blends: %d", TheTerrainRenderObject->getNumExtraBlendTiles(),
-			TheTerrainRenderObject->getNumShoreLineTiles());
-		m_displayStrings[TerrainStats]->setText( unibuffer );		
+		unibuffer.format( L"3-Way Blends: %d/%d, Shoreline Blends: %d/%d", TheTerrainRenderObject->getNumExtraBlendTiles(TRUE),
+			TheTerrainRenderObject->getNumExtraBlendTiles(FALSE),
+			TheTerrainRenderObject->getNumShoreLineTiles(TRUE),
+			TheTerrainRenderObject->getNumShoreLineTiles(FALSE));
+		m_displayStrings[TerrainStats]->setText( unibuffer );
 
 		// misc debug info
 		Coord3D camPos;
@@ -1356,7 +1424,11 @@ void W3DDisplay::gatherDebugStats( void )
 												objectName.str(),
 												draw->getPosition()->x,
 												draw->getPosition()->y,
-												draw->getPosition()->z );
+												draw->getPosition()->z
+											);
+
+			//const PhysicsBehavior *physics = obj->getPhysics();
+			//PhysicsTurningType turnType = physics ? physics->getTurning() : TURN_NONE;
 
 			// (gth) compute some stats about the rendering cost of this drawable
 #if defined(_DEBUG) || defined(_INTERNAL)	
@@ -1607,9 +1679,23 @@ AGAIN:
 #ifdef DUMP_PERF_STATS
 	if( TheGlobalData->m_dumpPerformanceStatistics )
 	{
-		TheStatDump.dumpStats();
+		TheStatDump.dumpStats( FALSE, TRUE );
 		TheWritableGlobalData->m_dumpPerformanceStatistics = FALSE;
 	}
+  //The <= GAME_REPLAY essentially means, GAME_SINGLE_PLAYER || GAME_LAN || GAME_SKIRMISH || GAME_REPLAY
+  else if ( TheGlobalData->m_dumpStatsAtInterval && TheGameLogic->getGameMode() <= GAME_REPLAY )
+  {
+    Int interval = TheGlobalData->m_statsInterval;
+    if ( TheGameLogic->getFrame() > 0 && (TheGameLogic->getFrame() % interval) == 0 )
+    {
+  	  TheStatDump.dumpStats( TRUE, TRUE );
+    	TheInGameUI->message( UnicodeString( L"-stats is running, at interval: %d." ), TheGlobalData->m_statsInterval );
+    }
+  }
+
+
+
+
 #endif
 
 	// compute debug statistics for display later
@@ -1745,6 +1831,15 @@ AGAIN:
 			//trying to refresh the visible terrain geometry.
 //			if(TheGlobalData->m_loadScreenRender != TRUE)
 				updateViews();
+     		TheParticleSystemManager->update();//LORENZEN AND WILCZYNSKI MOVED THIS FROM ITS NATIVE POSITION, ABOVE
+                                           //FOR THE PURPOSE OF LETTING THE PARTICLE SYSTEM LOOK UP THE RENDER OBJECT"S
+                                           //TRANSFORM MATRIX, WHILE IT IS STILL VALID (HAVING DONE ITS CLIENT TRANSFORMS
+                                           //BUT NOT YET RESETTING TOT HE LOGICAL TRANSFORM)
+                                           //THE RESULT IS THAT PARTICLESYSTEMS LINKED TO BONES IN DRAWABLES.OBJECTS
+                                           //MOVE WITH THE CLIENT TRANSFORMS, NOW.
+                                           //REVOLUTIONARY!
+                                           //-LORENZEN
+
 
 			if (TheWaterRenderObj && TheGlobalData->m_waterType == 2)
 				TheWaterRenderObj->updateRenderTargetTextures(primaryW3DView->get3DCamera());	//do a render into each texture
@@ -1951,6 +2046,12 @@ Bool W3DDisplay::isLetterBoxFading(void)
 	return FALSE;
 }
 
+//WST 10/2/2002 added query function.  JSC Integrated 5/20/03
+Bool W3DDisplay::isLetterBoxed(void)
+{
+	return (m_letterBoxEnabled);
+}
+
 // W3DDisplay::createLightPulse ===============================================
 /** Create a "light pulse" which is a dynamic light that grows, decays 
 	* and vanishes over several frames */
@@ -1976,12 +2077,20 @@ void W3DDisplay::createLightPulse( const Coord3D *pos, const RGBColor *color,
 	theDynamicLight->setDecayRange();
 	theDynamicLight->setDecayColor();
 	//theDynamicLight->setDonut(donut);
+	// (gth) CNC3 enable far attenuation.  C&C3 defaults to disabled.  Must enable to match Generals. MW 8-06-03
+	theDynamicLight->Set_Flag(LightClass::FAR_ATTENUATION,true);
 }
 
 void W3DDisplay::toggleLetterBox(void)
 {
 	m_letterBoxEnabled = !m_letterBoxEnabled;
 	m_letterBoxFadeStartTime = timeGetTime();
+
+	//WST  9/18/2002 This is not a script api to prevent cheat. JSC Integrated 5/20/03
+	if( TheTacticalView )
+	{
+		TheTacticalView->setZoomLimited( !m_letterBoxEnabled );
+	}  
 }
 
 void W3DDisplay::enableLetterBox(Bool enable)
@@ -1992,6 +2101,12 @@ void W3DDisplay::enableLetterBox(Bool enable)
 		{	//letterbox mode not previously enabled
 			m_letterBoxEnabled = TRUE;
 			m_letterBoxFadeStartTime = timeGetTime();
+
+			//WST  9/18/2002 - This is not a script api to prevent cheat.  JSC Integrated 5/20/03
+			if( TheTacticalView )
+			{
+				TheTacticalView->setZoomLimited( 0 );
+			}  
 		}
 	}
 	else
@@ -2000,6 +2115,12 @@ void W3DDisplay::enableLetterBox(Bool enable)
 		{	//letterbox mode no previously disabled
 			m_letterBoxEnabled = FALSE;
 			m_letterBoxFadeStartTime = timeGetTime();
+
+			//WST  9/18/2002. JSC Integrated 5/20/03
+			if( TheTacticalView )
+			{
+				TheTacticalView->setZoomLimited( 1 );
+			}
 		}
 	}
 }
@@ -2768,6 +2889,9 @@ void W3DDisplay::setShroudLevel( Int x, Int y, CellShroudStatus setting )
 			TheTerrainRenderObject->getShroud()->setShroudLevel(x, y, (W3DShroudLevel)TheGlobalData->m_clearAlpha );
 		//Logic is saying shroud.  We can add alpha levels here in client if needed.  
 		// W3DShroud is a 0-255 alpha byte.  Logic shroud is a double reference count.
+
+		TheTerrainRenderObject->notifyShroudChanged();
+	
 	}
 }
 

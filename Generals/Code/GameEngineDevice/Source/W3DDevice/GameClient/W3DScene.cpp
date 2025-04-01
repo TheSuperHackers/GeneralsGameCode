@@ -702,34 +702,6 @@ void RTS3DScene::renderOneObject(RenderInfoClass &rinfo, RenderObjClass *robj, I
 				lightEnv.Add_Light(*sceneLights[globalLightIndex]);
 			}
 		}
-
-		//Apply custom render pass for any drawables with heatvision enabled
-		if (draw->getSecondMaterialPassOpacity() != 0 ) 
-		{
-			rinfo.materialPassEmissiveOverride = draw->getSecondMaterialPassOpacity();
-
-      //if ( draw->testTintStatus( TINT_STATUS_FRENZY ) )
-      //{
-			//	rinfo.Push_Material_Pass(m_heatVisionMaterialPass);
-      //}
-			//else 
-      if (draw->getStealthLook() == STEALTHLOOK_VISIBLE_DETECTED )
-			{
-			  rinfo.materialPassEmissiveOverride = draw->getSecondMaterialPassOpacity();
-				// THIS WILL EXPLICITLY SKIP THE FIRST PASS SO THAT HEATVISION ONLY WILL RENDER
-				rinfo.Push_Override_Flags(RenderInfoClass::RINFO_OVERRIDE_ADDITIONAL_PASSES_ONLY);
-				rinfo.Push_Material_Pass(m_heatVisionOnlyPass);
-        doExtraFlagsPop = TRUE;
-			}
-			else
-			{
-				//THIS CALLS FOR THE HEATVISION TO RENDER
-			  rinfo.materialPassEmissiveOverride = draw->getSecondMaterialPassOpacity();
-				rinfo.Push_Material_Pass(m_heatVisionMaterialPass);
-			}
-
-			doExtraMaterialPop = TRUE;
-		}
 	}
 	else
 	{	//either no drawable or it is hidden
@@ -765,24 +737,6 @@ void RTS3DScene::renderOneObject(RenderInfoClass &rinfo, RenderObjClass *robj, I
 				lightEnv.Add_Light(*pLight);
 			}
 		}
-
-    if( draw && draw->getReceivesDynamicLights() )
-    {
-		  // dynamic lights
-		  RefRenderObjListIterator dynaLightIt(&m_dynamicLightList);	
-		  for (dynaLightIt.First(); !dynaLightIt.Is_Done(); dynaLightIt.Next())
-		  {	
-			  W3DDynamicLight* pDyna = (W3DDynamicLight*)dynaLightIt.Peek_Obj();
-			  if (!pDyna->isEnabled()) {
-				  continue;
-			  }
-			  SphereClass lSph = pDyna->Get_Bounding_Sphere();
-			  if (pDyna->Get_Type() == LightClass::POINT && !Spheres_Intersect(sph, lSph)) {
-				  continue;
-			  }
-			  lightEnv.Add_Light(*(LightClass*)dynaLightIt.Peek_Obj());
-		  }
-    }
 		
 		lightEnv.Pre_Render_Update(rinfo.Camera.Get_Transform());
 		rinfo.light_environment = &lightEnv;

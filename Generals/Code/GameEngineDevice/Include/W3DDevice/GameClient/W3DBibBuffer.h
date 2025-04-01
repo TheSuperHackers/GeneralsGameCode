@@ -86,7 +86,7 @@ typedef struct {
 //
 class W3DBibBuffer 
 {	
-friend class HeightMapRenderObjClass;
+friend class BaseHeightMapRenderObjClass;
 public:
 
 	W3DBibBuffer(void);
