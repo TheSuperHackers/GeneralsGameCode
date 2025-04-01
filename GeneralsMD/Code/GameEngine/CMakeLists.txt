@@ -1139,10 +1139,10 @@ set(GAMEENGINE_SRC
 )
 
 if(GENZH_GAMEMEMORY_ENABLE)
+    # Uses the original Game Memory implementation.
     list(APPEND GAMEENGINE_SRC
         Source/Common/System/GameMemory.cpp
         Source/Common/System/MemoryInit.cpp
-        #Include/Common/GameMemory.h
     )
 else()
     # Uses the null implementation when disabled.

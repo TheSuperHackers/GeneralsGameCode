@@ -115,6 +115,29 @@ public:
 };
 
 
+/**
+	Initialize the memory manager. Construct a new MemoryPoolFactory and 
+	DynamicMemoryAllocator and store 'em in the singletons of the relevant
+	names. 
+*/
+extern void initMemoryManager();
+
+/**
+	return true if initMemoryManager() has been called.
+	return false if only preMainInitMemoryManager() has been called.
+*/
+extern Bool isMemoryManagerOfficiallyInited();
+
+/**
+	Shut down the memory manager. Throw away TheMemoryPoolFactory and 
+	TheDynamicMemoryAllocator.
+*/
+extern void shutdownMemoryManager();
+
+extern MemoryPoolFactory *TheMemoryPoolFactory;
+extern DynamicMemoryAllocator *TheDynamicMemoryAllocator;
+
+
 // TheSuperHackers @info
 // The new operator overloads will zero all memory after allocation.
 // This replicates the behavior of the original Game Memory implementation and is necessary to avoid crashing the game,
