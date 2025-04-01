@@ -51,7 +51,7 @@
 // on Feb 12, 2002.  To regenerate, define REGENERATE_TRIG_TABLES, run the program, and copy the
 // resulting trig.txt file here.
 
-static Int sinLookup[TRIG_RES] = {
+static UnsignedInt sinLookup[TRIG_RES] = {
 	0x00000000, 0x00000006, 0x0000000C, 0x00000012, 0x00000019, 0x0000001F, 0x00000025, 0x0000002B,
 	0x00000032, 0x00000038, 0x0000003E, 0x00000045, 0x0000004B, 0x00000051, 0x00000057, 0x0000005E,
 	0x00000064, 0x0000006A, 0x00000071, 0x00000077, 0x0000007D, 0x00000083, 0x0000008A, 0x00000090,
@@ -566,7 +566,7 @@ static Int sinLookup[TRIG_RES] = {
 	0xFFFFFFCE, 0xFFFFFFD5, 0xFFFFFFDB, 0xFFFFFFE1, 0xFFFFFFE7, 0xFFFFFFEE, 0xFFFFFFF4, 0xFFFFFFFA
 };
 
-static Int arcCosLookup[2 * INT_ONE] = {
+static UnsignedInt arcCosLookup[2 * INT_ONE] = {
 	0x00003243, 0x000031E9, 0x000031C3, 0x000031A7, 0x0000318E, 0x00003179, 0x00003166, 0x00003154,
 	0x00003143, 0x00003134, 0x00003125, 0x00003117, 0x0000310A, 0x000030FD, 0x000030F1, 0x000030E5,
 	0x000030D9, 0x000030CE, 0x000030C3, 0x000030B9, 0x000030AF, 0x000030A5, 0x0000309B, 0x00003091,
@@ -1603,7 +1603,7 @@ static Int intArcCos( Int c )
 	if (c >= 2 * INT_ONE)
 		c = (2 * INT_ONE)-1;
 
-	return arcCosLookup[c];
+	return (Int)arcCosLookup[c];
 }
 
 static Int intSin( Int angle )
@@ -1614,7 +1614,7 @@ static Int intSin( Int angle )
 	while (angle >= INT_TWOPI)
 		angle -= INT_TWOPI;
 
-	return sinLookup[(angle * TRIG_RES)/INT_TWOPI];
+	return (Int)sinLookup[(angle * TRIG_RES)/INT_TWOPI];
 }
 
 static Int intTan( Int angle )
@@ -1694,7 +1694,7 @@ void initTrig( void )
 	static int columns = 8;
 	int column = 0;
 	FILE *fp = fopen("trig.txt", "w");
-	fprintf(fp, "static Int sinLookup[TRIG_RES] = {\n");
+	fprintf(fp, "static UnsignedInt sinLookup[TRIG_RES] = {\n");
 	for( i=0; i<TRIG_RES; i++ ) {
 		angle = TWOPI * i / (Real)TRIG_RES;
 		sinLookup[i] = (Int)(sin(angle) * INT_ONE);
@@ -1716,7 +1716,7 @@ void initTrig( void )
 	fprintf(fp, "\n};\n\n");
 
 	column = 0;
-	fprintf(fp, "static Int arcCosLookup[2 * INT_ONE] = {\n");
+	fprintf(fp, "static UnsignedInt arcCosLookup[2 * INT_ONE] = {\n");
 	for( i=0; i<2*INT_ONE; i++ ) {
 		r = (Real)i / (Real)INT_ONE - 1.0f;
 

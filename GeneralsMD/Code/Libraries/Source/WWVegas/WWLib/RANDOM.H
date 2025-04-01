@@ -145,8 +145,8 @@ class Random3Class {
 		};
 
 	protected:
-		static int Mix1[20];
-		static int Mix2[20];
+		static unsigned Mix1[20];
+		static unsigned Mix2[20];
 		int Seed;
 		int Index;
 };
