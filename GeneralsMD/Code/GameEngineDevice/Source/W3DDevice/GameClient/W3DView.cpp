@@ -773,7 +773,7 @@ static void drawContainedDrawable( Object *obj, void *userData )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-static void drawDrawableExtents( Drawable *draw, void *userData )
+void drawDrawableExtents( Drawable *draw, void *userData )
 {
 	UnsignedInt color = GameMakeColor( 0, 255, 0, 255 );
 
@@ -886,7 +886,7 @@ static void drawContainedAudioLocations( Object *obj, void *userData )
 //-------------------------------------------------------------------------------------------------
 // Draw the location of audio objects in the world
 //-------------------------------------------------------------------------------------------------
-static void drawAudioLocations( Drawable *draw, void *userData )
+void drawAudioLocations( Drawable *draw, void *userData )
 {
   // draw audio for things that are contained by this
   Object *obj = draw->getObject();

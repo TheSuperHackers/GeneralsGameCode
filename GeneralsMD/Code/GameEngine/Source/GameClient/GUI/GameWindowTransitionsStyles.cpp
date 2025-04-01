@@ -2174,7 +2174,7 @@ void PushButtonImageDrawThree(GameWindow *window, Int alpha )
 	
 }
 
-static void drawTypeText( GameWindow *window, DisplayString *str)
+void drawTypeText( GameWindow *window, DisplayString *str)
 {
 	TextData *tData = (TextData *)window->winGetUserData();
 	Int textColor = window->winGetEnabledTextColor();

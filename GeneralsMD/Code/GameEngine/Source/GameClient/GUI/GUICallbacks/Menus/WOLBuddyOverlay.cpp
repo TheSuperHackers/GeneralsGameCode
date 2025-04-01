@@ -347,7 +347,7 @@ WindowMsgHandledType BuddyControlSystem( GameWindow *window, UnsignedInt msg,
 }
 
 
-static void insertChat( BuddyMessage msg )
+void insertChat( BuddyMessage msg )
 {
 	if (buddyControls.listboxChat)
 	{

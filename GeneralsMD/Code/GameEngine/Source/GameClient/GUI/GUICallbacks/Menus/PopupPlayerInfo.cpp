@@ -1529,7 +1529,7 @@ WindowMsgHandledType GameSpyPlayerInfoOverlaySystem( GameWindow *window, Unsigne
 	return MSG_HANDLED;
 }// GameSpyPlayerInfoOverlaySystem
 
-static void messageBoxYes( void )
+void messageBoxYes( void )
 {
 	BuddyRequest breq;
 	breq.buddyRequestType = BuddyRequest::BUDDYREQUEST_DELETEACCT;
