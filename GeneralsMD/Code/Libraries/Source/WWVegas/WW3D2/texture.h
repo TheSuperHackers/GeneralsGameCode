@@ -67,6 +67,7 @@ class LoaderThreadClass;
 class TextureLoadTaskClass;
 class CubeTextureClass;
 class VolumeTextureClass;
+class TextureClass;
 
 class TextureBaseClass : public RefCountClass
 {

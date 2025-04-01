@@ -84,6 +84,8 @@ class DX8PolygonRendererAttachClass;
 class DX8SkinFVFCategoryContainer;
 class GapFillerClass;
 
+class MeshModelClass;
+
 struct VertexFormatXYZNDUV2;
 
 /**
