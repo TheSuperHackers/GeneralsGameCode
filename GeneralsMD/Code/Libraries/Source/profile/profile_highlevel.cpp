@@ -101,7 +101,7 @@ ProfileHighLevel::Block::Block(const char *name)
 
 ProfileHighLevel::Block::~Block()
 {
-  _int64 end;
+  __int64 end;
   ProfileGetTime(end);
   end-=m_start;
 

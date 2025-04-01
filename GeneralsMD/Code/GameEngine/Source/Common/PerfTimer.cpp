@@ -73,7 +73,7 @@ void InitPrecisionTimer()
 
   // measure clock cycles 3 times for 20 msec each
   // then take the 2 counts that are closest, average
-  _int64 n[ 3 ];
+  __int64 n[ 3 ];
   for( int k = 0; k < 3; k++ )
   {
     // wait for end of current tick
@@ -81,7 +81,7 @@ void InitPrecisionTimer()
     while( timeGetTime() < timeEnd ); //do nothing
  
     // get cycles
-    _int64 start, startQPC, endQPC;
+    __int64 start, startQPC, endQPC;
     QueryPerformanceCounter( (LARGE_INTEGER *)&startQPC );
     ProfileGetTime( start );
     timeEnd += 20;
@@ -102,9 +102,9 @@ void InitPrecisionTimer()
   }
  
   // find two closest values
-  _int64 d01 = n[ 1 ] - n[ 0 ];
-	_int64 d02 = n[ 2 ] - n[ 0 ];
-	_int64 d12 = n[ 2 ] - n[ 1 ];
+  __int64 d01 = n[ 1 ] - n[ 0 ];
+	__int64 d02 = n[ 2 ] - n[ 0 ];
+	__int64 d12 = n[ 2 ] - n[ 1 ];
 
   if( d01 < 0 )
 	{
@@ -119,7 +119,7 @@ void InitPrecisionTimer()
 		d12 = -d12;
 	}
 
-  _int64 avg;
+  __int64 avg;
   if( d01 < d02 )
   {
     avg = d01 < d12 ? n[ 0 ] + n[ 1 ] : n[ 1 ] + n[ 2 ];

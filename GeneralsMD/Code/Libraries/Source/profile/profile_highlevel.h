@@ -173,7 +173,7 @@ public:
     Id m_idTime;
 
     /// start time
-    _int64 m_start;
+    __int64 m_start;
   };
 
   /**

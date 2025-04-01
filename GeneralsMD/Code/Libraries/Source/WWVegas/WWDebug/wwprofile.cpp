@@ -97,7 +97,7 @@ WWINLINE double WWProfile_Get_Inv_Processor_Ticks_Per_Second(void)
  * HISTORY:                                                                                    *
  *   9/24/2000  gth : Created.                                                                 *
  *=============================================================================================*/
-inline void WWProfile_Get_Ticks(_int64 * ticks)
+inline void WWProfile_Get_Ticks(__int64 * ticks)
 {
 #ifdef _UNIX
        *ticks = TIMEGETTIME();
