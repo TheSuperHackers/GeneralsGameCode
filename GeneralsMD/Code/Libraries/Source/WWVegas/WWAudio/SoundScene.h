@@ -193,6 +193,8 @@ class SoundSceneClass
 			float						distance2;
 		};
 
+		friend class AutoPoolClass<SoundSceneClass::AudibleInfoClass, 64>;
+
 		typedef MultiListClass<AudibleInfoClass>	COLLECTED_SOUNDS;
 
 		virtual void			Collect_Audible_Sounds (Listener3DClass *listener, COLLECTED_SOUNDS &list);
