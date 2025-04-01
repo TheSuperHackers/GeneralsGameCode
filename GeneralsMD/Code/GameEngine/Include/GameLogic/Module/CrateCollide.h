@@ -39,7 +39,7 @@
 class Thing;
 class Anim2DTemplate;
 class FXList;
-enum ScienceType;
+enum ScienceType CPP_11(: int);
 
 //-------------------------------------------------------------------------------------------------
 class CrateCollideModuleData : public CollideModuleData 
@@ -72,7 +72,7 @@ class CrateCollide : public CollideModule
 
 public:
 
-enum SabotageVictimType
+enum SabotageVictimType CPP_11(: int)
 {
 	SAB_VICTIM_GENERIC = 0,
 	SAB_VICTIM_COMMAND_CENTER,

@@ -40,7 +40,7 @@ const Int SLAVED_UPDATE_RATE = LOGICFRAMES_PER_SECOND/4; ///< This is a low prio
 #include "Common/INI.h"
 #include "GameLogic/Module/UpdateModule.h"
 class DamageInfo;
-enum ModelConditionFlagType;
+enum ModelConditionFlagType CPP_11(: int);
 
 //-------------------------------------------------------------------------------------------------
 class SlavedUpdateModuleData : public UpdateModuleData
@@ -123,7 +123,7 @@ public:
 	}
 };
 
-enum RepairStates
+enum RepairStates CPP_11(: int)
 {
 	REPAIRSTATE_NONE,
 	REPAIRSTATE_UNPACKING,

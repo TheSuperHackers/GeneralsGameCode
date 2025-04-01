@@ -549,7 +549,7 @@ TextureClass *ground=NULL;
 #define TILE_HEIGHT	10.1f
 #define TILE_DIFFUSE 0x00b4b0a5
 
-enum BlendDirection
+enum BlendDirection CPP_11(: int)
 {	B_A,	//visible on all sides
 	B_R,	//visible on right
 	B_L,	//visible on left

@@ -41,8 +41,8 @@ class SpecialPowerModule;
 class ParticleSystem;
 class FXList;
 class AudioEventRTS;
-enum  MaxHealthChangeType;
-enum  CommandOption;
+enum  MaxHealthChangeType CPP_11(: int);
+enum  CommandOption CPP_11(: int);
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ private:
 
 };
 
-enum TransitionStatus
+enum TransitionStatus CPP_11(: int)
 {
 	TRANSITIONSTATUS_IDLE,
 	TRANSITIONSTATUS_UNPACKING,
@@ -98,7 +98,7 @@ enum TransitionStatus
 	TRANSITIONSTATUS_PACKING,
 };
 
-enum BattlePlanStatus
+enum BattlePlanStatus CPP_11(: int)
 {
 	PLANSTATUS_NONE,
 	PLANSTATUS_BOMBARDMENT,

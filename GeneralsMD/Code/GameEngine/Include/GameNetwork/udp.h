@@ -74,7 +74,7 @@ class UDP
  public:
   // These defines specify a system independent way to
   //   get error codes for socket services.
-  enum sockStat
+  enum sockStat CPP_11(: int)
   {
     OK           =  0,     // Everything's cool
     UNKNOWN      = -1,     // There was an error of unknown type

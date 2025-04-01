@@ -44,12 +44,12 @@
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 struct FieldParse;
-enum _TerrainLOD;
+enum _TerrainLOD CPP_11(: int);
 class GlobalData;
 class INI;
 class WeaponBonusSet;
-enum BodyDamageType;
-enum AIDebugOptions;
+enum BodyDamageType CPP_11(: int);
+enum AIDebugOptions CPP_11(: int);
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 

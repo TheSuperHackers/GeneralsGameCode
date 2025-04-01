@@ -39,7 +39,7 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class ObjectCreationList;
 
-enum OCLCreateLocType
+enum OCLCreateLocType CPP_11(: int)
 {
 	CREATE_AT_EDGE_NEAR_SOURCE,
 	CREATE_AT_EDGE_NEAR_TARGET,

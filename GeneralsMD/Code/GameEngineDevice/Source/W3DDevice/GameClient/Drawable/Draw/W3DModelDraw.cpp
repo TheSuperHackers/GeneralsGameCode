@@ -212,14 +212,14 @@ extern Real TheSkateDistOverride;
 #endif
 
 // flags that aren't read directly from INI, but set in response to various other situations
-enum INIReadFlagsType
+enum INIReadFlagsType CPP_11(: int)
 {
 	ANIMS_COPIED_FROM_DEFAULT_STATE = 0,
 	GOT_NONIDLE_ANIMS,
 	GOT_IDLE_ANIMS,
 };
 
-enum ACBits
+enum ACBits CPP_11(: int)
 {
 	RANDOMIZE_START_FRAME = 0,
 	START_FRAME_FIRST,
@@ -1177,7 +1177,7 @@ const Vector3* W3DModelDrawModuleData::getAttachToDrawableBoneOffset(const Drawa
 #endif
 
 //-------------------------------------------------------------------------------------------------
-enum ParseCondStateType
+enum ParseCondStateType CPP_11(: int)
 {
 	PARSE_NORMAL,
 	PARSE_DEFAULT,
@@ -1225,7 +1225,7 @@ void W3DModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 }
 
 //-------------------------------------------------------------------------------------------------
-enum AnimParseType
+enum AnimParseType CPP_11(: int)
 {
 	ANIM_NORMAL,
 	ANIM_IDLE

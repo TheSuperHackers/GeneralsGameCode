@@ -36,7 +36,7 @@
 #include "GameClient/GameWindowManager.h"
 
 // return codes for message box callbacks
-enum MessageBoxReturnType {
+enum MessageBoxReturnType CPP_11(: int) {
 	MB_RETURN_CLOSE,
 	MB_RETURN_KEEPOPEN
 };

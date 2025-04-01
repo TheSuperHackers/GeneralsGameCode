@@ -37,9 +37,9 @@
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/CollideModule.h"
 
-enum ObjectID;
+enum ObjectID CPP_11(: int);
 
-enum PhysicsTurningType
+enum PhysicsTurningType CPP_11(: int)
 {
 	TURN_NEGATIVE = -1,
 	TURN_NONE = 0,

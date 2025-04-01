@@ -64,7 +64,7 @@ typedef Bool (*StateTransFuncPtr)( State *state, void* userData );
 /**
  * State return codes
  */
-enum StateReturnType 
+enum StateReturnType CPP_11(: int) 
 { 
 	// note that all positive values are reserved for STATE_SLEEP!
 
@@ -120,7 +120,7 @@ enum
 /** 
  * Parameters for onExit().
  */
-enum StateExitType
+enum StateExitType CPP_11(: int)
 {
 	EXIT_NORMAL,							///< state exited due to normal state transitioning
 	EXIT_RESET								///< state exited due to state machine reset

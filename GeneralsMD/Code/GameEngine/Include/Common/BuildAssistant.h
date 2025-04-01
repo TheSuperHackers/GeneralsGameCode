@@ -72,7 +72,7 @@ typedef ObjectSellList::iterator ObjectSellListIterator;
 //-------------------------------------------------------------------------------------------------
 /** Return codes for queries about being able to build */
 //-------------------------------------------------------------------------------------------------
-enum CanMakeType
+enum CanMakeType CPP_11(: int)
 {
 	CANMAKE_OK,
 	CANMAKE_NO_PREREQ,
@@ -86,7 +86,7 @@ enum CanMakeType
 //-------------------------------------------------------------------------------------------------
 /** Return codes for queries about legal build locations */
 //-------------------------------------------------------------------------------------------------
-enum LegalBuildCode
+enum LegalBuildCode CPP_11(: int)
 {
 	LBC_OK = 0,
 	LBC_RESTRICTED_TERRAIN,

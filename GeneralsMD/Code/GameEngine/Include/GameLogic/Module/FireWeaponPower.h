@@ -52,7 +52,7 @@
 class Object;
 class SpecialPowerTemplate;
 struct FieldParse;
-enum ScienceType;
+enum ScienceType CPP_11(: int);
 
 class FireWeaponPowerModuleData : public SpecialPowerModuleData
 {

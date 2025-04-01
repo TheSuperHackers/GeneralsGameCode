@@ -46,7 +46,7 @@ typedef std::vector<const FXList*> FXVec;
 
 
 //-------------------------------------------------------------------------------------------------
-enum StructureCollapsePhaseType
+enum StructureCollapsePhaseType CPP_11(: int)
 {
 	SCPHASE_INITIAL = 0,
 	SCPHASE_DELAY,

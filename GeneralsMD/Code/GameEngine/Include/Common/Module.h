@@ -41,8 +41,8 @@
 #include "Common/Snapshot.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
-enum TimeOfDay;
-enum StaticGameLODLevel;
+enum TimeOfDay CPP_11(: int);
+enum StaticGameLODLevel CPP_11(: int);
 class Drawable;
 class Object;
 class Player;
@@ -55,7 +55,7 @@ struct FieldParse;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum ModuleType 
+enum ModuleType CPP_11(: int) 
 {
 	MODULETYPE_BEHAVIOR = 0,
 
@@ -80,7 +80,7 @@ enum ModuleType
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum ModuleInterfaceType 
+enum ModuleInterfaceType CPP_11(: int) 
 {
 	MODULEINTERFACE_UPDATE					= 0x00000001,
 	MODULEINTERFACE_DIE							= 0x00000002,

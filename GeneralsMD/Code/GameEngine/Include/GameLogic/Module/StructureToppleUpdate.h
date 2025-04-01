@@ -64,7 +64,7 @@ struct AngleFXInfo
 typedef std::vector<AngleFXInfo> AngleFXInfoVector;
 
 //-------------------------------------------------------------------------------------------------
-enum StructureTopplePhaseType
+enum StructureTopplePhaseType CPP_11(: int)
 {
 	STPHASE_INITIAL = 0,
 	STPHASE_DELAY,
