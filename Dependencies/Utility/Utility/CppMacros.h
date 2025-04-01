@@ -25,6 +25,13 @@
 #define NOEXCEPT_17
 #endif
 
+// noexcept for methods of IUNKNOWN interface
+#if defined(_MSC_VER)
+#define IUNKNOWN_NOEXCEPT NOEXCEPT_17
+#else
+#define IUNKNOWN_NOEXCEPT
+#endif
+
 #if __cplusplus >= 201103L
     #define CPP_11(code) code
 #else
