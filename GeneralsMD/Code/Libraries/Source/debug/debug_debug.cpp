@@ -45,9 +45,9 @@ bool __DebugIncludeInLink1;
 // and end of this list (B and Y respectively since the A and Z segments
 // contain list delimiters).
 #pragma data_seg(".CRT$XCB")
-void *Debug::PreStatic=&Debug::PreStaticInit;
+void *Debug::PreStatic=(void*)&Debug::PreStaticInit;
 #pragma data_seg(".CRT$XCY")
-void *Debug::PostStatic=&Debug::PostStaticInit;
+void *Debug::PostStatic=(void*)&Debug::PostStaticInit;
 #pragma data_seg()
 
 Debug::LogDescription::LogDescription(const char *fileOrGroup, const char *description)
