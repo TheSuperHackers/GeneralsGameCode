@@ -786,6 +786,39 @@ inline DynamicMemoryAllocator *DynamicMemoryAllocator::getNextDmaInList() { retu
 // EXTERNALS //////////////////////////////////////////////////////////////////
 
 /**
+	Initialize the memory manager. Construct a new MemoryPoolFactory and 
+	DynamicMemoryAllocator and store 'em in the singletons of the relevant
+	names. 
+*/
+extern void initMemoryManager();
+
+/**
+	return true if initMemoryManager() has been called.
+	return false if only preMainInitMemoryManager() has been called.
+*/
+extern Bool isMemoryManagerOfficiallyInited();
+
+/**
+	similar to initMemoryManager, but this should be used if the memory manager must be initialized
+	prior to main() (e.g., from a static constructor). If preMainInitMemoryManager() is called prior
+	to initMemoryManager(), then subsequent calls to either are quietly ignored, AS IS any subsequent
+	call to shutdownMemoryManager() [since there's no safe way to ensure that shutdownMemoryManager
+	will execute after all static destructors].
+
+	(Note: this function is actually not externally visible, but is documented here for clarity.)
+*/
+/* extern void preMainInitMemoryManager(); */
+
+/**
+	Shut down the memory manager. Throw away TheMemoryPoolFactory and 
+	TheDynamicMemoryAllocator.
+*/
+extern void shutdownMemoryManager();
+
+extern MemoryPoolFactory *TheMemoryPoolFactory;
+extern DynamicMemoryAllocator *TheDynamicMemoryAllocator;
+
+/**
 	This function is declared in this header, but is not defined anywhere -- you must provide
 	it in your code. It is called by initMemoryManager() or preMainInitMemoryManager() in order
 	to get the specifics of the subpool for the dynamic memory allocator. (If you just want
@@ -856,40 +889,6 @@ public:
 };
 
 #endif // DISABLE_GAMEMEMORY
-
-
-/**
-	Initialize the memory manager. Construct a new MemoryPoolFactory and 
-	DynamicMemoryAllocator and store 'em in the singletons of the relevant
-	names. 
-*/
-extern void initMemoryManager();
-
-/**
-	return true if initMemoryManager() has been called.
-	return false if only preMainInitMemoryManager() has been called.
-*/
-extern Bool isMemoryManagerOfficiallyInited();
-
-/**
-	similar to initMemoryManager, but this should be used if the memory manager must be initialized
-	prior to main() (e.g., from a static constructor). If preMainInitMemoryManager() is called prior
-	to initMemoryManager(), then subsequent calls to either are quietly ignored, AS IS any subsequent
-	call to shutdownMemoryManager() [since there's no safe way to ensure that shutdownMemoryManager
-	will execute after all static destructors].
-
-	(Note: this function is actually not externally visible, but is documented here for clarity.)
-*/
-/* extern void preMainInitMemoryManager(); */
-
-/**
-	Shut down the memory manager. Throw away TheMemoryPoolFactory and 
-	TheDynamicMemoryAllocator.
-*/
-extern void shutdownMemoryManager();
-
-extern MemoryPoolFactory *TheMemoryPoolFactory;
-extern DynamicMemoryAllocator *TheDynamicMemoryAllocator;
 
 
 /**
