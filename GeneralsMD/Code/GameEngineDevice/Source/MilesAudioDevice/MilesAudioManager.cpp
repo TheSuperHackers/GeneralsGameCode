@@ -1108,7 +1108,7 @@ void MilesAudioManager::releaseMilesHandles( PlayingAudio *release )
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::releasePlayingAudio( PlayingAudio *release )
+void MilesAudioManager::releasePlayingAudio( PlayingAudio *&release )
 {
 	if (release->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_SoundEffect) {
 		if (release->m_type == PAT_Sample) {
