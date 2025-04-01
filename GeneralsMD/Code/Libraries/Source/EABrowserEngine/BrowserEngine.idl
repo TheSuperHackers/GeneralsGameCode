@@ -2,6 +2,7 @@
 // 
 // typelib filename: <could not determine filename>
 
+import "oaidl.idl";
 [
   uuid(6EE45698-21BA-420D-AD40-1B547699BEFB),
   version(1.0)
