@@ -149,12 +149,25 @@ class AsciiString;
 
 	DEBUG_EXTERN_C void DebugLog(const char *format, ...);
 
+	// This defines a bitmask of log types that we care about, to allow some flexability
+	// in what gets logged.  This should be extended to asserts, too, but the assert box
+	// is waiting to be rewritten. -MDC 3/19/2003
+	extern unsigned int DebugLevelMask;
+	enum
+	{
+		DEBUG_LEVEL_NET = 0,           // in-game network
+		DEBUG_LEVEL_MAX
+	};
+	extern const char *TheDebugLevels[DEBUG_LEVEL_MAX];
+
 	#define DEBUG_LOG(m)						do { { DebugLog m ; } } while (0)
+	#define DEBUG_LOG_LEVEL(l, m)		do { if (l & DebugLevelMask) { DebugLog m ; } } while (0)
 	#define DEBUG_ASSERTLOG(c, m)		do { { if (!(c)) DebugLog m ; } } while (0)
 
 #else
 
 	#define DEBUG_LOG(m)						((void)0)
+	#define DEBUG_LOG_LEVEL(l, m)		((void)0)
 	#define DEBUG_ASSERTLOG(c, m)		((void)0)
 
 #endif
