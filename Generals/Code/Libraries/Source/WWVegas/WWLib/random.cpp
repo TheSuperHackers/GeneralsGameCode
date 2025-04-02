@@ -237,19 +237,19 @@ int Random2Class::operator() (int minval, int maxval)
 
 
 int Random3Class::Mix1[20] = {
-	static_cast<int>(0xbaa96887), static_cast<int>(0x1e17d32c), static_cast<int>(0x03bcdc3c), static_cast<int>(0x0f33d1b2),
-	static_cast<int>(0x76a6491d), static_cast<int>(0xc570d85d), static_cast<int>(0xe382b1e3), static_cast<int>(0x78db4362),
-	static_cast<int>(0x7439a9d4), static_cast<int>(0x9cea8ac5), static_cast<int>(0x89537c5c), static_cast<int>(0x2588f55d),
-	static_cast<int>(0x415b5e1d), static_cast<int>(0x216e3d95), static_cast<int>(0x85c662e7), static_cast<int>(0x5e8ab368),
-	static_cast<int>(0x3ea5cc8c), static_cast<int>(0xd26a0f74), static_cast<int>(0xf3a9222b), static_cast<int>(0x48aad7e4)
+	(int)0xbaa96887, (int)0x1e17d32c, (int)0x03bcdc3c, (int)0x0f33d1b2,
+	(int)0x76a6491d, (int)0xc570d85d, (int)0xe382b1e3, (int)0x78db4362,
+	(int)0x7439a9d4, (int)0x9cea8ac5, (int)0x89537c5c, (int)0x2588f55d,
+	(int)0x415b5e1d, (int)0x216e3d95, (int)0x85c662e7, (int)0x5e8ab368,
+	(int)0x3ea5cc8c, (int)0xd26a0f74, (int)0xf3a9222b, (int)0x48aad7e4
 };
 
 int Random3Class::Mix2[20] = {
-	static_cast<int>(0x4b0f3b58), static_cast<int>(0xe874f0c3), static_cast<int>(0x6955c5a6), static_cast<int>(0x55a7ca46),
-	static_cast<int>(0x4d9a9d86), static_cast<int>(0xfe28a195), static_cast<int>(0xb1ca7865), static_cast<int>(0x6b235751),
-	static_cast<int>(0x9a997a61), static_cast<int>(0xaa6e95c8), static_cast<int>(0xaaa98ee1), static_cast<int>(0x5af9154c),
-	static_cast<int>(0xfc8e2263), static_cast<int>(0x390f5e8c), static_cast<int>(0x58ffd802), static_cast<int>(0xac0a5eba),
-	static_cast<int>(0xac4874f6), static_cast<int>(0xa9df0913), static_cast<int>(0x86be4c74), static_cast<int>(0xed2c123b)
+	(int)0x4b0f3b58, (int)0xe874f0c3, (int)0x6955c5a6, (int)0x55a7ca46,
+	(int)0x4d9a9d86, (int)0xfe28a195, (int)0xb1ca7865, (int)0x6b235751,
+	(int)0x9a997a61, (int)0xaa6e95c8, (int)0xaaa98ee1, (int)0x5af9154c,
+	(int)0xfc8e2263, (int)0x390f5e8c, (int)0x58ffd802, (int)0xac0a5eba,
+	(int)0xac4874f6, (int)0xa9df0913, (int)0x86be4c74, (int)0xed2c123b
 };
 
 
