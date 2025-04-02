@@ -28,6 +28,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "_pch.h"
 #include <commctrl.h>
+#include <Utility/CppMacros.h>
 
 DebugExceptionhandler::DebugExceptionhandler(void)
 {
@@ -173,12 +174,16 @@ void DebugExceptionhandler::LogFPURegisters(Debug &dbg, struct _EXCEPTION_POINTE
     double fpVal;
 
     // convert from temporary real (10 byte) to double
+#ifdef _MSC_VER
     _asm
     {
       mov eax,value
       fld tbyte ptr [eax]
       fstp qword ptr [fpVal]
     }
+#else
+	UNIMPLEMEMTED_ERROR("LogFPURegisters");
+#endif
 
     dbg << " " << fpVal << "\n";
   }

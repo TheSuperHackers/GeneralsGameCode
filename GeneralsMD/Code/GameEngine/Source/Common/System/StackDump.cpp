@@ -76,6 +76,7 @@ void StackDump(void (*callback)(const char*))
 
 	DWORD myeip,myesp,myebp;
 
+#ifdef _MSC_VER
 _asm
 {
 MYEIP1:
@@ -86,6 +87,9 @@ MYEIP1:
  mov eax, ebp
  mov dword ptr [myebp] , eax
 }
+#else
+	UNIMPLEMEMTED_ERROR("StackDump");
+#endif
 
 
 	MakeStackTrace(myeip,myesp,myebp, 2, callback);
@@ -340,6 +344,7 @@ void FillStackAddresses(void**addresses, unsigned int count, unsigned int skip)
     gsContext.ContextFlags = CONTEXT_FULL;
 
 	DWORD myeip,myesp,myebp;
+#ifdef _MSC_VER
 _asm
 {
 MYEIP2:
@@ -351,6 +356,9 @@ MYEIP2:
  mov dword ptr [myebp] , eax
  xor eax,eax
 }
+#else
+	UNIMPLEMEMTED_ERROR("FillStackAddresses");
+#endif
 memset(&stack_frame, 0, sizeof(STACKFRAME));
 stack_frame.AddrPC.Mode = AddrModeFlat;
 stack_frame.AddrPC.Offset = myeip;

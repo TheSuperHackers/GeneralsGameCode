@@ -3,6 +3,11 @@
 
 #pragma once
 
+#include <cassert>
+#define UNIMPLEMEMTED_ERROR(msg) do { \
+  assert(("Unimplemented: ", msg, 0)); \
+  } while(0)
+
 #if __cplusplus >= 201703L
 #define NOEXCEPT_17 noexcept
 #else

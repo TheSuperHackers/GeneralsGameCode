@@ -28,6 +28,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "_pch.h"
 #include <imagehlp.h>
+#include <Utility/CppMacros.h>
 
 // Definitions to allow run-time linking to the dbghelp.dll functions.
 
@@ -363,6 +364,7 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
   {
     // walk stack back using current call chain
 	  unsigned long reg_eip, reg_ebp, reg_esp;
+#ifdef _MSC_VER
 	  __asm 
     {
     here:
@@ -371,6 +373,9 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
 		  mov	reg_ebp,ebp
 		  mov	reg_esp,esp
 	  };
+#else
+	UNIMPLEMEMTED_ERROR("DebugStackwalk::StackWalk");
+#endif
 	  stackFrame.AddrPC.Offset = reg_eip;
 	  stackFrame.AddrStack.Offset = reg_esp;
 	  stackFrame.AddrFrame.Offset = reg_ebp;
