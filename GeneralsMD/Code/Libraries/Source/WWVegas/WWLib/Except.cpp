@@ -797,7 +797,7 @@ int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info)
 
 #ifdef WWDEBUG
 	//CONTEXT *context;
-#endif WWDEBUG
+#endif // WWDEBUG
 
 	if (ExceptionRecursions == 0) {
 

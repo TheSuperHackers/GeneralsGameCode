@@ -3169,7 +3169,7 @@ void Weapon::crc( Xfer *xfer )
 		tmp.format("CRC of weapon %s: ", m_template->getName().str());
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	AsciiString tmplName = m_template->getName();
 	xfer->xferAsciiString(&tmplName);

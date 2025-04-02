@@ -217,4 +217,4 @@ class StreakLineClass : public RenderObjClass
 
 
 
-#endif SEGLINE_H
+#endif // SEGLINE_H

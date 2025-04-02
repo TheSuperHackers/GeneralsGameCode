@@ -3899,7 +3899,7 @@ void Object::crc( Xfer *xfer )
 		tmp.format("CRC of Object %d (%s), owned by player %d, ", m_id, getTemplate()->getName().str(), getControllingPlayer()->getPlayerIndex());
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	xfer->xferUnsignedByte(&m_privateStatus);
 #ifdef DEBUG_CRC
@@ -3921,7 +3921,7 @@ void Object::crc( Xfer *xfer )
 		tmpXfer.close();
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 	
 
 #ifdef DEBUG_CRC
@@ -3931,7 +3931,7 @@ void Object::crc( Xfer *xfer )
 		CRCDEBUG_LOG(("CRC of Object %d (%s), owned by player %d, ", m_id, getTemplate()->getName().str(), getControllingPlayer()->getPlayerIndex()));
 		DUMPMATRIX3D(mtx);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 
 
@@ -3950,7 +3950,7 @@ void Object::crc( Xfer *xfer )
 		tmp.format("m_id: %d, ", m_id);
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 	xfer->xferUser(&m_objectUpgradesCompleted,				sizeof(Int64));
 #ifdef DEBUG_CRC
 	if (doLogging)
@@ -3958,7 +3958,7 @@ void Object::crc( Xfer *xfer )
 		tmp.format("m_objectUpgradesCompleted: %I64X, ", m_objectUpgradesCompleted);
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 	if (m_experienceTracker)
 		xfer->xferSnapshot( m_experienceTracker );
 #ifdef DEBUG_CRC
@@ -3971,7 +3971,7 @@ void Object::crc( Xfer *xfer )
 		tmpXfer.close();
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	Real health = getBodyModule()->getHealth();
 	xfer->xferUser(&health,														sizeof(health));
@@ -3981,7 +3981,7 @@ void Object::crc( Xfer *xfer )
 		tmp.format("health: %g/%8.8X, ", health, AS_INT(health));
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	xfer->xferUnsignedInt(&m_weaponBonusCondition);
 #ifdef DEBUG_CRC
@@ -3990,7 +3990,7 @@ void Object::crc( Xfer *xfer )
 		tmp.format("m_weaponBonusCondition: %8.8X, ", m_weaponBonusCondition);
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	Real scalar = getBodyModule()->getDamageScalar();
 	xfer->xferUser(&scalar,														sizeof(scalar));
@@ -4002,7 +4002,7 @@ void Object::crc( Xfer *xfer )
 
 		CRCDEBUG_LOG(("%s", logString.str()));
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	for (Int i=0; i<WEAPONSLOT_COUNT; ++i)
 	{

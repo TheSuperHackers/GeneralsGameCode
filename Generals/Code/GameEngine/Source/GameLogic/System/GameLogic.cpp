@@ -2284,7 +2284,7 @@ void GameLogic::processCommandList( CommandList *list )
 				DEBUG_LOG(("CRC from player %d (%ls) = %X\n", crcIt->first,
 					player?player->getPlayerDisplayName().str():L"<NONE>", crcIt->second));
 			}
-#endif DEBUG_LOGGING
+#endif // DEBUG_LOGGING
 			TheNetwork->setSawCRCMismatch();
 		}
 	}

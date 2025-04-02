@@ -1036,7 +1036,7 @@ static void populateRandomStartPosition( GameInfo *game )
 			}
 		}
 	} //for i
-#endif 0
+#endif // 0
 
 	// now go back & assign observer spots
 	Int numPlayersInGame = 0;
@@ -2599,7 +2599,7 @@ void GameLogic::processCommandList( CommandList *list )
 				DEBUG_LOG(("CRC from player %d (%ls) = %X\n", crcIt->first,
 					player?player->getPlayerDisplayName().str():L"<NONE>", crcIt->second));
 			}
-#endif DEBUG_LOGGING
+#endif // DEBUG_LOGGING
 			TheNetwork->setSawCRCMismatch();
 		}
 	}
@@ -4035,7 +4035,7 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 			crcName.format("logicFrame%d.crc", (m_frame%5));
 		}
 		else
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 		{
 			xferCRC = NEW XferCRC;
 			crcName = "lightCRC";
@@ -4091,7 +4091,7 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 			CRCGEN_LOG(("CRC after module factory for frame %d is 0x%8.8X\n", m_frame, xferCRC->getCRC()));
 		}
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	marker = "MARKER:ThePlayerList";
 	xferCRC->xferAsciiString(&marker);

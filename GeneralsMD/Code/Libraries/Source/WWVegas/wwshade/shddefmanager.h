@@ -88,4 +88,4 @@ private:
 
 
 
-#endif SHDDEFMANAGER_H
+#endif // SHDDEFMANAGER_H

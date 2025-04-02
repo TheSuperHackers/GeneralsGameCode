@@ -901,7 +901,7 @@ void MemoryPoolSingleBlock::initBlock(Int logicalSize, MemoryPoolBlob *owningBlo
 	}
 #endif
 }
-#endif MEMORYPOOL_DEBUG
+#endif // MEMORYPOOL_DEBUG
 #ifdef MEMORYPOOL_CHECKPOINTING
 	m_checkpointInfo = NULL;
 #endif
@@ -2207,7 +2207,7 @@ void *DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes 
 				thePeakWastedDMA = theWastedDMA;
 		}
 	}
-#endif MEMORYPOOL_DEBUG
+#endif // MEMORYPOOL_DEBUG
 	}
 	else
 	{
@@ -2251,7 +2251,7 @@ void *DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes 
 	}
 #endif
 }
-#endif MEMORYPOOL_DEBUG
+#endif // MEMORYPOOL_DEBUG
 
 	++m_usedBlocksInDma;
 	DEBUG_ASSERTCRASH(m_usedBlocksInDma >= 0, ("negative count for m_usedBlocksInDma"));
@@ -2311,7 +2311,7 @@ void DynamicMemoryAllocator::freeBytes(void* pBlockPtr)
 		tagString = block->debugGetLiteralTagString();
 	#endif
 	}
-#endif MEMORYPOOL_DEBUG
+#endif // MEMORYPOOL_DEBUG
 
 	if (block->getOwningBlob()) 
 	{
@@ -2329,7 +2329,7 @@ void DynamicMemoryAllocator::freeBytes(void* pBlockPtr)
 					thePeakWastedDMA = theWastedDMA;
 			}
 		}
-#endif MEMORYPOOL_DEBUG
+#endif // MEMORYPOOL_DEBUG
 		block->getOwningBlob()->getOwningPool()->freeBlock(pBlockPtr);
 	}
 	else

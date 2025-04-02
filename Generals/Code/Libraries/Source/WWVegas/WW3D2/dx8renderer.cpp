@@ -1488,7 +1488,7 @@ unsigned DX8TextureCategoryClass::Add_Mesh(
 		if (index_buffer->Type()==BUFFER_TYPE_SORTING || index_buffer->Type()==BUFFER_TYPE_DYNAMIC_SORTING) {
 			stripify=false;
 		}
-#endif;
+#endif // ;
 		const TriIndex* src_indices=(const TriIndex*)split_table.Get_Polygon_Array(pass);//mmc->Get_Polygon_Array();
 
 		if (stripify) {
