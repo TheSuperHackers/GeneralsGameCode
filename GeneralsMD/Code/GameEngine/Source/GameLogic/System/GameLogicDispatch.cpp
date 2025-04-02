@@ -333,6 +333,13 @@ void GameLogic::prepareNewGame( Int gameMode, GameDifficulty diff, Int rankPoint
 		TheWritableGlobalData->m_pendingFile.clear();
 	}
 
+	// reset the frame counter
+	m_frame = 0;
+
+#ifdef DEBUG_CRC
+	CRCDebugStartNewGame();
+#endif
+
 	m_rankPointsToAddAtGameStart = rankPoints;
 	DEBUG_LOG(("GameLogic::prepareNewGame() - m_rankPointsToAddAtGameStart = %d\n", m_rankPointsToAddAtGameStart));
 

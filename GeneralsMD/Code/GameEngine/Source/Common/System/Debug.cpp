@@ -52,6 +52,7 @@
 #include "Common/CriticalSection.h"
 #endif
 #include "Common/Debug.h"
+#include "Common/CRCDebug.h"
 #include "Common/SystemInfo.h"
 #include "Common/UnicodeString.h"
 #include "GameClient/GameText.h"
@@ -229,6 +230,9 @@ static void doLogOutput(const char *buffer)
 	{
 		::OutputDebugString(buffer);
 	}
+
+	// Uncomment this to show normal logging stuff in the crc logging.
+	//addCRCDebugLineNoCounter(buffer);
 }
 #endif
 
