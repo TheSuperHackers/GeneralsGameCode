@@ -757,6 +757,16 @@ void Player::setDefaultTeam(void) {
 }
 
 //=============================================================================
+void Player::deletePlayerAI()
+{
+	if (m_ai)
+	{
+		m_ai->deleteInstance();
+		m_ai = NULL;
+	}
+}
+
+//=============================================================================
 // This is called from PlayerList->newGame()
 //
 void Player::initFromDict(const Dict* d)

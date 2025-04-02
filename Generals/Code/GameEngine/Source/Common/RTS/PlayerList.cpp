@@ -121,6 +121,10 @@ Player *PlayerList::findPlayerWithNameKey(NameKeyType key)
 //-----------------------------------------------------------------------------
 void PlayerList::reset()
 {
+	// TheSuperHackers @bugfix xezon 20/03/2025 Delete the Player AI before purging the dependent teams in the factory.
+	for (int i = 0; i < MAX_PLAYER_COUNT; i++)
+		m_players[i]->deletePlayerAI();
+
 	TheTeamFactory->clear(); // cleans up energy, among other things
 	init();
 }
@@ -131,11 +135,8 @@ void PlayerList::newGame()
 	Int i;
 
 	DEBUG_ASSERTCRASH(this != NULL, ("null this"));
-	
-	TheTeamFactory->clear(); // cleans up energy, among other things
 
-	// first, re-init ourselves.
-	init();
+	reset();
 
 	// ok, now create the rest of players we need.
 	Bool setLocal = false;
