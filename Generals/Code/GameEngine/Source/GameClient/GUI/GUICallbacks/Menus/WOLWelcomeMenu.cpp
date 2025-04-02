@@ -179,13 +179,8 @@ void updateLocalPlayerScores(AsciiString name, const WOL::Ladder *ladder, const 
 
 static void enableControls( Bool state )
 {
-#ifndef _PLAYTEST
 	if (buttonQuickMatch)
 		buttonQuickMatch->winEnable(state);
-#else
-	if (buttonQuickMatch)
-		buttonQuickMatch->winEnable(FALSE);
-#endif
 	if (buttonLobby)
 		buttonLobby->winEnable(state);
 }

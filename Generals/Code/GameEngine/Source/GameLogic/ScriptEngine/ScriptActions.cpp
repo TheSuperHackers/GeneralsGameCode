@@ -3903,7 +3903,6 @@ void ScriptActions::doNamedFireSpecialPowerAtWaypoint( const AsciiString& unit, 
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doSkirmishFireSpecialPowerAtMostCost( const AsciiString &player, const AsciiString& specialPower )
 {
-#if !defined(_PLAYTEST)
 	Int enemyNdx;
 	Player *enemyPlayer = TheScriptEngine->getSkirmishEnemyPlayer();
 	if (enemyPlayer == NULL) return;
@@ -3944,7 +3943,6 @@ void ScriptActions::doSkirmishFireSpecialPowerAtMostCost( const AsciiString &pla
 			}
 		}
 	}
-#endif
 }
 
 //-------------------------------------------------------------------------------------------------

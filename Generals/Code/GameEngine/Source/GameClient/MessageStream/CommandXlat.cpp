@@ -2859,11 +2859,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_CHAT_ALLIES:
-#if !defined(_PLAYTEST)
 			if (TheGameLogic->isInMultiplayerGame() && !TheGameLogic->isInReplayGame())
-#else
-			if (TheGameLogic->isInMultiplayerGame())
-#endif
 			{
 				Player *localPlayer = ThePlayerList->getLocalPlayer();
 				if (localPlayer && localPlayer->isPlayerActive() || !TheGlobalData->m_netMinPlayers)
@@ -2877,11 +2873,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_CHAT_EVERYONE:
-#if !defined(_PLAYTEST)
 			if (TheGameLogic->isInMultiplayerGame() && !TheGameLogic->isInReplayGame())
-#else
-			if (TheGameLogic->isInMultiplayerGame())
-#endif
 			{
 				Player *localPlayer = ThePlayerList->getLocalPlayer();
 				if (localPlayer && localPlayer->isPlayerActive() || !TheGlobalData->m_netMinPlayers)
@@ -2906,13 +2898,9 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_PLACE_BEACON:
-#if !defined(_PLAYTEST)
 			if (TheGameLogic->isInMultiplayerGame() && !TheGameLogic->isInReplayGame() &&
 				ThePlayerList->getLocalPlayer()->isPlayerActive() &&
 				(TheGlobalData->m_netMinPlayers==0 || TheGameInfo->isMultiPlayer()))
-#else
-			if (TheGameLogic->isInMultiplayerGame() && ThePlayerList->getLocalPlayer()->isPlayerActive() && TheGameInfo->isMultiPlayer())
-#endif
 			{
 				Int count;
 				const ThingTemplate *thing = TheThingFactory->findTemplate( ThePlayerList->getLocalPlayer()->getPlayerTemplate()->getBeaconTemplate() );
@@ -2929,11 +2917,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_REMOVE_BEACON:
-#if !defined(_PLAYTEST)
 			if (TheGameLogic->isInMultiplayerGame() && !TheGameLogic->isInReplayGame())
-#else
-			if (TheGameLogic->isInMultiplayerGame())
-#endif
+
 			{
 				TheMessageStream->appendMessage( GameMessage::MSG_REMOVE_BEACON );
 			}
@@ -4546,7 +4531,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			break;
 		}
 
-		//------------------------------------------------------------------------PLAYTEST DEMO MESSAGES
+		//------------------------------------------------------------------------DEMO MESSAGES
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_DEBUG_STATS:
 		{
@@ -4563,9 +4548,9 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//--------------------------------------------------------------------------- END DEMO MESSAGES
 #endif // #if defined(_DEBUG) || defined(_INTERNAL)
 
-		//------------------------------------------------------------------------PLAYTEST DEMO MESSAGES
+		//------------------------------------------------------------------------DEMO MESSAGES
 		//-----------------------------------------------------------------------------------------
-#if defined(_INTERNAL) || defined(_DEBUG) || defined(_PLAYTEST)
+#if defined(_INTERNAL) || defined(_DEBUG) 
 		case GameMessage::MSG_META_DEMO_TOGGLE_AUDIODEBUG:
 		{
 			if (TheDisplay->getDebugDisplayCallback() == AudioDebugDisplay)
@@ -4576,10 +4561,10 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			break;
 		}
 
-#endif//defined(_INTERNAL) || defined(_DEBUG) || defined(_PLAYTEST)
+#endif//defined(_INTERNAL) || defined(_DEBUG) 
 		
 #ifdef DUMP_PERF_STATS
-		//------------------------------------------------------------------------PLAYTEST DEMO MESSAGES
+		//------------------------------------------------------------------------DEMO MESSAGES
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_PERFORM_STATISTICAL_DUMP:
 			//Dump performance statistics for this frame.

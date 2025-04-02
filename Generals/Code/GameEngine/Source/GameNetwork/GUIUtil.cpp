@@ -269,14 +269,12 @@ void PopulatePlayerTemplateComboBox(Int comboBox, GameWindow *comboArray[], Game
 	seenSides.clear();
 
 	// disabling observers for Multiplayer test
-#ifndef _PLAYTEST
 	if (allowObservers)
 	{
 		def = TheMultiplayerSettings->getColor(PLAYERTEMPLATE_OBSERVER);
 		newIndex = GadgetComboBoxAddEntry(comboArray[comboBox], TheGameText->fetch("GUI:Observer"), def->getColor());
 		GadgetComboBoxSetItemData(comboArray[comboBox], newIndex, (void *)PLAYERTEMPLATE_OBSERVER);
 	}
-#endif
 	GadgetComboBoxSetSelectedPos(comboArray[comboBox], 0);
 
 }

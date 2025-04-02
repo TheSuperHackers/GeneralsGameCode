@@ -191,13 +191,11 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 		if(!commandButton)
 			return;
 
-	// note that, in this branch, ENABLE_SOLO_PLAY is ***NEVER*** defined...
-	// this is so that we have a multiplayer build that cannot possibly be hacked
-	// to work as a solo game!
-	#if !defined(_PLAYTEST)
+		// note that, in this branch, ENABLE_SOLO_PLAY is ***NEVER*** defined...
+		// this is so that we have a multiplayer build that cannot possibly be hacked
+		// to work as a solo game!
 		if (TheGameLogic->isInReplayGame())
 			return;
-	#endif
 
 		if (TheInGameUI->isQuitMenuVisible())
 			return;
@@ -205,16 +203,16 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 		if (TheDisconnectMenu && TheDisconnectMenu->isScreenVisible())
 			return;
 
-	//	if (m_buildToolTipLayout)
-	//	{
-	//		m_buildToolTipLayout->destroyWindows();
-	//		m_buildToolTipLayout->deleteInstance();
-	//
-	//	}
+		//	if (m_buildToolTipLayout)
+		//	{
+		//		m_buildToolTipLayout->destroyWindows();
+		//		m_buildToolTipLayout->deleteInstance();
+		//
+		//	}
 
 		m_showBuildToolTipLayout = TRUE;
-	//	m_buildToolTipLayout = TheWindowManager->winCreateLayout( "ControlBarPopupDescription.wnd" );
-	//	m_buildToolTipLayout->setUpdate(ControlBarPopupDescriptionUpdateFunc);
+		//	m_buildToolTipLayout = TheWindowManager->winCreateLayout( "ControlBarPopupDescription.wnd" );
+		//	m_buildToolTipLayout->setUpdate(ControlBarPopupDescriptionUpdateFunc);
 		
 		populateBuildTooltipLayout(commandButton);
 	}
@@ -481,8 +479,8 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 		{
 			TheScienceStore->getNameAndDescription(st, name, descrip);
 			cost.format(TheGameText->fetch("TOOLTIP:ScienceCost"),TheScienceStore->getSciencePurchaseCost(st));
-						// ask each prerequisite to give us a list of the non satisfied prerequisites
 
+			// ask each prerequisite to give us a list of the non satisfied prerequisites
 			if( thingTemplate )
 			{
 				for( Int i=0; i<thingTemplate->getPrereqCount(); i++ ) 
@@ -558,6 +556,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 	{
 		GadgetStaticTextSetText(win, name);
 	}
+
 	win = TheWindowManager->winGetWindowFromId(m_buildToolTipLayout->getFirstWindow(), TheNameKeyGenerator->nameToKey("ControlBarPopupDescription.wnd:StaticTextCost"));
 	if(win)
 	{

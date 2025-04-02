@@ -341,16 +341,7 @@ void PopupHostGameInit( WindowLayout *layout, void *userData )
 	checkBoxAllowObserversID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:CheckBoxAllowObservers"));
 	checkBoxAllowObservers = TheWindowManager->winGetWindowFromId(parentPopup, checkBoxAllowObserversID);
 	CustomMatchPreferences customPref;
-	// disabling observers for Multiplayer test
-#ifndef _PLAYTEST
 	GadgetCheckBoxSetChecked(checkBoxAllowObservers, customPref.allowsObservers());
-#else
-	if (checkBoxAllowObservers)
-	{
-		GadgetCheckBoxSetChecked(checkBoxAllowObservers, FALSE);
-		checkBoxAllowObservers->winEnable(FALSE);
-	}
-#endif
 
 	comboBoxLadderNameID = TheNameKeyGenerator->nameToKey(AsciiString("PopupHostGame.wnd:ComboBoxLadderName"));
 	comboBoxLadderName = TheWindowManager->winGetWindowFromId(parentPopup, comboBoxLadderNameID);

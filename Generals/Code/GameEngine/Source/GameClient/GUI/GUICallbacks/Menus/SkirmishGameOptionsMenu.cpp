@@ -481,12 +481,10 @@ static void startPressed(void)
 		isReady = TRUE;
 	}
 	
-#if !defined(_PLAYTEST)
 	if(isReady)
 	{
 		CheckForCDAtGameStart( reallyDoStart );
 	}
-#endif
 
 }//void startPressed(void)
 

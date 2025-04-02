@@ -604,7 +604,6 @@ LoadScreen *GameLogic::getLoadScreen( Bool saveGame )
 	case GAME_SHELL:
 		return NEW ShellGameLoadScreen;
 		break;
-#if !defined(_PLAYTEST)
 	case GAME_SINGLE_PLAYER:
 		if(TheCampaignManager->getCurrentMission() && saveGame == FALSE )
 			return NEW SinglePlayerLoadScreen;
@@ -620,7 +619,6 @@ LoadScreen *GameLogic::getLoadScreen( Bool saveGame )
 	case GAME_REPLAY:
 		return NEW ShellGameLoadScreen;
 		break;
-#endif
 	case GAME_INTERNET:
 		return NEW GameSpyLoadScreen;
 		break;
@@ -998,7 +996,6 @@ void GameLogic::startNewGame( Bool saveGame )
 
 		if( m_startNewGame == FALSE )
 		{
-#if !defined(_PLAYTEST)
 			/// @todo: Here is where we would look at the game mode & play an intro movie or something.
 			// Failing that, we just set the flag so the actual game can start from a uniform
 			// entry point (startNewGame() called from update()).
@@ -1019,7 +1016,6 @@ void GameLogic::startNewGame( Bool saveGame )
 				}
 
 			}
-#endif
 
 			m_startNewGame = TRUE;
 			return;
@@ -1060,12 +1056,10 @@ void GameLogic::startNewGame( Bool saveGame )
 		{
 			TheGameInfo = game = TheRecorder->getGameInfo();
 		}
-#if !defined(_PLAYTEST)
-    else if(m_gameMode == GAME_SKIRMISH )
-    {
-      TheGameInfo = game = TheSkirmishGameInfo;
-    }
-#endif
+		else if(m_gameMode == GAME_SKIRMISH)
+		{
+		  TheGameInfo = game = TheSkirmishGameInfo;
+		}
 	}
 
 	checkForDuplicateColors( game );

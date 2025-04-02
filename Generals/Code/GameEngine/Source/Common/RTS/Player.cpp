@@ -311,9 +311,7 @@ Player::Player( Int playerIndex )
 
 	m_upgradeList = NULL;
 	m_pBuildList = NULL;
-#if !defined(_PLAYTEST)
 	m_ai = NULL;
-#endif
 	m_resourceGatheringManager = NULL;
 	m_defaultTeam = NULL;
 	m_radarCount = 0;
@@ -394,13 +392,11 @@ void Player::init(const PlayerTemplate* pt)
 	}
 	m_defaultTeam = NULL;
 
-#if !defined(_PLAYTEST)
 	if (m_ai)
 	{
 		m_ai->deleteInstance();
 	}
 	m_ai = NULL;
-#endif
 
 	if( m_resourceGatheringManager )
 	{
@@ -688,10 +684,8 @@ void Player::addToPriorityBuildList(AsciiString templateName, Coord3D *pos, Real
 //=============================================================================
 void Player::update()
 {
-#if !defined(_PLAYTEST)
 	if (m_ai)
 		m_ai->update();
-#endif
 
 	// Allow the teams this player owns to update themselves.
 
@@ -710,10 +704,8 @@ void Player::update()
 //=============================================================================
 void Player::newMap()
 {
-#if !defined(_PLAYTEST)
 	if (m_ai)
 		m_ai->newMap();
-#endif
 }
 
 //=============================================================================
@@ -721,7 +713,6 @@ void Player::setPlayerType(PlayerType t, Bool skirmish)
 {
 	m_playerType = t;
 
-#if !defined(_PLAYTEST)
 	if (m_ai)
 	{
 		m_ai->deleteInstance();
@@ -738,7 +729,6 @@ void Player::setPlayerType(PlayerType t, Bool skirmish)
 			m_ai = newInstance(AIPlayer)( this );
 		}
 	}
-#endif
 }
 
 //=============================================================================
@@ -874,11 +864,9 @@ void Player::initFromDict(const Dict* d)
 		if (exists) {
 			difficulty = (GameDifficulty) diffInt;
 		}
-#if !defined(_PLAYTEST)
 		if (m_ai) {
 			m_ai->setAIDifficulty(difficulty);
 		}
-#endif
 
 		if (!found) {
 			DEBUG_CRASH(("Could not find skirmish player for side %s", mySide.str()));
@@ -1148,11 +1136,7 @@ void Player::becomingLocalPlayer(Bool yes)
 //-------------------------------------------------------------------------------------------------
 Bool Player::isSkirmishAIPlayer( void )
 {
-#if !defined(_PLAYTEST)
-	return m_ai?m_ai->isSkirmishAI():false; 
-#else
-	return FALSE;
-#endif
+	return m_ai ? m_ai->isSkirmishAI() : false; 
 }
 
 
@@ -1172,11 +1156,7 @@ void Player::computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D
 //-------------------------------------------------------------------------------------------------
 Player  *Player::getCurrentEnemy( void )
 {
-#if !defined(_PLAYTEST)
 	return m_ai?m_ai->getAiEnemy():NULL; 
-#else
-	return NULL;
-#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1222,11 +1202,10 @@ Object* Player::findNaturalCommandCenter()
 //-------------------------------------------------------------------------------------------------
 GameDifficulty Player::getPlayerDifficulty(void) const
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		return m_ai->getAIDifficulty();
 	}
-#endif
 	return TheScriptEngine->getGlobalDifficulty();
 }
 
@@ -1235,11 +1214,7 @@ GameDifficulty Player::getPlayerDifficulty(void) const
 //-------------------------------------------------------------------------------------------------
 Bool Player::checkBridges(Object *unit, Waypoint *way)
 {
-#if !defined(_PLAYTEST)
 	return m_ai?m_ai->checkBridges(unit, way):false; 
-#else
-	return FALSE;
-#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1247,11 +1222,7 @@ Bool Player::checkBridges(Object *unit, Waypoint *way)
 //-------------------------------------------------------------------------------------------------
 Bool Player::getAiBaseCenter(Coord3D *pos)
 {
-#if !defined(_PLAYTEST)
 	return m_ai?m_ai->getBaseCenter(pos):false; 
-#else
-	return FALSE;
-#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1259,11 +1230,10 @@ Bool Player::getAiBaseCenter(Coord3D *pos)
 //-------------------------------------------------------------------------------------------------
 void Player::repairStructure(ObjectID structureID)
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		m_ai->repairStructure(structureID); 
 	}
-#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1278,11 +1248,9 @@ void Player::onUnitCreated( Object *factory, Object *unit )
 	// increment our scorekeeper
 	m_scoreKeeper.addObjectBuilt(unit);
 
-#if !defined(_PLAYTEST)
 	// ai notification callback
 	if( m_ai )
 		m_ai->onUnitProduced( factory, unit );
-#endif
 }  // end onUnitCreated
 
 
@@ -1368,11 +1336,9 @@ void Player::onStructureConstructionComplete( Object *builder, Object *structure
 
 	structure->friend_adjustPowerForPlayer(TRUE);
 
-#if !defined(_PLAYTEST)
 	// ai notification callback
 	if( m_ai )
 		m_ai->onStructureProduced( builder, structure );
-#endif
 
 	// the GUI needs to re-evaluate the information being displayed to the user now
 	if( TheControlBar )
@@ -1994,76 +1960,69 @@ Bool Player::allowedToBuild(const ThingTemplate *tmplate) const
 //=============================================================================
 void Player::buildSpecificTeam( TeamPrototype *teamProto) 
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		// Do a priority build.
 		m_ai->buildSpecificAITeam(teamProto, true);
 	}
-#endif
 }
 
 //=============================================================================
 void Player::buildBaseDefense(Bool flank) 
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		// Do a priority build.
 		m_ai->buildAIBaseDefense(flank);
 	}
-#endif
 }
 
 //=============================================================================
 void Player::buildBaseDefenseStructure(const AsciiString &thingName, Bool flank) 
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		// Do a priority build.
 		m_ai->buildAIBaseDefenseStructure(thingName, flank);
 	}
-#endif
 }
 
 //=============================================================================
 void Player::buildSpecificBuilding(const AsciiString &thingName) 
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		// Do a priority build.
 		m_ai->buildSpecificAIBuilding(thingName);
 	}
-#endif
 }
 
 //=============================================================================
 void Player::buildBySupplies(Int minimumCash, const AsciiString &thingName) 
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		m_ai->buildBySupplies(minimumCash, thingName);
 	}
-#endif
 }
 
 //=============================================================================
 void Player::buildUpgrade( const AsciiString &upgrade) 
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		m_ai->buildUpgrade(upgrade);
 	}
-#endif
 }
 
 //=============================================================================
 void Player::recruitSpecificTeam( TeamPrototype *teamProto, Real recruitRadius) 
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		// Do a priority build.
 		m_ai->recruitSpecificAITeam(teamProto, recruitRadius);
 	}
-#endif
 }
 
 //=============================================================================
@@ -3770,7 +3729,6 @@ void Player::xfer( Xfer *xfer )
 
 	}  // end else, load
 
-#if !defined(_PLAYTEST)
 	// ai player data
 	Bool aiPlayerPresent = m_ai ? TRUE : FALSE;
 	xfer->xferBool( &aiPlayerPresent );
@@ -3783,10 +3741,6 @@ void Player::xfer( Xfer *xfer )
 	}  // end if
 	if( m_ai )
 		xfer->xferSnapshot( m_ai );
-#else
-	Bool aiPlayerPresent = FALSE;
-	xfer->xferBool( &aiPlayerPresent );
-#endif
 
 	// resource gathering manager
 	Bool resourceGatheringManagerPresent = m_resourceGatheringManager ? TRUE : FALSE;
