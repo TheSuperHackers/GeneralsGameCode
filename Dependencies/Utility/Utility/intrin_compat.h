@@ -87,11 +87,12 @@ static inline uint32_t _lrotl(uint32_t value, int shift)
 #ifdef _WIN32
 #include <intrin.h>
 #pragma intrinsic(__rdtsc)
-#endif
-
+#endif // _WIN32
+#endif // _rdtsc
+#ifndef _rdtsc
 static inline uint64_t _rdtsc()
 {
-#if _WIN32
+#ifdef _WIN32
     return __rdtsc();
 #elif defined(__has_builtin) && __has_builtin(__builtin_readcyclecounter)
     return __builtin_readcyclecounter();
@@ -101,9 +102,9 @@ static inline uint64_t _rdtsc()
 #error "No implementation for _rdtsc"
 #endif
 }
-#endif
+#endif // _rdtsc
  
-#ifdef _MSC_VER
+#ifdef _WIN32
 #include <intrin.h>
 #pragma intrinsic(_ReturnAddress)
 #elif defined(__has_builtin)
@@ -132,17 +133,20 @@ static inline uint64_t _rdtsc()
 #endif
 
 #ifndef cpuid
-#if defined(_MSC_VER)
+#if (defined _M_IX86 || defined _M_X64 || defined __i386__ || defined __amd64__)
+#ifdef _WIN32
 #include <intrin.h>
 #define cpuid(regs, cpuid_type) __cpuid(reinterpret_cast<int *>(regs), cpuid_type)
-#elif (defined __clang__ || defined __GNUC__) && (defined __i386__ || defined __amd64__)
+#elif (defined __clang__ || defined __GNUC__)
 #include <cpuid.h>
 #define cpuid(regs, cpuid_type) __cpuid(cpuid_type, regs[0], regs[1], regs[2], regs[3])
-#else
-/* Just return 0 for everything if its not x86 */
+#endif
+#endif // (defined _M_IX86 || defined _M_X64 || defined __i386__ || defined __amd64__)
+#endif // cpuid
+#ifndef cpuid
+/* Just return 0 for everything if its not x86 or as fallback */
 #include <string.h>
 #define cpuid(regs, cpuid_type) memset(regs, 0, 16)
-#endif
-#endif //cpuid
+#endif // cpuid
 
-#endif // defined(_MSC_VER) && _MSC_VER < 1300
+#endif // !(defined(_MSC_VER) && _MSC_VER < 1300)
