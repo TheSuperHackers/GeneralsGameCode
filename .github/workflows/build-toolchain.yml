@@ -111,8 +111,8 @@ jobs:
           )
 
           $gamePrefix = "${{ inputs.game == 'Generals' && 'GENERALS' || 'ZEROHOUR' }}"
-          $buildFlags += "-DGENZH_BUILD_${gamePrefix}_TOOLS=${{ inputs.tools && 'ON' || 'OFF' }}"
-          $buildFlags += "-DGENZH_BUILD_${gamePrefix}_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }}"
+          $buildFlags += "-DGENZH_BUILD_COMMON_TOOLS=${{ inputs.tools && 'ON' || 'OFF' }} -DGENZH_BUILD_${gamePrefix}_TOOLS=${{ inputs.tools && 'ON' || 'OFF' }}"
+          $buildFlags += "-DGENZH_BUILD_COMMON_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }} -DGENZH_BUILD_${gamePrefix}_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }}"
 
           Write-Host "Build flags: $buildFlags"
 

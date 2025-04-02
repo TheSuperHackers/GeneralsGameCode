@@ -19,7 +19,9 @@ target_include_directories(ci_libraries_source_wwvegas_wwsaveload INTERFACE "Lib
 
 # Do we want to build extra SDK stuff or just the game binary?
 option(GENZH_BUILD_COMMON_TOOLS "Build tools for Generals/Zero Hour" ON)
+add_feature_info(CommonTools GENZH_BUILD_COMMON_TOOLS "Build Mod Tools")
 option(GENZH_BUILD_COMMON_EXTRAS "Build extra tools/tests for Generals/Zero Hour" OFF)
+add_feature_info(CommonExtras GENZH_BUILD_COMMON_EXTRAS "Build Extra Tools/Tests")
 
 # Contains internal libraries
 add_subdirectory(Libraries)
