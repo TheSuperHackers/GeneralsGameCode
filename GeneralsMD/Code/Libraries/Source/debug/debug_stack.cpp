@@ -363,6 +363,7 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
   {
     // walk stack back using current call chain
 	  unsigned long reg_eip, reg_ebp, reg_esp;
+#ifdef _MSC_VER
 	  __asm 
     {
     here:
@@ -371,6 +372,13 @@ int DebugStackwalk::StackWalk(Signature &sig, struct _CONTEXT *ctx)
 		  mov	reg_ebp,ebp
 		  mov	reg_esp,esp
 	  };
+#else
+	CONTEXT ctx2;
+	RtlCaptureContext(&ctx2);
+	reg_eip = ctx2.Eip;
+	reg_ebp = ctx2.Ebp;
+	reg_esp = ctx2.Esp;
+#endif
 	  stackFrame.AddrPC.Offset = reg_eip;
 	  stackFrame.AddrStack.Offset = reg_esp;
 	  stackFrame.AddrFrame.Offset = reg_ebp;

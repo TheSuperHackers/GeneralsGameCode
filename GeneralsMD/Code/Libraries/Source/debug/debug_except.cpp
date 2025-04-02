@@ -173,12 +173,18 @@ void DebugExceptionhandler::LogFPURegisters(Debug &dbg, struct _EXCEPTION_POINTE
     double fpVal;
 
     // convert from temporary real (10 byte) to double
+#ifdef _MSC_VER
     _asm
     {
       mov eax,value
       fld tbyte ptr [eax]
       fstp qword ptr [fpVal]
     }
+#else
+    __float80 fp80val;
+    memcpy(&fp80val, value, 10);
+    fpVal = (double) fp80val;
+#endif
 
     dbg << " " << fpVal << "\n";
   }
