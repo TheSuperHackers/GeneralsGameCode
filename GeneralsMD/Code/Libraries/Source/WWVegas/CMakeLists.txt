@@ -26,6 +26,7 @@ target_include_directories(z_wwcommon INTERFACE
     wwshade
 )
 
+add_subdirectory(WWAudio)
 add_subdirectory(WWDebug)
 add_subdirectory(WWLib)
 add_subdirectory(WWMath)
