@@ -1,50 +1,54 @@
 name: Bug Report
-description: Report an issue you encountered.
-labels: 
-- bug
+description: Report bugs or issues you've encountered while playing the game
+title: "[Bug]: "
+type: Bug
+labels: [ "Bug", "⚠️ Triage" ]
 
 body:
-- type: markdown
+- type: checkboxes
   attributes:
-    value: Before filing this bug, [please check if it hasn't already been reported](https://github.com/TheSuperHackers/GeneralsGamePatch/issues?q=is%3Aissue%20state%3Aopen%20label%3ABug). If it has, please add useful information to the existing issue instead.
-
-- type: dropdown
-  attributes:
-    label: Area(s) with this issue?
-    description: What things had an issue? Check all that apply.
-    multiple: true
+    label: Prerequisites
+    description: Please make sure you've completed the following steps before submitting an issue
     options:
-      - The bug also exists in the original C&C Generals (Not Zero Hour)
-      - The bug also exists in the Zero Hour Expansion Pack
-      - This bug is a graphical glitch or error
-      - This is a development issue
-  validations:
-    required: false
+      - label: I have searched for similar issues and confirmed this is not a duplicate
+        required: true
+
+- type: checkboxes
+  attributes:
+    label: Game Version
+    description: Which version(s) of the game does this bug appear in?
+    options:
+      - label: "Command & Conquer Generals"
+        required: false
+      - label: "Command & Conquer Generals: Zero Hour"
+        required: false
+      - label: "Other (please specify below)"
+        required: false
 
 - type: textarea
   attributes:
-    label: Describe the issue
-    description: Please describe the issue you are experiencing here.
+    label: Bug Description
+    description: |
+      What is the bug? What happened versus what you expected to happen?
+      Please provide a clear and detailed description.
   validations:
     required: true
 
-
 - type: textarea
   attributes:
-    label: Steps to reproduce
-    description: Outline the steps you took to reproduce this bug.
+    label: Reproduction Steps
+    description: How can we reproduce this bug?
     placeholder: |
-      Tell us the steps required to trigger your bug. Example:
-      1. Open the attached save file
-      2. Click on the command center
-      3. The game crashes
+      1. Start a new game with [specific settings]
+      2. Build/Select [specific unit/building]
+      3. Perform [specific action]
+      4. Observe [the bug]
   validations:
     required: true
 
 - type: textarea
   attributes:
-    label: Attachments
-    description: Please add any screenshots, save files and/or videos here that may help us fix the issue.
-    placeholder: Drag and drop files here to add them
+    label: Additional Context
+    description: Add any relevant screenshots, video recordings, or other files here
   validations:
     required: false
