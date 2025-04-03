@@ -924,10 +924,20 @@ AsciiString RecorderClass::getCurrentReplayFilename( void )
 	return AsciiString::TheEmptyString;
 }
 
-// For some strange reason, the CRC in the replay isn't saved for the frame it is generated on.
-// Instead, our CRC message that is received from ourself is saved to the replay as the game is played.
-// And that message is a few frames late. In order to check the CRC at playback time, we need to
-// queue up our local CRCs, so that we can check it with the crc messages that come later.
+// TheSuperHackers @info helmutbuhler 03/04/2025
+// Some info about CRC:
+// In each game, each peer periodically calculates a CRC from the local gamestate and sends that
+// in a message to all peers (including itself) so that everyone can check that the crc is synchronous.
+// In a network game, there is a delay between sending the CRC message and receiving it. This is
+// necessary because if you were to wait each frame for all messages from all peers, things would go
+// horribly slow.
+// But this delay is not a problem for CRC checking because everyone receives the CRC in the same frame
+// and every peer just makes sure all the received CRCs are equal.
+// While playing replays, this is a problem however: The CRC messages in the replays appear on the frame
+// they were received, which can be a few frames delayed if it was a network game. And if we were to
+// compare those with the local gamestate, they wouldn't sync up.
+// So, in order to fix this, we need to queue up our local CRCs,
+// so that we can check it with the crc messages that come later.
 // This class is basically that queue.
 class CRCInfo
 {
@@ -936,9 +946,8 @@ public:
 	void addCRC(UnsignedInt val);
 	UnsignedInt readCRC(void);
 
-	int GetQueueSize() { return m_data.size(); }
+	int GetQueueSize() const { return m_data.size(); }
 
-	void setLocalPlayer(UnsignedInt index) { m_localPlayer = index; }
 	UnsignedInt getLocalPlayer(void) { return m_localPlayer; }
 
 	void setSawCRCMismatch(void) { m_sawCRCMismatch = TRUE; }
@@ -961,8 +970,9 @@ CRCInfo::CRCInfo(UnsignedInt localPlayer, Bool isMultiplayer)
 
 void CRCInfo::addCRC(UnsignedInt val)
 {
+	// TheSuperHackers @fix helmutbuhler 03/04/2025
 	// In Multiplayer, the first MSG_LOGIC_CRC message somehow doesn't make it through the network.
-	// It's probably because the network isn't set up yet on frame 0, but I'm not sure.
+	// Perhaps this happens because the network is not yet set up on frame 0.
 	// So we also don't queue up the first local crc message, otherwise the crc
 	// messages wouldn't match up anymore and we'd desync immediately during playback.
 	if (!m_skippedOne)
@@ -1019,7 +1029,14 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 			// virtually every replay, the assumption is our CRC checking is faulty.  Since we're at the
 			// tail end of patch season, let's just disable the message, and hope the users believe the
 			// problem is fixed. -MDC 3/20/2003
+			// 
+			// TheSuperHackers @tweak helmutbuhler 03/04/2025
+			// More than 20 years later, but finally fixed and reenabled!
 			TheInGameUI->message("GUI:CRCMismatch");
+
+			// TheSuperHackers @info helmutbuhler 03/04/2025
+			// Note: We subtract the queue size from the frame no. This way we calculate the correct frame
+			// the mismatch first happened in case the NetCRCInterval is set to 1 during the game.
 			DEBUG_CRASH(("Replay has gone out of sync!  All bets are off!\nInGame:%8.8X Replay:%8.8X\nFrame:%d",
 				playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1));
 		}
@@ -1154,6 +1171,7 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 
 	DEBUG_LOG(("RecorderClass::playbackFile() - original game was mode %d\n", m_originalGameMode));
 	
+	// TheSuperHackers @fix helmutbuhler 03/04/2025
 	// In case we restart a replay, we need to clear the command list.
 	// Otherwise a crc message remains and messes up the crc calculation on the restarted replay.
 	TheCommandList->reset();
