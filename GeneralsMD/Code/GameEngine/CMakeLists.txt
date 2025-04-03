@@ -48,7 +48,6 @@ set(GAMEENGINE_SRC
     Include/Common/GameMemory.h
     Include/Common/GameMusic.h
     Include/Common/GameSounds.h
-    Include/Common/GameSpeech.h
     Include/Common/GameSpyMiscPreferences.h
     Include/Common/GameState.h
     Include/Common/GameStateMap.h
@@ -558,7 +557,6 @@ set(GAMEENGINE_SRC
     Source/Common/Audio/GameAudio.cpp
     Source/Common/Audio/GameMusic.cpp
     Source/Common/Audio/GameSounds.cpp
-    #Source/Common/Audio/GameSpeech.cpp
     #Source/Common/Audio/simpleplayer.cpp
     #Source/Common/Audio/urllaunch.cpp
     Source/Common/Bezier/BezFwdIterator.cpp

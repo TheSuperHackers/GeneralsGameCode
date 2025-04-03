@@ -588,7 +588,6 @@ set(GAMEENGINE_SRC
     Include/Common/GameMemory.h
     Include/Common/GameMusic.h
     Include/Common/GameSounds.h
-    Include/Common/GameSpeech.h
     Include/Common/GameSpyMiscPreferences.h
     Include/Common/GameState.h
     Include/Common/GameStateMap.h
