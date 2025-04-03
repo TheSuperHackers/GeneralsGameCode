@@ -22,14 +22,17 @@
  *                                                                         * 
  *                 Project Name : G                                        * 
  *                                                                         * 
- *                     $Archive:: /VSS_Sync/ww3d2/mapper.cpp              $* 
+ *                     $Archive:: /Commando/Code/ww3d2/mapper.cpp         $* 
  *                                                                         * 
- *                      $Author:: Vss_sync                                $* 
+ *                  $Org Author:: Hector_y                                $* 
  *                                                                         * 
- *                     $Modtime:: 8/30/01 1:38a                           $* 
+ *                      $Author:: Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                         * 
- *                    $Revision:: 31                                      $* 
+ *                    $Revision:: 33                                      $* 
  *                                                                         * 
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "mapper.h"
@@ -325,7 +328,7 @@ void RotateTextureMapperClass::Apply(int uv_array_index)
 	float c,s;
 	c=WWMath::Cos(CurrentAngle);
 	s=WWMath::Sin(CurrentAngle);
-	Matrix4 m(true);
+	Matrix4x4 m(true);
 
 	// subtract center
 	// rotate
@@ -676,7 +679,7 @@ void WSClassicEnvironmentMapperClass::Apply(int uv_array_index)
 							0.0f, 0.0f, 1.0f, 0.0f );
 
 	// multiply by inverse of view transform	
-	Matrix4 mat;
+	Matrix4x4 mat;
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,mat);	
 	Matrix3D mat2(mat[0].X,mat[1].X,mat[2].X,0.0f,
 					  mat[0].Y,mat[1].Y,mat[2].Y,0.0f,
@@ -708,7 +711,7 @@ void WSEnvironmentMapperClass::Apply(int uv_array_index)
 							0.0f, 0.0f, 1.0f, 0.0f );		
 
 	// multiply by inverse of view transform	
-	Matrix4 mat;	
+	Matrix4x4 mat;	
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,mat);		
 	Matrix3D mat2(mat[0].X,mat[1].X,mat[2].X,0.0f,
 					  mat[0].Y,mat[1].Y,mat[2].Y,0.0f,
@@ -742,7 +745,7 @@ void ScreenMapperClass::Apply(int uv_array_index)
 
 	// multiply by projection matrix	
 	// followed by scale and translation
-	Matrix4 mat;	
+	Matrix4x4 mat;	
 	DX8Wrapper::Get_Transform(D3DTS_PROJECTION,mat);	
 	mat[0]*=Scale.X; // entire row since we're pre-multiplying
 	mat[1]*=Scale.Y;

@@ -1261,13 +1261,13 @@ void TexProjectClass::Pre_Render_Update(const Matrix3D & camera)
 	/*
 	** Mview-texture = PShadow * Mwrld-texture * Mcamera-vrld	
 	*/
-	Matrix3D world_to_texture;
-	Matrix3D tmp;
-	Matrix4	view_to_texture;
+	Matrix3D		world_to_texture;
+	Matrix3D		tmp;
+	Matrix4x4	view_to_texture;
 
 	Transform.Get_Orthogonal_Inverse(world_to_texture);
 	Matrix3D::Multiply(world_to_texture,camera,&tmp);
-	Matrix4::Multiply(Projection,tmp,&view_to_texture);
+	Matrix4x4::Multiply(Projection,tmp,&view_to_texture);
 
 	/*
 	** update the current intensity by iterating it towards the desired intensity

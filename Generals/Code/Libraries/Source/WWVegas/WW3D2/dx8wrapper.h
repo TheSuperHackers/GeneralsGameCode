@@ -159,8 +159,8 @@ struct RenderStateStruct
 	TextureClass * Textures[MAX_TEXTURE_STAGES];
 	D3DLIGHT8 Lights[4];
 	bool LightEnable[4];
-	Matrix4 world;
-	Matrix4 view;
+	Matrix4x4 world;
+	Matrix4x4 view;
 	unsigned vertex_buffer_type;
 	unsigned index_buffer_type;
 	unsigned short vba_offset;
@@ -271,9 +271,9 @@ public:
 
 	// Set_ and Get_Transform() functions take the matrix in Westwood convention format.
 
-	static void Set_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4& m);
+	static void Set_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4x4& m);
 	static void Set_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix3D& m);
-	static void Get_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4& m);
+	static void Get_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4x4& m);
 	static void	Set_World_Identity();
 	static void Set_View_Identity();
 	static bool	Is_World_Identity();
@@ -281,9 +281,9 @@ public:
 
 	// Note that *_DX8_Transform() functions take the matrix in DX8 format - transposed from Westwood convention.
 
-	static void _Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4& m);
+	static void _Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4x4& m);
 	static void _Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix3D& m);
-	static void _Get_DX8_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4& m);
+	static void _Get_DX8_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4x4& m);
 
 	static void Set_DX8_Light(int index,D3DLIGHT8* light);
 	static void Set_DX8_Render_State(D3DRENDERSTATETYPE state, unsigned value);
@@ -545,7 +545,7 @@ protected:
 };
 
 
-WWINLINE void DX8Wrapper::_Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4& m)
+WWINLINE void DX8Wrapper::_Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4x4& m)
 {
 	SNAPSHOT_SAY(("DX8 - SetTransform\n"));
 	DX8_RECORD_MATRIX_CHANGE();
@@ -560,7 +560,7 @@ WWINLINE void DX8Wrapper::_Set_DX8_Transform(D3DTRANSFORMSTATETYPE transform,con
 	DX8CALL(SetTransform(transform,(D3DMATRIX*)&m));
 }
 
-WWINLINE void DX8Wrapper::_Get_DX8_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4& m)
+WWINLINE void DX8Wrapper::_Get_DX8_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4x4& m)
 {
 	DX8CALL(GetTransform(transform,(D3DMATRIX*)&m));
 }
@@ -945,7 +945,7 @@ WWINLINE void DX8Wrapper::Set_Shader(const ShaderClass& shader)
 	render_state_changed|=SHADER_CHANGED;
 }
 
-WWINLINE void DX8Wrapper::Set_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4& m)
+WWINLINE void DX8Wrapper::Set_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix4x4& m)
 {
 	switch ((int)transform) {
 	case D3DTS_WORLD:
@@ -960,7 +960,7 @@ WWINLINE void DX8Wrapper::Set_Transform(D3DTRANSFORMSTATETYPE transform,const Ma
 		break;
 	default:
 		DX8_RECORD_MATRIX_CHANGE();
-		Matrix4 m2=m.Transpose();
+		Matrix4x4 m2=m.Transpose();
 		DX8CALL(SetTransform(transform,(D3DMATRIX*)&m2));	
 		break;
 	}
@@ -968,7 +968,7 @@ WWINLINE void DX8Wrapper::Set_Transform(D3DTRANSFORMSTATETYPE transform,const Ma
 
 WWINLINE void DX8Wrapper::Set_Transform(D3DTRANSFORMSTATETYPE transform,const Matrix3D& m)
 {
-	Matrix4 m2(m);
+	Matrix4x4 m2(m);
 	switch ((int)transform) {
 	case D3DTS_WORLD:
 		render_state.world=m2.Transpose();
@@ -1012,7 +1012,7 @@ WWINLINE bool DX8Wrapper::Is_View_Identity()
 	return !!(render_state_changed&(unsigned)VIEW_IDENTITY);
 }
 
-WWINLINE void DX8Wrapper::Get_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4& m)
+WWINLINE void DX8Wrapper::Get_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4x4& m)
 {
 	D3DMATRIX mat;
 
@@ -1027,7 +1027,7 @@ WWINLINE void DX8Wrapper::Get_Transform(D3DTRANSFORMSTATETYPE transform, Matrix4
 		break;
 	default:
 		DX8CALL(GetTransform(transform,&mat));
-		m=*(Matrix4*)&mat;
+		m=*(Matrix4x4*)&mat;
 		m=m.Transpose();
 		break;
 	}

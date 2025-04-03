@@ -24,12 +24,15 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/wwmath/colmathobbox.cpp                      $*
  *                                                                                             *
- *                       Author:: Greg Hjelstrom                                               *
+ *                   Org Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 11/14/00 2:46p                                              $*
+ *                       Author : Kenny Mitchell                                               * 
  *                                                                                             *
- *                    $Revision:: 8                                                           $*
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
+ *                    $Revision:: 9                                                           $*
+ *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -53,7 +56,7 @@ CollisionMath::Overlap_Test(const OBBoxClass & box,const Vector3 & point)
 {
 	// transform point into box coordinate system
 	Vector3 localpoint;
-	Matrix3::Transpose_Rotate_Vector(box.Basis,(point - box.Center),&localpoint);
+	Matrix3x3::Transpose_Rotate_Vector(box.Basis,(point - box.Center),&localpoint);
 
 	// if the point is outside any of the extents, it is outside the box
 	if (WWMath::Fabs(localpoint.X) > box.Extent.X) {

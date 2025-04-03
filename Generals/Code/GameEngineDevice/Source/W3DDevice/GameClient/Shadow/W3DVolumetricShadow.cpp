@@ -1296,10 +1296,10 @@ void W3DVolumetricShadow::RenderMeshVolume(Int meshIndex, Int lightIndex, const 
 	if( numVerts == 0 || numPolys == 0 )
 		return;
 
-	Matrix4 mWorld(*meshXform);
+	Matrix4x4 mWorld(*meshXform);
 
 	///@todo: W3D always does transpose on all of matrix sets.  Slow???  Better to hack view matrix.
-	Matrix4 mWorldTransposed = mWorld.Transpose();
+	Matrix4x4 mWorldTransposed = mWorld.Transpose();
 	m_pDev->SetTransform(D3DTS_WORLD,(_D3DMATRIX *)&mWorldTransposed);
 	
 	W3DBufferManager::W3DVertexBufferSlot *vbSlot=m_shadowVolumeVB[lightIndex][ meshIndex ];
@@ -1413,9 +1413,8 @@ void W3DVolumetricShadow::RenderDynamicMeshVolume(Int meshIndex, Int lightIndex,
 
 	m_pDev->SetIndices(shadowIndexBufferD3D,nShadowStartBatchVertex);
 	
-	Matrix4 mWorld(*meshXform);
-
-	Matrix4 mWorldTransposed = mWorld.Transpose();
+	Matrix4x4 mWorld(*meshXform);
+	Matrix4x4 mWorldTransposed = mWorld.Transpose();
 	m_pDev->SetTransform(D3DTS_WORLD,(_D3DMATRIX *)&mWorldTransposed);
 
 	if (shadowVertexBufferD3D != lastActiveVertexBuffer)
@@ -1569,9 +1568,8 @@ void W3DVolumetricShadow::RenderMeshVolumeBounds(Int meshIndex, Int lightIndex, 
 
 
 	//todo: replace this with mesh transform
-	Matrix4 mWorld(1);	//identity since boxes are pre-transformed to world space.
-
-	Matrix4 mWorldTransposed = mWorld.Transpose();
+	Matrix4x4 mWorld(1);	//identity since boxes are pre-transformed to world space.
+	Matrix4x4 mWorldTransposed = mWorld.Transpose();
 	m_pDev->SetTransform(D3DTS_WORLD,(_D3DMATRIX *)&mWorldTransposed);
 	
 	m_pDev->SetStreamSource(0,shadowVertexBufferD3D,sizeof(SHADOW_DYNAMIC_VOLUME_VERTEX));
@@ -1868,7 +1866,7 @@ to reduce fill rate usage.*/
 void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const Matrix3D *meshXform, const AABoxClass &meshBox, float floorZ )
 {
 	Vector3 lightPosObject;
-	Matrix4 worldToObject;
+	Matrix4x4 worldToObject;
 	Vector3 objectCenter;
 	Vector3 toLight;
 	Vector3 toPrevLight;
@@ -1880,8 +1878,8 @@ void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const 
 	Bool isMeshRotating = false;	//flag if mesh has rotated since last update. Translation doesn't matter for infinite light source.
 	Bool isLightMoving = false;	//flag if light has moved since last update.
 
-	Matrix4 objectToWorld(*meshXform);
-	Matrix4 *prevXForm=&m_objectXformHistory[ lightIndex ][meshIndex];
+	Matrix4x4 objectToWorld(*meshXform);
+	Matrix4x4 *prevXForm=&m_objectXformHistory[ lightIndex ][meshIndex];
 
 	//
 	// build the shadow silhouette and construct shadow volume from
@@ -1963,7 +1961,7 @@ void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const 
 		D3DXMatrixInverse((D3DXMATRIX*)&worldToObject, &det, (D3DXMATRIX*)&objectToWorld);
 
 		// find out light position in object space
-		Matrix4::Transform_Vector(worldToObject,lightPosWorld,&lightPosObject);
+		Matrix4x4::Transform_Vector(worldToObject,lightPosWorld,&lightPosObject);
 
 		//Updating shadow volumes is expensive, so verify that this volume is even visible.
 

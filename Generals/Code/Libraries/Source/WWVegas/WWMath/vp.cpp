@@ -24,12 +24,15 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/WWMath/vp.cpp                                $*
  *                                                                                             *
- *                        Author:: Hector Yee                                                  *
+ *                    Org Author:: Hector Yee                                                  *
  *                                                                                             *
- *                     $Modtime:: 6/27/01 4:16p                                               $*
+ *                       Author : Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
- *                    $Revision:: 11                                                          $*
+ *                    $Revision:: 12                                                          $*
  *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  *---------------------------------------------------------------------------------------------*/
 
 #include "vp.h"
@@ -309,7 +312,7 @@ void VectorProcessorClass::Transform (Vector3* dst,const Vector3 *src, const Mat
 	}
 }
 
-void VectorProcessorClass::Transform(Vector4* dst,const Vector3 *src, const Matrix4& matrix, const int count)
+void VectorProcessorClass::Transform(Vector4* dst,const Vector3 *src, const Matrix4x4& matrix, const int count)
 {
 	if (count<=0) return;
 

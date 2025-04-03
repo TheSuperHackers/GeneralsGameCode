@@ -1696,7 +1696,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 
 			Vector3 vec(loc.x, loc.y, loc.z);
 			Matrix3D tm(Transform);
-			Matrix3 rot(true);
+			Matrix3x3 rot(true);
 			rot.Rotate_Z(pMapObj->getAngle());
 
 			tm.Set_Translation(vec);
@@ -1813,7 +1813,7 @@ void DrawObject::Render(RenderInfoClass & rinfo)
 // ok to here.
 			Vector3 vec(loc.x, loc.y, loc.z);
 			Matrix3D tmXX(Transform);
-			Matrix3 rot(true);
+			Matrix3x3 rot(true);
 			rot.Rotate_Z(pBuild->getAngle());
 
 			tmXX.Set_Translation(vec);

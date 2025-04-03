@@ -26,12 +26,13 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Greg_h                                                      $*
+ *                      $Author:: Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
- *                     $Modtime:: 7/26/01 9:03a                                               $*
+ *                    $Revision:: 24                                                          $*
  *                                                                                             *
- *                    $Revision:: 20                                                          $*
- *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  *   DecalMeshClass::DecalMeshClass -- Constructor                                             *
@@ -474,13 +475,13 @@ bool RigidDecalMeshClass::Create_Decal
 	PlaneClass planes[4];
 	Vector3 extent;
 
-	Matrix3::Rotate_Vector(localbox.Basis,Vector3(localbox.Extent.X,0,0),&extent);
+	Matrix3x3::Rotate_Vector(localbox.Basis,Vector3(localbox.Extent.X,0,0),&extent);
 	Vector3 direction(localbox.Basis.Get_X_Vector());
 	
 	planes[0].Set(-direction,localbox.Center + extent);
 	planes[1].Set(direction,localbox.Center - extent);
 	
-	Matrix3::Rotate_Vector(localbox.Basis,Vector3(0,localbox.Extent.Y,0),&extent);
+	Matrix3x3::Rotate_Vector(localbox.Basis,Vector3(0,localbox.Extent.Y,0),&extent);
 	direction.Set(localbox.Basis.Get_Y_Vector());
 	
 	planes[2].Set(-direction,localbox.Center + extent);

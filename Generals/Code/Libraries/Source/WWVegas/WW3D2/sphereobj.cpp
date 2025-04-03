@@ -24,12 +24,15 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/ww3d2/sphereobj.cpp                          $*
  *                                                                                             *
- *                       Author:: Greg Hjelstrom                                               *
+ *                   Org Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 7/23/01 3:15p                                               $*
+ *                      $Author:: Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
- *                    $Revision:: 22                                                          $*
+ *                    $Revision:: 24                                                          $*
  *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  *   SphereRenderObjClass::SphereRenderObjClass -- Constructor                                 *
@@ -648,13 +651,13 @@ void SphereRenderObjClass::Render(RenderInfoClass & rinfo)
 
 		// Camera Align
 		if (Flags & USE_CAMERA_ALIGN) {
-			Matrix4 view,ident(true);
+			Matrix4x4 view,ident(true);
 			DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
 
 			Vector4 wpos(Transform[0][3],Transform[1][3],Transform[2][3],1);
 			Vector4 cpos;
 
-			Matrix4::Transform_Vector(view,wpos,&cpos);
+			Matrix4x4::Transform_Vector(view,wpos,&cpos);
 			Matrix3D tm(0.0f, 1.0f, 0.0f, cpos.X,
 							0.0f, 0.0f, 1.0f, cpos.Y,
 							1.0f, 0.0f, 0.0f, cpos.Z);
@@ -1382,7 +1385,7 @@ void SphereMeshClass::Generate(float radius, int slices, int stacks)
 	vtx_uv		= W3DNEWARRAY Vector2[Vertex_ct];
 	dcg			= W3DNEWARRAY Vector4[Vertex_ct];
 
-	Matrix3 mat;
+	Matrix3x3 mat;
 	Vector3 vec(0.0f, 0.0f, radius);
 
 	Vector3 *veclist = vtx;

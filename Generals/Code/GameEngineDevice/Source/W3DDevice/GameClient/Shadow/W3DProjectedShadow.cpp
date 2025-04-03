@@ -212,8 +212,8 @@ class W3DShadowTexture : public RefCountClass, public	HashableClass
 		void					 setTexture(TextureClass *texture)	{m_texture = texture;}
 		void					 setLightPosHistory(Vector3 &pos) {m_lastLightPosition=pos;}	///<updates the last position of light
 		Vector3&			 getLightPosHistory(void) {return m_lastLightPosition;}
-		void					 setObjectOrientationHistory(Matrix3 &mat) {m_lastObjectOrientation=mat;}	///<updates the last position of light
-		Matrix3&			 getObjectOrientationHistory(void) {return m_lastObjectOrientation;}
+		void					 setObjectOrientationHistory(Matrix3x3 &mat) {m_lastObjectOrientation=mat;}	///<updates the last position of light
+		Matrix3x3&			 getObjectOrientationHistory(void) {return m_lastObjectOrientation;}
 		SphereClass&	 getBoundingSphere(void)	{return m_areaEffectSphere;}
 		AABoxClass&		 getBoundingBox(void)		{return m_areaEffectBox;}
 		void	 setBoundingSphere(SphereClass &sphere)	{m_areaEffectSphere=sphere;}
@@ -228,7 +228,7 @@ class W3DShadowTexture : public RefCountClass, public	HashableClass
 
 		TextureClass *m_texture; ///<texture holding the shadow for this renderobject
 		Vector3		m_lastLightPosition;		///<position of light source at time of last texture update.
-		Matrix3		m_lastObjectOrientation;	///<orientation of shadow casting object when texture was generated.
+		Matrix3x3	m_lastObjectOrientation;	///<orientation of shadow casting object when texture was generated.
 		AABoxClass	m_areaEffectBox;			///<boundary defining object-space volume affected by shadow.
 		SphereClass	m_areaEffectSphere;			///<boundary defining object-space volume affected by shadow.
 		Vector3		m_shadowUV[2];		///world-space vectors defining the u and v texture coordinate axis.
@@ -384,7 +384,7 @@ void W3DProjectedShadowManager::updateRenderTargetTextures(void)
 ///Renders shadow on part of terrain covered by world-space bounding box.
 Int W3DProjectedShadowManager::renderProjectedTerrainShadow(W3DProjectedShadow *shadow, AABoxClass &box)
 {
-	static	Matrix4 mWorld(true);	//initialize to identity matrix
+	static	Matrix4x4 mWorld(true);	//initialize to identity matrix
 	struct SHADOW_VOLUME_VERTEX	//vertex structure passed to D3D
 	{
 		float x,y,z;
@@ -717,7 +717,7 @@ void TestBlendRender(RenderInfoClass & rinfo)
 
 void W3DProjectedShadowManager::flushDecals(W3DShadowTexture *texture, ShadowType type)
 {
-	static	Matrix4 mWorld(true);	//initialize to identity matrix
+	static	Matrix4x4 mWorld(true);	//initialize to identity matrix
 
 	if (nShadowDecalVertsInBatch == 0 && nShadowDecalPolysInBatch == 0)
 	{	//nothing to render

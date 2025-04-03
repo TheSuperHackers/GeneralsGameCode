@@ -85,7 +85,7 @@ MatrixMapperClass::MatrixMapperClass(int stage) :
  *=============================================================================================*/
 void MatrixMapperClass::Set_Texture_Transform(const Matrix3D & view_to_texture,float texsize)
 {
-	ViewToTexture = Matrix4(view_to_texture);
+	ViewToTexture = Matrix4x4(view_to_texture);
 	Update_View_To_Pixel_Transform(texsize);
 }
 
@@ -101,7 +101,7 @@ void MatrixMapperClass::Set_Texture_Transform(const Matrix3D & view_to_texture,f
  * HISTORY:                                                                                    *
  *   11/13/99   gth : Created.                                                                 *
  *=============================================================================================*/
-void	MatrixMapperClass::Set_Texture_Transform(const Matrix4 & view_to_texture,float texsize)
+void	MatrixMapperClass::Set_Texture_Transform(const Matrix4x4 & view_to_texture,float texsize)
 {
 	ViewToTexture=view_to_texture;	
 
@@ -207,7 +207,7 @@ void MatrixMapperClass::Compute_Texture_Coordinate(const Vector3 & point,Vector3
 
 void MatrixMapperClass::Apply(int uv_array_index)
 {
-	Matrix4 m;
+	Matrix4x4 m;
 
 	switch (Type) 
 	{

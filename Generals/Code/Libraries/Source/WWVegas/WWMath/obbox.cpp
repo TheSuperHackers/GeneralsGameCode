@@ -24,12 +24,15 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/wwmath/obbox.cpp                             $*
  *                                                                                             *
- *                       Author:: Greg_h                                                       *
+ *                    Org Author:: Greg_h                                                       *
  *                                                                                             *
- *                     $Modtime:: 8/23/99 2:10p                                               $*
+ *                       Author : Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
- *                    $Revision:: 23                                                          $*
+ *                    $Revision:: 24                                                          $*
  *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  *   OBBoxClass::OBBoxClass -- Constructor that computes the box for a set of point            *
@@ -236,7 +239,7 @@ void OBBoxClass::Init_From_Box_Points(Vector3 * points,int num)
 #endif
 	Vector3::Cross_Product(axis0,axis1,&axis2);
 
-	Basis = Matrix3(axis0,axis1,axis2);
+	Basis = Matrix3x3(axis0,axis1,axis2);
 
 	/*
 	** Center is the average of all of the points

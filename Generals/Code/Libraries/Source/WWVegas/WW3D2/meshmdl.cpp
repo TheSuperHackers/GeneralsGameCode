@@ -384,7 +384,7 @@ void MeshModelClass::compose_deformed_vertex_buffer(
 // Destination pointers MUST point to arrays large enough to hold all vertices
 void MeshModelClass::get_deformed_screenspace_vertices(Vector4 *dst_vert,const RenderInfoClass & rinfo,const Matrix3D & mesh_transform,const HTreeClass * htree)
 {
-	Matrix4 prj = rinfo.Camera.Get_Projection_Matrix() * rinfo.Camera.Get_View_Matrix() * mesh_transform;
+	Matrix4x4 prj = rinfo.Camera.Get_Projection_Matrix() * rinfo.Camera.Get_View_Matrix() * mesh_transform;
 
 	Vector3 * src_vert = Vertex->Get_Array();
 	int vertex_count=Get_Vertex_Count();
@@ -394,7 +394,7 @@ void MeshModelClass::get_deformed_screenspace_vertices(Vector4 *dst_vert,const R
 		for (int vi = 0; vi < vertex_count;) {
 			int idx=bonelink[vi];
 
-			Matrix4 tm = prj * htree->Get_Transform(idx);
+			Matrix4x4 tm = prj * htree->Get_Transform(idx);
 
 			// Count equal matrices (the vertices should be pre-sorted by matrices they use)
 			int cnt = vi;
