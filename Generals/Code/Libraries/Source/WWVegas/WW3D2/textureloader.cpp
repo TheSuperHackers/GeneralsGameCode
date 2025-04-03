@@ -25,7 +25,6 @@
 #include "wwstring.h"
 #include	"bufffile.h"
 #include "ww3d.h"
-#include "texfcach.h"
 #include "assetmgr.h"
 #include "dx8wrapper.h"
 #include "dx8caps.h"

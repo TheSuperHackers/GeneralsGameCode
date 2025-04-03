@@ -103,7 +103,6 @@
 #include "distlod.h"
 #include "hlod.h"
 #include "agg_def.h"
-#include "texfcach.h"
 #include "wwstring.h"
 #include "wwmemlog.h"
 #include "dazzle.h"

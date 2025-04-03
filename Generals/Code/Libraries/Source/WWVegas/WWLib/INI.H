@@ -49,7 +49,6 @@
 //#include	"straw.h"
 //#include	"wwfile.h"
 
-class PKey;
 class FileClass;
 class Straw;
 class Pipe;
@@ -122,7 +121,6 @@ class INIClass {
 		/*
 		**	Get the various data types from the section and entry specified.
 		*/
-		PKey Get_PKey(bool fast) const;
 		bool Get_Bool(char const * section, char const * entry, bool defvalue=false) const;
 		float Get_Float(char const * section, char const * entry, float defvalue=0.0) const;
 		int Get_Hex(char const * section, char const * entry, int defvalue=0) const;
@@ -148,7 +146,6 @@ class INIClass {
 		bool Put_Float(char const * section, char const * entry, double number);
 		bool Put_Hex(char const * section, char const * entry, int number);
 		bool Put_Int(char const * section, char const * entry, int number, int format=0);
-		bool Put_PKey(PKey const & key);
 		bool Put_String(char const * section, char const * entry, char const * string);
 		bool Put_TextBlock(char const * section, char const * text);
 		bool Put_UUBlock(char const * section, void const * block, int len);

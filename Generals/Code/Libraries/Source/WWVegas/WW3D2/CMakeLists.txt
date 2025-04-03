@@ -90,13 +90,11 @@ set(WW3D2_SRC
     streakRender.cpp
     stripoptimizer.cpp
     surfaceclass.cpp
-    texfcach.cpp
     texproject.cpp
     texture.cpp
     texturefilter.cpp
     textureloader.cpp
     texturethumbnail.cpp
-    txt.cpp
     vertmaterial.cpp
     visrasterizer.cpp
     w3d_dep.cpp
@@ -202,13 +200,11 @@ set(WW3D2_SRC
     streakRender.h
     stripoptimizer.h
     surfaceclass.h
-    texfcach.h
     texproject.h
     texture.h
     texturefilter.h
     textureloader.h
     texturethumbnail.h
-    txt.h
     vertmaterial.h
     visrasterizer.h
     w3d_dep.h

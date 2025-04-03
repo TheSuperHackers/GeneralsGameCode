@@ -1,69 +1,40 @@
 # Set source files
 set(WWLIB_SRC
-    _convert.cpp
-    _mono.cpp
     argv.cpp
     b64pipe.cpp
     b64straw.cpp
     base64.cpp
-    blit.cpp
-    blowfish.cpp
     buff.cpp
     bufffile.cpp
     chunkio.cpp
-    convert.cpp
     cpudetect.cpp
     crc.cpp
     cstraw.cpp
-    data.cpp
-    ddraw.cpp
-    dsurface.cpp
     Except.cpp
     FastAllocator.cpp
     ffactory.cpp
     gcd_lcm.cpp
     hash.cpp
-    hsv.cpp
     ini.cpp
-    int.cpp
     jshell.cpp
-    keyboard.cpp
     LaunchWeb.cpp
-    lcw.cpp
-    load.cpp
-    mixfile.cpp
-    mono.cpp
-    mpmath.cpp
     mpu.cpp
-    msgloop.cpp
     multilist.cpp
     mutex.cpp
     nstrdup.cpp
-    palette.cpp
-    pcx.cpp
     pipe.cpp
-    pk.cpp
     ramfile.cpp
     random.cpp
     rawfile.cpp
-    rc4.cpp
-    rcfile.cpp
     readline.cpp
     realcrc.cpp
     refcount.cpp
     registry.cpp
-    rgb.cpp
-    rle.cpp
-    rndstrng.cpp
-    sampler.cpp
-    sha.cpp
     slnode.cpp
-    srandom.cpp
     stimer.cpp
     straw.cpp
     strtok_r.cpp
     systimer.cpp
-    tagblock.cpp
     TARGA.CPP
     textfile.cpp
     tgatodxt.cpp
@@ -72,15 +43,11 @@ set(WWLIB_SRC
     vector.cpp
     verchk.cpp
     widestring.cpp
-    win.cpp
     WWCOMUtil.cpp
     wwfile.cpp
-    wwfont.cpp
     wwstring.cpp
     xpipe.cpp
     xstraw.cpp
-    xsurface.cpp
-    _mono.h
     always.h
     argv.h
     b64pipe.h
@@ -88,112 +55,69 @@ set(WWLIB_SRC
     base64.h
     binheap.h
     bittype.h
-    blit.h
-    blitter.h
-    bool.h
-    borlandc.h
     bound.h
     BSEARCH.H
-    bsurface.h
     BUFF.H
     bufffile.h
     CallbackHook.h
     chunkio.h
-    Convert.h
     cpudetect.h
     CRC.H
     cstraw.h
-    data.h
-    dsurface.h
     FastAllocator.h
     ffactory.h
-    FONT.H
     gcd_lcm.h
     hash.h
     hashcalc.h
     HASHLIST.H
     hashtemplate.h
-    IFF.H
     INDEX.H
     INI.H
     inisup.h
-    INT.H
     iostruct.h
-    keyboard.h
     LaunchWeb.h
-    LCW.H
     LISTNODE.H
     mempool.h
-    mixfile.h
-    MONO.H
-    MONODRVR.H
-    MPMATH.H
     MPU.H
-    msgloop.h
     multilist.h
     mutex.h
     notifier.h
     nstrdup.h
     ntree.h
-    PALETTE.H
-    pcx.H
     PIPE.H
-    PK.H
     Point.h
     RAMFILE.H
     RANDOM.H
     RAWFILE.H
-    rc4.h
-    rcfile.h
     readline.h
     realcrc.h
     ref_ptr.h
-    refcount.h
     registry.h
-    RGB.H
-    RLE.H
-    RNDSTRAW.H
-    rndstrng.h
-    rng.h
-    rsacrypt.h
-    sampler.h
-    sha.h
-    shapeset.h
     sharebuf.h
     Signaler.h
     simplevec.h
     SLIST.H
     SLNODE.H
-    srandom.h
-    stl.h
     STRAW.H
     strtok_r.h
-    Surface.h
-    surfrect.h
     systimer.h
-    TagBlock.h
     TARGA.H
     textfile.h
     tgatodxt.h
     thread.h
-    timer.h
-    trackwin.h
     trect.h
     trim.h
     uarray.h
     Vector.H
     verchk.h
     visualc.h
-    WATCOM.H
     widestring.h
     win.h
     WWCOMUtil.h
     WWFILE.H
     wwstring.h
-    xmouse.h
     XPIPE.H
     XSTRAW.H
-    xsurface.h
 )
 
 # Targets to build.

@@ -44,7 +44,7 @@
 **	November of '94. Until the compiler supports this, use the following
 **	definition.
 */
-#include	"bool.h"
+//#include	"bool.h"
 
 
 /*
