@@ -32,6 +32,8 @@
 
 #include "Always.h"
 
+#define _d3d9TYPES_H_
+
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions
 #ifndef _AFX_NO_AFXCMN_SUPPORT
