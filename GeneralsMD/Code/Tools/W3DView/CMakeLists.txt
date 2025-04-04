@@ -80,6 +80,7 @@ set(W3DVIEW_SRC
 )
 
 add_executable(z_w3dview WIN32)
+set_target_properties(z_w3dview PROPERTIES OUTPUT_NAME W3DView)
 
 target_sources(z_w3dview PRIVATE ${W3DVIEW_SRC})
 
@@ -96,6 +97,11 @@ target_link_libraries(z_w3dview PRIVATE
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
+    if(IS_VS6_BUILD)
+        target_compile_definitions(z_w3dview PRIVATE HTASK_OR_DWORD=HTASK)
+    else()
+        target_compile_definitions(z_w3dview PRIVATE HTASK_OR_DWORD=DWORD)
+    endif()
     target_compile_definitions(z_w3dview PRIVATE _AFXDLL)
     target_sources(z_w3dview PRIVATE W3DView.rc)
 endif()

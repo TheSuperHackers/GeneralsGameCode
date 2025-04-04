@@ -113,6 +113,15 @@ ColorPickerClass::OnPaint (void)
 }
 
 
+LRESULT WINAPI
+fnColorPickerProc
+(
+	HWND hwnd,
+	UINT message,
+	WPARAM wparam,
+	LPARAM lparam
+);
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // RegisterColorPicker

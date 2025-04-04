@@ -75,7 +75,7 @@ protected:
 	afx_msg void OnObjectProperties();
 	afx_msg void OnUpdateObjectProperties(CCmdUI* pCmdUI);
 	afx_msg void OnLodGenerate();
-	afx_msg void OnActivateApp(BOOL bActive, HTASK hTask);
+	afx_msg void OnActivateApp(BOOL bActive, HTASK_OR_DWORD hTask);
 	afx_msg void OnFileOpen();
 	afx_msg void OnAniSpeed();
 	afx_msg void OnAniStop();

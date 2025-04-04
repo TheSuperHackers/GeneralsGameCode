@@ -165,9 +165,9 @@ AnimatedSoundOptionsDialogClass::OnInitDialog (void)
 {
 	CDialog::OnInitDialog ();
 
-	StringClass sound_def_lib_path	= theApp.GetProfileString ("Config", "SoundDefLibPath");
-	StringClass sound_ini_path			= theApp.GetProfileString ("Config", "AnimSoundINIPath");
-	StringClass sound_data_path		= theApp.GetProfileString ("Config", "AnimSoundDataPath");
+	StringClass sound_def_lib_path	= static_cast<const TCHAR*>(theApp.GetProfileString ("Config", "SoundDefLibPath"));
+	StringClass sound_ini_path			= static_cast<const TCHAR*>(theApp.GetProfileString ("Config", "AnimSoundINIPath"));
+	StringClass sound_data_path		= static_cast<const TCHAR*>(theApp.GetProfileString ("Config", "AnimSoundDataPath"));
 
 	//
 	//	Fill in the default values
@@ -196,9 +196,9 @@ AnimatedSoundOptionsDialogClass::Load_Animated_Sound_Settings (void)
 	//
 	//	Get the data from the registry
 	//
-	StringClass sound_def_lib_path	= theApp.GetProfileString ("Config", "SoundDefLibPath");
-	StringClass sound_ini_path			= theApp.GetProfileString ("Config", "AnimSoundINIPath");
-	StringClass sound_data_path		= theApp.GetProfileString ("Config", "AnimSoundDataPath");
+	StringClass sound_def_lib_path	= static_cast<const TCHAR*>(theApp.GetProfileString ("Config", "SoundDefLibPath"));
+	StringClass sound_ini_path			= static_cast<const TCHAR*>(theApp.GetProfileString ("Config", "AnimSoundINIPath"));
+	StringClass sound_data_path		= static_cast<const TCHAR*>(theApp.GetProfileString ("Config", "AnimSoundDataPath"));
 
 	//
 	//	Try to load the definitions into the definition mgr
