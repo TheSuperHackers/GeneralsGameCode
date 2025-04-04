@@ -193,7 +193,8 @@ RingSizePropPageClass::OnInitDialog (void)
 	//
 	int x_index = 1;
 	int y_index = 1;
-	for (int index = 1; index < m_OrigInnerScaleChannel.Get_Key_Count (); index ++) {
+	int index;
+	for (index = 1; index < m_OrigInnerScaleChannel.Get_Key_Count (); index ++) {
 		const LERPAnimationChannelClass<Vector2>::KeyClass &prev_value = m_OrigInnerScaleChannel.Get_Key (index - 1);
 		const LERPAnimationChannelClass<Vector2>::KeyClass &curr_value = m_OrigInnerScaleChannel.Get_Key (index);
 		
@@ -553,7 +554,8 @@ RingSizePropPageClass::Update_Inner_Scale_Array (void)
 	//
 	//	Build the X-axis timline
 	//
-	for (int index = 0; index < max_x; index++) {
+	int index;
+	for (index = 0; index < max_x; index++) {
 		m_InnerScaleXBar->Get_Point (index, &position, &red, &green, &blue);		
 		x_values.Add_Key (m_InnerScaleXBar->Get_Graph_Percent (index), position);
 	}
@@ -651,7 +653,8 @@ RingSizePropPageClass::Update_Outer_Scale_Array (void)
 	//
 	//	Build the X-axis timline
 	//
-	for (int index = 0; index < max_x; index++) {
+	int index;
+	for (index = 0; index < max_x; index++) {
 		m_OuterScaleXBar->Get_Point (index, &position, &red, &green, &blue);		
 		x_values.Add_Key (m_OuterScaleXBar->Get_Graph_Percent (index), position);
 	}

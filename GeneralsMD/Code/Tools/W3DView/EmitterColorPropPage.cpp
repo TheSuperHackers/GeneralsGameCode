@@ -201,7 +201,8 @@ EmitterColorPropPageClass::OnInitDialog (void)
 	//
 	//	Set-up the color bar
 	//
-	for (UINT index = 0; index < m_OrigColors.NumKeyFrames; index ++) {
+	UINT index;
+	for (index = 0; index < m_OrigColors.NumKeyFrames; index ++) {
 		m_ColorBar->Modify_Point (index + 1,
 											m_OrigColors.KeyTimes[index] / m_Lifetime,
 											m_OrigColors.Values[index].X * 255,
@@ -643,7 +644,8 @@ EmitterColorPropPageClass::On_Lifetime_Changed (float lifetime)
 		//
 		//	Rescale the colors
 		//
-		for (UINT index = 0; index < m_CurrentColors.NumKeyFrames; index ++) {
+		UINT index;
+		for (index = 0; index < m_CurrentColors.NumKeyFrames; index ++) {
 			m_CurrentColors.KeyTimes[index] *= conversion;
 		}
 		
