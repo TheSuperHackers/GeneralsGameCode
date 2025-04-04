@@ -23,7 +23,6 @@ target_include_directories(z_wwcommon INTERFACE
     WWMath
     WWSaveLoad
     Wwutil
-    wwshade
 )
 
 add_subdirectory(WWAudio)
@@ -34,7 +33,6 @@ add_subdirectory(Wwutil)
 add_subdirectory(WWSaveLoad)
 add_subdirectory(WW3D2)
 add_subdirectory(WWDownload)
-add_subdirectory(wwshade)
 
 # Helpful interface to bundle the ww modules together.
 add_library(z_wwvegas INTERFACE)
@@ -48,7 +46,6 @@ target_include_directories(z_wwvegas INTERFACE
     WWMath
     WWSaveLoad
     Wwutil
-    wwshade
 )
 
 target_link_libraries(z_wwvegas INTERFACE
@@ -58,6 +55,5 @@ target_link_libraries(z_wwvegas INTERFACE
     z_wwlib
     z_wwmath
     z_wwsaveload
-    z_wwshade
     z_wwutil
 )
