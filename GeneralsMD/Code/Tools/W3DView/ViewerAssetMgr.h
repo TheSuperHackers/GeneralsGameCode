@@ -67,7 +67,7 @@ public:
 	// Base class overrides
 	//
 	virtual bool						Load_3D_Assets (FileClass &w3dfile);
-	virtual TextureClass *			Get_Texture(const char * filename, TextureClass::MipCountType mip_level_count=TextureClass::MIP_LEVELS_ALL);
+	virtual TextureClass *			Get_Texture(const char * filename, MipCountType mip_level_count=MIP_LEVELS_ALL);
 
 	//
 	//	Missing texture methods

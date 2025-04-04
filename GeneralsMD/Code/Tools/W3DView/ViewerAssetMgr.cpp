@@ -69,7 +69,7 @@ ViewerAssetMgrClass::Load_3D_Assets (FileClass &w3dfile)
 //
 ////////////////////////////////////////////////////////////////////////
 TextureClass *
-ViewerAssetMgrClass::Get_Texture (const char * tga_filename, TextureClass::MipCountType mip_level_count)
+ViewerAssetMgrClass::Get_Texture (const char * tga_filename, MipCountType mip_level_count)
 {
 	//
 	// See if the texture has already been loaded.

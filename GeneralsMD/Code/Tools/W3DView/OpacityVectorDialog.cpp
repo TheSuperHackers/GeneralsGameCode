@@ -28,6 +28,7 @@
 #include "ringobj.h"
 #include "colorbar.h"
 #include "euler.h"
+#include "matrix3.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -150,7 +151,12 @@ OpacityVectorDialogClass::OnInitDialog (void)
 	z_rot = WWMath::Wrap (z_rot, 0, 360);*/
 
 	
+#ifdef ALLOW_TEMPORARIES
 	Matrix3D rotation = Build_Matrix3D (m_Value.angle);
+#else
+	Matrix3D rotation;
+	Build_Matrix3D (m_Value.angle, rotation);
+#endif
 	//Vector3 point = m_Value.angle.Rotate_Vector (Vector3 (1, 0, 0));
 
 	EulerAnglesClass euler_angle (rotation, EulerOrderXYZr);
@@ -214,7 +220,7 @@ OpacityVectorDialogClass::Update_Value (void)
 	float y_rot = DEG_TO_RADF ((float)y_pos);
 	float z_rot = DEG_TO_RADF ((float)z_pos);
 
-	Matrix3 rot_mat (true);
+	Matrix3x3 rot_mat (true);
 	//rot_mat.Rotate_X (x_rot);
 	rot_mat.Rotate_Y (y_rot);
 	rot_mat.Rotate_Z (z_rot);

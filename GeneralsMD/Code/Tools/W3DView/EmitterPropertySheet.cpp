@@ -486,6 +486,7 @@ EmitterPropertySheetClass::Create_New_Emitter (void)
 													blurtimes,
 													Vector3 (0, 0, 0),
 													1.0F,
+													0.0F,
 													NULL,
 													ShaderClass::_PresetAdditiveSpriteShader,
 													0);
