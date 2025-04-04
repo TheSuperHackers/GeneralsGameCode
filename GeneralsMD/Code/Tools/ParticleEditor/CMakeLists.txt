@@ -49,8 +49,7 @@ target_link_libraries(z_particleeditor PRIVATE
     z_profile
     zi_gameengine_include
     zi_libraries_include
-    zi_libraries_source_wwvegas
-    zi_libraries_source_wwvegas_wwlib
+    z_wwcommon
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
