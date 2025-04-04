@@ -1061,7 +1061,8 @@ CW3DViewDoc::Update_Camera (void)
 			// Convert the bone's transform into a camera transform
 			//Matrix3D	transform = m_pCRenderObj->Get_Bone_Transform (index);												
 			Matrix3D cam_transform (Vector3 (0, -1, 0), Vector3 (0, 0, 1), Vector3 (-1, 0, 0), Vector3 (0, 0, 0));
-			Matrix3D new_transform = transform * cam_transform;
+			Matrix3D new_transform;
+			new_transform.mul(transform, cam_transform);
 
 			// Pass the new transform onto the camera
 			CameraClass *pcamera = GetGraphicView()->GetCamera ();
@@ -1386,7 +1387,9 @@ CW3DViewDoc::LoadSettings (LPCTSTR filename)
 			// Move the light to the object's center, perform the rotation, and
 			Matrix3D light_tm (1);
 			light_tm.Set_Translation (obj_pos);
-			Matrix3D::Multiply (light_tm, Build_Matrix3D (orientation), &light_tm);
+
+			Matrix3D orientation_matrix;
+			Matrix3D::Multiply (light_tm, Build_Matrix3D (orientation, orientation_matrix), &light_tm);
 			light_tm.Translate (Vector3 (0, 0, distance));
 			
 			// Pass the new transform onto the light
@@ -2465,7 +2468,9 @@ CW3DViewDoc::Make_Movie (void)
 					// Convert the bone's transform into a camera transform
 					Matrix3D	transform = m_pCRenderObj->Get_Bone_Transform (index);												
 					Matrix3D cam_transform (Vector3 (0, -1, 0), Vector3 (0, 0, 1), Vector3 (-1, 0, 0), Vector3 (0, 0, 0));
-					Matrix3D new_transform = transform * cam_transform;
+					
+					Matrix3D new_transform;
+					new_transform.mul(transform, cam_transform);
 
 					// Pass the new transform onto the camera
 					CameraClass *pcamera = GetGraphicView()->GetCamera ();

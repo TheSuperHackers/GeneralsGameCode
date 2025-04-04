@@ -41,6 +41,9 @@
 #ifndef __SOUNDROBJ_H
 #define __SOUNDROBJ_H
 
+// TheSuperHackers @compile xezon 05/04/2025 Compile in WWAUDIO for Renegade's w3dview tool.
+#define noWWAUDIO 1
+
 #if noWWAUDIO // (gth) removing dependency on WWAUDIO
 
 #include "rendobj.h"
@@ -182,7 +185,7 @@ public:
 	WW3DErrorType					Save_W3D (ChunkSaveClass &csave);
 	const char *					Get_Name (void) const					{ return Name; }
 	void								Set_Name (const char *name)			{ Name = name; }	
-	SoundRenderObjDefClass *	Clone (void) const						{ return NEW_REF( SoundRenderObjDefClass, (*this,"SoundRenderObjDefClass::Clone") ); }
+	SoundRenderObjDefClass *	Clone (void) const						{ return NEW_REF( SoundRenderObjDefClass, (*this) ); }
 
 	//
 	//	Initialization

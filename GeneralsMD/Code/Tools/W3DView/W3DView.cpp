@@ -47,6 +47,17 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
+HINSTANCE ApplicationHInstance = NULL;  ///< our application instance
+
+/// just to satisfy the game libraries we link to
+HWND ApplicationHWnd = NULL;
+
+const char *gAppPrefix = "w3_";
+
+// Where are the default string files?
+const char *g_strFile = "data\\Generals.str";
+const char *g_csfFile = "data\\%s\\Generals.csf";
+
 /////////////////////////////////////////////////////////////////////////////
 //
 //	Local prototypes
