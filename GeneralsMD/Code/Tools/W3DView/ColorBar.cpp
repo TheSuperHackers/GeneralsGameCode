@@ -152,6 +152,10 @@ END_MESSAGE_MAP()
 
 
 /////////////////////////////////////////////////////////////////////////////
+
+LRESULT WINAPI fnColorBarProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
+
+/////////////////////////////////////////////////////////////////////////////
 //
 // RegisterColorBar
 //
@@ -1068,7 +1072,8 @@ ColorBarClass::Update_Point_Info (void)
 	if (style & CBRS_HORZ) {
 
 		// Loop through all the color points
-		for (int index = 0; index < m_iColorPoints; index ++) {
+		int index = 0;
+		for (; index < m_iColorPoints; index ++) {
 
 			// Update the absolute starting position for this point
 			m_ColorPoints[index].StartPos = m_ColorArea.left + int(m_ColorPoints[index].PosPercent * width);
@@ -1099,7 +1104,8 @@ ColorBarClass::Update_Point_Info (void)
 	} else {
 
 		// Loop through all the color points
-		for (int index = 0; index < m_iColorPoints; index ++) {
+		int index = 0;
+		for (; index < m_iColorPoints; index ++) {
 
 			// Update the absolute starting position for this point
 			m_ColorPoints[index].StartPos = m_ColorArea.top + int(m_ColorPoints[index].PosPercent * height);

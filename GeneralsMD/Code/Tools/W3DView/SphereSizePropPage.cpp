@@ -450,7 +450,8 @@ SphereSizePropPageClass::Update_Scale_Array (void)
 	//
 	//	Build the X-axis timline
 	//
-	for (int index = 0; index < max_x; index++) {
+	int index;
+	for (index = 0; index < max_x; index++) {
 		m_ScaleXBar->Get_Point (index, &position, &red, &green, &blue);		
 		x_values.Add_Key (m_ScaleXBar->Get_Graph_Percent (index), position);
 	}

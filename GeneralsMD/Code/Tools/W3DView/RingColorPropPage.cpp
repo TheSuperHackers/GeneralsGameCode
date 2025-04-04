@@ -150,7 +150,8 @@ RingColorPropPageClass::OnInitDialog (void)
 	//
 	//	Set-up the color bar
 	//
-	for (int index = 0; index < m_OrigColorChannel.Get_Key_Count (); index ++) {
+	int index;
+	for (index = 0; index < m_OrigColorChannel.Get_Key_Count (); index ++) {
 		m_ColorBar->Modify_Point (	index,
 											m_OrigColorChannel[index].Get_Time (),
 											m_OrigColorChannel[index].Get_Value ().X * 255,

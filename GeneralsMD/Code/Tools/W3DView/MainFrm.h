@@ -30,6 +30,14 @@
 #include "DataTreeView.H"
 #include "Toolbar.H"
 
+
+#if defined(_MSC_VER) && _MSC_VER < 1300
+typedef HTASK HTASK_OR_DWORD;
+#else
+typedef DWORD HTASK_OR_DWORD;
+#endif
+
+
 class CMainFrame : public CFrameWnd
 {
 protected: // create from serialization only
@@ -75,7 +83,7 @@ protected:
 	afx_msg void OnObjectProperties();
 	afx_msg void OnUpdateObjectProperties(CCmdUI* pCmdUI);
 	afx_msg void OnLodGenerate();
-	afx_msg void OnActivateApp(BOOL bActive, HTASK hTask);
+	afx_msg void OnActivateApp(BOOL bActive, HTASK_OR_DWORD hTask);
 	afx_msg void OnFileOpen();
 	afx_msg void OnAniSpeed();
 	afx_msg void OnAniStop();

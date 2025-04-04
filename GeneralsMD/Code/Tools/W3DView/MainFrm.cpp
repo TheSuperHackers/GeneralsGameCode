@@ -877,7 +877,7 @@ CMainFrame::OnSelectionChanged (ASSET_TYPE newAssetType)
                     menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_DATA;
                     menuInfo.hSubMenu = hSubMenu;
                     menuInfo.fType = MFT_STRING;
-                    menuInfo.dwTypeData = "&Animation";
+                    menuInfo.dwTypeData = const_cast<LPSTR>("&Animation");
                     ::InsertMenuItem (*pMainMenu, SPECIAL_MENU_SLOT, TRUE, &menuInfo);
 
                     // Redrew the menu
@@ -906,7 +906,7 @@ CMainFrame::OnSelectionChanged (ASSET_TYPE newAssetType)
                     menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_DATA;
                     menuInfo.hSubMenu = hSubMenu;
                     menuInfo.fType = MFT_STRING;
-                    menuInfo.dwTypeData = "&Hierarchy";
+                    menuInfo.dwTypeData = const_cast<LPSTR>("&Hierarchy");
                     ::InsertMenuItem (*pMainMenu, SPECIAL_MENU_SLOT, TRUE, &menuInfo);
 
                     // Redrew the menu
@@ -929,7 +929,7 @@ CMainFrame::OnSelectionChanged (ASSET_TYPE newAssetType)
                     menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_DATA;
                     menuInfo.hSubMenu = hSubMenu;
                     menuInfo.fType = MFT_STRING;
-                    menuInfo.dwTypeData = "&Aggregate";
+                    menuInfo.dwTypeData = const_cast<LPSTR>("&Aggregate");
                     ::InsertMenuItem (*pMainMenu, SPECIAL_MENU_SLOT, TRUE, &menuInfo);
 
                     // Redrew the menu
@@ -952,7 +952,7 @@ CMainFrame::OnSelectionChanged (ASSET_TYPE newAssetType)
                     menuInfo.fMask = MIIM_SUBMENU | MIIM_TYPE | MIIM_DATA;
                     menuInfo.hSubMenu = hSubMenu;
                     menuInfo.fType = MFT_STRING;
-                    menuInfo.dwTypeData = "&LOD";
+                    menuInfo.dwTypeData = const_cast<LPSTR>("&LOD");
                     ::InsertMenuItem (*pMainMenu, SPECIAL_MENU_SLOT, TRUE, &menuInfo);
 
                     // Redrew the menu
@@ -1035,7 +1035,7 @@ void
 CMainFrame::OnActivateApp
 (
     BOOL bActive,
-    HTASK hTask
+    HTASK_OR_DWORD hTask
 ) 
 {
 	// Get a pointer to the 'graphic' pane's window

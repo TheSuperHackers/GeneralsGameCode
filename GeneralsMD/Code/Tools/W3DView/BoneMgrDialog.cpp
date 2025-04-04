@@ -124,7 +124,8 @@ BoneMgrDialogClass::OnInitDialog (void)
 
 	// Loop through all the bones in this model
 	int bone_count = m_pBaseModel->Get_Num_Bones ();
-	for (int index = 0; index < bone_count; index ++) {			
+	int index = 0;
+	for (; index < bone_count; index ++) {			
 		const char *pbone_name = m_pBaseModel->Get_Bone_Name (index);
 
 		// Add this bone to the tree control
@@ -183,7 +184,8 @@ BoneMgrDialogClass::Fill_Bone_Item
 
 	// Build a list of nodes that are contained in the vanilla model
 	DynamicVectorClass <RenderObjClass *> orig_node_list;
-	for (int index = 0;
+	int index = 0;
+	for (;
 		  index < porig_model->Get_Num_Sub_Objects_On_Bone (bone_index);
 		  index ++) {
 		RenderObjClass *psubobj = porig_model->Get_Sub_Object_On_Bone (index, bone_index);
