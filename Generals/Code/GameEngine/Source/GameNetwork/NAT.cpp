@@ -950,7 +950,7 @@ Bool NAT::allConnectionsDone() {
 
 Bool NAT::allConnectionsDoneThisRound() {
 	Bool retval = TRUE;
-	for (Int i = 0; (i < m_numNodes) && (retval == TRUE); ++i) {
+	for (size_t i = 0; (i < m_numNodes) && (retval == TRUE); ++i) {
 		if ((m_connectionStates[i] != NATCONNECTIONSTATE_DONE) && (m_connectionStates[i] != NATCONNECTIONSTATE_FAILED)) {
 			retval = FALSE;
 		}
@@ -1236,7 +1236,7 @@ void NAT::processGlobalMessage(Int slotNum, const char *options) {
 		if (m_connectionPairs[m_connectionPairIndex][m_connectionRound][node] == sendingNode) {
 //			Int node = atoi(ptr + strlen("CONNDONE"));
 			DEBUG_LOG(("NAT::processGlobalMessage - got a CONNDONE message for node %d\n", node));
-			if ((node >= 0) && (node <= m_numNodes)) {
+			if ((node >= 0) && (node <= static_cast<Int>(m_numNodes))) {
 				DEBUG_LOG(("NAT::processGlobalMessage - node %d's connection is complete, setting connection state to done\n", node));
 				setConnectionState(node, NATCONNECTIONSTATE_DONE);
 			}
@@ -1248,7 +1248,7 @@ void NAT::processGlobalMessage(Int slotNum, const char *options) {
 		// we should get the node number of the player who's connection failed from the options
 		// and mark that down as part of the connectionStates.
 		Int node = atoi(ptr + strlen("CONNFAILED"));
-		if ((node >= 0) && (node < m_numNodes)) {
+		if ((node >= 0) && (node < static_cast<Int>(m_numNodes))) {
 			DEBUG_LOG(("NAT::processGlobalMessage - node %d's connection failed, setting connection state to failed\n", node));
 			setConnectionState(node, NATCONNECTIONSTATE_FAILED);
 		}
@@ -1273,7 +1273,7 @@ void NAT::processGlobalMessage(Int slotNum, const char *options) {
 		DEBUG_LOG(("NAT::processGlobalMessage - got port message from node %d, port: %d, internal address: %d.%d.%d.%d\n", node, port,
 								addr >> 24, (addr >> 16) & 0xff, (addr >> 8) & 0xff, addr & 0xff));
 
-		if ((node >= 0) && (node < m_numNodes)) {
+		if ((node >= 0) && (node < static_cast<Int>(m_numNodes))) {
 			if (port < 1024) {
 				// it has to be less than 65535 cause its a short duh.
 				DEBUG_ASSERTCRASH(port >= 1024, ("Was passed an invalid port number"));

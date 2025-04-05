@@ -3272,7 +3272,7 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 	}
 	else
 	{
-		if (specificBarrelToUse < 0 || specificBarrelToUse >= wbvec.size())
+		if (specificBarrelToUse < 0 || specificBarrelToUse >= static_cast<Int>(wbvec.size()))
 			specificBarrelToUse = 0;
 
 		if (launchPos)
@@ -3613,7 +3613,7 @@ Bool W3DModelDraw::handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelTo
 	
 	Bool handled = false;
 
-	if (specificBarrelToUse < 0 || specificBarrelToUse > wbvec.size())
+	if (specificBarrelToUse < 0 || specificBarrelToUse > static_cast<Int>(wbvec.size()))
 		specificBarrelToUse = 0;
 
 	const ModelConditionInfo::WeaponBarrelInfo& info = wbvec[specificBarrelToUse];
@@ -3846,7 +3846,7 @@ void W3DModelDraw::doHideShowProjectileObjects( UnsignedInt showCount, UnsignedI
 	ModelConditionInfo::HideShowSubObjInfo oneEntry;
 	if (m_curState->m_weaponProjectileHideShowName[slot].isEmpty())
 	{
-		for( Int projectileIndex = 0; projectileIndex < maxCount; projectileIndex++ )
+		for( UnsignedInt projectileIndex = 0; projectileIndex < maxCount; projectileIndex++ )
 		{
 			oneEntry.subObjName.format("%s%02d", m_curState->m_weaponProjectileLaunchBoneName[slot].str(), (projectileIndex + 1));
 			oneEntry.hide = (projectileIndex < hideCount);

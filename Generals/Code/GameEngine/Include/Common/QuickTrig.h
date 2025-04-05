@@ -35,6 +35,8 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 
+#include "Utility/CppMacros.h"
+
 //-----------------------------------------------------------------------------
 
 extern Real TheQuickSinTable[];
@@ -88,8 +90,8 @@ inline Real QMag(Real x, Real y, Real z)
 //-----------------------------------------------------------------------------
 inline Real QSin(Real a)
 {  
-   register Real angle = a;
-   register long sgn = 1;
+   REGISTER Real angle = a;
+   REGISTER long sgn = 1;
 
    if (angle < 0)       // DO POSITIVE MATH AND PRESERVE SIGN
    {
@@ -108,8 +110,8 @@ inline Real QSin(Real a)
       angle = PI - angle; // FLIP
    }
 
-   register int index = REAL_TO_INT((angle/QUARTER_CIRCLE) * TheQuickTanTableCount);
-   register Real x = TheQuickSinTable[index];
+   REGISTER int index = REAL_TO_INT((angle/QUARTER_CIRCLE) * TheQuickTanTableCount);
+   REGISTER Real x = TheQuickSinTable[index];
 
    return x * sgn;
 

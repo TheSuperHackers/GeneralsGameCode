@@ -394,7 +394,7 @@ void RTS3DScene::Visibility_Check(CameraClass * camera)
 
 	Int currentFrame=0;
 	if (TheGameLogic) currentFrame = TheGameLogic->getFrame();
-	if (currentFrame <= TheGlobalData->m_defaultOcclusionDelay)
+	if (currentFrame <= static_cast<Int>(TheGlobalData->m_defaultOcclusionDelay))
 		currentFrame = TheGlobalData->m_defaultOcclusionDelay+1;	//make sure occlusion is enabled when game starts (frame 0).
 
 
@@ -476,7 +476,7 @@ void RTS3DScene::Visibility_Check(CameraClass * camera)
 							else
 							if (draw->getObject() &&
 									(draw->isKindOf(KINDOF_SCORE) || draw->isKindOf(KINDOF_SCORE_CREATE) || draw->isKindOf(KINDOF_SCORE_DESTROY) || draw->isKindOf(KINDOF_MP_COUNT_FOR_VICTORY)) &&
-									(draw->getObject()->getSafeOcclusionFrame()) <= currentFrame && m_numPotentialOccludees < TheGlobalData->m_maxVisibleOccludeeObjects)
+									(static_cast<Int>(draw->getObject()->getSafeOcclusionFrame())) <= currentFrame && m_numPotentialOccludees < TheGlobalData->m_maxVisibleOccludeeObjects)
 							{	//object which could be occluded but still needs to be visible.
 								m_potentialOccludees[m_numPotentialOccludees++]=robj;
 								drawInfo->m_flags |= DrawableInfo::ERF_POTENTIAL_OCCLUDEE;

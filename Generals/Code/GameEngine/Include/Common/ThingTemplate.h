@@ -298,7 +298,7 @@ public:
 
 	AsciiString getNthName(Int i) const
 	{
-		if (i >= 0 && i < m_info.size())
+		if (i >= 0 && i < static_cast<Int>(m_info.size()))
 		{
 			return m_info[i].first;
 		}
@@ -307,7 +307,7 @@ public:
 
 	AsciiString getNthTag(Int i) const
 	{
-		if (i >= 0 && i < m_info.size())
+		if (i >= 0 && i < static_cast<Int>(m_info.size()))
 		{
 			return m_info[i].m_moduleTag;
 		}
@@ -316,7 +316,7 @@ public:
 
 	const ModuleData* getNthData(Int i) const
 	{
-		if (i >= 0 && i < m_info.size())
+		if (i >= 0 && i < static_cast<Int>(m_info.size()))
 		{
 			return m_info[i].second;
 		}
@@ -333,7 +333,7 @@ public:
 
 	void setCopiedFromDefault(Bool v)
 	{
-		for (int i = 0; i < m_info.size(); i++)
+		for (int i = 0; i < static_cast<Int>(m_info.size()); i++)
 			m_info[i].copiedFromDefault = v;
 	}
 
@@ -351,10 +351,15 @@ class ThingTemplate : public Overridable
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ThingTemplate, "ThingTemplatePool" )		
 
 private:
+
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	ThingTemplate(const ThingTemplate& that) : m_geometryInfo(that.m_geometryInfo) 
 	{ 
 		DEBUG_CRASH(("This should never be called\n")); 
 	}
+#else
+	ThingTemplate(const ThingTemplate& that) = delete;
+#endif
 
 public:
 

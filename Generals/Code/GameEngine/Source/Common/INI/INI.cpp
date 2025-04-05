@@ -1889,7 +1889,7 @@ Bool INI::isDeclarationOfType( AsciiString blockType, AsciiString blockName, cha
 		++tempBuff;
 	}
 	
-	if (strlen(tempBuff) > blockTypeLength) {
+	if (static_cast<int>(strlen(tempBuff)) > blockTypeLength) {
 		restoreChar = tempBuff[blockTypeLength];
 		tempBuff[blockTypeLength] = 0;
 		
@@ -1907,7 +1907,7 @@ Bool INI::isDeclarationOfType( AsciiString blockType, AsciiString blockName, cha
 		++tempBuff;
 	}
 
-	if (strlen(tempBuff) > blockNameLength) {
+	if (static_cast<int>(strlen(tempBuff)) > blockNameLength) {
 		restoreChar = tempBuff[blockNameLength];
 		tempBuff[blockNameLength] = 0;
 		
@@ -1953,7 +1953,7 @@ Bool INI::isEndOfBlock( char *bufferToCheck )
 		++tempBuff;
 	}
 	
-	if (strlen(tempBuff) > endStringLength) {
+	if (static_cast<int>(strlen(tempBuff)) > endStringLength) {
 		restoreChar = tempBuff[endStringLength];
 		tempBuff[endStringLength] = 0;
 		

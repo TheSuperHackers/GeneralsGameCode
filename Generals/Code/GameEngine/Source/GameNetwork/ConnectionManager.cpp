@@ -1275,7 +1275,7 @@ void ConnectionManager::updateRunAhead(Int oldRunAhead, Int frameRate, Bool didS
 			// didn't change for the first time till frame 31.  This creates an extra command
 			// for frame 56 that isn't accounted for in the frame command count that is sent
 			// out in the NetFrameCommandMsg.  sheesh.
-			if (nextExecutionFrame > (TheGameLogic->getFrame() + oldRunAhead)) {
+			if (static_cast<UnsignedInt>(nextExecutionFrame) > (TheGameLogic->getFrame() + static_cast<UnsignedInt>(oldRunAhead))) {
 				msg->setExecutionFrame(nextExecutionFrame);
 			} else {
 				msg->setExecutionFrame(TheGameLogic->getFrame() + oldRunAhead);
@@ -1307,7 +1307,7 @@ void ConnectionManager::updateRunAhead(Int oldRunAhead, Int frameRate, Bool didS
 //				msg2->setID(GenerateNextCommandID());
 				msg2->setID(msg->getID());
 			}
-			if (nextExecutionFrame > (TheGameLogic->getFrame() + oldRunAhead)) {
+			if (static_cast<UnsignedInt>(nextExecutionFrame) > (TheGameLogic->getFrame() + static_cast<UnsignedInt>(oldRunAhead))) {
 				msg2->setExecutionFrame(nextExecutionFrame);
 			} else {
 				msg2->setExecutionFrame(TheGameLogic->getFrame() + oldRunAhead);
@@ -1622,7 +1622,7 @@ NetCommandList *ConnectionManager::getFrameCommandList(UnsignedInt frame)
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
 		if (m_frameData[i] != NULL) {
 			retlist->appendList(m_frameData[i]->getFrameCommandList(frame));
-			if (frame > FRAMES_TO_KEEP) {
+			if (frame > static_cast<UnsignedInt>(FRAMES_TO_KEEP)) {
 				m_frameData[i]->resetFrame(frame - FRAMES_TO_KEEP);	// After getting the commands for that frame from this
 													// FrameDataManager object, we need to tell it that we're
 													// done with the messages for that frame.
