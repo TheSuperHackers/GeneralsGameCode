@@ -8,6 +8,14 @@ add_feature_info(ZeroHourTools GENZH_BUILD_ZEROHOUR_TOOLS "Build Zero Hour Mod T
 option(GENZH_BUILD_ZEROHOUR_EXTRAS "Build extra tools/tests for Zero Hour" OFF)
 add_feature_info(ZeroHourExtras GENZH_BUILD_ZEROHOUR_EXTRAS "Build Zero Hour Extra Tools/Tests")
 
+# Do we want to build documentation?
+option(GENZH_BUILD_ZEROHOUR_DOCS "Build documentation for Zero Hour" OFF)
+add_feature_info(ZeroHourDocs GENZH_BUILD_ZEROHOUR_DOCS "Build Zero Hour Documentation")
+if (GENZH_BUILD_ZEROHOUR_DOCS)
+    find_package(Doxygen REQUIRED)
+    doxygen_add_docs(z_docs Code)
+endif()
+
 # Set where the build results will end up
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
