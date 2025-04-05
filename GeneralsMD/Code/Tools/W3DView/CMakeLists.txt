@@ -136,8 +136,8 @@ set(W3DVIEW_SRC
     "SpherePropertySheet.h"
     "SphereSizePropPage.cpp"
     "SphereSizePropPage.h"
-    "SphereUtils.cpp"
-    "SphereUtils.h"
+    #"SphereUtils.cpp" # Unused and does not compile
+    #"SphereUtils.h" # Unused and does not compile
     "StdAfx.cpp"
     "StdAfx.h"
     "TextureMgrDialog.cpp"
