@@ -1,0 +1,62 @@
+name: Generate Changelog
+on:
+  pull_request:
+    types: [closed]
+
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: 'PR number to process'
+        required: true
+        type: number
+
+env:
+    SCRIPTS_PATH: .github/workflows/scripts/changelog_file_generation
+    CONFIG: pr_changelog_config.yaml
+
+jobs:
+  process-pr:
+    if: |
+      github.event_name == 'workflow_dispatch' || 
+      (github.event_name == 'pull_request' && github.event.pull_request.merged)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r ${{ env.SCRIPTS_PATH }}/requirements.txt
+
+    - name: Determine PR number
+      id: pr-number
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+        echo "pr_number=${{ github.event.inputs.pr-number }}" >> $GITHUB_OUTPUT
+        else
+        echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Run changelog generator
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_REPOSITORY: ${{ github.repository }}
+      run: |
+        python ${{ env.SCRIPTS_PATH}}/src/generate_pr_yaml.py --pr-number ${{ steps.pr-number.outputs.pr_number }} --config ${{ env.CONFIG }} --force
+
+    - name: Commit generated files
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        git add changelogs/unreleased/*
+        git commit -m "Add changelog for PR #${{ steps.pr-number.outputs.pr_number }}" || echo "No changes to commit"
+        git push
