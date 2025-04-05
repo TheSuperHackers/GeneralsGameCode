@@ -1073,11 +1073,11 @@ ColorBarClass::Update_Point_Info (void)
 	int height = m_ColorArea.Height ();	
 
 	LONG style = GetWindowLong (m_hWnd, GWL_STYLE);
-	int index;
 	if (style & CBRS_HORZ) {
 
 		// Loop through all the color points
-		for (index = 0; index < m_iColorPoints; index ++) {
+		int index  = 0;
+		for (; index < m_iColorPoints; index ++) {
 
 			// Update the absolute starting position for this point
 			m_ColorPoints[index].StartPos = m_ColorArea.left + int(m_ColorPoints[index].PosPercent * width);
@@ -1108,7 +1108,8 @@ ColorBarClass::Update_Point_Info (void)
 	} else {
 
 		// Loop through all the color points
-		for (index = 0; index < m_iColorPoints; index ++) {
+		int index  = 0;
+		for (; index < m_iColorPoints; index ++) {
 
 			// Update the absolute starting position for this point
 			m_ColorPoints[index].StartPos = m_ColorArea.top + int(m_ColorPoints[index].PosPercent * height);

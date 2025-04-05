@@ -30,6 +30,14 @@
 #include "DataTreeView.H"
 #include "Toolbar.H"
 
+
+#if defined(_MSC_VER) && _MSC_VER < 1300
+typedef HTASK HTASK_OR_DWORD;
+#else
+typedef DWORD HTASK_OR_DWORD;
+#endif
+
+
 class CMainFrame : public CFrameWnd
 {
 protected: // create from serialization only
