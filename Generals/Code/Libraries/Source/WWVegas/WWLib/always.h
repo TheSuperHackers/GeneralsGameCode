@@ -72,6 +72,8 @@
 #endif	//_MSC_VER
 #endif	//_DEBUG
 
+#if !defined(DISABLE_GAMEMEMORY) // (gth) killing the Generals Memory Manager!
+
 #ifndef _OPERATOR_NEW_DEFINED_
 
 	#define _OPERATOR_NEW_DEFINED_
@@ -155,6 +157,19 @@ public:
 	virtual ~W3DMPO() { /* nothing */ }
 };
 // ----------------------------------------------------------------------------
+
+#else
+
+	#define MSGW3DNEW(MSG)					new
+	#define MSGW3DNEWARRAY(MSG)			new
+	#define W3DNEW									new
+	#define W3DNEWARRAY							new
+
+	#define W3DMPO_GLUE(ARGCLASS)
+
+	class W3DMPO { };
+
+#endif // (gth) removing the generals memory stuff from W3D
 
 
 // Jani: Intel's C++ compiler issues too many warnings in WW libraries when using warning level 4
