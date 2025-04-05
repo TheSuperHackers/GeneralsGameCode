@@ -6,6 +6,7 @@ option(GENZH_BUILD_GENERALS "Build Generals code." ON)
 option(GENZH_BUILD_INTERNAL "Build code with the \"Internal\" configuration." OFF)
 option(GENZH_BUILD_PROFILE "Build code with the \"Profile\" configuration." OFF)
 option(GENZH_BUILD_DEBUG "Build code with the \"Debug\" configuration." OFF)
+option(GENZH_BUILD_OPTION_ASAN "Build code with Address Sanitizer." OFF)
 
 if(NOT GENZH_BUILD_ZEROHOUR AND NOT GENZH_BUILD_GENERALS)
     set(GENZH_BUILD_ZEROHOUR TRUE)
@@ -17,6 +18,7 @@ add_feature_info(GeneralsStuff GENZH_BUILD_GENERALS "Build Generals code")
 add_feature_info(InternalBuild GENZH_BUILD_INTERNAL "Building as an \"Internal\" build")
 add_feature_info(ProfileBuild GENZH_BUILD_PROFILE "Building as a \"Profile\" build")
 add_feature_info(DebugBuild GENZH_BUILD_DEBUG "Building as a \"Debug\" build")
+add_feature_info(AddressSanitizer GENZH_BUILD_OPTION_ASAN "Building with address sanitizer")
 
 
 ### GAME MEMORY OPTIONS ###
