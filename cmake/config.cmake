@@ -19,7 +19,10 @@ add_feature_info(ProfileBuild GENZH_BUILD_PROFILE "Building as a \"Profile\" bui
 add_feature_info(DebugBuild GENZH_BUILD_DEBUG "Building as a \"Debug\" build")
 
 
-### MEMORY POOL OPTIONS ###
+### GAME MEMORY OPTIONS ###
+
+# Game Memory features
+option(GENZH_GAMEMEMORY_ENABLE "Enables the memory pool and dynamic memory allocator." ON)
 
 # Memory pool features
 option(GENZH_MEMORYPOOL_OVERRIDE_MALLOC "Enables the Dynamic Memory Allocator for malloc calls." OFF)
@@ -34,6 +37,9 @@ option(GENZH_MEMORYPOOL_DEBUG_STACKTRACE "Enables stack trace collection for all
 option(GENZH_MEMORYPOOL_DEBUG_INTENSE_VERIFY "Enables intensive verifications after nearly every memory operation. OFF by default, since it slows down things a lot, but is worth turning on for really obscure memory corruption issues." OFF)
 option(GENZH_MEMORYPOOL_DEBUG_CHECK_BLOCK_OWNERSHIP "Enables debug to verify that a block actually belongs to the pool it is called with. This is great for debugging, but can be realllly slow, so is OFF by default." OFF)
 option(GENZH_MEMORYPOOL_DEBUG_INTENSE_DMA_BOOKKEEPING "Prints statistics for memory usage of Memory Pools." OFF)
+
+# Game Memory features
+add_feature_info(GameMemoryEnable GENZH_GAMEMEMORY_ENABLE "Build with the original game memory implementation")
 
 # Memory pool features
 add_feature_info(MemoryPoolOverrideMalloc GENZH_MEMORYPOOL_OVERRIDE_MALLOC "Build with Memory Pool malloc")
@@ -77,6 +83,12 @@ else()
     if(GENZH_BUILD_PROFILE)
         target_compile_definitions(gz_config INTERFACE _PROFILE)
     endif()
+endif()
+
+
+# Game Memory features
+if(NOT GENZH_GAMEMEMORY_ENABLE)
+    target_compile_definitions(gz_config INTERFACE DISABLE_GAMEMEMORY=1)
 endif()
 
 # Memory pool features
