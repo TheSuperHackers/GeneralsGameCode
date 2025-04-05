@@ -75,13 +75,11 @@ SoundStreamHandleClass::Initialize (SoundBufferClass *buffer)
 	if (Buffer != NULL) {
 
 		//
-		//	Create a stream from the sample handle
+		//	Create a stream
 		//
-		StreamHandle = ::AIL_open_stream_by_sample (WWAudioClass::Get_Instance ()->Get_2D_Driver (),
-								SampleHandle, buffer->Get_Filename (), 0);
-
-		/*StreamHandle = ::AIL_open_stream (WWAudioClass::Get_Instance ()->Get_2D_Driver (),
-								buffer->Get_Filename (), 0);*/
+		// TheSuperHackers @fix xezon 05/04/2025 Upgrades miles call from legacy AIL_open_stream_by_sample.
+		StreamHandle = ::AIL_open_stream (WWAudioClass::Get_Instance ()->Get_2D_Driver (),
+								buffer->Get_Filename (), 0);
 	}
 
 	return ;
@@ -163,7 +161,12 @@ void
 SoundStreamHandleClass::Set_Sample_Pan (S32 pan)
 {
 	if (StreamHandle != (HSTREAM)INVALID_MILES_HANDLE) {
-		::AIL_set_stream_pan (StreamHandle, pan);
+		// TheSuperHackers @fix xezon 05/04/2025 Upgrades miles call from legacy AIL_set_stream_pan.
+		// TheSuperHackers @todo Perhaps use float natively.
+		float fVolume = 0.0F;
+		::AIL_stream_volume_pan (StreamHandle, &fVolume, NULL);
+		float fPan = pan / 127.0F;
+		::AIL_set_stream_volume_pan (StreamHandle, fVolume, fPan);
 	}
 	return ;
 }
@@ -180,7 +183,10 @@ SoundStreamHandleClass::Get_Sample_Pan (void)
 	S32 retval = 0;
 
 	if (StreamHandle != (HSTREAM)INVALID_MILES_HANDLE) {
-		retval = ::AIL_stream_pan (StreamHandle);
+		// TheSuperHackers @fix xezon 05/04/2025 Upgrades miles call from legacy AIL_stream_pan.
+		float fPan = 0.5F;
+		::AIL_stream_volume_pan (StreamHandle, NULL, &fPan);
+		retval = fPan * 127;
 	}
 
 	return retval;
@@ -196,7 +202,12 @@ void
 SoundStreamHandleClass::Set_Sample_Volume (S32 volume)
 {
 	if (StreamHandle != (HSTREAM)INVALID_MILES_HANDLE) {
-		::AIL_set_stream_volume (StreamHandle, volume);
+		// TheSuperHackers @fix xezon 05/04/2025 Upgrades miles call from legacy AIL_set_stream_volume.
+		// TheSuperHackers @todo Perhaps use float natively.
+		float fPan = 0.5F;
+		::AIL_stream_volume_pan (StreamHandle, NULL, &fPan);
+		float fVolume = volume / 127.0F;
+		::AIL_set_stream_volume_pan (StreamHandle, fVolume, fPan);
 	}
 	return ;
 }
@@ -213,7 +224,10 @@ SoundStreamHandleClass::Get_Sample_Volume (void)
 	S32 retval = 0;
 
 	if (StreamHandle != (HSTREAM)INVALID_MILES_HANDLE) {
-		retval = ::AIL_stream_volume (StreamHandle);
+		// TheSuperHackers @fix xezon 05/04/2025 Upgrades miles call from legacy AIL_stream_volume.
+		float fVolume = 0.0F;
+		::AIL_stream_volume_pan (StreamHandle, &fVolume, NULL);
+		retval = fVolume * 127;
 	}
 
 	return retval;
