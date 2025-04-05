@@ -57,6 +57,11 @@ public:
 
 	virtual char const * File_Name(void) const;
 	virtual char const * Set_Name(char const *filename);
+
+	// (gth) had to re-instate these functions in the base class, for now just give empty implementations...
+	virtual int Create(void) { assert(0); return 1; }
+	virtual int Delete(void) { assert(0); return 1; }
+
 	virtual bool Is_Available(int forced=false);
 	virtual bool Is_Open(void) const;
 	virtual int Open(char const *filename, int rights=READ);
