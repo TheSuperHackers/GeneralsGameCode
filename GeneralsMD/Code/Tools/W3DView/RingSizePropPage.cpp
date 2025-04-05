@@ -195,8 +195,8 @@ RingSizePropPageClass::OnInitDialog (void)
 	int y_index = 1;
 	int index;
 	for (index = 1; index < m_OrigInnerScaleChannel.Get_Key_Count (); index ++) {
-		const PrimitiveAnimationChannelClass<Vector2>::KeyClass &prev_value = m_OrigInnerScaleChannel.Get_Key (index - 1);
-		const PrimitiveAnimationChannelClass<Vector2>::KeyClass &curr_value = m_OrigInnerScaleChannel.Get_Key (index);
+		const LERPAnimationChannelClass<Vector2>::KeyClass &prev_value = m_OrigInnerScaleChannel.Get_Key (index - 1);
+		const LERPAnimationChannelClass<Vector2>::KeyClass &curr_value = m_OrigInnerScaleChannel.Get_Key (index);
 		
 		//
 		//	Find out which channels are unique (we toss the others)
@@ -207,7 +207,7 @@ RingSizePropPageClass::OnInitDialog (void)
 			unique_x = (curr_value.Get_Value ().X != prev_value.Get_Value ().X);
 			unique_y = (curr_value.Get_Value ().Y != prev_value.Get_Value ().Y);
 		} else {
-			const PrimitiveAnimationChannelClass<Vector2>::KeyClass &next_value = m_OrigInnerScaleChannel[index + 1];
+			const LERPAnimationChannelClass<Vector2>::KeyClass &next_value = m_OrigInnerScaleChannel[index + 1];
 
 			//
 			//	Check to ensure the X-value isn't just a LERP of the 2 adjacent keys.
@@ -255,8 +255,8 @@ RingSizePropPageClass::OnInitDialog (void)
 	x_index = 1;
 	y_index = 1;
 	for (index = 1; index < m_OrigOuterScaleChannel.Get_Key_Count (); index ++) {
-		const PrimitiveAnimationChannelClass<Vector2>::KeyClass &prev_value = m_OrigOuterScaleChannel.Get_Key (index - 1);
-		const PrimitiveAnimationChannelClass<Vector2>::KeyClass &curr_value = m_OrigOuterScaleChannel.Get_Key (index);
+		const LERPAnimationChannelClass<Vector2>::KeyClass &prev_value = m_OrigOuterScaleChannel.Get_Key (index - 1);
+		const LERPAnimationChannelClass<Vector2>::KeyClass &curr_value = m_OrigOuterScaleChannel.Get_Key (index);
 		
 		//
 		//	Find out which channels are unique (we toss the others)
@@ -267,7 +267,7 @@ RingSizePropPageClass::OnInitDialog (void)
 			unique_x = (curr_value.Get_Value ().X != prev_value.Get_Value ().X);
 			unique_y = (curr_value.Get_Value ().Y != prev_value.Get_Value ().Y);
 		} else {
-			const PrimitiveAnimationChannelClass<Vector2>::KeyClass &next_value = m_OrigOuterScaleChannel[index + 1];
+			const LERPAnimationChannelClass<Vector2>::KeyClass &next_value = m_OrigOuterScaleChannel[index + 1];
 
 			//
 			//	Check to ensure the X-value isn't just a LERP of the 2 adjacent keys.

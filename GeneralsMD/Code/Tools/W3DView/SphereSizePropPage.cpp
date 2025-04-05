@@ -173,8 +173,8 @@ SphereSizePropPageClass::OnInitDialog (void)
 	int y_index = 1;
 	int z_index = 1;
 	for (int index = 1; index < m_OrigScaleChannel.Get_Key_Count (); index ++) {
-		const PrimitiveAnimationChannelClass<Vector3>::KeyClass &prev_value = m_OrigScaleChannel.Get_Key (index - 1);
-		const PrimitiveAnimationChannelClass<Vector3>::KeyClass &curr_value = m_OrigScaleChannel.Get_Key (index);
+		const LERPAnimationChannelClass<Vector3>::KeyClass &prev_value = m_OrigScaleChannel.Get_Key (index - 1);
+		const LERPAnimationChannelClass<Vector3>::KeyClass &curr_value = m_OrigScaleChannel.Get_Key (index);
 		
 		//
 		//	Find out which channels are unique (we toss the others)
@@ -187,7 +187,7 @@ SphereSizePropPageClass::OnInitDialog (void)
 			unique_y = (curr_value.Get_Value ().Y != prev_value.Get_Value ().Y);
 			unique_z = (curr_value.Get_Value ().Z != prev_value.Get_Value ().Z);
 		} else {
-			const PrimitiveAnimationChannelClass<Vector3>::KeyClass &next_value = m_OrigScaleChannel[index + 1];
+			const LERPAnimationChannelClass<Vector3>::KeyClass &next_value = m_OrigScaleChannel[index + 1];
 
 			//
 			//	Check to ensure the X-value isn't just a LERP of the 2 adjacent keys.
