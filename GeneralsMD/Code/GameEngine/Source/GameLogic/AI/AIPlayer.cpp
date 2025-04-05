@@ -1048,7 +1048,7 @@ Bool AIPlayer::isLocationSafe(const Coord3D *pos, const ThingTemplate *tthing )
 void AIPlayer::onUnitProduced( Object *factory, Object *unit )
 {
 	Bool found = false;
-	Bool supplyTruck;
+	Bool supplyTruck = false;
 
 	// factory could be NULL at the start of the game.
 	if (factory == NULL) {

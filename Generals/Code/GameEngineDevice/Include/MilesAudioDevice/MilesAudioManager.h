@@ -258,7 +258,7 @@ class MilesAudioManager : public AudioManager
 
 		PlayingAudio *allocatePlayingAudio( void );
 		void releaseMilesHandles( PlayingAudio *release );
-		void releasePlayingAudio( PlayingAudio *release );
+		void releasePlayingAudio( PlayingAudio *&release );
 		
 		void stopAllAudioImmediately( void );
 		void freeAllMilesHandles( void );
