@@ -34,9 +34,10 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+#include "soundrobj.h"
+
 #if noWWAUDIO //(gth) removing dependency on wwaudio
 
-#include "soundrobj.h"
 #include "AudibleSound.h"
 #include "Sound3D.h"
 #include "WWAudio.h"
