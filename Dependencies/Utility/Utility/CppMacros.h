@@ -8,3 +8,9 @@
 #else
 #define NOEXCEPT_17
 #endif
+
+#if __cplusplus >= 201703L
+#define REGISTER
+#else
+#define REGISTER register
+#endif

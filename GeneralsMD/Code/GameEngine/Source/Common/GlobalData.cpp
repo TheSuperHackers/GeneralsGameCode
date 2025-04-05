@@ -1129,6 +1129,7 @@ Bool GlobalData::setTimeOfDay( TimeOfDay tod )
 //-------------------------------------------------------------------------------------------------
 GlobalData *GlobalData::newOverride( void )
 {
+	// TheSuperHackers @info This copy is not implemented in VS6 builds
 	GlobalData *override = NEW GlobalData;
 
 	// copy the data from the latest override (TheWritableGlobalData) to the newly created instance

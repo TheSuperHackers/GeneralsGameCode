@@ -52,6 +52,7 @@
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.	
 
+#include "Utility/CppMacros.h"
 
 #define no_INTENSE_DEBUG
 
@@ -2641,7 +2642,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 //		//	DEBUG_ASSERTCRASH(map[i][j].getZone() != 0, ("Cleared the zone."));
 //		}
 //	}
-  register UnsignedInt maxZone = m_maxZone;
+  REGISTER UnsignedInt maxZone = m_maxZone;
 	j=globalBounds.lo.y;
   while( j <= globalBounds.hi.y )	
   {
@@ -2754,7 +2755,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
   //FLATTEN HIERARCHICAL ZONES
   {
 	  i = 1;
-    register Int zone;  
+    REGISTER Int zone;  
     while ( i < maxZone ) 
     {		// Flatten hierarchical zones.
 		  zone = m_hierarchicalZones[i];

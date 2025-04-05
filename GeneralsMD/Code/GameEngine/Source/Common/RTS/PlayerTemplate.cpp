@@ -294,7 +294,7 @@ void PlayerTemplateStore::update()
 
 Int PlayerTemplateStore::getTemplateNumByName(AsciiString name) const
 {
-	for (Int num = 0; num < m_playerTemplates.size(); num++)
+	for (size_t num = 0; num < m_playerTemplates.size(); num++)
 	{
 		if (m_playerTemplates[num].getName().compareNoCase(name.str()) == 0)
 			return num;

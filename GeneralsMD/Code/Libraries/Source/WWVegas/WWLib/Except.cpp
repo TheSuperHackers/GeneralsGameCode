@@ -676,17 +676,17 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 			/*
 			** The stack contents cannot be read so just print up question marks.
 			*/
-			sprintf(scrap, "%08X: ", stackptr);
+			sprintf(scrap, "%p: ", static_cast<void*>(stackptr));
 			strcat(scrap, "????????\r\n");
 		} else {
 			/*
 			** If this stack address is in our memory space then try to match it with a code symbol.
 			*/
 			if (IsBadCodePtr((FARPROC)*stackptr)) {
-				sprintf(scrap, "%08X: %08X ", stackptr, *stackptr);
+				sprintf(scrap, "%p: %08lX ", static_cast<void*>(stackptr), *stackptr);
 				strcat(scrap, "DATA_PTR\r\n");
 			} else {
-				sprintf(scrap, "%08X: %08X", stackptr, *stackptr);
+				sprintf(scrap, "%p: %08lX", static_cast<void*>(stackptr), *stackptr);
 
 				if (symbols_available) {
 					symptr->SizeOfStruct = sizeof(symbol);
