@@ -113,7 +113,11 @@ protected:
 
 	static void List_W3D_CHUNK_SHADERS(ChunkItem * Item,CListCtrl *List);
 	static void List_W3D_CHUNK_PS2_SHADERS(ChunkItem * Item,CListCtrl *List);
-	
+	static void List_W3D_CHUNK_FX_SHADERS(ChunkItem * Item,CListCtrl *List);
+	static void List_W3D_CHUNK_FX_SHADER(ChunkItem * Item,CListCtrl *List);
+	static void List_W3D_CHUNK_FX_SHADER_INFO(ChunkItem* Item, CListCtrl* List);
+	static void List_W3D_CHUNK_FX_SHADER_CONSTANT(ChunkItem* Item, CListCtrl* List);
+
 	static void List_W3D_CHUNK_VERTEX_MATERIALS(ChunkItem * Item,CListCtrl *List);
 	static void List_W3D_CHUNK_VERTEX_MATERIAL(ChunkItem * Item,CListCtrl *List);
 	static void List_W3D_CHUNK_VERTEX_MATERIAL_NAME(ChunkItem *Item,CListCtrl *List);
