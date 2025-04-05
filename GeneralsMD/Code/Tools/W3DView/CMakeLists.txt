@@ -169,6 +169,7 @@ set(W3DVIEW_SRC
 add_executable(z_w3dview WIN32)
 
 target_sources(z_w3dview PRIVATE ${W3DVIEW_SRC})
+set_target_properties(z_w3dview PROPERTIES OUTPUT_NAME W3DView)
 
 target_link_libraries(z_w3dview PRIVATE
     dbghelplib
