@@ -1052,6 +1052,65 @@ void	ChunkTableClass::List_W3D_CHUNK_PS2_SHADERS(ChunkItem * Item,CListCtrl *Lis
 	}
 }
 
+void	ChunkTableClass::List_W3D_CHUNK_FX_SHADERS(ChunkItem * Item,CListCtrl *List)
+{
+	List_Subitems(Item,List);
+}
+
+void	ChunkTableClass::List_W3D_CHUNK_FX_SHADER(ChunkItem* Item, CListCtrl* List)
+{
+	List_Subitems(Item, List);
+}
+
+void	ChunkTableClass::List_W3D_CHUNK_FX_SHADER_INFO(ChunkItem* Item, CListCtrl* List)
+{
+	uint8 version = *(uint8*)Item->Data;
+	W3dFXShaderInfoStruct* shaderinfo = (W3dFXShaderInfoStruct*)((uint8*)Item->Data + 1);
+	int counter = 0;
+
+	AddItem(List, counter, "Version", version);
+	AddItem(List, counter, "ShaderName", shaderinfo->ShaderName);
+	AddItem(List, counter, "Technique", shaderinfo->Technique);
+}
+
+void	ChunkTableClass::List_W3D_CHUNK_FX_SHADER_CONSTANT(ChunkItem* Item, CListCtrl* List)
+{
+	int counter = 0;
+	uint8* chunkdata = (uint8 *)Item->Data;
+	uint32 type = *(uint32*)chunkdata;
+	uint32 strlen = *(uint32*)(chunkdata + 4);
+	// Let's hope this is null-terminated
+	char* constantname = (char*)(chunkdata + 8);
+	AddItem(List, counter, "Type", type);
+	AddItem(List, counter, "ConstantName", constantname);
+	if (type == CONSTANT_TYPE_TEXTURE)
+	{
+		// This is hopefully also null-terminated
+		char* texture = (char*)(chunkdata + 12 + strlen);
+		AddItem(List, counter, "Texture", texture);
+	}
+	else if (type >= CONSTANT_TYPE_FLOAT1 && type <= CONSTANT_TYPE_FLOAT4)
+	{
+		int count = type - 1;
+		float* floats = (float*)(chunkdata + 8 + strlen);
+		AddItem(List, counter, "Floats", floats, count);
+	}
+	else if (type == CONSTANT_TYPE_INT)
+	{
+		uint32 u = *(uint32*)(chunkdata + 8 + strlen);
+		AddItem(List, counter, "Int", u);
+	}
+	else if (type == CONSTANT_TYPE_BOOL)
+	{
+		uint8 u = *(uint8*)(chunkdata + 8 + strlen);
+		AddItem(List, counter, "Bool", u);
+	}
+	else
+	{
+		AddItem(List, counter, "Unknown", "Unknown");
+	}
+}
+
 void	ChunkTableClass::List_W3D_CHUNK_TEXTURES(ChunkItem * Item,CListCtrl *List)
 {
 	List_Subitems(Item,List);
@@ -2057,6 +2116,10 @@ ChunkTableClass::ChunkTableClass() {
 	NewType( W3D_CHUNK_VERTEX_SHADE_INDICES, "W3D_CHUNK_VERTEX_SHADE_INDICES",List_W3D_CHUNK_VERTEX_SHADE_INDICES);
 	NewType( W3D_CHUNK_MATERIAL_INFO,"W3D_CHUNK_MATERIAL_INFO",List_W3D_CHUNK_MATERIAL_INFO);
 	NewType( W3D_CHUNK_SHADERS,"W3D_CHUNK_SHADERS",List_W3D_CHUNK_SHADERS);
+	NewType( W3D_CHUNK_FX_SHADERS,"W3D_CHUNK_FX_SHADERS",List_W3D_CHUNK_FX_SHADERS, true);
+	NewType( W3D_CHUNK_FX_SHADER,"W3D_CHUNK_FX_SHADER",List_W3D_CHUNK_FX_SHADER, true);
+	NewType( W3D_CHUNK_FX_SHADER_INFO, "W3D_CHUNK_FX_SHADER_INFO", List_W3D_CHUNK_FX_SHADER_INFO);
+	NewType( W3D_CHUNK_FX_SHADER_CONSTANT, "W3D_CHUNK_FX_SHADER_CONSTANT", List_W3D_CHUNK_FX_SHADER_CONSTANT);
 	NewType( W3D_CHUNK_PS2_SHADERS,"W3D_CHUNK_PS2_SHADERS",List_W3D_CHUNK_PS2_SHADERS);
 
 	NewType( W3D_CHUNK_VERTEX_MATERIALS, "W3D_CHUNK_VERTEX_MATERIALS",List_W3D_CHUNK_VERTEX_MATERIALS,true);
