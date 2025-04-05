@@ -102,6 +102,9 @@ jobs:
         with:
           arch: x86
 
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
+
       - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
         shell: pwsh
         run: |
@@ -138,7 +141,7 @@ jobs:
             } else {
             $files = Get-ChildItem -Path "$buildDir\Core","$buildDir\${{ inputs.game }}" -File | Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
           }
-          $files | Move-Item -Destination $artifactsDir -Verbose
+          $files | Move-Item -Destination $artifactsDir -Verbose -Force
 
       - name: Upload ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
         uses: actions/upload-artifact@v4
