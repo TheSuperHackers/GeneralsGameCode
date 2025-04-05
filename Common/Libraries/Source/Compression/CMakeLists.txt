@@ -19,21 +19,21 @@ set(COMPRESSION_SRC
     Compression.h
 )
 
-add_library(z_compression STATIC)
-set_target_properties(z_compression PROPERTIES OUTPUT_NAME compression)
+add_library(gz_compression STATIC)
+set_target_properties(gz_compression PROPERTIES OUTPUT_NAME compression)
 
-target_sources(z_compression PRIVATE ${COMPRESSION_SRC})
+target_sources(gz_compression PRIVATE ${COMPRESSION_SRC})
 
-target_include_directories(z_compression INTERFACE
+target_include_directories(gz_compression INTERFACE
     .
 )
 
-target_link_libraries(z_compression PRIVATE
+target_link_libraries(gz_compression PRIVATE
     gz_config
-    zi_libraries_include
+    ci_libraries_include
 )
 
-target_link_libraries(z_compression PUBLIC
+target_link_libraries(gz_compression PUBLIC
     liblzhl
     libzlib
 )

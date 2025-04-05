@@ -16,19 +16,18 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// ---------------------------------------------------------------------------
-// File: misc.h
-// Author: Matthew D. Campbell
-// Creation Date: 9/12/2002
-// Description: misc utils
-// ---------------------------------------------------------------------------
+// Trig.h
+// fast trig functions
+// Author: Sondra Iverson, March 1998
+// Converted to Generals by Matthew D. Campbell, February 2002
 
-#ifndef __MISC_H__
-#define __MISC_H__
+#ifndef _TRIG_H_
+#define _TRIG_H_
 
-#include <string>
+Real Sin(Real);
+Real Cos(Real);
+Real Tan(Real);
+Real ACos(Real);
+Real ASin(Real x);
 
-std::string intToString(int val);
-
-#endif // __MISC_H__
-
+#endif // _TRIG_H_

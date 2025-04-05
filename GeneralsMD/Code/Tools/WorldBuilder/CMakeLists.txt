@@ -180,7 +180,7 @@ set(WORLDBUILDER_SRC
     "include/TeamIdentity.h"
     "include/TeamReinforcement.h"
     "include/teamsdialog.h"
-    "include/terrainmaterial.h"
+    "include/TerrainMaterial.h"
     "include/TerrainModal.h"
     "include/TerrainSwatches.h"
     "include/TileTool.h"
