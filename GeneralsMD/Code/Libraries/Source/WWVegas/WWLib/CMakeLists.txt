@@ -26,6 +26,7 @@ set(WWLIB_SRC
     ramfile.cpp
     random.cpp
     rawfile.cpp
+    rcfile.cpp
     readline.cpp
     realcrc.cpp
     refcount.cpp
@@ -89,6 +90,7 @@ set(WWLIB_SRC
     RAMFILE.H
     RANDOM.H
     RAWFILE.H
+    rcfile.h
     readline.h
     realcrc.h
     ref_ptr.h
