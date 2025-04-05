@@ -151,8 +151,12 @@ OpacityVectorDialogClass::OnInitDialog (void)
 	z_rot = WWMath::Wrap (z_rot, 0, 360);*/
 
 	
+#ifdef ALLOW_TEMPORARIES
+	Matrix3D rotation = Build_Matrix3D (m_Value.angle);
+#else
 	Matrix3D rotation;
 	Build_Matrix3D (m_Value.angle, rotation);
+#endif
 	//Vector3 point = m_Value.angle.Rotate_Vector (Vector3 (1, 0, 0));
 
 	EulerAnglesClass euler_angle (rotation, EulerOrderXYZr);

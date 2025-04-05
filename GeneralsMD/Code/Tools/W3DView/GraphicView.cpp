@@ -947,9 +947,12 @@ CGraphicView::OnMouseMove
 				// Do we want to 'lock-out' all rotation except X?
 				if (m_allowedCameraRotation == OnlyRotateX)
 				{
+#ifdef ALLOW_TEMPORARIES
+					Matrix3D tempMatrix = Build_Matrix3D (rotation);
+#else
 					Matrix3D tempMatrix;
 					Build_Matrix3D (rotation, tempMatrix);
-
+#endif
 					Matrix3D tempMatrix2 (1);
 
 					tempMatrix2.Rotate_X (tempMatrix.Get_X_Rotation ());
@@ -960,9 +963,12 @@ CGraphicView::OnMouseMove
 				// Do we want to 'lock-out' all rotation except Y?
 				else if (m_allowedCameraRotation == OnlyRotateY)
 				{
+#ifdef ALLOW_TEMPORARIES
+					Matrix3D tempMatrix = Build_Matrix3D (rotation);
+#else
 					Matrix3D tempMatrix;
 					Build_Matrix3D (rotation, tempMatrix);
-					
+#endif
 					Matrix3D tempMatrix2 (1);
 
 					tempMatrix2.Rotate_Y (tempMatrix.Get_Y_Rotation ());
@@ -973,9 +979,12 @@ CGraphicView::OnMouseMove
 				// Do we want to 'lock-out' all rotation except Z?
 				else if (m_allowedCameraRotation == OnlyRotateZ)
 				{
+#ifdef ALLOW_TEMPORARIES
+					Matrix3D tempMatrix = Build_Matrix3D (rotation);
+#else
 					Matrix3D tempMatrix;
 					Build_Matrix3D (rotation, tempMatrix);
-					
+#endif
 					Matrix3D tempMatrix2 (1);
 
 					tempMatrix2.Rotate_Z (tempMatrix.Get_Z_Rotation ());
@@ -986,15 +995,24 @@ CGraphicView::OnMouseMove
 
 				// Get the transformation matrix for the camera and its inverse
 				Matrix3D transform = m_pCamera->Get_Transform ();
-				Matrix3D inverseMatrix, rotationMatrix;
+				Matrix3D inverseMatrix;
 				transform.Get_Orthogonal_Inverse (inverseMatrix);
 
+#ifdef ALLOW_TEMPORARIES
+				Vector3 to_object = inverseMatrix * sphereCenter;
+#else
 				Vector3 to_object;
-				inverseMatrix.mulVector3(sphereCenter, to_object);
+				inverseMatrix.mulVector3 (sphereCenter, to_object);
+#endif
 
 				transform.Translate (to_object);
 
+#ifdef ALLOW_TEMPORARIES
+				Matrix3D::Multiply (transform, Build_Matrix3D (rotation), &transform);
+#else
+				Matrix3D rotationMatrix;
 				Matrix3D::Multiply (transform, Build_Matrix3D (rotation, rotationMatrix), &transform);
+#endif
 
 				transform.Translate (-to_object);
 
@@ -1260,7 +1278,11 @@ CGraphicView::Reset_Camera_To_Display_Object (RenderObjClass &render_object)
 		if (m_CameraBonePosX) {
 			Matrix3D tmp = transform;
 			Matrix3D cam_transform (Vector3 (0, -1, 0), Vector3 (0, 0, 1), Vector3 (-1, 0, 0), Vector3 (0, 0, 0));
+#ifdef ALLOW_TEMPORARIES
+			transform = tmp * cam_transform;
+#else
 			transform.mul(tmp, cam_transform);
+#endif
 		}
 
 		// Pass the new transform onto the camera
