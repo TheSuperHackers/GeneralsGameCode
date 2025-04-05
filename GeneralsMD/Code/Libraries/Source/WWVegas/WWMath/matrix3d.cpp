@@ -1187,7 +1187,7 @@ void Matrix3D::Lerp(const Matrix3D &A, const Matrix3D &B, float factor, Matrix3D
 
 	// Lerp position
 #ifdef ALLOW_TEMPORARIES
-  Vector3 pos = Lerp(A.Get_Translation(), B.Get_Translation(), factor);
+  Vector3 pos = Vector3::Lerp(A.Get_Translation(), B.Get_Translation(), factor);
 #else
 	Vector3 pos;
 	Vector3::Lerp(A.Get_Translation(), B.Get_Translation(), factor, &pos);
