@@ -1662,7 +1662,7 @@ WWINLINE void Matrix3D::mulVector3Array(const Vector3* in, Vector3* out, int cou
 {
 	assert(in != out);
 #ifdef ALLOW_TEMPORARIES
-	for (i=0; i<count; i++)
+	for (int i=0; i<count; i++)
 	{
 		out[i] = (*this) * in[i];
 	}
@@ -1682,7 +1682,7 @@ WWINLINE void Matrix3D::mulVector3Array(const Vector3* in, Vector3* out, int cou
 WWINLINE void Matrix3D::mulVector3Array(Vector3* inout, int count) const
 {
 #ifdef ALLOW_TEMPORARIES
-	for (i=0; i<count; i++)
+	for (int i=0; i<count; i++)
 	{
 		inout[i] = (*this) * inout[i];
 	}
