@@ -1076,33 +1076,38 @@ void	ChunkTableClass::List_W3D_CHUNK_FX_SHADER_INFO(ChunkItem* Item, CListCtrl* 
 void	ChunkTableClass::List_W3D_CHUNK_FX_SHADER_CONSTANT(ChunkItem* Item, CListCtrl* List)
 {
 	int counter = 0;
-	uint8* chunkdata = (uint8 *)Item->Data;
-	uint32 type = *(uint32*)chunkdata;
-	uint32 strlen = *(uint32*)(chunkdata + 4);
-	// Let's hope this is null-terminated
-	char* constantname = (char*)(chunkdata + 8);
+	uint8 *chunkdata = (uint8 *)Item->Data;
+	uint32 type = *(uint32 *)chunkdata;
+	chunkdata += 4;
+	// Includes the null terminator
+	uint32 constantstrlen = *(uint32 *)chunkdata;
+	chunkdata += 4;
+	char* constantname = (char*)chunkdata;
+	chunkdata += constantstrlen;
 	AddItem(List, counter, "Type", type);
 	AddItem(List, counter, "ConstantName", constantname);
 	if (type == CONSTANT_TYPE_TEXTURE)
 	{
 		// This is hopefully also null-terminated
-		char* texture = (char*)(chunkdata + 12 + strlen);
+		uint32 texturestrlen = *(uint32 *)chunkdata;
+		chunkdata += 4;
+		char* texture = (char*)chunkdata;
 		AddItem(List, counter, "Texture", texture);
 	}
 	else if (type >= CONSTANT_TYPE_FLOAT1 && type <= CONSTANT_TYPE_FLOAT4)
 	{
 		int count = type - 1;
-		float* floats = (float*)(chunkdata + 8 + strlen);
+		float* floats = (float*)chunkdata;
 		AddItem(List, counter, "Floats", floats, count);
 	}
 	else if (type == CONSTANT_TYPE_INT)
 	{
-		uint32 u = *(uint32*)(chunkdata + 8 + strlen);
+		uint32 u = *(uint32*)chunkdata;
 		AddItem(List, counter, "Int", u);
 	}
 	else if (type == CONSTANT_TYPE_BOOL)
 	{
-		uint8 u = *(uint8*)(chunkdata + 8 + strlen);
+		uint8 u = *(uint8*)chunkdata;
 		AddItem(List, counter, "Bool", u);
 	}
 	else
@@ -1237,6 +1242,24 @@ void	ChunkTableClass::List_W3D_CHUNK_SCG(ChunkItem * Item,CListCtrl *List)
 	
 		sprintf(buf, "Vertex[%d].SCG", counter);
 		AddItem(List, Counter,buf, data);
+
+		counter++;
+		data++;
+	}
+}
+
+void	ChunkTableClass::List_W3D_CHUNK_FXSHADER_IDS(ChunkItem* Item, CListCtrl* List)
+{
+	int Counter = 0;
+	int counter = 0;
+	uint32* data = (uint32*)Item->Data;
+	void* max = (char*)Item->Data + Item->Length;
+	char buf[256];
+
+	while (data < max) {
+
+		sprintf(buf, "Vertex[%d] FXShader Index", counter);
+		AddItem(List, Counter, buf, *data);
 
 		counter++;
 		data++;
@@ -2140,7 +2163,8 @@ ChunkTableClass::ChunkTableClass() {
 	NewType( W3D_CHUNK_DCG, "W3D_CHUNK_DCG", List_W3D_CHUNK_DCG);
 	NewType( W3D_CHUNK_DIG, "W3D_CHUNK_DIG", List_W3D_CHUNK_DIG);
 	NewType( W3D_CHUNK_SCG, "W3D_CHUNK_SCG", List_W3D_CHUNK_SCG);
-	
+	NewType( W3D_CHUNK_FXSHADER_IDS, "W3D_CHUNK_FXSHADER_IDS", List_W3D_CHUNK_FXSHADER_IDS);
+
 	NewType( W3D_CHUNK_TEXTURE_STAGE, "W3D_CHUNK_TEXTURE_STAGE", List_W3D_CHUNK_TEXTURE_STAGE,true);
 	NewType( W3D_CHUNK_TEXTURE_IDS, "W3D_CHUNK_TEXTURE_IDS", List_W3D_CHUNK_TEXTURE_IDS);
 	NewType( W3D_CHUNK_STAGE_TEXCOORDS, "W3D_CHUNK_STAGE_TEXCOORDS", List_W3D_CHUNK_STAGE_TEXCOORDS);

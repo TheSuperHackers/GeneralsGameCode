@@ -136,6 +136,7 @@ protected:
 	static void List_W3D_CHUNK_DCG(ChunkItem * Item,CListCtrl *List);
 	static void List_W3D_CHUNK_DIG(ChunkItem * Item,CListCtrl *List);
 	static void List_W3D_CHUNK_SCG(ChunkItem * Item,CListCtrl *List);
+	static void List_W3D_CHUNK_FXSHADER_IDS(ChunkItem* Item, CListCtrl* List);
 	
 	static void List_W3D_CHUNK_TEXTURE_STAGE(ChunkItem * Item,CListCtrl *List);
 	static void List_W3D_CHUNK_TEXTURE_IDS(ChunkItem * Item,CListCtrl *List);
