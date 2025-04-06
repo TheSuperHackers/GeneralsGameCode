@@ -55,11 +55,11 @@ class LookAtTranslator;
 // ------------------------------------------------------------------------------------------------
 enum PickType
 {
-	PICK_TYPE_TERRAIN						= COLLISION_TYPE_0,
-	PICK_TYPE_SELECTABLE				= COLLISION_TYPE_1,
-	PICK_TYPE_SHRUBBERY					= COLLISION_TYPE_2,
-	PICK_TYPE_MINES							= COLLISION_TYPE_3,	// mines aren't normally selectable, but workers/dozers need to
-	PICK_TYPE_FORCEATTACKABLE		= COLLISION_TYPE_4,
+	PICK_TYPE_TERRAIN						= COLL_TYPE_0,
+	PICK_TYPE_SELECTABLE				= COLL_TYPE_1,
+	PICK_TYPE_SHRUBBERY					= COLL_TYPE_2,
+	PICK_TYPE_MINES							= COLL_TYPE_3,	// mines aren't normally selectable, but workers/dozers need to
+	PICK_TYPE_FORCEATTACKABLE		= COLL_TYPE_4,
 	PICK_TYPE_ALL_DRAWABLES			= (PICK_TYPE_SELECTABLE | PICK_TYPE_SHRUBBERY | PICK_TYPE_MINES | PICK_TYPE_FORCEATTACKABLE)
 };
 

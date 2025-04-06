@@ -92,6 +92,10 @@ struct W3dRingStruct
 	// variable set of keyframes for each channel
 };
 
+// Note: RING_NUM_LOD does not include the NULL LOD.
+#define RING_NUM_LOD	(20)
+#define RING_LOWEST_LOD (10)
+#define RING_HIGHEST_LOD (50)
 
 /*
 ** RingRenderObjClass: Procedurally generated render rings

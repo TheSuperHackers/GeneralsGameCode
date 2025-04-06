@@ -24,11 +24,11 @@
  *                                                                         * 
  *                     $Archive:: /Commando/Code/ww3d2/dynamesh.h         $* 
  *                                                                         * 
- *                      $Author:: Jani_p                                  $* 
+ *                      $Author:: Greg_h                                  $* 
  *                                                                         * 
- *                     $Modtime:: 4/11/01 4:52p                           $* 
+ *                     $Modtime:: 12/03/01 4:20p                          $* 
  *                                                                         * 
- *                    $Revision:: 13                                      $* 
+ *                    $Revision:: 15                                      $* 
  *                                                                         * 
  *-------------------------------------------------------------------------*/
 
@@ -403,6 +403,11 @@ public:
 		MAX_PASSES = MeshMatDescClass::MAX_PASSES
 	};
 
+	// USER BE WARNED: This hack is only here because DynamicMeshClass does not expose all of the
+	// features that DynamicMeshModel provides.  It may be dangerous to modify the model behind the
+	// DynamicMeshClass's back so use at your own risk!
+	DynamicMeshModel *		Peek_Model(void)	{ return Model; }
+	
 protected:
 	
 	inline void	Switch_To_Multi_Vertex_Color(int color_array_index = 0);

@@ -76,10 +76,11 @@ public:
 	~RenderInfoClass(void);
 
 	enum RINFO_OVERRIDE_FLAGS {
-		RINFO_OVERRIDE_DEFAULT						= 0x0,	// No overrides
-		RINFO_OVERRIDE_FORCE_TWO_SIDED			= 0x1,	// Override mesh settings to force no backface culling
-		RINFO_OVERRIDE_FORCE_SORTING				= 0x2,	// Override mesh settings to force sorting
-		RINFO_OVERRIDE_ADDITIONAL_PASSES_ONLY	= 0x4		// Do not render base passes (only additional passes)
+		RINFO_OVERRIDE_DEFAULT						= 0x0000,	// No overrides
+		RINFO_OVERRIDE_FORCE_TWO_SIDED			= 0x0001,	// Override mesh settings to force no backface culling
+		RINFO_OVERRIDE_FORCE_SORTING				= 0x0002,	// Override mesh settings to force sorting
+		RINFO_OVERRIDE_ADDITIONAL_PASSES_ONLY	= 0x0004,	// Do not render base passes (only additional passes)
+		RINFO_OVERRIDE_SHADOW_RENDERING			= 0x0008		// Hint: we are rendering a shadow
 	};
 
 	void								Push_Material_Pass(MaterialPassClass * matpass);

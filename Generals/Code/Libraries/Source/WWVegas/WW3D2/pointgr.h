@@ -88,7 +88,7 @@ public:
 									ShareBufferClass<float> *sizes = NULL,
 									ShareBufferClass<unsigned char> *orientations = NULL,
 									ShareBufferClass<unsigned char> *frames = NULL,
-									unsigned int active_point_count = -1,
+									int active_point_count = -1,
 									float vpxmin = 0.0f, float vpymin = 0.0f,
 									float vpxmax = 0.0f, float vpymax = 0.0f);
 	void						Set_Point_Size(float size);

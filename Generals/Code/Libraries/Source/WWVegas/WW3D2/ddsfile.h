@@ -26,8 +26,10 @@
 #include "always.h"
 #include "ww3dformat.h"
 #include "wwstring.h"
+#include "vector3.h"
 
 struct IDirect3DSurface8;
+struct IDirect3DVolume8;
 
 // ----------------------------------------------------------------------------
 //
@@ -127,7 +129,11 @@ struct LegacyDDSURFACEDESC2 {
 		unsigned Pitch;
 		unsigned LinearSize;
 	};
-	unsigned BackBufferCount;
+	union
+	{
+		unsigned BackBufferCount;
+		unsigned Depth;				// added depth for volume textures
+	};
 	union
 	{
 		unsigned MipMapCount;
@@ -147,6 +153,14 @@ struct LegacyDDSURFACEDESC2 {
 	LegacyDDPIXELFORMAT PixelFormat;
 	LegacyDDSCAPS2 Caps;
 	unsigned TextureStage;
+};
+
+
+enum DDSType
+{
+	DDS_TEXTURE,
+	DDS_CUBEMAP,
+	DDS_VOLUME
 };
 
 // ----------------------------------------------------------------------------

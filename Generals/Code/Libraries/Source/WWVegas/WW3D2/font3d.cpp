@@ -24,12 +24,15 @@
  *                                                                                             * 
  *                     $Archive:: /Commando/Code/ww3d2/font3d.cpp                             $* 
  *                                                                                             * 
- *                      $Author:: Jani_p                                                      $* 
+ *                  $Org Author:: Jani_p                                  $* 
+ *                                                                         * 
+ *                      $Author:: Kenny_m                                  $* 
+ *                                                                         * 
+ *                     $Modtime:: 08/05/02 10:44a                          $* 
  *                                                                                             * 
- *                     $Modtime:: 4/11/01 10:17p                                              $* 
+ *                    $Revision:: 17                                                          $* 
  *                                                                                             * 
- *                    $Revision:: 16                                                          $* 
- *                                                                                             * 
+ * 08/05/02 KM Texture class redesign
  *---------------------------------------------------------------------------------------------* 
  * Functions:                                                                                  * 
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */

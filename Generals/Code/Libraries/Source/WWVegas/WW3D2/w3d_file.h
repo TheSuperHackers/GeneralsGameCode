@@ -16,20 +16,20 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* $Header: /VSS_Sync/ww3d2/w3d_file.h 16    8/29/01 9:49p Vss_sync $ */
+/* $Header: /Commando/Code/Tools/max2w3d/w3d_file.h 19    9/12/01 2:08p Greg_h $ */
 /*********************************************************************************************** 
  ***                            Confidential - Westwood Studios                              *** 
  *********************************************************************************************** 
  *                                                                                             * 
  *                 Project Name : Commando / G 3D Library                                      * 
  *                                                                                             * 
- *                     $Archive:: /VSS_Sync/ww3d2/w3d_file.h                                  $* 
+ *                     $Archive:: /Commando/Code/Tools/max2w3d/w3d_file.h                     $* 
  *                                                                                             * 
- *                      $Author:: Vss_sync                                                    $* 
+ *                      $Author:: Greg_h                                                      $* 
  *                                                                                             * 
- *                     $Modtime:: 8/29/01 7:29p                                               $* 
+ *                     $Modtime:: 9/12/01 2:04p                                               $* 
  *                                                                                             * 
- *                    $Revision:: 16                                                          $* 
+ *                    $Revision:: 19                                                          $* 
  *                                                                                             * 
  *---------------------------------------------------------------------------------------------* 
  * Functions:                                                                                  * 
@@ -453,6 +453,8 @@ enum {
 		W3D_CHUNK_EMITTER_LINE_PROPERTIES,								// line properties, used by line rendering mode
 		W3D_CHUNK_EMITTER_ROTATION_KEYFRAMES,							// rotation keys for the particles
 		W3D_CHUNK_EMITTER_FRAME_KEYFRAMES,								// frame keys (u-v based frame animation)
+		W3D_CHUNK_EMITTER_BLUR_TIME_KEYFRAMES,						// length of tail for line groups
+		W3D_CHUNK_EMITTER_EXTRA_INFO,										// Extra info for the emitter
 
 	W3D_CHUNK_AGGREGATE								=0x00000600,		// description of an aggregate object
 		W3D_CHUNK_AGGREGATE_HEADER,										// general information such as name and version
@@ -486,6 +488,32 @@ enum {
 		W3D_CHUNK_SOUNDROBJ_HEADER,										// general information such as name and version
 		W3D_CHUNK_SOUNDROBJ_DEFINITION,									// chunk containing the definition of the sound that is to play	
 
+	W3D_CHUNK_SHDMESH									=0x00000B00,		// "Shader mesh" Mesh with multiple sub-meshes that use the scaleable shader system
+		W3D_CHUNK_SHDMESH_NAME,
+		W3D_CHUNK_SHDMESH_HEADER,
+		W3D_CHUNK_SHDMESH_USER_TEXT,										// Text from the MAX comment field (Null terminated string)
+
+		W3D_CHUNK_SHDSUBMESH							=0x00000B20,		// wrapper around an individual sub-mesh.
+			W3D_CHUNK_SHDSUBMESH_HEADER,
+
+			W3D_CHUNK_SHDSUBMESH_SHADER			=0x00000B40,		// wrapper around a shader
+				W3D_CHUNK_SHDSUBMESH_SHADER_CLASSID,
+				W3D_CHUNK_SHDSUBMESH_SHADER_DEF,
+
+ 			W3D_CHUNK_SHDSUBMESH_VERTICES,								// array of vertices (array of W3dVectorStruct's)
+			W3D_CHUNK_SHDSUBMESH_VERTEX_NORMALS,						// array of normals (array of W3dVectorStruct's)
+			W3D_CHUNK_SHDSUBMESH_TRIANGLES,								// array of 16bit int triplets (vertex indices for each triangle)
+			W3D_CHUNK_SHDSUBMESH_VERTEX_SHADE_INDICES,				// shade indexes for each vertex (array of uint32's)
+
+			W3D_CHUNK_SHDSUBMESH_UV0,										// per-vertex texture coordinates (array of W3dTexCoordStruct's)
+			W3D_CHUNK_SHDSUBMESH_UV1,										// per-vertex texture coordinates (array of W3dTexCoordStruct's)
+
+			W3D_CHUNK_SHDSUBMESH_TANGENT_BASIS_S,						// per-vertex tangent basis S vectors
+			W3D_CHUNK_SHDSUBMESH_TANGENT_BASIS_T,						// per-vertex tangent basis T vectors
+			W3D_CHUNK_SHDSUBMESH_TANGENT_BASIS_SxT,					// per-vertex tangent basis SxT vectors
+
+			W3D_CHUNK_SHDSUBMESH_VERTEX_COLOR,							// per-vertex color
+			W3D_CHUNK_SHDSUBMESH_VERTEX_INFLUENCES,					// byte-per-vertex, WWSkin support
 };
 
 
@@ -641,6 +669,8 @@ struct W3dMaterialInfoStruct
 #define		W3DVERTMAT_STAGE0_MAPPING_RANDOM						0x00100000
 #define		W3DVERTMAT_STAGE0_MAPPING_EDGE						0x00110000
 #define		W3DVERTMAT_STAGE0_MAPPING_BUMPENV					0x00120000
+#define		W3DVERTMAT_STAGE0_MAPPING_GRID_WS_CLASSIC_ENV	0x00130000
+#define		W3DVERTMAT_STAGE0_MAPPING_GRID_WS_ENVIRONMENT	0x00140000
 
 #define		W3DVERTMAT_STAGE1_MAPPING_MASK						0x0000FF00
 #define		W3DVERTMAT_STAGE1_MAPPING_UV							0x00000000
@@ -662,6 +692,8 @@ struct W3dMaterialInfoStruct
 #define		W3DVERTMAT_STAGE1_MAPPING_RANDOM						0x00001000
 #define		W3DVERTMAT_STAGE1_MAPPING_EDGE						0x00001100
 #define		W3DVERTMAT_STAGE1_MAPPING_BUMPENV					0x00001200
+#define		W3DVERTMAT_STAGE1_MAPPING_GRID_WS_CLASSIC_ENV	0x00001300
+#define		W3DVERTMAT_STAGE1_MAPPING_GRID_WS_ENVIRONMENT	0x00001400
 
 #define		W3DVERTMAT_PSX_MASK										0xFF000000
 #define		W3DVERTMAT_PSX_TRANS_MASK 								0x07000000
@@ -751,6 +783,8 @@ enum
 	W3DSHADER_PRIGRADIENT_MODULATE,					// modulate fragment ARGB by gradient ARGB (default)
 	W3DSHADER_PRIGRADIENT_ADD,							// add gradient RGB to fragment RGB, copy gradient A to fragment A
 	W3DSHADER_PRIGRADIENT_BUMPENVMAP,				// environment-mapped bump mapping
+	W3DSHADER_PRIGRADIENT_BUMPENVMAPLUMINANCE,	// environment-mapped bump mapping with luminance control
+	W3DSHADER_PRIGRADIENT_MODULATE2X,				// modulate fragment ARGB by gradient ARGB and multiply RGB by 2
 	W3DSHADER_PRIGRADIENT_MAX,							// end of enumeration
 
 	W3DSHADER_SECGRADIENT_DISABLE = 0,				// don't draw secondary gradient (default)
@@ -776,6 +810,10 @@ enum
 	W3DSHADER_DETAILCOLORFUNC_SUBR,					// other - local
 	W3DSHADER_DETAILCOLORFUNC_BLEND,					// (localAlpha)*local + (~localAlpha)*other
 	W3DSHADER_DETAILCOLORFUNC_DETAILBLEND,			// (otherAlpha)*local + (~otherAlpha)*other
+	W3DSHADER_DETAILCOLORFUNC_ADDSIGNED,			// (local + other - 0.5)
+	W3DSHADER_DETAILCOLORFUNC_ADDSIGNED2X,			// (local + other - 0.5) * 2
+	W3DSHADER_DETAILCOLORFUNC_SCALE2X,				// local * other * 2
+	W3DSHADER_DETAILCOLORFUNC_MODALPHAADDCOLOR,	// local + localAlpha * other	
 	W3DSHADER_DETAILCOLORFUNC_MAX,					// end of enumeration
 
 	W3DSHADER_DETAILALPHAFUNC_DISABLE = 0,			// local (default)
@@ -827,6 +865,7 @@ enum PS2_SHADER_SETTINGS {
 struct W3dShaderStruct
 {
 	W3dShaderStruct(void) {}
+	
 	uint8						DepthCompare;
 	uint8						DepthMask;
 	uint8						ColorMask;		// now obsolete and ignored
@@ -843,6 +882,30 @@ struct W3dShaderStruct
 	uint8						PostDetailColorFunc;
 	uint8						PostDetailAlphaFunc;
 	uint8						pad[1];
+
+	// Required by DynamicVectorClass...
+	inline bool			operator == (const W3dShaderStruct & that) 
+	{		
+		return (
+			(DepthCompare == that.DepthCompare) && 
+			(DepthMask == that.DepthMask) && 
+			/*(ColorMask == that.ColorMask) &&       obsolete*/
+			(DestBlend == that.DestBlend) &&
+			/*(FogFunc == that.FogFunc) &&           obsolete*/
+			(PriGradient == that.PriGradient) &&
+			(SecGradient == that.SecGradient) &&
+			(SrcBlend == that.SrcBlend) &&
+			(Texturing == that.Texturing) &&
+			(DetailColorFunc == that.DetailColorFunc) &&
+			(DetailAlphaFunc == that.DetailAlphaFunc) &&
+			/*(ShaderPreset == that.ShaderPreset) &&  obsolete */
+			(AlphaTest == that.AlphaTest) );
+	}
+
+	inline bool			operator != (const W3dShaderStruct & that)
+	{
+		return !(*this == that);
+	}
 };
 
 struct W3dPS2ShaderStruct
@@ -1023,6 +1086,11 @@ typedef enum
 	SURFACE_TYPE_ELECTRICAL_PERMEABLE,
 	SURFACE_TYPE_FLAMMABLE_PERMEABLE,
 	SURFACE_TYPE_STEAM_PERMEABLE,
+	SURFACE_TYPE_WATER_PERMEABLE,
+	SURFACE_TYPE_TIBERIUM_WATER,
+	SURFACE_TYPE_TIBERIUM_WATER_PERMEABLE,
+	SURFACE_TYPE_UNDERWATER_DIRT,
+	SURFACE_TYPE_UNDERWATER_TIBERIUM_DIRT,
 
 	SURFACE_TYPE_MAX			// NOTE: if you add a surface type, add it to the SurfaceEffects.INI file!
 } W3D_SURFACE_TYPES;
@@ -1056,6 +1124,11 @@ const char * const SURFACE_TYPE_STRINGS[SURFACE_TYPE_MAX] =
 	"Flammable Permeable",
 	"Steam",
 	"Steam Permeable",
+	"Water Permeable",
+	"Tiberium Water",
+	"Tiberium Water Permeable",
+	"Underwater Dirt",
+	"Underwater Tiberium Dirt",
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -1722,6 +1795,12 @@ struct W3dEmitterInfoStruct
 	W3dRGBAStruct		EndColor;
 };
 
+struct W3dEmitterExtraInfoStruct
+{
+	float32				FutureStartTime; // Whether to start a particle in the future or not
+	uint32				Padding[9];
+};
+
 struct W3dVolumeRandomizerStruct
 {
 	uint32				ClassID;
@@ -1734,6 +1813,8 @@ struct W3dVolumeRandomizerStruct
 #define W3D_EMITTER_RENDER_MODE_TRI_PARTICLES		0
 #define W3D_EMITTER_RENDER_MODE_QUAD_PARTICLES		1
 #define W3D_EMITTER_RENDER_MODE_LINE					2
+#define W3D_EMITTER_RENDER_MODE_LINEGRP_TETRA		3
+#define W3D_EMITTER_RENDER_MODE_LINEGRP_PRISM		4
 
 #define W3D_EMITTER_FRAME_MODE_1x1						0
 #define W3D_EMITTER_FRAME_MODE_2x2						1
@@ -1819,6 +1900,22 @@ struct W3dEmitterFrameKeyframeStruct
 {
 	float32				Time;
 	float32				Frame;
+};
+
+// W3D_CHUNK_EMITTER_BLUR_TIME_KEYFRAMES
+// Contains a W3dEmitterFrameHeaderStruct followed by a number of
+// frame keyframes (sub-texture indexing)
+struct W3dEmitterBlurTimeHeaderStruct
+{
+	uint32				KeyframeCount;
+	float32				Random;
+	uint32				Reserved[1];
+};
+
+struct W3dEmitterBlurTimeKeyframeStruct
+{
+	float32				Time;
+	float32				BlurTime;
 };
 
 
@@ -2071,6 +2168,73 @@ struct W3dSoundRObjHeaderStruct
 	uint32				Padding[8];
 };
 
+/********************************************************************************
+
+	ShdMesh Render Objects
+
+	The following structs are used to define a ShdMesh in a w3d file.  This class
+	is the mesh class used with the scaleable shader system.  It contains a number
+	of sub-meshes; each which use a single shader.
+
+	NOTE: ShdMeshes re-use the following chunks from regular meshes:
+
+  			W3D_CHUNK_VERTICES
+			W3D_CHUNK_VERTEX_NORMALS
+			W3D_CHUNK_TRIANGLES
+			W3D_CHUNK_MESH_USER_TEXT
+			W3D_CHUNK_VERTEX_INFLUENCES
+			W3D_CHUNK_VERTEX_SHADE_INDICES
+			W3D_CHUNK_AABTREE
+
+********************************************************************************/
+
+#define W3D_CURRENT_SHDMESH_VERSION			0x00010000
+
+/**
+** Header for a ShdMesh
+*/
+struct W3dShdMeshHeaderStruct
+{
+	uint32					Version;							
+	uint32					Attributes;			// Uses same #defines as Mesh, e.g. W3D_MESH_FLAG_GEOMETRY_TYPE_SKIN
+	
+	//
+	// Counts, these can be regarded as an inventory of what is to come in the file.
+	//
+	uint32					NumTris;				// number of triangles
+	uint32					NumVertices;		// number of unique vertices
+	uint32					NumSubMeshes;		// number of sub-meshes
+	uint32					FutureCounts[5];	// future counts
+
+	//
+	// Bounding volumes
+	//
+	W3dVectorStruct		BoxMin;				// Min corner of the bounding box
+	W3dVectorStruct		BoxMax;				// Max corner of the bounding box
+	W3dVectorStruct		SphCenter;			// Center of bounding sphere
+	float32					SphRadius;			// Bounding sphere radius
+};
+
+/**
+** Header for a sub-mesh inside an ShdMesh
+*/
+struct W3dShdSubMeshHeaderStruct
+{
+	//
+	// Counts, these can be regarded as an inventory of what is to come in the file.
+	//
+	uint32					NumTris;				// number of triangles
+	uint32					NumVertices;		// number of unique vertices
+	uint32					FutureCounts[2];	// future counts
+
+	//
+	// Bounding volumes
+	//
+	W3dVectorStruct		BoxMin;				// Min corner of the bounding box
+	W3dVectorStruct		BoxMax;				// Max corner of the bounding box
+	W3dVectorStruct		SphCenter;			// Center of bounding sphere
+	float32					SphRadius;			// Bounding sphere radius
+};
 
 /*
 ** Include the obsolete structures and chunk ID's

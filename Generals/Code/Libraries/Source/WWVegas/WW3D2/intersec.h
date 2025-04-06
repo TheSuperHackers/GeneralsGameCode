@@ -158,7 +158,7 @@ public:
 		RayLocation = &_RayLocation;
 		RayDirection = &_RayDirection;
 		IntersectionNormal = &_IntersectionNormal;
-		Result.CollisionType=COLLISION_TYPE_ALL;	//added for 'Generals'. MW
+		Result.CollisionType=COLL_TYPE_ALL;	//added for 'Generals'. MW
 	}
 
 	

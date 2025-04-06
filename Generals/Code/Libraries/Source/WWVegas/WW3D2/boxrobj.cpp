@@ -26,9 +26,9 @@
  *                                                                                             *
  *                       Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 7/05/01 4:11p                                               $*
+ *                     $Modtime:: 1/19/02 12:57p                                              $*
  *                                                                                             *
- *                    $Revision:: 27                                                          $*
+ *                    $Revision:: 35                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -183,6 +183,7 @@ BoxRenderObjClass::BoxRenderObjClass(void)
 {
 	memset(Name,0,sizeof(Name));
 	Color.Set(1,1,1);
+	Opacity = 0.25f;
 	ObjSpaceCenter.Set(0,0,0);
 	ObjSpaceExtent.Set(1,1,1);
 }
@@ -208,6 +209,7 @@ BoxRenderObjClass::BoxRenderObjClass(const W3dBoxStruct & def)
 	W3dUtilityClass::Convert_Vector(def.Extent,&ObjSpaceExtent);
 	int col_bits = (def.Attributes & W3D_BOX_ATTRIBUTE_COLLISION_TYPE_MASK) >> W3D_BOX_ATTRIBUTE_COLLISION_TYPE_SHIFT;
 	Set_Collision_Type(col_bits<<1);
+	Opacity = 0.25f;
 }
 
 
@@ -358,7 +360,7 @@ void BoxRenderObjClass::Init(void)
 	_BoxMaterial->Set_Opacity(1.0f);		// uses vertex alpha...
 	_BoxMaterial->Set_Shininess(0.0f);
 
-	_BoxShader = ShaderClass::_PresetAlphaSolidShader;
+	_BoxShader = ShaderClass::_PresetAlphaSolidShader; //_PresetAdditiveSolidShader;
 
 	IsInitted = true;
 }
@@ -456,7 +458,7 @@ void BoxRenderObjClass::render_box(RenderInfoClass & rinfo,const Vector3 & cente
 		/*
 		** Dump the box vertices into the sorting dynamic vertex buffer. 
 		*/
-		DWORD color = DX8Wrapper::Convert_Color(Color,0.25f);
+		DWORD color = DX8Wrapper::Convert_Color(Color,Opacity);
 		
 		int buffer_type = BUFFER_TYPE_DYNAMIC_SORTING;
 
@@ -1079,8 +1081,7 @@ int OBBoxRenderObjClass::Class_ID(void) const
  *=============================================================================================*/
 void OBBoxRenderObjClass::Render(RenderInfoClass & rinfo)
 {
-	Matrix3D tm(Transform);
-	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
+	DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);
 	render_box(rinfo,ObjSpaceCenter,ObjSpaceExtent);
 }
 

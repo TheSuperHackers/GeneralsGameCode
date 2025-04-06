@@ -243,8 +243,8 @@ void RTS3DScene::flagOccludedObjects(CameraClass * camera)
 	Bool hit=FALSE;
 	Vector3 newEndPoint;
 	result.ComputeContactPoint=false;
-	RayCollisionTestClass raytest(lineseg,&result,COLLISION_TYPE_ALL,false,false);
-	raytest.CollisionType=COLLISION_TYPE_ALL;
+	RayCollisionTestClass raytest(lineseg,&result,COLL_TYPE_ALL,false,false);
+	raytest.CollisionType=COLL_TYPE_ALL;
 
 	m_occludedObjectsCount=0;
 
@@ -317,7 +317,7 @@ Bool RTS3DScene::castRay(RayCollisionTestClass & raytest, Bool testAll, Int coll
 	Vector3 newEndPoint;
 	Bool hit=FALSE;
 
-	tempRayTest.CollisionType = COLLISION_TYPE_ALL;
+	tempRayTest.CollisionType = COLL_TYPE_ALL;
 	//check if a mesh is translucent before colliding with it. Skips headlights, etc.
 	tempRayTest.CheckTranslucent = true;
 

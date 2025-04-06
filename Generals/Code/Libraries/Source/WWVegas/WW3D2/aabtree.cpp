@@ -26,9 +26,9 @@
  *                                                                                             *
  *                       Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 6/14/01 9:42a                                               $*
+ *                     $Modtime:: 11/24/01 5:34p                                              $*
  *                                                                                             *
- *                    $Revision:: 3                                                           $*
+ *                    $Revision:: 4                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -67,7 +67,6 @@
 #include "wwdebug.h"
 #include "tri.h"
 #include "meshgeometry.h"
-#include "camera.h"
 #include "coltest.h"
 #include "inttest.h"
 #include "colmathinlines.h"
@@ -223,6 +222,26 @@ void AABTreeClass::Reset(void)
 	}
 	if (Mesh) {
 		Mesh = NULL;
+	}
+}
+
+/***********************************************************************************************
+ * AABTreeClass::Scale - uniform scale																			  *
+ *                                                                                             *
+ * INPUT:                                                                                      *
+ *                                                                                             *
+ * OUTPUT:                                                                                     *
+ *                                                                                             *
+ * WARNINGS:                                                                                   *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   6/17/02    Jani : Created.                                                                *
+ *=============================================================================================*/
+void AABTreeClass::Scale(float f)
+{
+	for (int i=0;i<NodeCount;++i) {
+		Nodes[i].Min*=f;
+		Nodes[i].Max*=f;
 	}
 }
 

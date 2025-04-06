@@ -115,7 +115,7 @@
  *   HLodClass::Get_Snap_Point -- returns specified snap-point                                 *
  *   HLodClass::Update_Sub_Object_Transforms -- updates transforms of all sub-objects          *
  *   HLodClass::Update_Obj_Space_Bounding_Volumes -- update object-space bounding volumes      *
- *   HLodClass::add_lod_model -- adds a model to one of the lods                               *
+ *   HLodClass::Add_Lod_Model -- adds a model to one of the lods                               *
  *   HLodClass::Create_Decal -- create a decal on this HLod                                    *
  *   HLodClass::Delete_Decal -- remove a decal from this HLod                                  *
  *   HLodClass::Set_HTree -- replace the hierarchy tree                                        *
@@ -1035,7 +1035,7 @@ HLodClass::HLodClass(const char * name,RenderObjClass ** lods,int count) :
 				int boneindex = lod_obj->Get_Sub_Object_Bone_Index(sub_obj);
 				lod_obj->Remove_Sub_Object(sub_obj);				
 				
-				add_lod_model(lod_index,sub_obj,boneindex);
+				Add_Lod_Model(lod_index,sub_obj,boneindex);
 
 				sub_obj->Release_Ref();
 			}
@@ -1044,7 +1044,7 @@ HLodClass::HLodClass(const char * name,RenderObjClass ** lods,int count) :
 
 			// just insert the render object as the sole member of the current LOD array.  This
 			// case happens if this level of detail is a simple object such as a mesh or NullRenderObj
-			add_lod_model(lod_index,lod_obj,0);
+			Add_Lod_Model(lod_index,lod_obj,0);
 		}
 	}
 
@@ -1094,7 +1094,8 @@ HLodClass::HLodClass(const HLodDefClass & def) :
 {
 	// Set the name
 	Set_Name(def.Get_Name());
-	
+
+
 	// Number of LODs comes from the distlod
 	LodCount = def.LodCount;
 	WWASSERT(LodCount >= 1);
@@ -1117,7 +1118,7 @@ HLodClass::HLodClass(const HLodDefClass & def) :
 			RenderObjClass * robj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(def.Lod[ilod].ModelName[imodel]);
 			int boneindex = def.Lod[ilod].BoneIndex[imodel];
 			if (robj != NULL) {
-				add_lod_model(ilod,robj,boneindex);
+				Add_Lod_Model(ilod,robj,boneindex);
 				robj->Release_Ref();
 			}
 		}
@@ -1203,7 +1204,7 @@ HLodClass::HLodClass(const HModelDefClass & def) :
 		RenderObjClass * robj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(def.SubObjects[imodel].RenderObjName);
 		if (robj) {
 			int boneindex = def.SubObjects[imodel].PivotID;
-			add_lod_model(0,robj,boneindex);
+			Add_Lod_Model(0,robj,boneindex);
 			robj->Release_Ref();
 		}
 	}
@@ -2018,7 +2019,7 @@ void HLodClass::Include_NULL_Lod(bool include)
 			LodCount ++;
 
 			// Add this NULL object to the start of the lod list
-			add_lod_model (0, null_object, 0);
+			Add_Lod_Model (0, null_object, 0);
 			null_object->Release_Ref ();
 		}
 	}
@@ -3504,7 +3505,7 @@ void HLodClass::Update_Obj_Space_Bounding_Volumes(void)
 
 
 /***********************************************************************************************
- * HLodClass::add_lod_model -- adds a model to one of the lods                                 *
+ * HLodClass::Add_Lod_Model -- adds a model to one of the lods                                 *
  *                                                                                             *
  * INPUT:                                                                                      *
  *                                                                                             *
@@ -3515,7 +3516,7 @@ void HLodClass::Update_Obj_Space_Bounding_Volumes(void)
  * HISTORY:                                                                                    *
  *   1/26/00    gth : Created.                                                                 *
  *=============================================================================================*/
-void HLodClass::add_lod_model(int lod,RenderObjClass * robj,int boneindex)
+void HLodClass::Add_Lod_Model(int lod, RenderObjClass * robj, int boneindex)
 {		
 	WWASSERT(robj != NULL);
 

@@ -22,15 +22,15 @@
  *                                                                                             *
  *                 Project Name : Colorspace                                                   *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/ww3d2/colorspace.h                                $*
+ *                     $Archive::                                                             $*
  *                                                                                             *
  *              Original Author:: Hector Yee                                                   *
  *                                                                                             *
- *                      $Author:: Vss_sync                                                    $*
+ *                      $Author::                                                             $*
  *                                                                                             *
- *                     $Modtime:: 8/29/01 9:50p                                               $*
+ *                     $Modtime::                                                             $*
  *                                                                                             *
- *                    $Revision:: 1                                                           $*
+ *                    $Revision::                                                             $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -43,6 +43,7 @@
 #ifndef COLORSPACE_H
 #define COLORSPACE_H
 
+#include "dx8wrapper.h"
 #include <wwmath.h>
 
 void RGB_To_HSV(Vector3 &hsv,const Vector3 &rgb);
@@ -146,6 +147,13 @@ inline void Recolor(Vector3 &rgb, const Vector3 &hsv_shift)
 	hsv.Y=WWMath::Clamp(hsv.Y,0.0f,1.0f);
 	hsv.Z=WWMath::Clamp(hsv.Z,0.0f,1.0f);	
 	HSV_To_RGB(rgb,hsv);
+}
+
+inline void Recolor(unsigned& rgba, const Vector3 &hsv_shift)
+{
+	Vector4 rgba_v = DX8Wrapper::Convert_Color(rgba);
+	Recolor((Vector3&)rgba_v, hsv_shift);
+	rgba = DX8Wrapper::Convert_Color(rgba_v);
 }
 
 

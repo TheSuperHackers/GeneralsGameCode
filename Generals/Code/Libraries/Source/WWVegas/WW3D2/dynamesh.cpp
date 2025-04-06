@@ -22,13 +22,13 @@
  *                                                                         * 
  *                 Project Name : Commando                                 * 
  *                                                                         * 
- *                     $Archive:: /VSS_Sync/ww3d2/dynamesh.cpp            $* 
+ *                     $Archive:: /Commando/Code/ww3d2/dynamesh.cpp       $* 
  *                                                                         * 
- *                      $Author:: Vss_sync                                $* 
+ *                      $Author:: Greg_h                                  $* 
  *                                                                         * 
- *                     $Modtime:: 8/29/01 7:29p                           $* 
+ *                     $Modtime:: 12/03/01 4:50p                          $* 
  *                                                                         * 
- *                    $Revision:: 23                                      $* 
+ *                    $Revision:: 25                                      $* 
  *                                                                         * 
  *-------------------------------------------------------------------------* 
  * Functions:                                                              * 
@@ -92,11 +92,14 @@ DynamicMeshModel::DynamicMeshModel(const DynamicMeshModel &src) :
 	// Copy the material info structure.
 	MatInfo = NEW_REF(MaterialInfoClass, (*(src.MatInfo)));
 
+
+	// [SKB: Feb 21 2002 @ 11:47pm] :
+	// Moved before the remapping cause I don't like referencing null.
+	MatDesc = W3DNEW MeshMatDescClass;
+
 	// remap!
 	MaterialRemapperClass remapper(src.MatInfo, MatInfo);
 	remapper.Remap_Mesh(src.MatDesc, MatDesc);
-
-	MatDesc = W3DNEW MeshMatDescClass;
 }
 
 DynamicMeshModel::~DynamicMeshModel(void)

@@ -268,7 +268,7 @@ void PointGroupClass::Set_Arrays(
 	ShareBufferClass<float> *sizes,
 	ShareBufferClass<unsigned char> *orientations,
 	ShareBufferClass<unsigned char> *frames, 
-	unsigned int active_point_count,
+	int active_point_count,
 	float vpxmin, 
 	float vpymin, 
 	float vpxmax, 
@@ -887,6 +887,8 @@ void PointGroupClass::Render(RenderInfoClass &rinfo)
 
 	// need to interrupt this processing. If we are not billboarding, then we need the actual position
 	// of the vertice to lay it down flat.
+	
+	// (gth) changed this 'if' to use OR rather than AND... The way it was caused all emitters to break
 	if (Get_Flag(TRANSFORM) && Billboard) {
 		// Resize transformed location array if needed (2x guardband to prevent
 		// frequent reallocations):
