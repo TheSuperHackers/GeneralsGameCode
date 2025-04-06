@@ -45,6 +45,12 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ScriptEngine.h"
 
+#ifdef _INTERNAL
+// for occasional debugging...
+//#pragma optimize("", off)
+//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
+
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 RebuildHoleExposeDieModuleData::RebuildHoleExposeDieModuleData()
@@ -105,8 +111,9 @@ void RebuildHoleExposeDie::onDie( const DamageInfo *damageInfo )
 	// if we are being constructed from either the first time or from a hole reconstruction
 	// we do not "spawn" a hole object
 	//
-	if( us->getControllingPlayer() != ThePlayerList->getNeutralPlayer() && (us->getControllingPlayer()->isPlayerActive()) && 
-		(BitIsSet( us->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE ))
+	if( us->getControllingPlayer() != ThePlayerList->getNeutralPlayer() 
+		  && us->getControllingPlayer()->isPlayerActive() 
+			&& !us->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 	{
 		Object *hole;
 

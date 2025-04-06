@@ -280,7 +280,7 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 					m_reconstructingID = reconstructing->getID();
 
 					// we want to prevent the player from selecting and doing things with this worker
-					worker->setStatus( OBJECT_STATUS_UNSELECTABLE );
+					worker->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNSELECTABLE ) );
 
 					//
 					// we want to prevent the player and the AI from selecting or targeting the hole
@@ -316,8 +316,7 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 	}  // end if
 
 	// when re-construction is complete, we remove this hole and worker
-	if( reconstructing && 
-			BitIsSet( reconstructing->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE )
+	if( reconstructing && !reconstructing->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 	{
 		// Transfer hole name to new building
 		TheScriptEngine->transferObjectName( hole->getName(), reconstructing );

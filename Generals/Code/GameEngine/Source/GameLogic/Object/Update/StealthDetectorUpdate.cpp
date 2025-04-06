@@ -130,7 +130,7 @@ Bool PartitionFilterStealthedOrStealthGarrisoned::allow( Object *objOther)
 	if( ! objOther )
 		return FALSE;
 
-	if( objOther->getStatusBits() & OBJECT_STATUS_STEALTHED )
+	if( objOther->getStatusBits().test( OBJECT_STATUS_STEALTHED ) )
 		return TRUE;
 
 	ContainModuleInterface *contain = objOther->getContain();

@@ -42,7 +42,6 @@
 GrantUpgradeCreateModuleData::GrantUpgradeCreateModuleData()
 {
 	m_upgradeName = "";
-	m_exemptStatus = OBJECT_STATUS_NONE;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -54,7 +53,7 @@ void GrantUpgradeCreateModuleData::buildFieldParse(MultiIniFieldParse& p)
 	static const FieldParse dataFieldParse[] = 
 	{
 		{ "UpgradeToGrant",	INI::parseAsciiString,		NULL, offsetof( GrantUpgradeCreateModuleData, m_upgradeName ) },
-		{ "ExemptStatus",	INI::parseBitString32,	TheObjectStatusBitNames, offsetof( GrantUpgradeCreateModuleData, m_exemptStatus ) },
+		{ "ExemptStatus",	ObjectStatusMaskType::parseFromINI, NULL, offsetof( GrantUpgradeCreateModuleData, m_exemptStatus ) },
 		{ 0, 0, 0, 0 }
 	};
 
@@ -84,11 +83,11 @@ GrantUpgradeCreate::~GrantUpgradeCreate( void )
 void GrantUpgradeCreate::onCreate( void )
 {
 
-	ObjectStatusBits exemptStatus = (ObjectStatusBits)getGrantUpgradeCreateModuleData()->m_exemptStatus;
-	ObjectStatusBits currentStatus = (ObjectStatusBits)getObject()->getStatusBits();
-	if( BitIsSet( exemptStatus, OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
+	ObjectStatusMaskType exemptStatus = getGrantUpgradeCreateModuleData()->m_exemptStatus;
+	ObjectStatusMaskType currentStatus = getObject()->getStatusBits();
+	if( exemptStatus.test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 	{
-		if(	BitIsSet( currentStatus, OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE ) 
+		if(	!currentStatus.test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ) 
 		{
 			const UpgradeTemplate *upgradeTemplate = TheUpgradeCenter->findUpgrade( getGrantUpgradeCreateModuleData()->m_upgradeName );
 			if( !upgradeTemplate )

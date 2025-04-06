@@ -49,9 +49,7 @@
 //-------------------------------------------------------------------------------------------------
 DieMuxData::DieMuxData() :
 	m_deathTypes(DEATH_TYPE_FLAGS_ALL),
-	m_veterancyLevels(VETERANCY_LEVEL_FLAGS_ALL),
-	m_exemptStatus(OBJECT_STATUS_NONE),
-	m_requiredStatus(OBJECT_STATUS_NONE)
+	m_veterancyLevels(VETERANCY_LEVEL_FLAGS_ALL)
 {
 }
 
@@ -60,10 +58,10 @@ const FieldParse* DieMuxData::getFieldParse()
 {
 	static const FieldParse dataFieldParse[] = 
 	{
-		{ "DeathTypes", INI::parseDeathTypeFlags, NULL, offsetof( DieMuxData, m_deathTypes ) },
-		{ "VeterancyLevels", INI::parseVeterancyLevelFlags, NULL, offsetof( DieMuxData, m_veterancyLevels ) },
-		{ "ExemptStatus",	INI::parseBitString32,	TheObjectStatusBitNames,	offsetof( DieMuxData, m_exemptStatus ) },
-		{ "RequiredStatus",	INI::parseBitString32,	TheObjectStatusBitNames,	offsetof( DieMuxData, m_requiredStatus ) },
+		{ "DeathTypes",				INI::parseDeathTypeFlags,						NULL, offsetof( DieMuxData, m_deathTypes ) },
+		{ "VeterancyLevels",	INI::parseVeterancyLevelFlags,			NULL, offsetof( DieMuxData, m_veterancyLevels ) },
+		{ "ExemptStatus",			ObjectStatusMaskType::parseFromINI,	NULL,	offsetof( DieMuxData, m_exemptStatus ) },
+		{ "RequiredStatus",		ObjectStatusMaskType::parseFromINI, NULL,	offsetof( DieMuxData, m_requiredStatus ) },
 		{ 0, 0, 0, 0 }
 	};
   return dataFieldParse;
@@ -81,11 +79,12 @@ Bool DieMuxData::isDieApplicable(const Object* obj, const DamageInfo *damageInfo
 		return false;
 
 	// all 'exempt' bits must be clear for us to run.
-	if ((obj->getStatusBits() & m_exemptStatus) != 0)
+	if( m_exemptStatus.any() && obj->getStatusBits().testForAny( m_exemptStatus ) )
 		return false;
 
 	// all 'required' bits must be set for us to run.
-	if ((obj->getStatusBits() & m_requiredStatus) != m_requiredStatus)
+	// But only if we have a required status to check
+	if( m_requiredStatus.any()  &&  !obj->getStatusBits().testForAll( m_requiredStatus ) )
 		return false;
 
 	return true;

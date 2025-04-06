@@ -592,7 +592,7 @@ void InGameUI::objectChangedTeam(const Object *obj, Int oldPlayerIndex, Int newP
 			}
 			if (!found)
 			{
-				if( TheGameLogic->getFrame() == 0 && BitIsSet( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE &&
+				if( TheGameLogic->getFrame() == 0 && !obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) &&
 					obj->isKindOf( KINDOF_COMMANDCENTER ) == FALSE )
 					addSuperweapon(newPlayerIndex, powerName, id, powerTemplate);
 			}

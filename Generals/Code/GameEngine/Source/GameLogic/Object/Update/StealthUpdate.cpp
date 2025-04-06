@@ -75,7 +75,7 @@ void StealthUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "StealthDelay",									INI::parseDurationUnsignedInt,	NULL, offsetof( StealthUpdateModuleData, m_stealthDelay ) },
 		{ "MoveThresholdSpeed",						INI::parseVelocityReal,					NULL, offsetof( StealthUpdateModuleData, m_stealthSpeed ) },
 		{ "StealthForbiddenConditions",		INI::parseBitString32,					TheStealthLevelNames, offsetof( StealthUpdateModuleData, m_stealthLevel) }, 
-		{ "HintDetectableConditions",	  	INI::parseBitString32,					TheObjectStatusBitNames, offsetof( StealthUpdateModuleData, m_hintDetectableStates) },
+		{ "HintDetectableConditions",	  	ObjectStatusMaskType::parseFromINI,	NULL, offsetof( StealthUpdateModuleData, m_hintDetectableStates) },
 		{ "FriendlyOpacityMin",						INI::parsePercentToReal,				NULL, offsetof( StealthUpdateModuleData, m_friendlyOpacityMin ) },
 		{ "FriendlyOpacityMax",						INI::parsePercentToReal,				NULL, offsetof( StealthUpdateModuleData, m_friendlyOpacityMax ) },
 		{ "PulseFrequency",								INI::parseDurationUnsignedInt,	NULL, offsetof( StealthUpdateModuleData, m_pulseFrames ) },
@@ -120,7 +120,7 @@ StealthUpdate::StealthUpdate( Thing *thing, const ModuleData* moduleData ) : Upd
 	if( data->m_innateStealth )
 	{
 		//Giving innate stealth units this status bit allows other code to easily check the status bit.
-		getObject()->setStatus( OBJECT_STATUS_CAN_STEALTH );
+		getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_CAN_STEALTH ) );
 	}
 
 	// start active, since some stealths start enabled from the get-go
@@ -144,25 +144,25 @@ Bool StealthUpdate::allowedToStealth() const
 	const Object *self = getObject();
 	UnsignedInt flags = getStealthUpdateModuleData()->m_stealthLevel;
 
-	if( flags & STEALTH_NOT_WHILE_ATTACKING && self->getStatusBits() & OBJECT_STATUS_IS_FIRING_WEAPON )
+	if( flags & STEALTH_NOT_WHILE_ATTACKING && self->getStatusBits().test( OBJECT_STATUS_IS_FIRING_WEAPON ) )
 	{
 		//Doesn't stealth while aggressive (includes approaching).
-		return false;
+		return FALSE;
 	}
 	
-	if( flags & STEALTH_NOT_WHILE_USING_ABILITY && self->getStatusBits() & OBJECT_STATUS_IS_USING_ABILITY )
+	if( flags & STEALTH_NOT_WHILE_USING_ABILITY && self->getStatusBits().test( OBJECT_STATUS_IS_USING_ABILITY ) )
 	{
 		//Doesn't stealth while using a special ability (starting with preparation, which takes place after unpacking).
-		return false;
+		return FALSE;
 	}
 
 	//Do a quick preliminary test to see if we are restricted by firing particular weapons and we fired a shot last frame or this frame.
-	if( flags & STEALTH_NOT_WHILE_FIRING_WEAPON && self->getStatusBits() & OBJECT_STATUS_IS_FIRING_WEAPON )
+	if( flags & STEALTH_NOT_WHILE_FIRING_WEAPON && self->getStatusBits().test( OBJECT_STATUS_IS_FIRING_WEAPON ) )
 	{
 		if( (flags & STEALTH_NOT_WHILE_FIRING_WEAPON) == STEALTH_NOT_WHILE_FIRING_WEAPON )
 		{
 			//Not allowed to stealth while firing ANY weapon!
-			return false;
+			return FALSE;
 		}
 
 		//Now do weapon specific checks.
@@ -221,7 +221,7 @@ void StealthUpdate::hintDetectableWhileUnstealthed()
 	Object *self = getObject();
 	const StealthUpdateModuleData *md = getStealthUpdateModuleData();
 
-	if( self && (md->m_hintDetectableStates & self->getStatusBits()) )
+	if( self && md->m_hintDetectableStates.testForAny( self->getStatusBits() ) )
 	{
 		if ( self->getControllingPlayer() == ThePlayerList->getLocalPlayer() )
 		{
@@ -286,7 +286,7 @@ StealthLookType StealthUpdate::calcStealthedStatusForPlayer(const Object* obj, c
 	if (obj->isEffectivelyDead())
 		return STEALTHLOOK_NONE;			// making sure he turns visible when he dies
 
-	if (obj->getStatusBits() & OBJECT_STATUS_STEALTHED)
+	if( obj->getStatusBits().test( OBJECT_STATUS_STEALTHED ) )
 	{
 		const Team* team = obj->getTeam();
 		Relationship r = team ? team->getRelationship(player->getDefaultTeam()) : NEUTRAL;
@@ -306,7 +306,7 @@ StealthLookType StealthUpdate::calcStealthedStatusForPlayer(const Object* obj, c
 				return STEALTHLOOK_NONE;
 		}
 
-		if (obj->getStatusBits() & OBJECT_STATUS_DETECTED)			// we're detected.
+		if( obj->getStatusBits().test( OBJECT_STATUS_DETECTED ) )			// we're detected.
 		{
 			if (r == ALLIES)// if we're friendly to the given player, detection DOES matter though.
 				return STEALTHLOOK_VISIBLE_FRIENDLY_DETECTED;
@@ -421,8 +421,8 @@ UpdateSleepTime StealthUpdate::update( void )
 			{
 				//We're finished removing disguise so turn off stealth update.
 				m_enabled = false;
-				self->clearStatus( OBJECT_STATUS_STEALTHED );
-				self->clearStatus( OBJECT_STATUS_DETECTED );
+				self->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_STEALTHED ) );
+				self->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DETECTED ) );
 				return calcSleepTime();
 			}
 		}
@@ -456,7 +456,7 @@ UpdateSleepTime StealthUpdate::update( void )
 	}
 
 	// If the object is unable to Stealth, don't bother trying.
-	if( !(self->getStatusBits() & OBJECT_STATUS_CAN_STEALTH) )
+	if( !(self->getStatusBits().test(OBJECT_STATUS_CAN_STEALTH)) )
 	{
 		return calcSleepTime();
 	}
@@ -472,7 +472,7 @@ UpdateSleepTime StealthUpdate::update( void )
 
 		// If we haven't stealthed yet( still destealthed ), play stealthOn here
 		//if ( ( self->getStatusBits() && OBJECT_STATUS_STEALTHED ) == 0 )
-		if ( ( self->getStatusBits() & OBJECT_STATUS_STEALTHED ) == 0 )
+		if( !self->getStatusBits().test( OBJECT_STATUS_STEALTHED ) )
 		{
 			AudioEventRTS soundEvent = *self->getTemplate()->getSoundStealthOn();
 			soundEvent.setObjectID(self->getID());
@@ -480,21 +480,21 @@ UpdateSleepTime StealthUpdate::update( void )
 		}
 
 		// The timer is zero, so if we aren't stealthed, do so now!
-		self->setStatus( OBJECT_STATUS_STEALTHED );
+		self->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_STEALTHED ) );
 	}
 	else
 	{
 		m_stealthAllowedFrame = now + getStealthUpdateModuleData()->m_stealthDelay;
 		
 		// if you are destealthing on your own free will, play sound for all to hear
-		if ( ( self->getStatusBits() & OBJECT_STATUS_STEALTHED ) != 0 )
+		if( self->getStatusBits().test( OBJECT_STATUS_STEALTHED ) )
 		{
 			AudioEventRTS soundEvent = *self->getTemplate()->getSoundStealthOn();
 			soundEvent.setObjectID(self->getID());
 			TheAudio->addAudioEvent( &soundEvent );
 		}
 
-		self->clearStatus( OBJECT_STATUS_STEALTHED );
+		self->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_STEALTHED ) );
 		
 		hintDetectableWhileUnstealthed();
 	
@@ -506,7 +506,7 @@ UpdateSleepTime StealthUpdate::update( void )
 	if (m_detectionExpiresFrame > now)
 	{
 		// if this is the first time being detected, play stealth off sound
-		if( !(self->getStatusBits() & OBJECT_STATUS_DETECTED) )
+		if( !self->getStatusBits().test( OBJECT_STATUS_DETECTED ) )
 		{
 			detectedStatusChangedThisFrame = TRUE;
 			AudioEventRTS soundEvent = *self->getTemplate()->getSoundStealthOff();
@@ -514,12 +514,12 @@ UpdateSleepTime StealthUpdate::update( void )
 			TheAudio->addAudioEvent( &soundEvent );
 		}
 
-		self->setStatus( OBJECT_STATUS_DETECTED );
+		self->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DETECTED ) );
 	}
 	else
 	{
 		// if this is the first time your clearing the detected status, play the stealth on sound
-		if( ( self->getStatusBits() & OBJECT_STATUS_DETECTED ) )
+		if( self->getStatusBits().test( OBJECT_STATUS_DETECTED ) )
 		{
 			detectedStatusChangedThisFrame = TRUE;
 			//Only play sound effect if the selected object is controllable.
@@ -531,7 +531,7 @@ UpdateSleepTime StealthUpdate::update( void )
 			}
 		}
 
-		self->clearStatus( OBJECT_STATUS_DETECTED );
+		self->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DETECTED ) );
 	}
 
 	if ( detectedStatusChangedThisFrame )

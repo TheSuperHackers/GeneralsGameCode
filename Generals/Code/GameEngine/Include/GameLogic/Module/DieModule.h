@@ -35,7 +35,7 @@
 #include "Common/Module.h"
 #include "GameLogic/Damage.h"
 #include "GameLogic/Module/BehaviorModule.h"
-#include "GameLogic/ObjectStatusBits.h"
+#include "Common/ObjectStatusTypes.h"
 
 //-------------------------------------------------------------------------------------------------
 /** OBJECT DIE MODULE base class */

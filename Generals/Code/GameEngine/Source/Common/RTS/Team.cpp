@@ -258,7 +258,7 @@ void TeamFactory::addTeamPrototypeToList(TeamPrototype* team)
 	TeamPrototypeMap::iterator it = m_prototypes.find(nk);
 	if (it != m_prototypes.end())
 	{
-		DEBUG_ASSERTCRASH((*it).second==team, ("uh oh, mismatch"));
+		DEBUG_ASSERTCRASH((*it).second==team, ("TeamFactory::addTeamPrototypeToList: Team %s already exists... skipping.", team->getName().str()));
 		return;	// already present
 	}
 
@@ -1523,8 +1523,9 @@ Object *Team::getTeamTargetObject(void)
 	Object *target = TheGameLogic->findObjectByID(m_commonAttackTarget);
 	if (target) {
 		//If the enemy unit is stealthed and not detected, then we can't attack it!
-		UnsignedInt status = target->getStatusBits();
-		if( (status & OBJECT_STATUS_STEALTHED) && !(status & OBJECT_STATUS_DETECTED) ) {
+	if( target->testStatus( OBJECT_STATUS_STEALTHED ) && 
+			!target->testStatus( OBJECT_STATUS_DETECTED ) )
+		{
 			target = NULL;
 		}
 	}
@@ -1623,7 +1624,7 @@ void Team::countObjectsByThingTemplate(Int numTmplates, const ThingTemplate* con
 			if (ignoreDead && iter.cur()->isEffectivelyDead())
 				continue;
 
-			if( ignoreUnderConstruction && (BitIsSet(iter.cur()->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION) == TRUE) )
+			if( ignoreUnderConstruction && iter.cur()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 				continue;
 
 			counts[i] += 1;

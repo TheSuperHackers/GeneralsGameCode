@@ -501,7 +501,7 @@ void SpecialAbilityUpdate::onExit( Bool cleanup )
 
 	getObject()->clearModelConditionFlags( 
 		MAKE_MODELCONDITION_MASK4( MODELCONDITION_UNPACKING, MODELCONDITION_PACKING, MODELCONDITION_FIRING_A, MODELCONDITION_RAISING_FLAG ) );
-	getObject()->clearStatus( OBJECT_STATUS_IS_USING_ABILITY );
+	getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_USING_ABILITY ) );
 
 	TheAudio->removeAudioEvent( m_prepSoundLoop.getPlayingHandle() );
 	endPreparation();
@@ -978,7 +978,7 @@ void SpecialAbilityUpdate::startPreparation()
 	if (getObject()->getAI()) {
 		getObject()->getAI()->aiIdle( CMD_FROM_AI ); // just in case.  jba.
 	}
-	getObject()->setStatus( OBJECT_STATUS_IS_USING_ABILITY );
+	getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_USING_ABILITY ) );
 
 	m_prepSoundLoop = data->m_prepSoundLoop;
 	m_prepSoundLoop.setObjectID( getObject()->getID() );
@@ -1784,7 +1784,7 @@ Object* SpecialAbilityUpdate::findSpecialObjectWithProducerID( const Object *tar
 //-------------------------------------------------------------------------------------------------
 void SpecialAbilityUpdate::endPreparation()
 {
-	getObject()->clearStatus( OBJECT_STATUS_IS_USING_ABILITY );
+	getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_USING_ABILITY ) );
 	TheAudio->removeAudioEvent( m_prepSoundLoop.getPlayingHandle() );
 
 	// Based on the special that we just finished preparing (either by failure or success),

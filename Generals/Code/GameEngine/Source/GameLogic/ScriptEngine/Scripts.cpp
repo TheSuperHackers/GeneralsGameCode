@@ -2110,12 +2110,12 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 
 	if (pParm->getParameterType() == OBJECT_STATUS) 
 	{
-		// Need to change the string to an integer
-		for (int i = 0; TheObjectStatusBitNames[i]; ++i) 
+		// Need to change the string to an ObjectStatusMaskType
+		for( int i = 0; i < OBJECT_STATUS_COUNT; ++i ) 
 		{
-			if (pParm->m_string.compareNoCase(TheObjectStatusBitNames[i]) == 0) 
+			if( !pParm->m_string.compareNoCase( ObjectStatusMaskType::getBitNames()[i] ) ) 
 			{
-				pParm->setInt(1 << i);
+				pParm->setStatus( MAKE_OBJECT_STATUS_MASK( i ) );
 				break;
 			}
 		}

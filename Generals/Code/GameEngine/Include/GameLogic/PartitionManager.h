@@ -54,7 +54,7 @@
 //-----------------------------------------------------------------------------
 #include "Common/GameCommon.h"	// ensure we get DUMP_PERF_STATS, or not
 #include "GameLogic/ObjectIter.h"
-#include "GameLogic/ObjectStatusBits.h"
+#include "Common/ObjectStatusTypes.h"
 #include "Common/KindOf.h"
 #include "Common/Snapshot.h"
 #include "Common/Geometry.h"

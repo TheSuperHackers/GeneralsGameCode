@@ -385,9 +385,9 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 		// create the new object.  We need to construct it with UnderConstruction set, since we are going to insta build it,
 		// but we don't want to send double construction type events like power creation. onStructureConstructionComplete
 		// is called below, so we need to simulate the proper object creation flow from the start.  Be like Dozer.
-		ObjectStatusBits startingStatus = OBJECT_STATUS_NONE;
+		ObjectStatusMaskType startingStatus;
 		if( what->isKindOf( KINDOF_STRUCTURE ) )
-			startingStatus = OBJECT_STATUS_UNDER_CONSTRUCTION;
+			startingStatus.set( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNDER_CONSTRUCTION ) );
 
 		Object *obj = TheThingFactory->newObject( what, owningPlayer->getDefaultTeam(), startingStatus );
 		obj->setProducer(constructorObject);
@@ -1518,7 +1518,7 @@ void BuildAssistant::sellObject( Object *obj )
 	// set this object as under de-construction (sold).  It is still a legal target, since you get the money at 
 	// the completion of sale.
 	//
-	obj->setStatus( ObjectStatusBits( OBJECT_STATUS_SOLD | OBJECT_STATUS_UNSELECTABLE ) );
+	obj->setStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_SOLD, OBJECT_STATUS_UNSELECTABLE ) );
 
 	// for everybody, unselect them at this time.  You can't just deselect a drawable.  Selection is a logic property.
 	TheGameLogic->deselectObject(obj, PLAYERMASK_ALL, TRUE);

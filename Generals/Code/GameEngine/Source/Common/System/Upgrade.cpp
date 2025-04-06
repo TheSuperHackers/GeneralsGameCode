@@ -38,6 +38,14 @@
 #include "GameClient/InGameUI.h"
 #include "GameClient/Image.h"
 
+
+const char *TheUpgradeTypeNames[] = 
+{
+	"PLAYER",
+	"OBJECT",
+	NULL
+};
+
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 class UpgradeCenter *TheUpgradeCenter = NULL;
 
@@ -108,7 +116,7 @@ const FieldParse UpgradeTemplate::m_upgradeFieldParseTable[] =
 {
 
 	{ "DisplayName",				INI::parseAsciiString,		NULL, offsetof( UpgradeTemplate, m_displayNameLabel ) },
-	{ "Type",								INI::parseIndexList,			UpgradeTypeNames, offsetof( UpgradeTemplate, m_type ) },
+	{ "Type",								INI::parseIndexList,			TheUpgradeTypeNames, offsetof( UpgradeTemplate, m_type ) },
 	{ "BuildTime",					INI::parseReal,						NULL, offsetof( UpgradeTemplate, m_buildTime ) },
 	{ "BuildCost",					INI::parseInt,						NULL, offsetof( UpgradeTemplate, m_cost ) },
 	{ "ButtonImage",				INI::parseAsciiString,		NULL, offsetof( UpgradeTemplate, m_buttonImageName ) },
@@ -129,7 +137,6 @@ UpgradeTemplate::UpgradeTemplate( void )
 	m_type = UPGRADE_TYPE_PLAYER;
 	m_nameKey = NAMEKEY_INVALID;
 	m_buildTime = 0.0f;
-	m_upgradeMask = 0;
 	m_next = NULL;
 	m_prev = NULL;
 	m_buttonImage = NULL;
@@ -366,7 +373,9 @@ UpgradeTemplate *UpgradeCenter::newUpgrade( const AsciiString& name )
 
 	// Make a unique bitmask for this new template by keeping track of what bits have been assigned
 	// damn MSFT! proper ANSI syntax for a proper 64-bit constant is "1LL", but MSVC doesn't recognize it
-	UpgradeMaskType newMask = 1i64 << m_nextTemplateMaskBit;
+	UpgradeMaskType newMask;
+	newMask.set( m_nextTemplateMaskBit );
+	//Int64 newMask = 1i64 << m_nextTemplateMaskBit;
 	m_nextTemplateMaskBit++;
 	DEBUG_ASSERTCRASH( m_nextTemplateMaskBit < UPGRADE_MAX_COUNT, ("Can't have over %d types of Upgrades and have a Bitfield function.", UPGRADE_MAX_COUNT) );
 	newUpgrade->friend_setUpgradeMask( newMask );

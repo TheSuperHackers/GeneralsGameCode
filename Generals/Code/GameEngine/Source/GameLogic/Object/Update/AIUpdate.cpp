@@ -2256,9 +2256,9 @@ UpdateSleepTime AIUpdateInterface::doLocomotor( void )
 
 		// After our movement for the frame, update our AirborneTarget flag.
 		if(getObject()->getHeightAboveTerrain() > m_curLocomotor->getAirborneTargetingHeight() )
-			getObject()->setStatus(OBJECT_STATUS_AIRBORNE_TARGET);
+			getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_AIRBORNE_TARGET ) );
 		else
-			getObject()->clearStatus(OBJECT_STATUS_AIRBORNE_TARGET);
+			getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_AIRBORNE_TARGET ) );
 
 		m_curMaxBlockedSpeed = FAST_AS_POSSIBLE;
 	}
@@ -3365,12 +3365,12 @@ void AIUpdateInterface::privateAttackPosition( const Coord3D *pos, Int maxShotsT
 	if (continueRange > 0.0f)
 	{
 		// ick. set this bit so we can find the mine to go target, even if stealthed. (srj)
-		getObject()->setStatus(OBJECT_STATUS_IGNORING_STEALTH, true);
+		getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IGNORING_STEALTH ) );
 		PartitionFilterPossibleToAttack filterAttack(ATTACK_NEW_TARGET, getObject(), cmdSource);
 		PartitionFilterSameMapStatus filterMapStatus(getObject());
 		PartitionFilter *filters[] = { &filterAttack, &filterMapStatus, NULL };
 		Object* victim = ThePartitionManager->getClosestObject(&localPos, continueRange, FROM_CENTER_2D, filters);
-		getObject()->setStatus(OBJECT_STATUS_IGNORING_STEALTH, false);
+		getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IGNORING_STEALTH ) );
 
 		if (victim)
 		{
@@ -4281,7 +4281,7 @@ Object* AIUpdateInterface::getNextMoodTarget( Bool calledByAI, Bool calledDuring
 	//AutoAcquireWhenIdle = Yes Stealthed.
 	if ( calledDuringIdle )
 	{
-		if ((obj->getStatusBits() & OBJECT_STATUS_STEALTHED) != 0) 
+		if( obj->getStatusBits().test( OBJECT_STATUS_STEALTHED ) ) 
 		{
 			if ((getAIUpdateModuleData()->m_autoAcquireEnemiesWhenIdle & AAS_Idle_Stealthed) == 0) 
 			{

@@ -1744,7 +1744,7 @@ void ControlBar::evaluateContextUI( void )
 			return;
 
 		// we show no interface for objects being sold
-		if( BitIsSet( obj->getStatusBits(), OBJECT_STATUS_SOLD ) )
+		if( obj->getStatusBits().test( OBJECT_STATUS_SOLD ) )
 			return;
 
 		static const NameKeyType key_OCLUpdate = NAMEKEY( "OCLUpdate" );
@@ -1756,7 +1756,7 @@ void ControlBar::evaluateContextUI( void )
 		// more important than anything
 		//
 		Bool contextSelected = FALSE;
-		if( BitIsSet( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+		if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 		{
 
 			switchToContext( CB_CONTEXT_UNDER_CONSTRUCTION, drawToEvaluateFor );

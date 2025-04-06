@@ -38,6 +38,7 @@
 #include "Common/ThingFactory.h"
 #include "Common/Team.h"
 #include "Common/Player.h"
+#include "Common/ObjectStatusTypes.h"
 
 #include "GameClient/ControlBar.h"
 #include "GameClient/Drawable.h"
@@ -719,7 +720,7 @@ Bool ScriptConditions::evaluateTeamAttackedByType(Parameter *pTeamParm, Paramete
 {
 	Team *theTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
 	if (!theTeam) {
-		return false;
+		return FALSE;
 	}
 
 	ObjectTypesTemp types;
@@ -1040,7 +1041,8 @@ Bool ScriptConditions::evaluateEnemySighted(Parameter *pItemParm, Parameter *pAl
 	PartitionFilterAlive filterAlive;
 
 	// and only nonstealthed items.
-	PartitionFilterRejectByObjectStatus filterStealth(OBJECT_STATUS_STEALTHED, OBJECT_STATUS_DETECTED);
+	PartitionFilterRejectByObjectStatus filterStealth( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_STEALTHED ), 
+																										 MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DETECTED ) );
 	
 	// and only on-map (or not)
 	PartitionFilterSameMapStatus filterMapStatus(theObj);
@@ -1084,7 +1086,8 @@ Bool ScriptConditions::evaluateTypeSighted(Parameter *pItemParm, Parameter *pTyp
 	PartitionFilterAlive filterAlive;
 
 	// and only nonstealthed items.
-	PartitionFilterRejectByObjectStatus filterStealth(OBJECT_STATUS_STEALTHED, OBJECT_STATUS_DETECTED);
+	PartitionFilterRejectByObjectStatus filterStealth( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_STEALTHED ), 
+																										 MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DETECTED ) );
 
 	// and only on-map (or not)
 	PartitionFilterSameMapStatus filterMapStatus(theObj);
@@ -1128,8 +1131,9 @@ Bool ScriptConditions::evaluateNamedDiscovered(Parameter *pItemParm, Parameter* 
 	}
 
 	// If we are stealthed we are not visible.
-	if (BitIsSet( theObj->getStatusBits(), OBJECT_STATUS_STEALTHED) && 
-		!BitIsSet( theObj->getStatusBits(), OBJECT_STATUS_DETECTED)) {
+	if( theObj->getStatusBits().test( OBJECT_STATUS_STEALTHED ) && 
+			!theObj->getStatusBits().test( OBJECT_STATUS_DETECTED ) ) 
+	{
 		return false;
 	}
 	ObjectShroudStatus shroud = theObj->getShroudedStatus(pPlayer->getPlayerIndex());
@@ -1164,8 +1168,9 @@ Bool ScriptConditions::evaluateTeamDiscovered(Parameter *pTeamParm, Parameter *p
 		}
 		
 		// If we are stealthed we are not visible.
-		if (BitIsSet( pObj->getStatusBits(), OBJECT_STATUS_STEALTHED) && 
-			!BitIsSet( pObj->getStatusBits(), OBJECT_STATUS_DETECTED)) {
+		if( pObj->getStatusBits().test( OBJECT_STATUS_STEALTHED ) && 
+				!pObj->getStatusBits().test( OBJECT_STATUS_DETECTED ) )
+		{
 			continue;
 		}
 		ObjectShroudStatus shroud = pObj->getShroudedStatus(pPlayer->getPlayerIndex());
@@ -1826,7 +1831,7 @@ Bool ScriptConditions::evaluateSkirmishSpecialPowerIsReady(Parameter *pSkirmishP
 			for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
 				Object *pObj = iter.cur();
 				if (!pObj) continue;
-				if ( BitIsSet( pObj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) || pObj->isDisabled() )
+				if( pObj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) || pObj->isDisabled() )
 				{
 					continue; // can't fire if under construction or disabled.
 				}
@@ -1969,7 +1974,7 @@ Bool ScriptConditions::evaluateUnitHasObjectStatus(Parameter *pUnitParm, Paramet
 		return false;
 	}
 
-	return ((object->getStatusBits() & pObjectStatus->getInt()) != 0);
+	return( object->getStatusBits().testForAny( pObjectStatus->getStatus() ) );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1986,13 +1991,18 @@ Bool ScriptConditions::evaluateTeamHasObjectStatus(Parameter *pTeamParm, Paramet
 			return false;
 		}
 
-		Bool currObj = pObj->getStatusBits() & pObjectStatus->getInt();
+		ObjectStatusMaskType objStatus = pObjectStatus->getStatus();
+		Bool currObjHasStatus = pObj->getStatusBits().testForAny( objStatus );
 
-		if (entireTeam && !currObj) {
+		if( entireTeam && !currObjHasStatus ) 
+		{
 			return false;
-		} else if (!entireTeam && currObj) {
+		} 
+		else if( !entireTeam && currObjHasStatus )
+		{
 			return true;
 		}
+
 	}
 
 	if (entireTeam) {

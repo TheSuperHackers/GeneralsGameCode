@@ -106,7 +106,7 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 	// we won't be able to use the power for X number of frames now
 
 	// if we're pre-built, start counting down
-	if( BitIsSet( getObject()->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE )
+	if( !getObject()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 	{
 		//A sharedNSync special only startPowerRecharges when first scienced or when executed,
 		//Since a new modue with same SPTemplates may construct at any time.

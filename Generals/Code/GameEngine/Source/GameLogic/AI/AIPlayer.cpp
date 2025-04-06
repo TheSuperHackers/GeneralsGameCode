@@ -132,8 +132,8 @@ void AIPlayer::onStructureProduced( Object *factory, Object *bldg )
 		info->setUnderConstruction(false);
 		bldg->updateObjValuesFromMapProperties(&d);
 		// clear the under construction status
-		bldg->clearStatus( OBJECT_STATUS_UNDER_CONSTRUCTION );
-		bldg->clearStatus( OBJECT_STATUS_RECONSTRUCTING );
+		bldg->clearStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_RECONSTRUCTING ) );
+
 		TheScriptEngine->addObjectToCache(bldg);
 		TheScriptEngine->runObjectScript(info->getScript(), bldg);
 		if (TheGlobalData->m_debugAI) {
@@ -472,8 +472,7 @@ Object *AIPlayer::buildStructureNow(const ThingTemplate *bldgPlan, BuildListInfo
 		info->setObjectTimestamp( TheGameLogic->getFrame()+1 );	// has to be non-zero, so just add 1.
 
 		// clear the under construction status
-		bldg->clearStatus( OBJECT_STATUS_UNDER_CONSTRUCTION );
-		bldg->clearStatus( OBJECT_STATUS_RECONSTRUCTING );
+		bldg->clearStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_RECONSTRUCTING ) );
 
 		if (TheGlobalData->m_debugAI) {
 			AsciiString bldgName = bldgPlan->getName();
@@ -741,7 +740,8 @@ void AIPlayer::processBaseBuilding( void )
 				}	else {
 					if (bldg->getControllingPlayer() == m_player) {
 						// Check for built or dozer missing.
-						if( BitIsSet( bldg->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE) {
+						if( bldg->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ) 
+						{
 							// make sure dozer is working on him.
 							ObjectID builder = bldg->getBuilderID();
 							Object* myDozer = TheGameLogic->findObjectByID(builder);
@@ -1004,7 +1004,8 @@ Bool AIPlayer::isLocationSafe(const Coord3D *pos, const ThingTemplate *tthing )
 
 	// and only stuff that isn't stealthed (and not detected)
 	// (note that stealthed allies aren't hidden from us, but we're only looking for enemies here)
-	PartitionFilterRejectByObjectStatus filterStealth(OBJECT_STATUS_STEALTHED, OBJECT_STATUS_DETECTED);
+	PartitionFilterRejectByObjectStatus filterStealth( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_STEALTHED ), 
+																										 MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DETECTED ) );
 
 	// (optional) only stuff that is significant
 	PartitionFilterInsignificantBuildings filterInsignificant(true, false);
@@ -1680,9 +1681,9 @@ void AIPlayer::buildUpgrade(const AsciiString &upgrade)
 		Object *factory = TheGameLogic->findObjectByID( info->getObjectID() );
 		if( factory )
 		{
-			if( BitIsSet( factory->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
+			if( factory->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 				continue;
-			if( BitIsSet( factory->getStatusBits(), OBJECT_STATUS_SOLD ) == TRUE )
+			if( factory->getStatusBits().test( OBJECT_STATUS_SOLD ) )
 				continue;
 			Bool canUpgradeHere = false;
 			const CommandSet *commandSet = TheControlBar->findCommandSet( factory->getCommandSetString() );

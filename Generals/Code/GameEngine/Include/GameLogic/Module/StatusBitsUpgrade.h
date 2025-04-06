@@ -56,7 +56,7 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "GameLogic/Module/UpgradeModule.h"
-#include "GameLogic/ObjectStatusBits.h"
+#include "Common/ObjectStatusTypes.h"
 
 //-----------------------------------------------------------------------------
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
@@ -76,8 +76,6 @@ public:
 
 	StatusBitsUpgradeModuleData()
 	{
-		m_statusToSet = 0;
-		m_statusToClear = 0;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p);

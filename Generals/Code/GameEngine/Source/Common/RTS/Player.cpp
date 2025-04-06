@@ -320,8 +320,6 @@ Player::Player( Int playerIndex )
 	m_bombardBattlePlans = 0;
 	m_holdTheLineBattlePlans = 0;
 	m_searchAndDestroyBattlePlans = 0;
-	m_upgradesInProgress = 0;
-	m_upgradesCompleted = 0;
 	m_tunnelSystem = NULL;
 	m_playerTemplate = NULL;
 	m_visionSpiedMask = PLAYERMASK_NONE;
@@ -1016,7 +1014,7 @@ void Player::becomingTeamMember(Object *obj, Bool yes)
 		return;	
 
 	// energy production/consumption hooks, note we ignore things that are UNDER_CONSTRUCTION
-	if( BitIsSet( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE )
+	if( !obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 	{
 		obj->friend_adjustPowerForPlayer(yes);
 	}  // end if
@@ -2498,8 +2496,8 @@ void Player::deleteUpgradeList( void )
 	}  // end while
 
 	// This doesn't call removeUpgrade, so clear these ourselves.
-	m_upgradesInProgress = 0;
-	m_upgradesCompleted = 0;
+	m_upgradesInProgress.clear();
+	m_upgradesCompleted.clear();
 
 }  // end deleteUpgradeList
 
@@ -2534,7 +2532,7 @@ Bool Player::hasUpgradeComplete( const UpgradeTemplate *upgradeTemplate )
 //=================================================================================================
 Bool Player::hasUpgradeComplete( UpgradeMaskType testMask )
 {
-	return BitIsSet( m_upgradesCompleted, testMask );
+	return m_upgradesCompleted.testForAll( testMask );
 }
 
 //=================================================================================================
@@ -2543,7 +2541,7 @@ Bool Player::hasUpgradeComplete( UpgradeMaskType testMask )
 Bool Player::hasUpgradeInProduction( const UpgradeTemplate *upgradeTemplate )
 {
 	UpgradeMaskType testMask = upgradeTemplate->getUpgradeMask();
-	return BitIsSet( m_upgradesInProgress, testMask );
+	return m_upgradesInProgress.testForAll( testMask );
 }
 
 //=================================================================================================
@@ -2576,12 +2574,12 @@ Upgrade *Player::addUpgrade( const UpgradeTemplate *upgradeTemplate, UpgradeStat
 	UpgradeMaskType newMask = upgradeTemplate->getUpgradeMask();
 	if( status == UPGRADE_STATUS_IN_PRODUCTION )
 	{
-		BitSet( m_upgradesInProgress, newMask );
+		m_upgradesInProgress.set( newMask );
 	}
 	else if( status == UPGRADE_STATUS_COMPLETE )
 	{
-		BitClear( m_upgradesInProgress, newMask );
-		BitSet( m_upgradesCompleted, newMask );
+		m_upgradesInProgress.clear( newMask );
+		m_upgradesCompleted.set( newMask );
 		onUpgradeCompleted( upgradeTemplate );
 	}
 
@@ -2640,8 +2638,8 @@ void Player::removeUpgrade( const UpgradeTemplate *upgradeTemplate )
 
 		// Clear this upgrade's bits from our mind
 		UpgradeMaskType oldMask = upgradeTemplate->getUpgradeMask();
-		BitClear( m_upgradesInProgress, oldMask );
-		BitClear( m_upgradesCompleted, oldMask );
+		m_upgradesInProgress.clear( oldMask );
+		m_upgradesCompleted.clear( oldMask );
 
 		if( upgrade->getStatus() == UPGRADE_STATUS_COMPLETE )
 			onUpgradeRemoved();

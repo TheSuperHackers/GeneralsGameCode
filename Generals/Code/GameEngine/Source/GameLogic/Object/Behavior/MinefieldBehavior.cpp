@@ -125,7 +125,7 @@ MinefieldBehavior::MinefieldBehavior( Thing *thing, const ModuleData* moduleData
 	setWakeFrame( getObject(), UPDATE_SLEEP_NONE );
 
 	// mines aren't auto-acquirable
-	getObject()->setStatus(OBJECT_STATUS_NO_ATTACK_FROM_AI);
+	getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_NO_ATTACK_FROM_AI ) );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -317,12 +317,12 @@ void MinefieldBehavior::detonateOnce(const Coord3D& position)
 	if (m_virtualMinesRemaining == 0)
 	{
 		getObject()->setModelConditionState(MODELCONDITION_RUBBLE);
-		getObject()->setStatus(OBJECT_STATUS_MASKED);
+		getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ) );
 	}
 	else
 	{
 		getObject()->clearModelConditionState(MODELCONDITION_RUBBLE);
-		getObject()->clearStatus(OBJECT_STATUS_MASKED);
+		getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ) );
 	}
 }
 
@@ -495,12 +495,12 @@ void MinefieldBehavior::onDamage( DamageInfo *damageInfo )
 		}
 
 		getObject()->setModelConditionState(MODELCONDITION_RUBBLE);
-		getObject()->setStatus(OBJECT_STATUS_MASKED);
+		getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ) );
 	}
 	else
 	{
 		getObject()->clearModelConditionState(MODELCONDITION_RUBBLE);
-		getObject()->clearStatus(OBJECT_STATUS_MASKED);
+		getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ) );
 	}
 }
 
@@ -551,7 +551,7 @@ void MinefieldBehavior::disarm()
 
 	m_virtualMinesRemaining = 0;
 	getObject()->setModelConditionState(MODELCONDITION_RUBBLE);
-	getObject()->setStatus(OBJECT_STATUS_MASKED);
+	getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ) );
 }
 
 // ------------------------------------------------------------------------------------------------

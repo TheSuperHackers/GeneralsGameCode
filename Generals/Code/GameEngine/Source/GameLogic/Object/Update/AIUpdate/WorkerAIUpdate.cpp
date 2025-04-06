@@ -391,13 +391,12 @@ Object *WorkerAIUpdate::construct( const ThingTemplate *what,
 	}  // end if
 
 	// what will our initial status bits
-	ObjectStatusMaskType statusBits = OBJECT_STATUS_UNDER_CONSTRUCTION;
+	ObjectStatusMaskType statusBits = MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNDER_CONSTRUCTION );
 	if( isRebuild )
-		BitSet( statusBits, OBJECT_STATUS_RECONSTRUCTING );
+		statusBits.set( OBJECT_STATUS_RECONSTRUCTING );
 
 	// create an object at the destination location
-	Object *obj = TheThingFactory->newObject( what, owningPlayer->getDefaultTeam(), 
-																						(ObjectStatusBits)statusBits );
+	Object *obj = TheThingFactory->newObject( what, owningPlayer->getDefaultTeam(), statusBits );
 
 	// even though we haven't actually built anything yet, this keeps things tidy
 	obj->setProducer( getObject() );
@@ -419,7 +418,7 @@ Object *WorkerAIUpdate::construct( const ThingTemplate *what,
 	// set a bit that this object is under construction, it is important to do this early
 	// before the hooks add/subtract power from a player are executed
 	//
-	obj->setStatus( OBJECT_STATUS_UNDER_CONSTRUCTION );
+	obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNDER_CONSTRUCTION ) );
 
 	// initialize object
 	obj->setPosition( pos );

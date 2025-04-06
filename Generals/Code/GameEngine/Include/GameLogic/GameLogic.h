@@ -36,6 +36,7 @@
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
 #include "Common/STLTypedefs.h"
+#include "Common/ObjectStatusTypes.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "Common/STLTypedefs.h"
 #include "GameLogic/Module/UpdateModule.h"	// needed for DIRECT_UPDATEMODULE_ACCESS
@@ -66,7 +67,6 @@ class TerrainLogic;
 class GhostObjectManager;
 class CommandButton;
 enum BuildableStatus;
-enum ObjectStatusBits;
 
 typedef const CommandButton* ConstCommandButtonPtr;
 
@@ -145,7 +145,7 @@ public:
 
 	//-----------------------------------------------------------------------------------------------
 	/// create an object given the thing template. (Only for use by ThingFactory.)
-	Object *friend_createObject( const ThingTemplate *thing, ObjectStatusBits statusBits, Team *team );
+	Object *friend_createObject( const ThingTemplate *thing, const ObjectStatusMaskType &objectStatusMask, Team *team );
 	void destroyObject( Object *obj );							///< Mark object as destroyed for later deletion
 	Object *findObjectByID( ObjectID id );								///< Given an ObjectID, return a pointer to the object.
 	Object *getFirstObject( void );									///< Returns the "first" object in the world. When used with the object method "getNextObject()", all objects in the world can be iterated.

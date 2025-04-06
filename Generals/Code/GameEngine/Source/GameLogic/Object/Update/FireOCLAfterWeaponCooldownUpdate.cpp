@@ -122,7 +122,8 @@ UpdateSleepTime FireOCLAfterWeaponCooldownUpdate::update( void )
 
 	UpgradeMaskType objectMask = obj->getObjectCompletedUpgradeMask();
 	UpgradeMaskType playerMask = obj->getControllingPlayer()->getCompletedUpgradeMask();
-	UpgradeMaskType maskToCheck = playerMask | objectMask;
+	UpgradeMaskType maskToCheck = playerMask;
+	maskToCheck.set( objectMask );
 	if( validThisFrame && !testUpgradeConditions( maskToCheck ) )
 	{
 		//Can't use this period if this object doesn't have any of the upgrades

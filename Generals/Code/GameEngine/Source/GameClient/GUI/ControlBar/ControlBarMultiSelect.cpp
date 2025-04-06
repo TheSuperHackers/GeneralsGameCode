@@ -248,7 +248,7 @@ void ControlBar::populateMultiSelect( void )
 		// being sold as those objects can't be issued anymore commands
 		//
 		if( draw && draw->getObject() && 
-				BitIsSet( draw->getObject()->getStatusBits(), OBJECT_STATUS_SOLD ) == FALSE )
+				!draw->getObject()->getStatusBits().test( OBJECT_STATUS_SOLD ) )
 		{
 
 			// add the common commands of this drawable to the common command set

@@ -90,12 +90,12 @@ void SubObjectsUpgrade::upgradeImplementation( )
 	
 	//First make sure we have the right combination of upgrades
 
-	if( getObject()->getObjectCompletedUpgradeMask() & conflicting )
+	if( getObject()->getObjectCompletedUpgradeMask().testForAny( conflicting ) )
 	{
 		//If it has ANY of the conflicting OBJECT upgrades, then don't do it!
 		return;
 	}
-	if( getObject()->getControllingPlayer()->getCompletedUpgradeMask() & conflicting )
+	if( getObject()->getControllingPlayer()->getCompletedUpgradeMask().testForAny( conflicting ) )
 	{
 		//If it has ANY of the conflicting PLAYER upgrades, then don't do it!
 		return;

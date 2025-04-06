@@ -171,7 +171,7 @@ AsciiString DescribeObject(const Object *obj)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Object::Object( const ThingTemplate *tt, ObjectStatusBits statusBits, Team *team ) : 
+Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatusMask, Team *team ) : 
 	Thing(tt),
 	m_indicatorColor(0),
 	m_ai(NULL),
@@ -254,13 +254,12 @@ Object::Object( const ThingTemplate *tt, ObjectStatusBits statusBits, Team *team
 	m_producerID = INVALID_ID;
 	m_builderID = INVALID_ID;
 
-	m_status = statusBits;
+	m_status = objectStatusMask;
 	m_layer = LAYER_GROUND;
 
 	m_group = NULL;
 
 	m_constructionPercent = CONSTRUCTION_COMPLETE;  // complete by default
-	m_objectUpgradesCompleted = 0;
 
 	m_visionRange = tt->friend_getVisionRange();
 	m_shroudClearingRange = tt->friend_getShroudClearingRange();
@@ -629,11 +628,11 @@ Bool Object::isHero() const
 //-------------------------------------------------------------------------------------------------
 void Object::onContainedBy( Object *containedBy )
 {
-	setStatus(OBJECT_STATUS_UNSELECTABLE);
+	setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNSELECTABLE ) );
 	if (containedBy && containedBy->getContain()->isEnclosingContainerFor(this))
-		setStatus(OBJECT_STATUS_MASKED);
+		setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ) );
 	else
-		clearStatus(OBJECT_STATUS_MASKED);
+		clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ) );
 	m_containedBy = containedBy;
 	m_containedByFrame = TheGameLogic->getFrame();
 }
@@ -643,8 +642,7 @@ void Object::onContainedBy( Object *containedBy )
 //-------------------------------------------------------------------------------------------------
 void Object::onRemovedFrom( Object *removedFrom )
 {
-	clearStatus(OBJECT_STATUS_UNSELECTABLE);
-	clearStatus(OBJECT_STATUS_MASKED);
+	clearStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_MASKED, OBJECT_STATUS_UNSELECTABLE ) );
 	m_containedBy = NULL;
 	m_containedByFrame = 0;
 }
@@ -857,20 +855,18 @@ void Object::setOrRestoreTeam( Team* team, Bool restoring )
 }
 
 //=============================================================================
-void Object::setStatus( ObjectStatusBits bits, Bool set )
+void Object::setStatus( ObjectStatusMaskType objectStatus, Bool set )
 {
 	ObjectStatusMaskType oldStatus = m_status;
 
 	if (set)
-		m_status |= bits;
+		m_status.set( objectStatus );
 	else
-		m_status &= ~bits;
+		m_status.clear( objectStatus );
 
 	if (m_status != oldStatus)
 	{
-		if (set 
-				&& (bits & OBJECT_STATUS_REPULSOR) != 0
-				&& m_repulsorHelper != NULL)
+		if( set && objectStatus.test( OBJECT_STATUS_REPULSOR ) && m_repulsorHelper != NULL )
 		{
 			// Damaged repulsable civilians scare (repulse) other civs, but only
 			// for a short amount of time... use the repulsor helper to turn off repulsion shortly.
@@ -879,7 +875,7 @@ void Object::setStatus( ObjectStatusBits bits, Bool set )
 
 		// when an object's construction status changes, it needs to have its partition data updated,
 		// in order to maintain the shroud correctly.
-		if ((m_status & OBJECT_STATUS_UNDER_CONSTRUCTION) != (oldStatus & OBJECT_STATUS_UNDER_CONSTRUCTION))
+		if( m_status.test( OBJECT_STATUS_UNDER_CONSTRUCTION ) != oldStatus.test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 		{
 
 			// CHECK FOR MINES, AND DETONATE THEM NOW 
@@ -2117,7 +2113,7 @@ void Object::onCollide( Object *other, const Coord3D *loc, const Coord3D *normal
 			continue;
 
 		// check each time thru the loop, in case a collide module sets it
-		if (getStatusBits() & OBJECT_STATUS_NO_COLLISIONS)
+		if( getStatusBits().test( OBJECT_STATUS_NO_COLLISIONS ) )
 		{
 #ifdef DEBUG_CRC
 			//DEBUG_LOG(("Object::onCollide() - OBJECT_STATUS_NO_COLLISIONS set\n"));
@@ -2153,7 +2149,8 @@ void Object::updateUpgradeModules()
 {
 	UpgradeMaskType playerMask = getControllingPlayer()->getCompletedUpgradeMask();
 	UpgradeMaskType objectMask = getObjectCompletedUpgradeMask();
-	UpgradeMaskType maskToCheck = playerMask | objectMask;
+	UpgradeMaskType maskToCheck = playerMask;
+	maskToCheck.set( objectMask );
 	// We need to add in all of the already owned upgrades to handle "AND" requiring upgrades.
 	// We combine all the masks in case someone has a Object AND Player combination
 
@@ -2856,7 +2853,7 @@ Bool Object::isAbleToAttack() const
 	//******************************************************
 
 	// For things that may or may not be able to normally attack, but are under a status condition
-	if (getStatusBits() & OBJECT_STATUS_NO_ATTACK)
+	if( getStatusBits().test( OBJECT_STATUS_NO_ATTACK ) )
 		return false;
 
 	// if we're contained within a transport we cannot attack unless it specifically allows us
@@ -2936,7 +2933,7 @@ Bool Object::isAbleToAttack() const
 		return true;
 
 	// for garrisonned buildings that can attack sometimes
-	if (getStatusBits() & OBJECT_STATUS_CAN_ATTACK)
+	if( getStatusBits().test( OBJECT_STATUS_CAN_ATTACK ) )
 		return true;
 	
 	// for weaponless transports.  This will make me think I can, but I will check if I literally can by looking
@@ -2984,7 +2981,7 @@ void Object::maskObject( Bool mask )
 {
 
 	// set or clear the mask bit
-	setStatus( OBJECT_STATUS_MASKED, mask );
+	setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ), mask );
 
 	//
 	// when masking objects they become unselected ... we do this in any situation for
@@ -3491,13 +3488,14 @@ void Object::crc( Xfer *xfer )
 	* 5: m_isReceivingDifficultyBonus
 	* 6: We do indeed need to save m_containedBy.  The comment misrepresents what the contain module will do.
 	* 7: save full mtx, not pos+orient.
+	* 8: Kris: Conversion of object status bits from UnsignedInt to BitFlags<>
 	*/
 //-------------------------------------------------------------------------------------------------
 void Object::xfer( Xfer *xfer )
 {
 	
 	// version
-	const XferVersion currentVersion = 7;
+	const XferVersion currentVersion = 8;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -3556,7 +3554,29 @@ void Object::xfer( Xfer *xfer )
 	xfer->xferAsciiString( &m_name );
 
 	// status
-	xfer->xferUnsignedInt( &m_status );
+	if( version >= 8 )
+	{
+		m_status.xfer( xfer );
+	}
+	else
+	{
+		//We are loading an old version, so we must convert it from a 32-bit int to a bitflag
+		UnsignedInt oldStatus;
+		xfer->xferUnsignedInt( &oldStatus );
+
+		//Clear our status
+		m_status.clear();
+
+		for( int i = 0; i < 32; i++ )
+		{
+			UnsignedInt bit = 1<<i;
+			if( oldStatus & bit )
+			{
+				ObjectStatusTypes status = (ObjectStatusTypes)(i+1);
+				m_status.set( MAKE_OBJECT_STATUS_MASK( status ) );
+			}
+		}
+	}
 
 	// script status
 	xfer->xferUnsignedByte( &m_scriptStatus );
@@ -3888,7 +3908,11 @@ void Object::loadPostProcess()
 //-------------------------------------------------------------------------------------------------
 Bool Object::hasUpgrade( const UpgradeTemplate *upgradeT ) const 
 {
-	return BitIsSet( m_objectUpgradesCompleted, upgradeT->getUpgradeMask() );
+	if( m_objectUpgradesCompleted.testForAll( upgradeT->getUpgradeMask() ) )
+	{
+		return TRUE;
+	}
+	return FALSE;
 }  // end hasUpgrade
 
 //-------------------------------------------------------------------------------------------------
@@ -3898,7 +3922,10 @@ Bool Object::affectedByUpgrade( const UpgradeTemplate *upgradeT ) const
 {
 	UpgradeMaskType objectMask = getObjectCompletedUpgradeMask();
 	UpgradeMaskType playerMask = getControllingPlayer()->getCompletedUpgradeMask();
-	UpgradeMaskType maskToCheck = playerMask | objectMask | upgradeT->getUpgradeMask();
+	UpgradeMaskType maskToCheck = playerMask;
+	maskToCheck.set( objectMask );
+	maskToCheck.set( upgradeT->getUpgradeMask() );
+
 	// We need to add in all of the already owned upgrades to handle "AND" requiring upgrades.
 	// We combine all the masks in case someone has a Object AND Player combination
 
@@ -3925,7 +3952,7 @@ void Object::giveUpgrade( const UpgradeTemplate *upgradeT )
 {
 	if (upgradeT)
 	{
-		BitSet( m_objectUpgradesCompleted, upgradeT->getUpgradeMask() );
+		m_objectUpgradesCompleted.set( upgradeT->getUpgradeMask() );
 
 		//
 		// iterate through all the upgrade modules of this object and call the method to
@@ -3940,13 +3967,15 @@ void Object::giveUpgrade( const UpgradeTemplate *upgradeT )
 //-------------------------------------------------------------------------------------------------
 void Object::removeUpgrade( const UpgradeTemplate *upgradeT )
 {
-	BitClear( m_objectUpgradesCompleted, upgradeT->getUpgradeMask() );
+	m_objectUpgradesCompleted.clear( upgradeT->getUpgradeMask() );
 	for (BehaviorModule** module = m_behaviors; *module; ++module)
 	{
 		UpgradeModuleInterface* upgrade = (*module)->getUpgrade();
 		if (!upgrade)
 			continue;
 
+		// Whoa, please note that while the function is called Object::RemoveUpgrade, it is not removing anything
+		// in the sense of undoing the effects.  It is just resetting the upgrade so it may be run again.
 		upgrade->resetUpgrade( upgradeT->getUpgradeMask() );
 	}
 }
@@ -4220,9 +4249,7 @@ void Object::addValue()
 	if (!getControllingPlayer()) 
 		return;
 
-	if( ((getStatusBits() & OBJECT_STATUS_UNDER_CONSTRUCTION) != 0) 
-			|| ( isEffectivelyDead() )
-			|| ( getShroudClearingRange() <= 0.0f ))
+	if( getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) || isEffectivelyDead() || getShroudClearingRange() <= 0.0f )
 		return;
 
 
@@ -4272,9 +4299,7 @@ void Object::addThreat()
 	if (!getControllingPlayer()) 
 		return;
 
-	if( ((getStatusBits() & OBJECT_STATUS_UNDER_CONSTRUCTION) != 0) 
-			|| ( isEffectivelyDead() )
-			|| ( getShroudClearingRange() <= 0.0f ))
+	if( getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) || isEffectivelyDead() || getShroudClearingRange() <= 0.0f )
 		return;
 
 
@@ -4416,10 +4441,7 @@ void Object::shroud()
 	if ( controller )
 	{
 		// things under construction don't  shroud. (srj), nor do dead or blind things
-		if( ((getStatusBits() & OBJECT_STATUS_UNDER_CONSTRUCTION) == 0)
-				&& ( ! isEffectivelyDead() )
-				&& ( getShroudRange() > 0.0f )
-			)
+		if( !getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) && !isEffectivelyDead()	&& getShroudRange() > 0.0f )
 		{
 			PlayerMaskType shroudingMask = 0;
 			for( Int currentIndex = ThePlayerList->getPlayerCount() - 1; currentIndex >=0; currentIndex-- )
@@ -4494,8 +4516,9 @@ Real Object::getShroudClearingRange() const
 {
 	Real shroudClearingRange=m_shroudClearingRange;
 
-	if ((getStatusBits() & OBJECT_STATUS_UNDER_CONSTRUCTION))
-	{	//structures under construction have limited vision range.  For now, base it
+	if( getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	{	
+		//structures under construction have limited vision range.  For now, base it
 		//on the geometry extents so the structure can only see itself.
 		shroudClearingRange = getGeometryInfo().getBoundingCircleRadius();
 	}

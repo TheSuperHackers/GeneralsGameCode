@@ -303,7 +303,7 @@ ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name )
 }  // end getTemplate
 
 //=============================================================================
-Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, ObjectStatusBits statusBits )
+Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, ObjectStatusMaskType statusBits )
 {
 	if (tmplate == NULL)
 		throw ERROR_BAD_ARG;

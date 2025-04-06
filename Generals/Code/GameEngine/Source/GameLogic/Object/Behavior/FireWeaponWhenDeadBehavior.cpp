@@ -36,6 +36,7 @@
 #include "Common/INI.h"
 #include "Common/RandomValue.h"
 #include "Common/Xfer.h"
+#include "Common/Player.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/FXList.h"
 #include "GameClient/InGameUI.h"
@@ -47,7 +48,12 @@
 #include "GameLogic/ObjectCreationList.h"
 #include "GameLogic/Weapon.h"
 #include "GameClient/Drawable.h"
-#include "Common/Player.h"
+
+#ifdef _INTERNAL
+// for occasional debugging...
+//#pragma optimize("", off)
+//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
 
 const Int MAX_IDX = 32;
 
@@ -78,6 +84,7 @@ FireWeaponWhenDeadBehavior::~FireWeaponWhenDeadBehavior( void )
 void FireWeaponWhenDeadBehavior::onDie( const DamageInfo *damageInfo )
 {
 	const FireWeaponWhenDeadBehaviorModuleData* d = getFireWeaponWhenDeadBehaviorModuleData();
+	Object *obj = getObject();
 
 	if (!isUpgradeActive())
 		return;
@@ -88,18 +95,18 @@ void FireWeaponWhenDeadBehavior::onDie( const DamageInfo *damageInfo )
 	
 	// This will never apply until built.  Otherwise canceling construction sets it off, and killing
 	// a one hitpoint one percent building will too.
-	if( BitIsSet( getObject()->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
+	if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 		return;
 
 	
 	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks( activation, conflicting );
 	
-	if( getObject()->getObjectCompletedUpgradeMask() & conflicting )
+	if( obj->getObjectCompletedUpgradeMask().testForAny( conflicting ) )
 	{
 		return;
 	}
-	if( getObject()->getControllingPlayer()->getCompletedUpgradeMask() & conflicting )
+	if( obj->getControllingPlayer() && obj->getControllingPlayer()->getCompletedUpgradeMask().testForAny( conflicting ) )
 	{
 		return;
 	}
@@ -107,7 +114,7 @@ void FireWeaponWhenDeadBehavior::onDie( const DamageInfo *damageInfo )
 	if (d->m_deathWeapon)
 	{
 		// fire the default weapon
-	  TheWeaponStore->createAndFireTempWeapon(d->m_deathWeapon, getObject(), getObject()->getPosition());
+	  TheWeaponStore->createAndFireTempWeapon(d->m_deathWeapon, obj, obj->getPosition());
 	}
 }
 

@@ -51,8 +51,6 @@ public:
 	FireWeaponCollideModuleData()
 	{
 		m_collideWeaponTemplate = NULL;
-		m_requiredStatus = 0;		// nothing required
-		m_forbiddenStatus = 0;	// nothing forbidden
 		m_fireOnce = FALSE;
 	}
 

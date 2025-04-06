@@ -1278,7 +1278,7 @@ void ScriptActions::doNamedSetRepulsor(const AsciiString& unitName, Bool repulso
 	if (!theSrcUnit) {
 		return;
 	}
-	theSrcUnit->setStatus(OBJECT_STATUS_REPULSOR, repulsor);
+	theSrcUnit->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_REPULSOR ), repulsor);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1300,7 +1300,7 @@ void ScriptActions::doTeamSetRepulsor(const AsciiString& teamName, Bool repulsor
 			{
 				continue;
 			}
-			obj->setStatus(OBJECT_STATUS_REPULSOR, repulsor);
+			obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_REPULSOR ), repulsor );
 		}
 	}
 

@@ -188,7 +188,7 @@ Bool CanSelectDrawable( const Drawable *draw, Bool dragSelecting )
 	}
 
 	// You cannot select something that has a logic override of unselectability or masked
-	if( BitIsSet( obj->getStatusBits(), OBJECT_STATUS_UNSELECTABLE | OBJECT_STATUS_MASKED ) )
+	if( obj->getStatusBits().testForAny( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_UNSELECTABLE, OBJECT_STATUS_MASKED ) ) )
 	{
 		return FALSE;
 	}

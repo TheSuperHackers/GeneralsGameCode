@@ -1002,7 +1002,7 @@ void GarrisonContain::recalcApparentControllingPlayer( void )
 
 		// Check to see if all the contained units are stealthy.  Need to set this flag before the capture,
 		// since the Radar refresh in setTeam will want to use it to decide our color.
-		Bool detected = ( rider->getStatusBits() & OBJECT_STATUS_DETECTED ); 
+		Bool detected = rider->getStatusBits().test( OBJECT_STATUS_DETECTED );
 		m_hideGarrisonedStateFromNonallies = ( !detected && ( getStealthUnitsContained() == getContainCount() ) );
 		
 		Player* controller = rider->getControllingPlayer();
@@ -1030,7 +1030,7 @@ void GarrisonContain::recalcApparentControllingPlayer( void )
 		{
 			ContainedItemsList::const_iterator it = getContainList().begin();
 			Object *occupant = *it;
-			Bool detected = ( occupant->getStatusBits() & OBJECT_STATUS_DETECTED ); 
+			Bool detected = occupant->getStatusBits().test( OBJECT_STATUS_DETECTED );
 
 			if( detected || (getApparentControllingPlayer(ThePlayerList->getLocalPlayer()) == getObject()->getControllingPlayer()) )
 			{
@@ -1311,7 +1311,7 @@ void GarrisonContain::onContaining( Object *obj )
 	obj->setDisabled( DISABLED_HELD );
 
 	// the building can now attack, since it has soldiers inside of it
-	structure->setStatus( OBJECT_STATUS_CAN_ATTACK );
+	structure->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_CAN_ATTACK ) );
 
 	// give the object a garrisoned version of its weapon
 	obj->setWeaponBonusCondition( WEAPONBONUSCONDITION_GARRISONED );
@@ -1358,7 +1358,7 @@ void GarrisonContain::onRemoving( Object *obj )
 		}
 
 		// we also lose our transient attack ability
-		getObject()->clearStatus( OBJECT_STATUS_CAN_ATTACK );
+		getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_CAN_ATTACK ) );
 		m_hideGarrisonedStateFromNonallies = false;
 
 		// change the state back from garrisoned

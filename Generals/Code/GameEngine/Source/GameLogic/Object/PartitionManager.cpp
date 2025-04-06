@@ -2495,8 +2495,8 @@ void PartitionContactList::processContactList()
 		Object* obj = cd->m_obj->getObject();
 		Object* other = cd->m_other->getObject();
 		
-		if ((obj->getStatusBits() & OBJECT_STATUS_NO_COLLISIONS) != 0 ||
-				(other->getStatusBits() & OBJECT_STATUS_NO_COLLISIONS) != 0)
+		if( obj->getStatusBits().test( OBJECT_STATUS_NO_COLLISIONS ) ||
+				other->getStatusBits().test( OBJECT_STATUS_NO_COLLISIONS ) )
 			continue;
 
 		DEBUG_ASSERTCRASH(!(obj->isKindOf(KINDOF_IMMOBILE) && other->isKindOf(KINDOF_IMMOBILE)), 
@@ -5396,7 +5396,7 @@ Bool PartitionFilterLastAttackedBy::allow(Object *other)
 Bool PartitionFilterAcceptByObjectStatus::allow(Object *objOther)
 { 
 	ObjectStatusMaskType status = objOther->getStatusBits();
-	return ((status & m_mustBeSet) == m_mustBeSet) && ((status & m_mustBeClear) == 0);
+	return status.testForAll( m_mustBeSet ) && status.testForNone( m_mustBeClear );
 }
 
 
@@ -5408,7 +5408,8 @@ Bool PartitionFilterAcceptByObjectStatus::allow(Object *objOther)
 Bool PartitionFilterRejectByObjectStatus::allow(Object *objOther)
 { 
 	ObjectStatusMaskType status = objOther->getStatusBits();
-	return !(((status & m_mustBeSet) == m_mustBeSet) && ((status & m_mustBeClear) == 0));
+
+	return !( status.testForAll( m_mustBeSet ) && status.testForNone( m_mustBeClear ) );
 }
 
 
@@ -5443,7 +5444,10 @@ Bool PartitionFilterStealthedAndUndetected::allow( Object *objOther )
 {
 	// objOther is guaranteed to be non-null, so we don't need to check (srj)
 
-	if( BitIsSet( objOther->getStatusBits(), OBJECT_STATUS_STEALTHED ) && !BitIsSet( objOther->getStatusBits(), OBJECT_STATUS_DETECTED ) )
+	Bool stealthed = objOther->testStatus( OBJECT_STATUS_STEALTHED );
+	Bool detected = objOther->testStatus( OBJECT_STATUS_DETECTED );
+
+	if( stealthed && !detected )
 	{
 		if( !objOther->isKindOf( KINDOF_DISGUISER ) )
 		{
@@ -5489,7 +5493,7 @@ Bool PartitionFilterStealthedAndUndetected::allow( Object *objOther )
 				//Check if the first object inside is detected (if one is detected, all are detected).
 				ContainedItemsList::const_iterator it = contain->getContainedItemsList()->begin();
 				Object *member = (*it);
-				if( member && !BitIsSet( (*it)->getStatusBits(), OBJECT_STATUS_DETECTED ) )
+				if( member && !(*it)->getStatusBits().test( OBJECT_STATUS_DETECTED ) )
 				{
 					//Finally check the relationship!
 					if( victimApparentController && m_obj->getTeam()->getRelationship( victimApparentController->getDefaultTeam() ) == ENEMIES )

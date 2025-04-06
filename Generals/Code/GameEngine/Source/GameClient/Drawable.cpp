@@ -2750,7 +2750,7 @@ void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 	const Object *obj = getObject();			
 
 	// we do show show icons for things that explicitly forbid it
-	if( obj->isKindOf( KINDOF_NO_HEAL_ICON ) || BitIsSet( obj->getStatusBits(), OBJECT_STATUS_SOLD ))
+	if( obj->isKindOf( KINDOF_NO_HEAL_ICON ) || obj->getStatusBits().test( OBJECT_STATUS_SOLD ) )
 		return;
 
 
@@ -3204,8 +3204,8 @@ void Drawable::drawConstructPercent( const IRegion2D *healthBarRegion )
 	// this data is in an attached object
 	Object *obj = getObject();
 
-	if( obj == NULL || BitIsSet( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE ||
-			BitIsSet( obj->getStatusBits(), OBJECT_STATUS_SOLD ) == TRUE )
+	if( obj == NULL || !obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ||
+			obj->getStatusBits().test( OBJECT_STATUS_SOLD ) )
 	{
 		// no object, or we are now complete get rid of the string if we have one
 		if( m_constructDisplayString )
@@ -3395,7 +3395,7 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 		//
 
 		Color color, outlineColor;
-		if( BitIsSet( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) || (obj->isDisabled() && !obj->isDisabledByType(DISABLED_HELD)) )
+		if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) || (obj->isDisabled() && !obj->isDisabledByType(DISABLED_HELD)) )
 		{
 			color = GameMakeColor( 0, healthRatio * 255.0f, 255, 255 );//blue to cyan
 			outlineColor = GameMakeColor( 0, healthRatio * 128.0f, 128, 255 );//dark blue to dark cyan

@@ -508,7 +508,7 @@ Bool DumbProjectileBehavior::projectileHandleCollision( Object *other )
 
 					// don't do the normal explosion; just destroy ourselves & return
 					TheGameLogic->destroyObject(getObject());
-					
+
 					return true;
 				}
 			}	// if a garrisonable thing
@@ -520,7 +520,7 @@ Bool DumbProjectileBehavior::projectileHandleCollision( Object *other )
 	detonate();
 
 	// mark ourself as "no collisions" (since we might still exist in slow death mode)
-	getObject()->setStatus(OBJECT_STATUS_NO_COLLISIONS);
+	getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_NO_COLLISIONS ) );
 	return true;
 }
 

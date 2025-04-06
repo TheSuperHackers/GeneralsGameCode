@@ -2006,10 +2006,11 @@ BOOL EditParameter::OnInitDialog()
 		{
 			captionText = "Object status:";
 			showList = true;
-			for (i=0; TheObjectStatusBitNames[i]; ++i) {
-				pList->InsertString(-1, TheObjectStatusBitNames[i]);				
+			for( i = 0; i < OBJECT_STATUS_COUNT; i++ )
+			{
+				pList->InsertString( -1, ObjectStatusMaskType::getBitNames()[i] );				
 			}
-			pList->SelectString(-1, m_parameter->getString().str());
+			pList->SelectString( -1, m_parameter->getString().str() );
 			break;
 		}
 
@@ -2227,10 +2228,13 @@ void EditParameter::OnOK()
 		case Parameter::OBJECT_STATUS:
 		{
 			Int curSel = pList->GetCurSel();
-			if (curSel >= 0) {
-				m_parameter->friend_setString(TheObjectStatusBitNames[curSel]);
-			} else {
-				m_parameter->friend_setString(AsciiString::TheEmptyString);
+			if( curSel >= 0 ) 
+			{
+				m_parameter->friend_setString( ObjectStatusMaskType::getBitNames()[curSel] );
+			} 
+			else 
+			{
+				m_parameter->friend_setString( AsciiString::TheEmptyString );
 			}
 			break;
 		}

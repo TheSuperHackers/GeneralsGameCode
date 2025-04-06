@@ -76,9 +76,9 @@ public:
 
 	UpgradeMuxData()
 	{
-		m_activationMask = 0;
-		m_conflictingMask = 0;
 		m_fxListUpgrade = NULL;
+		m_activationMask.clear();
+		m_conflictingMask.clear();
 		m_requiresAllTriggers = false;
 	}
 

@@ -3400,7 +3400,7 @@ void GameLogic::registerObject( Object *obj )
 	* GameLogic/Client for those purposes, or we could put the allocation pools
 	* in the GameLogic and GameClient themselves */
 // ------------------------------------------------------------------------------------------------
-Object *GameLogic::friend_createObject( const ThingTemplate *thing, ObjectStatusBits statusBits, Team *team )
+Object *GameLogic::friend_createObject( const ThingTemplate *thing, const ObjectStatusMaskType &statusBits, Team *team )
 {
 	Object *obj;
 
@@ -3430,7 +3430,7 @@ void GameLogic::destroyObject( Object *obj )
 	}
 
 	// mark object as destroyed
-	obj->setStatus( OBJECT_STATUS_DESTROYED );
+	obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DESTROYED ) );
 
 	// We desperately need to stop here, or else the destructor of the statemachine will try to do
 	// stopping logic, which uses virtual functions and deleted modules, which will crash us.

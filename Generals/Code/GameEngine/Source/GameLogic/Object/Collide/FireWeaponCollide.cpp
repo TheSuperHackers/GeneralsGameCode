@@ -43,10 +43,10 @@ void FireWeaponCollideModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] = 
 	{
-		{ "CollideWeapon",	INI::parseWeaponTemplate,	NULL, offsetof( FireWeaponCollideModuleData, m_collideWeaponTemplate ) },
-		{ "FireOnce",				INI::parseBool,	NULL, offsetof( FireWeaponCollideModuleData, m_fireOnce ) },
-		{ "RequiredStatus",	INI::parseBitString32,	TheObjectStatusBitNames, offsetof( FireWeaponCollideModuleData, m_requiredStatus ) },
-		{ "ForbiddenStatus",	INI::parseBitString32,	TheObjectStatusBitNames, offsetof( FireWeaponCollideModuleData, m_forbiddenStatus ) },
+		{ "CollideWeapon",		INI::parseWeaponTemplate,						NULL, offsetof( FireWeaponCollideModuleData, m_collideWeaponTemplate ) },
+		{ "FireOnce",					INI::parseBool,											NULL, offsetof( FireWeaponCollideModuleData, m_fireOnce ) },
+		{ "RequiredStatus",		ObjectStatusMaskType::parseFromINI,	NULL, offsetof( FireWeaponCollideModuleData, m_requiredStatus ) },
+		{ "ForbiddenStatus",	ObjectStatusMaskType::parseFromINI,	NULL, offsetof( FireWeaponCollideModuleData, m_forbiddenStatus ) },
 		{ 0, 0, 0, 0 }
 	};
   p.add(dataFieldParse);
@@ -98,10 +98,12 @@ Bool FireWeaponCollide::shouldFireWeapon()
 
 	ObjectStatusMaskType status = getObject()->getStatusBits();
 	
-	if( (status & d->m_requiredStatus) != d->m_requiredStatus )
+	//We need all required status or else we fail
+	if( !status.testForAll( d->m_requiredStatus ) )
 		return FALSE; 
 
-	if( (status & d->m_forbiddenStatus) != 0 )
+	//If we have any forbidden statii, then fail
+	if( status.testForAny( d->m_forbiddenStatus ) )
 		return FALSE; 
 
 	if( m_everFired && d->m_fireOnce )

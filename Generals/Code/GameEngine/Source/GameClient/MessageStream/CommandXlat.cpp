@@ -1352,10 +1352,9 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 	//drawable is invalid... then convert it to a position to be evaluated instead.
 	//Added: shrubberies are the exception for interactions...
 	//Removed: GS Took out ObjectStatusUnselectable, since that status only prevents selection, not everything
-	if (obj == NULL || 
-		(BitIsSet(obj->getStatusBits(), OBJECT_STATUS_MASKED) && 
-		!obj->isKindOf(KINDOF_SHRUBBERY) && !obj->isKindOf(KINDOF_FORCEATTACKABLE)) 
-	)
+	if( obj == NULL || 
+			obj->getStatusBits().test( OBJECT_STATUS_MASKED ) && 
+			!obj->isKindOf(KINDOF_SHRUBBERY) && !obj->isKindOf(KINDOF_FORCEATTACKABLE) ) 
 	{
 		//Nulling out the draw and obj pointer will force the remainder of this code to evaluate 
 		//a position interaction.

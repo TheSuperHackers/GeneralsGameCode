@@ -32,6 +32,12 @@
 #include "Common/Xfer.h"
 #include "GameLogic/Module/UpgradeModule.h"
 
+#ifdef _INTERNAL
+// for occasional debugging...
+//#pragma optimize("", off)
+//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
+
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
@@ -126,26 +132,32 @@ Bool UpgradeMux::wouldUpgrade( UpgradeMaskType keyMask ) const
 	getUpgradeActivationMasks(activation, conflicting);
 
 	//Make sure we have activation conditions and we haven't performed the upgrade already.
-	if( activation && !m_upgradeExecuted )
+	if( activation.any() && keyMask.any() && !m_upgradeExecuted )
 	{
 		//Okay, make sure we don't have any conflicting upgrades
-		if( !(conflicting & keyMask) )
+		if( !keyMask.testForAny( conflicting) )
 		{
 			//Finally check to see if our upgrade conditions match.
 			if( requiresAllActivationUpgrades() )
 			{
 				//Make sure ALL triggers requirements are upgraded
-				return (activation & keyMask) == activation;
+				if( keyMask.testForAll( activation ) )
+				{
+					return TRUE;
+				}
 			}
-			else
+			else 
 			{
 				//Check if ANY trigger requirements are met.
-				return (activation & keyMask) != 0;
+				if( keyMask.testForAny( activation ) )
+				{
+					return TRUE;
+				}
 			}
 		}
 	}
 	//We can't upgrade!
-	return false;
+	return FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -155,21 +167,27 @@ Bool UpgradeMux::testUpgradeConditions( UpgradeMaskType keyMask ) const
 	getUpgradeActivationMasks(activation, conflicting);
 
 	//Okay, make sure we don't have any conflicting upgrades
-	if( !(conflicting & keyMask) )
+	if( !keyMask.any() || !keyMask.testForAny( conflicting ) )
 	{
 		//Make sure we have activation conditions
-		if( activation )
+		if( activation.any() )
 		{
 			//Finally check to see if our upgrade conditions match.
 			if( requiresAllActivationUpgrades() )
 			{
 				//Make sure ALL triggers requirements are upgraded
-				return (activation & keyMask) == activation;
+				if( keyMask.testForAll( activation ) )
+				{
+					return TRUE;
+				}
 			}
 			else
 			{
 				//Check if ANY trigger requirements are met.
-				return (activation & keyMask) != 0;
+				if( keyMask.testForAny( activation ) )
+				{
+					return TRUE;
+				}
 			}
 		}
 		else
@@ -188,7 +206,7 @@ Bool UpgradeMux::resetUpgrade( UpgradeMaskType keyMask )
 {
 	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks(activation, conflicting);
-	if( activation & keyMask && m_upgradeExecuted )
+	if( keyMask.testForAny( activation ) && m_upgradeExecuted )
 	{
 		m_upgradeExecuted = false;
 		return true;
