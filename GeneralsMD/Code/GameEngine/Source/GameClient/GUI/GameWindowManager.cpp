@@ -2214,7 +2214,7 @@ GameWindow *GameWindowManager::gogoGadgetListBox( GameWindow *parent,
 	//
 	if( listboxData->columns == 1 )
 	{
-		listboxData->columnWidth = NEW Int;
+		listboxData->columnWidth = NEW Int[listboxData->columns];
 		listboxData->columnWidth[0] = width;
 		if( listboxData->slider )
 		{

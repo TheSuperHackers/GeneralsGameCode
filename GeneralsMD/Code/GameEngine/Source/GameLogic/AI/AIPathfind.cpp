@@ -1135,7 +1135,7 @@ void PathfindCellInfo::releaseCellInfos(void)
 		s_firstFree = s_firstFree->m_pathParent;
 	}
 	DEBUG_ASSERTCRASH(count==CELL_INFOS_TO_ALLOCATE, ("Error - Allocated cellinfos."));
-	delete s_infoArray;
+	delete[] s_infoArray;
 	s_infoArray = NULL;
 	s_firstFree = NULL;
 }
