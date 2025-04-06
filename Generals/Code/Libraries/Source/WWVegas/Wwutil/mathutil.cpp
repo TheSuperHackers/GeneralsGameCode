@@ -32,7 +32,7 @@
 #include "miscutil.h"
 #include "wwdebug.h"
 
-const double cMathUtil::PI   = 3.1415927;
+const double cMathUtil::PI_1   = 3.1415927;
 const double cMathUtil::PI_2 = 1.5707963;
 
 //-----------------------------------------------------------------------------
@@ -46,19 +46,19 @@ void cMathUtil::Angle_To_Vector(double angle, double & dx, double & dy)
 	double angleRadians;
 
 	if (angle >= 0 && angle < 90) {
-		angleRadians = angle * PI / 180.0;
+		angleRadians = angle * PI_1 / 180.0;
 		dx = WWMath::Sin(angleRadians);
 		dy = WWMath::Cos(angleRadians);
 	} else if (angle >= 90 && angle < 180) {
-		angleRadians = (angle - 90) * PI / 180.0;
+		angleRadians = (angle - 90) * PI_1 / 180.0;
 		dx = WWMath::Cos(angleRadians);
 		dy = -WWMath::Sin(angleRadians);
 	} else if (angle >= 180 && angle < 270) {
-		angleRadians = (angle - 180) * PI / 180.0;
+		angleRadians = (angle - 180) * PI_1 / 180.0;
 		dx = -WWMath::Sin(angleRadians);
 		dy = -WWMath::Cos(angleRadians);
 	} else {
-		angleRadians = (angle - 270) * PI / 180.0;
+		angleRadians = (angle - 270) * PI_1 / 180.0;
 		dx = -WWMath::Cos(angleRadians);
 		dy = WWMath::Sin(angleRadians);
 	}
@@ -86,24 +86,24 @@ void cMathUtil::Vector_To_Angle(double dx, double dy, double & angle)
 		if (dy <= 0) {
 			theta = 0;
 		} else {
-			theta = PI;
+			theta = PI_1;
 		}
 	} else {
 		theta = WWMath::Atan(-dy / dx);
 		if (dx < 0) {
-			theta += PI;
+			theta += PI_1;
 		}
 		theta += 3 * PI_2;
-		if (theta >= 2 * PI) {
-			theta -= 2 * PI;
+		if (theta >= 2 * PI_1) {
+			theta -= 2 * PI_1;
 		}
-		theta = 2 * PI - theta;
-		if (theta == 2 * PI) {
+		theta = 2 * PI_1 - theta;
+		if (theta == 2 * PI_1) {
 			theta = 0;
 		}
 	}
 
-	angle = theta * 180.0 / PI;
+	angle = theta * 180.0 / PI_1;
 }
 
 //-----------------------------------------------------------------------------
@@ -131,7 +131,7 @@ int cMathUtil::Round(double arg)
 //-----------------------------------------------------------------------------
 void cMathUtil::Rotate_Vector(double & vx, double & vy, double angle)
 {
-   double angle_radians = angle * PI / 180.0;
+   double angle_radians = angle * PI_1 / 180.0;
 
    double vx1 = vx;
    double vy1 = vy;
@@ -211,7 +211,6 @@ int cMathUtil::Get_Hat_Pdf_Int(int lower, int upper)
 {
    return Round(Get_Hat_Pdf_Double(lower, upper));
 }
-
 
 
 

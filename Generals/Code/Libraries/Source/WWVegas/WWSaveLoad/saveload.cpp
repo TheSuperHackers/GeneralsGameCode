@@ -26,9 +26,9 @@
  *                                                                                             *
  *                       Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 5/09/01 11:48a                                              $*
+ *                     $Modtime:: 12/09/01 6:42p                                              $*
  *                                                                                             *
- *                    $Revision:: 15                                                          $*
+ *                    $Revision:: 19                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -43,6 +43,11 @@
 #include "wwdebug.h"
 #include "saveloadstatus.h"
 #include "wwhack.h"
+#include "wwprofile.h"
+
+#pragma warning(disable:4201) // warning C4201: nonstandard extension used : nameless struct/union
+#include <windows.h>
+#include "systimer.h"
 
 
 SaveLoadSubSystemClass *		SaveLoadSystemClass::SubSystemListHead = NULL;
@@ -53,11 +58,11 @@ PointerRemapClass					SaveLoadSystemClass::PointerRemapper;
 
 
 bool SaveLoadSystemClass::Save (ChunkSaveClass &csave,SaveLoadSubSystemClass & subsystem)
-{	
+{
 	bool ok = true;
 
 	if (subsystem.Contains_Data()) {
-		csave.Begin_Chunk (subsystem.Chunk_ID ());		
+		csave.Begin_Chunk (subsystem.Chunk_ID ());
 		ok &= subsystem.Save (csave);
 		csave.End_Chunk ();
 	}
@@ -65,18 +70,17 @@ bool SaveLoadSystemClass::Save (ChunkSaveClass &csave,SaveLoadSubSystemClass & s
 	return ok;
 }
 
-
 bool SaveLoadSystemClass::Load (ChunkLoadClass &cload,bool auto_post_load)
 {
-//	WWASSERT(PostLoadList.Head() == NULL);
-
 	PointerRemapper.Reset();
 	bool ok = true;
 
 	// Load each chunk we encounter and link the manager into the PostLoad list
 	while (cload.Open_Chunk ()) {
+		SaveLoadStatus::Inc_Status_Count();		// Count the sub systems loaded
 		SaveLoadSubSystemClass *sys = Find_Sub_System(cload.Cur_Chunk_ID ());
 		if (sys != NULL) {
+//WWRELEASE_SAY(("			Name: %s\n",sys->Name()));
 			INIT_SUB_STATUS(sys->Name());
 			ok &= sys->Load(cload);
 		}
@@ -89,17 +93,30 @@ bool SaveLoadSystemClass::Load (ChunkLoadClass &cload,bool auto_post_load)
 
 	// Call PostLoad on each PersistClass that wanted post-load
 	if (auto_post_load) {
-		Post_Load_Processing();
+		Post_Load_Processing(NULL);
 	}
 
 	return ok;
 }
 
-bool SaveLoadSystemClass::Post_Load_Processing (void)
+// Nework update macro for post loader.
+#define UPDATE_NETWORK 											\
+	if (network_callback) {                            \
+		unsigned long time2 = TIMEGETTIME();            \
+		if (time2 - time > 20) {                        \
+			network_callback();                          \
+			time = time2;                                \
+		}                                               \
+	}                                                  \
+
+bool SaveLoadSystemClass::Post_Load_Processing (void(*network_callback)(void))
 {
+	unsigned long time = TIMEGETTIME();
+
 	// Call PostLoad on each PersistClass that wanted post-load
 	PostLoadableClass * obj = PostLoadList.Remove_Head();
 	while (obj) {
+		UPDATE_NETWORK;
 		obj->On_Post_Load();
 		obj->Set_Post_Load_Registered(false);
 		obj = PostLoadList.Remove_Head();
@@ -131,7 +148,7 @@ SaveLoadSubSystemClass * SaveLoadSystemClass::Find_Sub_System (uint32 chunk_id)
 			break;
 		}
 	}
-	return sys;	
+	return sys;
 }
 
 void SaveLoadSystemClass::Register_Persist_Factory(PersistFactoryClass * factory)
@@ -155,7 +172,7 @@ PersistFactoryClass * SaveLoadSystemClass::Find_Persist_Factory(uint32 chunk_id)
 			break;
 		}
 	}
-	return fact;	
+	return fact;
 }
 
 bool SaveLoadSystemClass::Is_Post_Load_Callback_Registered(PostLoadableClass * obj)
@@ -229,7 +246,7 @@ void SaveLoadSystemClass::Unlink_Sub_System(SaveLoadSubSystemClass * sys)
 	WWASSERT(sys != NULL);
 	SaveLoadSubSystemClass * cursys = SubSystemListHead;
 	SaveLoadSubSystemClass * prev = NULL;
-	
+
 	while (cursys != sys) {
 		prev = cursys;
 		cursys = cursys->NextSubSystem;
@@ -240,14 +257,14 @@ void SaveLoadSystemClass::Unlink_Sub_System(SaveLoadSubSystemClass * sys)
 	} else {
 		prev->NextSubSystem = sys->NextSubSystem;
 	}
-	
+
 	sys->NextSubSystem = NULL;
 }
 
 
 void SaveLoadSystemClass::Link_Factory(PersistFactoryClass * fact)
 {
-	WWASSERT(fact != NULL);	
+	WWASSERT(fact != NULL);
 	if (fact != NULL) {
 		WWASSERT(fact->NextFactory == NULL);			// factories should never be registered twice!
 		fact->NextFactory = FactoryListHead;
@@ -257,11 +274,11 @@ void SaveLoadSystemClass::Link_Factory(PersistFactoryClass * fact)
 
 void SaveLoadSystemClass::Unlink_Factory(PersistFactoryClass * fact)
 {
-	WWASSERT(fact != NULL);	
+	WWASSERT(fact != NULL);
 
 	PersistFactoryClass * curfact = FactoryListHead;
 	PersistFactoryClass * prev = NULL;
-	
+
 	while (curfact != fact) {
 		prev = curfact;
 		curfact = curfact->NextFactory;
@@ -272,7 +289,7 @@ void SaveLoadSystemClass::Unlink_Factory(PersistFactoryClass * fact)
 	} else {
 		prev->NextFactory = fact->NextFactory;
 	}
-	
+
 	fact->NextFactory = NULL;
 }
 
@@ -281,4 +298,3 @@ void Force_Link_WWSaveLoad (void)
 	FORCE_LINK( Twiddler );
 	return ;
 }
-
