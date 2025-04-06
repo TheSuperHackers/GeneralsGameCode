@@ -571,7 +571,7 @@ AlphaTerrainTextureClass::AlphaTerrainTextureClass( TextureClass *pBaseTex ):
 		D3DTexture = NULL;
 	}
 	// Attach the base texture's d3d texture.
-	D3DTexture = pBaseTex->Peek_DX8_Texture();
+	D3DTexture = pBaseTex->Peek_D3D_Texture();
 	D3DTexture->AddRef();
 }
 
@@ -989,7 +989,7 @@ up the "sliding" parameters for the clouds to slide over the terrain. */
 CloudMapTerrainTextureClass::CloudMapTerrainTextureClass(MipCountType mipLevelCount) :
 	TextureClass("TSCloudMed.tga","TSCloudMed.tga", mipLevelCount )
 { 
-	Set_Mip_Mapping( TextureFilterClass::FILTER_TYPE_FAST );
+	Get_Filter().Set_Mip_Mapping( TextureFilterClass::FILTER_TYPE_FAST );
 	m_xSlidePerSecond = -0.02f;	 
 	m_ySlidePerSecond =  1.50f * m_xSlidePerSecond;
 	m_curTick = 0;

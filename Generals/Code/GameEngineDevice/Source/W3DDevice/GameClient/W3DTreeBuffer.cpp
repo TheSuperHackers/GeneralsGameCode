@@ -529,8 +529,8 @@ W3DTreeBuffer::W3DTreeBuffer(void)
 		return;  // WorldBuilderTool doesn't initialize the asset manager.  jba.
 
 	m_treeTexture = NEW_REF(TextureClass, ("trees.tga"));
-	m_treeTexture->Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
-	m_treeTexture->Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+	m_treeTexture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+	m_treeTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 	for (i=0; i<MAX_TYPES; i++) {
 		switch(i) {
 		case 0:

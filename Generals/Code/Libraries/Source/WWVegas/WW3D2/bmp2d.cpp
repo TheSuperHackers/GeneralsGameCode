@@ -155,8 +155,8 @@ Bitmap2DObjClass::Bitmap2DObjClass
 			SurfaceClass *piece_surface=NEW_REF(SurfaceClass,(pot,pot,sd.Format));			
 			piece_surface->Copy(0,0,tlpx,tlpy,pot,pot,surface);
 			TextureClass *piece_texture =NEW_REF(TextureClass,(piece_surface,MIP_LEVELS_1));			
-			piece_texture->Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
-			piece_texture->Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+			piece_texture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+			piece_texture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			REF_PTR_RELEASE(piece_surface);			
 
 			// calculate our actual texture coordinates based on the difference between

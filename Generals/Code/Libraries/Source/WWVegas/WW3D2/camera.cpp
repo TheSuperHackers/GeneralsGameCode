@@ -795,6 +795,7 @@ void CameraClass::Get_D3D_Projection_Matrix(Matrix4x4 * set_tm)
 		(*set_tm)[2][2] = -oozdiff;
 		(*set_tm)[2][3] = -ZNear * oozdiff;
 	}
+
 }
 
 void CameraClass::Get_View_Matrix(Matrix3D * set_tm)

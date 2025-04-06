@@ -457,7 +457,7 @@ void TextureLoader::Load_Mipmap_Levels(TextureLoadTaskClass* task)
 bool TextureLoader::Load_Uncompressed_Mipmap_Levels_From_TGA(TextureLoadTaskClass* task)
 {
 	if (!task->Get_Mip_Level_Count()) return false;
-	TextureClass* texture=task->Peek_Texture();
+	TextureBaseClass* texture=task->Peek_Texture();
 
 	Targa targa;
 	if (TARGA_ERROR_HANDLER(targa.Open(texture->Get_Full_Path(), TGA_READMODE),texture->Get_Full_Path())) {
@@ -776,7 +776,7 @@ static DWORD VectortoRGBA( D3DXVECTOR3* v, FLOAT fHeight )
     return( (a<<24L) + (r<<16L) + (g<<8L) + (b<<0L) );
 }
 
-IDirect3DTexture8* TextureLoader::Generate_Bumpmap(TextureClass* texture)
+IDirect3DTexture8* TextureLoader::Generate_Bumpmap(TextureBaseClass* texture)
 {
 	WW3DFormat bump_format=WW3D_FORMAT_U8V8;
 	if (!DX8Caps::Support_Texture_Format(bump_format)) {
@@ -784,7 +784,7 @@ IDirect3DTexture8* TextureLoader::Generate_Bumpmap(TextureClass* texture)
 	}
 
 	D3DSURFACE_DESC desc;
-	IDirect3DTexture8* src_d3d_tex=texture->Peek_DX8_Texture();
+	IDirect3DTexture8* src_d3d_tex=texture->Peek_D3D_Texture();
 	WWASSERT(src_d3d_tex);
 	DX8_ErrorCode(src_d3d_tex->GetLevelDesc(0,&desc));
 	unsigned width=desc.Width;
@@ -798,7 +798,7 @@ IDirect3DTexture8* TextureLoader::Generate_Bumpmap(TextureClass* texture)
 
 	D3DLOCKED_RECT src_locked_rect;
 	DX8_ErrorCode(
-		texture->Peek_DX8_Texture()->LockRect(
+		texture->Peek_D3D_Texture()->LockRect(
 			0,
 			&src_locked_rect,
 			NULL,
@@ -899,7 +899,7 @@ IDirect3DTexture8* TextureLoader::Generate_Bumpmap(TextureClass* texture)
 	}
 
 	DX8_ErrorCode(d3d_texture->UnlockRect(0));
-	DX8_ErrorCode(texture->Peek_DX8_Texture()->UnlockRect(0));
+	DX8_ErrorCode(texture->Peek_D3D_Texture()->UnlockRect(0));
 	return d3d_texture;
 }
 
@@ -910,7 +910,7 @@ IDirect3DTexture8* TextureLoader::Generate_Bumpmap(TextureClass* texture)
 //
 // ----------------------------------------------------------------------------
 
-void TextureLoader::Add_Load_Task(TextureClass* tc)
+void TextureLoader::Add_Load_Task(TextureBaseClass* tc)
 {
 	// If the texture is already being loaded we just exit here.
 	if (tc->TextureLoadTask) return;
@@ -922,7 +922,7 @@ void TextureLoader::Add_Load_Task(TextureClass* tc)
 // ----------------------------------------------------------------------------
 
 void TextureLoader::Request_High_Priority_Loading(
-	TextureClass* tc,
+	TextureBaseClass* tc,
 	MipCountType mip_level_count)
 {
 	TextureLoadTaskClass* task=TextureLoadTaskClass::Get_Instance(tc,true);
@@ -931,7 +931,7 @@ void TextureLoader::Request_High_Priority_Loading(
 
 // ----------------------------------------------------------------------------
 
-void TextureLoader::Request_Thumbnail(TextureClass* tc)
+void TextureLoader::Request_Thumbnail(TextureBaseClass* tc)
 {
 	// If the texture is already being loaded we just exit here.
 	if (tc->TextureLoadTask) return;
@@ -976,7 +976,7 @@ TextureLoadTaskClass::~TextureLoadTaskClass()
 	Deinit();
 }
 
-void TextureLoadTaskClass::Init(TextureClass* tc,bool high_priority)
+void TextureLoadTaskClass::Init(TextureBaseClass* tc,bool high_priority)
 {
 	// Make sure texture has a filename.
 	REF_PTR_SET(Texture,tc);
@@ -1338,7 +1338,7 @@ unsigned TextureLoadTaskClass::Get_Locked_Surface_Pitch(unsigned level) const
 //
 // ----------------------------------------------------------------------------
 
-TextureLoadTaskClass* TextureLoadTaskClass::Get_Instance(TextureClass* tc, bool high_priority)
+TextureLoadTaskClass* TextureLoadTaskClass::Get_Instance(TextureBaseClass* tc, bool high_priority)
 {
 	CriticalSectionClass::LockClass m(mutex);
 

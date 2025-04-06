@@ -75,6 +75,7 @@ struct StreamingTextureConfig;
 class TextureClass;
 class MetalMapManagerClass;
 
+
 /*
 ** AssetIterator
 **	This object can iterate through the 3D assets which
@@ -202,7 +203,7 @@ public:
 	**	WW3DAssetManager::Get_Instance();
 	*/
 	static WW3DAssetManager *		Get_Instance(void) { return TheInstance; }
-	static void							Delete_This(void) { if (TheInstance) delete TheInstance; }
+	static void							Delete_This(void) { if (TheInstance) delete TheInstance; TheInstance=NULL; }
 
 	/*
 	** Load data from any type of w3d file
@@ -323,6 +324,7 @@ public:
 
 	// Log texture statistics
 	void Log_All_Textures();
+
 protected:
 
 	/*

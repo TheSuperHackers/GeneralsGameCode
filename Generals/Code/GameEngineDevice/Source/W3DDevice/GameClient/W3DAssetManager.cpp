@@ -662,11 +662,11 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 		Remap_Palette(newsurf,color, false, true );	//texture only contains a palette stored in top row.
 
 	TextureClass * newtex=NEW_REF(TextureClass,(newsurf,(MipCountType)texture->Get_Mip_Level_Count()));
-	newtex->Set_Mag_Filter(texture->Get_Mag_Filter());
-	newtex->Set_Min_Filter(texture->Get_Min_Filter());
-	newtex->Set_Mip_Mapping(texture->Get_Mip_Mapping());
-	newtex->Set_U_Addr_Mode(texture->Get_U_Addr_Mode());
-	newtex->Set_V_Addr_Mode(texture->Get_V_Addr_Mode());
+	newtex->Get_Filter().Set_Mag_Filter(texture->Get_Filter().Get_Mag_Filter());
+	newtex->Get_Filter().Set_Min_Filter(texture->Get_Filter().Get_Min_Filter());
+	newtex->Get_Filter().Set_Mip_Mapping(texture->Get_Filter().Get_Mip_Mapping());
+	newtex->Get_Filter().Set_U_Addr_Mode(texture->Get_Filter().Get_U_Addr_Mode());
+	newtex->Get_Filter().Set_V_Addr_Mode(texture->Get_Filter().Get_V_Addr_Mode());
 
 	char newname[512];	
 	Munge_Texture_Name(newname, name, color);

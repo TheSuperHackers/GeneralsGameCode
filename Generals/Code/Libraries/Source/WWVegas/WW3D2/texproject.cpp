@@ -574,8 +574,8 @@ void TexProjectClass::Init_Multiplicative(void)
 		*/
 		TextureClass * grad_tex = WW3DAssetManager::Get_Instance()->Get_Texture("MultProjectorGradient.tga");
 		if (grad_tex) {
-			grad_tex->Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
-			grad_tex->Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+			grad_tex->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+			grad_tex->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			MaterialPass->Set_Texture(grad_tex,1);
 			grad_tex->Release_Ref();
 		} else {
@@ -676,8 +676,8 @@ void TexProjectClass::Init_Additive(void)
 	*/
 	TextureClass * grad_tex = WW3DAssetManager::Get_Instance()->Get_Texture("AddProjectorGradient.tga");
 	if (grad_tex) {
-		grad_tex->Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
-		grad_tex->Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		grad_tex->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		grad_tex->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		MaterialPass->Set_Texture(grad_tex,1);
 		grad_tex->Release_Ref();
 	} else {
@@ -729,9 +729,10 @@ void TexProjectClass::Init_Additive(void)
  *=============================================================================================*/
 void TexProjectClass::Set_Texture(TextureClass * texture)
 {
-	if (texture != NULL) {
-		texture->Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
-		texture->Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);	
+	if (texture != NULL) 
+	{
+		texture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		texture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);	
 		MaterialPass->Set_Texture(texture);
 
 		SurfaceClass::SurfaceDescription surface_desc;
@@ -1112,9 +1113,14 @@ bool TexProjectClass::Compute_Ortho_Projection
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-bool TexProjectClass::Compute_Texture(RenderObjClass * model,SpecialRenderInfoClass * context)
+bool TexProjectClass::Compute_Texture
+(
+	RenderObjClass * model,
+	SpecialRenderInfoClass * context
+)
 {
-	if ((model == NULL) || (context == NULL)) {
+	if ((model == NULL) || (context == NULL)) 
+	{
 		return false;
 	}
 	/*
@@ -1122,7 +1128,8 @@ bool TexProjectClass::Compute_Texture(RenderObjClass * model,SpecialRenderInfoCl
 	*/
 	TextureClass * rtarget = Peek_Render_Target();
 
-	if (rtarget != NULL) {
+	if (rtarget != NULL) 
+	{
 
 		/*
 		** Set the render target
@@ -1194,7 +1201,10 @@ bool TexProjectClass::Needs_Render_Target(void)
  * HISTORY:                                                                                    *
  *   4/16/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-void TexProjectClass::Set_Render_Target(TextureClass * render_target)
+void TexProjectClass::Set_Render_Target
+(
+	TextureClass* render_target
+)
 {
 	REF_PTR_SET(RenderTarget,render_target);
 	Set_Texture(RenderTarget);
@@ -1212,7 +1222,10 @@ void TexProjectClass::Set_Render_Target(TextureClass * render_target)
  * HISTORY:                                                                                    *
  *   4/5/2001   gth : Created.                                                                 *
  *=============================================================================================*/
-TextureClass * TexProjectClass::Peek_Render_Target(void)
+TextureClass* TexProjectClass::Peek_Render_Target
+(
+	void
+)
 {
 	return RenderTarget;
 }
@@ -1237,6 +1250,7 @@ void TexProjectClass::Configure_Camera(CameraClass & camera)
 	if (Get_Flag(PERSPECTIVE)) {
 		camera.Set_Projection_Type(CameraClass::PERSPECTIVE);
 		camera.Set_View_Plane(HFov,VFov);
+
 	} else {
 		camera.Set_Projection_Type(CameraClass::ORTHO);
 		camera.Set_View_Plane(Vector2(XMin,YMin),Vector2(XMax,YMax));

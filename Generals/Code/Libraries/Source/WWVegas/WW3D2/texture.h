@@ -124,26 +124,14 @@ class TextureClass : public W3DMPO, public RefCountClass
 		// Get surface description of a Mip level (defaults to the highest-resolution one)
 		void Get_Level_Description(SurfaceClass::SurfaceDescription &surface_desc, unsigned int level = 0);
 
+		TextureFilterClass& Get_Filter() { return Filter; }
+
 		// Get the surface of one of the mipmap levels (defaults to highest-resolution one)
 		SurfaceClass *Get_Surface_Level(unsigned int level = 0);
 
 		// Texture priority affects texture management and caching.
 		unsigned int Get_Priority(void);
 		unsigned int Set_Priority(unsigned int priority);	// Returns previous priority
-
-		// Filter and MIPmap settings:
-		TextureFilterClass::FilterType Get_Min_Filter(void) const { return Filter.Get_Min_Filter(); }
-		TextureFilterClass::FilterType Get_Mag_Filter(void) const { return Filter.Get_Mag_Filter(); }
-		TextureFilterClass::FilterType Get_Mip_Mapping(void) const { return Filter.Get_Mip_Mapping(); }
-		void Set_Min_Filter(TextureFilterClass::FilterType filter) { Filter.Set_Min_Filter(filter); }
-		void Set_Mag_Filter(TextureFilterClass::FilterType filter) { Filter.Set_Mag_Filter(filter); }
-		void Set_Mip_Mapping(TextureFilterClass::FilterType mipmap);
-
-		// Texture address mode
-		TextureFilterClass::TxtAddrMode Get_U_Addr_Mode(void) const { return Filter.Get_U_Addr_Mode(); }
-		TextureFilterClass::TxtAddrMode Get_V_Addr_Mode(void) const { return Filter.Get_V_Addr_Mode(); }
-		void Set_U_Addr_Mode(TextureFilterClass::TxtAddrMode mode) { Filter.Set_U_Addr_Mode(mode); }
-		void Set_V_Addr_Mode(TextureFilterClass::TxtAddrMode mode) { Filter.Set_V_Addr_Mode(mode); }
 
 		// Debug utility functions for returning the texture memory usage
 		unsigned Get_Texture_Memory_Usage() const;
@@ -167,7 +155,7 @@ class TextureClass : public W3DMPO, public RefCountClass
 		// This utility function processes the texture reduction (used during rendering)
 		void Invalidate();
 
-		IDirect3DTexture8 *Peek_DX8_Texture()
+		IDirect3DTexture8 *Peek_D3D_Texture()
 		{
 			return D3DTexture;
 		}
@@ -243,5 +231,8 @@ public:
 // Utility functions for loading and saving texture descriptions from/to W3D files
 TextureClass *Load_Texture(ChunkLoadClass & cload);
 void Save_Texture(TextureClass * texture, ChunkSaveClass & csave);
+
+// TheSuperHackers @todo TextureBaseClass abstraction
+typedef TextureClass TextureBaseClass;
 
 #endif //TEXTURE_H

@@ -267,12 +267,12 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 		bool material_changed = false;
 		bool shader_changed = false;
 
-		TextureClass **texture_array = NULL;
+		TextureClass **texture_array0 = NULL;
 		TexBufferClass * tex_buf = MatDesc->Get_Texture_Array(pass, 0, false);
 		if (tex_buf) {
-			texture_array = tex_buf->Get_Array();
+			texture_array0 = tex_buf->Get_Array();
 		} else {
-			texture_array = NULL;
+			texture_array0 = NULL;
 		}
 		VertexMaterialClass **material_array = NULL;
 		MatBufferClass * mat_buf = MatDesc->Get_Material_Array(pass, false);
@@ -284,8 +284,8 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 		ShaderClass *shader_array = MatDesc->Get_Shader_Array(pass, false);
 
 		// Set the DX8 state to the first triangle's state
-		if (texture_array) {
-			DX8Wrapper::Set_Texture(0,texture_array[0]);
+		if (texture_array0) {
+			DX8Wrapper::Set_Texture(0,texture_array0[0]);
 		} else {
 			DX8Wrapper::Set_Texture(0,MatDesc->Peek_Single_Texture(pass, 0));
 		}
@@ -304,7 +304,7 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 		Get_Bounding_Sphere(&sphere); 
 
 		// If no texture, shader or material arrays for this pass just draw and go to next pass
-		if (!texture_array && !material_array && !shader_array) {
+		if (!texture_array0 && !material_array && !shader_array) {
 			if (buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) {
 				SortingRendererClass::Insert_Triangles(sphere,0, DynamicMeshPNum, 0, DynamicMeshVNum);
 			}
@@ -331,7 +331,7 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 				material_changed = false;
 				shader_changed = false;
 			} else {
-				texture_changed = texture_array && texture_array[cur_tri_idx] != texture_array[next_tri_idx];
+				texture_changed = texture_array0 && texture_array0[cur_tri_idx] != texture_array0[next_tri_idx];
 				material_changed = material_array && material_array[tris[cur_tri_idx].I] != material_array[tris[next_tri_idx].I];
 				shader_changed = shader_array && shader_array[cur_tri_idx] != shader_array[next_tri_idx];
 			}
@@ -356,7 +356,7 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 				start_tri_idx = next_tri_idx;
 				min_vert_idx = DynamicMeshVNum - 1;
 				max_vert_idx = 0;
-				if (texture_changed) DX8Wrapper::Set_Texture(0,texture_array[next_tri_idx]);
+				if (texture_changed) DX8Wrapper::Set_Texture(0,texture_array0[next_tri_idx]);
 				if (material_changed) DX8Wrapper::Set_Material(material_array[tris[next_tri_idx].I]);
 				if (shader_changed) DX8Wrapper::Set_Shader(shader_array[next_tri_idx]);
 			}

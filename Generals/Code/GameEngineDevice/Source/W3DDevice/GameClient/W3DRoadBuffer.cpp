@@ -180,10 +180,10 @@ void RoadType::loadTexture(AsciiString path, Int ID)
 
 	m_roadTexture = pMgr->Get_Texture(path.str(), MIP_LEVELS_3); 
 
-	m_roadTexture->Set_Mip_Mapping( TextureFilterClass::FILTER_TYPE_BEST );
+	m_roadTexture->Get_Filter().Set_Mip_Mapping( TextureFilterClass::FILTER_TYPE_BEST );
 
-	m_roadTexture->Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_REPEAT);
-	m_roadTexture->Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_REPEAT);
+	m_roadTexture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_REPEAT);
+	m_roadTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_REPEAT);
 
 	m_vertexRoad=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZDUV1,TheGlobalData->m_maxRoadVertex+4,DX8VertexBufferClass::USAGE_DYNAMIC));
 	m_indexRoad=NEW_REF(DX8IndexBufferClass,(TheGlobalData->m_maxRoadIndex+4, DX8IndexBufferClass::USAGE_DYNAMIC));
@@ -207,10 +207,10 @@ void RoadType::loadTestTexture(void)
 	if (m_isAutoLoaded && m_uniqueID>0 && !m_texturePath.isEmpty()) {
 		/// @todo - delay loading textures and only load textures referenced by map.
 		m_roadTexture = NEW_REF(TextureClass, (m_texturePath.str(), m_texturePath.str(), MIP_LEVELS_3));
-		m_roadTexture->Set_Mip_Mapping( TextureFilterClass::FILTER_TYPE_BEST );
+		m_roadTexture->Get_Filter().Set_Mip_Mapping( TextureFilterClass::FILTER_TYPE_BEST );
 
-		m_roadTexture->Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_REPEAT);
-		m_roadTexture->Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_REPEAT);
+		m_roadTexture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_REPEAT);
+		m_roadTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_REPEAT);
 	}
 }
 #endif

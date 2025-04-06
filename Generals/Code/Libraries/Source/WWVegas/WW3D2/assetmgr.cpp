@@ -109,7 +109,6 @@
 #include <windows.h>
 #include <stdio.h>
 #include <d3dx8core.h>
-
 #include "texture.h"
 #include "wwprofile.h"
 
@@ -301,7 +300,7 @@ static void Log_Textures(bool inited,unsigned& total_count, unsigned& total_mem)
 		if (tex->Is_Initialized()!=inited) continue;
 
 		D3DSURFACE_DESC desc;
-		IDirect3DTexture8* d3d_texture=tex->Peek_DX8_Texture();
+		IDirect3DTexture8* d3d_texture=tex->Peek_D3D_Texture();
 		if (!d3d_texture) continue;
 		DX8_ErrorCode(d3d_texture->GetLevelDesc(0,&desc));
 
@@ -1082,18 +1081,21 @@ TextureClass* WW3DAssetManager::Get_Bumpmap_Based_On_Texture(TextureClass* textu
  * HISTORY:                                                                                    *
  *   1/31/2001  NH : Created.                                                                  *
  *=============================================================================================*/
-TextureClass * WW3DAssetManager::Get_Texture(
+TextureClass * WW3DAssetManager::Get_Texture
+(
 	const char * filename, 
 	MipCountType mip_level_count,
 	WW3DFormat texture_format,
-	bool allow_compression)
+	bool allow_compression
+)
 {
 	WWPROFILE( "WW3DAssetManager::Get_Texture 1" );
 
 	/*
 	** Bail if the user isn't really asking for anything
 	*/
-	if ((filename == NULL) || (strlen(filename) == 0)) {
+	if ((filename == NULL) || (strlen(filename) == 0)) 
+	{
 		return NULL;
 	}
 
@@ -1105,15 +1107,17 @@ TextureClass * WW3DAssetManager::Get_Texture(
 	*/
 
 	TextureClass* tex = TextureHash.Get(lower_case_name);
-	if (tex && texture_format!=WW3D_FORMAT_UNKNOWN) {
+	if (tex && texture_format!=WW3D_FORMAT_UNKNOWN) 
+	{
 		WWASSERT_PRINT(tex->Get_Texture_Format()==texture_format,("Texture %s has already been loaded witt different format",filename));
 	}
 
 	/*
 	** Didn't have it so we have to create a new texture
 	*/
-	if (!tex) {
-		tex = NEW_REF(TextureClass,(lower_case_name, NULL, mip_level_count, texture_format, allow_compression));
+	if (!tex) 
+	{
+		tex = NEW_REF (TextureClass, (lower_case_name, NULL, mip_level_count, texture_format, allow_compression));
 		TextureHash.Insert(tex->Get_Texture_Name(),tex);
 	}
 

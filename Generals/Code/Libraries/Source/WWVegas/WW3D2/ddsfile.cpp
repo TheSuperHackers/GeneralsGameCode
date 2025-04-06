@@ -162,10 +162,16 @@ unsigned DDSFileClass::Get_Level_Size(unsigned level) const
 }
 
 // For some reason DX-Tex tool doesn't fill the surface size field, so we need to calculate it...
-unsigned DDSFileClass::Calculate_DXTC_Surface_Size(unsigned width, unsigned height, WW3DFormat format)
+unsigned DDSFileClass::Calculate_DXTC_Surface_Size
+(
+	unsigned width, 
+	unsigned height, 
+	WW3DFormat format
+)
 {
 	unsigned level_size=(width/4)*(height/4);
-	switch (format) {
+	switch (format) 
+	{
 	case WW3D_FORMAT_DXT1:
 		level_size*=8;
 		break;
@@ -176,6 +182,7 @@ unsigned DDSFileClass::Calculate_DXTC_Surface_Size(unsigned width, unsigned heig
 		level_size*=16;
 		break;
 	}
+
 	return level_size;
 }
 
@@ -187,7 +194,8 @@ bool DDSFileClass::Load()
 	if (!LevelSizes || !LevelOffsets) return false;
 
 	file_auto_ptr file(_TheFileFactory,Name);	
-	if (!file->Is_Available()) {
+	if (!file->Is_Available()) 
+	{
 		return false;
 	}
 
@@ -197,10 +205,12 @@ bool DDSFileClass::Load()
 	// Skip mip levels if reduction factor is not zero
 	unsigned level_size=Calculate_DXTC_Surface_Size(SurfaceDesc.Width,SurfaceDesc.Height,Format);
 	unsigned skipped_offset=0;
-	for (unsigned i=0;i<ReductionFactor;++i) {
+	for (unsigned i=0;i<ReductionFactor;++i) 
+	{
 		skipped_offset+=level_size;
 		size-=level_size;
-		if (level_size>16) {	// If surface is bigger than one block (8 or 16 bytes)...
+		if (level_size>16) 
+		{	// If surface is bigger than one block (8 or 16 bytes)...
 			level_size/=4;
 		}
 	}
@@ -209,7 +219,8 @@ bool DDSFileClass::Load()
 	unsigned seek_size=file->Seek(SurfaceDesc.Size+4+skipped_offset);
 	WWASSERT(seek_size==(SurfaceDesc.Size+4+skipped_offset));
 
-	if (size) {
+	if (size) 
+	{
 		// Allocate memory for the data excluding the headers
 		DDSMemory=MSGW3DNEWARRAY("DDSMemory") unsigned char[size];
 		// Read data

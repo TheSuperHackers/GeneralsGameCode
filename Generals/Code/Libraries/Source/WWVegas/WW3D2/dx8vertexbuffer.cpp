@@ -149,7 +149,7 @@ void VertexBufferClass::Release_Engine_Ref() const
 //
 // ----------------------------------------------------------------------------
 
-VertexBufferClass::WriteLockClass::WriteLockClass(VertexBufferClass* VertexBuffer)
+VertexBufferClass::WriteLockClass::WriteLockClass(VertexBufferClass* VertexBuffer, int flags)
 	:
 	VertexBufferLockClass(VertexBuffer)
 {
@@ -174,7 +174,7 @@ VertexBufferClass::WriteLockClass::WriteLockClass(VertexBufferClass* VertexBuffe
 			0,
 			0,
 			(unsigned char**)&Vertices,
-			0));	// Default (no) flags
+			flags));	//flags
 		break;
 	case BUFFER_TYPE_SORTING:
 		Vertices=static_cast<SortingVertexBufferClass*>(VertexBuffer)->VertexBuffer;

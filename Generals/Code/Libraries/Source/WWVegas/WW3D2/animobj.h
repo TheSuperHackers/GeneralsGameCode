@@ -121,7 +121,6 @@ public:
 
 	// (gth) TESTING DYNAMICALLY SWAPPING SKELETONS!
 	virtual void					Set_HTree(HTreeClass * htree);
-
 	///Generals change so we can set sub-object transforms directly without having them revert to base pose
 	///when marked dirty.  DON'T USE THIS UNLESS YOU HAVE A GOOD REASON! -MW
 	void							Friend_Set_Hierarchy_Valid(bool onoff) const  	{ IsTreeValid = onoff; }

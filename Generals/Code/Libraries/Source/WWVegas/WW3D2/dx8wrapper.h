@@ -156,7 +156,7 @@ struct RenderStateStruct
 {
 	ShaderClass shader;
 	VertexMaterialClass* material;
-	TextureClass * Textures[MAX_TEXTURE_STAGES];
+	TextureBaseClass * Textures[MAX_TEXTURE_STAGES];
 	D3DLIGHT8 Lights[4];
 	bool LightEnable[4];
 	Matrix4x4 world;
@@ -212,14 +212,14 @@ class DX8Wrapper
 
 	static void Draw_Sorting_IB_VB(
 		unsigned primitive_type,
-		unsigned short start_index, 
+		unsigned short start_index,
 		unsigned short polygon_count,
 		unsigned short min_vertex_index,
 		unsigned short vertex_count);
 
 	static void Draw(
 		unsigned primitive_type,
-		unsigned short start_index, 
+		unsigned short start_index,
 		unsigned short polygon_count,
 		unsigned short min_vertex_index=0,
 		unsigned short vertex_count=0);
@@ -228,7 +228,7 @@ public:
 #ifdef EXTENDED_STATS
 	static DX8_Stats stats;
 #endif
-	
+
 	static bool Init(void * hwnd);
 	static void Shutdown(void);
 
@@ -264,7 +264,7 @@ public:
 	static void Get_Render_State(RenderStateStruct& state);
 	static void Set_Render_State(const RenderStateStruct& state);
 	static void Release_Render_State();
-	
+
 	static void Set_DX8_Material(const D3DMATERIAL8* mat);
 
 	static void Set_Gamma(float gamma,float bright,float contrast,bool calibrate=true,bool uselimit=true);
@@ -302,26 +302,26 @@ public:
 
 	static void Set_Shader(const ShaderClass& shader);
 	static void Get_Shader(ShaderClass& shader);
-	static void Set_Texture(unsigned stage,TextureClass* texture);
+	static void Set_Texture(unsigned stage,TextureBaseClass* texture);
 	static void Set_Material(const VertexMaterialClass* material);
-	static void Set_Light(unsigned index,const D3DLIGHT8* light);	
+	static void Set_Light(unsigned index,const D3DLIGHT8* light);
 	static void Set_Light(unsigned index,const LightClass &light);
 
 	static void Apply_Render_State_Changes();	// Apply deferred render state changes (will be called automatically by Draw...)
 
 	static void Draw_Triangles(
 		unsigned buffer_type,
-		unsigned short start_index, 
+		unsigned short start_index,
 		unsigned short polygon_count,
 		unsigned short min_vertex_index,
 		unsigned short vertex_count);
 	static void Draw_Triangles(
-		unsigned short start_index, 
+		unsigned short start_index,
 		unsigned short polygon_count,
 		unsigned short min_vertex_index,
 		unsigned short vertex_count);
 	static void Draw_Strip(
-		unsigned short start_index, 
+		unsigned short start_index,
 		unsigned short index_count,
 		unsigned short min_vertex_index,
 		unsigned short vertex_count);
@@ -329,13 +329,15 @@ public:
 	/*
 	** Resources
 	*/
-	static IDirect3DTexture8 * _Create_DX8_Texture(
-		unsigned int width, 
-		unsigned int height, 
-		WW3DFormat format, 
+	static IDirect3DTexture8 * _Create_DX8_Texture
+	(
+		unsigned int width,
+		unsigned int height,
+		WW3DFormat format,
 		MipCountType mip_level_count,
 		D3DPOOL pool=D3DPOOL_MANAGED,
-		bool rendertarget=false);
+		bool rendertarget=false
+	);
 	static IDirect3DTexture8 * _Create_DX8_Texture(const char *filename, MipCountType mip_level_count);
 	static IDirect3DTexture8 * _Create_DX8_Texture(IDirect3DSurface8 *surface, MipCountType mip_level_count);
 
@@ -378,7 +380,7 @@ public:
 
 	// Needed by shader class
 	static bool						Get_Fog_Enable() { return FogEnable; }
-	static D3DCOLOR				Get_Fog_Color() { return FogColor; }	
+	static D3DCOLOR				Get_Fog_Color() { return FogColor; }
 
 	// Utilities
 	static Vector4 Convert_Color(unsigned color);
@@ -417,17 +419,20 @@ public:
 	*/
 	static TextureClass *	Create_Render_Target (int width, int height, bool alpha=false);
 	
-	static void					Set_Render_Target (TextureClass * texture);
+	static void					Set_Render_Target (TextureBaseClass * texture);
 	static void					Set_Render_Target (IDirect3DSurface8 *render_target);
 	static void					Set_Render_Target (IDirect3DSwapChain8 *swap_chain);
 
 	static IDirect3DDevice8* _Get_D3D_Device8() { return D3DDevice; }
 	static IDirect3D8* _Get_D3D8() { return D3DInterface; }
-	static void Invalidate_Cached_Render_States(void);
-
 	/// Returns the display format - added by TR for video playback - not part of W3D
 	static WW3DFormat	getBackBufferFormat( void );
 	static bool Reset_Device(bool reload_assets=true);
+
+	static bool Registry_Save_Render_Device( const char * sub_key );
+	static bool Registry_Load_Render_Device( const char * sub_key, bool resize_window );
+
+	static void Invalidate_Cached_Render_States(void);
 
 protected:
 
@@ -459,12 +464,10 @@ protected:
 	static int	Get_Device_Resolution_Width(void) { return ResolutionWidth; }
 	static int	Get_Device_Resolution_Height(void) { return ResolutionHeight; }
 
-	static bool Registry_Save_Render_Device( const char * sub_key );
 	static bool Registry_Save_Render_Device( const char *sub_key, int device, int width, int height, int depth, bool windowed, int texture_depth);
-	static bool Registry_Load_Render_Device( const char * sub_key, bool resize_window );
 	static bool Registry_Load_Render_Device( const char * sub_key, char *device, int device_len, int &width, int &height, int &depth, int &windowed, int &texture_depth);
 	static bool Is_Windowed(void) { return IsWindowed; }
-	
+
 	static void	Set_Texture_Bitdepth(int depth)	{ WWASSERT(depth==16 || depth==32); TextureBitDepth = depth; }
 	static int	Get_Texture_Bitdepth(void)			{ return TextureBitDepth; }
 
@@ -526,6 +529,7 @@ protected:
 	static unsigned						texture_changes;
 	static unsigned						render_state_changes;
 	static unsigned						texture_stage_state_changes;
+	static unsigned						draw_calls;
 	static bool								CurrentDX8LightEnables[4];
 
 	static unsigned long FrameCount;
@@ -624,13 +628,13 @@ WWINLINE void DX8Wrapper::Set_DX8_Light(int index, D3DLIGHT8* light)
 		DX8CALL(SetLight(index,light));
 		DX8CALL(LightEnable(index,TRUE));
 		CurrentDX8LightEnables[index]=true;
-		SNAPSHOT_SAY(("DX8 - SetLight\n"));
+		SNAPSHOT_SAY(("DX8 - SetLight %d\n",index));
 	}
 	else if (CurrentDX8LightEnables[index]) {
 		DX8_RECORD_LIGHT_CHANGE();
 		CurrentDX8LightEnables[index]=false;
 		DX8CALL(LightEnable(index,FALSE));
-		SNAPSHOT_SAY(("DX8 - DisableLight\n"));
+		SNAPSHOT_SAY(("DX8 - DisableLight %d\n",index));
 	}
 }
 
@@ -803,7 +807,7 @@ skip:
 		or		eax,ecx					// (a << 24) | b
 		or		eax,ebx					// (a << 24) | (r << 16) | b
 		or		eax,edx					// (a << 24) | (r << 16) | (g << 8) | b
-		
+
 		fstp	st(0)
 
 		// Restore fpu rounding mode
@@ -923,7 +927,7 @@ WWINLINE void DX8Wrapper::Get_Shader(ShaderClass& shader)
 	shader=render_state.shader;
 }
 
-WWINLINE void DX8Wrapper::Set_Texture(unsigned stage,TextureClass* texture)
+WWINLINE void DX8Wrapper::Set_Texture(unsigned stage,TextureBaseClass* texture)
 {
 	WWASSERT(stage<MAX_TEXTURE_STAGES);
 	if (texture==render_state.Textures[stage]) return;
@@ -961,7 +965,7 @@ WWINLINE void DX8Wrapper::Set_Transform(D3DTRANSFORMSTATETYPE transform,const Ma
 	default:
 		DX8_RECORD_MATRIX_CHANGE();
 		Matrix4x4 m2=m.Transpose();
-		DX8CALL(SetTransform(transform,(D3DMATRIX*)&m2));	
+		DX8CALL(SetTransform(transform,(D3DMATRIX*)&m2));
 		break;
 	}
 }

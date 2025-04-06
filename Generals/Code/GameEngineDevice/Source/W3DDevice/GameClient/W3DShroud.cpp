@@ -247,9 +247,9 @@ Bool W3DShroud::ReAcquireResources(void)
 			m_dstTextureHeight = 0;
 			return FALSE;
 		}
-		m_pDstTexture->Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
-		m_pDstTexture->Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
-		m_pDstTexture->Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_NONE);
+		m_pDstTexture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		m_pDstTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		m_pDstTexture->Get_Filter().Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_NONE);
 		m_clearDstTexture = TRUE;	//force clearing of destination texture first time it's used.
 
 		return TRUE;
@@ -663,10 +663,10 @@ void W3DShroud::render(CameraClass *cam)
 
 	pSurface->Unlock();
 */
-	if (m_pDstTexture->Get_Mag_Filter() != m_shroudFilter)
+	if (m_pDstTexture->Get_Filter().Get_Mag_Filter() != m_shroudFilter)
 	{
-		m_pDstTexture->Set_Mag_Filter(m_shroudFilter);
-		m_pDstTexture->Set_Min_Filter(m_shroudFilter);
+		m_pDstTexture->Get_Filter().Set_Mag_Filter(m_shroudFilter);
+		m_pDstTexture->Get_Filter().Set_Min_Filter(m_shroudFilter);
 	}
 
 	//Update video memory texture with sysmem copy
