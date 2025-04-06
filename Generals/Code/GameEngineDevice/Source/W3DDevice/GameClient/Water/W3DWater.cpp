@@ -1014,7 +1014,7 @@ Int WaterRenderObjClass::init(Real waterLevel, Real dx, Real dy, SceneClass *par
 	Set_Force_Visible(TRUE);	//water is always visible since it's a composite object made of multiple planes all over the map.
 
 	ReAcquireResources();
-
+#if 0	//MD does not support the old bump-mapped water at all so no point loading textures. -MW 8-11-03
 	if (type == WATER_TYPE_2_PVSHADER || (W3DShaderManager::getChipset() >= DC_GENERIC_PIXEL_SHADER_1_1))
 	{	//geforce3 specific water requires some extra D3D assets
 		m_pDev=DX8Wrapper::_Get_D3D_Device8();
@@ -1045,6 +1045,7 @@ Int WaterRenderObjClass::init(Real waterLevel, Real dx, Real dy, SceneClass *par
 		//restore previous thumpnail mode
 		WW3D::Set_Texture_Thumbnail_Mode(tmMode);
 	}
+#endif
 
 	//Setup material for regular water
 	m_vertexMaterialClass=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
