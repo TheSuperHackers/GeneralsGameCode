@@ -131,7 +131,8 @@ void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData
 	{
 		// no buffer manhandling is needed (it's already large enough, and unique to us)
 		if (strToCopy)
-			strcpy(m_data->peek(), strToCopy);
+			// TheSuperHackers @fix Mauller 04/04/2025 Replace strcpy with safer memmove as memory regions can overlap when part of string is copied to itself
+			memmove(m_data->peek(), strToCopy, strlen(strToCopy) + 1);
 		if (strToCat)
 			strcat(m_data->peek(), strToCat);
 		return;
