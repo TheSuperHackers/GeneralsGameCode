@@ -27,6 +27,9 @@
 #endif
 
 #include "always.h"
+#include "Vector.H"
+
+struct _EXCEPTION_POINTERS;
 
 
 // ****************************************************************************
@@ -40,13 +43,15 @@
 // will clear the flag and expect you to exit from the thread. If you are
 // not exiting in certain time (defined as a parameter to Stop()) it will
 // force-kill the thread to prevent the program from halting.
-// 
+//
 // ****************************************************************************
 
 class ThreadClass
 {
 public:
-	ThreadClass();
+	typedef int (*ExceptionHandlerType)(int exception_code, struct _EXCEPTION_POINTERS *e_info);
+
+	ThreadClass(const char *name = NULL, ExceptionHandlerType exception_handler = NULL);
 	virtual ~ThreadClass();
 
 	// Execute Thread_Function(). Note that only one instance can be executed at a time.
@@ -70,12 +75,27 @@ public:
 	// Returns true if the thread is running.
 	bool Is_Running();
 
+	// Gets the name of the thread.
+	const char *Get_Name(void) {return(ThreadName);};
+
+	// Get info about a registered thread by it's index.
+	static int Get_Thread_By_Index(int index, char *name_ptr = NULL);
+
 protected:
 
 	// User defined thread function. The thread function should check for "running" flag every now and then
 	// and exit the thread if running is false.
 	virtual void Thread_Function() = 0;
 	volatile bool running;
+
+	// Name of thread.
+	char ThreadName[64];
+
+	// ID of thread.
+	unsigned ThreadID;
+
+	// Exception handler for this thread.
+	ExceptionHandlerType ExceptionHandler;
 
 private:
 	static void __cdecl Internal_Thread_Function(void*);

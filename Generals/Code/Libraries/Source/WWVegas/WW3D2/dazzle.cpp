@@ -564,7 +564,7 @@ void DazzleRenderObjClass::Init_From_INI(const INIClass* ini)
 
 		LensflareInitClass lic;
 
-		lic.texture_name=ini->Get_String(section_name,LENSFLARE_TEXTURE_STRING);
+		ini->Get_String(lic.texture_name,section_name,LENSFLARE_TEXTURE_STRING);
 		lic.flare_count=ini->Get_Int(section_name,FLARE_COUNT_STRING,0);
 		if (lic.flare_count) {
 			lic.flare_locations=W3DNEWARRAY float[lic.flare_count];	// Flare location is 1D
@@ -613,8 +613,8 @@ void DazzleRenderObjClass::Init_From_INI(const INIClass* ini)
 
 		DazzleInitClass dic;
 
-		dic.primary_texture_name=ini->Get_String(section_name,DAZZLE_TEXTURE_STRING);
-		dic.secondary_texture_name=ini->Get_String(section_name,HALO_TEXTURE_STRING);
+		ini->Get_String(dic.primary_texture_name,section_name,DAZZLE_TEXTURE_STRING);
+		ini->Get_String(dic.secondary_texture_name,section_name,HALO_TEXTURE_STRING);
 		dic.halo_intensity=ini->Get_Float(section_name,HALO_INTENSITY_STRING,0.95f);
 		dic.halo_intensity_pow=ini->Get_Float(section_name,HALO_INTENSITY_POW_STRING,0.95f);
 		dic.halo_size_pow=ini->Get_Float(section_name,HALO_SIZE_POW_STRING,0.95f);
@@ -633,7 +633,7 @@ void DazzleRenderObjClass::Init_From_INI(const INIClass* ini)
 		dic.size_optimization_limit=ini->Get_Float(section_name,SIZE_OPTIMIZATION_LIMIT_STRING,0.05f);
 		dic.history_weight=ini->Get_Float(section_name,HISTORY_WEIGHT_STRING,0.5f);
 		dic.use_camera_translation=!!ini->Get_Int(section_name,USE_CAMERA_TRANSLATION,1);
-		dic.lensflare_name=ini->Get_String(section_name,DAZZLE_LENSFLARE_STRING);
+		ini->Get_String(dic.lensflare_name,section_name,DAZZLE_LENSFLARE_STRING);
 		dic.type=entry;
 
 		TPoint3D<float> tp=ini->Get_Point(section_name,DAZZLE_DIRECTION_STRING,TPoint3D<float>(0.0f,0.0f,0.0f));

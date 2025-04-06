@@ -24,11 +24,11 @@
  *                                                                                             * 
  *                     $Archive:: /Commando/Code/wwlib/win.h                                  $* 
  *                                                                                             * 
- *                      $Author:: Denzil_l                                                    $*
+ *                      $Author:: Ian_l                                                       $*
  *                                                                                             * 
- *                     $Modtime:: 6/26/01 1:59p                                               $*
+ *                     $Modtime:: 10/16/01 2:42p                                              $*
  *                                                                                             * 
- *                    $Revision:: 10                                                          $*
+ *                    $Revision:: 11                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------* 
  * Functions:                                                                                  * 

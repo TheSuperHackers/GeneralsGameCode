@@ -22,13 +22,13 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /G/wwlib/listnode.h                                         $*
+ *                     $Archive:: /Commando/Code/wwlib/listnode.h                             $*
  *                                                                                             *
- *                      $Author:: David_m                                                     $*
+ *                      $Author:: Ian_l                                                       $*
  *                                                                                             *
- *                     $Modtime:: 4/05/00 12:34p                                              $*
+ *                     $Modtime:: 9/20/01 9:46p                                               $*
  *                                                                                             *
- *                    $Revision:: 3                                                           $*
+ *                    $Revision:: 4                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -213,6 +213,7 @@ class List : public GenericList {
 		List(List<T> const & rvalue);
 		List<T> operator = (List<T> const & rvalue);
 };
+
 
 /*
 

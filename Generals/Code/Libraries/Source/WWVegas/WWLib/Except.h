@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -22,40 +22,67 @@
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                     $Archive:: /Commando/Code/wwlib/stimer.cpp                             $*
+ *                     $Archive:: /Commando/Code/wwlib/Except.h                               $*
  *                                                                                             *
  *                      $Author:: Steve_t                                                     $*
  *                                                                                             *
- *                     $Modtime:: 12/09/01 6:42p                                              $*
+ *                     $Modtime:: 2/07/02 12:28p                                              $*
  *                                                                                             *
- *                    $Revision:: 4                                                           $*
+ *                    $Revision:: 6                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include	"always.h"
-#include	"stimer.h"
-#include	"win.h"
+#pragma once
+
+#ifndef EXCEPT_H
+#define EXCEPT_H
 
 #ifdef _MSC_VER
-#pragma warning (push,3)
-#endif
 
-#include "systimer.h"
+#include "win.h"
+/*
+** Forward Declarations
+*/
+typedef struct _EXCEPTION_POINTERS EXCEPTION_POINTERS;
+typedef struct _CONTEXT CONTEXT;
 
-#ifdef _MSC_VER
-#pragma warning (pop)
-#endif
+int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info);
+int Stack_Walk(unsigned long *return_addresses, int num_addresses, CONTEXT *context = NULL);
+bool Lookup_Symbol(void *code_ptr, char *symbol, int &displacement);
+void Load_Image_Helper(void);
+void Register_Thread_ID(unsigned long thread_id, char *thread_name, bool main = false);
+void Unregister_Thread_ID(unsigned long thread_id, char *thread_name);
+void Register_Application_Exception_Callback(void (*app_callback)(void));
+void Register_Application_Version_Callback(char *(*app_version_callback)(void));
+void Set_Exit_On_Exception(bool set);
+bool Is_Trying_To_Exit(void);
+unsigned long Get_Main_Thread_ID(void);
+#if (0)
+bool Register_Thread_Handle(unsigned long thread_id, HANDLE thread_handle);
+int Get_Num_Thread(void);
+HANDLE Get_Thread_Handle(int thread_index);
+#endif //(0)
+
+/*
+** Register dump variables. These are used to allow the game to restart from an arbitrary
+** position after an exception occurs.
+*/
+extern unsigned long ExceptionReturnStack;
+extern unsigned long ExceptionReturnAddress;
+extern unsigned long ExceptionReturnFrame;
 
 
-long SystemTimerClass::operator () (void) const
-{
-	return TIMEGETTIME()/16;
-}
+typedef struct tThreadInfoType {
+	char				ThreadName[128];
+	unsigned long	ThreadID;
+	HANDLE			ThreadHandle;
+	bool				Main;
+} ThreadInfoType;
 
 
-SystemTimerClass::operator long (void) const
-{
-	return TIMEGETTIME()/16;
-}
+
+#endif	//_MSC_VER
+
+#endif	//EXCEPT_H

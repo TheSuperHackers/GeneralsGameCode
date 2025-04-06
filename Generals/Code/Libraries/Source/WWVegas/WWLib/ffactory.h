@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/ffactory.h                     $* 
- *                                                                                             * 
- *                      $Author:: Jani_p                                                      $*
- *                                                                                             * 
- *                     $Modtime:: 8/24/01 11:50a                                              $*
- *                                                                                             * 
- *                    $Revision:: 13                                                          $*
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/ffactory.h                     $*
+ *                                                                                             *
+ *                      $Author:: Steve_t                                                     $*
+ *                                                                                             *
+ *                     $Modtime:: 9/07/01 5:30p                                               $*
+ *                                                                                             *
+ *                    $Revision:: 14                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #if _MSC_VER >= 1000
@@ -62,6 +62,7 @@ class	FileClass;
 class	FileFactoryClass {
 
 public:
+	virtual ~FileFactoryClass(void){};
 	virtual FileClass * Get_File( char const *filename ) = 0;
 	virtual void Return_File( FileClass *file ) = 0;
 };
@@ -72,7 +73,7 @@ public:
 //
 // Handy auto pointer class.  Prevents you from having to call Return_File manually
 //
-class file_auto_ptr 
+class file_auto_ptr
 {
 public:
 	explicit	file_auto_ptr(FileFactoryClass *fac, const char *filename);
@@ -81,7 +82,7 @@ public:
 	operator FileClass*(void) const
 		{return (get()); }
 
-	FileClass& operator*() const 
+	FileClass& operator*() const
 		{return (*get()); }
 
 	FileClass *operator->() const
@@ -141,6 +142,7 @@ public:
 	void						Append_Sub_Directory( const char * sub_directory );
 	bool						Get_Strip_Path( void ) const								{ return IsStripPath; }
 	void						Set_Strip_Path( bool set )									{ IsStripPath = set; }
+	void						Reset_Sub_Directory( void )								{ SubDirectory = ""; }
 
 protected:
 	StringClass				SubDirectory;
@@ -155,6 +157,7 @@ extern FileFactoryClass	*	_TheFileFactory;
 extern RawFileFactoryClass	*	_TheWritingFileFactory;
 
 // No simple file factory.  jba.
-//extern SimpleFileFactoryClass	*	_TheSimpleFileFactory;
+// (gth) re-enabling this because w3d view uses it
+extern SimpleFileFactoryClass	*	_TheSimpleFileFactory;
 
 #endif

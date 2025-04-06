@@ -24,11 +24,11 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/wwlib/registry.h                             $*
  *                                                                                             *
- *                      $Author:: Patrick                                                     $*
+ *                      $Author:: Steve_t                                                     $*
  *                                                                                             *
- *                     $Modtime:: 8/16/01 11:28a                                              $*
+ *                     $Modtime:: 11/21/01 3:42p                                              $*
  *                                                                                             *
- *                    $Revision:: 8                                                           $*
+ *                    $Revision:: 12                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -48,13 +48,17 @@
 #include "wwstring.h"
 #include "widestring.h"
 
+class INIClass;
+
 /*
 **
 */
 class	RegistryClass {
 public:
+	static bool Exists(const char* sub_key);
+
 	// Constructor & Destructor
-	RegistryClass( const char * sub_key );
+	RegistryClass( const char * sub_key, bool create = true );
 	~RegistryClass( void );
 
 	bool	Is_Valid( void )		{ return IsValid; }
@@ -93,9 +97,31 @@ public:
 	void	Delete_Value( const char * name);
 	void	Deleta_All_Values( void );
 
+	// Read only.
+	static void Set_Read_Only(bool set) {IsLocked = set;}
+
+	//
+	// Bulk registry operations. BE VERY VERY CAREFUL USING THESE
+	//
+	static void Delete_Registry_Tree(char *path);
+	static void Load_Registry(const char *filename, char *old_path, char *new_path);
+	static void Save_Registry(const char *filename, char *path);
+
+
 private:
+
+	static void Delete_Registry_Values(HKEY key);
+	static void Save_Registry_Tree(char *path, INIClass *ini);
+	static void Save_Registry_Values(HKEY key, char *path, INIClass *ini);
+
+
 	int	Key;
 	bool	IsValid;
+
+	//
+	// Use this to make the registry 'read only'. Useful for running multiple copies of the app.
+	//
+	static bool IsLocked;
 };
 
 #endif // REGISTRY_H

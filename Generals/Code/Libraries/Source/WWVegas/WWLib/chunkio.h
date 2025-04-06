@@ -16,23 +16,23 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* $Header: /Commando/Code/wwlib/chunkio.h 21    7/31/01 6:41p Patrick $ */
-/*********************************************************************************************** 
- ***                            Confidential - Westwood Studios                              *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Tiberian Sun / Commando / G Library                          * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/chunkio.h                              $* 
- *                                                                                             * 
- *                      $Author:: Patrick                                                     $* 
- *                                                                                             * 
- *                     $Modtime:: 7/27/01 2:47p                                               $* 
- *                                                                                             * 
- *                    $Revision:: 21                                                          $* 
- *                                                                                             * 
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+/* $Header: /Commando/Code/wwlib/chunkio.h 22    10/22/01 6:42p Steve_t $ */
+/***********************************************************************************************
+ ***                            Confidential - Westwood Studios                              ***
+ ***********************************************************************************************
+ *                                                                                             *
+ *                 Project Name : Tiberian Sun / Commando / G Library                          *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/chunkio.h                              $*
+ *                                                                                             *
+ *                      $Author:: Steve_t                                                     $*
+ *                                                                                             *
+ *                     $Modtime:: 10/21/01 8:58p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 22                                                          $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #if _MSC_VER >= 1000
 #pragma once
@@ -339,8 +339,8 @@ private:
 */
 #define READ_SAFE_MICRO_CHUNK(cload,id,var,type)								\
 	case (id):	{                                                     \
-		void *temp_read_buffer_on_the_stack = _alloca(sizeof(var));		\
-		cload.Read(temp_read_buffer_on_the_stack, sizeof(var));        \
+		void *temp_read_buffer_on_the_stack = _alloca(sizeof(type));	\
+		cload.Read(temp_read_buffer_on_the_stack, sizeof(type));       \
 		var = *((type*)temp_read_buffer_on_the_stack);                 \
 		break;                                                         \
 	}

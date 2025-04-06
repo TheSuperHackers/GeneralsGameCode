@@ -22,13 +22,13 @@
  *                                                                                             * 
  *                 Project Name : Command & Conquer                                            * 
  *                                                                                             * 
- *                     $Archive:: /Commando/Library/RAMFILE.H                                 $* 
+ *                     $Archive:: /Commando/Code/wwlib/ramfile.h                              $* 
  *                                                                                             * 
- *                      $Author:: Greg_h                                                      $*
+ *                      $Author:: Ian_l                                                       $*
  *                                                                                             * 
- *                     $Modtime:: 7/22/97 11:37a                                              $*
+ *                     $Modtime:: 10/31/01 2:02p                                              $*
  *                                                                                             * 
- *                    $Revision:: 1                                                           $*
+ *                    $Revision:: 2                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------* 
  * Functions:                                                                                  * 
@@ -62,6 +62,7 @@ class RAMFileClass : public FileClass
 		virtual unsigned long Get_Date_Time(void) {return(0);}
 		virtual bool Set_Date_Time(unsigned long ) {return(true);}
 		virtual void Error(int , int = false, char const * =NULL) {}
+		virtual void Bias(int start, int length=-1);
 
 		operator char const * () {return File_Name();}
 

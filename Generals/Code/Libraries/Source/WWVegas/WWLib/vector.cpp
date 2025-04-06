@@ -24,11 +24,11 @@
  *                                                                                             * 
  *                     $Archive:: /Commando/Code/wwlib/vector.cpp                             $* 
  *                                                                                             * 
- *                      $Author:: Patrick                                                     $*
+ *                      $Author:: Jani_p                                                      $*
  *                                                                                             * 
- *                     $Modtime:: 8/22/01 1:46p                                               $*
+ *                     $Modtime:: 1/16/02 11:40a                                              $*
  *                                                                                             * 
- *                    $Revision:: 19                                                          $*
+ *                    $Revision:: 20                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------* 
  * Functions:                                                                                  * 
@@ -371,4 +371,25 @@ void BooleanVectorClass::Init(unsigned size, unsigned char * array)
 	LastIndex = -1;
 	BitCount = size;
 	BitArray.Resize(((size + (8-1)) / 8), array);
+}
+
+
+/***********************************************************************************************
+ * BooleanVectorClass::Init -- Initializes the bit vector from an user array.                  *
+ *                                                                                             *
+ * INPUT:   none                                                                               *
+ *                                                                                             *
+ * OUTPUT:  none                                                                               *
+ *                                                                                             *
+ * WARNINGS:   none                                                                            *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   07/18/1995 JLB : Created.                                                                 *
+ *=============================================================================================*/
+void BooleanVectorClass::Init(unsigned size)
+{
+	Copy = false;
+	LastIndex = -1;
+	BitCount = size;
+	BitArray.Resize(((size + (8-1)) / 8));
 }

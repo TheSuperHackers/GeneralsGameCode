@@ -9,6 +9,7 @@ set(WWLIB_SRC
     cpudetect.cpp
     crc.cpp
     cstraw.cpp
+    Except.cpp
     ffactory.cpp
     gcd_lcm.cpp
     hash.cpp
