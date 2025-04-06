@@ -68,7 +68,8 @@ char* strtrim(char* buffer)
 		}
 
 		if (source != buffer) {
-			strcpy(buffer, source);
+			// TheSuperHackers @fix Mauller 04/04/2025 ASAN, Replace strcpy with safer memmove as copy occurs within overlapping address space
+			memmove(buffer, source, strlen(source) +1);
 		}
 
 		/* Clip trailing white space from the string. */
