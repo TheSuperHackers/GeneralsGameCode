@@ -158,13 +158,13 @@ Int HeightMapRenderObjClass::freeMapResources(void)
 	if (m_vertexBufferTiles) {
 		for (int i=0; i<m_numVertexBufferTiles; i++)
 			REF_PTR_RELEASE(m_vertexBufferTiles[i]);
-		delete m_vertexBufferTiles;
+		delete[] m_vertexBufferTiles;
 		m_vertexBufferTiles = NULL;
 	}
 	if (m_vertexBufferBackup) {
 		for (int i=0; i<m_numVertexBufferTiles; i++)
-			delete m_vertexBufferBackup[i];
-		delete m_vertexBufferBackup;
+			delete[] m_vertexBufferBackup[i];
+		delete[] m_vertexBufferBackup;
 		m_vertexBufferBackup = NULL;
 	}
 	m_numVertexBufferTiles = 0;
@@ -172,7 +172,7 @@ Int HeightMapRenderObjClass::freeMapResources(void)
 	if (m_xformedVertexBuffer) {
 		for (int i=0; i<m_numVertexBufferTiles; i++)
 			m_xformedVertexBuffer[i]->Release();
-		delete m_xformedVertexBuffer;
+		delete[] m_xformedVertexBuffer;
 		m_xformedVertexBuffer = NULL;
 	}
 #endif

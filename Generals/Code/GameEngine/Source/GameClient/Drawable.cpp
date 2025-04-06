@@ -281,7 +281,7 @@ const Int MAX_ENABLED_MODULES								= 16;
 {
 	if( s_animationTemplates )
 	{
-		delete s_animationTemplates;
+		delete[] s_animationTemplates;
 		s_animationTemplates = NULL;
 	}
 }

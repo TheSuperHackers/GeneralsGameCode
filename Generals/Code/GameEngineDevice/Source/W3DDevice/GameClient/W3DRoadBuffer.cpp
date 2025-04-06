@@ -237,12 +237,12 @@ RoadSegment::~RoadSegment(void)
 {
 	m_numVertex = 0;
 	if (m_vb) {
-		delete m_vb;
+		delete[] m_vb;
 	}
 	m_vb= NULL;
 	m_numIndex = 0;
 	if (m_ib) {
-		delete m_ib;
+		delete[] m_ib;
 	}
 	m_ib = NULL;
 }
@@ -257,7 +257,7 @@ RoadSegment::~RoadSegment(void)
 void RoadSegment::SetVertexBuffer(VertexFormatXYZDUV1 *vb, Int numVertex)
 {
 	if (m_vb) {
-		delete m_vb;
+		delete[] m_vb;
 		m_vb = NULL;
 		m_numVertex = 0;
 	}
@@ -285,7 +285,7 @@ void RoadSegment::SetVertexBuffer(VertexFormatXYZDUV1 *vb, Int numVertex)
 void RoadSegment::SetIndexBuffer(UnsignedShort *ib, Int numIndex)
 {
 	if (m_ib) {
-		delete m_ib;
+		delete[] m_ib;
 		m_ib = NULL;
 		m_numIndex = 0;
 	}
