@@ -16,35 +16,19 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// This file helps adapting modern iostream to legacy vs6 iostream,
-// where symbols are not contained in the std namespace.
-
+// This file contains WCHAR and related macros for compatibility with non-windows platforms.
 #pragma once
 
-#if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
+// WCHAR
+typedef wchar_t WCHAR;
+typedef const WCHAR* LPCWSTR;
+typedef WCHAR* LPWSTR;
 
-#include <iostream.h>
+#define _wcsicmp wcscasecmp
+#define wcsicmp wcscasecmp
+#define _vsnwprintf vswprintf
 
-#else
-
-#include <iostream>
-
-inline auto& cout = std::cout;
-inline auto& cerr = std::cerr;
-
-using streambuf = std::streambuf;
-using ostream = std::ostream;
-
-template <class _Elem, class _Traits>
-std::basic_ostream<_Elem, _Traits>& endl(std::basic_ostream<_Elem, _Traits>& _Ostr)
-{
-    return std::endl(_Ostr);
-}
-
-template <class _Elem, class _Traits>
-std::basic_ostream<_Elem, _Traits>& flush(std::basic_ostream<_Elem, _Traits>& _Ostr)
-{
-    return std::flush(_Ostr);
-}
-
-#endif
+// MultiByteToWideChar
+#define CP_ACP 0
+#define MultiByteToWideChar(cp, flags, mbstr, cb, wcstr, cch) mbstowcs(wcstr, mbstr, cch)
+#define WideCharToMultiByte(cp, flags, wcstr, cch, mbstr, cb, defchar, used) wcstombs(mbstr, wcstr, cb)

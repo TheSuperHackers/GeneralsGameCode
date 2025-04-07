@@ -1166,7 +1166,7 @@ target_include_directories(z_gameengine PRIVATE
 )
 
 target_link_libraries(z_gameengine PRIVATE
-    zi_libraries_include
+    zi_always
 )
 
 target_link_libraries(z_gameengine PUBLIC

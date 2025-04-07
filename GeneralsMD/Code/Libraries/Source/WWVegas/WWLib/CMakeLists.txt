@@ -130,5 +130,5 @@ target_sources(z_wwlib PRIVATE ${WWLIB_SRC})
 
 target_link_libraries(z_wwlib PRIVATE
     z_wwcommon
-    zi_libraries_include
+    zi_always
 )

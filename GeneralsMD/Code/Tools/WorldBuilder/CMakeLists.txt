@@ -222,7 +222,7 @@ target_link_libraries(z_worldbuilder PRIVATE
     z_profile
     zi_gameengine_include
     zi_gameenginedevice_include
-    zi_libraries_include
+    zi_always
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

@@ -24,7 +24,7 @@ target_link_libraries(z_mapcachebuilder PRIVATE
     z_gameengine
     z_gameenginedevice
     z_profile
-    zi_libraries_include
+    zi_always
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

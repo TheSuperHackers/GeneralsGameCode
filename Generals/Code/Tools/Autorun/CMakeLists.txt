@@ -54,9 +54,8 @@ macro(setup_autorun appname)
     target_sources(${appname} PRIVATE ${AUTORUN_SRC})
 
     target_link_libraries(${appname} PRIVATE
-        gi_libraries_include
+        gi_always
         gz_config
-        gz_utility
         winmm
     )
 

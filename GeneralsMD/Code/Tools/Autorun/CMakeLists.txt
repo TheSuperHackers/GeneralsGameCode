@@ -55,9 +55,8 @@ macro(setup_autorun appname)
 
     target_link_libraries(${appname} PRIVATE
         gz_config
-        gz_utility
         winmm
-        zi_libraries_include
+        zi_always
     )
 
     if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

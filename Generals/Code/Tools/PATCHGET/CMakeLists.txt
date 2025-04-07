@@ -27,7 +27,7 @@ macro(setup_patchgrabber appname)
         g_gameenginedevice
         g_wwvegas
         gamespy::gamespy
-        gi_libraries_include
+        gi_always
         imm32
         vfw32
         winmm

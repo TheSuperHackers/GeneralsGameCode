@@ -24,7 +24,7 @@ target_link_libraries(z_generals PRIVATE
     z_gameengine
     z_gameenginedevice
     z_profile
-    zi_libraries_include
+    zi_always
 )
 
 # TODO Originally referred to build host and user, replace with git info perhaps?

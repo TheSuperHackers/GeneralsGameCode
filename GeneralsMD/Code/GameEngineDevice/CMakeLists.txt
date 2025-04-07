@@ -205,7 +205,7 @@ target_include_directories(z_gameenginedevice PUBLIC
 )
 
 target_link_libraries(z_gameenginedevice PRIVATE
-    zi_libraries_include
+    zi_always
     zi_main
 )
 

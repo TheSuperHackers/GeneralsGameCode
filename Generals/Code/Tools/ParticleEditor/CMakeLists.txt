@@ -44,11 +44,10 @@ target_link_libraries(g_particleeditor PRIVATE
     d3d8lib
     dbghelplib
     gi_gameengine_include
-    gi_libraries_include
+    gi_always
     gi_libraries_source_wwvegas
     gi_libraries_source_wwvegas_wwlib
     gz_config
-    gz_utility
     imm32
     stlport
     vfw32

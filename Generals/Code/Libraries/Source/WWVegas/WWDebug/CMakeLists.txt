@@ -17,5 +17,5 @@ target_sources(g_wwdebug PRIVATE ${WWDEBUG_SRC})
 
 target_link_libraries(g_wwdebug PRIVATE
     g_wwcommon
-    gi_libraries_include
+    gi_always
 )

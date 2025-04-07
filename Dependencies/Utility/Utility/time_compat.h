@@ -16,35 +16,25 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// This file helps adapting modern iostream to legacy vs6 iostream,
-// where symbols are not contained in the std namespace.
-
+// This file contains the time functions for compatibility with non-windows platforms.
 #pragma once
+#include <time.h>
 
-#if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
+#define TIMERR_NOERROR 0
+typedef int MMRESULT;
+static inline MMRESULT timeBeginPeriod(int) { return TIMERR_NOERROR; }
+static inline MMRESULT timeEndPeriod(int) { return TIMERR_NOERROR; }
 
-#include <iostream.h>
-
-#else
-
-#include <iostream>
-
-inline auto& cout = std::cout;
-inline auto& cerr = std::cerr;
-
-using streambuf = std::streambuf;
-using ostream = std::ostream;
-
-template <class _Elem, class _Traits>
-std::basic_ostream<_Elem, _Traits>& endl(std::basic_ostream<_Elem, _Traits>& _Ostr)
+inline unsigned int timeGetTime()
 {
-    return std::endl(_Ostr);
+  struct timespec ts;
+  clock_gettime(CLOCK_BOOTTIME, &ts);
+  return ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
 }
-
-template <class _Elem, class _Traits>
-std::basic_ostream<_Elem, _Traits>& flush(std::basic_ostream<_Elem, _Traits>& _Ostr)
+inline unsigned int GetTickCount()
 {
-    return std::flush(_Ostr);
+  struct timespec ts;
+  clock_gettime(CLOCK_MONOTONIC, &ts);
+  // Return ms since boot
+  return ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
 }
-
-#endif

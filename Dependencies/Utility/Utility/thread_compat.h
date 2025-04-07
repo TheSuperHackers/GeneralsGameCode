@@ -16,35 +16,17 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// This file helps adapting modern iostream to legacy vs6 iostream,
-// where symbols are not contained in the std namespace.
-
+// This file contains thread related functions for compatibility with non-windows platforms.
 #pragma once
+#include <pthread.h>
+#include <unistd.h>
 
-#if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
-
-#include <iostream.h>
-
-#else
-
-#include <iostream>
-
-inline auto& cout = std::cout;
-inline auto& cerr = std::cerr;
-
-using streambuf = std::streambuf;
-using ostream = std::ostream;
-
-template <class _Elem, class _Traits>
-std::basic_ostream<_Elem, _Traits>& endl(std::basic_ostream<_Elem, _Traits>& _Ostr)
+inline int GetCurrentThreadId()
 {
-    return std::endl(_Ostr);
+  return pthread_self();
 }
 
-template <class _Elem, class _Traits>
-std::basic_ostream<_Elem, _Traits>& flush(std::basic_ostream<_Elem, _Traits>& _Ostr)
+inline void Sleep(int ms)
 {
-    return std::flush(_Ostr);
+  usleep(ms * 1000);
 }
-
-#endif

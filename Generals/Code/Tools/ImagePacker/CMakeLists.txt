@@ -32,7 +32,7 @@ target_link_libraries(g_imagepacker PRIVATE
     dbghelplib
     g_gameengine
     g_gameenginedevice
-    gi_libraries_include
+    gi_always
     imm32
     vfw32
     winmm

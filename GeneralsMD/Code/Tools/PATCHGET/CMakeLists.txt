@@ -32,7 +32,7 @@ macro(setup_patchgrabber appname)
         z_gameenginedevice
         z_profile
         z_wwvegas
-        zi_libraries_include
+        zi_always
     )
 
     target_compile_definitions(${appname} PRIVATE

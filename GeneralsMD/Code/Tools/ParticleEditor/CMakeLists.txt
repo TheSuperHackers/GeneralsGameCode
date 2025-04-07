@@ -41,14 +41,13 @@ target_link_libraries(z_particleeditor PRIVATE
     dbghelplib
     imm32
     gz_config
-    gz_utility
     stlport
     vfw32
     winmm
     z_debug
     z_profile
     zi_gameengine_include
-    zi_libraries_include
+    zi_always
     zi_libraries_source_wwvegas
     zi_libraries_source_wwvegas_wwlib
 )
