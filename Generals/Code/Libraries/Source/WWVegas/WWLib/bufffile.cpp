@@ -24,11 +24,11 @@
  *                                                                                             * 
  *                     $Archive:: /Commando/Code/wwlib/bufffile.cpp                           $* 
  *                                                                                             * 
- *                      $Author:: Naty_h                                                      $*
+ *                      $Author:: Jani_p                                                      $*
  *                                                                                             * 
- *                     $Modtime:: 4/20/01 4:23p                                               $*
+ *                     $Modtime:: 9/13/01 7:15p                                               $*
  *                                                                                             * 
- *                    $Revision:: 3                                                           $*
+ *                    $Revision:: 4                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------* 
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -39,7 +39,7 @@
 #include	"wwdebug.h"
 #include	<string.h>
 
-int		BufferedFileClass::_DesiredBufferSize	=	1024;	
+int		BufferedFileClass::_DesiredBufferSize	=	1024*16;	
 
 /***********************************************************************************************
  * BufferedFileClass::BufferedFileClass -- Default constructor for a file object.              *

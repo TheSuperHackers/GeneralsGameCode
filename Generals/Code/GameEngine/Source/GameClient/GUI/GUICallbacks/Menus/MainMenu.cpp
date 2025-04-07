@@ -75,11 +75,6 @@
 //for accessing the InGameUI
 #include "GameClient/InGameUI.h"
 
-// This define removes the code that could get you to solo and LAN games.
-//#if !defined(_DEBUG) && !defined(_INTERNAL)
-//#define _PLAYTEST
-//#endif
-// 10-20  GS  Made this a project setting so we can set it in one place.  (It has spread to several files, inclding MessageStream.h)
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
@@ -299,7 +294,6 @@ static MessageBoxReturnType checkCDCallback( void *userData )
 
 static void doGameStart( void )
 {
-#if !defined(_PLAYTEST)
 	startGame = FALSE;
 
 	if (TheGameLogic->isInGame())
@@ -313,7 +307,6 @@ static void doGameStart( void )
 	InitRandom(0);
 
 	isShuttingDown = TRUE;
-#endif
 }
 
 static void checkCDBeforeCampaign(GameDifficulty diff)
@@ -519,7 +512,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	dropDownWindows[DROPDOWN_DIFFICULTY] = TheWindowManager->winGetWindowFromId( parentMainMenu, TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:MapBorder4") ) );
 	for(i = 1; i < DROPDOWN_COUNT; ++i)
 		dropDownWindows[i]->winHide(TRUE);
-	
+
 	initialHide();
 	
 	showSelectiveButtons(SHOW_NONE);
@@ -618,27 +611,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 
 	//pendingDropDown =DROPDOWN_MAIN;
 	
-#if defined(_PLAYTEST)
-	// force these buttons enabled in DEBUG and INTERNAL, so we can still work. :-)
-	buttonNetwork->winEnable(FALSE);
-	buttonSinglePlayer->winEnable(FALSE);
-	buttonReplay->winEnable(FALSE);
-#endif
 
-#if defined(_PLAYTEST)
-
-	static Bool didMinSpecCheck = false;
-
-	if (!didMinSpecCheck)
-	{
-		Bool videoPassed, cpuPassed, memPassed;
-		if (!TheDisplay->testMinSpecRequirements(&videoPassed, &cpuPassed, &memPassed))
-		{	//system failed the test
-			MessageBoxOk(TheGameText->fetch("GUI:MinSpecFailedTitle"), TheGameText->fetch("GUI:MinSpecFailedMessage"),NULL);		
-		}
-		didMinSpecCheck = true;
-	}
-#endif
 	GameWindow *rule = TheWindowManager->winGetWindowFromId( parentMainMenu, TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:MainMenuRuler") ) );
 	if(rule)
 		rule->winHide(TRUE);
@@ -1071,7 +1044,6 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 			break;
 
 		}  // end input
-#ifndef _PLAYTEST
 		//---------------------------------------------------------------------------------------------
 		case GBM_MOUSE_ENTERING:
 		{
@@ -1266,7 +1238,6 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 			}	
 		break;
 		}
-#endif _PLAYTEST
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
 		{
@@ -1489,7 +1460,6 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 //#endif
 				
 			}  // end else if
-#ifndef _PLAYTEST
 			else if(controlID == buttonTRAININGID)
 			{
 				if(campaignSelected || dontAllowTransitions)
@@ -1612,7 +1582,6 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 				campaignSelected = FALSE;
 			}
 
-#endif _PLAYTEST
 
 			break;
 

@@ -179,4 +179,4 @@ class SegmentedLineClass : public RenderObjClass
 		SegLineRendererClass		LineRenderer;
 };
 
-#endif SEGLINE_H
+#endif // SEGLINE_H

@@ -446,7 +446,6 @@ void GameEngine::init( int argc, char *argv[] )
 		// load the initial shell screen
 		//TheShell->push( AsciiString("Menus/MainMenu.wnd") );
 		
-#if !defined(_PLAYTEST)
 		// This allows us to run a map/reply from the command line
 		if (TheGlobalData->m_initialFile.isEmpty() == FALSE)
 		{
@@ -474,7 +473,6 @@ void GameEngine::init( int argc, char *argv[] )
 				TheRecorder->playbackFile(fname);
 			}
 		}
-#endif
 
 		// 
 		if (TheMapCache && TheGlobalData->m_shellMapOn)

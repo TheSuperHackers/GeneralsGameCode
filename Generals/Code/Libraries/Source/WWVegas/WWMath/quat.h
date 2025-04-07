@@ -198,12 +198,12 @@ void __cdecl Slerp(Quaternion& result, const Quaternion & a,const Quaternion & b
 void __cdecl Fast_Slerp(Quaternion& result, const Quaternion & a,const Quaternion & b,float t);
 
 // Convert a rotation matrix into a quaternion
-Quaternion Build_Quaternion(const Matrix3 & matrix);
+Quaternion Build_Quaternion(const Matrix3x3 & matrix);
 Quaternion Build_Quaternion(const Matrix3D & matrix);
-Quaternion Build_Quaternion(const Matrix4 & matrix);
+Quaternion Build_Quaternion(const Matrix4x4 & matrix);
 
 // Convert a quaternion into a rotation matrix
-Matrix3	Build_Matrix3(const Quaternion & quat);
+Matrix3x3 Build_Matrix3(const Quaternion & quat);
 Matrix3D &Build_Matrix3D(const Quaternion & q, Matrix3D &out);
 WWINLINE Matrix3D &Build_Matrix3D(const Quaternion & q, Matrix3D &out)
 {
@@ -225,7 +225,7 @@ WWINLINE Matrix3D &Build_Matrix3D(const Quaternion & q, Matrix3D &out)
 	return out;
 }
 
-Matrix4  Build_Matrix4(const Quaternion & quat);
+Matrix4x4  Build_Matrix4(const Quaternion & quat);
 
 
 // Some values can be cached if you are performing multiple slerps

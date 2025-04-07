@@ -574,8 +574,8 @@ void TexProjectClass::Init_Multiplicative(void)
 		*/
 		TextureClass * grad_tex = WW3DAssetManager::Get_Instance()->Get_Texture("MultProjectorGradient.tga");
 		if (grad_tex) {
-			grad_tex->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-			grad_tex->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
+			grad_tex->Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+			grad_tex->Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			MaterialPass->Set_Texture(grad_tex,1);
 			grad_tex->Release_Ref();
 		} else {
@@ -676,8 +676,8 @@ void TexProjectClass::Init_Additive(void)
 	*/
 	TextureClass * grad_tex = WW3DAssetManager::Get_Instance()->Get_Texture("AddProjectorGradient.tga");
 	if (grad_tex) {
-		grad_tex->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-		grad_tex->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
+		grad_tex->Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		grad_tex->Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		MaterialPass->Set_Texture(grad_tex,1);
 		grad_tex->Release_Ref();
 	} else {
@@ -730,8 +730,8 @@ void TexProjectClass::Init_Additive(void)
 void TexProjectClass::Set_Texture(TextureClass * texture)
 {
 	if (texture != NULL) {
-		texture->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-		texture->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);	
+		texture->Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		texture->Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);	
 		MaterialPass->Set_Texture(texture);
 
 		SurfaceClass::SurfaceDescription surface_desc;
@@ -1261,13 +1261,13 @@ void TexProjectClass::Pre_Render_Update(const Matrix3D & camera)
 	/*
 	** Mview-texture = PShadow * Mwrld-texture * Mcamera-vrld	
 	*/
-	Matrix3D world_to_texture;
-	Matrix3D tmp;
-	Matrix4	view_to_texture;
+	Matrix3D		world_to_texture;
+	Matrix3D		tmp;
+	Matrix4x4	view_to_texture;
 
 	Transform.Get_Orthogonal_Inverse(world_to_texture);
 	Matrix3D::Multiply(world_to_texture,camera,&tmp);
-	Matrix4::Multiply(Projection,tmp,&view_to_texture);
+	Matrix4x4::Multiply(Projection,tmp,&view_to_texture);
 
 	/*
 	** update the current intensity by iterating it towards the desired intensity

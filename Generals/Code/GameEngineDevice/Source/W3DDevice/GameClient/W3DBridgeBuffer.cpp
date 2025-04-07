@@ -242,7 +242,7 @@ Bool W3DBridge::load(enum BodyDamageType curDamageState)
 	strcpy(right, modelName);
 	strcat(right, ".BRIDGE_RIGHT");
 
-	m_bridgeTexture = pMgr->Get_Texture(textureFile,  TextureClass::MIP_LEVELS_3); 
+	m_bridgeTexture = pMgr->Get_Texture(textureFile,  MIP_LEVELS_3); 
 	m_leftMtx.Make_Identity();
 	m_rightMtx.Make_Identity();
 	m_sectionMtx.Make_Identity();
@@ -593,7 +593,7 @@ Int W3DBridge::getModelIndices(UnsignedShort *destination_ib, Int curIndex, Int 
 	if (pMesh == NULL) 
 		return(0);
 	Int numPoly = pMesh->Peek_Model()->Get_Polygon_Count();
-	const Vector3i *pPoly =pMesh->Peek_Model()->Get_Polygon_Array();
+	const TriIndex *pPoly =pMesh->Peek_Model()->Get_Polygon_Array();
 	if (curIndex+3*numPoly+6 >= W3DBridgeBuffer::MAX_BRIDGE_INDEX) {
 		return(0);
 	}

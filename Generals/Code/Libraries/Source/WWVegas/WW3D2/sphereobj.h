@@ -50,6 +50,7 @@
 #include	"Vector3i.h"
 #include	"quat.h"
 #include "prim_anim.h"
+#include "meshgeometry.h"
 
 class TextureClass;
 
@@ -194,7 +195,7 @@ private:
 	int		fan_size;		// size of each fan
 	int		*fans;			// array of vertex indices for each fan (# of fans by fan_size)
 
-	Vector3i	*tri_poly;		// array of triangle poly's, vertex indices  (can be discard if switched to strips + fans)
+	TriIndex	*tri_poly;		// array of triangle poly's, vertex indices  (can be discard if switched to strips + fans)
 
 };
 
@@ -215,6 +216,11 @@ SphereMeshClass::Set_DCG (bool is_additive, int index, float value)
 
 	return ;
 }
+
+// Note: SPHERE_NUM_LOD does not include the NULL LOD.
+#define SPHERE_NUM_LOD		(10)
+#define SPHERE_LOWEST_LOD	(7)
+#define SPHERE_HIGHEST_LOD (17)
 
 /*
 ** SphereRenderObjClass: Procedurally generated render spheres

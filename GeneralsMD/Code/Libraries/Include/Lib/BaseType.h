@@ -184,10 +184,14 @@ __forceinline long fast_float2long_round(float f)
 {
 	long i;
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	__asm {
 		fld [f]
 		fistp [i]
 	}
+#else
+	i = lroundf(f);
+#endif
 
 	return i;
 }
@@ -196,6 +200,7 @@ __forceinline long fast_float2long_round(float f)
 // code courtesy of Martin Hoffesommer (grin)
 __forceinline float fast_float_trunc(float f)
 {
+#if defined(_MSC_VER) && _MSC_VER < 1300
   _asm
   {
     mov ecx,[f]
@@ -208,6 +213,15 @@ __forceinline float fast_float_trunc(float f)
     and [f],eax
   }
   return f;
+#else
+  unsigned x = *(unsigned *)&f;
+  unsigned char exp = x >> 23;
+  int mask = exp < 127 ? 0 : 0xff800000;
+  exp -= 127;
+  mask >>= exp & 31;
+  x &= mask;
+  return *(float *)&x;
+#endif
 }
 
 // same here, fast floor function

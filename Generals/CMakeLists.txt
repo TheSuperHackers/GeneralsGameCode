@@ -8,6 +8,14 @@ add_feature_info(GeneralsTools GENZH_BUILD_GENERALS_TOOLS "Build Generals Mod To
 option(GENZH_BUILD_GENERALS_EXTRAS "Build extra tools/tests for Generals" OFF)
 add_feature_info(GeneralsExtras GENZH_BUILD_GENERALS_EXTRAS "Build Generals Extra Tools/Tests")
 
+# Do we want to build documentation?
+option(GENZH_BUILD_GENERALS_DOCS "Build documentation for Generals" OFF)
+add_feature_info(GeneralsDocs GENZH_BUILD_GENERALS_DOCS "Build Generals Documentation")
+if (GENZH_BUILD_GENERALS_DOCS)
+    find_package(Doxygen REQUIRED)
+    doxygen_add_docs(g_docs Code)
+endif()
+
 # Set where the build results will end up
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 

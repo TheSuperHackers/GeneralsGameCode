@@ -1131,6 +1131,42 @@ Int parseMod(char *args[], Int num)
 	return 1;
 }
 
+#if defined(_DEBUG) || defined(_INTERNAL)
+Int parseSetDebugLevel(char *args[], int num)
+{
+	if (num > 1)
+	{
+		AsciiString val = args[1];
+		for (Int i=0; i<DEBUG_LEVEL_MAX; ++i)
+		{
+			if (val == TheDebugLevels[i])
+			{
+				DebugLevelMask |= 1<<i;
+				break;
+			}
+		}
+	}
+	return 2;
+}
+
+Int parseClearDebugLevel(char *args[], int num)
+{
+	if (num > 1)
+	{
+		AsciiString val = args[1];
+		for (Int i=0; i<DEBUG_LEVEL_MAX; ++i)
+		{
+			if (val == TheDebugLevels[i])
+			{
+				DebugLevelMask &= ~(1<<i);
+				break;
+			}
+		}
+	}
+	return 2;
+}
+#endif
+
 static CommandLineParam params[] =
 {
 	{ "-noshellmap", parseNoShellMap },
@@ -1212,6 +1248,8 @@ static CommandLineParam params[] =
 	{ "-selectTheUnselectable", parseSelectAll },
 	{ "-RunAhead", parseRunAhead },
 	{ "-noshroud", parseNoShroud },
+	{ "-setDebugLevel", parseSetDebugLevel },
+	{ "-clearDebugLevel", parseClearDebugLevel },
 	{ "-forceBenchmark", parseForceBenchmark },
 	{ "-buildmapcache", parseBuildMapCache },
 	{ "-noshadowvolumes", parseNoShadows },

@@ -76,6 +76,8 @@
 #include <sys/stat.h>
 #endif
 
+#include <algorithm>
+#include <utility>
 
 /****************************************************************************
 *
@@ -827,6 +829,7 @@ void Targa::XFlip(void)
 
 static __forceinline void _swapBytes(char *p1, char *p2, unsigned count)
 {
+#if defined(_MSC_VER) && _MSC_VER < 1300
   _asm
   {
     mov esi,[p1]
@@ -865,6 +868,9 @@ static __forceinline void _swapBytes(char *p1, char *p2, unsigned count)
     jmp lpLessThan16
   done:
   }
+#else
+	std::swap_ranges(p1, p1 + count, p2);
+#endif
 }
 
 void Targa::YFlip(void)

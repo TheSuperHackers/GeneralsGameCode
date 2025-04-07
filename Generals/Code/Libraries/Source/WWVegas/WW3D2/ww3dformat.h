@@ -97,6 +97,26 @@ enum WW3DFormat {
 	WW3D_FORMAT_COUNT	// Used only to determine number of surface formats
 };
 
+// depth stencil buffer formats
+enum WW3DZFormat
+{
+	WW3D_ZFORMAT_UNKNOWN=0,
+	WW3D_ZFORMAT_D16_LOCKABLE, // 16-bit z-buffer bit depth. This is an application-lockable surface format. 
+	WW3D_ZFORMAT_D32, // 32-bit z-buffer bit depth. 
+	WW3D_ZFORMAT_D15S1, // 16-bit z-buffer bit depth where 15 bits are reserved for the depth channel and 1 bit is reserved for the stencil channel. 
+	WW3D_ZFORMAT_D24S8, // 32-bit z-buffer bit depth using 24 bits for the depth channel and 8 bits for the stencil channel. 
+	WW3D_ZFORMAT_D16, // 16-bit z-buffer bit depth. 
+	WW3D_ZFORMAT_D24X8, // 32-bit z-buffer bit depth using 24 bits for the depth channel. 
+	WW3D_ZFORMAT_D24X4S4, // 32-bit z-buffer bit depth using 24 bits for the depth channel and 4 bits for the stencil channel. 
+#ifdef _XBOX
+	WW3D_ZFORMAT_LIN_D24S8,
+	WW3D_ZFORMAT_LIN_F24S8,
+	WW3D_ZFORMAT_LIN_D16,
+	WW3D_ZFORMAT_LIN_F16,
+#endif
+	WW3D_ZFORMAT_COUNT
+};
+
 // Utility function - not much used otherwise it would use an array.
 // NOTE: when adding values to WW3DFormat add here also (if they have alpha).
 inline bool Has_Alpha(WW3DFormat format) {

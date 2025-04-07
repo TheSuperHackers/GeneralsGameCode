@@ -859,7 +859,7 @@ void Object::setOrRestoreTeam( Team* team, Bool restoring )
 //=============================================================================
 void Object::setStatus( ObjectStatusBits bits, Bool set )
 {
-	UnsignedInt oldStatus = m_status;
+	ObjectStatusMaskType oldStatus = m_status;
 
 	if (set)
 		m_status |= bits;
@@ -2151,9 +2151,9 @@ Bool Object::isSalvageCrate() const
  */
 void Object::updateUpgradeModules()
 {
-	Int64 playerMask = getControllingPlayer()->getCompletedUpgradeMask();
-	Int64 objectMask = getObjectCompletedUpgradeMask();
-	Int64 maskToCheck = playerMask | objectMask;
+	UpgradeMaskType playerMask = getControllingPlayer()->getCompletedUpgradeMask();
+	UpgradeMaskType objectMask = getObjectCompletedUpgradeMask();
+	UpgradeMaskType maskToCheck = playerMask | objectMask;
 	// We need to add in all of the already owned upgrades to handle "AND" requiring upgrades.
 	// We combine all the masks in case someone has a Object AND Player combination
 
@@ -3896,9 +3896,9 @@ Bool Object::hasUpgrade( const UpgradeTemplate *upgradeT ) const
 //-------------------------------------------------------------------------------------------------
 Bool Object::affectedByUpgrade( const UpgradeTemplate *upgradeT ) const 
 {
-	Int64 objectMask = getObjectCompletedUpgradeMask();
-	Int64 playerMask = getControllingPlayer()->getCompletedUpgradeMask();
-	Int64 maskToCheck = playerMask | objectMask | upgradeT->getUpgradeMask();
+	UpgradeMaskType objectMask = getObjectCompletedUpgradeMask();
+	UpgradeMaskType playerMask = getControllingPlayer()->getCompletedUpgradeMask();
+	UpgradeMaskType maskToCheck = playerMask | objectMask | upgradeT->getUpgradeMask();
 	// We need to add in all of the already owned upgrades to handle "AND" requiring upgrades.
 	// We combine all the masks in case someone has a Object AND Player combination
 

@@ -88,7 +88,6 @@
 #include "predlod.h"
 #include "camera.h"
 #include "scene.h"
-#include "texfcach.h"
 #include "registry.h"
 #include "segline.h"
 #include "shader.h"

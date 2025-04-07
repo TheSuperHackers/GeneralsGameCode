@@ -26,9 +26,9 @@
  *                                                                                             *
  *                       Author:: Patrick Smith                                                *
  *                                                                                             *
- *                     $Modtime:: 8/28/01 7:33p                                               $*
+ *                     $Modtime:: 12/10/01 2:37p                                              $*
  *                                                                                             *
- *                    $Revision:: 33                                                          $*
+ *                    $Revision:: 35                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -241,8 +241,10 @@ DefinitionMgrClass::Find_Typed_Definition (const char *name, uint32 class_id, bo
 	//
 	WWASSERT(DefinitionHash != NULL);
 
-	StringClass name_string(name,true);
-	DynamicVectorClass<DefinitionClass*>* defs = DefinitionHash->Get(name_string);
+	StringClass lower_case_name(name,true);
+	_strlwr(lower_case_name.Peek_Buffer());
+	DynamicVectorClass<DefinitionClass*>* defs = DefinitionHash->Get(lower_case_name);
+
 	if (defs) {
 		for (int i=0;i<defs->Length();++i) {
 			DefinitionClass* curr_def=(*defs)[i];
@@ -283,7 +285,7 @@ DefinitionMgrClass::Find_Typed_Definition (const char *name, uint32 class_id, bo
 						// Add the definition to the hash table, so that it can be quickly accessed the next time it is needed.
 						if (!defs) {
 							defs=W3DNEW DynamicVectorClass<DefinitionClass*>;
-							DefinitionHash->Insert(name_string,defs);
+							DefinitionHash->Insert(lower_case_name,defs);
 						}
 						defs->Add(definition);
 						break;
@@ -868,10 +870,10 @@ DefinitionMgrClass::Get_New_ID (uint32 class_id)
 	uint32 idrange_start = (class_id - DEF_CLASSID_START) * IDRANGE_PER_CLASS;
 	uint32 idrange_end	= (idrange_start + IDRANGE_PER_CLASS);
 
-	uint32 new_id = idrange_start;
+	uint32 new_id = idrange_start + 1;
 
 	//
-	//	Loop through all the definition objects
+	//	Try to find the first empty slot in this ID range
 	//
 	for (int index = 0; index < _DefinitionCount; index ++) {
 		DefinitionClass *definition = _SortedDefinitionArray[index];
@@ -887,15 +889,33 @@ DefinitionMgrClass::Get_New_ID (uint32 class_id)
 			//
 			if (curr_id >= idrange_start && curr_id < idrange_end) {
 				
+				bool is_ok = false;
+				if (index < _DefinitionCount - 1) {
+
+					//
+					//	Check to see if the next definition in our array leaves a hole in the
+					// ID range.
+					//
+					DefinitionClass *next_definition = _SortedDefinitionArray[index + 1];
+					if (next_definition != NULL && next_definition->Get_ID () > (curr_id + 1)) {
+						is_ok = true;
+					}
+
+				} else {
+					is_ok = true;
+				}
+
 				//
-				//	Take the largest ID in the range
+				//	Return the new ID
 				//
-				new_id = max (new_id, curr_id);
+				if (is_ok) {
+					new_id = curr_id + 1;
+					break;
+				}
 			}
 		}
 	}
-	
-	new_id ++;
+
 	return new_id;
 }
 

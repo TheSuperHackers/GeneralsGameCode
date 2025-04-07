@@ -71,8 +71,7 @@
 
 #include "rendobj.h"
 #include "assetmgr.h"
-#include "_mono.h"
-#include "bsurface.h"
+#include "win.h"
 #include "pot.h"
 #include "scene.h"
 #include "colmath.h"
@@ -166,6 +165,7 @@ RenderObjClass::RenderObjClass(void) :
 	Scene(NULL),
 	Container(NULL),
 	User_Data(NULL),
+	RenderHook(NULL),
 	ObjectScale(1.0),
 	ObjectColor(0),
 	CachedBoundingSphere(Vector3(0,0,0),1.0f),
@@ -194,6 +194,7 @@ RenderObjClass::RenderObjClass(const RenderObjClass & src) :
 	Scene(NULL),
 	Container(NULL),
 	User_Data(NULL),
+	RenderHook(NULL),
 	ObjectScale(1.0),
 	ObjectColor(0),
 	CachedBoundingSphere(src.CachedBoundingSphere),
@@ -955,7 +956,7 @@ bool RenderObjClass::Intersect(IntersectionClass *Intersection, IntersectionResu
 		lineseg.Set(* Intersection->RayLocation, end);
 
 		RayCollisionTestClass ray(lineseg, &castresult);
-		ray.CollisionType = COLLISION_TYPE_ALL;
+		ray.CollisionType = COLL_TYPE_ALL;
 
 		if (Cast_Ray(ray)) {
 			lineseg.Compute_Point(ray.Result->Fraction,&(Final_Result->Intersection));

@@ -122,7 +122,7 @@ class GapFillerClass : public W3DMPO
 {
 	W3DMPO_GLUE(GapFillerClass)
 
-	Vector3i* PolygonArray;
+	TriIndex* PolygonArray;
 	unsigned PolygonCount;
 	unsigned ArraySize;
 	TextureClass** TextureArray[MeshMatDescClass::MAX_PASSES][MeshMatDescClass::MAX_TEX_STAGES];
@@ -136,7 +136,7 @@ public:
 	GapFillerClass(const GapFillerClass& that);
 	~GapFillerClass();
 
-	WWINLINE const Vector3i* Get_Polygon_Array() const { return PolygonArray; }
+	WWINLINE const TriIndex* Get_Polygon_Array() const { return PolygonArray; }
 	WWINLINE unsigned Get_Polygon_Count() const { return PolygonCount; }
 	WWINLINE TextureClass** Get_Texture_Array(int pass, int stage) const { return TextureArray[pass][stage]; }
 	WWINLINE VertexMaterialClass** Get_Material_Array(int pass) const { return MaterialArray[pass]; }
@@ -150,7 +150,7 @@ class MeshModelClass : public MeshGeometryClass
 {
 	W3DMPO_GLUE(MeshModelClass)
 	// Jani: Adding this here temporarily... must fine better place
-//	Vector3i*					GapFillerPolygonArray;
+//	TriIndex*					GapFillerPolygonArray;
 //	unsigned						GapFillerPolygonCount;
 	GapFillerClass* GapFiller;
 
@@ -175,7 +175,7 @@ public:
 	const Vector2 *			Get_UV_Array(int pass = 0, int stage = 0)									{ return CurMatDesc->Get_UV_Array(pass,stage); }
 	int							Get_UV_Array_Count(void)														{ return CurMatDesc->Get_UV_Array_Count(); }
 	const Vector2 *			Get_UV_Array_By_Index(int index)												{ return CurMatDesc->Get_UV_Array_By_Index(index, false); }
-//	Vector3i *					Get_UVIndex_Array (int pass = 0, bool create = true)					{ return CurMatDesc->Get_UVIndex_Array(pass,create); }
+//	TriIndex *					Get_UVIndex_Array (int pass = 0, bool create = true)					{ return CurMatDesc->Get_UVIndex_Array(pass,create); }
 
 	unsigned *					Get_DCG_Array(int pass)															{ return CurMatDesc->Get_DCG_Array(pass); }
 	unsigned *					Get_DIG_Array(int pass)															{ return CurMatDesc->Get_DIG_Array(pass); }

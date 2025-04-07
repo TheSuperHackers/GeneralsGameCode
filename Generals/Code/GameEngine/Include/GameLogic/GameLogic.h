@@ -73,12 +73,10 @@ typedef const CommandButton* ConstCommandButtonPtr;
 // What kind of game we're in.
 enum
 {
-#if !defined(_PLAYTEST)
 	GAME_SINGLE_PLAYER,
 	GAME_LAN,
 	GAME_SKIRMISH,
 	GAME_REPLAY,
-#endif
 	GAME_SHELL,
 	GAME_INTERNET,
 	GAME_NONE
@@ -164,12 +162,10 @@ public:
 	void setGameMode( Int mode );
 	Int getGameMode( void );
 	Bool isInGame( void );
-#if !defined(_PLAYTEST)
 	Bool isInLanGame( void );
 	Bool isInSinglePlayerGame( void );
 	Bool isInSkirmishGame( void );
 	Bool isInReplayGame( void );
-#endif
 	Bool isInInternetGame( void );
 	Bool isInShellGame( void );
 	Bool isInMultiplayerGame( void );
@@ -378,14 +374,10 @@ inline UnsignedInt GameLogic::getFrame( void ) { return m_frame; }
 inline Bool GameLogic::isInGame( void ) { return !(m_gameMode == GAME_NONE); }
 inline void GameLogic::setGameMode( Int mode ) { m_gameMode = mode; }
 inline Int  GameLogic::getGameMode( void ) { return m_gameMode; }
-#if !defined(_PLAYTEST)
 inline Bool GameLogic::isInLanGame( void ) { return (m_gameMode == GAME_LAN); }
 inline Bool GameLogic::isInSkirmishGame( void ) { return (m_gameMode == GAME_SKIRMISH); }
 inline Bool GameLogic::isInMultiplayerGame( void ) { return ((m_gameMode == GAME_LAN) || (m_gameMode == GAME_INTERNET)) ; }
 inline Bool GameLogic::isInReplayGame( void ) { return (m_gameMode == GAME_REPLAY); }
-#else
-inline Bool GameLogic::isInMultiplayerGame( void ) { return ((m_gameMode == GAME_INTERNET)) ; }
-#endif
 inline Bool GameLogic::isInInternetGame( void ) { return (m_gameMode == GAME_INTERNET); }
 inline Bool GameLogic::isInShellGame( void ) { return (m_gameMode == GAME_SHELL); }
 //Check for loading scene

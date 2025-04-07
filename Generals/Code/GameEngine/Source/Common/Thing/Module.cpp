@@ -241,7 +241,7 @@ void UpgradeMuxData::performUpgradeFX(Object* obj) const
 }
 
 //-------------------------------------------------------------------------------------------------
-void UpgradeMuxData::getUpgradeActivationMasks(Int64& activation, Int64& conflicting) const
+void UpgradeMuxData::getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
 {
 	// already computed.
 	if (!m_activationUpgradeNames.empty() || !m_conflictingUpgradeNames.empty())

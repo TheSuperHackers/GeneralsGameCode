@@ -19,16 +19,26 @@
 #define _WIN32_WINNT 0x0400
 
 #include "thread.h"
+#include "Except.h"
 #include "wwdebug.h"
 #include <process.h>
 #include <windows.h>
 #pragma warning ( push )
-#pragma warning ( disable : 4201 ) 
-#include <mmsystem.h>
+#pragma warning ( disable : 4201 )
+#include "systimer.h"
 #pragma warning ( pop )
 
-ThreadClass::ThreadClass() : handle(0), running(false), thread_priority(0)
+
+ThreadClass::ThreadClass(const char *thread_name, ExceptionHandlerType exception_handler) : handle(0), running(false), thread_priority(0)
 {
+	if (thread_name) {
+		assert(strlen(thread_name) < sizeof(ThreadName) - 1);
+		strcpy(ThreadName, thread_name);
+	} else {
+		strcpy(ThreadName, "No name");;
+	}
+
+	ExceptionHandler = exception_handler;
 }
 
 ThreadClass::~ThreadClass()
@@ -40,8 +50,28 @@ void __cdecl ThreadClass::Internal_Thread_Function(void* params)
 {
 	ThreadClass* tc=reinterpret_cast<ThreadClass*>(params);
 	tc->running=true;
+	tc->ThreadID = GetCurrentThreadId();
+
+#ifdef _WIN32
+	Register_Thread_ID(tc->ThreadID, tc->ThreadName);
+
+	if (tc->ExceptionHandler != NULL) {
+		__try {
+			tc->Thread_Function();
+		} __except(tc->ExceptionHandler(GetExceptionCode(), GetExceptionInformation())) {};
+	} else {
+		tc->Thread_Function();
+	}
+
+#else //_WIN32
 	tc->Thread_Function();
+#endif //_WIN32
+
+#ifdef _WIN32
+	Unregister_Thread_ID(tc->ThreadID, tc->ThreadName);
+#endif // _WIN32
 	tc->handle=0;
+	tc->ThreadID = 0;
 }
 
 void ThreadClass::Execute()
@@ -53,6 +83,7 @@ void ThreadClass::Execute()
 	#else
 		handle=_beginthread(&Internal_Thread_Function,0,this);
 		SetThreadPriority((HANDLE)handle,THREAD_PRIORITY_NORMAL+thread_priority);
+		WWDEBUG_SAY(("ThreadClass::Execute: Started thread %s, thread ID is %X\n", ThreadName, handle));
 	#endif
 }
 
@@ -74,9 +105,9 @@ void ThreadClass::Stop(unsigned ms)
 		return;
 	#else
 		running=false;
-		unsigned time=timeGetTime();
+		unsigned time=TIMEGETTIME();
 		while (handle) {
-			if ((timeGetTime()-time)>ms) {
+			if ((TIMEGETTIME()-time)>ms) {
 				int res=TerminateThread((HANDLE)handle,0);
 				res;	// just to silence compiler warnings
 				WWASSERT(res);	// Thread still not killed!

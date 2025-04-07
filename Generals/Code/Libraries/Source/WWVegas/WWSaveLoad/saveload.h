@@ -26,9 +26,9 @@
  *                                                                                             *
  *                       Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 4/16/01 4:35p                                               $*
+ *                     $Modtime:: 9/19/01 4:13p                                               $*
  *                                                                                             *
- *                    $Revision:: 11                                                          $*
+ *                    $Revision:: 12                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -148,8 +148,7 @@ public:
 	*/
 	static bool		Save (ChunkSaveClass &csave, SaveLoadSubSystemClass & subsystem);
 	static bool		Load (ChunkLoadClass &cload,bool auto_post_load = true);	
-	static bool		Post_Load_Processing (void);
-
+	static bool		Post_Load_Processing (void(*network_callback)(void));
 	/*
 	** Look up the persist factory for a given chunk id
 	*/

@@ -505,7 +505,7 @@ static void Apply_Render_State(RenderStateStruct& render_state)
 		DX8Wrapper::Set_DX8_Light(0,NULL);
 	}
 
-//	Matrix4 mtx;
+//	Matrix4x4 mtx;
 //	mtx=render_state.world.Transpose();
 //	DX8Wrapper::Set_Transform(D3DTS_WORLD,mtx);
 //	mtx=render_state.view.Transpose();
@@ -555,7 +555,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 
 			D3DXMATRIX d3d_mtx=(D3DXMATRIX&)state->sorting_state.world*(D3DXMATRIX&)state->sorting_state.view;
 			D3DXMatrixTranspose(&d3d_mtx,&d3d_mtx);
-			const Matrix4& mtx=(const Matrix4&)d3d_mtx;
+			const Matrix4x4& mtx=(const Matrix4x4&)d3d_mtx;
 			unsigned i=0;
 			for (;i<state->vertex_count;++i,++src_verts) {
 				vertex_z_array[i] = (mtx[2][0] * src_verts->x + mtx[2][1] * src_verts->y + mtx[2][2] * src_verts->z + mtx[2][3]);
@@ -697,8 +697,8 @@ void SortingRendererClass::Flush_Sorting_Pool()
 
 void SortingRendererClass::Flush()
 {
-	Matrix4 old_view;
-	Matrix4 old_world;
+	Matrix4x4 old_view;
+	Matrix4x4 old_world;
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,old_view);
 	DX8Wrapper::Get_Transform(D3DTS_WORLD,old_world);
 

@@ -68,6 +68,9 @@ enum ObjectStatusBits
 	// add more status bits here ... don't forget to add to the string table below!!!
 
 };
+
+typedef UnsignedInt	ObjectStatusMaskType;
+
 #ifdef DEFINE_OBJECT_STATUS_NAMES
 static const char *TheObjectStatusBitNames[] = 
 {

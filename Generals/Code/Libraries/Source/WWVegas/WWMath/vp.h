@@ -24,12 +24,15 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/WWMath/vp.h                                  $*
  *                                                                                             *
- *                        Author:: Hector Yee                                                  *
+ *                     Org Author:: Hector Yee                                                  *
  *                                                                                             *
- *                     $Modtime:: 6/27/01 11:39a                                              $*
+ *                       Author : Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
- *                    $Revision:: 12                                                          $*
+ *                    $Revision:: 13                                                          $*
  *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * Transform - transforms a vector array given  Matrix3D                                       *
@@ -53,13 +56,13 @@ class Vector2;
 class Vector3;
 class Vector4;
 class Matrix3D;
-class Matrix4;
+class Matrix4x4;
 
 class VectorProcessorClass
 {
 public:
 	static void Transform(Vector3* dst,const Vector3 *src, const Matrix3D& matrix, const int count);
-	static void Transform(Vector4* dst,const Vector3 *src, const Matrix4& matrix, const int count);
+	static void Transform(Vector4* dst,const Vector3 *src, const Matrix4x4& matrix, const int count);
 	static void Copy(unsigned *dst,const unsigned *src, const int count);
 	static void Copy(Vector2 *dst,const Vector2 *src, const int count);
 	static void Copy(Vector3 *dst,const Vector3 *src, const int count);

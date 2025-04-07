@@ -174,12 +174,8 @@ void showReplayControls( void )
 {
 	if (m_replayWindow)
 	{
-#if !defined(_PLAYTEST)
 		Bool show = TheGameLogic->isInReplayGame();
 		m_replayWindow->winHide(!show);
-#else
-		m_replayWindow->winHide(TRUE);
-#endif
 	}
 }
 
@@ -199,12 +195,8 @@ void toggleReplayControls( void )
 {
 	if (m_replayWindow)
 	{
-#if !defined(_PLAYTEST)
 		Bool show = TheGameLogic->isInReplayGame() && m_replayWindow->winIsHidden();
 		m_replayWindow->winHide(!show);
-#else
-		m_replayWindow->winHide(TRUE);
-#endif
 	}
 }
 

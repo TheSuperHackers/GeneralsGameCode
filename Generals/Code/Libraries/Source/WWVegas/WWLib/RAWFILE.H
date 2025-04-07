@@ -22,13 +22,13 @@
  *                                                                                             * 
  *                 Project Name : Command & Conquer                                            * 
  *                                                                                             * 
- *                     $Archive:: /G/wwlib/rawfile.h                                          $* 
+ *                     $Archive:: /Commando/Code/wwlib/rawfile.h                              $* 
  *                                                                                             * 
- *                      $Author:: Neal_k                                                      $*
+ *                      $Author:: Jani_p                                                      $*
  *                                                                                             * 
- *                     $Modtime:: 10/04/99 10:25a                                             $*
+ *                     $Modtime:: 11/25/01 11:52a                                             $*
  *                                                                                             * 
- *                    $Revision:: 8                                                           $*
+ *                    $Revision:: 10                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------* 
  * Functions:                                                                                  * 
@@ -59,6 +59,7 @@
 #endif
 
 #include	"WWFILE.H"
+#include "wwstring.h"
 
 
 #ifndef WWERROR
@@ -110,9 +111,7 @@ class RawFileClass : public FileClass
 		virtual unsigned long Get_Date_Time(void);
 		virtual bool Set_Date_Time(unsigned long datetime);
 		virtual void Error(int error, int canretry = false, char const * filename=NULL);
-
-		void Bias(int start, int length=-1);
-
+		virtual void Bias(int start, int length=-1);
 		virtual void * Get_File_Handle(void) { return Handle; } 
 
 		virtual void	Attach (void *handle, int rights=READ);
@@ -148,11 +147,7 @@ class RawFileClass : public FileClass
 			void * Handle;
 		#endif
 
-		/*
-		**	This points to the filename as a NULL terminated string. It may point to either a
-		**	constant or an allocated string as indicated by the "Allocated" flag.
-		*/
-		char const * Filename;
+		StringClass Filename;
 
 		//
 		// file date and time are in the following formats:
@@ -167,15 +162,6 @@ class RawFileClass : public FileClass
 		//
 		unsigned short Date;
 		unsigned short Time;
-
-		/*
-		**	Filenames that were assigned as part of the construction process
-		**	are not allocated. It is assumed that the filename string is a
-		**	constant in that case and thus making duplication unnecessary.
-		**	This value will be non-zero if the filename has be allocated
-		**	(using strdup()).
-		*/
-		bool Allocated;
 };
 
 #endif

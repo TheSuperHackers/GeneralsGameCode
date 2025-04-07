@@ -24,11 +24,11 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/wwlib/vector.h                               $*
  *                                                                                             *
- *                      $Author:: Patrick                                                     $*
+ *                      $Author:: Jani_p                                                      $*
  *                                                                                             *
- *                     $Modtime:: 8/22/01 12:24p                                              $*
+ *                     $Modtime:: 1/16/02 11:40a                                              $*
  *                                                                                             *
- *                    $Revision:: 47                                                          $*
+ *                    $Revision:: 49                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -61,6 +61,7 @@
 #include	<assert.h>
 #include	<stdlib.h>
 #include <string.h>
+#include <new.h>
 
 #ifdef _MSC_VER
 #pragma warning (disable : 4702) // unreachable code, happens with some uses of these templates
@@ -215,13 +216,13 @@ VectorClass<T>::~VectorClass(void)
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class T>
-VectorClass<T>::VectorClass(VectorClass<T> const & vector) :
+VectorClass<T>::VectorClass(VectorClass<T> const & vec) :
 	Vector(0),
 	VectorMax(0),
 	IsValid(true),
 	IsAllocated(false)
 {
-	*this = vector;
+	*this = vec;
 }
 
 
@@ -231,7 +232,7 @@ VectorClass<T>::VectorClass(VectorClass<T> const & vector) :
  *    This the the assignment operator for vector objects. It will alter the existing lvalue   *
  *    vector to duplicate the rvalue one.                                                      *
  *                                                                                             *
- * INPUT:   vector   -- The rvalue vector to copy into the lvalue one.                         *
+ * INPUT:   vec   -- The rvalue vector to copy into the lvalue one.                            *
  *                                                                                             *
  * OUTPUT:  Returns with reference to the newly copied vector.                                 *
  *                                                                                             *
@@ -241,17 +242,17 @@ VectorClass<T>::VectorClass(VectorClass<T> const & vector) :
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class T>
-VectorClass<T> & VectorClass<T>::operator =(VectorClass<T> const & vector)
+VectorClass<T> & VectorClass<T>::operator =(VectorClass<T> const & vec)
 {
-	if (this != &vector) {
+	if (this != &vec) {
 		Clear();
-		VectorMax = vector.Length();
+		VectorMax = vec.Length();
 		if (VectorMax) {
 			Vector = W3DNEWARRAY T[VectorMax];
 			if (Vector) {
 				IsAllocated = true;
 				for (int index = 0; index < VectorMax; index++) {
-					Vector[index] = vector[index];
+					Vector[index] = vec[index];
 				}
 			}
 		} else {
@@ -280,11 +281,11 @@ VectorClass<T> & VectorClass<T>::operator =(VectorClass<T> const & vector)
  *   03/10/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
 template<class T>
-bool VectorClass<T>::operator == (VectorClass<T> const & vector) const
+bool VectorClass<T>::operator == (VectorClass<T> const & vec) const
 {
-	if (VectorMax == vector.Length()) {
+	if (VectorMax == vec.Length()) {
 		for (int index = 0; index < VectorMax; index++) {
-			if (Vector[index] != vector[index]) {
+			if (Vector[index] != vec[index]) {
 				return(false);
 			}
 		}
@@ -507,6 +508,7 @@ class DynamicVectorClass : public VectorClass<T>
 
 		// retains the memory but zeros the active count
 		void Reset_Active(void) { ActiveCount = 0; }
+		void Set_Active(int count)	{ ActiveCount = count; }
 
 		// Fetch number of "allocated" vector objects.
 		int Count(void) const {return(ActiveCount);};
@@ -521,6 +523,7 @@ class DynamicVectorClass : public VectorClass<T>
 
 		// Delete object at this vector index.
 		bool Delete(int index);
+		bool Delete_Index(int index);		// Added to explictly call delete by index
 
 		// Deletes all objects in the vector.
 		void Delete_All(void);
@@ -871,6 +874,28 @@ bool DynamicVectorClass<T>::Delete(int index)
 
 
 template<class T>
+bool DynamicVectorClass<T>::Delete_Index(int index)
+{
+	if (index < ActiveCount) {
+		ActiveCount--;
+
+		/*
+		**	If there are any objects past the index that was deleted, copy those
+		**	objects down in order to fill the hole. A simple memory copy is
+		**	not sufficient since the vector could contain class objects that
+		**	need to use the assignment operator for movement.
+		*/
+//		(&(*this)[index])->~ T ();
+		for (int i = index; i < ActiveCount; i++) {
+			(*this)[i] = (*this)[i+1];
+		}
+		return(true);
+	}
+	return(false);
+}
+
+
+template<class T>
 void DynamicVectorClass<T>::Delete_All(void) 
 {
 	int len = VectorMax;
@@ -902,7 +927,8 @@ template<class T>
 T * DynamicVectorClass<T>::Uninitialized_Add(void)
 {
 	if (ActiveCount >= Length()) {
-		if ((IsAllocated || !VectorMax) && GrowthStep > 0) {
+//		if ((IsAllocated || !VectorMax) && GrowthStep > 0) {
+		if (GrowthStep > 0) {
 			if (!Resize(Length() + GrowthStep)) {
 
 				/*
@@ -959,6 +985,7 @@ class BooleanVectorClass
 
 		// Initialization
 		void Init(unsigned size, unsigned char * array);
+		void Init(unsigned size);
 
 		// Fetch number of boolean objects in vector.
 		int Length(void) {return BitCount;};

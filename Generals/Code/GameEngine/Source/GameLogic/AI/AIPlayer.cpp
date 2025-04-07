@@ -61,8 +61,6 @@
 #include "GameLogic/Module/SupplyWarehouseDockUpdate.h"
 #include "GameLogic/PartitionManager.h"
 
-#if !defined(_PLAYTEST)
-
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
@@ -3125,8 +3123,6 @@ void AIPlayer::loadPostProcess( void )
 {
 
 }  // end loadPostProcess
-
-#endif
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------

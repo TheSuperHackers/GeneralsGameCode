@@ -61,7 +61,7 @@ public:
 	DelayedWeaponSetUpgradeUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
-	virtual Bool isTriggeredBy( Int64 potentialMask );	///< If you were an upgrade, would you trigger for this?
+	virtual Bool isTriggeredBy( UpgradeMaskType potentialMask );	///< If you were an upgrade, would you trigger for this?
 	virtual void setDelay( UnsignedInt startingDelay );	///< Start the upgrade doing countdown
 
 	virtual UpdateSleepTime update();

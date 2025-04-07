@@ -37,6 +37,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/ModelState.h"
 #include "Common/Science.h"
+#include "Common/Upgrade.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Snapshot;
@@ -167,7 +168,7 @@ public:
 	virtual void xferScienceType( ScienceType *science );
 	virtual void xferScienceVec( ScienceVec *scienceVec );
 	virtual void xferKindOf( KindOfType *kindOfData );
-	virtual void xferUpgradeMask( Int64 *upgradeMaskData );
+	virtual void xferUpgradeMask( UpgradeMaskType *upgradeMaskData );
 	virtual void xferUser( void *data, Int dataSize );
 	virtual void xferMatrix3D( Matrix3D* mtx );
 	virtual void xferMapName( AsciiString *mapNameData );

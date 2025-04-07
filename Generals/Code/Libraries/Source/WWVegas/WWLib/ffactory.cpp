@@ -49,6 +49,7 @@
 */
 SimpleFileFactoryClass		_DefaultFileFactory;
 FileFactoryClass *			_TheFileFactory = &_DefaultFileFactory;
+SimpleFileFactoryClass *			_TheSimpleFileFactory = &_DefaultFileFactory;
 
 RawFileFactoryClass		_DefaultWritingFileFactory;
 RawFileFactoryClass *			_TheWritingFileFactory = &_DefaultWritingFileFactory;

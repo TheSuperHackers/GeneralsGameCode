@@ -476,9 +476,9 @@ AsciiString GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
 #endif // defined(_DEBUG) || defined(_INTERNAL)
 
 
-#if defined(_INTERNAL) || defined(_DEBUG) || defined(_PLAYTEST)
+#if defined(_INTERNAL) || defined(_DEBUG)
 	CHECK_IF(MSG_META_DEMO_TOGGLE_AUDIODEBUG)
-#endif//defined(_INTERNAL) || defined(_DEBUG) || defined(_PLAYTEST)
+#endif//defined(_INTERNAL) || defined(_DEBUG)
 #ifdef DUMP_PERF_STATS
 	CHECK_IF(MSG_META_DEMO_PERFORM_STATISTICAL_DUMP)
 #endif//DUMP_PERF_STATS

@@ -38,13 +38,20 @@
 #include "internal_cmd.h"
 #include "internal_result.h"
 
+#if !(defined(_MSC_VER) && _MSC_VER < 1300)
+#include <atomic>
+#include <Utility/intrin_compat.h>
+#endif
+
 class ProfileFastCS
 {
   ProfileFastCS(const ProfileFastCS&);
-  ProfileFastCS& operator=(const ProfileFastCS&);
+  ProfileFastCS& operator=(const ProfileFastCS&) {};
+  
+	static HANDLE testEvent;
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	volatile unsigned m_Flag;
-  static HANDLE testEvent;
 
 	void ThreadSafeSetFlag()
 	{
@@ -79,11 +86,32 @@ public:
     m_Flag(0) 
   {
   }
+#else
+
+	volatile std::atomic_flag Flag{};
+
+	void ThreadSafeSetFlag()
+	{
+		while (Flag.test_and_set(std::memory_order_acquire)) {
+			Flag.wait(true, std::memory_order_relaxed);
+		}
+	}
+
+	void ThreadSafeClearFlag()
+	{
+		Flag.clear(std::memory_order_release);
+		Flag.notify_one();
+	}
+
+public:
+	ProfileFastCS(void) {}
+
+#endif
 
 	class Lock
 	{
     Lock(const Lock&);
-    Lock& operator=(const Lock&);
+	Lock& operator=(const Lock&) {};
 
 		ProfileFastCS& CriticalSection;
 
@@ -109,6 +137,7 @@ void ProfileFreeMemory(void *ptr);
 
 __forceinline void ProfileGetTime(__int64 &t)
 {
+#if defined(_MSC_VER) && _MSC_VER < 1300
   _asm
   {
     mov ecx,[t]
@@ -120,6 +149,9 @@ __forceinline void ProfileGetTime(__int64 &t)
     pop edx
     pop eax
   };
+#else
+  t = static_cast<__int64>(_rdtsc());
+#endif
 }
 
 #endif // INTERNAL_H

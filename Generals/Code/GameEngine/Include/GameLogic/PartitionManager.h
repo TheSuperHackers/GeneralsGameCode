@@ -54,6 +54,7 @@
 //-----------------------------------------------------------------------------
 #include "Common/GameCommon.h"	// ensure we get DUMP_PERF_STATS, or not
 #include "GameLogic/ObjectIter.h"
+#include "GameLogic/ObjectStatusBits.h"
 #include "Common/KindOf.h"
 #include "Common/Snapshot.h"
 #include "Common/Geometry.h"
@@ -769,9 +770,9 @@ public:
 class PartitionFilterAcceptByObjectStatus : public PartitionFilter
 {
 private:
-	UnsignedInt m_mustBeSet, m_mustBeClear;
+	ObjectStatusMaskType m_mustBeSet, m_mustBeClear;
 public:
-	PartitionFilterAcceptByObjectStatus(UnsignedInt mustBeSet, UnsignedInt mustBeClear) : m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear) { }
+	PartitionFilterAcceptByObjectStatus(ObjectStatusMaskType mustBeSet, ObjectStatusMaskType mustBeClear) : m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear) { }
 	virtual Bool allow(Object *objOther);
 #if defined(_DEBUG) || defined(_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterAcceptByObjectStatus"; }
@@ -786,9 +787,9 @@ public:
 class PartitionFilterRejectByObjectStatus : public PartitionFilter
 {
 private:
-	UnsignedInt m_mustBeSet, m_mustBeClear;
+	ObjectStatusMaskType m_mustBeSet, m_mustBeClear;
 public:
-	PartitionFilterRejectByObjectStatus(UnsignedInt mustBeSet, UnsignedInt mustBeClear) 
+	PartitionFilterRejectByObjectStatus(ObjectStatusMaskType mustBeSet, ObjectStatusMaskType mustBeClear) 
 		: m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear) 
 	{ 
 	}

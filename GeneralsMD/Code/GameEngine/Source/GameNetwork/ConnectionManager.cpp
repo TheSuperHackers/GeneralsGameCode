@@ -565,7 +565,7 @@ void ConnectionManager::processWrapper(NetCommandRef *ref)
 {
 	NetWrapperCommandMsg *wrapperMsg = (NetWrapperCommandMsg *)(ref->getCommand());
 	UnsignedShort commandID = wrapperMsg->getWrappedCommandID();
-	DEBUG_LOG(("ConnectionManager::processWrapper() - wrapped commandID is %d, commandID is %d\n",
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::processWrapper() - wrapped commandID is %d, commandID is %d\n",
 		commandID, wrapperMsg->getID()));
 	Int origProgress = 0;
 	FileCommandMap::iterator fcIt = s_fileCommandMap.find(commandID);
@@ -573,7 +573,7 @@ void ConnectionManager::processWrapper(NetCommandRef *ref)
 	{
 		origProgress = s_fileProgressMap[m_localSlot][commandID];
 	}
-	DEBUG_LOG(("ConnectionManager::processWrapper() - origProgress[%d] == %d for command %d\n",
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::processWrapper() - origProgress[%d] == %d for command %d\n",
 		m_localSlot, origProgress, commandID));
 
 	m_netCommandWrapperList->processWrapper(ref);
@@ -581,11 +581,11 @@ void ConnectionManager::processWrapper(NetCommandRef *ref)
 	if (fcIt != s_fileCommandMap.end())
 	{
 		Int newProgress = m_netCommandWrapperList->getPercentComplete(commandID);
-		DEBUG_LOG(("ConnectionManager::processWrapper() - newProgress[%d] == %d for command %d\n",
+		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::processWrapper() - newProgress[%d] == %d for command %d\n",
 			m_localSlot, newProgress, commandID));
 		if (newProgress > origProgress && newProgress < 100)
 		{
-			DEBUG_LOG(("ConnectionManager::processWrapper() - sending a NetFileProgressCommandMsg\n"));
+			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::processWrapper() - sending a NetFileProgressCommandMsg\n"));
 			s_fileProgressMap[m_localSlot][commandID] = newProgress;
 
 			Int progressMask = 0xff ^ (1 << m_localSlot);
@@ -836,7 +836,7 @@ void ConnectionManager::processAckStage1(NetCommandMsg *msg) {
 
 #if defined(_DEBUG) || defined(_INTERNAL)
 	if (doDebug == TRUE) {
-		DEBUG_LOG(("ConnectionManager::processAck - processing ack for command %d from player %d\n", ((NetAckStage1CommandMsg *)msg)->getCommandID(), playerID));
+		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::processAck - processing ack for command %d from player %d\n", ((NetAckStage1CommandMsg *)msg)->getCommandID(), playerID));
 	}
 #endif
 	
@@ -1047,7 +1047,7 @@ void ConnectionManager::ackCommand(NetCommandRef *ref, UnsignedInt localSlot) {
 		originalPlayerID = bothmsg->getOriginalPlayerID();
 #if defined(_DEBUG) || defined(_INTERNAL)
 		if (doDebug) {
-			DEBUG_LOG(("ConnectionManager::ackCommand - doing ack both for command %d from player %d\n", bothmsg->getCommandID(), bothmsg->getOriginalPlayerID()));
+			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::ackCommand - doing ack both for command %d from player %d\n", bothmsg->getCommandID(), bothmsg->getOriginalPlayerID()));
 		}
 #endif
 	} else {
@@ -1057,7 +1057,7 @@ void ConnectionManager::ackCommand(NetCommandRef *ref, UnsignedInt localSlot) {
 		originalPlayerID = stage1msg->getOriginalPlayerID();
 #if defined(_DEBUG) || defined(_INTERNAL)
 		if (doDebug) {
-			DEBUG_LOG(("ConnectionManager::ackCommand - doing ack stage 1 for command %d from player %d\n", stage1msg->getCommandID(), stage1msg->getOriginalPlayerID()));
+			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::ackCommand - doing ack stage 1 for command %d from player %d\n", stage1msg->getCommandID(), stage1msg->getOriginalPlayerID()));
 		}
 #endif
 	}
@@ -1110,20 +1110,20 @@ void ConnectionManager::sendRemoteCommand(NetCommandRef *msg) {
 		return;
 	}
 
-	DEBUG_LOG(("ConnectionManager::sendRemoteCommand - sending net command %d of type %s from player %d, relay is 0x%x\n",
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendRemoteCommand - sending net command %d of type %s from player %d, relay is 0x%x\n",
 		msg->getCommand()->getID(), GetAsciiNetCommandType(msg->getCommand()->getNetCommandType()).str(), msg->getCommand()->getPlayerID(), msg->getRelay()));
 
 	UnsignedByte relay = msg->getRelay();
 	if ((relay & (1 << m_localSlot)) && (m_frameData[msg->getCommand()->getPlayerID()] != NULL)) {
 		if (IsCommandSynchronized(msg->getCommand()->getNetCommandType())) {
-			DEBUG_LOG(("ConnectionManager::sendRemoteCommand - adding net command of type %s to player %d for frame %d\n", GetAsciiNetCommandType(msg->getCommand()->getNetCommandType()).str(), msg->getCommand()->getPlayerID(), msg->getCommand()->getExecutionFrame()));
+			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendRemoteCommand - adding net command of type %s to player %d for frame %d\n", GetAsciiNetCommandType(msg->getCommand()->getNetCommandType()).str(), msg->getCommand()->getPlayerID(), msg->getCommand()->getExecutionFrame()));
 			m_frameData[msg->getCommand()->getPlayerID()]->addNetCommandMsg(msg->getCommand());
 		}
 	}
 
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
 		if ((relay & (1 << i)) && ((m_connections[i] != NULL) && (m_connections[i]->isQuitting() == FALSE))) {
-			DEBUG_LOG(("ConnectionManager::sendRemoteCommand - relaying command %d to player %d\n", msg->getCommand()->getID(), i));
+			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendRemoteCommand - relaying command %d to player %d\n", msg->getCommand()->getID(), i));
 			m_connections[i]->sendNetCommandMsg(msg->getCommand(), 1 << i);
 			actualRelay = actualRelay | (1 << i);
 		}
@@ -1237,7 +1237,7 @@ void ConnectionManager::updateRunAhead(Int oldRunAhead, Int frameRate, Bool didS
 			Int minFps;
 			Int minFpsPlayer;
 			getMinimumFps(minFps, minFpsPlayer);
-			DEBUG_LOG(("ConnectionManager::updateRunAhead - max latency = %f, min fps = %d, min fps player = %d old FPS = %d\n", getMaximumLatency(), minFps, minFpsPlayer, frameRate));
+			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::updateRunAhead - max latency = %f, min fps = %d, min fps player = %d old FPS = %d\n", getMaximumLatency(), minFps, minFpsPlayer, frameRate));
 			if ((minFps >= ((frameRate * 9) / 10)) && (minFps < frameRate)) {
 				// if the minimum fps is within 10% of the desired framerate, then keep the current minimum fps.
 				minFps = frameRate;
@@ -1248,7 +1248,7 @@ void ConnectionManager::updateRunAhead(Int oldRunAhead, Int frameRate, Bool didS
 			if (minFps > TheGlobalData->m_framesPerSecondLimit) {
 				minFps = TheGlobalData->m_framesPerSecondLimit; // Cap to 30 FPS.
 			}
-			DEBUG_LOG(("ConnectionManager::updateRunAhead - minFps after adjustment is %d\n", minFps));
+			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::updateRunAhead - minFps after adjustment is %d\n", minFps));
 			Int newRunAhead = (Int)((getMaximumLatency() / 2.0) * (Real)minFps);
 			newRunAhead += (newRunAhead * TheGlobalData->m_networkRunAheadSlack) / 100; // Add in 10% of slack to the run ahead in case of network hiccups.
 			if (newRunAhead < MIN_RUNAHEAD) {
@@ -1418,7 +1418,7 @@ void ConnectionManager::processFrameTick(UnsignedInt frame) {
 
 	m_frameMetrics.doPerFrameMetrics(frame);
 
-	DEBUG_LOG(("ConnectionManager::processFrameTick - sending frame info for frame %d, ID %d, command count %d\n", frame, msg->getID(), commandCount));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::processFrameTick - sending frame info for frame %d, ID %d, command count %d\n", frame, msg->getID(), commandCount));
 
 	sendLocalCommand(msg, 0xff & ~(1 << m_localSlot));
 
@@ -1481,11 +1481,11 @@ void ConnectionManager::sendLocalCommand(NetCommandMsg *msg, UnsignedByte relay 
 	}
 	msg->attach();
 
-	DEBUG_LOG(("ConnectionManager::sendLocalCommand - sending net command %d of type %s\n", msg->getID(),
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendLocalCommand - sending net command %d of type %s\n", msg->getID(),
 		GetAsciiNetCommandType(msg->getNetCommandType()).str()));
 
 	if (relay & (1 << m_localSlot)) {
-		DEBUG_LOG(("ConnectionManager::sendLocalCommand - adding net command of type %s to player %d for frame %d\n", GetAsciiNetCommandType(msg->getNetCommandType()).str(), msg->getPlayerID(), msg->getExecutionFrame()));
+		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendLocalCommand - adding net command of type %s to player %d for frame %d\n", GetAsciiNetCommandType(msg->getNetCommandType()).str(), msg->getPlayerID(), msg->getExecutionFrame()));
 		m_frameData[m_localSlot]->addNetCommandMsg(msg);
 	}
 
@@ -1529,7 +1529,7 @@ void ConnectionManager::sendLocalCommandDirect(NetCommandMsg *msg, UnsignedByte 
 
 	if (((relay & (1 << m_localSlot)) != 0) && (m_frameData[m_localSlot] != NULL)) {
 		if (IsCommandSynchronized(msg->getNetCommandType()) == TRUE) {
-			DEBUG_LOG(("ConnectionManager::sendLocalCommandDirect - adding net command of type %s to player %d for frame %d\n", GetAsciiNetCommandType(msg->getNetCommandType()).str(), msg->getPlayerID(), msg->getExecutionFrame()));
+			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendLocalCommandDirect - adding net command of type %s to player %d for frame %d\n", GetAsciiNetCommandType(msg->getNetCommandType()).str(), msg->getPlayerID(), msg->getExecutionFrame()));
 			m_frameData[m_localSlot]->addNetCommandMsg(msg);
 		}
 	}
@@ -1539,7 +1539,7 @@ void ConnectionManager::sendLocalCommandDirect(NetCommandMsg *msg, UnsignedByte 
 			if ((m_connections[i] != NULL) && (m_connections[i]->isQuitting() == FALSE)) {
 				UnsignedByte temprelay = 1 << i;
 				m_connections[i]->sendNetCommandMsg(msg, temprelay);
-				DEBUG_LOG(("ConnectionManager::sendLocalCommandDirect - Sending direct command %d of type %s to player %d\n", msg->getID(), GetAsciiNetCommandType(msg->getNetCommandType()).str(), i));
+				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendLocalCommandDirect - Sending direct command %d of type %s to player %d\n", msg->getID(), GetAsciiNetCommandType(msg->getNetCommandType()).str(), i));
 			}
 		}
 	}
@@ -1626,7 +1626,7 @@ NetCommandList *ConnectionManager::getFrameCommandList(UnsignedInt frame)
 				m_frameData[i]->resetFrame(frame - FRAMES_TO_KEEP);	// After getting the commands for that frame from this
 													// FrameDataManager object, we need to tell it that we're
 													// done with the messages for that frame.
-				DEBUG_LOG(("getFrameCommandList - called reset frame on player %d for frame %d\n", i, frame - FRAMES_TO_KEEP));
+				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("getFrameCommandList - called reset frame on player %d for frame %d\n", i, frame - FRAMES_TO_KEEP));
 			}
 		}
 	}
@@ -2086,7 +2086,7 @@ void ConnectionManager::sendChat(UnicodeString text, Int playerMask, UnsignedInt
 	{
 		msg->setID(GenerateNextCommandID());
 	}
-	DEBUG_LOG(("Chat message has ID of %d, mask of %8.8X, text of %ls\n", msg->getID(), msg->getPlayerMask(), msg->getText().str()));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Chat message has ID of %d, mask of %8.8X, text of %ls\n", msg->getID(), msg->getPlayerMask(), msg->getText().str()));
 
 	sendLocalCommand(msg, 0xff ^ (1 << m_localSlot));
 	processChat(msg);
@@ -2113,7 +2113,7 @@ UnsignedShort ConnectionManager::sendFileAnnounce(AsciiString path, UnsignedByte
 	{
 		UnicodeString log;
 		log.format(L"Not sending file '%hs' to %X\n", path.str(), playerMask);
-		DEBUG_LOG(("%ls\n", log.str()));
+		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("%ls\n", log.str()));
 		if (TheLAN)
 			TheLAN->OnChat(UnicodeString(L"sendFile"), 0, log, LANAPI::LANCHAT_SYSTEM);
 		return 0;
@@ -2131,13 +2131,13 @@ UnsignedShort ConnectionManager::sendFileAnnounce(AsciiString path, UnsignedByte
 	announceMsg->setPlayerMask(playerMask);
 	UnsignedShort fileID = GenerateNextCommandID();
 	announceMsg->setFileID(fileID);
-	DEBUG_LOG(("ConnectionManager::sendFileAnnounce() - creating announce message with ID of %d from %d to mask %X for '%s' going to %X as command %d\n",
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendFileAnnounce() - creating announce message with ID of %d from %d to mask %X for '%s' going to %X as command %d\n",
 		announceMsg->getID(), announceMsg->getPlayerID(), announceMask, announceMsg->getRealFilename().str(),
 		announceMsg->getPlayerMask(), announceMsg->getFileID()));
 
 	processFileAnnounce(announceMsg); // set up things for the host
 
-	DEBUG_LOG(("Sending file announce to %X\n", announceMask));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Sending file announce to %X\n", announceMask));
 	sendLocalCommand(announceMsg, announceMask);
 	announceMsg->detach();
 
@@ -2151,7 +2151,7 @@ void ConnectionManager::sendFile(AsciiString path, UnsignedByte playerMask, Unsi
 	{
 		UnicodeString log;
 		log.format(L"Not sending file '%hs' to %X\n", path.str(), playerMask);
-		DEBUG_LOG(("%ls\n", log.str()));
+		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("%ls\n", log.str()));
 		if (TheLAN)
 			TheLAN->OnChat(UnicodeString(L"sendFile"), 0, log, LANAPI::LANCHAT_SYSTEM);
 		return;
@@ -2183,7 +2183,7 @@ void ConnectionManager::sendFile(AsciiString path, UnsignedByte playerMask, Unsi
 #ifdef COMPRESS_TARGAS
 	if (compressedBuf)
 	{
-		DEBUG_LOG(("Compressed '%s' from %d to %d (%g%%) before transfer\n", path.str(), len, compressedSize,
+		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Compressed '%s' from %d to %d (%g%%) before transfer\n", path.str(), len, compressedSize,
 			(Real)compressedSize/(Real)len*100.0f));
 		fileMsg->setFileData((unsigned char *)compressedBuf, compressedSize);
 	}
@@ -2193,7 +2193,7 @@ void ConnectionManager::sendFile(AsciiString path, UnsignedByte playerMask, Unsi
 		fileMsg->setFileData((unsigned char *)buf, len);
 	}
 
-	DEBUG_LOG(("ConnectionManager::sendFile() - creating file message with ID of %d for '%s' going to %X from %d, size of %d\n",
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendFile() - creating file message with ID of %d for '%s' going to %X from %d, size of %d\n",
 		fileMsg->getID(), fileMsg->getRealFilename().str(), playerMask, fileMsg->getPlayerID(), fileMsg->getFileLength()));
 
 	delete[] buf;
@@ -2206,7 +2206,7 @@ void ConnectionManager::sendFile(AsciiString path, UnsignedByte playerMask, Unsi
 	}
 #endif // COMPRESS_TARGAS
 
-	DEBUG_LOG(("Sending file: '%s', len %d, to %X\n", path.str(), len, playerMask));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Sending file: '%s', len %d, to %X\n", path.str(), len, playerMask));
 
 	sendLocalCommand(fileMsg, playerMask);
 
@@ -2227,7 +2227,7 @@ Int ConnectionManager::getFileTransferProgress(Int playerID, AsciiString path)
 		++commandIt;
 	}
 	//DEBUG_LOG(("Falling back to 0, since we couldn't find the map\n"));
-	DEBUG_LOG(("ConnectionManager::getFileTransferProgress: path %s not found\n",path.str()));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::getFileTransferProgress: path %s not found\n",path.str()));
 	return 0;
 }
 
@@ -2317,14 +2317,14 @@ Int ConnectionManager::getSlotAverageFPS(Int slot) {
 
 #if defined(_DEBUG) || defined(_INTERNAL)
 void ConnectionManager::debugPrintConnectionCommands() {
-	DEBUG_LOG(("ConnectionManager::debugPrintConnectionCommands - begin commands\n"));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::debugPrintConnectionCommands - begin commands\n"));
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
 		if (m_connections[i] != NULL) {
-			DEBUG_LOG(("ConnectionManager::debugPrintConnectionCommands - commands for connection %d\n", i));
+			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::debugPrintConnectionCommands - commands for connection %d\n", i));
 			m_connections[i]->debugPrintCommands();
 		}
 	}
-	DEBUG_LOG(("ConnectionManager::debugPrintConnectionCommands - end commands\n"));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::debugPrintConnectionCommands - end commands\n"));
 }
 #endif
 
@@ -2337,7 +2337,7 @@ void ConnectionManager::notifyOthersOfCurrentFrame(Int frame) {
 		msg->setID(GenerateNextCommandID());
 	}
 
-	DEBUG_LOG(("ConnectionManager::notifyOthersOfCurrentFrame - sending disconnect frame of %d, command ID = %d\n", frame, msg->getID()));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::notifyOthersOfCurrentFrame - sending disconnect frame of %d, command ID = %d\n", frame, msg->getID()));
 	sendLocalCommandDirect(msg, 0xff ^ (1 << m_localSlot));
 	NetCommandRef *ref = NEW_NETCOMMANDREF(msg);
 	ref->setRelay(1 << m_localSlot);
@@ -2346,7 +2346,7 @@ void ConnectionManager::notifyOthersOfCurrentFrame(Int frame) {
 
 	msg->detach();
 
-	DEBUG_LOG(("ConnectionManager::notifyOthersOfCurrentFrame - start screen on debug stuff\n"));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::notifyOthersOfCurrentFrame - start screen on debug stuff\n"));
 #if defined(_DEBUG) || defined(_INTERNAL)
 	debugPrintConnectionCommands();
 #endif
@@ -2371,29 +2371,29 @@ void ConnectionManager::notifyOthersOfNewFrame(UnsignedInt frame) {
 }
 
 void ConnectionManager::sendFrameDataToPlayer(UnsignedInt playerID, UnsignedInt startingFrame) {
-	DEBUG_LOG(("ConnectionManager::sendFrameDataToPlayer - sending frame data to player %d starting with frame %d\n", playerID, startingFrame));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendFrameDataToPlayer - sending frame data to player %d starting with frame %d\n", playerID, startingFrame));
 	for (UnsignedInt frame = startingFrame; frame < TheGameLogic->getFrame(); ++frame) {
 		sendSingleFrameToPlayer(playerID, frame);
 	}
-	DEBUG_LOG(("ConnectionManager::sendFrameDataToPlayer - done sending commands to player %d\n", playerID));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendFrameDataToPlayer - done sending commands to player %d\n", playerID));
 }
 
 void ConnectionManager::sendSingleFrameToPlayer(UnsignedInt playerID, UnsignedInt frame) {
 	if ((TheGameLogic->getFrame() - FRAMES_TO_KEEP) > frame) {
-		DEBUG_LOG(("ConnectionManager::sendSingleFrameToPlayer - player %d requested frame %d when we are on frame %d, this is too far in the past.\n", playerID, frame, TheGameLogic->getFrame()));
+		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendSingleFrameToPlayer - player %d requested frame %d when we are on frame %d, this is too far in the past.\n", playerID, frame, TheGameLogic->getFrame()));
 		return;
 	}
 
 	UnsignedByte relay = 1 << playerID;
 
-	DEBUG_LOG(("ConnectionManager::sendFrameDataToPlayer - sending data for frame %d\n", frame));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendFrameDataToPlayer - sending data for frame %d\n", frame));
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
 		if ((m_frameData[i] != NULL) && (i != playerID)) { // no need to send his own commands to him.
 			NetCommandList *list = m_frameData[i]->getFrameCommandList(frame);
 			if (list != NULL) {
 				NetCommandRef *ref = list->getFirstMessage();
 				while (ref != NULL) {
-					DEBUG_LOG(("ConnectionManager::sendFrameDataToPlayer - sending command %d from player %d to player %d using relay 0x%x\n", ref->getCommand()->getID(), i, playerID, relay));
+					DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendFrameDataToPlayer - sending command %d from player %d to player %d using relay 0x%x\n", ref->getCommand()->getID(), i, playerID, relay));
 					sendLocalCommandDirect(ref->getCommand(), relay);
 					ref = ref->getNext();
 				}
@@ -2406,7 +2406,7 @@ void ConnectionManager::sendSingleFrameToPlayer(UnsignedInt playerID, UnsignedIn
 				msg->setID(GenerateNextCommandID());
 			}
 			msg->setPlayerID(i);
-			DEBUG_LOG(("ConnectionManager::sendFrameDataToPlayer - sending frame info from player %d to player %d for frame %d with command count %d and ID %d and relay %d\n", i, playerID, msg->getExecutionFrame(), msg->getCommandCount(), msg->getID(), relay));
+			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::sendFrameDataToPlayer - sending frame info from player %d to player %d for frame %d with command count %d and ID %d and relay %d\n", i, playerID, msg->getExecutionFrame(), msg->getCommandCount(), msg->getID(), relay));
 			sendLocalCommandDirect(msg, relay);
 			msg->detach();
 		}

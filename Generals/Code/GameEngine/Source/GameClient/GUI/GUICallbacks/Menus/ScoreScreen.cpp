@@ -269,7 +269,6 @@ void ScoreScreenInit( WindowLayout *layout, void *userData )
 		buttonSaveReplay->winEnable(FALSE);
 
 	s_needToFinishSinglePlayerInit = FALSE;
-#if !defined(_PLAYTEST)
 	if (TheGameLogic->isInReplayGame())
 	{
 		if (buttonSaveReplay)
@@ -288,14 +287,12 @@ void ScoreScreenInit( WindowLayout *layout, void *userData )
 		}
 	}
 	else
-#endif
 	{
 		if(TheGameLogic->isInInternetGame())
 		{
 			initInternetMultiPlayer();
 			TheTransitionHandler->setGroup("ScoreScreenShow");
 		}
-#if !defined(_PLAYTEST)
 		else if( TheGameLogic->isInLanGame())
 		{
 			initLANMultiPlayer();
@@ -311,7 +308,6 @@ void ScoreScreenInit( WindowLayout *layout, void *userData )
 			overidePlayerDisplayName = TRUE;
 			initSinglePlayer();
 		}
-#endif
 	}
 
 	// Make Sure the layout is visible
@@ -459,7 +455,6 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 			{
 				if(!buttonIsFinishCampaign)
 					ReplayWasPressed = TRUE;
-#if !defined(_PLAYTEST)
 				if( screenType == SCORESCREEN_SINGLEPLAYER)	
 				{
 					AsciiString mapName = TheCampaignManager->getCurrentMap();
@@ -474,7 +469,6 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 						CheckForCDAtGameStart( startNextCampaignGame );
 					}
 				}
-#endif
 			}
 			else if ( controlID == buttonBuddiesID )	
 			{
@@ -571,8 +565,6 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-
-#if !defined(_PLAYTEST)
 
 /** Special Init path for making this a single player Score Screen */
 //-------------------------------------------------------------------------------------------------
@@ -794,7 +786,6 @@ void finishSinglePlayerInit( void )
 	// need to do this here
 	TheTransitionHandler->setGroup("ScoreScreenShow");
 }
-#endif
 
 /** Special Init path for making this a single player replay Score Screen */
 //-------------------------------------------------------------------------------------------------

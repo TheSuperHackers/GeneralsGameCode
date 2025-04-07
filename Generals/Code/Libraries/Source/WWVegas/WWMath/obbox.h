@@ -24,12 +24,15 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/wwmath/obbox.h                               $*
  *                                                                                             *
- *                       Author:: Greg_h                                                       *
+ *                    Org Author:: Greg_h                                                       *
  *                                                                                             *
- *                     $Modtime:: 6/29/00 6:51p                                               $*
+ *                       Author : Kenny Mitchell                                               * 
  *                                                                                             *
- *                    $Revision:: 23                                                          $*
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
+ *                    $Revision:: 24                                                          $*
+ *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  *   OBBoxClass::Transform -- transform an oriented box                                        *
@@ -88,7 +91,7 @@ public:
 		Extent(extent)
 	{ }
 	
-	OBBoxClass(const Vector3 & center,const Vector3 & extent,const Matrix3 & basis) :
+	OBBoxClass(const Vector3 & center,const Vector3 & extent,const Matrix3x3 & basis) :
 		Basis(basis),
 		Center(center),
 		Extent(extent)
@@ -106,9 +109,9 @@ public:
 	void		Compute_Point(float params[3],Vector3 * set_point) const;
 	void		Compute_Axis_Aligned_Extent(Vector3 * set_extent) const;
 
-	Matrix3	Basis;
-	Vector3	Center;
-	Vector3	Extent;
+	Matrix3x3	Basis;
+	Vector3		Center;
+	Vector3		Extent;
 
 	static void	Transform(const Matrix3D & tm,const OBBoxClass & in,OBBoxClass * out);
 };
@@ -166,7 +169,7 @@ inline void OBBoxClass::Transform
 
 	out->Extent = in.Extent;
 	Matrix3D::Transform_Vector(tm,in.Center,&(out->Center));
-	Matrix3::Multiply(tm,in.Basis,&(out->Basis));
+	Matrix3x3::Multiply(tm,in.Basis,&(out->Basis));
 }
 
 
@@ -193,7 +196,7 @@ inline void OBBoxClass::Compute_Point(float params[3],Vector3 * set_point) const
 	point.Y *= params[1];
 	point.Z *= params[2];
 
-	Matrix3::Rotate_Vector(Basis,point,set_point);
+	Matrix3x3::Rotate_Vector(Basis,point,set_point);
 	Vector3::Add(Center,*set_point,set_point);
 }
 

@@ -298,7 +298,7 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Inits(void)
 	** Initalize any other subsystems inside of WW3D
 	*/
 	MissingTexture::_Init();
-	TextureClass::_Init_Filters();
+	TextureFilterClass::_Init_Filters();
 	TheDX8MeshRenderer.Init();
 	BoxRenderObjClass::Init();
 	VertexMaterialClass::Init();
@@ -1965,7 +1965,7 @@ IDirect3DTexture8 * DX8Wrapper::_Create_DX8_Texture(
 	unsigned int width, 
 	unsigned int height,
 	WW3DFormat format, 
-	TextureClass::MipCountType mip_level_count,
+	MipCountType mip_level_count,
 	D3DPOOL pool,
 	bool rendertarget)
 {
@@ -2030,7 +2030,7 @@ IDirect3DTexture8 * DX8Wrapper::_Create_DX8_Texture(
 
 IDirect3DTexture8 * DX8Wrapper::_Create_DX8_Texture(
 	const char *filename, 
-	TextureClass::MipCountType mip_level_count)
+	MipCountType mip_level_count)
 {
 	DX8_THREAD_ASSERT();
 	DX8_Assert();
@@ -2080,7 +2080,7 @@ IDirect3DTexture8 * DX8Wrapper::_Create_DX8_Texture(
 
 IDirect3DTexture8 * DX8Wrapper::_Create_DX8_Texture(
 	IDirect3DSurface8 *surface,
-	TextureClass::MipCountType mip_level_count)
+	MipCountType mip_level_count)
 {
 	DX8_THREAD_ASSERT();
 	DX8_Assert();
@@ -2102,7 +2102,7 @@ IDirect3DTexture8 * DX8Wrapper::_Create_DX8_Texture(
 	tex_surface->Release();
 
 	// Create mipmaps if needed
-	if (mip_level_count!=TextureClass::MIP_LEVELS_1) {
+	if (mip_level_count!=MIP_LEVELS_1) {
 		DX8_ErrorCode(D3DXFilterTexture(texture, NULL, 0, D3DX_FILTER_BOX));
 	}
 
@@ -2424,7 +2424,7 @@ DX8Wrapper::Create_Render_Target (int width, int height, bool alpha)
 	//	
 	DX8_Assert();
 	WW3DFormat format=D3DFormat_To_WW3DFormat(mode.Format);
-	TextureClass * tex = NEW_REF(TextureClass,(width,height,format,TextureClass::MIP_LEVELS_1,TextureClass::POOL_DEFAULT,true));
+	TextureClass * tex = NEW_REF(TextureClass,(width,height,format,MIP_LEVELS_1,TextureClass::POOL_DEFAULT,true));
 	
 	// 3dfx drivers are lying in the CheckDeviceFormat call and claiming
 	// that they support render targets!

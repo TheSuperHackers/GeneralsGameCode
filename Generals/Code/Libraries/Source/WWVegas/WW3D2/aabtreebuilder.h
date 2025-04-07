@@ -49,6 +49,7 @@
 #include "Vector3i.h"
 #include "aaplane.h"
 #include "bittype.h"
+#include "meshgeometry.h"
 #include <float.h>
 
 class AABTreeClass;
@@ -68,7 +69,7 @@ public:
 	AABTreeBuilderClass(void);
 	~AABTreeBuilderClass(void);
 
-	void					Build_AABTree(int polycount,Vector3i * polys,int vertcount,Vector3 * verts);
+	void					Build_AABTree(int polycount,TriIndex * polys,int vertcount,Vector3 * verts);
 	void					Export(ChunkSaveClass & csave);
 	
 	int					Node_Count(void);
@@ -195,7 +196,7 @@ private:
 	** Mesh data
 	*/
 	int								PolyCount;
-	Vector3i *						Polys;
+	TriIndex *						Polys;
 	int								VertCount;
 	Vector3 *						Verts;
 

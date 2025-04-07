@@ -385,9 +385,9 @@ public:
 		/// @todo END section to REMOVE (not disable) for release
 #endif // defined(_DEBUG) || defined(_INTERNAL)
 
-#if defined(_INTERNAL) || defined(_DEBUG) || defined(_PLAYTEST)
+#if defined(_INTERNAL) || defined(_DEBUG)
 		MSG_META_DEMO_TOGGLE_AUDIODEBUG,						///< show/hide the audio debug info
-#endif//defined(_INTERNAL) || defined(_DEBUG) || defined(_PLAYTEST)
+#endif//defined(_INTERNAL) || defined(_DEBUG)
 #ifdef DUMP_PERF_STATS
 		MSG_META_DEMO_PERFORM_STATISTICAL_DUMP,			///< dump performance stats for this frame to StatisticsDump.txt
 #endif//DUMP_PERF_STATS

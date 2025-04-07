@@ -96,7 +96,7 @@ Bool FireWeaponCollide::shouldFireWeapon()
 {
 	const FireWeaponCollideModuleData *d = getFireWeaponCollideModuleData();
 
-	UnsignedInt status = getObject()->getStatusBits();
+	ObjectStatusMaskType status = getObject()->getStatusBits();
 	
 	if( (status & d->m_requiredStatus) != d->m_requiredStatus )
 		return FALSE; 

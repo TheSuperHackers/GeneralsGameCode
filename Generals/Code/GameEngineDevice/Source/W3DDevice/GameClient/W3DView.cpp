@@ -1057,11 +1057,7 @@ void W3DView::update(void)
 	{
 		Real desiredHeight = (m_terrainHeightUnderCamera + m_heightAboveGround);
 		Real desiredZoom = desiredHeight / m_cameraOffset.z;
-#if !defined(_PLAYTEST)
   	if (didScriptedMovement || (TheGameLogic->isInReplayGame() && TheGlobalData->m_useCameraInReplay))
-#else
-  	if (didScriptedMovement)
-#endif
   	{
   		// if we are in a scripted camera movement, take its height above ground as our desired height.
   		m_heightAboveGround = m_currentHeightAboveGround;
@@ -1939,7 +1935,7 @@ Drawable *W3DView::pickDrawable( const ICoord2D *screen, Bool forceAttack, PickT
 		result.ComputeContactPoint = true;
 
 	//Don't check against translucent or hidden objects
-	RayCollisionTestClass raytest(lineseg,&result,COLLISION_TYPE_ALL,false,false);
+	RayCollisionTestClass raytest(lineseg,&result,COLL_TYPE_ALL,false,false);
 
 	if( W3DDisplay::m_3DScene->castRay( raytest, false, (Int)pickType ) )
 		renderObj = raytest.CollidedRenderObj;

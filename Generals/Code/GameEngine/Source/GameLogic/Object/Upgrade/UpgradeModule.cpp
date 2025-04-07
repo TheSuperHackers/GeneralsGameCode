@@ -107,7 +107,7 @@ void UpgradeMux::forceRefreshUpgrade()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool UpgradeMux::attemptUpgrade( Int64 keyMask )
+Bool UpgradeMux::attemptUpgrade( UpgradeMaskType keyMask )
 {
 	if (wouldUpgrade(keyMask))
 	{
@@ -120,9 +120,9 @@ Bool UpgradeMux::attemptUpgrade( Int64 keyMask )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool UpgradeMux::wouldUpgrade( Int64 keyMask ) const
+Bool UpgradeMux::wouldUpgrade( UpgradeMaskType keyMask ) const
 {
-	Int64 activation, conflicting;
+	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks(activation, conflicting);
 
 	//Make sure we have activation conditions and we haven't performed the upgrade already.
@@ -149,9 +149,9 @@ Bool UpgradeMux::wouldUpgrade( Int64 keyMask ) const
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool UpgradeMux::testUpgradeConditions( Int64 keyMask ) const
+Bool UpgradeMux::testUpgradeConditions( UpgradeMaskType keyMask ) const
 {
-	Int64 activation, conflicting;
+	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks(activation, conflicting);
 
 	//Okay, make sure we don't have any conflicting upgrades
@@ -184,9 +184,9 @@ Bool UpgradeMux::testUpgradeConditions( Int64 keyMask ) const
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool UpgradeMux::resetUpgrade( Int64 keyMask )
+Bool UpgradeMux::resetUpgrade( UpgradeMaskType keyMask )
 {
-	Int64 activation, conflicting;
+	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks(activation, conflicting);
 	if( activation & keyMask && m_upgradeExecuted )
 	{

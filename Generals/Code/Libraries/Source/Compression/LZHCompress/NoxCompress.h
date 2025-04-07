@@ -37,4 +37,4 @@ UnsignedInt CalcNewSize		(UnsignedInt rawSize);
 Bool DecompressMemory		(void *inBufferVoid, Int inSize, void *outBufferVoid, Int& outSize);
 Bool CompressMemory			(void *inBufferVoid, Int inSize, void *outBufferVoid, Int& outSize);
 
-#endif __compress_h
+#endif // __compress_h

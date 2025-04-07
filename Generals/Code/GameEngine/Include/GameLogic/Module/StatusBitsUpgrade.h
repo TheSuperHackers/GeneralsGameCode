@@ -56,6 +56,7 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "GameLogic/Module/UpgradeModule.h"
+#include "GameLogic/ObjectStatusBits.h"
 
 //-----------------------------------------------------------------------------
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
@@ -70,8 +71,8 @@ class Thing;
 class StatusBitsUpgradeModuleData : public UpgradeModuleData
 {
 public:
-	UnsignedInt m_statusToSet;
-	UnsignedInt m_statusToClear;
+	ObjectStatusMaskType m_statusToSet;
+	ObjectStatusMaskType m_statusToClear;
 
 	StatusBitsUpgradeModuleData()
 	{

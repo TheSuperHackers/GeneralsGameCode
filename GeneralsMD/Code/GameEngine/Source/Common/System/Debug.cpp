@@ -110,6 +110,12 @@ static DWORD theMainThreadID = 0;
 // ----------------------------------------------------------------------------
 
 char* TheCurrentIgnoreCrashPtr = NULL;
+#ifdef DEBUG_LOGGING
+UnsignedInt DebugLevelMask = 0;
+const char *TheDebugLevels[DEBUG_LEVEL_MAX] = {
+	"NET"
+};
+#endif
 
 // ----------------------------------------------------------------------------
 // PRIVATE PROTOTYPES 

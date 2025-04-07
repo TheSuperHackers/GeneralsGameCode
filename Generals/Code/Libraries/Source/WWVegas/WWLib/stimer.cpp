@@ -16,22 +16,22 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*********************************************************************************************** 
- ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               *** 
- *********************************************************************************************** 
- *                                                                                             * 
- *                 Project Name : Command & Conquer                                            * 
- *                                                                                             * 
- *                     $Archive:: /Commando/Code/wwlib/STIMER.CPP                             $* 
- *                                                                                             * 
- *                      $Author:: Greg_h                                                      $*
- *                                                                                             * 
- *                     $Modtime:: 7/09/99 1:46p                                               $*
- *                                                                                             * 
- *                    $Revision:: 3                                                           $*
+/***********************************************************************************************
+ ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
+ ***********************************************************************************************
  *                                                                                             *
- *---------------------------------------------------------------------------------------------* 
- * Functions:                                                                                  * 
+ *                 Project Name : Command & Conquer                                            *
+ *                                                                                             *
+ *                     $Archive:: /Commando/Code/wwlib/stimer.cpp                             $*
+ *                                                                                             *
+ *                      $Author:: Steve_t                                                     $*
+ *                                                                                             *
+ *                     $Modtime:: 12/09/01 6:42p                                              $*
+ *                                                                                             *
+ *                    $Revision:: 4                                                           $*
+ *                                                                                             *
+ *---------------------------------------------------------------------------------------------*
+ * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include	"always.h"
@@ -42,7 +42,7 @@
 #pragma warning (push,3)
 #endif
 
-#include <mmsystem.h>
+#include "systimer.h"
 
 #ifdef _MSC_VER
 #pragma warning (pop)
@@ -51,11 +51,11 @@
 
 long SystemTimerClass::operator () (void) const
 {
-	return timeGetTime()/16;
+	return TIMEGETTIME()/16;
 }
 
 
 SystemTimerClass::operator long (void) const
 {
-	return timeGetTime()/16;
+	return TIMEGETTIME()/16;
 }

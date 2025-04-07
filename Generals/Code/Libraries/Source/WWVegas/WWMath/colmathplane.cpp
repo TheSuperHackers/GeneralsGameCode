@@ -24,12 +24,15 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/wwmath/colmathplane.cpp                      $*
  *                                                                                             *
- *                       Author:: Greg Hjelstrom                                               *
+ *                    Org Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 3/29/00 4:41p                                               $*
+ *                       Author : Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
- *                    $Revision:: 9                                                           $*
+ *                    $Revision:: 10                                                           $*
  *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -173,12 +176,12 @@ CollisionMath::Overlap_Test(const PlaneClass & plane,const OBBoxClass & box)
 	Vector3 local_normal;
 	Vector3 posfarpt;
 	Vector3 negfarpt;
-	Matrix3::Transpose_Rotate_Vector(box.Basis,plane.N,&local_normal);
+	Matrix3x3::Transpose_Rotate_Vector(box.Basis,plane.N,&local_normal);
 
 	get_far_extent(local_normal,box.Extent,&posfarpt);
 
 	// transform the two extreme box coordinates into world space
-	Matrix3::Rotate_Vector(box.Basis,posfarpt,&posfarpt);
+	Matrix3x3::Rotate_Vector(box.Basis,posfarpt,&posfarpt);
 	negfarpt = -posfarpt;
 	posfarpt += box.Center;
 	negfarpt += box.Center;

@@ -313,7 +313,7 @@ void WWDebug_Assert_Fail(const char * expr,const char * file, int line)
       }
 
 		if (code == IDRETRY) {
-			_asm int 3;
+			WWDEBUG_BREAK
       	return;
 		}
    }

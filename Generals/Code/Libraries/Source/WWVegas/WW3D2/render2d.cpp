@@ -109,7 +109,7 @@ void Render2DClass::Set_Texture(TextureClass* tex)
 
 void Render2DClass::Set_Texture( const char * filename)
 {
-	TextureClass * tex = WW3DAssetManager::Get_Instance()->Get_Texture( filename, TextureClass::MIP_LEVELS_1 );
+	TextureClass * tex = WW3DAssetManager::Get_Instance()->Get_Texture( filename, MIP_LEVELS_1 );
 	Set_Texture( tex );
 	if ( tex != NULL ) {
 		SET_REF_OWNER( tex );
@@ -526,17 +526,15 @@ void	Render2DClass::Add_Outline( const RectClass & rect, float width, const Rect
 	Add_Line (Vector2 (rect.Right, rect.Bottom),	Vector2 (rect.Left + 1, rect.Bottom),	width, color);	
 }
 
-
 void Render2DClass::Render(void)
 {
 	if ( !Indices.Count() || IsHidden) {
 		return;
 	}
 
-
 	// save the view and projection matrices since we're nuking them
-	Matrix4 view,proj;
-	Matrix4 identity(true);
+	Matrix4x4 view,proj;
+	Matrix4x4 identity(true);
 
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
 	DX8Wrapper::Get_Transform(D3DTS_PROJECTION,proj);

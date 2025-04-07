@@ -63,7 +63,7 @@ public:
 	// is called from the main thread the texture is loaded immediatelly.
 	static void Request_High_Priority_Loading(
 		TextureClass* texture,
-		TextureClass::MipCountType mip_level_count);
+		MipCountType mip_level_count);
 	static void	Request_Thumbnail(TextureClass* tc);
 
 	static void Update();
@@ -90,8 +90,8 @@ class TextureLoadTaskClass : public W3DMPO
 	unsigned Width;
 	unsigned Height;
 	WW3DFormat Format;
-	unsigned char* LockedSurfacePtr[TextureClass::MIP_LEVELS_MAX];
-	unsigned LockedSurfacePitch[TextureClass::MIP_LEVELS_MAX];
+	unsigned char* LockedSurfacePtr[MIP_LEVELS_MAX];
+	unsigned LockedSurfacePitch[MIP_LEVELS_MAX];
 	unsigned MipLevelCount;
 	unsigned Reduction;
 	TextureLoadTaskClass* Succ;

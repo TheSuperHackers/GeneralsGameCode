@@ -1,8 +1,9 @@
 blank_issues_enabled: true
 contact_links:
-- name: Ideas & Feature Requests
+- name: Feature Request
   url: https://github.com/TheSuperHackers/GeneralsGameCode/discussions/categories/ideas
-  about: Request an idea or feature request to be added to the game.
+  about: Share your ideas or request new features to enhance the game
+
 - name: Community Outpost Discord Server
   url: https://discord.gg/WzxQDZersE
-  about: For help with miscelleneous things, join our discord server!
+  about: For help with miscellaneous things, join our Discord community

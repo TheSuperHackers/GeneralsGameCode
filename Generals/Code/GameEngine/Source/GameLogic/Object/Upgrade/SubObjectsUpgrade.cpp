@@ -85,7 +85,7 @@ SubObjectsUpgrade::~SubObjectsUpgrade( void )
 void SubObjectsUpgrade::upgradeImplementation( )
 {
 	const SubObjectsUpgradeModuleData *data = getSubObjectsUpgradeModuleData();
-	Int64 activation, conflicting;
+	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks( activation, conflicting );
 	
 	//First make sure we have the right combination of upgrades

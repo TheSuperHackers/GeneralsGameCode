@@ -22,16 +22,17 @@
  *                                                                                             *
  *                 Project Name : WW3D                                                         *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/ww3d2/dazzle.cpp                                  $*
+ *                     $Archive:: /Commando/Code/ww3d2/dazzle.cpp                             $*
  *                                                                                             *
  *              Original Author:: Jani Penttinen                                               *
  *                                                                                             *
- *                      $Author:: Vss_sync                                                    $*
+ *                       $Author:: Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
- *                     $Modtime:: 8/29/01 9:47p                                               $*
+ *                    $Revision:: 32                                                          $*
  *                                                                                             *
- *                    $Revision:: 19                                                          $*
- *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -563,7 +564,7 @@ void DazzleRenderObjClass::Init_From_INI(const INIClass* ini)
 
 		LensflareInitClass lic;
 
-		lic.texture_name=ini->Get_String(section_name,LENSFLARE_TEXTURE_STRING);
+		ini->Get_String(lic.texture_name,section_name,LENSFLARE_TEXTURE_STRING);
 		lic.flare_count=ini->Get_Int(section_name,FLARE_COUNT_STRING,0);
 		if (lic.flare_count) {
 			lic.flare_locations=W3DNEWARRAY float[lic.flare_count];	// Flare location is 1D
@@ -612,8 +613,8 @@ void DazzleRenderObjClass::Init_From_INI(const INIClass* ini)
 
 		DazzleInitClass dic;
 
-		dic.primary_texture_name=ini->Get_String(section_name,DAZZLE_TEXTURE_STRING);
-		dic.secondary_texture_name=ini->Get_String(section_name,HALO_TEXTURE_STRING);
+		ini->Get_String(dic.primary_texture_name,section_name,DAZZLE_TEXTURE_STRING);
+		ini->Get_String(dic.secondary_texture_name,section_name,HALO_TEXTURE_STRING);
 		dic.halo_intensity=ini->Get_Float(section_name,HALO_INTENSITY_STRING,0.95f);
 		dic.halo_intensity_pow=ini->Get_Float(section_name,HALO_INTENSITY_POW_STRING,0.95f);
 		dic.halo_size_pow=ini->Get_Float(section_name,HALO_SIZE_POW_STRING,0.95f);
@@ -632,7 +633,7 @@ void DazzleRenderObjClass::Init_From_INI(const INIClass* ini)
 		dic.size_optimization_limit=ini->Get_Float(section_name,SIZE_OPTIMIZATION_LIMIT_STRING,0.05f);
 		dic.history_weight=ini->Get_Float(section_name,HISTORY_WEIGHT_STRING,0.5f);
 		dic.use_camera_translation=!!ini->Get_Int(section_name,USE_CAMERA_TRANSLATION,1);
-		dic.lensflare_name=ini->Get_String(section_name,DAZZLE_LENSFLARE_STRING);
+		ini->Get_String(dic.lensflare_name,section_name,DAZZLE_LENSFLARE_STRING);
 		dic.type=entry;
 
 		TPoint3D<float> tp=ini->Get_Point(section_name,DAZZLE_DIRECTION_STRING,TPoint3D<float>(0.0f,0.0f,0.0f));
@@ -909,7 +910,7 @@ void DazzleRenderObjClass::Render(RenderInfoClass & rinfo)
 //			Get_Transform().Get_Translation(&position);
 //			visibility = _VisibilityHandler->Compute_Dazzle_Visibility(rinfo,this,position);
 
-			Matrix4 view_transform,projection_transform;
+			Matrix4x4 view_transform,projection_transform;
 			DX8Wrapper::Get_Transform(D3DTS_VIEW,view_transform);
 			DX8Wrapper::Get_Transform(D3DTS_PROJECTION,projection_transform);
 			Vector3 camera_loc(rinfo.Camera.Get_Position());
@@ -980,12 +981,12 @@ void DazzleRenderObjClass::Render(RenderInfoClass & rinfo)
 
 void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 {
-	Matrix4 old_view_transform;
-	Matrix4 old_world_transform;
-	Matrix4 old_projection_transform;
-	Matrix4 view_transform;
-	Matrix4 world_transform;
-	Matrix4 projection_transform;
+	Matrix4x4 old_view_transform;
+	Matrix4x4 old_world_transform;
+	Matrix4x4 old_projection_transform;
+	Matrix4x4 view_transform;
+	Matrix4x4 world_transform;
+	Matrix4x4 projection_transform;
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,view_transform);
 	DX8Wrapper::Get_Transform(D3DTS_WORLD,world_transform);
 	DX8Wrapper::Get_Transform(D3DTS_PROJECTION,projection_transform);
@@ -1178,7 +1179,7 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 
 	DX8Wrapper::Set_World_Identity();
 	DX8Wrapper::Set_View_Identity();
-	DX8Wrapper::Set_Transform(D3DTS_PROJECTION,Matrix4(true));
+	DX8Wrapper::Set_Transform(D3DTS_PROJECTION,Matrix4x4(true));
 
 	if (halo_poly_count) {
 		DX8Wrapper::Set_Index_Buffer(ib_access,dazzle_vertex_count);

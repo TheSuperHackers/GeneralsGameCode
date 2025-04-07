@@ -26,9 +26,9 @@
  *                                                                                             *
  *                      $Author:: Greg_h                                                      $*
  *                                                                                             *
- *                     $Modtime:: 8/28/01 9:23a                                               $*
+ *                     $Modtime:: 9/13/01 8:38p                                               $*
  *                                                                                             *
- *                    $Revision:: 22                                                          $*
+ *                    $Revision:: 24                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -134,29 +134,29 @@ public:
 	** to this object.
 	*/
 #ifdef NDEBUG
-	virtual void Add_Ref(void)										{ NumRefs++; }
+	WWINLINE void Add_Ref(void) const							{ NumRefs++; }
 #else
-	virtual void Add_Ref(void);
+	void Add_Ref(void) const;
 #endif
 
 	/*
 	** Release_Ref, call this function when you no longer need the pointer
 	** to this object.
 	*/
-	virtual void		Release_Ref(void)							{ 
+	WWINLINE void		Release_Ref(void) const					{ 
 																				#ifndef NDEBUG
 																				Dec_Total_Refs(this);
 																				#endif
 																				NumRefs--; 
 																				assert(NumRefs >= 0); 
-																				if (NumRefs == 0) Delete_This(); 
+																				if (NumRefs == 0) const_cast<RefCountClass*>(this)->Delete_This(); 
 																			}
 
 
 	/*
 	** Check the number of references to this object.  
 	*/
-	int					Num_Refs(void)								{ return NumRefs; }
+	int					Num_Refs(void) const						{ return NumRefs; }
 
 	/*
 	** Delete_This - this function will be called when the object is being
@@ -190,7 +190,7 @@ private:
 	/*
 	** Current reference count of this object
 	*/
-	int					NumRefs;
+	mutable int			NumRefs;
 
 	/*
 	** Sum of all references to RefCountClass's.  Should equal zero after
@@ -201,12 +201,12 @@ private:
 	/*
 	** increments the total reference count
 	*/
-	static void			Inc_Total_Refs(RefCountClass *);
+	static void			Inc_Total_Refs(const RefCountClass *);
 	
 	/*
 	** decrements the total reference count
 	*/
-	static void			Dec_Total_Refs(RefCountClass *);
+	static void			Dec_Total_Refs(const RefCountClass *);
 
 public:
 	

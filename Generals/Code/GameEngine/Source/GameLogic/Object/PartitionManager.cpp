@@ -5395,7 +5395,7 @@ Bool PartitionFilterLastAttackedBy::allow(Object *other)
 //-----------------------------------------------------------------------------
 Bool PartitionFilterAcceptByObjectStatus::allow(Object *objOther)
 { 
-	UnsignedInt status = objOther->getStatusBits();
+	ObjectStatusMaskType status = objOther->getStatusBits();
 	return ((status & m_mustBeSet) == m_mustBeSet) && ((status & m_mustBeClear) == 0);
 }
 
@@ -5407,7 +5407,7 @@ Bool PartitionFilterAcceptByObjectStatus::allow(Object *objOther)
 //-----------------------------------------------------------------------------
 Bool PartitionFilterRejectByObjectStatus::allow(Object *objOther)
 { 
-	UnsignedInt status = objOther->getStatusBits();
+	ObjectStatusMaskType status = objOther->getStatusBits();
 	return !(((status & m_mustBeSet) == m_mustBeSet) && ((status & m_mustBeClear) == 0));
 }
 

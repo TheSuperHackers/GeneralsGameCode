@@ -62,10 +62,10 @@ void MutexClass::Unlock()
 		//assert(0);
 	#else
 		WWASSERT(locked);
+		locked--;
 		int res=ReleaseMutex(handle);
 		res;	// silence compiler warnings
 		WWASSERT(res);
-		locked--;
 	#endif
 }
 
@@ -126,8 +126,8 @@ void CriticalSectionClass::Unlock()
 		//assert(0);
 	#else
 		WWASSERT(locked);
-		LeaveCriticalSection((CRITICAL_SECTION*)handle);
 		locked--;
+		LeaveCriticalSection((CRITICAL_SECTION*)handle);
 	#endif
 }
 

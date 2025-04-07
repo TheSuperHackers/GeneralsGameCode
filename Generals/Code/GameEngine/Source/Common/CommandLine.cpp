@@ -754,7 +754,7 @@ Int parseNoShellMap(char *args[], int)
 	return 1;
 }
 
-#if !defined(_PLAYTEST) || (defined(_DEBUG) || defined(_INTERNAL))
+#if (defined(_DEBUG) || defined(_INTERNAL))
 Int parseNoLogo(char *args[], int)
 {
 	if (TheWritableGlobalData)
@@ -795,7 +795,9 @@ Int parseWinCursors(char *args[], int num)
 
 Int parseQuickStart( char *args[], int num )
 {
+#if (defined(_DEBUG) || defined(_INTERNAL))
   parseNoLogo( args, num );
+#endif
 	parseNoShellMap( args, num );
 	parseNoWindowAnimation( args, num );
 	return 1;
@@ -1104,7 +1106,7 @@ static CommandLineParam params[] =
 	{ "-scriptDebug", parseScriptDebug },
 	{ "-playStats", parsePlayStats },
 	{ "-mod", parseMod },
-#if !defined(_PLAYTEST) || (defined(_DEBUG) || defined(_INTERNAL))
+#if (defined(_DEBUG) || defined(_INTERNAL))
 	{ "-noaudio", parseNoAudio },
 	{ "-map", parseMapName },
 	{ "-nomusic", parseNoMusic },

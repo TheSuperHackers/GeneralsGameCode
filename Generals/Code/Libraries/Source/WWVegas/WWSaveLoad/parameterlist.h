@@ -84,7 +84,7 @@ private:
 	/////////////////////////////////////////////////////////////////////
 	// Private member data
 	/////////////////////////////////////////////////////////////////////
-	DynamicVectorClass<ParameterClass *>		m_Parameters;
+	//DynamicVectorClass<ParameterClass *>		m_Parameters;
 };
 
 
@@ -153,7 +153,8 @@ ParameterListClass::Free_Parameters (void)
 		}
 	}
 
-	m_Parameters.Delete_All ();
+	Delete_All();
+//	m_Parameters.Delete_All ();
 	return ;
 }
 

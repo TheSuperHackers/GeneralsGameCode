@@ -32,9 +32,26 @@ void SaveLoadStatus::Set_Status_Text(const char* text,int id)
 	if (id==0) status_text[1]="";
 }
 
-StringClass SaveLoadStatus::Get_Status_Text(int id)
+void SaveLoadStatus::Get_Status_Text(StringClass& text, int id)
 {
 	CriticalSectionClass::LockClass m(text_mutex);
 	WWASSERT(id<MAX_STATUS_TEXT_ID);
-	return status_text[id];
+	text=status_text[id];
 }
+
+static	int	status_count;
+void	SaveLoadStatus::Reset_Status_Count( void )
+{
+	status_count = 0;
+}
+
+void	SaveLoadStatus::Inc_Status_Count( void )
+{
+	status_count++;
+}
+
+int	SaveLoadStatus::Get_Status_Count( void )
+{
+	return status_count;
+}
+

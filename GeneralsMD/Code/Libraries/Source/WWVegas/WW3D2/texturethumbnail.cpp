@@ -26,7 +26,6 @@
 #include "bitmaphandler.h"
 #include "ffactory.h"
 #include "RAWFILE.H"
-#include "mixfile.h"
 #include "wwprofile.h"
 #include <windows.h>
 
@@ -261,6 +260,7 @@ ThumbnailClass::~ThumbnailClass()
 
 void ThumbnailManagerClass::Create_Thumbnails()
 {
+#if 0
 	SimpleFileFactoryClass ff;
 //	ff.Set_Sub_Directory("Data\\");
 	ff.Set_Sub_Directory("..\\data\\client\\mixfiles\\");
@@ -290,6 +290,7 @@ void ThumbnailManagerClass::Create_Thumbnails()
 		}
 	}
 	_TheFileFactory=old_file_factory;
+#endif
 }
 
 void ThumbnailManagerClass::Load()

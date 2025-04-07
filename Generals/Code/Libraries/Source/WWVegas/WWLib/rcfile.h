@@ -26,9 +26,9 @@
  *                                                                                             *
  *                       Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 7/09/99 1:37p                                               $*
+ *                     $Modtime:: 11/02/01 1:21p                                              $*
  *                                                                                             *
- *                    $Revision:: 7                                                           $*
+ *                    $Revision:: 8                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -76,6 +76,7 @@ class ResourceFileClass : public FileClass
 		virtual int Write(void const * /*buffer*/, int /*size*/)	{ return 0; }
 		virtual void Close(void)											{ }
 		virtual void Error(int error, int canretry = false, char const * filename=NULL);
+		virtual void Bias(int start, int length=-1) {}
 
 		virtual unsigned char *Peek_Data(void) const					{ return FileBytes; }
 

@@ -24,11 +24,11 @@
  *                                                                                             * 
  *                     $Archive:: /Commando/Code/wwlib/bufffile.h                             $* 
  *                                                                                             * 
- *                      $Author:: Byon_g                                                      $*
+ *                      $Author:: Ian_l                                                       $*
  *                                                                                             * 
- *                     $Modtime:: 5/02/00 11:09a                                              $*
+ *                     $Modtime:: 10/31/01 3:33p                                              $*
  *                                                                                             * 
- *                    $Revision:: 2                                                           $*
+ *                    $Revision:: 3                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------* 
  * Functions:                                                                                  * 
@@ -70,10 +70,10 @@ class BufferedFileClass : public RawFileClass
 
 	protected:
 
-		void					Reset_Buffer( void );
-
 		static	void		Set_Desired_Buffer_Size( int size ) { _DesiredBufferSize = size; }
 
+		void					Reset_Buffer( void );
+		
 	private:
 		unsigned char *	Buffer;				// The read buffer 
 		unsigned int		BufferSize;			// The allocated size of the read buffer

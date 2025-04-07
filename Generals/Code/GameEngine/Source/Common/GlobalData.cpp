@@ -66,11 +66,9 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /*static*/ const FieldParse GlobalData::s_GlobalDataFieldParseTable[] = 
 {
-#if !defined(_PLAYTEST)
 	{ "Windowed",									INI::parseBool,				NULL,			offsetof( GlobalData, m_windowed ) },
 	{ "XResolution",							INI::parseInt,				NULL,			offsetof( GlobalData, m_xResolution ) },
 	{ "YResolution",							INI::parseInt,				NULL,			offsetof( GlobalData, m_yResolution ) },
-#endif
 	{ "MapName",									INI::parseAsciiString,NULL,			offsetof( GlobalData, m_mapName ) },
 	{ "MoveHintName",							INI::parseAsciiString,NULL,			offsetof( GlobalData, m_moveHintName ) },
 	{ "UseTrees",									INI::parseBool,				NULL,			offsetof( GlobalData, m_useTrees ) },

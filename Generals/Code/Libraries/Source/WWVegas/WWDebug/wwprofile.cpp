@@ -54,6 +54,7 @@
 #include "wwprofile.h"
 #include "wwdebug.h"
 #include <windows.h>
+#include <Utility/intrin_compat.h>
 
 
 
@@ -74,18 +75,7 @@ inline void WWProfile_Get_Ticks(_int64 * ticks)
 #ifdef _UNIX
 	*ticks = 0;
 #else 
-	__asm
-	{
-		push edx;
-		push ecx;
-		mov ecx,ticks;
-		_emit 0Fh
-		_emit 31h
-		mov [ecx],eax;
-		mov [ecx+4],edx;
-		pop ecx;
-		pop edx;
-	}
+	*ticks = _rdtsc();
 #endif
 }
 

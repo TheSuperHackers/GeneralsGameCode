@@ -328,7 +328,7 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 		setIndex = true;
 
 		Vector3 vec(0.95f, 0.67f, 0);
-		Matrix3 rot(true);
+		Matrix3x3 rot(true);
 
 		tm.Set_Translation(vec);
 

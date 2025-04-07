@@ -436,9 +436,9 @@ UnsignedShort OptionPreferences::getFirewallPortOverride()
 		return TheGlobalData->m_firewallPortOverride;
 	}
 
- 	Int override = atoi(it->second.str());
- 	if (override < 0 || override > 65535)
- 		override = 0;
+	Int override = atoi(it->second.str());
+	if (override < 0 || override > 65535)
+		override = 0;
 	return override;
 }
 
@@ -777,7 +777,8 @@ static void setDefaults( void )
 		GadgetComboBoxSetSelectedPos( comboBoxResolution, defaultResIndex );	//should be 800x600 (our lowest supported mode)
 	}
 
- 	//-------------------------------------------------------------------------------------------------
+
+	//-------------------------------------------------------------------------------------------------
 	// Mouse Mode
 	GadgetCheckBoxSetChecked(checkAlternateMouse, FALSE);
 
@@ -1092,23 +1093,23 @@ static void saveOptions( void )
 		ghttpSetProxy(aStr.str());
 	}
 
-   	//-------------------------------------------------------------------------------------------------
- 	// Firewall Port Override
- 	GameWindow *textEntryFirewallPortOverride = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("OptionsMenu.wnd:TextEntryFirewallPortOverride"));
- 	if (textEntryFirewallPortOverride)
- 	{
- 		UnicodeString uStr = GadgetTextEntryGetText(textEntryFirewallPortOverride);
- 		AsciiString aStr;
- 		aStr.translate(uStr);
- 		Int override = atoi(aStr.str());
- 		if (override < 0 || override > 65535)
- 			override = 0;
- 		if (TheGlobalData->m_firewallPortOverride != override)
- 		{	TheWritableGlobalData->m_firewallPortOverride = override;
- 		    aStr.format("%d", override);
- 			(*pref)["FirewallPortOverride"] = aStr;
- 		}
- 	}
+	//-------------------------------------------------------------------------------------------------
+	// Firewall Port Override
+	GameWindow *textEntryFirewallPortOverride = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("OptionsMenu.wnd:TextEntryFirewallPortOverride"));
+	if (textEntryFirewallPortOverride)
+	{
+		UnicodeString uStr = GadgetTextEntryGetText(textEntryFirewallPortOverride);
+		AsciiString aStr;
+		aStr.translate(uStr);
+		Int override = atoi(aStr.str());
+		if (override < 0 || override > 65535)
+			override = 0;
+		if (TheGlobalData->m_firewallPortOverride != override)
+		{	TheWritableGlobalData->m_firewallPortOverride = override;
+		    aStr.format("%d", override);
+			(*pref)["FirewallPortOverride"] = aStr;
+		}
+	}
 
 	//-------------------------------------------------------------------------------------------------
 	// antialiasing
@@ -1120,6 +1121,7 @@ static void saveOptions( void )
 		prefString.format("%d", index);
 		(*pref)["AntiAliasing"] = prefString;
   }
+
 
 	//-------------------------------------------------------------------------------------------------
 	// mouse mode
@@ -1297,10 +1299,6 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	comboBoxAntiAliasing   = TheWindowManager->winGetWindowFromId( NULL, comboBoxAntiAliasingID );
 	comboBoxResolutionID   = TheNameKeyGenerator->nameToKey( AsciiString( "OptionsMenu.wnd:ComboBoxResolution" ) );
 	comboBoxResolution     = TheWindowManager->winGetWindowFromId( NULL, comboBoxResolutionID );
-#ifdef _PLAYTEST
-	if (comboBoxResolution)
-		comboBoxResolution->winEnable(FALSE);
-#endif _PLAYTEST
 	comboBoxDetailID			 = TheNameKeyGenerator->nameToKey( AsciiString( "OptionsMenu.wnd:ComboBoxDetail" ) );
 	comboBoxDetail		   = TheWindowManager->winGetWindowFromId( NULL, comboBoxDetailID );
 

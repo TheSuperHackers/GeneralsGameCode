@@ -250,4 +250,4 @@ ParticlePriorityType GameLODManager::getMinDynamicParticleSkipPriority(void)
 }
 
 extern GameLODManager *TheGameLODManager;
-#endif _GAME_LOD_H_
+#endif // _GAME_LOD_H_

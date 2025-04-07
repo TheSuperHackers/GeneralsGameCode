@@ -22,13 +22,13 @@
  *                                                                         * 
  *                 Project Name : Commando                                 * 
  *                                                                         * 
- *                     $Archive:: /VSS_Sync/ww3d2/dynamesh.cpp            $* 
+ *                     $Archive:: /Commando/Code/ww3d2/dynamesh.cpp       $* 
  *                                                                         * 
- *                      $Author:: Vss_sync                                $* 
+ *                      $Author:: Greg_h                                  $* 
  *                                                                         * 
- *                     $Modtime:: 8/29/01 7:29p                           $* 
+ *                     $Modtime:: 12/03/01 4:50p                          $* 
  *                                                                         * 
- *                    $Revision:: 23                                      $* 
+ *                    $Revision:: 25                                      $* 
  *                                                                         * 
  *-------------------------------------------------------------------------* 
  * Functions:                                                              * 
@@ -92,11 +92,14 @@ DynamicMeshModel::DynamicMeshModel(const DynamicMeshModel &src) :
 	// Copy the material info structure.
 	MatInfo = NEW_REF(MaterialInfoClass, (*(src.MatInfo)));
 
+
+	// [SKB: Feb 21 2002 @ 11:47pm] :
+	// Moved before the remapping cause I don't like referencing null.
+	MatDesc = W3DNEW MeshMatDescClass;
+
 	// remap!
 	MaterialRemapperClass remapper(src.MatInfo, MatInfo);
 	remapper.Remap_Mesh(src.MatDesc, MatDesc);
-
-	MatDesc = W3DNEW MeshMatDescClass;
 }
 
 DynamicMeshModel::~DynamicMeshModel(void)
@@ -221,7 +224,7 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 	** Write index data to index buffers
 	*/
 	DynamicIBAccessClass dynamic_ib(buffer_type,DynamicMeshPNum * 3);
-	const Vector3i *tris = Get_Polygon_Array();
+	const TriIndex *tris = Get_Polygon_Array();
 
 	{ // scope for lock
 
@@ -314,7 +317,7 @@ void DynamicMeshModel::Render(RenderInfoClass & rinfo)
 		while (!done) {
 
 			// Add vertex indices of tri[cur_tri_idx] to min_vert_idx, max_vert_idx
-			const Vector3i &tri = tris[cur_tri_idx];
+			const TriIndex &tri = tris[cur_tri_idx];
 			unsigned short min_idx = (short)MIN(MIN(tri.I, tri.J), tri.K);
 			unsigned short max_idx = (short)MAX(MAX(tri.I, tri.J), tri.K);
 			min_vert_idx = MIN(min_vert_idx, min_idx);
@@ -447,7 +450,7 @@ bool DynamicMeshClass::End_Vertex()
 		WWASSERT(PolyCount < Model->Get_Polygon_Count());
 
 		// set vertex indices
-		Vector3i	*poly = &(Model->Get_Non_Const_Polygon_Array())[PolyCount];
+		TriIndex *poly = &(Model->Get_Non_Const_Polygon_Array())[PolyCount];
 		if (TriMode == TRI_MODE_STRIPS) {
 			(*poly)[0] = VertCount-3;
 			(*poly)[1] = VertCount-2;

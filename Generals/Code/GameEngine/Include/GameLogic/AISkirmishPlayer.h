@@ -38,8 +38,6 @@ class BuildListInfo;
 class SpecialPowerTemplate;
 
 
-#if !defined(_PLAYTEST)
-
 /**
  * The computer-controlled opponent.
  */
@@ -120,8 +118,6 @@ protected:
 	Player			*m_currentEnemy;
 
 };
-
-#endif
 
 #endif // _AI_SKIRMISH_PLAYER_H_
 

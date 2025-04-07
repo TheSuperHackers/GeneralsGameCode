@@ -22,14 +22,18 @@
  *                                                                                             *
  *                 Project Name : WW3D                                                         *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/ww3d2/rendobj.h                                   $*
+ *                     $Archive:: /Commando/Code/ww3d2/rendobj.h                              $*
  *                                                                                             *
- *                       Author:: Greg Hjelstrom                                               *
+ *                   Org Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 8/29/01 7:29p                                               $*
+ *                       Author : Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/27/02 9:23a                                              $*
  *                                                                                             *
  *                    $Revision:: 14                                                          $*
  *                                                                                             *
+ * 06/27/02 KM Shader system classid addition                                       *
+ * 07/01/02 KM Coltype enum change to avoid MAX conflicts									   *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -145,6 +149,26 @@ static const char* TheAnimModeNames[] =
 //
 //////////////////////////////////////////////////////////////////////////////////
 
+// This is a small abstract class which a render object may have a pointer to. If present, its
+// Pre_Render and Post_Render calls will be called before and after the Render() call of this
+// render object. Applications using WW3D may create concrete classes deriving from this for
+// application-specific pre- and post- render processing. (the return value from Pre_Render
+// determines whether to perform the Render() call - if false, Render() will not be called).
+class RenderHookClass
+{
+public:
+	RenderHookClass(void) { }
+	virtual ~RenderHookClass(void) { }
+	virtual bool Pre_Render(RenderObjClass *robj, RenderInfoClass &rinfo) = 0;
+	virtual void Post_Render(RenderObjClass *robj, RenderInfoClass &rinfo) = 0;
+private:
+	// Enforce no-copy semantics, for this and derived classes. This is done by making these
+	// private and not having definitions for them.
+	RenderHookClass(const RenderHookClass & src);
+	RenderHookClass & operator=(const RenderHookClass & src);
+};
+
+// RenderObjClass definition
 class RenderObjClass : public RefCountClass , public PersistClass, public MultiListObjectClass
 {
 public:
@@ -208,13 +232,14 @@ public:
 		CLASSID_SOUND,
 		CLASSID_SEGLINETRAIL,
 		CLASSID_LAND,
+		CLASSID_SHDMESH,				// mesh class that uses the scaleable shader system
 		CLASSID_LAST		= 0x0000FFFF
 	};
 
 	RenderObjClass(void);
 	RenderObjClass(const RenderObjClass & src);
 	RenderObjClass & operator = (const RenderObjClass &);
-	virtual ~RenderObjClass(void)																					{ }
+	virtual ~RenderObjClass(void)																					{ if (RenderHook) delete RenderHook; }
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -450,9 +475,8 @@ public:
 	virtual void					Set_Alpha(int onoff)													{ if (onoff) { Bits |= IS_ALPHA; } else { Bits &= ~IS_ALPHA; } }
 	virtual int						Is_Additive(void) const													{ return Bits & IS_ADDITIVE; }
 	virtual void					Set_Additive(int onoff)													{ if (onoff) { Bits |= IS_ADDITIVE; } else { Bits &= ~IS_ADDITIVE; } }
-
-	virtual int						Get_Collision_Type(void) const											{ return (Bits & COLLISION_TYPE_MASK); }
-	virtual void					Set_Collision_Type(int type)												{ Bits &= ~COLLISION_TYPE_MASK; Bits |= (type & COLLISION_TYPE_MASK) | COLLISION_TYPE_ALL; }
+	virtual int						Get_Collision_Type(void) const											{ return (Bits & COLL_TYPE_MASK); }
+	virtual void					Set_Collision_Type(int type)												{ Bits &= ~COLL_TYPE_MASK; Bits |= (type & COLL_TYPE_MASK) | COLL_TYPE_ALL; }
    virtual bool					Is_Complete(void)																{ return false; }
 	virtual bool					Is_In_Scene(void)																{ return Scene != NULL; }
 	virtual float					Get_Native_Screen_Size(void) const										{ return NativeScreenSize; }
@@ -471,7 +495,9 @@ public:
 	virtual bool					Save (ChunkSaveClass &csave);
 	virtual bool					Load (ChunkLoadClass &cload);
 
-	
+	// Application-specific render hook:
+	RenderHookClass *				Get_Render_Hook(void) { return RenderHook; }
+	void								Set_Render_Hook(RenderHookClass *hook) { if (RenderHook) delete RenderHook; RenderHook = hook; }
 
 protected:
 
@@ -486,7 +512,7 @@ protected:
 
 	enum 
 	{
-		COLLISION_TYPE_MASK =		0x000000FF,
+		COLL_TYPE_MASK =		0x000000FF, 
 
 		IS_VISIBLE =					0x00000100,
 		IS_NOT_HIDDEN =				0x00000200,
@@ -502,7 +528,7 @@ protected:
 		
 		IS_REALLY_VISIBLE =			IS_VISIBLE | IS_NOT_HIDDEN | IS_NOT_ANIMATION_HIDDEN,
       IS_NOT_HIDDEN_AT_ALL =     IS_NOT_HIDDEN | IS_NOT_ANIMATION_HIDDEN,
-		DEFAULT_BITS =					COLLISION_TYPE_ALL | IS_NOT_HIDDEN | IS_NOT_ANIMATION_HIDDEN,
+		DEFAULT_BITS =					COLL_TYPE_ALL | IS_NOT_HIDDEN | IS_NOT_ANIMATION_HIDDEN,
 	};
 
 	mutable unsigned long		Bits;
@@ -517,6 +543,8 @@ protected:
 	SceneClass *					Scene;
 	RenderObjClass *				Container;
 	void *							User_Data;
+
+	RenderHookClass *				RenderHook;
 	
 	friend class SceneClass;
 	friend class RenderObjProxyClass;

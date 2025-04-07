@@ -218,7 +218,7 @@ public:
 
 	enum StaticSortCategoryType
 	{
-		SSCAT_OPAQUE,
+		SSCAT_OPAQUE=0,
 		SSCAT_ALPHA_TEST,
 		SSCAT_ADDITIVE,
 		SSCAT_OTHER

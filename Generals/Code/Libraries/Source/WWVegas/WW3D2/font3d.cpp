@@ -24,12 +24,15 @@
  *                                                                                             * 
  *                     $Archive:: /Commando/Code/ww3d2/font3d.cpp                             $* 
  *                                                                                             * 
- *                      $Author:: Jani_p                                                      $* 
+ *                  $Org Author:: Jani_p                                  $* 
+ *                                                                         * 
+ *                      $Author:: Kenny_m                                  $* 
+ *                                                                         * 
+ *                     $Modtime:: 08/05/02 10:44a                          $* 
  *                                                                                             * 
- *                     $Modtime:: 4/11/01 10:17p                                              $* 
+ *                    $Revision:: 17                                                          $* 
  *                                                                                             * 
- *                    $Revision:: 16                                                          $* 
- *                                                                                             * 
+ * 08/05/02 KM Texture class redesign
  *---------------------------------------------------------------------------------------------* 
  * Functions:                                                                                  * 
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -333,7 +336,7 @@ bool	Font3DDataClass::Load_Font_Image( const char *filename )
 
 	// create the texture
 	if ( _surface ) {
-		Texture = NEW_REF(TextureClass,(_surface,TextureClass::MIP_LEVELS_1));
+		Texture = NEW_REF(TextureClass,(_surface,MIP_LEVELS_1));
 		REF_PTR_RELEASE(_surface);
 	}
 

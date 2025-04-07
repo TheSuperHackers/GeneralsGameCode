@@ -142,7 +142,7 @@ private:
 	Vector3	*vtx_normal;	// array of vertex normals
 	Vector2	*vtx_uv;			// array of vertex uv coordinates
 
-	Vector3i	*tri_poly;	// array of triangle polys, vertex indices (can be discard if switch to fan renderer)
+	TriIndex	*tri_poly;	// array of triangle polys, vertex indices (can be discard if switch to fan renderer)
 };
 
 
@@ -1097,7 +1097,7 @@ RingPrototypeClass::RingPrototypeClass(RingRenderObjClass *ring)
 	W3dUtilityClass::Convert_Shader (ring->RingShader, &Definition.Shader);	
 
 	//
-	//	Determine the texture name for this sphere
+	//	Determine the texture name for this ring
 	//
 	if (ring->RingTexture != NULL) {
 		StringClass name = ring->RingTexture->Get_Full_Path();
@@ -1409,7 +1409,7 @@ void RingMeshClass::Generate(float radius, int slices)
 	orig_vtx		= W3DNEWARRAY Vector2[Vertex_ct];
 	vtx_normal	= W3DNEWARRAY Vector3[Vertex_ct];
 	vtx_uv		= W3DNEWARRAY Vector2[Vertex_ct];
-	tri_poly		= W3DNEWARRAY Vector3i[face_ct];
+	tri_poly		= W3DNEWARRAY TriIndex[face_ct];
 
 	//
 	//	Generate vertices, normals, and uv's

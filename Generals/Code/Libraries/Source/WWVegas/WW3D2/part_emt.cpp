@@ -209,7 +209,7 @@ ParticleEmitterClass::Create_From_Definition (const ParticleEmitterDefClass &def
 	if (ptexture_filename && ptexture_filename[0]) {
 		ptexture = WW3DAssetManager::Get_Instance()->Get_Texture(
 			ptexture_filename,
-			TextureClass::MIP_LEVELS_ALL,
+			MIP_LEVELS_ALL,
 			WW3D_FORMAT_UNKNOWN,
 			false);	// no compression for particle textures!
 	}

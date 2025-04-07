@@ -26,12 +26,13 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Ian_l                                                       $*
+ *                      $Author:: Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
- *                     $Modtime:: 7/12/01 3:20p                                               $*
+ *                    $Revision:: 5                                                           $*
  *                                                                                             *
- *                    $Revision:: 3                                                           $*
- *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -47,6 +48,7 @@
 #include "Vector3i.h"
 #include "RANDOM.H"
 #include "v3_rnd.h"
+#include "meshgeometry.h"
 
 
 /* We have chunking logic which handles N segments at a time. To simplify the subdivision logic,
@@ -205,10 +207,10 @@ void SegLineRendererClass::Render
 	const SphereClass & obj_sphere
 )
 {
-	Matrix4 view;
+	Matrix4x4 view;
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,view);
 
-	Matrix4 identity(true);
+	Matrix4x4 identity(true);
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,identity);	
 	DX8Wrapper::Set_Transform(D3DTS_VIEW,identity);	
 
@@ -891,8 +893,8 @@ void SegLineRendererClass::Render
 
 		// Configure vertex array and setup renderer.
 		unsigned int vnum = num_intersections[TOP_EDGE] + num_intersections[BOTTOM_EDGE];		
-		VertexFormatXYZDUV1 *vArray=W3DNEWARRAY VertexFormatXYZDUV1[vnum];		
-		Vector3i v_index_array[MAX_SEGLINE_POLY_BUFFER_SIZE];
+		VertexFormatXYZDUV1 *vArray = W3DNEWARRAY VertexFormatXYZDUV1[vnum];
+		TriIndex v_index_array[MAX_SEGLINE_POLY_BUFFER_SIZE];
 		
 		// Vertex and triangle indices
 		unsigned int vidx = 0;

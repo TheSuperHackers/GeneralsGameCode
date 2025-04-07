@@ -24,9 +24,11 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/wwsaveload/parameter.h                       $*
  *                                                                                             *
- *                       Author:: Patrick Smith                                                *
+ *                   Org Author:: Patrick Smith                                                *
  *                                                                                             *
- *                     $Modtime:: 8/26/01 10:38a                                              $*
+ *                       Author:: Kenny Mitchell                                                *
+ *                                                                                             *
+ *                     $Modtime:: 5/29/02 11:00a                                              $*
  *                                                                                             *
  *                    $Revision:: 38                                                          $*
  *                                                                                             *
@@ -97,6 +99,7 @@ public:
 		TYPE_SCRIPTLIST,
 		TYPE_VECTOR2,
 		TYPE_RECT,
+		TYPE_TEXTURE_FILENAME,
 		TYPE_STRINGSDB_ID
 
 	}	Type;
@@ -344,6 +347,47 @@ protected:
 	StringClass				m_Extension;
 	StringClass				m_Description;
 };
+
+//////////////////////////////////////////////////////////////////////////////////
+//
+//	TextureFilenameParameterClass
+//
+//////////////////////////////////////////////////////////////////////////////////
+class TextureFilenameParameterClass : public FilenameParameterClass
+{
+public:	
+
+	//////////////////////////////////////////////////////////////////////////////
+	//	Public constructors/destructors
+	//////////////////////////////////////////////////////////////////////////////
+	TextureFilenameParameterClass(StringClass *string);
+	TextureFilenameParameterClass(const TextureFilenameParameterClass& src);
+	virtual ~TextureFilenameParameterClass() {}
+
+
+	//////////////////////////////////////////////////////////////////////////////
+	//	Public methods
+	//////////////////////////////////////////////////////////////////////////////
+
+	// Type identification
+	virtual Type			Get_Type (void) const { return TYPE_TEXTURE_FILENAME; }
+	virtual bool			Is_Type (Type type) const { return (type == TYPE_TEXTURE_FILENAME) || StringParameterClass::Is_Type (type); }
+
+	void						Set_Show_Alpha(bool show) { Show_Alpha=show; }
+	bool						Get_Show_Alpha() const { return Show_Alpha; }
+
+	void						Set_Show_Texture(bool show) { Show_Texture=show; }
+	bool						Get_Show_Texture() const { return Show_Texture; }
+
+	// Copy methods
+	virtual void			Copy_Value (const ParameterClass &src);
+
+protected:
+
+	bool						Show_Alpha;
+	bool						Show_Texture;
+};
+
 
 
 //////////////////////////////////////////////////////////////////////////////////

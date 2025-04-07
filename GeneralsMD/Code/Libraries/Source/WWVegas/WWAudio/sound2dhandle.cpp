@@ -164,7 +164,12 @@ void
 Sound2DHandleClass::Set_Sample_Pan (S32 pan)
 {
 	if (SampleHandle != (HSAMPLE)INVALID_MILES_HANDLE) {
-		::AIL_set_sample_pan (SampleHandle, pan);
+		// TheSuperHackers @fix xezon 05/04/2025 Upgrades miles call from legacy AIL_set_sample_pan.
+		// TheSuperHackers @todo Perhaps use float natively.
+		float fVolume = 0.0F;
+		::AIL_sample_volume_pan (SampleHandle, &fVolume, NULL);
+		float fPan = pan / 127.0F;
+		::AIL_set_sample_volume_pan (SampleHandle, fVolume, fPan);
 	}
 
 	return ;
@@ -182,7 +187,10 @@ Sound2DHandleClass::Get_Sample_Pan (void)
 	S32 retval = 0;
 
 	if (SampleHandle != (HSAMPLE)INVALID_MILES_HANDLE) {
-		retval = ::AIL_sample_pan (SampleHandle);
+		// TheSuperHackers @fix xezon 05/04/2025 Upgrades miles call from legacy AIL_sample_pan.
+		float fPan = 0.5F;
+		::AIL_sample_volume_pan (SampleHandle, NULL, &fPan);
+		retval = fPan * 127;
 	}
 
 	return retval;
@@ -198,7 +206,12 @@ void
 Sound2DHandleClass::Set_Sample_Volume (S32 volume)
 {
 	if (SampleHandle != (HSAMPLE)INVALID_MILES_HANDLE) {
-		::AIL_set_sample_volume (SampleHandle, volume);
+		// TheSuperHackers @fix xezon 05/04/2025 Upgrades miles call from legacy AIL_set_sample_volume.
+		// TheSuperHackers @todo Perhaps use float natively.
+		float fPan = 0.5F;
+		::AIL_sample_volume_pan (SampleHandle, NULL, &fPan);
+		float fVolume = volume / 127.0F;
+		::AIL_set_sample_volume_pan (SampleHandle, fVolume, fPan);
 	}
 	return ;
 }
@@ -215,7 +228,10 @@ Sound2DHandleClass::Get_Sample_Volume (void)
 	S32 retval = 0;
 
 	if (SampleHandle != (HSAMPLE)INVALID_MILES_HANDLE) {
-		retval = ::AIL_sample_volume (SampleHandle);
+		// TheSuperHackers @fix xezon 05/04/2025 Upgrades miles call from legacy AIL_sample_volume.
+		float fVolume = 0.0F;
+		::AIL_sample_volume_pan (SampleHandle, &fVolume, NULL);
+		retval = fVolume * 127;
 	}
 
 	return retval;

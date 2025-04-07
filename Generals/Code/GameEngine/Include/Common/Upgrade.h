@@ -53,6 +53,11 @@ enum UpgradeStatusType
 	UPGRADE_STATUS_COMPLETE
 };
 
+//The maximum number of upgrades. 
+#define UPGRADE_MAX_COUNT 64
+
+typedef Int64	UpgradeMaskType;
+
 //-------------------------------------------------------------------------------------------------
 /** A single upgrade *INSTANCE* */
 //-------------------------------------------------------------------------------------------------
@@ -134,7 +139,7 @@ public:
 	void setUpgradeNameKey( NameKeyType key ) { m_nameKey = key; }
 	NameKeyType getUpgradeNameKey( void ) const { return m_nameKey; }
 	const AsciiString& getDisplayNameLabel( void ) const { return m_displayNameLabel; }
-	Int64 getUpgradeMask() const { return m_upgradeMask; }
+	UpgradeMaskType getUpgradeMask() const { return m_upgradeMask; }
 	UpgradeType getUpgradeType( void ) const { return m_type; }
 	const AudioEventRTS* getResearchCompleteSound() const { return &m_researchSound; }
 	const AudioEventRTS* getUnitSpecificSound() const { return &m_unitSpecificSound; }
@@ -153,7 +158,7 @@ public:
 	UpgradeTemplate *friend_getPrev( void ) { return m_prev; }
 	const UpgradeTemplate *friend_getNext( void ) const { return m_next; }
 	const UpgradeTemplate *friend_getPrev( void ) const { return m_prev; }
-	void friend_setUpgradeMask( Int64 mask ) { m_upgradeMask = mask; }
+	void friend_setUpgradeMask( UpgradeMaskType mask ) { m_upgradeMask = mask; }
 	void friend_makeVeterancyUpgrade(VeterancyLevel v);
 
 protected:
@@ -164,7 +169,7 @@ protected:
 	AsciiString m_displayNameLabel;			///< String manager label for UI display name
 	Real m_buildTime;										///< database # for how long it takes to "build" this
 	Int m_cost;													///< cost for production 
-	Int64 m_upgradeMask;								///< Unique bitmask for this upgrade template
+	UpgradeMaskType m_upgradeMask;			///< Unique bitmask for this upgrade template
 	AudioEventRTS	m_researchSound;			///< Sound played when upgrade researched.
 	AudioEventRTS	m_unitSpecificSound;	///< Secondary sound played when upgrade researched.
 

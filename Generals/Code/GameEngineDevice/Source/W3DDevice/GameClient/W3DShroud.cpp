@@ -90,7 +90,7 @@ W3DShroud::W3DShroud(void)
 	m_cellHeight=DEFAULT_SHROUD_CELL_SIZE;
 	m_numCellsX=0;
 	m_numCellsY=0;
-	m_shroudFilter=TextureClass::FILTER_TYPE_DEFAULT;
+	m_shroudFilter=TextureFilterClass::FILTER_TYPE_DEFAULT;
 }
 
 //-----------------------------------------------------------------------------
@@ -234,10 +234,10 @@ Bool W3DShroud::ReAcquireResources(void)
 		// Since we control the video memory copy, we can do partial updates more efficiently. Or do shift blits.
 #if defined(_DEBUG) || defined(_INTERNAL)
 		if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
-			m_pDstTexture = MSGNEW("TextureClass") TextureClass(m_dstTextureWidth,m_dstTextureHeight,WW3D_FORMAT_A4R4G4B4,TextureClass::MIP_LEVELS_1, TextureClass::POOL_DEFAULT);
+			m_pDstTexture = MSGNEW("TextureClass") TextureClass(m_dstTextureWidth,m_dstTextureHeight,WW3D_FORMAT_A4R4G4B4,MIP_LEVELS_1, TextureClass::POOL_DEFAULT);
 		else
 #endif
-			m_pDstTexture = MSGNEW("TextureClass") TextureClass(m_dstTextureWidth,m_dstTextureHeight,WW3D_FORMAT_R5G6B5,TextureClass::MIP_LEVELS_1, TextureClass::POOL_DEFAULT);
+			m_pDstTexture = MSGNEW("TextureClass") TextureClass(m_dstTextureWidth,m_dstTextureHeight,WW3D_FORMAT_R5G6B5,MIP_LEVELS_1, TextureClass::POOL_DEFAULT);
 
 		DEBUG_ASSERTCRASH( m_pDstTexture != NULL, ("Failed ReAcquire of shroud texture"));
 
@@ -247,9 +247,9 @@ Bool W3DShroud::ReAcquireResources(void)
 			m_dstTextureHeight = 0;
 			return FALSE;
 		}
-		m_pDstTexture->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-		m_pDstTexture->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-		m_pDstTexture->Set_Mip_Mapping(TextureClass::FILTER_TYPE_NONE);
+		m_pDstTexture->Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		m_pDstTexture->Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		m_pDstTexture->Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_NONE);
 		m_clearDstTexture = TRUE;	//force clearing of destination texture first time it's used.
 
 		return TRUE;
@@ -762,9 +762,9 @@ void W3DShroud::interpolateFogLevels(RECT *rect)
 void W3DShroud::setShroudFilter(Bool enable)
 {
 	if (enable)
-		m_shroudFilter=TextureClass::FILTER_TYPE_DEFAULT;
+		m_shroudFilter=TextureFilterClass::FILTER_TYPE_DEFAULT;
 	else
-		m_shroudFilter=TextureClass::FILTER_TYPE_NONE;
+		m_shroudFilter=TextureFilterClass::FILTER_TYPE_NONE;
 }
 
 //-----------------------------------------------------------------------------

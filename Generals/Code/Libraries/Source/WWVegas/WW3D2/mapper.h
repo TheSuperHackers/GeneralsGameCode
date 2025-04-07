@@ -22,14 +22,17 @@
  *                                                                         * 
  *                 Project Name : G                                        * 
  *                                                                         * 
- *                     $Archive:: /VSS_Sync/ww3d2/mapper.h                $* 
+ *                     $Archive:: /Commando/Code/ww3d2/mapper.h           $* 
  *                                                                         * 
- *                      $Author:: Vss_sync                                $* 
+ *                     $Org Author:: Greg_h                                  $* 
  *                                                                         * 
- *                     $Modtime:: 8/30/01 1:38a                           $* 
+ *                       $Author:: Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                         * 
- *                    $Revision:: 23                                      $* 
+ *                    $Revision:: 26                                      $* 
  *                                                                         * 
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  *-------------------------------------------------------------------------* 
  * Functions:                                                              * 
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -48,6 +51,7 @@
 #include "vector2.h"
 #include "vector3.h"
 #include "ww3d.h"
+#include "matrix4.h"
 
 class INIClass;
 
