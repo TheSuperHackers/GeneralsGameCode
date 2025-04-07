@@ -549,8 +549,8 @@ bool ProfileFuncLevel::IdList::Enum(unsigned index, Id &id, unsigned *countPtr) 
 
   ProfileFuncLevelTracer::Profile &prof=*(ProfileFuncLevelTracer::Profile *)m_ptr;
 
-  unsigned addr;
-  if ((addr=prof.caller.Enumerate(index)))
+  unsigned addr = prof.caller.Enumerate(index);
+  if (addr!=0)
   {
     id.m_funcPtr=prof.tracer->FindFunction(addr);
     if (countPtr)
