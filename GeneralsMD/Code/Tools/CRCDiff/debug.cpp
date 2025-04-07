@@ -20,9 +20,11 @@
 // Minmal debug info
 // Author: Matthew D. Campbell, Sept 2002
 
-#include <windows.h>
 #include "debug.h"
 #include <cstdio>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 #ifdef DEBUG
 

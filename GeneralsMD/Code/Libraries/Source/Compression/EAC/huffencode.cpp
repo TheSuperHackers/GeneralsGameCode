@@ -1050,8 +1050,8 @@ static void HUFF_pack(struct HuffEncodeContext *EC,
 		if (!i3)
 			HUFF_writecode(EC,dest,i);
 
-		if (((int) bptr1- (int) EC->buffer) >= (int)(EC->plen+curpc))
-			curpc = (int) bptr1 - (int) EC->buffer - EC->plen;
+		if (((long) bptr1- (long) EC->buffer) >= (long)(EC->plen+curpc))
+			curpc = (long) bptr1 - (long) EC->buffer - EC->plen;
 	}
 
 	/* write EOF ([clue] 0gn [10]) */
