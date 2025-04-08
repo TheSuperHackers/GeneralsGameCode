@@ -1138,7 +1138,7 @@ set(GAMEENGINE_SRC
     Source/Precompiled/PreRTS.cpp
 )
 
-if(GENZH_GAMEMEMORY_ENABLE)
+if(RTS_GAMEMEMORY_ENABLE)
     # Uses the original Game Memory implementation.
     list(APPEND GAMEENGINE_SRC
         Source/Common/System/GameMemory.cpp

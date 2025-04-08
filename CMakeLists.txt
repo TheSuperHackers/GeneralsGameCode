@@ -69,11 +69,11 @@ add_subdirectory(Dependencies/Utility)
 add_subdirectory(resources)
 
 # Add main build targets
-if(GENZH_BUILD_ZEROHOUR)
+if(RTS_BUILD_ZEROHOUR)
     add_subdirectory(GeneralsMD)
 endif()
 
-if(GENZH_BUILD_GENERALS)
+if(RTS_BUILD_GENERALS)
     add_subdirectory(Generals)
 endif()
 

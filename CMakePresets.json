@@ -17,7 +17,7 @@
                 "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL",
                 "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "$<$<CONFIG:Release,Debug,RelWithDebInfo>:ProgramDatabase>",
                 "CMAKE_BUILD_TYPE": "Release",
-                "GENZH_FLAGS": "/W3"
+                "RTS_FLAGS": "/W3"
             },
             "vendor": {
                 "jetbrains.com/clion": {
@@ -31,7 +31,7 @@
             "hidden": false,
             "inherits": "vc6",
             "cacheVariables": {
-                "GENZH_BUILD_PROFILE": "ON"
+                "RTS_BUILD_OPTION_PROFILE": "ON"
             }
         },
         {
@@ -39,7 +39,7 @@
             "displayName": "Build Internal Binaries with NMake",
             "inherits": "vc6",
             "cacheVariables": {
-                "GENZH_BUILD_INTERNAL": "ON"
+                "RTS_BUILD_OPTION_INTERNAL": "ON"
             }
         },
         {
@@ -49,7 +49,7 @@
             "inherits": "vc6",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "GENZH_BUILD_DEBUG": "ON"
+                "RTS_BUILD_OPTION_DEBUG": "ON"
             }
         },
         {
@@ -74,7 +74,7 @@
                 "strategy": "external"
             },
             "cacheVariables": {
-                "GENZH_FLAGS": "/W3"
+                "RTS_FLAGS": "/W3"
             },
             "vendor": {
                 "jetbrains.com/clion": {
@@ -87,7 +87,7 @@
             "inherits": "win32",
             "displayName": "Windows 32bit Profile build",
             "cacheVariables": {
-                "GENZH_BUILD_PROFILE": "ON"
+                "RTS_BUILD_OPTION_PROFILE": "ON"
             }
         },
         {
@@ -95,7 +95,7 @@
             "inherits": "win32",
             "displayName": "Windows 32bit Internal build",
             "cacheVariables": {
-                "GENZH_BUILD_INTERNAL": "ON"
+                "RTS_BUILD_OPTION_INTERNAL": "ON"
             }
         },
         {
@@ -103,7 +103,7 @@
             "inherits": "win32",
             "displayName": "Windows 32bit Debug build",
             "cacheVariables": {
-                "GENZH_BUILD_DEBUG": "ON"
+                "RTS_BUILD_OPTION_DEBUG": "ON"
             }
         },
         {

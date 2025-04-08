@@ -38,7 +38,7 @@ if (NOT IS_VS6_BUILD)
     endif()
 endif()
 
-if(GENZH_BUILD_OPTION_ASAN)
+if(RTS_BUILD_OPTION_ASAN)
     if(MSVC)
         set(ENV{ASAN_OPTIONS} "shadow_scale=2")
         add_compile_options(/fsanitize=address)

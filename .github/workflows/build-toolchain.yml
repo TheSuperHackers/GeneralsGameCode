@@ -106,13 +106,13 @@ jobs:
         shell: pwsh
         run: |
           $buildFlags = @(
-          "-DGENZH_BUILD_ZEROHOUR=${{ inputs.game == 'GeneralsMD' && 'ON' || 'OFF' }}",
-          "-DGENZH_BUILD_GENERALS=${{ inputs.game == 'Generals' && 'ON' || 'OFF' }}"
+          "-DRTS_BUILD_ZEROHOUR=${{ inputs.game == 'GeneralsMD' && 'ON' || 'OFF' }}",
+          "-DRTS_BUILD_GENERALS=${{ inputs.game == 'Generals' && 'ON' || 'OFF' }}"
           )
 
           $gamePrefix = "${{ inputs.game == 'Generals' && 'GENERALS' || 'ZEROHOUR' }}"
-          $buildFlags += "-DGENZH_BUILD_${gamePrefix}_TOOLS=${{ inputs.tools && 'ON' || 'OFF' }}"
-          $buildFlags += "-DGENZH_BUILD_${gamePrefix}_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }}"
+          $buildFlags += "-DRTS_BUILD_${gamePrefix}_TOOLS=${{ inputs.tools && 'ON' || 'OFF' }}"
+          $buildFlags += "-DRTS_BUILD_${gamePrefix}_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }}"
 
           Write-Host "Build flags: $buildFlags"
 
