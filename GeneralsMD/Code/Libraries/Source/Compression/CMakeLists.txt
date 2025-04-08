@@ -33,7 +33,9 @@ target_link_libraries(z_compression PRIVATE
     zi_always
 )
 
+find_package(ZLIB REQUIRED)
+
 target_link_libraries(z_compression PUBLIC
     liblzhl
-    libzlib
+    ZLIB::ZLIB
 )
