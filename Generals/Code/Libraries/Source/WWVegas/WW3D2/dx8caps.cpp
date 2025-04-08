@@ -41,24 +41,27 @@
 #include "dx8wrapper.h"
 #include "formconv.h"
 
-D3DCAPS8 DX8Caps::hwVPCaps;
-D3DCAPS8 DX8Caps::swVPCaps;
-bool DX8Caps::UseTnL;	
-bool DX8Caps::SupportDOT3;
-bool DX8Caps::SupportDXTC;
-bool DX8Caps::supportGamma;
-bool DX8Caps::SupportNPatches;
-bool DX8Caps::SupportBumpEnvmap;
-bool DX8Caps::SupportBumpEnvmapLuminance;
-bool DX8Caps::SupportTextureFormat[WW3D_FORMAT_COUNT];
-int DX8Caps::VertexShaderVersion;
-int DX8Caps::PixelShaderVersion;
-int DX8Caps::MaxSimultaneousTextures;
 
 enum {
 	VENDOR_ID_NVIDIA=0x10de,
 	VENROD_ID_ATI=0x1002
 };
+
+DX8Caps::DX8Caps(
+	IDirect3D8* direct3d,
+	IDirect3DDevice8* D3DDevice, 
+	WW3DFormat display_format, 
+	const D3DADAPTER_IDENTIFIER8& adapter_id)
+{
+	Init_Caps(D3DDevice);
+	Compute_Caps(display_format, adapter_id);
+}
+
+//Don't really need this but I added this function to free static variables so
+//they don't show up in our memory manager as a leak. -MW 7-22-03
+void DX8Caps::Shutdown(void)
+{
+}
 
 // ----------------------------------------------------------------------------
 //
@@ -72,12 +75,12 @@ void DX8Caps::Init_Caps(IDirect3DDevice8* D3DDevice)
 	DX8CALL(GetDeviceCaps(&swVPCaps));
 
 	if ((swVPCaps.DevCaps&D3DDEVCAPS_HWTRANSFORMANDLIGHT)==D3DDEVCAPS_HWTRANSFORMANDLIGHT) {
-		UseTnL=true;
+		SupportTnL=true;
 
 		D3DDevice->SetRenderState(D3DRS_SOFTWAREVERTEXPROCESSING,FALSE);
 		DX8CALL(GetDeviceCaps(&hwVPCaps));	
 	} else {
-		UseTnL=false;			
+		SupportTnL=false;			
 	}
 }
 
@@ -86,14 +89,11 @@ void DX8Caps::Init_Caps(IDirect3DDevice8* D3DDevice)
 // Compute the caps bits
 //
 // ----------------------------------------------------------------------------
-
-void DX8Caps::Compute_Caps(D3DFORMAT display_format, D3DFORMAT depth_stencil_format, IDirect3DDevice8* D3DDevice)
+void DX8Caps::Compute_Caps(WW3DFormat display_format, const D3DADAPTER_IDENTIFIER8& adapter_id)
 {
-	const D3DADAPTER_IDENTIFIER8& adapter_id=DX8Wrapper::Get_Current_Adapter_Identifier();
+//	Init_Caps(D3DDevice);
 
-	Init_Caps(D3DDevice);
-
-	const D3DCAPS8& caps=Get_Default_Caps();
+	const D3DCAPS8& caps=Get_DX8_Caps();
 
 	if ((caps.DevCaps&D3DDEVCAPS_NPATCHES)==D3DDEVCAPS_NPATCHES) {
 		SupportNPatches=true;
@@ -101,10 +101,11 @@ void DX8Caps::Compute_Caps(D3DFORMAT display_format, D3DFORMAT depth_stencil_for
 		SupportNPatches=false;
 	}
 
-	if ((caps.TextureOpCaps&D3DTEXOPCAPS_DOTPRODUCT3)==D3DTEXOPCAPS_DOTPRODUCT3) {
-		SupportDOT3=true;
+	if ((caps.TextureOpCaps&D3DTEXOPCAPS_DOTPRODUCT3)==D3DTEXOPCAPS_DOTPRODUCT3) 
+	{
+		SupportDot3=true;
 	} else {
-		SupportDOT3=false;
+		SupportDot3=false;
 	}
 
 	supportGamma=((swVPCaps.Caps2&D3DCAPS2_FULLSCREENGAMMA)==D3DCAPS2_FULLSCREENGAMMA);
@@ -144,8 +145,9 @@ void DX8Caps::Check_Texture_Compression_Support(const D3DCAPS8& caps)
 		SupportTextureFormat[WW3D_FORMAT_DXT5];
 }
 
-void DX8Caps::Check_Texture_Format_Support(D3DFORMAT display_format,const D3DCAPS8& caps)
+void DX8Caps::Check_Texture_Format_Support(WW3DFormat display_format,const D3DCAPS8& caps)
 {
+	D3DFORMAT d3d_display_format=WW3DFormat_To_D3DFormat(display_format);
 	for (unsigned i=0;i<WW3D_FORMAT_COUNT;++i) {
 		if (i==WW3D_FORMAT_UNKNOWN) {
 			SupportTextureFormat[i]=false;
@@ -155,7 +157,7 @@ void DX8Caps::Check_Texture_Format_Support(D3DFORMAT display_format,const D3DCAP
 				DX8Wrapper::_Get_D3D8()->CheckDeviceFormat(
 					caps.AdapterOrdinal,
 					caps.DeviceType,
-					display_format,
+					d3d_display_format,
 					0,
 					D3DRTYPE_TEXTURE,
 					WW3DFormat_To_D3DFormat((WW3DFormat)i)));

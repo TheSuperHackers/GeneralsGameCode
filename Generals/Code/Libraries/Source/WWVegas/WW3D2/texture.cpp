@@ -172,7 +172,7 @@ TextureClass::TextureClass
 		// If requesting bumpmap format that isn't available we'll just return the surface in whatever color
 		// format the texture file is in. (This is illegal case, the format support should always be queried
 		// before creating a bump texture!)
-		if (!DX8Caps::Support_Texture_Format(TextureFormat)) 
+		if (!DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(TextureFormat)) 
 		{
 			TextureFormat=WW3D_FORMAT_UNKNOWN;
 		}

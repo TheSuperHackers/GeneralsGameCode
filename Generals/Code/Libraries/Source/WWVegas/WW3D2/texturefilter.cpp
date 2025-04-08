@@ -103,7 +103,7 @@ void TextureFilterClass::Apply(unsigned int stage)
 */
 void TextureFilterClass::_Init_Filters(void)
 {
-	const D3DCAPS8& dx8caps=DX8Caps::Get_Default_Caps();
+	const D3DCAPS8& dx8caps=DX8Wrapper::Get_Current_Caps()->Get_DX8_Caps();
 
 	_MinTextureFilters[FILTER_TYPE_NONE]=D3DTEXF_POINT;
 	_MagTextureFilters[FILTER_TYPE_NONE]=D3DTEXF_POINT;

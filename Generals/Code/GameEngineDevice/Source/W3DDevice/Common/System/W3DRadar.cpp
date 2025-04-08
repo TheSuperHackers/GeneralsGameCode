@@ -83,7 +83,7 @@ static WW3DFormat findFormat(const WW3DFormat formats[])
 	for( Int i = 0; formats[ i ] != WW3D_FORMAT_UNKNOWN; i++ )
 	{
 
-		if( DX8Caps::Support_Texture_Format( formats[ i ] ) )
+		if( DX8Wrapper::Get_Current_Caps()->Support_Texture_Format( formats[ i ] ) )
 		{
 
 			return formats[ i ];

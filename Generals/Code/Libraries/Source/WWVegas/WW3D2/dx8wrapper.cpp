@@ -135,6 +135,8 @@ unsigned							DX8Wrapper::texture_stage_state_changes			= 0;
 unsigned							DX8Wrapper::_MainThreadID								= 0;
 bool								DX8Wrapper::CurrentDX8LightEnables[4];
 
+DX8Caps*							DX8Wrapper::CurrentCaps = 0;
+
 D3DADAPTER_IDENTIFIER8		DX8Wrapper::CurrentAdapterIdentifier;
 
 unsigned long DX8Wrapper::FrameCount = 0;
@@ -288,6 +290,7 @@ void DX8Wrapper::Shutdown(void)
 	_RenderDeviceShortNameTable.Clear();
 	_RenderDeviceDescriptionTable.Clear();	
 
+	DX8Caps::Shutdown();
 	IsInitted = false;		// 010803 srj
 }
 
@@ -296,8 +299,7 @@ void DX8Wrapper::Do_Onetime_Device_Dependent_Inits(void)
 	/*
 	** Set Global render states (some of which depend on caps)
 	*/
-
-	Compute_Caps(DisplayFormat,_PresentParameters.AutoDepthStencilFormat);
+	Compute_Caps(D3DFormat_To_WW3DFormat(DisplayFormat));
 
    /*
 	** Initalize any other subsystems inside of WW3D
@@ -333,7 +335,7 @@ inline DWORD F2DW(float f) { return *((unsigned*)&f); }
 void DX8Wrapper::Set_Default_Global_Render_States(void)
 {
 	DX8_THREAD_ASSERT();
-	const D3DCAPS8 &caps = DX8Caps::Get_Default_Caps();
+	const D3DCAPS8 &caps = Get_Current_Caps()->Get_DX8_Caps();
 
 	Set_DX8_Render_State(D3DRS_RANGEFOGENABLE, (caps.RasterCaps & D3DPRASTERCAPS_FOGRANGE) ? TRUE : FALSE);
 	Set_DX8_Render_State(D3DRS_FOGTABLEMODE, D3DFOG_NONE);
@@ -442,12 +444,26 @@ bool DX8Wrapper::Create_Device(void)
 	}
 
 	::ZeroMemory(&CurrentAdapterIdentifier, sizeof(D3DADAPTER_IDENTIFIER8));
-	if (FAILED( D3DInterface->GetAdapterIdentifier(CurRenderDevice,D3DENUM_NO_WHQL_LEVEL,&CurrentAdapterIdentifier))) {
+	
+	if
+	(
+		FAILED
+		( 
+			D3DInterface->GetAdapterIdentifier
+			(
+				CurRenderDevice,
+				D3DENUM_NO_WHQL_LEVEL,
+				&CurrentAdapterIdentifier
+			)
+			)	
+	) 
+	{
 		return false;
 	}
 
 	unsigned vertex_processing_type=D3DCREATE_SOFTWARE_VERTEXPROCESSING;
-	if (caps.DevCaps&D3DDEVCAPS_HWTRANSFORMANDLIGHT) {
+	if (caps.DevCaps&D3DDEVCAPS_HWTRANSFORMANDLIGHT) 
+	{
 		vertex_processing_type=D3DCREATE_MIXED_VERTEXPROCESSING;
 	}
 
@@ -461,14 +477,18 @@ bool DX8Wrapper::Create_Device(void)
 	if (DX8Wrapper_PreserveFPU)
 		vertex_processing_type |= D3DCREATE_FPU_PRESERVE;
 
-	if (FAILED( D3DInterface->CreateDevice(
+	HRESULT hr=D3DInterface->CreateDevice
+	(
 		CurRenderDevice,
 		WW3D_DEVTYPE,
 		_Hwnd,
 		vertex_processing_type,
 		&_PresentParameters,
-		&D3DDevice ) ) )
-	{ 
+		&D3DDevice 
+	);
+
+	if (FAILED(hr)) 
+	{
 		return false;
 	}
 
@@ -2217,11 +2237,12 @@ void DX8Wrapper::_Update_Texture(TextureClass *system, TextureClass *video)
 	DX8CALL(UpdateTexture(system->D3DTexture,video->D3DTexture));
 }
 
-void DX8Wrapper::Compute_Caps(D3DFORMAT display_format,D3DFORMAT depth_stencil_format)
+void DX8Wrapper::Compute_Caps(WW3DFormat display_format)
 {
 	DX8_THREAD_ASSERT();
 	DX8_Assert();
-	DX8Caps::Compute_Caps(display_format,depth_stencil_format,D3DDevice);
+	delete CurrentCaps;
+	CurrentCaps=new DX8Caps(_Get_D3D8(),D3DDevice,display_format,Get_Current_Adapter_Identifier());
 }
 
 void DX8Wrapper::Set_Light(unsigned index,const LightClass &light)
@@ -2400,11 +2421,11 @@ DX8Wrapper::Create_Render_Target (int width, int height, bool alpha)
 {
 	DX8_THREAD_ASSERT();
 	DX8_Assert();
-	const D3DCAPS8& dx8caps=DX8Caps::Get_Default_Caps();
 
 	//
 	//	Note: We're going to force the width and height to be powers of two and equal
 	//
+	const D3DCAPS8& dx8caps=Get_Current_Caps()->Get_DX8_Caps();
 	float poweroftwosize = width;
 	if (height > 0 && height < width) {
 		poweroftwosize = height;
@@ -2684,7 +2705,7 @@ void DX8Wrapper::Set_Gamma(float gamma,float bright,float contrast,bool calibrat
 		ramp.blue[i]=(WORD) (out*65535);
 	}
 
-	if (DX8Caps::Support_Gamma())	{
+	if (DX8Wrapper::Get_Current_Caps()->Support_Gamma())	{
 		DX8Wrapper::_Get_D3D_Device8()->SetGammaRamp(flag,&ramp);
 	} else {
 		HWND hwnd = GetDesktopWindow();

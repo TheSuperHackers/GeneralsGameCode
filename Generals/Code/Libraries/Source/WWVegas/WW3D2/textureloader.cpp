@@ -53,7 +53,7 @@ static bool Is_Format_Compressed(WW3DFormat texture_format,bool allow_compressio
 
 	bool compressed=false;
 	if (texture_format!=WW3D_FORMAT_UNKNOWN) {
-		if (!DX8Caps::Support_DXTC() || !allow_compression) {
+		if (!DX8Wrapper::Get_Current_Caps()->Support_DXTC() || !allow_compression) {
 			WWASSERT(texture_format!=WW3D_FORMAT_DXT1);
 			WWASSERT(texture_format!=WW3D_FORMAT_DXT2);
 			WWASSERT(texture_format!=WW3D_FORMAT_DXT3);
@@ -73,7 +73,7 @@ static bool Is_Format_Compressed(WW3DFormat texture_format,bool allow_compressio
 	// defined as non-compressed.
 	compressed|=(
 		texture_format==WW3D_FORMAT_UNKNOWN && 
-		DX8Caps::Support_DXTC() && 
+		DX8Wrapper::Get_Current_Caps()->Support_DXTC() && 
 		WW3D::Get_Texture_Compression_Mode()==WW3D::TEXTURE_COMPRESSION_ENABLE &&
 		allow_compression);
 
@@ -128,7 +128,7 @@ void TextureLoader::Deinit()
 
 void TextureLoader::Validate_Texture_Size(unsigned& width, unsigned& height)
 {
-	const D3DCAPS8& dx8caps=DX8Caps::Get_Default_Caps();
+	const D3DCAPS8& dx8caps=DX8Wrapper::Get_Current_Caps()->Get_DX8_Caps();
 
 	unsigned poweroftwowidth = 1;
 	while (poweroftwowidth < width) {
@@ -779,7 +779,7 @@ static DWORD VectortoRGBA( D3DXVECTOR3* v, FLOAT fHeight )
 IDirect3DTexture8* TextureLoader::Generate_Bumpmap(TextureBaseClass* texture)
 {
 	WW3DFormat bump_format=WW3D_FORMAT_U8V8;
-	if (!DX8Caps::Support_Texture_Format(bump_format)) {
+	if (!DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(bump_format)) {
 		return MissingTexture::_Get_Missing_Texture();
 	}
 

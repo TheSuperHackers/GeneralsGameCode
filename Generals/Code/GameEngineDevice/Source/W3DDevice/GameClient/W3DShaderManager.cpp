@@ -420,7 +420,7 @@ Bool ScreenBWFilterDOT3::postRender(enum FilterModes mode, Coord2D &scrollDelta,
 	pDev->SetVertexShader(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 
 	//Draw B&W version first
-	if (DX8Caps::Support_DOT3())
+	if (DX8Wrapper::Get_Current_Caps()->Support_Dot3())
 	{	//Override W3D states with customizations for grayscale
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_TEXTUREFACTOR, 0x80A5CA8E);
 		DX8Wrapper::Set_DX8_Texture_Stage_State( 0, D3DTSS_COLORARG0, D3DTA_TFACTOR | D3DTA_ALPHAREPLICATE);
@@ -2716,13 +2716,13 @@ ChipsetType W3DShaderManager::getChipset( void )
 		}
 
 		//None of the vendor specific ID's matched so use generic means to classify the card
-		Int maxTextures=DX8Caps::Get_Max_Simultaneous_Textures();
+		Int maxTextures=DX8Wrapper::Get_Current_Caps()->Get_Max_Simultaneous_Textures();
 		Real pixelShaderVersion;
 
 		char buf[256];
 
 		//Convert version to Real
-		sprintf(buf,"%d.%d",DX8Caps::Get_Pixel_Shader_Major_Version(),DX8Caps::Get_Pixel_Shader_Minor_Version());
+		sprintf(buf,"%d.%d",DX8Wrapper::Get_Current_Caps()->Get_Pixel_Shader_Major_Version(),DX8Wrapper::Get_Current_Caps()->Get_Pixel_Shader_Minor_Version());
 		sscanf(buf,"%f",&pixelShaderVersion);
 
 		if (maxTextures >= 4)

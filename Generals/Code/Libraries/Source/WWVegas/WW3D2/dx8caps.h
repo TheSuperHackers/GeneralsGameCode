@@ -206,14 +206,17 @@ public:
 	};
 
 
-	static void Compute_Caps(D3DFORMAT display_format, D3DFORMAT depth_stencil_format, IDirect3DDevice8* D3DDevice);
-	static bool Use_TnL() { return UseTnL; };	
-	static bool Support_DXTC() { return SupportDXTC; }
-	static bool Support_Gamma() { return supportGamma; }
-	static bool Support_NPatches() { return SupportNPatches; }
-	static bool Support_DOT3() { return SupportDOT3; }
-	static bool	Support_Bump_Envmap() { return SupportBumpEnvmap; }
-	static bool	Support_Bump_Envmap_Luminance() { return SupportBumpEnvmapLuminance; }
+	DX8Caps(IDirect3D8* direct3d, IDirect3DDevice8* D3DDevice,WW3DFormat display_format, const D3DADAPTER_IDENTIFIER8& adapter_id);
+	static void Shutdown(void);
+
+	void Compute_Caps(WW3DFormat display_format, const D3DADAPTER_IDENTIFIER8& adapter_id);
+	bool Support_TnL() const { return SupportTnL; };	
+	bool Support_DXTC() const { return SupportDXTC; }
+	bool Support_Gamma() const { return supportGamma; }
+	bool Support_NPatches() const { return SupportNPatches; }
+	bool Support_Bump_Envmap() const { return SupportBumpEnvmap; }
+	bool Support_Bump_Envmap_Luminance() const { return SupportBumpEnvmapLuminance; }
+	bool Support_Dot3() const { return SupportDot3; }
 
 	// -------------------------------------------------------------------------
 	//
@@ -222,40 +225,42 @@ public:
 	//
 	// -------------------------------------------------------------------------
 
-	static int Get_Vertex_Shader_Major_Version() { return 0xff&(VertexShaderVersion>>8); }
-	static int Get_Vertex_Shader_Minor_Version() { return 0xff&(VertexShaderVersion); }
-	static int Get_Pixel_Shader_Major_Version() { return 0xff&(PixelShaderVersion>>8); }
-	static int Get_Pixel_Shader_Minor_Version() { return 0xff&(PixelShaderVersion); }
-	static int Get_Max_Simultaneous_Textures()	{ return MaxSimultaneousTextures;}
+	int Get_Vertex_Shader_Major_Version() const { return 0xff&(VertexShaderVersion>>8); }
+	int Get_Vertex_Shader_Minor_Version() const { return 0xff&(VertexShaderVersion); }
+	int Get_Pixel_Shader_Major_Version() const { return 0xff&(PixelShaderVersion>>8); }
+	int Get_Pixel_Shader_Minor_Version() const { return 0xff&(PixelShaderVersion); }
+	int Get_Max_Simultaneous_Textures()	const { return MaxSimultaneousTextures;}
 
-	static bool Support_Texture_Format(WW3DFormat format) { return SupportTextureFormat[format]; }
+	bool Support_Texture_Format(WW3DFormat format) const { return SupportTextureFormat[format]; }
 
-	static D3DCAPS8 const & Get_HW_VP_Caps() { return hwVPCaps; };
-	static D3DCAPS8 const & Get_SW_VP_Caps() { return swVPCaps; };
-	static D3DCAPS8 const & Get_Default_Caps() { return (UseTnL?hwVPCaps:swVPCaps); };
+	D3DCAPS8 const & Get_DX8_Caps() const { return (SupportTnL?hwVPCaps:swVPCaps); }
+
+	D3DCAPS8 const & Get_HW_VP_Caps() const { return hwVPCaps; };
+	D3DCAPS8 const & Get_SW_VP_Caps() const { return swVPCaps; };
 
 private:
-	static void Init_Caps(IDirect3DDevice8* D3DDevice);
-	static void Check_Texture_Format_Support(D3DFORMAT display_format,const D3DCAPS8& caps);
-	static void Check_Texture_Compression_Support(const D3DCAPS8& caps);
-	static void Check_Bumpmap_Support(const D3DCAPS8& caps);
-	static void Check_Shader_Support(const D3DCAPS8& caps);
-	static void Check_Maximum_Texture_Support(const D3DCAPS8& caps);
-	static void Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id);
+	void Init_Caps(IDirect3DDevice8* D3DDevice);
+	void Check_Texture_Format_Support(WW3DFormat display_format,const D3DCAPS8& caps);
+	void Check_Texture_Compression_Support(const D3DCAPS8& caps);
+	void Check_Bumpmap_Support(const D3DCAPS8& caps);
+	void Check_Shader_Support(const D3DCAPS8& caps);
+	void Check_Maximum_Texture_Support(const D3DCAPS8& caps);
+	void Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id);
 
-	static D3DCAPS8 hwVPCaps;
-	static D3DCAPS8 swVPCaps;
-	static bool UseTnL;	
-	static bool SupportDXTC;
-	static bool supportGamma;
-	static bool SupportNPatches;
-	static bool SupportDOT3;
-	static bool SupportBumpEnvmap;
-	static bool SupportBumpEnvmapLuminance;
-	static bool SupportTextureFormat[WW3D_FORMAT_COUNT];
-	static int VertexShaderVersion;
-	static int PixelShaderVersion;
-	static int MaxSimultaneousTextures;
+	D3DCAPS8 hwVPCaps;
+	D3DCAPS8 swVPCaps;
+	bool SupportTnL;	
+	bool SupportDXTC;
+	bool supportGamma;
+	bool SupportNPatches;
+	bool SupportBumpEnvmap;
+	bool SupportBumpEnvmapLuminance;
+	bool SupportTextureFormat[WW3D_FORMAT_COUNT];
+	bool SupportDot3;
+	int VertexShaderVersion;
+	int PixelShaderVersion;
+	int MaxSimultaneousTextures;
 };
+
 
 #endif

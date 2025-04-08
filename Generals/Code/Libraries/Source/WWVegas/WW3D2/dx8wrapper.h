@@ -429,6 +429,8 @@ public:
 	static WW3DFormat	getBackBufferFormat( void );
 	static bool Reset_Device(bool reload_assets=true);
 
+	static const DX8Caps*	Get_Current_Caps() { WWASSERT(CurrentCaps); return CurrentCaps; }
+
 	static bool Registry_Save_Render_Device( const char * sub_key );
 	static bool Registry_Load_Render_Device( const char * sub_key, bool resize_window );
 
@@ -482,7 +484,7 @@ protected:
 	static bool Find_Color_Mode(D3DFORMAT colorbuffer, int resx, int resy, UINT *mode);
 	static bool Find_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORMAT *zmode);
 	static bool Test_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORMAT zmode);
-	static void Compute_Caps(D3DFORMAT display_format,D3DFORMAT depth_stencil_format);
+	static void Compute_Caps(WW3DFormat display_format);
 
 	/*
 	** Protected Member Variables
@@ -533,6 +535,8 @@ protected:
 	static bool								CurrentDX8LightEnables[4];
 
 	static unsigned long FrameCount;
+
+	static DX8Caps*						CurrentCaps;
 
 	static D3DADAPTER_IDENTIFIER8		CurrentAdapterIdentifier;
 
