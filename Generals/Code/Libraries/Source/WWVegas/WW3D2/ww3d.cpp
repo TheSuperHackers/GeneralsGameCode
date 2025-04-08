@@ -791,9 +791,7 @@ WW3DErrorType WW3D::Begin_Render(bool clear,bool clearz,const Vector3 & color, f
 //	TextureClass::_Reset_Time_Stamp();
 	DynamicVBAccessClass::_Reset(true);
 	DynamicIBAccessClass::_Reset(true);
-#ifdef WW3D_DX8
-	TextureFileClass::Update_Texture_Flash();
-#endif //WW3D_DX8
+
 	Debug_Statistics::Begin_Statistics();
 
 	if (IsCapturing && (!PauseRecord || RecordNextFrame)) {
@@ -1766,42 +1764,12 @@ void WW3D::Release_Debug_Resources(void)
 
 WW3DErrorType WW3D::On_Deactivate_App(void)
 {
-#ifdef WW3D_DX8
-	assert(!IsRendering);
-
-	if ( Gerd == NULL )
-		return WW3D_ERROR_OK;
-
-	if ( IsWindowed )
-		return WW3D_ERROR_OK;
-
-	if ( !Gerd->isWindowOpen() )
-		return WW3D_ERROR_OK;
-
-	Gerd->closeWindow();
-#endif //WW3D_DX8
 	return WW3D_ERROR_OK;
 }
 
 
 WW3DErrorType WW3D::On_Activate_App(void)
 {
-#ifdef WW3D_DX8
-	if ( Gerd == NULL)
-		return WW3D_ERROR_OK;
-
-	if ( IsWindowed )
-		return WW3D_ERROR_OK;
-
-	assert( !Gerd->isWindowOpen() );
-
-	srGERD::DisplayMode disp_mode;
-	disp_mode = Gerd->getDisplayMode(ResolutionWidth,ResolutionHeight,BitDepth);
-	if (Gerd->openWindow(disp_mode) != srGERD::ERROR_NONE) {
-		return WW3D_ERROR_WINDOW_NOT_OPEN;
-	}
-
-#endif //WW3D_DX8
 	return WW3D_ERROR_OK;
 }
 

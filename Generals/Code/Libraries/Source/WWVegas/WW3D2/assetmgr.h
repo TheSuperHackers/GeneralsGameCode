@@ -390,12 +390,6 @@ protected:
 	HAnimManagerClass					HAnimManager;
 
 	/*
-	** When enabled, this handles all the caching for the texture class.
-	** If NULL then textures are not being cached.
-	*/
-	TextureFileCache *				TextureCache;
-
-	/*
 	** list of Font3DDatas
 	*/
 	SList<Font3DDataClass>			Font3DDatas;

@@ -208,10 +208,6 @@ WW3DAssetManager::WW3DAssetManager(void) :
 	PrototypeLoaders		(PROTOLOADERS_VECTOR_SIZE),
 	Prototypes				(PROTOTYPES_VECTOR_SIZE),
 
-#ifdef WW3D_DX8
-	TextureCache				(NULL),
-#endif //WW3D_DX8
-
 	WW3D_Load_On_Demand		(false),
 	Activate_Fog_On_Load		(false),
 	MetalManager(0)
@@ -270,9 +266,6 @@ WW3DAssetManager::~WW3DAssetManager(void)
 		delete [] PrototypeHashTable;
 		PrototypeHashTable = NULL;
 	}
-#ifdef WW3D_DX8
-	Close_Texture_File_Cache();
-#endif //WW3D_DX8
 }
 
 static void Create_Number_String(StringClass& number, unsigned value)
