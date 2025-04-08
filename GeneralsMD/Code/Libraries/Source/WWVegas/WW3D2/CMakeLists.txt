@@ -243,6 +243,6 @@ if (NOT IS_VS6_BUILD)
 endif()
 
 target_link_libraries(z_ww3d2 PRIVATE
-    z_browserengine
+    core_browserengine
     z_wwcommon
 )

@@ -232,6 +232,6 @@ if (NOT IS_VS6_BUILD)
 endif()
 
 target_link_libraries(g_ww3d2 PRIVATE
-    g_browserengine
+    core_browserengine
     g_wwcommon
 )

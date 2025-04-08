@@ -209,7 +209,7 @@ target_compile_definitions(g_worldbuilder PRIVATE _AFXDLL)
 target_link_libraries(g_worldbuilder PRIVATE
     d3d8lib
     dbghelplib
-    g_browserdispatch
+    core_browserdispatch
     g_gameengine
     g_gameenginedevice
     gi_gameengine_include

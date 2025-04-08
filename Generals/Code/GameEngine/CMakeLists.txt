@@ -1089,7 +1089,7 @@ target_link_libraries(g_gameengine PRIVATE
 
 target_link_libraries(g_gameengine PUBLIC
     d3d8lib
-    g_browserdispatch
+    core_browserdispatch
     g_compression
     g_wwvegas
     core_config

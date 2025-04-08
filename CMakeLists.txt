@@ -68,6 +68,8 @@ add_subdirectory(Dependencies/SafeDisc)
 add_subdirectory(Dependencies/Utility)
 add_subdirectory(resources)
 
+add_subdirectory(Core)
+
 # Add main build targets
 if(RTS_BUILD_ZEROHOUR)
     add_subdirectory(GeneralsMD)
