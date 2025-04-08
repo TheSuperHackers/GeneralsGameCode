@@ -92,11 +92,6 @@ public:
 		MESH_DRAW_MODE_DX8_ONLY
 	};
 
-	enum TextureThumbnailModeEnum {
-		TEXTURE_THUMBNAIL_MODE_OFF,
-		TEXTURE_THUMBNAIL_MODE_ON
-	};
-
 	enum TextureCompressionModeEnum {
 		TEXTURE_COMPRESSION_DISABLE,
 		TEXTURE_COMPRESSION_ENABLE
@@ -209,9 +204,12 @@ public:
 	static void					_Invalidate_Mesh_Cache();
 	static void					_Invalidate_Textures();
 
+	static void					Set_Thumbnail_Enabled(bool b);// { ThumbnailEnabled=b; }
+	static bool					Get_Thumbnail_Enabled() { return ThumbnailEnabled; }
+
 	static void					Enable_Sorting(bool onoff);
 	static bool					Is_Sorting_Enabled(void)					{ return IsSortingEnabled; }
-	
+
 	static void					Set_Screen_UV_Bias( bool onoff )			{ IsScreenUVBiased = onoff; }
 	static bool					Is_Screen_UV_Biased( void )				{ return IsScreenUVBiased; }
 
@@ -239,9 +237,6 @@ public:
 
 	static void					Set_Mesh_Draw_Mode (MeshDrawModeEnum mode)	{ MeshDrawMode = mode; }
 	static MeshDrawModeEnum Get_Mesh_Draw_Mode ()								{ return (MeshDrawMode); }
-
-	static void					Set_Texture_Thumbnail_Mode (TextureThumbnailModeEnum mode);
-	static TextureThumbnailModeEnum 	Get_Texture_Thumbnail_Mode () { return (TextureThumbnailMode); }
 
 	static void					Set_Texture_Compression_Mode (TextureCompressionModeEnum mode);
 	static TextureCompressionModeEnum 	Get_Texture_Compression_Mode () { return (TextureCompressionMode); }
@@ -352,9 +347,9 @@ private:
 	static bool							ExposePrelit;
 
 	static bool							SnapshotActivated;
+	static bool							ThumbnailEnabled;
 
 	static MeshDrawModeEnum			MeshDrawMode;
-	static TextureThumbnailModeEnum TextureThumbnailMode;
 	static TextureCompressionModeEnum TextureCompressionMode;
 	static NPatchesGapFillingModeEnum NPatchesGapFillingMode;
 	static unsigned NPatchesLevel;

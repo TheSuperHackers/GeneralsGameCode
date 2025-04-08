@@ -1019,9 +1019,9 @@ Int WaterRenderObjClass::init(Real waterLevel, Real dx, Real dy, SceneClass *par
 	{	//geforce3 specific water requires some extra D3D assets
 		m_pDev=DX8Wrapper::_Get_D3D_Device8();
 		//save previous thumbnail mode
-		WW3D::TextureThumbnailModeEnum 	tmMode=WW3D::Get_Texture_Thumbnail_Mode ();
+		bool thumbnails_enabled = WW3D::Get_Thumbnail_Enabled();
+		WW3D::Set_Thumbnail_Enabled(false);
 
-		WW3D::Set_Texture_Thumbnail_Mode(WW3D::TEXTURE_THUMBNAIL_MODE_OFF);
 		//load bump map textures off disk
 		TextureClass *pBumpSource;	//temporary textures in a format W3D understands
 		TextureClass *pBumpSource2;	//temporary textures in a format W3D understands
@@ -1043,7 +1043,7 @@ Int WaterRenderObjClass::init(Real waterLevel, Real dx, Real dy, SceneClass *par
 			REF_PTR_RELEASE(pBumpSource2);
 		}
 		//restore previous thumpnail mode
-		WW3D::Set_Texture_Thumbnail_Mode(tmMode);
+		WW3D::Set_Thumbnail_Enabled(thumbnails_enabled);
 	}
 
 	//Setup material for regular water

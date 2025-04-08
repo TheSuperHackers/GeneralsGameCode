@@ -212,7 +212,7 @@ TextureClass::TextureClass
 		Initialized=true;
 		D3DTexture=0;
 	}
-	else if (WW3D::Get_Texture_Thumbnail_Mode()==WW3D::TEXTURE_THUMBNAIL_MODE_OFF || mip_level_count==MIP_LEVELS_1)
+	else if (WW3D::Get_Thumbnail_Enabled()==false || mip_level_count==MIP_LEVELS_1)
 	{
 		Initialized=true;
 		D3DTexture=0;
@@ -346,7 +346,7 @@ void TextureClass::Invalidate()
 		Initialized=true;
 		D3DTexture=0;
 	}
-	else if (WW3D::Get_Texture_Thumbnail_Mode()==WW3D::TEXTURE_THUMBNAIL_MODE_OFF || MipLevelCount==MIP_LEVELS_1)
+	else if (WW3D::Get_Thumbnail_Enabled()==false || MipLevelCount==MIP_LEVELS_1)
 	{
 		Initialized=true;
 		D3DTexture=0;

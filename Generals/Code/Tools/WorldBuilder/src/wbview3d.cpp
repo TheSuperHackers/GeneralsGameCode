@@ -2208,7 +2208,7 @@ void WbView3d::initWW3D()
 
 		WW3D::Enable_Static_Sort_Lists(true);
 		WW3D::Set_Texture_Compression_Mode(WW3D::TEXTURE_COMPRESSION_ENABLE);
-		WW3D::Set_Texture_Thumbnail_Mode(WW3D::TEXTURE_THUMBNAIL_MODE_OFF);
+		WW3D::Set_Thumbnail_Enabled(false);
 		WW3D::Set_Screen_UV_Bias( TRUE );  ///< this makes text look good :)
 
 		W3DShaderManager::init();

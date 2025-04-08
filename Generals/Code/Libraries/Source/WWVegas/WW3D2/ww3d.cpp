@@ -204,9 +204,9 @@ WW3D::PrelitModeEnum									WW3D::PrelitMode = PRELIT_MODE_LIGHTMAP_MULTI_PASS;
 bool														WW3D::ExposePrelit = false;
 
 bool														WW3D::SnapshotActivated=false;
+bool														WW3D::ThumbnailEnabled=true;
 
 WW3D::MeshDrawModeEnum								WW3D::MeshDrawMode = MESH_DRAW_MODE_OLD;
-WW3D::TextureThumbnailModeEnum					WW3D::TextureThumbnailMode = TEXTURE_THUMBNAIL_MODE_ON;
 WW3D::TextureCompressionModeEnum					WW3D::TextureCompressionMode = TEXTURE_COMPRESSION_ENABLE;
 WW3D::NPatchesGapFillingModeEnum					WW3D::NPatchesGapFillingMode = NPATCHES_GAP_FILLING_ENABLED;
 unsigned													WW3D::NPatchesLevel=1;
@@ -250,10 +250,10 @@ void WW3D::Set_NPatches_Level(unsigned level)
 	NPatchesLevel = level; 
 }
 
-void WW3D::Set_Texture_Thumbnail_Mode (TextureThumbnailModeEnum mode)
+void WW3D::Set_Thumbnail_Enabled (bool b)
 {
-	if (TextureThumbnailMode!=mode) {
-		TextureThumbnailMode = mode;
+	if (ThumbnailEnabled!=b) {
+		ThumbnailEnabled = b;
 		_Invalidate_Textures();
 	}
 }
