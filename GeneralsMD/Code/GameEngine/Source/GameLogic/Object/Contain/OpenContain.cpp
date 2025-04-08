@@ -1448,7 +1448,7 @@ void OpenContain::processDamageToContained(Real percentDamage)
 		ContainedItemsList::const_iterator it;
 		it = items->begin();
 
-		while( *it )
+		while( it != items->end() )
 		{
 			Object *object = *it;
 
