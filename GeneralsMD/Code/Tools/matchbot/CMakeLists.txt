@@ -68,8 +68,8 @@ target_include_directories(z_matchbot PRIVATE . wlib wnet)
 
 target_link_libraries(z_matchbot PRIVATE
     gamespy::gamespy
-    gz_config
-    gz_utility
+    core_config
+    core_utility
     stlport
 )
 

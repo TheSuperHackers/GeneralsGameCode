@@ -57,7 +57,7 @@ set_target_properties(z_babylon PROPERTIES OUTPUT_NAME babylon)
 target_sources(z_babylon PRIVATE ${BABYLON_SRC})
 
 target_link_libraries(z_babylon PRIVATE
-    gz_config
+    core_config
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

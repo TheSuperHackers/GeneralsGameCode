@@ -33,6 +33,6 @@ target_include_directories(z_debug INTERFACE
 )
 
 target_link_libraries(z_debug PRIVATE
-    gz_config
+    core_config
     zi_always
 )

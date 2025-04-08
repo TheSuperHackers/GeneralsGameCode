@@ -15,8 +15,8 @@ set_target_properties(g_crcdiff PROPERTIES OUTPUT_NAME crcdiff)
 target_sources(g_crcdiff PRIVATE ${CRCDIFF_SRC})
 
 target_link_libraries(g_crcdiff PRIVATE
-    gz_config
-    gz_utility
+    core_config
+    core_utility
     stlport
 )
 

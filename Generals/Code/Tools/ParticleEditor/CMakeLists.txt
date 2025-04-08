@@ -47,7 +47,7 @@ target_link_libraries(g_particleeditor PRIVATE
     gi_always
     gi_libraries_source_wwvegas
     gi_libraries_source_wwvegas_wwlib
-    gz_config
+    core_config
     imm32
     stlport
     vfw32

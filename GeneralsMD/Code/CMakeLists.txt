@@ -25,7 +25,7 @@ target_include_directories(zi_libraries_source_wwvegas_wwsaveload INTERFACE "Lib
 target_include_directories(zi_main INTERFACE "Main")
 target_link_libraries(zi_always INTERFACE
     zi_libraries_include
-    gz_utility
+    core_utility
 )
 
 # Contains internal libraries

@@ -21,7 +21,7 @@ set_target_properties(z_wolsetup PROPERTIES OUTPUT_NAME wolsetup)
 target_sources(z_wolsetup PRIVATE ${WOLSETUP_SRC})
 
 target_link_libraries(z_wolsetup PRIVATE
-    gz_config
+    core_config
     Version
 )
 

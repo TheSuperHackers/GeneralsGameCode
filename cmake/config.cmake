@@ -60,24 +60,24 @@ add_feature_info(MemoryPoolDebugIntenseDmaBookkeeping RTS_MEMORYPOOL_DEBUG_INTEN
 
 ### INTERFACE LIBRARY SETUP ###
 
-add_library(gz_config INTERFACE)
+add_library(core_config INTERFACE)
 
 if(NOT IS_VS6_BUILD)
     # Because we set CMAKE_CXX_STANDARD_REQUIRED and CMAKE_CXX_EXTENSIONS in the compilers.cmake this should be enforced.
-    target_compile_features(gz_config INTERFACE cxx_std_20)
+    target_compile_features(core_config INTERFACE cxx_std_20)
 endif()
 
-target_compile_options(gz_config INTERFACE ${RTS_FLAGS})
+target_compile_options(core_config INTERFACE ${RTS_FLAGS})
 
 # This disables a lot of warnings steering developers to use windows only functions/function names.
 if(MSVC)
-    target_compile_definitions(gz_config INTERFACE _CRT_NONSTDC_NO_WARNINGS _CRT_SECURE_NO_WARNINGS $<$<CONFIG:DEBUG>:_DEBUG_CRT>)
+    target_compile_definitions(core_config INTERFACE _CRT_NONSTDC_NO_WARNINGS _CRT_SECURE_NO_WARNINGS $<$<CONFIG:DEBUG>:_DEBUG_CRT>)
 endif()
 
 if(RTS_BUILD_OPTION_DEBUG)
     target_compile_definitions(core_config INTERFACE _DEBUG WWDEBUG DEBUG)
 else()
-    target_compile_definitions(gz_config INTERFACE _RELEASE)
+    target_compile_definitions(core_config INTERFACE _RELEASE)
 
     if(RTS_BUILD_OPTION_INTERNAL)
         target_compile_definitions(core_config INTERFACE _INTERNAL)
@@ -90,50 +90,50 @@ endif()
 
 # Game Memory features
 if(NOT RTS_GAMEMEMORY_ENABLE)
-    target_compile_definitions(gz_config INTERFACE DISABLE_GAMEMEMORY=1)
+    target_compile_definitions(core_config INTERFACE DISABLE_GAMEMEMORY=1)
 endif()
 
 # Memory pool features
 if(RTS_MEMORYPOOL_OVERRIDE_MALLOC)
-    target_compile_definitions(gz_config INTERFACE MEMORYPOOL_OVERRIDE_MALLOC=1)
+    target_compile_definitions(core_config INTERFACE MEMORYPOOL_OVERRIDE_MALLOC=1)
 endif()
 
 if(NOT RTS_MEMORYPOOL_MPSB_DLINK)
-    target_compile_definitions(gz_config INTERFACE DISABLE_MEMORYPOOL_MPSB_DLINK=1)
+    target_compile_definitions(core_config INTERFACE DISABLE_MEMORYPOOL_MPSB_DLINK=1)
 endif()
 
 # Memory pool debugs
 if(NOT RTS_MEMORYPOOL_DEBUG)
-    target_compile_definitions(gz_config INTERFACE DISABLE_MEMORYPOOL_DEBUG=1)
+    target_compile_definitions(core_config INTERFACE DISABLE_MEMORYPOOL_DEBUG=1)
 else()
     if(NOT RTS_MEMORYPOOL_DEBUG_CUSTOM_NEW)
-        target_compile_definitions(gz_config INTERFACE DISABLE_MEMORYPOOL_DEBUG_CUSTOM_NEW=1)
+        target_compile_definitions(core_config INTERFACE DISABLE_MEMORYPOOL_DEBUG_CUSTOM_NEW=1)
     endif()
     
     if(RTS_MEMORYPOOL_DEBUG_CHECKPOINTING)
         # Set to 0 to override the default setting in code
-        target_compile_definitions(gz_config INTERFACE DISABLE_MEMORYPOOL_CHECKPOINTING=0)
+        target_compile_definitions(core_config INTERFACE DISABLE_MEMORYPOOL_CHECKPOINTING=0)
     else()
-        target_compile_definitions(gz_config INTERFACE DISABLE_MEMORYPOOL_CHECKPOINTING=1)
+        target_compile_definitions(core_config INTERFACE DISABLE_MEMORYPOOL_CHECKPOINTING=1)
     endif()
     
     if(NOT RTS_MEMORYPOOL_DEBUG_BOUNDINGWALL)
-        target_compile_definitions(gz_config INTERFACE DISABLE_MEMORYPOOL_BOUNDINGWALL=1)
+        target_compile_definitions(core_config INTERFACE DISABLE_MEMORYPOOL_BOUNDINGWALL=1)
     endif()
     
     if(NOT RTS_MEMORYPOOL_DEBUG_STACKTRACE)
-        target_compile_definitions(gz_config INTERFACE DISABLE_MEMORYPOOL_STACKTRACE=1)
+        target_compile_definitions(core_config INTERFACE DISABLE_MEMORYPOOL_STACKTRACE=1)
     endif()
     
     if(RTS_MEMORYPOOL_DEBUG_INTENSE_VERIFY)
-        target_compile_definitions(gz_config INTERFACE MEMORYPOOL_INTENSE_VERIFY=1)
+        target_compile_definitions(core_config INTERFACE MEMORYPOOL_INTENSE_VERIFY=1)
     endif()
     
     if(RTS_MEMORYPOOL_DEBUG_CHECK_BLOCK_OWNERSHIP)
-        target_compile_definitions(gz_config INTERFACE MEMORYPOOL_CHECK_BLOCK_OWNERSHIP=1)
+        target_compile_definitions(core_config INTERFACE MEMORYPOOL_CHECK_BLOCK_OWNERSHIP=1)
     endif()
     
     if(RTS_MEMORYPOOL_DEBUG_INTENSE_DMA_BOOKKEEPING)
-        target_compile_definitions(gz_config INTERFACE INTENSE_DMA_BOOKKEEPING=1)
+        target_compile_definitions(core_config INTERFACE INTENSE_DMA_BOOKKEEPING=1)
     endif()
 endif()

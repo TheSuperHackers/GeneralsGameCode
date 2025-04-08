@@ -29,7 +29,7 @@ target_include_directories(z_compression INTERFACE
 )
 
 target_link_libraries(z_compression PRIVATE
-    gz_config
+    core_config
     zi_always
 )
 

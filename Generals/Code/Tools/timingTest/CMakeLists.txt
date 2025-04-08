@@ -10,8 +10,8 @@ set_target_properties(g_timingtest PROPERTIES OUTPUT_NAME timingtest)
 target_sources(g_timingtest PRIVATE ${TIMINGTEST_SRC})
 
 target_link_libraries(g_timingtest PRIVATE
-    gz_config
-    gz_utility
+    core_config
+    core_utility
     winmm
 )
 

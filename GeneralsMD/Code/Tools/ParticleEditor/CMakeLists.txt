@@ -40,7 +40,7 @@ target_link_libraries(z_particleeditor PRIVATE
     d3d8lib
     dbghelplib
     imm32
-    gz_config
+    core_config
     stlport
     vfw32
     winmm

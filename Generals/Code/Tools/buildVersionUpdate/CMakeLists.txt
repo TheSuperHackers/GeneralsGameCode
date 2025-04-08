@@ -8,5 +8,5 @@ set_target_properties(g_buildversionupdate PROPERTIES OUTPUT_NAME buildversionup
 target_sources(g_buildversionupdate PRIVATE ${BUILDVERSIONUPDATE_SRC})
 
 target_link_libraries(g_buildversionupdate PRIVATE
-    gz_config
+    core_config
 )

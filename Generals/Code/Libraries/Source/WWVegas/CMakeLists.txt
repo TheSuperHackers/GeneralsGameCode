@@ -3,8 +3,8 @@ add_library(g_wwcommon INTERFACE)
 
 target_link_libraries(g_wwcommon INTERFACE
     d3d8lib
-    gz_config
-    gz_utility
+    core_config
+    core_utility
     milesstub
     stlport
 )

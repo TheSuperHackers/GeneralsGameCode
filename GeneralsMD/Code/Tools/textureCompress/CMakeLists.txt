@@ -9,7 +9,7 @@ set_target_properties(z_texturecompress PROPERTIES OUTPUT_NAME texturecompress)
 target_sources(z_texturecompress PRIVATE ${TEXTURECOMPRESS_SRC})
 
 target_link_libraries(z_texturecompress PRIVATE
-    gz_config
+    core_config
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

@@ -30,7 +30,7 @@ target_include_directories(g_compression INTERFACE
 
 target_link_libraries(g_compression PRIVATE
     gi_always
-    gz_config
+    core_config
 )
 
 target_link_libraries(g_compression PUBLIC

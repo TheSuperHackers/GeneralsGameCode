@@ -65,8 +65,8 @@ target_compile_definitions(g_launcher PRIVATE
 
 target_link_libraries(g_launcher PRIVATE
     comctl32
-    gz_config
-    gz_utility
+    core_config
+    core_utility
     safedisc
 )
 

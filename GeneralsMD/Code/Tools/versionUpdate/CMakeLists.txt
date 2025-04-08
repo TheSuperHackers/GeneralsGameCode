@@ -8,5 +8,5 @@ set_target_properties(z_versionupdate PROPERTIES OUTPUT_NAME versionupdate)
 target_sources(z_versionupdate PRIVATE ${VERSIONUPDATE_SRC})
 
 target_link_libraries(z_versionupdate PRIVATE
-    gz_config
+    core_config
 )

@@ -12,7 +12,7 @@ target_sources(g_compress PRIVATE ${COMRPESS_SRC})
 target_link_libraries(g_compress PRIVATE
     g_compression
     gi_always
-    gz_config
+    core_config
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

@@ -57,7 +57,7 @@ set_target_properties(g_babylon PROPERTIES OUTPUT_NAME noxstring)
 target_sources(g_babylon PRIVATE ${BABYLON_SRC})
 
 target_link_libraries(g_babylon PRIVATE
-    gz_config
+    core_config
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
