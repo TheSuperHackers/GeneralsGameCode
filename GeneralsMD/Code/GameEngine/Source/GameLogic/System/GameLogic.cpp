@@ -2834,14 +2834,17 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 	UpdateModulePtr* pI = &m_sleepyUpdates[i];
 
 	// our children are i*2 and i*2+1
-  Int child = ((i+1)<<1)-1;
+	Int child = ((i+1)<<1)-1;
+	UnsignedInt containerSize = m_sleepyUpdates.size();
+	// TheSuperHackers @fix Mauller 02/04/2025 Prevent invalid index into container throwing errors during debug
+	if(child >= containerSize) return i;
 	UpdateModulePtr* pChild = &m_sleepyUpdates[child];
-	UpdateModulePtr* pSZ = &m_sleepyUpdates[m_sleepyUpdates.size()];	// yes, this is off the end.
+	UpdateModulePtr* pSZ = &m_sleepyUpdates[containerSize - 1];
 
-  while (pChild < pSZ) 
+  while (pChild <= pSZ) 
 	{
 		// choose the higher-priority of the two children; we must be higher-pri than that.
-		if (pChild < pSZ-1 && isLowerPriority(*pChild, *(pChild+1)))
+		if (pChild < pSZ && isLowerPriority(*pChild, *(pChild+1)))
 		{
       ++pChild;
 			++child;
@@ -2867,6 +2870,8 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 		pI = pChild;
 
 		child = ((i+1)<<1)-1;
+		// TheSuperHackers @fix Mauller 02/04/2025 Prevent invalid index into container throwing errors during debug
+		if(child >= containerSize) break;
 		pChild = &m_sleepyUpdates[child];
   }
 #else
