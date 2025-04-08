@@ -193,7 +193,6 @@ target_include_directories(g_gameenginedevice PUBLIC
 
 target_link_libraries(g_gameenginedevice PRIVATE
     gi_libraries_include
-    gi_libraries_source
     gi_main
 )
 

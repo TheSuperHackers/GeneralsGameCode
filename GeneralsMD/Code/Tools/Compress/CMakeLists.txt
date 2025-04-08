@@ -13,7 +13,6 @@ target_link_libraries(z_compress PRIVATE
     gz_config
     z_compression
     zi_libraries_include
-    zi_libraries_source
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
