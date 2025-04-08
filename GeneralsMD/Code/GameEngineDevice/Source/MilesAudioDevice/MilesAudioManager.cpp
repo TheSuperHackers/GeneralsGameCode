@@ -2087,9 +2087,9 @@ Bool MilesAudioManager::killLowestPrioritySoundImmediately( AudioEventRTS *event
 
 				if( playing->m_audioEventRTS && playing->m_audioEventRTS == lowestPriorityEvent ) 
 				{
-					//Release this 3D sound channel immediately because we are going to play another sound in it's place.
+					//Release this sound channel immediately because we are going to play another sound in it's place.
 					releasePlayingAudio( playing );
-					m_playing3DSounds.erase( it );
+					m_playingSounds.erase( it );
 					return TRUE;
 				}
 			}
