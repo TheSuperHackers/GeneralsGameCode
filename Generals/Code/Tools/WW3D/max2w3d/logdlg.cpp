@@ -106,7 +106,7 @@ void LogDataDialogClass::printf(const char *text, ...)
 	va_start(arguments, text);
 }	// printf
 
-void LogDataDialogClass::printf(const char * text, const va_list & args)
+void LogDataDialogClass::printf(const char * text, va_list args)
 {
 	static char string_buffer[256];
 
@@ -151,7 +151,7 @@ void LogDataDialogClass::rprintf(const char *text, ...)
 	rprintf(text,arguments);
 }
 
-void LogDataDialogClass::rprintf(const char *text, const va_list & args)
+void LogDataDialogClass::rprintf(const char *text, va_list args)
 {
 	static char string_buffer[256];
 	vsprintf(string_buffer, text, args);
