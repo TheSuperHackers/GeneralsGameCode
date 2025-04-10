@@ -249,8 +249,8 @@ inline Drawable* GameClient::findDrawableByID( const DrawableID id )
 //
 //	return (*it).second;
 
-	if( (Int)id < m_drawableVector.size() )
-		return m_drawableVector[(Int)id];
+	if( (size_t)id < m_drawableVector.size() )
+		return m_drawableVector[(size_t)id];
 
 	return NULL;
 }
