@@ -370,6 +370,14 @@ void GameTextManager::init( void )
 	qsort( m_stringLUT, m_textCount, sizeof(StringLookUp), compareLUT  );
 
 	UnicodeString ourName = fetch("GUI:Command&ConquerGenerals");
+#if ENABLE_FAKE_IP
+	if (getFakeIPNo())
+	{
+		// Set window title to make it easier to differentiate
+		ourName.format(L"Fake IP %d", getFakeIPNo());
+	}
+#endif
+
 	AsciiString ourNameA;
 	ourNameA.translate(ourName);	//get ASCII version for Win 9x
 

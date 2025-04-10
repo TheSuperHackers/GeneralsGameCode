@@ -79,7 +79,10 @@ public:
 #if defined(_DEBUG) || defined(_INTERNAL)
 	DelayedTransportMessage m_delayedInBuffer[MAX_MESSAGES];
 #endif
-
+#if ENABLE_FAKE_IP
+	// Need to know our own IP when using fake ips
+	UnsignedInt	m_localIP;
+#endif
 	UnsignedShort m_port;
 private:
 	Bool m_winsockInit;
