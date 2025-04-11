@@ -41,12 +41,13 @@ jobs:
             generalsmd:
               - 'GeneralsMD/**'
             shared:
-              - 'Dependencies/**'
-              - 'cmake/**'
+              - '.github/workflows/build-toolchain.yml'
+              - '.github/workflows/ci.yml'
               - 'CMakeLists.txt'
               - 'CMakePresets.json'
-              - ".github/workflows/ci.yml"
-              - '.github/workflows/build-toolchain.yml'
+              - 'cmake/**'
+              - 'Core/**'
+              - 'Dependencies/**'
 
       - name: Changes Summary
         run: |
