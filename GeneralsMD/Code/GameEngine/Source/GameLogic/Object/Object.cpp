@@ -3884,10 +3884,6 @@ void Object::onDisabledEdge(Bool becomingDisabled)
 //-------------------------------------------------------------------------------------------------
 void Object::crc( Xfer *xfer )
 {
-	// This is evil - we cast the const Matrix3D * to a Matrix3D * because the XferCRC class must use
-	// the same interface as the XferLoad class for save game restore.  This only works because
-	// XferCRC does not modify its data.
-
 #ifdef DEBUG_CRC
 //	g_logObjectCRCs = TRUE;
 //	Bool g_logAllObjects = TRUE;
@@ -3896,7 +3892,7 @@ void Object::crc( Xfer *xfer )
 	Bool doLogging = g_logObjectCRCs /* && getControllingPlayer()->getPlayerType() == PLAYER_HUMAN */;
 	if (doLogging)
 	{
-		tmp.format("CRC of Object %d (%s), owned by player %d, ", m_id, getTemplate()->getName().str(), getControllingPlayer()->getPlayerIndex());
+		tmp.format("CRC of Object %d (%s), owned by player %d, team: %d, ", m_id, getTemplate()->getName().str(), getControllingPlayer()->getPlayerIndex(), this->getTeam() ? this->getTeam()->getID() : TEAM_ID_INVALID);
 		logString.concat(tmp);
 	}
 #endif // DEBUG_CRC
@@ -3910,6 +3906,9 @@ void Object::crc( Xfer *xfer )
 	}
 #endif // DEBUG_CRC
 
+	// This is evil - we cast the const Matrix3D * to a Matrix3D * because the XferCRC class must use
+	// the same interface as the XferLoad class for save game restore.  This only works because
+	// XferCRC does not modify its data.
 	xfer->xferUser((Matrix3D *)getTransformMatrix(),	sizeof(Matrix3D));
 #ifdef DEBUG_CRC
 	if (doLogging)
@@ -3923,25 +3922,6 @@ void Object::crc( Xfer *xfer )
 	}
 #endif // DEBUG_CRC
 	
-
-#ifdef DEBUG_CRC
-	if (doLogging)
-	{
-		const Matrix3D *mtx = getTransformMatrix();
-		CRCDEBUG_LOG(("CRC of Object %d (%s), owned by player %d, ", m_id, getTemplate()->getName().str(), getControllingPlayer()->getPlayerIndex()));
-		DUMPMATRIX3D(mtx);
-	}
-#endif // DEBUG_CRC
-
-
-
-
-
-
-
-
-
-
 
 	xfer->xferUser(&m_id,															sizeof(m_id));
 #ifdef DEBUG_CRC
