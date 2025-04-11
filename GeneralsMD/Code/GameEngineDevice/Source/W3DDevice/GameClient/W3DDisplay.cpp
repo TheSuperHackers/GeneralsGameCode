@@ -675,49 +675,54 @@ void W3DDisplay::init( void )
 	// init the Westwood math library
 	WWMath::Init();
 
-	// create our 3D interface scene
-	m_3DInterfaceScene = NEW_REF( RTS3DInterfaceScene, () );
-	m_3DInterfaceScene->Set_Ambient_Light( Vector3( 1, 1, 1 ) );
+	if (!TheGlobalData->m_headless)
+	{
 
-	// create our 2D scene
-	m_2DScene = NEW_REF( RTS2DScene, () );
-	m_2DScene->Set_Ambient_Light( Vector3( 1, 1, 1 ) );
+		// create our 3D interface scene
+		m_3DInterfaceScene = NEW_REF( RTS3DInterfaceScene, () );
+		m_3DInterfaceScene->Set_Ambient_Light( Vector3( 1, 1, 1 ) );
 
-	// create our 3D scene
-	m_3DScene =NEW_REF( RTS3DScene, () );
-#if defined(_DEBUG) || defined(_INTERNAL)
-	if( TheGlobalData->m_wireframe )
-		m_3DScene->Set_Polygon_Mode( SceneClass::LINE );
-#endif
-//============================================================================
-	// m_myLight = NEW_REF
-//============================================================================
-	Int lindex;
-	for (lindex=0; lindex<TheGlobalData->m_numGlobalLights; lindex++) 
-	{	m_myLight[lindex] = NEW_REF( LightClass, (LightClass::DIRECTIONAL) );
+		// create our 2D scene
+		m_2DScene = NEW_REF( RTS2DScene, () );
+		m_2DScene->Set_Ambient_Light( Vector3( 1, 1, 1 ) );
+
+		// create our 3D scene
+		m_3DScene =NEW_REF( RTS3DScene, () );
+	#if defined(_DEBUG) || defined(_INTERNAL)
+		if( TheGlobalData->m_wireframe )
+			m_3DScene->Set_Polygon_Mode( SceneClass::LINE );
+	#endif
+	//============================================================================
+		// m_myLight = NEW_REF
+	//============================================================================
+		Int lindex;
+		for (lindex=0; lindex<TheGlobalData->m_numGlobalLights; lindex++) 
+		{	m_myLight[lindex] = NEW_REF( LightClass, (LightClass::DIRECTIONAL) );
+		}
+
+		setTimeOfDay( TheGlobalData->m_timeOfDay );	//set each light to correct values for given time
+
+		for (lindex=0; lindex<TheGlobalData->m_numGlobalLights; lindex++) 
+		{	m_3DScene->setGlobalLight( m_myLight[lindex], lindex );
+		}
+
+	#ifdef SAMPLE_DYNAMIC_LIGHT
+		theDynamicLight = NEW_REF(W3DDynamicLight, ());
+		Real red = 1;
+		Real green = 1;
+		Real blue = 0;
+		if(red==0 && blue==0 && green==0) {
+			red = green = blue = 1;
+		}
+		theDynamicLight->Set_Ambient( Vector3( red, green, blue ) );
+		theDynamicLight->Set_Diffuse( Vector3( red, green, blue) );
+		theDynamicLight->Set_Position(Vector3(0, 0, 4));
+		theDynamicLight->Set_Far_Attenuation_Range(1, 8);
+		// Note: Don't Add_Render_Object dynamic lights. 
+		m_3DScene->addDynamicLight( theDynamicLight );
+	#endif
+
 	}
-
-	setTimeOfDay( TheGlobalData->m_timeOfDay );	//set each light to correct values for given time
-
-	for (lindex=0; lindex<TheGlobalData->m_numGlobalLights; lindex++) 
-	{	m_3DScene->setGlobalLight( m_myLight[lindex], lindex );
-	}
-
-#ifdef SAMPLE_DYNAMIC_LIGHT
-	theDynamicLight = NEW_REF(W3DDynamicLight, ());
-	Real red = 1;
-	Real green = 1;
-	Real blue = 0;
-	if(red==0 && blue==0 && green==0) {
-		red = green = blue = 1;
-	}
-	theDynamicLight->Set_Ambient( Vector3( red, green, blue ) );
-	theDynamicLight->Set_Diffuse( Vector3( red, green, blue) );
-	theDynamicLight->Set_Position(Vector3(0, 0, 4));
-	theDynamicLight->Set_Far_Attenuation_Range(1, 8);
-	// Note: Don't Add_Render_Object dynamic lights. 
-	m_3DScene->addDynamicLight( theDynamicLight );
-#endif
 
 	// create a new asset manager
 	m_assetManager = NEW W3DAssetManager;	
@@ -725,43 +730,35 @@ void W3DDisplay::init( void )
 	m_assetManager->Register_Prototype_Loader(&_AggregateLoader);
 	m_assetManager->Set_WW3D_Load_On_Demand( true );
 
-
-	if (TheGlobalData->m_incrementalAGPBuf)
+	if (!TheGlobalData->m_headless)
 	{
-		SortingRendererClass::SetMinVertexBufferSize(1);
-	}
-	if (WW3D::Init( ApplicationHWnd ) != WW3D_ERROR_OK)
-		throw ERROR_INVALID_D3D;	//failed to initialize.  User probably doesn't have DX 8.1
 
-	WW3D::Set_Prelit_Mode( WW3D::PRELIT_MODE_LIGHTMAP_MULTI_PASS );
-	WW3D::Set_Collision_Box_Display_Mask(0x00);	///<set to 0xff to make collision boxes visible
-	WW3D::Enable_Static_Sort_Lists(true);
-	WW3D::Set_Thumbnail_Enabled(false);
-	WW3D::Set_Screen_UV_Bias( TRUE );  ///< this makes text look good :)
-	WW3D::Set_Texture_Bitdepth(32);
+		if (TheGlobalData->m_incrementalAGPBuf)
+		{
+			SortingRendererClass::SetMinVertexBufferSize(1);
+		}
+		if (WW3D::Init( ApplicationHWnd ) != WW3D_ERROR_OK)
+			throw ERROR_INVALID_D3D;	//failed to initialize.  User probably doesn't have DX 8.1
+
+		WW3D::Set_Prelit_Mode( WW3D::PRELIT_MODE_LIGHTMAP_MULTI_PASS );
+		WW3D::Set_Collision_Box_Display_Mask(0x00);	///<set to 0xff to make collision boxes visible
+		WW3D::Enable_Static_Sort_Lists(true);
+		WW3D::Set_Thumbnail_Enabled(false);
+		WW3D::Set_Screen_UV_Bias( TRUE );  ///< this makes text look good :)
+		WW3D::Set_Texture_Bitdepth(32);
 			
-	setWindowed( TheGlobalData->m_windowed );
+		setWindowed( TheGlobalData->m_windowed );
 
-	// create a 2D renderer helper
-	m_2DRender = NEW Render2DClass;
-	DEBUG_ASSERTCRASH( m_2DRender, ("Cannot create Render2DClass") );
+		// create a 2D renderer helper
+		m_2DRender = NEW Render2DClass;
+		DEBUG_ASSERTCRASH( m_2DRender, ("Cannot create Render2DClass") );
 
-	// set our default width and height and bit depth
-	/// @todo we should set this according to options read from a file
-	setWidth( TheGlobalData->m_xResolution );
-	setHeight( TheGlobalData->m_yResolution );
-	setBitDepth( W3D_DISPLAY_DEFAULT_BIT_DEPTH );
+		// set our default width and height and bit depth
+		/// @todo we should set this according to options read from a file
+		setWidth( TheGlobalData->m_xResolution );
+		setHeight( TheGlobalData->m_yResolution );
+		setBitDepth( W3D_DISPLAY_DEFAULT_BIT_DEPTH );
 
-	if( WW3D::Set_Render_Device( 0, 
-															 getWidth(), 
-															 getHeight(), 
-															 getBitDepth(), 
-															 getWindowed(), 
-															 true ) != WW3D_ERROR_OK ) 
-	{
-		// Getting the device at the default bit depth (32) didn't work, so try
-		// getting a 16 bit display.  (Voodoo 1-3 only supported 16 bit.) jba.
-		setBitDepth( 16 );
 		if( WW3D::Set_Render_Device( 0, 
 																 getWidth(), 
 																 getHeight(), 
@@ -769,62 +766,77 @@ void W3DDisplay::init( void )
 																 getWindowed(), 
 																 true ) != WW3D_ERROR_OK ) 
 		{
+			// Getting the device at the default bit depth (32) didn't work, so try
+			// getting a 16 bit display.  (Voodoo 1-3 only supported 16 bit.) jba.
+			setBitDepth( 16 );
+			if( WW3D::Set_Render_Device( 0, 
+																	 getWidth(), 
+																	 getHeight(), 
+																	 getBitDepth(), 
+																	 getWindowed(), 
+																	 true ) != WW3D_ERROR_OK ) 
+			{
 
-			WW3D::Shutdown();
-			WWMath::Shutdown();
-			throw ERROR_INVALID_D3D;	//failed to initialize.  User probably doesn't have DX 8.1
-			DEBUG_ASSERTCRASH( 0, ("Unable to set render device\n") );
-			return;
+				WW3D::Shutdown();
+				WWMath::Shutdown();
+				throw ERROR_INVALID_D3D;	//failed to initialize.  User probably doesn't have DX 8.1
+				DEBUG_ASSERTCRASH( 0, ("Unable to set render device\n") );
+				return;
+			}
+
+		}  // end if
+
+		//Check if level was never set and default to setting most suitable for system.
+		if (TheGameLODManager->getStaticLODLevel() == STATIC_GAME_LOD_UNKNOWN)
+			TheGameLODManager->setStaticLODLevel(TheGameLODManager->findStaticLODLevel());
+		else
+		{	//Static LOD level was applied during GameLOD manager init except for texture reduction
+			//which needs to be applied here.
+			Int txtReduction=TheWritableGlobalData->m_textureReductionFactor;
+			if (txtReduction > 0)
+			{		WW3D::Set_Texture_Reduction(txtReduction,32);
+					//Tell LOD manager that texture reduction was applied.
+					TheGameLODManager->setCurrentTextureReduction(txtReduction);
+			}
 		}
 
-	}  // end if
-
-	//Check if level was never set and default to setting most suitable for system.
-	if (TheGameLODManager->getStaticLODLevel() == STATIC_GAME_LOD_UNKNOWN)
-		TheGameLODManager->setStaticLODLevel(TheGameLODManager->findStaticLODLevel());
-	else
-	{	//Static LOD level was applied during GameLOD manager init except for texture reduction
-		//which needs to be applied here.
-		Int txtReduction=TheWritableGlobalData->m_textureReductionFactor;
-		if (txtReduction > 0)
-		{		WW3D::Set_Texture_Reduction(txtReduction,32);
-				//Tell LOD manager that texture reduction was applied.
-				TheGameLODManager->setCurrentTextureReduction(txtReduction);
-		}
+		if (TheGlobalData->m_displayGamma != 1.0f)
+			setGamma(TheGlobalData->m_displayGamma,0.0f,1.0f,FALSE);
 	}
-
-	if (TheGlobalData->m_displayGamma != 1.0f)
-		setGamma(TheGlobalData->m_displayGamma,0.0f,1.0f,FALSE);
 
 	initAssets();
-	init2DScene();
-	init3DScene();
-	W3DShaderManager::init();
 
-	// Create and initialize the debug display
-	m_nativeDebugDisplay = NEW W3DDebugDisplay();
-	m_debugDisplay = m_nativeDebugDisplay;
-	if ( m_nativeDebugDisplay )
+	if (!TheGlobalData->m_headless)
 	{
-		m_nativeDebugDisplay->init();
-		GameFont *font;
+		init2DScene();
+		init3DScene();
+		W3DShaderManager::init();
 
-		if (TheGlobalLanguageData && TheGlobalLanguageData->m_nativeDebugDisplay.name.isNotEmpty())
+		// Create and initialize the debug display
+		m_nativeDebugDisplay = NEW W3DDebugDisplay();
+		m_debugDisplay = m_nativeDebugDisplay;
+		if ( m_nativeDebugDisplay )
 		{
-			font=TheFontLibrary->getFont(
-				TheGlobalLanguageData->m_nativeDebugDisplay.name,
-				TheGlobalLanguageData->m_nativeDebugDisplay.size,
-				TheGlobalLanguageData->m_nativeDebugDisplay.bold);
+			m_nativeDebugDisplay->init();
+			GameFont *font;
+
+			if (TheGlobalLanguageData && TheGlobalLanguageData->m_nativeDebugDisplay.name.isNotEmpty())
+			{
+				font=TheFontLibrary->getFont(
+					TheGlobalLanguageData->m_nativeDebugDisplay.name,
+					TheGlobalLanguageData->m_nativeDebugDisplay.size,
+					TheGlobalLanguageData->m_nativeDebugDisplay.bold);
+			}
+			else
+				font=TheFontLibrary->getFont( AsciiString("FixedSys"), 8, FALSE );
+
+			m_nativeDebugDisplay->setFont( font );
+			m_nativeDebugDisplay->setFontHeight( 13 );
+			m_nativeDebugDisplay->setFontWidth( 9 );
 		}
-		else
-			font=TheFontLibrary->getFont( AsciiString("FixedSys"), 8, FALSE );
 
-		m_nativeDebugDisplay->setFont( font );
-		m_nativeDebugDisplay->setFontHeight( 13 );
-		m_nativeDebugDisplay->setFontWidth( 9 );
+		DX8WebBrowser::Initialize();
 	}
-
-	DX8WebBrowser::Initialize();
 
 	// we're now online
 	m_initialized = true;
@@ -845,16 +857,19 @@ void W3DDisplay::reset( void )
 
 	// Remove all render objects.
 
-	SceneIterator *sceneIter = m_3DScene->Create_Iterator();
-	sceneIter->First();
-	while(!sceneIter->Is_Done()) {
-		RenderObjClass * robj = sceneIter->Current_Item();
-		robj->Add_Ref();
-		m_3DScene->Remove_Render_Object(robj);
-		robj->Release_Ref();
-		sceneIter->Next();
+	if (m_3DScene != NULL)
+	{
+		SceneIterator *sceneIter = m_3DScene->Create_Iterator();
+		sceneIter->First();
+		while(!sceneIter->Is_Done()) {
+			RenderObjClass * robj = sceneIter->Current_Item();
+			robj->Add_Ref();
+			m_3DScene->Remove_Render_Object(robj);
+			robj->Release_Ref();
+			sceneIter->Next();
+		}
+		m_3DScene->Destroy_Iterator(sceneIter);
 	}
-	m_3DScene->Destroy_Iterator(sceneIter);
 
 	m_isClippedEnabled = FALSE;
 
@@ -1671,6 +1686,8 @@ void W3DDisplay::draw( void )
 		return;
 	}
 
+	if (TheGlobalData->m_headless)
+		return;
 
 	updateAverageFPS();
 	if (TheGlobalData->m_enableDynamicLOD && TheGameLogic->getShowDynamicLOD())
@@ -2082,7 +2099,7 @@ void W3DDisplay::createLightPulse( const Coord3D *pos, const RGBColor *color,
 																	 UnsignedInt decayFrameTime//, Bool donut
 																	 )
 {
-	if (innerRadius+attenuationWidth<2.0*PATHFIND_CELL_SIZE_F + 1.0f) {
+	if (innerRadius+attenuationWidth<2.0*PATHFIND_CELL_SIZE_F + 1.0f || m_3DScene == NULL) {
 		return; // it basically won't make any visual difference.  jba.
 	}
 	W3DDynamicLight * theDynamicLight = m_3DScene->getADynamicLight();

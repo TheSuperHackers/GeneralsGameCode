@@ -169,6 +169,8 @@ BriefingList* GetBriefingTextList(void)
 //-------------------------------------------------------------------------------------------------
 void UpdateDiplomacyBriefingText(AsciiString newText, Bool clear)
 {
+	if (TheWindowManager == NULL)
+		return;
 	GameWindow *listboxSolo = TheWindowManager->winGetWindowFromId(theWindow, NAMEKEY("Diplomacy.wnd:ListboxSolo"));
 
 	if (clear)

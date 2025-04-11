@@ -737,6 +737,9 @@ static void populateRandomSideAndColor( GameInfo *game )
 		// Prevent from selecting the disabled Generals.
 		// This is also enforced at GUI setup (GUIUtil.cpp).
 		// @todo: unlock these when something rad happens
+
+		// TheSuperHackers @logic-client-separation helmutbuhler 04/11/2025
+		// TheChallengeGenerals belongs to client, we shouldn't depend on that here.
 		Bool disallowLockedGenerals = TRUE;
 		const GeneralPersona *general = TheChallengeGenerals->getGeneralByTemplateName(ptTest->getName());
 		Bool startsLocked = general ? !general->isStartingEnabled() : FALSE;
@@ -1113,6 +1116,15 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	GetPrecisionTimer(&startTime64);
 	#endif
 
+	// reset the frame counter
+	m_frame = 0;
+
+#ifdef DEBUG_CRC
+	// TheSuperHackers @info helmutbuhler 04/09/2025
+	// Let CRC Logger know that a new game was started.
+	CRCDebugStartNewGame();
+#endif
+
 	setLoadingMap( TRUE );
 
 	if( loadingSaveGame == FALSE )
@@ -1258,7 +1270,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	//****************************//
 
 	// Get the m_loadScreen for this kind of game
-	if(!m_loadScreen)
+	if(!m_loadScreen && !TheGlobalData->m_headless)
 	{
 		m_loadScreen = getLoadScreen( loadingSaveGame );
 		if(m_loadScreen)
@@ -1285,8 +1297,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	if(m_loadScreen)
 		updateLoadProgress(LOAD_PROGRESS_POST_PARTICLE_INI_LOAD);
 
-	// reset the frame counter
-	m_frame = 0;
+	DEBUG_ASSERTCRASH(m_frame == 0, ("framecounter expected to be 0 here\n"));
 
 	// before loading the map, load the map.ini file in the same directory.
 	loadMapINI( TheGlobalData->m_mapName );
@@ -1974,6 +1985,9 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 				// The game will start, but the cheater will be instantly defeated because he has no troops.
 				// This is also enforced at GUI setup (GUIUtil.cpp and UserPreferences.cpp).
 				// @todo: unlock these when something rad happens
+				
+				// TheSuperHackers @logic-client-separation helmutbuhler 04/11/2025
+				// TheChallengeGenerals belongs to client, we shouldn't depend on that here.
 				Bool disallowLockedGenerals = TRUE;
 				const GeneralPersona *general = TheChallengeGenerals->getGeneralByTemplateName(pt->getName());
 				Bool startsLocked = general ? !general->isStartingEnabled() : FALSE;
@@ -2179,7 +2193,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	}
 
 	// if we're in a load game, don't fade yet
-	if( loadingSaveGame == FALSE )
+	if(loadingSaveGame == FALSE && TheTransitionHandler != NULL)
 	{
 		TheTransitionHandler->setGroup("FadeWholeScreen");
 		while(!TheTransitionHandler->isFinished())
@@ -2219,14 +2233,17 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 
 	if(m_gameMode == GAME_SHELL)
 	{
-		if(TheShell->getScreenCount() == 0)
-			TheShell->push( AsciiString("Menus/MainMenu.wnd") );
-		else if (TheShell->top())
+		if (!TheGlobalData->m_headless)
 		{
-			TheShell->top()->hide(FALSE);
-			TheShell->top()->bringForward();
+			if(TheShell->getScreenCount() == 0)
+				TheShell->push( AsciiString("Menus/MainMenu.wnd") );
+			else if (TheShell->top())
+			{
+				TheShell->top()->hide(FALSE);
+				TheShell->top()->bringForward();
+			}
+			HideControlBar();
 		}
-		HideControlBar();
 	}
 	else
 	{
@@ -3654,7 +3671,7 @@ void GameLogic::update( void )
 	Bool generateForMP = (isMPGameOrReplay && (m_frame % TheGameInfo->getCRCInterval()) == 0);
 #if defined(_DEBUG) || defined(_INTERNAL)
 	Bool generateForSolo = isSoloGameOrReplay && ((m_frame && (m_frame%100 == 0)) ||
-		(getFrame() > TheCRCFirstFrameToLog && getFrame() < TheCRCLastFrameToLog && ((m_frame % REPLAY_CRC_INTERVAL) == 0)));
+		(getFrame() >= TheCRCFirstFrameToLog && getFrame() < TheCRCLastFrameToLog && ((m_frame % REPLAY_CRC_INTERVAL) == 0)));
 #else
 	Bool generateForSolo = isSoloGameOrReplay && ((m_frame % REPLAY_CRC_INTERVAL) == 0);
 #endif // defined(_DEBUG) || defined(_INTERNAL)
@@ -3667,14 +3684,14 @@ void GameLogic::update( void )
 			GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_LOGIC_CRC );
 			msg->appendIntegerArgument( m_CRC );
 			msg->appendBooleanArgument( (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_PLAYBACK) ); // playback CRC
-			//DEBUG_LOG(("Appended CRC of %8.8X on frame %d\n", m_CRC, m_frame));
+			DEBUG_LOG(("Appended CRC on frame %d: %8.8X\n", m_frame, m_CRC));
 		}
 		else
 		{
 			GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_LOGIC_CRC );
 			msg->appendIntegerArgument( m_CRC );
 			msg->appendBooleanArgument( (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_PLAYBACK) ); // playback CRC
-			//DEBUG_LOG(("Appended Playback CRC of %8.8X on frame %d\n", m_CRC, m_frame));
+			DEBUG_LOG(("Appended Playback CRC on frame %d: %8.8X\n", m_frame, m_CRC));
 		}
 	}
 
@@ -4030,6 +4047,12 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	{
 		AsciiString crcName;
 #ifdef DEBUG_CRC
+		// TheSuperHackers @info helmutbuhler 04/09/2025
+		// This allows you to save the binary data that is involved in the crc calculation
+		// to a binary file per frame.
+		// This was apparently used early in development and isn't that useful, because diffing
+		// that binary data is very difficult. The CRC logging is much easier to diff and also more
+		// granular than this because it can capture changes between two frames.
 		if (isInGameLogicUpdate() && g_keepCRCSaves && m_frame < 5)
 		{
 			xferCRC = NEW XferDeepCRC;

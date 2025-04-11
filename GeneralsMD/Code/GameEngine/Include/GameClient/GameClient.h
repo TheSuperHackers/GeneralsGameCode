@@ -259,4 +259,44 @@ inline Drawable* GameClient::findDrawableByID( const DrawableID id )
 // the singleton
 extern GameClient *TheGameClient;
 
+
+// TheSuperHackers @logic-client-separation helmutbuhler 04/11/2025
+// Some information about the architecture and headless mode:
+// The game is structurally separated into GameLogic and GameClient.
+// The Logic is responsible for everything that affects the game mechanic and what is synchronized over
+// the network. The Client is responsible for rendering, input, audio and similar stuff.
+// 
+// Unfortunately there are some places in the code that make the Logic depend on the Client.
+// (Search for @logic-client-separation)
+// That means if we want to run the game headless, we cannot just disable the Client. We need to disable
+// the parts in the Client that don't work in headless mode and need to keep the parts that are needed
+// to run the Logic.
+// The following describes which parts we disable in headless mode:
+//
+//	GameEngine:
+//		TheGameClient is partially disabled:
+//			TheKeyboard = NULL
+//			TheMouse = NULL
+//			TheDisplay is partially disabled:
+//				m_3DInterfaceScene = NULL
+//				m_2DScene = NULL
+//				m_3DScene = NULL
+//				(m_assetManager remains!)
+//			TheWindowManager = NULL
+//			TheIMEManager = NULL
+//			TheTerrainVisual is partially disabled:
+//				TheTerrainTracksRenderObjClassSystem = NULL
+//				TheW3DShadowManager = NULL
+//				TheWaterRenderObj = NULL
+//				TheSmudgeManager = NULL
+//				TheTerrainRenderObject is partially disabled:
+//					m_treeBuffer = NULL
+//					m_propBuffer = NULL
+//					m_bibBuffer = NULL
+//					m_bridgeBuffer = NULL
+//					m_waypointBuffer = NULL
+//					m_roadBuffer = NULL
+//					m_shroud = NULL
+//		TheRadar = RadarHeadless
+
 #endif // _GAME_INTERFACE_H_

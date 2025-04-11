@@ -1162,6 +1162,8 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayerTemplate( const PlayerT
 //-----------------------------------------------------------------------------
 void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 {
+	if (TheWindowManager == NULL)
+		return;
 	GameWindow *communicatorButton = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY("ControlBar.wnd:PopupCommunicator") );
 	if (communicatorButton && TheControlBar)
 	{

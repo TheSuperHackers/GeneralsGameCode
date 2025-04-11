@@ -702,7 +702,7 @@ void ControlBar::deleteBuildTooltipLayout( void )
 {
 	m_showBuildToolTipLayout = FALSE;
 	prevWindow= NULL;
-	m_buildToolTipLayout->hide(TRUE);
+	if (m_buildToolTipLayout) m_buildToolTipLayout->hide(TRUE);
 //	if(!m_buildToolTipLayout)
 //		return;
 //	

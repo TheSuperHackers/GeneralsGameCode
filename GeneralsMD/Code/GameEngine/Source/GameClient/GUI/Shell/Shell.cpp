@@ -496,7 +496,7 @@ void Shell::showShellMap(Bool useShellMap )
 			TheMessageStream->appendMessage( GameMessage::MSG_CLEAR_GAME_DATA );
 
 		// if the shell is active,we need a background
-		if(!m_isShellActive)
+		if(!m_isShellActive || TheWindowManager == NULL)
 			return;
 		if(!m_background)
 			m_background = TheWindowManager->winCreateLayout("Menus/BlankWindow.wnd");

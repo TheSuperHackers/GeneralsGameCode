@@ -1026,7 +1026,7 @@ Int HeightMapRenderObjClass::updateBlock(Int x0, Int y0, Int x1, Int y1,  WorldH
 	DEBUG_ASSERTCRASH(y0<=y1, ("HeightMapRenderObjClass::UpdateBlock parameters have inside-out rectangle (on Y)."));
 #endif
 	Invalidate_Cached_Bounding_Volumes();
-	if (pMap) {
+	if (pMap && m_treeBuffer != NULL) {
 		REF_PTR_SET(m_stageZeroTexture, pMap->getTerrainTexture());
 		REF_PTR_SET(m_stageOneTexture, pMap->getAlphaTerrainTexture());
 	}
@@ -1326,7 +1326,7 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 	if (m_stageOneTexture == NULL) {
 		needToAllocate = true;
 	}
-	if (data && needToAllocate)
+	if (data && needToAllocate && m_treeBuffer != NULL)
 	{	//requested heightmap different from old one.
 		freeIndexVertexBuffers();
 		//Create static index buffers.  These will index the vertex buffers holding the map.

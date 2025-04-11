@@ -270,10 +270,13 @@ void GameClient::init( void )
 		TheDisplayStringManager->setName("TheDisplayStringManager");
 	}
 	
-	// create the keyboard
-	TheKeyboard = createKeyboard();
-	TheKeyboard->init();
-	TheKeyboard->setName("TheKeyboard");
+	if (!TheGlobalData->m_headless)
+	{
+		// create the keyboard
+		TheKeyboard = createKeyboard();
+		TheKeyboard->init();
+		TheKeyboard->setName("TheKeyboard");
+	}
 
 	// allocate and load image collection for the GUI and just load the 256x256 ones for now
 	TheMappedImageCollection = MSGNEW("GameClientSubsystem") ImageCollection;
@@ -321,11 +324,14 @@ void GameClient::init( void )
 	if( TheFontLibrary )
 		TheFontLibrary->init();
 
-	// create the mouse
-	TheMouse = createMouse();
-	TheMouse->parseIni();
-	TheMouse->initCursorResources();
- 	TheMouse->setName("TheMouse");
+	if (!TheGlobalData->m_headless)
+	{
+		// create the mouse
+		TheMouse = createMouse();
+		TheMouse->parseIni();
+		TheMouse->initCursorResources();
+ 		TheMouse->setName("TheMouse");
+	}
 
 	// instantiate the display
 	TheDisplay = createGameDisplay();
@@ -339,23 +345,25 @@ void GameClient::init( void )
 		TheHeaderTemplateManager->init();
 	}
 
-	// create the window manager
-	TheWindowManager = createWindowManager();
-	if( TheWindowManager )
+	if (!TheGlobalData->m_headless)
 	{
+		// create the window manager
+		TheWindowManager = createWindowManager();
+		if( TheWindowManager )
+		{
 
-		TheWindowManager->init();
- 		TheWindowManager->setName("TheWindowManager");
-//		TheWindowManager->initTestGUI();
+			TheWindowManager->init();
+ 			TheWindowManager->setName("TheWindowManager");
+	//		TheWindowManager->initTestGUI();
 
-	}  // end if
-
-	// create the IME manager
-	TheIMEManager = CreateIMEManagerInterface();
-	if ( TheIMEManager )
-	{
-		TheIMEManager->init();
- 		TheIMEManager->setName("TheIMEManager");
+		}  // end if
+		// create the IME manager
+		TheIMEManager = CreateIMEManagerInterface();
+		if ( TheIMEManager )
+		{
+			TheIMEManager->init();
+ 			TheIMEManager->setName("TheIMEManager");
+		}
 	}
 
 	// create the shell
@@ -397,11 +405,10 @@ void GameClient::init( void )
  		TheRayEffects->setName("TheRayEffects");
 	}
 
-	TheMouse->init();	//finish initializing the mouse.
-
 	// set the limits of the mouse now that we've created the display and such
 	if( TheMouse )
 	{
+		TheMouse->init();	//finish initializing the mouse.
 		TheMouse->setPosition( 0, 0 );
 		TheMouse->setMouseLimits();
  		TheMouse->setName("TheMouse");
@@ -633,6 +640,7 @@ void GameClient::update( void )
 	}
 
 	// update the window system itself
+	if (TheWindowManager)
 	{
 		TheWindowManager->UPDATE();
 	}

@@ -48,6 +48,8 @@ extern Int DX8Wrapper_PreserveFPU;
 Int TheCRCFirstFrameToLog = -1;
 UnsignedInt TheCRCLastFrameToLog = 0xffffffff;
 Bool g_keepCRCSaves = FALSE;
+Bool g_saveDebugCRCPerFrame = FALSE;
+AsciiString g_saveDebugCRCPerFrameDir;
 Bool g_crcModuleDataFromLogic = FALSE;
 Bool g_crcModuleDataFromClient = FALSE;
 Bool g_verifyClientCRC = FALSE; // verify that GameLogic CRC doesn't change from client
@@ -163,6 +165,7 @@ Int parseFPUPreserve(char *args[], int argc)
 }
 
 #if defined(_DEBUG) || defined(_INTERNAL)
+
 //=============================================================================
 //=============================================================================
 Int parseUseCSF(char *args[], int)
@@ -203,6 +206,7 @@ Int parseNoMilCap(char *args[], int)
 	}
 	return 1;
 }
+#endif // _DEBUG || _INTERNAL
 
 //=============================================================================
 //=============================================================================
@@ -238,6 +242,22 @@ Int parseKeepCRCSave(char *args[], int argc)
 	g_keepCRCSaves = TRUE;
 #endif
 	return 1;
+}
+
+//=============================================================================
+//=============================================================================
+Int parseSaveDebugCRCPerFrame(char* args[], int argc)
+{
+#ifdef DEBUG_CRC
+	if (argc > 1)
+	{
+		g_saveDebugCRCPerFrame = TRUE;
+		g_saveDebugCRCPerFrameDir = args[1];
+		if (TheCRCFirstFrameToLog == -1)
+			TheCRCFirstFrameToLog = 0;
+	}
+#endif
+	return 2;
 }
 
 //=============================================================================
@@ -328,6 +348,8 @@ Int parseNoDraw(char *args[], int argc)
 #endif
 	return 1;
 }
+
+#if defined(_DEBUG) || defined(_INTERNAL)
 
 //=============================================================================
 //=============================================================================
@@ -839,6 +861,15 @@ Int parseQuickStart( char *args[], int num )
 	return 1;
 }
 
+Int parseHeadless( char *args[], int num )
+{
+	if (TheWritableGlobalData)
+	{
+		TheWritableGlobalData->m_headless = TRUE;
+	}
+	return 1;
+}
+
 Int parseConstantDebug( char *args[], int num )
 {
 	if (TheWritableGlobalData)
@@ -1182,6 +1213,10 @@ static CommandLineParam params[] =
 	{ "-noshaders", parseNoShaders },
 	{ "-quickstart", parseQuickStart },
 
+	// TheSuperHackers @feature helmutbuhler 04/11/2025
+	// This runs the game without a window, graphics, input and audio. Used for testing.
+	{ "-headless", parseHeadless },
+
 #if (defined(_DEBUG) || defined(_INTERNAL))
 	{ "-noaudio", parseNoAudio },
 	{ "-map", parseMapName },
@@ -1197,17 +1232,58 @@ static CommandLineParam params[] =
 	{ "-localMOTD", parseLocalMOTD },
 	{ "-UseCSF", parseUseCSF },
 	{ "-NoInputDisable", parseNoInputDisable },
+#endif
+#ifdef DEBUG_CRC
+	// TheSuperHackers @info helmutbuhler 04/09/2025
+	// The following arguments are useful for CRC debugging.
+	// Note that you need to have a debug or internal configuration build in order to use this.
+	// Release configuration also works if RELEASE_DEBUG_LOGGING is defined in Debug.h
+	// Also note that all players need to play in the same configuration, otherwise mismatch will
+	// occur almost immediately.
+	// Try this if you want to play the game and have useful debug information in case mismatch occurs:
+	// -ignoreAsserts -DebugCRCFromFrame 0 -VerifyClientCRC -LogObjectCRCs -NetCRCInterval 1
+	// After mismatch occurs, you can examine the logfile and also reproduce the crc from the replay with this (and diff that with the log):
+	// -ignoreAsserts -DebugCRCFromFrame xxx -LogObjectCRCs -SaveDebugCRCPerFrame crc
+
+	// After which frame to log crc logging. Call with 0 to log all frames and with -1 to log none (default).
 	{ "-DebugCRCFromFrame", parseDebugCRCFromFrame },
+
+	// Last frame to log
 	{ "-DebugCRCUntilFrame", parseDebugCRCUntilFrame },
+
+	// Save data involving CRC calculation to a binary file. (This isn't that useful.)
 	{ "-KeepCRCSaves", parseKeepCRCSave },
+
+	// TheSuperHackers @feature helmutbuhler 04/09/2025
+	// Store CRC Debug Logging into a separate file for each frame.
+	// Pass the foldername after this where those files are to be stored.
+	// This is useful for replay analysis.
+	// Note that the passed folder is deleted if it already exists for every started game.
+	{ "-SaveDebugCRCPerFrame", parseSaveDebugCRCPerFrame },
+
 	{ "-CRCLogicModuleData", parseCRCLogicModuleData },
 	{ "-CRCClientModuleData", parseCRCClientModuleData },
-	{ "-ClientDeepCRC", parseClientDeepCRC },
+
+	// Verify that Game Logic CRC doesn't change during client update.
+	// Client update is only for visuals and not supposed to change the crc.
+	// (This is implemented using CRCVerification class in GameEngine::update)
 	{ "-VerifyClientCRC", parseVerifyClientCRC },
+
+	// Write out binary crc data pre and post client update to "clientPre.crc" and "clientPost.crc"
+	{ "-ClientDeepCRC", parseClientDeepCRC },
+
+	// Log CRC of Objects and Weapons (See Object::crc and Weapon::crc)
 	{ "-LogObjectCRCs", parseLogObjectCRCs },
-	{ "-saveAllStats", parseSaveAllStats },
+
+	// Number of frames between each CRC check between all players in multiplayer games
+	// (if not all crcs are equal, mismatch occurs).
 	{ "-NetCRCInterval", parseNetCRCInterval },
+
+	// Number of frames between each CRC that is written to replay files in singleplayer games.
 	{ "-ReplayCRCInterval", parseReplayCRCInterval },
+#endif
+#if (defined(_DEBUG) || defined(_INTERNAL))
+	{ "-saveAllStats", parseSaveAllStats },
 	{ "-noDraw", parseNoDraw },
 	{ "-nomilcap", parseNoMilCap },
 	{ "-nofade", parseNoFade },

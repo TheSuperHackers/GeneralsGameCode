@@ -507,7 +507,7 @@ void GameEngine::init( int argc, char *argv[] )
 		initSubsystem(TheCrateSystem,"TheCrateSystem", MSGNEW("GameEngineSubsystem") CrateSystem(), &xferCRC, "Data\\INI\\Default\\Crate.ini", "Data\\INI\\Crate.ini");
 		initSubsystem(ThePlayerList,"ThePlayerList", MSGNEW("GameEngineSubsystem") PlayerList(), NULL);
 		initSubsystem(TheRecorder,"TheRecorder", createRecorder(), NULL);
-		initSubsystem(TheRadar,"TheRadar", createRadar(), NULL);
+		initSubsystem(TheRadar,"TheRadar", TheGlobalData->m_headless ? NEW RadarHeadless : createRadar(), NULL);
 		initSubsystem(TheVictoryConditions,"TheVictoryConditions", createVictoryConditions(), NULL);
 
 

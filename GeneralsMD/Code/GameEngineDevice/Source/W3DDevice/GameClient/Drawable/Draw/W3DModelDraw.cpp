@@ -2806,7 +2806,8 @@ void W3DModelDraw::nukeCurrentRender(Matrix3D* xform)
 		// save the transform for the new model
 		if (xform)
 			*xform = m_renderObject->Get_Transform();
-		W3DDisplay::m_3DScene->Remove_Render_Object(m_renderObject);
+		if (W3DDisplay::m_3DScene != NULL)
+			W3DDisplay::m_3DScene->Remove_Render_Object(m_renderObject);
 		REF_PTR_RELEASE(m_renderObject);
 		m_renderObject = NULL;
 	}
@@ -3133,7 +3134,8 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
    		}
 
 			// add render object to our scene
-			W3DDisplay::m_3DScene->Add_Render_Object(m_renderObject);
+			if (W3DDisplay::m_3DScene != NULL)
+				W3DDisplay::m_3DScene->Add_Render_Object(m_renderObject);
 
 			// tie in our drawable as the user data pointer in the render object
 			m_renderObject->Set_User_Data(draw->getDrawableInfo());

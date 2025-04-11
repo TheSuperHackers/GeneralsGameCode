@@ -68,9 +68,11 @@
 	void dumpReal(Real r, AsciiString name, AsciiString fname, Int line);
 
 	void outputCRCDebugLines( void );
+	void CRCDebugStartNewGame( void );
 	void outputCRCDumpLines( void );
 
 	void addCRCDebugLine(const char *fmt, ...);
+	void addCRCDebugLineNoCounter(const char *fmt, ...);
 	void addCRCDumpLine(const char *fmt, ...);
 	void addCRCGenLine(const char *fmt, ...);
 	#define CRCDEBUG_LOG(x) addCRCDebugLine x
@@ -97,7 +99,9 @@
 	extern Bool g_crcModuleDataFromLogic;
 
 	extern Bool g_keepCRCSaves;
-	
+	extern Bool g_saveDebugCRCPerFrame;
+	extern AsciiString g_saveDebugCRCPerFrameDir;
+
 	extern Bool g_logObjectCRCs;
 
 #else // DEBUG_CRC

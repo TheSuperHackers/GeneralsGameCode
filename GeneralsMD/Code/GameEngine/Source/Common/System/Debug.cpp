@@ -46,12 +46,20 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 
-// USER INCLUDES 
+// USER INCLUDES
+
+// TheSuperHackers @feature helmutbuhler 04/10/2025
+// Uncomment this to show normal logging stuff in the crc logging.
+// This can be helpful for context, but can also clutter diffs because normal logs arn't necessarily
+// deterministic or the same on all peers in multiplayer games.
+//#define NORMAL_LOG_IN_CRC_LOG
+
 #define DEBUG_THREADSAFE
 #ifdef DEBUG_THREADSAFE
 #include "Common/CriticalSection.h"
 #endif
 #include "Common/Debug.h"
+#include "Common/CRCDebug.h"
 #include "Common/SystemInfo.h"
 #include "Common/UnicodeString.h"
 #include "GameClient/GameText.h"
@@ -235,6 +243,10 @@ static void doLogOutput(const char *buffer)
 	{
 		::OutputDebugString(buffer);
 	}
+
+#ifdef NORMAL_LOG_IN_CRC_LOG
+	addCRCDebugLineNoCounter("%s", buffer);
+#endif
 }
 #endif
 
