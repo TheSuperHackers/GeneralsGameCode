@@ -10,6 +10,7 @@ target_sources(z_texturecompress PRIVATE ${TEXTURECOMPRESS_SRC})
 
 target_link_libraries(z_texturecompress PRIVATE
     core_config
+    z_wwlib
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

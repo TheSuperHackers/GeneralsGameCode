@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <trim.h>
 
 // Local defines
 #define VERSION_BUILDNUM "VERSION_LOCALBUILDNUM"
@@ -86,42 +87,6 @@ static void usage(char *progname)
 	{
 		printf ("Usage: %s versionfile.h", progname);
 	}
-}
-
-
-// strtrim ====================================================================
-/** Trim leading and trailing whitespace from a character string (in place). */
-//=============================================================================
-static char* strtrim(char* buffer)
-{
-	if (buffer != NULL) {
-		//	Strip leading white space from the string.
-		char * source = buffer;
-		while ((*source != 0) && ((unsigned char)*source <= 32))
-		{
-			source++;
-		}
-
-		if (source != buffer)
-		{
-			strcpy(buffer, source);
-		}
-
-		//	Clip trailing white space from the string.
-		for (int index = strlen(buffer)-1; index >= 0; index--)
-		{
-			if ((*source != 0) && ((unsigned char)buffer[index] <= 32))
-			{
-				buffer[index] = '\0';
-			}
-			else
-			{
-				break;
-			}
-		}
-	}
-
-	return buffer;
 }
 
 int APIENTRY WinMain(HINSTANCE hInstance,

@@ -44,7 +44,7 @@ target_include_directories(z_wwvegas INTERFACE
     WW3D2
     WWDebug
     WWDownload
-    WWLib
+    #WWLib
     WWMath
     WWSaveLoad
     Wwutil

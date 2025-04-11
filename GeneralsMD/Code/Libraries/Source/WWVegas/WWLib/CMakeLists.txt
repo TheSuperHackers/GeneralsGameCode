@@ -126,6 +126,10 @@ set_target_properties(z_wwlib PROPERTIES OUTPUT_NAME wwlib)
 
 target_sources(z_wwlib PRIVATE ${WWLIB_SRC})
 
+target_include_directories(z_wwlib PUBLIC
+    .
+)
+
 target_link_libraries(z_wwlib PRIVATE
     z_wwcommon
     zi_always
