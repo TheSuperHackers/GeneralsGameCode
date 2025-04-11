@@ -501,104 +501,8 @@ Create_DIB_Section
 HBITMAP
 Make_Bitmap_From_Texture (TextureClass &texture, int width, int height)
 {
+	// TheSuperHackers @info Not implemented
 	HBITMAP hbitmap = NULL;
-#ifdef WW3D_DX8
-	srColorSurfaceIFace	*surface = NULL;
-
-	// What type of texture is this?
-	switch (texture.getClassID ())
-	{
-		case srClass::ID_TEXTURE_FILE:
-		{
-			// Hopefully get the image data
-			srTextureIFace::MultiRequest info = { 0 };
-			info.levels[0] = new srColorSurface (srColorSurface::ARGB0444, width, height);
-			texture.getMipmapData (info);
-			surface = info.levels[0];
-		}
-		break;
-
-		case ID_MANUAL_ANIM_TEXTURE_INSTANCE_CLASS:
-		case ID_TIME_ANIM_TEXTURE_INSTANCE_CLASS:
-		case ID_RESIZEABLE_TEXTURE_INSTANCE_CLASS:
-		{
-			VariableTextureClass *psource = ((ResizeableTextureInstanceClass &)texture).Peek_Source();
-			if (psource != NULL) {
-				
-				// Hopefully get the image data
-				srTextureIFace::MultiRequest info = { 0 };
-				info.levels[0] = new srColorSurface (srColorSurface::ARGB0444, width, height);
-				psource->Get_Mipmap_Data (0, info);
-				surface = info.levels[0];
-			}
-		}
-		break;
-
-		case ID_INDIRECT_TEXTURE_CLASS:
-		{
-			srTextureIFace *preal_texture = ((IndirectTextureClass &)texture).Get_Texture ();
-			hbitmap = ::Make_Bitmap_From_Texture (*preal_texture, width, height);
-			SR_RELEASE (preal_texture);
-		}
-		break;
-
-		// Unknown texture type
-		default:
-			ASSERT (0);
-			break;
-	}
-
-	
-	if (surface != NULL) {
-	
-		int src_width = surface->getWidth ();
-		int src_height = surface->getHeight ();
-
-		// Create a DIB section for fast 'blitting'
-		UCHAR *pbits = NULL;
-		hbitmap = ::Create_DIB_Section (&pbits, width, height);
-		
-		ASSERT (hbitmap != NULL);
-		ASSERT (pbits != NULL);
-		if (pbits != NULL) {
-			
-			float src_bits_per_pixel = (float)src_width / (float)width;
-			float src_bits_per_scanline = (float)src_height / (float)height;
-			float curr_src_pixel = 0;
-			float curr_src_row = 0;
-			
-			// Window's bitmaps are DWORD aligned, so make sure
-			// we take that into account.
-			int alignment_offset = (width * 3) % 4;
-			alignment_offset = (alignment_offset != 0) ? (4 - alignment_offset) : 0;
-
-			// Copy the bits into the windows DIB section
-			int index = 0;
-			for (int y = 0; y < height; y ++) {
-				for (int x = 0; x < width; x ++) {
-					
-					// Grab the pixel from the source buffer and stuff it into the dest
-					srARGB pixel = surface->getPixel (curr_src_pixel, curr_src_row);
-					pbits[index++] = pixel[srARGB::B];
-					pbits[index++] = pixel[srARGB::G];
-					pbits[index++] = pixel[srARGB::R];
-					
-					// Increment our source counter (the src size and dest don't have to match)
-					curr_src_pixel += src_bits_per_pixel;
-				}
-
-				// Reset our src-to-dest conversion data
-				curr_src_pixel = 0;
-				curr_src_row += src_bits_per_scanline;
-
-				// Skip past the padded bytes
-				index += alignment_offset;
-			}
-		}
-
-		surface->release ();
-	}
-#endif
 	// Return a handle to the bitmap
 	return hbitmap;
 }
@@ -613,43 +517,7 @@ Get_Texture_Name (TextureClass &texture)
 {
 	CString name;
 
-	// What type of texture is this?
-#ifdef WW3D_DX8
-	switch (texture.getClassID ())
-	{
-		case srClass::ID_TEXTURE_FILE:
-			name = texture.getName ();
-			break;
-
-		case ID_MANUAL_ANIM_TEXTURE_INSTANCE_CLASS:
-		case ID_TIME_ANIM_TEXTURE_INSTANCE_CLASS:
-		case ID_RESIZEABLE_TEXTURE_INSTANCE_CLASS:
-		{
-			VariableTextureClass *psource = ((ResizeableTextureInstanceClass &)texture).Peek_Source();
-			if (psource != NULL) {
-				name = psource->getName ();
-			}
-		}
-		break;
-
-		case ID_INDIRECT_TEXTURE_CLASS:
-		{
-			srTextureIFace *preal_texture = ((IndirectTextureClass &)texture).Get_Texture ();
-			if (preal_texture != NULL) {
-				name = ::Get_Texture_Name (*preal_texture);
-				SR_RELEASE (preal_texture);
-			}
-		}
-		break;
-
-		// Unknown texture type
-		default:
-			ASSERT (0);
-			break;
-	}
-#else 
 	name = texture.Get_Texture_Name();
-#endif
 
 	// Return the texture's name
 	return name;
@@ -892,17 +760,9 @@ Load_RC_Texture (LPCTSTR resource_name)
 	//
 	//	Create a texture from the raw image data
 	//
-#ifdef WW3D_DX8
-	srBinIMStream stream (res_data, data_size);
-	srSurfaceIOManager::SurfaceImporter *importer = srCore.getSurfaceIOManager()->getImporter (".tga");
-	if (importer != NULL) {
-		srColorSurfaceIFace *surface = importer->importSurface (stream, srSurfaceIOManager::ImportInfo());
-		if (surface != NULL) {
-			texture = new srTextureMap (surface);
-		}
-	}	
-#endif
 
+	// TheSuperHackers @info Not implemented
+	
 	// Reutrn a pointer to the new texture
 	return texture;
 }
