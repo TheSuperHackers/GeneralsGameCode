@@ -22,5 +22,5 @@ add_subdirectory(Libraries)
 # add_subdirectory(GameEngineDevice)
 
 if (RTS_BUILD_CORE_TOOLS OR RTS_BUILD_CORE_EXTRAS)
-  # add_subdirectory(Tools)
+    add_subdirectory(Tools)
 endif()
