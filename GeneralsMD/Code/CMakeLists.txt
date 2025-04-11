@@ -24,8 +24,10 @@ target_include_directories(zi_libraries_source_wwvegas_wwmath INTERFACE "Librari
 target_include_directories(zi_libraries_source_wwvegas_wwsaveload INTERFACE "Libraries/Source/WWVegas/WWSaveLoad")
 target_include_directories(zi_main INTERFACE "Main")
 target_link_libraries(zi_always INTERFACE
-    zi_libraries_include
     core_utility
+    zi_libraries_include
+    # Must stay below so headers from game are included first
+    corei_libraries_include
 )
 
 # Contains internal libraries

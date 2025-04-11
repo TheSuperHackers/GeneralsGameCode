@@ -9,7 +9,7 @@ target_sources(z_compress PRIVATE ${COMRPESS_SRC})
 
 target_link_libraries(z_compress PRIVATE
     core_config
-    z_compression
+    core_compression
     zi_always
 )
 

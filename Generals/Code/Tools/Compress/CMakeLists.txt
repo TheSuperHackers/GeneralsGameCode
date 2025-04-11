@@ -8,9 +8,9 @@ set_target_properties(g_compress PROPERTIES OUTPUT_NAME compress)
 target_sources(g_compress PRIVATE ${COMRPESS_SRC})
 
 target_link_libraries(g_compress PRIVATE
-    g_compression
-    gi_always
+    core_compression
     core_config
+    gi_always
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

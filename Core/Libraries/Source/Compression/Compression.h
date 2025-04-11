@@ -25,7 +25,7 @@
 #ifndef __COMPRESSION_H__
 #define __COMPRESSION_H__
 
-#include "Lib/BaseType.h"
+#include "Lib/BaseTypeCore.h"
 
 enum CompressionType
 {
