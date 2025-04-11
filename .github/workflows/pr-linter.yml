@@ -1,0 +1,47 @@
+name: PR Linter
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: 'PR number to process'
+        required: true
+        type: number
+
+env:
+  SCRIPTS_PATH: .github/workflows/scripts/changelog_file_generation
+  CONFIG: pr_changelog_config.yaml
+
+jobs:
+  validate-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ${{ env.SCRIPTS_PATH }}/requirements.txt
+
+      - name: Determine PR number
+        id: pr-number
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "pr_number=${{ github.event.inputs.pr-number }}" >> $GITHUB_OUTPUT
+          else
+          echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run PR Linter
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPOSITORY: ${{ github.repository }}
+        run: |
+          python ${{ env.SCRIPTS_PATH}}/src/pr_linter.py --pr-number ${{ steps.pr-number.outputs.pr_number }}

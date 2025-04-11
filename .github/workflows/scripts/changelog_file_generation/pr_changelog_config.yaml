@@ -1,0 +1,86 @@
+# PR Changelog Generator Configuration
+# ------------------------------------
+# Defines how to parse PR content and structure output YAML
+
+# Section Processing Configuration
+sections:
+  # Change List Section
+  changes:
+    header: "Change list"
+    pattern: "^(\\w+): (.+)"
+    yaml_key: "changes"
+    processor: "key_value"
+    example: "- fix: Description of change"
+    required: true
+    allowed_keywords:
+      - fix
+      - feat
+      - breaking
+      - build
+      - ci
+      - balance
+      - performance
+      - docs
+      - test
+
+  # Authors Section
+  authors:
+    header: "Author\\(s\\)"
+    pattern: "@?(\\w+)"
+    yaml_key: "authors"
+    default: "$pr_creator"
+    example: "@username"
+    merge_with: ["$pr_creator"]
+    processor: "flat_list"
+
+  # Labels Section
+  fixes_issues:
+    header: "Fixes Issue\\(s\\)"
+    pattern: "([Cc]loses|[Ff]ixes|[Rr]esolves) (#?\\d+)"
+    yaml_key: "fixes_issues"
+    example: "- closes #123 or - fixes https://github.com/.../issues/456"
+    processor: "structured_links"
+    link_type: "issue"
+
+  # Linked PRs Section
+  updates_prs:
+    header: "Updates PR\\(s\\)"
+    pattern: "([Uu]pdates|[Cc]ontinues) (#?\\d+)"
+    yaml_key: "updates_prs"
+    example: "- Updates #2"
+    processor: "structured_links"
+    link_type: "pr"
+
+# Title Processing Configuration
+title_processing:
+  scope_pattern: "^\\[([\\w\/]+)\\]"  # Pattern to extract scopes from title
+  scope_key: "affects"                # YAML key for extracted scopes
+  clean_title: true                   # Whether to remove scopes from final title
+  example: "[GEN] short description, or [GEN/ZH] short description"  # Example title format
+  allowed_scopes:                     # Validate title prefixes
+    - GEN
+    - ZH
+    - GITHUB
+    - BUILD
+    - AI
+    - ART
+    - AUDIO
+
+# Output Configuration
+output:
+  required_keys:                                      # Mandatory keys in final YAML
+    - "date"
+    - "title"
+    - "changes"
+  filename_template: "$pr_number_$clean_title.yaml"   # Output filename pattern
+  directory: "changelogs/unreleased"                  # Output directory for YAML files
+  order:                                              # Order of keys in final YAML
+    - date
+    - title
+    - affects
+    - changes
+    - labels
+    - links
+    - authors
+    - fixes_issues
+    - updates_prs
