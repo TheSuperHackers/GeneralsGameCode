@@ -2729,7 +2729,6 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 	{
 		DynamicIBAccessClass::WriteLockClass lockib(&ib_access);
  		UnsignedShort *curIb = lockib.Get_Index_Array();
-		try {
 		for (Int i=0; i<rectangleCount; i++)
 		{
 			//triangle 1
@@ -2744,11 +2743,8 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 
 			curIb += 6;	//skip the 6 indices we just added.
 		}
-		IndexBufferExceptionFunc();
-		} catch(...) {
-			IndexBufferExceptionFunc();
-		}
 	}
+
 
 	Real shadeR=TheWaterTransparency->m_standingWaterColor.red;
 	Real shadeG=TheWaterTransparency->m_standingWaterColor.green;
@@ -3075,7 +3071,6 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 	{
 		DynamicIBAccessClass::WriteLockClass lockib(&ib_access);
  		UnsignedShort *curIb = lockib.Get_Index_Array();
-		try {
 		for (j=0; j<vCount-1; j++)
 		{	for (i=0; i<uCount-1; i++)
 			{
@@ -3091,10 +3086,6 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 
 				curIb += 6;	//skip the 6 indices we just added.
 			}
-		}
-		IndexBufferExceptionFunc();
-		} catch(...) {
-			IndexBufferExceptionFunc();
 		}
 	}
 

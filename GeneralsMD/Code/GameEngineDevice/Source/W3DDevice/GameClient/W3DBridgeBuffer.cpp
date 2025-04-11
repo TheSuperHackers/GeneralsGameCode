@@ -708,14 +708,9 @@ void W3DBridgeBuffer::loadBridgesInVertexAndIndexBuffers(RefRenderObjListIterato
 
 	Int curBridge;
 
-	try {
 	for (curBridge=0; curBridge<m_numBridges; curBridge++) {
 		m_bridges[curBridge].getIndicesNVertices(ib, vb, &m_curNumBridgeIndices, 
 			&m_curNumBridgeVertices, pLightsIterator);
-	}
-	IndexBufferExceptionFunc();
-	} catch(...) {
-		IndexBufferExceptionFunc();
 	}
 }
 

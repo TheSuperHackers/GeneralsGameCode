@@ -133,7 +133,6 @@ void W3DBibBuffer::loadBibsInVertexAndIndexBuffers(void)
 
 	Int diffuse = (REAL_TO_INT(shadeB) | (REAL_TO_INT(shadeG) << 8) | (REAL_TO_INT(shadeR) << 16) | (255 << 24));
 	Int doHighlight;
-	try {
 	for (doHighlight=0; doHighlight<=1; doHighlight++) 
 	{
 		if (doHighlight==1) 
@@ -195,10 +194,6 @@ void W3DBibBuffer::loadBibsInVertexAndIndexBuffers(void)
 			*curIb++ = startVertex + 3;
 			m_curNumBibIndices+=6;
 		}		
-	}
-	IndexBufferExceptionFunc();
-	} catch(...) {
-		IndexBufferExceptionFunc();
 	}
 }
 
