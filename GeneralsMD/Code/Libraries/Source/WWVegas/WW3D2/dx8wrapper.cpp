@@ -2006,16 +2006,11 @@ void DX8Wrapper::Draw_Sorting_IB_VB(
 		src=static_cast<SortingIndexBufferClass*>(render_state.index_buffer)->index_buffer;
 		src+=render_state.iba_offset+start_index;
 
-		try {
 		for (unsigned short i=0;i<index_count;++i) {
 			unsigned short index=*src++;
 			index-=min_vertex_index;
 			WWASSERT(index<vertex_count);
 			*dest++=index;
-		}
-		IndexBufferExceptionFunc();
-		} catch(...) {
-			IndexBufferExceptionFunc();
 		}
 	}
 

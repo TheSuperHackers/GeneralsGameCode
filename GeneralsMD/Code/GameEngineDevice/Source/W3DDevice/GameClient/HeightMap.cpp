@@ -2284,7 +2284,6 @@ void HeightMapRenderObjClass::renderExtraBlendTiles(void)
 		Int drawStartX=m_map->getDrawOrgX();
 		Int drawStartY=m_map->getDrawOrgY();
 
-		try {
 		for (Int j=0; j<m_numExtraBlendTiles; j++)
 		{
 			if (vertexCount >= (maxBlendTiles*4))
@@ -2385,10 +2384,6 @@ void HeightMapRenderObjClass::renderExtraBlendTiles(void)
 				indexCount +=6;
 			}//tile has 3rd blend layer and is visible
 		}	//for all extre blend tiles
-		IndexBufferExceptionFunc();
-		} catch(...) {
-			IndexBufferExceptionFunc();
-		}
 	}//unlock vertex buffer
 
 	if (vertexCount)

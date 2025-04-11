@@ -1249,17 +1249,12 @@ void W3DRoadBuffer::loadRoadsInVertexAndIndexBuffers()
 
 	// Do road segments.
 	TCorner corner;
-	try {
 	for (corner = SEGMENT; corner < NUM_JOINS; corner = (TCorner)(corner+1)) {
 		for (curRoad=0; curRoad<m_numRoads; curRoad++) {
 			if (m_roads[curRoad].m_type == corner) {
 				loadRoadSegment(ib, vb, &m_roads[curRoad]);
 			}
 		}		
-	}
-	IndexBufferExceptionFunc();
-	} catch(...) {
-		IndexBufferExceptionFunc();
 	}
 	this->m_roadTypes[m_curRoadType].setNumVertices(m_curNumRoadVertices);
 	this->m_roadTypes[m_curRoadType].setNumIndices(m_curNumRoadIndices);
@@ -1333,17 +1328,12 @@ void W3DRoadBuffer::loadLitRoadsInVertexAndIndexBuffers(RefRenderObjListIterator
 	if (true) {
 		// Do road segments.
 		TCorner corner;
-		try {
 		for (corner = SEGMENT; corner < NUM_JOINS; corner = (TCorner)(corner+1)) {
 			for (curRoad=0; curRoad<m_numRoads; curRoad++) {
 				if (m_roads[curRoad].m_type == corner) {
 					loadLit4PtSection(&m_roads[curRoad], ib, vb, pDynamicLightsIterator);
 				}
 			}		
-		}
-		IndexBufferExceptionFunc();
-		} catch(...) {
-			IndexBufferExceptionFunc();
 		}
 	}
 	this->m_roadTypes[m_curRoadType].setNumVertices(m_curNumRoadVertices);

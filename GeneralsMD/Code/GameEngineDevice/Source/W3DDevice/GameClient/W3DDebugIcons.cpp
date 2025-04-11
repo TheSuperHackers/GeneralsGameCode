@@ -247,7 +247,6 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 		shadeR = 0;
 		shadeG = 0;
 		shadeB = 255;
-		try {
 		for(;  numVertex<numRect*4 && k<m_numDebugIcons; k++) {
 			Int theAlpha = 64;
 			const Int FADE_FRAMES = 100;
@@ -300,11 +299,6 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 			curIndex += 6;
 			numVertex += 4;
 		}
-		IndexBufferExceptionFunc();
-		} catch(...) {
-			IndexBufferExceptionFunc();
-		}
-
 		}	
 		if (numVertex == 0) break;
 		DX8Wrapper::Set_Shader(ShaderClass(SC_ALPHA));

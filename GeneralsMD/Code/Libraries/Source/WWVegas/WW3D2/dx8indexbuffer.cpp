@@ -539,13 +539,3 @@ unsigned short DynamicIBAccessClass::Get_Default_Index_Count(void)
 {
 	return _DynamicDX8IndexBufferSize;
 }
-
-/*Added so that VisualC++ doesn't remove our try/catch blocks around index buffer access.
-This is needed because of a Windows 2000 Kernal bug as explained in the DX 9.0b readme file.*/
-int IndexBufferExceptionFunc(void)
-{
-	int b=1;
-
-	b += _IndexBufferTotalIndices;
-	return b;
-}

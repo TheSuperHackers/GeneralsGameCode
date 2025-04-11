@@ -295,13 +295,8 @@ void Line3DClass::Render(RenderInfoClass & rinfo)
 	{
 		DynamicIBAccessClass::WriteLockClass Lock(&ib);
 		unsigned short *mem=Lock.Get_Index_Array();
-		try {
 		for (int i=0; i<36; i++)
 			mem[i]=Indices[i];
-		IndexBufferExceptionFunc();
-		} catch(...) {
-			IndexBufferExceptionFunc();
-		}
 	}	
 
 	DX8Wrapper::Set_Vertex_Buffer(vb);

@@ -141,7 +141,6 @@ void W3DCustomEdging::loadEdgingsInVertexAndIndexBuffers(WorldHeightMap *pMap, I
 	if (maxY >= pMap->getYExtent()) maxY = pMap->getYExtent()-1;
 	Int row;
 	Int column;
-	try {
 	for (row=minY; row<maxY-1; row++) {
 		for (column = minX; column < maxX-1; column++) {
 			Int cellNdx = column+row*pMap->getXExtent();
@@ -262,10 +261,6 @@ void W3DCustomEdging::loadEdgingsInVertexAndIndexBuffers(WorldHeightMap *pMap, I
 			m_curNumEdgingIndices+=6;
 		}
 	}
-	IndexBufferExceptionFunc();
-	} catch(...) {
-		IndexBufferExceptionFunc();
-	}
 	m_anythingChanged = false;
 }
 
@@ -322,7 +317,7 @@ void W3DCustomEdging::allocateEdgingBuffers(void)
 	m_indexEdging=NEW_REF(DX8IndexBufferClass,(2*MAX_EDGE_INDEX+4, DX8IndexBufferClass::USAGE_DYNAMIC));
 	m_curNumEdgingVertices=0;
 	m_curNumEdgingIndices=0;
-	//m_edgeTexture = MSGNEW("TextureClass") TextureClass("EdgingTemplate.tga","EdgingTemplate.tga", TextureClass::MIP_LEVELS_3);
+	//m_edgeTexture = MSGNEW("TextureClass") TextureClass("EdgingTemplate.tga","EdgingTemplate.tga", MIP_LEVELS_3);
 }
 
 //=============================================================================

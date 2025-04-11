@@ -968,7 +968,6 @@ void W3DTreeBuffer::loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *p
 				m_curNumTreeVertices[bNdx]++;
 			}
 
-			try {
 			for (i=0; i<numIndex; i++) {
 				if (m_curNumTreeIndices[bNdx]+4 > MAX_TREE_INDEX) 
 					break;
@@ -976,10 +975,6 @@ void W3DTreeBuffer::loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *p
 				*curIb++ = startVertex + pPoly[i].J;
 				*curIb++ = startVertex + pPoly[i].K;
 				m_curNumTreeIndices[bNdx]+=3;
-			}
-			IndexBufferExceptionFunc();
-			} catch(...) {
-				IndexBufferExceptionFunc();
 			}
 		}		
 	}

@@ -1097,7 +1097,6 @@ void W3DProjectedShadowManager::queueDecal(W3DProjectedShadow *shadow)
 				return;
 		}
 
-		try {
 		if(pvIndices)
 		{	//fill each cell's vertex indices
 			Int rowStart;
@@ -1126,10 +1125,7 @@ void W3DProjectedShadowManager::queueDecal(W3DProjectedShadow *shadow)
 				}
 			}
 		}
-		IndexBufferExceptionFunc();
-		} catch(...) {
-			IndexBufferExceptionFunc();
-		}
+
 		shadowDecalIndexBufferD3D->Unlock();
 
 		Int numPolys = (endX - startX)*(endY - startY)*2;	//2 triangles per cell
@@ -1262,7 +1258,6 @@ void W3DProjectedShadowManager::queueSimpleDecal(W3DProjectedShadow *shadow)
 				return;
 		}
 
-		try {
 		if(pvIndices)
 		{	pvIndices[0]=nShadowDecalVertsInBatch;
 			pvIndices[1]=nShadowDecalVertsInBatch+1;
@@ -1271,10 +1266,6 @@ void W3DProjectedShadowManager::queueSimpleDecal(W3DProjectedShadow *shadow)
 			pvIndices[4]=nShadowDecalVertsInBatch+2;
 			pvIndices[5]=nShadowDecalVertsInBatch+3;
 			pvIndices += 6;
-		}
-		IndexBufferExceptionFunc();
-		} catch(...) {
-			IndexBufferExceptionFunc();
 		}
 
 		shadowDecalIndexBufferD3D->Unlock();
@@ -1320,9 +1311,9 @@ Int W3DProjectedShadowManager::renderShadows(RenderInfoClass & rinfo)
 		return projectionCount;
 
 	//According to Nvidia there's a D3D bug that happens if you don't start with a
- 	//new dynamic VB each frame - so we force a DISCARD by overflowing the counter.
- 	nShadowDecalVertsInBuf = 0xffff;
- 	nShadowDecalIndicesInBuf = 0xffff;
+	//new dynamic VB each frame - so we force a DISCARD by overflowing the counter.
+	nShadowDecalVertsInBuf = 0xffff;
+	nShadowDecalIndicesInBuf = 0xffff;
 
 	if (TheGlobalData->m_useShadowDecals)
 	{

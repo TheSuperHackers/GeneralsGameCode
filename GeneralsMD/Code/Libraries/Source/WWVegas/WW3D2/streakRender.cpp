@@ -1369,16 +1369,11 @@ void StreakRendererClass::RenderStreak
 			DynamicIBAccessClass::WriteLockClass lock(&ib_access);
 			unsigned short* inds=lock.Get_Index_Array();
 
-			try {
 			for (i=0; i<triangleIndex; i++)
 			{
 				*inds++=v_index_array[i].I;
 				*inds++=v_index_array[i].J;
 				*inds++=v_index_array[i].K;
-			}
-			IndexBufferExceptionFunc();
-			} catch(...) {
-				IndexBufferExceptionFunc();
 			}
 		}
 

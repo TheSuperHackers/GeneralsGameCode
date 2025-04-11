@@ -919,7 +919,7 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 				DynamicIBAccessClass::WriteLockClass lock(&dynamic_ib);
 				unsigned short * indices = lock.Get_Index_Array();
 				const TriIndex * polys = Model->Get_Polygon_Array();
-				try {
+
 				for (int i=0; i < temp_apt.Count(); i++)
 				{
 					unsigned v0 = polys[temp_apt[i]].I;
@@ -937,10 +937,6 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 					max_v = WWMath::Max(v0,max_v);
 					max_v = WWMath::Max(v1,max_v);
 					max_v = WWMath::Max(v2,max_v);
-				}
-				IndexBufferExceptionFunc();
-				} catch(...) {
-					IndexBufferExceptionFunc();
 				}
 			}
 
