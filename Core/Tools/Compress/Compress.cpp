@@ -20,9 +20,10 @@
 #include <cstdio>
 #include "Lib/BaseType.h"
 #include "Compression.h"
-#include "../CRCDiff/debug.h"
+// TheSuperHackers @compile feliwir 11/04/2025 Use the release DEBUG_LOG in debug aswell
+//#include "../CRCDiff/debug.h"
 
-#ifndef DEBUG
+//#ifndef DEBUG
 
 #include <cstdarg>
 
@@ -38,10 +39,10 @@ void ReleaseLog(const char *fmt, ...)
 	printf( "%s", buffer );
 }
 
-#undef DEBUG_LOG
+//#undef DEBUG_LOG
 #define DEBUG_LOG(x) ReleaseLog x
 
-#endif
+// #endif
 
 void dumpHelp(const char *exe)
 {

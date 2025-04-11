@@ -1176,7 +1176,7 @@ target_link_libraries(z_gameengine PUBLIC
     core_utility
     stlport
     core_browserdispatch
-    z_compression
+    core_compression
     z_wwvegas
 )
 

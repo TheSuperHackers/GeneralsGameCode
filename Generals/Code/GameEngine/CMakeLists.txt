@@ -1084,13 +1084,13 @@ target_include_directories(g_gameengine PRIVATE
 )
 
 target_link_libraries(g_gameengine PRIVATE
-    gi_libraries_include
+    gi_always
 )
 
 target_link_libraries(g_gameengine PUBLIC
     d3d8lib
     core_browserdispatch
-    g_compression
+    core_compression
     g_wwvegas
     core_config
     core_utility
