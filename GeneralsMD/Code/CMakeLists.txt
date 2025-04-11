@@ -24,8 +24,9 @@ target_include_directories(zi_libraries_source_wwvegas_wwmath INTERFACE "Librari
 target_include_directories(zi_libraries_source_wwvegas_wwsaveload INTERFACE "Libraries/Source/WWVegas/WWSaveLoad")
 target_include_directories(zi_main INTERFACE "Main")
 target_link_libraries(zi_always INTERFACE
-    zi_libraries_include
     core_utility
+    corei_libraries_include
+    zi_libraries_include
 )
 
 # Contains internal libraries
