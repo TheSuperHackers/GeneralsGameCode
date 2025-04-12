@@ -478,6 +478,9 @@ void GameClient::reset( void )
 	// clear any drawable TOC we might have
 	m_drawableTOC.clear();
 
+	// TheSuperHackers @fix Mauller 13/04/2025 Reset the drawable id so it does not keep growing over the lifetime of the game.
+	m_nextDrawableID = (DrawableID)1;
+
 }  // end reset
 
 /** -----------------------------------------------------------------------------------------------
