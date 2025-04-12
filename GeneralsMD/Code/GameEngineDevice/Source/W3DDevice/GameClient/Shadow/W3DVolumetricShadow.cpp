@@ -58,9 +58,6 @@
 #include "GameLogic/TerrainLogic.h"
 #include "WW3D2/dx8caps.h"
 #include "GameClient/Drawable.h"
-
-// TheSuperHackers @compile Removes the unused WWShade code. (#596)
-// If there is a desire to revive this, then the WWShade library needs to be re-added.
 #ifdef USE_WWSHADE
 #include "wwshade/shdmesh.h"
 #include "wwshade/shdsubmesh.h"
