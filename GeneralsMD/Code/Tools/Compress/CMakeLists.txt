@@ -1,7 +1,5 @@
 set(COMRPESS_SRC
     "Compress.cpp"
-    "../CRCDiff/debug.cpp"
-    "../CRCDiff/debug.h"
 )
 
 add_executable(z_compress WIN32)
