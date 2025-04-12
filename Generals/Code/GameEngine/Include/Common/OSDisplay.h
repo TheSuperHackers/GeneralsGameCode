@@ -35,7 +35,7 @@
 
 class AsciiString;
 
-enum OSDisplayButtonType
+enum OSDisplayButtonType CPP_11(: UnsignedInt)
 {
 	OSDBT_OK										= 0x00000001,
 	OSDBT_CANCEL								= 0x00000002,
@@ -44,7 +44,7 @@ enum OSDisplayButtonType
 	OSDBT_ERROR									= 0x80000000
 };
 
-enum OSDisplayOtherFlags
+enum OSDisplayOtherFlags CPP_11(: UnsignedInt)
 {
 	OSDOF_SYSTEMMODAL						= 0x00000001,
 	OSDOF_APPLICATIONMODAL			= 0x00000002,

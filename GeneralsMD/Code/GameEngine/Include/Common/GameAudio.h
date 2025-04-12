@@ -61,8 +61,8 @@ class Object;
 class SoundManager;
 
 
-enum AudioAffect;
-enum AudioType;
+enum AudioAffect CPP_11(: Int);
+enum AudioType CPP_11(: Int);
 
 struct AudioEventInfo;
 struct AudioRequest;

@@ -60,10 +60,10 @@ class ProductionPrerequisite;
 struct FieldParse;
 class Player;
 class INI;
-enum RadarPriorityType;
-enum ScienceType;
-enum EditorSortingType;
-enum ShadowType;
+enum RadarPriorityType CPP_11(: Int);
+enum ScienceType CPP_11(: Int);
+enum EditorSortingType CPP_11(: Int);
+enum ShadowType CPP_11(: Int);
 class WeaponTemplateSet;
 class ArmorTemplateSet;
 class FXList;
@@ -94,7 +94,7 @@ enum
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum ThingTemplateAudioType
+enum ThingTemplateAudioType CPP_11(: Int)
 {
 	TTAUDIO_voiceSelect,							///< Response when unit is selected
 	TTAUDIO_voiceGroupSelect,					///< Response when a group of this unit is selected
@@ -195,7 +195,7 @@ public:
 //-------------------------------------------------------------------------------------------------
 /** Object class type enumeration */
 //-------------------------------------------------------------------------------------------------
-enum BuildCompletionType
+enum BuildCompletionType CPP_11(: Int)
 {
 	BC_INVALID = 0,
 	BC_APPEARS_AT_RALLY_POINT,	///< unit appears at rally point of its #1 prereq
@@ -214,7 +214,7 @@ static const char *BuildCompletionNames[] =
 };
 #endif  // end DEFINE_BUILD_COMPLETION_NAMES
 
-enum BuildableStatus
+enum BuildableStatus CPP_11(: Int)
 {
 	// saved into savegames... do not change or remove values!
 	BSTATUS_YES = 0,
@@ -237,7 +237,7 @@ static const char *BuildableStatusNames[] =
 #endif	// end DEFINE_BUILDABLE_STATUS_NAMES
 
 //-------------------------------------------------------------------------------------------------
-enum ModuleParseMode
+enum ModuleParseMode CPP_11(: Int)
 {
 	MODULEPARSE_NORMAL,
 	MODULEPARSE_ADD_REMOVE_REPLACE,

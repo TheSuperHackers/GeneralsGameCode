@@ -78,7 +78,7 @@ void updateGameOptions( void );
 
 //Enum is used for the utility function so other windows do not need
 //to know about controls on LanGameOptions window.
-enum PostToLanGameType{ SEND_GAME_OPTS = 0,
+enum PostToLanGameType CPP_11(: Int){ SEND_GAME_OPTS = 0,
 												MAP_BACK,
 												POST_TO_LAN_GAME_TYPE_COUNT };
 //the utility function mentioned above

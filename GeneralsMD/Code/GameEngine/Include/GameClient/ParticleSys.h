@@ -56,7 +56,7 @@ class INI;
 class DebugWindowDialog;		// really ParticleEditorDialog
 class RenderInfoClass;			// ick
 
-enum ParticleSystemID
+enum ParticleSystemID CPP_11(: Int)
 {
 	INVALID_PARTICLE_SYSTEM_ID = 0
 };
@@ -82,7 +82,7 @@ struct RGBColorKeyframe
 	UnsignedInt frame;
 };
 
-enum ParticlePriorityType
+enum ParticlePriorityType CPP_11(: Int)
 {
 	INVALID_PRIORITY = 0, 
 	PARTICLE_PRIORITY_LOWEST = 1,

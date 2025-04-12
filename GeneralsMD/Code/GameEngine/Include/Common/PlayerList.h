@@ -60,7 +60,7 @@ class Team;
 class TeamFactory;
 
 //-------------------------------------------------------------------------------------------------
-enum AllowPlayerRelationship
+enum AllowPlayerRelationship CPP_11(: Int)
 {
 	ALLOW_SAME_PLAYER			= 0x01,		///< allow only objects of the same player as m_obj
 	ALLOW_ALLIES					= 0x02,		///< allow objects that m_obj considers allies

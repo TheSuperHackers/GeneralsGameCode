@@ -39,7 +39,7 @@
 
 
 //-------------------------------------------------------------------------------------------------
-enum FlammabilityStatusType
+enum FlammabilityStatusType CPP_11(: Int)
 {
 	// These show the state I last noticed my object was in.
 	FS_NORMAL = 0,

@@ -51,11 +51,11 @@ class PolygonTrigger;
 class UpgradeTemplate;
 class WeaponTemplate;
 
-enum GUICommandType;
-enum HackerAttackMode;
-enum WeaponSetType;
-enum WeaponLockType;
-enum SpecialPowerType;
+enum GUICommandType CPP_11(: Int);
+enum HackerAttackMode CPP_11(: Int);
+enum WeaponSetType CPP_11(: Int);
+enum WeaponLockType CPP_11(: Int);
+enum SpecialPowerType CPP_11(: Int);
 
 typedef std::vector<ObjectID> VecObjectID;
 typedef VecObjectID::iterator VecObjectIDIt;
@@ -63,7 +63,7 @@ typedef VecObjectID::iterator VecObjectIDIt;
 typedef std::list<Object *> ListObjectPtr;
 typedef ListObjectPtr::iterator ListObjectPtrIt;
 
-enum AIDebugOptions
+enum AIDebugOptions CPP_11(: Int)
 {
 	AI_DEBUG_NONE = 0, 
 	AI_DEBUG_PATHS,
@@ -307,7 +307,7 @@ class Weapon;
 // TheSuperHackers @compile xezon 22/03/2025 Renames AI_PASSIVE to not conflict with macro in ws2def.h
 
 // Note - written out in save/load xfer and .map files, don't change these numbers.  
-enum AttitudeType {
+enum AttitudeType CPP_11(: Int) {
 	ATTITUDE_SLEEP = -2,
 	ATTITUDE_PASSIVE=-1,
 	ATTITUDE_NORMAL=0,
@@ -316,7 +316,7 @@ enum AttitudeType {
 	ATTITUDE_INVALID=3
 };		///< AI "attitude" behavior modifiers
 
-enum CommandSourceType;
+enum CommandSourceType CPP_11(: Int);
 
 typedef UnsignedInt CommandSourceMask;
 
@@ -333,7 +333,7 @@ static const char *TheCommandSourceMaskNames[] =
 
 //------------------------------------------------------------------------------------------------------------
 
-enum AICommandType	// Stored in save file, do not reorder/renumber.  jba.
+enum AICommandType CPP_11(: Int)	// Stored in save file, do not reorder/renumber.  jba.
 {
 	AICMD_MOVE_TO_POSITION = 0,
 	AICMD_MOVE_TO_OBJECT,

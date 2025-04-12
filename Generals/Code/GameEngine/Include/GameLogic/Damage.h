@@ -43,7 +43,7 @@ class INI;
 //-------------------------------------------------------------------------------------------------
 /** Damage types, keep this in sync with TheDamageNames[] */
 //-------------------------------------------------------------------------------------------------
-enum DamageType
+enum DamageType CPP_11(: Int)
 {	
 	DAMAGE_EXPLOSION							= 0,			
 	DAMAGE_CRUSH									= 1,					
@@ -166,7 +166,7 @@ inline DamageTypeFlags clearDamageTypeFlag(DamageTypeFlags flags, DamageType dt)
 //-------------------------------------------------------------------------------------------------
 /** Death types, keep this in sync with TheDeathNames[] */
 //-------------------------------------------------------------------------------------------------
-enum DeathType
+enum DeathType CPP_11(: Int)
 {	
 	// note that these DELIBERATELY have (slightly) different names from the damage names,
 	// since there isn't necessarily a one-to-one correspondence. e.g., DEATH_BURNED

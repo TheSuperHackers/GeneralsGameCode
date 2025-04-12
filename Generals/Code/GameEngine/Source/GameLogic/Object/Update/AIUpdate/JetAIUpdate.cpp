@@ -55,7 +55,7 @@ const Real BIGNUM = 99999.0f;
 #endif
 
 //-------------------------------------------------------------------------------------------------
-enum TaxiType
+enum TaxiType CPP_11(: Int)
 {
 	FROM_HANGAR,
 	FROM_PARKING,
@@ -63,7 +63,7 @@ enum TaxiType
 };
 
 //-------------------------------------------------------------------------------------------------
-enum JetAIStateType
+enum JetAIStateType CPP_11(: Int)
 {
 	// note that these must be distinct (numerically) from AIStateType. ick.
 	JETAISTATETYPE_FIRST = 1000,

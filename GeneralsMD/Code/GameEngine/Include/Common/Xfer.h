@@ -41,10 +41,10 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Snapshot;
 typedef Int Color;
-enum ObjectID;
-enum DrawableID;
-enum KindOfType;
-enum ScienceType;
+enum ObjectID CPP_11(: Int);
+enum DrawableID CPP_11(: Int);
+enum KindOfType CPP_11(: Int);
+enum ScienceType CPP_11(: Int);
 class Matrix3D;
 
 // ------------------------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ typedef UnsignedByte XferVersion;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum XferMode
+enum XferMode CPP_11(: Int)
 {
 	XFER_INVALID = 0,
 
@@ -65,7 +65,7 @@ enum XferMode
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum XferStatus
+enum XferStatus CPP_11(: Int)
 {
 	XFER_STATUS_INVALID = 0,
 	
@@ -93,7 +93,7 @@ enum XferStatus
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum XferOptions
+enum XferOptions CPP_11(: UnsignedInt)
 {
 	XO_NONE										= 0x00000000,
 	XO_NO_POST_PROCESSING			= 0x00000001,

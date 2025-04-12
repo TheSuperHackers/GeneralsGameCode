@@ -50,13 +50,13 @@ class Weapon;
 class WeaponTemplate;
 class INI;
 class ParticleSystemTemplate;
-enum NameKeyType;
+enum NameKeyType CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
 const Int NO_MAX_SHOTS_LIMIT = 0x7fffffff;
 
 //-------------------------------------------------------------------------------------------------
-enum WeaponReloadType
+enum WeaponReloadType CPP_11(: Int)
 {
 	AUTO_RELOAD,
 	NO_RELOAD,
@@ -74,7 +74,7 @@ static const char *TheWeaponReloadNames[] =
 #endif
 
 //-------------------------------------------------------------------------------------------------
-enum WeaponPrefireType
+enum WeaponPrefireType CPP_11(: Int)
 {
 	PREFIRE_PER_SHOT,		///< Use the prefire delay for every shot we make
 	PREFIRE_PER_ATTACK,	///< Use the prefire delay each time we attack a new target
@@ -94,7 +94,7 @@ static const char *TheWeaponPrefireNames[] =
 #endif
 
 //-------------------------------------------------------------------------------------------------
-enum WeaponAntiMaskType
+enum WeaponAntiMaskType CPP_11(: Int)
 {
 	WEAPON_ANTI_AIRBORNE_VEHICLE	= 0x01,
 	WEAPON_ANTI_GROUND						= 0x02,
@@ -107,7 +107,7 @@ enum WeaponAntiMaskType
 };
 
 //-------------------------------------------------------------------------------------------------
-enum WeaponAffectsMaskType
+enum WeaponAffectsMaskType CPP_11(: Int)
 {
 	WEAPON_AFFECTS_SELF						= 0x01,
 	WEAPON_AFFECTS_ALLIES					= 0x02,
@@ -133,7 +133,7 @@ static const char *TheWeaponAffectsMaskNames[] =
 //#endif
 
 //-------------------------------------------------------------------------------------------------
-enum WeaponCollideMaskType
+enum WeaponCollideMaskType CPP_11(: Int)
 {
 	// all of these apply to *nontargeted* things that might just happen to get in the way...
 	// the target can always be collided with, regardless of flags
@@ -169,7 +169,7 @@ static const char *TheWeaponCollideMaskNames[] =
 // Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
 // existing values!
 //
-enum WeaponBonusConditionType
+enum WeaponBonusConditionType CPP_11(: Int)
 {
 	// The access and use of this enum has the bit shifting built in, so this is a 0,1,2,3,4,5 enum
 	WEAPONBONUSCONDITION_INVALID = -1,

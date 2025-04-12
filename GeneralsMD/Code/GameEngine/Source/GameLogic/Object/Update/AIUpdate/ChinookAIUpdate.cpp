@@ -58,7 +58,7 @@ const Real BIGNUM = 99999.0f;
 #endif
 
 //-------------------------------------------------------------------------------------------------
-enum ChinookAIStateType
+enum ChinookAIStateType CPP_11(: Int)
 {
 	// note that these must be distinct (numerically) from AIStateType. ick.
 	ChinookAIStateType_FIRST = 1000,

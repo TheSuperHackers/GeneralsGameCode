@@ -43,7 +43,7 @@ void RefreshGameInfoListBox( GameWindow *mainWin, GameWindow *win );
 void RefreshGameListBoxes( void );
 void ToggleGameListType( void );
 
-enum GameSortType
+enum GameSortType CPP_11(: Int)
 {
 	GAMESORT_ALPHA_ASCENDING = 0,
 	GAMESORT_ALPHA_DESCENDING,

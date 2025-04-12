@@ -38,21 +38,21 @@
 #define DEFAULT_WORLD_HEIGHT	64
 
 /// A unique, generic "identifier" used to access Objects.
-enum ObjectID
+enum ObjectID CPP_11(: Int)
 {
 	INVALID_ID = 0,
 	FORCE_OBJECTID_TO_LONG_SIZE = 0x7ffffff
 };
 
 /// A unique, generic "identifier" used to access Drawables.
-enum DrawableID
+enum DrawableID CPP_11(: Int)
 {
 	INVALID_DRAWABLE_ID = 0,
 	FORCE_DRAWABLEID_TO_LONG_SIZE = 0x7ffffff
 };
 
 /// A unique, generic "identifier" used to identify player specified formations.
-enum FormationID
+enum FormationID CPP_11(: Int)
 {
 	NO_FORMATION_ID = 0,					// Unit is not a member of any formation
 	FORCE_FORMATIONID_TO_LONG_SIZE = 0x7ffffff
@@ -63,7 +63,7 @@ class INI;
 //-------------------------------------------------------------------------------------------------
 /** The time of day enumeration, keep in sync with TimeOfDayNames[] */
 //-------------------------------------------------------------------------------------------------
-enum TimeOfDay
+enum TimeOfDay CPP_11(: Int)
 {
 	TIME_OF_DAY_INVALID = 0,
 	TIME_OF_DAY_FIRST = 1,
@@ -79,7 +79,7 @@ extern const char *TimeOfDayNames[];
 // defined in Common/GameType.cpp
 
 //-------------------------------------------------------------------------------------------------
-enum Weather
+enum Weather CPP_11(: Int)
 {
 	WEATHER_NORMAL = 0,
 	WEATHER_SNOWY = 1,
@@ -89,7 +89,7 @@ enum Weather
 
 extern const char *WeatherNames[];
 
-enum Scorches
+enum Scorches CPP_11(: Int)
 {
 	SCORCH_1 = 0,
 	SCORCH_2 = 1,
@@ -168,7 +168,7 @@ enum Scorches
 };
 
 //-------------------------------------------------------------------------------------------------
-enum WeaponSlotType
+enum WeaponSlotType CPP_11(: Int)
 {
 	PRIMARY_WEAPON = 0,
 	SECONDARY_WEAPON,
@@ -186,7 +186,7 @@ enum WeaponSlotType
 // made of structures.
 // Note that the bridges just index in the pathfinder, so you don't actually
 // have a LAYER_BRIDGE_1 enum value.
-enum PathfindLayerEnum {LAYER_INVALID = 0, LAYER_GROUND = 1, LAYER_WALL = 15, LAYER_LAST=15};
+enum PathfindLayerEnum CPP_11(: Int) {LAYER_INVALID = 0, LAYER_GROUND = 1, LAYER_WALL = 15, LAYER_LAST=15};
 
 //-------------------------------------------------------------------------------------------------
 

@@ -46,8 +46,8 @@ typedef UnsignedInt TranslatorID;								///< Unique identifiers for message str
 
 class Drawable;
 class GameMessageList;
-enum ObjectID;
-enum DrawableID;
+enum ObjectID CPP_11(: Int);
+enum DrawableID CPP_11(: Int);
 
 union GameMessageArgumentType														///< Union of possible data for given message type
 {
@@ -65,7 +65,7 @@ union GameMessageArgumentType														///< Union of possible data for given
 	WideChar				wChar;
 };
 
-enum GameMessageArgumentDataType 
+enum GameMessageArgumentDataType CPP_11(: Int) 
 {
 	ARGUMENTDATATYPE_INTEGER,
 	ARGUMENTDATATYPE_REAL,
@@ -679,7 +679,7 @@ protected:
 	What to do with a GameMessage after a translator has handled it.
 	Use a custom enum (rather than a Bool) to make the code more obvious.
 */
-enum GameMessageDisposition
+enum GameMessageDisposition CPP_11(: Int)
 {
 	KEEP_MESSAGE,			///< continue processing this message thru other translators
 	DESTROY_MESSAGE		///< destroy this message immediately and don't hand it to any other translators

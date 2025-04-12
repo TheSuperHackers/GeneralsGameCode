@@ -149,7 +149,7 @@ static void handleLadderSelection( Int ladderID )
 }
 
 
-enum PasswordMode
+enum PasswordMode CPP_11(: Int)
 {
 	PASS_NONE,
 	PASS_ENTRY,

@@ -39,7 +39,7 @@ class Player;
 /*
  * bitfield for specifying which victory conditions will apply in multiplayer games
  */
-enum VictoryType
+enum VictoryType CPP_11(: Int)
 {
 	VICTORY_NOBUILDINGS = 1,
 	VICTORY_NOUNITS = 2,

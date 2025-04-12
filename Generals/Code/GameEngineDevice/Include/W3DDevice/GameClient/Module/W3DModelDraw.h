@@ -62,7 +62,7 @@ class RenderObjClass;
 class Shadow;
 class TerrainTracksRenderObjClass;
 class HAnimClass;
-enum GameLODLevel;
+enum GameLODLevel CPP_11(: Int);
 //-------------------------------------------------------------------------------------------------
 /** The default client update module */
 //-------------------------------------------------------------------------------------------------

@@ -120,7 +120,7 @@ enum
 #endif
 
 //-------------------------------------------------------------------------------------------------
-enum GameDifficulty
+enum GameDifficulty CPP_11(: Int)
 {
 	DIFFICULTY_EASY,
 	DIFFICULTY_NORMAL,
@@ -130,7 +130,7 @@ enum GameDifficulty
 };
 
 //-------------------------------------------------------------------------------------------------
-enum PlayerType
+enum PlayerType CPP_11(: Int)
 {
 	PLAYER_HUMAN,				///< player is human-controlled
 	PLAYER_COMPUTER,		///< player is computer-controlled
@@ -140,7 +140,7 @@ enum PlayerType
 
 //-------------------------------------------------------------------------------------------------
 /// A PartitionCell can be one of three states for Shroud
-enum CellShroudStatus
+enum CellShroudStatus CPP_11(: Int)
 {
 	CELLSHROUD_CLEAR,
 	CELLSHROUD_FOGGED,
@@ -151,7 +151,7 @@ enum CellShroudStatus
 
 //-------------------------------------------------------------------------------------------------
 /// Since an object can take up more than a single PartitionCell, this is a status that applies to the whole Object
-enum ObjectShroudStatus
+enum ObjectShroudStatus CPP_11(: Int)
 {
 	OBJECTSHROUD_INVALID,				///< indeterminate state, will recompute
 	OBJECTSHROUD_CLEAR,					///< object is not shrouded at all (ie, completely visible)
@@ -164,7 +164,7 @@ enum ObjectShroudStatus
 };
 
 //-------------------------------------------------------------------------------------------------
-enum GuardMode
+enum GuardMode CPP_11(: Int)
 {
 	GUARDMODE_NORMAL,
 	GUARDMODE_GUARD_WITHOUT_PURSUIT,	// no pursuit out of guard area
@@ -185,7 +185,7 @@ enum
 
 /// Veterancy level define needed by several files that don't need the full Experience code.
 // NOTE NOTE NOTE: Keep TheVeterencyNames in sync with these.
-enum VeterancyLevel
+enum VeterancyLevel CPP_11(: Int)
 {
 	LEVEL_REGULAR = 0,
 	LEVEL_VETERAN,
@@ -204,7 +204,7 @@ extern const char *TheVeterancyNames[];
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum CommandSourceType 
+enum CommandSourceType CPP_11(: Int) 
 { 
 
 	CMD_FROM_PLAYER = 0, 
@@ -215,7 +215,7 @@ enum CommandSourceType
 };		///< the source of a command
 
 //-------------------------------------------------------------------------------------------------
-enum AbleToAttackType
+enum AbleToAttackType CPP_11(: Int)
 {
 	_ATTACK_FORCED			= 0x01,
 	_ATTACK_CONTINUED		= 0x02,
@@ -453,7 +453,7 @@ public:
 
 // ------------------------------------------------------------------------
 
-enum WhichTurretType
+enum WhichTurretType CPP_11(: Int)
 {
 	TURRET_INVALID = -1,
 
@@ -476,7 +476,7 @@ inline Real stdAngleDiff(Real a1, Real a2)
 
 // ------------------------------------------------------------------------
 // NOTE NOTE NOTE: Keep TheRelationShipNames in sync with this enum
-enum Relationship
+enum Relationship CPP_11(: Int)
 {
 	ENEMIES = 0,
 	NEUTRAL,

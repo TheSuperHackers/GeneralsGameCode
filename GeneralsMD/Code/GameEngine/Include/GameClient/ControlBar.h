@@ -61,19 +61,19 @@ class ControlBarResizer;
 class GameWindowTransitionsHandler;
 class DisplayString;
 
-enum ProductionID;
+enum ProductionID CPP_11(: Int);
 
-enum CommandSourceType;
-enum ProductionType;
-enum GadgetGameMessage;
-enum ScienceType;
-enum TimeOfDay;
-enum RadiusCursorType;
+enum CommandSourceType CPP_11(: Int);
+enum ProductionType CPP_11(: Int);
+enum GadgetGameMessage CPP_11(: Int);
+enum ScienceType CPP_11(: Int);
+enum TimeOfDay CPP_11(: Int);
+enum RadiusCursorType CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
 /** Command options */
 //-------------------------------------------------------------------------------------------------
-enum CommandOption
+enum CommandOption CPP_11(: Int)
 {
 	COMMAND_OPTION_NONE					= 0x00000000,
 	NEED_TARGET_ENEMY_OBJECT		= 0x00000001, // command now needs user to select enemy target
@@ -166,7 +166,7 @@ const UnsignedInt COMMAND_OPTION_NEED_OBJECT_TARGET =
 	* IMPORTANT: Make sure the GUICommandType enum and the TheGuiCommandNames[] have the same
 	*						 entries in the same order */
 //-------------------------------------------------------------------------------------------------
-enum GUICommandType
+enum GUICommandType CPP_11(: Int)
 {
 	GUI_COMMAND_NONE = 0,									///< invalid command
 	GUI_COMMAND_DOZER_CONSTRUCT,					///< dozer construct
@@ -270,7 +270,7 @@ static const char *TheGuiCommandNames[] =
 };
 #endif  // end DEFINE_GUI_COMMAND_NAMES
 
-enum CommandButtonMappedBorderType
+enum CommandButtonMappedBorderType CPP_11(: Int)
 {
 	COMMAND_BUTTON_BORDER_NONE = 0,
 	COMMAND_BUTTON_BORDER_BUILD,
@@ -576,7 +576,7 @@ private:
 	* display of commands and information to the user based on what objects are selected
 	* and their capabilities */
 //-------------------------------------------------------------------------------------------------
-enum ControlBarContext
+enum ControlBarContext CPP_11(: Int)
 {
 	CB_CONTEXT_NONE,									///< default view for center bar and portrait window
 //	CB_CONTEXT_PURCHASE_SCIENCE,
@@ -598,7 +598,7 @@ enum ControlBarContext
 	* hide and un-hide these windows and their interface controls in order to make
 	* the control bar context sensitive to the object that is selected */
 //-------------------------------------------------------------------------------------------------
-enum ContextParent
+enum ContextParent CPP_11(: Int)
 {
 	CP_MASTER,									///< *The* control bar window as a whole
 	CP_PURCHASE_SCIENCE,
@@ -615,7 +615,7 @@ enum ContextParent
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum CBCommandStatus
+enum CBCommandStatus CPP_11(: Int)
 {
 	CBC_COMMAND_NOT_USED = 0,		///< gui control message was *not* used
 	CBC_COMMAND_USED						///< gui control message was used
@@ -626,7 +626,7 @@ enum CBCommandStatus
 	* GUI button to be enabled/disabled/checked/unchecked to represent the current
 	* state of that command availability */
 // ------------------------------------------------------------------------------------------------
-enum CommandAvailability
+enum CommandAvailability CPP_11(: Int)
 {
 	COMMAND_RESTRICTED,
 	COMMAND_AVAILABLE,
@@ -636,7 +636,7 @@ enum CommandAvailability
 	COMMAND_CANT_AFFORD,
 };
 
-enum ControlBarStages
+enum ControlBarStages CPP_11(: Int)
 {
 	CONTROL_BAR_STAGE_DEFAULT = 0,		///< full view for the world to see
 	CONTROL_BAR_STAGE_SQUISHED,				///< squished just for expeirenced players

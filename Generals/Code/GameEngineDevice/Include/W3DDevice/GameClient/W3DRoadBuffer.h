@@ -103,7 +103,7 @@ struct TRoadSegInfo
 
 // The individual data for a road segment.
 enum {MAX_SEG_VERTEX=500, MAX_SEG_INDEX=2000};
-enum TCorner 
+enum TCorner CPP_11(: Int) 
 {
 	SEGMENT, 
 	CURVE, 

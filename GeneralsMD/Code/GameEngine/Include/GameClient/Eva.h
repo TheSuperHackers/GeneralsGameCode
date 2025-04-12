@@ -38,7 +38,7 @@ class INI;
 
 //------------------------------------------------------------------------------------ Eva Messages
 // Keep in sync with TheEvaMessageNames AND Eva::s_shouldPlayFuncs
-enum EvaMessage
+enum EvaMessage CPP_11(: Int)
 {
   EVA_Invalid = -1,
     

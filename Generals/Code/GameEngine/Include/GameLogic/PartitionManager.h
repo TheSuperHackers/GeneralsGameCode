@@ -96,10 +96,10 @@ class ThingTemplate;
 class GhostObject;
 class CommandButton;
 
-enum CommandSourceType;
+enum CommandSourceType CPP_11(: Int);
 
 // ----------------------------------------------------------------------------------------------
-enum ValueOrThreat
+enum ValueOrThreat CPP_11(: Int)
 {
 	VOT_CashValue = 1,
 	VOT_ThreatValue,
@@ -107,7 +107,7 @@ enum ValueOrThreat
 };
 
 // ----------------------------------------------------------------------------------------------
-enum FindPositionFlags
+enum FindPositionFlags CPP_11(: Int)
 {
 	FPF_NONE															= 0x00000000,		// no options, default behavior
 	FPF_IGNORE_WATER											= 0x00000001,		// a position found underwater is ok
@@ -149,7 +149,7 @@ struct FindPositionOptions
 //=====================================
 /** */
 //=====================================
-enum DistanceCalculationType
+enum DistanceCalculationType CPP_11(: Int)
 {
 	FROM_CENTER_2D					= 0,	///< measure from Object center in 2d.
 	FROM_CENTER_3D					= 1,	///< measure from Object center in 3d.

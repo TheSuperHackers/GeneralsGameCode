@@ -45,7 +45,7 @@ public:
 	}
 };
 
-enum RecorderModeType {
+enum RecorderModeType CPP_11(: Int) {
 	RECORDERMODETYPE_RECORD,
 	RECORDERMODETYPE_PLAYBACK,
 	RECORDERMODETYPE_NONE // this is a valid state to be in on the shell map, or in saved games

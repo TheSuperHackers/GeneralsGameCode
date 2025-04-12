@@ -28,7 +28,7 @@
 #ifndef __W3DWaterTracks_H_
 #define __W3DWaterTracks_H_
 
-enum waveType;	//forward reference
+enum waveType CPP_11(: Int);	//forward reference
 
 /// Custom render object that draws animated tracks/waves on the water.
 /**

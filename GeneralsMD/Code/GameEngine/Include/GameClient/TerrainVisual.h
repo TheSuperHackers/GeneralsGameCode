@@ -57,7 +57,7 @@ struct SeismicSimulationNode; // just a forward declaration folks, no cause for 
 class SeismicSimulationFilterBase
 {
 public:
-  enum SeismicSimStatusCode
+  enum SeismicSimStatusCode CPP_11(: Int)
   {
     SEISMIC_STATUS_INVALID,
     SEISMIC_STATUS_ACTIVE,
@@ -170,7 +170,7 @@ class DomeStyleSeismicFilter : public SeismicSimulationFilterBase
 //-------------------------------------------------------------------------------------------------
 /** LOD values for terrain, keep this in sync with TerrainLODNames[] */
 //-------------------------------------------------------------------------------------------------
-typedef enum _TerrainLOD
+typedef enum _TerrainLOD CPP_11(: Int)
 { 
 	TERRAIN_LOD_INVALID								= 0,
 	TERRAIN_LOD_MIN										= 1,  // note that this is less than max

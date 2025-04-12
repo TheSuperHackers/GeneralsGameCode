@@ -30,7 +30,7 @@
 #ifndef __WEAPONSTATUS_H__
 #define __WEAPONSTATUS_H__
 
-enum WeaponStatus
+enum WeaponStatus CPP_11(: Int)
 {
 	READY_TO_FIRE,
 	OUT_OF_AMMO,

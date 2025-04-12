@@ -74,7 +74,7 @@ static const Real MIN_ACTION_TOLERANCE = 70.0f;
 //-------------------------------------------------------------------------------------------------
 /** Available Dozer actions */
 //-------------------------------------------------------------------------------------------------
-enum DozerActionType
+enum DozerActionType CPP_11(: Int)
 {
 	DOZER_ACTION_PICK_ACTION_POS,		///< pick a location "around" the target to do our action
 	DOZER_ACTION_MOVE_TO_ACTION_POS,///< move to our action pos we've picked

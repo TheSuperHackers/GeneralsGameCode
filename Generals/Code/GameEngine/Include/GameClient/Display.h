@@ -51,7 +51,7 @@ class DebugDisplayInterface;
 class Radar;
 class Image;
 class DisplayString;
-enum StaticGameLODLevel;
+enum StaticGameLODLevel CPP_11(: Int);
 /**
  * The Display class implements the Display interface
  */
