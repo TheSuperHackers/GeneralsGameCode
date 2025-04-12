@@ -6753,7 +6753,7 @@ void ScriptActions::executeAction( ScriptAction *pAction )
 				                     pAction->getParameter(2)->getInt());
 			return;
 		case ScriptAction::DEBUG_CRASH_BOX:
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_CRASHING
 			{
 				const char* MSG = "Your Script requested the following message be displayed:\n\n";
 				const char* MSG2 = "\n\nTHIS IS NOT A BUG. DO NOT REPORT IT.";

@@ -354,6 +354,9 @@ BOOL CWorldBuilderApp::InitInstance()
 	
 #if defined(_DEBUG) || defined(_INTERNAL)
 	ini.load( AsciiString( "Data\\INI\\GameDataDebug.ini" ), INI_LOAD_MULTIFILE, NULL );
+#endif
+
+#ifdef DEBUG_CRASHING
 	TheWritableGlobalData->m_debugIgnoreAsserts = false;
 #endif
 

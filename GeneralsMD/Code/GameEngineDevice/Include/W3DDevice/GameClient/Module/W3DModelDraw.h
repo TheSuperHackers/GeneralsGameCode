@@ -176,7 +176,7 @@ struct ModelConditionInfo
 		Int							m_fxBone;											///< the FX bone for this barrel (zero == no bone)
 		Int							m_muzzleFlashBone;						///< the muzzle-flash subobj bone for this barrel (zero == none)
 		Matrix3D				m_projectileOffsetMtx;				///< where the projectile fires from
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 		AsciiString			m_muzzleFlashBoneName;
 #endif
 
@@ -191,7 +191,7 @@ struct ModelConditionInfo
 			m_fxBone = 0;
 			m_muzzleFlashBone = 0;
 			m_projectileOffsetMtx.Make_Identity();
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 			m_muzzleFlashBoneName.clear();
 #endif
 		}
@@ -200,7 +200,7 @@ struct ModelConditionInfo
 	}; 
 	typedef std::vector<WeaponBarrelInfo>	WeaponBarrelInfoVec;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 	AsciiString												m_description;
 #endif
 	std::vector<ModelConditionFlags>	m_conditionsYesVec;

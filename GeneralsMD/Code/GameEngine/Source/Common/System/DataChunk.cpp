@@ -893,7 +893,7 @@ void DataChunkInput::readArrayOfBytes(char *ptr, Int len)
 NameKeyType DataChunkInput::readNameKey(void)
 {
 		Int keyAndType = readInt();
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#ifdef DEBUG_CRASHING
 		Dict::DataType t = (Dict::DataType)(keyAndType & 0xff);
 		DEBUG_ASSERTCRASH(t==Dict::DICT_ASCIISTRING,("Invalid key data."));
 #endif

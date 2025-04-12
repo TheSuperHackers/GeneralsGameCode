@@ -1704,6 +1704,7 @@ void MapObjectProps::InitSound(void)
     for ( i = 0; i <= AP_CRITICAL; i++ )
     {
       Int index = priorityComboBox->InsertString( i,theAudioPriorityNames[i] );
+      (void)index;
       DEBUG_ASSERTCRASH( index == i, ("insert string returned %d, expected %d", index, i ) );
     }
   }

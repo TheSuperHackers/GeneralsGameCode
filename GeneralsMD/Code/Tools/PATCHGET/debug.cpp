@@ -66,7 +66,7 @@ static int doCrashBox(const char *buffer, bool logResult)
 	return result;
 }
 
-#ifdef DEBUG
+#if defined(DEBUG) || defined(DEBUG_LOGGING)
 
 void DebugLog(const char *fmt, ...)
 {
@@ -80,7 +80,7 @@ void DebugLog(const char *fmt, ...)
 	printf( "%s", theBuffer );
 }
 
-#endif // DEBUG
+#endif // defined(DEBUG) || defined(DEBUG_LOGGING)
 
 #ifdef DEBUG_CRASHING
 

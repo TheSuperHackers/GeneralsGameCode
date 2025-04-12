@@ -377,7 +377,7 @@ void TransportContain::onRemoving( Object *rider )
 	DEBUG_ASSERTCRASH(transportSlotCount > 0, ("Hmm, this object isnt transportable"));
 	m_extraSlotsInUse -= transportSlotCount - 1;
 
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#ifdef DEBUG_CRASHING
 	UnsignedInt containCount = getContainCount();
 	UnsignedInt containMax = getContainMax();
 	DEBUG_ASSERTCRASH(m_extraSlotsInUse >= 0 && m_extraSlotsInUse + containCount <= containMax, ("Hmm, bad slot count"));

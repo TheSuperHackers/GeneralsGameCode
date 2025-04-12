@@ -647,7 +647,7 @@ public:
 
 	// this is intended for use ONLY by AIFollowPathState.
 	inline void friend_setCurrentGoalPathIndex( Int index ) { m_nextGoalPathIndex = index; }
-#if defined(_DEBUG) || defined(_INTERNAL)	
+#ifdef DEBUG_LOGGING
 	inline const Coord3D *friend_getRequestedDestination() const { return &m_requestedDestination; }
 	inline const Coord3D *friend_getRequestedDestination2() const { return &m_requestedDestination2; }
 #endif

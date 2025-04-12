@@ -37,6 +37,7 @@ extern "C" {
 //#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
 
+// TheSuperHackers @todo Recover debug logging in this file?
 #define DEBUG_LOG(x) {}
 
 const char *CompressionManager::getCompressionNameByType( CompressionType compType )
@@ -328,10 +329,6 @@ Int CompressionManager::decompressData( void *srcVoid, Int srcLen, void *destVoi
 
 	if (compType >= COMPRESSION_ZLIB1 && compType <= COMPRESSION_ZLIB9)
 	{
-#ifdef DEBUG_LOGGING
-		Int level = compType - COMPRESSION_ZLIB1 + 1; // 1-9
-#endif
-
 		unsigned long outLen = destLen;
 		Int err = z_uncompress(dest, &outLen, src+8, srcLen-8);
 		if (err == Z_OK || err == Z_STREAM_END)
@@ -340,7 +337,8 @@ Int CompressionManager::decompressData( void *srcVoid, Int srcLen, void *destVoi
 		}
 		else
 		{
-			DEBUG_LOG(("ZLib decompression error (src is level %d, %d bytes long) %d\n", level, srcLen, err));
+			DEBUG_LOG(("ZLib decompression error (src is level %d, %d bytes long) %d\n",
+				compType - COMPRESSION_ZLIB1 + 1 /* 1-9 */, srcLen, err));
 			return 0;
 		}
 	}

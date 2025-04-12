@@ -205,8 +205,11 @@ LogClass BonePosLog("bonePositions.txt");
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 extern AsciiString TheThingTemplateBeingParsedName;
+#endif
+
+#if defined(_DEBUG) || defined(_INTERNAL)
 extern Real TheSkateDistOverride;
 #endif
 
@@ -770,7 +773,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				{
 					sprintf(buffer, "%s%02d", mfName.str(), i);
 					findPristineBone(NAMEKEY(buffer), &info.m_muzzleFlashBone);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 					if (info.m_muzzleFlashBone)
 						info.m_muzzleFlashBoneName = buffer;
 #endif
@@ -818,7 +821,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				if (!mfName.isEmpty())
 					findPristineBone(NAMEKEY(mfName), &info.m_muzzleFlashBone);
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 				if (info.m_muzzleFlashBone)
 					info.m_muzzleFlashBoneName = mfName;
 #endif
@@ -1586,7 +1589,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 	//	}
 			
 			ModelConditionFlags conditionsYes;
-	#if defined(_DEBUG) || defined(_INTERNAL)
+	#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 			AsciiString description;
 			conditionsYes.parse(ini, &description);
 

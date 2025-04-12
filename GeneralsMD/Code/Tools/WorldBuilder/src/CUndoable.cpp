@@ -723,6 +723,7 @@ m_pDoc(pDoc)
 	m_new = newSL;
 	// ensure the new setup is valid. (don't mess with the old one.)
 	Bool modified = m_new.validateSides();
+	(void)modified;
 	DEBUG_ASSERTLOG(!modified,("*** had to clean up sides in SidesListUndoable! (caller should do this)\n"));
 }
 

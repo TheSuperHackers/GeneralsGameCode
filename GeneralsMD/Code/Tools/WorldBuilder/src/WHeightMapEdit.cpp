@@ -304,7 +304,7 @@ WorldHeightMapEdit::WorldHeightMapEdit(ChunkInputStream *pStrm):
 		optimizeTiles();
 	}
 	selectDuplicates();
-#ifdef _DEBUG
+#ifdef DEBUG_CRASHING
 	if (didCancel) {
 		return; // won't check out right.
 	}
@@ -782,7 +782,7 @@ void WorldHeightMapEdit::saveToFile(DataChunkOutput &chunkWriter)
 
 	chunkWriter.closeDataChunk();
 
-#ifdef _DEBUG
+#ifdef DEBUG_CRASHING
 	for (i=0; i<m_dataSize; i++) {
 		Int texNdx = this->m_tileNdxes[i];
 		DEBUG_ASSERTCRASH((texNdx>>2) < m_numBitmapTiles,("oops"));
@@ -1926,7 +1926,7 @@ Int WorldHeightMapEdit::getFirstTile(Int textureClass)
 */	 
 void WorldHeightMapEdit::dbgVerifyAfterUndo(void)
 {
-#ifdef _DEBUG
+#ifdef DEBUG_CRASHING
 	Int i, j;
 	for (i=0; i<m_numGlobalTextureClasses; i++) {
 		m_globalTextureClasses[i].forDebugOnly_fileTextureClass = -1;

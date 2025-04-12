@@ -2272,7 +2272,9 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 
 	// Turn off shadows
 	TheWritableGlobalData->m_useShadowVolumes = false;
+#ifdef DEBUG_CRASHING
 	TheWritableGlobalData->m_debugIgnoreAsserts = TRUE;
+#endif
 
 	// Just look somewhere.  lookAt does some terrain specific setup, so it is good
 	// to call it.  jba
@@ -2717,8 +2719,8 @@ void GameLogic::deselectObject(Object *obj, PlayerMaskType playerMask, Bool affe
 // ------------------------------------------------------------------------------------------------
 inline void GameLogic::validateSleepyUpdate() const
 {
-// pretty slow, so do only for DEBUG for now. turn on if you suspect wonkiness.
-#ifdef _DEBUG
+// pretty slow, so do only for DEBUG_CRASHING for now. turn on if you suspect wonkiness.
+#ifdef DEBUG_CRASHING
 	#define SLEEPY_DEBUG
 #endif
 #ifdef SLEEPY_DEBUG
@@ -3652,12 +3654,12 @@ void GameLogic::update( void )
 	Bool isMPGameOrReplay = (TheRecorder && TheRecorder->isMultiplayer() && getGameMode() != GAME_SHELL && getGameMode() != GAME_NONE);
 	Bool isSoloGameOrReplay = (TheRecorder && !TheRecorder->isMultiplayer() && getGameMode() != GAME_SHELL && getGameMode() != GAME_NONE);
 	Bool generateForMP = (isMPGameOrReplay && (m_frame % TheGameInfo->getCRCInterval()) == 0);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_CRC
 	Bool generateForSolo = isSoloGameOrReplay && ((m_frame && (m_frame%100 == 0)) ||
 		(getFrame() > TheCRCFirstFrameToLog && getFrame() < TheCRCLastFrameToLog && ((m_frame % REPLAY_CRC_INTERVAL) == 0)));
 #else
 	Bool generateForSolo = isSoloGameOrReplay && ((m_frame % REPLAY_CRC_INTERVAL) == 0);
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // DEBUG_CRC
 
 	if (generateForSolo || generateForMP)
 	{

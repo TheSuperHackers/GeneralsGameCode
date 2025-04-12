@@ -489,8 +489,6 @@ public:
 	Real m_debugProjectileTileWidth;			///< How wide should these tiles be?
 	Int m_debugProjectileTileDuration;		///< How long should these tiles stay around, in frames?
 	RGBColor m_debugProjectileTileColor;	///< What color should these tiles be?
-	Bool m_debugIgnoreAsserts;						///< Ignore all asserts.
-	Bool m_debugIgnoreStackTrace;					///< No stacktraces for asserts.
 	Bool m_showCollisionExtents;	///< Used to display collision extents
   Bool m_showAudioLocations;    ///< Used to display audio markers and ambient sound radii
 	Bool m_saveStats;
@@ -504,6 +502,14 @@ public:
 	Int m_latencyNoise;						///< Max amplitude of jitter to throw in
 	Int m_packetLoss;							///< Percent of packets to drop
 	Bool m_extraLogging;					///< More expensive debug logging to catch crashes.
+#endif
+
+#ifdef DEBUG_CRASHING
+		Bool m_debugIgnoreAsserts;						///< Ignore all asserts.
+#endif
+
+#ifdef DEBUG_STACKTRACE
+	Bool m_debugIgnoreStackTrace;					///< No stacktraces for asserts.
 #endif
 
 	Bool				m_isBreakableMovie;							///< if we enter a breakable movie, set this flag

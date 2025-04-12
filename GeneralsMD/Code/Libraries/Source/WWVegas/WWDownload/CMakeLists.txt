@@ -21,4 +21,5 @@ target_sources(z_wwdownload PRIVATE ${WWDOWNLOAD_SRC})
 
 target_link_libraries(z_wwdownload PRIVATE
     z_wwcommon
+    zi_gameengine_include
 )
