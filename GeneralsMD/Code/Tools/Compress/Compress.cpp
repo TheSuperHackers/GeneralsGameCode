@@ -20,28 +20,11 @@
 #include <cstdio>
 #include "Lib/BaseType.h"
 #include "Compression.h"
-#include "../CRCDiff/debug.h"
 
-#ifndef DEBUG
 
-#include <cstdarg>
+// TheSuperHackers @todo Streamline and simplify the logging approach for tools
+#define DEBUG_LOG(x) printf x
 
-void ReleaseLog(const char *fmt, ...)
-{
-	static char buffer[1024];
-	va_list va;
-	va_start( va, fmt );
-	vsnprintf(buffer, 1024, fmt, va );
-	buffer[1023] = 0;
-	va_end( va );
-
-	printf( "%s", buffer );
-}
-
-#undef DEBUG_LOG
-#define DEBUG_LOG(x) ReleaseLog x
-
-#endif
 
 void dumpHelp(const char *exe)
 {
