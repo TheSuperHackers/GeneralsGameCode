@@ -100,6 +100,15 @@ ShaderClass ShaderClass::_PresetMultiplicativeShader(SC_MULTIPLICATIVE);
 	DETAILCOLOR_DISABLE, DETAILALPHA_DISABLE) )
 ShaderClass ShaderClass::_PresetOpaque2DShader(SC_OP_2D);
 
+// Texturing, default zbuffer reading, no zbuffer writing, no gradients, no blending, no
+// fogging - mostly for opaque sprite objects.
+#define SC_OP_SPRITE ( SHADE_CNST(PASS_LEQUAL, DEPTH_WRITE_DISABLE, COLOR_WRITE_ENABLE, SRCBLEND_ONE, \
+	DSTBLEND_ZERO, FOG_DISABLE, GRADIENT_DISABLE, SECONDARY_GRADIENT_DISABLE, TEXTURING_ENABLE, \
+	ALPHATEST_DISABLE, CULL_MODE_ENABLE, \
+	DETAILCOLOR_DISABLE, DETAILALPHA_DISABLE) )
+ShaderClass ShaderClass::_PresetOpaqueSpriteShader(SC_OP_SPRITE);
+
+
 // Texturing, no zbuffer reading/writing, no gradients, additive blending,
 // no fogging - mostly for additive 2D objects.
 #define SC_ADD_2D ( SHADE_CNST(PASS_ALWAYS, DEPTH_WRITE_DISABLE, COLOR_WRITE_ENABLE, SRCBLEND_ONE, \
@@ -934,3 +943,99 @@ bool ShaderClass::Is_Backface_Culling_Inverted(void)
 {
 	return (_PolygonCullMode == D3DCULL_CCW);
 }
+
+const StringClass& ShaderClass::Get_Description(StringClass& str) const
+{
+	str="";
+	switch (Get_Depth_Compare()) {
+	case PASS_NEVER: str+="DEPTH_COMPARE:PASS_NEVER | "; break;
+	case PASS_LESS: str+="DEPTH_COMPARE:PASS_LESS | "; break;
+	case PASS_EQUAL: str+="DEPTH_COMPARE:PASS_EQUAL | "; break;
+	case PASS_LEQUAL: str+="DEPTH_COMPARE:PASS_LEQUAL | "; break;
+	case PASS_GREATER: str+="DEPTH_COMPARE:PASS_GREATER | "; break;
+	case PASS_NOTEQUAL: str+="DEPTH_COMPARE:PASS_NOTEQUAL | "; break;
+	case PASS_GEQUAL: str+="DEPTH_COMPARE:PASS_GEQUAL | "; break;
+	case PASS_ALWAYS: str+="DEPTH_COMPARE:PASS_ALWAYS | "; break;
+	}
+
+	switch (Get_Depth_Mask()) {
+	case DEPTH_WRITE_DISABLE: str+="DEPTH_WRITE_DISABLE | "; break;
+	case DEPTH_WRITE_ENABLE: str+="DEPTH_WRITE_ENABLE | "; break;
+	}
+
+	switch (Get_Color_Mask()) {
+	case COLOR_WRITE_DISABLE: str+="COLOR_WRITE_DISABLE | "; break;
+	case COLOR_WRITE_ENABLE: str+="COLOR_WRITE_ENABLE | "; break;
+	}
+
+	switch (Get_Dst_Blend_Func()) {
+	case DSTBLEND_ZERO: str+="DSTBLEND_ZERO | "; break;
+  	case DSTBLEND_ONE: str+="DSTBLEND_ONE | "; break;
+ 	case DSTBLEND_SRC_COLOR: str+="DSTBLEND_SRC_COLOR | "; break;
+ 	case DSTBLEND_ONE_MINUS_SRC_COLOR: str+="DSTBLEND_ONE_MINUS_SRC_COLOR | "; break;
+ 	case DSTBLEND_SRC_ALPHA: str+="DSTBLEND_SRC_ALPHA | "; break;
+ 	case DSTBLEND_ONE_MINUS_SRC_ALPHA: str+="DSTBLEND_ONE_MINUS_SRC_ALPHA | "; break;
+	}
+
+	switch (Get_Fog_Func()) {
+	case FOG_DISABLE: str+="FOG_DISABLE | "; break;
+ 	case FOG_ENABLE: str+="FOG_ENABLE | "; break;
+ 	case FOG_SCALE_FRAGMENT: str+="FOG_SCALE_FRAGMENT | "; break;
+ 	case FOG_WHITE: str+="FOG_WHITE | "; break;
+	}
+
+	switch (Get_Primary_Gradient()) {
+ 	case GRADIENT_DISABLE: str+="GRADIENT_DISABLE | "; break;
+	case GRADIENT_MODULATE: str+="GRADIENT_MODULATE | "; break;
+	case GRADIENT_ADD: str+="GRADIENT_ADD | "; break;
+	case GRADIENT_BUMPENVMAP: str+="GRADIENT_BUMPENVMAP | "; break;
+	case GRADIENT_BUMPENVMAPLUMINANCE: str+="GRADIENT_BUMPENVMAPLUMINANCE | "; break;
+	case GRADIENT_DOTPRODUCT3: str+="GRADIENT_DOTPRODUCT3 | "; break;
+	}
+
+	switch (Get_Secondary_Gradient()) {
+	case SECONDARY_GRADIENT_DISABLE: str+="SECONDARY_GRADIENT_DISABLE | "; break;
+	case SECONDARY_GRADIENT_ENABLE: str+="SECONDARY_GRADIENT_ENABLE | "; break;
+	}
+
+	switch (Get_Src_Blend_Func()) {
+  	case SRCBLEND_ZERO: str+="SRCBLEND_ZERO | "; break;
+  	case SRCBLEND_ONE: str+="SRCBLEND_ONE | "; break;
+ 	case SRCBLEND_SRC_ALPHA: str+="SRCBLEND_SRC_ALPHA | "; break;
+ 	case SRCBLEND_ONE_MINUS_SRC_ALPHA: str+="SRCBLEND_ONE_MINUS_SRC_ALPHA | "; break;
+	}
+
+	switch (Get_Texturing()) {
+	case TEXTURING_DISABLE: str+="TEXTURING_DISABLE | "; break;
+	case TEXTURING_ENABLE: str+="TEXTURING_ENABLE | "; break;
+	}
+
+	switch (Get_NPatch_Enable()) {
+	case NPATCH_DISABLE: str+="NPATCH_DISABLE | "; break;
+	case NPATCH_ENABLE: str+="NPATCH_ENABLE | "; break;
+	}
+
+	switch (Get_Alpha_Test()) {
+	case ALPHATEST_DISABLE: str+="ALPHATEST_DISABLE | "; break;
+	case ALPHATEST_ENABLE: str+="ALPHATEST_ENABLE | "; break;
+	}
+
+	switch (Get_Cull_Mode()) {
+	case CULL_MODE_DISABLE: str+="CULL_MODE_DISABLE | "; break;
+	case CULL_MODE_ENABLE: str+="CULL_MODE_ENABLE | "; break;
+	}
+
+	switch (Get_Post_Detail_Color_Func()) {
+	case DETAILCOLOR_DISABLE: str+="DETAILCOLOR_DISABLE"; break;
+	case DETAILCOLOR_DETAIL: str+="DETAILCOLOR_DETAIL"; break;
+	case DETAILCOLOR_SCALE: str+="DETAILCOLOR_SCALE"; break;
+	case DETAILCOLOR_INVSCALE: str+="DETAILCOLOR_INVSCALE"; break;
+	case DETAILCOLOR_ADD: str+="DETAILCOLOR_ADD"; break;
+	case DETAILCOLOR_SUB: str+="DETAILCOLOR_SUB"; break;
+	case DETAILCOLOR_SUBR: str+="DETAILCOLOR_SUBR"; break;
+	case DETAILCOLOR_BLEND: str+="DETAILCOLOR_BLEND"; break;
+	case DETAILCOLOR_DETAILBLEND: str+="DETAILCOLOR_DETAILBLEND"; break;
+	}
+	return str;
+}
+

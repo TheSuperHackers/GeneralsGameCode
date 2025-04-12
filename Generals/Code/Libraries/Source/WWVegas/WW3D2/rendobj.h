@@ -318,6 +318,7 @@ public:
 	virtual int						Get_Sub_Object_Bone_Index(int LodIndex, int ModelIndex)	const 		{ return 0; }
 	virtual int						Add_Sub_Object_To_Bone(RenderObjClass * subobj,int bone_index)	{ return 0; }
 	virtual int						Add_Sub_Object_To_Bone(RenderObjClass * subobj,const char * bname);
+	virtual int						Remove_Sub_Objects_From_Bone(int boneindex);
 	virtual int						Remove_Sub_Objects_From_Bone(const char * bname);
 
 	// This is public only so objects can recursively call this on their sub-objects
@@ -450,7 +451,7 @@ public:
 	virtual float					Get_Screen_Size(CameraClass &camera);
 	virtual void					Scale(float scale) 															{ };
 	virtual void					Scale(float scalex, float scaley, float scalez)						{ };
- 	virtual void					Set_ObjectScale(float scale) { ObjectScale=scale;}	//set's a scale factor that's factored into transform matrix.
+ 	virtual void					Set_ObjectScale(float scale) { ObjectScale=scale;}	//set's a scale factor that's factored into transform matrix.									{ScaleFactor=scale; };
 	const float						Get_ObjectScale( void ) const { return ObjectScale; };
  	void							Set_ObjectColor(unsigned int color) { ObjectColor=color;}	//the color that was used to modify the asset for player team color (for Generals). -MW
 	const unsigned int				Get_ObjectColor( void ) const { return ObjectColor; };
@@ -462,6 +463,11 @@ public:
 	virtual int						Is_Not_Hidden_At_All(void)													{ return ((Bits & IS_NOT_HIDDEN_AT_ALL) == IS_NOT_HIDDEN_AT_ALL); }
 	virtual int						Is_Visible(void) const														{ return (Bits & IS_VISIBLE); }
 	virtual void					Set_Visible(int onoff)														{ if (onoff) { Bits |= IS_VISIBLE; } else { Bits &= ~IS_VISIBLE; } }
+
+// The cheatSpy has been put on ice until later... perhaps the next patch? - M Lorenzen
+  //	virtual int						Is_VisibleWithCheatSpy(void) const								{ return ((Bits&=~0x80) & (IS_VISIBLE); }
+//	virtual void					Set_VisibleWithCheatSpy(int onoff)								{ if (onoff) { Bits |= IS_VISIBLE|0x80; } else { Bits &= ~IS_VISIBLE; } }
+
 	virtual int						Is_Hidden(void) const														{ return !(Bits & IS_NOT_HIDDEN); }
 	virtual void					Set_Hidden(int onoff)														{ if (onoff) { Bits &= ~IS_NOT_HIDDEN; } else { Bits |= IS_NOT_HIDDEN; } }
 	virtual int						Is_Animation_Hidden(void) const											{ return !(Bits & IS_NOT_ANIMATION_HIDDEN); }
@@ -487,6 +493,13 @@ public:
 
 	void								Set_Sub_Object_Transforms_Dirty(bool onoff)							{ if (onoff) { Bits |= SUBOBJ_TRANSFORMS_DIRTY; } else { Bits &= ~SUBOBJ_TRANSFORMS_DIRTY; } }
 	bool								Are_Sub_Object_Transforms_Dirty(void)									{ return (Bits & SUBOBJ_TRANSFORMS_DIRTY) != 0; }
+
+	void								Set_Ignore_LOD_Cost(bool onoff)											{ if (onoff) { Bits |= IGNORE_LOD_COST; } else { Bits &= ~IGNORE_LOD_COST; } }
+	bool								Is_Ignoring_LOD_Cost(void)													{ return (Bits & IGNORE_LOD_COST) != 0; }
+
+	void								Set_Is_Self_Shadowed()														{ Bits|=IS_SELF_SHADOWED; }
+	void								Unset_Is_Self_Shadowed()													{ Bits&=~IS_SELF_SHADOWED; }
+	int								Is_Self_Shadowed() const													{ return (Bits&IS_SELF_SHADOWED); }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Persistant object save-load interface
@@ -520,12 +533,13 @@ protected:
 		IS_FORCE_VISIBLE =			0x00000800,
 		BOUNDING_VOLUMES_VALID =	0x00002000,		
 		IS_TRANSLUCENT =				0x00004000,			// is additive or alpha blended on any poly
-		//IS_VERTEX_PROCESSOR =		0x00008000,			// is or has a vertex processor, OBSOLETE!
+		IGNORE_LOD_COST =				0x00008000,			// used to define if we should ignore object from LOD calculations
 		SUBOBJS_MATCH_LOD =			0x00010000,			// force sub-objects to have same LOD level
 		SUBOBJ_TRANSFORMS_DIRTY =	0x00020000,			// my sub-objects need me to update their transform
 		IS_ALPHA = 0x00040000,	// added for Generals so we can default these meshes not to cast shadows. -MW
-		IS_ADDITIVE = 0x00080000,	//added for Generals so we quickly determine what type of blending is on the mesh. -MW
-		
+		IS_ADDITIVE = 0x00100000,	//added for Generals so we quickly determine what type of blending is on the mesh. -MW
+		IS_SELF_SHADOWED =			0x00080000,			// the mesh is self shadowed
+		IS_CHEATER =            0x00100000,// the new cheat spy code uses these bits, since nothing else now does
 		IS_REALLY_VISIBLE =			IS_VISIBLE | IS_NOT_HIDDEN | IS_NOT_ANIMATION_HIDDEN,
       IS_NOT_HIDDEN_AT_ALL =     IS_NOT_HIDDEN | IS_NOT_ANIMATION_HIDDEN,
 		DEFAULT_BITS =					COLL_TYPE_ALL | IS_NOT_HIDDEN | IS_NOT_ANIMATION_HIDDEN,

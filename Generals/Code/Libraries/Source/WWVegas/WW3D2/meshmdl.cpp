@@ -102,6 +102,7 @@ MeshModelClass::MeshModelClass(const MeshModelClass & that) :
 
 MeshModelClass::~MeshModelClass(void)
 {
+//	WWDEBUG_SAY(("Note: Mesh %s was never used\n",Get_Name()));
 	TheDX8MeshRenderer.Unregister_Mesh_Type(this);
 
 	Reset(0,0,0);

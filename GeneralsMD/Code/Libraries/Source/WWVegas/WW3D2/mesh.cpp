@@ -677,6 +677,7 @@ void MeshClass::Render(RenderInfoClass & rinfo)
 		m_materialPassEmissiveOverride = rinfo.materialPassEmissiveOverride;
 
 		WW3D::Add_To_Static_Sort_List(this, sort_level);
+
 	} else {
 
 		/* Commented out since we set lighting environment only on visible meshes below. -MW
@@ -1173,6 +1174,7 @@ WW3DErrorType MeshClass::Load_W3D(ChunkLoadClass & cload)
 	int is_translucent = Model->Get_Flag(MeshModelClass::SORT);
 	int is_alpha = 0;	//keep track of alpha pieces that require sorting (including static sort lists).
 	int is_additive = 0;
+
 	if (Model->Has_Shader_Array(0)) {
 		for (int i=0; i<Model->Get_Polygon_Count(); i++) {
 			ShaderClass shader = Model->Get_Shader(i,0);

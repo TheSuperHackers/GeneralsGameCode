@@ -73,6 +73,12 @@ class	Vector4;
 #define RGBA_TO_INT32(r,g,b,a)	(unsigned(a)<<24)|(unsigned(r)<<16)|(unsigned(g)<<8)|(unsigned(b))
 
 //
+// Float RGB to INT32 methods (each component is a float between 0.0 and 1.0)
+//
+#define FRGB_TO_INT32(r,g,b)		(unsigned(r*255.0f)<<16)|(unsigned(g*255.0f)<<8)|(unsigned(b*255.0f))|0xFF000000
+#define FRGBA_TO_INT32(r,g,b,a)	(unsigned(a*255.0f)<<24)|(unsigned(r*255.0f)<<16)|(unsigned(g*255.0f)<<8)|(unsigned(b*255.0f))
+
+//
 //	INT32 to Vector RGB methods
 //
 #define INT32_TO_VRGB(color, vrgb)							\
@@ -156,7 +162,7 @@ protected:
 	Vector2										CoordinateScale;
 	Vector2										CoordinateOffset;
 	Vector2										BiasedCoordinateOffset;
-	TextureClass *							Texture;
+	TextureClass *								Texture;
 	ShaderClass									Shader;
 	SimpleDynVecClass<unsigned short>	Indices;
 	SimpleDynVecClass<Vector2>				Vertices;

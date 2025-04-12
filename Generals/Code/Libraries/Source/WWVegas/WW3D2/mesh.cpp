@@ -119,6 +119,7 @@
 #include "visrasterizer.h"
 #include "wwmemlog.h"
 #include <stdio.h>
+#include <wwprofile.h>
 
 
 bool MeshClass::Legacy_Meshes_Fogged = true;
@@ -561,14 +562,14 @@ void MeshClass::Create_Decal(DecalGeneratorClass * generator)
 		OBBoxClass::Transform(modeltm_inv, generator->Get_Bounding_Volume(), &localbox);
 
 		// generate apt, if it is not empty, add a decal.
-		SimpleDynVecClass<uint32> apt;
-		Model->Generate_Rigid_APT(localbox, apt);
+		SimpleDynVecClass<uint32> temp_apt;
+		Model->Generate_Rigid_APT(localbox, temp_apt);
 		
-		if (apt.Count() > 0) {
+		if (temp_apt.Count() > 0) {
 			if (DecalMesh == NULL) {
 				DecalMesh =		NEW_REF(RigidDecalMeshClass, (this, generator->Peek_Decal_System()));
 			}
-			DecalMesh->Create_Decal(generator, localbox, apt);
+			DecalMesh->Create_Decal(generator, localbox, temp_apt);
 		}
 
 	} else {
@@ -584,19 +585,19 @@ void MeshClass::Create_Decal(DecalGeneratorClass * generator)
 		Get_Deformed_Vertices(dst_vert);
 
 		// generate apt, if it is not empty, add a decal.
-		SimpleDynVecClass<uint32> apt;
+		SimpleDynVecClass<uint32> temp_apt;
 
 		OBBoxClass worldbox = generator->Get_Bounding_Volume();
 
 		// We compare the worldspace box vs. the worldspace vertices
-		Model->Generate_Skin_APT(worldbox, apt, dst_vert);
+		Model->Generate_Skin_APT(worldbox, temp_apt, dst_vert);
 		
 		// if it is not empty, add a decal
-		if (apt.Count() > 0) {
+		if (temp_apt.Count() > 0) {
 			if (DecalMesh == NULL) {
 				DecalMesh = NEW_REF(SkinDecalMeshClass, (this, generator->Peek_Decal_System()));
 			}
-			DecalMesh->Create_Decal(generator, worldbox, apt, &_TempVertexBuffer);
+			DecalMesh->Create_Decal(generator, worldbox, temp_apt, &_TempVertexBuffer);
 		}
 	}
 }
@@ -657,6 +658,7 @@ int MeshClass::Get_Num_Polys(void) const
  *=============================================================================================*/
 void MeshClass::Render(RenderInfoClass & rinfo)
 {
+	WWPROFILE("Mesh::Render");
 	if (Is_Not_Hidden_At_All() == false) {
 		return;
 	}
@@ -697,6 +699,7 @@ void MeshClass::Render(RenderInfoClass & rinfo)
 			*/
 			if (sort_level == SORT_LEVEL_NONE)	//sorting ones get their environment set above.
 			{	Set_Lighting_Environment(rinfo.light_environment);
+
 				//Add custom alpha
 				m_alphaOverride = rinfo.alphaOverride;
 				m_materialPassAlphaOverride = rinfo.materialPassAlphaOverride;
@@ -843,8 +846,8 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 		/*
 		** Generate the APT 
 		*/
-		static SimpleDynVecClass<uint32> _apt;
-		_apt.Delete_All(false);
+		static SimpleDynVecClass<uint32> temp_apt;
+		temp_apt.Delete_All(false);
 			
 		Matrix3D modeltminv;
 		Get_Transform().Get_Orthogonal_Inverse(modeltminv);
@@ -857,12 +860,12 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 		view_dir = -view_dir;
 			
 		if (Model->Has_Cull_Tree()) {
-			Model->Generate_Rigid_APT(localbox,view_dir,_apt);
+			Model->Generate_Rigid_APT(localbox,view_dir,temp_apt);
 		} else {
-			Model->Generate_Rigid_APT(view_dir,_apt);
+			Model->Generate_Rigid_APT(view_dir,temp_apt);
 		}
 	
-		if (_apt.Count() > 0) {
+		if (temp_apt.Count() > 0) {
 
 			int buftype = BUFFER_TYPE_DYNAMIC_DX8;
 			if (Model->Get_Flag(MeshGeometryClass::SORT) && WW3D::Is_Sorting_Enabled()) {
@@ -875,17 +878,17 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 			int min_v = Model->Get_Vertex_Count();
 			int max_v = 0;
 
-			DynamicIBAccessClass dynamic_ib(buftype,_apt.Count() * 3);
+			DynamicIBAccessClass dynamic_ib(buftype,temp_apt.Count() * 3);
 			{
 				DynamicIBAccessClass::WriteLockClass lock(&dynamic_ib);
 				unsigned short * indices = lock.Get_Index_Array();
 				const TriIndex * polys = Model->Get_Polygon_Array();
 
-				for (int i=0; i < _apt.Count(); i++)
+				for (int i=0; i < temp_apt.Count(); i++)
 				{
-					unsigned v0 = polys[_apt[i]].I;
-					unsigned v1 = polys[_apt[i]].J;
-					unsigned v2 = polys[_apt[i]].K;
+					unsigned v0 = polys[temp_apt[i]].I;
+					unsigned v1 = polys[temp_apt[i]].J;
+					unsigned v2 = polys[temp_apt[i]].K;
 
 					indices[i*3 + 0] = (unsigned short)v0;
 					indices[i*3 + 1] = (unsigned short)v1;
@@ -912,7 +915,7 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 
 			DX8Wrapper::Draw_Triangles(
 				0,
-				_apt.Count(),
+				temp_apt.Count(),
 				min_v,
 				max_v-min_v+1);
 			//MW: Need uninstall custom materials in case they leave D3D in unknown state
@@ -1065,9 +1068,13 @@ void MeshClass::Replace_VertexMaterial(VertexMaterialClass* vmat,VertexMaterialC
  * HISTORY:                                                                                    *
  *   4/2/2001   hy : Created.                                                                  *
  *=============================================================================================*/
-void MeshClass::Make_Unique()
+void MeshClass::Make_Unique(bool force_meshmdl_clone)
 {
-	if (Model->Num_Refs()==1) return;
+	// Usually we will not clone the mesh model if it is already unique - force_meshmdl_clone will
+	// force it to be cloned in any case. This is used in some special situations, for example if we
+	// want to change this mesh and it may have already been rendered, we need to clone the mesh
+	// model regardless of whether there is another mesh using it.
+	if (Model->Num_Refs()==1 && !force_meshmdl_clone) return;
 
 	MeshModelClass *newmesh=NEW_REF(MeshModelClass,(*Model));
 	REF_PTR_SET(Model,newmesh);
@@ -1130,18 +1137,20 @@ WW3DErrorType MeshClass::Load_W3D(ChunkLoadClass & cload)
 
 	if (Model->Has_Shader_Array(0)) {
 		for (int i=0; i<Model->Get_Polygon_Count(); i++) {
-			is_translucent |= (Model->Get_Shader(i,0).Get_Alpha_Test() == ShaderClass::ALPHATEST_ENABLE);
-			is_alpha |= (Model->Get_Shader(i,0).Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO ||
-									Model->Get_Shader(i,0).Get_Src_Blend_Func() != ShaderClass::SRCBLEND_ONE) && (Model->Get_Shader(i,0).Get_Alpha_Test() != ShaderClass::ALPHATEST_ENABLE);
-			is_additive |= (Model->Get_Shader(i,0).Get_Dst_Blend_Func() == ShaderClass::DSTBLEND_ONE &&
-									Model->Get_Shader(i,0).Get_Src_Blend_Func() == ShaderClass::SRCBLEND_ONE);
+			ShaderClass shader = Model->Get_Shader(i,0);
+			is_translucent |= (shader.Get_Alpha_Test() == ShaderClass::ALPHATEST_ENABLE);
+			is_alpha |= (shader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO ||
+									shader.Get_Src_Blend_Func() != ShaderClass::SRCBLEND_ONE) && (shader.Get_Alpha_Test() != ShaderClass::ALPHATEST_ENABLE);
+			is_additive |= (shader.Get_Dst_Blend_Func() == ShaderClass::DSTBLEND_ONE &&
+									shader.Get_Src_Blend_Func() == ShaderClass::SRCBLEND_ONE);
 		}
 	} else {
-		is_translucent |= (Model->Get_Single_Shader(0).Get_Alpha_Test() == ShaderClass::ALPHATEST_ENABLE);
-		is_alpha |= (Model->Get_Single_Shader(0).Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO ||
-									Model->Get_Single_Shader(0).Get_Src_Blend_Func() != ShaderClass::SRCBLEND_ONE) && (Model->Get_Single_Shader(0).Get_Alpha_Test() != ShaderClass::ALPHATEST_ENABLE);
-		is_additive |= (Model->Get_Single_Shader(0).Get_Dst_Blend_Func() == ShaderClass::DSTBLEND_ONE &&
-									Model->Get_Single_Shader(0).Get_Src_Blend_Func() == ShaderClass::SRCBLEND_ONE);
+		ShaderClass shader = Model->Get_Single_Shader(0);
+		is_translucent |= (shader.Get_Alpha_Test() == ShaderClass::ALPHATEST_ENABLE);
+		is_alpha |= (shader.Get_Dst_Blend_Func() != ShaderClass::DSTBLEND_ZERO ||
+									shader.Get_Src_Blend_Func() != ShaderClass::SRCBLEND_ONE) && (shader.Get_Alpha_Test() != ShaderClass::ALPHATEST_ENABLE);
+		is_additive |= (shader.Get_Dst_Blend_Func() == ShaderClass::DSTBLEND_ONE &&
+									shader.Get_Src_Blend_Func() == ShaderClass::SRCBLEND_ONE);
 	}
 	Set_Translucent(is_translucent);
 	Set_Alpha(is_alpha);
@@ -1542,8 +1551,6 @@ int MeshClass::Get_Draw_Call_Count(void) const
 		return 0;
 	}
 }
-
-
 
 
 

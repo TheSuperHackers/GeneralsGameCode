@@ -46,12 +46,14 @@
 #include "metalmap.h"
 #include "texture.h"
 #include "ww3dformat.h"
+#include "ww3d.h"
 #include <vp.h>
 #include <INI.H>
 #include <Point.h>
 #include <stdio.h>
 #include <hashtemplate.h>
 #include <wwstring.h>
+#include <wwmath.h>
 
 /*
 ** Class static members:
@@ -78,7 +80,8 @@ MetalMapManagerClass::MetalMapManagerClass(INIClass &ini) :
 	CurrentAmbient(0.0f, 0.0f, 0.0f),
 	CurrentMainLightColor(0.0f, 0.0f, 0.0f),
 	CurrentMainLightDir(1.0f, 0.0f, 0.0f),
-	CurrentCameraDir(1.0f,0.0f,0.0f)
+	CurrentCameraDir(1.0f,0.0f,0.0f),
+	Use16Bit(false)
 {
 
 	// If the static normal table has not been initialized yet, initialize it
@@ -129,9 +132,17 @@ MetalMapManagerClass::MetalMapManagerClass(INIClass &ini) :
 		assert(0);
 	}
 
+	int w,h,bits;
+	bool windowed;
+
+	WW3D::Get_Device_Resolution(w,h,bits,windowed);
+	Use16Bit=(bits<=16);	
+
+	WW3DFormat format=(Use16Bit?WW3D_FORMAT_A4R4G4B4:WW3D_FORMAT_A8R8G8B8);
+
+
 	for (int i = 0; i < lp; i++) {		
-		// Create texture. NOTE: we should add code here to ensure we use a native texture format
-		Textures[i]=NEW_REF(TextureClass,(METALMAP_SIZE,METALMAP_SIZE,WW3D_FORMAT_A8R8G8B8,MIP_LEVELS_1));
+		Textures[i]=NEW_REF(TextureClass,(METALMAP_SIZE,METALMAP_SIZE,format,MIP_LEVELS_1));
 		Textures[i]->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		Textures[i]->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		StringClass tex_name;
@@ -303,10 +314,25 @@ void MetalMapManagerClass::Update_Textures(void)
 				Vector3 result = ambient_color + (diffuse_color * n_dot_l[idx]) + (specular_color * specular[idx]);
 				result.Update_Min(white);	// Clamp to white
 				
-				map[4*x] = (unsigned char)floor(result.Z * 255.99f);	// B
-				map[4*x+1] = (unsigned char)floor(result.Y * 255.99f);	// G
-				map[4*x+2] = (unsigned char)floor(result.X * 255.99f);	// R
-				map[4*x+3] = 0xFF;													// A
+				unsigned char b,g,r,a;
+				b= (unsigned char)WWMath::Floor(result.Z * 255.99f);	// B
+				g= (unsigned char)WWMath::Floor(result.Y * 255.99f);	// G
+				r= (unsigned char)WWMath::Floor(result.X * 255.99f);	// R
+				a= 0xFF;													// A
+
+				if (Use16Bit) {					
+					unsigned short tmp;
+					tmp=(a&0xf0)<<8;
+					tmp|=(r&0xf0)<<4;
+					tmp|=(g&0xf0);
+					tmp|=(b&0xf0)>>4;
+					*(unsigned short*)&map[2*x]=tmp;
+				} else {
+					map[4*x]=b;
+					map[4*x+1]=g;
+					map[4*x+2]=r;
+					map[4*x+3]=a;
+				}
 				idx++;
 			}
 			map+=pitch;

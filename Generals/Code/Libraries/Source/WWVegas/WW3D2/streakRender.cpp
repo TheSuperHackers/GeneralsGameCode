@@ -1085,7 +1085,7 @@ void StreakRendererClass::RenderStreak
 
 		// Configure vertex array and setup renderer.
 		unsigned int vnum = num_intersections[TOP_EDGE] + num_intersections[BOTTOM_EDGE];		
-		VertexFormatXYZDUV1 *vertexArray=W3DNEWARRAY VertexFormatXYZDUV1[vnum];		
+		VertexFormatXYZDUV1 *vertexArray=W3DNEWARRAY VertexFormatXYZDUV1[vnum];
 		Vector3i v_index_array[MAX_STREAK_POLY_BUFFER_SIZE];
 		
 		// Vertex and triangle indices

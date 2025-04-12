@@ -615,7 +615,6 @@ void HTreeClass::Anim_Update(const Matrix3D & root,HRawAnimClass * motion,float 
 	Pivot[0].Transform = root;
 	Pivot[0].IsVisible = true;
 
-
 	int num_anim_pivots = motion->Get_Num_Pivots ();
 
 	//Get integer frame

@@ -42,7 +42,6 @@
 #include "camera.h"
 #include "light.h"
 
-
 /*
 ** Constants
 */
@@ -54,7 +53,7 @@ const float DIFFUSE_TO_AMBIENT_FRACTION = 1.0f;
 */
 // TheSuperHackers @fix xezon 13/03/2025 Set integer type as per the original.
 // TODO: Investigate if it should be a float.
-static int _LightingLODCutoff			= 0.5f;	
+static int _LightingLODCutoff			= 0.5f;
 static int _LightingLODCutoff2			= 0.5f * 0.5f;
 
 
@@ -222,8 +221,9 @@ void LightEnvironmentClass::Add_Light(const LightClass & light)
 	/*
 	** Compute the equivalent directional + ambient light
 	*/
+
 	InputLightStruct new_light;
-	new_light.Init(light,ObjectCenter);
+	new_light.Init(light, ObjectCenter);
 
 	/*
 	** Add in the ambient component

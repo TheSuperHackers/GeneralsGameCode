@@ -966,7 +966,7 @@ void DazzleRenderObjClass::Render(RenderInfoClass & rinfo)
 			Vector3 dir;
 			dir=camera_loc-loc;
 			current_distance=dir.Length2();
-			dir.Normalize();			
+			dir.Normalize();
 
 			float dazzle_size;
 			current_halo_intensity=1.0f;

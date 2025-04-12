@@ -26,16 +26,18 @@
  *                                                                                             *
  *                       Author:: Patrick Smith                                                *
  *                                                                                             *
- *                     $Modtime:: 5/14/01 10:57a                                              $*
+ *                     $Modtime:: 1/16/02 10:21a                                              $*
  *                                                                                             *
- *                    $Revision:: 3                                                           $*
+ *                    $Revision:: 4                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
 #include "soundrobj.h"
+
+#if noWWAUDIO //(gth) removing dependency on wwaudio
+
 #include "AudibleSound.h"
 #include "Sound3D.h"
 #include "WWAudio.h"
@@ -751,18 +753,20 @@ SoundRenderObjLoaderClass::Load_W3D (ChunkLoadClass &cload)
 		//
 		// Ask the definition object to load the sound data
 		//
-		if (definition->Load_W3D (cload) != WW3D_ERROR_OK) {			
-			REF_PTR_RELEASE (definition);
-		} else {
+		if (definition->Load_W3D (cload) == WW3D_ERROR_OK) {
 
 			//
 			// Success!  Create a prototype from the definition
 			//
 			prototype = W3DNEW SoundRenderObjPrototypeClass (definition);
 		}
+
+		REF_PTR_RELEASE (definition);
 	}
 
 	return prototype;
 }
+
+#endif // noWWAUDIO
 
 

@@ -176,7 +176,7 @@ struct RenderStateStruct
 	RenderStateStruct& operator= (const RenderStateStruct& src);
 };
 
-/** 
+/**
 ** DX8Wrapper
 **
 ** DX8 interface wrapper class.  This encapsulates the DX8 interface; adding redundant state
@@ -375,6 +375,7 @@ public:
 	static unsigned Get_Last_Frame_Render_State_Changes();
 	static unsigned Get_Last_Frame_Texture_Stage_State_Changes();
 	static unsigned Get_Last_Frame_DX8_Calls();
+	static unsigned Get_Last_Frame_Draw_Calls();
 
 	static unsigned long Get_FrameCount(void);
 
@@ -446,7 +447,7 @@ protected:
 	static void Set_Default_Global_Render_States(void);
 
 	/*
-	** Device Selection Code.  
+	** Device Selection Code.
 	** For backward compatibility, the public interface for these functions is in the ww3d.
 	** header file.  These functions are protected so that we aren't exposing two interfaces.
 	*/

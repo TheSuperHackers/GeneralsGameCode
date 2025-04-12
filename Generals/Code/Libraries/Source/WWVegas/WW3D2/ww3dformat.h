@@ -45,6 +45,9 @@
 #ifndef WW3DFORMAT_H
 #define WW3DFORMAT_H
 
+#include "always.h"
+#include "wwstring.h"
+
 class Vector4;
 class Targa;
 
@@ -192,5 +195,11 @@ void Get_WW3D_Format(WW3DFormat& dest_format,WW3DFormat& src_format,unsigned& sr
 WW3DFormat Get_Valid_Texture_Format(WW3DFormat format,bool is_compression_allowed);
 
 unsigned Get_Bytes_Per_Pixel(WW3DFormat format);
+
+void Get_WW3D_Format_Name(WW3DFormat format, StringClass& name);
+void Get_WW3D_ZFormat_Name(WW3DZFormat format, StringClass& name);
+
+unsigned Get_Num_Depth_Bits(WW3DZFormat zformat);
+unsigned Get_Num_Stencil_Bits(WW3DZFormat zformat);
 
 #endif

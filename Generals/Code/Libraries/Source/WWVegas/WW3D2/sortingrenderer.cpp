@@ -454,8 +454,6 @@ void SortingRendererClass::Insert_To_Sorting_Pool(SortingNodeStruct* state)
 
 static void Apply_Render_State(RenderStateStruct& render_state)
 {
-/*	state->sorting_state.shader.Apply();
-*/
 	DX8Wrapper::Set_Shader(render_state.shader);
 
 /*	if (render_state.material) render_state.material->Apply();
@@ -469,7 +467,8 @@ static void Apply_Render_State(RenderStateStruct& render_state)
 	if (render_state.Textures[6]) render_state.Textures[6]->Apply();
 	if (render_state.Textures[7]) render_state.Textures[7]->Apply();
 */
-	for (unsigned i=0;i<MAX_TEXTURE_STAGES;++i) {
+	for (unsigned i=0;i<MAX_TEXTURE_STAGES;++i)
+	{
 		DX8Wrapper::Set_Texture(i,render_state.Textures[i]);
 	}
 
@@ -505,11 +504,6 @@ static void Apply_Render_State(RenderStateStruct& render_state)
 		DX8Wrapper::Set_DX8_Light(0,NULL);
 	}
 
-//	Matrix4x4 mtx;
-//	mtx=render_state.world.Transpose();
-//	DX8Wrapper::Set_Transform(D3DTS_WORLD,mtx);
-//	mtx=render_state.view.Transpose();
-//	DX8Wrapper::Set_Transform(D3DTS_VIEW,mtx);
 
 }
 
@@ -802,7 +796,8 @@ void SortingRendererClass::Insert_VolumeParticle(
 	SortingNodeStruct* state=Get_Sorting_Struct();
 	DX8Wrapper::Get_Render_State(state->sorting_state);
 
- 	WWASSERT(((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
+	WWASSERT(
+		((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
 		(state->sorting_state.vertex_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING)));
 
 	state->bounding_sphere=bounding_sphere;
@@ -865,10 +860,3 @@ void SortingRendererClass::Insert_VolumeParticle(
 //	}
 //#endif
 }
-
-
-
-
-
-
-

@@ -855,6 +855,10 @@ void ShatterSystem::Shutdown(void)
 
 void ShatterSystem::Shatter_Mesh(MeshClass * mesh,const Vector3 & point,const Vector3 & direction)
 {
+	if (ShatterPatterns.Count() == 0) {
+		return ;
+	}
+
 	int ivert,ipoly;
 	int ipass,istage;
 

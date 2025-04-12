@@ -1152,7 +1152,7 @@ void ShatterSystem::Process_Clip_Pools
 			for (ipass=0; ipass<model->Get_Pass_Count(); ipass++) {
 				new_mesh->Set_Vertex_Material(model->Peek_Single_Material(ipass),false,ipass);
 				new_mesh->Set_Shader(model->Get_Single_Shader(ipass),ipass);
-				
+
 				for (istage=0; istage<MeshMatDescClass::MAX_TEX_STAGES; istage++) {
 					TextureClass * tex = model->Peek_Single_Texture(ipass,istage);	
 					if (tex != NULL) {

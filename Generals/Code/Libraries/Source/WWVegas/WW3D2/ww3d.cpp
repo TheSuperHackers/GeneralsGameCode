@@ -211,7 +211,7 @@ WW3D::TextureCompressionModeEnum					WW3D::TextureCompressionMode = TEXTURE_COMP
 WW3D::NPatchesGapFillingModeEnum					WW3D::NPatchesGapFillingMode = NPATCHES_GAP_FILLING_ENABLED;
 unsigned													WW3D::NPatchesLevel=1;
 bool														WW3D::IsTexturingEnabled=true;
-unsigned int										WW3D::IsColoringEnabled=0x00000000;
+bool										WW3D::IsColoringEnabled=false;
 
 static HWND												_Hwnd = NULL;		// Not a member to hide windows from WW3D users
 static int												_TextureReduction = 0;
@@ -1622,7 +1622,7 @@ void WW3D::Enable_Texturing(bool b)
 
 void WW3D::Enable_Coloring(unsigned int color)
 {
-	IsColoringEnabled = color;
+	IsColoringEnabled = (color == 0) ? false : true;
 }
 
 /***********************************************************************************************

@@ -26,11 +26,11 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Greg_h                                                      $*
+ *                      $Author:: Jani_p                                                      $*
  *                                                                                             *
- *                     $Modtime:: 5/17/01 10:41a                                              $*
+ *                     $Modtime:: 11/24/01 5:42p                                              $*
  *                                                                                             *
- *                    $Revision:: 4                                                           $*
+ *                    $Revision:: 6                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -81,6 +81,9 @@ public:
 	uint32					Get_Backface_ID(void)			{ return BackfaceID; }
 	uint32					Get_Frontface_ID(void)			{ return FrontfaceID; }
 
+	void						Enable_Two_Sided_Rendering(bool onoff)		{ TwoSidedRenderingEnabled = onoff; }
+	bool						Is_Two_Sided_Rendering_Enabled(void)		{ return TwoSidedRenderingEnabled; }
+
 	enum ModeType { OCCLUDER_MODE = 0, NON_OCCLUDER_MODE };
 	void						Set_Render_Mode(ModeType mode) { RenderMode = mode; }
 	ModeType					Get_Render_Mode(void)			{ return RenderMode; }
@@ -108,6 +111,7 @@ protected:
 	uint32					CurID;
 	int						PixelCounter;
 	ModeType					RenderMode;
+	bool						TwoSidedRenderingEnabled;
 
 	int						ResWidth;
 	int						ResHeight;
@@ -164,6 +168,9 @@ public:
 	void					Set_Frontface_ID(uint32 id)	{ IDBuffer.Set_Frontface_ID(id); }
 	uint32				Get_Backface_ID(void)			{ return IDBuffer.Get_Backface_ID(); }
 	uint32				Get_Frontface_ID(void)			{ return IDBuffer.Get_Frontface_ID(); }
+
+	void					Enable_Two_Sided_Rendering(bool onoff)		{ IDBuffer.Enable_Two_Sided_Rendering(onoff); }
+	bool					Is_Two_Sided_Rendering_Enabled(void)		{ return IDBuffer.Is_Two_Sided_Rendering_Enabled(); }
 
 	void					Set_Resolution(int width,int height);
 	void					Get_Resolution(int * set_width,int * set_height);

@@ -483,10 +483,10 @@ void ShaderClass::Apply()
 		}
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHATESTENABLE,alphaTest);
 
-		diff &= ~(ShaderClass::MASK_COLORMASK | ShaderClass::MASK_SRCBLEND | ShaderClass::MASK_DSTBLEND | ShaderClass::MASK_ALPHATEST);		
-		if(!diff) 			
+		diff &= ~(ShaderClass::MASK_COLORMASK | ShaderClass::MASK_SRCBLEND | ShaderClass::MASK_DSTBLEND | ShaderClass::MASK_ALPHATEST);
+		if(!diff)
 			return;
-	}	
+	}
 
 	if(diff & (ShaderClass::MASK_FOG))
 	{

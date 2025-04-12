@@ -26,11 +26,11 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Jani_p                                                      $*
+ *                      $Author:: Greg_h                                                      $*
  *                                                                                             *
- *                     $Modtime:: 7/10/01 7:47p                                               $*
+ *                     $Modtime:: 1/18/02 3:08p                                               $*
  *                                                                                             *
- *                    $Revision:: 12                                                          $*
+ *                    $Revision:: 14                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -52,6 +52,7 @@ class MatBufferClass;
 class TexBufferClass;
 class UVBufferClass;
 class TextureClass;
+class MeshModelClass;
 
 /**
 ** MeshMatDescClass - This class encapsulates all of the material description data for a mesh.
@@ -103,7 +104,6 @@ public:
 
 	int							Get_UV_Array_Count(void);
 	Vector2 *					Get_UV_Array_By_Index(int index, bool create = true);
-//	Vector3i *					Get_UVIndex_Array (int pass = 0, bool create = true);
 	
 	unsigned*					Get_DCG_Array(int pass);
 	unsigned*					Get_DIG_Array(int pass);
@@ -146,7 +146,6 @@ public:
 	** Determine whether this material description contains data for the specified category
 	*/
 	bool							Has_UV(int pass,int stage)					{ return UVSource[pass][stage] != -1; }
-//	bool							Has_UVIndex(int pass)						{ return UVIndex[pass] != NULL; }
 	bool							Has_Color_Array(int array)					{ return ColorArray[array] != NULL; }
 	
 	bool							Has_Texture_Data(int pass,int stage)	{ return (Texture[pass][stage] != NULL) || (TextureArray[pass][stage] != NULL); }
@@ -180,7 +179,7 @@ public:
 	** Post-Load processing, configures all materials to use the correct passes and 
 	** material color sources, etc.
 	*/
-	void							Post_Load_Process(bool enable_lighting = true);
+	void							Post_Load_Process(bool enable_lighting = true,MeshModelClass * parent = NULL);
 	void							Disable_Lighting(void);
 
 	/*
@@ -194,6 +193,7 @@ protected:
 	
 	void							Configure_Material(VertexMaterialClass * mtl,int pass,bool lighting_enabled);
 	void							Disable_Backface_Culling(void);
+	void							Delete_Pass(int pass);
 
 	int													PassCount;
 	int													VertexCount;
@@ -202,7 +202,6 @@ protected:
 	// u-v coordinates
 	UVBufferClass *									UV[MAX_UV_ARRAYS];
 	int													UVSource[MAX_PASSES][MAX_TEX_STAGES];
-//	ShareBufferClass<Vector3i> *					UVIndex[MAX_PASSES];
 
 	// vertex color arrays, we support two arrays: each can only be used on the 
 	// first pass.
@@ -226,11 +225,9 @@ protected:
 
 /**
 ** MatBufferClass
-** This is a ShareBufferClass of pointers to vertex materials.  Could have written as a template but
-** don't think I'll need another array like this and I couldn't make one template do both the materials
-** and the textures (one uses our ref-counting system, the other uses surrender's).  So, here are
-** two quick and dirty ref-counted arrays of ref-counted pointers...  Get and Peek work like normal, and
-** all non-NULL pointers will be released when the buffer is destroyed.
+** This is a ShareBufferClass of pointers to vertex materials.  Should be written as a template...
+** Get and Peek work like normal, and all non-NULL pointers will be released when the buffer 
+** is destroyed.
 */
 class MatBufferClass : public ShareBufferClass < VertexMaterialClass * >
 {
@@ -252,7 +249,7 @@ private:
 /**
 ** TexBufferClass
 ** This is a ShareBufferClass of pointers to textures.  Works just like MatBufferClass but with 
-** srTextureIFace's...
+** TextureClass's...
 */
 class TexBufferClass : public ShareBufferClass < TextureClass * >
 {
@@ -354,18 +351,7 @@ inline Vector2 * MeshMatDescClass::Get_UV_Array_By_Index(int index, bool create)
 	}
 	return NULL;
 }
-/*
-inline Vector3i * MeshMatDescClass::Get_UVIndex_Array (int pass, bool create)
-{
-	if (create && !UVIndex[pass]) {
-		UVIndex[pass] = NEW_REF(ShareBufferClass<Vector3i>,(PolyCount));
-	}
-	if (UVIndex[pass]) {
-		return UVIndex[pass]->Get_Array();
-	}
-	return NULL;
-}
-*/
+
 inline unsigned* MeshMatDescClass::Get_DCG_Array(int pass)
 {
 	WWASSERT(pass >= 0);

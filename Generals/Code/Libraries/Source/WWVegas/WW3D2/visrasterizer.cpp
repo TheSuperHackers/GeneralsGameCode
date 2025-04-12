@@ -26,11 +26,11 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Greg_h                                                      $*
+ *                      $Author:: Jani_p                                                      $*
  *                                                                                             *
- *                     $Modtime:: 5/17/01 10:41a                                              $*
+ *                     $Modtime:: 11/24/01 5:42p                                              $*
  *                                                                                             *
- *                    $Revision:: 9                                                           $*
+ *                    $Revision:: 11                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -371,6 +371,7 @@ IDBufferClass::IDBufferClass(void) :
 	FrontfaceID(0),
 	CurID(0),
 	RenderMode(OCCLUDER_MODE),
+	TwoSidedRenderingEnabled(false),
 	PixelCounter(0),
 	ResWidth(0),
 	ResHeight(0),
@@ -519,7 +520,7 @@ bool IDBufferClass::Render_Triangle(const Vector3 & p0,const Vector3 & p1,const 
 	int pixels_passed = 0;
 	bool is_backfacing = Is_Backfacing(p0,p1,p2);
 
-	if (is_backfacing) {
+	if ((is_backfacing) && (TwoSidedRenderingEnabled == false)) {
 		if (RenderMode == NON_OCCLUDER_MODE) {
 			return false;
 		}

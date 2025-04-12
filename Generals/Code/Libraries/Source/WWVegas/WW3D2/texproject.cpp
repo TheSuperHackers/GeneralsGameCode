@@ -1154,6 +1154,7 @@ bool TexProjectClass::Compute_Texture
 		WW3D::End_Render(false);
 
 		DX8Wrapper::Set_Render_Target((IDirect3DSurface8 *)NULL);
+
 	}
 
 #if 0

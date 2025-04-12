@@ -69,8 +69,8 @@ class		MaterialPassClass;
 /**
 ** WW3D
 **
-** This is the collection of static functions and data which initialize and 
-** control the behavior of the WW3D library.  
+** This is the collection of static functions and data which initialize and
+** control the behavior of the WW3D library.
 */
 class WW3D
 {
@@ -106,13 +106,13 @@ public:
 
 	static WW3DErrorType		Init(void * hwnd, char *defaultpal = NULL);
 	static WW3DErrorType		Shutdown(void);
-	static bool					Is_Initted(void)								{ return IsInitted; }	
+	static bool					Is_Initted(void)								{ return IsInitted; }
 
 	static const int			Get_Render_Device_Count(void);
 	static const char *		Get_Render_Device_Name(int device_index);
 	static const RenderDeviceDescClass &								Get_Render_Device_Desc(int device = -1);
 
-	static int					Get_Render_Device(void);	
+	static int					Get_Render_Device(void);
 	static WW3DErrorType		Set_Render_Device( int dev=-1, int resx=-1, int resy=-1, int bits=-1, int windowed=-1, bool resize_window = false, bool reset_device=false, bool restore_assets=true);
 	static WW3DErrorType		Set_Render_Device( const char *dev_name, int resx=-1, int resy=-1, int bits=-1, int windowed=-1, bool resize_window = false  );	
 	static WW3DErrorType		Set_Next_Render_Device(void);
@@ -167,7 +167,7 @@ public:
    static unsigned int     Get_Frame_Count(void) { return FrameCount; }
 	static unsigned int		Get_Last_Frame_Poly_Count(void);
 	static unsigned int		Get_Last_Frame_Vertex_Count(void);
-	
+
 	/*
 	** Screen/Movie capturing
 	** These functions allow you to create screenshots and movies.
@@ -195,7 +195,7 @@ public:
 	/*
 	** Texture Reduction - all currently loaded textures can be de-resed on the fly
 	** by passing in a non-unit value to Set_Texture_Reduction.  Passing in 2 causes
-	** all textures to be half their normal resolution.  Passing in 3 causes them to 
+	** all textures to be half their normal resolution.  Passing in 3 causes them to
 	** be cut in half twice, etc
 	*/
 	static void					Set_Texture_Reduction( int value, int min_mip_levels=1 );
@@ -233,7 +233,7 @@ public:
 	static bool					Expose_Prelit ()										{ return (ExposePrelit); }
 
 	static void					Set_Texture_Bitdepth(int bitdepth);
-	static int					Get_Texture_Bitdepth(); 
+	static int					Get_Texture_Bitdepth();
 
 	static void					Set_Mesh_Draw_Mode (MeshDrawModeEnum mode)	{ MeshDrawMode = mode; }
 	static MeshDrawModeEnum Get_Mesh_Draw_Mode ()								{ return (MeshDrawMode); }
@@ -249,7 +249,7 @@ public:
 
 	static void					Enable_Texturing(bool b);
 	static bool					Is_Texturing_Enabled() { return IsTexturingEnabled; }
-	static bool					Is_Coloring_Enabled() { return IsColoringEnabled; }
+	static bool					Is_Coloring_Enabled() { return (IsColoringEnabled == 0) ? false : true; }
 	static void					Enable_Coloring(unsigned int color);	///<when non-zero color is passed, it will override vertex colors
 
 	static int					Get_Last_Frame_Memory_Allocation_Count() { return LastFrameMemoryAllocations; }
@@ -291,8 +291,8 @@ public:
    static long             UserStat2;
 
 private:
-	
-	enum 
+
+	enum
 	{
 		DEFAULT_RESOLUTION_WIDTH =			640,
 		DEFAULT_RESOLUTION_HEIGHT =		480,
@@ -354,7 +354,7 @@ private:
 	static NPatchesGapFillingModeEnum NPatchesGapFillingMode;
 	static unsigned NPatchesLevel;
 	static bool							IsTexturingEnabled;
-	static unsigned int			IsColoringEnabled;
+	static bool							IsColoringEnabled;
 
 	// This is the default native screen size which will be set for each
 	// RenderObject on construction. The native screen size is the screen size
@@ -369,8 +369,8 @@ private:
 	// pointer is so the application can temporarily set a different set of
 	// static sort lists to be used temporarily. This and the min/max sort
 	// levels are for specialised uses.
-	static RefRenderObjListClass *DefaultStaticSortLists;
-	static RefRenderObjListClass *CurrentStaticSortLists;
+	static RefRenderObjListClass * DefaultStaticSortLists;
+	static RefRenderObjListClass * CurrentStaticSortLists;
 	static unsigned int MinStaticSortLevel;
 	static unsigned int MaxStaticSortLevel;
 
@@ -410,7 +410,7 @@ struct RenderStatistics
 		double	TrianglesClipRemoved;
 		double	TrianglesClipCreated;
 		double	DeviceDriverCalls;
-		
+
 		// Rendering device statistics
 		double	TextureTransfers;
 		double	PixelsDrawn;

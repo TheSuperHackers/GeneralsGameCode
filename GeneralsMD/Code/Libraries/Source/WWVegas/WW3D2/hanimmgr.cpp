@@ -412,7 +412,7 @@ bool HAnimManagerClass::Add_Anim(HAnimClass *new_anim)
 	// Increment the refcount on the W3DNEW animation and add it to our table.
 	new_anim->Add_Ref ();
 	AnimPtrTable->Add( new_anim );
-	
+
 	return true;
 }
 
