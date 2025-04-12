@@ -86,6 +86,7 @@ set(WW3D2_SRC
     sortingrenderer.cpp
     soundrobj.cpp
     sphereobj.cpp
+    static_sort_list.cpp
     statistics.cpp
     streak.cpp
     streakRender.cpp
@@ -197,6 +198,7 @@ set(WW3D2_SRC
     sortingrenderer.h
     soundrobj.h
     sphereobj.h
+    static_sort_list.h
     statistics.h
     streak.h
     streakRender.h

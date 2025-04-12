@@ -62,6 +62,7 @@ class		RenderDeviceDescClass;
 class		StringClass;
 class		LightEnvironmentClass;
 class		MaterialPassClass;
+class 	StaticSortListClass;
 
 #define SNAPSHOT_SAY(x) if (WW3D::Is_Snapshot_Activated()) { WWDEBUG_SAY(x); }
 //#define SNAPSHOT_SAY(x)
@@ -278,7 +279,7 @@ public:
 	static bool					Is_Munge_Sort_On_Load_Enabled(void)		{ return MungeSortOnLoad; }
 	static void					Add_To_Static_Sort_List(RenderObjClass *robj, unsigned int sort_level);
 	static void					Render_And_Clear_Static_Sort_Lists(RenderInfoClass & rinfo);
-	static void					Override_Current_Static_Sort_Lists(RefRenderObjListClass *sort_list, unsigned int min_sort, unsigned int max_sort);
+	static void					Override_Current_Static_Sort_Lists(StaticSortListClass * sort_list);
 	static void					Reset_Current_Static_Sort_Lists_To_Default(void);
 
 	static bool					Is_Snapshot_Activated()						{ return SnapshotActivated; }
@@ -367,12 +368,9 @@ private:
 	// For meshes which have a static sorting order. These will get drawn
 	// after opaque meshes and before normally sorted meshes. The 'current'
 	// pointer is so the application can temporarily set a different set of
-	// static sort lists to be used temporarily. This and the min/max sort
-	// levels are for specialised uses.
-	static RefRenderObjListClass * DefaultStaticSortLists;
-	static RefRenderObjListClass * CurrentStaticSortLists;
-	static unsigned int MinStaticSortLevel;
-	static unsigned int MaxStaticSortLevel;
+	// static sort lists to be used temporarily. This is for specialised uses.
+	static StaticSortListClass * DefaultStaticSortLists;
+	static StaticSortListClass * CurrentStaticSortLists;
 
 	// Memory allocation statistics
 	static int							LastFrameMemoryAllocations;

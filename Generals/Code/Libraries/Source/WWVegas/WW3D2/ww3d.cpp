@@ -113,6 +113,7 @@
 #include "cpudetect.h"
 #include "dx8texman.h"
 #include "formconv.h"
+#include "static_sort_list.h"
 
 
 #ifndef _UNIX
@@ -190,10 +191,8 @@ long														WW3D::UserStat2 = 0;
 
 float														WW3D::DefaultNativeScreenSize = 1.0f;
 
-RefRenderObjListClass *								WW3D::DefaultStaticSortLists = NULL;
-RefRenderObjListClass *								WW3D::CurrentStaticSortLists = NULL;
-unsigned int											WW3D::MinStaticSortLevel = 1;	// The 0 list is not used
-unsigned int											WW3D::MaxStaticSortLevel = MAX_SORT_LEVEL;
+StaticSortListClass *								WW3D::DefaultStaticSortLists = NULL;
+StaticSortListClass *								WW3D::CurrentStaticSortLists = NULL;
 
 
 VertexMaterialClass *								WW3D::DefaultDebugMaterial  = NULL;
@@ -301,7 +300,7 @@ WW3DErrorType WW3D::Init(void *hwnd, char *defaultpal)
 	** Initialize the default static sort lists
 	** Note that DefaultStaticSortLists[0] is unused.
 	*/
-	DefaultStaticSortLists = W3DNEWARRAY RefRenderObjListClass[MAX_SORT_LEVEL + 1];
+	DefaultStaticSortLists = W3DNEW DefaultStaticSortListClass();
 	Reset_Current_Static_Sort_Lists_To_Default();
 
 	IsInitted = true;
@@ -360,7 +359,7 @@ WW3DErrorType WW3D::Shutdown(void)
 	/*
 	** Clear the default static sort lists
 	*/
-	delete [] DefaultStaticSortLists;
+	delete DefaultStaticSortLists;
 
 	IsInitted = false;
 	return WW3D_ERROR_OK;
@@ -1035,6 +1034,7 @@ WW3DErrorType WW3D::End_Render(bool flip_frame)
 
 	// If sorting renderer flush isn't called from within any of the render functions
 	// the sorting arrays will overflow!
+
 	SortingRendererClass::Flush();
 
 	IsRendering = false;
@@ -1813,13 +1813,7 @@ int WW3D::Get_Texture_Bitdepth()
 
 void WW3D::Add_To_Static_Sort_List(RenderObjClass *robj, unsigned int sort_level)
 {
-	if(sort_level < 1 || sort_level > MAX_SORT_LEVEL) {
-		WWASSERT(0);
-		return;
-	}
-
-	CurrentStaticSortLists[sort_level].Add_Tail(robj, false);
-
+	CurrentStaticSortLists->Add_To_List(robj, sort_level);
 }
 
 void WW3D::Render_And_Clear_Static_Sort_Lists(RenderInfoClass & rinfo)
@@ -1828,20 +1822,7 @@ void WW3D::Render_And_Clear_Static_Sort_Lists(RenderInfoClass & rinfo)
 	// Render() function will just dump the objects right back on the same lists.
 	bool old_enable = AreStaticSortListsEnabled;
 	AreStaticSortListsEnabled = false;
-
-	// We go from higher sort level to lower, since lower sort level means higher priority (in
-	// front), so lower sort level meshes need to be rendered later.
-	for(unsigned int sort_level = MaxStaticSortLevel; sort_level >= MinStaticSortLevel; sort_level--)
-	{
-		bool render=false;
-		for (	RenderObjClass *robj = CurrentStaticSortLists[sort_level].Remove_Head(); robj;
-				robj->Release_Ref(), robj = CurrentStaticSortLists[sort_level].Remove_Head())
-		{
-			robj->Render(rinfo);
-			render=true;
-		}
-		if (render) TheDX8MeshRenderer.Flush();
-	}
+	CurrentStaticSortLists->Render_And_Clear(rinfo);
 	AreStaticSortListsEnabled = old_enable;
 }
 
@@ -1853,22 +1834,17 @@ void WW3D::Enable_Sorting(bool onoff)
 	TheDX8MeshRenderer.Invalidate();
 }
 
-void WW3D::Override_Current_Static_Sort_Lists(RefRenderObjListClass *sort_list, unsigned int min_sort, unsigned int max_sort)
+void WW3D::Override_Current_Static_Sort_Lists(StaticSortListClass * sort_list)
 {
-	CurrentStaticSortLists = sort_list;
-	if (min_sort <= max_sort) {
-		MinStaticSortLevel = min_sort;
-		MaxStaticSortLevel = max_sort;
+	if (sort_list) {
+		CurrentStaticSortLists = sort_list;
 	} else {
-		WWASSERT(0);
-		MinStaticSortLevel = max_sort;
-		MaxStaticSortLevel = min_sort;
+		WWASSERT(sort_list);
 	}
 }
+
 
 void WW3D::Reset_Current_Static_Sort_Lists_To_Default(void)
 {
 	CurrentStaticSortLists = DefaultStaticSortLists;
-	MinStaticSortLevel = 1;	// The 0 list is not used
-	MaxStaticSortLevel = MAX_SORT_LEVEL;
 }
