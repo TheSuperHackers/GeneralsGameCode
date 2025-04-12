@@ -36,6 +36,7 @@
 #include <string.h>
 // TheSuperHackers @compile feliwir 07/04/2025 Adds utility macros for cross-platform compatibility
 #include <Utility/compat.h>
+#include <Utility/CppMacros.h>
 
 /*
 **	Turn off some unneeded warnings.

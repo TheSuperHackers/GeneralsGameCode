@@ -30,6 +30,8 @@
 #ifndef _AUDIOAFFECT_H_
 #define _AUDIOAFFECT_H_
 
+#include <Lib/BaseType.h>
+
 // if it is set by the options panel, use the system setting parameter. Otherwise, this will be 
 // appended to whatever the current system volume is.
 enum AudioAffect
