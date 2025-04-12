@@ -5,6 +5,7 @@ set(WW3D2_SRC
     agg_def.cpp
     animobj.cpp
     assetmgr.cpp
+    assetstatus.cpp
     bitmaphandler.cpp
     bmp2d.cpp
     boxrobj.cpp
@@ -107,6 +108,7 @@ set(WW3D2_SRC
     agg_def.h
     animobj.h
     assetmgr.h
+    assetstatus.h
     bitmaphandler.h
     bmp2d.h
     boxrobj.h

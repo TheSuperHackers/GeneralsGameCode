@@ -26,9 +26,9 @@
  *                                                                                             *
  *                       Author:: Jason Andersen                                               *
  *                                                                                             *
- *                     $Modtime:: 5/05/01 6:28p                                               $*
+ *                     $Modtime:: 11/24/01 6:21p                                              $*
  *                                                                                             *
- *                    $Revision:: 6                                                           $*
+ *                    $Revision:: 7                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -256,6 +256,21 @@ public:
 	virtual void 					Set_Position(const Vector3 &v);
    virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;
    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;
+
+	virtual void					Prepare_LOD(CameraClass &camera);
+	virtual void					Increment_LOD(void);
+	virtual void					Decrement_LOD(void);
+	virtual float					Get_Cost(void) const;
+	virtual float					Get_Value(void) const;
+	virtual float					Get_Post_Increment_Value(void) const;
+	virtual void					Set_LOD_Level(int lod);
+	virtual int						Get_LOD_Level(void) const;
+	virtual int						Get_LOD_Count(void) const;
+	virtual void					Set_LOD_Bias(float bias)	{ LODBias = MAX(bias, 0.0f); }
+	virtual int						Calculate_Cost_Value_Arrays(float screen_area, float *values, float *costs) const;
+
+	virtual void					Scale(float scale);
+	virtual void					Scale(float scalex, float scaley, float scalez);
 	virtual void					Set_Hidden(int onoff)				{ RenderObjClass::Set_Hidden (onoff); Update_On_Visibilty (); }
 	virtual void					Set_Visible(int onoff)				{ RenderObjClass::Set_Visible (onoff); Update_On_Visibilty (); }
 	virtual void					Set_Animation_Hidden(int onoff)	{ RenderObjClass::Set_Animation_Hidden (onoff); Update_On_Visibilty (); }
@@ -278,15 +293,15 @@ public:
 	void								Stop_Animating (void)	{ IsAnimating = false; anim_time = 0; }
 
 	// Current state access
-	void							 	Set_Color(const Vector3 & color)			{ Color = color; }
-	void							 	Set_Alpha(float alpha)						{ Alpha = alpha; }
-	void							 	Set_Scale(const Vector3 & scale)			{ Scale = scale; }
-	void								Set_Vector(const AlphaVectorStruct &v)	{ Vector = v; }
+	void							 	Set_Color(const Vector3 & color)			{ CurrentColor = color; }
+	void							 	Set_Alpha(float alpha)						{ CurrentAlpha = alpha; }
+	void							 	Set_Scale(const Vector3 & scale)			{ CurrentScale = scale; }
+	void								Set_Vector(const AlphaVectorStruct &v)	{ CurrentVector = v; }
 
-	const Vector3 &				Get_Color(void) const	{ return Color; }
-	float								Get_Alpha(void) const	{ return Alpha; }
-	const Vector3 &				Get_Scale(void) const	{ return Scale; }
-	const AlphaVectorStruct &	Get_Vector(void) const	{ return Vector; }
+	const Vector3 &				Get_Color(void) const	{ return CurrentColor; }
+	float								Get_Alpha(void) const	{ return CurrentAlpha; }
+	const Vector3 &				Get_Scale(void) const	{ return CurrentScale; }
+	const AlphaVectorStruct &	Get_Vector(void) const	{ return CurrentVector; }
 
 	Vector3							Get_Default_Color(void) const;
 	float								Get_Default_Alpha(void) const;
@@ -343,6 +358,12 @@ protected:
 	float								AnimDuration;
 	bool								IsAnimating;
 	
+	// LOD Stuff
+	void								calculate_value_array(float screen_area, float *values) const;
+	float								LODBias;
+	int						 		CurrentLOD;
+	float								Value[SPHERE_NUM_LOD + 2];// Value array needs # of LODs + 1 (RING_NUM_LOD doesn't include null LOD)
+
 	SphereColorChannelClass		ColorChannel;
 	SphereAlphaChannelClass		AlphaChannel;
 	SphereScaleChannelClass		ScaleChannel;
@@ -356,13 +377,11 @@ protected:
 	Vector3					 		ObjSpaceCenter;
 	Vector3					 		ObjSpaceExtent;
 
-	int						 		CurrentLOD;
-
 	// Current State
-	Vector3					 		Color;
-	float								Alpha;
-	Vector3							Scale;
-	AlphaVectorStruct				Vector;
+	Vector3					 		CurrentColor;
+	float								CurrentAlpha;
+	Vector3							CurrentScale;
+	AlphaVectorStruct				CurrentVector;
 
 	Quaternion						Orientation;
 

@@ -129,6 +129,22 @@ public:
 	virtual void 					Set_Position(const Vector3 &v);
    virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass	& sphere) const;
    virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & box) const;
+
+	virtual void					Prepare_LOD(CameraClass &camera);
+	virtual void					Increment_LOD(void);
+	virtual void					Decrement_LOD(void);
+	virtual float					Get_Cost(void) const;
+	virtual float					Get_Value(void) const;
+	virtual float					Get_Post_Increment_Value(void) const;
+	virtual void					Set_LOD_Level(int lod);
+	virtual int						Get_LOD_Level(void) const;
+	virtual int						Get_LOD_Count(void) const;
+	virtual void					Set_LOD_Bias(float bias)	{ LODBias = MAX(bias, 0.0f); }
+	virtual int						Calculate_Cost_Value_Arrays(float screen_area, float *values, float *costs) const;
+
+	virtual void					Scale(float scale);
+	virtual void					Scale(float scalex, float scaley, float scalez);
+
 	virtual void					Set_Hidden(int onoff)				{ RenderObjClass::Set_Hidden (onoff); Update_On_Visibilty (); }
 	virtual void					Set_Visible(int onoff)				{ RenderObjClass::Set_Visible (onoff); Update_On_Visibilty (); }
 	virtual void					Set_Animation_Hidden(int onoff)	{ RenderObjClass::Set_Animation_Hidden (onoff); Update_On_Visibilty (); }
@@ -222,6 +238,12 @@ protected:
 	float								AnimDuration;
 	bool								IsAnimating;
 
+	// LOD Stuff
+	void								calculate_value_array(float screen_area, float *values) const;
+	float								LODBias;
+	int						 		CurrentLOD;
+	float								Value[RING_NUM_LOD + 2];// Value array needs # of LODs + 1 (RING_NUM_LOD doesn't include null LOD)
+
 	RingColorChannelClass		ColorChannel;
 	RingAlphaChannelClass		AlphaChannel;
 	RingScaleChannelClass		InnerScaleChannel;
@@ -238,7 +260,6 @@ protected:
 	Vector2							InnerExtent;
 	Vector2							OuterExtent;
 
-	int						 		CurrentLOD;
 	int								TextureTileCount;
 
 	// Current State
