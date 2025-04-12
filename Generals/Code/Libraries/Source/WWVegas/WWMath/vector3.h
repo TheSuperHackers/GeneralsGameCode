@@ -146,7 +146,7 @@ public:
    WWINLINE friend bool Equal_Within_Epsilon(const Vector3 &a,const Vector3 &b,float epsilon);
 
 	// dot product / inner product
-	//WWINLINE friend float operator * (const Vector3 &a,const Vector3 &b);
+	WWINLINE friend float operator * (const Vector3 &a,const Vector3 &b);
 	static WWINLINE float Dot_Product(const Vector3 &a,const Vector3 &b);
 	
 	// cross product / outer product
@@ -184,6 +184,10 @@ public:
 
 	// Linearly interpolate two Vector3's
 	static void Lerp(const Vector3 & a, const Vector3 & b, float alpha,Vector3 * set_result);
+
+#ifdef ALLOW_TEMPORARIES
+	static Vector3 Lerp(const Vector3 & a, const Vector3 & b, float alpha);
+#endif
 
 	// Color Conversion
 	WWINLINE unsigned	long	Convert_To_ABGR( void ) const;
@@ -284,12 +288,12 @@ WWINLINE Vector3 operator - (const Vector3 &a,const Vector3 &b)
  *                                                                        * 
  * HISTORY:                                                               * 
  *========================================================================*/
-//WWINLINE float operator * (const Vector3 &a,const Vector3 &b)
-//{
-//	return	a.X*b.X + 
-//				a.Y*b.Y + 
-//				a.Z*b.Z;
-//}
+WWINLINE float operator * (const Vector3 &a,const Vector3 &b)
+{
+	return	a.X*b.X + 
+				a.Y*b.Y + 
+				a.Z*b.Z;
+}
 
 WWINLINE float Vector3::Dot_Product(const Vector3 &a,const Vector3 &b)
 {
@@ -540,6 +544,16 @@ WWINLINE void Vector3::Lerp(const Vector3 & a, const Vector3 & b, float alpha,Ve
    set_result->Y = (a.Y + (b.Y - a.Y)*alpha);
    set_result->Z = (a.Z + (b.Z - a.Z)*alpha);
 }
+
+
+#ifdef ALLOW_TEMPORARIES
+WWINLINE Vector3 Vector3::Lerp(const Vector3 & a, const Vector3 & b, float alpha)
+{
+	Vector3 set_result;
+	Vector3::Lerp(a, b, alpha, &set_result);
+	return set_result;
+}
+#endif
 
 /***********************************************************************************************
  * Vector3::Add -- Add two vector3's without return-by-value                                   *

@@ -88,3 +88,6 @@ target_sources(g_wwmath PRIVATE ${WWMATH_SRC})
 target_link_libraries(g_wwmath PRIVATE
     g_wwcommon
 )
+
+# @todo Test its impact and see what to do with the legacy functions.
+#add_compile_definitions(z_wwmath PUBLIC ALLOW_TEMPORARIES) # Enables legacy math with "temporaries"
