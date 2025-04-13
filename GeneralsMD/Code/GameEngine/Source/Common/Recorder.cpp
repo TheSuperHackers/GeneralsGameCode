@@ -913,6 +913,11 @@ Bool RecorderClass::isAnalysisInProgress( void )
 {
 	return m_mode == RECORDERMODETYPE_PLAYBACK && m_nextFrame != -1;
 }
+
+void RecorderClass::stopAnalysis()
+{
+	m_doingAnalysis = FALSE;
+}
 #endif
 
 AsciiString RecorderClass::getCurrentReplayFilename( void )

@@ -74,6 +74,7 @@ public:
 #if defined _DEBUG || defined _INTERNAL
 	Bool analyzeReplay( AsciiString filename );
 	Bool isAnalysisInProgress( void );
+	void stopAnalysis();
 #endif
 
 public:

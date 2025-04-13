@@ -535,6 +535,7 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 						{
 							TheRecorder->update();
 						} while (TheRecorder->isAnalysisInProgress());
+						TheRecorder->stopAnalysis();
 					}
 				}
 			}
