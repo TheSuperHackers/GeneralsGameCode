@@ -2146,6 +2146,7 @@ Int PartitionData::calcMaxCoiForShape(GeometryType geom, Real majorRadius, Real 
 	{
 		#if defined(_DEBUG) || defined(_INTERNAL)
 		Int chk = calcMaxCoiForShape(geom, majorRadius, minorRadius, false);
+		(void)chk;
 		DEBUG_ASSERTCRASH(chk <= 4, ("Small objects should be <= 4 cells, but I calced %s as %d\n",theObjName.str(),chk));
 		#endif
 		result = 4;

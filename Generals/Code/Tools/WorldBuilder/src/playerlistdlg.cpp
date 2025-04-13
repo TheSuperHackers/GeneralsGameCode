@@ -372,6 +372,7 @@ void PlayerListDlg::OnEditplayer()
 		fixDefaultTeamName(m_sides, pnameold, pnamenew);
 
 		Bool modified = m_sides.validateSides();
+		(void)modified;
 		DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::OnEditplayer"));
 
 		updateTheUI();

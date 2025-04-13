@@ -203,6 +203,7 @@ void AttackPriorityInfo::dumpPriorityInfo(void)
 	for (AttackPriorityMap::const_iterator it = m_priorityMap->begin(); it != m_priorityMap->end(); ++it) {
 		const ThingTemplate *tThing = (*it).first;
 		Int priority = (*it).second;
+		(void)tThing; (void)priority;
 		DEBUG_LOG(("  Thing '%s' priority %d\n",tThing->getName().str(), priority));
 	}
 }

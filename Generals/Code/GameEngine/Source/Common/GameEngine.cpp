@@ -262,7 +262,7 @@ void GameEngine::init( int argc, char *argv[] )
 	#elif defined _INTERNAL
 			const char *buildType = "Internal";
 	#else
-	//	const char *buildType = "Release";
+			const char *buildType = "Release";
 	#endif
 #endif // DEBUG_LOGGING
 			DEBUG_LOG(("Generals version %s (%s)\n", TheVersion->getAsciiVersion().str(), buildType));
