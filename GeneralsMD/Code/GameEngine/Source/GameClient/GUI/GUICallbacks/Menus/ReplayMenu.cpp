@@ -37,6 +37,7 @@
 #include "Common/GameState.h"
 #include "Common/Recorder.h"
 #include "Common/version.h"
+#include "Common/CRCDebug.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/GadgetListBox.h"
@@ -47,6 +48,7 @@
 #include "GameClient/MapUtil.h"
 #include "GameClient/GameText.h"
 #include "GameClient/GameWindowTransitions.h"
+#include "GameLogic/GameLogic.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -77,6 +79,10 @@ static Bool justEntered = FALSE;
 
 #if defined _DEBUG || defined _INTERNAL
 static GameWindow *buttonAnalyzeReplay = NULL;
+
+// TheSuperHackers @feature helmutbuhler 04/13/2025
+// Button to simulate replay without graphics
+static GameWindow *buttonSimulateReplay = NULL;
 #endif
 
 void deleteReplay( void );
@@ -296,10 +302,19 @@ void ReplayMenuInit( WindowLayout *layout, void *userData )
 	instData.init();
 	BitSet( instData.m_style, GWS_PUSH_BUTTON | GWS_MOUSE_TRACK );
 	instData.m_textLabelString = "Debug: Analyze Replay";
-	instData.setTooltipText(UnicodeString(L"Only Used in Debug and Internal!"));
+	instData.setTooltipText(UnicodeString(L"Dump commands stored in selected replay into log"));
 	buttonAnalyzeReplay = TheWindowManager->gogoGadgetPushButton( parentReplayMenu, 
 																									 WIN_STATUS_ENABLED | WIN_STATUS_IMAGE, 
 																									 4, 4, 
+																									 180, 26, 
+																									 &instData, NULL, TRUE );
+
+	instData.m_id = 1;
+	instData.m_textLabelString = "Debug: Simulate Replay";
+	instData.setTooltipText(UnicodeString(L"Playback selected replay without graphics. Will block game until replay simulation is done!"));
+	buttonSimulateReplay = TheWindowManager->gogoGadgetPushButton( parentReplayMenu, 
+																									 WIN_STATUS_ENABLED | WIN_STATUS_IMAGE, 
+																									 4, 40, 
 																									 180, 26, 
 																									 &instData, NULL, TRUE );
 #endif
@@ -536,6 +551,34 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 							TheRecorder->update();
 						} while (TheRecorder->isAnalysisInProgress());
 						TheRecorder->stopAnalysis();
+					}
+				}
+			}
+			else if( controlID == buttonSimulateReplay->winGetWindowId() )
+			{
+				if(listboxReplayFiles)
+				{
+					Int selected;
+					GadgetListBoxGetSelected( listboxReplayFiles,  &selected );
+					if(selected < 0)
+					{
+						MessageBoxOk(UnicodeString(L"Blah Blah"),UnicodeString(L"Please select something munkee girl"), NULL);
+						break;
+					}
+
+					filename = GetReplayFilenameFromListbox(listboxReplayFiles, selected);
+
+					AsciiString asciiFilename;
+					asciiFilename.translate(filename);
+					if (TheRecorder->simulateReplay(asciiFilename))
+					{
+						do
+						{
+							{
+								VERIFY_CRC
+							}
+							TheGameLogic->UPDATE();
+						} while (TheRecorder->isAnalysisInProgress());
 					}
 				}
 			}

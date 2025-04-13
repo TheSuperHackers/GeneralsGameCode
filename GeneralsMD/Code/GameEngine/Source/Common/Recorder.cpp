@@ -428,7 +428,7 @@ void RecorderClass::reset() {
 void RecorderClass::update() {
 	if (m_mode == RECORDERMODETYPE_RECORD || m_mode == RECORDERMODETYPE_NONE) {
 		updateRecord();
-	} else if (m_mode == RECORDERMODETYPE_PLAYBACK) {
+	} else if (isPlaybackMode()) {
 		updatePlayback();
 	}
 }
@@ -902,6 +902,14 @@ Bool RecorderClass::readReplayHeader(ReplayHeader& header)
 	return TRUE;
 }
 
+Bool RecorderClass::simulateReplay(AsciiString filename)
+{
+	Bool success = playbackFile(filename);
+	if (success)
+		m_mode = RECORDERMODETYPE_SIMULATION_PLAYBACK;
+	return success;
+}
+
 #if defined _DEBUG || defined _INTERNAL
 Bool RecorderClass::analyzeReplay( AsciiString filename )
 {
@@ -911,7 +919,7 @@ Bool RecorderClass::analyzeReplay( AsciiString filename )
 
 Bool RecorderClass::isAnalysisInProgress( void )
 {
-	return m_mode == RECORDERMODETYPE_PLAYBACK && m_nextFrame != -1;
+	return isPlaybackMode() && m_nextFrame != -1;
 }
 
 void RecorderClass::stopAnalysis()
@@ -922,7 +930,7 @@ void RecorderClass::stopAnalysis()
 
 AsciiString RecorderClass::getCurrentReplayFilename( void )
 {
-	if (m_mode == RECORDERMODETYPE_PLAYBACK)
+	if (isPlaybackMode())
 	{
 		return m_currentReplayFilename;
 	}
@@ -1186,12 +1194,17 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	// send a message to the logic for a new game
 	if (!m_doingAnalysis)
 	{
-		GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_NEW_GAME );
+		// TheSuperHackers @info helmutbuhler 04/13/2025
+		// We send the New Game message here directly to the command list and bypass the TheMessageStream.
+		// That's ok because Multiplayer is disabled during replay playback and is actually required
+		// during replay simulation because we don't update TheMessageStream during simulation.
+		GameMessage *msg = newInstance(GameMessage)(GameMessage::MSG_NEW_GAME);
 		msg->appendIntegerArgument(GAME_REPLAY);
 		msg->appendIntegerArgument(difficulty);
 		msg->appendIntegerArgument(rankPoints);
 		if( maxFPS != 0 )
 			msg->appendIntegerArgument(maxFPS);
+		TheCommandList->appendMessage( msg );
 		//InitGameLogicRandom( m_gameInfo.getSeed());
 		InitRandom( m_gameInfo.getSeed() );
 	}
@@ -1616,7 +1629,7 @@ void RecorderClass::initControls()
 Bool RecorderClass::isMultiplayer( void )
 {
 
-	if (m_mode == RECORDERMODETYPE_PLAYBACK)
+	if (isPlaybackMode())
 	{
 		GameSlot *slot;
 		for (int i=0; i<MAX_SLOTS; ++i)
