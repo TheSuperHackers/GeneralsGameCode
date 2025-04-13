@@ -681,10 +681,10 @@ set(GAMEENGINE_SRC
     Source/GameClient/Display.cpp
     Source/GameClient/DisplayString.cpp
     Source/GameClient/DisplayStringManager.cpp
+    Source/GameClient/Drawable.cpp
     Source/GameClient/Drawable/Update/AnimatedParticleSysBoneClientUpdate.cpp
     Source/GameClient/Drawable/Update/BeaconClientUpdate.cpp
     Source/GameClient/Drawable/Update/SwayClientUpdate.cpp
-    Source/GameClient/Drawable.cpp
     Source/GameClient/DrawGroupInfo.cpp
     Source/GameClient/Eva.cpp
     Source/GameClient/FXList.cpp
@@ -960,6 +960,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/SpecialPower/SpecialAbility.cpp
     Source/GameLogic/Object/SpecialPower/SpecialPowerModule.cpp
     Source/GameLogic/Object/SpecialPower/SpyVisionSpecialPower.cpp
+    Source/GameLogic/Object/Update/AIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/AssaultTransportAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/ChinookAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/DeliverPayloadAIUpdate.cpp
@@ -975,7 +976,6 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Update/AIUpdate/TransportAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/WanderAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/WorkerAIUpdate.cpp
-    Source/GameLogic/Object/Update/AIUpdate.cpp
     Source/GameLogic/Object/Update/AnimationSteeringUpdate.cpp
     Source/GameLogic/Object/Update/AssistedTargetingUpdate.cpp
     Source/GameLogic/Object/Update/AutoDepositUpdate.cpp
@@ -1091,6 +1091,9 @@ set(GAMEENGINE_SRC
     Source/GameNetwork/FrameMetrics.cpp
     Source/GameNetwork/GameInfo.cpp
     Source/GameNetwork/GameMessageParser.cpp
+    #Source/GameNetwork/GameSpyChat.cpp
+    #Source/GameNetwork/GameSpyGameInfo.cpp
+    #Source/GameNetwork/GameSpyGP.cpp
     Source/GameNetwork/GameSpy/Chat.cpp
     Source/GameNetwork/GameSpy/GSConfig.cpp
     Source/GameNetwork/GameSpy/LadderDefs.cpp
@@ -1104,9 +1107,6 @@ set(GAMEENGINE_SRC
     Source/GameNetwork/GameSpy/Thread/PersistentStorageThread.cpp
     Source/GameNetwork/GameSpy/Thread/PingThread.cpp
     Source/GameNetwork/GameSpy/Thread/ThreadUtils.cpp
-    #Source/GameNetwork/GameSpyChat.cpp
-    #Source/GameNetwork/GameSpyGameInfo.cpp
-    #Source/GameNetwork/GameSpyGP.cpp
     Source/GameNetwork/GameSpyOverlay.cpp
     Source/GameNetwork/GUIUtil.cpp
     Source/GameNetwork/IPEnumeration.cpp

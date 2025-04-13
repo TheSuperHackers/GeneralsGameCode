@@ -11,8 +11,8 @@ set(WOLSETUP_SRC
     "WOLAPI/downloaddefs.h"
     "WOLAPI/ftpdefs.h"
     "WOLAPI/netutildefs.h"
-    "WOLAPI/wolapi.h"
     "WOLAPI/wolapi_i.c"
+    "WOLAPI/wolapi.h"
 )
 
 add_executable(z_wolsetup WIN32)

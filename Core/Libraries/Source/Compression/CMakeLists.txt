@@ -1,22 +1,22 @@
 set(COMPRESSION_SRC
+    Compression.h
+    CompressionManager.cpp
     EAC/btreeabout.cpp
+    EAC/btreecodex.h
     EAC/btreedecode.cpp
     EAC/btreeencode.cpp
+    EAC/codex.h
+    EAC/gimex.h
     EAC/huffabout.cpp
+    EAC/huffcodex.h
     EAC/huffdecode.cpp
     EAC/huffencode.cpp
     EAC/refabout.cpp
+    EAC/refcodex.h
     EAC/refdecode.cpp
     EAC/refencode.cpp
-    EAC/btreecodex.h
-    EAC/codex.h
-    EAC/gimex.h
-    EAC/huffcodex.h
-    EAC/refcodex.h
     LZHCompress/NoxCompress.cpp
     LZHCompress/NoxCompress.h
-    CompressionManager.cpp
-    Compression.h
 )
 
 add_library(core_compression STATIC)

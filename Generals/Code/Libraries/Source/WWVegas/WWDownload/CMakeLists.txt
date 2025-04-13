@@ -1,15 +1,15 @@
 # Set source files
 set(WWDOWNLOAD_SRC
     Download.cpp
-    FTP.CPP
-    registry.cpp
-    urlBuilder.cpp
     Download.h
     DownloadDebug.h
     downloaddefs.h
+    FTP.CPP
     ftp.h
     ftpdefs.h
+    registry.cpp
     Registry.h
+    urlBuilder.cpp
     urlBuilder.h
 )
 

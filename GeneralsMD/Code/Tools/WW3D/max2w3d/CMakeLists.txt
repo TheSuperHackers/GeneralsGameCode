@@ -130,6 +130,8 @@ set(MAX2W3D_SRC
     "vxldbg.h"
     "vxllayer.cpp"
     "vxllayer.h"
+    "w3d_file.h"
+    "w3d_obsolete.h"
     "w3dappdata.cpp"
     "w3dappdata.h"
     "w3ddesc.cpp"
@@ -142,8 +144,6 @@ set(MAX2W3D_SRC
     "w3dmtl.h"
     "w3dutil.cpp"
     "w3dutil.h"
-    "w3d_file.h"
-    "w3d_obsolete.h"
 )
 
 add_library(z_max2w3d SHARED)

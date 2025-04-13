@@ -1,116 +1,116 @@
 # Set source files
 set(WWLIB_SRC
-    b64pipe.cpp
-    b64straw.cpp
-    base64.cpp
-    buff.cpp
-    bufffile.cpp
-    chunkio.cpp
-    cpudetect.cpp
-    crc.cpp
-    cstraw.cpp
-    Except.cpp
-    ffactory.cpp
-    gcd_lcm.cpp
-    hash.cpp
-    ini.cpp
-    jshell.cpp
-    mpu.cpp
-    multilist.cpp
-    mutex.cpp
-    nstrdup.cpp
-    pipe.cpp
-    ramfile.cpp
-    random.cpp
-    rawfile.cpp
-    rcfile.cpp
-    readline.cpp
-    realcrc.cpp
-    refcount.cpp
-    registry.cpp
-    slnode.cpp
-    stimer.cpp
-    straw.cpp
-    strtok_r.cpp
-    systimer.cpp
-    TARGA.CPP
-    textfile.cpp
-    thread.cpp
-    trim.cpp
-    vector.cpp
-    widestring.cpp
-    WWCOMUtil.cpp
-    wwfile.cpp
-    wwstring.cpp
-    xpipe.cpp
-    xstraw.cpp
     always.h
     argv.h
+    b64pipe.cpp
     b64pipe.h
+    b64straw.cpp
     b64straw.h
+    base64.cpp
     base64.h
     binheap.h
     bittype.h
     bound.h
     BSEARCH.H
+    buff.cpp
     BUFF.H
+    bufffile.cpp
     bufffile.h
     CallbackHook.h
+    chunkio.cpp
     chunkio.h
+    cpudetect.cpp
     cpudetect.h
+    crc.cpp
     CRC.H
+    cstraw.cpp
     cstraw.h
+    Except.cpp
+    ffactory.cpp
     ffactory.h
+    gcd_lcm.cpp
     gcd_lcm.h
+    hash.cpp
     hash.h
     hashcalc.h
     HASHLIST.H
     hashtemplate.h
     INDEX.H
+    ini.cpp
     INI.H
     inisup.h
     iostruct.h
+    jshell.cpp
     LISTNODE.H
     mempool.h
+    mpu.cpp
     MPU.H
+    multilist.cpp
     multilist.h
+    mutex.cpp
     mutex.h
     Notify.h
+    nstrdup.cpp
     nstrdup.h
     ntree.h
+    pipe.cpp
     PIPE.H
     Point.h
+    ramfile.cpp
     RAMFILE.H
+    random.cpp
     RANDOM.H
+    rawfile.cpp
     RAWFILE.H
+    rcfile.cpp
     rcfile.h
+    readline.cpp
     readline.h
+    realcrc.cpp
     realcrc.h
     ref_ptr.h
+    refcount.cpp
+    registry.cpp
     registry.h
     sharebuf.h
     Signaler.h
     simplevec.h
     SLIST.H
+    slnode.cpp
     SLNODE.H
+    stimer.cpp
+    straw.cpp
     STRAW.H
+    strtok_r.cpp
     strtok_r.h
+    systimer.cpp
     systimer.h
+    TARGA.CPP
     TARGA.H
+    textfile.cpp
     textfile.h
+    thread.cpp
     thread.h
     trect.h
+    trim.cpp
     trim.h
     uarray.h
+    vector.cpp
     Vector.H
     verchk.h
     visualc.h
+    widestring.cpp
     widestring.h
     win.h
+    WWCOMUtil.cpp
     WWCOMUtil.h
+    wwfile.cpp
     WWFILE.H
+    wwstring.cpp
     wwstring.h
+    xpipe.cpp
     XPIPE.H
+    xstraw.cpp
     XSTRAW.H
 )
 

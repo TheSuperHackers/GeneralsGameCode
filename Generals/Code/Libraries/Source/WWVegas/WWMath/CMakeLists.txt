@@ -1,80 +1,80 @@
 set(WWMATH_SRC
     aabox.cpp
+    aabox.h
     aabtreecull.cpp
+    aabtreecull.h
+    aaplane.h
     cardinalspline.cpp
+    cardinalspline.h
+    castres.h
     catmullromspline.cpp
+    catmullromspline.h
     colmath.cpp
+    colmath.h
     colmathaabox.cpp
+    colmathaabox.h
     colmathaabtri.cpp
     colmathfrustum.cpp
+    colmathfrustum.h
+    colmathinlines.h
     colmathline.cpp
+    colmathline.h
     colmathobbobb.cpp
     colmathobbox.cpp
     colmathobbtri.cpp
     colmathplane.cpp
+    colmathplane.h
     colmathsphere.cpp
     cullsys.cpp
-    curve.cpp
-    euler.cpp
-    frustum.cpp
-    gridcull.cpp
-    hermitespline.cpp
-    lineseg.cpp
-    lookuptable.cpp
-    matrix3.cpp
-    matrix3d.cpp
-    matrix4.cpp
-    obbox.cpp
-    ode.cpp
-    pot.cpp
-    quat.cpp
-    tcbspline.cpp
-    tri.cpp
-    v3_rnd.cpp
-    vehiclecurve.cpp
-    vp.cpp
-    wwmath.cpp
-    aabox.h
-    aabtreecull.h
-    aaplane.h
-    cardinalspline.h
-    castres.h
-    catmullromspline.h
-    colmath.h
-    colmathaabox.h
-    colmathfrustum.h
-    colmathinlines.h
-    colmathline.h
-    colmathplane.h
     cullsys.h
     culltype.h
+    curve.cpp
     curve.h
+    euler.cpp
     euler.h
+    frustum.cpp
     frustum.h
+    gridcull.cpp
     gridcull.h
+    hermitespline.cpp
     hermitespline.h
+    lineseg.cpp
     lineseg.h
+    lookuptable.cpp
     lookuptable.h
+    matrix3.cpp
     matrix3.h
+    matrix3d.cpp
     matrix3d.h
+    matrix4.cpp
     matrix4.h
+    obbox.cpp
     obbox.h
+    ode.cpp
     ode.h
     plane.h
+    pot.cpp
     pot.h
+    quat.cpp
     quat.h
     rect.h
     sphere.h
+    tcbspline.cpp
     tcbspline.h
+    tri.cpp
     tri.h
+    v3_rnd.cpp
     v3_rnd.h
     vector2.h
     vector2i.h
     vector3.h
     Vector3i.h
     vector4.h
+    vehiclecurve.cpp
     vehiclecurve.h
+    vp.cpp
     vp.h
+    wwmath.cpp
     wwmath.h
     wwmathids.h
 )
