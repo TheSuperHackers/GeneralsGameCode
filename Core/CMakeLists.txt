@@ -1,7 +1,12 @@
 # c stands for core, i stands for Interface
 add_library(corei_libraries_include INTERFACE)
+add_library(corei_always INTERFACE)
 
 target_include_directories(corei_libraries_include INTERFACE "Libraries/Include")
+target_link_libraries(corei_always INTERFACE
+    core_utility
+    corei_libraries_include
+)
 
 # Do we want to build extra SDK stuff or just the game binary?
 option(RTS_BUILD_CORE_TOOLS "Build core tools" ON)
