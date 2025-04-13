@@ -124,6 +124,7 @@ public:
 
 	void logPlayerDisconnect(UnicodeString player, Int slot);
 	void logCRCMismatch( void );
+	Bool sawCRCMismatch();
 	void cleanUpReplayFile( void );										///< after a crash, send replay/debug info to a central repository
 
 	void stopRecording();															///< Stop recording and close m_file.

@@ -1012,6 +1012,11 @@ UnsignedInt CRCInfo::readCRC(void)
 	return val;
 }
 
+Bool RecorderClass::sawCRCMismatch()
+{
+	return m_crcInfo->sawCRCMismatch();
+}
+
 void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool fromPlayback)
 {
 	if (fromPlayback)
@@ -1031,8 +1036,9 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 	if (samePlayer || (localPlayerIndex < 0))
 	{
 		UnsignedInt playbackCRC = m_crcInfo->readCRC();
+		Int mismatchFrame = TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1;
 		//DEBUG_LOG(("RecorderClass::handleCRCMessage() - Comparing CRCs of InGame:%8.8X Replay:%8.8X Frame:%d from Player %d\n",
-		//	playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1, playerIndex));
+		//	playbackCRC, newCRC, mismatchFrame, playerIndex));
 		if (TheGameLogic->getFrame() > 0 && newCRC != playbackCRC && !m_crcInfo->sawCRCMismatch())
 		{
 			m_crcInfo->setSawCRCMismatch();
@@ -1051,7 +1057,31 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 			// Note: We subtract the queue size from the frame no. This way we calculate the correct frame
 			// the mismatch first happened in case the NetCRCInterval is set to 1 during the game.
 			DEBUG_CRASH(("Replay has gone out of sync!  All bets are off!\nInGame:%8.8X Replay:%8.8X\nFrame:%d",
-				playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1));
+				playbackCRC, newCRC, mismatchFrame));
+
+			// TheSuperHackers @info helmutbuhler 04/13/2025
+			// Print Mismatch to console in case we are in SimulateReplayList
+			printf("CRC Mismatch in Frame %d\n", mismatchFrame);
+
+			// dump GameLogic random seed
+			DEBUG_LOG(("GameLogic frame = %d\n", TheGameLogic->getFrame()));
+			DEBUG_LOG(("GetGameLogicRandomSeedCRC() = %d\n", GetGameLogicRandomSeedCRC()));
+
+			// dump CRCs
+			{
+				DEBUG_LOG(("--- GameState Dump ---\n"));
+		#ifdef DEBUG_CRC
+				outputCRCDumpLines();
+		#endif
+				DEBUG_LOG(("------ End Dump ------\n"));
+			}
+			{
+				DEBUG_LOG(("--- DebugInfo Dump ---\n"));
+		#ifdef DEBUG_CRC
+				outputCRCDebugLines();
+		#endif
+				DEBUG_LOG(("------ End Dump ------\n"));
+			}
 		}
 		return;
 	}

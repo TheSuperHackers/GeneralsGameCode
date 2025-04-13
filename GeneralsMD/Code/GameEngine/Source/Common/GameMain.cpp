@@ -34,12 +34,16 @@
 #include "GameLogic/GameLogic.h"
 
 // TheSuperHackers @feature helmutbuhler 04/13/2025
-// Simulate a list of replays without graphics
-void SimulateReplayList(const std::vector<AsciiString> &filenames)
+// Simulate a list of replays without graphics.
+// Returns exitcode 1 if mismatch occured
+int SimulateReplayList(const std::vector<AsciiString> &filenames)
 {
+	// Note that we use printf here because this is run from cmd.
+	Bool sawCRCMismatch = false;
 	for (size_t i = 0; i < TheGlobalData->m_simulateReplayList.size(); i++)
 	{
 		AsciiString filename = TheGlobalData->m_simulateReplayList[i];
+		printf("Simulating Replay %s\n", filename.str());
 		if (TheRecorder->simulateReplay(filename))
 		{
 			do
@@ -48,9 +52,14 @@ void SimulateReplayList(const std::vector<AsciiString> &filenames)
 					VERIFY_CRC
 				}
 				TheGameLogic->UPDATE();
-			} while (TheRecorder->isAnalysisInProgress());
+				sawCRCMismatch = TheRecorder->sawCRCMismatch();
+			} while (TheRecorder->isAnalysisInProgress() && !sawCRCMismatch);
 		}
+		if (sawCRCMismatch)
+			break;
 	}
+	if (!sawCRCMismatch)
+		printf("Successfully simulated all replays\n");
 
 	// TheSuperHackers @todo helmutbuhler 04/13/2025
 	// There is a bug somewhere in the destructor of TheGameEngine which doesn't properly
@@ -59,20 +68,22 @@ void SimulateReplayList(const std::vector<AsciiString> &filenames)
 	{
 		TheGameLogic->clearGameData();
 	}
+	return sawCRCMismatch ? 1 : 0;
 }
 
 /**
  * This is the entry point for the game system.
  */
-void GameMain( int argc, char *argv[] )
+Int GameMain( int argc, char *argv[] )
 {
+	int exitcode = 0;
 	// initialize the game engine using factory function
 	TheGameEngine = CreateGameEngine();
 	TheGameEngine->init(argc, argv);
 
 	if (!TheGlobalData->m_simulateReplayList.empty())
 	{
-		SimulateReplayList(TheGlobalData->m_simulateReplayList);
+		exitcode = SimulateReplayList(TheGlobalData->m_simulateReplayList);
 	}
 	else
 	{
@@ -84,5 +95,6 @@ void GameMain( int argc, char *argv[] )
 	delete TheGameEngine;
 	TheGameEngine = NULL;
 
+	return exitcode;
 }
 
