@@ -26,7 +26,7 @@
 namespace patchget
 {
 
-#ifdef DEBUG
+#if defined(DEBUG) || defined(DEBUG_LOGGING)
 
 void DebugLog( const char *fmt, ... );
 #define DEBUG_LOG(x) DebugLog x

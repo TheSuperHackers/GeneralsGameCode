@@ -32,6 +32,7 @@
 #include "Common/version.h"
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
+#include "GameNetwork/NetworkDefs.h"
 
 Bool TheDebugIgnoreSyncErrors = FALSE;
 extern Int DX8Wrapper_PreserveFPU;
@@ -103,9 +104,7 @@ static void ConvertShortMapPathToLongMapPath(AsciiString &mapName)
 //=============================================================================
 Int parseNoLogOrCrash(char *args[], int)
 {
-#ifdef ALLOW_DEBUG_UTILS
 	DEBUG_CRASH(("-NoLogOrCrash not supported in this build\n"));
-#endif
 	return 1;
 }
 
@@ -325,7 +324,9 @@ Int parseNoDraw(char *args[], int argc)
 //=============================================================================
 Int parseLogToConsole(char *args[], int)
 {
+#ifdef ALLOW_DEBUG_UTILS
 	DebugSetFlags(DebugGetFlags() | DEBUG_FLAG_LOG_TO_CONSOLE);
+#endif
 	return 1;
 }
 
@@ -950,7 +951,7 @@ Int parseBenchmark(char *args[], int num)
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_CRASHING
 Int parseIgnoreAsserts(char *args[], int num)
 {
 	if (TheWritableGlobalData && num > 0)
@@ -961,7 +962,7 @@ Int parseIgnoreAsserts(char *args[], int num)
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_STACKTRACE
 Int parseIgnoreStackTrace(char *args[], int num)
 {
 	if (TheWritableGlobalData && num > 0)
@@ -1058,7 +1059,7 @@ Int parseMod(char *args[], Int num)
 	return 1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_LOGGING
 Int parseSetDebugLevel(char *args[], int num)
 {
 	if (num > 1)
@@ -1113,7 +1114,6 @@ static CommandLineParam params[] =
 	{ "-novideo", parseNoVideo },
 	{ "-noLogOrCrash", parseNoLogOrCrash },
 	{ "-FPUPreserve", parseFPUPreserve },
-#if defined(_DEBUG) || defined(_INTERNAL)
 	{ "-benchmark", parseBenchmark },
 	{ "-saveStats", parseSaveStats },
 	{ "-localMOTD", parseLocalMOTD },
@@ -1161,16 +1161,11 @@ static CommandLineParam params[] =
 	{ "-netMinPlayers", parseNetMinPlayers },
 	{ "-DemoLoadScreen", parseDemoLoadScreen },
 	{ "-cameraDebug", parseCameraDebug },
-	{ "-ignoreAsserts", parseIgnoreAsserts },
-	{ "-ignoreStackTrace", parseIgnoreStackTrace },
 	{ "-logToCon", parseLogToConsole },
 	{ "-vTune", parseVTune },
 	{ "-selectTheUnselectable", parseSelectAll },
 	{ "-RunAhead", parseRunAhead },
 	{ "-noshroud", parseNoShroud },
-	{ "-setDebugLevel", parseSetDebugLevel },
-	{ "-clearDebugLevel", parseClearDebugLevel },
-#endif
 	{ "-forceBenchmark", parseForceBenchmark },
 	{ "-buildmapcache", parseBuildMapCache },
 	{ "-noshadowvolumes", parseNoShadows },
@@ -1189,6 +1184,19 @@ static CommandLineParam params[] =
 	{ "-jumpToFrame", parseJumpToFrame },
 	{ "-updateImages", parseUpdateImages },
 	{ "-showTeamDot", parseShowTeamDot },
+#endif
+
+#ifdef DEBUG_LOGGING
+	{ "-setDebugLevel", parseSetDebugLevel },
+	{ "-clearDebugLevel", parseClearDebugLevel },
+#endif
+
+#ifdef DEBUG_CRASHING
+	{ "-ignoreAsserts", parseIgnoreAsserts },
+#endif
+
+#ifdef DEBUG_STACKTRACE
+	{ "-ignoreStackTrace", parseIgnoreStackTrace },
 #endif
 };
 

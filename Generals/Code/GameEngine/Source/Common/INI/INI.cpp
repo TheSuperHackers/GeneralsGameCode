@@ -190,7 +190,7 @@ INI::INI( void )
 	m_blockEndToken			= "END";
 	m_endOfFile					= FALSE;
 	m_buffer[0]					= 0;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_CRASHING
 	m_curBlockStart[0]	= 0;
 #endif
 
@@ -368,7 +368,7 @@ void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 				INIBlockParse parse = findBlockParse(token);
 				if (parse)
 				{
-					#if defined(_DEBUG) || defined(_INTERNAL)
+					#ifdef DEBUG_CRASHING
 					strcpy(m_curBlockStart, m_buffer);
 					#endif
 					try {
@@ -381,7 +381,7 @@ void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 
 						throw INIException(buff);
 					}
-					#if defined(_DEBUG) || defined(_INTERNAL)
+					#ifdef DEBUG_CRASHING
 						strcpy(m_curBlockStart, "NO_BLOCK");
 					#endif
 				}

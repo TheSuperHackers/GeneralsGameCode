@@ -85,6 +85,7 @@ void AddPlayerDialog::OnOK()
 			SidesList newSides = *TheSidesList;
 			newSides.addPlayerByTemplate(m_addedSide);
 			Bool modified = newSides.validateSides();
+			(void)modified;
 			DEBUG_ASSERTLOG(!modified,("had to clean up sides in AddPlayerDialog::OnOK"));
 
 			CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();

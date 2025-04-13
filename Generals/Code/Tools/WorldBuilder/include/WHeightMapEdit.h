@@ -46,7 +46,7 @@ public:
 /// Struct in memory.
 typedef struct 
 {
-#ifdef _DEBUG
+#ifdef DEBUG_CRASHING
 	Int forDebugOnly_fileTextureClass;
 #endif
 	Int numTiles;

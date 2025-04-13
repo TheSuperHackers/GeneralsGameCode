@@ -288,7 +288,7 @@ PopupSlider::~PopupSlider()
 {
 	if (mIcon) {
 		BOOL bRet = DestroyIcon(mIcon);
-
+		(void)bRet;
 		DEBUG_ASSERTCRASH(bRet != 0, ("Oops."));
 
 		mIcon = NULL;
