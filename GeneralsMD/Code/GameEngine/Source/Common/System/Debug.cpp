@@ -631,7 +631,7 @@ double SimpleProfiler::getAverageTime()
 	return (double)m_totalAllSessions * 1000.0 / ((double)m_freq * (double)m_numSessions);
 }
 
-#endif	// ALLOW_DEBUG_UTILS
+#endif	// DEBUG_PROFILE
 
 // ----------------------------------------------------------------------------
 // ReleaseCrash

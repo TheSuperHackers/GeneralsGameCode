@@ -1247,10 +1247,6 @@ static CommandLineParam params[] =
 	{ "-selectTheUnselectable", parseSelectAll },
 	{ "-RunAhead", parseRunAhead },
 	{ "-noshroud", parseNoShroud },
-#ifdef DEBUG_LOGGING
-	{ "-setDebugLevel", parseSetDebugLevel },
-	{ "-clearDebugLevel", parseClearDebugLevel },
-#endif
 	{ "-forceBenchmark", parseForceBenchmark },
 	{ "-buildmapcache", parseBuildMapCache },
 	{ "-noshadowvolumes", parseNoShadows },
@@ -1272,12 +1268,17 @@ static CommandLineParam params[] =
 
 #endif
 
+#ifdef DEBUG_LOGGING
+	{ "-setDebugLevel", parseSetDebugLevel },
+	{ "-clearDebugLevel", parseClearDebugLevel },
+#endif
+
 #ifdef DEBUG_CRASHING
-		{ "-ignoreAsserts", parseIgnoreAsserts },
+	{ "-ignoreAsserts", parseIgnoreAsserts },
 #endif
 
 #ifdef DEBUG_STACKTRACE
-		{ "-ignoreStackTrace", parseIgnoreStackTrace },
+	{ "-ignoreStackTrace", parseIgnoreStackTrace },
 #endif
 
 	//-allAdvice feature

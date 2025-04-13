@@ -505,7 +505,7 @@ public:
 #endif
 
 #ifdef DEBUG_CRASHING
-		Bool m_debugIgnoreAsserts;						///< Ignore all asserts.
+	Bool m_debugIgnoreAsserts;						///< Ignore all asserts.
 #endif
 
 #ifdef DEBUG_STACKTRACE
