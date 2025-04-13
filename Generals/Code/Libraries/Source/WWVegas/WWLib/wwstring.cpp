@@ -26,9 +26,9 @@
  *                                                                                             *
  *                       Author:: Patrick Smith                                                *
  *                                                                                             *
- *                     $Modtime:: 8/27/01 1:42p                                               $*
+ *                     $Modtime:: 12/13/01 10:48p                                             $*
  *                                                                                             *
- *                    $Revision:: 10                                                          $*
+ *                    $Revision:: 17                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -45,7 +45,7 @@
 //	Static member initialzation
 ///////////////////////////////////////////////////////////////////
 
-CriticalSectionClass StringClass::m_Mutex;
+FastCriticalSectionClass StringClass::m_Mutex;
 
 TCHAR		StringClass::m_NullChar					= 0;
 TCHAR *	StringClass::m_EmptyString				= &m_NullChar;
@@ -87,7 +87,7 @@ StringClass::Get_String (int length, bool is_temp)
 		// the mutex lock, but that is a feature by design and doesn't cause
 		// anything bad to happen.
 		//
-		CriticalSectionClass::LockClass m(m_Mutex);
+		FastCriticalSectionClass::LockClass m(m_Mutex);
 
 		//
 		//	Try to find an available temporary buffer
@@ -116,7 +116,15 @@ StringClass::Get_String (int length, bool is_temp)
 	}
 
 	if (string == NULL) {
-		Set_Buffer_And_Allocated_Length (Allocate_Buffer (length), length);
+		
+		//
+		//	Allocate a new string as necessary
+		//
+		if (length > 0) {
+			Set_Buffer_And_Allocated_Length (Allocate_Buffer (length), length);
+		} else {
+			Free_String ();
+		}
 	}
 }
 
@@ -168,9 +176,13 @@ StringClass::Uninitialised_Grow (int new_len)
 		//	Switch to a newly allocated buffer
 		//
 		TCHAR *new_buffer = Allocate_Buffer (new_len);
-		Set_Buffer_And_Allocated_Length (new_buffer, new_len);
+		Set_Buffer_And_Allocated_Length (new_buffer, new_len);	
 	}
-
+		
+	//
+	// Whenever this function is called, clear the cached length 
+	//
+	Store_Length (0);
 	return ;
 }
 
@@ -189,11 +201,13 @@ StringClass::Free_String (void)
 		unsigned temp_base=reinterpret_cast<unsigned>(m_TempStrings+MAX_TEMP_BYTES*MAX_TEMP_STRING);
 
 		if ((buffer_base>>11)==(temp_base>>11)) {
+			m_Buffer[0] = 0;
+
 			//
 			//	Make sure no one else is changing the reserved mask
 			// at the same time we are.
 			//
-			CriticalSectionClass::LockClass m(m_Mutex);
+			FastCriticalSectionClass::LockClass m(m_Mutex);
 
 			unsigned index=(buffer_base/MAX_TEMP_BYTES)&(MAX_TEMP_STRING-1);
 			unsigned mask=1<<index;
@@ -295,4 +309,34 @@ void
 StringClass::Release_Resources (void)
 {
 	Free_String();
+}
+
+
+///////////////////////////////////////////////////////////////////
+// Copy_Wide
+//
+///////////////////////////////////////////////////////////////////
+bool StringClass::Copy_Wide (const WCHAR *source)
+{
+	if (source != NULL) {
+
+		int  length;
+		BOOL unmapped;
+			
+		length = WideCharToMultiByte (CP_ACP, 0 , source, -1, NULL, 0, NULL, &unmapped);
+		if (length > 0) {
+
+			// Convert.
+			WideCharToMultiByte (CP_ACP, 0, source, -1, Get_Buffer (length), length, NULL, NULL);
+
+			// Update length.
+			Store_Length (length - 1);
+		}
+
+		// Were all characters successfully mapped?
+		return (!unmapped);
+	}
+
+	// Failure.
+	return (false);
 }

@@ -22,13 +22,13 @@
  *                                                                                             * 
  *                 Project Name : Command & Conquer                                            * 
  *                                                                                             * 
- *                     $Archive:: /VSS_Sync/wwlib/trim.cpp                                    $* 
+ *                     $Archive:: /Commando/Code/wwlib/trim.cpp                               $* 
  *                                                                                             * 
- *                      $Author:: Vss_sync                                                    $*
+ *                      $Author:: Denzil_l                                                    $*
  *                                                                                             * 
- *                     $Modtime:: 8/29/01 10:24p                                              $*
+ *                     $Modtime:: 11/08/01 11:35a                                             $*
  *                                                                                             * 
- *                    $Revision:: 3                                                           $*
+ *                    $Revision:: 4                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------* 
  * Functions:                                                                                  * 
@@ -36,8 +36,6 @@
 
 #include	"always.h"
 #include	"trim.h"
-#include	<ctype.h>
-#include	<stddef.h>
 #include	<string.h>
 
 #ifdef _UNIX
@@ -59,65 +57,59 @@
  * HISTORY:                                                                                    * 
  *   02/06/1997 JLB : Created.                                                                 * 
  *=============================================================================================*/
-char * strtrim(char * buffer)
+char* strtrim(char* buffer)
 {
-	if (buffer != NULL) {
+	if (buffer) {
+		/* Strip leading white space from the string. */
+		char* source = buffer;
 
-		/*
-		**	Strip leading white space from the string.
-		*/
-		char * source = buffer;
-		while (isspace(*source)) {
-			source++;
+		while ((*source != 0) && ((unsigned char)*source <= 32)) {
+			++source;
 		}
+
 		if (source != buffer) {
 			// TheSuperHackers @fix Mauller 04/04/2025 Replace strcpy with safer memmove as memory regions can overlap when part of string is copied to itself
 			memmove(buffer, source, strlen(source) +1);
 		}
 
-		/*
-		**	Clip trailing white space from the string.
-		*/
-		for (int index = strlen(buffer)-1; index >= 0; index--) {
-			if (isspace(buffer[index])) {
+		/* Clip trailing white space from the string. */
+		for (int index = strlen(buffer) - 1; index >= 0; --index) {
+			if ((*source != 0) && ((unsigned char)buffer[index] <= 32)) {
 				buffer[index] = '\0';
 			} else {
 				break;
 			}
 		}
 	}
-	return(buffer);
+
+	return buffer;
 }
 
-wchar_t * wcstrim(wchar_t * buffer)
-{
-	if (buffer != NULL) {
 
-		/*
-		**	Strip leading white space from the string.
-		*/
-		wchar_t * source = buffer;
-		while (iswspace(*source)) {
-			source++;
+wchar_t* wcstrim(wchar_t* buffer)
+{
+	if (buffer) {
+		/* Strip leading white space from the string. */
+		wchar_t* source = buffer;
+
+		while ((*source != 0) && ((unsigned int)*source <= 32)) {
+			++source;
 		}
+		
 		if (source != buffer) {
 			// TheSuperHackers @fix Mauller 04/04/2025 Replace wcscpy with safer memmove as memory regions can overlap when part of string is copied to itself
 			memmove(buffer, source, (wcslen(source) + 1) * sizeof(wchar_t));
 		}
 
-		/*
-		**	Clip trailing white space from the string.
-		*/
-		for (int index = wcslen(buffer)-1; index >= 0; index--) {
-			if (iswspace(buffer[index])) {
+		/* Clip trailing white space from the string. */
+		for (int index = wcslen(buffer) - 1; index >= 0; --index) {
+			if ((*source != 0) && ((unsigned int)buffer[index] <= 32)) {
 				buffer[index] = L'\0';
 			} else {
 				break;
 			}
 		}
 	}
-	return(buffer);
+
+	return buffer;
 }
-
-
-

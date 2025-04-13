@@ -26,9 +26,9 @@
  *                                                                                             *
  *                       Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 6/06/01 11:04a                                              $*
+ *                     $Modtime:: 9/26/01 3:11p                                               $*
  *                                                                                             *
- *                    $Revision:: 7                                                           $*
+ *                    $Revision:: 9                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -52,6 +52,8 @@
 
 #include "bittype.h"
 #include "wwdebug.h"
+#include "mutex.h"
+#include <new.h>
 #include <stdlib.h>
 #include <stddef.h>
 
@@ -92,6 +94,7 @@ protected:
 	uint32 *	BlockListHead;			
 	int		FreeObjectCount;
 	int		TotalObjectCount;
+	FastCriticalSectionClass ObjectPoolCS;
 
 };
 
@@ -155,8 +158,7 @@ private:
 ** the class.
 */
 #define DEFINE_AUTO_POOL(T,BLOCKSIZE) \
-ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator
-
+ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator;
 
 
 /***********************************************************************************************
@@ -274,6 +276,8 @@ void ObjectPoolClass<T,BLOCK_SIZE>::Free_Object(T * obj)
 template<class T,int BLOCK_SIZE> 
 T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object_Memory(void)
 {
+	FastCriticalSectionClass::LockClass lock(ObjectPoolCS);
+
 	if ( FreeListHead == 0 ) {  
 
 		// No free objects, allocate another block
@@ -296,6 +300,7 @@ T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object_Memory(void)
 	T * obj = FreeListHead;						// Get the next free object
 	FreeListHead = *(T**)(FreeListHead);	// Bump the Head
 	FreeObjectCount--;
+
 	return obj;										
 }
 
@@ -315,6 +320,8 @@ T * ObjectPoolClass<T,BLOCK_SIZE>::Allocate_Object_Memory(void)
 template<class T,int BLOCK_SIZE> 
 void ObjectPoolClass<T,BLOCK_SIZE>::Free_Object_Memory(T * obj)
 {
+	FastCriticalSectionClass::LockClass lock(ObjectPoolCS);
+
 	WWASSERT(obj != NULL);
 	*(T**)(obj) = FreeListHead;		// Link to the Head
 	FreeListHead = obj;					// Set the Head
