@@ -22,13 +22,13 @@
  *                                                                                             *
  *                 Project Name : WWDebug                                                      *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/wwdebug/wwdebug.cpp                               $*
+ *                     $Archive:: /Commando/Code/wwdebug/wwdebug.cpp                          $*
  *                                                                                             *
- *                      $Author:: Vss_sync                                                    $*
+ *                      $Author:: Greg_h                                                      $*
  *                                                                                             *
- *                     $Modtime:: 10/19/00 2:12p                                              $*
+ *                     $Modtime:: 1/13/02 1:46p                                               $*
  *                                                                                             *
- *                    $Revision:: 13                                                          $*
+ *                    $Revision:: 16                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -50,6 +50,8 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include <signal.h>
+#include "Except.h"
 
 
 static PrintFunc			_CurMessageHandler = NULL;
@@ -93,7 +95,7 @@ int Get_Last_System_Error()
  *   2/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
 PrintFunc WWDebug_Install_Message_Handler(PrintFunc func)
-{	
+{
 	PrintFunc tmp = _CurMessageHandler;
 	_CurMessageHandler = func;
 	return tmp;
@@ -192,13 +194,13 @@ ProfileFunc	WWDebug_Install_Profile_Stop_Handler(ProfileFunc func)
  * HISTORY:                                                                                    *
  *   2/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-#ifdef WWDEBUG
+
 void WWDebug_Printf(const char * format,...)
 {
 	if (_CurMessageHandler != NULL) {
-		
+
 		va_list	va;
-		char buffer[1024];
+		char buffer[4096];
 
 		va_start(va, format);
 		vsprintf(buffer, format, va);
@@ -209,7 +211,6 @@ void WWDebug_Printf(const char * format,...)
 
 	}
 }
-#endif
 
 /***********************************************************************************************
  * WWDebug_Printf_Warning -- Internal function for passing messages to installed handler       *
@@ -223,13 +224,13 @@ void WWDebug_Printf(const char * format,...)
  * HISTORY:                                                                                    *
  *   2/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-#ifdef WWDEBUG
+
 void WWDebug_Printf_Warning(const char * format,...)
 {
 	if (_CurMessageHandler != NULL) {
-		
+
 		va_list	va;
-		char buffer[1024];
+		char buffer[4096];
 
 		va_start(va, format);
 		vsprintf(buffer, format, va);
@@ -240,7 +241,6 @@ void WWDebug_Printf_Warning(const char * format,...)
 
 	}
 }
-#endif
 
 /***********************************************************************************************
  * WWDebug_Printf_Error -- Internal function for passing messages to installed handler         *
@@ -254,13 +254,13 @@ void WWDebug_Printf_Warning(const char * format,...)
  * HISTORY:                                                                                    *
  *   2/19/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-#ifdef WWDEBUG
+
 void WWDebug_Printf_Error(const char * format,...)
 {
 	if (_CurMessageHandler != NULL) {
-		
+
 		va_list	va;
-		char buffer[1024];
+		char buffer[4096];
 
 		va_start(va, format);
 		vsprintf(buffer, format, va);
@@ -271,7 +271,6 @@ void WWDebug_Printf_Error(const char * format,...)
 
 	}
 }
-#endif
 
 /***********************************************************************************************
  * WWDebug_Assert_Fail -- Internal function for passing assert messages to installed handler   *
@@ -289,18 +288,68 @@ void WWDebug_Printf_Error(const char * format,...)
 void WWDebug_Assert_Fail(const char * expr,const char * file, int line)
 {
 	if (_CurAssertHandler != NULL) {
-	
-		char buffer[1024];
+
+		char buffer[4096];
 		sprintf(buffer,"%s (%d) Assert: %s\n",file,line,expr);
 		_CurAssertHandler(buffer);
 
 	} else {
 
-		assert(0);
+		/*
+		// If the exception handler is try to quit the game then don't show an assert.
+		*/
+		if (Is_Trying_To_Exit()) {
+			ExitProcess(0);
+		}
 
-	}
+      char assertbuf[4096];
+		sprintf(assertbuf, "Assert failed\n\n. File %s Line %d", file, line);
+
+      int code = MessageBoxA(NULL, assertbuf, "WWDebug_Assert_Fail", MB_ABORTRETRYIGNORE|MB_ICONHAND|MB_SETFOREGROUND|MB_TASKMODAL);
+
+      if (code == IDABORT) {
+      	raise(SIGABRT);
+      	_exit(3);
+      }
+
+		if (code == IDRETRY) {
+			WWDEBUG_BREAK
+      	return;
+		}
+   }
 }
 #endif
+
+
+
+
+/***********************************************************************************************
+ * _assert -- Catch all asserts by overriding lib function                                     *
+ *                                                                                             *
+ *                                                                                             *
+ *                                                                                             *
+ * INPUT:    Assert stuff                                                                      *
+ *                                                                                             *
+ * OUTPUT:   Nothing                                                                           *
+ *                                                                                             *
+ * WARNINGS: None                                                                              *
+ *                                                                                             *
+ * HISTORY:                                                                                    *
+ *   12/11/2001 3:56PM ST : Created                                                            *
+ *=============================================================================================*/
+#if 0 //(gth) this is giving me link errors for some reason...
+
+#ifndef W3D_MAX4
+#ifdef WWDEBUG
+void __cdecl _assert(void *expr, void *filename, unsigned lineno)
+{
+	WWDebug_Assert_Fail((const char*)expr, (const char*)filename, lineno);
+}
+#endif //WWDEBUG
+#endif
+
+#endif
+
 
 
 /***********************************************************************************************
@@ -320,14 +369,14 @@ void WWDebug_Assert_Fail_Print(const char * expr,const char * file, int line,con
 {
 	if (_CurAssertHandler != NULL) {
 
-		char buffer[1024];
+		char buffer[4096];
 		sprintf(buffer,"%s (%d) Assert: %s %s\n",file,line,expr, string);
 		_CurAssertHandler(buffer);
 
 	} else {
 
 		assert(0);
-	
+
 	}
 }
 #endif
@@ -422,7 +471,7 @@ void WWDebug_DBWin32_Message_Handler( const char * str )
     if ( !heventDBWIN )
     {
         //MessageBox(NULL, "DBWIN_BUFFER_READY nonexistent", NULL, MB_OK);
-        return;            
+        return;
     }
 
     /* get a handle to the data synch object */
@@ -431,11 +480,11 @@ void WWDebug_DBWin32_Message_Handler( const char * str )
     {
         // MessageBox(NULL, "DBWIN_DATA_READY nonexistent", NULL, MB_OK);
         CloseHandle(heventDBWIN);
-        return;            
+        return;
     }
-    
+
     hSharedFile = CreateFileMapping((HANDLE)-1, NULL, PAGE_READWRITE, 0, 4096, "DBWIN_BUFFER");
-    if (!hSharedFile) 
+    if (!hSharedFile)
     {
         //MessageBox(NULL, "DebugTrace: Unable to create file mapping object DBWIN_BUFFER", "Error", MB_OK);
         CloseHandle(heventDBWIN);
@@ -444,7 +493,7 @@ void WWDebug_DBWin32_Message_Handler( const char * str )
     }
 
     lpszSharedMem = (LPSTR)MapViewOfFile(hSharedFile, FILE_MAP_WRITE, 0, 0, 512);
-    if (!lpszSharedMem) 
+    if (!lpszSharedMem)
     {
         //MessageBox(NULL, "DebugTrace: Unable to map shared memory", "Error", MB_OK);
         CloseHandle(heventDBWIN);
@@ -470,4 +519,3 @@ void WWDebug_DBWin32_Message_Handler( const char * str )
     return;
 }
 #endif // WWDEBUG
-

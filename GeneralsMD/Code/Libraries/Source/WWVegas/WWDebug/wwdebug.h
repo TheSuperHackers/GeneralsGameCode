@@ -41,6 +41,7 @@
 #ifndef WWDEBUG_H
 #define WWDEBUG_H
 
+// TheSuperHackers @todo Recover WWDEBUG?
 #ifdef WWDEBUG
 #include <Utility/intrin_compat.h>
 #endif

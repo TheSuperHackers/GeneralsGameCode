@@ -31,6 +31,8 @@ set(WWLIB_SRC
     cstraw.h
     Except.cpp
     Except.h
+    FastAllocator.cpp
+    FastAllocator.h
     ffactory.cpp
     ffactory.h
     gcd_lcm.cpp
