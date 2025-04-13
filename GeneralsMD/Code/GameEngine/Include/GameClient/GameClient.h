@@ -59,10 +59,8 @@ class SnowManager;
 
 /// Function pointers for use by GameClient callback functions.
 typedef void (*GameClientFuncPtr)( Drawable *draw, void *userData ); 
-//typedef std::hash_map<DrawableID, Drawable *, rts::hash<DrawableID>, rts::equal_to<DrawableID> > DrawablePtrHash;
-//typedef DrawablePtrHash::iterator DrawablePtrHashIt;
-
-typedef std::vector<Drawable*> DrawablePtrVector;
+typedef std::hash_map<DrawableID, Drawable *, rts::hash<DrawableID>, rts::equal_to<DrawableID> > DrawablePtrHash;
+typedef DrawablePtrHash::iterator DrawablePtrHashIt;
 
 //-----------------------------------------------------------------------------
 /** The Client message dispatcher, this is the last "translator" on the message
@@ -165,8 +163,7 @@ protected:
 	UnsignedInt m_frame;																				///< Simulation frame number from server
 
 	Drawable *m_drawableList;																		///< All of the drawables in the world
-//	DrawablePtrHash m_drawableHash;															///< Used for DrawableID lookups
-	DrawablePtrVector m_drawableVector;
+	DrawablePtrHash m_drawableHash;															///< Used for DrawableID lookups
 
 	DrawableID m_nextDrawableID;																///< For allocating drawable id's
 	DrawableID allocDrawableID( void );													///< Returns a new unique drawable id
@@ -241,18 +238,13 @@ inline Drawable* GameClient::findDrawableByID( const DrawableID id )
 	if( id == INVALID_DRAWABLE_ID )
 		return NULL;
 
-//	DrawablePtrHashIt it = m_drawableHash.find(id);
-//	if (it == m_drawableHash.end()) {
-//		// no such drawable	
-//		return NULL;
-//	}
-//
-//	return (*it).second;
+	DrawablePtrHashIt it = m_drawableHash.find(id);
+	if (it == m_drawableHash.end()) {
+		// no such drawable	
+		return NULL;
+	}
 
-	if( (size_t)id < m_drawableVector.size() )
-		return m_drawableVector[(size_t)id];
-
-	return NULL;
+	return (*it).second;
 }
 
 
