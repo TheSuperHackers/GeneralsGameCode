@@ -1055,7 +1055,9 @@ void StealthUpdate::changeVisualDisguise()
 
 		const ThingTemplate *tTemplate = self->getTemplate();
 
-		TheThingFactory->newDrawable( tTemplate );
+		// TheSuperHackers @bugfix helmutbuhler 04/13/2025
+		// draw was originally not assigned here and potentially caused memory corruption
+		draw = TheThingFactory->newDrawable( tTemplate );
 		if( draw )
 		{
 			TheGameLogic->bindObjectAndDrawable(self, draw);
