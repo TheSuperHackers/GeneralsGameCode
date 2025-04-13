@@ -113,7 +113,7 @@ public:
 	void initControls();															///< Show or Hide the Replay controls
 
 	AsciiString getReplayDir();												///< Returns the directory that holds the replay files.
-	AsciiString getReplayExtention();									///< Returns the file extention for replay files.
+	static AsciiString getReplayExtention();									///< Returns the file extention for replay files.
 	AsciiString getLastReplayFileName();							///< Returns the filename used for the default replay.
 
 	GameInfo *getGameInfo( void ) { return &m_gameInfo; }	///< Returns the slot list for playback game start

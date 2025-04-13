@@ -29,7 +29,37 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
+#include "Common/Recorder.h"
+#include "Common/CRCDebug.h"
+#include "GameLogic/GameLogic.h"
 
+// TheSuperHackers @feature helmutbuhler 04/13/2025
+// Simulate a list of replays without graphics
+void SimulateReplayList(const std::vector<AsciiString> &filenames)
+{
+	for (size_t i = 0; i < TheGlobalData->m_simulateReplayList.size(); i++)
+	{
+		AsciiString filename = TheGlobalData->m_simulateReplayList[i];
+		if (TheRecorder->simulateReplay(filename))
+		{
+			do
+			{
+				{
+					VERIFY_CRC
+				}
+				TheGameLogic->UPDATE();
+			} while (TheRecorder->isAnalysisInProgress());
+		}
+	}
+
+	// TheSuperHackers @todo helmutbuhler 04/13/2025
+	// There is a bug somewhere in the destructor of TheGameEngine which doesn't properly
+	// clean up the players and causes a crash in debug unless this is called.
+	if (TheGameLogic->isInGame())
+	{
+		TheGameLogic->clearGameData();
+	}
+}
 
 /**
  * This is the entry point for the game system.
@@ -40,8 +70,15 @@ void GameMain( int argc, char *argv[] )
 	TheGameEngine = CreateGameEngine();
 	TheGameEngine->init(argc, argv);
 
-	// run it
-	TheGameEngine->execute();
+	if (!TheGlobalData->m_simulateReplayList.empty())
+	{
+		SimulateReplayList(TheGlobalData->m_simulateReplayList);
+	}
+	else
+	{
+		// run it
+		TheGameEngine->execute();
+	}
 
 	// since execute() returned, we are exiting the game
 	delete TheGameEngine;
