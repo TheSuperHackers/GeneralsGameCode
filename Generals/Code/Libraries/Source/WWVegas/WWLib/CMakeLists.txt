@@ -1,13 +1,15 @@
 # Set source files
 set(WWLIB_SRC
     always.h
-    argv.h
+    #argv.cpp
+    #argv.h
     b64pipe.cpp
     b64pipe.h
     b64straw.cpp
     b64straw.h
     base64.cpp
     base64.h
+    #bfiofile.h
     binheap.h
     bittype.h
     bound.h
@@ -23,9 +25,12 @@ set(WWLIB_SRC
     cpudetect.h
     crc.cpp
     CRC.H
+    #crcpipe.h
+    #crcstraw.h
     cstraw.cpp
     cstraw.h
     Except.cpp
+    Except.h
     ffactory.cpp
     ffactory.h
     gcd_lcm.cpp
@@ -34,7 +39,9 @@ set(WWLIB_SRC
     hash.h
     hashcalc.h
     HASHLIST.H
+    #hashtab.h
     hashtemplate.h
+    #incdec.h
     INDEX.H
     ini.cpp
     INI.H
@@ -43,12 +50,14 @@ set(WWLIB_SRC
     jshell.cpp
     LISTNODE.H
     mempool.h
+    mmsys.h
     mpu.cpp
     MPU.H
     multilist.cpp
     multilist.h
     mutex.cpp
     mutex.h
+    #noinit.h
     Notify.h
     nstrdup.cpp
     nstrdup.h
@@ -70,8 +79,10 @@ set(WWLIB_SRC
     realcrc.h
     ref_ptr.h
     refcount.cpp
+    refcount.h
     registry.cpp
     registry.h
+    #search.h
     sharebuf.h
     Signaler.h
     simplevec.h
@@ -79,10 +90,12 @@ set(WWLIB_SRC
     slnode.cpp
     SLNODE.H
     stimer.cpp
+    stimer.h
     straw.cpp
     STRAW.H
     strtok_r.cpp
     strtok_r.h
+    #swap.h
     systimer.cpp
     systimer.h
     TARGA.CPP
@@ -97,6 +110,7 @@ set(WWLIB_SRC
     uarray.h
     vector.cpp
     Vector.H
+    verchk.cpp
     verchk.h
     visualc.h
     widestring.cpp

@@ -9,6 +9,8 @@ set(WWLIB_SRC
     b64straw.h
     base64.cpp
     base64.h
+    #bfiofile.cpp
+    #bfiofile.h
     binheap.h
     bittype.h
     bound.h
@@ -22,22 +24,31 @@ set(WWLIB_SRC
     chunkio.h
     cpudetect.cpp
     cpudetect.h
+    #crandom.h
     crc.cpp
     CRC.H
+    #crcpipe.cpp
+    #crcpipe.h
+    #crcstraw.cpp
+    #crcstraw.h
     cstraw.cpp
     cstraw.h
     Except.cpp
+    Except.h
     FastAllocator.cpp
     FastAllocator.h
     ffactory.cpp
     ffactory.h
     gcd_lcm.cpp
     gcd_lcm.h
+    #global.h
     hash.cpp
     hash.h
     hashcalc.h
     HASHLIST.H
+    #hashtab.h
     hashtemplate.h
+    #incdec.h
     INDEX.H
     ini.cpp
     INI.H
@@ -45,13 +56,28 @@ set(WWLIB_SRC
     iostruct.h
     jshell.cpp
     LISTNODE.H
+    #lzo.cpp
+    #lzo.h
+    #lzo1x.h
+    #lzo1x_c.cpp
+    #lzo1x_d.cpp
+    #lzoconf.h
+    #lzopipe.cpp
+    #lzopipe.h
+    #lzostraw.cpp
+    #lzostraw.h
+    #lzo_conf.h
+    #md5.cpp
+    #md5.h
     mempool.h
+    mmsys.h
     mpu.cpp
     MPU.H
     multilist.cpp
     multilist.h
     mutex.cpp
     mutex.h
+    #noinit.h
     notifier.h
     nstrdup.cpp
     nstrdup.h
@@ -73,8 +99,12 @@ set(WWLIB_SRC
     realcrc.h
     ref_ptr.h
     refcount.cpp
+    refcount.h
+    #regexpr.cpp
+    #regexpr.h
     registry.cpp
     registry.h
+    #search.h
     sharebuf.h
     Signaler.h
     simplevec.h
@@ -82,10 +112,12 @@ set(WWLIB_SRC
     slnode.cpp
     SLNODE.H
     stimer.cpp
+    stimer.h
     straw.cpp
     STRAW.H
     strtok_r.cpp
     strtok_r.h
+    #swap.h
     systimer.cpp
     systimer.h
     TARGA.CPP

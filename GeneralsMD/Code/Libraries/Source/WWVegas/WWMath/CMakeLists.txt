@@ -48,6 +48,7 @@ set(WWMATH_SRC
     matrix3d.h
     matrix4.cpp
     matrix4.h
+    #normalcone.h
     obbox.cpp
     obbox.h
     ode.cpp

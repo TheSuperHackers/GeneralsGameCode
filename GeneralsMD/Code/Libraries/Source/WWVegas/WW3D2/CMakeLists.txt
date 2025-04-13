@@ -24,6 +24,7 @@ set(WW3D2_SRC
     bwrender.h
     camera.cpp
     camera.h
+    #classid.h
     collect.cpp
     collect.h
     colorspace.h
@@ -183,6 +184,7 @@ set(WW3D2_SRC
     snapPts.h
     sortingrenderer.cpp
     sortingrenderer.h
+    soundlibrarybridge.h
     soundrobj.cpp
     soundrobj.h
     sphereobj.cpp
@@ -201,6 +203,8 @@ set(WW3D2_SRC
     surfaceclass.h
     texproject.cpp
     texproject.h
+    #textdraw.cpp
+    textdraw.h
     texture.cpp
     texture.h
     texturefilter.cpp
