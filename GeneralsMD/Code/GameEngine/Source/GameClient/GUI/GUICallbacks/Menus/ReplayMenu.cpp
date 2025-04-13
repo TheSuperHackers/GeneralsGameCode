@@ -37,7 +37,6 @@
 #include "Common/GameState.h"
 #include "Common/Recorder.h"
 #include "Common/version.h"
-#include "Common/CRCDebug.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/GadgetListBox.h"
@@ -549,7 +548,7 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 						do
 						{
 							TheRecorder->update();
-						} while (TheRecorder->isAnalysisInProgress());
+						} while (TheRecorder->isPlaybackInProgress());
 						TheRecorder->stopAnalysis();
 					}
 				}
@@ -574,11 +573,10 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 					{
 						do
 						{
-							{
-								VERIFY_CRC
-							}
 							TheGameLogic->UPDATE();
-						} while (TheRecorder->isAnalysisInProgress());
+							if (TheRecorder->sawCRCMismatch())
+								break;
+						} while (TheRecorder->isPlaybackInProgress());
 					}
 				}
 			}

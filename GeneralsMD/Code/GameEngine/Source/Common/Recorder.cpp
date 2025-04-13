@@ -917,16 +917,17 @@ Bool RecorderClass::analyzeReplay( AsciiString filename )
 	return playbackFile(filename);
 }
 
-Bool RecorderClass::isAnalysisInProgress( void )
-{
-	return isPlaybackMode() && m_nextFrame != -1;
-}
 
 void RecorderClass::stopAnalysis()
 {
 	m_doingAnalysis = FALSE;
 }
 #endif
+
+Bool RecorderClass::isPlaybackInProgress( void )
+{
+	return isPlaybackMode() && m_nextFrame != -1;
+}
 
 AsciiString RecorderClass::getCurrentReplayFilename( void )
 {

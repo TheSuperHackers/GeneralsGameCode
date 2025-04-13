@@ -30,7 +30,6 @@
 
 #include "Common/GameEngine.h"
 #include "Common/Recorder.h"
-#include "Common/CRCDebug.h"
 #include "GameLogic/GameLogic.h"
 
 // TheSuperHackers @feature helmutbuhler 04/13/2025
@@ -48,12 +47,9 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames)
 		{
 			do
 			{
-				{
-					VERIFY_CRC
-				}
 				TheGameLogic->UPDATE();
 				sawCRCMismatch = TheRecorder->sawCRCMismatch();
-			} while (TheRecorder->isAnalysisInProgress() && !sawCRCMismatch);
+			} while (TheRecorder->isPlaybackInProgress() && !sawCRCMismatch);
 		}
 		if (sawCRCMismatch)
 			break;

@@ -75,9 +75,9 @@ public:
 	Bool simulateReplay(AsciiString filename);
 #if defined _DEBUG || defined _INTERNAL
 	Bool analyzeReplay( AsciiString filename );
-	Bool isAnalysisInProgress( void );
 	void stopAnalysis();
 #endif
+	Bool isPlaybackInProgress();
 
 public:
 	void handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool fromPlayback);
