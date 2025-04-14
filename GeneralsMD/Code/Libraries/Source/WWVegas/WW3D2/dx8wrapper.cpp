@@ -903,6 +903,58 @@ void DX8Wrapper::Get_Format_Name(unsigned int format, StringClass *tex_format)
 		}
 }
 
+void DX8Wrapper::Resize_And_Position_Window()
+{
+	// Get the current dimensions of the 'render area' of the window
+	RECT rect = { 0 };
+	::GetClientRect (_Hwnd, &rect);
+
+	// Is the window the correct size for this resolution?
+	if ((rect.right-rect.left) != ResolutionWidth ||
+			(rect.bottom-rect.top) != ResolutionHeight) {			
+			
+		// Calculate what the main window's bounding rectangle should be to
+		// accomodate this resolution
+		rect.left = 0;
+		rect.top = 0;
+		rect.right = ResolutionWidth;
+		rect.bottom = ResolutionHeight;
+		DWORD dwstyle = ::GetWindowLong (_Hwnd, GWL_STYLE);
+		AdjustWindowRect (&rect, dwstyle, FALSE);
+		int width = rect.right-rect.left;
+		int height = rect.bottom-rect.top;
+
+		// Resize the window to fit this resolution
+		if (!IsWindowed)
+			::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, width, height, SWP_NOSIZE | SWP_NOMOVE);
+		else
+		{
+			// Center the window in the workarea of the monitor it is on
+			MONITORINFO mi = {sizeof(MONITORINFO)};
+			GetMonitorInfo(MonitorFromWindow(_Hwnd, MONITOR_DEFAULTTOPRIMARY), &mi);
+			int left = (mi.rcWork.left + mi.rcWork.right - width) / 2;
+			int top  = (mi.rcWork.top + mi.rcWork.bottom - height) / 2;
+
+			// In case part of the resulting client area is off monitor, move it.
+			// This can happen when the window is larger than the work area.
+			RECT rectClient;
+			rectClient.left = left - rect.left;
+			rectClient.top = top - rect.top;
+			rectClient.right = rectClient.left + ResolutionWidth;
+			rectClient.bottom = rectClient.top + ResolutionHeight;
+			MoveRectIntoOtherRect(rectClient, mi.rcMonitor, &left, &top);
+
+			::SetWindowPos (_Hwnd,
+								NULL,
+								left,
+								top,
+								width,
+								height,
+								SWP_NOZORDER);
+		}
+	}
+}
+
 bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int windowed,
 								   bool resize_window,bool reset_device, bool restore_assets)
 {
@@ -944,55 +996,7 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	// push the client area to be the size you really want.
 	// if ( resize_window && windowed ) {
 	if (resize_window) {
-
-		// Get the current dimensions of the 'render area' of the window
-		RECT rect = { 0 };
-		::GetClientRect (_Hwnd, &rect);
-
-		// Is the window the correct size for this resolution?
-		if ((rect.right-rect.left) != ResolutionWidth ||
-			 (rect.bottom-rect.top) != ResolutionHeight) {			
-			
-			// Calculate what the main window's bounding rectangle should be to
-			// accomodate this resolution
-			rect.left = 0;
-			rect.top = 0;
-			rect.right = ResolutionWidth;
-			rect.bottom = ResolutionHeight;
-			DWORD dwstyle = ::GetWindowLong (_Hwnd, GWL_STYLE);
-			AdjustWindowRect (&rect, dwstyle, FALSE);
-			int width = rect.right-rect.left;
-			int height = rect.bottom-rect.top;
-
-			// Resize the window to fit this resolution
-			if (!windowed)
-				::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, width, height, SWP_NOSIZE | SWP_NOMOVE);
-			else
-			{
-				// Center the window in the workarea of the monitor it is on
-				MONITORINFO mi = {sizeof(MONITORINFO)};
-				GetMonitorInfo(MonitorFromWindow(_Hwnd, MONITOR_DEFAULTTOPRIMARY), &mi);
-				int left = (mi.rcWork.left + mi.rcWork.right - width) / 2;
-				int top  = (mi.rcWork.top + mi.rcWork.bottom - height) / 2;
-
-				// In case part of the resulting client area is off monitor, move it.
-				// This can happen when the window is larger than the work area.
-				RECT rectClient;
-				rectClient.left = left - rect.left;
-				rectClient.top = top - rect.top;
-				rectClient.right = rectClient.left + ResolutionWidth;
-				rectClient.bottom = rectClient.top + ResolutionHeight;
-				MoveRectIntoOtherRect(rectClient, mi.rcMonitor, &left, &top);
-
-				::SetWindowPos (_Hwnd,
-								 NULL,
-								 left,
-								 top,
-								 width,
-								 height,
-								 SWP_NOZORDER);
-			}
-		}
+		Resize_And_Position_Window();
 	}
 #endif
 	//must be either resetting existing device or creating a new one.
@@ -1241,37 +1245,7 @@ bool DX8Wrapper::Set_Device_Resolution(int width,int height,int bits,int windowe
 		}
 		if (resize_window)
 		{
-
-			// Get the current dimensions of the 'render area' of the window
-			RECT rect = { 0 };
-			::GetClientRect (_Hwnd, &rect);
-
-			// Is the window the correct size for this resolution?
-			if ((rect.right-rect.left) != ResolutionWidth ||
-				 (rect.bottom-rect.top) != ResolutionHeight)
-			{			
-				
-				// Calculate what the main window's bounding rectangle should be to
-				// accomodate this resolution
-				rect.left = 0;
-				rect.top = 0;
-				rect.right = ResolutionWidth;
-				rect.bottom = ResolutionHeight;
-				DWORD dwstyle = ::GetWindowLong (_Hwnd, GWL_STYLE);
-				AdjustWindowRect (&rect, dwstyle, FALSE);
-
-				// Resize the window to fit this resolution
-				if (!windowed)
-					::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, rect.right-rect.left, rect.bottom-rect.top,SWP_NOSIZE |SWP_NOMOVE);
-				else
-					::SetWindowPos (_Hwnd,
-									 NULL,
-									 0,
-									 0,
-									 rect.right-rect.left,
-									 rect.bottom-rect.top,
-									 SWP_NOZORDER | SWP_NOMOVE);
-			}
+			Resize_And_Position_Window();
 		}
 #pragma message("TODO: support changing windowed status and changing the bit depth")
 		return Reset_Device();
