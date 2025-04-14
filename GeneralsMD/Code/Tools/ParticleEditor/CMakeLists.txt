@@ -37,6 +37,8 @@ target_include_directories(z_particleeditor PRIVATE
 )
 
 target_link_libraries(z_particleeditor PRIVATE
+    corei_libraries_source_wwvegas
+    corei_libraries_source_wwvegas_wwlib
     d3d8lib
     dbghelplib
     imm32
@@ -49,7 +51,6 @@ target_link_libraries(z_particleeditor PRIVATE
     zi_gameengine_include
     zi_always
     zi_libraries_source_wwvegas
-    zi_libraries_source_wwvegas_wwlib
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

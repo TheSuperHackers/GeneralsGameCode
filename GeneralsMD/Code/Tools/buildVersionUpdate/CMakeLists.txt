@@ -9,5 +9,5 @@ target_sources(z_buildversionupdate PRIVATE ${BUILDVERSIONUPDATE_SRC})
 
 target_link_libraries(z_buildversionupdate PRIVATE
     core_config
-    z_wwlib
+    core_wwlib
 )

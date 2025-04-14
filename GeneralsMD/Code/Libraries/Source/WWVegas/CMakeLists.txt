@@ -10,6 +10,7 @@ target_link_libraries(z_wwcommon INTERFACE
     d3d8lib
     core_config
     core_utility
+    core_wwcommon
     milesstub
     stlport
 )
@@ -18,16 +19,12 @@ target_include_directories(z_wwcommon INTERFACE
     .
     WW3D2
     WWAudio
-    WWDebug
-    WWLib
     WWMath
     WWSaveLoad
     Wwutil
 )
 
 add_subdirectory(WWAudio)
-add_subdirectory(WWDebug)
-add_subdirectory(WWLib)
 add_subdirectory(WWMath)
 add_subdirectory(Wwutil)
 add_subdirectory(WWSaveLoad)
@@ -40,19 +37,16 @@ add_library(z_wwvegas INTERFACE)
 target_include_directories(z_wwvegas INTERFACE
     .
     WW3D2
-    WWDebug
     WWDownload
-    #WWLib
     WWMath
     WWSaveLoad
     Wwutil
 )
 
 target_link_libraries(z_wwvegas INTERFACE
+    core_wwvegas
     z_ww3d2
-    z_wwdebug
     z_wwdownload
-    z_wwlib
     z_wwmath
     z_wwsaveload
     z_wwutil

@@ -41,12 +41,13 @@ target_include_directories(g_particleeditor PRIVATE
 target_compile_definitions(g_particleeditor PRIVATE _AFXDLL)
 
 target_link_libraries(g_particleeditor PRIVATE
+    corei_libraries_source_wwvegas
+    corei_libraries_source_wwvegas_wwlib
     d3d8lib
     dbghelplib
     gi_gameengine_include
     gi_always
     gi_libraries_source_wwvegas
-    gi_libraries_source_wwvegas_wwlib
     core_config
     imm32
     stlport
