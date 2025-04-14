@@ -48,6 +48,7 @@ set(WWMATH_SRC
     matrix3d.h
     matrix4.cpp
     matrix4.h
+    #normalcone.h
     obbox.cpp
     obbox.h
     ode.cpp
@@ -80,14 +81,14 @@ set(WWMATH_SRC
 )
 
 # Targets to build.
-add_library(g_wwmath STATIC)
-set_target_properties(g_wwmath PROPERTIES OUTPUT_NAME wwmath)
+add_library(core_wwmath STATIC)
+set_target_properties(core_wwmath PROPERTIES OUTPUT_NAME wwmath)
 
-target_sources(g_wwmath PRIVATE ${WWMATH_SRC})
+target_sources(core_wwmath PRIVATE ${WWMATH_SRC})
 
-target_link_libraries(g_wwmath PRIVATE
-    g_wwcommon
+target_link_libraries(core_wwmath PRIVATE
+    core_wwcommon
 )
 
 # @todo Test its impact and see what to do with the legacy functions.
-#add_compile_definitions(z_wwmath PUBLIC ALLOW_TEMPORARIES) # Enables legacy math with "temporaries"
+#add_compile_definitions(core_wwmath PUBLIC ALLOW_TEMPORARIES) # Enables legacy math with "temporaries"
