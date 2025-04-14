@@ -243,6 +243,23 @@ void Non_Fatal_Log_DX8_ErrorCode(unsigned res,const char * file,int line)
 	}
 }
 
+void MoveRectIntoOtherRect(const RECT& inner, const RECT& outer, int* x, int* y)
+{
+	int dx = 0;
+	if (inner.right > outer.right)
+		dx = outer.right-inner.right;
+	if (inner.left < outer.left)
+		dx = outer.left-inner.left;
+
+	int dy = 0;
+	if (inner.bottom > outer.bottom)
+		dy = outer.bottom-inner.bottom;
+	if (inner.top < outer.top)
+		dy = outer.top-inner.top;
+
+	*x += dx;
+	*y += dy;
+}
 
 
 bool DX8Wrapper::Init(void * hwnd, bool lite)
@@ -944,18 +961,29 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 			rect.bottom = ResolutionHeight;
 			DWORD dwstyle = ::GetWindowLong (_Hwnd, GWL_STYLE);
 			AdjustWindowRect (&rect, dwstyle, FALSE);
+			int width = rect.right-rect.left;
+			int height = rect.bottom-rect.top;
 
 			// Resize the window to fit this resolution
 			if (!windowed)
-				::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, rect.right-rect.left, rect.bottom-rect.top,SWP_NOSIZE |SWP_NOMOVE);
+				::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, width, height, SWP_NOSIZE | SWP_NOMOVE);
 			else
 			{
+				// Center the window in the workarea of the monitor it is on
 				MONITORINFO mi = {sizeof(MONITORINFO)};
 				GetMonitorInfo(MonitorFromWindow(_Hwnd, MONITOR_DEFAULTTOPRIMARY), &mi);
-				int width = rect.right-rect.left;
-				int height = rect.bottom-rect.top;
 				int left = (mi.rcWork.left + mi.rcWork.right - width) / 2;
 				int top  = (mi.rcWork.top + mi.rcWork.bottom - height) / 2;
+
+				// In case part of the resulting client area is off monitor, move it.
+				// This can happen when the window is larger than the work area.
+				RECT rectClient;
+				rectClient.left = left - rect.left;
+				rectClient.top = top - rect.top;
+				rectClient.right = rectClient.left + ResolutionWidth;
+				rectClient.bottom = rectClient.top + ResolutionHeight;
+				MoveRectIntoOtherRect(rectClient, mi.rcMonitor, &left, &top);
+
 				::SetWindowPos (_Hwnd,
 								 NULL,
 								 left,
