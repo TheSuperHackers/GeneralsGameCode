@@ -125,13 +125,7 @@ protected:
 	virtual Bool requiresAllActivationUpgrades() const = 0;
 	virtual Bool isSubObjectsUpgrade() = 0;
 	
-	void giveSelfUpgrade()
-	{
-		// If I have an activation condition, and I haven't activated, and this key matches my condition.
-		performUpgradeFX();
-		upgradeImplementation();
-		setUpgradeExecuted(true);
-	}
+	void giveSelfUpgrade();
 
 	//
 	// this is not a snapshot class itself, but it is a base class used in conjunction with

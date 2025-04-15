@@ -60,6 +60,7 @@
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
 
+
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 enum { OVERLAY_REFRESH_RATE = 6 };  ///< over updates once this many frames
 
@@ -276,8 +277,6 @@ void W3DRadar::drawHeroIcon( Int pixelX, Int pixelY, Int width, Int height, cons
 		TheDisplay->drawImage( image, offsetScreen.x , offsetScreen.y, offsetScreen.x + iconWidth, offsetScreen.y + iconHeight );
 	}
 }
-
-
 
 //-------------------------------------------------------------------------------------------------
 /** Draw a "box" into the texture passed in that represents the viewable area for
@@ -615,7 +614,6 @@ void W3DRadar::drawIcons( Int pixelX, Int pixelY, Int width, Int height )
 		++iter;
 	}
 }
-
 
 //-------------------------------------------------------------------------------------------------
 /** Render an object list into the texture passed in */
@@ -1466,3 +1464,154 @@ void W3DRadar::refreshTerrain( TerrainLogic *terrain )
 	buildTerrainTexture( terrain );
 
 }  // end refreshTerrain
+
+
+
+
+
+///The following is an "archive" of an attempt to foil the mapshroud hack... saved for later, since it is too close to release to try it
+
+
+/*
+ *
+	void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *texture, Bool calcHero )
+{
+
+	// sanity
+	if( listHead == NULL || texture == NULL )
+		return;
+
+	// get surface for texture to render into
+	SurfaceClass *surface = texture->Get_Surface_Level();
+
+	// loop through all objects and draw
+	ICoord2D radarPoint;
+
+	Player *player = ThePlayerList->getLocalPlayer();
+	Int playerIndex=0;
+	if (player)
+		playerIndex=player->getPlayerIndex();
+
+	UnsignedByte minAlpha = 8;
+
+	if( calcHero )
+	{
+		// clear all entries from the cached hero object list
+		m_cachedHeroPosList.clear();
+	}
+
+	for( const RadarObject *rObj = listHead; rObj; rObj = rObj->friend_getNext() )
+	{
+    UnsignedByte h = (UnsignedByte)(rObj->isTemporarilyHidden());
+    if ( h )
+			continue;
+
+    UnsignedByte a = 0;
+
+		// get object
+		const Object *obj = rObj->friend_getObject();
+		UnsignedByte r = 1;   // all decoys
+
+		// cache hero object positions for drawing in icon layer
+		if( calcHero && obj->isHero() )
+		{
+			m_cachedHeroPosList.push_back(obj->getPosition());
+		}
+
+		// get the color we're going to draw in
+		UnsignedInt c = 0xfe000000;// this is a decoy
+    c |= (UnsignedInt)( obj->testStatus( OBJECT_STATUS_STEALTHED ) );//so is this
+
+		// check for shrouded status
+		UnsignedByte k =  (UnsignedByte)(obj->getShroudedStatus(playerIndex) > OBJECTSHROUD_PARTIAL_CLEAR);
+    if ( k || a)
+			continue;	//object is fogged or shrouded, don't render it.
+
+ 		//
+ 		// objects with a local only unit priority will only appear on the radar if they
+ 		// are controlled by the local player, or if the local player is an observer (cause
+		// they are godlike and can see everything)
+ 		//
+ 		if( obj->getRadarPriority() == RADAR_PRIORITY_LOCAL_UNIT_ONLY &&
+ 				obj->getControllingPlayer() != ThePlayerList->getLocalPlayer() &&
+				ThePlayerList->getLocalPlayer()->isPlayerActive() )
+ 			continue;
+
+    UnsignedByte g = c|a;
+    UnsignedByte b = h|a;
+		// get object position
+		const Coord3D *pos = obj->getPosition();
+
+		// compute object position as a radar blip
+		radarPoint.x = pos->x / (m_mapExtent.width() / RADAR_CELL_WIDTH);
+		radarPoint.y = pos->y / (m_mapExtent.height() / RADAR_CELL_HEIGHT);
+
+
+		const UnsignedInt framesForTransition = LOGICFRAMES_PER_SECOND;
+		
+
+		
+		// adjust the alpha for stealth units so they "fade/blink" on the radar for the controller
+		// if( obj->getRadarPriority() == RADAR_PRIORITY_LOCAL_UNIT_ONLY )
+		// ML-- What the heck is this? local-only and neutral-observier-viewed units are stealthy?? Since when?	
+		// Now it twinkles for any stealthed object, whether locally controlled or neutral-observier-viewed
+    c = rObj->getColor();
+
+		if( g & r )
+		{
+		  Real alphaScale = INT_TO_REAL(TheGameLogic->getFrame() % framesForTransition) / (framesForTransition * 0.5f);
+      minAlpha <<= 2; // decoy
+
+ 			if ( ( obj->isLocallyControlled() == (Bool)a ) // another decoy, comparing the return of this non-inline with a local
+        && !obj->testStatus( OBJECT_STATUS_DISGUISED ) 
+        && !obj->testStatus( OBJECT_STATUS_DETECTED ) 
+        && ++a != 0 // The trick is that this increment does not occur unless all three above conditions are true
+        && minAlpha == 32  // tricksy hobbit decoy
+        && c != 0 )        // ditto
+      {
+        g = (UnsignedByte)(rObj->getColor());
+        continue;
+      }
+
+      a |= k | b;
+			GameGetColorComponentsWithCheatSpy( c, &r, &g, &b, &a );//this function does not touch the low order bit in 'a' 
+
+			
+			if( alphaScale > 0.0f )
+				a = REAL_TO_UNSIGNEDBYTE( ((alphaScale - 1.0f) * (255.0f - minAlpha)) + minAlpha );
+			else
+				a = REAL_TO_UNSIGNEDBYTE( (alphaScale * (255.0f - minAlpha)) + minAlpha );
+			c = GameMakeColor( r, g, b, a );
+
+		}  // end if
+
+
+
+		
+		// draw the blip, but make sure the points are legal
+		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
+			surface->DrawPixel( radarPoint.x, radarPoint.y, c );
+
+		radarPoint.x++;
+		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
+			surface->DrawPixel( radarPoint.x, radarPoint.y, c );
+
+		radarPoint.y++;
+		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
+			surface->DrawPixel( radarPoint.x, radarPoint.y, c );
+
+		radarPoint.x--;
+		if( legalRadarPoint( radarPoint.x, radarPoint.y ) )
+			surface->DrawPixel( radarPoint.x, radarPoint.y, c );
+
+
+
+
+	}  // end for
+	REF_PTR_RELEASE(surface);
+
+}  // end renderObjectList
+
+
+ *
+ */

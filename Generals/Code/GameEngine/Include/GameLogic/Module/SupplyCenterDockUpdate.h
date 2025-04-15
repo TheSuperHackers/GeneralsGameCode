@@ -41,11 +41,8 @@
 // ------------------------------------------------------------------------------------------------
 class SupplyCenterDockUpdateModuleData : public DockUpdateModuleData
 {
-
 public:
-
   SupplyCenterDockUpdateModuleData( void );
-	
 	static void buildFieldParse(MultiIniFieldParse& p);
 };
 

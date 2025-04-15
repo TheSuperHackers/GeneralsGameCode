@@ -68,6 +68,7 @@ class GhostObjectManager;
 class CommandButton;
 enum BuildableStatus CPP_11(: Int);
 
+
 typedef const CommandButton* ConstCommandButtonPtr;
 
 // What kind of game we're in.
@@ -87,6 +88,7 @@ enum
 	CRC_CACHED,
 	CRC_RECALC
 };
+
 
 /// Function pointers for use by GameLogic callback functions.
 typedef void (*GameLogicFuncPtr)( Object *obj, void *userData ); 

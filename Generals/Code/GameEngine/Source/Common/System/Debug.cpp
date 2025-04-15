@@ -66,7 +66,9 @@
 #include "GameClient/GameText.h"
 #include "GameClient/Keyboard.h"
 #include "GameClient/Mouse.h"
-#include "Common/StackDump.h"
+#if defined(DEBUG_STACKTRACE) || defined(IG_DEBUG_STACKTRACE)
+	#include "Common/StackDump.h"
+#endif
 
 // Horrible reference, but we really, really need to know if we are windowed.
 extern bool DX8Wrapper_IsWindowed;
@@ -264,8 +266,8 @@ static int doCrashBox(const char *buffer, Bool logResult)
 	int result;
 
 	if (!ignoringAsserts()) {
+		result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING|MB_DEFBUTTON3);
 		//result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING|MB_DEFBUTTON3);
-		result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING);
 	}	else {
 		result = IDIGNORE;
 	}

@@ -603,6 +603,7 @@ void MilesAudioManager::pauseAudio( AudioAffect which )
 	}
 }
 
+
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::resumeAudio( AudioAffect which )
 {

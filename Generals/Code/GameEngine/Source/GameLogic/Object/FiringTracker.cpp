@@ -84,6 +84,7 @@ Int FiringTracker::getNumConsecutiveShotsAtVictim( const Object *victim ) const
 void FiringTracker::shotFired(const Weapon* weaponFired, ObjectID victimID)
 {
 	UnsignedInt now = TheGameLogic->getFrame();
+	Object *me = getObject();
 
 	if( victimID == m_victimID )
 	{
@@ -117,7 +118,7 @@ void FiringTracker::shotFired(const Weapon* weaponFired, ObjectID victimID)
 	Int shotsNeededOne = weaponFired->getContinuousFireOneShotsNeeded();
 	Int shotsNeededTwo = weaponFired->getContinuousFireTwoShotsNeeded();
 
-	if( getObject()->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN ) )
+	if( me->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_MEAN ) )
 	{
 		// Can either go up or down from here.
 		if( m_consecutiveShots < shotsNeededOne )
@@ -125,7 +126,7 @@ void FiringTracker::shotFired(const Weapon* weaponFired, ObjectID victimID)
 		else if( m_consecutiveShots > shotsNeededTwo )
 			speedUp();
 	}
-	else if( getObject()->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST ) )
+	else if( me->testWeaponBonusCondition( WEAPONBONUSCONDITION_CONTINUOUS_FIRE_FAST ) )
 	{
 		// Only place I can go here from here is all the way down
 		if( m_consecutiveShots < shotsNeededTwo )
@@ -161,7 +162,7 @@ void FiringTracker::shotFired(const Weapon* weaponFired, ObjectID victimID)
 	}
 
 
-	setWakeFrame(getObject(), calcTimeToSleep());
+	setWakeFrame(me, calcTimeToSleep());
 }
 
 //-------------------------------------------------------------------------------------------------

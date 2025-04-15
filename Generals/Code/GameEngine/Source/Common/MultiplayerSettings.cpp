@@ -166,3 +166,4 @@ void MultiplayerColorDefinition::setNightColor( RGBColor rgb )
 {
 	m_colorNight = rgb.getAsInt() | 0xFF << 24;
 }
+

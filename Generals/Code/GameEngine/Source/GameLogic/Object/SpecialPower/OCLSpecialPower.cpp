@@ -154,13 +154,12 @@ void OCLSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, UnsignedInt 
 	if( loc == NULL )
 		return;
 
+	// get the module data
+	const OCLSpecialPowerModuleData *modData = getOCLSpecialPowerModuleData();
 	// call the base class action cause we are *EXTENDING* functionality
 	SpecialPowerModule::doSpecialPowerAtLocation( loc, commandOptions );
 
 	const ObjectCreationList* ocl = findOCL();
-
-	// get the module data
-	const OCLSpecialPowerModuleData *modData = getOCLSpecialPowerModuleData();
 
 	// at what point will the "deliverer" come in
 	Coord3D creationCoord;
@@ -265,3 +264,4 @@ void OCLSpecialPower::loadPostProcess( void )
 	SpecialPowerModule::loadPostProcess();
 
 }  // end loadPostProcess
+

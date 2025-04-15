@@ -730,7 +730,6 @@ private: \
 public: /* include this line at the end to reset visibility to 'public' */ 
 
 
-
 // ----------------------------------------------------------------------------
 /**
 	This class is provided as a simple and safe way to integrate C++ object allocation
@@ -766,7 +765,6 @@ public:
 		}
 	} 
 };
-
 
 
 // INLINING ///////////////////////////////////////////////////////////////////
@@ -893,7 +891,6 @@ public:
 #endif //DISABLE_GAMEMEMORY
 
 
-// ----------------------------------------------------------------------------
 /**
 	A simple utility class to ensure exception safety; this holds a MemoryPoolObject
 	and deletes it in its destructor. Especially useful for iterators!
@@ -910,7 +907,6 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
 /**
 	Sometimes you want to make a class's destructor protected so that it can only
 	be destroyed under special circumstances. MemoryPoolObject short-circuits this
@@ -923,5 +919,6 @@ ARGVIS:	void deleteInstance() { MemoryPoolObject::deleteInstance(); } public:
 
 
 #define EMPTY_DTOR(CLASS) inline CLASS::~CLASS() { }
+
 
 #endif // _GAME_MEMORY_H_

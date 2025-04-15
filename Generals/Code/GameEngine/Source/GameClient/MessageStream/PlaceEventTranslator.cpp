@@ -27,19 +27,19 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
+#include "Common/BuildAssistant.h"
 #include "Common/GameAudio.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/ThingTemplate.h"
-#include "Common/BuildAssistant.h"
-
-#include "GameLogic/Object.h"
-#include "GameLogic/GameLogic.h"
 
 #include "GameClient/CommandXlat.h"
-#include "GameClient/PlaceEventTranslator.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/Eva.h"
+#include "GameClient/PlaceEventTranslator.h"
+
+#include "GameLogic/GameLogic.h"
+#include "GameLogic/Object.h"
 
 //-------------------------------------------------------------------------------------------------
 PlaceEventTranslator::PlaceEventTranslator() : m_frameOfUpButton(-1)

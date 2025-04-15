@@ -318,7 +318,6 @@ void RailroadBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 	dlt.y = theirLoc->y - myLoc->y;
 	dlt.z = theirLoc->z - myLoc->z;
 
-
 	//Alert all the players of recent disaster 
 	if ( ! m_whistleSound.isCurrentlyPlaying())
 		m_whistleSound.setPlayingHandle(TheAudio->addAudioEvent( &m_whistleSound ));

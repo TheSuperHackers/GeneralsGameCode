@@ -413,7 +413,6 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 
 	m_ambientSoundEnabled = TRUE;
 
-	//
 	// allocate any modules we need to, we should keep
 	// this at or near the end of the drawable construction so that we have
 	// all the valid data about the thing when we create the module
@@ -1977,76 +1976,106 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 		m_locoInfo->m_wheelInfo.m_wheelAngle += (newInfo.m_wheelAngle - m_locoInfo->m_wheelInfo.m_wheelAngle)/WHEEL_SMOOTHNESS;
 
 		const Real SPRING_FACTOR = 0.9f;
-		if (pitchHeight<0) {	// Front raising up
+		if (pitchHeight<0) 
+		{	
+			// Front raising up
 			newInfo.m_frontLeftHeightOffset = SPRING_FACTOR*(pitchHeight/3+pitchHeight/2);
 			newInfo.m_frontRightHeightOffset = SPRING_FACTOR*(pitchHeight/3+pitchHeight/2);
 			newInfo.m_rearLeftHeightOffset = -pitchHeight/2 + pitchHeight/4;
 			newInfo.m_rearRightHeightOffset = -pitchHeight/2 + pitchHeight/4;
-		}	else {	// Back rasing up.
+		}	
+		else 
+		{	
+			// Back rasing up.
 			newInfo.m_frontLeftHeightOffset = (-pitchHeight/4+pitchHeight/2);
 			newInfo.m_frontRightHeightOffset = (-pitchHeight/4+pitchHeight/2);
 			newInfo.m_rearLeftHeightOffset = SPRING_FACTOR*(-pitchHeight/2 + -pitchHeight/3);
 			newInfo.m_rearRightHeightOffset = SPRING_FACTOR*(-pitchHeight/2 + -pitchHeight/3);
 		}
-		if (rollHeight>0) {	// Right raising up
+		if (rollHeight>0) 
+		{	
+			// Right raising up
 			newInfo.m_frontRightHeightOffset += -SPRING_FACTOR*(rollHeight/3+rollHeight/2);
 			newInfo.m_rearRightHeightOffset += -SPRING_FACTOR*(rollHeight/3+rollHeight/2);
 			newInfo.m_rearLeftHeightOffset += rollHeight/2 - rollHeight/4;
 			newInfo.m_frontLeftHeightOffset += rollHeight/2 - rollHeight/4;
-		}	else {	// Left rasing up.
+		}	
+		else 
+		{	
+			// Left rasing up.
 			newInfo.m_frontRightHeightOffset += -rollHeight/2 + rollHeight/4;
 			newInfo.m_rearRightHeightOffset += -rollHeight/2 + rollHeight/4;
 			newInfo.m_rearLeftHeightOffset += SPRING_FACTOR*(rollHeight/3+rollHeight/2);
 			newInfo.m_frontLeftHeightOffset += SPRING_FACTOR*(rollHeight/3+rollHeight/2);
 		}
-		if (newInfo.m_frontLeftHeightOffset < m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset) {
+		if (newInfo.m_frontLeftHeightOffset < m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset) 
+		{
 			// If it's going down, dampen the movement a bit
 			m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset += (newInfo.m_frontLeftHeightOffset - m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset)/2.0f;
-		}	else {
+		}	
+		else 
+		{
 			m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset = newInfo.m_frontLeftHeightOffset;
 		}
-		if (newInfo.m_frontRightHeightOffset < m_locoInfo->m_wheelInfo.m_frontRightHeightOffset) {
+		if (newInfo.m_frontRightHeightOffset < m_locoInfo->m_wheelInfo.m_frontRightHeightOffset) 
+		{
 			// If it's going down, dampen the movement a bit
 			m_locoInfo->m_wheelInfo.m_frontRightHeightOffset += (newInfo.m_frontRightHeightOffset - m_locoInfo->m_wheelInfo.m_frontRightHeightOffset)/2.0f;
-		}	else {
+		}	
+		else 
+		{
 			m_locoInfo->m_wheelInfo.m_frontRightHeightOffset = newInfo.m_frontRightHeightOffset;
 		}
-		if (newInfo.m_rearLeftHeightOffset < m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset) {
+		if (newInfo.m_rearLeftHeightOffset < m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset) 
+		{
 			// If it's going down, dampen the movement a bit
 			m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset += (newInfo.m_rearLeftHeightOffset - m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset)/2.0f;
-		}	else {
+		}	
+		else 
+		{
 			m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset = newInfo.m_rearLeftHeightOffset;
 		}
-		if (newInfo.m_rearRightHeightOffset < m_locoInfo->m_wheelInfo.m_rearRightHeightOffset) {
+		if (newInfo.m_rearRightHeightOffset < m_locoInfo->m_wheelInfo.m_rearRightHeightOffset) 
+		{
 			// If it's going down, dampen the movement a bit
 			m_locoInfo->m_wheelInfo.m_rearRightHeightOffset += (newInfo.m_rearRightHeightOffset - m_locoInfo->m_wheelInfo.m_rearRightHeightOffset)/2.0f;
-		}	else {
+		}	
+		else 
+		{
 			m_locoInfo->m_wheelInfo.m_rearRightHeightOffset = newInfo.m_rearRightHeightOffset;
 		}
 		//m_locoInfo->m_wheelInfo = newInfo;
-		if (m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset<MAX_SUSPENSION_EXTENSION) {
+		if (m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset<MAX_SUSPENSION_EXTENSION) 
+		{
 			m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset=MAX_SUSPENSION_EXTENSION;
 		}
-		if (m_locoInfo->m_wheelInfo.m_frontRightHeightOffset<MAX_SUSPENSION_EXTENSION) {
+		if (m_locoInfo->m_wheelInfo.m_frontRightHeightOffset<MAX_SUSPENSION_EXTENSION) 
+		{
 			m_locoInfo->m_wheelInfo.m_frontRightHeightOffset=MAX_SUSPENSION_EXTENSION;
 		}
-		if (m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset<MAX_SUSPENSION_EXTENSION) {
+		if (m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset<MAX_SUSPENSION_EXTENSION) 
+		{
 			m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset=MAX_SUSPENSION_EXTENSION;
 		}
-		if (m_locoInfo->m_wheelInfo.m_rearRightHeightOffset<MAX_SUSPENSION_EXTENSION) {
+		if (m_locoInfo->m_wheelInfo.m_rearRightHeightOffset<MAX_SUSPENSION_EXTENSION) 
+		{
 			m_locoInfo->m_wheelInfo.m_rearRightHeightOffset=MAX_SUSPENSION_EXTENSION;
 		}
 /*
-		if (m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset>MAX_SUSPENSION_COMPRESSION) {
+		if (m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset>MAX_SUSPENSION_COMPRESSION) 
+		{
 			m_locoInfo->m_wheelInfo.m_frontLeftHeightOffset=MAX_SUSPENSION_COMPRESSION;
 		}
-		if (m_locoInfo->m_wheelInfo.m_frontRightHeightOffset>MAX_SUSPENSION_COMPRESSION) {
+		if (m_locoInfo->m_wheelInfo.m_frontRightHeightOffset>MAX_SUSPENSION_COMPRESSION) 
+		{
 			m_locoInfo->m_wheelInfo.m_frontRightHeightOffset=MAX_SUSPENSION_COMPRESSION;
 		}
-		if (m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset>MAX_SUSPENSION_COMPRESSION) {
+		if (m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset>MAX_SUSPENSION_COMPRESSION) 
+		{
 			m_locoInfo->m_wheelInfo.m_rearLeftHeightOffset=MAX_SUSPENSION_COMPRESSION;
 		}
-		if (m_locoInfo->m_wheelInfo.m_rearRightHeightOffset>MAX_SUSPENSION_COMPRESSION) {
+		if (m_locoInfo->m_wheelInfo.m_rearRightHeightOffset>MAX_SUSPENSION_COMPRESSION) 
+		{
 			m_locoInfo->m_wheelInfo.m_rearRightHeightOffset=MAX_SUSPENSION_COMPRESSION;
 		}	
 		*/
@@ -2061,6 +2090,7 @@ void Drawable::calcPhysicsXformWheels( const Locomotor *locomotor, PhysicsXformI
 	info.m_totalZ += fabs(pitchHeight)/divisor;
 	info.m_totalZ += fabs(rollHeight)/divisor;
 }
+
 
 //-------------------------------------------------------------------------------------------------
 /** decodes the current previous damage type and sets the ambient sound set from that. */
@@ -3861,9 +3891,10 @@ void Drawable::startAmbientSound(BodyDamageType dt, TimeOfDay tod)
 {
 	stopAmbientSound();
 
+	Bool trySound = FALSE;
+
 	//Get the specific ambient sound for the damage type.
 	const AudioEventRTS& audio = getAmbientSoundByDamage(dt);
-	Bool trySound = FALSE;
 	if( audio.getEventName().isNotEmpty() )
 	{
 		if (m_ambientSound == NULL)
@@ -3943,7 +3974,9 @@ void Drawable::startAmbientSound()
 void	Drawable::stopAmbientSound( void )
 {
 	if (m_ambientSound)
+  {
 		TheAudio->removeAudioEvent(m_ambientSound->m_event.getPlayingHandle());
+  }
 }
 
 //-------------------------------------------------------------------------------------------------

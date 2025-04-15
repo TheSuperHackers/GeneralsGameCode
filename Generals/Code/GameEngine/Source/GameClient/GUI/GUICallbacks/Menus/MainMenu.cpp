@@ -98,7 +98,7 @@ enum
 
 static Bool raiseMessageBoxes = TRUE;
 static Bool campaignSelected = FALSE;
-#if defined _DEBUG || defined _INTERNAL
+#if defined _DEBUG || defined _INTERNAL || defined _PROFILE
 static NameKeyType campaignID = NAMEKEY_INVALID;
 static GameWindow *buttonCampaign = NULL;
 #ifdef TEST_COMPRESSION
@@ -106,6 +106,7 @@ static GameWindow *buttonCompressTest = NULL;
 void DoCompressTest( void );
 #endif // TEST_COMPRESSION
 #endif
+
 
 // window ids -------------------------------------------------------------------------------------
 static NameKeyType mainMenuID = NAMEKEY_INVALID;
@@ -179,6 +180,7 @@ static Bool buttonPushed = FALSE;
 static Bool isShuttingDown = FALSE;
 static Bool startGame = FALSE;
 static Int	initialGadgetDelay = 210;
+
 enum
 {
 	SHOW_NONE = 0,
@@ -517,7 +519,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	
 	showSelectiveButtons(SHOW_NONE);
 	// Set up the version number
-#if defined _DEBUG || defined _INTERNAL
+#if defined _DEBUG || defined _INTERNAL || defined _PROFILE
 	WinInstanceData instData;
 #ifdef TEST_COMPRESSION
 	instData.init();
@@ -1247,7 +1249,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 			
 			if(buttonPushed)
 				break;
-#if defined _DEBUG || defined _INTERNAL
+#if defined _DEBUG || defined _INTERNAL || defined _PROFILE
 			if( control == buttonCampaign )
 			{
 				buttonPushed = TRUE;

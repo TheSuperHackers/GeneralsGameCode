@@ -263,7 +263,6 @@ void positionStartSpots(AsciiString mapName, GameWindow *buttonMapStartPositions
 void WOLPositionStartSpots( void )
 {
 	GameWindow *win = windowMap;
-
 	if (WOLMapSelectLayout != NULL) {
 		win = TheWindowManager->winGetWindowFromId(NULL, windowMapSelectMapID);
 
@@ -935,6 +934,7 @@ void WOLDisplayGameOptions( void )
 	updateMapStartSpots(TheGameSpyInfo->getCurrentStagingRoom(), buttonMapStartPosition);
 }
 
+
 //  -----------------------------------------------------------------------------------------
 // The Bad munkee slot list displaying function
 //-------------------------------------------------------------------------------------------------
@@ -1555,7 +1555,6 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 			{
 				break;
 			}
-
 			switch (resp.peerResponseType)
 			{
 			case PeerResponse::PEERRESPONSE_FAILEDTOHOST:
@@ -2497,7 +2496,6 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 				GameWindow *control = (GameWindow *)mData1;
 				Int controlID = control->winGetWindowId();
 				static Int buttonCommunicatorID = NAMEKEY("GameSpyGameOptionsMenu.wnd:ButtonCommunicator");
-
 				if ( controlID == buttonBackID )
 				{
 					savePlayerInfo();

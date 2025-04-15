@@ -1028,11 +1028,12 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 	{
 		case GUI_COMMAND_DOZER_CONSTRUCT:
 		{
+      const ThingTemplate * whatToBuild = command->getThingTemplate();
 			// if the command is a dozer construct task and the object dozer is building anything
 			// this command is not available
-			if(command->getThingTemplate())
+			if(whatToBuild)
 			{
-				BuildableStatus bStatus = command->getThingTemplate()->getBuildable();
+				BuildableStatus bStatus = whatToBuild->getBuildable();
 				if (bStatus == BSTATUS_NO || (bStatus == BSTATUS_ONLY_BY_AI && obj->getControllingPlayer()->getPlayerType() != PLAYER_COMPUTER))
 					return COMMAND_HIDDEN;
 			}
@@ -1057,13 +1058,14 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 				return COMMAND_RESTRICTED;
 			
 			// return whether or not the player can build this thing
-			if( player->canBuild( command->getThingTemplate() ) == FALSE )
+			if( player->canBuild( whatToBuild ) == FALSE )
 				return COMMAND_RESTRICTED;
 
-			if( !player->canAffordBuild( command->getThingTemplate() ) )
+			if( !player->canAffordBuild( whatToBuild ) )
 			{
 				return COMMAND_RESTRICTED;//COMMAND_CANT_AFFORD;
 			}
+
 
 			break;
 		}  

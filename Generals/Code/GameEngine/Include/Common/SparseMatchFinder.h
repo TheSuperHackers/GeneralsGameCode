@@ -72,6 +72,26 @@ private:
 		}
 	};
 
+	struct MapHelper
+	{
+		bool operator()(const BITSET& a, const BITSET& b) const
+		{
+			int i;
+			if (a.size() < b.size()) {
+				return true;
+			}
+			for (i = 0; i < a.size(); ++i) {
+				bool aVal = a.test(i);
+				bool bVal = b.test(i);
+				if (aVal && bVal) continue;
+				if (!aVal && !bVal) continue;
+				if (!aVal) return true;
+				return false;
+			}
+			return false; // all bits match.
+		}
+	};
+
 	//-------------------------------------------------------------------------------------------------
 	typedef std::hash_map< BITSET, const MATCHABLE*, HashMapHelper, HashMapHelper > MatchMap;
 
@@ -80,6 +100,7 @@ private:
 	//-------------------------------------------------------------------------------------------------
 	
 	mutable MatchMap m_bestMatches;
+	//mutable HashMatchMap m_bestHashMatches;
 
 	//-------------------------------------------------------------------------------------------------
 	// METHODS

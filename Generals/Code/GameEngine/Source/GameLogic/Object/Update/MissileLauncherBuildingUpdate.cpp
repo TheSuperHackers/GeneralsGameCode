@@ -205,7 +205,12 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 //-------------------------------------------------------------------------------------------------
 void MissileLauncherBuildingUpdate::initiateIntentToDoSpecialPower( const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, UnsignedInt commandOptions, Int locationCount )
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+	if( m_specialPowerModule->getSpecialPowerTemplate() != specialPowerTemplate )
+	{
+		return;
+	}
+
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	DEBUG_ASSERTCRASH(!TheGlobalData->m_specialPowerUsesDelay || m_doorState == DOOR_OPEN, ("door is not fully open when specialpower is fired!"));
 #endif
 
@@ -250,7 +255,7 @@ UpdateSleepTime MissileLauncherBuildingUpdate::update( void )
 			switchToState(m_timeoutState);
 		}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 		DEBUG_ASSERTCRASH(!TheGlobalData->m_specialPowerUsesDelay || !(m_specialPowerModule->isReady() && m_doorState != DOOR_OPEN), ("door is not fully open when specialpower is ready!"));
 #endif
 

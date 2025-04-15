@@ -53,7 +53,7 @@
 #endif
 
 GameSpyInfoInterface *TheGameSpyInfo = NULL;
-GameSpyStagingRoom *TheGameSpyGame = NULL;
+extern GameSpyStagingRoom *TheGameSpyGame = NULL;
 void deleteNotificationBox( void );
 
 bool AsciiComparator::operator()(AsciiString s1, AsciiString s2) const

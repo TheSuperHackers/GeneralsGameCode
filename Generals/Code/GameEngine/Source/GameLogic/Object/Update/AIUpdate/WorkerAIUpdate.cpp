@@ -780,6 +780,9 @@ void WorkerAIUpdate::internalCancelTask( DozerTask task )
 	if(task < 0 || task >= DOZER_NUM_TASKS)
 		return;  //DAMNIT!  You CANNOT assert and then not handle the damn error!  The.  Code.  Must.  Not.  Crash.
 
+	if(task < 0 || task >= DOZER_NUM_TASKS)
+		return;  //DAMNIT!  You CANNOT assert and then not handle the damn error!  The.  Code.  Must.  Not.  Crash.
+
 	// call the single method that gets called for completing and canceling tasks
 	internalTaskCompleteOrCancelled( task );
 

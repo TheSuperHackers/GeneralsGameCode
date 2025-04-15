@@ -57,8 +57,8 @@
 #include "GameLogic/Module/OverchargeBehavior.h"
 #include "GameLogic/Module/HealContain.h"
 #include "GameLogic/Module/GarrisonContain.h"
-#include "GameLogic/Module/TransportContain.h"
 #include "GameLogic/Module/RailedTransportContain.h"
+#include "GameLogic/Module/TransportContain.h"
 #include "GameLogic/Module/MobNexusContain.h"
 #include "GameLogic/Module/TunnelContain.h"
 #include "GameLogic/Module/OverlordContain.h"
@@ -214,14 +214,14 @@
 #include "GameLogic/Module/FireWeaponCollide.h"
 #include "GameLogic/Module/SquishCollide.h"
 
+#include "GameLogic/Module/ConvertToCarBombCrateCollide.h"
+#include "GameLogic/Module/ConvertToHijackedVehicleCrateCollide.h"
 #include "GameLogic/Module/HealCrateCollide.h"
 #include "GameLogic/Module/MoneyCrateCollide.h"
+#include "GameLogic/Module/SalvageCrateCollide.h"
 #include "GameLogic/Module/ShroudCrateCollide.h"
 #include "GameLogic/Module/UnitCrateCollide.h"
 #include "GameLogic/Module/VeterancyCrateCollide.h"
-#include "GameLogic/Module/ConvertToCarBombCrateCollide.h"
-#include "GameLogic/Module/ConvertToHijackedVehicleCrateCollide.h"
-#include "GameLogic/Module/SalvageCrateCollide.h"
 
 // body includes
 #include "GameLogic/Module/InactiveBody.h"

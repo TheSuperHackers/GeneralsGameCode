@@ -151,7 +151,7 @@ static Bool ParseObjectDataChunk(DataChunkInput &file, DataChunkInfo *info, void
 	
 	// create the map object
 	pThisOne = newInstance( MapObject )( loc, name, angle, flags, &d, 
-														TheThingFactory->findTemplate( name ) );
+														TheThingFactory->findTemplate( name, FALSE ) );
 
 //DEBUG_LOG(("obj %s owner %s\n",name.str(),d.getAsciiString(TheKey_originalOwner).str()));
 

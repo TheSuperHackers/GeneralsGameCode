@@ -125,8 +125,8 @@ void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSi
 	//Precompute a bounding box for entire shroud layer
 	if (pMap)
 	{	
-		m_numCellsX = REAL_TO_INT_CEIL((Real)(pMap->getXExtent() - 1 - pMap->getBorderSize()*2)*MAP_XY_FACTOR/m_cellWidth);
-		m_numCellsY = REAL_TO_INT_CEIL((Real)(pMap->getYExtent() - 1 - pMap->getBorderSize()*2)*MAP_XY_FACTOR/m_cellHeight);
+		m_numCellsX = REAL_TO_INT_CEIL((Real)(pMap->getXExtent() - 1 - pMap->getBorderSizeInline()*2)*MAP_XY_FACTOR/m_cellWidth);
+		m_numCellsY = REAL_TO_INT_CEIL((Real)(pMap->getYExtent() - 1 - pMap->getBorderSizeInline()*2)*MAP_XY_FACTOR/m_cellHeight);
 
 		//Maximum visible cells will depend on maximum drawable terrain size plus 1 for partial cells (since
 		//shroud cells are larger than terrain cells).
@@ -614,10 +614,10 @@ void W3DShroud::render(CameraClass *cam)
 
 
 	WorldHeightMap *hm=TheTerrainRenderObject->getMap();
-	Int visStartX=REAL_TO_INT_FLOOR((Real)(hm->getDrawOrgX()-hm->getBorderSize())*MAP_XY_FACTOR/m_cellWidth);	//start of rendered heightmap rectangle
+	Int visStartX=REAL_TO_INT_FLOOR((Real)(hm->getDrawOrgX()-hm->getBorderSizeInline())*MAP_XY_FACTOR/m_cellWidth);	//start of rendered heightmap rectangle
 	if (visStartX < 0)
 		visStartX = 0;	//no shroud is applied in border area so it always starts at > 0
-	Int visStartY=REAL_TO_INT_FLOOR((Real)(hm->getDrawOrgY()-hm->getBorderSize())*MAP_XY_FACTOR/m_cellHeight);
+	Int visStartY=REAL_TO_INT_FLOOR((Real)(hm->getDrawOrgY()-hm->getBorderSizeInline())*MAP_XY_FACTOR/m_cellHeight);
 	if (visStartY < 0)
 		visStartY = 0;	//no shroud is applied in border area so it always starts at > 0
 	Int visEndX=visStartX+REAL_TO_INT_FLOOR((Real)(hm->getDrawWidth()-1)*MAP_XY_FACTOR/m_cellWidth)+1;	//size of rendered heightmap rectangle

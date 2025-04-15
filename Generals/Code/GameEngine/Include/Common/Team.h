@@ -474,7 +474,7 @@ public:
 		a convenience routine used to estimate the team's position by just returning the position
 		of the first member of the team
 		*/
-	const Coord3D* getEstimateTeamPosition(void);
+	const Coord3D* getEstimateTeamPosition(void) const;
 	
 	/**
 		a convenience routine to move a team's units to another team.

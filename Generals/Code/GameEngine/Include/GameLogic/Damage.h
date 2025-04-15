@@ -36,6 +36,7 @@
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
 
+
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Object;
 class INI;
@@ -215,7 +216,6 @@ static const char *TheDeathNames[] =
 	"DETONATED",
 	"SPLATTED",
 	"POISONED_BETA",	
-
 	"EXTRA_2",	
 	"EXTRA_3",	
 	"EXTRA_4",	

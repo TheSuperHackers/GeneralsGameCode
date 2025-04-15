@@ -40,6 +40,12 @@
 #include "GameLogic/Module/LaserUpdate.h"
 #include "WWMath/vector3.h"
 
+#ifdef _INTERNAL
+// for occasional debugging...
+//#pragma optimize("", off)
+//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 LaserUpdateModuleData::LaserUpdateModuleData()
@@ -243,6 +249,7 @@ void LaserUpdate::initLaser( const Object *parent, const Coord3D *startPos, cons
 	}
 
 	//Adjust the position of any existing particle system.
+	//PLEASE NOTE You cannot check an ID for NULL.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
 	if( m_particleSystemID )
 	{
 		system = TheParticleSystemManager->findParticleSystem( m_particleSystemID );
@@ -251,6 +258,8 @@ void LaserUpdate::initLaser( const Object *parent, const Coord3D *startPos, cons
 			system->setPosition( &m_startPos );
 		}
 	}
+	
+	//PLEASE NOTE You cannot check an ID for NULL.  This should be a check against INVALID_PARTICLE_SYSTEM_ID.  Can't change it on the last day without a bug though.
 	if( m_targetParticleSystemID )
 	{
 		system = TheParticleSystemManager->findParticleSystem( m_targetParticleSystemID );

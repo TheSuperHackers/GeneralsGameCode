@@ -37,6 +37,7 @@
 #include "Common/GameType.h"
 #include "Common/MessageStream.h"		// for GameMessageTranslator
 #include "Common/SpecialPowerType.h"
+#include "Common/Snapshot.h"
 #include "Common/STLTypedefs.h"
 #include "Common/SubsystemInterface.h"
 #include "Common/UnicodeString.h"
@@ -44,7 +45,6 @@
 #include "GameClient/Mouse.h"
 #include "GameClient/RadiusDecal.h"
 #include "GameClient/View.h"
-#include "Common/Snapshot.h"
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 class Drawable;

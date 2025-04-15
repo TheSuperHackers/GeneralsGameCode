@@ -41,6 +41,15 @@
 #include "GameLogic/Module/AssistedTargetingUpdate.h"
 #include "GameLogic/Module/LaserUpdate.h"
 
+
+#ifdef _INTERNAL
+// for occasional debugging...
+//#pragma optimize("", off)
+//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
+
+
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void AssistedTargetingUpdateModuleData::buildFieldParse(MultiIniFieldParse& p) 
@@ -95,6 +104,7 @@ void AssistedTargetingUpdate::assistAttack( const Object *requestingObject, Obje
 	// lock it just till the weapon is empty or the attack is "done"
 	me->setWeaponLock( md->m_weaponSlot, LOCKED_TEMPORARILY );
 	me->getAI()->aiAttackObject( victimObject, md->m_clipSize, CMD_FROM_AI );
+
 
 	if( md->m_laserFromAssisted )
 		makeFeedbackLaser( md->m_laserFromAssisted, requestingObject, me );

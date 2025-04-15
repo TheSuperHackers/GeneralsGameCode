@@ -90,6 +90,7 @@ void ArmorUpgrade::upgradeImplementation( )
 	Object *obj = getObject();
 	if( !obj )
 		return;
+
 	BodyModuleInterface* body = obj->getBodyModule();
 	if ( body )
 		body->setArmorSetFlag( ARMORSET_PLAYER_UPGRADE );

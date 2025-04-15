@@ -30,12 +30,13 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
+#include "GameLogic/Module/StickyBombUpdate.h"
+
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/InGameUI.h"
 #include "GameLogic/Object.h"
-#include "GameLogic/Module/StickyBombUpdate.h"
 #include "GameLogic/Module/LifetimeUpdate.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/BodyModule.h"

@@ -151,6 +151,7 @@ Bool GetUnsignedIntFromRegistry(AsciiString path, AsciiString key, UnsignedInt& 
 AsciiString GetRegistryLanguage(void)
 {
 	static Bool cached = FALSE;
+	// NOTE: static causes a memory leak, but we have to keep it because the value is cached.
 	static AsciiString val = "english";
 	if (cached) {
 		return val;

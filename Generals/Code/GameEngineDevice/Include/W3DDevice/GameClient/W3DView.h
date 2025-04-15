@@ -232,7 +232,6 @@ private:
 	Real m_shakeAngleSin;														///< the sine of the orientation of the oscillation
 	Real m_shakeIntensity;													///< the intensity of the oscillation
 
-
 	TRotateCameraInfo	m_rcInfo;
 	Bool		m_doingRotateCamera;										///< True if we are doing a camera rotate.
 

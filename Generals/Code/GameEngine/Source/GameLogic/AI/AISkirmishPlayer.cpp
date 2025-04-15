@@ -158,7 +158,7 @@ void AISkirmishPlayer::processBaseBuilding( void )
 							ObjectID builder = bldg->getBuilderID();
 							Object* myDozer = TheGameLogic->findObjectByID(builder);
 							if (myDozer==NULL) {
-								DEBUG_LOG(("AI's Dozer got killed.  Find another dozer.\n"));
+								DEBUG_LOG(("AI's Dozer got killed (or captured).  Find another dozer.\n"));
 								queueDozer();
  								myDozer = findDozer(bldg->getPosition());
 								if (myDozer==NULL || myDozer->getAI()==NULL) {
@@ -672,8 +672,8 @@ void AISkirmishPlayer::buildAIBaseDefenseStructure(const AsciiString &thingName,
 		Real s = sin(angle);
 		Real c = cos(angle);
 
-	  DEBUG_LOG(("Angle is %f sin %f, cos %f \n", 180*angle/PI, s, c));
-		DEBUG_LOG(("Offset is %f  %f, new is %f, %f \n", 
+	  DEBUG_LOG(("buildAIBaseDefenseStructure -- Angle is %f sin %f, cos %f \n", 180*angle/PI, s, c));
+		DEBUG_LOG(("buildAIBaseDefenseStructure -- Offset is %f  %f, Final Position is %f, %f \n", 
 			offset.x, offset.y, 
 			offset.x*c - offset.y*s,
 			offset.y*c + offset.x*s
@@ -801,7 +801,7 @@ void AISkirmishPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recr
 						AIUpdateInterface *ai = unit->getAIUpdateInterface();
 						if (ai) 
 						{
-#ifdef DEBUG_LOGGING
+#if defined(_DEBUG) || defined(_INTERNAL)
 							Coord3D pos = *unit->getPosition();
 							Coord3D to = teamProto->getTemplateInfo()->m_homeLocation;
 							DEBUG_LOG(("Moving unit from %f,%f to %f,%f\n", pos.x, pos.y , to.x, to.y ));

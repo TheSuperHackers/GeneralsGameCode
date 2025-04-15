@@ -1290,7 +1290,6 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 								AsciiString theMap = *it;
 								theMap.toLower();
 								const MapMetaData *md = TheMapCache->findMap(theMap);
-
 								if (md && md->m_numPlayers >= numPlayers)
 								{
 									TheGameSpyGame->setMap(*it);

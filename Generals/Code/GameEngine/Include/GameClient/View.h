@@ -83,6 +83,16 @@ public:
 		SHAKE_COUNT 
 	};
 
+  // Return values for worldToScreenTriReturn
+  enum WorldToScreenReturn CPP_11(: Int)
+  {
+    WTS_INSIDE_FRUSTUM = 0, // On the screen (inside frustum of camera)
+    WTS_OUTSIDE_FRUSTUM,    // Return is valid but off the screen (outside frustum of camera)
+    WTS_INVALID,            // No transform possible
+
+    WTS_COUNT
+  };
+
 public:
 
 	View( void );

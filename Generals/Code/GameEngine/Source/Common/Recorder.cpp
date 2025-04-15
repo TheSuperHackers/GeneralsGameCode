@@ -1022,6 +1022,7 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 		{
 			m_crcInfo->setSawCRCMismatch();
 
+			//Kris: Patch 1.01 November 10, 2003 (integrated changes from Matt Campbell)
 			// Since we don't seem to have any *visible* desyncs when replaying games, but get this warning
 			// virtually every replay, the assumption is our CRC checking is faulty.  Since we're at the
 			// tail end of patch season, let's just disable the message, and hope the users believe the

@@ -62,6 +62,32 @@ const char *TheEvaMessageNames[] =
 	"EVA_INVALID",
 };
 
+//-------------------------------------------------------------------------------------------------
+const ShouldPlayFunc Eva::s_shouldPlayFuncs[] = 
+{
+	Eva::shouldPlayLowPower,
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,
+	Eva::shouldPlayGenericHandler,	
+	Eva::shouldPlayGenericHandler,	
+	NULL,
+};
+
+
 //------------------------------------------------------------------------------ INI::parseEvaEvent
 void INI::parseEvaEvent( INI* ini )
 {
@@ -121,32 +147,6 @@ const FieldParse EvaCheckInfo::s_evaEventInfo[] =
 	{ "SideSounds",						parseSideSoundsList,						NULL,			offsetof( EvaCheckInfo, m_evaSideSounds ) },
 	{ 0, 0, 0, 0 },
 
-};
-
-
-//-------------------------------------------------------------------------------------------------
-const ShouldPlayFunc Eva::s_shouldPlayFuncs[] = 
-{
-	Eva::shouldPlayLowPower,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,
-	Eva::shouldPlayGenericHandler,	
-	Eva::shouldPlayGenericHandler,	
-	NULL,
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -248,6 +248,10 @@ void Eva::update()
 //-------------------------------------------------------------------------------------------------
 EvaMessage Eva::nameToMessage(const AsciiString& name)
 {
+  DEBUG_ASSERTCRASH( ELEMENTS_OF( TheEvaMessageNames ) == EVA_COUNT + 1, ("TheEvaMessageNames out of sync" ) );
+  DEBUG_ASSERTCRASH( stricmp( TheEvaMessageNames[ EVA_COUNT ], "EVA_INVALID" ) == 0, ("TheEvaMessageNames out of sync" ) );
+  DEBUG_ASSERTCRASH( stricmp( TheEvaMessageNames[ EVA_COUNT - 1], "EVA_INVALID" ) != 0, ("TheEvaMessageNames out of sync" ) );
+
 	for (Int i = EVA_FIRST; i < EVA_COUNT; ++i) {
 		if (name.compareNoCase(TheEvaMessageNames[i]) == 0) {
 			return (EvaMessage) i;
@@ -261,6 +265,10 @@ EvaMessage Eva::nameToMessage(const AsciiString& name)
 //-------------------------------------------------------------------------------------------------
 AsciiString Eva::messageToName(EvaMessage message)
 {
+  DEBUG_ASSERTCRASH( ELEMENTS_OF( TheEvaMessageNames ) == EVA_COUNT + 1, ("TheEvaMessageNames out of sync" ) );
+  DEBUG_ASSERTCRASH( stricmp( TheEvaMessageNames[ EVA_COUNT ], "EVA_INVALID" ) == 0, ("TheEvaMessageNames out of sync" ) );
+  DEBUG_ASSERTCRASH( stricmp( TheEvaMessageNames[ EVA_COUNT - 1], "EVA_INVALID" ) != 0, ("TheEvaMessageNames out of sync" ) );
+
 	if (message >= EVA_FIRST && message < EVA_COUNT)
 		return TheEvaMessageNames[message];
 
@@ -305,6 +313,8 @@ const EvaCheckInfo *Eva::getEvaCheckInfo(AsciiString name)
 void Eva::setShouldPlay(EvaMessage messageToPlay)
 {
 	m_shouldPlay[messageToPlay] = TRUE;
+  
+  // DEBUG_LOG( ( "Eva message %s play requested\n", messageToName( messageToPlay).str() ) );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -336,6 +346,10 @@ Bool Eva::messageShouldPlay(EvaMessage messageToTest, UnsignedInt currentFrame) 
 	if (m_localPlayer == NULL) {
 		return FALSE;
 	}
+
+  DEBUG_ASSERTCRASH( ELEMENTS_OF( s_shouldPlayFuncs ) == EVA_COUNT + 1, ("Eva::s_shouldPlayFuncs out of sync" ) );
+  DEBUG_ASSERTCRASH( s_shouldPlayFuncs[ EVA_COUNT ] == NULL, ("Eva::s_shouldPlayFuncs out of sync" ) );
+  DEBUG_ASSERTCRASH( s_shouldPlayFuncs[ EVA_COUNT - 1] != NULL, ("Eva::s_shouldPlayFuncs out of sync" ) );
 
 	m_messageBeingTested = messageToTest;
 	return s_shouldPlayFuncs[messageToTest](m_localPlayer);

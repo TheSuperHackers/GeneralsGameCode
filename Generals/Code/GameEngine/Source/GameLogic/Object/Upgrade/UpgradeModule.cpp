@@ -161,6 +161,15 @@ Bool UpgradeMux::wouldUpgrade( UpgradeMaskType keyMask ) const
 }
 
 //-------------------------------------------------------------------------------------------------
+void UpgradeMux::giveSelfUpgrade()
+{
+	// If I have an activation condition, and I haven't activated, and this key matches my condition.
+	performUpgradeFX();
+	upgradeImplementation();
+	setUpgradeExecuted(true);
+}
+
+//-------------------------------------------------------------------------------------------------
 Bool UpgradeMux::testUpgradeConditions( UpgradeMaskType keyMask ) const
 {
 	UpgradeMaskType activation, conflicting;

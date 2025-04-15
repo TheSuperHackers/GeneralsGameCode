@@ -3163,11 +3163,7 @@ void ControlBar::initSpecialPowershortcutBar( Player *player)
 		id = TheNameKeyGenerator->nameToKey( windowName.str() );
 		m_specialPowerShortcutButtonParents[ i ] = 
 			TheWindowManager->winGetWindowFromId( m_specialPowerShortcutParent, id );
-		
-
 	}  // end for i
-
-
 
 }
 
@@ -3382,6 +3378,7 @@ void ControlBar::updateSpecialPowerShortcut( void )
 	}
 
 }
+
 void ControlBar::animateSpecialPowerShortcut( Bool isOn )
 {
 	if(!m_specialPowerShortcutParent || !m_animateWindowManagerForGenShortcuts || !m_currentlyUsedSpecialPowersButtons)

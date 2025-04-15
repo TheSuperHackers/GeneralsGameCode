@@ -301,7 +301,7 @@ Bool SpecialPowerModule::isReady() const
 //-------------------------------------------------------------------------------------------------
 Real SpecialPowerModule::getPercentReady() const
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	if( TheGlobalData->m_specialPowerUsesDelay == FALSE )
 		return 1.0f;
 #endif
@@ -310,8 +310,10 @@ Real SpecialPowerModule::getPercentReady() const
 	if( isReady() )
 		return 1.0f;
 
-	if ( m_pausedCount > 0 )
+	if( m_pausedCount > 0 )
+	{
 		return m_pausedPercent;
+	}
 
 	// get the module data
 	const SpecialPowerModuleData *modData = getSpecialPowerModuleData();
@@ -349,7 +351,7 @@ Real SpecialPowerModule::getPercentReady() const
 //-------------------------------------------------------------------------------------------------
 void SpecialPowerModule::startPowerRecharge()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	// this is a cheat ... remove this for release!
 	if( TheGlobalData->m_specialPowerUsesDelay == FALSE )
 		return;
@@ -472,7 +474,7 @@ void SpecialPowerModule::createViewObject( const Coord3D *location )
 //-------------------------------------------------------------------------------------------------
 void SpecialPowerModule::markSpecialPowerTriggered( const Coord3D *location )
 {
-	triggerSpecialPower(location);
+	triggerSpecialPower( location );
 }
 
 

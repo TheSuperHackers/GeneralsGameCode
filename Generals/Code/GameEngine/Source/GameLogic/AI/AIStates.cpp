@@ -66,6 +66,7 @@
 #include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
 #include "GameLogic/Module/StealthUpdate.h"
+
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
@@ -862,7 +863,8 @@ StateReturnType AIStateMachine::updateStateMachine()
 				status = STATE_SUCCESS;
 			}
 		}
-		if (status==STATE_CONTINUE)	{
+		if (status==STATE_CONTINUE)	
+		{
 			return status;
 		}
 		m_temporaryState->onExit(EXIT_NORMAL);
@@ -1724,7 +1726,8 @@ StateReturnType AIInternalMoveToState::update()
 			/// @todo srj -- find a way to sleep for a number of frames here, if possible
 			return STATE_CONTINUE;
 		}
-		if (thePath==NULL) {
+		if (thePath==NULL) 
+		{
 			return STATE_FAILURE;
 		}
 		m_waitingForPath = false;
@@ -2835,10 +2838,13 @@ StateReturnType AIAttackPursueTargetState::onEnter()
 	}
 
 	setAdjustsDestination(false);
+
 	// Check here:  If we are a player, and we got to this state via an ai command (ie we auto-acquired), 
 	// we don't want to chase the unit. 
-	if (source->getControllingPlayer()->getPlayerType() == PLAYER_HUMAN) {
-		if (ai->getLastCommandSource() == CMD_FROM_AI) {
+	if (source->getControllingPlayer()->getPlayerType() == PLAYER_HUMAN) 
+	{
+		if (ai->getLastCommandSource() == CMD_FROM_AI) 
+		{
 			return STATE_SUCCESS;
 		}
 	}
@@ -4749,6 +4755,7 @@ StateReturnType AIAttackAimAtTargetState::onEnter()
 	Locomotor* curLoco = sourceAI->getCurLocomotor();
 	m_canTurnInPlace = curLoco ? curLoco->getMinSpeed() == 0.0f : false;
 
+
 //	if (!victim) 
 //		return STATE_CONTINUE; // Just continue till we get a victim.
 // Ick.  This was originally a safety to a single line that required victim, and was never meant
@@ -4786,6 +4793,7 @@ StateReturnType AIAttackAimAtTargetState::onEnter()
 	WhichTurretType tur = sourceAI->getWhichTurretForCurWeapon();
 	if (tur != TURRET_INVALID)
 	{
+		//Order specific turret to attack.
 		if (m_isAttackingObject)
 		{
 			sourceAI->setTurretTargetObject(tur, victim, m_isForceAttacking);

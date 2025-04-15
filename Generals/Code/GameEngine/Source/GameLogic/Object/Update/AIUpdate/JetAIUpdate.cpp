@@ -85,9 +85,26 @@ enum JetAIStateType CPP_11(: Int)
 	JETAISTATETYPE_LAST
 };
 
+
 //-------------------------------------------------------------------------------------------------
-static Bool isOutOfSpecialReloadAmmo(Object* jet)
+Bool JetAIUpdate::getFlag( FlagType f ) const 
+{ 
+	return (m_flags & (1<<f)) != 0; 
+}
+
+//-------------------------------------------------------------------------------------------------
+void JetAIUpdate::setFlag( FlagType f, Bool v) 
+{ 
+	if (v) 
+		m_flags |= (1<<f); 
+	else 
+		m_flags &= ~(1<<f); 
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool JetAIUpdate::isOutOfSpecialReloadAmmo() const
 {
+	const Object* jet = getObject();
 	// if we have at least one special reload weapon,
 	// AND all such weapons are out of ammo,
 	// return true.
@@ -95,7 +112,7 @@ static Bool isOutOfSpecialReloadAmmo(Object* jet)
 	Int out = 0;
 	for( Int i = 0; i < WEAPONSLOT_COUNT;	i++ )
 	{
-		Weapon* weapon = jet->getWeaponInWeaponSlot((WeaponSlotType)i);
+		const Weapon* weapon = jet->getWeaponInWeaponSlot((WeaponSlotType)i);
 		if (weapon == NULL || weapon->getReloadType() != RETURN_TO_BASE_TO_RELOAD)
 			continue;
 		++specials;
@@ -300,7 +317,7 @@ public:
 		// it might not have an owning airfield, and it might be trying to return
 		// simply due to being idle, not out of ammo. so check and don't die in that
 		// case, but just punt back out to idle.
-		if (!isOutOfSpecialReloadAmmo(jet) && jet->getProducerID() == INVALID_ID)
+		if (!jetAI->isOutOfSpecialReloadAmmo() && jet->getProducerID() == INVALID_ID)
 		{
 			return STATE_FAILURE;
 		}
@@ -1656,7 +1673,7 @@ UpdateSleepTime JetAIUpdate::update()
 		}
 
 		// note that we might still have weapons with ammo, but still be forced to return to reload.
-		if (isOutOfSpecialReloadAmmo(jet) && getFlag(ALLOW_AIR_LOCO))
+		if (isOutOfSpecialReloadAmmo() && getFlag(ALLOW_AIR_LOCO))
 		{
 			m_returnToBaseFrame = 0;
 
@@ -1682,7 +1699,7 @@ UpdateSleepTime JetAIUpdate::update()
 		else if (m_returnToBaseFrame != 0 && now >= m_returnToBaseFrame && getFlag(ALLOW_AIR_LOCO))
 		{
 			m_returnToBaseFrame = 0;
-			DEBUG_ASSERTCRASH(isOutOfSpecialReloadAmmo(jet) == false, ("Hmm, this seems unlikely -- isOutOfSpecialReloadAmmo(jet)==false"));
+			DEBUG_ASSERTCRASH(isOutOfSpecialReloadAmmo() == false, ("Hmm, this seems unlikely -- isOutOfSpecialReloadAmmo()==false"));
 			setFlag(USE_SPECIAL_RETURN_LOCO, false);
 			setLastCommandSource( CMD_FROM_AI );
 			getStateMachine()->setState(RETURNING_FOR_LANDING);
@@ -1700,7 +1717,7 @@ UpdateSleepTime JetAIUpdate::update()
 		}
 		m_returnToBaseFrame = 0;
 		if (getFlag(ALLOW_INTERRUPT_AND_RESUME_OF_CUR_STATE_FOR_RELOAD) && 
-						isOutOfSpecialReloadAmmo(jet) && getFlag(ALLOW_AIR_LOCO))
+						isOutOfSpecialReloadAmmo() && getFlag(ALLOW_AIR_LOCO))
 		{
 			setFlag(USE_SPECIAL_RETURN_LOCO, true);
 			setFlag(HAS_PENDING_COMMAND, true);
@@ -2101,7 +2118,7 @@ void JetAIUpdate::doLandingCommand(Object *airfield, CommandSourceType cmdSource
 			}
 
 			getObject()->setProducer(airfield);
-			DEBUG_ASSERTCRASH(isOutOfSpecialReloadAmmo(getObject()) == false, ("Hmm, this seems unlikely -- isOutOfSpecialReloadAmmo(jet)==false"));
+			DEBUG_ASSERTCRASH(isOutOfSpecialReloadAmmo() == false, ("Hmm, this seems unlikely -- isOutOfSpecialReloadAmmo()==false"));
 			setFlag(USE_SPECIAL_RETURN_LOCO, false);
 			setFlag(ALLOW_INTERRUPT_AND_RESUME_OF_CUR_STATE_FOR_RELOAD, false);
 			setLastCommandSource( cmdSource );

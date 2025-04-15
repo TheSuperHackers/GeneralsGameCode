@@ -84,6 +84,7 @@ protected:
 static RenderObjClass::Material_Override animationDisableOverride;
 
 //Helper function used to disable all UV mapper animations on a given model.
+//Also use this pass to disable muzzle effects.
 void disableUVAnimations(RenderObjClass *robj)
 {
 	if (robj && robj->Class_ID() == RenderObjClass::CLASSID_HLOD)
@@ -107,6 +108,9 @@ void disableUVAnimations(RenderObjClass *robj)
 					}
 					REF_PTR_RELEASE(mat);
 				}
+				//We don't want muzzle flashes visible inside fog, so turn them off.
+				if (subObj->Get_Name() && strstr(subObj->Get_Name(),"MUZZLEFX"))
+					subObj->Set_Hidden(true);
 			}
 			REF_PTR_RELEASE(subObj);
 		}

@@ -543,6 +543,7 @@ void MapSelectorTooltip(GameWindow *window,
 	
 }
 
+
 void positionStartSpotControls( GameWindow *win, GameWindow *mapWindow, Coord3D *pos, MapMetaData *mmd, GameWindow *buttonMapStartPositions[])
 {
 	if(!win || !mmd || !mapWindow || !buttonMapStartPositions)
@@ -798,7 +799,7 @@ void updateMapStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[
 		  {
 			  buttonMapStartPositions[i]->winSetTooltip(TheGameText->fetch("TOOLTIP:StartPosition"));
 		  }
-    }
+	}
 	}
 	for( i = 0; i < MAX_SLOTS; ++i)
 	{
@@ -1062,6 +1063,7 @@ void InitSkirmishGameGadgets( void )
 		comboBoxTeam[i] = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, comboBoxTeamID[i] );
 		DEBUG_ASSERTCRASH(comboBoxTeam[i], ("Could not find the comboBoxTeam[%d]",i ));
 		
+
 //		tmpString.format("SkirmishGameOptionsMenu.wnd:ButtonStartPosition%d", i);
 //		buttonStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString );
 //		buttonStartPosition[i] = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, buttonStartPositionID[i] );
@@ -1355,6 +1357,7 @@ void SkirmishGameOptionsMenuShutdown( WindowLayout *layout, void *userData )
 
 	// our shutdown is complete
 	TheTransitionHandler->reverse("SkirmishGameOptionsMenuFade");
+	
 }  // void SkirmishGameOptionsMenuShutdown( WindowLayout *layout, void *userData )
 
 //-------------------------------------------------------------------------------------------------

@@ -54,6 +54,12 @@
 
 #include "Common/file.h"
 
+#ifdef _INTERNAL
+// for occasional debugging...
+//#pragma optimize("", off)
+//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
+
 #define K_OBSOLETE_HEIGHT_MAP_VERSION 8
 
 #define PATHFIND_CLIFF_SLOPE_LIMIT_F	9.8f	
@@ -1093,7 +1099,7 @@ Bool WorldHeightMap::ParseObjectData(DataChunkInput &file, DataChunkInfo *info, 
 	
 	// create the map object
 	pThisOne = newInstance( MapObject )( loc, name, angle, flags, &d, 
-														TheThingFactory->findTemplate( name ) );
+														TheThingFactory->findTemplate( name, FALSE ) );
 
 //DEBUG_LOG(("obj %s owner %s\n",name.str(),d.getAsciiString(TheKey_originalOwner).str()));
 
@@ -1944,6 +1950,12 @@ void WorldHeightMap::getAlphaUVData(Int xIndex, Int yIndex, float U[4], float V[
 #ifdef FLIP_TRIANGLES
 	*flip = needFlip;
 #endif
+}
+
+void WorldHeightMap::setTextureLOD(Int lod)
+{
+	if (m_terrainTex)
+		m_terrainTex->setLOD(lod);
 }
 
 TextureClass *WorldHeightMap::getTerrainTexture(void)

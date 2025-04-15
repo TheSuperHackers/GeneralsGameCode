@@ -316,6 +316,9 @@ public:
 	void toggleFreeBuild(){ m_DEMO_freeBuild = !m_DEMO_freeBuild; }
 	Bool buildsForFree() const { return m_DEMO_freeBuild; }
 
+#endif
+
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	/// No time building cheat key
 	void toggleInstantBuild(){ m_DEMO_instantBuild = !m_DEMO_instantBuild; }
 	Bool buildsInstantly() const { return m_DEMO_instantBuild; }
@@ -770,6 +773,9 @@ private:
 #if defined(_DEBUG) || defined(_INTERNAL)
 	Bool									m_DEMO_ignorePrereqs;		///< Can I ignore prereq checks?
 	Bool									m_DEMO_freeBuild;				///< Can I build everything for no money?
+#endif
+
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	Bool									m_DEMO_instantBuild;		///< Can I build anything in one frame?
 #endif
 

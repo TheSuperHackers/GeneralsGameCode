@@ -359,8 +359,11 @@ private:
 	RadiusCursorType							m_radiusCursor;								///< radius cursor, if any
 	AsciiString										m_cursorName;									///< cursor name for placement (NEED_TARGET_POS) or valid version (CONTEXTMODE_COMMAND)
 	AsciiString										m_invalidCursorName;					///< cursor name for invalid version
-	AsciiString										m_textLabel;									///< string manager text label
-	AsciiString										m_descriptionLabel;						///< The description of the current command, read in from the ini
+
+	// bleah. shouldn't be mutable, but is. sue me. (Kris) -snork!
+	mutable AsciiString										m_textLabel;									///< string manager text label
+	mutable AsciiString										m_descriptionLabel;						///< The description of the current command, read in from the ini
+	
 	AsciiString										m_purchasedLabel;							///< Description for the current command if it has already been purchased.
 	AsciiString										m_conflictingLabel;						///< Description for the current command if it can't be selected due to multually-exclusive choice.
 	WeaponSlotType								m_weaponSlot;									///< for commands that refer to a weapon slot

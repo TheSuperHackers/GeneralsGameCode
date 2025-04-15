@@ -563,9 +563,7 @@ void TurretAI::removeSelfAsTargeter()
 //----------------------------------------------------------------------------------------------------------
 void TurretAI::setTurretTargetObject( Object *victim, Bool forceAttacking )
 {
-	if (!victim || 
-				victim->isEffectivelyDead() ||
-				!isOwnersCurWeaponOnTurret())
+	if( !victim || victim->isEffectivelyDead() ||	!isOwnersCurWeaponOnTurret() )
 	{
 		victim = NULL;
 	}

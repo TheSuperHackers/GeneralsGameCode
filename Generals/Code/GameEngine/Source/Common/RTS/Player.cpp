@@ -433,6 +433,9 @@ void Player::init(const PlayerTemplate* pt)
 #if defined(_DEBUG) || defined(_INTERNAL)
 	m_DEMO_ignorePrereqs = FALSE;
 	m_DEMO_freeBuild = FALSE;
+#endif
+
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	m_DEMO_instantBuild = FALSE;
 #endif
 
@@ -686,14 +689,15 @@ void Player::update()
 		m_ai->update();
 
 	// Allow the teams this player owns to update themselves.
-
-	for (PlayerTeamList::iterator it = m_playerTeamPrototypes.begin(); it != m_playerTeamPrototypes.end(); ++it) {
-		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
+	for( PlayerTeamList::iterator it = m_playerTeamPrototypes.begin(); it != m_playerTeamPrototypes.end(); ++it ) 
+	{
+		for( DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance() ) 
+		{
 			Team *team = iter.cur();
-			if (!team) {
+			if( !team ) 
+			{
 				continue;
 			}
-
 			team->updateGenericScripts();
 		}
 	}
@@ -859,14 +863,17 @@ void Player::initFromDict(const Dict* d)
 		}
 		Int diffInt  = d->getInt(TheKey_skirmishDifficulty, &exists);
 		GameDifficulty difficulty = TheScriptEngine->getGlobalDifficulty();
-		if (exists) {
+		if (exists) 
+		{
 			difficulty = (GameDifficulty) diffInt;
 		}
-		if (m_ai) {
+		if (m_ai) 
+		{
 			m_ai->setAIDifficulty(difficulty);
 		}
 
-		if (!found) {
+		if (!found) 
+		{
 			DEBUG_CRASH(("Could not find skirmish player for side %s", mySide.str()));
 		} else {
 			m_playerName = qualTemplatePlayerName;
@@ -3881,11 +3888,6 @@ void Player::xfer( Xfer *xfer )
 
 	// score keeper
 	xfer->xferSnapshot( &m_scoreKeeper );
-
-	
-
-
-
 
 	// size of and data for kindof percent production change list
 	UnsignedShort percentProductionChangeCount = m_kindOfPercentProductionChangeList.size();

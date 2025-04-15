@@ -2745,6 +2745,7 @@ static void playerInfoCallback(PEER peer, RoomType roomType, const char * nick, 
 		resp.locale, resp.player.wins, resp.player.losses,
 		resp.player.rankPoints, resp.player.side, resp.player.preorder,
 		roomType, resp.player.flags);
+DEBUG_LOG(("**GS playerInfoCallback name=%s, local=%s\n", nick, resp.locale.c_str() ));
 	TheGameSpyPeerMessageQueue->addResponse(resp);
 }
 

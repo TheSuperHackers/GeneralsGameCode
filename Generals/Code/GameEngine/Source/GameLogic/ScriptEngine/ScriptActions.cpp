@@ -4831,17 +4831,20 @@ void ScriptActions::doSetToppleDirection( const AsciiString& unitName, const Coo
 void ScriptActions::doMoveUnitTowardsNearest( const AsciiString& unitName, const AsciiString& objectType, AsciiString triggerName)
 {
 	Object *obj = TheScriptEngine->getUnitNamed(unitName);
-	if (!obj) {
+	if (!obj) 
+	{
 		return;
 	}
 
 	AIUpdateInterface *ai = obj->getAIUpdateInterface();
-	if (!ai) {
+	if (!ai) 
+	{
 		return;
 	}
 	
-	const ThingTemplate *templ = TheThingFactory->findTemplate(objectType);
-	if (!templ) {
+	const ThingTemplate *templ = TheThingFactory->findTemplate( objectType, FALSE );
+	if ( !templ ) 
+	{
 		return;
 	}
 
@@ -4875,7 +4878,7 @@ void ScriptActions::doMoveTeamTowardsNearest( const AsciiString& teamName, const
 		return;
 	}
 	
-	const ThingTemplate *templ = TheThingFactory->findTemplate(objectType);
+	const ThingTemplate *templ = TheThingFactory->findTemplate( objectType, FALSE );
 	if (!templ) {
 		return;
 	}
@@ -5328,7 +5331,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 		return;
 	}
 
-	const ThingTemplate *thingTemplate = TheThingFactory->findTemplate(objectType);
+	const ThingTemplate *thingTemplate = TheThingFactory->findTemplate( objectType, FALSE );
 	if (!thingTemplate) {
 		return;
 	}

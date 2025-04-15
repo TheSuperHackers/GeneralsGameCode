@@ -1720,7 +1720,8 @@ Bool ScriptConditions::evaluatePlayerUnitCondition(Condition *pCondition, Parame
 	}
 
 	Player* pPlayer = playerFromParam(pPlayerParm);
-	if (!pPlayer) {
+	if (!pPlayer) 
+	{
 		return false;
 	}
 
@@ -1733,7 +1734,8 @@ Bool ScriptConditions::evaluatePlayerUnitCondition(Condition *pCondition, Parame
 	Int numObjs = types.m_types->prepForPlayerCounting(templates, counts);
 	Int count = 0;
 
-	if (numObjs > 0) {
+	if (numObjs > 0) 
+	{
 		pPlayer->countObjectsByThingTemplate(numObjs, &(*templates.begin()), false, &(*counts.begin()));
 		count = rts::sum(counts);
 	}
@@ -1752,7 +1754,8 @@ Bool ScriptConditions::evaluatePlayerUnitCondition(Condition *pCondition, Parame
 			break;
 	}
 	pCondition->setCustomData(-1); // false.
-	if (comparison) {
+	if (comparison) 
+	{
 		pCondition->setCustomData(1); // true.
 	}
 	return comparison;
@@ -2166,7 +2169,7 @@ Bool ScriptConditions::evaluateSkirmishPlayerTechBuildingWithinDistancePerimeter
 	if (!player) {
 		return false;
 	}
-
+	// If we have a chached value, return it. [8/8/2003]
 	if (pCondition->getCustomData()==1) return true;
 	if (pCondition->getCustomData()==-1) return false;
 

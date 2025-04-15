@@ -469,6 +469,7 @@ void WriteStackLine(void*address, void (*callback)(const char*))
 	callback("\n");
 }
 
+
 //*****************************************************************************
 //*****************************************************************************
 void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )

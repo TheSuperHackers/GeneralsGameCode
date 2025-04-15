@@ -228,7 +228,8 @@ public:  // height map info.
 	inline Int getDrawHeight(void) {return m_drawHeightY;}
 	inline void setDrawWidth(Int width) {m_drawWidthX = width; if (m_drawWidthX>m_width) m_drawWidthX = m_width;}
 	inline void setDrawHeight(Int height) {m_drawHeightY = height; if (m_drawHeightY>m_height) m_drawHeightY = m_height;}
-	inline Int getBorderSize(void) {return m_borderSize;}
+	virtual Int getBorderSize(void) {return m_borderSize;}
+	inline Int getBorderSizeInline(void) const { return m_borderSize; }
 	/// Get height with the offset that HeightMapRenderObjClass uses built in.
 	inline UnsignedByte getDisplayHeight(Int x, Int y) { return m_data[x+m_drawOriginX+m_width*(y+m_drawOriginY)];}
 
@@ -253,6 +254,7 @@ public:  // height map info.
 	TXTextureClass getTextureFromIndex( Int textureIndex );
 
 public:  // tile and texture info.	
+	void setTextureLOD(Int lod);	///< set maximum lod level sent to the hardware.
 	TextureClass *getTerrainTexture(void);  //< generates if needed and returns the terrain texture
 	TextureClass *getAlphaTerrainTexture(void); //< generates if needed and returns alpha terrain texture
 	TextureClass *getEdgeTerrainTexture(void); //< generates if needed and returns blend edge texture

@@ -96,7 +96,6 @@
 #include "GameNetwork/GameSpy/BuddyThread.h"
 #include "GameNetwork/GameSpy/GameResultsThread.h"
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
-//Added By Saad
 #include "GameClient/InGameUI.h"
 
 #ifdef _INTERNAL

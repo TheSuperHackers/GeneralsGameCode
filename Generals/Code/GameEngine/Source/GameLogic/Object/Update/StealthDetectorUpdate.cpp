@@ -239,7 +239,6 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 					// do audio and UI message if we need to do feedback
 					if( doFeedback )
 					{
-
  						// audio msg
  						static AudioEventRTS discoveredSound = TheAudio->getMiscAudio()->m_stealthDiscoveredSound;
  						discoveredSound.setPlayerIndex( self->getControllingPlayer()->getPlayerIndex() );

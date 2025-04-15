@@ -34,6 +34,7 @@
 #include "Lib/BaseType.h"
 #include "Common/INI.h"
 #include "Common/BitFlags.h"
+#include "Common/BitFlagsIO.h"
 
 //-------------------------------------------------------------------------------------------------
 
@@ -82,6 +83,8 @@
 	"forbidden" conditions. 
 
 */
+
+#define NUM_MODELCONDITION_DOOR_STATES 4
 
 //-------------------------------------------------------------------------------------------------
 // IMPORTANT NOTE: you should endeavor to set up states such that the most "normal"

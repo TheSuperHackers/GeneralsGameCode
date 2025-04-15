@@ -888,7 +888,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			break;
 		}
 		
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(_DEBUG) || defined(_INTERNAL) || defined (_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DEBUG_KILL_SELECTION:
 		{
@@ -907,7 +907,6 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			}
 			break;
 		}
-
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DEBUG_HURT_OBJECT:
 		{

@@ -431,8 +431,8 @@ public:
 	Bool isBridge() const { return m_isBridge; }  // return fence offset
 
 	// Only Object can ask this.  Everyone else should ask the Object.  In fact, you really should ask the Object everything.
-	Real friend_getVisionRange() const { return m_visionRange; }  ///< get vision range
-	Real friend_getShroudClearingRange() const { return m_shroudClearingRange; }  ///< get vision range for Shroud ONLY (Design requested split)
+	Real friend_calcVisionRange() const { return m_visionRange; }  ///< get vision range
+	Real friend_calcShroudClearingRange() const { return m_shroudClearingRange; }  ///< get vision range for Shroud ONLY (Design requested split)
 	
 	// This function is only for use by the AIUpdateModuleData::parseLocomotorSet function.
 	AIUpdateModuleData *friend_getAIModuleInfo(void);
