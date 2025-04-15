@@ -22,9 +22,8 @@ target_link_libraries(z_wdump PRIVATE
     imm32
     vfw32
     winmm
-    z_debug
-    z_gameengine
-    z_gameenginedevice
+    core_wwstub # avoid linking GameEngine
+    z_wwvegas
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
