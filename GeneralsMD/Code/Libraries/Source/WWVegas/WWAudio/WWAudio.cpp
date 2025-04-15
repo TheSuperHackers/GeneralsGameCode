@@ -45,7 +45,6 @@
 #include "AudibleSound.h"
 #include "Sound3D.h"
 #include "RAWFILE.H"
-#include "ww3d.h"
 #include "SoundScene.h"
 #include "SoundPseudo3D.h"
 #include "ffactory.h"
@@ -61,6 +60,18 @@
 #ifdef G_CODE_BASE
 #include "../WWLib/argv.h"
 #endif
+
+// TheSuperHackers @compile tomsons26 15/04/2025 Define WW3D to break dependency on W3D2
+// Because the declarations are the same it will link to proper WW3D static members
+class WW3D 
+{
+public:
+	static unsigned int Get_FrameTime(void) { return SyncTime - PreviousSyncTime; }
+
+private:
+	static unsigned int SyncTime;
+	static unsigned int PreviousSyncTime;
+};
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1328,7 +1339,7 @@ WWAudioClass::On_Frame_Update (unsigned int milliseconds)
 	//
 	unsigned int time_delta = milliseconds;
 	if (time_delta == 0) {
-		time_delta = WW3D::Get_Frame_Time ();
+		time_delta = WW3D::Get_FrameTime ();
 	}
 
 	if (m_SoundScene != NULL) {
