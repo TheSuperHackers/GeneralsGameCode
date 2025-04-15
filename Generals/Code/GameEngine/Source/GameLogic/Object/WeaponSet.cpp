@@ -425,7 +425,6 @@ Bool WeaponSet::isAnyWithinTargetPitch(const Object* obj, const Object* victim) 
 //-------------------------------------------------------------------------------------------------
 CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attackType, const Object* source, const Object* victim, CommandSourceType commandSource ) const
 {
-  static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
 
 	// basic sanity checks.
 	if (!source || 
@@ -467,7 +466,7 @@ CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attac
     // force-attack allows you to attack disguised things, which also happen to be stealthed.
     // since we normally disallow attacking stealthed things (even via force-fire), we check
     // for disguised and explicitly ignore stealth in that case
-	  StealthUpdate *update = (StealthUpdate*)victim->findUpdateModule( key_StealthUpdate );
+	  StealthUpdate *update = victim->getStealth();
     if (update && update->isDisguised())
   	  allowStealthToPreventAttacks = FALSE;
   }
@@ -485,7 +484,7 @@ CanAttackResult WeaponSet::getAbleToAttackSpecificObject( AbleToAttackType attac
 		else
 		{
 			//Exception case -- don't return false if we are a bomb truck disguised as an enemy vehicle.
-			StealthUpdate *update = (StealthUpdate*)victim->findUpdateModule( key_StealthUpdate );
+			StealthUpdate *update = victim->getStealth();
 			if( update && update->isDisguised() )
 			{
 				Player *ourPlayer = source->getControllingPlayer();

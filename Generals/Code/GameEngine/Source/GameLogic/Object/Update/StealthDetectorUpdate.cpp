@@ -207,8 +207,7 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 		if ( them->isEffectivelyDead() )
 			continue;
 
-		static NameKeyType key_StealthUpdate = NAMEKEY("StealthUpdate");
-		StealthUpdate* stealth = (StealthUpdate *)them->findUpdateModule(key_StealthUpdate);
+		StealthUpdate* stealth = them->getStealth();
 		if ( stealth ) 
 		{
 
@@ -324,8 +323,7 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 				{
 					rider = *it;
 
-					static NameKeyType key_StealthUpdate = NAMEKEY("StealthUpdate");
-					StealthUpdate* stealth = (StealthUpdate *)rider->findUpdateModule(key_StealthUpdate);
+					StealthUpdate* stealth = rider->getStealth();
 					if ( stealth ) 
 					{
 						// we have found someone

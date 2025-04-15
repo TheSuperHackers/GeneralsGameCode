@@ -1093,8 +1093,7 @@ void Player::becomingLocalPlayer(Bool yes)
 					Drawable *draw = object->getDrawable();
 					if( draw )
 					{
-						static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-						StealthUpdate *update = (StealthUpdate*)object->findUpdateModule( key_StealthUpdate );
+						StealthUpdate *update = object->getStealth();
 						if( update && update->isDisguised() )
 						{
 							Player *disguisedPlayer = ThePlayerList->getNthPlayer( update->getDisguisedPlayerIndex() );

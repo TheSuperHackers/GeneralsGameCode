@@ -123,6 +123,8 @@ public:
 	StealthUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
 
+	virtual StealthUpdate* getStealth() { return this; }
+
 	virtual UpdateSleepTime update();
 
 	//Still gets called, even if held -ML

@@ -5458,8 +5458,7 @@ Bool PartitionFilterStealthedAndUndetected::allow( Object *objOther )
 		else
 		{
 			//Exception case -- bomb trucks can't be considered stealthed units when they are disguised as the enemy.
-			static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-			StealthUpdate *update = (StealthUpdate*)objOther->findUpdateModule( key_StealthUpdate );
+			StealthUpdate *update = objOther->getStealth();
 			if( update && update->isDisguised() )
 			{
 				Player *ourPlayer = m_obj->getControllingPlayer();

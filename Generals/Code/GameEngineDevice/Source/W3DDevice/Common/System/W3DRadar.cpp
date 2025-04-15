@@ -698,8 +698,7 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 		// Now it twinkles for any stealthed object, whether locally controlled or neutral-observier-viewed
 		if( obj->testStatus( OBJECT_STATUS_STEALTHED ) )
 		{
-			static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-			StealthUpdate* stealth = (StealthUpdate*)obj->findUpdateModule( key_StealthUpdate );
+			StealthUpdate* stealth = obj->getStealth();
 			if( !stealth )
 				continue;
 

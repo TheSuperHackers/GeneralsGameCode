@@ -183,6 +183,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	m_behaviors(NULL),
 	m_body(NULL),
 	m_contain(NULL),
+	m_stealth(NULL),
 	m_partitionData(NULL),
 	m_radarData(NULL),
 	m_drawable(NULL),
@@ -364,6 +365,13 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 		{
 			DEBUG_ASSERTCRASH(m_contain == NULL, ("Duplicate containers"));
 			m_contain = contain;
+		}
+
+		StealthUpdate* stealth = newMod->getStealth();
+		if ( stealth )
+		{
+			DEBUG_ASSERTCRASH( m_stealth == NULL, ("DuplicateStealthUpdates!") );
+			m_stealth = stealth;
 		}
 
 		AIUpdateInterface* ai = newMod->getAIUpdateInterface();

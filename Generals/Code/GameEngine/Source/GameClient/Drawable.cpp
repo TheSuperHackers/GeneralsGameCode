@@ -2126,8 +2126,7 @@ void Drawable::setStealthLook(StealthLookType look)
 				if( obj )
 				{
 					//Try to get the stealthupdate module and see if the opacity value is overriden.
-					static NameKeyType key_StealthUpdate = NAMEKEY("StealthUpdate");
-					StealthUpdate* stealth = (StealthUpdate *)obj->findUpdateModule(key_StealthUpdate);
+					StealthUpdate* stealth = obj->getStealth();
 					if( stealth )
 					{
 						if( stealth->isDisguised() )

@@ -2506,8 +2506,7 @@ void ControlBar::setPortraitByObject( Object *obj )
 				setPortraitByObject( NULL );
 				return;
 			}
-			static NameKeyType key_StealthUpdate = NAMEKEY("StealthUpdate");
-			StealthUpdate* stealth = (StealthUpdate *)obj->findUpdateModule(key_StealthUpdate);
+			StealthUpdate* stealth = obj->getStealth();
 			if( stealth && stealth->isDisguised() )
 			{
 				//Fake player upgrades too!
