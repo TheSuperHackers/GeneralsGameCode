@@ -183,7 +183,7 @@ target_link_libraries(z_w3dview PRIVATE
     Version
     vfw32
     winmm
-    z_wwaudio
+    core_wwaudio
     z_wwvegas
 )
 
