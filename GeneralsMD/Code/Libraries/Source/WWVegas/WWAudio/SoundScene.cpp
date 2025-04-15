@@ -136,7 +136,7 @@ SoundSceneClass::Re_Partition
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
-SoundSceneClass::Collect_Logical_Sounds (int listener_count)
+SoundSceneClass::Collect_Logical_Sounds (unsigned int milliseconds, int listener_count)
 {
 	WWPROFILE ("Collect_Logical_Sounds");
 
@@ -164,7 +164,7 @@ SoundSceneClass::Collect_Logical_Sounds (int listener_count)
 	{
 		LogicalListenerClass::Set_Oldest_Timestamp (listener->Get_Timestamp ());
 		listener->Set_Timestamp (LogicalListenerClass::Get_New_Timestamp ());
-		listener->On_Frame_Update ();
+		listener->On_Frame_Update (milliseconds);
 	
 		//
 		// Collect a list of the sounds this listener can hear.

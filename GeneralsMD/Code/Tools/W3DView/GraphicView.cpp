@@ -546,7 +546,7 @@ CGraphicView::RepaintView
 		//
 		//	Let the audio class think
 		//
-		WWAudioClass::Get_Instance ()->On_Frame_Update ();
+		WWAudioClass::Get_Instance ()->On_Frame_Update (WW3D::Get_Frame_Time());
 
 		//
 		//	Update the count of particles and polys in the status bar
