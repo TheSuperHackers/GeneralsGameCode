@@ -460,6 +460,11 @@ public:
 	inline Bool isPlayFXWhenStealthed() const { return m_playFXWhenStealthed; }
 	inline Bool getDieOnDetonate() const { return m_dieOnDetonate; }
 
+	inline Bool isScatterTargetAligned() const { return m_scatterTargetAligned; }
+	inline Bool isScatterTargetRandom() const { return m_scatterTargetRandom; }
+	inline Bool isScatterTargetRandomAngle() const { return m_scatterTargetRandomAngle; }
+	inline Real getScatterTargetMinScalar () const { return m_scatterTargetMinScalar; }
+
 	Bool shouldProjectileCollideWith(
 		const Object* projectileLauncher, 
 		const Object* projectile, 
@@ -556,6 +561,12 @@ private:
 	ObjectStatusTypes m_damageStatusType;		///< If our damage is Status damage, the status we apply
 	UnsignedInt m_suspendFXDelay;						///< The fx can be suspended for any delay, in frames, then they will execute as normal
 	Bool m_dieOnDetonate;
+
+	//New
+	Bool m_scatterTargetAligned;		///< if the scatter target pattern is aligned to the shooter
+	Bool m_scatterTargetRandom;		///< if the scatter target pattern is fired in a random order
+	Bool m_scatterTargetRandomAngle;  ///< if the scatter target pattern is randomly aligned
+	Real m_scatterTargetMinScalar;  ///< scale the scatterTarget pattern depending on range
 
 	mutable HistoricWeaponDamageList m_historicDamage;
 };  
@@ -803,6 +814,7 @@ private:
 	std::vector<Int>					m_scatterTargetsUnused;			///< A running memory of which targets I've used, so I can shoot them all at random
 	Bool											m_pitchLimited;
 	Bool											m_leechWeaponRangeActive;		///< This weapon has unlimited range until attack state is aborted!
+	Real											m_scatterTargetsAngle;		 ///< Random angle chosen for scatterTarget pattern
 
 	// setter function for status that should not be used outside this class
 	void setStatus( WeaponStatus status) { m_status = status; }

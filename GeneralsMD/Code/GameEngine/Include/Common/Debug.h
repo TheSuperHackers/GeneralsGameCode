@@ -56,6 +56,8 @@ class AsciiString;
 
 #define NO_RELEASE_DEBUG_LOGGING
 
+#define RELEASE_DEBUG_LOGGING 1
+
 #ifdef RELEASE_DEBUG_LOGGING  ///< Creates a DebugLogFile.txt (No I or D) with all the debug log goodness.  Good for startup problems.
 	#define ALLOW_DEBUG_UTILS 1
 	#define DEBUG_LOGGING 1
