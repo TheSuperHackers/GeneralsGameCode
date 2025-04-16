@@ -171,14 +171,20 @@ add_executable(z_w3dview WIN32)
 target_sources(z_w3dview PRIVATE ${W3DVIEW_SRC})
 
 target_link_libraries(z_w3dview PRIVATE
+    core_config
+    core_utility
+    core_wwstub # avoid linking GameEngine
+    d3d8
+    d3d8lib
+    d3dx8
     dbghelplib
     imm32
+    milesstub
     Version
     vfw32
     winmm
     z_wwaudio
-    z_wwcommon
-    z_gameenginedevice
+    z_wwvegas
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

@@ -37,6 +37,7 @@ add_library(z_wwvegas INTERFACE)
 target_include_directories(z_wwvegas INTERFACE
     .
     WW3D2
+    WWAudio
     WWDownload
     WWMath
     WWSaveLoad
