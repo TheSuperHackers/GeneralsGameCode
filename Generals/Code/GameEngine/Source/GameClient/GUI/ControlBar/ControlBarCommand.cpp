@@ -179,6 +179,8 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
 	const CommandButton *commandButton;
 	for( Int i = 0; i < MAX_COMMANDS_PER_SET; i++ )
 	{
+		// our implementation doesn't necessarily make use of the max possible command buttons
+		if (! m_commandWindows[ i ]) continue;
 
 		// get command button
 		commandButton = commandSet->getCommandButton(i);
@@ -212,6 +214,9 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
  			{
  				m_commandWindows[ i ]->winHide( TRUE );
  			}
+
+      
+     //  is this where we set the cameos disabled when container is subdued?
 
 			// if we've counted more UI spots than the transport can hold, hide this command window
 			if( inventoryCommandCount > transportMax )
@@ -279,7 +284,10 @@ void ControlBar::populateCommand( Object *obj )
 
 		// hide all the buttons
 		for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
-			m_commandWindows[ i ]->winHide( TRUE );
+			if (m_commandWindows[ i ])
+			{
+				m_commandWindows[ i ]->winHide( TRUE );
+			}
 
 		// nothing left to do
 		return;
@@ -294,6 +302,8 @@ void ControlBar::populateCommand( Object *obj )
 	const CommandButton *commandButton;
 	for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
 	{
+		// our implementation doesn't necessarily make use of the max possible command buttons
+		if (! m_commandWindows[ i ]) continue;
 
 		// get command button
 		commandButton = commandSet->getCommandButton(i);
@@ -377,7 +387,7 @@ void ControlBar::populateCommand( Object *obj )
 								//Now we have to search through the command buttons to find a matching purchase science button.
 								for( const CommandButton *command = m_commandButtons; command; command = command->getNext() )
 								{
-									if( command->getCommandType() == GUI_COMMAND_PURCHASE_SCIENCE )
+									if( command && command->getCommandType() == GUI_COMMAND_PURCHASE_SCIENCE )
 									{
 										//All purchase sciences specify a single science.
 										if( command->getScienceVec().empty() )
@@ -731,6 +741,9 @@ void ControlBar::updateContextCommand( void )
 	{
 		GameWindow *win;
 		const CommandButton *command;
+
+		// our implementation doesn't necessarily make use of the max possible command buttons
+		if (! m_commandWindows[ i ]) continue;
 
 		// get the window
 		win = m_commandWindows[ i ];
@@ -1277,7 +1290,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			}
 			else if( SpecialAbilityUpdate *spUpdate = obj->findSpecialAbilityUpdate( command->getSpecialPowerTemplate()->getSpecialPowerType() ) )
 			{
-				if( spUpdate->isPowerCurrentlyInUse( command ) )
+				if( spUpdate && spUpdate->isPowerCurrentlyInUse( command ) )
 				{
 					return COMMAND_RESTRICTED;
 				}

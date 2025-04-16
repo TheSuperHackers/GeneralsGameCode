@@ -389,6 +389,7 @@ void Mouse::checkForDrag( void )
 
 }  // end checkForDrag
 
+
 //-------------------------------------------------------------------------------------------------
 /** Check for mouse click, using allowed drag forgiveness */
 //-------------------------------------------------------------------------------------------------
@@ -409,6 +410,7 @@ Bool Mouse::isClick(const ICoord2D *anchor, const ICoord2D *dest, UnsignedInt pr
 	}
 	return TRUE;
 }
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -636,7 +638,8 @@ void Mouse::reset( void )
 	///@ todo Write Mouse::reset() if there needs to be anything here
 
 	// reset the text of the cursor text
-	m_cursorTextDisplayString->reset();
+  if ( m_cursorTextDisplayString )
+  	m_cursorTextDisplayString->reset();
 
 }  // end reset
 

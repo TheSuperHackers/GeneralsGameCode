@@ -252,7 +252,11 @@ void ControlBar::populatePurchaseScience( Player* player )
 
 			setControlCommand( m_sciencePurchaseWindowsRank3[ i ], commandButton );
 			ScienceType	st = SCIENCE_INVALID; 
-			st = commandButton->getScienceVec()[ 0 ];
+			ScienceVec sv = commandButton->getScienceVec();
+			if (! sv.empty())
+			{
+				st = sv[ 0 ];
+			}
 
 			if( player->isScienceDisabled( st ) )
 			{
@@ -940,6 +944,10 @@ ControlBar::~ControlBar( void )
 	}
 
 	m_radarAttackGlowWindow = NULL;
+
+	if (m_rightHUDCameoWindow && m_rightHUDCameoWindow->winGetUserData())
+		delete m_rightHUDCameoWindow->winGetUserData();
+
 }  // end ~ControlBar
 void ControlBarPopupDescriptionUpdateFunc( WindowLayout *layout, void *param );
 
@@ -1017,9 +1025,12 @@ void ControlBar::init( void )
 			id = TheNameKeyGenerator->nameToKey( windowName.str() );
 			m_commandWindows[ i ] = 
 				TheWindowManager->winGetWindowFromId( m_contextParent[ CP_COMMAND ], id );
-			m_commandWindows[ i ]->winGetPosition(&commandPos.x, &commandPos.y);
-			m_commandWindows[ i ]->winGetSize(&commandSize.x, &commandSize.y);
-			m_commandWindows[ i ]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
+			if (m_commandWindows[ i ])
+			{
+				m_commandWindows[ i ]->winGetPosition(&commandPos.x, &commandPos.y);
+				m_commandWindows[ i ]->winGetSize(&commandSize.x, &commandSize.y);
+				m_commandWindows[ i ]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
+			}
 
 	// removed from multiplayer branch
 //			windowName.format( "ControlBar.wnd:CommandMarker%02d", i + 1 );
@@ -1052,7 +1063,7 @@ void ControlBar::init( void )
 			m_sciencePurchaseWindowsRank3[ i ]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
 		}  // end for i
 		
-		for( i = 0; i < MAX_PURCHASE_SCIENCE_RANK_8; i++ )
+		for( i = 0; i < MAX_PURCHASE_SCIENCE_RANK_8; i++ ) 
 		{
 			windowName.format( "GeneralsExpPoints.wnd:ButtonRank8Number%d", i );
 			id = TheNameKeyGenerator->nameToKey( windowName.str() );
@@ -1933,7 +1944,10 @@ CommandSet* ControlBar::findNonConstCommandSet( const AsciiString& name )
 const CommandButton *ControlBar::findCommandButton( const AsciiString& name ) 
 { 
 	CommandButton *btn =  findNonConstCommandButton(name); 
-	btn = (CommandButton *)btn->friend_getFinalOverride();
+	if( btn )
+	{
+		btn = (CommandButton *)btn->friend_getFinalOverride();
+	}
 	return btn; 
 }
 
@@ -2059,7 +2073,11 @@ void ControlBar::switchToContext( ControlBarContext context, Drawable *draw )
 			//Clear any potentially flashing buttons!
 			for( int i = 0; i < MAX_COMMANDS_PER_SET; i++ )
 			{
-				m_commandWindows[ i ]->winClearStatus( WIN_STATUS_FLASHING );
+				// the implementation won't necessarily use the max number of windows possible
+				if (m_commandWindows[ i ]) 
+				{
+					m_commandWindows[ i ]->winClearStatus( WIN_STATUS_FLASHING );
+				}
 			}
 			// if there is a current selected drawable then we wil display a selection portrait if present
 			if( draw )

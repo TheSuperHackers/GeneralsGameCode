@@ -207,9 +207,6 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
 			m_commandWindows[ i ]->winHide( FALSE );
 			m_commandWindows[ i ]->winEnable( FALSE );
 
-      
-///////// poopy
-
 			//Clear any potential veterancy rank, or else we'll see it when it's empty!
 			GadgetButtonDrawOverlayImage( m_commandWindows[ i ], NULL );
 			

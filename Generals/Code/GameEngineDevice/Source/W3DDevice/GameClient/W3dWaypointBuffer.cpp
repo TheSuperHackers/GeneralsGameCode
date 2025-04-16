@@ -125,6 +125,8 @@ W3DWaypointBuffer::W3DWaypointBuffer(void)
 W3DWaypointBuffer::~W3DWaypointBuffer(void)
 {
 	REF_PTR_RELEASE( m_waypointNodeRobj );
+	REF_PTR_RELEASE( m_texture );
+	REF_PTR_RELEASE( m_line );
 }
 
 //=============================================================================
@@ -418,7 +420,6 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 					m_line->Render( localRinfo );
 
 				}
-
 				
 			}
 		}

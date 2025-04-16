@@ -95,6 +95,11 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 {
 	// get the command pointer from the control user data we put in the button
 	const CommandButton *commandButton = (const CommandButton *)GadgetButtonGetData(control);
+	if( !commandButton )
+	{
+		DEBUG_CRASH( ("ControlBar::processCommandUI() -- Button activated has no data. Ignoring...") );
+		return CBC_COMMAND_NOT_USED;
+	}
 
 	// sanity, we won't process messages if we have no source object, 
 	// unless we're CB_CONTEXT_PURCHASE_SCIENCE or GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER

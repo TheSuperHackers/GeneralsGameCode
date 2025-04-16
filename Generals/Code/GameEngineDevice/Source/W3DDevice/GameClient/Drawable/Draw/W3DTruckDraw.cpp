@@ -265,7 +265,8 @@ void W3DTruckDraw::enableEmitters( Bool enable  )
 	}
 }
 //-------------------------------------------------------------------------------------------------
-void W3DTruckDraw::updateBones( void ) {
+void W3DTruckDraw::updateBones( void ) 
+{
 	if( getW3DTruckDrawModuleData() ) 
 	{
 		//Front tires
@@ -273,28 +274,25 @@ void W3DTruckDraw::updateBones( void ) {
 		{
 			m_frontLeftTireBone = getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_frontLeftTireBoneName.str());
 			DEBUG_ASSERTCRASH(m_frontLeftTireBone, ("Missing front-left tire bone %s in model %s\n", getW3DTruckDrawModuleData()->m_frontLeftTireBoneName.str(), getRenderObject()->Get_Name()));
-			
+		}
+
+		if( !getW3DTruckDrawModuleData()->m_frontRightTireBoneName.isEmpty() )
+		{
 			m_frontRightTireBone = getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_frontRightTireBoneName.str());
 			DEBUG_ASSERTCRASH(m_frontRightTireBone, ("Missing front-right tire bone %s in model %s\n", getW3DTruckDrawModuleData()->m_frontRightTireBoneName.str(), getRenderObject()->Get_Name()));
-			
-			if (!m_frontRightTireBone ) 
-			{
-				m_frontLeftTireBone = 0;
-			}
 		}
+
 		//Rear tires
 		if( !getW3DTruckDrawModuleData()->m_rearLeftTireBoneName.isEmpty() ) 
 		{
 			m_rearLeftTireBone = getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_rearLeftTireBoneName.str());
 			DEBUG_ASSERTCRASH(m_rearLeftTireBone, ("Missing rear-left tire bone %s in model %s\n", getW3DTruckDrawModuleData()->m_rearLeftTireBoneName.str(), getRenderObject()->Get_Name()));
+		}
 
+		if( !getW3DTruckDrawModuleData()->m_rearRightTireBoneName.isEmpty() ) 
+		{
 			m_rearRightTireBone = getRenderObject()->Get_Bone_Index(getW3DTruckDrawModuleData()->m_rearRightTireBoneName.str());
 			DEBUG_ASSERTCRASH(m_rearRightTireBone, ("Missing rear-left tire bone %s in model %s\n", getW3DTruckDrawModuleData()->m_rearRightTireBoneName.str(), getRenderObject()->Get_Name()));
-
-			if (!m_rearRightTireBone) 
-			{
-				m_rearLeftTireBone = 0;
-			}
 		}
 
 		//midFront tires

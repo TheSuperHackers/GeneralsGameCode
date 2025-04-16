@@ -81,6 +81,8 @@ class ScienceStore : public SubsystemInterface
 	friend class ScienceInfo;
 
 public:
+	virtual ~ScienceStore();
+
 	void init();
 	void reset();
 	void update() { }

@@ -141,7 +141,7 @@ static void doStackDump();
 inline Bool ignoringAsserts()
 {
 #ifdef DEBUG_CRASHING
-	return !DX8Wrapper_IsWindowed || TheGlobalData->m_debugIgnoreAsserts;
+	return !DX8Wrapper_IsWindowed || (TheGlobalData&&TheGlobalData->m_debugIgnoreAsserts);
 #else
 	return !DX8Wrapper_IsWindowed;
 #endif
@@ -468,7 +468,7 @@ void DebugCrash(const char *format, ...)
 	doLogOutput(theCrashBuffer);
 #endif
 #ifdef DEBUG_STACKTRACE
-	if (!TheGlobalData->m_debugIgnoreStackTrace)
+	if (!(TheGlobalData && TheGlobalData->m_debugIgnoreStackTrace))
 	{
 		doStackDump();
 	}
@@ -662,6 +662,10 @@ void ReleaseCrash(const char *reason)
 
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];
+
+	if (TheGlobalData==NULL) {
+		return; // We are shutting down, and TheGlobalData has been freed.  jba. [4/15/2003]
+	}
 
 	strcpy(prevbuf, TheGlobalData->getPath_UserData().str());
 	strcat(prevbuf, RELEASECRASH_FILE_NAME_PREV);
