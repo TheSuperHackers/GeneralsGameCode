@@ -1539,6 +1539,21 @@ void Object::preFireCurrentWeapon( const Object *victim )
 	}
 }
 
+//=============================================================================
+void Object::preFireCurrentWeapon(const Coord3D* pos)
+{
+	Weapon* weapon = m_weaponSet.getCurWeapon();
+
+	//If we are going to be capable of firing our weapon NEXT frame, set the pre-attack
+	//up now. This gets called by AIAttackFireWeaponState::onEnter().. but the update happens
+	//next frame.
+	if (weapon && TheGameLogic->getFrame() + 1 >= weapon->getPossibleNextShotFrame())
+	{
+		weapon->preFireWeapon(this, pos);
+		friend_setUndetectedDefector(FALSE);// My secret is out
+	}
+}
+
 // ============================================================================
 /** Using the firing tracker, return the frame a shot was last fired on */
 // ============================================================================

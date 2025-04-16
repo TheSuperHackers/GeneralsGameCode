@@ -4263,6 +4263,32 @@ Bool Drawable::handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelToUse,
 } 
 
 //-------------------------------------------------------------------------------------------------
+Bool Drawable::handleWeaponPreAttackFX(WeaponSlotType wslot, Int specificBarrelToUse, const FXList* fxl, Real weaponSpeed, Real recoilAmount, Real recoilAngle, const Coord3D* victimPos, Real damageRadius)
+{
+	if (recoilAmount != 0.0f)
+	{
+		// adjust recoil from absolute to relative.
+		if (getObject())
+			recoilAngle -= getObject()->getOrientation();
+		// flip direction 180 degrees.
+		recoilAngle += PI;
+		if (m_locoInfo)
+		{
+			m_locoInfo->m_accelerationPitchRate += recoilAmount * Cos(recoilAngle);
+			m_locoInfo->m_accelerationRollRate += recoilAmount * Sin(recoilAngle);
+		}
+	}
+
+	for (DrawModule** dm = getDrawModules(); *dm; ++dm)
+	{
+		ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
+		if (di && di->handleWeaponPreAttackFX(wslot, specificBarrelToUse, fxl, weaponSpeed, victimPos, damageRadius))
+			return true;
+	}
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
 Int Drawable::getBarrelCount(WeaponSlotType wslot) const
 {
 	for (const DrawModule** dm = getDrawModules(); *dm; ++dm)

@@ -187,6 +187,7 @@ public:
 	virtual void replaceModelConditionState(const ModelConditionFlags& a) = 0;
 	virtual void replaceIndicatorColor(Color color) = 0;
 	virtual Bool handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelToUse, const FXList* fxl, Real weaponSpeed, const Coord3D* victimPos, Real damageRadius) = 0;
+	virtual Bool handleWeaponPreAttackFX(WeaponSlotType wslot, Int specificBarrelToUse, const FXList* fxl, Real weaponSpeed, const Coord3D* victimPos, Real damageRadius) = 0;
 	virtual Int getBarrelCount(WeaponSlotType wslot) const = 0;
 
 	virtual void setSelectable(Bool selectable) = 0;

@@ -243,6 +243,9 @@ const FieldParse WeaponTemplate::TheWeaponTemplateFieldParseTable[] =
 	{ "ContinueAttackRange",			INI::parseReal,													NULL,							offsetof(WeaponTemplate, m_continueAttackRange) },
 	{ "SuspendFXDelay",						INI::parseDurationUnsignedInt,					NULL,							offsetof(WeaponTemplate, m_suspendFXDelay) },		
 	{ "MissileCallsOnDie",			INI::parseBool,													NULL,							offsetof(WeaponTemplate, m_dieOnDetonate) },
+	{ "PreAttackFX", parseAllVetLevelsFXList, NULL,	offsetof(WeaponTemplate, m_preAttackFXs) },
+	{ "VeterancyPreAttackFX", parsePerVetLevelFXList, NULL, offsetof(WeaponTemplate, m_preAttackFXs) },
+	{ "PreAttackFXDelay",						INI::parseDurationUnsignedInt,					NULL,							offsetof(WeaponTemplate, m_preAttackFXDelay) },
 	{ NULL,												NULL,																		NULL,							0 }  // keep this last
 
 };
@@ -1188,7 +1191,55 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		return 0;
 	}
 }
+//-------------------
+void WeaponTemplate::createPreAttackFX
+(
+	const Object* sourceObj,
+	WeaponSlotType wslot,
+	Int specificBarrelToUse,
+	const Object* victimObj,
+	const Coord3D* victimPos
+	//const WeaponBonus& bonus,
+	//Weapon *firingWeapon,
+) const
+{
+	// PLAY PRE ATTACK FX
+	VeterancyLevel v = sourceObj->getVeterancyLevel();
+	const FXList* fx = getPreAttackFX(v);
 
+	if (fx) {
+		Coord3D targetPos;
+		if (victimObj)
+		{
+			victimObj->getGeometryInfo().getCenterPosition(*victimObj->getPosition(), targetPos);
+		}
+		else if (victimPos)
+		{
+			targetPos.set(victimPos);
+		}
+
+		/*DEBUG_LOG((">>> INFO - creating PRE_ATTACK FX for '%s' with victim '%s' and pos '(%f, %f, %f)' \n",
+			sourceObj->getTemplate()->getName().str(),
+			victimObj ? victimObj->getTemplate()->getName().str() : "None",
+			targetPos.x, targetPos.y, targetPos.z));*/
+
+		Bool handled = false;
+		handled = sourceObj->getDrawable()->handleWeaponPreAttackFX(wslot,
+			specificBarrelToUse,
+			fx,
+			getWeaponSpeed(),
+			0.0f, //TODO: Enable recoil stats if we want to have PreAttack specific recoil amount
+			0.0f,
+			&targetPos,
+			0.0f
+		);
+		if (handled == false && fx != NULL)
+		{
+			const Coord3D* where = isContactWeapon() ? &targetPos : sourceObj->getDrawable()->getPosition();
+			FXList::doFXPos(fx, where, sourceObj->getDrawable()->getTransformMatrix(), getWeaponSpeed(), &targetPos, 0.0f);
+		}
+	}
+}
 //-------------------------------------------------------------------------------------------------
 void WeaponTemplate::trimOldHistoricDamage() const
 {
@@ -1764,6 +1815,7 @@ Weapon::Weapon(const WeaponTemplate* tmpl, WeaponSlotType wslot)
 	m_numShotsForCurBarrel = 	m_template->getShotsPerBarrel();
 	m_lastFireFrame = 0;
 	m_suspendFXFrame = TheGameLogic->getFrame() + m_template->getSuspendFXDelay();
+	m_nextPreAttackFXFrame = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1785,6 +1837,7 @@ Weapon::Weapon(const Weapon& that)
 	this->m_numShotsForCurBarrel = m_template->getShotsPerBarrel();
 	this->m_lastFireFrame = 0;
 	this->m_suspendFXFrame = that.getSuspendFXFrame();
+	this->m_nextPreAttackFXFrame = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1808,6 +1861,7 @@ Weapon& Weapon::operator=(const Weapon& that)
 		this->m_suspendFXFrame = that.getSuspendFXFrame();
 		this->m_numShotsForCurBarrel = m_template->getShotsPerBarrel();
 		this->m_projectileStreamID = INVALID_ID;
+		this->m_nextPreAttackFXFrame = 0;
 	}
 	return *this;
 }
@@ -2700,14 +2754,69 @@ Bool Weapon::privateFireWeapon(
 //-------------------------------------------------------------------------------------------------
 void Weapon::preFireWeapon( const Object *source, const Object *victim )
 {
-	Int delay = getPreAttackDelay( source, victim );
-	if( delay > 0 )
+	Int delay = getPreAttackDelay(source, victim);
+	if (delay > 0)
 	{
-		setStatus( PRE_ATTACK );
-		setPreAttackFinishedFrame( TheGameLogic->getFrame() + delay );
-		if( m_template->isLeechRangeWeapon() )
+		Bool allowFX = TheGameLogic->getFrame() > getNextPreAttackFXFrame();
+
+		setStatus(PRE_ATTACK);
+		setPreAttackFinishedFrame(TheGameLogic->getFrame() + delay);
+		if (m_template->isLeechRangeWeapon())
 		{
-			setLeechRangeActive( TRUE );
+			setLeechRangeActive(TRUE);
+		}
+
+		if (allowFX) {
+
+			// Fix currentBarrel
+			Int curBarrel = m_curBarrel;
+			Int barrelCount = source->getDrawable()->getBarrelCount(m_wslot);
+		
+			if (curBarrel >= barrelCount)
+			{
+				curBarrel = 0;
+			}
+
+			getTemplate()->createPreAttackFX(source, m_wslot, curBarrel, victim, NULL);
+			// Add delay to avoid spamming the FX
+			if (m_template->getPreAttackFXDelay() > 0) {
+				setNextPreAttackFXFrame(TheGameLogic->getFrame() + m_template->getPreAttackFXDelay());
+			}
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+// Same as above but with target location instead of object
+void Weapon::preFireWeapon(const Object* source, const Coord3D* pos)
+{
+	Int delay = getPreAttackDelay(source, NULL);
+	if (delay > 0)
+	{
+		Bool allowFX = TheGameLogic->getFrame() > getNextPreAttackFXFrame();
+
+		setStatus(PRE_ATTACK);
+		setPreAttackFinishedFrame(TheGameLogic->getFrame() + delay);
+		if (m_template->isLeechRangeWeapon())
+		{
+			setLeechRangeActive(TRUE);
+		}
+
+		if (allowFX) {
+			// Fix currentBarrel
+			Int curBarrel = m_curBarrel;
+			Int barrelCount = source->getDrawable()->getBarrelCount(m_wslot);
+
+			if (curBarrel >= barrelCount)
+			{
+				curBarrel = 0;
+			}
+
+			getTemplate()->createPreAttackFX(source, m_wslot, curBarrel, NULL, pos);
+			// Add delay to avoid spamming the FX
+			if (m_template->getPreAttackFXDelay() > 0) {
+				setNextPreAttackFXFrame(TheGameLogic->getFrame() + m_template->getPreAttackFXDelay());
+			}
 		}
 	}
 }
@@ -3226,6 +3335,16 @@ void Weapon::crc( Xfer *xfer )
 	}
 #endif // DEBUG_CRC
 
+	// m_nextPreAttackFXFrame
+	xfer->xferUnsignedInt(&m_nextPreAttackFXFrame);
+#ifdef DEBUG_CRC
+	if (doLogging)
+	{
+		tmp.format("m_nextPreAttackFXFrame %d ", m_nextPreAttackFXFrame);
+		logString.concat(tmp);
+	}
+#endif // DEBUG_CRC
+
 	// when last reload started
 	xfer->xferUnsignedInt( &m_whenLastReloadStarted );
 #ifdef DEBUG_CRC
@@ -3395,6 +3514,9 @@ void Weapon::xfer( Xfer *xfer )
 
 	// wehn pre attack finished
 	xfer->xferUnsignedInt( &m_whenPreAttackFinished );
+
+	// when next preAttack FX
+	xfer->xferUnsignedInt( &m_nextPreAttackFXFrame);
 
 	// when last reload started
 	xfer->xferUnsignedInt( &m_whenLastReloadStarted );

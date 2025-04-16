@@ -447,6 +447,8 @@ public:
 	inline const ObjectCreationList* getFireOCL(VeterancyLevel v) const { return m_fireOCLs[v]; }
 	inline const ObjectCreationList* getProjectileDetonationOCL(VeterancyLevel v) const { return m_projectileDetonationOCLs[v]; }
 	inline const ParticleSystemTemplate* getProjectileExhaust(VeterancyLevel v) const { return m_projectileExhausts[v]; }
+	inline const FXList* getPreAttackFX(VeterancyLevel v) const { return m_preAttackFXs[v]; }
+	inline UnsignedInt getPreAttackFXDelay() const { return m_preAttackFXDelay; }
 
 	inline const AudioEventRTS& getFireSound() const { return m_fireSound; }
 	inline UnsignedInt getFireSoundLoopTime() const { return m_fireSoundLoopTime; }
@@ -465,6 +467,17 @@ public:
 		const Object* projectile, 
 		const Object* thingWeCollidedWith,
 		ObjectID intendedVictimID	// could be INVALID_ID for a position-shot
+	) const;
+
+	void createPreAttackFX
+	(
+		const Object* sourceObj,
+		WeaponSlotType wslot,
+		Int specificBarrelToUse,
+		const Object* victimObj,
+		const Coord3D* victimPos
+		//const WeaponBonus& bonus,
+		//Weapon *firingWeapon,
 	) const;
 	
 	void postProcessLoad();
@@ -556,6 +569,8 @@ private:
 	ObjectStatusTypes m_damageStatusType;		///< If our damage is Status damage, the status we apply
 	UnsignedInt m_suspendFXDelay;						///< The fx can be suspended for any delay, in frames, then they will execute as normal
 	Bool m_dieOnDetonate;
+	const FXList* m_preAttackFXs[LEVEL_COUNT];			///< FX played when preattack starts
+	UnsignedInt m_preAttackFXDelay;						///< Delay after starting a preattackFX before we can play it again
 
 	mutable HistoricWeaponDamageList m_historicDamage;
 };  
@@ -597,6 +612,8 @@ public:
 	void fireProjectileDetonationWeapon(const Object *source, const Coord3D* pos, WeaponBonusConditionFlags extraBonusFlags, Bool inflictDamage = TRUE );
 
 	void preFireWeapon( const Object *source, const Object *victim );
+
+	void preFireWeapon(const Object* source, const Coord3D* pos);
 
 	//Currently, this function was added to allow a script to force fire a weapon,
 	//and immediately gain control of the weapon that was fired to give it special orders...
@@ -660,10 +677,13 @@ public:
 	UnsignedInt getLastReloadStartedFrame() const { return m_whenLastReloadStarted; }
 	Real getPercentReadyToFire() const;
 
+	UnsignedInt getNextPreAttackFXFrame() const { return m_nextPreAttackFXFrame; }
+
 	// do not ever use this unless you are weaponset.cpp
 	void setPossibleNextShotFrame( UnsignedInt frameNum ) { m_whenWeCanFireAgain = frameNum; }
 	void setPreAttackFinishedFrame( UnsignedInt frameNum ) { m_whenPreAttackFinished = frameNum; }
 	void setLastReloadStartedFrame( UnsignedInt frameNum ) { m_whenLastReloadStarted = frameNum; }
+	void setNextPreAttackFXFrame(UnsignedInt frameNum) { m_nextPreAttackFXFrame = frameNum; }
 
 	//Transfer the reload times and status from the passed in weapon.
 	void transferNextShotStatsFrom( const Weapon &weapon );
@@ -803,6 +823,7 @@ private:
 	std::vector<Int>					m_scatterTargetsUnused;			///< A running memory of which targets I've used, so I can shoot them all at random
 	Bool											m_pitchLimited;
 	Bool											m_leechWeaponRangeActive;		///< This weapon has unlimited range until attack state is aborted!
+	UnsignedInt										m_nextPreAttackFXFrame;			///< the frame when we are next allowed to play a preAttackFX
 
 	// setter function for status that should not be used outside this class
 	void setStatus( WeaponStatus status) { m_status = status; }

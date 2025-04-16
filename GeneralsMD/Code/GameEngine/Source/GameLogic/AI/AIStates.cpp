@@ -5181,7 +5181,18 @@ StateReturnType AIAttackFireWeaponState::onEnter()
 	}
 
 	obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_FIRING_WEAPON ) );
-	obj->preFireCurrentWeapon( getMachineGoalObject() );
+	if (victim) {
+		obj->preFireCurrentWeapon(victim);
+	}
+	else {
+		const Coord3D* pos = getMachineGoalPosition();
+		if (pos) {
+			obj->preFireCurrentWeapon(pos);
+		}
+		else {
+			obj->preFireCurrentWeapon(victim);
+		}
+	}
 	return STATE_CONTINUE;	
 }
 

@@ -447,6 +447,16 @@ public:
 							const Coord3D* victimPos,
 							Real damageRadius
 							);
+	Bool handleWeaponPreAttackFX(
+		WeaponSlotType wslot,
+		Int specificBarrelToUse,
+		const FXList* fxl,
+		Real weaponSpeed,
+		Real recoilAmount,
+		Real recoilAngle,
+		const Coord3D* victimPos,
+		Real damageRadius
+	);
 
 	Int getBarrelCount(WeaponSlotType wslot) const;
 
