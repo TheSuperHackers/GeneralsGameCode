@@ -27,6 +27,14 @@
 // Desc:   The Xfer system is capable of setting up operations to work with blocks of data
 //				 from other subsystems.  It can work things such as file reading, file writing,
 //				 CRC computations etc
+//
+// TheSuperHackers @info helmutbuhler 04/09/2025
+//         The baseclass Xfer has 3 implementations:
+//          - XferLoad: Load gamestate
+//          - XferSave: Save gamestate
+//          - XferCRC: Calculate gamestate CRC
+//            - XferDeepCRC: This derives from XferCRC and also writes the gamestate data relevant
+//              to crc calculation to a file (only used in developer builds)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once

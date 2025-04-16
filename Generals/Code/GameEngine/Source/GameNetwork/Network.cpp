@@ -380,7 +380,8 @@ void Network::setSawCRCMismatch( void )
 	TheRecorder->logCRCMismatch();
 
 	// dump GameLogic random seed
-	DEBUG_LOG(("GameLogic frame = %d\n", TheGameLogic->getFrame()));
+	DEBUG_LOG(("Latest frame for mismatch = %d GameLogic frame = %d\n",
+		TheGameLogic->getFrame()-m_runAhead-1, TheGameLogic->getFrame()));
 	DEBUG_LOG(("GetGameLogicRandomSeedCRC() = %d\n", GetGameLogicRandomSeedCRC()));
 
 	// dump CRCs
