@@ -19,6 +19,7 @@ target_sources(z_wdump PRIVATE ${WDUMP_SRC})
 
 target_link_libraries(z_wdump PRIVATE
     core_config
+    core_utility
     core_wwstub # avoid linking GameEngine
     dbghelplib
     imm32

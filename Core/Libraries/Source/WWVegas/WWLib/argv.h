@@ -47,10 +47,6 @@
 #include "always.h"
 #endif
 
-#ifdef _UNIX
-#include "osdep.h"
-#endif
-
 // Used to parse command line that is passed into WinMain.  
 // It also has the ability to load a file with values to append to the command line.
 // Normally in WinMain() there would be a call Argv::Init(lpCmdLine, fileprefix).  

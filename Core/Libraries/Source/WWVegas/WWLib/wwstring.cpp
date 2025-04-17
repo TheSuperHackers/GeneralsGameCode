@@ -35,7 +35,6 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "wwstring.h"
-#include "win.h"
 #include "wwmemlog.h"
 #include "mutex.h"
 #include <stdio.h>
@@ -102,7 +101,7 @@ StringClass::Get_String (int length, bool is_temp)
 				//
 				//	Grab this unused buffer for our string
 				//
-				unsigned temp_string=reinterpret_cast<unsigned>(m_TempStrings);
+				unsigned long temp_string=reinterpret_cast<unsigned long>(m_TempStrings);
 				temp_string+=MAX_TEMP_BYTES*MAX_TEMP_STRING;
 				temp_string&=~(MAX_TEMP_BYTES*MAX_TEMP_STRING-1);
 				temp_string+=index*MAX_TEMP_BYTES;
@@ -197,8 +196,8 @@ StringClass::Free_String (void)
 {
 	if (m_Buffer != m_EmptyString) {
 
-		unsigned buffer_base=reinterpret_cast<unsigned>(m_Buffer-sizeof (StringClass::_HEADER));
-		unsigned temp_base=reinterpret_cast<unsigned>(m_TempStrings+MAX_TEMP_BYTES*MAX_TEMP_STRING);
+		unsigned long buffer_base=reinterpret_cast<unsigned long>(m_Buffer-sizeof (StringClass::_HEADER));
+		unsigned long temp_base=reinterpret_cast<unsigned long>(m_TempStrings+MAX_TEMP_BYTES*MAX_TEMP_STRING);
 
 		if ((buffer_base>>11)==(temp_base>>11)) {
 			m_Buffer[0] = 0;
@@ -321,7 +320,7 @@ bool StringClass::Copy_Wide (const WCHAR *source)
 	if (source != NULL) {
 
 		int  length;
-		BOOL unmapped;
+		int unmapped;
 			
 		length = WideCharToMultiByte (CP_ACP, 0 , source, -1, NULL, 0, NULL, &unmapped);
 		if (length > 0) {
