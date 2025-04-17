@@ -113,6 +113,7 @@
 #include "cpudetect.h"
 #include "dx8texman.h"
 #include "formconv.h"
+#include "animatedsoundmgr.h"
 #include "static_sort_list.h"
 
 
@@ -303,6 +304,10 @@ WW3DErrorType WW3D::Init(void *hwnd, char *defaultpal)
 	DefaultStaticSortLists = W3DNEW DefaultStaticSortListClass();
 	Reset_Current_Static_Sort_Lists_To_Default();
 
+	/*
+	** Initialize the animation-triggered sound system
+	*/
+	AnimatedSoundMgrClass::Initialize ();
 	IsInitted = true;
 	return WW3D_ERROR_OK;
 }
@@ -360,6 +365,11 @@ WW3DErrorType WW3D::Shutdown(void)
 	** Clear the default static sort lists
 	*/
 	delete DefaultStaticSortLists;
+
+	/*
+	** Release the animation-triggered sound data
+	*/
+	AnimatedSoundMgrClass::Shutdown ();
 
 	IsInitted = false;
 	return WW3D_ERROR_OK;

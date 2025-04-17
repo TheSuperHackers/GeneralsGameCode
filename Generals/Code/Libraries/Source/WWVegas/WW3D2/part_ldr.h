@@ -179,6 +179,7 @@ class ParticleEmitterDefClass
 		virtual void			Get_Size_Keyframes (ParticlePropertyStruct<float> &keyframes) const;
 		virtual void			Get_Rotation_Keyframes (ParticlePropertyStruct<float> &rotationframes) const;
 		virtual void			Get_Frame_Keyframes (ParticlePropertyStruct<float> &frameframes) const;
+		virtual void			Get_Blur_Time_Keyframes (ParticlePropertyStruct<float> &blurtimeframes) const;
 		virtual float			Get_Initial_Orientation_Random (void) const { return m_InitialOrientationRandom; }
 
 		virtual void			Set_Color_Keyframes (ParticlePropertyStruct<Vector3> &keyframes);
@@ -186,6 +187,7 @@ class ParticleEmitterDefClass
 		virtual void			Set_Size_Keyframes (ParticlePropertyStruct<float> &keyframes);
 		virtual void			Set_Rotation_Keyframes (ParticlePropertyStruct<float> &keyframes, float orient_rnd);
 		virtual void			Set_Frame_Keyframes (ParticlePropertyStruct<float> &keyframes);
+		virtual void			Set_Blur_Time_Keyframes (ParticlePropertyStruct<float> &keyframes);
 
 		//
 		//	User data accessors
@@ -241,6 +243,7 @@ class ParticleEmitterDefClass
 		virtual WW3DErrorType	Read_Line_Properties (ChunkLoadClass &chunk_load);
 		virtual WW3DErrorType	Read_Rotation_Keyframes (ChunkLoadClass &chunk_load);
 		virtual WW3DErrorType	Read_Frame_Keyframes (ChunkLoadClass &chunk_load);
+		virtual WW3DErrorType	Read_Blur_Time_Keyframes (ChunkLoadClass &chunk_load);
 
 		virtual bool				Read_Color_Keyframe (ChunkLoadClass &chunk_load, float *key_time, Vector3 *value);
 		virtual bool				Read_Opacity_Keyframe (ChunkLoadClass &chunk_load, float *key_time, float *value);
@@ -257,6 +260,7 @@ class ParticleEmitterDefClass
 		virtual WW3DErrorType	Save_Line_Properties (ChunkSaveClass &chunk_save);
 		virtual WW3DErrorType	Save_Frame_Keyframes (ChunkSaveClass & chunk_save);
 		virtual WW3DErrorType	Save_Rotation_Keyframes (ChunkSaveClass & chunk_save);
+		virtual WW3DErrorType	Save_Blur_Time_Keyframes (ChunkSaveClass & chunk_save);
 
 		virtual WW3DErrorType	Save_Color_Keyframes (ChunkSaveClass &chunk_save);
 		virtual WW3DErrorType	Save_Opacity_Keyframes (ChunkSaveClass &chunk_save);
@@ -298,6 +302,7 @@ class ParticleEmitterDefClass
 		ParticlePropertyStruct<float>		m_RotationKeyframes;
 		float										m_InitialOrientationRandom;
 		ParticlePropertyStruct<float>		m_FrameKeyframes;
+		ParticlePropertyStruct<float>		m_BlurTimeKeyframes;
 		Vector3Randomizer *					m_pCreationVolume;
 		Vector3Randomizer *					m_pVelocityRandomizer;
 };

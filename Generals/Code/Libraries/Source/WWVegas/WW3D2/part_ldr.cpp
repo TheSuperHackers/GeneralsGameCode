@@ -95,6 +95,7 @@ ParticleEmitterDefClass::ParticleEmitterDefClass (void)
 	::memset (&m_SizeKeyframes, 0, sizeof (m_SizeKeyframes));
 	::memset (&m_RotationKeyframes, 0, sizeof (m_RotationKeyframes));
 	::memset (&m_FrameKeyframes, 0, sizeof (m_FrameKeyframes));
+	::memset (&m_BlurTimeKeyframes, 0, sizeof (m_BlurTimeKeyframes));
 	::memset (&m_LineProperties, 0, sizeof (m_LineProperties));
 	return ;
 }
@@ -121,6 +122,7 @@ ParticleEmitterDefClass::ParticleEmitterDefClass (const ParticleEmitterDefClass 
 	::memset (&m_SizeKeyframes, 0, sizeof (m_SizeKeyframes));
 	::memset (&m_RotationKeyframes, 0, sizeof (m_RotationKeyframes));
 	::memset (&m_FrameKeyframes, 0, sizeof (m_FrameKeyframes));
+	::memset (&m_BlurTimeKeyframes, 0, sizeof (m_BlurTimeKeyframes));
 	::memset (&m_LineProperties, 0, sizeof (m_LineProperties));
 
 	(*this) = src;
@@ -189,6 +191,7 @@ ParticleEmitterDefClass::operator= (const ParticleEmitterDefClass &src)
 	::Copy_Emitter_Property_Struct (m_SizeKeyframes, src.m_SizeKeyframes);
 	::Copy_Emitter_Property_Struct (m_RotationKeyframes, src.m_RotationKeyframes);
 	::Copy_Emitter_Property_Struct (m_FrameKeyframes, src.m_FrameKeyframes);
+	::Copy_Emitter_Property_Struct (m_BlurTimeKeyframes, src.m_BlurTimeKeyframes);
 	m_InitialOrientationRandom = src.m_InitialOrientationRandom;
 
 	//
@@ -213,6 +216,7 @@ ParticleEmitterDefClass::Free_Props (void)
 	m_SizeKeyframes.NumKeyFrames = 0;
 	m_RotationKeyframes.NumKeyFrames = 0;
 	m_FrameKeyframes.NumKeyFrames = 0;
+	m_BlurTimeKeyframes.NumKeyFrames = 0;
 
 	SAFE_DELETE_ARRAY (m_ColorKeyframes.KeyTimes);
 	SAFE_DELETE_ARRAY (m_ColorKeyframes.Values);
@@ -224,6 +228,8 @@ ParticleEmitterDefClass::Free_Props (void)
 	SAFE_DELETE_ARRAY (m_RotationKeyframes.Values);
 	SAFE_DELETE_ARRAY (m_FrameKeyframes.KeyTimes);
 	SAFE_DELETE_ARRAY (m_FrameKeyframes.Values);
+	SAFE_DELETE_ARRAY (m_BlurTimeKeyframes.KeyTimes);
+	SAFE_DELETE_ARRAY (m_BlurTimeKeyframes.Values);
 
 	return ;
 }
@@ -387,6 +393,11 @@ ParticleEmitterDefClass::Load_W3D (ChunkLoadClass &chunk_load)
 			case W3D_CHUNK_EMITTER_FRAME_KEYFRAMES:
 				ret_val = Read_Frame_Keyframes(chunk_load);
 				break;
+
+			case W3D_CHUNK_EMITTER_BLUR_TIME_KEYFRAMES:
+				ret_val = Read_Blur_Time_Keyframes(chunk_load);
+				break;
+
 				
 			default: 
 				WWDEBUG_SAY(("Unhandled Chunk! File: %s Line: %d\r\n",__FILE__,__LINE__));
@@ -1073,6 +1084,48 @@ ParticleEmitterDefClass::Read_Frame_Keyframes (ChunkLoadClass &chunk_load)
 	return ret_val;
 }
 
+//////////////////////////////////////////////////////////////////////////////////
+//
+//	Read_Blur_Time_Keyframes
+//
+WW3DErrorType
+ParticleEmitterDefClass::Read_Blur_Time_Keyframes (ChunkLoadClass &chunk_load)
+{
+	// Assume success
+	WW3DErrorType ret_val = WW3D_ERROR_OK;
+
+	// Read the header
+	W3dEmitterBlurTimeHeaderStruct header;
+	if (chunk_load.Read(&header,sizeof(header)) != sizeof(header)) {
+		ret_val = WW3D_ERROR_LOAD_FAILED;
+	}
+
+	// Read in the first key
+	W3dEmitterBlurTimeKeyframeStruct key;
+	if (chunk_load.Read(&key,sizeof(key)) == sizeof(key)) {
+		m_BlurTimeKeyframes.Start = key.BlurTime;
+	}
+	
+	// Allocate the keys
+	m_BlurTimeKeyframes.NumKeyFrames		= header.KeyframeCount;
+	m_BlurTimeKeyframes.Rand					= header.Random;
+
+	if (m_BlurTimeKeyframes.NumKeyFrames > 0) {
+		m_BlurTimeKeyframes.KeyTimes = new float[m_BlurTimeKeyframes.NumKeyFrames];
+		m_BlurTimeKeyframes.Values = new float[m_BlurTimeKeyframes.NumKeyFrames];
+	}
+
+	// Read in the keys
+	for (unsigned int i=0; (i<header.KeyframeCount) && (ret_val == WW3D_ERROR_OK); i++) {
+		W3dEmitterBlurTimeKeyframeStruct key;
+		if (chunk_load.Read(&key,sizeof(key)) != sizeof(key)) {
+			ret_val = WW3D_ERROR_LOAD_FAILED;
+		}
+		m_BlurTimeKeyframes.KeyTimes[i] = key.Time;
+		m_BlurTimeKeyframes.Values[i] = key.BlurTime;
+	}
+	return ret_val;
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 //
@@ -1094,7 +1147,8 @@ ParticleEmitterDefClass::Save_W3D (ChunkSaveClass &chunk_save)
 			 (Save_InfoV2 (chunk_save) == WW3D_ERROR_OK) &&
 			 (Save_Props (chunk_save) == WW3D_ERROR_OK) &&
 			 (Save_Rotation_Keyframes (chunk_save) == WW3D_ERROR_OK) &&
-			 (Save_Frame_Keyframes (chunk_save) == WW3D_ERROR_OK)) 
+			 (Save_Frame_Keyframes (chunk_save) == WW3D_ERROR_OK) &&
+			 (Save_Blur_Time_Keyframes (chunk_save) == WW3D_ERROR_OK))
 		{
 			// Success!
 			ret_val = WW3D_ERROR_OK;
@@ -1488,7 +1542,7 @@ ParticleEmitterDefClass::Save_Rotation_Keyframes (ChunkSaveClass & chunk_save)
 ///////////////////////////////////////////////////////////////////////////////////
 //
 //	Save_Frame_Keyframes
-// NOTE: Rotation keyframes are saved in a separate chunk unlike color,size,and
+// NOTE: Frame keyframes are saved in a separate chunk unlike color,size,and
 // opacity which are embedded inside the PROPS chunk. 
 //
 WW3DErrorType
@@ -1532,6 +1586,52 @@ ParticleEmitterDefClass::Save_Frame_Keyframes (ChunkSaveClass & chunk_save)
 	return ret_val;
 }
 
+///////////////////////////////////////////////////////////////////////////////////
+//
+//	Save_Blur_Time_Keyframes
+// NOTE: Blur Time keyframes are saved in a separate chunk unlike color,size,and
+// opacity which are embedded inside the PROPS chunk. 
+//
+WW3DErrorType
+ParticleEmitterDefClass::Save_Blur_Time_Keyframes (ChunkSaveClass & chunk_save)
+{
+	// Assume error
+	WW3DErrorType ret_val = WW3D_ERROR_SAVE_FAILED;
+	
+	// Begin a chunk that identifies the rotation keyframes
+	if (chunk_save.Begin_Chunk (W3D_CHUNK_EMITTER_BLUR_TIME_KEYFRAMES) == TRUE) {
+
+		// Write the header
+		W3dEmitterBlurTimeHeaderStruct header;
+		header.KeyframeCount = m_BlurTimeKeyframes.NumKeyFrames;
+		header.Random = m_BlurTimeKeyframes.Rand;
+		chunk_save.Write (&header, sizeof (W3dEmitterBlurTimeHeaderStruct));
+		
+		// Write the keyframes
+		bool success = true;
+		W3dEmitterBlurTimeKeyframeStruct key;
+
+		// Write the start keyframe
+		key.Time = 0;
+		key.BlurTime = m_BlurTimeKeyframes.Start;
+		chunk_save.Write (&key, sizeof (key));
+
+		// Write the remaining keyframes
+		for (unsigned int index = 0; (index < header.KeyframeCount) && success; index ++) {			
+			key.Time = m_BlurTimeKeyframes.KeyTimes[index];
+			key.BlurTime = m_BlurTimeKeyframes.Values[index];
+			success = (chunk_save.Write (&key, sizeof (key)) == sizeof (key));
+		}
+
+		ret_val = success ? WW3D_ERROR_OK : WW3D_ERROR_SAVE_FAILED;
+
+		// End the chunk
+		chunk_save.End_Chunk ();
+	}
+
+	// Return the WW3DErrorType return code
+	return ret_val;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////
 //
@@ -1609,6 +1709,20 @@ ParticleEmitterDefClass::Set_Frame_Keyframes (ParticlePropertyStruct<float> &key
 
 ///////////////////////////////////////////////////////////////////////////////////
 //
+//	Set_Blur_Time_Keyframes
+//
+void
+ParticleEmitterDefClass::Set_Blur_Time_Keyframes (ParticlePropertyStruct<float> &keyframes)
+{
+	SAFE_DELETE_ARRAY (m_BlurTimeKeyframes.KeyTimes);
+	SAFE_DELETE_ARRAY (m_BlurTimeKeyframes.Values);
+
+	::Copy_Emitter_Property_Struct (m_BlurTimeKeyframes, keyframes);
+	return ;
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+//
 //	Get_Color_Keyframes
 //
 void
@@ -1662,6 +1776,17 @@ void
 ParticleEmitterDefClass::Get_Frame_Keyframes (ParticlePropertyStruct<float> &keyframes) const
 {
 	::Copy_Emitter_Property_Struct (keyframes, m_FrameKeyframes);
+	return ;
+}
+
+///////////////////////////////////////////////////////////////////////////////////
+//
+//	Get_Blur_Time_Keyframes
+//
+void
+ParticleEmitterDefClass::Get_Blur_Time_Keyframes (ParticlePropertyStruct<float> &blurtimeframes) const
+{
+	::Copy_Emitter_Property_Struct (blurtimeframes, m_BlurTimeKeyframes);
 	return ;
 }
 
