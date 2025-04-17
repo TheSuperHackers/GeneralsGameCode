@@ -95,21 +95,22 @@ int main(int argc, char **argv)
 	DEBUG_LOG(("IN:'%s' OUT:'%s' Compression:'%s'\n",
 		inFile.c_str(), outFile.c_str(), CompressionManager::getCompressionNameByType(compressType)));
 
+	// just check compression on the input file if we have no output specified
 	if (outFile.empty())
 	{
-		// just check compression
-		FILE *fp = fopen(inFile.c_str(), "rb");
-		if (!fp)
+		FILE *fpIn = fopen(inFile.c_str(), "rb");
+		if (!fpIn)
 		{
 			DEBUG_LOG(("Cannot open '%s'\n", inFile.c_str()));
 			return EXIT_FAILURE;
 		}
-		fseek(fp, 0, SEEK_END);
-		int size = ftell(fp);
-		fseek(fp, 0, SEEK_SET);
+		fseek(fpIn, 0, SEEK_END);
+		int size = ftell(fpIn);
+		fseek(fpIn, 0, SEEK_SET);
 
 		char data[8];
-		int numRead = fread(data, 1, 8, fp);
+		int numRead = fread(data, 1, 8, fpIn);
+		fclose(fpIn);
 
 		if (numRead != 8)
 		{
@@ -121,7 +122,7 @@ int main(int argc, char **argv)
 		if (usedType == COMPRESSION_NONE)
 		{
 			DEBUG_LOG(("No compression on '%s'\n", inFile.c_str()));
-			return EXIT_FAILURE;
+			return EXIT_SUCCESS;
 		}
 
 		int uncompressedSize = CompressionManager::getUncompressedSize(data, 8);
@@ -133,6 +134,66 @@ int main(int argc, char **argv)
 		return EXIT_SUCCESS;
 	}
 
-	// compress file
-	return EXIT_FAILURE;
+	// Open the input file
+	FILE *fpIn = fopen(inFile.c_str(), "rb");
+	if (!fpIn)
+	{
+		DEBUG_LOG(("Cannot open input '%s'\n", inFile.c_str()));
+		return EXIT_FAILURE;
+	}
+
+	// Read the input file
+	fseek(fpIn, 0, SEEK_END);
+	int inputSize = ftell(fpIn);
+	fseek(fpIn, 0, SEEK_SET);
+
+	char *inputData = new char[inputSize];
+	int numRead = fread(inputData, 1, inputSize, fpIn);
+	fclose(fpIn);
+	if (numRead != inputSize)
+	{
+		DEBUG_LOG(("Cannot read input '%s'\n", inFile.c_str()));
+		delete[] inputData;
+		return EXIT_FAILURE;
+	}
+
+	DEBUG_LOG(("Read %d bytes from '%s'\n", numRead, inFile.c_str()));
+
+	// Open the output file
+	FILE *fpOut = fopen(outFile.c_str(), "wb");
+	if (!fpOut)
+	{
+		DEBUG_LOG(("Cannot open output '%s'\n", outFile.c_str()));
+		delete[] inputData;
+		return EXIT_FAILURE;
+	}
+
+
+	if (compressType == COMPRESSION_NONE)
+	{
+		DEBUG_LOG(("No compression requested, writing uncompressed data\n"));
+		int outSize = CompressionManager::getUncompressedSize(inputData, inputSize);
+		char *outData = new char[outSize];
+		CompressionManager::decompressData(inputData, inputSize, outData, outSize);
+
+		// Write the output file
+		fwrite(outData, 1, outSize, fpOut);
+	}
+	else 
+	{
+		DEBUG_LOG(("Compressing data using %s\n", CompressionManager::getCompressionNameByType(compressType)));
+		// Allocate the output buffer
+		int outSize = CompressionManager::getMaxCompressedSize(inputSize, compressType);
+		char *outData = new char[outSize];
+		int compressedSize = CompressionManager::compressData(compressType, inputData, inputSize, outData, outSize);
+
+		// Write the output file
+		fwrite(outData, 1, compressedSize, fpOut);
+		delete[] outData;
+	}
+
+	fclose(fpOut);
+	delete[] inputData;
+
+	return EXIT_SUCCESS;
 }
