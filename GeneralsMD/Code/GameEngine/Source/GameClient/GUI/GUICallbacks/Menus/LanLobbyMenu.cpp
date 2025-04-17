@@ -84,6 +84,15 @@ LANPreferences::~LANPreferences()
 UnicodeString LANPreferences::getUserName(void)
 {
 	UnicodeString ret;
+#if ENABLE_FAKE_IP
+	if (getFakeIPNo())
+	{
+		// Set user to fake ip number as a convenience
+		ret.format(L"fake_ip_%d", getFakeIPNo());
+		return ret;
+	}
+#endif
+
 	LANPreferences::const_iterator it = find("UserName");
 	if (it == end())
 	{
@@ -400,7 +409,14 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 	// Choose an IP address, then initialize the LAN singleton
 	UnsignedInt IP = TheGlobalData->m_defaultIP;
 	IPEnumeration IPs;
-
+#if ENABLE_FAKE_IP
+	if (getFakeIPNo())
+	{
+		IP = getFakeIPNo();
+		//IPSource = L"Using Fake IP";
+	}
+	else
+#endif
 	if (!IP)
 	{
 		EnumeratedIP *IPlist = IPs.getAddresses();

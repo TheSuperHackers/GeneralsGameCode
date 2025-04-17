@@ -169,6 +169,14 @@ Int UDP::Bind(UnsignedInt IP,UnsignedShort Port)
   if (fd==-1)
     return(UNKNOWN);
 
+#if ENABLE_FAKE_IP
+  addr.sin_addr.s_addr=0; // Allow packets from any ip;
+
+  // Allow the sockets to listen on multiple instances on the same port
+  int enable = 1;
+  retval = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const char*)&enable, sizeof(int));
+#endif
+
   retval=bind(fd,(struct sockaddr *)&addr,sizeof(addr));
 
   #ifdef _WINDOWS
@@ -194,7 +202,11 @@ Int UDP::Bind(UnsignedInt IP,UnsignedShort Port)
   retval=SetBlocking(FALSE);
   if (retval==-1)
     fprintf(stderr,"Couldn't set nonblocking mode!\n");
-
+  
+#if ENABLE_FAKE_IP
+  AllowBroadcasts(true);
+#endif
+  
   return(OK);
 }
 
