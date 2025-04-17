@@ -79,7 +79,9 @@ public:
 	void drawWaypoints(RenderInfoClass &rinfo);
 	void freeWaypointBuffers();
 
+
 private:
+  void setDefaultLineStyle();
 
 	RenderObjClass *m_waypointNodeRobj;
 	SegmentedLineClass *m_line;

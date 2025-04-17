@@ -351,7 +351,7 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 
  	// Need to validate that we can make this in case someone fakes their CommandSet
 	// A Null constructorObject is used by the script engine to cheat, so let it slide
- 	if( constructorObject && !isPossibleToMakeUnit(constructorObject, what) )
+	if( (constructorObject != NULL) && !isPossibleToMakeUnit(constructorObject, what) )
  		return NULL;
 
 	// clear out any objects from the building area that are "auto-clearable" when building
@@ -694,8 +694,10 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 			continue;
 
 		// an immobile object may obstruct our building depending on flags.
-		if( them->isKindOf( KINDOF_IMMOBILE ) )	{
-			if (onlyCheckEnemies && builderObject && builderObject->getRelationship( them ) != ENEMIES )	{
+		if( them->isKindOf( KINDOF_IMMOBILE ) )	
+		{
+			if (onlyCheckEnemies && builderObject && builderObject->getRelationship( them ) != ENEMIES )	
+			{
 				continue;
 			}
 			TheTerrainVisual->addFactionBib(them, true);
@@ -706,14 +708,16 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 		// if this is an enemy object of the builder object (and therefore the thing
 		// that will be constructed) we can't build here
 		//
-		if( builderObject && builderObject->getRelationship( them ) == ENEMIES ) {
+		if( builderObject && builderObject->getRelationship( them ) == ENEMIES ) 
+		{
 			TheTerrainVisual->addFactionBib(them, true);
 			return false;
 		}
 
 	}  // end for, them
 
-	if (onlyCheckEnemies) {
+	if (onlyCheckEnemies) 
+	{
 		return true;
 	}
 	// Check for overlapping exit areas.
@@ -893,7 +897,6 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 		{
 			return LBC_OBJECTS_IN_THE_WAY;
 		}
-
 	}  // end if
 
 	if (build->isKindOf(KINDOF_CANNOT_BUILD_NEAR_SUPPLIES) && TheGlobalData->m_SupplyBuildBorder > 0)
@@ -1021,7 +1024,7 @@ void BuildAssistant::addBibs(const Coord3D *worldPos,
 																	const ThingTemplate *build  )
 {
 
-	Real range = build->friend_getVisionRange();
+	Real range = build->friend_calcVisionRange();
 	range += 3*build->getTemplateGeometryInfo().getMajorRadius();
 
 	PartitionFilterAcceptByKindOf f1(MAKE_KINDOF_MASK(KINDOF_STRUCTURE), KINDOFMASK_NONE);

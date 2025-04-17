@@ -364,6 +364,69 @@ void Xfer::xferDrawableID( DrawableID *drawableID )
 
 }  // end xferDrawableID
 
+
+// ------------------------------------------------------------------------------------------------
+void Xfer::xferSTLObjectIDVector( std::vector<ObjectID> *objectIDVectorData )
+{
+	//
+	// the fact that this is a list and a little higher level than a simple data type
+	// is reason enough to have every one of these versioned
+	//
+	XferVersion currentVersion = 1;
+	XferVersion version = currentVersion;
+	xferVersion( &version, currentVersion );
+
+	// xfer the count of the vector
+	UnsignedShort listCount = objectIDVectorData->size();
+	xferUnsignedShort( &listCount );
+	
+	// xfer vector data
+	ObjectID objectID;
+	if( getXferMode() == XFER_SAVE || getXferMode() == XFER_CRC )
+	{
+
+		// save all ids
+		std::vector< ObjectID >::const_iterator it;
+		for( it = objectIDVectorData->begin(); it != objectIDVectorData->end(); ++it )
+		{
+
+			objectID = *it;
+			xferObjectID( &objectID );
+
+		}  // end for
+
+	}  // end if, save
+	else if( getXferMode() == XFER_LOAD )
+	{
+
+		// sanity, the list should be empty before we transfer more data into it
+		if( objectIDVectorData->size() != 0 )
+		{
+
+			DEBUG_CRASH(( "Xfer::xferSTLObjectIDList - object vector should be empty before loading\n" ));
+			throw XFER_LIST_NOT_EMPTY;
+
+		}  // end if
+
+		// read all ids
+		for( UnsignedShort i = 0; i < listCount; ++i )
+		{
+
+			xferObjectID( &objectID );
+			objectIDVectorData->push_back( objectID );
+
+		}  // end for, i
+
+	}  // end else if
+	else
+	{
+
+		DEBUG_CRASH(( "xferSTLObjectIDList - Unknown xfer mode '%d'\n", getXferMode() ));
+		throw XFER_MODE_UNKNOWN;
+
+	}  // end else
+}
+
 // ------------------------------------------------------------------------------------------------
 /** STL Object ID list (cause it's a common data structure we use a lot)
 	* Version Info;
@@ -540,7 +603,7 @@ void Xfer::xferScienceType( ScienceType *science )
 	else
 	{
 
-		DEBUG_CRASH(( "xferScienceVec - Unknown xfer mode '%d'\n", getXferMode() ));
+		DEBUG_CRASH(( "xferScienceType - Unknown xfer mode '%d'\n", getXferMode() ));
 		throw XFER_MODE_UNKNOWN;
 
 	}  // end else
@@ -577,8 +640,12 @@ void Xfer::xferScienceVec( ScienceVec *scienceVec )
 		// vector should be empty at this point
 		if( scienceVec->empty() == FALSE )
 		{
-			DEBUG_CRASH(( "xferScienceVec - vector is not empty, but should be\n" ));
-			throw XFER_LIST_NOT_EMPTY;
+			// Not worth an assert, since things can give you Sciences on creation.  Just handle it and load.
+			scienceVec->clear();
+
+			// Homework for today.  Write 2000 words reconciling "Your code must never crash" with "Intentionally putting crashes in the code".  Fucktard.
+//			DEBUG_CRASH(( "xferScienceVec - vector is not empty, but should be\n" ));
+//			throw XFER_LIST_NOT_EMPTY;
 		}
 
 		for( UnsignedShort i = 0; i < count; ++i )

@@ -35,6 +35,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Lib/BaseType.h"
 #include "Common/BitFlags.h"
+#include "Common/BitFlagsIO.h"
 
 //-------------------------------------------------------------------------------------------------
 /** Kind of flags for determining groups of things that belong together
@@ -56,6 +57,8 @@ enum DisabledType CPP_11(: Int)
 	DISABLED_SCRIPT_UNDERPOWERED,
 
 	DISABLED_COUNT,
+	
+	DISABLED_ANY = 65535		///< Do not use this value for setting disabled types (read-only)
 };
 
 typedef BitFlags<DISABLED_COUNT>	DisabledMaskType;

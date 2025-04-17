@@ -58,6 +58,8 @@ enum FormationID CPP_11(: Int)
 	FORCE_FORMATIONID_TO_LONG_SIZE = 0x7ffffff
 };
 
+#define INVALID_ANGLE -100.0f
+
 class INI;
 
 //-------------------------------------------------------------------------------------------------

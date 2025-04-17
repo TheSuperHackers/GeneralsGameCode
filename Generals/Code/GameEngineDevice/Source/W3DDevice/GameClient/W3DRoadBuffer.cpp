@@ -333,11 +333,12 @@ Int RoadSegment::GetIndices(UnsignedShort *destination_ib, Int numToCopy, Int of
 void RoadSegment::updateSegLighting(void)
 {
 	Int i;
+	Int borderSizeInLine=TheTerrainRenderObject->getMap()->getBorderSizeInline();
 	for (i=0; i<m_numVertex; i++) {
 		Int x = m_vb[i].x/MAP_XY_FACTOR+0.5;
 		Int y = m_vb[i].y/MAP_XY_FACTOR+0.5;
-		x += TheTerrainRenderObject->getMap()->getBorderSize();
-		y += TheTerrainRenderObject->getMap()->getBorderSize();
+		x += borderSizeInLine;
+		y += borderSizeInLine;
 		m_vb[i].diffuse = (255<<24)|TheTerrainRenderObject->getStaticDiffuse(x, y);
 	}
 }
@@ -3197,6 +3198,33 @@ void W3DRoadBuffer::loadRoads()
 //=============================================================================
 void W3DRoadBuffer::updateLighting(void)
 {
+	/*
+	CRASH FIX: Kris Morness
+	When the player alt-tabs out of the game, m_roads is freed up, but when the other player
+	places a structure in this area, the terrain gets flattened and calls this code, and BOOM!
+
+	Submitted By:   	Lee, Pei                     
+	Date Submitted: 	08/21/03 18:47:25
+	Found: 
+	When playing a 2 player game both as USA-based armies, if one of the players uses Satellite Spy to reveal an area not yet reveal by either player then Alt-Tab's out, and then the enemy send a dozer over to build some structure in the previously revealed area, then the game will crash to desktop for the player who Alt-Tab'd.
+
+	Steps to reproduce: 
+	- Play a 2 player network game with both player being USA.
+		(Not sure if this will happen if the players are of different USA-based armies)
+	- Have the victim reveal an area that is not yet reveal to either player.
+	- Wait until the area has been shrouded again. (Not sure if required)
+	- Have the victim Alt-Tab.
+	- Have the remaining player then send a dozer to build a Cold Fusion Reactor in the area 
+		previously revealed by the other player's Spy Satellite.  (Not sure if it has to be Cold Fusion
+		Reactor.)
+
+	Result: 
+	As soon as the fence is set up, the player who Alt-tab'd would get Zero Hour crashing to desktop with Serious Error occured.
+	*/
+	if( !m_roads )
+	{
+		return;
+	}
 	Int curRoad;
 	// Do road segments.
 	for (curRoad=0; curRoad<m_numRoads; curRoad++) {
@@ -3227,8 +3255,8 @@ void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, 
 	}
 	Int stacking;
 	W3DShaderManager::ShaderTypes st=W3DShaderManager::ST_ROAD_BASE; //set default shader
-	if (cloudTexture)
-	{	st=W3DShaderManager::ST_ROAD_BASE_NOISE1;
+	if (cloudTexture) {	
+	st=W3DShaderManager::ST_ROAD_BASE_NOISE1;
 		if (noiseTexture)
 			st=W3DShaderManager::ST_ROAD_BASE_NOISE12;
 	}
@@ -3268,12 +3296,18 @@ void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, 
 		 			W3DShaderManager::setShader(st, pass);
 				//Draw all this road type.
 				DX8Wrapper::Draw_Triangles(	0, m_roadTypes[i].getNumIndices()/3, 0,	m_roadTypes[i].getNumVertices());
+#ifdef LOG_STATS
+				polys += m_roadTypes[i].getNumIndices()/3;
+#endif
 			}
 
 			if (!wireframe)	//shader was applied at least once?
  				W3DShaderManager::resetShader(st);
 		}
 	}
+#ifdef LOG_STATS
+	DEBUG_LOG(("Road poly count %d\n", polys));
+#endif
 
 #if 0
 	// Need to use a separate set of index & vertex buffers for this.  jba.

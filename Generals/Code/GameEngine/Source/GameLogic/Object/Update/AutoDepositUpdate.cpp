@@ -116,6 +116,7 @@ void AutoDepositUpdate::awardInitialCaptureBonus( Player *player )
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime AutoDepositUpdate::update( void )
 {
+	const AutoDepositUpdateModuleData *modData = getAutoDepositUpdateModuleData();
 /// @todo srj use SLEEPY_UPDATE here
 	if( TheGameLogic->getFrame() >= m_depositOnFrame)
 	{
@@ -125,30 +126,31 @@ UpdateSleepTime AutoDepositUpdate::update( void )
 			m_awardInitialCaptureBonus = TRUE;
 			m_initialized = TRUE;
 		}
-		m_depositOnFrame = TheGameLogic->getFrame() + getAutoDepositUpdateModuleData()->m_depositFrame;
+		m_depositOnFrame = TheGameLogic->getFrame() + modData->m_depositFrame;
 		
-		if(getObject()->isNeutralControlled() || getAutoDepositUpdateModuleData()->m_depositAmount <= 0 )
+		if(getObject()->isNeutralControlled() || modData->m_depositAmount <= 0 )
 			return UPDATE_SLEEP_NONE;
 
 		// makes sure that buildings under construction do not get a bonus CCB
 		if( getObject()->getConstructionPercent() != CONSTRUCTION_COMPLETE )
 			return UPDATE_SLEEP_NONE;
 		
-		getObject()->getControllingPlayer()->getMoney()->deposit( getAutoDepositUpdateModuleData()->m_depositAmount);
-		getObject()->getControllingPlayer()->getScoreKeeper()->addMoneyEarned( getAutoDepositUpdateModuleData()->m_depositAmount);
+		int moneyAmount = modData->m_depositAmount;
+
+		getObject()->getControllingPlayer()->getMoney()->deposit( moneyAmount );
+		getObject()->getControllingPlayer()->getScoreKeeper()->addMoneyEarned( modData->m_depositAmount);
 		
 		//Display cash income floating over the blacklotus
-		if(getAutoDepositUpdateModuleData()->m_depositAmount > 0)
+		if(moneyAmount > 0)
 		{
 			UnicodeString moneyString;
-			moneyString.format( TheGameText->fetch( "GUI:AddCash" ), getAutoDepositUpdateModuleData()->m_depositAmount );
+			moneyString.format( TheGameText->fetch( "GUI:AddCash" ), moneyAmount );
 			Coord3D pos;
 			pos.set( getObject()->getPosition() );
 			pos.z += 10.0f; //add a little z to make it show up above the unit.
 			Color color = getObject()->getControllingPlayer()->getPlayerColor() | GameMakeColor( 0, 0, 0, 230 );
 			TheInGameUI->addFloatingText( moneyString, &pos, color );
 		}
-		
 	}
 
 	return UPDATE_SLEEP_NONE;

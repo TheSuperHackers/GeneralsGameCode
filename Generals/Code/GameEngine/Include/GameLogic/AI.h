@@ -307,7 +307,8 @@ class Weapon;
 // TheSuperHackers @compile xezon 22/03/2025 Renames AI_PASSIVE to not conflict with macro in ws2def.h
 
 // Note - written out in save/load xfer and .map files, don't change these numbers.  
-enum AttitudeType CPP_11(: Int) {
+enum AttitudeType CPP_11(: Int)
+{
 	ATTITUDE_SLEEP = -2,
 	ATTITUDE_PASSIVE=-1,
 	ATTITUDE_NORMAL=0,
@@ -335,6 +336,7 @@ static const char *TheCommandSourceMaskNames[] =
 
 enum AICommandType CPP_11(: Int)	// Stored in save file, do not reorder/renumber.  jba.
 {
+	AICMD_NO_COMMAND = -1,
 	AICMD_MOVE_TO_POSITION = 0,
 	AICMD_MOVE_TO_OBJECT,
 	AICMD_TIGHTEN_TO_POSITION,
@@ -435,6 +437,7 @@ public:
 	void store(const AICommandParms& parms);
 	void reconstitute(AICommandParms& parms) const;
 	void doXfer(Xfer *xfer);
+	AICommandType getCommandType() const { return m_cmd; }
 };
 
 /**

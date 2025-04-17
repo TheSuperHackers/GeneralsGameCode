@@ -55,16 +55,6 @@
 #define SKIRMISH_BACKDOOR "Backdoor"
 #define SKIRMISH_SPECIAL "Special"
 
-#if 0
-// Skirmish Player names
-#define SKIRMISH_PLAYER_AI		"AI"
-#define SKIRMISH_PLAYER_HUMAN "Human"
-#define SKIRMISH_PLAYER_AI_ALLIES	"AI Allies"
-#define SKIRMISH_PLAYER_AI_ENEMIES	"AI Enemies"
-#define SKIRMISH_PLAYER_HUMAN_ALLIES	"Human Allies"
-#define SKIRMISH_PLAYER_HUMAN_ENEMIES	"Human Enemies"
-#endif
-
 // Skirmish Player Areas
 #define SKIRMISH_AREA_HOME_BASE				"Home Base"
 #define SKIRMISH_AREA_ANY_SUPPLYDEPOT	"Any Supply Depot"
@@ -210,7 +200,7 @@ public:
 	/// @todo Use a "symbol table" so we can re-order this enum without breaking old maps (MSB)
 	enum ScriptActionType 
 	{
-		DEBUG_MESSAGE_BOX=0,							///< Show a message box.
+		DEBUG_MESSAGE_BOX,							///< Show a message box.
 		SET_FLAG,													///< Set a flag true of false.
 		SET_COUNTER,											///< Set a counter to an integer.
 		VICTORY,													///< Announce victory.
@@ -852,7 +842,7 @@ class Condition : public MemoryPoolObject  // This is the conditional class.
 public:
 	enum ConditionType 
 	{
-		CONDITION_FALSE=0,										// Always evaluates to false.
+		CONDITION_FALSE,										// Always evaluates to false.
 		COUNTER,															// COUNTER, COMPARISON, INT
 		FLAG,																	// FLAG BOOLEAN compares flag to value.
 		CONDITION_TRUE,												// Always evaluates to true.

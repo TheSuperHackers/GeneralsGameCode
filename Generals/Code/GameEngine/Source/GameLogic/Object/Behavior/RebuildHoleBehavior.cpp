@@ -217,10 +217,8 @@ UpdateSleepTime RebuildHoleBehavior::update( void )
 		//
 		if( reconstructing == NULL )
 		{
-
 			newWorkerRespawnProcess( worker );
 			m_reconstructingID = INVALID_ID;
-
 		}  // end if
 
 	}  // end if

@@ -140,6 +140,7 @@ void GlobalLanguage::init( void )
 
 	OSVERSIONINFO	osvi;
 	osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFO);
+
 	//GS NOTE: Must call doesFileExist in either case so that NameKeyGenerator will stay in sync
 	AsciiString tempName;
 	tempName.format("Data\\%s\\Language9x.ini", GetRegistryLanguage().str());
@@ -148,6 +149,7 @@ void GlobalLanguage::init( void )
 	{	//check if we're running Win9x variant since they may need different fonts
 		fname = tempName;
 	}
+
 
 	ini.load( fname, INI_LOAD_OVERWRITE, NULL );
 	StringListIt it = m_localFonts.begin();

@@ -56,7 +56,7 @@ public:
 		// just use default destructor. ~TerrainTextureClass(void);
 public:
 	int update(WorldHeightMap *htMap); ///< Sets the pixels, and returns the actual height of the texture.
-
+	void setLOD(Int LOD);
 };
 
 

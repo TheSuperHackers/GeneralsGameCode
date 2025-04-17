@@ -430,7 +430,6 @@ HRESULT WaterRenderObjClass::initBumpMap(LPDIRECT3DTEXTURE8 *pTex, TextureClass 
 
 #ifdef MIPMAP_BUMP_TEXTURE
 
-	numLevels=pBumpSource->Get_Mip_Level_Count();
 	pBumpSource->Get_Level_Description(d3dsd);
 
 	if (Get_Bytes_Per_Pixel(d3dsd.Format) != 4)
@@ -439,6 +438,13 @@ HRESULT WaterRenderObjClass::initBumpMap(LPDIRECT3DTEXTURE8 *pTex, TextureClass 
 		//		DEBUG_CRASH(("WaterRenderObjClass::Invalid BumpMap format - Was it compressed?") );
 		return S_OK;
 	} 
+
+	if (pBumpSource->Peek_D3D_Texture())
+	{
+		numLevels=pBumpSource->Peek_D3D_Texture()->GetLevelCount();
+	}
+	else
+		return S_OK;
 
 	pTex[0]=DX8Wrapper::_Create_DX8_Texture(d3dsd.Width,d3dsd.Height,WW3D_FORMAT_U8V8,MIP_LEVELS_ALL,D3DPOOL_MANAGED,false);
 
@@ -929,9 +935,9 @@ void WaterRenderObjClass::ReAcquireResources(void)
 		}
 		shader = 
 			"ps.1.1\n \
-			tex t0 \n\
-			tex t1	\n\
-			tex t2	\n\
+			tex t0 ;get water texture\n\
+			tex t1 ;get white highlights on black background\n\
+			tex t2 ;get white highlights with more tiling\n\
 			tex t3	; get black shroud \n\
 			mul r0,v0,t0 ; blend vertex color and alpha into base texture. \n\
 			mad r0.rgb, t1, t2, r0	; blend sparkles and noise \n\
@@ -1078,6 +1084,8 @@ Int WaterRenderObjClass::init(Real waterLevel, Real dx, Real dy, SceneClass *par
 				material->Peek_Texture(i)->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			}
 		}
+
+		REF_PTR_RELEASE(material);
 	}
 
 	m_riverTexture=WW3DAssetManager::Get_Instance()->Get_Texture("TWWater01.tga"); 

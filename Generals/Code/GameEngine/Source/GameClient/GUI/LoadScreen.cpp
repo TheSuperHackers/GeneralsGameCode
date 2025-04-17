@@ -48,47 +48,41 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
-#ifdef _INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "Common/NameKeyGenerator.h"
-#include "Common/MultiplayerSettings.h"
-#include "Common/GameEngine.h"
-#include "Common/GameState.h"
-#include "Common/PlayerTemplate.h"
-#include "Common/PlayerList.h"
-#include "Common/Player.h"
-#include "Common/GameLOD.h"
-#include "Common/GameAudio.h"
+#include "Common/AudioAffect.h"
 #include "Common/AudioEventRTS.h"
 #include "Common/AudioHandleSpecialValues.h"
-#include "Common/AudioAffect.h"
-
-#include "GameClient/LoadScreen.h"
-#include "GameClient/Shell.h"
-#include "GameClient/GameWindowManager.h"
+#include "Common/GameAudio.h"
+#include "Common/GameEngine.h"
+#include "Common/GameLOD.h"
+#include "Common/GameState.h"
+#include "Common/MultiplayerSettings.h"
+#include "Common/Player.h"
+#include "Common/PlayerList.h"
+#include "Common/PlayerTemplate.h"
+#include "GameClient/CampaignManager.h"
+#include "GameClient/Display.h"
 #include "GameClient/GadgetProgressBar.h"
 #include "GameClient/GadgetStaticText.h"
 #include "GameClient/GameText.h"
-#include "GameClient/Display.h"
-#include "GameClient/WindowLayout.h"
-#include "GameClient/Mouse.h"
-#include "GameClient/VideoPlayer.h"
+#include "GameClient/GameWindowManager.h"
+#include "GameClient/GameWindowTransitions.h"
+#include "GameClient/LoadScreen.h"
 #include "GameClient/MapUtil.h"
+#include "GameClient/Mouse.h"
+#include "GameClient/Shell.h"
+#include "GameClient/VideoPlayer.h"
+#include "GameClient/WindowLayout.h"
 #include "GameLogic/FPUControl.h"
 #include "GameLogic/GameLogic.h"
-#include "GameNetwork/NetworkInterface.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
-#include "GameClient/CampaignManager.h"
+#include "GameNetwork/NetworkInterface.h"
 #include "GameNetwork/RankPointValue.h"
-#include "GameClient/GameWindowTransitions.h"
 
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////

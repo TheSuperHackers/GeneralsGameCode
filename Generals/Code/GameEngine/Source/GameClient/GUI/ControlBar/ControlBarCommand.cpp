@@ -179,6 +179,8 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
 	const CommandButton *commandButton;
 	for( Int i = 0; i < MAX_COMMANDS_PER_SET; i++ )
 	{
+		// our implementation doesn't necessarily make use of the max possible command buttons
+		if (! m_commandWindows[ i ]) continue;
 
 		// get command button
 		commandButton = commandSet->getCommandButton(i);
@@ -204,6 +206,9 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
 			m_commandWindows[ i ]->winHide( FALSE );
 			m_commandWindows[ i ]->winEnable( FALSE );
 
+      
+///////// poopy
+
 			//Clear any potential veterancy rank, or else we'll see it when it's empty!
 			GadgetButtonDrawOverlayImage( m_commandWindows[ i ], NULL );
 			
@@ -212,6 +217,9 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
  			{
  				m_commandWindows[ i ]->winHide( TRUE );
  			}
+
+      
+     //  is this where we set the cameos disabled when container is subdued?
 
 			// if we've counted more UI spots than the transport can hold, hide this command window
 			if( inventoryCommandCount > transportMax )
@@ -279,7 +287,10 @@ void ControlBar::populateCommand( Object *obj )
 
 		// hide all the buttons
 		for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
+			if (m_commandWindows[ i ])
+			{
 			m_commandWindows[ i ]->winHide( TRUE );
+			}
 
 		// nothing left to do
 		return;
@@ -294,6 +305,8 @@ void ControlBar::populateCommand( Object *obj )
 	const CommandButton *commandButton;
 	for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
 	{
+		// our implementation doesn't necessarily make use of the max possible command buttons
+		if (! m_commandWindows[ i ]) continue;
 
 		// get command button
 		commandButton = commandSet->getCommandButton(i);
@@ -732,6 +745,9 @@ void ControlBar::updateContextCommand( void )
 		GameWindow *win;
 		const CommandButton *command;
 
+		// our implementation doesn't necessarily make use of the max possible command buttons
+		if (! m_commandWindows[ i ]) continue;
+
 		// get the window
 		win = m_commandWindows[ i ];
 
@@ -1015,11 +1031,12 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 	{
 		case GUI_COMMAND_DOZER_CONSTRUCT:
 		{
+      const ThingTemplate * whatToBuild = command->getThingTemplate();
 			// if the command is a dozer construct task and the object dozer is building anything
 			// this command is not available
-			if(command->getThingTemplate())
+			if(whatToBuild)
 			{
-				BuildableStatus bStatus = command->getThingTemplate()->getBuildable();
+				BuildableStatus bStatus = whatToBuild->getBuildable();
 				if (bStatus == BSTATUS_NO || (bStatus == BSTATUS_ONLY_BY_AI && obj->getControllingPlayer()->getPlayerType() != PLAYER_COMPUTER))
 					return COMMAND_HIDDEN;
 			}
@@ -1044,13 +1061,14 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 				return COMMAND_RESTRICTED;
 			
 			// return whether or not the player can build this thing
-			if( player->canBuild( command->getThingTemplate() ) == FALSE )
+			if( player->canBuild( whatToBuild ) == FALSE )
 				return COMMAND_RESTRICTED;
 
-			if( !player->canAffordBuild( command->getThingTemplate() ) )
+			if( !player->canAffordBuild( whatToBuild ) )
 			{
 				return COMMAND_RESTRICTED;//COMMAND_CANT_AFFORD;
 			}
+
 
 			break;
 		}  

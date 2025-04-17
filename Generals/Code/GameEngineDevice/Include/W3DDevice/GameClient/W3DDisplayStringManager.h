@@ -38,6 +38,14 @@
 //-------------------------------------------------------------------------------------------------
 /** Access for creating game managed display strings */
 //-------------------------------------------------------------------------------------------------
+//#define KRIS_BRUTAL_HACK_FOR_AIRCRAFT_CARRIER_DEBUGGING
+
+#ifdef KRIS_BRUTAL_HACK_FOR_AIRCRAFT_CARRIER_DEBUGGING
+	#define MAX_GROUPS 20
+#else
+	#define MAX_GROUPS 10
+#endif
+
 class W3DDisplayStringManager : public DisplayStringManager
 {
 
@@ -64,7 +72,7 @@ public:
 	virtual DisplayString *getFormationLetterString( void ) { return m_formationLetterDisplayString; };
 
 protected:
-	DisplayString *m_groupNumeralStrings[10];
+	DisplayString *m_groupNumeralStrings[ MAX_GROUPS ];
 	DisplayString *m_formationLetterDisplayString;
 
 };

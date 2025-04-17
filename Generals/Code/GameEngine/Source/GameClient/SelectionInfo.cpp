@@ -23,18 +23,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "PreRTS.h"
-#include "GameClient/SelectionInfo.h"
+
+#include "GameLogic/Damage.h"
 
 #include "Common/ActionManager.h"
-#include "GameLogic/Damage.h"
-#include "Common/Player.h"
-#include "Common/PlayerList.h"
 #include "Common/ThingTemplate.h"
+#include "Common/PlayerList.h"
+#include "Common/Player.h"
 
+#include "GameClient/SelectionInfo.h"
 #include "GameClient/CommandXlat.h"
 #include "GameClient/ControlBar.h"
-#include "GameClient/Drawable.h"
 #include "GameClient/GameClient.h"
+#include "GameClient/Drawable.h"
 #include "GameClient/KeyDefs.h"
 
 #ifdef _INTERNAL

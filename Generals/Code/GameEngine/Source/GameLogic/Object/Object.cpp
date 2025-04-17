@@ -262,8 +262,8 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 
 	m_constructionPercent = CONSTRUCTION_COMPLETE;  // complete by default
 
-	m_visionRange = tt->friend_getVisionRange();
-	m_shroudClearingRange = tt->friend_getShroudClearingRange();
+	m_visionRange = tt->friend_calcVisionRange();
+	m_shroudClearingRange = tt->friend_calcShroudClearingRange();
 	if( m_shroudClearingRange == -1.0f )
 		m_shroudClearingRange = m_visionRange;// Backwards compatible, and perfectly logical default to assign
 	m_shroudRange = 0.0f;
@@ -284,6 +284,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 // pool[]ify
 	m_behaviors = MSGNEW("ModulePtrs") BehaviorModule*[totalModules + 1];
 	BehaviorModule** curB = m_behaviors;
+	const ModuleInfo& mi = tt->getBehaviorModuleInfo();
 
 	// set m_team to null before the first call, to avoid naughtiness...
 	// If no team is specified in the constructor, then assign the object
@@ -343,7 +344,6 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 
 	// behaviors are always done first, so they get into the publicModule arrays
 	// before anything else.
-	const ModuleInfo& mi = tt->getBehaviorModuleInfo();
 	for (modIdx = 0; modIdx < mi.getCount(); ++modIdx)
 	{
 		modName = mi.getNthName(modIdx);
@@ -377,7 +377,10 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 		AIUpdateInterface* ai = newMod->getAIUpdateInterface();
 		if (ai)
 		{
-			DEBUG_ASSERTCRASH(m_ai == NULL, ("You should never have more than one AI module (srj)\n"));
+			if( m_ai ) 
+			{
+				DEBUG_ASSERTCRASH( m_ai == NULL, ("%s has more than one AI module. This is illegal!\n", getTemplate()->getName().str()) );
+			}
 			m_ai = ai;
 		}
 
@@ -602,34 +605,6 @@ Object::~Object()
 	// a crack at this in case it is the current "This Object" pointer.
 	TheScriptEngine->notifyOfObjectDestruction(this);
 }
-
-//-------------------------------------------------------------------------------------------------
-void localIsHero( Object *obj, void* userData )
-{
-	Bool *hero = (Bool*)userData;
-	
-	if( obj && obj->isKindOf( KINDOF_HERO ) )
-	{
-		*hero = TRUE;
-	}
-}
-
-//-------------------------------------------------------------------------------------------------
-Bool Object::isHero() const
-{
-	ContainModuleInterface *contain = getContain();
-	if( contain )
-	{
-		Bool heroInside = FALSE;
-		contain->iterateContained( localIsHero, (void*)(&heroInside), FALSE );
-		if( heroInside )
-		{
-			return TRUE;
-		}
-	}
-	return isKindOf( KINDOF_HERO );
-}
-   
 
 //-------------------------------------------------------------------------------------------------
 /// this object now contained in "containedBy"
@@ -1835,6 +1810,32 @@ Bool Object::isNonFactionStructure(void) const
 	return isStructure() && !isFactionStructure();
 }
 
+void localIsHero( Object *obj, void* userData )
+{
+	Bool *hero = (Bool*)userData;
+	
+	if( obj && obj->isKindOf( KINDOF_HERO ) )
+	{
+		*hero = TRUE;
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+Bool Object::isHero(void) const
+{
+	ContainModuleInterface *contain = getContain();
+	if( contain )
+	{
+		Bool heroInside = FALSE;
+		contain->iterateContained( localIsHero, (void*)(&heroInside), FALSE );
+		if( heroInside )
+		{
+			return TRUE;
+		}
+	}
+	return isKindOf( KINDOF_HERO );
+}
+   
 //-------------------------------------------------------------------------------------------------
 void Object::setReceivingDifficultyBonus(Bool receive)
 {
@@ -4625,7 +4626,7 @@ SpecialPowerModuleInterface *Object::getSpecialPowerModule( const SpecialPowerTe
 		return NULL;
 
 	// search the modules for the one with the matching template
-	for (BehaviorModule** m = m_behaviors; *m; ++m)
+	for( BehaviorModule** m = m_behaviors; *m; ++m )
 	{
 		SpecialPowerModuleInterface* sp = (*m)->getSpecialPower();
 		if (!sp)
@@ -4829,6 +4830,7 @@ void Object::doCommandButton( const CommandButton *commandButton, CommandSourceT
 			default:
 				break;
 		}
+		DEBUG_CRASH( ("WARNING: Script doCommandButton for button %s not implemented. Doing nothing.", commandButton->getName().str()) );
 	}
 }
 
@@ -4908,6 +4910,7 @@ void Object::doCommandButtonAtObject( const CommandButton *commandButton, Object
 			default:
 				break;
 		}
+		DEBUG_CRASH( ("WARNING: Script doCommandButtonAtObject for button %s not implemented. Doing nothing.", commandButton->getName().str()) );
 	}
 }
 
@@ -5215,6 +5218,15 @@ Int Object::getMultiLogicalBonePosition(const char* boneNamePrefix, Int maxBones
 }
 
 //=============================================================================
+const AsciiString& Object::getCommandSetString() const 
+{ 
+	if (m_commandSetStringOverride.isNotEmpty())
+		return m_commandSetStringOverride; 
+
+	return getTemplate()->friend_getCommandSetString();
+}
+
+//=============================================================================
 Bool Object::canProduceUpgrade( const UpgradeTemplate *upgrade )
 {
 	// We need to have the button to make the upgrade.  CommandSets are a weird Logic/Client hybrid.
@@ -5226,21 +5238,11 @@ Bool Object::canProduceUpgrade( const UpgradeTemplate *upgrade )
  		if( button  
 				&&  ( (button->getCommandType() == GUI_COMMAND_PLAYER_UPGRADE)  ||  (button->getCommandType() == GUI_COMMAND_OBJECT_UPGRADE) ) // Or else a button that requires an upgrade will appear the same as a button that gives an upgrade
 				&&  button->getUpgradeTemplate()  
-				&&  (button->getUpgradeTemplate() == upgrade) 
-				)		
+				&&  (button->getUpgradeTemplate() == upgrade) )		
  			return TRUE; // getUpgradeTemplate only returns something if it is actually an upgrade
  	}
  
  	return FALSE;// Cheatin' punk.
-}
- 
- //=============================================================================
-const AsciiString& Object::getCommandSetString() const 
-{ 
-	if (m_commandSetStringOverride.isNotEmpty())
-		return m_commandSetStringOverride; 
-
-	return getTemplate()->friend_getCommandSetString();
 }
 
 //=============================================================================

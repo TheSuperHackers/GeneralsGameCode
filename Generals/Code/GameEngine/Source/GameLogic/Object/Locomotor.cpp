@@ -2553,6 +2553,14 @@ void Locomotor::maintainCurrentPositionHover(Object* obj, PhysicsBehavior *physi
 			force.y = accelForce * dir->y;
 			force.z = 0.0f;
 
+
+      // Apply a random kick (if applicable) to dirty-up visually.
+      // The idea is that chopper pilots have to do course corrections all the time
+      // Because of changes in wind, pressure, etc.
+      // Those changes are added here, then the 
+
+
+
 			// apply forces to object
 			physics->applyMotiveForce( &force );
 		}

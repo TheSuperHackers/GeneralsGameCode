@@ -254,7 +254,7 @@ void W3DTerrainLogic::getExtentIncludingBorder( Region3D *extent ) const
 	extent->lo.x = 0.0f;
 	extent->lo.y = 0.0f;
 
-	Real border = TheTerrainRenderObject->getMap()->getBorderSize() * MAP_XY_FACTOR;
+	Real border = TheTerrainRenderObject->getMap()->getBorderSizeInline() * MAP_XY_FACTOR;
 	extent->lo.x -= border;
 	extent->lo.y -= border;
 	extent->hi.x = (m_mapDX * MAP_XY_FACTOR)-border;

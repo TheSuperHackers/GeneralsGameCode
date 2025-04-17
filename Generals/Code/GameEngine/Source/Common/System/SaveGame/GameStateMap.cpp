@@ -29,6 +29,7 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"
+
 #include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/GameState.h"
@@ -410,16 +411,22 @@ void GameStateMap::xfer( Xfer *xfer )
 	xfer->xferDrawableID( &highDrawableID );
 	TheGameClient->setDrawableIDCounter( highDrawableID );
 
-	if (TheGameLogic->getGameMode()==GAME_SKIRMISH) {
-		if (TheSkirmishGameInfo==NULL) {
+	// Save the Game Info so the game can be started with the correct players on load
+	if( TheGameLogic->getGameMode()==GAME_SKIRMISH ) 
+	{
+		if( TheSkirmishGameInfo==NULL ) 
+		{
 			TheSkirmishGameInfo = NEW SkirmishGameInfo;
 			TheSkirmishGameInfo->init();  
 			TheSkirmishGameInfo->clearSlotList();
 			TheSkirmishGameInfo->reset();
 		}
 		xfer->xferSnapshot(TheSkirmishGameInfo);
-	} else {
-		if (TheSkirmishGameInfo) {
+	} 
+	else 
+	{
+		if( TheSkirmishGameInfo ) 
+		{
 			delete TheSkirmishGameInfo;
 			TheSkirmishGameInfo = NULL;
 		}
@@ -430,7 +437,8 @@ void GameStateMap::xfer( Xfer *xfer )
 	// things in the map file that don't don't change (terrain, triggers, teams, script
 	// definitions) etc
 	//
-	if( xfer->getXferMode() == XFER_LOAD ) {
+	if( xfer->getXferMode() == XFER_LOAD ) 
+	{
 		TheGameLogic->startNewGame( TRUE );
 	}
 

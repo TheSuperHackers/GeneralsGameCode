@@ -501,7 +501,6 @@ UpdateSleepTime StealthUpdate::update( void )
 		
 	}
 
-
 	Bool detectedStatusChangedThisFrame = FALSE;
 	if (m_detectionExpiresFrame > now)
 	{
@@ -591,6 +590,7 @@ void setWakeupIfInRange( Object *obj, void *userData)
 //		}
 //	}
 }
+
 
 //-------------------------------------------------------------------------------------------------
 void StealthUpdate::markAsDetected(UnsignedInt numFrames)

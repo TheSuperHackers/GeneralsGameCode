@@ -52,14 +52,23 @@
 //-----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
+#include "GameClient/CampaignManager.h"
+
 #include "Common/INI.h"
 #include "Common/Xfer.h"
-#include "GameClient/CampaignManager.h"
 #include "GameClient/GameClient.h"
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 CampaignManager *TheCampaignManager = NULL;
+
+
+#ifdef _INTERNAL
+// for occasional debugging...
+//#pragma optimize("", off)
+//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
+
 
 const FieldParse CampaignManager::m_campaignFieldParseTable[] = 
 {
@@ -363,7 +372,6 @@ void CampaignManager::parseMissionPart( INI* ini, void *instance, void *store, c
 			{ "UnitNames2",				INI::parseAsciiString,				NULL, offsetof( Mission, m_unitNames[2] ) },
 			{ "LocationNameLabel",INI::parseAsciiString,				NULL, offsetof( Mission, m_locationNameLabel ) },
 			{ "VoiceLength",			INI::parseInt ,								NULL, offsetof( Mission, m_voiceLength ) },
-
 
 			{ NULL,							NULL,											NULL, 0 }  // keep this last
 		};

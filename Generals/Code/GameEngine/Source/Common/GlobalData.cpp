@@ -1055,8 +1055,10 @@ GlobalData::~GlobalData( void )
 	if (m_weaponBonusSet)
 		m_weaponBonusSet->deleteInstance();
 
-	if( m_theOriginal == this )
+	if( m_theOriginal == this )	{
 		m_theOriginal = NULL;
+		TheWritableGlobalData = NULL;
+	}
 
 }  // end ~GlobalData
 

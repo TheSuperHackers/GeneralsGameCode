@@ -108,6 +108,7 @@ static const char *rankNames[] = {
 	"Commander",
 };
 
+
 static const Image* lookupRankImage(AsciiString side, Int rank)
 {
 	if (side.isEmpty())
@@ -142,6 +143,7 @@ static const Image* lookupRankImage(AsciiString side, Int rank)
 	return img;
 }
 
+
 static Int getTotalDisconnectsFromFile(Int playerID)
 {
 	Int retval = 0;
@@ -153,7 +155,7 @@ static Int getTotalDisconnectsFromFile(Int playerID)
 	UserPreferences pref;
 	AsciiString userPrefFilename;
 	userPrefFilename.format("GeneralsOnline\\MiscPref%d.ini", playerID);
-	DEBUG_LOG(("setPersistentDataCallback - reading stats from file %s\n", userPrefFilename.str()));
+	DEBUG_LOG(("getTotalDisconnectsFromFile - reading stats from file %s\n", userPrefFilename.str()));
 	pref.load(userPrefFilename);
 
 	// if there is a file override, use that data instead.
@@ -221,7 +223,7 @@ void GetAdditionalDisconnectsFromUserFile(PSPlayerStats *stats)
 	UserPreferences pref;
 	AsciiString userPrefFilename;
 	userPrefFilename.format("GeneralsOnline\\MiscPref%d.ini", stats->id);
-	DEBUG_LOG(("setPersistentDataCallback - reading stats from file %s\n", userPrefFilename.str()));
+	DEBUG_LOG(("GetAdditionalDisconnectsFromUserFile - reading stats from file %s\n", userPrefFilename.str()));
 	pref.load(userPrefFilename);
 
 	// if there is a file override, use that data instead.

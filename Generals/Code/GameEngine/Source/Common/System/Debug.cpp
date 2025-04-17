@@ -58,7 +58,9 @@
 #include "GameClient/GameText.h"
 #include "GameClient/Keyboard.h"
 #include "GameClient/Mouse.h"
-#include "Common/StackDump.h"
+#if defined(DEBUG_STACKTRACE) || defined(IG_DEBUG_STACKTRACE)
+	#include "Common/StackDump.h"
+#endif
 
 // Horrible reference, but we really, really need to know if we are windowed.
 extern bool DX8Wrapper_IsWindowed;
@@ -141,7 +143,7 @@ static void doStackDump();
 inline Bool ignoringAsserts()
 {
 #ifdef DEBUG_CRASHING
-	return !DX8Wrapper_IsWindowed || TheGlobalData->m_debugIgnoreAsserts;
+	return !DX8Wrapper_IsWindowed || (TheGlobalData&&TheGlobalData->m_debugIgnoreAsserts);
 #else
 	return !DX8Wrapper_IsWindowed;
 #endif
@@ -252,8 +254,8 @@ static int doCrashBox(const char *buffer, Bool logResult)
 	int result;
 
 	if (!ignoringAsserts()) {
+		result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING|MB_DEFBUTTON3);
 		//result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING|MB_DEFBUTTON3);
-		result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING);
 	}	else {
 		result = IDIGNORE;
 	}
@@ -468,7 +470,7 @@ void DebugCrash(const char *format, ...)
 	doLogOutput(theCrashBuffer);
 #endif
 #ifdef DEBUG_STACKTRACE
-	if (!TheGlobalData->m_debugIgnoreStackTrace)
+	if (!(TheGlobalData && TheGlobalData->m_debugIgnoreStackTrace))
 	{
 		doStackDump();
 	}
@@ -662,6 +664,10 @@ void ReleaseCrash(const char *reason)
 
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];
+
+	if (TheGlobalData==NULL) {
+		return; // We are shutting down, and TheGlobalData has been freed.  jba. [4/15/2003]
+	}
 
 	strcpy(prevbuf, TheGlobalData->getPath_UserData().str());
 	strcat(prevbuf, RELEASECRASH_FILE_NAME_PREV);

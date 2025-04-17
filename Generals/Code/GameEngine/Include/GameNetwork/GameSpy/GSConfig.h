@@ -45,7 +45,7 @@ public:
 	virtual Int getNumPingRepetitions(void) = 0;
 	virtual Int getPingTimeoutInMs(void) = 0;
 	virtual Int getPingCutoffGood( void ) = 0;
-	virtual Int getPingCutoffBad( void ) = 0;
+	virtual Int getPingCutoffBad( void ) = 0; //Bryan sez, Maybe
 
 	// QM
 	virtual std::list<AsciiString> getQMMaps(void) = 0;
@@ -73,7 +73,6 @@ public:
 
 	// Custom match
 	virtual Bool restrictGamesToLobby() = 0;
-
 	static GameSpyConfigInterface* create(AsciiString config);
 };
 

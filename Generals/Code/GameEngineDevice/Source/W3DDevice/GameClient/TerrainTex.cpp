@@ -347,6 +347,16 @@ int TerrainTextureClass::update(WorldHeightMap *htMap)
 	return(surface_desc.Height);
 }
 #endif
+
+//=============================================================================
+// TerrainTextureClass::setLOD
+//=============================================================================
+/** Sets the lod of the texture to be loaded into the video card.  */
+//=============================================================================
+void TerrainTextureClass::setLOD(Int LOD)
+{
+	if (Peek_D3D_Texture()) Peek_D3D_Texture()->SetLOD(LOD);
+}
 //=============================================================================
 // TerrainTextureClass::update256
 //=============================================================================

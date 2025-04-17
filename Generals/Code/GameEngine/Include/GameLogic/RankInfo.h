@@ -49,11 +49,13 @@ public:
 	Int							m_sciencePurchasePointsGranted;
 	ScienceVec			m_sciencesGranted;
 };
-EMPTY_DTOR(RankInfo)
+//EMPTY_DTOR(RankInfo)
 
 //-------------------------------------------------------------------------------------------------
 class RankInfoStore : public SubsystemInterface
 {
+public:
+	virtual ~RankInfoStore();
 
 public:
 	void init();

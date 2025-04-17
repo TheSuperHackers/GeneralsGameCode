@@ -72,6 +72,12 @@
 #include "WW3D2/meshmdl.h"
 #include "WW3D2/scene.h"
 
+#ifdef _INTERNAL
+// for occasional debugging...
+//#pragma optimize("", off)
+//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
+
 //-----------------------------------------------------------------------------
 //         Private Data                                                     
 //-----------------------------------------------------------------------------
@@ -130,7 +136,7 @@ are already set.  */
 //=============================================================================
 void W3DBridge::renderBridge(Bool wireframe)
 {
-	if (m_visible) {
+	if (m_visible && m_numPolygons && m_numVertex) {
 		if (!wireframe) DX8Wrapper::Set_Texture(0,m_bridgeTexture);
 		// Draw all the bridges.
 		DX8Wrapper::Draw_Triangles(	m_firstIndex, m_numPolygons, m_firstVertex,	m_numVertex);
@@ -514,7 +520,17 @@ void W3DBridge::getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatX
 	m_numPolygons = 0;
 	if (m_sectionMesh == NULL) {
 		numV = getModelVerticesFixed(destination_vb, *curVertexP, m_leftMtx, m_leftMesh, pLightsIterator);
+		if (!numV)
+		{	//not enough room for vertices
+			DEBUG_ASSERTCRASH( numV, ("W3DBridge::GetIndicesNVertices(). Vertex overflow.\n") );
+			return;
+		}
 		numI = getModelIndices( destination_ib, *curIndexP, *curVertexP, m_leftMesh);
+		if (!numI)
+		{	//not enough room for indices
+			DEBUG_ASSERTCRASH( numI, ("W3DBridge::GetIndicesNVertices(). Index overflow.\n") );
+			return;
+		}
 		*curIndexP += numI;
 		*curVertexP += numV;
 		m_numVertex += numV;
@@ -554,7 +570,17 @@ void W3DBridge::getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatX
 	vec /= bridgeLength;
 	numV = getModelVertices(destination_vb, *curVertexP, xOffset, vec, vecNormal, vecZ, m_start, 
 		m_leftMtx, m_leftMesh, pLightsIterator);
+	if (!numV)
+	{	//not enough room for vertices
+		DEBUG_ASSERTCRASH( numV, ("W3DBridge::GetIndicesNVertices(). Vertex overflow.\n") );
+		return;
+	}
 	numI = getModelIndices( destination_ib, *curIndexP, *curVertexP, m_leftMesh);
+	if (!numI)
+	{	//not enough room for indices
+		DEBUG_ASSERTCRASH( numI, ("W3DBridge::GetIndicesNVertices(). Index overflow.\n") );
+		return;
+	}
 	*curIndexP += numI;
 	*curVertexP += numV;
 	m_numVertex += numV;
@@ -565,7 +591,17 @@ void W3DBridge::getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatX
 	for (i=0; i<numSpans; i++) {
 		numV = getModelVertices(destination_vb, *curVertexP, xOffset+i*spanLength, vec, vecNormal, vecZ, m_start, 
 			m_sectionMtx, m_sectionMesh, pLightsIterator);
+		if (!numV)
+		{	//not enough room for vertices
+			DEBUG_ASSERTCRASH( numV, ("W3DBridge::GetIndicesNVertices(). Vertex overflow.\n") );
+			return;
+		}
 		numI = getModelIndices( destination_ib, *curIndexP, *curVertexP, m_sectionMesh);
+		if (!numI)
+		{	//not enough room for indices
+			DEBUG_ASSERTCRASH( numI, ("W3DBridge::GetIndicesNVertices(). Index overflow.\n") );
+			return;
+		}
 		*curIndexP += numI;
 		*curVertexP += numV;
 		m_numVertex += numV;
@@ -575,7 +611,17 @@ void W3DBridge::getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatX
 	// Draw the right end.
 	numV = getModelVertices(destination_vb, *curVertexP, xOffset+(numSpans-1)*spanLength, vec, vecNormal, vecZ, m_start,
 		m_rightMtx, m_rightMesh, pLightsIterator);
+	if (!numV)
+	{	//not enough room for vertices
+		DEBUG_ASSERTCRASH( numV, ("W3DBridge::GetIndicesNVertices(). Vertex overflow.\n") );
+		return;
+	}
 	numI = getModelIndices( destination_ib, *curIndexP, *curVertexP, m_rightMesh);
+	if (!numI)
+	{	//not enough room for indices
+		DEBUG_ASSERTCRASH( numI, ("W3DBridge::GetIndicesNVertices(). Index overflow.\n") );
+		return;
+	}
 	*curIndexP += numI;
 	*curVertexP += numV;
 	m_numVertex += numV;

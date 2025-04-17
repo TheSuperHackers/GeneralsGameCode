@@ -62,6 +62,42 @@
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
 
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+struct SelectObjectsInfo
+{
+	const ThingTemplate *thingTemplate;
+	GameMessage *msg;
+};
+
+//-------------------------------------------------------------------------------------------------
+
+void selectObjectOfType( Object* obj, void* selectObjectsInfo )
+{
+	SelectObjectsInfo *soInfo = (SelectObjectsInfo*)selectObjectsInfo;
+	if( !obj || !soInfo )
+	{
+		return;
+	}
+
+	//Do the templates match?
+	if( obj->getTemplate()->isEquivalentTo( soInfo->thingTemplate ) )
+	{
+		//Okay, then add it to the selected group.
+		soInfo->msg->appendObjectIDArgument( obj->getID() );
+
+		Drawable *draw = obj->getDrawable();
+		if( draw )
+		{
+			TheInGameUI->selectDrawable( draw );
+		}
+	}
+}
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+
+
 //-------------------------------------------------------------------------------------------------
 /** Process a button transition message from the window system that should be for one of
 	* our GUI commands */
@@ -256,6 +292,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 		//---------------------------------------------------------------------------------------------
 		case GUI_COMMAND_UNIT_BUILD:
 		{
+			//
 			const ThingTemplate *whatToBuild = commandButton->getThingTemplate();
 
 			// get the "factory" object that is going to make the thing
@@ -538,6 +575,8 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 				break;  // exit case
 
 			}  // end if
+
+      //what if container is subdued... assert a logic failure, perhaps?
 
 			// send message to exit
 			GameMessage *exitMsg = TheMessageStream->appendMessage( GameMessage::MSG_EXIT );

@@ -543,6 +543,7 @@ void MapSelectorTooltip(GameWindow *window,
 	
 }
 
+
 void positionStartSpotControls( GameWindow *win, GameWindow *mapWindow, Coord3D *pos, MapMetaData *mmd, GameWindow *buttonMapStartPositions[])
 {
 	if(!win || !mmd || !mapWindow || !buttonMapStartPositions)
@@ -778,7 +779,12 @@ void updateMapStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[
 	if (it == TheMapCache->end())
 	{
 		for (Int i = 0; i < MAX_SLOTS; ++i)
+    {
+      if ( buttonMapStartPositions[i] != NULL )
+      {
 			buttonMapStartPositions[i]->winHide(TRUE);
+      }
+    }
 		return;
 	}
 	MapMetaData mmd = it->second;
@@ -786,14 +792,20 @@ void updateMapStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[
 	Int i = 0;
 	for(; i < MAX_SLOTS; ++i)
 	{
+    if ( buttonMapStartPositions[i] != NULL )
+    {
 		GadgetButtonSetText(buttonMapStartPositions[i], UnicodeString::TheEmptyString);
 		if (!onLoadScreen)
 		{
 			buttonMapStartPositions[i]->winSetTooltip(TheGameText->fetch("TOOLTIP:StartPosition"));
 		}
 	}
+	}
 	for( i = 0; i < MAX_SLOTS; ++i)
 	{
+    if ( buttonMapStartPositions[i] == NULL )
+      continue;
+
 		GameSlot *gs =myGame->getSlot(i);
 		if(onLoadScreen)
 		{
@@ -1051,6 +1063,7 @@ void InitSkirmishGameGadgets( void )
 		comboBoxTeam[i] = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, comboBoxTeamID[i] );
 		DEBUG_ASSERTCRASH(comboBoxTeam[i], ("Could not find the comboBoxTeam[%d]",i ));
 		
+
 //		tmpString.format("SkirmishGameOptionsMenu.wnd:ButtonStartPosition%d", i);
 //		buttonStartPositionID[i] = TheNameKeyGenerator->nameToKey( tmpString );
 //		buttonStartPosition[i] = TheWindowManager->winGetWindowFromId( parentSkirmishGameOptions, buttonStartPositionID[i] );
@@ -1344,6 +1357,7 @@ void SkirmishGameOptionsMenuShutdown( WindowLayout *layout, void *userData )
 
 	// our shutdown is complete
 	TheTransitionHandler->reverse("SkirmishGameOptionsMenuFade");
+	
 }  // void SkirmishGameOptionsMenuShutdown( WindowLayout *layout, void *userData )
 
 //-------------------------------------------------------------------------------------------------

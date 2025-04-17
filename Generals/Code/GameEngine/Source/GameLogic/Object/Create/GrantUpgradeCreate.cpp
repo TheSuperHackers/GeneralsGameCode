@@ -96,10 +96,10 @@ void GrantUpgradeCreate::onCreate( void )
 				return;
 			}
 
+			Player *player = getObject()->getControllingPlayer();
 			if( upgradeTemplate->getUpgradeType() == UPGRADE_TYPE_PLAYER )
 			{
 				// get the player
-				Player *player = getObject()->getControllingPlayer();
 				player->addUpgrade( upgradeTemplate, UPGRADE_STATUS_COMPLETE );
 			}
 			else

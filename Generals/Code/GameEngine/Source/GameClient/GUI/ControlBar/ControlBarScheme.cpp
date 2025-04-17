@@ -362,7 +362,6 @@ ControlBarScheme::ControlBarScheme(void)
 	m_minMaxButtonHightlited = NULL;
 	m_minMaxButtonPushed = NULL;
 
-	
 	m_minMaxUL.x = 0;
 	m_minMaxLR.x = 0;
 

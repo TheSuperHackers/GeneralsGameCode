@@ -137,7 +137,7 @@ void oversizeTheTerrain(Int amount)
 #define DEFAULT_MAX_BATCH_SHORELINE_TILES		512	//maximum number of terrain tiles rendered per call (must fit in one VB)
 #define DEFAULT_MAX_MAP_SHORELINE_TILES		4096	//default size of array allocated to hold all map shoreline tiles.
 
-#define ADJUST_FROM_INDEX_TO_REAL(k) ((k-m_map->getBorderSize())*MAP_XY_FACTOR)
+#define ADJUST_FROM_INDEX_TO_REAL(k) ((k-m_map->getBorderSizeInline())*MAP_XY_FACTOR)
 inline Int IABS(Int x) {	if (x>=0) return x; return -x;};
 
 //-----------------------------------------------------------------------------
@@ -640,8 +640,8 @@ Int HeightMapRenderObjClass::updateVB(DX8VertexBufferClass	*pVB, char *data, Int
 				if (m_showImpassableAreas) {
 					// Color impassable cells "red"
 					DEBUG_ASSERTCRASH(PATHFIND_CELL_SIZE_F == MAP_XY_FACTOR, ("Pathfind must be terrain cell size, or this code needs reworking.  John A."));
-					Real borderHiX = (pMap->getXExtent()-2*pMap->getBorderSize())*MAP_XY_FACTOR;
-					Real borderHiY = (pMap->getYExtent()-2*pMap->getBorderSize())*MAP_XY_FACTOR;
+					Real borderHiX = (pMap->getXExtent()-2*pMap->getBorderSizeInline())*MAP_XY_FACTOR;
+					Real borderHiY = (pMap->getYExtent()-2*pMap->getBorderSizeInline())*MAP_XY_FACTOR;
 					Bool border = pCurVertices[0].x == -MAP_XY_FACTOR || pCurVertices[0].y == -MAP_XY_FACTOR;
 					Bool cliffMapped = pMap->isCliffMappedTexture(getXWithOrigin(i), getYWithOrigin(j));
 					if (pCurVertices[0].x == borderHiX) {
@@ -731,7 +731,7 @@ Int HeightMapRenderObjClass::updateVBForLight(DX8VertexBufferClass	*pVB, char *d
 			if (m_halfResMesh) {
 				if (j&1) continue;
 			}
-			Int yCoord = getYWithOrigin(j)+m_map->getDrawOrgY()-m_map->getBorderSize();
+			Int yCoord = getYWithOrigin(j)+m_map->getDrawOrgY()-m_map->getBorderSizeInline();
 			Bool intersect = false;
 			for (k=0; k<numLights; k++) {
 				if (pLights[k]->m_minY <= yCoord+1 && 
@@ -758,7 +758,7 @@ Int HeightMapRenderObjClass::updateVBForLight(DX8VertexBufferClass	*pVB, char *d
 				if (m_halfResMesh) {
 					if (i&1) continue;
 				}
-				Int xCoord = getXWithOrigin(i)+m_map->getDrawOrgX()-m_map->getBorderSize();
+				Int xCoord = getXWithOrigin(i)+m_map->getDrawOrgX()-m_map->getBorderSizeInline();
 				Bool intersect = false;
 				for (k=0; k<numLights; k++) {
 					if (pLights[k]->m_minX <= xCoord+1 && 
@@ -906,7 +906,7 @@ Int HeightMapRenderObjClass::updateVBForLightOptimized(DX8VertexBufferClass	*pVB
 			if (m_halfResMesh) {
 				if (j&1) continue;
 			}
-			Int yCoord = getYWithOrigin(j)+m_map->getDrawOrgY()-m_map->getBorderSize();
+			Int yCoord = getYWithOrigin(j)+m_map->getDrawOrgY()-m_map->getBorderSizeInline();
 			Bool intersect = false;
 			for (k=0; k<numLights; k++) {
 				if (pLights[k]->m_minY <= yCoord+1 && 
@@ -933,7 +933,7 @@ Int HeightMapRenderObjClass::updateVBForLightOptimized(DX8VertexBufferClass	*pVB
 				if (m_halfResMesh) {
 					if (i&1) continue;
 				}
-				Int xCoord = getXWithOrigin(i)+m_map->getDrawOrgX()-m_map->getBorderSize();
+				Int xCoord = getXWithOrigin(i)+m_map->getDrawOrgX()-m_map->getBorderSizeInline();
 				Bool intersect = false;
 				for (k=0; k<numLights; k++) {
 					if (pLights[k]->m_minX <= xCoord+1 && 
@@ -1634,7 +1634,7 @@ bool HeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 	Int EndCellX = 0;
  	Int StartCellY = 0;
 	Int EndCellY = 0;
-	const Int overhang = 2*VERTEX_BUFFER_TILE_LENGTH+m_map->getBorderSize(); // Allow picking past the edge for scrolling & objects.
+	const Int overhang = 2*VERTEX_BUFFER_TILE_LENGTH+m_map->getBorderSizeInline(); // Allow picking past the edge for scrolling & objects.
  	Vector3 minPt(MAP_XY_FACTOR*(-overhang), MAP_XY_FACTOR*(-overhang), -MAP_XY_FACTOR);
 	Vector3 maxPt(MAP_XY_FACTOR*(m_map->getXExtent()+overhang), 
 		MAP_XY_FACTOR*(m_map->getYExtent()+overhang), MAP_HEIGHT_SCALE*m_map->getMaxHeightValue()+MAP_XY_FACTOR);
@@ -1696,7 +1696,7 @@ bool HeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 
 		for (j=StartCellY; j<=EndCellY; j++) {
 			for (i=StartCellX; i<=EndCellX; i++) {
-				Short cur = getClipHeight(i+m_map->getBorderSize(),j+m_map->getBorderSize());
+				Short cur = getClipHeight(i+m_map->getBorderSizeInline(),j+m_map->getBorderSizeInline());
 				if (cur<minHt) minHt = cur;
 				if (maxHt<cur) maxHt = cur;
 			}
@@ -1711,10 +1711,10 @@ bool HeightMapRenderObjClass::Cast_Ray(RayCollisionTestClass & raytest)
 
 	// Adjust indexes into the bordered height map.
 
-	StartCellX += m_map->getBorderSize();
-	EndCellX += m_map->getBorderSize();
-	StartCellY += m_map->getBorderSize();
-	EndCellY += m_map->getBorderSize();
+	StartCellX += m_map->getBorderSizeInline();
+	EndCellX += m_map->getBorderSizeInline();
+	StartCellY += m_map->getBorderSizeInline();
+	EndCellY += m_map->getBorderSizeInline();
 
 	Int offset;
 	for (offset = 1; offset < 5; offset *= 3) {
@@ -1822,8 +1822,8 @@ Real HeightMapRenderObjClass::getHeightMapHeight(Real x, Real y, Coord3D* normal
 	float fy = ydiv - iyf; //get fraction
 
 	// since ixf & iyf are already floor'ed, we can use the fastest f->i conversion we have...
-	Int	ix = REAL_TO_INT_FLOOR(ixf) + m_map->getBorderSize();
-	Int	iy = REAL_TO_INT_FLOOR(iyf) + m_map->getBorderSize();
+	Int	ix = REAL_TO_INT_FLOOR(ixf) + m_map->getBorderSizeInline();
+	Int	iy = REAL_TO_INT_FLOOR(iyf) + m_map->getBorderSizeInline();
 	Int xExtent = m_map->getXExtent();
 
 	// Check for extent-3, not extent-1: we go into the next row/column of data for smoothed triangle points, so extent-1
@@ -1935,7 +1935,7 @@ Bool HeightMapRenderObjClass::isClearLineOfSight(const Coord3D& pos, const Coord
 	*/
 	const Real MAP_XY_FACTOR_INV = 1.0f / MAP_XY_FACTOR;
 
-	Int borderSize = m_map->getBorderSize();
+	Int borderSize = m_map->getBorderSizeInline();
 	Int start_x = REAL_TO_INT_FLOOR(pos.x * MAP_XY_FACTOR_INV) + borderSize;
 	Int start_y = REAL_TO_INT_FLOOR(pos.y * MAP_XY_FACTOR_INV) + borderSize;
 	Int end_x = REAL_TO_INT_FLOOR(posOther.x * MAP_XY_FACTOR_INV) + borderSize;
@@ -2131,8 +2131,8 @@ Real HeightMapRenderObjClass::getMaxCellHeight(Real x, Real y) const
 	Int offset = 1;
 	Int iX = x/MAP_XY_FACTOR;
 	Int iY = y/MAP_XY_FACTOR;
-	iX += m_map->getBorderSize();
-	iY += m_map->getBorderSize();
+	iX += m_map->getBorderSizeInline();
+	iY += m_map->getBorderSizeInline();
 	if (iX<0) iX = 0;
 	if (iY<0) iY = 0;
 	if (iX >= (m_map->getXExtent()-1)) {
@@ -2174,8 +2174,8 @@ Bool HeightMapRenderObjClass::isCliffCell(Real x, Real y)
 	}
 	Int iX = x/MAP_XY_FACTOR;
 	Int iY = y/MAP_XY_FACTOR;
-	iX += m_map->getBorderSize();
-	iY += m_map->getBorderSize();
+	iX += m_map->getBorderSizeInline();
+	iY += m_map->getBorderSizeInline();
 	if (iX<0) iX = 0;
 	if (iY<0) iY = 0;
 	if (iX >= (m_map->getXExtent()-1)) {
@@ -2424,7 +2424,7 @@ void HeightMapRenderObjClass::setShoreLineDetail(void)
 water.*/
 void HeightMapRenderObjClass::updateShorelineTiles(Int minX, Int minY, Int maxX, Int maxY, WorldHeightMap *pMap)
 {
-	Int border = pMap->getBorderSize();
+	Int border = pMap->getBorderSizeInline();
 
 	//Clamp region to valid terrain tiles
 	if (minX<0)
@@ -2871,16 +2871,16 @@ void HeightMapRenderObjClass::updateScorches(void)
 
 		Int minX = REAL_TO_INT_FLOOR((loc.X-radius)/MAP_XY_FACTOR);
 		Int minY = REAL_TO_INT_FLOOR((loc.Y-radius)/MAP_XY_FACTOR);
-		if (minX<-m_map->getBorderSize()) minX=-m_map->getBorderSize();
-		if (minY<-m_map->getBorderSize()) minY=-m_map->getBorderSize();
+		if (minX<-m_map->getBorderSizeInline()) minX=-m_map->getBorderSizeInline();
+		if (minY<-m_map->getBorderSizeInline()) minY=-m_map->getBorderSizeInline();
 		Int maxX = REAL_TO_INT_CEIL((loc.X+radius)/MAP_XY_FACTOR);
 		Int maxY = REAL_TO_INT_CEIL((loc.Y+radius)/MAP_XY_FACTOR);
 		maxX++; maxY++;
-		if (maxX > m_map->getXExtent()-m_map->getBorderSize()) {
-			maxX = m_map->getXExtent()-m_map->getBorderSize();
+		if (maxX > m_map->getXExtent()-m_map->getBorderSizeInline()) {
+			maxX = m_map->getXExtent()-m_map->getBorderSizeInline();
 		}
-		if (maxY > m_map->getYExtent()-m_map->getBorderSize()) {
-			maxY = m_map->getYExtent()-m_map->getBorderSize();
+		if (maxY > m_map->getYExtent()-m_map->getBorderSizeInline()) {
+			maxY = m_map->getYExtent()-m_map->getBorderSizeInline();
 		}
 		Int startVertex = m_curNumScorchVertices;
 		Int i, j;
@@ -2889,7 +2889,7 @@ void HeightMapRenderObjClass::updateScorches(void)
 				if (m_curNumScorchVertices >= MAX_SCORCH_VERTEX) return;
 				curVb->diffuse = diffuse;
 				Real theZ; 
-				theZ = amtToFloat+((float)getClipHeight(i+m_map->getBorderSize(),j+m_map->getBorderSize())*MAP_HEIGHT_SCALE);
+				theZ = amtToFloat+((float)getClipHeight(i+m_map->getBorderSizeInline(),j+m_map->getBorderSizeInline())*MAP_HEIGHT_SCALE);
 				if (m_halfResMesh) {
 					theZ = amtToFloat + this->getMaxCellHeight(i, j);
 					Real amt2 = amtToFloat + getMaxCellHeight(i-1, j-1);
@@ -2915,8 +2915,8 @@ void HeightMapRenderObjClass::updateScorches(void)
 		for (j=0; j<maxY-minY-1; j++) {
 			for (i=0; i<maxX-minX-1; i++) {
 				if (m_curNumScorchIndices+6 > MAX_SCORCH_INDEX) return;
-				Int xNdx = i+minX+m_map->getBorderSize();
-				Int yNdx = j+minY+m_map->getBorderSize();
+				Int xNdx = i+minX+m_map->getBorderSizeInline();
+				Int yNdx = j+minY+m_map->getBorderSizeInline();
 				Bool flipForBlend = m_map->getFlipState(xNdx, yNdx);
 #if 0
 				UnsignedByte alpha[4];
@@ -3261,8 +3261,8 @@ void HeightMapRenderObjClass::On_Frame_Update(void)
 			yMin = originY;
 			yMax = originY+VERTEX_BUFFER_TILE_LENGTH;
 			Bool intersect = false;
-			Int yCoordMin = getYWithOrigin(yMin)+m_map->getDrawOrgY()-m_map->getBorderSize();
-			Int yCoordMax = getYWithOrigin(yMax-1)+m_map->getDrawOrgY()+1-m_map->getBorderSize();
+			Int yCoordMin = getYWithOrigin(yMin)+m_map->getDrawOrgY()-m_map->getBorderSizeInline();
+			Int yCoordMax = getYWithOrigin(yMax-1)+m_map->getDrawOrgY()+1-m_map->getBorderSizeInline();
 			if (yCoordMax>yCoordMin) {
 				// no wrap occurred.
 				for (k=0; k<numDynaLights; k++) {
@@ -3307,8 +3307,8 @@ void HeightMapRenderObjClass::On_Frame_Update(void)
 				xMax = originX+VERTEX_BUFFER_TILE_LENGTH;
 
 				Bool intersect = false;
-				Int xCoordMin = getXWithOrigin(xMin)+m_map->getDrawOrgX()-m_map->getBorderSize();
-				Int xCoordMax = getXWithOrigin(xMax-1)+m_map->getDrawOrgX()+1-m_map->getBorderSize();
+				Int xCoordMin = getXWithOrigin(xMin)+m_map->getDrawOrgX()-m_map->getBorderSizeInline();
+				Int xCoordMax = getXWithOrigin(xMax-1)+m_map->getDrawOrgX()+1-m_map->getBorderSizeInline();
 				if (xCoordMax>xCoordMin) {
 					// no wrap occurred.
 					for (k=0; k<numDynaLights; k++) {
@@ -3479,7 +3479,7 @@ static Bool check(const FrustumClass & frustum, WorldHeightMap *pMap, Int x, Int
 		return(true);
 	}
 	Int height = pMap->getHeight(x, y);
-	Vector3 loc((x-pMap->getBorderSize())*MAP_XY_FACTOR, (y-pMap->getBorderSize())*MAP_XY_FACTOR, height*MAP_HEIGHT_SCALE);
+	Vector3 loc((x-pMap->getBorderSizeInline())*MAP_XY_FACTOR, (y-pMap->getBorderSizeInline())*MAP_XY_FACTOR, height*MAP_HEIGHT_SCALE);
 	if (CollisionMath::Overlap_Test(frustum,loc) == CollisionMath::INSIDE) {
 		if (x<visMinX) visMinX=x;
 		if (x>visMaxX) visMaxX=x;
@@ -3663,10 +3663,10 @@ void HeightMapRenderObjClass::updateCenter(CameraClass *camera , RefRenderObjLis
 	minY /= MAP_XY_FACTOR;
 	maxY /= MAP_XY_FACTOR;
 
-	minX += m_map->getBorderSize();
-	maxX += m_map->getBorderSize();
-	minY += m_map->getBorderSize();
-	maxY += m_map->getBorderSize();
+	minX += m_map->getBorderSizeInline();
+	maxX += m_map->getBorderSizeInline();
+	minY += m_map->getBorderSizeInline();
+	maxY += m_map->getBorderSizeInline();
 
 	visMinX = m_map->getXExtent();
 	visMinY = m_map->getYExtent();
@@ -4022,7 +4022,7 @@ void HeightMapRenderObjClass::Render(RenderInfoClass & rinfo)
 				RTS3DScene *pMyScene = (RTS3DScene *)Scene;
 				RefRenderObjListIterator pDynamicLightsIterator(pMyScene->getDynamicLights());
 				m_roadBuffer->drawRoads(&rinfo.Camera, doCloud?m_stageTwoTexture:NULL, TheGlobalData->m_useLightMap?m_stageThreeTexture:NULL,
-					m_disableTextures,xCoordMin-m_map->getBorderSize(), xCoordMax-m_map->getBorderSize(), yCoordMin-m_map->getBorderSize(), yCoordMax-m_map->getBorderSize(), &pDynamicLightsIterator);
+					m_disableTextures,xCoordMin-m_map->getBorderSizeInline(), xCoordMax-m_map->getBorderSizeInline(), yCoordMin-m_map->getBorderSizeInline(), yCoordMax-m_map->getBorderSizeInline(), &pDynamicLightsIterator);
 			}
 		}
 	#endif
@@ -4089,7 +4089,7 @@ void HeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 	Int vertexCount = 0;
 	Int indexCount = 0;
 	Int xExtent = m_map->getXExtent();
-	Int border = m_map->getBorderSize();
+	Int border = m_map->getBorderSizeInline();
 	Int drawEdgeY=m_map->getDrawOrgY()+m_map->getDrawHeight()-1;
 	Int drawEdgeX=m_map->getDrawOrgX()+m_map->getDrawWidth()-1;
 	if (drawEdgeX > (m_map->getXExtent()-1))
@@ -4292,7 +4292,7 @@ void HeightMapRenderObjClass::renderExtraBlendTiles(void)
 	Int vertexCount = 0;
 	Int indexCount = 0;
 	Int xExtent = m_map->getXExtent();
-	Int border = m_map->getBorderSize();
+	Int border = m_map->getBorderSizeInline();
 	static Int maxBlendTiles = DEFAULT_MAX_FRAME_EXTRABLEND_TILES;
 
 	if (!m_numExtraBlendTiles)

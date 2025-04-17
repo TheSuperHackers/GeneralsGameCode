@@ -116,9 +116,13 @@ struct FileInfo {
 	* created when FileSystem::Open() gets called.
 	*/
 //===============================
+#include <map>
 
 class FileSystem : public SubsystemInterface
 {
+  FileSystem(const FileSystem&);
+  FileSystem& operator=(const FileSystem&);
+  
 public:
 	FileSystem();
 	virtual	~FileSystem();
@@ -138,8 +142,7 @@ public:
 	void loadMusicFilesFromCD();
 	void unloadMusicFilesFromCD();
 protected:
-
-
+  mutable std::map<unsigned,bool> m_fileExist;
 };
 
 extern FileSystem*	TheFileSystem;

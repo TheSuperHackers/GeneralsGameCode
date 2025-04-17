@@ -72,6 +72,26 @@ private:
 		}
 	};
 
+	struct MapHelper
+	{
+		bool operator()(const BITSET& a, const BITSET& b) const
+		{
+			int i;
+			if (a.size() < b.size()) {
+				return true;
+			}
+			for (i = 0; i < a.size(); ++i) {
+				bool aVal = a.test(i);
+				bool bVal = b.test(i);
+				if (aVal && bVal) continue;
+				if (!aVal && !bVal) continue;
+				if (!aVal) return true;
+				return false;
+			}
+			return false; // all bits match.
+		}
+	};
+
 	//-------------------------------------------------------------------------------------------------
 	typedef std::hash_map< BITSET, const MATCHABLE*, HashMapHelper, HashMapHelper > MatchMap;
 
@@ -80,6 +100,7 @@ private:
 	//-------------------------------------------------------------------------------------------------
 	
 	mutable MatchMap m_bestMatches;
+	//mutable HashMatchMap m_bestHashMatches;
 
 	//-------------------------------------------------------------------------------------------------
 	// METHODS
@@ -176,16 +197,22 @@ public:
 	const MATCHABLE* findBestInfo(const std::vector<MATCHABLE>& v, const BITSET& bits) const
 	{
 		typename MatchMap::const_iterator it = m_bestMatches.find(bits);
+
+		const MATCHABLE *first = NULL;
 		if (it != m_bestMatches.end())
 		{
-			return (*it).second;
+			first = (*it).second;
 		}
-
+		if (first != NULL) {
+			return first;
+		}
+		
 		const MATCHABLE* info = findBestInfoSlow(v, bits);
 
 		DEBUG_ASSERTCRASH(info != NULL, ("no suitable match for criteria was found!\n"));
-		if (info != NULL)
+		if (info != NULL) {
 			m_bestMatches[bits] = info;
+		}
 
 		return info;
 	}

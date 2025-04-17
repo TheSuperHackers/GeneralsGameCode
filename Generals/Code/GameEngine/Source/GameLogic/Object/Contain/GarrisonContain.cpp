@@ -854,7 +854,6 @@ UpdateSleepTime GarrisonContain::update( void )
 		// remove if dead
 		if( contained->isEffectivelyDead() )
 		{
-
 			// remove from container
 			removeFromContain( contained );
 
@@ -1254,6 +1253,7 @@ void GarrisonContain::exitObjectViaDoor( Object *exitObj, ExitDoorType exitDoor 
 	Coord3D endPosition;
 
 	Real exitAngle = getObject()->getOrientation();
+
 	// Garrison doesn't have reserveDoor or exitDelay, so if we do nothing, everyone will appear on top 
 	// of each other and get stuck inside each others' extent (except for the first guy).  So we'll
 	// scatter the start point around a little to make it better.

@@ -659,7 +659,7 @@ private:
 	const Object *m_obj;
 	Int m_flags;
 public:
-	enum 
+	enum RelationshipAllowTypes
 	{
 		ALLOW_ALLIES					= (1<<ALLIES),		///< allow objects that m_obj considers allies
 		ALLOW_ENEMIES					= (1<<ENEMIES),		///< allow objects that m_obj considers enemy 
@@ -772,7 +772,7 @@ class PartitionFilterAcceptByObjectStatus : public PartitionFilter
 private:
 	ObjectStatusMaskType m_mustBeSet, m_mustBeClear;
 public:
-	PartitionFilterAcceptByObjectStatus(ObjectStatusMaskType mustBeSet, ObjectStatusMaskType mustBeClear) : m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear) { }
+	PartitionFilterAcceptByObjectStatus( ObjectStatusMaskType mustBeSet, ObjectStatusMaskType mustBeClear) : m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear) { }
 	virtual Bool allow(Object *objOther);
 #if defined(_DEBUG) || defined(_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterAcceptByObjectStatus"; }
@@ -789,7 +789,7 @@ class PartitionFilterRejectByObjectStatus : public PartitionFilter
 private:
 	ObjectStatusMaskType m_mustBeSet, m_mustBeClear;
 public:
-	PartitionFilterRejectByObjectStatus(ObjectStatusMaskType mustBeSet, ObjectStatusMaskType mustBeClear) 
+	PartitionFilterRejectByObjectStatus( ObjectStatusMaskType mustBeSet, ObjectStatusMaskType mustBeClear ) 
 		: m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear) 
 	{ 
 	}

@@ -61,6 +61,8 @@ LogClass::~LogClass()
 
 void LogClass::log(const char *fmt, ...)
 {
+	if (!m_fp)
+		return;
 	static char buf[1024];
 	static Int lastFrame = 0;
 	static Int lastIndex = 0;

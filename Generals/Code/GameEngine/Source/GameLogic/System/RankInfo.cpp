@@ -42,6 +42,28 @@ RankInfoStore* TheRankInfoStore = NULL;
 #endif
 
 //-----------------------------------------------------------------------------
+RankInfo::~RankInfo()
+{
+}
+
+
+//-----------------------------------------------------------------------------
+RankInfoStore::~RankInfoStore()
+{
+	Int level;
+	for (level =0; level < getRankLevelCount(); level++)
+	{
+		RankInfo* ri = m_rankInfos[level];
+		if (ri)
+		{
+			ri->deleteInstance();
+		}
+	}
+	m_rankInfos.clear();
+}
+
+
+//-----------------------------------------------------------------------------
 void RankInfoStore::init()
 {
 	DEBUG_ASSERTCRASH(m_rankInfos.empty(), ("Hmm"));

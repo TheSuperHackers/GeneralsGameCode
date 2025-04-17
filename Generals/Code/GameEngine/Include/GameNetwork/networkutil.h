@@ -39,7 +39,9 @@ Bool IsCommandSynchronized(NetCommandType type);
 AsciiString GetAsciiNetCommandType(NetCommandType type);
 
 #ifdef DEBUG_LOGGING
+extern "C" {
 void dumpBufferToLog(const void *vBuf, Int len, const char *fname, Int line);
+};
 #define LOGBUFFER(buf, len) dumpBufferToLog(buf, len, __FILE__, __LINE__)
 #else
 #define LOGBUFFER(buf, len) {}

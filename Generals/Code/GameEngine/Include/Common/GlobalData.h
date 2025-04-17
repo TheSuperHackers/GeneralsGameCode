@@ -391,6 +391,9 @@ public:
 
 	Color m_hotKeyTextColor;					///< standard color for all hotkeys.
 	
+  //THis is put on ice until later - M Lorenzen
+  //	Int m_cheaterHasBeenSpiedIfMyLowestBitIsTrue; ///< says it all.. this lives near other "colors" cause it is masquerading as one
+	
 	AsciiString m_specialPowerViewObjectName;	///< Created when certain special powers are fired so players can watch.
 
 	std::vector<AsciiString> m_standardPublicBones;
@@ -492,9 +495,12 @@ public:
 
 	Bool				m_isBreakableMovie;							///< if we enter a breakable movie, set this flag
 	Bool				m_breakTheMovie;								///< The user has hit escape!
-	
 	AsciiString m_modDir;
 	AsciiString m_modBIG;
+
+	//-allAdvice feature
+	//Bool m_allAdvice;
+
 
 	// the trailing '\' is included!
 	AsciiString getPath_UserData() const;

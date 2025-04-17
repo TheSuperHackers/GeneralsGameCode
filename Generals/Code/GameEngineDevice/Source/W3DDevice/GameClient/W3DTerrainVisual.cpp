@@ -565,8 +565,8 @@ Bool W3DTerrainVisual::getWaterGridHeight( Real worldX, Real worldY, Real *heigh
 void W3DTerrainVisual::setRawMapHeight(const ICoord2D *gridPos, Int height)
 {
 	if (m_terrainHeightMap) {
-		Int x = gridPos->x+m_terrainHeightMap->getBorderSize();
-		Int y = gridPos->y+m_terrainHeightMap->getBorderSize();
+		Int x = gridPos->x+m_terrainHeightMap->getBorderSizeInline();
+		Int y = gridPos->y+m_terrainHeightMap->getBorderSizeInline();
  		//if (m_terrainHeightMap->getHeight(x,y) != height) //ML changed to prevent scissoring with roads
  		if (m_terrainHeightMap->getHeight(x,y) > height) 
 		{

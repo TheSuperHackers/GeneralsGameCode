@@ -1165,13 +1165,16 @@ void AIPlayer::computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord
 	Coord3D bestPos;
 	Int i, j;
 
-	for (i=0; i<xCount; i++) {
-		for (j=0; j<yCount; j++) {
-			pos.x = bounds.lo.x + (bounds.width()*i)/xCount;
-			pos.y = bounds.lo.y + (bounds.height()*j)/yCount;
+	for (i=0; i<xCount; i++) 
+	{
+		for (j=0; j<yCount; j++) 
+		{
+			pos.x = bounds.lo.x + ( bounds.width() * i ) / xCount;
+			pos.y = bounds.lo.y + ( bounds.height() * j ) / yCount;
 			pos.z = 0;
 			Int curCash = getPlayerSuperweaponValue(&pos, playerNdx, 2*weaponRadius);
-			if ( curCash > cash) {
+			if ( curCash > cash) 
+			{
 				cash = curCash;
 				bestPos = pos;
 			}
@@ -1183,17 +1186,22 @@ void AIPlayer::computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord
 	yCount = 11;
 	cash = -1;
 	Int count = 0;
-	for (i=0; i<xCount; i++) {
-		for (j=0; j<yCount; j++) {
+	for( i = 0; i < xCount; i++ ) 
+	{
+		for( j = 0; j < yCount; j++ ) 
+		{
 			pos.x = bestPos.x + (i-5)*(weaponRadius/10);
-			pos.y = bestPos.y+ (j-5)*(weaponRadius/10);
+			pos.y = bestPos.y + (j-5)*(weaponRadius/10);
 			pos.z = 0;
-			Int curCash = getPlayerSuperweaponValue(&pos, playerNdx, weaponRadius);
-			if ( curCash > cash) {
+			Int curCash = getPlayerSuperweaponValue( &pos, playerNdx, weaponRadius );
+			if ( curCash > cash) 
+			{
 				cash = curCash;
 				veryBestPos = pos;
 				count = 1;
-			}	else if (curCash==cash) {
+			}	
+			else if (curCash==cash) 
+			{
 				veryBestPos.x += pos.x;
 				veryBestPos.y += pos.y;
 				count++;
@@ -1214,7 +1222,8 @@ void AIPlayer::computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord
  */
 Int AIPlayer::getPlayerSuperweaponValue(Coord3D *center, Int playerNdx, Real radius )
 {
-	if (radius < 4*PATHFIND_CELL_SIZE_F) {
+	if (radius < 4*PATHFIND_CELL_SIZE_F) 
+	{
 		radius = 4*PATHFIND_CELL_SIZE_F;
 	}
 	Player::PlayerTeamList::const_iterator it;
@@ -1222,30 +1231,40 @@ Int AIPlayer::getPlayerSuperweaponValue(Coord3D *center, Int playerNdx, Real rad
 	Real radSqr = sqr(radius);
 
 	Player* pPlayer = ThePlayerList->getNthPlayer(playerNdx);
-	if (pPlayer == NULL) return 0;
-	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it) {
-		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
+	if (pPlayer == NULL) 
+		return 0;
+	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it) 
+	{
+		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) 
+		{
 			Team *team = iter.cur();
 			if (!team) continue;
-			for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
+			for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance()) 
+			{
 				Object *pObj = iter.cur();
-				if (!pObj) continue;
-				if (pObj->isKindOf(KINDOF_AIRCRAFT)) {
-					if (pObj->isSignificantlyAboveTerrain()) {
+				if (!pObj) 
+					continue;
+				if (pObj->isKindOf(KINDOF_AIRCRAFT)) 
+				{
+					if (pObj->isSignificantlyAboveTerrain()) 
+					{
 						continue; // Don't target flying aircraft.  OK if in the airstrip.
 					}
 				}
 				Coord3D pos = *pObj->getPosition();
 				Real dx = center->x - pos.x;
 				Real dy = center->y - pos.y;
-				if (dx*dx+dy*dy<radSqr) {
+				if (dx*dx+dy*dy<radSqr) 
+				{
 					Real dist = sqrt(dx*dx+dy*dy);
 					Real factor = 1.0f - (dist/(2*radius)); // 1.0 in center, 0.5 on edges.
 					Real value = pObj->getTemplate()->calcCostToBuild(pPlayer);
-					if (pObj->isKindOf(KINDOF_COMMANDCENTER)) {
+					if (pObj->isKindOf(KINDOF_COMMANDCENTER)) 
+					{
 						value = value/10; // Command centers cannot be killed by any superweapon, so we don't want to target them as highly. jba.
 					}
-					if (value > 3000) {
+					if (value > 3000) 
+					{
 						value = value/10; // Superweapons can't be killed by superweapons, so we don't want to value them highly.
 					}
 					cash += factor * value;
@@ -1817,7 +1836,10 @@ void AIPlayer::buildBySupplies(Int minimumCash, const AsciiString& thingName)
 				if (valid) break;
 			}
 		}
-		if (valid) location = newPos;
+		if (valid) 
+		{
+			location = newPos;
+		}
 		TheTerrainVisual->removeAllBibs();	// isLocationLegalToBuild adds bib feedback, turn it off.  jba.
 		location.z = 0; // All build list locations are ground relative.
 		m_player->addToPriorityBuildList(thingName, &location, angle);
@@ -2249,7 +2271,7 @@ void AIPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadiu
 						AIUpdateInterface *ai = unit->getAIUpdateInterface();
 						if (ai) 
 						{
-#ifdef DEBUG_LOGGING
+#if defined(_DEBUG) || defined(_INTERNAL)
 							Coord3D pos = *unit->getPosition();
 							Coord3D to = teamProto->getTemplateInfo()->m_homeLocation;
 							DEBUG_LOG(("Moving unit from %f,%f to %f,%f\n", pos.x, pos.y , to.x, to.y ));
@@ -3443,31 +3465,43 @@ void AIPlayer::getPlayerStructureBounds(Region2D *bounds, Int playerNdx )
 	objBounds.hi.x = objBounds.lo.x = objBounds.hi.y = objBounds.lo.x = 0;
 
 	Player* pPlayer = ThePlayerList->getNthPlayer(playerNdx);
-	if (pPlayer == NULL) return;
-	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it) {
-		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
+	if (pPlayer == NULL) 
+		return;
+	for (it = pPlayer->getPlayerTeams()->begin(); it != pPlayer->getPlayerTeams()->end(); ++it) 
+	{
+		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) 
+		{
 			Team *team = iter.cur();
-			if (!team) continue;
-			for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
+			if (!team) 
+				continue;
+			for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance()) 
+			{
 				Object *pObj = iter.cur();
-				if (!pObj) continue;
-				if (pObj->isKindOf(KINDOF_STRUCTURE)) {
+				if (!pObj) 
+					continue;
+				if( pObj->isKindOf(KINDOF_STRUCTURE) ) 
+				{
 					Coord3D pos = *pObj->getPosition();
 					if (firstObject) {
 						objBounds.lo.x = objBounds.hi.x = pos.x;
 						objBounds.lo.y = objBounds.hi.y = pos.y;
 						firstObject = false;
-					}	else {
+					}	
+					else 
+					{
 						if (objBounds.lo.x>pos.x) objBounds.lo.x = pos.x;
 						if (objBounds.lo.y>pos.y) objBounds.lo.y = pos.y;
 						if (objBounds.hi.x<pos.x) objBounds.hi.x = pos.x;
 						if (objBounds.hi.y<pos.y) objBounds.hi.y = pos.y;
 					}
-					if (firstStructure) {
+					if (firstStructure) 
+					{
 						bounds->lo.x = bounds->hi.x = pos.x;
 						bounds->lo.y = bounds->hi.y = pos.y;
 						firstStructure = false;
-					}	else {
+					}	
+					else 
+					{
 						if (bounds->lo.x>pos.x) bounds->lo.x = pos.x;
 						if (bounds->lo.y>pos.y) bounds->lo.y = pos.y;
 						if (bounds->hi.x<pos.x) bounds->hi.x = pos.x;

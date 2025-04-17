@@ -511,7 +511,9 @@ void InGameUI::addSuperweapon(Int playerIndex, const AsciiString& powerName, Obj
 	const Player* player = ThePlayerList->getNthPlayer(playerIndex);
 	Bool hiddenByScience = (powerTemplate->getRequiredScience() != SCIENCE_INVALID) && (player->hasScience(powerTemplate->getRequiredScience()) == false);
 
+#ifndef DO_UNIT_TIMINGS
 	DEBUG_LOG(("Adding superweapon UI timer\n"));
+#endif
 	SuperweaponInfo *info = newInstance(SuperweaponInfo)(
 					id,
 					-1,			// timestamp
@@ -3508,10 +3510,6 @@ void InGameUI::postDraw( void )
 						}
 					}
 				}
-
-
-
-
 			}
 		}
 	}
@@ -3876,9 +3874,9 @@ void InGameUI::militarySubtitle( const AsciiString& label, Int duration )
 	TheInGameUI->disableTooltipsUntil(messageTimeout);
 	
 	// calculate where this screen position should be since the position being passed in is based off 8x6
-	Coord2D multiplyer;
-	multiplyer.x = TheDisplay->getWidth() / 800;
-	multiplyer.y = TheDisplay->getHeight() / 600;
+	Coord2D multiplier;
+	multiplier.x = TheDisplay->getWidth() / 800;
+	multiplier.y = TheDisplay->getHeight() / 600;
 
 	// lets bring out the data structure!
 	m_militarySubtitle = NEW MilitarySubtitleData;
@@ -3887,8 +3885,8 @@ void InGameUI::militarySubtitle( const AsciiString& label, Int duration )
 	m_militarySubtitle->blockDrawn = TRUE;
 	m_militarySubtitle->blockBeginFrame = currLogicFrame;
 	m_militarySubtitle->lifetime = messageTimeout;
-	m_militarySubtitle->blockPos.x =  m_militarySubtitle->position.x = m_militaryCaptionPosition.x * multiplyer.x;
-	m_militarySubtitle->blockPos.y =  m_militarySubtitle->position.y = m_militaryCaptionPosition.y * multiplyer.y;
+	m_militarySubtitle->blockPos.x =  m_militarySubtitle->position.x = m_militaryCaptionPosition.x * multiplier.x;
+	m_militarySubtitle->blockPos.y =  m_militarySubtitle->position.y = m_militaryCaptionPosition.y * multiplier.y;
 	m_militarySubtitle->incrementOnFrame = currLogicFrame + (Int)(((Real)LOGICFRAMES_PER_SECOND * m_militaryCaptionDelayMS)/1000.0f);
 	m_militarySubtitle->index = 0;
 	for (int i = 1; i < MAX_SUBTITLE_LINES; i ++)
@@ -5133,7 +5131,7 @@ void InGameUI::updateAndDrawWorldAnimations( void )
 		wad = *it;
 
 		// update portion ... only when the game is in motion
-		if( TheGameLogic->isGamePaused() == FALSE )
+		if( wad && TheGameLogic->isGamePaused() == FALSE )
 		{
 
 			//

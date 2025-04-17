@@ -92,10 +92,16 @@ void W3DBibBuffer::loadBibsInVertexAndIndexBuffers(void)
 	if (!m_anythingChanged) {
 		return;
 	}
+
 	m_curNumBibVertices = 0;
 	m_curNumBibIndices = 0;
 	m_curNumNormalBibIndices = 0;
 	m_curNumNormalBibVertex = 0;
+
+	if (m_numBibs==0) {
+		return;	
+	}
+
 	VertexFormatXYZDUV1 *vb;
 	UnsignedShort *ib;
 	// Lock the buffers.

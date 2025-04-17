@@ -80,7 +80,9 @@ DECLARE_PERF_TIMER(MemoryPoolInitFilling)
 	faster to free raw DMA blocks. 
 	@todo verify this speedup is enough to be worth the extra space
 */
-#define MPSB_DLINK
+#ifndef DISABLE_MEMORYPOOL_MPSB_DLINK
+	#define MPSB_DLINK
+#endif
 
 #ifdef MEMORYPOOL_DEBUG
 
@@ -902,9 +904,11 @@ void MemoryPoolSingleBlock::initBlock(Int logicalSize, MemoryPoolBlob *owningBlo
 #endif
 }
 #endif // MEMORYPOOL_DEBUG
+
 #ifdef MEMORYPOOL_CHECKPOINTING
 	m_checkpointInfo = NULL;
 #endif
+
 #ifdef MEMORYPOOL_BOUNDINGWALL
 	m_wallPattern = theBoundingWallPattern++;
 	debugFillInWalls();

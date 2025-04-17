@@ -658,6 +658,16 @@ Int GameWindow::winEnable( Bool enable )
 
 }  // end WinEnable
 
+// GameWindow::winGetEnabled ======================================================
+/** Enable or disable a window based on the enable parameter.
+	* A disabled window can be seen but accepts no input. */
+//=============================================================================
+Bool GameWindow::winGetEnabled( void )
+{
+  return BitIsSet( m_status, WIN_STATUS_ENABLED );
+
+}  // end winGetEnabled
+
 // GameWindow::winHide ========================================================
 /** Hide or show a window based on the hide parameter.
 	* A hidden window can't be seen and accepts no input. */

@@ -409,7 +409,6 @@ UpdateSleepTime TransportContain::update()
 			}
 		}
 	}
-
 	return OpenContain::update(); //extend
 }
 

@@ -49,6 +49,23 @@ void ScienceStore::init()
 }
 
 //-----------------------------------------------------------------------------
+ScienceStore::~ScienceStore()
+{
+	// nope.
+	//m_sciences.clear();
+
+	// go through all sciences and delete any overrides
+	for (ScienceInfoVec::iterator it = m_sciences.begin(); it != m_sciences.end(); /*++it*/)
+	{
+		ScienceInfo* si = *it;
+		++it;
+		if (si) {
+			si->deleteInstance();
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
 void ScienceStore::reset()
 {
 	// nope.

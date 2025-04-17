@@ -307,6 +307,7 @@ public:
 	virtual const Script *findScriptByName(const AsciiString& scriptName) {return findScript(scriptName);} ///<  Finds a script.
 		
 	const BreezeInfo& getBreezeInfo() const {return m_breezeInfo;}
+	void turnBreezeOff(void) {m_breezeInfo.m_intensity = 0.0f;}
 	
 	Bool isTimeFrozenScript( void );		///< Ask whether a script has frozen time or not
 	void doFreezeTime( void );

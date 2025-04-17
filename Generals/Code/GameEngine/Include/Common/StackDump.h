@@ -29,8 +29,7 @@
 
 #ifndef IG_DEGBUG_STACKTRACE
 #define IG_DEBUG_STACKTRACE	1
-#endif
-
+#endif // Unsure about this one -ML 3/25/03
 #if defined(_DEBUG) || defined(_INTERNAL) || defined(IG_DEBUG_STACKTRACE)
 
 // Writes a stackdump (provide a callback : gets called per line)
@@ -70,6 +69,4 @@ __inline void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info ) {}
 #endif
 
 extern AsciiString g_LastErrorDump;
-
-
 #endif // __STACKDUMP_H_

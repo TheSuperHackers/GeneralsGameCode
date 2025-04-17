@@ -205,7 +205,9 @@ static CanAttackResult canObjectForceAttack( Object *obj, const Object *victim, 
 		//that try to force attack in a location beyond their reach (range, LOS, etc).
 		if( pos )
 		{
+
 			Object *testObj = obj;
+
 			if( obj->isKindOf( KINDOF_IMMOBILE ) || obj->isKindOf( KINDOF_SPAWNS_ARE_THE_WEAPONS ) )
 			{
 				SpawnBehaviorInterface *spawnInterface = obj->getSpawnBehaviorInterface();
@@ -2917,7 +2919,6 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_REMOVE_BEACON:
 			if (TheGameLogic->isInMultiplayerGame() && !TheGameLogic->isInReplayGame())
-
 			{
 				TheMessageStream->appendMessage( GameMessage::MSG_REMOVE_BEACON );
 			}

@@ -766,13 +766,9 @@ void ActiveBody::createParticleSystems( const AsciiString &boneBaseName,
 	{
 
 		// pick a bone index to place this particle system at
-		
 		// MDC: moving to GameLogicRandomValue.  This does not need to be synced, but having it so makes searches *so* much nicer.
-		//Int boneIndex = GameLogicRandomValue( 0, maxSystems - i - 1 );
-
     // DTEH: Moved back to GameClientRandomValue because of desync problems. July 27th 2003.
     Int boneIndex = GameClientRandomValue( 0, maxSystems - i - 1 );
-
 
 		// find the actual bone location to use and mark that bone index as used
 		Int count = 0;

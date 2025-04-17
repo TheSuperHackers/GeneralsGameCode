@@ -290,6 +290,7 @@ void GameResultsThreadClass::Thread_Function()
 
 //-------------------------------------------------------------------------
 
+#ifdef DEBUG_LOGGING
 #define CASE(x) case (x): return #x;
 
 static const char *getWSAErrorString( Int error )
@@ -355,6 +356,7 @@ static const char *getWSAErrorString( Int error )
 
 #undef CASE
 
+#endif
 //-------------------------------------------------------------------------
 
 Int GameResultsThreadClass::sendGameResults( UnsignedInt IP, UnsignedShort port, const std::string& results )

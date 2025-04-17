@@ -734,6 +734,23 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 		const AsciiString& recoilBoneName = m_weaponRecoilBoneName[wslot];
 		const AsciiString& mfName = m_weaponMuzzleFlashName[wslot];
 		const AsciiString& plbName = m_weaponProjectileLaunchBoneName[wslot];
+    
+// a useful tool for finding missing INI entries in the weapon-bone block
+// since this class has no idea which object it refers to, it must assume that the projectilelaunchbonename
+// is required if the fxBoneName is specified
+// this is not always true, since some weapons have no launched projectiles, hence the caveat in the assert message
+//#if defined(_DEBUG) || defined(_INTERNAL)
+//    if (
+//          ( m_modelName.startsWith("UV") || m_modelName.startsWith("NV") || m_modelName.startsWith("AV") ||
+//            m_modelName.startsWith("uv") || m_modelName.startsWith("nv") || m_modelName.startsWith("av")
+//          )
+//
+//          && fxBoneName.isNotEmpty()
+//          
+//      )
+//    DEBUG_ASSERTCRASH( plbName.isNotEmpty(), ("You appear to have a missing projectilelaunchbonename. \n Promptly ignore this assert if this model is used by a non-projectile-weapon-bearing unit\nModel name = %s.", m_modelName.str()) );
+//#endif
+
 		if (fxBoneName.isNotEmpty() || recoilBoneName.isNotEmpty() || mfName.isNotEmpty() || plbName.isNotEmpty())
 		{
 			Int prevFxBone = 0;
@@ -1730,7 +1747,10 @@ W3DModelDraw::W3DModelDraw(Thing *thing, const ModuleData* moduleData) : DrawMod
 	}
 
 	Drawable* draw = getDrawable();
-	Object* obj = draw ? draw->getObject() : NULL;
+
+  if ( draw )
+  {
+	  Object* obj = draw->getObject();
 	if (obj)
 	{	
 		if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
@@ -1739,6 +1759,7 @@ W3DModelDraw::W3DModelDraw(Thing *thing, const ModuleData* moduleData) : DrawMod
 			m_hexColor = obj->getIndicatorColor();
 	}
 
+  }
 	setModelState(info);
 }
 

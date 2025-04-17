@@ -483,6 +483,9 @@ static Object * placeObjectAtPosition(Int slotNum, AsciiString objectTemplateNam
 																	const PlayerTemplate *pTemplate)
 {
 	const ThingTemplate* btt = TheThingFactory->findTemplate(objectTemplateName);
+
+	DEBUG_ASSERTCRASH(btt, ("TheThingFactory didn't find a template in placeObjectAtPosition()") );
+
 	Object *obj = TheThingFactory->newObject( btt, pPlayer->getDefaultTeam() );
 	DEBUG_ASSERTCRASH(obj, ("TheThingFactory didn't give me a valid Object for player %d's (%ls) starting building\n",
 		slotNum, pTemplate->getDisplayName().str()));
@@ -2300,18 +2303,22 @@ Bool GameLogic::isIntroMoviePlaying()
 // ------------------------------------------------------------------------------------------------
 void GameLogic::selectObject(Object *obj, Bool createNewSelection, PlayerMaskType playerMask, Bool affectClient)
 {
-	if (!obj) {
+	if (!obj) 
+	{
 		return;
 	}
 
-	if (!obj->isMassSelectable() && !createNewSelection) {
+	if (!obj->isMassSelectable() && !createNewSelection) 
+	{
 		DEBUG_LOG(("GameLogic::selectObject() - Object attempted to be added to selection, but isn't mass-selectable.\n"));
 		return;
 	}
 
-	while (playerMask) {
+	while( playerMask ) 
+	{
 		Player *player = ThePlayerList->getEachPlayerFromMask(playerMask);
-		if (!player) {
+		if( !player ) 
+		{
 			return;
 		}
 
@@ -2321,17 +2328,22 @@ void GameLogic::selectObject(Object *obj, Bool createNewSelection, PlayerMaskTyp
 		group->add(obj);
 
 		// add all selected agents to the AI group
-		if (createNewSelection)	{
+		if (createNewSelection)	
+		{
 			player->setCurrentlySelectedAIGroup(group);
-		} else {
+		} 
+		else 
+		{
 			player->addAIGroupToCurrentSelection(group);
 		}
 
 		TheAI->destroyGroup(group);
 
-		if (affectClient) {
+		if( affectClient ) 
+		{
 			Drawable *draw = obj->getDrawable();
-			if (draw) {
+			if( draw ) 
+			{
 				TheInGameUI->selectDrawable(draw);
 			}
 		}
@@ -2722,6 +2734,7 @@ void GameLogic::friend_awakenUpdateModule(Object* obj, UpdateModulePtr u, Unsign
 // ------------------------------------------------------------------------------------------------
 #ifdef DO_UNIT_TIMINGS
 	enum {TIME_FRAMES=100};
+	enum {SETTLE_FRAMES=10};
 static void unitTimings(void)
 {
 	static Int settleFrames = 0;
@@ -2729,6 +2742,11 @@ static void unitTimings(void)
 	enum { INFANTRY, VEHICLE, STRUCTURE, OTHER, END}; 
 	static Int unitTypes = INFANTRY;
 	AsciiString sides[8];
+
+
+	const Int UNIT_X = 10;
+	const Int UNIT_Y = 10;
+	const Int TOTAL_UNITS = UNIT_X*UNIT_Y;
 
 
 	Int sideCount = 0;
@@ -2786,10 +2804,10 @@ static void unitTimings(void)
 
 		if (mode == LOGIC) {
 			timeLogic = timeToUpdate;
-			drawCallLogic = (float)drawCallTotal / (float)(TIME_FRAMES * 100);  // 100 units for TIME_FRAMES
+			drawCallLogic = (float)drawCallTotal / (float)(TIME_FRAMES * TOTAL_UNITS);  // 100 units for TIME_FRAMES
 
 			mode = ALL;
-			settleFrames = 10;
+			settleFrames = SETTLE_FRAMES;
 			//g_timing_no_anim = true;
 			Coord3D thePos;
 			thePos.x = 50;
@@ -2800,19 +2818,19 @@ static void unitTimings(void)
 		}
 		if (mode == ALL) {
 			timeAll = timeToUpdate;
-			drawCallAll = (float)drawCallTotal / (float)(TIME_FRAMES * 100);  // 100 units for TIME_FRAMES
+			drawCallAll = (float)drawCallTotal / (float)(TIME_FRAMES * TOTAL_UNITS);  // 100 units for TIME_FRAMES
 
 			mode = NO_PARTICLES; 
-			settleFrames = 10;
+			settleFrames = SETTLE_FRAMES;
 			if (TheParticleSystemManager->getParticleCount()>1) {
 				TheParticleSystemManager->reset();
-				DEBUG_LOG(("Starting noPart - "));
+				DEBUG_LOG(("Starting noParticles - \n"));
 			}
 			return;
 		} 
 		if (mode == NO_PARTICLES) {
 			timeNoPart = timeToUpdate;
-			drawCallNoPart = (float)drawCallTotal / (float)(TIME_FRAMES * 100);  // 100 units for TIME_FRAMES
+			drawCallNoPart = (float)drawCallTotal / (float)(TIME_FRAMES * TOTAL_UNITS);  // 100 units for TIME_FRAMES
 
 			mode = NO_SPAWN;
 			Object *obj = TheGameLogic->getFirstObject();
@@ -2825,34 +2843,34 @@ static void unitTimings(void)
 				obj = obj->getNextObject();
 			}	
 			if (gotSpawn) {
-				DEBUG_LOG(("Starting noSpawn - "));
-				settleFrames = 10;
+				DEBUG_LOG(("Starting noSpawn - \n"));
+				settleFrames = SETTLE_FRAMES;
 				return;
 			}
 		}	
 		if (mode==NO_SPAWN) {
 			timeNoSpawn = timeToUpdate;
-			drawCallNoSpawn = (float)drawCallTotal / (float)(TIME_FRAMES * 100);  // 100 units for TIME_FRAMES
+			drawCallNoSpawn = (float)drawCallTotal / (float)(TIME_FRAMES * TOTAL_UNITS);  // 100 units for TIME_FRAMES
 		}
 		if (g_UT_curThing==NULL) return;
 
 
 
-		char foo[1024];
+		char remark[1024];
 		AsciiString thingName = g_UT_curThing->getName();
 		if (veryFirstTime) {
 			thingName = "No Object";
 		}
-		sprintf(foo, "\nTime %f, %d ms for 100 %s , noPart %f, noSpawn %f logic %f \n", timeAll, 
+		sprintf(remark, "\nTime %f, %d ms for 100 %s , noPart %f, noSpawn %f logic %f \n", timeAll, 
 			(Int)(timeAll*1000/TIME_FRAMES), thingName.str(), timeNoPart, 
 			timeNoSpawn, timeLogic);
-		DEBUG_LOG((foo));
-		sprintf(foo, "\nDrawCalls for 100 %s , all %d, noPart %d, noSpawn %d logic %d \n", thingName.str(), 
+		DEBUG_LOG((remark));
+		sprintf(remark, "\nDrawCalls for 100 %s , all %d, noPart %d, noSpawn %d logic %d \n", thingName.str(), 
 			drawCallAll,drawCallNoPart,drawCallNoSpawn, drawCallLogic);
-		DEBUG_LOG((foo));
+		DEBUG_LOG((remark));
 
 		if (g_UT_timingLog) {
-			fputs(foo, g_UT_timingLog);
+			fputs(remark, g_UT_timingLog);
 		}
 		if (g_UT_commaLog) {
 			AsciiString type;
@@ -2882,14 +2900,14 @@ static void unitTimings(void)
 				modelName = "**NO MODEL**";
 				veryFirstTime = false;
 			}
-			sprintf(foo, "%f,%d,%f,%d,%f,%d,%f,%d,%s,%s,%s,%s,%f,%f,%f\n", timeAll, 
+			sprintf(remark, "%f,%d,%f,%d,%f,%d,%f,%d,%s,%s,%s,%s,%f,%f,%f\n", timeAll, 
 			(Int)(timeAll*1000/TIME_FRAMES),timeNoPart, 
 			(Int)(timeNoPart*1000/TIME_FRAMES),timeNoSpawn, 
 			(Int)(timeNoSpawn*1000/TIME_FRAMES),timeLogic, 
 			(Int)(timeLogic*1000/TIME_FRAMES), thingName.str(), modelName.str(), type.str(),
 			sides[side].str(),
 			drawCallAll,drawCallNoPart,drawCallNoSpawn);
-			fputs(foo, g_UT_commaLog);
+			fputs(remark, g_UT_commaLog);
 		}
 		TheParticleSystemManager->reset();
 		g_UT_gotUnit = false;
@@ -2928,13 +2946,16 @@ static void unitTimings(void)
 				if (unitTypes==END) {
 					side++;
 					unitTypes = INFANTRY;
-					if (sides[side].isEmpty()) {
+					if (sides[side].isEmpty() ) // end of sides list
+					{
 						g_UT_startTiming = false;
-						if (g_UT_timingLog) {
+						if (g_UT_timingLog) 
+						{
 							fclose(g_UT_timingLog);
 							g_UT_timingLog = NULL;
 						}
-						if (g_UT_commaLog) {
+						if (g_UT_commaLog) 
+						{
 							fclose(g_UT_commaLog);
 							g_UT_commaLog = NULL;
 						}
@@ -2945,7 +2966,8 @@ static void unitTimings(void)
 			}
 
 			const ThingTemplate* btt = g_UT_curThing;
-			if (btt->getDefaultOwningSide() != sides[side]) {
+			if (btt->getDefaultOwningSide() != sides[side]) 
+			{
 				continue;
 			}
 			if (unitTypes == INFANTRY) {

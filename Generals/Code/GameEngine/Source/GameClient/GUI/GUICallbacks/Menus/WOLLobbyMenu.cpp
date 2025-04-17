@@ -244,7 +244,7 @@ static void playerTooltip(GameWindow *window,
 		return;
 	}
 
-	UnicodeString uName = GadgetListBoxGetText(window, row, 2);
+	UnicodeString uName = GadgetListBoxGetText(window, row, COLUMN_PLAYERNAME);
 	AsciiString aName;
 	aName.translate(uName);
 
@@ -471,8 +471,10 @@ static Int insertPlayerInListbox(const PlayerInfo& info, Color color)
 	return index;
 }
 
+
 void PopulateLobbyPlayerListbox(void)
 {
+
 	if (!listboxLobbyPlayers)
 		return;
 
@@ -501,7 +503,7 @@ void PopulateLobbyPlayerListbox(void)
 			}
 			++numSelected;
 			AsciiString selectedName;
-			uStr = GadgetListBoxGetText(listboxLobbyPlayers, selectedIndices[i], 2);
+			uStr = GadgetListBoxGetText(listboxLobbyPlayers, selectedIndices[i], COLUMN_PLAYERNAME);
 			selectedName.translate(uStr);
 			selectedNames.insert(selectedName);
 			DEBUG_LOG(("Saving off old selection %d (%s)\n", selectedIndices[i], selectedName.str()));
@@ -704,6 +706,7 @@ void WOLLobbyMenuInit( WindowLayout *layout, void *userData )
 	if(win)
 		win->winHide(TRUE);
 	DontShowMainMenu = TRUE;
+
 } // WOLLobbyMenuInit
 
 //-------------------------------------------------------------------------------------------------

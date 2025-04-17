@@ -1152,8 +1152,7 @@ void ProductionUpdate::cancelAndRefundAllProduction( void )
       else
       {
         // unknown production type
-        DEBUG_CRASH(( "ProductionUpdate::cancelAndRefundAllProduction - Unknown production type '%d'\n",
-                      m_productionQueue->getProductionType() ));
+				DEBUG_CRASH(( "ProductionUpdate::cancelAndRefundAllProduction - Unknown production type '%d'\n", m_productionQueue->getProductionType() ));
         return;
       }  // end else
     }  // end if

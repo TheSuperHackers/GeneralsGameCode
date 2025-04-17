@@ -9644,3 +9644,4 @@ static void _cleanUpVTune()
 	VTResume = NULL;
 }
 #endif	// VTUNE
+
