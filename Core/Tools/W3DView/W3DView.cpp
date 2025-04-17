@@ -33,8 +33,9 @@
 #include "viewerassetmgr.h"
 #include "globals.h"
 #include "animatedsoundoptionsdialog.h"
+#if 0
 #include "animatedsoundmgr.h"
-
+#endif
 
 #undef STRICT
 #include "ww3d.h"
@@ -399,8 +400,9 @@ CW3DViewApp::ExitInstance()
 		//	Shutdown the libraries
 		//
 		WWMath::Shutdown ();
+#if 0
 		AnimatedSoundMgrClass::Shutdown ();
-
+#endif
 		//
 		//	Free the asset manager
 		//
