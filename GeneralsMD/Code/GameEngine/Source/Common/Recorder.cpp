@@ -910,7 +910,7 @@ Bool RecorderClass::simulateReplay(AsciiString filename)
 	return success;
 }
 
-#if defined _DEBUG || defined _INTERNAL
+#ifdef DEBUG_LOGGING
 Bool RecorderClass::analyzeReplay( AsciiString filename )
 {
 	m_doingAnalysis = TRUE;
