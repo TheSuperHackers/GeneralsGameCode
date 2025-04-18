@@ -234,6 +234,7 @@ W3DLaserDraw::~W3DLaserDraw( void )
 	}  // end for i
 
 	delete [] m_line3D;
+	REF_PTR_RELEASE(m_texture);
 }
 
 //-------------------------------------------------------------------------------------------------
