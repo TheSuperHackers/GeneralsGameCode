@@ -17,6 +17,7 @@ target_include_directories(g_wwcommon INTERFACE
     Wwutil
 )
 
+add_subdirectory(WWAudio)
 add_subdirectory(WWMath)
 add_subdirectory(Wwutil)
 add_subdirectory(WW3D2)
@@ -28,6 +29,7 @@ add_library(g_wwvegas INTERFACE)
 target_include_directories(g_wwvegas INTERFACE
     .
     WW3D2
+    WWAudio
     WWDownload
     Wwutil
 )
