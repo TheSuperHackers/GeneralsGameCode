@@ -52,22 +52,18 @@ static std::filesystem::path fixFilenameFromWindowsPath(const Char *filename, In
 #endif
 
 	// Convert the filename to a std::filesystem::path and pass that
-	// make_preferred does not convert from Windows to Linux (see https://en.cppreference.com/w/cpp/filesystem/path/make_preferred)
-	std::filesystem::path path(fixedFilename);
-	path = path.make_preferred();
+	std::filesystem::path path(std::move(fixedFilename));
 
 #ifndef _WIN32
 	// check if the file exists to see if fixup is required
 	// if it's not found try to match disregarding case sensitivity
 	// For cases where a write is happening, we should check if the parent path exists, if so, let it through, since the file may not exist yet.
-
-	if (!std::filesystem::exists(path) &&
-		((!(access & File::WRITE)) || ((access & File::WRITE) && !std::filesystem::exists(path.parent_path()))))
+	std::error_code ec;
+	if (!std::filesystem::exists(path, ec) &&
+		((!(access & File::WRITE)) || ((access & File::WRITE) && !std::filesystem::exists(path.parent_path(), ec))))
 	{
 		// Traverse path to try and match case-insensitively
 		std::filesystem::path parent = path.parent_path();
-		std::filesystem::path filename = path.filename();
-		std::error_code ec;
 
 		std::filesystem::path pathFixed;
 		std::filesystem::path pathCurrent;
@@ -132,18 +128,15 @@ static std::filesystem::path fixFilenameFromWindowsPath(const Char *filename, In
 File * StdLocalFileSystem::openFile(const Char *filename, Int access /* = 0 */)
 {
 	//USE_PERF_TIMER(StdLocalFileSystem_openFile)
-	StdLocalFile *file = newInstance( StdLocalFile );
 
 	// sanity check
 	if (strlen(filename) <= 0) {
-		file->deleteInstance();
 		return NULL;
 	}
 
 	std::filesystem::path path = fixFilenameFromWindowsPath(filename, access);
 
-	if(path.empty()) {
-		file->deleteInstance();
+	if (path.empty()) {
 		return NULL;
 	}
 
@@ -151,15 +144,16 @@ File * StdLocalFileSystem::openFile(const Char *filename, Int access /* = 0 */)
 		// if opening the file for writing, we need to make sure the directory is there
 		// before we try to create the file.
 		std::filesystem::path dir = path.parent_path();
-		if (!std::filesystem::exists(dir)) {
-			std::error_code ec;
-			if(!std::filesystem::create_directories(dir,ec ) || ec) {
+		std::error_code ec;
+		if (!std::filesystem::exists(dir, ec) || ec) {
+			if(!std::filesystem::create_directories(dir, ec) || ec) {
 				DEBUG_LOG(("StdLocalFileSystem::openFile - Error creating directory %s\n", dir.string().c_str()));
-				file->deleteInstance();
 				return NULL;
 			}
 		}
 	}
+
+	StdLocalFile *file = newInstance( StdLocalFile );
 	
 	if (file->open(path.string().c_str(), access) == FALSE) {
 		file->close();
@@ -210,7 +204,9 @@ Bool StdLocalFileSystem::doesFileExist(const Char *filename) const
 	if(path.empty()) {
 		return FALSE;
 	}
-	return std::filesystem::exists(path);
+
+	std::error_code ec;
+	return std::filesystem::exists(path, ec);
 }
 
 void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList & filenameList, Bool searchSubdirectories) const
@@ -227,10 +223,10 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 
 	std::string fixedDirectory(asciisearch.str());
 
-	#ifndef _WIN32
+#ifndef _WIN32
 	// Replace backslashes with forward slashes on unix
 	std::replace(fixedDirectory.begin(), fixedDirectory.end(), '\\', '/');
-	#endif
+#endif
 
 	strcpy(search, fixedDirectory.c_str());
 
@@ -238,6 +234,7 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 	std::error_code ec;
 
 	auto iter = std::filesystem::directory_iterator(search, ec);
+	// The default iterator constructor creates an end iterator
 	done = iter == std::filesystem::directory_iterator();
 
 	if (ec) {
@@ -246,18 +243,19 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 	}
 
 	while (!done)	{
+		std::string filenameStr = iter->path().filename().string();
 		if (!iter->is_directory() && iter->path().extension() == searchExt &&
-			(strcmp(iter->path().filename().string().c_str(), ".") && strcmp(iter->path().string().c_str(), ".."))) {
+			(strcmp(filenameStr.c_str(), ".") && strcmp(filenameStr.c_str(), ".."))) {
 			// if we haven't already, add this filename to the list.
 			// a stl set should only allow one copy of each filename
 			AsciiString newFilename = iter->path().string().c_str();
-		if (filenameList.find(newFilename) == filenameList.end()) {
-			filenameList.insert(newFilename);
-		}
+			if (filenameList.find(newFilename) == filenameList.end()) {
+				filenameList.insert(newFilename);
 			}
+		}
 
-			iter++;
-			done = iter == std::filesystem::directory_iterator();
+		iter++;
+		done = iter == std::filesystem::directory_iterator();
 	}
 
 	if (searchSubdirectories) {
@@ -268,20 +266,21 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 			return;
 		}
 
+		// The default iterator constructor creates an end iterator
 		done = iter == std::filesystem::directory_iterator();
 
 		while (!done) {
+			std::string filenameStr = iter->path().filename().string();
 			if(iter->is_directory() && 
-				(strcmp(iter->path().filename().string().c_str(), ".") && strcmp(iter->path().string().c_str(), ".."))) {
-				AsciiString tempsearchstr;
-			tempsearchstr = iter->path().filename().string().c_str();
+				(strcmp(filenameStr.c_str(), ".") && strcmp(filenameStr.c_str(), ".."))) {
+				AsciiString tempsearchstr(filenameStr.c_str());
 
-			// recursively add files in subdirectories if required.
-			getFileListInDirectory(tempsearchstr, originalDirectory, searchName, filenameList, searchSubdirectories);
-				}
+				// recursively add files in subdirectories if required.
+				getFileListInDirectory(tempsearchstr, originalDirectory, searchName, filenameList, searchSubdirectories);
+			}
 
-				iter++;
-				done = iter == std::filesystem::directory_iterator();
+			iter++;
+			done = iter == std::filesystem::directory_iterator();
 		}
 	}
 }
@@ -323,18 +322,17 @@ Bool StdLocalFileSystem::createDirectory(AsciiString directory)
 
 	std::string fixedDirectory(directory.str());
 
-	#ifndef _WIN32
+#ifndef _WIN32
 	// Replace backslashes with forward slashes on unix
 	std::replace(fixedDirectory.begin(), fixedDirectory.end(), '\\', '/');
-	#endif
+#endif
 
 	if ((fixedDirectory.length() > 0) && (fixedDirectory.length() < _MAX_DIR)) {
 		// Convert to host path
-		std::filesystem::path path(fixedDirectory);
-		path = path.make_preferred();
+		std::filesystem::path path(std::move(fixedDirectory));
 
 		std::error_code ec;
-		result = std::filesystem::create_directory(fixedDirectory, ec);
+		result = std::filesystem::create_directory(path, ec);
 		if (ec) {
 			result = FALSE;
 		}
