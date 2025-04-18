@@ -37,8 +37,6 @@
 #include "StdDevice/Common/StdBIGFileSystem.h"
 #include "Common/Registry.h"
 
-#include <filesystem>
-
 static const char *BIGFileIdentifier = "BIGF";
 
 StdBIGFileSystem::StdBIGFileSystem() : ArchiveFileSystem() {

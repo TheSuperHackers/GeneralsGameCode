@@ -196,7 +196,7 @@ set(GAMEENGINEDEVICE_SRC
 
 # Add C++ 17 FileSystem implementation for non-VS6 builds
 if(NOT IS_VS6_BUILD)
-    set(GAMEENGINEDEVICE_SRC ${GAMEENGINEDEVICE_SRC}
+    list(APPEND GAMEENGINEDEVICE_SRC
         Include/StdDevice/Common/StdBIGFile.h
         Include/StdDevice/Common/StdBIGFileSystem.h
         Include/StdDevice/Common/StdLocalFile.h
