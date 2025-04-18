@@ -436,10 +436,6 @@ void GameLogic::reset( void )
 	m_thingTemplateBuildableOverrides.clear();
 	m_controlBarOverrides.clear();
 
-	// destroy all objects
-	// TheSuperHackers @info xezon 10/04/2025 Objects need to be destroyed before clearing the object vector.
-	destroyAllObjectsImmediate();
-
 	// set the hash to be rather large. We need to optimize this value later.
 	m_objHash.clear();
 #if USING_STLPORT
@@ -451,6 +447,9 @@ void GameLogic::reset( void )
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
 	setFPMode();
+
+	// destroy all objects
+	destroyAllObjectsImmediate();
 
 	m_nextObjID = (ObjectID)1;
 
@@ -3881,6 +3880,8 @@ void GameLogic::removeObjectFromLookupTable( Object *obj )
 	// sanity
 	if( obj == NULL )
 		return;
+
+	DEBUG_ASSERTCRASH( m_objHash.find(obj->getID()) != m_objHash.end() , ("bad ObjectID: %d when removing object from lookup table, object not found.", (Int)obj->getID()) );
 
 	// remove from lookup table
 	m_objHash.erase( obj->getID() );

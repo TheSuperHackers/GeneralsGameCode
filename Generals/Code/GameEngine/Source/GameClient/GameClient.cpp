@@ -457,6 +457,9 @@ void GameClient::reset( void )
 	// clear any drawable TOC we might have
 	m_drawableTOC.clear();
 
+	// TheSuperHackers @fix Mauller 13/04/2025 Reset the drawable id so it does not keep growing over the lifetime of the game.
+	m_nextDrawableID = (DrawableID)1;
+
 }  // end reset
 
 /** -----------------------------------------------------------------------------------------------
@@ -837,6 +840,8 @@ void GameClient::removeDrawableFromLookupTable( Drawable *draw )
 	// sanity
 	if( draw == NULL )
 		return;
+
+	DEBUG_ASSERTCRASH( m_drawableHash.find(draw->getID()) != m_drawableHash.end() , ("bad DrawableID: %d when removing drawable from lookup table, object not found.", (Int)draw->getID()) );
 
 	// remove from table
 	m_drawableHash.erase( draw->getID() );
