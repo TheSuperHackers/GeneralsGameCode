@@ -1,11 +1,6 @@
 # Interface libraries to set common defines and includes, avoid duplication later
 add_library(z_wwcommon INTERFACE)
 
-target_compile_definitions(z_wwcommon INTERFACE
-    #NOMINMAX
-    WIN32_LEAN_AND_MEAN
-)
-
 target_link_libraries(z_wwcommon INTERFACE
     d3d8lib
     core_config
