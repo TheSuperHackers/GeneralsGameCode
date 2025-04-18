@@ -44,11 +44,11 @@ set(WWAUDIO_SRC
     "WWAudio.h"
 )
 
-add_library(z_wwaudio STATIC)
-set_target_properties(z_wwaudio PROPERTIES OUTPUT_NAME wwaudio)
+add_library(core_wwaudio STATIC)
+set_target_properties(core_wwaudio PROPERTIES OUTPUT_NAME wwaudio)
 
-target_sources(z_wwaudio PRIVATE ${WWAUDIO_SRC})
+target_sources(core_wwaudio PRIVATE ${WWAUDIO_SRC})
 
-target_link_libraries(z_wwaudio PRIVATE
-    z_wwcommon
+target_link_libraries(core_wwaudio PRIVATE
+    core_wwcommon
 )

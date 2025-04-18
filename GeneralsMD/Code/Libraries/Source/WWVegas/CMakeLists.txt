@@ -18,12 +18,9 @@ target_link_libraries(z_wwcommon INTERFACE
 target_include_directories(z_wwcommon INTERFACE
     .
     WW3D2
-    WWAudio
     Wwutil
 )
 
-add_subdirectory(WWAudio)
-add_subdirectory(WWMath)
 add_subdirectory(Wwutil)
 add_subdirectory(WW3D2)
 add_subdirectory(WWDownload)
