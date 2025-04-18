@@ -178,6 +178,7 @@ class SoundSceneClass
 		//////////////////////////////////////////////////////////////////////
 		//	Collection methods
 		//////////////////////////////////////////////////////////////////////		
+	public:
 		class AudibleInfoClass : public MultiListObjectClass, public AutoPoolClass<AudibleInfoClass, 64>
 		{
 		public:
@@ -193,6 +194,7 @@ class SoundSceneClass
 			float						distance2;
 		};
 
+	protected:
 		typedef MultiListClass<AudibleInfoClass>	COLLECTED_SOUNDS;
 
 		virtual void			Collect_Audible_Sounds (Listener3DClass *listener, COLLECTED_SOUNDS &list);

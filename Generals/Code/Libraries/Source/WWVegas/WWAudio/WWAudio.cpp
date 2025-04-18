@@ -1220,7 +1220,8 @@ WWAudioClass::Remove_From_Playlist (AudibleSoundClass *sound_obj)
 	if (sound_obj != NULL) {
 
 		// Loop through all the entries in the playlist
-		for (int index = 0; (index < m_Playlist.Count ()) && (retval == false); index ++) {
+		int index = 0;
+		for (; (index < m_Playlist.Count ()) && (retval == false); index ++) {
 
 			// Is this the entry we are looking for?
 			if (sound_obj == m_Playlist[index]) {
