@@ -150,17 +150,11 @@ RenderObjClass * W3DPrototypeClass::Create(void)
 //---------------------------------------------------------------------
 W3DAssetManager::W3DAssetManager(void)
 {
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	m_GrannyAnimManager = NEW GrannyAnimManagerClass;
-#endif
 }
 
 //---------------------------------------------------------------------
 W3DAssetManager::~W3DAssetManager(void)
 {
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	delete m_GrannyAnimManager;
-#endif
 }
 
 #ifdef DUMP_PERF_STATS
@@ -700,12 +694,6 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	GetPrecisionTimer(&startTime64);
 	#endif
 
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	Bool isGranny = false;
-	char *pext=strrchr(name,'.');	//find file extension
-	if (pext)
-		isGranny=(strnicmp(pext,".GR2",4) == 0);
-#endif
 	Bool reallyscale = (WWMath::Fabs(scale - ident_scale) > scale_epsilon);
 	Bool reallycolor = (color & 0xFFFFFF) != 0;	//black is not a valid color and assumes no custom coloring.
 	Bool reallytexture = (oldTexture != NULL && newTexture != NULL);
@@ -727,12 +715,6 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	// see if we got a cached version
 	RenderObjClass *rendobj = NULL;
 
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	if (isGranny)
-	{	//Granny objects share the same prototype since they allow instance scaling.
-		strcpy(newname,name);	//use same name for all granny objects at any scale.
-	}
-#endif
 	Set_WW3D_Load_On_Demand(false); // munged name will never be found in a file.
 	rendobj = WW3DAssetManager::Create_Render_Obj(newname);
 	if (rendobj)
@@ -740,11 +722,6 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 		//when we need to save this render object to a file.  Used during saving
 		//of fog of war ghost objects.
 		rendobj->Set_ObjectColor(color);
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-		if (isGranny)
-			///@todo Granny objects are realtime scaled - fix to scale like W3D.
-			rendobj->Set_ObjectScale(scale);
-#endif
 		Set_WW3D_Load_On_Demand(true); // Auto Load.
 
 	#ifdef DUMP_PERF_STATS
@@ -767,16 +744,11 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	{	
 		// If we didn't find one, try to load on demand
 		char filename [MAX_PATH];
-		const char *mesh_name = ::strchr (name, '.');
+		const char *mesh_name = strchr (name, '.');
 		if (mesh_name != NULL) 
 		{
-			::lstrcpyn(filename, name, ((int)mesh_name) - ((int)name) + 1);
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-			if (isGranny)
-				::lstrcat(filename, ".gr2");
-			else
-#endif
-				::lstrcat(filename, ".w3d");
+			lstrcpyn(filename, name, ((int)mesh_name) - ((int)name) + 1);
+			lstrcat(filename, ".w3d");
 		} else {
 			sprintf( filename, "%s.w3d", name);
 		}
@@ -785,15 +757,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 		if ( Load_3D_Assets( filename ) == false ) 
 		{
 			StringClass	new_filename = StringClass("..\\") + filename;
-			if (Load_3D_Assets( new_filename ) == false)
-			{
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-				char *mesh_name = ::strchr (filename, '.');
-				::lstrcpyn (mesh_name, ".gr2",5);
-				Load_3D_Assets( filename );
-				isGranny=true;
-#endif
-			}
+			Load_3D_Assets( new_filename );
 		}
 
 		proto = Find_Prototype(name);		// try again
@@ -823,33 +787,21 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	#endif
 		return NULL;
 	}
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	if (!isGranny)
-#endif
-	{	
-		Make_Unique(rendobj,reallyscale,reallycolor);
-		if (reallytexture)
-		{	
-			TextureClass *oldTex = Get_Texture(oldTexture);
-			TextureClass *newTex = Get_Texture(newTexture);
-			replaceAssetTexture(rendobj,oldTex,newTex);
-			REF_PTR_RELEASE(newTex);
-			REF_PTR_RELEASE(oldTex);
-		}
-		if (reallyscale)
-			rendobj->Scale(scale);
 
-		if (reallycolor)
-			Recolor_Asset(rendobj,color);
-	}
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	else
+	Make_Unique(rendobj,reallyscale,reallycolor);
+	if (reallytexture)
 	{	
-		///@todo Granny objects are realtime scaled - fix to scale like W3D.
-		rendobj->Set_ObjectScale(scale);
-		return rendobj;
+		TextureClass *oldTex = Get_Texture(oldTexture);
+		TextureClass *newTex = Get_Texture(newTexture);
+		replaceAssetTexture(rendobj,oldTex,newTex);
+		REF_PTR_RELEASE(newTex);
+		REF_PTR_RELEASE(oldTex);
 	}
-#endif
+	if (reallyscale)
+		rendobj->Scale(scale);
+
+	if (reallycolor)
+		Recolor_Asset(rendobj,color);
 
 	W3DPrototypeClass *w3dproto = newInstance(W3DPrototypeClass)(rendobj, newname);	
 	rendobj->Release_Ref();
@@ -986,14 +938,6 @@ bool W3DAssetManager::Load_3D_Assets( const char * filename )
 		GetPrecisionTimer(&startTime64);
 #endif
 
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	Bool isGranny = false;
-	char *pext=strrchr(filename,'.');	//find file extension
-	if (pext)
-		isGranny=(strnicmp(pext,".GR2",4) == 0);
-	if (!isGranny)
-#endif
-
 	// Try to find an existing prototype
 	char basename[512];
 	strcpy(basename, filename);
@@ -1038,40 +982,6 @@ bool W3DAssetManager::Load_3D_Assets( const char * filename )
 #endif
 	return result;
 
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	//Loading assets for Granny File
-	PrototypeClass * newproto = NULL;
-	newproto = _GrannyLoader.Load_W3D(filename);
-	/*
-	** Now, see if the prototype that we loaded has a duplicate
-	** name with any of our currently loaded prototypes (can't have that!)
-	*/
-	if (newproto != NULL) {
-		if (!Render_Obj_Exists(newproto->Get_Name())) {
-			/*
-			** Add the new, unique prototype to our list
-			*/
-			Add_Prototype(newproto);
-		} else {
-			/*
-			** Warn the user about a name collision with this prototype 
-			** and dump it
-			*/
-			WWDEBUG_SAY(("Render Object Name Collision: %s\r\n",newproto->Get_Name()));
-			delete newproto;
-			newproto = NULL;
-			return false;
-		}
-	} else {
-		/*
-		** Warn user that a prototype was not generated from this 
-		** chunk type
-		*/
-		WWDEBUG_SAY(("Could not generate Granny prototype!  File  = %d\r\n",filename));
-		return false;
-	}
-	return true;
-#endif
 }
 
 #ifdef DUMP_PERF_STATS
@@ -1089,47 +999,17 @@ HAnimClass *	W3DAssetManager::Get_HAnim(const char * name)
 #endif
 	WWPROFILE( "WW3DAssetManager::Get_HAnim" );
 
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	Bool isGranny = false;
-	char *pext=strrchr(name,'.');	//find file extension
-	if (pext)
-		isGranny=(strnicmp(pext,".GR2",4) == 0);
-	if (!isGranny)
-#endif
-	{
-		HAnimClass *anim=WW3DAssetManager::Get_HAnim(name);	//we only do custom granny processing.
+	HAnimClass *anim=WW3DAssetManager::Get_HAnim(name);
 #ifdef DUMP_PERF_STATS
-		if (HAnim_Recursions == 1)
-		{
-			GetPrecisionTimer(&endTime64);
-			Total_Get_HAnim_Time += endTime64-startTime64;
-		}
-		HAnim_Recursions--;
+	if (HAnim_Recursions == 1)
+	{
+		GetPrecisionTimer(&endTime64);
+		Total_Get_HAnim_Time += endTime64-startTime64;
+	}
+	HAnim_Recursions--;
 #endif
-		return anim;
-	}
-
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	// Try to find the hanim
-	HAnimClass * anim = m_GrannyAnimManager->Get_Anim(name);
-	if (WW3D_Load_On_Demand && anim == NULL) {	// If we didn't find it, try to load on demand
-		if ( !m_GrannyAnimManager->Is_Missing( name ) ) {	// if this is NOT a known missing anim
-
-			// If we can't find it, try the parent directory
-			if ( m_GrannyAnimManager->Load_Anim(name) == 1 ) {
-				StringClass	new_filename = StringClass("..\\") + name;
-				m_GrannyAnimManager->Load_Anim( new_filename );
-			}
-
-			anim = m_GrannyAnimManager->Get_Anim(name);		// Try again
-			if (anim == NULL) {
-//				WWDEBUG_SAY(("WARNING: Animation %s not found!\n", name));
-				m_GrannyAnimManager->Register_Missing( name );		// This is now a KNOWN missing anim
-			}
-		}
-	}
 	return anim;
-#endif
+
 }
 
 //---------------------------------------------------------------------
@@ -1420,11 +1300,6 @@ static inline void Munge_Texture_Name(char *newname, const char *oldname, const 
 RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scale, const Vector3 &hsv_shift)
 {
 	Bool isGranny = false;
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	char *pext=strrchr(name,'.');	//find file extension
-	if (pext)
-		isGranny=(strnicmp(pext,".GR2",4) == 0);
-#endif
 	Bool reallyscale = (WWMath::Fabs(scale - ident_scale) > scale_epsilon);
 	Bool reallyhsv_shift = (WWMath::Fabs(hsv_shift.X - ident_HSV.X) > H_epsilon ||
 		WWMath::Fabs(hsv_shift.Y - ident_HSV.Y) > S_epsilon || WWMath::Fabs(hsv_shift.Z - ident_HSV.Z) > V_epsilon);
