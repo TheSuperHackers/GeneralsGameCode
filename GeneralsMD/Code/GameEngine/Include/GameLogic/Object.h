@@ -492,6 +492,7 @@ public:
 	void fireCurrentWeapon(Object *target);
 	void fireCurrentWeapon(const Coord3D* pos);
 	void preFireCurrentWeapon( const Object *victim );
+	void preFireCurrentWeapon(const Coord3D* pos);
 	UnsignedInt getLastShotFiredFrame() const;					///< Get the frame a shot was last fired on
 	ObjectID getLastVictimID() const;						///< Get the last victim we shot at
 	Weapon* findWaypointFollowingCapableWeapon();

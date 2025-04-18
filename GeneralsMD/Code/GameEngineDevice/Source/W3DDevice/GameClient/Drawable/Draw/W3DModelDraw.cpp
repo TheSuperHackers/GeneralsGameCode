@@ -3774,6 +3774,72 @@ Bool W3DModelDraw::handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelTo
 	return handled;
 } 
 
+
+//-------------------------------------------------------------------------------------------------
+Bool W3DModelDraw::handleWeaponPreAttackFX(WeaponSlotType wslot, Int specificBarrelToUse, const FXList* fxl, Real weaponSpeed, const Coord3D* victimPos, Real damageRadius)
+{
+	//Note: This is mostly a copy of handleWeaponFireFX
+
+	//DEBUG_LOG((">>> handleWeaponPreAttackFX - Slot: %d, Barrel: %d, Pos: '(%f, %f, %f)' \n",
+	//	(Int)wslot,
+	//	specificBarrelToUse,
+	//	victimPos->x, victimPos->y, victimPos->z));
+
+	if (!m_curState || !(m_curState->m_validStuff & ModelConditionInfo::BARRELS_VALID))
+		return false;
+
+	const ModelConditionInfo::WeaponBarrelInfoVec& wbvec = m_curState->m_weaponBarrelInfoVec[wslot];
+	if (wbvec.empty())
+	{
+		return false;
+	}
+
+	Bool handled = false;
+
+	if (specificBarrelToUse < 0 || specificBarrelToUse > wbvec.size())
+		specificBarrelToUse = 0;
+
+	const ModelConditionInfo::WeaponBarrelInfo& info = wbvec[specificBarrelToUse];
+
+	if (fxl)
+	{
+		if (info.m_fxBone && m_renderObject)
+		{
+			const Object* logicObject = getDrawable()->getObject();
+			/*DEBUG_LOG((">>> handleWeaponPreAttackFX - 1.5 - m_renderObject= '%s' \n",
+				m_renderObject ? "Not Null" : "Null"));*/
+			if (!m_renderObject->Is_Hidden() || (logicObject == NULL))
+			{
+				// I can ask the drawable's bone position if I am not hidden (if I have no object I have no choice)
+				Matrix3D mtx = m_renderObject->Get_Bone_Transform(info.m_fxBone);
+				Coord3D pos;
+				pos.x = mtx.Get_X_Translation();
+				pos.y = mtx.Get_Y_Translation();
+				pos.z = mtx.Get_Z_Translation();
+				FXList::doFXPos(fxl, &pos, &mtx, weaponSpeed, victimPos, damageRadius);
+			}
+			else
+			{
+				// Else, I should just use my logic position for the effect placement.
+				// Things in transports regularly fire from inside (hidden), so this is not weird.
+				const Matrix3D* mtx;
+				Coord3D pos;
+				mtx = logicObject->getTransformMatrix();
+				pos = *(logicObject->getPosition());
+				FXList::doFXPos(fxl, &pos, mtx, weaponSpeed, victimPos, damageRadius);
+			}
+
+			handled = true;
+		}
+		else
+		{
+			DEBUG_LOG(("*** no FXBone found for a non-null FXL\n"));
+		}
+	}
+
+	return handled;
+}
+
 //-------------------------------------------------------------------------------------------------
 void W3DModelDraw::setAnimationLoopDuration(UnsignedInt numFrames)
 {

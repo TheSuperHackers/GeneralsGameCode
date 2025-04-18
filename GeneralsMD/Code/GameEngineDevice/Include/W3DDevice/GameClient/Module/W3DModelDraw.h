@@ -385,6 +385,7 @@ public:
 	virtual void replaceModelConditionState(const ModelConditionFlags& c);
 	virtual void replaceIndicatorColor(Color color);
 	virtual Bool handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelToUse, const FXList* fxl, Real weaponSpeed, const Coord3D* victimPos, Real damageRadius);
+	virtual Bool handleWeaponPreAttackFX(WeaponSlotType wslot, Int specificBarrelToUse, const FXList* fxl, Real weaponSpeed, const Coord3D* victimPos, Real damageRadius);
 	virtual Int getBarrelCount(WeaponSlotType wslot) const;
 	virtual void setSelectable(Bool selectable); // Change the selectability of the model.
 
