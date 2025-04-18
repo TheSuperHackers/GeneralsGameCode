@@ -243,6 +243,10 @@ const FieldParse WeaponTemplate::TheWeaponTemplateFieldParseTable[] =
 	{ "ContinueAttackRange",			INI::parseReal,													NULL,							offsetof(WeaponTemplate, m_continueAttackRange) },
 	{ "SuspendFXDelay",						INI::parseDurationUnsignedInt,					NULL,							offsetof(WeaponTemplate, m_suspendFXDelay) },		
 	{ "MissileCallsOnDie",			INI::parseBool,													NULL,							offsetof(WeaponTemplate, m_dieOnDetonate) },
+	{ "ScatterTargetAligned", INI::parseBool, NULL, offsetof(WeaponTemplate, m_scatterTargetAligned) },
+	{ "ScatterTargetRandomOrder", INI::parseBool, NULL, offsetof(WeaponTemplate, m_scatterTargetRandom) },
+	{ "ScatterTargetRandomAngle", INI::parseBool, NULL, offsetof(WeaponTemplate, m_scatterTargetRandomAngle) },
+	{ "ScatterTargetMinScalar", INI::parseReal, NULL, offsetof(WeaponTemplate, m_scatterTargetMinScalar) },
 	{ NULL,												NULL,																		NULL,							0 }  // keep this last
 
 };
@@ -327,6 +331,10 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(NULL)
 	m_damageStatusType							= OBJECT_STATUS_NONE;
 	m_suspendFXDelay								= 0;
 	m_dieOnDetonate						= FALSE;
+	m_scatterTargetAligned = FALSE;
+	m_scatterTargetRandom = TRUE;
+	m_scatterTargetRandomAngle = FALSE;
+	m_scatterTargetMinScalar = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1764,6 +1772,7 @@ Weapon::Weapon(const WeaponTemplate* tmpl, WeaponSlotType wslot)
 	m_numShotsForCurBarrel = 	m_template->getShotsPerBarrel();
 	m_lastFireFrame = 0;
 	m_suspendFXFrame = TheGameLogic->getFrame() + m_template->getSuspendFXDelay();
+	m_scatterTargetsAngle = 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1891,9 +1900,18 @@ void Weapon::rebuildScatterTargets()
 	Int scatterTargetsCount = m_template->getScatterTargetsVector().size();
 	if (scatterTargetsCount)
 	{
-		// When I reload, I need to rebuild the list of ScatterTargets to shoot at.
-		for (Int targetIndex = 0; targetIndex < scatterTargetsCount; targetIndex++)
-			m_scatterTargetsUnused.push_back( targetIndex );
+		if (!m_template->isScatterTargetRandom()) {
+			// When I reload, I need to rebuild the list of ScatterTargets to shoot at.
+			for (Int targetIndex = 0; targetIndex < scatterTargetsCount; targetIndex++)
+				m_scatterTargetsUnused.push_back(targetIndex);
+		}
+		else { // We fill up from the back;
+			for (Int targetIndex = scatterTargetsCount - 1; targetIndex >= 0; targetIndex--)
+				m_scatterTargetsUnused.push_back(targetIndex);
+		}
+	}
+	if (m_template->isScatterTargetRandomAngle()) {
+		m_scatterTargetsAngle = GameLogicRandomValueReal(0, PI * 2);
 	}
 }
 
@@ -2605,7 +2623,7 @@ Bool Weapon::privateFireWeapon(
 			m_numShotsForCurBarrel = m_template->getShotsPerBarrel();
 		}
 
-		if( m_scatterTargetsUnused.size() )
+		if( m_scatterTargetsUnused.size() && !isProjectileDetonation)
 		{
 			// If I have a set scatter pattern, I need to offset the target by a random pick from that pattern
 			if( victimObj )
@@ -2614,23 +2632,59 @@ Bool Weapon::privateFireWeapon(
 				victimObj = NULL;
 			}
 			Coord3D targetPos = *victimPos; // need to copy, as this pointer is actually inside somebody potentially
-			Int randomPick = GameLogicRandomValue( 0, m_scatterTargetsUnused.size() - 1 );
-			Int targetIndex = m_scatterTargetsUnused[randomPick];
+			Int targetIndex = 0;
+			if (m_template->isScatterTargetRandom()) {
+				Int randomPick = GameLogicRandomValue(0, m_scatterTargetsUnused.size() - 1);
+				targetIndex = m_scatterTargetsUnused[randomPick];
+				// To erase from a vector, put the last on the one you used and pop the back.
+				m_scatterTargetsUnused[randomPick] = m_scatterTargetsUnused.back();
+				m_scatterTargetsUnused.pop_back();
+			}
+			else {
+				//We actually pick from the back of the the order of targets
+				targetIndex = m_scatterTargetsUnused[m_scatterTargetsUnused.size() - 1];
+				m_scatterTargetsUnused.pop_back();
+			}
 
 			Real scatterTargetScalar = getScatterTargetScalar();// essentially a radius, but operates only on this scatterTarget table
 			Coord2D scatterOffset = m_template->getScatterTargetsVector().at( targetIndex );
 
+			// Scale scatter target based on range
+			if (Real minScale = m_template->getScatterTargetMinScalar() > 0) {
+				Real minRange = m_template->getMinimumAttackRange();
+				Real maxRange = m_template->getUnmodifiedAttackRange();
+				Real range = sqrt(ThePartitionManager->getDistanceSquared(sourceObj, victimPos, FROM_CENTER_2D));
+				Real rangeRatio = (range - minRange) / (maxRange - minRange);
+				scatterTargetScalar = (rangeRatio * (scatterTargetScalar - minScale)) + minScale;
+				// DEBUG_LOG((">>> Weapon: Range = %f, RangeRatio = %f, TargetScalar = %f\n", range, rangeRatio, scatterTargetScalar));
+			}
+
 			scatterOffset.x *= scatterTargetScalar;
 			scatterOffset.y *= scatterTargetScalar;
+
+			// New: align scatter pattern to shooter, and/or use a random angle
+			if (m_template->isScatterTargetAligned() || m_scatterTargetsAngle != 0.0f) {
+				// DEBUG_LOG((">>> Weapon: m_scatterTargetsAngle = %f\n", m_scatterTargetsAngle));
+				const Coord3D srcPos = *sourceObj->getPosition();
+
+				Real angle = m_scatterTargetsAngle;
+				if (m_template->isScatterTargetAligned()) {
+					angle += atan2(targetPos.y - srcPos.y, targetPos.x - srcPos.x);
+				}
+
+				Real cosA = Cos(angle);
+				Real sinA = Sin(angle);
+				Real scatterOffsetRotX = scatterOffset.x * cosA - scatterOffset.y * sinA;
+				Real scatterOffsetRotY = scatterOffset.x * sinA + scatterOffset.y * cosA;
+				scatterOffset.x = scatterOffsetRotX;
+				scatterOffset.y = scatterOffsetRotY;
+			}
 
 			targetPos.x += scatterOffset.x;
 			targetPos.y += scatterOffset.y;
 
 			targetPos.z = TheTerrainLogic->getGroundHeight(targetPos.x, targetPos.y);
 
-			// To erase from a vector, put the last on the one you used and pop the back.
-			m_scatterTargetsUnused[randomPick] = m_scatterTargetsUnused.back();
-			m_scatterTargetsUnused.pop_back();
 			m_template->fireWeaponTemplate(sourceObj, m_wslot, m_curBarrel, victimObj, &targetPos, bonus, isProjectileDetonation, ignoreRanges, this, projectileID, inflictDamage );
 		}
 		else
@@ -3348,12 +3402,24 @@ void Weapon::crc( Xfer *xfer )
 #endif // DEBUG_CRC
 
 
+	// scatter targets random angle
+	xfer->xferReal(&m_scatterTargetsAngle);
+#ifdef DEBUG_CRC
+	if (doLogging)
+	{
+		tmp.format("m_scatterTargetsAngle %d ", m_scatterTargetsAngle);
+		logString.concat(tmp);
+	}
+#endif // DEBUG_CRC
+
+
 #ifdef DEBUG_CRC
 	if (doLogging)
 	{
 		CRCDEBUG_LOG(("%s\n", logString.str()));
 	}
 #endif // DEBUG_CRC
+
 
 }  // end crc
 
@@ -3462,6 +3528,9 @@ void Weapon::xfer( Xfer *xfer )
 
 	// leech weapon range active
 	xfer->xferBool( &m_leechWeaponRangeActive );
+
+	// scatter targets random angle
+	xfer->xferReal( &m_scatterTargetsAngle );
 
 }  // end xfer
 
