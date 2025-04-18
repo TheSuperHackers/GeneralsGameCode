@@ -101,7 +101,7 @@ StringClass::Get_String (int length, bool is_temp)
 				//
 				//	Grab this unused buffer for our string
 				//
-				unsigned long temp_string=reinterpret_cast<unsigned long>(m_TempStrings);
+				uintptr_t temp_string=reinterpret_cast<uintptr_t>(m_TempStrings);
 				temp_string+=MAX_TEMP_BYTES*MAX_TEMP_STRING;
 				temp_string&=~(MAX_TEMP_BYTES*MAX_TEMP_STRING-1);
 				temp_string+=index*MAX_TEMP_BYTES;
@@ -196,8 +196,8 @@ StringClass::Free_String (void)
 {
 	if (m_Buffer != m_EmptyString) {
 
-		unsigned long buffer_base=reinterpret_cast<unsigned long>(m_Buffer-sizeof (StringClass::_HEADER));
-		unsigned long temp_base=reinterpret_cast<unsigned long>(m_TempStrings+MAX_TEMP_BYTES*MAX_TEMP_STRING);
+		uintptr_t buffer_base=reinterpret_cast<uintptr_t>(m_Buffer-sizeof (StringClass::_HEADER));
+		uintptr_t temp_base=reinterpret_cast<uintptr_t>(m_TempStrings+MAX_TEMP_BYTES*MAX_TEMP_STRING);
 
 		if ((buffer_base>>11)==(temp_base>>11)) {
 			m_Buffer[0] = 0;
