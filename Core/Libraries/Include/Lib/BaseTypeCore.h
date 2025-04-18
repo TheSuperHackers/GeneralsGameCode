@@ -37,6 +37,7 @@
 // TheSuperHackers @compile feliwir 07/04/2025 Adds utility macros for cross-platform compatibility
 #include <Utility/compat.h>
 #include <Utility/CppMacros.h>
+#include <Utility/stdint_adapter.h>
 
 /*
 **	Turn off some unneeded warnings.
@@ -124,22 +125,17 @@
 //--------------------------------------------------------------------
 // Fundamental type definitions
 //--------------------------------------------------------------------
-typedef float							Real;							// 4 bytes 
-typedef int								Int;							// 4 bytes 
-typedef unsigned int			UnsignedInt;	  	// 4 bytes 
-typedef unsigned short		UnsignedShort;		// 2 bytes 
-typedef short							Short;					  // 2 bytes 
-typedef unsigned char			UnsignedByte;			// 1 byte		USED TO BE "Byte"
-typedef char							Byte;							// 1 byte		USED TO BE "SignedByte"
-typedef char							Char;							// 1 byte of text
-typedef bool							Bool;							// 
+typedef float						Real;					// 4 bytes 
+typedef int32_t						Int;					// 4 bytes 
+typedef uint32_t	                UnsignedInt;	  	    // 4 bytes 
+typedef uint16_t	                UnsignedShort;		    // 2 bytes 
+typedef int16_t						Short;					// 2 bytes 
+typedef unsigned char	            UnsignedByte;			// 1 byte		USED TO BE "Byte"
+typedef char						Byte;					// 1 byte		USED TO BE "SignedByte"
+typedef char						Char;					// 1 byte of text
+typedef bool						Bool;					// 
 // note, the types below should use "long long", but MSVC doesn't support it yet
-#ifdef _MSC_VER
-typedef __int64						Int64;							// 8 bytes 
-typedef unsigned __int64	UnsignedInt64;	  	// 8 bytes 
-#else
-typedef long long						Int64;							// 8 bytes 
-typedef unsigned long long	UnsignedInt64;	  	// 8 bytes 
-#endif
+typedef int64_t						Int64;						// 8 bytes
+typedef uint64_t					UnsignedInt64;	  	        // 8 bytes
 
 #endif // _BASE_TYPE_CORE_H_
