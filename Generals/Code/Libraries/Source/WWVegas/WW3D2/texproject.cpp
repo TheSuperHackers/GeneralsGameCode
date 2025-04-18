@@ -734,10 +734,6 @@ void TexProjectClass::Set_Texture(TextureClass * texture)
 		texture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		texture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);	
 		MaterialPass->Set_Texture(texture);
-
-		SurfaceClass::SurfaceDescription surface_desc;
-		texture->Get_Level_Description(surface_desc);
-		Set_Texture_Size(surface_desc.Width);
 	}
 }
 
@@ -1319,6 +1315,14 @@ void TexProjectClass::Pre_Render_Update(const Matrix3D & camera)
 	} else {
 		Mapper->Set_Type(MatrixMapperClass::ORTHO_PROJECTION);
 	}
+
+	if (Get_Texture_Size() == 0) {
+//		SurfaceClass::SurfaceDescription surface_desc;
+//		MaterialPass->Peek_Texture()->Get_Level_Description(surface_desc);
+		Set_Texture_Size(MaterialPass->Peek_Texture()->Get_Width());
+		WWASSERT(Get_Texture_Size() != 0);
+	}
+	
 	Mapper->Set_Texture_Transform(view_to_texture,Get_Texture_Size());
 	if (Mapper1) {
 		Mapper1->Set_Texture_Transform(view_to_texture,Get_Texture_Size());

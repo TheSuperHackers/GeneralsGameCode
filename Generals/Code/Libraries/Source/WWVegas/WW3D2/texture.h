@@ -120,6 +120,16 @@ class TextureClass : public W3DMPO, public RefCountClass
 
 		// The number of Mip levels in the texture
 		unsigned int Get_Mip_Level_Count(void);
+	
+		// Note! Width and Height may be zero and may change if texture uses mipmaps
+		int Get_Width() const
+		{
+			return Width;
+		}
+		int Get_Height() const
+		{
+			return Height; 
+		}
 
 		// Get surface description of a Mip level (defaults to the highest-resolution one)
 		void Get_Level_Description(SurfaceClass::SurfaceDescription &surface_desc, unsigned int level = 0);
@@ -207,6 +217,9 @@ class TextureClass : public W3DMPO, public RefCountClass
 
 		unsigned LastAccessed;
 		WW3DFormat TextureFormat;
+
+		int Width;
+		int Height;
 
 		// Support for self-managed textures
 
