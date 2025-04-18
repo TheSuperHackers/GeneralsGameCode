@@ -570,7 +570,7 @@ private:
 	UnsignedInt m_suspendFXDelay;						///< The fx can be suspended for any delay, in frames, then they will execute as normal
 	Bool m_dieOnDetonate;
 	const FXList* m_preAttackFXs[LEVEL_COUNT];			///< FX played when preattack starts
-	UnsignedInt m_preAttackFXDelay;						///< Delay after starting a preattackFX before we can play it again
+	UnsignedInt m_preAttackFXDelay;						///< Delay after starting a preattackFX before we can play it again (default = 200 ms)
 
 	mutable HistoricWeaponDamageList m_historicDamage;
 };  
