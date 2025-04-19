@@ -850,43 +850,6 @@ Int W3DShadowGeometry::initFromMesh(RenderObjClass *robj)
 Int W3DShadowGeometry::init(RenderObjClass *robj)
 {
 	return TRUE;
-//	m_robj=robj;
-/*	//code to deal with granny - don't think we'll use shadow volumes on these!?
-	granny_file *fileInfo=robj->getPrototype().m_file;
-
-	for (Int modelIndex=0; modelIndex<fileInfo->ModelCount; modelIndex++)
-	{
-		granny_model *sourceModel =  fileInfo->Models[modelIndex];
-		if (stricmp(sourceModel->Name,"AABOX") == 0)
-		{	//found a collision box, copy out data
-			int MeshCount = sourceModel->MeshBindingCount;
-			if (MeshCount==1)
-			{
-				granny_mesh *sourceMesh = sourceModel->MeshBindings[0].Mesh;
-				granny_pn33_vertex *Vertices = (granny_pn33_vertex *)sourceMesh->PrimaryVertexData->Vertices;
-				Vector3 points[24];
-
-				assert (sourceMesh->PrimaryVertexData->VertexCount <= 24);
-
-				for (Int boxVertex=0; boxVertex<sourceMesh->PrimaryVertexData->VertexCount; boxVertex++)
-				{	points[boxVertex].Set(Vertices[boxVertex].Position[0],
-										  Vertices[boxVertex].Position[1],
-										  Vertices[boxVertex].Position[2]);
-				}
-				box.Init(points,sourceMesh->PrimaryVertexData->VertexCount);
-			}
-		}
-		else
-		{	//mesh is part of model
-			int meshCount = sourceModel->MeshBindingCount;
-			for (Int meshIndex=0; meshIndex<meshCount; meshIndex++)
-			{
-				granny_mesh *sourceMesh = sourceModel->MeshBindings[meshIndex].Mesh;
-				if (sourceMesh->PrimaryVertexData)
-					vertexCount+=sourceMesh->PrimaryVertexData->VertexCount;
-			}
-		}
-	}*/
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -4088,7 +4051,7 @@ Error:
 }
 
 /*
-** Iterator converter from HashableClass to GrannyAnimClass
+** Iterator converter from HashableClass to W3DShadowGeometry
 */
 W3DShadowGeometry * W3DShadowGeometryManagerIterator::Get_Current_Geom( void )	
 { 
