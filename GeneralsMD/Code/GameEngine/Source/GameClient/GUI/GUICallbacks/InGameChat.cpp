@@ -114,7 +114,7 @@ void HideInGameChat( Bool immediate )
 		chatTextEntry->winEnable(FALSE);
 		TheWindowManager->winSetFocus( NULL );
 	}
-	TheWindowManager->winSetFocus( NULL );
+	if (TheWindowManager) TheWindowManager->winSetFocus( NULL );
 }
 
 // ------------------------------------------------------------------------------------------------

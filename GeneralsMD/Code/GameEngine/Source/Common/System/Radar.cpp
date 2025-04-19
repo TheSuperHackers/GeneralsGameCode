@@ -335,8 +335,11 @@ void Radar::newMap( TerrainLogic *terrain )
 
 	// keep a pointer for our radar window
 	Int id = NAMEKEY( "ControlBar.wnd:LeftHUD" );
-	m_radarWindow = TheWindowManager->winGetWindowFromId( NULL, id );
-	DEBUG_ASSERTCRASH( m_radarWindow, ("Radar::newMap - Unable to find radar game window\n") );
+	if (TheWindowManager != NULL)
+	{
+		m_radarWindow = TheWindowManager->winGetWindowFromId( NULL, id );
+		DEBUG_ASSERTCRASH( m_radarWindow, ("Radar::newMap - Unable to find radar game window\n") );
+	}
 
 	// reset all the data in the radar
 	reset();

@@ -436,7 +436,8 @@ void W3DInGameUI::draw( void )
 
 	postDraw();
 
-	TheWindowManager->winRepaint();
+	if (TheWindowManager)
+		TheWindowManager->winRepaint();
 	
 #ifdef EXTENDED_STATS
 	}

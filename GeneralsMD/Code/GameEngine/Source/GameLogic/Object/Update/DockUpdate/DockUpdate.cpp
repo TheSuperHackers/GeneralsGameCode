@@ -510,6 +510,10 @@ void DockUpdate::loadDockPositions()
 			if( m_numberApproachPositions != DYNAMIC_APPROACH_VECTOR_FLAG )
 			{
 				// Dynamic means no bones
+				
+				// TheSuperHackers @logic-client-separation helmutbuhler 04/11/2025
+				// We shouldn't depend on bones of a drawable here!
+
 				Coord3D approachBones[DEFAULT_APPROACH_VECTOR_SIZE];
 				m_numberApproachPositionBones = myDrawable->getPristineBonePositions( "DockWaiting", 1, approachBones, NULL, m_numberApproachPositions);
 				if( m_numberApproachPositions == m_approachPositions.size() )//safeguard: will always be true

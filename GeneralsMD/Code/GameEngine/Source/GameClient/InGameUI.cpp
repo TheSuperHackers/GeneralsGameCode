@@ -1298,7 +1298,7 @@ void InGameUI::setRadiusCursor(RadiusCursorType cursorType, const SpecialPowerTe
 //-------------------------------------------------------------------------------------------------
 void InGameUI::handleRadiusCursor()
 {
-	if (!m_curRadiusCursor.isEmpty())
+	if (!m_curRadiusCursor.isEmpty() && TheMouse)
 	{
 		const MouseIO* mouseIO = TheMouse->getMouseStatus();
 		Coord3D pos;
@@ -1337,6 +1337,8 @@ void InGameUI::handleRadiusCursor()
 
 void InGameUI::triggerDoubleClickAttackMoveGuardHint( void ) 
 {
+	if (TheMouse == NULL)
+		return;
   m_duringDoubleClickAttackMoveGuardHintTimer = 11; 
 	const MouseIO* mouseIO = TheMouse->getMouseStatus();
 	TheTacticalView->screenToTerrain( &mouseIO->pos, &m_duringDoubleClickAttackMoveGuardHintStashedPosition );
@@ -1803,39 +1805,42 @@ void InGameUI::update( void )
 	static NameKeyType moneyWindowKey = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:MoneyDisplay" );	
 	static NameKeyType powerWindowKey = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:PowerWindow" );	
 
-	GameWindow *moneyWin = TheWindowManager->winGetWindowFromId( NULL, moneyWindowKey );
-	GameWindow *powerWin = TheWindowManager->winGetWindowFromId( NULL, powerWindowKey );
-//	if( moneyWin == NULL )
-//	{
-//		NameKeyType moneyWindowKey = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:MoneyDisplay" );	
-//
-//		moneyWin = TheWindowManager->winGetWindowFromId( NULL, moneyWindowKey );
-//
-//	}  // end if
-	Player *moneyPlayer = NULL;
-	if( TheControlBar->isObserverControlBarOn())
-		moneyPlayer = TheControlBar->getObserverLookAtPlayer();
-	else
-		moneyPlayer = ThePlayerList->getLocalPlayer();
-	if( moneyPlayer)
+	if (TheWindowManager != NULL)
 	{
-		Int currentMoney = moneyPlayer->getMoney()->countMoney();
-		if( lastMoney != currentMoney )
+		GameWindow *moneyWin = TheWindowManager->winGetWindowFromId( NULL, moneyWindowKey );
+		GameWindow *powerWin = TheWindowManager->winGetWindowFromId( NULL, powerWindowKey );
+	//	if( moneyWin == NULL )
+	//	{
+	//		NameKeyType moneyWindowKey = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:MoneyDisplay" );	
+	//
+	//		moneyWin = TheWindowManager->winGetWindowFromId( NULL, moneyWindowKey );
+	//
+	//	}  // end if
+		Player *moneyPlayer = NULL;
+		if( TheControlBar->isObserverControlBarOn())
+			moneyPlayer = TheControlBar->getObserverLookAtPlayer();
+		else
+			moneyPlayer = ThePlayerList->getLocalPlayer();
+		if( moneyPlayer)
 		{
-			UnicodeString buffer;
+			Int currentMoney = moneyPlayer->getMoney()->countMoney();
+			if( lastMoney != currentMoney )
+			{
+				UnicodeString buffer;
 
-			buffer.format( TheGameText->fetch( "GUI:ControlBarMoneyDisplay" ), currentMoney );
-			GadgetStaticTextSetText( moneyWin, buffer );
-			lastMoney = currentMoney;
+				buffer.format( TheGameText->fetch( "GUI:ControlBarMoneyDisplay" ), currentMoney );
+				GadgetStaticTextSetText( moneyWin, buffer );
+				lastMoney = currentMoney;
 			
-		}  // end if
-		moneyWin->winHide(FALSE);
-		powerWin->winHide(FALSE);
-	}
-	else
-	{
-		moneyWin->winHide(TRUE);
-		powerWin->winHide(TRUE);
+			}  // end if
+			moneyWin->winHide(FALSE);
+			powerWin->winHide(FALSE);
+		}
+		else
+		{
+			moneyWin->winHide(TRUE);
+			powerWin->winHide(TRUE);
+		}
 	}
 	
 	// Update the floating Text;
@@ -2936,8 +2941,9 @@ void InGameUI::setGUICommand( const CommandButton *command )
 		}
 		setRadiusCursorNone();
 	}
-
-	m_mouseModeCursor = TheMouse->getMouseCursor();
+	
+	if (TheMouse != NULL)
+		m_mouseModeCursor = TheMouse->getMouseCursor();
 
 }  // end setGUICommand
 
@@ -3863,8 +3869,8 @@ void InGameUI::expireHint( HintType type, UnsignedInt hintIndex )
 //-------------------------------------------------------------------------------------------------
 void InGameUI::createControlBar( void )
 {
-
-	TheWindowManager->winCreateFromScript( AsciiString("ControlBar.wnd") );
+	if (TheWindowManager != NULL)
+		TheWindowManager->winCreateFromScript( AsciiString("ControlBar.wnd") );
 	HideControlBar();
 /*	
 	// hide all windows created from this layout
@@ -3880,8 +3886,8 @@ void InGameUI::createControlBar( void )
 //-------------------------------------------------------------------------------------------------
 void InGameUI::createReplayControl( void )
 {
-
-	m_replayWindow = TheWindowManager->winCreateFromScript( AsciiString("ReplayControl.wnd") );
+	if (TheWindowManager != NULL)
+		m_replayWindow = TheWindowManager->winCreateFromScript( AsciiString("ReplayControl.wnd") );
 
 /*	
 	// hide all windows created from this layout
@@ -3983,6 +3989,8 @@ void InGameUI::playCameoMovie( const AsciiString& movieName )
 void InGameUI::stopCameoMovie( void )
 {
 //RightHUD
+	if (TheWindowManager == NULL)
+		return;
 	//GameWindow *window = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( AsciiString("ControlBar.wnd:CameoMovieWindow") ));
 	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL,TheNameKeyGenerator->nameToKey( AsciiString("ControlBar.wnd:RightHUD") ));
 //	window->winHide(FALSE);
@@ -4978,6 +4986,8 @@ void InGameUI::buildRegion( const ICoord2D *anchor, const ICoord2D *dest, IRegio
 //-------------------------------------------------------------------------------------------------
 void InGameUI::addFloatingText(const UnicodeString& text,const Coord3D *pos, Color color)
 {
+	if (TheWindowManager == NULL)
+		return;
 	if( TheGameLogic->getDrawIconUI() )
 	{
 		FloatingTextData *newFTD = newInstance( FloatingTextData );
@@ -5011,6 +5021,8 @@ inline Bool isClose(const Coord3D& a, const Coord3D& b)
 }
 void InGameUI::DEBUG_addFloatingText(const AsciiString& text, const Coord3D * pos, Color color)
 {
+	if (TheWindowManager == NULL)
+		return;
 	const Int POINTSIZE = 8;
 	const Int LEADING = 0;
 
@@ -5168,6 +5180,8 @@ void InGameUI::popupMessage( const AsciiString& message, Int x, Int y, Int width
 //-------------------------------------------------------------------------------------------------
 void InGameUI::popupMessage( const AsciiString& identifier, Int x, Int y, Int width, Color textColor, Bool pause, Bool pauseMusic)
 {
+	if (TheWindowManager == NULL)
+		return;
 	if(m_popupMessageData)
 		clearPopupMessageData();
 
@@ -5210,7 +5224,7 @@ void InGameUI::popupMessage( const AsciiString& identifier, Int x, Int y, Int wi
 //-------------------------------------------------------------------------------------------------
 void InGameUI::clearPopupMessageData( void )
 {
-	if(!m_popupMessageData)
+	if(!m_popupMessageData || TheWindowManager == NULL)
 		return;
 	if(m_popupMessageData->layout)
 	{

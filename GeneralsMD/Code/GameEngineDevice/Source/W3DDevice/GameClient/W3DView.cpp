@@ -616,7 +616,7 @@ void W3DView::setCameraTransform( void )
 	buildCameraTransform( &cameraTransform );
 	m_3DCamera->Set_Transform( cameraTransform );
 
-	if (TheTerrainRenderObject) 
+	if (TheTerrainRenderObject && W3DDisplay::m_3DScene != NULL) 
 	{
 		RefRenderObjListIterator *it = W3DDisplay::m_3DScene->createLightsIterator();
 		TheTerrainRenderObject->updateCenter(m_3DCamera, it);
@@ -1538,6 +1538,8 @@ void W3DView::draw( void )
 	CustomScenePassModes customScenePassMode  = SCENE_PASS_DEFAULT;
 	Bool preRenderResult = false;
 
+	if (TheGlobalData->m_headless)
+		return;
 	if (m_viewFilterMode && 
 			m_viewFilter > FT_NULL_FILTER && 
 			m_viewFilter < FT_MAX)
