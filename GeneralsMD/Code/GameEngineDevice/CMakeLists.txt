@@ -235,9 +235,9 @@ find_package(FFMPEG)
 if(FFMPEG_FOUND)
     target_sources(z_gameenginedevice PRIVATE
         Include/VideoDevice/FFmpeg/FFmpegFile.h
-        #Include/VideoDevice/FFmpeg/FFmpegVideoPlayer.h
+        Include/VideoDevice/FFmpeg/FFmpegVideoPlayer.h
         Source/VideoDevice/FFmpeg/FFmpegFile.cpp
-        #Source/VideoDevice/FFmpeg/FFmpegVideoPlayer.cpp
+        Source/VideoDevice/FFmpeg/FFmpegVideoPlayer.cpp
     )
 
     target_include_directories(z_gameenginedevice PRIVATE ${FFMPEG_INCLUDE_DIRS})
