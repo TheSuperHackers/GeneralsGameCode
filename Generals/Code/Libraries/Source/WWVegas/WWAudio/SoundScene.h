@@ -101,7 +101,7 @@ class SoundSceneClass
 		//////////////////////////////////////////////////////////////////////
 		//	Logical sound methods
 		//////////////////////////////////////////////////////////////////////		
-		virtual void			Collect_Logical_Sounds (int listener_count = -1);
+		virtual void			Collect_Logical_Sounds (unsigned int milliseconds, int listener_count = -1);
 
 		//////////////////////////////////////////////////////////////////////
 		//	Listener methods
@@ -166,7 +166,7 @@ class SoundSceneClass
 		//////////////////////////////////////////////////////////////////////
 		//	Protected methods
 		//////////////////////////////////////////////////////////////////////
-		virtual void			On_Frame_Update (unsigned int milliseconds = 0);
+		virtual void			On_Frame_Update (unsigned int milliseconds);
 		virtual void			Initialize (void);
 
 		virtual bool			Is_Logical_Sound_In_Scene (LogicalSoundClass *sound_obj, bool single_shot = false);
@@ -178,6 +178,7 @@ class SoundSceneClass
 		//////////////////////////////////////////////////////////////////////
 		//	Collection methods
 		//////////////////////////////////////////////////////////////////////		
+	public:
 		class AudibleInfoClass : public MultiListObjectClass, public AutoPoolClass<AudibleInfoClass, 64>
 		{
 		public:
@@ -193,6 +194,7 @@ class SoundSceneClass
 			float						distance2;
 		};
 
+	protected:
 		typedef MultiListClass<AudibleInfoClass>	COLLECTED_SOUNDS;
 
 		virtual void			Collect_Audible_Sounds (Listener3DClass *listener, COLLECTED_SOUNDS &list);

@@ -220,7 +220,7 @@ Sound3DClass::On_Frame_Update (unsigned int milliseconds)
 	m_PrevTransform = m_Transform;
 
 	// Allow the base class to process this call
-	return AudibleSoundClass::On_Frame_Update ();
+	return AudibleSoundClass::On_Frame_Update (milliseconds);
 }
 
 

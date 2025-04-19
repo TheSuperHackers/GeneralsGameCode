@@ -45,7 +45,6 @@
 #include "AudibleSound.h"
 #include "Sound3D.h"
 #include "RAWFILE.H"
-#include "ww3d.h"
 #include "SoundScene.h"
 #include "SoundPseudo3D.h"
 #include "ffactory.h"
@@ -1220,7 +1219,8 @@ WWAudioClass::Remove_From_Playlist (AudibleSoundClass *sound_obj)
 	if (sound_obj != NULL) {
 
 		// Loop through all the entries in the playlist
-		for (int index = 0; (index < m_Playlist.Count ()) && (retval == false); index ++) {
+		int index = 0;
+		for (; (index < m_Playlist.Count ()) && (retval == false); index ++) {
 
 			// Is this the entry we are looking for?
 			if (sound_obj == m_Playlist[index]) {
@@ -1322,17 +1322,9 @@ WWAudioClass::On_Frame_Update (unsigned int milliseconds)
 	//
 	Free_Completed_Sounds ();
 
-	//
-	// Calculate the time in ms since the last frame
-	//
-	unsigned int time_delta = milliseconds;
-	if (time_delta == 0) {
-		time_delta = WW3D::Get_Frame_Time ();
-	}
-
 	if (m_SoundScene != NULL) {
 		m_SoundScene->On_Frame_Update (milliseconds);
-		m_SoundScene->Collect_Logical_Sounds ();
+		m_SoundScene->Collect_Logical_Sounds (milliseconds);
 	}
 
 	//
@@ -1344,7 +1336,7 @@ WWAudioClass::On_Frame_Update (unsigned int milliseconds)
 		// Update this sound object
 		//
 		AudibleSoundClass *sound_obj = m_Playlist[index];
-		sound_obj->On_Frame_Update (time_delta);
+		sound_obj->On_Frame_Update (milliseconds);
 	}
 
 	return;

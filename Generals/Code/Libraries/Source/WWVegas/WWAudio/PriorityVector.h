@@ -47,6 +47,9 @@
 template<class T>
 class PriorityVectorClass : public DynamicVectorClass<T>
 {
+	using DynamicVectorClass<T>::Vector;
+	using DynamicVectorClass<T>::ActiveCount;
+
 	public:
 
 		virtual bool	Process_Head (T &object);

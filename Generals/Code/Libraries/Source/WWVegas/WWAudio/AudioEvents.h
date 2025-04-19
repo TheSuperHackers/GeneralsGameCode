@@ -151,6 +151,7 @@ class AudioCallbackListClass : public SimpleDynVecClass< AUDIO_CALLBACK_STRUCT<T
 	using SimpleDynVecClass< AUDIO_CALLBACK_STRUCT<T> >::Vector;
 	using SimpleDynVecClass< AUDIO_CALLBACK_STRUCT<T> >::ActiveCount;
 	using SimpleDynVecClass< AUDIO_CALLBACK_STRUCT<T> >::Delete;
+	using SimpleDynVecClass< AUDIO_CALLBACK_STRUCT<T> >::Add;
 
 public:
 
