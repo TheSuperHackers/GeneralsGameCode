@@ -510,7 +510,14 @@ void DockUpdate::loadDockPositions()
 			if( m_numberApproachPositions != DYNAMIC_APPROACH_VECTOR_FLAG )
 			{
 				// Dynamic means no bones
-				Coord3D approachBones[DEFAULT_APPROACH_VECTOR_SIZE];
+				// TheSuperHackers @fix helmutbuhler 04/19/2025
+				// approachBones was originally not initialized. It needs to be initialized because
+				// myDrawable->getPristineBonePositions only sets a certain amount of elements
+				// (m_numberApproachPositionBones), but the following code copies a different amount
+				// (m_numberApproachPositions) into m_approachPositions (which CRC indirectly depends on).
+				// Luckily, just setting it to zero seems to work.
+
+				Coord3D approachBones[DEFAULT_APPROACH_VECTOR_SIZE] = {0};
 				m_numberApproachPositionBones = myDrawable->getPristineBonePositions( "DockWaiting", 1, approachBones, NULL, m_numberApproachPositions);
 				if( m_numberApproachPositions == m_approachPositions.size() )//safeguard: will always be true
 				{
