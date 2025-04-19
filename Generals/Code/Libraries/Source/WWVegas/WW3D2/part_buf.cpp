@@ -87,6 +87,7 @@ ParticleBufferClass::ParticleBufferClass
 	ParticlePropertyStruct<float> &rotation,
 	float orient_rnd,
 	ParticlePropertyStruct<float> &frame,
+	ParticlePropertyStruct<float> &blurtime,
 	Vector3 accel, 
 	float max_age, 
 	TextureClass *tex,
@@ -135,6 +136,10 @@ ParticleBufferClass::ParticleBufferClass
 	FrameKeyFrameTimes(NULL),
 	FrameKeyFrameValues(NULL),
 	FrameKeyFrameDeltas(NULL),
+	NumBlurTimeKeyFrames(0),
+	BlurTimeKeyFrameTimes(NULL),
+	BlurTimeKeyFrameValues(NULL),
+	BlurTimeKeyFrameDeltas(NULL),
 	NumRandomColorEntriesMinus1(0),
 	RandomColorEntries(NULL),
 	NumRandomAlphaEntriesMinus1(0),
@@ -153,6 +158,8 @@ ParticleBufferClass::ParticleBufferClass
 	RandomOrientationEntries(NULL),
 	NumRandomFrameEntriesMinus1(0),
 	RandomFrameEntries(NULL),
+	NumRandomBlurTimeEntriesMinus1(0),
+	RandomBlurTimeEntries(NULL),
 	PointGroup(NULL),
 	LineRenderer(NULL),
 	Diffuse(NULL),
@@ -161,6 +168,7 @@ ParticleBufferClass::ParticleBufferClass
 	Size(NULL),
 	Orientation(NULL),
 	Frame(NULL),
+	TailPosition(NULL),
 	APT(NULL),
 	PingPongPosition(pingpong),
 	Velocity(NULL),
@@ -189,6 +197,9 @@ ParticleBufferClass::ParticleBufferClass
 
 	// Create the frame array, keyframes, and randomizer table (if needed)
 	Reset_Frames(frame);
+
+	// Create the blur time array, keyframes, and randomizer table if needed
+	Reset_Blur_Times(blurtime);
 
 	// We do not add a ref for the emitter (see DTor for detailed explanation)
 	// if (Emitter) Emitter->Add_Ref();
@@ -295,6 +306,10 @@ ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass & src) :
 	FrameKeyFrameTimes(NULL),
 	FrameKeyFrameValues(NULL),
 	FrameKeyFrameDeltas(NULL),
+	NumBlurTimeKeyFrames(src.NumBlurTimeKeyFrames),
+	BlurTimeKeyFrameTimes(NULL),
+	BlurTimeKeyFrameValues(NULL),
+	BlurTimeKeyFrameDeltas(NULL),
 	RandomColorEntries(NULL),
 	RandomAlphaEntries(NULL),
 	RandomSizeEntries(NULL),
@@ -310,14 +325,17 @@ ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass & src) :
 	RandomOrientationEntries(NULL),
 	NumRandomFrameEntriesMinus1(0),
 	RandomFrameEntries(NULL),
+	NumRandomBlurTimeEntriesMinus1(0),
+	RandomBlurTimeEntries(NULL),
 	PointGroup(NULL),
 	LineRenderer(NULL),
-	Diffuse(NULL),	
+	Diffuse(NULL),
 	Color(NULL),
 	Alpha(NULL),
 	Size(NULL),
 	Orientation(NULL),
 	Frame(NULL),
+	TailPosition(NULL),
 	APT(NULL),
 	PingPongPosition(src.PingPongPosition),
 	Velocity(NULL),
@@ -488,6 +506,31 @@ ParticleBufferClass::ParticleBufferClass(const ParticleBufferClass & src) :
 		FrameKeyFrameValues[0] = src.FrameKeyFrameValues[0];
 	}
 
+	// Set up the blur times keyframes
+	NumRandomBlurTimeEntriesMinus1 = src.NumRandomBlurTimeEntriesMinus1;
+	if (NumBlurTimeKeyFrames > 0) {
+		// Copy blur time keyframes
+		BlurTimeKeyFrameTimes = new unsigned int [NumBlurTimeKeyFrames];
+		BlurTimeKeyFrameValues = new float [NumBlurTimeKeyFrames];
+		BlurTimeKeyFrameDeltas = new float [NumBlurTimeKeyFrames];
+		for (i = 0; i < NumBlurTimeKeyFrames; i++) {
+			BlurTimeKeyFrameTimes[i] = src.BlurTimeKeyFrameTimes[i];
+			BlurTimeKeyFrameValues[i] = src.BlurTimeKeyFrameValues[i];
+			BlurTimeKeyFrameDeltas[i] = src.BlurTimeKeyFrameDeltas[i];
+		}
+
+		// Copy blur time randomizer table
+		if (src.RandomBlurTimeEntries) {
+			RandomBlurTimeEntries = new float [NumRandomBlurTimeEntriesMinus1 + 1];
+			for (unsigned int j = 0; j <= NumRandomBlurTimeEntriesMinus1; j++) {
+				RandomBlurTimeEntries[j] = src.RandomBlurTimeEntries[j];
+			}
+		}
+	} else {
+		BlurTimeKeyFrameValues = new float [1];
+		BlurTimeKeyFrameValues[0] = src.BlurTimeKeyFrameValues[0];
+	}
+
 
 	// We do not add a ref for the emitter (see DTor for detailed explanation)
 	// if (Emitter) Emitter->Add_Ref();
@@ -574,12 +617,16 @@ ParticleBufferClass::~ParticleBufferClass(void)
 	if (FrameKeyFrameTimes)				delete [] FrameKeyFrameTimes;
 	if (FrameKeyFrameValues)			delete [] FrameKeyFrameValues;
 	if (FrameKeyFrameDeltas)			delete [] FrameKeyFrameDeltas;
+	if (BlurTimeKeyFrameTimes)			delete [] BlurTimeKeyFrameTimes;
+	if (BlurTimeKeyFrameValues)		delete [] BlurTimeKeyFrameValues;
+	if (BlurTimeKeyFrameDeltas)		delete [] BlurTimeKeyFrameDeltas;
 	if (RandomColorEntries)				delete [] RandomColorEntries;
 	if (RandomAlphaEntries)				delete [] RandomAlphaEntries;
 	if (RandomSizeEntries)				delete [] RandomSizeEntries;
 	if (RandomRotationEntries)			delete [] RandomRotationEntries;
 	if (RandomOrientationEntries)		delete [] RandomOrientationEntries;
 	if (RandomFrameEntries)				delete [] RandomFrameEntries;
+	if (RandomBlurTimeEntries)			delete [] RandomBlurTimeEntries;
 	
 	if (PointGroup) delete PointGroup;
 
@@ -1920,6 +1967,154 @@ void ParticleBufferClass::Reset_Frames(ParticlePropertyStruct<float> &new_props)
 }
 
 
+void ParticleBufferClass::Reset_Blur_Times(ParticlePropertyStruct<float> &new_blur_times)
+{
+
+	unsigned int i;	// Used in loops	
+   float oo_intmax = 1.0f / (float)INT_MAX;
+	unsigned int ui_previous_key_time = 0;
+	unsigned int ui_current_key_time = 0;
+
+	BlurTimeRandom = new_blur_times.Rand;
+
+	// If the randomizer is effectively zero and there are no keyframes, then we just create a
+	// values array with one entry and store the starting value in it (the keyframes and random
+	// table will not be used in this case).
+	static const float eps_blur = 1e-5f;	// Epsilon is equivalent to 1e-5 units per second
+	bool blurtime_rand_zero	= (fabs(new_blur_times.Rand) < eps_blur);
+	if (blurtime_rand_zero && new_blur_times.NumKeyFrames == 0) {
+
+		// Release Arrays, Reuse KeyFrameValues if the right size, 
+		// otherwise release and reallocate.		
+		if (BlurTimeKeyFrameTimes) {
+			delete [] BlurTimeKeyFrameTimes;
+			BlurTimeKeyFrameTimes = NULL;
+		}
+		if (BlurTimeKeyFrameDeltas) {
+			delete [] BlurTimeKeyFrameDeltas;
+			BlurTimeKeyFrameDeltas = NULL;
+		}
+		if (BlurTimeKeyFrameValues) {
+			if (NumBlurTimeKeyFrames > 1) {
+				delete [] BlurTimeKeyFrameValues;
+				BlurTimeKeyFrameValues = new float [1];
+			}
+		} else {
+			BlurTimeKeyFrameValues = new float [1];
+		}
+
+		NumBlurTimeKeyFrames = 0;
+		NumRandomBlurTimeEntriesMinus1 = 0;
+		BlurTimeKeyFrameValues[0] = new_blur_times.Start;
+	
+	} else {
+
+		// Check times of the keyframes (each keytime must be larger than the
+		// previous one by at least a millisecond, and we stop at the first
+		// keytime of MaxAge or larger. (If all keyframes below MaxAge, the value is
+		// constant during the last segment between last keyframe and MaxAge).
+		ui_previous_key_time = 0;
+		unsigned int key = 0;
+		for (; key < new_blur_times.NumKeyFrames; key++) {
+			ui_current_key_time = (unsigned int)(new_blur_times.KeyTimes[key] * 1000.0f);
+			WWASSERT(ui_current_key_time > ui_previous_key_time);
+			if (ui_current_key_time >= MaxAge) break;
+			ui_previous_key_time = ui_current_key_time;
+		}
+		bool blurtime_constant_at_end = (key == new_blur_times.NumKeyFrames);
+
+		// Reuse BlurTimeKeyFrameValues, BlurTimeKeyFrameTimes and BlurTimeKeyFrameDeltas if the right size,
+		// otherwise release and reallocate.
+		unsigned int new_num_key_frames = key + 1;// Includes start keyframe (keytime == 0).
+		if (new_num_key_frames != NumBlurTimeKeyFrames) {
+
+			if (BlurTimeKeyFrameTimes) {
+				delete [] BlurTimeKeyFrameTimes;
+				BlurTimeKeyFrameTimes = NULL;
+			}
+			if (BlurTimeKeyFrameValues) {
+				delete [] BlurTimeKeyFrameValues;
+				BlurTimeKeyFrameValues = NULL;
+			}
+			if (BlurTimeKeyFrameDeltas) {
+				delete [] BlurTimeKeyFrameDeltas;
+				BlurTimeKeyFrameDeltas = NULL;
+			}
+
+			NumBlurTimeKeyFrames = new_num_key_frames;	
+			BlurTimeKeyFrameTimes = new unsigned int [NumBlurTimeKeyFrames];
+			BlurTimeKeyFrameValues = new float [NumBlurTimeKeyFrames];
+			BlurTimeKeyFrameDeltas = new float [NumBlurTimeKeyFrames];
+		}
+
+		// Set keyframes (deltas will be set later)
+		BlurTimeKeyFrameTimes[0] = 0;
+		BlurTimeKeyFrameValues[0] = new_blur_times.Start;
+		for (i = 1; i < NumBlurTimeKeyFrames; i++) {
+			unsigned int im1 = i - 1;
+			BlurTimeKeyFrameTimes[i] = (unsigned int)(new_blur_times.KeyTimes[im1] * 1000.0f);
+			BlurTimeKeyFrameValues[i] = new_blur_times.Values[im1];
+		}
+
+		// Do deltas for all frame keyframes except last
+		for (i = 0; i < NumBlurTimeKeyFrames - 1; i++) {
+			BlurTimeKeyFrameDeltas[i]	= (BlurTimeKeyFrameValues[i + 1] - BlurTimeKeyFrameValues[i]) /
+				(float)(BlurTimeKeyFrameTimes[i + 1] - BlurTimeKeyFrameTimes[i]);
+		}
+
+		// Do delta for last frame keyframe (i is NumBlurTimeKeyFrames - 1)
+		if (blurtime_constant_at_end) {
+			BlurTimeKeyFrameDeltas[i] = 0.0f;
+		} else {
+			// This is OK because if frame_constant_at_end is false, NumBlurTimeKeyFrames is equal or
+			// smaller than new_props.NumKeyFrames so new_props.Values[NumBlurTimeKeyFrames - 1] and
+			// new_props.KeyTimes[NumBlurTimeKeyFrames - 1] exist.
+			BlurTimeKeyFrameDeltas[i] = (new_blur_times.Values[i] - BlurTimeKeyFrameValues[i]) /
+				(new_blur_times.KeyTimes[i] * 1000.0f - (float)BlurTimeKeyFrameTimes[i]);
+		}
+
+		// Set up frame randomizer table
+		if (blurtime_rand_zero) {
+
+			if (RandomBlurTimeEntries) {
+				// Reuse RandomBlurTimeEntries if the right size, otherwise release and reallocate.
+				if (NumRandomBlurTimeEntriesMinus1 != 0) {
+					delete [] RandomBlurTimeEntries;
+					RandomBlurTimeEntries = new float [1];
+				}
+			} else {
+				RandomBlurTimeEntries = new float [1];
+			}
+
+			NumRandomBlurTimeEntriesMinus1 = 0;
+			RandomBlurTimeEntries[0] = 0.0f;
+		} else {
+
+			// Default size of randomizer tables (tables for non-zero randomizers will be this size)
+			unsigned int pot_num = Find_POT(MaxNum);
+			unsigned int default_randomizer_entries = MIN(pot_num, MAX_RANDOM_ENTRIES);
+
+			if (RandomBlurTimeEntries) {
+				// Reuse RandomBlurTimeEntries if the right size, otherwise release and reallocate.
+				if (NumRandomBlurTimeEntriesMinus1 != (default_randomizer_entries - 1)) {
+					delete [] RandomBlurTimeEntries;
+					RandomBlurTimeEntries = new float [default_randomizer_entries];
+				}
+			} else {
+				RandomBlurTimeEntries = new float [default_randomizer_entries];
+			}
+
+			NumRandomBlurTimeEntriesMinus1 = default_randomizer_entries - 1;
+
+			float scale = new_blur_times.Rand * oo_intmax;
+			for (unsigned int j = 0; j <= NumRandomBlurTimeEntriesMinus1; j++) {
+				RandomBlurTimeEntries[j] = rand_gen * scale;
+			}
+		}
+	}
+}
+
+
 // This informs the buffer that the emitter is dead, so it can release
 // its pointer to it and be removed itself after all its particles dies
 // out.
@@ -2046,6 +2241,7 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 	unsigned int skey = NumSizeKeyFrames - 1;
 	unsigned int rkey = NumRotationKeyFrames - 1;
 	unsigned int fkey = NumFrameKeyFrames - 1;
+	unsigned int bkey = NumBlurTimeKeyFrames -1;
 
 	unsigned int part;
 	Vector3 *color = Color ? Color->Get_Array(): NULL;
@@ -2053,6 +2249,16 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 	float *size = Size ? Size->Get_Array(): NULL;
 	uint8 *orientation = Orientation ? Orientation->Get_Array(): NULL;
 	uint8 *frame = Frame ? Frame->Get_Array(): NULL;
+	Vector3 *tailposition = TailPosition ? TailPosition->Get_Array() : NULL;
+
+	Vector3 *position=NULL;
+
+	if (PingPongPosition) {
+		int pingpong = WW3D::Get_Frame_Count() & 0x1;
+		position = Position[pingpong]->Get_Array();		
+	} else {
+		position = Position[0]->Get_Array();
+	}
 
 
 	for (part = Start; part < sub1_end; part++) {
@@ -2123,6 +2329,19 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 			
 			frame[part] = (uint)(((int)(tmp_frame)) & 0xFF);
 		}
+
+		if (tailposition) {
+			// We go from older to younger particles, so we go backwards from the last keyframe until
+			// age >= keytime. This loop must terminate because the 0th keytime is 0.
+			float blur_time = BlurTimeKeyFrameValues[0];
+			if (BlurTimeKeyFrameTimes) {
+				for (; part_age < BlurTimeKeyFrameTimes[bkey]; bkey--);
+				blur_time = BlurTimeKeyFrameValues[bkey] +
+					BlurTimeKeyFrameDeltas[bkey] * (float)(part_age - BlurTimeKeyFrameTimes[bkey]) +
+					RandomBlurTimeEntries[part & NumRandomBlurTimeEntriesMinus1];
+			}
+			tailposition[part]=position[part]-Velocity[part]*blur_time*1000;
+		}		
 	}
 
 	for (part = sub2_start; part < End; part++) {
@@ -2193,6 +2412,19 @@ void ParticleBufferClass::Update_Visual_Particle_State(void)
 				RandomFrameEntries[part & NumRandomFrameEntriesMinus1];
 			
 			frame[part] = (uint)(((int)(tmp_frame)) & 0xFF);
+		}
+
+		if (tailposition) {
+			// We go from older to younger particles, so we go backwards from the last keyframe until
+			// age >= keytime. This loop must terminate because the 0th keytime is 0.
+			float blur_time = BlurTimeKeyFrameValues[0];
+			if (BlurTimeKeyFrameTimes) {
+				for (; part_age < BlurTimeKeyFrameTimes[bkey]; bkey--);
+				blur_time = BlurTimeKeyFrameValues[bkey] +
+					BlurTimeKeyFrameDeltas[bkey] * (float)(part_age - BlurTimeKeyFrameTimes[bkey]) +
+					RandomBlurTimeEntries[part & NumRandomBlurTimeEntriesMinus1];
+			}
+			tailposition[part]=position[part]-Velocity[part]*blur_time*1000;
 		}
 	}
 }
@@ -2710,7 +2942,7 @@ void ParticleBufferClass::Get_Frame_Key_Frames (ParticlePropertyStruct<float> &f
 
 	//
 	//	If we have more than just the start rotation, build
-	// an array of key times and rotation values
+	// an array of key times and frame values
 	//
 	if (real_keyframe_count > 0) {
 		frames.KeyTimes	= W3DNEWARRAY float[real_keyframe_count];
@@ -2738,6 +2970,62 @@ void ParticleBufferClass::Get_Frame_Key_Frames (ParticlePropertyStruct<float> &f
 			float &delta				= FrameKeyFrameDeltas[NumFrameKeyFrames - 1];
 			float time_delta			= MaxAge - FrameKeyFrameTimes[index - 1];
 			frames.Values[index - 1]	= start_frame + (delta * time_delta);
+		}
+	}
+
+	return ;
+}
+
+void ParticleBufferClass::Get_Blur_Time_Key_Frames (ParticlePropertyStruct<float> &blurtimes) const
+{
+	int real_keyframe_count = (NumBlurTimeKeyFrames > 0) ? (NumBlurTimeKeyFrames - 1) : 0;
+	bool create_last_keyframe = false;
+
+	//
+	//	Determine if there is a keyframe at the very end of the particle's lifetime
+	//
+	if ((BlurTimeKeyFrameDeltas != NULL) &&
+		 (BlurTimeKeyFrameDeltas[NumBlurTimeKeyFrames - 1] != 0)) {
+		real_keyframe_count ++;
+		create_last_keyframe = true;
+	}
+
+	blurtimes.Start			= BlurTimeKeyFrameValues[0];
+	blurtimes.Rand				= BlurTimeRandom;
+	blurtimes.NumKeyFrames	= real_keyframe_count;
+	blurtimes.KeyTimes		= NULL;
+	blurtimes.Values			= NULL;
+
+	//
+	//	If we have more than just the start rotation, build
+	// an array of key times and blur time values
+	//
+	if (real_keyframe_count > 0) {
+		blurtimes.KeyTimes	= new float[real_keyframe_count];
+		blurtimes.Values		= new float[real_keyframe_count];
+
+		//
+		//	Copy the keytimes and frame values
+		//
+		unsigned int index;
+		for (index = 1; index < NumBlurTimeKeyFrames; index ++) {
+			blurtimes.KeyTimes[index - 1]	= ((float)BlurTimeKeyFrameTimes[index]) / 1000;
+			blurtimes.Values[index - 1]	= BlurTimeKeyFrameValues[index];
+		}
+
+		//
+		//	Add a keyframe at the very end of the timeline if necessary
+		//
+		if (create_last_keyframe) {			
+			blurtimes.KeyTimes[index - 1] = ((float)MaxAge / 1000);
+
+			//
+			// Determine what the value of the last keyframe should be
+			//
+			float start_blurtime		= BlurTimeKeyFrameValues[index - 1];
+			float &delta				= BlurTimeKeyFrameDeltas[NumBlurTimeKeyFrames - 1];
+			float time_delta			= MaxAge - BlurTimeKeyFrameTimes[index - 1];
+			blurtimes.Values[index - 1]	= start_blurtime + (delta * time_delta);
 		}
 	}
 

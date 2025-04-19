@@ -115,6 +115,7 @@ class ParticleEmitterClass : public RenderObjClass
 			ParticlePropertyStruct<float> &size, 
 			ParticlePropertyStruct<float> &rotation, float orient_rnd,
 			ParticlePropertyStruct<float> &frames,
+			ParticlePropertyStruct<float> &blur_times,
 			Vector3 accel, float max_age, TextureClass *tex,
 			ShaderClass shader = ShaderClass::_PresetAdditiveSpriteShader, 
 			int max_particles = 0, int max_buffer_size = -1, bool pingpong = false,
@@ -159,7 +160,7 @@ class ParticleEmitterClass : public RenderObjClass
 		virtual void			Set_Animation_Hidden(int onoff)	{ RenderObjClass::Set_Animation_Hidden (onoff); Update_On_Visibilty (); }
 		virtual void			Set_Force_Visible(int onoff)		{ RenderObjClass::Set_Force_Visible (onoff); Update_On_Visibilty (); }
 
-		virtual void				Set_LOD_Bias(float bias)			{ if (Buffer) Buffer->Set_LOD_Bias(bias); }
+		virtual void			Set_LOD_Bias(float bias)			{ if (Buffer) Buffer->Set_LOD_Bias(bias); }
 
 
 		// These are not part of the renderobject interface:
@@ -184,6 +185,7 @@ class ParticleEmitterClass : public RenderObjClass
 		void Reset_Size(ParticlePropertyStruct<float> &new_props)								{ if (Buffer) Buffer->Reset_Size(new_props); }
 		void Reset_Rotations(ParticlePropertyStruct<float> &new_props, float orient_rnd)	{ if (Buffer) Buffer->Reset_Rotations(new_props, orient_rnd); }
 		void Reset_Frames(ParticlePropertyStruct<float> &new_props)								{ if (Buffer) Buffer->Reset_Frames(new_props); }
+		void Reset_Blur_Times(ParticlePropertyStruct<float> &new_props)								{ if (Buffer) Buffer->Reset_Blur_Times(new_props); }
 
 		// Change emission/burst rate, or tell the emitter to emit a one-time burst.
 		// NOTE: default buffer size fits the emission/burst rate that the emitter was created with.
@@ -252,6 +254,7 @@ class ParticleEmitterClass : public RenderObjClass
 		void						Get_Size_Key_Frames (ParticlePropertyStruct<float>	&sizes) const				{ Buffer->Get_Size_Key_Frames (sizes); }
 		void						Get_Rotation_Key_Frames (ParticlePropertyStruct<float> &rotations) const	{ Buffer->Get_Rotation_Key_Frames (rotations); }
 		void						Get_Frame_Key_Frames (ParticlePropertyStruct<float> &frames) const			{ Buffer->Get_Frame_Key_Frames (frames); }
+		void						Get_Blur_Time_Key_Frames (ParticlePropertyStruct<float> &blurtimes) const	{ Buffer->Get_Blur_Time_Key_Frames (blurtimes); }
 		float						Get_Initial_Orientation_Random (void) const											{ return Buffer->Get_Initial_Orientation_Random(); }
 
 		// Line rendering accessors

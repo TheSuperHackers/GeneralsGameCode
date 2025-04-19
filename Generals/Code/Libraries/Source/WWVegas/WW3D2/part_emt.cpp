@@ -73,6 +73,7 @@ ParticleEmitterClass::ParticleEmitterClass(float emit_rate, unsigned int burst_s
 			ParticlePropertyStruct<float> &size,
 			ParticlePropertyStruct<float> &rotation, float orient_rnd,
 			ParticlePropertyStruct<float> &frames,
+			ParticlePropertyStruct<float> &blur_times,
 			Vector3 accel, float max_age, TextureClass *tex, ShaderClass shader, int max_particles,
 			int max_buffer_size, bool pingpong,int render_mode,int frame_mode,
 			const W3dEmitterLinePropertiesStruct * line_props
@@ -111,7 +112,7 @@ ParticleEmitterClass::ParticleEmitterClass(float emit_rate, unsigned int burst_s
 	max_num = MAX(max_num, 2);	// max_num of 1 causes problems
 
 	Buffer = W3DNEW ParticleBufferClass(this, max_num, color, opacity, size, rotation, orient_rnd,
-		frames, accel/1000000.0f,max_age, tex, shader, pingpong, render_mode, frame_mode,
+		frames, blur_times, accel/1000000.0f,max_age, tex, shader, pingpong, render_mode, frame_mode,
 		line_props);
 	SET_REF_OWNER( Buffer );
 	BufferSceneNeeded = true;
@@ -207,7 +208,8 @@ ParticleEmitterClass::Create_From_Definition (const ParticleEmitterDefClass &def
 	const char *ptexture_filename = definition.Get_Texture_Filename ();
 	TextureClass *ptexture = NULL;
 	if (ptexture_filename && ptexture_filename[0]) {
-		ptexture = WW3DAssetManager::Get_Instance()->Get_Texture(
+		ptexture = WW3DAssetManager::Get_Instance()->Get_Texture
+		(
 			ptexture_filename,
 			MIP_LEVELS_ALL,
 			WW3D_FORMAT_UNKNOWN,
@@ -237,12 +239,14 @@ ParticleEmitterClass::Create_From_Definition (const ParticleEmitterDefClass &def
 	ParticlePropertyStruct<float> size_keys;
 	ParticlePropertyStruct<float> rotation_keys;
 	ParticlePropertyStruct<float> frame_keys;
+	ParticlePropertyStruct<float> blur_time_keys;
 
 	definition.Get_Color_Keyframes (color_keys);
 	definition.Get_Opacity_Keyframes (opacity_keys);
 	definition.Get_Size_Keyframes (size_keys);
 	definition.Get_Rotation_Keyframes (rotation_keys);
 	definition.Get_Frame_Keyframes (frame_keys);
+	definition.Get_Blur_Time_Keyframes (blur_time_keys);
 
 	//
 	//	Create the emitter
@@ -260,6 +264,7 @@ ParticleEmitterClass::Create_From_Definition (const ParticleEmitterDefClass &def
 																rotation_keys,
 																definition.Get_Initial_Orientation_Random(),
 																frame_keys,
+																blur_time_keys,
 																definition.Get_Acceleration (),
 																definition.Get_Lifetime (),
 																ptexture,
@@ -281,6 +286,8 @@ ParticleEmitterClass::Create_From_Definition (const ParticleEmitterDefClass &def
 	if (rotation_keys.Values != NULL) delete [] rotation_keys.Values;
 	if (frame_keys.KeyTimes != NULL) delete [] frame_keys.KeyTimes;
 	if (frame_keys.Values != NULL) delete [] frame_keys.Values;
+	if (blur_time_keys.KeyTimes != NULL) delete [] blur_time_keys.KeyTimes;
+	if (blur_time_keys.Values != NULL) delete [] blur_time_keys.Values;
 
 	// Pass the name along to the emitter
 	pemitter->Set_Name (definition.Get_Name ());
@@ -774,6 +781,16 @@ ParticleEmitterClass::Build_Definition (void) const
 		pdefinition->Set_Frame_Keyframes (frames);
 		if (frames.KeyTimes != NULL) delete [] frames.KeyTimes;
 		if (frames.Values != NULL) delete [] frames.Values;
+
+		//
+		//	Pass the blur time keyframes onto the definition
+		//
+		ParticlePropertyStruct<float> blur_times;
+		Get_Blur_Time_Key_Frames (blur_times);
+		pdefinition->Set_Blur_Time_Keyframes (blur_times);
+		if (blur_times.KeyTimes != NULL) delete [] blur_times.KeyTimes;
+		if (blur_times.Values != NULL) delete [] blur_times.Values;
+
 
 		//
 		// Set up the line parameters 
