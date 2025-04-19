@@ -31,6 +31,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/ThingFactory.h"
+#include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
 #include "GameLogic/Damage.h"
 #include "GameLogic/Object.h"
@@ -121,6 +122,11 @@ void SquishCollide::onCollide( Object *other, const Coord3D *loc, const Coord3D 
 
 		if (to.x * vel->x + to.y * vel->y > 0.0f)
 		{
+
+			DEBUG_LOG((">>> squishCollide onCollide: %s (Crusher:%d, Crushable:%d) is colliding with (getting crushed by) %s (Crusher:%d, Crushable:%d)\n",
+				getObject()->getTemplate()->getName().str(), getObject()->getCrusherLevel(), getObject()->getCrushableLevel(),
+				other->getTemplate()->getName().str(), other->getCrusherLevel(), other->getCrushableLevel()));
+
 			DamageInfo damageInfo;
 			damageInfo.in.m_damageType = DAMAGE_CRUSH;
 			damageInfo.in.m_deathType = DEATH_CRUSHED;

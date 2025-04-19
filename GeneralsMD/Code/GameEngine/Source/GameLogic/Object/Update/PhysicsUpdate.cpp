@@ -140,6 +140,7 @@ PhysicsBehaviorModuleData::PhysicsBehaviorModuleData()
 	m_pitchRollYawFactor = 2.0f;
 	m_vehicleCrashesIntoBuildingWeaponTemplate = TheWeaponStore->findWeaponTemplate("VehicleCrashesIntoBuildingWeapon");
 	m_vehicleCrashesIntoNonBuildingWeaponTemplate = TheWeaponStore->findWeaponTemplate("VehicleCrashesIntoNonBuildingWeapon");
+	m_vehicleCrashAllowAirborne = FALSE;
 
 }
 
@@ -190,7 +191,7 @@ static void parseFrictionPerSec( INI* ini, void * /*instance*/, void *store, con
 
 		{ "VehicleCrashesIntoBuildingWeaponTemplate", INI::parseWeaponTemplate, NULL, offsetof(PhysicsBehaviorModuleData, m_vehicleCrashesIntoBuildingWeaponTemplate) },
 		{ "VehicleCrashesIntoNonBuildingWeaponTemplate", INI::parseWeaponTemplate, NULL, offsetof(PhysicsBehaviorModuleData, m_vehicleCrashesIntoNonBuildingWeaponTemplate) },
-
+		{ "VehicleCrashWeaponAllowAirborne", INI::parseBool, NULL, offsetof(PhysicsBehaviorModuleData, m_vehicleCrashAllowAirborne) },
 		{ 0, 0, 0, 0 }
 	};
   p.add(dataFieldParse);
@@ -1391,8 +1392,15 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 				else
 				{
 					// fall into a nonbuilding -- whatever. if we're a vehicle, quietly do a little damage.
-					if (obj->isKindOf(KINDOF_VEHICLE))
+					if (obj->isKindOf(KINDOF_VEHICLE) && (!other->isAirborneTarget() || getPhysicsBehaviorModuleData()->m_vehicleCrashAllowAirborne))
 					{
+						//DEBUG_LOG((
+						//	">>> PhysicsUpdate - fire vehicleCrashesIntoNonBuildingWeapon; obj = %s (%d); other = %s (%d).\n",
+						//	obj->getTemplate()->getName().str(),
+						//	obj->getID(),
+						//	other->getTemplate()->getName().str(),
+						//	other->getID()
+						//	));
 						TheWeaponStore->createAndFireTempWeapon(getPhysicsBehaviorModuleData()->m_vehicleCrashesIntoNonBuildingWeaponTemplate, obj, obj->getPosition());
 					}
 				}
@@ -1491,6 +1499,11 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 	crusherPhysics->addOverlap(crusheeOther);
 	if (!crusherPhysics->wasPreviouslyOverlapped(crusheeOther))
 	{
+		DEBUG_LOG((">>> checkForOverlapCollision 1: %s (Crusher:%d, Crushable:%d) is attempting to crush %s (Crusher:%d, Crushable:%d)\n",
+			crusherMe->getTemplate()->getName().str(), crusherMe->getCrusherLevel(), crusherMe->getCrushableLevel(),
+			crusheeOther->getTemplate()->getName().str(), crusheeOther->getCrusherLevel(), crusheeOther->getCrushableLevel()));
+
+
 		DamageInfo damageInfo;
 		damageInfo.in.m_damageType = DAMAGE_CRUSH;
 		damageInfo.in.m_deathType = DEATH_CRUSHED;
@@ -1757,6 +1770,10 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 
 		if( crushIt )
 		{
+			DEBUG_LOG((">>> checkForOverlapCollision 2: %s (Crusher:%d, Crushable:%d) is attempting to crush %s (Crusher:%d, Crushable:%d)\n",
+				crusherMe->getTemplate()->getName().str(), crusherMe->getCrusherLevel(), crusherMe->getCrushableLevel(),
+				crusheeOther->getTemplate()->getName().str(), crusheeOther->getCrusherLevel(), crusheeOther->getCrushableLevel()));
+
 			// do a boat load of crush damage, and the onDie will handle cases like crushed car object
 			DamageInfo damageInfo;
 			damageInfo.in.m_damageType = DAMAGE_CRUSH;

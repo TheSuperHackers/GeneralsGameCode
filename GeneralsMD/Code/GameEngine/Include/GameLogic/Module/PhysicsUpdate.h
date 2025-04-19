@@ -66,6 +66,7 @@ public:
 	Real	m_minFallSpeedForDamage;
 	Real	m_fallHeightDamageFactor;
 	Real	m_pitchRollYawFactor;
+	Bool    m_vehicleCrashAllowAirborne;
   
 	const WeaponTemplate* m_vehicleCrashesIntoBuildingWeaponTemplate;
 	const WeaponTemplate* m_vehicleCrashesIntoNonBuildingWeaponTemplate;

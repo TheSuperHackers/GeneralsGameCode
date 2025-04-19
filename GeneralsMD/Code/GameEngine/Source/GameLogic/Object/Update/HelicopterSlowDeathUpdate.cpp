@@ -183,6 +183,16 @@ HelicopterSlowDeathBehavior::~HelicopterSlowDeathBehavior( void )
 //-------------------------------------------------------------------------------------------------
 void HelicopterSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 {
+	DEBUG_LOG((">>> HSDB: beginSlowDeath '%s' (%d); damageAmount = %f; damagetype = %d; deathtype = %d; m_kill = %d; from %d (%s); \n",
+		getObject()->getTemplate()->getName().str(),
+		getObject()->getID(),
+		damageInfo->in.m_amount,
+		damageInfo->in.m_damageType,
+		damageInfo->in.m_deathType,
+		damageInfo->in.m_kill,
+		damageInfo->in.m_sourceID, damageInfo->in.m_sourceTemplate->getName().str()
+
+		));
 
 	// extending functionality
 	SlowDeathBehavior::beginSlowDeath( damageInfo );
