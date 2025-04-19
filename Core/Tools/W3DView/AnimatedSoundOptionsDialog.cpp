@@ -24,7 +24,9 @@
 #include "globals.h"
 #include "animatedsoundoptionsdialog.h"
 #include "ffactory.h"
+#if 0
 #include "animatedsoundmgr.h"
+#endif
 #include "wwsaveload.h"
 #include "definitionmgr.h"
 #include "wwfile.h"
@@ -217,9 +219,10 @@ AnimatedSoundOptionsDialogClass::Load_Animated_Sound_Settings (void)
 	//
 	//	Load the sound settings from the ini file
 	//
+#if 0
 	AnimatedSoundMgrClass::Shutdown ();
 	AnimatedSoundMgrClass::Initialize (sound_ini_path);
-
+#endif
 	//
 	//	Add a sub-directory to the file factory for audio use
 	//

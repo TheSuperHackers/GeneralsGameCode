@@ -2,7 +2,7 @@
 
 # Build useful tool binaries.
 if(RTS_BUILD_CORE_TOOLS)
-    # TODO: add subdirectory...
+    add_subdirectory(W3DView)
 endif()
 
 # Build less useful tool/test binaries.
