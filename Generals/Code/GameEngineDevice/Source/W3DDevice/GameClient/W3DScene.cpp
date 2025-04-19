@@ -1124,16 +1124,6 @@ void RTS3DScene::Customized_Render( RenderInfoClass &rinfo )
 				renderOneObject(rinfo, robj, localPlayerIndex);
 		}
 	}
-
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	if (TheGrannyRenderObjSystem)
-	{	//we only want to update granny animations once per frame, so only queue
-		//them up if this is not a mirror pass.
-		if (!ShaderClass::Is_Backface_Culling_Inverted())
-			TheGrannyRenderObjSystem->queueUpdate();
-		TheGrannyRenderObjSystem->Flush();
-	}
-#endif
 	
 	//Tell shadow manager to render shadows at the end of this frame
 	//Don't draw shadows if there is no terrain present.
