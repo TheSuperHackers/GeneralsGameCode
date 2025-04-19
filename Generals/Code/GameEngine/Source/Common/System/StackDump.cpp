@@ -76,6 +76,7 @@ void StackDump(void (*callback)(const char*))
 
 	DWORD myeip,myesp,myebp;
 
+#ifdef _MSC_VER
 _asm
 {
 MYEIP1:
@@ -86,6 +87,12 @@ MYEIP1:
  mov eax, ebp
  mov dword ptr [myebp] , eax
 }
+#else
+	RtlCaptureContext(&gsContext);
+	myeip = gsContext.Eip;
+	myesp = gsContext.Esp;
+	myebp = gsContext.Ebp;
+#endif
 
 
 	MakeStackTrace(myeip,myesp,myebp, 2, callback);
@@ -340,6 +347,7 @@ void FillStackAddresses(void**addresses, unsigned int count, unsigned int skip)
     gsContext.ContextFlags = CONTEXT_FULL;
 
 	DWORD myeip,myesp,myebp;
+#ifdef _MSC_VER
 _asm
 {
 MYEIP2:
@@ -351,6 +359,12 @@ MYEIP2:
  mov dword ptr [myebp] , eax
  xor eax,eax
 }
+#else
+	RtlCaptureContext(&gsContext);
+	myeip = gsContext.Eip;
+	myesp = gsContext.Esp;
+	myebp = gsContext.Ebp;
+#endif
 memset(&stack_frame, 0, sizeof(STACKFRAME));
 stack_frame.AddrPC.Mode = AddrModeFlat;
 stack_frame.AddrPC.Offset = myeip;
@@ -360,17 +374,6 @@ stack_frame.AddrFrame.Mode = AddrModeFlat;
 stack_frame.AddrFrame.Offset = myebp;
 
 {
-/*
-    if(GetThreadContext(thread, &gsContext))
-    {
-        memset(&stack_frame, 0, sizeof(STACKFRAME));
-        stack_frame.AddrPC.Mode = AddrModeFlat;
-        stack_frame.AddrPC.Offset = gsContext.Eip;
-        stack_frame.AddrStack.Mode = AddrModeFlat;
-        stack_frame.AddrStack.Offset = gsContext.Esp;
-        stack_frame.AddrFrame.Mode = AddrModeFlat;
-        stack_frame.AddrFrame.Offset = gsContext.Ebp;
-*/
 
 		Bool stillgoing = TRUE;
 //	unsigned int cd = count;

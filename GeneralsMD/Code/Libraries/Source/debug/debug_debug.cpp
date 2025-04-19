@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <new>      // needed for placement new prototype
+#include <Utility/intrin_compat.h>
 
 // a little dummy variable that makes the linker actually include
 // us...
@@ -270,11 +271,15 @@ bool Debug::SkipNext(void)
   // do not implement this function inline, we do need
   // a valid frame pointer here!
   unsigned help;
+#ifdef _MSC_VER
   _asm 
   {
     mov eax,[ebp+4]   // return address
     mov help,eax
   };
+#else
+	help = (unsigned)_ReturnAddress();
+#endif
   curStackFrame=help;
 
   // do we know if to skip the following code?
@@ -386,7 +391,7 @@ bool Debug::AssertDone(void)
           }
           break;
         case IDRETRY:
-          _asm int 0x03
+          __debugbreak();
           break;
         default:
           ((void)0);
@@ -654,7 +659,7 @@ bool Debug::CrashDone(bool die)
             }
             break;
           case IDRETRY:
-            _asm int 0x03
+            __debugbreak();
             break;
           default:
             ((void)0);
