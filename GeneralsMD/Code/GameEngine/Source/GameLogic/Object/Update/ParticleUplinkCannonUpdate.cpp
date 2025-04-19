@@ -390,6 +390,17 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 		///return UPDATE_SLEEP_FOREVER;
 	}
 
+	{
+		// TheSuperHackers @logic-client-separation helmutbuhler 04/19/2025
+		// This class originally depended on some members of LaserUpdate that is attached to
+		// m_orbitToTargetBeamID for GameLogic. We fix that here by calling LogicUpdate of that
+		// instance here explicitely.
+		static NameKeyType nameKeyClientUpdate = NAMEKEY("LaserUpdate");
+		Drawable* beam = TheGameClient->findDrawableByID(m_orbitToTargetBeamID);
+		LaserUpdate* update = beam ? (LaserUpdate*)beam->findClientUpdateModule(nameKeyClientUpdate) : NULL;
+		if (update) update->logicUpdate();
+	}
+
 	const ParticleUplinkCannonUpdateModuleData *data = getParticleUplinkCannonUpdateModuleData();
 
 	Object *me = getObject();
@@ -608,12 +619,15 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 			Real scorchRadius = 0.0f;
 			Real damageRadius = 0.0f;
 
+			// TheSuperHackers @logic-client-separation helmutbuhler 04/19/2025
+			// damageRadius affects gamelogic and shouldn't depend on LaserUpdate
+
 			//Reset the laser position
 			static NameKeyType nameKeyClientUpdate = NAMEKEY( "LaserUpdate" );
 			LaserUpdate *update = (LaserUpdate*)beam->findClientUpdateModule( nameKeyClientUpdate );
 			if( update )
 			{
-				update->initLaser( NULL, NULL, &orbitPosition, &m_currentTargetPosition, "" );
+				update->initLaser( NULL, NULL, &orbitPosition, &m_currentTargetPosition, "", 0, /*m_explicitLogicUpdate=*/true );
 				scorchRadius = update->getCurrentLaserRadius() * data->m_scorchMarkScalar;
 				damageRadius = update->getCurrentLaserRadius() * data->m_damageRadiusScalar;
 			}
@@ -998,7 +1012,7 @@ void ParticleUplinkCannonUpdate::createOrbitToTargetLaser( UnsignedInt growthFra
 					Coord3D orbitPosition;
 					orbitPosition.set( &m_initialTargetPosition );
 					orbitPosition.z += 500.0f;
-					update->initLaser( NULL, NULL, &orbitPosition, &m_initialTargetPosition, "", growthFrames );
+					update->initLaser( NULL, NULL, &orbitPosition, &m_initialTargetPosition, "", growthFrames, /*m_explicitLogicUpdate=*/true );
 				}
 			}
 		}

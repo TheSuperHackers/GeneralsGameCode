@@ -75,7 +75,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	//Actually puts the laser in the world.
-	void initLaser( const Object *parent, const Object *target, const Coord3D *startPos, const Coord3D *endPos, AsciiString parentBoneName, Int sizeDeltaFrames = 0 );
+	void initLaser( const Object *parent, const Object *target, const Coord3D *startPos, const Coord3D *endPos, AsciiString parentBoneName, Int sizeDeltaFrames = 0, Bool explicitLogicUpdate = false);
 	void setDecayFrames( UnsignedInt decayFrames );
 
 	const Coord3D* getStartPos() { return &m_startPos; }
@@ -89,6 +89,7 @@ public:
 	Real getWidthScale() const { return m_currentWidthScalar; }
 
 	virtual void clientUpdate();
+	void logicUpdate();
 
 protected:
 
@@ -113,6 +114,14 @@ protected:
 	UnsignedInt m_decayStartFrame;
 	UnsignedInt m_decayFinishFrame;
 	AsciiString m_parentBoneName;
+
+	// TheSuperHackers @logic-client-separation helmutbuhler 04/19/2025
+	// LaserUpdate belongs to the client, but some members here are used by GameLogic.
+	// Sadly these members were originally updated in clientUpdate, which doesn't run
+	// in headless mode. To make it work, this new bool can be set to true to disable updating
+	// gamelogic relevant updates in clientUpdate. These variables can then be updated explicitely
+	// with logicUpdate from gamelogic.
+	Bool m_explicitLogicUpdate;
 };
 
 

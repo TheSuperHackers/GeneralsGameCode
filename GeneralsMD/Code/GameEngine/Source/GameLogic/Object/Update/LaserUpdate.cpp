@@ -93,6 +93,8 @@ LaserUpdate::LaserUpdate( Thing *thing, const ModuleData* moduleData ) : ClientU
 	m_parentID = INVALID_DRAWABLE_ID;
 	m_targetID = INVALID_DRAWABLE_ID;
 	m_parentBoneName.clear();
+
+	m_explicitLogicUpdate = false;
 } 
 
 //-------------------------------------------------------------------------------------------------
@@ -201,7 +203,12 @@ void LaserUpdate::clientUpdate( void )
 {
 	updateStartPos();
 	updateEndPos();
+	if (!m_explicitLogicUpdate)
+		logicUpdate();
+}
 
+void LaserUpdate::logicUpdate()
+{
 	if( m_decaying )
 	{
 		UnsignedInt now = TheGameLogic->getFrame();
@@ -244,7 +251,7 @@ void LaserUpdate::setDecayFrames( UnsignedInt decayFrames )
 
 
 //-------------------------------------------------------------------------------------------------
-void LaserUpdate::initLaser( const Object *parent, const Object *target, const Coord3D *startPos, const Coord3D *endPos, AsciiString parentBoneName, Int sizeDeltaFrames )
+void LaserUpdate::initLaser( const Object *parent, const Object *target, const Coord3D *startPos, const Coord3D *endPos, AsciiString parentBoneName, Int sizeDeltaFrames, Bool explicitLogicUpdate )
 {
 	const LaserUpdateModuleData *data = getLaserUpdateModuleData();
 	ParticleSystem *system;
@@ -265,6 +272,8 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 
 	// Write down the bone name override
 	m_parentBoneName = parentBoneName;
+
+	m_explicitLogicUpdate = explicitLogicUpdate;
 
 	//Record IDs if we have them, then figure out starting points
 	if( parent )
@@ -406,6 +415,11 @@ Real LaserUpdate::getCurrentLaserRadius() const
 			//While it appears the logic is accessing client data, it is actually accessing template module
 			//data from the client. This value is INI constant thus can't change. It's grouped with other 
 			//laser defining attributes and having it there makes it easier for artists.
+			
+			// TheSuperHackers @logic-client-separation helmutbuhler 04/19/2025
+			// Sadly the comment above is only true for ldi->getLaserTemplateWidth()
+			// For m_currentWidthScalar we fix this with m_explicitLogicUpdate.
+
 			return ldi->getLaserTemplateWidth() * m_currentWidthScalar;
 		}
 	}
