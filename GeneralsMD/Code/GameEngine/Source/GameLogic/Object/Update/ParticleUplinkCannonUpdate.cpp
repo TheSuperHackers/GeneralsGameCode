@@ -942,7 +942,10 @@ void ParticleUplinkCannonUpdate::createGroundToOrbitLaser( UnsignedInt growthFra
 	if( beam )
 	{
 		TheGameClient->destroyDrawable( beam );
-		m_orbitToTargetBeamID = INVALID_DRAWABLE_ID;
+
+		// TheSuperHackers @fix helmutbuhler 04/19/2025
+		// This originally mistakenly assigned to m_orbitToTargetBeamID and thus caused a leak.
+		m_groundToOrbitBeamID = INVALID_DRAWABLE_ID;
 	}
 
 	if( data->m_particleBeamLaserName.isNotEmpty() )
