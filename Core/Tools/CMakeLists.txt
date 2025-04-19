@@ -7,6 +7,7 @@ endif()
 
 # Build less useful tool/test binaries.
 if(RTS_BUILD_CORE_EXTRAS)
+    add_subdirectory(Babylon)
     add_subdirectory(buildVersionUpdate)
     add_subdirectory(Compress)
     add_subdirectory(CRCDiff)

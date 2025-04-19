@@ -51,16 +51,16 @@ set(BABYLON_SRC
     "XLStuff.h"
 )
 
-add_executable(z_babylon WIN32)
-set_target_properties(z_babylon PROPERTIES OUTPUT_NAME babylon)
+add_executable(core_babylon WIN32)
+set_target_properties(core_babylon PROPERTIES OUTPUT_NAME babylon)
 
-target_sources(z_babylon PRIVATE ${BABYLON_SRC})
+target_sources(core_babylon PRIVATE ${BABYLON_SRC})
 
-target_link_libraries(z_babylon PRIVATE
+target_link_libraries(core_babylon PRIVATE
     core_config
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
-    target_compile_definitions(z_babylon PRIVATE _AFXDLL)
-    target_sources(z_babylon PRIVATE Babylon.rc)
+    target_compile_definitions(core_babylon PRIVATE _AFXDLL)
+    target_sources(core_babylon PRIVATE Babylon.rc)
 endif()

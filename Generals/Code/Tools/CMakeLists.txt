@@ -13,7 +13,6 @@ endif()
 # Build less useful tool/test binaries.
 if(RTS_BUILD_GENERALS_EXTRAS)
     add_subdirectory(Autorun)
-    add_subdirectory(Babylon)
     add_subdirectory(Launcher)
     add_subdirectory(mangler)
     add_subdirectory(PATCHGET)
