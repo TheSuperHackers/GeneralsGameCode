@@ -16,9 +16,9 @@ target_link_libraries(corei_always INTERFACE
 
 # Do we want to build extra SDK stuff or just the game binary?
 option(RTS_BUILD_CORE_TOOLS "Build core tools" ON)
-add_feature_info(CoreTools GENZH_BUILD_ZEROHOUR_TOOLS "Build Core Mod Tools")
+add_feature_info(CoreTools RTS_BUILD_CORE_TOOLS "Build Core Mod Tools")
 option(RTS_BUILD_CORE_EXTRAS "Build core extra tools/tests" OFF)
-add_feature_info(CoreExtras GENZH_BUILD_ZEROHOUR_EXTRAS "Build Core Extra Tools/Tests")
+add_feature_info(CoreExtras RTS_BUILD_CORE_EXTRAS "Build Core Extra Tools/Tests")
 
 # Set where the build results will end up
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
