@@ -1499,11 +1499,6 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 	crusherPhysics->addOverlap(crusheeOther);
 	if (!crusherPhysics->wasPreviouslyOverlapped(crusheeOther))
 	{
-		DEBUG_LOG((">>> checkForOverlapCollision 1: %s (Crusher:%d, Crushable:%d) is attempting to crush %s (Crusher:%d, Crushable:%d)\n",
-			crusherMe->getTemplate()->getName().str(), crusherMe->getCrusherLevel(), crusherMe->getCrushableLevel(),
-			crusheeOther->getTemplate()->getName().str(), crusheeOther->getCrusherLevel(), crusheeOther->getCrushableLevel()));
-
-
 		DamageInfo damageInfo;
 		damageInfo.in.m_damageType = DAMAGE_CRUSH;
 		damageInfo.in.m_deathType = DEATH_CRUSHED;
@@ -1770,10 +1765,6 @@ Bool PhysicsBehavior::checkForOverlapCollision(Object *other)
 
 		if( crushIt )
 		{
-			DEBUG_LOG((">>> checkForOverlapCollision 2: %s (Crusher:%d, Crushable:%d) is attempting to crush %s (Crusher:%d, Crushable:%d)\n",
-				crusherMe->getTemplate()->getName().str(), crusherMe->getCrusherLevel(), crusherMe->getCrushableLevel(),
-				crusheeOther->getTemplate()->getName().str(), crusheeOther->getCrusherLevel(), crusheeOther->getCrushableLevel()));
-
 			// do a boat load of crush damage, and the onDie will handle cases like crushed car object
 			DamageInfo damageInfo;
 			damageInfo.in.m_damageType = DAMAGE_CRUSH;
