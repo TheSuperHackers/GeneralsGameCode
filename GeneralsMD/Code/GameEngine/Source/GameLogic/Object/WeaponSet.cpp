@@ -103,6 +103,7 @@ void WeaponTemplateSet::clear()
 {
 	m_isReloadTimeShared = false;
 	m_isWeaponLockSharedAcrossSets = FALSE;
+	m_isWeaponReloadSharedAcrossSets = FALSE;
 	m_types.clear();
 	for (int i = 0; i < WEAPONSLOT_COUNT; ++i) 
 	{
@@ -158,6 +159,7 @@ void WeaponTemplateSet::parseWeaponTemplateSet( INI* ini, const ThingTemplate* t
 		{ "PreferredAgainst", WeaponTemplateSet::parsePreferredAgainst, NULL, 0 },
 		{ "ShareWeaponReloadTime", INI::parseBool, NULL, offsetof( WeaponTemplateSet, m_isReloadTimeShared ) },
 		{ "WeaponLockSharedAcrossSets", INI::parseBool, NULL, offsetof( WeaponTemplateSet, m_isWeaponLockSharedAcrossSets ) },
+		{ "WeaponReloadSharedAcrossSets", INI::parseBool, NULL, offsetof(WeaponTemplateSet, m_isWeaponReloadSharedAcrossSets) },
 		{ 0, 0, 0, 0 }
 	};
 
@@ -313,30 +315,63 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 		m_totalDamageTypeMask.clear();
 		m_hasPitchLimit = false;
 		m_hasDamageWeapon = false;
-		for (Int i = WEAPONSLOT_COUNT - 1; i >= PRIMARY_WEAPON ; --i)
+		for (Int i = WEAPONSLOT_COUNT - 1; i >= PRIMARY_WEAPON; --i)
 		{
-			if (m_weapons[i] != NULL)
-			{
-				m_weapons[i]->deleteInstance();
-				m_weapons[i] = NULL;
+			if (set->isWeaponReloadSharedAcrossSets() && (m_weapons[i] != NULL)) {  //This is a bit of redundant code, but it keeps it cleaner overall.
+
+				Weapon* prevWeapon = m_weapons[i];
+
+				if (set->getNth((WeaponSlotType)i))
+				{
+					m_weapons[i] = TheWeaponStore->allocateNewWeapon(set->getNth((WeaponSlotType)i), (WeaponSlotType)i);
+
+					Real clipPercentage = prevWeapon->getClipSize() > 0 ? (Real)(prevWeapon->getRemainingAmmo()) / (Real)(prevWeapon->getClipSize()) : 0.0f;
+
+					m_weapons[i]->transferNextShotStatsFrom(*prevWeapon);
+					m_weapons[i]->setClipPercentFull(clipPercentage, false);
+
+					m_filledWeaponSlotMask |= (1 << i);
+					m_totalAntiMask |= m_weapons[i]->getAntiMask();
+					m_totalDamageTypeMask.set(m_weapons[i]->getDamageType());
+					if (m_weapons[i]->isPitchLimited())
+						m_hasPitchLimit = true;
+					if (m_weapons[i]->isDamageWeapon())
+						m_hasDamageWeapon = true;
+				}
+				else {
+					m_weapons[i] = NULL;
+				}
+
+				if (prevWeapon != NULL)
+				{
+					prevWeapon->deleteInstance();
+					prevWeapon = NULL;
+				}
 			}
+			else { // Regular old behaviour
+				if (m_weapons[i] != NULL)
+				{
+					m_weapons[i]->deleteInstance();
+					m_weapons[i] = NULL;
+				}
 
-			if (set->getNth((WeaponSlotType)i))
-			{
-				m_weapons[i] = TheWeaponStore->allocateNewWeapon(set->getNth((WeaponSlotType)i), (WeaponSlotType)i);
-				m_weapons[i]->loadAmmoNow(obj);	// start 'em all with full clips.
-				m_filledWeaponSlotMask |= (1 << i);
-				m_totalAntiMask |= m_weapons[i]->getAntiMask();
-				m_totalDamageTypeMask.set(m_weapons[i]->getDamageType());
-				if (m_weapons[i]->isPitchLimited())
-					m_hasPitchLimit = true;
-				if (m_weapons[i]->isDamageWeapon())
-					m_hasDamageWeapon = true;
+				if (set->getNth((WeaponSlotType)i))
+				{
+					m_weapons[i] = TheWeaponStore->allocateNewWeapon(set->getNth((WeaponSlotType)i), (WeaponSlotType)i);
+					m_weapons[i]->loadAmmoNow(obj);	// start 'em all with full clips.
+					m_filledWeaponSlotMask |= (1 << i);
+					m_totalAntiMask |= m_weapons[i]->getAntiMask();
+					m_totalDamageTypeMask.set(m_weapons[i]->getDamageType());
+					if (m_weapons[i]->isPitchLimited())
+						m_hasPitchLimit = true;
+					if (m_weapons[i]->isDamageWeapon())
+						m_hasDamageWeapon = true;
 
-				// no, do NOT do this; always start with the cur weapon being primary, even if there is no primary
-				// weapon. this is by design, to allow us to have units that have only "spell" weapons and no
-				// "normal" weapons. (srj)
-				// m_curWeapon = (WeaponSlotType)i;
+					// no, do NOT do this; always start with the cur weapon being primary, even if there is no primary
+					// weapon. this is by design, to allow us to have units that have only "spell" weapons and no
+					// "normal" weapons. (srj)
+					// m_curWeapon = (WeaponSlotType)i;
+				}
 			}
 		}
 		m_curWeaponTemplateSet = set;
