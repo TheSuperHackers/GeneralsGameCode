@@ -84,6 +84,14 @@ W3DTerrainVisual::~W3DTerrainVisual()
 		TheTerrainTracksRenderObjClassSystem=NULL;
 	}
 
+#ifdef	INCLUDE_GRANNY_IN_BUILD
+	if (TheGrannyRenderObjSystem)
+	{
+		delete TheGrannyRenderObjSystem;
+		TheGrannyRenderObjSystem=NULL;
+	}
+#endif
+
 	if (TheW3DShadowManager)
 	{	
 		delete TheW3DShadowManager;
@@ -112,6 +120,11 @@ void W3DTerrainVisual::init( void )
 	// initialize track drawing system
 	TheTerrainTracksRenderObjClassSystem = NEW TerrainTracksRenderObjClassSystem;
 	TheTerrainTracksRenderObjClassSystem->init(W3DDisplay::m_3DScene);
+
+#ifdef	INCLUDE_GRANNY_IN_BUILD
+	// initialize Granny model drawing system
+	TheGrannyRenderObjSystem = NEW GrannyRenderObjSystem;
+#endif
 
 	// initialize object shadow drawing system
 	TheW3DShadowManager = NEW W3DShadowManager;

@@ -54,6 +54,7 @@
 
 class Vector3;
 class VertexMaterialClass;
+class GrannyAnimManagerClass;
 
 class W3DAssetManager: public WW3DAssetManager
 {
@@ -106,6 +107,8 @@ private:
 	int replaceAssetTexture(RenderObjClass *robj, TextureClass *oldTex, TextureClass *newTex);
 	int replaceHLODTexture(RenderObjClass *robj, TextureClass *oldTex, TextureClass *newTex);
 	int replaceMeshTexture(RenderObjClass *robj, TextureClass *oldTex, TextureClass *newTex);
+
+	GrannyAnimManagerClass		*m_GrannyAnimManager;
 
 	//'E&B' customizations
 /*	virtual RenderObjClass * Create_Render_Obj(const char * name, float scale, const Vector3 &hsv_shift);	
