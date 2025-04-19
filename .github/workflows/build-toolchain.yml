@@ -111,10 +111,12 @@ jobs:
           )
 
           $gamePrefix = "${{ inputs.game == 'Generals' && 'GENERALS' || 'ZEROHOUR' }}"
+          $buildFlags += "-DRTS_BUILD_CORE_TOOLS=${{ inputs.tools && 'ON' || 'OFF' }}"
           $buildFlags += "-DRTS_BUILD_${gamePrefix}_TOOLS=${{ inputs.tools && 'ON' || 'OFF' }}"
+          $buildFlags += "-DRTS_BUILD_CORE_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }}"
           $buildFlags += "-DRTS_BUILD_${gamePrefix}_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }}"
 
-          Write-Host "Build flags: $buildFlags"
+          Write-Host "Build flags: $($buildFlags -join ' | ')"
 
           cmake --preset ${{ inputs.preset }} $buildFlags
 
@@ -132,9 +134,9 @@ jobs:
             if ("${{ inputs.preset }}" -like "win32*") {
             # For win32 preset, look in config-specific subdirectories
             $configToUse = if ("${{ inputs.preset }}" -eq "win32dbg") { "Debug" } else { "Release" }
-            $files = Get-ChildItem -Path "$buildDir\${{ inputs.game }}\$configToUse" -File | Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
+            $files = Get-ChildItem -Path "$buildDir\Core\$configToUse","$buildDir\${{ inputs.game }}\$configToUse" -File | Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
             } else {
-            $files = Get-ChildItem -Path "$buildDir\${{ inputs.game }}" -File | Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
+            $files = Get-ChildItem -Path "$buildDir\Core","$buildDir\${{ inputs.game }}" -File | Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
           }
           $files | Move-Item -Destination $artifactsDir -Verbose
 
