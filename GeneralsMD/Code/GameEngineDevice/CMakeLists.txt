@@ -228,3 +228,19 @@ target_link_libraries(z_gameenginedevice PUBLIC
     milesstub
     z_gameengine
 )
+
+# FFmpeg
+find_package(FFMPEG)
+
+if(FFMPEG_FOUND)
+    target_sources(z_gameenginedevice PRIVATE
+        Include/VideoDevice/FFmpeg/FFmpegFile.h
+        #Include/VideoDevice/FFmpeg/FFmpegVideoPlayer.h
+        Source/VideoDevice/FFmpeg/FFmpegFile.cpp
+        #Source/VideoDevice/FFmpeg/FFmpegVideoPlayer.cpp
+    )
+
+    target_include_directories(z_gameenginedevice PRIVATE ${FFMPEG_INCLUDE_DIRS})
+    target_link_directories(z_gameenginedevice PRIVATE ${FFMPEG_LIBRARY_DIRS})
+    target_link_libraries(z_gameenginedevice PRIVATE ${FFMPEG_LIBRARIES})
+endif()
