@@ -7,6 +7,7 @@ option(RTS_BUILD_OPTION_INTERNAL "Build code with the \"Internal\" configuration
 option(RTS_BUILD_OPTION_PROFILE "Build code with the \"Profile\" configuration." OFF)
 option(RTS_BUILD_OPTION_DEBUG "Build code with the \"Debug\" configuration." OFF)
 option(RTS_BUILD_OPTION_ASAN "Build code with Address Sanitizer." OFF)
+option(RTS_BUILD_OPTION_FFMPEG "Enable FFmpeg support" OFF)
 
 if(NOT RTS_BUILD_ZEROHOUR AND NOT RTS_BUILD_GENERALS)
     set(RTS_BUILD_ZEROHOUR TRUE)
@@ -21,6 +22,7 @@ add_feature_info(InternalBuild RTS_BUILD_OPTION_INTERNAL "Building as an \"Inter
 add_feature_info(ProfileBuild RTS_BUILD_OPTION_PROFILE "Building as a \"Profile\" build")
 add_feature_info(DebugBuild RTS_BUILD_OPTION_DEBUG "Building as a \"Debug\" build")
 add_feature_info(AddressSanitizer RTS_BUILD_OPTION_ASAN "Building with address sanitizer")
+add_feature_info(FFmpegSupport RTS_BUILD_OPTION_FFMPEG "Building with FFmpeg support")
 
 if(RTS_BUILD_ZEROHOUR)
     option(RTS_BUILD_ZEROHOUR_TOOLS "Build tools for Zero Hour" ON)

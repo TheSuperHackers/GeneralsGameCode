@@ -229,18 +229,20 @@ target_link_libraries(z_gameenginedevice PUBLIC
     z_gameengine
 )
 
-# FFmpeg
-find_package(FFMPEG)
+if(RTS_BUILD_OPTION_FFMPEG)
+    find_package(FFMPEG REQUIRED)
 
-if(FFMPEG_FOUND)
-    target_sources(z_gameenginedevice PRIVATE
-        Include/VideoDevice/FFmpeg/FFmpegFile.h
-        Include/VideoDevice/FFmpeg/FFmpegVideoPlayer.h
-        Source/VideoDevice/FFmpeg/FFmpegFile.cpp
-        Source/VideoDevice/FFmpeg/FFmpegVideoPlayer.cpp
-    )
+    if(FFMPEG_FOUND)
+        target_sources(z_gameenginedevice PRIVATE
+            Include/VideoDevice/FFmpeg/FFmpegFile.h
+            Include/VideoDevice/FFmpeg/FFmpegVideoPlayer.h
+            Source/VideoDevice/FFmpeg/FFmpegFile.cpp
+            Source/VideoDevice/FFmpeg/FFmpegVideoPlayer.cpp
+        )
 
-    target_include_directories(z_gameenginedevice PRIVATE ${FFMPEG_INCLUDE_DIRS})
-    target_link_directories(z_gameenginedevice PRIVATE ${FFMPEG_LIBRARY_DIRS})
-    target_link_libraries(z_gameenginedevice PRIVATE ${FFMPEG_LIBRARIES})
+        target_include_directories(z_gameenginedevice PRIVATE ${FFMPEG_INCLUDE_DIRS})
+        target_link_directories(z_gameenginedevice PRIVATE ${FFMPEG_LIBRARY_DIRS})
+        target_link_libraries(z_gameenginedevice PRIVATE ${FFMPEG_LIBRARIES})
+        target_compile_definitions(z_gameenginedevice PUBLIC RTS_HAS_FFMPEG)
+    endif()
 endif()
