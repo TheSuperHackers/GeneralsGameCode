@@ -116,7 +116,7 @@ class ParticleEmitterClass : public RenderObjClass
 			ParticlePropertyStruct<float> &rotation, float orient_rnd,
 			ParticlePropertyStruct<float> &frames,
 			ParticlePropertyStruct<float> &blur_times,
-			Vector3 accel, float max_age, TextureClass *tex,
+			Vector3 accel, float max_age, float future_start, TextureClass *tex,
 			ShaderClass shader = ShaderClass::_PresetAdditiveSpriteShader, 
 			int max_particles = 0, int max_buffer_size = -1, bool pingpong = false,
 			int render_mode = W3D_EMITTER_RENDER_MODE_TRI_PARTICLES,

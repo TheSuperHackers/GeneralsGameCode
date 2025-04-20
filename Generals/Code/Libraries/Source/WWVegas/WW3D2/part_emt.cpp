@@ -74,7 +74,7 @@ ParticleEmitterClass::ParticleEmitterClass(float emit_rate, unsigned int burst_s
 			ParticlePropertyStruct<float> &rotation, float orient_rnd,
 			ParticlePropertyStruct<float> &frames,
 			ParticlePropertyStruct<float> &blur_times,
-			Vector3 accel, float max_age, TextureClass *tex, ShaderClass shader, int max_particles,
+			Vector3 accel, float max_age, float future_start, TextureClass *tex, ShaderClass shader, int max_particles,
 			int max_buffer_size, bool pingpong,int render_mode,int frame_mode,
 			const W3dEmitterLinePropertiesStruct * line_props
 ) :
@@ -267,6 +267,7 @@ ParticleEmitterClass::Create_From_Definition (const ParticleEmitterDefClass &def
 																blur_time_keys,
 																definition.Get_Acceleration (),
 																definition.Get_Lifetime (),
+																0.0f,
 																ptexture,
 																shader, 
 																definition.Get_Max_Emissions (),
