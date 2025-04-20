@@ -2201,12 +2201,28 @@ IDirect3DSurface8 * DX8Wrapper::_Create_DX8_Surface(const char *filename_)
 		// If file not found, create a surface with missing texture in it
 
 		if (!myfile->Is_Available()) {
-			return MissingTexture::_Create_Missing_Surface();
+			// If file not found, try the dds format
+			// else create a surface with missing texture in it
+			char compressed_name[200];
+			strncpy(compressed_name,filename_, 200);
+			char *ext = strstr(compressed_name, ".");
+			if ( (strlen(ext)==4) && 
+				  ( (ext[1] == 't') || (ext[1] == 'T') ) && 
+				  ( (ext[2] == 'g') || (ext[2] == 'G') ) && 
+				  ( (ext[3] == 'a') || (ext[3] == 'A') ) ) {
+				ext[1]='d';
+				ext[2]='d';
+				ext[3]='s';
+			}
+			file_auto_ptr myfile2(_TheFileFactory,compressed_name);
+			if (!myfile2->Is_Available())
+				return MissingTexture::_Create_Missing_Surface();
 		}
 	}
 
+	StringClass filename_string(filename_,true);
 	surface=TextureLoader::Load_Surface_Immediate(
-		filename_,
+		filename_string,
 		WW3D_FORMAT_UNKNOWN,
 		true);
 	return surface;
