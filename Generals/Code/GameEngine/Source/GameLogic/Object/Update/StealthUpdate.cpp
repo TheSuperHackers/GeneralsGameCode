@@ -755,7 +755,9 @@ void StealthUpdate::changeVisualDisguise()
 
 		const ThingTemplate *tTemplate = self->getTemplate();
 
-		TheThingFactory->newDrawable( tTemplate );
+		// TheSuperHackers @fix helmutbuhler 13/04/2025 Fixes missing pointer assignment for the new drawable.
+		// This originally caused no runtime crash because the new drawable is allocated at the same address as the previously deleted drawable via the MemoryPoolBlob.
+		draw = TheThingFactory->newDrawable( tTemplate );
 		if( draw )
 		{
 			TheGameLogic->bindObjectAndDrawable(self, draw);
