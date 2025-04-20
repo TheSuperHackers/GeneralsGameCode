@@ -94,28 +94,22 @@ class ThumbnailManagerClass : public DLNodeClass<ThumbnailManagerClass>
 	static bool CreateThumbnailIfNotFound;
 	bool PerTextureTimeStampUsed;
 	StringClass ThumbnailFileName;
-	StringClass MixFileName;
 	HashTemplateClass<StringClass,ThumbnailClass*> ThumbnailHash;
 	unsigned char* ThumbnailMemory;
 	bool Changed;
 	unsigned long DateTime;
 
-	ThumbnailManagerClass(const char* thumbnail_filename, const char* mix_file_name);
+	ThumbnailManagerClass(const char* thumbnail_filename);
 	~ThumbnailManagerClass();
 
 	void Remove_From_Hash(ThumbnailClass* thumb);
 	void Insert_To_Hash(ThumbnailClass* thumb);
 	ThumbnailClass* Get_From_Hash(const StringClass& name);
 
-	void Create_Thumbnails();
-	static void Update_Thumbnail_File(const char* mix_file_name, bool display_message_box);
-
-	void Load();
-	void Save(bool force=false);
 public:
 	ThumbnailClass* Peek_Thumbnail_Instance(const StringClass& name);
 
-	static void Add_Thumbnail_Manager(const char* thumbnail_filename, const char* mix_file_name);
+	static void Add_Thumbnail_Manager(const char* thumbnail_filename);
 	static void Remove_Thumbnail_Manager(const char* thumbnail_filename);
 	static ThumbnailManagerClass* Peek_Thumbnail_Manager(const char* thumbnail_filename);
 
@@ -127,7 +121,6 @@ public:
 	bool Is_Per_Texture_Time_Stamp_Used() const { return PerTextureTimeStampUsed; }
 	void Enable_Per_Texture_Time_Stamp(bool enable) { PerTextureTimeStampUsed=enable; }
 
-	static void Pre_Init(bool display_message_box);
 	static void Init();
 	static void Deinit();
 };
