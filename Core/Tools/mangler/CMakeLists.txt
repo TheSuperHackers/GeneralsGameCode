@@ -56,40 +56,40 @@ set(MANGLERTEST_SRC
     "manglertest.cpp"
 )
 
-add_library(g_manglerlib STATIC)
-set_target_properties(g_manglerlib PROPERTIES OUTPUT_NAME manglerlib)
+add_library(core_manglerlib STATIC)
+set_target_properties(core_manglerlib PROPERTIES OUTPUT_NAME manglerlib)
 
-target_sources(g_manglerlib PUBLIC ${MANGLERLIB_SRC})
-target_include_directories(g_manglerlib PRIVATE . wlib wnet)
-target_link_libraries(g_manglerlib PRIVATE wsock32)
-target_link_libraries(g_manglerlib PUBLIC
+target_sources(core_manglerlib PUBLIC ${MANGLERLIB_SRC})
+target_include_directories(core_manglerlib PRIVATE . wlib wnet)
+target_link_libraries(core_manglerlib PRIVATE wsock32)
+target_link_libraries(core_manglerlib PUBLIC
     core_config
     core_utility
 )
 
 # mangler app
 
-add_executable(g_mangler WIN32)
-set_target_properties(g_mangler PROPERTIES OUTPUT_NAME mangler)
+add_executable(core_mangler WIN32)
+set_target_properties(core_mangler PROPERTIES OUTPUT_NAME mangler)
 
-target_sources(g_mangler PRIVATE ${MANGLER_SRC})
-target_include_directories(g_mangler PRIVATE . wlib wnet)
-target_link_libraries(g_mangler PRIVATE g_manglerlib)
+target_sources(core_mangler PRIVATE ${MANGLER_SRC})
+target_include_directories(core_mangler PRIVATE . wlib wnet)
+target_link_libraries(core_mangler PRIVATE core_manglerlib)
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
-    target_link_options(g_mangler PRIVATE /subsystem:console)
+    target_link_options(core_mangler PRIVATE /subsystem:console)
 endif()
 
 
 # manglertest app
 
-add_executable(g_manglertest WIN32)
-set_target_properties(g_manglertest PROPERTIES OUTPUT_NAME manglertest)
+add_executable(core_manglertest WIN32)
+set_target_properties(core_manglertest PROPERTIES OUTPUT_NAME manglertest)
 
-target_sources(g_manglertest PRIVATE ${MANGLERTEST_SRC})
-target_include_directories(g_manglertest PRIVATE . wlib wnet)
-target_link_libraries(g_manglertest PRIVATE g_manglerlib)
+target_sources(core_manglertest PRIVATE ${MANGLERTEST_SRC})
+target_include_directories(core_manglertest PRIVATE . wlib wnet)
+target_link_libraries(core_manglertest PRIVATE core_manglerlib)
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
-    target_link_options(g_manglertest PRIVATE /subsystem:console)
+    target_link_options(core_manglertest PRIVATE /subsystem:console)
 endif()
