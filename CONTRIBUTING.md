@@ -18,7 +18,7 @@ Code edits should fit the nearby code in ways that the code style reads consiste
 
 ### Precedence of code changes
 
-Changes to Zero Hour take precendence over Generals, if applicable. When the changed code is not shared by both titles, then the change needs to be created for Zero Hour first, and then recreated for Generals. The implementation of a change for both titles needs to be identical or as close as possible. Preferably the Generals replica of a change comes with the same Pull Request. The Generals replica can be created after the Zero Hour code review has finished.
+Changes to Zero Hour take precedence over Generals, if applicable. When the changed code is not shared by both titles, then the change needs to be created for Zero Hour first, and then recreated for Generals. The implementation of a change for both titles needs to be identical or as close as possible. Preferably the Generals replica of a change comes with the same Pull Request. The Generals replica can be created after the Zero Hour code review has finished.
 
 
 ## Change documentation
