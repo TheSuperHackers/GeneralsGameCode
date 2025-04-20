@@ -26,12 +26,13 @@
  *                                                                                             *
  *              Original Author:: Nathaniel Hoffman                                            *
  *                                                                                             *
- *                      $Author:: Jani_p                                                      $*
+ *                       Author : Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
- *                     $Modtime:: 8/20/01 9:41a                                               $*
+ *                    $Revision:: 12                                                          $*
  *                                                                                             *
- *                    $Revision:: 9                                                           $*
- *                                                                                             *
+ * 06/27/02 KM Z Format support																						*
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * Vector4_to_Color - converts a vector4 to the format in format                               *
@@ -187,6 +188,9 @@ void Color_to_Vector4(Vector4* outc,const unsigned int inc,const WW3DFormat form
 // src_bpp - bytes per pixel in the source surface
 // targa - reference to the targa object...
 void Get_WW3D_Format(WW3DFormat& dest_format,WW3DFormat& src_format,unsigned& src_bpp,const Targa& targa);
+
+// The same as above, but doesn't validate the device - only checks the source format.
+void Get_WW3D_Format(WW3DFormat& src_format,unsigned& src_bpp,const Targa& targa);
 
 // Get valid texture format (on current hardware) that is closest to the given format (for instance, 32 bit ARGB8888 would
 // return 16 bit ARGB4444 if the device doesn't support 32 bit textures).

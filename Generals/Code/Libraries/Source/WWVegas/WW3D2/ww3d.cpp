@@ -207,7 +207,6 @@ bool														WW3D::SnapshotActivated=false;
 bool														WW3D::ThumbnailEnabled=true;
 
 WW3D::MeshDrawModeEnum								WW3D::MeshDrawMode = MESH_DRAW_MODE_OLD;
-WW3D::TextureCompressionModeEnum					WW3D::TextureCompressionMode = TEXTURE_COMPRESSION_ENABLE;
 WW3D::NPatchesGapFillingModeEnum					WW3D::NPatchesGapFillingMode = NPATCHES_GAP_FILLING_ENABLED;
 unsigned													WW3D::NPatchesLevel=1;
 bool														WW3D::IsTexturingEnabled=true;
@@ -215,7 +214,8 @@ bool										WW3D::IsColoringEnabled=false;
 
 static HWND												_Hwnd = NULL;		// Not a member to hide windows from WW3D users
 static int												_TextureReduction = 0;
-static int												_TextureMinMipLevels = 1;
+static int												_TextureMinDim = 1;
+static bool												_LargeTextureExtraReductionEnabled = false;
 int														WW3D::LastFrameMemoryAllocations;
 int														WW3D::LastFrameMemoryFrees;
 
@@ -224,14 +224,6 @@ int														WW3D::LastFrameMemoryFrees;
 **  WW3D Static Functions
 **
 ***********************************************************************************/
-
-void WW3D::Set_Texture_Compression_Mode(TextureCompressionModeEnum mode)
-{
-	if (TextureCompressionMode!=mode) {
-		TextureCompressionMode = mode; 
-		_Invalidate_Textures();
-	}
-}
 
 void WW3D::Set_NPatches_Gap_Filling_Mode(NPatchesGapFillingModeEnum mode)
 {
@@ -1615,11 +1607,13 @@ float	WW3D::Get_Movie_Capture_Frame_Rate( void )
  * HISTORY:                                                                                    *
  *   5/19/99    GTH : Created.                                                                 *
  *=============================================================================================*/
-void	WW3D::Set_Texture_Reduction( int value, int min_mip_levels )
+void	WW3D::Set_Texture_Reduction( int value, int minDim )
 {
-	_TextureReduction=value;
-	_TextureMinMipLevels=min_mip_levels;
-	_Invalidate_Textures();
+	if (_TextureReduction != value || _TextureMinDim != minDim) {
+		_TextureReduction=value;
+		_TextureMinDim=minDim;
+		_Invalidate_Textures();
+	}
 }
 
 
@@ -1664,9 +1658,22 @@ int	WW3D::Get_Texture_Reduction( void )
  * HISTORY:                                                                                    *
  *   11/25/99    TSS : Created.                                                                 *
  *=============================================================================================*/
-int	WW3D::Get_Texture_Min_Mip_Levels( void )
+int	WW3D::Get_Texture_Min_Dimension( void )
 {
-	return _TextureMinMipLevels;
+	return _TextureMinDim;
+}
+
+void WW3D::Enable_Large_Texture_Extra_Reduction(bool onoff)
+{
+	if (_LargeTextureExtraReductionEnabled != onoff) {
+		_LargeTextureExtraReductionEnabled = onoff;
+		_Invalidate_Textures();
+	}
+}
+
+bool WW3D::Is_Large_Texture_Extra_Reduction_Enabled(void)
+{
+	return _LargeTextureExtraReductionEnabled;
 }
 
 /***********************************************************************************************

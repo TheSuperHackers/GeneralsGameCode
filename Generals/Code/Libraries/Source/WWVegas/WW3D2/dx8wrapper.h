@@ -239,6 +239,9 @@ public:
 	*/
 	static void	Do_Onetime_Device_Dependent_Inits(void);
 	static void Do_Onetime_Device_Dependent_Shutdowns(void);
+
+	static bool Is_Initted(void) { return IsInitted; }
+
 	static bool Has_Stencil (void);
 	static void Get_Format_Name(unsigned int format, StringClass *tex_format);
 
@@ -329,6 +332,7 @@ public:
 	/*
 	** Resources
 	*/
+
 	static IDirect3DTexture8 * _Create_DX8_Texture
 	(
 		unsigned int width,

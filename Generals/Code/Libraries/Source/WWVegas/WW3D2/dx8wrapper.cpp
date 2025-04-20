@@ -2248,9 +2248,9 @@ void DX8Wrapper::_Update_Texture(TextureClass *system, TextureClass *video)
 {
 	WWASSERT(system);
 	WWASSERT(video);
-	WWASSERT(system->Pool==TextureClass::POOL_SYSTEMMEM);
-	WWASSERT(video->Pool==TextureClass::POOL_DEFAULT);
-	DX8CALL(UpdateTexture(system->D3DTexture,video->D3DTexture));
+	WWASSERT(system->Get_Pool()==TextureClass::POOL_SYSTEMMEM);
+	WWASSERT(video->Get_Pool()==TextureClass::POOL_DEFAULT);
+	DX8CALL(UpdateTexture(system->Peek_D3D_Base_Texture(),video->Peek_D3D_Base_Texture()));
 }
 
 void DX8Wrapper::Compute_Caps(WW3DFormat display_format)
@@ -2504,7 +2504,7 @@ DX8Wrapper::Create_Render_Target (int width, int height, bool alpha)
 
 	// 3dfx drivers are lying in the CheckDeviceFormat call and claiming
 	// that they support render targets!
-	if (tex->Peek_D3D_Texture() == NULL) 
+	if (tex->Peek_D3D_Base_Texture() == NULL) 
 	{
 		WWDEBUG_SAY(("DX8Wrapper - Render target creation failed!\r\n"));
 		REF_PTR_RELEASE(tex);

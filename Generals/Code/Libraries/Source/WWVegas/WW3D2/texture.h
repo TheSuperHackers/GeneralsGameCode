@@ -50,8 +50,10 @@
 #include "wwstring.h"
 #include "texturefilter.h"
 
-class DX8Wrapper;
+struct IDirect3DBaseTexture8;
 struct IDirect3DTexture8;
+
+class DX8Wrapper;
 class TextureLoader;
 class LoaderThreadClass;
 class DX8TextureManagerClass;
@@ -82,6 +84,11 @@ class TextureClass : public W3DMPO, public RefCountClass
 			POOL_SYSTEMMEM
 		};
 
+		enum TexAssetType
+		{
+			TEX_REGULAR,
+		};
+
 		// Create texture with desired height, width and format.
 		TextureClass(
 			unsigned width, 
@@ -107,6 +114,8 @@ class TextureClass : public W3DMPO, public RefCountClass
 			MipCountType mip_level_count=MIP_LEVELS_ALL);		
 
 		TextureClass(IDirect3DTexture8* d3d_texture);
+
+		virtual TexAssetType Get_Asset_Type() const { return TEX_REGULAR; }
 
 		virtual ~TextureClass(void);
 
@@ -165,10 +174,13 @@ class TextureClass : public W3DMPO, public RefCountClass
 		// This utility function processes the texture reduction (used during rendering)
 		void Invalidate();
 
-		IDirect3DTexture8 *Peek_D3D_Texture()
-		{
-			return D3DTexture;
-		}
+		IDirect3DTexture8 *Peek_D3D_Texture() const { return (IDirect3DTexture8 *)Peek_D3D_Base_Texture(); }
+
+		// texture accessors (dx8)
+		IDirect3DBaseTexture8 *Peek_D3D_Base_Texture() const;
+		void Set_D3D_Base_Texture(IDirect3DBaseTexture8* tex);
+
+		PoolType Get_Pool() const { return Pool; }
 
 		bool Is_Missing_Texture();
 
@@ -194,7 +206,7 @@ class TextureClass : public W3DMPO, public RefCountClass
 		TextureFilterClass Filter;
 
 		// Direct3D texture object
-		IDirect3DTexture8 *D3DTexture;
+		IDirect3DBaseTexture8 *D3DTexture;
 		bool Initialized;
 
 		// Name
@@ -215,7 +227,7 @@ class TextureClass : public W3DMPO, public RefCountClass
 		bool IsProcedural;
 		bool IsCompressionAllowed;
 
-		unsigned LastAccessed;
+		mutable unsigned LastAccessed;
 		WW3DFormat TextureFormat;
 
 		int Width;

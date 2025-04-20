@@ -26,12 +26,13 @@
  *                                                                                             *
  *              Original Author:: Hector Yee                                                   *
  *                                                                                             *
- *                      $Author:: Jani_p                                                      $*
+ *                       Author : Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
- *                     $Modtime:: 8/20/01 11:51a                                              $*
+ *                    $Revision:: 14                                                          $*
  *                                                                                             *
- *                    $Revision:: 5                                                           $*
- *                                                                                             *
+ * 06/27/02 KM Z Format support																						*
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -270,6 +271,17 @@ void Color_to_Vector4(Vector4* outc,const unsigned int inc,const WW3DFormat form
 
 void Get_WW3D_Format(WW3DFormat& dest_format,WW3DFormat& src_format,unsigned& src_bpp,const Targa& targa)
 {
+	Get_WW3D_Format(src_format,src_bpp,targa);
+	dest_format=src_format;
+	if ((dest_format==WW3D_FORMAT_P8) || (dest_format==WW3D_FORMAT_L8)) {
+		dest_format=WW3D_FORMAT_X8R8G8B8;
+	}
+	dest_format=Get_Valid_Texture_Format(dest_format,false);	// No compressed destination format if reading from targa...
+
+}
+
+void Get_WW3D_Format(WW3DFormat& src_format,unsigned& src_bpp,const Targa& targa)
+{
 	// Guess the format from the TGA Header bits:
 	src_format = WW3D_FORMAT_UNKNOWN;
 	src_bpp=0;
@@ -285,15 +297,9 @@ void Get_WW3D_Format(WW3DFormat& dest_format,WW3DFormat& src_format,unsigned& sr
 			break;
 		default:
 			WWDEBUG_SAY(("TextureClass: Targa has unsupported bitdepth(%i)\n",targa.Header.PixelDepth));
-			WWASSERT(0);
+//			WWASSERT(0);
 			break;
 	}
-	dest_format=src_format;
-	if ((dest_format==WW3D_FORMAT_P8) || (dest_format==WW3D_FORMAT_L8)) {
-		dest_format=WW3D_FORMAT_X8R8G8B8;
-	}
-	dest_format=Get_Valid_Texture_Format(dest_format,false);	// No compressed destination format if reading from targa...
-
 }
 
 // ----------------------------------------------------------------------------
@@ -308,8 +314,7 @@ WW3DFormat Get_Valid_Texture_Format(WW3DFormat format, bool is_compression_allow
 	bool windowed;
 
 	if (!DX8Wrapper::Get_Current_Caps()->Support_DXTC() || 
-		!is_compression_allowed || 
-		WW3D::Get_Texture_Compression_Mode()==WW3D::TEXTURE_COMPRESSION_DISABLE) {
+		!is_compression_allowed) {
 		switch (format) {
 		case WW3D_FORMAT_DXT1: format=WW3D_FORMAT_R8G8B8; break;
 		case WW3D_FORMAT_DXT2:
@@ -342,6 +347,8 @@ WW3DFormat Get_Valid_Texture_Format(WW3DFormat format, bool is_compression_allow
 	}
 
 	WW3D::Get_Device_Resolution(w,h,bits,windowed);
+	if (WW3D::Get_Texture_Bitdepth()==16) bits=16;
+
 	// if the device bitdepth is 16, don't allow 32 bit textures
 	if (bits<=16) {
 		switch (format) {
@@ -368,7 +375,8 @@ WW3DFormat Get_Valid_Texture_Format(WW3DFormat format, bool is_compression_allow
 			format=WW3D_FORMAT_A4R4G4B4;
 			if (!DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(format)) {
 				// If still no luck, try non-alpha formats
-				format=WW3D_FORMAT_A8R8G8B8;
+
+				format=WW3D_FORMAT_X8R8G8B8;
 				if (!DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(format)) {
 					format=WW3D_FORMAT_R5G6B5;
 					if (!DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(format)) {
@@ -386,14 +394,19 @@ unsigned Get_Bytes_Per_Pixel(WW3DFormat format)
 {
 	switch (format) {
 	case WW3D_FORMAT_X8R8G8B8:
+	case WW3D_FORMAT_X8L8V8U8:
 	case WW3D_FORMAT_A8R8G8B8: return 4;
 	case WW3D_FORMAT_R8G8B8: return 3;
-	case WW3D_FORMAT_A4R4G4B4:
 	case WW3D_FORMAT_A1R5G5B5:
+	case WW3D_FORMAT_A4R4G4B4:
+	case WW3D_FORMAT_U8V8:
+	case WW3D_FORMAT_L6V5U5:
 	case WW3D_FORMAT_R5G6B5: return 2;
+	case WW3D_FORMAT_R3G3B2:
 	case WW3D_FORMAT_L8:
 	case WW3D_FORMAT_A8:
 	case WW3D_FORMAT_P8: return 1;
+
 	default:	WWASSERT(0); break;
 	}
 	return 0;

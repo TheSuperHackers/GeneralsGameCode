@@ -93,11 +93,6 @@ public:
 		MESH_DRAW_MODE_DX8_ONLY
 	};
 
-	enum TextureCompressionModeEnum {
-		TEXTURE_COMPRESSION_DISABLE,
-		TEXTURE_COMPRESSION_ENABLE
-	};
-
 	enum NPatchesGapFillingModeEnum {
 		NPATCHES_GAP_FILLING_DISABLED,
 		NPATCHES_GAP_FILLING_ENABLED,
@@ -199,9 +194,11 @@ public:
 	** all textures to be half their normal resolution.  Passing in 3 causes them to
 	** be cut in half twice, etc
 	*/
-	static void					Set_Texture_Reduction( int value, int min_mip_levels=1 );
+	static void					Set_Texture_Reduction( int value, int min_dim=1 );
 	static int					Get_Texture_Reduction( void );
-	static int					Get_Texture_Min_Mip_Levels( void );
+	static int					Get_Texture_Min_Dimension(void);
+	static void					Enable_Large_Texture_Extra_Reduction(bool onoff);
+	static bool					Is_Large_Texture_Extra_Reduction_Enabled(void);
 	static void					_Invalidate_Mesh_Cache();
 	static void					_Invalidate_Textures();
 
@@ -238,9 +235,6 @@ public:
 
 	static void					Set_Mesh_Draw_Mode (MeshDrawModeEnum mode)	{ MeshDrawMode = mode; }
 	static MeshDrawModeEnum Get_Mesh_Draw_Mode ()								{ return (MeshDrawMode); }
-
-	static void					Set_Texture_Compression_Mode (TextureCompressionModeEnum mode);
-	static TextureCompressionModeEnum 	Get_Texture_Compression_Mode () { return (TextureCompressionMode); }
 
 	static void					Set_NPatches_Gap_Filling_Mode (NPatchesGapFillingModeEnum mode);
 	static NPatchesGapFillingModeEnum 	Get_NPatches_Gap_Filling_Mode () { return (NPatchesGapFillingMode); }
@@ -351,7 +345,6 @@ private:
 	static bool							ThumbnailEnabled;
 
 	static MeshDrawModeEnum			MeshDrawMode;
-	static TextureCompressionModeEnum TextureCompressionMode;
 	static NPatchesGapFillingModeEnum NPatchesGapFillingMode;
 	static unsigned NPatchesLevel;
 	static bool							IsTexturingEnabled;

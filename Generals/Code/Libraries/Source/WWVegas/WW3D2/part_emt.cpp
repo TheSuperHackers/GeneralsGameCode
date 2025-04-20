@@ -212,8 +212,9 @@ ParticleEmitterClass::Create_From_Definition (const ParticleEmitterDefClass &def
 		(
 			ptexture_filename,
 			MIP_LEVELS_ALL,
-			WW3D_FORMAT_UNKNOWN,
-			false);	// no compression for particle textures!
+			WW3D_FORMAT_UNKNOWN
+		);
+//			false);	// no compression for particle textures!
 	}
 	
 	ShaderClass shader;
