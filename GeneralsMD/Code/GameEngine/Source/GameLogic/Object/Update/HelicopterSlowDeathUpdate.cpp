@@ -183,6 +183,7 @@ HelicopterSlowDeathBehavior::~HelicopterSlowDeathBehavior( void )
 //-------------------------------------------------------------------------------------------------
 void HelicopterSlowDeathBehavior::beginSlowDeath( const DamageInfo *damageInfo )
 {
+
 	// extending functionality
 	SlowDeathBehavior::beginSlowDeath( damageInfo );
 
