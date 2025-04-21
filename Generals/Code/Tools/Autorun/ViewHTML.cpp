@@ -79,17 +79,27 @@ bool ViewHTML(const char* url, bool wait, const CallbackHook& callback)
 
 	//--------------------------------------------------------------------------
 	// Create unique temporary HTML filename
+	// JFS: Fixed so that it would go to the temp folder which was crashing
+	// on limited users.
 	//--------------------------------------------------------------------------
 	char tempPath[MAX_PATH];
-	GetWindowsDirectory(tempPath, MAX_PATH);
-	
 	char filename1[MAX_PATH];
 	char filename2[MAX_PATH];
+	
+	// Expand the TMP environment variable. 
+	{ 
+		DWORD dwResult;
+		dwResult = ExpandEnvironmentStrings( "%TEMP%", tempPath,  MAX_PATH);
+		if(dwResult == 0)
+			return false;
+	}
+
 	GetTempFileName(tempPath, "WS", 0, filename1);
 
 	strcpy( filename2, filename1 );
 	char* extPtr = strrchr(filename2, '.');
 	strcpy(extPtr, ".html");
+
 
 //	DebugPrint(filename);
 	Msg( __LINE__, TEXT(__FILE__), TEXT("filename = %s"), filename2 );

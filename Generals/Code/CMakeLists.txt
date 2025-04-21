@@ -19,6 +19,10 @@ target_include_directories(gi_libraries_source_wwvegas_ww3d2 INTERFACE "Librarie
 target_include_directories(gi_libraries_source_wwvegas_wwmath INTERFACE "Libraries/Source/WWVegas/WWMath")
 target_include_directories(gi_libraries_source_wwvegas_wwsaveload INTERFACE "Libraries/Source/WWVegas/WWSaveLoad")
 target_include_directories(gi_main INTERFACE "Main")
+
+target_compile_definitions(gi_always INTERFACE
+    RTS_GENERALS=1
+)
 target_link_libraries(gi_always INTERFACE
     core_utility
     gi_libraries_include

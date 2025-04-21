@@ -122,8 +122,6 @@
 #include "Win32Device/Common/Win32BIGFileSystem.h"
 #endif
 
-
-
 //-----------------------------------------------------------------------------
 //  DEFINES
 //-----------------------------------------------------------------------------
@@ -2750,7 +2748,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 				} else if( b800X600 ) {
 
-					strcpy( szBitmap, _TEXT( "BacKground" ));
+					strcpy( szBitmap, _TEXT( "Background" ));
 
 					if ( LANG_FRE == LanguageID ) {
 						strcpy( szLicense, _TEXT( "License_FRENCH2" ));
@@ -3963,11 +3961,9 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						// Uninstll.exe which in turn launches Uninst.exe thus 
 						// ::Run_Install ends before Uninst.exe is done.
 						//---------------------------------------------------------------
-#if 1
 						if ( result ) {
 							end_dialog = true;
 						}
-#endif
 						break;
 
 					default:

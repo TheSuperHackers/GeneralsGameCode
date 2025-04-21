@@ -54,8 +54,8 @@ macro(setup_autorun appname)
     target_sources(${appname} PRIVATE ${AUTORUN_SRC})
 
     target_link_libraries(${appname} PRIVATE
-        gi_always
         core_config
+        gi_always
         winmm
     )
 

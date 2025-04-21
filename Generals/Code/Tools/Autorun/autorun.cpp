@@ -149,8 +149,8 @@
 #define		SHOW_MOH_DEMO					FALSE
 
 #define		BFAVI_FILENAME					"Autorun\\BF1942RTR.avi"
-#define		SC4AVI_FILENAME					"Autorun\\SimCity4.avi"
-#define		HELP_FILENAME						"HELP:FILENAME"//"Support\\eahelp.hlp"
+#define		SC4AVI_FILENAME					"Autorun\\Preview.avi"
+#define		HELP_FILENAME					"HELP:FILENAME"//"Support\\eahelp.hlp"
 
 #define		SHOW_GAMESPY_BUTTON				FALSE
 #define		GAMESPY_WEBSITE					"http://www.gamespyarcade.com/features/launch.asp?svcname=ccrenegade&distID=391"
@@ -158,6 +158,8 @@
 #define		RESOURCE_FILE					"Autorun.loc"
 #define		SETUP_INI_FILE1					"Setup\\Setup.ini"
 #define		SETUP_INI_FILE2					"Setup.ini"
+
+#define		UNINSTALL_EXECUTABLE			"IDriver.exe"			// JFS
 
 //-----------------------------------------------------------------------------
 // These defines need the Product name from Setup.ini to complete.
@@ -170,8 +172,8 @@
 #define		GAME_WEBSITE					"http://generals.ea.com" 
 
 #define		AUTORUN_MUTEX_OBJECT			"01AF9993-3492-11d3-8F6F-0060089C05B1" 
-//#define		GAME_MUTEX_OBJECT				"C6D925A3-7A9B-4ca3-866D-8B4D506C3665" 
-#define		GAME_MUTEX_OBJECT					"685EAFF2-3216-4265-B047-251C5F4B82F3"
+//#define		GAME_MUTEX_OBJECT			"C6D925A3-7A9B-4ca3-866D-8B4D506C3665" 
+#define		GAME_MUTEX_OBJECT				"685EAFF2-3216-4265-B047-251C5F4B82F3"
 #define		PRODUCT_VOLUME_CD1	 			"Generals1"
 #define		PRODUCT_VOLUME_CD2	 			"Generals2"
 
@@ -201,6 +203,7 @@ char		szWorldbuilderPath	[_MAX_PATH];
 char		szPatchgetPath	[_MAX_PATH];
 char	 	szSetupPath			[_MAX_PATH];
 char 		szUninstallPath		[_MAX_PATH];
+char		szUninstallCommandLine[_MAX_PATH];		// JFS: Returned value contains parameters needed.
 char	 	szRegisterPath		[_MAX_PATH];
 char		szButtonWav	 		[_MAX_PATH ];
 char 		szSpeechWav			[_MAX_PATH ];
@@ -568,7 +571,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	Locale_GetString( "Autorun:Command&ConquerGenerals",		szFullProductName );
 	//Locale_GetString( IDS_GAME_TITLE,	szProductName );
 	//Locale_GetString( IDS_FULL_GAME_TITLE,	szFullProductName );
-//	Locale_GetString( IDS_REGISTRY_KEY,		szRegistryKey );
+//	Locale_GetString( IDS_REGISTRY_KEY,		szRegistryKey );			// jfs
 //	Locale_GetString( IDS_MAIN_WINDOW,		szGameWindow );
 
 
@@ -724,6 +727,16 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 		SetForegroundWindow( prev );
 
 		Msg( __LINE__, __FILE__, "Either same app, game or setup was found. Exit and set window to foreground." );
+		return 0;
+	}
+
+	//---------------------------------------------------------------------
+	// Check if another installshield session is already running.  This happens
+	// because we ask the user to insert CD-1 again at the end of the install
+	// to prevent a crash on Windows ME where it tries to access CD-1 again.
+	//---------------------------------------------------------------------
+	prev = FindWindow( NULL,"InstallShield Wizard");
+	if( prev ){
 		return 0;
 	}
 
@@ -1220,6 +1233,7 @@ BOOL MainWindow::Is_Product_Registered( void )
 
 	char 		key			[_MAX_PATH];
 	wchar_t 	szPath		[_MAX_PATH];
+	char		aName		[_MAX_PATH];			//jfs
 
 	unsigned long Type;
 	unsigned long Size = _MAX_PATH;
@@ -1232,7 +1246,8 @@ BOOL MainWindow::Is_Product_Registered( void )
 	memset( szSetupPath,	'\0', sizeof( szSetupPath ));
 	memset( szRegisterPath, '\0', sizeof( szRegisterPath ));
 	memset( szInternetPath, '\0', sizeof( szInternetPath ));
-	memset( szUninstallPath, '\0', sizeof( szUninstallPath ));
+	memset( szUninstallPath,		'\0', sizeof( szUninstallPath ));
+	memset( szUninstallCommandLine, '\0', sizeof( szUninstallCommandLine ));
 	memset( FindFileData.cFileName, '\0', sizeof( FindFileData.cFileName ));
 	memset( FindFileData.cAlternateFileName, '\0', sizeof( FindFileData.cAlternateFileName ));
 
@@ -1257,7 +1272,7 @@ BOOL MainWindow::Is_Product_Registered( void )
 		// Get Full path\filename of product to execute ("Play").
 		//-----------------------------------------------------------------------
 		Size = _MAX_PATH;
-		if ( RegQueryValueEx( phKey, INSTALL_PATH_KEY, NULL, &Type, (unsigned char *)szGamePath, &Size ) == ERROR_SUCCESS ) {
+ 		if ( RegQueryValueEx( phKey, INSTALL_PATH_KEY, NULL, &Type, (unsigned char *)szGamePath, &Size ) == ERROR_SUCCESS ) {
 			_tcscpy(szWorldbuilderPath, szGamePath);
 			_tcscpy(szPatchgetPath, szGamePath);
 			_tcscat(szGamePath, LAUNCHER_FILENAME);
@@ -1288,11 +1303,27 @@ BOOL MainWindow::Is_Product_Registered( void )
 	if ( RegOpenKeyEx( HKEY_LOCAL_MACHINE, key, 0, KEY_ALL_ACCESS, &phKey ) == ERROR_SUCCESS ) {
 
 		Size = _MAX_PATH;
-		if ( RegQueryValueEx( phKey, UNINSTALL_STRING_SUBKEY, NULL, &Type, (unsigned char *)szUninstallPath, &Size ) == ERROR_SUCCESS ) {
-
-			//--------------------------------------------------------------------
+		if ( RegQueryValueEx( phKey, UNINSTALL_STRING_SUBKEY, NULL, &Type, (unsigned char *)aName, &Size ) == ERROR_SUCCESS ) 
+		{
+			//------------------------------------------------------------------------------------------------------
 			// Look for the uninstall program.  If found, set flag.
-			//--------------------------------------------------------------------
+			// JFS... need to extract path and command line...  8/26/03
+			// JFS... further verify that we use a very limited uninstall based on the presence of "IDriver.exe"
+			//------------------------------------------------------------------------------------------------------
+			if(strstr(aName,UNINSTALL_EXECUTABLE) != NULL)
+			{
+				char	*sp;
+				
+				strcpy( szUninstallPath, aName );
+				sp = strchr(szUninstallPath,'/');
+				if(*sp != NULL)
+				{
+					strcpy( szUninstallCommandLine, sp );
+					strcpy( szUninstallPath, aName );
+					*sp = '\0';
+				}		
+			}
+				
 			handle = FindFirstFile( szUninstallPath, &FindFileData );
 			if ( handle != INVALID_HANDLE_VALUE ) {
 				UninstallAvailable = TRUE;
@@ -2002,11 +2033,11 @@ unsigned int MainWindow::Run_Auto_Update ( HWND hWnd, RECT *rect )
 
 unsigned int MainWindow::Run_Uninstall( HWND hWnd, RECT *rect )
 {
-	MSG		msg;
+//	MSG		msg;
 	UINT	result			= 0;
 //	int		done 			= 0;
-	DWORD	dwTimeout		= 1500;
-	DWORD	dwRC			= WAIT_TIMEOUT;
+//	DWORD	dwTimeout		= 1500;
+//	DWORD	dwRC			= WAIT_TIMEOUT;
 	DWORD	lpExitCode;
 
 	STARTUPINFO 			startupinfo;
@@ -2040,13 +2071,12 @@ unsigned int MainWindow::Run_Uninstall( HWND hWnd, RECT *rect )
 
 	result = CreateProcess( 
 					szUninstallPath,			// address of module name
-					szUninstallPath,			// address of command line
+					szUninstallCommandLine,		// address of command line
 					NULL,						// address of process security attributes
 					NULL,						// address of thread security attributes
 					0,							// new process inherits handles
 					0,
 					NULL,						// address of new environment block
-//					_TEXT("."),
 					szCurDir,
 					&startupinfo,				// address of STARTUPINFO
 					&processinfo );				// address of PROCESS_INFORMATION
@@ -2071,25 +2101,29 @@ unsigned int MainWindow::Run_Uninstall( HWND hWnd, RECT *rect )
 		return( result );
 	}
 
+	// JFS: 8-26-03... Can't have auto run going during an uninstall!
+#if 0
 	//--------------------------------------------------------------------------
 	// Wait for App to shutdown
 	//--------------------------------------------------------------------------
-	while (dwRC == WAIT_TIMEOUT)  {
+	while (dwRC == WAIT_TIMEOUT)  
+	{
 
 		//-----------------------------------------------------------------------
 		// Wait for object
 		//-----------------------------------------------------------------------
 		dwRC = WaitForSingleObject( processinfo.hProcess, dwTimeout );
 
+
 		//-----------------------------------------------------------------------
 		// Flush the Queue
 		//-----------------------------------------------------------------------
 		while (PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ))  {
 			TranslateMessage( &msg );
-			DispatchMessage( &msg );
+//			DispatchMessage( &msg );
 		}
 	}
-
+#endif
 	//--------------------------------------------------------------------------
 	// If the specified process has not terminated, the termination status 
 	// returned is STILL_ACTIVE.    
@@ -2137,8 +2171,6 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 	int	y_pos = 0;
 	int	width = 0;
 	int	height = 0;
-//	int	avg_width = 0;
-//	int	space_between = 5;
 	int	button_index = 0;
 
 	HBITMAP		hButtonBitmap  = 0;
@@ -2175,13 +2207,8 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 	//--------------------------------------------------------------------------
 	if( b640X480 || b800X600 ) {
 
-//		x_pos	= 0;
-//		y_pos	= 340;
 		x_pos	= 410;
 		y_pos	= 90;
-//		width	= 123;
-//		height	= 42;
-
 	} else {
 		x_pos	= 540;
 		y_pos	= 117;
@@ -2189,15 +2216,16 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 
 	for ( i = 0; i < NUM_BUTTONS; i++ ) {
 
-		if ( ButtonList[i] ) {
+		if ( ButtonList[i] ) 
+		{
 			delete( ButtonList[i] );
 		}
+
 		ButtonList[i]			= NULL;
 		ButtonSizes[i].left		= x_pos; 				// X position.
 		ButtonSizes[i].top 		= y_pos;				// Y position.
 		ButtonSizes[i].right	= width;				// Button's width.
 		ButtonSizes[i].bottom	= height;				// Button's height.
-//		x_pos -= /*height*/	16;
 		y_pos += height + 4;
 
 		Msg( __LINE__, TEXT(__FILE__), TEXT("ButtonSizes[%d] = ( %d, %d, %d, %d )"), 
@@ -2207,8 +2235,6 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 	//==========================================================================
 	// Create the "Buttons"
 	//==========================================================================
-//	i = NUM_BUTTONS-1;
-//	j = NUM_BUTTONS-1;
 	i = 0;
 	j = 0;
 
@@ -2223,7 +2249,6 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 	if ( InstallProduct ) {
 		count--;					// No Website button.
 	}
-//	button_index = NUM_BUTTONS - (( NUM_BUTTONS - count ) / 2 ) - 1;
 	button_index = 0;
 
 	strcpy( next_button_name, ButtonImages[button_index] );
@@ -2231,7 +2256,6 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 
 	button_size = ButtonSizes;
 	i = j = button_index;
-//	button_index--;
 
 	Msg( __LINE__, TEXT(__FILE__), TEXT("count = %d."), count );
 	Msg( __LINE__, TEXT(__FILE__), TEXT("button_index = %d."), button_index );
@@ -2323,10 +2347,8 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 	// (7) EXPLORE CD
 	//-------------------------------------------------------------------------
 	Msg( __LINE__, TEXT(__FILE__), TEXT("ButtonList[%d]: Id=%d, ButtonSizes=%d, String=%s."), i, IDD_EXPLORE, j, "Explore" );
-//	ButtonList[i--] = new DrawButton (
 	ButtonList[i++] = new DrawButton (
 		IDD_EXPLORE,
-//		button_size[j--],
 		button_size[j++],
 		BUTTON_REG,
 		BUTTON_SEL,
@@ -2346,10 +2368,8 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 		// (3) WebSite button.
 		//-----------------------------------------------------------------------
 		Msg( __LINE__, TEXT(__FILE__), TEXT("ButtonList[%d]: Id=%d, ButtonSizes=%d, String=%s."), i, IDD_OK, j, "Install" );
-//		ButtonList[i--] = new DrawButton( 
 		ButtonList[i++] = new DrawButton( 
 			IDD_INTERNET, 
-//			button_size[j--],
 			button_size[j++],
 			BUTTON_REG, 
 			BUTTON_SEL, 
@@ -2371,10 +2391,8 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 	//--------------------------------------------------------------------------
 	if ( UninstallAvailable && !InstallProduct ) {
 		Msg( __LINE__, TEXT(__FILE__), TEXT("ButtonList[%d]: Id=%d, ButtonSizes=%d, String=%s."), i, IDD_UNINSTALL, j, "Uninstall" );
-//		ButtonList[i--] = new DrawButton( 
 		ButtonList[i++] = new DrawButton( 
 			IDD_UNINSTALL, 
-//			button_size[j--],
 			button_size[j++],
 			BUTTON_REG, 
 			BUTTON_SEL, 
@@ -2429,10 +2447,8 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 	// (1) CANCEL?
 	//--------------------------------------------------------------------------
 	Msg( __LINE__, TEXT(__FILE__), TEXT("ButtonList[%d]: Id=%d, ButtonSizes=%d, String=%s."), i, IDD_CANCEL, j, "Cancel" );
-//	ButtonList[i--] = new DrawButton( 
 	ButtonList[i++] = new DrawButton( 
 		IDD_CANCEL, 
-//		button_size[j--], 
 		button_size[j++], 
 		BUTTON_REG, 
 		BUTTON_SEL, 
@@ -2911,6 +2927,12 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 				// Get the new Client area.
 				//-----------------------------------------------------------------------
 				GetClientRect( window_handle, &dlg_rect );
+
+				
+				//=======================================================================================
+				// JFS: 8/26/03 -- This was not getting cleared so if the button cnt were reduced...
+				//=======================================================================================
+				memset(	BackgroundRect, 0, sizeof ( BackgroundRect ) );
 
 				//=======================================================================
 				// These are the areas of the Background to paint minus the Button Area.
@@ -5032,17 +5054,27 @@ HBITMAP LoadResourceButton( HINSTANCE hInstance, LPCTSTR lpString, HPALETTE FAR 
 // WARNINGS:
 //                                                                 
 // HISTORY: Found this routine on MS Developmemt CD, July 1996.
-// 	09/26/1996  MML : Created.                                            
+// 	09/26/1996  MML : Created.  
+//  08/27/2003  JFS : Repaired!                                          
 //=============================================================================
 
 void Cant_Find_MessageBox ( HINSTANCE hInstance, const char *szPath )
 {
 
+	//
+	// JFS... Added functionality to make this work in wide characters.
+	//
 #ifdef LEAN_AND_MEAN
-	
-	Locale_GetString( "Autorun:AutorunTitle", szWideBuffer );
-	swprintf( szWideBuffer2, szWideBuffer, szProductName );
-	Locale_GetString( "Autorun:CantFind", szWideBuffer3 );
+	{
+		Locale_GetString( "Autorun:AutorunTitle", szWideBuffer );
+		swprintf( szWideBuffer3, szWideBuffer, szProductName );
+
+		Locale_GetString( "Autorun:CantFind", szWideBuffer );
+		MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szPath, _MAX_PATH, szWideBuffer0, _MAX_PATH );
+		swprintf( szWideBuffer2, szWideBuffer, szWideBuffer0 );	
+
+		MessageBoxW( NULL,  szWideBuffer2, szWideBuffer3, MB_APPLMODAL | MB_OK );
+	}
 
 #else
 
@@ -5053,7 +5085,6 @@ void Cant_Find_MessageBox ( HINSTANCE hInstance, const char *szPath )
 	WideCharToMultiByte( CodePage, 0, wideBuffer3.str(), wideBuffer3.getLength()+1, szBuffer3, _MAX_PATH, NULL, NULL );
 	WideCharToMultiByte( CodePage, 0, wideBuffer2.str(), wideBuffer2.getLength()+1, szBuffer2, _MAX_PATH, NULL, NULL );
 
-#endif
 
 	sprintf( szBuffer1, szBuffer3, szPath );
 
@@ -5083,6 +5114,8 @@ void Cant_Find_MessageBox ( HINSTANCE hInstance, const char *szPath )
 
 
 	MessageBox( NULL, szBuffer1, szBuffer2, MB_APPLMODAL | MB_OK );
+#endif
+
 }
 
 

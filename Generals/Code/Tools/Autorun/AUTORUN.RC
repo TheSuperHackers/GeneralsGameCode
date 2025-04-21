@@ -138,9 +138,29 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Bitmap
 //
 
+#if defined(APSTUDIO_INVOKED) || defined(_ENGLISH)
+#if defined(APSTUDIO_INVOKED)
+BACKGROUND$(_ENGLISH)   BITMAP  DISCARDABLE     "Autorun_BG.bmp"
+#else
 BACKGROUND              BITMAP  DISCARDABLE     "Autorun_BG.bmp"
+#endif
+#endif
 BUTTON_SEL              BITMAP  DISCARDABLE     "ARButton_Sel.bmp"
 BUTTON_REG              BITMAP  DISCARDABLE     "ARButton_Reg.bmp"
+#if defined(APSTUDIO_INVOKED) || defined(_FRENCH)
+#if defined(APSTUDIO_INVOKED)
+BACKGROUND$(_FRENCH)    BITMAP  DISCARDABLE     "AutoRun_Frn.bmp"
+#else
+BACKGROUND              BITMAP  DISCARDABLE     "AutoRun_Frn.bmp"
+#endif
+#endif
+#if defined(APSTUDIO_INVOKED) || defined(_GERMAN)
+#if defined(APSTUDIO_INVOKED)
+BACKGROUND$(_GERMAN)    BITMAP  DISCARDABLE     "AutoRun_Ger.bmp"
+#else
+BACKGROUND              BITMAP  DISCARDABLE     "AutoRun_Ger.bmp"
+#endif
+#endif
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -150,13 +170,12 @@ BUTTON_REG              BITMAP  DISCARDABLE     "ARButton_Reg.bmp"
 
 1 TEXTINCLUDE DISCARDABLE 
 BEGIN
-    "..\\resource.h\0"
+    "resource.h\0"
 END
 
 2 TEXTINCLUDE DISCARDABLE 
 BEGIN
-    "#include ""afxres.h""\r\n"
-    "\0"
+    "#include ""afxres.h""\0"
 END
 
 3 TEXTINCLUDE DISCARDABLE 
