@@ -32,6 +32,4 @@ add_subdirectory(Libraries)
 # Platform specific GameEngine code
 # add_subdirectory(GameEngineDevice)
 
-if (RTS_BUILD_CORE_TOOLS OR RTS_BUILD_CORE_EXTRAS)
-    add_subdirectory(Tools)
-endif()
+add_subdirectory(Tools)
