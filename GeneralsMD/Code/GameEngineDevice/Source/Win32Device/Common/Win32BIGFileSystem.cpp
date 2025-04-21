@@ -90,8 +90,6 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 	Int archiveFileSize = 0;
 	Int numLittleFiles = 0;
 
-	ArchiveFile *archiveFile = NEW Win32BIGFile;
-
 	DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - opening BIG file %s\n", filename));
 
 	if (fp == NULL) {
@@ -133,6 +131,8 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 	fp->seek(0x10, File::START);
 	// read in each directory listing.
 	ArchivedFileInfo *fileInfo = NEW ArchivedFileInfo;
+	// TheSuperHackers @fix Mauller 23/04/2025 Create new file handle when necessary to prevent memory leak
+	ArchiveFile *archiveFile = NEW Win32BIGFile;
 
 	for (Int i = 0; i < numLittleFiles; ++i) {
 		Int filesize = 0;
