@@ -141,7 +141,7 @@ MeshModelClass & MeshModelClass::operator = (const MeshModelClass & that)
 		clone_materials(that);
 
 		if (GapFiller) {
-			delete[] GapFiller;
+			delete GapFiller;
 				GapFiller=NULL;
 		}
 		if (that.GapFiller) GapFiller=W3DNEW GapFillerClass(*that.GapFiller);
