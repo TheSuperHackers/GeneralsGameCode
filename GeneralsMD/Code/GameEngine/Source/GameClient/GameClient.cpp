@@ -450,12 +450,11 @@ void GameClient::init( void )
 void GameClient::reset( void )
 {
 	Drawable *draw, *nextDraw;
-	m_drawableHash.clear();
-#if USING_STLPORT
-	m_drawableHash.resize(DRAWABLE_HASH_SIZE);
-#else
-	m_drawableHash.reserve(DRAWABLE_HASH_SIZE);
-#endif
+//	m_drawableHash.clear();
+//	m_drawableHash.resize(DRAWABLE_HASH_SIZE);
+
+	m_drawableVector.clear();
+	m_drawableVector.resize(DRAWABLE_HASH_SIZE, NULL);
 
 	// need to reset the in game UI to clear drawables before they are destroyed
 	TheInGameUI->reset();
@@ -863,7 +862,12 @@ void GameClient::addDrawableToLookupTable(Drawable *draw )
 		return;
 
 	// add to lookup
-	m_drawableHash[ draw->getID() ] = draw;
+//	m_drawableHash[ draw->getID() ] = draw;
+	DrawableID newID = draw->getID();
+	while( newID >= m_drawableVector.size() ) // Fail case is hella rare, so faster to double up on size() call
+		m_drawableVector.resize(m_drawableVector.size() * 2, NULL);
+
+	m_drawableVector[ newID ] = draw;
 
 }  // end addDrawableToLookupTable
 
@@ -878,7 +882,8 @@ void GameClient::removeDrawableFromLookupTable( Drawable *draw )
 		return;
 
 	// remove from table
-	m_drawableHash.erase( draw->getID() );
+//	m_drawableHash.erase( draw->getID() );
+	m_drawableVector[ draw->getID() ] = NULL;
 
 }  // end removeDrawableFromLookupTable
 
