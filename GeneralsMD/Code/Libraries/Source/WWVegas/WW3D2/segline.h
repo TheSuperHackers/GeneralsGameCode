@@ -96,6 +96,7 @@ class SegmentedLineClass : public RenderObjClass
 		SegLineRendererClass::TextureMapMode		Get_Texture_Mapping_Mode(void);
 		float					Get_Texture_Tile_Factor(void);
 		Vector2				Get_UV_Offset_Rate(void);
+		Vector2				Get_Current_UV_Offset(void);
 		int					Is_Merge_Intersections(void);
 		int					Is_Freeze_Random(void);
 		int					Is_Sorting_Disabled(void);
@@ -114,6 +115,8 @@ class SegmentedLineClass : public RenderObjClass
 		//performance impact will result!
 		void					Set_Texture_Tile_Factor(float factor);
 		void					Set_UV_Offset_Rate(const Vector2 &rate);
+		void					Set_U_Scale(float scale);
+		void					Set_Current_UV_Offset(const Vector2& offset);
 		void					Set_Merge_Intersections(int onoff);
 		void					Set_Freeze_Random(int onoff);
 		void					Set_Disable_Sorting(int onoff);

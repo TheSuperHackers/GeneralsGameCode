@@ -58,6 +58,8 @@ public:
 	Real m_arcHeight;
 	Real m_segmentOverlapRatio;
 	Real m_tilingScalar;
+	UnsignedInt m_gridColumns;
+	UnsignedInt m_gridColumnsTotal;
 
 	W3DLaserDrawModuleData();
 	~W3DLaserDrawModuleData();

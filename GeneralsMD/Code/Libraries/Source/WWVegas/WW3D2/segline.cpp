@@ -202,6 +202,11 @@ Vector2 SegmentedLineClass::Get_UV_Offset_Rate(void)
 	return LineRenderer.Get_UV_Offset_Rate();
 }
 
+Vector2 SegmentedLineClass::Get_Current_UV_Offset(void)
+{
+	return LineRenderer.Get_Current_UV_Offset();
+}
+
 int SegmentedLineClass::Is_Merge_Intersections(void)
 {
 	return LineRenderer.Is_Merge_Intersections();
@@ -288,6 +293,16 @@ void SegmentedLineClass::Set_Texture_Tile_Factor(float factor)
 void SegmentedLineClass::Set_UV_Offset_Rate(const Vector2 &rate)
 {
 	LineRenderer.Set_UV_Offset_Rate(rate);
+}
+
+void SegmentedLineClass::Set_U_Scale(float scale)
+{
+	LineRenderer.Set_U_Scale(scale);
+}
+
+void SegmentedLineClass::Set_Current_UV_Offset(const Vector2& offset)
+{
+	LineRenderer.Set_Current_UV_Offset(offset);
 }
 
 void SegmentedLineClass::Set_Merge_Intersections(int onoff)
