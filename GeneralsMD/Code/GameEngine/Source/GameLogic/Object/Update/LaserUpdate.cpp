@@ -161,6 +161,16 @@ void LaserUpdate::updateStartPos()
 		m_startPos.x = startPosMatrix.Get_X_Translation();
 		m_startPos.y = startPosMatrix.Get_Y_Translation();
 		m_startPos.z = startPosMatrix.Get_Z_Translation();
+
+		// Update ParticleSystem Position
+		if (m_particleSystemID)
+		{
+			ParticleSystem* system = TheParticleSystemManager->findParticleSystem(m_particleSystemID);
+			if (system)
+			{
+				system->setPosition(&m_startPos);
+			}
+		}
 	}
 	else
 	{

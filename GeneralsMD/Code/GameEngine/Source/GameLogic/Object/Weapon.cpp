@@ -1070,6 +1070,26 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 				else
 					firingWeapon->createLaser(sourceObj, NULL, &projectileDestination);
 			}
+
+			// Handle Detonation OCL
+			VeterancyLevel vet = sourceObj->getVeterancyLevel();
+			const ObjectCreationList* detOCL = getProjectileDetonationOCL(vet);
+			Real laserAngle = atan2(v.y, v.x);  //TODO: check if this should be inverted
+			if (detOCL) {
+				//TODO: should we consider a proper 3D matrix?
+				ObjectCreationList::create(detOCL, sourceObj, &projectileDestination, NULL, laserAngle);
+			}
+			// Handle Detonation FX
+			const FXList* fx = getProjectileDetonateFX(vet);
+			if (fx != NULL) {
+				Matrix3D laserMtx;
+				Vector3 pos(sourcePos->x, sourcePos->y, sourcePos->z);
+				Vector3 dir(v.x, v.y, v.z);
+				dir.Normalize(); //This is fantastically crucial for calling buildTransformMatrix!!!!!
+				laserMtx.buildTransformMatrix(pos, dir);
+				FXList::doFXPos(fx, &projectileDestination, &laserMtx, 0.0f, NULL, getPrimaryDamageRadius(bonus));
+			}
+
 			if( inflictDamage )
 			{
 				dealDamageInternal( sourceID, damageID, &projectileDestination, bonus, isProjectileDetonation );
