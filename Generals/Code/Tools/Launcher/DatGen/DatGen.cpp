@@ -41,10 +41,17 @@ static void doIt(void)
 	// Get game information
 	HKEY hKey;
 	bool usesHKeycurrentUser = false;
-	LONG result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\Electronic Arts\\EA Games\\Generals", 0, KEY_READ, &hKey);
+
+#if RTS_GENERALS
+	const char* gameRegistryKey = "Software\\Electronic Arts\\EA Games\\Generals";
+#elif RTS_ZEROHOUR
+	const char* gameRegistryKey = "Software\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour";
+#endif
+
+	LONG result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, gameRegistryKey, 0, KEY_READ, &hKey);
 	if (result != ERROR_SUCCESS)
 	{
-		result = RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\Electronic Arts\\EA Games\\Generals", 0, KEY_READ, &hKey);
+		result = RegOpenKeyEx(HKEY_CURRENT_USER, gameRegistryKey, 0, KEY_READ, &hKey);
 		usesHKeycurrentUser = true;
 	}
 	assert((result == ERROR_SUCCESS) && "Failed to open game registry key");
@@ -90,13 +97,20 @@ static void doIt(void)
 	unsigned char gameSerialNumber[64];
 	gameSerialNumber[0] = '\0';
 	sizeOfBuffer = sizeof(gameSerialNumber);
+
+#if RTS_GENERALS
+	const char* serialRegistryKey = "Software\\Electronic Arts\\EA Games\\Generals\\ergc";
+#elif RTS_ZEROHOUR
+	const char* serialRegistryKey = "Software\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour\\ergc";
+#endif
+
 	if (usesHKeycurrentUser)
 	{
-		result = RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\Electronic Arts\\EA Games\\Generals\\ergc", 0, KEY_READ, &hKey);
+		result = RegOpenKeyEx(HKEY_CURRENT_USER, serialRegistryKey, 0, KEY_READ, &hKey);
 	}
 	else
 	{
-		result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\Electronic Arts\\EA Games\\Generals\\ergc", 0, KEY_READ, &hKey);
+		result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, serialRegistryKey, 0, KEY_READ, &hKey);
 	}
 	assert((result == ERROR_SUCCESS) && "Failed to open game serial registry key");
 

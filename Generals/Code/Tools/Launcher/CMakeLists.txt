@@ -67,6 +67,7 @@ target_link_libraries(g_launcher PRIVATE
     comctl32
     core_config
     core_utility
+    gi_always
     safedisc
 )
 

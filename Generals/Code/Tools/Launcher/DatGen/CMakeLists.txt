@@ -16,6 +16,7 @@ target_include_directories(g_datgen PRIVATE
 
 target_link_libraries(g_datgen PRIVATE
     core_config
+    gi_always
     safedisc
 )
 

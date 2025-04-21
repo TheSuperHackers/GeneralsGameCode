@@ -112,7 +112,11 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_GENERALS            ICON    DISCARDABLE     "Generals.ico"
+#if RTS_GENERALS
+IDI_GENERALS            ICON    DISCARDABLE     "GeneralsV.ico"
+#elif RTS_ZEROHOUR
+IDI_GENERALS            ICON    DISCARDABLE     "GeneralsZH.ico"
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 //

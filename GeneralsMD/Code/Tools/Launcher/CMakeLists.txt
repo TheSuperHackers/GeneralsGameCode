@@ -68,6 +68,7 @@ target_link_libraries(z_launcher PRIVATE
     core_config
     core_utility
     safedisc
+    zi_always
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

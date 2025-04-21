@@ -17,6 +17,7 @@ target_include_directories(z_datgen PRIVATE
 target_link_libraries(z_datgen PRIVATE
     core_config
     safedisc
+    zi_always
 )
 
 target_sources(z_datgen PRIVATE ${DATGEN_SRC})
