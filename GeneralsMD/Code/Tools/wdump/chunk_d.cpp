@@ -1035,6 +1035,36 @@ void	ChunkTableClass::List_W3D_CHUNK_SHADERS(ChunkItem * Item,CListCtrl *List)
 	}
 }
 
+void ChunkTableClass::List_W3D_CHUNK_VERTEX_TANGENTS(ChunkItem *Item, CListCtrl *List) {
+	W3dVectorStruct *data;
+	data = (W3dVectorStruct *) Item->Data;
+	int Counter = 0;
+	int index = 0;
+	void *max = (char *) Item->Data + Item->Length;
+	int counter = 0;
+	char buf[256];
+	while(data < max) {
+		sprintf(buf, "Tangent[%d]", counter++);
+		AddItem(List, Counter,buf, data);
+		data++;
+	}
+}
+
+void ChunkTableClass::List_W3D_CHUNK_VERTEX_BINORMALS(ChunkItem *Item, CListCtrl *List) {
+	W3dVectorStruct *data;
+	data = (W3dVectorStruct *) Item->Data;
+	int Counter = 0;
+	int index = 0;
+	void *max = (char *) Item->Data + Item->Length;
+	int counter = 0;
+	char buf[256];
+	while(data < max) {
+		sprintf(buf, "Binormal[%d]", counter++);
+		AddItem(List, Counter,buf, data);
+		data++;
+	}
+}
+
 void	ChunkTableClass::List_W3D_CHUNK_PS2_SHADERS(ChunkItem * Item,CListCtrl *List)
 {
 	struct W3dPS2ShaderStruct *shader = (W3dPS2ShaderStruct *)Item->Data;
@@ -2143,6 +2173,8 @@ ChunkTableClass::ChunkTableClass() {
 	NewType( W3D_CHUNK_FX_SHADER,"W3D_CHUNK_FX_SHADER",List_W3D_CHUNK_FX_SHADER, true);
 	NewType( W3D_CHUNK_FX_SHADER_INFO, "W3D_CHUNK_FX_SHADER_INFO", List_W3D_CHUNK_FX_SHADER_INFO);
 	NewType( W3D_CHUNK_FX_SHADER_CONSTANT, "W3D_CHUNK_FX_SHADER_CONSTANT", List_W3D_CHUNK_FX_SHADER_CONSTANT);
+	NewType( W3D_CHUNK_VERTEX_TANGENTS, "W3D_CHUNK_VERTEX_TANGENTS", List_W3D_CHUNK_VERTEX_TANGENTS);
+	NewType( W3D_CHUNK_VERTEX_BINORMALS, "W3D_CHUNK_VERTEX_BINORMALS", List_W3D_CHUNK_VERTEX_BINORMALS);
 	NewType( W3D_CHUNK_PS2_SHADERS,"W3D_CHUNK_PS2_SHADERS",List_W3D_CHUNK_PS2_SHADERS);
 
 	NewType( W3D_CHUNK_VERTEX_MATERIALS, "W3D_CHUNK_VERTEX_MATERIALS",List_W3D_CHUNK_VERTEX_MATERIALS,true);
