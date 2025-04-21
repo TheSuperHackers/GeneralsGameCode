@@ -35,6 +35,7 @@
 #define K_HEIGHT_MAP_VERSION_2	2	// Height map cell = 10.0
 #define K_HEIGHT_MAP_VERSION_3	3	// Added m_borderSize
 #define K_HEIGHT_MAP_VERSION_4	4	// Major rev. See comments at bottom of file.
+#define K_HEIGHT_MAP_VERSION_5	5	// Major rev. See comments at bottom of file.
 #define K_BLEND_TILE_VERSION_1	1	// Height map cell = 5.0
 #define K_BLEND_TILE_VERSION_2	2	// Height map cell = 10.0
 #define K_BLEND_TILE_VERSION_3	3	// Added long diagonal blends.
@@ -128,4 +129,13 @@ public:
 	We now support multiple boundary areas. They are stored in a vector of ICoord2Ds. The lower-
 	left corner is always (0,0), and the ICoord2D specifies the top-right coordinate.
 	The boundary also contains a name.
+*/
+
+// TheSuperHackers @info feliwir 21/04/2025 Backport HeightMap version 5 from BFME
+/*
+	rev K_HEIGHT_MAP_VERSION_5
+
+	This is a major rev of the heightmap chunk. Here's the basic overview of what has happened:
+	Elevation data is now in 16-bit. This gives us more precision, and allows us to model more 
+	realistic terrain. The heightmap is now 16-bit unsigned int, and the range is 0-65535.
 */
