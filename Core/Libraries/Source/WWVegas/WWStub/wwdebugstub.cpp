@@ -30,14 +30,11 @@ char* TheCurrentIgnoreCrashPtr = NULL;
 void DebugLog(const char *format, ...)
 {
 	// Print it to the console
-	char theBuffer[8192];
 
 	va_list arg;
 	va_start(arg, format);
-	vsprintf(theBuffer, format, arg);
+	vprintf(format, arg);
 	va_end(arg);
-
-	printf( "%s\n", theBuffer );
 }
 
 #endif
@@ -47,14 +44,11 @@ void DebugLog(const char *format, ...)
 void DebugCrash(const char *format, ...)
 {
 	// Print it to the console
-	char theBuffer[8192];
 
 	va_list arg;
 	va_start(arg, format);
-	vsprintf(theBuffer, format, arg);
+	vprintf(format, arg);
 	va_end(arg);
-
-	printf( "%s\n", theBuffer );
 
 	// No exit in this stub
 }
