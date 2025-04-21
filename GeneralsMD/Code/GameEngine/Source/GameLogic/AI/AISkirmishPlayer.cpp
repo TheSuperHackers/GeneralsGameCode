@@ -682,7 +682,7 @@ void AISkirmishPlayer::buildAIBaseDefenseStructure(const AsciiString &thingName,
 		Real c = cos(angle);
 
 #if defined(_DEBUG) || defined(_INTERNAL)
-		// TheSuperHackers @info helmutbuhler 04/21/2025
+		// TheSuperHackers @info helmutbuhler 21/04/2025
 		// This log causes mismatch on Release when logging is enabled.
 		DEBUG_LOG(("buildAIBaseDefenseStructure -- Angle is %f sin %f, cos %f \n", 180*angle/PI, s, c));
 		DEBUG_LOG(("buildAIBaseDefenseStructure -- Offset is %f  %f, Final Position is %f, %f \n", 
