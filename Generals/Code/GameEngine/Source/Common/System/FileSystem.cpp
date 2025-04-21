@@ -176,14 +176,14 @@ File*		FileSystem::openFile( const Char *filename, Int access )
 	USE_PERF_TIMER(FileSystem)
 	File *file = NULL;
 
-	if ( TheLocalFileSystem != NULL )
-	{
-		file = TheLocalFileSystem->openFile( filename, access );
-	}
-
-	if ( (TheArchiveFileSystem != NULL) && (file == NULL) )
+	if ( TheArchiveFileSystem != NULL )
 	{
 		file = TheArchiveFileSystem->openFile( filename );
+	}
+
+	if ( (TheLocalFileSystem != NULL) && (file == NULL) )
+	{
+		file = TheLocalFileSystem->openFile( filename, access );
 	}
 
 	return file;
