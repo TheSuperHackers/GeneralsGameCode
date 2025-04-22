@@ -452,6 +452,7 @@ public:
 
 	inline const AudioEventRTS& getFireSound() const { return m_fireSound; }
 	inline UnsignedInt getFireSoundLoopTime() const { return m_fireSoundLoopTime; }
+	inline UnsignedInt getContinuousLaserLoopTime() const { return m_continuousLaserLoopTime; }
 	inline const std::vector<Coord2D>& getScatterTargetsVector() const { return m_scatterTargets; }
 	inline const WeaponBonusSet* getExtraBonus() const { return m_extraBonus; }
 	inline Int getShotsPerBarrel() const { return m_shotsPerBarrel; }
@@ -577,7 +578,8 @@ private:
 	const FXList* m_preAttackFXs[LEVEL_COUNT];			///< FX played when preattack starts
 	UnsignedInt m_preAttackFXDelay;						///< Delay after starting a preattackFX before we can play it again (default = 200 ms)
 
-	//New
+	UnsignedInt m_continuousLaserLoopTime;  ///< time between shots the continuos laser object is kept alive instead of creating a new one
+
 	Bool m_scatterTargetAligned;		///< if the scatter target pattern is aligned to the shooter
 	Bool m_scatterTargetRandom;		///< if the scatter target pattern is fired in a random order
 	Bool m_scatterTargetRandomAngle;  ///< if the scatter target pattern is randomly aligned
@@ -711,7 +713,9 @@ public:
 	void newProjectileFired( const Object *sourceObj, const Object *projectile, const Object *victimObj, const Coord3D *victimPos );///<I just made this projectile and may need to keep track of it 
 	
 	Bool isLaser() const { return m_template->getLaserName().isNotEmpty(); }
-	void createLaser( const Object *sourceObj, const Object *victimObj, const Coord3D *victimPos );
+	// void createLaser( const Object *sourceObj, const Object *victimObj, const Coord3D *victimPos );
+	ObjectID createLaser(const Object* sourceObj, const Object* victimObj, const Coord3D* victimPos); //now returns the object ID
+	void handleContinuousLaser(const Object* sourceObj, const Object* victimObj, const Coord3D* victimPos);
 
 	inline const WeaponTemplate* getTemplate() const { return m_template; }
 	inline WeaponSlotType getWeaponSlot() const { return m_wslot; }
@@ -732,6 +736,7 @@ public:
  	inline UnsignedInt getAutoReloadWhenIdleFrames() const { return m_template->getAutoReloadWhenIdleFrames(); }
 	inline const AudioEventRTS& getFireSound() const { return m_template->getFireSound(); }
 	inline UnsignedInt getFireSoundLoopTime() const { return m_template->getFireSoundLoopTime(); }
+	inline UnsignedInt getContinuousLaserLoopTime() const { return m_template->getContinuousLaserLoopTime(); }
 	inline DamageType getDamageType() const { return m_template->getDamageType(); }
 	inline DeathType getDeathType() const { return m_template->getDeathType(); }
 	inline Real getContinueAttackRange() const { return m_template->getContinueAttackRange(); }
@@ -836,7 +841,7 @@ private:
 	Bool											m_leechWeaponRangeActive;		///< This weapon has unlimited range until attack state is aborted!
 	Real											m_scatterTargetsAngle;		 ///< Random angle chosen for scatterTarget pattern
 	UnsignedInt										m_nextPreAttackFXFrame;			///< the frame when we are next allowed to play a preAttackFX
-
+	ObjectID									m_continuousLaserID;				///< the object that is tracking our continuous laser if we have one.
 	// setter function for status that should not be used outside this class
 	void setStatus( WeaponStatus status) { m_status = status; }
 };

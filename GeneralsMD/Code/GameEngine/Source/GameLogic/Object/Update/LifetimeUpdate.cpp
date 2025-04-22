@@ -80,6 +80,15 @@ void LifetimeUpdate::setLifetimeRange( UnsignedInt minFrames, UnsignedInt maxFra
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
+void LifetimeUpdate::resetLifetime(void)
+{
+	const LifetimeUpdateModuleData* d = getLifetimeUpdateModuleData();
+	UnsignedInt delay = delay = calcSleepDelay(d->m_minFrames, d->m_maxFrames);
+	setWakeFrame(getObject(), UPDATE_SLEEP(delay));
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 UnsignedInt LifetimeUpdate::calcSleepDelay(UnsignedInt minFrames, UnsignedInt maxFrames)
 {
 	UnsignedInt delay = GameLogicRandomValue( minFrames, maxFrames );

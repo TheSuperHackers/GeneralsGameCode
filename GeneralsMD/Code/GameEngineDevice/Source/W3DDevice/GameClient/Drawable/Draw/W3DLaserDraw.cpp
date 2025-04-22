@@ -75,6 +75,8 @@ W3DLaserDrawModuleData::W3DLaserDrawModuleData()
 	m_arcHeight = 0.0f;
 	m_segmentOverlapRatio = 0.0f;
 	m_tilingScalar = 1.0f;
+	m_gridColumnsTotal = 1;
+	m_gridColumns = 1;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -105,6 +107,8 @@ void W3DLaserDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
     { "ArcHeight",						INI::parseReal,									NULL, offsetof( W3DLaserDrawModuleData, m_arcHeight ) },
 		{ "SegmentOverlapRatio",	INI::parseReal,									NULL, offsetof( W3DLaserDrawModuleData, m_segmentOverlapRatio ) },
 		{ "TilingScalar",					INI::parseReal,									NULL, offsetof( W3DLaserDrawModuleData, m_tilingScalar ) },
+		{ "TextureGridTotalColumns",		INI::parseUnsignedInt,							NULL, offsetof(W3DLaserDrawModuleData, m_gridColumnsTotal) },
+		{ "TextureGridColumns",				INI::parseUnsignedInt,							NULL, offsetof(W3DLaserDrawModuleData, m_gridColumns) },
 		{ 0, 0, 0, 0 }
 	};
   p.add(dataFieldParse);
@@ -201,7 +205,13 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 				line->Set_UV_Offset_Rate( Vector2(0.0f, data->m_scrollRate) );	//amount to scroll texture on each draw
 				if( m_texture )
 				{
-					line->Set_Texture_Mapping_Mode(SegLineRendererClass::TILED_TEXTURE_MAP);	//this tiles the texture across the line
+					if (data->m_gridColumnsTotal > 1) {
+						line->Set_Texture_Mapping_Mode(SegLineRendererClass::GRID_TILED_TEXTURE_MAP);	//allows animated U coordinates
+						line->Set_U_Scale(1.0f / (Real)(data->m_gridColumnsTotal));
+					}
+					else {
+						line->Set_Texture_Mapping_Mode(SegLineRendererClass::TILED_TEXTURE_MAP);	//this tiles the texture across the line
+					}
 				}
 
 				// add to scene
@@ -268,7 +278,23 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 	if (update->isDirty() || m_selfDirty)
 	{
 		update->setDirty(false);
-		m_selfDirty = false;
+
+		// Texture animation
+		float u_offset = 0;
+		if (data->m_gridColumnsTotal > 1) {
+			float prog = update->getLifeTimeProgress();
+			int currentFrame = (int)(data->m_gridColumns * prog);
+			if (currentFrame == data->m_gridColumns)
+				currentFrame = data->m_gridColumns - 1;
+
+			u_offset = (1.0f / (float)data->m_gridColumnsTotal) * (float)currentFrame;
+
+			// We stay dirty if we want to animate the beam
+			m_selfDirty = true;
+		}
+		else {
+			m_selfDirty = false;
+		}
 
 		Vector3 laserPoints[ 2 ];
 
@@ -384,7 +410,7 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 				if( data->m_numBeams == 1 )
 				{	
 					width = data->m_innerBeamWidth * update->getWidthScale();
-					alpha = innerAlpha;
+					alpha = innerAlpha * update->getAlphaScale();
 				}
 				else
 				{
@@ -393,9 +419,11 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 					//0.2 means min value + 20% of the diff between min and max
 					Real scale = i / ( data->m_numBeams - 1.0f);
 					Real ultimateScale = update->getWidthScale();
+					Real ultimateAlpha = update->getAlphaScale();
 					width		= (data->m_innerBeamWidth	+ scale * (data->m_outerBeamWidth - data->m_innerBeamWidth));
 					width *= ultimateScale;
 					alpha		= innerAlpha							+ scale * (outerAlpha - innerAlpha);
+					alpha *= ultimateAlpha;
 				}
 
 
@@ -412,6 +440,12 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 
 					//Set the tile factor
 					m_line3D[ index ]->Set_Texture_Tile_Factor( tileFactor );	//number of times to tile texture across each segment
+				}
+
+				if (u_offset > 0) {
+					Vector2 uvoffset = m_line3D[index]->Get_Current_UV_Offset();
+					uvoffset.U = u_offset;
+					m_line3D[index]->Set_Current_UV_Offset(uvoffset);
 				}
 
 				m_line3D[ index ]->Set_Width( width );

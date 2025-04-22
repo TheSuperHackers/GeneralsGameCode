@@ -85,6 +85,7 @@ SegLineRendererClass::SegLineRendererClass(void) :
 		TextureTileFactor(1.0f),
 		LastUsedSyncTime(WW3D::Get_Sync_Time()),
 		CurrentUVOffset(0.0f,0.0f),
+		UScale(1.0f),
 		UVOffsetDeltaPerMS(0.0f, 0.0f),
 		Bits(DEFAULT_BITS),
 		m_vertexBufferSize(0),
@@ -105,6 +106,7 @@ SegLineRendererClass::SegLineRendererClass(const SegLineRendererClass & that) :
 		TextureTileFactor(1.0f),
 		LastUsedSyncTime(that.LastUsedSyncTime),
 		CurrentUVOffset(0.0f,0.0f),
+		UScale(1.0f),
 		UVOffsetDeltaPerMS(0.0f, 0.0f),
 		Bits(DEFAULT_BITS),
 		m_vertexBufferSize(0),
@@ -127,6 +129,7 @@ SegLineRendererClass & SegLineRendererClass::operator = (const SegLineRendererCl
 		TextureTileFactor = that.TextureTileFactor;
 		LastUsedSyncTime = that.LastUsedSyncTime;
 		CurrentUVOffset = that.CurrentUVOffset;
+		UScale = that.UScale;
 		UVOffsetDeltaPerMS = that.UVOffsetDeltaPerMS;
 		Bits = that.Bits;
 		// Don't modify m_vertexBufferSize and m_vertexBuffer
@@ -187,6 +190,11 @@ TextureClass * SegLineRendererClass::Get_Texture(void) const
 void SegLineRendererClass::Set_Current_UV_Offset(const Vector2 & offset)
 {
 	CurrentUVOffset = offset;
+}
+
+void SegLineRendererClass::Set_U_Scale(float scale)
+{
+	UScale = scale;
 }
 
 void SegLineRendererClass::Set_Texture_Tile_Factor(float factor)
@@ -326,6 +334,15 @@ void SegLineRendererClass::Render
 				}
 				u_values[0] = 0.0f;
 				u_values[1] = 1.0f;
+				break;
+			//For animated laser texture
+			case GRID_TILED_TEXTURE_MAP:
+				for (pidx = 0; pidx < point_cnt; pidx++) {
+					// Increasing V
+					base_tex_v[pidx] = (float)(pidx + chidx) * TextureTileFactor;
+				}
+				u_values[0] = 0.0f;
+				u_values[1] = UScale;
 				break;
 		}
 
