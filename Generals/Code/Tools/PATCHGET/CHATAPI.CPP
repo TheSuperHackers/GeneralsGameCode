@@ -52,6 +52,12 @@ enum EVENT_TYPES
   NUM_EVENTS       // keep last
 };
 
+#if RTS_GENERALS
+#define GAME_NAME	"Command and Conquer Generals"
+#elif RTS_ZEROHOUR
+#define GAME_NAME	"Command & Conquer"
+#endif
+
 HANDLE       Events[NUM_EVENTS];
 
 char         g_UpdateString[256];   // for the filename
@@ -173,12 +179,12 @@ static void startOnline( void )
 
 	if (cantConnect)
 	{
-		MessageBox(NULL, "Can't Connect", "Command and Conquer Generals", MB_OK);
+		MessageBox(NULL, "Can't Connect", GAME_NAME, MB_OK);
 		exit(0);
 	}
 	else if (queuedDownloads.size())
 	{
-		if (MessageBox(NULL, "Patches Available.  Download?", "Command and Conquer Generals", MB_YESNO) == IDYES)
+		if (MessageBox(NULL, "Patches Available.  Download?", GAME_NAME, MB_YESNO) == IDYES)
 		{
 			DEBUG_LOG(("Downloading patches\n"));
 			while (queuedDownloads.size())
@@ -222,7 +228,7 @@ static void startOnline( void )
 	}
 	else
 	{
-		MessageBox(NULL, "No Patches Available", "Command and Conquer Generals", MB_OK);
+		MessageBox(NULL, "No Patches Available", GAME_NAME, MB_OK);
 		exit(0);
 	}
 }

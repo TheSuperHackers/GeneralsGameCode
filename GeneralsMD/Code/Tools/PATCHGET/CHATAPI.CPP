@@ -52,7 +52,11 @@ enum EVENT_TYPES
   NUM_EVENTS       // keep last
 };
 
+#if RTS_GENERALS
+#define GAME_NAME	"Command and Conquer Generals"
+#elif RTS_ZEROHOUR
 #define GAME_NAME	"Command & Conquer"
+#endif
 
 HANDLE       Events[NUM_EVENTS];
 

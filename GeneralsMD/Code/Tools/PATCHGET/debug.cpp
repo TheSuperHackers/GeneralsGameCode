@@ -72,7 +72,7 @@ void DebugLog(const char *fmt, ...)
 {
 	va_list va;
 	va_start( va, fmt );
-	_vsnprintf(theBuffer, LARGE_BUFFER, fmt, va );
+	vsnprintf(theBuffer, LARGE_BUFFER, fmt, va );
 	theBuffer[LARGE_BUFFER-1] = 0;
 	va_end( va );
 
