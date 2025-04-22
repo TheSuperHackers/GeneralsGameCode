@@ -52,7 +52,7 @@ target_link_libraries(core_wwvegas INTERFACE
     core_wwdebug
     # core_wwdownload
     core_wwlib
-    # core_wwmath
+    core_wwmath
     core_wwsaveload
     # core_wwshade
     # core_wwutil
