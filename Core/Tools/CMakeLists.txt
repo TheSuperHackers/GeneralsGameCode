@@ -24,6 +24,7 @@ endif()
 # Add library interfaces here
 if(RTS_BUILD_GENERALS_TOOLS OR RTS_BUILD_ZEROHOUR_TOOLS)
     add_subdirectory(ImagePacker)
+    add_subdirectory(MapCacheBuilder)
 endif()
 
 # Add library interfaces here
