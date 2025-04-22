@@ -386,6 +386,14 @@ public:
 	/// Returns production cost change based on typeof (Used for upgrades)
 	Real getProductionCostChangeBasedOnKindOf( KindOfMaskType kindOf ) const;
 
+	/// Decrement the ref counter on the typeof production list node
+	void removeKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent);
+	/// add type of production cost change (Used for upgrades)
+	void addKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent);
+	/// Returns production cost change based on typeof (Used for upgrades)
+	Real getProductionTimeChangeBasedOnKindOf(KindOfMaskType kindOf) const;
+
+
 	/** Return bonus or penalty for construction of this thing.
 	*/
 	Real getProductionCostChangePercent( AsciiString buildTemplateName ) const;
@@ -813,10 +821,14 @@ private:
 
 	ScoreKeeper						m_scoreKeeper;					///< The local scorekeeper for this player
 
+	// Production Cost modifier
 	typedef std::list<KindOfPercentProductionChange*> KindOfPercentProductionChangeList;
 	typedef KindOfPercentProductionChangeList::iterator KindOfPercentProductionChangeListIt;
 	mutable KindOfPercentProductionChangeList m_kindOfPercentProductionChangeList;
 	
+	// Production Time modifier (we can re-use the same types)
+	mutable KindOfPercentProductionChangeList m_kindOfPercentProductionTimeChangeList;
+
 
 	typedef std::list<SpecialPowerReadyTimerType> SpecialPowerReadyTimerList;
 	typedef SpecialPowerReadyTimerList::iterator SpecialPowerReadyTimerListIterator;
