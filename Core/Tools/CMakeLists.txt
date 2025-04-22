@@ -30,4 +30,5 @@ endif()
 # Add library interfaces here
 if(RTS_BUILD_GENERALS_EXTRAS OR RTS_BUILD_ZEROHOUR_EXTRAS)
     add_subdirectory(Autorun)
+    add_subdirectory(PATCHGET)
 endif()

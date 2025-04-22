@@ -1,32 +1,8 @@
-set(PATCHGET_SRC
-    "CHATAPI.CPP"
-    "CHATAPI.H"
-    "COMINIT.CPP"
-    "COMINIT.H"
-    "debug.cpp"
-    "debug.h"
-    "DownloadManager.cpp"
-    "DownloadManager.h"
-    "PROCESS.CPP"
-    "PROCESS.H"
-    "registry.cpp"
-    "Registry.h"
-    "RESOURCE.H"
-    "WINBLOWS.CPP"
-    "WINBLOWS.H"
-    "WSTYPES.H"
-)
-
 macro(setup_patchgrabber appname)
     add_executable(${appname} WIN32)
-    target_sources(${appname} PRIVATE ${PATCHGET_SRC})
+
     target_link_libraries(${appname} PRIVATE
-        comctl32
-        dbghelplib
-        gamespy::gamespy
-        imm32
-        vfw32
-        winmm
+        corei_patchgrabber
         z_debug
         z_gameengine
         z_gameenginedevice
@@ -34,14 +10,6 @@ macro(setup_patchgrabber appname)
         z_wwvegas
         zi_always
     )
-
-    target_compile_definitions(${appname} PRIVATE
-        $<$<CONFIG:Debug>:DEBUG_CRASHING>
-    )
-
-    if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
-        target_sources(${appname} PRIVATE SCRIPT1.RC)
-    endif()
 endmacro()
 
 setup_patchgrabber(z_patchgrabber_en)
