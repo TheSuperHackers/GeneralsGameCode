@@ -253,6 +253,7 @@ const RGBColor RED_IRRADIATED_COLOR					= { 1.0f, -1.0f, -1.0f};
 const RGBColor SUBDUAL_DAMAGE_COLOR					= {-0.2f, -0.2f,  0.8f};
 const RGBColor FRENZY_COLOR									= { 0.2f, -0.2f, -0.2f};
 const RGBColor FRENZY_COLOR_INFANTRY				= { 0.0f, -0.7f, -0.7f};
+const RGBColor SHIELDED_COLOR = { -0.1f, -0.2f, -0.2f};  //TODO: Make configurable
 const Int MAX_ENABLED_MODULES								= 16;
 
 // ------------------------------------------------------------------------------------------------
@@ -1266,15 +1267,32 @@ void Drawable::updateDrawable( void )
 				m_colorTintEnvelope = newInstance(TintEnvelope);
 			m_colorTintEnvelope->play( &SUBDUAL_DAMAGE_COLOR, 150, 150, SUSTAIN_INDEFINITELY);
 		}
-		else if( testTintStatus(TINT_STATUS_FRENZY) )
+		else if (testTintStatus(TINT_STATUS_FRENZY))
 		{
 			// Disabled has precendence, so it goes first
 			if (m_colorTintEnvelope == NULL)
 				m_colorTintEnvelope = newInstance(TintEnvelope);
 
-      m_colorTintEnvelope->play( isKindOf( KINDOF_INFANTRY) ? &FRENZY_COLOR_INFANTRY:&FRENZY_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
-		
-    }
+			m_colorTintEnvelope->play(isKindOf(KINDOF_INFANTRY) ? &FRENZY_COLOR_INFANTRY : &FRENZY_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
+		}
+		else if (testTintStatus(TINT_STATUS_SHIELDED))
+		{
+			// Disabled has precendence, so it goes first
+			if (m_colorTintEnvelope == NULL)
+				m_colorTintEnvelope = newInstance(TintEnvelope);
+
+			m_colorTintEnvelope->play( &SHIELDED_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
+		}
+		// TODO: Maybe we will use this later
+		//else if (testTintStatus(TINT_STATUS_CUSTOM) && (RGBColor* customColor = getObject()->getCustomTintColor()))
+		//{
+		//	// Custom color defined on object. LAST PRIORITY
+		//	if (m_colorTintEnvelope == NULL)
+		//		m_colorTintEnvelope = newInstance(TintEnvelope);
+
+		//	m_colorTintEnvelope->play(customColor, 30, 30, SUSTAIN_INDEFINITELY);
+		//}
+
 //		else if ( testTintStatus( TINT_STATUS_POISONED) )
 //		{
 //			if (m_colorTintEnvelope == NULL)

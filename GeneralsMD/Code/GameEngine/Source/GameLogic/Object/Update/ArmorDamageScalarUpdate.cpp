@@ -81,6 +81,7 @@ ArmorDamageScalarUpdateModuleData::ArmorDamageScalarUpdateModuleData()
 	m_damageFx = NULL;
 	m_effectParticleSystem = NULL;
 	m_scaleParticleCount = false;
+	m_applyTint = false;
 	// m_sparksPerCubicFoot = 0.001f;
 }
 
@@ -101,6 +102,7 @@ void ArmorDamageScalarUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "OverrideDamageFX",			INI::parseDamageFX,	NULL, offsetof(ArmorDamageScalarUpdateModuleData, m_damageFx) },
 		{ "EffectParticleSystem",		INI::parseParticleSystemTemplate, NULL, offsetof(ArmorDamageScalarUpdateModuleData, m_effectParticleSystem) },
 		{ "ScaleParticleSystem",			INI::parseBool, NULL, offsetof(ArmorDamageScalarUpdateModuleData, m_scaleParticleCount) },
+		{ "ApplyColorTint",					INI::parseBool, NULL, offsetof(ArmorDamageScalarUpdateModuleData, m_applyTint)},
 		//{ "ParticlesPerCubicFoot",		INI::parseReal, NULL, offsetof(ArmorDamageScalarUpdateModuleData, m_sparksPerCubicFoot) },
 		{ 0, 0, 0, 0 }
 	};
@@ -240,15 +242,21 @@ void ArmorDamageScalarUpdate::removeEffect(void) {
 void ArmorDamageScalarUpdate::applyEffectToObject(Object *obj) {
 	const ArmorDamageScalarUpdateModuleData* data = getArmorDamageScalarUpdateModuleData();
 	BodyModuleInterface* body = obj->getBodyModule();
-	body->applyDamageScalar(data->m_armorDamageScalar);
+	body->applyDamageScalar(__max(data->m_armorDamageScalar, 0.01f));
 
-	//DEBUG_LOG((">>>ADSU: apply scalar '%f' to obj '%s' - new scalar = '%f' \n",
-	//	data->m_armorDamageScalar, obj->getTemplate()->getName().str(), body->getDamageScalar()));
+
+	DEBUG_LOG((">>>ADSU: apply scalar '%f' to obj '%s' - new scalar = '%f' \n",
+		data->m_armorDamageScalar, obj->getTemplate()->getName().str(), body->getDamageScalar()));
 
 	// Apply Particle System
 	Drawable* drw = obj->getDrawable();
 	if (drw)
 	{
+		if (data->m_applyTint)
+		{
+			drw->setTintStatus(TINT_STATUS_SHIELDED);
+		}
+
 		const ParticleSystemTemplate* tmp = data->m_effectParticleSystem;
 		if (tmp)
 		{
@@ -294,11 +302,16 @@ void ArmorDamageScalarUpdate::removeEffectFromObject(Object* obj) {
 	Real scalar = 1.0f / __max(data->m_armorDamageScalar, 0.01f);
 	body->applyDamageScalar(scalar);
 
-	//DEBUG_LOG((">>>ADSU: apply (=remove) scalar '%f' to obj '%s' - new scalar = '%f' \n",
-	//	scalar, obj->getTemplate()->getName().str(), body->getDamageScalar()));
+	DEBUG_LOG((">>>ADSU: apply (=remove) scalar '%f' to obj '%s' - new scalar = '%f' \n",
+		scalar, obj->getTemplate()->getName().str(), body->getDamageScalar()));
 
 	if (data->m_damageFx) {
 		body->overrideDamageFX(NULL);
+	}
+
+	Drawable* drw = obj->getDrawable();
+	if (data->m_applyTint && drw != NULL) {
+		drw->clearTintStatus(TINT_STATUS_SHIELDED);
 	}
 }
 
