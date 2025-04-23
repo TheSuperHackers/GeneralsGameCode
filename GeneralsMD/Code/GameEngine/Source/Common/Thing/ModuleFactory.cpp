@@ -212,6 +212,7 @@
 #include "GameLogic/Module/WeaponSetUpgrade.h"
 #include "GameLogic/Module/WeaponBonusUpgrade.h"
 #include "GameLogic/Module/CostModifierUpgrade.h"
+#include "GameLogic/Module/ProductionTimeModifierUpgrade.h"
 #include "GameLogic/Module/ExperienceScalarUpgrade.h"
 #include "GameLogic/Module/MaxHealthUpgrade.h"
 
@@ -478,6 +479,7 @@ void ModuleFactory::init( void )
 
 	// upgrade modules
 	addModule( CostModifierUpgrade );
+	addModule( ProductionTimeModifierUpgrade );
 	addModule( ActiveShroudUpgrade );
 	addModule( ArmorUpgrade );
 	addModule( CommandSetUpgrade );
