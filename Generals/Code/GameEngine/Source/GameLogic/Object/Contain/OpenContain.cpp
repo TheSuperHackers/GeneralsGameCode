@@ -1274,6 +1274,9 @@ void OpenContain::orderAllPassengersToExit( CommandSourceType commandSource )
 //-------------------------------------------------------------------------------------------------
 void OpenContain::processDamageToContained()
 {
+	const OpenContainModuleData *data = getOpenContainModuleData();
+	Real percentDamage = data->m_damagePercentageToUnits;
+
 	const ContainedItemsList* items = getContainedItemsList();
 	if( items )
 	{
@@ -1290,7 +1293,7 @@ void OpenContain::processDamageToContained()
 			++it;
 
 			//Calculate the damage to be inflicted on each unit.
-			Real damage = object->getBodyModule()->getMaxHealth() * getOpenContainModuleData()->m_damagePercentageToUnits;
+			Real damage = object->getBodyModule()->getMaxHealth() * percentDamage;
 
 			DamageInfo damageInfo;
 			damageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
@@ -1299,7 +1302,7 @@ void OpenContain::processDamageToContained()
 			damageInfo.in.m_amount = damage;
 			object->attemptDamage( &damageInfo );
 
-			if( !object->isEffectivelyDead() && getOpenContainModuleData()->m_damagePercentageToUnits == 1.0f )
+			if( !object->isEffectivelyDead() && percentDamage == 1.0f )
 				object->kill(); // in case we are carrying flame proof troops we have been asked to kill			
 		}
 	}

@@ -52,9 +52,10 @@ DestroyDie::~DestroyDie( void )
 //-------------------------------------------------------------------------------------------------
 void DestroyDie::onDie( const DamageInfo *damageInfo )
 {
+	Object *obj = getObject();
 	if (!isDieApplicable(damageInfo))
 		return;
-	TheGameLogic->destroyObject(getObject());
+	TheGameLogic->destroyObject( obj );
 }
 
 // ------------------------------------------------------------------------------------------------

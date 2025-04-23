@@ -679,6 +679,7 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 	MemoryPoolObjectHolder hold(iter);
 	for( them = iter->first(); them; them = iter->next() )
 	{
+		Relationship rel = builderObject ? builderObject->getRelationship( them ) : NEUTRAL;
 
 		// ignore any kind of class of objects that we will "remove" for building
 		if( isRemovableForConstruction( them ) == TRUE )
@@ -695,7 +696,7 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 
 		// an immobile object may obstruct our building depending on flags.
 		if( them->isKindOf( KINDOF_IMMOBILE ) )	{
-			if (onlyCheckEnemies && builderObject && builderObject->getRelationship( them ) != ENEMIES )	{
+			if (onlyCheckEnemies && builderObject && rel != ENEMIES )	{
 				continue;
 			}
 			TheTerrainVisual->addFactionBib(them, true);
@@ -706,7 +707,7 @@ Bool BuildAssistant::isLocationClearOfObjects( const Coord3D *worldPos,
 		// if this is an enemy object of the builder object (and therefore the thing
 		// that will be constructed) we can't build here
 		//
-		if( builderObject && builderObject->getRelationship( them ) == ENEMIES ) {
+		if( builderObject && rel == ENEMIES ) {
 			TheTerrainVisual->addFactionBib(them, true);
 			return false;
 		}
