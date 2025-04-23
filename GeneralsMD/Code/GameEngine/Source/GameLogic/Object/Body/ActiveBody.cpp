@@ -173,7 +173,8 @@ ActiveBody::ActiveBody( Thing *thing, const ModuleData* moduleData ) :
 	m_lastDamageCleared(false),
 	m_particleSystems(NULL),
 	m_currentSubdualDamage(0),
-	m_indestructible(false)
+	m_indestructible(false),
+	m_damageFXOverride(false)
 {
 	m_currentHealth = getActiveBodyModuleData()->m_initialHealth;
 	m_prevHealth = getActiveBodyModuleData()->m_initialHealth;
@@ -278,7 +279,7 @@ void ActiveBody::validateArmorAndDamageFX() const
 		{
 			m_curArmor.clear();
 		}
-		m_curDamageFX = set->getDamageFX();
+		if (!m_damageFXOverride) m_curDamageFX = set->getDamageFX();  // Only set this if override is cleared
 		m_curArmorSet = set;
 	}
 }
@@ -1513,6 +1514,28 @@ void ActiveBody::setAflame( Bool )
 	//
 	updateBodyParticleSystems();	
 
+}
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void ActiveBody::overrideDamageFX(DamageFX* damageFX)
+{
+	if (damageFX != NULL) {
+		m_curDamageFX = damageFX;
+		m_damageFXOverride = true;
+	}
+	else {
+		m_curDamageFX = NULL;
+		m_damageFXOverride = false;
+
+		// Restore DamageFX from current armorset
+		const ArmorTemplateSet* set = getObject()->getTemplate()->findArmorTemplateSet(m_curArmorSetFlags);
+		if (set)
+		{
+			m_curDamageFX = set->getDamageFX();
+		}
+	}
+	DEBUG_LOG((">>>ActiveBody: overrideDamageFX - new m_curDamageFX = %d, m_damageFXOverride = %d\n",
+		m_curDamageFX, m_damageFXOverride));
 }
 
 // ------------------------------------------------------------------------------------------------

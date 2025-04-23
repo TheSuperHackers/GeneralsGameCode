@@ -128,6 +128,8 @@ public:
 	virtual Bool canBeSubdued() const; 
 	virtual void onSubdualChange( Bool isNowSubdued );///< Override this if you want a totally different effect than DISABLED_SUBDUED
 
+	virtual void overrideDamageFX(DamageFX* damageFX);
+
 protected:
 
 	void validateArmorAndDamageFX() const;
@@ -162,6 +164,7 @@ private:
 	Bool									m_backCrushed;
 	Bool									m_lastDamageCleared;
 	Bool									m_indestructible;				///< is this object indestructible?
+	Bool									m_damageFXOverride;
 
 	BodyParticleSystem *m_particleSystems;				///< particle systems created and attached to this object
 
