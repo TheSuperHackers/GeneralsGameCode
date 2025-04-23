@@ -32,7 +32,7 @@ if(RTS_BUILD_ZEROHOUR)
     add_feature_info(ZeroHourDocs RTS_BUILD_ZEROHOUR_DOCS "Build Zero Hour Documentation")
 endif()
 
-if(RTS_BUILD_ZEROHOUR)
+if(RTS_BUILD_GENERALS)
     option(RTS_BUILD_GENERALS_TOOLS "Build tools for Generals" ON)
     option(RTS_BUILD_GENERALS_EXTRAS "Build extra tools/tests for Generals" OFF)
     option(RTS_BUILD_GENERALS_DOCS "Build documentation for Generals" OFF)
