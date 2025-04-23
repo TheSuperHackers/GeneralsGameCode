@@ -103,16 +103,16 @@ static void adjustVector(Coord3D *vec, const Matrix3D* mtx)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
-void ObjectCreationNugget::create( const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames ) const
+Object* ObjectCreationNugget::create( const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames ) const
 {
-	create( primary, primary ? primary->getPosition() : NULL, secondary ? secondary->getPosition() : NULL, lifetimeFrames );
+	return create( primary, primary ? primary->getPosition() : NULL, secondary ? secondary->getPosition() : NULL, lifetimeFrames );
 }
 
 //-------------------------------------------------------------------------------------------------
 //This one is called only when we have a nugget that doesn't care about createOwner.
-void ObjectCreationNugget::create( const Object *primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames ) const
+Object* ObjectCreationNugget::create( const Object *primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames ) const
 {
-	create( primaryObj, primary, secondary, lifetimeFrames );
+	return create( primaryObj, primary, secondary, lifetimeFrames );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -128,18 +128,19 @@ public:
 	{
 	}
 
-	virtual void create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const
+	virtual Object* create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const
 	{
 		if (!primaryObj || !primary || !secondary)
 		{ 
 			DEBUG_CRASH(("You must have a primary and secondary source for this effect"));
-      return;
+      return NULL;
     }
 
 	  if (m_weapon)
 	  {
 		  TheWeaponStore->createAndFireTempWeapon( m_weapon, primaryObj, secondary );
 	  }
+		return NULL;
   }
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
@@ -174,12 +175,12 @@ public:
 	{
 	}
 
-	virtual void create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const
+	virtual Object* create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const
 	{
 		if (!primaryObj || !primary || !secondary)
 		{ 
 			DEBUG_CRASH(("You must have a primary and secondary source for this effect"));
-      return;
+      return NULL;
     }
 
 		// Star trekkin, across the universe.
@@ -207,6 +208,7 @@ public:
 			rd->createRadiusDecal(m_deliveryDecalTemplate, m_deliveryDecalRadius, *secondary);
 			rd->killWhenNoLongerAttacking(true);
 		}
+		return NULL;
   }
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
@@ -261,17 +263,17 @@ public:
 		// End Add
 	}
 
-	virtual void create(const Object *primaryObj, const Coord3D *primary, const Coord3D *secondary, UnsignedInt lifetimeFrames = 0 ) const
+	virtual Object* create(const Object *primaryObj, const Coord3D *primary, const Coord3D *secondary, UnsignedInt lifetimeFrames = 0 ) const
 	{
-		create( primaryObj, primary, secondary, true, lifetimeFrames );
+		return create( primaryObj, primary, secondary, true, lifetimeFrames );
 	}
 
-	virtual void create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 ) const
+	virtual Object* create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 ) const
 	{
 		if (!primaryObj || !primary || !secondary)
 		{
 			DEBUG_CRASH(("You must have a primary and secondary source for this effect"));
-      return;
+      return NULL;
     }
 
 		Team* owner = primaryObj ? primaryObj->getControllingPlayer()->getDefaultTeam() : NULL;
@@ -310,6 +312,7 @@ public:
 			CWy = dx * s + dy * c + dy;
 		}
 		
+		Object *firstTransport = NULL;
 		for( Int formationIndex = 0; formationIndex < m_formationSize; formationIndex++ )
 		{
 			Coord3D offset;
@@ -372,7 +375,11 @@ public:
 				transport = TheThingFactory->newObject( ttn, owner );
 				if( !transport )
 				{
-					return;
+					return NULL;
+				}
+				if( !firstTransport )
+				{
+					firstTransport = transport;
 				}
 				transport->setPosition(&startPos);
 				transport->setOrientation(orient);
@@ -434,6 +441,12 @@ public:
 				for (std::vector<Payload>::const_iterator it = m_payload.begin(); it != m_payload.end(); ++it)
   			{
 					const ThingTemplate* payloadTmpl = TheThingFactory->findTemplate(it->m_payloadName);
+					if( !payloadTmpl )
+					{
+						DEBUG_CRASH( ("DeliverPayloadNugget::create() -- %s couldn't create %s (template not found).", 
+							transport->getTemplate()->getName().str(), it->m_payloadName.str() ) );
+						return NULL;
+					}
 					for (int i = 0; i < it->m_payloadCount; ++i)
 					{
 						Object* payload = TheThingFactory->newObject( payloadTmpl, owner );
@@ -493,6 +506,7 @@ public:
 				DEBUG_CRASH(("You should really have a DeliverPayloadAIUpdate here"));
 			}
 		}
+		return firstTransport;
 	}
 
 	static void parsePayload( INI* ini, void *instance, void *store, const void* /*userData*/ )
@@ -607,7 +621,7 @@ public:
 	{
 	}
 
-	virtual void create( const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const
+	virtual Object* create( const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const
 	{
 		if (primary)
 		{
@@ -635,11 +649,13 @@ public:
 		{
 			DEBUG_CRASH(("You must have a primary source for this effect"));
 		}
+		return NULL;
 	}
 
-	virtual void create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const
+	virtual Object* create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const
 	{
 		DEBUG_CRASH(("You must call this effect with an object, not a location"));
+		return NULL;
 	}
 
 	static void parse(INI *ini, void *instance, void* /*store*/, const void* /*userData*/)
@@ -761,33 +777,35 @@ public:
 		m_offset.zero(); 
 	}
 
-	virtual void create(const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const
+	virtual Object* create(const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const
 	{
 		if (primary)
 		{
 			if (m_skipIfSignificantlyAirborne && primary->isSignificantlyAboveTerrain())
-				return;
+				return NULL;
 
-			reallyCreate( primary->getPosition(), primary->getTransformMatrix(), primary->getOrientation(), primary, lifetimeFrames );
+			return reallyCreate( primary->getPosition(), primary->getTransformMatrix(), primary->getOrientation(), primary, lifetimeFrames );
 		}
 		else
 		{
 			DEBUG_CRASH(("You must have a primary source for this effect"));
 		}
+		return NULL;
 	}
 
-	virtual void create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const
+	virtual Object* create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const
 	{
 		if (primary)
 		{
 			const Matrix3D *xfrm = NULL;
-			const Real orientation = 0.0;
-			reallyCreate( primary, xfrm, orientation, primaryObj, lifetimeFrames );
+			const Real angle = 0.0;
+			return reallyCreate( primary, xfrm, angle, primaryObj, lifetimeFrames );
 		}
 		else
 		{
 			DEBUG_CRASH(("You must have a primary source for this effect"));
 		}
+		return NULL;
 	}
 
 	static const FieldParse* getCommonFieldParse()
@@ -1207,15 +1225,15 @@ protected:
 		}
 	}
 
-	void reallyCreate(const Coord3D *pos, const Matrix3D *mtx, Real orientation, const Object *sourceObj, UnsignedInt lifetimeFrames ) const
+	Object* reallyCreate(const Coord3D *pos, const Matrix3D *mtx, Real orientation, const Object *sourceObj, UnsignedInt lifetimeFrames ) const
 	{
 		static const ThingTemplate* debrisTemplate = TheThingFactory->findTemplate("GenericDebris");
 
 		if (m_names.size() <= 0)
-			return;
+			return NULL;
 
 		if (m_requiresLivePlayer && (!sourceObj || !sourceObj->getControllingPlayer()->isPlayerActive()))
-			return; // don't spawn useful objects for dead players.  Avoid the zombie units from Yuri's.
+			return NULL; // don't spawn useful objects for dead players.  Avoid the zombie units from Yuri's.
 
 		// Object type debris might need this information to process visual UpgradeModules.
 		Team *debrisOwner = NULL;
@@ -1223,15 +1241,23 @@ protected:
 			debrisOwner = sourceObj->getControllingPlayer()->getDefaultTeam();
 		
 		Object* container = NULL;
+		Object *firstObject = NULL;
 		if (!m_putInContainer.isEmpty())
 		{
 			const ThingTemplate* containerTmpl = TheThingFactory->findTemplate(m_putInContainer);
 			if (containerTmpl)
 			{
 				container = TheThingFactory->newObject( containerTmpl, debrisOwner );
+				if( !container )
+				{
+					DEBUG_CRASH( ("OCL::reallyCreate() failed to create container %s.", m_putInContainer.str() ) );
+					return firstObject;
+				}
+				firstObject = container;
 				container->setProducer(sourceObj);
 			}
 		}
+
 
 		for (Int nn = 0; nn < m_debrisToGenerate; nn++)
 		{
@@ -1253,6 +1279,15 @@ protected:
 				continue;
 
 			Object *debris = TheThingFactory->newObject( tmpl, debrisOwner );
+			if( !debris )
+			{
+				DEBUG_CRASH( ("OCL::reallyCreate() failed to create debris %s.", tmpl->getName().str() ) );
+				return firstObject;
+			}
+			if( !firstObject )
+			{
+				firstObject = debris;
+			}
 			debris->setProducer(sourceObj);
 			if (m_preserveLayer && sourceObj != NULL && container == NULL)
 			{
@@ -1304,6 +1339,8 @@ protected:
 
 		if (container)
 			doStuffToObj( container, AsciiString::TheEmptyString, pos, mtx, orientation, sourceObj, lifetimeFrames );
+    
+		return firstObject;
 	}
 
 	static void parseDebrisObjectNames( INI* ini, void *instance, void *store, const void* /*userData*/ )
@@ -1404,33 +1441,48 @@ void ObjectCreationList::addObjectCreationNugget(ObjectCreationNugget* nugget)
 }
 
 //-------------------------------------------------------------------------------------------------
-void ObjectCreationList::create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Bool createOwner, UnsignedInt lifetimeFrames ) const
+Object* ObjectCreationList::createInternal( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, Bool createOwner, UnsignedInt lifetimeFrames ) const
 {
 	DEBUG_ASSERTCRASH(primaryObj != NULL, ("You should always call OCLs with a non-null primary Obj, even for positional calls, to get team ownership right"));
+	Object *theFirstObject = NULL;
 	for (ObjectCreationNuggetVector::const_iterator i = m_nuggets.begin(); i != m_nuggets.end(); ++i)
 	{
-		(*i)->create( primaryObj, primary, secondary, createOwner, lifetimeFrames );
+		Object *curObj = (*i)->create( primaryObj, primary, secondary, createOwner, lifetimeFrames );
+		if (theFirstObject==NULL) {
+			theFirstObject = curObj;
+		}
 	}
+	return theFirstObject;
 }
 
 //-------------------------------------------------------------------------------------------------
-void ObjectCreationList::create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames ) const
+Object* ObjectCreationList::createInternal( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames ) const
 {
 	DEBUG_ASSERTCRASH(primaryObj != NULL, ("You should always call OCLs with a non-null primary Obj, even for positional calls, to get team ownership right"));
+	Object *theFirstObject = NULL;
 	for (ObjectCreationNuggetVector::const_iterator i = m_nuggets.begin(); i != m_nuggets.end(); ++i)
 	{
-		(*i)->create( primaryObj, primary, secondary, lifetimeFrames );
+		Object *curObj =  (*i)->create( primaryObj, primary, secondary, lifetimeFrames );
+		if (theFirstObject==NULL) {
+			theFirstObject = curObj;
+		}
 	}
+	return theFirstObject;
 }
 
 //-------------------------------------------------------------------------------------------------
-void ObjectCreationList::create( const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames ) const
+Object* ObjectCreationList::createInternal( const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames ) const
 {
 	DEBUG_ASSERTCRASH(primary != NULL, ("You should always call OCLs with a non-null primary Obj, even for positional calls, to get team ownership right"));
+	Object *theFirstObject = NULL;
 	for (ObjectCreationNuggetVector::const_iterator i = m_nuggets.begin(); i != m_nuggets.end(); ++i)
 	{
-		(*i)->create( primary, secondary, lifetimeFrames );
+		Object *curObj =  (*i)->create( primary, secondary, lifetimeFrames );
+		if (theFirstObject==NULL) {
+			theFirstObject = curObj;
+		}
 	}
+	return theFirstObject;
 }
 
 //-------------------------------------------------------------------------------------------------
