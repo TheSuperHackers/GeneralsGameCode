@@ -180,6 +180,7 @@ public:
 	
 	virtual void applyDamageScalar( Real scalar ) = 0;
 	virtual Real getDamageScalar() const = 0;
+	virtual void overrideDamageFX(DamageFX* damageFX) = 0;
 
 	/**
 		Change the module's health by the given delta. Note that 
@@ -279,6 +280,7 @@ public:
 	//Allows outside systems to apply defensive bonuses or penalties (they all stack as a multiplier!)
 	virtual void applyDamageScalar( Real scalar ) { m_damageScalar *= scalar; }
 	virtual Real getDamageScalar() const { return m_damageScalar; }
+	virtual void overrideDamageFX(DamageFX* damageFX) { }
 
 	/**
 		Change the module's health by the given delta. Note that 

@@ -469,6 +469,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/WanderAIUpdate.h
     Include/GameLogic/Module/WaveGuideUpdate.h
     Include/GameLogic/Module/WeaponBonusUpdate.h
+    Include/GameLogic/Module/ArmorDamageScalarUpdate.h
     Include/GameLogic/Module/WeaponBonusUpgrade.h
     Include/GameLogic/Module/WeaponSetUpgrade.h
     Include/GameLogic/Module/WorkerAIUpdate.h
@@ -1047,6 +1048,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Update/UpdateModule.cpp
     Source/GameLogic/Object/Update/WaveGuideUpdate.cpp
     Source/GameLogic/Object/Update/WeaponBonusUpdate.cpp
+    Source/GameLogic/Object/Update/ArmorDamageScalarUpdate.cpp
     Source/GameLogic/Object/Upgrade/ActiveShroudUpgrade.cpp
     Source/GameLogic/Object/Upgrade/ArmorUpgrade.cpp
     Source/GameLogic/Object/Upgrade/CommandSetUpgrade.cpp

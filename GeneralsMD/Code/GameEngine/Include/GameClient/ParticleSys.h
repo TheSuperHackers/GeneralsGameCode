@@ -627,6 +627,13 @@ public:
 	// Access to dynamically changing part of a particle system.
 	void setEmissionVolumeSphereRadius( Real newRadius ) { if (m_emissionVolumeType == SPHERE) m_emissionVolume.sphere.radius = newRadius; }
 	void setEmissionVolumeCylinderRadius( Real newRadius ) { if (m_emissionVolumeType == CYLINDER) m_emissionVolume.cylinder.radius = newRadius; }
+	void setEmissionBoxHalfSize(Real newX, Real newY, Real newZ) {
+		if (m_emissionVolumeType == BOX) {
+			m_emissionVolume.box.halfSize.x = newX;
+			m_emissionVolume.box.halfSize.y = newY;
+			m_emissionVolume.box.halfSize.z = newZ;
+		}
+	}
 	EmissionVolumeType getEmisionVolumeType() const { return m_emissionVolumeType; }
 	ParticlePriorityType getPriority() const { return m_priority; }
 

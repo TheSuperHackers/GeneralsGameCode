@@ -347,6 +347,7 @@ static PoolSizeRec sizes[] =
 	{ "ChinookAIUpdate", 32, 32 },
 	{ "WanderAIUpdate", 32, 32 },
 	{ "WaveGuideUpdate", 16, 16 },
+	{ "ArmorDamageScalarUpdate", 256, 32 },
 	{ "WeaponBonusUpgrade", 512, 128 },
 	{ "WeaponSetUpgrade", 512, 128 },
 	{ "ArmorUpgrade", 512, 128 },
