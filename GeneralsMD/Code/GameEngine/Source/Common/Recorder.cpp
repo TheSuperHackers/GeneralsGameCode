@@ -56,10 +56,17 @@ Int REPLAY_CRC_INTERVAL = 100;
 const char *replayExtention = ".rep";
 const char *lastReplayFileName = "00000000";	// a name the user is unlikely to ever type, but won't cause panic & confusion
 
+// TheSuperHackers @tweak helmutbuhler 25/04/2025
+// The replay header contains two time elements startTime and endTime of type time_t.
+// On VC6 this was 32-bit, but on newer compilers it's 64-bit. In order to remain compatible
+// we need to load and save them as 32-bit and use this type for that.
+// Note that this will overflow on January 18, 2038.
+typedef int32_t replay_time_t;
+
 static time_t startTime;
 static const UnsignedInt startTimeOffset = 6;
-static const UnsignedInt endTimeOffset = startTimeOffset + sizeof(time_t);
-static const UnsignedInt framesOffset = endTimeOffset + sizeof(time_t);
+static const UnsignedInt endTimeOffset = startTimeOffset + sizeof(replay_time_t);
+static const UnsignedInt framesOffset = endTimeOffset + sizeof(replay_time_t);
 static const UnsignedInt desyncOffset = framesOffset + sizeof(UnsignedInt);
 static const UnsignedInt quitEarlyOffset = desyncOffset + sizeof(Bool);
 static const UnsignedInt disconOffset = quitEarlyOffset + sizeof(Bool);
@@ -75,7 +82,8 @@ void RecorderClass::logGameStart(AsciiString options)
 	if (!fseek(m_file, startTimeOffset, SEEK_SET))
 	{
 		// save off start time
-		fwrite(&startTime, sizeof(time_t), 1, m_file);
+		replay_time_t tmp = (replay_time_t)startTime;
+		fwrite(&tmp, sizeof(replay_time_t), 1, m_file);
 	}
 	// move back to end of stream
 #ifdef DEBUG_CRASHING
@@ -229,7 +237,8 @@ void RecorderClass::logGameEnd( void )
 	if (!fseek(m_file, endTimeOffset, SEEK_SET))
 	{
 		// save off end time
-		fwrite(&t, sizeof(time_t), 1, m_file);
+		replay_time_t tmp = (replay_time_t)t;
+		fwrite(&tmp, sizeof(replay_time_t), 1, m_file);
 	}
 	// move to appropriate offset
 	if (!fseek(m_file, framesOffset, SEEK_SET))
@@ -557,9 +566,9 @@ void RecorderClass::startRecording(GameDifficulty diff, Int originalGameMode, In
 	//
 	// **** if this changes, change the LAN code above ****
 	//
-	time_t t = 0;
-	fwrite(&t, sizeof(time_t), 1, m_file);	// reserve space for start time
-	fwrite(&t, sizeof(time_t), 1, m_file);	// reserve space for end time
+	replay_time_t t = 0;
+	fwrite(&t, sizeof(replay_time_t), 1, m_file);	// reserve space for start time
+	fwrite(&t, sizeof(replay_time_t), 1, m_file);	// reserve space for end time
 
 	UnsignedInt frames = 0;
 	fwrite(&frames, sizeof(UnsignedInt), 1, m_file);	// reserve space for duration in frames
@@ -836,8 +845,11 @@ Bool RecorderClass::readReplayHeader(ReplayHeader& header)
 	}
 
 	// read in some stats
-	fread(&header.startTime, sizeof(time_t), 1, m_file);
-	fread(&header.endTime, sizeof(time_t), 1, m_file);
+	replay_time_t tmp;
+	fread(&tmp, sizeof(replay_time_t), 1, m_file);
+	header.startTime = tmp;
+	fread(&tmp, sizeof(replay_time_t), 1, m_file);
+	header.endTime = tmp;
 
 	fread(&header.frameDuration, sizeof(UnsignedInt), 1, m_file);
 
