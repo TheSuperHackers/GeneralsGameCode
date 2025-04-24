@@ -34,6 +34,33 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/WeaponSetUpgrade.h"
 
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+WeaponSetUpgradeModuleData::WeaponSetUpgradeModuleData(void)
+{
+	m_weaponSetFlagSet = WEAPONSET_PLAYER_UPGRADE;
+	m_weaponSetFlagClear = WEAPONSET_COUNT;  // = undefined;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void WeaponSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+
+	UpgradeModuleData::buildFieldParse(p);
+
+	static const FieldParse dataFieldParse[] =
+	{
+		{ "WeaponSetFlag", INI::parseIndexList,	WeaponSetFlags::getBitNames(),offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlagSet) },
+		{ "WeaponSetFlagToClear", INI::parseIndexList, WeaponSetFlags::getBitNames(), offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlagClear) },
+		{ 0, 0, 0, 0 }
+	};
+
+	p.add(dataFieldParse);
+
+}  // end buildFieldParse
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 WeaponSetUpgrade::WeaponSetUpgrade( Thing *thing, const ModuleData* moduleData ) : UpgradeModule( thing, moduleData )
@@ -51,9 +78,15 @@ WeaponSetUpgrade::~WeaponSetUpgrade( void )
 void WeaponSetUpgrade::upgradeImplementation( )
 {
 	// Very simple; just need to flag the Object as having the player upgrade, and the WeaponSet chooser 
-	// will do the work of picking the right one from ini.  This comment is as long as the code.
+	// will do the work of picking the right one from ini.  This comment is as long as the code. Update: not anymore ;)
+	const WeaponSetUpgradeModuleData* data = getWeaponSetUpgradeModuleData();
+
 	Object *obj = getObject();
-	obj->setWeaponSetFlag( WEAPONSET_PLAYER_UPGRADE );
+	obj->setWeaponSetFlag(data->m_weaponSetFlagSet);
+
+	if (data->m_weaponSetFlagClear < WEAPONSET_COUNT) {
+		obj->clearWeaponSetFlag(data->m_weaponSetFlagClear);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------

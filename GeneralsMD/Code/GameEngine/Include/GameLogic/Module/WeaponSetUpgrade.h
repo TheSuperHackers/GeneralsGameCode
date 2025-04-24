@@ -37,15 +37,36 @@
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Thing;
+enum ModelConditionFlagType CPP_11(: Int);
+enum WeaponSetType CPP_11(: Int);
 
-//-------------------------------------------------------------------------------------------------
-/** The default	die module */
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+class WeaponSetUpgradeModuleData : public UpgradeModuleData
+{
+
+public:
+
+	WeaponSetUpgradeModuleData(void);
+
+	static void buildFieldParse(MultiIniFieldParse& p);
+
+	WeaponSetType m_weaponSetFlagSet;  ///< The weaponset flag to set (default = WEAPONSET_PLAYER_UPGRADE)
+	WeaponSetType m_weaponSetFlagClear;  ///< The weaponset flag to clear. This is needed if we want to override a previous upgrade.
+
+	//Note: looks like conditionState changes are intrinsic to the weaponsets.
+	// If we define new weaponsets, we need to add new conditionstates anyways
+	// 
+	//ModelConditionFlagType m_modelconditionFlagSet;
+	//ModelConditionFlagType m_modelconditionFlagClear;
+
+};
 //-------------------------------------------------------------------------------------------------
 class WeaponSetUpgrade : public UpgradeModule
 {
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( WeaponSetUpgrade, "WeaponSetUpgrade" )
-	MAKE_STANDARD_MODULE_MACRO( WeaponSetUpgrade );
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(WeaponSetUpgrade, WeaponSetUpgradeModuleData);
 
 public:
 
