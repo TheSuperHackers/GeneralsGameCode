@@ -256,7 +256,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 						color = colors[COLOR_SP_CRC_MISMATCH];
 					}
 				}
-
+				
 				Int insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
 				if (insertionIndex == -1)
 				{
