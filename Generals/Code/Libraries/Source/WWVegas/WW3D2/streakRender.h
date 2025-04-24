@@ -48,7 +48,7 @@
 class RenderInfoClass;
 class SphereClass;
 struct W3dEmitterLinePropertiesStruct;
-
+struct VertexFormatXYZUV1;
 
 // The maximum allowable level of subdivision. This should be no more than 7 to avoid increasing
 // the chunk buffer size too much
@@ -89,8 +89,8 @@ public:
 	float					Get_Merge_Abort_Factor(void) const					{ return MergeAbortFactor; }
 	unsigned int		Get_Current_Subdivision_Level(void)	const			{ return SubdivisionLevel; }
 	TextureMapMode		Get_Texture_Mapping_Mode(void) const;
-	float					Get_Texture_Tile_Factor(void) const					{ return TextureTileFactor; }
-	Vector2				Get_UV_Offset_Rate(void) const;
+	// float					Get_Texture_Tile_Factor(void) const					{ return TextureTileFactor; }
+	// Vector2				Get_UV_Offset_Rate(void) const;
 	int					Is_Merge_Intersections(void) const					{ return Bits & MERGE_INTERSECTIONS; }
 	int					Is_Freeze_Random(void) const							{ return Bits & FREEZE_RANDOM; }
 	int					Is_Sorting_Disabled(void) const						{ return Bits & DISABLE_SORTING; }
@@ -104,13 +104,16 @@ public:
 	void					Set_Opacity(float opacity)								{ Opacity = opacity; }
 	void					Set_Noise_Amplitude(float amplitude)				{ NoiseAmplitude = amplitude; }
 	void					Set_Merge_Abort_Factor(float factor)				{ MergeAbortFactor = factor; }
-	void					Set_Current_Subdivision_Level(unsigned int lv)	{ SubdivisionLevel = lv; }
+	void					Set_Current_Subdivision_Level(unsigned int lv)	{
+		DEBUG_ASSERTCRASH(lv == 0, ("Streak renderer does not work for non-zero subdivisions"));
+		SubdivisionLevel = lv; SubdivisionLevel = 0;
+	}
 	void					Set_Texture_Mapping_Mode(TextureMapMode mode);
 	// WARNING! Do NOT set the tile factor to be too high (should be less than 8) or negative
 	//performance impact will result!
-	void					Set_Texture_Tile_Factor(float factor);
-	void					Set_Current_UV_Offset(const Vector2 & offset);
-	void					Set_UV_Offset_Rate(const Vector2 &rate);
+	// void					Set_Texture_Tile_Factor(float factor);
+	// void					Set_Current_UV_Offset(const Vector2 & offset);
+	// void					Set_UV_Offset_Rate(const Vector2 &rate);
 	void					Set_Merge_Intersections(int onoff)					{ if (onoff) { Bits |= MERGE_INTERSECTIONS; } else { Bits &= ~MERGE_INTERSECTIONS; }; }
 	void					Set_Freeze_Random(int onoff)							{ if (onoff) { Bits |= FREEZE_RANDOM; } else { Bits &= ~FREEZE_RANDOM; }; }
 	void					Set_Disable_Sorting(int onoff)						{ if (onoff) { Bits |= DISABLE_SORTING; } else { Bits &= ~DISABLE_SORTING; }; }
@@ -160,12 +163,12 @@ private:
 	// Affects tiled texture mapping mode only. If this is set too high, performance (and
 	// possibly visual) problems will result from excessive tiling over a single polygon, over
 	// the entire line, or both.
-	float								TextureTileFactor;
+	// float								TextureTileFactor;
 
 	// Used for texture coordinate animation
-	unsigned int					LastUsedSyncTime;		// Last sync time used	
-	Vector2							CurrentUVOffset;		// Current UV offset
-	Vector2							UVOffsetDeltaPerMS;	// Amount to increase offset each millisec
+	// unsigned int					LastUsedSyncTime;		// Last sync time used	
+	// Vector2							CurrentUVOffset;		// Current UV offset
+	// Vector2							UVOffsetDeltaPerMS;	// Amount to increase offset each millisec
 	
 	// Various flags
 	enum BitShiftOffsets {
@@ -185,6 +188,11 @@ private:
 	unsigned int					Bits;
 
 	friend class SegmentedLineClass;
+
+	// Vertex buffer manager
+	VertexFormatXYZUV1 *getVertexBuffer(unsigned int number);
+	unsigned int m_vertexBufferSize;
+	VertexFormatXYZUV1 *m_vertexBuffer;
 };
 
 
@@ -200,16 +208,20 @@ inline void StreakRendererClass::Set_Texture_Mapping_Mode(StreakRendererClass::T
 	Bits |= ((mode << TEXTURE_MAP_MODE_OFFSET) & TEXTURE_MAP_MODE_MASK);
 }
 
-inline Vector2 StreakRendererClass::Get_UV_Offset_Rate(void) const
-{	
-	return UVOffsetDeltaPerMS * 1000.0f;
-}
+// inline Vector2 StreakRendererClass::Get_UV_Offset_Rate(void) const
+// {	
+// 	return UVOffsetDeltaPerMS * 1000.0f;
+// }
 
-inline void StreakRendererClass::Set_UV_Offset_Rate(const Vector2 &rate)
+// inline void StreakRendererClass::Set_UV_Offset_Rate(const Vector2 &rate)
+// {
+// 	UVOffsetDeltaPerMS = rate * 0.001f;
+// }
+
+inline void StreakRendererClass::Reset_Line(void)
 {
-	UVOffsetDeltaPerMS = rate * 0.001f;
+	// Empty
 }
-
 
 #endif //STREAKRENDER_H
 

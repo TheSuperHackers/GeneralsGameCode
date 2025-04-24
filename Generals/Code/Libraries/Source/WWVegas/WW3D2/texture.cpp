@@ -128,8 +128,8 @@ TextureClass::TextureClass(unsigned width, unsigned height, WW3DFormat format, M
 			height, 
 			format, 
 			mip_level_count,
-			rendertarget,
-			this
+			this,
+			rendertarget
 		);
 		DX8TextureManagerClass::Add(track);
 	}

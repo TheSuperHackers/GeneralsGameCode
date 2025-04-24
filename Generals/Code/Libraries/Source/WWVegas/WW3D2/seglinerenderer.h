@@ -48,6 +48,7 @@
 class RenderInfoClass;
 class SphereClass;
 struct W3dEmitterLinePropertiesStruct;
+struct VertexFormatXYZDUV1;
 
 
 // The maximum allowable level of subdivision. This should be no more than 7 to avoid increasing
@@ -106,9 +107,7 @@ public:
 	void					Set_Merge_Abort_Factor(float factor)				{ MergeAbortFactor = factor; }
 	void					Set_Current_Subdivision_Level(unsigned int lv)	{ SubdivisionLevel = lv; }
 	void					Set_Texture_Mapping_Mode(TextureMapMode mode);
-	// WARNING! Do NOT set the tile factor to be too high (should be less than 8) or negative
-	//performance impact will result!
-	void					Set_Texture_Tile_Factor(float factor);
+	void					Set_Texture_Tile_Factor(float factor);	// Might be clamped if too high
 	void					Set_Current_UV_Offset(const Vector2 & offset);
 	void					Set_UV_Offset_Rate(const Vector2 &rate);
 	void					Set_Merge_Intersections(int onoff)					{ if (onoff) { Bits |= MERGE_INTERSECTIONS; } else { Bits &= ~MERGE_INTERSECTIONS; }; }
@@ -121,16 +120,19 @@ public:
 										const Matrix3D & transform,
 										unsigned int point_count,
 										Vector3 * points,
-										const SphereClass & obj_sphere);
+										const SphereClass & obj_sphere,
+										Vector4 * rgbas = 0);
 
 	void					Reset_Line(void);
+	void					Scale(float scale);
 
 private:
 
 	// Utility functions
 	void								subdivision_util(unsigned int point_cnt, const Vector3 *xformed_pts,
 											const float *base_tex_v, unsigned int *p_sub_point_cnt,
-											Vector3 *xformed_subdiv_pts, float *subdiv_tex_v);
+											Vector3 *xformed_subdiv_pts, float *subdiv_tex_v,
+											Vector4 *base_diffuse, Vector4 *subdiv_diffuse);
 
 	// Global properties
 	TextureClass *					Texture;
@@ -176,6 +178,10 @@ private:
 	unsigned int					Bits;
 
 	friend class SegmentedLineClass;
+
+	VertexFormatXYZDUV1 *getVertexBuffer(unsigned int number);
+	unsigned int m_vertexBufferSize;
+	VertexFormatXYZDUV1 *m_vertexBuffer;
 };
 
 

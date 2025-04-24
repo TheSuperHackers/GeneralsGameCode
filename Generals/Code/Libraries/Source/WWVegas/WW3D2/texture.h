@@ -71,6 +71,8 @@ class TextureClass : public W3DMPO, public RefCountClass
 {
 	W3DMPO_GLUE(TextureClass)
 
+	friend class DX8TextureTrackerClass;  //(gth) so it can call Poke_Texture, 
+
 	friend DX8Wrapper;
 	friend TextureLoader;
 	friend LoaderThreadClass;
@@ -186,6 +188,7 @@ class TextureClass : public W3DMPO, public RefCountClass
 
 		// Support for self managed textures
 		bool Is_Dirty() { WWASSERT(Pool==POOL_DEFAULT); return Dirty; };
+		void Set_Dirty() { WWASSERT(Pool==POOL_DEFAULT); Dirty=true; }
 		void Clean() { Dirty=false; };
 
 		unsigned Get_Reduction() const;
@@ -193,6 +196,8 @@ class TextureClass : public W3DMPO, public RefCountClass
 		bool Is_Compression_Allowed() const { return IsCompressionAllowed; }
 
 	protected:
+		void Poke_Texture(IDirect3DBaseTexture8* tex) { D3DTexture = tex; }
+
 		// Apply this texture's settings into D3D
 		virtual void Apply(unsigned int stage);
 		void Load_Locked_Surface();
