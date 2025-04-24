@@ -159,8 +159,6 @@ UpdateSleepTime ArmorDamageScalarUpdate::update(void)
 
 void ArmorDamageScalarUpdate::applyEffect(void) {
 
-	// DEBUG_LOG(("ADSU: Apply Effect 1\n"));
-
 	if (m_effectApplied) return;
 
 	m_effectApplied = TRUE;
@@ -206,21 +204,15 @@ void ArmorDamageScalarUpdate::applyEffect(void) {
 
 		}
 	}
-
-	// DEBUG_LOG(("ADSU: Apply Effect Done. m_affectedObjects.size = %d\n", m_affectedObjects.size()));
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 void ArmorDamageScalarUpdate::removeEffect(void) {
 
-	// DEBUG_LOG((">>> ADSU: Remove Effect 1\n"));
-
 	if (!m_effectApplied) return;
 
 	m_effectApplied = FALSE;
-	// const ArmorDamageScalarUpdateModuleData* data = getArmorDamageScalarUpdateModuleData();
-	// Object* me = getObject();
 
 	for (ObjectIDVectorIterator it = m_affectedObjects.begin(); it != m_affectedObjects.end(); ) {
 		Object* obj = TheGameLogic->findObjectByID(*it);
@@ -232,8 +224,6 @@ void ArmorDamageScalarUpdate::removeEffect(void) {
 
 		it = m_affectedObjects.erase(it);
 	}
-
-	// DEBUG_LOG((">>> ADSU: Remove Effect Done.\n"));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -245,8 +235,8 @@ void ArmorDamageScalarUpdate::applyEffectToObject(Object *obj) {
 	body->applyDamageScalar(__max(data->m_armorDamageScalar, 0.01f));
 
 
-	DEBUG_LOG((">>>ADSU: apply scalar '%f' to obj '%s' - new scalar = '%f' \n",
-		data->m_armorDamageScalar, obj->getTemplate()->getName().str(), body->getDamageScalar()));
+	//DEBUG_LOG((">>>ADSU: apply scalar '%f' to obj '%s' - new scalar = '%f' \n",
+	//	data->m_armorDamageScalar, obj->getTemplate()->getName().str(), body->getDamageScalar()));
 
 	// Apply Particle System
 	Drawable* drw = obj->getDrawable();
@@ -281,8 +271,8 @@ void ArmorDamageScalarUpdate::applyEffectToObject(Object *obj) {
 					//	obj->getTemplate()->getName().str(), x, y, z, sys->getBurstCountMultiplier(), sys->getBurstDelayMultiplier()));
 				}
 				
-				DEBUG_LOG((">>>ADSU: spawned particle system with lifetime '%d'.\n",
-					data->m_bonusDuration));
+				//DEBUG_LOG((">>>ADSU: spawned particle system with lifetime '%d'.\n",
+				//	data->m_bonusDuration));
 			}
 		}
 	}
@@ -302,8 +292,8 @@ void ArmorDamageScalarUpdate::removeEffectFromObject(Object* obj) {
 	Real scalar = 1.0f / __max(data->m_armorDamageScalar, 0.01f);
 	body->applyDamageScalar(scalar);
 
-	DEBUG_LOG((">>>ADSU: apply (=remove) scalar '%f' to obj '%s' - new scalar = '%f' \n",
-		scalar, obj->getTemplate()->getName().str(), body->getDamageScalar()));
+	//DEBUG_LOG((">>>ADSU: apply (=remove) scalar '%f' to obj '%s' - new scalar = '%f' \n",
+	//	scalar, obj->getTemplate()->getName().str(), body->getDamageScalar()));
 
 	if (data->m_damageFx) {
 		body->overrideDamageFX(NULL);
