@@ -42,7 +42,7 @@ GhostObject::GhostObject(void):
 //Added By Sadullah Nader
 //Initializations missing and needed
 m_parentAngle(0.0f),
-m_parentGeometryIsSmall(0.0f),
+m_parentGeometryIsSmall(true),
 m_parentGeometryMajorRadius(0.0f),
 m_parentGeometryminorRadius(0.0f),
 m_parentObject(NULL),
