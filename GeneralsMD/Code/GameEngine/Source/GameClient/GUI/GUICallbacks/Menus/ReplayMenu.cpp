@@ -117,7 +117,6 @@ void WriteOutReplayList()
 	if (!fp)
 		return;
 
-	AsciiString asciistr;
 	AsciiString asciisearch;
 	asciisearch = "*";
 	asciisearch.concat(TheRecorder->getReplayExtention());
@@ -127,29 +126,29 @@ void WriteOutReplayList()
 
 	for (FilenameListIter it = replayFilenames.begin(); it != replayFilenames.end(); ++it)
 	{
-		// just want the filename
-		asciistr.set((*it).reverseFind('\\') + 1);
+		AsciiString filename;
+		filename.set(it->reverseFind('\\') + 1);
 		RecorderClass::ReplayHeader header;
 		ReplayGameInfo info;
 		const MapMetaData *md;
-		Bool success = GetMapInfo(asciistr, &header, &info, &md);
+		Bool success = GetMapInfo(filename, &header, &info, &md);
 		if (!success)
 			continue;
 
-		UnicodeString replayNameToShow = header.replayName;
-		AsciiString replayNameToShowAscii;
-		replayNameToShowAscii.translate(replayNameToShow);
 		
-		fprintf(fp, "%s #", replayNameToShowAscii.str());
-
+		AsciiString extra;
 		if (!md)
-			fprintf(fp, " no map");
-		fprintf(fp, header.localPlayerIndex >= 0 ? " MP" : " SP");
+			extra.concat(" no map");
+		//extra.concat(header.localPlayerIndex >= 0 ? " MP" : " SP");
 		if (header.quitEarly)
-			fprintf(fp, " quitearly");
+			extra.concat(" quitearly");
 		if (header.desyncGame)
-			fprintf(fp, " mismatch");
-		fprintf(fp, "\n");
+			extra.concat(" mismatch");
+		
+		if (extra.getLength() != 0)
+			fprintf(fp, "%s #%s\n", filename.str(), extra.str());
+		else
+			fprintf(fp, "%s\n", filename.str());
 	}
 	fclose(fp);
 }
