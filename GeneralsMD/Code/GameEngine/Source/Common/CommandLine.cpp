@@ -862,6 +862,15 @@ Int parseQuickStart( char *args[], int num )
 	return 1;
 }
 
+Int parseHeadless( char *args[], int num )
+{
+	if (TheWritableGlobalData)
+	{
+		TheWritableGlobalData->m_headless = TRUE;
+	}
+	return 1;
+}
+
 Int parseConstantDebug( char *args[], int num )
 {
 	if (TheWritableGlobalData)
@@ -1204,6 +1213,10 @@ static CommandLineParam params[] =
 	{ "-mod", parseMod },
 	{ "-noshaders", parseNoShaders },
 	{ "-quickstart", parseQuickStart },
+
+	// TheSuperHackers @feature helmutbuhler 11/04/2025
+	// This runs the game without a window, graphics, input and audio. Used for testing.
+	{ "-headless", parseHeadless },
 
 #if (defined(_DEBUG) || defined(_INTERNAL))
 	{ "-noaudio", parseNoAudio },

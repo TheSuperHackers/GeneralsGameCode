@@ -616,7 +616,7 @@ void W3DView::setCameraTransform( void )
 	buildCameraTransform( &cameraTransform );
 	m_3DCamera->Set_Transform( cameraTransform );
 
-	if (TheTerrainRenderObject) 
+	if (TheTerrainRenderObject && W3DDisplay::m_3DScene != NULL) 
 	{
 		RefRenderObjListIterator *it = W3DDisplay::m_3DScene->createLightsIterator();
 		TheTerrainRenderObject->updateCenter(m_3DCamera, it);

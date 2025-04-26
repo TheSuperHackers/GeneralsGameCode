@@ -380,6 +380,49 @@ extern WindowMsgHandledType PassMessagesToParentSystem( GameWindow *window,
 																															 WindowMsgData mData2 );
 
 
+// TheSuperHackers @feature helmutbuhler 24/04/2025
+// GameWindow that does nothing. Used for Headless Mode.
+class DummyGameWindow : public GameWindow
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DummyGameWindow, "DummyGameWindow")
+public:
+	//virtual ~DummyGameWindow();
+	virtual void winDrawBorder() { }
+};
+
+// TheSuperHackers @feature helmutbuhler 24/04/2025
+// GameWindowManager that does nothing. Used for Headless Mode.
+class DummyGameWindowManager : public GameWindowManager
+{
+public:
+	virtual GameWindow *winGetWindowFromId(GameWindow *window, Int id);
+	virtual GameWindow *winCreateFromScript(AsciiString filenameString, WindowLayoutInfo *info);
+
+	virtual GameWindow *allocateNewWindow() { return newInstance(DummyGameWindow); }
+
+	virtual GameWinDrawFunc getPushButtonImageDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getPushButtonDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getCheckBoxImageDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getCheckBoxDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getRadioButtonImageDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getRadioButtonDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getTabControlImageDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getTabControlDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getListBoxImageDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getListBoxDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getComboBoxImageDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getComboBoxDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getHorizontalSliderImageDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getHorizontalSliderDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getVerticalSliderImageDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getVerticalSliderDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getProgressBarImageDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getProgressBarDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getStaticTextImageDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getStaticTextDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getTextEntryImageDrawFunc() { return NULL; }
+	virtual GameWinDrawFunc getTextEntryDrawFunc() { return NULL; }
+};
 
 #endif // __GAMEWINDOWMANAGER_H_
 
