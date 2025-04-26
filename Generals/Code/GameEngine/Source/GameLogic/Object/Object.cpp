@@ -142,8 +142,7 @@ extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBCo
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-#ifdef DEBUG_LOGGING
-AsciiString DescribeObject(const Object *obj)
+AsciiString DebugDescribeObject(const Object *obj)
 {
 	if (!obj)
 		return "<No Object>";
@@ -167,7 +166,6 @@ AsciiString DescribeObject(const Object *obj)
 
 	return ret;
 }
-#endif // DEBUG_LOGGING
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

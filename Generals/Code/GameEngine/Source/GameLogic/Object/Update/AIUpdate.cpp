@@ -2163,7 +2163,7 @@ UpdateSleepTime AIUpdateInterface::doLocomotor( void )
 							// obstacles, and follow the intermediate path points.
 							ClosestPointOnPathInfo info;
 							CRCDEBUG_LOG(("AIUpdateInterface::doLocomotor() - calling computePointOnPath() for %s\n",
-								DescribeObject(getObject()).str()));
+								DebugDescribeObject(getObject()).str()));
 							getPath()->computePointOnPath(getObject(), m_locomotorSet, *getObject()->getPosition(), info);
 							onPathDistToGoal = info.distAlongPath;
 							goalPos = info.posOnPath;
