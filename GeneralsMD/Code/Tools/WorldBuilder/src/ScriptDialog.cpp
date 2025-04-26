@@ -160,6 +160,9 @@ ScriptDialog::ScriptDialog(CWnd* pParent /*=NULL*/)
 {
 	m_draggingTreeView = false;
 	m_autoUpdateWarnings = true;
+	m_pOldFont = NULL; 
+	m_bCompressed = false;
+	m_bNewIcons = false;
 	//{{AFX_DATA_INIT(ScriptDialog)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
@@ -192,6 +195,9 @@ BEGIN_MESSAGE_MAP(ScriptDialog, CDialog)
 	ON_BN_CLICKED(IDC_VERIFY, OnVerify)
 	ON_BN_CLICKED(IDC_PATCH_GC, OnPatchGC)
 	ON_BN_CLICKED(IDC_AUTO_VERIFY, OnAutoVerify)
+	ON_BN_CLICKED(IDC_COMPRESS, OnCompress)
+	ON_BN_CLICKED(IDC_NEWICONS, OnNewIcons)
+	ON_BN_CLICKED(IDC_FIND_NEXT, OnFindNext)
 	ON_BN_CLICKED(IDC_SAVE, OnSave)
 	ON_BN_CLICKED(IDC_LOAD, OnLoad)
 	ON_NOTIFY(NM_DBLCLK, IDC_SCRIPT_TREE, OnDblclkScriptTree)
@@ -359,6 +365,50 @@ void ScriptDialog::OnPatchGC()
 	}*/
 }
 
+void ScriptDialog::OnFindNext()
+{
+    UpdateData(TRUE); // Sync UI to variables if you're using DDX
+
+    CEdit* pEdit = (CEdit*)GetDlgItem(IDC_SCRIPT_SEARCH);
+    CString searchText;
+    pEdit->GetWindowText(searchText);
+    searchText.MakeLower();
+
+    CTreeCtrl* pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
+    HTREEITEM hItem = m_lastFoundItem ? pTree->GetNextItem(m_lastFoundItem, TVGN_NEXT) : pTree->GetRootItem();
+
+    while (hItem)
+    {
+		CString text = pTree->GetItemText(hItem);
+		text.MakeLower();
+		if (text.Find(searchText) != -1)
+		{		
+            m_lastFoundItem = hItem;
+            pTree->SelectItem(hItem);
+            pTree->EnsureVisible(hItem);
+            return;
+        }
+
+        // Search child if it exists
+        HTREEITEM hChild = pTree->GetChildItem(hItem);
+        if (hChild)
+        {
+            hItem = hChild;
+        }
+        else
+        {
+            // Otherwise, go to the next sibling or climb up until we find one
+            while (hItem && !pTree->GetNextSiblingItem(hItem))
+                hItem = pTree->GetParentItem(hItem);
+            if (hItem)
+                hItem = pTree->GetNextSiblingItem(hItem);
+        }
+    }
+
+    MessageBox("No more matches found.", "Search", MB_OK | MB_ICONINFORMATION);
+    m_lastFoundItem = NULL;
+}
+
 /**Force a pass over all the scripts to make sure no warnings.  I moved this
 to user control because this function is VERY slow. 7-15-03 -MW*/
 void ScriptDialog::OnVerify()
@@ -376,6 +426,86 @@ void ScriptDialog::OnAutoVerify()
 	CWnd *pWnd = GetDlgItem(IDC_VERIFY);
 	pWnd->EnableWindow(!m_autoUpdateWarnings);
 }
+
+void ScriptDialog::OnNewIcons()
+{
+	CButton *pButton = (CButton*)GetDlgItem(IDC_NEWICONS);
+	m_bNewIcons = (pButton->GetCheck() == 1);
+	::AfxGetApp()->WriteProfileInt(SCRIPT_DIALOG_SECTION, "NewIcons", m_bNewIcons ? 1 : 0);
+
+	CTreeCtrl* pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
+	if (pTree)
+	{
+		// Delete old image list if it exists
+		if (m_imageList.GetSafeHandle())
+		{
+			m_imageList.DeleteImageList();
+		}
+
+		if (m_bNewIcons)
+			m_imageList.Create(IDB_FOLDERSCRIPTB, 16, 2, ILC_COLOR4); // new icons
+		else
+			m_imageList.Create(IDB_FOLDERSCRIPT, 16, 2, ILC_COLOR4); // default icons
+
+		pTree->SetImageList(&m_imageList, TVSIL_STATE);
+	}
+}
+
+void ScriptDialog::OnCompress()
+{
+	CButton *pButton = (CButton*)GetDlgItem(IDC_COMPRESS);
+	m_bCompressed = (pButton->GetCheck() == 1);
+    ::AfxGetApp()->WriteProfileInt(SCRIPT_DIALOG_SECTION, "CompressScripts", m_bCompressed ? 1 : 0);
+
+    CTreeCtrl* pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
+    if (!pTree)
+        return;
+
+    if (m_bCompressed)
+    {
+        // Save original font (only once)
+        if (!m_pOldFont)
+        {
+            CFont* pFont = pTree->GetFont();
+            if (pFont)
+                m_pOldFont = pFont;
+        }
+
+        // Create and apply custom font
+        if (m_treeFont.GetSafeHandle())
+            m_treeFont.DeleteObject();  // Clean up if reusing
+
+        m_treeFont.CreateFont(
+            14,                         // Height
+            0,                          // Width
+            0,                          // Escapement
+            0,                          // Orientation
+            FW_MEDIUM,               // Weight
+            FALSE,                      // Italic
+            FALSE,                      // Underline
+            0,                          // StrikeOut
+            ANSI_CHARSET,               // CharSet
+            OUT_DEFAULT_PRECIS,         // OutPrecision
+            CLIP_DEFAULT_PRECIS,        // ClipPrecision
+            DEFAULT_QUALITY,            // Quality
+            DEFAULT_PITCH | FF_SWISS,   // PitchAndFamily
+            _T("Segoe UI")              // Font face
+        );
+
+        pTree->SetFont(&m_treeFont);
+    }
+    else
+    {
+        // Revert to old font
+        if (m_pOldFont)
+            pTree->SetFont(m_pOldFont);
+    }
+
+    // Force redraw
+    pTree->Invalidate();
+    pTree->UpdateWindow();
+}
+
 
 /** Updates the warning flags in the scripts, script groups & script conditions & actions. */
 void ScriptDialog::updateWarnings(Bool forceUpdate)
@@ -564,6 +694,18 @@ BOOL ScriptDialog::OnInitDialog()
 	top.top = ::AfxGetApp()->GetProfileInt(SCRIPT_DIALOG_SECTION, "Top", top.top);
 	top.left =::AfxGetApp()->GetProfileInt(SCRIPT_DIALOG_SECTION, "Left", top.left);
 	SetWindowPos(NULL, top.left, top.top, 0, 0, SWP_NOZORDER|SWP_NOSIZE);
+	
+
+	m_bCompressed=::AfxGetApp()->GetProfileInt(SCRIPT_DIALOG_SECTION, "CompressScripts", 1);
+	pButton = (CButton*)GetDlgItem(IDC_COMPRESS);
+	pButton->SetCheck(m_bCompressed ? 1:0);
+	OnCompress();
+
+	m_bNewIcons=::AfxGetApp()->GetProfileInt(SCRIPT_DIALOG_SECTION, "NewIcons", 1);
+	pButton = (CButton*)GetDlgItem(IDC_NEWICONS);
+	pButton->SetCheck(m_bNewIcons ? 1:0);
+	OnNewIcons();
+
 	
 	return FALSE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -1946,11 +2088,19 @@ void ScriptDialog::OnDblclkScriptTree(NMHDR* pNMHDR, LRESULT* pResult)
 
 void ScriptDialog::OnOK() 
 {
-	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
-	SidesListUndoable *pUndo = new SidesListUndoable(m_sides, pDoc);
-	pDoc->AddAndDoUndoable(pUndo);
-	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-	CDialog::OnOK();
+    // Check if the IDC_OBJECT_SEARCH_EDIT control is focused
+    if (GetFocus() == GetDlgItem(IDC_SCRIPT_SEARCH))
+    {
+        OnFindNext();  // Trigger search on "Enter" key press
+    }
+    else
+    {
+		CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
+		SidesListUndoable *pUndo = new SidesListUndoable(m_sides, pDoc);
+		pDoc->AddAndDoUndoable(pUndo);
+		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
+        CDialog::OnOK();  // Call the default OK behavior if the search box isn't focused
+    }
 }
 
 void ScriptDialog::OnCancel() 
@@ -1982,7 +2132,8 @@ void ScriptDialog::OnMouseMove(UINT nFlags, CPoint point)
     HTREEITEM htiTarget;  // handle to target item 
     TVHITTESTINFO tvht;  // hit test information 
 
-		const Int CENTER_OFFSET = 12;
+// Adjust the drag point to align with the center of the tree item.
+		const Int CENTER_OFFSET = 50;
 		point.y -= CENTER_OFFSET;
     tvht.pt = point; 
     if ((htiTarget = pTree->HitTest( &tvht)) != NULL) {
@@ -2003,7 +2154,8 @@ void ScriptDialog::OnLButtonUp(UINT nFlags, CPoint point)
     HTREEITEM htiTarget;  // handle to target item 
     TVHITTESTINFO tvht;  // hit test information 
 
-		const Int CENTER_OFFSET = 12;
+// Adjust the drag point to align with the center of the tree item.
+		const Int CENTER_OFFSET = 50;
 		point.y -= CENTER_OFFSET;
     tvht.pt = point; 
     if ((htiTarget = pTree->HitTest( &tvht)) != NULL) { 

@@ -110,13 +110,19 @@ PointerTool::~PointerTool(void)
 	}
 }
 
+
+/**
+ * Adriane [Deathscythe]
+ * Edited the panel logic so it only shows the Map Objects panel when an object is clicked;
+ * otherwise, it hides the panel to save screen space.
+ */
 /// See if a single obj is selected that has properties.
 void PointerTool::checkForPropertiesPanel(void) 
 {
 	MapObject *theMapObj = WaypointOptions::getSingleSelectedWaypoint();
 	PolygonTrigger *theTrigger = WaypointOptions::getSingleSelectedPolygon();
 	MapObject *theLightObj = LightOptions::getSingleSelectedLight(); 
-	MapObject *theObj = MapObjectProps::getSingleSelectedMapObject(); 
+	MapObject *theObj = MapObjectProps::getMultipleMapObjects(); 
 	if (theMapObj) {
 		CMainFrame::GetMainFrame()->showOptionsDialog(IDD_WAYPOINT_OPTIONS);
 		WaypointOptions::update();
@@ -134,14 +140,20 @@ void PointerTool::checkForPropertiesPanel(void)
 	} else if (RoadOptions::selectionIsRoadsOnly()) {
 		CMainFrame::GetMainFrame()->showOptionsDialog(IDD_ROAD_OPTIONS);
 		RoadOptions::updateSelection();
-	} else {
+	} else if (theObj) {
 		CMainFrame::GetMainFrame()->showOptionsDialog(IDD_MAPOBJECT_PROPS);
 		MapObjectProps::update();
-		if (theObj) {
-			ObjectOptions::selectObject(theObj);
-		}
+		ObjectOptions::selectObject(theObj);
+	} else {
+		CMainFrame::GetMainFrame()->showOptionsDialog(IDD_NO_OPTIONS);
+		// Nothing relevant selected -- hide the current options panel
+		// if (CMainFrame::GetMainFrame()->m_curOptions) {
+		//     CMainFrame::GetMainFrame()->m_curOptions->ShowWindow(SW_HIDE);
+		//     CMainFrame::GetMainFrame()->m_curOptions = NULL;
+		// }
 	}
 }
+
 
 /// Clear the selection..
 void PointerTool::clearSelection(void) ///< Clears the selected objects selected flags.
@@ -468,6 +480,8 @@ void PointerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 
 	if (m_rotating) {
 		Coord3D center = *m_curObject->getLocation();
+		// Support Snap point for rotation similar to placing or dragging objects to the world - Adriane
+		pView->snapPoint(&cpt); 
 		m_modifyUndoable->RotateTo(ObjectTool::calcAngle(center, cpt, pView));
 	} else {
 		pView->snapPoint(&cpt);

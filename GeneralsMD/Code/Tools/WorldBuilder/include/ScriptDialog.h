@@ -26,6 +26,7 @@
 //
 
 #include "GameLogic/SidesList.h"
+#include <afxtempl.h> // for CArray, CMap, etc -- please review this one
 
 class ListType  {
 public:
@@ -113,6 +114,14 @@ protected:
 
 	AsciiString			m_readPlayerNames[MAX_PLAYER_COUNT];
 
+	CString m_searchText;
+	HTREEITEM m_lastFoundItem;
+
+	CFont m_treeFont;
+	CFont* m_pOldFont;
+	BOOL m_bCompressed;
+	BOOL m_bNewIcons;
+
 protected:
 	HTREEITEM addPlayer(Int playerIndx);
 	void addScriptList(HTREEITEM hPlayer, Int playerIndex, ScriptList *pSL);
@@ -150,7 +159,10 @@ protected:
 	afx_msg void OnDelete();
 	afx_msg void OnVerify();
 	afx_msg void OnPatchGC();
+	afx_msg void OnFindNext();
 	afx_msg void OnAutoVerify();
+	afx_msg void OnCompress();
+	afx_msg void OnNewIcons();
 	afx_msg void OnSave();
 	afx_msg void OnLoad();
 	afx_msg void OnDblclkScriptTree(NMHDR* pNMHDR, LRESULT* pResult);

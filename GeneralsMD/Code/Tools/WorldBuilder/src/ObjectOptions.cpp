@@ -54,6 +54,7 @@ AsciiString ObjectOptions::m_curOwnerName;
 ObjectOptions::ObjectOptions(CWnd* pParent /*=NULL*/)
 {
 	m_objectsList = NULL;
+	m_objectsListModified = false;
 	strcpy(m_currentObjectName, "No Selection");
 	m_curOwnerName.clear();
 	//{{AFX_DATA_INIT(ObjectOptions)
@@ -85,6 +86,9 @@ BEGIN_MESSAGE_MAP(ObjectOptions, COptionsPanel)
 	ON_CBN_EDITCHANGE(IDC_OWNINGTEAM, OnEditchangeOwningteam)
 	ON_CBN_CLOSEUP(IDC_OWNINGTEAM, OnCloseupOwningteam)
 	ON_CBN_SELCHANGE(IDC_OWNINGTEAM, OnSelchangeOwningteam)
+	ON_BN_CLICKED(IDC_OBJECT_SEARCH_BUTTON, OnSearch)
+	ON_BN_CLICKED(IDC_OBJECT_SEARCH_RESET_BTN, OnReset)
+	ON_WM_SHOWWINDOW()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -793,6 +797,124 @@ Int ObjectOptions::getObjectNamedIndex(const AsciiString& name)
 	return(NULL);
 }
 
+void ObjectOptions::OnOK()
+{
+    OnSearch(); 
+}
+
+// Add the function that handles the search button click
+void ObjectOptions::OnReset()
+{
+	m_objectTreeView.DeleteAllItems(); // Clear current tree
+
+	// Repopulate list
+	MapObject* pMap = m_objectsList;
+	Int index = 0;
+	while (pMap)
+	{
+		addObject(pMap, pMap->getName().str(), index, TVI_ROOT);
+		index++;
+		pMap = pMap->getNext();
+	}
+
+	m_objectsListModified = false;
+}
+
+// Add the function that handles the search button click
+void ObjectOptions::OnSearch()
+{
+    UpdateData(TRUE);
+
+    CString searchText;
+    GetDlgItemText(IDC_OBJECT_SEARCH_EDIT, searchText);
+    searchText.MakeLower();
+
+    m_objectTreeView.DeleteAllItems(); // Clear current tree
+
+    if (searchText.IsEmpty())
+    {
+        // Repopulate full list if search is empty
+        MapObject* pMap = m_objectsList;
+		Int index = 0;
+		while (pMap)
+		{
+			addObject(pMap, pMap->getName().str(), index, TVI_ROOT);
+			index++;
+			pMap = pMap->getNext();
+		}
+
+		m_objectsListModified = false;
+
+        return;
+    }
+
+    MapObject* pMap = m_objectsList;
+    int index = 0;
+    int matchCount = 0;
+
+    while (pMap)
+    {
+        CString name = pMap->getName().str();
+        CString lowerName = name;
+        lowerName.MakeLower();
+
+        if (lowerName.Find(searchText) != -1)
+        {
+            addObject(pMap, name, index, TVI_ROOT);
+            matchCount++;
+        }
+
+        pMap = pMap->getNext();
+        index++;
+    }
+
+    if (matchCount == 0)
+    {
+        MessageBox("No matches found.", "Search", MB_OK | MB_ICONINFORMATION);
+    }
+    else
+    {
+        // Expand all items in the tree
+        HTREEITEM hRoot = m_objectTreeView.GetRootItem();
+        if (hRoot)
+        {
+            ExpandAllItems(m_objectTreeView, hRoot);
+        }
+
+		m_objectsListModified = true;
+    }
+}
+
+
+void ObjectOptions::ExpandAllItems(CTreeCtrl& treeCtrl, HTREEITEM hItem)
+{
+    while (hItem)
+    {
+        treeCtrl.Expand(hItem, TVE_EXPAND);
+        HTREEITEM hChild = treeCtrl.GetChildItem(hItem);
+        if (hChild)
+            ExpandAllItems(treeCtrl, hChild);
+
+        hItem = treeCtrl.GetNextSiblingItem(hItem);
+    }
+}
+
+// Old Logic -- Unused
+// HTREEITEM ObjectOptions::getNextItem(HTREEITEM hItem)
+// {
+//     if (m_objectTreeView.GetChildItem(hItem))
+//         return m_objectTreeView.GetChildItem(hItem);
+
+//     while (hItem)
+//     {
+//         if (m_objectTreeView.GetNextSiblingItem(hItem))
+//             return m_objectTreeView.GetNextSiblingItem(hItem);
+
+//         hItem = m_objectTreeView.GetParentItem(hItem);
+//     }
+
+//     return NULL;
+// }
 
 void ObjectOptions::OnEditchangeOwningteam() 
 {
@@ -845,3 +967,16 @@ void ObjectOptions::OnSelchangeOwningteam()
 	OnEditchangeOwningteam();
 }
 
+void ObjectOptions::OnShowWindow(BOOL bShow, UINT nStatus)
+{
+	CDialog::OnShowWindow(bShow, nStatus);
+	/**
+	 * Adriane [Deathscythe]
+	 * Call reset when we modify the object list from a search and the dialog is about to commit seppuku.
+	 * For some shitty reason, the object list here is tied to the Fence Tool — make sure to reset it.
+	 */
+	if (!bShow && m_objectsListModified)
+	{
+		OnReset();
+	}
+}

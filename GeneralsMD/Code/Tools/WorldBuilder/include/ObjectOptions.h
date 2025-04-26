@@ -53,9 +53,10 @@ public:
 	//{{AFX_VIRTUAL(ObjectOptions)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnOK(){return;};  ///< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnOK();
 	virtual void OnCancel(){return;}; ///< Modeless dialogs don't close on ESC, so eat this for modeless.
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+	virtual void OnShowWindow(BOOL bShow, UINT nStatus);
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -67,6 +68,8 @@ protected:
 	afx_msg void OnEditchangeOwningteam();
 	afx_msg void OnCloseupOwningteam();
 	afx_msg void OnSelchangeOwningteam();
+	afx_msg void OnSearch();
+	afx_msg void OnReset();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -81,11 +84,15 @@ protected:
 	CTreeCtrl					m_objectTreeView;
 	MapObject					*m_objectsList;
 	ObjectPreview			m_objectPreview;
+	Bool m_objectsListModified;
+	// HTREEITEM m_lastFoundItem;
 
 protected:
 	void addObject( MapObject *mapObject, const char *pPath,  
 									Int objectNdx, HTREEITEM parent );
 	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
+	// HTREEITEM getNextItem(HTREEITEM hItem);
+	void ExpandAllItems(CTreeCtrl& treeCtrl, HTREEITEM hItem);
 	HTREEITEM findOrDont(const char *pLabel);
 	HTREEITEM _FindOrDont(const char* pLabel, HTREEITEM startPoint);
 	Bool setObjectTreeViewSelection(HTREEITEM parent, Int selection);

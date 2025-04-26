@@ -41,6 +41,7 @@
 #include "WorldBuilder.h"	// for MAX_OBJECTS_IN_MAP 
 #include "Common/UnicodeString.h"
 
+static Bool g_freshWarning = true;
 
 // base mostly virtual class.
 
@@ -281,7 +282,8 @@ void AddObjectUndoable::Do(void)
 		pCur = pCur->getNext();
 	}
 
-	if (numObjects >= MAX_OBJECTS_IN_MAP) {
+	if (numObjects >= MAX_OBJECTS_IN_MAP && g_freshWarning) {
+		g_freshWarning = false;
 		CString str, loadStr;
 		loadStr.Format(IDS_MAX_OBJECTS, MAX_OBJECTS_IN_MAP);
 		AfxMessageBox(loadStr, MB_APPLMODAL | MB_ICONEXCLAMATION | MB_OK);

@@ -25,6 +25,9 @@
 
 #define ARBITRARY_BUFF_SIZE		128
 
+#define MAX_SETS 10
+#define TREES_PER_SET 5
+
 /*extern*/ GroveOptions *TheGroveOptions = NULL;
 
 void GroveOptions::makeMain(void)
@@ -172,76 +175,147 @@ GroveOptions::~GroveOptions()
 }
 
 
-void GroveOptions::_setTreesToLists(void)
+void GroveOptions::_setTreesToLists()
 {
 	CString str;
-	for (VecPairNameDisplayNameIt it = mVecDisplayNames.begin(); it != mVecDisplayNames.end(); it++) {
-		// TODO: If/when Models get Display strings, we need to replace the 
-		// current (str = ...) line with the commented one JKMCD
+
+	// Fill all 5 tree type combo boxes with model display names
+	for (VecPairNameDisplayNameIt it = mVecDisplayNames.begin(); it != mVecDisplayNames.end(); ++it) {
 		str = it->first.str();
-		//str = GetDisplayNameFromPair(it).str();
-		
-		CComboBox* pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type1);
-		if (pComboBox) {
-			pComboBox->AddString(str);
-		}
 
-		pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type2);
-		if (pComboBox) {
-			pComboBox->AddString(str);
-		}
-
-		pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type3);
-		if (pComboBox) {
-			pComboBox->AddString(str);
-		}
-
-		pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type4);
-		if (pComboBox) {
-			pComboBox->AddString(str);
-		}
-
-		pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type5);
-		if (pComboBox) {
-			pComboBox->AddString(str);
+		for (int i = 0; i < TREES_PER_SET; ++i) {
+			CComboBox* pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type1 + i * 2);
+			if (pComboBox) {
+				pComboBox->AddString(str);
+			}
 		}
 	}
 
-	int selValue;
+	// Add a blank entry at the end
 	str = "";
-	CComboBox* pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type1);
-	if (pComboBox) {
-		pComboBox->AddString(str);
-		selValue = AfxGetApp()->GetProfileInt("GroveOptions", "TreeType1", 0);
-		pComboBox->SetCurSel(selValue % mVecDisplayNames.size());
+	for (int i = 0; i < TREES_PER_SET; ++i) {
+		CComboBox* pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type1 + i * 2);
+		if (pComboBox) {
+			pComboBox->AddString(str);
+		}
 	}
 
-	pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type2);
-	if (pComboBox) {
-		pComboBox->AddString(str);
-		selValue = AfxGetApp()->GetProfileInt("GroveOptions", "TreeType2", 0);
-		pComboBox->SetCurSel(selValue % mVecDisplayNames.size());
+	// Fill Set Name combo box
+	CComboBox* pSetNameBox = (CComboBox*) GetDlgItem(IDC_Grove_SetName);
+	if (pSetNameBox) {
+		pSetNameBox->ResetContent();
+
+		CString setNameKey, setName;
+		for (int i = 0; i < MAX_SETS; ++i) {
+			setNameKey.Format("SetName%d", i);
+			setName = AfxGetApp()->GetProfileString("GroveOptions", setNameKey, CString("Set ") + (char)('A' + i));
+			pSetNameBox->AddString(setName);
+		}
+
+		int selIndex = AfxGetApp()->GetProfileInt("GroveOptions", "SetNameIndex", 0);
+		pSetNameBox->SetCurSel(selIndex);
+		_loadSet(selIndex);
+	}
+}
+
+
+/**
+ * Adriane [Deatscythe]
+ * I got bored talking with chatGPT -- i had to abandon this feature for now
+ */
+void GroveOptions::OnSaveSetName()
+{
+// 	DEBUG_LOG(("test\n"));
+// 	CComboBox* pSetNameBox = (CComboBox*) GetDlgItem(IDC_Grove_SetName);
+// 	if (!pSetNameBox) return;
+
+// 	int selIndex = pSetNameBox->GetCurSel();
+// 	if (selIndex == CB_ERR) return;
+
+// 	CString selText;
+// 	pSetNameBox->GetWindowText(selText); 
+// 	DEBUG_LOG(("testX %s\n", selText));
+
+// 	CString setNameKey;
+// 	setNameKey.Format("SetName%d", selIndex);
+// 	AfxGetApp()->WriteProfileString("GroveOptions", setNameKey, selText);
+}
+
+
+
+// void GroveOptions::OnOK() 
+// {
+// 	CComboBox* pSetNameBox = (CComboBox*) GetDlgItem(IDC_Grove_SetName);
+// 	if (pSetNameBox) {
+// 		int selIndex = pSetNameBox->GetCurSel();
+// 		if (selIndex != CB_ERR) {
+// 			CString selText;
+// 			pSetNameBox->GetWindowText(selText);
+// 			AfxGetApp()->WriteProfileString("GroveOptions", "SetNameText", selText);
+	
+// 			CString setNameKey;
+// 			setNameKey.Format("SetName%d", selIndex);
+// 			AfxGetApp()->WriteProfileString("GroveOptions", setNameKey, selText);
+// 		}
+// 	}
+// }
+
+void GroveOptions::OnSelchangeGroveSetName()
+{
+	CComboBox* pSetNameBox = (CComboBox*) GetDlgItem(IDC_Grove_SetName);
+	if (!pSetNameBox) return;
+
+	int selIndex = pSetNameBox->GetCurSel();
+	if (selIndex == CB_ERR) return;
+
+	// CString selText;
+	// pSetNameBox->GetWindowText(selText); // <- use GetWindowText instead of GetLBText
+
+	// Save to profile
+	AfxGetApp()->WriteProfileInt("GroveOptions", "SetNameIndex", selIndex);
+	// AfxGetApp()->WriteProfileString("GroveOptions", "SetNameText", selText);
+
+	// CString setNameKey;
+	// setNameKey.Format("SetName%d", selIndex);
+	// AfxGetApp()->WriteProfileString("GroveOptions", setNameKey, selText);
+
+	_loadSet(selIndex);
+}
+
+
+void GroveOptions::_loadSet(int setIndex)
+{
+	for (int i = 0; i < TREES_PER_SET; ++i) {
+		CString key;
+		key.Format("TreeTypeSet%d_%d", setIndex, i + 1);
+		int treeIndex = AfxGetApp()->GetProfileInt("GroveOptions", key, 0);
+
+		CComboBox* pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type1 + i * 2);
+		if (pComboBox) {
+			pComboBox->SetCurSel(treeIndex % (mVecDisplayNames.size() + 1));
+		}
+	}
+}
+
+void GroveOptions::_updateGroveMakeup(void)
+{
+	// Save current Set Name selection
+	CComboBox* pSetNameBox = (CComboBox*)GetDlgItem(IDC_Grove_SetName);
+	int setIndex = 0;
+	if (pSetNameBox) {
+		setIndex = pSetNameBox->GetCurSel();
+		AfxGetApp()->WriteProfileInt("GroveOptions", "SetNameIndex", setIndex);
 	}
 
-	pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type3);
-	if (pComboBox) {
-		pComboBox->AddString(str);
-		selValue = AfxGetApp()->GetProfileInt("GroveOptions", "TreeType3", 0);
-		pComboBox->SetCurSel(selValue % mVecDisplayNames.size());
-	}
-
-	pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type4);
-	if (pComboBox) {
-		pComboBox->AddString(str);
-		selValue = AfxGetApp()->GetProfileInt("GroveOptions", "TreeType4", 0);
-		pComboBox->SetCurSel(selValue % mVecDisplayNames.size());
-	}
-
-	pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type5);
-	if (pComboBox) {
-		pComboBox->AddString(str);
-		selValue = AfxGetApp()->GetProfileInt("GroveOptions", "TreeType5", 0);
-		pComboBox->SetCurSel(selValue % mVecDisplayNames.size());
+	// Save current tree type selections for this set
+	for (int i = 0; i < TREES_PER_SET; ++i) {
+		CComboBox* pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type1 + i * 2);
+		if (pComboBox) {
+			int curSel = pComboBox->GetCurSel();
+			CString key;
+			key.Format("TreeTypeSet%d_%d", setIndex, i + 1);
+			AfxGetApp()->WriteProfileInt("GroveOptions", key, curSel);
+		}
 	}
 }
 
@@ -395,41 +469,6 @@ void GroveOptions::_updateTreeCount(void)
 	}
 }
 
-void GroveOptions::_updateGroveMakeup(void)
-{
-	for (int type = 1; type <= 5; ++type) {
-		CComboBox *pComboBox;
-		if (type == 1) {
-			pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type1);
-		} else if (type == 2) {
-			pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type2);
-		} else if (type == 3) {
-			pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type3);
-		} else if (type == 4) {
-			pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type4);
-		} else if (type == 5) {
-			pComboBox = (CComboBox*) GetDlgItem(IDC_Grove_Type5);
-		}
-
-		if (!pComboBox) {
-			continue;
-		}
-
-		int curSel = pComboBox->GetCurSel();
-		if (type == 1) {
-			AfxGetApp()->WriteProfileInt("GroveOptions", "TreeType1", curSel);
-		} else if (type == 2) {
-			AfxGetApp()->WriteProfileInt("GroveOptions", "TreeType2", curSel);
-		} else if (type == 3) {
-			AfxGetApp()->WriteProfileInt("GroveOptions", "TreeType3", curSel);
-		} else if (type == 4) {
-			AfxGetApp()->WriteProfileInt("GroveOptions", "TreeType4", curSel);
-		} else if (type == 5) {
-			AfxGetApp()->WriteProfileInt("GroveOptions", "TreeType5", curSel);
-		}		
-	}
-}
-
 void GroveOptions::_updatePlacementAllowed(void)
 {
 	// huh huh huh-huh
@@ -489,4 +528,6 @@ BEGIN_MESSAGE_MAP(GroveOptions, CDialog)
 	ON_CBN_SELENDOK(IDC_Grove_Type5, _updateGroveMakeup)
 	ON_BN_CLICKED(IDC_Grove_AllowCliffPlacement, _updatePlacementAllowed)
 	ON_BN_CLICKED(IDC_Grove_AllowWaterPlacement, _updatePlacementAllowed)
+	ON_CBN_SELCHANGE(IDC_Grove_SetName, OnSelchangeGroveSetName)
+	ON_BN_CLICKED(IDC_Grove_SaveSet, OnSaveSetName)
 END_MESSAGE_MAP()

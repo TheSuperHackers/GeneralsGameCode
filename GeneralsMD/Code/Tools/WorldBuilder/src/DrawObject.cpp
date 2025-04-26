@@ -246,6 +246,9 @@ Int DrawObject::freeMapResources(void)
 // Height of selection pyramid.
 #define SELECT_PYRAMID_HEIGHT (1.0f)
 
+// // Total number of triangles
+// #define NUM_TRI (3 + NUM_ARROW_TRI + NUM_SELECT_TRI)
+
 
 Int DrawObject::initData(void)
 {	
@@ -1387,6 +1390,14 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 	r *= factor;
 	g *= factor;
 	b *= factor;
+
+
+	// r = 0;
+	// g = 255;
+	// b = 255; // cyan
+	// r = 255;
+	// g = 105;
+	// b = 180; // hot pink!
 	const Int theAlpha = 127;
 	static const Int highlightColors[NUM_HIGHLIGHT] = { ((255<<8) + (255<<16)) , 
 				((255<<16)), (255<<8) };
@@ -1398,7 +1409,7 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 		VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
 		
 		const Real theZ = 0.0f;
-		Real theRadius = THE_RADIUS;
+		Real theRadius = THE_RADIUS * 2.0f;
 		Real halfLineWidth = 0.03f*MAP_XY_FACTOR;
 		if (doDiamond) {
 			theRadius *= 5.0;
@@ -2126,11 +2137,17 @@ if (pMapObj->isSelected()) {
 			if (TheTerrainRenderObject) {
 				loc.z += TheTerrainRenderObject->getHeightMapHeight(loc.x, loc.y, NULL);
 			}
-			// Cull.
-			//SphereClass bounds(Vector3(loc.x, loc.y, loc.z), THE_RADIUS); 
-			//if (rinfo.Camera.Cull_Sphere(bounds)) {
-			//	continue;
-			//}
+			/**
+			 * Adriane [Deathscythe] -- this check already existed, not sure why they commented it out.
+			 * It actually works too -- significantly reduces lag when rendering object icons
+			 * with lots of objects placed on the map.
+			 *
+			 * Cull the mfs
+			 */
+			SphereClass bounds(Vector3(loc.x, loc.y, loc.z), THE_RADIUS); 
+			if (rinfo.Camera.Cull_Sphere(bounds)) {
+				continue;
+			}
 			Bool doArrow = true;
 			if (pMapObj->getFlag(FLAG_ROAD_FLAGS) || pMapObj->getFlag(FLAG_BRIDGE_FLAGS) || pMapObj->isWaypoint()) 
 			{

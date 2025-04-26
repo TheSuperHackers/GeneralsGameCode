@@ -67,6 +67,10 @@ class GroveOptions : public COptionsPanel
 		void _setDefaultNumTrees(void);
 		void _setDefaultPlacementAllowed(void);
 
+		void _loadSet(int setIndex);
+		void OnSaveSetName();
+		void OnSelchangeGroveSetName();
+
 		afx_msg void _updateTreeWeights(void);
 		afx_msg void _updateTreeCount(void);
 		afx_msg void _updateGroveMakeup(void);

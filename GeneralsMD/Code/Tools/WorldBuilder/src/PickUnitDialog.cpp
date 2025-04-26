@@ -62,6 +62,7 @@ BOOL ReplaceUnitDialog::OnInitDialog()
 BEGIN_MESSAGE_MAP(ReplaceUnitDialog, CDialog)
 	//{{AFX_MSG_MAP(ReplaceUnitDialog)
 	//}}AFX_MSG_MAP
+    ON_BN_CLICKED(IDIGNORE, OnIgnore)  // Handle the "Proceed without replace" button
 END_MESSAGE_MAP()
 
 PickUnitDialog::PickUnitDialog(CWnd* pParent /*=NULL*/)
@@ -277,6 +278,17 @@ BOOL PickUnitDialog::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 	
 	return CDialog::OnNotify(wParam, lParam, pResult);
 }
+
+/**
+ * Adriane [Deathscythe]
+ * Support for bypass -- everyone hates to replace them missing object - yes?
+ */
+void PickUnitDialog::OnIgnore()
+{
+    // Close the dialog and return IDIGNORE when the button is clicked
+    EndDialog(IDIGNORE);  // This will return IDIGNORE, allowing the caller to handle it
+}
+
 
 //-------------------------------------------------------------------------------------------------
 /** Add the object hierarchy paths to the tree view. */

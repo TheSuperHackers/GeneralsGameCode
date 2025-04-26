@@ -46,7 +46,7 @@ protected:
 	void plantTree( Coord3D *pos );
 	void plantShrub( Coord3D *pos );
 	void plantGrove( Coord3D pos, Coord3D prevDir, Real baseHeight, Int level, CPoint bounds );
-	void _plantGroveInBox(CPoint tl, CPoint br, WbView* pView);
+	void _plantGroveInBox(CPoint tl, CPoint br, WbView* pView,  CWorldBuilderDoc *pDoc);
 
 	void addObj(Coord3D *pos, AsciiString name);
 	void activate();

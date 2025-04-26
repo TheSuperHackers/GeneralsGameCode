@@ -201,10 +201,11 @@ BOOL CTeamsDialog::OnInitDialog()
 
 	CListCtrl *pList = (CListCtrl *)GetDlgItem(IDC_TEAMS_LIST);
 	pList->InsertColumn(0, "Team Name", LVCFMT_LEFT, 150, 0);
-	pList->InsertColumn(1, "Origin", LVCFMT_LEFT, 150, 1);
-	pList->InsertColumn(2, "Priority", LVCFMT_LEFT, 50, 2);
-	pList->InsertColumn(3, "Script", LVCFMT_LEFT, 150, 3);
-	pList->InsertColumn(4, "Trigger", LVCFMT_LEFT, 150, 4);
+	pList->InsertColumn(1, "Priority", LVCFMT_LEFT, 50, 1);
+	pList->InsertColumn(2, "Script", LVCFMT_LEFT, 150, 2);
+	pList->InsertColumn(3, "Trigger", LVCFMT_LEFT, 150, 3);
+	pList->InsertColumn(4, "Origin", LVCFMT_LEFT, 50, 4);
+	pList->InsertColumn(5, "Index", LVCFMT_LEFT, 150, 5); // required to hold our proper indexes - Adriane
 
 
 	CListBox *players = (CListBox*)GetDlgItem(IDC_PLAYER_LIST);
@@ -308,13 +309,23 @@ void CTeamsDialog::OnEditTemplate()
 	TeamGeneric generic;
 	generic.setTeamDict(m_sides.getTeamInfo(m_curTeam)->getDict());
 
-	TeamObjectProperties object(m_sides.getTeamInfo(m_curTeam)->getDict());
+	// Unused and useless
+	// TeamObjectProperties object(m_sides.getTeamInfo(m_curTeam)->getDict());
+
+	// editDialog.AddPage(&reinforcements);
+	// editDialog.AddPage(&identity);
+	// // editDialog.AddPage(&reinforcements);
+	// editDialog.AddPage(&behavior);
+	// editDialog.AddPage(&generic);
+	// // editDialog.AddPage(&object);
+	// editDialog.SetActivePage(&identity); 
 
 	editDialog.AddPage(&identity);
 	editDialog.AddPage(&reinforcements);
 	editDialog.AddPage(&behavior);
 	editDialog.AddPage(&generic);
-	editDialog.AddPage(&object);
+	// editDialog.AddPage(&object);
+	// editDialog.SetActivePage(&identity); 
 
 	if (IDOK == editDialog.DoModal()) {
 	}
@@ -324,7 +335,8 @@ void CTeamsDialog::OnEditTemplate()
 void CTeamsDialog::UpdateTeamsList() 
 {
 	CListCtrl *pList = (CListCtrl *)GetDlgItem(IDC_TEAMS_LIST);
-	pList->DeleteAllItems();
+	pList->SetRedraw(FALSE);  // Stop redrawing
+	pList->DeleteAllItems();  // Clear items
 	CListBox *players = (CListBox*)GetDlgItem(IDC_PLAYER_LIST);
 
 	Int which = players->GetCurSel();
@@ -348,10 +360,15 @@ void CTeamsDialog::UpdateTeamsList()
 			AsciiString trigger = ti->getDict()->getAsciiString(TheKey_teamProductionCondition, &exists);
 
 			pList->InsertItem(LVIF_TEXT, inserted, teamName.str(), 0, 0, 0, 0);
-			pList->SetItemText(inserted, 1, waypoint.str());
-			pList->SetItemText(inserted, 2, pri);
-			pList->SetItemText(inserted, 3, script.str());
-			pList->SetItemText(inserted, 4, trigger.str());
+			
+			pList->SetItemText(inserted, 1, pri);
+			pList->SetItemText(inserted, 2, script.str());
+			pList->SetItemText(inserted, 3, trigger.str());
+			pList->SetItemText(inserted, 4, waypoint.str());
+
+			CString indexStr;
+			indexStr.Format(TEXT("%d"), i); 
+			pList->SetItemText(inserted, 5, indexStr);
 
 			pList->SetItemData(inserted, i);
 			if (m_curTeam == i) {
@@ -370,6 +387,9 @@ void CTeamsDialog::UpdateTeamsList()
 			pList->EnsureVisible(0, false);
 		} 
 	}
+
+	pList->SetRedraw(TRUE);   // Enable redrawing
+	pList->Invalidate();      // Force a redraw
 }
 
 void CTeamsDialog::OnSelchangePlayerList() 
@@ -457,122 +477,101 @@ void CTeamsDialog::OnSelectTeamMembers()
 	::AfxMessageBox(info, MB_OK);
 }
 
+int CTeamsDialog::findPrevTeamIndex(int curIndex)
+{
+    CListCtrl* pList = (CListCtrl*)GetDlgItem(IDC_TEAMS_LIST);
+    int totalTeams = pList->GetItemCount();
+
+    for (int i = 1; i < totalTeams; i++)  // Start from 1 to avoid out-of-bounds
+    {
+        CString indexStr = pList->GetItemText(i, 5);  // Column 1 holds the actual index
+        int actualIndex = _ttoi(indexStr);
+
+        if (actualIndex == curIndex) 
+        {
+            // Get the previous team's index (could be 2-3 indices apart)
+            CString prevIndexStr = pList->GetItemText(i - 1, 5);
+            return _ttoi(prevIndexStr);
+        }
+    }
+    return -1;  // No valid previous team found
+}
+
+
+
+/**
+ * Adriane [Deathscythe]
+ * Refactored by chatGPT and seemed to work -- nice vibe coding eh..
+ */
 /** This function moves a team up the list in the teams list dialog */
 void CTeamsDialog::OnMoveUpTeam() 
 {
-	// don't move up if already at top of list
-	if (m_curTeam <= 1)
-		return;
+    // Don't move up if already at the top
+    if (m_curTeam <= 0)
+        return;
 
-	Dict temp, current;
-	int startRemove;
-	int totalTeams = m_sides.getNumTeams();
+    // Find the actual previous team index in the UI order
+    int prevIndex = findPrevTeamIndex(m_curTeam);
+    if (prevIndex == -1 || prevIndex < 0) 
+        return;  // No valid previous team to swap with
 
-	// iterates through all modified entries in the teams list
-	for (int i=m_curTeam-1; i<totalTeams; i++)
-	{
+    // Swap the selected team with the previous team
+    Dict* currentTeam = m_sides.getTeamInfo(m_curTeam)->getDict();
+    Dict* prevTeam = m_sides.getTeamInfo(prevIndex)->getDict();
+    std::swap(*currentTeam, *prevTeam);
 
-		/* saves the one right above the selected team, then deletes it
-		 from the list */
-		if (i == (m_curTeam-1)) {
-			temp = *m_sides.getTeamInfo(i)->getDict();
-			m_sides.removeTeam(i);
-			startRemove = i;
-		}
+    // Move cursor to new position
+    m_curTeam = prevIndex;
 
-		/* saves the selected item, deletes from the list, then adds it
-		 to the bottom of the list -- then adds the saved "temp" item
-		 to the bottom of the list */
-		else if (i == m_curTeam) {
-			current = *m_sides.getTeamInfo(startRemove)->getDict();
-			m_sides.removeTeam(startRemove);
-			m_sides.addTeam(&current);
-			m_sides.addTeam(&temp);
-		}
-
-		/* saves each following item, deletes from the list, and then
-		 adds it to the bottom of the list */
-		else if (i > m_curTeam) {
-			current = *m_sides.getTeamInfo(startRemove)->getDict();
-			m_sides.removeTeam(startRemove);
-			m_sides.addTeam(&current);
-		}
-	}
-
-	// modify cursor
-	m_curTeam--;
-
-	// rebuild user interface to reflect changes
-/*
-	LVITEM *pItem = NULL;
-	CListCtrl* pList = (CListCtrl*) GetDlgItem(IDC_TEAMS_LIST);
-	Bool result = pList->GetItem(pItem);
-	pList->DeleteItem(m_curTeam);
-	pList->InsertItem(pItem);
-	for (i=0; i<m_sides.getNumTeams(); i++)
-		pList->Update(i);
-	pList->SetItemState(m_curTeam, LVIS_SELECTED, LVIS_SELECTED);
-*/
-	updateUI(REBUILD_ALL);
+    // Update UI
+    updateUI(REBUILD_ALL);
 }
 
 /// This function moves a team down the list in the teams list dialog
 void CTeamsDialog::OnMoveDownTeam() 
 {
-	// don't move down if already at bottom of list
-	if (m_curTeam >= m_sides.getNumTeams()-1)
+	// Don't move down if already at the bottom
+	if (m_curTeam >= m_sides.getNumTeams() - 1)
 		return;
 
-	Dict temp, current;
-	int startRemove;
-	int totalTeams = m_sides.getNumTeams();
+	// Find the actual next team's index based on the UI list
+	int nextIndex = findNextTeamIndex(m_curTeam);
+	if (nextIndex == -1 || nextIndex >= m_sides.getNumTeams()) 
+		return;  // No valid next team to swap with
 
-	// iterates through all modified entries in the teams list
-	for (int i=m_curTeam; i<totalTeams; i++)
-	{
+	// Swap the selected team with the next team
+	Dict* currentTeam = m_sides.getTeamInfo(m_curTeam)->getDict();
+	Dict* nextTeam = m_sides.getTeamInfo(nextIndex)->getDict();
+	std::swap(*currentTeam, *nextTeam);
 
-		/* saves the  selected team, then deletes it
-		 from the list */
-		if (i == m_curTeam) {
-			temp = *m_sides.getTeamInfo(i)->getDict();
-			m_sides.removeTeam(i);
-			startRemove = i;
-		}
+	// Move cursor to new position
+	m_curTeam = nextIndex;
 
-		/* saves the one right after the selected item, deletes it from the list, 
-		 then adds it to the bottom of the list -- then adds the saved "temp" item
-		 to the bottom of the list */
-		else if (i == (m_curTeam+1)) {
-			current = *m_sides.getTeamInfo(startRemove)->getDict();
-			m_sides.removeTeam(startRemove);
-			m_sides.addTeam(&current);
-			m_sides.addTeam(&temp);
-		}
-
-		/* saves each following item, deletes from the list, and then
-		 adds it to the bottom of the list */
-		else if (i > m_curTeam+1) {
-			current = *m_sides.getTeamInfo(startRemove)->getDict();
-			m_sides.removeTeam(startRemove);
-			m_sides.addTeam(&current);
-		}
-	}
-
-	// modify cursor
-	m_curTeam++;
-
-	// rebuild user interface to reflect changes
-/*	LVITEM *pItem = NULL;
-	CListCtrl* pList = (CListCtrl*) GetDlgItem(IDC_TEAMS_LIST);
-	Bool result = pList->GetItem(pItem);
-	pList->DeleteItem(m_curTeam);
-	pList->InsertItem(pItem);
-	for (i=0; i<m_sides.getNumTeams(); i++)
-		pList->Update(i);
-	pList->SetItemState(m_curTeam, LVIS_SELECTED, LVIS_SELECTED);
-*/
+	// Update UI
 	updateUI(REBUILD_ALL);
 }
+
+// Helper function to find the next team's actual index in the UI
+int CTeamsDialog::findNextTeamIndex(int curIndex)
+{
+	CListCtrl* pList = (CListCtrl*)GetDlgItem(IDC_TEAMS_LIST);
+	int totalTeams = pList->GetItemCount();
+
+	for (int i = 0; i < totalTeams; i++) 
+	{
+		CString indexStr = pList->GetItemText(i, 5);  // Column 1 holds the actual index
+		int actualIndex = _ttoi(indexStr);
+
+		if (actualIndex == curIndex && i + 1 < totalTeams) 
+		{
+			// Get the next team's index from the UI list
+			CString nextIndexStr = pList->GetItemText(i + 1, 5);
+			return _ttoi(nextIndexStr);
+		}
+	}
+	return -1;  // No valid next team found
+}
+
 
 void CTeamsDialog::validateTeamOwners( void )
 {

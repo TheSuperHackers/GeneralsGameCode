@@ -101,6 +101,7 @@ protected:
 	static void loadConditionParameter(Script *pScr, Parameter::ParameterType type, CComboBox *pCombo);
 	static Bool loadActionParameter(Script *pScr, Parameter::ParameterType type, CComboBox *pCombo, AsciiString match);
 	static Bool loadFlags(CComboBox *pCombo, AsciiString match = AsciiString::TheEmptyString);
+	static char* trimSpaces(char* str);  // required for fixing the bug under command buttons extra spaces at the end - Adriane [Deathscythe]
 	
 
 protected:							

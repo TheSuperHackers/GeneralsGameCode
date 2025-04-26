@@ -105,6 +105,7 @@ BEGIN_MESSAGE_MAP(CWorldBuilderDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_TS_CANONICAL, OnUpdateTsCanonical)
 	ON_COMMAND(ID_FILE_RESIZE, OnFileResize)
 	ON_COMMAND(ID_FILE_JUMPTOGAME, OnJumpToGame)
+	ON_COMMAND(ID_FILE_JUMPTOGAME_WD, OnJumpToGameWithoutDebug)
 	ON_COMMAND(ID_TS_REMAP, OnTsRemap)
 	ON_COMMAND(ID_EDIT_LINK_CENTERS, OnEditLinkCenters)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_LINK_CENTERS, OnUpdateEditLinkCenters)
@@ -608,12 +609,19 @@ void CWorldBuilderDoc::validate(void)
 					dlg.SetAllowableType((EditorSortingType)i);
 				}
 				dlg.SetFactionOnly(false);
-				if (dlg.DoModal() == IDOK) {
+				int result = dlg.DoModal();  // Run the dialog and capture the result
+				if (result == IDOK) {
+					// User clicked OK and selected a replacement
 					const ThingTemplate* thing = dlg.getPickedThing();
 					if (thing) {
 						swapName = thing->getName();
 						swapDict.setAsciiString(NAMEKEY(name), swapName);
 					}
+				} else if (result == IDIGNORE) {
+					// User clicked "Proceed without replace"
+					DEBUG_LOG(("User opted to proceed without replacing unit '%s'\n", name.str()));
+					// Optionally, you can continue to the next object or handle as necessary
+					break;  // Skip this object and move to the next one
 				}
 			}
 			swapName = swapDict.getAsciiString(NAMEKEY(name), &exists);
@@ -685,7 +693,53 @@ void CWorldBuilderDoc::OnJumpToGame()
 		else
 			filename.Format("Maps\\%s", m_strTitle);
 
-		/*int retval =*/ _spawnl(_P_NOWAIT, "\\projects\\rts\\run\\rtsi.exe", "ignored", "-scriptDebug", "-win", "-file", filename, NULL);
+		/** 
+		 * Adriane [Deathscythe] : spawnl cant read spaces sadly,
+		 * Shellexcute fortunately does the job 
+		*/
+		CString gameExePath;
+		gameExePath.Format("\"%s\\generals.exe\"", WbApp()->getCurrentGameDirectory().str());
+
+		DEBUG_LOG(("Loading gameExePath=%s\n", gameExePath));
+		// 	/*int retval =*/ _spawnl(_P_NOWAIT, "\\projects\\rts\\run\\rtsi.exe", "ignored", "-scriptDebug", "-win", "-file", filename, NULL);
+        ShellExecute(NULL, "open", 
+            gameExePath, 
+            CString("-scriptDebug -win -file \"" + filename + "\""), // Arguments
+            NULL, 
+            SW_SHOWNORMAL
+		);
+		
+	} catch (...) {
+	}
+}
+
+void CWorldBuilderDoc::OnJumpToGameWithoutDebug()
+{
+	try {
+		DoFileSave();
+		CString filename;
+		DEBUG_LOG(("strTitle=%s strPathName=%s\n", m_strTitle, m_strPathName));
+		if (strstr(m_strPathName, TheGlobalData->getPath_UserData().str()) != NULL)
+			filename.Format("%sMaps\\%s", TheGlobalData->getPath_UserData().str(), m_strTitle);
+		else
+			filename.Format("Maps\\%s", m_strTitle);
+
+		/** 
+		 * Adriane [Deathscythe] : spawnl cant read spaces sadly,
+		 * Shellexcute fortunately does the job 
+		*/
+		CString gameExePath;
+		gameExePath.Format("\"%s\\generals.exe\"", WbApp()->getCurrentGameDirectory().str());
+
+		DEBUG_LOG(("Loading gameExePath=%s\n", gameExePath));
+		// 	/*int retval =*/ _spawnl(_P_NOWAIT, "\\projects\\rts\\run\\rtsi.exe", "ignored", "-scriptDebug", "-win", "-file", filename, NULL);
+        ShellExecute(NULL, "open", 
+            gameExePath, 
+            CString("-win -file \"" + filename + "\""), // Arguments
+            NULL, 
+            SW_SHOWNORMAL
+		);
+		
 	} catch (...) {
 	}
 }
@@ -1413,6 +1467,18 @@ BOOL CWorldBuilderDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	s.concat("map.str");
 	DEBUG_LOG(("Looking for map-specific text in [%s]\n", s.str()));
 	TheGameText->initMapStringFile(s);
+
+	// // use same logic to construct map.ini path -- doesnt work -- look like the worldbuilder doesnt have the parser for map inis
+	// AsciiString iniPath = lpszPathName;
+	// while (iniPath.getLength() && iniPath.getCharAt(iniPath.getLength()-1) != '\\')
+	// 	iniPath.removeLastChar();
+	// iniPath.concat("map.ini");
+	
+	// if (TheFileSystem->doesFileExist(iniPath.str())) {
+	// 	DEBUG_LOG(("Loading map.ini from [%s]\n", iniPath.str()));
+	// 	INI ini;
+	// 	ini.load(iniPath, INI_LOAD_CREATE_OVERRIDES, NULL);
+	// }
 
 	WbApp()->setCurrentDirectory(AsciiString(buf));
 	::GetModuleFileName(NULL, buf, sizeof(buf));
@@ -2533,6 +2599,11 @@ writeRawDict( theLogFile, "Scripts",d );
 		}
 		fprintf(theLogFile,"End of Scripts\n");
 		fclose(theLogFile);
+
+
+		AfxMessageBox("Action completed. The file is located to your gamedirectory.", MB_OK | MB_ICONINFORMATION);
+
+
 		open = false;
 	} catch (...) {
 		if (open) {

@@ -121,7 +121,7 @@ BEGIN_MESSAGE_MAP(MapObjectProps, CDialog)
 	ON_BN_CLICKED(IDC_SCALE_ON, OnScaleOn)
 	ON_CBN_KILLFOCUS(IDC_MAPOBJECT_HitPoints, _HPsToDict)
 	ON_CBN_SELCHANGE(IDC_MAPOBJECT_Aggressiveness, _AggressivenessToDict)
-	ON_CBN_SELCHANGE(IDC_MAPOBJECT_Script, _ScriptToDict)
+	// ON_CBN_SELCHANGE(IDC_MAPOBJECT_Script, _ScriptToDict)
 	ON_CBN_SELCHANGE(IDC_MAPOBJECT_StartingHealth, _HealthToDict)
 	ON_CBN_SELCHANGE(IDC_MAPOBJECT_Team, _TeamToDict)
 	ON_CBN_SELCHANGE(IDC_MAPOBJECT_Time, _TimeToDict)
@@ -202,6 +202,7 @@ void MapObjectProps::_DictToTeam(void)
   AsciiString name;
   CComboBox *owner = (CComboBox*)GetDlgItem(IDC_MAPOBJECT_Team);
   owner->ResetContent();
+    owner->SetRedraw(FALSE); 
   for (i = 0; i < TheSidesList->getNumTeams(); i++)
   {
     name = TheSidesList->getTeamInfo(i)->getDict()->getAsciiString(TheKey_teamName);
@@ -221,6 +222,8 @@ void MapObjectProps::_DictToTeam(void)
 
   }
   owner->SetCurSel(i);
+  owner->SetRedraw(TRUE);  
+  owner->Invalidate();    
 }
 
 /// Move data from object to dialog controls
@@ -241,26 +244,26 @@ void MapObjectProps::_DictToName(void)
 }
 
 /// Move data from object to dialog controls
-void MapObjectProps::_DictToScript(void)
-{
-  if (!m_dictToEdit) 
-  {
-    return;
-  }
+// void MapObjectProps::_DictToScript(void)
+// {
+//   if (!m_dictToEdit) 
+//   {
+//     return;
+//   }
   
-  Bool exists;
-  CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_MAPOBJECT_Script);
-  // Load the subroutine scripts into the combo box.
-  EditParameter::loadScripts(pCombo, true);
-  /*Int stringNdx =*/ pCombo->AddString("<none>");
-  AsciiString script = m_dictToEdit->getAsciiString(TheKey_objectScriptAttachment, &exists);
+//   Bool exists;
+//   CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_MAPOBJECT_Script);
+//   // Load the subroutine scripts into the combo box.
+//   EditParameter::loadScripts(pCombo, true);
+//   /*Int stringNdx =*/ pCombo->AddString("<none>");
+//   AsciiString script = m_dictToEdit->getAsciiString(TheKey_objectScriptAttachment, &exists);
   
-  if (script.isEmpty()) {
-    pCombo->SelectString(-1, "<none>");
-  } else {
-    pCombo->SelectString(-1, script.str());
-  }
-}
+//   if (script.isEmpty()) {
+//     pCombo->SelectString(-1, "<none>");
+//   } else {
+//     pCombo->SelectString(-1, script.str());
+//   }
+// }
 
 /// Move data from dialog controls to object
 void MapObjectProps::_TeamToDict(void)
@@ -308,26 +311,33 @@ void MapObjectProps::_NameToDict(void)
   }
 }
 
+/**
+ * Adriane [Deathscythe]
+ * Commenting out ScriptToDict is intentional.
+ * Somehow things still work, even though it was never meant to.
+ * 
+ * The feature was cut from the panel, but the underlying code still works.
+ */
 /// Move data from dialog controls to object
-void MapObjectProps::_ScriptToDict(void)
-{
-  getAllSelectedDicts();
+// void MapObjectProps::_ScriptToDict(void)
+// {
+//   getAllSelectedDicts();
   
-  CComboBox *owner = (CComboBox*)GetDlgItem(IDC_MAPOBJECT_Script);
-  static char buf[1024];
-  owner->GetWindowText(buf, sizeof(buf)-2);
+//   CComboBox *owner = (CComboBox*)GetDlgItem(IDC_MAPOBJECT_Script);
+//   static char buf[1024];
+//   owner->GetWindowText(buf, sizeof(buf)-2);
   
-  CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
-  if ( pDoc )
-  {
-    Dict newDict;
-    newDict.setAsciiString(TheKey_objectScriptAttachment, AsciiString(buf));
-    DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
-    pDoc->AddAndDoUndoable(pUndo);
-    REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-    // Update is called by Do	
-  }
-}
+//   CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
+//   if ( pDoc )
+//   {
+//     Dict newDict;
+//     newDict.setAsciiString(TheKey_objectScriptAttachment, AsciiString(buf));
+//     DictItemUndoable *pUndo = new DictItemUndoable(m_allSelectedDicts.begin(), newDict, newDict.getNthKey(0), m_allSelectedDicts.size());
+//     pDoc->AddAndDoUndoable(pUndo);
+//     REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
+//     // Update is called by Do	
+//   }
+// }
 
 
 /// Move data from object to dialog controls
@@ -587,8 +597,8 @@ void MapObjectProps::GetPopSliderInfo(const long sliderID, long *pMin, long *pMa
 	switch (sliderID) {
 
 		case IDC_HEIGHT_POPUP:
-			*pMin = -50;
-			*pMax = 50;
+			*pMin = -100;
+			*pMax = 100;
 			*pInitial = m_height;
 			*pLineSize = 1;
 			break;
@@ -1652,7 +1662,7 @@ void MapObjectProps::updateTheUI(MapObject *pMapObj)
 {
   _DictToName();
   _DictToTeam();
-  _DictToScript();
+  // _DictToScript();
   _DictToWeather();
   _DictToTime();
   _DictToScale();
@@ -2802,7 +2812,7 @@ void MapObjectProps::enableButtons()
 }
 
 
-/*static*/ MapObject *MapObjectProps::getSingleSelectedMapObject(void)
+/*static*/ MapObject *MapObjectProps::getMultipleMapObjects(void)
 {
 	MapObject *pMapObj; 
 	MapObject *theMapObj = NULL; 
@@ -2817,7 +2827,7 @@ void MapObjectProps::enableButtons()
 			selCount++;
 		}
 	}
-	if (selCount==1 && theMapObj) {
+	if (selCount>0 && theMapObj) {
 		return theMapObj;
 	}
 	return(NULL);

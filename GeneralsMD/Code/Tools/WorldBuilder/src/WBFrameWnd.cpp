@@ -80,6 +80,8 @@ void CWBFrameWnd::OnMove(int x, int y)
 BEGIN_MESSAGE_MAP(CWBFrameWnd, CFrameWnd)
 	//{{AFX_MSG_MAP(CWBFrameWnd)
 	ON_WM_MOVE()
+	ON_WM_SIZE()
+	ON_WM_TIMER()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -105,12 +107,16 @@ BEGIN_MESSAGE_MAP(CWB3dFrameWnd, CMainFrame)
 	//{{AFX_MSG_MAP(CWB3dFrameWnd)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
 	ON_WM_MOVE()
+	ON_WM_SIZE()
+	ON_WM_TIMER()
 	ON_COMMAND(ID_WINDOW_PREVIEW1024X768, OnWindowPreview1024x768)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_PREVIEW1024X768, OnUpdateWindowPreview1024x768)
 	ON_COMMAND(ID_WINDOW_PREVIEW640X480, OnWindowPreview640x480)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_PREVIEW640X480, OnUpdateWindowPreview640x480)
 	ON_COMMAND(ID_WINDOW_PREVIEW800X600, OnWindowPreview800x600)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_PREVIEW800X600, OnUpdateWindowPreview800x600)
+	ON_COMMAND(ID_WINDOW_PREVIEW1280X768, OnWindowPreview1280x768)
+	ON_UPDATE_COMMAND_UI(ID_WINDOW_PREVIEW1280X768, OnUpdateWindowPreview1280x768)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -120,9 +126,11 @@ BOOL CWB3dFrameWnd::LoadFrame(UINT nIDResource,
 				DWORD dwDefaultStyle,
 				CWnd* pParentWnd,
 				CCreateContext* pContext) {
-	dwDefaultStyle &= ~(WS_SIZEBOX);
+	// dwDefaultStyle &= ~(WS_SIZEBOX);
 
+	// m_disableOnSize = true;
 	BOOL ret = CMainFrame::LoadFrame(nIDResource, dwDefaultStyle, CMainFrame::GetMainFrame(), pContext);
+	// SetTimer(2, 5000, NULL);
 	return(ret);
 }
 
@@ -138,12 +146,73 @@ void CWB3dFrameWnd::OnMove(int x, int y)
 	}
 }
 
+/**
+ * Adriane [Deathscythe] :  Much better resize option support
+ */
+void CWB3dFrameWnd::OnSize(UINT nType, int cx, int cy)
+{
+    CFrameWnd::OnSize(nType, cx, cy);
+
+    if (nType == SIZE_MINIMIZED) return;
+// DEBUG_LOG(("Ignored resize? %s\n", m_disableOnSize ? "Yes" : "No"));
+// 	if (m_disableOnSize) return; 
+    // m_newWidth = cx;
+    // m_newHeight = cy;
+
+	// Kill any existing timer and start a new one
+    KillTimer(1);
+    SetTimer(1, 300, NULL);  // 300ms delay to detect when resizing stops
+	// DEBUG_LOG(("OnSize Width: %d\n", m_newWidth));
+	// DEBUG_LOG(("OnSize Height: %d\n", m_newHeight));
+}
+
+void CWB3dFrameWnd::OnTimer(UINT nIDEvent)
+{
+	// if (nIDEvent == 2)
+	// {
+	// 	KillTimer(2);
+	// 	m_disableOnSize = false;
+	// 	DEBUG_LOG(("Initialization Finished!!\n"));
+	// 	return;
+	// }
+    // if (nIDEvent == 1 && !m_disableOnSize) // Our resizing timer
+	if (nIDEvent == 1) // Our resizing timer
+    {
+        KillTimer(1);  // Stop the timer
+        // Apply new size and save it
+        // if (m_newWidth > 0 && m_newHeight > 0)
+        // {
+            // ::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "Width", m_newWidth);
+            // ::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "Height", m_newHeight);
+            adjustWindowSize(false, true);
+			DEBUG_LOG(("Size Adjusted!!\n"));
+        // }
+    }
+    CFrameWnd::OnTimer(nIDEvent);
+}
+
+void CWB3dFrameWnd::OnWindowPreview1280x768() 
+{
+	if (m_3dViewWidth == 1280) return;
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "Width", 1280);
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "Height", 768);
+	adjustWindowSize(true, false);
+}
+
+void CWB3dFrameWnd::OnUpdateWindowPreview1280x768(CCmdUI* pCmdUI) 
+{
+	pCmdUI->SetCheck(m_3dViewWidth==1280?1:0);
+}
+
+/**
+ * Adriane [Deathscythe] :  End of code
+ */
 void CWB3dFrameWnd::OnWindowPreview1024x768() 
 {
 	if (m_3dViewWidth == 1024) return;
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "Width", 1024);
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "Height", 768);
-	adjustWindowSize();
+	adjustWindowSize(true, false);
 }
 
 void CWB3dFrameWnd::OnUpdateWindowPreview1024x768(CCmdUI* pCmdUI) 
@@ -156,7 +225,7 @@ void CWB3dFrameWnd::OnWindowPreview640x480()
 	if (m_3dViewWidth == 640) return;
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "Width", 640);
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "Height", 480);
-	adjustWindowSize();
+	adjustWindowSize(true, false);
 }
 
 void CWB3dFrameWnd::OnUpdateWindowPreview640x480(CCmdUI* pCmdUI) 
@@ -169,7 +238,7 @@ void CWB3dFrameWnd::OnWindowPreview800x600()
 	if (m_3dViewWidth == 800) return;
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "Width", 800);
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "Height", 600);
-	adjustWindowSize();
+	adjustWindowSize(true, false);
 }
 
 void CWB3dFrameWnd::OnUpdateWindowPreview800x600(CCmdUI* pCmdUI) 

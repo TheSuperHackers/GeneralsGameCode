@@ -78,6 +78,7 @@ BEGIN_MESSAGE_MAP(TeamIdentity, CPropertyPage)
 	ON_EN_KILLFOCUS(IDC_TEAM_NAME, OnKillfocusTeamName)
 	ON_CBN_SELENDOK(IDC_TEAMOWNER, OnSelendokTeamowner)
 	ON_EN_CHANGE(IDC_TEAM_BUILD_FRAMES, OnChangeTeamBuildFrames)
+    ON_WM_TIMER()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -88,33 +89,36 @@ BOOL TeamIdentity::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 	
-	loadUnitsInfo(IDC_MIN_UNIT1, TheKey_teamUnitMinCount1,
-								IDC_MAX_UNIT1, TheKey_teamUnitMaxCount1,
-								IDC_UNIT_TYPE1, TheKey_teamUnitType1); 
+    unitLoadIndex = 0; // Start loading from Unit 1
+    SetTimer(UNIT_LOAD_TIMER, 200, NULL); // 100ms delay for smooth UI
 
-	loadUnitsInfo(IDC_MIN_UNIT2, TheKey_teamUnitMinCount2,
-								IDC_MAX_UNIT2, TheKey_teamUnitMaxCount2,
-								IDC_UNIT_TYPE2, TheKey_teamUnitType2); 
+	// loadUnitsInfo(IDC_MIN_UNIT1, TheKey_teamUnitMinCount1,
+	// 							IDC_MAX_UNIT1, TheKey_teamUnitMaxCount1,
+	// 							IDC_UNIT_TYPE1, TheKey_teamUnitType1); 
 
-	loadUnitsInfo(IDC_MIN_UNIT3, TheKey_teamUnitMinCount3,
-								IDC_MAX_UNIT3, TheKey_teamUnitMaxCount3,
-								IDC_UNIT_TYPE3, TheKey_teamUnitType3); 
+	// loadUnitsInfo(IDC_MIN_UNIT2, TheKey_teamUnitMinCount2,
+	// 							IDC_MAX_UNIT2, TheKey_teamUnitMaxCount2,
+	// 							IDC_UNIT_TYPE2, TheKey_teamUnitType2); 
 
-	loadUnitsInfo(IDC_MIN_UNIT4, TheKey_teamUnitMinCount4,
-								IDC_MAX_UNIT4, TheKey_teamUnitMaxCount4,
-								IDC_UNIT_TYPE4, TheKey_teamUnitType4); 
+	// loadUnitsInfo(IDC_MIN_UNIT3, TheKey_teamUnitMinCount3,
+	// 							IDC_MAX_UNIT3, TheKey_teamUnitMaxCount3,
+	// 							IDC_UNIT_TYPE3, TheKey_teamUnitType3); 
 
-	loadUnitsInfo(IDC_MIN_UNIT5, TheKey_teamUnitMinCount5,
-								IDC_MAX_UNIT5, TheKey_teamUnitMaxCount5,
-								IDC_UNIT_TYPE5, TheKey_teamUnitType5); 
+	// loadUnitsInfo(IDC_MIN_UNIT4, TheKey_teamUnitMinCount4,
+	// 							IDC_MAX_UNIT4, TheKey_teamUnitMaxCount4,
+	// 							IDC_UNIT_TYPE4, TheKey_teamUnitType4); 
 
-	loadUnitsInfo(IDC_MIN_UNIT6, TheKey_teamUnitMinCount6,
-								IDC_MAX_UNIT6, TheKey_teamUnitMaxCount6,
-								IDC_UNIT_TYPE6, TheKey_teamUnitType6); 
+	// loadUnitsInfo(IDC_MIN_UNIT5, TheKey_teamUnitMinCount5,
+	// 							IDC_MAX_UNIT5, TheKey_teamUnitMaxCount5,
+	// 							IDC_UNIT_TYPE5, TheKey_teamUnitType5); 
 
-	loadUnitsInfo(IDC_MIN_UNIT7, TheKey_teamUnitMinCount7,
-								IDC_MAX_UNIT7, TheKey_teamUnitMaxCount7,
-								IDC_UNIT_TYPE7, TheKey_teamUnitType7); 
+	// loadUnitsInfo(IDC_MIN_UNIT6, TheKey_teamUnitMinCount6,
+	// 							IDC_MAX_UNIT6, TheKey_teamUnitMaxCount6,
+	// 							IDC_UNIT_TYPE6, TheKey_teamUnitType6); 
+
+	// loadUnitsInfo(IDC_MIN_UNIT7, TheKey_teamUnitMinCount7,
+	// 							IDC_MAX_UNIT7, TheKey_teamUnitMaxCount7,
+	// 							IDC_UNIT_TYPE7, TheKey_teamUnitType7); 
 
 	CComboBox *pCombo = (CComboBox *)GetDlgItem(IDC_HOME_WAYPOINT);
 	Bool exists;
@@ -169,6 +173,28 @@ BOOL TeamIdentity::OnInitDialog()
 	description = m_teamDict->getAsciiString(TheKey_teamName, &exists);
 	pWnd->SetWindowText(description.str());
 	
+	// Hide unit controls in a loop
+	int minIDs[]    = { IDC_MIN_UNIT1, IDC_MIN_UNIT2, IDC_MIN_UNIT3, IDC_MIN_UNIT4, IDC_MIN_UNIT5, IDC_MIN_UNIT6, IDC_MIN_UNIT7 };
+	int maxIDs[]    = { IDC_MAX_UNIT1, IDC_MAX_UNIT2, IDC_MAX_UNIT3, IDC_MAX_UNIT4, IDC_MAX_UNIT5, IDC_MAX_UNIT6, IDC_MAX_UNIT7 };
+	int typeIDs[]   = { IDC_UNIT_TYPE1, IDC_UNIT_TYPE2, IDC_UNIT_TYPE3, IDC_UNIT_TYPE4, IDC_UNIT_TYPE5, IDC_UNIT_TYPE6, IDC_UNIT_TYPE7 };
+	int buttonIDs[] = { IDC_UNIT_TYPE1_BUTTON, IDC_UNIT_TYPE2_BUTTON, IDC_UNIT_TYPE3_BUTTON, IDC_UNIT_TYPE4_BUTTON, 
+						IDC_UNIT_TYPE5_BUTTON, IDC_UNIT_TYPE6_BUTTON, IDC_UNIT_TYPE7_BUTTON };
+	
+	for (int unitIndex = 0; unitIndex < 7; ++unitIndex) {
+		pWnd = GetDlgItem(minIDs[unitIndex]);
+		if (pWnd) pWnd->ShowWindow(SW_HIDE);
+	
+		pWnd = GetDlgItem(maxIDs[unitIndex]);
+		if (pWnd) pWnd->ShowWindow(SW_HIDE);
+	
+		pWnd = GetDlgItem(typeIDs[unitIndex]);
+		if (pWnd) pWnd->ShowWindow(SW_HIDE);
+	
+		pWnd = GetDlgItem(buttonIDs[unitIndex]);
+		if (pWnd) pWnd->ShowWindow(SW_HIDE);
+	}
+		
+
 	pWnd = GetDlgItem(IDC_MAX);
 	Int maxInstances = m_teamDict->getInt(TheKey_teamMaxInstances, &exists);
 	if (!exists) maxInstances = 1;
@@ -223,6 +249,73 @@ BOOL TeamIdentity::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
+void TeamIdentity::OnTimer(UINT nIDEvent)
+{
+    if (nIDEvent == UNIT_LOAD_TIMER)
+    {
+        static const int minUnitIDs[] = {
+            IDC_MIN_UNIT1, IDC_MIN_UNIT2, IDC_MIN_UNIT3, IDC_MIN_UNIT4,
+            IDC_MIN_UNIT5, IDC_MIN_UNIT6, IDC_MIN_UNIT7
+        };
+        static const int maxUnitIDs[] = {
+            IDC_MAX_UNIT1, IDC_MAX_UNIT2, IDC_MAX_UNIT3, IDC_MAX_UNIT4,
+            IDC_MAX_UNIT5, IDC_MAX_UNIT6, IDC_MAX_UNIT7
+        };
+        static const int typeUnitIDs[] = {
+            IDC_UNIT_TYPE1, IDC_UNIT_TYPE2, IDC_UNIT_TYPE3, IDC_UNIT_TYPE4,
+            IDC_UNIT_TYPE5, IDC_UNIT_TYPE6, IDC_UNIT_TYPE7
+        };
+        static const int typeUnitButtonIDs[] = {
+            IDC_UNIT_TYPE1_BUTTON, IDC_UNIT_TYPE2_BUTTON, IDC_UNIT_TYPE3_BUTTON, IDC_UNIT_TYPE4_BUTTON,
+            IDC_UNIT_TYPE5_BUTTON, IDC_UNIT_TYPE6_BUTTON, IDC_UNIT_TYPE7_BUTTON
+        };
+		static const NameKeyType minCounts[] = {
+			TheKey_teamUnitMinCount1, TheKey_teamUnitMinCount2, TheKey_teamUnitMinCount3,
+			TheKey_teamUnitMinCount4, TheKey_teamUnitMinCount5, TheKey_teamUnitMinCount6,
+			TheKey_teamUnitMinCount7
+		};
+		static const NameKeyType maxCounts[] = {
+			TheKey_teamUnitMaxCount1, TheKey_teamUnitMaxCount2, TheKey_teamUnitMaxCount3,
+			TheKey_teamUnitMaxCount4, TheKey_teamUnitMaxCount5, TheKey_teamUnitMaxCount6,
+			TheKey_teamUnitMaxCount7
+		};
+		static const NameKeyType unitTypes[] = {
+			TheKey_teamUnitType1, TheKey_teamUnitType2, TheKey_teamUnitType3,
+			TheKey_teamUnitType4, TheKey_teamUnitType5, TheKey_teamUnitType6,
+			TheKey_teamUnitType7
+		};
+
+        if (unitLoadIndex < 7) // Ensure index is within bounds
+        {
+            loadUnitsInfo(minUnitIDs[unitLoadIndex], minCounts[unitLoadIndex],
+                            maxUnitIDs[unitLoadIndex], maxCounts[unitLoadIndex],
+                            typeUnitIDs[unitLoadIndex], unitTypes[unitLoadIndex]);
+
+            CWnd* pWnd = GetDlgItem(minUnitIDs[unitLoadIndex]);
+            if (pWnd) pWnd->ShowWindow(SW_SHOW);
+
+            pWnd = GetDlgItem(maxUnitIDs[unitLoadIndex]);
+            if (pWnd) pWnd->ShowWindow(SW_SHOW);
+
+            pWnd = GetDlgItem(typeUnitIDs[unitLoadIndex]);
+            if (pWnd) pWnd->ShowWindow(SW_SHOW);
+
+			pWnd = GetDlgItem(typeUnitButtonIDs[unitLoadIndex]);
+			if (pWnd) pWnd->ShowWindow(SW_SHOW);
+        
+        }
+
+        unitLoadIndex++;
+
+        if (unitLoadIndex >= 7) // Stop timer after the last unit is loaded
+        {
+            KillTimer(UNIT_LOAD_TIMER);
+        }
+    }
+
+    CDialog::OnTimer(nIDEvent);
+}
+
 void TeamIdentity::loadUnitsInfo(int idcMinUnit, NameKeyType keyMinUnit, 
 								int idcMaxUnit, NameKeyType keyMaxUnit,
 								int idcUnitType, NameKeyType keyUnitType)
@@ -252,8 +345,9 @@ void TeamIdentity::loadUnitsInfo(int idcMinUnit, NameKeyType keyMinUnit,
 			 tTemplate = tTemplate->friend_getNextTemplate() ) {
 
 		// next tier uses the editor sorting bits that design can specify in the INI
+		// fuck this rules
 		EditorSortingType sort = tTemplate->getEditorSorting();
-		if (( sort != ES_VEHICLE ) && (sort != ES_INFANTRY)) continue;
+		// if (( sort != ES_VEHICLE ) && (sort != ES_INFANTRY)) continue; <<<--- fuck this line in particular
 
 		Int ndx = pCombo->AddString(tTemplate->getName().str());
 		if (type == tTemplate->getName()) {
@@ -437,6 +531,11 @@ void TeamIdentity::OnUnitTypeButton(Int idcUnitType)
 	PickUnitDialog dlg;
 	dlg.SetAllowableType(ES_VEHICLE);
 	dlg.SetAllowableType(ES_INFANTRY);
+	dlg.SetAllowableType(ES_STRUCTURE);
+	dlg.SetAllowableType(ES_SYSTEM);
+	// for (int i = ES_FIRST; i<ES_NUM_SORTING_TYPES; i++)	{
+	// 	dlg.SetAllowableType((EditorSortingType)i);
+	// }
 	if (dlg.DoModal() == IDOK) {
 		AsciiString unit = dlg.getPickedUnit();
 		NameKeyType keyUnitType;

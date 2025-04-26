@@ -25,6 +25,8 @@
 #include "EditParameter.h"
 #include "GameLogic/ScriptEngine.h"
 
+#define SCRIPT_DIALOG_SECTION "ScriptDialog"
+
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
@@ -38,6 +40,8 @@
 EditAction::EditAction(CWnd* pParent /*=NULL*/)
 	: CDialog(EditAction::IDD, pParent)
 {
+	// m_oldFont = NULL;
+	m_bCompressed = false;
 	//{{AFX_DATA_INIT(EditAction)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
@@ -56,6 +60,9 @@ void EditAction::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(EditAction, CDialog)
 	//{{AFX_MSG_MAP(EditAction)
 	ON_WM_TIMER()
+	ON_BN_CLICKED(IDC_FIND_BUTTON, OnSearch)
+	ON_BN_CLICKED(IDC_RESET_BUTTON, OnReset)
+	ON_BN_CLICKED(IDC_COMPRESS, OnCompress)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -163,7 +170,7 @@ BOOL EditAction::OnInitDialog()
 		HTREEITEM item = m_actionTreeView.InsertItem(&ins);
 		if (i == m_action->getActionType()) {
 			selItem = item;
-			GetDlgItem(IDC_HELP_TEXT)->SetWindowText(helpText);
+			ParseHelpText(helpText);
 		}
 
 		name = pTemplate->getName2().str();
@@ -208,6 +215,12 @@ BOOL EditAction::OnInitDialog()
 	formatScriptActionText(0);
 	m_actionTreeView.SetFocus();
 
+
+	m_bCompressed=::AfxGetApp()->GetProfileInt(SCRIPT_DIALOG_SECTION, "CompressScripts", 1);
+	CButton *pButton = (CButton*)GetDlgItem(IDC_COMPRESS);
+	pButton->SetCheck(m_bCompressed ? 1:0);
+	OnCompress();
+	
 	return FALSE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -300,7 +313,266 @@ void EditAction::formatScriptActionText(Int parameterNdx) {
 	m_updating = false;
 }
 
+/**
+ * Adriane [Deathscythe] --
+ * This is an altered version of SCRIPTDIALOG onCompress func.
+ * For some reason, if we get the font from the EditAction dialog, it's different -- 
+ * so I had to initialize and create new fonts for both the old and new versions.
+ */
+void EditAction::OnCompress()
+{
+	CButton *pButton = (CButton*)GetDlgItem(IDC_COMPRESS);
+	m_bCompressed = (pButton->GetCheck() == 1);
+    ::AfxGetApp()->WriteProfileInt(SCRIPT_DIALOG_SECTION, "CompressScripts", m_bCompressed ? 1 : 0);
 
+    CTreeCtrl* pTree = (CTreeCtrl*)GetDlgItem(IDC_ACTION_TREE);
+    if (!pTree)
+        return;
+
+    if (m_bCompressed)
+    {
+        // Create and apply custom font
+        if (m_treeFont.GetSafeHandle())
+            m_treeFont.DeleteObject();  // Clean up if reusing
+
+        m_treeFont.CreateFont(
+            14,                         // Height
+            0,                          // Width
+            0,                          // Escapement
+            0,                          // Orientation
+            FW_MEDIUM,               // Weight
+            FALSE,                      // Italic
+            FALSE,                      // Underline
+            0,                          // StrikeOut
+            ANSI_CHARSET,               // CharSet
+            OUT_DEFAULT_PRECIS,         // OutPrecision
+            CLIP_DEFAULT_PRECIS,        // ClipPrecision
+            DEFAULT_QUALITY,            // Quality
+            DEFAULT_PITCH | FF_SWISS,   // PitchAndFamily
+            _T("Segoe UI")              // Font face
+        );
+
+        pTree->SetFont(&m_treeFont);
+    }
+    else
+    {
+        // Revert to old font
+
+		// Create and apply custom font
+		if (m_oldFont.GetSafeHandle())
+			m_oldFont.DeleteObject();  // Clean up if reusing
+
+		m_oldFont.CreateFont(
+			16,                         // Height
+			0,                          // Width
+			0,                          // Escapement
+			0,                          // Orientation
+			FW_MEDIUM,               // Weight
+			FALSE,                      // Italic
+			FALSE,                      // Underline
+			0,                          // StrikeOut
+			ANSI_CHARSET,               // CharSet
+			OUT_DEFAULT_PRECIS,         // OutPrecision
+			CLIP_DEFAULT_PRECIS,        // ClipPrecision
+			DEFAULT_QUALITY,            // Quality
+			DEFAULT_PITCH | FF_SWISS,   // PitchAndFamily
+			_T("Segoe UI")              // Font face
+		);
+
+		pTree->SetFont(&m_oldFont);
+    }
+
+    // Force redraw
+    pTree->Invalidate();
+    pTree->UpdateWindow();
+}
+
+void EditAction::ParseHelpText(const CString& helpText)
+{
+    // Create a mutable string to work with
+    CString mutableHelpText = helpText;
+
+    // Replace all instances of \n with actual newline characters
+    mutableHelpText.Replace("\\n", "\n");
+
+    // Now set the processed help text to the UI control
+    GetDlgItem(IDC_HELP_TEXT)->SetWindowText(mutableHelpText);
+}
+
+
+void EditAction::OnReset()
+{
+	m_actionTreeView.DeleteAllItems();
+    // Repopulate full list if search is empty
+	Int i;	
+	HTREEITEM selItem = NULL;
+	for (i=0; i<ScriptAction::NUM_ITEMS; i++) {
+		const ActionTemplate *pTemplate = TheScriptEngine->getActionTemplate(i);
+		char prefix[_MAX_PATH];
+		const char *name = pTemplate->getName().str();
+		const char *helpText = pTemplate->getHelpText().str();
+
+		Int count = 0;
+		HTREEITEM parent = TVI_ROOT;
+		do {
+			count = 0; 
+			const char *nameStart = name;
+			while (*name && *name != '/') {
+				count++;
+				name++;								 
+			}
+			if (*name=='/') {
+				count++;
+				name++;
+			} else {
+				name = nameStart;
+				count = 0;
+			}
+			if (count>0) {
+				strncpy(prefix, nameStart, count);
+				prefix[count-1] = 0;
+				parent = findOrAdd(&m_actionTreeView, parent, prefix);
+			}
+		} while (count>0);
+
+		TVINSERTSTRUCT ins;
+		::memset(&ins, 0, sizeof(ins));
+		ins.hParent = parent;
+		ins.hInsertAfter = TVI_SORT;
+		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
+		ins.item.lParam = i;
+		ins.item.pszText = (char*)name;
+		ins.item.cchTextMax = 0;				
+		HTREEITEM item = m_actionTreeView.InsertItem(&ins);
+		if (i == m_action->getActionType()) {
+			selItem = item;
+			ParseHelpText(helpText);
+		}
+
+		name = pTemplate->getName2().str();
+		count = 0;
+		if (pTemplate->getName2().isEmpty()) continue;
+		parent = TVI_ROOT;
+		do {
+			count = 0; 
+			const char *nameStart = name;
+			while (*name && *name != '/') {
+				count++;
+				name++;								 
+			}
+			if (*name=='/') {
+				count++;
+				name++;
+			} else {
+				name = nameStart;
+				count = 0;
+			}
+			if (count>0) {
+				strncpy(prefix, nameStart, count);
+				prefix[count-1] = 0;
+				parent = findOrAdd(&m_actionTreeView, parent, prefix);
+			}
+		} while (count>0);
+
+		::memset(&ins, 0, sizeof(ins));
+		ins.hParent = parent;
+		ins.hInsertAfter = TVI_SORT;
+		ins.item.mask = TVIF_PARAM|TVIF_TEXT;
+		ins.item.lParam = i;
+		ins.item.pszText = (char*)name;
+		ins.item.cchTextMax = 0;				
+		m_actionTreeView.InsertItem(&ins);
+	}
+	m_actionTreeView.Select(selItem, TVGN_FIRSTVISIBLE);
+	m_actionTreeView.SelectItem(selItem);
+	m_action->setWarnings(false); 
+	m_myEditCtrl.SetWindowText(m_action->getUiText().str());
+	m_myEditCtrl.SetSel(-1, -1);
+	formatScriptActionText(0);
+	m_actionTreeView.SetFocus();
+}
+
+
+void EditAction::OnSearch()
+{
+    UpdateData(TRUE);
+
+    CString searchText;
+    GetDlgItemText(IDC_SEARCH_EDIT, searchText);
+    searchText.MakeLower();
+
+    m_actionTreeView.DeleteAllItems(); // Clear current tree
+
+    if (searchText.IsEmpty())
+    {
+		OnReset();
+
+        return;
+    }
+
+    int matchCount = 0;
+    HTREEITEM selItem = NULL;
+
+    for (Int i = 0; i < ScriptAction::NUM_ITEMS; i++)
+    {
+        const ActionTemplate* pTemplate = TheScriptEngine->getActionTemplate(i);
+        CString name = pTemplate->getName().str();
+        CString name2 = pTemplate->getName2().str();
+
+        CString lowerName = name;
+        lowerName.MakeLower();
+
+        CString lowerName2 = name2;
+        lowerName2.MakeLower();
+
+        if (lowerName.Find(searchText) != -1 || lowerName2.Find(searchText) != -1)
+        {
+            TVINSERTSTRUCT ins;
+            ::memset(&ins, 0, sizeof(ins));
+            ins.hParent = TVI_ROOT;
+            ins.hInsertAfter = TVI_SORT;
+            ins.item.mask = TVIF_PARAM | TVIF_TEXT;
+            ins.item.lParam = i;
+            ins.item.pszText = (char*)pTemplate->getName().str();
+            HTREEITEM item = m_actionTreeView.InsertItem(&ins);
+
+            if (i == m_action->getActionType())
+            {
+                selItem = item;
+				ParseHelpText(pTemplate->getHelpText().str());
+            }
+
+            matchCount++;
+        }
+    }
+
+    if (matchCount == 0)
+    {
+        MessageBox("No matches found.", "Search", MB_OK | MB_ICONINFORMATION);
+    }
+    else
+    {
+        if (selItem)
+        {
+            m_actionTreeView.SelectItem(selItem);
+            m_actionTreeView.EnsureVisible(selItem);
+        }
+    }
+}
+
+
+void EditAction::OnOK() 
+{
+    // Check if the IDC_OBJECT_SEARCH_EDIT control is focused
+    if (GetFocus() == GetDlgItem(IDC_SEARCH_EDIT))
+    {
+        OnSearch();  // Trigger search on "Enter" key press
+    }
+    else
+    {
+        CDialog::OnOK();  // Call the default OK behavior if the search box isn't focused
+    }
+}
 
 BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
 {																											
@@ -325,10 +597,10 @@ BOOL EditAction::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 					m_myEditCtrl.SetWindowText(m_action->getUiText().str());
 					formatScriptActionText(0);
 					
-					// Adriane [Deathscythe] (24-03-2025) : -- Support for the new help text group box
+					// Adriane [Deathscythe] -- Support for the new help text group box
 					const ActionTemplate *pTemplate = TheScriptEngine->getActionTemplate(actionType);
 					const char *helpText = pTemplate->getHelpText().str();
-					GetDlgItem(IDC_HELP_TEXT)->SetWindowText(helpText);
+					ParseHelpText(helpText);
 				}
 			}	
 		} else if (pHdr->hdr.code == TVN_KEYDOWN) {

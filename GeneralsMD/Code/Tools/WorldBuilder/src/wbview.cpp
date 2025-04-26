@@ -200,7 +200,7 @@ void WbView::mouseMove(TTrackingMode m, CPoint viewPt)
 	while (::PeekMessage(&msg, m_hWnd, WM_MOUSEMOVE, WM_MOUSEMOVE, PM_REMOVE)) {
 		viewPt.x = (short)LOWORD(msg.lParam);  // horizontal position of cursor 
 		viewPt.y = (short)HIWORD(msg.lParam);  // vertical position of cursor 
-		DEBUG_LOG(("Peek mouse %d, %d\n", viewPt.x,  viewPt.y));
+		// DEBUG_LOG(("Peek mouse %d, %d\n", viewPt.x,  viewPt.y));
 	}
 
 	if (m_trackingMode == TRACK_NONE) {
@@ -409,7 +409,7 @@ TPickedStatus WbView::picked(MapObject *pObj, Coord3D docPt)
 		doArrow = false;
 	}
 	// Check and see if we are within 1 cell size of the center.
-	if (doArrow && cpt.length() < 1.5f*MAP_XY_FACTOR+m_hysteresis) {
+	if (doArrow && cpt.length() < 2.5f*MAP_XY_FACTOR+m_hysteresis) {
 		return PICK_ARROW;
 	}
 	return PICK_NONE;
@@ -566,9 +566,21 @@ void WbView::OnEditPaste()
 	/* First, clear the selection. */
 	PointerTool::clearSelection();
 
+	// Set an offset for the pasted objects if necessary
+	const int offsetX = 10;
+	const int offsetY = 10;
+
 	MapObject *pObj = WbApp()->getMapObjPasteList();
 	while (pObj) {
 		pTmp = pObj->duplicate();
+		const Coord3D* pOriginalLocation = pObj->getLocation();
+
+		Coord3D newLocation = *pOriginalLocation;
+		newLocation.x += offsetX; // Adjust X position
+		newLocation.y += offsetY; // Adjust Y position
+
+
+		pTmp->setLocation(&newLocation);
 		pTmp->setNextMap(pTheCopy);
 		pTmp->validate();
 		

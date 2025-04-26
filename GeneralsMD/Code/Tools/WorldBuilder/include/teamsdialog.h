@@ -93,6 +93,9 @@ protected:
 private:
 	void UpdateTeamsList(void);
 
+	// Required for bug fix for the move and down button - Adriane [Deathscythe]
+	int findNextTeamIndex(int curIndex); 
+	int findPrevTeamIndex(int curIndex);
 };
 
 //{{AFX_INSERT_LOCATION}}

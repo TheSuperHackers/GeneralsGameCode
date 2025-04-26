@@ -250,6 +250,9 @@ public:
 	// find the best model for an object
 	AsciiString getBestModelName(const ThingTemplate* tt, const ModelConditionFlags& c);
 
+	// Adriane [Deathscythe] - Nasty dogshit hack
+	AsciiString getBestModelNameWBPrev(const ThingTemplate* tt, const ModelConditionFlags& c);
+	
 	/// Invalidates an build list object.
 	void invalBuildListItemInView(BuildListInfo *pBuild);
 

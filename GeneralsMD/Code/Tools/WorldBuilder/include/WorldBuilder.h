@@ -133,6 +133,8 @@ protected:
 	Int								m_lockCurTool;
 
 	AsciiString				m_currentDirectory; ///< Current directory for open file.
+	AsciiString				m_gameDirectory; ///< Required for the jump to the game button - Adriane [Deathscythe].
+	BOOL m_bLaunchOnStartUp;
 
 	CDocTemplate			*m_3dtemplate;
 
@@ -165,6 +167,7 @@ public:
 	/// Sets the current directry for file opens.
 	void setCurrentDirectory(AsciiString dir) {m_currentDirectory = dir;};
 
+	AsciiString getCurrentGameDirectory() { return m_gameDirectory; }
 	Tool *getCurTool() { return m_curTool; }
 
 	/// Check to see if any keyboard overrides are changing the current tool.

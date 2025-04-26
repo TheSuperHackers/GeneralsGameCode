@@ -25,6 +25,7 @@
 // FenceOptions.h : header file
 //
 
+#include "ObjectPreview.h"
 #include "TerrainSwatches.h"
 #include "OptionsPanel.h"
 #include "Common/AsciiString.h"
@@ -53,9 +54,11 @@ public:
 	//{{AFX_VIRTUAL(FenceOptions)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void OnOK(){return;};  ///< Modeless dialogs don't OK, so eat this for modeless.
+	virtual void OnOK();
 	virtual void OnCancel(){return;}; ///< Modeless dialogs don't close on ESC, so eat this for modeless.
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
+	void ExpandAllItems(CTreeCtrl& treeCtrl, HTREEITEM hItem);
+	virtual void OnShowWindow(BOOL bShow, UINT nStatus);
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -65,6 +68,9 @@ protected:
 	//{{AFX_MSG(FenceOptions)
 	virtual BOOL OnInitDialog();
 	afx_msg void OnChangeFenceSpacingEdit();
+	afx_msg void OnSearch();
+	afx_msg void OnReset();
+	afx_msg void OnCheckFenceOnly();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -77,8 +83,10 @@ protected:
 	static Real				m_fenceOffset;
 
 	CTreeCtrl					m_objectTreeView;
+	ObjectPreview			m_objectPreview;
 	MapObject					*m_objectsList;
 	Bool							m_customSpacing;
+	Bool m_showAllObjectTypes;
 
 protected:
 	void addObject( MapObject *mapObject, const char *pPath, const char *name, 

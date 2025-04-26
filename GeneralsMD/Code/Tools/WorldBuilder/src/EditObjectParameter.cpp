@@ -234,51 +234,110 @@ HTREEITEM EditObjectParameter::findOrAdd(HTREEITEM parent, const char *pLabel)
 	return(child);
 }
 
+/**
+ * Adriane [Deathscythe] --
+ * Changes here were made to support the edit text field for the EditObject parameter.
+ * Advanced map.ini coders create new objects -- ones that aren’t yet loaded into the map,
+ * since WorldBuilder doesn’t know how to parse them (-- yet-- circa 2025).
+ * 
+ * The script using this EditObject dialog is very restrictive --
+ * it doesn’t let you type manually, only offers a select option.
+ * That’s why I had to implement this myself and add text field support.
+ */
 BOOL EditObjectParameter::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult) 
-{																											
-	NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam; 	 
+{
+    NMTREEVIEW *pHdr = (NMTREEVIEW *)lParam;
 
-	// Handle events from the tree control.
-	if (pHdr->hdr.idFrom == IDC_TERRAIN_TREEVIEW) {
-		if (pHdr->hdr.code == TVN_KEYDOWN) {
-			NMTVKEYDOWN	*pKey = (NMTVKEYDOWN*)lParam;
-			Int key = pKey->wVKey;	
-			if (key==VK_SHIFT || key==VK_SPACE) {
-				HTREEITEM hItem = m_objectTreeView.GetSelectedItem();
-				if (!m_objectTreeView.ItemHasChildren(hItem)) {
-					hItem = m_objectTreeView.GetParentItem(hItem);
-				}
-				m_objectTreeView.Expand(hItem, TVE_TOGGLE);
-				return 0;
-			}
-			return 0;
-		}
-	}
-	return CDialog::OnNotify(wParam, lParam, pResult);
+    // Handle events from the tree control.
+    if (pHdr->hdr.idFrom == IDC_TERRAIN_TREEVIEW) {
+        if (pHdr->hdr.code == TVN_SELCHANGED) { // Detect item selection change
+            HTREEITEM hItem = pHdr->itemNew.hItem; // Get the newly selected item
+
+            // Check if the selected item has children (i.e., not a leaf node)
+            if (m_objectTreeView.ItemHasChildren(hItem)) {
+                // If it's not the deepest child, do not allow getting/setting the name
+                return 0;
+            }
+
+            // Get the text of the selected item
+            char buffer[_MAX_PATH];
+            TVITEM item;
+            ::memset(&item, 0, sizeof(item));
+            item.mask = TVIF_HANDLE | TVIF_TEXT;
+            item.hItem = hItem;
+            item.pszText = buffer;
+            item.cchTextMax = sizeof(buffer) - 2;
+            m_objectTreeView.GetItem(&item);
+
+            // Set the object name in the edit text box
+            SetDlgItemText(IDC_OBJECT_EDIT, buffer); // Assuming IDC_OBJECT_EDIT is your edit box ID
+
+            return 0;
+        }
+        // Handle other key down events like expanding tree items
+        else if (pHdr->hdr.code == TVN_KEYDOWN) {
+            NMTVKEYDOWN *pKey = (NMTVKEYDOWN*)lParam;
+            int key = pKey->wVKey;
+            if (key == VK_SHIFT || key == VK_SPACE) {
+                HTREEITEM hItem = m_objectTreeView.GetSelectedItem();
+                if (!m_objectTreeView.ItemHasChildren(hItem)) {
+                    hItem = m_objectTreeView.GetParentItem(hItem);
+                }
+                m_objectTreeView.Expand(hItem, TVE_TOGGLE);
+                return 0;
+            }
+        }
+    }
+    return CDialog::OnNotify(wParam, lParam, pResult);
 }
 
 void EditObjectParameter::OnOK() 
 {
-	char buffer[_MAX_PATH];
-	HTREEITEM hItem = m_objectTreeView.GetSelectedItem();
-	if (!hItem) {
-		::MessageBeep(MB_ICONEXCLAMATION);
-		return;
-	}
+    // Buffer to hold the object name
+    char buffer[_MAX_PATH];
 
-	TVITEM item;
-	::memset(&item, 0, sizeof(item));
-	item.mask = TVIF_HANDLE|TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
-	item.hItem = hItem;
-	item.pszText = buffer;
-	item.cchTextMax = sizeof(buffer)-2;				
-	m_objectTreeView.GetItem(&item);
-	AsciiString objName = buffer;
-	// We used to try to find the TT here, but now we don't because we
-	// use object lists as well.
-	m_parameter->friend_setString(objName);
-	CDialog::OnOK();
+    // Try to get the value from the edit box
+    GetDlgItemText(IDC_OBJECT_EDIT, buffer, sizeof(buffer) - 2);  // Get text from the edit box
+
+    // Check if the edit box has a value
+    if (strlen(buffer) > 0) {
+        // If the edit box has a value, use it directly
+        AsciiString objName = buffer;
+        m_parameter->friend_setString(objName);
+    }
+    else {
+        // Otherwise, proceed with the selected item from the tree view
+        HTREEITEM hItem = m_objectTreeView.GetSelectedItem();
+        if (!hItem) {
+            ::MessageBeep(MB_ICONEXCLAMATION);  // No selection, alert the user
+            return;
+        }
+
+        // Check if the selected item has children (i.e., not a leaf node)
+        if (m_objectTreeView.ItemHasChildren(hItem)) {
+            ::MessageBeep(MB_ICONEXCLAMATION);  // Selected item is not a leaf, alert the user
+            return;
+        }
+
+        // Proceed to get the tree item's name
+        TVITEM item;
+        ::memset(&item, 0, sizeof(item));
+        item.mask = TVIF_HANDLE | TVIF_PARAM | TVIF_TEXT | TVIF_STATE;
+        item.hItem = hItem;
+        item.pszText = buffer;
+        item.cchTextMax = sizeof(buffer) - 2;
+        m_objectTreeView.GetItem(&item);
+        
+        // Use the tree item's name
+        AsciiString objName = buffer;
+        m_parameter->friend_setString(objName);
+    }
+
+    // Call the base class OnOK
+    CDialog::OnOK();
 }
+
+
 
 void EditObjectParameter::OnCancel() 
 {

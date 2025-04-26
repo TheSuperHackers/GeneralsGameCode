@@ -76,6 +76,7 @@ protected:
 	//{{AFX_MSG(PickUnitDialog)
 	virtual BOOL OnInitDialog();
 	afx_msg void OnMove(int x, int y);
+	afx_msg void OnIgnore(); // For the bypass feature - Adriane [Deathscythe]
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

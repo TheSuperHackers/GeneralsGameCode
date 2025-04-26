@@ -192,7 +192,7 @@ static UnsignedByte * generatePreview( const ThingTemplate *tt )
 		ModelConditionFlags state;
 		state.clear();
 		WbView3d *p3View = CWorldBuilderDoc::GetActiveDoc()->GetActive3DView();
-		modelName = p3View->getBestModelName(tt, state);
+		modelName = p3View->getBestModelNameWBPrev(tt, state);
 		scale = tt->getAssetScale();
 	}
 	// set render object, or create if we need to

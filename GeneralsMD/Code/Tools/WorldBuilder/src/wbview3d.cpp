@@ -29,6 +29,7 @@
 #include "intersec.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
+#include "W3DDevice/GameClient/Module/W3DTreeDraw.h"
 #include "agg_def.h"
 #include "msgloop.h"
 #include "part_ldr.h"
@@ -601,6 +602,12 @@ void WbView3d::reset3dEngineDisplaySize(Int width, Int height)
 	if (m_ww3dInited) {
 		WW3D::Set_Device_Resolution(m_actualWinSize.x, m_actualWinSize.y, true);
 	}
+
+	// Update camera FOV instead of stretching -- Preserves ratio
+	if (m_camera) {
+		float newAspectRatio = (float)width / (float)height;
+		m_camera->Set_Aspect_Ratio(newAspectRatio);
+	}
 }
 
 // ----------------------------------------------------------------------------
@@ -1110,6 +1117,52 @@ void WbView3d::removeFenceListObjects(MapObject *pObject)
 	}
 
 	Invalidate(false);
+}
+
+/**
+ * Adriane [Deathscythe]
+ * Very nasty hack incoming, good lord — some necessary functions are already exposed for tree drawing,
+ * and I can fix the preview bug using those.
+ * 
+ * Do note though: this is a temporary fix —
+ * WorldBuilder originally only checked for W3DModelDraw. However, due to
+ * optimizations made by the Zero Hour developers, many tree objects were
+ * converted to use W3DTreeDraw instead. As a result, previews for these
+ * objects were broken. This fallback restores support for tree previews.
+ * 
+ * Extra: the original getBestModelName() is also synonymous with the shadow system.
+ * I had to revert edits to the original and create a new function,
+ * since there's a weird bug I haven't been able to fix where models are drawn twice
+ * when trees are rendered.
+ */
+AsciiString WbView3d::getBestModelNameWBPrev(const ThingTemplate* tt, const ModelConditionFlags& c)
+{
+	if (tt)
+	{
+		const ModuleInfo& mi = tt->getDrawModuleInfo();
+		if (mi.getCount() > 0)
+		{
+			const ModuleData* mdd = mi.getNthData(0);
+
+			// Try W3DModelDraw first
+			const W3DModelDrawModuleData* md = mdd ? mdd->getAsW3DModelDrawModuleData() : NULL;
+			if (md)
+			{
+				return md->getBestModelNameForWB(c);
+			}
+
+			/*
+			* Adriane [Deathscythe] 
+			* Fallback: Try W3DTreeDraw -- now supports preview model in WorldBuilder.
+			*/
+			const W3DTreeDrawModuleData* td = mdd ? mdd->getAsW3DTreeDrawModuleData() : NULL;
+			if (td)
+			{
+				return td->m_modelName;
+			}
+		}
+	}
+	return AsciiString::TheEmptyString;
 }
 
 // ----------------------------------------------------------------------------
@@ -2103,7 +2156,7 @@ void WbView3d::render()
 		if (m_showWireframe) {
 			if (m_heightMapRenderObj) {
 				m_heightMapRenderObj->doTextures(false);
-				m_scene->Set_Polygon_Mode(SceneClass::LINE);
+				m_scene->Set_Polygon_Mode(SceneClass::POINT);
 				// Render 3D scene
 				WW3D::Render(m_scene,m_camera);	
 				WW3D::Render(m_baseBuildScene,m_camera);	
@@ -2306,6 +2359,7 @@ void WbView3d::initWW3D()
 		TheWritableGlobalData->m_useShadowVolumes = true;
 		TheWritableGlobalData->m_useShadowDecals = true;
 		TheWritableGlobalData->m_enableBehindBuildingMarkers = false;	//this is only for the game.
+		// TheWritableGlobalData->m_textureReductionFactor = 4;
 		if (TheW3DShadowManager==NULL)
 		{	TheW3DShadowManager = new W3DShadowManager;
  			TheW3DShadowManager->init();			

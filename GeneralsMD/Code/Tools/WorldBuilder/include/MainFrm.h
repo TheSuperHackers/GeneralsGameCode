@@ -86,11 +86,13 @@ public:
 #endif
 
 	static CMainFrame *GetMainFrame() { return TheMainFrame; }
-
+	CWnd							*m_curOptions;
+	int m_curDialogID;
+	
 	void showOptionsDialog(Int dialogID);
 	void OnEditGloballightoptions();
 	void ResetWindowPositions(void);
-	void adjustWindowSize(void);
+	void adjustWindowSize(Bool forcedResolution = false, Bool dynamicResolution = false);
 	Bool isAutoSaving(void) {return m_autoSaving;};
 	void handleCameraChange(void);
 	void onEditScripts();
@@ -123,7 +125,6 @@ protected:  // control bar embedded members
 	ScriptDialog*				m_scriptDialog;
 	RulerOptions				m_rulerOptions;
 	
-	CWnd							*m_curOptions;
 	Int								m_curOptionsX;
 	Int								m_curOptionsY;
 	Int								m_optionsPanelWidth;
@@ -132,6 +133,9 @@ protected:  // control bar embedded members
 	Int								m_globalLightOptionsHeight;
 
 	Int								m_3dViewWidth;
+	// Int m_newWidth;
+    // Int m_newHeight;
+	// Bool m_disableOnSize;
 
 	Bool							m_autoSaving;  ///< True if we are autosaving.
 	UINT							m_hAutoSaveTimer;  ///< Timer that triggers for autosave.

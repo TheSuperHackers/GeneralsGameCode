@@ -114,7 +114,7 @@ protected:
 
 	afx_msg void _TeamToDict(void);
 	afx_msg void _NameToDict(void);
-	afx_msg void _ScriptToDict(void);
+	// afx_msg void _ScriptToDict(void);
 	afx_msg void _WeatherToDict(void);
 	afx_msg void _TimeToDict(void);
 	afx_msg void _ScaleToDict(void);
@@ -155,7 +155,7 @@ protected:
 
 	void _DictToName(void);
 	void _DictToTeam(void);
-	void _DictToScript(void);
+	// void _DictToScript(void);
 	void _DictToScale(void);
 	void _DictToWeather(void);
 	void _DictToTime(void);
@@ -197,7 +197,7 @@ protected:
 	virtual void PopSliderFinished(const long sliderID, long theVal);
 
 public:
-	static MapObject *getSingleSelectedMapObject(void);
+	static MapObject *getMultipleMapObjects(void);
 	static void update(void);
   
 private:

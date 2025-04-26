@@ -140,6 +140,17 @@
 #define IDD_MAPOBJECT_PROPPAGE_VISUAL   237
 #define IDD_MAPOBJECT_PROPPAGE_UPGRADES 238
 #define IDD_MAPOBJECT_PROPPAGE_SOUND    239
+#define IDC_ABORT_ALL                   240
+#define IDC_SCRIPT_SEARCH               241
+#define IDC_FIND_NEXT                   242
+#define IDC_OBJECT_SEARCH_EDIT          243
+#define IDC_OBJECT_SEARCH_BUTTON        244
+#define IDC_OBJECT_SEARCH_RESET_BTN     245
+#define IDC_OBJECT_EDIT                 246
+#define IDC_SEARCH_EDIT                 247
+#define IDC_FIND_BUTTON                 248
+#define IDC_RESET_BUTTON                249
+#define IDB_FOLDERSCRIPTB               250
 #define IDC_HEIGHT_COMBO                1000
 #define IDC_CELL_WIDTH                  1001
 #define IDC_INITIAL_HEIGHT              1002
@@ -356,10 +367,12 @@
 #define IDC_TRANSPORTS_EXIT             1167
 #define IDC_MAKE_RIVER                  1167
 #define IDC_WAYPOINT_LOCATIONY          1167
+#define IDC_COMPRESS                    1167
 #define IDC_PLAYERISCOMPUTER            1168
 #define IDC_CHECK3                      1168
 #define IDC_TEAM_STARTS_FULL            1168
 #define IDC_WAYPOINT_BIDIRECTIONAL      1168
+#define IDC_NEWICONS                    1168
 #define IDC_GROUP_ACTIVE                1169
 #define IDC_MAPOBJECT_Selectable2       1169
 #define IDC_PLAYERDISPLAYNAME           1170
@@ -577,6 +590,8 @@
 #define IDC_MAPOBJECT_DISTANCE          1383
 #define IDC_HELP_CAPTION                1384
 #define IDC_HELP_TEXT                   1385
+#define ID_FILE_JUMPTOGAME_WD           1386
+#define IDC_FENCE_ONLY                  1387
 #define ID_BRUSH_TOOL                   32771
 #define IDM_ShowGrid                    32772
 #define ID_FEATHERTOOL                  32791
@@ -720,6 +735,10 @@
 #define ID_SELECTLAYEROBJECT            33344
 #define ID_SELECTACTIVELAYER            33345
 #define ID_VIEW_SHOW_SOUND_CIRCLES      33346
+#define ID_WINDOW_PREVIEW1280X768       33347
+#define IDC_Grove_SetName               33348
+#define IDC_Grove_SaveSet               33349
+#define IDC_LAUNCH_ONSTARTUP            33350
 #define IDS_NEW                         61446
 #define IDS_RESIZE                      61447
 #define IDS_REMOVING_INUSE_TEAM         61448
@@ -761,6 +780,15 @@
 #define IDS_DUPLICATE_TEAM_REMOVED      61483
 #define IDS_PLAYERLESS_TEAM_REMOVED     61484
 #define IDS_NEED_TO_FIX_TEAMS           61485
+#define IDC_HOTKEYLIST                  61486
+#define IDC_FIND_QUERY                  61487
+#define IDC_FIND_HKEY_BUTTON            61488
+#define IDC_FIND_QUERY_OBJ              61489
+#define IDC_FIND_OBJ_BUTTON             61490
+#define IDC_REFRESH_OBJ_BUTTON          61491
+#define IDC_FIND_QUERY_WP               61492
+#define IDC_FIND_WP_BUTTON              61493
+#define IDC_REFRESH_WP_BUTTON           61494
 
 // Next default values for new objects
 // 

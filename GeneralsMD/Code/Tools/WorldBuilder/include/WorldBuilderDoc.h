@@ -187,6 +187,7 @@ protected:
 	afx_msg void OnUpdateTsCanonical(CCmdUI* pCmdUI);
 	afx_msg void OnFileResize();
 	afx_msg void OnJumpToGame();
+	afx_msg void OnJumpToGameWithoutDebug();
 	afx_msg void OnTsRemap();
 	afx_msg void OnEditLinkCenters();
 	afx_msg void OnUpdateEditLinkCenters(CCmdUI* pCmdUI);

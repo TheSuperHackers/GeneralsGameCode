@@ -72,6 +72,7 @@ CMainFrame::CMainFrame()
 	m_hAutoSaveTimer = NULL;
 	m_autoSaving = false;
 	m_layersList = NULL;
+	m_curDialogID = IDD_NO_OPTIONS;
 	m_scriptDialog = NULL;
 }
 
@@ -312,8 +313,16 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CMainFrame::adjustWindowSize(void)
+void CMainFrame::adjustWindowSize(Bool forcedResolution, Bool dynamicResolution)
 {
+	// DEBUG_LOG(("IgnoredX resize? %s\n", m_disableOnSize ? "Yes" : "No"));
+	// if (m_disableOnSize){
+	// 	Int viewWidth = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "Width", THREE_D_VIEW_WIDTH);
+	// 	Int viewHeight = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "Height", THREE_D_VIEW_HEIGHT);
+	// 		DEBUG_LOG(("viewWidth: %d, viewHeight: %d\n", viewWidth, viewHeight));
+	// 	return;
+	// } 
+
 	HWND hDesk = ::GetDesktopWindow();
 	CRect top;
 	::GetWindowRect(hDesk, &top);
@@ -332,18 +341,57 @@ void CMainFrame::adjustWindowSize(void)
 		GetClientRect(&client);
 		client.right -= 2*borderX;
 	}
-		int widthDelta = client.Width() - (viewWidth);
-		int heightDelta = client.Height() - (viewHeight);
+	    // No use to us anymore
+		// int widthDelta = client.Width() - (viewWidth);
+		// int heightDelta = client.Height() - (viewHeight);
+		
+		Int newWidth = 0;
+		Int newHeight = 0; 
 		this->GetWindowRect(window);
-		Int newWidth = window.Width()-widthDelta;
-		Int newHeight = window.Height()-heightDelta; 
+		
+		/**
+		 * Adriane [Deathscythe] 
+		 * `forcedResolution` is `true` by default. The check below preserves the old behavior  
+		 * (using specific resolution values) while supporting the new one.  
+		 * 
+		 * If `forcedResolution` is true, we use the provided resolution.  
+		 * If `dynamicResolution` is true and `forcedResolution` is false, we use the current window size.  
+		 * Otherwise, we fallback to using the specific resolution values.
+		 */
+		if (forcedResolution) {
+			newWidth = viewWidth;
+			newHeight = viewHeight;
+		} else if (dynamicResolution) {
+			newWidth = window.Width();
+			newHeight = window.Height();
+
+			// Save the new dynamic resolution -- Make sure its greater than 0 or else if we load a 0 it will crash the wb everytime
+			if(newWidth > 0 && newHeight > 0){
+				::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "Width", newWidth);
+				::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "Height", newHeight);
+			}
+		} else {
+			newWidth = viewWidth;
+			newHeight = viewHeight;
+		}
+
+
 	this->SetWindowPos(NULL, 0,
 	0, newWidth, newHeight,
 	SWP_NOMOVE|SWP_NOZORDER); // MainFrm.cpp sets the top and left.
 	if (pView) {
-		pView->reset3dEngineDisplaySize(viewWidth, viewHeight);
+		pView->reset3dEngineDisplaySize(newWidth, newHeight);
 	}
-	m_3dViewWidth = viewWidth;
+	
+	/**  This is responsible for the check icon for the resolution selector -- 
+	 * make sure we sent similar values to the ones we have in the menu or else it wont have that check icon
+	*/ 
+	m_3dViewWidth = newWidth;
+
+	// DEBUG_LOG(("Client Width: %d, Client Height: %d\n", client.Width(), client.Height()));
+	// DEBUG_LOG(("widthDelta: %d, heightDelta: %d\n", widthDelta, heightDelta));
+	DEBUG_LOG(("OLD viewWidth: %d, OLD viewHeight: %d\n", viewWidth, viewHeight));
+	DEBUG_LOG(("New Width: %d, New Height: %d\n", newWidth, newHeight));
 }
 
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
@@ -378,6 +426,25 @@ void CMainFrame::ResetWindowPositions(void)
 
 void CMainFrame::showOptionsDialog(Int dialogID)
 {
+	if (dialogID == m_curDialogID && m_curOptions && m_curOptions->IsWindowVisible()) {
+		// DEBUG_LOG(("Already showing visible dialog ID: %d\n", dialogID));
+		return;
+	}
+
+	/**
+	 * Adriane [Deathscythe]
+	 * Suggested feature -- lets not entertain the huge ass dialog that blocks the app 
+	 * just hide that damn thing ..
+	 */
+	if (dialogID == IDD_NO_OPTIONS) {
+		// DEBUG_LOG(("Hiding current options dialog (IDD_NO_OPTIONS triggered).\n"));
+		if (m_curOptions) {
+			m_curOptions->ShowWindow(SW_HIDE);
+			m_curOptions = NULL;
+		}
+		return;
+	}
+
 	CWnd *newOptions = NULL;
 	switch(dialogID) {
 		case IDD_BRUSH_OPTIONS : newOptions = &m_brushOptions; break;
@@ -417,6 +484,8 @@ void CMainFrame::showOptionsDialog(Int dialogID)
 			m_curOptions->ShowWindow(SW_HIDE);
 		}
 		m_curOptions = newOptions;
+		m_curDialogID = dialogID;
+		// DEBUG_LOG(("Current ID----------:%d\n", m_curDialogID));
 	}
 }
 

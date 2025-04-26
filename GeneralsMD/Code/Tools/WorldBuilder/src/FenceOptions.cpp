@@ -50,7 +50,7 @@ Bool FenceOptions::m_updating = false;
 Int FenceOptions::m_currentObjectIndex=-1;
 Real FenceOptions::m_fenceSpacing=1;
 Real FenceOptions::m_fenceOffset=0;
-
+// static Bool g_freshWarning_fenceopts = true;
 										 
 /////////////////////////////////////////////////////////////////////////////
 // FenceOptions dialog
@@ -60,6 +60,7 @@ FenceOptions::FenceOptions(CWnd* pParent /*=NULL*/)
 {
 	m_objectsList = NULL;
 	m_customSpacing = false;
+	m_showAllObjectTypes = false;
 	//{{AFX_DATA_INIT(FenceOptions)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
@@ -87,6 +88,10 @@ void FenceOptions::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(FenceOptions, COptionsPanel)
 	//{{AFX_MSG_MAP(FenceOptions)
 	ON_EN_CHANGE(IDC_FENCE_SPACING_EDIT, OnChangeFenceSpacingEdit)
+	ON_BN_CLICKED(IDC_OBJECT_SEARCH_BUTTON, OnSearch)
+	ON_BN_CLICKED(IDC_OBJECT_SEARCH_RESET_BTN, OnReset)
+	ON_BN_CLICKED(IDC_FENCE_ONLY, OnCheckFenceOnly)
+	ON_WM_SHOWWINDOW()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -102,31 +107,62 @@ END_MESSAGE_MAP()
 
 void FenceOptions::updateObjectOptions()
 {
+	MapObject *pObj = m_objectsList;
 	if (m_currentObjectIndex >= 0) {
-		MapObject *pObj = m_objectsList;
 		int count = 0;
+		int visibleIndex = -1; // Track index of visible fence objects
 		while (pObj) {
+			if (!m_showAllObjectTypes && pObj->getThingTemplate()->getFenceWidth() == 0) {
+				// Skip non-fence objects when not showing all types
+				pObj = pObj->getNext();
+				continue;
+			}
+			
+			// If the current object is visible, update the index
 			if (count == m_currentObjectIndex) {
+				visibleIndex = count;
 				ObjectOptions::selectObject(pObj);
 				const ThingTemplate *t = pObj->getThingTemplate();
 				if (t && !m_customSpacing) {
-					if ( !m_customSpacing) {
-						m_fenceSpacing = t->getFenceWidth();
+					Real fenceWidth = t->getFenceWidth();
+					if (fenceWidth) {
+						m_fenceSpacing = fenceWidth;
+					} else {
+						Real scaledRadius = t->getTemplateGeometryInfo().getMajorRadius() * 2.18f;
+						m_fenceSpacing = (scaledRadius > 10.0f) ? scaledRadius : 10.0f;
 					}
 					m_fenceOffset = t->getFenceXOffset();
-				}
+				}				
 				break;
 			}
 			count++;
 			pObj = pObj->getNext();
 		}
+
+		// If the object is not found or it's filtered out, reset selection
+		if (visibleIndex == -1) {
+			m_currentObjectIndex = -1;
+			return; // Or handle this case as needed
+		}
 	}
+
 	CWnd *pWnd = GetDlgItem(IDC_FENCE_SPACING_EDIT);
 	if (pWnd) {
 		CString s;
 		s.Format("%f",m_fenceSpacing);
 		pWnd->SetWindowText(s);
 	}
+
+	/**
+	 * Adriane [Deathscythe] --
+	 * Support for the Object Preview
+	 */
+	if (pObj && pObj->getThingTemplate()) {
+		m_objectPreview.SetThingTemplate(pObj->getThingTemplate());
+	} else {
+		m_objectPreview.SetThingTemplate(NULL);
+	}
+	m_objectPreview.Invalidate();
 }
 
 
@@ -151,8 +187,8 @@ BOOL FenceOptions::OnInitDialog()
 		Coord3D loc = { 0, 0, 0 };
 		MapObject *pMap;
 
-		// Only add fence type objects.
-		if (tTemplate->getFenceWidth() == 0) continue;
+		// Only add fence type objects by default. -- we disable this coz this will be the base list before filtering..
+		// if (tTemplate->getFenceWidth() == 0) continue; 
 
 		// create new map object
 		pMap = newInstance( MapObject)( loc, tTemplate->getName(), 0.0f, 0, NULL, tTemplate );
@@ -183,9 +219,21 @@ BOOL FenceOptions::OnInitDialog()
 		TVS_SHOWSELALWAYS|TVS_DISABLEDRAGDROP, rect, this, IDC_TERRAIN_TREEVIEW);
 	m_objectTreeView.ShowWindow(SW_SHOW);
 
+	pWnd = GetDlgItem(IDC_TERRAIN_SWATCHES);
+	pWnd->GetWindowRect(&rect);
+	ScreenToClient(&rect);
+	rect.DeflateRect(2,2,2,2);
+	m_objectPreview.Create(NULL, "", WS_CHILD, rect, this, IDC_TERRAIN_SWATCHES);
+	m_objectPreview.ShowWindow(SW_SHOW);
+
 	MapObject *pMap =  m_objectsList;
 	Int index = 0;
 	while (pMap) {
+
+		if (!m_showAllObjectTypes && pMap->getThingTemplate()->getFenceWidth() == 0) {
+			pMap = pMap->getNext();
+			continue;
+		}
 
 		addObject( pMap, pMap->getName().str(), "", index, TVI_ROOT);
 		index++;
@@ -411,3 +459,171 @@ void FenceOptions::OnChangeFenceSpacingEdit()
 		m_customSpacing = true;
 	}
 }
+
+/**
+ * Adriane [Deathscythe]
+ * Start the long code of pain 
+ * 
+ * Changes include preview support, non fencetype objects and search.
+ */
+
+void FenceOptions::OnOK()
+{
+    OnSearch(); 
+}
+
+// Add the function that handles the search button click
+void FenceOptions::OnReset()
+{
+	m_objectTreeView.DeleteAllItems(); // Clear current tree
+
+	// Repopulate list
+	MapObject *pMap =  m_objectsList;
+	Int index = 0;
+	while (pMap) {
+
+		// Skip non-fence objects if checkbox is unchecked (m_showAllObjectTypes is false)
+		if (!m_showAllObjectTypes && pMap->getThingTemplate()->getFenceWidth() == 0) {
+			pMap = pMap->getNext();
+			continue;
+		}
+
+		addObject( pMap, pMap->getName().str(), "", index, TVI_ROOT);
+		index++;
+		pMap = pMap->getNext();
+	}
+}
+
+// Add the function that handles the search button click
+void FenceOptions::OnSearch()
+{
+    UpdateData(TRUE);
+
+    CString searchText;
+    GetDlgItemText(IDC_OBJECT_SEARCH_EDIT, searchText);
+    searchText.MakeLower();
+
+    m_objectTreeView.DeleteAllItems(); // Clear current tree
+
+    if (searchText.IsEmpty())
+    {
+        // Repopulate full list if search is empty
+		MapObject *pMap =  m_objectsList;
+		Int index = 0;
+		while (pMap) {
+
+			// Skip non-fence objects if checkbox is checked
+			if (!m_showAllObjectTypes && pMap->getThingTemplate()->getFenceWidth() == 0) {
+				pMap = pMap->getNext();
+				continue;
+			}
+	
+			addObject( pMap, pMap->getName().str(), "", index, TVI_ROOT);
+			index++;
+			pMap = pMap->getNext();
+		}
+
+        return;
+    }
+
+    MapObject* pMap = m_objectsList;
+    int index = 0;
+    int matchCount = 0;
+
+    while (pMap)
+    {
+        CString name = pMap->getName().str();
+        CString lowerName = name;
+        lowerName.MakeLower();
+
+        if (lowerName.Find(searchText) != -1)
+        {
+
+			// Skip non-fence objects if checkbox is checked
+			if (!m_showAllObjectTypes && pMap->getThingTemplate()->getFenceWidth() == 0) {
+				pMap = pMap->getNext();
+				continue;
+			}
+
+            addObject( pMap, pMap->getName().str(), "", index, TVI_ROOT);
+            matchCount++;
+        }
+
+        pMap = pMap->getNext();
+        index++;
+    }
+
+    if (matchCount == 0)
+    {
+        MessageBox("No matches found.", "Search", MB_OK | MB_ICONINFORMATION);
+    }
+    else
+    {
+        // Expand all items in the tree
+        HTREEITEM hRoot = m_objectTreeView.GetRootItem();
+        if (hRoot)
+        {
+            ExpandAllItems(m_objectTreeView, hRoot);
+        }
+    }
+}
+
+
+void FenceOptions::ExpandAllItems(CTreeCtrl& treeCtrl, HTREEITEM hItem)
+{
+    while (hItem)
+    {
+        treeCtrl.Expand(hItem, TVE_EXPAND);
+        HTREEITEM hChild = treeCtrl.GetChildItem(hItem);
+        if (hChild)
+            ExpandAllItems(treeCtrl, hChild);
+
+        hItem = treeCtrl.GetNextSiblingItem(hItem);
+    }
+}
+
+void FenceOptions::OnShowWindow(BOOL bShow, UINT nStatus)
+{
+	CDialog::OnShowWindow(bShow, nStatus);
+	if (!bShow)
+	{
+		/** We are required to do a reset everytime we hide this window or 
+		 * 	else there will be a fuck up with object options
+		*/
+		OnReset();
+	}
+}
+
+void FenceOptions::OnCheckFenceOnly()
+{
+    m_showAllObjectTypes = ((CButton*)GetDlgItem(IDC_FENCE_ONLY))->GetCheck();
+
+	/** 
+	 * Adriane [Deathscythe]
+	 * Only enable search when non-fence types are allowed -- 
+	 * I had to do this since the search for non fence type is bugged and fucked -- cant figure out how to fix it nor chatgpt it hallucinating...
+	*/
+	if (m_showAllObjectTypes)
+    {
+        GetDlgItem(IDC_OBJECT_SEARCH_EDIT)->EnableWindow(TRUE);
+        GetDlgItem(IDC_OBJECT_SEARCH_BUTTON)->EnableWindow(TRUE);
+        GetDlgItem(IDC_OBJECT_SEARCH_RESET_BTN)->EnableWindow(TRUE);
+    } else {
+		GetDlgItem(IDC_OBJECT_SEARCH_EDIT)->SetWindowText(_T(""));
+		GetDlgItem(IDC_OBJECT_SEARCH_EDIT)->EnableWindow(FALSE);
+        GetDlgItem(IDC_OBJECT_SEARCH_BUTTON)->EnableWindow(FALSE);
+        GetDlgItem(IDC_OBJECT_SEARCH_RESET_BTN)->EnableWindow(FALSE);
+		OnReset();
+	}
+
+    // if (g_freshWarning_fenceopts) {
+    //     AfxMessageBox(
+	// 		_T("Warning: Non-fence object types do not have a fence spacing value and will therefore use a default value of 50.0. This may not be accurate for objects with a larger width. You can use the Shift key to dynamically set the fence spacing.\n\n- Adriane [Deathscythe]"),
+    //         MB_ICONWARNING | MB_OK
+    //     );
+	// 	g_freshWarning_fenceopts = false;
+    // }
+	OnSearch();
+}
+
+

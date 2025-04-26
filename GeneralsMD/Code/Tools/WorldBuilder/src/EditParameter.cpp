@@ -1230,7 +1230,24 @@ Bool EditParameter::loadTriggerAreas(CComboBox *pCombo, AsciiString match)
 	return didMatch;
 }
 
-//-------------------------------------------------------------------------------------------------
+char* EditParameter::trimSpaces(char* str) {
+    // Trim leading spaces
+    while (*str && isspace((unsigned char)*str)) {
+        ++str;
+    }
+
+    // Trim trailing spaces
+    if (*str) {
+        char* end = str + strlen(str) - 1;
+        while (end > str && isspace((unsigned char)*end)) {
+            --end;
+        }
+        *(end + 1) = '\0';
+    }
+
+    return str;
+}
+
 Bool EditParameter::loadCommandButtons(CComboBox *pCombo, AsciiString match)
 {
 	if (pCombo) pCombo->ResetContent();
@@ -1257,6 +1274,7 @@ Bool EditParameter::loadCommandButtons(CComboBox *pCombo, AsciiString match)
 				token = strtok(NULL, seps);
 				if( token != NULL )
 				{
+					token = trimSpaces(token);  // Trim any leading/trailing spaces
 					if (pCombo) pCombo->AddString(token);
 					if (strcmp(match.str(), token) == 0) didMatch = true;
 				}
@@ -1494,11 +1512,27 @@ Bool EditParameter::loadSides(CComboBox *pCombo, AsciiString match)
 		pCombo->AddString(LOCAL_PLAYER);
 		pCombo->AddString(THIS_PLAYER);
 		pCombo->AddString(THIS_PLAYER_ENEMY);
+		pCombo->AddString(PLAYER_0);
+		pCombo->AddString(PLAYER_1);
+		pCombo->AddString(PLAYER_2);
+		pCombo->AddString(PLAYER_3);
+		pCombo->AddString(PLAYER_4);
+		pCombo->AddString(PLAYER_5);
+		pCombo->AddString(PLAYER_6);
+		pCombo->AddString(PLAYER_7);
 	}
 	Bool didMatch = false;
 	if (match == LOCAL_PLAYER) didMatch=true;
 	if (match == THIS_PLAYER) didMatch=true;
 	if (match == THIS_PLAYER_ENEMY) didMatch=true;
+	if (match == PLAYER_0) didMatch = true;
+	if (match == PLAYER_1) didMatch = true;
+	if (match == PLAYER_2) didMatch = true;
+	if (match == PLAYER_3) didMatch = true;
+	if (match == PLAYER_4) didMatch = true;
+	if (match == PLAYER_5) didMatch = true;
+	if (match == PLAYER_6) didMatch = true;
+	if (match == PLAYER_7) didMatch = true;
 	Int i;
 	SidesList *sidesListP = m_sidesListP;
 	if (sidesListP==NULL) sidesListP = TheSidesList;

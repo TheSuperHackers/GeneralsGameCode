@@ -1017,10 +1017,10 @@ Bool isValidMap( AsciiString mapName, Bool isMultiplayer )
 	MapCache::iterator it = TheMapCache->find(mapName);
 	if (it != TheMapCache->end())
 	{
-		if (isMultiplayer == it->second.m_isMultiplayer)
-		{
+		// if (isMultiplayer == it->second.m_isMultiplayer)
+		// {
 			return TRUE;
-		}
+		// }
 	}
 
 	return FALSE;

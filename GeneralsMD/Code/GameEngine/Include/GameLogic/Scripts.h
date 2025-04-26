@@ -45,6 +45,15 @@
 #define THIS_PLAYER "<This Player>"
 #define LOCAL_PLAYER "<Local Player>"
 
+#define PLAYER_0 "player0"
+#define PLAYER_1 "player1"
+#define PLAYER_2 "player2"
+#define PLAYER_3 "player3"
+#define PLAYER_4 "player4"
+#define PLAYER_5 "player5"
+#define PLAYER_6 "player6"
+#define PLAYER_7 "player7"
+
 #define THE_PLAYER "ThePlayer"
 #define TEAM_THE_PLAYER "teamThePlayer"
 

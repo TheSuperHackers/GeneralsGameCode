@@ -86,6 +86,10 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(CWB3dFrameWnd)
 	afx_msg void OnMove(int x, int y);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnTimer(UINT nIDEvent);
+	afx_msg void OnWindowPreview1280x768();
+	afx_msg void OnUpdateWindowPreview1280x768(CCmdUI* pCmdUI);
 	afx_msg void OnWindowPreview1024x768();
 	afx_msg void OnUpdateWindowPreview1024x768(CCmdUI* pCmdUI);
 	afx_msg void OnWindowPreview640x480();

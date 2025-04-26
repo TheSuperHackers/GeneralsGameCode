@@ -42,7 +42,7 @@ RampOptions::RampOptions(CWnd* pParent) : COptionsPanel(RampOptions::IDD, pParen
 	}
 
 	TheRampOptions = this;
-	m_rampWidth = 20;
+	m_rampWidth = 50;
 	m_shouldApplyTheRamp = false;
 }
 

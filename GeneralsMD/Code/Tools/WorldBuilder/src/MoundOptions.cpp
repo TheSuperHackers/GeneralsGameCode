@@ -104,6 +104,9 @@ BOOL MoundOptions::OnInitDialog()
 	m_brushFeatherPopup.SetupPopSliderButton(this, IDC_FEATHER_POPUP, this);
 	m_brushHeightPopup.SetupPopSliderButton(this, IDC_HEIGHT_POPUP, this);
 
+	m_currentWidth = 2;
+	m_currentFeather = 3; 
+	m_currentHeight = 9; 
 
 	m_staticThis = this;
 	m_updating = false;

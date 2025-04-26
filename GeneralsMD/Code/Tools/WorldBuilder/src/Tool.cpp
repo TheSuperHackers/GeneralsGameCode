@@ -49,11 +49,20 @@ Tool::~Tool(void)
 }
 
 
-/// Shows the "no options"  options panel.
+/// Shows the "no options" options panel. -- NO, we won’t
 void Tool::activate() 
 {
-	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_NO_OPTIONS);
-	DrawObject::setDoBrushFeedback(false);
+    /**  
+	 * Adriane [Deathscythe]
+	 * Removed this default dialog -- this is the problematic code that forces a reload of the tool menu
+     * Every time we perform an action in the WorldBuilder view, it replaces the current tool menu, then loads the actual one,
+     * which results the OCD inducing flashbang load on the tool menus. 
+	 * This part is only supposed to initialize the dialog but we dont actually need to.
+	 *
+	 * CMainFrame::GetMainFrame()->showOptionsDialog(IDD_NO_OPTIONS);
+	 */
+
+    DrawObject::setDoBrushFeedback(false);
 }
 
 
