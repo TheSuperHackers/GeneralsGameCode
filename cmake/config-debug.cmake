@@ -10,7 +10,10 @@ set_property(CACHE RTS_DEBUG_STACKTRACE PROPERTY STRINGS DEFAULT ON OFF)
 set(RTS_DEBUG_PROFILE "DEFAULT" CACHE STRING "Enables debug profiling. When DEFAULT, this option is enabled with DEBUG or INTERNAL")
 set_property(CACHE RTS_DEBUG_PROFILE PROPERTY STRINGS DEFAULT ON OFF)
 
-option(RTS_DEBUG_INCLUDE_DEBUG_LOG_IN_CRC_LOG "Include normal debug log in crc log" OFF)
+set(RTS_DEBUG_CRC "DEFAULT" CACHE STRING "Enables debug CRC testing. When DEFAULT, this option is enabled with DEBUG_LOGGING")
+set_property(CACHE RTS_DEBUG_CRC PROPERTY STRINGS DEFAULT ON OFF)
+
+option(RTS_DEBUG_INCLUDE_DEBUG_LOG_IN_CRC_LOG "Includes normal debug log in CRC log" OFF)
 
 
 # Helper macro that handles DEFAULT ON OFF options
@@ -33,6 +36,7 @@ define_debug_option(RTS_DEBUG_LOGGING    DEBUG_LOGGING    DISABLE_DEBUG_LOGGING 
 define_debug_option(RTS_DEBUG_CRASHING   DEBUG_CRASHING   DISABLE_DEBUG_CRASHING   DebugCrashing   "Build with Debug Crashing")
 define_debug_option(RTS_DEBUG_STACKTRACE DEBUG_STACKTRACE DISABLE_DEBUG_STACKTRACE DebugStacktrace "Build with Debug Stacktracing")
 define_debug_option(RTS_DEBUG_PROFILE    DEBUG_PROFILE    DISABLE_DEBUG_PROFILE    DebugProfile    "Build with Debug Profiling")
+define_debug_option(RTS_DEBUG_CRC        DEBUG_CRC        NO_DEBUG_CRC             DebugCRC        "Build with Debug CRC Testing")
 
 if(RTS_DEBUG_INCLUDE_DEBUG_LOG_IN_CRC_LOG)
     target_compile_definitions(core_config INTERFACE INCLUDE_DEBUG_LOG_IN_CRC_LOG)
