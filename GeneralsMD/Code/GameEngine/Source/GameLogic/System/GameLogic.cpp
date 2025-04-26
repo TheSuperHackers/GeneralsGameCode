@@ -436,21 +436,19 @@ void GameLogic::reset( void )
 	m_thingTemplateBuildableOverrides.clear();
 	m_controlBarOverrides.clear();
 
-	// destroy all objects
-	// TheSuperHackers @info xezon 10/04/2025 Objects need to be destroyed before clearing the object vector.
-	destroyAllObjectsImmediate();
-
 	// set the hash to be rather large. We need to optimize this value later.
-	m_objHash.clear();
-#if USING_STLPORT
-	m_objHash.resize(OBJ_HASH_SIZE);
-#else
-	m_objHash.reserve(OBJ_HASH_SIZE);
-#endif
+//	m_objHash.clear();
+//	m_objHash.resize(OBJ_HASH_SIZE);
+	m_objVector.clear();
+	m_objVector.resize(OBJ_HASH_SIZE, NULL);
+
 	m_gamePaused = FALSE;
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
 	setFPMode();
+
+	// destroy all objects
+	destroyAllObjectsImmediate();
 
 	m_nextObjID = (ObjectID)1;
 
@@ -3868,7 +3866,12 @@ void GameLogic::addObjectToLookupTable( Object *obj )
 		return;
 
 	// add to lookup
-	m_objHash[ obj->getID() ] = obj;
+//	m_objHash[ obj->getID() ] = obj;
+	ObjectID newID = obj->getID();
+	while( newID >= m_objVector.size() ) // Fail case is hella rare, so faster to double up on size() call
+		m_objVector.resize(m_objVector.size() * 2, NULL);
+
+	m_objVector[ newID ] = obj;
 
 }  // end addObjectToLookupTable
 
@@ -3879,11 +3882,13 @@ void GameLogic::removeObjectFromLookupTable( Object *obj )
 {
 
 	// sanity
-	if( obj == NULL )
+	// TheSuperHackers @fix Mauller/Xezon 24/04/2025 Prevent out of range access to vector lookup table
+	if( obj == NULL || static_cast<size_t>(obj->getID()) >= m_objVector.size() )
 		return;
 
 	// remove from lookup table
-	m_objHash.erase( obj->getID() );
+//	m_objHash.erase( obj->getID() );
+	m_objVector[ obj->getID() ] = NULL;
 
 }  // end removeObjectFromLookupTable
 

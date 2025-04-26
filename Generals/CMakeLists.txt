@@ -2,15 +2,6 @@ cmake_minimum_required(VERSION 3.25)
 
 project(g_generals LANGUAGES C CXX)
 
-# Do we want to build extra SDK stuff or just the game binary?
-option(RTS_BUILD_GENERALS_TOOLS "Build tools for Generals" ON)
-add_feature_info(GeneralsTools RTS_BUILD_GENERALS_TOOLS "Build Generals Mod Tools")
-option(RTS_BUILD_GENERALS_EXTRAS "Build extra tools/tests for Generals" OFF)
-add_feature_info(GeneralsExtras RTS_BUILD_GENERALS_EXTRAS "Build Generals Extra Tools/Tests")
-
-# Do we want to build documentation?
-option(RTS_BUILD_GENERALS_DOCS "Build documentation for Generals" OFF)
-add_feature_info(GeneralsDocs RTS_BUILD_GENERALS_DOCS "Build Generals Documentation")
 if (RTS_BUILD_GENERALS_DOCS)
     find_package(Doxygen REQUIRED)
     doxygen_add_docs(g_docs Code)

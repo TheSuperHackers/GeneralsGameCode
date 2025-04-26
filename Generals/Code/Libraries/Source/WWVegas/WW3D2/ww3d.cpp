@@ -22,14 +22,18 @@
  *                                                                                             *
  *                 Project Name : WW3D                                                         *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/ww3d2/ww3d.cpp                                    $*
+ *                     $Archive:: /Commando/Code/ww3d2/ww3d.cpp                               $*
  *                                                                                             *
- *                       Author:: Greg_h                                                       *
+ *                   Org Author:: Greg_h                                                       *
  *                                                                                             *
- *                     $Modtime:: 8/29/01 7:29p                                               $*
+ *                       Author : Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *								$Modtime:: 08/05/02 10:03a                                             $*
  *                                                                                             *
- *                    $Revision:: 82                                                          $*
+ *                    $Revision:: 98                                                          $*
  *                                                                                             *
+ * 07/01/02 KM Scalable shader library integration				                               *
+ * 08/05/02 KM Texture class redesign 
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  *   WW3D::Init -- Initialize the WW3D Library                                                 *
@@ -50,7 +54,6 @@
  *   WW3D::Sync -- Time sychronization                                                         *
  *   WW3D::Set_Ext_Swap_Interval -- Sets the swap interval the device should aim sync for.     *
  *   WW3D::Get_Ext_Swap_Interval -- Queries the swap interval the device is aiming sync for.   *
- *   WW3D::Set_Polygon_Mode -- set the drawing mode                                            *
  *   WW3D::Get_Polygon_Mode -- returns the current rendering mode                              *
  *   WW3D::Set_Collision_Box_Display_Mask -- control rendering of collision boxes              *
  *   WW3D::Get_Collision_Box_Display_Mask -- returns the current display mask for collision bo *
@@ -181,6 +184,8 @@ float														WW3D::DecalRejectionDistance = 1000000.0f;
 bool														WW3D::AreStaticSortListsEnabled = false;
 bool														WW3D::MungeSortOnLoad = false;
 
+bool														WW3D::OverbrightModifyOnLoad = false;
+
 FrameGrabClass *										WW3D::Movie = NULL;
 bool														WW3D::PauseRecord;
 bool														WW3D::RecordNextFrame;
@@ -219,6 +224,10 @@ static bool												_LargeTextureExtraReductionEnabled = false;
 int														WW3D::LastFrameMemoryAllocations;
 int														WW3D::LastFrameMemoryFrees;
 
+int														WW3D::TextureFilter = 0;
+
+bool														WW3D::Lite = false;
+
 /**********************************************************************************
 **
 **  WW3D Static Functions
@@ -239,7 +248,7 @@ void WW3D::Set_NPatches_Level(unsigned level)
 	if (level<1) level=1;
 	if (NPatchesLevel==1 && level>1) TheDX8MeshRenderer.Invalidate();
 	if (NPatchesLevel>1 && level==1) TheDX8MeshRenderer.Invalidate();
-	NPatchesLevel = level; 
+	NPatchesLevel = level;
 }
 
 void WW3D::Set_Thumbnail_Enabled (bool b)
@@ -262,18 +271,22 @@ void WW3D::Set_Thumbnail_Enabled (bool b)
  * HISTORY:                                                                                    *
  *   3/24/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-WW3DErrorType WW3D::Init(void *hwnd, char *defaultpal)
+WW3DErrorType WW3D::Init(void *hwnd, char *defaultpal, bool lite)
 {
 	assert(IsInitted == false);
 	WWDEBUG_SAY(("WW3D::Init hwnd = %p\n",hwnd));
 	_Hwnd = (HWND)hwnd;
+	Lite = lite;
 
 	/*
 	** Initialize d3d, this also enumerates the available devices and resolutions.
 	*/
 	Init_D3D_To_WW3_Conversion();
-	if (!DX8Wrapper::Init(_Hwnd))
-		return WW3D_ERROR_INITIALIZATION_FAILED;
+	WWDEBUG_SAY(("Init DX8Wrapper\n"));
+	if (!DX8Wrapper::Init(_Hwnd, lite)) {
+		return(WW3D_ERROR_INITIALIZATION_FAILED);
+	}
+	WWDEBUG_SAY(("Allocate Debug Resources\n"));
 	Allocate_Debug_Resources();
 
  	MMRESULT r=timeBeginPeriod(1);
@@ -282,13 +295,15 @@ WW3DErrorType WW3D::Init(void *hwnd, char *defaultpal)
 	/*
 	** Initialize the dazzle system
 	*/
-	FileClass * dazzle_ini_file = _TheFileFactory->Get_File(DAZZLE_INI_FILENAME);
-	if (dazzle_ini_file) {
-		INIClass dazzle_ini(*dazzle_ini_file);
-		DazzleRenderObjClass::Init_From_INI(&dazzle_ini);
-		_TheFileFactory->Return_File(dazzle_ini_file);
+	if (!lite) {
+		WWDEBUG_SAY(("Init Dazzles\n"));
+		FileClass * dazzle_ini_file = _TheFileFactory->Get_File(DAZZLE_INI_FILENAME);
+		if (dazzle_ini_file) {
+			INIClass dazzle_ini(*dazzle_ini_file);
+			DazzleRenderObjClass::Init_From_INI(&dazzle_ini);
+			_TheFileFactory->Return_File(dazzle_ini_file);
+		}
 	}
-
 	/*
 	** Initialize the default static sort lists
 	** Note that DefaultStaticSortLists[0] is unused.
@@ -299,8 +314,11 @@ WW3DErrorType WW3D::Init(void *hwnd, char *defaultpal)
 	/*
 	** Initialize the animation-triggered sound system
 	*/
-	AnimatedSoundMgrClass::Initialize ();
-	IsInitted = true;
+	if (!lite) {
+		AnimatedSoundMgrClass::Initialize ();
+		IsInitted = true;
+	}
+	WWDEBUG_SAY(("WW3D Init completed\n"));
 	return WW3D_ERROR_OK;
 }
 
@@ -319,7 +337,7 @@ WW3DErrorType WW3D::Init(void *hwnd, char *defaultpal)
  *=============================================================================================*/
 WW3DErrorType WW3D::Shutdown(void)
 {
-	assert(IsInitted == true);
+	assert(Lite || IsInitted == true);
 //	WWDEBUG_SAY(("WW3D::Shutdown\n"));
 
 #ifdef WW3D_DX8
@@ -331,7 +349,6 @@ WW3DErrorType WW3D::Shutdown(void)
 	//restore the previous timer resolution
 	MMRESULT r=timeEndPeriod(1);
 	WWASSERT(r==TIMERR_NOERROR);
-
 	/*
 	** Free memory in predictive LOD optimizer
 	*/
@@ -340,7 +357,9 @@ WW3DErrorType WW3D::Shutdown(void)
 	/*
 	** Free the DazzleRenderObject class stuff. Whatever it is. ST - 6/11/2001 8:20PM
 	*/
-	DazzleRenderObjClass::Deinit ();
+	if (!Lite) {
+		DazzleRenderObjClass::Deinit ();
+	}
 
 	/*
 	** Release all of our assets
@@ -351,7 +370,9 @@ WW3DErrorType WW3D::Shutdown(void)
 	}
 
 	DX8TextureManagerClass::Shutdown();
-	DX8Wrapper::Shutdown();
+	if (!Lite) {
+		DX8Wrapper::Shutdown();
+	}
 
 	/*
 	** Clear the default static sort lists
@@ -738,6 +759,8 @@ void WW3D::_Invalidate_Mesh_Cache()
 
 void WW3D::_Invalidate_Textures()
 {
+	if (!WW3DAssetManager::Get_Instance()) return;
+
 	TextureLoader::Flush_Pending_Load_Tasks();
 
 	HashTemplateIterator<StringClass,TextureClass*> ite(WW3DAssetManager::Get_Instance()->Texture_Hash());
@@ -749,6 +772,15 @@ void WW3D::_Invalidate_Textures()
 		tex->Invalidate();
 	}
 }
+
+void WW3D::Set_Texture_Filter(int texture_filter)
+{
+	if (texture_filter<0) texture_filter=0;
+	if (texture_filter>TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC) texture_filter=TextureFilterClass::TEXTURE_FILTER_ANISOTROPIC;
+	TextureFilter=texture_filter;
+	TextureFilterClass::_Init_Filters();
+}
+
 
 /***********************************************************************************************
  * WW3D::Begin_Render -- mark the start of rendering for a new frame                           *
@@ -762,11 +794,19 @@ void WW3D::_Invalidate_Textures()
  * HISTORY:                                                                                    *
  *   3/24/98    GTH : Created.                                                                 *
  *=============================================================================================*/
-WW3DErrorType WW3D::Begin_Render(bool clear,bool clearz,const Vector3 & color, float dest_alpha)
+WW3DErrorType WW3D::Begin_Render(bool clear,bool clearz,const Vector3 & color, float dest_alpha, void(*network_callback)(void))
 {
+	if (!IsInitted) {
+		return(WW3D_ERROR_OK);
+	}
+
 	WWPROFILE("WW3D::Begin_Render");
 	WWASSERT(IsInitted);
 	HRESULT hr;
+
+	SNAPSHOT_SAY(("==========================================\r\n"));
+	SNAPSHOT_SAY(("========== WW3D::Begin_Render ============\r\n"));
+	SNAPSHOT_SAY(("==========================================\r\n\r\n"));
 
 	if (DX8Wrapper::_Get_D3D_Device8() && (hr=DX8Wrapper::_Get_D3D_Device8()->TestCooperativeLevel()) != D3D_OK)
 	{
@@ -839,6 +879,10 @@ WW3DErrorType WW3D::Begin_Render(bool clear,bool clearz,const Vector3 & color, f
  *=============================================================================================*/
 WW3DErrorType WW3D::Render(const LayerListClass &LayerList)
 {
+	if (!IsInitted) {
+		return(WW3D_ERROR_OK);
+	}
+
 	WWASSERT(IsRendering);
 
 	LayerClass *layer = LayerList.Last();
@@ -870,6 +914,9 @@ WW3DErrorType WW3D::Render(const LayerListClass &LayerList)
  *=============================================================================================*/
 WW3DErrorType WW3D::Render(const LayerClass &Layer)
 {
+	if (!IsInitted) {
+		return(WW3D_ERROR_OK);
+	}
 
 	WWASSERT(IsRendering);
 	return Render(Layer.Scene, Layer.Camera, Layer.Clear, Layer.ClearZ, Layer.ClearColor);
@@ -891,6 +938,10 @@ WW3DErrorType WW3D::Render(const LayerClass &Layer)
  *=============================================================================================*/
 WW3DErrorType WW3D::Render(SceneClass * scene,CameraClass * cam,bool clear,bool clearz,const Vector3 & color)
 {
+	if (!IsInitted) {
+		return(WW3D_ERROR_OK);
+	}
+
 	WWPROFILE("WW3D::Render");
 	WWMEMLOG(MEM_GAMEDATA);
 	WWASSERT(IsInitted);
@@ -924,8 +975,7 @@ WW3DErrorType WW3D::Render(SceneClass * scene,CameraClass * cam,bool clear,bool 
 
 	// Set the global ambient light value here.  If the scene is using the LightEnvironment system
 	// this setting will get overriden.
-	Vector3 ambient = scene->Get_Ambient_Light();
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_AMBIENT, DX8Wrapper::Convert_Color(ambient,0.0f));
+	DX8Wrapper::Set_Ambient(scene->Get_Ambient_Light());
 
 	// render the scene
 
@@ -956,6 +1006,10 @@ WW3DErrorType WW3D::Render(
 	RenderInfoClass & rinfo
 )
 {
+	if (!IsInitted) {
+		return(WW3D_ERROR_OK);
+	}
+
 	WWPROFILE("WW3D::Render");
 	WWASSERT(IsInitted);
 	WWASSERT(IsRendering);
@@ -1029,10 +1083,14 @@ void WW3D::Flush(RenderInfoClass & rinfo)
  *=============================================================================================*/
 WW3DErrorType WW3D::End_Render(bool flip_frame)
 {
+	if (!IsInitted) {
+		return(WW3D_ERROR_OK);
+	}
+
 	WWPROFILE("WW3D::End_Render");
 
-	assert(IsRendering);
-	assert(IsInitted);
+	WWASSERT(IsRendering);
+	WWASSERT(IsInitted);
 
 	// If sorting renderer flush isn't called from within any of the render functions
 	// the sorting arrays will overflow!
@@ -1041,12 +1099,28 @@ WW3DErrorType WW3D::End_Render(bool flip_frame)
 
 	IsRendering = false;
 
-	DX8Wrapper::End_Scene(flip_frame);
+	{
+		WWPROFILE("DX8Wrapper::End_Scene");
+		DX8Wrapper::End_Scene(flip_frame);
+	}
 
 	FrameCount++;
 
-	Debug_Statistics::End_Statistics();
+	{
+		WWPROFILE("End_Statistics");
+		Debug_Statistics::End_Statistics();
+	}
+
+	SNAPSHOT_SAY(("==========================================\r\n"));
+	SNAPSHOT_SAY(("========== WW3D::End_Render ==============\r\n"));
+	SNAPSHOT_SAY(("==========================================\r\n\r\n"));
+
 	Activate_Snapshot(false);
+	
+	// (gth) I've found some cases where its not safe to rely on our "shadow" copy (of 
+	// matrices for example) across multiple frames.  So even though this is slightly
+	// less "optimal", lets just reset the caches each frame.
+	DX8Wrapper::Invalidate_Cached_Render_States();
 
 	return WW3D_ERROR_OK;
 }
@@ -1223,18 +1297,32 @@ void WW3D::Normalize_Coordinates(int x, int y, float &fx, float &fy)
  *   5/19/99    GTH : Created.                                                                 *
  *   2/26/2001  hy : Updated to DX8                                                            *
  *=============================================================================================*/
-void WW3D::Make_Screen_Shot( const char * filename_base )
+void WW3D::Make_Screen_Shot( const char * filename_base , const float gamma, const ScreenShotFormatEnum format)
 {
 
 	WWASSERT(!IsRendering);
 
 	char filename[80];
 
+	char ext[4];
+	switch (format) {
+		case TGA:
+			sprintf(ext,"tga");
+			break;
+		case BMP:
+			sprintf(ext,"bmp");
+			break;
+		default:
+			WWASSERT(0);
+			return;
+			break;
+	}
+
 	static int frame_number = 1;
 
 	bool done = false;
 	while (!done) {
-		sprintf( filename, "%s%.2d.tga", filename_base, frame_number++);
+		sprintf( filename, "%s%.2d.%s", filename_base, frame_number++, ext);
 		FileClass*file=_TheFileFactory->Get_File( filename );
 		if ( file ) {
 			file->Open();
@@ -1246,6 +1334,17 @@ void WW3D::Make_Screen_Shot( const char * filename_base )
 	}
 
 	WWDEBUG_SAY(( "Creating Screen Shot %s\n", filename ));
+
+	// make the gamma look up table
+	int i;
+	unsigned char gamma_lut[256];
+	float recip = 1.0f;
+	if (gamma > WWMATH_EPSILON) {
+		recip = 1.0f / gamma;
+	}
+	for (i = 0; i < 256; i++) {
+		gamma_lut[i] = (unsigned char) (256.0f * powf(i / 256.0f, recip));
+	}
 
 	// Lock front buffer and copy
 
@@ -1266,7 +1365,7 @@ void WW3D::Make_Screen_Shot( const char * filename_base )
 	width=bounds.right-bounds.left;
 	height=bounds.bottom-bounds.top;
 
-	char *image=W3DNEWARRAY char[3*width*height];
+	unsigned char *image=W3DNEWARRAY unsigned char[3*width*height];
 
 	for (y=0; y<height; y++)
 	{
@@ -1277,34 +1376,87 @@ void WW3D::Make_Screen_Shot( const char * filename_base )
 			// index for fb
 			index2=y*lrect.Pitch+4*x;
 
-			image[index]=*((char *) lrect.pBits + index2+2);
-			image[index+1]=*((char *) lrect.pBits + index2+1);
-			image[index+2]=*((char *) lrect.pBits + index2+0);
+			image[index]   = gamma_lut[*((unsigned char *) lrect.pBits + index2+2)];
+			image[index+1] = gamma_lut[*((unsigned char *) lrect.pBits + index2+1)];
+			image[index+2] = gamma_lut[*((unsigned char *) lrect.pBits + index2+0)];
 		}
 	}
 
 	fb->Release();
 
-	Targa targ;
-	memset(&targ.Header,0,sizeof(targ.Header));
-	targ.Header.Width=width;
-	targ.Header.Height=height;
-	targ.Header.PixelDepth=24;
-	targ.Header.ImageType=TGA_TRUECOLOR;
-	targ.SetImage(image);
-	targ.YFlip();
+	switch (format) {
+		case TGA:
+			{
+				Targa targ;
+				memset(&targ.Header,0,sizeof(targ.Header));
+				targ.Header.Width=width;
+				targ.Header.Height=height;
+				targ.Header.PixelDepth=24;
+				targ.Header.ImageType=TGA_TRUECOLOR;
+				targ.SetImage((char *) image);
+				targ.YFlip();
 
-	RawFileClass*file=(RawFileClass*)_TheWritingFileFactory->Get_File( filename );
-	if ( file ) {
-		file->Create();
-		file->Close();
-		_TheWritingFileFactory->Return_File( file );
+				FileClass*file=_TheWritingFileFactory->Get_File( filename );
+				if ( file ) {
+					file->Create();
+					file->Close();
+					_TheWritingFileFactory->Return_File( file );
+				}
+
+				targ.Save(filename,TGAF_IMAGE,false);
+			}
+		break;
+		case BMP:
+			{
+				BITMAPFILEHEADER fileheader;
+				BITMAPINFOHEADER header;
+				memset(&header, 0, sizeof(BITMAPINFOHEADER));
+				header.biSize = sizeof(BITMAPINFOHEADER);
+				header.biWidth = width;
+				header.biHeight = height;
+				header.biPlanes = 1;
+				header.biBitCount = 24;
+				header.biCompression = BI_RGB;
+				header.biXPelsPerMeter = 0xB12;
+				header.biYPelsPerMeter = 0xB12;
+				int len = ((width * 24 +31) & ~31) /8;
+    
+				memset(&fileheader, 0, sizeof(BITMAPFILEHEADER));
+				fileheader.bfType = 19778; // BM
+				fileheader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+				fileheader.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + 3 * len * height * sizeof(char);
+
+				FileClass *file = _TheWritingFileFactory->Get_File( filename );
+				if ( file ) {
+					file->Create();
+					file->Open(FileClass::WRITE);
+					int num;
+					num = file->Write(&fileheader, sizeof(BITMAPFILEHEADER));
+					WWASSERT(num == sizeof(BITMAPFILEHEADER));
+					num = file->Write(&header, sizeof(BITMAPINFOHEADER));
+					WWASSERT(num == sizeof(BITMAPINFOHEADER));
+					char *temp = new char [3 * len];
+					memset(temp, 0, 3 * len * sizeof(char));
+					// invert image, pad and swap R and B
+					for (y = 0; y < (int) height; y++) {
+						memcpy(&temp[0], &image[ 3 * width * (height - y - 1)], 3 * width * sizeof(char));
+						for (x = 0; x < width; x++) {
+							char t2 = temp[3 * x];
+							temp[3 * x] = temp[3 * x + 2];
+							temp[3 * x + 2] = t2;
+						}
+						num = file->Write(&temp[0], len * sizeof(char));
+						WWASSERT(num == len * (int)sizeof(char));
+					}
+					delete [] temp;
+					file->Close();
+					_TheWritingFileFactory->Return_File( file );
+				}
+			}
+			break;
 	}
 
-	targ.Save(filename,TGAF_IMAGE,false);
-
 	delete [] image;
-
 }
 
 
@@ -1781,6 +1933,9 @@ void WW3D::Release_Debug_Resources(void)
 
 WW3DErrorType WW3D::On_Deactivate_App(void)
 {
+	_Invalidate_Textures();
+	_Invalidate_Mesh_Cache();
+
 	return WW3D_ERROR_OK;
 }
 
@@ -1864,4 +2019,9 @@ void WW3D::Override_Current_Static_Sort_Lists(StaticSortListClass * sort_list)
 void WW3D::Reset_Current_Static_Sort_Lists_To_Default(void)
 {
 	CurrentStaticSortLists = DefaultStaticSortLists;
+}
+
+void WW3D::Set_Gamma(float gamma,float bright,float contrast,bool calibrate)
+{
+	DX8Wrapper::Set_Gamma(gamma,bright,contrast,calibrate);
 }

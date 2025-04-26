@@ -1,6 +1,6 @@
 /*
 **	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 TheSuperHackers 
+**	Copyright 2025 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -30,13 +30,12 @@ char* TheCurrentIgnoreCrashPtr = NULL;
 void DebugLog(const char *format, ...)
 {
 	// Print it to the console
-	char theBuffer[8192];
 
 	va_list arg;
 	va_start(arg, format);
-	vsprintf(theBuffer, format, arg);
+	vprintf(format, arg);
 	va_end(arg);
-} 
+}
 
 #endif
 
@@ -45,14 +44,13 @@ void DebugLog(const char *format, ...)
 void DebugCrash(const char *format, ...)
 {
 	// Print it to the console
-	char theCrashBuffer[8192];
+
 	va_list arg;
 	va_start(arg, format);
-	vsprintf(theCrashBuffer, format, arg);
+	vprintf(format, arg);
 	va_end(arg);
 
-	// Quit
-	exit(EXIT_FAILURE);
+	// No exit in this stub
 }
 
 #endif
