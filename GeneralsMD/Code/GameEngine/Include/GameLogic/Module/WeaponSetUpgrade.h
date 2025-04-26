@@ -34,11 +34,14 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
+#include "GameLogic/WeaponSet.h"
+
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Thing;
-enum ModelConditionFlagType CPP_11(: Int);
+//enum ModelConditionFlagType CPP_11(: Int);
 enum WeaponSetType CPP_11(: Int);
+
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -51,8 +54,8 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-	WeaponSetType m_weaponSetFlagSet;  ///< The weaponset flag to set (default = WEAPONSET_PLAYER_UPGRADE)
-	WeaponSetType m_weaponSetFlagClear;  ///< The weaponset flag to clear. This is needed if we want to override a previous upgrade.
+	WeaponSetType m_weaponSetFlag;  ///< The weaponset flag to set (default = WEAPONSET_PLAYER_UPGRADE)
+	WeaponSetFlags m_weaponSetFlagsToClear;  ///< The weaponset flag to clear. This is needed if we want to override a previous upgrade.
 	Bool m_needsParkedAircraft;   ///< Aircraft attempting this upgrade needs to be stationary in hangar
 
 	//Note: looks like conditionState changes are intrinsic to the weaponsets.

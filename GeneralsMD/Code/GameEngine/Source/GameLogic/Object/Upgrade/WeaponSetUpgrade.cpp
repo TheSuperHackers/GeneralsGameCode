@@ -40,8 +40,8 @@
 //-------------------------------------------------------------------------------------------------
 WeaponSetUpgradeModuleData::WeaponSetUpgradeModuleData(void)
 {
-	m_weaponSetFlagSet = WEAPONSET_PLAYER_UPGRADE;
-	m_weaponSetFlagClear = WEAPONSET_COUNT;  // = undefined;
+	m_weaponSetFlag = WEAPONSET_PLAYER_UPGRADE;
+	// m_weaponSetFlagsToClear = WEAPONSET_COUNT;  // = undefined;
 	m_needsParkedAircraft = FALSE;
 }
 
@@ -54,8 +54,10 @@ void WeaponSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 	static const FieldParse dataFieldParse[] =
 	{
-		{ "WeaponSetFlag", INI::parseIndexList,	WeaponSetFlags::getBitNames(),offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlagSet) },
-		{ "WeaponSetFlagToClear", INI::parseIndexList, WeaponSetFlags::getBitNames(), offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlagClear) },
+		{ "WeaponSetFlag", INI::parseIndexList,	WeaponSetFlags::getBitNames(),offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlag) },
+		// { "WeaponSetFlagToClear", INI::parseIndexList, WeaponSetFlags::getBitNames(), offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlagClear) },
+		//{ "WeaponSetFlag", WeaponSetFlags::parseFromINI,	NULL ,offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlag) },
+		{ "WeaponSetFlagsToClear", WeaponSetFlags::parseFromINI, NULL, offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlagsToClear) },
 		{ "NeedsParkedAircraft", INI::parseBool, NULL, offsetof(WeaponSetUpgradeModuleData, m_needsParkedAircraft) },
 		{ 0, 0, 0, 0 }
 	};
@@ -88,9 +90,8 @@ Bool WeaponSetUpgrade::wouldUpgrade(UpgradeMaskType keyMask) const
 		if (data->m_needsParkedAircraft) {
 			const AIUpdateInterface* ai = getObject()->getAI();
 			if (ai) {
-				// Jets can be idle while in the air, so we need to do more than isMoving
 				const JetAIUpdate* jetAI = ai->getJetAIUpdate();
-				if (!ai->isMoving() && (jetAI) && !(jetAI->friend_isTakeoffOrLandingInProgress() || getObject()->isAboveTerrain())) {
+				if ((jetAI) && jetAI->isParkedInHangar()){
 					return TRUE;
 				}
 			}
@@ -113,10 +114,30 @@ void WeaponSetUpgrade::upgradeImplementation( )
 	const WeaponSetUpgradeModuleData* data = getWeaponSetUpgradeModuleData();
 
 	Object *obj = getObject();
-	obj->setWeaponSetFlag(data->m_weaponSetFlagSet);
+	obj->setWeaponSetFlag(data->m_weaponSetFlag);
 
-	if (data->m_weaponSetFlagClear < WEAPONSET_COUNT) {
-		obj->clearWeaponSetFlag(data->m_weaponSetFlagClear);
+	/*DEBUG_LOG((">>> WSU: m_weaponSetFlagsToClear = %d\n",
+		data->m_weaponSetFlag));*/
+
+	if (data->m_weaponSetFlagsToClear.any()) {
+		//WeaponSetFlags& flags = obj->getWeaponSetFlags();
+		for (int i = 0; i < WEAPONSET_COUNT; i++) {
+			WeaponSetType type = (WeaponSetType)i;
+			if (data->m_weaponSetFlagsToClear.test(type)) {
+				obj->clearWeaponSetFlag(type);
+			}
+		}
+
+		//unsigned int flags = data->m_weaponSetFlagsToClear;
+		//while (flags) {
+		//	// Isolate the lowest set bit
+		//	unsigned int flag = flags & -flags;
+
+		//	obj->clearWeaponSetFlag(flag);
+
+		//	// Clear the lowest set bit
+		//	flags ^= flag;
+		//}
 	}
 }
 

@@ -1070,7 +1070,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			// Jets can be idle while in the air, so we need to do more
 			JetAIUpdate* jetAI = ai->getJetAIUpdate();
 
-			if (jetAI && (jetAI->friend_isTakeoffOrLandingInProgress() || obj->isAboveTerrain())) {
+			if (jetAI && !jetAI->isParkedInHangar()) {
 				return COMMAND_RESTRICTED;
 			}
 		}

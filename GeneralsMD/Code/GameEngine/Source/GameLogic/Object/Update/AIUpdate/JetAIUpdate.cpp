@@ -2267,6 +2267,18 @@ Bool JetAIUpdate::getTreatAsAircraftForLocoDistToGoal() const
 	}
 }
 
+//-------------------------------------------------------------------------------------------------
+Bool JetAIUpdate::isParkedInHangar() const
+{
+	// We do not check if the Aircraft actually needs a runway/hangar here,
+	// so we can ignore those cases earlier already
+	return !(getFlag(TAKEOFF_IN_PROGRESS)
+		|| getFlag(LANDING_IN_PROGRESS)
+		|| getObject()->isSignificantlyAboveTerrain()
+		|| isMoving()
+		|| isWaitingForPath());
+}
+
 //----------------------------------------------------------------------------------------
 /**
  * Follow the path defined by the given array of points
