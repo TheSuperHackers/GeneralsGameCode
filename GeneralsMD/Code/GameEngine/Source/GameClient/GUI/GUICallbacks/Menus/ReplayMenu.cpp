@@ -108,6 +108,52 @@ UnicodeString GetReplayFilenameFromListbox(GameWindow *listbox, Int index)
 }
 
 
+
+void WriteOutReplayList()
+{
+	AsciiString fname;
+	fname.format("%sreplay_list.replist", TheRecorder->getReplayDir().str());
+	FILE *fp = fopen(fname.str(), "wt");
+	if (!fp)
+		return;
+
+	AsciiString asciistr;
+	AsciiString asciisearch;
+	asciisearch = "*";
+	asciisearch.concat(TheRecorder->getReplayExtention());
+
+	FilenameList replayFilenames;
+	TheFileSystem->getFileListInDirectory(TheRecorder->getReplayDir(), asciisearch, replayFilenames, TRUE);
+
+	for (FilenameListIter it = replayFilenames.begin(); it != replayFilenames.end(); ++it)
+	{
+		// just want the filename
+		asciistr.set((*it).reverseFind('\\') + 1);
+		RecorderClass::ReplayHeader header;
+		ReplayGameInfo info;
+		const MapMetaData *md;
+		Bool success = GetMapInfo(asciistr, &header, &info, &md);
+		if (!success)
+			continue;
+
+		UnicodeString replayNameToShow = header.replayName;
+		AsciiString replayNameToShowAscii;
+		replayNameToShowAscii.translate(replayNameToShow);
+		
+		fprintf(fp, "%s #", replayNameToShowAscii.str());
+
+		if (!md)
+			fprintf(fp, " no map");
+		fprintf(fp, header.localPlayerIndex >= 0 ? " MP" : " SP");
+		if (header.quitEarly)
+			fprintf(fp, " quitearly");
+		if (header.desyncGame)
+			fprintf(fp, " mismatch");
+		fprintf(fp, "\n");
+	}
+	fclose(fp);
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Populate the listbox with the names of the available replay files */
 //-------------------------------------------------------------------------------------------------
@@ -268,6 +314,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 		}
 	}
 	GadgetListBoxSetSelected(listbox, 0);
+	WriteOutReplayList();
 }
 
 //-------------------------------------------------------------------------------------------------
