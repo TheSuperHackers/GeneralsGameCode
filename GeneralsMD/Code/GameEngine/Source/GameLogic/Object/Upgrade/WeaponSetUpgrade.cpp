@@ -33,6 +33,7 @@
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/WeaponSetUpgrade.h"
+#include "GameLogic/Module/JetAIUpdate.h"
 
 
 //-------------------------------------------------------------------------------------------------
@@ -41,6 +42,7 @@ WeaponSetUpgradeModuleData::WeaponSetUpgradeModuleData(void)
 {
 	m_weaponSetFlagSet = WEAPONSET_PLAYER_UPGRADE;
 	m_weaponSetFlagClear = WEAPONSET_COUNT;  // = undefined;
+	m_needsParkedAircraft = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -54,6 +56,7 @@ void WeaponSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 	{
 		{ "WeaponSetFlag", INI::parseIndexList,	WeaponSetFlags::getBitNames(),offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlagSet) },
 		{ "WeaponSetFlagToClear", INI::parseIndexList, WeaponSetFlags::getBitNames(), offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlagClear) },
+		{ "NeedsParkedAircraft", INI::parseBool, NULL, offsetof(WeaponSetUpgradeModuleData, m_needsParkedAircraft) },
 		{ 0, 0, 0, 0 }
 	};
 
@@ -71,6 +74,34 @@ WeaponSetUpgrade::WeaponSetUpgrade( Thing *thing, const ModuleData* moduleData )
 //-------------------------------------------------------------------------------------------------
 WeaponSetUpgrade::~WeaponSetUpgrade( void )
 {
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Bool WeaponSetUpgrade::wouldUpgrade(UpgradeMaskType keyMask) const
+{
+	if (UpgradeMux::wouldUpgrade(keyMask)) {
+
+		// Check additional conditions
+		const WeaponSetUpgradeModuleData* data = getWeaponSetUpgradeModuleData();
+
+		if (data->m_needsParkedAircraft) {
+			const AIUpdateInterface* ai = getObject()->getAI();
+			if (ai) {
+				// Jets can be idle while in the air, so we need to do more than isMoving
+				const JetAIUpdate* jetAI = ai->getJetAIUpdate();
+				if (!ai->isMoving() && (jetAI) && !(jetAI->friend_isTakeoffOrLandingInProgress() || getObject()->isAboveTerrain())) {
+					return TRUE;
+				}
+			}
+		}
+		else {
+			return TRUE;
+		}
+	}
+
+	//We can't upgrade!
+	return FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -53,6 +53,7 @@ public:
 
 	WeaponSetType m_weaponSetFlagSet;  ///< The weaponset flag to set (default = WEAPONSET_PLAYER_UPGRADE)
 	WeaponSetType m_weaponSetFlagClear;  ///< The weaponset flag to clear. This is needed if we want to override a previous upgrade.
+	Bool m_needsParkedAircraft;   ///< Aircraft attempting this upgrade needs to be stationary in hangar
 
 	//Note: looks like conditionState changes are intrinsic to the weaponsets.
 	// If we define new weaponsets, we need to add new conditionstates anyways
@@ -69,6 +70,8 @@ class WeaponSetUpgrade : public UpgradeModule
 	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(WeaponSetUpgrade, WeaponSetUpgradeModuleData);
 
 public:
+
+	virtual Bool wouldUpgrade(UpgradeMaskType keyMask) const;
 
 	WeaponSetUpgrade( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype defined by MemoryPoolObject
