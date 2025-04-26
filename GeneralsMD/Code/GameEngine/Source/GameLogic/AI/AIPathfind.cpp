@@ -760,7 +760,7 @@ void Path::computePointOnPath(
 	ClosestPointOnPathInfo& out
 )
 {
-	CRCDEBUG_LOG(("Path::computePointOnPath() fzor %s\n", DescribeObject(obj).str()));
+	CRCDEBUG_LOG(("Path::computePointOnPath() for %s\n", DebugDescribeObject(obj).str()));
 
 	out.layer = LAYER_GROUND;
 	out.posOnPath.zero();

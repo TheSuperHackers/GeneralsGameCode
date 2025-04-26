@@ -811,10 +811,8 @@ private:
 
 };  // end class Object
 
-#ifdef DEBUG_LOGGING
 // describe an object as an AsciiString: e.g. "Object 102 (KillerBuggy) [GLARocketBuggy, owned by player 2 (GLAIntroPlayer)]"
-AsciiString DescribeObject(const Object *obj);
-#endif // DEBUG_LOGGING
+AsciiString DebugDescribeObject(const Object *obj);
 
 #if defined(_DEBUG) || defined(_INTERNAL)
 	#define DEBUG_OBJECT_ID_EXISTS
