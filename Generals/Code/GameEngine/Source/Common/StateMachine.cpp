@@ -499,8 +499,20 @@ State *StateMachine::internalGetState( StateID id )
 
 	if (i == m_stateMap.end())
 	{
-		DEBUG_CRASH(( "StateMachine::internalGetState(): Invalid state" ));
-		throw ERROR_BAD_ARG;
+		// TheSuperHackers @info helmutbuhler 26/04/2025
+		// These logs cause mismatch on Release when logging is enabled.
+		DEBUG_CRASH( ("StateMachine::internalGetState(): Invalid state for object %s using state %d", m_owner->getTemplate()->getName().str(), id) );
+#if defined(_DEBUG) || defined(_INTERNAL)
+		DEBUG_LOG(("Transitioning to state #d\n", (Int)id));
+		DEBUG_LOG(("Attempting to recover - locating default state...\n"));
+#endif
+		i = m_stateMap.find(m_defaultStateID);
+		if (i == m_stateMap.end()) {
+#if defined(_DEBUG) || defined(_INTERNAL)
+			DEBUG_LOG(("Failed to located default state.  Aborting...\n"));
+#endif
+			throw ERROR_BAD_ARG;
+		}
 	}
 
 	return (*i).second;
