@@ -293,7 +293,10 @@ extern GameClient *TheGameClient;
 //					m_treeBuffer = NULL
 //					m_propBuffer = NULL
 //					m_bibBuffer = NULL
-//					m_bridgeBuffer = NULL
+//					m_bridgeBuffer is partially disabled:
+//						m_vertexBridge = NULL
+//						m_indexBridge = NULL
+//						m_vertexMaterial = NULL
 //					m_waypointBuffer = NULL
 //					m_roadBuffer = NULL
 //					m_shroud = NULL

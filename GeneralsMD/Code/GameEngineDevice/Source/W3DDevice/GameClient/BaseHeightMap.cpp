@@ -304,6 +304,7 @@ BaseHeightMapRenderObjClass::BaseHeightMapRenderObjClass(void)
 	clearAllScorches();
 	m_shroud = NULL;
 #endif
+	m_bridgeBuffer = NEW W3DBridgeBuffer;
 
 	if (TheGlobalData->m_headless)
 		return;
@@ -315,7 +316,6 @@ BaseHeightMapRenderObjClass::BaseHeightMapRenderObjClass(void)
 	m_bibBuffer = NEW W3DBibBuffer;
 
 	m_curImpassableSlope = 45.0f;	// default to 45 degrees.
-	m_bridgeBuffer = NEW W3DBridgeBuffer;
 	m_waypointBuffer = NEW W3DWaypointBuffer;
 #ifdef DO_ROADS
 	m_roadBuffer = NEW W3DRoadBuffer;
