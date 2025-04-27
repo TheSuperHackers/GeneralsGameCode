@@ -118,6 +118,8 @@ class SkeletonSceneClass;
 #define UPDATE_TIME					100  /* 10 frames a second */
 #define MOUSE_WHEEL_FACTOR	32
 
+#define ICON_COLOR_SECTION "EntityIconColor"
+
 #define SAMPLE_DYNAMIC_LIGHT	1
 #ifdef SAMPLE_DYNAMIC_LIGHT
 static W3DDynamicLight * theDynamicLight = NULL;
@@ -2070,6 +2072,86 @@ Bool WbView3d::docToViewCoords(Coord3D curPt, CPoint* newPt)
 	return coordInsideFrustrum;
 }
 
+
+Int WbView3d::parseHexColorFromProfile(const char* section, const char* key, const char* defaultHex)
+{
+    CString str = AfxGetApp()->GetProfileString(section, key, defaultHex);
+
+#ifdef _UNICODE
+    char buffer[16];
+    WideCharToMultiByte(CP_ACP, 0, str, -1, buffer, sizeof(buffer), NULL, NULL);
+    unsigned int color = 0;
+    sscanf(buffer, "%x", &color);
+#else
+    unsigned int color = 0;
+    sscanf(str, "%x", &color);
+#endif
+
+    color &= 0xFFFFFF;
+
+    // 🔥 Swap Red and Blue to match Windows COLORREF
+    unsigned int r = (color >> 16) & 0xFF;
+    unsigned int g = (color >> 8) & 0xFF;
+    unsigned int b = (color >> 0) & 0xFF;
+    color = (b << 16) | (g << 8) | (r << 0);
+
+    return (Int)color;
+}
+
+
+// void WbView3d::addMapObjectIfVisible(MapObject *pMapObj)
+// {
+//     if (!pMapObj) return;
+
+//     const Coord3D* loc = pMapObj->getLocation();
+//     SphereClass bounds(Vector3(loc->x, loc->y, loc->z), THE_RADIUS);
+//     Bool isCulled = m_camera->Cull_Sphere(bounds);
+
+//     if (isCulled) {
+//         return;
+//     }
+
+//     RenderObjClass* renderObj = NULL;
+//     Real scale = 1.0;
+//     AsciiString modelName = getModelNameAndScale(pMapObj, &scale, BODY_PRISTINE);
+//     if (!modelName.isEmpty() && strncmp(modelName.str(), "No ", 3) != 0) {
+//         renderObj = m_assetManager->Create_Render_Obj(modelName.str(), scale, 0);
+
+//         if (renderObj) {
+//             pMapObj->setRenderObj(renderObj);
+
+//             // 🛠 Fix: adjust z by terrain height
+//             Coord3D finalLoc = *loc;
+//             if (m_heightMapRenderObj) {
+//                 finalLoc.z += m_heightMapRenderObj->getHeightMapHeight(finalLoc.x, finalLoc.y, NULL);
+//             }
+
+//             Matrix3D renderObjPos(true); // Identity
+//             renderObjPos.Translate(finalLoc.x, finalLoc.y, finalLoc.z);
+//             renderObjPos.Rotate_Z(pMapObj->getAngle());
+//             renderObj->Set_Transform(renderObjPos);
+
+//             m_scene->Add_Render_Object(renderObj);
+//             REF_PTR_RELEASE(renderObj); // Scene owns it now
+//         }
+//     }
+// }
+
+
+// void WbView3d::updateVisibleMapObjects()
+// {
+//     // Step 1: Clean up previous render objects
+//     resetRenderObjects();
+
+//     // Step 2: Loop through ALL MapObjects and add if visible
+//     MapObject* pMapObj = MapObject::getFirstMapObject();
+//     while (pMapObj)
+//     {
+//         addMapObjectIfVisible(pMapObj);
+//         pMapObj = pMapObj->getNext();
+//     }
+// }
+
 // ----------------------------------------------------------------------------
 void WbView3d::redraw(void) 
 {
@@ -2107,7 +2189,23 @@ void WbView3d::redraw(void)
 //			WWDEBUG_SAY(("%d ms for updateCenter, %d FPS\n", curTicks, 1000/curTicks));
 //		}
 	}
+
+	// const Int COLOR_GREN = 0x00FF00; // Reserved for waypoint path
+	// const Int COLOR_YLLW = 0xFFFF00; // Reserved for roads
+	// const Int COLOR_PINK = 0xFF00FF; // Reserved for units
+	// const Int COLOR_CYAN = 0x00FFFF; // Reserved for anything else
+	// AfxGetApp()->GetProfileString(APP_SECTION, "Color16", "0");
+
 	if (m_drawObject) {
+		Int roadIconColor = parseHexColorFromProfile(ICON_COLOR_SECTION, "Roads", "FFFF00"); 
+		m_drawObject->setRoadIconColor(roadIconColor);
+		Int waypointIconColor  = parseHexColorFromProfile(ICON_COLOR_SECTION, "Waypoints", "00FF00");
+		m_drawObject->setWaypointIconColor(waypointIconColor);
+		Int unitIconColor  = parseHexColorFromProfile(ICON_COLOR_SECTION, "Units", "FF00FF");
+		m_drawObject->setUnitIconColor(unitIconColor);
+		Int defaultIconColor  = parseHexColorFromProfile(ICON_COLOR_SECTION, "Defaukt", "00FFFF");
+		m_drawObject->setDefaultIconColor(defaultIconColor);
+
 		m_drawObject->setDrawObjects(m_showObjects, 
 			m_showWaypoints || WaypointTool::isActive(),
 			m_showPolygonTriggers || PolygonTool::isActive(),
@@ -2119,6 +2217,8 @@ void WbView3d::redraw(void)
 	if (m_buildRedMultiplier>4.0f || m_buildRedMultiplier<0) {
 		m_buildRedMultiplier = 0;
 	}
+
+	// updateVisibleMapObjects();
 	render();
 	m_time = ::GetTickCount();
 }

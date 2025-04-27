@@ -86,6 +86,8 @@ IDB_ROAD_CORNERS        BITMAP  DISCARDABLE     "IDB_ROAD_CORNERS.bmp"
 IDB_FOLDERSCRIPT        BITMAP  DISCARDABLE     "foldersc.bmp"
 IDB_FOLDERSCRIPTB       BITMAP  DISCARDABLE     "foldersb.bmp"
 IDB_WORLDBUILDERSPLASH  BITMAP  DISCARDABLE     "WorldBuilder.bmp"
+28727                   BITMAP  DISCARDABLE     "bmp28727.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -499,36 +501,38 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 222, 286
+IDD_ABOUTBOX DIALOGEX 0, 0, 235, 304
 STYLE DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About Generals World Builder"
 FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "Adriane [ Deathscythe ] Community Worldbuilder Version 3.0",
-                    IDC_STATIC,6,6,211,8,SS_NOPREFIX
-    GROUPBOX        "Collaborators / Testers:",IDC_STATIC,6,42,211,41
+                    IDC_STATIC,6,6,224,8,SS_NOPREFIX
+    GROUPBOX        "Collaborators / Testers:",IDC_STATIC,6,42,170,41
     LTEXT           "This is a fan-modified tool of the original ZH worldbuilder. All trademarks belong to their respective owners.",
-                    IDC_STATIC,6,18,211,22
-    EDITTEXT        IDC_HOTKEYLIST,6,213,211,65,ES_MULTILINE | 
+                    IDC_STATIC,6,18,224,22
+    EDITTEXT        IDC_HOTKEYLIST,6,192,224,104,ES_MULTILINE | 
                     ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
-    LTEXT           "Hotkey List    Search:",IDC_STATIC,6,193,72,11,
+    LTEXT           "Hotkey List    Search:",IDC_STATIC,6,177,72,11,
                     SS_CENTERIMAGE
-    EDITTEXT        IDC_FIND_QUERY,81,191,110,14
-    PUSHBUTTON      "Find",IDC_FIND_HKEY_BUTTON,193,191,24,14
+    EDITTEXT        IDC_FIND_QUERY,81,174,110,14
+    PUSHBUTTON      "Find",IDC_FIND_HKEY_BUTTON,206,174,24,14
     LTEXT           "Kabuse [Hotkey layout] , Gramantio [Tester .. (WIP)",
-                    IDC_STATIC,13,52,192,22
+                    IDC_STATIC,13,52,160,22
     CONTROL         "Launch this window on app startup",IDC_LAUNCH_ONSTARTUP,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,86,129,14
-    COMBOBOX        IDC_FIND_QUERY_OBJ,15,124,122,164,CBS_DROPDOWN | 
+    COMBOBOX        IDC_FIND_QUERY_OBJ,15,115,135,172,CBS_DROPDOWN | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Find",IDC_FIND_OBJ_BUTTON,139,123,34,14
-    PUSHBUTTON      "Refresh",IDC_REFRESH_OBJ_BUTTON,175,123,34,14
-    GROUPBOX        "Object Finder:",IDC_STATIC,6,110,211,35
-    GROUPBOX        "Waypoint Finder:",IDC_STATIC,6,150,211,35
-    COMBOBOX        IDC_FIND_QUERY_WP,15,163,122,124,CBS_DROPDOWN | 
+    PUSHBUTTON      "Find",IDC_FIND_OBJ_BUTTON,153,114,34,14
+    PUSHBUTTON      "Refresh",IDC_REFRESH_OBJ_BUTTON,189,114,34,14
+    GROUPBOX        "Object Finder:",IDC_STATIC,6,101,224,35
+    GROUPBOX        "Waypoint Finder:",IDC_STATIC,6,137,224,35
+    COMBOBOX        IDC_FIND_QUERY_WP,15,150,135,206,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Find",IDC_FIND_WP_BUTTON,139,161,34,14
-    PUSHBUTTON      "Refresh",IDC_REFRESH_WP_BUTTON,175,161,34,14
+    PUSHBUTTON      "Find",IDC_FIND_WP_BUTTON,153,148,34,14
+    PUSHBUTTON      "Refresh",IDC_REFRESH_WP_BUTTON,189,148,34,14
+    CONTROL         28727,IDC_STATIC,"Static",SS_BITMAP,186,43,44,41,
+                    WS_EX_DLGMODALFRAME
 END
 
 IDD_CellWidth DIALOG DISCARDABLE  0, 0, 186, 95
@@ -2070,9 +2074,9 @@ BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
         LEFTMARGIN, 6
-        RIGHTMARGIN, 217
+        RIGHTMARGIN, 230
         TOPMARGIN, 6
-        BOTTOMMARGIN, 278
+        BOTTOMMARGIN, 296
     END
 
     IDD_CellWidth, DIALOG

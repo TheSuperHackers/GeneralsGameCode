@@ -886,13 +886,13 @@ void CAboutDlg::OnFindButtonClicked()
 	{
 		pHotkeyList->SetFocus();
 		pHotkeyList->SetSel(pos, pos + query.GetLength());
-		GetDlgItem(IDC_FIND_QUERY)->SetFocus();
+		// GetDlgItem(IDC_FIND_QUERY)->SetFocus();
 	}
 	else
 	{
 		MessageBeep(MB_ICONEXCLAMATION);
 		pHotkeyList->SetSel(-1, -1); // Clear selection if not found
-		GetDlgItem(IDC_FIND_QUERY)->SetFocus();
+		// GetDlgItem(IDC_FIND_QUERY)->SetFocus();
 	}
 }
 
@@ -927,43 +927,83 @@ void CWorldBuilderApp::OnAppAbout()
 	}
 
 	CEdit* pEdit = (CEdit*)pAboutDlg->GetDlgItem(IDC_HOTKEYLIST);
+
+	struct HotkeyEntry
+	{
+		const char* key;
+		const char* description;
+	};
+	
+	HotkeyEntry hotkeys[] =
+	{
+		{ "Tab", "Lock Horizontal" },
+		{ "Q", "Brush Tool" },
+		{ "W", "Add Brush" },
+		{ "E", "Subtract Brush" },
+		{ "R", "Feather Tool" },
+		{ "T", "Mold Tool  " }, // artificially spaced it out -- theres a bug with tabs
+		{ "Alt+1", "Show Objects" },
+		{ "Alt+2", "Show Waypoints" },
+		{ "Alt+3", "Show Polygon Triggers" },
+		{ "Alt+4", "Show Labels" },
+		{ "Alt+5", "Show Models" },
+		{ "Alt+6", "Show Bounding Boxes" },
+		{ "Alt+7", "Show Sight Ranges" },
+		{ "Alt+8", "Show Weapon Ranges" },
+		{ "Alt+9", "Show Map Boundaries" },
+		{ "Alt+0", "Show Terrain" },
+		{ "Y", "Water Tool" },
+		{ "A", "Tile Tool    " }, // artificially spaced it out -- theres a bug with tabs
+		{ "S", "Big Tile Tool" },
+		{ "D", "Tile Flood Fill" },
+		{ "F", "Auto Edge Out Tool" },
+		{ "G", "Blend Edge Tool" },
+		{ "Z", "Place Object Tool" },
+		{ "X", "Road Tool" },
+		{ "C", "Grove Tool" },
+		{ "V", "Ramp Tool" },
+		{ "B", "Scorch Tool" },
+		{ "N", "Fence Tool" },
+		{ "M", "Build List Tool" },
+		{ "F1", "Waypoint Tool" },
+		{ "F2", "Polygon Tool" },
+		{ "F3", "Border Tool" },
+		{ "F4", "Script Editor" },
+		{ "F5", "Team Editor" },
+	};
+	
 	CString text;
-	text =
-    "Tab\tLock Horizontal" NEWLINE
-    "Q\tBrush Tool" NEWLINE
-    "W\tAdd Brush" NEWLINE
-    "E\tSubtract Brush" NEWLINE
-    "R\tFeather Tool" NEWLINE
-    "T\tMold Tool" NEWLINE
-    "Alt+1\tShow Objects" NEWLINE
-    "Alt+2\tShow Waypoints" NEWLINE
-    "Alt+3\tShow Polygon Triggers" NEWLINE
-    "Alt+4\tShow Labels" NEWLINE
-    "Alt+5\tShow Models" NEWLINE
-    "Alt+6\tShow Bounding Boxes" NEWLINE
-    "Alt+7\tShow Sight Ranges" NEWLINE
-    "Alt+8\tShow Weapon Ranges" NEWLINE
-    "Alt+9\tShow Map Boundaries" NEWLINE
-    "Alt+0\tShow Terrain" NEWLINE
-    "Y\tWater Tool" NEWLINE
-    "A\tTile Tool" NEWLINE
-    "S\tBig Tile Tool" NEWLINE
-    "D\tTile Flood Fill" NEWLINE
-    "F\tAuto Edge Out Tool" NEWLINE
-    "G\tBlend Edge Tool" NEWLINE
-    "Z\tPlace Object Tool" NEWLINE
-    "X\tRoad Tool" NEWLINE
-    "C\tGrove Tool" NEWLINE
-    "V\tRamp Tool" NEWLINE
-    "B\tScorch Tool" NEWLINE
-    "N\tFence Tool" NEWLINE
-    "M\tBuild List Tool" NEWLINE
-    "F1\tWaypoint Tool" NEWLINE
-    "F2\tPolygon Tool" NEWLINE
-    "F3\tBorder Tool" NEWLINE
-    "F4\tScript Editor" NEWLINE
-    "F5\tTeam Editor" NEWLINE;
-	// ...
+	int numHotkeys = sizeof(hotkeys) / sizeof(hotkeys[0]);
+	const int maxFirstColumnLength = 17; // You can tweak this number (roughly key + description length)
+	
+	for (int i = 0; i < numHotkeys; i++)
+	{
+		CString firstEntry;
+		firstEntry.Format("%s\t%s", hotkeys[i].key, hotkeys[i].description);
+	
+		if (strlen(hotkeys[i].description) >= maxFirstColumnLength || (i + 1) >= numHotkeys)
+		{
+			// Only one entry on this line
+			text += firstEntry;
+			text += "\t";
+			text += NEWLINE;
+		}
+		else
+		{
+			// Two entries per line
+			CString secondEntry;
+			secondEntry.Format("%s\t%s", hotkeys[i + 1].key, hotkeys[i + 1].description);
+	
+			text += firstEntry;
+			text += "\t"; // space between columns
+			text += secondEntry;
+			text += "\t";
+			text += NEWLINE;
+	
+			i++; // skip the next one because we already used it
+		}
+	}
+	
 	pEdit->SetWindowText(text);	
 }
 

@@ -789,6 +789,7 @@
 #define IDC_FIND_QUERY_WP               61492
 #define IDC_FIND_WP_BUTTON              61493
 #define IDC_REFRESH_WP_BUTTON           61494
+#define IDB_WB_LOGO                     61495
 
 // Next default values for new objects
 // 

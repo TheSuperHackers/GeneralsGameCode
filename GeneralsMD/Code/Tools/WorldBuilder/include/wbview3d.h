@@ -237,6 +237,10 @@ protected:
 	void updateLights();
 	void updateScorches();
 	void updateTrees();
+	int parseHexColorFromProfile(const char* section, const char* key, const char* defaultHex);
+	// void addMapObjectIfVisible(MapObject *pMapObj);
+	// void updateVisibleMapObjects();
+	
 
 public:
 	virtual Bool viewToDocCoords(CPoint curPt, Coord3D *newPt, Bool constrain=true);

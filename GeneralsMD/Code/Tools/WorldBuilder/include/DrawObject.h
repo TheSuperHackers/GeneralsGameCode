@@ -102,9 +102,11 @@ public:
 	static void setWaypointDragFeedback(const Coord3D &start, const Coord3D &end);
 	static void setRampFeedbackParms(const Coord3D *start, const Coord3D *end, Real rampWidth);
 	static void stopWaypointDragFeedback();
-	
-	
-	
+
+	static void setRoadIconColor(int val) { m_roadIconColor = val; }
+	static void setWaypointIconColor(int val) { m_waypointIconColor = val; }
+	static void setUnitIconColor(int val) { m_unitIconColor = val; }
+	static void setDefaultIconColor(int val) { m_defaultIconColor = val; }
 
 	MeshClass *peekMesh(void) {return m_moldMesh;};
 	void getMeshBounds(SphereClass *pSphere) {*pSphere = m_moldMeshBounds;};
@@ -168,6 +170,10 @@ protected: // static state vars.
 	static Coord3D						m_rampEndPoint;		///< End ramp point
 	static Real								m_rampWidth;
 
+	static Int								m_roadIconColor;
+	static Int								m_waypointIconColor;
+	static Int								m_unitIconColor;
+	static Int								m_defaultIconColor;
 protected:
   void addCircleToLineRenderer( const Coord3D & center, Real radius, Real width, unsigned long color, CameraClass* camera );
 	Int updateVB(DX8VertexBufferClass	*vertexBufferTile, Int color, Bool doArrow, Bool doDiamond);
