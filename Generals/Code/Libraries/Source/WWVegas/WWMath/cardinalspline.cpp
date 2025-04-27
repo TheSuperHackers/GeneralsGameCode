@@ -22,13 +22,13 @@
  *                                                                                             *
  *                 Project Name : WWMath                                                       *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/wwmath/cardinalspline.cpp                         $*
+ *                     $Archive:: /Commando/Code/wwmath/cardinalspline.cpp                    $*
  *                                                                                             *
  *                       Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 6/13/01 2:18p                                               $*
+ *                     $Modtime:: 9/16/01 4:07p                                               $*
  *                                                                                             *
- *                    $Revision:: 5                                                           $*
+ *                    $Revision:: 6                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -108,6 +108,7 @@ void CardinalSpline3DClass::Update_Tangents(void)
 			Tangents[0].InTangent.Set(0,0,0);
 			Tangents[0].OutTangent.Set(0,0,0);
 		}
+		return;
 	}
 
 	// First and Last Key: 
