@@ -320,7 +320,7 @@ static Bool calcTrajectory(
 	return false;
 }
 
-#endif NOT_IN_USE
+#endif // NOT_IN_USE
 
 //-------------------------------------------------------------------------------------------------
 // Prepares the missile for launch via proper weapon-system channels.

@@ -47,7 +47,7 @@
 //-----------------------------------------------------------------------------
 
 
-#include "W3DDevice/GameClient/heightmap.h"
+#include "W3DDevice/GameClient/HeightMap.h"
 
 #ifndef USE_FLAT_HEIGHT_MAP // Flat height map uses flattened textures. jba. [3/20/2003]
 
@@ -87,9 +87,9 @@
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "W3DDevice/GameClient/W3DWater.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
-#include "WW3D2/DX8Wrapper.h"
-#include "WW3D2/Light.h"
-#include "WW3D2/Scene.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/light.h"
+#include "WW3D2/scene.h"
 #include "W3DDevice/GameClient/W3DPoly.h"
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 
@@ -140,13 +140,13 @@ void HeightMapRenderObjClass::freeIndexVertexBuffers(void)
 	if (m_vertexBufferTiles) {
 		for (int i=0; i<m_numVertexBufferTiles; i++)
 			REF_PTR_RELEASE(m_vertexBufferTiles[i]);
-		delete m_vertexBufferTiles;
+		delete[] m_vertexBufferTiles;
 		m_vertexBufferTiles = NULL;
 	}
 	if (m_vertexBufferBackup) {
 		for (int i=0; i<m_numVertexBufferTiles; i++)
-			delete m_vertexBufferBackup[i];
-		delete m_vertexBufferBackup;
+			delete[] m_vertexBufferBackup[i];
+		delete[] m_vertexBufferBackup;
 		m_vertexBufferBackup = NULL;
 	}
 	m_numVertexBufferTiles = 0;
@@ -2284,7 +2284,6 @@ void HeightMapRenderObjClass::renderExtraBlendTiles(void)
 		Int drawStartX=m_map->getDrawOrgX();
 		Int drawStartY=m_map->getDrawOrgY();
 
-		try {
 		for (Int j=0; j<m_numExtraBlendTiles; j++)
 		{
 			if (vertexCount >= (maxBlendTiles*4))
@@ -2385,10 +2384,6 @@ void HeightMapRenderObjClass::renderExtraBlendTiles(void)
 				indexCount +=6;
 			}//tile has 3rd blend layer and is visible
 		}	//for all extre blend tiles
-		IndexBufferExceptionFunc();
-		} catch(...) {
-			IndexBufferExceptionFunc();
-		}
 	}//unlock vertex buffer
 
 	if (vertexCount)

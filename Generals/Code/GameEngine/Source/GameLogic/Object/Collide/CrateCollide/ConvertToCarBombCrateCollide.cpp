@@ -75,7 +75,7 @@ Bool ConvertToCarBombCrateCollide::isValidToExecute( const Object *other ) const
 		return FALSE;
 	}
 
-	if ( other->getStatusBits() & OBJECT_STATUS_IS_CARBOMB )
+	if( other->getStatusBits().test( OBJECT_STATUS_IS_CARBOMB ) )
 	{
 		return FALSE;// oops, sorry, I'll convert the next one.
 	}
@@ -131,7 +131,7 @@ Bool ConvertToCarBombCrateCollide::executeCrateBehavior( Object *other )
 	//This is kinda special... we will endow our new ride with our vision and shroud range, since we are driving
 	other->setVisionRange(getObject()->getVisionRange());
 	other->setShroudClearingRange(getObject()->getShroudClearingRange());
-	other->setStatus( OBJECT_STATUS_IS_CARBOMB );
+	other->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_CARBOMB ) );
 
 	ExperienceTracker *exp = other->getExperienceTracker();
 	if (exp)

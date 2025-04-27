@@ -37,7 +37,7 @@
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "GameNetwork/NetworkInterface.h"
-#include "GameNetwork/Udp.h"
+#include "GameNetwork/udp.h"
 #include "GameNetwork/Transport.h"
 #include "strtok_r.h"
 #include "GameClient/Shell.h"
@@ -380,7 +380,8 @@ void Network::setSawCRCMismatch( void )
 	TheRecorder->logCRCMismatch();
 
 	// dump GameLogic random seed
-	DEBUG_LOG(("GameLogic frame = %d\n", TheGameLogic->getFrame()));
+	DEBUG_LOG(("Latest frame for mismatch = %d GameLogic frame = %d\n",
+		TheGameLogic->getFrame()-m_runAhead-1, TheGameLogic->getFrame()));
 	DEBUG_LOG(("GetGameLogicRandomSeedCRC() = %d\n", GetGameLogicRandomSeedCRC()));
 
 	// dump CRCs
@@ -632,7 +633,7 @@ void Network::processFrameSynchronizedNetCommand(NetCommandRef *msg) {
 	else if (cmdMsg->getNetCommandType() == NETCOMMANDTYPE_RUNAHEAD) {
 		NetRunAheadCommandMsg *netmsg = (NetRunAheadCommandMsg *)cmdMsg;
 		processRunAheadCommand(netmsg);
-		DEBUG_LOG(("command to set run ahead to %d and frame rate to %d on frame %d actually executed on frame %d\n", netmsg->getRunAhead(), netmsg->getFrameRate(), netmsg->getExecutionFrame(), TheGameLogic->getFrame()));
+		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command to set run ahead to %d and frame rate to %d on frame %d actually executed on frame %d\n", netmsg->getRunAhead(), netmsg->getFrameRate(), netmsg->getExecutionFrame(), TheGameLogic->getFrame()));
 	}
 	else if (cmdMsg->getNetCommandType() == NETCOMMANDTYPE_DESTROYPLAYER) {
 		NetDestroyPlayerCommandMsg *netmsg = (NetDestroyPlayerCommandMsg *)cmdMsg;

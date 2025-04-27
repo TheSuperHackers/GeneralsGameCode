@@ -73,7 +73,7 @@
 #include "GameClient/Eva.h"
 #include "GameClient/GameText.h"
 #include "GameClient/GameWindowManager.h"
-#include "GameClient/GuiCallbacks.h"
+#include "GameClient/GUICallbacks.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/KeyDefs.h"
 #include "GameClient/Mouse.h"
@@ -1760,7 +1760,8 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			if (msg->getArgument(0)->boolean)
 			{
 				// transfer control to any living ally
-				for (Int i=0; i<ThePlayerList->getPlayerCount(); ++i)
+				Int i=0;
+				for (; i<ThePlayerList->getPlayerCount(); ++i)
 				{
 					if (i != msg->getPlayerIndex())
 					{

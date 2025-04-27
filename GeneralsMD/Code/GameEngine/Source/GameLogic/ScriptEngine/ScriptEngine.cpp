@@ -28,8 +28,8 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "common/DataChunk.h"
-#include "Common/File.h"
+#include "Common/DataChunk.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
@@ -7883,12 +7883,13 @@ void ScriptEngine::setSequentialTimer(Team *team, Int frameCount)
 
 void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 {
-	VecSequentialScriptPtrIt it, lastIt;
-	lastIt = m_sequentialScripts.end();
+	VecSequentialScriptPtrIt it;
+	SequentialScript* lastScript = NULL;
+	Bool itAdvanced = false;
 
 	Int spinCount = 0;
 	for (it = m_sequentialScripts.begin(); it != m_sequentialScripts.end(); /* empty */) {
-		if (it == lastIt) {
+		if ((*it) == lastScript) {
 			++spinCount;
 		} else {
 			spinCount = 0;
@@ -7904,9 +7905,9 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 			continue;
 		}
 
-		lastIt = it;
+		lastScript = (*it);
 		
-		Bool itAdvanced = false;
+		itAdvanced = false;
 
 		SequentialScript *seqScript = (*it);
 		if (seqScript == NULL) {

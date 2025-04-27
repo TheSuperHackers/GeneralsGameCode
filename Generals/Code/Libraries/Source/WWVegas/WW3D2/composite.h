@@ -26,9 +26,9 @@
  *                                                                                             *
  *                       Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 5/30/01 2:17p                                               $*
+ *                     $Modtime:: 11/25/01 12:25p                                             $*
  *                                                                                             *
- *                    $Revision:: 4                                                           $*
+ *                    $Revision:: 5                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -43,6 +43,7 @@
 #define COMPOSITE_H
 
 #include "rendobj.h"
+#include "wwstring.h"
 
 /*
 ** CompositeRenderObjClass
@@ -64,7 +65,7 @@ public:
 
 	virtual const char *			Get_Name(void) const;
 	virtual void					Set_Name(const char * name);
-	virtual const char *			Get_Base_Model_Name (void) const { return BaseModelName; }
+	virtual const char *			Get_Base_Model_Name (void) const;
 	virtual void					Set_Base_Model_Name (const char *name);
 	virtual int						Get_Num_Polys(void) const;
 	virtual void					Notify_Added(SceneClass * scene);
@@ -87,8 +88,8 @@ public:
 
 protected:
 
-	char *							Name;						// name of the render object
-	char *							BaseModelName;			// name of the original render obj (before aggregation)
+	StringClass						Name;						// name of the render object
+	StringClass						BaseModelName;			// name of the original render obj (before aggregation)
 	SphereClass						ObjSphere;				// object-space bounding sphere
 	AABoxClass						ObjBox;					// object-space bounding box
 };

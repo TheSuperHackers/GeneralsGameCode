@@ -24,11 +24,11 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/ww3d2/rddesc.h                               $*
  *                                                                                             *
- *                      $Author:: Greg_h                                                      $*
+ *                      $Author:: Jani_p                                                      $*
  *                                                                                             *
- *                     $Modtime:: 3/19/01 11:43a                                              $*
+ *                     $Modtime:: 12/04/01 5:20p                                              $*
  *                                                                                             *
- *                    $Revision:: 3                                                           $*
+ *                    $Revision:: 6                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -42,9 +42,10 @@
 #ifndef RDDESC_H
 #define RDDESC_H
 
-#include "vector.h"
-#include <stdlib.h>
-#include <string.h>
+#include "Vector.H"
+#include "wwstring.h"
+#include <d3d8types.h>
+#include <d3d8caps.h>
 
 class ResolutionDescClass
 {
@@ -74,15 +75,6 @@ public:
 
 	~RenderDeviceDescClass(void)
 	{
-		if (DeviceName) { free(DeviceName); }
-		if (DeviceVendor) { free(DeviceVendor); }
-		if (DevicePlatform) { free(DevicePlatform); }
-		if (DriverName) { free(DriverName); }
-		if (DriverVendor) { free(DriverVendor); }
-		if (DriverVersion) { free(DriverVersion); }
-		if (HardwareName) { free(HardwareName); }
-		if (HardwareVendor) { free(HardwareVendor); }
-		if (HardwareChipset) { free(HardwareChipset); }
 	}
 
 	RenderDeviceDescClass & operator = (const RenderDeviceDescClass & src) 
@@ -96,6 +88,8 @@ public:
 		set_hardware_name(src.Get_Hardware_Name());
 		set_hardware_vendor(src.Get_Hardware_Vendor());
 		set_hardware_chipset(src.Get_Hardware_Chipset());
+		Caps=src.Caps;
+		AdapterIdentifier=src.AdapterIdentifier;
 		ResArray = src.ResArray;
 		return *this;
 	}	
@@ -116,33 +110,38 @@ public:
 	const char *		Get_Hardware_Chipset() const	{ return HardwareChipset; }
 
 	const DynamicVectorClass<ResolutionDescClass> & Enumerate_Resolutions(void) const	{ return ResArray; }
+	const D3DCAPS8& 	Get_Caps() const { return Caps; }
+	const D3DADAPTER_IDENTIFIER8& Get_Adapter_Identifier() const { return AdapterIdentifier; }
 
 private:
 
-	void set_device_name(const char * name)		{ if (DeviceName) { free(DeviceName); }				DeviceName = NULL;			if (name) DeviceName = strdup(name); }
-	void set_device_vendor(const char * name)		{ if (DeviceVendor) { free(DeviceVendor); }			DeviceVendor = NULL;		if (name) DeviceVendor = strdup(name); }
-	void set_device_platform(const char * name)	{ if (DevicePlatform) { free(DevicePlatform); }		DevicePlatform = NULL;		if (name) DevicePlatform = strdup(name); }
-	void set_driver_name(const char * name)		{ if (DriverName) { free(DriverName); }				DriverName = NULL;			if (name) DriverName = strdup(name); }
-	void set_driver_vendor(const char * name)		{ if (DriverVendor) { free(DriverVendor); }			DriverVendor = NULL;			if (name) DriverVendor = strdup(name); }
-	void set_driver_version(const char * name)	{ if (DriverVersion) { free(DriverVersion); }		DriverVersion = NULL;		if (name) DriverVersion = strdup(name); }
-	void set_hardware_name(const char * name)		{ if (HardwareName) { free(HardwareName); }			HardwareName = NULL;			if (name) HardwareName = strdup(name); }
-	void set_hardware_vendor(const char * name)	{ if (HardwareVendor) { free(HardwareVendor); }		HardwareVendor = NULL;		if (name) HardwareVendor = strdup(name); }
-	void set_hardware_chipset(const char * name)	{ if (HardwareChipset) { free(HardwareChipset); }	HardwareChipset = NULL;		if (name) HardwareChipset = strdup(name); }
+	void set_device_name(const char * name)		{ DeviceName=name; }
+	void set_device_vendor(const char * name)		{ DeviceVendor=name; }
+	void set_device_platform(const char * name)	{ DevicePlatform=name; }
+	void set_driver_name(const char * name)		{ DriverName=name; }
+	void set_driver_vendor(const char * name)		{ DriverVendor=name; }
+	void set_driver_version(const char * name)	{ DriverVersion=name; }
+	void set_hardware_name(const char * name)		{ HardwareName=name; }
+	void set_hardware_vendor(const char * name)	{ HardwareVendor=name; }
+	void set_hardware_chipset(const char * name)	{ HardwareChipset=name; }
 
 	void reset_resolution_list(void)					{ ResArray.Delete_All(); }
 	void add_resolution(int w,int h,int bits);
 
-	char *				DeviceName;
-	char *				DeviceVendor;
-	char *				DevicePlatform;
+	StringClass			DeviceName;
+	StringClass			DeviceVendor;
+	StringClass			DevicePlatform;
 
-	char *				DriverName;
-	char *				DriverVendor;
-	char *				DriverVersion;
+	StringClass			DriverName;
+	StringClass			DriverVendor;
+	StringClass			DriverVersion;
 
-	char *				HardwareName;
-	char *				HardwareVendor;
-	char *				HardwareChipset;
+	StringClass			HardwareName;
+	StringClass			HardwareVendor;
+	StringClass			HardwareChipset;
+
+	D3DCAPS8				Caps;
+	D3DADAPTER_IDENTIFIER8 AdapterIdentifier;
 	
 	DynamicVectorClass<ResolutionDescClass>	ResArray;
 

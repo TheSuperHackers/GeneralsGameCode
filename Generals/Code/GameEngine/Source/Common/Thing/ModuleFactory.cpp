@@ -589,7 +589,7 @@ Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const M
 	{
 		Module* mod = (*mt->m_createProc)( thing, moduleData );
 
-#ifdef _DEBUG
+#ifdef DEBUG_CRASHING
 		if (type == MODULETYPE_BEHAVIOR)
 		{
 			BehaviorModule* bm = (BehaviorModule*)mod;

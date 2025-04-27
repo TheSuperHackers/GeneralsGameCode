@@ -48,7 +48,6 @@ set(GAMEENGINE_SRC
     Include/Common/GameMemory.h
     Include/Common/GameMusic.h
     Include/Common/GameSounds.h
-    Include/Common/GameSpeech.h
     Include/Common/GameSpyMiscPreferences.h
     Include/Common/GameState.h
     Include/Common/GameStateMap.h
@@ -90,7 +89,6 @@ set(GAMEENGINE_SRC
     Include/Common/PlayerTemplate.h
     Include/Common/ProductionPrerequisite.h
     Include/Common/QuickmatchPreferences.h
-    Include/Common/QuickTrig.h
     Include/Common/QuotedPrintable.h
     Include/Common/Radar.h
     Include/Common/RAMFile.h
@@ -114,7 +112,6 @@ set(GAMEENGINE_SRC
     Include/Common/StatsCollector.h
     Include/Common/STLTypedefs.h
     Include/Common/StreamingArchiveFile.h
-    Include/Common/string.h
     Include/Common/SubsystemInterface.h
     Include/Common/SystemInfo.h
     Include/Common/Team.h
@@ -157,7 +154,6 @@ set(GAMEENGINE_SRC
     Include/GameClient/DisplayStringManager.h
     Include/GameClient/Drawable.h
     Include/GameClient/DrawableInfo.h
-    Include/GameClient/DrawableManager.h
     Include/GameClient/DrawGroupInfo.h
     Include/GameClient/EstablishConnectionsMenu.h
     Include/GameClient/Eva.h
@@ -558,7 +554,6 @@ set(GAMEENGINE_SRC
     Source/Common/Audio/GameAudio.cpp
     Source/Common/Audio/GameMusic.cpp
     Source/Common/Audio/GameSounds.cpp
-    #Source/Common/Audio/GameSpeech.cpp
     #Source/Common/Audio/simpleplayer.cpp
     #Source/Common/Audio/urllaunch.cpp
     Source/Common/Bezier/BezFwdIterator.cpp
@@ -635,7 +630,6 @@ set(GAMEENGINE_SRC
     Source/Common/System/AsciiString.cpp
     Source/Common/System/BuildAssistant.cpp
     Source/Common/System/CDManager.cpp
-    Source/Common/System/Compression.cpp
     Source/Common/System/CopyProtection.cpp
     Source/Common/System/CriticalSection.cpp
     Source/Common/System/DataChunk.cpp
@@ -647,16 +641,15 @@ set(GAMEENGINE_SRC
     Source/Common/System/FileSystem.cpp
     Source/Common/System/FunctionLexicon.cpp
     Source/Common/System/GameCommon.cpp
-    Source/Common/System/GameMemory.cpp
+    #Source/Common/System/GameMemory.cpp
     Source/Common/System/GameType.cpp
     Source/Common/System/Geometry.cpp
     Source/Common/System/KindOf.cpp
     Source/Common/System/List.cpp
     Source/Common/System/LocalFile.cpp
     Source/Common/System/LocalFileSystem.cpp
-    Source/Common/System/MemoryInit.cpp
+    #Source/Common/System/MemoryInit.cpp
     Source/Common/System/ObjectStatusTypes.cpp
-    Source/Common/System/QuickTrig.cpp
     Source/Common/System/QuotedPrintable.cpp
     Source/Common/System/Radar.cpp
     Source/Common/System/RAMFile.cpp
@@ -666,7 +659,6 @@ set(GAMEENGINE_SRC
     Source/Common/System/Snapshot.cpp
     Source/Common/System/StackDump.cpp
     Source/Common/System/StreamingArchiveFile.cpp
-    Source/Common/System/String.cpp
     Source/Common/System/SubsystemInterface.cpp
     Source/Common/System/Trig.cpp
     Source/Common/System/UnicodeString.cpp
@@ -689,12 +681,10 @@ set(GAMEENGINE_SRC
     Source/GameClient/Display.cpp
     Source/GameClient/DisplayString.cpp
     Source/GameClient/DisplayStringManager.cpp
-    Source/GameClient/Drawable/DrawableManager.cpp
+    Source/GameClient/Drawable.cpp
     Source/GameClient/Drawable/Update/AnimatedParticleSysBoneClientUpdate.cpp
     Source/GameClient/Drawable/Update/BeaconClientUpdate.cpp
     Source/GameClient/Drawable/Update/SwayClientUpdate.cpp
-    Source/GameClient/Drawable.cpp
-    Source/GameClient/DrawableManager.cpp
     Source/GameClient/DrawGroupInfo.cpp
     Source/GameClient/Eva.cpp
     Source/GameClient/FXList.cpp
@@ -970,6 +960,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/SpecialPower/SpecialAbility.cpp
     Source/GameLogic/Object/SpecialPower/SpecialPowerModule.cpp
     Source/GameLogic/Object/SpecialPower/SpyVisionSpecialPower.cpp
+    Source/GameLogic/Object/Update/AIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/AssaultTransportAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/ChinookAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/DeliverPayloadAIUpdate.cpp
@@ -985,7 +976,6 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Update/AIUpdate/TransportAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/WanderAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/WorkerAIUpdate.cpp
-    Source/GameLogic/Object/Update/AIUpdate.cpp
     Source/GameLogic/Object/Update/AnimationSteeringUpdate.cpp
     Source/GameLogic/Object/Update/AssistedTargetingUpdate.cpp
     Source/GameLogic/Object/Update/AutoDepositUpdate.cpp
@@ -1101,6 +1091,9 @@ set(GAMEENGINE_SRC
     Source/GameNetwork/FrameMetrics.cpp
     Source/GameNetwork/GameInfo.cpp
     Source/GameNetwork/GameMessageParser.cpp
+    #Source/GameNetwork/GameSpyChat.cpp
+    #Source/GameNetwork/GameSpyGameInfo.cpp
+    #Source/GameNetwork/GameSpyGP.cpp
     Source/GameNetwork/GameSpy/Chat.cpp
     Source/GameNetwork/GameSpy/GSConfig.cpp
     Source/GameNetwork/GameSpy/LadderDefs.cpp
@@ -1114,9 +1107,6 @@ set(GAMEENGINE_SRC
     Source/GameNetwork/GameSpy/Thread/PersistentStorageThread.cpp
     Source/GameNetwork/GameSpy/Thread/PingThread.cpp
     Source/GameNetwork/GameSpy/Thread/ThreadUtils.cpp
-    #Source/GameNetwork/GameSpyChat.cpp
-    #Source/GameNetwork/GameSpyGameInfo.cpp
-    #Source/GameNetwork/GameSpyGP.cpp
     Source/GameNetwork/GameSpyOverlay.cpp
     Source/GameNetwork/GUIUtil.cpp
     Source/GameNetwork/IPEnumeration.cpp
@@ -1140,11 +1130,22 @@ set(GAMEENGINE_SRC
     Source/Precompiled/PreRTS.cpp
 )
 
-add_library(z_gameengine STATIC)
+if(RTS_GAMEMEMORY_ENABLE)
+    # Uses the original Game Memory implementation.
+    list(APPEND GAMEENGINE_SRC
+        Source/Common/System/GameMemory.cpp
+        Source/Common/System/MemoryInit.cpp
+    )
+else()
+    # Uses the null implementation when disabled.
+    list(APPEND GAMEENGINE_SRC
+        Source/Common/System/GameMemoryNull.cpp
+        Include/Common/GameMemoryNull.h
+    )
+endif()
 
-set_target_properties(z_gameengine PROPERTIES OUTPUT_NAME
-    $<IF:$<CONFIG:Debug>,gameenginedebug,$<IF:$<BOOL:${GENZH_BUILD_INTERNAL}>,gameengineinternal,gameengine>>
-)
+
+add_library(z_gameengine STATIC)
 
 target_sources(z_gameengine PRIVATE ${GAMEENGINE_SRC})
 
@@ -1157,17 +1158,17 @@ target_include_directories(z_gameengine PRIVATE
 )
 
 target_link_libraries(z_gameengine PRIVATE
-    zi_libraries_include
-    zi_libraries_source
+    zi_always
 )
 
 target_link_libraries(z_gameengine PUBLIC
     d3d8lib
     gamespy::gamespy
-    gz_config
+    core_config
+    core_utility
     stlport
-    z_browserdispatch
-    z_compression
+    core_browserdispatch
+    core_compression
     z_wwvegas
 )
 

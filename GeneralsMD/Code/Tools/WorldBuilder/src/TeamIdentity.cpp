@@ -19,8 +19,8 @@
 // TeamIdentity.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "worldbuilder.h"
+#include "StdAfx.h"
+#include "WorldBuilder.h"
 #include "TeamIdentity.h"
 #include "EditParameter.h"
 #include "PickUnitDialog.h"
@@ -451,7 +451,7 @@ void TeamIdentity::OnChangeDescription()
 	if (pWnd) {
 		CString val;
 		pWnd->GetWindowText(val);
-		AsciiString des = val;
+		AsciiString des = static_cast<LPCSTR>(val);
 		m_teamDict->setAsciiString(TheKey_teamDescription, des);
 	}
 }
@@ -633,7 +633,7 @@ void TeamIdentity::OnKillfocusTeamName()
 	if (pWnd) {
 		CString val;
 		pWnd->GetWindowText(val);
-		AsciiString tnamenew = val;
+		AsciiString tnamenew = static_cast<LPCSTR>(val);
 		AsciiString tnamecur = m_teamDict->getAsciiString(TheKey_teamName);
 		Bool set = true;
 		if (tnamecur != tnamenew) {
@@ -671,7 +671,7 @@ void TeamIdentity::OnSelendokTeamowner()
 	if (pWnd) {
 		CString val;
 		pWnd->GetWindowText(val);
-		AsciiString des = val;
+		AsciiString des = static_cast<LPCSTR>(val);
 		m_teamDict->setAsciiString(TheKey_teamOwner, des);
 	}
 }

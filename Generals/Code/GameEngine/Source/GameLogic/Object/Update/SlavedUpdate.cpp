@@ -717,7 +717,7 @@ void SlavedUpdate::startSlavedEffects( const Object *slaver )
 	m_guardPointOffset.y += data->m_guardMaxRange * Sin( randomDirection );
 	
 	// mark selves as not selectable
-	getObject()->setStatus( OBJECT_STATUS_UNSELECTABLE );
+	getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNSELECTABLE ) );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -727,7 +727,7 @@ void SlavedUpdate::stopSlavedEffects()
 	m_guardPointOffset.zero();
 
 	/// @todo Just a thought.  Our Status bits on objects really need to be reference counts so you don't clear someone else's flag
-	getObject()->clearStatus( OBJECT_STATUS_UNSELECTABLE );
+	getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNSELECTABLE ) );
 	getObject()->clearDisabled( DISABLED_HELD );
 }
 

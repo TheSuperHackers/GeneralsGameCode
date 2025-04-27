@@ -30,9 +30,9 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "LogicalSound.H"
-#include "WWAudio.H"
-#include "SoundScene.H"
+#include "LogicalSound.h"
+#include "WWAudio.h"
+#include "SoundScene.h"
 #include "SoundChunkIDs.h"
 #include "persistfactory.h"
 

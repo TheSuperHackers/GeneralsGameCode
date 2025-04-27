@@ -29,7 +29,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "GameClient/GameText.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 
 Version *TheVersion = NULL;	///< The Version singleton
 

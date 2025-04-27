@@ -35,7 +35,7 @@
 
 //#include "Common/Registry.h"
 #include "Common/UserPreferences.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 #include "GameClient/GameText.h"
 #include "GameClient/MessageBox.h"
 #include "GameClient/Shell.h"
@@ -43,7 +43,7 @@
 
 #include "GameClient/ShellHooks.h"
 
-#include "GameSpy/ghttp/ghttp.h"
+#include "gamespy/ghttp/ghttp.h"
 
 #include "GameNetwork/DownloadManager.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
@@ -52,7 +52,7 @@
 #include "GameNetwork/GameSpy/PeerThread.h"
 
 #include "WWDownload/Registry.h"
-#include "WWDownload/URLBuilder.h"
+#include "WWDownload/urlBuilder.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -241,12 +241,12 @@ static void startOnline( void )
 	pref.load("GameSpyLogin.ini");
 	UserPreferences::const_iterator it = pref.find("useProfiles");
 	if (it != pref.end() && it->second.compareNoCase("yes") == 0)
-#endif ALLOW_NON_PROFILED_LOGIN
+#endif // ALLOW_NON_PROFILED_LOGIN
 		TheShell->push( AsciiString("Menus/GameSpyLoginProfile.wnd") );
 #ifdef ALLOW_NON_PROFILED_LOGIN
 	else
 		TheShell->push( AsciiString("Menus/GameSpyLoginQuick.wnd") );
-#endif ALLOW_NON_PROFILED_LOGIN
+#endif // ALLOW_NON_PROFILED_LOGIN
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -785,7 +785,8 @@ void HTTPThinkWrapper( void )
 {
 	if (s_asyncDNSLookupInProgress)
 	{
-		Int ret = asyncGethostbyname("servserv.generals.ea.com");
+		Char hostname[] = "servserv.generals.ea.com";
+		Int ret = asyncGethostbyname(hostname);
 		switch(ret)
 		{
 		case LOOKUP_FAILED:
@@ -842,7 +843,8 @@ void StartPatchCheck( void )
 		TheGameText->fetch("GUI:CheckingForPatches"), CancelPatchCheckCallbackAndReopenDropdown);
 
 	s_asyncDNSLookupInProgress = TRUE;
-	Int ret = asyncGethostbyname("servserv.generals.ea.com");
+	Char hostname[] = "servserv.generals.ea.com";
+	Int ret = asyncGethostbyname(hostname);
 	switch(ret)
 	{
 	case LOOKUP_FAILED:

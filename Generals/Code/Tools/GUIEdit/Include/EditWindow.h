@@ -57,8 +57,8 @@
 #include "Lib/BaseType.h"
 #include "GameClient/Image.h"
 #include "GameClient/GameWindow.h"
-#include "WW3D2/AssetMgr.h"
-#include "WW3D2/Render2D.h"
+#include "WW3D2/assetmgr.h"
+#include "WW3D2/render2d.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 
@@ -155,7 +155,7 @@ protected:
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	static Bool m_classRegistered;  ///< TRUE when we've register with OS
-	static char *m_className;  ///< name for windows class
+	static const char *m_className;  ///< name for windows class
 
 	ICoord2D m_size;  ///< width and height of edit window	
 	UnsignedByte m_bitDepth;  ///< bit depth for edit window

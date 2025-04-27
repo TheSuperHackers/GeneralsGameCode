@@ -46,7 +46,7 @@ class INI;
 	* order of this geometry and the fact that the values start at 1
 	*/
 //-------------------------------------------------------------------------------------------------
-enum GeometryType
+enum GeometryType CPP_11(: Int)
 {
 	GEOMETRY_SPHERE = 0,	///< partition/collision testing as sphere. (majorRadius = radius)
 	GEOMETRY_CYLINDER,		///< partition/collision testing as cylinder. (majorRadius = radius, height = height)
@@ -68,7 +68,7 @@ static const char *GeometryNames[] =
 
 //-------------------------------------------------------------------------------------------------
 #if defined(_DEBUG) || defined(_INTERNAL)
-enum ExtentModType
+enum ExtentModType CPP_11(: Int)
 {
 	EXTENTMOD_INVALID = 0,
 	EXTENTMOD_TYPE = 1,

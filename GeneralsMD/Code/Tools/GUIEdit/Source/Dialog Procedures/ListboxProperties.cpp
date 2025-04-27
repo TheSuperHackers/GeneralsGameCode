@@ -49,10 +49,10 @@
 #include "GUIEdit.h"
 #include "Properties.h"
 #include "LayoutScheme.h"
-#include "Resource.h"
+#include "resource.h"
 #include "GameClient/GadgetListBox.h"
 #include "GameClient/GadgetPushButton.h"
-#include "Gameclient/GadgetSlider.h"
+#include "GameClient/GadgetSlider.h"
 #include "GameClient/GameWindowManager.h"
 
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -953,7 +953,7 @@ HWND InitListboxPropertiesDialog( GameWindow *window )
 
 	}
 	// WordWrap Check Box
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ONE_LINE ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ONE_LINE ) )
 		CheckDlgButton( dialog, CHECK_NO_WORDWRAP, BST_CHECKED );
 
 

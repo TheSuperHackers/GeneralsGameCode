@@ -21,7 +21,7 @@
 // January, 2003
 // (c) Electronic Arts 2003
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "TeamObjectProperties.h"
 #include "Common/MapObject.h"
 #include "Common/WellKnownKeys.h"

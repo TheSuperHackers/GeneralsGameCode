@@ -61,8 +61,8 @@ class Object;
 class SoundManager;
 
 
-enum AudioAffect;
-enum AudioType;
+enum AudioAffect CPP_11(: Int);
+enum AudioType CPP_11(: Int);
 
 struct AudioEventInfo;
 struct AudioRequest;
@@ -263,7 +263,7 @@ class AudioManager : public SubsystemInterface
 		const MiscAudio *getMiscAudio( void ) const;
 
 		// This function should only be called by AudioManager, MusicManager and SoundManager
-		virtual void releaseAudioEventRTS( AudioEventRTS *eventToRelease );
+		virtual void releaseAudioEventRTS( AudioEventRTS *&eventToRelease );
 
 		// For INI
 		AudioSettings *friend_getAudioSettings( void );

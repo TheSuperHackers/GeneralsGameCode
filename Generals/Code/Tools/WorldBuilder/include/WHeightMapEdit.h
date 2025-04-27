@@ -46,7 +46,7 @@ public:
 /// Struct in memory.
 typedef struct 
 {
-#ifdef _DEBUG
+#ifdef DEBUG_CRASHING
 	Int forDebugOnly_fileTextureClass;
 #endif
 	Int numTiles;
@@ -76,7 +76,7 @@ protected:
 
 protected:
 	static void loadBitmap(char *path, const char *uiName);
-	static void loadDirectoryOfImages(char *path);
+	static void loadDirectoryOfImages(const char *path);
 	static void loadImagesFromTerrainType( TerrainType *terrain );
 	static void loadBaseImages(void);
 	Int allocateTiles(Int textureClass);

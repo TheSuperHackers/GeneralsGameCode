@@ -26,12 +26,13 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Greg_h                                                      $*
- *                                                                                             *
- *                     $Modtime:: 2/07/01 2:07p                                               $*
+ *                      $Author:: Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
  *                    $Revision:: 2                                                           $*
  *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -70,12 +71,14 @@ public:
 	const OBBoxClass &			Get_Bounding_Volume(void) const { return WorldBoundingVolume; }
 	void								Compute_Texture_Coordinate(const Vector3 & point,Vector3 * set_stq);
 
+	MatrixMapperClass*			Peek_Mapper() const { return Mapper; }
+
 protected:
 
 	virtual void					Update_WS_Bounding_Volume(void);
 
 	Matrix3D							Transform;
-	Matrix4							Projection;
+	Matrix4x4						Projection;
 
 	AABoxClass						LocalBoundingVolume;
 	OBBoxClass						WorldBoundingVolume;

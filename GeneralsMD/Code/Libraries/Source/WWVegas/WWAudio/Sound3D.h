@@ -41,7 +41,7 @@
 #ifndef __SOUND3DOBJ_H
 #define __SOUND3DOBJ_H
 
-#include "AudibleSound.H"
+#include "AudibleSound.h"
 #include "mempool.h"
 
 
@@ -172,7 +172,7 @@ class Sound3DClass : public AudibleSoundClass
 		//////////////////////////////////////////////////////////////////////
 		//	Update methods
 		//////////////////////////////////////////////////////////////////////
-		virtual bool					On_Frame_Update (unsigned int milliseconds = 0);		
+		virtual bool					On_Frame_Update (unsigned int milliseconds);		
 
 		//////////////////////////////////////////////////////////////////////
 		//	Handle information

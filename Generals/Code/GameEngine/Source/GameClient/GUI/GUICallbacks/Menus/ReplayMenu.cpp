@@ -36,10 +36,10 @@
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
 #include "Common/Recorder.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
-#include "GameClient/GadgetListbox.h"
+#include "GameClient/GadgetListBox.h"
 #include "GameClient/Shell.h"
 #include "GameClient/KeyDefs.h"
 #include "GameClient/GameWindowManager.h"
@@ -181,7 +181,10 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 				const MapMetaData *md = TheMapCache->findMap(info.getMap());
 				if (!md)
 				{
-					mapStr.translate(info.getMap());
+					// TheSuperHackers @bugfix helmutbuhler 08/03/2025 Just use the filename.
+					// Displaying a long map path string would break the map list gui.
+					const char* filename = info.getMap().reverseFind('\\');
+					mapStr.translate(filename ? filename + 1 : info.getMap());
 				}
 				else
 				{
@@ -394,7 +397,7 @@ WindowMsgHandledType ReplayMenuInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 

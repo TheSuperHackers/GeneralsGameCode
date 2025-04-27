@@ -385,7 +385,7 @@ void HAnimManagerClass::Create_Asset_List(DynamicVectorClass<StringClass> & excl
 		// File that this anim came from should be the name after the '.'
 		// Anims are named in the format: <skeleton>.<animname>
 		const char * anim_name = anim->Get_Name();
-		char * filename = strchr(anim_name,'.');
+		const char * filename = strchr(anim_name,'.');
 		if (filename != NULL) {	
 			exclusion_list.Add(StringClass(filename+1));
 		}
@@ -412,7 +412,7 @@ bool HAnimManagerClass::Add_Anim(HAnimClass *new_anim)
 	// Increment the refcount on the W3DNEW animation and add it to our table.
 	new_anim->Add_Ref ();
 	AnimPtrTable->Add( new_anim );
-	
+
 	return true;
 }
 

@@ -60,7 +60,7 @@
 
 #include "GameClient/ShellHooks.h"
 
-#include "GameLogic/Ai.h"
+#include "GameLogic/AI.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/SidesList.h"
@@ -80,7 +80,7 @@ static ScriptGroup *s_mtGroup = NULL;
 // These strings must be in the same order as they are in their definitions 
 // (See SHELL_SCRIPT_HOOK_* )
 //
-char *TheShellHookNames[]=
+const char *TheShellHookNames[]=
 {
 	"ShellMainMenuCampaignPushed", //SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_SELECTED,
 	"ShellMainMenuCampaignHighlighted", //SHELL_SCRIPT_HOOK_MAIN_MENU_CAMPAIGN_HIGHLIGHTED,
@@ -1903,11 +1903,11 @@ AsciiString Parameter::getUiText(void) const
 
 		case AI_MOOD:
 			switch (m_int) {
-				case AI_SLEEP: uiText.format("Sleep"); break;
-				case AI_PASSIVE: uiText.format("Passive"); break;
-				case AI_NORMAL: uiText.format("Normal"); break;
-				case AI_ALERT: uiText.format("Alert"); break;
-				case AI_AGGRESSIVE: uiText.format("Aggressive"); break;
+				case ATTITUDE_SLEEP: uiText.format("Sleep"); break;
+				case ATTITUDE_PASSIVE: uiText.format("Passive"); break;
+				case ATTITUDE_NORMAL: uiText.format("Normal"); break;
+				case ATTITUDE_ALERT: uiText.format("Alert"); break;
+				case ATTITUDE_AGGRESSIVE: uiText.format("Aggressive"); break;
 				default : DEBUG_CRASH(("Unknown AI Mood type."));
 			}
 			break;
@@ -2110,12 +2110,12 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 
 	if (pParm->getParameterType() == OBJECT_STATUS) 
 	{
-		// Need to change the string to an integer
-		for (int i = 0; TheObjectStatusBitNames[i]; ++i) 
+		// Need to change the string to an ObjectStatusMaskType
+		for( int i = 0; i < OBJECT_STATUS_COUNT; ++i ) 
 		{
-			if (pParm->m_string.compareNoCase(TheObjectStatusBitNames[i]) == 0) 
+			if( !pParm->m_string.compareNoCase( ObjectStatusMaskType::getBitNames()[i] ) ) 
 			{
-				pParm->setInt(1 << i);
+				pParm->setStatus( MAKE_OBJECT_STATUS_MASK( i ) );
 				break;
 			}
 		}

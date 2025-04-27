@@ -104,7 +104,8 @@ GameMessageArgumentDataType GameMessage::getArgumentDataType( Int argIndex )
 		return ARGUMENTDATATYPE_UNKNOWN;
 	}
 	int i=0;
-	for (GameMessageArgument *a = m_argList; a && (i < argIndex); a=a->m_next, ++i );
+	GameMessageArgument *a = m_argList;
+	for (; a && (i < argIndex); a=a->m_next, ++i );
 
 	if (a != NULL)
 	{
@@ -475,9 +476,9 @@ AsciiString GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
 #endif // defined(_DEBUG) || defined(_INTERNAL)
 
 
-#if defined(_INTERNAL) || defined(_DEBUG) || defined(_PLAYTEST)
+#if defined(_INTERNAL) || defined(_DEBUG)
 	CHECK_IF(MSG_META_DEMO_TOGGLE_AUDIODEBUG)
-#endif//defined(_INTERNAL) || defined(_DEBUG) || defined(_PLAYTEST)
+#endif//defined(_INTERNAL) || defined(_DEBUG)
 #ifdef DUMP_PERF_STATS
 	CHECK_IF(MSG_META_DEMO_PERFORM_STATISTICAL_DUMP)
 #endif//DUMP_PERF_STATS

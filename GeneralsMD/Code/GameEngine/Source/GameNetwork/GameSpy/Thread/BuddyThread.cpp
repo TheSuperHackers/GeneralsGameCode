@@ -545,7 +545,7 @@ void BuddyThreadClass::connectCallback( GPConnection *con, GPConnectResponseArg 
 			DEBUG_LOG(("Buddy connect: trying chat connect\n"));
 			PeerRequest req;
 			req.peerRequestType = PeerRequest::PEERREQUEST_LOGIN;
-			req.nick = m_nick.c_str();
+			req.nick = m_nick;
 			req.password = m_pass;
 			req.email = m_email;
 			req.login.profileID = arg->profile;

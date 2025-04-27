@@ -39,9 +39,9 @@
 #ifndef __SOUND_SCENE_OBJ_H
 #define __SOUND_SCENE_OBJ_H
 
-#include "Refcount.H"
-#include "WWAudio.H"
-#include "BitType.H"
+#include "refcount.h"
+#include "WWAudio.h"
+#include "bittype.h"
 #include "persist.h"
 #include "multilist.h"
 #include "mutex.h"
@@ -123,7 +123,7 @@ class SoundSceneObjClass : public MultiListObjectClass, public PersistClass, pub
 		//////////////////////////////////////////////////////////////////////
 		//	Update methods
 		//////////////////////////////////////////////////////////////////////
-		virtual bool			On_Frame_Update (unsigned int milliseconds = 0);
+		virtual bool			On_Frame_Update (unsigned int milliseconds);
 
 		//////////////////////////////////////////////////////////////////////
 		//	Event handling

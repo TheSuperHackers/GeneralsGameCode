@@ -45,7 +45,7 @@ extern Int FRAME_DATA_LENGTH;
 extern Int FRAMES_TO_KEEP;
 
 // This is the connection numbering: 1-8 are for players, 9 is a broadcast con.
-enum ConnectionNumbers
+enum ConnectionNumbers CPP_11(: Int)
 {
 	MAX_PLAYER = 7,			// The index of the highest possible player number.  This is 0 based, so the most players allowed in a game is MAX_PLAYER+1.
 	NUM_CONNECTIONS
@@ -112,7 +112,7 @@ struct DelayedTransportMessage
 /**
  * Message types
  */
-enum NetMessageFlag {
+enum NetMessageFlag CPP_11(: Int) {
 	MSG_ACK = 1,
 	MSG_NEEDACK = 2,
 	MSG_SEQUENCED = 4,
@@ -120,7 +120,7 @@ enum NetMessageFlag {
 };
 typedef UnsignedByte NetMessageFlags;
 
-enum NetCommandType {
+enum NetCommandType CPP_11(: Int) {
 	NETCOMMANDTYPE_UNKNOWN = -1,
 	NETCOMMANDTYPE_ACKBOTH = 0,
 	NETCOMMANDTYPE_ACKSTAGE1,
@@ -159,7 +159,7 @@ enum NetCommandType {
 	NETCOMMANDTYPE_MAX
 };
 
-enum NetLocalStatus {
+enum NetLocalStatus CPP_11(: Int) {
 	NETLOCALSTATUS_PREGAME = 0,
 	NETLOCALSTATUS_INGAME,
 	NETLOCALSTATUS_LEAVING,
@@ -167,7 +167,7 @@ enum NetLocalStatus {
 	NETLOCALSTATUS_POSTGAME
 };
 
-enum PlayerLeaveCode {
+enum PlayerLeaveCode CPP_11(: Int) {
 	PLAYERLEAVECODE_CLIENT = 0,
 	PLAYERLEAVECODE_LOCAL,
 	PLAYERLEAVECODE_PACKETROUTER,

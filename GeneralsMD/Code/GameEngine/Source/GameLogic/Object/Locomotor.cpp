@@ -989,7 +989,7 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 	// do not allow for invalid positions that the pathfinder cannot handle ... for airborne
 	// objects we don't need the pathfinder so we'll ignore this
 	//
-	if( BitTest( m_template->m_surfaces, LOCOMOTORSURFACE_AIR ) == false &&
+	if( BitIsSet( m_template->m_surfaces, LOCOMOTORSURFACE_AIR ) == false &&
 			!TheAI->pathfinder()->validMovementTerrain(obj->getLayer(), this, obj->getPosition()) && 
 			!getFlag(ALLOW_INVALID_POSITION)) 
 	{
@@ -1043,7 +1043,7 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 		{
 			*blocked = false;
 		}
-		if (treatAsAirborne && BitTest( m_template->m_surfaces, LOCOMOTORSURFACE_AIR ) ) 
+		if (treatAsAirborne && BitIsSet( m_template->m_surfaces, LOCOMOTORSURFACE_AIR ) ) 
 		{
 			// Airborne flying objects don't collide for now.  jba.
 			*blocked = false;

@@ -36,6 +36,12 @@
 #include "Common/Xfer.h"
 #include "Common/BitFlagsIO.h"
 
+#ifdef _INTERNAL
+// for occasional debugging...
+//#pragma optimize("", off)
+//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 Xfer::Xfer( void )
@@ -534,7 +540,7 @@ void Xfer::xferScienceType( ScienceType *science )
 	else
 	{
 
-		DEBUG_CRASH(( "xferScienceVec - Unknown xfer mode '%d'\n", getXferMode() ));
+		DEBUG_CRASH(( "xferScienceType - Unknown xfer mode '%d'\n", getXferMode() ));
 		throw XFER_MODE_UNKNOWN;
 
 	}  // end else
@@ -571,8 +577,12 @@ void Xfer::xferScienceVec( ScienceVec *scienceVec )
 		// vector should be empty at this point
 		if( scienceVec->empty() == FALSE )
 		{
-			DEBUG_CRASH(( "xferScienceVec - vector is not empty, but should be\n" ));
-			throw XFER_LIST_NOT_EMPTY;
+			// Not worth an assert, since things can give you Sciences on creation.  Just handle it and load.
+			scienceVec->clear();
+
+			// Homework for today.  Write 2000 words reconciling "Your code must never crash" with "Intentionally putting crashes in the code".  Fucktard.
+//			DEBUG_CRASH(( "xferScienceVec - vector is not empty, but should be\n" ));
+//			throw XFER_LIST_NOT_EMPTY;
 		}
 
 		for( UnsignedShort i = 0; i < count; ++i )
@@ -656,13 +666,21 @@ void Xfer::xferKindOf( KindOfType *kindOfData )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void Xfer::xferUpgradeMask( Int64 *upgradeMaskData )
+void Xfer::xferUpgradeMask( UpgradeMaskType *upgradeMaskData )
 {
 
 	// this deserves a version number
 	XferVersion currentVersion = 1;
 	XferVersion version = currentVersion;
 	xferVersion( &version, currentVersion );
+
+	//Kris: The Upgrade system has been converted from Int64 to BitFlags. However because the 
+	//names of upgrades are saved to preserve order reassignments (inserting a new upgrade in
+	//the INI file will skew the bit values), we must continue saving the names of the upgrades
+	//in order to recalculate the actual bit value of said upgrade.
+	//---------------------------------------------------------------------------------------------
+	//NOTE: The xfer code didn't have to change with the bitset upgrades, because either way, we're 
+	//converting data <-> Ascii, so the minor syntax works with the before and after code!
 
 	// check which type of xfer we're doing
 	if( getXferMode() == XFER_SAVE )
@@ -672,37 +690,28 @@ void Xfer::xferUpgradeMask( Int64 *upgradeMaskData )
 		// count how many bits are set in the mask
 		UnsignedShort count = 0;
 		UpgradeTemplate *upgradeTemplate;
-		for( upgradeTemplate = TheUpgradeCenter->firstUpgradeTemplate();
-				 upgradeTemplate;
-				 upgradeTemplate = upgradeTemplate->friend_getNext() )
+		for( upgradeTemplate = TheUpgradeCenter->firstUpgradeTemplate(); upgradeTemplate; upgradeTemplate = upgradeTemplate->friend_getNext() )
 		{
-
 			// if the mask of this upgrade is set, it counts
-			if( BitTest( *upgradeMaskData, upgradeTemplate->getUpgradeMask() ) )
+			if( upgradeMaskData->testForAll( upgradeTemplate->getUpgradeMask() ) )
+			{
 				count++;
-
+			}
 		}  // end for, upgradeTemplate
 
 		// write the count
 		xferUnsignedShort( &count );
 
 		// write out the upgrades as strings
-		for( upgradeTemplate = TheUpgradeCenter->firstUpgradeTemplate();
-				 upgradeTemplate;
-				 upgradeTemplate = upgradeTemplate->friend_getNext() )
+		for( upgradeTemplate = TheUpgradeCenter->firstUpgradeTemplate(); upgradeTemplate; upgradeTemplate = upgradeTemplate->friend_getNext() )
 		{
-
 			// if the mask of this upgrade is set, it counts
-			if( BitTest( *upgradeMaskData, upgradeTemplate->getUpgradeMask() ) )
+			if( upgradeMaskData->testForAll( upgradeTemplate->getUpgradeMask() ) )
 			{
-
 				upgradeName = upgradeTemplate->getUpgradeName();
 				xferAsciiString( &upgradeName );
-
 			}  // end if
-
 		}  // end for, upgradeTemplate
-
 	}  // end if, save
 	else if( getXferMode() == XFER_LOAD )
 	{
@@ -714,7 +723,7 @@ void Xfer::xferUpgradeMask( Int64 *upgradeMaskData )
 		xferUnsignedShort( &count );
 
 		// zero the mask data
-		*upgradeMaskData = 0;
+		upgradeMaskData->clear();
 
 		// read all the strings and set the mask vaules
 		for( UnsignedShort i = 0; i < count; ++i )
@@ -734,7 +743,7 @@ void Xfer::xferUpgradeMask( Int64 *upgradeMaskData )
 			}  // end if
 
 			// set the mask data
-			BitSet( *upgradeMaskData, upgradeTemplate->getUpgradeMask() );
+			upgradeMaskData->set( upgradeTemplate->getUpgradeMask() );
 
 		}  // end for i
 
@@ -743,7 +752,7 @@ void Xfer::xferUpgradeMask( Int64 *upgradeMaskData )
 	{
 
 		// just xfer implementation the data itself
-		xferImplementation( upgradeMaskData, sizeof( Int64 ) );
+		xferImplementation( upgradeMaskData, sizeof( UpgradeMaskType ) );
 
 	}  // end else if, crc
 	else
@@ -753,7 +762,7 @@ void Xfer::xferUpgradeMask( Int64 *upgradeMaskData )
 		throw XFER_MODE_UNKNOWN;
 
 	}  // end else
-
+	
 }  // end xferUpgradeMask
 
 // ------------------------------------------------------------------------------------------------

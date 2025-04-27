@@ -61,10 +61,11 @@
 #include "GameClient/IMEManager.h"
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "Win32Device/Common/Win32GameEngine.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 #include "BuildVersion.h"
 #include "GeneratedVersion.h"
-#include "Resource.h"
+#include "resource.h"
+#include "trim.h"
 
 #include <rts/profile.h>
 
@@ -83,7 +84,7 @@ DWORD TheMessageTime = 0;	///< For getting the time that a message was posted fr
 
 const Char *g_strFile = "data\\Generals.str";
 const Char *g_csfFile = "data\\%s\\Generals.csf";
-char *gAppPrefix = ""; /// So WB can have a different debug log file name.
+const char *gAppPrefix = ""; /// So WB can have a different debug log file name.
 
 static HANDLE GeneralsMutex = NULL;
 #define GENERALS_GUID "685EAFF2-3216-4265-B047-251C5F4B82F3"
@@ -777,42 +778,7 @@ void checkProtection(void)
 #endif
 }
 
-// strtrim ====================================================================
-/** Trim leading and trailing whitespace from a character string (in place). */
-//=============================================================================
-static char* strtrim(char* buffer)
-{
-	if (buffer != NULL) {
-		//	Strip leading white space from the string.
-		char * source = buffer;
-		while ((*source != 0) && ((unsigned char)*source <= 32))
-		{
-			source++;
-		}
-
-		if (source != buffer)
-		{
-			strcpy(buffer, source);
-		}
-
-		//	Clip trailing white space from the string.
-		for (int index = strlen(buffer)-1; index >= 0; index--)
-		{
-			if ((*source != 0) && ((unsigned char)buffer[index] <= 32))
-			{
-				buffer[index] = '\0';
-			}
-			else
-			{
-				break;
-			}
-		}
-	}
-
-	return buffer;
-}
-
-char *nextParam(char *newSource, char *seps)
+char *nextParam(char *newSource, const char *seps)
 {
 	static char *source = NULL;
 	if (newSource)
@@ -966,7 +932,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 			// check both localized directory and root dir
 		char filePath[_MAX_PATH];
-		char *fileName = "Install_Final.bmp";
+		const char *fileName = "Install_Final.bmp";
 		static const char *localizedPathFormat = "Data/%s/";
 		sprintf(filePath,localizedPathFormat, GetRegistryLanguage().str());
 		strcat( filePath, fileName );

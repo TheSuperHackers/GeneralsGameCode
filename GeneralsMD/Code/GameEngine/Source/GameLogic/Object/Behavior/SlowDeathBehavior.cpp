@@ -497,7 +497,8 @@ void SlowDeathBehavior::onDie( const DamageInfo *damageInfo )
 	TheGameLogic->deselectObject(obj, PLAYERMASK_ALL, TRUE);
 
 	Int total = 0;
-	for (BehaviorModule** update = obj->getBehaviorModules(); *update; ++update)
+	BehaviorModule** update = obj->getBehaviorModules();
+	for (; *update; ++update)
 	{
 		SlowDeathBehaviorInterface* sdu = (*update)->getSlowDeathBehaviorInterface();
 		if (sdu != NULL && sdu->isDieApplicable(damageInfo))

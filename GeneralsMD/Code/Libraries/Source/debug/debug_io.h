@@ -22,7 +22,7 @@
 // $Revision: #1 $
 // $DateTime: 2003/07/03 11:55:26 $
 //
-// ©2003 Electronic Arts
+// (c) 2003 Electronic Arts
 //
 // Debug I/O interface
 //////////////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@
 class DebugIOInterface
 {
   // no copy/assign op
-  DebugIOInterface(const &DebugIOInterface);
+  DebugIOInterface(const DebugIOInterface&);
   DebugIOInterface& operator=(const DebugIOInterface&);
 
 protected:

@@ -47,14 +47,16 @@ class STLSpecialAlloc;
 #include <assert.h>
 #include <ctype.h>
 #include <direct.h>
-#include <EXCPT.H>
+#include <excpt.h>
 #include <float.h>
-#include <fstream.h>
+#include <Utility/fstream_adapter.h>
 #include <imagehlp.h>
 #include <io.h>
 #include <limits.h>
 #include <lmcons.h>
+#if defined(_MSC_VER) && _MSC_VER < 1300
 #include <mapicode.h>
+#endif
 #include <math.h>
 #include <memory.h>
 #include <mmsystem.h>
@@ -73,7 +75,7 @@ class STLSpecialAlloc;
 #include <sys/stat.h>
 #include <sys/timeb.h>
 #include <sys/types.h>
-#include <TCHAR.H>
+#include <tchar.h>
 #include <time.h>
 #include <vfw.h>
 #include <winerror.h>
@@ -101,7 +103,7 @@ class STLSpecialAlloc;
 
 //------------------------------------------------------------------------------------ RTS Includes
 // Icky. These have to be in this order.
-#include "Lib/Basetype.h"
+#include "Lib/BaseType.h"
 #include "Common/STLTypedefs.h"
 #include "Common/Errors.h"
 #include "Common/Debug.h"

@@ -22,7 +22,7 @@
 // $Revision: #2 $
 // $DateTime: 2005/01/19 15:02:33 $
 //
-// �2003 Electronic Arts
+// (c) 2003 Electronic Arts
 //
 // Stack walker
 //////////////////////////////////////////////////////////////////////////////
@@ -86,7 +86,8 @@ static void InitDbghelp(void)
 
   // Get function addresses
   unsigned *funcptr=gDbg.funcPtr;
-  for (unsigned k=0;DebughelpFunctionNames[k];++k,++funcptr)
+  unsigned k=0;
+  for (;DebughelpFunctionNames[k];++k,++funcptr)
   {
     *funcptr=(unsigned)GetProcAddress(g_dbghelp,DebughelpFunctionNames[k]);
     if (!*funcptr)

@@ -19,7 +19,7 @@
 // wbview3d.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
 #include "wwmath.h"
 #include "ww3d.h"
@@ -31,7 +31,6 @@
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 #include "W3DDevice/GameClient/Module/W3DTreeDraw.h"
 #include "agg_def.h"
-#include "msgloop.h"
 #include "part_ldr.h"
 #include "rendobj.h"
 #include "hanim.h"
@@ -59,7 +58,6 @@
 #include "shattersystem.h"
 #include "light.h"
 #include "texproject.h"
-#include "keyboard.h"
 #include "MapSettings.h"
 #include "predlod.h"
 #include "SelectMacrotexture.h"
@@ -75,10 +73,10 @@
 #include "W3DDevice/Common/W3DConvert.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "DrawObject.h"
-#include "common/MapObject.h"
-#include "common/GlobalData.h"
+#include "Common/MapObject.h"
+#include "Common/GlobalData.h"
 #include "ShadowOptions.h"
-#include "worldbuilder.h"
+#include "WorldBuilder.h"
 #include "wbview3d.h"
 #include "Common/Debug.h"
 #include "Common/ThingFactory.h"

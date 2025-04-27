@@ -28,8 +28,6 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "windows.h"
-
 #include "Common/GameType.h"
 #include "Common/MessageStream.h"
 #include "Common/Player.h"
@@ -174,7 +172,7 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			// get key and state from args
 			UnsignedByte key		= msg->getArgument( 0 )->integer;
 			UnsignedByte state	= msg->getArgument( 1 )->integer;
-			Bool isPressed = !(BitTest( state, KEY_STATE_UP ));
+			Bool isPressed = !(BitIsSet( state, KEY_STATE_UP ));
 			
 			if (TheShell && TheShell->isShellActive())
 				break;

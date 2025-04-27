@@ -30,10 +30,10 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "Common/CRC.h"
+#include "Common/crc.h"
 #include "Common/FileSystem.h"
 #include "Common/LocalFileSystem.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/GlobalData.h"
 #include "Common/GameState.h"
 #include "Common/GameEngine.h"
@@ -69,7 +69,7 @@
 
 //-------------------------------------------------------------------------------
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
-static char *mapExtension = ".map";
+static const char *mapExtension = ".map";
 
 static Int m_width = 0;						///< Height map width.
 static Int m_height = 0;					///< Height map height (y size of array).
@@ -1162,7 +1162,7 @@ Image *getMapPreviewImage( AsciiString mapName )
 	mapPreviewImage->setStatus(IMAGE_STATUS_RAW_TEXTURE);
 // allocate our terrain texture
 	TextureClass * texture = new TextureClass( size.x, size.y, 
-																			 WW3D_FORMAT_X8R8G8B8, TextureClass::MIP_LEVELS_1 );
+																			 WW3D_FORMAT_X8R8G8B8, MIP_LEVELS_1 );
 	uv.lo.x = 0.0f;
 	uv.lo.y = 1.0f;
 	uv.hi.x = 1.0f;

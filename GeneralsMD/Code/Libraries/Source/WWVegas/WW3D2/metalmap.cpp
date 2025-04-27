@@ -51,8 +51,8 @@
 #include "ww3dformat.h"
 #include "ww3d.h"
 #include <vp.h>
-#include <ini.h>
-#include <point.h>
+#include <INI.H>
+#include <Point.h>
 #include <stdio.h>
 #include <hashtemplate.h>
 #include <wwstring.h>
@@ -95,7 +95,8 @@ MetalMapManagerClass::MetalMapManagerClass(INIClass &ini) :
 	// Determine how many metals are in this file
 	char section[255];
 
-	for (int lp = 0; ; lp++) {
+	int lp = 0;
+	for (; ; lp++) {
 		sprintf(section, "Metal%02d", lp);
 		if (!ini.Find_Section(section)) {
 			break;			// NAK - Mar 8, 2000: changed to a break to fix off by one error in lp

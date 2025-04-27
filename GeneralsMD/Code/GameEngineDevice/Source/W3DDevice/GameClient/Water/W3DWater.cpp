@@ -33,7 +33,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "stdio.h"
 #include "W3DDevice/GameClient/W3DWater.h"
-#include "W3DDevice/GameClient/heightmap.h"
+#include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
 #include "W3DDevice/GameClient/W3DWaterTracks.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
@@ -44,7 +44,7 @@
 #include "scene.h"
 #include "dx8wrapper.h"
 #include "light.h"
-#include "D3dx8math.h"
+#include "d3dx8math.h"
 #include "simplevec.h"
 #include "mesh.h"
 #include "matinfo.h"
@@ -912,7 +912,7 @@ void WaterRenderObjClass::ReAcquireResources(void)
 	if (W3DShaderManager::getChipset() >= DC_GENERIC_PIXEL_SHADER_1_1)
 	{
 		ID3DXBuffer *compiledShader;
-		char *shader = 
+		const char *shader = 
 			"ps.1.1\n \
 			tex t0 \n\
 			tex t1	\n\
@@ -1265,7 +1265,7 @@ void WaterRenderObjClass::update( void )
 				{
 
 					// only pay attention to mesh points that are in motion
-					if( BitTest( pData->status, WaterRenderObjClass::IN_MOTION ) )
+					if( BitIsSet( pData->status, WaterRenderObjClass::IN_MOTION ) )
 					{
 
 						// DAMPENING to slow the changes down
@@ -2729,7 +2729,6 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 	{
 		DynamicIBAccessClass::WriteLockClass lockib(&ib_access);
  		UnsignedShort *curIb = lockib.Get_Index_Array();
-		try {
 		for (Int i=0; i<rectangleCount; i++)
 		{
 			//triangle 1
@@ -2744,11 +2743,8 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 
 			curIb += 6;	//skip the 6 indices we just added.
 		}
-		IndexBufferExceptionFunc();
-		} catch(...) {
-			IndexBufferExceptionFunc();
-		}
 	}
+
 
 	Real shadeR=TheWaterTransparency->m_standingWaterColor.red;
 	Real shadeG=TheWaterTransparency->m_standingWaterColor.green;
@@ -3075,7 +3071,6 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 	{
 		DynamicIBAccessClass::WriteLockClass lockib(&ib_access);
  		UnsignedShort *curIb = lockib.Get_Index_Array();
-		try {
 		for (j=0; j<vCount-1; j++)
 		{	for (i=0; i<uCount-1; i++)
 			{
@@ -3091,10 +3086,6 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 
 				curIb += 6;	//skip the 6 indices we just added.
 			}
-		}
-		IndexBufferExceptionFunc();
-		} catch(...) {
-			IndexBufferExceptionFunc();
 		}
 	}
 

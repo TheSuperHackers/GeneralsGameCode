@@ -36,7 +36,7 @@
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
 #include "Lib/BaseType.h"
-#include "WW3D2/ColType.h"			///< we don't generally do this, but we need the W3D collision types
+#include "WW3D2/coltype.h"			///< we don't generally do this, but we need the W3D collision types
 
 #define DEFAULT_VIEW_WIDTH 640
 #define DEFAULT_VIEW_HEIGHT 480
@@ -53,13 +53,13 @@ class LookAtTranslator;
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum PickType
+enum PickType CPP_11(: Int)
 {
-	PICK_TYPE_TERRAIN						= COLLISION_TYPE_0,
-	PICK_TYPE_SELECTABLE				= COLLISION_TYPE_1,
-	PICK_TYPE_SHRUBBERY					= COLLISION_TYPE_2,
-	PICK_TYPE_MINES							= COLLISION_TYPE_3,	// mines aren't normally selectable, but workers/dozers need to
-	PICK_TYPE_FORCEATTACKABLE		= COLLISION_TYPE_4,
+	PICK_TYPE_TERRAIN						= COLL_TYPE_0,
+	PICK_TYPE_SELECTABLE				= COLL_TYPE_1,
+	PICK_TYPE_SHRUBBERY					= COLL_TYPE_2,
+	PICK_TYPE_MINES							= COLL_TYPE_3,	// mines aren't normally selectable, but workers/dozers need to
+	PICK_TYPE_FORCEATTACKABLE		= COLL_TYPE_4,
 	PICK_TYPE_ALL_DRAWABLES			= (PICK_TYPE_SELECTABLE | PICK_TYPE_SHRUBBERY | PICK_TYPE_MINES | PICK_TYPE_FORCEATTACKABLE)
 };
 

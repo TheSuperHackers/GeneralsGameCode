@@ -22,14 +22,14 @@
 // $Revision: #1 $
 // $DateTime: 2003/07/03 11:55:26 $
 //
-// ©2003 Electronic Arts
+// (c) 2003 Electronic Arts
 //
 // Debug module - Test 2 (Checking commands, CON I/O, cmddbg file)
 //////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "..\debug.h"
+#include "../debug.h"
 
 #define MAX_LOADSTRING 100
 

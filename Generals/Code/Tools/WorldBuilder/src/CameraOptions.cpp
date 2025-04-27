@@ -19,11 +19,11 @@
 // CameraOptions.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "worldbuilder.h"
+#include "WorldBuilder.h"
 #include "CameraOptions.h"
-#include "WbView3d.h"
+#include "wbview3d.h"
 #include "WorldBuilderDoc.h"
 
 /////////////////////////////////////////////////////////////////////////////

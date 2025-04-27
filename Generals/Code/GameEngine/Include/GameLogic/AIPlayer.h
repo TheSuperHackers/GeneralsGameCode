@@ -147,8 +147,6 @@ public:
 };
 
 
-#if !defined(_PLAYTEST)
-
 /**
  * The computer-controlled opponent.
  */
@@ -295,7 +293,6 @@ protected:
 
 	ObjectID m_curWarehouseID;
 };
-#endif
 
 #endif // _AI_PLAYER_H_
 

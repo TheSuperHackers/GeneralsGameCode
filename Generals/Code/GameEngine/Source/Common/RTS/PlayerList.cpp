@@ -121,6 +121,10 @@ Player *PlayerList::findPlayerWithNameKey(NameKeyType key)
 //-----------------------------------------------------------------------------
 void PlayerList::reset()
 {
+	// TheSuperHackers @bugfix xezon 20/03/2025 Delete the Player AI before purging the dependent teams in the factory.
+	for (int i = 0; i < MAX_PLAYER_COUNT; i++)
+		m_players[i]->deletePlayerAI();
+
 	TheTeamFactory->clear(); // cleans up energy, among other things
 	init();
 }
@@ -131,11 +135,8 @@ void PlayerList::newGame()
 	Int i;
 
 	DEBUG_ASSERTCRASH(this != NULL, ("null this"));
-	
-	TheTeamFactory->clear(); // cleans up energy, among other things
 
-	// first, re-init ourselves.
-	init();
+	reset();
 
 	// ok, now create the rest of players we need.
 	Bool setLocal = false;
@@ -380,7 +381,7 @@ Player *PlayerList::getEachPlayerFromMask( PlayerMaskType& maskToAdjust )
 	{
 		
 		player = getNthPlayer( i );
-		if ( player && BitTest(player->getPlayerMask(), maskToAdjust ))
+		if ( player && BitIsSet(player->getPlayerMask(), maskToAdjust ))
 		{
 			maskToAdjust &= (~player->getPlayerMask());
 			return player;
@@ -405,7 +406,7 @@ PlayerMaskType PlayerList::getPlayersWithRelationship( Int srcPlayerIndex, Unsig
 	if (!srcPlayer)
 		return retVal;
 
-	if (BitTest(allowedRelationships, ALLOW_SAME_PLAYER))
+	if (BitIsSet(allowedRelationships, ALLOW_SAME_PLAYER))
 		BitSet(retVal, srcPlayer->getPlayerMask());
 
 	for ( Int i = 0; i < getPlayerCount(); ++i )
@@ -420,15 +421,15 @@ PlayerMaskType PlayerList::getPlayersWithRelationship( Int srcPlayerIndex, Unsig
 		switch (srcPlayer->getRelationship(player->getDefaultTeam()))
 		{
 			case ENEMIES:
-				if (BitTest(allowedRelationships, ALLOW_ENEMIES))
+				if (BitIsSet(allowedRelationships, ALLOW_ENEMIES))
 					BitSet(retVal, player->getPlayerMask());
 				break;
 			case ALLIES:
-				if (BitTest(allowedRelationships, ALLOW_ALLIES))
+				if (BitIsSet(allowedRelationships, ALLOW_ALLIES))
 					BitSet(retVal, player->getPlayerMask());
 				break;
 			case NEUTRAL:
-				if (BitTest(allowedRelationships, ALLOW_NEUTRAL))
+				if (BitIsSet(allowedRelationships, ALLOW_NEUTRAL))
 					BitSet(retVal, player->getPlayerMask());
 				break;
 		}

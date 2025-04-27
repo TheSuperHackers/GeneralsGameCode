@@ -178,6 +178,7 @@ void HRawAnimClass::Free(void)
 {
 	if (NodeMotion != NULL) {
 		delete[] NodeMotion;
+		NodeMotion = NULL;
 	}
 }
 

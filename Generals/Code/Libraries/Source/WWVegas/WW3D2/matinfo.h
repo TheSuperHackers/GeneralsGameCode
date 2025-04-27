@@ -44,7 +44,7 @@
 
 #include "always.h"
 #include "wwdebug.h"
-#include "vector.h"
+#include "Vector.H"
 #include "vertmaterial.h"
 #include "texture.h"
 #include "shader.h"

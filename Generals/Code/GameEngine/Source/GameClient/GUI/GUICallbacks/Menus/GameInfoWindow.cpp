@@ -235,8 +235,8 @@ void GameInfoWindowInit( WindowLayout *layout, void *userData )
 	winSuperWeapons = TheWindowManager->winGetWindowFromId( parent, winSuperWeaponsID );
 	winFreeForAll = TheWindowManager->winGetWindowFromId( parent, winFreeForAllID );
 
-	GadgetStaticTextSetText(staticTextGameName,UnicodeString.TheEmptyString);
-	GadgetStaticTextSetText(staticTextMapName,UnicodeString.TheEmptyString);
+	GadgetStaticTextSetText(staticTextGameName,UnicodeString::TheEmptyString);
+	GadgetStaticTextSetText(staticTextMapName,UnicodeString::TheEmptyString);
 	GadgetListBoxReset(listBoxPlayers);
 	
 }  // end MapSelectMenuInit

@@ -11,6 +11,7 @@ set(WORLDBUILDER_SRC
     "src/BuildListTool.cpp"
     "src/CameraOptions.cpp"
     "src/CButtonShowColor.cpp"
+    "src/CButtonShowColor.h"
     "src/CellWidth.cpp"
     "src/CFixTeamOwnerDialog.cpp"
     "src/ContourOptions.cpp"
@@ -110,7 +111,6 @@ set(WORLDBUILDER_SRC
     "include/BuildList.h"
     "include/BuildListTool.h"
     "include/CameraOptions.h"
-    "src/CButtonShowColor.h"
     "include/CellWidth.h"
     "include/CFixTeamOwnerDialog.h"
     "include/ContourOptions.h"
@@ -180,7 +180,7 @@ set(WORLDBUILDER_SRC
     "include/TeamIdentity.h"
     "include/TeamReinforcement.h"
     "include/teamsdialog.h"
-    "include/terrainmaterial.h"
+    "include/TerrainMaterial.h"
     "include/TerrainModal.h"
     "include/TerrainSwatches.h"
     "include/TileTool.h"
@@ -215,21 +215,21 @@ target_link_libraries(z_worldbuilder PRIVATE
     imm32
     vfw32
     winmm
-    z_browserdispatch
+    core_browserdispatch
     z_debug
     z_gameengine
     z_gameenginedevice
     z_profile
     zi_gameengine_include
     zi_gameenginedevice_include
-    zi_libraries_include
+    zi_always
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     target_link_options(z_worldbuilder PRIVATE /NODEFAULTLIB:libci.lib /NODEFAULTLIB:libc.lib)
     target_compile_definitions(z_worldbuilder PRIVATE _AFXDLL)
     target_sources(z_worldbuilder PRIVATE res/WorldBuilder.rc)
-    set_target_properties(z_worldbuilder PROPERTIES OUTPUT_NAME WorldBuilder)
+    set_target_properties(z_worldbuilder PROPERTIES OUTPUT_NAME WorldBuilderZH)
 else()
-    set_target_properties(z_worldbuilder PROPERTIES OUTPUT_NAME worldbuilder)
+    set_target_properties(z_worldbuilder PROPERTIES OUTPUT_NAME worldbuilderzh)
 endif()

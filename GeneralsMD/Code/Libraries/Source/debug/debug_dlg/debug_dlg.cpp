@@ -22,7 +22,7 @@
 // $Revision: #1 $
 // $DateTime: 2003/07/03 11:55:26 $
 //
-// ©2003 Electronic Arts
+// (c) 2003 Electronic Arts
 //
 // Debug exception dialog test program
 //////////////////////////////////////////////////////////////////////////////
@@ -33,8 +33,6 @@
 #include <stdio.h>
 
 // Pardon my coding here but this is for testing only...
-
-#pragma comment (lib,"comctl32")
 
 BOOL CALLBACK DialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {

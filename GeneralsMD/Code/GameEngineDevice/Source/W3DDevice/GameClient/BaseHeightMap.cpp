@@ -82,9 +82,9 @@
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "W3DDevice/GameClient/W3DWater.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
-#include "WW3D2/DX8Wrapper.h"
-#include "WW3D2/Light.h"
-#include "WW3D2/Scene.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/light.h"
+#include "WW3D2/scene.h"
 #include "W3DDevice/GameClient/W3DPoly.h"
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 
@@ -1671,7 +1671,8 @@ void BaseHeightMapRenderObjClass::updateShorelineTiles(Int minX, Int minY, Int m
 	}
 	
 	//First remove any existing extra blend tiles within this partial region
-	for (Int j=0; j<m_numShoreLineTiles; j++)
+	Int j=0;
+	for (; j<m_numShoreLineTiles; j++)
 	{	Int x = m_shoreLineTilePositions[j].m_xy & 0xffff;
 		Int y = m_shoreLineTilePositions[j].m_xy >> 16;
 		if (x >= minX && x < maxX &&
@@ -2504,7 +2505,6 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 				return;
 			}
 
-			try {
 			//Loop over visible terrain and extract all the tiles that need shoreline blend
 			for (; j<m_numShoreLineTiles; j++)
 			{
@@ -2593,10 +2593,6 @@ void BaseHeightMapRenderObjClass::renderShoreLines(CameraClass *pCamera)
 					vertexCount +=4;
 					indexCount +=6;
 				}
-			}
-			IndexBufferExceptionFunc();
-			} catch(...) {
-				IndexBufferExceptionFunc();
 			}
 		}//lock and fill ib/vb
 
@@ -2695,11 +2691,11 @@ void BaseHeightMapRenderObjClass::renderShoreLinesSorted(CameraClass *pCamera)
 				return;
 			}
 
-			try {
 			//Loop over visible terrain and extract all the tiles that need shoreline blend
 			if (m_shoreLineSortInfosXMajor)	//map is wider than taller.
 			{	
-				for (Int x=drawStartX; x<drawEdgeX; x++)
+				Int x=drawStartX;
+				for (; x<drawEdgeX; x++)
 				{	//figure out how many tiles are available in this column
 					shoreLineTileSortInfo *sortInfo=&m_shoreLineSortInfos[x];
 
@@ -2819,7 +2815,8 @@ flushVertexBuffer0:
 			}
 			else
 			{
-				for (Int y=drawStartY; y<drawEdgeY; y++)
+				Int y=drawStartY;
+				for (; y<drawEdgeY; y++)
 				{	//figure out how many tiles are available in this row
 					shoreLineTileSortInfo *sortInfo=&m_shoreLineSortInfos[y];
 
@@ -2936,10 +2933,6 @@ flushVertexBuffer0:
 flushVertexBuffer1:
 				drawStartY = y;	//record how far we've moved so far
 				isDone = y >= drawEdgeY;
-				IndexBufferExceptionFunc();
-			}
-			} catch(...) {
-				IndexBufferExceptionFunc();
 			}
 		}//lock and fill ib/vb
 

@@ -1,8 +1,15 @@
 add_executable(z_generals WIN32)
-set_target_properties(z_generals PROPERTIES OUTPUT_NAME generals)
+
+# Use a binary name that doesn't conflict with original game.
+if("${CMAKE_SYSTEM}" MATCHES "Windows")
+    set_target_properties(z_generals PROPERTIES OUTPUT_NAME generalszh)
+else()
+    set_target_properties(z_generals PROPERTIES OUTPUT_NAME generalszh)
+endif()
 
 target_link_libraries(z_generals PRIVATE
     binkstub
+    comctl32
     d3d8
     d3dx8
     dbghelplib
@@ -17,8 +24,7 @@ target_link_libraries(z_generals PRIVATE
     z_gameengine
     z_gameenginedevice
     z_profile
-    zi_libraries_include
-    zi_libraries_source
+    zi_always
 )
 
 # TODO Originally referred to build host and user, replace with git info perhaps?

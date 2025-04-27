@@ -87,14 +87,14 @@ void W3DGadgetHorizontalSliderDraw( GameWindow *window, WinInstanceData *instDat
 	window->winGetSize( &size.x, &size.y );
 
 	// get the right colors
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 
 		backBorder		= GadgetSliderGetDisabledBorderColor( window );
 		backColor			= GadgetSliderGetDisabledColor( window );
 
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
 		backBorder		= GadgetSliderGetHiliteBorderColor( window );
@@ -183,7 +183,7 @@ void W3DGadgetHorizontalSliderImageDraw( GameWindow *window,
 	origin.x += blankness/2;
 
 	Int i;
-	if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		ICoord2D backgroundStart, backgroundEnd;
 		backgroundStart.y = origin.y + highlightOffset.y;
@@ -249,7 +249,7 @@ void W3DGadgetHorizontalSliderImageDrawB( GameWindow *window,
 	tmp.format(L"\ns= %d <--> %d, numTicks=%g, pos = %d", s->minVal, s->maxVal, s->numTicks, s->position);
 	tooltip.concat(tmp);
 
-	if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		highlightSquare					= GadgetSliderGetHiliteImageLeft( window );
 		ICoord2D backgroundStart, backgroundEnd;
@@ -309,7 +309,7 @@ void W3DGadgetHorizontalSliderImageDrawB( GameWindow *window,
 
 	instData->setTooltipText(tooltip);
 
-//	if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+//	if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 //	{
 //		progressArrow				= GadgetSliderGetHiliteImageRight( window );
 //		if(!progressArrow)
@@ -351,7 +351,7 @@ void W3DGadgetHorizontalSliderImageDrawA( GameWindow *window,
 	yOffset = instData->m_imageOffset.y;
 
 	// get the right images
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 
 		leftImageRight = leftImageLeft					= GadgetSliderGetDisabledImageLeft( window );
@@ -360,7 +360,7 @@ void W3DGadgetHorizontalSliderImageDrawA( GameWindow *window,
 //		smallCenterImageRight = smallCenterImageLeft	= GadgetSliderGetDisabledImageSmallCenter( window );
 
 	}  // end if, disabled
-	else //if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else //if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
 		leftImageLeft					= GadgetSliderGetHiliteImageLeft( window );

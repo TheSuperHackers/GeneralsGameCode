@@ -50,7 +50,7 @@ public:
 	UnsignedShort port;
 	time_t lastPlayDate;
 
-	bool operator== (const LadderPref& other)
+	bool operator== (const LadderPref& other) const
 	{
 		return ( address==other.address && port==other.port );
 	}

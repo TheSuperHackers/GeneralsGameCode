@@ -59,7 +59,7 @@ target_link_libraries(z_guiedit PRIVATE
     z_gameenginedevice
     z_profile
     z_wwvegas
-    zi_libraries_include
+    zi_always
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

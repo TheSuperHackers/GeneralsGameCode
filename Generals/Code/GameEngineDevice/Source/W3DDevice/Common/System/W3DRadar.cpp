@@ -51,8 +51,8 @@
 #include "W3DDevice/Common/W3DRadar.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
-#include "WW3D2/Texture.h"
-#include "WW3D2/DX8Caps.h"
+#include "WW3D2/texture.h"
+#include "WW3D2/dx8caps.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -83,7 +83,7 @@ static WW3DFormat findFormat(const WW3DFormat formats[])
 	for( Int i = 0; formats[ i ] != WW3D_FORMAT_UNKNOWN; i++ )
 	{
 
-		if( DX8Caps::Support_Texture_Format( formats[ i ] ) )
+		if( DX8Wrapper::Get_Current_Caps()->Support_Texture_Format( formats[ i ] ) )
 		{
 
 			return formats[ i ];
@@ -698,8 +698,7 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 		// Now it twinkles for any stealthed object, whether locally controlled or neutral-observier-viewed
 		if( obj->testStatus( OBJECT_STATUS_STEALTHED ) )
 		{
-			static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-			StealthUpdate* stealth = (StealthUpdate*)obj->findUpdateModule( key_StealthUpdate );
+			StealthUpdate* stealth = obj->getStealth();
 			if( !stealth )
 				continue;
 
@@ -886,24 +885,24 @@ void W3DRadar::init( void )
 	// allocate our terrain texture
 	// poolify
 	m_terrainTexture = MSGNEW("TextureClass") TextureClass( m_textureWidth, m_textureHeight, 
-																			 m_terrainTextureFormat, TextureClass::MIP_LEVELS_1 );
+																			 m_terrainTextureFormat, MIP_LEVELS_1 );
 	DEBUG_ASSERTCRASH( m_terrainTexture, ("W3DRadar: Unable to allocate terrain texture\n") );
 
 	// allocate our overlay texture
 	m_overlayTexture = MSGNEW("TextureClass") TextureClass( m_textureWidth, m_textureHeight,
-																			 m_overlayTextureFormat, TextureClass::MIP_LEVELS_1 );
+																			 m_overlayTextureFormat, MIP_LEVELS_1 );
 	DEBUG_ASSERTCRASH( m_overlayTexture, ("W3DRadar: Unable to allocate overlay texture\n") );
 
 	// set filter type for the overlay texture, try it and see if you like it, I don't ;)
-//	m_overlayTexture->Set_Min_Filter( TextureClass::FILTER_TYPE_NONE );
-//	m_overlayTexture->Set_Mag_Filter( TextureClass::FILTER_TYPE_NONE );
+//	m_overlayTexture->Set_Min_Filter( TextureFilterClass::FILTER_TYPE_NONE );
+//	m_overlayTexture->Set_Mag_Filter( TextureFilterClass::FILTER_TYPE_NONE );
 
 	// allocate our shroud texture
 	m_shroudTexture = MSGNEW("TextureClass") TextureClass( m_textureWidth, m_textureHeight,
-																			 m_shroudTextureFormat, TextureClass::MIP_LEVELS_1 );
+																			 m_shroudTextureFormat, MIP_LEVELS_1 );
 	DEBUG_ASSERTCRASH( m_shroudTexture, ("W3DRadar: Unable to allocate shroud texture\n") );
-	m_shroudTexture->Set_Min_Filter( TextureClass::FILTER_TYPE_DEFAULT );
-	m_shroudTexture->Set_Mag_Filter( TextureClass::FILTER_TYPE_DEFAULT );
+	m_shroudTexture->Get_Filter().Set_Min_Filter( TextureFilterClass::FILTER_TYPE_DEFAULT );
+	m_shroudTexture->Get_Filter().Set_Mag_Filter( TextureFilterClass::FILTER_TYPE_DEFAULT );
 
 	//
 	// create images used for rendering and set them up with the textures

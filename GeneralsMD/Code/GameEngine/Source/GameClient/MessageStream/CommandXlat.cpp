@@ -1052,7 +1052,7 @@ GameMessage::Type CommandTranslator::issueSpecialPowerCommand( const CommandButt
 	Drawable* sourceDraw = ignoreSelObj ? ignoreSelObj->getDrawable() : TheInGameUI->getFirstSelectedDrawable();
 	ObjectID specificSource = ignoreSelObj ? ignoreSelObj->getID() : INVALID_ID;
 
-	if( BitTest( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
+	if( BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
 	{
 		// OBJECT BASED SPECIAL
 		if (!command->isValidObjectTarget(sourceDraw, target))
@@ -1076,7 +1076,7 @@ GameMessage::Type CommandTranslator::issueSpecialPowerCommand( const CommandButt
 
 		}
 	}
-	else if( BitTest( command->getOptions(), NEED_TARGET_POS ) )
+	else if( BitIsSet( command->getOptions(), NEED_TARGET_POS ) )
 	{
 		//LOCATION BASED SPECIAL
 		msgType = GameMessage::MSG_DO_SPECIAL_POWER_AT_LOCATION;
@@ -1157,7 +1157,7 @@ GameMessage::Type CommandTranslator::issueCombatDropCommand( const CommandButton
 		return GameMessage::MSG_INVALID;
 	}
 
-	if( target != NULL && BitTest( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
+	if( target != NULL && BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
 	{
 
 		// OBJECT BASED SPECIAL
@@ -1174,7 +1174,7 @@ GameMessage::Type CommandTranslator::issueCombatDropCommand( const CommandButton
 		}
 		return msgType;
 	}
-	else if ( BitTest( command->getOptions(), NEED_TARGET_POS ) )
+	else if ( BitIsSet( command->getOptions(), NEED_TARGET_POS ) )
 	{
 		GameMessage::Type msgType = GameMessage::MSG_COMBATDROP_AT_LOCATION;
 		if( commandType == DO_COMMAND )
@@ -1201,7 +1201,7 @@ GameMessage::Type CommandTranslator::issueFireWeaponCommand( const CommandButton
 		return msgType;
 	}
 
-	if( BitTest( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
+	if( BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
 	{
 		//OBJECT BASED FIRE WEAPON
 		if (!target || !target->getObject())
@@ -1210,7 +1210,7 @@ GameMessage::Type CommandTranslator::issueFireWeaponCommand( const CommandButton
 		if (!command->isValidObjectTarget(TheInGameUI->getFirstSelectedDrawable(), target))
 			return msgType;
 
-		if( BitTest( command->getOptions(), ATTACK_OBJECTS_POSITION ) )
+		if( BitIsSet( command->getOptions(), ATTACK_OBJECTS_POSITION ) )
 		{
 			//Actually, you know what.... we want to attack the object's location instead.
 			msgType = GameMessage::MSG_DO_WEAPON_AT_LOCATION;
@@ -1246,7 +1246,7 @@ GameMessage::Type CommandTranslator::issueFireWeaponCommand( const CommandButton
 			}
 		}
 	}
-	else if( BitTest( command->getOptions(), NEED_TARGET_POS ) )
+	else if( BitIsSet( command->getOptions(), NEED_TARGET_POS ) )
 	{
 		//LOCATION BASED FIRE WEAPON
 		msgType = GameMessage::MSG_DO_WEAPON_AT_LOCATION;
@@ -1505,7 +1505,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				|| command->getCommandType() == GUI_COMMAND_SPECIAL_POWER
 				|| command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT))
 		{
-			if( obj && obj->isKindOf( KINDOF_SHRUBBERY ) && !BitTest( command->getOptions(), ALLOW_SHRUBBERY_TARGET ) )
+			if( obj && obj->isKindOf( KINDOF_SHRUBBERY ) && !BitIsSet( command->getOptions(), ALLOW_SHRUBBERY_TARGET ) )
 			{
 				//If our object is a shrubbery, and we don't allow targetting it... then null it out.
 				//Nulling out the draw and obj pointer will force the remainder of this code to evaluate 
@@ -1514,7 +1514,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				obj = NULL;
 			}
 
-			if( obj && obj->isKindOf( KINDOF_MINE ) && !BitTest( command->getOptions(), ALLOW_MINE_TARGET ) )
+			if( obj && obj->isKindOf( KINDOF_MINE ) && !BitIsSet( command->getOptions(), ALLOW_MINE_TARGET ) )
 			{
 				//If our object is a mine, and we don't allow targetting it... then null it out.
 				//Nulling out the draw and obj pointer will force the remainder of this code to evaluate 
@@ -1526,27 +1526,27 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 			//Kris: September 27, 2002
 			//Added relationship tests to make sure we're not attempting a context-command on a restricted relationship.
 			//This case prevents rebels from using tranq darts on allies.
-			if( obj && BitTest( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
+			if( obj && BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
 			{
 				Relationship relationship = ThePlayerList->getLocalPlayer()->getRelationship( obj->getTeam() );
 				switch( relationship )
 				{
 					case ALLIES:
-						if( !BitTest( command->getOptions(), NEED_TARGET_ALLY_OBJECT ) )
+						if( !BitIsSet( command->getOptions(), NEED_TARGET_ALLY_OBJECT ) )
 						{
 							draw = NULL;
 							obj = NULL;
 						}	
 						break;
 					case ENEMIES:
-						if( !BitTest( command->getOptions(), NEED_TARGET_ENEMY_OBJECT ) )
+						if( !BitIsSet( command->getOptions(), NEED_TARGET_ENEMY_OBJECT ) )
 						{
 							draw = NULL;
 							obj = NULL;
 						}	
 						break;
 					case NEUTRAL:
-						if( !BitTest( command->getOptions(), NEED_TARGET_NEUTRAL_OBJECT ) )
+						if( !BitIsSet( command->getOptions(), NEED_TARGET_NEUTRAL_OBJECT ) )
 						{
 							draw = NULL;
 							obj = NULL;
@@ -4054,7 +4054,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_BW_VIEW:
 		{   //We're not testing BW mode anymore, so use this message for toggling wireframe mode.
-			static mode=0;
+			static Int mode=0;
 			if (mode == 0)
 			{	//First turn on wireframe
 				TheTacticalView->set3DWireFrameMode(TRUE);
@@ -5031,7 +5031,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			QueryPerformanceCounter((LARGE_INTEGER *)&startTime64);
 			QueryPerformanceFrequency((LARGE_INTEGER *)&freq64);
 			Int numberLookups = 10000;
-			for( Int testindex = 1; testindex < numberLookups; testindex++ )
+			Int testindex = 1;
+			for( ; testindex < numberLookups; testindex++ )
 			{
 				Object *objPtr = TheGameLogic->findObjectByID((ObjectID)testindex);
 				objPtr++;
@@ -5081,7 +5082,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			QueryPerformanceCounter((LARGE_INTEGER *)&startTime64);
 			QueryPerformanceFrequency((LARGE_INTEGER *)&freq64);
 			Int numberLookups = 10000;
-			for( Int testindex = 1; testindex < numberLookups; testindex++ )
+			Int testindex = 1;
+			for( ; testindex < numberLookups; testindex++ )
 			{
 				Drawable *drawPtr = TheGameClient->findDrawableByID((DrawableID)testindex);
 				drawPtr++;

@@ -43,8 +43,16 @@
 #include "GameLogic/Module/PropagandaTowerBehavior.h"
 #include "GameLogic/Module/BodyModule.h"
 
+
+#ifdef _INTERNAL
+// for occasional debugging...
+//#pragma optimize("", off)
+//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
+
+
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
-enum ObjectID;
+enum ObjectID CPP_11(: Int);
 
 // ------------------------------------------------------------------------------------------------
 /** This class is used to track objects as they exit our area of influence */
@@ -176,7 +184,7 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 	
 	//Sep 27, 2002 (Kris): Added this code to prevent the tower from working while under construction.
 	Object *self = getObject();
-	if( BitTest( self->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	if( self->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 		return UPDATE_SLEEP_NONE;
 
 	if( self->testStatus(OBJECT_STATUS_SOLD) )

@@ -647,7 +647,8 @@ void MeshMatDescClass::Post_Load_Process(bool lighting_enabled,MeshModelClass * 
 	** Pre-multiply the vertex color arrays.
 	*/
 	bool set_lighting_to_false=true;
-	for (int pass=0; pass<PassCount; pass++) {
+	int pass=0;
+	for (; pass<PassCount; pass++) {
 
 		/*
 		** If this pass doesn't have a vertex material, create one

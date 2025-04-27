@@ -107,8 +107,6 @@ RailroadBehavior::RailroadBehavior( Thing *thing, const ModuleData *moduleData )
 {
 	const RailroadBehaviorModuleData *modData = getRailroadBehaviorModuleData();
 
-	m_carriageTemplateNameIterator = 0;
-
 	m_nextStationTask = DO_NOTHING;
 	m_trailerID = INVALID_ID;
 
@@ -1427,12 +1425,17 @@ void RailroadBehavior::FindPosByPathDistance( Coord3D *pos, const Real dist, con
 	{
 		const TrackPoint *thisPoint = &(*pointIter);
 		++pointIter;// next pointIter in this list, so then...
-		const TrackPoint *nextPoint = &(*pointIter);
 
 
 		if (thisPoint && thisPoint->m_distanceFromFirst < actualDistance)// I am after this point, and
 		{
 			Coord3D thisPointPos = thisPoint->m_position;
+			const TrackPoint *nextPoint = NULL;
+
+			// TheSuperHackers Mauller 02/04/2025 Prevent dereferencing of endpoint pointer which throws asserts during Debug
+			if (pointIter != pointList->end()) {
+				 nextPoint = &(*pointIter);
+			}
 			
 			if (nextPoint && nextPoint->m_distanceFromFirst > actualDistance)
 			{

@@ -33,7 +33,7 @@
 #include "Common/ThingSort.h"
 #include "Common/ThingTemplate.h"
 #include "GameLogic/PolygonTrigger.h"
-#include "WBView3D.h"
+#include "wbview3d.h"
 #include "ObjectTool.h"
 
 //

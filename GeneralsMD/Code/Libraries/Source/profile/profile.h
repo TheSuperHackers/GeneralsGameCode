@@ -22,7 +22,7 @@
 // $Revision: #4 $
 // $DateTime: 2003/08/14 13:43:29 $
 //
-// ©2003 Electronic Arts
+// (c) 2003 Electronic Arts
 //
 // Profiling module
 //////////////////////////////////////////////////////////////////////////////
@@ -34,17 +34,6 @@
 
 #if defined(_DEBUG) && defined(_INTERNAL)
 	#error "Only either _DEBUG or _INTERNAL should ever be defined"
-#endif
-
-// Define which libraries to use. 
-#if defined(_INTERNAL)
-#  pragma comment (lib,"profileinternal.lib")
-#elif defined(_DEBUG)
-#  pragma comment (lib,"profiledebug.lib")
-#elif defined(_PROFILE)
-#  pragma comment (lib,"profileprofile.lib")
-#else
-#  pragma comment (lib,"profile.lib")
 #endif
 
 // include all our public header files (use double quotes here)

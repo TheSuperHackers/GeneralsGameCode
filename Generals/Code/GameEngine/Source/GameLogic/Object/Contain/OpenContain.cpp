@@ -533,8 +533,7 @@ void OpenContain::removeFromContainViaIterator( ContainedItemsList::iterator it,
 		m_stealthUnitsContained--;
 		if( exposeStealthUnits )
 		{
-			static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-			StealthUpdate* stealth = (StealthUpdate*)rider->findUpdateModule( key_StealthUpdate );
+			StealthUpdate* stealth = rider->getStealth();
 			if( stealth )
 			{
 				stealth->markAsDetected();
@@ -700,8 +699,7 @@ void OpenContain::onCollide( Object *other, const Coord3D *loc, const Coord3D *n
 				if( rider->isKindOf( KINDOF_STEALTH_GARRISON ) )
 				{
 					// aiExit is needed to walk away from the building well, but it doesn't take the Unstealth flag
-					static const NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-					StealthUpdate* stealth = (StealthUpdate*)rider->findUpdateModule( key_StealthUpdate );
+					StealthUpdate* stealth = rider->getStealth();
 					if( stealth )
 					{
 						stealth->markAsDetected();
@@ -1239,8 +1237,7 @@ void OpenContain::markAllPassengersDetected( )
 		// call it
 		if( rider->isKindOf( KINDOF_STEALTH_GARRISON ) )
 		{
-			static const NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-			StealthUpdate* stealth = (StealthUpdate*)rider->findUpdateModule( key_StealthUpdate );
+			StealthUpdate* stealth = rider->getStealth();
 			if( stealth )
 			{
 				stealth->markAsDetected();
@@ -1283,7 +1280,7 @@ void OpenContain::processDamageToContained()
 		ContainedItemsList::const_iterator it;
 		it = items->begin();
 
-		while( *it )
+		while( it != items->end() )
 		{
 			Object *object = *it;
 

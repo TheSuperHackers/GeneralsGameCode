@@ -55,6 +55,7 @@
 #include "chunkio.h"
 #include "wwmemlog.h"
 #include "w3dexclusionlist.h"
+#include "animatedsoundmgr.h"
 
 
 /*********************************************************************************************** 
@@ -383,7 +384,7 @@ void HAnimManagerClass::Create_Asset_List(DynamicVectorClass<StringClass> & excl
 		// File that this anim came from should be the name after the '.'
 		// Anims are named in the format: <skeleton>.<animname>
 		const char * anim_name = anim->Get_Name();
-		char * filename = strchr(anim_name,'.');
+		const char * filename = strchr(anim_name,'.');
 		if (filename != NULL) {	
 			exclusion_list.Add(StringClass(filename+1));
 		}

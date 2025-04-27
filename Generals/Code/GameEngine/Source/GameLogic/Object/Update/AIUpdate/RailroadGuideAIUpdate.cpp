@@ -109,8 +109,6 @@ RailroadBehavior::RailroadBehavior( Thing *thing, const ModuleData *moduleData )
 {
 	const RailroadBehaviorModuleData *modData = getRailroadBehaviorModuleData();
 
-	m_carriageTemplateNameIterator = 0;
-
 	m_nextStationTask = DO_NOTHING;
 	m_trailerID = INVALID_ID;
 
@@ -275,7 +273,7 @@ void RailroadBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 		DemoTrapUpdate *dtu = (DemoTrapUpdate*)other->findUpdateModule(key_DemoTrapUpdate);
 		if( dtu )
 		{
-			if( ! BitTest( other-> getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+			if( !other->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 				obj->kill(); // it can only detonate on me if it is ready
 
 			playImpactSound(other, other->getPosition());
@@ -1386,12 +1384,17 @@ void RailroadBehavior::FindPosByPathDistance( Coord3D *pos, const Real dist, con
 	{
 		const TrackPoint *thisPoint = &(*pointIter);
 		++pointIter;// next pointIter in this list, so then...
-		const TrackPoint *nextPoint = &(*pointIter);
 
 
 		if (thisPoint && thisPoint->m_distanceFromFirst < actualDistance)// I am after this point, and
 		{
 			Coord3D thisPointPos = thisPoint->m_position;
+			const TrackPoint *nextPoint = NULL;
+
+			// TheSuperHackers Mauller 02/04/2025 Prevent dereferencing of endpoint pointer which throws asserts during Debug
+			if (pointIter != pointList->end()) {
+				 nextPoint = &(*pointIter);
+			}
 			
 			if (nextPoint && nextPoint->m_distanceFromFirst > actualDistance)
 			{

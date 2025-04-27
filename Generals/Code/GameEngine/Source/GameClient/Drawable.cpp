@@ -281,7 +281,7 @@ const Int MAX_ENABLED_MODULES								= 16;
 {
 	if( s_animationTemplates )
 	{
-		delete s_animationTemplates;
+		delete[] s_animationTemplates;
 		s_animationTemplates = NULL;
 	}
 }
@@ -2126,8 +2126,7 @@ void Drawable::setStealthLook(StealthLookType look)
 				if( obj )
 				{
 					//Try to get the stealthupdate module and see if the opacity value is overriden.
-					static NameKeyType key_StealthUpdate = NAMEKEY("StealthUpdate");
-					StealthUpdate* stealth = (StealthUpdate *)obj->findUpdateModule(key_StealthUpdate);
+					StealthUpdate* stealth = obj->getStealth();
 					if( stealth )
 					{
 						if( stealth->isDisguised() )
@@ -2750,7 +2749,7 @@ void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 	const Object *obj = getObject();			
 
 	// we do show show icons for things that explicitly forbid it
-	if( obj->isKindOf( KINDOF_NO_HEAL_ICON ) || BitTest( obj->getStatusBits(), OBJECT_STATUS_SOLD ))
+	if( obj->isKindOf( KINDOF_NO_HEAL_ICON ) || obj->getStatusBits().test( OBJECT_STATUS_SOLD ) )
 		return;
 
 
@@ -3204,8 +3203,8 @@ void Drawable::drawConstructPercent( const IRegion2D *healthBarRegion )
 	// this data is in an attached object
 	Object *obj = getObject();
 
-	if( obj == NULL || BitTest( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE ||
-			BitTest( obj->getStatusBits(), OBJECT_STATUS_SOLD ) == TRUE )
+	if( obj == NULL || !obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ||
+			obj->getStatusBits().test( OBJECT_STATUS_SOLD ) )
 	{
 		// no object, or we are now complete get rid of the string if we have one
 		if( m_constructDisplayString )
@@ -3395,7 +3394,7 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 		//
 
 		Color color, outlineColor;
-		if( BitTest( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) || (obj->isDisabled() && !obj->isDisabledByType(DISABLED_HELD)) )
+		if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) || (obj->isDisabled() && !obj->isDisabledByType(DISABLED_HELD)) )
 		{
 			color = GameMakeColor( 0, healthRatio * 255.0f, 255, 255 );//blue to cyan
 			outlineColor = GameMakeColor( 0, healthRatio * 128.0f, 128, 255 );//dark blue to dark cyan
@@ -3893,7 +3892,7 @@ void Drawable::startAmbientSound(BodyDamageType dt, TimeOfDay tod)
 		const AudioEventInfo *info = m_ambientSound->m_event.getAudioEventInfo();
 		if( info )
 		{
-			if( BitTest( info->m_type, ST_GLOBAL) || info->m_priority == AP_CRITICAL )
+			if( BitIsSet( info->m_type, ST_GLOBAL) || info->m_priority == AP_CRITICAL )
 			{
 				//Play it anyways.
 				m_ambientSound->m_event.setDrawableID(getID());

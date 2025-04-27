@@ -37,10 +37,10 @@
 #ifndef __LOGICAL_SOUND_H
 #define __LOGICAL_SOUND_H
 
-#include "SoundSceneObj.H"
-#include "BitType.H"
-#include "Vector3.H"
-#include "Matrix3D.H"
+#include "SoundSceneObj.h"
+#include "bittype.h"
+#include "vector3.h"
+#include "matrix3d.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 //
@@ -87,7 +87,7 @@ class LogicalSoundClass : public SoundSceneObjClass
 		//////////////////////////////////////////////////////////////////////
 		//	Update methods
 		//////////////////////////////////////////////////////////////////////
-		virtual bool			On_Frame_Update (unsigned int milliseconds = 0);
+		virtual bool			On_Frame_Update (unsigned int milliseconds);
 
 		//////////////////////////////////////////////////////////////////////
 		//	Position/direction methods

@@ -38,7 +38,7 @@
 #include "GameLogic/GameLogic.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/Module/W3DTracerDraw.h"
-#include "WW3D2/Line3D.h"
+#include "WW3D2/line3d.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 
 #ifdef _INTERNAL

@@ -656,16 +656,12 @@ void Render2DClass::Render(void)
 	}
 
 	DynamicIBAccessClass ib(BUFFER_TYPE_DYNAMIC_DX8,Indices.Count());
-	try {
+	{
 		DynamicIBAccessClass::WriteLockClass Lock(&ib);
-			unsigned short *mem=Lock.Get_Index_Array();
-			for (int i=0; i<Indices.Count(); i++)
-				mem[i]=Indices[i];
-	
-		IndexBufferExceptionFunc();
-	} catch(...) {
-		IndexBufferExceptionFunc();
-	}
+		unsigned short *mem=Lock.Get_Index_Array();
+		for (int i=0; i<Indices.Count(); i++)
+			mem[i]=Indices[i];
+	}	
 
 	DX8Wrapper::Set_Vertex_Buffer(vb);
 	DX8Wrapper::Set_Index_Buffer(ib,0);

@@ -311,9 +311,7 @@ Player::Player( Int playerIndex )
 
 	m_upgradeList = NULL;
 	m_pBuildList = NULL;
-#if !defined(_PLAYTEST)
 	m_ai = NULL;
-#endif
 	m_resourceGatheringManager = NULL;
 	m_defaultTeam = NULL;
 	m_radarCount = 0;
@@ -322,8 +320,6 @@ Player::Player( Int playerIndex )
 	m_bombardBattlePlans = 0;
 	m_holdTheLineBattlePlans = 0;
 	m_searchAndDestroyBattlePlans = 0;
-	m_upgradesInProgress = 0;
-	m_upgradesCompleted = 0;
 	m_tunnelSystem = NULL;
 	m_playerTemplate = NULL;
 	m_visionSpiedMask = PLAYERMASK_NONE;
@@ -394,13 +390,11 @@ void Player::init(const PlayerTemplate* pt)
 	}
 	m_defaultTeam = NULL;
 
-#if !defined(_PLAYTEST)
 	if (m_ai)
 	{
 		m_ai->deleteInstance();
 	}
 	m_ai = NULL;
-#endif
 
 	if( m_resourceGatheringManager )
 	{
@@ -498,17 +492,7 @@ void Player::init(const PlayerTemplate* pt)
 	resetRank();
 	m_sciencesDisabled.clear();
 	m_sciencesHidden.clear();
-
-	{
-		SpecialPowerReadyTimerListIterator it = m_specialPowerReadyTimerList.begin();
-		while(it != m_specialPowerReadyTimerList.end())
-		{
-			SpecialPowerReadyTimerType *sprt = &(*it);
-			it = m_specialPowerReadyTimerList.erase( it );
-			if(sprt)
-				sprt->clear();
-		}
-	}
+	m_specialPowerReadyTimerList.clear();
 
 	KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionChangeList.begin();
 	while(it != m_kindOfPercentProductionChangeList.end())
@@ -698,10 +682,8 @@ void Player::addToPriorityBuildList(AsciiString templateName, Coord3D *pos, Real
 //=============================================================================
 void Player::update()
 {
-#if !defined(_PLAYTEST)
 	if (m_ai)
 		m_ai->update();
-#endif
 
 	// Allow the teams this player owns to update themselves.
 
@@ -720,10 +702,8 @@ void Player::update()
 //=============================================================================
 void Player::newMap()
 {
-#if !defined(_PLAYTEST)
 	if (m_ai)
 		m_ai->newMap();
-#endif
 }
 
 //=============================================================================
@@ -731,7 +711,6 @@ void Player::setPlayerType(PlayerType t, Bool skirmish)
 {
 	m_playerType = t;
 
-#if !defined(_PLAYTEST)
 	if (m_ai)
 	{
 		m_ai->deleteInstance();
@@ -748,7 +727,6 @@ void Player::setPlayerType(PlayerType t, Bool skirmish)
 			m_ai = newInstance(AIPlayer)( this );
 		}
 	}
-#endif
 }
 
 //=============================================================================
@@ -763,6 +741,16 @@ void Player::setDefaultTeam(void) {
 	if (dt) {
 		m_defaultTeam = dt;
 		dt->setActive();
+	}
+}
+
+//=============================================================================
+void Player::deletePlayerAI()
+{
+	if (m_ai)
+	{
+		m_ai->deleteInstance();
+		m_ai = NULL;
 	}
 }
 
@@ -874,11 +862,9 @@ void Player::initFromDict(const Dict* d)
 		if (exists) {
 			difficulty = (GameDifficulty) diffInt;
 		}
-#if !defined(_PLAYTEST)
 		if (m_ai) {
 			m_ai->setAIDifficulty(difficulty);
 		}
-#endif
 
 		if (!found) {
 			DEBUG_CRASH(("Could not find skirmish player for side %s", mySide.str()));
@@ -1028,7 +1014,7 @@ void Player::becomingTeamMember(Object *obj, Bool yes)
 		return;	
 
 	// energy production/consumption hooks, note we ignore things that are UNDER_CONSTRUCTION
-	if( BitTest( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE )
+	if( !obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 	{
 		obj->friend_adjustPowerForPlayer(yes);
 	}  // end if
@@ -1107,8 +1093,7 @@ void Player::becomingLocalPlayer(Bool yes)
 					Drawable *draw = object->getDrawable();
 					if( draw )
 					{
-						static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-						StealthUpdate *update = (StealthUpdate*)object->findUpdateModule( key_StealthUpdate );
+						StealthUpdate *update = object->getStealth();
 						if( update && update->isDisguised() )
 						{
 							Player *disguisedPlayer = ThePlayerList->getNthPlayer( update->getDisguisedPlayerIndex() );
@@ -1148,11 +1133,7 @@ void Player::becomingLocalPlayer(Bool yes)
 //-------------------------------------------------------------------------------------------------
 Bool Player::isSkirmishAIPlayer( void )
 {
-#if !defined(_PLAYTEST)
-	return m_ai?m_ai->isSkirmishAI():false; 
-#else
-	return FALSE;
-#endif
+	return m_ai ? m_ai->isSkirmishAI() : false; 
 }
 
 
@@ -1172,11 +1153,7 @@ void Player::computeSuperweaponTarget(const SpecialPowerTemplate *power, Coord3D
 //-------------------------------------------------------------------------------------------------
 Player  *Player::getCurrentEnemy( void )
 {
-#if !defined(_PLAYTEST)
 	return m_ai?m_ai->getAiEnemy():NULL; 
-#else
-	return NULL;
-#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1222,11 +1199,10 @@ Object* Player::findNaturalCommandCenter()
 //-------------------------------------------------------------------------------------------------
 GameDifficulty Player::getPlayerDifficulty(void) const
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		return m_ai->getAIDifficulty();
 	}
-#endif
 	return TheScriptEngine->getGlobalDifficulty();
 }
 
@@ -1235,11 +1211,7 @@ GameDifficulty Player::getPlayerDifficulty(void) const
 //-------------------------------------------------------------------------------------------------
 Bool Player::checkBridges(Object *unit, Waypoint *way)
 {
-#if !defined(_PLAYTEST)
 	return m_ai?m_ai->checkBridges(unit, way):false; 
-#else
-	return FALSE;
-#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1247,11 +1219,7 @@ Bool Player::checkBridges(Object *unit, Waypoint *way)
 //-------------------------------------------------------------------------------------------------
 Bool Player::getAiBaseCenter(Coord3D *pos)
 {
-#if !defined(_PLAYTEST)
 	return m_ai?m_ai->getBaseCenter(pos):false; 
-#else
-	return FALSE;
-#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1259,11 +1227,10 @@ Bool Player::getAiBaseCenter(Coord3D *pos)
 //-------------------------------------------------------------------------------------------------
 void Player::repairStructure(ObjectID structureID)
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		m_ai->repairStructure(structureID); 
 	}
-#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1278,11 +1245,9 @@ void Player::onUnitCreated( Object *factory, Object *unit )
 	// increment our scorekeeper
 	m_scoreKeeper.addObjectBuilt(unit);
 
-#if !defined(_PLAYTEST)
 	// ai notification callback
 	if( m_ai )
 		m_ai->onUnitProduced( factory, unit );
-#endif
 }  // end onUnitCreated
 
 
@@ -1368,11 +1333,9 @@ void Player::onStructureConstructionComplete( Object *builder, Object *structure
 
 	structure->friend_adjustPowerForPlayer(TRUE);
 
-#if !defined(_PLAYTEST)
 	// ai notification callback
 	if( m_ai )
 		m_ai->onStructureProduced( builder, structure );
-#endif
 
 	// the GUI needs to re-evaluate the information being displayed to the user now
 	if( TheControlBar )
@@ -1698,7 +1661,8 @@ void Player::setUnitsShouldHunt(Bool unitsShouldHunt, CommandSourceType source)
 //=============================================================================
 void Player::killPlayer(void)
 {
-	for (PlayerTeamList::iterator it = m_playerTeamPrototypes.begin(); it != m_playerTeamPrototypes.end(); ++it) {
+	PlayerTeamList::iterator it = m_playerTeamPrototypes.begin();
+	for (; it != m_playerTeamPrototypes.end(); ++it) {
 		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
 			Team *team = iter.cur();
 			if (!team) {
@@ -1993,76 +1957,69 @@ Bool Player::allowedToBuild(const ThingTemplate *tmplate) const
 //=============================================================================
 void Player::buildSpecificTeam( TeamPrototype *teamProto) 
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		// Do a priority build.
 		m_ai->buildSpecificAITeam(teamProto, true);
 	}
-#endif
 }
 
 //=============================================================================
 void Player::buildBaseDefense(Bool flank) 
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		// Do a priority build.
 		m_ai->buildAIBaseDefense(flank);
 	}
-#endif
 }
 
 //=============================================================================
 void Player::buildBaseDefenseStructure(const AsciiString &thingName, Bool flank) 
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		// Do a priority build.
 		m_ai->buildAIBaseDefenseStructure(thingName, flank);
 	}
-#endif
 }
 
 //=============================================================================
 void Player::buildSpecificBuilding(const AsciiString &thingName) 
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		// Do a priority build.
 		m_ai->buildSpecificAIBuilding(thingName);
 	}
-#endif
 }
 
 //=============================================================================
 void Player::buildBySupplies(Int minimumCash, const AsciiString &thingName) 
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		m_ai->buildBySupplies(minimumCash, thingName);
 	}
-#endif
 }
 
 //=============================================================================
 void Player::buildUpgrade( const AsciiString &upgrade) 
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		m_ai->buildUpgrade(upgrade);
 	}
-#endif
 }
 
 //=============================================================================
 void Player::recruitSpecificTeam( TeamPrototype *teamProto, Real recruitRadius) 
 {
-#if !defined(_PLAYTEST)
-	if (m_ai) {
+	if (m_ai) 
+	{
 		// Do a priority build.
 		m_ai->recruitSpecificAITeam(teamProto, recruitRadius);
 	}
-#endif
 }
 
 //=============================================================================
@@ -2538,8 +2495,8 @@ void Player::deleteUpgradeList( void )
 	}  // end while
 
 	// This doesn't call removeUpgrade, so clear these ourselves.
-	m_upgradesInProgress = 0;
-	m_upgradesCompleted = 0;
+	m_upgradesInProgress.clear();
+	m_upgradesCompleted.clear();
 
 }  // end deleteUpgradeList
 
@@ -2563,7 +2520,7 @@ Upgrade *Player::findUpgrade( const UpgradeTemplate *upgradeTemplate )
 //=================================================================================================
 Bool Player::hasUpgradeComplete( const UpgradeTemplate *upgradeTemplate )
 {
-	Int64 testMask = upgradeTemplate->getUpgradeMask();
+	UpgradeMaskType testMask = upgradeTemplate->getUpgradeMask();
 	return hasUpgradeComplete( testMask );
 } 
 
@@ -2572,9 +2529,9 @@ Bool Player::hasUpgradeComplete( const UpgradeTemplate *upgradeTemplate )
 	Does the player have this completed upgrade.  This form is exposed so Objects can do quick lookups.
 */
 //=================================================================================================
-Bool Player::hasUpgradeComplete( Int64 testMask )
+Bool Player::hasUpgradeComplete( UpgradeMaskType testMask )
 {
-	return BitTest( m_upgradesCompleted, testMask );
+	return m_upgradesCompleted.testForAll( testMask );
 }
 
 //=================================================================================================
@@ -2582,8 +2539,8 @@ Bool Player::hasUpgradeComplete( Int64 testMask )
 //=================================================================================================
 Bool Player::hasUpgradeInProduction( const UpgradeTemplate *upgradeTemplate )
 {
-	Int64 testMask = upgradeTemplate->getUpgradeMask();
-	return BitTest( m_upgradesInProgress, testMask );
+	UpgradeMaskType testMask = upgradeTemplate->getUpgradeMask();
+	return m_upgradesInProgress.testForAll( testMask );
 }
 
 //=================================================================================================
@@ -2613,15 +2570,15 @@ Upgrade *Player::addUpgrade( const UpgradeTemplate *upgradeTemplate, UpgradeStat
 	u->setStatus( status );
 
 	// Update our Bitmasks
-	Int64 newMask = upgradeTemplate->getUpgradeMask();
+	UpgradeMaskType newMask = upgradeTemplate->getUpgradeMask();
 	if( status == UPGRADE_STATUS_IN_PRODUCTION )
 	{
-		BitSet( m_upgradesInProgress, newMask );
+		m_upgradesInProgress.set( newMask );
 	}
 	else if( status == UPGRADE_STATUS_COMPLETE )
 	{
-		BitClear( m_upgradesInProgress, newMask );
-		BitSet( m_upgradesCompleted, newMask );
+		m_upgradesInProgress.clear( newMask );
+		m_upgradesCompleted.set( newMask );
 		onUpgradeCompleted( upgradeTemplate );
 	}
 
@@ -2679,9 +2636,9 @@ void Player::removeUpgrade( const UpgradeTemplate *upgradeTemplate )
 			m_upgradeList = upgrade->friend_getNext();
 
 		// Clear this upgrade's bits from our mind
-		Int64 oldMask = upgradeTemplate->getUpgradeMask();
-		BitClear( m_upgradesInProgress, oldMask );
-		BitClear( m_upgradesCompleted, oldMask );
+		UpgradeMaskType oldMask = upgradeTemplate->getUpgradeMask();
+		m_upgradesInProgress.clear( oldMask );
+		m_upgradesCompleted.clear( oldMask );
 
 		if( upgrade->getStatus() == UPGRADE_STATUS_COMPLETE )
 			onUpgradeRemoved();
@@ -3769,7 +3726,6 @@ void Player::xfer( Xfer *xfer )
 
 	}  // end else, load
 
-#if !defined(_PLAYTEST)
 	// ai player data
 	Bool aiPlayerPresent = m_ai ? TRUE : FALSE;
 	xfer->xferBool( &aiPlayerPresent );
@@ -3782,10 +3738,6 @@ void Player::xfer( Xfer *xfer )
 	}  // end if
 	if( m_ai )
 		xfer->xferSnapshot( m_ai );
-#else
-	Bool aiPlayerPresent = FALSE;
-	xfer->xferBool( &aiPlayerPresent );
-#endif
 
 	// resource gathering manager
 	Bool resourceGatheringManagerPresent = m_resourceGatheringManager ? TRUE : FALSE;

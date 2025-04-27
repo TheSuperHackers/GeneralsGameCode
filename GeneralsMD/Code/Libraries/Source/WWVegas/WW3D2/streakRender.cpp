@@ -25,14 +25,14 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "streakrender.h"
+#include "streakRender.h"
 #include "ww3d.h"
 #include "rinfo.h"
 #include "dx8wrapper.h"
 #include "sortingrenderer.h"
 #include "vp.h"
-#include "vector3i.h"
-#include "random.h"
+#include "Vector3i.h"
+#include "RANDOM.H"
 #include "v3_rnd.h"
 
 #ifdef _INTERNAL
@@ -1369,16 +1369,11 @@ void StreakRendererClass::RenderStreak
 			DynamicIBAccessClass::WriteLockClass lock(&ib_access);
 			unsigned short* inds=lock.Get_Index_Array();
 
-			try {
 			for (i=0; i<triangleIndex; i++)
 			{
 				*inds++=v_index_array[i].I;
 				*inds++=v_index_array[i].J;
 				*inds++=v_index_array[i].K;
-			}
-			IndexBufferExceptionFunc();
-			} catch(...) {
-				IndexBufferExceptionFunc();
 			}
 		}
 

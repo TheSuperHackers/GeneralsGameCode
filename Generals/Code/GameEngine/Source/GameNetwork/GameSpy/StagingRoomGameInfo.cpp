@@ -592,7 +592,7 @@ void GameSpyStagingRoom::startGame(Int gameID)
 			TheGameSpyInfo->leaveStagingRoom();
 	}
 	else
-//#endif defined(_DEBUG) || defined(_INTERNAL)
+//#endif // defined(_DEBUG) || defined(_INTERNAL)
 	{
 		TheNAT = NEW NAT();
 		TheNAT->attachSlotList(m_slot, getLocalSlotNum(), m_localIP);

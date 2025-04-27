@@ -32,6 +32,12 @@
 #include "Common/Xfer.h"
 #include "GameLogic/Module/UpgradeModule.h"
 
+#ifdef _INTERNAL
+// for occasional debugging...
+//#pragma optimize("", off)
+//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
+
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
@@ -107,7 +113,7 @@ void UpgradeMux::forceRefreshUpgrade()
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool UpgradeMux::attemptUpgrade( Int64 keyMask )
+Bool UpgradeMux::attemptUpgrade( UpgradeMaskType keyMask )
 {
 	if (wouldUpgrade(keyMask))
 	{
@@ -120,56 +126,68 @@ Bool UpgradeMux::attemptUpgrade( Int64 keyMask )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool UpgradeMux::wouldUpgrade( Int64 keyMask ) const
+Bool UpgradeMux::wouldUpgrade( UpgradeMaskType keyMask ) const
 {
-	Int64 activation, conflicting;
+	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks(activation, conflicting);
 
 	//Make sure we have activation conditions and we haven't performed the upgrade already.
-	if( activation && !m_upgradeExecuted )
+	if( activation.any() && keyMask.any() && !m_upgradeExecuted )
 	{
 		//Okay, make sure we don't have any conflicting upgrades
-		if( !(conflicting & keyMask) )
+		if( !keyMask.testForAny( conflicting) )
 		{
 			//Finally check to see if our upgrade conditions match.
 			if( requiresAllActivationUpgrades() )
 			{
 				//Make sure ALL triggers requirements are upgraded
-				return (activation & keyMask) == activation;
+				if( keyMask.testForAll( activation ) )
+				{
+					return TRUE;
+				}
 			}
-			else
+			else 
 			{
 				//Check if ANY trigger requirements are met.
-				return (activation & keyMask) != 0;
+				if( keyMask.testForAny( activation ) )
+				{
+					return TRUE;
+				}
 			}
 		}
 	}
 	//We can't upgrade!
-	return false;
+	return FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
-Bool UpgradeMux::testUpgradeConditions( Int64 keyMask ) const
+Bool UpgradeMux::testUpgradeConditions( UpgradeMaskType keyMask ) const
 {
-	Int64 activation, conflicting;
+	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks(activation, conflicting);
 
 	//Okay, make sure we don't have any conflicting upgrades
-	if( !(conflicting & keyMask) )
+	if( !keyMask.any() || !keyMask.testForAny( conflicting ) )
 	{
 		//Make sure we have activation conditions
-		if( activation )
+		if( activation.any() )
 		{
 			//Finally check to see if our upgrade conditions match.
 			if( requiresAllActivationUpgrades() )
 			{
 				//Make sure ALL triggers requirements are upgraded
-				return (activation & keyMask) == activation;
+				if( keyMask.testForAll( activation ) )
+				{
+					return TRUE;
+				}
 			}
 			else
 			{
 				//Check if ANY trigger requirements are met.
-				return (activation & keyMask) != 0;
+				if( keyMask.testForAny( activation ) )
+				{
+					return TRUE;
+				}
 			}
 		}
 		else
@@ -184,11 +202,11 @@ Bool UpgradeMux::testUpgradeConditions( Int64 keyMask ) const
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-Bool UpgradeMux::resetUpgrade( Int64 keyMask )
+Bool UpgradeMux::resetUpgrade( UpgradeMaskType keyMask )
 {
-	Int64 activation, conflicting;
+	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks(activation, conflicting);
-	if( activation & keyMask && m_upgradeExecuted )
+	if( keyMask.testForAny( activation ) && m_upgradeExecuted )
 	{
 		m_upgradeExecuted = false;
 		return true;

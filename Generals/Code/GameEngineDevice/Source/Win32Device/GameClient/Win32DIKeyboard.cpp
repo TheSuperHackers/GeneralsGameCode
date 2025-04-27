@@ -45,7 +45,7 @@ enum { KEYBOARD_BUFFER_SIZE = 256 };
 struct ErrorLookup
 {
 	HRESULT error;
-	char *string;
+	const char *string;
 };
 static ErrorLookup errorLookup[] = 
 {
@@ -420,6 +420,6 @@ void DirectInputKeyboard::update( void )
 Bool DirectInputKeyboard::getCapsState( void )
 {
 
-	return BitTest( GetKeyState( VK_CAPITAL ), 0X01);
+	return BitIsSet( GetKeyState( VK_CAPITAL ), 0X01);
 
 }  // end getCapsState

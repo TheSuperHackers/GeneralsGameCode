@@ -313,7 +313,7 @@ void TransportContain::onRemoving( Object *rider )
 	//There is no computer player check since Aggressive only means something for computer players anyway
 	if( d->m_goAggressiveOnExit && rider->getAI() )
 	{
-		rider->getAI()->setAttitude( AI_AGGRESSIVE );
+		rider->getAI()->setAttitude( ATTITUDE_AGGRESSIVE );
 	}
 	if (getObject()->isEffectivelyDead()) {
 		scatterToNearbyPosition(rider);
@@ -382,7 +382,7 @@ UpdateSleepTime TransportContain::update()
 				ContainedItemsList::const_iterator it;
 				it = items->begin();
 
-				while( *it )
+				while( it != items->end() )
 				{
 					Object *object = *it;
 

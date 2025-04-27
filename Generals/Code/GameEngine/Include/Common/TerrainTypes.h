@@ -74,7 +74,7 @@ typedef enum
 
 } TerrainClass;
 #ifdef DEFINE_TERRAIN_TYPE_NAMES
-static char *terrainTypeNames[] = 
+static const char *terrainTypeNames[] = 
 {
 	"NONE",
 	"DESERT_1",

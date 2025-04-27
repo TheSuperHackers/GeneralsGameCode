@@ -78,7 +78,7 @@ enum { WIN_COLOR_UNDEFINED = GAME_COLOR_UNDEFINED };
 typedef UnsignedInt WindowMsgData;
 
 //-----------------------------------------------------------------------------
-enum WindowMsgHandledType { MSG_IGNORED, MSG_HANDLED };
+enum WindowMsgHandledType CPP_11(: Int) { MSG_IGNORED, MSG_HANDLED };
 
 // callback types -------------------------------------------------------------
 typedef void (*GameWinMsgBoxFunc)( void ); //used for the Message box callbacks.
@@ -113,7 +113,7 @@ enum
 
 // Game window messages -------------------------------------------------------
 //-----------------------------------------------------------------------------
-enum GameWindowMessage
+enum GameWindowMessage CPP_11(: Int)
 {
 
 	GWM_NONE = 0,
@@ -141,7 +141,7 @@ enum GameWindowMessage
 /** These return codes are returned when after processing events through
 	* the window system */
 //-----------------------------------------------------------------------------
-enum WinInputReturnCode
+enum WinInputReturnCode CPP_11(: Int)
 {
 	WIN_INPUT_NOT_USED = 0,
 	WIN_INPUT_USED,

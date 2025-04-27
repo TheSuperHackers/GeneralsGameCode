@@ -37,17 +37,7 @@
 
 __forceinline void ProfileGetTime(__int64 &t)
 {
-  _asm
-  {
-    mov ecx,[t]
-    push eax
-    push edx
-    rdtsc
-    mov [ecx],eax
-    mov [ecx+4],edx
-    pop edx
-    pop eax
-  };
+	t = _rdtsc();
 }
 
 #ifdef _INTERNAL

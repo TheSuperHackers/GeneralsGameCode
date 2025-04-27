@@ -35,7 +35,7 @@
 #include "Common/INIException.h"
 
 #include "Common/DamageFX.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/GameAudio.h"
 #include "Common/Science.h"
@@ -196,7 +196,7 @@ INI::INI( void )
 	m_blockEndToken			= "END";
 	m_endOfFile					= FALSE;
 	m_buffer[0]					= 0;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_CRASHING
 	m_curBlockStart[0]	= 0;
 #endif
 
@@ -323,7 +323,8 @@ static INIBlockParse findBlockParse(const char* token)
 //-------------------------------------------------------------------------------------------------
 static INIFieldParseProc findFieldParse(const FieldParse* parseTable, const char* token, int& offset, const void*& userData)
 {
-	for (const FieldParse* parse = parseTable; parse->token; ++parse)
+	const FieldParse* parse = parseTable;
+	for (; parse->token; ++parse)
 	{
 		if (strcmp( parse->token, token ) == 0)
 		{
@@ -374,7 +375,7 @@ void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 				INIBlockParse parse = findBlockParse(token);
 				if (parse)
 				{
-					#if defined(_DEBUG) || defined(_INTERNAL)
+					#ifdef DEBUG_CRASHING
 					strcpy(m_curBlockStart, m_buffer);
 					#endif
 					try {
@@ -387,7 +388,7 @@ void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 
 						throw INIException(buff);
 					}
-					#if defined(_DEBUG) || defined(_INTERNAL)
+					#ifdef DEBUG_CRASHING
 						strcpy(m_curBlockStart, "NO_BLOCK");
 					#endif
 				}
@@ -1504,7 +1505,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 				for (int ptIdx = 0; ptIdx < parseTableList.getCount(); ++ptIdx)
 				{
 					int offset = 0;
-					void* userData = 0;
+					const void* userData = 0;
 					INIFieldParseProc parse = findFieldParse(parseTableList.getNthFieldParse(ptIdx), field, offset, userData);
 					if (parse)
 					{

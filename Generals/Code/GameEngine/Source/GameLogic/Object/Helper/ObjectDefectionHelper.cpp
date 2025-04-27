@@ -81,8 +81,7 @@ UpdateSleepTime ObjectDefectionHelper::update()
 	}
 
 	// dead or attacking... our cover is blown.
-	if (obj->isEffectivelyDead() || 
-			(obj->getStatusBits() & OBJECT_STATUS_IS_FIRING_WEAPON)!= 0)
+	if( obj->isEffectivelyDead() || obj->getStatusBits().test( OBJECT_STATUS_IS_FIRING_WEAPON ) )
 	{
 		// PLEASE NOTE:
 		// checking the is_attacking statusbit above, only handles weapon related attacks...

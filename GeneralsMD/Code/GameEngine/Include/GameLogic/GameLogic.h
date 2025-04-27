@@ -66,7 +66,7 @@ class WindowLayout;
 class TerrainLogic;
 class GhostObjectManager;
 class CommandButton;
-enum BuildableStatus;
+enum BuildableStatus CPP_11(: Int);
 
 
 typedef const CommandButton* ConstCommandButtonPtr;
@@ -417,8 +417,8 @@ inline Object* GameLogic::findObjectByID( ObjectID id )
 //		return NULL;
 //	
 //	return (*it).second;
-	if( (Int)id < m_objVector.size() )
-		return m_objVector[(Int)id];
+	if( (size_t)id < m_objVector.size() )
+		return m_objVector[(size_t)id];
 
 	return NULL;
 }

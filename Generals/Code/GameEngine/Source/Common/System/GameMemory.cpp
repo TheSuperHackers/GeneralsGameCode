@@ -181,7 +181,6 @@ DECLARE_PERF_TIMER(MemoryPoolInitFilling)
 	Int theWastedDMA = 0;
 	Int thePeakWastedDMA = 0;
 
-#define NO_INTENSE_DMA_BOOKKEEPING
 #ifdef INTENSE_DMA_BOOKKEEPING
 	struct UsedNPeak
 	{
@@ -902,7 +901,7 @@ void MemoryPoolSingleBlock::initBlock(Int logicalSize, MemoryPoolBlob *owningBlo
 	}
 #endif
 }
-#endif MEMORYPOOL_DEBUG
+#endif // MEMORYPOOL_DEBUG
 #ifdef MEMORYPOOL_CHECKPOINTING
 	m_checkpointInfo = NULL;
 #endif
@@ -1655,7 +1654,8 @@ void* MemoryPool::allocateBlockDoNotZeroImplementation(DECLARE_LITERALSTRING_ARG
 	{
 		// hmm... the current 'free' blob has nothing available. look and see if there
 		// are any other existing blobs with freespace.
-		for (MemoryPoolBlob *blob = m_firstBlob; blob != NULL; blob = blob->getNextInList()) 
+		MemoryPoolBlob *blob = m_firstBlob;
+		for (; blob != NULL; blob = blob->getNextInList()) 
 		{
 			if (blob->hasAnyFreeBlocks())
 			 	break;
@@ -2207,7 +2207,7 @@ void *DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes 
 				thePeakWastedDMA = theWastedDMA;
 		}
 	}
-#endif MEMORYPOOL_DEBUG
+#endif // MEMORYPOOL_DEBUG
 	}
 	else
 	{
@@ -2251,7 +2251,7 @@ void *DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes 
 	}
 #endif
 }
-#endif MEMORYPOOL_DEBUG
+#endif // MEMORYPOOL_DEBUG
 
 	++m_usedBlocksInDma;
 	DEBUG_ASSERTCRASH(m_usedBlocksInDma >= 0, ("negative count for m_usedBlocksInDma"));
@@ -2297,6 +2297,9 @@ void DynamicMemoryAllocator::freeBytes(void* pBlockPtr)
 	MemoryPoolSingleBlock *block = MemoryPoolSingleBlock::recoverBlockFromUserData(pBlockPtr);
 #ifdef MEMORYPOOL_DEBUG
 	Int waste = 0, used = 0;
+#ifdef INTENSE_DMA_BOOKKEEPING
+	const char* tagString;
+#endif
 	{
 		USE_PERF_TIMER(MemoryPoolDebugging)
 		waste = 0;
@@ -2305,10 +2308,10 @@ void DynamicMemoryAllocator::freeBytes(void* pBlockPtr)
 		if (thePeakDMA < theTotalDMA)
 			thePeakDMA = theTotalDMA;
 	#ifdef INTENSE_DMA_BOOKKEEPING
-		const char* tagString = block->debugGetLiteralTagString();
+		tagString = block->debugGetLiteralTagString();
 	#endif
 	}
-#endif MEMORYPOOL_DEBUG
+#endif // MEMORYPOOL_DEBUG
 
 	if (block->getOwningBlob()) 
 	{
@@ -2326,7 +2329,7 @@ void DynamicMemoryAllocator::freeBytes(void* pBlockPtr)
 					thePeakWastedDMA = theWastedDMA;
 			}
 		}
-#endif MEMORYPOOL_DEBUG
+#endif // MEMORYPOOL_DEBUG
 		block->getOwningBlob()->getOwningPool()->freeBlock(pBlockPtr);
 	}
 	else
@@ -2687,7 +2690,8 @@ MemoryPool *MemoryPoolFactory::createMemoryPool(const char *poolName, Int alloca
 */
 MemoryPool *MemoryPoolFactory::findMemoryPool(const char *poolName)
 {
-	for (MemoryPool *pool = m_firstPoolInFactory; pool; pool = pool->getNextPoolInList())
+	MemoryPool *pool = m_firstPoolInFactory;
+	for (; pool; pool = pool->getNextPoolInList())
 	{
 		if (!strcmp(poolName, pool->getPoolName())) 
 		{
@@ -3075,8 +3079,10 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 {
 	//USE_PERF_TIMER(MemoryPoolDebugging) skip end-of-run reporting stuff
 
+#ifdef ALLOW_DEBUG_UTILS
 	Int oldFlags = DebugGetFlags();
 	DebugSetFlags(oldFlags & ~DEBUG_FLAG_PREPEND_TIME);
+#endif
 
 #ifdef MEMORYPOOL_CHECKPOINTING
 	Bool doBlockReport = (flags & _REPORT_CP_ALLOCATED_DONTCARE) != 0 && (flags & _REPORT_CP_FREED_DONTCARE) != 0;
@@ -3149,7 +3155,8 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 		DEBUG_LOG(("------------------------------------------\n"));
 		DEBUG_LOG(("Begin Pool Overflow Report\n"));
 		DEBUG_LOG(("------------------------------------------\n"));
-		for (MemoryPool *pool = m_firstPoolInFactory; pool; pool = pool->getNextPoolInList())
+		MemoryPool *pool = m_firstPoolInFactory;
+		for (; pool; pool = pool->getNextPoolInList())
 		{
 			if (pool->getPeakBlockCount() > pool->getInitialBlockCount())
 			{
@@ -3231,30 +3238,15 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 	}
 #endif
 
+#ifdef ALLOW_DEBUG_UTILS
 	DebugSetFlags(oldFlags);
+#endif
 }
 #endif
 
 //-----------------------------------------------------------------------------
 // GLOBAL FUNCTIONS
 //-----------------------------------------------------------------------------
-
-/*
-	This is a trick that is intended to force MSVC to link this file (and thus,
-	these definitions of new/delete) ahead of all others. (We do debug checking
-	to ensure that's the case)
-*/
-#if defined(_DEBUG)
-	#pragma comment(lib, "GameEngineDebug")
-#elif defined(_INTERNAL)
-	#pragma comment(lib, "GameEngineInternal")
-#else
-	#pragma comment(lib, "GameEngine")
-#endif
-
-#ifdef MEMORYPOOL_OVERRIDE_MALLOC
-	#pragma comment(linker, "/force:multiple")
-#endif
 
 static int theLinkTester = 0;
 
@@ -3461,7 +3453,7 @@ void initMemoryManager()
 	linktest = new char[8];
 	delete [] linktest;
 
-	linktest = new char("",1);
+	linktest = new char('\0');
 	delete linktest;
 
 #ifdef MEMORYPOOL_OVERRIDE_MALLOC

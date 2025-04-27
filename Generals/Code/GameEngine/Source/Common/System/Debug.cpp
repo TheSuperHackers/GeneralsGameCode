@@ -46,13 +46,21 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 
-// USER INCLUDES 
+// USER INCLUDES
+
+// TheSuperHackers @feature helmutbuhler 04/10/2025
+// Uncomment this to show normal logging stuff in the crc logging.
+// This can be helpful for context, but can also clutter diffs because normal logs aren't necessarily
+// deterministic or the same on all peers in multiplayer games.
+//#define INCLUDE_DEBUG_LOG_IN_CRC_LOG
+
 #define DEBUG_THREADSAFE
 #ifdef DEBUG_THREADSAFE
 #include "Common/CriticalSection.h"
 #endif
 #include "Common/Debug.h"
-#include "Common/registry.h"
+#include "Common/CRCDebug.h"
+#include "Common/Registry.h"
 #include "Common/SystemInfo.h"
 #include "Common/UnicodeString.h"
 #include "GameClient/GameText.h"
@@ -64,7 +72,7 @@
 extern bool DX8Wrapper_IsWindowed;
 extern HWND ApplicationHWnd;
 
-extern char *gAppPrefix; /// So WB can have a different log file name.
+extern const char *gAppPrefix; /// So WB can have a different log file name.
 
 #ifdef _INTERNAL
 // this should ALWAYS be present
@@ -125,7 +133,9 @@ static const char *prepBuffer(const char* format, char *buffer);
 #ifdef DEBUG_LOGGING
 static void doLogOutput(const char *buffer);
 #endif
+#ifdef DEBUG_CRASHING
 static int doCrashBox(const char *buffer, Bool logResult);
+#endif
 static void whackFunnyCharacters(char *buf);
 #ifdef DEBUG_STACKTRACE
 static void doStackDump();
@@ -138,8 +148,8 @@ static void doStackDump();
 // ----------------------------------------------------------------------------
 inline Bool ignoringAsserts()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
-	return !DX8Wrapper_IsWindowed || TheGlobalData->m_debugIgnoreAsserts;
+#ifdef DEBUG_CRASHING
+	return !DX8Wrapper_IsWindowed || (TheGlobalData&&TheGlobalData->m_debugIgnoreAsserts);
 #else
 	return !DX8Wrapper_IsWindowed;
 #endif
@@ -234,6 +244,10 @@ static void doLogOutput(const char *buffer)
 	{
 		::OutputDebugString(buffer);
 	}
+
+#ifdef INCLUDE_DEBUG_LOG_IN_CRC_LOG
+	addCRCDebugLineNoCounter("%s", buffer);
+#endif
 }
 #endif
 
@@ -244,6 +258,7 @@ static void doLogOutput(const char *buffer)
 	we exit the app, break into debugger, or continue execution. 
 */
 // ----------------------------------------------------------------------------
+#ifdef DEBUG_CRASHING
 static int doCrashBox(const char *buffer, Bool logResult)
 {
 	int result;
@@ -281,6 +296,7 @@ static int doCrashBox(const char *buffer, Bool logResult)
 	}
 	return result;
 }
+#endif
 
 #ifdef DEBUG_STACKTRACE
 // ----------------------------------------------------------------------------
@@ -464,7 +480,7 @@ void DebugCrash(const char *format, ...)
 	doLogOutput(theCrashBuffer);
 #endif
 #ifdef DEBUG_STACKTRACE
-	if (!TheGlobalData->m_debugIgnoreStackTrace)
+	if (!(TheGlobalData && TheGlobalData->m_debugIgnoreStackTrace))
 	{
 		doStackDump();
 	}
@@ -546,7 +562,7 @@ void DebugSetFlags(int flags)
 
 #endif	// ALLOW_DEBUG_UTILS
 
-#ifdef ALLOW_DEBUG_UTILS
+#ifdef DEBUG_PROFILE
 // ----------------------------------------------------------------------------
 SimpleProfiler::SimpleProfiler()
 {
@@ -626,7 +642,7 @@ double SimpleProfiler::getAverageTime()
 	return (double)m_totalAllSessions * 1000.0 / ((double)m_freq * (double)m_numSessions);
 }
 
-#endif	// ALLOW_DEBUG_UTILS
+#endif	// DEBUG_PROFILE
 
 // ----------------------------------------------------------------------------
 // ReleaseCrash
@@ -658,6 +674,10 @@ void ReleaseCrash(const char *reason)
 
 	char prevbuf[ _MAX_PATH ];
 	char curbuf[ _MAX_PATH ];
+
+	if (TheGlobalData==NULL) {
+		return; // We are shutting down, and TheGlobalData has been freed.  jba. [4/15/2003]
+	}
 
 	strcpy(prevbuf, TheGlobalData->getPath_UserData().str());
 	strcat(prevbuf, RELEASECRASH_FILE_NAME_PREV);
@@ -700,7 +720,7 @@ void ReleaseCrash(const char *reason)
 
 	if (!GetRegistryLanguage().compareNoCase("german2") || !GetRegistryLanguage().compareNoCase("german") )
 	{
-		::MessageBox(NULL, "Es ist ein gravierender Fehler aufgetreten. Solche Fehler können durch viele verschiedene Dinge wie Viren, überhitzte Hardware und Hardware, die den Mindestanforderungen des Spiels nicht entspricht, ausgelöst werden. Tipps zur Vorgehensweise findest du in den Foren unter www.generals.ea.com, Informationen zum Technischen Kundendienst im Handbuch zum Spiel.", "Fehler...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
+		::MessageBox(NULL, "Es ist ein gravierender Fehler aufgetreten. Solche Fehler k\366nnen durch viele verschiedene Dinge wie Viren, \374berhitzte Hardware und Hardware, die den Mindestanforderungen des Spiels nicht entspricht, ausgel\366st werden. Tipps zur Vorgehensweise findest du in den Foren unter www.generals.ea.com, Informationen zum Technischen Kundendienst im Handbuch zum Spiel.", "Fehler...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
 	} 
 	else
 	{
@@ -762,7 +782,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 	theReleaseCrashLogFile = fopen(curbuf, "w");
 	if (theReleaseCrashLogFile)
 	{
-		fprintf(theReleaseCrashLogFile, "Release Crash at %s; Reason %s\n", getCurrentTimeString(), mesg.str());
+		fprintf(theReleaseCrashLogFile, "Release Crash at %s; Reason %ls\n", getCurrentTimeString(), mesg.str());
 
 		const int STACKTRACE_SIZE	= 12;
 		const int STACKTRACE_SKIP = 6;

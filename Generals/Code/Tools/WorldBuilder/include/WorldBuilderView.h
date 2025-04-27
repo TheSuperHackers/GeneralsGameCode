@@ -29,7 +29,7 @@
 
 #include "Lib/BaseType.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
-#include "WbView.h"
+#include "wbview.h"
 
 //#include "WW3D_SimpleWindow.h"
 

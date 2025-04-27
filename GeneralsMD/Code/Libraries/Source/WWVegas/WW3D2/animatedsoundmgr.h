@@ -45,7 +45,7 @@
 #define __ANIMATEDSOUNDMGR_H
 
 #include "simplevec.h"
-#include "vector.h"
+#include "Vector.H"
 #include "hashtemplate.h"
 
 

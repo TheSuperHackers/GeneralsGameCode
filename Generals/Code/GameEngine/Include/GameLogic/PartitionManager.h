@@ -54,6 +54,7 @@
 //-----------------------------------------------------------------------------
 #include "Common/GameCommon.h"	// ensure we get DUMP_PERF_STATS, or not
 #include "GameLogic/ObjectIter.h"
+#include "Common/ObjectStatusTypes.h"
 #include "Common/KindOf.h"
 #include "Common/Snapshot.h"
 #include "Common/Geometry.h"
@@ -95,10 +96,10 @@ class ThingTemplate;
 class GhostObject;
 class CommandButton;
 
-enum CommandSourceType;
+enum CommandSourceType CPP_11(: Int);
 
 // ----------------------------------------------------------------------------------------------
-enum ValueOrThreat
+enum ValueOrThreat CPP_11(: Int)
 {
 	VOT_CashValue = 1,
 	VOT_ThreatValue,
@@ -106,7 +107,7 @@ enum ValueOrThreat
 };
 
 // ----------------------------------------------------------------------------------------------
-enum FindPositionFlags
+enum FindPositionFlags CPP_11(: Int)
 {
 	FPF_NONE															= 0x00000000,		// no options, default behavior
 	FPF_IGNORE_WATER											= 0x00000001,		// a position found underwater is ok
@@ -148,7 +149,7 @@ struct FindPositionOptions
 //=====================================
 /** */
 //=====================================
-enum DistanceCalculationType
+enum DistanceCalculationType CPP_11(: Int)
 {
 	FROM_CENTER_2D					= 0,	///< measure from Object center in 2d.
 	FROM_CENTER_3D					= 1,	///< measure from Object center in 3d.
@@ -515,7 +516,8 @@ public:
 
 	inline Int wasSeenByAnyPlayers() const	///<check if a player in the game has seen the object but is now looking at fogged version.
 	{	
-		for (Int i=0; i<MAX_PLAYER_COUNT; i++)
+		Int i=0;
+		for (; i<MAX_PLAYER_COUNT; i++)
 			if (m_everSeenByPlayer[i] && m_shroudedness[i] == OBJECTSHROUD_FOGGED)
 				return i;
 		return i;
@@ -768,9 +770,9 @@ public:
 class PartitionFilterAcceptByObjectStatus : public PartitionFilter
 {
 private:
-	UnsignedInt m_mustBeSet, m_mustBeClear;
+	ObjectStatusMaskType m_mustBeSet, m_mustBeClear;
 public:
-	PartitionFilterAcceptByObjectStatus(UnsignedInt mustBeSet, UnsignedInt mustBeClear) : m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear) { }
+	PartitionFilterAcceptByObjectStatus(ObjectStatusMaskType mustBeSet, ObjectStatusMaskType mustBeClear) : m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear) { }
 	virtual Bool allow(Object *objOther);
 #if defined(_DEBUG) || defined(_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterAcceptByObjectStatus"; }
@@ -785,9 +787,9 @@ public:
 class PartitionFilterRejectByObjectStatus : public PartitionFilter
 {
 private:
-	UnsignedInt m_mustBeSet, m_mustBeClear;
+	ObjectStatusMaskType m_mustBeSet, m_mustBeClear;
 public:
-	PartitionFilterRejectByObjectStatus(UnsignedInt mustBeSet, UnsignedInt mustBeClear) 
+	PartitionFilterRejectByObjectStatus(ObjectStatusMaskType mustBeSet, ObjectStatusMaskType mustBeClear) 
 		: m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear) 
 	{ 
 	}
@@ -1225,7 +1227,7 @@ protected:
 		This is an internal function that is used to implement the public 
 		getClosestObject and iterateObjects calls. 
 	*/
-	Object *PartitionManager::getClosestObjects(
+	Object *getClosestObjects(
 		const Object *obj, 
 		const Coord3D *pos, 
 		Real maxDist, 

@@ -111,7 +111,11 @@ ThingFactory::ThingFactory()
 	m_firstTemplate = NULL;
 	m_nextTemplateID = 1;	// not zero!
 
+#ifdef USING_STLPORT
 	m_templateHashMap.resize( TEMPLATE_HASH_SIZE );
+#else
+	m_templateHashMap.reserve( TEMPLATE_HASH_SIZE );
+#endif
 }  // end ThingFactory
 
 //-------------------------------------------------------------------------------------------------
@@ -299,7 +303,7 @@ ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name )
 }  // end getTemplate
 
 //=============================================================================
-Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, ObjectStatusBits statusBits )
+Object *ThingFactory::newObject( const ThingTemplate *tmplate, Team *team, ObjectStatusMaskType statusBits )
 {
 	if (tmplate == NULL)
 		throw ERROR_BAD_ARG;
@@ -359,7 +363,7 @@ Drawable *ThingFactory::newDrawable(const ThingTemplate *tmplate, DrawableStatus
 
 }  // end newDrawableByType
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 AsciiString TheThingTemplateBeingParsedName;
 #endif
 
@@ -368,7 +372,7 @@ AsciiString TheThingTemplateBeingParsedName;
 //-------------------------------------------------------------------------------------------------
 /*static*/ void ThingFactory::parseObjectDefinition( INI* ini, const AsciiString& name, const AsciiString& reskinFrom )
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 	TheThingTemplateBeingParsedName = name;
 #endif
 
@@ -422,7 +426,7 @@ AsciiString TheThingTemplateBeingParsedName;
 
 	thingTemplate->validate();
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 	TheThingTemplateBeingParsedName.clear();
 #endif
 }

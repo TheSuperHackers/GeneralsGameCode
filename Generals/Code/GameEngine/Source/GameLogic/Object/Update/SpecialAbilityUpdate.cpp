@@ -468,7 +468,7 @@ Bool SpecialAbilityUpdate::isPowerCurrentlyInUse( const CommandButton *command )
 	{
 		if( command->getSpecialPowerTemplate() && command->getSpecialPowerTemplate()->getSpecialPowerType() == SPECIAL_REMOTE_CHARGES )
 		{
-			if( !BitTest( command->getOptions(), CONTEXTMODE_COMMAND ) )
+			if( !BitIsSet( command->getOptions(), CONTEXTMODE_COMMAND ) )
 			{
 				//This is the detonate charge button. Treat it backwards saying it's in use when we don't have any special objects (charges).
 				//That way, the button will be grayed out.
@@ -501,7 +501,7 @@ void SpecialAbilityUpdate::onExit( Bool cleanup )
 
 	getObject()->clearModelConditionFlags( 
 		MAKE_MODELCONDITION_MASK4( MODELCONDITION_UNPACKING, MODELCONDITION_PACKING, MODELCONDITION_FIRING_A, MODELCONDITION_RAISING_FLAG ) );
-	getObject()->clearStatus( OBJECT_STATUS_IS_USING_ABILITY );
+	getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_USING_ABILITY ) );
 
 	TheAudio->removeAudioEvent( m_prepSoundLoop.getPlayingHandle() );
 	endPreparation();
@@ -580,8 +580,7 @@ Bool SpecialAbilityUpdate::handlePackingProcessing()
 		if( getSpecialAbilityUpdateModuleData()->m_loseStealthOnTrigger &&
 			m_animFrames < getSpecialAbilityUpdateModuleData()->m_preTriggerUnstealthFrames)
 		{
-			static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-			StealthUpdate* stealth = (StealthUpdate*)getObject()->findUpdateModule( key_StealthUpdate );
+			StealthUpdate* stealth = getObject()->getStealth();
 			if( stealth )
 			{
 				stealth->markAsDetected();
@@ -978,7 +977,7 @@ void SpecialAbilityUpdate::startPreparation()
 	if (getObject()->getAI()) {
 		getObject()->getAI()->aiIdle( CMD_FROM_AI ); // just in case.  jba.
 	}
-	getObject()->setStatus( OBJECT_STATUS_IS_USING_ABILITY );
+	getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_USING_ABILITY ) );
 
 	m_prepSoundLoop = data->m_prepSoundLoop;
 	m_prepSoundLoop.setObjectID( getObject()->getID() );
@@ -1440,10 +1439,9 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
 		case SPECIAL_DISGUISE_AS_VEHICLE:
 		{
 			Object *target = TheGameLogic->findObjectByID( m_targetID );
-			static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
 			if( target )
 			{
-				StealthUpdate *update = (StealthUpdate*)object->findUpdateModule( key_StealthUpdate );
+				StealthUpdate *update = object->getStealth();
 				if( update )
 				{
 					update->disguiseAsObject( target );
@@ -1456,8 +1454,7 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
 
 	if( data->m_loseStealthOnTrigger && okToLoseStealth)
 	{
-		static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-		StealthUpdate* stealth = (StealthUpdate*)object->findUpdateModule( key_StealthUpdate );
+		StealthUpdate* stealth = object->getStealth();
 		if( stealth )
 		{
 			stealth->markAsDetected();
@@ -1784,7 +1781,7 @@ Object* SpecialAbilityUpdate::findSpecialObjectWithProducerID( const Object *tar
 //-------------------------------------------------------------------------------------------------
 void SpecialAbilityUpdate::endPreparation()
 {
-	getObject()->clearStatus( OBJECT_STATUS_IS_USING_ABILITY );
+	getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_USING_ABILITY ) );
 	TheAudio->removeAudioEvent( m_prepSoundLoop.getPlayingHandle() );
 
 	// Based on the special that we just finished preparing (either by failure or success),

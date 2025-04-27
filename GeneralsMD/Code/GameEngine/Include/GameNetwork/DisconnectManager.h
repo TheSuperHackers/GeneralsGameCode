@@ -32,7 +32,7 @@
 #include "Lib/BaseType.h"
 //#include "GameNetwork/ConnectionManager.h"
 
-enum DisconnectStateType {
+enum DisconnectStateType CPP_11(: Int) {
 	DISCONNECTSTATETYPE_SCREENON,
 	DISCONNECTSTATETYPE_SCREENOFF
 //	DISCONNECTSTATETYPE_WAITINGFORPACKETROUTER

@@ -491,7 +491,7 @@ float SimpleSceneClass::Compute_Point_Visibility
 {
 	CastResultStruct res;
 	LineSegClass ray(rinfo.Camera.Get_Position(),point);
-	RayCollisionTestClass raytest(ray,&res,COLLISION_TYPE_PROJECTILE);
+	RayCollisionTestClass raytest(ray,&res,COLL_TYPE_PROJECTILE);
 
 	RefRenderObjListIterator it(&RenderList);
 	for (it.First(); !it.Is_Done(); it.Next()) {

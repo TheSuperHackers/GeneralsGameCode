@@ -49,9 +49,9 @@
 #include "vector3.h"
 #include "matrix3d.h"
 #include "refcount.h"
-#include "rawfile.h"
-#include "soundsceneobj.h"
-#include "vector.h"
+#include "RAWFILE.H"
+#include "SoundSceneObj.h"
+#include "Vector.H"
 #include "wwstring.h"
 #include "definition.h"
 
@@ -153,7 +153,7 @@ class AudibleSoundClass : public SoundSceneObjClass
 		//////////////////////////////////////////////////////////////////////
 		//	Update methods
 		//////////////////////////////////////////////////////////////////////
-		virtual bool				On_Frame_Update (unsigned int milliseconds = 0);
+		virtual bool				On_Frame_Update (unsigned int milliseconds);
 
 		//////////////////////////////////////////////////////////////////////
 		//	State control methods

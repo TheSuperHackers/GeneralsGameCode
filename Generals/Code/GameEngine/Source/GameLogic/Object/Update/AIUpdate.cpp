@@ -253,7 +253,7 @@ AIUpdateInterface::AIUpdateInterface( Thing *thing, const ModuleData* moduleData
 	for (i = 0; i < MAX_TURRETS; i++)
 		m_turretAI[i] = NULL;
 	m_turretSyncFlag = TURRET_INVALID;
-	m_attitude = AI_NORMAL;
+	m_attitude = ATTITUDE_NORMAL;
 	m_nextMoodCheckTime = 0;
 #ifdef ALLOW_DEMORALIZE
 	m_demoralizedFramesLeft = 0;
@@ -2256,9 +2256,9 @@ UpdateSleepTime AIUpdateInterface::doLocomotor( void )
 
 		// After our movement for the frame, update our AirborneTarget flag.
 		if(getObject()->getHeightAboveTerrain() > m_curLocomotor->getAirborneTargetingHeight() )
-			getObject()->setStatus(OBJECT_STATUS_AIRBORNE_TARGET);
+			getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_AIRBORNE_TARGET ) );
 		else
-			getObject()->clearStatus(OBJECT_STATUS_AIRBORNE_TARGET);
+			getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_AIRBORNE_TARGET ) );
 
 		m_curMaxBlockedSpeed = FAST_AS_POSSIBLE;
 	}
@@ -3365,12 +3365,12 @@ void AIUpdateInterface::privateAttackPosition( const Coord3D *pos, Int maxShotsT
 	if (continueRange > 0.0f)
 	{
 		// ick. set this bit so we can find the mine to go target, even if stealthed. (srj)
-		getObject()->setStatus(OBJECT_STATUS_IGNORING_STEALTH, true);
+		getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IGNORING_STEALTH ) );
 		PartitionFilterPossibleToAttack filterAttack(ATTACK_NEW_TARGET, getObject(), cmdSource);
 		PartitionFilterSameMapStatus filterMapStatus(getObject());
 		PartitionFilter *filters[] = { &filterAttack, &filterMapStatus, NULL };
 		Object* victim = ThePartitionManager->getClosestObject(&localPos, continueRange, FROM_CENTER_2D, filters);
-		getObject()->setStatus(OBJECT_STATUS_IGNORING_STEALTH, false);
+		getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IGNORING_STEALTH ) );
 
 		if (victim)
 		{
@@ -4103,11 +4103,11 @@ UnsignedInt AIUpdateInterface::getMoodMatrixValue( void ) const
 		returnVal |= MM_Controller_AI;
 		switch (getAttitude())
 		{
-			case AI_SLEEP:			returnVal |= MM_Mood_Sleep; break;
-			case AI_PASSIVE:		returnVal |= MM_Mood_Passive; break;
-			case AI_NORMAL:			returnVal |= MM_Mood_Normal; break;
-			case AI_ALERT:			returnVal |= MM_Mood_Alert; break;
-			case AI_AGGRESSIVE:	returnVal |= MM_Mood_Aggressive; break;
+			case ATTITUDE_SLEEP:			returnVal |= MM_Mood_Sleep; break;
+			case ATTITUDE_PASSIVE:		returnVal |= MM_Mood_Passive; break;
+			case ATTITUDE_NORMAL:			returnVal |= MM_Mood_Normal; break;
+			case ATTITUDE_ALERT:			returnVal |= MM_Mood_Alert; break;
+			case ATTITUDE_AGGRESSIVE:	returnVal |= MM_Mood_Aggressive; break;
 			default: 
 				DEBUG_CRASH(("Unknown mood '%d' in getMoodMatrixValue. (Team '%s'). Using normal. (jkmcd)", getAttitude(), getObject()->getTeam()->getName().str() ));
 				returnVal |= MM_Mood_Normal;
@@ -4272,7 +4272,7 @@ Object* AIUpdateInterface::getNextMoodTarget( Bool calledByAI, Bool calledDuring
 	}
 
 // srj sez: this should ignore calledDuringIdle, despite what the name of the bit implies.
-	if (isAttacking() && BitTest(d->m_autoAcquireEnemiesWhenIdle, AAS_Idle_Not_While_Attacking))
+	if (isAttacking() && BitIsSet(d->m_autoAcquireEnemiesWhenIdle, AAS_Idle_Not_While_Attacking))
 	{
 		return NULL;
 	}
@@ -4281,7 +4281,7 @@ Object* AIUpdateInterface::getNextMoodTarget( Bool calledByAI, Bool calledDuring
 	//AutoAcquireWhenIdle = Yes Stealthed.
 	if ( calledDuringIdle )
 	{
-		if ((obj->getStatusBits() & OBJECT_STATUS_STEALTHED) != 0) 
+		if( obj->getStatusBits().test( OBJECT_STATUS_STEALTHED ) ) 
 		{
 			if ((getAIUpdateModuleData()->m_autoAcquireEnemiesWhenIdle & AAS_Idle_Stealthed) == 0) 
 			{
@@ -4308,7 +4308,7 @@ Object* AIUpdateInterface::getNextMoodTarget( Bool calledByAI, Bool calledDuring
 	if (calledByAI && obj->getTeam()->getPrototype()->getTemplateInfo()->m_attackCommonTarget) 
 	{
 		teamVictim = obj->getTeam()->getTeamTargetObject();
-		if (teamVictim && getAttitude()>=AI_NORMAL) 
+		if (teamVictim && getAttitude()>=ATTITUDE_NORMAL) 
 			return teamVictim;
 	}
 

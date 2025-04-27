@@ -22,14 +22,11 @@
 // $Revision: #1 $
 // $DateTime: 2003/07/03 11:55:26 $
 //
-// ©2003 Electronic Arts
+// (c) 2003 Electronic Arts
 //
 // Debug module - Test 3 (Checking FLAT I/O, logging)
 //////////////////////////////////////////////////////////////////////////////
 #ifdef NDEBUG
-#  define _INTERNAL
-#  pragma comment(linker,"/nodefaultlib:debuginternal.lib")
-#endif
 #include "../debug.h"
 
 unsigned divByNull;

@@ -12,6 +12,7 @@ set(WORLDBUILDER_SRC
     "src/BuildListTool.cpp"
     "src/CameraOptions.cpp"
     "src/CButtonShowColor.cpp"
+    "src/CButtonShowColor.h"
     "src/CellWidth.cpp"
     "src/CFixTeamOwnerDialog.cpp"
     "src/ContourOptions.cpp"
@@ -108,7 +109,6 @@ set(WORLDBUILDER_SRC
     "include/BuildList.h"
     "include/BuildListTool.h"
     "include/CameraOptions.h"
-    "src/CButtonShowColor.h"
     "include/CellWidth.h"
     "include/CFixTeamOwnerDialog.h"
     "include/ContourOptions.h"
@@ -176,7 +176,7 @@ set(WORLDBUILDER_SRC
     "include/TeamIdentity.h"
     "include/TeamReinforcement.h"
     "include/teamsdialog.h"
-    "include/terrainmaterial.h"
+    "include/TerrainMaterial.h"
     "include/TerrainModal.h"
     "include/TerrainSwatches.h"
     "include/TileTool.h"
@@ -209,12 +209,12 @@ target_compile_definitions(g_worldbuilder PRIVATE _AFXDLL)
 target_link_libraries(g_worldbuilder PRIVATE
     d3d8lib
     dbghelplib
-    g_browserdispatch
+    core_browserdispatch
     g_gameengine
     g_gameenginedevice
     gi_gameengine_include
     gi_gameenginedevice_include
-    gi_libraries_include
+    gi_always
     imm32
     vfw32
     winmm
@@ -224,9 +224,9 @@ if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     target_link_options(g_worldbuilder PRIVATE /NODEFAULTLIB:libci.lib /NODEFAULTLIB:libc.lib)
 
     target_sources(g_worldbuilder PRIVATE res/WorldBuilder.rc)
-    set_target_properties(g_worldbuilder PROPERTIES OUTPUT_NAME WorldBuilder)
+    set_target_properties(g_worldbuilder PROPERTIES OUTPUT_NAME WorldBuilderV)
 else()
-    set_target_properties(g_worldbuilder PROPERTIES OUTPUT_NAME worldbuilder)
+    set_target_properties(g_worldbuilder PROPERTIES OUTPUT_NAME worldbuilderv)
 endif()
 
 target_sources(g_worldbuilder PRIVATE ${WORLDBUILDER_SRC})

@@ -22,15 +22,13 @@
 // $Revision: #6 $
 // $DateTime: 2003/08/14 13:43:29 $
 //
-// ©2003 Electronic Arts
+// (c) 2003 Electronic Arts
 //
 // Profile module main code
 //////////////////////////////////////////////////////////////////////////////
 #include "_pch.h"
 #include <new>
 #include "mmsystem.h"
-
-#pragma comment (lib,"winmm")
 
 // yuk, I'm doing this so weird because the destructor
 // of cmd must never be called...
@@ -165,7 +163,8 @@ void Profile::StartRange(const char *range)
     range="frame";
 
   // known name?
-  for (unsigned k=0;k<m_names;++k)
+  unsigned k=0;
+  for (;k<m_names;++k)
     if (!strcmp(range,m_frameNames[k].name))
       break;
   if (k==m_names)
@@ -219,7 +218,8 @@ void Profile::AppendRange(const char *range)
     range="frame";
 
   // known name?
-  for (unsigned k=0;k<m_names;++k)
+  unsigned k=0;
+  for (;k<m_names;++k)
     if (!strcmp(range,m_frameNames[k].name))
       break;
   if (k==m_names)
@@ -269,7 +269,8 @@ void Profile::StopRange(const char *range)
     range="frame";
 
   // known name?
-  for (unsigned k=0;k<m_names;++k)
+  unsigned k=0;
+  for (;k<m_names;++k)
     if (!strcmp(range,m_frameNames[k].name))
       break;
   DFAIL_IF(k==m_names) return;

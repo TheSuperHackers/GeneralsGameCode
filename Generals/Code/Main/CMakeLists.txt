@@ -1,9 +1,15 @@
 add_executable(g_generals WIN32)
 
-set_target_properties(g_generals PROPERTIES OUTPUT_NAME generals)
+# Use a binary name that doesn't conflict with original game.
+if("${CMAKE_SYSTEM}" MATCHES "Windows")
+    set_target_properties(g_generals PROPERTIES OUTPUT_NAME generalsv)
+else()
+    set_target_properties(g_generals PROPERTIES OUTPUT_NAME generalsv)
+endif()
 
 target_link_libraries(g_generals PRIVATE
     binkstub
+    comctl32
     d3d8
     d3dx8
     dbghelplib
@@ -11,8 +17,7 @@ target_link_libraries(g_generals PRIVATE
     dxguid
     g_gameengine
     g_gameenginedevice
-    gi_libraries_include
-    gi_libraries_source
+    gi_always
     imm32
     milesstub
     safedisc
@@ -35,7 +40,7 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h
 "#pragma once
 
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 4
+#define VERSION_MINOR 8
 #define VERSION_BUILDNUM 601
 "
 )

@@ -35,10 +35,10 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "soundbuffer.h"
-#include "rawfile.h"
+#include "SoundBuffer.h"
+#include "RAWFILE.H"
 #include "wwdebug.h"
-#include "utils.h"
+#include "Utils.h"
 #include "ffactory.h"
 #include "win.h"
 

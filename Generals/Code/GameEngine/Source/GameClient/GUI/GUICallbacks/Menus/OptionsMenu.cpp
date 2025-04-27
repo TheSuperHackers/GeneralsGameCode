@@ -30,7 +30,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "GameSpy/ghttp/ghttp.h"
+#include "gamespy/ghttp/ghttp.h"
 
 #include "Common/AudioAffect.h"
 #include "Common/AudioSettings.h"
@@ -39,7 +39,7 @@
 #include "Common/UserPreferences.h"
 #include "Common/GameLOD.h"
 #include "Common/Registry.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 
 #include "GameClient/GameClient.h"
 #include "GameClient/InGameUI.h"
@@ -210,7 +210,7 @@ extern void DoResolutionDialog();
 static Bool ignoreSelected = FALSE;
 WindowLayout *OptionsLayout = NULL;
 
-enum Detail
+enum Detail CPP_11(: Int)
 {
 	HIGHDETAIL = 0,
 	MEDIUMDETAIL,
@@ -436,9 +436,9 @@ UnsignedShort OptionPreferences::getFirewallPortOverride()
 		return TheGlobalData->m_firewallPortOverride;
 	}
 
- 	Int override = atoi(it->second.str());
- 	if (override < 0 || override > 65535)
- 		override = 0;
+	Int override = atoi(it->second.str());
+	if (override < 0 || override > 65535)
+		override = 0;
 	return override;
 }
 
@@ -777,7 +777,8 @@ static void setDefaults( void )
 		GadgetComboBoxSetSelectedPos( comboBoxResolution, defaultResIndex );	//should be 800x600 (our lowest supported mode)
 	}
 
- 	//-------------------------------------------------------------------------------------------------
+
+	//-------------------------------------------------------------------------------------------------
 	// Mouse Mode
 	GadgetCheckBoxSetChecked(checkAlternateMouse, FALSE);
 
@@ -1092,23 +1093,23 @@ static void saveOptions( void )
 		ghttpSetProxy(aStr.str());
 	}
 
-   	//-------------------------------------------------------------------------------------------------
- 	// Firewall Port Override
- 	GameWindow *textEntryFirewallPortOverride = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("OptionsMenu.wnd:TextEntryFirewallPortOverride"));
- 	if (textEntryFirewallPortOverride)
- 	{
- 		UnicodeString uStr = GadgetTextEntryGetText(textEntryFirewallPortOverride);
- 		AsciiString aStr;
- 		aStr.translate(uStr);
- 		Int override = atoi(aStr.str());
- 		if (override < 0 || override > 65535)
- 			override = 0;
- 		if (TheGlobalData->m_firewallPortOverride != override)
- 		{	TheWritableGlobalData->m_firewallPortOverride = override;
- 		    aStr.format("%d", override);
- 			(*pref)["FirewallPortOverride"] = aStr;
- 		}
- 	}
+	//-------------------------------------------------------------------------------------------------
+	// Firewall Port Override
+	GameWindow *textEntryFirewallPortOverride = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("OptionsMenu.wnd:TextEntryFirewallPortOverride"));
+	if (textEntryFirewallPortOverride)
+	{
+		UnicodeString uStr = GadgetTextEntryGetText(textEntryFirewallPortOverride);
+		AsciiString aStr;
+		aStr.translate(uStr);
+		Int override = atoi(aStr.str());
+		if (override < 0 || override > 65535)
+			override = 0;
+		if (TheGlobalData->m_firewallPortOverride != override)
+		{	TheWritableGlobalData->m_firewallPortOverride = override;
+		    aStr.format("%d", override);
+			(*pref)["FirewallPortOverride"] = aStr;
+		}
+	}
 
 	//-------------------------------------------------------------------------------------------------
 	// antialiasing
@@ -1120,6 +1121,7 @@ static void saveOptions( void )
 		prefString.format("%d", index);
 		(*pref)["AntiAliasing"] = prefString;
   }
+
 
 	//-------------------------------------------------------------------------------------------------
 	// mouse mode
@@ -1297,10 +1299,6 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	comboBoxAntiAliasing   = TheWindowManager->winGetWindowFromId( NULL, comboBoxAntiAliasingID );
 	comboBoxResolutionID   = TheNameKeyGenerator->nameToKey( AsciiString( "OptionsMenu.wnd:ComboBoxResolution" ) );
 	comboBoxResolution     = TheWindowManager->winGetWindowFromId( NULL, comboBoxResolutionID );
-#ifdef _PLAYTEST
-	if (comboBoxResolution)
-		comboBoxResolution->winEnable(FALSE);
-#endif _PLAYTEST
 	comboBoxDetailID			 = TheNameKeyGenerator->nameToKey( AsciiString( "OptionsMenu.wnd:ComboBoxDetail" ) );
 	comboBoxDetail		   = TheWindowManager->winGetWindowFromId( NULL, comboBoxDetailID );
 
@@ -1389,7 +1387,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 
 	Color color =  GameMakeColor(255,255,255,255);
 
-  enum AliasingMode
+  enum AliasingMode CPP_11(: Int)
   {
     OFF = 0,
     LOW,
@@ -1521,7 +1519,8 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	AsciiString selectedAliasingMode = (*pref)["AntiAliasing"];
 	GadgetComboBoxReset(comboBoxAntiAliasing);
 	AsciiString temp;
-	for (Int i=0; i < NUM_ALIASING_MODES; ++i)
+	Int i=0;
+	for (; i < NUM_ALIASING_MODES; ++i)
 	{
 		temp.format("GUI:AntiAliasing%d", i);
 		str = TheGameText->fetch( temp );
@@ -1815,7 +1814,7 @@ WindowMsgHandledType OptionsMenuInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 						AsciiString buttonName( "OptionsMenu.wnd:ButtonBack" );
 						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );

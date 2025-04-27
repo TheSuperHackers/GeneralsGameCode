@@ -43,7 +43,7 @@
 #include "shader.h"
 #include "w3d_file.h"
 #include "wwdebug.h"
-#include "Dx8Wrapper.h"
+#include "dx8wrapper.h"
 #include "dx8caps.h"
 
 
@@ -483,10 +483,10 @@ void ShaderClass::Apply()
 		}
 		DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHATESTENABLE,alphaTest);
 
-		diff &= ~(ShaderClass::MASK_COLORMASK | ShaderClass::MASK_SRCBLEND | ShaderClass::MASK_DSTBLEND | ShaderClass::MASK_ALPHATEST);		
-		if(!diff) 			
+		diff &= ~(ShaderClass::MASK_COLORMASK | ShaderClass::MASK_SRCBLEND | ShaderClass::MASK_DSTBLEND | ShaderClass::MASK_ALPHATEST);
+		if(!diff)
 			return;
-	}	
+	}
 
 	if(diff & (ShaderClass::MASK_FOG))
 	{

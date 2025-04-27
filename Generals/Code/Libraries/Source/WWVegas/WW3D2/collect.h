@@ -43,7 +43,7 @@
 
 #include "rendobj.h"
 #include "composite.h"
-#include "vector.h"
+#include "Vector.H"
 #include "proto.h"
 #include "w3d_file.h"
 #include "wwstring.h"
@@ -64,7 +64,7 @@ public:
 	CollectionClass(void);
 	CollectionClass(const CollectionDefClass & def);
 	CollectionClass(const CollectionClass & src);
-	CollectionClass & CollectionClass::operator = (const CollectionClass &);
+	CollectionClass & operator = (const CollectionClass &);
 	virtual ~CollectionClass(void);
 	virtual RenderObjClass *	Clone(void) const;		
 	

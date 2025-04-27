@@ -26,11 +26,11 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Jani_p                                                      $*
+ *                      $Author:: Greg_h                                                      $*
  *                                                                                             *
- *                     $Modtime:: 7/11/01 9:49p                                               $*
+ *                     $Modtime:: 12/03/01 4:57p                                              $*
  *                                                                                             *
- *                    $Revision:: 7                                                           $*
+ *                    $Revision:: 11                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -855,6 +855,10 @@ void ShatterSystem::Shutdown(void)
 
 void ShatterSystem::Shatter_Mesh(MeshClass * mesh,const Vector3 & point,const Vector3 & direction)
 {
+	if (ShatterPatterns.Count() == 0) {
+		return ;
+	}
+
 	int ivert,ipoly;
 	int ipass,istage;
 
@@ -959,7 +963,7 @@ void ShatterSystem::Shatter_Mesh(MeshClass * mesh,const Vector3 & point,const Ve
 	** Grab the arrays out of the mesh and transform verts and vnorms
 	** into "shatter-space"
 	*/
-	const Vector3i * polys = model->Get_Polygon_Array();
+	const TriIndex * polys = model->Get_Polygon_Array();
 	const Vector3 * src_verts = model->Get_Vertex_Array();
 	const Vector3 * src_vnorms = model->Get_Vertex_Normal_Array();
 
@@ -1136,9 +1140,11 @@ void ShatterSystem::Process_Clip_Pools
 				if (model->Peek_Single_Material(ipass) != NULL) {
 					matinfo->Add_Vertex_Material(model->Peek_Single_Material(ipass));
 				}
-				if (model->Peek_Single_Texture(ipass) != NULL) {
-					matinfo->Add_Texture(model->Peek_Single_Texture(ipass));
-					has_textures = true;
+				for (int istage=0; istage<MeshMatDescClass::MAX_TEX_STAGES; istage++) {
+					if (model->Peek_Single_Texture(ipass,istage) != NULL) {
+						matinfo->Add_Texture(model->Peek_Single_Texture(ipass,istage));
+						has_textures = true;
+					}
 				}
 			}
 			new_mesh->Set_Material_Info(matinfo);
@@ -1147,9 +1153,11 @@ void ShatterSystem::Process_Clip_Pools
 				new_mesh->Set_Vertex_Material(model->Peek_Single_Material(ipass),false,ipass);
 				new_mesh->Set_Shader(model->Get_Single_Shader(ipass),ipass);
 
-				TextureClass * tex = model->Peek_Single_Texture(ipass,0);	
-				if (tex != NULL) {
-					new_mesh->Set_Texture(tex,true,ipass);
+				for (istage=0; istage<MeshMatDescClass::MAX_TEX_STAGES; istage++) {
+					TextureClass * tex = model->Peek_Single_Texture(ipass,istage);	
+					if (tex != NULL) {
+						new_mesh->Peek_Model()->Set_Single_Texture(tex,ipass,istage);
+					}
 				}
 			}
 			
@@ -1197,7 +1205,8 @@ void ShatterSystem::Process_Clip_Pools
 							*/
 							mycolor=vert.DCG[ipass];							
 						}
-
+						
+						// HY- Multiplying DIG with DCG as in meshmdlio
 						if (mtl_params.DIG[ipass] != NULL) {
 							SHATTER_DEBUG_SAY(("DIG: pass:%d: %f %f %f\n",ipass,vert.DIG[ipass].X,vert.DIG[ipass].Y,vert.DIG[ipass].Z));
 							Vector4 mc=DX8Wrapper::Convert_Color(mycolor);
@@ -1212,27 +1221,17 @@ void ShatterSystem::Process_Clip_Pools
 						** If there were UV coordinates in the original mesh for either stage,
 						** then copy the vertex's uv's into into the new mesh.
 						*/
+//						#pragma MESSAGE("HY- Naty, will dynamesh support multiple stages of UV?")
 						for (istage=0; istage<MeshMatDescClass::MAX_TEX_STAGES; istage++) {
 							if (mtl_params.UV[ipass][istage] != NULL) {
 								SHATTER_DEBUG_SAY(("UV: pass:%d stage: %d: %f %f\n",ipass,istage,vert.TexCoord[ipass][istage].X,vert.TexCoord[ipass][istage].Y));
-								new_mesh->UV(vert.TexCoord[ipass][istage]);
+								new_mesh->UV(vert.TexCoord[ipass][istage],istage);
 							}
 						}
 					}
 
 					new_mesh->End_Vertex();
 			
-					/*
-					** Set the texture for each pass and stage.  
-					** TODO: support texture arrays?
-					** TODO: support stage 1 textures
-					*/
-					for (ipass=0; ipass<mtl_params.PassCount; ipass++) {
-						TextureClass * tex = model->Peek_Single_Texture(ipass,0);	
-						if (tex != NULL) {
-							new_mesh->Set_Texture(tex,true,ipass);
-						}
-					}
 				}
 				new_mesh->End_Tri_Fan();
 			}

@@ -1,15 +1,15 @@
 # Set source files
 set(WWDOWNLOAD_SRC
     Download.cpp
-    FTP.CPP
-    registry.cpp
-    urlBuilder.cpp
     Download.h
     DownloadDebug.h
     downloaddefs.h
+    FTP.CPP
     ftp.h
     ftpdefs.h
+    registry.cpp
     Registry.h
+    urlBuilder.cpp
     urlBuilder.h
 )
 
@@ -21,4 +21,5 @@ target_sources(g_wwdownload PRIVATE ${WWDOWNLOAD_SRC})
 
 target_link_libraries(g_wwdownload PRIVATE
     g_wwcommon
+    gi_gameengine_include
 )

@@ -904,7 +904,8 @@ Bool LadderPreferences::loadProfile( Int profileID )
 			continue;
 
 		p.port = atoi( ptr + 1 );
-		for (Int i=0; i<strlen(ptr); ++i)
+		Int i=0;
+		for (; i<strlen(ptr); ++i)
 		{
 			ladName.removeLastChar();
 		}

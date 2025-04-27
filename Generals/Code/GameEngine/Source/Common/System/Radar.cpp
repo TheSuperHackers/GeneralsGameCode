@@ -426,8 +426,7 @@ void Radar::addObject( Object *obj )
 		//Because we have support for disguised units pretending to be units from another
 		//team, we need to intercept it here and make sure it's rendered appropriately
 		//based on which client is rendering it.
-		static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-		StealthUpdate *update = (StealthUpdate*)obj->findUpdateModule( key_StealthUpdate );
+		StealthUpdate *update = obj->getStealth();
 		if( update )
 		{
 			if( update->isDisguised() )
@@ -1010,7 +1009,8 @@ void Radar::createEvent( const Coord3D *world, RadarEventType type, Real seconds
 
 	// lookup the colors we are to used based on the event 
 	RGBAColorInt color[ 2 ];
-	for( Int i = 0; radarColorLookupTable[ i ].event != RADAR_EVENT_INVALID; ++i )
+	Int i = 0;
+	for( ; radarColorLookupTable[ i ].event != RADAR_EVENT_INVALID; ++i )
 	{
 
 		if( radarColorLookupTable[ i ].event == type )

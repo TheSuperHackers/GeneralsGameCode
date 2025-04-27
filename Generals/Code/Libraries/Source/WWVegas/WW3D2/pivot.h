@@ -58,7 +58,7 @@
 	
 */
 
-#define LAZY_CAP_MTX_ALLOC
+//#define LAZY_CAP_MTX_ALLOC
 
 struct PivotClass
 {

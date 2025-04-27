@@ -22,7 +22,7 @@
 // $Revision: #1 $
 // $DateTime: 2003/07/03 11:55:26 $
 //
-// ©2003 Electronic Arts
+// (c) 2003 Electronic Arts
 //
 // Proxy header for profile module
 //////////////////////////////////////////////////////////////////////////////
@@ -32,6 +32,6 @@
 #ifndef PROXY_PROFILE_H // Include guard
 #define PROXY_PROFILE_H
 
-#include "../../source/profile/profile.h"
+#include "../../Source/profile/profile.h"
 
 #endif // PROXY_PROFILE_H

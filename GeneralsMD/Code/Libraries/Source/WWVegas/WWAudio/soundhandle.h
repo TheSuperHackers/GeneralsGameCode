@@ -41,7 +41,7 @@
 #ifndef __SOUNDHANDLE_H
 #define __SOUNDHANDLE_H
 
-#include "wwaudio.h"
+#include "WWAudio.h"
 
 //////////////////////////////////////////////////////////////////////
 //	Forward declarations

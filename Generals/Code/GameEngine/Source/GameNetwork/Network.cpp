@@ -37,7 +37,7 @@
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "GameNetwork/NetworkInterface.h"
-#include "GameNetwork/Udp.h"
+#include "GameNetwork/udp.h"
 #include "GameNetwork/Transport.h"
 #include "strtok_r.h"
 #include "GameClient/Shell.h"
@@ -380,7 +380,8 @@ void Network::setSawCRCMismatch( void )
 	TheRecorder->logCRCMismatch();
 
 	// dump GameLogic random seed
-	DEBUG_LOG(("GameLogic frame = %d\n", TheGameLogic->getFrame()));
+	DEBUG_LOG(("Latest frame for mismatch = %d GameLogic frame = %d\n",
+		TheGameLogic->getFrame()-m_runAhead-1, TheGameLogic->getFrame()));
 	DEBUG_LOG(("GetGameLogicRandomSeedCRC() = %d\n", GetGameLogicRandomSeedCRC()));
 
 	// dump CRCs

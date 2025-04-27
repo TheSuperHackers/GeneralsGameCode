@@ -379,14 +379,14 @@ Render2DSentenceClass::Build_Textures (void)
 		//
 		//	Create the new texture
 		//
-		TextureClass *new_texture = W3DNEW TextureClass (desc.Width, desc.Width, WW3D_FORMAT_A4R4G4B4, TextureClass::MIP_LEVELS_1);
+		TextureClass *new_texture = W3DNEW TextureClass (desc.Width, desc.Width, WW3D_FORMAT_A4R4G4B4, MIP_LEVELS_1);
 		SurfaceClass *texture_surface = new_texture->Get_Surface_Level ();
 
-		new_texture->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-		new_texture->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-		new_texture->Set_Min_Filter	(TextureClass::FILTER_TYPE_NONE);
-		new_texture->Set_Mag_Filter	(TextureClass::FILTER_TYPE_NONE);
-		new_texture->Set_Mip_Mapping	(TextureClass::FILTER_TYPE_NONE);
+		new_texture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		new_texture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		new_texture->Get_Filter().Set_Min_Filter(TextureFilterClass::FILTER_TYPE_NONE);
+		new_texture->Get_Filter().Set_Mag_Filter(TextureFilterClass::FILTER_TYPE_NONE);
+		new_texture->Get_Filter().Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_NONE);
 
 		//
 		//	Copy the contents of the texture from the surface
@@ -1220,7 +1220,7 @@ FontCharsClass::FontCharsClass (void) :
 FontCharsClass::~FontCharsClass (void) 
 {
 	while ( BufferList.Count() ) {
-		delete [] BufferList[0];
+		delete BufferList[0];
 		BufferList.Delete(0);
 	}
 
@@ -1720,8 +1720,8 @@ FontCharsClass::Grow_Unicode_Array (WCHAR ch)
 		return ;
 	} 
 
-	uint16 first_index	= min( FirstUnicodeChar, ch );
-	uint16 last_index		= max( LastUnicodeChar, ch );
+	uint16 first_index	= min( FirstUnicodeChar, static_cast<uint16>(ch) );
+	uint16 last_index		= max( LastUnicodeChar, static_cast<uint16>(ch) );
 	uint16 count			= (last_index - first_index) + 1;
 
 	//

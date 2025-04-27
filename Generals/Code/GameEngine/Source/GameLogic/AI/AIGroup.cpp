@@ -1609,19 +1609,18 @@ void AIGroup::groupMoveToPosition( const Coord3D *pos, Bool addWaypoint, Command
 		}
 		computeIndividualDestination( &dest, &goalPos, theUnit, &center, isFormation );
 
-		if( cmdSource == CMD_FROM_PLAYER && BitTest( theUnit->getStatusBits(), OBJECT_STATUS_CAN_STEALTH ) && ai->canAutoAcquire() )
+		if( cmdSource == CMD_FROM_PLAYER && theUnit->getStatusBits().test( OBJECT_STATUS_CAN_STEALTH ) && ai->canAutoAcquire() )
 		{
 			//When ordering a combat stealth unit to move, there is a single special case we want to handle.
 			//When a stealth unit is currently not stealthed and doesn't autoacquire while stealthed,
 			//then when the player specifically orders the unit to stop, we want to not autoacquire until
 			//he is able to stealth again. Of course, if he's detected, then don't bother trying.
-			if( !BitTest( theUnit->getStatusBits(), OBJECT_STATUS_STEALTHED ) && !BitTest( theUnit->getStatusBits(), OBJECT_STATUS_DETECTED ) )
+			if( !theUnit->getStatusBits().test( OBJECT_STATUS_STEALTHED ) && !theUnit->getStatusBits().test( OBJECT_STATUS_DETECTED ) )
 			{
 				//Not stealthed, not detected -- so do auto-acquire while stealthed?
 				if( !ai->canAutoAcquireWhileStealthed() )
 				{
-					static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-					StealthUpdate* stealth = (StealthUpdate*)theUnit->findUpdateModule( key_StealthUpdate );
+					StealthUpdate* stealth = theUnit->getStealth();
 					if( stealth )
 					{
 						//Delay the mood check time (for autoacquire) until after the unit can stealth again.
@@ -1904,19 +1903,18 @@ void AIGroup::groupIdle(CommandSourceType cmdSource)
 		{
 			ai->aiIdle(cmdSource);
 
-			if( cmdSource == CMD_FROM_PLAYER && BitTest( obj->getStatusBits(), OBJECT_STATUS_CAN_STEALTH ) && ai->canAutoAcquire() )
+			if( cmdSource == CMD_FROM_PLAYER && obj->getStatusBits().test( OBJECT_STATUS_CAN_STEALTH ) && ai->canAutoAcquire() )
 			{
 				//When ordering a combat stealth unit to stop, there is a single special case we want to handle.
 				//When a stealth unit is currently not stealthed and doesn't autoacquire while stealthed,
 				//then when the player specifically orders the unit to stop, we want to not autoacquire until
 				//he is able to stealth again. Of course, if he's detected, then don't bother trying.
-				if( !BitTest( obj->getStatusBits(), OBJECT_STATUS_STEALTHED ) && !BitTest( obj->getStatusBits(), OBJECT_STATUS_DETECTED ) )
+				if( !obj->getStatusBits().test( OBJECT_STATUS_STEALTHED ) && !obj->getStatusBits().test( OBJECT_STATUS_DETECTED ) )
 				{
 					//Not stealthed, not detected -- so do auto-acquire while stealthed?
 					if( !ai->canAutoAcquireWhileStealthed() )
 					{
-						static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-						StealthUpdate* stealth = (StealthUpdate*)obj->findUpdateModule( key_StealthUpdate );
+						StealthUpdate* stealth = obj->getStealth();
 						if( stealth )
 						{
 							//Delay the mood check time (for autoacquire) until after the unit can stealth again.
@@ -2820,7 +2818,7 @@ void AIGroup::setAttitude( AttitudeType tude )
  */
 AttitudeType AIGroup::getAttitude( void ) const
 {
-	return AI_PASSIVE;
+	return ATTITUDE_PASSIVE;
 }
 
 void AIGroup::setMineClearingDetail( Bool set )
@@ -2900,10 +2898,10 @@ void AIGroup::queueUpgrade( const UpgradeTemplate *upgrade )
 			if( thisMember->hasUpgrade( upgrade )  || !thisMember->affectedByUpgrade( upgrade ) )
 				continue;
 		}
-
- 		// Ever think to check if this thing can actually build the upgrade to "stop cheaters"?
- 		if( !thisMember->canProduceUpgrade(upgrade) )
- 			continue;// They have faked their button; go out of sync. (Cheater will execute it, non cheater will not execute it.)
+		
+		// Ever think to check if this thing can actually build the upgrade to "stop cheaters"?
+		if( !thisMember->canProduceUpgrade(upgrade) )
+			continue;// They have faked their button; go out of sync. (Cheater will execute it, non cheater will not execute it.)
 
 		// producer must have a production update
 		ProductionUpdateInterface *pu = thisMember->getProductionUpdateInterface();

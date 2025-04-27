@@ -385,9 +385,9 @@ Object *BuildAssistant::buildObjectNow( Object *constructorObject, const ThingTe
 		// create the new object.  We need to construct it with UnderConstruction set, since we are going to insta build it,
 		// but we don't want to send double construction type events like power creation. onStructureConstructionComplete
 		// is called below, so we need to simulate the proper object creation flow from the start.  Be like Dozer.
-		ObjectStatusBits startingStatus = OBJECT_STATUS_NONE;
+		ObjectStatusMaskType startingStatus;
 		if( what->isKindOf( KINDOF_STRUCTURE ) )
-			startingStatus = OBJECT_STATUS_UNDER_CONSTRUCTION;
+			startingStatus.set( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNDER_CONSTRUCTION ) );
 
 		Object *obj = TheThingFactory->newObject( what, owningPlayer->getDefaultTeam(), startingStatus );
 		obj->setProducer(constructorObject);
@@ -854,7 +854,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 
 	// check shroud level
 	// This should be the first check, since returning other errors for shrouded areas could be used to game the system
-	if( BitTest( options, SHROUD_REVEALED ) )
+	if( BitIsSet( options, SHROUD_REVEALED ) )
 	{
 		{
 			Int x, y;
@@ -875,7 +875,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 	// any immobile objects, or an enemy object.  Friendly objects should politely 
 	// "move out of the way" when you build something where they're standing
 	//
-	if( BitTest( options, NO_OBJECT_OVERLAP ) )
+	if( BitIsSet( options, NO_OBJECT_OVERLAP ) )
 	{
 		if (!isLocationClearOfObjects(worldPos, build, angle, builderObject, NO_OBJECT_OVERLAP, player)) 
 		{
@@ -887,7 +887,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 	// if NO_ENEMY_OBJECT_OVERLAP is set, we are not allowed to construct 'build' if it would overlap
 	// any enemy objects.  Friendly objects are ignored.
 	//
-	if( BitTest( options, NO_ENEMY_OBJECT_OVERLAP ) )
+	if( BitIsSet( options, NO_ENEMY_OBJECT_OVERLAP ) )
 	{
 		if (!isLocationClearOfObjects(worldPos, build, angle, builderObject, NO_ENEMY_OBJECT_OVERLAP, player)) 
 		{
@@ -925,7 +925,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 	}
 
 	// if clear path is requestsed check to see if the builder object can get there
-	if( BitTest( options, CLEAR_PATH ) && builderObject )
+	if( BitIsSet( options, CLEAR_PATH ) && builderObject )
 	{
 		AIUpdateInterface *ai = builderObject->getAIUpdateInterface();
 
@@ -943,7 +943,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 		// check for an available path using one of two methods (the quick less accurate one,
 		// or the slow more accurate one)
 		//
-		if( BitTest( options, USE_QUICK_PATHFIND ) )
+		if( BitIsSet( options, USE_QUICK_PATHFIND ) )
 		{
 
 			if( ai->isQuickPathAvailable( worldPos ) == FALSE )
@@ -961,7 +961,7 @@ LegalBuildCode BuildAssistant::isLocationLegalToBuild( const Coord3D *worldPos,
 	}  // end if
 
 	// check basic terrain restrctions
-	if( BitTest( options, TERRAIN_RESTRICTIONS ) )
+	if( BitIsSet( options, TERRAIN_RESTRICTIONS ) )
 	{
 
 		//
@@ -1518,7 +1518,7 @@ void BuildAssistant::sellObject( Object *obj )
 	// set this object as under de-construction (sold).  It is still a legal target, since you get the money at 
 	// the completion of sale.
 	//
-	obj->setStatus( ObjectStatusBits( OBJECT_STATUS_SOLD | OBJECT_STATUS_UNSELECTABLE ) );
+	obj->setStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_SOLD, OBJECT_STATUS_UNSELECTABLE ) );
 
 	// for everybody, unselect them at this time.  You can't just deselect a drawable.  Selection is a logic property.
 	TheGameLogic->deselectObject(obj, PLAYERMASK_ALL, TRUE);

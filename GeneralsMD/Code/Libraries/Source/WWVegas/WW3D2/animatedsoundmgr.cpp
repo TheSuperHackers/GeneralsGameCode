@@ -39,21 +39,21 @@
 
 #include <string.h>	// stricmp()
 #include "animatedsoundmgr.h"
-#include "ini.h"
+#include "INI.H"
 #include "inisup.h"
 #include "ffactory.h"
-#include "wwfile.h"
+#include "WWFILE.H"
 #include <stdio.h>
 #include "definition.h"
 #include "definitionmgr.h"
 #include "definitionclassids.h"
-#include "wwaudio.h"
-#include "audiblesound.h"
+#include "WWAudio.h"
+#include "AudibleSound.h"
 #include "htree.h"
 #include "hanim.h"
 #include "soundlibrarybridge.h"
 
-#include "WWDebug.h"
+#include "wwdebug.h"
 
 //////////////////////////////////////////////////////////////////////
 //	Static member initialization
@@ -114,7 +114,8 @@ Build_List_From_String
 		//
 		// Determine how many entries there will be in the list
 		//
-		for (const char *entry = buffer;
+		const char *entry = buffer;
+		for (;
 			  (entry != NULL) && (entry[1] != 0);
 			  entry = ::strstr (entry, delimiter))
 		{
@@ -157,7 +158,7 @@ Build_List_From_String
 				// Copy this entry into its own string
 				//
 				StringClass entry_string = entry;
-				char *delim_start = ::strstr (entry_string, delimiter);				
+				char *delim_start = ::strstr (entry_string.Peek_Buffer(), delimiter);				
 				if (delim_start != NULL) {
 					delim_start[0] = 0;
 				}

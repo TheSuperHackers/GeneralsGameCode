@@ -99,7 +99,7 @@ void W3DRightHUDDraw( GameWindow *window, WinInstanceData *instData )
 {
 
 	// draw the default stuff
-	if( BitTest(window->winGetStatus(), WIN_STATUS_IMAGE ))
+	if( BitIsSet(window->winGetStatus(), WIN_STATUS_IMAGE ))
 		W3DGameWinDefaultDraw( window, instData );
 	
 }  // end W3DRightHUDDraw
@@ -465,7 +465,7 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 
 void W3DCommandBarGridDraw( GameWindow *window, WinInstanceData *instData )
 {
-	if( BitTest(window->winGetStatus(), WIN_STATUS_IMAGE ))
+	if( BitIsSet(window->winGetStatus(), WIN_STATUS_IMAGE ))
 	{
 		W3DGameWinDefaultDraw( window, instData );
 		return;
@@ -744,7 +744,7 @@ void W3DDrawMapPreview( GameWindow *window, WinInstanceData *instData)
 
 	}  // end else
 
-	if(!BitTest(window->winGetStatus(), WIN_STATUS_IMAGE) || !window->winGetEnabledImage(0))
+	if(!BitIsSet(window->winGetStatus(), WIN_STATUS_IMAGE) || !window->winGetEnabledImage(0))
 		TheDisplay->drawFillRect(ul.x, ul.y, lr.x -ul.x, lr.y-ul.y, lineColor);
 	else
 		TheDisplay->drawImage(window->winGetEnabledImage(0) , ul.x, ul.y, lr.x, lr.y );

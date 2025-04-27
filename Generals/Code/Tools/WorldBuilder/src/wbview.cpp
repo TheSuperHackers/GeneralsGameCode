@@ -19,19 +19,19 @@
 // wbview.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "CUndoable.h"
-#include "worldbuilder.h"
-#include "worldbuilderdoc.h"
+#include "WorldBuilder.h"
+#include "WorldBuilderDoc.h"
 #include "wbview.h"
-#include "wheightmapedit.h"
+#include "WHeightMapEdit.h"
 #include "MainFrm.h"
 #include "Common/Debug.h"
 #include "Common/ThingTemplate.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "GlobalLightOptions.h"
-#include "PlayerListDlg.h"
-#include "TeamsDialog.h"
+#include "playerlistdlg.h"
+#include "teamsdialog.h"
 
 Bool WbView::m_snapToGrid = false;
 
@@ -923,7 +923,7 @@ void WbView::OnValidationFixTeams()
 
 	// Now, do the Undoable
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
-	DictItemUndoable *pUndo = new DictItemUndoable(allTeamDicts.begin(), newDict, newDict.getNthKey(0), allTeamDicts.size(), pDoc, true);
+	DictItemUndoable *pUndo = new DictItemUndoable(&allTeamDicts.front(), newDict, newDict.getNthKey(0), allTeamDicts.size(), pDoc, true);
 	pDoc->AddAndDoUndoable(pUndo);
 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
 	

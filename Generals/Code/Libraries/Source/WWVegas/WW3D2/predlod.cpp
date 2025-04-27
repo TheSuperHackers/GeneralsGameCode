@@ -26,9 +26,9 @@
  *                                                                         * 
  *                      $Author:: Jani_p                                  $* 
  *                                                                         * 
- *                     $Modtime:: 8/23/01 5:38p                           $* 
+ *                     $Modtime:: 9/20/01 10:10a                          $* 
  *                                                                         * 
- *                    $Revision:: 3                                       $* 
+ *                    $Revision:: 5                                       $* 
  *                                                                         * 
  *-------------------------------------------------------------------------* 
  * Functions:                                                              * 
@@ -179,7 +179,7 @@ int					PredictiveLODOptimizerClass::NumObjects = 0;
 float					PredictiveLODOptimizerClass::TotalCost = 0.0f;
 LODHeapNode *		PredictiveLODOptimizerClass::VisibleObjArray1;
 LODHeapNode	*		PredictiveLODOptimizerClass::VisibleObjArray2;
-int					PredictiveLODOptimizerClass::NumVisibleObjects;
+int					PredictiveLODOptimizerClass::VisibleObjArraySize;
 
 
 /************************************************************************** 
@@ -391,12 +391,13 @@ void PredictiveLODOptimizerClass::Free(void)
 	if (VisibleObjArray1) delete[] VisibleObjArray1;
 	VisibleObjArray1=NULL;
 	VisibleObjArray2=NULL;
+	VisibleObjArraySize = 0;
 }
 
 void PredictiveLODOptimizerClass::AllocVisibleObjArrays(int num_objects)
 {
-	if (NumVisibleObjects<num_objects) {
-		NumVisibleObjects=num_objects;
+	if (VisibleObjArraySize<num_objects) {
+		VisibleObjArraySize=num_objects;
 		if (VisibleObjArray1) delete[] VisibleObjArray1;	// Only the first array is actually allocated
 		VisibleObjArray1=W3DNEWARRAY LODHeapNode[2*(num_objects + 1)];
 		VisibleObjArray2=VisibleObjArray1+(num_objects + 1);

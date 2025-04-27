@@ -87,7 +87,8 @@ void UnicodeString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveDa
 	{
 		// no buffer manhandling is needed (it's already large enough, and unique to us)
 		if (strToCopy)
-			wcscpy(m_data->peek(), strToCopy);
+			// TheSuperHackers @fix Mauller 04/04/2025 Replace wcscpy with safer memmove as memory regions can overlap when part of string is copied to itself
+			memmove(m_data->peek(), strToCopy, (wcslen(strToCopy) + 1) * sizeof(WideChar));
 		if (strToCat)
 			wcscat(m_data->peek(), strToCat);
 		return;

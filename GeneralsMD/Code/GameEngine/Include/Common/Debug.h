@@ -72,6 +72,9 @@ class AsciiString;
 // by default, turn on ALLOW_DEBUG_UTILS if _DEBUG is turned on.
 #if (defined(_DEBUG) || defined(_INTERNAL)) && !defined(ALLOW_DEBUG_UTILS) && !defined(DISABLE_ALLOW_DEBUG_UTILS)
 	#define ALLOW_DEBUG_UTILS 1
+#elif defined(DEBUG_LOGGING) || defined(DEBUG_CRASHING) || defined(DEBUG_STACKTRACE) || defined(DEBUG_PROFILE)
+	// TheSuperHackers @tweak also turn on when any of the above options is already set.
+	#define ALLOW_DEBUG_UTILS 1
 #endif
 
 // these are predicated on ALLOW_DEBUG_UTILS, not _DEBUG, and allow you to selectively disable
@@ -84,6 +87,9 @@ class AsciiString;
 #endif
 #if defined(ALLOW_DEBUG_UTILS) && !defined(DEBUG_STACKTRACE) && !defined(DISABLE_DEBUG_STACKTRACE)
 	#define DEBUG_STACKTRACE 1
+	#ifndef DEBUG_LOGGING
+		#define DEBUG_LOGGING 1 // TheSuperHackers @compile Stack trace requires logging.
+	#endif
 #endif
 #if defined(ALLOW_DEBUG_UTILS) && !defined(DEBUG_PROFILE) && !defined(DISABLE_DEBUG_PROFILE)
 	#define DEBUG_PROFILE 1
@@ -149,12 +155,25 @@ class AsciiString;
 
 	DEBUG_EXTERN_C void DebugLog(const char *format, ...);
 
+	// This defines a bitmask of log types that we care about, to allow some flexability
+	// in what gets logged.  This should be extended to asserts, too, but the assert box
+	// is waiting to be rewritten. -MDC 3/19/2003
+	extern unsigned int DebugLevelMask;
+	enum
+	{
+		DEBUG_LEVEL_NET = 0,           // in-game network
+		DEBUG_LEVEL_MAX
+	};
+	extern const char *TheDebugLevels[DEBUG_LEVEL_MAX];
+
 	#define DEBUG_LOG(m)						do { { DebugLog m ; } } while (0)
+	#define DEBUG_LOG_LEVEL(l, m)		do { if (l & DebugLevelMask) { DebugLog m ; } } while (0)
 	#define DEBUG_ASSERTLOG(c, m)		do { { if (!(c)) DebugLog m ; } } while (0)
 
 #else
 
 	#define DEBUG_LOG(m)						((void)0)
+	#define DEBUG_LOG_LEVEL(l, m)		((void)0)
 	#define DEBUG_ASSERTLOG(c, m)		((void)0)
 
 #endif

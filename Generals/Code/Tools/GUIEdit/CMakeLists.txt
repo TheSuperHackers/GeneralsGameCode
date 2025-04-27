@@ -53,7 +53,7 @@ target_link_libraries(g_guiedit PRIVATE
     g_gameengine
     g_gameenginedevice
     g_wwvegas
-    gi_libraries_include
+    gi_always
     imm32
     stlport
     vfw32

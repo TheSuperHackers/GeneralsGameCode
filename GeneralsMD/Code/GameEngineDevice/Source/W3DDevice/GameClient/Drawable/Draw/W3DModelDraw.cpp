@@ -34,7 +34,9 @@
 
 #define NO_DEBUG_CRC
 
-#include "Common/CRC.h"
+#include <windows.h>
+
+#include "Common/crc.h"
 #include "Common/CRCDebug.h"
 #include "Common/GameState.h"
 #include "Common/GlobalData.h"
@@ -43,8 +45,6 @@
 #include "Common/ThingTemplate.h"
 #include "Common/GameLOD.h"
 #include "Common/Xfer.h"
-#include "Common/GameState.h"
-#include "Common/QuickTrig.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/FXList.h"
 #include "GameClient/Shadow.h"
@@ -61,11 +61,11 @@
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "W3DDevice/GameClient/W3DTerrainTracks.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
-#include "WW3D2/HAnim.h"
-#include "WW3D2/HLod.h"
-#include "WW3D2/RendObj.h"
-#include "WW3D2/Mesh.h"
-#include "WW3D2/MeshMdl.h"
+#include "WW3D2/hanim.h"
+#include "WW3D2/hlod.h"
+#include "WW3D2/rendobj.h"
+#include "WW3D2/mesh.h"
+#include "WW3D2/meshmdl.h"
 #include "Common/BitFlagsIO.h"
 
 #ifdef _INTERNAL
@@ -205,20 +205,23 @@ LogClass BonePosLog("bonePositions.txt");
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 extern AsciiString TheThingTemplateBeingParsedName;
+#endif
+
+#if defined(_DEBUG) || defined(_INTERNAL)
 extern Real TheSkateDistOverride;
 #endif
 
 // flags that aren't read directly from INI, but set in response to various other situations
-enum INIReadFlagsType
+enum INIReadFlagsType CPP_11(: Int)
 {
 	ANIMS_COPIED_FROM_DEFAULT_STATE = 0,
 	GOT_NONIDLE_ANIMS,
 	GOT_IDLE_ANIMS,
 };
 
-enum ACBits
+enum ACBits CPP_11(: Int)
 {
 	RANDOMIZE_START_FRAME = 0,
 	START_FRAME_FIRST,
@@ -272,7 +275,7 @@ inline Bool isCommonMaintainFrameFlagSet(Int a, Int b)
 // Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
 // existing values!
 //
-static char *TerrainDecalTextureName[TERRAIN_DECAL_MAX]=
+static const char *TerrainDecalTextureName[TERRAIN_DECAL_MAX]=
 {
 #ifdef ALLOW_DEMORALIZE
 	"DM_RING",//demoralized
@@ -770,7 +773,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				{
 					sprintf(buffer, "%s%02d", mfName.str(), i);
 					findPristineBone(NAMEKEY(buffer), &info.m_muzzleFlashBone);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 					if (info.m_muzzleFlashBone)
 						info.m_muzzleFlashBoneName = buffer;
 #endif
@@ -818,7 +821,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				if (!mfName.isEmpty())
 					findPristineBone(NAMEKEY(mfName), &info.m_muzzleFlashBone);
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 				if (info.m_muzzleFlashBone)
 					info.m_muzzleFlashBoneName = mfName;
 #endif
@@ -1074,7 +1077,8 @@ void W3DModelDrawModuleData::validateStuffForTimeAndWeather(const Drawable* draw
 
 	m_validated |= mode;
 
-	for (ModelConditionVector::iterator c_it = m_conditionStates.begin(); c_it != m_conditionStates.end(); ++c_it)
+	ModelConditionVector::iterator c_it = m_conditionStates.begin();
+	for (; c_it != m_conditionStates.end(); ++c_it)
 	{
 		if (!c_it->matchesMode(false, false) && !c_it->matchesMode(night, snowy))
 			continue;
@@ -1175,7 +1179,7 @@ const Vector3* W3DModelDrawModuleData::getAttachToDrawableBoneOffset(const Drawa
 #endif
 
 //-------------------------------------------------------------------------------------------------
-enum ParseCondStateType
+enum ParseCondStateType CPP_11(: Int)
 {
 	PARSE_NORMAL,
 	PARSE_DEFAULT,
@@ -1223,7 +1227,7 @@ void W3DModelDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 }
 
 //-------------------------------------------------------------------------------------------------
-enum AnimParseType
+enum AnimParseType CPP_11(: Int)
 {
 	ANIM_NORMAL,
 	ANIM_IDLE
@@ -1585,7 +1589,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 	//	}
 			
 			ModelConditionFlags conditionsYes;
-	#if defined(_DEBUG) || defined(_INTERNAL)
+	#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 			AsciiString description;
 			conditionsYes.parse(ini, &description);
 
@@ -3448,7 +3452,8 @@ Int W3DModelDraw::getPristineBonePositionsForConditionState(
 	Int posCount = 0;
 	Int endIndex = (startIndex == 0) ? 0 : 99;	
 	char buffer[256];
-	for (Int i = startIndex; i <= endIndex; ++i)
+	Int i = startIndex;
+	for (; i <= endIndex; ++i)
 	{
 		if (i == 0)
 			strcpy(buffer, boneNamePrefix);
@@ -3604,7 +3609,8 @@ Int W3DModelDraw::getCurrentBonePositions(
 	Int posCount = 0;
 	Int endIndex = (startIndex == 0) ? 0 : 99;	
 	char buffer[256];
-	for (Int i = startIndex; i <= endIndex; ++i)
+	Int i = startIndex;
+	for (; i <= endIndex; ++i)
 	{
 		if (i == 0)
 			strcpy(buffer, boneNamePrefix);
@@ -4303,7 +4309,8 @@ void W3DModelDrawModuleData::xfer( Xfer *x )
 				x->xferInt(&(bone->boneIndex));
 				x->xferUser(&(bone->mtx), sizeof(Matrix3D));
 			}
-			for (Int i=0; i<MAX_TURRETS; ++i)
+			Int i=0;
+			for (; i<MAX_TURRETS; ++i)
 			{
 				x->xferInt(&(info->m_turrets[i].m_turretAngleBone));
 				x->xferInt(&(info->m_turrets[i].m_turretPitchBone));

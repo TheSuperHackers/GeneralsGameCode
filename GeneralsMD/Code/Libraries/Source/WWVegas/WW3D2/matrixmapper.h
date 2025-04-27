@@ -164,7 +164,7 @@ inline MatrixMapperClass::MappingType MatrixMapperClass::Get_Type(void)
 	return Type;
 }
 
-inline const Matrix4x4 & MatrixMapperClass::Get_Texture_Transform(void) const	
+inline const Matrix4x4 & MatrixMapperClass::Get_Texture_Transform(void) const
 { 
 	return ViewToTexture; 
 }

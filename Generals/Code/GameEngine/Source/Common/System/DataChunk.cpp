@@ -32,7 +32,7 @@
 #include "string.h"
 #include "Compression.h"
 #include "Common/DataChunk.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 
 // If verbose, lots of debug logging.
@@ -275,7 +275,7 @@ DataChunkOutput::~DataChunkOutput()
 	::fclose(m_tmp_file);
 }
 
-void DataChunkOutput::openDataChunk( char *name, DataChunkVersionType ver )
+void DataChunkOutput::openDataChunk( const char *name, DataChunkVersionType ver )
 {
 	// allocate (or get existing) ID from the table of m_contents
 	UnsignedInt id = m_contents.allocateID( AsciiString(name) );

@@ -124,7 +124,7 @@ ParachuteContain::ParachuteContain( Thing *thing, const ModuleData *moduleData )
 		m_rollRate = GameLogicRandomValueReal(-d->m_rollRateMax, d->m_rollRateMax);
 	}
 
-	getObject()->setStatus(OBJECT_STATUS_PARACHUTING);
+	getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_PARACHUTING ) );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -357,16 +357,16 @@ UpdateSleepTime ParachuteContain::update( void )
 	{
 		// unopened, or empty, chutes, don't collide with anything, to simplify
 		// ejections, paradrops, landings, etc...
-		parachute->setStatus(OBJECT_STATUS_NO_COLLISIONS);
+		parachute->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_NO_COLLISIONS ) );
 		if (rider)
-			rider->setStatus(OBJECT_STATUS_NO_COLLISIONS);
+			rider->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_NO_COLLISIONS ) );
 	}
 	else
 	{
 		// opened/nonempty chutes DO collide...
-		parachute->clearStatus(OBJECT_STATUS_NO_COLLISIONS);
+		parachute->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_NO_COLLISIONS ) );
 		if (rider)
-			rider->clearStatus(OBJECT_STATUS_NO_COLLISIONS);
+			rider->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_NO_COLLISIONS ) );
 	}
 
 	AIUpdateInterface* ai = parachute->getAIUpdateInterface();
@@ -455,7 +455,7 @@ void ParachuteContain::onContaining( Object *rider )
 
 	// objects inside a transport are held
 	rider->setDisabled( DISABLED_HELD );
-	rider->setStatus(OBJECT_STATUS_PARACHUTING);
+	rider->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_PARACHUTING ) );
 
 	rider->clearAndSetModelConditionState(MODELCONDITION_PARACHUTING, MODELCONDITION_FREEFALL);
 	m_needToUpdateRiderBones = true;
@@ -474,12 +474,12 @@ void ParachuteContain::onRemoving( Object *rider )
 
 	// object is no longer held inside a transport
 	rider->clearDisabled( DISABLED_HELD );
-	rider->clearStatus(OBJECT_STATUS_PARACHUTING);
+	rider->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_PARACHUTING ) );
 
 	// mark parachute as "no-collisions"... it is just ephemeral at this point,
 	// and having the chute collide with the soldier (and both bounce apart) is
 	// just dumb-lookin'...
-	getObject()->setStatus(OBJECT_STATUS_NO_COLLISIONS);
+	getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_NO_COLLISIONS ) );
 
 	// position him correctly.
 	positionRider(rider);

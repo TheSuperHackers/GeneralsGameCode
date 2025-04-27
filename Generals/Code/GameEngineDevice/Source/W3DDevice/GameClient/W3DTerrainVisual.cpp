@@ -48,13 +48,12 @@
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DDebugIcons.h"
 #include "W3DDevice/GameClient/W3DTerrainTracks.h"
-#include "W3DDevice/GameClient/W3DGranny.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
-#include "W3DDevice/GameClient/heightmap.h"
-#include "WW3D2/Light.h"
-#include "WW3D2/RendObj.h"
-#include "WW3D2/ColType.h"
-#include "WW3D2/ColTest.h"
+#include "W3DDevice/GameClient/HeightMap.h"
+#include "WW3D2/light.h"
+#include "WW3D2/rendobj.h"
+#include "WW3D2/coltype.h"
+#include "WW3D2/coltest.h"
 #include "WW3D2/assetmgr.h"
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.		 
@@ -85,14 +84,6 @@ W3DTerrainVisual::~W3DTerrainVisual()
 		TheTerrainTracksRenderObjClassSystem=NULL;
 	}
 
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	if (TheGrannyRenderObjSystem)
-	{
-		delete TheGrannyRenderObjSystem;
-		TheGrannyRenderObjSystem=NULL;
-	}
-#endif
-
 	if (TheW3DShadowManager)
 	{	
 		delete TheW3DShadowManager;
@@ -121,11 +112,6 @@ void W3DTerrainVisual::init( void )
 	// initialize track drawing system
 	TheTerrainTracksRenderObjClassSystem = NEW TerrainTracksRenderObjClassSystem;
 	TheTerrainTracksRenderObjClassSystem->init(W3DDisplay::m_3DScene);
-
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	// initialize Granny model drawing system
-	TheGrannyRenderObjSystem = NEW GrannyRenderObjSystem;
-#endif
 
 	// initialize object shadow drawing system
 	TheW3DShadowManager = NEW W3DShadowManager;

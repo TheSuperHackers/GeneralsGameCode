@@ -38,14 +38,14 @@
 #define DEFINE_BODYDAMAGETYPE_NAMES
 #define DEFINE_PANNING_NAMES
 
-#include "Common/CRC.h"
-#include "Common/File.h"
+#include "Common/crc.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/GameAudio.h"
 #include "Common/INI.h"
-#include "Common/registry.h"
+#include "Common/Registry.h"
 #include "Common/UserPreferences.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 
 #include "GameLogic/AI.h"
 #include "GameLogic/Weapon.h"
@@ -571,8 +571,6 @@ GlobalData::GlobalData()
 	m_debugCashValueMap = FALSE;
 	m_maxDebugValue = 10000;
 	m_debugCashValueMapTileDuration = LOGICFRAMES_PER_SECOND; // Changed By Sadullah Nader
-	m_debugIgnoreAsserts = FALSE;
-	m_debugIgnoreStackTrace = FALSE;
 	m_vTune = false;
 	m_checkForLeaks = TRUE;
 	m_benchmarkTimer = -1;
@@ -593,6 +591,14 @@ GlobalData::GlobalData()
 	m_baseStatsDir = ".\\";
 	m_MOTDPath = "MOTD.txt";
 	m_extraLogging = FALSE;
+#endif
+
+#ifdef DEBUG_CRASHING
+	m_debugIgnoreAsserts = FALSE;
+#endif
+
+#ifdef DEBUG_STACKTRACE
+	m_debugIgnoreStackTrace = FALSE;
 #endif
 
 	m_playStats = -1;
@@ -1129,6 +1135,7 @@ Bool GlobalData::setTimeOfDay( TimeOfDay tod )
 //-------------------------------------------------------------------------------------------------
 GlobalData *GlobalData::newOverride( void )
 {
+	// TheSuperHackers @info This copy is not implemented in VS6 builds
 	GlobalData *override = NEW GlobalData;
 
 	// copy the data from the latest override (TheWritableGlobalData) to the newly created instance

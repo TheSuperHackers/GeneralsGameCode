@@ -223,7 +223,7 @@ GameWindow *GameWindow::findPrevLeaf( void )
 		leaf = leaf->m_prev;
 
 		while( leaf->m_child && 
-					 BitTest( leaf->m_status, WIN_STATUS_TAB_STOP ) == FALSE ) 
+					 BitIsSet( leaf->m_status, WIN_STATUS_TAB_STOP ) == FALSE ) 
 		{
 
 			leaf = leaf->m_child;
@@ -250,7 +250,7 @@ GameWindow *GameWindow::findPrevLeaf( void )
 				leaf = leaf->m_prev;
 
 				while( leaf->m_child && 
-							 BitTest( leaf->m_status, WIN_STATUS_TAB_STOP ) == FALSE ) 
+							 BitIsSet( leaf->m_status, WIN_STATUS_TAB_STOP ) == FALSE ) 
 				{
 
 					leaf = leaf->m_child;
@@ -291,7 +291,7 @@ GameWindow *GameWindow::findNextLeaf( void )
 			return leaf->m_next;
 
 		for( leaf = leaf->m_next; leaf; leaf = leaf->m_child )
-			if( leaf->m_child == NULL || BitTest( leaf->m_status, 
+			if( leaf->m_child == NULL || BitIsSet( leaf->m_status, 
 																						WIN_STATUS_TAB_STOP ) )
 				return leaf;
 
@@ -309,7 +309,7 @@ GameWindow *GameWindow::findNextLeaf( void )
 
 				for( leaf = leaf->m_next; leaf; leaf = leaf->m_child )
 					if( leaf->m_child == NULL || 
-							BitTest( leaf->m_status, WIN_STATUS_TAB_STOP ) )
+							BitIsSet( leaf->m_status, WIN_STATUS_TAB_STOP ) )
 						return leaf;
 
 			}  // end if
@@ -673,7 +673,7 @@ Int GameWindow::winHide( Bool hide )
 		// invisible then there's a good chance that the black border around
 		// the game window needs redrawing
 		//
-		if( !BitTest( m_status, WIN_STATUS_NO_FLUSH ) )
+		if( !BitIsSet( m_status, WIN_STATUS_NO_FLUSH ) )
 			freeImages();
 
 		BitSet( m_status, WIN_STATUS_HIDDEN );
@@ -699,7 +699,7 @@ Int GameWindow::winHide( Bool hide )
 Bool GameWindow::winIsHidden( void )
 {
 
-	return BitTest( m_status, WIN_STATUS_HIDDEN );
+	return BitIsSet( m_status, WIN_STATUS_HIDDEN );
 
 }  // end WinIsHidden
 
@@ -843,13 +843,13 @@ void GameWindow::winSetFont( GameFont *font )
 	m_instData.m_font = font;
 
 	// set font for other display strings in special gadget window controls
-	if( BitTest( m_instData.getStyle(), GWS_SCROLL_LISTBOX ) )
+	if( BitIsSet( m_instData.getStyle(), GWS_SCROLL_LISTBOX ) )
 		GadgetListBoxSetFont( this, font );
-	else if( BitTest( m_instData.getStyle(), GWS_COMBO_BOX ) )
+	else if( BitIsSet( m_instData.getStyle(), GWS_COMBO_BOX ) )
 		GadgetComboBoxSetFont( this, font );
-	else if( BitTest( m_instData.getStyle(), GWS_ENTRY_FIELD ) )
+	else if( BitIsSet( m_instData.getStyle(), GWS_ENTRY_FIELD ) )
 		GadgetTextEntrySetFont( this, font );
-	else if( BitTest( m_instData.getStyle(), GWS_STATIC_TEXT ) )
+	else if( BitIsSet( m_instData.getStyle(), GWS_STATIC_TEXT ) )
 		GadgetStaticTextSetFont( this, font );
 	else
 	{
@@ -875,7 +875,7 @@ void GameWindow::winSetEnabledTextColors( Color color, Color borderColor )
 	m_instData.m_enabledText.color = color;
 	m_instData.m_enabledText.borderColor = borderColor;
 	
-	if( BitTest( m_instData.getStyle(), GWS_COMBO_BOX ) )
+	if( BitIsSet( m_instData.getStyle(), GWS_COMBO_BOX ) )
 		GadgetComboBoxSetEnabledTextColors(this,  color, borderColor );
 	
 
@@ -890,7 +890,7 @@ void GameWindow::winSetDisabledTextColors( Color color, Color borderColor )
 	m_instData.m_disabledText.color = color;
 	m_instData.m_disabledText.borderColor = borderColor;
 
-	if( BitTest( m_instData.getStyle(), GWS_COMBO_BOX ) )
+	if( BitIsSet( m_instData.getStyle(), GWS_COMBO_BOX ) )
 		GadgetComboBoxSetDisabledTextColors( this, color, borderColor );
 
 }  // end winSetDisabledTextColors
@@ -904,7 +904,7 @@ void GameWindow::winSetHiliteTextColors( Color color, Color borderColor )
 	m_instData.m_hiliteText.color = color;
 	m_instData.m_hiliteText.borderColor = borderColor;
 
-	if( BitTest( m_instData.getStyle(), GWS_COMBO_BOX ) )
+	if( BitIsSet( m_instData.getStyle(), GWS_COMBO_BOX ) )
 		GadgetComboBoxSetHiliteTextColors( this, color, borderColor );
 
 }  // end winSetHiliteTextColors
@@ -918,7 +918,7 @@ void GameWindow::winSetIMECompositeTextColors( Color color, Color borderColor )
 	m_instData.m_imeCompositeText.color = color;
 	m_instData.m_imeCompositeText.borderColor = borderColor;
 
-	if( BitTest( m_instData.getStyle(), GWS_COMBO_BOX ) )
+	if( BitIsSet( m_instData.getStyle(), GWS_COMBO_BOX ) )
 		GadgetComboBoxSetIMECompositeTextColors( this, color, borderColor );
 }  // end winSetIMECompositeTextColors
 
@@ -1367,7 +1367,7 @@ Int GameWindow::winSetCallbacks( GameWinInputFunc input,
 Int GameWindow::winDrawWindow( void )
 {
 
-	if( BitTest( m_status, WIN_STATUS_HIDDEN ) == FALSE && m_draw )
+	if( BitIsSet( m_status, WIN_STATUS_HIDDEN ) == FALSE && m_draw )
 		m_draw( this, &m_instData );
 
 	return WIN_ERR_OK;
@@ -1403,8 +1403,8 @@ GameWindow *GameWindow::winPointInChild( Int x, Int y, Bool ignoreEnableCheck, B
 		if( x >= origin.x && x <= origin.x + child->m_size.x &&
 				y >= origin.y && y <= origin.y + child->m_size.y )
 		{
-			Bool enabled = ignoreEnableCheck || BitTest( child->m_status, WIN_STATUS_ENABLED );
-			Bool hidden = BitTest( child->m_status, WIN_STATUS_HIDDEN );
+			Bool enabled = ignoreEnableCheck || BitIsSet( child->m_status, WIN_STATUS_ENABLED );
+			Bool hidden = BitIsSet( child->m_status, WIN_STATUS_HIDDEN );
 			if( !hidden )
 			{
 				if( enabled )
@@ -1458,7 +1458,7 @@ GameWindow *GameWindow::winPointInAnyChild( Int x, Int y, Bool ignoreHidden, Boo
 				y >= origin.y && y <= origin.y + child->m_size.y )
 		{
 
-			if( !(ignoreHidden == TRUE &&	BitTest( child->m_status, WIN_STATUS_HIDDEN )) )
+			if( !(ignoreHidden == TRUE &&	BitIsSet( child->m_status, WIN_STATUS_HIDDEN )) )
 				return child->winPointInChild( x, y, ignoreEnableCheck );
 
 		}  // end if

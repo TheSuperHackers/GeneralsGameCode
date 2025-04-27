@@ -27,6 +27,14 @@
 // Desc:   The Xfer system is capable of setting up operations to work with blocks of data
 //				 from other subsystems.  It can work things such as file reading, file writing,
 //				 CRC computations etc
+//
+// TheSuperHackers @info helmutbuhler 04/09/2025
+//         The baseclass Xfer has 3 implementations:
+//          - XferLoad: Load gamestate
+//          - XferSave: Save gamestate
+//          - XferCRC: Calculate gamestate CRC
+//            - XferDeepCRC: This derives from XferCRC and also writes the gamestate data relevant
+//              to crc calculation to a file (only used in developer builds)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -35,17 +43,17 @@
 #define __XFER_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "Common/STLTypedefs.h"
 #include "Common/ModelState.h"
 #include "Common/Science.h"
+#include "Common/Upgrade.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Snapshot;
 typedef Int Color;
-enum ObjectID;
-enum DrawableID;
-enum KindOfType;
-enum ScienceType;
+enum ObjectID CPP_11(: Int);
+enum DrawableID CPP_11(: Int);
+enum KindOfType CPP_11(: Int);
+enum ScienceType CPP_11(: Int);
 class Matrix3D;
 
 // ------------------------------------------------------------------------------------------------
@@ -53,7 +61,7 @@ typedef UnsignedByte XferVersion;
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum XferMode
+enum XferMode CPP_11(: Int)
 {
 	XFER_INVALID = 0,
 
@@ -66,7 +74,7 @@ enum XferMode
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum XferStatus
+enum XferStatus CPP_11(: Int)
 {
 	XFER_STATUS_INVALID = 0,
 	
@@ -94,7 +102,7 @@ enum XferStatus
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum XferOptions
+enum XferOptions CPP_11(: UnsignedInt)
 {
 	XO_NONE										= 0x00000000,
 	XO_NO_POST_PROCESSING			= 0x00000001,
@@ -168,7 +176,7 @@ public:
 	virtual void xferScienceType( ScienceType *science );
 	virtual void xferScienceVec( ScienceVec *scienceVec );
 	virtual void xferKindOf( KindOfType *kindOfData );
-	virtual void xferUpgradeMask( Int64 *upgradeMaskData );
+	virtual void xferUpgradeMask( UpgradeMaskType *upgradeMaskData );
 	virtual void xferUser( void *data, Int dataSize );
 	virtual void xferMatrix3D( Matrix3D* mtx );
 	virtual void xferMapName( AsciiString *mapNameData );

@@ -24,12 +24,16 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/ww3d2/meshbuild.h                            $*
  *                                                                                             *
- *                       Author:: Greg_h                                                       *
+ *                   Org Author:: Greg_h                                                       *
  *                                                                                             *
- *                     $Modtime:: 1/08/01 10:04a                                              $*
+ *                       Author : Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/27/02 9:23a                                              $*
  *                                                                                             *
- *                    $Revision:: 1                                                           $*
+ *                    $Revision:: 2                                                           $*
  *                                                                                             *
+ * 
+ * 06/27/02 KM Shader system MAX plugin updates                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -223,6 +227,9 @@ public:
 	*/
 	void							Compute_Bounding_Box(Vector3 * set_min,Vector3 * set_max);
 	void							Compute_Bounding_Sphere(Vector3 * set_center,float * set_radius);
+
+	// For per-pixel lighting KM
+	void							Compute_Tangent_Basis();
 
 	/*
 	** World information managment.  Used to give the mesh builder information

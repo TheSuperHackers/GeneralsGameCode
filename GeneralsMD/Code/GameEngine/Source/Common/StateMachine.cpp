@@ -664,7 +664,7 @@ StateReturnType StateMachine::internalSetState( StateID newStateID )
  */
 StateReturnType StateMachine::initDefaultState()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_LOGGING
 #ifdef STATE_MACHINE_DEBUG
 #define REALLY_VERBOSE_LOG(x) /* */
 	// Run through all the transitions and make sure there aren't any transitions to undefined states. jba. [8/18/2003]

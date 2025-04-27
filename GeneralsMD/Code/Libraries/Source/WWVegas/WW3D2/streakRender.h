@@ -189,10 +189,10 @@ private:
 
 	friend class SegmentedLineClass;
 
-  // Vertex buffer manager
+	// Vertex buffer manager
 	VertexFormatXYZUV1 *getVertexBuffer(unsigned int number);
-  unsigned int m_vertexBufferSize;
-  VertexFormatXYZUV1 *m_vertexBuffer;
+	unsigned int m_vertexBufferSize;
+	VertexFormatXYZUV1 *m_vertexBuffer;
 };
 
 

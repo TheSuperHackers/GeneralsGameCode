@@ -45,7 +45,7 @@
 #include "GameLogic/GameLogic.h"
 #include "GameNetwork/FileTransfer.h"
 #include "GameNetwork/LANAPICallbacks.h"
-#include "GameNetwork/NetworkUtil.h"
+#include "GameNetwork/networkutil.h"
 
 LANAPI *TheLAN = NULL;
 extern Bool LANbuttonPushed;
@@ -104,8 +104,8 @@ void LANAPI::OnAccept( UnsignedInt playerIP, Bool status )
 { 
 	if( AmIHost() )
 	{
-		
-		for (Int i = 0; i < MAX_SLOTS; i++)
+		Int i = 0;
+		for (; i < MAX_SLOTS; i++)
 		{
 			if (m_currentGame->getIP(i) == playerIP)
 			{
@@ -138,8 +138,8 @@ void LANAPI::OnHasMap( UnsignedInt playerIP, Bool status )
 { 
 	if( AmIHost() )
 	{
-		
-		for (Int i = 0; i < MAX_SLOTS; i++)
+		Int i = 0;
+		for (; i < MAX_SLOTS; i++)
 		{
 			if (m_currentGame->getIP(i) == playerIP)
 			{
@@ -192,7 +192,6 @@ void LANAPI::OnGameStart( void )
 	//DEBUG_LOG(("Map is '%s', preview is '%s'\n", m_currentGame->getMap().str(), GetPreviewFromMap(m_currentGame->getMap()).str()));
 	//DEBUG_LOG(("Map is '%s', INI is '%s'\n", m_currentGame->getMap().str(), GetINIFromMap(m_currentGame->getMap()).str()));
 
-#if !defined(_PLAYTEST)
 	if (m_currentGame)
 	{
 		LANPreferences pref;
@@ -264,7 +263,6 @@ void LANAPI::OnGameStart( void )
 		InitGameLogicRandom( m_currentGame->getSeed() );
 		DEBUG_LOG(("InitGameLogicRandom( %d )\n", m_currentGame->getSeed()));
 	}
-#endif
 }
 
 void LANAPI::OnGameOptions( UnsignedInt playerIP, Int playerSlot, AsciiString options )

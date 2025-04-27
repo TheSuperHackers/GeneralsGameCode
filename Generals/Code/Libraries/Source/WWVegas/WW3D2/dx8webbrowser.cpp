@@ -36,11 +36,24 @@
 
 #if ENABLE_EMBEDDED_BROWSER
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
+
 // Import the Browser Type Library
 // BGC, the path for the dll file is pretty odd, no?
 //      I'll leave it like this till I can figure out a
 //      better way.
-#import "..\..\..\..\..\run\BrowserEngine.DLL" no_namespace
+#import "../../../../../Run/BrowserEngine.dll" no_namespace
+
+#else
+
+#include <comutil.h>
+#include <comip.h>
+
+#include "EABrowserEngine/BrowserEngine.h"
+
+typedef _com_ptr_t<_com_IIID<IFEBrowserEngine2, &__uuidof(IFEBrowserEngine2)>> IFEBrowserEngine2Ptr;
+
+#endif
 
 static	IFEBrowserEngine2Ptr	pBrowser = 0;
 
@@ -176,7 +189,7 @@ void	DX8WebBrowser::Render(int backbufferindex)
 // ******************************************************************************************
 void	DX8WebBrowser::CreateBrowser(const char* browsername, const char* url, int x, int y, int w, int h, int updateticks, LONG options, LPDISPATCH gamedispatch)
 {
-	DEBUG_LOG(("DX8WebBrowser::CreateBrowser - Creating browser with the name %s, url = %s, (x, y, w, h) = (%d, %d, %d, %d), update ticks = %d\n", browsername, url, x, y, h, w, updateticks));
+	WWDEBUG_SAY(("DX8WebBrowser::CreateBrowser - Creating browser with the name %s, url = %s, (x, y, w, h) = (%d, %d, %d, %d), update ticks = %d\n", browsername, url, x, y, h, w, updateticks));
 	if(pBrowser)
 	{
 		_bstr_t brsname(browsername);
@@ -199,7 +212,7 @@ void	DX8WebBrowser::CreateBrowser(const char* browsername, const char* url, int 
 // ******************************************************************************************
 void	DX8WebBrowser::DestroyBrowser(const char* browsername)
 {
-	DEBUG_LOG(("DX8WebBrowser::DestroyBrowser - destroying browser %s\n", browsername));
+	WWDEBUG_SAY(("DX8WebBrowser::DestroyBrowser - destroying browser %s\n", browsername));
 	if(pBrowser)
 		pBrowser->DestroyBrowser(_bstr_t(browsername));
 }
@@ -219,7 +232,12 @@ void	DX8WebBrowser::DestroyBrowser(const char* browsername)
 bool	DX8WebBrowser::Is_Browser_Open(const char* browsername)
 {
 	if(pBrowser == 0) return false;
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	return (pBrowser->IsOpen(_bstr_t(browsername)) != 0);
+#else
+	long isOpen;
+	return (pBrowser->IsOpen(_bstr_t(browsername), &isOpen) != 0);
+#endif
 }
 
 // ******************************************************************************************

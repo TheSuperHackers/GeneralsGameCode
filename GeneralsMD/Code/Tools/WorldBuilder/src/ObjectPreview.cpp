@@ -23,18 +23,18 @@
 #include <camera.h>
 #include <light.h>
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
 
-#include "Lib\BaseType.h"
+#include "Lib/BaseType.h"
 
 #include "ObjectPreview.h"
 #include "WorldBuilderDoc.h"
 #include "WHeightMapEdit.h"
 #include "ObjectOptions.h"
-#include "AddPlayerDialog.h"
+#include "addplayerdialog.h"
 #include "CUndoable.h"
-#include "WbView3d.h"
+#include "wbview3d.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/ThingTemplate.h"
@@ -46,8 +46,8 @@
 #include "GameClient/Color.h"
 
 #include "W3DDevice/GameClient/W3DAssetManager.h"
-#include "WW3D2/DX8Wrapper.h"
-#include "WWLib/targa.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WWLib/TARGA.H"
 
 /////////////////////////////////////////////////////////////////////////////
 // ObjectPreview

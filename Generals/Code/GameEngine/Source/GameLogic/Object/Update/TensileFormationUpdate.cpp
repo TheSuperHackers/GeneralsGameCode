@@ -31,7 +31,6 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Xfer.h"
-#include "Common/QuickTrig.h"
 #include "Common/AudioEventRTS.h"
 
 #include "GameLogic/Object.h"
