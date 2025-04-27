@@ -26,9 +26,9 @@
  *                                                                                             *
  *                       Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 5/04/01 8:37p                                               $*
+ *                     $Modtime:: 11/28/01 5:56p                                              $*
  *                                                                                             *
- *                    $Revision:: 15                                                          $*
+ *                    $Revision:: 16                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -527,7 +527,7 @@ static inline float eval_side(float val,int side)
 static inline void obbtri_compute_contact_normal
 (
 	const BTCollisionStruct &	context,
-	CastResultStruct *			result
+	Vector3 *						set_normal
 )
 {
 	switch(context.AxisId) 
@@ -536,55 +536,55 @@ static inline void obbtri_compute_contact_normal
 //			WWASSERT(0);
 			break;
 		case AXIS_N:
-			result->Normal = -context.Side * *context.Tri.N;
+			*set_normal = -context.Side * *context.Tri.N;
 			break;
 		case AXIS_A0:
-			result->Normal = -context.Side * context.A[0];
+			*set_normal = -context.Side * context.A[0];
 			break;
 		case AXIS_A1:
-			result->Normal = -context.Side * context.A[1];
+			*set_normal = -context.Side * context.A[1];
 			break;
 		case AXIS_A2:
-			result->Normal = -context.Side * context.A[2];
+			*set_normal = -context.Side * context.A[2];
 			break;
 		case AXIS_A0E0:
-			result->Normal = -context.Side * context.AxE[0][0];
-			result->Normal.Normalize();
+			*set_normal = -context.Side * context.AxE[0][0];
+			set_normal->Normalize();
 			break;
 		case AXIS_A1E0:
-			result->Normal = -context.Side * context.AxE[1][0];
-			result->Normal.Normalize();
+			*set_normal = -context.Side * context.AxE[1][0];
+			set_normal->Normalize();
 			break;
 		case AXIS_A2E0:
-			result->Normal = -context.Side * context.AxE[2][0];
-			result->Normal.Normalize();
+			*set_normal = -context.Side * context.AxE[2][0];
+			set_normal->Normalize();
 			break;
 		case AXIS_A0E1:
-			result->Normal = -context.Side * context.AxE[0][1];
-			result->Normal.Normalize();
+			*set_normal = -context.Side * context.AxE[0][1];
+			set_normal->Normalize();
 			break;
 		case AXIS_A1E1:
-			result->Normal = -context.Side * context.AxE[1][1];
-			result->Normal.Normalize();
+			*set_normal = -context.Side * context.AxE[1][1];
+			set_normal->Normalize();
 			break;
 		case AXIS_A2E1:
-			result->Normal = -context.Side * context.AxE[2][1];
-			result->Normal.Normalize();
+			*set_normal = -context.Side * context.AxE[2][1];
+			set_normal->Normalize();
 			break;
 		case AXIS_A0E2:
-			result->Normal = -context.Side * context.AxE[0][2];
-			result->Normal.Normalize();
+			*set_normal = -context.Side * context.AxE[0][2];
+			set_normal->Normalize();
 			break;
 		case AXIS_A1E2:
-			result->Normal = -context.Side * context.AxE[1][2];
-			result->Normal.Normalize();
+			*set_normal = -context.Side * context.AxE[1][2];
+			set_normal->Normalize();
 			break;
 		case AXIS_A2E2:
-			result->Normal = -context.Side * context.AxE[2][2];
-			result->Normal.Normalize();
+			*set_normal = -context.Side * context.AxE[2][2];
+			set_normal->Normalize();
 			break;
 	}
-	WWASSERT(result->Normal.Length2() > 0.0f);
+	WWASSERT(set_normal->Length2() > 0.0f);
 }
 
 
@@ -1095,10 +1095,13 @@ exit:
 
 	if ((context.MaxFrac < 1.0f) && (context.MaxFrac <= result->Fraction)) {
 
+		Vector3 normal;
+		obbtri_compute_contact_normal(context,&normal);
+
 		if (	(WWMath::Fabs(context.MaxFrac - result->Fraction) > WWMATH_EPSILON) ||
-				(Vector3::Dot_Product(*(tri.N),move) < Vector3::Dot_Product(result->Normal,move)) )
+				(Vector3::Dot_Product(normal,move) < Vector3::Dot_Product(result->Normal,move)) )
 		{
-			obbtri_compute_contact_normal(context,result);
+			result->Normal = normal; //obbtri_compute_contact_normal(context,result);
 		}
 				
 		result->Fraction = context.MaxFrac;
