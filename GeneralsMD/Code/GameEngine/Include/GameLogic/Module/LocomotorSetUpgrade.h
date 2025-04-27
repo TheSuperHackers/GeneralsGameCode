@@ -38,14 +38,24 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Thing;
 
-//-------------------------------------------------------------------------------------------------
-/** The default	die module */
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+class LocomotorSetUpgradeModuleData : public UpgradeModuleData
+{
+public:
+
+	LocomotorSetUpgradeModuleData(void);
+
+	static void buildFieldParse(MultiIniFieldParse& p);
+
+	Bool m_setUpgraded;   ///< Enable or Disable upgraded locomotor 
+	//Bool m_needsParkedAircraft;   ///< Aircraft attempting this upgrade needs to be stationary in hangar
+};
 //-------------------------------------------------------------------------------------------------
 class LocomotorSetUpgrade : public UpgradeModule
 {
-
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( LocomotorSetUpgrade, "LocomotorSetUpgrade" )
-	MAKE_STANDARD_MODULE_MACRO( LocomotorSetUpgrade );
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(LocomotorSetUpgrade, "LocomotorSetUpgrade")
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( LocomotorSetUpgrade, LocomotorSetUpgradeModuleData);
 
 public:
 
