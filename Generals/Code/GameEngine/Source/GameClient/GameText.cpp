@@ -370,8 +370,13 @@ void GameTextManager::init( void )
 	qsort( m_stringLUT, m_textCount, sizeof(StringLookUp), compareLUT  );
 
 	UnicodeString ourName = fetch("GUI:Command&ConquerGenerals");
+	AsciiString ourNameA;
+	ourNameA.translate(ourName);	//get ASCII version for Win 9x
+
 	extern HWND ApplicationHWnd;  ///< our application window handle
 	if (ApplicationHWnd) {
+		//Set it twice because Win 9x does not support SetWindowTextW.
+		::SetWindowText(ApplicationHWnd, ourNameA.str());
 		::SetWindowTextW(ApplicationHWnd, ourName.str());
 	}
 

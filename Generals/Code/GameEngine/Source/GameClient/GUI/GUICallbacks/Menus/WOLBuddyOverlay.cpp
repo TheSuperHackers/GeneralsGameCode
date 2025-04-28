@@ -1302,8 +1302,6 @@ WindowMsgHandledType WOLBuddyOverlayRCMenuSystem( GameWindow *window, UnsignedIn
 
 						BuddyInfoMap *m = TheGameSpyInfo->getBuddyRequestMap();
 						m->erase( profileID );
-
-						// DONT CHECK IN UNTIL MATT HAS REVIEWED
 						// if the profile ID is not from a buddy and we're okaying his request, then
 						// request to add him to our list automatically CLH 2-18-03
 						if(!TheGameSpyInfo->isBuddy(profileID))
@@ -1311,7 +1309,6 @@ WindowMsgHandledType WOLBuddyOverlayRCMenuSystem( GameWindow *window, UnsignedIn
 							RequestBuddyAdd(profileID, nick);		
 						}
 						updateBuddyInfo();
-
 					}
 					else if (!isBuddy)
 					{

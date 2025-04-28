@@ -281,7 +281,7 @@ public:
 	void mouseNotifyResolutionChange(void);
 
 	Bool isClick(const ICoord2D *anchor, const ICoord2D *dest, UnsignedInt previousMouseClick, UnsignedInt currentMouseClick);
-	
+
 	AsciiString m_tooltipFontName;		///< tooltip font
 	Int m_tooltipFontSize;						///< tooltip font
 	Bool m_tooltipFontIsBold;					///< tooltip font

@@ -669,7 +669,7 @@ AsciiString GameSpyStagingRoom::generateGameSpyGameResultsPacket( void )
 			Int gsPlayerID = slot->getProfileID();
 			Bool disconnected = slot->disconnected();
 
-			AsciiString result = "loss", side = "USA";
+			AsciiString result = "loss";
 			if (disconnected)
 				result = "discon";
 			else if (TheNetwork->sawCRCMismatch())
@@ -677,9 +677,9 @@ AsciiString GameSpyStagingRoom::generateGameSpyGameResultsPacket( void )
 			else if (TheVictoryConditions->hasAchievedVictory(p))
 				result = "win";
 
-			side = p->getPlayerTemplate()->getSide();
+			AsciiString side = p->getPlayerTemplate()->getSide();
 			if (side == "America")
-				side = "USA";
+				side = "USA";  //conform to GameSpy
 
 			AsciiString playerStr;
 			playerStr.format("\\player_%d\\%s\\pid_%d\\%d\\team_%d\\%d\\result_%d\\%s\\side_%d\\%s",

@@ -5010,3 +5010,15 @@ Int AIUpdateInterface::friend_getWaypointGoalPathSize() const
 
 	return getStateMachine()->getGoalPathSize(); 
 }
+
+// ------------------------------------------------------------------------------------------------
+Bool AIUpdateInterface::hasLocomotorForSurface(LocomotorSurfaceType surfaceType)
+{
+	LocomotorSurfaceTypeMask surfaceMask = (LocomotorSurfaceTypeMask)surfaceType;
+	if (m_locomotorSet.findLocomotor(surfaceMask))
+		return TRUE;
+	else
+		return FALSE;
+}
+
+// ------------------------------------------------------------------------------------------------

@@ -45,7 +45,7 @@ class State;
 class StateMachine;
 class Object;
 
-#undef STATE_MACHINE_DEBUG
+//#undef STATE_MACHINE_DEBUG
 #if defined(_DEBUG)
 	#define STATE_MACHINE_DEBUG
 #endif
@@ -169,6 +169,7 @@ public:
 
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const {return m_name;}
+	std::vector<StateID> *getTransitions(void);
 #endif
 
 	// for internal use by the StateMachine class ---------------------------------------------------------

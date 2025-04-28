@@ -171,6 +171,25 @@ void HackInternetAIUpdate::hackInternet()
 }
 
 // ------------------------------------------------------------------------------------------------
+UnsignedInt HackInternetAIUpdate::getUnpackTime() const
+{
+	// Not yet contained at the time this is queried
+	return getHackInternetAIUpdateModuleData()->m_unpackTime;
+}
+
+// ------------------------------------------------------------------------------------------------
+UnsignedInt HackInternetAIUpdate::getPackTime() const
+{
+	return getHackInternetAIUpdateModuleData()->m_packTime; 
+}
+
+// ------------------------------------------------------------------------------------------------
+UnsignedInt HackInternetAIUpdate::getCashUpdateDelay() const
+{
+	return getHackInternetAIUpdateModuleData()->m_cashUpdateDelay; 
+}
+
+// ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------
 void HackInternetAIUpdate::crc( Xfer *xfer )

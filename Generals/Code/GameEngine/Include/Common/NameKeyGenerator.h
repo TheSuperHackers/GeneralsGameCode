@@ -96,9 +96,11 @@ public:
 
 	/// Given a string, convert into a unique integer key.
 	NameKeyType nameToKey(const AsciiString& name) { return nameToKey(name.str()); }
+	NameKeyType nameToLowercaseKey(const AsciiString& name) { return nameToLowercaseKey(name.str()); }
 
 	/// Given a string, convert into a unique integer key.
 	NameKeyType nameToKey(const char* name);
+	NameKeyType nameToLowercaseKey(const char *name);
 
 	/** 
 		given a key, return the name. this is almost never needed,
@@ -107,6 +109,9 @@ public:
 		search for the key.
 	*/
 	AsciiString keyToName(NameKeyType key);
+
+  // Get a string out of the INI. Store it into a NameKeyType
+  static void parseStringAsNameKeyType( INI *ini, void *instance, void *store, const void* userData );
 
 private:
 
