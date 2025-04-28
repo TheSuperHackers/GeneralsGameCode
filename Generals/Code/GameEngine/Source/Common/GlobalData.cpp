@@ -500,6 +500,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "ShroudOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_shroudOn ) },
 	{ "FogOfWarOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_fogOfWarOn ) },
 	{ "ShowCollisionExtents",				INI::parseBool,				NULL,			offsetof( GlobalData, m_showCollisionExtents ) },
+  { "ShowAudioLocations",  				INI::parseBool,				NULL,			offsetof( GlobalData, m_showAudioLocations ) },
 	{ "DebugProjectileTileWidth",		INI::parseReal,				NULL,			offsetof( GlobalData, m_debugProjectileTileWidth) },
 	{ "DebugProjectileTileDuration",INI::parseInt,				NULL,			offsetof( GlobalData, m_debugProjectileTileDuration) },
 	{ "DebugProjectileTileColor",		INI::parseRGBColor,		NULL,			offsetof( GlobalData, m_debugProjectileTileColor) },
@@ -518,7 +519,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "UseLocalMOTD",								INI::parseBool,				NULL,			offsetof( GlobalData, m_useLocalMOTD ) },
 	{ "BaseStatsDir",								INI::parseAsciiString,NULL,			offsetof( GlobalData, m_baseStatsDir ) },
 	{ "LocalMOTDPath",							INI::parseAsciiString,NULL,			offsetof( GlobalData, m_MOTDPath ) },
-	{ "ExtraLogging",								INI::parseBool,				NULL,			offsetof(GlobalData, m_extraLogging) },
+	{ "ExtraLogging",								INI::parseBool,				NULL,			offsetof( GlobalData, m_extraLogging ) },
 #endif
 
 	{ NULL,					NULL,						NULL,						0 }  // keep this last
@@ -551,6 +552,7 @@ GlobalData::GlobalData()
 	m_jabberOn = FALSE;
 	m_munkeeOn = FALSE;
 	m_showCollisionExtents = FALSE;
+  m_showAudioLocations = FALSE;
 	m_debugCamera = FALSE;
 	m_specialPowerUsesDelay = TRUE;
 	m_debugVisibility = FALSE;
@@ -808,6 +810,7 @@ GlobalData::GlobalData()
 	// End Add
 
 	m_debugAI = AI_DEBUG_NONE;
+	m_debugSupplyCenterPlacement = FALSE;
 	m_debugAIObstacles = FALSE;
 	m_showClientPhysics = TRUE;
 	m_showTerrainNormals = FALSE;

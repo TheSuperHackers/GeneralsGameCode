@@ -243,6 +243,7 @@ public:
 
 	UnsignedInt m_noDraw;					///< Used to disable drawing, to profile game logic code.
 	AIDebugOptions m_debugAI;			///< Used to display AI debug information
+	Bool m_debugSupplyCenterPlacement; ///< Dumps to log everywhere it thinks about placing a supply center
 	Bool m_debugAIObstacles;			///< Used to display AI obstacle debug information
 	Bool m_showObjectHealth;			///< debug display object health
 	Bool m_scriptDebug;						///< Should we attempt to load the script debugger window (.DLL)
@@ -471,6 +472,7 @@ public:
 	Int m_debugProjectileTileDuration;		///< How long should these tiles stay around, in frames?
 	RGBColor m_debugProjectileTileColor;	///< What color should these tiles be?
 	Bool m_showCollisionExtents;	///< Used to display collision extents
+  Bool m_showAudioLocations;    ///< Used to display audio markers and ambient sound radii
 	Bool m_saveStats;
 	Bool m_saveAllStats;
 	Bool m_useLocalMOTD;

@@ -854,9 +854,9 @@ StateReturnType AIStateMachine::updateStateMachine()
 {
 	//-extraLogging
 	#if (defined(_DEBUG) || defined(_INTERNAL))
-	Bool idle = getOwner()->getAI()->isIdle();
-	if (!idle && TheGlobalData->m_extraLogging)
-		DEBUG_LOG(("%d - %s::update() start - %s", TheGameLogic->getFrame(), getCurrentStateName().str(), getOwner()->getTemplate()->getName().str()));
+		Bool idle = getOwner()->getAI()->isIdle();
+		if( !idle && TheGlobalData->m_extraLogging )
+			DEBUG_LOG( ("%d - %s::update() start - %s", TheGameLogic->getFrame(), getCurrentStateName().str(), getOwner()->getTemplate()->getName().str() ) );
 	#endif
 	//end -extraLogging 
 
@@ -874,10 +874,11 @@ StateReturnType AIStateMachine::updateStateMachine()
 		{
 			//-extraLogging
 			#if (defined(_DEBUG) || defined(_INTERNAL))
-				if (!idle && TheGlobalData->m_extraLogging)
-					DEBUG_LOG((" - RETURN EARLY STATE_CONTINUE\n"));
+				if( !idle && TheGlobalData->m_extraLogging )
+					DEBUG_LOG( (" - RETURN EARLY STATE_CONTINUE\n") );
 			#endif
 			//end -extraLogging 
+
 			return status;
 		}
 		m_temporaryState->onExit(EXIT_NORMAL);
@@ -888,25 +889,25 @@ StateReturnType AIStateMachine::updateStateMachine()
 	//-extraLogging 
 	#if (defined(_DEBUG) || defined(_INTERNAL))
 		AsciiString result;
-		if (TheGlobalData->m_extraLogging)
+		if( TheGlobalData->m_extraLogging )
 		{
-			switch (retType)
+			switch( retType )
 			{
-			case STATE_CONTINUE:
-				result.format("CONTINUE");
-				break;
-			case STATE_SUCCESS:
-				result.format("SUCCESS");
-				break;
-			case STATE_FAILURE:
-				result.format("FAILURE");
-				break;
-			default:
-				result.format("UNKNOWN %d", retType);
-				break;
-			}
-			if (!idle)
-				DEBUG_LOG((" - RETURNING %s\n", result.str()));
+				case STATE_CONTINUE:
+					result.format( "CONTINUE" );
+					break;
+				case STATE_SUCCESS:
+					result.format( "SUCCESS" );
+					break;
+				case STATE_FAILURE:
+					result.format( "FAILURE" );
+					break;
+				default:
+					result.format( "UNKNOWN %d", retType );
+					break;
+			}	
+			if( !idle )
+				DEBUG_LOG( (" - RETURNING %s\n", result.str() ) );
 		}
 	#endif
 	//end -extraLogging 

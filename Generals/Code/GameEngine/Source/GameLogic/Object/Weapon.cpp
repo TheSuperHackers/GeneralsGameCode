@@ -747,17 +747,17 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 	//-extraLogging 
 	#if (defined(_DEBUG) || defined(_INTERNAL))
 		AsciiString targetStr;
-		if (TheGlobalData->m_extraLogging)
+		if( TheGlobalData->m_extraLogging )
 		{
-			if (victimObj)
-				targetStr.format("%s", victimObj->getTemplate()->getName().str());
-			else if (victimPos)
-				targetStr.format("%d,%d,%d", victimPos->x, victimPos->y, victimPos->z);
+			if( victimObj )
+				targetStr.format( "%s", victimObj->getTemplate()->getName().str() );
+			else if( victimPos )
+				targetStr.format( "%d,%d,%d", victimPos->x, victimPos->y, victimPos->z );
 			else
-				targetStr.format("SELF.");
+				targetStr.format( "SELF." );
 
-			DEBUG_LOG(("%d - WeaponTemplate::fireWeaponTemplate() begin - %s attacking %s - ",
-				TheGameLogic->getFrame(), sourceObj->getTemplate()->getName().str(), targetStr.str()));
+			DEBUG_LOG( ("%d - WeaponTemplate::fireWeaponTemplate() begin - %s attacking %s - ", 
+				TheGameLogic->getFrame(), sourceObj->getTemplate()->getName().str(), targetStr.str() ) );
 		}
 	#endif
 	//end -extraLogging 
@@ -769,8 +769,8 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 	{
 		//-extraLogging 
 		#if (defined(_DEBUG) || defined(_INTERNAL))
-			if (TheGlobalData->m_extraLogging)
-				DEBUG_LOG(("FAIL 1 (sourceObj %d == NULL || (victimObj %d == NULL && victimPos %d == NULL)\n", sourceObj != 0, victimObj != 0, victimPos != 0));
+			if( TheGlobalData->m_extraLogging )
+				DEBUG_LOG( ("FAIL 1 (sourceObj %d == NULL || (victimObj %d == NULL && victimPos %d == NULL)\n", sourceObj != 0, victimObj != 0, victimPos != 0) );
 		#endif
 		//end -extraLogging 
 
