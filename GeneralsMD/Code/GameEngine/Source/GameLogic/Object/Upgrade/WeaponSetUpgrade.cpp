@@ -55,8 +55,6 @@ void WeaponSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 	static const FieldParse dataFieldParse[] =
 	{
 		{ "WeaponSetFlag", INI::parseIndexList,	WeaponSetFlags::getBitNames(),offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlag) },
-		// { "WeaponSetFlagToClear", INI::parseIndexList, WeaponSetFlags::getBitNames(), offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlagClear) },
-		//{ "WeaponSetFlag", WeaponSetFlags::parseFromINI,	NULL ,offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlag) },
 		{ "WeaponSetFlagsToClear", WeaponSetFlags::parseFromINI, NULL, offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlagsToClear) },
 		{ "NeedsParkedAircraft", INI::parseBool, NULL, offsetof(WeaponSetUpgradeModuleData, m_needsParkedAircraft) },
 		{ 0, 0, 0, 0 }
@@ -120,24 +118,14 @@ void WeaponSetUpgrade::upgradeImplementation( )
 		data->m_weaponSetFlag));*/
 
 	if (data->m_weaponSetFlagsToClear.any()) {
-		//WeaponSetFlags& flags = obj->getWeaponSetFlags();
+		// We loop over each weaponset type and see if we have it set.
+		// Andi: Not sure if this is cleaner solution than storing an array of flags.
 		for (int i = 0; i < WEAPONSET_COUNT; i++) {
 			WeaponSetType type = (WeaponSetType)i;
 			if (data->m_weaponSetFlagsToClear.test(type)) {
 				obj->clearWeaponSetFlag(type);
 			}
 		}
-
-		//unsigned int flags = data->m_weaponSetFlagsToClear;
-		//while (flags) {
-		//	// Isolate the lowest set bit
-		//	unsigned int flag = flags & -flags;
-
-		//	obj->clearWeaponSetFlag(flag);
-
-		//	// Clear the lowest set bit
-		//	flags ^= flag;
-		//}
 	}
 }
 

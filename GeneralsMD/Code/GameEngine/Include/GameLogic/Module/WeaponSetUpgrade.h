@@ -55,14 +55,8 @@ public:
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 	WeaponSetType m_weaponSetFlag;  ///< The weaponset flag to set (default = WEAPONSET_PLAYER_UPGRADE)
-	WeaponSetFlags m_weaponSetFlagsToClear;  ///< The weaponset flag to clear. This is needed if we want to override a previous upgrade.
+	WeaponSetFlags m_weaponSetFlagsToClear;  ///< The weaponset flags to clear. This is needed if we want to disable a previous upgrade.
 	Bool m_needsParkedAircraft;   ///< Aircraft attempting this upgrade needs to be stationary in hangar
-
-	//Note: looks like conditionState changes are intrinsic to the weaponsets.
-	// If we define new weaponsets, we need to add new conditionstates anyways
-	// 
-	//ModelConditionFlagType m_modelconditionFlagSet;
-	//ModelConditionFlagType m_modelconditionFlagClear;
 
 };
 //-------------------------------------------------------------------------------------------------
