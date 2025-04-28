@@ -376,10 +376,17 @@ W3DDisplay::~W3DDisplay()
 
 	// get rid of the debug display
 	delete m_debugDisplay;
+	m_debugDisplay = NULL;
+	m_nativeDebugDisplay = NULL;
 
 	// delete the display strings
 	for (int i = 0; i < DisplayStringCount; i++)
 		TheDisplayStringManager->freeDisplayString(m_displayStrings[i]);
+
+	// TheSuperHackers @fix Mauller/Tomsons26 28/04/2025 Free benchmark display string
+	if( m_benchmarkDisplayString ) {
+		TheDisplayStringManager->freeDisplayString(m_benchmarkDisplayString);
+	}
 
 	// delete 2D renderer
 	if( m_2DRender )
