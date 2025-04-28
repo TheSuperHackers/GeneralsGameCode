@@ -278,7 +278,7 @@ SoundPseudo3DClass::On_Frame_Update (unsigned int milliseconds)
 	}
 
 	// Allow the base Sound3DClass to process this call
-	return Sound3DClass::On_Frame_Update ();
+	return Sound3DClass::On_Frame_Update (milliseconds);
 }
 
 

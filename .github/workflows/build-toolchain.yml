@@ -136,7 +136,7 @@ jobs:
 
             if ("${{ inputs.preset }}" -like "win32*") {
             # For win32 preset, look in config-specific subdirectories
-            $configToUse = if ("${{ inputs.preset }}" -eq "win32dbg") { "Debug" } else { "Release" }
+            $configToUse = if ("${{ inputs.preset }}" -match "debug") { "Debug" } else { "Release" }
             $files = Get-ChildItem -Path "$buildDir\Core\$configToUse","$buildDir\${{ inputs.game }}\$configToUse" -File | Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
             } else {
             $files = Get-ChildItem -Path "$buildDir\Core","$buildDir\${{ inputs.game }}" -File | Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose

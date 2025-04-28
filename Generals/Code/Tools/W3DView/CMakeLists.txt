@@ -1,6 +1,6 @@
-add_executable(z_w3dview WIN32)
+add_executable(g_w3dview WIN32)
 
-target_link_libraries(z_w3dview PRIVATE
+target_link_libraries(g_w3dview PRIVATE
     core_config
     core_utility
     core_wwstub # avoid linking GameEngine
@@ -14,13 +14,13 @@ target_link_libraries(z_w3dview PRIVATE
     Version
     vfw32
     winmm
-    z_wwaudio
-    z_wwvegas
+    g_wwaudio
+    g_wwvegas
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
-    target_compile_definitions(z_w3dview PRIVATE _AFXDLL)
-    set_target_properties(z_w3dview PROPERTIES OUTPUT_NAME W3DViewZH)
+    target_compile_definitions(g_w3dview PRIVATE _AFXDLL)
+    set_target_properties(g_w3dview PROPERTIES OUTPUT_NAME W3DViewV)
 else()
-    set_target_properties(z_w3dview PROPERTIES OUTPUT_NAME w3dviewzh)
+    set_target_properties(g_w3dview PROPERTIES OUTPUT_NAME w3dviewv)
 endif()
