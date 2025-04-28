@@ -57,10 +57,10 @@ const char *replayExtention = ".rep";
 const char *lastReplayFileName = "00000000";	// a name the user is unlikely to ever type, but won't cause panic & confusion
 
 // TheSuperHackers @tweak helmutbuhler 25/04/2025
-// The replay header contains two time elements startTime and endTime of type time_t.
-// On VC6 this was 32-bit, but on newer compilers it's 64-bit. In order to remain compatible
-// we need to load and save them as 32-bit and use this type for that.
-// Note that this will overflow on January 18, 2038.
+// The replay header contains two time fields; startTime and endTime of type time_t.
+// time_t is 32 bit wide on VC6, but on newer compilers it is 64 bit wide.
+// In order to remain compatible we need to load and save time values with 32 bits.
+// Note that this will overflow on January 18, 2038. @todo Upgrade to 64 bits when we break compatibility.
 typedef int32_t replay_time_t;
 
 static time_t startTime;
