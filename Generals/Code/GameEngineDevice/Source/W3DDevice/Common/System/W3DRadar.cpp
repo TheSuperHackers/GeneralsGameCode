@@ -48,6 +48,7 @@
 #include "GameClient/Image.h"
 #include "GameClient/Line2D.h"
 #include "GameClient/TerrainVisual.h"
+#include "GameClient/Water.h"
 #include "W3DDevice/Common/W3DRadar.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
@@ -59,6 +60,7 @@
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
+
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 enum { OVERLAY_REFRESH_RATE = 6 };  ///< over updates once this many frames
@@ -276,8 +278,6 @@ void W3DRadar::drawHeroIcon( Int pixelX, Int pixelY, Int width, Int height, cons
 		TheDisplay->drawImage( image, offsetScreen.x , offsetScreen.y, offsetScreen.x + iconWidth, offsetScreen.y + iconHeight );
 	}
 }
-
-
 
 //-------------------------------------------------------------------------------------------------
 /** Draw a "box" into the texture passed in that represents the viewable area for
@@ -615,7 +615,6 @@ void W3DRadar::drawIcons( Int pixelX, Int pixelY, Int width, Int height )
 		++iter;
 	}
 }
-
 
 //-------------------------------------------------------------------------------------------------
 /** Render an object list into the texture passed in */
@@ -1034,9 +1033,9 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 	m_reconstructViewBox = TRUE;
 
 	// setup our water color
-	waterColor.red = 0.55f;
-	waterColor.green = 0.55f;
-	waterColor.blue = 1.0f;
+	waterColor.red = TheWaterTransparency->m_radarColor.red;
+	waterColor.green = TheWaterTransparency->m_radarColor.green;
+	waterColor.blue = TheWaterTransparency->m_radarColor.blue;
 
 	// get the terrain surface to draw in
 	surface = m_terrainTexture->Get_Surface_Level();

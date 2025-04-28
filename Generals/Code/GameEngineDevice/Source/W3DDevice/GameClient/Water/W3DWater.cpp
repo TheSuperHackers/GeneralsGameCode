@@ -196,8 +196,11 @@ static Bool wireframeForDebug = 0;
 
 void WaterRenderObjClass::setupJbaWaterShader(void) 
 {
+	if (!TheWaterTransparency->m_additiveBlend)
+		DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaShader);
+	else
+		DX8Wrapper::Set_Shader(ShaderClass::_PresetAdditiveShader);
 
-	DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaShader);
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 	DX8Wrapper::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);
@@ -304,7 +307,8 @@ WaterRenderObjClass::~WaterRenderObjClass(void)
 	{	WaterSettings[i].m_skyTextureFile.clear();
 		WaterSettings[i].m_waterTextureFile.clear();
 	}
-
+	((WaterTransparencySetting*)TheWaterTransparency.getNonOverloadedPointer())->deleteInstance();
+	TheWaterTransparency = NULL;
 	ReleaseResources();
 
 	if (m_waterTrackSystem)
@@ -365,9 +369,6 @@ WaterRenderObjClass::WaterRenderObjClass(void)
 	m_waterSparklesTexture=0;
 	m_riverXOffset=0;
 	m_riverYOffset=0;
-
-
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1088,8 +1089,8 @@ Int WaterRenderObjClass::init(Real waterLevel, Real dx, Real dy, SceneClass *par
 		REF_PTR_RELEASE(material);
 	}
 
-	m_riverTexture=WW3DAssetManager::Get_Instance()->Get_Texture("TWWater01.tga"); 
-	
+	m_riverTexture=WW3DAssetManager::Get_Instance()->Get_Texture(TheWaterTransparency->m_standingWaterTexture.str()); 
+
 	//For some reason setting a NULL texture does not result in 0xffffffff for pixel shaders so using explicit "white" texture.
 	m_whiteTexture=MSGNEW("TextureClass") TextureClass(1,1,WW3D_FORMAT_A4R4G4B4,MIP_LEVELS_1);
 	SurfaceClass *surface=m_whiteTexture->Get_Surface_Level();
@@ -1105,6 +1106,15 @@ Int WaterRenderObjClass::init(Real waterLevel, Real dx, Real dy, SceneClass *par
 #endif
 
 	return 0;
+}
+
+void WaterRenderObjClass::updateMapOverrides(void)
+{
+	if (m_riverTexture && TheWaterTransparency->m_standingWaterTexture.compareNoCase(m_riverTexture->Get_Texture_Name()) != 0)
+	{
+		REF_PTR_RELEASE(m_riverTexture);
+		m_riverTexture = WW3DAssetManager::Get_Instance()->Get_Texture(TheWaterTransparency->m_standingWaterTexture.str());
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2713,29 +2723,49 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 	}
 
 
-	Real shadeR, shadeG, shadeB;
-	shadeR = TheGlobalData->m_terrainAmbient[0].red;
-	shadeG = TheGlobalData->m_terrainAmbient[0].green;
-	shadeB = TheGlobalData->m_terrainAmbient[0].blue;
+	Real shadeR=TheWaterTransparency->m_standingWaterColor.red;
+	Real shadeG=TheWaterTransparency->m_standingWaterColor.green;
+	Real shadeB=TheWaterTransparency->m_standingWaterColor.blue;
 
-	//Add in diffuse lighting from each terrain light
-	for (Int lightIndex=0; lightIndex < TheGlobalData->m_numGlobalLights; lightIndex++)
+	//If the water color is not overridden, use legacy lighting code.
+	if ( shadeR==1.0f && shadeG==1.0f && shadeB==1.0f)
 	{
-		if (-TheGlobalData->m_terrainLightPos[lightIndex].z > 0)
-		{	shadeR += -TheGlobalData->m_terrainLightPos[lightIndex].z * TheGlobalData->m_terrainDiffuse[lightIndex].red;
-			shadeG += -TheGlobalData->m_terrainLightPos[lightIndex].z * TheGlobalData->m_terrainDiffuse[lightIndex].green;
-			shadeB += -TheGlobalData->m_terrainLightPos[lightIndex].z * TheGlobalData->m_terrainDiffuse[lightIndex].blue;
+		shadeR = TheGlobalData->m_terrainAmbient[0].red;
+		shadeG = TheGlobalData->m_terrainAmbient[0].green;
+		shadeB = TheGlobalData->m_terrainAmbient[0].blue;
+
+		//Add in diffuse lighting from each terrain light
+		for (Int lightIndex=0; lightIndex < TheGlobalData->m_numGlobalLights; lightIndex++)
+		{
+			if (-TheGlobalData->m_terrainLightPos[lightIndex].z > 0)
+			{	shadeR += -TheGlobalData->m_terrainLightPos[lightIndex].z * TheGlobalData->m_terrainDiffuse[lightIndex].red;
+				shadeG += -TheGlobalData->m_terrainLightPos[lightIndex].z * TheGlobalData->m_terrainDiffuse[lightIndex].green;
+				shadeB += -TheGlobalData->m_terrainLightPos[lightIndex].z * TheGlobalData->m_terrainDiffuse[lightIndex].blue;
+			}
+		}
+
+		//Get water material colors
+		Real waterShadeR = (m_settings[m_tod].waterDiffuse & 0xff) / 255.0f;
+		Real waterShadeG = ((m_settings[m_tod].waterDiffuse >> 8) & 0xff) / 255.0f;
+		Real waterShadeB = ((m_settings[m_tod].waterDiffuse >> 16) & 0xff) / 255.0f;
+
+		shadeR=shadeR*waterShadeR*255.0f;
+		shadeG=shadeG*waterShadeG*255.0f;
+		shadeB=shadeB*waterShadeB*255.0f;
+	}
+	else
+	{
+		shadeR=shadeR*255.0f;
+		shadeG=shadeG*255.0f;
+		shadeB=shadeB*255.0f;
+
+		if (shadeR == 0 && shadeG == 0 && shadeB == 0)
+		{	//special case where we disable lighting
+			shadeR=255;
+			shadeG=255;
+			shadeB=255;
 		}
 	}
-
-	//Get water material colors
-	Real waterShadeR = (m_settings[m_tod].waterDiffuse & 0xff) / 255.0f;
-	Real waterShadeG = ((m_settings[m_tod].waterDiffuse >> 8) & 0xff) / 255.0f;
-	Real waterShadeB = ((m_settings[m_tod].waterDiffuse >> 16) & 0xff) / 255.0f;
-
-	shadeR=shadeR*waterShadeR*255.0f;
-	shadeG=shadeG*waterShadeG*255.0f;
-	shadeB=shadeB*waterShadeB*255.0f;
 
 	Int diffuse=REAL_TO_INT(shadeB) | (REAL_TO_INT(shadeG) << 8) | (REAL_TO_INT(shadeR) << 16);
 
@@ -2840,9 +2870,15 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);	//position the water surface
 	DX8Wrapper::Set_Index_Buffer(ib_access,0);
 	DX8Wrapper::Set_Vertex_Buffer(vb_access);
-	DX8Wrapper::Set_Texture(0,m_riverTexture);	//set to white
+	DX8Wrapper::Set_Texture(0,m_riverTexture);	//set to blue
 
 	setupJbaWaterShader();
+
+	//In additive blending we need to use the alpha at the edges of river to darken
+	//rgb instead.
+	if (TheWaterTransparency->m_additiveBlend)
+		DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
+
 	if (m_riverWaterPixelShader) DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(m_riverWaterPixelShader);
  	DWORD cull;
 	DX8Wrapper::_Get_D3D_Device8()->GetRenderState(D3DRS_CULLMODE, &cull);
@@ -2860,6 +2896,9 @@ void WaterRenderObjClass::drawRiverWater(PolygonTrigger *pTrig)
 
 	if (m_riverWaterPixelShader) DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(NULL);
 
+	//restore blend mode to what W3D expects.
+	if (TheWaterTransparency->m_additiveBlend)
+		DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, D3DBLEND_ONE );
 
 	//do second pass to apply the shroud on water plane
 	if (TheTerrainRenderObject->getShroud())
@@ -2904,7 +2943,11 @@ void WaterRenderObjClass::setupFlatWaterShader(void)
 	}
 
 	DX8Wrapper::Set_Texture(0,m_riverTexture);
-	DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaShader);
+	if (!TheWaterTransparency->m_additiveBlend)
+		DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaShader);
+	else
+		DX8Wrapper::Set_Shader(ShaderClass::_PresetAdditiveShader);
+
 	VertexMaterialClass *vmat=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 	DX8Wrapper::Set_Material(vmat);
 	REF_PTR_RELEASE(vmat);
@@ -2995,7 +3038,7 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 		DynamicIBAccessClass::WriteLockClass lockib(&ib_access);
  		UnsignedShort *curIb = lockib.Get_Index_Array();
 		for (j=0; j<vCount-1; j++)
-			for (i=0; i<uCount-1; i++)
+		{	for (i=0; i<uCount-1; i++)
 			{
 				//triangle 1
 				curIb[0] = (j)*uCount + i;
@@ -3009,32 +3052,53 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 
 				curIb += 6;	//skip the 6 indices we just added.
 			}
-	}
-
-	Real	waterFactor=150;
-	Real shadeR, shadeG, shadeB;
-	shadeR = TheGlobalData->m_terrainAmbient[0].red;
-	shadeG = TheGlobalData->m_terrainAmbient[0].green;
-	shadeB = TheGlobalData->m_terrainAmbient[0].blue;
-
-	//Add in diffuse lighting from each terrain light
-	for (Int lightIndex=0; lightIndex < TheGlobalData->m_numGlobalLights; lightIndex++)
-	{
-		if (-TheGlobalData->m_terrainLightPos[lightIndex].z > 0)
-		{	shadeR += -TheGlobalData->m_terrainLightPos[lightIndex].z * TheGlobalData->m_terrainDiffuse[lightIndex].red;
-			shadeG += -TheGlobalData->m_terrainLightPos[lightIndex].z * TheGlobalData->m_terrainDiffuse[lightIndex].green;
-			shadeB += -TheGlobalData->m_terrainLightPos[lightIndex].z * TheGlobalData->m_terrainDiffuse[lightIndex].blue;
 		}
 	}
 
-	//Get water material colors
-	Real waterShadeR = (m_settings[m_tod].waterDiffuse & 0xff) / 255.0f;
-	Real waterShadeG = ((m_settings[m_tod].waterDiffuse >> 8) & 0xff) / 255.0f;
-	Real waterShadeB = ((m_settings[m_tod].waterDiffuse >> 16) & 0xff) / 255.0f;
+	Real	waterFactor=150;
+	Real shadeR=TheWaterTransparency->m_standingWaterColor.red;
+	Real shadeG=TheWaterTransparency->m_standingWaterColor.green;
+	Real shadeB=TheWaterTransparency->m_standingWaterColor.blue;
 
-	shadeR=shadeR*waterShadeR*255.0f;
-	shadeG=shadeG*waterShadeG*255.0f;
-	shadeB=shadeB*waterShadeB*255.0f;
+	//If the water color is not overridden, use legacy lighting code.
+	if ( shadeR==1.0f && shadeG==1.0f && shadeB==1.0f)
+	{
+		shadeR = TheGlobalData->m_terrainAmbient[0].red;
+		shadeG = TheGlobalData->m_terrainAmbient[0].green;
+		shadeB = TheGlobalData->m_terrainAmbient[0].blue;
+
+		//Add in diffuse lighting from each terrain light
+		for (Int lightIndex=0; lightIndex < TheGlobalData->m_numGlobalLights; lightIndex++)
+		{
+			if (-TheGlobalData->m_terrainLightPos[lightIndex].z > 0)
+			{	shadeR += -TheGlobalData->m_terrainLightPos[lightIndex].z * TheGlobalData->m_terrainDiffuse[lightIndex].red;
+				shadeG += -TheGlobalData->m_terrainLightPos[lightIndex].z * TheGlobalData->m_terrainDiffuse[lightIndex].green;
+				shadeB += -TheGlobalData->m_terrainLightPos[lightIndex].z * TheGlobalData->m_terrainDiffuse[lightIndex].blue;
+			}
+		}
+
+		//Get water material colors
+		Real waterShadeR = (m_settings[m_tod].waterDiffuse & 0xff) / 255.0f;
+		Real waterShadeG = ((m_settings[m_tod].waterDiffuse >> 8) & 0xff) / 255.0f;
+		Real waterShadeB = ((m_settings[m_tod].waterDiffuse >> 16) & 0xff) / 255.0f;
+
+		shadeR=shadeR*waterShadeR*255.0f;
+		shadeG=shadeG*waterShadeG*255.0f;
+		shadeB=shadeB*waterShadeB*255.0f;
+	}
+	else
+	{
+		shadeR=shadeR*255.0f;
+		shadeG=shadeG*255.0f;
+		shadeB=shadeB*255.0f;
+
+		if (shadeR == 0 && shadeG == 0 && shadeB == 0)
+		{	//special case where we disable lighting
+			shadeR=255;
+			shadeG=255;
+			shadeB=255;
+		}
+	}
 
 	Int diffuse=REAL_TO_INT(shadeB) | (REAL_TO_INT(shadeG) << 8) | (REAL_TO_INT(shadeR) << 16);
 
@@ -3173,7 +3237,8 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 	//If video card supports it and it's enabled, feather the water edge using destination alpha
 	if (DX8Wrapper::getBackBufferFormat() == WW3D_FORMAT_A8R8G8B8 && TheGlobalData->m_showSoftWaterEdge && TheWaterTransparency->m_transparentWaterDepth !=0)
 	{		DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, D3DBLEND_DESTALPHA );
-			DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND, D3DBLEND_INVDESTALPHA );
+			if (!TheWaterTransparency->m_additiveBlend)
+				DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND, D3DBLEND_INVDESTALPHA );
 	}
 
 
@@ -3217,8 +3282,15 @@ void WaterRenderObjClass::drawTrapezoidWater(Vector3 points[4])
 
 	if (m_riverWaterPixelShader) DX8Wrapper::_Get_D3D_Device8()->SetPixelShader(NULL);
 	//Restore alpha blend to default values since we may have changed them to feather edges.
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-	DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
+	if (!TheWaterTransparency->m_additiveBlend)
+	{	DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
+		DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
+	}
+	else
+	{
+		DX8Wrapper::Set_DX8_Render_State(D3DRS_SRCBLEND, D3DBLEND_ONE );
+		DX8Wrapper::Set_DX8_Render_State(D3DRS_DESTBLEND, D3DBLEND_ONE );
+	}
 
 	if (TheTerrainRenderObject->getShroud())
 	{
