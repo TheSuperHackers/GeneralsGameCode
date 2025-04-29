@@ -19,6 +19,8 @@
 // FILE: MilesAudioFileCache.h //////////////////////////////////////////////////////////////////////////
 // MilesAudioManager implementation
 // Author: John K. McDonald, July 2002
+#pragma once
+
 #include "MilesAudioDevice/MilesAudioManager.h"
 
 struct PlayingAudio
@@ -37,11 +39,11 @@ struct PlayingAudio
 	Bool m_requestStop;
 	Bool m_cleanupAudioEventRTS;
 	Int m_framesFaded;
-	
-	PlayingAudio() : 
-		m_type(PAT_INVALID), 
-		m_audioEventRTS(NULL), 
-		m_requestStop(false), 
+
+	PlayingAudio() :
+		m_type(PAT_INVALID),
+		m_audioEventRTS(NULL),
+		m_requestStop(false),
 		m_cleanupAudioEventRTS(true),
 		m_sample(NULL), 
 		m_framesFaded(0)
@@ -56,7 +58,7 @@ struct OpenAudioFile
 	UnsignedInt m_fileSize;
 
 	Bool m_compressed;	// if the file was compressed, then we need to free it with a miles function.
-	
+
 	// Note: OpenAudioFile does not own this m_eventInfo, and should not delete it.
 	const AudioEventInfo *m_eventInfo;	// Not mutable, unlike the one on AudioEventRTS.
 };
@@ -68,7 +70,7 @@ class MilesAudioFileCache
 {
 	public:
 		MilesAudioFileCache();
-		
+
 		// Protected by mutex
 		virtual ~MilesAudioFileCache();
 		void *openFile( AudioEventRTS *eventToOpenFrom );
@@ -87,7 +89,7 @@ class MilesAudioFileCache
 
 		// This function will return TRUE if it was able to free enough space, and FALSE otherwise.
 		Bool freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNeedsSpace);
-		
+
 		OpenFilesHash m_openFiles;
 		UnsignedInt m_currentlyUsedSize;
 		UnsignedInt m_maxSize;
