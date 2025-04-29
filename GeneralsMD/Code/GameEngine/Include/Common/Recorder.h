@@ -73,7 +73,7 @@ public:
 	AsciiString getCurrentReplayFilename( void );			///< valid during playback only
 	void stopPlayback();															///< Stops playback.  Its fine to call this even if not playing back a file.
 	Bool simulateReplay(AsciiString filename);
-#ifdef DEBUG_LOGGING
+#if 1
 	Bool analyzeReplay( AsciiString filename );
 	void stopAnalysis();
 #endif
