@@ -341,13 +341,25 @@ void OpenContain::addToContain( Object *rider )
 		addOrRemoveObjFromWorld(rider, false);
 	}
 
-	// ensure our contents are positions correctly.
-	redeployOccupants();
+	// @TheSuperHackers @bugfix skyaero 10/07/2025
+	// Garrison point may not yet be initialized. This happens after triggering onContaining event.
+	// Solution is to move redeployOccupants() after the event, but that may cause a mismatch.
+	if (RETAIL_COMPATIBLE_CRC)
+	{
+		// ensure our contents are positions correctly.
+		redeployOccupants();
+	}
 
 	// trigger an onContaining event for the object that just "ate" something
 	if( getObject()->getContain() )
 	{
 		getObject()->getContain()->onContaining( rider, wasSelected );
+	}
+
+	if (!RETAIL_COMPATIBLE_CRC)
+	{
+		// ensure our contents are positions correctly.
+		redeployOccupants();
 	}
 
 	// trigger an onContainedBy event for the object that just got "eaten" by us
