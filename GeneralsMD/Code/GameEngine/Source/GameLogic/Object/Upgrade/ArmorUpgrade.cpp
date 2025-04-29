@@ -58,17 +58,33 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/ArmorUpgrade.h"
 #include "GameLogic/Module/BodyModule.h"
-//-----------------------------------------------------------------------------
-// DEFINES ////////////////////////////////////////////////////////////////////
-//-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-// PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
-//-----------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+ArmorUpgradeModuleData::ArmorUpgradeModuleData(void)
+{
+	m_armorSetFlag = ARMORSET_PLAYER_UPGRADE;
+	//m_needsParkedAircraft = FALSE;
+}
 
-//-----------------------------------------------------------------------------
-// PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
-//-----------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void ArmorUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+
+	UpgradeModuleData::buildFieldParse(p);
+
+	static const FieldParse dataFieldParse[] =
+	{
+		{ "ArmorSetFlag", INI::parseIndexList,	ArmorSetFlags::getBitNames(),offsetof(ArmorUpgradeModuleData, m_armorSetFlag) },
+		{ "ArmorSetFlagsToClear", ArmorSetFlags::parseFromINI, NULL, offsetof(ArmorUpgradeModuleData, m_armorSetFlagsToClear) },
+		//{ "NeedsParkedAircraft", INI::parseBool, NULL, offsetof(ArmorUpgradeModuleData, m_needsParkedAircraft) },
+		{ 0, 0, 0, 0 }
+	};
+
+	p.add(dataFieldParse);
+
+}  // end buildFieldParse
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -88,19 +104,46 @@ void ArmorUpgrade::upgradeImplementation( )
 {
 	// Very simple; just need to flag the Object as having the player upgrade, and the WeaponSet chooser 
 	// will do the work of picking the right one from ini.  This comment is as long as the code.
-	// STILL IN PROGRESS
+	
+	DEBUG_LOG(("ArmorUpgrade::upgradeImplementation 0\n"));
+
+	const ArmorUpgradeModuleData* data = getArmorUpgradeModuleData();
+
 	Object *obj = getObject();
 	if( !obj )
 		return;
 
+	DEBUG_LOG(("ArmorUpgrade::upgradeImplementation 1\n"));
+
 	BodyModuleInterface* body = obj->getBodyModule();
-	if ( body )
-		body->setArmorSetFlag( ARMORSET_PLAYER_UPGRADE );
+	if (body) {
+		body->setArmorSetFlag(data->m_armorSetFlag);
+
+		DEBUG_LOG(("ArmorUpgrade::upgradeImplementation 2 - flagsToClear = %d\n", data->m_armorSetFlagsToClear));
+
+		if (data->m_armorSetFlagsToClear.any()) {
+			// We loop over each armorset type and see if we have it set.
+			// Andi: Not sure if this is cleaner solution than storing an array of flags.
+			for (int i = 0; i < ARMORSET_COUNT; i++) {
+				ArmorSetType type = (ArmorSetType)i;
+				if (data->m_armorSetFlagsToClear.test(type)) {
+					body->clearArmorSetFlag(type);
+					// obj->clearWeaponSetFlag(type);
+				}
+			}
+		}
+	}
 
 	// Unique case for AMERICA to test for upgrade to set flag
 	if(isTriggeredBy("Upgrade_AmericaChemicalSuits"))
 	{
-		obj->getDrawable()->setTerrainDecal(TERRAIN_DECAL_CHEMSUIT);
+		Drawable* draw = obj->getDrawable();
+		if (draw) {
+			draw->setTerrainDecal(TERRAIN_DECAL_CHEMSUIT);
+		}
+		/*else {
+			DEBUG_LOG(("ArmorUpgrade::upgradeImplementation 3b - no draw?.\n"));
+		}*/
 	}
 }
 
