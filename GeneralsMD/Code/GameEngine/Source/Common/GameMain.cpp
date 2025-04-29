@@ -35,31 +35,99 @@
 // TheSuperHackers @feature helmutbuhler 04/13/2025
 // Simulate a list of replays without graphics.
 // Returns exitcode 1 if mismatch occured
-int SimulateReplayList(const std::vector<AsciiString> &filenames)
+int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char *argv[])
 {
 	// Note that we use printf here because this is run from cmd.
+	Int fps = TheGlobalData->m_framesPerSecondLimit;
 	Bool sawCRCMismatch = false;
-	for (size_t i = 0; i < TheGlobalData->m_simulateReplayList.size(); i++)
+	DWORD totalStartTime = GetTickCount();
+	for (size_t i = 0; i < filenames.size(); i++)
 	{
-		AsciiString filename = TheGlobalData->m_simulateReplayList[i];
-		printf("Simulating Replay %s\n", filename.str());
-		if (TheRecorder->simulateReplay(filename))
+		AsciiString filename = filenames[i];
+		if (filenames.size() == 1)
 		{
-			do
+			printf("Simulating Replay \"%s\"\n", filename.str());
+			fflush(stdout);
+			DWORD startTime = GetTickCount();
+			if (TheRecorder->simulateReplay(filename))
 			{
-				TheGameLogic->UPDATE();
-				sawCRCMismatch = TheRecorder->sawCRCMismatch();
-			} while (TheRecorder->isPlaybackInProgress() && !sawCRCMismatch);
+				UnsignedInt totalTime = TheRecorder->getFrameDuration() / fps;
+				do
+				{
+					if (TheGameLogic->getFrame() && TheGameLogic->getFrame() % (600*fps) == 0)
+					{
+						UnsignedInt gameTime = TheGameLogic->getFrame() / fps;
+						UnsignedInt realTime = (GetTickCount()-startTime) / 1000;
+						printf("Frame %02d:%02d/%02d:%02d  RT: %02d:%02d\n",
+							gameTime/60, gameTime%60, totalTime/60, totalTime%60, realTime/60, realTime%60);
+						fflush(stdout);
+					}
+					TheGameLogic->UPDATE();
+					sawCRCMismatch = TheRecorder->sawCRCMismatch();
+				} while (TheRecorder->isPlaybackInProgress() && !sawCRCMismatch);
+			
+				UnsignedInt realTime = (GetTickCount()-startTime) / 1000;
+				printf("GT: %02d:%02d RT: %02d:%02d\n", totalTime/60, totalTime%60, realTime/60, realTime%60);
+				fflush(stdout);
+			}
+			else
+			{
+				printf("Cannot open replay\n");
+				sawCRCMismatch = true;
+			}
+		}
+		else
+		{
+			printf("%d/%d ", i+1, filenames.size());
+			fflush(stdout);
+
+			STARTUPINFO si = { sizeof(STARTUPINFO) };
+			si.dwFlags = STARTF_FORCEOFFFEEDBACK;
+			PROCESS_INFORMATION pi = { 0 };
+			AsciiString command;
+			command.format("generalszh.exe -win -xres 800 -yres 600 -simReplay \"%s\"", filename.str());
+			//printf("Starting Exe for Replay \"%s\": %s\n", filename.str(), command.str());
+			fflush(stdout);
+			CreateProcessA(NULL, (LPSTR)command.str(),
+				NULL, NULL, TRUE, 0,
+				NULL,             
+				0,				  
+				&si,              
+				&pi);
+			CloseHandle(pi.hThread);
+			WaitForSingleObject(pi.hProcess, INFINITE);
+			DWORD exitcode = 1;
+			GetExitCodeProcess(pi.hProcess, &exitcode);
+			CloseHandle(pi.hProcess);
+			sawCRCMismatch = sawCRCMismatch || exitcode;
 		}
 		if (sawCRCMismatch)
 			break;
+		/*if (i == TheGlobalData->m_simulateReplayList.size()-1)
+		{
+			if (TheGameLogic->isInGame())
+			{
+				TheGameLogic->clearGameData();
+			}
+			delete TheGameEngine;
+			TheGameEngine = NULL;
+			TheGameEngine = CreateGameEngine();
+			TheGameEngine->init(argc, argv);
+		}*/
 	}
-	if (!sawCRCMismatch)
-		printf("Successfully simulated all replays\n");
+	if (TheGlobalData->m_simulateReplayList.size() > 1)
+	{
+		if (!sawCRCMismatch)
+			printf("Successfully simulated all replays\n");
+
+		UnsignedInt realTime = (GetTickCount()-totalStartTime) / 1000;
+		printf("Total Time: %d:%02d:%02d\n", realTime/60/60, realTime/60%60, realTime%60);
+		fflush(stdout);
+	}
 
 	// TheSuperHackers @todo helmutbuhler 04/13/2025
 	// There is a bug somewhere in the destructor of TheGameEngine which doesn't properly
-	// clean up the players and causes a crash in debug unless this is called.
+	// clean up the players and causes a crash unless this is called.
 	if (TheGameLogic->isInGame())
 	{
 		TheGameLogic->clearGameData();
@@ -79,7 +147,7 @@ Int GameMain( int argc, char *argv[] )
 
 	if (!TheGlobalData->m_simulateReplayList.empty())
 	{
-		exitcode = SimulateReplayList(TheGlobalData->m_simulateReplayList);
+		exitcode = SimulateReplayList(TheGlobalData->m_simulateReplayList, argc, argv);
 	}
 	else
 	{
