@@ -39,7 +39,7 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 {
 	// Note that we use printf here because this is run from cmd.
 	Int fps = TheGlobalData->m_framesPerSecondLimit;
-	Bool sawCRCMismatch = false;
+	int numErrors = 0;
 	DWORD totalStartTime = GetTickCount();
 	for (size_t i = 0; i < filenames.size(); i++)
 	{
@@ -52,7 +52,7 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 			if (TheRecorder->simulateReplay(filename))
 			{
 				UnsignedInt totalTime = TheRecorder->getFrameDuration() / fps;
-				do
+				while (TheRecorder->isPlaybackInProgress())
 				{
 					if (TheGameLogic->getFrame() && TheGameLogic->getFrame() % (600*fps) == 0)
 					{
@@ -63,9 +63,12 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 						fflush(stdout);
 					}
 					TheGameLogic->UPDATE();
-					sawCRCMismatch = TheRecorder->sawCRCMismatch();
-				} while (TheRecorder->isPlaybackInProgress() && !sawCRCMismatch);
-			
+					if (TheRecorder->sawCRCMismatch())
+					{
+						numErrors++;
+						break;
+					}
+				}
 				UnsignedInt realTime = (GetTickCount()-startTime) / 1000;
 				printf("GT: %02d:%02d RT: %02d:%02d\n", totalTime/60, totalTime%60, realTime/60, realTime%60);
 				fflush(stdout);
@@ -73,7 +76,7 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 			else
 			{
 				printf("Cannot open replay\n");
-				sawCRCMismatch = true;
+				numErrors++;
 			}
 		}
 		else
@@ -99,10 +102,8 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 			DWORD exitcode = 1;
 			GetExitCodeProcess(pi.hProcess, &exitcode);
 			CloseHandle(pi.hProcess);
-			sawCRCMismatch = sawCRCMismatch || exitcode;
+			numErrors += exitcode ? 1 : 0;
 		}
-		if (sawCRCMismatch)
-			break;
 		/*if (i == TheGlobalData->m_simulateReplayList.size()-1)
 		{
 			if (TheGameLogic->isInGame())
@@ -117,7 +118,9 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 	}
 	if (TheGlobalData->m_simulateReplayList.size() > 1)
 	{
-		if (!sawCRCMismatch)
+		if (numErrors)
+			printf("Errors occured: %d\n", numErrors);
+		else
 			printf("Successfully simulated all replays\n");
 
 		UnsignedInt realTime = (GetTickCount()-totalStartTime) / 1000;
@@ -132,7 +135,7 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 	{
 		TheGameLogic->clearGameData();
 	}
-	return sawCRCMismatch ? 1 : 0;
+	return numErrors != 0 ? 1 : 0;
 }
 
 /**
