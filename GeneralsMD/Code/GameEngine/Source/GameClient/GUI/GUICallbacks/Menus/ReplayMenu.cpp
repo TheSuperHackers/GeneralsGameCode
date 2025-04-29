@@ -112,31 +112,51 @@ UnicodeString GetReplayFilenameFromListbox(GameWindow *listbox, Int index)
 void WriteOutReplayList()
 {
 	AsciiString fname;
-	fname.format("%sreplay_list.replist", TheRecorder->getReplayDir().str());
+	fname.format("%sreplay_list.csv", TheRecorder->getReplayDir().str());
 	FILE *fp = fopen(fname.str(), "wt");
 	if (!fp)
 		return;
 
+	// Get list of replay filenames
 	AsciiString asciisearch;
 	asciisearch = "*";
 	asciisearch.concat(TheRecorder->getReplayExtention());
+	FilenameList replayFilenamesSet;
+	TheFileSystem->getFileListInDirectory(TheRecorder->getReplayDir(), asciisearch, replayFilenamesSet, TRUE);
+	std::vector<AsciiString> replayFilenames;
+	for (FilenameListIter it = replayFilenamesSet.begin(); it != replayFilenamesSet.end(); ++it)
+	{
+		replayFilenames.push_back(*it);
+	}
 
-	FilenameList replayFilenames;
-	TheFileSystem->getFileListInDirectory(TheRecorder->getReplayDir(), asciisearch, replayFilenames, TRUE);
-
-	for (FilenameListIter it = replayFilenames.begin(); it != replayFilenames.end(); ++it)
+	// Print out a line per filename. i = -1 is csv header.
+	for (int i = -1; i < (int)replayFilenames.size(); i++)
 	{
 		AsciiString filename;
-		filename.set(it->reverseFind('\\') + 1);
 		RecorderClass::ReplayHeader header;
 		ReplayGameInfo info;
-		const MapMetaData *md;
-		Bool success = GetMapInfo(filename, &header, &info, &md);
-		if (!success)
-			continue;
+		const MapMetaData *md = NULL;
+		if (i != -1)
+		{
+			filename.set(replayFilenames[i].reverseFind('\\') + 1);
+			Bool success = GetMapInfo(filename, &header, &info, &md);
+			if (!success)
+				continue;
+		}
+		bool check = md && !header.desyncGame && header.endTime != 0;
+		fprintf(fp, "%s", i == -1 ? "check" : check ? "1" : "0");
 
-		
-		AsciiString extra;
+		if (i == -1)
+			fprintf(fp, ",filename");
+		else
+			fprintf(fp, ",\"%s\"", filename.str());
+
+		fprintf(fp, ",%s", i == -1 ? "map_exists" : md ? "1" : "0");
+		fprintf(fp, ",%s", i == -1 ? "mismatch"   : header.desyncGame ? "1" : "0");
+		fprintf(fp, ",%s", i == -1 ? "crash"      : header.endTime == 0 ? "1" : "0");
+		fprintf(fp, i == -1 ? ",frames" : ",%d",    header.frameDuration);
+
+		/*AsciiString extra;
 		if (!md)
 			extra.concat(" no map");
 		//extra.concat(header.localPlayerIndex >= 0 ? " MP" : " SP");
@@ -148,7 +168,85 @@ void WriteOutReplayList()
 		if (extra.getLength() != 0)
 			fprintf(fp, "%s #%s\n", filename.str(), extra.str());
 		else
-			fprintf(fp, "%s\n", filename.str());
+			fprintf(fp, "%s\n", filename.str());*/
+		fprintf(fp, "\n");
+	}
+	fclose(fp);
+}
+
+bool ReadLineFromFile(FILE *fp, AsciiString *str)
+{
+	char buffer[124];
+    if (fgets(buffer, 124, fp) == NULL)
+	{
+		str->clear();
+		return false;
+	}
+	buffer[124-1] = 0;
+	str->set(buffer);
+	return true;
+}
+
+void NextToken(AsciiString *string, AsciiString *token, char separator)
+{
+	const char *tokenStart = string->str();
+
+	const char *str = tokenStart;
+	bool inQuotationMarks = false;
+	while (*str)
+	{
+		if (*str == separator && !inQuotationMarks)
+			break;
+		if (*str == '\"')
+			inQuotationMarks = !inQuotationMarks;
+		str++;
+	}
+	const char *tokenEnd = str;
+
+	Int len = tokenEnd - tokenStart;
+	char *tmp = token->getBufferForRead(len + 1);
+	memcpy(tmp, tokenStart, len);
+	tmp[len] = 0;
+	token->trim();
+
+	string->set(*tokenEnd == 0 ? tokenEnd : tokenEnd+1);
+}
+
+void ReadReplayListFromCsv(AsciiString filename, std::vector<AsciiString>* replayList)
+{
+	AsciiString fname;
+	fname.format("%s%s", TheRecorder->getReplayDir().str(), filename.str());
+	FILE *fp = fopen(fname.str(), "rt");
+	if (!fp)
+		return;
+
+	// Parse header
+	AsciiString line, token;
+	ReadLineFromFile(fp, &line);
+	char separator = line.find(';') == NULL ? ',' : ';';
+
+	while (feof(fp) == 0)
+	{
+		ReadLineFromFile(fp, &line);
+
+		// Parse check
+		NextToken(&line, &token, separator);
+		if (token != "1")
+			continue;
+
+		// Parse filename
+		NextToken(&line, &token, separator);
+		if (token.isEmpty())
+			continue;
+		if (token.getCharAt(0) == '\"' && token.getCharAt(token.getLength()-1) == '\"')
+		{
+			token.set(token.str()+1);
+			token.removeLastChar();
+		}
+		if (!token.isEmpty())
+			replayList->push_back(token);
+
+		// Ignore remaining columns
 	}
 	fclose(fp);
 }

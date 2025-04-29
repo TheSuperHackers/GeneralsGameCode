@@ -445,6 +445,18 @@ Int parseSimReplay(char *args[], int num)
 	return 1;
 }
 
+Int parseSimReplayList(char *args[], int num)
+{
+	if (TheWritableGlobalData && num > 1)
+	{
+		void ReadReplayListFromCsv(AsciiString filename, std::vector<AsciiString>* replayList);
+		AsciiString filename = args[1];
+		ReadReplayListFromCsv(filename, &TheWritableGlobalData->m_simulateReplayList);
+		return 2;
+	}
+	return 1;
+}
+
 Int parseXRes(char *args[], int num)
 {
 	if (TheWritableGlobalData && num > 1)
@@ -1242,6 +1254,10 @@ static CommandLineParam params[] =
 	// Simulate replay without graphics. Pass the filename including .rep afterwards.
 	// You can pass this multiple times to check multiple replays.
 	{ "-simReplay", parseSimReplay },
+
+	// TheSuperHackers @feature helmutbuhler 28/04/2025
+	// Pass in a csv file to simulate multiple replays. The file must be in the replay folder.
+	{ "-simReplayList", parseSimReplayList },
 
 #if (defined(_DEBUG) || defined(_INTERNAL))
 	{ "-noaudio", parseNoAudio },
