@@ -53,12 +53,12 @@ enum PlayingWhich CPP_11(: Int)
 
 struct PlayingAudio
 {
-//	union
-//	{
+	union
+	{
 		HSAMPLE m_sample;
 		H3DSAMPLE m_3DSample;
 		HSTREAM m_stream;
-//	};
+	};
 
 	PlayingAudioType m_type;
 	volatile PlayingStatus m_status;	// This member is adjusted by another running thread.
@@ -73,9 +73,7 @@ struct PlayingAudio
 		m_audioEventRTS(NULL), 
 		m_requestStop(false), 
 		m_cleanupAudioEventRTS(true),
-		m_sample(0), 
-		m_3DSample(0),
-		m_stream(0),
+		m_sample(NULL), 
 		m_framesFaded(0)
 	{ }
 };

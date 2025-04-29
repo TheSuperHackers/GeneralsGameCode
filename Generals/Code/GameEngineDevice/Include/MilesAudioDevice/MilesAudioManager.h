@@ -73,6 +73,7 @@ struct PlayingAudio
 		m_audioEventRTS(NULL), 
 		m_requestStop(false), 
 		m_cleanupAudioEventRTS(true),
+		m_sample(NULL), 
 		m_framesFaded(0)
 	{ }
 };
@@ -222,6 +223,10 @@ class MilesAudioManager : public AudioManager
 		virtual Real getFileLengthMS( AsciiString strToLoad ) const;
 
 		virtual void closeAnySamplesUsingFile( const void *fileToClose );
+
+    
+    virtual Bool has3DSensitiveStreamsPlaying( void ) const; 
+
 
 	protected:	
 		// 3-D functions
