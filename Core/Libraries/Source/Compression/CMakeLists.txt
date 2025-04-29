@@ -45,5 +45,6 @@ if (ZLIB_FOUND)
     target_link_libraries(core_compression PUBLIC ZLIB::ZLIB)
 else()
     # Adds zlib from github repository
+    include(${CMAKE_SOURCE_DIR}/cmake/zlib.cmake)
     target_link_libraries(core_compression PUBLIC libzlib)
 endif()
