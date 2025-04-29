@@ -460,7 +460,7 @@ void Shell::showShell( Bool runInit )
 
 	if (!TheGlobalData->m_shellMapOn && m_screenCount == 0)
   {
-#ifdef _PROFILE
+#ifdef RTS_PROFILE
     Profile::StopRange("init");
 #endif
 	//else

@@ -1441,7 +1441,7 @@ void Debug::WriteBuildInfo(void)
     operator<<(" internal");
   #elif defined(RTS_DEBUG)
     operator<<(" debug");
-  #elif defined(_PROFILE)
+  #elif defined(RTS_PROFILE)
     operator<<(" profile");
   #else
     operator<<(" release");

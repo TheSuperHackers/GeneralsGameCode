@@ -842,7 +842,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 {
 	checkProtection();
 
-#ifdef _PROFILE
+#ifdef RTS_PROFILE
   Profile::StartRange("init");
 #endif
 
@@ -928,7 +928,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 // Force "splash image" to be loaded from a file, not a resource so same exe can be used in different localizations.
-#if defined RTS_DEBUG || defined RTS_INTERNAL || defined _PROFILE
+#if defined RTS_DEBUG || defined RTS_INTERNAL || defined RTS_PROFILE
 
 			// check both localized directory and root dir
 		char filePath[_MAX_PATH];
