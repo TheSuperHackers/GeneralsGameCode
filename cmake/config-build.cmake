@@ -63,7 +63,7 @@ endif()
 if(RTS_BUILD_OPTION_DEBUG)
     target_compile_definitions(core_config INTERFACE RTS_DEBUG WWDEBUG DEBUG)
 else()
-    target_compile_definitions(core_config INTERFACE _RELEASE)
+    target_compile_definitions(core_config INTERFACE RTS_RELEASE)
 
     if(RTS_BUILD_OPTION_INTERNAL)
         target_compile_definitions(core_config INTERFACE RTS_INTERNAL)

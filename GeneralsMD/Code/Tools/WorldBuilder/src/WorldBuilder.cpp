@@ -272,7 +272,7 @@ CWorldBuilderApp::~CWorldBuilderApp()
 
 BOOL CWorldBuilderApp::InitInstance()
 {
-//#ifdef _RELEASE
+//#ifdef RTS_RELEASE
 	EulaDialog eulaDialog;
 	if( eulaDialog.DoModal() == IDCANCEL )
 	{
