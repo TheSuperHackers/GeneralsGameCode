@@ -71,6 +71,7 @@ public:
 	Bool playbackFile(AsciiString filename);					///< Starts playback of the specified file.
 	Bool testVersionPlayback(AsciiString filename);   ///< Returns if the playback is a valid playback file for this version or not.
 	AsciiString getCurrentReplayFilename( void );			///< valid during playback only
+	UnsignedInt getFrameDuration() { return m_playbackFrameDuration; }			///< valid during playback only
 	void stopPlayback();															///< Stops playback.  Its fine to call this even if not playing back a file.
 	Bool simulateReplay(AsciiString filename);
 #if 1
@@ -149,6 +150,7 @@ protected:
 	Int m_currentFilePosition;
 	RecorderModeType m_mode;
 	AsciiString m_currentReplayFilename;							///< valid during playback only
+	UnsignedInt m_playbackFrameDuration;
 
 	ReplayGameInfo m_gameInfo;
 	Bool m_wasDesync;

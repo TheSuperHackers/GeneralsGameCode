@@ -406,6 +406,7 @@ void RecorderClass::init() {
 	m_gameInfo.setSeed(GetGameLogicRandomSeed());
 	m_wasDesync = FALSE;
 	m_doingAnalysis = FALSE;
+	m_playbackFrameDuration = 0;
 }
 
 /**
@@ -1241,6 +1242,7 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	}
 
 	m_currentReplayFilename = filename;
+	m_playbackFrameDuration = header.frameDuration;
 	return TRUE;
 }
 
