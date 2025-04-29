@@ -40,9 +40,10 @@
 
 #include "DownloadDebug.h"
 
-#ifndef RTS_DEBUG
-#define RTS_DEBUG
-#endif
+// umm... what?? BGC 3/27/03
+//#ifndef RTS_DEBUG
+//#define RTS_DEBUG
+//#endif
 
 /*************************************************************************/
 /*_$                      External References                            */

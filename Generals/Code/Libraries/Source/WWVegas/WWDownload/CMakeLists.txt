@@ -21,5 +21,6 @@ target_sources(g_wwdownload PRIVATE ${WWDOWNLOAD_SRC})
 
 target_link_libraries(g_wwdownload PRIVATE
     g_wwcommon
+    gi_always
     gi_gameengine_include
 )

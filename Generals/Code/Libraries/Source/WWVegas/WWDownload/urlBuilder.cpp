@@ -23,7 +23,11 @@
 void FormatURLFromRegistry( std::string& gamePatchURL, std::string& mapPatchURL,
 													 std::string& configURL, std::string& motdURL )
 {
+#if RTS_GENERALS
 	std::string sku = "generals";
+#elif RTS_ZEROHOUR
+	std::string sku = "GeneralsZH";
+#endif
 	std::string language = "english";
 	unsigned int version = 0; // invalid version - can't get on with a corrupt reg.
 	unsigned int mapVersion = 0; // invalid version - can't get on with a corrupt reg.
