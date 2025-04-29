@@ -1171,7 +1171,7 @@ void W3DVolumetricShadow::updateOptimalExtrusionPadding(void)
 // getRenderCost ============================================================
 // Returns number of draw calls for this shadow.
 // ============================================================================
-#if defined(_DEBUG) || defined(_INTERNAL)	
+#if defined(RTS_DEBUG) || defined(_INTERNAL)	
 void W3DVolumetricShadow::getRenderCost(RenderCost & rc) const
 {
 	Int drawCount = 0;

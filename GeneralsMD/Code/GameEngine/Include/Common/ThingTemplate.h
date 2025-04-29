@@ -286,7 +286,7 @@ public:
 		return m_info.size(); 
 	}
 	
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	Bool containsPartialName(const char* n) const
 	{
 		for (size_t i = 0; i < m_info.size(); i++)

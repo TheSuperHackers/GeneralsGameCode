@@ -179,7 +179,7 @@ UnsignedInt HeightMapRenderObjClass::doTheDynamicLight(VERTEX_FORMAT *vb, VERTEX
 #else
 	Real shadeR, shadeG, shadeB;
 	Int diffuse = vbMirror->diffuse;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	//vbMirror->diffuse += 30;	// Shows which vertexes are geting touched by dynamic light. debug only.
 #endif
 	
@@ -272,7 +272,7 @@ Int HeightMapRenderObjClass::getXWithOrigin(Int x)
 	x -= m_originX;
 	if (x<0) x+= m_x-1;
 	if (x>= m_x-1) x-=m_x-1;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	DEBUG_ASSERTCRASH (x>=0, ("X out of range."));
 	DEBUG_ASSERTCRASH (x<m_x-1, ("X out of range."));
 #endif
@@ -293,7 +293,7 @@ Int HeightMapRenderObjClass::getYWithOrigin(Int y)
 	y -= m_originY;
 	if (y<0) y+= m_y-1;
 	if (y>= m_y-1) y-=m_y-1;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	DEBUG_ASSERTCRASH (y>=0, ("Y out of range."));
 	DEBUG_ASSERTCRASH (y<m_y-1, ("Y out of range."));
 #endif
@@ -328,7 +328,7 @@ Int HeightMapRenderObjClass::updateVB(DX8VertexBufferClass	*pVB, char *data, Int
 	REF_PTR_SET(m_map, pMap);	//update our heightmap pointer in case it changed since last call.
 	if (m_vertexBufferTiles && pMap)
 	{
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		assert(x0 >= originX && y0 >= originY && x1>x0 && y1>y0 && x1<=originX+VERTEX_BUFFER_TILE_LENGTH && y1<=originY+VERTEX_BUFFER_TILE_LENGTH);
 #endif 
 
@@ -583,7 +583,7 @@ Int HeightMapRenderObjClass::updateVBForLight(DX8VertexBufferClass	*pVB, char *d
 
 	if (m_vertexBufferTiles && m_map)
 	{
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		assert(x0 >= originX && y0 >= originY && x1>x0 && y1>y0 && x1<=originX+VERTEX_BUFFER_TILE_LENGTH && y1<=originY+VERTEX_BUFFER_TILE_LENGTH);
 #endif 
 
@@ -730,7 +730,7 @@ Int HeightMapRenderObjClass::updateVBForLightOptimized(DX8VertexBufferClass	*pVB
 
 	if (m_vertexBufferTiles && m_map)
 	{
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		assert(x0 >= originX && y0 >= originY && x1>x0 && y1>y0 && x1<=originX+VERTEX_BUFFER_TILE_LENGTH && y1<=originY+VERTEX_BUFFER_TILE_LENGTH);
 #endif 
 
@@ -1017,7 +1017,7 @@ The vertex coordinates and texture coordinates, as well as static lighting are u
 */
 Int HeightMapRenderObjClass::updateBlock(Int x0, Int y0, Int x1, Int y1,  WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator)
 {	
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	DEBUG_ASSERTCRASH(x0>=0,  ("HeightMapRenderObjClass::UpdateBlock parameters extend beyond left edge."));
 	DEBUG_ASSERTCRASH(y0>=0,  ("HeightMapRenderObjClass::UpdateBlock parameters extend beyond bottom edge."));
 	DEBUG_ASSERTCRASH(x1<m_x, ("HeightMapRenderObjClass::UpdateBlock parameters extend beyond right edge."));

@@ -175,7 +175,7 @@ struct ModelConditionInfo
 		Int							m_fxBone;											///< the FX bone for this barrel (zero == no bone)
 		Int							m_muzzleFlashBone;						///< the muzzle-flash subobj bone for this barrel (zero == none)
 		Matrix3D				m_projectileOffsetMtx;				///< where the projectile fires from
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 		AsciiString			m_muzzleFlashBoneName;
 #endif
 
@@ -190,7 +190,7 @@ struct ModelConditionInfo
 			m_fxBone = 0;
 			m_muzzleFlashBone = 0;
 			m_projectileOffsetMtx.Make_Identity();
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 			m_muzzleFlashBoneName.clear();
 #endif
 		}
@@ -199,7 +199,7 @@ struct ModelConditionInfo
 	}; 
 	typedef std::vector<WeaponBarrelInfo>	WeaponBarrelInfoVec;
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 	AsciiString												m_description;
 #endif
 	std::vector<ModelConditionFlags>	m_conditionsYesVec;
@@ -248,7 +248,7 @@ struct ModelConditionInfo
 
 	inline Int getConditionsYesCount() const { DEBUG_ASSERTCRASH(m_conditionsYesVec.size() > 0, ("empty m_conditionsYesVec.size(), see srj")); return m_conditionsYesVec.size(); }
 	inline const ModelConditionFlags& getNthConditionsYes(Int i) const { return m_conditionsYesVec[i]; }
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	inline AsciiString getDescription() const { return m_description; }
 #endif
 
@@ -350,7 +350,7 @@ public:
 	virtual void releaseShadows(void);	///< frees all shadow resources used by this module - used by Options screen.
 	virtual void allocateShadows(void); ///< create shadow resources if not already present. Used by Options screen.
 
-#if defined(_DEBUG) || defined(_INTERNAL)	
+#if defined(RTS_DEBUG) || defined(_INTERNAL)	
 	virtual void getRenderCost(RenderCost & rc) const;  ///< estimates the render cost of this draw module
 	void getRenderCostRecursive(RenderCost & rc,RenderObjClass * robj) const; 
 #endif
@@ -508,7 +508,7 @@ private:
 	void adjustAnimSpeedToMovementSpeed();
 	static void hideAllMuzzleFlashes(const ModelConditionInfo* state, RenderObjClass* renderObject);
 	void hideAllHeadlights(Bool hide);
-#if defined(_DEBUG) || defined(_INTERNAL)	//art wants to see buildings without flags as a test.
+#if defined(RTS_DEBUG) || defined(_INTERNAL)	//art wants to see buildings without flags as a test.
 	void hideGarrisonFlags(Bool hide);
 #endif
 };

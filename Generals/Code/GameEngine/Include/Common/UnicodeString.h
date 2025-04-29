@@ -89,7 +89,7 @@ private:
 	// add a ctor/dtor, 'cuz they won't ever be called.
 	struct UnicodeStringData
 	{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 		const WideChar* m_debugptr;	// just makes it easier to read in the debugger
 #endif
 		unsigned short	m_refCount;						// reference count
@@ -99,7 +99,7 @@ private:
 		inline WideChar* peek() { return (WideChar*)(this+1); }
 	};
 
-	#ifdef _DEBUG
+	#ifdef RTS_DEBUG
 	void validate() const;
 	#else
 	inline void validate() const { }

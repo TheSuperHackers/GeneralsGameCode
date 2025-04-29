@@ -524,7 +524,7 @@ public:
 		return true;
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterLiveMapEnemies"; }
 #endif
 };
@@ -554,7 +554,7 @@ public:
 		return false;
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterWithinAttackRange"; }
 #endif
 };
@@ -860,7 +860,7 @@ Real AI::getAdjustedVisionRangeForObject(const Object *object, Int factorsToCons
 		}
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		// ICK. This really nasty statement is used so that we only initialize this color once.

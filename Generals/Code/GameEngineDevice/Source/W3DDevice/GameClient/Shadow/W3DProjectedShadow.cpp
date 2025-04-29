@@ -141,7 +141,7 @@ class W3DProjectedShadow	: public Shadow
 		void updateTexture(Vector3 &lightPos);	///<updates the shadow texture image using render object and given light position.
 		void updateProjectionParameters(const Matrix3D &cameraXform);	///<recompute projection matrix - needed when light or object moves.
 		TexProjectClass *getShadowProjector(void)	{return m_shadowProjector;}
-		#if defined(_DEBUG) || defined(_INTERNAL)	
+		#if defined(RTS_DEBUG) || defined(_INTERNAL)	
 		virtual void getRenderCost(RenderCost & rc) const;
 		#endif
 
@@ -2031,7 +2031,7 @@ void W3DProjectedShadowManager::removeAllShadows(void)
 	}  // end for
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)	
+#if defined(RTS_DEBUG) || defined(_INTERNAL)	
 void W3DProjectedShadow::getRenderCost(RenderCost & rc) const
 {
 	if (TheGlobalData->m_useShadowDecals && m_isEnabled && !m_isInvisibleEnabled)

@@ -88,7 +88,7 @@ extern const char *gAppPrefix; /// So WB can have a different log file name.
 #if defined(_INTERNAL)
 	#define DEBUG_FILE_NAME				"DebugLogFileI.txt"
 	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevI.txt"
-#elif defined(_DEBUG)
+#elif defined(RTS_DEBUG)
 	#define DEBUG_FILE_NAME				"DebugLogFileD.txt"
 	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevD.txt"
 #else
@@ -709,7 +709,7 @@ void ReleaseCrash(const char *reason)
 		}
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	/* static */ char buff[8192]; // not so static so we can be threadsafe
 	_snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);
 	buff[8191] = 0;

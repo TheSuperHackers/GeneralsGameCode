@@ -232,7 +232,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 			Bool canJoin = true;
 
 			// see if the CRCs match
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 			if (TheGlobalData->m_netMinPlayers > 0) {
 #endif
 /*			if (msg->GameToJoin.iniCRC != TheGlobalData->m_iniCRC ||
@@ -248,7 +248,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 				canJoin = false;
 			}
 */
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 			}
 #endif
 			

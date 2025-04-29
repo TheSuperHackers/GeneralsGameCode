@@ -2372,7 +2372,7 @@ Bool ScriptAction::ParseActionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 
 	pScriptAction->m_actionType = (enum ScriptActionType)file.readInt();
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	const ActionTemplate* at = TheScriptEngine->getActionTemplate(pScriptAction->m_actionType);
 	if (at && (at->getName().isEmpty() || (at->getName().compareNoCase("(placeholder)") == 0))) {
 		DEBUG_CRASH(("Invalid Script Action found in script '%s'\n", pScript->getName().str()));

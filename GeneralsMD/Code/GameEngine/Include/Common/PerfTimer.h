@@ -33,7 +33,7 @@
 
 #include "Utility/intrin_compat.h"
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	/*
 		NOTE NOTE NOTE: never check this in with this enabled, since there is a nonzero time penalty
 		for running in this mode. Only enable it for local builds for testing purposes! (srj)
@@ -155,7 +155,7 @@ void PerfGather::stopTimer()
 
 	++m_callCount;
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	DEBUG_ASSERTCRASH(*m_activeHead != NULL, ("m_activeHead is null, uh oh"));
 	DEBUG_ASSERTCRASH(*m_activeHead == this, ("I am not the active timer, uh oh"));
 	DEBUG_ASSERTCRASH(m_activeHead >= &m_active[0] && m_activeHead <= &m_active[MAX_ACTIVE_STACK-1], ("active under/over flow"));

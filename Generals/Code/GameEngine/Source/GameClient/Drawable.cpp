@@ -2083,7 +2083,7 @@ const AudioEventRTS& Drawable::getAmbientSoundByDamage(BodyDamageType dt)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void Drawable::validatePos() const
 {
 	const Coord3D* ourPos = getPosition();
@@ -2209,7 +2209,7 @@ void Drawable::draw( View *view )
 
 
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	validatePos();
 #endif
 

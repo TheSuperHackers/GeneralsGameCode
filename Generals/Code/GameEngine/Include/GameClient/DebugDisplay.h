@@ -142,7 +142,7 @@ class DebugDisplay : public DebugDisplayInterface
 
 // displayers
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 extern void AudioDebugDisplay( DebugDisplayInterface *debugDisplay, void *userData, FILE *fp );
 #endif
 

@@ -333,12 +333,12 @@ const PlayerTemplate* PlayerTemplateStore::findPlayerTemplate(NameKeyType nameke
 		namekey = g0;
 // end ugly, hokey code to quietly load old maps...
 
-	#ifdef _DEBUG
+	#ifdef RTS_DEBUG
 	AsciiString nn = KEYNAME(namekey);
 	#endif
   for (PlayerTemplateVector::const_iterator it = m_playerTemplates.begin(); it != m_playerTemplates.end(); ++it)
 	{
-		#ifdef _DEBUG
+		#ifdef RTS_DEBUG
 		AsciiString n = KEYNAME((*it).getNameKey());
 		#endif
 		if ((*it).getNameKey() == namekey)

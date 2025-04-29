@@ -757,7 +757,7 @@ void StateMachine::xfer( Xfer *xfer )
 	}
 
 	Bool snapshotAllStates = false;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	//snapshotAllStates = true;
 #endif
 	xfer->xferBool(&snapshotAllStates);

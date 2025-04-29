@@ -26,7 +26,7 @@
 #include "chunk_d.h"
 #include "finddialog.h"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -67,7 +67,7 @@ void CWDumpTreeView::OnDraw(CDC* pDC)
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpTreeView diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void CWDumpTreeView::AssertValid() const
 {
 	CTreeView::AssertValid();

@@ -59,7 +59,7 @@
 #endif
 
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "WW3D2/dx8indexbuffer.h"
 #include "WW3D2/dx8vertexbuffer.h"
@@ -259,7 +259,7 @@ void DebugHintObject::Render(RenderInfoClass & rinfo)
 		DX8Wrapper::Draw_Triangles(	0, 1, 0, 3);
 	}
 }
-#endif // _DEBUG
+#endif // RTS_DEBUG
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

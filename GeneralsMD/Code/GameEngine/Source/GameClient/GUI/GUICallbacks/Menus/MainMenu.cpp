@@ -101,7 +101,7 @@ enum
 
 static Bool raiseMessageBoxes = TRUE;
 static Bool campaignSelected = FALSE;
-#if defined _DEBUG || defined _INTERNAL || defined _PROFILE
+#if defined RTS_DEBUG || defined _INTERNAL || defined _PROFILE
 static NameKeyType campaignID = NAMEKEY_INVALID;
 static GameWindow *buttonCampaign = NULL;
 #ifdef TEST_COMPRESSION
@@ -554,7 +554,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	
 	showSelectiveButtons(SHOW_NONE);
 	// Set up the version number
-#if defined _DEBUG || defined _INTERNAL || defined _PROFILE
+#if defined RTS_DEBUG || defined _INTERNAL || defined _PROFILE
 	WinInstanceData instData;
 #ifdef TEST_COMPRESSION
 	instData.init();
@@ -1309,7 +1309,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 			
 			if(buttonPushed)
 				break;
-#if defined _DEBUG || defined _INTERNAL || defined _PROFILE
+#if defined RTS_DEBUG || defined _INTERNAL || defined _PROFILE
 			if( control == buttonCampaign )
 			{
 				buttonPushed = TRUE;
@@ -1509,7 +1509,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 			}  // end else if
 			else if( controlID == worldBuilderID )
 			{
-#if defined _DEBUG
+#if defined RTS_DEBUG
 				if(_spawnl(_P_NOWAIT,"WorldBuilderD.exe","WorldBuilderD.exe", NULL) < 0)
 					MessageBoxOk(TheGameText->fetch("GUI:WorldBuilder"), TheGameText->fetch("GUI:WorldBuilderLoadFailed"),NULL);
 #elif defined  _INTERNAL
@@ -1527,7 +1527,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 			else if( controlID == exitID )
 			{
 				// If we ever want to add a dialog before we exit out of the game, uncomment this line and kill the quitCallback() line below.
-//#if defined(_DEBUG) || defined(_INTERNAL)
+//#if defined(RTS_DEBUG) || defined(_INTERNAL)
 				
 				//Added By Sadullah Nader
 				//Changed the preprocessing code to normal code

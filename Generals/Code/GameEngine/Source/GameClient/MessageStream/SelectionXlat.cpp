@@ -65,7 +65,7 @@
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 static Bool TheHurtSelectionMode = false;
 static Bool TheHandOfGodSelectionMode = false;
 static Bool TheDebugSelectionMode = false;
@@ -783,7 +783,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 				if (newDrawablesSelected == 1 && draw) 
 				{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 					if (TheHandOfGodSelectionMode && draw)
 					{
 						Object* obj = draw->getObject();
@@ -1175,7 +1175,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		}
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_HAND_OF_GOD_MODE:
 		{
@@ -1186,7 +1186,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		}
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_HURT_ME_MODE:
 		{
@@ -1197,7 +1197,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		}
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_DEBUG_SELECTION:
 		{

@@ -46,7 +46,7 @@ class StateMachine;
 class Object;
 
 //#undef STATE_MACHINE_DEBUG
-#if defined(_DEBUG)
+#if defined(RTS_DEBUG)
 	#define STATE_MACHINE_DEBUG
 #endif
 #if defined(_INTERNAL)
@@ -321,7 +321,7 @@ public:
 	//
 	StateReturnType internalSetState( StateID newStateID );	///< for internal use only - change the current state of the machine
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	UnsignedInt peekSleepTill() const { return m_sleepTill; }
 #endif
 

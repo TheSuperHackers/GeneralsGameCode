@@ -910,7 +910,7 @@ void CWorldBuilderDoc::autoSave(void)
 /////////////////////////////////////////////////////////////////////////////
 // CWorldBuilderDoc diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void CWorldBuilderDoc::AssertValid() const
 {
 	CDocument::AssertValid();

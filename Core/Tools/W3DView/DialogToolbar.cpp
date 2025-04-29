@@ -58,7 +58,7 @@ DialogToolbarClass::DialogToolbarClass (void)
 	return ;
 }
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void DialogToolbarClass::AssertValid() const
 {
 	CToolBar::AssertValid();

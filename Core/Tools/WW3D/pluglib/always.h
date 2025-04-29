@@ -48,7 +48,7 @@
 ** This helps find leaks.
 */
 //#define STEVES_NEW_CATCHER
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #ifdef _MSC_VER
 #ifdef STEVES_NEW_CATCHER
 

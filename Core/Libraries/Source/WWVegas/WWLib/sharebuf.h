@@ -77,7 +77,7 @@ class ShareBufferClass : public W3DMPO, public RefCountClass
 
 	protected:
 
-#if (defined(_DEBUG) || defined(_INTERNAL)) 
+#if (defined(RTS_DEBUG) || defined(_INTERNAL)) 
 		const char* Msg;
 #endif
 		T *			Array;
@@ -90,7 +90,7 @@ class ShareBufferClass : public W3DMPO, public RefCountClass
 template <class T>
 ShareBufferClass<T>::ShareBufferClass(int count, const char* msg) :
 	Count(count)
-#if (defined(_DEBUG) || defined(_INTERNAL)) 
+#if (defined(RTS_DEBUG) || defined(_INTERNAL)) 
 	, Msg(msg)
 #endif
 {
@@ -103,7 +103,7 @@ ShareBufferClass<T>::ShareBufferClass(const ShareBufferClass<T> & that) :
 	Count(that.Count)
 {
 	assert(Count > 0);
-#if (defined(_DEBUG) || defined(_INTERNAL)) 
+#if (defined(RTS_DEBUG) || defined(_INTERNAL)) 
 	Msg = that.Msg;
 #endif
 	Array = MSGW3DNEWARRAY(Msg) T[Count];

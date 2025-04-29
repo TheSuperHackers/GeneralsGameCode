@@ -136,7 +136,7 @@ class AudioManager : public SubsystemInterface
 	public:
 		AudioManager();
 		virtual ~AudioManager();
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 		virtual void audioDebugDisplay(DebugDisplayInterface *dd, void *userData, FILE *fp = NULL ) = 0;
 #endif
 

@@ -77,7 +77,7 @@ public:
 	virtual void releaseShadows(void) = 0;	///< frees all shadow resources used by this module - used by Options screen.
 	virtual void allocateShadows(void) = 0; ///< create shadow resources if not already present. Used by Options screen.
 
-#if defined(_DEBUG) || defined(_INTERNAL)	
+#if defined(RTS_DEBUG) || defined(_INTERNAL)	
 	virtual void getRenderCost(RenderCost & rc) const { };  ///< estimates the render cost of this draw module
 #endif
 

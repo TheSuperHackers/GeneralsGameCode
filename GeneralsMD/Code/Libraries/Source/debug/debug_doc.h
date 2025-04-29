@@ -332,7 +332,7 @@ void test(const Point2D &val)
   DASSERT_MSG( val.x>=0 && val.y>=0, val << " is invalid");
 }
   \endcode
-  Please note that all these operators should not be cluttered with any #ifdef _DEBUG
+  Please note that all these operators should not be cluttered with any #ifdef RTS_DEBUG
   or similar conditional compile statements. It is not necessary to remove these
   operators from the code in release builds (just don't forget to add 'inline' before
   the operator though).

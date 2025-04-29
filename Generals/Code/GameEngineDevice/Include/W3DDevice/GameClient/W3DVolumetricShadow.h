@@ -108,7 +108,7 @@ class W3DVolumetricShadow	: public Shadow
 
 		virtual void release(void)	{TheW3DVolumetricShadowManager->removeShadow(this);}	///<release shadow from manager
 
-		#if defined(_DEBUG) || defined(_INTERNAL)	
+		#if defined(RTS_DEBUG) || defined(_INTERNAL)	
 		virtual void getRenderCost(RenderCost & rc) const;
 		#endif
 

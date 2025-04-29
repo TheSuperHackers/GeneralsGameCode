@@ -2290,7 +2290,7 @@ void AIUpdateInterface::setLocomotorGoalPositionExplicit(const Coord3D& newPos)
 {
 	m_locomotorGoalType = POSITION_EXPLICIT;
 	m_locomotorGoalData = newPos;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 if (_isnan(m_locomotorGoalData.x) || _isnan(m_locomotorGoalData.y) || _isnan(m_locomotorGoalData.z))
 {
 	DEBUG_CRASH(("NAN in setLocomotorGoalPositionExplicit"));
@@ -2303,7 +2303,7 @@ void AIUpdateInterface::setLocomotorGoalOrientation(Real angle)
 {
 	m_locomotorGoalType = ANGLE;
 	m_locomotorGoalData.x = angle;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 if (_isnan(m_locomotorGoalData.x) || _isnan(m_locomotorGoalData.y) || _isnan(m_locomotorGoalData.z))
 {
 	DEBUG_CRASH(("NAN in setLocomotorGoalOrientation"));

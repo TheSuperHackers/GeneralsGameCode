@@ -115,7 +115,7 @@ AsciiString GetWSAErrorString( Int error )
 
 #undef CASE
 
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(_INTERNAL)
 
 //-------------------------------------------------------------------------
 

@@ -430,7 +430,7 @@ void Player::init(const PlayerTemplate* pt)
 
 	m_unitsShouldHunt = FALSE;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	m_DEMO_ignorePrereqs = FALSE;
 	m_DEMO_freeBuild = FALSE;
 	m_DEMO_instantBuild = FALSE;
@@ -2454,7 +2454,7 @@ Bool Player::canBuild(const ThingTemplate *tmplate) const
 				prereqsOK = false;
 		}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 		if (ignoresPrereqs())
 			prereqsOK = true;
 #endif

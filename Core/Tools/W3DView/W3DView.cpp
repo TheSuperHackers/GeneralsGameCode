@@ -40,7 +40,7 @@
 #include "ww3d.h"
 #include "AssetMgr.H"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -110,7 +110,7 @@ WinMain
 {
 	int retcode = 0;
 
-#ifndef _DEBUG
+#ifndef RTS_DEBUG
 	try
 	{
 #endif //_DEBUG
@@ -127,7 +127,7 @@ WinMain
 
 		retcode = ::AfxWinMain (hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 
-#ifndef _DEBUG
+#ifndef RTS_DEBUG
 	}
 	catch (...)
 	{

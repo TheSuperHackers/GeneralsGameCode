@@ -50,7 +50,7 @@ static const char* const protectGUID =
 	"7BEB9006-CC19-4aca-913A-C870A88DE01A"; // Generals Protect GUID
 */
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 Bool skipProtection(void)
 {
 	//return FALSE;
@@ -79,7 +79,7 @@ Bool CopyProtect::isLauncherRunning(void)
 	}
 	DEBUG_LOG(("result was %d\n", (int)isRunning));
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (skipProtection())
 	{
 		DEBUG_LOG(("DevStudio is running - forcing to TRUE\n"));
@@ -95,7 +95,7 @@ Bool CopyProtect::notifyLauncher(void)
 {
 	DEBUG_LOG(("COPYPROTECTION - Notify launcher\n"));
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (skipProtection())
 	{
 		DEBUG_LOG(("DevStudio is running - skipping notifyLauncher()\n"));
@@ -207,7 +207,7 @@ Bool CopyProtect::validate(void)
 			"Play the \"Command & Conquer: Generals\" Multiplayer Test.") == 0);
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (skipProtection())
 	{
 		DEBUG_LOG(("DevStudio is running - forcing to TRUE\n"));

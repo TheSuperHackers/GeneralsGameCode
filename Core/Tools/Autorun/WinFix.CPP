@@ -185,7 +185,7 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 
 //         } else {
 
-		#if( _DEBUG )
+		#if( RTS_DEBUG )
             HKEY hKey;
             char szProductType[80];
             DWORD dwBufLen;
@@ -239,7 +239,7 @@ WindowsVersionInfo::WindowsVersionInfo(void) :
 	//--------------------------------------------------------------------------
 	// Send all info found to the debug output file.
 	//--------------------------------------------------------------------------
-#if ( _DEBUG )
+#if ( RTS_DEBUG )
 	Msg( __LINE__, __FILE__, "MajorVersionNumber	= %d", MajorVersionNumber );
 	Msg( __LINE__, __FILE__, "MinorVersionNumber	= %d", MinorVersionNumber );
 	Msg( __LINE__, __FILE__, "WindowsVersion	= %d", WindowsVersion );

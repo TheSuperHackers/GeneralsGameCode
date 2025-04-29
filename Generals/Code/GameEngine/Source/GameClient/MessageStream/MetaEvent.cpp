@@ -172,7 +172,7 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "END_CAMERA_ZOOM_OUT",											GameMessage::MSG_META_END_CAMERA_ZOOM_OUT },
 	{ "CAMERA_RESET",															GameMessage::MSG_META_CAMERA_RESET },
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	{ "HELP",																			GameMessage::MSG_META_HELP },
 	{ "DEMO_INSTANT_QUIT",												GameMessage::MSG_META_DEMO_INSTANT_QUIT },
 
@@ -293,12 +293,12 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "DEBUG_DUMP_ALL_PLAYER_OBJECTS",						GameMessage::MSG_META_DEBUG_DUMP_ALL_PLAYER_OBJECTS },
 	{ "DEMO_WIN",																	GameMessage::MSG_META_DEBUG_WIN },
 	{ "DEMO_TOGGLE_DEBUG_STATS",									GameMessage::MSG_META_DEMO_TOGGLE_DEBUG_STATS },
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(_INTERNAL)
 
 
-#if defined(_INTERNAL) || defined(_DEBUG) 
+#if defined(_INTERNAL) || defined(RTS_DEBUG) 
 	{ "DEMO_TOGGLE_AUDIODEBUG",										GameMessage::MSG_META_DEMO_TOGGLE_AUDIODEBUG },
-#endif//defined(_INTERNAL) || defined(_DEBUG)
+#endif//defined(_INTERNAL) || defined(RTS_DEBUG)
 #ifdef DUMP_PERF_STATS
 	{ "DEMO_PERFORM_STATISTICAL_DUMP",						GameMessage::MSG_META_DEMO_PERFORM_STATISTICAL_DUMP },
 #endif//DUMP_PERF_STATS

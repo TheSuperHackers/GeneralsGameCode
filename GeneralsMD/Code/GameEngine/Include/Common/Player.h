@@ -327,7 +327,7 @@ public:
 	void onUpgradeCompleted( const UpgradeTemplate *upgradeTemplate );				///< An upgrade just finished, do things like tell all objects to recheck UpgradeModules
 	void onUpgradeRemoved(){}					///< An upgrade just got removed, this doesn't do anything now.
  
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	/// Prereq disabling cheat key
 	void toggleIgnorePrereqs(){ m_DEMO_ignorePrereqs = !m_DEMO_ignorePrereqs; }
 	Bool ignoresPrereqs() const { return m_DEMO_ignorePrereqs; }
@@ -338,7 +338,7 @@ public:
 
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	/// No time building cheat key
 	void toggleInstantBuild(){ m_DEMO_instantBuild = !m_DEMO_instantBuild; }
 	Bool buildsInstantly() const { return m_DEMO_instantBuild; }
@@ -802,12 +802,12 @@ private:
 	Real									m_cashBountyPercent;
 
 	/// @todo REMOVE (not disable) these cheat keys
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	Bool									m_DEMO_ignorePrereqs;		///< Can I ignore prereq checks?
 	Bool									m_DEMO_freeBuild;				///< Can I build everything for no money?
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	Bool									m_DEMO_instantBuild;		///< Can I build anything in one frame?
 #endif
 

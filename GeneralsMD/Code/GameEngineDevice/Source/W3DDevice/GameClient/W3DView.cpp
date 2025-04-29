@@ -585,7 +585,7 @@ void W3DView::setCameraTransform( void )
 	}
 
 	m_3DCamera->Set_Clip_Planes(nearZ, farZ);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (TheGlobalData->m_useCameraConstraints)
 #endif
 	{
@@ -608,7 +608,7 @@ void W3DView::setCameraTransform( void )
 		}
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	m_3DCamera->Set_View_Plane( m_FOV, -1 );
 #endif
 
@@ -726,7 +726,7 @@ static void drawTerrainNormal( Drawable *draw, void *userData )
   }
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 // ------------------------------------------------------------------------------------------------
 // Draw a crude circle. Appears on top of any world geometry
 // ------------------------------------------------------------------------------------------------
@@ -992,7 +992,7 @@ static void drawablePostDraw( Drawable *draw, void *userData )
 
 	Object* obj = draw->getObject();
 	Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	ObjectShroudStatus ss = (!obj || !TheGlobalData->m_shroudOn) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
 #else
 	ObjectShroudStatus ss = (!obj) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
@@ -1010,7 +1010,7 @@ static void drawablePostDraw( Drawable *draw, void *userData )
 			draw->drawIconUI();
 	//}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	// debug collision extents
 	if( TheGlobalData->m_showCollisionExtents )
 	  drawDrawableExtents( draw, userData );
@@ -1687,7 +1687,7 @@ void W3DView::draw( void )
 
 	}  // end if, show debug AI
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if( TheGlobalData->m_debugCamera )
 	{
 		UnsignedInt c = 0xaaffffff;
@@ -2006,7 +2006,7 @@ void W3DView::setFieldOfView( Real angle )
 {
 	View::setFieldOfView( angle );
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	// this is only for testing, and recalculating the 
 	// camera every frame is wasteful
 	setCameraTransform();

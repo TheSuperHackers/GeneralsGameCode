@@ -140,7 +140,7 @@ public:
 	Int getAverageFPS( void );
 	Int getSlotAverageFPS(Int slot);
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	void debugPrintConnectionCommands();
 #endif
 

@@ -138,7 +138,7 @@ static void		Debug_Refs(void);
 // ----------------------------------------------------------------------------
 static void WWDebug_Message_Callback(DebugType type, const char * message)
 {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	::OutputDebugString(message);
 #endif
 }
@@ -146,7 +146,7 @@ static void WWDebug_Message_Callback(DebugType type, const char * message)
 // ----------------------------------------------------------------------------
 static void WWAssert_Callback(const char * message)
 {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	::OutputDebugString(message);
 	::DebugBreak();
 #endif
@@ -2210,7 +2210,7 @@ void WbView3d::OnDraw(CDC* pDC)
 // ----------------------------------------------------------------------------
 // WbView3d diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 // ----------------------------------------------------------------------------
 void WbView3d::AssertValid() const
 {

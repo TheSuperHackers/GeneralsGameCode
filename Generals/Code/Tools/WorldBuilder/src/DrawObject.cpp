@@ -55,7 +55,7 @@
 #include "Common/WellKnownKeys.h"
 #include "Common/BorderColors.h"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #define NO_INTENSE_DEBUG 1
 #endif
 

@@ -431,12 +431,12 @@ void Player::init(const PlayerTemplate* pt)
 
 	m_unitsShouldHunt = FALSE;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	m_DEMO_ignorePrereqs = FALSE;
 	m_DEMO_freeBuild = FALSE;
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	m_DEMO_instantBuild = FALSE;
 #endif
 
@@ -1292,7 +1292,7 @@ static void doFindSpecialPowerSourceObject( Object *obj, void *userData )
 			{
 				UnsignedInt readyFrame = spmInterface->getReadyFrame();
 				
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 				// Everything is ready if timers are debug off'd
 				if( ! TheGlobalData->m_specialPowerUsesDelay )
 					readyFrame = 0;
@@ -1349,7 +1349,7 @@ static void doCountSpecialPowersReady( Object *obj, void *userData )
 				
 				UnsignedInt readyFrame = spmInterface->getReadyFrame();
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 				// Everything is ready if timers are debug off'd
 				if( ! TheGlobalData->m_specialPowerUsesDelay )
 					readyFrame = 0;
@@ -2939,7 +2939,7 @@ Bool Player::canBuild(const ThingTemplate *tmplate) const
 				prereqsOK = false;
 		}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 		if (ignoresPrereqs())
 			prereqsOK = true;
 #endif

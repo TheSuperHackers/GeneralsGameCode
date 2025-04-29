@@ -591,7 +591,7 @@ protected:
 
 	const AudioEventRTS& getAmbientSoundByDamage(BodyDamageType dt);
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	void validatePos() const;
 #endif
 

@@ -67,7 +67,7 @@ static const char *GeometryNames[] =
 #endif  // end DEFINE_GEOMETRY_NAMES
 
 //-------------------------------------------------------------------------------------------------
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 enum ExtentModType CPP_11(: Int)
 {
 	EXTENTMOD_INVALID = 0,
@@ -188,7 +188,7 @@ public:
 	// given an object with this geom, SET how far above the object's canonical position its max z should extend.
 	void setMaxHeightAbovePosition(Real z);
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	void tweakExtents(ExtentModType extentModType, Real extentModAmount);
 	AsciiString getDescriptiveString() const;
 #endif

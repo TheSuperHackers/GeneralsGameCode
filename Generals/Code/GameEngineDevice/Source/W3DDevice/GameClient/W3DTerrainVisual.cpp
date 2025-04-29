@@ -306,7 +306,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 	// add our terrain render object to the scene
 	W3DDisplay::m_3DScene->Add_Render_Object( m_terrainRenderObject );
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined _INTERNAL
 	// Icon drawing utility object for pathfinding.
 	W3DDebugIcons *icons = NEW W3DDebugIcons;
  	W3DDisplay::m_3DScene->Add_Render_Object( icons );

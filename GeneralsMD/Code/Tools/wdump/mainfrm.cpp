@@ -26,7 +26,7 @@
 
 #include "MainFrm.h"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -132,7 +132,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void CMainFrame::AssertValid() const
 {
 	CFrameWnd::AssertValid();

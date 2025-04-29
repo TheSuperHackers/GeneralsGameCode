@@ -58,7 +58,7 @@ Bool g_clientDeepCRC = FALSE;
 Bool g_logObjectCRCs = FALSE;
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 extern Bool g_useStringFile;
 #endif
 
@@ -163,7 +163,7 @@ Int parseFPUPreserve(char *args[], int argc)
 	return 2;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 
 //=============================================================================
 //=============================================================================
@@ -205,7 +205,7 @@ Int parseNoMilCap(char *args[], int)
 	}
 	return 1;
 }
-#endif // _DEBUG || _INTERNAL
+#endif // RTS_DEBUG || _INTERNAL
 
 //=============================================================================
 //=============================================================================
@@ -348,7 +348,7 @@ Int parseNoDraw(char *args[], int argc)
 	return 1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 
 //=============================================================================
 //=============================================================================
@@ -360,7 +360,7 @@ Int parseLogToConsole(char *args[], int)
 	return 1;
 }
 
-#endif // _DEBUG || _INTERNAL
+#endif // RTS_DEBUG || _INTERNAL
 
 //=============================================================================
 //=============================================================================
@@ -436,7 +436,7 @@ Int parseYRes(char *args[], int num)
 	return 1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 //=============================================================================
 //=============================================================================
 Int parseLatencyAverage(char *args[], int num)
@@ -619,7 +619,7 @@ Int parseMunkee(char *args[], int)
 	}
 	return 1;
 }
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(_INTERNAL)
 
 Int parseScriptDebug(char *args[], int)
 {
@@ -653,7 +653,7 @@ Int parseBuildMapCache(char *args[], int)
 }
 
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 Int parsePreload( char *args[], int num )
 {
 	if( TheWritableGlobalData )
@@ -663,7 +663,7 @@ Int parsePreload( char *args[], int num )
 #endif
 
 
-#if defined(_DEBUG) || defined(_INTERNAL) 
+#if defined(RTS_DEBUG) || defined(_INTERNAL) 
 Int parseDisplayDebug(char *args[], int)
 {
 	if (TheWritableGlobalData)
@@ -715,7 +715,7 @@ Int parseVTune ( char *args[], int num )
 }
 /// end stuff for VTUNE
 
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(_INTERNAL)
 
 //=============================================================================
 //=============================================================================
@@ -729,7 +729,7 @@ Int parseNoFX(char *args[], int)
 	return 1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 Int parseNoShroud(char *args[], int)
 {
 	if (TheWritableGlobalData)
@@ -758,7 +758,7 @@ Int parseNoMoveCamera(char *args[], int)
 	return 1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 Int parseNoCinematic(char *args[], int)
 {
 	if (TheWritableGlobalData)
@@ -799,7 +799,7 @@ Int parseNoShaders(char *args[], int)
 	return 1;
 }
 
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#if (defined(RTS_DEBUG) || defined(_INTERNAL))
 Int parseNoLogo(char *args[], int)
 {
 	if (TheWritableGlobalData)
@@ -850,7 +850,7 @@ Int parseWinCursors(char *args[], int num)
 
 Int parseQuickStart( char *args[], int num )
 {
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#if (defined(RTS_DEBUG) || defined(_INTERNAL))
   parseNoLogo( args, num );
 #else
 	//Kris: Patch 1.01 -- Allow release builds to skip the sizzle video, but still force the EA logo to show up.
@@ -871,7 +871,7 @@ Int parseConstantDebug( char *args[], int num )
 	return 1;
 }
 
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#if (defined(RTS_DEBUG) || defined(_INTERNAL))
 Int parseExtraLogging( char *args[], int num )
 {
 	if (TheWritableGlobalData)
@@ -904,7 +904,7 @@ Int parseShowTeamDot( char *args[], int num )
 }
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 Int parseSelectAll( char *args[], int num )
 {
 	if( TheWritableGlobalData )
@@ -972,7 +972,7 @@ Int parseDemoLoadScreen(char *args[], int num)
 	return 1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 Int parseSaveStats(char *args[], int num)
 {
 	if (TheWritableGlobalData  && num > 1)
@@ -984,7 +984,7 @@ Int parseSaveStats(char *args[], int num)
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 Int parseSaveAllStats(char *args[], int num)
 {
 	if (TheWritableGlobalData  && num > 1)
@@ -997,7 +997,7 @@ Int parseSaveAllStats(char *args[], int num)
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 Int parseLocalMOTD(char *args[], int num)
 {
 	if (TheWritableGlobalData  && num > 1)
@@ -1009,7 +1009,7 @@ Int parseLocalMOTD(char *args[], int num)
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 Int parseCameraDebug(char *args[], int num)
 {
 	if (TheWritableGlobalData)
@@ -1020,7 +1020,7 @@ Int parseCameraDebug(char *args[], int num)
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 Int parseBenchmark(char *args[], int num)
 {
 	if (TheWritableGlobalData && num > 1)
@@ -1032,7 +1032,7 @@ Int parseBenchmark(char *args[], int num)
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 #ifdef DUMP_PERF_STATS
 Int parseStats(char *args[], int num)
 {
@@ -1205,7 +1205,7 @@ static CommandLineParam params[] =
 	{ "-noshaders", parseNoShaders },
 	{ "-quickstart", parseQuickStart },
 
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#if (defined(RTS_DEBUG) || defined(_INTERNAL))
 	{ "-noaudio", parseNoAudio },
 	{ "-map", parseMapName },
 	{ "-nomusic", parseNoMusic },
@@ -1270,7 +1270,7 @@ static CommandLineParam params[] =
 	// Number of frames between each CRC that is written to replay files in singleplayer games.
 	{ "-ReplayCRCInterval", parseReplayCRCInterval },
 #endif
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#if (defined(RTS_DEBUG) || defined(_INTERNAL))
 	{ "-saveAllStats", parseSaveAllStats },
 	{ "-noDraw", parseNoDraw },
 	{ "-nomilcap", parseNoMilCap },
@@ -1347,7 +1347,7 @@ static CommandLineParam params[] =
 	//-allAdvice feature
 	//{ "-allAdvice", parseAllAdvice },
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
   { "-preload", parsePreload },
 #endif
 

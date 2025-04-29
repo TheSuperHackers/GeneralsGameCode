@@ -114,7 +114,7 @@ MilesAudioManager::~MilesAudioManager()
 }
 
 //-------------------------------------------------------------------------------------------------
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 AudioHandle MilesAudioManager::addAudioEvent( const AudioEventRTS *eventToAdd )
 {
 	if (TheGlobalData->m_preloadReport) {
@@ -127,7 +127,7 @@ AudioHandle MilesAudioManager::addAudioEvent( const AudioEventRTS *eventToAdd )
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FILE *fp )
 {
@@ -446,7 +446,7 @@ void MilesAudioManager::init()
 	AudioManager::init();
 #ifdef INTENSE_DEBUG
 	DEBUG_LOG(("Sound has temporarily been disabled in debug builds only. jkmcd\n"));
-	// for now, _DEBUG builds only should have no sound. ask jkmcd or srj about this.
+	// for now, RTS_DEBUG builds only should have no sound. ask jkmcd or srj about this.
 	return;
 #endif
 
@@ -467,7 +467,7 @@ void MilesAudioManager::postProcessLoad()
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::reset()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	dumpAllAssetsUsed();
 	m_allEventsLoaded.clear();
 #endif
@@ -3017,7 +3017,7 @@ void AILCALLBACK setStreamCompleted( HSTREAM streamCompleted )
 //-------------------------------------------------------------------------------------------------
 U32 AILCALLBACK streamingFileOpen(char const *fileName, U32 *file_handle)
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (sizeof(U32) != sizeof(File*)) {
 		RELEASE_CRASH(("streamingFileOpen - This function requires work in order to compile on non 32-bit platforms.\n"));
 	}
@@ -3277,7 +3277,7 @@ Bool AudioFileCache::freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNee
 }
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::dumpAllAssetsUsed()
 {

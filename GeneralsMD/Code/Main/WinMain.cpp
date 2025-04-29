@@ -912,7 +912,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			return 0;
 		}
 
-		#ifdef _DEBUG
+		#ifdef RTS_DEBUG
 			// Turn on Memory heap tracking
 			int tmpFlag = _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG );
 			tmpFlag |= (_CRTDBG_LEAK_CHECK_DF|_CRTDBG_ALLOC_MEM_DF);
@@ -928,7 +928,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 // Force "splash image" to be loaded from a file, not a resource so same exe can be used in different localizations.
-#if defined _DEBUG || defined _INTERNAL || defined _PROFILE
+#if defined RTS_DEBUG || defined _INTERNAL || defined _PROFILE
 
 			// check both localized directory and root dir
 		char filePath[_MAX_PATH];
@@ -1043,7 +1043,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	#ifdef MEMORYPOOL_DEBUG
 		TheMemoryPoolFactory->debugMemoryReport(REPORT_POOLINFO | REPORT_POOL_OVERFLOW | REPORT_SIMPLE_LEAKS, 0, 0);
 	#endif
-	#if defined(_DEBUG) || defined(_INTERNAL)
+	#if defined(RTS_DEBUG) || defined(_INTERNAL)
 		TheMemoryPoolFactory->memoryPoolUsageReport("AAAMemStats");
 	#endif
 

@@ -263,7 +263,7 @@ AsciiString GetMessageTypeString(UnsignedInt type)
 
 void LANAPI::checkMOTD( void )
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (TheGlobalData->m_useLocalMOTD)
 	{
 		// for a playtest, let's log some play statistics, eh?

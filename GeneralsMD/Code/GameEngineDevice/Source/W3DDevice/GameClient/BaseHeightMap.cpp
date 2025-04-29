@@ -313,7 +313,7 @@ BaseHeightMapRenderObjClass::BaseHeightMapRenderObjClass(void)
 	m_scorchTexture = NULL;
 	clearAllScorches();
 #endif
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (TheGlobalData->m_shroudOn)
 		m_shroud = NEW W3DShroud;
 	else
@@ -1896,7 +1896,7 @@ void BaseHeightMapRenderObjClass::allocateScorchBuffers(void)
 	m_scorchesInBuffer = 0; // If we just allocated the buffers, we got no scorches in the buffer.
 	m_curNumScorchVertices=0;
 	m_curNumScorchIndices=0;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	Vector3 loc(4*MAP_XY_FACTOR,4*MAP_XY_FACTOR,0);
 	addScorch(loc, 1*MAP_XY_FACTOR, SCORCH_1);
 	loc.Y += 10*MAP_XY_FACTOR;

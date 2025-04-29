@@ -152,7 +152,7 @@ public:
 	void loadProgressComplete( void );
 	void sendTimeOutGameStart( void );
 
-#if defined(_INTERNAL) || defined(_DEBUG)
+#if defined(_INTERNAL) || defined(RTS_DEBUG)
 	// Disconnect screen testing
 	virtual void toggleNetworkOn();
 #endif
@@ -219,7 +219,7 @@ protected:
 	std::list<Int> m_playersToDisconnect;
 	GameWindow *m_messageWindow;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	Bool m_networkOn;
 #endif
 };
@@ -279,7 +279,7 @@ Network::Network()
 	m_conMgr = NULL;
 	m_messageWindow = NULL;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	m_networkOn = TRUE;
 #endif
 }
@@ -362,7 +362,7 @@ void Network::init()
 	DEBUG_LOG(("FRAMES_TO_KEEP = %d\n", FRAMES_TO_KEEP));
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	m_networkOn = TRUE;
 #endif
 
@@ -692,7 +692,7 @@ void Network::update( void )
 //
 	m_frameDataReady = FALSE;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (m_networkOn == FALSE) {
 		return;
 	}
@@ -726,7 +726,7 @@ void Network::update( void )
 
 void Network::liteupdate() {
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (m_networkOn == FALSE) {
 		return;
 	}
@@ -750,7 +750,7 @@ void Network::endOfGameCheck() {
 
 			DEBUG_LOG(("Network::endOfGameCheck - about to show the shell\n"));
 		}
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 		else {
 			m_conMgr->debugPrintConnectionCommands();
 		}
@@ -1012,7 +1012,7 @@ Int Network::getSlotAverageFPS(Int slot) {
 	return -1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 void Network::toggleNetworkOn() {
 	if (m_networkOn == TRUE) {
 		m_networkOn = FALSE;

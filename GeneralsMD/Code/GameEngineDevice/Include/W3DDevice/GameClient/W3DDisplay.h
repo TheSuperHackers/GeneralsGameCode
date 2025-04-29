@@ -71,7 +71,7 @@ public:
 	virtual void getDisplayModeDescription(Int modeIndex, Int *xres, Int *yres, Int *bitDepth);	///<return description of mode
  	virtual void setGamma(Real gamma, Real bright, Real contrast, Bool calibrate);
 	virtual void doSmartAssetPurgeAndPreload(const char* usageFileName);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	virtual void dumpAssetUsage(const char* mapname);
 #endif
 
@@ -133,7 +133,7 @@ public:
 	virtual void clearShroud();
 	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting);
 	virtual void setBorderShroudLevel(UnsignedByte level);	///<color that will appear in unused border terrain.
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	virtual void dumpModelAssets(const char *path);	///< dump all used models/textures to a file.
 #endif
 	virtual void preloadModelAssets( AsciiString model );			///< preload model asset
@@ -167,7 +167,7 @@ protected:
 	IRegion2D m_clipRegion;									///< the clipping region for images
 	Bool m_isClippedEnabled;	///<used by 2D drawing operations to define clip re
 	Real m_averageFPS;		///<average fps over the last 30 frames.
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	Int64 m_timerAtCumuFPSStart;
 #endif
 

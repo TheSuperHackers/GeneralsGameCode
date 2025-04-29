@@ -425,7 +425,7 @@ int GameFileClass::Size(void)
 //-------------------------------------------------------------------------------------------------
 int GameFileClass::Write(void const *buffer, Int len) 
 {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #endif
 	return(0);
 }

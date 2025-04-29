@@ -83,14 +83,14 @@ char DebugFile	[ MAX_PATH ] = { '\0' };
 // public file class functions...
 //-----------------------------------------------------------------------------
 #if(0)
-#ifndef _DEBUG
+#ifndef RTS_DEBUG
 void __cdecl Msg( int, char *, char *, ... ) { };	// line, file, fmt
 void 	Delete_Msg_File ( void )  { };
 #endif
 #endif
 
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 
 /****************************************************************************
  * MSG -- Write Message to Debug file with line and filename.				*
@@ -1097,7 +1097,7 @@ HANDLE Open_File( char const *file_name, int mode )
     // error!
     //
     if ( windows_file_handle == INVALID_HANDLE_VALUE ) {
-		//  #if( _DEBUG )
+		//  #if( RTS_DEBUG )
 		//	Debug_Printf( "%s: Create file error is %d\r\n", file_name, GetLastError());
 		//  #endif
         return( INVALID_FILE_HANDLE );

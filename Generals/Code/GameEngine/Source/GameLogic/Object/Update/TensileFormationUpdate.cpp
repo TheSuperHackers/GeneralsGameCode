@@ -76,7 +76,7 @@ private:
 
 public:
 	PartitionFilterTensileFormationMember( Object* obj ) : m_obj( obj ) { }
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterTensileFormationMember"; }
 #endif
 	virtual Bool allow( Object *objOther )

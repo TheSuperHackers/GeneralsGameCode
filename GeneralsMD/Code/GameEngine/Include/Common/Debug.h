@@ -50,7 +50,7 @@
 
 class AsciiString;
 
-#if defined(_DEBUG) && defined(_INTERNAL)
+#if defined(RTS_DEBUG) && defined(_INTERNAL)
 	#error "Only one at a time of these should ever be defined"
 #endif
 
@@ -69,8 +69,8 @@ class AsciiString;
 #define TOKEN_IT(a) STRING_IT(,##a)
 #define MESSAGE(a) message (__FILE__ "(" TOKEN_IT(__LINE__) ") : " a)
 
-// by default, turn on ALLOW_DEBUG_UTILS if _DEBUG is turned on.
-#if (defined(_DEBUG) || defined(_INTERNAL)) && !defined(ALLOW_DEBUG_UTILS) && !defined(DISABLE_ALLOW_DEBUG_UTILS)
+// by default, turn on ALLOW_DEBUG_UTILS if RTS_DEBUG is turned on.
+#if (defined(RTS_DEBUG) || defined(_INTERNAL)) && !defined(ALLOW_DEBUG_UTILS) && !defined(DISABLE_ALLOW_DEBUG_UTILS)
 	#define ALLOW_DEBUG_UTILS 1
 #elif defined(DEBUG_LOGGING) || defined(DEBUG_CRASHING) || defined(DEBUG_STACKTRACE) || defined(DEBUG_PROFILE)
 	// TheSuperHackers @tweak also turn on when any of the above options is already set.

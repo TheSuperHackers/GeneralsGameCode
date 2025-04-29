@@ -304,7 +304,7 @@ void DeliverPayloadAIUpdate::deliverPayload(
 	// must make the state machine AFTER initing the other stuff, since it may inquire of its values...
 	m_deliverPayloadStateMachine = newInstance(DeliverPayloadStateMachine)( getObject() );
 	m_deliverPayloadStateMachine->initDefaultState();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	m_deliverPayloadStateMachine->setName("DeliverPayloadSpecificAI");
 #endif
 }

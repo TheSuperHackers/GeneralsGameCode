@@ -46,7 +46,7 @@
 #include "assetmgr.h"
 
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -112,7 +112,7 @@ END_MESSAGE_MAP()
 // SoundEditDialogClass
 //
 /////////////////////////////////////////////////////////////////////////////
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void SoundEditDialogClass::AssertValid() const
 {
 	CDialog::AssertValid();

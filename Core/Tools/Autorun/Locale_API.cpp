@@ -265,7 +265,7 @@ int Locale_Init	( int language, char *file )
 
 		LanguageID = 0;
 
-#if(_DEBUG)
+#if(RTS_DEBUG)
 		switch( LanguageID ) {
 			case 6:
 				CodePage = 932;

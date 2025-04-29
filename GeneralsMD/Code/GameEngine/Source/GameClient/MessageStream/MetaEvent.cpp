@@ -208,7 +208,7 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	{ "HELP",																			GameMessage::MSG_META_HELP },
 
 	{ "DEMO_TOGGLE_BEHIND_BUILDINGS",							GameMessage::MSG_META_DEMO_TOGGLE_BEHIND_BUILDINGS },
@@ -333,12 +333,12 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "DEBUG_OBJECT_ID_PERFORMANCE",							GameMessage::MSG_META_DEBUG_OBJECT_ID_PERFORMANCE },
 	{ "DEBUG_DRAWABLE_ID_PERFORMANCE",						GameMessage::MSG_META_DEBUG_DRAWABLE_ID_PERFORMANCE },
 	{ "DEBUG_SLEEPY_UPDATE_PERFORMANCE",					GameMessage::MSG_META_DEBUG_SLEEPY_UPDATE_PERFORMANCE },
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(_INTERNAL)
 
 
-#if defined(_INTERNAL) || defined(_DEBUG) 
+#if defined(_INTERNAL) || defined(RTS_DEBUG) 
 	{ "DEMO_TOGGLE_AUDIODEBUG",										GameMessage::MSG_META_DEMO_TOGGLE_AUDIODEBUG },
-#endif//defined(_INTERNAL) || defined(_DEBUG)
+#endif//defined(_INTERNAL) || defined(RTS_DEBUG)
 #ifdef DUMP_PERF_STATS
 	{ "DEMO_PERFORM_STATISTICAL_DUMP",						GameMessage::MSG_META_DEMO_PERFORM_STATISTICAL_DUMP },
 #endif//DUMP_PERF_STATS

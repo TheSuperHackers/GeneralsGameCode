@@ -116,7 +116,7 @@ private:
 	WeaponBonusConditionFlags		m_extraBonusFlags;
 
 	Bool calcFlightPath(Bool recalcNumSegments);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	void displayFlightPath();	///< Uses little debug icons in worldspace to show the path chosen when it is decided upon
 #endif
 

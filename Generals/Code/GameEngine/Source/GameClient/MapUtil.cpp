@@ -465,7 +465,7 @@ void MapCache::updateCache( void )
 		writeCacheINI( TRUE );
 	}
 	loadStandardMaps();	// we shall overwrite info from matching user maps to prevent munkees from getting rowdy :)
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (TheLocalFileSystem->doesFileExist(getMapDir().str()))
 	{
 		// only create the map cache file if "Maps" exist
@@ -504,7 +504,7 @@ void MapCache::loadStandardMaps(void)
 	INI ini;
 	AsciiString fname;
 	fname.format("%s\\%s", getMapDir().str(), m_mapCacheName);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	File *fp = TheFileSystem->openFile(fname.str(), File::READ);
 	if (fp != NULL)
 	{
@@ -512,7 +512,7 @@ void MapCache::loadStandardMaps(void)
 		fp = NULL;
 #endif
 		ini.load( fname, INI_LOAD_OVERWRITE, NULL );
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	}
 #endif
 }

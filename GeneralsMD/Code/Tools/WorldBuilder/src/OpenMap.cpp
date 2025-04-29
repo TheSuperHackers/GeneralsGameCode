@@ -33,7 +33,7 @@ OpenMap::OpenMap(TOpenMapInfo *pInfo, CWnd* pParent /*=NULL*/)
 	m_pInfo(pInfo)
 {
 	m_pInfo->browse = false;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	m_usingSystemDir = ::AfxGetApp()->GetProfileInt(MAP_OPENSAVE_PANEL_SECTION, "UseSystemDir", TRUE);
 #else
 	m_usingSystemDir = FALSE;
@@ -110,7 +110,7 @@ void OpenMap::OnOK()
 void OpenMap::populateMapListbox( Bool systemMaps )
 {
 	m_usingSystemDir = systemMaps;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	::AfxGetApp()->WriteProfileInt(MAP_OPENSAVE_PANEL_SECTION, "UseSystemDir", m_usingSystemDir);
 #endif
 
@@ -190,7 +190,7 @@ BOOL OpenMap::OnInitDialog()
 	if (pUserMaps != NULL)
 		pUserMaps->SetCheck( !m_usingSystemDir );
 
-#if !defined(_DEBUG) && !defined(_INTERNAL)
+#if !defined(RTS_DEBUG) && !defined(_INTERNAL)
 	if (pSystemMaps)
 		pSystemMaps->ShowWindow( FALSE );
 	if (pUserMaps)

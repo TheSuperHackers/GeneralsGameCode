@@ -120,7 +120,7 @@ public:
 
 	virtual Bool allow(Object *objOther);
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterStealthedOrStealthGarrisoned"; }
 #endif
 };

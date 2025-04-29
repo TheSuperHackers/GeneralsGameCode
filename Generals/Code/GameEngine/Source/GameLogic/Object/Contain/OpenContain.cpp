@@ -284,7 +284,7 @@ void OpenContain::addToContain( Object *rider )
 	if( rider == NULL )
 		return;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if( !isValidContainerFor( rider, false ) )
 	{
 		Object *reportObject = rider;
@@ -515,7 +515,7 @@ void OpenContain::removeFromContainViaIterator( ContainedItemsList::iterator it,
 {
 
 /*
-	#ifdef _DEBUG
+	#ifdef RTS_DEBUG
 		TheInGameUI->message( UnicodeString( L"'%S(%d)' no longer contains '%S(%d)'" ), 
 													getObject()->getTemplate()->getName().str(),
 													getObject()->getID(),

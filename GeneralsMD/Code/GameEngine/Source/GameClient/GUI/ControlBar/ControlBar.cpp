@@ -139,7 +139,7 @@ void ControlBar::markUIDirty( void )
 { 
   m_UIDirty = TRUE;
 
-#if defined( _INTERNAL ) || defined( _DEBUG )
+#if defined( _INTERNAL ) || defined( RTS_DEBUG )
 	UnsignedInt now = TheGameLogic->getFrame();
 	if( now == m_lastFrameMarkedDirty )
 	{
@@ -961,7 +961,7 @@ ControlBar::ControlBar( void )
 	m_remainingRadarAttackGlowFrames = 0;
 	m_radarAttackGlowWindow = NULL;
 
-#if defined( _INTERNAL ) || defined( _DEBUG )
+#if defined( _INTERNAL ) || defined( RTS_DEBUG )
 	m_lastFrameMarkedDirty = 0;
 	m_consecutiveDirtyFrames = 0;
 #endif

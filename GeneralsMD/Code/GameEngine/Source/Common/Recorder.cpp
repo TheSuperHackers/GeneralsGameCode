@@ -92,7 +92,7 @@ void RecorderClass::logGameStart(AsciiString options)
 		fseek(m_file, fileSize, SEEK_SET);
 	DEBUG_ASSERTCRASH(res == 0, ("Could not seek to end of file!"));
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (TheNetwork && TheGlobalData->m_saveStats)
 	{
 		//if (TheLAN)
@@ -153,7 +153,7 @@ void RecorderClass::logPlayerDisconnect(UnicodeString player, Int slot)
 		fseek(m_file, fileSize, SEEK_SET);
 	DEBUG_ASSERTCRASH(res == 0, ("Could not seek to end of file!"));
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (TheGlobalData->m_saveStats)
 	{
 		unsigned long bufSize = MAX_COMPUTERNAME_LENGTH + 1;
@@ -198,7 +198,7 @@ void RecorderClass::logCRCMismatch( void )
 		fseek(m_file, fileSize, SEEK_SET);
 	DEBUG_ASSERTCRASH(res == 0, ("Could not seek to end of file!"));
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (TheGlobalData->m_saveStats)
 	{
 		m_wasDesync = TRUE;
@@ -253,7 +253,7 @@ void RecorderClass::logGameEnd( void )
 		fseek(m_file, fileSize, SEEK_SET);
 	DEBUG_ASSERTCRASH(res == 0, ("Could not seek to end of file!"));
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (TheNetwork && TheGlobalData->m_saveStats)
 	{
 		//if (TheLAN)
@@ -286,7 +286,7 @@ void RecorderClass::logGameEnd( void )
 	#if defined(_INTERNAL)
 		#define DEBUG_FILE_NAME				"DebugLogFileI.txt"
 		#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevI.txt"
-	#elif defined(_DEBUG)
+	#elif defined(RTS_DEBUG)
 		#define DEBUG_FILE_NAME				"DebugLogFileD.txt"
 		#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevD.txt"
 	#else
@@ -297,7 +297,7 @@ void RecorderClass::logGameEnd( void )
 
 void RecorderClass::cleanUpReplayFile( void )
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (TheGlobalData->m_saveStats)
 	{
 		char fname[_MAX_PATH+1];
@@ -914,7 +914,7 @@ Bool RecorderClass::readReplayHeader(ReplayHeader& header)
 	return TRUE;
 }
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined _INTERNAL
 Bool RecorderClass::analyzeReplay( AsciiString filename )
 {
 	m_doingAnalysis = TRUE;
@@ -1547,7 +1547,7 @@ AsciiString RecorderClass::getReplayExtention() {
  */
 AsciiString RecorderClass::getLastReplayFileName() 
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (TheNetwork && TheGlobalData->m_saveStats)
 	{
 		GameInfo *game = NULL;

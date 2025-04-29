@@ -593,7 +593,7 @@ public:
 													Real durationInSeconds,
 													Real zRisePerSecond );
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	virtual void DEBUG_addFloatingText(const AsciiString& text,const Coord3D * pos, Color color);
 #endif
 
@@ -613,7 +613,7 @@ protected:
 	{
 		MOVE_HINT = 0,
 		ATTACK_HINT,
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		DEBUG_HINT,
 #endif
 		NUM_HINT_TYPES  // keep this one last

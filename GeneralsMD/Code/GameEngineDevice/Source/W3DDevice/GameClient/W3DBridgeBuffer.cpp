@@ -1157,7 +1157,7 @@ void W3DBridgeBuffer::drawBridges(CameraClass * camera, Bool wireframe, TextureC
 	DX8Wrapper::Set_Index_Buffer(m_indexBridge,0);
 	DX8Wrapper::Set_Vertex_Buffer(m_vertexBridge);
 	DX8Wrapper::Set_Shader(detailAlphaShader);
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	//DX8Wrapper::Set_Shader(detailShader); // shows alpha clipping.
 #endif
 

@@ -54,7 +54,7 @@
 #include "Common/Team.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/Xfer.h"
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #include "GameLogic/Object.h"
 #endif
 #include "GameLogic/SidesList.h"

@@ -25,7 +25,7 @@
 #include "wdumpDoc.h"
 #include "wdView.h"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -78,7 +78,7 @@ void CWdumpView::OnDraw(CDC* pDC)
 /////////////////////////////////////////////////////////////////////////////
 // CWdumpView diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void CWdumpView::AssertValid() const
 {
 	CView::AssertValid();

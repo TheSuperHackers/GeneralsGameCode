@@ -41,8 +41,8 @@
 #include "DownloadDebug.h"
 
 // umm... what?? BGC 3/27/03
-//#ifndef _DEBUG
-//#define _DEBUG
+//#ifndef RTS_DEBUG
+//#define RTS_DEBUG
 //#endif
 
 /*************************************************************************/
@@ -874,7 +874,7 @@ HRESULT  Cftp::SendCommand( LPCSTR pCommand, int iSize )
 
 	if( i > 0 )
 	{
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		OutputDebugString( "-->" );
 		OutputDebugString( pCommand );
 #endif
@@ -954,7 +954,7 @@ HRESULT  Cftp::RecvReply( LPCSTR pReplyBuffer, int iSize, int * piRetCode )
 
 		// OK, we've got a line, pull it from the socket...
 		recv(m_iCommandSocket, pc, end-pc+strlen("\r\n"), 0);
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		OutputDebugString( "<--" );
 		OutputDebugString( pc );
 #endif

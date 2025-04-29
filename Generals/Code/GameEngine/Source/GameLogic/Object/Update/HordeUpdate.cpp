@@ -79,7 +79,7 @@ public:
 
 	PartitionFilterHordeMember(Object* obj, const HordeUpdateModuleData* data) : m_obj(obj), m_data(data) { }
 	
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterHordeMember"; }
 #endif
 

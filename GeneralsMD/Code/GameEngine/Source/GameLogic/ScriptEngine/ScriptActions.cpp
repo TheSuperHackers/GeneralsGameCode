@@ -3200,7 +3200,7 @@ void ScriptActions::doMergeTeamIntoTeam(const AsciiString& teamSrcName, const As
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doDisableInput()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (!TheGlobalData->m_disableScriptedInputDisabling)
 #endif
 	{
@@ -3852,7 +3852,7 @@ void ScriptActions::doUnfreezeTime(void)
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doMilitaryCaption(const AsciiString& briefing, Int duration)
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (TheGlobalData->m_disableMilitaryCaption)
 		duration = 1;
 #endif

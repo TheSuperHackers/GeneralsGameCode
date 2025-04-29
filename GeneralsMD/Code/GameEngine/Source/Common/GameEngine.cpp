@@ -258,7 +258,7 @@ void GameEngine::init( int argc, char *argv[] )
 		if (TheVersion)
 		{
 			DEBUG_LOG(("================================================================================\n"));
-	#if defined _DEBUG
+	#if defined RTS_DEBUG
 			const char *buildType = "Debug";
 	#elif defined _INTERNAL
 			const char *buildType = "Internal";
@@ -372,7 +372,7 @@ void GameEngine::init( int argc, char *argv[] )
 
 
 
-	#if defined(_DEBUG) || defined(_INTERNAL)
+	#if defined(RTS_DEBUG) || defined(_INTERNAL)
 		// If we're in Debug or Internal, load the Debug info as well.
 		ini.load( AsciiString( "Data\\INI\\GameDataDebug.ini" ), INI_LOAD_OVERWRITE, NULL );
 	#endif
@@ -524,7 +524,7 @@ void GameEngine::init( int argc, char *argv[] )
 		fname.format("Data\\%s\\CommandMap.ini", GetRegistryLanguage().str());
 		initSubsystem(TheMetaMap,"TheMetaMap", MSGNEW("GameEngineSubsystem") MetaMap(), NULL, fname.str(), "Data\\INI\\CommandMap.ini");
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 		ini.load("Data\\INI\\CommandMapDebug.ini", INI_LOAD_MULTIFILE, NULL);
 #endif
 
@@ -578,7 +578,7 @@ void GameEngine::init( int argc, char *argv[] )
 		// for fingerprinting, we need to ensure the presence of these files
 
 
-#if !defined(_INTERNAL) && !defined(_DEBUG)
+#if !defined(_INTERNAL) && !defined(RTS_DEBUG)
 		AsciiString dirName;
     dirName = TheArchiveFileSystem->getArchiveFilenameForFile("generalsbzh.sec");
 
@@ -790,7 +790,7 @@ void GameEngine::execute( void )
 {
 	
 	DWORD prevTime = timeGetTime();
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	DWORD startTime = timeGetTime() / 1000;
 #endif
 
@@ -807,7 +807,7 @@ void GameEngine::execute( void )
 
 		{
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 			{
 				// enter only if in benchmark mode
 				if (TheGlobalData->m_benchmarkTimer > 0)
@@ -865,7 +865,7 @@ void GameEngine::execute( void )
 
 		// I'm disabling this in internal because many people need alt-tab capability.  If you happen to be
 		// doing performance tuning, please just change this on your local system. -MDC
-		#if defined(_DEBUG) || defined(_INTERNAL)
+		#if defined(RTS_DEBUG) || defined(_INTERNAL)
 					::Sleep(1); // give everyone else a tiny time slice.
 		#endif
 

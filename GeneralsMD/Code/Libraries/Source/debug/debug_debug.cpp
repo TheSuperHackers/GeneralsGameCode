@@ -1439,7 +1439,7 @@ void Debug::WriteBuildInfo(void)
     (*this) << " internal " << m_intVersion;
   #if defined(_INTERNAL)
     operator<<(" internal");
-  #elif defined(_DEBUG)
+  #elif defined(RTS_DEBUG)
     operator<<(" debug");
   #elif defined(_PROFILE)
     operator<<(" profile");

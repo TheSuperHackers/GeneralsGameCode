@@ -75,7 +75,7 @@
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined(_DEBUG) || defined(_INTERNAL)	//debug hack to view object under mouse stats
+#if defined(RTS_DEBUG) || defined(_INTERNAL)	//debug hack to view object under mouse stats
 extern ICoord2D TheMousePos;
 #endif
 
@@ -218,7 +218,7 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 		{
 			// all window events have the position of the mouse as arg 0
 			ICoord2D mousePos = msg->getArgument( 0 )->pixel;
-#if defined(_DEBUG) || defined(_INTERNAL)	//debug hack to view object under mouse stats
+#if defined(RTS_DEBUG) || defined(_INTERNAL)	//debug hack to view object under mouse stats
 			TheMousePos.x = mousePos.x;
 			TheMousePos.y = mousePos.y;
 #endif

@@ -454,7 +454,7 @@ Bool DumbProjectileBehavior::calcFlightPath(Bool recalcNumSegments)
 	flightCurve.getSegmentPoints( m_flightPathSegments, &m_flightPath );
 	DEBUG_ASSERTCRASH(m_flightPathSegments == m_flightPath.size(), ("m_flightPathSegments mismatch"));
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if( TheGlobalData->m_debugProjectilePath )
 		displayFlightPath();
 #endif
@@ -701,7 +701,7 @@ UpdateSleepTime DumbProjectileBehavior::update()
 // ------------------------------------------------------------------------------------------------
 /** displayFlightPath for debugging */
 // ------------------------------------------------------------------------------------------------
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 void DumbProjectileBehavior::displayFlightPath()
 {
 	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);

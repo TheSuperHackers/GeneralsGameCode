@@ -698,7 +698,7 @@ void W3DRoadBuffer::loadFloat4PtSection(RoadSegment *pRoad, Vector2 loc,
 				V = Vector2::Dot_Product(roadNormal, curVector);
 				U = Vector2::Dot_Product(roadVector, curVector);
 				Int diffuse = 0;
-			#ifdef _DEBUG
+			#ifdef RTS_DEBUG
 				//diffuse &= 0xFFFF00FF; // strip out green.
 			#endif
 				vb[numRoadVertices].u1 = uOffset+U/(uScale*4);
@@ -996,7 +996,7 @@ void W3DRoadBuffer::loadLit4PtSection(RoadSegment *pRoad, UnsignedShort *ib, Ver
 				shadeB*=255;
 				diffuse=REAL_TO_INT(shadeB) | (REAL_TO_INT(shadeG) << 8) | (REAL_TO_INT(shadeR) << 16) | ((int)255 << 24);
 
-			#ifdef _DEBUG
+			#ifdef RTS_DEBUG
 				//diffuse &= 0xFFFF00FF; // strip out green.
 			#endif
 				vb[m_curNumRoadVertices].u1 = info.uOffset+U/(info.scale*4);
@@ -1346,7 +1346,7 @@ void W3DRoadBuffer::loadRoadSegment(UnsignedShort *ib, VertexFormatXYZDUV1 *vb, 
 void W3DRoadBuffer::moveRoadSegTo(Int fromNdx, Int toNdx)
 {
 	if (fromNdx<0 || fromNdx>=m_numRoads || toNdx<0 || toNdx>=m_numRoads) {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		DEBUG_LOG(("bad moveRoadSegTo\n"));
 #endif
 		return;
@@ -1379,7 +1379,7 @@ void W3DRoadBuffer::checkLinkBefore(Int ndx)
 	}
 
 	Vector2 loc2 = m_roads[ndx].m_pt2.loc;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	DEBUG_ASSERTLOG(m_roads[ndx].m_pt1.loc == m_roads[ndx+1].m_pt2.loc, ("Bad link\n"));
 	if (ndx>0) {
 		DEBUG_ASSERTLOG(m_roads[ndx].m_pt2.loc != m_roads[ndx-1].m_pt1.loc, ("Bad Link\n"));
@@ -1396,7 +1396,7 @@ void W3DRoadBuffer::checkLinkBefore(Int ndx)
 	Int checkNdx = endOfCurSeg+1;
 	while (checkNdx < m_numRoads) {
 		if (m_roads[checkNdx].m_pt1.loc == loc2) {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 			DEBUG_ASSERTLOG(m_roads[checkNdx].m_pt1.count==1, ("Bad count\n"));
 #endif
 			moveRoadSegTo(checkNdx, ndx);
@@ -1404,7 +1404,7 @@ void W3DRoadBuffer::checkLinkBefore(Int ndx)
 			if (m_roads[ndx].m_pt2.count != 1) return;
 			endOfCurSeg++;
 		} else if (m_roads[checkNdx].m_pt2.loc == loc2) {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 			if (m_roads[checkNdx].m_pt2.count!=1) {
 				::OutputDebugString("fooey.\n");
 			}
@@ -1441,14 +1441,14 @@ void W3DRoadBuffer::checkLinkAfter(Int ndx)
 	}
 
 	Vector2 loc1 = m_roads[ndx].m_pt1.loc;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	DEBUG_ASSERTLOG(m_roads[ndx].m_pt2.loc == m_roads[ndx-1].m_pt1.loc, ("Bad link\n"));
 #endif
 
 	Int checkNdx = ndx+1;
 	while (checkNdx < m_numRoads && ndx < m_numRoads-1) {
 		if (m_roads[checkNdx].m_pt2.loc == loc1) {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 			DEBUG_ASSERTLOG(m_roads[checkNdx].m_pt2.count==1, ("Bad count\n"));
 #endif
 			ndx++;
@@ -1456,7 +1456,7 @@ void W3DRoadBuffer::checkLinkAfter(Int ndx)
 			loc1 = m_roads[ndx].m_pt1.loc;
 			if (m_roads[ndx].m_pt1.count != 1) return;
 		} else if (m_roads[checkNdx].m_pt1.loc == loc1) {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 			DEBUG_ASSERTLOG(m_roads[checkNdx].m_pt1.count==1, ("Wrong m_pt1.count.\n"));
 			if ( m_roads[checkNdx].m_pt1.count!=1) {
 				::OutputDebugString("Wrong m_pt1.count.\n");
@@ -1579,7 +1579,7 @@ void W3DRoadBuffer::addMapObjects()
 		}
 		if (pMapObj->getFlag(FLAG_ROAD_POINT1)) {
 			pMapObj2 = pMapObj->getNext();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 			DEBUG_ASSERTLOG(pMapObj2 && pMapObj2->getFlag(FLAG_ROAD_POINT2), ("Bad Flag\n"));
 #endif
 			if (pMapObj2==NULL) break;
@@ -3259,7 +3259,7 @@ void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, 
 			} else {
 				m_roadTypes[i].applyTexture();
 			}
-	#ifdef _DEBUG
+	#ifdef RTS_DEBUG
 			//DX8Wrapper::Set_Shader(detailShader); // shows clipping.
 	#endif	
 			for (Int pass=0; pass < devicePasses; pass++)

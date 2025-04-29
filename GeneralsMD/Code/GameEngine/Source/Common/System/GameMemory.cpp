@@ -115,7 +115,7 @@ DECLARE_PERF_TIMER(MemoryPoolInitFilling)
 	};
 
 	// in debug mode (but not internal), save stacktraces too
-	#if !defined(MEMORYPOOL_CHECKPOINTING) && defined(MEMORYPOOL_STACKTRACE) && defined(_DEBUG)
+	#if !defined(MEMORYPOOL_CHECKPOINTING) && defined(MEMORYPOOL_STACKTRACE) && defined(RTS_DEBUG)
 		#define MEMORYPOOL_SINGLEBLOCK_GETS_STACKTRACE
 	#endif
 
@@ -2248,7 +2248,7 @@ void *DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes 
 	#endif
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
   // check alignment
   if (unsigned(result)&3)
     throw ERROR_OUT_OF_MEMORY;

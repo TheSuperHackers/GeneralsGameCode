@@ -31,7 +31,7 @@
 #include "GameNetwork/NetCommandMsg.h"
 #include "Common/GameMemory.h"
 
-#if defined(_INTERNAL) || defined(_DEBUG)
+#if defined(_INTERNAL) || defined(RTS_DEBUG)
 //	#define DEBUG_NETCOMMANDREF
 #endif
 

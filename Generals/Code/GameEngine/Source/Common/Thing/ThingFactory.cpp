@@ -363,7 +363,7 @@ Drawable *ThingFactory::newDrawable(const ThingTemplate *tmplate, DrawableStatus
 
 }  // end newDrawableByType
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 AsciiString TheThingTemplateBeingParsedName;
 #endif
 
@@ -372,7 +372,7 @@ AsciiString TheThingTemplateBeingParsedName;
 //-------------------------------------------------------------------------------------------------
 /*static*/ void ThingFactory::parseObjectDefinition( INI* ini, const AsciiString& name, const AsciiString& reskinFrom )
 {
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 	TheThingTemplateBeingParsedName = name;
 #endif
 
@@ -426,7 +426,7 @@ AsciiString TheThingTemplateBeingParsedName;
 
 	thingTemplate->validate();
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
 	TheThingTemplateBeingParsedName.clear();
 #endif
 }

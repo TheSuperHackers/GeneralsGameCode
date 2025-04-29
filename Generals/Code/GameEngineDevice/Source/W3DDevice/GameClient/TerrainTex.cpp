@@ -104,7 +104,7 @@ int TerrainTextureClass::update(WorldHeightMap *htMap)
 	Int tilesPerRow = surface_desc.Width/(2*TILE_PIXEL_EXTENT+TILE_OFFSET);
 	tilesPerRow *= 2;
 //	Int numRows = surface_desc.Height/(tilePixelExtent+TILE_OFFSET);
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	//DEBUG_ASSERTCRASH(tilesPerRow*numRows >= htMap->m_numBitmapTiles, ("Too many tiles."));
 	DEBUG_ASSERTCRASH((Int)surface_desc.Width >= tilePixelExtent*tilesPerRow, ("Bitmap too small."));
 #endif
@@ -224,7 +224,7 @@ int TerrainTextureClass::update(WorldHeightMap *htMap)
 	Int tilesPerRow = surface_desc.Width/(2*TILE_PIXEL_EXTENT+TILE_OFFSET);
 	tilesPerRow *= 2;
 	Int numRows = surface_desc.Height/(tilePixelExtent+TILE_OFFSET);
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	assert(tilesPerRow*numRows >= htMap->m_numBitmapTiles);
 	assert((Int)surface_desc.Width >= tilePixelExtent*tilesPerRow);
 #endif
@@ -377,7 +377,7 @@ int TerrainTextureClass::update256(WorldHeightMap *htMap)
 	tilesPerRow *= 2;
 	Int numRows = surface_desc.Height/(tilePixelExtent+tileOffset);
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	assert(tilesPerRow*numRows >= htMap->m_numBitmapTiles);
 	assert((Int)surface_desc.Width >= tilePixelExtent*tilesPerRow);
 #endif

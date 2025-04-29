@@ -53,7 +53,7 @@
 #include "Common/MapObject.h"
 #include "WW3D2/dx8wrapper.h"
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined _INTERNAL
 
 // Texturing, no zbuffer, disabled zbuffer write, primary gradient, alpha blending
 #define SC_OPAQUE ( SHADE_CNST(ShaderClass::PASS_ALWAYS, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_ONE, \
@@ -312,4 +312,4 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 	}
 }
 
-#endif // _DEBUG or _INTERNAL
+#endif // RTS_DEBUG or _INTERNAL

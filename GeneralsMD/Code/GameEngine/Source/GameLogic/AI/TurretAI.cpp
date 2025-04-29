@@ -308,7 +308,7 @@ TurretAI::TurretAI(Object* owner, const TurretAIData* data, WhichTurretType tur)
 	m_angle = getNaturalTurretAngle();
 	m_pitch = getNaturalTurretPitch();
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	char smbuf[256];
 	sprintf(smbuf, "TurretStateMachine for tur %08lx slot %d",this,tur);
 	const char* smname = smbuf;
@@ -689,7 +689,7 @@ UpdateSleepTime TurretAI::updateTurretAI()
 {
 	USE_PERF_TIMER(TurretAI)
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	DEBUG_ASSERTCRASH(!m_enabled ||
 							m_turretStateMachine->peekSleepTill() == 0 || 
 							m_turretStateMachine->peekSleepTill() >= m_sleepUntil, ("Turret Machine is less sleepy than turret"));
@@ -748,7 +748,7 @@ UpdateSleepTime TurretAI::updateTurretAI()
 
 	m_sleepUntil = now + subMachineSleep;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	DEBUG_ASSERTCRASH(!m_enabled ||
 							m_turretStateMachine->peekSleepTill() == 0 || 
 							m_turretStateMachine->peekSleepTill() >= m_sleepUntil, ("Turret Machine is less sleepy than turret"));

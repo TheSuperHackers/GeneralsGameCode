@@ -342,7 +342,7 @@ void GameLogic::prepareNewGame( Int gameMode, GameDifficulty diff, Int rankPoint
 //-------------------------------------------------------------------------------------------------
 void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	DEBUG_ASSERTCRASH(msg != NULL && msg != (GameMessage*)0xdeadbeef, ("bad msg"));
 #endif
 
@@ -443,7 +443,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_CLEAR_GAME_DATA:
 		{
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 			if (TheDisplay && TheGlobalData->m_dumpAssetUsage)
 				TheDisplay->dumpAssetUsage(TheGlobalData->m_mapName.str());
 #endif
@@ -888,7 +888,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			break;
 		}
 		
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DEBUG_KILL_SELECTION:
 		{
@@ -1917,13 +1917,13 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 				if (thisPlayer->isLocalPlayer())
 				{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 					// don't even put this in release, cause someone might hack it.
 					if (!TheDebugIgnoreSyncErrors)
 					{
 #endif
 						m_shouldValidateCRCs = TRUE;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 					}
 #endif
 				}

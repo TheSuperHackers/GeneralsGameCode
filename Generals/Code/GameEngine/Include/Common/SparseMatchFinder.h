@@ -36,7 +36,7 @@
 #include "Common/BitFlags.h"
 #include "Common/STLTypedefs.h"
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	#define SPARSEMATCH_DEBUG
 #else
 	#undef SPARSEMATCH_DEBUG

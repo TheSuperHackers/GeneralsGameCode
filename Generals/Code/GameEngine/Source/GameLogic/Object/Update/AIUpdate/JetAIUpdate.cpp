@@ -136,7 +136,7 @@ private:
 public:
 	PartitionFilterHasParkingPlace(ObjectID id) : m_id(id) { }
 protected:
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterHasParkingPlace"; }
 #endif
 	virtual Bool allow(Object *objOther)

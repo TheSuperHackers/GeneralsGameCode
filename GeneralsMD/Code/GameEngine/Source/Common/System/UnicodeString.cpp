@@ -57,7 +57,7 @@
 /*static*/ UnicodeString UnicodeString::TheEmptyString;
 
 // -----------------------------------------------------
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void UnicodeString::validate() const
 {
 	if (!m_data) return;
@@ -102,7 +102,7 @@ void UnicodeString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveDa
 	UnicodeStringData* newData = (UnicodeStringData*)TheDynamicMemoryAllocator->allocateBytesDoNotZero(actualBytes, "STR_UnicodeString::ensureUniqueBufferOfSize");
 	newData->m_refCount = 1;
 	newData->m_numCharsAllocated = (actualBytes - sizeof(UnicodeStringData))/sizeof(WideChar);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	newData->m_debugptr = newData->peek();	// just makes it easier to read in the debugger
 #endif
 

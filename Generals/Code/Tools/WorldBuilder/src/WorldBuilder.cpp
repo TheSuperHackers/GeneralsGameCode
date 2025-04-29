@@ -285,7 +285,7 @@ BOOL CWorldBuilderApp::InitInstance()
 #ifdef _INTERNAL
 	DEBUG_LOG(("_INTERNAL defined.\n"));
 #endif
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	DEBUG_LOG(("_DEBUG defined.\n"));
 #endif
 	initMemoryManager();
@@ -339,7 +339,7 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	initSubsystem(TheWritableGlobalData, new GlobalData(), "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
 	
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	ini.load( AsciiString( "Data\\INI\\GameDataDebug.ini" ), INI_LOAD_MULTIFILE, NULL );
 #endif
 
@@ -411,7 +411,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	DEBUG_ASSERTCRASH(!TheGlobalData->m_useHalfHeightMap, ("TheGlobalData->m_useHalfHeightMap : Don't use this setting in WB."));
 	TheWritableGlobalData->m_useHalfHeightMap = false;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	// WB never uses the shroud.
 	TheWritableGlobalData->m_shroudOn = FALSE;
 #endif

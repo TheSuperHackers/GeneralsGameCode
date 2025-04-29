@@ -164,7 +164,7 @@ void HackInternetAIUpdate::hackInternet()
 	// must make the state machine AFTER initing the other stuff, since it may inquire of its values...
 	//m_hackInternetStateMachine = newInstance(HackInternetStateMachine)( getObject() );
 	//m_hackInternetStateMachine->initDefaultState();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	//m_hackInternetStateMachine->setName("HackInternetSpecificAI");
 #endif
 		getStateMachine()->setState(UNPACKING);

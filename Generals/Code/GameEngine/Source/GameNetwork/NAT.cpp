@@ -576,7 +576,7 @@ void NAT::establishConnectionPaths() {
 	}
 
 // sanity check
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	for (i = 0; i < m_numNodes; ++i) {
 		DEBUG_ASSERTCRASH(connectionAssigned[i] == TRUE, ("connection number %d not assigned", i));
 	}

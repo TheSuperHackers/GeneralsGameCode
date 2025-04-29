@@ -388,7 +388,7 @@ void WorldHeightMapEdit::loadBaseImages(void)
 {
  
  	/// @todo - take this out when we are done evaluating terrain textures. 
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#if (defined(RTS_DEBUG) || defined(_INTERNAL))
  	loadDirectoryOfImages("..\\TestArt\\TestTerrain");
 #endif
 

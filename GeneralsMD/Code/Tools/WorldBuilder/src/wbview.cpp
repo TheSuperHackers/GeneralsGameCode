@@ -159,7 +159,7 @@ void WbView::OnDraw(CDC* pDC)
 /////////////////////////////////////////////////////////////////////////////
 // WbView diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void WbView::AssertValid() const
 {
 	CView::AssertValid();

@@ -68,7 +68,7 @@ Thing::Thing( const ThingTemplate *thingTemplate )
 	}  // end if
 		
 	m_template = thingTemplate;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	m_templateName = thingTemplate->getName();
 #endif
 	m_transform.Make_Identity();

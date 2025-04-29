@@ -33,7 +33,7 @@
 #include "vertmaterial.h"
 #include "Lib/BaseType.h"
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined _INTERNAL
 struct DebugIcon;
 //
 /// W3DDebugIcons: Draws huge numbers of debug icons for pathfinding quickly.
@@ -76,6 +76,6 @@ protected:
 public:
 	static void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 };
-#endif // _DEBUG or _INTERNAL
+#endif // RTS_DEBUG or _INTERNAL
 
 #endif  // end __W3D_DEBUG_ICONS_H_

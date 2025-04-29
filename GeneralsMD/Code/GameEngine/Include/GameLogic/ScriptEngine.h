@@ -136,7 +136,7 @@ public:
 	void setPriority(const ThingTemplate *tThing, Int priority);
 	Int getPriority(const ThingTemplate *tThing) const;
 	AsciiString getName(void) const {return m_name;}
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	void dumpPriorityInfo(void);
 #endif
 
@@ -353,7 +353,7 @@ public:
 	void setEnableVTune(Bool value);
 	Bool getEnableVTune() const;
 	///End VTUNE
-//#if defined(_DEBUG) || defined(_INTERNAL)
+//#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	void debugVictory( void );
 //#endif
 

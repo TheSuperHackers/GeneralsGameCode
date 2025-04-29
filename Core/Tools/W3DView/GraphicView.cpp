@@ -48,7 +48,7 @@
 #include "dx8wrapper.h"
 #include "matrix3.h"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -144,7 +144,7 @@ CGraphicView::OnDraw (CDC* pDC)
 }
 
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void CGraphicView::AssertValid() const
 {
 	CView::AssertValid();

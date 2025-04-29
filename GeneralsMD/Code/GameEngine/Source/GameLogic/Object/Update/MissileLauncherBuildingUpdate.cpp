@@ -186,7 +186,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 				TheAudio->removeAudioEvent(m_openIdleAudio.getPlayingHandle());
 			}
 			break;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		default:
 			DEBUG_CRASH(("unknown state"));
 			break;
@@ -211,7 +211,7 @@ Bool MissileLauncherBuildingUpdate::initiateIntentToDoSpecialPower( const Specia
 		return FALSE;
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	DEBUG_ASSERTCRASH(!TheGlobalData->m_specialPowerUsesDelay || m_doorState == DOOR_OPEN, ("door is not fully open when specialpower is fired!"));
 #endif
 
@@ -258,7 +258,7 @@ UpdateSleepTime MissileLauncherBuildingUpdate::update( void )
 			switchToState(m_timeoutState);
 		}
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 		DEBUG_ASSERTCRASH(!TheGlobalData->m_specialPowerUsesDelay || !(m_specialPowerModule->isReady() && m_doorState != DOOR_OPEN), ("door is not fully open when specialpower is ready!"));
 #endif
 

@@ -79,7 +79,7 @@
 #include "GameClient/Line2D.h"
 #include "GameClient/ControlBar.h"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 //#include "GameClient/InGameUI.h"	// for debugHints
 #include "Common/PlayerList.h"
 #endif
@@ -1492,7 +1492,7 @@ void PartitionCell::getCellCenterPos(Real& x, Real& y)
 }
 
 //-----------------------------------------------------------------------------
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void PartitionCell::validateCoiList()
 {
 	CellAndObjectIntersection *nextCoi = 0, *prevCoi = 0;
@@ -2138,7 +2138,7 @@ void PartitionData::invalidateShroudedStatusForAllPlayers()
 	}
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 static AsciiString theObjName;
 #endif
 
@@ -2152,7 +2152,7 @@ Int PartitionData::calcMaxCoiForShape(GeometryType geom, Real majorRadius, Real 
   //M Lorenzen 8/26/03
 //	if (isSmall)
 //	{
-//		#if defined(_DEBUG) || defined(_INTERNAL)
+//		#if defined(RTS_DEBUG) || defined(_INTERNAL)
 //		Int chk = calcMaxCoiForShape(geom, majorRadius, minorRadius, false);
 //		DEBUG_ASSERTCRASH(chk <= 4, ("Small objects should be <= 4 cells, but I calced %s as %d\n",theObjName.str(),chk));
 //		#endif
@@ -2193,7 +2193,7 @@ Int PartitionData::calcMaxCoiForObject()
 	Real majorRadius = obj->getGeometryInfo().getMajorRadius();
 	Real minorRadius = obj->getGeometryInfo().getMinorRadius();
 	Bool isSmall = obj->getGeometryInfo().getIsSmall();
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 theObjName = obj->getTemplate()->getName();
 #endif
 	return calcMaxCoiForShape(geom, majorRadius, minorRadius, isSmall);
@@ -2695,7 +2695,7 @@ void PartitionManager::shutdown()
 	m_updatedSinceLastReset = false;
 	ThePartitionManager->removeAllDirtyModules();
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	// the above *should* remove all the touched cells (via unRegisterObject), but let's check:
 	DEBUG_ASSERTCRASH( m_moduleList == NULL, ("hmm, modules left over"));
 	PartitionData *mod, *nextMod;
@@ -2779,7 +2779,7 @@ void PartitionManager::update()
 		processPendingUndoShroudRevealQueue();
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (TheGlobalData->m_debugThreatMap) 
 	{
 		if (TheGameLogic->getFrame() % TheGlobalData->m_debugThreatMapTileDuration)
@@ -2839,7 +2839,7 @@ void PartitionManager::update()
 			}			
 		}
 	}
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(_INTERNAL)
 }  // end update
 
 //------------------------------------------------------------------------------
@@ -3194,7 +3194,7 @@ void PartitionManager::calcRadiusVec()
 		}
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	Int total = 0;
 	for (Int i = 0; i <= m_maxGcoRadius; ++i)
 	{
@@ -3236,7 +3236,7 @@ Object *PartitionManager::getClosestObjects(
 	GetPrecisionTimer(&startTime64);
 #endif
 	
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	static Int theEntrancyCount = 0;
 	DEBUG_ASSERTCRASH(theEntrancyCount == 0, ("sorry, this routine is not reentrant"));
 	++theEntrancyCount;
@@ -3439,7 +3439,7 @@ Object *PartitionManager::getClosestObjects(
 		*closestDistArg = (Real)sqrtf(closestDistSqr);
 	}
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	--theEntrancyCount;
 #endif
 #ifdef DUMP_PERF_STATS
@@ -5376,7 +5376,7 @@ Bool PartitionFilterPossibleToAttack::allow(Object *objOther)
 	// objOther is guaranteed to be non-null, so we don't need to check (srj)
 	
 	// we should have already filtered out isAbleToAttack!
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	// disable this assert for INTERNAL builds (srj)
 	DEBUG_ASSERTCRASH(m_obj && m_obj->isAbleToAttack(), ("if the object is unable to attack at all, you should filter that out ahead of time!"));
 #endif

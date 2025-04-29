@@ -136,7 +136,7 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 	{
 		m_outBuffer[i].length = 0;
 		m_inBuffer[i].length = 0;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 		m_delayedInBuffer[i].message.length = 0;
 #endif
 	}
@@ -154,7 +154,7 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 
 	m_port = port;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (TheGlobalData->m_latencyAverage > 0 || TheGlobalData->m_latencyNoise)
 		m_useLatency = true;
 
@@ -249,7 +249,7 @@ Bool Transport::doSend() {
 		}
 	} // for (i=0; i<MAX_MESSAGES; ++i)
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	// Latency simulation - deliver anything we're holding on to that is ready
 	if (m_useLatency)
 	{
@@ -286,7 +286,7 @@ Bool Transport::doRecv()
 
 	// Read in anything on our socket
 	sockaddr_in from;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	UnsignedInt now = timeGetTime();
 #endif
 
@@ -296,7 +296,7 @@ Bool Transport::doRecv()
 //	DEBUG_LOG(("Transport::doRecv - checking\n"));
 	while ( (len=m_udpsock->Read(buf, MAX_MESSAGE_LEN, &from)) > 0 )
 	{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 		// Packet loss simulation
 		if (m_usePacketLoss)
 		{
@@ -332,7 +332,7 @@ Bool Transport::doRecv()
 
 		for (int i=0; i<MAX_MESSAGES; ++i)
 		{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 			// Latency simulation
 			if (m_useLatency)
 			{
@@ -362,7 +362,7 @@ Bool Transport::doRecv()
 					memcpy(&m_inBuffer[i], buf, len);
 					break;
 				}
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 			}
 #endif
 		}

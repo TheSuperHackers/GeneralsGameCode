@@ -91,7 +91,7 @@ private:
 	// add a ctor/dtor, 'cuz they won't ever be called.
 	struct AsciiStringData
 	{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 		const char* m_debugptr;	// just makes it easier to read in the debugger
 #endif
 		unsigned short	m_refCount;						// reference count
@@ -101,7 +101,7 @@ private:
 		inline char* peek() { return (char*)(this+1); }
 	};
 
-	#ifdef _DEBUG
+	#ifdef RTS_DEBUG
 	void validate() const;
 	#else
 	inline void validate() const { }

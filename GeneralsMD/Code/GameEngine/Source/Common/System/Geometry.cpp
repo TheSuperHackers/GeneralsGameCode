@@ -518,7 +518,7 @@ void GeometryInfo::calcBoundingStuff()
 	};
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 //=============================================================================
 void GeometryInfo::tweakExtents(ExtentModType extentModType, Real extentModAmount)
 {
@@ -542,7 +542,7 @@ void GeometryInfo::tweakExtents(ExtentModType extentModType, Real extentModAmoun
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 //=============================================================================
 AsciiString GeometryInfo::getDescriptiveString() const
 {

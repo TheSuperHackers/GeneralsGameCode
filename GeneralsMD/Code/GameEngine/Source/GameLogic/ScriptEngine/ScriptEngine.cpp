@@ -194,7 +194,7 @@ Int AttackPriorityInfo::getPriority(const ThingTemplate *tThing) const
 	return priority;
 }
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 /** Dump the info. */
 //-------------------------------------------------------------------------------------------------
 void AttackPriorityInfo::dumpPriorityInfo(void)
@@ -5615,7 +5615,7 @@ void ScriptEngine::update( void )
 			_adjustVariable(m_flags[k].name.str(), m_flags[k].value);
 		}
 	}
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	if (TheGameLogic->getFrame()==0) {
 		for (i=0; i<m_numAttackInfo; i++) {
 			m_attackPriorityInfo[i].dumpPriorityInfo();
@@ -6377,7 +6377,7 @@ void ScriptEngine::setCounter( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setFade( ScriptAction *pAction )
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(_INTERNAL)
 	if (TheGlobalData->m_disableCameraFade)
 	{
 		m_fade = FADE_NONE;
@@ -9332,7 +9332,7 @@ void ScriptEngine::loadPostProcess( void )
 
 }  // end loadPostProcess
 
-//#if defined(_DEBUG) || defined(_INTERNAL)
+//#if defined(RTS_DEBUG) || defined(_INTERNAL)
 void ScriptEngine::debugVictory( void )
 {
 	ScriptAction *action = newInstance(ScriptAction)(ScriptAction::VICTORY);
