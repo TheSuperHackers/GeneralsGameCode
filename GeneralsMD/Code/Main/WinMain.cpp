@@ -69,7 +69,7 @@
 
 #include <rts/profile.h>
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
@@ -766,7 +766,7 @@ void munkeeFunc(void)
 
 void checkProtection(void)
 {
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 	__try
 	{
 		munkeeFunc();
@@ -928,7 +928,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 // Force "splash image" to be loaded from a file, not a resource so same exe can be used in different localizations.
-#if defined RTS_DEBUG || defined _INTERNAL || defined _PROFILE
+#if defined RTS_DEBUG || defined RTS_INTERNAL || defined _PROFILE
 
 			// check both localized directory and root dir
 		char filePath[_MAX_PATH];
@@ -1043,7 +1043,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	#ifdef MEMORYPOOL_DEBUG
 		TheMemoryPoolFactory->debugMemoryReport(REPORT_POOLINFO | REPORT_POOL_OVERFLOW | REPORT_SIMPLE_LEAKS, 0, 0);
 	#endif
-	#if defined(RTS_DEBUG) || defined(_INTERNAL)
+	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		TheMemoryPoolFactory->memoryPoolUsageReport("AAAMemStats");
 	#endif
 

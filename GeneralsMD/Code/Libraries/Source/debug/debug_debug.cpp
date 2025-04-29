@@ -1437,7 +1437,7 @@ void Debug::WriteBuildInfo(void)
     (*this) << " " << m_version;
   if (*m_intVersion)
     (*this) << " internal " << m_intVersion;
-  #if defined(_INTERNAL)
+  #if defined(RTS_INTERNAL)
     operator<<(" internal");
   #elif defined(RTS_DEBUG)
     operator<<(" debug");

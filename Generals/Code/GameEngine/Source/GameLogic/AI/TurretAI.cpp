@@ -47,7 +47,7 @@
 
 const UnsignedInt WAIT_INDEFINITELY = 0xffffffff;
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -672,7 +672,7 @@ UpdateSleepTime TurretAI::updateTurretAI()
 {
 	USE_PERF_TIMER(TurretAI)
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	DEBUG_ASSERTCRASH(!m_enabled ||
 							m_turretStateMachine->peekSleepTill() == 0 || 
 							m_turretStateMachine->peekSleepTill() >= m_sleepUntil, ("Turret Machine is less sleepy than turret"));
@@ -731,7 +731,7 @@ UpdateSleepTime TurretAI::updateTurretAI()
 
 	m_sleepUntil = now + subMachineSleep;
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	DEBUG_ASSERTCRASH(!m_enabled ||
 							m_turretStateMachine->peekSleepTill() == 0 || 
 							m_turretStateMachine->peekSleepTill() >= m_sleepUntil, ("Turret Machine is less sleepy than turret"));

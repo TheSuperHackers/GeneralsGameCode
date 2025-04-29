@@ -86,7 +86,7 @@
 #include "GameNetwork/NetworkInterface.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -452,7 +452,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_CLEAR_GAME_DATA:
 		{
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 			if (TheDisplay && TheGlobalData->m_dumpAssetUsage)
 				TheDisplay->dumpAssetUsage(TheGlobalData->m_mapName.str());
 #endif
@@ -914,7 +914,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			break;
 		}
 		
-#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined (_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined (_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DEBUG_KILL_SELECTION:
 		{
@@ -1945,13 +1945,13 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 				if (thisPlayer->isLocalPlayer())
 				{
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 					// don't even put this in release, cause someone might hack it.
 					if (!TheDebugIgnoreSyncErrors)
 					{
 #endif
 						m_shouldValidateCRCs = TRUE;
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 					}
 #endif
 				}

@@ -38,7 +38,7 @@
 #include "Common/UserPreferences.h"
 #include "GameLogic/GameLogic.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -263,7 +263,7 @@ AsciiString GetMessageTypeString(UnsignedInt type)
 
 void LANAPI::checkMOTD( void )
 {
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_useLocalMOTD)
 	{
 		// for a playtest, let's log some play statistics, eh?

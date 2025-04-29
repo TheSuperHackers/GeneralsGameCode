@@ -74,7 +74,7 @@ extern HWND ApplicationHWnd;
 
 extern const char *gAppPrefix; /// So WB can have a different log file name.
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // this should ALWAYS be present
 #pragma optimize("", off)
 #endif
@@ -85,7 +85,7 @@ extern const char *gAppPrefix; /// So WB can have a different log file name.
 
 #ifdef DEBUG_LOGGING
 
-#if defined(_INTERNAL)
+#if defined(RTS_INTERNAL)
 	#define DEBUG_FILE_NAME				"DebugLogFileI.txt"
 	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevI.txt"
 #elif defined(RTS_DEBUG)
@@ -709,7 +709,7 @@ void ReleaseCrash(const char *reason)
 		}
 	}
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	/* static */ char buff[8192]; // not so static so we can be threadsafe
 	_snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);
 	buff[8191] = 0;

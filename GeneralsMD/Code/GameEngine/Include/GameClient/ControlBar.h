@@ -1027,7 +1027,7 @@ private:
 	Int m_remainingRadarAttackGlowFrames;
 	GameWindow *m_radarAttackGlowWindow;
 
-#if defined( _INTERNAL ) || defined( RTS_DEBUG )
+#if defined( RTS_INTERNAL ) || defined( RTS_DEBUG )
 	UnsignedInt m_lastFrameMarkedDirty;
 	UnsignedInt m_consecutiveDirtyFrames;
 #endif

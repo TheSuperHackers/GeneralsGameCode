@@ -120,7 +120,7 @@ private:
   Bool                  m_hasDetonated;           ///< 
 
 	Bool calcFlightPath(Bool recalcNumSegments);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	void displayFlightPath();	///< Uses little debug icons in worldspace to show the path chosen when it is decided upon
 #endif
 

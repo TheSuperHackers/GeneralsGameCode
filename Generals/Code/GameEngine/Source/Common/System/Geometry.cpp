@@ -36,7 +36,7 @@
 #include "Common/RandomValue.h"
 #include "Common/Xfer.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -471,7 +471,7 @@ void GeometryInfo::calcBoundingStuff()
 	};
 }
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 //=============================================================================
 void GeometryInfo::tweakExtents(ExtentModType extentModType, Real extentModAmount)
 {
@@ -495,7 +495,7 @@ void GeometryInfo::tweakExtents(ExtentModType extentModType, Real extentModAmoun
 }
 #endif
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 //=============================================================================
 AsciiString GeometryInfo::getDescriptiveString() const
 {

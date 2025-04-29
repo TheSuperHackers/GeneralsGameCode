@@ -68,7 +68,7 @@
 #include "WW3D2/meshmdl.h"
 #include "Common/BitFlagsIO.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -85,7 +85,7 @@ static inline Bool isValidTimeToCalcLogicStuff()
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-#if defined(DEBUG_CRC) && (defined(RTS_DEBUG) || defined(_INTERNAL))
+#if defined(DEBUG_CRC) && (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 #include <cstdarg>
 class LogClass
 {
@@ -205,11 +205,11 @@ LogClass BonePosLog("bonePositions.txt");
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
 extern AsciiString TheThingTemplateBeingParsedName;
 #endif
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 extern Real TheSkateDistOverride;
 #endif
 
@@ -476,7 +476,7 @@ static Bool findSingleSubObj(RenderObjClass* robj, const AsciiString& boneName, 
 			if (test == childObject)
 			{
 				boneIndex = robj->Get_Sub_Object_Bone_Index(0, subObj);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 				test->Release_Ref();
 				test = robj->Get_Sub_Object_On_Bone(0, boneIndex);
 				DEBUG_ASSERTCRASH(test != NULL && test == childObject, ("*** ASSET ERROR: Hmm, bone problem"));
@@ -743,7 +743,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 // since this class has no idea which object it refers to, it must assume that the projectilelaunchbonename
 // is required if the fxBoneName is specified
 // this is not always true, since some weapons have no launched projectiles, hence the caveat in the assert message
-//#if defined(RTS_DEBUG) || defined(_INTERNAL)
+//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 //    if (
 //          ( m_modelName.startsWith("UV") || m_modelName.startsWith("NV") || m_modelName.startsWith("AV") ||
 //            m_modelName.startsWith("uv") || m_modelName.startsWith("nv") || m_modelName.startsWith("av")
@@ -773,7 +773,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				{
 					sprintf(buffer, "%s%02d", mfName.str(), i);
 					findPristineBone(NAMEKEY(buffer), &info.m_muzzleFlashBone);
-#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
 					if (info.m_muzzleFlashBone)
 						info.m_muzzleFlashBoneName = buffer;
 #endif
@@ -821,7 +821,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				if (!mfName.isEmpty())
 					findPristineBone(NAMEKEY(mfName), &info.m_muzzleFlashBone);
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
 				if (info.m_muzzleFlashBone)
 					info.m_muzzleFlashBoneName = mfName;
 #endif
@@ -986,7 +986,7 @@ void ModelConditionInfo::loadAnimations() const
 void ModelConditionInfo::clear()
 { 
 	int i;
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_description.clear();
 #endif
 	m_conditionsYesVec.clear();
@@ -1482,7 +1482,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 				info.m_conditionsYesVec.clear();
 				info.m_conditionsYesVec.push_back(blankConditions);
 
-	#if defined(RTS_DEBUG) || defined(_INTERNAL)
+	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 				info.m_description.clear();
 				info.m_description.concat(TheThingTemplateBeingParsedName);
 				info.m_description.concat(" DEFAULT");
@@ -1513,7 +1513,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 			}
 
 			info.m_transitionSig = buildTransitionSig(firstKey, secondKey);
-	#if defined(RTS_DEBUG) || defined(_INTERNAL)
+	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 			info.m_description.clear();
 			info.m_description.concat(TheThingTemplateBeingParsedName);
 			info.m_description.concat(" TRANSITION: ");
@@ -1537,7 +1537,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 			
 			ModelConditionFlags conditionsYes;
 
-	#if defined(RTS_DEBUG) || defined(_INTERNAL)
+	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 			AsciiString description;
 			conditionsYes.parse(ini, &description);
 
@@ -1589,7 +1589,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 	//	}
 			
 			ModelConditionFlags conditionsYes;
-	#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
+	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
 			AsciiString description;
 			conditionsYes.parse(ini, &description);
 
@@ -1889,18 +1889,18 @@ void W3DModelDraw::setShadowsEnabled(Bool enable)
 }
 
 /**collect some stats about the rendering cost of this draw module */
-#if defined(RTS_DEBUG) || defined(_INTERNAL)	
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
 void W3DModelDraw::getRenderCost(RenderCost & rc) const
 {
 	getRenderCostRecursive(rc,m_renderObject);
 	if (m_shadow)
 		m_shadow->getRenderCost(rc);
 }
-#endif //_DEBUG || _INTERNAL
+#endif //_DEBUG || RTS_INTERNAL
 
 
 /**recurse through sub-objs to collect stats about the rendering cost of this draw module */
-#if defined(RTS_DEBUG) || defined(_INTERNAL)	
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
 void W3DModelDraw::getRenderCostRecursive(RenderCost & rc,RenderObjClass * robj) const 
 {
 	if (robj == NULL) return;
@@ -1937,7 +1937,7 @@ void W3DModelDraw::getRenderCostRecursive(RenderCost & rc,RenderObjClass * robj)
 		}
 	}
 }
-#endif //_DEBUG || _INTERNAL
+#endif //_DEBUG || RTS_INTERNAL
 
 //-------------------------------------------------------------------------------------------------
 void W3DModelDraw::setFullyObscuredByShroud(Bool fullyObscured)
@@ -2262,7 +2262,7 @@ Real W3DModelDraw::getCurAnimDistanceCovered() const
 	if (m_curState != NULL && m_whichAnimInCurState >= 0)
 	{
 		const W3DAnimationInfo& animInfo = m_curState->m_animations[m_whichAnimInCurState];
-	#if defined(RTS_DEBUG) || defined(_INTERNAL)
+	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		if (TheSkateDistOverride != 0.0f)
 			return TheSkateDistOverride;
 	#endif
@@ -2822,7 +2822,7 @@ void W3DModelDraw::nukeCurrentRender(Matrix3D* xform)
 }
 
 //-------------------------------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(_INTERNAL)	//art wants to see buildings without flags as a test.
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	//art wants to see buildings without flags as a test.
 void W3DModelDraw::hideGarrisonFlags(Bool hide)
 {
 	if (!m_renderObject)
@@ -3048,7 +3048,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 		rebuildWeaponRecoilInfo(newState);
 		doHideShowSubObjs(&newState->m_hideShowVec);
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL)	//art wants to see buildings without flags as a test.
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	//art wants to see buildings without flags as a test.
 		if (TheGlobalData->m_hideGarrisonFlags && draw->isKindOf(KINDOF_STRUCTURE))
 			hideGarrisonFlags(TRUE);
 #endif
@@ -3277,7 +3277,7 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 		//BONEPOS_LOG(("can't find best info\n"));
 		return false;
 	}
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	CRCDEBUG_LOG(("W3DModelDraw::getProjectileLaunchOffset() for %s\n",
 		stateToUse->getDescription().str()));
 #endif
@@ -4298,7 +4298,7 @@ void W3DModelDrawModuleData::xfer( Xfer *x )
 	{
 		ModelConditionInfo *info = &(*it);
 		x->xferByte(&(info->m_validStuff));
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		x->xferAsciiString(&(info->m_description));
 #endif
 		if (info->m_validStuff)

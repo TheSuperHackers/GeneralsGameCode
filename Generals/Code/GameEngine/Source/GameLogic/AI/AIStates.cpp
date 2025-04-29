@@ -66,7 +66,7 @@
 #include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
 #include "GameLogic/Module/StealthUpdate.h"
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -853,7 +853,7 @@ AsciiString AIStateMachine::getCurrentStateName(void) const
 StateReturnType AIStateMachine::updateStateMachine()
 {
 	//-extraLogging
-	#if (defined(RTS_DEBUG) || defined(_INTERNAL))
+	#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 		Bool idle = getOwner()->getAI()->isIdle();
 		if( !idle && TheGlobalData->m_extraLogging )
 			DEBUG_LOG( ("%d - %s::update() start - %s", TheGameLogic->getFrame(), getCurrentStateName().str(), getOwner()->getTemplate()->getName().str() ) );
@@ -873,7 +873,7 @@ StateReturnType AIStateMachine::updateStateMachine()
 		if (status==STATE_CONTINUE)	
 		{
 			//-extraLogging
-			#if (defined(RTS_DEBUG) || defined(_INTERNAL))
+			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 				if( !idle && TheGlobalData->m_extraLogging )
 					DEBUG_LOG( (" - RETURN EARLY STATE_CONTINUE\n") );
 			#endif
@@ -887,7 +887,7 @@ StateReturnType AIStateMachine::updateStateMachine()
 	StateReturnType retType = StateMachine::updateStateMachine();
 
 	//-extraLogging 
-	#if (defined(RTS_DEBUG) || defined(_INTERNAL))
+	#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 		AsciiString result;
 		if( TheGlobalData->m_extraLogging )
 		{

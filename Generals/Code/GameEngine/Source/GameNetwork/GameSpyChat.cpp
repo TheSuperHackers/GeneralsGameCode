@@ -135,7 +135,7 @@ static Bool handleSlashCommands( UnicodeString message, Bool isAction, GameWindo
 		case L'r':
 		case L'R':
 			remainder.nextToken(&token);
-#if defined RTS_DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 			if (token.compareNoCase(L"raw") == 0)
 			{
 				// Send raw IRC commands (Ascii only)
@@ -149,7 +149,7 @@ static Bool handleSlashCommands( UnicodeString message, Bool isAction, GameWindo
 			}
 #endif
 			break;
-#if defined RTS_DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 		case L'k':
 		case L'K':
 			remainder.nextToken(&token);
@@ -194,7 +194,7 @@ static Bool handleSlashCommands( UnicodeString message, Bool isAction, GameWindo
 				}
 				return true; // show it anyway
 			}
-#if defined RTS_DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 			else if (token.compareNoCase(L"oper") == 0)
 			{
 				// Send raw IRC oper command
@@ -245,7 +245,7 @@ static Bool handleSlashCommands( UnicodeString message, Bool isAction, GameWindo
 				return true; // show it anyway
 			}
 			break;
-#if defined RTS_DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 		case L'c':
 		case L'C':
 			remainder.nextToken(&token);
@@ -262,7 +262,7 @@ static Bool handleSlashCommands( UnicodeString message, Bool isAction, GameWindo
 				return true; // show it anyway
 			}
 			break;
-#endif // RTS_DEBUG || defined _INTERNAL
+#endif // RTS_DEBUG || defined RTS_INTERNAL
 		}
 	}
 	*/

@@ -57,7 +57,7 @@
 #include "Common/FileSystem.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -68,7 +68,7 @@
 //         Externals                                                     
 //----------------------------------------------------------------------------
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Bool g_useStringFile = TRUE;
 #endif
 
@@ -167,7 +167,7 @@ class GameTextManager : public GameTextInterface
 		StringInfo			*m_stringInfo;
 		StringLookUp		*m_stringLUT;
 		Bool						m_initialized;
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		Bool						m_jabberWockie;
 		Bool						m_munkee;
 #endif
@@ -248,7 +248,7 @@ GameTextManager::GameTextManager()
 	m_stringLUT(NULL),
 	m_initialized(FALSE),
 	m_noStringList(NULL),
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_jabberWockie(FALSE),
 	m_munkee(FALSE),
 	m_useStringFile(g_useStringFile),
@@ -301,7 +301,7 @@ void GameTextManager::init( void )
 	m_initialized = TRUE;
 
 	m_maxLabelLen = 0;
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if(TheGlobalData)
 	{
 		m_jabberWockie = TheGlobalData->m_jabberOn;
@@ -695,7 +695,7 @@ void GameTextManager::translateCopy( WideChar *outbuf, Char *inbuf )
 {
 	Int slash = FALSE;
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if ( m_jabberWockie )
 	{
 		static Char buffer[MAX_UITEXT_LENGTH*2];

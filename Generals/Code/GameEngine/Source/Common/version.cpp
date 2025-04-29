@@ -41,7 +41,7 @@ Version::Version()
 	m_localBuildNum = 0;
 	m_buildUser = AsciiString("somebody");
 	m_buildLocation = AsciiString("somewhere");
-#if defined RTS_DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	m_showFullVersion = TRUE;
 #else
 	m_showFullVersion = FALSE;
@@ -70,15 +70,15 @@ UnsignedInt Version::getVersionNumber( void )
 AsciiString Version::getAsciiVersion( void )
 {
 	AsciiString version;
-#if defined RTS_DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	if (m_localBuildNum)
 		version.format("%d.%d.%d.%d%c%c", m_major, m_minor, m_buildNum, m_localBuildNum,
 			m_buildUser.getCharAt(0), m_buildUser.getCharAt(1));
 	else
 		version.format("%d.%d.%d", m_major, m_minor, m_buildNum);
-#else // defined RTS_DEBUG || defined _INTERNAL
+#else // defined RTS_DEBUG || defined RTS_INTERNAL
 	version.format("%d.%d", m_major, m_minor);
-#endif // defined RTS_DEBUG || defined _INTERNAL
+#endif // defined RTS_DEBUG || defined RTS_INTERNAL
 
 	return version;
 }
@@ -87,21 +87,21 @@ UnicodeString Version::getUnicodeVersion( void )
 {
 	UnicodeString version;
 
-#if defined RTS_DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	if (!m_localBuildNum)
 		version.format(TheGameText->fetch("Version:Format3").str(), m_major, m_minor, m_buildNum);
 	else
 		version.format(TheGameText->fetch("Version:Format4").str(), m_major, m_minor, m_buildNum, m_localBuildNum,
 			m_buildUser.getCharAt(0), m_buildUser.getCharAt(1));
-#else // defined RTS_DEBUG || defined _INTERNAL
+#else // defined RTS_DEBUG || defined RTS_INTERNAL
 	version.format(TheGameText->fetch("Version:Format2").str(), m_major, m_minor);
-#endif // defined RTS_DEBUG || defined _INTERNAL
+#endif // defined RTS_DEBUG || defined RTS_INTERNAL
 
 #ifdef RTS_DEBUG
 	version.concat(UnicodeString(L" Debug"));
 #endif
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 	version.concat(UnicodeString(L" Internal"));
 #endif
 
@@ -122,7 +122,7 @@ UnicodeString Version::getFullUnicodeVersion( void )
 	version.concat(UnicodeString(L" Debug"));
 #endif
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 	version.concat(UnicodeString(L" Internal"));
 #endif
 

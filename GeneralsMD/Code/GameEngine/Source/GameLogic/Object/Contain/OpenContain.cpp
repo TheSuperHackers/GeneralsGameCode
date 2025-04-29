@@ -57,7 +57,7 @@
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Weapon.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -306,7 +306,7 @@ void OpenContain::addToContain( Object *rider )
 		wasSelected = TRUE;
 	}
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if( !isValidContainerFor( rider, false ) )
 	{
 		Object *reportObject = rider;

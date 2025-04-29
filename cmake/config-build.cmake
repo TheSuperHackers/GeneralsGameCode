@@ -66,7 +66,7 @@ else()
     target_compile_definitions(core_config INTERFACE _RELEASE)
 
     if(RTS_BUILD_OPTION_INTERNAL)
-        target_compile_definitions(core_config INTERFACE _INTERNAL)
+        target_compile_definitions(core_config INTERFACE RTS_INTERNAL)
     endif()
     if(RTS_BUILD_OPTION_PROFILE)
         target_compile_definitions(core_config INTERFACE _PROFILE)

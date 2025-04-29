@@ -71,7 +71,7 @@ public:
 	Bool testVersionPlayback(AsciiString filename);   ///< Returns if the playback is a valid playback file for this version or not.
 	AsciiString getCurrentReplayFilename( void );			///< valid during playback only
 	void stopPlayback();															///< Stops playback.  Its fine to call this even if not playing back a file.
-#if defined RTS_DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	Bool analyzeReplay( AsciiString filename );
 	Bool isAnalysisInProgress( void );
 #endif

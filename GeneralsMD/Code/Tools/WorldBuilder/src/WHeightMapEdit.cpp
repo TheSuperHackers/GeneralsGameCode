@@ -43,7 +43,7 @@
 
 #include "Common/DataChunk.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -394,7 +394,7 @@ void WorldHeightMapEdit::loadBaseImages(void)
 {
  
  	/// @todo - take this out when we are done evaluating terrain textures. 
-#if (defined(RTS_DEBUG) || defined(_INTERNAL))
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
  	loadDirectoryOfImages("..\\TestArt\\TestTerrain");
 #endif
 

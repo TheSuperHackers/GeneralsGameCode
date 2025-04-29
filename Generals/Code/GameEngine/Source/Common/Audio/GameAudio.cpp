@@ -71,7 +71,7 @@
 #include "WWMath/matrix3d.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
@@ -248,7 +248,7 @@ void AudioManager::init()
 				break;
 			}
 			// We loop infinitely on the splash screen if we don't allow breaking out of this loop.
-//#if !defined( RTS_DEBUG ) && !defined( _INTERNAL )
+//#if !defined( RTS_DEBUG ) && !defined( RTS_INTERNAL )
 			else
 			{
 				// Display the warning.

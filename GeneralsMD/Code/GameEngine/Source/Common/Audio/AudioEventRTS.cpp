@@ -57,7 +57,7 @@
 #include "GameClient/Drawable.h"	// For getPosition
 #include "GameClient/GameClient.h"	// For getDrawableByID
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif

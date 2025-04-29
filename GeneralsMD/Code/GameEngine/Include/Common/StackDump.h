@@ -30,7 +30,7 @@
 #ifndef IG_DEGBUG_STACKTRACE
 #define IG_DEBUG_STACKTRACE	1
 #endif // Unsure about this one -ML 3/25/03
-#if defined(RTS_DEBUG) || defined(_INTERNAL) || defined(IG_DEBUG_STACKTRACE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(IG_DEBUG_STACKTRACE)
 
 // Writes a stackdump (provide a callback : gets called per line)
 // If callback is NULL then will write using OuputDebugString

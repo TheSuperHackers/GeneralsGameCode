@@ -56,7 +56,7 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/SidesList.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -104,7 +104,7 @@ Bool st_particleSystemNeedsStopping = FALSE; ///< Set along with st_particleSyst
 #define FORMAT_STRING_LEADING_STRING		"%s%.2f"
 // That's it for particle editor
 
-#if defined(_INTERNAL)
+#if defined(RTS_INTERNAL)
 	#define DO_VTUNE_STUFF
 #endif
 
@@ -5656,7 +5656,7 @@ void ScriptEngine::setCounter( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setFade( ScriptAction *pAction )
 {
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_disableCameraFade)
 	{
 		m_fade = FADE_NONE;
@@ -8609,7 +8609,7 @@ void ScriptEngine::loadPostProcess( void )
 
 }  // end loadPostProcess
 
-//#if defined(RTS_DEBUG) || defined(_INTERNAL)
+//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 void ScriptEngine::debugVictory( void )
 {
 	ScriptAction *action = newInstance(ScriptAction)(ScriptAction::VICTORY);

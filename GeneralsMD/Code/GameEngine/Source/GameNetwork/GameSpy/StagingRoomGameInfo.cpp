@@ -48,7 +48,7 @@
 #include "GameNetwork/NAT.h"
 #include "GameNetwork/NetworkInterface.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -584,7 +584,7 @@ void GameSpyStagingRoom::startGame(Int gameID)
 		}
 	}
 
-//#if defined(RTS_DEBUG) || defined(_INTERNAL)
+//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (numHumans < 2)
 	{
 		launchGame();
@@ -592,7 +592,7 @@ void GameSpyStagingRoom::startGame(Int gameID)
 			TheGameSpyInfo->leaveStagingRoom();
 	}
 	else
-//#endif // defined(RTS_DEBUG) || defined(_INTERNAL)
+//#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	{
 		TheNAT = NEW NAT();
 		TheNAT->attachSlotList(m_slot, getLocalSlotNum(), m_localIP);

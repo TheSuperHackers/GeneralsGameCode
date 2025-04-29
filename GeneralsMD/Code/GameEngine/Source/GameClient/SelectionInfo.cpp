@@ -39,7 +39,7 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/KeyDefs.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -344,7 +344,7 @@ void translatePickTypesToKindof(UnsignedInt pickTypes, KindOfMaskType& outMask)
 Bool addDrawableToList( Drawable *draw, void *userData )
 {
 	PickDrawableStruct *pds = (PickDrawableStruct *) userData;
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_allowUnselectableSelection) {
 		pds->drawableListToFill->push_back(draw);
 		return TRUE;

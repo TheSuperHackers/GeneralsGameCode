@@ -54,7 +54,7 @@
 #include "Lib/BaseType.h"
 
 // ----------------------------------------------------------------------------------------------
-#if defined(_INTERNAL) || defined(RTS_DEBUG)
+#if defined(RTS_INTERNAL) || defined(RTS_DEBUG)
 	#define NO_DUMP_PERF_STATS
 #else
 	#define NO_DUMP_PERF_STATS

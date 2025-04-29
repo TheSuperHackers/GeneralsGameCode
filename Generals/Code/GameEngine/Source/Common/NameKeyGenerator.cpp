@@ -135,7 +135,7 @@ NameKeyType NameKeyGenerator::nameToKey(const char* nameString)
 
 	NameKeyType result = b->m_key;
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	// reality-check to be sure our hasher isn't going bad.
 	const Int maxThresh = 3;
 	Int numOverThresh = 0;

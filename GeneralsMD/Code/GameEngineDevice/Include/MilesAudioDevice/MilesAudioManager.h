@@ -138,7 +138,7 @@ class MilesAudioManager : public AudioManager
 {
 
 	public:
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		virtual void audioDebugDisplay(DebugDisplayInterface *dd, void *, FILE *fp = NULL );
 		virtual AudioHandle addAudioEvent( const AudioEventRTS *eventToAdd );	///< Add an audio event (event must be declared in an INI file)
 #endif
@@ -323,7 +323,7 @@ class MilesAudioManager : public AudioManager
 		UnsignedInt m_num3DSamples;
 		UnsignedInt m_numStreams;
 		
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		typedef std::set<AsciiString> SetAsciiString;
 		typedef SetAsciiString::iterator SetAsciiStringIt;
 		SetAsciiString m_allEventsLoaded;

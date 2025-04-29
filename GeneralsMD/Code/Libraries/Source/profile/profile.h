@@ -32,8 +32,8 @@
 #ifndef PROFILE_H // Include guard
 #define PROFILE_H
 
-#if defined(RTS_DEBUG) && defined(_INTERNAL)
-	#error "Only either RTS_DEBUG or _INTERNAL should ever be defined"
+#if defined(RTS_DEBUG) && defined(RTS_INTERNAL)
+	#error "Only either RTS_DEBUG or RTS_INTERNAL should ever be defined"
 #endif
 
 // include all our public header files (use double quotes here)

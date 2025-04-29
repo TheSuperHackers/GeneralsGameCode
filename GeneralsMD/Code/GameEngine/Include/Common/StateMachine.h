@@ -49,7 +49,7 @@ class Object;
 #if defined(RTS_DEBUG)
 	#define STATE_MACHINE_DEBUG
 #endif
-#if defined(_INTERNAL)
+#if defined(RTS_INTERNAL)
 	#define STATE_MACHINE_DEBUG	//uncomment to debug state machines in internal.  jba.
 #endif
 
@@ -321,7 +321,7 @@ public:
 	//
 	StateReturnType internalSetState( StateID newStateID );	///< for internal use only - change the current state of the machine
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	UnsignedInt peekSleepTill() const { return m_sleepTill; }
 #endif
 

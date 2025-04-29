@@ -91,7 +91,7 @@ private:
 	// add a ctor/dtor, 'cuz they won't ever be called.
 	struct AsciiStringData
 	{
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		const char* m_debugptr;	// just makes it easier to read in the debugger
 #endif
 		unsigned short	m_refCount;						// reference count

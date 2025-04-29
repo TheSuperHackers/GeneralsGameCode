@@ -53,7 +53,7 @@
 #include "WW3D2/texture.h"
 #include "WW3D2/dx8caps.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -1255,7 +1255,7 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 //-------------------------------------------------------------------------------------------------
 void W3DRadar::clearShroud()
 {
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (!TheGlobalData->m_shroudOn)
 		return;
 #endif
@@ -1275,7 +1275,7 @@ void W3DRadar::clearShroud()
 //-------------------------------------------------------------------------------------------------
 void W3DRadar::setShroudLevel(Int shroudX, Int shroudY, CellShroudStatus setting)
 {
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (!TheGlobalData->m_shroudOn)
 		return;
 #endif
@@ -1412,7 +1412,7 @@ void W3DRadar::draw( Int pixelX, Int pixelY, Int width, Int height )
  	TheDisplay->drawImage( m_overlayImage, ul.x, ul.y, lr.x, lr.y );
 
 	// draw the shroud image
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if( TheGlobalData->m_shroudOn )
 #else
 	if (true)

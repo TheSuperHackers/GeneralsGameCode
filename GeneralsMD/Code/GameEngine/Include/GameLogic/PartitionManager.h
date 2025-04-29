@@ -596,7 +596,7 @@ class PartitionFilter
 {
 public:
 	virtual Bool allow(Object *objOther) = 0;
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() = 0;
 #endif
 };
@@ -610,7 +610,7 @@ class PartitionFilterIsFlying : public PartitionFilter
 public:
 	PartitionFilterIsFlying() { }
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterIsFlying"; }
 #endif
 };
@@ -626,7 +626,7 @@ private:
 public:
 	PartitionFilterWouldCollide(const Coord3D& pos, const GeometryInfo& geom, Real angle, Bool desired);
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterWouldCollide"; }
 #endif
 };
@@ -642,7 +642,7 @@ private:
 public:
 	PartitionFilterSamePlayer(const Player *player) : m_player(player) { }
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterSamePlayer"; }
 #endif
 };
@@ -668,7 +668,7 @@ public:
 	};
 	PartitionFilterRelationship(const Object *obj, Int flags) : m_obj(obj), m_flags(flags) { }
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterRelationship"; }
 #endif
 };
@@ -685,7 +685,7 @@ private:
 public:
 	PartitionFilterAcceptOnTeam(const Team *team);
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterAcceptOnTeam"; }
 #endif
 };
@@ -702,7 +702,7 @@ private:
 public:
 	PartitionFilterAcceptOnSquad(const Squad *squad);
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterAcceptOnSquad"; }
 #endif
 };
@@ -725,7 +725,7 @@ private:
 public:
 	PartitionFilterLineOfSight(const Object *obj);
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterLineOfSight"; }
 #endif
 };
@@ -743,7 +743,7 @@ private:
 public:
 	PartitionFilterPossibleToAttack(AbleToAttackType t, const Object *obj, CommandSourceType commandSource);
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterPossibleToAttack"; }
 #endif
 };
@@ -761,7 +761,7 @@ private:
 public:
 	PartitionFilterPossibleToEnter(const Object *obj, CommandSourceType commandSource);
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterPossibleToEnter"; }
 #endif
 };
@@ -779,7 +779,7 @@ private:
 public:
 	PartitionFilterPossibleToHijack(const Object *obj, CommandSourceType commandSource);
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterPossibleToHijack"; }
 #endif
 };
@@ -795,7 +795,7 @@ private:
 public:
 	PartitionFilterLastAttackedBy(Object *obj);
 	virtual Bool allow(Object *other);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterLastAttackedBy"; }
 #endif
 };
@@ -811,7 +811,7 @@ private:
 public:
 	PartitionFilterAcceptByObjectStatus( ObjectStatusMaskType mustBeSet, ObjectStatusMaskType mustBeClear) : m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear) { }
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterAcceptByObjectStatus"; }
 #endif
 };
@@ -831,7 +831,7 @@ public:
 	{ 
 	}
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterRejectByObjectStatus"; }
 #endif
 };
@@ -848,7 +848,7 @@ private:
 public:
 	PartitionFilterStealthedAndUndetected( const Object *obj, Bool allow ) { m_obj = obj; m_allow = allow; } 
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterStealthedAndUndetected"; }
 #endif
 };
@@ -864,7 +864,7 @@ private:
 public:
 	PartitionFilterAcceptByKindOf(const KindOfMaskType& mustBeSet, const KindOfMaskType& mustBeClear) : m_mustBeSet(mustBeSet), m_mustBeClear(mustBeClear) { }
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterAcceptByKindOf"; }
 #endif
 };
@@ -884,7 +884,7 @@ public:
 	{ 
 	}
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterRejectByKindOf"; }
 #endif
 };
@@ -901,7 +901,7 @@ private:
 public:
 	PartitionFilterRejectBehind( Object *obj );
 	virtual Bool allow( Object *other );
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterRejectBehind"; }
 #endif
 };
@@ -916,7 +916,7 @@ public:
 	PartitionFilterAlive(void) { }
 protected:
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterAlive"; }
 #endif
 };
@@ -934,7 +934,7 @@ public:
 	PartitionFilterSameMapStatus(const Object *obj) : m_obj(obj) { }
 protected:
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterSameMapStatus"; }
 #endif
 };
@@ -949,7 +949,7 @@ public:
 	PartitionFilterOnMap() { }
 protected:
 	virtual Bool allow(Object *objOther);
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterOnMap"; }
 #endif
 };
@@ -969,7 +969,7 @@ public:
 	PartitionFilterRejectBuildings(const Object *o);
 protected:
 	virtual Bool allow( Object *other );
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterRejectBuildings"; }
 #endif
 };
@@ -989,7 +989,7 @@ public:
 			m_allowNonBuildings(allowNonBuildings), m_allowInsignificant(allowInsignificant) {}
 protected:
 	virtual Bool allow( Object *other );
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterInsignificantBuildings"; }
 #endif
 };
@@ -1007,7 +1007,7 @@ public:
 			m_comparisonIndex(toWhom){}
 protected:
 	virtual Bool allow( Object *other );
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterFreeOfFog"; }
 #endif
 };
@@ -1024,7 +1024,7 @@ public:
 	PartitionFilterRepulsor(const Object *o) : m_self(o) { }
 protected:
 	virtual Bool allow( Object *other );
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterRepulsor"; }
 #endif
 };
@@ -1045,7 +1045,7 @@ public:
 	PartitionFilterIrregularArea(Coord3D* area, Int numPointsInArea) : m_area(area), m_numPointsInArea(numPointsInArea) {}
 protected:
 	virtual Bool allow( Object *other );
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterIrregularArea"; }
 #endif
 };
@@ -1065,7 +1065,7 @@ public:
 	PartitionFilterPolygonTrigger(const PolygonTrigger *trigger) : m_trigger(trigger) {}
 protected:
 	virtual Bool allow( Object *other );
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterPolygonTrigger"; }
 #endif
 };
@@ -1085,7 +1085,7 @@ public:
 	PartitionFilterPlayer(const Player *player, Bool match) : m_player(player), m_match(match) {}
 protected:
 	virtual Bool allow( Object *other );
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterPlayer"; }
 #endif
 };
@@ -1110,7 +1110,7 @@ public:
 	}
 protected:
 	virtual Bool allow( Object *other );
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterPlayerAffiliation"; }
 #endif
 };
@@ -1130,7 +1130,7 @@ public:
 	PartitionFilterThing(const ThingTemplate *thing, Bool match) : m_tThing(thing), m_match(match) {}
 protected:
 	virtual Bool allow( Object *other );
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterThing"; }
 #endif
 };
@@ -1155,7 +1155,7 @@ public:
 	}
 protected:
 	virtual Bool allow( Object *other );
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterGarrisonable"; }
 #endif
 };
@@ -1178,7 +1178,7 @@ public:
 	}
 protected:
 	virtual Bool allow( Object *other );
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterGarrisonableByPlayer"; }
 #endif
 };
@@ -1196,7 +1196,7 @@ public:
 	PartitionFilterUnmannedObject( Bool match ) : m_match(match) {}
 protected:
 	virtual Bool allow( Object *other );
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterUnmannedObject"; }
 #endif
 };
@@ -1218,7 +1218,7 @@ public:
 		m_source(source), m_commandButton(commandButton), m_match(match), m_commandSource(commandSource) {}
 protected:
 	virtual Bool allow( Object *other );
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterValidCommandButtonTarget"; }
 #endif
 };

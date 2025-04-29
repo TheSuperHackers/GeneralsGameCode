@@ -206,14 +206,14 @@ void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
 		if (ref != NULL) {
 
 /*
-#if ((defined(RTS_DEBUG)) || (defined(_INTERNAL)))
+#if ((defined(RTS_DEBUG)) || (defined(RTS_INTERNAL)))
 			if (msg->getNetCommandType() == NETCOMMANDTYPE_GAMECOMMAND) {
 				DEBUG_LOG(("Connection::sendNetCommandMsg - added game command %d to net command list for frame %d.\n",
 					msg->getID(), msg->getExecutionFrame()));
 			} else if (msg->getNetCommandType() == NETCOMMANDTYPE_FRAMEINFO) {
 				DEBUG_LOG(("Connection::sendNetCommandMsg - added frame info for frame %d\n", msg->getExecutionFrame()));
 			}
-#endif // RTS_DEBUG || _INTERNAL
+#endif // RTS_DEBUG || RTS_INTERNAL
 */
 
 			ref->setRelay(relay);
@@ -371,7 +371,7 @@ NetCommandRef * Connection::processAck(UnsignedShort commandID, UnsignedByte ori
 		return NULL;
 	}
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool doDebug = FALSE;
 	if (temp->getCommand()->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTFRAME) {
 		doDebug = TRUE;
@@ -384,7 +384,7 @@ NetCommandRef * Connection::processAck(UnsignedShort commandID, UnsignedByte ori
 	m_averageLatency += lat / CONNECTION_LATENCY_HISTORY_LENGTH;
 	m_latencies[index] = lat;
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (doDebug == TRUE) {
 		DEBUG_LOG(("Connection::processAck - disconnect frame command %d found, removing from command list.\n", commandID));
 	}
@@ -411,7 +411,7 @@ void Connection::doRetryMetrics() {
 	}
 }
 
-#if defined(RTS_DEBUG) || (_INTERNAL)
+#if defined(RTS_DEBUG) || (RTS_INTERNAL)
 void Connection::debugPrintCommands() {
 	NetCommandRef *ref = m_netCommandList->getFirstMessage();
 	while (ref != NULL) {

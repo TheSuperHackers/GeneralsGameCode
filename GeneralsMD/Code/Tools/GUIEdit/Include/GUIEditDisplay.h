@@ -117,11 +117,11 @@ public:
 	virtual void preloadTextureAssets( AsciiString texture ) {}
 	virtual void toggleLetterBox(void) {}
 	virtual void enableLetterBox(Bool enable) {}
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual void dumpModelAssets(const char *path) {}
 #endif
 	virtual void doSmartAssetPurgeAndPreload(const char* usageFileName) {}
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual void dumpAssetUsage(const char* mapname) {}
 #endif
 

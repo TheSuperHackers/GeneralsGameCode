@@ -120,7 +120,7 @@ public:
 
 	virtual Int  getExecutionFrame() = 0;																			///< Returns the next valid frame for simultaneous command execution.
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual void toggleNetworkOn( void ) = 0;													///< toggle whether or not to send network traffic.
 #endif
 

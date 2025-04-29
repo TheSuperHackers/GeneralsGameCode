@@ -105,7 +105,7 @@
 
 #endif
 
-#if (defined(RTS_DEBUG) || defined(_INTERNAL)) 
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) 
 	#define MSGW3DNEW(MSG)					new( MSG, 0 )
 	#define MSGW3DNEWARRAY(MSG)			new( MSG, 0 )
 	#define W3DNEW									new("W3D_" __FILE__, 0)

@@ -58,7 +58,7 @@
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -141,7 +141,7 @@ class W3DProjectedShadow	: public Shadow
 		void updateTexture(Vector3 &lightPos);	///<updates the shadow texture image using render object and given light position.
 		void updateProjectionParameters(const Matrix3D &cameraXform);	///<recompute projection matrix - needed when light or object moves.
 		TexProjectClass *getShadowProjector(void)	{return m_shadowProjector;}
-		#if defined(RTS_DEBUG) || defined(_INTERNAL)	
+		#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
 		virtual void getRenderCost(RenderCost & rc) const;
 		#endif
 
@@ -2031,7 +2031,7 @@ void W3DProjectedShadowManager::removeAllShadows(void)
 	}  // end for
 }
 
-#if defined(RTS_DEBUG) || defined(_INTERNAL)	
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
 void W3DProjectedShadow::getRenderCost(RenderCost & rc) const
 {
 	if (TheGlobalData->m_useShadowDecals && m_isEnabled && !m_isInvisibleEnabled)

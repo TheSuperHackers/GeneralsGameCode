@@ -47,7 +47,7 @@
 
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -76,7 +76,7 @@ private:
 
 public:
 	PartitionFilterTensileFormationMember( Object* obj ) : m_obj( obj ) { }
-#if defined(RTS_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterTensileFormationMember"; }
 #endif
 	virtual Bool allow( Object *objOther )
