@@ -32,9 +32,29 @@
 #include "Common/Recorder.h"
 #include "GameLogic/GameLogic.h"
 
+bool SimulateReplayInProcess(AsciiString filename)
+{
+	STARTUPINFO si = { sizeof(STARTUPINFO) };
+	si.dwFlags = STARTF_FORCEOFFFEEDBACK;
+	PROCESS_INFORMATION pi = { 0 };
+	AsciiString command;
+	command.format("generalszh.exe -win -xres 800 -yres 600 -simReplay \"%s\"", filename.str());
+	//printf("Starting Exe for Replay \"%s\": %s\n", filename.str(), command.str());
+	//fflush(stdout);
+	CreateProcessA(NULL, (LPSTR)command.str(),
+		NULL, NULL, TRUE, 0,
+		NULL, 0, &si, &pi);
+	CloseHandle(pi.hThread);
+	WaitForSingleObject(pi.hProcess, INFINITE);
+	DWORD exitcode = 1;
+	GetExitCodeProcess(pi.hProcess, &exitcode);
+	CloseHandle(pi.hProcess);
+	return exitcode != 0;
+}
+
 // TheSuperHackers @feature helmutbuhler 04/13/2025
 // Simulate a list of replays without graphics.
-// Returns exitcode 1 if mismatch occured
+// Returns exitcode 1 if mismatch or other error occured
 int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char *argv[])
 {
 	// Note that we use printf here because this is run from cmd.
@@ -83,26 +103,8 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 		{
 			printf("%d/%d ", i+1, filenames.size());
 			fflush(stdout);
-
-			STARTUPINFO si = { sizeof(STARTUPINFO) };
-			si.dwFlags = STARTF_FORCEOFFFEEDBACK;
-			PROCESS_INFORMATION pi = { 0 };
-			AsciiString command;
-			command.format("generalszh.exe -win -xres 800 -yres 600 -simReplay \"%s\"", filename.str());
-			//printf("Starting Exe for Replay \"%s\": %s\n", filename.str(), command.str());
-			fflush(stdout);
-			CreateProcessA(NULL, (LPSTR)command.str(),
-				NULL, NULL, TRUE, 0,
-				NULL,             
-				0,				  
-				&si,              
-				&pi);
-			CloseHandle(pi.hThread);
-			WaitForSingleObject(pi.hProcess, INFINITE);
-			DWORD exitcode = 1;
-			GetExitCodeProcess(pi.hProcess, &exitcode);
-			CloseHandle(pi.hProcess);
-			numErrors += exitcode ? 1 : 0;
+			bool error = SimulateReplayInProcess(filename);
+			numErrors += error ? 1 : 0;
 		}
 		/*if (i == TheGlobalData->m_simulateReplayList.size()-1)
 		{
