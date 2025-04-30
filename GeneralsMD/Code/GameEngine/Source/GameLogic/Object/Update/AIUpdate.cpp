@@ -800,7 +800,7 @@ Real AIUpdateInterface::getCurLocomotorSpeed() const
 	if (m_curLocomotor != NULL)
 		return m_curLocomotor->getMaxSpeedForCondition(getObject()->getBodyModule()->getDamageState());
 
-	DEBUG_LOG(("no current locomotor!"));
+	// DEBUG_LOG(("no current locomotor!"));
 	return 0.0f;
 }
 
