@@ -82,6 +82,10 @@ const char* WeaponSetFlags::s_bitNameList[] =
 	"WEAPON_RIDER6",
 	"WEAPON_RIDER7",
 	"WEAPON_RIDER8",
+	// New Weaponsets
+	"PLAYER_UPGRADE2",
+	"PLAYER_UPGRADE3",
+	"PLAYER_UPGRADE4",
 
 	NULL
 };

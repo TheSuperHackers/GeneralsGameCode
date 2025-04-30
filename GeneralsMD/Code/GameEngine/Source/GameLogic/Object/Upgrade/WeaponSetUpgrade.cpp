@@ -33,6 +33,36 @@
 #include "Common/Xfer.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/WeaponSetUpgrade.h"
+#include "GameLogic/Module/JetAIUpdate.h"
+
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+WeaponSetUpgradeModuleData::WeaponSetUpgradeModuleData(void)
+{
+	m_weaponSetFlag = WEAPONSET_PLAYER_UPGRADE;
+	// m_weaponSetFlagsToClear = WEAPONSET_COUNT;  // = undefined;
+	m_needsParkedAircraft = FALSE;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void WeaponSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+
+	UpgradeModuleData::buildFieldParse(p);
+
+	static const FieldParse dataFieldParse[] =
+	{
+		{ "WeaponSetFlag", INI::parseIndexList,	WeaponSetFlags::getBitNames(),offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlag) },
+		{ "WeaponSetFlagsToClear", WeaponSetFlags::parseFromINI, NULL, offsetof(WeaponSetUpgradeModuleData, m_weaponSetFlagsToClear) },
+		{ "NeedsParkedAircraft", INI::parseBool, NULL, offsetof(WeaponSetUpgradeModuleData, m_needsParkedAircraft) },
+		{ 0, 0, 0, 0 }
+	};
+
+	p.add(dataFieldParse);
+
+}  // end buildFieldParse
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -48,12 +78,55 @@ WeaponSetUpgrade::~WeaponSetUpgrade( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
+Bool WeaponSetUpgrade::wouldUpgrade(UpgradeMaskType keyMask) const
+{
+	if (UpgradeMux::wouldUpgrade(keyMask)) {
+
+		// Check additional conditions
+		const WeaponSetUpgradeModuleData* data = getWeaponSetUpgradeModuleData();
+
+		if (data->m_needsParkedAircraft) {
+			const AIUpdateInterface* ai = getObject()->getAI();
+			if (ai) {
+				const JetAIUpdate* jetAI = ai->getJetAIUpdate();
+				if ((jetAI) && jetAI->isParkedInHangar()){
+					return TRUE;
+				}
+			}
+		}
+		else {
+			return TRUE;
+		}
+	}
+
+	//We can't upgrade!
+	return FALSE;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 void WeaponSetUpgrade::upgradeImplementation( )
 {
 	// Very simple; just need to flag the Object as having the player upgrade, and the WeaponSet chooser 
-	// will do the work of picking the right one from ini.  This comment is as long as the code.
+	// will do the work of picking the right one from ini.  This comment is as long as the code. Update: not anymore ;)
+	const WeaponSetUpgradeModuleData* data = getWeaponSetUpgradeModuleData();
+
 	Object *obj = getObject();
-	obj->setWeaponSetFlag( WEAPONSET_PLAYER_UPGRADE );
+	obj->setWeaponSetFlag(data->m_weaponSetFlag);
+
+	/*DEBUG_LOG((">>> WSU: m_weaponSetFlagsToClear = %d\n",
+		data->m_weaponSetFlag));*/
+
+	if (data->m_weaponSetFlagsToClear.any()) {
+		// We loop over each weaponset type and see if we have it set.
+		// Andi: Not sure if this is cleaner solution than storing an array of flags.
+		for (int i = 0; i < WEAPONSET_COUNT; i++) {
+			WeaponSetType type = (WeaponSetType)i;
+			if (data->m_weaponSetFlagsToClear.test(type)) {
+				obj->clearWeaponSetFlag(type);
+			}
+		}
+	}
 }
 
 // ------------------------------------------------------------------------------------------------

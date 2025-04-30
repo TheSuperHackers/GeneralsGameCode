@@ -42,6 +42,7 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/BattlePlanUpdate.h"
 #include "GameLogic/Module/DozerAIUpdate.h"
+#include "GameLogic/Module/JetAIUpdate.h"
 #include "GameLogic/Module/OverchargeBehavior.h"
 #include "GameLogic/Module/ProductionUpdate.h"
 #include "GameLogic/Module/SpecialPowerModule.h"
@@ -1061,11 +1062,19 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 	
 	if( BitIsSet( command->getOptions(), MUST_BE_STOPPED ) )
 	{
-		//This button can only be activated when the unit isn't moving!
+		// This button can only be activated when the unit isn't moving!
+		// Jets can be idle while in the air, so we need to do more checks
 		AIUpdateInterface *ai = obj->getAI();
-		if( ai && ai->isMoving() )
-		{
-			return COMMAND_RESTRICTED;
+		if( ai ) {
+			JetAIUpdate* jetAI = ai->getJetAIUpdate();
+			if (jetAI) {
+				if (!jetAI->isParkedInHangar()) {
+					return COMMAND_RESTRICTED;
+				}
+			}
+			else if (ai->isMoving()) {
+				return COMMAND_RESTRICTED;
+			}
 		}
 	}
  

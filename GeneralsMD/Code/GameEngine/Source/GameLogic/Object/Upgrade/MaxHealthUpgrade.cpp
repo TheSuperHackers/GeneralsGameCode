@@ -42,6 +42,7 @@
 MaxHealthUpgradeModuleData::MaxHealthUpgradeModuleData( void )
 {
 	m_addMaxHealth = 0.0f;
+	m_multiplyMaxHealth = 1.0f;
 	m_maxHealthChangeType = SAME_CURRENTHEALTH;
 }
 
@@ -55,6 +56,7 @@ void MaxHealthUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 	static const FieldParse dataFieldParse[] = 
 	{
 		{ "AddMaxHealth",					INI::parseReal,					NULL,										offsetof( MaxHealthUpgradeModuleData, m_addMaxHealth ) },
+		{ "MultiplyMaxHealth",				INI::parseReal,					NULL,										offsetof( MaxHealthUpgradeModuleData, m_multiplyMaxHealth ) },
 		{ "ChangeType",						INI::parseIndexList,		TheMaxHealthChangeTypeNames, offsetof( MaxHealthUpgradeModuleData, m_maxHealthChangeType ) },
 		{ 0, 0, 0, 0 }
 	};
@@ -87,7 +89,10 @@ void MaxHealthUpgrade::upgradeImplementation( )
 	BodyModuleInterface *body = obj->getBodyModule();
 	if( body )
 	{
-		body->setMaxHealth( body->getMaxHealth() + data->m_addMaxHealth, data->m_maxHealthChangeType );
+		Real newVal = (body->getMaxHealth() * data->m_multiplyMaxHealth) + data->m_addMaxHealth;
+		// DEBUG_LOG(("MaxHealthUpgrade::upgradeImplementation - newVal: (%f * %f) + %f = %f.\n",
+		//  	body->getMaxHealth(), data->m_multiplyMaxHealth, data->m_addMaxHealth, newVal));
+		body->setMaxHealth( newVal, data->m_maxHealthChangeType );
 	}
 }
 

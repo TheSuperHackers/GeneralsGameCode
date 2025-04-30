@@ -56,21 +56,36 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "GameLogic/Module/UpgradeModule.h"
+#include "GameLogic/ArmorSet.h"
 
 //-----------------------------------------------------------------------------
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 class Thing;
+enum ArmorSetType CPP_11(: Int);
 
-//-----------------------------------------------------------------------------
-// TYPE DEFINES ///////////////////////////////////////////////////////////////
-//-----------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+class ArmorUpgradeModuleData : public UpgradeModuleData
+{
 
+public:
+
+	ArmorUpgradeModuleData(void);
+
+	static void buildFieldParse(MultiIniFieldParse& p);
+
+	ArmorSetType m_armorSetFlag;  ///< The weaponset flag to set (default = WEAPONSET_PLAYER_UPGRADE)
+	ArmorSetFlags m_armorSetFlagsToClear;  ///< The weaponset flags to clear. This is needed if we want to disable a previous upgrade.
+	//Bool m_needsParkedAircraft;   ///< Aircraft attempting this upgrade needs to be stationary in hangar
+
+};
+//-------------------------------------------------------------------------------------------------
 class ArmorUpgrade : public UpgradeModule
 {
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( ArmorUpgrade, "ArmorUpgrade" )
-	MAKE_STANDARD_MODULE_MACRO( ArmorUpgrade );
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA( ArmorUpgrade, ArmorUpgradeModuleData);
 
 public:
 

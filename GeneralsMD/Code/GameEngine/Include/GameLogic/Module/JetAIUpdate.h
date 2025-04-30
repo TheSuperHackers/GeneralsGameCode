@@ -134,6 +134,7 @@ public:
 	void friend_addWaypointToGoalPath( const Coord3D &pos );
 	AICommandType friend_getPendingCommandType() const;
 	void friend_purgePendingCommand();
+	Bool isParkedInHangar() const;
 
 protected:
 

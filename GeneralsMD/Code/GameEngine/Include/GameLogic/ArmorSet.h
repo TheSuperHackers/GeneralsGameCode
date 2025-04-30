@@ -53,7 +53,10 @@ enum ArmorSetType CPP_11(: Int)
 	ARMORSET_WEAK_VERSUS_BASEDEFENSES = 4,
 	ARMORSET_SECOND_LIFE = 5,	///< Body Module has marked us as on our second life
 	ARMORSET_CRATE_UPGRADE_ONE, ///< Just like weaponset type from salvage.
-	ARMORSET_CRATE_UPGRADE_TWO, 
+	ARMORSET_CRATE_UPGRADE_TWO,
+	ARMORSET_PLAYER_UPGRADE2,
+	ARMORSET_PLAYER_UPGRADE3,
+	ARMORSET_PLAYER_UPGRADE4,
 
 	ARMORSET_COUNT			///< keep last, please
 };
