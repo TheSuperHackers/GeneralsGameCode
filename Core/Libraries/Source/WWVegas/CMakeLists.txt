@@ -26,12 +26,10 @@ target_include_directories(core_wwcommon INTERFACE
 add_subdirectory(WWDebug)
 add_subdirectory(WWLib)
 add_subdirectory(WWMath)
-# add_subdirectory(Wwutil)
 add_subdirectory(WWSaveLoad)
 add_subdirectory(WWStub)
 # add_subdirectory(WW3D2)
 add_subdirectory(WWDownload)
-# add_subdirectory(wwshade)
 
 # Helpful interface to bundle the ww modules together.
 add_library(core_wwvegas INTERFACE)
@@ -44,7 +42,6 @@ target_include_directories(core_wwvegas INTERFACE
     WWLib
     WWMath
     WWSaveLoad
-    #Wwutil
 )
 
 target_link_libraries(core_wwvegas INTERFACE
@@ -54,5 +51,4 @@ target_link_libraries(core_wwvegas INTERFACE
     core_wwlib
     core_wwmath
     core_wwsaveload
-    # core_wwutil
 )
