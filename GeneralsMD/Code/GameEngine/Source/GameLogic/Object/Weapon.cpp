@@ -1913,6 +1913,23 @@ Weapon::~Weapon()
 {
 }
 
+
+//-------------------------------------------------------------------------------------------------
+// DEBUG
+static void debug_printWeaponBonus(WeaponBonus* bonus, AsciiString name) {
+	const char* bonusNames[] = {
+		"DAMAGE",
+		"RADIUS",
+		"RANGE",
+		"RATE_OF_FIRE",
+		"PRE_ATTACK"
+	};
+	DEBUG_LOG((">>> Weapon bonus for '%s':\n", name.str()));
+	for (int i = 0; i < 5; i++) {
+		DEBUG_LOG((">>> -- '%s' : %f\n", bonusNames[i], bonus->getField(static_cast<WeaponBonus::Field>(i))));
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 void Weapon::computeBonus(const Object *source, WeaponBonusConditionFlags extraBonusFlags, WeaponBonus& bonus) const
 {
@@ -2741,6 +2758,8 @@ Bool Weapon::privateFireWeapon(
 
 	WeaponBonus bonus;
 	computeBonus(sourceObj, extraBonusFlags, bonus);
+
+	// debug_printWeaponBonus(&bonus, getTemplate()->getName());
 
 	DEBUG_ASSERTCRASH(getStatus() != OUT_OF_AMMO, ("Hmm, firing weapon that is OUT_OF_AMMO"));
 	DEBUG_ASSERTCRASH(getStatus() == READY_TO_FIRE, ("Hmm, Weapon is firing more often than should be possible"));

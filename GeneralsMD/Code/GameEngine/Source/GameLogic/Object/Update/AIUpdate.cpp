@@ -4721,43 +4721,48 @@ void AIUpdateInterface::evaluateMoraleBonus( void )
 
 #ifdef ALLOW_DEMORALIZE
 	// if we are are not demoralized we can have horde and nationalism effects
-	if( demoralized == FALSE )
+	if (demoralized == FALSE)
 #endif
 	{
 
 #ifdef ALLOW_DEMORALIZE
 		// demoralized
-		us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_DEMORALIZED );
+		us->clearWeaponBonusCondition(WEAPONBONUSCONDITION_DEMORALIZED);
 #endif		
-		
+
 		//Lorenzen temporarily disabled, since it fights with the horde buff
 		//Drawable *draw = us->getDrawable();
 		//if ( draw && !us->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 		//	draw->setTerrainDecal(TERRAIN_DECAL_NONE);
 
 		// horde
-		if( horde )
+		if (horde)
 		{
-			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
+			us->setWeaponBonusCondition(WEAPONBONUSCONDITION_HORDE);
+
 
 		}  // end if
-		else
-			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
+		else {
+			us->clearWeaponBonusCondition(WEAPONBONUSCONDITION_HORDE);
+		}
 
 		// nationalism
-		if( nationalism )
-    {
-			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
-      // fanaticism
-      if ( fanaticism )
-        us->setWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );// FOR THE NEW GC INFANTRY GENERAL
-      else 
-        us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
-    }
-		else
-			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
+		if (horde && nationalism)
+		{
+			us->setWeaponBonusCondition(WEAPONBONUSCONDITION_NATIONALISM);
+		}
+		else {
+			us->clearWeaponBonusCondition(WEAPONBONUSCONDITION_NATIONALISM);
+		}
 
-
+		// fanaticism
+		if (horde && fanaticism)
+		{
+			us->setWeaponBonusCondition(WEAPONBONUSCONDITION_FANATICISM);// FOR THE NEW GC INFANTRY GENERAL
+		}
+		else {
+			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
+		}
 
 	}  // end if
 #ifdef ALLOW_DEMORALIZE
