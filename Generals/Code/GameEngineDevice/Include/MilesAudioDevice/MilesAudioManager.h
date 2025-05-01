@@ -167,9 +167,6 @@ class MilesAudioManager : public AudioManager
 
 		virtual void killAudioEventImmediately( AudioHandle audioEvent );
 
-		virtual void stopAllAmbientsBy( Object *objID );
-		virtual void stopAllAmbientsBy( Drawable *drawID );
-
 		///< Return whether the current audio is playing or not. 
 		///< NOTE NOTE NOTE !!DO NOT USE THIS IN FOR GAMELOGIC PURPOSES!! NOTE NOTE NOTE
 		virtual Bool isCurrentlyPlaying( AudioHandle handle );

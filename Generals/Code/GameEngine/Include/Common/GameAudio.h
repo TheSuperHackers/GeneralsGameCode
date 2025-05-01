@@ -152,10 +152,6 @@ class AudioManager : public SubsystemInterface
 		virtual void resumeAudio( AudioAffect which ) = 0;
 		virtual void pauseAmbient( Bool shouldPause ) = 0;
 
-		// device dependent stops.
-		virtual void stopAllAmbientsBy( Object* obj ) = 0;
-		virtual void stopAllAmbientsBy( Drawable* draw ) = 0;
-
 		// for focus issues
 		virtual void loseFocus( void );
 		virtual void regainFocus( void );

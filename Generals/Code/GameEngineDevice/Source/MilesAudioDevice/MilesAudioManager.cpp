@@ -653,19 +653,6 @@ void MilesAudioManager::pauseAmbient( Bool shouldPause )
 }
 
 //-------------------------------------------------------------------------------------------------
-void MilesAudioManager::stopAllAmbientsBy( Object *obj )
-{
-
-}
-
-//-------------------------------------------------------------------------------------------------
-void MilesAudioManager::stopAllAmbientsBy( Drawable *draw )
-{
-
-}
-
-
-//-------------------------------------------------------------------------------------------------
 void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 {
 #ifdef INTENSIVE_AUDIO_DEBUG
