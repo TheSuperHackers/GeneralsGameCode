@@ -4669,7 +4669,7 @@ void Object::doSpecialPowerAtObject( const SpecialPowerTemplate *specialPowerTem
 /** Execute special power */
 //-------------------------------------------------------------------------------------------------
 void Object::doSpecialPowerAtLocation( const SpecialPowerTemplate *specialPowerTemplate, 
-																			 const Coord3D *loc, UnsignedInt commandOptions, Bool forced )
+																			 const Coord3D *loc, Real angle, UnsignedInt commandOptions, Bool forced )
 {
 
 	if (isDisabled())
@@ -4682,15 +4682,14 @@ void Object::doSpecialPowerAtLocation( const SpecialPowerTemplate *specialPowerT
 	// get the module and execute
 	SpecialPowerModuleInterface *mod = getSpecialPowerModule( specialPowerTemplate );
 	if( mod )
-		mod->doSpecialPowerAtLocation( loc, commandOptions );
+		mod->doSpecialPowerAtLocation( loc, angle, commandOptions );
 
 }  
 
 //-------------------------------------------------------------------------------------------------
 /** Execute special power */
 //-------------------------------------------------------------------------------------------------
-void Object::doSpecialPowerAtMultipleLocations( const SpecialPowerTemplate *specialPowerTemplate, 
-																								const Coord3D *locations, Int locCount, UnsignedInt commandOptions, Bool forced )
+void Object::doSpecialPowerUsingWaypoints( const SpecialPowerTemplate *specialPowerTemplate, const Waypoint *way, UnsignedInt commandOptions, Bool forced )
 {
 
 	if (isDisabled())
@@ -4703,7 +4702,7 @@ void Object::doSpecialPowerAtMultipleLocations( const SpecialPowerTemplate *spec
 	// get the module and execute
 	SpecialPowerModuleInterface *mod = getSpecialPowerModule( specialPowerTemplate );
 	if( mod )
-		mod->doSpecialPowerAtMultipleLocations( locations, locCount, commandOptions );
+		mod->doSpecialPowerUsingWaypoints( way, commandOptions );
 
 }
 
@@ -4916,7 +4915,7 @@ void Object::doCommandButtonAtPosition( const CommandButton *commandButton, cons
 				if( commandButton->getSpecialPowerTemplate() )
 				{
 					CommandOption commandOptions = (CommandOption)(commandButton->getOptions() | COMMAND_FIRED_BY_SCRIPT);
-					doSpecialPowerAtLocation( commandButton->getSpecialPowerTemplate(), pos, commandOptions, cmdSource == CMD_FROM_SCRIPT );
+					doSpecialPowerAtLocation( commandButton->getSpecialPowerTemplate(), pos, INVALID_ANGLE, commandOptions, cmdSource == CMD_FROM_SCRIPT );
 				}
 				break;
 			}
@@ -5038,6 +5037,26 @@ SpecialPowerModuleInterface* Object::findSpecialPowerModuleInterface( SpecialPow
 }
 
 // ------------------------------------------------------------------------------------------------
+// Search our special power modules for the first occurrence of a shortcut special.
+// ------------------------------------------------------------------------------------------------
+SpecialPowerModuleInterface* Object::findAnyShortcutSpecialPowerModuleInterface() const
+{
+	for( BehaviorModule** m = m_behaviors; *m; ++m )
+	{
+		SpecialPowerModuleInterface* sp = (*m)->getSpecialPower();
+		if (!sp)
+			continue;
+
+		const SpecialPowerTemplate *spTemplate = sp->getSpecialPowerTemplate();
+		if( spTemplate && spTemplate->isShortcutPower() )
+		{
+			return sp; 
+		}
+	}
+	return NULL;
+}
+
+// ------------------------------------------------------------------------------------------------
 /** Get spawn behavior interface from object */
 // ------------------------------------------------------------------------------------------------
 SpawnBehaviorInterface* Object::getSpawnBehaviorInterface() const
@@ -5071,6 +5090,26 @@ SpecialPowerUpdateInterface* Object::findSpecialPowerWithOverridableDestinationA
 	}  // end for
 	return NULL;
 }
+
+// ------------------------------------------------------------------------------------------------
+// Simply find the special power module that is potentially allowed to plot positions to target.
+// ------------------------------------------------------------------------------------------------
+SpecialPowerUpdateInterface* Object::findSpecialPowerWithOverridableDestination( SpecialPowerType type ) const
+{
+	for( BehaviorModule** u = m_behaviors; *u; ++u )
+	{
+		SpecialPowerUpdateInterface *spInterface = (*u)->getSpecialPowerUpdateInterface();
+		if( spInterface )
+		{
+			if( spInterface->doesSpecialPowerHaveOverridableDestination() )
+			{
+				return spInterface;
+			}
+		}
+	}  // end for
+	return NULL;
+}
+
 
 // ------------------------------------------------------------------------------------------------
 // Search our special ability updates for a specific one.

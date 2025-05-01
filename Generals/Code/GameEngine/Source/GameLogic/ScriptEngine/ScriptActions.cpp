@@ -3893,7 +3893,7 @@ void ScriptActions::doNamedFireSpecialPowerAtWaypoint( const AsciiString& unit, 
 			if (!way) {
 				return;
 			}
-			mod->doSpecialPowerAtLocation(way->getLocation(), COMMAND_FIRED_BY_SCRIPT );
+			mod->doSpecialPowerAtLocation(way->getLocation(), INVALID_ANGLE, COMMAND_FIRED_BY_SCRIPT );
 		}
 	}
 }
@@ -3936,10 +3936,9 @@ void ScriptActions::doSkirmishFireSpecialPowerAtMostCost( const AsciiString &pla
 				SpecialPowerModuleInterface *mod = pObj->getSpecialPowerModule(power);
 				if (mod)
 				{
-					mod->doSpecialPowerAtLocation( &location, COMMAND_FIRED_BY_SCRIPT );
+					mod->doSpecialPowerAtLocation( &location, INVALID_ANGLE, COMMAND_FIRED_BY_SCRIPT );
 					break;
 				}
-
 			}
 		}
 	}

@@ -391,6 +391,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/SpecialPowerCompletionDie.h
     Include/GameLogic/Module/SpecialPowerCreate.h
     Include/GameLogic/Module/SpecialPowerModule.h
+    Include/GameLogic/Module/SpecialPowerUpdateModule.h
     Include/GameLogic/Module/SpyVisionSpecialPower.h
     Include/GameLogic/Module/SpyVisionUpdate.h
     Include/GameLogic/Module/SquishCollide.h

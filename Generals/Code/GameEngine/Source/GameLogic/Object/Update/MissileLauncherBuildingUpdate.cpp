@@ -203,13 +203,14 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 }
 
 //-------------------------------------------------------------------------------------------------
-void MissileLauncherBuildingUpdate::initiateIntentToDoSpecialPower( const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, UnsignedInt commandOptions, Int locationCount )
+Bool MissileLauncherBuildingUpdate::initiateIntentToDoSpecialPower( const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions )
 {
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	DEBUG_ASSERTCRASH(!TheGlobalData->m_specialPowerUsesDelay || m_doorState == DOOR_OPEN, ("door is not fully open when specialpower is fired!"));
 #endif
 
 	switchToState(DOOR_WAITING_TO_CLOSE);
+	return TRUE;
 }
 
 //-------------------------------------------------------------------------------------------------
