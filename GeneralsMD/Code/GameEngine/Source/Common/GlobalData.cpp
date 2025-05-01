@@ -522,6 +522,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "ExtraLogging",								INI::parseBool,				NULL,			offsetof( GlobalData, m_extraLogging ) },
 #endif
 
+	{ "UseVanillaDiagonalMoveSpeed",	      INI::parseBool,		NULL,			offsetof(GlobalData, m_useOldMoveSpeed) },
 	{ NULL,					NULL,						NULL,						0 }  // keep this last
 
 };
@@ -1088,6 +1089,8 @@ GlobalData::GlobalData()
 	//m_allAdvice = FALSE;
 
 	m_clientRetaliationModeEnabled = TRUE; //On by default.
+
+	m_useOldMoveSpeed = FALSE;  //Fix is enabled by default
 
 }  // end GlobalData
 

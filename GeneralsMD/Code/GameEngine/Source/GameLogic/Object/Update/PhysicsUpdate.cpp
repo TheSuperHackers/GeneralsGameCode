@@ -964,21 +964,32 @@ Real PhysicsBehavior::getVelocityMagnitude() const
 Real PhysicsBehavior::getForwardSpeed2D() const
 {
 	const Coord3D *dir = getObject()->getUnitDirectionVector2D();
-
 	Real vx = m_vel.x * dir->x;
 	Real vy = m_vel.y * dir->y;
-
 	Real dot = vx + vy;
 
-	Real speedSquared = vx*vx + vy*vy;
-//	DEBUG_ASSERTCRASH( speedSquared != 0, ("zero speedSquared will overflow sqrtf()!") );// lorenzen... sanity check
-	
-	Real speed = (Real)sqrtf( speedSquared );
+	if (TheGlobalData->m_useOldMoveSpeed) {
 
-	if (dot >= 0.0f)
-		return speed;
+		Real speedSquared = vx * vx + vy * vy;
+		//	DEBUG_ASSERTCRASH( speedSquared != 0, ("zero speedSquared will overflow sqrtf()!") );// lorenzen... sanity check
 
-	return -speed;
+		Real speed = (Real)sqrtf(speedSquared);
+
+		if (dot >= 0.0f)
+			return speed;
+
+		return -speed;
+	}
+	else {
+		//Note: using fixes from https://github.com/TheSuperHackers/GeneralsGameCode/issues/123#issuecomment-2827246587
+
+		//Return the speed of the unit - Magnitude of the velocity is the speed
+		if (dot >= 0.0f)
+			return (Real)sqrtf(sqr(m_vel.x) + sqr(m_vel.y));
+
+		//Negative dot product means the unit is moving in reverse
+		return -(Real)sqrtf(sqr(m_vel.x) + sqr(m_vel.y));
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -989,19 +1000,29 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 Real PhysicsBehavior::getForwardSpeed3D() const
 {
 	Vector3 dir = getObject()->getTransformMatrix()->Get_X_Vector();
-
 	Real vx = m_vel.x * dir.X;
 	Real vy = m_vel.y * dir.Y;
 	Real vz = m_vel.z * dir.Z;
-
 	Real dot = vx + vy + vz;
 
-	Real speed = (Real)sqrtf( vx*vx + vy*vy + vz*vz );
+	if (TheGlobalData->m_useOldMoveSpeed) {
+		Real speed = (Real)sqrtf(vx * vx + vy * vy + vz * vz);
 
-	if (dot >= 0.0f)
-		return speed;
+		if (dot >= 0.0f)
+			return speed;
 
-	return -speed;
+		return -speed;
+	}
+	else {
+		//Note: using fixes from https://github.com/TheSuperHackers/GeneralsGameCode/issues/123#issuecomment-2827246587
+
+		//Return the speed of the unit - Magnitude of the velocity is the speed
+		if (dot >= 0.0f)
+			return (Real)sqrtf(sqr(m_vel.x) + sqr(m_vel.y) + sqr(m_vel.z));
+
+		//Negative dot product means the unit is moving in reverse
+		return -(Real)sqrtf(sqr(m_vel.x) + sqr(m_vel.y) + sqr(m_vel.z));
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
