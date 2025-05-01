@@ -62,6 +62,7 @@
 #include "Common/CRCDebug.h"
 #include "Common/SystemInfo.h"
 #include "Common/UnicodeString.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/GameText.h"
 #include "GameClient/Keyboard.h"
 #include "GameClient/Mouse.h"
@@ -87,14 +88,14 @@ extern const char *gAppPrefix; /// So WB can have a different log file name.
 #ifdef DEBUG_LOGGING
 
 #if defined(RTS_INTERNAL)
-	#define DEBUG_FILE_NAME				"DebugLogFileI.txt"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevI.txt"
+	#define DEBUG_FILE_NAME				"DebugLogFileI"
+	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevI"
 #elif defined(RTS_DEBUG)
-	#define DEBUG_FILE_NAME				"DebugLogFileD.txt"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevD.txt"
+	#define DEBUG_FILE_NAME				"DebugLogFileD"
+	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevD"
 #else
-	#define DEBUG_FILE_NAME				"DebugLogFile.txt"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrev.txt"
+	#define DEBUG_FILE_NAME				"DebugLogFile"
+	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrev"
 #endif
 
 #endif
@@ -363,6 +364,10 @@ void DebugInit(int flags)
 		theMainThreadID = GetCurrentThreadId();
 
 	#ifdef DEBUG_LOGGING
+
+		// Debug initialization can happen very early. Initialize the client instance now.
+		if (!rts::ClientInstance::initialize())
+			return;
 
 		char dirbuf[ _MAX_PATH ];
 		::GetModuleFileName( NULL, dirbuf, sizeof( dirbuf ) );

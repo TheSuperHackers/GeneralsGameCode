@@ -30,6 +30,7 @@
 #include "Common/Player.h"
 #include "Common/GlobalData.h"
 #include "Common/GameEngine.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/GameWindow.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/InGameUI.h"
@@ -1598,7 +1599,13 @@ AsciiString RecorderClass::getLastReplayFileName()
 		}
 	}
 #endif
-	return AsciiString(lastReplayFileName);
+	AsciiString filename = lastReplayFileName;
+
+	if (rts::ClientInstance::getInstanceId() > 0u)
+	{
+		filename.format("%s_Instance%u", lastReplayFileName, rts::ClientInstance::getInstanceId());
+	}
+	return filename;
 }
 
 /**
