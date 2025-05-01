@@ -411,27 +411,6 @@ void GameEngine::init( int argc, char *argv[] )
 		// load music dialog will still cause the game to quit.
 		// m_quitting = FALSE;
 
-		// for fingerprinting, we need to ensure the presence of these files
-		AsciiString dirName;
-		dirName = TheArchiveFileSystem->getArchiveFilenameForFile("generalsb.sec");
-		if (dirName.compareNoCase("gensec.big") != 0)
-		{
-			DEBUG_LOG(("generalsb.sec was not found in gensec.big - it was in '%s'\n", dirName.str()));
-			m_quitting = TRUE;
-		}
-		
-		dirName = TheArchiveFileSystem->getArchiveFilenameForFile("generalsa.sec");
-		const char *noPath = dirName.reverseFind('\\');
-		if (noPath) {
-			dirName = noPath + 1;
-		}
-
-		if (dirName.compareNoCase("music.big") != 0)
-		{
-			DEBUG_LOG(("generalsa.sec was not found in music.big - it was in '%s'\n", dirName.str()));
-			m_quitting = TRUE;
-		}
-
 		// initialize the MapCache
 		TheMapCache = MSGNEW("GameEngineSubsystem") MapCache;
 		TheMapCache->updateCache();
