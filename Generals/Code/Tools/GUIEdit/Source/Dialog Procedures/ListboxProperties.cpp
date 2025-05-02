@@ -600,9 +600,10 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 						
 						if(newColumns > 1)
 						{
-							char *percentages = new char[60];
+							const Int size = 60;
+							char *percentages = new char[size];
 							char *token;
-							GetDlgItemText(hWndDialog,EDIT_COLUMN_PERCENT,percentages,200);
+							GetDlgItemText(hWndDialog,EDIT_COLUMN_PERCENT,percentages,size);
 							if(strlen(percentages) == 0)
 							{
 								MessageBox(NULL,"You have specified a column amount greater then 1, please enter the same about of percentages","whoops",MB_OK | MB_ICONSTOP | MB_APPLMODAL);
