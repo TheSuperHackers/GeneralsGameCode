@@ -30,8 +30,13 @@
 
 #include "Common/GameEngine.h"
 #include "Common/Recorder.h"
+#include "Common/Radar.h"
+#include "Common/PerfTimer.h"
 #include "GameLogic/GameLogic.h"
+#include "GameClient/GameClient.h"
+#include "GameClient/ParticleSys.h"
 
+#if 1
 bool SimulateReplayInProcess(AsciiString filename)
 {
 	STARTUPINFO si = { sizeof(STARTUPINFO) };
@@ -51,6 +56,115 @@ bool SimulateReplayInProcess(AsciiString filename)
 	CloseHandle(pi.hProcess);
 	return exitcode != 0;
 }
+#else
+class ReplayProcess
+{
+public:
+	ReplayProcess()
+	{
+		m_processHandle = INVALID_HANDLE;
+	}
+	bool StartProcess(AsciiString filename)
+	{
+		STARTUPINFO si = { sizeof(STARTUPINFO) };
+		si.dwFlags = STARTF_FORCEOFFFEEDBACK;
+		PROCESS_INFORMATION pi = { 0 };
+		AsciiString command;
+		command.format("generalszh.exe -win -xres 800 -yres 600 -simReplay \"%s\"", filename.str());
+		//printf("Starting Exe for Replay \"%s\": %s\n", filename.str(), command.str());
+		//fflush(stdout);
+		if (!CreateProcessA(NULL, (LPSTR)command.str(),
+			NULL, NULL, TRUE, 0,
+			NULL, 0, &si, &pi))
+			return false;
+		CloseHandle(pi.hThread);
+		m_processHandle = pi.hProcess;
+		/*WaitForSingleObject(pi.hProcess, INFINITE);
+		DWORD exitcode = 1;
+		GetExitCodeProcess(pi.hProcess, &exitcode);
+		CloseHandle(pi.hProcess);*/
+		return exitcode != 0;
+	}
+	bool IsRunning()
+	{
+		return m_processHandle != INVALID_HANDLE;
+	}
+	bool IsDone(int *exitcode)
+	{
+		if (WaitForSingleObject(m_processHandle, 0) == WAIT_OBJECT_0)
+		{
+			GetExitCodeProcess(m_processHandle, exitcode);
+			return true;
+		}
+		return false;
+	}
+
+private:
+	HANDLE m_processHandle;
+};
+#endif
+
+void ClientUpdate()
+{
+	// allow windows to perform regular windows maintenance stuff like msgs
+	TheGameEngine->serviceWindowsOS();
+
+	Drawable* draw = TheGameClient->firstDrawable();
+	while (draw && 0)
+	{
+		Drawable* next = draw->getNextDrawable();
+#if 0
+		if (0)
+		{	//immobile objects need to take snapshots whenever they become fogged
+			//so need to refresh their status.  We can't rely on external calls
+			//to getShroudStatus() because they are only made for visible on-screen
+			//objects.
+			Object *object=draw->getObject();
+			if (object)
+			{
+#ifdef DEBUG_FOG_MEMORY
+				Int *playerIndex=nonLocalPlayerIndices;
+				for (i=0; i<numNonLocalPlayers; i++, playerIndex++)
+					object->getShroudedStatus(*playerIndex);
+#endif
+				ObjectShroudStatus ss=object->getShroudedStatus(localPlayerIndex);
+				if (ss >= OBJECTSHROUD_FOGGED && draw->getShroudClearFrame()!=0) {
+					UnsignedInt limit = 2*LOGICFRAMES_PER_SECOND;
+					if (object->isEffectivelyDead()) {
+						// extend the time, so we can see the dead plane blow up & crash.
+						limit += 3*LOGICFRAMES_PER_SECOND;
+					}
+					if (TheGameLogic->getFrame() < limit + draw->getShroudClearFrame()) {
+						// It's been less than 2 seconds since we could see them clear, so keep showing them.
+						ss = OBJECTSHROUD_CLEAR;
+					}
+				}
+				draw->setFullyObscuredByShroud(ss >= OBJECTSHROUD_FOGGED);
+			}
+		}
+#endif
+		draw->updateDrawable();
+		draw = next;
+	}
+	//return;
+	/*TheRadar->UPDATE();
+	TheAudio->UPDATE();
+	TheMessageStream->propagateMessages();
+	return;*/
+
+	TheRadar->UPDATE();
+
+	/// @todo Move audio init, update, etc, into GameClient update
+			
+	TheAudio->UPDATE();
+	TheGameClient->UPDATE();
+	TheMessageStream->propagateMessages();
+	//if (TheNetwork != NULL)
+	{
+	//	TheNetwork->UPDATE();
+	}	 
+	//TheCDManager->UPDATE();
+}
 
 // TheSuperHackers @feature helmutbuhler 04/13/2025
 // Simulate a list of replays without graphics.
@@ -64,7 +178,7 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 	for (size_t i = 0; i < filenames.size(); i++)
 	{
 		AsciiString filename = filenames[i];
-		if (filenames.size() == 1)
+		if (1 || filenames.size() == 1)
 		{
 			printf("Simulating Replay \"%s\"\n", filename.str());
 			fflush(stdout);
@@ -74,12 +188,16 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 				UnsignedInt totalTime = TheRecorder->getFrameDuration() / fps;
 				while (TheRecorder->isPlaybackInProgress())
 				{
+					//ClientUpdate();
+					TheParticleSystemManager->reset();
+
 					if (TheGameLogic->getFrame() && TheGameLogic->getFrame() % (600*fps) == 0)
 					{
+						// Print progress report
 						UnsignedInt gameTime = TheGameLogic->getFrame() / fps;
 						UnsignedInt realTime = (GetTickCount()-startTime) / 1000;
-						printf("Frame %02d:%02d/%02d:%02d  RT: %02d:%02d\n",
-							gameTime/60, gameTime%60, totalTime/60, totalTime%60, realTime/60, realTime%60);
+						printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d\n",
+								realTime/60, realTime%60, gameTime/60, gameTime%60, totalTime/60, totalTime%60);
 						fflush(stdout);
 					}
 					TheGameLogic->UPDATE();
@@ -90,7 +208,7 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 					}
 				}
 				UnsignedInt realTime = (GetTickCount()-startTime) / 1000;
-				printf("GT: %02d:%02d RT: %02d:%02d\n", totalTime/60, totalTime%60, realTime/60, realTime%60);
+				printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d\n", realTime/60, realTime%60, totalTime/60, totalTime%60);
 				fflush(stdout);
 			}
 			else
