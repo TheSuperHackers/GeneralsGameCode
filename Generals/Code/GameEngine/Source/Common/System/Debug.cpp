@@ -364,7 +364,8 @@ void DebugInit(int flags)
 
 	#ifdef DEBUG_LOGGING
 
-		// Debug initialization can happen very early. Initialize the client instance now.
+		// TheSuperHackers @info Debug initialization can happen very early.
+		// Therefore, initialize the client instance now.
 		if (!rts::ClientInstance::initialize())
 			return;
 
