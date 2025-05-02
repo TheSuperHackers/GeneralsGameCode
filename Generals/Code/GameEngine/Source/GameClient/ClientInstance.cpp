@@ -36,7 +36,7 @@ bool ClientInstance::initialize()
 	// WARNING: DO NOT use this number for any other application except Generals.
 	while (true)
 	{
-#if RTS_MULTI_INSTANCE
+#ifdef RTS_MULTI_INSTANCE
 		std::string guidStr = getFirstInstanceName();
 		if (s_instanceIndex > 0u)
 		{
