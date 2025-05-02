@@ -151,7 +151,7 @@ void		FileSystem::init( void )
 
 void		FileSystem::update( void )
 {
-	USE_PERF_TIMER(FileSystem)
+	//USE_PERF_TIMER(FileSystem)
 	TheLocalFileSystem->update();
 	TheArchiveFileSystem->update();
 }
@@ -162,7 +162,7 @@ void		FileSystem::update( void )
 
 void		FileSystem::reset( void )
 {
-	USE_PERF_TIMER(FileSystem)
+	//USE_PERF_TIMER(FileSystem)
 	TheLocalFileSystem->reset();
 	TheArchiveFileSystem->reset();
 }
@@ -173,7 +173,7 @@ void		FileSystem::reset( void )
 
 File*		FileSystem::openFile( const Char *filename, Int access ) 
 {
-	USE_PERF_TIMER(FileSystem)
+	//USE_PERF_TIMER(FileSystem)
 	File *file = NULL;
 
 	if ( TheLocalFileSystem != NULL )
@@ -195,7 +195,7 @@ File*		FileSystem::openFile( const Char *filename, Int access )
 
 Bool FileSystem::doesFileExist(const Char *filename) const
 {
-	USE_PERF_TIMER(FileSystem)
+	//USE_PERF_TIMER(FileSystem)
 
   unsigned key=TheNameKeyGenerator->nameToLowercaseKey(filename);
   std::map<unsigned,bool>::iterator i=m_fileExist.find(key);
@@ -222,7 +222,7 @@ Bool FileSystem::doesFileExist(const Char *filename) const
 //============================================================================
 void FileSystem::getFileListInDirectory(const AsciiString& directory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const
 {
-	USE_PERF_TIMER(FileSystem)
+	//USE_PERF_TIMER(FileSystem)
 	TheLocalFileSystem->getFileListInDirectory(AsciiString(""), directory, searchName, filenameList, searchSubdirectories);
 	TheArchiveFileSystem->getFileListInDirectory(AsciiString(""), directory, searchName, filenameList, searchSubdirectories);
 }
@@ -232,7 +232,7 @@ void FileSystem::getFileListInDirectory(const AsciiString& directory, const Asci
 //============================================================================
 Bool FileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const
 {
-	USE_PERF_TIMER(FileSystem)
+	//USE_PERF_TIMER(FileSystem)
 	if (fileInfo == NULL) {
 		return FALSE;
 	}
@@ -254,7 +254,7 @@ Bool FileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) co
 //============================================================================
 Bool FileSystem::createDirectory(AsciiString directory) 
 {
-	USE_PERF_TIMER(FileSystem)
+	//USE_PERF_TIMER(FileSystem)
 	if (TheLocalFileSystem != NULL) {
 		return TheLocalFileSystem->createDirectory(directory);
 	}

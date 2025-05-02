@@ -112,7 +112,7 @@ static FILE *theLogFile = NULL;
 #define LARGE_BUFFER	8192
 static char theBuffer[ LARGE_BUFFER ];	// make it big to avoid weird overflow bugs in debug mode
 static int theDebugFlags = 0;
-static DWORD theMainThreadID = 0;
+DWORD theMainThreadID = 0;
 // ----------------------------------------------------------------------------
 // PUBLIC DATA 
 // ----------------------------------------------------------------------------
