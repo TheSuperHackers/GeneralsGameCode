@@ -26,7 +26,6 @@
 // Bryan Cleveland, August 2002
 /////////////////////////////////////////////////////////////
 
-#include <winsock2.h>
 #include "Common/AudioAffect.h"
 #include "Common/ArchiveFile.h"
 #include "Common/ArchiveFileSystem.h"
@@ -36,6 +35,7 @@
 #include "Common/LocalFileSystem.h"
 #include "Win32Device/Common/Win32BIGFile.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
+#include "Utility/endian_compat.h"
 
 #ifdef RTS_INTERNAL
 // for occasional debugging...
@@ -107,7 +107,7 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 	// read in the number of files contained in this BIG file.
 	// change the order of the bytes cause the file size is in reverse byte order for some reason.
 	fp->read(&numLittleFiles, 4);
-	numLittleFiles = ntohl(numLittleFiles);
+	numLittleFiles = betoh(numLittleFiles);
 
 	DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - %d are contained in archive\n", numLittleFiles));
 //	for (Int i = 0; i < 2; ++i) {
@@ -127,8 +127,8 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 		fp->read(&fileOffset, 4);
 		fp->read(&filesize, 4);
 
-		filesize = ntohl(filesize);
-		fileOffset = ntohl(fileOffset);
+		filesize = betoh(filesize);
+		fileOffset = betoh(fileOffset);
 
 		fileInfo->m_archiveFilename = archiveFileName;
 		fileInfo->m_offset = fileOffset;
