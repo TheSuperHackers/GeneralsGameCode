@@ -282,19 +282,6 @@ void RecorderClass::logGameEnd( void )
 #endif
 }
 
-#ifdef DEBUG_LOGGING
-	#if defined(RTS_INTERNAL)
-		#define DEBUG_FILE_NAME				"DebugLogFileI.txt"
-		#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevI.txt"
-	#elif defined(RTS_DEBUG)
-		#define DEBUG_FILE_NAME				"DebugLogFileD.txt"
-		#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevD.txt"
-	#else
-		#define DEBUG_FILE_NAME				"DebugLogFile.txt"
-		#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrev.txt"
-	#endif
-#endif
-
 void RecorderClass::cleanUpReplayFile( void )
 {
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
@@ -307,14 +294,18 @@ void RecorderClass::cleanUpReplayFile( void )
 		AsciiString oldFname;
 		oldFname.format("%s%s", getReplayDir().str(), m_fileName.str());
 		CopyFile(oldFname.str(), fname, TRUE);
-#ifdef DEBUG_FILE_NAME
+
+		const char* logFileName = DebugGetLogFileName();
+		if (logFileName[0] == '\0')
+			return;
+
 		AsciiString debugFname = fname;
 		debugFname.removeLastChar();
 		debugFname.removeLastChar();
 		debugFname.removeLastChar();
 		debugFname.concat("txt");
 		UnsignedInt fileSize = 0;
-		FILE *fp = fopen(DEBUG_FILE_NAME, "rb");
+		FILE *fp = fopen(logFileName, "rb");
 		if (fp)
 		{
 			fseek(fp, 0, SEEK_END);
@@ -327,13 +318,13 @@ void RecorderClass::cleanUpReplayFile( void )
 		const int MAX_DEBUG_SIZE = 65536;
 		if (fileSize <= MAX_DEBUG_SIZE || TheGlobalData->m_saveAllStats)
 		{
-			DEBUG_LOG(("Using CopyFile to copy %s\n", DEBUG_FILE_NAME));
-			CopyFile(DEBUG_FILE_NAME, debugFname.str(), TRUE);
+			DEBUG_LOG(("Using CopyFile to copy %s\n", logFileName));
+			CopyFile(logFileName, debugFname.str(), TRUE);
 		}
 		else
 		{
-			DEBUG_LOG(("manual copy of %s\n", DEBUG_FILE_NAME));
-			FILE *ifp = fopen(DEBUG_FILE_NAME, "rb");
+			DEBUG_LOG(("manual copy of %s\n", logFileName));
+			FILE *ifp = fopen(logFileName, "rb");
 			FILE *ofp = fopen(debugFname.str(), "wb");
 			if (ifp && ofp)
 			{
@@ -357,7 +348,6 @@ void RecorderClass::cleanUpReplayFile( void )
 				ofp = NULL;
 			}
 		}
-#endif // DEBUG_FILE_NAME
 	}
 #endif
 }
