@@ -991,7 +991,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 		if (!rts::ClientInstance::initialize())
 		{
-			HWND ccwindow = FindWindow(rts::ClientInstance::getInstanceName(), NULL);
+			HWND ccwindow = FindWindow(rts::ClientInstance::getFirstInstanceName(), NULL);
 			if (ccwindow)
 			{
 				SetForegroundWindow(ccwindow);

@@ -374,9 +374,9 @@ void GameTextManager::init( void )
 
 	if (rts::ClientInstance::getInstanceId() > 0u)
 	{
-		UnicodeString instanceStr;
-		instanceStr.format(L" - Instance:%u", rts::ClientInstance::getInstanceId());
-		ourName.concat(instanceStr.str());
+		UnicodeString s;
+		s.format(L"id:%u - %s", rts::ClientInstance::getInstanceId(), ourName.str());
+		ourName = s;
 	}
 
 	AsciiString ourNameA;

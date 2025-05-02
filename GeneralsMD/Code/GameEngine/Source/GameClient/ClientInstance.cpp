@@ -37,7 +37,7 @@ bool ClientInstance::initialize()
 	while (true)
 	{
 #if RTS_MULTI_INSTANCE
-		std::string guidStr = getInstanceName();
+		std::string guidStr = getFirstInstanceName();
 		if (s_instanceId > 0u)
 		{
 			char idStr[33];
@@ -58,7 +58,7 @@ bool ClientInstance::initialize()
 			continue;
 		}
 #else
-		s_mutexHandle = CreateMutex(NULL, FALSE, getInstanceName());
+		s_mutexHandle = CreateMutex(NULL, FALSE, getFirstInstanceName());
 		if (GetLastError() == ERROR_ALREADY_EXISTS)
 		{
 			if (s_mutexHandle != NULL)
@@ -86,7 +86,7 @@ UnsignedInt ClientInstance::getInstanceId()
 	return s_instanceId;
 }
 
-const char* ClientInstance::getInstanceName()
+const char* ClientInstance::getFirstInstanceName()
 {
 	return GENERALS_GUID;
 }
