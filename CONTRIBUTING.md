@@ -1,16 +1,16 @@
 # How to contribute as a developer
 
-To contribute, fork and clone this repository.
+To contribute, fork this repository to create your own copy that you can clone locally and push back to. You can use your fork to create pull requests for your code to be merged into this repository.
 
 ## Code guidelines
 
 ### Scope of code changes
 
-Code edits only touch the lines of code that serve the intended goal of the change. Big refactors should not be combined with logical changes, because these can become very difficult to review. If a change requires a refactor, create a commit for the refactor before (or after) creating a commit for the change. A Pull Request can contain multiple commits and can be merged with **Rebase and Merge** if these commits are meant to be preserved on the main branch. Otherwise, the regular method of merging is **Squash and Merge**.
+Code edits only touch the lines of code that serve the intended goal of the change. Big refactors should not be combined with logical changes, because these can become very difficult to review. If a change requires a refactor, create a commit for the refactor before (or after) creating a commit for the change. A Pull Request can contain multiple commits and can be merged with **Rebase and Merge** if these commits are meant to be preserved on the main branch. Otherwise, method of merging will be **Squash and Merge**.
 
 ### Style of code changes
 
-Code edits should fit the nearby code in ways that the code style reads consistent, unless the original code style is bad. The original game code uses c++98, or a deviation thereof, and is simple to read. Prefer to not use new fancy language features where not absolutely necessary to get a particular change done.
+Code edits should fit the nearby code in ways that the code style reads consistent, unless the original code style is bad. The original game code uses c++98, or a deviation thereof, and is simple to read. Prefer not to use newer language features unless required to implement the desired change. Prefer to use newer language features when they are considerably more robust or make the code easier to understand or maintain.
 
 ### Language style guide
 
