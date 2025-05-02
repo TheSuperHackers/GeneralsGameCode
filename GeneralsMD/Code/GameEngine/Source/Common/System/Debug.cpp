@@ -385,10 +385,16 @@ void DebugInit(int flags)
 		strcpy(theLogFileNamePrev, dirbuf);
 		strcat(theLogFileNamePrev, gAppPrefix);
 		strcat(theLogFileNamePrev, DEBUG_FILE_NAME_PREV);
+		if (rts::ClientInstance::getInstanceId() > 1u)
+			sprintf(theLogFileNamePrev + strlen(theLogFileNamePrev), "_Instance%u", rts::ClientInstance::getInstanceId());
+		strcat(theLogFileNamePrev, ".txt");
 
 		strcpy(theLogFileName, dirbuf);
 		strcat(theLogFileName, gAppPrefix);
 		strcat(theLogFileName, DEBUG_FILE_NAME);
+		if (rts::ClientInstance::getInstanceId() > 1u)
+			sprintf(theLogFileName + strlen(theLogFileName), "_Instance%u", rts::ClientInstance::getInstanceId());
+		strcat(theLogFileName, ".txt");
 
 		remove(theLogFileNamePrev);
 		rename(theLogFileName, theLogFileNamePrev);

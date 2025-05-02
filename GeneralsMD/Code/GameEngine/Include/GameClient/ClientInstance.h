@@ -30,7 +30,10 @@ public:
 
 	static bool isInitialized();
 
-	// Returns the instance id of this game client.
+	// Returns the instance index of this game client. Starts at 0.
+	static UnsignedInt getInstanceIndex();
+
+	// Returns the instance id of this game client. Starts at 1.
 	static UnsignedInt getInstanceId();
 
 	// Returns the instance name of the first game client.
@@ -38,7 +41,7 @@ public:
 
 private:
 	static HANDLE s_mutexHandle;
-	static UnsignedInt s_instanceId;
+	static UnsignedInt s_instanceIndex;
 };
 
 } // namespace rts

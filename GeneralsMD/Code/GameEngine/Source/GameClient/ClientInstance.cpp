@@ -23,7 +23,7 @@
 namespace rts
 {
 HANDLE ClientInstance::s_mutexHandle = NULL;
-UnsignedInt ClientInstance::s_instanceId = 0;
+UnsignedInt ClientInstance::s_instanceIndex = 0;
 
 bool ClientInstance::initialize()
 {
@@ -38,10 +38,10 @@ bool ClientInstance::initialize()
 	{
 #if RTS_MULTI_INSTANCE
 		std::string guidStr = getFirstInstanceName();
-		if (s_instanceId > 0u)
+		if (s_instanceIndex > 0u)
 		{
 			char idStr[33];
-			itoa(s_instanceId, idStr, 10);
+			itoa(s_instanceIndex, idStr, 10);
 			guidStr.push_back('-');
 			guidStr.append(idStr);
 		}
@@ -54,7 +54,7 @@ bool ClientInstance::initialize()
 				s_mutexHandle = NULL;
 			}
 			// Try again with a new instance.
-			++s_instanceId;
+			++s_instanceIndex;
 			continue;
 		}
 #else
@@ -80,10 +80,15 @@ bool ClientInstance::isInitialized()
 	return s_mutexHandle != NULL;
 }
 
-UnsignedInt ClientInstance::getInstanceId()
+UnsignedInt ClientInstance::getInstanceIndex()
 {
 	DEBUG_ASSERTLOG(!isInitialized(), ("ClientInstance::isInitialized() failed"));
-	return s_instanceId;
+	return s_instanceIndex;
+}
+
+UnsignedInt ClientInstance::getInstanceId()
+{
+	return getInstanceIndex() + 1;
 }
 
 const char* ClientInstance::getFirstInstanceName()

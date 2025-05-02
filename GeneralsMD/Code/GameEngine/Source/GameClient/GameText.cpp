@@ -372,10 +372,10 @@ void GameTextManager::init( void )
 
 	UnicodeString ourName = fetch("GUI:Command&ConquerGenerals");
 
-	if (rts::ClientInstance::getInstanceId() > 0u)
+	if (rts::ClientInstance::getInstanceId() > 1u)
 	{
 		UnicodeString s;
-		s.format(L"id:%u - %s", rts::ClientInstance::getInstanceId(), ourName.str());
+		s.format(L"Instance%u - %s", rts::ClientInstance::getInstanceId(), ourName.str());
 		ourName = s;
 	}
 
