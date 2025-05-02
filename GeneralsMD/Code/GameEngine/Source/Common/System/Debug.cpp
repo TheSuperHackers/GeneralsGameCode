@@ -106,8 +106,12 @@ extern const char *gAppPrefix; /// So WB can have a different log file name.
 // ----------------------------------------------------------------------------
 // PRIVATE DATA 
 // ----------------------------------------------------------------------------
+// TheSuperHackers @info Must not use static RAII types when set in DebugInit,
+// because DebugInit can be called during static module initialization before the main function is called.
 #ifdef DEBUG_LOGGING
 static FILE *theLogFile = NULL;
+static char theLogFileName[ _MAX_PATH ];
+static char theLogFileNamePrev[ _MAX_PATH ];
 #endif
 #define LARGE_BUFFER	8192
 static char theBuffer[ LARGE_BUFFER ];	// make it big to avoid weird overflow bugs in debug mode
@@ -373,22 +377,20 @@ void DebugInit(int flags)
 			pEnd--;
 		}
 
-		char prevbuf[ _MAX_PATH ];
-		char curbuf[ _MAX_PATH ];
+		strcpy(theLogFileNamePrev, dirbuf);
+		strcat(theLogFileNamePrev, gAppPrefix);
+		strcat(theLogFileNamePrev, DEBUG_FILE_NAME_PREV);
 
-		strcpy(prevbuf, dirbuf);
-		strcat(prevbuf, gAppPrefix);
-		strcat(prevbuf, DEBUG_FILE_NAME_PREV);
-		strcpy(curbuf, dirbuf);
-		strcat(curbuf, gAppPrefix);
-		strcat(curbuf, DEBUG_FILE_NAME);
+		strcpy(theLogFileName, dirbuf);
+		strcat(theLogFileName, gAppPrefix);
+		strcat(theLogFileName, DEBUG_FILE_NAME);
 
- 		remove(prevbuf);
-		rename(curbuf, prevbuf);
-		theLogFile = fopen(curbuf, "w");
+		remove(theLogFileNamePrev);
+		rename(theLogFileName, theLogFileNamePrev);
+		theLogFile = fopen(theLogFileName, "w");
 		if (theLogFile != NULL)
 		{
-			DebugLog("Log %s opened: %s\n", curbuf, getCurrentTimeString());
+			DebugLog("Log %s opened: %s\n", theLogFileName, getCurrentTimeString());
 		} 
 	#endif
 	}
@@ -425,6 +427,17 @@ void DebugLog(const char *format, ...)
 	whackFunnyCharacters(theBuffer);
 	doLogOutput(theBuffer);
 } 
+
+const char* DebugGetLogFileName()
+{
+	return theLogFileName;
+}
+
+const char* DebugGetLogFileNamePrev()
+{
+	return theLogFileNamePrev;
+}
+
 #endif
 
 // ----------------------------------------------------------------------------
