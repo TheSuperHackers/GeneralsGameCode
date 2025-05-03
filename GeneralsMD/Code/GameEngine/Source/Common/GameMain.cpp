@@ -61,9 +61,14 @@ public:
 	{
 		m_processHandle = INVALID_HANDLE_VALUE;
 		m_readHandle = INVALID_HANDLE_VALUE;
+		m_exitcode = 0;
+		m_isDone = false;
 	}
 	bool StartProcess(AsciiString filename)
 	{
+		m_stdOutput = "";
+		m_isDone = false;
+
 		PROCESS_INFORMATION pi = { 0 };
 
 		SECURITY_ATTRIBUTES saAttr = { sizeof(SECURITY_ATTRIBUTES) };
@@ -86,20 +91,24 @@ public:
 		if (!CreateProcessA(NULL, (LPSTR)command.str(),
 				NULL, NULL, TRUE, 0,
 				NULL, 0, &si, &pi))
-				return false;
+		{
+			printf("Couldn't start exe: %s\n", command.str());
+			fflush(stdout);
+			return false;
+		}
 		CloseHandle(pi.hThread);
 		CloseHandle(writeHandle);
 		m_processHandle = pi.hProcess;
-		m_stdOutput = "";
 		return true;
 	}
-	bool IsRunning()
+	bool IsRunning() const
 	{
 		return m_processHandle != INVALID_HANDLE_VALUE;
 	}
-	bool Update(DWORD *exitcode, AsciiString *stdOutput)
+	void Update()
 	{
-		DEBUG_ASSERTCRASH(IsRunning(), ("process must be running"));
+		if (!IsRunning())
+			return;
 
 		while (true)
 		{
@@ -111,7 +120,7 @@ public:
 			if (bytesAvailable == 0)
 			{
 				// Child process is still running and we have all output so far
-				return false;
+				return;
 			}
 
 			DWORD readBytes = 0;
@@ -131,32 +140,57 @@ public:
 
 		// Pipe broke, that means the process already exited. But we call this just to make sure
 		WaitForSingleObject(m_processHandle, INFINITE);
-		GetExitCodeProcess(m_processHandle, exitcode);
+		GetExitCodeProcess(m_processHandle, &m_exitcode);
 		CloseHandle(m_processHandle);
 		m_processHandle = INVALID_HANDLE_VALUE;
 
 		CloseHandle(m_readHandle);
 		m_readHandle = INVALID_HANDLE_VALUE;
 
-		*stdOutput = m_stdOutput;
-		m_stdOutput = "";
-
-		return true;
+		m_isDone = true;
 	}
+	bool IsDone(DWORD *exitcode, AsciiString *stdOutput)
+	{
+		*exitcode = m_exitcode;
+		*stdOutput = m_stdOutput;
+		return m_isDone;
+	}
+	void Close()
+	{
+		if (m_processHandle != INVALID_HANDLE_VALUE)
+		{
+			TerminateProcess(m_processHandle, 1);
+			CloseHandle(m_processHandle);
+			m_processHandle = INVALID_HANDLE_VALUE;
+		}
 
+		CloseHandle(m_readHandle);
+		m_readHandle = INVALID_HANDLE_VALUE;
+
+		m_stdOutput = "";
+		m_isDone = false;
+	}
 private:
 	HANDLE m_processHandle;
 	HANDLE m_readHandle;
 	AsciiString m_stdOutput;
+	DWORD m_exitcode;
+	bool m_isDone;
 };
 #endif
 
+int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filenames);
 
 // TheSuperHackers @feature helmutbuhler 04/13/2025
 // Simulate a list of replays without graphics.
 // Returns exitcode 1 if mismatch or other error occured
 int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char *argv[])
 {
+	if (filenames.size() != 1)
+	{
+		return SimulateReplayListMultiProcess(filenames);
+	}
+
 	// Note that we use printf here because this is run from cmd.
 	Int fps = TheGlobalData->m_framesPerSecondLimit;
 	int numErrors = 0;
@@ -207,7 +241,7 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 		}
 		else
 		{
-			printf("%d/%d ", i+1, filenames.size());
+			/*printf("%d/%d ", i+1, filenames.size());
 			fflush(stdout);
 			//bool error = SimulateReplayInProcess(filename);
 			ReplayProcess p;
@@ -218,7 +252,7 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 			{}
 			printf("%s", stdOutput.str());
 			fflush(stdout);
-			numErrors += exitcode == 0 ? 0 : 1;
+			numErrors += exitcode == 0 ? 0 : 1;*/
 		}
 		/*if (i == TheGlobalData->m_simulateReplayList.size()-1)
 		{
@@ -251,6 +285,76 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 	{
 		TheGameLogic->clearGameData();
 	}
+	return numErrors != 0 ? 1 : 0;
+}
+
+int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filenames)
+{
+	DWORD totalStartTime = GetTickCount();
+
+	std::vector<ReplayProcess> processes;
+	const int maxProcesses = 4;
+	int filenamePositionStarted = 0;
+	int filenamePositionDone = 0;
+	int numErrors = 0;
+
+	while (true)
+	{
+		int i;
+		for (i = 0; i < processes.size(); i++)
+			processes[i].Update();
+
+		// Get result of finished processes and print output in order
+		while (processes.size() != 0)
+		{
+			DWORD exitcode;
+			AsciiString stdOutput;
+			if (!processes[0].IsDone(&exitcode, &stdOutput))
+				break;
+			printf("%d/%d %s", filenamePositionDone+1, filenames.size(), stdOutput.str());
+			fflush(stdout);
+			numErrors += exitcode == 0 ? 0 : 1;
+			processes.erase(processes.begin());
+			filenamePositionDone++;
+		}
+
+		// Count how many processes are running
+		int numProcessesRunning = 0;
+		for (i = 0; i < processes.size(); i++)
+		{
+			if (processes[i].IsRunning())
+				numProcessesRunning++;
+		}
+
+		// Add new processes when we are below the limit and there are replays left
+		while (numProcessesRunning < maxProcesses && filenamePositionStarted < filenames.size())
+		{
+			ReplayProcess p;
+			p.StartProcess(filenames[filenamePositionStarted]);
+			processes.push_back(p);
+			filenamePositionStarted++;
+			numProcessesRunning++;
+		}
+
+		if (processes.empty())
+			break;
+
+		// Don't waste CPU here, our workers need every bit of CPU time they can get
+		Sleep(100);
+	}
+
+	DEBUG_ASSERTCRASH(filenamePositionStarted == filenames.size(), ("inconsistent file position 1"));
+	DEBUG_ASSERTCRASH(filenamePositionDone == filenames.size(), ("inconsistent file position 2"));
+
+	if (numErrors)
+		printf("Errors occured: %d\n", numErrors);
+	else
+		printf("Successfully simulated all replays\n");
+
+	UnsignedInt realTime = (GetTickCount()-totalStartTime) / 1000;
+	printf("Total Wall Time: %d:%02d:%02d\n", realTime/60/60, realTime/60%60, realTime%60);
+	fflush(stdout);
+
 	return numErrors != 0 ? 1 : 0;
 }
 
