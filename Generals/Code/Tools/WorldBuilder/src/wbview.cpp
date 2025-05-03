@@ -159,7 +159,7 @@ void WbView::Dump(CDumpContext& dc) const
 {
 	CView::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // WbView message handlers

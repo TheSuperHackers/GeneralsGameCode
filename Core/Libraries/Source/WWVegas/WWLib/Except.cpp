@@ -793,7 +793,7 @@ int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info)
 	}
 #else
 	exception_code = exception_code;
-#endif	//_DEBUG
+#endif	//RTS_DEBUG
 
 #ifdef WWDEBUG
 	//CONTEXT *context;
@@ -833,7 +833,7 @@ int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info)
 				}
 			}
 			DebugString ("Debug file copied\n");
-#endif	//_DEBUG
+#endif	//RTS_DEBUG
 #endif	//_DEBUG_PRINT
 #endif	//(0)
 
@@ -854,7 +854,7 @@ int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info)
 	if (ExitOnException) {
 #ifdef RTS_DEBUG
 		_CrtSetDbgFlag(0);
-#endif //_DEBUG
+#endif //RTS_DEBUG
 		TryingToExit = true;
 
 		unsigned long id = Get_Main_Thread_ID();

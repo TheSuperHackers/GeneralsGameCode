@@ -73,7 +73,7 @@ void CWDumpEditView::Dump(CDumpContext& dc) const
 {
 	CEditView::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpEditView message handlers

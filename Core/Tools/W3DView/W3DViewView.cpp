@@ -92,7 +92,7 @@ CW3DViewDoc* CW3DViewView::GetDocument() // non-debug version is inline
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CW3DViewDoc)));
 	return (CW3DViewDoc*)m_pDocument;
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CW3DViewView message handlers

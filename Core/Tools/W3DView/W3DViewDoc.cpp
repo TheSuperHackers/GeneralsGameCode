@@ -343,7 +343,7 @@ void CW3DViewDoc::Dump(CDumpContext& dc) const
 {
 	CDocument::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 
 ///////////////////////////////////////////////////////////////

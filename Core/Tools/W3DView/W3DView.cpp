@@ -113,7 +113,7 @@ WinMain
 #ifndef RTS_DEBUG
 	try
 	{
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 		//::AfxWinInit (hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 		//::AfxInitialize (FALSE, _MFC_VER);
@@ -134,7 +134,7 @@ WinMain
 
 		::MessageBox (NULL, "Internal Application Error", "Unrecoverable Error", MB_ICONERROR | MB_OK);
 	}
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 	return retcode;
 }
