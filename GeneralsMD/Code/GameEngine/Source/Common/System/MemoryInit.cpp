@@ -211,6 +211,7 @@ static PoolSizeRec sizes[] =
 	{ "GarrisonContain", 256, 32 },
 	{ "HealCrateCollide", 32, 32 },
 	{ "HeightDieUpdate", 32, 32 },
+	{ "ScatterShotUpdate", 128, 64 },
 	{ "FireWeaponWhenDamagedBehavior", 32, 32 },
 	{ "FireWeaponWhenDeadBehavior", 128, 64 },
 	{ "GenerateMinefieldBehavior", 32, 32 },

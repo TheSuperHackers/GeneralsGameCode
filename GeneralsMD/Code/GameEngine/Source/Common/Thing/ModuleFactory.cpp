@@ -128,6 +128,7 @@
 #include "GameLogic/Module/AssaultTransportAIUpdate.h"
 #include "GameLogic/Module/HeightDieUpdate.h"
 #include "GameLogic/Module/HordeUpdate.h"
+#include "GameLogic/Module/ScatterShotUpdate.h"
 #include "GameLogic/Module/JetAIUpdate.h"
 #include "GameLogic/Module/LaserUpdate.h"
 #include "GameLogic/Module/PointDefenseLaserUpdate.h"
@@ -418,6 +419,7 @@ void ModuleFactory::init( void )
 	addModule( FloatUpdate );
 	addModule( TensileFormationUpdate );
 	addModule( HeightDieUpdate );
+	addModule( ScatterShotUpdate );
 	addModule( ChinookAIUpdate );
 	addModule( JetAIUpdate );
 	addModule( AIUpdateInterface );

@@ -106,6 +106,8 @@ public:
 	virtual const Coord3D *getVelocity() const { return &m_vel; }		///< get current velocity
 	virtual void setFramesTillCountermeasureDiversionOccurs( UnsignedInt frames ) {}
 	virtual void projectileNowJammed() {}
+	virtual Object* getTargetObject() { return NULL; }
+	virtual const Coord3D* getTargetPosition();
 
 	virtual UpdateSleepTime update();
 	virtual void onDelete( void );

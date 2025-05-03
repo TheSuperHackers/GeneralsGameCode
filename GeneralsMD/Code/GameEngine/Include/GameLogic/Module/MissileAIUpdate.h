@@ -99,6 +99,8 @@ public:
 	virtual ObjectID projectileGetLauncherID() const { return m_launcherID; }
 	virtual void setFramesTillCountermeasureDiversionOccurs( UnsignedInt frames ); ///< Number of frames till missile diverts to countermeasures.
 	virtual void projectileNowJammed();///< We lose our Object target and scatter to the ground
+	virtual Object* getTargetObject();
+	virtual const Coord3D* getTargetPosition();
 
 	virtual Bool processCollision(PhysicsBehavior *physics, Object *other); ///< Returns true if the physics collide should apply the force.  Normally not.  jba.
 

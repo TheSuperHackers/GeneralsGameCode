@@ -97,6 +97,8 @@ public:
 	virtual ObjectID projectileGetLauncherID() const { return m_launcherID; }
 	virtual void setFramesTillCountermeasureDiversionOccurs( UnsignedInt frames ) {}
 	virtual void projectileNowJammed() {}
+	virtual Object* getTargetObject();
+	virtual const Coord3D* getTargetPosition();
 
 protected:
 
