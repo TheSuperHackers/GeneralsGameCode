@@ -71,7 +71,7 @@
 #include "WWMath/matrix3d.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
@@ -248,7 +248,7 @@ void AudioManager::init()
 				break;
 			}
 			// We loop infinitely on the splash screen if we don't allow breaking out of this loop.
-//#if !defined( _DEBUG ) && !defined( _INTERNAL )
+//#if !defined( RTS_DEBUG ) && !defined( RTS_INTERNAL )
 			else
 			{
 				// Display the warning.
@@ -781,8 +781,8 @@ void AudioManager::set3DVolumeAdjustment( Real volumeAdjustment )
 	if (m_sound3DVolume > 1.0f) 
 		m_sound3DVolume = 1.0f;
 
-
-	m_volumeHasChanged = TRUE;
+  if ( ! has3DSensitiveStreamsPlaying() )
+  	m_volumeHasChanged = TRUE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -879,6 +879,28 @@ AudioEventInfo *AudioManager::findAudioEventInfo( AsciiString eventName ) const
 	}
 
 	return (*it).second;
+}
+
+//-------------------------------------------------------------------------------------------------
+// Remove all AudioEventInfo's with the m_isLevelSpecific flag
+void AudioManager::removeLevelSpecificAudioEventInfos(void)
+{
+  AudioEventInfoHash::iterator it = m_allAudioEventInfo.begin();
+
+  while ( it != m_allAudioEventInfo.end() )
+  {
+    AudioEventInfoHash::iterator next = it; // Make sure erase doesn't cause problems
+    next++;
+
+    if ( it->second->isLevelSpecific() )
+    {
+      it->second->deleteInstance();
+      m_allAudioEventInfo.erase( it );
+    }
+
+    it = next;
+  }
+
 }
 
 //-------------------------------------------------------------------------------------------------

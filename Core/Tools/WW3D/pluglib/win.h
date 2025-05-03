@@ -74,15 +74,15 @@ extern HINSTANCE	ProgramInstance;
 extern HWND			MainWindow;
 extern bool GameInFocus;
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 
 void __cdecl Print_Win32Error(unsigned long win32Error);
 
-#else // _DEBUG
+#else // RTS_DEBUG
 
 #define Print_Win32Error
 
-#endif // _DEBUG
+#endif // RTS_DEBUG
 
 #else // _WINDOWS
 #include <unistd.h>

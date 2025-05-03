@@ -136,7 +136,7 @@ class AudioManager : public SubsystemInterface
 	public:
 		AudioManager();
 		virtual ~AudioManager();
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		virtual void audioDebugDisplay(DebugDisplayInterface *dd, void *userData, FILE *fp = NULL ) = 0;
 #endif
 
@@ -151,10 +151,6 @@ class AudioManager : public SubsystemInterface
 		virtual void pauseAudio( AudioAffect which ) = 0;
 		virtual void resumeAudio( AudioAffect which ) = 0;
 		virtual void pauseAmbient( Bool shouldPause ) = 0;
-
-		// device dependent stops.
-		virtual void stopAllAmbientsBy( Object* obj ) = 0;
-		virtual void stopAllAmbientsBy( Drawable* draw ) = 0;
 
 		// for focus issues
 		virtual void loseFocus( void );
@@ -320,6 +316,8 @@ class AudioManager : public SubsystemInterface
 
 		// For tracking purposes
 		virtual AudioHandle allocateNewHandle( void );	
+    // Remove all AudioEventInfo's with the m_isLevelSpecific flag
+    virtual void removeLevelSpecificAudioEventInfos( void );
     
     void removeAllAudioRequests( void );
     

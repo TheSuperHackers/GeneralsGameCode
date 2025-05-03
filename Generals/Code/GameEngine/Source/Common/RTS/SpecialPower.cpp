@@ -37,7 +37,7 @@
 #include "GameLogic/Object.h"
 #include "Common/BitFlagsIO.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -176,6 +176,7 @@ void SpecialPowerStore::parseSpecialPowerDefinition( INI *ini )
 	{ "ViewObjectDuration",				INI::parseDurationUnsignedInt,		NULL,	offsetof( SpecialPowerTemplate, m_viewObjectDuration ) },
 	{ "ViewObjectRange",					INI::parseReal,										NULL,	offsetof( SpecialPowerTemplate, m_viewObjectRange ) },
 	{ "RadiusCursorRadius",				INI::parseReal,										NULL,	offsetof( SpecialPowerTemplate, m_radiusCursorRadius ) },
+	{ "ShortcutPower",						INI::parseBool,										NULL, offsetof( SpecialPowerTemplate, m_shortcutPower ) },
 	{ NULL,	NULL, NULL,	0 }  // keep this last
 
 };
@@ -194,6 +195,7 @@ SpecialPowerTemplate::SpecialPowerTemplate()
 	m_viewObjectDuration = 0;
 	m_viewObjectRange = 0;
 	m_radiusCursorRadius = 0;
+	m_shortcutPower = FALSE;
 
 }  // end SpecialPowerTemplate
 

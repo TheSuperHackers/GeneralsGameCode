@@ -62,7 +62,7 @@
 #include "dazzle.h"
 
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -333,7 +333,7 @@ CW3DViewDoc::Serialize(CArchive& ar)
 /////////////////////////////////////////////////////////////////////////////
 // CW3DViewDoc diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void CW3DViewDoc::AssertValid() const
 {
 	CDocument::AssertValid();

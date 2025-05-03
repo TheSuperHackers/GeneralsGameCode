@@ -63,6 +63,7 @@
 #include "Common/Registry.h"
 #include "Common/SystemInfo.h"
 #include "Common/UnicodeString.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/GameText.h"
 #include "GameClient/Keyboard.h"
 #include "GameClient/Mouse.h"
@@ -74,7 +75,7 @@ extern HWND ApplicationHWnd;
 
 extern const char *gAppPrefix; /// So WB can have a different log file name.
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // this should ALWAYS be present
 #pragma optimize("", off)
 #endif
@@ -85,15 +86,15 @@ extern const char *gAppPrefix; /// So WB can have a different log file name.
 
 #ifdef DEBUG_LOGGING
 
-#if defined(_INTERNAL)
-	#define DEBUG_FILE_NAME				"DebugLogFileI.txt"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevI.txt"
-#elif defined(_DEBUG)
-	#define DEBUG_FILE_NAME				"DebugLogFileD.txt"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevD.txt"
+#if defined(RTS_INTERNAL)
+	#define DEBUG_FILE_NAME				"DebugLogFileI"
+	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevI"
+#elif defined(RTS_DEBUG)
+	#define DEBUG_FILE_NAME				"DebugLogFileD"
+	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevD"
 #else
-	#define DEBUG_FILE_NAME				"DebugLogFile.txt"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrev.txt"
+	#define DEBUG_FILE_NAME				"DebugLogFile"
+	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrev"
 #endif
 
 #endif
@@ -105,8 +106,12 @@ extern const char *gAppPrefix; /// So WB can have a different log file name.
 // ----------------------------------------------------------------------------
 // PRIVATE DATA 
 // ----------------------------------------------------------------------------
+// TheSuperHackers @info Must not use static RAII types when set in DebugInit,
+// because DebugInit can be called during static module initialization before the main function is called.
 #ifdef DEBUG_LOGGING
 static FILE *theLogFile = NULL;
+static char theLogFileName[ _MAX_PATH ];
+static char theLogFileNamePrev[ _MAX_PATH ];
 #endif
 #define LARGE_BUFFER	8192
 static char theBuffer[ LARGE_BUFFER ];	// make it big to avoid weird overflow bugs in debug mode
@@ -359,6 +364,11 @@ void DebugInit(int flags)
 
 	#ifdef DEBUG_LOGGING
 
+		// TheSuperHackers @info Debug initialization can happen very early.
+		// Therefore, initialize the client instance now.
+		if (!rts::ClientInstance::initialize())
+			return;
+
 		char dirbuf[ _MAX_PATH ];
 		::GetModuleFileName( NULL, dirbuf, sizeof( dirbuf ) );
 		char *pEnd = dirbuf + strlen( dirbuf );
@@ -372,22 +382,26 @@ void DebugInit(int flags)
 			pEnd--;
 		}
 
-		char prevbuf[ _MAX_PATH ];
-		char curbuf[ _MAX_PATH ];
+		strcpy(theLogFileNamePrev, dirbuf);
+		strcat(theLogFileNamePrev, gAppPrefix);
+		strcat(theLogFileNamePrev, DEBUG_FILE_NAME_PREV);
+		if (rts::ClientInstance::getInstanceId() > 1u)
+			sprintf(theLogFileNamePrev + strlen(theLogFileNamePrev), "_Instance%.2u", rts::ClientInstance::getInstanceId());
+		strcat(theLogFileNamePrev, ".txt");
 
-		strcpy(prevbuf, dirbuf);
-		strcat(prevbuf, gAppPrefix);
-		strcat(prevbuf, DEBUG_FILE_NAME_PREV);
-		strcpy(curbuf, dirbuf);
-		strcat(curbuf, gAppPrefix);
-		strcat(curbuf, DEBUG_FILE_NAME);
+		strcpy(theLogFileName, dirbuf);
+		strcat(theLogFileName, gAppPrefix);
+		strcat(theLogFileName, DEBUG_FILE_NAME);
+		if (rts::ClientInstance::getInstanceId() > 1u)
+			sprintf(theLogFileName + strlen(theLogFileName), "_Instance%.2u", rts::ClientInstance::getInstanceId());
+		strcat(theLogFileName, ".txt");
 
- 		remove(prevbuf);
-		rename(curbuf, prevbuf);
-		theLogFile = fopen(curbuf, "w");
+		remove(theLogFileNamePrev);
+		rename(theLogFileName, theLogFileNamePrev);
+		theLogFile = fopen(theLogFileName, "w");
 		if (theLogFile != NULL)
 		{
-			DebugLog("Log %s opened: %s\n", curbuf, getCurrentTimeString());
+			DebugLog("Log %s opened: %s\n", theLogFileName, getCurrentTimeString());
 		} 
 	#endif
 	}
@@ -424,6 +438,17 @@ void DebugLog(const char *format, ...)
 	whackFunnyCharacters(theBuffer);
 	doLogOutput(theBuffer);
 } 
+
+const char* DebugGetLogFileName()
+{
+	return theLogFileName;
+}
+
+const char* DebugGetLogFileNamePrev()
+{
+	return theLogFileNamePrev;
+}
+
 #endif
 
 // ----------------------------------------------------------------------------
@@ -709,7 +734,7 @@ void ReleaseCrash(const char *reason)
 		}
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	/* static */ char buff[8192]; // not so static so we can be threadsafe
 	_snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);
 	buff[8191] = 0;

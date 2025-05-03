@@ -41,7 +41,7 @@
 #include "rawfilem.h"
 #include "finddialog.h"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW

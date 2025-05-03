@@ -94,7 +94,7 @@ public:
 // Implementation
 public:
 	virtual ~CW3DViewDoc();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif

@@ -137,7 +137,7 @@ void CWorldBuilderView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 /////////////////////////////////////////////////////////////////////////////
 // CWorldBuilderView diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void CWorldBuilderView::AssertValid() const
 {
 	WbView::AssertValid();

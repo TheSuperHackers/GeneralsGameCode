@@ -728,7 +728,7 @@ File::EFileError File::Save(const void* buffer, UInt32 size)
 
 bool File::OnFileError(EFileError error, bool)
 	{
-	#ifdef _DEBUG
+	#ifdef RTS_DEBUG
 	const char* _errorNames[] = 
 		{
 		"FileError_None",

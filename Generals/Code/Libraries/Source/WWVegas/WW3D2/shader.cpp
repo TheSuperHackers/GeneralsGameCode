@@ -531,57 +531,74 @@ void ShaderClass::Apply()
 			return;
 	}
 
-	if(diff & (ShaderClass::MASK_PRIGRADIENT|ShaderClass::MASK_TEXTURING))
-	{
-		D3DTEXTUREOP	cOp = D3DTOP_SELECTARG1;
-		D3DTEXTUREOP	aOp = D3DTOP_SELECTARG1;
-		DWORD	cArg1 = D3DTA_DIFFUSE, cArg2 = D3DTA_DIFFUSE;
-		DWORD	aArg1 = D3DTA_DIFFUSE, aArg2 = D3DTA_DIFFUSE;
+	// Defaults
+	
+	D3DTEXTUREOP	PricOp	= D3DTOP_SELECTARG1;
+	DWORD				PricArg1 = D3DTA_DIFFUSE;
+	DWORD				PricArg2 = D3DTA_DIFFUSE;
 
+	D3DTEXTUREOP	PriaOp	 = D3DTOP_SELECTARG1;	
+	DWORD			PriaArg1 = D3DTA_DIFFUSE;
+	DWORD			PriaArg2 = D3DTA_DIFFUSE;
+
+	D3DTEXTUREOP	SeccOp	 = D3DTOP_DISABLE;
+	DWORD			SeccArg1 = D3DTA_TEXTURE;
+	DWORD			SeccArg2 = D3DTA_CURRENT;
+
+	D3DTEXTUREOP	SecaOp	 = D3DTOP_DISABLE;
+	DWORD			SecaArg1 = D3DTA_TEXTURE;
+	DWORD			SecaArg2 = D3DTA_CURRENT;
+
+	int pri_mask=ShaderClass::MASK_PRIGRADIENT|ShaderClass::MASK_TEXTURING;
+	int sec_mask=ShaderClass::MASK_POSTDETAILCOLORFUNC|ShaderClass::MASK_TEXTURING;
+	int seca_mask=ShaderClass::MASK_POSTDETAILALPHAFUNC|ShaderClass::MASK_TEXTURING;
+
+	if(diff & pri_mask)
+	{
 		if(Get_Texturing() == ShaderClass::TEXTURING_ENABLE)
 		{
 			switch(Get_Primary_Gradient())
 			{
 			case ShaderClass::GRADIENT_DISABLE:
 				//Decal
-				cOp = D3DTOP_SELECTARG1;
-				cArg1 = D3DTA_TEXTURE;
-				cArg2 = D3DTA_CURRENT;
-				aOp = D3DTOP_SELECTARG1;
-				aArg1 = D3DTA_TEXTURE;
-				aArg2 = D3DTA_CURRENT;
+				PricOp = D3DTOP_SELECTARG1;
+				PricArg1 = D3DTA_TEXTURE;
+				PricArg2 = D3DTA_CURRENT;
+				PriaOp = D3DTOP_SELECTARG1;
+				PriaArg1 = D3DTA_TEXTURE;
+				PriaArg2 = D3DTA_CURRENT;
 				break;
 			default:
 			case ShaderClass::GRADIENT_MODULATE:
 				//Modulate Alpha
-				cOp = D3DTOP_MODULATE;
-				cArg1 = D3DTA_TEXTURE;
-				cArg2 = D3DTA_DIFFUSE;
-				aOp = D3DTOP_MODULATE;
-				aArg1 = D3DTA_TEXTURE;
-				aArg2 = D3DTA_DIFFUSE;
+				PricOp = D3DTOP_MODULATE;
+				PricArg1 = D3DTA_TEXTURE;
+				PricArg2 = D3DTA_DIFFUSE;
+				PriaOp = D3DTOP_MODULATE;
+				PriaArg1 = D3DTA_TEXTURE;
+				PriaArg2 = D3DTA_DIFFUSE;
 				break;
 			case ShaderClass::GRADIENT_ADD:
 				if(!(TextureOpCaps & D3DTEXOPCAPS_ADD))	
-					cOp = D3DTOP_MODULATE;
+					PricOp = D3DTOP_MODULATE;
 				else
-					cOp = D3DTOP_ADD;
-				cArg1 = D3DTA_TEXTURE;
-				cArg2 = D3DTA_DIFFUSE;
-				aOp = D3DTOP_MODULATE;
-				aArg1 = D3DTA_TEXTURE;
-				aArg2 = D3DTA_DIFFUSE;
+					PricOp = D3DTOP_ADD;
+				PricArg1 = D3DTA_TEXTURE;
+				PricArg2 = D3DTA_DIFFUSE;
+				PriaOp = D3DTOP_MODULATE;
+				PriaArg1 = D3DTA_TEXTURE;
+				PriaArg2 = D3DTA_DIFFUSE;
 				break;
 			// Bump map is a hack currently as we only have two stages in use!
 			case ShaderClass::GRADIENT_BUMPENVMAP:
 				if(TextureOpCaps & D3DTEXOPCAPS_BUMPENVMAP)
 				{
-					cOp=D3DTOP_BUMPENVMAP;
-					cArg1=D3DTA_TEXTURE;
-					cArg2=D3DTA_DIFFUSE;
-					aOp = D3DTOP_DISABLE;
-					aArg1 = D3DTA_TEXTURE;
-					aArg2 = D3DTA_CURRENT;
+					PricOp=D3DTOP_BUMPENVMAP;
+					PricArg1=D3DTA_TEXTURE;
+					PricArg2=D3DTA_DIFFUSE;
+					PriaOp = D3DTOP_DISABLE;
+					PriaArg1 = D3DTA_TEXTURE;
+					PriaArg2 = D3DTA_CURRENT;
 				}
 				break;
 
@@ -589,12 +606,12 @@ void ShaderClass::Apply()
 			case ShaderClass::GRADIENT_BUMPENVMAPLUMINANCE:
 				if(TextureOpCaps & D3DTEXOPCAPS_BUMPENVMAPLUMINANCE)
 				{
-					cOp=D3DTOP_BUMPENVMAPLUMINANCE;
-					cArg1=D3DTA_TEXTURE;
-					cArg2=D3DTA_DIFFUSE;
-					aOp = D3DTOP_DISABLE;
-					aArg1 = D3DTA_TEXTURE;
-					aArg2 = D3DTA_CURRENT;
+					PricOp=D3DTOP_BUMPENVMAPLUMINANCE;
+					PricArg1=D3DTA_TEXTURE;
+					PricArg2=D3DTA_DIFFUSE;
+					PriaOp = D3DTOP_DISABLE;
+					PriaArg1 = D3DTA_TEXTURE;
+					PriaArg2 = D3DTA_CURRENT;
 				}
 				break;
 
@@ -602,12 +619,12 @@ void ShaderClass::Apply()
 			case ShaderClass::GRADIENT_DOTPRODUCT3:
 				if(TextureOpCaps & D3DTEXOPCAPS_DOTPRODUCT3)
 				{
-					cOp=D3DTOP_DOTPRODUCT3;
-					cArg1=D3DTA_TEXTURE;
-					cArg2=D3DTA_DIFFUSE;
-					aOp = D3DTOP_DISABLE;
-					aArg1 = D3DTA_TEXTURE;
-					aArg2 = D3DTA_CURRENT;
+					PricOp = D3DTOP_DOTPRODUCT3;
+					PricArg1 = D3DTA_TEXTURE;
+					PricArg2 = D3DTA_DIFFUSE;
+					PriaOp = D3DTOP_DISABLE;
+					PriaArg1 = D3DTA_TEXTURE;
+					PriaArg2 = D3DTA_CURRENT;
 				}
 				break;
 			}
@@ -617,54 +634,50 @@ void ShaderClass::Apply()
 			switch(Get_Primary_Gradient())
 			{
 			case ShaderClass::GRADIENT_DISABLE:
-				cOp = D3DTOP_DISABLE;
-				cArg1 = D3DTA_TEXTURE;
-				cArg2 = D3DTA_CURRENT;
-				aOp = D3DTOP_DISABLE;
-				aArg1 = D3DTA_TEXTURE;
-				aArg2 = D3DTA_CURRENT;
+				PricOp = D3DTOP_DISABLE;
+				PricArg1 = D3DTA_TEXTURE;
+				PricArg2 = D3DTA_CURRENT;
+				PriaOp = D3DTOP_DISABLE;
+				PriaArg1 = D3DTA_TEXTURE;
+				PriaArg2 = D3DTA_CURRENT;
 				break;
 			default:
 			case ShaderClass::GRADIENT_MODULATE:
-				cOp = D3DTOP_SELECTARG2;
-				cArg1 = D3DTA_TEXTURE;
-				cArg2 = D3DTA_DIFFUSE;
-				aOp = D3DTOP_SELECTARG2;
-				aArg1 = D3DTA_TEXTURE;
-				aArg2 = D3DTA_DIFFUSE;
+				PricOp = D3DTOP_SELECTARG2;
+				PricArg1 = D3DTA_TEXTURE;
+				PricArg2 = D3DTA_DIFFUSE;
+				PriaOp = D3DTOP_SELECTARG2;
+				PriaArg1 = D3DTA_TEXTURE;
+				PriaArg2 = D3DTA_DIFFUSE;
 				break;
 			case ShaderClass::GRADIENT_ADD:
-				cOp = D3DTOP_SELECTARG2;
-				cArg1 = D3DTA_TEXTURE;
-				cArg2 = D3DTA_DIFFUSE;
-				aOp = D3DTOP_SELECTARG2;
-				aArg1 = D3DTA_TEXTURE;
-				aArg2 = D3DTA_DIFFUSE;
+				PricOp = D3DTOP_SELECTARG2;
+				PricArg1 = D3DTA_TEXTURE;
+				PricArg2 = D3DTA_DIFFUSE;
+				PriaOp = D3DTOP_SELECTARG2;
+				PriaArg1 = D3DTA_TEXTURE;
+				PriaArg2 = D3DTA_DIFFUSE;
 				break;
 			}
 		}
 
 		if (WW3D::Is_Coloring_Enabled())
 		{
-			cArg2=aArg2=D3DTA_TFACTOR;
-			cOp=aOp=D3DTOP_SELECTARG2;
+			PricArg2=PriaArg2=D3DTA_TFACTOR;
+			PricOp=PriaOp=D3DTOP_SELECTARG2;
 		}
 
-		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLOROP,cOp);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLORARG1,cArg1);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLORARG2,cArg2);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAOP,aOp);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAARG1,aArg1);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAARG2,aArg2);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLOROP,PricOp);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLORARG1,PricArg1);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_COLORARG2,PricArg2);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAOP,PriaOp);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAARG1,PriaArg1);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(0,D3DTSS_ALPHAARG2,PriaArg2);
 		diff &= ~(ShaderClass::MASK_PRIGRADIENT);
 	}
 
-	if(diff & (ShaderClass::MASK_POSTDETAILCOLORFUNC|ShaderClass::MASK_TEXTURING))
+	if(diff & sec_mask)
 	{
-		D3DTEXTUREOP	cOp	= D3DTOP_DISABLE;
-		DWORD			cArg1 = D3DTA_TEXTURE;
-		DWORD			cArg2 = D3DTA_CURRENT;
-
 		if(Get_Texturing()== ShaderClass::TEXTURING_ENABLE)
 		{
 			switch(Get_Post_Detail_Color_Func())
@@ -676,88 +689,84 @@ void ShaderClass::Apply()
 			case ShaderClass::DETAILCOLOR_DETAIL:
 				if(TextureOpCaps & D3DTEXOPCAPS_MODULATE)
 				{
-					cOp = D3DTOP_SELECTARG1;
-					cArg1 = D3DTA_TEXTURE;
-					cArg2 = D3DTA_CURRENT;
+					SeccOp = D3DTOP_SELECTARG1;
+					SeccArg1 = D3DTA_TEXTURE;
+					SeccArg2 = D3DTA_CURRENT;
 				}
 				break;
 
 			case ShaderClass::DETAILCOLOR_SCALE:
 				if(TextureOpCaps & D3DTEXOPCAPS_MODULATE)
 				{
-					cOp = D3DTOP_MODULATE;
-					cArg1 = D3DTA_TEXTURE;
-					cArg2 = D3DTA_CURRENT;
+					SeccOp = D3DTOP_MODULATE;
+					SeccArg1 = D3DTA_TEXTURE;
+					SeccArg2 = D3DTA_CURRENT;
 				}
 				break;
 
 			case ShaderClass::DETAILCOLOR_INVSCALE:
 				if(TextureOpCaps & D3DTEXOPCAPS_ADDSMOOTH)
 				{
-					cOp = D3DTOP_ADDSMOOTH;
-					cArg1 = D3DTA_TEXTURE;
-					cArg2 = D3DTA_CURRENT;
+					SeccOp = D3DTOP_ADDSMOOTH;
+					SeccArg1 = D3DTA_TEXTURE;
+					SeccArg2 = D3DTA_CURRENT;
 				}
 				break;
 
 			case ShaderClass::DETAILCOLOR_ADD:
 				if(TextureOpCaps & D3DTEXOPCAPS_ADD)
 				{
-					cOp = D3DTOP_ADD;
-					cArg1 = D3DTA_TEXTURE;
-					cArg2 = D3DTA_CURRENT;
+					SeccOp = D3DTOP_ADD;
+					SeccArg1 = D3DTA_TEXTURE;
+					SeccArg2 = D3DTA_CURRENT;
 				}
 				break;
 
 			case ShaderClass::DETAILCOLOR_SUB:
 				if(TextureOpCaps & D3DTEXOPCAPS_SUBTRACT)
 				{
-					cOp = D3DTOP_SUBTRACT;
-					cArg1 = D3DTA_TEXTURE;
-					cArg2 = D3DTA_CURRENT;
+					SeccOp = D3DTOP_SUBTRACT;
+					SeccArg1 = D3DTA_TEXTURE;
+					SeccArg2 = D3DTA_CURRENT;
 				}
 				break;
 
 			case ShaderClass::DETAILCOLOR_SUBR:
 				if(TextureOpCaps & D3DTEXOPCAPS_SUBTRACT)
 				{
-					cOp = D3DTOP_SUBTRACT;
-					cArg1 = D3DTA_CURRENT;
-					cArg2 = D3DTA_TEXTURE;
+					SeccOp = D3DTOP_SUBTRACT;
+					SeccArg1 = D3DTA_CURRENT;
+					SeccArg2 = D3DTA_TEXTURE;
 				}
 				break;
 
 			case ShaderClass::DETAILCOLOR_BLEND:
 				if(TextureOpCaps & D3DTEXOPCAPS_BLENDTEXTUREALPHA)
 				{
-					cOp = D3DTOP_BLENDTEXTUREALPHA;
-					cArg1 = D3DTA_TEXTURE;
-					cArg2 = D3DTA_CURRENT;
+					SeccOp = D3DTOP_BLENDTEXTUREALPHA;
+					SeccArg1 = D3DTA_TEXTURE;
+					SeccArg2 = D3DTA_CURRENT;
 				}
 				break;
 
 			case ShaderClass::DETAILCOLOR_DETAILBLEND:
 				if(TextureOpCaps & D3DTEXOPCAPS_BLENDCURRENTALPHA)
 				{
-					cOp = D3DTOP_BLENDCURRENTALPHA;
-					cArg1 = D3DTA_TEXTURE;
-					cArg2 = D3DTA_CURRENT;
+					SeccOp = D3DTOP_BLENDCURRENTALPHA;
+					SeccArg1 = D3DTA_TEXTURE;
+					SeccArg2 = D3DTA_CURRENT;
 				}
 				break;
 			}
 		}
-		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_COLOROP,cOp);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_COLORARG1,cArg1);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_COLORARG2,cArg2);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_COLOROP,SeccOp);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_COLORARG1,SeccArg1);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_COLORARG2,SeccArg2);
 	}
 	diff &= ~(ShaderClass::MASK_POSTDETAILCOLORFUNC);
 
-	if(diff & (ShaderClass::MASK_POSTDETAILALPHAFUNC|ShaderClass::MASK_TEXTURING))
+	if(diff & seca_mask)
 	{
-		D3DTEXTUREOP	aOp	= D3DTOP_DISABLE;
-		DWORD			aArg1 = D3DTA_TEXTURE;
-		DWORD			aArg2 = D3DTA_CURRENT;
-
 		if(Get_Texturing() == ShaderClass::TEXTURING_ENABLE)
 		{
 			switch(Get_Post_Detail_Alpha_Func())
@@ -769,34 +778,34 @@ void ShaderClass::Apply()
 			case ShaderClass::DETAILALPHA_DETAIL:
 				if(TextureOpCaps & D3DTEXOPCAPS_MODULATE)
 				{
-					aOp = D3DTOP_SELECTARG1;
-					aArg1 = D3DTA_TEXTURE;
-					aArg2 = D3DTA_CURRENT;
+					SecaOp = D3DTOP_SELECTARG1;
+					SecaArg1 = D3DTA_TEXTURE;
+					SecaArg2 = D3DTA_CURRENT;
 				}
 				break;
 
 			case ShaderClass::DETAILALPHA_SCALE:
 				if(TextureOpCaps & D3DTEXOPCAPS_MODULATE)
 				{
-					aOp = D3DTOP_MODULATE;
-					aArg1 = D3DTA_TEXTURE;
-					aArg2 = D3DTA_CURRENT;
+					SecaOp = D3DTOP_MODULATE;
+					SecaArg1 = D3DTA_TEXTURE;
+					SecaArg2 = D3DTA_CURRENT;
 				}
 				break;
 
 			case ShaderClass::DETAILALPHA_INVSCALE:
 				if(TextureOpCaps & D3DTEXOPCAPS_ADDSMOOTH)
 				{
-					aOp = D3DTOP_ADDSMOOTH;
-					aArg1 = D3DTA_TEXTURE;
-					aArg2 = D3DTA_CURRENT;
+					SecaOp = D3DTOP_ADDSMOOTH;
+					SecaArg1 = D3DTA_TEXTURE;
+					SecaArg2 = D3DTA_CURRENT;
 				}
 				break;
 			}
 		}
-		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_ALPHAOP,aOp);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_ALPHAARG1,aArg1);
-		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_ALPHAARG2,aArg2);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_ALPHAOP,SecaOp);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_ALPHAARG1,SecaArg1);
+		DX8Wrapper::Set_DX8_Texture_Stage_State(1,D3DTSS_ALPHAARG2,SecaArg2);
 	}
 	diff &= ~(ShaderClass::MASK_POSTDETAILALPHAFUNC);
 	diff &= ~(ShaderClass::MASK_TEXTURING);

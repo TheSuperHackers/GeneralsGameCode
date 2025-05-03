@@ -414,7 +414,7 @@ void CMainFrame::OnEditGloballightoptions()
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void CMainFrame::AssertValid() const
 {
 	CFrameWnd::AssertValid();

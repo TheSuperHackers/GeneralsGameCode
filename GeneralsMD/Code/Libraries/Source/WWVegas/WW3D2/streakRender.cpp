@@ -35,7 +35,7 @@
 #include "RANDOM.H"
 #include "v3_rnd.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 // #pragma optimize("", off)
 // #pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -1414,7 +1414,7 @@ VertexFormatXYZUV1 *StreakRendererClass::getVertexBuffer(unsigned int number)
 		m_vertexBufferSize = numberToAlloc;
 	}
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 	for (unsigned i = 0; i < number; ++i)
 	{
 	  m_vertexBuffer[i].x = m_vertexBuffer[i].y = m_vertexBuffer[i].z = m_vertexBuffer[i].u1 = m_vertexBuffer[i].v1 = (float)0xdeadbeef;

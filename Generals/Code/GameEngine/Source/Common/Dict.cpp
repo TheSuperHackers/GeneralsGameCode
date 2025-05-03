@@ -107,7 +107,7 @@ void Dict::DictPair::setNameAndType(NameKeyType key, Dict::DataType type)
 }
 
 // -----------------------------------------------------
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void Dict::validate() const
 {
 	if (!m_data) return;

@@ -30,7 +30,7 @@ jobs:
   build:
     name: Preset ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
     runs-on: windows-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4

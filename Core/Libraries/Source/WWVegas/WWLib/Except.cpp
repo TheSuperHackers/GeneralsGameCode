@@ -783,11 +783,11 @@ int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info)
 	}
 
 	/*
-	** If there was a breakpoint then chances are it was set by a debugger. In _DEBUG mode
+	** If there was a breakpoint then chances are it was set by a debugger. In RTS_DEBUG mode
 	** we probably should ignore breakpoints. Breakpoints become more significant in release
 	** mode since there probably isn't a debugger present.
 	*/
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	if (exception_code == EXCEPTION_BREAKPOINT) {
 		return (EXCEPTION_CONTINUE_SEARCH);
 	}
@@ -818,7 +818,7 @@ int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info)
 
 #if (0)
 #ifdef _DEBUG_PRINT
-#ifndef _DEBUG
+#ifndef RTS_DEBUG
 			/*
 			** Copy the exception debug file to the network. No point in doing this for the debug version
 			** since symbols are not normally available.
@@ -852,7 +852,7 @@ int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info)
 	** EXCEPTION_EXECUTE_HANDLER to let us fall out of winmain.
 	*/
 	if (ExitOnException) {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		_CrtSetDbgFlag(0);
 #endif //_DEBUG
 		TryingToExit = true;

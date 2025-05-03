@@ -886,7 +886,7 @@ char const * Fetch_String(int id)
 
 void LogMsg(const char *msg)
 {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
   FILE *out=fopen("register.log","a");
   fprintf(out,"%s\n",msg);
   fflush(out);

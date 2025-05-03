@@ -4,24 +4,24 @@ set(WWMATH_SRC
     aabtreecull.cpp
     aabtreecull.h
     aaplane.h
-    #cardinalspline.cpp # to be moved
+    cardinalspline.cpp
     cardinalspline.h
     castres.h
     catmullromspline.cpp
     catmullromspline.h
     colmath.cpp
     colmath.h
-    #colmathaabox.cpp # to be moved
+    colmathaabox.cpp
     colmathaabox.h
-    #colmathaabtri.cpp # to be moved
+    colmathaabtri.cpp
     colmathfrustum.cpp
     colmathfrustum.h
     colmathinlines.h
     colmathline.cpp
     colmathline.h
-    #colmathobbobb.cpp # to be moved
+    colmathobbobb.cpp
     colmathobbox.cpp
-    #colmathobbtri.cpp # to be moved
+    colmathobbtri.cpp
     colmathplane.cpp
     colmathplane.h
     colmathsphere.cpp

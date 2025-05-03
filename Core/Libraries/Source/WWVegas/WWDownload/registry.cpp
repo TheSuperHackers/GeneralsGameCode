@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -113,7 +113,11 @@ bool setUnsignedIntInRegistry( HKEY root, std::string path, std::string key, uns
 
 bool GetStringFromRegistry(std::string path, std::string key, std::string& val)
 {
+#if RTS_GENERALS
 	std::string fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Generals";
+#elif RTS_ZEROHOUR
+	std::string fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour";
+#endif
 
 	fullPath.append(path);
 	if (getStringFromRegistry(HKEY_LOCAL_MACHINE, fullPath.c_str(), key.c_str(), val))
@@ -126,7 +130,11 @@ bool GetStringFromRegistry(std::string path, std::string key, std::string& val)
 
 bool GetUnsignedIntFromRegistry(std::string path, std::string key, unsigned int& val)
 {
+#if RTS_GENERALS
 	std::string fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Generals";
+#elif RTS_ZEROHOUR
+	std::string fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour";
+#endif
 
 	fullPath.append(path);
 	if (getUnsignedIntFromRegistry(HKEY_LOCAL_MACHINE, fullPath.c_str(), key.c_str(), val))
@@ -139,7 +147,11 @@ bool GetUnsignedIntFromRegistry(std::string path, std::string key, unsigned int&
 
 bool SetStringInRegistry( std::string path, std::string key, std::string val)
 {
+#if RTS_GENERALS
 	std::string fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Generals";
+#elif RTS_ZEROHOUR
+	std::string fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour";
+#endif
 	fullPath.append(path);
 
 	if (setStringInRegistry( HKEY_LOCAL_MACHINE, fullPath, key, val))
@@ -150,7 +162,11 @@ bool SetStringInRegistry( std::string path, std::string key, std::string val)
 
 bool SetUnsignedIntInRegistry( std::string path, std::string key, unsigned int val)
 {
+#if RTS_GENERALS
 	std::string fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Generals";
+#elif RTS_ZEROHOUR
+	std::string fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Command and Conquer Generals Zero Hour";
+#endif
 	fullPath.append(path);
 
 	if (setUnsignedIntInRegistry( HKEY_LOCAL_MACHINE, fullPath, key, val))

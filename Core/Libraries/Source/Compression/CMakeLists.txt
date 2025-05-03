@@ -41,6 +41,10 @@ target_link_libraries(core_compression PUBLIC
 
 find_package(ZLIB)
 if (ZLIB_FOUND)
+    # Adds zlib from vcpkg
     target_link_libraries(core_compression PUBLIC ZLIB::ZLIB)
-    target_compile_definitions(core_compression PUBLIC RTS_HAS_ZLIB)
+else()
+    # Adds zlib from github repository
+    include(${CMAKE_SOURCE_DIR}/cmake/zlib.cmake)
+    target_link_libraries(core_compression PUBLIC libzlib)
 endif()

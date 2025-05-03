@@ -28,7 +28,7 @@
 #include "MeshMdl.H"
 #include "w3d_file.h"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;

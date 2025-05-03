@@ -320,7 +320,7 @@ private:
 		inline DictPair* peek() { return (DictPair*)(this+1); }
 	};
 
-	#ifdef _DEBUG
+	#ifdef RTS_DEBUG
 	void validate() const;
 	#else
 	inline void validate() const { }
