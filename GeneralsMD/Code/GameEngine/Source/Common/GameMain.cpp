@@ -30,13 +30,10 @@
 
 #include "Common/GameEngine.h"
 #include "Common/Recorder.h"
-#include "Common/Radar.h"
-#include "Common/PerfTimer.h"
 #include "GameLogic/GameLogic.h"
 #include "GameClient/GameClient.h"
-#include "GameClient/ParticleSys.h"
 
-#if 1
+#if 0
 bool SimulateReplayInProcess(AsciiString filename)
 {
 	STARTUPINFO si = { sizeof(STARTUPINFO) };
@@ -62,45 +59,95 @@ class ReplayProcess
 public:
 	ReplayProcess()
 	{
-		m_processHandle = INVALID_HANDLE;
+		m_processHandle = INVALID_HANDLE_VALUE;
+		m_readHandle = INVALID_HANDLE_VALUE;
 	}
 	bool StartProcess(AsciiString filename)
 	{
+		PROCESS_INFORMATION pi = { 0 };
+
+		SECURITY_ATTRIBUTES saAttr = { sizeof(SECURITY_ATTRIBUTES) };
+	    saAttr.bInheritHandle = TRUE;
+		
+		HANDLE writeHandle = NULL;
+		CreatePipe(&m_readHandle, &writeHandle, &saAttr, 0);
+		SetHandleInformation(m_readHandle, HANDLE_FLAG_INHERIT, 0);
+
 		STARTUPINFO si = { sizeof(STARTUPINFO) };
 		si.dwFlags = STARTF_FORCEOFFFEEDBACK;
-		PROCESS_INFORMATION pi = { 0 };
+		si.hStdError = writeHandle;
+		si.hStdOutput = writeHandle;
+		si.dwFlags |= STARTF_USESTDHANDLES;
+
 		AsciiString command;
 		command.format("generalszh.exe -win -xres 800 -yres 600 -simReplay \"%s\"", filename.str());
 		//printf("Starting Exe for Replay \"%s\": %s\n", filename.str(), command.str());
-		//fflush(stdout);
+		fflush(stdout);
 		if (!CreateProcessA(NULL, (LPSTR)command.str(),
-			NULL, NULL, TRUE, 0,
-			NULL, 0, &si, &pi))
-			return false;
+				NULL, NULL, TRUE, 0,
+				NULL, 0, &si, &pi))
+				return false;
 		CloseHandle(pi.hThread);
+		CloseHandle(writeHandle);
 		m_processHandle = pi.hProcess;
-		/*WaitForSingleObject(pi.hProcess, INFINITE);
-		DWORD exitcode = 1;
-		GetExitCodeProcess(pi.hProcess, &exitcode);
-		CloseHandle(pi.hProcess);*/
-		return exitcode != 0;
+		m_stdOutput = "";
+		return true;
 	}
 	bool IsRunning()
 	{
-		return m_processHandle != INVALID_HANDLE;
+		return m_processHandle != INVALID_HANDLE_VALUE;
 	}
-	bool IsDone(int *exitcode)
+	bool Update(DWORD *exitcode, AsciiString *stdOutput)
 	{
-		if (WaitForSingleObject(m_processHandle, 0) == WAIT_OBJECT_0)
+		DEBUG_ASSERTCRASH(IsRunning(), ("process must be running"));
+
+		while (true)
 		{
-			GetExitCodeProcess(m_processHandle, exitcode);
-			return true;
+			// Call PeekNamedPipe to make sure ReadFile won't block
+			DWORD bytesAvailable = 0;
+			BOOL success = PeekNamedPipe(m_readHandle, NULL, 0, NULL, &bytesAvailable, NULL);
+			if (!success)
+				break;
+			if (bytesAvailable == 0)
+			{
+				// Child process is still running and we have all output so far
+				return false;
+			}
+
+			DWORD readBytes = 0;
+			char buffer[1024];
+			success = ReadFile(m_readHandle, buffer, 1024-1, &readBytes, NULL);
+			if (!success)
+				break;
+			DEBUG_ASSERTCRASH(readBytes != 0, ("expected readBytes to be non null"));
+
+			// Remove \r, otherwise each new line it doubled when we output it again
+			for (int i = 0; i < readBytes; i++)
+				if (buffer[i] == '\r')
+					buffer[i] = ' ';
+			buffer[readBytes] = 0;
+			m_stdOutput.concat(buffer);
 		}
-		return false;
+
+		// Pipe broke, that means the process already exited. But we call this just to make sure
+		WaitForSingleObject(m_processHandle, INFINITE);
+		GetExitCodeProcess(m_processHandle, exitcode);
+		CloseHandle(m_processHandle);
+		m_processHandle = INVALID_HANDLE_VALUE;
+
+		CloseHandle(m_readHandle);
+		m_readHandle = INVALID_HANDLE_VALUE;
+
+		*stdOutput = m_stdOutput;
+		m_stdOutput = "";
+
+		return true;
 	}
 
 private:
 	HANDLE m_processHandle;
+	HANDLE m_readHandle;
+	AsciiString m_stdOutput;
 };
 #endif
 
@@ -117,7 +164,7 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 	for (size_t i = 0; i < filenames.size(); i++)
 	{
 		AsciiString filename = filenames[i];
-		if (1 || filenames.size() == 1)
+		if (filenames.size() == 1)
 		{
 			printf("Simulating Replay \"%s\"\n", filename.str());
 			fflush(stdout);
@@ -146,8 +193,10 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 						break;
 					}
 				}
+				UnsignedInt gameTime = TheGameLogic->getFrame() / fps;
 				UnsignedInt realTime = (GetTickCount()-startTime) / 1000;
-				printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d\n", realTime/60, realTime%60, totalTime/60, totalTime%60);
+				printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d\n",
+						realTime/60, realTime%60, gameTime/60, gameTime%60, totalTime/60, totalTime%60);
 				fflush(stdout);
 			}
 			else
@@ -160,8 +209,16 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 		{
 			printf("%d/%d ", i+1, filenames.size());
 			fflush(stdout);
-			bool error = SimulateReplayInProcess(filename);
-			numErrors += error ? 1 : 0;
+			//bool error = SimulateReplayInProcess(filename);
+			ReplayProcess p;
+			p.StartProcess(filename);
+			DWORD exitcode;
+			AsciiString stdOutput;
+			while (!p.Update(&exitcode, &stdOutput))
+			{}
+			printf("%s", stdOutput.str());
+			fflush(stdout);
+			numErrors += exitcode == 0 ? 0 : 1;
 		}
 		/*if (i == TheGlobalData->m_simulateReplayList.size()-1)
 		{
