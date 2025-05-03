@@ -1857,7 +1857,7 @@ void W3DModelDraw::getRenderCost(RenderCost & rc) const
 	if (m_shadow)
 		m_shadow->getRenderCost(rc);
 }
-#endif //_DEBUG || RTS_INTERNAL
+#endif //RTS_DEBUG || RTS_INTERNAL
 
 
 /**recurse through sub-objs to collect stats about the rendering cost of this draw module */
@@ -1898,7 +1898,7 @@ void W3DModelDraw::getRenderCostRecursive(RenderCost & rc,RenderObjClass * robj)
 		}
 	}
 }
-#endif //_DEBUG || RTS_INTERNAL
+#endif //RTS_DEBUG || RTS_INTERNAL
 
 //-------------------------------------------------------------------------------------------------
 void W3DModelDraw::setFullyObscuredByShroud(Bool fullyObscured)

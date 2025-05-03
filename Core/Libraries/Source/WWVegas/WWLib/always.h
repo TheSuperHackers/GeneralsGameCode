@@ -74,7 +74,7 @@
 
 #endif	//STEVES_NEW_CATCHER
 #endif	//_MSC_VER
-#endif	//_DEBUG
+#endif	//RTS_DEBUG
 
 #if !defined(DISABLE_GAMEMEMORY) // (gth) killing the Generals Memory Manager!
 

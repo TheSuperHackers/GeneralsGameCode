@@ -154,7 +154,7 @@ void CGraphicView::Dump(CDumpContext& dc) const
 {
 	CView::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 
 

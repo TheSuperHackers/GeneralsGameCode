@@ -71,7 +71,7 @@ void CWDumpListView::Dump(CDumpContext& dc) const
 {
 	CListView::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpListView message handlers

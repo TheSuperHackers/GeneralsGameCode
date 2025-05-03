@@ -122,7 +122,7 @@ void SoundEditDialogClass::Dump(CDumpContext& dc) const
 {
 	CDialog::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 
 

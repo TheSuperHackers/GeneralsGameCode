@@ -312,4 +312,4 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 	}
 }
 
-#endif // RTS_DEBUG or _INTERNAL
+#endif // RTS_DEBUG or RTS_INTERNAL
