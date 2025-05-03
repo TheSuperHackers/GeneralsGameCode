@@ -104,67 +104,6 @@ private:
 };
 #endif
 
-void ClientUpdate()
-{
-	// allow windows to perform regular windows maintenance stuff like msgs
-	TheGameEngine->serviceWindowsOS();
-
-	Drawable* draw = TheGameClient->firstDrawable();
-	while (draw && 0)
-	{
-		Drawable* next = draw->getNextDrawable();
-#if 0
-		if (0)
-		{	//immobile objects need to take snapshots whenever they become fogged
-			//so need to refresh their status.  We can't rely on external calls
-			//to getShroudStatus() because they are only made for visible on-screen
-			//objects.
-			Object *object=draw->getObject();
-			if (object)
-			{
-#ifdef DEBUG_FOG_MEMORY
-				Int *playerIndex=nonLocalPlayerIndices;
-				for (i=0; i<numNonLocalPlayers; i++, playerIndex++)
-					object->getShroudedStatus(*playerIndex);
-#endif
-				ObjectShroudStatus ss=object->getShroudedStatus(localPlayerIndex);
-				if (ss >= OBJECTSHROUD_FOGGED && draw->getShroudClearFrame()!=0) {
-					UnsignedInt limit = 2*LOGICFRAMES_PER_SECOND;
-					if (object->isEffectivelyDead()) {
-						// extend the time, so we can see the dead plane blow up & crash.
-						limit += 3*LOGICFRAMES_PER_SECOND;
-					}
-					if (TheGameLogic->getFrame() < limit + draw->getShroudClearFrame()) {
-						// It's been less than 2 seconds since we could see them clear, so keep showing them.
-						ss = OBJECTSHROUD_CLEAR;
-					}
-				}
-				draw->setFullyObscuredByShroud(ss >= OBJECTSHROUD_FOGGED);
-			}
-		}
-#endif
-		draw->updateDrawable();
-		draw = next;
-	}
-	//return;
-	/*TheRadar->UPDATE();
-	TheAudio->UPDATE();
-	TheMessageStream->propagateMessages();
-	return;*/
-
-	TheRadar->UPDATE();
-
-	/// @todo Move audio init, update, etc, into GameClient update
-			
-	TheAudio->UPDATE();
-	TheGameClient->UPDATE();
-	TheMessageStream->propagateMessages();
-	//if (TheNetwork != NULL)
-	{
-	//	TheNetwork->UPDATE();
-	}	 
-	//TheCDManager->UPDATE();
-}
 
 // TheSuperHackers @feature helmutbuhler 04/13/2025
 // Simulate a list of replays without graphics.
@@ -188,8 +127,8 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 				UnsignedInt totalTime = TheRecorder->getFrameDuration() / fps;
 				while (TheRecorder->isPlaybackInProgress())
 				{
-					//ClientUpdate();
-					TheParticleSystemManager->reset();
+					TheGameClient->updateHeadless();
+					//TheParticleSystemManager->reset();
 
 					if (TheGameLogic->getFrame() && TheGameLogic->getFrame() % (600*fps) == 0)
 					{

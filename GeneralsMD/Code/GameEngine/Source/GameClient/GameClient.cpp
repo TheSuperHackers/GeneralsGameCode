@@ -776,6 +776,18 @@ void GameClient::update( void )
 	}
 }  // end update
 
+void GameClient::updateHeadless()
+{
+	// TheSuperHackers @info helmutbuhler 03/05/2025
+	// When we play a replay back in headless mode, we want to skip the update of GameClient
+	// because it's not necessary for CRC checking.
+	// But we do reset the particles. The problem is that particles can be generated during
+	// GameLogic and are only cleaned up during rendering. If we don't clean this up here,
+	// the particles accumulate and slow things down a lot and can even cause a crash on
+	// longer replays.
+	TheParticleSystemManager->reset();
+}
+
 /** -----------------------------------------------------------------------------------------------
  * Call the given callback function for each object contained within the given region.
  */
