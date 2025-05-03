@@ -33,7 +33,7 @@
 
 #include "Lib/BaseType.h"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 
 //#include "winsock2.h" // for htonl
 
