@@ -1124,7 +1124,7 @@ void GameClient::preloadAssets( TimeOfDay timeOfDay )
 
 	GlobalMemoryStatus(&before);
 	extern std::vector<AsciiString>	debrisModelNamesGlobalHack;
-	Int i=0;
+	size_t i=0;
 	for (; i<debrisModelNamesGlobalHack.size(); ++i)
 	{
 		TheDisplay->preloadModelAssets(debrisModelNamesGlobalHack[i]);

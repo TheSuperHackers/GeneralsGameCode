@@ -4270,7 +4270,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			{
 				// cheese festival: do NOT imitate this code. it is for debug purposes only.
 				std::vector<AsciiString> v = TheScienceStore->friend_getScienceNames();
-				for (int i = 0; i < v.size(); ++i) 
+				for (size_t i = 0; i < v.size(); ++i) 
 				{
 					ScienceType st = TheScienceStore->getScienceFromInternalName(v[i]);
 					if (st != SCIENCE_INVALID && TheScienceStore->isScienceGrantable(st))

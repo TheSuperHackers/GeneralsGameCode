@@ -2019,7 +2019,7 @@ void PeerThreadClass::doQuickMatch( PEER peer )
 								msg.append(buf);
 								buf[0] = 0;
 								msg.append("\\Maps\\");
-								for (Int i=0; i<m_qmInfo.qmMaps.size(); ++i)
+								for (size_t i=0; i<m_qmInfo.qmMaps.size(); ++i)
 								{
 									if (m_qmInfo.qmMaps[i])
 										msg.append("1");
