@@ -2,10 +2,10 @@
 add_library(g_wwcommon INTERFACE)
 
 target_link_libraries(g_wwcommon INTERFACE
-    d3d8lib
     core_config
     core_utility
     core_wwcommon
+    d3d8lib
     milesstub
     stlport
 )
@@ -13,7 +13,6 @@ target_link_libraries(g_wwcommon INTERFACE
 target_include_directories(g_wwcommon INTERFACE
     .
     WW3D2
-    WWAudio
 )
 
 add_subdirectory(WWAudio)
@@ -26,8 +25,6 @@ add_library(g_wwvegas INTERFACE)
 target_include_directories(g_wwvegas INTERFACE
     .
     WW3D2
-    WWAudio
-    WWDownload
 )
 
 target_link_libraries(g_wwvegas INTERFACE
