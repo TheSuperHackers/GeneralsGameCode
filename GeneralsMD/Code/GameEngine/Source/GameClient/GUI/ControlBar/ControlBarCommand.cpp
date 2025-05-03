@@ -369,7 +369,7 @@ void ControlBar::populateCommand( Object *obj )
 								//button specifying a vector of sciences in the command button.
 								Int bestIndex = -1;
 								ScienceType science;
-								for( Int scienceIndex = 0; scienceIndex < commandButton->getScienceVec().size(); ++scienceIndex )
+								for( size_t scienceIndex = 0; scienceIndex < commandButton->getScienceVec().size(); ++scienceIndex )
 								{
 									science = commandButton->getScienceVec()[ scienceIndex ];
 									
@@ -1237,7 +1237,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			if( TheUpgradeCenter->canAffordUpgrade( player, command->getUpgradeTemplate() ) == FALSE )
 				return COMMAND_RESTRICTED;//COMMAND_CANT_AFFORD;
 
-			for( Int i = 0; i < command->getScienceVec().size(); i++ )
+			for( size_t i = 0; i < command->getScienceVec().size(); i++ )
 			{
 				ScienceType st = command->getScienceVec()[ i ];
 				if( !player->hasScience( st ) )
@@ -1273,7 +1273,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			if( TheUpgradeCenter->canAffordUpgrade( player, command->getUpgradeTemplate() ) == FALSE )
 				return COMMAND_RESTRICTED;//COMMAND_CANT_AFFORD;
 
-			for( Int i = 0; i < command->getScienceVec().size(); i++ )
+			for( size_t i = 0; i < command->getScienceVec().size(); i++ )
 			{
 				ScienceType st = command->getScienceVec()[ i ];
 				if( !player->hasScience( st ) )
