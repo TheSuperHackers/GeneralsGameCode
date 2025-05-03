@@ -772,6 +772,9 @@ public:
 	Bool isClearGoalFiringLineOfSightTerrain(const Object* source, const Coord3D& goalPos, const Object* victim) const;
 	Bool isClearGoalFiringLineOfSightTerrain(const Object* source, const Coord3D& goalPos, const Coord3D& victimPos) const;
 
+	ObjectID setBonusRefObjID(void) { return m_bonusRefObjID; }
+	void setBonusRefObjID(ObjectID id) { m_bonusRefObjID = id; }
+
 	static void calcProjectileLaunchPosition(
 		const Object* launcher, 
 		WeaponSlotType wslot, 
@@ -842,6 +845,8 @@ private:
 	Real											m_scatterTargetsAngle;		 ///< Random angle chosen for scatterTarget pattern
 	UnsignedInt										m_nextPreAttackFXFrame;			///< the frame when we are next allowed to play a preAttackFX
 	ObjectID									m_continuousLaserID;				///< the object that is tracking our continuous laser if we have one.
+	ObjectID									m_bonusRefObjID;					///< for weapons fired from projectiles, we compute the bonus from the original source object instead.
+
 	// setter function for status that should not be used outside this class
 	void setStatus( WeaponStatus status) { m_status = status; }
 };

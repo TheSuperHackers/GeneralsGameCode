@@ -754,6 +754,8 @@ public:
 		m_minLODRequired(STATIC_GAME_LOD_LOW),
 		m_ignorePrimaryObstacle(false),
 		m_inheritsVeterancy(false),
+		m_inheritsWeaponBonus(false),
+		m_experienceSink(false),
     m_diesOnBadLand(FALSE),
 		m_skipIfSignificantlyAirborne(false),
 		m_invulnerableTime(0),
@@ -874,6 +876,8 @@ public:
 			{ "MinHealth",					INI::parsePercentToReal, NULL, offsetof(GenericObjectCreationNugget, m_minHealth) },
 			{ "MaxHealth",					INI::parsePercentToReal, NULL, offsetof(GenericObjectCreationNugget, m_maxHealth) },
 			{ "RequiresLivePlayer",	INI::parseBool, NULL, offsetof(GenericObjectCreationNugget, m_requiresLivePlayer) },
+			{ "InheritsWeaponBonus",	INI::parseBool, NULL, offsetof(GenericObjectCreationNugget, m_inheritsWeaponBonus) },
+			{ "ExperienceSinkForCaller",	INI::parseBool, NULL, offsetof(GenericObjectCreationNugget, m_experienceSink) },
 			{ 0, 0, 0, 0 }
 		};
 
@@ -1027,6 +1031,14 @@ protected:
 			//In order to make things easier for the designers, we are going to transfer the unit name
 			//to the ejected thing... so the designer can control the pilot with the scripts.
 			TheScriptEngine->transferObjectName( sourceObj->getName(), obj );
+		}
+
+		if (m_experienceSink && sourceObj) {
+			obj->getExperienceTracker()->setExperienceSink(sourceObj->getID());
+		}
+
+		if (m_inheritsWeaponBonus && sourceObj) {
+			obj->setWeaponBonusConditionFlags(sourceObj->getWeaponBonusCondition());
 		}
 
 		if ( m_invulnerableTime > 0 )
@@ -1482,6 +1494,8 @@ private:
 	Int												m_objectCount; // how many objects will there be?
 	AudioEventRTS							m_bounceSound;
 	Bool											m_requiresLivePlayer;
+	Bool											m_experienceSink;
+	Bool											m_inheritsWeaponBonus;
 	Bool											m_containInsideSourceObject; ///< The created stuff will be added to the Conatin module of the SourceObject
 	Bool											m_preserveLayer;
 	Bool											m_nameAreObjects;

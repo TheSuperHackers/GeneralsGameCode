@@ -1072,12 +1072,21 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			}
 
 			// Handle Detonation OCL
+			Coord3D targetPos; // We need a better position to match the visual laser;
+			targetPos.set(&projectileDestination);
+			if (victimObj && !victimObj->isKindOf(KINDOF_PROJECTILE) && !victimObj->isAirborneTarget())
+			{
+				//Targets are positioned on the ground, so raise the beam up so we're not shooting their feet.
+				//Projectiles are a different story, target their exact position.
+				targetPos.z += 10.0f;
+			}
+
 			VeterancyLevel vet = sourceObj->getVeterancyLevel();
 			const ObjectCreationList* detOCL = getProjectileDetonationOCL(vet);
 			Real laserAngle = atan2(v.y, v.x);  //TODO: check if this should be inverted
 			if (detOCL) {
 				//TODO: should we consider a proper 3D matrix?
-				ObjectCreationList::create(detOCL, sourceObj, &projectileDestination, NULL, laserAngle);
+				ObjectCreationList::create(detOCL, sourceObj, &targetPos, NULL, laserAngle);
 			}
 			// Handle Detonation FX
 			const FXList* fx = getProjectileDetonateFX(vet);
@@ -1087,7 +1096,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 				Vector3 dir(v.x, v.y, v.z);
 				dir.Normalize(); //This is fantastically crucial for calling buildTransformMatrix!!!!!
 				laserMtx.buildTransformMatrix(pos, dir);
-				FXList::doFXPos(fx, &projectileDestination, &laserMtx, 0.0f, NULL, getPrimaryDamageRadius(bonus));
+				FXList::doFXPos(fx, &targetPos, &laserMtx, 0.0f, NULL, getPrimaryDamageRadius(bonus));
 			}
 
 			if( inflictDamage )
@@ -1856,6 +1865,7 @@ Weapon::Weapon(const WeaponTemplate* tmpl, WeaponSlotType wslot)
 	m_scatterTargetsAngle = 0;
 	m_nextPreAttackFXFrame = 0;
 	m_continuousLaserID = INVALID_ID;
+	m_bonusRefObjID = INVALID_ID;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1879,6 +1889,7 @@ Weapon::Weapon(const Weapon& that)
 	this->m_suspendFXFrame = that.getSuspendFXFrame();
 	this->m_nextPreAttackFXFrame = 0;
 	this->m_continuousLaserID = INVALID_ID;
+	this->m_bonusRefObjID = INVALID_ID;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1912,19 +1923,43 @@ Weapon& Weapon::operator=(const Weapon& that)
 Weapon::~Weapon()
 {
 }
+//-------------------------------------------------------------------------------------------------
+// DEBUG
+static void debug_printWeaponBonus(WeaponBonus* bonus, AsciiString name) {
+	const char* bonusNames[] = {
+		"DAMAGE",
+		"RADIUS",
+		"RANGE",
+		"RATE_OF_FIRE",
+		"PRE_ATTACK"
+	};
+	DEBUG_LOG((">>> Weapon bonus for '%s':\n", name.str()));
+	for (int i = 0; i < 5; i++) {
+		DEBUG_LOG((">>> -- '%s' : %f\n", bonusNames[i], bonus->getField(static_cast<WeaponBonus::Field>(i))));
+	}
+}
 
 //-------------------------------------------------------------------------------------------------
 void Weapon::computeBonus(const Object *source, WeaponBonusConditionFlags extraBonusFlags, WeaponBonus& bonus) const
 {
+	// TODO: Do we need this eventually?
+	const Object* bonusRefObj = NULL;
+	if (m_bonusRefObjID != INVALID_ID) {
+		bonusRefObj = TheGameLogic->findObjectByID(m_bonusRefObjID);
+	}
+	else {
+		bonusRefObj = source;
+	}
+
 	bonus.clear();
-	WeaponBonusConditionFlags flags = source->getWeaponBonusCondition();
+	WeaponBonusConditionFlags flags = bonusRefObj->getWeaponBonusCondition();
 	//CRCDEBUG_LOG(("Weapon::computeBonus() - flags are %X for %s\n", flags, DescribeObject(source).str()));
 	flags |= extraBonusFlags;
 	
-	if( source->getContainedBy() )
+	if (bonusRefObj->getContainedBy())
 	{
 		// We may be able to add in our container's flags
-		const ContainModuleInterface *theirContain = source->getContainedBy()->getContain();
+		const ContainModuleInterface *theirContain = bonusRefObj->getContainedBy()->getContain();
 		if( theirContain && theirContain->isWeaponBonusPassedToPassengers() )
 			flags |= theirContain->getWeaponBonusPassedToPassengers();
 	}
