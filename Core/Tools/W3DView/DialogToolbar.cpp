@@ -68,7 +68,7 @@ void DialogToolbarClass::Dump(CDumpContext& dc) const
 {
 	CToolBar::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 
 ///////////////////////////////////////////////////////////////////

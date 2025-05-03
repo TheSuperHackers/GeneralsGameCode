@@ -691,7 +691,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 				AIGroup* theGroup = TheAI->createGroup();
 				theGroup->add(source);
-				theGroup->groupDoSpecialPowerAtLocation( specialPowerID, &targetCoord, objectInWay, options );
+				theGroup->groupDoSpecialPowerAtLocation( specialPowerID, &targetCoord, INVALID_ANGLE, objectInWay, options );
 				TheAI->destroyGroup(theGroup);
 			}
 			else
@@ -699,7 +699,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				//Use the selected group!
 				if( currentlySelectedGroup )
 				{
-					currentlySelectedGroup->groupDoSpecialPowerAtLocation( specialPowerID, &targetCoord, objectInWay, options );
+					currentlySelectedGroup->groupDoSpecialPowerAtLocation( specialPowerID, &targetCoord, INVALID_ANGLE, objectInWay, options );
 				}
 			}
 			break;

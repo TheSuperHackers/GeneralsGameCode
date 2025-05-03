@@ -94,7 +94,7 @@ CWdumpDoc* CWdumpView::GetDocument() // non-debug version is inline
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CWdumpDoc)));
 	return (CWdumpDoc*)m_pDocument;
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CWdumpView message handlers

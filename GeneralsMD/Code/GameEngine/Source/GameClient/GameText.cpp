@@ -48,6 +48,7 @@
 #include "GameClient/GameText.h"
 #include "Common/Language.h"
 #include "Common/Registry.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/LanguageFilter.h"
 #include "Common/Debug.h"
 #include "Common/UnicodeString.h"
@@ -370,6 +371,14 @@ void GameTextManager::init( void )
 	qsort( m_stringLUT, m_textCount, sizeof(StringLookUp), compareLUT  );
 
 	UnicodeString ourName = fetch("GUI:Command&ConquerGenerals");
+
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		UnicodeString s;
+		s.format(L"Instance:%.2u - %s", rts::ClientInstance::getInstanceId(), ourName.str());
+		ourName = s;
+	}
+
 	AsciiString ourNameA;
 	ourNameA.translate(ourName);	//get ASCII version for Win 9x
 

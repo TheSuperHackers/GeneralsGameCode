@@ -264,12 +264,12 @@ void BattlePlanUpdate::onObjectCreated()
 }
 
 //-------------------------------------------------------------------------------------------------
-void BattlePlanUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, UnsignedInt commandOptions, Int locationCount )
+Bool BattlePlanUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions )
 {
 	if( m_specialPowerModule->getSpecialPowerTemplate() != specialPowerTemplate )
 	{
 		//Check to make sure our modules are connected.
-		return;
+		return FALSE;
 	}
 
 	//Set the desired status based on the command button option!
@@ -285,6 +285,13 @@ void BattlePlanUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate
 	{
 		m_desiredPlan = PLANSTATUS_SEARCHANDDESTROY;
 	}
+	else
+	{
+		DEBUG_CRASH( ("Selected an unsupported strategy for strategy center.") );
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 Bool BattlePlanUpdate::isPowerCurrentlyInUse( const CommandButton *command ) const

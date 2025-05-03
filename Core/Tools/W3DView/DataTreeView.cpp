@@ -149,7 +149,7 @@ void CDataTreeView::Dump(CDumpContext& dc) const
 {
 	CTreeView::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CDataTreeView message handlers

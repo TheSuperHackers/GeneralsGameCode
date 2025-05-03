@@ -62,6 +62,7 @@
 #include "Common/CRCDebug.h"
 #include "Common/SystemInfo.h"
 #include "Common/UnicodeString.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/GameText.h"
 #include "GameClient/Keyboard.h"
 #include "GameClient/Mouse.h"
@@ -87,14 +88,14 @@ extern const char *gAppPrefix; /// So WB can have a different log file name.
 #ifdef DEBUG_LOGGING
 
 #if defined(RTS_INTERNAL)
-	#define DEBUG_FILE_NAME				"DebugLogFileI.txt"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevI.txt"
+	#define DEBUG_FILE_NAME				"DebugLogFileI"
+	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevI"
 #elif defined(RTS_DEBUG)
-	#define DEBUG_FILE_NAME				"DebugLogFileD.txt"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevD.txt"
+	#define DEBUG_FILE_NAME				"DebugLogFileD"
+	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevD"
 #else
-	#define DEBUG_FILE_NAME				"DebugLogFile.txt"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrev.txt"
+	#define DEBUG_FILE_NAME				"DebugLogFile"
+	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrev"
 #endif
 
 #endif
@@ -364,6 +365,11 @@ void DebugInit(int flags)
 
 	#ifdef DEBUG_LOGGING
 
+		// TheSuperHackers @info Debug initialization can happen very early.
+		// Therefore, initialize the client instance now.
+		if (!rts::ClientInstance::initialize())
+			return;
+
 		char dirbuf[ _MAX_PATH ];
 		::GetModuleFileName( NULL, dirbuf, sizeof( dirbuf ) );
 		char *pEnd = dirbuf + strlen( dirbuf );
@@ -380,10 +386,16 @@ void DebugInit(int flags)
 		strcpy(theLogFileNamePrev, dirbuf);
 		strcat(theLogFileNamePrev, gAppPrefix);
 		strcat(theLogFileNamePrev, DEBUG_FILE_NAME_PREV);
+		if (rts::ClientInstance::getInstanceId() > 1u)
+			sprintf(theLogFileNamePrev + strlen(theLogFileNamePrev), "_Instance%.2u", rts::ClientInstance::getInstanceId());
+		strcat(theLogFileNamePrev, ".txt");
 
 		strcpy(theLogFileName, dirbuf);
 		strcat(theLogFileName, gAppPrefix);
 		strcat(theLogFileName, DEBUG_FILE_NAME);
+		if (rts::ClientInstance::getInstanceId() > 1u)
+			sprintf(theLogFileName + strlen(theLogFileName), "_Instance%.2u", rts::ClientInstance::getInstanceId());
+		strcat(theLogFileName, ".txt");
 
 		remove(theLogFileNamePrev);
 		rename(theLogFileName, theLogFileNamePrev);

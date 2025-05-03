@@ -306,9 +306,11 @@ public:
 
 	// Ditto for special powers -- Kris
 	SpecialPowerModuleInterface* findSpecialPowerModuleInterface( SpecialPowerType type ) const;
+	SpecialPowerModuleInterface* findAnyShortcutSpecialPowerModuleInterface() const;
 	SpecialAbilityUpdate* findSpecialAbilityUpdate( SpecialPowerType type ) const;
 	SpecialPowerCompletionDie* findSpecialPowerCompletionDie() const;
 	SpecialPowerUpdateInterface* findSpecialPowerWithOverridableDestinationActive( SpecialPowerType type = SPECIAL_INVALID ) const;
+	SpecialPowerUpdateInterface* findSpecialPowerWithOverridableDestination( SpecialPowerType type = SPECIAL_INVALID ) const;
 
 	inline ObjectStatusMaskType getStatusBits() const { return m_status; }
 	inline Bool testStatus( ObjectStatusTypes bit ) const { return m_status.test( bit ); }
@@ -425,9 +427,9 @@ public:
 	SpecialPowerModuleInterface *getSpecialPowerModule( const SpecialPowerTemplate *specialPowerTemplate ) const;
 	void doSpecialPower( const SpecialPowerTemplate *specialPowerTemplate, UnsignedInt commandOptions, Bool forced = false );	///< execute power
 	void doSpecialPowerAtObject( const SpecialPowerTemplate *specialPowerTemplate, Object *obj, UnsignedInt commandOptions, Bool forced = false );	///< execute power
-	void doSpecialPowerAtLocation( const SpecialPowerTemplate *specialPowerTemplate, const Coord3D *loc, UnsignedInt commandOptions, Bool forced = false );	///< execute power
-	void doSpecialPowerAtMultipleLocations( const SpecialPowerTemplate *specialPowerTemplate,
-																					const Coord3D *locations, Int locCount, UnsignedInt commandOptions, Bool forced = false );	///< execute power
+	void doSpecialPowerAtLocation( const SpecialPowerTemplate *specialPowerTemplate, const Coord3D *loc, Real angle, UnsignedInt commandOptions, Bool forced = false );	///< execute power
+	void doSpecialPowerUsingWaypoints( const SpecialPowerTemplate *specialPowerTemplate, const Waypoint *way, UnsignedInt commandOptions, Bool forced = false );	///< execute power
+
 	void doCommandButton( const CommandButton *commandButton, CommandSourceType cmdSource );
 	void doCommandButtonAtObject( const CommandButton *commandButton, Object *obj, CommandSourceType cmdSource );
 	void doCommandButtonAtPosition( const CommandButton *commandButton, const Coord3D *pos, CommandSourceType cmdSource );
