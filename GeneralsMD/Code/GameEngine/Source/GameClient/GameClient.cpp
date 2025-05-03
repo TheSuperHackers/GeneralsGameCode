@@ -218,7 +218,7 @@ GameClient::~GameClient()
 	TheVideoPlayer = NULL;
 
 	// destroy all translators
-	for( Int i = 0; i < m_numTranslators; i++ )
+	for( UnsignedInt i = 0; i < m_numTranslators; i++ )
 		TheMessageStream->removeTranslator( m_translators[ i ] );	
 	m_numTranslators = 0;
 	m_commandTranslator = NULL;
