@@ -3416,7 +3416,7 @@ void InGameUI::postDraw( void )
 		UnsignedByte r, g, b, a;
 		GameGetColorComponents( m_militarySubtitle->color, &r, &g, &b, &a );
 		dropColor = GameMakeColor( 0, 0, 0, a );
-		for(Int i = 0; i <= m_militarySubtitle->currentDisplayString; i++)
+		for(UnsignedInt i = 0; i <= m_militarySubtitle->currentDisplayString; i++)
 		{
 			m_militarySubtitle->displayStrings[i]->draw(pos.x,pos.y, m_militarySubtitle->color,dropColor );
 			Int height;
@@ -3984,7 +3984,7 @@ void InGameUI::removeMilitarySubtitle( void )
 	TheInGameUI->clearTooltipsDisabled();
 
 	// loop through and free up the display strings
-	for(Int i = 0; i <= m_militarySubtitle->currentDisplayString; i ++)
+	for(UnsignedInt i = 0; i <= m_militarySubtitle->currentDisplayString; i ++)
 	{
 		TheDisplayStringManager->freeDisplayString(m_militarySubtitle->displayStrings[i]);
 		m_militarySubtitle->displayStrings[i] = NULL;
