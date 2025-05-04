@@ -122,12 +122,14 @@ void WriteOutReplayList()
 	asciisearch = "*";
 	asciisearch.concat(TheRecorder->getReplayExtention());
 	FilenameList replayFilenamesSet;
-	TheFileSystem->getFileListInDirectory(TheRecorder->getReplayDir(), asciisearch, replayFilenamesSet, TRUE);
+	TheFileSystem->getFileListInDirectory(TheRecorder->getReplayDir(), asciisearch, replayFilenamesSet, FALSE);
 	std::vector<AsciiString> replayFilenames;
 	for (FilenameListIter it = replayFilenamesSet.begin(); it != replayFilenamesSet.end(); ++it)
 	{
 		replayFilenames.push_back(*it);
 	}
+
+	std::set<int> foundSeeds;
 
 	// Print out a line per filename. i = -1 is csv header.
 	for (int i = -1; i < (int)replayFilenames.size(); i++)
@@ -143,7 +145,40 @@ void WriteOutReplayList()
 			if (!success)
 				continue;
 		}
-		bool check = md && !header.desyncGame && header.endTime != 0;
+		int numHumans = 0, numAIs = 0;
+		for (int slot = 0; slot < MAX_SLOTS; slot++)
+		{
+			SlotState state = info.getSlot(slot)->getState();
+			numHumans += state == SLOT_PLAYER ? 1 : 0;
+			numAIs += state >= SLOT_EASY_AI && state <= SLOT_BRUTAL_AI ? 1 : 0;
+		}
+
+		bool compatibleVersion =
+				header.versionString == UnicodeString(L"Version 1.4") ||
+				header.versionString == UnicodeString(L"Version 1.04") ||
+				header.versionString == UnicodeString(L"Version 1.05") ||
+				header.versionString == UnicodeString(L"\x0412\x0435\x0440\x0441\x0438\x044f 1.04") ||
+				header.versionString == UnicodeString(L"\x0412\x0435\x0440\x0441\x0438\x044f 1.05") ||
+				header.versionString == UnicodeString(L"\x0412\x0435\x0440\x0441\x0438\x044f 1.4") ||
+				header.versionString == UnicodeString(L"Versi\x00F3n 1.04") ||
+				header.versionString == UnicodeString(L"Versi\x00F3n 1.05");
+
+		// Some versions, e.g. "Zero Hour 1.04 The Ultimate Collection" have a different ini crc and are
+		// actually incompatible. Mark them as incompatible
+		compatibleVersion = compatibleVersion && header.iniCRC == 0xfeaae3f3;
+
+		// Check whether random seed appears multiple times. This can be used to check only one replay
+		// per game in case multiple replays by different players of the same game are in the list.
+		int seed = info.getSeed();
+		bool uniqueSeed = foundSeeds.find(seed) == foundSeeds.end();
+		if (uniqueSeed)
+			foundSeeds.insert(seed);
+
+		// When a csv file is loaded with -simReplayList, check indicates whether the replay should be simulated.
+		// If you want to check replays with certain properties, you can change this expression
+		// or change the csv file manually.
+		bool check = md && !header.desyncGame && header.endTime != 0 &&
+			compatibleVersion && numHumans > 1 && numAIs > 0 && uniqueSeed;
 		fprintf(fp, "%s", i == -1 ? "check" : check ? "1" : "0");
 
 		if (i == -1)
@@ -154,36 +189,65 @@ void WriteOutReplayList()
 		fprintf(fp, ",%s", i == -1 ? "map_exists" : md ? "1" : "0");
 		fprintf(fp, ",%s", i == -1 ? "mismatch"   : header.desyncGame ? "1" : "0");
 		fprintf(fp, ",%s", i == -1 ? "crash"      : header.endTime == 0 ? "1" : "0");
-		fprintf(fp, i == -1 ? ",frames" : ",%d",    header.frameDuration);
+		//fprintf(fp, i == -1 ? ",frames" : ",%d",    header.frameDuration);
 
-		/*AsciiString extra;
-		if (!md)
-			extra.concat(" no map");
-		//extra.concat(header.localPlayerIndex >= 0 ? " MP" : " SP");
-		if (header.quitEarly)
-			extra.concat(" quitearly");
-		if (header.desyncGame)
-			extra.concat(" mismatch");
-		
-		if (extra.getLength() != 0)
-			fprintf(fp, "%s #%s\n", filename.str(), extra.str());
+		UnsignedInt gameTime = header.frameDuration / LOGICFRAMES_PER_SECOND;
+		fprintf(fp, i == -1 ? ",time" : ",%02d:%02d", gameTime/60, gameTime%60);
+
+		fprintf(fp, i == -1 ? ",numHumans" : ",%d", numHumans);
+		fprintf(fp, i == -1 ? ",numAIs" : ",%d",    numAIs);
+
+		AsciiString tmp;
+		tmp.translate(header.versionString);
+		if (i == -1)
+			fprintf(fp, ",version");
 		else
-			fprintf(fp, "%s\n", filename.str());*/
+			fprintf(fp, ",\"%s\"", tmp.str());
+		//fprintf(fp, i == -1 ? ",exeCRC" : ",0x%08x",    header.exeCRC);
+		//fprintf(fp, i == -1 ? ",iniCRC" : ",0x%08x",    header.iniCRC);
+
+		fprintf(fp, ",%s", i == -1 ? "compatibleVersion" : compatibleVersion ? "1" : "0");
+
+		//fprintf(fp, i == -1 ? ",crcInterval" : ",%d", info.getCRCInterval());
+		//fprintf(fp, i == -1 ? ",seed" : ",0x%08x", seed);
+
 		fprintf(fp, "\n");
+
+
+#if 0
+		if (i != -1 && check)
+		{
+			AsciiString sourceFilename = replayFilenames[i];
+			
+			AsciiString targetFilename;
+			targetFilename = TheRecorder->getReplayDir();
+			targetFilename.concat("filter/");
+			targetFilename.concat(filename);
+
+			CopyFile(sourceFilename.str(), targetFilename.str(), FALSE);
+		}
+#endif
 	}
 	fclose(fp);
 }
 
 bool ReadLineFromFile(FILE *fp, AsciiString *str)
 {
-	char buffer[124];
-    if (fgets(buffer, 124, fp) == NULL)
+	const int bufferSize = 128;
+	char buffer[bufferSize];
+	str->clear();
+	while (true)
 	{
-		str->clear();
-		return false;
+		if (fgets(buffer, bufferSize, fp) == NULL)
+		{
+			str->clear();
+			return false;
+		}
+		buffer[bufferSize-1] = 0; // Should be already nul-terminated, just to be sure
+		str->concat(buffer);
+		if (strlen(buffer) != bufferSize-1 || buffer[bufferSize-2] == '\n')
+			break;
 	}
-	buffer[124-1] = 0;
-	str->set(buffer);
 	return true;
 }
 
@@ -283,7 +347,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 	FilenameList replayFilenames;
 	FilenameListIter it;
 
-	TheFileSystem->getFileListInDirectory(TheRecorder->getReplayDir(), asciisearch, replayFilenames, TRUE);
+	TheFileSystem->getFileListInDirectory(TheRecorder->getReplayDir(), asciisearch, replayFilenames, FALSE);
 
 	TheMapCache->updateCache();
 
