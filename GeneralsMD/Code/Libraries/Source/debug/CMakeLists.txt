@@ -29,7 +29,7 @@ add_library(z_debug STATIC)
 target_sources(z_debug PRIVATE ${DEBUG_SRC})
 
 target_include_directories(z_debug INTERFACE
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_link_libraries(z_debug PRIVATE

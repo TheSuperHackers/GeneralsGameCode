@@ -164,7 +164,7 @@ set_target_properties(core_wwlib PROPERTIES OUTPUT_NAME wwlib)
 target_sources(core_wwlib PRIVATE ${WWLIB_SRC})
 
 target_include_directories(core_wwlib PUBLIC
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_link_libraries(core_wwlib PRIVATE

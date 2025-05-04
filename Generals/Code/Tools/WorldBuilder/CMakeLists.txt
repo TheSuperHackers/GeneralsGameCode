@@ -199,7 +199,7 @@ set(WORLDBUILDER_SRC
 add_executable(g_worldbuilder WIN32)
 
 target_include_directories(g_worldbuilder PRIVATE
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
     include
     res
 )

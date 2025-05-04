@@ -23,7 +23,7 @@ add_library(z_profile STATIC)
 target_sources(z_profile PRIVATE ${PROFILE_SRC})
 
 target_include_directories(z_profile INTERFACE
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_link_libraries(z_profile PRIVATE
