@@ -55,27 +55,39 @@ bool SimulateReplayInProcess(AsciiString filename)
 }
 #else
 
-// We need Job-related functions, but these arn't defined in the Windows-headers that VC6 uses
-// So we define them here and load them dynamically
-#if defined(_MSC_VER) && (_MSC_VER <= 1200)
-typedef struct _IO_COUNTERS
+// We need Job-related functions, but these aren't defined in the Windows-headers that VC6 uses.
+// So we define them here and load them dynamically.
+#if defined(_MSC_VER) && _MSC_VER < 1300
+struct JOBOBJECT_BASIC_LIMIT_INFORMATION2
 {
-	ULONGLONG  ReadOperationCount;
-	ULONGLONG  WriteOperationCount;
-	ULONGLONG  OtherOperationCount;
+	LARGE_INTEGER PerProcessUserTimeLimit;
+	LARGE_INTEGER PerJobUserTimeLimit;
+	DWORD LimitFlags;
+	SIZE_T MinimumWorkingSetSize;
+	SIZE_T MaximumWorkingSetSize;
+	DWORD ActiveProcessLimit;
+	ULONG_PTR Affinity;
+	DWORD PriorityClass;
+	DWORD SchedulingClass;
+};
+struct IO_COUNTERS
+{
+	ULONGLONG ReadOperationCount;
+	ULONGLONG WriteOperationCount;
+	ULONGLONG OtherOperationCount;
 	ULONGLONG ReadTransferCount;
 	ULONGLONG WriteTransferCount;
 	ULONGLONG OtherTransferCount;
-} IO_COUNTERS;
-typedef struct _JOBOBJECT_EXTENDED_LIMIT_INFORMATION
+};
+struct JOBOBJECT_EXTENDED_LIMIT_INFORMATION
 {
-	JOBOBJECT_BASIC_LIMIT_INFORMATION BasicLimitInformation;
+	JOBOBJECT_BASIC_LIMIT_INFORMATION2 BasicLimitInformation;
 	IO_COUNTERS IoInfo;
 	SIZE_T ProcessMemoryLimit;
 	SIZE_T JobMemoryLimit;
 	SIZE_T PeakProcessMemoryUsed;
 	SIZE_T PeakJobMemoryUsed;
-} JOBOBJECT_EXTENDED_LIMIT_INFORMATION, *PJOBOBJECT_EXTENDED_LIMIT_INFORMATION;
+};
 
 #define JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE 0x00002000
 const int JobObjectExtendedLimitInformation = 9;
@@ -87,7 +99,6 @@ typedef BOOL (WINAPI *PFN_AssignProcessToJobObject)(HANDLE, HANDLE);
 static PFN_CreateJobObjectW CreateJobObjectW = (PFN_CreateJobObjectW)GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "CreateJobObjectW");
 static PFN_SetInformationJobObject SetInformationJobObject = (PFN_SetInformationJobObject)GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "SetInformationJobObject");
 static PFN_AssignProcessToJobObject AssignProcessToJobObject = (PFN_AssignProcessToJobObject)GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "AssignProcessToJobObject");
-
 #endif
 
 class ReplayProcess
@@ -111,29 +122,30 @@ public:
 
 		SECURITY_ATTRIBUTES saAttr = { sizeof(SECURITY_ATTRIBUTES) };
 		saAttr.bInheritHandle = TRUE;
-
 		HANDLE writeHandle = NULL;
 		CreatePipe(&m_readHandle, &writeHandle, &saAttr, 0);
-
 		SetHandleInformation(m_readHandle, HANDLE_FLAG_INHERIT, 0);
 
-		STARTUPINFO si = { sizeof(STARTUPINFO) };
-		si.dwFlags = STARTF_FORCEOFFFEEDBACK;
+		STARTUPINFOW si = { sizeof(STARTUPINFOW) };
+		si.dwFlags = STARTF_FORCEOFFFEEDBACK; // Prevent cursor wait animation
 		si.hStdError = writeHandle;
 		si.hStdOutput = writeHandle;
 		si.dwFlags |= STARTF_USESTDHANDLES;
 
-		AsciiString command;
-		command.format("generalszh.exe -win -xres 800 -yres 600 -simReplay \"%s\"", filename.str());
-		//printf("Starting Exe for Replay \"%s\": %s\n", filename.str(), command.str());
-		fflush(stdout);
+		WideChar exePath[1024];
+		GetModuleFileNameW(NULL, exePath, 1024);
+		UnicodeString filenameWide;
+		filenameWide.translate(filename);
 
-		if (!CreateProcessA(NULL, (LPSTR)command.str(),
-				NULL, NULL, TRUE, 0,
+		UnicodeString command;
+		command.format(L"\"%s\" -win -xres 800 -yres 600 -simReplay \"%s\"", exePath, filenameWide.str());
+		//wprintf(L"Starting Exe for Replay \"%s\": %s\n", filenameWide.str(), command.str());
+		//fflush(stdout);
+
+		if (!CreateProcessW(NULL, (LPWSTR)command.str(),
+				NULL, NULL, /*bInheritHandles=*/TRUE, 0,
 				NULL, 0, &si, &pi))
 		{
-			printf("Couldn't start exe: %s\n", command.str());
-			fflush(stdout);
 			CloseHandle(writeHandle);
 			CloseHandle(m_readHandle);
 			m_readHandle = NULL;
@@ -152,7 +164,6 @@ public:
 			JOBOBJECT_EXTENDED_LIMIT_INFORMATION jobInfo = { 0 };
 			jobInfo.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
 			SetInformationJobObject(m_jobHandle, (JOBOBJECTINFOCLASS)JobObjectExtendedLimitInformation, &jobInfo, sizeof(jobInfo));
-
 			AssignProcessToJobObject(m_jobHandle, m_processHandle);
 		}
 
@@ -162,6 +173,13 @@ public:
 	bool IsRunning() const
 	{
 		return m_processHandle != NULL;
+	}
+	
+	bool IsDone(DWORD *exitcode, AsciiString *stdOutput)
+	{
+		*exitcode = m_exitcode;
+		*stdOutput = m_stdOutput;
+		return m_isDone;
 	}
 
 	void Update()
@@ -215,13 +233,6 @@ public:
 		m_isDone = true;
 	}
 
-	bool IsDone(DWORD *exitcode, AsciiString *stdOutput)
-	{
-		*exitcode = m_exitcode;
-		*stdOutput = m_stdOutput;
-		return m_isDone;
-	}
-
 	void Cancel()
 	{
 		if (m_processHandle != NULL)
@@ -254,7 +265,6 @@ private:
 	AsciiString m_stdOutput;
 	DWORD m_exitcode;
 	bool m_isDone;
-	
 };
 
 
@@ -265,7 +275,7 @@ int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filenames);
 // TheSuperHackers @feature helmutbuhler 04/13/2025
 // Simulate a list of replays without graphics.
 // Returns exitcode 1 if mismatch or other error occured
-int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char *argv[])
+int SimulateReplayList(const std::vector<AsciiString> &filenames)
 {
 	if (filenames.size() != 1)
 	{
@@ -457,7 +467,7 @@ Int GameMain( int argc, char *argv[] )
 
 	if (!TheGlobalData->m_simulateReplayList.empty())
 	{
-		exitcode = SimulateReplayList(TheGlobalData->m_simulateReplayList, argc, argv);
+		exitcode = SimulateReplayList(TheGlobalData->m_simulateReplayList);
 	}
 	else
 	{
