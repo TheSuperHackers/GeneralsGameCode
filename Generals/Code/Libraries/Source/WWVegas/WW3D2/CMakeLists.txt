@@ -1,4 +1,3 @@
-# Set source files
 set(WW3D2_SRC
     aabtree.cpp
     aabtree.h
@@ -229,7 +228,6 @@ set(WW3D2_SRC
     ww3dtrig.h
 )
 
-# Targets to build.
 add_library(g_ww3d2 STATIC)
 set_target_properties(g_ww3d2 PROPERTIES OUTPUT_NAME ww3d2)
 

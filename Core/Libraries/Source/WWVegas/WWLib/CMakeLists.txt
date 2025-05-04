@@ -1,4 +1,3 @@
-# Set source files
 set(WWLIB_SRC
     always.h
     argv.cpp
@@ -157,7 +156,6 @@ if(WIN32)
     )
 endif()
 
-# Targets to build.
 add_library(core_wwlib STATIC)
 set_target_properties(core_wwlib PROPERTIES OUTPUT_NAME wwlib)
 

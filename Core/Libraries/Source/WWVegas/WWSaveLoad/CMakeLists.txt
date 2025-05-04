@@ -1,4 +1,3 @@
-# Set source files
 set(WWSAVELOAD_SRC
     definition.cpp
     definition.h
@@ -36,7 +35,6 @@ set(WWSAVELOAD_SRC
     wwsaveload.h
 )
 
-# Targets to build.
 add_library(core_wwsaveload STATIC)
 set_target_properties(core_wwsaveload PROPERTIES OUTPUT_NAME wwsaveload)
 

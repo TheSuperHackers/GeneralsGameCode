@@ -19,7 +19,7 @@ target_include_directories(core_wwcommon INTERFACE
     # WW3D2
     WWAudio
     WWDebug
-    # WWDownload
+    # WWDownload # is not added because headers are included as "WWDownload/file.h"
     WWLib
     WWMath
     WWSaveLoad
@@ -42,7 +42,7 @@ target_include_directories(core_wwvegas INTERFACE
     #WW3D2
     WWAudio
     WWDebug
-    WWDownload
+    # WWDownload # is not added because headers are included as "WWDownload/file.h"
     WWLib
     WWMath
     WWSaveLoad
