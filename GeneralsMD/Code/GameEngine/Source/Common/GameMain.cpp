@@ -54,16 +54,54 @@ bool SimulateReplayInProcess(AsciiString filename)
 	return exitcode != 0;
 }
 #else
+
+// We need Job-related functions, but these arn't defined in the Windows-headers that VC6 uses
+// So we define them here and load them dynamically
+#if defined(_MSC_VER) && (_MSC_VER <= 1200)
+typedef struct _IO_COUNTERS
+{
+	ULONGLONG  ReadOperationCount;
+	ULONGLONG  WriteOperationCount;
+	ULONGLONG  OtherOperationCount;
+	ULONGLONG ReadTransferCount;
+	ULONGLONG WriteTransferCount;
+	ULONGLONG OtherTransferCount;
+} IO_COUNTERS;
+typedef struct _JOBOBJECT_EXTENDED_LIMIT_INFORMATION
+{
+	JOBOBJECT_BASIC_LIMIT_INFORMATION BasicLimitInformation;
+	IO_COUNTERS IoInfo;
+	SIZE_T ProcessMemoryLimit;
+	SIZE_T JobMemoryLimit;
+	SIZE_T PeakProcessMemoryUsed;
+	SIZE_T PeakJobMemoryUsed;
+} JOBOBJECT_EXTENDED_LIMIT_INFORMATION, *PJOBOBJECT_EXTENDED_LIMIT_INFORMATION;
+
+#define JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE 0x00002000
+const int JobObjectExtendedLimitInformation = 9;
+
+typedef HANDLE (WINAPI *PFN_CreateJobObjectW)(LPSECURITY_ATTRIBUTES, LPCWSTR);
+typedef BOOL (WINAPI *PFN_SetInformationJobObject)(HANDLE, JOBOBJECTINFOCLASS, LPVOID, DWORD);
+typedef BOOL (WINAPI *PFN_AssignProcessToJobObject)(HANDLE, HANDLE);
+
+static PFN_CreateJobObjectW CreateJobObjectW = (PFN_CreateJobObjectW)GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "CreateJobObjectW");
+static PFN_SetInformationJobObject SetInformationJobObject = (PFN_SetInformationJobObject)GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "SetInformationJobObject");
+static PFN_AssignProcessToJobObject AssignProcessToJobObject = (PFN_AssignProcessToJobObject)GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "AssignProcessToJobObject");
+
+#endif
+
 class ReplayProcess
 {
 public:
 	ReplayProcess()
 	{
-		m_processHandle = INVALID_HANDLE_VALUE;
-		m_readHandle = INVALID_HANDLE_VALUE;
+		m_processHandle = NULL;
+		m_readHandle = NULL;
+		m_jobHandle = NULL;
 		m_exitcode = 0;
 		m_isDone = false;
 	}
+
 	bool StartProcess(AsciiString filename)
 	{
 		m_stdOutput = "";
@@ -72,10 +110,11 @@ public:
 		PROCESS_INFORMATION pi = { 0 };
 
 		SECURITY_ATTRIBUTES saAttr = { sizeof(SECURITY_ATTRIBUTES) };
-	    saAttr.bInheritHandle = TRUE;
-		
+		saAttr.bInheritHandle = TRUE;
+
 		HANDLE writeHandle = NULL;
 		CreatePipe(&m_readHandle, &writeHandle, &saAttr, 0);
+
 		SetHandleInformation(m_readHandle, HANDLE_FLAG_INHERIT, 0);
 
 		STARTUPINFO si = { sizeof(STARTUPINFO) };
@@ -88,23 +127,43 @@ public:
 		command.format("generalszh.exe -win -xres 800 -yres 600 -simReplay \"%s\"", filename.str());
 		//printf("Starting Exe for Replay \"%s\": %s\n", filename.str(), command.str());
 		fflush(stdout);
+
 		if (!CreateProcessA(NULL, (LPSTR)command.str(),
 				NULL, NULL, TRUE, 0,
 				NULL, 0, &si, &pi))
 		{
 			printf("Couldn't start exe: %s\n", command.str());
 			fflush(stdout);
+			CloseHandle(writeHandle);
+			CloseHandle(m_readHandle);
+			m_readHandle = NULL;
 			return false;
 		}
+
 		CloseHandle(pi.hThread);
 		CloseHandle(writeHandle);
 		m_processHandle = pi.hProcess;
+
+		// We want to make sure that when our process is killed, our workers automatically terminate as well.
+		// In Windows, the way to do this is to attach the worker to a job we own.
+		m_jobHandle = CreateJobObjectW(NULL, NULL);
+		if (m_jobHandle != NULL)
+		{
+			JOBOBJECT_EXTENDED_LIMIT_INFORMATION jobInfo = { 0 };
+			jobInfo.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
+			SetInformationJobObject(m_jobHandle, (JOBOBJECTINFOCLASS)JobObjectExtendedLimitInformation, &jobInfo, sizeof(jobInfo));
+
+			AssignProcessToJobObject(m_jobHandle, m_processHandle);
+		}
+
 		return true;
 	}
+
 	bool IsRunning() const
 	{
-		return m_processHandle != INVALID_HANDLE_VALUE;
+		return m_processHandle != NULL;
 	}
+
 	void Update()
 	{
 		if (!IsRunning())
@@ -130,7 +189,7 @@ public:
 				break;
 			DEBUG_ASSERTCRASH(readBytes != 0, ("expected readBytes to be non null"));
 
-			// Remove \r, otherwise each new line it doubled when we output it again
+			// Remove \r, otherwise each new line is doubled when we output it again
 			for (int i = 0; i < readBytes; i++)
 				if (buffer[i] == '\r')
 					buffer[i] = ' ';
@@ -142,41 +201,63 @@ public:
 		WaitForSingleObject(m_processHandle, INFINITE);
 		GetExitCodeProcess(m_processHandle, &m_exitcode);
 		CloseHandle(m_processHandle);
-		m_processHandle = INVALID_HANDLE_VALUE;
+		m_processHandle = NULL;
 
 		CloseHandle(m_readHandle);
-		m_readHandle = INVALID_HANDLE_VALUE;
+		m_readHandle = NULL;
+
+		if (m_jobHandle != NULL)
+		{
+			CloseHandle(m_jobHandle); // This kills the process if still running
+			m_jobHandle = NULL;
+		}
 
 		m_isDone = true;
 	}
+
 	bool IsDone(DWORD *exitcode, AsciiString *stdOutput)
 	{
 		*exitcode = m_exitcode;
 		*stdOutput = m_stdOutput;
 		return m_isDone;
 	}
+
 	void Cancel()
 	{
-		if (m_processHandle != INVALID_HANDLE_VALUE)
+		if (m_processHandle != NULL)
 		{
 			TerminateProcess(m_processHandle, 1);
 			CloseHandle(m_processHandle);
-			m_processHandle = INVALID_HANDLE_VALUE;
+			m_processHandle = NULL;
 		}
 
-		CloseHandle(m_readHandle);
-		m_readHandle = INVALID_HANDLE_VALUE;
+		if (m_readHandle != NULL)
+		{
+			CloseHandle(m_readHandle);
+			m_readHandle = NULL;
+		}
+
+		if (m_jobHandle != NULL)
+		{
+			CloseHandle(m_jobHandle);
+			m_jobHandle = NULL;
+		}
 
 		m_stdOutput = "";
 		m_isDone = false;
 	}
+
 private:
 	HANDLE m_processHandle;
 	HANDLE m_readHandle;
+	HANDLE m_jobHandle;
 	AsciiString m_stdOutput;
 	DWORD m_exitcode;
 	bool m_isDone;
+	
 };
+
+
 #endif
 
 int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filenames);
