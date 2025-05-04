@@ -155,7 +155,7 @@ public:
 		*stdOutput = m_stdOutput;
 		return m_isDone;
 	}
-	void Close()
+	void Cancel()
 	{
 		if (m_processHandle != INVALID_HANDLE_VALUE)
 		{
@@ -192,7 +192,6 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 	}
 
 	// Note that we use printf here because this is run from cmd.
-	Int fps = TheGlobalData->m_framesPerSecondLimit;
 	int numErrors = 0;
 	DWORD totalStartTime = GetTickCount();
 	for (size_t i = 0; i < filenames.size(); i++)
@@ -205,16 +204,16 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 			DWORD startTime = GetTickCount();
 			if (TheRecorder->simulateReplay(filename))
 			{
-				UnsignedInt totalTime = TheRecorder->getFrameDuration() / fps;
+				UnsignedInt totalTime = TheRecorder->getFrameDuration() / LOGICFRAMES_PER_SECOND;
 				while (TheRecorder->isPlaybackInProgress())
 				{
 					TheGameClient->updateHeadless();
 					//TheParticleSystemManager->reset();
 
-					if (TheGameLogic->getFrame() && TheGameLogic->getFrame() % (600*fps) == 0)
+					if (TheGameLogic->getFrame() && TheGameLogic->getFrame() % (600*LOGICFRAMES_PER_SECOND) == 0)
 					{
 						// Print progress report
-						UnsignedInt gameTime = TheGameLogic->getFrame() / fps;
+						UnsignedInt gameTime = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
 						UnsignedInt realTime = (GetTickCount()-startTime) / 1000;
 						printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d\n",
 								realTime/60, realTime%60, gameTime/60, gameTime%60, totalTime/60, totalTime%60);
@@ -227,7 +226,7 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 						break;
 					}
 				}
-				UnsignedInt gameTime = TheGameLogic->getFrame() / fps;
+				UnsignedInt gameTime = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
 				UnsignedInt realTime = (GetTickCount()-startTime) / 1000;
 				printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d\n",
 						realTime/60, realTime%60, gameTime/60, gameTime%60, totalTime/60, totalTime%60);
@@ -278,6 +277,11 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames, int argc, char
 		fflush(stdout);
 	}
 
+	// TheSuperHackers @todo helmutbuhler 04/05/2025
+	// Some replays cause a crash inside TheGameLogic->clearGameData().
+	// It likely has to do with Contains. We really gotta fix this, but for now we just terminate.
+	TerminateProcess(GetCurrentProcess(), numErrors != 0 ? 1 : 0);
+
 	// TheSuperHackers @todo helmutbuhler 04/13/2025
 	// There is a bug somewhere in the destructor of TheGameEngine which doesn't properly
 	// clean up the players and causes a crash unless this is called.
@@ -293,7 +297,7 @@ int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filenames)
 	DWORD totalStartTime = GetTickCount();
 
 	std::vector<ReplayProcess> processes;
-	const int maxProcesses = 4;
+	const int maxProcesses = 20;
 	int filenamePositionStarted = 0;
 	int filenamePositionDone = 0;
 	int numErrors = 0;
@@ -312,6 +316,8 @@ int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filenames)
 			if (!processes[0].IsDone(&exitcode, &stdOutput))
 				break;
 			printf("%d/%d %s", filenamePositionDone+1, filenames.size(), stdOutput.str());
+			if (exitcode != 0)
+				printf("Error!\n");
 			fflush(stdout);
 			numErrors += exitcode == 0 ? 0 : 1;
 			processes.erase(processes.begin());
