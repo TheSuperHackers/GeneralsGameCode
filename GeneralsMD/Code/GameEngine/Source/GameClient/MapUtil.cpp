@@ -579,7 +579,7 @@ Bool MapCache::loadUserMaps()
 		{
 			AsciiString endingStr;
 			AsciiString fname = s+1;
-			for (Int i=0; i<strlen(mapExtension); ++i)
+			for (size_t i=0; i<strlen(mapExtension); ++i)
 				fname.removeLastChar();
 
 			endingStr.format("%s\\%s%s", fname.str(), fname.str(), mapExtension);

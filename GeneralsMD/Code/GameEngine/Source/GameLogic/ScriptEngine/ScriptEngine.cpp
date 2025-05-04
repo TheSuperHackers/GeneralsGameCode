@@ -6592,7 +6592,7 @@ void ScriptEngine::setPriorityThing( ScriptAction *pAction )
 	{
 		// Found a list by this name, so we have a bunch of things
 
-		for( Int typeIndex = 0; typeIndex < types->getListSize(); typeIndex ++ )
+		for( size_t typeIndex = 0; typeIndex < types->getListSize(); typeIndex ++ )
 		{
 			AsciiString thisTypeName = types->getNthInList(typeIndex);
 			const ThingTemplate *thisType = TheThingFactory->findTemplate(thisTypeName);

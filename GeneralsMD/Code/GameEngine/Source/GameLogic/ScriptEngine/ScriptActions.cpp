@@ -643,7 +643,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 		PartitionSolver partition(vecOfUnits, vecOfTransports, PREFER_FAST_SOLUTION);
 		partition.solve();
 		SolutionVec solution = partition.getSolution();
-		for (int i = 0; i < solution.size(); ++i) {
+		for (size_t i = 0; i < solution.size(); ++i) {
 			Object *unit = TheGameLogic->findObjectByID(solution[i].first);
 			Object *trans = TheGameLogic->findObjectByID(solution[i].second);
 			if (!unit || !trans) {
@@ -1503,7 +1503,7 @@ void ScriptActions::doLoadAllTransports(const AsciiString& teamName)
 	PartitionSolver partition(vecOfUnits, vecOfTransports, PREFER_FAST_SOLUTION);
 	partition.solve();
 	SolutionVec solution = partition.getSolution();
-	for (int i = 0; i < solution.size(); ++i) {
+	for (size_t i = 0; i < solution.size(); ++i) {
 		Object *unit = TheGameLogic->findObjectByID(solution[i].first);
 		Object *trans = TheGameLogic->findObjectByID(solution[i].second);
 		if (!unit || !trans) {
@@ -5207,7 +5207,7 @@ void ScriptActions::doMoveUnitTowardsNearest( const AsciiString& unitName, const
 			Real closestDist;
 			Real dist;
 
-			for( Int typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
+			for( size_t typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
 			{
 				AsciiString thisTypeName = objectTypes->getNthInList( typeIndex );
 				const ThingTemplate *thisType = TheThingFactory->findTemplate( thisTypeName );
@@ -5296,7 +5296,7 @@ void ScriptActions::doMoveTeamTowardsNearest( const AsciiString& teamName, const
 		{
 			Real closestDist;
 			Real dist;
-			for( Int typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
+			for( size_t typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
 			{
 				AsciiString thisTypeName = objectTypes->getNthInList( typeIndex );
 				const ThingTemplate *thisType = TheThingFactory->findTemplate( thisTypeName );
@@ -5786,7 +5786,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 			Real closestDist;
 			Real dist;
 
-			for( Int typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
+			for( size_t typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
 			{
 				AsciiString thisTypeName = objectTypes->getNthInList( typeIndex );
 				const ThingTemplate *thisType = TheThingFactory->findTemplate( thisTypeName );

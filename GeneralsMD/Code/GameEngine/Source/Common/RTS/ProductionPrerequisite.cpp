@@ -80,7 +80,7 @@ void ProductionPrerequisite::init()
 //=============================================================================
 void ProductionPrerequisite::resolveNames()
 {
-	for (Int i = 0; i < m_prereqUnits.size(); i++)
+	for (size_t i = 0; i < m_prereqUnits.size(); i++)
 	{
 
 		//
@@ -121,7 +121,7 @@ Int ProductionPrerequisite::calcNumPrereqUnitsOwned(const Player *player, Int co
 Int ProductionPrerequisite::getAllPossibleBuildFacilityTemplates(const ThingTemplate* tmpls[], Int maxtmpls) const
 {
 	Int count = 0;
-	for (int i = 0; i < m_prereqUnits.size(); i++)
+	for (size_t i = 0; i < m_prereqUnits.size(); i++)
 	{
 		if (i > 0 && !(m_prereqUnits[i].flags & UNIT_OR_WITH_PREV))
 			break;
@@ -216,7 +216,7 @@ void ProductionPrerequisite::addUnitPrereq( AsciiString unit, Bool orUnitWithPre
 void ProductionPrerequisite::addUnitPrereq( const std::vector<AsciiString>& units )
 {
 	Bool orWithPrevious = false;
-	for (int i = 0; i < units.size(); ++i)
+	for (size_t i = 0; i < units.size(); ++i)
 	{
 		addUnitPrereq(units[i], orWithPrevious);
 		orWithPrevious = true;
