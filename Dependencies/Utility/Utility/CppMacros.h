@@ -37,3 +37,9 @@
 #else
     #define CPP_11(code)
 #endif
+
+#if __cplusplus >= 201703L
+#define REGISTER
+#else
+#define REGISTER register
+#endif

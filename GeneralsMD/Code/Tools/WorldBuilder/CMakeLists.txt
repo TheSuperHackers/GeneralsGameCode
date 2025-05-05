@@ -204,7 +204,7 @@ add_executable(z_worldbuilder WIN32)
 target_sources(z_worldbuilder PRIVATE ${WORLDBUILDER_SRC})
 
 target_include_directories(z_worldbuilder PRIVATE
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
     include
     res
 )

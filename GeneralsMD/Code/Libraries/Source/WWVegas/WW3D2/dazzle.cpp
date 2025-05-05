@@ -305,7 +305,7 @@ const Vector2 DazzleINIClass::Get_Vector2(char const *section, char const *entry
 		INIEntry * entryptr = Find_Entry(section, entry);
 		if (entryptr && entryptr->Value != NULL) {
 			Vector2	ret;
-			if ( sscanf( entryptr->Value, "%f,%f", &ret[0], &ret[1], &ret[2] ) == 2 ) {
+			if ( sscanf( entryptr->Value, "%f,%f", &ret[0], &ret[1] ) == 2 ) {
 				return ret;
 			}
 		}

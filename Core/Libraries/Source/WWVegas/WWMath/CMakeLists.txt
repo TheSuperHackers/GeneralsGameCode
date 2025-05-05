@@ -80,7 +80,6 @@ set(WWMATH_SRC
     wwmathids.h
 )
 
-# Targets to build.
 add_library(core_wwmath STATIC)
 set_target_properties(core_wwmath PROPERTIES OUTPUT_NAME wwmath)
 

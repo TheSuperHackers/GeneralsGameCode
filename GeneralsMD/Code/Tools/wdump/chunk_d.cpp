@@ -2396,7 +2396,7 @@ void ChunkData::Add_Chunk(ChunkLoadClass & cload, ChunkItem *Parent)
 				existing.SetAt(data, data);
 
 				if(theApp.TextureDumpFile != 0) 
-					fprintf(theApp.TextureDumpFile, "%s,%s\n", theApp.Filename, data);
+					fprintf(theApp.TextureDumpFile, "%s,%s\n", (LPCTSTR)theApp.Filename, data);
 				TRACE("%s,%s\n", theApp.Filename, data);
 			}
 		}
