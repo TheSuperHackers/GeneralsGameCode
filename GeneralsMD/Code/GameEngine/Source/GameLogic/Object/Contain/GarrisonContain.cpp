@@ -94,7 +94,11 @@ inline Real calcDistSqr(const Coord3D& a, const Coord3D& b)
 Int GarrisonContain::findClosestFreeGarrisonPointIndex( Int conditionIndex, 
 																												const Coord3D *targetPos )
 {
+#if defined(_DEBUG) || defined(_INTERNAL)
+	// TheSuperHackers @info helmutbuhler 05/05/2025
+	// This assert causes a mismatch on Release when DEBUG_CRASHING is enabled.
 	DEBUG_ASSERTCRASH(m_garrisonPointsInitialized, ("garrisonPoints are not inited"));
+#endif
 
 	// sanity
 	if( targetPos == NULL || m_garrisonPointsInUse == MAX_GARRISON_POINTS )
