@@ -1041,13 +1041,8 @@ Bool AIPlayer::isLocationSafe(const Coord3D *pos, const ThingTemplate *tthing )
 void AIPlayer::onUnitProduced( Object *factory, Object *unit )
 {
 	Bool found = false;
-	// TheSuperHackers @fix Mauller 26/04/2025 Fixes uninitialized variable.
-	// To keep retail compatibility this needs to remain uninitialized in VS6 builds.
-#if defined(_MSC_VER) && _MSC_VER < 1300
-	Bool supplyTruck;
-#else
-	Bool supplyTruck = false;
-#endif
+	// TheSuperHackers @fix helmutbuhler 05/05/2025 Fixes uninitialized variable.
+	Bool supplyTruck = true;
 
 	// factory could be NULL at the start of the game.
 	if (factory == NULL) {
