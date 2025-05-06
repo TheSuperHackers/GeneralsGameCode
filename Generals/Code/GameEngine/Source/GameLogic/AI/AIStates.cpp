@@ -3984,8 +3984,11 @@ StateReturnType AIFollowWaypointPathState::update()
 		if (getAdjustsDestination() && ai->isDoingGroundMovement()) {
 			if (!TheAI->pathfinder()->adjustDestination(obj, ai->getLocomotorSet(), &m_goalPosition)) {
 				if (m_currentWaypoint) {
+					// This log causes mismatch on Release (TheSuperHackers @info helmutbuhler 05/05/2025)
+#if defined(_DEBUG) || defined(_INTERNAL)
 					DEBUG_LOG(("Breaking out of follow waypoint path %s of %s\n", 
 					m_currentWaypoint->getName().str(), m_currentWaypoint->getPathLabel1().str()));
+#endif
 				}
 				return STATE_FAILURE;
 			}
@@ -4054,8 +4057,11 @@ StateReturnType AIFollowWaypointPathState::update()
 		if (getAdjustsDestination() && ai->isDoingGroundMovement()) {
 			if (!TheAI->pathfinder()->adjustDestination(obj, ai->getLocomotorSet(), &m_goalPosition)) {
 				if (m_currentWaypoint) {
+					// This log causes mismatch on Release (TheSuperHackers @info helmutbuhler 05/05/2025)
+#if defined(_DEBUG) || defined(_INTERNAL)
 					DEBUG_LOG(("Breaking out of follow waypoint path %s of %s\n", 
 					m_currentWaypoint->getName().str(), m_currentWaypoint->getPathLabel1().str()));
+#endif
 				}
 				return STATE_FAILURE;
 			}

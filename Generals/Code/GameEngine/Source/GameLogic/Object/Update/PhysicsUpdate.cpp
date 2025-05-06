@@ -303,7 +303,11 @@ Real PhysicsBehavior::getZFriction() const
  */
 void PhysicsBehavior::applyForce( const Coord3D *force )
 {
+#if defined(_DEBUG) || defined(_INTERNAL)
+	// TheSuperHackers @info helmutbuhler 06/05/2025
+	// This assert causes a mismatch on Release when DEBUG_CRASHING is enabled.
 	DEBUG_ASSERTCRASH(!(_isnan(force->x) || _isnan(force->y) || _isnan(force->z)), ("PhysicsBehavior::applyForce force NAN!\n"));
+#endif
 	if (_isnan(force->x) || _isnan(force->y) || _isnan(force->z)) {
 		return;
 	}
