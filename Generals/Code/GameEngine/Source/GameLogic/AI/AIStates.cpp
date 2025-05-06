@@ -4029,7 +4029,7 @@ StateReturnType AIFollowWaypointPathState::update()
 			if (!TheAI->pathfinder()->adjustDestination(obj, ai->getLocomotorSet(), &m_goalPosition)) {
 				if (m_currentWaypoint) {
 					// This log causes mismatch on Release (TheSuperHackers @info helmutbuhler 05/05/2025)
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 					DEBUG_LOG(("Breaking out of follow waypoint path %s of %s\n", 
 					m_currentWaypoint->getName().str(), m_currentWaypoint->getPathLabel1().str()));
 #endif
@@ -4102,7 +4102,7 @@ StateReturnType AIFollowWaypointPathState::update()
 			if (!TheAI->pathfinder()->adjustDestination(obj, ai->getLocomotorSet(), &m_goalPosition)) {
 				if (m_currentWaypoint) {
 					// This log causes mismatch on Release (TheSuperHackers @info helmutbuhler 05/05/2025)
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 					DEBUG_LOG(("Breaking out of follow waypoint path %s of %s\n", 
 					m_currentWaypoint->getName().str(), m_currentWaypoint->getPathLabel1().str()));
 #endif
