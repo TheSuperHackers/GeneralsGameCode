@@ -48,17 +48,19 @@
 #include "GameClient/Image.h"
 #include "GameClient/Line2D.h"
 #include "GameClient/TerrainVisual.h"
+#include "GameClient/Water.h"
 #include "W3DDevice/Common/W3DRadar.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
 #include "WW3D2/texture.h"
 #include "WW3D2/dx8caps.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
+
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 enum { OVERLAY_REFRESH_RATE = 6 };  ///< over updates once this many frames
@@ -276,8 +278,6 @@ void W3DRadar::drawHeroIcon( Int pixelX, Int pixelY, Int width, Int height, cons
 		TheDisplay->drawImage( image, offsetScreen.x , offsetScreen.y, offsetScreen.x + iconWidth, offsetScreen.y + iconHeight );
 	}
 }
-
-
 
 //-------------------------------------------------------------------------------------------------
 /** Draw a "box" into the texture passed in that represents the viewable area for
@@ -615,7 +615,6 @@ void W3DRadar::drawIcons( Int pixelX, Int pixelY, Int width, Int height )
 		++iter;
 	}
 }
-
 
 //-------------------------------------------------------------------------------------------------
 /** Render an object list into the texture passed in */
@@ -1034,9 +1033,9 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 	m_reconstructViewBox = TRUE;
 
 	// setup our water color
-	waterColor.red = 0.55f;
-	waterColor.green = 0.55f;
-	waterColor.blue = 1.0f;
+	waterColor.red = TheWaterTransparency->m_radarColor.red;
+	waterColor.green = TheWaterTransparency->m_radarColor.green;
+	waterColor.blue = TheWaterTransparency->m_radarColor.blue;
 
 	// get the terrain surface to draw in
 	surface = m_terrainTexture->Get_Surface_Level();
@@ -1268,7 +1267,7 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 //-------------------------------------------------------------------------------------------------
 void W3DRadar::clearShroud()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (!TheGlobalData->m_shroudOn)
 		return;
 #endif
@@ -1288,7 +1287,7 @@ void W3DRadar::clearShroud()
 //-------------------------------------------------------------------------------------------------
 void W3DRadar::setShroudLevel(Int shroudX, Int shroudY, CellShroudStatus setting)
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (!TheGlobalData->m_shroudOn)
 		return;
 #endif
@@ -1425,7 +1424,7 @@ void W3DRadar::draw( Int pixelX, Int pixelY, Int width, Int height )
  	TheDisplay->drawImage( m_overlayImage, ul.x, ul.y, lr.x, lr.y );
 
 	// draw the shroud image
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if( TheGlobalData->m_shroudOn )
 #else
 	if (true)

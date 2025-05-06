@@ -48,7 +48,7 @@
 ** This helps find leaks.
 */
 //#define STEVES_NEW_CATCHER
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #ifdef _MSC_VER
 #ifdef STEVES_NEW_CATCHER
 
@@ -67,7 +67,7 @@ void* __cdecl operator new(unsigned int s);
 
 #endif	//STEVES_NEW_CATCHER
 #endif	//_MSC_VER
-#endif	//_DEBUG
+#endif	//RTS_DEBUG
 
 
 // Jani: Intel's C++ compiler issues too many warnings in WW libraries when using warning level 4

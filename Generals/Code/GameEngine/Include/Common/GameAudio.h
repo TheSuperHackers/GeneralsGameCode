@@ -136,7 +136,7 @@ class AudioManager : public SubsystemInterface
 	public:
 		AudioManager();
 		virtual ~AudioManager();
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		virtual void audioDebugDisplay(DebugDisplayInterface *dd, void *userData, FILE *fp = NULL ) = 0;
 #endif
 
@@ -151,10 +151,6 @@ class AudioManager : public SubsystemInterface
 		virtual void pauseAudio( AudioAffect which ) = 0;
 		virtual void resumeAudio( AudioAffect which ) = 0;
 		virtual void pauseAmbient( Bool shouldPause ) = 0;
-
-		// device dependent stops.
-		virtual void stopAllAmbientsBy( Object* obj ) = 0;
-		virtual void stopAllAmbientsBy( Drawable* draw ) = 0;
 
 		// for focus issues
 		virtual void loseFocus( void );
@@ -240,6 +236,8 @@ class AudioManager : public SubsystemInterface
 		// on zoom.
 		virtual void set3DVolumeAdjustment( Real volumeAdjustment );
 
+    virtual Bool has3DSensitiveStreamsPlaying( void ) const = 0;
+
  		virtual void *getHandleForBink( void ) = 0;
  		virtual void releaseHandleForBink( void ) = 0;
 
@@ -257,6 +255,7 @@ class AudioManager : public SubsystemInterface
 		virtual void processRequestList( void );
 	
 		virtual AudioEventInfo *newAudioEventInfo( AsciiString newEventName );
+    virtual void addAudioEventInfo( AudioEventInfo * newEventInfo );
 		virtual AudioEventInfo *findAudioEventInfo( AsciiString eventName ) const;
 
 		const AudioSettings *getAudioSettings( void ) const;
@@ -298,6 +297,7 @@ class AudioManager : public SubsystemInterface
 
 		// For Worldbuilder, to build lists from which to select
 		virtual void findAllAudioEventsOfType( AudioType audioType, std::vector<AudioEventInfo*>& allEvents );
+    virtual const AudioEventInfoHash & getAllAudioEvents() const { return m_allAudioEventInfo; }
 
 		Real getZoomVolume() const { return m_zoomVolume; }
 	protected:
@@ -317,6 +317,11 @@ class AudioManager : public SubsystemInterface
 		// For tracking purposes
 		virtual AudioHandle allocateNewHandle( void );	
 
+    // Remove all AudioEventInfo's with the m_isLevelSpecific flag
+    virtual void removeLevelSpecificAudioEventInfos( void );
+    
+    void removeAllAudioRequests( void );
+    
 	protected:
 		AudioSettings *m_audioSettings;
 		MiscAudio *m_miscAudio;

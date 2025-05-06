@@ -95,7 +95,7 @@
 
 #include <d3dx8.h>
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -138,7 +138,7 @@ static void		Debug_Refs(void);
 // ----------------------------------------------------------------------------
 static void WWDebug_Message_Callback(DebugType type, const char * message)
 {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	::OutputDebugString(message);
 #endif
 }
@@ -146,7 +146,7 @@ static void WWDebug_Message_Callback(DebugType type, const char * message)
 // ----------------------------------------------------------------------------
 static void WWAssert_Callback(const char * message)
 {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	::OutputDebugString(message);
 	::DebugBreak();
 #endif
@@ -176,7 +176,7 @@ public:
 	virtual Int iterateDrawablesInRegion( IRegion2D *screenRegion,
 																				Bool (*callback)( Drawable *draw, void *userData ),
 																				void *userData ) {return 0;};
-	virtual Bool worldToScreen( const Coord3D *w, ICoord2D *s ) { return FALSE; };	///< Transform world coordinate "w" into screen coordinate "s"
+  virtual WorldToScreenReturn worldToScreenTriReturn( const Coord3D *w, ICoord2D *s ) { return WTS_INVALID; };	///< Transform world coordinate "w" into screen coordinate "s"
 	virtual void screenToWorld( const ICoord2D *s, Coord3D *w ) {};	///< Transform screen coordinate "s" into world coordinate "w"
 	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world ) {};  ///< transform screen coord to a point on the 3D terrain
 	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) {};  ///< transform screen point to world point at the specified world Z value
@@ -2128,7 +2128,7 @@ void WbView3d::OnDraw(CDC* pDC)
 // ----------------------------------------------------------------------------
 // WbView3d diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 // ----------------------------------------------------------------------------
 void WbView3d::AssertValid() const
 {
@@ -2140,7 +2140,7 @@ void WbView3d::Dump(CDumpContext& dc) const
 {
 	WbView::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 // ----------------------------------------------------------------------------
 void WbView3d::initWW3D()

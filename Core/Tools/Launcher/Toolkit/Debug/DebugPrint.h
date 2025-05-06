@@ -37,7 +37,7 @@
 #ifndef _DEBUGPRINT_H_
 #define _DEBUGPRINT_H_
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 
 #ifdef __cplusplus
 extern "C"
@@ -55,11 +55,11 @@ extern char debugLogName[];
 }
 #endif
 
-#else // _DEBUG
+#else // RTS_DEBUG
 
 #define DebugPrint
 #define PrintWin32Error
 
-#endif // _DEBUG
+#endif // RTS_DEBUG
 
 #endif // _DEBUGPRINT_H_

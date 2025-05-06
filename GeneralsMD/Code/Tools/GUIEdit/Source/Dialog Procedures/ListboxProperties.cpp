@@ -636,7 +636,7 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 								else if((total > 100 ) || (total < 100 && !token ))
 								{
 									Char *whoopsMsg = new char[250];
-									sprintf(whoopsMsg,"Please Double check to make sure your percentages add up to 100.", newColumns, i - 1);
+									sprintf(whoopsMsg,"Please Double check to make sure your percentages add up to 100.");
 									MessageBox(NULL, whoopsMsg,"Whoops",MB_OK | MB_ICONSTOP | MB_APPLMODAL);
 									return 0;
 								}

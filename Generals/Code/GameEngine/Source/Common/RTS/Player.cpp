@@ -99,7 +99,7 @@
 #include "GameLogic/VictoryConditions.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -430,7 +430,7 @@ void Player::init(const PlayerTemplate* pt)
 
 	m_unitsShouldHunt = FALSE;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_DEMO_ignorePrereqs = FALSE;
 	m_DEMO_freeBuild = FALSE;
 	m_DEMO_instantBuild = FALSE;
@@ -1301,6 +1301,10 @@ void Player::preTeamDestroy( const Team *team )
 	// ai notification callback
 	if( m_ai )
 		m_ai->aiPreTeamDestroy( team );
+
+	// TheSuperHackers @bugfix Mauller/Xezon 03/05/2025 Clear the default team to prevent dangling pointer usage
+	if( m_defaultTeam == team )
+		m_defaultTeam = NULL;
 }  // preTeamDestroy
 
 //-------------------------------------------------------------------------------------------------
@@ -2454,7 +2458,7 @@ Bool Player::canBuild(const ThingTemplate *tmplate) const
 				prereqsOK = false;
 		}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		if (ignoresPrereqs())
 			prereqsOK = true;
 #endif

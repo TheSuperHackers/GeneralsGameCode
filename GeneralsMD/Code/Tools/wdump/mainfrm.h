@@ -52,7 +52,7 @@ public:
 // Implementation
 public:
 	virtual ~CMainFrame();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif

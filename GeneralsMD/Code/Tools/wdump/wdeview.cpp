@@ -25,7 +25,7 @@
 #include "wdumpdoc.h"
 #include "chunk_d.h"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -63,7 +63,7 @@ void CWDumpEditView::OnDraw(CDC* pDC)
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpEditView diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void CWDumpEditView::AssertValid() const
 {
 	CEditView::AssertValid();
@@ -73,7 +73,7 @@ void CWDumpEditView::Dump(CDumpContext& dc) const
 {
 	CEditView::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpEditView message handlers

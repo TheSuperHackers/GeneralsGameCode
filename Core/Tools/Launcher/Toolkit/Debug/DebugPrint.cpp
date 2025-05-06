@@ -34,7 +34,7 @@
 *
 ******************************************************************************/
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 
 #include "DebugPrint.h"
 #include <windows.h>
@@ -182,4 +182,4 @@ void __cdecl PrintWin32Error(const char* string, ...)
 		}
 	}
 
-#endif // _DEBUG
+#endif // RTS_DEBUG

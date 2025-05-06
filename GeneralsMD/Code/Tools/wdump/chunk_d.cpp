@@ -41,7 +41,7 @@
 #include "rawfilem.h"
 #include "finddialog.h"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
@@ -2396,7 +2396,7 @@ void ChunkData::Add_Chunk(ChunkLoadClass & cload, ChunkItem *Parent)
 				existing.SetAt(data, data);
 
 				if(theApp.TextureDumpFile != 0) 
-					fprintf(theApp.TextureDumpFile, "%s,%s\n", theApp.Filename, data);
+					fprintf(theApp.TextureDumpFile, "%s,%s\n", (LPCTSTR)theApp.Filename, data);
 				TRACE("%s,%s\n", theApp.Filename, data);
 			}
 		}

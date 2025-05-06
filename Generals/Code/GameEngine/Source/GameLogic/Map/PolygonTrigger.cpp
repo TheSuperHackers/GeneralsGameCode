@@ -189,7 +189,7 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 		// before water areas existed, so create a default one.
 		PolygonTrigger *pTrig = newInstance(PolygonTrigger)(4);
 		pTrig->setWaterArea(true);
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		pTrig->setTriggerName("AutoAddedWaterAreaTrigger");
 #endif
 		pTrig->m_triggerID = maxTriggerId++;

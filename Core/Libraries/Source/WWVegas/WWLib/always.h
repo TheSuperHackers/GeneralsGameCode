@@ -55,7 +55,7 @@
 ** This helps find leaks.
 */
 //#define STEVES_NEW_CATCHER
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #ifdef _MSC_VER
 #ifdef STEVES_NEW_CATCHER
 
@@ -74,7 +74,7 @@
 
 #endif	//STEVES_NEW_CATCHER
 #endif	//_MSC_VER
-#endif	//_DEBUG
+#endif	//RTS_DEBUG
 
 #if !defined(DISABLE_GAMEMEMORY) // (gth) killing the Generals Memory Manager!
 
@@ -105,7 +105,7 @@
 
 #endif
 
-#if (defined(_DEBUG) || defined(_INTERNAL)) 
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) 
 	#define MSGW3DNEW(MSG)					new( MSG, 0 )
 	#define MSGW3DNEWARRAY(MSG)			new( MSG, 0 )
 	#define W3DNEW									new("W3D_" __FILE__, 0)
