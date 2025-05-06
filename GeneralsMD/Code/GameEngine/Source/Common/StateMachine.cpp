@@ -525,6 +525,8 @@ State *StateMachine::internalGetState( StateID id )
 		if (i == m_stateMap.end()) {
 			DEBUG_LOG(("Failed to located default state.  Aborting...\n"));
 			throw ERROR_BAD_ARG;
+		} else {
+			DEBUG_LOG(("Located default state to recover.\n"));
 		}
 	}
 
