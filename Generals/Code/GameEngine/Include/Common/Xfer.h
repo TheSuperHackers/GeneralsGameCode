@@ -43,7 +43,6 @@
 #define __XFER_H_
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "Common/ModelState.h"
 #include "Common/Science.h"
 #include "Common/Upgrade.h"
 
@@ -171,6 +170,7 @@ public:
 	virtual void xferRGBAColorInt( RGBAColorInt *rgbaColorInt );
 	virtual void xferObjectID( ObjectID *objectID );
 	virtual void xferDrawableID( DrawableID *drawableID );
+	virtual void xferSTLObjectIDVector( std::vector<ObjectID> *objectIDVectorData );
 	virtual void xferSTLObjectIDList( std::list< ObjectID > *objectIDListData );
 	virtual void xferSTLIntList( std::list< Int > *intListData );
 	virtual void xferScienceType( ScienceType *science );
