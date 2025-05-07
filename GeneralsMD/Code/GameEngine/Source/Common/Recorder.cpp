@@ -1118,7 +1118,11 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 		debugString = "EXE is different:\n";
 		if (versionStringDiff)
 		{
-			tempStr.format("   Version [%ls] vs [%ls]\n", TheVersion->getUnicodeVersion().str(), header.versionString.str());
+			// TheSuperHackers @fix helmutbuhler 05/05/2025
+			// AsciiString::format with %ls can make internal _vsnprintf call fail on some strings. We convert using translate here.
+			UnicodeString tempStrWide;
+			tempStrWide.format(L"   Version [%s] vs [%s]\n", TheVersion->getUnicodeVersion().str(), header.versionString.str());
+			tempStr.translate(tempStrWide);
 			debugString.concat(tempStr);
 		}
 		if (versionTimeStringDiff)
