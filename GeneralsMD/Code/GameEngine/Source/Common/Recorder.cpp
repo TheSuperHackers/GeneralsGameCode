@@ -1226,7 +1226,7 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	// send a message to the logic for a new game
 	if (!m_doingAnalysis)
 	{
-		// TheSuperHackers @info helmutbuhler 04/13/2025
+		// TheSuperHackers @info helmutbuhler 13/04/2025
 		// We send the New Game message here directly to the command list and bypass the TheMessageStream.
 		// That's ok because Multiplayer is disabled during replay playback and is actually required
 		// during replay simulation because we don't update TheMessageStream during simulation.

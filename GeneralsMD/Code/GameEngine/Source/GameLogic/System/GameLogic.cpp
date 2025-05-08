@@ -3678,7 +3678,7 @@ void GameLogic::update( void )
 		msg->appendIntegerArgument(m_CRC);
 		msg->appendBooleanArgument(isPlayback);
 
-		// TheSuperHackers @info helmutbuhler 04/13/2025
+		// TheSuperHackers @info helmutbuhler 13/04/2025
 		// During replay simulation, we bypass TheMessageStream and instead put the CRC message
 		// directly into TheCommandList because we don't update TheMessageStream during simulation.
 		GameMessageList *messageList = TheMessageStream;

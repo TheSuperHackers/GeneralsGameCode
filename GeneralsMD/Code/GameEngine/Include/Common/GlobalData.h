@@ -327,7 +327,7 @@ public:
 	AsciiString m_initialFile;				///< If this is specified, load a specific map/replay from the command-line
 	AsciiString m_pendingFile;				///< If this is specified, use this map at the next game start
 	
-	std::vector<AsciiString> m_simulateReplayList; ///< If not empty, simulate this list of replays and exit. (TheSuperHackers @feature helmutbuhler 04/13/2025)
+	std::vector<AsciiString> m_simulateReplayList; ///< If not empty, simulate this list of replays and exit. (TheSuperHackers @feature helmutbuhler 13/04/2025)
 
 	Int m_maxParticleCount;						///< maximum number of particles that can exist
 	Int m_maxFieldParticleCount;			///< maximum number of field-type particles that can exist (roughly)

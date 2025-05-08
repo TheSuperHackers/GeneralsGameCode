@@ -79,7 +79,7 @@ static Bool justEntered = FALSE;
 #if 1
 static GameWindow *buttonAnalyzeReplay = NULL;
 
-// TheSuperHackers @feature helmutbuhler 04/13/2025
+// TheSuperHackers @feature helmutbuhler 13/04/2025
 // Button to simulate replay without graphics
 static GameWindow *buttonSimulateReplay = NULL;
 #endif
