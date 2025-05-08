@@ -944,7 +944,7 @@ HWND InitListboxPropertiesDialog( GameWindow *window )
 	if(listData->columns > 1)
 	{
 		Char percentages[200];
-		Char tempStr[200];
+		Char tempStr[33];
 		sprintf(percentages,"%d",listData->columnWidthPercentage[0]);
 		for(Int i = 1; i < listData->columns; i++ )
 		{
