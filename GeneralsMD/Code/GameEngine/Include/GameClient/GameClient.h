@@ -94,7 +94,7 @@ public:
 	// subsystem methods
 	virtual void init( void );																					///< Initialize resources
 	virtual void update( void );																				///< Updates the GUI, display, audio, etc
-	void updateHeadless();																				///< Updates the GUI, display, audio, etc
+	void updateHeadless();
 	virtual void reset( void );																					///< reset system
 
 	virtual void setFrame( UnsignedInt frame ) { m_frame = frame; }			///< Set the GameClient's internal frame number
