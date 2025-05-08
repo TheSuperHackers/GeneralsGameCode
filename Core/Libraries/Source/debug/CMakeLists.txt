@@ -24,15 +24,15 @@ set(DEBUG_SRC
     "internal.h"
 )
 
-add_library(z_debug STATIC)
+add_library(core_debug STATIC)
 
-target_sources(z_debug PRIVATE ${DEBUG_SRC})
+target_sources(core_debug PRIVATE ${DEBUG_SRC})
 
-target_include_directories(z_debug INTERFACE
+target_include_directories(core_debug INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(z_debug PRIVATE
+target_link_libraries(core_debug PRIVATE
     core_config
-    zi_always
+    corei_always
 )

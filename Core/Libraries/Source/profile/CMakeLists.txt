@@ -18,15 +18,15 @@ set(PROFILE_SRC
     "profile.h"
 )
 
-add_library(z_profile STATIC)
+add_library(core_profile STATIC)
 
-target_sources(z_profile PRIVATE ${PROFILE_SRC})
+target_sources(core_profile PRIVATE ${PROFILE_SRC})
 
-target_include_directories(z_profile INTERFACE
+target_include_directories(core_profile INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(z_profile PRIVATE
+target_link_libraries(core_profile PRIVATE
     core_config
-    zi_always
+    corei_always
 )

@@ -43,3 +43,7 @@
 #else
 #define REGISTER register
 #endif
+
+#if __cplusplus < 201103L
+#define static_assert(expr, msg)
+#endif
