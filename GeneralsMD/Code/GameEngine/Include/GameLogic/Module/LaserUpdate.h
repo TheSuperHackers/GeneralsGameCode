@@ -89,7 +89,7 @@ public:
 	Real getCurrentLaserRadius() const;
 
 	void setDirty( Bool dirty ) { m_dirty = dirty; }
-	Bool isDirty() { return m_dirty; }
+	Bool isDirty() { return m_dirty || m_isMultiDraw; }
 
 	Real getWidthScale() const { return m_currentWidthScalar; }
 	Real getAlphaScale() const { return m_currentAlphaScalar; }
@@ -135,6 +135,8 @@ protected:
 	UnsignedInt m_fadeOutFinishFrame;
 
 	AsciiString m_parentBoneName;
+
+	Bool m_isMultiDraw;
 };
 
 

@@ -111,6 +111,8 @@ LaserUpdate::LaserUpdate( Thing *thing, const ModuleData* moduleData ) : ClientU
 	m_parentID = INVALID_DRAWABLE_ID;
 	m_targetID = INVALID_DRAWABLE_ID;
 	m_parentBoneName.clear();
+
+	m_isMultiDraw = FALSE;
 } 
 
 //-------------------------------------------------------------------------------------------------
@@ -481,6 +483,22 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 	// Drawable *draw = getDrawable();
 	if( draw )
 	{
+		// Note: Is this too expensive?
+		// When initializing the laser, keep track if it has multiple draw modules.
+		int numDraws = 0;
+		LaserDrawInterface* ldi = NULL;
+		for (DrawModule** d = draw->getDrawModules(); *d; ++d)
+		{
+			ldi = (*d)->getLaserDrawInterface();
+			if (ldi)
+			{
+				numDraws++;
+			}
+		}
+		if (numDraws > 1) {
+			m_isMultiDraw = TRUE;
+		}
+
 		draw->setPosition( &posToUse );
 	}
 
@@ -706,6 +724,9 @@ void LaserUpdate::xfer( Xfer *xfer )
 	xfer->xferDrawableID(&m_targetID);
 
 	xfer->xferAsciiString(&m_parentBoneName);
+
+	// multi draw
+	xfer->xferBool(&m_isMultiDraw);
 
 }  // end xfer
 
