@@ -600,7 +600,7 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 						
 						if(newColumns > 1)
 						{
-							Char percentages[100];
+							Char percentages[200];
 							GetDlgItemText(hWndDialog,EDIT_COLUMN_PERCENT,percentages,sizeof(percentages));
 							if(strlen(percentages) == 0)
 							{
@@ -943,8 +943,8 @@ HWND InitListboxPropertiesDialog( GameWindow *window )
 	SetDlgItemInt( dialog, EDIT_NUM_COLUMNS, listData->columns, FALSE );
 	if(listData->columns > 1)
 	{
-		Char percentages[100];
-		Char tempStr[100];
+		Char percentages[200];
+		Char tempStr[200];
 		sprintf(percentages,"%d",listData->columnWidthPercentage[0]);
 		for(Int i = 1; i < listData->columns; i++ )
 		{
