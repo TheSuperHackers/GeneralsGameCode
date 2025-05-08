@@ -540,7 +540,7 @@ void Xfer::xferScienceType( ScienceType *science )
 	else
 	{
 
-		DEBUG_CRASH(( "xferScienceVec - Unknown xfer mode '%d'\n", getXferMode() ));
+		DEBUG_CRASH(( "xferScienceType - Unknown xfer mode '%d'\n", getXferMode() ));
 		throw XFER_MODE_UNKNOWN;
 
 	}  // end else
@@ -577,8 +577,12 @@ void Xfer::xferScienceVec( ScienceVec *scienceVec )
 		// vector should be empty at this point
 		if( scienceVec->empty() == FALSE )
 		{
-			DEBUG_CRASH(( "xferScienceVec - vector is not empty, but should be\n" ));
-			throw XFER_LIST_NOT_EMPTY;
+			// Not worth an assert, since things can give you Sciences on creation.  Just handle it and load.
+			scienceVec->clear();
+
+			// Homework for today.  Write 2000 words reconciling "Your code must never crash" with "Intentionally putting crashes in the code".  Fucktard.
+//			DEBUG_CRASH(( "xferScienceVec - vector is not empty, but should be\n" ));
+//			throw XFER_LIST_NOT_EMPTY;
 		}
 
 		for( UnsignedShort i = 0; i < count; ++i )

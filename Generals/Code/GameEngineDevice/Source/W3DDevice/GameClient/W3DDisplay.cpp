@@ -670,7 +670,6 @@ void W3DDisplay::init( void )
 	WW3D::Set_Prelit_Mode( WW3D::PRELIT_MODE_LIGHTMAP_MULTI_PASS );
 	WW3D::Set_Collision_Box_Display_Mask(0x00);	///<set to 0xff to make collision boxes visible
 	WW3D::Enable_Static_Sort_Lists(true);
-	WW3D::Set_Texture_Compression_Mode(WW3D::TEXTURE_COMPRESSION_ENABLE);
 	WW3D::Set_Thumbnail_Enabled(false);
 	WW3D::Set_Screen_UV_Bias( TRUE );  ///< this makes text look good :)
 			

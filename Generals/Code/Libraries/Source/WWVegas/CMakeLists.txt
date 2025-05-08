@@ -14,14 +14,11 @@ target_include_directories(g_wwcommon INTERFACE
     .
     WW3D2
     WWAudio
-    WWMath
-    WWSaveLoad
     Wwutil
 )
 
 add_subdirectory(WWMath)
 add_subdirectory(Wwutil)
-add_subdirectory(WWSaveLoad)
 add_subdirectory(WW3D2)
 add_subdirectory(WWDownload)
 
@@ -32,16 +29,13 @@ target_include_directories(g_wwvegas INTERFACE
     .
     WW3D2
     WWDownload
-    WWMath
-    WWSaveLoad
     Wwutil
 )
 
 target_link_libraries(g_wwvegas INTERFACE
-    core_wwvegas    
+    core_wwvegas
     g_ww3d2
     g_wwdownload
     g_wwmath
-    g_wwsaveload
     g_wwutil
 )

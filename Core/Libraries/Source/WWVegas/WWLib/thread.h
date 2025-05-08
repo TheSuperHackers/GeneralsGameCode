@@ -22,9 +22,6 @@
 #if defined(_MSC_VER)
 #pragma once
 #endif
-#ifdef _UNIX
-#include "osdep.h"
-#endif
 
 #include "always.h"
 #include "Vector.H"

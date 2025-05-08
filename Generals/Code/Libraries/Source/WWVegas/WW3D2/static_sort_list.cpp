@@ -80,8 +80,16 @@ void DefaultStaticSortListClass::Render_And_Clear(RenderInfoClass & rinfo)
 		for (	RenderObjClass *robj = SortLists[sort_level].Remove_Head(); robj;
 				robj->Release_Ref(), robj = SortLists[sort_level].Remove_Head())
 		{
-			robj->Render(rinfo);
-			render = true;
+			if (robj->Get_Render_Hook()) {
+				if (robj->Get_Render_Hook()->Pre_Render(robj, rinfo)) {
+					robj->Render(rinfo);
+					render = true;
+				}
+				robj->Get_Render_Hook()->Post_Render(robj, rinfo);
+			} else {
+				robj->Render(rinfo);
+				render = true;
+			}
 		}
 		if (render) TheDX8MeshRenderer.Flush();
 	}

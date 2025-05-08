@@ -450,12 +450,11 @@ void GameClient::init( void )
 void GameClient::reset( void )
 {
 	Drawable *draw, *nextDraw;
-	m_drawableHash.clear();
-#if USING_STLPORT
-	m_drawableHash.resize(DRAWABLE_HASH_SIZE);
-#else
-	m_drawableHash.reserve(DRAWABLE_HASH_SIZE);
-#endif
+//	m_drawableHash.clear();
+//	m_drawableHash.resize(DRAWABLE_HASH_SIZE);
+
+	m_drawableVector.clear();
+	m_drawableVector.resize(DRAWABLE_HASH_SIZE, NULL);
 
 	// need to reset the in game UI to clear drawables before they are destroyed
 	TheInGameUI->reset();
@@ -478,6 +477,9 @@ void GameClient::reset( void )
 
 	// clear any drawable TOC we might have
 	m_drawableTOC.clear();
+
+	// TheSuperHackers @fix Mauller 13/04/2025 Reset the drawable id so it does not keep growing over the lifetime of the game.
+	m_nextDrawableID = (DrawableID)1;
 
 }  // end reset
 
@@ -875,7 +877,12 @@ void GameClient::addDrawableToLookupTable(Drawable *draw )
 		return;
 
 	// add to lookup
-	m_drawableHash[ draw->getID() ] = draw;
+//	m_drawableHash[ draw->getID() ] = draw;
+	DrawableID newID = draw->getID();
+	while( newID >= m_drawableVector.size() ) // Fail case is hella rare, so faster to double up on size() call
+		m_drawableVector.resize(m_drawableVector.size() * 2, NULL);
+
+	m_drawableVector[ newID ] = draw;
 
 }  // end addDrawableToLookupTable
 
@@ -886,11 +893,13 @@ void GameClient::removeDrawableFromLookupTable( Drawable *draw )
 {
 
 	// sanity
-	if( draw == NULL )
+	// TheSuperHackers @fix Mauller/Xezon 24/04/2025 Prevent out of range access to vector lookup table
+	if( draw == NULL || static_cast<size_t>(draw->getID()) >= m_drawableVector.size() )
 		return;
 
 	// remove from table
-	m_drawableHash.erase( draw->getID() );
+//	m_drawableHash.erase( draw->getID() );
+	m_drawableVector[ draw->getID() ] = NULL;
 
 }  // end removeDrawableFromLookupTable
 

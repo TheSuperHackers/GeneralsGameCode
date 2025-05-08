@@ -18,14 +18,16 @@ target_include_directories(core_wwcommon INTERFACE
     .
     WWDebug
     WWLib
+    WWMath
+    WWSaveLoad
 )
 
 # add_subdirectory(WWAudio)
 add_subdirectory(WWDebug)
 add_subdirectory(WWLib)
-# add_subdirectory(WWMath)
+add_subdirectory(WWMath)
 # add_subdirectory(Wwutil)
-# add_subdirectory(WWSaveLoad)
+add_subdirectory(WWSaveLoad)
 add_subdirectory(WWStub)
 # add_subdirectory(WW3D2)
 # add_subdirectory(WWDownload)
@@ -40,10 +42,9 @@ target_include_directories(core_wwvegas INTERFACE
     WWDebug
     #WWDownload
     WWLib
-    #WWMath
-    #WWSaveLoad
+    WWMath
+    WWSaveLoad
     #Wwutil
-    #wwshade
 )
 
 target_link_libraries(core_wwvegas INTERFACE
@@ -52,7 +53,7 @@ target_link_libraries(core_wwvegas INTERFACE
     # core_wwdownload
     core_wwlib
     # core_wwmath
-    # core_wwsaveload
+    core_wwsaveload
     # core_wwshade
     # core_wwutil
 )

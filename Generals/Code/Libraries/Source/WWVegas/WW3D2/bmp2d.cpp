@@ -213,12 +213,12 @@ Bitmap2DObjClass::Bitmap2DObjClass
 	//Set_Aspect(resh/(float)resw);
 
 	// Find the dimensions of the texture:
-	SurfaceClass::SurfaceDescription sd;
-	texture->Get_Level_Description(sd);
+//	SurfaceClass::SurfaceDescription sd;
+//	texture->Get_Level_Description(sd);
 		
 	// convert image width and image height to normalized values
-	float vw = (float) sd.Width / (float)resw;
-	float vh = (float) sd.Height / (float)resh;
+	float vw = (float) texture->Get_Width() / (float)resw;
+	float vh = (float) texture->Get_Height() / (float)resh;
 
 	// if we requested the image to be centered around a point adjust the
 	// coordinates accordingly.
@@ -236,7 +236,7 @@ Bitmap2DObjClass::Bitmap2DObjClass
 	if (additive) {
 		shader = ShaderClass::_PresetAdditive2DShader;
 	} else {
-		if (ignore_alpha == false && Has_Alpha(sd.Format)) {
+		if (ignore_alpha == false && Has_Alpha(texture->Get_Texture_Format())) {
 			shader = ShaderClass::_PresetAlpha2DShader;
 		} else {
 			shader = ShaderClass::_PresetOpaque2DShader;

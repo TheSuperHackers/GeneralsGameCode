@@ -176,16 +176,22 @@ public:
 	const MATCHABLE* findBestInfo(const std::vector<MATCHABLE>& v, const BITSET& bits) const
 	{
 		typename MatchMap::const_iterator it = m_bestMatches.find(bits);
+
+		const MATCHABLE *first = NULL;
 		if (it != m_bestMatches.end())
 		{
-			return (*it).second;
+			first = (*it).second;
 		}
-
+		if (first != NULL) {
+			return first;
+		}
+		
 		const MATCHABLE* info = findBestInfoSlow(v, bits);
 
 		DEBUG_ASSERTCRASH(info != NULL, ("no suitable match for criteria was found!\n"));
-		if (info != NULL)
+		if (info != NULL) {
 			m_bestMatches[bits] = info;
+		}
 
 		return info;
 	}

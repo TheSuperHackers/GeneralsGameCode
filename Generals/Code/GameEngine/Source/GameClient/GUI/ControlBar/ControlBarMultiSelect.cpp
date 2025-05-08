@@ -96,7 +96,10 @@ void ControlBar::addCommonCommands( Drawable *draw, Bool firstDrawable )
 		{
 
 			m_commonCommands[ i ] = NULL;
-			m_commandWindows[ i ]->winHide( TRUE );
+			if (m_commandWindows[ i ])
+			{
+				m_commandWindows[ i ]->winHide( TRUE );
+			}
 			// After Every change to the m_commandWIndows, we need to show fill in the missing blanks with the images
 	// removed from multiplayer branch
 			//showCommandMarkers();
@@ -118,6 +121,8 @@ void ControlBar::addCommonCommands( Drawable *draw, Bool firstDrawable )
 		// just add each command that is classified as a common command
 		for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
 		{
+			// our implementation doesn't necessarily make use of the max possible command buttons
+			if (! m_commandWindows[ i ]) continue;
 
 			// get command
 			command = commandSet->getCommandButton(i);
@@ -148,6 +153,9 @@ void ControlBar::addCommonCommands( Drawable *draw, Bool firstDrawable )
 		for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
 		{
 		
+			// our implementation doesn't necessarily make use of the max possible command buttons
+			if (! m_commandWindows[ i ]) continue;
+
 			// get the command
 			command = commandSet->getCommandButton(i);
 					
@@ -213,7 +221,12 @@ void ControlBar::populateMultiSelect( void )
 
 	// by default, hide all the controls in the command section
 	for( Int i = 0; i < MAX_COMMANDS_PER_SET; i++ )
-		m_commandWindows[ i ]->winHide( TRUE );
+	{
+		if (m_commandWindows[ i ])
+		{
+			m_commandWindows[ i ]->winHide( TRUE );
+		}
+	}
 
 	// sanity
 	DEBUG_ASSERTCRASH( TheInGameUI->getSelectCount() > 1,
@@ -333,6 +346,9 @@ void ControlBar::updateContextMultiSelect( void )
 			// get the control window
 			win = m_commandWindows[ i ];
 
+			// our implementation doesn't necessarily make use of the max possible command buttons
+			if (!win) continue;
+
 			// don't consider hidden windows
 			if( win->winIsHidden() == TRUE )
 				continue;
@@ -389,6 +405,8 @@ void ControlBar::updateContextMultiSelect( void )
 	//
 	for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
 	{
+		// our implementation doesn't necessarily make use of the max possible command buttons
+		if (! m_commandWindows[ i ]) continue;
 
 		// don't consider hidden commands
 		if( m_commandWindows[ i ]->winIsHidden() == TRUE )

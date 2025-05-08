@@ -63,3 +63,23 @@ void operator delete[](void * p, const char *, int)
 }
 
 #endif
+
+void* createW3DMemPool(const char *poolName, int allocationSize)
+{
+	return NULL;
+}
+
+void* allocateFromW3DMemPool(void* pool, int allocationSize)
+{
+	return malloc(allocationSize);
+}
+
+void* allocateFromW3DMemPool(void* pool, int allocationSize, const char* msg, int unused)
+{
+	return malloc(allocationSize);
+}
+
+void freeFromW3DMemPool(void* pool, void* p)
+{
+	free(p);
+}

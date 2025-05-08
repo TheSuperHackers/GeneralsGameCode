@@ -72,9 +72,8 @@ static bool Is_Format_Compressed(WW3DFormat texture_format,bool allow_compressio
 	// If hardware supports DXTC compression, load a compressed texture. Proceed only if the texture format hasn't been
 	// defined as non-compressed.
 	compressed|=(
-		texture_format==WW3D_FORMAT_UNKNOWN && 
-		DX8Wrapper::Get_Current_Caps()->Support_DXTC() && 
-		WW3D::Get_Texture_Compression_Mode()==WW3D::TEXTURE_COMPRESSION_ENABLE &&
+		texture_format==WW3D_FORMAT_UNKNOWN &&
+		DX8Wrapper::Get_Current_Caps()->Support_DXTC() &&
 		allow_compression);
 
 	return compressed;
@@ -1115,10 +1114,10 @@ void TextureLoadTaskClass::Begin_Texture_Load()
 					MipLevels++;
 
 			//Adjust the reduction factor to keep textures above some minimum dimensions
-			if (MipLevels <= WW3D::Get_Texture_Min_Mip_Levels())
+			if (MipLevels <= WW3D::Get_Texture_Min_Dimension())
 				ReductionFactor=0;
 			else
-			{	int mipToDrop=MipLevels-WW3D::Get_Texture_Min_Mip_Levels();
+			{	int mipToDrop=MipLevels-WW3D::Get_Texture_Min_Dimension();
 				if (ReductionFactor >= mipToDrop)
 					ReductionFactor=mipToDrop;
 			}

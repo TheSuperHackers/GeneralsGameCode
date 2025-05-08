@@ -21,9 +21,12 @@
 #include "wwdebug.h"
 #include "thread.h"
 #pragma warning (disable : 4201)	// Nonstandard extension - nameless struct
-#include <windows.h>
 #include "systimer.h"
 #include <Utility/intrin_compat.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 #ifdef _UNIX
 # include <time.h>  // for time(), localtime() and timezone variable.
@@ -57,7 +60,7 @@ int CPUDetectClass::ProcessorFamily;
 int CPUDetectClass::ProcessorModel;
 int CPUDetectClass::ProcessorRevision;
 int CPUDetectClass::ProcessorSpeed;
-__int64 CPUDetectClass::ProcessorTicksPerSecond;	// Ticks per second
+sint64 CPUDetectClass::ProcessorTicksPerSecond;	// Ticks per second
 double CPUDetectClass::InvProcessorTicksPerSecond;	// 1.0 / Ticks per second
 
 unsigned CPUDetectClass::FeatureBits;
@@ -125,10 +128,10 @@ const char* CPUDetectClass::Get_Processor_Manufacturer_Name()
 
 #define ASM_RDTSC _asm _emit 0x0f _asm _emit 0x31
 
-static unsigned Calculate_Processor_Speed(__int64& ticks_per_second)
+static unsigned Calculate_Processor_Speed(sint64& ticks_per_second)
 {
-	unsigned __int64 timer0=0;
-	unsigned __int64 timer1=0;
+	sint64 timer0=0;
+	sint64 timer1=0;
 
 	timer0=_rdtsc();
 
@@ -138,8 +141,8 @@ static unsigned Calculate_Processor_Speed(__int64& ticks_per_second)
 		timer1=_rdtsc();
 	}
 
-	__int64 t=timer1-timer0;
-	ticks_per_second=(__int64)((1000.0/(double)elapsed)*(double)t);	// Ticks per second
+	sint64 t=timer1-timer0;
+	ticks_per_second=(sint64)((1000.0/(double)elapsed)*(double)t);	// Ticks per second
 	return unsigned((double)t/(double)(elapsed*1000));
 }
 
@@ -898,8 +901,8 @@ void CPUDetectClass::Init_Memory()
 
 void CPUDetectClass::Init_OS()
 {
-	OSVERSIONINFO os;
 #ifdef WIN32
+	OSVERSIONINFO os;
    os.dwOSVersionInfoSize = sizeof(os);
 	GetVersionEx(&os);
 
@@ -940,9 +943,11 @@ void CPUDetectClass::Init_Processor_Log()
 
 	SYSLOG(("Operating System: "));
 	switch (OSVersionPlatformId) {
+#ifdef _WIN32
 	case VER_PLATFORM_WIN32s: SYSLOG(("Windows 3.1")); break;
 	case VER_PLATFORM_WIN32_WINDOWS: SYSLOG(("Windows 9x")); break;
 	case VER_PLATFORM_WIN32_NT: SYSLOG(("Windows NT")); break;
+#endif
 	}
 	SYSLOG(("\r\n"));
 
@@ -1223,6 +1228,7 @@ void Get_OS_Info(
 	switch (OSVersionPlatformId) {
 	default:
 		break;
+#ifdef _WIN32
 	case VER_PLATFORM_WIN32_WINDOWS:
 		{
 			for(int i=0;i<sizeof(Windows9xVersionTable)/sizeof(os_info);++i) {
@@ -1304,5 +1310,6 @@ void Get_OS_Info(
 
 		// No more-specific version detected; fallback to XX
 		os_info.Code="WINXX";
+#endif
 	}
 }

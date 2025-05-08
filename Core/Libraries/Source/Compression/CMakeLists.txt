@@ -34,7 +34,13 @@ target_link_libraries(core_compression PRIVATE
     corei_libraries_include
 )
 
+
 target_link_libraries(core_compression PUBLIC
     liblzhl
-    libzlib
 )
+
+find_package(ZLIB)
+if (ZLIB_FOUND)
+    target_link_libraries(core_compression PUBLIC ZLIB::ZLIB)
+    target_compile_definitions(core_compression PUBLIC RTS_HAS_ZLIB)
+endif()
