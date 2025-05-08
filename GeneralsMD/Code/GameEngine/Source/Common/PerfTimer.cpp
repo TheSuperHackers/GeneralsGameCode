@@ -64,7 +64,7 @@ void GetPrecisionTimerTicksPerSec(Int64* t)
 }
 
 //Kris: Plugged in Martin's code to optimize timer setup.
-//#define HOFFESOMMER_REPLACEMENT_CODE
+#define HOFFESOMMER_REPLACEMENT_CODE
 
 //-------------------------------------------------------------------------------------------------
 void InitPrecisionTimer()
@@ -246,7 +246,7 @@ public:
 		{
 			if (m_outputStats[i].first == id) 
 			{
-				m_outputStats.erase(m_outputStats.begin()+i);
+				m_outputStats.erase(&m_outputStats[i]);
 				return;
 			}
 		}
@@ -375,7 +375,7 @@ void PerfGather::reset()
 		Int64 start, end;
 		PerfGather pf("timer");
 		GetPrecisionTimer(&start);
-		/*for (Int ii = 0; ii < ITERS; ++ii)
+		for (Int ii = 0; ii < ITERS; ++ii)
 		{
 			pf.startTimer(); pf.stopTimer();
 			pf.startTimer(); pf.stopTimer();
@@ -385,7 +385,7 @@ void PerfGather::reset()
 			pf.startTimer(); pf.stopTimer();
 			pf.startTimer(); pf.stopTimer();
 			pf.startTimer(); pf.stopTimer();
-		}*/
+		}
 		GetPrecisionTimer(&end);
 		s_stopStartOverhead = (end - start) / (ITERS*8);
 		DEBUG_LOG(("s_stopStartOverhead is %d (%f usec)\n",(int)s_stopStartOverhead,s_stopStartOverhead/s_ticksPerUSec));
@@ -408,7 +408,7 @@ void PerfGather::reset()
 		return;
 	}
 
-	if (frame >= 0 && frame <= 30)
+	if (frame >= 1 && frame <= 30)
 	{
 		// always skip the first second or so, since it loads everything and skews the results horribly
 	}
@@ -597,7 +597,7 @@ void PerfTimer::outputInfo( void )
 		return;
 	}
 
-#if 1
+#if defined(_DEBUG) || defined(_INTERNAL)
 	double totalTimeInMS = 1000.0 * m_runningTime / s_ticksPerSec;
 	double avgTimePerFrame = totalTimeInMS / (m_lastFrame - m_startFrame + 1);
 	double avgTimePerCall = totalTimeInMS / m_callCount;
@@ -635,7 +635,7 @@ void PerfTimer::outputInfo( void )
 //-------------------------------------------------------------------------------------------------
 void PerfTimer::showMetrics( void )
 {
-#if 1
+#if defined(_DEBUG) || defined(_INTERNAL)
 	double totalTimeInMS = 1000.0 * m_runningTime / s_ticksPerSec;
 	double avgTimePerFrame = totalTimeInMS / (m_lastFrame - m_startFrame + 1);
 	double avgTimePerCall = totalTimeInMS / m_callCount;

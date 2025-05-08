@@ -33,7 +33,6 @@
 
 #include "Common/PerfTimer.h"
 
-#undef PERF_TIMERS
 #ifdef PERF_TIMERS
 extern PerfGather TheCritSecPerfGather;
 #endif

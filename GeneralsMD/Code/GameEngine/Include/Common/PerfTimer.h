@@ -38,9 +38,9 @@
 		NOTE NOTE NOTE: never check this in with this enabled, since there is a nonzero time penalty
 		for running in this mode. Only enable it for local builds for testing purposes! (srj)
 	*/
-	#define PERF_TIMERS
+	#define NO_PERF_TIMERS
 #else
-	#define PERF_TIMERS
+	#define NO_PERF_TIMERS
 #endif
 
 #include "Common/GameCommon.h"	// ensure we get DUMP_PERF_STATS, or not
@@ -58,8 +58,7 @@ class DebugDisplayInterface;
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-//#define NO_USE_QPF	// non-QPF is much faster.
-#define USE_QPF	// non-QPF is much faster.
+#define NO_USE_QPF	// non-QPF is much faster.
 
 #if defined(PERF_TIMERS) || defined(DUMP_PERF_STATS)
 //-------------------------------------------------------------------------------------------------
@@ -90,7 +89,7 @@ class PerfGather
 {
 public:
 	// If net only (default), subtract perf timers running inside. [8/12/2003]
-	PerfGather( const char *identifier/*, Bool netOnly=true*/ );
+	PerfGather( const char *identifier, Bool netOnly=true );
 	virtual ~PerfGather( );
 
 	__forceinline void startTimer();
@@ -133,24 +132,18 @@ private:
 	Bool					m_ignore;
 	Bool					m_netTimeOnly;
 };
-extern DWORD theMainThreadID;
 
 //-------------------------------------------------------------------------------------------------
 void PerfGather::startTimer()
 {
-	DEBUG_ASSERTCRASH(theMainThreadID == GetCurrentThreadId(), ("PerfGather Start Thread"));
 	*++m_activeHead = this;
-	DEBUG_ASSERTCRASH(m_activeHead >= &m_active[0] && m_activeHead <= &m_active[MAX_ACTIVE_STACK-1], ("active under/over flow"));
-	//DEBUG_LOG(("startTimer %s  %d\n", m_identifier, int(m_activeHead-&m_active[0])));
 	GetPrecisionTimer(&m_startTime);
 }
 
 //-------------------------------------------------------------------------------------------------
 void PerfGather::stopTimer()
 {
-	//DEBUG_LOG(("stopTimer %s  %d\n", m_identifier, int(m_activeHead-&m_active[0])));
 	DEBUG_ASSERTCRASH(this != NULL, ("I am null, uh oh"));
-	DEBUG_ASSERTCRASH(theMainThreadID == GetCurrentThreadId(), ("PerfGather Thread"));
 
 	Int64 runTime;
 	GetPrecisionTimer(&runTime);
@@ -168,7 +161,6 @@ void PerfGather::stopTimer()
 	DEBUG_ASSERTCRASH(m_activeHead >= &m_active[0] && m_activeHead <= &m_active[MAX_ACTIVE_STACK-1], ("active under/over flow"));
 #endif
 	--m_activeHead;
-	DEBUG_ASSERTCRASH(m_activeHead >= &m_active[0] && m_activeHead <= &m_active[MAX_ACTIVE_STACK-1], ("active under/over flow"));
 
 	if (*m_activeHead)
 	{
