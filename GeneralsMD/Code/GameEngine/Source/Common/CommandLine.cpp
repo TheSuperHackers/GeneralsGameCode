@@ -1246,10 +1246,6 @@ static CommandLineParam params[] =
 	{ "-noshaders", parseNoShaders },
 	{ "-quickstart", parseQuickStart },
 
-	// TheSuperHackers @feature helmutbuhler 11/04/2025
-	// This runs the game without a window, graphics, input and audio. Used for testing.
-	{ "-headless", parseHeadless },
-	
 	// TheSuperHackers @feature helmutbuhler 13/04/2025
 	// Simulate replay without graphics. Pass the filename including .rep afterwards.
 	// You can pass this multiple times to check multiple replays.
