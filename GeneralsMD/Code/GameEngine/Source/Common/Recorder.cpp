@@ -1061,29 +1061,9 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 			DEBUG_CRASH(("Replay has gone out of sync!  All bets are off!\nInGame:%8.8X Replay:%8.8X\nFrame:%d",
 				playbackCRC, newCRC, mismatchFrame));
 
-			// TheSuperHackers @info helmutbuhler 04/13/2025
+			// TheSuperHackers @info helmutbuhler 13/04/2025
 			// Print Mismatch to console in case we are in SimulateReplayList
 			printf("CRC Mismatch in Frame %d\n", mismatchFrame);
-
-			// dump GameLogic random seed
-			DEBUG_LOG(("GameLogic frame = %d\n", TheGameLogic->getFrame()));
-			DEBUG_LOG(("GetGameLogicRandomSeedCRC() = %d\n", GetGameLogicRandomSeedCRC()));
-
-			// dump CRCs
-			{
-				DEBUG_LOG(("--- GameState Dump ---\n"));
-		#ifdef DEBUG_CRC
-				outputCRCDumpLines();
-		#endif
-				DEBUG_LOG(("------ End Dump ------\n"));
-			}
-			{
-				DEBUG_LOG(("--- DebugInfo Dump ---\n"));
-		#ifdef DEBUG_CRC
-				outputCRCDebugLines();
-		#endif
-				DEBUG_LOG(("------ End Dump ------\n"));
-			}
 		}
 		return;
 	}
