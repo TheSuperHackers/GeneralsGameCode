@@ -284,12 +284,7 @@ void AsciiString::format(const char* format, ...)
 // -----------------------------------------------------
 void AsciiString::format_va(const AsciiString& format, va_list args)
 {
-	validate();
-	char buf[MAX_FORMAT_BUF_LEN];
-  if (_vsnprintf(buf, sizeof(buf)/sizeof(char)-1, format.str(), args) < 0)
-			throw ERROR_OUT_OF_MEMORY;
-	set(buf);
-	validate();
+	format_va(format.str(), args);
 }
 
 // -----------------------------------------------------
@@ -297,10 +292,16 @@ void AsciiString::format_va(const char* format, va_list args)
 {
 	validate();
 	char buf[MAX_FORMAT_BUF_LEN];
-  if (_vsnprintf(buf, sizeof(buf)/sizeof(char)-1, format, args) < 0)
-			throw ERROR_OUT_OF_MEMORY;
-	set(buf);
-	validate();
+	const int result = _vsnprintf(buf, sizeof(buf)/sizeof(WideChar)-1, format, args);
+	if (result >= 0)
+	{
+		set(buf);
+		validate();
+	}
+	else
+	{
+		DEBUG_ASSERTCRASH(false, ("%s failed with code:%d format:\"%s\"", __FUNCTION__, result, format));
+	}
 }
 
 // -----------------------------------------------------
