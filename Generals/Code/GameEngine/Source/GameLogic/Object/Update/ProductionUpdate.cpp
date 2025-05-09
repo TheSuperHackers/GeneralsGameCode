@@ -217,6 +217,8 @@ ProductionUpdate::~ProductionUpdate( void )
 
 		production = m_productionQueue;
 		removeFromProductionQueue( production );
+		// TheSuperHackers @fix Mauller 13/04/2025 Delete instance of production item
+		production->deleteInstance();
 
 	}  // end while
 

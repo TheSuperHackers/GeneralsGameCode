@@ -60,7 +60,11 @@ add_library(core_manglerlib STATIC)
 set_target_properties(core_manglerlib PROPERTIES OUTPUT_NAME manglerlib)
 
 target_sources(core_manglerlib PUBLIC ${MANGLERLIB_SRC})
-target_include_directories(core_manglerlib PRIVATE . wlib wnet)
+target_include_directories(core_manglerlib PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    wlib
+    wnet
+)
 target_link_libraries(core_manglerlib PRIVATE wsock32)
 target_link_libraries(core_manglerlib PUBLIC
     core_config
@@ -73,7 +77,11 @@ add_executable(core_mangler WIN32)
 set_target_properties(core_mangler PROPERTIES OUTPUT_NAME mangler)
 
 target_sources(core_mangler PRIVATE ${MANGLER_SRC})
-target_include_directories(core_mangler PRIVATE . wlib wnet)
+target_include_directories(core_mangler PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    wlib
+    wnet
+)
 target_link_libraries(core_mangler PRIVATE core_manglerlib)
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
@@ -87,7 +95,11 @@ add_executable(core_manglertest WIN32)
 set_target_properties(core_manglertest PROPERTIES OUTPUT_NAME manglertest)
 
 target_sources(core_manglertest PRIVATE ${MANGLERTEST_SRC})
-target_include_directories(core_manglertest PRIVATE . wlib wnet)
+target_include_directories(core_manglertest PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    wlib
+    wnet
+)
 target_link_libraries(core_manglertest PRIVATE core_manglerlib)
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

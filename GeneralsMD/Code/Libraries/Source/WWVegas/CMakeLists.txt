@@ -2,18 +2,17 @@
 add_library(z_wwcommon INTERFACE)
 
 target_link_libraries(z_wwcommon INTERFACE
-    d3d8lib
     core_config
     core_utility
     core_wwcommon
+    d3d8lib
     milesstub
     stlport
 )
 
 target_include_directories(z_wwcommon INTERFACE
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
     WW3D2
-    WWAudio
 )
 
 add_subdirectory(WWAudio)
@@ -24,10 +23,8 @@ add_subdirectory(WWDownload)
 add_library(z_wwvegas INTERFACE)
 
 target_include_directories(z_wwvegas INTERFACE
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
     WW3D2
-    WWAudio
-    WWDownload
 )
 
 target_link_libraries(z_wwvegas INTERFACE

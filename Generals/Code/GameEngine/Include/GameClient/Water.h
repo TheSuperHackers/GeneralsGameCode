@@ -100,9 +100,9 @@ class WaterTransparencySetting : public Overridable
 			m_standingWaterColor.red = 1.0f;
 			m_standingWaterColor.green = 1.0f;
 			m_standingWaterColor.blue = 1.0f;
-			m_radarColor.red = 140;
-			m_radarColor.green = 140;
-			m_radarColor.blue = 255;
+			m_radarColor.red = 0.55f;
+			m_radarColor.green = 0.55f;
+			m_radarColor.blue = 1.0f;
 			m_standingWaterTexture = "TWWater01.tga";
 			m_additiveBlend = FALSE;
 

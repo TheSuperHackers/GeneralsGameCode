@@ -234,6 +234,8 @@ W3DLaserDraw::~W3DLaserDraw( void )
 	}  // end for i
 
 	delete [] m_line3D;
+	// TheSuperHackers @fix Mauller 11/03/2025 Free reference counted material
+	REF_PTR_RELEASE(m_texture);
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -1036,6 +1036,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	m_rankLevelLimit = 1000;	// this is reset every game.
 	setDefaults( saveGame );
 	TheWritableGlobalData->m_loadScreenRender = TRUE;	///< mark it so only a few select things are rendered during load	
+	TheWritableGlobalData->m_TiVOFastMode = FALSE;	//always disable the TIVO fast-forward mode at the start of a new game.
 
 	m_showBehindBuildingMarkers = TRUE;
 	m_drawIconUI = TRUE;

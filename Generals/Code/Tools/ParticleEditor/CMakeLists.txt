@@ -1,4 +1,3 @@
-# Set source files
 set(PARTICLEED_SRC
     "CButtonShowColor.cpp"
     "CButtonShowColor.h"
@@ -27,7 +26,6 @@ set(PARTICLEED_SRC
     "VelocityTypePanels.h"
 )
 
-# Targets to build.
 add_library(g_particleeditor SHARED)
 set_target_properties(g_particleeditor PROPERTIES OUTPUT_NAME particleeditor PREFIX "")
 

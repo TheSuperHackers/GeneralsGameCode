@@ -667,19 +667,29 @@ void GameEngine::execute( void )
 					::Sleep(1); // give everyone else a tiny time slice.
 		#endif
 
-					// limit the framerate
-					DWORD now = timeGetTime();
-					DWORD limit = (1000.0f/m_maxFPS)-1;
-					while (TheGlobalData->m_useFpsLimit && (now - prevTime) < limit) 
-					{
-						::Sleep(0);
-						now = timeGetTime();
-					}
-					//Int slept = now - prevTime;
-					//DEBUG_LOG(("delayed %d\n",slept));
 
-					prevTime = now;
-				}
+		#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+          if ( ! TheGlobalData->m_TiVOFastMode )
+		#else	//always allow this cheatkey if we're in a replaygame.
+		  if ( ! (TheGlobalData->m_TiVOFastMode && TheGameLogic->isInReplayGame()))
+		#endif
+          {
+            // limit the framerate
+					  DWORD now = timeGetTime();
+					  DWORD limit = (1000.0f/m_maxFPS)-1;
+					  while (TheGlobalData->m_useFpsLimit && (now - prevTime) < limit) 
+					  {
+						  ::Sleep(0);
+						  now = timeGetTime();
+					  }
+					  //Int slept = now - prevTime;
+					  //DEBUG_LOG(("delayed %d\n",slept));
+
+					  prevTime = now;
+
+          }        
+        
+        }
 			}
 
 		}	// perfgather for execute_loop

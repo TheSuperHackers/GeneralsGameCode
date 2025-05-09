@@ -266,6 +266,8 @@ public:
 		MSG_META_BEGIN_CAMERA_ZOOM_OUT,
 		MSG_META_END_CAMERA_ZOOM_OUT,
 		MSG_META_CAMERA_RESET,
+		MSG_META_TOGGLE_FAST_FORWARD_REPLAY,	      ///< Toggle the fast forward feature
+
 
 		// META items that are really for debug/demo/development use only...
 		// They do not get built into RELEASE builds.

@@ -411,6 +411,10 @@ UpdateSleepTime StealthUpdate::update( void )
 			{
 				//Switch models at the halfway point
 				changeVisualDisguise();
+
+				// TheSuperHackers @fix Skyaero 06/05/2025 obtain the new drawable
+				draw = getObject()->getDrawable();
+
 				m_disguiseHalfpointReached = true;
 			}
 			//Opacity ranges from full to none at midpoint and full again at the end

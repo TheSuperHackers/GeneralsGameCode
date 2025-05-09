@@ -120,6 +120,8 @@ extern Bool inCRCGen;
 
 void CRCDebugStartNewGame()
 {
+	if (TheGameLogic->isInShellGame())
+		return;
 	if (g_saveDebugCRCPerFrame)
 	{
 		// Create folder for frame data, if it doesn't exist yet.

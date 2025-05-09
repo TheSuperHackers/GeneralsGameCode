@@ -1,7 +1,0 @@
-
-- Detect skins that are using materials that are too complex (max of two uv channels, one pass???)
-- Remove Translucency from max plugin
-- Editor has to resolve all of the cases where it is rendering to secondary windows
-- VIS system needs a new z-buffering software renderer
-- WWConfig needs to be updated
-- Classic environment mapper and env mapper are the same thing now...
