@@ -387,7 +387,7 @@ void AsciiString::format_va(const char* format, va_list args)
 	}
 	else
 	{
-		DEBUG_ASSERTCRASH(false, ("%s failed with code:%d format:\"%s\"", __FUNCTION__, result, format));
+		DEBUG_ASSERTCRASH(false, ("AsciiString::format_va failed with code:%d format:\"%s\"", result, format));
 	}
 }
 

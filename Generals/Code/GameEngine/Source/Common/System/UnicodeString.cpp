@@ -324,7 +324,7 @@ void UnicodeString::format_va(const WideChar* format, va_list args)
 	}
 	else
 	{
-		DEBUG_ASSERTCRASH(false, ("%s failed with code:%d", __FUNCTION__, result));
+		DEBUG_ASSERTCRASH(false, ("UnicodeString::format_va failed with code:%d", result));
 	}
 }
 
