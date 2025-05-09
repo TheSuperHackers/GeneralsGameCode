@@ -57,6 +57,8 @@ public:
 	UnsignedInt m_widenDurationFrames;  ///< If non-zero, beam grows to max size over duration
 	UnsignedInt m_decayDurationFrames;  ///< If non-zero, beam shrinks over duration (tries to get time from lifetimeUpdate)
 
+	Bool m_hasMultiDraw;  ///< Enable this to support tracking multiple LaserDraw modules
+
 	LaserUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
@@ -89,7 +91,7 @@ public:
 	Real getCurrentLaserRadius() const;
 
 	void setDirty( Bool dirty ) { m_dirty = dirty; }
-	Bool isDirty() { return m_dirty || m_isMultiDraw; }
+	Bool isDirty() { return m_dirty || getLaserUpdateModuleData()->m_hasMultiDraw; }
 
 	Real getWidthScale() const { return m_currentWidthScalar; }
 	Real getAlphaScale() const { return m_currentAlphaScalar; }
@@ -136,7 +138,7 @@ protected:
 
 	AsciiString m_parentBoneName;
 
-	Bool m_isMultiDraw;
+	// Bool m_isMultiDraw;
 };
 
 

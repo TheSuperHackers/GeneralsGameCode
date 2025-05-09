@@ -59,6 +59,7 @@ LaserUpdateModuleData::LaserUpdateModuleData()
 	m_fadeOutDurationFrames = 0;
 	m_widenDurationFrames = 0;
 	m_decayDurationFrames = 0;
+	m_hasMultiDraw = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -75,6 +76,7 @@ LaserUpdateModuleData::LaserUpdateModuleData()
 		{ "BeamFadeOutDuration",			INI::parseDurationUnsignedInt,		NULL, offsetof(LaserUpdateModuleData, m_fadeOutDurationFrames) },
 		{ "BeamGrowDuration",				INI::parseDurationUnsignedInt,		NULL, offsetof(LaserUpdateModuleData, m_widenDurationFrames) },
 		{ "BeamShrinkDuration",				INI::parseDurationUnsignedInt,		NULL, offsetof(LaserUpdateModuleData, m_decayDurationFrames) },
+		{ "UseMultiLaserDraw",			INI::parseBool,		NULL, offsetof(LaserUpdateModuleData, m_hasMultiDraw) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
@@ -112,7 +114,7 @@ LaserUpdate::LaserUpdate( Thing *thing, const ModuleData* moduleData ) : ClientU
 	m_targetID = INVALID_DRAWABLE_ID;
 	m_parentBoneName.clear();
 
-	m_isMultiDraw = FALSE;
+	// m_isMultiDraw = FALSE;
 } 
 
 //-------------------------------------------------------------------------------------------------
@@ -483,9 +485,9 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 	// Drawable *draw = getDrawable();
 	if( draw )
 	{
-		// Note: Is this too expensive?
 		// When initializing the laser, keep track if it has multiple draw modules.
-		int numDraws = 0;
+		// Update: This is a very special case, makes more sense to set it in INI, rather than check it every time
+		/* int numDraws = 0;
 		LaserDrawInterface* ldi = NULL;
 		for (DrawModule** d = draw->getDrawModules(); *d; ++d)
 		{
@@ -497,7 +499,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 		}
 		if (numDraws > 1) {
 			m_isMultiDraw = TRUE;
-		}
+		}*/
 
 		draw->setPosition( &posToUse );
 	}
@@ -726,7 +728,7 @@ void LaserUpdate::xfer( Xfer *xfer )
 	xfer->xferAsciiString(&m_parentBoneName);
 
 	// multi draw
-	xfer->xferBool(&m_isMultiDraw);
+	// xfer->xferBool(&m_isMultiDraw);
 
 }  // end xfer
 
