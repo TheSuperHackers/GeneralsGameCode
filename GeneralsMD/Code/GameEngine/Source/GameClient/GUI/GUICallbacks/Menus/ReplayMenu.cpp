@@ -37,6 +37,7 @@
 #include "Common/GameState.h"
 #include "Common/Recorder.h"
 #include "Common/version.h"
+#include "GameClient/GameClient.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/GadgetListBox.h"
@@ -784,10 +785,13 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 					{
 						do
 						{
+							TheGameClient->updateHeadless();
 							TheGameLogic->UPDATE();
 							if (TheRecorder->sawCRCMismatch())
 								break;
 						} while (TheRecorder->isPlaybackInProgress());
+						if (TheGameLogic->isInGame())
+							TheGameLogic->clearGameData();
 					}
 				}
 			}
