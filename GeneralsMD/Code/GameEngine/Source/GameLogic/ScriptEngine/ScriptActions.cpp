@@ -3221,7 +3221,8 @@ void ScriptActions::doDisableInput()
 void ScriptActions::doEnableInput()
 {
 	TheInGameUI->setInputEnabled(true);
-	TheMouse->setVisibility(true);
+	if (TheMouse != NULL)
+		TheMouse->setVisibility(true);
 }
 
 //-------------------------------------------------------------------------------------------------
