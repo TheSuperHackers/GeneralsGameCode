@@ -296,6 +296,7 @@ void RecorderClass::cleanUpReplayFile( void )
 		oldFname.format("%s%s", getReplayDir().str(), m_fileName.str());
 		CopyFile(oldFname.str(), fname, TRUE);
 
+#ifdef DEBUG_LOGGING
 		const char* logFileName = DebugGetLogFileName();
 		if (logFileName[0] == '\0')
 			return;
@@ -349,6 +350,7 @@ void RecorderClass::cleanUpReplayFile( void )
 				ofp = NULL;
 			}
 		}
+#endif // DEBUG_LOGGING
 	}
 #endif
 }
