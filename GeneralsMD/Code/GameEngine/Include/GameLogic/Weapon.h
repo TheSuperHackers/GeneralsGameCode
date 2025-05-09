@@ -467,6 +467,7 @@ public:
 	inline Bool isScatterTargetRandom() const { return m_scatterTargetRandom; }
 	inline Bool isScatterTargetRandomAngle() const { return m_scatterTargetRandomAngle; }
 	inline Real getScatterTargetMinScalar () const { return m_scatterTargetMinScalar; }
+	inline Bool isScatterTargetCenteredAtShooter() const { return m_scatterTargetCenteredAtShooter; }
 
 	Bool shouldProjectileCollideWith(
 		const Object* projectileLauncher, 
@@ -584,6 +585,7 @@ private:
 	Bool m_scatterTargetRandom;		///< if the scatter target pattern is fired in a random order
 	Bool m_scatterTargetRandomAngle;  ///< if the scatter target pattern is randomly aligned
 	Real m_scatterTargetMinScalar;  ///< scale the scatterTarget pattern depending on range
+	Bool m_scatterTargetCenteredAtShooter;  ///< if the scatter target pattern is centered at the shooter
 
 	mutable HistoricWeaponDamageList m_historicDamage;
 };  
