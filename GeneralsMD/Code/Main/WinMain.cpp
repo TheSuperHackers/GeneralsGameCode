@@ -373,6 +373,10 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
                 case SC_SIZE:
                 case SC_MAXIMIZE:
                 case SC_KEYMENU:
+					// TheSuperHackers @bugfix Mauller 10/05/2025 Handle left ALT when in windowed mode to prevent game freezing
+					if( TRUE == ApplicationIsWindowed )
+						return 1;
+					break;
                 case SC_MONITORPOWER:
                     if( FALSE == ApplicationIsWindowed )
                         return 1;
