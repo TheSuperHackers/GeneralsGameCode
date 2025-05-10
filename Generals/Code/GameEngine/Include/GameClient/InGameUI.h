@@ -694,7 +694,7 @@ protected:
 	BuildProgress								m_buildProgress[ MAX_BUILD_PROGRESS ];	///< progress for building units
 	const ThingTemplate *				m_pendingPlaceType;											///< type of built thing we're trying to place
 	ObjectID										m_pendingPlaceSourceObjectID;						///< source object of the thing constructing the item
-	Bool										m_preventLeftClickDeselectionInAlternateMouseModeForOneClick; // TheSuperHackers @feature @ShizCalev 04/04/2025 - Backports Zero Hour's alt-mouse mode's left click deselect functionality
+	Bool										m_preventLeftClickDeselectionInAlternateMouseModeForOneClick;
 	Drawable **									m_placeIcon;														///< array for drawables to appear at the cursor when building in the world
 	Bool												m_placeAnchorInProgress;								///< is place angle interface for placement active
 	ICoord2D										m_placeAnchorStart;											///< place angle anchor start
