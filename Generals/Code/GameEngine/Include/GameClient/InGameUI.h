@@ -416,7 +416,6 @@ public:  // ********************************************************************
 	virtual void placeBuildAvailable( const ThingTemplate *build, Drawable *buildDrawable );				///< built thing being placed
 	virtual const ThingTemplate *getPendingPlaceType( void );					///< get item we're trying to place
 	virtual const ObjectID getPendingPlaceSourceObjectID( void );			///< get producing object
-			// TheSuperHackers @feature @ShizCalev 04/04/2025 - Backports Zero Hour's alt-mouse mode's left click deselect functionality
 	virtual Bool getPreventLeftClickDeselectionInAlternateMouseModeForOneClick() const { return m_preventLeftClickDeselectionInAlternateMouseModeForOneClick; }
 	virtual void setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( Bool set ) { m_preventLeftClickDeselectionInAlternateMouseModeForOneClick = set; }
 	virtual void setPlacementStart( const ICoord2D *start );					///< placement anchor point (for choosing angles)
