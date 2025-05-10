@@ -258,6 +258,16 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 				}
 				
 				Int insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
+				if (insertionIndex == -1)
+				{
+					// TheSuperHackers @bugfix helmutbuhler 08/03/2025
+					// The list originally had a maximum length of 100. If we fail here we probably
+					// exceeded that and just double the max here and try again.
+					Int length = GadgetListBoxGetNumEntries(listbox);
+					GadgetListBoxSetListLength(listbox, length * 2);
+
+					insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
+				}
 				GadgetListBoxAddEntryText(listbox, displayTimeBuffer, color, insertionIndex, 1);
 				GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 2);
 				GadgetListBoxAddEntryText(listbox, mapStr, color, insertionIndex, 3);
