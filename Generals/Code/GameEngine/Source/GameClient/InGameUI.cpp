@@ -905,7 +905,7 @@ InGameUI::InGameUI()
 		m_placeIcon[ i ] = NULL;
 	m_pendingPlaceType = NULL;
 	m_pendingPlaceSourceObjectID = INVALID_ID;
-	m_preventLeftClickDeselectionInAlternateMouseModeForOneClick = FALSE; // TheSuperHackers @feature @ShizCalev 04/04/2025 - Backports Zero Hour's alt-mouse mode's left click deselect functionality
+	m_preventLeftClickDeselectionInAlternateMouseModeForOneClick = FALSE;
 	m_placeAnchorStart.x = m_placeAnchorStart.y = 0;
 	m_placeAnchorEnd.x = m_placeAnchorEnd.y = 0;
 	m_placeAnchorInProgress = FALSE;
