@@ -511,9 +511,9 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 				// Yay. Either select across the screen or the world depending on selectAcrossMap
 				if (selectAcrossMap)
-					TheInGameUI->selectAcrossMap();
+					TheInGameUI->selectMatchingAcrossMap();
 				else 
-					TheInGameUI->selectAcrossScreen();
+					TheInGameUI->selectMatchingAcrossScreen();
 
 				// emit "picked" message
 				GameMessage *pickMsg = TheMessageStream->appendMessage( GameMessage::MSG_AREA_SELECTION );

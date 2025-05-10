@@ -104,14 +104,63 @@ InGameUI *TheInGameUI = NULL;
 GameWindow *m_replayWindow = NULL;
 
 // ------------------------------------------------------------------------------------------------
-struct TypeSelectionData
+struct KindOfSelectionData
 {
-	GameMessage *m_message;
-	const ThingTemplate *m_template;
+	KindOfMaskType m_mustbeSet;
+	KindOfMaskType m_mustbeClear;
+
+	DrawableList newlySelectedDrawables;
 };
+// ------------------------------------------------------------------------------------------------
+static Bool kindOfUnitSelection( Drawable *test, void *userData )
+{
+	KindOfSelectionData *data = (KindOfSelectionData *) userData;
+
+	if( test )
+	{
+		const Object *object = test->getObject();
+		// Only things with objects can be selected, and the code below isn't 
+		// safe unless you've verified that there is a valid object.
+		if (!object)
+			return FALSE;
+
+		Bool isKindOfMatch = object->isKindOfMulti(data->m_mustbeSet, data->m_mustbeClear);
+
+		// only select objects if not already selected
+		if( object && isKindOfMatch 
+					&& object->isLocallyControlled() 
+					&& !object->isContained() 
+					&& !object->getDrawable()->isSelected() 
+					&& !object->isEffectivelyDead()
+					&& object->isMassSelectable()
+					&& !object->isOffMap()
+				)
+		{
+			// enforce optional unit cap
+			if (TheInGameUI->getMaxSelectCount() > 0 && TheInGameUI->getSelectCount() >= TheInGameUI->getMaxSelectCount())
+			{
+				if ( !TheInGameUI->getDisplayedMaxWarning() )
+				{
+					TheInGameUI->setDisplayedMaxWarning( TRUE );
+					UnicodeString msg;
+					msg.format(TheGameText->fetch("GUI:MaxSelectionSize").str(), TheInGameUI->getMaxSelectCount());
+					TheInGameUI->message(msg);
+				}
+			}
+			else
+			{
+				TheInGameUI->selectDrawable( test );
+				TheInGameUI->setDisplayedMaxWarning( FALSE );
+				data->newlySelectedDrawables.push_back(test);
+				return TRUE;
+			}	
+		}
+	}
+	return FALSE;
+}
 
 // ------------------------------------------------------------------------------------------------
-struct SelectionData
+struct MatchingUnitSelectionData
 {
 	const ThingTemplate *templateToSelect;
 	DrawableList newlySelectedDrawables;
@@ -120,7 +169,7 @@ struct SelectionData
 // ------------------------------------------------------------------------------------------------
 static Bool similarUnitSelection( Drawable *test, void *userData )
 {
-	SelectionData *data = (SelectionData *) userData;
+	MatchingUnitSelectionData *data = (MatchingUnitSelectionData *) userData;
 	const ThingTemplate *selectedType = data->templateToSelect;
 
 	if( test )
@@ -143,6 +192,7 @@ static Bool similarUnitSelection( Drawable *test, void *userData )
 				&& !object->isContained()
 				&& !( object->getDrawable()->isSelected() ) 
 				&& object->isMassSelectable() // And only if they can be multiply selected. (otherwise the drawable will be, but the object will not be)
+				&& !object->isOffMap()
 				)
 		{
 			// enforce optional unit cap
@@ -4409,9 +4459,63 @@ Bool InGameUI::canSelectedObjectsEffectivelyUseWeapon( const CommandButton *comm
 }
 
 // ------------------------------------------------------------------------------------------------
+Int InGameUI::selectAllUnitsByTypeAcrossRegion( IRegion2D *region, KindOfMaskType mustBeSet, KindOfMaskType mustBeClear )
+{
+	KindOfSelectionData data;
+	Int newSelectionCount = 0;
+	Int oldSelectionCount = getAllSelectedDrawables()->size();
+
+	data.m_mustbeSet = mustBeSet;
+	data.m_mustbeClear = mustBeClear;
+
+	if (region)
+	{
+		TheTacticalView->iterateDrawablesInRegion(region, kindOfUnitSelection, (void *)&data);
+		newSelectionCount += data.newlySelectedDrawables.size();
+	}
+	else
+	{
+		// loop over the map
+		Drawable *temp = TheGameClient->firstDrawable();
+		while( temp )
+		{
+			if( kindOfUnitSelection( temp, (void *)&data) )
+			{
+				newSelectionCount ++;
+			}
+
+			temp = temp->getNextDrawable();
+		}
+	}
+	setDisplayedMaxWarning( FALSE );
+
+	if (newSelectionCount > 0)
+	{
+		// create selected message
+		GameMessage *teamMsg = TheMessageStream->appendMessage( GameMessage::MSG_CREATE_SELECTED_GROUP );
+
+		teamMsg->appendBooleanArgument( (oldSelectionCount == 0) ? TRUE : FALSE );
+
+		const Drawable *draw;
+
+		//Loop through each drawable add append it's objectID to the event.
+		for( DrawableListCIt it = data.newlySelectedDrawables.begin(); it != data.newlySelectedDrawables.end(); ++it )
+		{
+			draw = *it;
+			if( draw && draw->getObject() )
+			{
+				teamMsg->appendObjectIDArgument( draw->getObject()->getID() );
+			}
+		}
+	}
+
+	return newSelectionCount;
+}
+
+// ------------------------------------------------------------------------------------------------
 /** Selects maching units on the screen */
 // ------------------------------------------------------------------------------------------------
-Int InGameUI::selectAcrossRegion( IRegion2D *region )
+Int InGameUI::selectMatchingAcrossRegion( IRegion2D *region )
 {
 	const DrawableList *selected = getAllSelectedDrawables();
 
@@ -4447,7 +4551,7 @@ Int InGameUI::selectAcrossRegion( IRegion2D *region )
 	const ThingTemplate *templateName;
 
 	// now use the list to select across screen
-	SelectionData data;
+	MatchingUnitSelectionData data;
 	Int newSelectionCount = 0;
 
 	for( iter = drawableList.begin(); iter != drawableList.end(); ++iter )
@@ -4495,9 +4599,7 @@ Int InGameUI::selectAcrossRegion( IRegion2D *region )
 }
 
 // ------------------------------------------------------------------------------------------------
-/** Selects maching units on the screen */
-// ------------------------------------------------------------------------------------------------
-Int InGameUI::selectAcrossScreen( void )
+Int InGameUI::selectAllUnitsByTypeAcrossScreen(KindOfMaskType mustBeSet, KindOfMaskType mustBeClear)
 {
 	/// When implementing this, obey TheInGameUI->getMaxSelectCount() if it is > 0
 			
@@ -4511,7 +4613,41 @@ Int InGameUI::selectAcrossScreen( void )
  
 	buildRegion( &origin, &size, &region );
 
-	Int numSelected = selectAcrossRegion(&region);
+	Int numSelected = selectAllUnitsByTypeAcrossRegion(&region, mustBeSet, mustBeClear);
+	if (numSelected == -1)
+	{
+		UnicodeString message = TheGameText->fetch( "GUI:NothingSelected" );
+		TheInGameUI->message( message );
+	}
+	else if (numSelected == 0)
+	{
+	}
+	else
+	{
+		UnicodeString message = TheGameText->fetch( "GUI:SelectedAcrossScreen" );
+		TheInGameUI->message( message );
+	}
+	return numSelected;
+}
+
+// ------------------------------------------------------------------------------------------------
+/** Selects maching units on the screen */
+// ------------------------------------------------------------------------------------------------
+Int InGameUI::selectMatchingAcrossScreen( void )
+{
+	/// When implementing this, obey TheInGameUI->getMaxSelectCount() if it is > 0
+			
+	IRegion2D region;
+	ICoord2D origin;
+	ICoord2D size;
+ 
+	TheTacticalView->getOrigin( &origin.x, &origin.y );
+	size.x = TheTacticalView->getWidth();
+	size.y = TheTacticalView->getHeight();
+ 
+	buildRegion( &origin, &size, &region );
+
+	Int numSelected = selectMatchingAcrossRegion(&region);
 	if (numSelected == -1)
 	{
 		UnicodeString message = TheGameText->fetch( "GUI:NothingSelected" );
@@ -4529,12 +4665,10 @@ Int InGameUI::selectAcrossScreen( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-/** Selects matching units across map */
-//-------------------------------------------------------------------------------------------------
-Int InGameUI::selectAcrossMap()
+Int InGameUI::selectAllUnitsByTypeAcrossMap(KindOfMaskType mustBeSet, KindOfMaskType mustBeClear)
 {
 	/// When implementing this, obey TheInGameUI->getMaxSelectCount() if it is > 0
-	Int numSelected = selectAcrossRegion(NULL);
+	Int numSelected = selectAllUnitsByTypeAcrossRegion(NULL, mustBeSet, mustBeClear);
 	if (numSelected == -1)
 	{
 		UnicodeString message = TheGameText->fetch( "GUI:NothingSelected" );
@@ -4558,20 +4692,67 @@ Int InGameUI::selectAcrossMap()
 }
 
 //-------------------------------------------------------------------------------------------------
+/** Selects matching units across map */
+//-------------------------------------------------------------------------------------------------
+Int InGameUI::selectMatchingAcrossMap()
+{
+	/// When implementing this, obey TheInGameUI->getMaxSelectCount() if it is > 0
+	Int numSelected = selectMatchingAcrossRegion(NULL);
+	if (numSelected == -1)
+	{
+		UnicodeString message = TheGameText->fetch( "GUI:NothingSelected" );
+		TheInGameUI->message( message );
+	}
+	else if (numSelected == 0)
+	{
+		Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
+		if( !draw || !draw->getObject() || !draw->getObject()->isKindOf( KINDOF_STRUCTURE ) )
+		{
+			UnicodeString message = TheGameText->fetch( "GUI:SelectedAcrossMap" );
+			TheInGameUI->message( message );
+		}
+	}
+	else
+	{
+		UnicodeString message = TheGameText->fetch( "GUI:SelectedAcrossMap" );
+		TheInGameUI->message( message );
+	}
+	return numSelected;
+}
+
+//-------------------------------------------------------------------------------------------------
+Int InGameUI::selectAllUnitsByType(KindOfMaskType mustBeSet, KindOfMaskType mustBeClear)
+{
+	/// When implementing this, obey TheInGameUI->getMaxSelectCount() if it is > 0
+	Int numSelected = selectAllUnitsByTypeAcrossScreen(mustBeSet, mustBeClear);
+	if (numSelected == -1)
+	{
+		return numSelected;
+	}
+
+	if (numSelected == 0)
+	{
+		Int numSelectedAcrossMap = selectAllUnitsByTypeAcrossMap(mustBeSet, mustBeClear);
+		return numSelectedAcrossMap;
+	}
+	return numSelected;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Selects matching units, either on screen or across map.  When called by pressing 'T',
     their is not a way to tell if the game is supposed to select across the screen, or
     across the map.  For mouse clicks, i.e. Alt + click or double click, we can directly call
-    selectAcrossScreen or selectAcrossMap */
+    selectMatchingAcrossScreen or selectMatchingAcrossMap */
 //-------------------------------------------------------------------------------------------------
-Int InGameUI::selectMatchingUnits()
+Int InGameUI::selectUnitsMatchingCurrentSelection()
 {
 	/// When implementing this, obey TheInGameUI->getMaxSelectCount() if it is > 0
-	Int numSelected = selectAcrossScreen();
+	Int numSelected = selectMatchingAcrossScreen();
 	if (numSelected == -1)
 		return numSelected;
 	if (numSelected == 0)
 	{
-		Int numSelectedAcrossMap = selectAcrossMap();
+		Int numSelectedAcrossMap = selectMatchingAcrossMap();
 		//if (numSelectedAcrossMap < 1)
 		//{
 			//UnicodeString message = TheGameText->fetch( "GUI:NothingSelected" );
@@ -4581,140 +4762,6 @@ Int InGameUI::selectMatchingUnits()
 	}
 	return numSelected;
 
-	/*
-	/// When implementing this, obey TheInGameUI->getMaxSelectCount() if it is > 0
-			
-	// check to see if you select units across screen or across map
-			
-	IRegion2D region;
-	ICoord2D origin;
-	ICoord2D size;
- 
-	TheTacticalView->getOrigin( &origin.x, &origin.y );
-	size.x = TheTacticalView->getWidth();
-	size.y = TheTacticalView->getHeight();
- 
-	// setup the region and to the iterate function
-
-	buildRegion( &origin, &size, &region );
-
-	const DrawableList *selected = getAllSelectedDrawables();
-
-	Drawable *draw;
-
-	std::set<const ThingTemplate*> drawableList;
-	
-	// get a set of the selected types of object
-	for( DrawableListCIt it = selected->begin(); it != selected->end(); ++it )
-	{
-		// get this drawable
-		draw = *it;
-		if( draw && draw->getObject() && draw->getObject()->isLocallyControlled() )
-		{
-			
-
-			//drawableList.insert( draw->getObject()->getTemplate()->getName() );
-			drawableList.insert( draw->getTemplate() );
-		}
-	}
-
-	std::set<const ThingTemplate*>::const_iterator iter;
-	
-	const ThingTemplate *templateName;
-	TypeSelectionData data;
-	data.m_message = TheMessageStream->appendMessage( GameMessage::MSG_CREATE_SELECTED_GROUP );
-
-	// go though the drawableList and get the units of that type
-	for( iter = drawableList.begin(); iter != drawableList.end(); ++iter )
-	{
-		// get this drawable
-		data.m_template = *iter;
-		//iterate through the drawable region
-		// all drawables in the region will call the typeSelection method
-		m_selectedAcrossScreen = TheTacticalView->iterateDrawablesInRegion( &region, InGameUI::typeSelection, (void *) &data);
-		setDisplayedMaxWarning( FALSE );
-	}
-
-	if( m_selectedAcrossScreen )
-	{
-			UnicodeString message = TheGameText->fetch( "GUI:SelectedAcrossScreen" );
-			TheInGameUI->message( message );
-			setSelectedAcrossScreen( false );
-	}
-	else
-	{
-		// add to existing group
-		GameMessage *teamMsg = TheMessageStream->appendMessage( GameMessage::MSG_CREATE_SELECTED_GROUP );
-
-		// adding to previous group so pass false
-		teamMsg->appendBooleanArgument( FALSE );
-
-		selected = getAllSelectedDrawables();
-		// loop through all the selected drawables
-		Drawable *draw;
-
-		//see if player has any units selected, if not, give message
-		Bool check = FALSE;
-		for( DrawableListCIt it1 = selected->begin(); it1 != selected->end(); ++it1 )
-		{
-			draw = *it1;
-			if( draw && draw->getObject()->isLocallyControlled() )
-			{
-				check = TRUE;
-			}
-		}
-		if( check == FALSE )
-		{
-			UnicodeString message = TheGameText->fetch( "GUI:NothingSelected" );
-			TheInGameUI->message( message );
-			setSelectedAcrossScreen( false );
-			deselectAllDrawables();
-			return;
-		}
-
-		//else select across the map
-
-		for( iter = drawableList.begin(); iter != drawableList.end(); ++iter )
-		{
-			// get this drawable
-			templateName = *iter;
-			Drawable *temp = TheGameClient->firstDrawable();
-			while( temp )
-			{
-				const Object *object = temp->getObject();
-
-				if( object && object->isLocallyControlled()
-						&& !object->isContained() && temp->getTemplate()->isEquivalentTo( templateName ) )
-				{
-
-					// enforce optional unit cap
-					if ( getMaxSelectCount() > 0 && TheInGameUI->getSelectCount() >= getMaxSelectCount())
-					{
-						if ( !getDisplayedMaxWarning() )
-						{
-							setDisplayedMaxWarning( TRUE );
-							UnicodeString msg;
-							msg.format(TheGameText->fetch("GUI:MaxSelectionSize").str(), TheInGameUI->getMaxSelectCount());
-							message(msg);
-						}
-					}
-					else
-					{
-						selectDrawable( temp );
-						teamMsg->appendObjectIDArgument( temp->getObject()->getID() );
-						setDisplayedMaxWarning( FALSE );
-					}
-				}
-				temp = temp->getNextDrawable();
-			}
-		}
-
-		UnicodeString message = TheGameText->fetch( "GUI:SelectedAcrossMap" );
-		TheInGameUI->message( message );
-		setSelectedAcrossScreen( FALSE );
-
-	}
-	*/
 }
 
 //-----------------------------------------------------------------------------

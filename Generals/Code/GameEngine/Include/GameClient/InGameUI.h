@@ -36,7 +36,9 @@
 #include "Common/GameCommon.h"
 #include "Common/GameType.h"
 #include "Common/MessageStream.h"		// for GameMessageTranslator
+#include "Common/KindOf.h"
 #include "Common/SpecialPowerType.h"
+#include "Common/Snapshot.h"
 #include "Common/STLTypedefs.h"
 #include "Common/SubsystemInterface.h"
 #include "Common/UnicodeString.h"
@@ -44,7 +46,6 @@
 #include "GameClient/Mouse.h"
 #include "GameClient/RadiusDecal.h"
 #include "GameClient/View.h"
-#include "Common/Snapshot.h"
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 class Drawable;
@@ -482,10 +483,16 @@ public:  // ********************************************************************
 	Bool canSelectedObjectsOverrideSpecialPowerDestination( const Coord3D *loc, SelectionRules rule, SpecialPowerType spType = SPECIAL_INVALID ) const;
 
 	// Selection Methods
-	virtual Int selectMatchingUnits();                        ///< selects matching units
-	virtual Int selectAcrossScreen();                         ///< selects matching units across screen
-	virtual Int selectAcrossMap();                            ///< selects matching units across map
-	virtual Int selectAcrossRegion( IRegion2D *region );			// -1 = no locally-owned selection, 0+ = # of units selected
+	virtual Int selectUnitsMatchingCurrentSelection();                        ///< selects matching units
+	virtual Int selectMatchingAcrossScreen();                         ///< selects matching units across screen
+	virtual Int selectMatchingAcrossMap();                            ///< selects matching units across map
+	virtual Int selectMatchingAcrossRegion( IRegion2D *region );			// -1 = no locally-owned selection, 0+ = # of units selected
+
+	virtual Int selectAllUnitsByType(KindOfMaskType mustBeSet, KindOfMaskType mustBeClear);                
+	virtual Int selectAllUnitsByTypeAcrossScreen(KindOfMaskType mustBeSet, KindOfMaskType mustBeClear);                         
+	virtual Int selectAllUnitsByTypeAcrossMap(KindOfMaskType mustBeSet, KindOfMaskType mustBeClear);                            
+	virtual Int selectAllUnitsByTypeAcrossRegion( IRegion2D *region, KindOfMaskType mustBeSet, KindOfMaskType mustBeClear );			
+	
 	virtual void buildRegion( const ICoord2D *anchor, const ICoord2D *dest, IRegion2D *region );  ///< builds a region around the specified coordinates
 
 	virtual Bool getDisplayedMaxWarning( void ) { return m_displayedMaxWarning; }

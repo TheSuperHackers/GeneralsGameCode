@@ -225,6 +225,7 @@ public:
 		MSG_META_VIEW_LAST_RADAR_EVENT,							///< center view on last radar event
 		MSG_META_SELECT_HERO,                       ///< selects player's hero character, if exists...
 		MSG_META_SELECT_ALL,                        ///< selects all units across screen
+		MSG_META_SELECT_ALL_AIRCRAFT,								///< selects all air units just like select all
 		MSG_META_SCATTER,														///< selected units scatter
 		MSG_META_STOP,															///< selected units stop
 		MSG_META_DEPLOY,														///< selected units 'deploy'

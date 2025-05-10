@@ -132,6 +132,7 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "SELECT_PREV_WORKER",												GameMessage::MSG_META_SELECT_PREV_WORKER },
 	{ "SELECT_HERO",												      GameMessage::MSG_META_SELECT_HERO },
 	{ "SELECT_ALL",																GameMessage::MSG_META_SELECT_ALL },
+	{ "SELECT_ALL_AIRCRAFT",											GameMessage::MSG_META_SELECT_ALL_AIRCRAFT },
 	{ "VIEW_COMMAND_CENTER",											GameMessage::MSG_META_VIEW_COMMAND_CENTER },
 	{ "VIEW_LAST_RADAR_EVENT",										GameMessage::MSG_META_VIEW_LAST_RADAR_EVENT },
 	{ "SCATTER",																	GameMessage::MSG_META_SCATTER },
