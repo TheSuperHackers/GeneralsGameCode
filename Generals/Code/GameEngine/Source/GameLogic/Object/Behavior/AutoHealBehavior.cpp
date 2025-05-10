@@ -201,7 +201,7 @@ UpdateSleepTime AutoHealBehavior::update( void )
 		if( owningPlayer )
 		{
 			AutoHealPlayerScanHelper helper;
-			helper.m_kindOfToTest = getAutoHealBehaviorModuleData()->m_kindOf;
+			helper.m_kindOfToTest = d->m_kindOf;
 			helper.m_objectList = &objectsToHeal;
 			helper.m_theHealer = getObject();
 
