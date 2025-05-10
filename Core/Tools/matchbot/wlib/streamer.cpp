@@ -22,7 +22,7 @@
   #include <windows.h>
 #endif
 
-#if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
+#if defined(USING_STLPORT) || VC6_BUILD
 #define STREAMER_UNBUFFERED unbuffered()
 #else
 #define STREAMER_UNBUFFERED 0
@@ -30,7 +30,7 @@
 
 Streamer::Streamer() : streambuf(), Output_Device(NULL), Buf(NULL)
 {
-#if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
+#if defined(USING_STLPORT) || VC6_BUILD
   int state=unbuffered();
   unbuffered(0);  // 0 = buffered, 1 = unbuffered
 #else
@@ -107,7 +107,7 @@ int Streamer::doallocate()
     memset(Buf,0,2*STREAMER_BUFSIZ);
 
     // Buffer
-#if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
+#if defined(USING_STLPORT) || VC6_BUILD
     setb(
        Buf,         // base pointer
        Buf+STREAMER_BUFSIZ,  // ebuf pointer (end of buffer);

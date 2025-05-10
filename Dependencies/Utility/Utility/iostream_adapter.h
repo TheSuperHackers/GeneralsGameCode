@@ -21,7 +21,7 @@
 
 #pragma once
 
-#if defined(USING_STLPORT) || (defined(_MSC_VER) && _MSC_VER < 1300)
+#if defined(USING_STLPORT) || VC6_BUILD
 
 #include <iostream.h>
 

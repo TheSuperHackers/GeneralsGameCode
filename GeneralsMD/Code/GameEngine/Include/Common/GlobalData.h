@@ -537,7 +537,7 @@ private:
 	GlobalData *newOverride( void );		/** create a new override, copy data from previous
 																			override, and return it */
 
-#if defined(_MSC_VER) && _MSC_VER < 1300
+#if VC6_BUILD
 	GlobalData(const GlobalData& that) { DEBUG_CRASH(("unimplemented")); }
 	GlobalData& operator=(const GlobalData& that) { DEBUG_CRASH(("unimplemented")); return *this; }
 #else

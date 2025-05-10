@@ -805,7 +805,7 @@ void CPUDetectClass::Init_CPUID_Instruction()
    // because CodeWarrior seems to have problems with
    // the command (huh?)
 
-#if defined(_MSC_VER) && _MSC_VER < 1300
+#if VC6_BUILD
 #ifdef WIN32
    __asm
    {
@@ -851,7 +851,7 @@ void CPUDetectClass::Init_CPUID_Instruction()
 #else
 	// TheSuperHackers @info Mauller 30/3/2020 All modern CPUs have the CPUID instruction, VS22 code will not run on a cpu that doesn't.
 	HasCPUIDInstruction = true;
-#endif	// defined(_MSC_VER) && _MSC_VER < 1300
+#endif	// VC6_BUILD
 }
 
 void CPUDetectClass::Init_Processor_Features()

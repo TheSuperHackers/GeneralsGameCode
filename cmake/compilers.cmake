@@ -10,9 +10,10 @@ endif()
 
 # Set variable for VS6 to handle special cases.
 if (DEFINED MSVC_VERSION AND MSVC_VERSION LESS 1300)
-    set(IS_VS6_BUILD TRUE)
+    set(IS_VC6_BUILD TRUE)
+    add_compile_definitions(VC6_BUILD=1)
 else()
-    set(IS_VS6_BUILD FALSE)
+    set(IS_VC6_BUILD FALSE)
 endif()
 
 # Make release builds have debug information too.
@@ -29,7 +30,7 @@ endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)  # Ensures only ISO features are used
 
-if (NOT IS_VS6_BUILD)
+if (NOT IS_VC6_BUILD)
     if (MSVC)
         # Multithreaded build.
         add_compile_options(/MP)

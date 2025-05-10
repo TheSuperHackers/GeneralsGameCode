@@ -47,7 +47,7 @@ if((WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows") AND ${CMAKE_SIZEOF_VOID_P} EQU
 endif()
 
 # Define a dummy stlport target when not on VC6.
-if (IS_VS6_BUILD)
+if (IS_VC6_BUILD)
     include(cmake/stlport.cmake)
 else()
     add_library(stlport INTERFACE)
@@ -58,7 +58,7 @@ include(cmake/gamespy.cmake)
 include(cmake/lzhl.cmake)
 
 add_subdirectory(Dependencies/Benchmark)
-if (IS_VS6_BUILD)
+if (IS_VC6_BUILD)
     # The original max sdk does not compile against a modern compiler.
     # If there is a desire to make this work, then a fixed max sdk needs to be created.
     add_subdirectory(Dependencies/MaxSDK)

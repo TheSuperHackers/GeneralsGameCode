@@ -67,7 +67,7 @@ public:
     if (!buf||len<1)
       return;
     
-#if !(defined(_MSC_VER) && _MSC_VER < 1300)
+#if !VC6_BUILD
     // C++ version left in for reference purposes
 	  for (UnsignedByte *uintPtr=(UnsignedByte *)buf;len>0;len--,uintPtr++)
     {

@@ -31,7 +31,7 @@
 #include "Toolbar.H"
 
 
-#if defined(_MSC_VER) && _MSC_VER < 1300
+#if VC6_BUILD
 typedef HTASK HTASK_OR_DWORD;
 #else
 typedef DWORD HTASK_OR_DWORD;
