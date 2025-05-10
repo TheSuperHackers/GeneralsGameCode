@@ -336,7 +336,9 @@ static const char *TheCommandSourceMaskNames[] =
 	"FROM_AI",
 	"FROM_DOZER", //don't use this
 	"DEFAULT_SWITCH_WEAPON", //unit will pick this weapon when normal logic fails.
-
+	"SYNC_TO_PRIMARY",  //This weapon will be fired whenever PRIMARY is fired
+	"SYNC_TO_SECONDARY",  //This weapon will be fired whenever SECONDARY is fired
+	"SYNC_TO_TERTIARY",  //This weapon will be fired whenever TERTIARY is fired
 	NULL
 };
 #endif
