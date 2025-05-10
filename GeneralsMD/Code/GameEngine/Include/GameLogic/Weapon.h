@@ -453,6 +453,7 @@ public:
 	inline const AudioEventRTS& getFireSound() const { return m_fireSound; }
 	inline UnsignedInt getFireSoundLoopTime() const { return m_fireSoundLoopTime; }
 	inline UnsignedInt getContinuousLaserLoopTime() const { return m_continuousLaserLoopTime; }
+	inline UnsignedInt getScatterTargetResetTime() const { return m_scatterTargetResetTime; }
 	inline const std::vector<Coord2D>& getScatterTargetsVector() const { return m_scatterTargets; }
 	inline const WeaponBonusSet* getExtraBonus() const { return m_extraBonus; }
 	inline Int getShotsPerBarrel() const { return m_shotsPerBarrel; }
@@ -586,6 +587,8 @@ private:
 	Bool m_scatterTargetRandomAngle;  ///< if the scatter target pattern is randomly aligned
 	Real m_scatterTargetMinScalar;  ///< scale the scatterTarget pattern depending on range
 	Bool m_scatterTargetCenteredAtShooter;  ///< if the scatter target pattern is centered at the shooter
+
+	UnsignedInt m_scatterTargetResetTime;  ///< if this much time between shots has passed, we reset the scatter targets
 
 	mutable HistoricWeaponDamageList m_historicDamage;
 };  

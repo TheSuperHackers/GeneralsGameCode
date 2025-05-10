@@ -249,6 +249,7 @@ const FieldParse WeaponTemplate::TheWeaponTemplateFieldParseTable[] =
 	{ "ScatterTargetRandomAngle", INI::parseBool, NULL, offsetof(WeaponTemplate, m_scatterTargetRandomAngle) },
 	{ "ScatterTargetMinScalar", INI::parseReal, NULL, offsetof(WeaponTemplate, m_scatterTargetMinScalar) },
 	{ "ScatterTargetCenteredAtShooter", INI::parseBool, NULL, offsetof(WeaponTemplate, m_scatterTargetCenteredAtShooter) },
+	{ "ScatterTargetResetTime", INI::parseDurationUnsignedInt, NULL, offsetof(WeaponTemplate, m_scatterTargetResetTime) },
 	{ "PreAttackFX", parseAllVetLevelsFXList, NULL,	offsetof(WeaponTemplate, m_preAttackFXs) },
 	{ "VeterancyPreAttackFX", parsePerVetLevelFXList, NULL, offsetof(WeaponTemplate, m_preAttackFXs) },
 	{ "PreAttackFXDelay",						INI::parseDurationUnsignedInt,					NULL,							offsetof(WeaponTemplate, m_preAttackFXDelay) },
@@ -343,6 +344,7 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(NULL)
 	m_scatterTargetRandomAngle = FALSE;
 	m_scatterTargetMinScalar = 0;
 	m_scatterTargetCenteredAtShooter = FALSE;
+	m_scatterTargetResetTime = 0;
 	m_preAttackFXDelay = 6; // Non-Zero default! 6 frames = 200ms. This should be a good base value to avoid spamming
 }
 
@@ -2794,6 +2796,15 @@ Bool Weapon::privateFireWeapon(
 
 		if( m_scatterTargetsUnused.size() && !isProjectileDetonation)
 		{
+			// If we haven't fired for this long: reset the scatter targets.
+			if (m_template->getScatterTargetResetTime() > 0) {
+				UnsignedInt frameNow = TheGameLogic->getFrame();
+				if (m_lastFireFrame + m_template->getScatterTargetResetTime() < frameNow) {
+					rebuildScatterTargets();
+				}
+			}
+
+
 			// If I have a set scatter pattern, I need to offset the target by a random pick from that pattern
 			if( victimObj )
 			{
