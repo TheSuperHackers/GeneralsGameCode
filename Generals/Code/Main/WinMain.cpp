@@ -366,10 +366,12 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
             // Prevent moving/sizing and power loss in fullscreen mode
             switch( wParam )
             {
+                case SC_KEYMENU:
+                    // TheSuperHackers @bugfix Mauller 10/05/2025 Always handle this command to prevent halting the game when left Alt is pressed.
+                    return 1;
                 case SC_MOVE:
                 case SC_SIZE:
                 case SC_MAXIMIZE:
-                case SC_KEYMENU:
                 case SC_MONITORPOWER:
                     if( FALSE == ApplicationIsWindowed )
                         return 1;
