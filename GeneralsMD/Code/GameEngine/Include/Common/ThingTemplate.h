@@ -604,6 +604,9 @@ public:
 
 	void setCopiedFromDefault();
 
+	// Only set non removable modules as copied when using ObjectExtend
+	void setCopiedFromDefaultExtended();
+
 	void setReskinnedFrom(const ThingTemplate* tt) { DEBUG_ASSERTCRASH(m_reskinnedFrom == NULL, ("should be null")); m_reskinnedFrom = tt; }
 
 	Bool isPrerequisite() const { return m_isPrerequisite; }

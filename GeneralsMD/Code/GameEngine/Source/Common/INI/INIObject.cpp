@@ -58,4 +58,14 @@ void INI::parseObjectReskinDefinition( INI* ini )
 	ThingFactory::parseObjectDefinition(ini, name, reskinFrom);
 }
 
+//-------------------------------------------------------------------------------------------------
+/** Parse Object with extends entry */
+//-------------------------------------------------------------------------------------------------
+void INI::parseObjectExtendDefinition(INI* ini)
+{
+	AsciiString name = ini->getNextToken();
+	AsciiString extendFrom = ini->getNextToken(); 
+	ThingFactory::parseObjectExtendDefinition(ini, name, extendFrom);
+}
+
 

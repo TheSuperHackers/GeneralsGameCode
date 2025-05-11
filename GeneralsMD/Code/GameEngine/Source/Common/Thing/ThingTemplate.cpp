@@ -1243,6 +1243,18 @@ void ThingTemplate::setCopiedFromDefault()
 }
 
 //-------------------------------------------------------------------------------------------------
+void ThingTemplate::setCopiedFromDefaultExtended()
+{
+	//only set weapons and armors as copied, so they get cleared when defining new ones as they
+	// cannot be removed with RemoveModule
+	m_armorCopiedFromDefault = true;
+	m_weaponsCopiedFromDefault = true;
+	//m_behaviorModuleInfo.setCopiedFromDefault(true);
+	//m_drawModuleInfo.setCopiedFromDefault(true);
+	//m_clientUpdateModuleInfo.setCopiedFromDefault(true);
+}
+
+//-------------------------------------------------------------------------------------------------
 ThingTemplate::~ThingTemplate()
 {
 	// note, we don't need to take any special action for Armor/WeaponSets...

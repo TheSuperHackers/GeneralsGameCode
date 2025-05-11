@@ -439,6 +439,72 @@ AsciiString TheThingTemplateBeingParsedName;
 #endif
 }
 
+void ThingFactory::parseObjectExtendDefinition(INI* ini, const AsciiString& name, const AsciiString& extendFrom)
+{
+#if defined(_DEBUG) || defined(_INTERNAL)
+	TheThingTemplateBeingParsedName = name;
+#endif
+
+	if (extendFrom.isEmpty()) {
+		DEBUG_CRASH(("ObjectExtend must specify an Object to extend from (%s).\n", name.str()));
+	}
+
+	// find existing item if present
+	ThingTemplate* thingTemplate = TheThingFactory->findTemplateInternal(name, FALSE);
+	if (!thingTemplate)
+	{
+		// no item is present, create a new one
+		thingTemplate = TheThingFactory->newTemplate(name);
+		if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
+		{
+			// This ThingTemplate is actually an override, so we will mark it as such so that it properly
+			// gets deleted on ::reset().
+			thingTemplate->markAsOverride();
+		}
+	}
+	else if (ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES)
+	{
+		//Holy crap, this sucks to debug!!!
+		//If you have two different objects, the previous code would simply 
+		//allow you to define multiple objects with the same name, and just 
+		//nuke the old one with the new one. So, I (KM) have added this 
+		//assert to notify in case of two same-name objects.
+		DEBUG_CRASH(("[LINE: %d in '%s'] Duplicate factionunit %s found!", ini->getLineNum(), ini->getFilename().str(), name.str()));
+	}
+	else
+	{
+		thingTemplate = TheThingFactory->newOverride(thingTemplate);
+	}
+
+
+	const ThingTemplate* extendTmpl = TheThingFactory->findTemplate(extendFrom);
+	if (extendTmpl)
+	{
+		thingTemplate->copyFrom(extendTmpl);
+		thingTemplate->setCopiedFromDefaultExtended();
+		//thingTemplate->setReskinnedFrom(extendTmpl);
+		
+		ini->initFromINI(thingTemplate, thingTemplate->getFieldParse());
+	}
+	else
+	{
+		DEBUG_CRASH(("ObjectExtend must come after the original Object (%s, %s).\n", extendFrom.str(), name.str()));
+		throw INI_INVALID_DATA;
+	}
+
+
+	thingTemplate->validate();
+
+	if (ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES)
+	{
+		thingTemplate->resolveNames();
+	}
+
+#if defined(_DEBUG) || defined(_INTERNAL)
+	TheThingTemplateBeingParsedName.clear();
+#endif
+}
+
 //#define CHECK_THING_NAMES
 #ifdef CHECK_THING_NAMES
 
