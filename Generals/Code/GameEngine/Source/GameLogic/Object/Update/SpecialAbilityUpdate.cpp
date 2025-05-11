@@ -776,6 +776,7 @@ Bool SpecialAbilityUpdate::isWithinStartAbilityRange() const
 			PartitionFilterLineOfSight	filterLOS( self );
 			PartitionFilter *filters[] = { &filterLOS, NULL };
 			ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( self, range, FROM_BOUNDINGSPHERE_2D, filters, ITER_SORTED_NEAR_TO_FAR );
+			MemoryPoolObjectHolder hold(iter);
 			for( Object *theTarget = iter->first(); theTarget; theTarget = iter->next() ) 
 			{
 				//LOS check succeeded.
