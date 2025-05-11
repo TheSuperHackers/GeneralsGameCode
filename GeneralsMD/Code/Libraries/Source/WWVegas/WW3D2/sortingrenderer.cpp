@@ -344,6 +344,7 @@ void SortingRendererClass::Insert_To_Sorting_Pool(SortingNodeStruct* state)
 {
 	if (overlapping_node_count>=MAX_OVERLAPPING_NODES) {
 		Release_Refs(state);
+		delete state;
 		WWASSERT(0);
 		return;
 	}
