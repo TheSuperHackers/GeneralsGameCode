@@ -870,7 +870,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				buildRegion( &m_selectFeedbackAnchor, &msg->getArgument(0)->pixel, &selectionRegion );
 				dragMsg->appendPixelRegionArgument( selectionRegion );
 			}
-			else
+			else 
 			{
 				// left click behavior (not right drag)
 
