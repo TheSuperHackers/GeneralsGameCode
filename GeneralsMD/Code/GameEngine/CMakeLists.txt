@@ -89,7 +89,6 @@ set(GAMEENGINE_SRC
     Include/Common/PlayerTemplate.h
     Include/Common/ProductionPrerequisite.h
     Include/Common/QuickmatchPreferences.h
-    Include/Common/QuickTrig.h
     Include/Common/QuotedPrintable.h
     Include/Common/Radar.h
     Include/Common/RAMFile.h
@@ -113,7 +112,6 @@ set(GAMEENGINE_SRC
     Include/Common/StatsCollector.h
     Include/Common/STLTypedefs.h
     Include/Common/StreamingArchiveFile.h
-    Include/Common/string.h
     Include/Common/SubsystemInterface.h
     Include/Common/SystemInfo.h
     Include/Common/Team.h
@@ -131,16 +129,17 @@ set(GAMEENGINE_SRC
     Include/Common/UserPreferences.h
     Include/Common/version.h
     Include/Common/WellKnownKeys.h
-    Include/Common/Xfer.h
-    Include/Common/XferCRC.h
-    Include/Common/XferDeepCRC.h
-    Include/Common/XferLoad.h
-    Include/Common/XferSave.h
+#    Include/Common/Xfer.h
+#    Include/Common/XferCRC.h
+#    Include/Common/XferDeepCRC.h
+#    Include/Common/XferLoad.h
+#    Include/Common/XferSave.h
     Include/GameClient/Anim2D.h
     Include/GameClient/AnimateWindowManager.h
     Include/GameClient/CampaignManager.h
     Include/GameClient/CDCheck.h
     Include/GameClient/ChallengeGenerals.h
+    Include/GameClient/ClientInstance.h
     Include/GameClient/ClientRandomValue.h
     Include/GameClient/Color.h
     Include/GameClient/CommandXlat.h
@@ -156,7 +155,6 @@ set(GAMEENGINE_SRC
     Include/GameClient/DisplayStringManager.h
     Include/GameClient/Drawable.h
     Include/GameClient/DrawableInfo.h
-    Include/GameClient/DrawableManager.h
     Include/GameClient/DrawGroupInfo.h
     Include/GameClient/EstablishConnectionsMenu.h
     Include/GameClient/Eva.h
@@ -633,7 +631,6 @@ set(GAMEENGINE_SRC
     Source/Common/System/AsciiString.cpp
     Source/Common/System/BuildAssistant.cpp
     Source/Common/System/CDManager.cpp
-    Source/Common/System/Compression.cpp
     Source/Common/System/CopyProtection.cpp
     Source/Common/System/CriticalSection.cpp
     Source/Common/System/DataChunk.cpp
@@ -654,7 +651,6 @@ set(GAMEENGINE_SRC
     Source/Common/System/LocalFileSystem.cpp
     #Source/Common/System/MemoryInit.cpp
     Source/Common/System/ObjectStatusTypes.cpp
-    Source/Common/System/QuickTrig.cpp
     Source/Common/System/QuotedPrintable.cpp
     Source/Common/System/Radar.cpp
     Source/Common/System/RAMFile.cpp
@@ -664,15 +660,14 @@ set(GAMEENGINE_SRC
     Source/Common/System/Snapshot.cpp
     Source/Common/System/StackDump.cpp
     Source/Common/System/StreamingArchiveFile.cpp
-    Source/Common/System/String.cpp
     Source/Common/System/SubsystemInterface.cpp
     Source/Common/System/Trig.cpp
     Source/Common/System/UnicodeString.cpp
     Source/Common/System/Upgrade.cpp
-    Source/Common/System/Xfer.cpp
-    Source/Common/System/XferCRC.cpp
-    Source/Common/System/XferLoad.cpp
-    Source/Common/System/XferSave.cpp
+#    Source/Common/System/Xfer.cpp
+#    Source/Common/System/XferCRC.cpp
+#    Source/Common/System/XferLoad.cpp
+#    Source/Common/System/XferSave.cpp
     Source/Common/TerrainTypes.cpp
     Source/Common/Thing/DrawModule.cpp
     Source/Common/Thing/Module.cpp
@@ -682,17 +677,16 @@ set(GAMEENGINE_SRC
     Source/Common/Thing/ThingTemplate.cpp
     Source/Common/UserPreferences.cpp
     Source/Common/version.cpp
+    Source/GameClient/ClientInstance.cpp
     Source/GameClient/Color.cpp
     Source/GameClient/Credits.cpp
     Source/GameClient/Display.cpp
     Source/GameClient/DisplayString.cpp
     Source/GameClient/DisplayStringManager.cpp
-    Source/GameClient/Drawable/DrawableManager.cpp
+    Source/GameClient/Drawable.cpp
     Source/GameClient/Drawable/Update/AnimatedParticleSysBoneClientUpdate.cpp
     Source/GameClient/Drawable/Update/BeaconClientUpdate.cpp
     Source/GameClient/Drawable/Update/SwayClientUpdate.cpp
-    Source/GameClient/Drawable.cpp
-    Source/GameClient/DrawableManager.cpp
     Source/GameClient/DrawGroupInfo.cpp
     Source/GameClient/Eva.cpp
     Source/GameClient/FXList.cpp
@@ -968,6 +962,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/SpecialPower/SpecialAbility.cpp
     Source/GameLogic/Object/SpecialPower/SpecialPowerModule.cpp
     Source/GameLogic/Object/SpecialPower/SpyVisionSpecialPower.cpp
+    Source/GameLogic/Object/Update/AIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/AssaultTransportAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/ChinookAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/DeliverPayloadAIUpdate.cpp
@@ -983,7 +978,6 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Update/AIUpdate/TransportAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/WanderAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/WorkerAIUpdate.cpp
-    Source/GameLogic/Object/Update/AIUpdate.cpp
     Source/GameLogic/Object/Update/AnimationSteeringUpdate.cpp
     Source/GameLogic/Object/Update/AssistedTargetingUpdate.cpp
     Source/GameLogic/Object/Update/AutoDepositUpdate.cpp
@@ -1099,6 +1093,9 @@ set(GAMEENGINE_SRC
     Source/GameNetwork/FrameMetrics.cpp
     Source/GameNetwork/GameInfo.cpp
     Source/GameNetwork/GameMessageParser.cpp
+    #Source/GameNetwork/GameSpyChat.cpp
+    #Source/GameNetwork/GameSpyGameInfo.cpp
+    #Source/GameNetwork/GameSpyGP.cpp
     Source/GameNetwork/GameSpy/Chat.cpp
     Source/GameNetwork/GameSpy/GSConfig.cpp
     Source/GameNetwork/GameSpy/LadderDefs.cpp
@@ -1112,9 +1109,6 @@ set(GAMEENGINE_SRC
     Source/GameNetwork/GameSpy/Thread/PersistentStorageThread.cpp
     Source/GameNetwork/GameSpy/Thread/PingThread.cpp
     Source/GameNetwork/GameSpy/Thread/ThreadUtils.cpp
-    #Source/GameNetwork/GameSpyChat.cpp
-    #Source/GameNetwork/GameSpyGameInfo.cpp
-    #Source/GameNetwork/GameSpyGP.cpp
     Source/GameNetwork/GameSpyOverlay.cpp
     Source/GameNetwork/GUIUtil.cpp
     Source/GameNetwork/IPEnumeration.cpp
@@ -1166,22 +1160,13 @@ target_include_directories(z_gameengine PRIVATE
 )
 
 target_link_libraries(z_gameengine PRIVATE
+    corei_gameengine_private
     zi_always
 )
 
 target_link_libraries(z_gameengine PUBLIC
-    d3d8lib
-    gamespy::gamespy
-    core_config
-    core_utility
-    stlport
-    core_browserdispatch
-    core_compression
+    corei_gameengine_public
     z_wwvegas
-)
-
-target_compile_definitions(z_gameengine PRIVATE
-    IG_DEBUG_STACKTRACE
 )
 
 target_precompile_headers(z_gameengine PRIVATE Include/Precompiled/PreRTS.h)

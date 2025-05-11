@@ -67,7 +67,7 @@
 #include "GameLogic/Module/ContainModule.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -2479,7 +2479,7 @@ ScriptAction *ScriptAction::ParseAction(DataChunkInput &file, DataChunkInfo *inf
 			}
 		}
 	}
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_CRASHING
 	Script *pScript = (Script *)userData;
 	if (at && (at->getName().isEmpty() || (at->getName().compareNoCase("(placeholder)") == 0))) {
 		DEBUG_CRASH(("Invalid Script Action found in script '%s'\n", pScript->getName().str()));

@@ -86,7 +86,7 @@
 #include "GameLogic/VictoryConditions.h"
 #include "GameLogic/AIPathfind.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -3200,7 +3200,7 @@ void ScriptActions::doMergeTeamIntoTeam(const AsciiString& teamSrcName, const As
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doDisableInput()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (!TheGlobalData->m_disableScriptedInputDisabling)
 #endif
 	{
@@ -3852,7 +3852,7 @@ void ScriptActions::doUnfreezeTime(void)
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doMilitaryCaption(const AsciiString& briefing, Int duration)
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_disableMilitaryCaption)
 		duration = 1;
 #endif
@@ -6753,7 +6753,7 @@ void ScriptActions::executeAction( ScriptAction *pAction )
 				                     pAction->getParameter(2)->getInt());
 			return;
 		case ScriptAction::DEBUG_CRASH_BOX:
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_CRASHING
 			{
 				const char* MSG = "Your Script requested the following message be displayed:\n\n";
 				const char* MSG2 = "\n\nTHIS IS NOT A BUG. DO NOT REPORT IT.";

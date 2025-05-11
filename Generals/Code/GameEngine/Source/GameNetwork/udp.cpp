@@ -35,7 +35,7 @@
 //#include "GameNetwork/NetworkInterface.h"
 #include "GameNetwork/udp.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -43,7 +43,7 @@
 
 //-------------------------------------------------------------------------
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_LOGGING
 
 #define CASE(x) case (x): return #x;
 
@@ -115,7 +115,7 @@ AsciiString GetWSAErrorString( Int error )
 
 #undef CASE
 
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 //-------------------------------------------------------------------------
 

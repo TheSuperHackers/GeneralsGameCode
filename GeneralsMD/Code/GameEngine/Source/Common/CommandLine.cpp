@@ -32,8 +32,9 @@
 #include "Common/version.h"
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
+#include "GameNetwork/NetworkDefs.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -48,6 +49,8 @@ extern Int DX8Wrapper_PreserveFPU;
 Int TheCRCFirstFrameToLog = -1;
 UnsignedInt TheCRCLastFrameToLog = 0xffffffff;
 Bool g_keepCRCSaves = FALSE;
+Bool g_saveDebugCRCPerFrame = FALSE;
+AsciiString g_saveDebugCRCPerFrameDir;
 Bool g_crcModuleDataFromLogic = FALSE;
 Bool g_crcModuleDataFromClient = FALSE;
 Bool g_verifyClientCRC = FALSE; // verify that GameLogic CRC doesn't change from client
@@ -55,7 +58,7 @@ Bool g_clientDeepCRC = FALSE;
 Bool g_logObjectCRCs = FALSE;
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 extern Bool g_useStringFile;
 #endif
 
@@ -111,9 +114,7 @@ static void ConvertShortMapPathToLongMapPath(AsciiString &mapName)
 //=============================================================================
 Int parseNoLogOrCrash(char *args[], int)
 {
-#ifdef ALLOW_DEBUG_UTILS
 	DEBUG_CRASH(("-NoLogOrCrash not supported in this build\n"));
-#endif
 	return 1;
 }
 
@@ -162,7 +163,8 @@ Int parseFPUPreserve(char *args[], int argc)
 	return 2;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+
 //=============================================================================
 //=============================================================================
 Int parseUseCSF(char *args[], int)
@@ -203,6 +205,7 @@ Int parseNoMilCap(char *args[], int)
 	}
 	return 1;
 }
+#endif // RTS_DEBUG || RTS_INTERNAL
 
 //=============================================================================
 //=============================================================================
@@ -238,6 +241,22 @@ Int parseKeepCRCSave(char *args[], int argc)
 	g_keepCRCSaves = TRUE;
 #endif
 	return 1;
+}
+
+//=============================================================================
+//=============================================================================
+Int parseSaveDebugCRCPerFrame(char* args[], int argc)
+{
+#ifdef DEBUG_CRC
+	if (argc > 1)
+	{
+		g_saveDebugCRCPerFrame = TRUE;
+		g_saveDebugCRCPerFrameDir = args[1];
+		if (TheCRCFirstFrameToLog == -1)
+			TheCRCFirstFrameToLog = 0;
+	}
+#endif
+	return 2;
 }
 
 //=============================================================================
@@ -329,15 +348,19 @@ Int parseNoDraw(char *args[], int argc)
 	return 1;
 }
 
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+
 //=============================================================================
 //=============================================================================
 Int parseLogToConsole(char *args[], int)
 {
+#ifdef ALLOW_DEBUG_UTILS
 	DebugSetFlags(DebugGetFlags() | DEBUG_FLAG_LOG_TO_CONSOLE);
+#endif
 	return 1;
 }
 
-#endif // _DEBUG || _INTERNAL
+#endif // RTS_DEBUG || RTS_INTERNAL
 
 //=============================================================================
 //=============================================================================
@@ -413,7 +436,7 @@ Int parseYRes(char *args[], int num)
 	return 1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 //=============================================================================
 //=============================================================================
 Int parseLatencyAverage(char *args[], int num)
@@ -596,7 +619,7 @@ Int parseMunkee(char *args[], int)
 	}
 	return 1;
 }
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 Int parseScriptDebug(char *args[], int)
 {
@@ -630,7 +653,7 @@ Int parseBuildMapCache(char *args[], int)
 }
 
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 Int parsePreload( char *args[], int num )
 {
 	if( TheWritableGlobalData )
@@ -640,7 +663,7 @@ Int parsePreload( char *args[], int num )
 #endif
 
 
-#if defined(_DEBUG) || defined(_INTERNAL) 
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) 
 Int parseDisplayDebug(char *args[], int)
 {
 	if (TheWritableGlobalData)
@@ -692,7 +715,7 @@ Int parseVTune ( char *args[], int num )
 }
 /// end stuff for VTUNE
 
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 //=============================================================================
 //=============================================================================
@@ -706,7 +729,7 @@ Int parseNoFX(char *args[], int)
 	return 1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Int parseNoShroud(char *args[], int)
 {
 	if (TheWritableGlobalData)
@@ -735,7 +758,7 @@ Int parseNoMoveCamera(char *args[], int)
 	return 1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Int parseNoCinematic(char *args[], int)
 {
 	if (TheWritableGlobalData)
@@ -776,7 +799,7 @@ Int parseNoShaders(char *args[], int)
 	return 1;
 }
 
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 Int parseNoLogo(char *args[], int)
 {
 	if (TheWritableGlobalData)
@@ -827,7 +850,7 @@ Int parseWinCursors(char *args[], int num)
 
 Int parseQuickStart( char *args[], int num )
 {
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
   parseNoLogo( args, num );
 #else
 	//Kris: Patch 1.01 -- Allow release builds to skip the sizzle video, but still force the EA logo to show up.
@@ -848,7 +871,7 @@ Int parseConstantDebug( char *args[], int num )
 	return 1;
 }
 
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 Int parseExtraLogging( char *args[], int num )
 {
 	if (TheWritableGlobalData)
@@ -881,7 +904,7 @@ Int parseShowTeamDot( char *args[], int num )
 }
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Int parseSelectAll( char *args[], int num )
 {
 	if( TheWritableGlobalData )
@@ -949,7 +972,7 @@ Int parseDemoLoadScreen(char *args[], int num)
 	return 1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Int parseSaveStats(char *args[], int num)
 {
 	if (TheWritableGlobalData  && num > 1)
@@ -961,7 +984,7 @@ Int parseSaveStats(char *args[], int num)
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Int parseSaveAllStats(char *args[], int num)
 {
 	if (TheWritableGlobalData  && num > 1)
@@ -974,7 +997,7 @@ Int parseSaveAllStats(char *args[], int num)
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Int parseLocalMOTD(char *args[], int num)
 {
 	if (TheWritableGlobalData  && num > 1)
@@ -986,7 +1009,7 @@ Int parseLocalMOTD(char *args[], int num)
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Int parseCameraDebug(char *args[], int num)
 {
 	if (TheWritableGlobalData)
@@ -997,7 +1020,7 @@ Int parseCameraDebug(char *args[], int num)
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Int parseBenchmark(char *args[], int num)
 {
 	if (TheWritableGlobalData && num > 1)
@@ -1009,7 +1032,7 @@ Int parseBenchmark(char *args[], int num)
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 #ifdef DUMP_PERF_STATS
 Int parseStats(char *args[], int num)
 {
@@ -1023,7 +1046,7 @@ Int parseStats(char *args[], int num)
 #endif
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_CRASHING
 Int parseIgnoreAsserts(char *args[], int num)
 {
 	if (TheWritableGlobalData && num > 0)
@@ -1034,7 +1057,7 @@ Int parseIgnoreAsserts(char *args[], int num)
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_STACKTRACE
 Int parseIgnoreStackTrace(char *args[], int num)
 {
 	if (TheWritableGlobalData && num > 0)
@@ -1131,7 +1154,7 @@ Int parseMod(char *args[], Int num)
 	return 1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_LOGGING
 Int parseSetDebugLevel(char *args[], int num)
 {
 	if (num > 1)
@@ -1182,7 +1205,7 @@ static CommandLineParam params[] =
 	{ "-noshaders", parseNoShaders },
 	{ "-quickstart", parseQuickStart },
 
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 	{ "-noaudio", parseNoAudio },
 	{ "-map", parseMapName },
 	{ "-nomusic", parseNoMusic },
@@ -1197,17 +1220,58 @@ static CommandLineParam params[] =
 	{ "-localMOTD", parseLocalMOTD },
 	{ "-UseCSF", parseUseCSF },
 	{ "-NoInputDisable", parseNoInputDisable },
+#endif
+#ifdef DEBUG_CRC
+	// TheSuperHackers @info helmutbuhler 04/09/2025
+	// The following arguments are useful for CRC debugging.
+	// Note that you need to have a debug or internal configuration build in order to use this.
+	// Release configuration also works if RELEASE_DEBUG_LOGGING is defined in Debug.h
+	// Also note that all players need to play in the same configuration, otherwise mismatch will
+	// occur almost immediately.
+	// Try this if you want to play the game and have useful debug information in case mismatch occurs:
+	// -ignoreAsserts -DebugCRCFromFrame 0 -VerifyClientCRC -LogObjectCRCs -NetCRCInterval 1
+	// After mismatch occurs, you can examine the logfile and also reproduce the crc from the replay with this (and diff that with the log):
+	// -ignoreAsserts -DebugCRCFromFrame xxx -LogObjectCRCs -SaveDebugCRCPerFrame crc
+
+	// After which frame to log crc logging. Call with 0 to log all frames and with -1 to log none (default).
 	{ "-DebugCRCFromFrame", parseDebugCRCFromFrame },
+
+	// Last frame to log
 	{ "-DebugCRCUntilFrame", parseDebugCRCUntilFrame },
+
+	// Save data involving CRC calculation to a binary file. (This isn't that useful.)
 	{ "-KeepCRCSaves", parseKeepCRCSave },
+
+	// TheSuperHackers @feature helmutbuhler 04/09/2025
+	// Store CRC Debug Logging into a separate file for each frame.
+	// Pass the foldername after this where those files are to be stored.
+	// This is useful for replay analysis.
+	// Note that the passed folder is deleted if it already exists for every started game.
+	{ "-SaveDebugCRCPerFrame", parseSaveDebugCRCPerFrame },
+
 	{ "-CRCLogicModuleData", parseCRCLogicModuleData },
 	{ "-CRCClientModuleData", parseCRCClientModuleData },
-	{ "-ClientDeepCRC", parseClientDeepCRC },
+
+	// Verify that Game Logic CRC doesn't change during client update.
+	// Client update is only for visuals and not supposed to change the crc.
+	// (This is implemented using CRCVerification class in GameEngine::update)
 	{ "-VerifyClientCRC", parseVerifyClientCRC },
+
+	// Write out binary crc data pre and post client update to "clientPre.crc" and "clientPost.crc"
+	{ "-ClientDeepCRC", parseClientDeepCRC },
+
+	// Log CRC of Objects and Weapons (See Object::crc and Weapon::crc)
 	{ "-LogObjectCRCs", parseLogObjectCRCs },
-	{ "-saveAllStats", parseSaveAllStats },
+
+	// Number of frames between each CRC check between all players in multiplayer games
+	// (if not all crcs are equal, mismatch occurs).
 	{ "-NetCRCInterval", parseNetCRCInterval },
+
+	// Number of frames between each CRC that is written to replay files in singleplayer games.
 	{ "-ReplayCRCInterval", parseReplayCRCInterval },
+#endif
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+	{ "-saveAllStats", parseSaveAllStats },
 	{ "-noDraw", parseNoDraw },
 	{ "-nomilcap", parseNoMilCap },
 	{ "-nofade", parseNoFade },
@@ -1241,15 +1305,11 @@ static CommandLineParam params[] =
 	{ "-netMinPlayers", parseNetMinPlayers },
 	{ "-DemoLoadScreen", parseDemoLoadScreen },
 	{ "-cameraDebug", parseCameraDebug },
-	{ "-ignoreAsserts", parseIgnoreAsserts },
-	{ "-ignoreStackTrace", parseIgnoreStackTrace },
 	{ "-logToCon", parseLogToConsole },
 	{ "-vTune", parseVTune },
 	{ "-selectTheUnselectable", parseSelectAll },
 	{ "-RunAhead", parseRunAhead },
 	{ "-noshroud", parseNoShroud },
-	{ "-setDebugLevel", parseSetDebugLevel },
-	{ "-clearDebugLevel", parseClearDebugLevel },
 	{ "-forceBenchmark", parseForceBenchmark },
 	{ "-buildmapcache", parseBuildMapCache },
 	{ "-noshadowvolumes", parseNoShadows },
@@ -1271,10 +1331,23 @@ static CommandLineParam params[] =
 
 #endif
 
+#ifdef DEBUG_LOGGING
+	{ "-setDebugLevel", parseSetDebugLevel },
+	{ "-clearDebugLevel", parseClearDebugLevel },
+#endif
+
+#ifdef DEBUG_CRASHING
+	{ "-ignoreAsserts", parseIgnoreAsserts },
+#endif
+
+#ifdef DEBUG_STACKTRACE
+	{ "-ignoreStackTrace", parseIgnoreStackTrace },
+#endif
+
 	//-allAdvice feature
 	//{ "-allAdvice", parseAllAdvice },
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
   { "-preload", parsePreload },
 #endif
 

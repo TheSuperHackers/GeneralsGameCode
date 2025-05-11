@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* $Header: /Commando/Code/ww3d2/mesh.h 15    8/20/01 9:31a Jani_p $ */
+/* $Header: /Commando/Code/ww3d2/mesh.h 16    11/07/01 5:50p Jani_p $ */
 /*********************************************************************************************** 
  ***                            Confidential - Westwood Studios                              *** 
  *********************************************************************************************** 
@@ -163,8 +163,12 @@ public:
 	void								Replace_Texture(TextureClass* texture,TextureClass* new_texture);
 	void								Replace_VertexMaterial(VertexMaterialClass* vmat,VertexMaterialClass* new_vmat);
 
-	void								Make_Unique();
-	
+	void								Make_Unique(bool force_meshmdl_clone = false);
+	unsigned							Get_Debug_Id() const { return  MeshDebugId; }
+
+	void								Set_Debugger_Disable(bool b) { IsDisabledByDebugger=b; }
+	bool								Is_Disabled_By_Debugger() const { return IsDisabledByDebugger; }
+
 protected:
 
 	virtual void					Add_Dependencies_To_List (DynamicVectorClass<StringClass> &file_list, bool textures_only = false);
@@ -186,6 +190,9 @@ protected:
 	float					m_materialPassAlphaOverride;	//added for 'Generals' to allow variable alpha on additional render passes.
 	int								BaseVertexOffset;		// offset to our first vertex in whatever vb this mesh is in.
 	MeshClass *						NextVisibleSkin;		// linked list of visible skins
+
+	unsigned							MeshDebugId;
+	bool								IsDisabledByDebugger;
 
 	friend class MeshBuilderClass;
 };

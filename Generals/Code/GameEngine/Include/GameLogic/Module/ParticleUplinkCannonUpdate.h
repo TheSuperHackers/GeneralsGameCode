@@ -34,14 +34,14 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
-#include "GameLogic/Module/UpdateModule.h"
+#include "GameLogic/Module/SpecialPowerUpdateModule.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class SpecialPowerModule;
 class ParticleSystem;
 class FXList;
 class AudioEventRTS;
-enum ParticleSystemID;
+enum ParticleSystemID CPP_11(: Int);
 
 #define MAX_OUTER_NODES 16
 
@@ -112,7 +112,7 @@ private:
 
 };
 
-enum PUCStatus
+enum PUCStatus CPP_11(: Int)
 {
 	STATUS_IDLE,
 	STATUS_CHARGING,
@@ -125,7 +125,7 @@ enum PUCStatus
 	STATUS_PACKING,
 };
 
-enum LaserStatus
+enum LaserStatus CPP_11(: Int)
 {
 	LASERSTATUS_NONE,
 	LASERSTATUS_BORN,
@@ -133,7 +133,7 @@ enum LaserStatus
 	LASERSTATUS_DEAD,
 };
 
-enum IntensityTypes
+enum IntensityTypes CPP_11(: Int)
 {
 	IT_LIGHT,
 	IT_MEDIUM,
@@ -156,7 +156,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	// SpecialPowerUpdateInterface
-	virtual void initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, UnsignedInt commandOptions, Int locationCount );
+	virtual Bool initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions );
 	virtual Bool isSpecialAbility() const { return false; }
 	virtual Bool isSpecialPower() const { return true; }
 	virtual Bool isActive() const {return m_status != STATUS_IDLE;}
@@ -180,7 +180,8 @@ public:
 	Bool calculateDefaultInformation();
 	Bool calculateUpBonePositions();
 
-	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const;
+	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const; //Is it active now?
+	virtual Bool doesSpecialPowerHaveOverridableDestination() const { return true; }	//Does it have it, even if it's not active?
 	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc );
 
 	// Disabled conditions to process (termination conditions!)

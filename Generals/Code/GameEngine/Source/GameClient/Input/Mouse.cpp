@@ -47,7 +47,7 @@
 
 #include "GameLogic/ScriptEngine.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -389,6 +389,7 @@ void Mouse::checkForDrag( void )
 
 }  // end checkForDrag
 
+
 //-------------------------------------------------------------------------------------------------
 /** Check for mouse click, using allowed drag forgiveness */
 //-------------------------------------------------------------------------------------------------
@@ -409,6 +410,7 @@ Bool Mouse::isClick(const ICoord2D *anchor, const ICoord2D *dest, UnsignedInt pr
 	}
 	return TRUE;
 }
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -636,7 +638,8 @@ void Mouse::reset( void )
 	///@ todo Write Mouse::reset() if there needs to be anything here
 
 	// reset the text of the cursor text
-	m_cursorTextDisplayString->reset();
+  if ( m_cursorTextDisplayString )
+  	m_cursorTextDisplayString->reset();
 
 }  // end reset
 
@@ -678,6 +681,11 @@ void Mouse::createStreamMessages( void )
   Int delay = m_tooltipDelayTime;
   if(m_tooltipDelay >= 0 )
      delay = m_tooltipDelay;
+	if( TheGlobalData->m_scriptDebug )
+	{
+		//No delay while scriptdebugging!
+		delay = 0;
+	}
   
 	if( now - m_stillTime >= delay )
 	{

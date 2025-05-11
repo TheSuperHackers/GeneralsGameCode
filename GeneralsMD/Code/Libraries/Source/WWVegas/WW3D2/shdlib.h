@@ -39,6 +39,9 @@
 #ifndef SHDLIB_H
 #define SHDLIB_H
 
+// TheSuperHackers @compile Removes the unused WWShade code. (#596)
+// If there is a desire to revive this, then the WWShade library needs to be re-added.
+
 #ifdef USE_WWSHADE
 
 extern void SHD_Init();

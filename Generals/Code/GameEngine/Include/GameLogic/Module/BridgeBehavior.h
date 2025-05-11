@@ -41,7 +41,7 @@
 #include "GameLogic/Module/UpdateModule.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
-enum BridgeTowerType;
+enum BridgeTowerType CPP_11(: Int);
 class FXList;
 class ObjectCreationList;
 class Bridge;

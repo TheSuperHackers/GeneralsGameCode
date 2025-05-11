@@ -10,7 +10,7 @@ target_sources(core_compress PRIVATE ${COMRPESS_SRC})
 target_link_libraries(core_compress PRIVATE
     core_config
     core_compression
-    zi_always
+    corei_always
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

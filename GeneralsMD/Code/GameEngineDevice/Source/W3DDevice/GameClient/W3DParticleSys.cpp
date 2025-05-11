@@ -36,7 +36,7 @@
 #include "W3DDevice/GameClient/W3DSnow.h"
 #include "WW3D2/camera.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -49,7 +49,6 @@
 //-------------------------------------------------------------------------------------------------
 
 
-#include "Common/QuickTrig.h"
 W3DParticleSystemManager::W3DParticleSystemManager()
 {
 	m_pointGroup = NULL;

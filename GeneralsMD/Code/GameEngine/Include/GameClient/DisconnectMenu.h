@@ -30,7 +30,7 @@
 
 #include "GameNetwork/DisconnectManager.h"
 
-enum DisconnectMenuStateType {
+enum DisconnectMenuStateType CPP_11(: Int) {
 	DISCONNECTMENUSTATETYPE_SCREENON,
 	DISCONNECTMENUSTATETYPE_SCREENOFF
 };

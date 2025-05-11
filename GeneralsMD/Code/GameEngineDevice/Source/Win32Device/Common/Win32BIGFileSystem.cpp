@@ -26,7 +26,6 @@
 // Bryan Cleveland, August 2002
 /////////////////////////////////////////////////////////////
 
-#include <winsock2.h>
 #include "Common/AudioAffect.h"
 #include "Common/ArchiveFile.h"
 #include "Common/ArchiveFileSystem.h"
@@ -37,8 +36,9 @@
 #include "Win32Device/Common/Win32BIGFile.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
 #include "Common/Registry.h"
+#include "Utility/endian_compat.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -64,7 +64,7 @@ void Win32BIGFileSystem::init() {
     AsciiString installPath;
     GetStringFromGeneralsRegistry("", "InstallPath", installPath );
     //@todo this will need to be ramped up to a crash for release
-#ifndef _INTERNAL
+#ifndef RTS_INTERNAL
     // had to make this non-internal only, otherwise we can't autobuild
     // GeneralsZH...
     DEBUG_ASSERTCRASH(installPath != "", ("Be 1337! Go install Generals!"));
@@ -89,8 +89,6 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 	archiveFileName.toLower();
 	Int archiveFileSize = 0;
 	Int numLittleFiles = 0;
-
-	ArchiveFile *archiveFile = NEW Win32BIGFile;
 
 	DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - opening BIG file %s\n", filename));
 
@@ -120,7 +118,7 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 	// read in the number of files contained in this BIG file.
 	// change the order of the bytes cause the file size is in reverse byte order for some reason.
 	fp->read(&numLittleFiles, 4);
-	numLittleFiles = ntohl(numLittleFiles);
+	numLittleFiles = betoh(numLittleFiles);
 
 	DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - %d are contained in archive\n", numLittleFiles));
 //	for (Int i = 0; i < 2; ++i) {
@@ -133,6 +131,8 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 	fp->seek(0x10, File::START);
 	// read in each directory listing.
 	ArchivedFileInfo *fileInfo = NEW ArchivedFileInfo;
+	// TheSuperHackers @fix Mauller 23/04/2025 Create new file handle when necessary to prevent memory leak
+	ArchiveFile *archiveFile = NEW Win32BIGFile;
 
 	for (Int i = 0; i < numLittleFiles; ++i) {
 		Int filesize = 0;
@@ -140,8 +140,8 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 		fp->read(&fileOffset, 4);
 		fp->read(&filesize, 4);
 
-		filesize = ntohl(filesize);
-		fileOffset = ntohl(fileOffset);
+		filesize = betoh(filesize);
+		fileOffset = betoh(fileOffset);
 
 		fileInfo->m_archiveFilename = archiveFileName;
 		fileInfo->m_offset = fileOffset;

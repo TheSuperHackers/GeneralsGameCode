@@ -1,33 +1,31 @@
-# Set source files
 set(PARTICLEED_SRC
     "CButtonShowColor.cpp"
-    "CColorAlphaDialog.cpp"
-    "CSwitchesDialog.cpp"
-    "EmissionTypePanels.cpp"
-    "MoreParmsDialog.cpp"
-    "ParticleEditor.cpp"
-    "ParticleEditorDialog.cpp"
-    "ParticleTypePanels.cpp"
-    "ShaderTypePanels.cpp"
-    "StdAfx.cpp"
-    "VelocityTypePanels.cpp"
     "CButtonShowColor.h"
+    "CColorAlphaDialog.cpp"
     "CColorAlphaDialog.h"
+    "CSwitchesDialog.cpp"
     "CSwitchesDialog.h"
+    "EmissionTypePanels.cpp"
     "EmissionTypePanels.h"
     "ISwapablePanel.h"
+    "MoreParmsDialog.cpp"
     "MoreParmsDialog.h"
+    "ParticleEditor.cpp"
     "ParticleEditor.h"
+    "ParticleEditorDialog.cpp"
     "ParticleEditorDialog.h"
     "ParticleEditorExport.h"
+    "ParticleTypePanels.cpp"
     "ParticleTypePanels.h"
     "Resource.h"
+    "ShaderTypePanels.cpp"
     "ShaderTypePanels.h"
+    "StdAfx.cpp"
     "StdAfx.h"
+    "VelocityTypePanels.cpp"
     "VelocityTypePanels.h"
 )
 
-# Targets to build.
 add_library(g_particleeditor SHARED)
 set_target_properties(g_particleeditor PROPERTIES OUTPUT_NAME particleeditor PREFIX "")
 
@@ -41,12 +39,13 @@ target_include_directories(g_particleeditor PRIVATE
 target_compile_definitions(g_particleeditor PRIVATE _AFXDLL)
 
 target_link_libraries(g_particleeditor PRIVATE
+    corei_libraries_source_wwvegas
+    corei_libraries_source_wwvegas_wwlib
     d3d8lib
     dbghelplib
     gi_gameengine_include
     gi_always
     gi_libraries_source_wwvegas
-    gi_libraries_source_wwvegas_wwlib
     core_config
     imm32
     stlport

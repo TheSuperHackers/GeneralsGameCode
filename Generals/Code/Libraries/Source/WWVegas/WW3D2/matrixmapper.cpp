@@ -108,7 +108,6 @@ void	MatrixMapperClass::Set_Texture_Transform(const Matrix4x4 & view_to_texture,
 	Update_View_To_Pixel_Transform(texsize);
 }
 
-
 /***********************************************************************************************
  * MatrixMapperClass::Update_View_To_Pixel_Transform -- recomputes ViewToPixel                 *
  *                                                                                             *
@@ -182,7 +181,6 @@ void MatrixMapperClass::Update_View_To_Pixel_Transform(float tex_size)
 	ViewSpaceProjectionNormal.Normalize();
 
 }
-
 
 /***********************************************************************************************
  * MatrixMapperClass::Compute_Texture_Coordinate -- compute a single texture coord             *

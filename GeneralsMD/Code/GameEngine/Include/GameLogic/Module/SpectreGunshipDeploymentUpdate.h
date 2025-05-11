@@ -41,15 +41,15 @@ class SpecialPowerModule;
 class ParticleSystem;
 class FXList;
 class AudioEventRTS;
-enum ParticleSystemID;
-enum ScienceType;
+enum ParticleSystemID CPP_11(: Int);
+enum ScienceType CPP_11(: Int);
 
 //#define MAX_OUTER_NODES 16
 
 //#define PUCK
 
 
-enum GunshipCreateLocType
+enum GunshipCreateLocType CPP_11(: Int)
 {
 	CREATE_GUNSHIP_AT_EDGE_NEAR_SOURCE,
   CREATE_GUNSHIP_AT_EDGE_FARTHEST_FROM_SOURCE,
@@ -88,7 +88,7 @@ private:
 
 };
 
-enum GunshipDeployStatus
+enum GunshipDeployStatus CPP_11(: Int)
 {
    GUNSHIPDEPLOY_STATUS_INSERTING,
    GUNSHIPDEPLOY_STATUS_ORBITING,

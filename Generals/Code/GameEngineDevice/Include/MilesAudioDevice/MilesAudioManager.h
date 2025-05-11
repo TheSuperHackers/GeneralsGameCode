@@ -28,7 +28,7 @@ class AudioEventRTS;
 
 enum { MAXPROVIDERS = 64 };
 
-enum PlayingAudioType
+enum PlayingAudioType CPP_11(: Int)
 {
 	PAT_Sample,
 	PAT_3DSample,
@@ -36,14 +36,14 @@ enum PlayingAudioType
 	PAT_INVALID
 };
 
-enum PlayingStatus
+enum PlayingStatus CPP_11(: Int)
 {
 	PS_Playing,
 	PS_Stopped,
 	PS_Paused
 };
 
-enum PlayingWhich
+enum PlayingWhich CPP_11(: Int)
 {
 	PW_Attack,
 	PW_Sound,
@@ -73,6 +73,7 @@ struct PlayingAudio
 		m_audioEventRTS(NULL), 
 		m_requestStop(false), 
 		m_cleanupAudioEventRTS(true),
+		m_sample(NULL), 
 		m_framesFaded(0)
 	{ }
 };
@@ -135,7 +136,7 @@ class MilesAudioManager : public AudioManager
 {
 
 	public:
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		virtual void audioDebugDisplay(DebugDisplayInterface *dd, void *, FILE *fp = NULL );
 		virtual AudioHandle addAudioEvent( const AudioEventRTS *eventToAdd );	///< Add an audio event (event must be declared in an INI file)
 #endif
@@ -166,9 +167,6 @@ class MilesAudioManager : public AudioManager
 		virtual void pauseAmbient( Bool shouldPause );
 
 		virtual void killAudioEventImmediately( AudioHandle audioEvent );
-
-		virtual void stopAllAmbientsBy( Object *objID );
-		virtual void stopAllAmbientsBy( Drawable *drawID );
 
 		///< Return whether the current audio is playing or not. 
 		///< NOTE NOTE NOTE !!DO NOT USE THIS IN FOR GAMELOGIC PURPOSES!! NOTE NOTE NOTE
@@ -225,6 +223,10 @@ class MilesAudioManager : public AudioManager
 		virtual Real getFileLengthMS( AsciiString strToLoad ) const;
 
 		virtual void closeAnySamplesUsingFile( const void *fileToClose );
+
+    
+    virtual Bool has3DSensitiveStreamsPlaying( void ) const; 
+
 
 	protected:	
 		// 3-D functions
@@ -319,7 +321,7 @@ class MilesAudioManager : public AudioManager
 		UnsignedInt m_num3DSamples;
 		UnsignedInt m_numStreams;
 		
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		typedef std::set<AsciiString> SetAsciiString;
 		typedef SetAsciiString::iterator SetAsciiStringIt;
 		SetAsciiString m_allEventsLoaded;

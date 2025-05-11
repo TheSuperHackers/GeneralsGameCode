@@ -37,7 +37,7 @@
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Thing;
-enum StealthLookType;
+enum StealthLookType CPP_11(: Int);
 class FXList;
 
 enum
@@ -122,6 +122,8 @@ public:
 
 	StealthUpdate( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype provided by memory pool declaration
+
+	virtual StealthUpdate* getStealth() { return this; }
 
 	virtual UpdateSleepTime update();
 

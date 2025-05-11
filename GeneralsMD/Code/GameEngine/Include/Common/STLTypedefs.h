@@ -64,9 +64,9 @@ class STLSpecialAlloc;
 
 // FORWARD DECLARATIONS
 class Object;
-enum NameKeyType;
-enum ObjectID;
-enum DrawableID;
+enum NameKeyType CPP_11(: Int);
+enum ObjectID CPP_11(: Int);
+enum DrawableID CPP_11(: Int);
 
 #include <algorithm>
 #include <bitset>

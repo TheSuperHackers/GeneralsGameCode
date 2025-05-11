@@ -131,6 +131,7 @@ void HTreeManagerClass::Free_All_Trees(void)
 	}
 	NumTrees = 0;
 }
+
 /*********************************************************************************************** 
  * HTreeManagerClass::Free_All_Trees_With_Exclusion_List -- de-allocates all trees not in list * 
  *                                                                                             * 

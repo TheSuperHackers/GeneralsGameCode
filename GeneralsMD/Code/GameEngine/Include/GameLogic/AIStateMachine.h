@@ -58,7 +58,7 @@ class Squad;
  * Each of these constants will be associated with an instance of a State class
  * in a given StateMachine.
  */
-enum AIStateType
+enum AIStateType CPP_11(: Int)
 {
 	AI_IDLE,
 	AI_MOVE_TO,																///< move to the GoalObject or GoalPosition
@@ -196,7 +196,7 @@ class AttackStateMachine : public StateMachine
 
 public:
 // Attack states.
-enum StateType
+enum StateType CPP_11(: Int)
 	{
 		CHASE_TARGET,													///< Chase a moving target (optionally following it)
 		APPROACH_TARGET,											///< Approach a non-moving target.

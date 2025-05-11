@@ -78,7 +78,7 @@ class W3DProjectedShadow;
 //           Type Defines
 //-----------------------------------------------------------------------------
 
-enum W3DToppleState
+enum W3DToppleState CPP_11(: Int)
 {
 	TOPPLE_UPRIGHT = 0,
 	TOPPLE_FALLING,

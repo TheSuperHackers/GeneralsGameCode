@@ -109,18 +109,18 @@ class TempWeaponBonusHelper;
 class ObjectWeaponStatusHelper;
 class ObjectDefectionHelper;
 
-enum CommandSourceType;
-enum HackerAttackMode;
-enum NameKeyType;
-enum SpecialPowerType;
-enum WeaponBonusConditionType;
-enum WeaponChoiceCriteria;
-enum WeaponSetConditionType;
-enum WeaponSetType;
-enum ArmorSetType;
-enum WeaponStatus;
-enum RadarPriorityType;
-enum CanAttackResult;
+enum CommandSourceType CPP_11(: Int);
+enum HackerAttackMode CPP_11(: Int);
+enum NameKeyType CPP_11(: Int);
+enum SpecialPowerType CPP_11(: Int);
+enum WeaponBonusConditionType CPP_11(: Int);
+enum WeaponChoiceCriteria CPP_11(: Int);
+enum WeaponSetConditionType CPP_11(: Int);
+enum WeaponSetType CPP_11(: Int);
+enum ArmorSetType CPP_11(: Int);
+enum WeaponStatus CPP_11(: Int);
+enum RadarPriorityType CPP_11(: Int);
+enum CanAttackResult CPP_11(: Int);
 
 // For ObjectStatusTypes
 #include "Common/ObjectStatusTypes.h"
@@ -147,7 +147,7 @@ struct TTriggerInfo
 //----------------------------------------------------
 
 
-enum CrushSquishTestType
+enum CrushSquishTestType CPP_11(: Int)
 {
 	TEST_CRUSH_ONLY, 
 	TEST_SQUISH_ONLY, 
@@ -800,7 +800,7 @@ private:
 	// --------- BYTE-SIZED THINGS GO HERE
 	Bool													m_isSelectable;
 	Bool													m_modulesReady;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool													m_hasDiedAlready;
 #endif
 	UnsignedByte									m_scriptStatus;					///< status as set by scripting, corresponds to ORed ObjectScriptStatusBits
@@ -811,12 +811,10 @@ private:
 
 };  // end class Object
 
-#ifdef DEBUG_LOGGING
 // describe an object as an AsciiString: e.g. "Object 102 (KillerBuggy) [GLARocketBuggy, owned by player 2 (GLAIntroPlayer)]"
-AsciiString DescribeObject(const Object *obj);
-#endif // DEBUG_LOGGING
+AsciiString DebugDescribeObject(const Object *obj);
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	#define DEBUG_OBJECT_ID_EXISTS
 #else
 	#undef DEBUG_OBJECT_ID_EXISTS

@@ -54,8 +54,8 @@ class TracerDrawInterface;
 class RopeDrawInterface;
 class LaserDrawInterface;
 class FXList;
-enum TerrainDecalType;
-enum ShadowType;
+enum TerrainDecalType CPP_11(: Int);
+enum ShadowType CPP_11(: Int);
 
 //class ModelConditionFlags;
 
@@ -77,7 +77,7 @@ public:
 	virtual void releaseShadows(void) = 0;	///< frees all shadow resources used by this module - used by Options screen.
 	virtual void allocateShadows(void) = 0; ///< create shadow resources if not already present. Used by Options screen.
 
-#if defined(_DEBUG) || defined(_INTERNAL)	
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
 	virtual void getRenderCost(RenderCost & rc) const { };  ///< estimates the render cost of this draw module
 #endif
 

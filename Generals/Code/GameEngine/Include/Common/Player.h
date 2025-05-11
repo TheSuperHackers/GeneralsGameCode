@@ -85,11 +85,11 @@ class SpecialPowerModule;
 
 class BattlePlanBonuses;
 
-enum BattlePlanStatus;
-enum UpgradeStatusType;
-enum CommandSourceType;
+enum BattlePlanStatus CPP_11(: Int);
+enum UpgradeStatusType CPP_11(: Int);
+enum CommandSourceType CPP_11(: Int);
 
-enum ScienceAvailabilityType
+enum ScienceAvailabilityType CPP_11(: Int)
 {
 	SCIENCE_AVAILABILITY_INVALID = -1,
 
@@ -307,7 +307,7 @@ public:
 	void onUpgradeCompleted( const UpgradeTemplate *upgradeTemplate );				///< An upgrade just finished, do things like tell all objects to recheck UpgradeModules
 	void onUpgradeRemoved(){}					///< An upgrade just got removed, this doesn't do anything now.
  
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	/// Prereq disabling cheat key
 	void toggleIgnorePrereqs(){ m_DEMO_ignorePrereqs = !m_DEMO_ignorePrereqs; }
 	Bool ignoresPrereqs() const { return m_DEMO_ignorePrereqs; }
@@ -767,7 +767,7 @@ private:
 	Real									m_cashBountyPercent;
 
 	/// @todo REMOVE (not disable) these cheat keys
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool									m_DEMO_ignorePrereqs;		///< Can I ignore prereq checks?
 	Bool									m_DEMO_freeBuild;				///< Can I build everything for no money?
 	Bool									m_DEMO_instantBuild;		///< Can I build anything in one frame?

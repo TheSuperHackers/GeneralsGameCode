@@ -1,28 +1,28 @@
 set(PARTICLEED_SRC
     "CButtonShowColor.cpp"
-    "CColorAlphaDialog.cpp"
-    "CSwitchesDialog.cpp"
-    "EmissionTypePanels.cpp"
-    "MoreParmsDialog.cpp"
-    "ParticleEditor.cpp"
-    "ParticleEditorDialog.cpp"
-    "ParticleTypePanels.cpp"
-    "ShaderTypePanels.cpp"
-    "StdAfx.cpp"
-    "VelocityTypePanels.cpp"
     "CButtonShowColor.h"
+    "CColorAlphaDialog.cpp"
     "CColorAlphaDialog.h"
+    "CSwitchesDialog.cpp"
     "CSwitchesDialog.h"
+    "EmissionTypePanels.cpp"
     "EmissionTypePanels.h"
     "ISwapablePanel.h"
+    "MoreParmsDialog.cpp"
     "MoreParmsDialog.h"
+    "ParticleEditor.cpp"
     "ParticleEditor.h"
+    "ParticleEditorDialog.cpp"
     "ParticleEditorDialog.h"
     "ParticleEditorExport.h"
+    "ParticleTypePanels.cpp"
     "ParticleTypePanels.h"
     "Resource.h"
+    "ShaderTypePanels.cpp"
     "ShaderTypePanels.h"
+    "StdAfx.cpp"
     "StdAfx.h"
+    "VelocityTypePanels.cpp"
     "VelocityTypePanels.h"
 )
 
@@ -37,6 +37,10 @@ target_include_directories(z_particleeditor PRIVATE
 )
 
 target_link_libraries(z_particleeditor PRIVATE
+    core_debug
+    core_profile
+    corei_libraries_source_wwvegas
+    corei_libraries_source_wwvegas_wwlib
     d3d8lib
     dbghelplib
     imm32
@@ -44,12 +48,9 @@ target_link_libraries(z_particleeditor PRIVATE
     stlport
     vfw32
     winmm
-    z_debug
-    z_profile
     zi_gameengine_include
     zi_always
     zi_libraries_source_wwvegas
-    zi_libraries_source_wwvegas_wwlib
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

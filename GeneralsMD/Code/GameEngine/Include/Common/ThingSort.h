@@ -33,7 +33,7 @@
 #define __THINGSORT_H_
 
 //-------------------------------------------------------------------------------------------------
-enum EditorSortingType
+enum EditorSortingType CPP_11(: Int)
 {
 	ES_FIRST = 0,
 

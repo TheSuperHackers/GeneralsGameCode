@@ -25,6 +25,6 @@ library BROWSERDISPATCHLib
 	]
 	interface IBrowserDispatch : IUnknown
 	{
-		[id(1), helpstring("method TestMethod")] HRESULT TestMethod(Int num1);
+		[id(1), helpstring("method TestMethod")] HRESULT TestMethod(int num1);
 	};
 };

@@ -488,7 +488,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "KeyboardCameraRotateSpeed", INI::parseReal, NULL, offsetof( GlobalData, m_keyboardCameraRotateSpeed ) },
 	{ "PlayStats",									INI::parseInt,				NULL,			offsetof( GlobalData, m_playStats ) },
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	{ "DisableCameraFade",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableCameraFade ) },
 	{ "DisableScriptedInputDisabling",			INI::parseBool,		NULL,			offsetof( GlobalData, m_disableScriptedInputDisabling ) },
 	{ "DisableMilitaryCaption",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableMilitaryCaption ) },
@@ -543,12 +543,12 @@ GlobalData::GlobalData()
 		m_theOriginal = this;
 	m_next = NULL;
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	m_specialPowerUsesDelay = TRUE;
 #endif
   m_TiVOFastMode = FALSE;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_wireframe = 0;
 	m_stateMachineDebug = FALSE;
 	m_useCameraConstraints = TRUE;
@@ -571,8 +571,6 @@ GlobalData::GlobalData()
 	m_debugCashValueMap = FALSE;
 	m_maxDebugValue = 10000;
 	m_debugCashValueMapTileDuration = LOGICFRAMES_PER_SECOND; // Changed By Sadullah Nader
-	m_debugIgnoreAsserts = FALSE;
-	m_debugIgnoreStackTrace = FALSE;
 	m_vTune = false;
 	m_checkForLeaks = TRUE;
 	m_benchmarkTimer = -1;
@@ -593,6 +591,14 @@ GlobalData::GlobalData()
 	m_baseStatsDir = ".\\";
 	m_MOTDPath = "MOTD.txt";
 	m_extraLogging = FALSE;
+#endif
+
+#ifdef DEBUG_CRASHING
+	m_debugIgnoreAsserts = FALSE;
+#endif
+
+#ifdef DEBUG_STACKTRACE
+	m_debugIgnoreStackTrace = FALSE;
 #endif
 
 	m_playStats = -1;

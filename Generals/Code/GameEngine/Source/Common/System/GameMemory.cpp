@@ -64,7 +64,7 @@ DECLARE_PERF_TIMER(MemoryPoolDebugging)
 DECLARE_PERF_TIMER(MemoryPoolInitFilling)
 #endif
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -113,7 +113,7 @@ DECLARE_PERF_TIMER(MemoryPoolInitFilling)
 	};
 
 	// in debug mode (but not internal), save stacktraces too
-	#if !defined(MEMORYPOOL_CHECKPOINTING) && defined(MEMORYPOOL_STACKTRACE) && defined(_DEBUG)
+	#if !defined(MEMORYPOOL_CHECKPOINTING) && defined(MEMORYPOOL_STACKTRACE) && defined(RTS_DEBUG)
 		#define MEMORYPOOL_SINGLEBLOCK_GETS_STACKTRACE
 	#endif
 
@@ -3079,8 +3079,10 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 {
 	//USE_PERF_TIMER(MemoryPoolDebugging) skip end-of-run reporting stuff
 
+#ifdef ALLOW_DEBUG_UTILS
 	Int oldFlags = DebugGetFlags();
 	DebugSetFlags(oldFlags & ~DEBUG_FLAG_PREPEND_TIME);
+#endif
 
 #ifdef MEMORYPOOL_CHECKPOINTING
 	Bool doBlockReport = (flags & _REPORT_CP_ALLOCATED_DONTCARE) != 0 && (flags & _REPORT_CP_FREED_DONTCARE) != 0;
@@ -3236,7 +3238,9 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 	}
 #endif
 
+#ifdef ALLOW_DEBUG_UTILS
 	DebugSetFlags(oldFlags);
+#endif
 }
 #endif
 

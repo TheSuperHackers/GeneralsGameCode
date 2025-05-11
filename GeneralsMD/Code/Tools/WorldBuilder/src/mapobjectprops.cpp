@@ -39,7 +39,7 @@
 const char* NEUTRAL_TEAM_UI_STR = "(neutral)";
 const char* NEUTRAL_TEAM_INTERNAL_STR = "team";
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -1704,6 +1704,7 @@ void MapObjectProps::InitSound(void)
     for ( i = 0; i <= AP_CRITICAL; i++ )
     {
       Int index = priorityComboBox->InsertString( i,theAudioPriorityNames[i] );
+      (void)index;
       DEBUG_ASSERTCRASH( index == i, ("insert string returned %d, expected %d", index, i ) );
     }
   }

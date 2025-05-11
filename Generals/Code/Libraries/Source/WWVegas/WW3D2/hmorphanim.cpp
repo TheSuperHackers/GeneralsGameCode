@@ -200,6 +200,7 @@ HMorphAnimClass::HMorphAnimClass(void) :
 	PivotChannel(NULL)
 {
 	memset(Name,0,sizeof(Name));
+	memset(AnimName,0,sizeof(AnimName));	
 	memset(HierarchyName,0,sizeof(HierarchyName));
 }
 
@@ -230,7 +231,7 @@ void HMorphAnimClass::Free(void)
 }
 
 
-int Build_List_From_String
+static int Build_List_From_String
 (
 	const char *	buffer,
 	const char *	delimiter,

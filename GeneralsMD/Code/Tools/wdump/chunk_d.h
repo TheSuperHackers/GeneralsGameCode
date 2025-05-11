@@ -111,6 +111,9 @@ protected:
 	static void List_W3D_CHUNK_VERTEX_SHADE_INDICES(ChunkItem * Item,CListCtrl *List);
 	static void List_W3D_CHUNK_MATERIAL_INFO(ChunkItem * Item,CListCtrl *List);
 
+	static void List_W3D_CHUNK_VERTEX_TANGENTS(ChunkItem *Item, CListCtrl *List);
+	static void List_W3D_CHUNK_VERTEX_BINORMALS(ChunkItem *Item, CListCtrl *List);
+
 	static void List_W3D_CHUNK_SHADERS(ChunkItem * Item,CListCtrl *List);
 	static void List_W3D_CHUNK_PS2_SHADERS(ChunkItem * Item,CListCtrl *List);
 	static void List_W3D_CHUNK_FX_SHADERS(ChunkItem * Item,CListCtrl *List);

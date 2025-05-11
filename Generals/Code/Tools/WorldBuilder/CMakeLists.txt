@@ -1,4 +1,3 @@
-# Set source files
 set(WORLDBUILDER_SRC
     "src/addplayerdialog.cpp"
     "src/AutoEdgeOutTool.cpp"
@@ -12,6 +11,7 @@ set(WORLDBUILDER_SRC
     "src/BuildListTool.cpp"
     "src/CameraOptions.cpp"
     "src/CButtonShowColor.cpp"
+    "src/CButtonShowColor.h"
     "src/CellWidth.cpp"
     "src/CFixTeamOwnerDialog.cpp"
     "src/ContourOptions.cpp"
@@ -108,7 +108,6 @@ set(WORLDBUILDER_SRC
     "include/BuildList.h"
     "include/BuildListTool.h"
     "include/CameraOptions.h"
-    "src/CButtonShowColor.h"
     "include/CellWidth.h"
     "include/CFixTeamOwnerDialog.h"
     "include/ContourOptions.h"
@@ -195,11 +194,10 @@ set(WORLDBUILDER_SRC
     "include/WorldBuilderView.h"
 )
 
-# Targets to build.
 add_executable(g_worldbuilder WIN32)
 
 target_include_directories(g_worldbuilder PRIVATE
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
     include
     res
 )

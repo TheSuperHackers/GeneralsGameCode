@@ -61,8 +61,8 @@ class Object;
 class SoundManager;
 
 
-enum AudioAffect;
-enum AudioType;
+enum AudioAffect CPP_11(: Int);
+enum AudioType CPP_11(: Int);
 
 struct AudioEventInfo;
 struct AudioRequest;
@@ -136,7 +136,7 @@ class AudioManager : public SubsystemInterface
 	public:
 		AudioManager();
 		virtual ~AudioManager();
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		virtual void audioDebugDisplay(DebugDisplayInterface *dd, void *userData, FILE *fp = NULL ) = 0;
 #endif
 

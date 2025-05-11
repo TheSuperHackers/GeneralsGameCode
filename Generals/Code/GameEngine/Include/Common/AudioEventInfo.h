@@ -41,7 +41,7 @@
 struct FieldParse;
 
 // USEFUL DECLARATIONS ////////////////////////////////////////////////////////////////////////////
-enum AudioType
+enum AudioType CPP_11(: Int)
 {
 	AT_Music,
 	AT_Streaming,
@@ -49,7 +49,7 @@ enum AudioType
 };
 
 extern const char *theAudioPriorityNames[];
-enum AudioPriority
+enum AudioPriority CPP_11(: Int)
 {
 	AP_LOWEST,
 	AP_LOW,
@@ -59,7 +59,7 @@ enum AudioPriority
 };
 
 extern const char *theSoundTypeNames[];
-enum SoundType
+enum SoundType CPP_11(: Int)
 {
 	ST_UI										= 0x0001,
 	ST_WORLD								= 0x0002,
@@ -73,7 +73,7 @@ enum SoundType
 };
 
 extern const char *theAudioControlNames[];
-enum AudioControl
+enum AudioControl CPP_11(: Int)
 {
 	AC_LOOP									= 0x0001,
 	AC_RANDOM								= 0x0002,
@@ -81,6 +81,8 @@ enum AudioControl
 	AC_POSTDELAY						= 0x0008,
 	AC_INTERRUPT						= 0x0010,
 };
+
+class DynamicAudioEventInfo;
 
 struct AudioEventInfo : public MemoryPoolObject
 {
@@ -118,6 +120,16 @@ public:
 
 	AudioType m_soundType;	// This should be either Music, Streaming or SoundEffect
 	
+  
+  // DynamicAudioEventInfo interfacing functions
+  virtual Bool isLevelSpecific() const { return false; } ///< If true, this sound is only defined on the current level and can be deleted when that level ends
+  virtual DynamicAudioEventInfo * getDynamicAudioEventInfo() { return NULL; }  ///< If this object is REALLY a DynamicAudioEventInfo, return a pointer to the derived class
+  virtual const DynamicAudioEventInfo * getDynamicAudioEventInfo() const { return NULL; } ///< If this object is REALLY a DynamicAudioEventInfo, return a pointer to the derived class
+
+  /// Is this a permenant sound? That is, if I start this sound up, will it ever end
+  /// "on its own" or only if I explicitly kill it?
+  Bool isPermanentSound() const { return BitIsSet( m_control, AC_LOOP ) && (m_loopCount == 0 );  }
+  
 	static const FieldParse m_audioEventInfo[];		///< the parse table for INI definition
 	const FieldParse *getFieldParse( void ) const { return m_audioEventInfo; }
 };

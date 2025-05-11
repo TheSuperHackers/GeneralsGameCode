@@ -75,7 +75,7 @@
 #include "Common/GameLOD.h"
 #include "benchmark.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -1218,7 +1218,7 @@ Int ShroudTextureShader::set(Int stage)
 
 	if (stage == 0)
 	{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 		DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaSpriteShader);
 	else
@@ -2905,7 +2905,7 @@ IDirect3DTexture8 *W3DShaderManager::getRenderTexture(void)
 	return m_renderTexture;
 }
 
-enum GraphicsVenderID
+enum GraphicsVenderID CPP_11(: Int)
 {
 	DC_NVIDIA_VENDOR_ID	= 0x10DE,
 	DC_3DFX_VENDOR_ID	= 0x121A,

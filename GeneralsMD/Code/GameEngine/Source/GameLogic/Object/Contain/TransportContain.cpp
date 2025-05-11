@@ -46,7 +46,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Weapon.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -376,12 +376,7 @@ void TransportContain::onRemoving( Object *rider )
 	Int transportSlotCount = rider->getTransportSlotCount();
 	DEBUG_ASSERTCRASH(transportSlotCount > 0, ("Hmm, this object isnt transportable"));
 	m_extraSlotsInUse -= transportSlotCount - 1;
-
-#if (defined(_DEBUG) || defined(_INTERNAL))
-	UnsignedInt containCount = getContainCount();
-	UnsignedInt containMax = getContainMax();
-	DEBUG_ASSERTCRASH(m_extraSlotsInUse >= 0 && m_extraSlotsInUse + containCount <= containMax, ("Hmm, bad slot count"));
-#endif
+	DEBUG_ASSERTCRASH(m_extraSlotsInUse >= 0 && m_extraSlotsInUse + getContainCount() <= getContainMax(), ("Hmm, bad slot count"));
 
 	// when we are empty again, clear the model condition for loaded
 	if( getContainCount() == 0 )

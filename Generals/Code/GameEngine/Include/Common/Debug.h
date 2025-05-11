@@ -50,7 +50,7 @@
 
 class AsciiString;
 
-#if defined(_DEBUG) && defined(_INTERNAL)
+#if defined(RTS_DEBUG) && defined(RTS_INTERNAL)
 	#error "Only one at a time of these should ever be defined"
 #endif
 
@@ -63,12 +63,15 @@ class AsciiString;
 // have any debugging of any kind.
 //#define DISABLE_DEBUG_LOGGING
 
-// by default, turn on ALLOW_DEBUG_UTILS if _DEBUG is turned on.
-#if (defined(_DEBUG) || defined(_INTERNAL)) && !defined(ALLOW_DEBUG_UTILS) && !defined(DISABLE_ALLOW_DEBUG_UTILS)
+// by default, turn on ALLOW_DEBUG_UTILS if RTS_DEBUG is turned on.
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) && !defined(ALLOW_DEBUG_UTILS) && !defined(DISABLE_ALLOW_DEBUG_UTILS)
+	#define ALLOW_DEBUG_UTILS 1
+#elif defined(DEBUG_LOGGING) || defined(DEBUG_CRASHING) || defined(DEBUG_STACKTRACE) || defined(DEBUG_PROFILE)
+	// TheSuperHackers @tweak also turn on when any of the above options is already set.
 	#define ALLOW_DEBUG_UTILS 1
 #endif
 
-// these are predicated on ALLOW_DEBUG_UTILS, not _DEBUG, and allow you to selectively disable
+// these are predicated on ALLOW_DEBUG_UTILS, not RTS_DEBUG, and allow you to selectively disable
 // bits of the debug stuff for special builds.
 #if defined(ALLOW_DEBUG_UTILS) && !defined(DEBUG_LOGGING) && !defined(DISABLE_DEBUG_LOGGING)
 	#define DEBUG_LOGGING 1
@@ -76,10 +79,11 @@ class AsciiString;
 #if defined(ALLOW_DEBUG_UTILS) && !defined(DEBUG_CRASHING) && !defined(DISABLE_DEBUG_CRASHING)
 	#define DEBUG_CRASHING 1
 #endif
-
-// BGC - added the DEBUG_LOGGING term...doesn't make sense to do stack debugging without a debug log to print to.
-#if defined(ALLOW_DEBUG_UTILS) && !defined(DEBUG_STACKTRACE) && !defined(DISABLE_DEBUG_STACKTRACE) && defined(DEBUG_LOGGING)
+#if defined(ALLOW_DEBUG_UTILS) && !defined(DEBUG_STACKTRACE) && !defined(DISABLE_DEBUG_STACKTRACE)
 	#define DEBUG_STACKTRACE 1
+	#ifndef DEBUG_LOGGING
+		#define DEBUG_LOGGING 1 // TheSuperHackers @compile Stack trace requires logging.
+	#endif
 #endif
 #if defined(ALLOW_DEBUG_UTILS) && !defined(DEBUG_PROFILE) && !defined(DISABLE_DEBUG_PROFILE)
 	#define DEBUG_PROFILE 1
@@ -116,8 +120,8 @@ class AsciiString;
 		DEBUG_FLAG_LOG_TO_FILE = 0x01,	
 		DEBUG_FLAG_LOG_TO_CONSOLE = 0x02,
 		DEBUG_FLAG_PREPEND_TIME = 0x04,
-#ifdef _INTERNAL
-		// by default, _INTERNAL builds log to file, but not to console, in the interest
+#ifdef RTS_INTERNAL
+		// by default, RTS_INTERNAL builds log to file, but not to console, in the interest
 		// of speed. want console output? just change this line:
 		DEBUG_FLAGS_DEFAULT = (DEBUG_FLAG_LOG_TO_FILE)
 #else
@@ -144,6 +148,8 @@ class AsciiString;
 #ifdef DEBUG_LOGGING
 
 	DEBUG_EXTERN_C void DebugLog(const char *format, ...);
+	DEBUG_EXTERN_C const char* DebugGetLogFileName();
+	DEBUG_EXTERN_C const char* DebugGetLogFileNamePrev();
 
 	// This defines a bitmask of log types that we care about, to allow some flexability
 	// in what gets logged.  This should be extended to asserts, too, but the assert box

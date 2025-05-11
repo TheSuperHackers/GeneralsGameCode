@@ -63,10 +63,11 @@ class WeaponTemplate;
 class DamageInfo;
 class ParticleSystemTemplate;
 class CommandButton;
-enum CommandOption;
+class Waypoint;
+enum CommandOption CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
-enum UpdateSleepTime 
+enum UpdateSleepTime CPP_11(: Int) 
 { 
 	UPDATE_SLEEP_INVALID	= 0,
 	UPDATE_SLEEP_NONE			= 1,
@@ -83,7 +84,7 @@ enum UpdateSleepTime
 // in an efficient way while still maintaining order-dependency; you should
 // really never specify anything other than PHASE_NORMAL without very
 // careful deliberation. If you need to, talk it over with folks first. (srj)
-enum SleepyUpdatePhase
+enum SleepyUpdatePhase CPP_11(: Int)
 {
 	// reserve 2 bits for phase. this still leaves us 30 bits for frame counter,
 	// which, at 30fps, will still run for ~414 days without overflowing...
@@ -260,20 +261,6 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
-class SpecialPowerUpdateInterface
-{
-public:
-	virtual void initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, UnsignedInt commandOptions, Int locationCount = 0 ) = 0;
-	virtual Bool isSpecialAbility() const = 0;
-	virtual Bool isSpecialPower() const = 0;
-	virtual Bool isActive() const = 0;
-	virtual CommandOption getCommandOption() const = 0;
-	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const = 0;
-	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) = 0;
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const = 0;
-};
-
-//-------------------------------------------------------------------------------------------------
 class ProjectileUpdateInterface
 {
 public:
@@ -346,7 +333,7 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
-enum ExitDoorType
+enum ExitDoorType CPP_11(: Int)
 {
 	DOOR_1 = 0,
 	DOOR_2 = 1,

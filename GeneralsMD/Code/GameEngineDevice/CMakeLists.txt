@@ -50,7 +50,6 @@ set(GAMEENGINEDEVICE_SRC
     Include/W3DDevice/GameClient/W3DGameFont.h
     Include/W3DDevice/GameClient/W3DGameWindow.h
     Include/W3DDevice/GameClient/W3DGameWindowManager.h
-    Include/W3DDevice/GameClient/W3DGranny.h
     Include/W3DDevice/GameClient/W3DGUICallbacks.h
     Include/W3DDevice/GameClient/W3DInGameUI.h
     Include/W3DDevice/GameClient/W3DMirror.h
@@ -157,7 +156,6 @@ set(GAMEENGINEDEVICE_SRC
     Source/W3DDevice/GameClient/W3DDynamicLight.cpp
     Source/W3DDevice/GameClient/W3DFileSystem.cpp
     Source/W3DDevice/GameClient/W3DGameClient.cpp
-    Source/W3DDevice/GameClient/W3DGranny.cpp
     Source/W3DDevice/GameClient/W3DInGameUI.cpp
     Source/W3DDevice/GameClient/W3DMouse.cpp
     Source/W3DDevice/GameClient/W3DParticleSys.cpp
@@ -196,6 +194,20 @@ set(GAMEENGINEDEVICE_SRC
     Source/Win32Device/GameClient/Win32Mouse.cpp
 )
 
+# Add C++ 17 FileSystem implementation for non-VS6 builds
+if(NOT IS_VS6_BUILD)
+    list(APPEND GAMEENGINEDEVICE_SRC
+        Include/StdDevice/Common/StdBIGFile.h
+        Include/StdDevice/Common/StdBIGFileSystem.h
+        Include/StdDevice/Common/StdLocalFile.h
+        Include/StdDevice/Common/StdLocalFileSystem.h
+        Source/StdDevice/Common/StdBIGFile.cpp
+        Source/StdDevice/Common/StdBIGFileSystem.cpp
+        Source/StdDevice/Common/StdLocalFile.cpp
+        Source/StdDevice/Common/StdLocalFileSystem.cpp
+    )
+endif()
+
 add_library(z_gameenginedevice STATIC)
 
 target_sources(z_gameenginedevice PRIVATE ${GAMEENGINEDEVICE_SRC})
@@ -216,3 +228,21 @@ target_link_libraries(z_gameenginedevice PUBLIC
     milesstub
     z_gameengine
 )
+
+if(RTS_BUILD_OPTION_FFMPEG)
+    find_package(FFMPEG REQUIRED)
+
+    if(FFMPEG_FOUND)
+        target_sources(z_gameenginedevice PRIVATE
+            Include/VideoDevice/FFmpeg/FFmpegFile.h
+            Include/VideoDevice/FFmpeg/FFmpegVideoPlayer.h
+            Source/VideoDevice/FFmpeg/FFmpegFile.cpp
+            Source/VideoDevice/FFmpeg/FFmpegVideoPlayer.cpp
+        )
+
+        target_include_directories(z_gameenginedevice PRIVATE ${FFMPEG_INCLUDE_DIRS})
+        target_link_directories(z_gameenginedevice PRIVATE ${FFMPEG_LIBRARY_DIRS})
+        target_link_libraries(z_gameenginedevice PRIVATE ${FFMPEG_LIBRARIES})
+        target_compile_definitions(z_gameenginedevice PUBLIC RTS_HAS_FFMPEG)
+    endif()
+endif()

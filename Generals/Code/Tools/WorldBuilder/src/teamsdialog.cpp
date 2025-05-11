@@ -223,6 +223,7 @@ BOOL CTeamsDialog::OnInitDialog()
 void CTeamsDialog::OnOK() 
 {
 	Bool modified = m_sides.validateSides();
+	(void)modified;
 	DEBUG_ASSERTLOG(!modified,("had to clean up sides in CTeamsDialog::OnOK"));
 
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();

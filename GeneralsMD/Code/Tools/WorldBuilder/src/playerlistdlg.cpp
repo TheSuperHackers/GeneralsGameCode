@@ -324,6 +324,7 @@ void PlayerListDlg::OnNewplayer()
 			m_sides.addSide(&newPlayerDict);
 
 			Bool modified = m_sides.validateSides();
+			(void)modified;
 			DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::OnNewplayer"));
 			m_curPlayerIdx = m_sides.getNumSides()-1;
 			updateTheUI();
@@ -422,6 +423,7 @@ try_again:
 	} 
 
 	Bool modified = m_sides.validateSides();
+	(void)modified;
 	DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::OnRemoveplayer"));
 	updateTheUI();
 }
@@ -444,6 +446,7 @@ void PlayerListDlg::updateTheUI(void)
 
 	// make sure everything is canonical.
 	Bool modified = m_sides.validateSides();
+	(void)modified;
 	DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::updateTheUI! (caller should do this)"));
 
 	if (m_curPlayerIdx < 0) m_curPlayerIdx = 0;
@@ -743,6 +746,7 @@ void PlayerListDlg::OnSelchangeEnemieslist()
 void PlayerListDlg::OnOK() 
 {
 	Bool modified = m_sides.validateSides();
+	(void)modified;
 	DEBUG_ASSERTLOG(!modified,("had to clean up sides in CTeamsDialog::OnOK"));
 
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
@@ -859,6 +863,7 @@ static void addSide(SidesList *sides, AsciiString faction,
 		sides->addSide(&newPlayerDict);
 
 		Bool modified = sides->validateSides();
+		(void)modified;
 		DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::OnNewplayer"));
 	}
 }

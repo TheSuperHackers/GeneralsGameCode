@@ -37,8 +37,9 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
+
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
@@ -89,6 +90,24 @@ public:
 		--num;
 	}
 };
+#ifdef STATE_MACHINE_DEBUG
+//-----------------------------------------------------------------------------
+std::vector<StateID> * State::getTransitions( void ) 
+{ 
+	std::vector<StateID> *ids = new std::vector<StateID>;
+	ids->push_back(m_successStateID);
+	ids->push_back(m_failureStateID);
+	// check transition condition list
+	if (!m_transitions.empty())
+	{
+		for(std::vector<TransitionInfo>::const_iterator it = m_transitions.begin(); it != m_transitions.end(); ++it)
+		{
+			ids->push_back(it->toStateID);
+		}
+	}
+	return ids;
+}
+#endif
 
 //-----------------------------------------------------------------------------
 /**
@@ -637,6 +656,61 @@ StateReturnType StateMachine::internalSetState( StateID newStateID )
  */
 StateReturnType StateMachine::initDefaultState()
 {
+#ifdef DEBUG_LOGGING
+#ifdef STATE_MACHINE_DEBUG
+#define REALLY_VERBOSE_LOG(x) /* */
+	// Run through all the transitions and make sure there aren't any transitions to undefined states. jba. [8/18/2003]
+	std::map<StateID, State *>::iterator i;
+	REALLY_VERBOSE_LOG(("SM_BEGIN\n"));
+	for( i = m_stateMap.begin(); i != m_stateMap.end(); ++i ) {
+		State *state = (*i).second;
+		StateID id = state->getID();
+		// Check transitions. [8/18/2003]
+		std::vector<StateID> *ids = state->getTransitions();
+		// check transitions
+		REALLY_VERBOSE_LOG(("State %s(%d) : ", state->getName().str(), id));
+		if (!ids->empty())
+		{
+			for(std::vector<StateID>::const_iterator it = ids->begin(); it != ids->end(); ++it)
+			{
+				StateID curID = *it;
+				REALLY_VERBOSE_LOG(("%d('", curID));
+				if (curID == INVALID_STATE_ID) {
+					REALLY_VERBOSE_LOG(("INVALID_STATE_ID', "));
+					continue;
+				}
+				if (curID == EXIT_MACHINE_WITH_SUCCESS) {
+					REALLY_VERBOSE_LOG(("EXIT_MACHINE_WITH_SUCCESS', "));
+					continue;
+				}
+				if (curID == EXIT_MACHINE_WITH_FAILURE) {
+					REALLY_VERBOSE_LOG(("EXIT_MACHINE_WITH_FAILURE', "));
+					continue;
+				}
+				// locate the actual state associated with the given ID
+				std::map<StateID, State *>::iterator i;
+				i = m_stateMap.find( curID );
+
+				if (i == m_stateMap.end()) {
+					DEBUG_LOG(("\nState %s(%d) : ", state->getName().str(), id));
+					DEBUG_LOG(("Transition %d not found\n", curID));
+					DEBUG_LOG(("This MUST BE FIXED!!!jba\n"));
+					DEBUG_CRASH(("Invalid transition."));
+				} else {
+					State *st = (*i).second;
+					if (st->getName().isNotEmpty()) {
+						REALLY_VERBOSE_LOG(("%s') ", st->getName().str()));
+					}
+				}
+			}
+		}
+		REALLY_VERBOSE_LOG(("\n"));
+		delete ids;
+		ids = NULL;
+	}
+	REALLY_VERBOSE_LOG(("SM_END\n\n"));
+#endif	
+#endif
 	DEBUG_ASSERTCRASH(!m_locked, ("Machine is locked here, but probably should not be"));
 	if (m_defaultStateInited)
 	{
@@ -757,7 +831,7 @@ void StateMachine::xfer( Xfer *xfer )
 	}
 
 	Bool snapshotAllStates = false;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	//snapshotAllStates = true;
 #endif
 	xfer->xferBool(&snapshotAllStates);

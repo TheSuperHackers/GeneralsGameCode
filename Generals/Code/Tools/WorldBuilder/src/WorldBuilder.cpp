@@ -83,7 +83,7 @@
 #include "Win32Device/Common/Win32LocalFileSystem.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -282,11 +282,11 @@ BOOL CWorldBuilderApp::InitInstance()
 	// start the log
 	DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
 	DEBUG_LOG(("starting Worldbuilder.\n"));
-#ifdef _INTERNAL
-	DEBUG_LOG(("_INTERNAL defined.\n"));
+#ifdef RTS_INTERNAL
+	DEBUG_LOG(("RTS_INTERNAL defined.\n"));
 #endif
-#ifdef _DEBUG
-	DEBUG_LOG(("_DEBUG defined.\n"));
+#ifdef RTS_DEBUG
+	DEBUG_LOG(("RTS_DEBUG defined.\n"));
 #endif
 	initMemoryManager();
 #ifdef MEMORYPOOL_CHECKPOINTING
@@ -339,11 +339,11 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	initSubsystem(TheWritableGlobalData, new GlobalData(), "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
 	
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	ini.load( AsciiString( "Data\\INI\\GameDataDebug.ini" ), INI_LOAD_MULTIFILE, NULL );
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_CRASHING
 	TheWritableGlobalData->m_debugIgnoreAsserts = true;
 #endif
 
@@ -411,7 +411,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	DEBUG_ASSERTCRASH(!TheGlobalData->m_useHalfHeightMap, ("TheGlobalData->m_useHalfHeightMap : Don't use this setting in WB."));
 	TheWritableGlobalData->m_useHalfHeightMap = false;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	// WB never uses the shroud.
 	TheWritableGlobalData->m_shroudOn = FALSE;
 #endif

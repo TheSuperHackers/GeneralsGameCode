@@ -45,6 +45,7 @@
 #include "GameLogic/WeaponBonusConditionFlags.h"
 #include "GameLogic/WeaponSet.h"
 #include "GameLogic/WeaponSetFlags.h"
+#include "GameLogic/Module/StealthUpdate.h"
 
 //-----------------------------------------------------------------------------
 //           Forward References
@@ -102,18 +103,18 @@ class ObjectRepulsorHelper;
 class ObjectWeaponStatusHelper;
 class ObjectDefectionHelper;
 
-enum CommandSourceType;
-enum DamageType;
-enum HackerAttackMode;
-enum NameKeyType;
-enum SpecialPowerType;
-enum WeaponBonusConditionType;
-enum WeaponChoiceCriteria;
-enum WeaponSetConditionType;
-enum WeaponSetType;
-enum WeaponStatus;
-enum RadarPriorityType;
-enum CanAttackResult;
+enum CommandSourceType CPP_11(: Int);
+enum DamageType CPP_11(: Int);
+enum HackerAttackMode CPP_11(: Int);
+enum NameKeyType CPP_11(: Int);
+enum SpecialPowerType CPP_11(: Int);
+enum WeaponBonusConditionType CPP_11(: Int);
+enum WeaponChoiceCriteria CPP_11(: Int);
+enum WeaponSetConditionType CPP_11(: Int);
+enum WeaponSetType CPP_11(: Int);
+enum WeaponStatus CPP_11(: Int);
+enum RadarPriorityType CPP_11(: Int);
+enum CanAttackResult CPP_11(: Int);
 
 // For ObjectStatusTypes
 #include "Common/ObjectStatusTypes.h"
@@ -140,7 +141,7 @@ struct TTriggerInfo
 //----------------------------------------------------
 
 
-enum CrushSquishTestType
+enum CrushSquishTestType CPP_11(: Int)
 {
 	TEST_CRUSH_ONLY, 
 	TEST_SQUISH_ONLY, 
@@ -271,6 +272,7 @@ public:
 
 	BodyModuleInterface* getBodyModule() const { return m_body; }
 	ContainModuleInterface* getContain() const { return m_contain; }
+	StealthUpdate* getStealth() const { return m_stealth; }
 	SpawnBehaviorInterface* getSpawnBehaviorInterface() const;
 
 
@@ -304,9 +306,11 @@ public:
 
 	// Ditto for special powers -- Kris
 	SpecialPowerModuleInterface* findSpecialPowerModuleInterface( SpecialPowerType type ) const;
+	SpecialPowerModuleInterface* findAnyShortcutSpecialPowerModuleInterface() const;
 	SpecialAbilityUpdate* findSpecialAbilityUpdate( SpecialPowerType type ) const;
 	SpecialPowerCompletionDie* findSpecialPowerCompletionDie() const;
 	SpecialPowerUpdateInterface* findSpecialPowerWithOverridableDestinationActive( SpecialPowerType type = SPECIAL_INVALID ) const;
+	SpecialPowerUpdateInterface* findSpecialPowerWithOverridableDestination( SpecialPowerType type = SPECIAL_INVALID ) const;
 
 	inline ObjectStatusMaskType getStatusBits() const { return m_status; }
 	inline Bool testStatus( ObjectStatusTypes bit ) const { return m_status.test( bit ); }
@@ -423,9 +427,9 @@ public:
 	SpecialPowerModuleInterface *getSpecialPowerModule( const SpecialPowerTemplate *specialPowerTemplate ) const;
 	void doSpecialPower( const SpecialPowerTemplate *specialPowerTemplate, UnsignedInt commandOptions, Bool forced = false );	///< execute power
 	void doSpecialPowerAtObject( const SpecialPowerTemplate *specialPowerTemplate, Object *obj, UnsignedInt commandOptions, Bool forced = false );	///< execute power
-	void doSpecialPowerAtLocation( const SpecialPowerTemplate *specialPowerTemplate, const Coord3D *loc, UnsignedInt commandOptions, Bool forced = false );	///< execute power
-	void doSpecialPowerAtMultipleLocations( const SpecialPowerTemplate *specialPowerTemplate,
-																					const Coord3D *locations, Int locCount, UnsignedInt commandOptions, Bool forced = false );	///< execute power
+	void doSpecialPowerAtLocation( const SpecialPowerTemplate *specialPowerTemplate, const Coord3D *loc, Real angle, UnsignedInt commandOptions, Bool forced = false );	///< execute power
+	void doSpecialPowerUsingWaypoints( const SpecialPowerTemplate *specialPowerTemplate, const Waypoint *way, UnsignedInt commandOptions, Bool forced = false );	///< execute power
+
 	void doCommandButton( const CommandButton *commandButton, CommandSourceType cmdSource );
 	void doCommandButtonAtObject( const CommandButton *commandButton, Object *obj, CommandSourceType cmdSource );
 	void doCommandButtonAtPosition( const CommandButton *commandButton, const Coord3D *pos, CommandSourceType cmdSource );
@@ -691,6 +695,7 @@ private:
 	// cache these, for convenience
 	ContainModuleInterface*				m_contain;
 	BodyModuleInterface*					m_body;
+	StealthUpdate*						m_stealth;
 
 	AIUpdateInterface*						m_ai;	///< ai interface (if any), cached for handy access. (duplicate of entry in the module array!)
 	PhysicsBehavior*							m_physics;	///< physics interface (if any), cached for handy access. (duplicate of entry in the module array!)
@@ -749,7 +754,7 @@ private:
 	// --------- BYTE-SIZED THINGS GO HERE
 	Bool													m_isSelectable;
 	Bool													m_modulesReady;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool													m_hasDiedAlready;
 #endif
 	UnsignedByte									m_scriptStatus;					///< status as set by scripting, corresponds to ORed ObjectScriptStatusBits
@@ -760,12 +765,10 @@ private:
 
 };  // end class Object
 
-#ifdef DEBUG_LOGGING
 // describe an object as an AsciiString: e.g. "Object 102 (KillerBuggy) [GLARocketBuggy, owned by player 2 (GLAIntroPlayer)]"
-AsciiString DescribeObject(const Object *obj);
-#endif // DEBUG_LOGGING
+AsciiString DebugDescribeObject(const Object *obj);
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	#define DEBUG_OBJECT_ID_EXISTS
 #else
 	#undef DEBUG_OBJECT_ID_EXISTS

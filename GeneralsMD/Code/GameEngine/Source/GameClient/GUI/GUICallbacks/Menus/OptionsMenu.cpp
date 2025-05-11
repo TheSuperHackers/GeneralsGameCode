@@ -75,7 +75,7 @@
 // This is for non-RC builds only!!!
 #define VERBOSE_VERSION L"Release"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -219,7 +219,7 @@ extern void DoResolutionDialog();
 static Bool ignoreSelected = FALSE;
 WindowLayout *OptionsLayout = NULL;
 
-enum Detail
+enum Detail CPP_11(: Int)
 {
 	HIGHDETAIL = 0,
 	MEDIUMDETAIL,
@@ -1453,7 +1453,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 
 	Color color =  GameMakeColor(255,255,255,255);
 
-  enum AliasingMode
+  enum AliasingMode CPP_11(: Int)
   {
     OFF = 0,
     LOW,

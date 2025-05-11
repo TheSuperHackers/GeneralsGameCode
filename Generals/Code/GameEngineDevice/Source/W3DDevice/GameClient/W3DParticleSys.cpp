@@ -40,7 +40,6 @@
 //-------------------------------------------------------------------------------------------------
 
 
-#include "Common/QuickTrig.h"
 W3DParticleSystemManager::W3DParticleSystemManager()
 {
 	m_pointGroup = NULL;

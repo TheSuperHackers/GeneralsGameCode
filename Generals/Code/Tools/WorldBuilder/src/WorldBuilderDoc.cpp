@@ -849,7 +849,7 @@ void CWorldBuilderDoc::autoSave(void)
 /////////////////////////////////////////////////////////////////////////////
 // CWorldBuilderDoc diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void CWorldBuilderDoc::AssertValid() const
 {
 	CDocument::AssertValid();
@@ -859,7 +859,7 @@ void CWorldBuilderDoc::Dump(CDumpContext& dc) const
 {
 	CDocument::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CWorldBuilderDoc commands
@@ -1606,7 +1606,7 @@ void CWorldBuilderDoc::compressWaypointIds(void)
 	}
 	m_waypointTableNeedsUpdate = true;
 	updateWaypointTable();
-#ifdef _DEBUG
+#ifdef DEBUG_CRASHING
 	for (i=0; i<m_numWaypointLinks; i++) {
 		MapObject *pWay1 = getWaypointByID(m_waypointLinks[i].waypoint1);
 		MapObject *pWay2 = getWaypointByID(m_waypointLinks[i].waypoint2);

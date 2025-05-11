@@ -2,6 +2,9 @@
 // 
 // typelib filename: <could not determine filename>
 
+// NOTE: Import of oaidl.idl has been added to fix compilation error with widl:
+// BrowserEngine.idl:31:44: error: type 'IDispatch' not found in global namespace
+import "oaidl.idl";
 [
   uuid(6EE45698-21BA-420D-AD40-1B547699BEFB),
   version(1.0)

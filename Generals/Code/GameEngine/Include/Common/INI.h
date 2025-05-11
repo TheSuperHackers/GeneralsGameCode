@@ -42,12 +42,12 @@
 class INI;
 class Xfer;
 class File;
-enum ScienceType;
+enum ScienceType CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
 /** These control the behavior of loading the INI data into items */
 //-------------------------------------------------------------------------------------------------
-enum INILoadType
+enum INILoadType CPP_11(: Int)
 {	
 	INI_LOAD_INVALID,						///< invalid load type
 	INI_LOAD_OVERWRITE,					///< create new or load *over* existing data instance
@@ -399,7 +399,7 @@ protected:
 	const char *m_sepsQuote;									///< token to represent a quoted ascii string
 	const char *m_blockEndToken;							///< token to represent end of data block
 	Bool m_endOfFile;													///< TRUE when we've hit EOF
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_CRASHING
 	char m_curBlockStart[ INI_MAX_CHARS_PER_LINE ];	///< first line of cur block
 #endif
 };

@@ -50,6 +50,7 @@
 
 class DX8Wrapper;
 struct W3dMaterial3Struct;
+class StringClass;
 
 // Re-written shader class
 // Hector Yee 1/24/01
@@ -348,6 +349,8 @@ public:
 	static void				Invert_Backface_Culling(bool onoff);
 	static bool				Is_Backface_Culling_Inverted(void);
 
+	const StringClass& Get_Description(StringClass& str) const;
+
 	// These are a bunch of predefined shaders for common cases. None of them
 	// have fogging since "no fog" is the surrender default and usage of fog
 	// changes from app to app - if you want a fogging shader just grab one of
@@ -371,6 +374,10 @@ public:
 	// Texturing, no zbuffer reading/writing, no gradients, no blending, no
 	// fogging - mostly for opaque 2D objects.
 	static ShaderClass _PresetOpaque2DShader;
+
+	// Texturing, default zbuffer reading, no zbuffer writing, no gradients, no blending, no
+	// fogging - mostly for opaque sprites
+	static ShaderClass _PresetOpaqueSpriteShader;
 
 	// Texturing, no zbuffer reading/writing, no gradients, additive blending,
 	// no fogging - mostly for additive 2D objects.

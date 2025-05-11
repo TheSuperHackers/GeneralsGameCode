@@ -90,13 +90,14 @@ class TextureMapperClass : public W3DMPO, public RefCountClass
 		TextureMapperClass(unsigned int stage=0);
 		TextureMapperClass(const TextureMapperClass & src) : Stage(src.Stage) { }
 
-		virtual void Reset(void) { }
-		
-		virtual TextureMapperClass *		Clone(void) const=0;		
+
 		virtual int								Mapper_ID(void) const { return MAPPER_ID_UNKNOWN;}
 
-		virtual bool Is_Time_Variant(void) { return false; }
-		virtual void							Apply(int uv_array_index)=0;
+		virtual TextureMapperClass *		Clone(void) const = 0;
+
+		virtual bool							Is_Time_Variant(void) { return false; }
+		virtual void							Apply(int uv_array_index) = 0;
+		virtual void							Reset(void) { }
 		virtual bool							Needs_Normals(void) { return false; }
 		void										Set_Stage(int stage) { Stage = stage; }
 		int										Get_Stage(void) const { return Stage; }
@@ -130,7 +131,7 @@ protected:
 
 /*
 ** LinearOffsetTextureMapperClass
-** Modifies the UV coodinates by a linear offset
+** Modifies the UV coordinates by a linear offset
 */
 class LinearOffsetTextureMapperClass : public ScaleTextureMapperClass
 {
@@ -144,10 +145,10 @@ public:
 
 	virtual TextureMapperClass *Clone(void) const { return NEW_REF( LinearOffsetTextureMapperClass, (*this)); }
 
+	virtual bool Is_Time_Variant(void) { return true; }
+
 	virtual void Apply(int uv_array_index);
 	virtual void Reset(void) { Set_Current_UV_Offset(Vector2(0.0f, 0.0f)); }
-
-	virtual bool Is_Time_Variant(void) { return true; }
 
 	void Set_Current_UV_Offset(const Vector2 &cur)  {
 		CurrentUVOffset = cur;
@@ -184,14 +185,11 @@ public:
 
 	virtual TextureMapperClass *Clone(void) const { return NEW_REF( GridTextureMapperClass, (*this)); }
 
+	virtual bool Is_Time_Variant(void) { return true; }
 	virtual void Apply(int uv_array_index);
-
 	virtual void Reset(void);
 
-	virtual bool Is_Time_Variant(void) { return true; }
-
 	void Set_Frame(unsigned int frame) { CurrentFrame=frame; }
-
 	void Set_Frame_Per_Second(float fps);
 	
 protected:	
@@ -205,7 +203,7 @@ protected:
 	unsigned int	MSPerFrame;			// milliseconds per frame
 	float				OOGridWidth;		// 1.0f / size of the side of the grid)
 	unsigned int	GridWidthLog2;		// log base 2 of size of the side of the grid
-	unsigned int	LastFrame;				// Last frame to use
+	unsigned int	LastFrame;			// Last frame to use
 
 	// Temporal state
 	unsigned int	Remainder;			// used for timing calculations
@@ -229,11 +227,9 @@ public:
 
 	virtual TextureMapperClass *Clone(void) const { return NEW_REF( RotateTextureMapperClass, (*this)); }
 
-	virtual void Apply(int uv_array_index);
-	
-	virtual void Reset(void) { CurrentAngle = 0.0f; }
-
 	virtual bool Is_Time_Variant(void) { return true; }
+	virtual void Apply(int uv_array_index);
+	virtual void Reset(void) { CurrentAngle = 0.0f; }
 
 private:
 	float CurrentAngle;
@@ -258,11 +254,9 @@ public:
 
 	virtual TextureMapperClass *Clone(void) const { return NEW_REF( SineLinearOffsetTextureMapperClass, (*this)); }
 
-	virtual void Apply(int uv_array_index);	
-	
-	virtual void Reset(void) { CurrentAngle = 0.0f; }
-	
 	virtual bool Is_Time_Variant(void) { return true; }
+	virtual void Apply(int uv_array_index);
+	virtual void Reset(void) { CurrentAngle = 0.0f; }
 
 private:
 	Vector3 UAFP;								// U Coordinate Amplitude frequency phase
@@ -287,11 +281,9 @@ public:
 
 	virtual TextureMapperClass *Clone(void) const { return NEW_REF( StepLinearOffsetTextureMapperClass, (*this)); }
 
-	virtual void Apply(int uv_array_index);	
-	
-	virtual void Reset(void);
-
 	virtual bool Is_Time_Variant(void) { return true; }
+	virtual void Apply(int uv_array_index);
+	virtual void Reset(void);
 
 private:
 	Vector2 Step;								// Size of step
@@ -316,11 +308,9 @@ public:
 
 	virtual TextureMapperClass *Clone(void) const { return NEW_REF( ZigZagLinearOffsetTextureMapperClass, (*this)); }
 
-	virtual void Apply(int uv_array_index);	
-	
-	virtual void Reset(void);
-	
 	virtual bool Is_Time_Variant(void) { return true; }
+	virtual void Apply(int uv_array_index);
+	virtual void Reset(void);
 
 private:
 	Vector2 Speed;								// Speed of zigzag
@@ -445,7 +435,6 @@ public:
 	virtual int	Mapper_ID(void) const { return MAPPER_ID_SCREEN;}
 	virtual TextureMapperClass* Clone() const { return NEW_REF( ScreenMapperClass, (*this)); }
 	virtual void Apply(int uv_array_index);
-
 };
 
 /**

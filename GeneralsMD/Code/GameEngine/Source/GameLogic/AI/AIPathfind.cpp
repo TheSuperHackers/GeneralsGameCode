@@ -52,6 +52,7 @@
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.	
 
+#include "Utility/CppMacros.h"
 
 #define no_INTENSE_DEBUG
 
@@ -70,7 +71,7 @@
 
 //-------------------------------------------------------------------------------------------------
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -357,7 +358,7 @@ void Path::xfer( Xfer *xfer )
 	xfer->xferBool(&m_blockedByAlly);
 
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	if (TheGlobalData->m_debugAI == AI_DEBUG_PATHS)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -760,7 +761,7 @@ void Path::computePointOnPath(
 	ClosestPointOnPathInfo& out
 )
 {
-	CRCDEBUG_LOG(("Path::computePointOnPath() fzor %s\n", DescribeObject(obj).str()));
+	CRCDEBUG_LOG(("Path::computePointOnPath() for %s\n", DebugDescribeObject(obj).str()));
 
 	out.layer = LAYER_GROUND;
 	out.posOnPath.zero();
@@ -2641,7 +2642,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 //		//	DEBUG_ASSERTCRASH(map[i][j].getZone() != 0, ("Cleared the zone."));
 //		}
 //	}
-  register UnsignedInt maxZone = m_maxZone;
+  REGISTER UnsignedInt maxZone = m_maxZone;
 	j=globalBounds.lo.y;
   while( j <= globalBounds.hi.y )	
   {
@@ -2754,7 +2755,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
   //FLATTEN HIERARCHICAL ZONES
   {
 	  i = 1;
-    register Int zone;  
+    REGISTER Int zone;  
     while ( i < maxZone ) 
     {		// Flatten hierarchical zones.
 		  zone = m_hierarchicalZones[i];
@@ -2797,7 +2798,7 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
 
 #endif
 #endif
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	if (TheGlobalData->m_debugAI == AI_DEBUG_ZONES) 
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -2942,7 +2943,7 @@ void PathfindZoneManager::updateZonesForModify(PathfindCell **map, PathfindLayer
 	//DEBUG_LOG(("Time to update zones %f, cells %d\n", timeToUpdate, (globalBounds.hi.x-globalBounds.lo.x)*(globalBounds.hi.y-globalBounds.lo.y)));
 #endif
 #endif
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	if (TheGlobalData->m_debugAI==AI_DEBUG_ZONES) 
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -3266,7 +3267,7 @@ Bool PathfindLayer::isUnused(void)
 /**
  * Draws debug cell info.
  */
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 void PathfindLayer::doDebugIcons(void) {
 	if (isUnused()) return;
 	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -4031,6 +4032,8 @@ void Pathfinder::classifyFence( Object *obj, Bool insert )
 	IRegion2D cellBounds;
 	cellBounds.lo.x = REAL_TO_INT_FLOOR((pos->x + 0.5f)/PATHFIND_CELL_SIZE_F);
 	cellBounds.lo.y = REAL_TO_INT_FLOOR((pos->y + 0.5f)/PATHFIND_CELL_SIZE_F);
+	cellBounds.hi.x = REAL_TO_INT_CEIL((pos->x + 0.5f)/PATHFIND_CELL_SIZE_F);
+	cellBounds.hi.y = REAL_TO_INT_CEIL((pos->y + 0.5f)/PATHFIND_CELL_SIZE_F);
 	Bool didAnything = false;
 
  	for (Int iy = 0; iy < numStepsY; ++iy, tl_x += ydx, tl_y += ydy)
@@ -4694,7 +4697,7 @@ void Pathfinder::debugShowSearch(  Bool pathFound  )
 	if (!TheGlobalData->m_debugAI) {
 		return;
 	}
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 
 	// show all explored cells for debugging
@@ -4820,7 +4823,7 @@ void Pathfinder::cleanOpenAndClosedLists(void) {
 		m_closedList = NULL;
 	}		 
 	m_cumulativeCellsAllocated += count;
-//#ifdef _DEBUG
+//#ifdef RTS_DEBUG
 #if 0
 	// Check for dangling cells.
 	for( int j=0; j<=m_extent.hi.y; j++ )
@@ -5647,7 +5650,7 @@ Bool Pathfinder::adjustToPossibleDestination(Object *obj, const LocomotorSet& lo
  */
 Bool Pathfinder::queueForPath(ObjectID id)
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_LOGGING
 	{
 		Object *tmpObj = TheGameLogic->findObjectByID(id);
 		if (tmpObj) {
@@ -5686,7 +5689,7 @@ Bool Pathfinder::queueForPath(ObjectID id)
 	return true;
 }
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 void Pathfinder::doDebugIcons(void) {
 	const Int FRAMES_TO_SHOW_OBSTACLES = 100;
 	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -5885,7 +5888,7 @@ void Pathfinder::processPathfindQueue(void)
 		return;
 	}
 #ifdef DEBUG_QPF
-#if defined _DEBUG || defined _INTERNAL
+#ifdef DEBUG_LOGGING
 	Int startTimeMS = ::GetTickCount();
 	__int64 startTime64;
 	double timeToUpdate=0.0f;
@@ -5944,7 +5947,7 @@ void Pathfinder::processPathfindQueue(void)
 	}
 	if (pathsFound>0) {
 #ifdef DEBUG_QPF
-#if defined _DEBUG || defined _INTERNAL
+#ifdef DEBUG_LOGGING
 		QueryPerformanceCounter((LARGE_INTEGER *)&endTime64);
 		timeToUpdate = ((double)(endTime64-startTime64) / (double)(freq64));
 		if (timeToUpdate>0.01f) 
@@ -5956,7 +5959,7 @@ void Pathfinder::processPathfindQueue(void)
 #endif
 #endif
 	}
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	doDebugIcons();
 #endif
 
@@ -6467,7 +6470,7 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 	DEBUG_LOG(("internal find path...\n"));
 #endif
 
-#if defined _DEBUG || defined _INTERNAL
+#ifdef DEBUG_LOGGING
 	Int startTimeMS = ::GetTickCount();
 #endif
 	Bool centerInCell = true;
@@ -6657,7 +6660,7 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 	}
 
 	// failure - goal cannot be reached
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 #ifdef INTENSE_DEBUG
 	DEBUG_LOG(("internal find path FAILURE...\n"));
 #endif
@@ -6694,12 +6697,6 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 	}	
 
 	if (obj) {
-		Bool valid;
-		valid = validMovementPosition( isCrusher, obj->getLayer(), locomotorSet, to ) ;
-
-		DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
-		DEBUG_LOG(("Pathfind failed from (%f,%f) to (%f,%f), OV %d\n", from->x, from->y, to->x, to->y, valid));
-		DEBUG_LOG(("Unit '%s', time %f, cells %d\n", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f,cellCount));
 #ifdef DUMP_PERF_STATS
 		TheGameLogic->incrementOverallFailedPathfinds();
 #endif
@@ -6711,6 +6708,19 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 #endif
 	}
 #endif
+
+#ifdef DEBUG_LOGGING
+	if (obj)
+	{
+		Bool valid;
+		valid = validMovementPosition( isCrusher, obj->getLayer(), locomotorSet, to ) ;
+
+		DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
+		DEBUG_LOG(("Pathfind failed from (%f,%f) to (%f,%f), OV %d\n", from->x, from->y, to->x, to->y, valid));
+		DEBUG_LOG(("Unit '%s', time %f, cells %d\n", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f,cellCount));
+	}
+#endif
+
 	m_isTunneling = false;
 	goalCell->releaseInfo();
 	cleanOpenAndClosedLists();
@@ -6798,7 +6808,7 @@ Path *Pathfinder::buildGroundPath(Bool isCrusher, const Coord3D *fromPos, Pathfi
 	path->optimizeGroundPath( isCrusher, pathDiameter );
 
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	if (TheGlobalData->m_debugAI==AI_DEBUG_GROUND_PATHS)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -6862,7 +6872,7 @@ Path *Pathfinder::buildHierachicalPath( const Coord3D *fromPos, PathfindCell *go
 		}
 	}
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	if (TheGlobalData->m_debugAI==AI_DEBUG_PATHS)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -7006,7 +7016,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 													 const Coord3D *rawTo, Int pathDiameter, Bool crusher)
 {
 	//CRCDEBUG_LOG(("Pathfinder::findGroundPath()\n"));
-#if defined _DEBUG || defined _INTERNAL
+#ifdef DEBUG_LOGGING
 	Int startTimeMS = ::GetTickCount();
 #endif
 #ifdef INTENSE_DEBUG
@@ -7138,7 +7148,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	DEBUG_LOG((" time %d msec %d cells", (::GetTickCount()-startTimeMS), cellCount));
 	DEBUG_LOG((" SUCCESS\n"));
 #endif	
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 			Bool show = TheGlobalData->m_debugAI==AI_DEBUG_GROUND_PATHS;
 			if (show)
 				debugShowSearch(true);
@@ -7183,7 +7193,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
 		Bool neighborFlags[8] = {false, false, false, false, false, false, false};
 
-		UnsignedInt newCostSoFar;
+		UnsignedInt newCostSoFar = 0;
 
 		for( int i=0; i<numNeighbors; i++ )
 		{
@@ -7294,7 +7304,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 #ifdef INTENSE_DEBUG
 	DEBUG_LOG((" FAILURE\n"));
 #endif	
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	if (TheGlobalData->m_debugAI)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -7326,11 +7336,12 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 
 		}
 	}	
+#endif
 
 	DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
 	DEBUG_LOG(("FindGroundPath failed from (%f,%f) to (%f,%f)\n", from->x, from->y, to->x, to->y));
 	DEBUG_LOG(("time %f\n", (::GetTickCount()-startTimeMS)/1000.0f));
-#endif
+
 #ifdef DUMP_PERF_STATS
 	TheGameLogic->incrementOverallFailedPathfinds();
 #endif
@@ -7460,7 +7471,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 													 const Coord3D *rawTo, Bool crusher, Bool closestOK)
 {
 	//CRCDEBUG_LOG(("Pathfinder::findGroundPath()\n"));
-#if defined _DEBUG || defined _INTERNAL
+#ifdef DEBUG_LOGGING
 	Int startTimeMS = ::GetTickCount();
 #endif
 	
@@ -7687,7 +7698,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 			m_isTunneling = false;
 			// construct and return path
 			Path *path =  buildHierachicalPath( from, goalCell );
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 			Bool show = TheGlobalData->m_debugAI==AI_DEBUG_PATHS;
 			show |= (TheGlobalData->m_debugAI==AI_DEBUG_GROUND_PATHS);
 			if (show)	{
@@ -7722,7 +7733,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 			return path;
 		}	
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 #if 0 
 		Bool show = TheGlobalData->m_debugAI==AI_DEBUG_PATHS;
 		show |= (TheGlobalData->m_debugAI==AI_DEBUG_GROUND_PATHS);
@@ -7889,7 +7900,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 		m_isTunneling = false;
 		// construct and return path
 		Path *path =  buildHierachicalPath( from, closestCell );
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 #if 0
 		if (TheGlobalData->m_debugAI)
 		{
@@ -7923,7 +7934,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 	}
 
 	// failure - goal cannot be reached
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	if (TheGlobalData->m_debugAI)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -7955,11 +7966,12 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 
 		}
 	}	
+#endif
 
 	DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
 	DEBUG_LOG(("FindHierarchicalPath failed from (%f,%f) to (%f,%f)\n", from->x, from->y, to->x, to->y));
 	DEBUG_LOG(("time %f\n", (::GetTickCount()-startTimeMS)/1000.0f));
-#endif
+
 #ifdef DUMP_PERF_STATS
 	TheGameLogic->incrementOverallFailedPathfinds();
 #endif
@@ -8391,7 +8403,7 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 		}
 	}
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	if (closestCell) {
 		debugShowSearch(true);
 		*dest = closestPos;
@@ -8663,7 +8675,7 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 																	Coord3D *rawTo, Bool blocked, Real pathCostMultiplier, Bool moveAllies)
 {
 	//CRCDEBUG_LOG(("Pathfinder::findClosestPath()\n"));
-#if defined _DEBUG || defined _INTERNAL
+#ifdef DEBUG_LOGGING
 	Int startTimeMS = ::GetTickCount();
 #endif
 	Bool isHuman = true;
@@ -8938,13 +8950,15 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 	}
 
 	// failure - goal cannot be reached
-#if defined _DEBUG || defined _INTERNAL
+#ifdef DEBUG_LOGGING
 	Bool valid;
 	valid = validMovementPosition( isCrusher, obj->getLayer(), locomotorSet, to ) ;
 
 	DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
 	DEBUG_LOG(("Pathfind(findClosestPath) failed from (%f,%f) to (%f,%f), original valid %d --", from->x, from->y, to->x, to->y, valid));
 	DEBUG_LOG(("Unit '%s', time %f\n", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
+#endif
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	if (TheGlobalData->m_debugAI) 
 		debugShowSearch(false);
 #endif
@@ -8992,7 +9006,7 @@ Path *Pathfinder::buildActualPath( const Object *obj, LocomotorSurfaceTypeMask a
 	// cleanup the path by checking line of sight
 	path->optimize(obj, acceptableSurfaces, blocked);
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	if (TheGlobalData->m_debugAI==AI_DEBUG_PATHS) 
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -10198,7 +10212,7 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 											Path *pathToAvoid, Object *otherObj2, Path *pathToAvoid2)
 {
 	if (m_isMapReady == false) return NULL; // Should always be ok.
-#if defined _DEBUG || defined _INTERNAL
+#ifdef DEBUG_LOGGING
 	Int startTimeMS = ::GetTickCount();
 #endif
 	Bool isHuman = true;
@@ -10352,12 +10366,14 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 
 	}
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	debugShowSearch(true);
+#endif
+
 	DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
 	DEBUG_LOG(("getMoveAwayFromPath pathfind failed  -- "));
 	DEBUG_LOG(("Unit '%s', time %f\n", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
-#endif
+
 	m_isTunneling = false;
 	cleanOpenAndClosedLists();
 	return NULL;
@@ -10371,7 +10387,7 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 		Path *originalPath, Bool blocked )
 {
 	//CRCDEBUG_LOG(("Pathfinder::patchPath()\n"));
-#if defined _DEBUG || defined _INTERNAL
+#ifdef DEBUG_LOGGING
 	Int startTimeMS = ::GetTickCount();
 #endif
 	if (originalPath==NULL) return NULL;
@@ -10426,7 +10442,7 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 	// until goal is found.
 	//
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 	if (TheGlobalData->m_debugAI) 
 	{
@@ -10449,7 +10465,7 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 		info.radius = radius;
 		info.considerTransient = blocked;
 		info.acceptableSurfaces = locomotorSet.getValidSurfaces();
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 		if (TheGlobalData->m_debugAI) {
 			RGBColor color;
 			color.setFromInt(0);
@@ -10533,10 +10549,11 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 		}
 	}
 
-#if defined _DEBUG || defined _INTERNAL
 	DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
 	DEBUG_LOG(("patchPath Pathfind failed  -- "));
 	DEBUG_LOG(("Unit '%s', time %f\n", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
+
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	if (TheGlobalData->m_debugAI) {
 		debugShowSearch(true);
 	}
@@ -10586,7 +10603,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 	}
 	*/
 	if (m_isMapReady == false) return NULL; // Should always be ok.
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 //	Int startTimeMS = ::GetTickCount();
 #endif
 
@@ -10776,7 +10793,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 	#endif
 				if (show)
 					debugShowSearch(true);
-	#if defined _DEBUG || defined _INTERNAL
+	#if defined RTS_DEBUG || defined RTS_INTERNAL
 				//DEBUG_LOG(("Attack path took %d cells, %f sec\n", cellCount, (::GetTickCount()-startTimeMS)/1000.0f));
 	#endif
 				// put parent cell onto closed list - its evaluation is finished
@@ -10890,7 +10907,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 		cleanOpenAndClosedLists();
 		return path;
 	}
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	DEBUG_LOG(("%d (%d cells)", TheGameLogic->getFrame(), cellCount));
 	DEBUG_LOG(("Attack Pathfind failed from (%f,%f) to (%f,%f) -- \n", from->x, from->y, victim->getPosition()->x, victim->getPosition()->y));
 	DEBUG_LOG(("Unit '%s', attacking '%s' time %f\n", obj->getTemplate()->getName().str(),  victim->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
@@ -10913,7 +10930,7 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 {
 	//CRCDEBUG_LOG(("Pathfinder::findSafePath()\n"));
 	if (m_isMapReady == false) return NULL; // Should always be ok.
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 //	Int startTimeMS = ::GetTickCount();
 #endif
 
@@ -11020,7 +11037,7 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 #endif
 			if (show)
 				debugShowSearch(true);
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 			//DEBUG_LOG(("Attack path took %d cells, %f sec\n", cellCount, (::GetTickCount()-startTimeMS)/1000.0f));
 #endif
 			// construct and return path
@@ -11051,7 +11068,7 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 	TheScriptEngine->AppendDebugMessage("Overflowed Safe path", false);
 #endif
 #if 0
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	DEBUG_LOG(("%d (%d cells)", TheGameLogic->getFrame(), cellCount));
 	DEBUG_LOG(("Attack Pathfind failed from (%f,%f) to (%f,%f) -- \n", from->x, from->y, victim->getPosition()->x, victim->getPosition()->y));
 	DEBUG_LOG(("Unit '%s', attacking '%s' time %f\n", obj->getTemplate()->getName().str(),  victim->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));

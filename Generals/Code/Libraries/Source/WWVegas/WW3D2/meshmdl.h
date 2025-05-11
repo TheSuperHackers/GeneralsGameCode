@@ -82,6 +82,7 @@ class LightEnvironmentClass;
 class DX8MeshRendererClass;
 class DX8PolygonRendererAttachClass;
 class DX8SkinFVFCategoryContainer;
+class GapFillerClass;
 
 struct VertexFormatXYZNDUV2;
 
@@ -115,9 +116,13 @@ struct VertexFormatXYZNDUV2;
 ** UV, DIG, DCG, SCG
 ** Texture, Shader, Material,
 ** TextureArray, MaterialArray, ShaderArray
-** 
 */
 
+
+/**
+** GapFillerClass
+** This class is used to generate gap-filling polygons for "N-Patched" meshes
+*/
 class GapFillerClass : public W3DMPO
 {
 	W3DMPO_GLUE(GapFillerClass)
@@ -149,9 +154,6 @@ public:
 class MeshModelClass : public MeshGeometryClass
 {
 	W3DMPO_GLUE(MeshModelClass)
-	// Jani: Adding this here temporarily... must fine better place
-//	TriIndex*					GapFillerPolygonArray;
-//	unsigned						GapFillerPolygonCount;
 	GapFillerClass* GapFiller;
 
 public:	
@@ -175,7 +177,6 @@ public:
 	const Vector2 *			Get_UV_Array(int pass = 0, int stage = 0)									{ return CurMatDesc->Get_UV_Array(pass,stage); }
 	int							Get_UV_Array_Count(void)														{ return CurMatDesc->Get_UV_Array_Count(); }
 	const Vector2 *			Get_UV_Array_By_Index(int index)												{ return CurMatDesc->Get_UV_Array_By_Index(index, false); }
-//	TriIndex *					Get_UVIndex_Array (int pass = 0, bool create = true)					{ return CurMatDesc->Get_UVIndex_Array(pass,create); }
 
 	unsigned *					Get_DCG_Array(int pass)															{ return CurMatDesc->Get_DCG_Array(pass); }
 	unsigned *					Get_DIG_Array(int pass)															{ return CurMatDesc->Get_DIG_Array(pass); }
@@ -255,6 +256,8 @@ public:
 
 	void							Init_For_NPatch_Rendering();
 	const GapFillerClass*	Get_Gap_Filler() const { return GapFiller; }
+
+	bool							Has_Polygon_Renderers(void) { return !PolygonRendererList.Is_Empty(); }
 
 protected:
 

@@ -98,7 +98,6 @@
 
 #define MESH_SINGLE_MATERIAL_HACK		0		// (gth) forces all multi-material meshes to use their first material only. (NOT RECOMMENDED, TESTING ONLY!)
 #define MESH_FORCE_STATIC_SORT_HACK	0		// (gth) forces all sorting meshes to use static sort level 1 instead.
-
 /**
 ** MeshLoadContextClass
 ** This class is just used as a temporary scratchpad while a mesh is being
@@ -162,11 +161,11 @@ private:
 
 	struct LegacyMaterialClass
 	{
-		LegacyMaterialClass(void) : Name(NULL),VertexMaterialIdx(0),ShaderIdx(0),TextureIdx(0)	{ }
-		~LegacyMaterialClass(void)	{ if (Name) free(Name); }		
-		void		Set_Name(const char * name) { if (Name) free(Name); Name = NULL; if (name) Name = strdup(name); }
+		LegacyMaterialClass(void) : VertexMaterialIdx(0),ShaderIdx(0),TextureIdx(0)	{ }
+		~LegacyMaterialClass(void)	{ }		
+		void		Set_Name(const char * name) { Name=name; }
 		
-		char *	Name;
+		StringClass Name;
 		int		VertexMaterialIdx;
 		int		ShaderIdx;
 		int		TextureIdx;
@@ -671,15 +670,6 @@ WW3DErrorType MeshModelClass::read_v3_materials(ChunkLoadClass & cload,MeshLoadC
 			vmat->Init_From_Material3(mat);
 			vmat->Set_Name(name);
 			shader.Init_From_Material3(mat);
-
-#if 0 // TODO... ummmm...
-			if (MeshClass::Legacy_Meshes_Fogged) {
-				shader.Set_Fog_Func( ShaderClass::FOG_ENABLE );
-			} else {
-				shader.Set_Fog_Func( ShaderClass::FOG_DISABLE );
-			}
-#endif
-
 
 			/*
 			** If this shader does alpha blending, the mesh must be sorted.
@@ -1226,7 +1216,6 @@ WW3DErrorType MeshModelClass::read_shader_ids(ChunkLoadClass & cload,MeshLoadCon
 		}
 
 #endif //0
-
 	return WW3D_ERROR_OK;
 }
 

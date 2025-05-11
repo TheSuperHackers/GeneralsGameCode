@@ -420,10 +420,12 @@ void SortingRendererClass::Insert_Triangles(
 
 void Release_Refs(SortingNodeStruct* state)
 {
+	int i;
 	REF_PTR_RELEASE(state->sorting_state.vertex_buffer);
 	REF_PTR_RELEASE(state->sorting_state.index_buffer);
 	REF_PTR_RELEASE(state->sorting_state.material);
-	for (unsigned i=0;i<MAX_TEXTURE_STAGES;++i) {
+	for (i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i) 
+	{
 		REF_PTR_RELEASE(state->sorting_state.Textures[i]);
 	}
 }
@@ -431,7 +433,7 @@ void Release_Refs(SortingNodeStruct* state)
 static unsigned overlapping_node_count;
 static unsigned overlapping_polygon_count;
 static unsigned overlapping_vertex_count;
-const unsigned MAX_OVERLAPPING_NODES=4096;
+static const unsigned MAX_OVERLAPPING_NODES=4096;
 static SortingNodeStruct* overlapping_nodes[MAX_OVERLAPPING_NODES];
 
 // ----------------------------------------------------------------------------
@@ -451,11 +453,10 @@ void SortingRendererClass::Insert_To_Sorting_Pool(SortingNodeStruct* state)
 }
 
 // ----------------------------------------------------------------------------
+//static unsigned prevLight = 0xffffffff;
 
 static void Apply_Render_State(RenderStateStruct& render_state)
 {
-/*	state->sorting_state.shader.Apply();
-*/
 	DX8Wrapper::Set_Shader(render_state.shader);
 
 /*	if (render_state.material) render_state.material->Apply();
@@ -469,7 +470,8 @@ static void Apply_Render_State(RenderStateStruct& render_state)
 	if (render_state.Textures[6]) render_state.Textures[6]->Apply();
 	if (render_state.Textures[7]) render_state.Textures[7]->Apply();
 */
-	for (unsigned i=0;i<MAX_TEXTURE_STAGES;++i) {
+	for (int i=0;i<DX8Wrapper::Get_Current_Caps()->Get_Max_Textures_Per_Pass();++i) 
+	{
 		DX8Wrapper::Set_Texture(i,render_state.Textures[i]);
 	}
 
@@ -479,6 +481,7 @@ static void Apply_Render_State(RenderStateStruct& render_state)
 
 	if (!render_state.material->Get_Lighting())
 		return;	//no point changing lights if they are ignored.
+  //prevLight = render_state.lightsHash;
 
 	if (render_state.LightEnable[0]) {
 		DX8Wrapper::Set_DX8_Light(0,&render_state.Lights[0]);
@@ -505,11 +508,6 @@ static void Apply_Render_State(RenderStateStruct& render_state)
 		DX8Wrapper::Set_DX8_Light(0,NULL);
 	}
 
-//	Matrix4x4 mtx;
-//	mtx=render_state.world.Transpose();
-//	DX8Wrapper::Set_Transform(D3DTS_WORLD,mtx);
-//	mtx=render_state.view.Transpose();
-//	DX8Wrapper::Set_Transform(D3DTS_VIEW,mtx);
 
 }
 
@@ -802,7 +800,8 @@ void SortingRendererClass::Insert_VolumeParticle(
 	SortingNodeStruct* state=Get_Sorting_Struct();
 	DX8Wrapper::Get_Render_State(state->sorting_state);
 
- 	WWASSERT(((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
+	WWASSERT(
+		((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
 		(state->sorting_state.vertex_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING)));
 
 	state->bounding_sphere=bounding_sphere;
@@ -865,10 +864,3 @@ void SortingRendererClass::Insert_VolumeParticle(
 //	}
 //#endif
 }
-
-
-
-
-
-
-

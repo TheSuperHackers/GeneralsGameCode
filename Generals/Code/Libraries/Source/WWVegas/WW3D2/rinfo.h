@@ -24,12 +24,15 @@
  *                                                                                             *
  *                     $Archive:: /Commando/Code/ww3d2/rinfo.h                                $*
  *                                                                                             *
- *                       Author:: Greg Hjelstrom                                               *
+ *                   Org Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                     $Modtime:: 8/24/01 3:33p                                               $*
+ *                       Author : Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
- *                    $Revision:: 13                                                          $*
+ *                    $Revision:: 16                                                          $*
  *                                                                                             *
+ * 06/27/02 KM Render to shadow buffer texture support														*
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -57,6 +60,7 @@ class MaterialPassClass;
 class LightEnvironmentClass;
 class VisRasterizerClass;
 class BWRenderClass;
+class TexProjectClass;
 
 const unsigned MAX_ADDITIONAL_MATERIAL_PASSES=32;
 const unsigned MAX_OVERRIDE_FLAG_LEVEL=32;
@@ -104,9 +108,12 @@ public:
 
 	LightEnvironmentClass*		light_environment;
 
+	TexProjectClass*				Texture_Projector;
+
 protected:
 	MaterialPassClass*			AdditionalMaterialPassArray[MAX_ADDITIONAL_MATERIAL_PASSES];
 	unsigned							AdditionalMaterialPassCount;
+	unsigned							RejectedMaterialPasses;
 	RINFO_OVERRIDE_FLAGS			OverrideFlag[MAX_OVERRIDE_FLAG_LEVEL];
 	unsigned							OverrideFlagLevel;
 

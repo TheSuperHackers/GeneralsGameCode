@@ -88,7 +88,7 @@ enum
 #include "WW3D2/meshmdl.h"
 #include "d3dx8tex.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -146,7 +146,7 @@ int W3DTreeBuffer::W3DTreeTextureClass::update(W3DTreeBuffer *buffer)
 
 	Int tilePixelExtent = TILE_PIXEL_EXTENT;		 
 //	Int numRows = surface_desc.Height/(tilePixelExtent+TILE_OFFSET);
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	//DASSERT_MSG(tilesPerRow*numRows >= htMap->m_numBitmapTiles,Debug::Format ("Too many tiles.")); 
 	//DEBUG_ASSERTCRASH((Int)surface_desc.Width >= tilePixelExtent*tilesPerRow, ("Bitmap too small."));
 #endif

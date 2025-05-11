@@ -49,7 +49,7 @@
 #include "Lib/BaseType.h"
 #include "Common/GameMemory.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -556,6 +556,7 @@ static PoolSizeRec sizes[] =
 	{ "AttackPriorityInfo", 32, 32 },
 	{ "SequentialScript", 32, 32 },
 	{ "Win32LocalFile", 1024, 256 },
+	{ "StdLocalFile", 1024, 256 },
 	{ "RAMFile", 32, 32 },
 	{ "BattlePlanBonuses", 32, 32 },
 	{ "KindOfPercentProductionChange", 32, 32 },

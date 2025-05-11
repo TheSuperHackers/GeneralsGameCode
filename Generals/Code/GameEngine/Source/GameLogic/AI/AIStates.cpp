@@ -66,7 +66,7 @@
 #include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
 #include "GameLogic/Module/StealthUpdate.h"
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -852,6 +852,14 @@ AsciiString AIStateMachine::getCurrentStateName(void) const
  */
 StateReturnType AIStateMachine::updateStateMachine()
 {
+	//-extraLogging
+	#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+		Bool idle = getOwner()->getAI()->isIdle();
+		if( !idle && TheGlobalData->m_extraLogging )
+			DEBUG_LOG( ("%d - %s::update() start - %s", TheGameLogic->getFrame(), getCurrentStateName().str(), getOwner()->getTemplate()->getName().str() ) );
+	#endif
+	//end -extraLogging 
+
 	if (m_temporaryState)
 	{
 		// execute this state
@@ -862,13 +870,49 @@ StateReturnType AIStateMachine::updateStateMachine()
 				status = STATE_SUCCESS;
 			}
 		}
-		if (status==STATE_CONTINUE)	{
+		if (status==STATE_CONTINUE)	
+		{
+			//-extraLogging
+			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+				if( !idle && TheGlobalData->m_extraLogging )
+					DEBUG_LOG( (" - RETURN EARLY STATE_CONTINUE\n") );
+			#endif
+			//end -extraLogging 
+
 			return status;
 		}
 		m_temporaryState->onExit(EXIT_NORMAL);
 		m_temporaryState = NULL;
 	}
-	return StateMachine::updateStateMachine();
+	StateReturnType retType = StateMachine::updateStateMachine();
+
+	//-extraLogging 
+	#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+		AsciiString result;
+		if( TheGlobalData->m_extraLogging )
+		{
+			switch( retType )
+			{
+				case STATE_CONTINUE:
+					result.format( "CONTINUE" );
+					break;
+				case STATE_SUCCESS:
+					result.format( "SUCCESS" );
+					break;
+				case STATE_FAILURE:
+					result.format( "FAILURE" );
+					break;
+				default:
+					result.format( "UNKNOWN %d", retType );
+					break;
+			}	
+			if( !idle )
+				DEBUG_LOG( (" - RETURNING %s\n", result.str() ) );
+		}
+	#endif
+	//end -extraLogging 
+
+	return retType;
 }
 
 //----------------------------------------------------------------------------------------------------------

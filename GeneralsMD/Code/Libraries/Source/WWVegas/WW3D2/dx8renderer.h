@@ -147,7 +147,7 @@ protected:
 	
 	MatPassTaskClass *									visible_matpass_head;
 	MatPassTaskClass *									visible_matpass_tail;
-	
+
 	IndexBufferClass *									index_buffer;
 	int														used_indices;
 	unsigned													FVF;
@@ -296,7 +296,7 @@ public:
 private:
 
 	void Reset();
- 	void clearVisibleSkinList();
+	void clearVisibleSkinList();
 
 	unsigned int								VisibleVertexCount;
 	MeshClass *									VisibleSkinHead;

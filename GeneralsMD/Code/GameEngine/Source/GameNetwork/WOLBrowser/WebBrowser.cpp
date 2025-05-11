@@ -46,7 +46,7 @@
 #include "GameClient/GameWindow.h"
 #include "GameClient/Display.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -237,7 +237,7 @@ WebBrowserURL * WebBrowser::makeNewURL(AsciiString tag)
 *
 ******************************************************************************/
 
-STDMETHODIMP WebBrowser::QueryInterface(REFIID iid, void** ppv) NOEXCEPT_17
+STDMETHODIMP WebBrowser::QueryInterface(REFIID iid, void** ppv) IUNKNOWN_NOEXCEPT
 {
 	*ppv = NULL;
 
@@ -270,7 +270,7 @@ STDMETHODIMP WebBrowser::QueryInterface(REFIID iid, void** ppv) NOEXCEPT_17
 *
 ******************************************************************************/
 
-ULONG STDMETHODCALLTYPE WebBrowser::AddRef(void) NOEXCEPT_17
+ULONG STDMETHODCALLTYPE WebBrowser::AddRef(void) IUNKNOWN_NOEXCEPT
 {
 	return ++mRefCount;
 }
@@ -290,7 +290,7 @@ ULONG STDMETHODCALLTYPE WebBrowser::AddRef(void) NOEXCEPT_17
 *
 ******************************************************************************/
 
-ULONG STDMETHODCALLTYPE WebBrowser::Release(void) NOEXCEPT_17
+ULONG STDMETHODCALLTYPE WebBrowser::Release(void) IUNKNOWN_NOEXCEPT
 {
 	DEBUG_ASSERTCRASH(mRefCount > 0, ("Negative reference count"));
 	--mRefCount;

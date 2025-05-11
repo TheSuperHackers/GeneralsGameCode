@@ -137,7 +137,7 @@ void CWorldBuilderView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 /////////////////////////////////////////////////////////////////////////////
 // CWorldBuilderView diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void CWorldBuilderView::AssertValid() const
 {
 	WbView::AssertValid();
@@ -148,7 +148,7 @@ void CWorldBuilderView::Dump(CDumpContext& dc) const
 	WbView::Dump(dc);
 }
 
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 /** Set the cell size, and invalidate. */
 void CWorldBuilderView::setCellSize(Int cellSize)

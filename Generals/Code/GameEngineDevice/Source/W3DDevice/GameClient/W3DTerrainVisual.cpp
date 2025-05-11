@@ -48,7 +48,6 @@
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DDebugIcons.h"
 #include "W3DDevice/GameClient/W3DTerrainTracks.h"
-#include "W3DDevice/GameClient/W3DGranny.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "WW3D2/light.h"
@@ -85,14 +84,6 @@ W3DTerrainVisual::~W3DTerrainVisual()
 		TheTerrainTracksRenderObjClassSystem=NULL;
 	}
 
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	if (TheGrannyRenderObjSystem)
-	{
-		delete TheGrannyRenderObjSystem;
-		TheGrannyRenderObjSystem=NULL;
-	}
-#endif
-
 	if (TheW3DShadowManager)
 	{	
 		delete TheW3DShadowManager;
@@ -121,11 +112,6 @@ void W3DTerrainVisual::init( void )
 	// initialize track drawing system
 	TheTerrainTracksRenderObjClassSystem = NEW TerrainTracksRenderObjClassSystem;
 	TheTerrainTracksRenderObjClassSystem->init(W3DDisplay::m_3DScene);
-
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	// initialize Granny model drawing system
-	TheGrannyRenderObjSystem = NEW GrannyRenderObjSystem;
-#endif
 
 	// initialize object shadow drawing system
 	TheW3DShadowManager = NEW W3DShadowManager;
@@ -320,7 +306,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 	// add our terrain render object to the scene
 	W3DDisplay::m_3DScene->Add_Render_Object( m_terrainRenderObject );
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	// Icon drawing utility object for pathfinding.
 	W3DDebugIcons *icons = NEW W3DDebugIcons;
  	W3DDisplay::m_3DScene->Add_Render_Object( icons );

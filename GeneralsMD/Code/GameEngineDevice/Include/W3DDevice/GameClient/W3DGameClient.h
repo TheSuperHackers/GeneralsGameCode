@@ -49,6 +49,9 @@
 #include "W3DDevice/GameClient/W3DGameFont.h"
 #include "W3DDevice/GameClient/W3DDisplayStringManager.h"
 #include "VideoDevice/Bink/BinkVideoPlayer.h"
+#ifdef RTS_HAS_FFMPEG
+#include "VideoDevice/FFmpeg/FFmpegVideoPlayer.h"
+#endif
 #include "Win32Device/GameClient/Win32DIKeyboard.h"
 #include "Win32Device/GameClient/Win32DIMouse.h"
 #include "Win32Device/GameClient/Win32Mouse.h"
@@ -111,8 +114,11 @@ protected:
 
   /// Manager for display strings
 	virtual DisplayStringManager *createDisplayStringManager( void ) { return NEW W3DDisplayStringManager; }
-
+#ifdef RTS_HAS_FFMPEG
+	virtual VideoPlayerInterface *createVideoPlayer( void ) { return NEW FFmpegVideoPlayer; }
+#else
 	virtual VideoPlayerInterface *createVideoPlayer( void ) { return NEW BinkVideoPlayer; }
+#endif
 	/// factory for creating the TerrainVisual
 	virtual TerrainVisual *createTerrainVisual( void ) { return NEW W3DTerrainVisual; }
 

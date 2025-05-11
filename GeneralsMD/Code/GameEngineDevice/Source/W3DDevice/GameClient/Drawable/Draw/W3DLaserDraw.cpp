@@ -52,7 +52,7 @@
 #include "WW3D2/assetmgr.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -237,6 +237,8 @@ W3DLaserDraw::~W3DLaserDraw( void )
 	}  // end for i
 
 	delete [] m_line3D;
+	// TheSuperHackers @fix Mauller 11/03/2025 Free reference counted material
+	REF_PTR_RELEASE(m_texture);
 }
 
 //-------------------------------------------------------------------------------------------------

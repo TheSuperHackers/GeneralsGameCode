@@ -79,7 +79,7 @@
 #include "GameClient/Line2D.h"
 #include "GameClient/ControlBar.h"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 //#include "GameClient/InGameUI.h"	// for debugHints
 #include "Common/PlayerList.h"
 #endif
@@ -92,7 +92,7 @@
 	UnsignedInt s_gcoPerfFrame = 0xffffffff;
 #endif 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -1408,7 +1408,7 @@ UnsignedInt PartitionCell::getThreatValue( Int playerIndex )
 void PartitionCell::addThreatValue( Int playerIndex, UnsignedInt threatValue )
 {
 	if (playerIndex >= 0 && playerIndex < MAX_PLAYER_COUNT) {
-#ifdef _DEBUG
+#ifdef DEBUG_CRASHING
 		UnsignedInt oldThreatVal = m_threatValue[playerIndex];
 		DEBUG_ASSERTCRASH(oldThreatVal <= oldThreatVal + threatValue, ("adding new threat value overflowed allotted storage."));
 #endif
@@ -1420,7 +1420,7 @@ void PartitionCell::addThreatValue( Int playerIndex, UnsignedInt threatValue )
 void PartitionCell::removeThreatValue( Int playerIndex, UnsignedInt threatValue )
 {
 	if (playerIndex >= 0 && playerIndex < MAX_PLAYER_COUNT) {
-#ifdef _DEBUG
+#ifdef DEBUG_CRASHING
 		UnsignedInt oldThreatVal = m_threatValue[playerIndex];
 		DEBUG_ASSERTCRASH(oldThreatVal >= oldThreatVal - threatValue, ("removing new threat value underflowed allotted storage."));
 #endif
@@ -1441,7 +1441,7 @@ UnsignedInt PartitionCell::getCashValue( Int playerIndex )
 void PartitionCell::addCashValue( Int playerIndex, UnsignedInt cashValue )
 {
 	if (playerIndex >= 0 && playerIndex < MAX_PLAYER_COUNT) {
-#ifdef _DEBUG
+#ifdef DEBUG_CRASHING
 		UnsignedInt oldCashVal = m_cashValue[playerIndex];
 		DEBUG_ASSERTCRASH(oldCashVal <= oldCashVal + cashValue, ("adding new cash value overflowed allotted storage."));
 #endif
@@ -1453,7 +1453,7 @@ void PartitionCell::addCashValue( Int playerIndex, UnsignedInt cashValue )
 void PartitionCell::removeCashValue( Int playerIndex, UnsignedInt cashValue )
 {
 	if (playerIndex >= 0 && playerIndex < MAX_PLAYER_COUNT) {
-#ifdef _DEBUG
+#ifdef DEBUG_CRASHING
 		UnsignedInt oldCashVal = m_cashValue[playerIndex];
 		DEBUG_ASSERTCRASH(oldCashVal >= oldCashVal - cashValue, ("removing new cash value underflowed allotted storage."));
 #endif
@@ -1488,7 +1488,7 @@ void PartitionCell::getCellCenterPos(Real& x, Real& y)
 }
 
 //-----------------------------------------------------------------------------
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void PartitionCell::validateCoiList()
 {
 	CellAndObjectIntersection *nextCoi = 0, *prevCoi = 0;
@@ -2134,7 +2134,7 @@ void PartitionData::invalidateShroudedStatusForAllPlayers()
 	}
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 static AsciiString theObjName;
 #endif
 
@@ -2144,8 +2144,9 @@ Int PartitionData::calcMaxCoiForShape(GeometryType geom, Real majorRadius, Real 
 	Int result;
 	if (isSmall)
 	{
-		#if defined(_DEBUG) || defined(_INTERNAL)
+		#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		Int chk = calcMaxCoiForShape(geom, majorRadius, minorRadius, false);
+		(void)chk;
 		DEBUG_ASSERTCRASH(chk <= 4, ("Small objects should be <= 4 cells, but I calced %s as %d\n",theObjName.str(),chk));
 		#endif
 		result = 4;
@@ -2185,7 +2186,7 @@ Int PartitionData::calcMaxCoiForObject()
 	Real majorRadius = obj->getGeometryInfo().getMajorRadius();
 	Real minorRadius = obj->getGeometryInfo().getMinorRadius();
 	Bool isSmall = obj->getGeometryInfo().getIsSmall();
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 theObjName = obj->getTemplate()->getName();
 #endif
 	return calcMaxCoiForShape(geom, majorRadius, minorRadius, isSmall);
@@ -2687,7 +2688,7 @@ void PartitionManager::shutdown()
 	m_updatedSinceLastReset = false;
 	ThePartitionManager->removeAllDirtyModules();
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	// the above *should* remove all the touched cells (via unRegisterObject), but let's check:
 	DEBUG_ASSERTCRASH( m_moduleList == NULL, ("hmm, modules left over"));
 	PartitionData *mod, *nextMod;
@@ -2771,7 +2772,7 @@ void PartitionManager::update()
 		processPendingUndoShroudRevealQueue();
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_debugThreatMap) 
 	{
 		if (TheGameLogic->getFrame() % TheGlobalData->m_debugThreatMapTileDuration)
@@ -2831,7 +2832,7 @@ void PartitionManager::update()
 			}			
 		}
 	}
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 }  // end update
 
 //------------------------------------------------------------------------------
@@ -3160,7 +3161,7 @@ void PartitionManager::calcRadiusVec()
 		}
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Int total = 0;
 	for (Int i = 0; i <= m_maxGcoRadius; ++i)
 	{
@@ -3202,7 +3203,7 @@ Object *PartitionManager::getClosestObjects(
 	GetPrecisionTimer(&startTime64);
 #endif
 	
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	static Int theEntrancyCount = 0;
 	DEBUG_ASSERTCRASH(theEntrancyCount == 0, ("sorry, this routine is not reentrant"));
 	++theEntrancyCount;
@@ -3405,7 +3406,7 @@ Object *PartitionManager::getClosestObjects(
 		*closestDistArg = (Real)sqrtf(closestDistSqr);
 	}
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	--theEntrancyCount;
 #endif
 #ifdef DUMP_PERF_STATS
@@ -5350,7 +5351,7 @@ Bool PartitionFilterPossibleToAttack::allow(Object *objOther)
 //		return false;
 
 	// we should have already filtered out isAbleToAttack!
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	// disable this assert for INTERNAL builds (srj)
 	DEBUG_ASSERTCRASH(m_obj && m_obj->isAbleToAttack(), ("if the object is unable to attack at all, you should filter that out ahead of time!"));
 #endif
@@ -5457,8 +5458,7 @@ Bool PartitionFilterStealthedAndUndetected::allow( Object *objOther )
 		else
 		{
 			//Exception case -- bomb trucks can't be considered stealthed units when they are disguised as the enemy.
-			static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-			StealthUpdate *update = (StealthUpdate*)objOther->findUpdateModule( key_StealthUpdate );
+			StealthUpdate *update = objOther->getStealth();
 			if( update && update->isDisguised() )
 			{
 				Player *ourPlayer = m_obj->getControllingPlayer();

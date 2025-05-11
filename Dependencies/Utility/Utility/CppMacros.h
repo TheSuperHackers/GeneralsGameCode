@@ -24,3 +24,26 @@
 #else
 #define NOEXCEPT_17
 #endif
+
+// noexcept for methods of IUNKNOWN interface
+#if defined(_MSC_VER)
+#define IUNKNOWN_NOEXCEPT NOEXCEPT_17
+#else
+#define IUNKNOWN_NOEXCEPT
+#endif
+
+#if __cplusplus >= 201103L
+    #define CPP_11(code) code
+#else
+    #define CPP_11(code)
+#endif
+
+#if __cplusplus >= 201703L
+#define REGISTER
+#else
+#define REGISTER register
+#endif
+
+#if __cplusplus < 201103L
+#define static_assert(expr, msg)
+#endif

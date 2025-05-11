@@ -44,7 +44,6 @@
 #include "WW3D2/texproject.h"
 #include "WW3D2/dx8renderer.h"
 #include "Lib/BaseType.h"
-#include "W3DDevice/GameClient/W3DGranny.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "d3dx8math.h"
 #include "Common/GlobalData.h"
@@ -59,7 +58,7 @@
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -549,7 +548,7 @@ TextureClass *ground=NULL;
 #define TILE_HEIGHT	10.1f
 #define TILE_DIFFUSE 0x00b4b0a5
 
-enum BlendDirection
+enum BlendDirection CPP_11(: Int)
 {	B_A,	//visible on all sides
 	B_R,	//visible on right
 	B_L,	//visible on left
@@ -2100,7 +2099,7 @@ void W3DProjectedShadowManager::removeAllShadows(void)
 	}  // end for
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)	
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
 void W3DProjectedShadow::getRenderCost(RenderCost & rc) const
 {
 	if (TheGlobalData->m_useShadowDecals && m_isEnabled && !m_isInvisibleEnabled)
