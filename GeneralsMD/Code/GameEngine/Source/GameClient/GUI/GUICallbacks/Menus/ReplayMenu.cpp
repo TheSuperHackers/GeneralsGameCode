@@ -166,7 +166,8 @@ void WriteOutReplayList()
 
 		// Some versions, e.g. "Zero Hour 1.04 The Ultimate Collection" have a different ini crc and are
 		// actually incompatible. Mark them as incompatible
-		compatibleVersion = compatibleVersion && header.iniCRC == 0xfeaae3f3;
+		compatibleVersion = compatibleVersion &&
+				(header.iniCRC == 0xfeaae3f3 || header.iniCRC == 0xb859d2f9);
 
 		// Check whether random seed appears multiple times. This can be used to check only one replay
 		// per game in case multiple replays by different players of the same game are in the list.
@@ -179,7 +180,7 @@ void WriteOutReplayList()
 		// If you want to check replays with certain properties, you can change this expression
 		// or change the csv file manually.
 		bool check = md && !header.desyncGame && header.endTime != 0 &&
-			compatibleVersion && numHumans > 1 && numAIs > 0 && uniqueSeed;
+			compatibleVersion && uniqueSeed;// && numHumans > 1 && numAIs > 0;
 		fprintf(fp, "%s", i == -1 ? "check" : check ? "1" : "0");
 
 		if (i == -1)
@@ -190,7 +191,7 @@ void WriteOutReplayList()
 		fprintf(fp, ",%s", i == -1 ? "map_exists" : md ? "1" : "0");
 		fprintf(fp, ",%s", i == -1 ? "mismatch"   : header.desyncGame ? "1" : "0");
 		fprintf(fp, ",%s", i == -1 ? "crash"      : header.endTime == 0 ? "1" : "0");
-		//fprintf(fp, i == -1 ? ",frames" : ",%d",    header.frameDuration);
+		fprintf(fp, i == -1 ? ",frames" : ",%d",    header.frameDuration);
 
 		UnsignedInt gameTime = header.frameDuration / LOGICFRAMES_PER_SECOND;
 		fprintf(fp, i == -1 ? ",time" : ",%02d:%02d", gameTime/60, gameTime%60);
