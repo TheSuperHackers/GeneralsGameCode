@@ -44,7 +44,9 @@ if(RTS_BUILD_GENERALS)
     add_feature_info(GeneralsDocs RTS_BUILD_GENERALS_DOCS "Build Generals Documentation")
 endif()
 
-if(NOT IS_VC6_BUILD)
+if(IS_VC6_BUILD)
+    target_compile_definitions(core_config INTERFACE defined(VC6_BUILD))
+else()
     # Because we set CMAKE_CXX_STANDARD_REQUIRED and CMAKE_CXX_EXTENSIONS in the compilers.cmake this should be enforced.
     target_compile_features(core_config INTERFACE cxx_std_20)
 endif()

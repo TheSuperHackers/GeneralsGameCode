@@ -11,7 +11,6 @@ endif()
 # Set variable for VS6 to handle special cases.
 if (DEFINED MSVC_VERSION AND MSVC_VERSION LESS 1300)
     set(IS_VC6_BUILD TRUE)
-    add_compile_definitions(VC6_BUILD=1)
 else()
     set(IS_VC6_BUILD FALSE)
 endif()
