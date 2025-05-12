@@ -138,7 +138,7 @@ public:
 		filenameWide.translate(filename);
 
 		UnicodeString command;
-		command.format(L"\"%s\" -win -xres 800 -yres 600 -simReplay \"%s\"", exePath, filenameWide.str());
+		command.format(L"\"%s\" -win -xres 800 -yres 600 -ignoreAsserts -headless -simReplay \"%s\"", exePath, filenameWide.str());
 		//wprintf(L"Starting Exe for Replay \"%s\": %s\n", filenameWide.str(), command.str());
 		//fflush(stdout);
 
