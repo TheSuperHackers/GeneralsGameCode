@@ -5330,7 +5330,7 @@ StateReturnType AIAttackFireWeaponState::update()
 			continue;
 		}
 
-		//DEBUG_LOG((">> Slot %d is synced. Prepare to fire weapon.\n", slot));
+		// DEBUG_LOG((">> Slot %d is synced. Prepare to fire weapon.\n", slot));
 
 		// Yes, we are firing this weapon!
 		Weapon* weapon = obj->getWeaponInWeaponSlot((WeaponSlotType)slot);
