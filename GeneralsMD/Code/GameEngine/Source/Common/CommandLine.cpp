@@ -113,13 +113,6 @@ static void ConvertShortMapPathToLongMapPath(AsciiString &mapName)
 
 static void ConvertShortReplayPathToLongReplayPath(AsciiString &filename)
 {
-	if (filename.find('\\') != NULL || filename.find('/') != NULL)
-	{
-		// Absolute paths not yet supported
-		DEBUG_CRASH(("Invalid replay name %s", filename.str()));
-		exit(1);
-	}
-
 	if (!filename.endsWithNoCase(RecorderClass::getReplayExtention()))
 	{
 		DEBUG_CRASH(("Invalid replay name %s", filename.str()));

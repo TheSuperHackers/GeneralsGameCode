@@ -279,6 +279,21 @@ void NextToken(AsciiString *string, AsciiString *token, char separator)
 
 void ReadReplayListFromCsv(AsciiString filename, std::vector<AsciiString>* replayList)
 {
+	// Get path of csv file relative to replay folder.
+	// Later we will search for replays in that path.
+	AsciiString relativeFolder = filename;
+	{
+		int len = relativeFolder.getLength();
+		while (len)
+		{
+			char c = relativeFolder.getCharAt(len-1);
+			if (c == '/' || c == '\\')
+				break;
+			relativeFolder.removeLastChar();
+			len--;
+		}
+	}
+
 	AsciiString fname;
 	fname.format("%s%s", TheRecorder->getReplayDir().str(), filename.str());
 	FILE *fp = fopen(fname.str(), "rt");
@@ -309,7 +324,11 @@ void ReadReplayListFromCsv(AsciiString filename, std::vector<AsciiString>* repla
 			token.removeLastChar();
 		}
 		if (!token.isEmpty())
-			replayList->push_back(token);
+		{
+			AsciiString path;
+			path.format("%s%s", relativeFolder.str(), token.str());
+			replayList->push_back(path);
+		}
 
 		// Ignore remaining columns
 	}
