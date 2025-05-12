@@ -125,6 +125,7 @@ public:
 	
 	virtual void skip( void ) = 0;
 	
+	void cleanup(GameWindow* win) { if (m_win != win) return; m_win = NULL; }
 	Bool isFinished( void ) { return m_isFinished;	}
 	Int getFrameLength( void ){ return m_frameLength;	}
 protected:
@@ -609,7 +610,9 @@ public:
 	void reverse( Int totalFrames );
 	Int  getTotalFrames( void );
 	void skip( void );
-		void draw( void );
+	void draw( void );
+
+	void cleanup( GameWindow* win );
 
 // INI parsed vars
 	AsciiString m_winName;

@@ -180,6 +180,10 @@ Bool TransitionWindow::init( void )
 	m_transition = getTransitionForStyle( m_style );
 	m_transition->init(m_win);
 
+	// TheSuperHackers @fix Mauller 15/05/2025 Add TransitionWindow pointer to a vector in the GameWindow so pointers to the GameWindow can be cleared when the GameWindow is destroyed
+	if(m_win)
+		m_win->addTransitionWindow(this);
+
 	return TRUE;
 }
 
@@ -216,6 +220,15 @@ void TransitionWindow::draw( void )
 {
 	if(m_transition)
 		m_transition->draw();
+}
+
+void TransitionWindow::cleanup(GameWindow* win)
+{
+	if (m_win != win)
+		return;
+
+	m_transition->cleanup(win);
+	m_win = NULL;
 }
 
 Int TransitionWindow::getTotalFrames( void )
