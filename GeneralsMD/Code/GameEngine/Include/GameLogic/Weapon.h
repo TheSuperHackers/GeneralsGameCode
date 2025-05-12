@@ -205,6 +205,7 @@ enum WeaponBonusConditionType CPP_11(: Int)
 	WEAPONBONUSCONDITION_FRENZY_ONE,
 	WEAPONBONUSCONDITION_FRENZY_TWO,
 	WEAPONBONUSCONDITION_FRENZY_THREE,
+	WEAPONBONUSCONDITION_CONTAINED,
 
 	WEAPONBONUSCONDITION_COUNT
 };
@@ -243,10 +244,15 @@ static const char *TheWeaponBonusNames[] =
 	"FRENZY_ONE",
 	"FRENZY_TWO",
 	"FRENZY_THREE",
+	"CONTAINED",
 
 	NULL
 };
 #endif
+
+
+typedef std::vector<WeaponBonusConditionType> WeaponBonusConditionTypeVec;
+
 
 // For WeaponBonusConditionFlags
 // part of detangling

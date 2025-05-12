@@ -30,6 +30,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 #define DEFINE_DEATH_NAMES
+#define DEFINE_WEAPONBONUSCONDITION_NAMES
 
 #include "Common/INI.h"
 #include "Common/INIException.h"
@@ -708,6 +709,40 @@ void INI::parseAsciiStringVectorAppend( INI* ini, void * /*instance*/, void *sto
 			return;
 		}
 		asv->push_back(INI::scanScience( token ));
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+/* static */void INI::parseWeaponBonusVector( INI *ini, void * /*instance*/, void *store, const void *userData )
+{
+	WeaponBonusConditionTypeVec* asv = (WeaponBonusConditionTypeVec*)store;
+	asv->clear();
+	for (const char *token = ini->getNextTokenOrNull(); token != NULL; token = ini->getNextTokenOrNull())
+	{
+		if (stricmp(token, "None") == 0)
+		{
+			asv->clear();
+			return;
+		}
+		asv->push_back((WeaponBonusConditionType)INI::scanIndexList(token, TheWeaponBonusNames));
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+/* static */void INI::parseWeaponBonusVectorKeepDefault(INI* ini, void* /*instance*/, void* store, const void* userData)
+{
+	WeaponBonusConditionTypeVec* asv = (WeaponBonusConditionTypeVec*)store;
+	// asv->clear();
+	for (const char* token = ini->getNextTokenOrNull(); token != NULL; token = ini->getNextTokenOrNull())
+	{
+		if (stricmp(token, "None") == 0)
+		{
+			asv->clear();
+			return;
+		}
+		asv->push_back((WeaponBonusConditionType)INI::scanIndexList(token, TheWeaponBonusNames));
 	}
 }
 

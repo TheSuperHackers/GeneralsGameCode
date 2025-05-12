@@ -289,6 +289,8 @@ public:
 	static void parseUpgradeTemplate( INI *ini, void *instance, void *store, const void *userData );
 	static void parseScience( INI *ini, void *instance, void *store, const void *userData );
 	static void parseScienceVector( INI *ini, void *instance, void *store, const void *userData );
+	static void parseWeaponBonusVector( INI *ini, void *instance, void *store, const void *userData );
+	static void parseWeaponBonusVectorKeepDefault( INI *ini, void *instance, void *store, const void *userData );
 	static void parseGameClientRandomVariable( INI* ini, void *instance, void *store, const void* userData );
 	static void parseBitString8( INI *ini, void *instance, void *store, const void* userData );
 	static void parseBitString32( INI *ini, void *instance, void *store, const void* userData );
