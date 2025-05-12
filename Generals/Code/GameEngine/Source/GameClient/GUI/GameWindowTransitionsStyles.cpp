@@ -692,6 +692,8 @@ void FadeTransition::draw( void )
 {
 	if(!m_win)
 		return;
+	if(m_drawState <= FADETRANSITION_START || m_drawState >= FADETRANSITION_END)
+		return;
 	const Image *image = m_win->winGetEnabledImage(0);
 	switch (m_drawState) 
 	{
@@ -854,9 +856,9 @@ void ScaleUpTransition::draw( void )
 {
 	if(!m_win)
 		return;
-	const Image *image = m_win->winGetEnabledImage(0);
 	if(m_drawState <= SCALEUPTRANSITION_START || m_drawState >= SCALEUPTRANSITION_END)
 		return;
+	const Image *image = m_win->winGetEnabledImage(0);
 	Int x = m_centerPos.x - ((m_incrementSize.x * m_drawState) / 2);
 	Int y = m_centerPos.y - ((m_incrementSize.y * m_drawState) / 2);
 	Int x1 = x + m_incrementSize.x * m_drawState;
@@ -977,9 +979,9 @@ void ScoreScaleUpTransition::draw( void )
 {
 	if(!m_win)
 		return;
-	const Image *image = m_win->winGetEnabledImage(0);
 	if(m_drawState <= SCORESCALEUPTRANSITION_START || m_drawState >= SCORESCALEUPTRANSITION_END)
 		return;
+	const Image *image = m_win->winGetEnabledImage(0);
 	Int x = m_centerPos.x - ((m_incrementSize.x * m_drawState) / 2);
 	Int y = m_centerPos.y - ((m_incrementSize.y * m_drawState) / 2);
 	Int x1 = x + m_incrementSize.x * m_drawState;
@@ -1094,9 +1096,9 @@ void MainMenuScaleUpTransition::draw( void )
 {
 	if(!m_win)
 		return;
-	const Image *image = m_growWin->winGetEnabledImage(0);
 	if(m_drawState <= MAINMENUSCALEUPTRANSITION_START || m_drawState >= MAINMENUSCALEUPTRANSITION_END)
 		return;
+	const Image *image = m_growWin->winGetEnabledImage(0);
 	Int x = m_pos.x + ((m_incrementPos.x * m_drawState));
 	Int y = m_pos.y + ((m_incrementPos.y * m_drawState));
 	Int x1 = x + m_size.x + ((m_incrementSize.x * m_drawState));
@@ -1214,9 +1216,9 @@ void MainMenuMediumScaleUpTransition::draw( void )
 {
 	if(!m_win)
 		return;
-	const Image *image = m_win->winGetEnabledImage(0);
 	if(m_drawState <= MAINMENUMEDIUMSCALEUPTRANSITION_START || m_drawState >= MAINMENUMEDIUMSCALEUPTRANSITION_END)
 		return;
+	const Image *image = m_win->winGetEnabledImage(0);
 	Int x = m_pos.x - ((m_incrementSize.x * m_drawState) /2);
 	Int y = m_pos.y - ((m_incrementSize.y * m_drawState) / 2);
 	Int x1 = m_pos.x + m_size.x + ((m_incrementSize.x * m_drawState) / 2);
@@ -1325,9 +1327,9 @@ void MainMenuSmallScaleDownTransition::draw( void )
 {
 	if(!m_win)
 		return;
-	const Image *image = m_win->winGetEnabledImage(0);
 	if(m_drawState <= MAINMENUSMALLSCALEDOWNTRANSITION_START || m_drawState >= MAINMENUSMALLSCALEDOWNTRANSITION_END)
 		return;
+	const Image *image = m_win->winGetEnabledImage(0);
 	Int x = m_pos.x - ((m_incrementSize.x * m_drawState) /2);
 	Int y = m_pos.y - ((m_incrementSize.y * m_drawState) / 2);
 	Int x1 = m_pos.x + m_size.x + ((m_incrementSize.x * m_drawState) / 2);
@@ -1757,7 +1759,7 @@ void ControlBarArrowTransition::reverse( void )
 
 void ControlBarArrowTransition::draw( void )
 {
-	if(m_drawState <0)
+	if(m_drawState < CONTROLBARARROWTRANSITION_START)
 		return;
 	if(m_drawState < CONTROLBARARROWTRANSITION_BEGIN_FADE)
 	{
