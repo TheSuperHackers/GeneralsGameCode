@@ -863,7 +863,7 @@ extern void userMemoryAdjustPoolSize(const char *poolName, Int& initialAllocatio
 	extern void* __cdecl operator new[](size_t nSize, const char *, int);
 	extern void __cdecl operator delete[](void *, const char *, int);
 
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 	// additional overloads for 'placement new'
 	//inline void* __cdecl operator new							(size_t s, void *p) { return p; }
 	//inline void __cdecl operator delete						(void *, void *p)		{ }

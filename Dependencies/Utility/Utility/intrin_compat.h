@@ -20,7 +20,7 @@
 #pragma once
 
 // VC6 macros
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 
 #ifndef __debugbreak
 #define __debugbreak() __asm { int 3 }
@@ -63,11 +63,11 @@ static inline __int64 _rdtsc()
 #endif
 #endif //defined _WIN32 && (defined _M_IX86 || defined _M_AMD64)
 
-#endif // VC6_BUILD
+#endif // defined(VC6_BUILD)
 
 
 // Non-VC6 macros
-#if !VC6_BUILD
+#if !defined(VC6_BUILD)
 
 #include <cstdint>
 
@@ -149,4 +149,4 @@ static inline uint64_t _rdtsc()
 #define cpuid(regs, cpuid_type) memset(regs, 0, 16)
 #endif // cpuid
 
-#endif // !VC6_BUILD
+#endif // !defined(VC6_BUILD)

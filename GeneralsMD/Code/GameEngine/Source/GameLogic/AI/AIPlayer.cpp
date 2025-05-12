@@ -1050,7 +1050,7 @@ void AIPlayer::onUnitProduced( Object *factory, Object *unit )
 	Bool found = false;
 	// TheSuperHackers @fix Mauller 26/04/2025 Fixes uninitialized variable.
 	// To keep retail compatibility it needs to be set true in VS6 builds.
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 	Bool supplyTruck = true;
 #else
 	Bool supplyTruck = false;

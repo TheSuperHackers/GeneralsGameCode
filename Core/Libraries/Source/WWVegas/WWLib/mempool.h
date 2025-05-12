@@ -157,7 +157,7 @@ private:
 ** Macro to declare the allocator for your class.  Put this in the cpp file for
 ** the class.
 */
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 #define DEFINE_AUTO_POOL(T,BLOCKSIZE) \
 ObjectPoolClass<T,BLOCKSIZE> AutoPoolClass<T,BLOCKSIZE>::Allocator;
 #else

@@ -54,7 +54,7 @@ class STLSpecialAlloc;
 #include <io.h>
 #include <limits.h>
 #include <lmcons.h>
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 #include <mapicode.h>
 #endif
 #include <math.h>

@@ -26,7 +26,7 @@
 #include "always.h"
 #include "thread.h"
 
-#if !VC6_BUILD
+#if !defined(VC6_BUILD)
 #include <atomic>
 #endif
 
@@ -120,7 +120,7 @@ public:
 
 class FastCriticalSectionClass
 {
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 	// TheSuperHackers @info Mauller 30/03/2025 Added volatile to prevent reordering of critical sections if inlined
 	volatile unsigned Flag;
 #else
@@ -130,7 +130,7 @@ class FastCriticalSectionClass
 public:
 	// Name can (and usually should) be NULL. Use name only if you wish to create a globally unique mutex
 	FastCriticalSectionClass()
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 		: Flag(0)
 #endif
 	{}
@@ -152,7 +152,7 @@ public:
 	private:
 
     void lock() {
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 		  volatile unsigned& nFlag=cs.Flag;
 
 		  #define ts_lock _emit 0xF0
@@ -191,7 +191,7 @@ public:
     }
 
     void unlock() {
-#if VC6_BUILD
+#if defined(VC6_BUILD)
       cs.Flag=0;
 #else
       cs.Flag.clear(std::memory_order_release);

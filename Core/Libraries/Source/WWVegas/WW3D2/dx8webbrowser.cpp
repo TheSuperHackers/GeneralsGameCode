@@ -36,7 +36,7 @@
 
 #if ENABLE_EMBEDDED_BROWSER
 
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 
 // Import the Browser Type Library
 // BGC, the path for the dll file is pretty odd, no?
@@ -232,7 +232,7 @@ void	DX8WebBrowser::DestroyBrowser(const char* browsername)
 bool	DX8WebBrowser::Is_Browser_Open(const char* browsername)
 {
 	if(pBrowser == 0) return false;
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 	return (pBrowser->IsOpen(_bstr_t(browsername)) != 0);
 #else
 	long isOpen;

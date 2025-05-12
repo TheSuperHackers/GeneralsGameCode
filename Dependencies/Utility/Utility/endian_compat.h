@@ -64,7 +64,7 @@
 #define le64toh(x) letoh64(x)
 
 #elif defined(_WIN32) || defined(_WIN64)
-#if !VC6_BUILD
+#if !defined(VC6_BUILD)
 #include <intrin.h>
 #define htobe16(x) _byteswap_ushort(x)
 #define htole16(x) (x)
@@ -154,7 +154,7 @@ static_assert(sizeof(SwapType32) == 4, "expected size does not match");
 static_assert(sizeof(SwapType64) == 8, "expected size does not match");
 
 // VC6 compatible overloaded endian functions
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 
 // Big endian to host
 inline int16_t  betoh(int16_t value)  { return be16toh(value); }
@@ -241,6 +241,6 @@ template<typename Type> inline void betoh_ref(Type &value) { value = Endian::bet
 // Little endian to host
 template<typename Type> inline void letoh_ref(Type &value) { value = Endian::letohHelper<Type>::swap(value); }
 
-#endif // VC6_BUILD
+#endif // defined(VC6_BUILD)
 
 #endif // ENDIAN_COMPAT_H

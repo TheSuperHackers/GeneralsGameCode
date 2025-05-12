@@ -21,7 +21,7 @@
 
 #pragma once
 
-#if defined(USING_STLPORT) || VC6_BUILD
+#if defined(USING_STLPORT) || defined(VC6_BUILD)
 
 #include <hash_map>
 

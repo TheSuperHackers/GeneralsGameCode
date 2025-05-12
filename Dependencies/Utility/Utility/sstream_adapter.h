@@ -20,7 +20,7 @@
 // where symbols are not contained in the std namespace.
 #pragma once
 
-#if defined(USING_STLPORT) || VC6_BUILD
+#if defined(USING_STLPORT) || defined(VC6_BUILD)
 
 #include <strstrea.h>
 

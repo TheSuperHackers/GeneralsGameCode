@@ -68,7 +68,7 @@ typedef char Char;
 typedef unsigned char UChar;
 
 //! Wide character (Unicode)
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 typedef unsigned short WChar;
 #else
 typedef wchar_t WChar;

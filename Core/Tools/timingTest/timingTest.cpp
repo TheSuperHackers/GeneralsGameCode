@@ -34,7 +34,7 @@ char buffer[1024];
 //-------------------------------------------------------------------------------------------------
 void GetPrecisionTimer(INT64* t)
 {
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 	// CPUID is needed to force serialization of any previous instructions. 
 	__asm 
 	{

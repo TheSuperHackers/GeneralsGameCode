@@ -524,7 +524,7 @@ private:
 	GlobalData *newOverride( void );		/** create a new override, copy data from previous
 																			override, and return it */
 
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 	GlobalData(const GlobalData& that) { DEBUG_CRASH(("unimplemented")); }
 	GlobalData& operator=(const GlobalData& that) { DEBUG_CRASH(("unimplemented")); return *this; }
 #else

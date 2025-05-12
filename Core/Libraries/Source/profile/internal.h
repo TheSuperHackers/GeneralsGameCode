@@ -38,7 +38,7 @@
 #include "internal_cmd.h"
 #include "internal_result.h"
 
-#if !VC6_BUILD
+#if !defined(VC6_BUILD)
 #include <atomic>
 #include <Utility/intrin_compat.h>
 #endif
@@ -50,7 +50,7 @@ class ProfileFastCS
   
 	static HANDLE testEvent;
 
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 	volatile unsigned m_Flag;
 
 	void ThreadSafeSetFlag()
@@ -137,7 +137,7 @@ void ProfileFreeMemory(void *ptr);
 
 __forceinline void ProfileGetTime(__int64 &t)
 {
-#if VC6_BUILD
+#if defined(VC6_BUILD)
   _asm
   {
     mov ecx,[t]

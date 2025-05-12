@@ -829,7 +829,7 @@ void Targa::XFlip(void)
 
 static __forceinline void _swapBytes(char *p1, char *p2, unsigned count)
 {
-#if VC6_BUILD
+#if defined(VC6_BUILD)
   _asm
   {
     mov esi,[p1]

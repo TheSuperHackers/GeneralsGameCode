@@ -1003,7 +1003,7 @@ WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector4& color)
 
 WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector3& color,float alpha)
 {
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 	const float scale = 255.0;
 	unsigned int col;
 
@@ -1072,7 +1072,7 @@ not_changed:
 	return col;
 #else
 	return color.Convert_To_ARGB(alpha);
-#endif // VC6_BUILD
+#endif // defined(VC6_BUILD)
 }
 
 // ----------------------------------------------------------------------------
@@ -1083,7 +1083,7 @@ not_changed:
 
 WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
 {
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 	if (CPUDetectClass::Has_CMOV_Instruction()) {
 	__asm
 	{
@@ -1129,7 +1129,7 @@ WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
 	}
 	return;
 	}
-#endif // VC6_BUILD
+#endif // defined(VC6_BUILD)
 
 	for (int i=0;i<4;++i) {
 		float f=(color[i]<0.0f) ? 0.0f : color[i];

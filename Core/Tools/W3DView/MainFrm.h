@@ -31,7 +31,7 @@
 #include "Toolbar.H"
 
 
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 typedef HTASK HTASK_OR_DWORD;
 #else
 typedef DWORD HTASK_OR_DWORD;

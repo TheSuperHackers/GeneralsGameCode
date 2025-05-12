@@ -18,7 +18,7 @@
 
 #pragma once
 
-#if defined(USING_STLPORT) || VC6_BUILD
+#if defined(USING_STLPORT) || defined(VC6_BUILD)
 /* 7.18.1.4  Integer types capable of holding object pointers */
 #ifdef _WIN64
   typedef __int64 intptr_t;

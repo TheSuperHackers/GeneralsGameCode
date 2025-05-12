@@ -83,7 +83,7 @@ __forceinline long fast_float2long_round(float f)
 {
 	long i;
 
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 	__asm {
 		fld [f]
 		fistp [i]
@@ -99,7 +99,7 @@ __forceinline long fast_float2long_round(float f)
 // code courtesy of Martin Hoffesommer (grin)
 __forceinline float fast_float_trunc(float f)
 {
-#if VC6_BUILD
+#if defined(VC6_BUILD)
   _asm
   {
     mov ecx,[f]

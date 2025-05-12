@@ -352,7 +352,7 @@ class ThingTemplate : public Overridable
 
 private:
 
-#if VC6_BUILD
+#if defined(VC6_BUILD)
 	ThingTemplate(const ThingTemplate& that) : m_geometryInfo(that.m_geometryInfo) 
 	{ 
 		DEBUG_CRASH(("This should never be called\n")); 
