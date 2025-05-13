@@ -249,6 +249,7 @@ void Non_Fatal_Log_DX8_ErrorCode(unsigned res,const char * file,int line)
 // TheSuperHackers @info helmutbuhler 04/14/2025
 // Helper function that moves x and y such that the inner rect fits into the outer rect.
 // If inner already is in outer, this does nothing.
+// If inner is bigger than outer, the inner rect will be aligned on the top left of the outer rect.
 void MoveRectIntoOtherRect(const RECT& inner, const RECT& outer, int* x, int* y)
 {
 	int dx = 0;
@@ -921,7 +922,7 @@ void DX8Wrapper::Resize_And_Position_Window()
 			(rect.bottom-rect.top) != ResolutionHeight) {			
 			
 		// Calculate what the main window's bounding rectangle should be to
-		// accomodate this resolution
+		// accommodate this resolution
 		rect.left = 0;
 		rect.top = 0;
 		rect.right = ResolutionWidth;
@@ -944,8 +945,10 @@ void DX8Wrapper::Resize_And_Position_Window()
 			int top  = (mi.rcWork.top + mi.rcWork.bottom - height) / 2;
 
 			// TheSuperHackers @feature helmutbuhler 04/14/2025
-			// In case part of the resulting client area is off monitor, move it.
-			// This can happen when the window is larger than the work area.
+			// In case part of the resulting client area is off monitor, move it so it's visible.
+			// This is useful when the client area of the window is larger than the work area,
+			// but still smaller or equal to the monitor size.
+			// (If it's larger, we just align on the top left corner)
 			RECT rectClient;
 			rectClient.left = left - rect.left;
 			rectClient.top = top - rect.top;
@@ -953,13 +956,7 @@ void DX8Wrapper::Resize_And_Position_Window()
 			rectClient.bottom = rectClient.top + ResolutionHeight;
 			MoveRectIntoOtherRect(rectClient, mi.rcMonitor, &left, &top);
 
-			::SetWindowPos (_Hwnd,
-								NULL,
-								left,
-								top,
-								width,
-								height,
-								SWP_NOZORDER);
+			::SetWindowPos (_Hwnd, NULL, left, top, width, height, SWP_NOZORDER);
 		}
 	}
 }
