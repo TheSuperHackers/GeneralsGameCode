@@ -562,6 +562,14 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			//-------------------------------------------------------------------------
 			case WM_MOUSEMOVE:
 			{
+
+				if (ApplicationIsWindowed && TheGameEngine && TheGameEngine->isActive())
+				{
+					static RECT originalRect;
+					GetWindowRect(ApplicationHWnd, &originalRect);
+					ClipCursor(&originalRect);
+				}
+
 				Int x = (Int)LOWORD( lParam );
 				Int y = (Int)HIWORD( lParam );
 				RECT rect;
