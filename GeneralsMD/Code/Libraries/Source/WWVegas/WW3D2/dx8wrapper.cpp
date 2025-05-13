@@ -44,8 +44,11 @@
 //#define CREATE_DX8_MULTI_THREADED
 //#define CREATE_DX8_FPU_PRESERVE
 #define WW3D_DEVTYPE D3DDEVTYPE_HAL
+#if defined(_MSC_VER) && _MSC_VER < 1300
+// This is required to access GetMonitorInfo in VC6.
 #undef WINVER
 #define WINVER 0x0500
+#endif
 #include "dx8wrapper.h"
 #include "dx8webbrowser.h"
 #include "dx8fvf.h"
