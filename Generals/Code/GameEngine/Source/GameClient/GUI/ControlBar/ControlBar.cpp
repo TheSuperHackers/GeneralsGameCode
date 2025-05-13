@@ -2982,8 +2982,6 @@ void ControlBar::switchControlBarStage( ControlBarStages stage )
 {
 	if(stage < CONTROL_BAR_STAGE_DEFAULT || stage >= MAX_CONTROL_BAR_STAGES)
 		return;
-	if (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_PLAYBACK)
-		return;
 	switch (stage) {
 	case CONTROL_BAR_STAGE_DEFAULT:
 		setDefaultControlBarConfig();
