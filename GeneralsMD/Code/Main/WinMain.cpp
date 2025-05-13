@@ -702,6 +702,7 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 	                     TEXT("Game Window") };
   RegisterClass( &wndClass );
 
+	// TheSuperHackers @feature helmutbuhler 23/03/2025
 	// Find out which monitor to create the window on.
 	// This way, when the executable or a shortcut to it is opened on a certain monitor, the window
 	// opens on the same monitor. This also works when the game is started from the taskbar.
@@ -717,7 +718,7 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 		GetMonitorInfo(hMonitor, &mi);
 	}
 
-    // Create our main window
+	// Create our main window
 	windowStyle =  WS_POPUP|WS_VISIBLE;
 	if (runWindowed) 
 		windowStyle |= WS_DLGFRAME | WS_CAPTION | WS_SYSMENU;
@@ -729,7 +730,6 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 	rect.top = 0;
 	rect.right = startWidth;
 	rect.bottom = startHeight;
-	// todo: use AdjustWindowRectExForDpi when we make this Per Monitor DPI compatible
 	AdjustWindowRect (&rect, windowStyle, FALSE);
 	startWidth = rect.right - rect.left;
 	startHeight = rect.bottom - rect.top;
