@@ -87,7 +87,7 @@ public:
 	/** request a new object using the given template. 
 		this will throw an exception on failure; it will never return null.
 	*/
-	Object *newObject( const ThingTemplate *tmplate, Team *team, ObjectStatusBits statusBits = OBJECT_STATUS_NONE );
+	Object *newObject( const ThingTemplate *tmplate, Team *team, ObjectStatusMaskType statusMask = OBJECT_STATUS_MASK_NONE );
 
 	/** request a new drawable using the given template. 
 		this will throw an exception on failure; it will never return null.

@@ -208,7 +208,7 @@ Bool GameResultsQueue::areGameResultsBeingSent( void )
 
 //-------------------------------------------------------------------------
 // Wrap ladder results in HTTP POST
-static WrapHTTP( const std::string& hostname, std::string& results )
+static void WrapHTTP( const std::string& hostname, std::string& results )
 {
 	const char HEADER[] =
 		"PUT / HTTP/1.1\r\n"

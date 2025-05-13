@@ -51,7 +51,7 @@ public:
 	PartitionFilterFlammable(){ }
 	
 	virtual Bool allow(Object *objOther);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterFlammable"; }
 #endif
 };
@@ -119,7 +119,7 @@ UpdateSleepTime FireSpreadUpdate::update( void )
 	const FireSpreadUpdateModuleData* d = getFireSpreadUpdateModuleData();
 	Object* me = getObject();
 
-	if( (me->getStatusBits() & OBJECT_STATUS_AFLAME) == 0 )
+	if( !me->getStatusBits().test( OBJECT_STATUS_AFLAME ) )
 		return UPDATE_SLEEP_FOREVER;		// not on fire -- sleep forever
 	{
 		ObjectCreationList::create( d->m_oclEmbers, getObject(), NULL );
@@ -162,7 +162,7 @@ UpdateSleepTime FireSpreadUpdate::update( void )
 //-------------------------------------------------------------------------------------------------
 void FireSpreadUpdate::startFireSpreading()
 {
-	if ((getObject()->getStatusBits() & OBJECT_STATUS_AFLAME) == 0)
+	if( !getObject()->getStatusBits().test( OBJECT_STATUS_AFLAME ) )
 		return;	// sorry, must be on fire
 
 	setWakeFrame(getObject(), UPDATE_SLEEP(calcNextSpreadDelay()));

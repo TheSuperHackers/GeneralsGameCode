@@ -31,7 +31,7 @@
 #ifndef _GAME_INTERFACE_H_
 #define _GAME_INTERFACE_H_
 
-#include "common/GameType.h"
+#include "Common/GameType.h"
 #include "Common/MessageStream.h"		// for GameMessageTranslator
 #include "Common/Snapshot.h"
 #include "Common/STLTypedefs.h"
@@ -249,8 +249,8 @@ inline Drawable* GameClient::findDrawableByID( const DrawableID id )
 //
 //	return (*it).second;
 
-	if( (Int)id < m_drawableVector.size() )
-		return m_drawableVector[(Int)id];
+	if( (size_t)id < m_drawableVector.size() )
+		return m_drawableVector[(size_t)id];
 
 	return NULL;
 }

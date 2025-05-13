@@ -53,11 +53,11 @@
 #include "W3DDevice/GameClient/W3DStatusCircle.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
-#include "W3DDevice/GameClient/heightmap.h"
-#include "WW3D2/Part_emt.h"
-#include "WW3D2/HAnim.h"
-#include "WW3D2/HTree.h"
-#include "WW3D2/AnimObj.h"  ///< @todo superhack for demo, remove!
+#include "W3DDevice/GameClient/HeightMap.h"
+#include "WW3D2/part_emt.h"
+#include "WW3D2/hanim.h"
+#include "WW3D2/htree.h"
+#include "WW3D2/animobj.h"  ///< @todo superhack for demo, remove!
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

@@ -85,7 +85,7 @@
 
 
 // DEBUG DEBUG
-#include "mpu.h"
+#include "MPU.H"
 
 #define DEBUG_SHADOW_RENDERING					0
 #define DEFAULT_TEXTURE_SIZE						64
@@ -574,8 +574,8 @@ void TexProjectClass::Init_Multiplicative(void)
 		*/
 		TextureClass * grad_tex = WW3DAssetManager::Get_Instance()->Get_Texture("MultProjectorGradient.tga");
 		if (grad_tex) {
-			grad_tex->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-			grad_tex->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
+			grad_tex->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+			grad_tex->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			MaterialPass->Set_Texture(grad_tex,1);
 			grad_tex->Release_Ref();
 		} else {
@@ -676,8 +676,8 @@ void TexProjectClass::Init_Additive(void)
 	*/
 	TextureClass * grad_tex = WW3DAssetManager::Get_Instance()->Get_Texture("AddProjectorGradient.tga");
 	if (grad_tex) {
-		grad_tex->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-		grad_tex->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
+		grad_tex->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		grad_tex->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		MaterialPass->Set_Texture(grad_tex,1);
 		grad_tex->Release_Ref();
 	} else {
@@ -729,14 +729,11 @@ void TexProjectClass::Init_Additive(void)
  *=============================================================================================*/
 void TexProjectClass::Set_Texture(TextureClass * texture)
 {
-	if (texture != NULL) {
-		texture->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-		texture->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);	
+	if (texture != NULL) 
+	{
+		texture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		texture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);	
 		MaterialPass->Set_Texture(texture);
-
-		SurfaceClass::SurfaceDescription surface_desc;
-		texture->Get_Level_Description(surface_desc);
-		Set_Texture_Size(surface_desc.Width);
 	}
 }
 
@@ -1112,9 +1109,14 @@ bool TexProjectClass::Compute_Ortho_Projection
  * HISTORY:                                                                                    *
  *   1/11/00    gth : Created.                                                                 *
  *=============================================================================================*/
-bool TexProjectClass::Compute_Texture(RenderObjClass * model,SpecialRenderInfoClass * context)
+bool TexProjectClass::Compute_Texture
+(
+	RenderObjClass * model,
+	SpecialRenderInfoClass * context
+)
 {
-	if ((model == NULL) || (context == NULL)) {
+	if ((model == NULL) || (context == NULL)) 
+	{
 		return false;
 	}
 	/*
@@ -1122,7 +1124,8 @@ bool TexProjectClass::Compute_Texture(RenderObjClass * model,SpecialRenderInfoCl
 	*/
 	TextureClass * rtarget = Peek_Render_Target();
 
-	if (rtarget != NULL) {
+	if (rtarget != NULL) 
+	{
 
 		/*
 		** Set the render target
@@ -1147,6 +1150,7 @@ bool TexProjectClass::Compute_Texture(RenderObjClass * model,SpecialRenderInfoCl
 		WW3D::End_Render(false);
 
 		DX8Wrapper::Set_Render_Target((IDirect3DSurface8 *)NULL);
+
 	}
 
 #if 0
@@ -1194,7 +1198,10 @@ bool TexProjectClass::Needs_Render_Target(void)
  * HISTORY:                                                                                    *
  *   4/16/2001  gth : Created.                                                                 *
  *=============================================================================================*/
-void TexProjectClass::Set_Render_Target(TextureClass * render_target)
+void TexProjectClass::Set_Render_Target
+(
+	TextureClass* render_target
+)
 {
 	REF_PTR_SET(RenderTarget,render_target);
 	Set_Texture(RenderTarget);
@@ -1212,7 +1219,10 @@ void TexProjectClass::Set_Render_Target(TextureClass * render_target)
  * HISTORY:                                                                                    *
  *   4/5/2001   gth : Created.                                                                 *
  *=============================================================================================*/
-TextureClass * TexProjectClass::Peek_Render_Target(void)
+TextureClass* TexProjectClass::Peek_Render_Target
+(
+	void
+)
 {
 	return RenderTarget;
 }
@@ -1237,6 +1247,7 @@ void TexProjectClass::Configure_Camera(CameraClass & camera)
 	if (Get_Flag(PERSPECTIVE)) {
 		camera.Set_Projection_Type(CameraClass::PERSPECTIVE);
 		camera.Set_View_Plane(HFov,VFov);
+
 	} else {
 		camera.Set_Projection_Type(CameraClass::ORTHO);
 		camera.Set_View_Plane(Vector2(XMin,YMin),Vector2(XMax,YMax));
@@ -1261,13 +1272,13 @@ void TexProjectClass::Pre_Render_Update(const Matrix3D & camera)
 	/*
 	** Mview-texture = PShadow * Mwrld-texture * Mcamera-vrld	
 	*/
-	Matrix3D world_to_texture;
-	Matrix3D tmp;
-	Matrix4	view_to_texture;
+	Matrix3D		world_to_texture;
+	Matrix3D		tmp;
+	Matrix4x4	view_to_texture;
 
 	Transform.Get_Orthogonal_Inverse(world_to_texture);
 	Matrix3D::Multiply(world_to_texture,camera,&tmp);
-	Matrix4::Multiply(Projection,tmp,&view_to_texture);
+	Matrix4x4::Multiply(Projection,tmp,&view_to_texture);
 
 	/*
 	** update the current intensity by iterating it towards the desired intensity
@@ -1304,6 +1315,14 @@ void TexProjectClass::Pre_Render_Update(const Matrix3D & camera)
 	} else {
 		Mapper->Set_Type(MatrixMapperClass::ORTHO_PROJECTION);
 	}
+
+	if (Get_Texture_Size() == 0) {
+//		SurfaceClass::SurfaceDescription surface_desc;
+//		MaterialPass->Peek_Texture()->Get_Level_Description(surface_desc);
+		Set_Texture_Size(MaterialPass->Peek_Texture()->Get_Width());
+		WWASSERT(Get_Texture_Size() != 0);
+	}
+	
 	Mapper->Set_Texture_Transform(view_to_texture,Get_Texture_Size());
 	if (Mapper1) {
 		Mapper1->Set_Texture_Transform(view_to_texture,Get_Texture_Size());

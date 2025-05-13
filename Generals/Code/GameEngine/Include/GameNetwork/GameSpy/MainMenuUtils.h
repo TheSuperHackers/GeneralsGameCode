@@ -39,7 +39,7 @@ void CancelPatchCheckCallback( void );
 void StartDownloadingPatches( void );
 void HandleCanceledDownload( Bool resetDropDown = TRUE );
 
-enum OverallStatsPeriod
+enum OverallStatsPeriod CPP_11(: Int)
 {
 	STATS_TODAY = 0,
 	STATS_YESTERDAY,

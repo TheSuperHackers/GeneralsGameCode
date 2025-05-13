@@ -51,16 +51,16 @@
 #include <string.h>
 #include <assetmgr.h>
 #include <texture.h>
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 #include "GameClient/ClientRandomValue.h"
 #include "W3DDevice/GameClient/TerrainTex.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DDynamicLight.h"
-#include "WW3D2/Camera.h"
-#include "WW3D2/DX8Wrapper.h"
-#include "WW3D2/DX8Renderer.h"
-#include "WW3D2/Mesh.h"
-#include "WW3D2/MeshMdl.h"
+#include "WW3D2/camera.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/dx8renderer.h"
+#include "WW3D2/mesh.h"
+#include "WW3D2/meshmdl.h"
 
 //-----------------------------------------------------------------------------
 //         Private Data                                                     
@@ -529,8 +529,8 @@ W3DTreeBuffer::W3DTreeBuffer(void)
 		return;  // WorldBuilderTool doesn't initialize the asset manager.  jba.
 
 	m_treeTexture = NEW_REF(TextureClass, ("trees.tga"));
-	m_treeTexture->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-	m_treeTexture->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
+	m_treeTexture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+	m_treeTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 	for (i=0; i<MAX_TYPES; i++) {
 		switch(i) {
 		case 0:

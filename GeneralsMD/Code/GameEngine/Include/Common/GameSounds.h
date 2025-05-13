@@ -69,7 +69,7 @@ class SoundManager : public SubsystemInterface
 		virtual void setCameraAudibleDistance( Real audibleDistance );
 		virtual Real getCameraAudibleDistance( void );
 		
-		virtual void addAudioEvent(AudioEventRTS *eventToAdd);	// pre-copied
+		virtual void addAudioEvent(AudioEventRTS *&eventToAdd);	// pre-copied
 
 		virtual void notifyOf2DSampleStart( void );
 		virtual void notifyOf3DSampleStart( void );

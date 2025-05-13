@@ -95,7 +95,7 @@ Directory::Directory( const AsciiString& dirPath ) : m_dirPath(dirPath)
 	while (!done)
 	{
 		// if this is a subdirectory keep the name around till the end
-		if( BitTest( item.dwFileAttributes, FILE_ATTRIBUTE_DIRECTORY ) )
+		if( BitIsSet( item.dwFileAttributes, FILE_ATTRIBUTE_DIRECTORY ) )
 		{
 			if ( strcmp( item.cFileName, "." ) && strcmp( item.cFileName, ".." ) )
 			{

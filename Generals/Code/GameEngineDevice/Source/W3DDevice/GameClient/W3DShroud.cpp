@@ -31,18 +31,18 @@
 #include "camera.h"
 #include "simplevec.h"
 #include "dx8wrapper.h"
-#include "common/MapObject.h"
-#include "common/PerfTimer.h"
+#include "Common/MapObject.h"
+#include "Common/PerfTimer.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DPoly.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "assetmgr.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
 #include "WW3D2/textureloader.h"
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 #include "GameLogic/PartitionManager.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -90,7 +90,7 @@ W3DShroud::W3DShroud(void)
 	m_cellHeight=DEFAULT_SHROUD_CELL_SIZE;
 	m_numCellsX=0;
 	m_numCellsY=0;
-	m_shroudFilter=TextureClass::FILTER_TYPE_DEFAULT;
+	m_shroudFilter=TextureFilterClass::FILTER_TYPE_DEFAULT;
 }
 
 //-----------------------------------------------------------------------------
@@ -154,7 +154,7 @@ void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSi
  	memset(m_finalFogData,0,srcWidth*srcHeight);
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 		m_pSrcTexture = DX8Wrapper::_Create_DX8_Surface(srcWidth,srcHeight, WW3D_FORMAT_A4R4G4B4);
 	else
@@ -178,7 +178,7 @@ void W3DShroud::init(WorldHeightMap *pMap, Real worldCellSizeX, Real worldCellSi
 	//clear entire texture to black
 	memset(m_srcTextureData,0,m_srcTexturePitch*srcHeight);
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 		fillShroudData(TheGlobalData->m_shroudAlpha);	//initialize shroud to a known value
 #endif
@@ -232,12 +232,12 @@ Bool W3DShroud::ReAcquireResources(void)
 	
 		// Create destination texture (stored in video memory).
 		// Since we control the video memory copy, we can do partial updates more efficiently. Or do shift blits.
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
-			m_pDstTexture = MSGNEW("TextureClass") TextureClass(m_dstTextureWidth,m_dstTextureHeight,WW3D_FORMAT_A4R4G4B4,TextureClass::MIP_LEVELS_1, TextureClass::POOL_DEFAULT);
+			m_pDstTexture = MSGNEW("TextureClass") TextureClass(m_dstTextureWidth,m_dstTextureHeight,WW3D_FORMAT_A4R4G4B4,MIP_LEVELS_1, TextureClass::POOL_DEFAULT);
 		else
 #endif
-			m_pDstTexture = MSGNEW("TextureClass") TextureClass(m_dstTextureWidth,m_dstTextureHeight,WW3D_FORMAT_R5G6B5,TextureClass::MIP_LEVELS_1, TextureClass::POOL_DEFAULT);
+			m_pDstTexture = MSGNEW("TextureClass") TextureClass(m_dstTextureWidth,m_dstTextureHeight,WW3D_FORMAT_R5G6B5,MIP_LEVELS_1, TextureClass::POOL_DEFAULT);
 
 		DEBUG_ASSERTCRASH( m_pDstTexture != NULL, ("Failed ReAcquire of shroud texture"));
 
@@ -247,9 +247,9 @@ Bool W3DShroud::ReAcquireResources(void)
 			m_dstTextureHeight = 0;
 			return FALSE;
 		}
-		m_pDstTexture->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-		m_pDstTexture->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-		m_pDstTexture->Set_Mip_Mapping(TextureClass::FILTER_TYPE_NONE);
+		m_pDstTexture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		m_pDstTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		m_pDstTexture->Get_Filter().Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_NONE);
 		m_clearDstTexture = TRUE;	//force clearing of destination texture first time it's used.
 
 		return TRUE;
@@ -264,7 +264,7 @@ W3DShroudLevel W3DShroud::getShroudLevel(Int x, Int y)
 	{
 		UnsignedShort pixel=*(UnsignedShort *)((Byte *)m_srcTextureData + x*2 + y*m_srcTexturePitch);
 		
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 			//in this mode, alpha channel holds intensity
 			return (W3DShroudLevel)((1.0f-((Real)(pixel >> 12)/15.0f))*255.0f);
@@ -289,7 +289,7 @@ void W3DShroud::setShroudLevel(Int x, Int y, W3DShroudLevel level, Bool textureO
 		if (level < TheGlobalData->m_shroudAlpha)
 			level = TheGlobalData->m_shroudAlpha;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 		{
 			///@todo: optimize this case if we end up using fog shroud.
@@ -354,7 +354,7 @@ void W3DShroud::fillShroudData(W3DShroudLevel level)
 	if (level < TheGlobalData->m_shroudAlpha)
 		level = TheGlobalData->m_shroudAlpha;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	//convert value to pixel format
 	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 	{
@@ -417,7 +417,7 @@ void W3DShroud::fillBorderShroudData(W3DShroudLevel level, SurfaceClass* pDestSu
 	if (level < TheGlobalData->m_shroudAlpha)
 		level = TheGlobalData->m_shroudAlpha;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	//convert value to pixel format
 	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 	{
@@ -525,7 +525,7 @@ void W3DShroud::render(CameraClass *cam)
 	if (DX8Wrapper::_Get_D3D_Device8() && (DX8Wrapper::_Get_D3D_Device8()->TestCooperativeLevel()) != D3D_OK)
 		return;	//device not ready to render anything
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData && TheGlobalData->m_fogOfWarOn != m_drawFogOfWar)
 	{	
 		//fog state has changed since last time shroud system was initialized
@@ -585,7 +585,7 @@ void W3DShroud::render(CameraClass *cam)
 		{
 			for (Int x=0; x<desc.Width; x++)
 			{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 				if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 				{
 					dataDest[x]=((TheGlobalData->m_shroudColor.getAsInt()>>4)&0xf) | (((TheGlobalData->m_shroudColor.getAsInt()>>12)&0xf)<<4) | (((TheGlobalData->m_shroudColor.getAsInt()>>20)&0xf)<<8) | ((((255-(dataSrc[x] & 0xff))>>4)&0xf)<<12);
@@ -663,10 +663,10 @@ void W3DShroud::render(CameraClass *cam)
 
 	pSurface->Unlock();
 */
-	if (m_pDstTexture->Get_Mag_Filter() != m_shroudFilter)
+	if (m_pDstTexture->Get_Filter().Get_Mag_Filter() != m_shroudFilter)
 	{
-		m_pDstTexture->Set_Mag_Filter(m_shroudFilter);
-		m_pDstTexture->Set_Min_Filter(m_shroudFilter);
+		m_pDstTexture->Get_Filter().Set_Mag_Filter(m_shroudFilter);
+		m_pDstTexture->Get_Filter().Set_Min_Filter(m_shroudFilter);
 	}
 
 	//Update video memory texture with sysmem copy
@@ -762,9 +762,9 @@ void W3DShroud::interpolateFogLevels(RECT *rect)
 void W3DShroud::setShroudFilter(Bool enable)
 {
 	if (enable)
-		m_shroudFilter=TextureClass::FILTER_TYPE_DEFAULT;
+		m_shroudFilter=TextureFilterClass::FILTER_TYPE_DEFAULT;
 	else
-		m_shroudFilter=TextureClass::FILTER_TYPE_NONE;
+		m_shroudFilter=TextureFilterClass::FILTER_TYPE_NONE;
 }
 
 //-----------------------------------------------------------------------------

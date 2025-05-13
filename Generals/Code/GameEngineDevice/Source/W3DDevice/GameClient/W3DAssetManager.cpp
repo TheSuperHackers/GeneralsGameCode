@@ -66,11 +66,10 @@
 #include "font3d.h"
 #include "render2dsentence.h"
 #include <stdio.h>
-#include "W3DDevice/GameClient/W3DGranny.h"
 #include "Common/PerfTimer.h"
 #include "Common/GlobalData.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -151,17 +150,11 @@ RenderObjClass * W3DPrototypeClass::Create(void)
 //---------------------------------------------------------------------
 W3DAssetManager::W3DAssetManager(void)
 {
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	m_GrannyAnimManager = NEW GrannyAnimManagerClass;
-#endif
 }
 
 //---------------------------------------------------------------------
 W3DAssetManager::~W3DAssetManager(void)
 {
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	delete m_GrannyAnimManager;
-#endif
 }
 
 #ifdef DUMP_PERF_STATS
@@ -170,7 +163,7 @@ __int64 Total_Get_Texture_Time=0;
 //---------------------------------------------------------------------
 TextureClass *W3DAssetManager::Get_Texture(
 	const char * filename,
-	TextureClass::MipCountType mip_level_count,
+	MipCountType mip_level_count,
 	WW3DFormat texture_format,
 	bool allow_compression
 )
@@ -218,7 +211,7 @@ TextureClass *W3DAssetManager::Get_Texture(
 //			extern std::vector<std::string>	preloadTextureNamesGlobalHack;
 //			preloadTextureNamesGlobalHack.push_back(tex->Get_Texture_Name());
 //		}
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		if (TheGlobalData->m_preloadReport)
 		{	
 			//loading a new asset and app is requesting a log of all loaded assets.
@@ -410,7 +403,8 @@ static void remapTexture16Bit(Int dx, Int dy, Int pitch, SurfaceClass::SurfaceDe
 	Vector3 rgb,v_color((float)((color>>16)&0xff)/255.0f/255.0f,(float)((color>>8)&0xff)/255.0f/255.0f,(float)(color&0xff)/255.0f/255.0f);
 
 	//Generate a new color gradient palette based on reference color
-	for (Int y=0; y<TEAM_COLOR_PALETTE_SIZE; y++)
+	Int y=0;
+	for (; y<TEAM_COLOR_PALETTE_SIZE; y++)
 	{	
 		rgb.X=(Real)houseColorScale[y]*v_color.X;
 		rgb.Y=(Real)houseColorScale[y]*v_color.Y;
@@ -513,7 +507,8 @@ static void remapTexture32Bit(Int dx, Int dy, Int pitch, SurfaceClass::SurfaceDe
 	Vector3 rgb,v_color((float)((color>>16)&0xff)/255.0f/255.0f,(float)((color>>8)&0xff)/255.0f/255.0f,(float)(color&0xff)/255.0f/255.0f);
 
 	//Generate a new color gradient palette based on reference color
-	for (Int y=0; y<TEAM_COLOR_PALETTE_SIZE; y++)
+	Int y=0;
+	for (; y<TEAM_COLOR_PALETTE_SIZE; y++)
 	{	
 		rgb.X=(Real)houseColorScale[y]*v_color.X;
 		rgb.Y=(Real)houseColorScale[y]*v_color.Y;
@@ -638,7 +633,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 
 	// make sure texture is loaded
 	if (!texture->Is_Initialized())	
-		TextureLoader::Request_High_Priority_Loading(texture, (TextureClass::MipCountType)texture->Get_Mip_Level_Count());
+		TextureLoader::Request_High_Priority_Loading(texture, (MipCountType)texture->Get_Mip_Level_Count());
 
 	SurfaceClass::SurfaceDescription desc;
 	SurfaceClass *newsurf, *oldsurf;
@@ -659,12 +654,12 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 	if (*(name+3) == 'A' || *(name+3) == 'a')
 		Remap_Palette(newsurf,color, false, true );	//texture only contains a palette stored in top row.
 
-	TextureClass * newtex=NEW_REF(TextureClass,(newsurf,(TextureClass::MipCountType)texture->Get_Mip_Level_Count()));
-	newtex->Set_Mag_Filter(texture->Get_Mag_Filter());
-	newtex->Set_Min_Filter(texture->Get_Min_Filter());
-	newtex->Set_Mip_Mapping(texture->Get_Mip_Mapping());
-	newtex->Set_U_Addr_Mode(texture->Get_U_Addr_Mode());
-	newtex->Set_V_Addr_Mode(texture->Get_V_Addr_Mode());
+	TextureClass * newtex=NEW_REF(TextureClass,(newsurf,(MipCountType)texture->Get_Mip_Level_Count()));
+	newtex->Get_Filter().Set_Mag_Filter(texture->Get_Filter().Get_Mag_Filter());
+	newtex->Get_Filter().Set_Min_Filter(texture->Get_Filter().Get_Min_Filter());
+	newtex->Get_Filter().Set_Mip_Mapping(texture->Get_Filter().Get_Mip_Mapping());
+	newtex->Get_Filter().Set_U_Addr_Mode(texture->Get_Filter().Get_U_Addr_Mode());
+	newtex->Get_Filter().Set_V_Addr_Mode(texture->Get_Filter().Get_V_Addr_Mode());
 
 	char newname[512];	
 	Munge_Texture_Name(newname, name, color);
@@ -699,12 +694,6 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	GetPrecisionTimer(&startTime64);
 	#endif
 
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	Bool isGranny = false;
-	char *pext=strrchr(name,'.');	//find file extension
-	if (pext)
-		isGranny=(strnicmp(pext,".GR2",4) == 0);
-#endif
 	Bool reallyscale = (WWMath::Fabs(scale - ident_scale) > scale_epsilon);
 	Bool reallycolor = (color & 0xFFFFFF) != 0;	//black is not a valid color and assumes no custom coloring.
 	Bool reallytexture = (oldTexture != NULL && newTexture != NULL);
@@ -726,12 +715,6 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	// see if we got a cached version
 	RenderObjClass *rendobj = NULL;
 
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	if (isGranny)
-	{	//Granny objects share the same prototype since they allow instance scaling.
-		strcpy(newname,name);	//use same name for all granny objects at any scale.
-	}
-#endif
 	Set_WW3D_Load_On_Demand(false); // munged name will never be found in a file.
 	rendobj = WW3DAssetManager::Create_Render_Obj(newname);
 	if (rendobj)
@@ -739,11 +722,6 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 		//when we need to save this render object to a file.  Used during saving
 		//of fog of war ghost objects.
 		rendobj->Set_ObjectColor(color);
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-		if (isGranny)
-			///@todo Granny objects are realtime scaled - fix to scale like W3D.
-			rendobj->Set_ObjectScale(scale);
-#endif
 		Set_WW3D_Load_On_Demand(true); // Auto Load.
 
 	#ifdef DUMP_PERF_STATS
@@ -766,16 +744,11 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	{	
 		// If we didn't find one, try to load on demand
 		char filename [MAX_PATH];
-		char *mesh_name = ::strchr (name, '.');
+		const char *mesh_name = strchr (name, '.');
 		if (mesh_name != NULL) 
 		{
-			::lstrcpyn(filename, name, ((int)mesh_name) - ((int)name) + 1);
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-			if (isGranny)
-				::lstrcat(filename, ".gr2");
-			else
-#endif
-				::lstrcat(filename, ".w3d");
+			lstrcpyn(filename, name, ((int)mesh_name) - ((int)name) + 1);
+			lstrcat(filename, ".w3d");
 		} else {
 			sprintf( filename, "%s.w3d", name);
 		}
@@ -784,15 +757,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 		if ( Load_3D_Assets( filename ) == false ) 
 		{
 			StringClass	new_filename = StringClass("..\\") + filename;
-			if (Load_3D_Assets( new_filename ) == false)
-			{
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-				char *mesh_name = ::strchr (filename, '.');
-				::lstrcpyn (mesh_name, ".gr2",5);
-				Load_3D_Assets( filename );
-				isGranny=true;
-#endif
-			}
+			Load_3D_Assets( new_filename );
 		}
 
 		proto = Find_Prototype(name);		// try again
@@ -822,33 +787,21 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 	#endif
 		return NULL;
 	}
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	if (!isGranny)
-#endif
-	{	
-		Make_Unique(rendobj,reallyscale,reallycolor);
-		if (reallytexture)
-		{	
-			TextureClass *oldTex = Get_Texture(oldTexture);
-			TextureClass *newTex = Get_Texture(newTexture);
-			replaceAssetTexture(rendobj,oldTex,newTex);
-			REF_PTR_RELEASE(newTex);
-			REF_PTR_RELEASE(oldTex);
-		}
-		if (reallyscale)
-			rendobj->Scale(scale);
 
-		if (reallycolor)
-			Recolor_Asset(rendobj,color);
-	}
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	else
+	Make_Unique(rendobj,reallyscale,reallycolor);
+	if (reallytexture)
 	{	
-		///@todo Granny objects are realtime scaled - fix to scale like W3D.
-		rendobj->Set_ObjectScale(scale);
-		return rendobj;
+		TextureClass *oldTex = Get_Texture(oldTexture);
+		TextureClass *newTex = Get_Texture(newTexture);
+		replaceAssetTexture(rendobj,oldTex,newTex);
+		REF_PTR_RELEASE(newTex);
+		REF_PTR_RELEASE(oldTex);
 	}
-#endif
+	if (reallyscale)
+		rendobj->Scale(scale);
+
+	if (reallycolor)
+		Recolor_Asset(rendobj,color);
 
 	W3DPrototypeClass *w3dproto = newInstance(W3DPrototypeClass)(rendobj, newname);	
 	rendobj->Release_Ref();
@@ -973,7 +926,7 @@ void W3DAssetManager::Recolor_Vertex_Material(VertexMaterialClass *vmat, const i
 
 #ifdef DUMP_PERF_STATS
 __int64 Total_Load_3D_Assets=0;
-static Load_3D_Asset_Recursions=0;
+static Int Load_3D_Asset_Recursions=0;
 #endif
 //---------------------------------------------------------------------
 bool W3DAssetManager::Load_3D_Assets( const char * filename )
@@ -983,14 +936,6 @@ bool W3DAssetManager::Load_3D_Assets( const char * filename )
 
 		__int64 startTime64,endTime64;
 		GetPrecisionTimer(&startTime64);
-#endif
-
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	Bool isGranny = false;
-	char *pext=strrchr(filename,'.');	//find file extension
-	if (pext)
-		isGranny=(strnicmp(pext,".GR2",4) == 0);
-	if (!isGranny)
 #endif
 
 	// Try to find an existing prototype
@@ -1014,7 +959,7 @@ bool W3DAssetManager::Load_3D_Assets( const char * filename )
 
 	bool result = WW3DAssetManager::Load_3D_Assets(filename);
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (result && TheGlobalData->m_preloadReport)
 	{	
 		//loading a new asset and app is requesting a log of all loaded assets.
@@ -1037,45 +982,11 @@ bool W3DAssetManager::Load_3D_Assets( const char * filename )
 #endif
 	return result;
 
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	//Loading assets for Granny File
-	PrototypeClass * newproto = NULL;
-	newproto = _GrannyLoader.Load_W3D(filename);
-	/*
-	** Now, see if the prototype that we loaded has a duplicate
-	** name with any of our currently loaded prototypes (can't have that!)
-	*/
-	if (newproto != NULL) {
-		if (!Render_Obj_Exists(newproto->Get_Name())) {
-			/*
-			** Add the new, unique prototype to our list
-			*/
-			Add_Prototype(newproto);
-		} else {
-			/*
-			** Warn the user about a name collision with this prototype 
-			** and dump it
-			*/
-			WWDEBUG_SAY(("Render Object Name Collision: %s\r\n",newproto->Get_Name()));
-			delete newproto;
-			newproto = NULL;
-			return false;
-		}
-	} else {
-		/*
-		** Warn user that a prototype was not generated from this 
-		** chunk type
-		*/
-		WWDEBUG_SAY(("Could not generate Granny prototype!  File  = %d\r\n",filename));
-		return false;
-	}
-	return true;
-#endif
 }
 
 #ifdef DUMP_PERF_STATS
 __int64 Total_Get_HAnim_Time=0;
-static HAnim_Recursions=0;
+static Int HAnim_Recursions=0;
 #endif
 //---------------------------------------------------------------------
 HAnimClass *	W3DAssetManager::Get_HAnim(const char * name)
@@ -1088,47 +999,17 @@ HAnimClass *	W3DAssetManager::Get_HAnim(const char * name)
 #endif
 	WWPROFILE( "WW3DAssetManager::Get_HAnim" );
 
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	Bool isGranny = false;
-	char *pext=strrchr(name,'.');	//find file extension
-	if (pext)
-		isGranny=(strnicmp(pext,".GR2",4) == 0);
-	if (!isGranny)
-#endif
-	{
-		HAnimClass *anim=WW3DAssetManager::Get_HAnim(name);	//we only do custom granny processing.
+	HAnimClass *anim=WW3DAssetManager::Get_HAnim(name);
 #ifdef DUMP_PERF_STATS
-		if (HAnim_Recursions == 1)
-		{
-			GetPrecisionTimer(&endTime64);
-			Total_Get_HAnim_Time += endTime64-startTime64;
-		}
-		HAnim_Recursions--;
+	if (HAnim_Recursions == 1)
+	{
+		GetPrecisionTimer(&endTime64);
+		Total_Get_HAnim_Time += endTime64-startTime64;
+	}
+	HAnim_Recursions--;
 #endif
-		return anim;
-	}
-
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	// Try to find the hanim
-	HAnimClass * anim = m_GrannyAnimManager->Get_Anim(name);
-	if (WW3D_Load_On_Demand && anim == NULL) {	// If we didn't find it, try to load on demand
-		if ( !m_GrannyAnimManager->Is_Missing( name ) ) {	// if this is NOT a known missing anim
-
-			// If we can't find it, try the parent directory
-			if ( m_GrannyAnimManager->Load_Anim(name) == 1 ) {
-				StringClass	new_filename = StringClass("..\\") + name;
-				m_GrannyAnimManager->Load_Anim( new_filename );
-			}
-
-			anim = m_GrannyAnimManager->Get_Anim(name);		// Try again
-			if (anim == NULL) {
-//				WWDEBUG_SAY(("WARNING: Animation %s not found!\n", name));
-				m_GrannyAnimManager->Register_Missing( name );		// This is now a KNOWN missing anim
-			}
-		}
-	}
 	return anim;
-#endif
+
 }
 
 //---------------------------------------------------------------------
@@ -1419,11 +1300,6 @@ static inline void Munge_Texture_Name(char *newname, const char *oldname, const 
 RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scale, const Vector3 &hsv_shift)
 {
 	Bool isGranny = false;
-#ifdef	INCLUDE_GRANNY_IN_BUILD
-	char *pext=strrchr(name,'.');	//find file extension
-	if (pext)
-		isGranny=(strnicmp(pext,".GR2",4) == 0);
-#endif
 	Bool reallyscale = (WWMath::Fabs(scale - ident_scale) > scale_epsilon);
 	Bool reallyhsv_shift = (WWMath::Fabs(hsv_shift.X - ident_HSV.X) > H_epsilon ||
 		WWMath::Fabs(hsv_shift.Y - ident_HSV.Y) > S_epsilon || WWMath::Fabs(hsv_shift.Z - ident_HSV.Z) > V_epsilon);
@@ -1519,7 +1395,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scal
 	return w3dproto->Create();
 }
 
-TextureClass * W3DAssetManager::Get_Texture_With_HSV_Shift(const char * filename, const Vector3 &hsv_shift, TextureClass::MipCountType mip_level_count)
+TextureClass * W3DAssetManager::Get_Texture_With_HSV_Shift(const char * filename, const Vector3 &hsv_shift, MipCountType mip_level_count)
 {
 	WWPROFILE( "W3DAssetManager::Get_Texture with HSV shift" );
 
@@ -1623,7 +1499,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 
 	// make sure texture is loaded
 	if (!texture->Is_Initialized())	
-		TextureLoader::Request_High_Priority_Loading(texture, (TextureClass::MipCountType)texture->Get_Mip_Level_Count());
+		TextureLoader::Request_High_Priority_Loading(texture, (MipCountType)texture->Get_Mip_Level_Count());
 
 	SurfaceClass::SurfaceDescription desc;
 	SurfaceClass *newsurf, *oldsurf, *smallsurf;
@@ -1631,7 +1507,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 
 	// if texture is monochrome and no value shifting
 	// return NULL	
-	smallsurf=texture->Get_Surface_Level((TextureClass::MipCountType)texture->Get_Mip_Level_Count()-1);
+	smallsurf=texture->Get_Surface_Level((MipCountType)texture->Get_Mip_Level_Count()-1);
 	if (hsv_shift.Z==0.0f && smallsurf->Is_Monochrome())
 	{
 		REF_PTR_RELEASE(smallsurf);
@@ -1644,7 +1520,7 @@ TextureClass * W3DAssetManager::Recolor_Texture_One_Time(TextureClass *texture, 
 	newsurf=NEW_REF(SurfaceClass,(desc.Width,desc.Height,desc.Format));
 	newsurf->Copy(0,0,0,0,desc.Width,desc.Height,oldsurf);
 	newsurf->Hue_Shift(hsv_shift);
-	TextureClass * newtex=NEW_REF(TextureClass,(newsurf,(TextureClass::MipCountType)texture->Get_Mip_Level_Count()));
+	TextureClass * newtex=NEW_REF(TextureClass,(newsurf,(MipCountType)texture->Get_Mip_Level_Count()));
 	newtex->Set_Mag_Filter(texture->Get_Mag_Filter());
 	newtex->Set_Min_Filter(texture->Get_Min_Filter());
 	newtex->Set_Mip_Mapping(texture->Get_Mip_Mapping());

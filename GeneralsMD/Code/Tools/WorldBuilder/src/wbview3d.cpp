@@ -19,7 +19,7 @@
 // wbview3d.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
 #include "wwmath.h"
 #include "ww3d.h"
@@ -30,7 +30,6 @@
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 #include "agg_def.h"
-#include "msgloop.h"
 #include "part_ldr.h"
 #include "rendobj.h"
 #include "hanim.h"
@@ -58,7 +57,6 @@
 #include "shattersystem.h"
 #include "light.h"
 #include "texproject.h"
-#include "keyboard.h"
 #include "MapSettings.h"
 #include "predlod.h"
 #include "SelectMacrotexture.h"
@@ -74,10 +72,10 @@
 #include "W3DDevice/Common/W3DConvert.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "DrawObject.h"
-#include "common/MapObject.h"
-#include "common/GlobalData.h"
+#include "Common/MapObject.h"
+#include "Common/GlobalData.h"
 #include "ShadowOptions.h"
-#include "worldbuilder.h"
+#include "WorldBuilder.h"
 #include "wbview3d.h"
 #include "Common/Debug.h"
 #include "Common/ThingFactory.h"
@@ -97,7 +95,7 @@
 
 #include <d3dx8.h>
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -140,7 +138,7 @@ static void		Debug_Refs(void);
 // ----------------------------------------------------------------------------
 static void WWDebug_Message_Callback(DebugType type, const char * message)
 {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	::OutputDebugString(message);
 #endif
 }
@@ -148,7 +146,7 @@ static void WWDebug_Message_Callback(DebugType type, const char * message)
 // ----------------------------------------------------------------------------
 static void WWAssert_Callback(const char * message)
 {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	::OutputDebugString(message);
 	::DebugBreak();
 #endif
@@ -2212,7 +2210,7 @@ void WbView3d::OnDraw(CDC* pDC)
 // ----------------------------------------------------------------------------
 // WbView3d diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 // ----------------------------------------------------------------------------
 void WbView3d::AssertValid() const
 {
@@ -2224,7 +2222,7 @@ void WbView3d::Dump(CDumpContext& dc) const
 {
 	WbView::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 // ----------------------------------------------------------------------------
 void WbView3d::initWW3D()

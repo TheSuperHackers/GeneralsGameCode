@@ -55,7 +55,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ScriptEngine.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -217,6 +217,8 @@ ProductionUpdate::~ProductionUpdate( void )
 
 		production = m_productionQueue;
 		removeFromProductionQueue( production );
+		// TheSuperHackers @fix Mauller 13/04/2025 Delete instance of production item
+		production->deleteInstance();
 
 	}  // end while
 
@@ -667,7 +669,7 @@ UpdateSleepTime ProductionUpdate::update( void )
 	// Actually, there will be nothing in the queue since everything gets cancel/refunded
 	// at the start of sell, but we still don't want to do anything here.
 	//
-	if( BitTest( us->getStatusBits(), OBJECT_STATUS_SOLD ) )
+	if( us->getStatusBits().test( OBJECT_STATUS_SOLD ) )
 		return UPDATE_SLEEP_NONE;
 
 	// get the player that is building this thing

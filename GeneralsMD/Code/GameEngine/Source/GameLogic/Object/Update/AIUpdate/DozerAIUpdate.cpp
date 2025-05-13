@@ -55,7 +55,7 @@
 #include "GameLogic/Module/DozerAIUpdate.h"
 #include "GameClient/InGameUI.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -74,7 +74,7 @@ static const Real MIN_ACTION_TOLERANCE = 70.0f;
 //-------------------------------------------------------------------------------------------------
 /** Available Dozer actions */
 //-------------------------------------------------------------------------------------------------
-enum DozerActionType
+enum DozerActionType CPP_11(: Int)
 {
 	DOZER_ACTION_PICK_ACTION_POS,		///< pick a location "around" the target to do our action
 	DOZER_ACTION_MOVE_TO_ACTION_POS,///< move to our action pos we've picked
@@ -1832,7 +1832,7 @@ void DozerAIUpdate::privateRepair( Object *obj, CommandSourceType cmdSource )
   //
 	//	Object *bridge = TheGameLogic->findObjectByID( btbi->getBridgeID() );
 	//	DEBUG_ASSERTCRASH( bridge, ("Unable to find bridge object\n") );
-	//	if( BitTest( bridge->getStatusBits(), OBJECT_STATUS_UNDERGOING_REPAIR ) == TRUE )
+	//	if( BitIsSet( bridge->getStatusBits(), OBJECT_STATUS_UNDERGOING_REPAIR ) == TRUE )
 	//		return;
   //
 	//}  // end if

@@ -44,10 +44,10 @@
 #define ASSETMGR_H
 
 #include "always.h"
-#include "vector.h"
+#include "Vector.H"
 #include "htreemgr.h"
 #include "hanimmgr.h"
-#include "slist.h"
+#include "SLIST.H"
 #include "texture.h"
 #include "hashtemplate.h"
 #include "simplevec.h"
@@ -389,12 +389,6 @@ protected:
 	*/
 	HTreeManagerClass					HTreeManager;
 	HAnimManagerClass					HAnimManager;
-
-	/*
-	** When enabled, this handles all the caching for the texture class.
-	** If NULL then textures are not being cached.
-	*/
-	TextureFileCache *				TextureCache;
 
 	/*
 	** list of Font3DDatas

@@ -48,14 +48,14 @@
 
 const Real BIGNUM = 99999.0f;
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
 
 //-------------------------------------------------------------------------------------------------
-enum TaxiType
+enum TaxiType CPP_11(: Int)
 {
 	FROM_HANGAR,
 	FROM_PARKING,
@@ -63,7 +63,7 @@ enum TaxiType
 };
 
 //-------------------------------------------------------------------------------------------------
-enum JetAIStateType
+enum JetAIStateType CPP_11(: Int)
 {
 	// note that these must be distinct (numerically) from AIStateType. ick.
 	JETAISTATETYPE_FIRST = 1000,
@@ -136,7 +136,7 @@ private:
 public:
 	PartitionFilterHasParkingPlace(ObjectID id) : m_id(id) { }
 protected:
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterHasParkingPlace"; }
 #endif
 	virtual Bool allow(Object *objOther)
@@ -152,8 +152,8 @@ protected:
 static Object* findSuitableAirfield(Object* jet)
 {
 	PartitionFilterAcceptByKindOf					filterKind(MAKE_KINDOF_MASK(KINDOF_AIRFIELD), KINDOFMASK_NONE);
-	PartitionFilterRejectByObjectStatus		filterStatus(OBJECT_STATUS_UNDER_CONSTRUCTION, 0);
-	PartitionFilterRejectByObjectStatus		filterStatusTwo(OBJECT_STATUS_SOLD, 0); // Independent to make it an OR
+	PartitionFilterRejectByObjectStatus		filterStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNDER_CONSTRUCTION ), OBJECT_STATUS_MASK_NONE );
+	PartitionFilterRejectByObjectStatus		filterStatusTwo( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_SOLD ), OBJECT_STATUS_MASK_NONE ); // Independent to make it an OR
 	PartitionFilterRelationship						filterTeam(jet, PartitionFilterRelationship::ALLOW_ALLIES);
 	PartitionFilterAlive									filterAlive;
 	PartitionFilterSameMapStatus					filterMapStatus(jet);

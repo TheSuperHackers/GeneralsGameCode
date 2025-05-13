@@ -34,7 +34,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/ObjectHelper.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -51,7 +51,7 @@ ObjectHelper::~ObjectHelper( void )
 // ------------------------------------------------------------------------------------------------
 void ObjectHelper::sleepUntil(UnsignedInt when)
 {
-	if (getObject()->getStatusBits() & OBJECT_STATUS_DESTROYED)
+	if( getObject()->getStatusBits().test( OBJECT_STATUS_DESTROYED ) )
 		return;
 
 	// note the setWakeFrame(NEVER) actually awakens immediately, since NEVER==0.

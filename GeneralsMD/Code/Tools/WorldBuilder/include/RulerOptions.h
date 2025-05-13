@@ -77,4 +77,4 @@ public:
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-#endif __RULEROPTIONS_H_
+#endif // __RULEROPTIONS_H_

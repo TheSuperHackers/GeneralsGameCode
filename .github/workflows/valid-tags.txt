@@ -1,0 +1,7 @@
+[GEN]
+[ZH]
+[BFME]
+[CMAKE]
+[GITHUB]
+[CORE]
+[LINUX]

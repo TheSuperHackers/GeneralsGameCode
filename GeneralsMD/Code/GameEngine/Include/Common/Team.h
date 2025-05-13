@@ -110,7 +110,7 @@ class ThingTemplate;
 class Waypoint;
 class PlayerRelationMap;
 
-enum AttitudeType;
+enum AttitudeType CPP_11(: Int);
 
 typedef struct {
 	Int	minUnits;

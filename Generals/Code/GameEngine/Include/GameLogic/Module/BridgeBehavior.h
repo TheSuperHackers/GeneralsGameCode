@@ -37,11 +37,11 @@
 #include "GameClient/TerrainRoads.h"
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/DamageModule.h"
-#include "GameLogic/Module/Diemodule.h"
+#include "GameLogic/Module/DieModule.h"
 #include "GameLogic/Module/UpdateModule.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
-enum BridgeTowerType;
+enum BridgeTowerType CPP_11(: Int);
 class FXList;
 class ObjectCreationList;
 class Bridge;

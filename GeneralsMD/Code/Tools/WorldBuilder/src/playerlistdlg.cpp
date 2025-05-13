@@ -19,13 +19,13 @@
 // playerlistdlg.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "worldbuilder.h"
+#include "StdAfx.h"
+#include "WorldBuilder.h"
 #include "playerlistdlg.h"
-#include "MapObjectProps.h"
+#include "mapobjectprops.h"
 #include "WorldBuilderDoc.h"
-#include "cundoable.h"
-#include "AddPlayerDialog.h"
+#include "CUndoable.h"
+#include "addplayerdialog.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/MultiplayerSettings.h"
@@ -324,6 +324,7 @@ void PlayerListDlg::OnNewplayer()
 			m_sides.addSide(&newPlayerDict);
 
 			Bool modified = m_sides.validateSides();
+			(void)modified;
 			DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::OnNewplayer"));
 			m_curPlayerIdx = m_sides.getNumSides()-1;
 			updateTheUI();
@@ -422,6 +423,7 @@ try_again:
 	} 
 
 	Bool modified = m_sides.validateSides();
+	(void)modified;
 	DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::OnRemoveplayer"));
 	updateTheUI();
 }
@@ -444,6 +446,7 @@ void PlayerListDlg::updateTheUI(void)
 
 	// make sure everything is canonical.
 	Bool modified = m_sides.validateSides();
+	(void)modified;
 	DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::updateTheUI! (caller should do this)"));
 
 	if (m_curPlayerIdx < 0) m_curPlayerIdx = 0;
@@ -455,7 +458,8 @@ void PlayerListDlg::updateTheUI(void)
 	list->ResetContent();
 
 	Int len = m_sides.getNumSides();
-	for (int i = 0; i < len; i++)
+	int i = 0;
+	for (; i < len; i++)
 	{
 		Dict *d = m_sides.getSideInfo(i)->getDict();
 		AsciiString name = d->getAsciiString(TheKey_playerName);
@@ -689,7 +693,8 @@ void PlayerListDlg::OnSelectPlayerColor()
 		pCombo->GetWindowText(str);
 		Int index = -1;
 		Int numColors = TheMultiplayerSettings->getNumColors();
-		for (Int c=0; c<numColors; ++c)
+		Int c=0;
+		for (; c<numColors; ++c)
 		{
 			MultiplayerColorDefinition *def = TheMultiplayerSettings->getColor(c);
 			if (!def)
@@ -741,6 +746,7 @@ void PlayerListDlg::OnSelchangeEnemieslist()
 void PlayerListDlg::OnOK() 
 {
 	Bool modified = m_sides.validateSides();
+	(void)modified;
 	DEBUG_ASSERTLOG(!modified,("had to clean up sides in CTeamsDialog::OnOK"));
 
 	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
@@ -839,7 +845,7 @@ void PlayerListDlg::OnChangePlayerdisplayname()
 }
 
 static void addSide(SidesList *sides, AsciiString faction, 
-										AsciiString playerName, UnsignedShort *playerUName)
+										AsciiString playerName, const wchar_t *playerUName)
 {
 	if (!sides->findSideInfo(playerName)) {
 
@@ -857,6 +863,7 @@ static void addSide(SidesList *sides, AsciiString faction,
 		sides->addSide(&newPlayerDict);
 
 		Bool modified = sides->validateSides();
+		(void)modified;
 		DEBUG_ASSERTLOG(!modified,("had to clean up sides in PlayerListDlg::OnNewplayer"));
 	}
 }

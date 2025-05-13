@@ -103,7 +103,6 @@
 #include "distlod.h"
 #include "hlod.h"
 #include "agg_def.h"
-#include "texfcach.h"
 #include "wwstring.h"
 #include "wwmemlog.h"
 #include "dazzle.h"
@@ -111,10 +110,10 @@
 #include "dx8renderer.h"
 #include "metalmap.h"
 #include "w3dexclusionlist.h"
-#include <ini.h>
+#include <INI.H>
 #include <windows.h>
 #include <stdio.h>
-#include <D3dx8core.h>
+#include <d3dx8core.h>
 #include "texture.h"
 #include "wwprofile.h"
 #include "assetstatus.h"
@@ -209,10 +208,6 @@ WW3DAssetManager::WW3DAssetManager(void) :
 	PrototypeLoaders		(PROTOLOADERS_VECTOR_SIZE),
 	Prototypes				(PROTOTYPES_VECTOR_SIZE),
 
-#ifdef WW3D_DX8
-	TextureCache				(NULL),
-#endif //WW3D_DX8
-
 	WW3D_Load_On_Demand		(false),
 	Activate_Fog_On_Load		(false),
 	MetalManager(0)
@@ -271,9 +266,6 @@ WW3DAssetManager::~WW3DAssetManager(void)
 		delete [] PrototypeHashTable;
 		PrototypeHashTable = NULL;
 	}
-#ifdef WW3D_DX8
-	Close_Texture_File_Cache();
-#endif //WW3D_DX8
 }
 
 static void Create_Number_String(StringClass& number, unsigned value)
@@ -540,7 +532,8 @@ void WW3DAssetManager::Free_Assets_With_Exclusion_List(const DynamicVectorClass<
 	exclude_array.Set_Growth_Step(DEFAULT_EXCLUDE_ARRAY_SIZE);
 
 	// iterate the array of prototypes saving each one that should be excluded from deletion
-	for (int i=0; i<Prototypes.Count(); i++) {
+	int i=0;
+	for (; i<Prototypes.Count(); i++) {
 
 		PrototypeClass * proto = Prototypes[i];
 		if (proto != NULL) {		
@@ -808,7 +801,7 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 		AssetStatusClass::Peek_Instance()->Report_Load_On_Demand_RObj(name);
 
 		char filename [MAX_PATH];
-		char *mesh_name = ::strchr (name, '.');
+		const char *mesh_name = ::strchr (name, '.');
 		if (mesh_name != NULL) {
 			::lstrcpyn (filename, name, ((int)mesh_name) - ((int)name) + 1);
 			::lstrcat (filename, ".w3d");
@@ -989,7 +982,7 @@ HAnimClass *	WW3DAssetManager::Get_HAnim(const char * name)
 			AssetStatusClass::Peek_Instance()->Report_Load_On_Demand_HAnim(name);
 
 			char filename[ MAX_PATH ];
-			char *animname = strchr( name, '.');
+			const char *animname = strchr( name, '.');
 			if (animname != NULL) {
 				sprintf( filename, "%s.w3d", animname+1);
 			} else {

@@ -43,6 +43,7 @@
 #include "Common/RandomValue.h"
 #include "Common/GlobalData.h"
 #include "Common/ResourceGatheringManager.h"
+#include "Common/Upgrade.h"
 
 #include "GameClient/Drawable.h"
 #include "GameClient/GameText.h"
@@ -61,7 +62,7 @@
 #include "GameLogic/Module/WorkerAIUpdate.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -205,7 +206,7 @@ void WorkerAIUpdate::createMachines( void )
 		m_workerMachine->initDefaultState();// this has to wait until all three are in place since
 		// an immediate transition check will ask questions of the machines.
 
-//#ifdef _DEBUG
+//#ifdef RTS_DEBUG
 //		m_workerMachine->setDebugOutput(TRUE);
 //		m_dozerMachine->setDebugOutput(TRUE);
 //		m_supplyTruckStateMachine->setDebugOutput(TRUE);
@@ -391,13 +392,12 @@ Object *WorkerAIUpdate::construct( const ThingTemplate *what,
 	}  // end if
 
 	// what will our initial status bits
-	UnsignedInt statusBits = OBJECT_STATUS_UNDER_CONSTRUCTION;
+	ObjectStatusMaskType statusBits = MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNDER_CONSTRUCTION );
 	if( isRebuild )
-		BitSet( statusBits, OBJECT_STATUS_RECONSTRUCTING );
+		statusBits.set( OBJECT_STATUS_RECONSTRUCTING );
 
 	// create an object at the destination location
-	Object *obj = TheThingFactory->newObject( what, owningPlayer->getDefaultTeam(), 
-																						(ObjectStatusBits)statusBits );
+	Object *obj = TheThingFactory->newObject( what, owningPlayer->getDefaultTeam(), statusBits );
 
 	// even though we haven't actually built anything yet, this keeps things tidy
 	obj->setProducer( getObject() );
@@ -419,7 +419,7 @@ Object *WorkerAIUpdate::construct( const ThingTemplate *what,
 	// set a bit that this object is under construction, it is important to do this early
 	// before the hooks add/subtract power from a player are executed
 	//
-	obj->setStatus( OBJECT_STATUS_UNDER_CONSTRUCTION );
+	obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNDER_CONSTRUCTION ) );
 
 	// initialize object
 	obj->setPosition( pos );
@@ -776,6 +776,9 @@ void WorkerAIUpdate::internalCancelTask( DozerTask task )
 
 	// sanity
 	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'\n", task) );
+	
+	if(task < 0 || task >= DOZER_NUM_TASKS)
+		return;  //DAMNIT!  You CANNOT assert and then not handle the damn error!  The.  Code.  Must.  Not.  Crash.
 
 	// call the single method that gets called for completing and canceling tasks
 	internalTaskCompleteOrCancelled( task );

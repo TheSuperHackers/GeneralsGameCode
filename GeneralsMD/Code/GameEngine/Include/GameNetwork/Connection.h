@@ -40,7 +40,7 @@
 
 #include "GameNetwork/NetCommandList.h"
 #include "GameNetwork/User.h"
-#include "GameNetwork/transport.h"
+#include "GameNetwork/Transport.h"
 #include "GameNetwork/NetPacket.h"
 
 #define CONNECTION_LATENCY_HISTORY_LENGTH 200
@@ -79,7 +79,7 @@ public:
 	void setQuitting( void );
 	Bool isQuitting( void ) { return m_isQuitting; }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	void debugPrintCommands();
 #endif
 

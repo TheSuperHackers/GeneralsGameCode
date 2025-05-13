@@ -28,7 +28,7 @@
 #ifndef __W3DWaterTracks_H_
 #define __W3DWaterTracks_H_
 
-enum waveType;	//forward reference
+enum waveType CPP_11(: Int);	//forward reference
 
 /// Custom render object that draws animated tracks/waves on the water.
 /**
@@ -49,8 +49,8 @@ public:
     virtual void					Get_Obj_Space_Bounding_Box(AABoxClass & aabox) const;		///<bounding box of this object
 
 	Int freeWaterTracksResources(void);	///<free W3D assets used for this track
-	void init( Real width, Real length, Vector2 &start, Vector2 &end, Char *texturename, Int waveTimeOffset);	///<allocate W3D resources and set size
-	void init( Real width, Vector2 &start, Vector2 &end, Char *texturename);	///<allocate W3D resources and set size
+	void init( Real width, Real length, const Vector2 &start, const Vector2 &end, const Char *texturename, Int waveTimeOffset);	///<allocate W3D resources and set size
+	void init( Real width, const Vector2 &start, const Vector2 &end, const Char *texturename);	///<allocate W3D resources and set size
 	Int	update(Int msElapsed);	///< update animation state
 	Int render(DX8VertexBufferClass	*vertexBuffer, Int batchStart);	///<draw this object
 

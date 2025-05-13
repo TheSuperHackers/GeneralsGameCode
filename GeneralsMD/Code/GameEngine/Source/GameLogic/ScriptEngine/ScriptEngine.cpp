@@ -28,8 +28,8 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "common/DataChunk.h"
-#include "Common/File.h"
+#include "Common/DataChunk.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
@@ -57,7 +57,7 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/SidesList.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -105,7 +105,7 @@ Bool st_particleSystemNeedsStopping = FALSE; ///< Set along with st_particleSyst
 #define FORMAT_STRING_LEADING_STRING		"%s%.2f"
 // That's it for particle editor
 
-#if defined(_INTERNAL)
+#if defined(RTS_INTERNAL)
 	#define DO_VTUNE_STUFF
 #endif
 
@@ -194,7 +194,7 @@ Int AttackPriorityInfo::getPriority(const ThingTemplate *tThing) const
 	return priority;
 }
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 /** Dump the info. */
 //-------------------------------------------------------------------------------------------------
 void AttackPriorityInfo::dumpPriorityInfo(void)
@@ -5615,7 +5615,7 @@ void ScriptEngine::update( void )
 			_adjustVariable(m_flags[k].name.str(), m_flags[k].value);
 		}
 	}
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	if (TheGameLogic->getFrame()==0) {
 		for (i=0; i<m_numAttackInfo; i++) {
 			m_attackPriorityInfo[i].dumpPriorityInfo();
@@ -6377,7 +6377,7 @@ void ScriptEngine::setCounter( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setFade( ScriptAction *pAction )
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_disableCameraFade)
 	{
 		m_fade = FADE_NONE;
@@ -7883,12 +7883,13 @@ void ScriptEngine::setSequentialTimer(Team *team, Int frameCount)
 
 void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 {
-	VecSequentialScriptPtrIt it, lastIt;
-	lastIt = m_sequentialScripts.end();
+	VecSequentialScriptPtrIt it;
+	SequentialScript* lastScript = NULL;
+	Bool itAdvanced = false;
 
 	Int spinCount = 0;
 	for (it = m_sequentialScripts.begin(); it != m_sequentialScripts.end(); /* empty */) {
-		if (it == lastIt) {
+		if ((*it) == lastScript) {
 			++spinCount;
 		} else {
 			spinCount = 0;
@@ -7904,9 +7905,9 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 			continue;
 		}
 
-		lastIt = it;
+		lastScript = (*it);
 		
-		Bool itAdvanced = false;
+		itAdvanced = false;
 
 		SequentialScript *seqScript = (*it);
 		if (seqScript == NULL) {
@@ -9331,7 +9332,7 @@ void ScriptEngine::loadPostProcess( void )
 
 }  // end loadPostProcess
 
-//#if defined(_DEBUG) || defined(_INTERNAL)
+//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 void ScriptEngine::debugVictory( void )
 {
 	ScriptAction *action = newInstance(ScriptAction)(ScriptAction::VICTORY);

@@ -65,8 +65,6 @@ void FXListDie::onDie( const DamageInfo *damageInfo )
 	const FXListDieModuleData* d = getFXListDieModuleData();
 	if (d->m_defaultDeathFX)
 	{
-		// if the object has any ambient sound(s), kill 'em now.
-		TheAudio->stopAllAmbientsBy(getObject());
 		
 		if (d->m_orientToObject)
 		{

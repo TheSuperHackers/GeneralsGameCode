@@ -47,7 +47,6 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "Windows.h"
 #include "mbstring.h"
 
 #include "Common/Debug.h"
@@ -62,7 +61,7 @@
 #include "GameClient/Color.h"
 #include "Common/NameKeyGenerator.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")

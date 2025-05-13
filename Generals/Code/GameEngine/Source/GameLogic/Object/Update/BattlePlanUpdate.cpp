@@ -51,7 +51,7 @@
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/ObjectIter.h"
-#include "GameLogic/Weaponset.h"
+#include "GameLogic/WeaponSet.h"
 #include "GameLogic/Weapon.h"
 #include "GameLogic/TerrainLogic.h"
 #include "GameLogic/Module/SpecialPowerModule.h"
@@ -61,7 +61,7 @@
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/StealthDetectorUpdate.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -264,27 +264,34 @@ void BattlePlanUpdate::onObjectCreated()
 }
 
 //-------------------------------------------------------------------------------------------------
-void BattlePlanUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, UnsignedInt commandOptions, Int locationCount )
+Bool BattlePlanUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions )
 {
 	if( m_specialPowerModule->getSpecialPowerTemplate() != specialPowerTemplate )
 	{
 		//Check to make sure our modules are connected.
-		return;
+		return FALSE;
 	}
 
 	//Set the desired status based on the command button option!
-	if( BitTest( commandOptions, OPTION_ONE ) )
+	if( BitIsSet( commandOptions, OPTION_ONE ) )
 	{
 		m_desiredPlan = PLANSTATUS_BOMBARDMENT;
 	}
-	else if( BitTest( commandOptions, OPTION_TWO ) )
+	else if( BitIsSet( commandOptions, OPTION_TWO ) )
 	{
 		m_desiredPlan = PLANSTATUS_HOLDTHELINE;
 	}
-	else if( BitTest( commandOptions, OPTION_THREE ) )
+	else if( BitIsSet( commandOptions, OPTION_THREE ) )
 	{
 		m_desiredPlan = PLANSTATUS_SEARCHANDDESTROY;
 	}
+	else
+	{
+		DEBUG_CRASH( ("Selected an unsupported strategy for strategy center.") );
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 Bool BattlePlanUpdate::isPowerCurrentlyInUse( const CommandButton *command ) const

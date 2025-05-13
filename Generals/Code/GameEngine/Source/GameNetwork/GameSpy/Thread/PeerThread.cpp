@@ -34,7 +34,7 @@
 #include "Common/Registry.h"
 #include "Common/StackDump.h"
 #include "Common/UserPreferences.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 #include "GameNetwork/IPEnumeration.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
@@ -48,7 +48,7 @@
 
 #include "Common/MiniLog.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -84,7 +84,7 @@ static LogClass s_stateChangedLog("StateChanged.txt");
 // -MDC 2/14/2003
 #define USE_BROADCAST_KEYS
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -518,7 +518,7 @@ static enum CallbackType
 	CALLBACK_MAX
 };
 
-void connectCallbackWrapper( PEER peer, PEERBool success, void *param )
+void connectCallbackWrapper( PEER peer, PEERBool success, int failureReason, void *param )
 {
 #ifdef SERVER_DEBUGGING
 	DEBUG_LOG(("In connectCallbackWrapper()\n"));
@@ -530,7 +530,7 @@ void connectCallbackWrapper( PEER peer, PEERBool success, void *param )
 	}
 }
 
-void nickErrorCallbackWrapper( PEER peer, Int type, const char *nick, void *param )
+void nickErrorCallbackWrapper( PEER peer, Int type, const char *nick, int numSuggestedNicks, const gsi_char** suggestedNicks, void *param )
 {
 	if (param != NULL)
 	{
@@ -657,7 +657,7 @@ static void playerFlagsChangedCallback(PEER peer, RoomType roomType, const char 
 static void listingGamesCallback(PEER peer, PEERBool success, const char * name, SBServer server, PEERBool staging, int msg, Int percentListed, void * param);
 static void roomUTMCallback(PEER peer, RoomType roomType, const char * nick, const char * command, const char * parameters, PEERBool authenticated, void * param);
 static void playerUTMCallback(PEER peer, const char * nick, const char * command, const char * parameters, PEERBool authenticated, void * param);
-static void gameStartedCallback(PEER peer, UnsignedInt IP, const char *message, void *param);
+static void gameStartedCallback(PEER peer, SBServer server, const char *message, void *param);
 static void globalKeyChangedCallback(PEER peer, const char *nick, const char *key, const char *val, void *param);
 static void roomKeyChangedCallback(PEER peer, RoomType roomType, const char *nick, const char *key, const char *val, void *param);
 
@@ -1820,7 +1820,8 @@ void PeerThreadClass::handleQMMatch(PEER peer, Int mapIndex, Int seed,
 		m_qmStatus = QM_MATCHED;
 		peerLeaveRoom(peer, GroupRoom, "");
 
-		for (Int i=0; i<MAX_SLOTS; ++i)
+		Int i=0;
+		for (; i<MAX_SLOTS; ++i)
 		{
 			if (playerName[i] && stricmp(playerName[i], m_loginName.c_str()))
 			{
@@ -2410,7 +2411,7 @@ void roomMessageCallback(PEER peer, RoomType roomType, const char * nick, const 
 	}
 }
 
-void gameStartedCallback( PEER peer, UnsignedInt IP, const char *message, void *param )
+void gameStartedCallback( PEER peer, SBServer server, const char *message, void *param )
 {
 	PeerResponse resp;
 	resp.peerResponseType = PeerResponse::PEERRESPONSE_GAMESTART;

@@ -135,8 +135,8 @@ public:
 	void releaseSlot(W3DIndexBufferSlot *vbSlot);	///<return slot to pool
 	void freeAllSlots(void);	///<release all slots to pool.
 	void freeAllBuffers(void);	///<release all vertex buffers to pool.
-	void W3DBufferManager::ReleaseResources(void);	///<release D3D/W3D resources.
-	Bool W3DBufferManager::ReAcquireResources(void);	///<reaquire D3D/W3D resources.
+	void ReleaseResources(void);	///<release D3D/W3D resources.
+	Bool ReAcquireResources(void);	///<reaquire D3D/W3D resources.
 	///allows iterating over vertex buffers used by manager.  Input of NULL to get first.
 	W3DVertexBuffer *getNextVertexBuffer(W3DVertexBuffer *pVb, VBM_FVF_TYPES type)
 	{	if (pVb == NULL)

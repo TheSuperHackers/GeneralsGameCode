@@ -35,7 +35,7 @@
 
 ScienceStore* TheScienceStore = NULL;
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -46,6 +46,23 @@ void ScienceStore::init()
 {
 	DEBUG_ASSERTCRASH(m_sciences.empty(), ("Hmm"));
 	m_sciences.clear();
+}
+
+//-----------------------------------------------------------------------------
+ScienceStore::~ScienceStore()
+{
+	// nope.
+	//m_sciences.clear();
+
+	// go through all sciences and delete any overrides
+	for (ScienceInfoVec::iterator it = m_sciences.begin(); it != m_sciences.end(); /*++it*/)
+	{
+		ScienceInfo* si = *it;
+		++it;
+		if (si) {
+			si->deleteInstance();
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------

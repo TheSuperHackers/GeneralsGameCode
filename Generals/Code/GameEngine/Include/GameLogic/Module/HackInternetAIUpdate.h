@@ -197,10 +197,10 @@ public:
 
  	virtual void aiDoCommand(const AICommandParms* parms);
 
-	UnsignedInt getUnpackTime()					const { return getHackInternetAIUpdateModuleData()->m_unpackTime; }
-	UnsignedInt getPackTime()						const { return getHackInternetAIUpdateModuleData()->m_packTime; }
 	Real getPackUnpackVariationFactor() const { return getHackInternetAIUpdateModuleData()->m_packUnpackVariationFactor; }
-	UnsignedInt getCashUpdateDelay()		const { return getHackInternetAIUpdateModuleData()->m_cashUpdateDelay; }
+	UnsignedInt getUnpackTime()					const;
+	UnsignedInt getPackTime()						const;
+	UnsignedInt getCashUpdateDelay()		const;
 	UnsignedInt getRegularCashAmount()	const { return getHackInternetAIUpdateModuleData()->m_regularCashAmount; }
 	UnsignedInt getVeteranCashAmount()	const { return getHackInternetAIUpdateModuleData()->m_veteranCashAmount; }
 	UnsignedInt getEliteCashAmount()		const { return getHackInternetAIUpdateModuleData()->m_eliteCashAmount; }

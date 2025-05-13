@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* $Header: /Commando/Code/ww3d2/assetmgr.h 15    7/24/01 6:28p Jani_p $ */
+/* $Header: /Commando/Code/ww3d2/assetmgr.h 19    12/17/01 7:55p Jani_p $ */
 /*********************************************************************************************** 
  ***                            Confidential - Westwood Studios                              *** 
  *********************************************************************************************** 
@@ -27,9 +27,9 @@
  *                                                                                             * 
  *                       Author:: Greg_h                                                       * 
  *                                                                                             * 
- *                     $Modtime:: 7/17/01 5:52p                                               $* 
+ *                     $Modtime:: 12/15/01 4:14p                                              $* 
  *                                                                                             * 
- *                    $Revision:: 15                                                          $* 
+ *                    $Revision:: 19                                                          $* 
  *                                                                                             * 
  *---------------------------------------------------------------------------------------------* 
  * Functions:                                                                                  * 
@@ -44,10 +44,10 @@
 #define ASSETMGR_H
 
 #include "always.h"
-#include "vector.h"
+#include "Vector.H"
 #include "htreemgr.h"
 #include "hanimmgr.h"
-#include "slist.h"
+#include "SLIST.H"
 #include "texture.h"
 #include "hashtemplate.h"
 #include "simplevec.h"
@@ -74,6 +74,7 @@ class StreamingTextureClass;
 struct StreamingTextureConfig;
 class TextureClass;
 class MetalMapManagerClass;
+
 
 /*
 ** AssetIterator
@@ -202,7 +203,7 @@ public:
 	**	WW3DAssetManager::Get_Instance();
 	*/
 	static WW3DAssetManager *		Get_Instance(void) { return TheInstance; }
-	static void							Delete_This(void) { if (TheInstance) delete TheInstance; }
+	static void							Delete_This(void) { if (TheInstance) delete TheInstance; TheInstance=NULL; }
 
 	/*
 	** Load data from any type of w3d file
@@ -261,11 +262,15 @@ public:
 
 	static void Log_Texture_Statistics();
 
-	virtual TextureClass *			Get_Texture(
+	virtual TextureClass *			Get_Texture
+	(
 		const char * filename, 
-		TextureClass::MipCountType mip_level_count=TextureClass::MIP_LEVELS_ALL,
+		MipCountType mip_level_count=MIP_LEVELS_ALL,
 		WW3DFormat texture_format=WW3D_FORMAT_UNKNOWN,
-		bool allow_compression=true);
+		bool allow_compression=true,
+		TextureBaseClass::TexAssetType type=TextureBaseClass::TEX_REGULAR,
+		bool allow_reduction=true
+	);
 	TextureClass*						Get_Bumpmap_Based_On_Texture(TextureClass* texture);
 
 	virtual void						Release_All_Textures(void);
@@ -321,6 +326,7 @@ public:
 
 	// Log texture statistics
 	void Log_All_Textures();
+
 protected:
 
 	/*
@@ -384,12 +390,6 @@ protected:
 	*/
 	HTreeManagerClass					HTreeManager;
 	HAnimManagerClass					HAnimManager;
-
-	/*
-	** When enabled, this handles all the caching for the texture class.
-	** If NULL then textures are not being cached.
-	*/
-	TextureFileCache *				TextureCache;
 
 	/*
 	** list of Font3DDatas

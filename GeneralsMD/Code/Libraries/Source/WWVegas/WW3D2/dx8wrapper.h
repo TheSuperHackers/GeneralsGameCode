@@ -81,7 +81,6 @@ const unsigned MAX_SHADOW_MAPS=1;
 
 #define prevVer
 #define nextVer
-#define __volatile unsigned
 
 
 enum {
@@ -1004,6 +1003,7 @@ WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector4& color)
 
 WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector3& color,float alpha)
 {
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	const float scale = 255.0;
 	unsigned int col;
 
@@ -1070,24 +1070,21 @@ not_changed:
 		mov	col,eax
 	}
 	return col;
+#else
+	return color.Convert_To_ARGB(alpha);
+#endif // defined(_MSC_VER) && _MSC_VER < 1300
 }
 
 // ----------------------------------------------------------------------------
 //
-// Clamp color vertor to [0...1] range
+// Clamp color vector to [0...1] range
 //
 // ----------------------------------------------------------------------------
 
 WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
 {
-	if (!CPUDetectClass::Has_CMOV_Instruction()) {
-		for (int i=0;i<4;++i) {
-			float f=(color[i]<0.0f) ? 0.0f : color[i];
-			color[i]=(f>1.0f) ? 1.0f : f;
-		}
-		return;
-	}
-
+#if defined(_MSC_VER) && _MSC_VER < 1300
+	if (CPUDetectClass::Has_CMOV_Instruction()) {
 	__asm
 	{
 		mov	esi,dword ptr color
@@ -1129,6 +1126,14 @@ WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
 		cmp edi,edx		// if no less than 1.0 set to 1.0
 		cmovnb edi,edx
 		mov dword ptr[esi+12],edi
+	}
+	return;
+	}
+#endif // defined(_MSC_VER) && _MSC_VER < 1300
+
+	for (int i=0;i<4;++i) {
+		float f=(color[i]<0.0f) ? 0.0f : color[i];
+		color[i]=(f>1.0f) ? 1.0f : f;
 	}
 }
 
@@ -1443,7 +1448,7 @@ WWINLINE RenderStateStruct::~RenderStateStruct()
 WWINLINE unsigned flimby( char* name, unsigned crib )
 {
   unsigned lnt prevVer = 0x00000000;  
-  __volatile D3D2_BASE_VEC nextVer = 0;
+  unsigned D3D2_BASE_VEC nextVer = 0;
   for( unsigned t = 0; t < crib; ++t )
   {
     (D3D2_BASE_VEC)nextVer += name[t];

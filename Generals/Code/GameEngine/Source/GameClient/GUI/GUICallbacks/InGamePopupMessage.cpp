@@ -54,7 +54,7 @@
 
 #include "Common/GlobalData.h"
 #include "Common/NameKeyGenerator.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 #include "Common/MessageStream.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
@@ -163,7 +163,7 @@ WindowMsgHandledType InGamePopupMessageInput( GameWindow *window, UnsignedInt ms
 						// send a simulated selected event to the parent window of the
 						// back/exit button
 						//
-						if( BitTest( state, KEY_STATE_UP ) )
+						if( BitIsSet( state, KEY_STATE_UP ) )
 						{
 							TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
 																								(WindowMsgData)buttonOk, buttonOkID );

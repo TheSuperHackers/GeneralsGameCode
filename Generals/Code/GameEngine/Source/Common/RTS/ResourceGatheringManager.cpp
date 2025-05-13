@@ -213,7 +213,7 @@ Object *ResourceGatheringManager::findBestSupplyCenter( Object *queryObject )
 		if( dock )
 		{
 			static const NameKeyType key_centerUpdate = NAMEKEY("SupplyCenterDockUpdate");
-			SupplyWarehouseDockUpdate *centerModule = (SupplyWarehouseDockUpdate*)dock->findUpdateModule( key_centerUpdate );
+			SupplyCenterDockUpdate *centerModule = (SupplyCenterDockUpdate*)dock->findUpdateModule( key_centerUpdate );
 			//If remotely okay, let User win.
 			if( centerModule && computeRelativeCost( queryObject, dock, NULL ) != FLT_MAX )
 				return dock;
@@ -234,7 +234,7 @@ Object *ResourceGatheringManager::findBestSupplyCenter( Object *queryObject )
 
 		if( currentCenter == NULL )
 		{
-			iterator = m_supplyWarehouses.erase( iterator );
+			iterator = m_supplyCenters.erase( iterator );
 		}
 		else
 		{

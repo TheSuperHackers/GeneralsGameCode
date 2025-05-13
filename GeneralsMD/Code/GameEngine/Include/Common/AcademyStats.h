@@ -68,7 +68,7 @@ struct AcademyAdviceInfo
 	UnsignedInt numTips;
 };
 
-enum AcademyClassificationType
+enum AcademyClassificationType CPP_11(: Int)
 {
 	//Don't forget to update the strings too!
 	ACT_NONE,

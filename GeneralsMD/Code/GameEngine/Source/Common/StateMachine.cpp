@@ -37,7 +37,7 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 
 //#pragma optimize("", off)
@@ -664,7 +664,7 @@ StateReturnType StateMachine::internalSetState( StateID newStateID )
  */
 StateReturnType StateMachine::initDefaultState()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_LOGGING
 #ifdef STATE_MACHINE_DEBUG
 #define REALLY_VERBOSE_LOG(x) /* */
 	// Run through all the transitions and make sure there aren't any transitions to undefined states. jba. [8/18/2003]
@@ -839,7 +839,7 @@ void StateMachine::xfer( Xfer *xfer )
 	}
 
 	Bool snapshotAllStates = false;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	//snapshotAllStates = true;
 #endif
 	xfer->xferBool(&snapshotAllStates);

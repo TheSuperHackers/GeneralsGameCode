@@ -42,10 +42,10 @@ class Player;
 class ExitInterface;
 class Matrix3D;
 class Weapon;
-enum CommandSourceType;
+enum CommandSourceType CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
-enum ObjectEnterExitType
+enum ObjectEnterExitType CPP_11(: Int)
 {
 	WANTS_TO_ENTER,
 	WANTS_TO_EXIT,
@@ -53,7 +53,7 @@ enum ObjectEnterExitType
 };
 
 
-enum EvacDisposition
+enum EvacDisposition CPP_11(: Int)
 {
   EVAC_INVALID = 0,
   EVAC_TO_LEFT,

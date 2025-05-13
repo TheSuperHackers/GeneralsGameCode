@@ -64,13 +64,13 @@ class STLSpecialAlloc;
 
 // FORWARD DECLARATIONS
 class Object;
-enum NameKeyType;
-enum ObjectID;
-enum DrawableID;
+enum NameKeyType CPP_11(: Int);
+enum ObjectID CPP_11(: Int);
+enum DrawableID CPP_11(: Int);
 
 #include <algorithm>
 #include <bitset>
-#include <hash_map>
+#include <Utility/hash_map_adapter.h>
 #include <list>
 #include <map>
 #include <queue>
@@ -190,10 +190,16 @@ namespace rts
 
 	template<> struct hash<AsciiString>
 	{
-		size_t operator()(AsciiString ast) const
-		{ 
+		size_t operator()(const AsciiString& ast) const
+		{
+#ifdef USING_STLPORT
 			std::hash<const char *> tmp;
 			return tmp((const char *) ast.str());
+#else
+			// TheSuperHackers @bugfix xezon 16/03/2024 Re-implements hash function that works with non-STLPort.
+			std::hash<std::string_view> hasher;
+			return hasher(std::string_view(ast.str(), ast.getLength()));
+#endif
 		}
 	};
 

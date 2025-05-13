@@ -204,7 +204,5 @@ protected:
 	unsigned short* index_buffer;
 };
 
-extern int IndexBufferExceptionFunc(void);
-
 #endif //DX8INDEXBUFFER_H
 

@@ -82,7 +82,7 @@
 	#include "GameLogic/Module/ParkingPlaceBehavior.h"
 #endif
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -313,7 +313,7 @@ const Int MAX_ENABLED_MODULES								= 16;
 {
 	if( s_animationTemplates )
 	{
-		delete s_animationTemplates;
+		delete[] s_animationTemplates;
 		s_animationTemplates = NULL;
 	}
 }
@@ -2527,7 +2527,7 @@ const AudioEventRTS& Drawable::getAmbientSoundByDamage(BodyDamageType dt)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void Drawable::validatePos() const
 {
 	const Coord3D* ourPos = getPosition();
@@ -2655,7 +2655,7 @@ void Drawable::draw( View *view )
 
 
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	validatePos();
 #endif
 
@@ -4515,7 +4515,7 @@ void Drawable::startAmbientSound(BodyDamageType dt, TimeOfDay tod, Bool onlyIfPe
 		{
       if ( !onlyIfPermanent || info->isPermanentSound() )
       {
-			  if( BitTest( info->m_type, ST_GLOBAL) || info->m_priority == AP_CRITICAL )
+			  if( BitIsSet( info->m_type, ST_GLOBAL) || info->m_priority == AP_CRITICAL )
 			  {
 				  //Play it anyways.
 				  m_ambientSound->m_event.setDrawableID(getID());

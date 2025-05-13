@@ -26,11 +26,11 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Greg_h                                                      $*
+ *                      $Author:: Jani_p                                                      $*
  *                                                                                             *
- *                     $Modtime:: 6/14/01 9:32a                                               $*
+ *                     $Modtime:: 11/24/01 6:18p                                              $*
  *                                                                                             *
- *                    $Revision:: 6                                                           $*
+ *                    $Revision:: 7                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -46,13 +46,14 @@
 #include "always.h"
 #include "bittype.h"
 #include "simplevec.h"
-#include "vector.h"
+#include "Vector.H"
 #include "vector2.h"
 #include "vector3.h"
-#include "vector3i.h"
+#include "Vector3i.h"
 #include "vector4.h"
 #include "shader.h"
 #include "vertmaterial.h"
+#include "meshgeometry.h"
 
 class MeshClass;
 class RenderInfoClass;
@@ -148,7 +149,7 @@ protected:
 	/*
 	** Connectivity
 	*/
-	SimpleDynVecClass<Vector3i>						Polys;
+	SimpleDynVecClass<TriIndex>						Polys;
 
 	/*
 	** Geometry
@@ -213,7 +214,7 @@ protected:
 	/*
 	** Connectivity
 	*/
-	SimpleDynVecClass<Vector3i>						Polys;
+	SimpleDynVecClass<TriIndex>						Polys;
 
 	/*
 	** Indirected vertex indices (for copying dynamically updated mesh geometry)

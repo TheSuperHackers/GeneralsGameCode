@@ -167,7 +167,7 @@ void DynamicAudioEventInfo::xferNoName( Xfer * xfer )
     Int field;
     for ( field = 0; field < OVERRIDE_COUNT; field++ )
     {
-      m_overriddenFields.set( field, BitTest( overriddenFlags, 1 << field ) );
+      m_overriddenFields.set( field, BitIsSet( overriddenFlags, 1 << field ) );
     }
   }
   else
@@ -187,7 +187,7 @@ void DynamicAudioEventInfo::xferNoName( Xfer * xfer )
 
   if ( wasLoopFlagOverriden() )
   {
-    Bool loopFlag = BitTest( m_control, AC_LOOP );
+    Bool loopFlag = BitIsSet( m_control, AC_LOOP );
     xfer->xferBool( &loopFlag );
     if ( loopFlag )
     {

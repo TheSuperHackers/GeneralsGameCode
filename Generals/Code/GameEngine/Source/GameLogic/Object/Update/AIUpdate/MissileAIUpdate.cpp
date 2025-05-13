@@ -52,7 +52,7 @@
 
 const Real BIGNUM = 99999.0f;
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -338,7 +338,7 @@ Bool MissileAIUpdate::projectileHandleCollision( Object *other )
 				const ContainedItemsList* items = contain->getContainedItemsList();
 				if (items)
 				{
-					for (ContainedItemsList::const_iterator it = items->begin(); *it != NULL && numKilled < d->m_garrisonHitKillCount; )
+					for (ContainedItemsList::const_iterator it = items->begin(); it != items->end() && numKilled < d->m_garrisonHitKillCount; )
 					{
 						Object* thingToKill = *it++;
 						if (!thingToKill->isEffectivelyDead() && thingToKill->isKindOfMulti(d->m_garrisonHitKillKindof, d->m_garrisonHitKillKindofNot))
@@ -370,7 +370,7 @@ Bool MissileAIUpdate::projectileHandleCollision( Object *other )
 	detonate();
 
 	// mark ourself as "no collisions" (since we might still exist in slow death mode)
-	obj->setStatus(OBJECT_STATUS_NO_COLLISIONS);
+	obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_NO_COLLISIONS ) );
 	return true;
 }
 
@@ -569,7 +569,7 @@ void MissileAIUpdate::doKillState(void)
 	Locomotor* curLoco = getCurLocomotor();
 	Object *obj = getObject();	
 	// Objects that are braking don't follow the normal physics, so they end up at their destination exactly.
-	obj->setStatus(OBJECT_STATUS_BRAKING, TRUE);
+	obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_BRAKING ) );
 
 	if (curLoco)
 	{

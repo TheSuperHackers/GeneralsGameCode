@@ -43,7 +43,7 @@
 #include "Common/AudioEventInfo.h"
 #include "Common/AudioRandomValue.h"
 #include "Common/AudioSettings.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/GameSounds.h"
 #include "Common/GlobalData.h"
@@ -57,7 +57,7 @@
 #include "GameClient/Drawable.h"	// For getPosition
 #include "GameClient/GameClient.h"	// For getDrawableByID
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
@@ -340,7 +340,7 @@ void AudioEventRTS::generateFilename( void )
 
 
 		
-		if (BitTest(m_eventInfo->m_control, AC_RANDOM)) 
+		if (BitIsSet(m_eventInfo->m_control, AC_RANDOM)) 
 		{ 
 			if (m_isLogicalAudio) 
 			{
@@ -474,7 +474,7 @@ void AudioEventRTS::advanceNextPlayPortion( void )
 			m_portionToPlayNext = PP_Sound;
 			break;
 		case PP_Sound:
-			if (m_eventInfo && BitTest(m_eventInfo->m_control, AC_ALL)) 
+			if (m_eventInfo && BitIsSet(m_eventInfo->m_control, AC_ALL)) 
 			{
 				if (m_allCount == m_eventInfo->m_sounds.size()) {
 					m_portionToPlayNext = PP_Decay;
@@ -671,7 +671,7 @@ Bool AudioEventRTS::isPositionalAudio( void ) const
 {
 	if( m_eventInfo ) 
 	{
-		if( !BitTest( m_eventInfo->m_type, ST_WORLD ) ) 
+		if( !BitIsSet( m_eventInfo->m_type, ST_WORLD ) ) 
 		{
 			return FALSE;
 		}
