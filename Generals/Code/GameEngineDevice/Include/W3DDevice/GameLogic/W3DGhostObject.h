@@ -80,8 +80,8 @@ public:
 	virtual void removeGhostObject(GhostObject *mod);
 	virtual void setLocalPlayerIndex(int index);
 	virtual void updateOrphanedObjects(int *playerIndexList, int numNonLocalPlayers);
-	virtual void W3DGhostObjectManager::releasePartitionData(void);
-	virtual void W3DGhostObjectManager::restorePartitionData(void);
+	virtual void releasePartitionData(void);
+	virtual void restorePartitionData(void);
 
 protected:
 	virtual void crc( Xfer *xfer );

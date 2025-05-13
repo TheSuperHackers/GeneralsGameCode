@@ -102,7 +102,6 @@ MeshModelClass::MeshModelClass(const MeshModelClass & that) :
 
 MeshModelClass::~MeshModelClass(void)
 {
-	TheDX8MeshRenderer.Unregister_Mesh_Type(this);
 
 	Reset(0,0,0);
 	REF_PTR_RELEASE(MatInfo);
@@ -140,7 +139,7 @@ MeshModelClass & MeshModelClass::operator = (const MeshModelClass & that)
 		clone_materials(that);
 
 		if (GapFiller) {
-			delete[] GapFiller;
+			delete GapFiller;
 				GapFiller=NULL;
 		}
 		if (that.GapFiller) GapFiller=W3DNEW GapFillerClass(*that.GapFiller);
@@ -150,6 +149,11 @@ MeshModelClass & MeshModelClass::operator = (const MeshModelClass & that)
 
 void MeshModelClass::Reset(int polycount,int vertcount,int passcount)
 {
+	//DMS - We must delete the gapfiller object BEFORE the geometry is reset.  Otherwise,
+	// the number of stages and passes gets reset and the gapfiller cannot deallocate properly.
+	delete GapFiller;
+	GapFiller=NULL;
+
 	Reset_Geometry(polycount,vertcount);
 
 	// Release everything we have and reset to initial state
@@ -163,9 +167,6 @@ void MeshModelClass::Reset(int polycount,int vertcount,int passcount)
 		AlternateMatDesc = NULL;
 	}
 	CurMatDesc = DefMatDesc;
-
-	delete GapFiller;
-	GapFiller=NULL;
 
 	return ;
 }
@@ -384,7 +385,7 @@ void MeshModelClass::compose_deformed_vertex_buffer(
 // Destination pointers MUST point to arrays large enough to hold all vertices
 void MeshModelClass::get_deformed_screenspace_vertices(Vector4 *dst_vert,const RenderInfoClass & rinfo,const Matrix3D & mesh_transform,const HTreeClass * htree)
 {
-	Matrix4 prj = rinfo.Camera.Get_Projection_Matrix() * rinfo.Camera.Get_View_Matrix() * mesh_transform;
+	Matrix4x4 prj = rinfo.Camera.Get_Projection_Matrix() * rinfo.Camera.Get_View_Matrix() * mesh_transform;
 
 	Vector3 * src_vert = Vertex->Get_Array();
 	int vertex_count=Get_Vertex_Count();
@@ -394,10 +395,11 @@ void MeshModelClass::get_deformed_screenspace_vertices(Vector4 *dst_vert,const R
 		for (int vi = 0; vi < vertex_count;) {
 			int idx=bonelink[vi];
 
-			Matrix4 tm = prj * htree->Get_Transform(idx);
+			Matrix4x4 tm = prj * htree->Get_Transform(idx);
 
 			// Count equal matrices (the vertices should be pre-sorted by matrices they use)
-			for (int cnt = vi; cnt < vertex_count; cnt++) if (idx!=bonelink[cnt]) break;
+			int cnt = vi;
+			for (; cnt < vertex_count; cnt++) if (idx!=bonelink[cnt]) break;
 
 			// Transform to screenspace (x,y,z,w)
 			VectorProcessorClass::Transform(
@@ -490,11 +492,11 @@ bool MeshModelClass::Needs_Vertex_Normals(void)
 }
 
 void Whatever(
-	Vector3i* added_polygon_indices,
+	TriIndex* added_polygon_indices,
 	unsigned& added_polygon_count,
 	const Vector3* locations,
 	unsigned vertex_count,
-	const Vector3i* polygon_indices,
+	const TriIndex* polygon_indices,
 	unsigned polygon_count);
 
 
@@ -586,7 +588,7 @@ GapFillerClass::GapFillerClass(MeshModelClass* mmc_) : mmc(NULL), PolygonCount(0
 	REF_PTR_SET(mmc,mmc_);
 
 	ArraySize=mmc->Get_Polygon_Count()*6;	// Each side of each triangle can have 2 polygons added, in the worst case
-	PolygonArray=W3DNEWARRAY Vector3i[ArraySize];
+	PolygonArray=W3DNEWARRAY TriIndex[ArraySize];
 	for (int pass=0;pass<mmc->Get_Pass_Count();++pass) {
 		for (int stage=0;stage<MeshMatDescClass::MAX_TEX_STAGES;++stage) {
 			if (mmc->Has_Texture_Array(pass,stage)) {
@@ -612,7 +614,7 @@ GapFillerClass::GapFillerClass(const GapFillerClass& that) : mmc(NULL), PolygonC
 	REF_PTR_SET(mmc,that.mmc);
 
 	ArraySize=that.ArraySize;
-	PolygonArray=W3DNEWARRAY Vector3i[ArraySize];
+	PolygonArray=W3DNEWARRAY TriIndex[ArraySize];
 	for (int pass=0;pass<mmc->Get_Pass_Count();++pass) {
 		for (int stage=0;stage<MeshMatDescClass::MAX_TEX_STAGES;++stage) {
 			if (that.TextureArray[pass][stage]) {
@@ -697,7 +699,7 @@ WWASSERT(loc1==loc2 || loc1==loc3 || loc2==loc3);
 //vidx2=mmc->Get_Polygon_Array()[polygon_index][1];
 //vidx3=mmc->Get_Polygon_Array()[polygon_index][2];
 
-	PolygonArray[PolygonCount]=Vector3i(vidx1,vidx2,vidx3);
+	PolygonArray[PolygonCount]=TriIndex(vidx1,vidx2,vidx3);
 	for (int pass=0;pass<mmc->Get_Pass_Count();++pass) {
 		if (mmc->Has_Shader_Array(pass)) {
 			ShaderArray[pass][PolygonCount]=mmc->Get_Shader(polygon_index,pass);
@@ -727,8 +729,8 @@ void GapFillerClass::Shrink_Buffers()
 	if (PolygonCount==ArraySize) return;
 
 	// Shrink the polygon array
-	Vector3i* new_polygon_array=W3DNEWARRAY Vector3i[PolygonCount];
-	memcpy(new_polygon_array,PolygonArray,PolygonCount*sizeof(Vector3i));
+	TriIndex* new_polygon_array=W3DNEWARRAY TriIndex[PolygonCount];
+	memcpy(new_polygon_array,PolygonArray,PolygonCount*sizeof(TriIndex));
 	delete[] PolygonArray;
 	PolygonArray=new_polygon_array;
 
@@ -775,14 +777,15 @@ void MeshModelClass::Init_For_NPatch_Rendering()
 
 	const Vector3* locations=Get_Vertex_Array();
 	unsigned vertex_count=Get_Vertex_Count();
-	const Vector3i* polygon_indices=Get_Polygon_Array();
+	const TriIndex* polygon_indices=Get_Polygon_Array();
 	unsigned polygon_count=Get_Polygon_Count();
 
 	LocationHash.Remove_All();
 	DuplicateLocationHash.Remove_All();
 	SideHash.Remove_All();
 
-	for (unsigned i=0;i<vertex_count;++i) {
+	unsigned i=0;
+	for (;i<vertex_count;++i) {
 		if (LocationHash.Exists(locations[i])) {
 			if (!DuplicateLocationHash.Exists(locations[i])) {
 				DuplicateLocationHash.Insert(locations[i],i);

@@ -94,10 +94,22 @@ protected:
 class SceneClass : public RefCountClass
 {
 public:
-
 	SceneClass(void);
 	virtual ~SceneClass(void);
-	
+
+	///////////////////////////////////////////////////////////////////////////////////
+	// RTTI information.
+	///////////////////////////////////////////////////////////////////////////////////
+	enum {
+		SCENE_ID_UNKOWN = 0xFFFFFFFF,
+		SCENE_ID_SCENE = 0,
+		SCENE_ID_SIMPLE,
+
+		SCENE_ID_LAST = 0x0000FFFF,
+	};
+	virtual int					Get_Scene_ID(void) const	{	return SCENE_ID_SCENE;	}
+
+
 	virtual void				Add_Render_Object(RenderObjClass * obj);
 	virtual void				Remove_Render_Object(RenderObjClass * obj);
 
@@ -214,6 +226,8 @@ public:
 
 	SimpleSceneClass(void);
 	virtual ~SimpleSceneClass(void);
+
+	virtual int	Get_Scene_ID(void)	{	return SCENE_ID_SIMPLE;	}
 
 	virtual void Add_Render_Object(RenderObjClass * obj);
 	virtual void Remove_Render_Object(RenderObjClass * obj);

@@ -55,7 +55,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ScriptEngine.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -218,6 +218,8 @@ ProductionUpdate::~ProductionUpdate( void )
 
 		production = m_productionQueue;
 		removeFromProductionQueue( production );
+		// TheSuperHackers @fix Mauller 13/04/2025 Delete instance of production item
+		production->deleteInstance();
 
 	}  // end while
 

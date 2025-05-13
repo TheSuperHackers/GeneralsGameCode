@@ -44,7 +44,7 @@ const Int SPAWN_UPDATE_RATE = LOGICFRAMES_PER_SECOND/2; ///< This is a low prior
 
 //-------------------------------------------------------------------------------------------------
 class ThingTemplate;
-enum CanAttackResult;
+enum CanAttackResult CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
 class SpawnBehaviorModuleData : public BehaviorModuleData

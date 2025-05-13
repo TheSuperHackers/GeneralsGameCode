@@ -31,7 +31,7 @@
 #ifndef __PERSISTENTSTORAGETHREAD_H__
 #define __PERSISTENTSTORAGETHREAD_H__
 
-#include "GameSpy/gstats/gpersist.h"
+#include "gamespy/gstats/gpersist.h"
 
 #define MAX_BUDDY_CHAT_LEN 128
 

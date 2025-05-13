@@ -50,7 +50,7 @@ class Player;
 class PolygonTrigger;
 class ObjectTypes;
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 #define SPECIAL_SCRIPT_PROFILING
 #endif
 
@@ -122,24 +122,21 @@ typedef AllObjectTypes::iterator AllObjectTypesIt;
 typedef std::vector<NamedReveal> VecNamedReveal;
 typedef VecNamedReveal::iterator VecNamedRevealIt;
 
-class AttackPriorityInfo : public MemoryPoolObject, public Snapshot
+// TheSuperHackers @compile xezon 17/03/2025 Fixes destructor visibility by removing MemoryPoolObject base class.
+// MemoryPoolObject looks to be unnecessary because it is never dynamically allocated.
+class AttackPriorityInfo : public Snapshot
 {
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(AttackPriorityInfo, "AttackPriorityInfo")		
-
-// friend bad for MPOs. (srj)
-//friend class ScriptEngine;
-
 public:
 
 	AttackPriorityInfo();
-	//~AttackPriorityInfo();
+	~AttackPriorityInfo();
 
 public:
 
 	void setPriority(const ThingTemplate *tThing, Int priority);
 	Int getPriority(const ThingTemplate *tThing) const;
 	AsciiString getName(void) const {return m_name;}
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	void dumpPriorityInfo(void);
 #endif
 
@@ -150,7 +147,7 @@ public:
 
 protected:
 
-	// sanapshot methods
+	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess( void );
@@ -355,7 +352,7 @@ public:
 	void setEnableVTune(Bool value);
 	Bool getEnableVTune() const;
 	///End VTUNE
-//#if defined(_DEBUG) || defined(_INTERNAL)
+//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	void debugVictory( void );
 //#endif
 protected:

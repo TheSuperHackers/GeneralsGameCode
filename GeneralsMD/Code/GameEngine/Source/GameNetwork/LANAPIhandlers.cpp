@@ -30,7 +30,7 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "Common/CRC.h"
+#include "Common/crc.h"
 #include "Common/GameState.h"
 #include "Common/Registry.h"
 #include "Common/GlobalData.h"
@@ -232,7 +232,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 			Bool canJoin = true;
 
 			// see if the CRCs match
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 			if (TheGlobalData->m_netMinPlayers > 0) {
 #endif
 /*			if (msg->GameToJoin.iniCRC != TheGlobalData->m_iniCRC ||
@@ -248,10 +248,12 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 				canJoin = false;
 			}
 */
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 			}
 #endif
 			
+// TheSuperHackers @tweak Disables the duplicate serial check
+#if 0
 			// check for a duplicate serial
 			AsciiString s;
 			for (player = 0; canJoin && player<MAX_SLOTS; ++player)
@@ -287,6 +289,7 @@ void LANAPI::handleRequestJoin( LANMessage *msg, UnsignedInt senderIP )
 					}
 				}
 			}
+#endif
 
 			// We're the host, so see if he has a duplicate name
 			for (player = 0; canJoin && player<MAX_SLOTS; ++player)

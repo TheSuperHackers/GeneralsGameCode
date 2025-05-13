@@ -41,7 +41,7 @@
 #define PART_EMT_H
 
 #include "rendobj.h"
-#include "random.h"
+#include "RANDOM.H"
 #include "part_buf.h"
 #include "quat.h"
 #include "w3d_file.h"

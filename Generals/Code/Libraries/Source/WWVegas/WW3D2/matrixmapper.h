@@ -26,12 +26,13 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Greg_h                                                      $*
+ *                      $Author:: Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
- *                     $Modtime:: 6/21/01 10:22a                                              $*
+ *                    $Revision:: 8                                                           $*
  *                                                                                             *
- *                    $Revision:: 7                                                           $*
- *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -87,8 +88,8 @@ public:
 	MappingType				Get_Type(void);
 
 	void						Set_Texture_Transform(const Matrix3D & view_to_texture,float texsize);
-	void						Set_Texture_Transform(const Matrix4 & view_to_texture,float texsize);
-	const Matrix4 &		Get_Texture_Transform(void) const;
+	void						Set_Texture_Transform(const Matrix4x4 & view_to_texture,float texsize);
+	const Matrix4x4 &		Get_Texture_Transform(void) const;
 
 	void						Set_Gradient_U_Coord(float coord) { GradientUCoord = coord; }
 	float						Get_Gradient_U_Coord(void) { return GradientUCoord; }
@@ -105,8 +106,8 @@ protected:
 
 	uint32					Flags;
 	MappingType				Type;
-	Matrix4					ViewToTexture;
-	Matrix4					ViewToPixel;
+	Matrix4x4				ViewToTexture;
+	Matrix4x4					ViewToPixel;
 	Vector3					ViewSpaceProjectionNormal;
 	float						GradientUCoord;
 };
@@ -135,7 +136,7 @@ inline MatrixMapperClass::MappingType MatrixMapperClass::Get_Type(void)
 	return Type;
 }
 
-inline const Matrix4 & MatrixMapperClass::Get_Texture_Transform(void) const	
+inline const Matrix4x4 & MatrixMapperClass::Get_Texture_Transform(void) const
 { 
 	return ViewToTexture; 
 }

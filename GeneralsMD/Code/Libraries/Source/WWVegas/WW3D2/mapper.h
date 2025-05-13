@@ -515,7 +515,7 @@ class BumpEnvTextureMapperClass : public LinearOffsetTextureMapperClass
 public:
 	BumpEnvTextureMapperClass(float rad_per_sec, float scale_factor, const Vector2 & offset_per_sec,
 		const Vector2 & start_offset, bool clamp_fix, const Vector2 &scale, unsigned int stage);
-	BumpEnvTextureMapperClass(INIClass &ini, char *section, unsigned int stage);
+	BumpEnvTextureMapperClass(INIClass &ini, const char *section, unsigned int stage);
 	BumpEnvTextureMapperClass(const BumpEnvTextureMapperClass & src);
 
 	virtual int	Mapper_ID(void) const { return MAPPER_ID_BUMPENV;}

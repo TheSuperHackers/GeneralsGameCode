@@ -56,26 +56,26 @@
 #include "dx8wrapper.h"
 #include "assetmgr.h"
 #include "Lib/BaseType.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 #include "W3DDevice/GameClient/W3DSmudge.h"
-#include "GameClient/view.h"
+#include "GameClient/View.h"
 #include "GameClient/CommandXlat.h"
-#include "GameClient/display.h"
+#include "GameClient/Display.h"
 #include "GameClient/Water.h"
 #include "GameLogic/GameLogic.h"
-#include "common/GlobalData.h"
-#include "common/GameLOD.h"
+#include "Common/GlobalData.h"
+#include "Common/GameLOD.h"
 #include "d3dx8tex.h"
 #include "dx8caps.h"
-#include "common/gamelod.h"
-#include "Benchmark.h"
+#include "Common/GameLOD.h"
+#include "benchmark.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -1218,7 +1218,7 @@ Int ShroudTextureShader::set(Int stage)
 
 	if (stage == 0)
 	{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData && TheGlobalData->m_fogOfWarOn)
 		DX8Wrapper::Set_Shader(ShaderClass::_PresetAlphaSpriteShader);
 	else
@@ -2694,7 +2694,8 @@ void W3DShaderManager::shutdown(void)
 	m_currentShader = ST_INVALID;
 	m_currentFilter = FT_NULL_FILTER;
 	//release any assets associated with a shader (vertex/pixel shaders, textures, etc.)
-	for (Int i=0; i<W3DShaderManager::ST_MAX; i++) {
+	Int i=0;
+	for (; i<W3DShaderManager::ST_MAX; i++) {
 		if (W3DShaders[i]) {
 			W3DShaders[i]->shutdown();
 		}
@@ -2904,7 +2905,7 @@ IDirect3DTexture8 *W3DShaderManager::getRenderTexture(void)
 	return m_renderTexture;
 }
 
-enum GraphicsVenderID
+enum GraphicsVenderID CPP_11(: Int)
 {
 	DC_NVIDIA_VENDOR_ID	= 0x10DE,
 	DC_3DFX_VENDOR_ID	= 0x121A,
@@ -3009,7 +3010,7 @@ ChipsetType W3DShaderManager::getChipset( void )
 //=============================================================================
 /** Loads and creates a D3D pixel or vertex shader.*/
 //=============================================================================
-HRESULT W3DShaderManager::LoadAndCreateD3DShader(char* strFilePath, const DWORD* pDeclaration, DWORD Usage, Bool ShaderType, DWORD* pHandle)
+HRESULT W3DShaderManager::LoadAndCreateD3DShader(const char* strFilePath, const DWORD* pDeclaration, DWORD Usage, Bool ShaderType, DWORD* pHandle)
 {
 	if (getChipset() < DC_GENERIC_PIXEL_SHADER_1_1)
 		return E_FAIL;	//don't allow loading any shaders if hardware can't handle it.

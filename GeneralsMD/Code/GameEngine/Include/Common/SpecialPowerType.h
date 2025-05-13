@@ -37,7 +37,7 @@
 // Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
 // existing values!
 //
-enum SpecialPowerType
+enum SpecialPowerType CPP_11(: Int)
 {
 	SPECIAL_INVALID,
 	// don't forget to add new strings to SpecialPowerMaskType::s_bitNameList[]

@@ -55,12 +55,12 @@
 #include "PreRTS.h"
 
 #include "Common/INI.h"
-#include "Common/Filesystem.h"
+#include "Common/FileSystem.h"
 #include "Common/Registry.h"
 #include "GameClient/HeaderTemplate.h"
 #include "GameClient/GameFont.h"
 #include "GameClient/GlobalLanguage.h"
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")

@@ -60,10 +60,10 @@ class ProductionPrerequisite;
 struct FieldParse;
 class Player;
 class INI;
-enum RadarPriorityType;
-enum ScienceType;
-enum EditorSortingType;
-enum ShadowType;
+enum RadarPriorityType CPP_11(: Int);
+enum ScienceType CPP_11(: Int);
+enum EditorSortingType CPP_11(: Int);
+enum ShadowType CPP_11(: Int);
 class WeaponTemplateSet;
 class ArmorTemplateSet;
 class FXList;
@@ -94,7 +94,7 @@ enum
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-enum ThingTemplateAudioType
+enum ThingTemplateAudioType CPP_11(: Int)
 {
 	TTAUDIO_voiceSelect,							///< Response when unit is selected
 	TTAUDIO_voiceGroupSelect,					///< Response when a group of this unit is selected
@@ -195,7 +195,7 @@ public:
 //-------------------------------------------------------------------------------------------------
 /** Object class type enumeration */
 //-------------------------------------------------------------------------------------------------
-enum BuildCompletionType
+enum BuildCompletionType CPP_11(: Int)
 {
 	BC_INVALID = 0,
 	BC_APPEARS_AT_RALLY_POINT,	///< unit appears at rally point of its #1 prereq
@@ -214,7 +214,7 @@ static const char *BuildCompletionNames[] =
 };
 #endif  // end DEFINE_BUILD_COMPLETION_NAMES
 
-enum BuildableStatus
+enum BuildableStatus CPP_11(: Int)
 {
 	// saved into savegames... do not change or remove values!
 	BSTATUS_YES = 0,
@@ -237,7 +237,7 @@ static const char *BuildableStatusNames[] =
 #endif	// end DEFINE_BUILDABLE_STATUS_NAMES
 
 //-------------------------------------------------------------------------------------------------
-enum ModuleParseMode
+enum ModuleParseMode CPP_11(: Int)
 {
 	MODULEPARSE_NORMAL,
 	MODULEPARSE_ADD_REMOVE_REPLACE,
@@ -279,24 +279,24 @@ public:
 	ModuleInfo() { }
 
 	void addModuleInfo( ThingTemplate *thingTemplate, const AsciiString& name, const AsciiString& moduleTag, const ModuleData* data, Int interfaceMask, Bool inheritable, Bool overrideableByLikeKind = FALSE );
-	const ModuleInfo::Nugget *ModuleInfo::getNuggetWithTag( const AsciiString& tag ) const;
+	const ModuleInfo::Nugget *getNuggetWithTag( const AsciiString& tag ) const;
 
 	Int getCount() const 
 	{ 
 		return m_info.size(); 
 	}
 	
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool containsPartialName(const char* n) const
 	{
-		for (int i = 0; i < m_info.size(); i++)
+		for (size_t i = 0; i < m_info.size(); i++)
 			if (strstr(m_info[i].first.str(), n) != NULL)
 				return true;
 		return false;
 	}
 #endif
 
-	AsciiString getNthName(Int i) const
+	AsciiString getNthName(size_t i) const
 	{
 		if (i >= 0 && i < m_info.size())
 		{
@@ -305,7 +305,7 @@ public:
 		return AsciiString::TheEmptyString;
 	}
 
-	AsciiString getNthTag(Int i) const
+	AsciiString getNthTag(size_t i) const
 	{
 		if (i >= 0 && i < m_info.size())
 		{
@@ -314,7 +314,7 @@ public:
 		return AsciiString::TheEmptyString;
 	}
 
-	const ModuleData* getNthData(Int i) const
+	const ModuleData* getNthData(size_t i) const
 	{
 		if (i >= 0 && i < m_info.size())
 		{
@@ -333,7 +333,7 @@ public:
 
 	void setCopiedFromDefault(Bool v)
 	{
-		for (int i = 0; i < m_info.size(); i++)
+		for (size_t i = 0; i < m_info.size(); i++)
 			m_info[i].copiedFromDefault = v;
 	}
 
@@ -351,10 +351,15 @@ class ThingTemplate : public Overridable
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(ThingTemplate, "ThingTemplatePool" )		
 
 private:
+
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	ThingTemplate(const ThingTemplate& that) : m_geometryInfo(that.m_geometryInfo) 
 	{ 
 		DEBUG_CRASH(("This should never be called\n")); 
 	}
+#else
+	ThingTemplate(const ThingTemplate& that) = delete;
+#endif
 
 public:
 

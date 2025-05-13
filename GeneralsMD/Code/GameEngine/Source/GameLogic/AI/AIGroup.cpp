@@ -56,7 +56,7 @@
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
 #include "GameLogic/ObjectIter.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -3007,7 +3007,7 @@ void AIGroup::setAttitude( AttitudeType tude )
  */
 AttitudeType AIGroup::getAttitude( void ) const
 {
-	return AI_PASSIVE;
+	return ATTITUDE_PASSIVE;
 }
 
 void AIGroup::setMineClearingDetail( Bool set )

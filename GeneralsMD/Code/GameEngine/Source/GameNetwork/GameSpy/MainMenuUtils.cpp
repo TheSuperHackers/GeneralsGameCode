@@ -35,7 +35,7 @@
 
 //#include "Common/Registry.h"
 #include "Common/UserPreferences.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 #include "GameClient/GameText.h"
 #include "GameClient/MessageBox.h"
 #include "GameClient/Shell.h"
@@ -43,7 +43,7 @@
 
 #include "GameClient/ShellHooks.h"
 
-#include "GameSpy/ghttp/ghttp.h"
+#include "gamespy/ghttp/ghttp.h"
 
 #include "GameNetwork/DownloadManager.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
@@ -52,9 +52,9 @@
 #include "GameNetwork/GameSpy/PeerThread.h"
 
 #include "WWDownload/Registry.h"
-#include "WWDownload/URLBuilder.h"
+#include "WWDownload/urlBuilder.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -241,12 +241,12 @@ static void startOnline( void )
 	pref.load("GameSpyLogin.ini");
 	UserPreferences::const_iterator it = pref.find("useProfiles");
 	if (it != pref.end() && it->second.compareNoCase("yes") == 0)
-#endif ALLOW_NON_PROFILED_LOGIN
+#endif // ALLOW_NON_PROFILED_LOGIN
 		TheShell->push( AsciiString("Menus/GameSpyLoginProfile.wnd") );
 #ifdef ALLOW_NON_PROFILED_LOGIN
 	else
 		TheShell->push( AsciiString("Menus/GameSpyLoginQuick.wnd") );
-#endif ALLOW_NON_PROFILED_LOGIN
+#endif // ALLOW_NON_PROFILED_LOGIN
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -316,7 +316,7 @@ static void queuePatch(Bool mandatory, AsciiString downloadURL)
 ///////////////////////////////////////////////////////////////////////////////////////
 
 static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
-															char * buffer, int bufferLen, void * param )
+															char * buffer, GHTTPByteCount bufferLen, void * param )
 {
 	Int run = (Int)param;
 	if (run != timeThroughOnline)
@@ -356,7 +356,7 @@ static GHTTPBool motdCallback( GHTTPRequest request, GHTTPResult result,
 ///////////////////////////////////////////////////////////////////////////////////////
 
 static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
-																char * buffer, int bufferLen, void * param )
+																char * buffer, GHTTPByteCount bufferLen, void * param )
 {
 	Int run = (Int)param;
 	if (run != timeThroughOnline)
@@ -421,7 +421,7 @@ static GHTTPBool configCallback( GHTTPRequest request, GHTTPResult result,
 ///////////////////////////////////////////////////////////////////////////////////////
 
 static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
-																		char * buffer, int bufferLen, void * param )
+																		char * buffer, GHTTPByteCount bufferLen, void * param )
 {
 	Int run = (Int)param;
 	if (run != timeThroughOnline)
@@ -508,7 +508,7 @@ static GHTTPBool configHeadCallback( GHTTPRequest request, GHTTPResult result,
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool gamePatchCheckCallback( GHTTPRequest request, GHTTPResult result, char * buffer, int bufferLen, void * param )
+static GHTTPBool gamePatchCheckCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, void * param )
 {
 	Int run = (Int)param;
 	if (run != timeThroughOnline)
@@ -598,7 +598,7 @@ void CancelPatchCheckCallback( void )
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result, char * buffer, int bufferLen, void * param )
+static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, void * param )
 {
 	DEBUG_LOG(("overallStatsCallback() - Result=%d, len=%d\n", result, bufferLen));
 	if (result != GHTTPSuccess)
@@ -612,7 +612,7 @@ static GHTTPBool overallStatsCallback( GHTTPRequest request, GHTTPResult result,
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-static GHTTPBool numPlayersOnlineCallback( GHTTPRequest request, GHTTPResult result, char * buffer, int bufferLen, void * param )
+static GHTTPBool numPlayersOnlineCallback( GHTTPRequest request, GHTTPResult result, char * buffer, GHTTPByteCount bufferLen, void * param )
 {
 	DEBUG_LOG(("numPlayersOnlineCallback() - Result=%d, buffer=[%s], len=%d\n", result, buffer, bufferLen));
 	if (result != GHTTPSuccess)
@@ -717,7 +717,8 @@ void HTTPThinkWrapper( void )
 {
 	if (s_asyncDNSLookupInProgress)
 	{
-		Int ret = asyncGethostbyname("servserv.generals.ea.com");
+		Char hostname[] = "servserv.generals.ea.com";
+		Int ret = asyncGethostbyname(hostname);
 		switch(ret)
 		{
 		case LOOKUP_FAILED:
@@ -774,7 +775,8 @@ void StartPatchCheck( void )
 		TheGameText->fetch("GUI:CheckingForPatches"), CancelPatchCheckCallbackAndReopenDropdown);
 
 	s_asyncDNSLookupInProgress = TRUE;
-	Int ret = asyncGethostbyname("servserv.generals.ea.com");
+	Char hostname[] = "servserv.generals.ea.com";
+	Int ret = asyncGethostbyname(hostname);
 	switch(ret)
 	{
 	case LOOKUP_FAILED:

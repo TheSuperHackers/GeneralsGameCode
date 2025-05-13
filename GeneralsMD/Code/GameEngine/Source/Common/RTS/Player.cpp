@@ -101,7 +101,7 @@
 
 #include "GameNetwork/GameInfo.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -431,12 +431,12 @@ void Player::init(const PlayerTemplate* pt)
 
 	m_unitsShouldHunt = FALSE;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_DEMO_ignorePrereqs = FALSE;
 	m_DEMO_freeBuild = FALSE;
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	m_DEMO_instantBuild = FALSE;
 #endif
 
@@ -505,17 +505,7 @@ void Player::init(const PlayerTemplate* pt)
 	resetRank();
 	m_sciencesDisabled.clear();
 	m_sciencesHidden.clear();
-
-	{
-		SpecialPowerReadyTimerListIterator it = m_specialPowerReadyTimerList.begin();
-		while(it != m_specialPowerReadyTimerList.end())
-		{
-			SpecialPowerReadyTimerType *sprt = &(*it);
-			it = m_specialPowerReadyTimerList.erase( it );
-			if(sprt)
-				sprt->clear();
-		}
-	}
+	m_specialPowerReadyTimerList.clear();
 
 	KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionChangeList.begin();
 	while(it != m_kindOfPercentProductionChangeList.end())
@@ -799,6 +789,16 @@ void Player::setDefaultTeam(void) {
 	if (dt) {
 		m_defaultTeam = dt;
 		dt->setActive();
+	}
+}
+
+//=============================================================================
+void Player::deletePlayerAI()
+{
+	if (m_ai)
+	{
+		m_ai->deleteInstance();
+		m_ai = NULL;
 	}
 }
 
@@ -1292,7 +1292,7 @@ static void doFindSpecialPowerSourceObject( Object *obj, void *userData )
 			{
 				UnsignedInt readyFrame = spmInterface->getReadyFrame();
 				
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 				// Everything is ready if timers are debug off'd
 				if( ! TheGlobalData->m_specialPowerUsesDelay )
 					readyFrame = 0;
@@ -1349,7 +1349,7 @@ static void doCountSpecialPowersReady( Object *obj, void *userData )
 				
 				UnsignedInt readyFrame = spmInterface->getReadyFrame();
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 				// Everything is ready if timers are debug off'd
 				if( ! TheGlobalData->m_specialPowerUsesDelay )
 					readyFrame = 0;
@@ -1652,6 +1652,10 @@ void Player::preTeamDestroy( const Team *team )
 	// ai notification callback
 	if( m_ai )
 		m_ai->aiPreTeamDestroy( team );
+
+	// TheSuperHackers @bugfix Mauller/Xezon 03/05/2025 Clear the default team to prevent dangling pointer usage
+	if( m_defaultTeam == team )
+		m_defaultTeam = NULL;
 }  // preTeamDestroy
 
 //-------------------------------------------------------------------------------------------------
@@ -2054,7 +2058,8 @@ void Player::setUnitsShouldHunt(Bool unitsShouldHunt, CommandSourceType source)
 //=============================================================================
 void Player::killPlayer(void)
 {
-	for (PlayerTeamList::iterator it = m_playerTeamPrototypes.begin(); it != m_playerTeamPrototypes.end(); ++it) {
+	PlayerTeamList::iterator it = m_playerTeamPrototypes.begin();
+	for (; it != m_playerTeamPrototypes.end(); ++it) {
 		for (DLINK_ITERATOR<Team> iter = (*it)->iterate_TeamInstanceList(); !iter.done(); iter.advance()) {
 			Team *team = iter.cur();
 			if (!team) {
@@ -2938,7 +2943,7 @@ Bool Player::canBuild(const ThingTemplate *tmplate) const
 				prereqsOK = false;
 		}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		if (ignoresPrereqs())
 			prereqsOK = true;
 #endif

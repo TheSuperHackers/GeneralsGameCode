@@ -21,12 +21,12 @@
 
 #define DEFINE_EDITOR_SORTING_NAMES
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "Lib\BaseType.h"
+#include "Lib/BaseType.h"
 #include "ObjectOptions.h"
 #include "WHeightMapEdit.h"
-#include "AddPlayerDialog.h"
+#include "addplayerdialog.h"
 #include "WorldBuilderDoc.h"
 #include "CUndoable.h"
 #include "W3DDevice/GameClient/HeightMap.h"
@@ -431,7 +431,7 @@ HTREEITEM ObjectOptions::_FindOrDont(const char* pLabel, HTREEITEM startPoint)
 			item.cchTextMax = sizeof(buffer)-2;				
 			m_objectTreeView.GetItem(&item);
 
-			char* strToTest = strrchr(pLabel, '/');
+			const char* strToTest = strrchr(pLabel, '/');
 //		if (strstr((strToTest ? strToTest : pLabel), buffer)) 
 			if (strcmp((strToTest ? strToTest : pLabel), buffer) == 0) 
 			{
@@ -486,7 +486,8 @@ void ObjectOptions::addObject( MapObject *mapObject, const char *pPath,
 		parent = findOrAdd( parent, buffer );
 
 		// next tier uses the editor sorting that design can specify in the INI
-		for( EditorSortingType i = ES_FIRST; 
+		EditorSortingType i = ES_FIRST;
+		for( ;
 				 i < ES_NUM_SORTING_TYPES;
 				 i = (EditorSortingType)(i + 1) )
 		{

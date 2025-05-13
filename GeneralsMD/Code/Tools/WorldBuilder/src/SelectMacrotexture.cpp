@@ -19,11 +19,11 @@
 // SelectMacrotexture.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "worldbuilder.h"
+#include "StdAfx.h"
+#include "WorldBuilder.h"
 #include "SelectMacrotexture.h"
 #include "Common/FileSystem.h"
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -114,8 +114,9 @@ BOOL SelectMacrotexture::OnInitDialog()
 			ins.hInsertAfter = TVI_SORT;
 			ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 			ins.item.lParam = -1;
-			ins.item.pszText = DEFAULT;
-			ins.item.cchTextMax = strlen(DEFAULT);				
+			char defaultText[] = DEFAULT;
+			ins.item.pszText = defaultText;
+			ins.item.cchTextMax = strlen(defaultText);				
 			child = m_textureTreeView.InsertItem(&ins);
 
  		}

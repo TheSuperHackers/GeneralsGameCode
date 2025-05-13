@@ -29,7 +29,7 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
@@ -59,7 +59,7 @@
 #include "GameLogic/SidesList.h"
 #include "GameLogic/TerrainLogic.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -789,7 +789,7 @@ Bool GameState::isInSaveDirectory(const AsciiString& path) const
 // ------------------------------------------------------------------------------------------------
 AsciiString GameState::getMapLeafName(const AsciiString& in) const
 {
-	char* p = strrchr(in.str(), '\\');
+	const char* p = strrchr(in.str(), '\\');
 	if (p)
 	{
 		//

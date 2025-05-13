@@ -45,7 +45,7 @@ class Drawable;
 //-------------------------------------------------------------------------------------------------
 /** LOD values for terrain, keep this in sync with TerrainLODNames[] */
 //-------------------------------------------------------------------------------------------------
-typedef enum _TerrainLOD
+typedef enum _TerrainLOD CPP_11(: Int)
 { 
 	TERRAIN_LOD_INVALID								= 0,
 	TERRAIN_LOD_MIN										= 1,  // note that this is less than max
@@ -62,7 +62,7 @@ typedef enum _TerrainLOD
 
 } TerrainLOD;
 #ifdef DEFINE_TERRAIN_LOD_NAMES
-static char * TerrainLODNames[] = 
+static const char * TerrainLODNames[] = 
 {
 	"NONE",
 	"MIN",

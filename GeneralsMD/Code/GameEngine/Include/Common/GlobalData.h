@@ -44,12 +44,12 @@
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 struct FieldParse;
-typedef enum _TerrainLOD;
+enum _TerrainLOD CPP_11(: Int);
 class GlobalData;
 class INI;
 class WeaponBonusSet;
-enum BodyDamageType;
-enum AIDebugOptions;
+enum BodyDamageType CPP_11(: Int);
+enum AIDebugOptions CPP_11(: Int);
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -449,14 +449,14 @@ public:
 	Real				m_keyboardCameraRotateSpeed;    ///< How fast the camera rotates when rotated via keyboard controls.
   Int					m_playStats;									///< Int whether we want to log play stats or not, if <= 0 then we don't log
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	Bool m_specialPowerUsesDelay ;
 #endif
   Bool m_TiVOFastMode;            ///< When true, the client speeds up the framerate... set by HOTKEY!
   
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool m_wireframe;
 	Bool m_stateMachineDebug;
 	Bool m_useCameraConstraints;
@@ -489,8 +489,6 @@ public:
 	Real m_debugProjectileTileWidth;			///< How wide should these tiles be?
 	Int m_debugProjectileTileDuration;		///< How long should these tiles stay around, in frames?
 	RGBColor m_debugProjectileTileColor;	///< What color should these tiles be?
-	Bool m_debugIgnoreAsserts;						///< Ignore all asserts.
-	Bool m_debugIgnoreStackTrace;					///< No stacktraces for asserts.
 	Bool m_showCollisionExtents;	///< Used to display collision extents
   Bool m_showAudioLocations;    ///< Used to display audio markers and ambient sound radii
 	Bool m_saveStats;
@@ -504,6 +502,14 @@ public:
 	Int m_latencyNoise;						///< Max amplitude of jitter to throw in
 	Int m_packetLoss;							///< Percent of packets to drop
 	Bool m_extraLogging;					///< More expensive debug logging to catch crashes.
+#endif
+
+#ifdef DEBUG_CRASHING
+	Bool m_debugIgnoreAsserts;						///< Ignore all asserts.
+#endif
+
+#ifdef DEBUG_STACKTRACE
+	Bool m_debugIgnoreStackTrace;					///< No stacktraces for asserts.
 #endif
 
 	Bool				m_isBreakableMovie;							///< if we enter a breakable movie, set this flag
@@ -531,9 +537,13 @@ private:
 	GlobalData *newOverride( void );		/** create a new override, copy data from previous
 																			override, and return it */
 
-
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	GlobalData(const GlobalData& that) { DEBUG_CRASH(("unimplemented")); }
 	GlobalData& operator=(const GlobalData& that) { DEBUG_CRASH(("unimplemented")); return *this; }
+#else
+	GlobalData(const GlobalData& that) = delete;
+	GlobalData& operator=(const GlobalData& that) = default;
+#endif
 
 };
 

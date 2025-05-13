@@ -81,7 +81,7 @@ public:
 		IndexBufferClass* index_buffer;
 		unsigned short* indices;
 	public:
-		WriteLockClass(IndexBufferClass* index_buffer);
+		WriteLockClass(IndexBufferClass* index_buffer, int flags=0);
 		~WriteLockClass();
 
 		unsigned short* Get_Index_Array() { return indices; }

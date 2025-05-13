@@ -57,7 +57,7 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/Module/DozerAIUpdate.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")

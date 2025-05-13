@@ -53,7 +53,7 @@
 #include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/Module/StealthUpdate.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -1025,7 +1025,8 @@ void Radar::createEvent( const Coord3D *world, RadarEventType type, Real seconds
 
 	// lookup the colors we are to used based on the event 
 	RGBAColorInt color[ 2 ];
-	for( Int i = 0; radarColorLookupTable[ i ].event != RADAR_EVENT_INVALID; ++i )
+	Int i = 0;
+	for( ; radarColorLookupTable[ i ].event != RADAR_EVENT_INVALID; ++i )
 	{
 
 		if( radarColorLookupTable[ i ].event == type )

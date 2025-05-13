@@ -19,11 +19,11 @@
 // DebugWindow.cpp : Defines the initialization routines for the DLL.
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "ParticleEditor.h"
 #include "ParticleEditorDialog.h"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;

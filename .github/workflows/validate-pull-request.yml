@@ -1,0 +1,96 @@
+name: Validate Pull Request
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+
+jobs:
+  validate-title-and-commits:
+    name: Validate Title and Commits
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Load valid tags
+        id: load-tags
+        run: |
+          if [ ! -f ./.github/workflows/valid-tags.txt ]; then
+            echo "::error::.github/workflows/valid-tags.txt file not found"
+            exit 1
+          fi
+
+          echo "**Valid tags**: $(cat ./.github/workflows/valid-tags.txt | tr '\n' ',' | sed 's/,/, /g' | sed 's/, $//')" >> $GITHUB_STEP_SUMMARY
+
+          TAG_REGEX=$(sed 's/[]\/$*.^|[]/\\&/g' ./.github/workflows/valid-tags.txt | paste -sd "|" -)
+
+          # Matches:
+          #   1) One or more valid tags at the beginning, directly adjacent, followed by at least one space, then text
+          #   2) Text that does not start with '[' (i.e. no tags)
+          echo "regex=^((($TAG_REGEX)){1,}[[:space:]]+.*|[^[]+.*)$" >> $GITHUB_OUTPUT
+
+          echo "Built the regex: ^((($TAG_REGEX)){1,}[[:space:]]+.*|[^[]+.*)$"
+
+      - name: Validate PR title
+        id: validate_title
+        run: |
+          echo "### Validate PR Title" >> $GITHUB_STEP_SUMMARY
+          REGEX="${{ steps.load-tags.outputs.regex }}"
+          TITLE=$(jq -r '.pull_request.title // "No title found"' "$GITHUB_EVENT_PATH")
+
+          ESCAPED_TITLE=$(echo "$TITLE" | sed 's/["\`\\$]/\\&/g')
+
+          if [[ ! "$TITLE" =~ $REGEX ]]; then
+            echo "- ❌ PR title \"$ESCAPED_TITLE\" is invalid." >> $GITHUB_STEP_SUMMARY
+            echo "TITLE_VALID=false" >> $GITHUB_OUTPUT
+          else
+            echo "- ✅ PR title \"$ESCAPED_TITLE\" is valid." >> $GITHUB_STEP_SUMMARY
+            echo "TITLE_VALID=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Validate PR commits
+        id: validate_commits
+        run: |
+          echo "### Validate PR Commits" >> $GITHUB_STEP_SUMMARY
+          REGEX="${{ steps.load-tags.outputs.regex }}"
+          git fetch --prune --unshallow origin ${{ github.base_ref }}
+          COMMITS=$(git log origin/${{ github.base_ref }}..HEAD --pretty=format:"%s" --no-merges)
+
+          INVALID_COMMITS=0
+
+          while read -r COMMIT_MSG; do
+          if [[ -z "$COMMIT_MSG" ]]; then
+            continue
+          fi
+          ESCAPED_MSG=$(echo "$COMMIT_MSG" | sed 's/["\`\\$]/\\&/g')
+          if [[ ! "$COMMIT_MSG" =~ $REGEX ]]; then
+            echo "- ❌ Commit message \"$ESCAPED_MSG\" is invalid." >> $GITHUB_STEP_SUMMARY
+            INVALID_COMMITS=$((INVALID_COMMITS+1))
+          else
+            echo "- ✅ Commit message \"$ESCAPED_MSG\" is valid." >> $GITHUB_STEP_SUMMARY
+          fi
+          done <<< "$COMMITS"
+
+          if [[ $INVALID_COMMITS -gt 0 ]]; then
+            echo "COMMITS_VALID=false" >> $GITHUB_OUTPUT
+          else
+            echo "COMMITS_VALID=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Validation return code
+        run: |
+          if [[ "${{ steps.validate_title.outputs.TITLE_VALID }}" != "true" || "${{ steps.validate_commits.outputs.COMMITS_VALID }}" != "true" ]]; then
+            exit 1
+          fi

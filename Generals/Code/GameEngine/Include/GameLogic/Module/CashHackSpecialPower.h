@@ -39,7 +39,7 @@
 class Object;
 class SpecialPowerTemplate;
 struct FieldParse;
-enum ScienceType;
+enum ScienceType CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ public:
 	// virtual destructor provided by memory pool object
 
 	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, UnsignedInt commandOptions );
+	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
 
 protected:
 

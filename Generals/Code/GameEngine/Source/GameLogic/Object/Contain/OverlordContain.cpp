@@ -43,6 +43,14 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 
+
+#ifdef RTS_INTERNAL
+// for occasional debugging...
+//#pragma optimize("", off)
+//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
+
+
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 OverlordContainModuleData::OverlordContainModuleData()
@@ -435,7 +443,7 @@ void OverlordContain::clientVisibleContainedFlashAsSelected()
 		ContainedItemsList::const_iterator it;
 		it = items->begin();
 
-		while( *it )
+		while( it != items->end() )
 		{
 			Object *object = *it;
 			if ( object && object->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )

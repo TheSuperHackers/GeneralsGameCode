@@ -171,7 +171,7 @@ public:
 // Implementation
 protected:
 	virtual ~WbView();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif

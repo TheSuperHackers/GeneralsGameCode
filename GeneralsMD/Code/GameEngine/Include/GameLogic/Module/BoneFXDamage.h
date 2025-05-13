@@ -37,7 +37,7 @@
 #include "GameLogic/Module/DamageModule.h" 
 
 //#include "GameLogic/Module/BodyModule.h" -- Yikes... not necessary to include this! (KM)
-enum BodyDamageType; //Ahhhh much better!
+enum BodyDamageType CPP_11(: Int); //Ahhhh much better!
 
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////

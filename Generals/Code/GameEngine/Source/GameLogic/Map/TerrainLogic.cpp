@@ -59,7 +59,7 @@
 #include "WWMath/plane.h"
 #include "WWMath/tri.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -136,7 +136,7 @@ Object *Bridge::createTower( Coord3D *worldPos,
 	if( towerTemplate == NULL || bridge == NULL )
 	{
 
-		DEBUG_CRASH(( "createTower: Invalid params\n" ));
+		DEBUG_CRASH(( "Bridge::createTower(): Invalid params\n" ));
 		return NULL;
 
 	}  // end if
@@ -430,9 +430,11 @@ Bridge::Bridge(Object *bridgeObj)
 
 		}  // end switch
 		tower = createTower( &pos, type, towerTemplate, bridgeObj );
-
-		// store the tower object ID
-		m_bridgeInfo.towerObjectID[ i ] = tower->getID();
+		if( tower )
+		{
+			// store the tower object ID
+			m_bridgeInfo.towerObjectID[ i ] = tower->getID();
+		}
 
 	}  // end for, i
 
@@ -1183,7 +1185,7 @@ void TerrainLogic::enableWaterGrid( Bool enable )
 			//
 			AsciiString strippedMapNameOnly;
 			AsciiString strippedCompareMapNameOnly;
-			char *c;
+			const char *c;
 
 			// create stripped map name
 			c = strrchr( TheGlobalData->m_mapName.str(), '\\' );

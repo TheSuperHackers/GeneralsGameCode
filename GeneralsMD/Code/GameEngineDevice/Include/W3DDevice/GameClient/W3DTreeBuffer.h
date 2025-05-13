@@ -53,15 +53,15 @@
 #include "always.h"
 #include "rendobj.h"
 #include "w3d_file.h"
-#include "Texture.h"
+#include "texture.h"
 #include "dx8vertexbuffer.h"
 #include "dx8indexbuffer.h"
 #include "shader.h"
 #include "vertmaterial.h"
 #include "Lib/BaseType.h"
-#include "common/GameType.h"
+#include "Common/GameType.h"
 #include "Common/AsciiString.h"
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 
 //-----------------------------------------------------------------------------
 //           Forward References
@@ -78,7 +78,7 @@ class W3DProjectedShadow;
 //           Type Defines
 //-----------------------------------------------------------------------------
 
-enum W3DToppleState
+enum W3DToppleState CPP_11(: Int)
 {
 	TOPPLE_UPRIGHT = 0,
 	TOPPLE_FALLING,

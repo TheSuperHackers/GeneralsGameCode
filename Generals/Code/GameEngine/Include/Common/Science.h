@@ -40,7 +40,7 @@
 class Player;
 
 //-------------------------------------------------------------------------------------------------
-enum ScienceType
+enum ScienceType CPP_11(: Int)
 {
 	SCIENCE_INVALID = -1
 };
@@ -81,6 +81,8 @@ class ScienceStore : public SubsystemInterface
 	friend class ScienceInfo;
 
 public:
+	virtual ~ScienceStore();
+
 	void init();
 	void reset();
 	void update() { }

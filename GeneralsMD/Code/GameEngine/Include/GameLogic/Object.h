@@ -109,18 +109,18 @@ class TempWeaponBonusHelper;
 class ObjectWeaponStatusHelper;
 class ObjectDefectionHelper;
 
-enum CommandSourceType;
-enum HackerAttackMode;
-enum NameKeyType;
-enum SpecialPowerType;
-enum WeaponBonusConditionType;
-enum WeaponChoiceCriteria;
-enum WeaponSetConditionType;
-enum WeaponSetType;
-enum ArmorSetType;
-enum WeaponStatus;
-enum RadarPriorityType;
-enum CanAttackResult;
+enum CommandSourceType CPP_11(: Int);
+enum HackerAttackMode CPP_11(: Int);
+enum NameKeyType CPP_11(: Int);
+enum SpecialPowerType CPP_11(: Int);
+enum WeaponBonusConditionType CPP_11(: Int);
+enum WeaponChoiceCriteria CPP_11(: Int);
+enum WeaponSetConditionType CPP_11(: Int);
+enum WeaponSetType CPP_11(: Int);
+enum ArmorSetType CPP_11(: Int);
+enum WeaponStatus CPP_11(: Int);
+enum RadarPriorityType CPP_11(: Int);
+enum CanAttackResult CPP_11(: Int);
 
 // For ObjectStatusTypes
 #include "Common/ObjectStatusTypes.h"
@@ -147,7 +147,7 @@ struct TTriggerInfo
 //----------------------------------------------------
 
 
-enum CrushSquishTestType
+enum CrushSquishTestType CPP_11(: Int)
 {
 	TEST_CRUSH_ONLY, 
 	TEST_SQUISH_ONLY, 
@@ -262,12 +262,12 @@ public:
 	Bool isLocallyControlled() const;
 	Bool isNeutralControlled() const;
 	
-	Bool getIsUndetectedDefector(void) const { return BitTest(m_privateStatus, UNDETECTED_DEFECTOR); }
+	Bool getIsUndetectedDefector(void) const { return BitIsSet(m_privateStatus, UNDETECTED_DEFECTOR); }
 	void friend_setUndetectedDefector(Bool status);
 
-	inline Bool isOffMap() const { return BitTest(m_privateStatus, OFF_MAP); }
+	inline Bool isOffMap() const { return BitIsSet(m_privateStatus, OFF_MAP); }
 
-	inline Bool isCaptured() const { return BitTest(m_privateStatus, CAPTURED); }
+	inline Bool isCaptured() const { return BitIsSet(m_privateStatus, CAPTURED); }
 	void setCaptured(Bool isCaptured);
 
 	inline const GeometryInfo& getGeometryInfo() const { return m_geometryInfo; }
@@ -330,8 +330,8 @@ public:
 	SpecialPowerUpdateInterface* findSpecialPowerWithOverridableDestinationActive( SpecialPowerType type = SPECIAL_INVALID ) const;
 	SpecialPowerUpdateInterface* findSpecialPowerWithOverridableDestination( SpecialPowerType type = SPECIAL_INVALID ) const;
 
-	CountermeasuresBehaviorInterface* Object::getCountermeasuresBehaviorInterface();
-	const CountermeasuresBehaviorInterface* Object::getCountermeasuresBehaviorInterface() const;
+	CountermeasuresBehaviorInterface* getCountermeasuresBehaviorInterface();
+	const CountermeasuresBehaviorInterface* getCountermeasuresBehaviorInterface() const;
 
 	inline ObjectStatusMaskType getStatusBits() const { return m_status; }
 	inline Bool testStatus( ObjectStatusTypes bit ) const { return m_status.test( bit ); }
@@ -349,7 +349,7 @@ public:
 	void forceRefreshSubObjectUpgradeStatus();
 
 	// Useful for status bits that can be set by the scripting system
-	inline Bool testScriptStatusBit(ObjectScriptStatusBit b) const { return BitTest(m_scriptStatus, b); }
+	inline Bool testScriptStatusBit(ObjectScriptStatusBit b) const { return BitIsSet(m_scriptStatus, b); }
 	void setScriptStatus( ObjectScriptStatusBit bit, Bool set = true );
 	inline void clearScriptStatus( ObjectScriptStatusBit bit ) { setScriptStatus(bit, false); }
 
@@ -467,7 +467,7 @@ public:
 	void setCommandSetStringOverride( AsciiString newCommandSetString ) { m_commandSetStringOverride = newCommandSetString; }
 
 	/// People are faking their commandsets, and, Surprise!, they are authoritative.  Challenge everything.
-	Bool Object::canProduceUpgrade( const UpgradeTemplate *upgrade ); 
+	Bool canProduceUpgrade( const UpgradeTemplate *upgrade ); 
 
 
 	// Weapons & Damage -------------------------------------------------------------------------------------------------
@@ -800,7 +800,7 @@ private:
 	// --------- BYTE-SIZED THINGS GO HERE
 	Bool													m_isSelectable;
 	Bool													m_modulesReady;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool													m_hasDiedAlready;
 #endif
 	UnsignedByte									m_scriptStatus;					///< status as set by scripting, corresponds to ORed ObjectScriptStatusBits
@@ -811,12 +811,10 @@ private:
 
 };  // end class Object
 
-#ifdef DEBUG_LOGGING
 // describe an object as an AsciiString: e.g. "Object 102 (KillerBuggy) [GLARocketBuggy, owned by player 2 (GLAIntroPlayer)]"
-AsciiString DescribeObject(const Object *obj);
-#endif // DEBUG_LOGGING
+AsciiString DebugDescribeObject(const Object *obj);
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	#define DEBUG_OBJECT_ID_EXISTS
 #else
 	#undef DEBUG_OBJECT_ID_EXISTS

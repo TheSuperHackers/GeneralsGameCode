@@ -32,7 +32,7 @@
 #include "string.h"
 #include "Compression.h"
 #include "Common/DataChunk.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 
 // If verbose, lots of debug logging.
@@ -275,7 +275,7 @@ DataChunkOutput::~DataChunkOutput()
 	::fclose(m_tmp_file);
 }
 
-void DataChunkOutput::openDataChunk( char *name, DataChunkVersionType ver )
+void DataChunkOutput::openDataChunk( const char *name, DataChunkVersionType ver )
 {
 	// allocate (or get existing) ID from the table of m_contents
 	UnsignedInt id = m_contents.allocateID( AsciiString(name) );
@@ -366,6 +366,16 @@ void DataChunkOutput::writeUnicodeString( UnicodeString theString )
 	UnsignedShort len = theString.getLength();
 	::fwrite( (const char *)&len, sizeof(UnsignedShort) , 1, m_tmp_file );
 	::fwrite( theString.str(), len*sizeof(WideChar) , 1, m_tmp_file ); 
+}
+
+void DataChunkOutput::writeNameKey( const NameKeyType key ) 
+{ 
+		AsciiString kname = TheNameKeyGenerator->keyToName(key);
+		Int keyAndType = m_contents.allocateID(kname);
+		keyAndType <<= 8;
+		Dict::DataType t = Dict::DICT_ASCIISTRING;
+		keyAndType |= (t & 0xff);
+		writeInt(keyAndType);
 }
 
 void DataChunkOutput::writeDict( const Dict& d ) 
@@ -878,6 +888,20 @@ void DataChunkInput::readArrayOfBytes(char *ptr, Int len)
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=len, ("Read past end of chunk."));
 	m_file->read( ptr, len ); 
 	decrementDataLeft( len );
+}
+
+NameKeyType DataChunkInput::readNameKey(void)
+{
+		Int keyAndType = readInt();
+#ifdef DEBUG_CRASHING
+		Dict::DataType t = (Dict::DataType)(keyAndType & 0xff);
+		DEBUG_ASSERTCRASH(t==Dict::DICT_ASCIISTRING,("Invalid key data."));
+#endif
+		keyAndType >>= 8;
+
+		AsciiString kname = m_contents.getName(keyAndType);
+		NameKeyType k = TheNameKeyGenerator->nameToKey(kname);
+		return k;
 }
 
 Dict DataChunkInput::readDict() 

@@ -53,7 +53,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/GlobalData.h"
-#include "Common/Encrypt.h"
+#include "Common/encrypt.h"
 #include "Common/NameKeyGenerator.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
@@ -68,7 +68,7 @@
 //#include "GameNetwork/GameSpy/PeerThread.h"
 #include "GameNetwork/GameSpyOverlay.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -149,7 +149,7 @@ static void handleLadderSelection( Int ladderID )
 }
 
 
-enum PasswordMode
+enum PasswordMode CPP_11(: Int)
 {
 	PASS_NONE,
 	PASS_ENTRY,
@@ -291,7 +291,7 @@ WindowMsgHandledType PopupLadderSelectInput( GameWindow *window, UnsignedInt msg
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 						switch (s_currentMode)
 						{
@@ -557,7 +557,8 @@ static void updateLadderDetails( Int selID, GameWindow *staticTextLadderName, Ga
 
 	// factions
 	AsciiStringList validFactions = info->validFactions;
-	for (AsciiStringListIterator it = validFactions.begin(); it != validFactions.end(); ++it)
+	AsciiStringListIterator it = validFactions.begin();
+	for (; it != validFactions.end(); ++it)
 	{
 		AsciiString marker;
 		marker.format("INI:Faction%s", it->str());

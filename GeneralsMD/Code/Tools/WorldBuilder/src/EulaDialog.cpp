@@ -19,11 +19,11 @@
 // EulaDialog.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "worldbuilder.h"
+#include "StdAfx.h"
+#include "WorldBuilder.h"
 #include "euladialog.h"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;

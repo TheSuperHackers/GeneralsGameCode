@@ -136,7 +136,7 @@ WindowMsgHandledType WOLCustomScoreScreenInput( GameWindow *window, UnsignedInt 
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
 																							(WindowMsgData)buttonDisconnect, buttonDisconnectID );

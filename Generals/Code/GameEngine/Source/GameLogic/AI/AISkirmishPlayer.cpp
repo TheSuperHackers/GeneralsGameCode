@@ -56,16 +56,13 @@
 #include "GameLogic/Module/ProductionUpdate.h"
 #include "GameClient/TerrainVisual.h"	
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
 
 #define USE_DOZER 1	 
-
-
-#if !defined(_PLAYTEST)
 
 
 
@@ -151,8 +148,10 @@ void AISkirmishPlayer::processBaseBuilding( void )
 				}	else {
 					if (bldg->getControllingPlayer() == m_player) {
 						// Check for built or dozer missing.
-						if( BitTest( bldg->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE) {
-							if (bldg->isKindOf(KINDOF_FS_POWER) && !bldg->isKindOf(KINDOF_CASH_GENERATOR)) {
+						if( bldg->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ) 
+						{
+							if (bldg->isKindOf(KINDOF_FS_POWER) && !bldg->isKindOf(KINDOF_CASH_GENERATOR)) 
+							{
 								powerUnderConstruction = true;
 							}
 							// make sure dozer is working on him.
@@ -1226,4 +1225,3 @@ void AISkirmishPlayer::loadPostProcess( void )
 
 }  // end loadPostProcess
 
-#endif

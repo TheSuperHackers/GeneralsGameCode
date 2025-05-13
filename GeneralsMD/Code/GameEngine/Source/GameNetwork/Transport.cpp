@@ -25,11 +25,11 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "Common/CRC.h"
+#include "Common/crc.h"
 #include "GameNetwork/Transport.h"
 #include "GameNetwork/NetworkInterface.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -131,11 +131,12 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 	}
 
 	// ------- Clear buffers --------
-	for (int i=0; i<MAX_MESSAGES; ++i)
+	int i=0;
+	for (; i<MAX_MESSAGES; ++i)
 	{
 		m_outBuffer[i].length = 0;
 		m_inBuffer[i].length = 0;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		m_delayedInBuffer[i].message.length = 0;
 #endif
 	}
@@ -153,7 +154,7 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 
 	m_port = port;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_latencyAverage > 0 || TheGlobalData->m_latencyNoise)
 		m_useLatency = true;
 
@@ -248,7 +249,7 @@ Bool Transport::doSend() {
 		}
 	} // for (i=0; i<MAX_MESSAGES; ++i)
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	// Latency simulation - deliver anything we're holding on to that is ready
 	if (m_useLatency)
 	{
@@ -285,7 +286,7 @@ Bool Transport::doRecv()
 
 	// Read in anything on our socket
 	sockaddr_in from;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	UnsignedInt now = timeGetTime();
 #endif
 
@@ -295,7 +296,7 @@ Bool Transport::doRecv()
 //	DEBUG_LOG(("Transport::doRecv - checking\n"));
 	while ( (len=m_udpsock->Read(buf, MAX_MESSAGE_LEN, &from)) > 0 )
 	{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		// Packet loss simulation
 		if (m_usePacketLoss)
 		{
@@ -331,7 +332,7 @@ Bool Transport::doRecv()
 
 		for (int i=0; i<MAX_MESSAGES; ++i)
 		{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 			// Latency simulation
 			if (m_useLatency)
 			{
@@ -361,7 +362,7 @@ Bool Transport::doRecv()
 					memcpy(&m_inBuffer[i], buf, len);
 					break;
 				}
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 			}
 #endif
 		}

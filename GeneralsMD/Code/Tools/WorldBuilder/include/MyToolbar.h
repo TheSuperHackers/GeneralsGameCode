@@ -33,7 +33,7 @@
 class CellSizeToolBar : public CDialogBar
 {
 protected:
-	static CellSizeToolBar* CellSizeToolBar::m_staticThis;
+	static CellSizeToolBar* m_staticThis;
 	CSliderCtrl m_cellSlider;
 
 protected:

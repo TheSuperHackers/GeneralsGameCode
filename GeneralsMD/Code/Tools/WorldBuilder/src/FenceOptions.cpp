@@ -27,9 +27,9 @@ so forth is all handled in the object options panel.  jba. */
 
 #define DEFINE_EDITOR_SORTING_NAMES
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "Lib\BaseType.h"
+#include "Lib/BaseType.h"
 #include "FenceOptions.h"
 #include "ObjectOptions.h"
 #include "WHeightMapEdit.h"
@@ -268,7 +268,8 @@ void FenceOptions::addObject( MapObject *mapObject, const char *pPath, const cha
 		parent = findOrAdd( parent, buffer );
 
 		// next tier uses the editor sorting that design can specify in the INI
-		for( EditorSortingType i = ES_FIRST; 
+		EditorSortingType i = ES_FIRST;
+		for( ;
 				 i < ES_NUM_SORTING_TYPES;
 				 i = (EditorSortingType)(i + 1) )
 		{

@@ -1,0 +1,152 @@
+name: Build Toolchain
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  workflow_call:
+    inputs:
+      game:
+        required: true
+        type: string
+        description: "Game to build (Generals, GeneralsMD)"
+      preset:
+        required: true
+        type: string
+        description: "CMake preset"
+      tools:
+        required: false
+        default: true
+        type: boolean
+        description: "Build tools"
+      extras:
+        required: false
+        default: false
+        type: boolean
+        description: "Build extras"
+
+jobs:
+  build:
+    name: Preset ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Cache VC6 Installation
+        if: startsWith(inputs.preset, 'vc6')
+        id: cache-vc6
+        uses: actions/cache@v4
+        with:
+          path: C:\VC6
+          key: vc6-permanent-cache-v1
+
+      - name: Cache CMake Dependencies
+        id: cache-cmake-deps
+        uses: actions/cache@v4
+        with:
+          path: build\${{ inputs.preset }}\_deps
+          key: cmake-deps-${{ inputs.preset }}-${{ hashFiles('cmake/**/*.cmake', '**/CMakeLists.txt') }}
+          restore-keys: |
+            cmake-deps-${{ inputs.preset }}-
+
+      - name: Download VC6 Portable from Cloudflare R2
+        if: ${{ startsWith(inputs.preset, 'vc6') && steps.cache-vc6.outputs.cache-hit != 'true' }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
+          EXPECTED_HASH: "118D0F1ACBBD70C3F8B081CA4DBAF955FE0C6C359A76636E930AA89FDC551091"
+        shell: pwsh
+        run: |
+          Write-Host "Downloading VC6 Portable Installation" -ForegroundColor Cyan
+          aws s3 cp s3://github-ci/VS6_VisualStudio6.7z VS6_VisualStudio6.7z --endpoint-url $env:AWS_ENDPOINT_URL
+
+          Write-Host "Verifying File Integrity" -ForegroundColor Cyan
+          $fileHash = (Get-FileHash -Path VS6_VisualStudio6.7z -Algorithm SHA256).Hash
+          Write-Host "Downloaded file SHA256: $fileHash"
+          Write-Host "Expected file SHA256: $env:EXPECTED_HASH"
+          if ($hash -ne $env:EXPECTED_HASH) {
+              Write-Error "Hash verification failed! File may be corrupted or tampered with."
+              exit 1
+          }
+
+          Write-Host "Extracting Archive" -ForegroundColor Cyan
+          & 7z x VS6_VisualStudio6.7z -oC:\VC6
+          Remove-Item VS6_VisualStudio6.7z -Verbose
+
+      - name: Set Up VC6 Environment
+        if: startsWith(inputs.preset, 'vc6')
+        shell: pwsh
+        run: |
+          # Define the base directories as local variables first
+          $VSCommonDir = "C:\VC6\VC6SP6\Common"
+          $MSDevDir = "C:\VC6\VC6SP6\Common\msdev98"
+          $MSVCDir = "C:\VC6\VC6SP6\VC98"
+          $VcOsDir = "WINNT"
+
+          # Set the variables in GitHub environment
+          "VSCommonDir=$VSCommonDir" >> $env:GITHUB_ENV
+          "MSDevDir=$MSDevDir" >> $env:GITHUB_ENV
+          "MSVCDir=$MSVCDir" >> $env:GITHUB_ENV
+          "VcOsDir=$VcOsDir" >> $env:GITHUB_ENV
+          "PATH=$MSDevDir\BIN;$MSVCDir\BIN;$VSCommonDir\TOOLS\$VcOsDir;$VSCommonDir\TOOLS;$env:PATH" >> $env:GITHUB_ENV
+          "INCLUDE=$MSVCDir\ATL\INCLUDE;$MSVCDir\INCLUDE;$MSVCDir\MFC\INCLUDE;$env:INCLUDE" >> $env:GITHUB_ENV
+          "LIB=$MSVCDir\LIB;$MSVCDir\MFC\LIB;$env:LIB" >> $env:GITHUB_ENV
+
+      - name: Set Up VC2022 Environment
+        if: startsWith(inputs.preset, 'win32')
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x86
+
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
+
+      - name: Configure ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
+        shell: pwsh
+        run: |
+          $buildFlags = @(
+          "-DRTS_BUILD_ZEROHOUR=${{ inputs.game == 'GeneralsMD' && 'ON' || 'OFF' }}",
+          "-DRTS_BUILD_GENERALS=${{ inputs.game == 'Generals' && 'ON' || 'OFF' }}"
+          )
+
+          $gamePrefix = "${{ inputs.game == 'Generals' && 'GENERALS' || 'ZEROHOUR' }}"
+          $buildFlags += "-DRTS_BUILD_CORE_TOOLS=${{ inputs.tools && 'ON' || 'OFF' }}"
+          $buildFlags += "-DRTS_BUILD_${gamePrefix}_TOOLS=${{ inputs.tools && 'ON' || 'OFF' }}"
+          $buildFlags += "-DRTS_BUILD_CORE_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }}"
+          $buildFlags += "-DRTS_BUILD_${gamePrefix}_EXTRAS=${{ inputs.extras && 'ON' || 'OFF' }}"
+
+          Write-Host "Build flags: $($buildFlags -join ' | ')"
+
+          cmake --preset ${{ inputs.preset }} $buildFlags
+
+      - name: Build ${{ inputs.game }} with CMake Using ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Preset
+        shell: pwsh
+        run: |
+          cmake --build --preset ${{ inputs.preset }}
+
+      - name: Collect ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
+        shell: pwsh
+        run: |
+          $buildDir = "build\${{ inputs.preset }}"
+          $artifactsDir = New-Item -ItemType Directory -Force -Path "$buildDir\${{ inputs.game }}\artifacts" -Verbose
+
+            if ("${{ inputs.preset }}" -like "win32*") {
+            # For win32 preset, look in config-specific subdirectories
+            $configToUse = if ("${{ inputs.preset }}" -match "debug") { "Debug" } else { "Release" }
+            $files = Get-ChildItem -Path "$buildDir\Core\$configToUse","$buildDir\${{ inputs.game }}\$configToUse" -File | Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
+            } else {
+            $files = Get-ChildItem -Path "$buildDir\Core","$buildDir\${{ inputs.game }}" -File | Where-Object { $_.Extension -in @(".exe", ".dll", ".pdb") } -Verbose
+          }
+          $files | Move-Item -Destination $artifactsDir -Verbose -Force
+
+      - name: Upload ${{ inputs.game }} ${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }} Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.game }}-${{ inputs.preset }}${{ inputs.tools && '+t' || '' }}${{ inputs.extras && '+e' || '' }}
+          path: build\${{ inputs.preset }}\${{ inputs.game }}\artifacts
+          retention-days: 30
+          if-no-files-found: error

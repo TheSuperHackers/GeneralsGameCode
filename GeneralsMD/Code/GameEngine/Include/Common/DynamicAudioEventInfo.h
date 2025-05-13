@@ -33,7 +33,7 @@
 #define DYNAMICAUDIOEVENTINFO_H_INCLUDED
 
 #include "Common/AudioEventInfo.h"
-#include "Common/Bitflags.h"
+#include "Common/BitFlags.h"
 
 class AsciiString;
 class Xfer;
@@ -87,7 +87,7 @@ class DynamicAudioEventInfo : public AudioEventInfo
 
   private:
     // List of fields we can override
-    enum OverriddenFields
+    enum OverriddenFields CPP_11(: Int)
     {
       OVERRIDE_NAME = 0,
       OVERRIDE_LOOP_FLAG,

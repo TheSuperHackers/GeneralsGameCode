@@ -47,7 +47,7 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
@@ -65,7 +65,7 @@
 #include "GameClient/DisplayStringManager.h"
 #include "GameClient/GadgetPushButton.h"
 #include "GameClient/GadgetStaticText.h"
-#include "GameClient/Controlbar.h"
+#include "GameClient/ControlBar.h"
 
 //-----------------------------------------------------------------------------
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -2198,7 +2198,7 @@ static void drawTypeText( GameWindow *window, DisplayString *str)
 	wordWrap = size.x - 10;
 	text->setWordWrap(wordWrap);	
 	str->setWordWrap(wordWrap);
-	if( BitTest(window->winGetStatus(), WIN_STATUS_WRAP_CENTERED)		)
+	if( BitIsSet(window->winGetStatus(), WIN_STATUS_WRAP_CENTERED)		)
 	{
 		str->setWordWrapCentered(TRUE);
 		text->setWordWrapCentered(TRUE);

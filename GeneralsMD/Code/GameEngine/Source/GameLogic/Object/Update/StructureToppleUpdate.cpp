@@ -48,7 +48,7 @@
 #include "GameClient/InGameUI.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -403,7 +403,8 @@ void StructureToppleUpdate::applyCrushingDamage(Real theta)
 	Real jcos;
 	Real jsin;
 //	Coord3D target;
-	for (Real j = m_lastCrushedLocation; j < maxDistance; j += WEAPON_SPACING_PERPENDICULAR) {
+	Real j = m_lastCrushedLocation;
+	for (; j < maxDistance; j += WEAPON_SPACING_PERPENDICULAR) {
 		jcos = j * Cos(toppleAngle);
 		jsin = j * Sin(toppleAngle);
 		doDamageLine(building, wt, jcos, jsin, facingWidth, toppleAngle);

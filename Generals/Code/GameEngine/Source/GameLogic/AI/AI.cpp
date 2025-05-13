@@ -47,7 +47,7 @@
 
 extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -524,7 +524,7 @@ public:
 		return true;
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterLiveMapEnemies"; }
 #endif
 };
@@ -554,7 +554,7 @@ public:
 		return false;
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterWithinAttackRange"; }
 #endif
 };
@@ -784,7 +784,8 @@ Object *AI::findClosestRepulsor( const Object *me, Real range)
 
 	// and only stuff that isn't stealthed (and not detected)
 	// (note that stealthed allies aren't hidden from us, but that's ok. jba.)
-	PartitionFilterRejectByObjectStatus filterStealth(OBJECT_STATUS_STEALTHED, OBJECT_STATUS_DETECTED);
+	PartitionFilterRejectByObjectStatus filterStealth( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_STEALTHED ), 
+																										 MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DETECTED ) );
 
 	PartitionFilter *filters[16];
 	Int numFilters = 0;
@@ -859,7 +860,7 @@ Real AI::getAdjustedVisionRangeForObject(const Object *object, Int factorsToCons
 		}
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		// ICK. This really nasty statement is used so that we only initialize this color once.

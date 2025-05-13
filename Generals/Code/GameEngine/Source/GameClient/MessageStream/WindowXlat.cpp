@@ -55,7 +55,7 @@
 #include "GameClient/Shell.h"
 #include "GameClient/Display.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -75,7 +75,7 @@
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined(_DEBUG) || defined(_INTERNAL)	//debug hack to view object under mouse stats
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	//debug hack to view object under mouse stats
 extern ICoord2D TheMousePos;
 #endif
 
@@ -218,7 +218,7 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 		{
 			// all window events have the position of the mouse as arg 0
 			ICoord2D mousePos = msg->getArgument( 0 )->pixel;
-#if defined(_DEBUG) || defined(_INTERNAL)	//debug hack to view object under mouse stats
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	//debug hack to view object under mouse stats
 			TheMousePos.x = mousePos.x;
 			TheMousePos.y = mousePos.y;
 #endif
@@ -305,7 +305,7 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 			// If we're in a movie, we want to be able to escape out of it
 			if(returnCode != WIN_INPUT_USED 
 				&& (key == KEY_ESC) 
-				&& (BitTest( state, KEY_STATE_UP ))
+				&& (BitIsSet( state, KEY_STATE_UP ))
 				&& TheDisplay->isMoviePlaying()
 				&& TheGlobalData->m_allowExitOutOfMovies == TRUE )
 			{
@@ -315,7 +315,7 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 
 			if(returnCode != WIN_INPUT_USED 
 				&& (key == KEY_ESC) 
-				&& (BitTest( state, KEY_STATE_UP ))
+				&& (BitIsSet( state, KEY_STATE_UP ))
 				&& (TheInGameUI && (TheInGameUI->getInputEnabled() == FALSE)) )
 			{
 				returnCode = WIN_INPUT_USED;

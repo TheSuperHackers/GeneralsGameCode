@@ -59,7 +59,7 @@
 #include "GameClient/KeyDefs.h"
 #include "GameClient/GadgetTextEntry.h"
 #include "GameClient/GadgetStaticText.h"
-#include "GameNetwork/GameSpy/Peerdefs.h"
+#include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameNetwork/GameSpy/PeerThread.h"
 #include "GameNetwork/GameSpyOverlay.h"
 
@@ -135,7 +135,7 @@ WindowMsgHandledType PopupJoinGameInput( GameWindow *window, UnsignedInt msg, Wi
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 						GameSpyCloseOverlay(GSOVERLAY_GAMEPASSWORD);
 						SetLobbyAttemptHostJoin( FALSE );

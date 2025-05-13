@@ -308,14 +308,14 @@ void W3DGameWinDefaultDraw( GameWindow *window, WinInstanceData *instData )
 	w3dWindow->winGetSize( &size.x, &size.y );
 
 	// image drawing vs color drawing
-	if( BitTest( window->winGetStatus(), WIN_STATUS_IMAGE ) )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_IMAGE ) )
 	{
 		const Image *image;
 
 		// get image
-		if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+		if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 			image = window->winGetDisabledImage( 0 );
-		else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+		else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 			image = window->winGetHiliteImage( 0 );
 		else
 			image = window->winGetEnabledImage( 0 );
@@ -338,14 +338,14 @@ void W3DGameWinDefaultDraw( GameWindow *window, WinInstanceData *instData )
 		Color color, borderColor;
 
 		// get colors
-		if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+		if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 		{
 
 			color				= window->winGetDisabledColor( 0 );
 			borderColor = window->winGetDisabledBorderColor( 0 );
 
 		}  // end if
-		else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+		else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 		{
 
 			color				= window->winGetHiliteColor( 0 );

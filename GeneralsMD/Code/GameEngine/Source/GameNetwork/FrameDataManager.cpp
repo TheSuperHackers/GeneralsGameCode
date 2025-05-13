@@ -26,7 +26,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "GameNetwork/FrameDataManager.h"
-#include "GameNetwork/NetworkUtil.h"
+#include "GameNetwork/networkutil.h"
 
 /**
  * Constructor.  isLocal tells it whether its the frame data manager for the local player or not.
@@ -90,7 +90,7 @@ void FrameDataManager::update() {
 void FrameDataManager::addNetCommandMsg(NetCommandMsg *msg) {
 	UnsignedInt frame = msg->getExecutionFrame();
 	UnsignedInt frameindex = frame % FRAME_DATA_LENGTH;
-	DEBUG_LOG(("FrameDataManager::addNetCommandMsg - about to add a command of type %s for frame %d, frame index %d\n", GetAsciiNetCommandType(msg->getNetCommandType()).str(), frame, frameindex));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("FrameDataManager::addNetCommandMsg - about to add a command of type %s for frame %d, frame index %d\n", GetAsciiNetCommandType(msg->getNetCommandType()).str(), frame, frameindex));
 	m_frameData[frameindex].addCommand(msg);
 
 	if (m_isLocal) {

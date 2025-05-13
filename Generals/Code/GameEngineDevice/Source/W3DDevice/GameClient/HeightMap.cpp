@@ -45,7 +45,7 @@
 //-----------------------------------------------------------------------------
 //         Includes                                                      
 //-----------------------------------------------------------------------------
-#include "W3DDevice/GameClient/heightmap.h"
+#include "W3DDevice/GameClient/HeightMap.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -82,16 +82,16 @@
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "W3DDevice/GameClient/W3DWater.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
-#include "WW3D2/DX8Wrapper.h"
-#include "WW3D2/Light.h"
-#include "WW3D2/Scene.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/light.h"
+#include "WW3D2/scene.h"
 #include "W3DDevice/GameClient/W3DPoly.h"
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 
 #include "Common/PerfTimer.h"
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.		 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -158,13 +158,13 @@ Int HeightMapRenderObjClass::freeMapResources(void)
 	if (m_vertexBufferTiles) {
 		for (int i=0; i<m_numVertexBufferTiles; i++)
 			REF_PTR_RELEASE(m_vertexBufferTiles[i]);
-		delete m_vertexBufferTiles;
+		delete[] m_vertexBufferTiles;
 		m_vertexBufferTiles = NULL;
 	}
 	if (m_vertexBufferBackup) {
 		for (int i=0; i<m_numVertexBufferTiles; i++)
-			delete m_vertexBufferBackup[i];
-		delete m_vertexBufferBackup;
+			delete[] m_vertexBufferBackup[i];
+		delete[] m_vertexBufferBackup;
 		m_vertexBufferBackup = NULL;
 	}
 	m_numVertexBufferTiles = 0;
@@ -172,7 +172,7 @@ Int HeightMapRenderObjClass::freeMapResources(void)
 	if (m_xformedVertexBuffer) {
 		for (int i=0; i<m_numVertexBufferTiles; i++)
 			m_xformedVertexBuffer[i]->Release();
-		delete m_xformedVertexBuffer;
+		delete[] m_xformedVertexBuffer;
 		m_xformedVertexBuffer = NULL;
 	}
 #endif
@@ -314,7 +314,7 @@ UnsignedInt HeightMapRenderObjClass::doTheDynamicLight(VERTEX_FORMAT *vb, VERTEX
 #else
 	Real shadeR, shadeG, shadeB;
 	Int diffuse = vbMirror->diffuse;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	//vbMirror->diffuse += 30;	// Shows which vertexes are geting touched by dynamic light. debug only.
 #endif
 	
@@ -407,7 +407,7 @@ Int HeightMapRenderObjClass::getXWithOrigin(Int x)
 	x -= m_originX;
 	if (x<0) x+= m_x-1;
 	if (x>= m_x-1) x-=m_x-1;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	DEBUG_ASSERTCRASH (x>=0, ("X out of range."));
 	DEBUG_ASSERTCRASH (x<m_x-1, ("X out of range."));
 #endif
@@ -428,7 +428,7 @@ Int HeightMapRenderObjClass::getYWithOrigin(Int y)
 	y -= m_originY;
 	if (y<0) y+= m_y-1;
 	if (y>= m_y-1) y-=m_y-1;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	DEBUG_ASSERTCRASH (y>=0, ("Y out of range."));
 	DEBUG_ASSERTCRASH (y<m_y-1, ("Y out of range."));
 #endif
@@ -463,7 +463,7 @@ Int HeightMapRenderObjClass::updateVB(DX8VertexBufferClass	*pVB, char *data, Int
 	REF_PTR_SET(m_map, pMap);	//update our heightmap pointer in case it changed since last call.
 	if (m_vertexBufferTiles && pMap)
 	{
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		assert(x0 >= originX && y0 >= originY && x1>x0 && y1>y0 && x1<=originX+VERTEX_BUFFER_TILE_LENGTH && y1<=originY+VERTEX_BUFFER_TILE_LENGTH);
 #endif 
 
@@ -718,7 +718,7 @@ Int HeightMapRenderObjClass::updateVBForLight(DX8VertexBufferClass	*pVB, char *d
 
 	if (m_vertexBufferTiles && m_map)
 	{
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		assert(x0 >= originX && y0 >= originY && x1>x0 && y1>y0 && x1<=originX+VERTEX_BUFFER_TILE_LENGTH && y1<=originY+VERTEX_BUFFER_TILE_LENGTH);
 #endif 
 
@@ -865,7 +865,7 @@ Int HeightMapRenderObjClass::updateVBForLightOptimized(DX8VertexBufferClass	*pVB
 
 	if (m_vertexBufferTiles && m_map)
 	{
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		assert(x0 >= originX && y0 >= originY && x1>x0 && y1>y0 && x1<=originX+VERTEX_BUFFER_TILE_LENGTH && y1<=originY+VERTEX_BUFFER_TILE_LENGTH);
 #endif 
 
@@ -1152,7 +1152,7 @@ The vertex coordinates and texture coordinates, as well as static lighting are u
 */
 Int HeightMapRenderObjClass::updateBlock(Int x0, Int y0, Int x1, Int y1,  WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator)
 {	
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	DEBUG_ASSERTCRASH(x0>=0&&y0>=0 && x1<m_x && y1<m_y && x0<=x1 && y0<=y1, ("Invalid updates."));
 #endif
 	Invalidate_Cached_Bounding_Volumes();
@@ -1360,7 +1360,7 @@ HeightMapRenderObjClass::HeightMapRenderObjClass(void)
 	m_scorchTexture = NULL;
 	clearAllScorches();
 #endif
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_shroudOn)
 		m_shroud = NEW W3DShroud;
 	else
@@ -2446,7 +2446,8 @@ void HeightMapRenderObjClass::updateShorelineTiles(Int minX, Int minY, Int maxX,
 	//over the same tile and require an extra render pass.
 
 	//First remove any existing extra blend tiles within this partial region
-	for (Int j=0; j<m_numShoreLineTiles; j++)
+	Int j=0;
+	for (; j<m_numShoreLineTiles; j++)
 	{	Int x = m_shoreLineTilePositions[j].m_xy & 0xffff;
 		Int y = m_shoreLineTilePositions[j].m_xy >> 16;
 		if (x >= minX && x < maxX &&
@@ -2564,8 +2565,8 @@ void HeightMapRenderObjClass::initDestAlphaLUT(void)
 			surf->Unlock();
 		}
 
-		m_destAlphaTexture->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-		m_destAlphaTexture->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
+		m_destAlphaTexture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+		m_destAlphaTexture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 		REF_PTR_RELEASE(surf);
 		m_currentMinWaterOpacity = TheWaterTransparency->m_minWaterOpacity;
 	}
@@ -2677,7 +2678,7 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 		REF_PTR_SET(m_map,pMap);	//update our heightmap pointer in case it changed since last call.
 		m_stageTwoTexture=NEW CloudMapTerrainTextureClass;
 		m_stageThreeTexture=NEW LightMapTerrainTextureClass(m_macroTextureName);
-		m_destAlphaTexture=MSGNEW("TextureClass") TextureClass(256,1,WW3D_FORMAT_A8R8G8B8,TextureClass::MIP_LEVELS_1);
+		m_destAlphaTexture=MSGNEW("TextureClass") TextureClass(256,1,WW3D_FORMAT_A8R8G8B8,MIP_LEVELS_1);
 		initDestAlphaLUT();
 #ifdef DO_SCORCH
 		allocateScorchBuffers();
@@ -2806,7 +2807,7 @@ void HeightMapRenderObjClass::allocateScorchBuffers(void)
 	m_scorchesInBuffer = 0; // If we just allocated the buffers, we got no scorches in the buffer.
 	m_curNumScorchVertices=0;
 	m_curNumScorchIndices=0;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	Vector3 loc(4*MAP_XY_FACTOR,4*MAP_XY_FACTOR,0);
 	addScorch(loc, 1*MAP_XY_FACTOR, SCORCH_1);
 	loc.Y += 10*MAP_XY_FACTOR;
@@ -3156,7 +3157,7 @@ Int HeightMapRenderObjClass::getStaticDiffuse(Int x, Int y)
 	if ( vbMirror[2].x==X && vbMirror[2].y==Y) {
 		return(vbMirror[2].diffuse);
 	}
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	char buf[256];
 	sprintf(buf, "(%f,%f) -> mirror (%f, %f)\n", X, Y, vbMirror->x, vbMirror->y);
 	::OutputDebugString(buf);

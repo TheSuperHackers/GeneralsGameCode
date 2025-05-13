@@ -262,7 +262,7 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 			{
 				const Image *left, *right, *center, *smallCenter;
 
-				if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+				if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 				{
 
 					left				= GadgetListBoxGetDisabledSelectedItemImageLeft( window );
@@ -271,7 +271,7 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 					smallCenter = GadgetListBoxGetDisabledSelectedItemImageSmallCenter( window );
 
 				}  // end if
-				else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+				else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 				{
 
 					left				= GadgetListBoxGetHiliteSelectedItemImageLeft( window );
@@ -315,12 +315,12 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 				Color selectColor = WIN_COLOR_UNDEFINED,
 							selectBorder = WIN_COLOR_UNDEFINED;
 
-				if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+				if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 				{
 					selectColor  = GadgetListBoxGetDisabledSelectedItemColor( window );
 					selectBorder = GadgetListBoxGetDisabledSelectedItemBorderColor( window );
 				}  // end if, disabled
-				else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+				else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 				{
 					selectColor  = GadgetListBoxGetHiliteSelectedItemColor( window );
 					selectBorder = GadgetListBoxGetHiliteSelectedItemBorderColor( window );
@@ -412,7 +412,7 @@ static void drawListBoxText( GameWindow *window, WinInstanceData *instData,
 				{
 					textColor = cells[j].color;
 					string = (DisplayString *)cells[j].data;
-					if( BitTest( window->winGetStatus(), WIN_STATUS_ONE_LINE ) == TRUE )
+					if( BitIsSet( window->winGetStatus(), WIN_STATUS_ONE_LINE ) == TRUE )
 					{
 						string->setWordWrap(0);
 						// make sure the font of the text is the same as the windows
@@ -515,14 +515,14 @@ void W3DGadgetListBoxDraw( GameWindow *window, WinInstanceData *instData )
 	height = size.y;
 
 	// get the right colors
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 		background		= GadgetListBoxGetDisabledColor( window );
 		border				= GadgetListBoxGetDisabledBorderColor( window );
 		titleColor		= window->winGetDisabledTextColor();
 		titleBorder		= window->winGetDisabledTextBorderColor();
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		background		= GadgetListBoxGetHiliteColor( window );
 		border				= GadgetListBoxGetHiliteBorderColor( window );
@@ -612,13 +612,13 @@ void W3DGadgetListBoxImageDraw( GameWindow *window, WinInstanceData *instData )
 	}  // end if
 
 	// get the image
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 		image				= GadgetListBoxGetDisabledImage( window );
 		titleColor	= window->winGetDisabledTextColor();
 		titleBorder = window->winGetDisabledTextBorderColor();
 	}
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 		image				= GadgetListBoxGetHiliteImage( window );
 		titleColor	= window->winGetHiliteTextColor();

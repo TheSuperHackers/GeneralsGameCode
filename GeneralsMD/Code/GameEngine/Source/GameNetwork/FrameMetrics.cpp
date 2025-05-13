@@ -28,7 +28,7 @@
 
 #include "GameNetwork/FrameMetrics.h"
 #include "GameClient/Display.h"
-#include "GameNetwork/NetworkUtil.h"
+#include "GameNetwork/networkutil.h"
 
 FrameMetrics::FrameMetrics() 
 {
@@ -72,7 +72,8 @@ void FrameMetrics::init() {
 	m_averageLatency = (Real)0.2;
 	m_minimumCushion = -1;
 
-	for (Int i = 0; i < TheGlobalData->m_networkFPSHistoryLength; ++i) {
+	Int i = 0;
+	for (; i < TheGlobalData->m_networkFPSHistoryLength; ++i) {
 		m_fpsList[i] = 30.0;
 	}
 	m_fpsListIndex = 0;

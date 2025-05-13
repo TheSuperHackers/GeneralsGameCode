@@ -66,7 +66,7 @@ class Energy : public Snapshot
 
 public:
 	
-	inline Energy() : m_energyProduction(0), m_energyConsumption(0), m_owner(NULL) { }
+	Energy();
 
 	// reset energy information to base values.
 	void init( Player *owner)
@@ -77,7 +77,7 @@ public:
 	}
 
 	/// return current energy production in kilowatts
-	Int getProduction() const { return m_energyProduction; }
+	Int getProduction() const;
 
 	/// return current energy consumption in kilowatts
 	Int getConsumption() const { return m_energyConsumption; }

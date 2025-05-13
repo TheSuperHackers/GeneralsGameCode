@@ -60,7 +60,7 @@
 #include "GameLogic/Module/SpawnBehavior.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -672,6 +672,10 @@ UpdateSleepTime StealthUpdate::update( void )
 			{
 				//Switch models at the halfway point
 				changeVisualDisguise();
+
+				// TheSuperHackers @fix Skyaero 06/05/2025 obtain the new drawable
+				draw = getObject()->getDrawable();
+
 				m_disguiseHalfpointReached = true;
 			}
 			//Opacity ranges from full to none at midpoint and full again at the end
@@ -1055,7 +1059,9 @@ void StealthUpdate::changeVisualDisguise()
 
 		const ThingTemplate *tTemplate = self->getTemplate();
 
-		TheThingFactory->newDrawable( tTemplate );
+		// TheSuperHackers @fix helmutbuhler 13/04/2025 Fixes missing pointer assignment for the new drawable.
+		// This originally caused no runtime crash because the new drawable is allocated at the same address as the previously deleted drawable via the MemoryPoolBlob.
+		draw = TheThingFactory->newDrawable( tTemplate );
 		if( draw )
 		{
 			TheGameLogic->bindObjectAndDrawable(self, draw);

@@ -19,7 +19,7 @@
 // TerrainSwatches.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
 #include "TerrainSwatches.h"
 #include "TerrainMaterial.h"

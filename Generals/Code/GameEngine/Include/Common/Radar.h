@@ -61,7 +61,7 @@ enum
 /** These event types determine the colors radar events happen in to make it easier for us
 	* to play events with a consistent color scheme */
 //-------------------------------------------------------------------------------------------------
-enum RadarEventType
+enum RadarEventType CPP_11(: Int)
 {
 	RADAR_EVENT_INVALID = 0,
 	RADAR_EVENT_CONSTRUCTION,
@@ -126,7 +126,7 @@ protected:
 //-------------------------------------------------------------------------------------------------
 /** Radar priorities.  Keep this in sync with the priority names list below */
 //-------------------------------------------------------------------------------------------------
-enum RadarPriorityType
+enum RadarPriorityType CPP_11(: Int)
 {
 	RADAR_PRIORITY_INVALID,					// a priority that has not been set (in general it won't show up on the radar)
 	RADAR_PRIORITY_NOT_ON_RADAR,		// object specifically forbidden from being on the radar
@@ -169,6 +169,7 @@ public:
 	Bool isRadarWindow( GameWindow *window ) { return (m_radarWindow == window) && (m_radarWindow != NULL); }
 
 	Bool radarToWorld( const ICoord2D *radar, Coord3D *world );		///< radar point to world point on terrain
+	Bool radarToWorld2D( const ICoord2D *radar, Coord3D *world );		///< radar point to world point (x,y only!)
 	Bool worldToRadar( const Coord3D *world, ICoord2D *radar );		///< translate world point to radar (x,y)
 	Bool localPixelToRadar( const ICoord2D *pixel, ICoord2D *radar );	///< translate pixel (with UL of radar being (0,0)) to logical radar coords
 	Bool screenPixelToWorld( const ICoord2D *pixel, Coord3D *world ); ///< translate pixel (with UL of the screen being (0,0)) to world position in the world

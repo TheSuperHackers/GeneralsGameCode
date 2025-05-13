@@ -153,6 +153,33 @@ public:
 		return m_bits.test(i);
 	}
 
+	//Tests for any bits that are set in both.
+	inline Bool testForAny( const BitFlags& that ) const
+	{
+		BitFlags tmp = *this;
+		tmp.m_bits &= that.m_bits;
+		return tmp.m_bits.any();
+	} 
+
+	//All argument bits must be set in our bits too in order to return TRUE
+	inline Bool testForAll( const BitFlags& that ) const
+	{
+		DEBUG_ASSERTCRASH( that.any(), ("BitFlags::testForAll is always true if you ask about zero flags.  Did you mean that?") );
+
+		BitFlags tmp = *this;
+		tmp.m_bits.flip();
+		tmp.m_bits &= that.m_bits;
+		return !tmp.m_bits.any();
+	}
+
+	//None of the argument bits must be set in our bits in order to return TRUE
+	inline Bool testForNone( const BitFlags& that ) const
+	{
+		BitFlags tmp = *this;
+		tmp.m_bits &= that.m_bits;
+		return !tmp.m_bits.any();
+	}
+
 	inline Int size() const
 	{
 		return m_bits.size();
@@ -277,8 +304,10 @@ public:
   }
 
 	void parse(INI* ini, AsciiString* str);
+	void parseSingleBit(INI* ini, AsciiString* str);
 	void xfer(Xfer* xfer);
-	static void parseFromINI(INI* ini, void* /*instance*/, void *store, const void* /*userData*/);
+	static void parseFromINI(INI* ini, void* /*instance*/, void *store, const void* /*userData*/); ///< Returns a BitFlag
+	static void parseSingleBitFromINI(INI* ini, void* /*instance*/, void *store, const void* /*userData*/); ///< Returns an int, the Index of the one bit
 
 	void buildDescription( AsciiString* str ) const
 	{

@@ -33,33 +33,33 @@
 #define DEFINE_DEATH_NAMES
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "Common\ThingTemplate.h"
-#include "Common\ThingFactory.h"
-#include "Common\Player.h"
-#include "Common\PlayerList.h"
-#include "Common\Xfer.h"
-#include "Common\ClientUpdateModule.h"
+#include "Common/ThingTemplate.h"
+#include "Common/ThingFactory.h"
+#include "Common/Player.h"
+#include "Common/PlayerList.h"
+#include "Common/Xfer.h"
+#include "Common/ClientUpdateModule.h"
 
-#include "GameClient\ControlBar.h"
-#include "GameClient\GameClient.h"
-#include "GameClient\Drawable.h"
-#include "GameClient\ParticleSys.h"
-#include "GameClient\FXList.h"
+#include "GameClient/ControlBar.h"
+#include "GameClient/GameClient.h"
+#include "GameClient/Drawable.h"
+#include "GameClient/ParticleSys.h"
+#include "GameClient/FXList.h"
 
-#include "GameLogic\GameLogic.h"
-#include "GameLogic\PartitionManager.h"
-#include "GameLogic\Object.h"
-#include "GameLogic\ObjectIter.h"
-#include "GameLogic\Weaponset.h"
-#include "GameLogic\Weapon.h"
-#include "GameLogic\TerrainLogic.h"
-#include "GameLogic\Module\SpecialPowerModule.h"
-#include "GameLogic\Module\ParticleUplinkCannonUpdate.h"
-#include "GameLogic\Module\PhysicsUpdate.h"
-#include "GameLogic\Module\LaserUpdate.h"
-#include "GameLogic\Module\ActiveBody.h"
+#include "GameLogic/GameLogic.h"
+#include "GameLogic/PartitionManager.h"
+#include "GameLogic/Object.h"
+#include "GameLogic/ObjectIter.h"
+#include "GameLogic/WeaponSet.h"
+#include "GameLogic/Weapon.h"
+#include "GameLogic/TerrainLogic.h"
+#include "GameLogic/Module/SpecialPowerModule.h"
+#include "GameLogic/Module/ParticleUplinkCannonUpdate.h"
+#include "GameLogic/Module/PhysicsUpdate.h"
+#include "GameLogic/Module/LaserUpdate.h"
+#include "GameLogic/Module/ActiveBody.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -268,17 +268,17 @@ void ParticleUplinkCannonUpdate::onObjectCreated()
 }
 
 //-------------------------------------------------------------------------------------------------
-void ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, UnsignedInt commandOptions, Int locationCount )
+Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions )
 {
 	const ParticleUplinkCannonUpdateModuleData *data = getParticleUplinkCannonUpdateModuleData();
 
 	if( m_specialPowerModule->getSpecialPowerTemplate() != specialPowerTemplate )
 	{
 		//Check to make sure our modules are connected.
-		return;
+		return FALSE;
 	}
 
-	if( !BitTest( commandOptions, COMMAND_FIRED_BY_SCRIPT ) )
+	if( !BitIsSet( commandOptions, COMMAND_FIRED_BY_SCRIPT ) )
 	{
 		//All human players have manual control and must "drive" the beam around!
 		m_startAttackFrame = TheGameLogic->getFrame();
@@ -306,6 +306,7 @@ void ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 		SpecialPowerModule *spModule = (SpecialPowerModule*)spmInterface;
 		spModule->markSpecialPowerTriggered( &m_initialTargetPosition );
 	}
+	return TRUE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -870,7 +871,8 @@ void ParticleUplinkCannonUpdate::createGroundToOrbitLaser( UnsignedInt growthFra
 	if( beam )
 	{
 		TheGameClient->destroyDrawable( beam );
-		m_orbitToTargetBeamID = INVALID_DRAWABLE_ID;
+		// TheSuperHackers @fix helmutbuhler 19/04/2025 Invalidate the relevant drawable ID.
+		m_groundToOrbitBeamID = INVALID_DRAWABLE_ID;
 	}
 
 	if( data->m_particleBeamLaserName.isNotEmpty() )

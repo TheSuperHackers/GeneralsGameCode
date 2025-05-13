@@ -87,13 +87,13 @@ WindowMsgHandledType GadgetStaticTextInput( GameWindow *window, UnsignedInt msg,
         case KEY_RIGHT:
         case KEY_TAB:
 					// Just in case some fool sets static text as a tab stop
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
             window->winNextTab();
           break;
 
         case KEY_UP:
         case KEY_LEFT:
-					if( BitTest( mData2, KEY_STATE_DOWN ) )
+					if( BitIsSet( mData2, KEY_STATE_DOWN ) )
             window->winPrevTab();
           break;
 

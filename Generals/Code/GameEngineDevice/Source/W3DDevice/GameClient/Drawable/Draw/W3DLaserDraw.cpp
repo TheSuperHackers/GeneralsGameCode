@@ -45,14 +45,14 @@
 #include "W3DDevice/GameClient/Module/W3DLaserDraw.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DScene.h"
-#include "WW3D2/RInfo.h"
-#include "WW3D2/Camera.h"
-#include "WW3D2/Segline.h"
-#include "WWMath/Vector3.h"
-#include "WW3D2/AssetMgr.h"
+#include "WW3D2/rinfo.h"
+#include "WW3D2/camera.h"
+#include "WW3D2/segline.h"
+#include "WWMath/vector3.h"
+#include "WW3D2/assetmgr.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -234,6 +234,8 @@ W3DLaserDraw::~W3DLaserDraw( void )
 	}  // end for i
 
 	delete [] m_line3D;
+	// TheSuperHackers @fix Mauller 11/03/2025 Free reference counted material
+	REF_PTR_RELEASE(m_texture);
 }
 
 //-------------------------------------------------------------------------------------------------

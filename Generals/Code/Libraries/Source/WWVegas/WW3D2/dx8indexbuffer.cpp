@@ -180,7 +180,8 @@ void IndexBufferClass::Copy(unsigned short* indices,unsigned first_index,unsigne
 //
 // ----------------------------------------------------------------------------
 
-IndexBufferClass::WriteLockClass::WriteLockClass(IndexBufferClass* index_buffer_) : index_buffer(index_buffer_)
+
+IndexBufferClass::WriteLockClass::WriteLockClass(IndexBufferClass* index_buffer_, int flags) : index_buffer(index_buffer_)
 {
 	DX8_THREAD_ASSERT();
 	WWASSERT(index_buffer);
@@ -193,7 +194,7 @@ IndexBufferClass::WriteLockClass::WriteLockClass(IndexBufferClass* index_buffer_
 			0,
 			index_buffer->Get_Index_Count()*sizeof(WORD),
 			(unsigned char**)&indices,
-			0));
+			flags));
 		break;
 	case BUFFER_TYPE_SORTING:
 		indices=static_cast<SortingIndexBufferClass*>(index_buffer)->index_buffer;
@@ -244,7 +245,7 @@ IndexBufferClass::AppendLockClass::AppendLockClass(IndexBufferClass* index_buffe
 			start_index*sizeof(unsigned short),
 			index_range*sizeof(unsigned short),
 			(unsigned char**)&indices,
-			NULL));	// Optional pointer to receive the buffer size
+			0));
 		break;
 	case BUFFER_TYPE_SORTING:
 		indices=static_cast<SortingIndexBufferClass*>(index_buffer)->index_buffer+start_index;
@@ -451,7 +452,7 @@ void DynamicIBAccessClass::Allocate_DX8_Dynamic_Buffer()
 	// Create a new vb if one doesn't exist currently
 	if (!_DynamicDX8IndexBuffer) {
 		unsigned usage=DX8IndexBufferClass::USAGE_DYNAMIC;
-		if (DX8Caps::Support_NPatches()) {
+		if (DX8Wrapper::Get_Current_Caps()->Support_NPatches()) {
 			usage|=DX8IndexBufferClass::USAGE_NPATCHES;
 		}
 

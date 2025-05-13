@@ -88,7 +88,6 @@
 #include "predlod.h"
 #include "camera.h"
 #include "scene.h"
-#include "texfcach.h"
 #include "registry.h"
 #include "segline.h"
 #include "shader.h"
@@ -101,17 +100,17 @@
 #include "statistics.h"
 #include "pointgr.h"
 #include "ffactory.h"
-#include "ini.h"
+#include "INI.H"
 #include "dazzle.h"
 #include "meshmdl.h"
 #include "dx8renderer.h"
 #include "render2d.h"
 #include "bound.h"
 #include "rddesc.h"
-#include "vector3i.h"
+#include "Vector3i.h"
 #include <cstdio>
 #include "dx8wrapper.h"
-#include "targa.h"
+#include "TARGA.H"
 #include "sortingrenderer.h"
 #include "thread.h"
 #include "cpudetect.h"
@@ -826,9 +825,7 @@ WW3DErrorType WW3D::Begin_Render(bool clear,bool clearz,const Vector3 & color, f
 //	TextureClass::_Reset_Time_Stamp();
 	DynamicVBAccessClass::_Reset(true);
 	DynamicIBAccessClass::_Reset(true);
-#ifdef WW3D_DX8
-	TextureFileClass::Update_Texture_Flash();
-#endif //WW3D_DX8
+
 	Debug_Statistics::Begin_Statistics();
 
 	if (IsCapturing && (!PauseRecord || RecordNextFrame)) {

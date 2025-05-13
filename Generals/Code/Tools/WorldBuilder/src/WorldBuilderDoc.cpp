@@ -19,7 +19,7 @@
 // WorldBuilderDoc.cpp : implementation of the CWorldBuilderDoc class
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "WorldBuilder.h"
 
 #include <direct.h>
@@ -52,7 +52,7 @@
 #include "ScriptDialog.h"
 #include "TerrainMaterial.h"
 #include "W3DDevice/GameClient/HeightMap.h"
-#include "WbView3d.h"
+#include "wbview3d.h"
 #include "wbview.h"
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
@@ -304,7 +304,7 @@ void CWorldBuilderDoc::Serialize(CArchive& ar)
 			chunkWriter = NULL;
 			theStream.flush();
 		} catch(...) {
-			char *msg = "WorldHeightMapEdit::WorldHeightMapEdit  height map file write failed: ";
+			const char *msg = "WorldHeightMapEdit::WorldHeightMapEdit  height map file write failed: ";
 			AfxMessageBox(msg);
 			return;
 		}
@@ -849,7 +849,7 @@ void CWorldBuilderDoc::autoSave(void)
 /////////////////////////////////////////////////////////////////////////////
 // CWorldBuilderDoc diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void CWorldBuilderDoc::AssertValid() const
 {
 	CDocument::AssertValid();
@@ -859,7 +859,7 @@ void CWorldBuilderDoc::Dump(CDumpContext& dc) const
 {
 	CDocument::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CWorldBuilderDoc commands
@@ -1606,7 +1606,7 @@ void CWorldBuilderDoc::compressWaypointIds(void)
 	}
 	m_waypointTableNeedsUpdate = true;
 	updateWaypointTable();
-#ifdef _DEBUG
+#ifdef DEBUG_CRASHING
 	for (i=0; i<m_numWaypointLinks; i++) {
 		MapObject *pWay1 = getWaypointByID(m_waypointLinks[i].waypoint1);
 		MapObject *pWay2 = getWaypointByID(m_waypointLinks[i].waypoint2);
@@ -2085,8 +2085,8 @@ static void fprintUnit(FILE *theLogFile, Dict *teamDict, NameKeyType keyMinUnit,
 void CWorldBuilderDoc::OnDumpDocToText(void) 
 {
 	MapObject *pMapObj = NULL; 
-	char* vetStrings[] = {"Green", "Regular", "Veteran", "Elite"};
-	char* aggroStrings[] = {"Passive", "Normal", "Guard", "Hunt", "Agressive", "Sleep"};
+	const char* vetStrings[] = {"Green", "Regular", "Veteran", "Elite"};
+	const char* aggroStrings[] = {"Passive", "Normal", "Guard", "Hunt", "Agressive", "Sleep"};
 	AsciiString noOwner = "No Owner";
 	static FILE *theLogFile = NULL;
 	Bool open = false;
@@ -2359,7 +2359,7 @@ writeRawDict( theLogFile, "TeamInfo",ti->getDict() );
 					AsciiString trigger = ti->getDict()->getAsciiString(TheKey_teamProductionCondition, &exists);
 
 					fprintf(theLogFile, "TEAM %s home '%s', priority %s, condition '%s',\n", teamName.str(),
-						waypoint.str(), pri, trigger.str());
+						waypoint.str(), static_cast<LPCSTR>(pri), trigger.str());
 					fprintf(theLogFile, "  UNITS:");
 					fprintUnit(theLogFile, ti->getDict(), TheKey_teamUnitMinCount1, TheKey_teamUnitMaxCount1, TheKey_teamUnitType1);
 					fprintUnit(theLogFile, ti->getDict(), TheKey_teamUnitMinCount2, TheKey_teamUnitMaxCount2, TheKey_teamUnitType2);

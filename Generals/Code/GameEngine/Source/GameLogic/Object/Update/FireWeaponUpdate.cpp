@@ -35,7 +35,7 @@
 #include "GameLogic/Module/FireWeaponUpdate.h"
 #include "GameLogic/WeaponStatus.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -87,11 +87,25 @@ FireWeaponUpdate::~FireWeaponUpdate( void )
 UpdateSleepTime FireWeaponUpdate::update( void )
 {
 	// If my weapon is ready, shoot it.
-	if( m_weapon && m_weapon->getStatus() == READY_TO_FIRE )
+	if( isOkayToFire() )
 	{
 		m_weapon->forceFireWeapon( getObject(), getObject()->getPosition() );
 	}
 	return UPDATE_SLEEP_NONE;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Bool FireWeaponUpdate::isOkayToFire()
+{
+	if( m_weapon == NULL )
+		return FALSE;
+
+	// Weapon is reloading
+	if( m_weapon->getStatus() != READY_TO_FIRE )
+		return FALSE;
+
+	return TRUE;
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -46,10 +46,10 @@ class StateMachine;
 class Object;
 
 //#undef STATE_MACHINE_DEBUG
-#if defined(_DEBUG)
+#if defined(RTS_DEBUG)
 	#define STATE_MACHINE_DEBUG
 #endif
-#if defined(_INTERNAL)
+#if defined(RTS_INTERNAL)
 	#define STATE_MACHINE_DEBUG	//uncomment to debug state machines in internal.  jba.
 #endif
 
@@ -64,7 +64,7 @@ typedef Bool (*StateTransFuncPtr)( State *state, void* userData );
 /**
  * State return codes
  */
-enum StateReturnType 
+enum StateReturnType CPP_11(: Int) 
 { 
 	// note that all positive values are reserved for STATE_SLEEP!
 
@@ -120,7 +120,7 @@ enum
 /** 
  * Parameters for onExit().
  */
-enum StateExitType
+enum StateExitType CPP_11(: Int)
 {
 	EXIT_NORMAL,							///< state exited due to normal state transitioning
 	EXIT_RESET								///< state exited due to state machine reset
@@ -321,7 +321,7 @@ public:
 	//
 	StateReturnType internalSetState( StateID newStateID );	///< for internal use only - change the current state of the machine
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	UnsignedInt peekSleepTill() const { return m_sleepTill; }
 #endif
 

@@ -50,7 +50,7 @@
 #include "GameClient/MapUtil.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -807,7 +807,8 @@ Bool LadderPreferences::loadProfile( Int profileID )
 			continue;
 
 		p.port = atoi( ptr + 1 );
-		for (Int i=0; i<strlen(ptr); ++i)
+		Int i=0;
+		for (; i<strlen(ptr); ++i)
 		{
 			ladName.removeLastChar();
 		}

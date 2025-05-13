@@ -117,9 +117,7 @@ UpdateSleepTime HijackerUpdate::update( void )
 				}
 
 				// We won't come back here until and unless we have hijacked another vehicle
-				obj->clearStatus( OBJECT_STATUS_NO_COLLISIONS );
-				obj->clearStatus( OBJECT_STATUS_MASKED );
-				obj->clearStatus( OBJECT_STATUS_UNSELECTABLE );
+				obj->clearStatus( MAKE_OBJECT_STATUS_MASK3( OBJECT_STATUS_NO_COLLISIONS, OBJECT_STATUS_MASKED, OBJECT_STATUS_UNSELECTABLE ) );
 
 				AIUpdateInterface* ai = obj->getAIUpdateInterface();
 				if ( ai )

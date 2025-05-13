@@ -32,18 +32,18 @@
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "Common\BitFlagsIO.h"
-#include "Common\ThingTemplate.h"
-#include "Common\Xfer.h"
-#include "GameClient\Drawable.h"
-#include "GameLogic\GameLogic.h"
-#include "GameLogic\PartitionManager.h"
-#include "GameLogic\Object.h"
-#include "GameLogic\ObjectIter.h"
-#include "GameLogic\Module\DemoTrapUpdate.h"
-#include "GameLogic\Module\PhysicsUpdate.h"
-#include "GameLogic\Weaponset.h"
-#include "GameLogic\Weapon.h"
+#include "Common/BitFlagsIO.h"
+#include "Common/ThingTemplate.h"
+#include "Common/Xfer.h"
+#include "GameClient/Drawable.h"
+#include "GameLogic/GameLogic.h"
+#include "GameLogic/PartitionManager.h"
+#include "GameLogic/Object.h"
+#include "GameLogic/ObjectIter.h"
+#include "GameLogic/Module/DemoTrapUpdate.h"
+#include "GameLogic/Module/PhysicsUpdate.h"
+#include "GameLogic/WeaponSet.h"
+#include "GameLogic/Weapon.h"
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------

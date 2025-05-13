@@ -59,7 +59,7 @@
 #include "GameClient/Shell.h"
 #include "GameLogic/GameLogic.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -215,7 +215,7 @@ WindowMsgHandledType PopupReplayInput( GameWindow *window, UnsignedInt msg, Wind
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 						GameWindow *button = TheWindowManager->winGetWindowFromId( parent, buttonBackKey );
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 

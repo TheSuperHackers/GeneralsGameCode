@@ -44,7 +44,7 @@
 #include "GameLogic/Module/BodyModule.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -52,7 +52,7 @@
 
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
-enum ObjectID;
+enum ObjectID CPP_11(: Int);
 
 // ------------------------------------------------------------------------------------------------
 /** This class is used to track objects as they exit our area of influence */

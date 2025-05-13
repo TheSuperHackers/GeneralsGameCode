@@ -37,7 +37,7 @@ class Player;
 
 //------------------------------------------------------------------------------------ Eva Messages
 // Keep in sync with TheEvaMessageNames AND Eva::s_shouldPlayFuncs
-enum EvaMessage
+enum EvaMessage CPP_11(: Int)
 {
 	EVA_FIRST = 0,
 	EVA_LowPower = EVA_FIRST,

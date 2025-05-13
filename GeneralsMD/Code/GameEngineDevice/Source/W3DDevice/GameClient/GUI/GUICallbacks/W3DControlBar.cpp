@@ -39,7 +39,7 @@
 #include "GameClient/ControlBarScheme.h"
 #include "GameClient/MapUtil.h"
 #include "GameLogic/GameLogic.h"
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -99,7 +99,7 @@ void W3DRightHUDDraw( GameWindow *window, WinInstanceData *instData )
 {
 
 	// draw the default stuff
-	if( BitTest(window->winGetStatus(), WIN_STATUS_IMAGE ))
+	if( BitIsSet(window->winGetStatus(), WIN_STATUS_IMAGE ))
 		W3DGameWinDefaultDraw( window, instData );
 	
 }  // end W3DRightHUDDraw
@@ -465,7 +465,7 @@ void W3DPowerDrawA( GameWindow *window, WinInstanceData *instData )
 
 void W3DCommandBarGridDraw( GameWindow *window, WinInstanceData *instData )
 {
-	if( BitTest(window->winGetStatus(), WIN_STATUS_IMAGE ))
+	if( BitIsSet(window->winGetStatus(), WIN_STATUS_IMAGE ))
 	{
 		W3DGameWinDefaultDraw( window, instData );
 		return;
@@ -497,8 +497,14 @@ void W3DCommandBarGenExpDraw( GameWindow *window, WinInstanceData *instData )
 	static const Image *endBar = TheMappedImageCollection->findImageByName("GenExpBarTop1");
 	static const Image *beginBar = TheMappedImageCollection->findImageByName("GenExpBarBottom1");
 	static const Image *centerBar = TheMappedImageCollection->findImageByName("GenExpBar1");
-	Int progress;
-	progress = ((player->getSkillPoints() - player->getSkillPointsLevelDown()) * 100) /(player->getSkillPointsLevelUp() - player->getSkillPointsLevelDown());
+	Int progress = 0;
+	Int skillPointsRequired = player->getSkillPointsLevelUp() - player->getSkillPointsLevelDown();
+
+	// TheSuperHackers @bugfix Mauller 04/05/2025 Prevent possible division by zero
+	if ( skillPointsRequired > 0)
+	{
+		progress = ( ((player->getSkillPoints() - player->getSkillPointsLevelDown()) * 100) / skillPointsRequired );
+	}
 	
 	if(progress <= 0)
 		return;
@@ -744,7 +750,7 @@ void W3DDrawMapPreview( GameWindow *window, WinInstanceData *instData)
 
 	}  // end else
 
-	if(!BitTest(window->winGetStatus(), WIN_STATUS_IMAGE) || !window->winGetEnabledImage(0))
+	if(!BitIsSet(window->winGetStatus(), WIN_STATUS_IMAGE) || !window->winGetEnabledImage(0))
 		TheDisplay->drawFillRect(ul.x, ul.y, lr.x -ul.x, lr.y-ul.y, lineColor);
 	else
 		TheDisplay->drawImage(window->winGetEnabledImage(0) , ul.x, ul.y, lr.x, lr.y );

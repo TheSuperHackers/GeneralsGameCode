@@ -99,7 +99,7 @@ public:
 	class WriteLockClass : public VertexBufferLockClass
 	{
 	public:
-		WriteLockClass(VertexBufferClass* vertex_buffer);
+		WriteLockClass(VertexBufferClass* vertex_buffer, int flags=0);
 		~WriteLockClass();
 	};
 

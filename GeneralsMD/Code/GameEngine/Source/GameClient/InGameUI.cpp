@@ -90,7 +90,7 @@
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.		 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -2222,7 +2222,7 @@ void InGameUI::createGarrisonHint( const GameMessage *msg )
 	}
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 #define AI_DEBUG_TOOLTIPS		1
 
 #ifdef AI_DEBUG_TOOLTIPS
@@ -2231,7 +2231,7 @@ void InGameUI::createGarrisonHint( const GameMessage *msg )
 #include "GameLogic/AIPathfind.h"
 #endif // AI_DEBUG_TOOLTIPS
 
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 //-------------------------------------------------------------------------------------------------
 /** Details of what is mouse hovered over right now are in this message.  Terrain might result
@@ -2257,7 +2257,7 @@ void InGameUI::createMouseoverHint( const GameMessage *msg )
 		}
 		
 		// check to see if it or any of its parents are opaque.  If so, we can't select anything.
-		if (!BitTest( window->winGetStatus(), WIN_STATUS_SEE_THRU ))
+		if (!BitIsSet( window->winGetStatus(), WIN_STATUS_SEE_THRU ))
 		{
 			underWindow = true;
 			break;
@@ -2307,7 +2307,7 @@ void InGameUI::createMouseoverHint( const GameMessage *msg )
  			else
  				m_mousedOverDrawableID = draw->getID();
 
-#if defined(_DEBUG) || defined(_INTERNAL) //Extra hacky, sorry, but I need to use this in constantdebug report
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) //Extra hacky, sorry, but I need to use this in constantdebug report
 			if ( TheGlobalData->m_constantDebugUpdate == TRUE )
 				m_mousedOverDrawableID = draw->getID();
 #endif
@@ -2533,7 +2533,7 @@ void InGameUI::createCommandHint( const GameMessage *msg )
 	{
 		const Object* obj = draw->getObject();
 		Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		ObjectShroudStatus ss = (!obj || !TheGlobalData->m_shroudOn) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
 #else
 		ObjectShroudStatus ss = (!obj) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
@@ -2579,7 +2579,7 @@ void InGameUI::createCommandHint( const GameMessage *msg )
 		}
 		
 		// check to see if it or any of its parents are opaque.  If so, we can't select anything.
-		if (!BitTest( window->winGetStatus(), WIN_STATUS_SEE_THRU ))
+		if (!BitIsSet( window->winGetStatus(), WIN_STATUS_SEE_THRU ))
 		{
 			underWindow = true;
 			break;
@@ -2774,7 +2774,7 @@ void InGameUI::createCommandHint( const GameMessage *msg )
 														m_pendingGUICommand->getSpecialPowerTemplate(),
 														m_pendingGUICommand->getWeaponSlot());
 					}
-					else if( BitTest( m_pendingGUICommand->getOptions(), COMMAND_OPTION_NEED_TARGET ) )
+					else if( BitIsSet( m_pendingGUICommand->getOptions(), COMMAND_OPTION_NEED_TARGET ) )
 					{
 						Int index = TheMouse->getCursorIndex(m_pendingGUICommand->getCursorName());
 						if (index != Mouse::INVALID_MOUSE_CURSOR)
@@ -2895,7 +2895,7 @@ void InGameUI::setGUICommand( const CommandButton *command )
 	if( command )
 	{
 
-		if( BitTest( command->getOptions(), COMMAND_OPTION_NEED_TARGET ) == FALSE )
+		if( BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_TARGET ) == FALSE )
 		{
 
 			DEBUG_ASSERTCRASH( 0, ("setGUICommand: Command '%s' does not need additional user interaction\n",	
@@ -2918,7 +2918,7 @@ void InGameUI::setGUICommand( const CommandButton *command )
 	m_pendingGUICommand = command;
 
 	// set the mouse cursor for commands that need a targeting or to normal with no command
-	if( command && BitTest( command->getOptions(), COMMAND_OPTION_NEED_TARGET ) && !command->isContextCommand() )
+	if( command && BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_TARGET ) && !command->isContextCommand() )
 	{
 		setMouseCursor( Mouse::ARROW );// This occurs on the mouse-up of a panel button, so make an arrow
 		// the mouseoverhint code will take care of the cursor context, once the mouse leaves the panel
@@ -4438,8 +4438,8 @@ Bool InGameUI::canSelectedObjectsDoSpecialPower( const CommandButton *command, c
 	//1) NO TARGET OR POS
 	//2) COMMAND_OPTION_NEED_OBJECT_TARGET
 	//3) NEED_TARGET_POS
-	Bool doAtPosition = BitTest( command->getOptions(), NEED_TARGET_POS );
-	Bool doAtObject = BitTest( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET );
+	Bool doAtPosition = BitIsSet( command->getOptions(), NEED_TARGET_POS );
+	Bool doAtObject = BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET );
 
 	//Sanity checks
 	if( doAtObject && !objectToInteractWith )
@@ -4562,8 +4562,8 @@ Bool InGameUI::canSelectedObjectsEffectivelyUseWeapon( const CommandButton *comm
 	//1) NO TARGET OR POS
 	//2) COMMAND_OPTION_NEED_OBJECT_TARGET
 	//3) NEED_TARGET_POS
-	Bool doAtPosition = BitTest( command->getOptions(), NEED_TARGET_POS );
-	Bool doAtObject = BitTest( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET );
+	Bool doAtPosition = BitIsSet( command->getOptions(), NEED_TARGET_POS );
+	Bool doAtObject = BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET );
 
 	//Sanity checks
 	if( doAtObject && !objectToInteractWith )
@@ -5001,7 +5001,7 @@ void InGameUI::addFloatingText(const UnicodeString& text,const Coord3D *pos, Col
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 inline Bool isClose(Real a, Real b) { return fabs(a-b) <= 1.0f; }
 inline Bool isClose(const Coord3D& a, const Coord3D& b) 
 {
@@ -5365,8 +5365,8 @@ void InGameUI::updateAndDrawWorldAnimations( void )
 			// the expire frame
 			//
 			if( TheGameLogic->getFrame() >= wad->m_expireFrame ||
-					(BitTest( wad->m_options, WORLD_ANIM_PLAY_ONCE_AND_DESTROY ) &&
-					 BitTest( wad->m_anim->getStatus(), ANIM_2D_STATUS_COMPLETE )) )
+					(BitIsSet( wad->m_options, WORLD_ANIM_PLAY_ONCE_AND_DESTROY ) &&
+					 BitIsSet( wad->m_anim->getStatus(), ANIM_2D_STATUS_COMPLETE )) )
 			{
 
 				// delete this element and continue
@@ -5397,7 +5397,7 @@ void InGameUI::updateAndDrawWorldAnimations( void )
 		}  // end if
 
 		// update translucency value
-		if( BitTest( wad->m_options, WORLD_ANIM_FADE_ON_EXPIRE ) )
+		if( BitIsSet( wad->m_options, WORLD_ANIM_FADE_ON_EXPIRE ) )
 		{
 
 			// see if we should be setting the translucency value

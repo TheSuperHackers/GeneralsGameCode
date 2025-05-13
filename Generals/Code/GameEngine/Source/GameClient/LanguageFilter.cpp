@@ -27,9 +27,9 @@
 
 #include "GameClient/LanguageFilter.h"
 #include "Common/FileSystem.h"
-#include "Common/File.h"
+#include "Common/file.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -59,7 +59,7 @@ void LanguageFilter::init() {
 	}
 
 	wchar_t word[128];
-	while (readWord(file1, (UnsignedShort*)word)) {
+	while (readWord(file1, word)) {
 		Int wordLen = wcslen(word);
 		if (wordLen == 0) {
 			continue;
@@ -159,14 +159,14 @@ void LanguageFilter::unHaxor(UnicodeString &word) {
 }
 
 // returning true means that there are more words in the file.
-Bool LanguageFilter::readWord(File *file1, UnsignedShort *buf) {
+Bool LanguageFilter::readWord(File *file1, WideChar *buf) {
 	Int index = 0;
 	Bool retval = TRUE;
 	Int val = 0;
 
-	UnsignedShort c;
+	WideChar c;
 
-	val = file1->read(&c, sizeof(UnsignedShort));
+	val = file1->read(&c, sizeof(WideChar));
 	if ((val == -1) || (val == 0)) {
 		buf[index] = 0;
 		return FALSE;
@@ -175,7 +175,7 @@ Bool LanguageFilter::readWord(File *file1, UnsignedShort *buf) {
 
 	while (buf[index] != L' ') {
 		++index;
-		val = file1->read(&c, sizeof(UnsignedShort));
+		val = file1->read(&c, sizeof(WideChar));
 		if ((val == -1) || (val == 0)) {
 			c = WEOF;
 		}

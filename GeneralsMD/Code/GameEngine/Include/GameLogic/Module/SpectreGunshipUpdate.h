@@ -41,7 +41,7 @@ class SpecialPowerModule;
 class ParticleSystem;
 class FXList;
 class AudioEventRTS;
-enum ParticleSystemID;
+enum ParticleSystemID CPP_11(: Int);
 
 //#define MAX_OUTER_NODES 16
 //#define TRACKERS 
@@ -79,7 +79,7 @@ private:
 
 };
 
-enum GunshipStatus
+enum GunshipStatus CPP_11(: Int)
 {
    GUNSHIP_STATUS_INSERTING,
    GUNSHIP_STATUS_ORBITING,

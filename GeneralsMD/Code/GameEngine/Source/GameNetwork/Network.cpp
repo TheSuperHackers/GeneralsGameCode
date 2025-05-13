@@ -37,7 +37,7 @@
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "GameNetwork/NetworkInterface.h"
-#include "GameNetwork/Udp.h"
+#include "GameNetwork/udp.h"
 #include "GameNetwork/Transport.h"
 #include "strtok_r.h"
 #include "GameClient/Shell.h"
@@ -52,7 +52,7 @@
 #include "Common/Recorder.h"
 #include "GameClient/MessageBox.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -152,7 +152,7 @@ public:
 	void loadProgressComplete( void );
 	void sendTimeOutGameStart( void );
 
-#if defined(_INTERNAL) || defined(_DEBUG)
+#if defined(RTS_INTERNAL) || defined(RTS_DEBUG)
 	// Disconnect screen testing
 	virtual void toggleNetworkOn();
 #endif
@@ -219,7 +219,7 @@ protected:
 	std::list<Int> m_playersToDisconnect;
 	GameWindow *m_messageWindow;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool m_networkOn;
 #endif
 };
@@ -279,7 +279,7 @@ Network::Network()
 	m_conMgr = NULL;
 	m_messageWindow = NULL;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_networkOn = TRUE;
 #endif
 }
@@ -362,7 +362,7 @@ void Network::init()
 	DEBUG_LOG(("FRAMES_TO_KEEP = %d\n", FRAMES_TO_KEEP));
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_networkOn = TRUE;
 #endif
 
@@ -380,7 +380,8 @@ void Network::setSawCRCMismatch( void )
 	TheRecorder->logCRCMismatch();
 
 	// dump GameLogic random seed
-	DEBUG_LOG(("GameLogic frame = %d\n", TheGameLogic->getFrame()));
+	DEBUG_LOG(("Latest frame for mismatch = %d GameLogic frame = %d\n",
+		TheGameLogic->getFrame()-m_runAhead-1, TheGameLogic->getFrame()));
 	DEBUG_LOG(("GetGameLogicRandomSeedCRC() = %d\n", GetGameLogicRandomSeedCRC()));
 
 	// dump CRCs
@@ -632,7 +633,7 @@ void Network::processFrameSynchronizedNetCommand(NetCommandRef *msg) {
 	else if (cmdMsg->getNetCommandType() == NETCOMMANDTYPE_RUNAHEAD) {
 		NetRunAheadCommandMsg *netmsg = (NetRunAheadCommandMsg *)cmdMsg;
 		processRunAheadCommand(netmsg);
-		DEBUG_LOG(("command to set run ahead to %d and frame rate to %d on frame %d actually executed on frame %d\n", netmsg->getRunAhead(), netmsg->getFrameRate(), netmsg->getExecutionFrame(), TheGameLogic->getFrame()));
+		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command to set run ahead to %d and frame rate to %d on frame %d actually executed on frame %d\n", netmsg->getRunAhead(), netmsg->getFrameRate(), netmsg->getExecutionFrame(), TheGameLogic->getFrame()));
 	}
 	else if (cmdMsg->getNetCommandType() == NETCOMMANDTYPE_DESTROYPLAYER) {
 		NetDestroyPlayerCommandMsg *netmsg = (NetDestroyPlayerCommandMsg *)cmdMsg;
@@ -691,7 +692,7 @@ void Network::update( void )
 //
 	m_frameDataReady = FALSE;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (m_networkOn == FALSE) {
 		return;
 	}
@@ -725,7 +726,7 @@ void Network::update( void )
 
 void Network::liteupdate() {
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (m_networkOn == FALSE) {
 		return;
 	}
@@ -749,7 +750,7 @@ void Network::endOfGameCheck() {
 
 			DEBUG_LOG(("Network::endOfGameCheck - about to show the shell\n"));
 		}
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		else {
 			m_conMgr->debugPrintConnectionCommands();
 		}
@@ -1015,7 +1016,7 @@ Int Network::getSlotAverageFPS(Int slot) {
 	return -1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 void Network::toggleNetworkOn() {
 	if (m_networkOn == TRUE) {
 		m_networkOn = FALSE;
