@@ -246,7 +246,7 @@ void Non_Fatal_Log_DX8_ErrorCode(unsigned res,const char * file,int line)
 	}
 }
 
-// TheSuperHackers @info helmutbuhler 04/14/2025
+// TheSuperHackers @info helmutbuhler 14/04/2025
 // Helper function that moves x and y such that the inner rect fits into the outer rect.
 // If inner already is in outer, this does nothing.
 // If inner is bigger than outer, the inner rect will be aligned on the top left of the outer rect.
@@ -937,14 +937,14 @@ void DX8Wrapper::Resize_And_Position_Window()
 			::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, width, height, SWP_NOSIZE | SWP_NOMOVE);
 		else
 		{
-			// TheSuperHackers @feature helmutbuhler 04/14/2025
+			// TheSuperHackers @feature helmutbuhler 14/04/2025
 			// Center the window in the workarea of the monitor it is on.
 			MONITORINFO mi = {sizeof(MONITORINFO)};
 			GetMonitorInfo(MonitorFromWindow(_Hwnd, MONITOR_DEFAULTTOPRIMARY), &mi);
 			int left = (mi.rcWork.left + mi.rcWork.right - width) / 2;
 			int top  = (mi.rcWork.top + mi.rcWork.bottom - height) / 2;
 
-			// TheSuperHackers @feature helmutbuhler 04/14/2025
+			// TheSuperHackers @feature helmutbuhler 14/04/2025
 			// In case part of the resulting client area is off monitor, move it so it's visible.
 			// This is useful when the client area of the window is larger than the work area,
 			// but still smaller or equal to the monitor size.

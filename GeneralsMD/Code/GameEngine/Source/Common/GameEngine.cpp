@@ -371,7 +371,7 @@ void GameEngine::init( int argc, char *argv[] )
 	#endif/////////////////////////////////////////////////////////////////////////////////////////////
 
 
-		// TheSuperHackers @bugfix helmutbuhler 04/14/2025
+		// TheSuperHackers @bugfix helmutbuhler 14/04/2025
 		// Pump messages during startup to avoid "(Not responding)" in the window title
 		// on slower computers and in debug build.
 		// This also ensures that the window is correctly positioned, because Windows
