@@ -33,9 +33,8 @@
 // SYSTEM INCLUDES ////////////////////////////////////////////////////////////
 #define WIN32_LEAN_AND_MEAN  // only bare bones windows stuff wanted
 
-#if (_MSC_VER < 1300)
+#if defined(_MSC_VER) && _MSC_VER < 1300
 // This is required to access GetMonitorInfo in VC6.
-// As soon as we break compatibility with VC6 we can remove this.
 #undef WINVER
 #define WINVER 0x0500
 #endif
