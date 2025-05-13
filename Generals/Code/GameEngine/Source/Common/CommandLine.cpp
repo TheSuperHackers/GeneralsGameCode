@@ -163,6 +163,17 @@ Int parseFPUPreserve(char *args[], int argc)
 	return 2;
 }
 
+//=============================================================================
+//=============================================================================
+Int parseUseWaveEditor(char *args[], int num)
+{
+	if (TheWritableGlobalData)
+	{
+		TheWritableGlobalData->m_usingWaterTrackEditor = TRUE;
+	}
+	return 1;
+}
+
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 //=============================================================================
@@ -521,17 +532,6 @@ Int parseNoStaticLOD(char *args[], int num)
 	if (TheWritableGlobalData)
 	{
 		TheWritableGlobalData->m_enableStaticLOD = FALSE;
-	}
-	return 1;
-}
-
-//=============================================================================
-//=============================================================================
-Int parseUseWaveEditor(char *args[], int num)
-{
-	if (TheWritableGlobalData)
-	{
-		TheWritableGlobalData->m_usingWaterTrackEditor = TRUE;
 	}
 	return 1;
 }
@@ -1204,6 +1204,7 @@ static CommandLineParam params[] =
 	{ "-mod", parseMod },
 	{ "-noshaders", parseNoShaders },
 	{ "-quickstart", parseQuickStart },
+	{ "-useWaveEditor", parseUseWaveEditor },
 
 #if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 	{ "-noaudio", parseNoAudio },
@@ -1286,7 +1287,6 @@ static CommandLineParam params[] =
 	{ "-lowDetail", parseLowDetail },
 	{ "-noDynamicLOD", parseNoDynamicLOD },
 	{ "-noStaticLOD", parseNoStaticLOD },
-	{ "-useWaveEditor", parseUseWaveEditor },
 	{ "-fps", parseFPSLimit },
 	{ "-wireframe", parseWireframe },
 	{ "-showCollision", parseShowCollision },
