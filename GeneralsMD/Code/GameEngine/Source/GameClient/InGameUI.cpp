@@ -2024,16 +2024,21 @@ void InGameUI::message( AsciiString stringManagerLabel, ... )
 
 	// construct the final text after formatting
 	va_list args;
-  va_start( args, stringManagerLabel );
+	va_start( args, stringManagerLabel );
 	WideChar buf[ UnicodeString::MAX_FORMAT_BUF_LEN ];
-  if( _vsnwprintf(buf, sizeof( buf )/sizeof( WideChar ) - 1, stringManagerString.str(), args ) < 0 )
-			throw ERROR_OUT_OF_MEMORY;
-	formattedMessage.set( buf );
-  va_end(args);
+	int result = _vsnwprintf(buf, sizeof( buf )/sizeof( WideChar ) - 1, stringManagerString.str(), args );
+	va_end(args);
 
-	// add the text to the ui
-	addMessageText( formattedMessage );
-
+	if( result >= 0 )
+	{
+		formattedMessage.set( buf );
+		// add the text to the ui
+		addMessageText( formattedMessage );
+	}
+	else
+	{
+		DEBUG_CRASH(("InGameUI::message failed with code:%d", result));
+	}
 }  // end 
 
 //-------------------------------------------------------------------------------------------------
@@ -2046,16 +2051,21 @@ void InGameUI::message( UnicodeString format, ... )
 
 	// construct the final text after formatting
 	va_list args;
-  va_start( args, format );
+	va_start( args, format );
 	WideChar buf[ UnicodeString::MAX_FORMAT_BUF_LEN ];
-  if( _vsnwprintf(buf, sizeof( buf )/sizeof( WideChar ) - 1, format.str(), args ) < 0 )
-			throw ERROR_OUT_OF_MEMORY;
-	formattedMessage.set( buf );
-  va_end(args);
+	int result = _vsnwprintf(buf, sizeof( buf )/sizeof( WideChar ) - 1, format.str(), args );
+	va_end(args);
 
-	// add the text to the ui
-	addMessageText( formattedMessage );
-
+	if( result >= 0 )
+	{
+		formattedMessage.set( buf );
+		// add the text to the ui
+		addMessageText( formattedMessage );
+	}
+	else
+	{
+		DEBUG_CRASH(("InGameUI::message failed with code:%d", result));
+	}
 }  // end message
 
 //-------------------------------------------------------------------------------------------------
@@ -2068,16 +2078,20 @@ void InGameUI::messageColor( const RGBColor *rgbColor, UnicodeString format, ...
 
 	// construct the final text after formatting
 	va_list args;
-  va_start( args, format );
+	va_start( args, format );
 	WideChar buf[ UnicodeString::MAX_FORMAT_BUF_LEN ];
-  if( _vsnwprintf(buf, sizeof( buf )/sizeof( WideChar ) - 1, format.str(), args ) < 0 )
-			throw ERROR_OUT_OF_MEMORY;
-	formattedMessage.set( buf );
-  va_end(args);
+	int result = _vsnwprintf(buf, sizeof( buf )/sizeof( WideChar ) - 1, format.str(), args );
 
-	// add the text to the ui
-	addMessageText( formattedMessage, rgbColor );
-
+	if( result >= 0 )
+	{
+		formattedMessage.set( buf );
+		// add the text to the ui
+		addMessageText( formattedMessage, rgbColor );
+	}
+	else
+	{
+		DEBUG_CRASH(("InGameUI::messageColor failed with code:%d", result));
+	}
 }  // end message
 
 //-------------------------------------------------------------------------------------------------
