@@ -377,7 +377,7 @@ void AsciiString::format_va(const char* format, va_list args)
 {
 	validate();
 	char buf[MAX_FORMAT_BUF_LEN];
-	const int result = _vsnprintf(buf, sizeof(buf)/sizeof(char)-1, format, args);
+	const int result = vsnprintf(buf, sizeof(buf)/sizeof(char), format, args);
 	if (result >= 0)
 	{
 		set(buf);

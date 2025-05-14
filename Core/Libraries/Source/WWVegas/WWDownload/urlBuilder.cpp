@@ -17,7 +17,7 @@
 */
 
 #include <string>
-#include <stdio.h>
+#include <Utility/stdio_adapter.h>
 #include "Registry.h"
 
 void FormatURLFromRegistry( std::string& gamePatchURL, std::string& mapPatchURL,
@@ -41,13 +41,13 @@ void FormatURLFromRegistry( std::string& gamePatchURL, std::string& mapPatchURL,
 	GetUnsignedIntFromRegistry("", "MapPackVersion", mapVersion);
 
 	char buf[256];
-	_snprintf(buf, 256, "%s%s-%d.txt", baseURL.c_str(), language.c_str(), version);
+	snprintf(buf, 256, "%s%s-%d.txt", baseURL.c_str(), language.c_str(), version);
 	gamePatchURL = buf;
-	_snprintf(buf, 256, "%smaps-%d.txt", baseURL.c_str(), mapVersion);
+	snprintf(buf, 256, "%smaps-%d.txt", baseURL.c_str(), mapVersion);
 	mapPatchURL = buf;
-	_snprintf(buf, 256, "%sconfig.txt", baseURL.c_str());
+	snprintf(buf, 256, "%sconfig.txt", baseURL.c_str());
 	configURL = buf;
-	_snprintf(buf, 256, "%sMOTD-%s.txt", baseURL.c_str(), language.c_str());
+	snprintf(buf, 256, "%sMOTD-%s.txt", baseURL.c_str(), language.c_str());
 	motdURL = buf;
 }
 

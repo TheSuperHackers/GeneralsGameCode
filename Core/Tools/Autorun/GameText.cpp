@@ -38,7 +38,7 @@
 //----------------------------------------------------------------------------
 
 #include <stdlib.h>
-#include <stdio.h>
+#include <Utility/stdio_adapter.h>
 #include <ctype.h>
 #include <string.h>
 
@@ -1072,8 +1072,7 @@ const wchar_t * GameTextManager::fetch( const Char *label )
 	{
 		// See if we already have the missing string
 		wchar_t tmp[256];
-		_snwprintf(tmp, 256, L"MISSING: '%hs'", label);
-		tmp[255] = 0;
+		swprintf(tmp, 256, L"MISSING: '%hs'", label);
 		std::wstring missingString = tmp;
 
 		NoString *noString = m_noStringList;

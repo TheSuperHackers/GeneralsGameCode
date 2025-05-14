@@ -94,7 +94,7 @@
 #include	"win.h"
 #include	"XPIPE.H"
 #include	"XSTRAW.H"
-#include	<stdio.h>
+#include	<Utility/stdio_adapter.h>
 #include <malloc.h>
 #ifdef _UNIX
 #include <ctype.h>
@@ -2281,7 +2281,7 @@ int INIClass::CRC(const char *string)
 void INIClass::DuplicateCRCError(const char *message, const char *section, const char *entry)
 {
 	char buffer[512];
-	_snprintf(buffer, sizeof(buffer), "%s - Duplicate Entry \"%s\" in section \"%s\" (%s)\n", message,
+	snprintf(buffer, sizeof(buffer), "%s - Duplicate Entry \"%s\" in section \"%s\" (%s)\n", message,
 		entry, section, Filename);
 
 	OutputDebugString(buffer);

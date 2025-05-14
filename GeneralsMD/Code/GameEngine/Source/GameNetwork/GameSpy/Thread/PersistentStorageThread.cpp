@@ -1367,15 +1367,13 @@ std::string GameSpyPSMessageQueueInterface::formatPlayerKVPairs( PSPlayerStats s
 
 	if (stats.options.length())
 	{
-		_snprintf(kvbuf, 256, "\\options\\%s", stats.options.c_str());
-		kvbuf[255] = 0;
+		snprintf(kvbuf, 256, "\\options\\%s", stats.options.c_str());
 		s.append(kvbuf);
 	}
 
 	if (stats.systemSpec.length())
 	{
-		_snprintf(kvbuf, 256, "\\systemSpec\\%s", stats.systemSpec.c_str());
-		kvbuf[255] = 0;
+		snprintf(kvbuf, 256, "\\systemSpec\\%s", stats.systemSpec.c_str());
 		s.append(kvbuf);
 	}
 
@@ -1471,8 +1469,7 @@ std::string GameSpyPSMessageQueueInterface::formatPlayerKVPairs( PSPlayerStats s
 	}
 	if (stats.lastLadderHost.length())
 	{
-		_snprintf(kvbuf, 256, "\\ladderHost\\%s", stats.lastLadderHost.c_str());
-		kvbuf[255] = 0;
+		snprintf(kvbuf, 256, "\\ladderHost\\%s", stats.lastLadderHost.c_str());
 		s.append(kvbuf);
 	}
 

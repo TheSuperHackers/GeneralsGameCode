@@ -314,7 +314,7 @@ void UnicodeString::format_va(const WideChar* format, va_list args)
 {
 	validate();
 	WideChar buf[MAX_FORMAT_BUF_LEN];
-	const int result = _vsnwprintf(buf, sizeof(buf)/sizeof(WideChar)-1, format, args);
+	const int result = vswprintf(buf, sizeof(buf)/sizeof(WideChar), format, args);
 	if (result >= 0)
 	{
 		set(buf);

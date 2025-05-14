@@ -1486,24 +1486,24 @@ void PeerThreadClass::Thread_Function()
 
 					// Testing alternate way to push stats
 #ifdef USE_BROADCAST_KEYS
-					_snprintf(s_valueBuffers[0], 20, "%d", incomingRequest.statsToPush.locale);
-					_snprintf(s_valueBuffers[1], 20, "%d", incomingRequest.statsToPush.wins);
-					_snprintf(s_valueBuffers[2], 20, "%d", incomingRequest.statsToPush.losses);
-					_snprintf(s_valueBuffers[3], 20, "%d", incomingRequest.statsToPush.rankPoints);
-					_snprintf(s_valueBuffers[4], 20, "%d", incomingRequest.statsToPush.side);
-					_snprintf(s_valueBuffers[5], 20, "%d", incomingRequest.statsToPush.preorder);
+					snprintf(s_valueBuffers[0], 20, "%d", incomingRequest.statsToPush.locale);
+					snprintf(s_valueBuffers[1], 20, "%d", incomingRequest.statsToPush.wins);
+					snprintf(s_valueBuffers[2], 20, "%d", incomingRequest.statsToPush.losses);
+					snprintf(s_valueBuffers[3], 20, "%d", incomingRequest.statsToPush.rankPoints);
+					snprintf(s_valueBuffers[4], 20, "%d", incomingRequest.statsToPush.side);
+					snprintf(s_valueBuffers[5], 20, "%d", incomingRequest.statsToPush.preorder);
 					pushStatsToRoom(peer);
 #else
 					const char *keys[6] = { "locale", "wins", "losses", "points", "side", "pre" };
 					char valueStrings[6][20];
 					char *values[6] = { valueStrings[0], valueStrings[1], valueStrings[2],
 						valueStrings[3], valueStrings[4], valueStrings[5]};
-					_snprintf(values[0], 20, "%d", incomingRequest.statsToPush.locale);
-					_snprintf(values[1], 20, "%d", incomingRequest.statsToPush.wins);
-					_snprintf(values[2], 20, "%d", incomingRequest.statsToPush.losses);
-					_snprintf(values[3], 20, "%d", incomingRequest.statsToPush.rankPoints);
-					_snprintf(values[4], 20, "%d", incomingRequest.statsToPush.side);
-					_snprintf(values[5], 20, "%d", incomingRequest.statsToPush.preorder);
+					snprintf(values[0], 20, "%d", incomingRequest.statsToPush.locale);
+					snprintf(values[1], 20, "%d", incomingRequest.statsToPush.wins);
+					snprintf(values[2], 20, "%d", incomingRequest.statsToPush.losses);
+					snprintf(values[3], 20, "%d", incomingRequest.statsToPush.rankPoints);
+					snprintf(values[4], 20, "%d", incomingRequest.statsToPush.side);
+					snprintf(values[5], 20, "%d", incomingRequest.statsToPush.preorder);
 					peerSetGlobalKeys(peer, 6, (const char **)keys, (const char **)values);
 					peerSetGlobalWatchKeys(peer, GroupRoom,   0, NULL, PEERFalse);
 					peerSetGlobalWatchKeys(peer, StagingRoom, 0, NULL, PEERFalse);
@@ -1984,39 +1984,38 @@ void PeerThreadClass::doQuickMatch( PEER peer )
 							if (m_sawMatchbot)
 							{
 								char buf[64];
-								buf[63] = '\0';
 								std::string msg = "\\CINFO";
-								_snprintf(buf, 63, "\\Widen\\%d", m_qmInfo.QM.widenTime);
+								snprintf(buf, 64, "\\Widen\\%d", m_qmInfo.QM.widenTime);
 								msg.append(buf);
-								_snprintf(buf, 63, "\\LadID\\%d", m_qmInfo.QM.ladderID);
+								snprintf(buf, 64, "\\LadID\\%d", m_qmInfo.QM.ladderID);
 								msg.append(buf);
-								_snprintf(buf, 63, "\\LadPass\\%d", m_qmInfo.QM.ladderPassCRC);
+								snprintf(buf, 64, "\\LadPass\\%d", m_qmInfo.QM.ladderPassCRC);
 								msg.append(buf);
-								_snprintf(buf, 63, "\\PointsMin\\%d", m_qmInfo.QM.minPointPercentage);
+								snprintf(buf, 64, "\\PointsMin\\%d", m_qmInfo.QM.minPointPercentage);
 								msg.append(buf);
-								_snprintf(buf, 63, "\\PointsMax\\%d", m_qmInfo.QM.maxPointPercentage);
+								snprintf(buf, 64, "\\PointsMax\\%d", m_qmInfo.QM.maxPointPercentage);
 								msg.append(buf);
-								_snprintf(buf, 63, "\\Points\\%d", m_qmInfo.QM.points);
+								snprintf(buf, 64, "\\Points\\%d", m_qmInfo.QM.points);
 								msg.append(buf);
-								_snprintf(buf, 63, "\\Discons\\%d", m_qmInfo.QM.discons);
+								snprintf(buf, 64, "\\Discons\\%d", m_qmInfo.QM.discons);
 								msg.append(buf);
-								_snprintf(buf, 63, "\\DisconMax\\%d", m_qmInfo.QM.maxDiscons);
+								snprintf(buf, 64, "\\DisconMax\\%d", m_qmInfo.QM.maxDiscons);
 								msg.append(buf);
-								_snprintf(buf, 63, "\\NumPlayers\\%d", m_qmInfo.QM.numPlayers);
+								snprintf(buf, 64, "\\NumPlayers\\%d", m_qmInfo.QM.numPlayers);
 								msg.append(buf);
-								_snprintf(buf, 63, "\\Pings\\%s", m_qmInfo.QM.pings);
+								snprintf(buf, 64, "\\Pings\\%s", m_qmInfo.QM.pings);
 								msg.append(buf);
-								_snprintf(buf, 63, "\\IP\\%d", ntohl(peerGetLocalIP(peer)));// not ntohl(localIP), as we need EXTERNAL address for proper NAT negotiation!
+								snprintf(buf, 64, "\\IP\\%d", ntohl(peerGetLocalIP(peer)));// not ntohl(localIP), as we need EXTERNAL address for proper NAT negotiation!
 								msg.append(buf);
-								_snprintf(buf, 63, "\\Side\\%d", m_qmInfo.QM.side);
+								snprintf(buf, 64, "\\Side\\%d", m_qmInfo.QM.side);
 								msg.append(buf);
-								_snprintf(buf, 63, "\\Color\\%d", m_qmInfo.QM.color);
+								snprintf(buf, 64, "\\Color\\%d", m_qmInfo.QM.color);
 								msg.append(buf);
-								_snprintf(buf, 63, "\\NAT\\%d", m_qmInfo.QM.NAT);
+								snprintf(buf, 64, "\\NAT\\%d", m_qmInfo.QM.NAT);
 								msg.append(buf);
-								_snprintf(buf, 63, "\\EXE\\%d", m_qmInfo.QM.exeCRC);
+								snprintf(buf, 64, "\\EXE\\%d", m_qmInfo.QM.exeCRC);
 								msg.append(buf);
-								_snprintf(buf, 63, "\\INI\\%d", m_qmInfo.QM.iniCRC);
+								snprintf(buf, 64, "\\INI\\%d", m_qmInfo.QM.iniCRC);
 								msg.append(buf);
 								buf[0] = 0;
 								msg.append("\\Maps\\");
