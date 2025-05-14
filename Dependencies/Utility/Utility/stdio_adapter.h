@@ -24,7 +24,7 @@
 
 #include <stdarg.h>
 
-extern "C" inline int vsnprintf(char* _Buffer, size_t _BufferCount, const char* _Format, va_list _ArgList)
+inline int vsnprintf(char* _Buffer, size_t _BufferCount, const char* _Format, va_list _ArgList)
 {
     // Microsoft's _vsnprintf does not null terminate when writing the entire length.
     int result = _vsnprintf(_Buffer, _BufferCount, _Format, _ArgList);
@@ -33,7 +33,7 @@ extern "C" inline int vsnprintf(char* _Buffer, size_t _BufferCount, const char* 
 }
 
 // Yes, this is called vswprintf instead of vsnwprintf
-extern "C" inline int vswprintf(wchar_t* _Buffer, size_t _BufferCount, const wchar_t* _Format, va_list _ArgList)
+inline int vswprintf(wchar_t* _Buffer, size_t _BufferCount, const wchar_t* _Format, va_list _ArgList)
 {
     // Microsoft's _vsnwprintf does not null terminate when writing the entire length.
     int result = _vsnwprintf(_Buffer, _BufferCount, _Format, _ArgList);
@@ -41,7 +41,7 @@ extern "C" inline int vswprintf(wchar_t* _Buffer, size_t _BufferCount, const wch
     return result;
 }
 
-extern "C" inline int snprintf(char* _Buffer, size_t _BufferCount, const char* _Format, ...)
+inline int snprintf(char* _Buffer, size_t _BufferCount, const char* _Format, ...)
 {
     va_list _ArgList;
     va_start(_ArgList, _Format);
@@ -51,7 +51,7 @@ extern "C" inline int snprintf(char* _Buffer, size_t _BufferCount, const char* _
 }
 
 // Yes, this is called swprintf instead of snwprintf
-extern "C" inline int swprintf(wchar_t* _Buffer, size_t _BufferCount, const wchar_t* _Format, ...)
+inline int swprintf(wchar_t* _Buffer, size_t _BufferCount, const wchar_t* _Format, ...)
 {
     va_list _ArgList;
     va_start(_ArgList, _Format);
