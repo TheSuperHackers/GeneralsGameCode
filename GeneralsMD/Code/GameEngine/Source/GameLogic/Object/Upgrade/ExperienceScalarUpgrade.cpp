@@ -40,6 +40,7 @@
 ExperienceScalarUpgradeModuleData::ExperienceScalarUpgradeModuleData( void )
 {
 	m_addXPScalar = 0.0f;
+	m_addXPValueScalar = 0.0f;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -52,6 +53,7 @@ void ExperienceScalarUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
 	static const FieldParse dataFieldParse[] = 
 	{
 		{ "AddXPScalar",	INI::parseReal,		NULL, offsetof( ExperienceScalarUpgradeModuleData, m_addXPScalar ) },
+		{ "AddXPValueScalar",	INI::parseReal,		NULL, offsetof( ExperienceScalarUpgradeModuleData, m_addXPValueScalar ) },
 		{ 0, 0, 0, 0 }
 	};
 
@@ -83,6 +85,7 @@ void ExperienceScalarUpgrade::upgradeImplementation( )
 	if( xpTracker )
 	{
 		xpTracker->setExperienceScalar( xpTracker->getExperienceScalar() + data->m_addXPScalar );
+		xpTracker->setExperienceValueScalar( xpTracker->getExperienceValueScalar() + data->m_addXPValueScalar );
 	}
 }
 
