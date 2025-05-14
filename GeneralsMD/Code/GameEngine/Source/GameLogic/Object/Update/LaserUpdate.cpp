@@ -416,7 +416,7 @@ Real LaserUpdate::getCurrentLaserRadius() const
 			//data from the client. This value is INI constant thus can't change. It's grouped with other 
 			//laser defining attributes and having it there makes it easier for artists.
 			
-			// TheSuperHackers @logic-client-separation helmutbuhler 04/19/2025
+			// TheSuperHackers @logic-client-separation helmutbuhler 19/04/2025
 			// Sadly the comment above is only true for ldi->getLaserTemplateWidth()
 			// For m_currentWidthScalar we fix this with m_explicitLogicUpdate.
 

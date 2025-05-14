@@ -115,7 +115,7 @@ protected:
 	UnsignedInt m_decayFinishFrame;
 	AsciiString m_parentBoneName;
 
-	// TheSuperHackers @logic-client-separation helmutbuhler 04/19/2025
+	// TheSuperHackers @logic-client-separation helmutbuhler 19/04/2025
 	// LaserUpdate belongs to the client, but some members here are used by GameLogic.
 	// Sadly these members were originally updated in clientUpdate, which doesn't run
 	// in headless mode. To make it work, this new bool can be set to true to disable updating

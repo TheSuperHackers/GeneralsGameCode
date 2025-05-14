@@ -391,14 +391,15 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 	}
 
 	{
-		// TheSuperHackers @logic-client-separation helmutbuhler 04/19/2025
+		// TheSuperHackers @logic-client-separation helmutbuhler 19/04/2025
 		// This class originally depended on some members of LaserUpdate that is attached to
 		// m_orbitToTargetBeamID for GameLogic. We fix that here by calling LogicUpdate of that
 		// instance here explicitely.
 		static NameKeyType nameKeyClientUpdate = NAMEKEY("LaserUpdate");
 		Drawable* beam = TheGameClient->findDrawableByID(m_orbitToTargetBeamID);
 		LaserUpdate* update = beam ? (LaserUpdate*)beam->findClientUpdateModule(nameKeyClientUpdate) : NULL;
-		if (update) update->logicUpdate();
+		if (update)
+			update->logicUpdate();
 	}
 
 	const ParticleUplinkCannonUpdateModuleData *data = getParticleUplinkCannonUpdateModuleData();
@@ -619,7 +620,7 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 			Real scorchRadius = 0.0f;
 			Real damageRadius = 0.0f;
 
-			// TheSuperHackers @logic-client-separation helmutbuhler 04/19/2025
+			// TheSuperHackers @logic-client-separation helmutbuhler 19/04/2025
 			// damageRadius affects gamelogic and shouldn't depend on LaserUpdate
 
 			//Reset the laser position
