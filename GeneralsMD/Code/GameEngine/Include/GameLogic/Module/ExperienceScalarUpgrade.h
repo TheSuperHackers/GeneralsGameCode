@@ -49,7 +49,8 @@ public:
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
-	Real m_addXPScalar;
+	Real m_addXPScalar;   ///< Additive bonus to scalar for XP this unit gains
+	Real m_addXPValueScalar;  ///< Additive bonus to scalar for XP this unit gives when killed
 
 };
 

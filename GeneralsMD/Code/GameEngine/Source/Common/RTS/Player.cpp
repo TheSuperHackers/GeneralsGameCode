@@ -2511,7 +2511,15 @@ Bool Player::addSkillPointsForKill(const Object* killer, const Object* victim)
 		return false;
 	
 	Int victimLevel = victim->getVeterancyLevel();
+
 	Int skillValue = victim->getTemplate()->getSkillPointValue(victimLevel);
+
+	//New: We can now upgrade XP value, so we check the XP tracker for a scalar
+	const ExperienceTracker* xpTracker = victim->getExperienceTracker();
+	if (xpTracker)
+	{
+		skillValue *= xpTracker->getExperienceValueScalar();
+	}
 	
 	return addSkillPoints(skillValue);
 }
