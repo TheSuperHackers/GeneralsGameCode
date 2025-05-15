@@ -299,6 +299,14 @@ void GameEngine::init( int argc, char *argv[] )
 		initSubsystem(TheArchiveFileSystem, "TheArchiveFileSystem", createArchiveFileSystem(), NULL); // this MUST come after TheLocalFileSystem creation
 		initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", MSGNEW("GameEngineSubsystem") GlobalData(), &xferCRC, "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
 
+		
+		// TheSuperHackers @bugfix helmutbuhler 14/04/2025
+		// Pump messages during startup to ensure that the application window is correctly
+		// positioned on slower computers and in debug builds by a later call to SetWindowPos.
+		// It is unclear what the issue with SetWindowPos really is.
+		serviceWindowsOS();
+
+
 	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		// If we're in Debug or Internal, load the Debug info as well.
 		ini.load( AsciiString( "Data\\INI\\GameDataDebug.ini" ), INI_LOAD_OVERWRITE, NULL );
