@@ -934,7 +934,11 @@ void DX8Wrapper::Resize_And_Position_Window()
 
 		// Resize the window to fit this resolution
 		if (!IsWindowed)
+		{
 			::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, width, height, SWP_NOSIZE | SWP_NOMOVE);
+
+			DEBUG_LOG(("Window sized to w:%d h:%d\n", width, height));
+		}
 		else
 		{
 			// TheSuperHackers @feature helmutbuhler 14/04/2025
@@ -955,6 +959,8 @@ void DX8Wrapper::Resize_And_Position_Window()
 			MoveRectIntoOtherRect(rectClient, mi.rcMonitor, &left, &top);
 
 			::SetWindowPos (_Hwnd, NULL, left, top, width, height, SWP_NOZORDER);
+
+			DEBUG_LOG(("Window positioned to x:%d y:%d, sized to w:%d h:%d\n", left, top, width, height));
 		}
 	}
 }
