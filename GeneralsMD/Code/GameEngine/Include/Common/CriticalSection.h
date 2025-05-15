@@ -99,7 +99,7 @@ class ScopedCriticalSection
 
 // These should be NULL on creation then non-NULL in WinMain or equivalent.
 // This allows us to be silently non-threadsafe for WB and other single-threaded apps.
-extern FastCriticalSectionClass TheAsciiStringCriticalSection;
+extern CriticalSection *TheAsciiStringCriticalSection;
 extern CriticalSection *TheUnicodeStringCriticalSection;
 extern CriticalSection *TheDmaCriticalSection;
 extern CriticalSection *TheMemoryPoolCriticalSection;
