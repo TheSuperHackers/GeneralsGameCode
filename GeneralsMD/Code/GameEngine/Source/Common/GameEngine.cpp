@@ -372,10 +372,9 @@ void GameEngine::init( int argc, char *argv[] )
 
 
 		// TheSuperHackers @bugfix helmutbuhler 14/04/2025
-		// Pump messages during startup to avoid "(Not responding)" in the window title
-		// on slower computers and in debug build.
-		// This also ensures that the window is correctly positioned, because Windows
-		// apparently ignores the SetWindowPos call when the window is not responding.
+		// Pump messages during startup to ensure that the application window is correctly
+		// positioned on slower computers and in debug builds by a later call to SetWindowPos.
+		// It is unclear what the issue with SetWindowPos really is.
 		serviceWindowsOS();
 
 
