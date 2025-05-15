@@ -2213,7 +2213,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_SELECT_MATCHING_UNITS:
 		{
 
-			TheInGameUI->selectMatchingUnits();
+			TheInGameUI->selectUnitsMatchingCurrentSelection();
 
 			disp = DESTROY_MESSAGE;
 			break;
@@ -2739,7 +2739,51 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_SELECT_ALL:
+		case GameMessage::MSG_META_SELECT_ALL_AIRCRAFT:
 		{
+			KindOfMaskType requiredKindofs;
+			KindOfMaskType disqualifyingKindofs;
+			disqualifyingKindofs.set(KINDOF_DOZER);
+			disqualifyingKindofs.set(KINDOF_HARVESTER);
+			disqualifyingKindofs.set(KINDOF_IGNORES_SELECT_ALL);
+			Bool selectAircraft = FALSE;
+			
+			if( t == GameMessage::MSG_META_SELECT_ALL_AIRCRAFT )
+			{
+				requiredKindofs.set(KINDOF_AIRCRAFT);
+				selectAircraft = TRUE;
+			}
+
+			//Kris: Patch 1.03. We need to deselect all the units if any of the units we have selected
+			//are incompatible with the select all type we are triggering. This is a fix for the SCUDSTORM
+			//exploit.
+			const DrawableList *drawList = TheInGameUI->getAllSelectedDrawables();
+			Drawable *draw;
+			for( DrawableListCIt it = drawList->begin(); it != drawList->end(); ++it )
+			{
+				draw = *it;
+				if( selectAircraft && (draw->isAnyKindOf( disqualifyingKindofs ) || !draw->isKindOf( KINDOF_AIRCRAFT )) )
+				{
+					TheInGameUI->deselectAllDrawables();
+					break;
+				}
+				else if( !selectAircraft && (draw->isAnyKindOf( disqualifyingKindofs ) || draw->isKindOf( KINDOF_STRUCTURE )) )
+				{
+					TheInGameUI->deselectAllDrawables();
+					break;
+				}
+			}
+
+			TheInGameUI->selectAllUnitsByType(requiredKindofs, disqualifyingKindofs);
+
+			disp = DESTROY_MESSAGE;
+			break;
+
+
+
+
+
+/*
 			TheInGameUI->deselectAllDrawables();
 
 			GameMessage *teamMsg = TheMessageStream->appendMessage( GameMessage::MSG_CREATE_SELECTED_GROUP );
@@ -2785,10 +2829,6 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 						TheInGameUI->setDisplayedMaxWarning( FALSE );
 					}
 				}
-				/*else
-				{
-					TheInGameUI->deselectDrawable(draw);
-				}*/
 
 				draw = draw->getNextDrawable();
 			}
@@ -2800,6 +2840,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 			disp = DESTROY_MESSAGE;
 			break;
+*/
 
 		}  // end select all
 
