@@ -396,8 +396,8 @@ void HelixContain::onContaining( Object *obj, Bool wasSelected )
 	TransportContain::onContaining( obj, wasSelected );
 
 	// give the object a garrisoned version of its weapon
-	obj->setWeaponBonusCondition( WEAPONBONUSCONDITION_GARRISONED );
-  obj->setDisabled( DISABLED_HELD );
+	// obj->setWeaponBonusCondition( WEAPONBONUSCONDITION_GARRISONED );
+    obj->setDisabled( DISABLED_HELD );
   
 
   if ( obj->isKindOf( KINDOF_PORTABLE_STRUCTURE ) && getObject()->testStatus( OBJECT_STATUS_STEALTHED ) )

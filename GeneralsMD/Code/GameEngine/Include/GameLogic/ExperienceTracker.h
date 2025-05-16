@@ -60,7 +60,9 @@ public:
 	void setExperienceSink( ObjectID sink );											///< My experience actually goes to this person (loose couple)
 
 	Real getExperienceScalar() const { return m_experienceScalar; }
+	Real getExperienceValueScalar() const { return m_experienceValueScalar; }
 	void setExperienceScalar( Real scalar ) { m_experienceScalar = scalar; }
+	void setExperienceValueScalar( Real scalar ) { m_experienceValueScalar = scalar; }
 
 	// --------------- inherited from Snapshot interface --------------
 	void crc( Xfer *xfer );
@@ -73,6 +75,7 @@ private:
 	Int								m_currentExperience;								///< Number of experience points
 	ObjectID					m_experienceSink;										///< ID of object I have pledged my experience point gains to
 	Real							m_experienceScalar;									///< Scales any experience gained by this multiplier.
+	Real							m_experienceValueScalar;									///< Scales any experience given by this multiplier.
 };
 
 #endif

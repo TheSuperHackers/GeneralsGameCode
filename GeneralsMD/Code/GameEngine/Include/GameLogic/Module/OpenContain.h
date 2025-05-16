@@ -42,6 +42,7 @@
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/DieModule.h"
 #include "GameLogic/Module/DamageModule.h"
+#include "GameLogic/Weapon.h"
 #include "Common/AudioEventRTS.h"
 #include "Common/KindOf.h"
 #include "Common/GameMemory.h"
@@ -72,6 +73,8 @@ public:
  	Bool m_allowAlliesInside;				///< allow allies inside us
  	Bool m_allowEnemiesInside;			///< allow enemies inside us
  	Bool m_allowNeutralInside;			///< allow neutral inside us
+
+	WeaponBonusConditionTypeVec m_passengerWeaponBonusVec;  ///< weaponBonus types granted to passengers
 
 	OpenContainModuleData( void );
 	static void buildFieldParse(MultiIniFieldParse& p);

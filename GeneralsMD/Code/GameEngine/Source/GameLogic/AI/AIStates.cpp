@@ -5247,10 +5247,10 @@ StateReturnType AIAttackFireWeaponState::update()
 
 	if (m_att->isAttackingObject())
 	{
-    // Since it is very late in the project, and there is no call for such code...
-    // there is currently no support here for linked turrets, as regards Attacking Objects (victims)
-    // If the concept of linked turrets is further developed then God help you, and put more code right here
-    // that lookl like the //LINKED TURRETS// block, below
+		// Since it is very late in the project, and there is no call for such code...
+		// there is currently no support here for linked turrets, as regards Attacking Objects (victims)
+		// If the concept of linked turrets is further developed then God help you, and put more code right here
+		// that lookl like the //LINKED TURRETS// block, below
 
 
 		obj->fireCurrentWeapon(victim);
@@ -5261,19 +5261,19 @@ StateReturnType AIAttackFireWeaponState::update()
 		//to transfer attackers (AIUpdateInterface::transferAttack), it is unable to modify our current victim in our attack state
 		//machine. When we move immediately to the aim state in the same frame as the transfer (after this call in fact), the victim
 		//was still pointing to the building and not the hole we transferred to. This code fixes that.
-		if( victim != obj->getAI()->getCurrentVictim() )
+		if (victim != obj->getAI()->getCurrentVictim())
 		{
-			getMachine()->setGoalObject( obj->getAI()->getCurrentVictim() );
+			getMachine()->setGoalObject(obj->getAI()->getCurrentVictim());
 		}
 
 		// clear this, just in case.
-		obj->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IGNORING_STEALTH ) );
+		obj->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_IGNORING_STEALTH));
 		Real continueRange = weapon->getContinueAttackRange();
 		if (
 			continueRange > 0.0f &&
-			victim && 
+			victim &&
 			(victim->isDestroyed() || victim->isEffectivelyDead() || (victim->isKindOf(KINDOF_MINE) && victim->testStatus(OBJECT_STATUS_MASKED)))
-		)
+			)
 		{
 			const Coord3D* originalVictimPos = m_att ? m_att->getOriginalVictimPos() : NULL;
 			if (originalVictimPos)
@@ -5283,12 +5283,12 @@ StateReturnType AIAttackFireWeaponState::update()
 				// but not if they were ordered by ai.
 				AIUpdateInterface* ai = obj->getAI();
 				CommandSourceType lastCmdSource = ai ? ai->getLastCommandSource() : CMD_FROM_AI;
-				PartitionFilterSamePlayer filterPlayer( victim->getControllingPlayer() );
+				PartitionFilterSamePlayer filterPlayer(victim->getControllingPlayer());
 				PartitionFilterSameMapStatus filterMapStatus(obj);
 				PartitionFilterPossibleToAttack filterAttack(ATTACK_NEW_TARGET, obj, lastCmdSource);
-				PartitionFilter *filters[] = { &filterAttack, &filterPlayer, &filterMapStatus, NULL };
+				PartitionFilter* filters[] = { &filterAttack, &filterPlayer, &filterMapStatus, NULL };
 				// note that we look around originalVictimPos, *not* the current victim's pos.
-				victim = ThePartitionManager->getClosestObject( originalVictimPos, continueRange, FROM_CENTER_2D, filters );// could be null. this is ok.
+				victim = ThePartitionManager->getClosestObject(originalVictimPos, continueRange, FROM_CENTER_2D, filters);// could be null. this is ok.
 				if (victim)
 				{
 					getMachine()->setGoalObject(victim);
@@ -5299,27 +5299,53 @@ StateReturnType AIAttackFireWeaponState::update()
 	}
 	else
 	{
-    
-    if( getMachineOwner()->getAI()->areTurretsLinked() ) //LINKED TURRETS
-    {// it doesn;t matter which weapon slot is locked, current or whatever
-      for ( Int slot = PRIMARY_WEAPON; slot < WEAPONSLOT_COUNT ; slot++ )
-      {// were firing with all barrels
-        Weapon *weapon = obj->getWeaponInWeaponSlot( (WeaponSlotType)slot );
-        if ( weapon )
-        {
-          if ( weapon->fireWeapon(obj, getMachineGoalPosition()) ) //fire() returns 'reloaded'
-            obj->releaseWeaponLock(LOCKED_TEMPORARILY);// unlock, 'cause we're loaded
 
-	  	    obj->notifyFiringTrackerShotFired(weapon, INVALID_ID);
-        }
-      }
-    }
-    else
-		obj->fireCurrentWeapon(getMachineGoalPosition());
+		if (getMachineOwner()->getAI()->areTurretsLinked()) //LINKED TURRETS
+		{// it doesn;t matter which weapon slot is locked, current or whatever
+			for (Int slot = PRIMARY_WEAPON; slot < WEAPONSLOT_COUNT; slot++)
+			{// were firing with all barrels
+				Weapon* weapon = obj->getWeaponInWeaponSlot((WeaponSlotType)slot);
+				if (weapon)
+				{
+					if (weapon->fireWeapon(obj, getMachineGoalPosition())) //fire() returns 'reloaded'
+						obj->releaseWeaponLock(LOCKED_TEMPORARILY);// unlock, 'cause we're loaded
+
+					obj->notifyFiringTrackerShotFired(weapon, INVALID_ID);
+				}
+			}
+		}
+		else
+			obj->fireCurrentWeapon(getMachineGoalPosition());
 		// clear this, just in case.
-		obj->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IGNORING_STEALTH ) );
+		obj->clearStatus(MAKE_OBJECT_STATUS_MASK(OBJECT_STATUS_IGNORING_STEALTH));
 	}
 		
+
+	// Synced weapon Slots:
+	for (Int slot = PRIMARY_WEAPON; slot < WEAPONSLOT_COUNT; slot++)
+	{
+		// check this slot if the weapon should be synced to the currently fired slot
+		if (slot == wslot || !obj->getWeaponInWeaponSlotSyncedToSlot((WeaponSlotType)slot, wslot)) {
+			// DEBUG_LOG((">> Skipping slot %d.\n", slot));
+			continue;
+		}
+
+		// DEBUG_LOG((">> Slot %d is synced. Prepare to fire weapon.\n", slot));
+
+		// Yes, we are firing this weapon!
+		Weapon* weapon = obj->getWeaponInWeaponSlot((WeaponSlotType)slot);
+		if (weapon)
+		{
+			if (weapon->fireWeapon(obj, getMachineGoalPosition())) { //fire() returns 'reloaded'
+				obj->releaseWeaponLock(LOCKED_TEMPORARILY);// unlock, 'cause we're loaded
+				// DEBUG_LOG((">> On firing Weapon in slot %d: fire synced weapon slot %d. Shot Fired!\n", wslot, slot));
+			}
+
+			obj->notifyFiringTrackerShotFired(weapon, INVALID_ID);
+		}
+	}
+
+
 	m_att->notifyFired();
 
 	return STATE_SUCCESS;

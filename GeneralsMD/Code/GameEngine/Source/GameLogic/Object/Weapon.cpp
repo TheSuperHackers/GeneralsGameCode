@@ -248,6 +248,8 @@ const FieldParse WeaponTemplate::TheWeaponTemplateFieldParseTable[] =
 	{ "ScatterTargetRandomOrder", INI::parseBool, NULL, offsetof(WeaponTemplate, m_scatterTargetRandom) },
 	{ "ScatterTargetRandomAngle", INI::parseBool, NULL, offsetof(WeaponTemplate, m_scatterTargetRandomAngle) },
 	{ "ScatterTargetMinScalar", INI::parseReal, NULL, offsetof(WeaponTemplate, m_scatterTargetMinScalar) },
+	{ "ScatterTargetCenteredAtShooter", INI::parseBool, NULL, offsetof(WeaponTemplate, m_scatterTargetCenteredAtShooter) },
+	{ "ScatterTargetResetTime", INI::parseDurationUnsignedInt, NULL, offsetof(WeaponTemplate, m_scatterTargetResetTime) },
 	{ "PreAttackFX", parseAllVetLevelsFXList, NULL,	offsetof(WeaponTemplate, m_preAttackFXs) },
 	{ "VeterancyPreAttackFX", parsePerVetLevelFXList, NULL, offsetof(WeaponTemplate, m_preAttackFXs) },
 	{ "PreAttackFXDelay",						INI::parseDurationUnsignedInt,					NULL,							offsetof(WeaponTemplate, m_preAttackFXDelay) },
@@ -341,6 +343,8 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(NULL)
 	m_scatterTargetRandom = TRUE;
 	m_scatterTargetRandomAngle = FALSE;
 	m_scatterTargetMinScalar = 0;
+	m_scatterTargetCenteredAtShooter = FALSE;
+	m_scatterTargetResetTime = 0;
 	m_preAttackFXDelay = 6; // Non-Zero default! 6 frames = 200ms. This should be a good base value to avoid spamming
 }
 
@@ -1072,12 +1076,21 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			}
 
 			// Handle Detonation OCL
+			Coord3D targetPos; // We need a better position to match the visual laser;
+			targetPos.set(&projectileDestination);
+			if (victimObj && !victimObj->isKindOf(KINDOF_PROJECTILE) && !victimObj->isAirborneTarget())
+			{
+				//Targets are positioned on the ground, so raise the beam up so we're not shooting their feet.
+				//Projectiles are a different story, target their exact position.
+				targetPos.z += 10.0f;
+			}
+
 			VeterancyLevel vet = sourceObj->getVeterancyLevel();
 			const ObjectCreationList* detOCL = getProjectileDetonationOCL(vet);
 			Real laserAngle = atan2(v.y, v.x);  //TODO: check if this should be inverted
 			if (detOCL) {
 				//TODO: should we consider a proper 3D matrix?
-				ObjectCreationList::create(detOCL, sourceObj, &projectileDestination, NULL, laserAngle);
+				ObjectCreationList::create(detOCL, sourceObj, &targetPos, NULL, laserAngle);
 			}
 			// Handle Detonation FX
 			const FXList* fx = getProjectileDetonateFX(vet);
@@ -1087,7 +1100,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 				Vector3 dir(v.x, v.y, v.z);
 				dir.Normalize(); //This is fantastically crucial for calling buildTransformMatrix!!!!!
 				laserMtx.buildTransformMatrix(pos, dir);
-				FXList::doFXPos(fx, &projectileDestination, &laserMtx, 0.0f, NULL, getPrimaryDamageRadius(bonus));
+				FXList::doFXPos(fx, &targetPos, &laserMtx, 0.0f, NULL, getPrimaryDamageRadius(bonus));
 			}
 
 			if( inflictDamage )
@@ -1856,6 +1869,7 @@ Weapon::Weapon(const WeaponTemplate* tmpl, WeaponSlotType wslot)
 	m_scatterTargetsAngle = 0;
 	m_nextPreAttackFXFrame = 0;
 	m_continuousLaserID = INVALID_ID;
+	m_bonusRefObjID = INVALID_ID;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1879,6 +1893,7 @@ Weapon::Weapon(const Weapon& that)
 	this->m_suspendFXFrame = that.getSuspendFXFrame();
 	this->m_nextPreAttackFXFrame = 0;
 	this->m_continuousLaserID = INVALID_ID;
+	this->m_bonusRefObjID = INVALID_ID;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1912,6 +1927,21 @@ Weapon& Weapon::operator=(const Weapon& that)
 Weapon::~Weapon()
 {
 }
+//-------------------------------------------------------------------------------------------------
+// DEBUG
+static void debug_printWeaponBonus(WeaponBonus* bonus, AsciiString name) {
+	const char* bonusNames[] = {
+		"DAMAGE",
+		"RADIUS",
+		"RANGE",
+		"RATE_OF_FIRE",
+		"PRE_ATTACK"
+	};
+	DEBUG_LOG((">>> Weapon bonus for '%s':\n", name.str()));
+	for (int i = 0; i < 5; i++) {
+		DEBUG_LOG((">>> -- '%s' : %f\n", bonusNames[i], bonus->getField(static_cast<WeaponBonus::Field>(i))));
+	}
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -1933,15 +1963,24 @@ static void debug_printWeaponBonus(WeaponBonus* bonus, AsciiString name) {
 //-------------------------------------------------------------------------------------------------
 void Weapon::computeBonus(const Object *source, WeaponBonusConditionFlags extraBonusFlags, WeaponBonus& bonus) const
 {
+	// TODO: Do we need this eventually?
+	const Object* bonusRefObj = NULL;
+	if (m_bonusRefObjID != INVALID_ID) {
+		bonusRefObj = TheGameLogic->findObjectByID(m_bonusRefObjID);
+	}
+	else {
+		bonusRefObj = source;
+	}
+
 	bonus.clear();
-	WeaponBonusConditionFlags flags = source->getWeaponBonusCondition();
+	WeaponBonusConditionFlags flags = bonusRefObj->getWeaponBonusCondition();
 	//CRCDEBUG_LOG(("Weapon::computeBonus() - flags are %X for %s\n", flags, DescribeObject(source).str()));
 	flags |= extraBonusFlags;
 	
-	if( source->getContainedBy() )
+	if (bonusRefObj->getContainedBy())
 	{
 		// We may be able to add in our container's flags
-		const ContainModuleInterface *theirContain = source->getContainedBy()->getContain();
+		const ContainModuleInterface *theirContain = bonusRefObj->getContainedBy()->getContain();
 		if( theirContain && theirContain->isWeaponBonusPassedToPassengers() )
 			flags |= theirContain->getWeaponBonusPassedToPassengers();
 	}
@@ -2004,18 +2043,13 @@ void Weapon::rebuildScatterTargets()
 	Int scatterTargetsCount = m_template->getScatterTargetsVector().size();
 	if (scatterTargetsCount)
 	{
-		if (!m_template->isScatterTargetRandom()) {
-			// When I reload, I need to rebuild the list of ScatterTargets to shoot at.
-			for (Int targetIndex = 0; targetIndex < scatterTargetsCount; targetIndex++)
-				m_scatterTargetsUnused.push_back(targetIndex);
+		// When I reload, I need to rebuild the list of ScatterTargets to shoot at.
+		for (Int targetIndex = scatterTargetsCount - 1; targetIndex >= 0; targetIndex--)
+			m_scatterTargetsUnused.push_back(targetIndex);
+
+		if (m_template->isScatterTargetRandomAngle()) {
+			m_scatterTargetsAngle = GameLogicRandomValueReal(0, PI * 2);
 		}
-		else { // We fill up from the back;
-			for (Int targetIndex = scatterTargetsCount - 1; targetIndex >= 0; targetIndex--)
-				m_scatterTargetsUnused.push_back(targetIndex);
-		}
-	}
-	if (m_template->isScatterTargetRandomAngle()) {
-		m_scatterTargetsAngle = GameLogicRandomValueReal(0, PI * 2);
 	}
 }
 
@@ -2759,7 +2793,7 @@ Bool Weapon::privateFireWeapon(
 	WeaponBonus bonus;
 	computeBonus(sourceObj, extraBonusFlags, bonus);
 
-	// debug_printWeaponBonus(&bonus, getTemplate()->getName());
+	// debug_printWeaponBonus(&bonus, m_template->getName());
 
 	DEBUG_ASSERTCRASH(getStatus() != OUT_OF_AMMO, ("Hmm, firing weapon that is OUT_OF_AMMO"));
 	DEBUG_ASSERTCRASH(getStatus() == READY_TO_FIRE, ("Hmm, Weapon is firing more often than should be possible"));
@@ -2781,13 +2815,23 @@ Bool Weapon::privateFireWeapon(
 
 		if( m_scatterTargetsUnused.size() && !isProjectileDetonation)
 		{
+			// If we haven't fired for this long: reset the scatter targets.
+			if (m_template->getScatterTargetResetTime() > 0) {
+				UnsignedInt frameNow = TheGameLogic->getFrame();
+				if (m_lastFireFrame + m_template->getScatterTargetResetTime() < frameNow) {
+					rebuildScatterTargets();
+				}
+			}
+
+
 			// If I have a set scatter pattern, I need to offset the target by a random pick from that pattern
 			if( victimObj )
 			{
 				victimPos = victimObj->getPosition();
 				victimObj = NULL;
 			}
-			Coord3D targetPos = *victimPos; // need to copy, as this pointer is actually inside somebody potentially
+			Coord3D  targetPos = *victimPos; // need to copy, as this pointer is actually inside somebody potentially
+
 			Int targetIndex = 0;
 			if (m_template->isScatterTargetRandom()) {
 				Int randomPick = GameLogicRandomValue(0, m_scatterTargetsUnused.size() - 1);
@@ -2821,11 +2865,13 @@ Bool Weapon::privateFireWeapon(
 			// New: align scatter pattern to shooter, and/or use a random angle
 			if (m_template->isScatterTargetAligned() || m_scatterTargetsAngle != 0.0f) {
 				// DEBUG_LOG((">>> Weapon: m_scatterTargetsAngle = %f\n", m_scatterTargetsAngle));
+
 				const Coord3D srcPos = *sourceObj->getPosition();
 
 				Real angle = m_scatterTargetsAngle;
 				if (m_template->isScatterTargetAligned()) {
 					angle += atan2(targetPos.y - srcPos.y, targetPos.x - srcPos.x);
+					// angle += atan2(srcPos.y - targetPos.y, srcPos.x - targetPos.x);
 				}
 
 				Real cosA = Cos(angle);
@@ -2834,6 +2880,10 @@ Bool Weapon::privateFireWeapon(
 				Real scatterOffsetRotY = scatterOffset.x * sinA + scatterOffset.y * cosA;
 				scatterOffset.x = scatterOffsetRotX;
 				scatterOffset.y = scatterOffsetRotY;
+			}
+
+			if (m_template->isScatterTargetCenteredAtShooter()) {
+				targetPos = *sourceObj->getPosition();
 			}
 
 			targetPos.x += scatterOffset.x;

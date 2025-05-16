@@ -33,6 +33,7 @@
 #include "Common/BitFlagsIO.h"
 #include "Common/BuildAssistant.h"
 #include "Common/Dict.h"
+#include "Common/GameCommon.h"
 #include "Common/GameEngine.h"
 #include "Common/GameState.h"
 #include "Common/ModuleFactory.h"
@@ -1258,6 +1259,28 @@ Bool Object::hasAnyDamageWeapon() const
 UnsignedInt Object::getMostPercentReadyToFireAnyWeapon() const
 {
 	return m_weaponSet.getMostPercentReadyToFireAnyWeapon();
+}
+
+//=============================================================================
+Bool Object::getWeaponInWeaponSlotSyncedToSlot(WeaponSlotType thisSlot, WeaponSlotType otherSlot) const
+{
+	CommandSourceMask mask = getWeaponInWeaponSlotCommandSourceMask(thisSlot);
+
+	//Bool value0a = mask & (1 << CMD_SYNC_TO_PRIMARY);
+	//Bool value0b = (otherSlot == PRIMARY_WEAPON);
+	//Bool value1a = mask & (1 << CMD_SYNC_TO_SECONDARY);
+	//Bool value1b = (otherSlot == SECONDARY_WEAPON);
+	//Bool value2a = mask & (1 << CMD_SYNC_TO_TERTIARY);
+	//Bool value2b = (otherSlot == TERTIARY_WEAPON);
+
+	//DEBUG_LOG(("- getWeaponInWeaponSlotSyncedToSlot (thisSlot=%d, otherSlot=%d): mask = %d --> value0 = %d/%d, value1 = %d/%d, value2 = %d/%d.\n",
+	//	thisSlot, otherSlot, static_cast<int>(mask), value0a, value0b, value1a, value1b, value2a, value2b));
+
+	return ((Int)mask >= 0) &&
+		((mask & (1 << CMD_SYNC_TO_PRIMARY) && otherSlot == PRIMARY_WEAPON) ||
+		(mask & (1 << CMD_SYNC_TO_SECONDARY) && otherSlot == SECONDARY_WEAPON) ||
+		(mask & (1 << CMD_SYNC_TO_TERTIARY) && otherSlot == TERTIARY_WEAPON));
+
 }
 
 //=============================================================================

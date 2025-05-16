@@ -87,6 +87,9 @@ const char* WeaponSetFlags::s_bitNameList[] =
 	"PLAYER_UPGRADE3",
 	"PLAYER_UPGRADE4",
 
+	"GARRISONED",
+	"CONTAINED",
+
 	NULL
 };
 

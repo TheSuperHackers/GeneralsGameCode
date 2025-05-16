@@ -415,6 +415,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/SabotageSupplyCenterCrateCollide.h
     Include/GameLogic/Module/SabotageSupplyDropzoneCrateCollide.h
     Include/GameLogic/Module/SalvageCrateCollide.h
+    Include/GameLogic/Module/ScatterShotUpdate.h
     Include/GameLogic/Module/ShroudCrateCollide.h
     Include/GameLogic/Module/SlavedUpdate.h
     Include/GameLogic/Module/SlowDeathBehavior.h
@@ -1031,6 +1032,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Update/ProneUpdate.cpp
     Source/GameLogic/Object/Update/RadarUpdate.cpp
     Source/GameLogic/Object/Update/RadiusDecalUpdate.cpp
+    Source/GameLogic/Object/Update/ScatterShotUpdate.cpp
     Source/GameLogic/Object/Update/SlavedUpdate.cpp
     Source/GameLogic/Object/Update/SmartBombTargetHomingUpdate.cpp
     Source/GameLogic/Object/Update/SpecialAbilityUpdate.cpp

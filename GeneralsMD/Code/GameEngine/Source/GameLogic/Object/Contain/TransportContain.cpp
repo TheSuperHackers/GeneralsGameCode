@@ -45,6 +45,7 @@
 #include "GameLogic/Module/TransportContain.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/Weapon.h"
+#include "GameLogic/WeaponSetType.h"
 
 #ifdef _INTERNAL
 // for occasional debugging...
@@ -76,6 +77,8 @@ TransportContainModuleData::TransportContainModuleData()
 	// overwritten by any data provided from the INI entry tho
 	//
 	m_allowInsideKindOf = MAKE_KINDOF_MASK( KINDOF_INFANTRY );
+
+	m_passengerWeaponBonusVec.push_back(WEAPONBONUSCONDITION_CONTAINED);
 
 }
 
@@ -306,6 +309,12 @@ void TransportContain::onContaining( Object *rider, Bool wasSelected )
 
 	}  // end if
 
+
+	// give the object a contained version of its weapon
+	// rider->setWeaponBonusCondition(WEAPONBONUSCONDITION_CONTAINED);
+	rider->setWeaponSetFlag(WEAPONSET_CONTAINED);
+
+
   if ( getTransportContainModuleData()->m_armedRidersUpgradeWeaponSet )
     letRidersUpgradeWeaponSet();
 
@@ -335,6 +344,10 @@ void TransportContain::onRemoving( Object *rider )
 	rider->clearDisabled( DISABLED_HELD );
 
 	const TransportContainModuleData* d = getTransportContainModuleData();
+
+	// give the object back a regular weapon
+	rider->clearWeaponBonusCondition(WEAPONBONUSCONDITION_CONTAINED);
+	rider->clearWeaponSetFlag(WEAPONSET_CONTAINED);
 
 	if (!d->m_exitBone.isEmpty())
 	{

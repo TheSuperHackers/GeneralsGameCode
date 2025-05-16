@@ -699,6 +699,17 @@ UpdateSleepTime DumbProjectileBehavior::update()
 }
 
 // ------------------------------------------------------------------------------------------------
+const Coord3D* DumbProjectileBehavior::getTargetPosition()
+{
+	return &m_flightPathEnd;
+}
+// ------------------------------------------------------------------------------------------------
+Object* DumbProjectileBehavior::getTargetObject()
+{
+	return TheGameLogic->findObjectByID(m_victimID);
+}
+
+// ------------------------------------------------------------------------------------------------
 /** displayFlightPath for debugging */
 // ------------------------------------------------------------------------------------------------
 #if defined(_DEBUG) || defined(_INTERNAL)

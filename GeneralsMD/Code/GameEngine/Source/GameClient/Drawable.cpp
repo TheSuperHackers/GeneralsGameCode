@@ -2902,54 +2902,124 @@ void Drawable::drawEmoticon( const IRegion2D *healthBarRegion )
 // ------------------------------------------------------------------------------------------------
 void Drawable::drawAmmo( const IRegion2D *healthBarRegion )
 {
-	const Object *obj = getObject();			
-
-	if (!(
-				TheGlobalData->m_showObjectHealth && 
-				(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
-				obj->getControllingPlayer() == ThePlayerList->getLocalPlayer()
-			))
+	if (!healthBarRegion)
 		return;
 
-	Int numTotal;
-	Int numFull;
+	const Object* obj = getObject();
+
+	if (!(
+		TheGlobalData->m_showObjectHealth &&
+		(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
+		obj->getControllingPlayer() == ThePlayerList->getLocalPlayer()
+		))
+		return;
+
+	Int numTotal;  	 // getClipSize();
+	Int numFull;	// getRemainingAmmo();
 	if (!obj->getAmmoPipShowingInfo(numTotal, numFull))
 		return;
 
-	if (!s_fullAmmo || !s_emptyAmmo)
-		return;
+	AmmoPipsStyle pipsStyle = obj->getTemplate()->getAmmoPipsStyle();
+	switch (pipsStyle)
+	{
+	case AMMO_PIPS_DEFAULT:
+	case AMMO_PIPS_SINGLE:
+	{
 
+		if (!s_fullAmmo || !s_emptyAmmo)
+			return;
 
-	
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
-	Real scale = TheGlobalData->m_ammoPipScaleFactor / CLAMP_ICON_ZOOM_FACTOR( TheTacticalView->getZoom() );
+		Real scale = TheGlobalData->m_ammoPipScaleFactor / CLAMP_ICON_ZOOM_FACTOR(TheTacticalView->getZoom());
 #else
-	Real scale = 1.0f;
+		Real scale = 1.0f;
 #endif
 
-	Int boxWidth  = REAL_TO_INT(s_emptyAmmo->getImageWidth() * scale);
-	Int boxHeight = REAL_TO_INT(s_emptyAmmo->getImageHeight() * scale);
-	const Int SPACING = 1;
-	//Int totalWidth = (boxWidth+SPACING)*numTotal;
+		Int boxWidth = REAL_TO_INT(s_emptyAmmo->getImageWidth() * scale);
+		Int boxHeight = REAL_TO_INT(s_emptyAmmo->getImageHeight() * scale);
+		const Int SPACING = 1;
+		//Int totalWidth = (boxWidth+SPACING)*numTotal;
 
-	ICoord2D screenCenter;
-	Coord3D pos = *obj->getPosition();
-	pos.x += TheGlobalData->m_ammoPipWorldOffset.x;
-	pos.y += TheGlobalData->m_ammoPipWorldOffset.y;
-	pos.z += TheGlobalData->m_ammoPipWorldOffset.z + obj->getGeometryInfo().getMaxHeightAbovePosition();
-	if( !TheTacticalView->worldToScreen( &pos, &screenCenter ) )
+		ICoord2D screenCenter;
+		Coord3D pos = *obj->getPosition();
+		pos.x += TheGlobalData->m_ammoPipWorldOffset.x;
+		pos.y += TheGlobalData->m_ammoPipWorldOffset.y;
+		pos.z += TheGlobalData->m_ammoPipWorldOffset.z + obj->getGeometryInfo().getMaxHeightAbovePosition();
+		if (!TheTacticalView->worldToScreen(&pos, &screenCenter))
+			return;
+
+		Real bounding = obj->getGeometryInfo().getBoundingSphereRadius() * scale;
+		//Int posx = screenCenter.x + REAL_TO_INT(TheGlobalData->m_ammoPipScreenOffset.x*bounding) - totalWidth;
+		//**CHANGING CODE: Left justify with health bar min
+		Int posx = healthBarRegion->lo.x;
+		Int posy = screenCenter.y + REAL_TO_INT(TheGlobalData->m_ammoPipScreenOffset.y * bounding);
+
+		// Draw only one pip, either full or empty
+		if (pipsStyle == AMMO_PIPS_SINGLE) {
+			if (numTotal <= 0) return;
+
+			Real ammoRatio = (Real)numFull / (Real)numTotal;
+
+			if (numFull == numTotal) { // Full
+				TheDisplay->drawImage(s_fullAmmo, posx, posy + 1, posx + boxWidth, posy + 1 + boxHeight);
+			}
+			else if (numFull == 0) { // Empty
+				TheDisplay->drawImage(s_emptyAmmo, posx, posy + 1, posx + boxWidth, posy + 1 + boxHeight);
+			}
+			else { // partial
+				// Color color = GameMakeColor(255 * ammoRatio, 255 * ammoRatio, 255 * ammoRatio, 255);
+				Color color = GameMakeColor(255, 255, 255, 255 * ammoRatio);
+				TheDisplay->drawImage(s_emptyAmmo, posx, posy + 1, posx + boxWidth, posy + 1 + boxHeight);
+				TheDisplay->drawImage(s_fullAmmo, posx, posy + 1, posx + boxWidth, posy + 1 + boxHeight, color);
+			}
+		}
+		else {  // Default style
+			for (Int i = 0; i < numTotal; ++i)
+			{
+				TheDisplay->drawImage(i < numFull ? s_fullAmmo : s_emptyAmmo, posx, posy + 1, posx + boxWidth, posy + 1 + boxHeight);
+				posx += boxWidth + SPACING;
+			}
+		}
+
+		
 		return;
 
-	Real bounding = obj->getGeometryInfo().getBoundingSphereRadius() * scale;
-	//Int posx = screenCenter.x + REAL_TO_INT(TheGlobalData->m_ammoPipScreenOffset.x*bounding) - totalWidth;
-	//**CHANGING CODE: Left justify with health bar min
-	Int posx = healthBarRegion->lo.x;
-	Int posy = screenCenter.y + REAL_TO_INT(TheGlobalData->m_ammoPipScreenOffset.y*bounding);
-	for (Int i = 0; i < numTotal; ++i)
-	{
-		TheDisplay->drawImage(i < numFull ? s_fullAmmo : s_emptyAmmo, posx, posy + 1, posx + boxWidth, posy + 1 + boxHeight);
-		posx += boxWidth + SPACING;
 	}
+	case AMMO_PIPS_BAR:
+	{
+		if (numTotal <= 0) return;
+
+		Color color, outlineColor;
+
+		color = GameMakeColor(255, 255, 0, 255);  // yellow bar
+		outlineColor = GameMakeColor(0, 0, 0, 255);  // black outline
+
+		Real ammoRatio = (Real)numFull / (Real)numTotal;
+
+		Real healthBoxWidth = healthBarRegion->hi.x - healthBarRegion->lo.x;
+
+		Real healthBoxHeight = max(3, healthBarRegion->hi.y - healthBarRegion->lo.y) * 1.5f;
+		Real healthBoxOutlineSize = 1.0f;
+
+		Real yOffset = 5;
+
+		// draw the health (actually ammo) box outline
+		TheDisplay->drawOpenRect(healthBarRegion->lo.x, healthBarRegion->lo.y + yOffset, healthBoxWidth, healthBoxHeight,
+			healthBoxOutlineSize, outlineColor);
+
+		if (numFull > 0) {
+
+			// draw a filled bar for the ammo count
+			TheDisplay->drawFillRect(healthBarRegion->lo.x + 1, healthBarRegion->lo.y + yOffset + 1,
+				(healthBoxWidth - 2) * ammoRatio, healthBoxHeight - 2,
+				color);
+		}
+
+
+		return;
+	}
+	}
+
 }
 
 // ------------------------------------------------------------------------------------------------

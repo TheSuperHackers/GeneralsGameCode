@@ -205,6 +205,7 @@ enum WeaponBonusConditionType CPP_11(: Int)
 	WEAPONBONUSCONDITION_FRENZY_ONE,
 	WEAPONBONUSCONDITION_FRENZY_TWO,
 	WEAPONBONUSCONDITION_FRENZY_THREE,
+	WEAPONBONUSCONDITION_CONTAINED,
 
 	WEAPONBONUSCONDITION_COUNT
 };
@@ -243,10 +244,15 @@ static const char *TheWeaponBonusNames[] =
 	"FRENZY_ONE",
 	"FRENZY_TWO",
 	"FRENZY_THREE",
+	"CONTAINED",
 
 	NULL
 };
 #endif
+
+
+typedef std::vector<WeaponBonusConditionType> WeaponBonusConditionTypeVec;
+
 
 // For WeaponBonusConditionFlags
 // part of detangling
@@ -453,6 +459,7 @@ public:
 	inline const AudioEventRTS& getFireSound() const { return m_fireSound; }
 	inline UnsignedInt getFireSoundLoopTime() const { return m_fireSoundLoopTime; }
 	inline UnsignedInt getContinuousLaserLoopTime() const { return m_continuousLaserLoopTime; }
+	inline UnsignedInt getScatterTargetResetTime() const { return m_scatterTargetResetTime; }
 	inline const std::vector<Coord2D>& getScatterTargetsVector() const { return m_scatterTargets; }
 	inline const WeaponBonusSet* getExtraBonus() const { return m_extraBonus; }
 	inline Int getShotsPerBarrel() const { return m_shotsPerBarrel; }
@@ -467,6 +474,7 @@ public:
 	inline Bool isScatterTargetRandom() const { return m_scatterTargetRandom; }
 	inline Bool isScatterTargetRandomAngle() const { return m_scatterTargetRandomAngle; }
 	inline Real getScatterTargetMinScalar () const { return m_scatterTargetMinScalar; }
+	inline Bool isScatterTargetCenteredAtShooter() const { return m_scatterTargetCenteredAtShooter; }
 
 	Bool shouldProjectileCollideWith(
 		const Object* projectileLauncher, 
@@ -584,6 +592,9 @@ private:
 	Bool m_scatterTargetRandom;		///< if the scatter target pattern is fired in a random order
 	Bool m_scatterTargetRandomAngle;  ///< if the scatter target pattern is randomly aligned
 	Real m_scatterTargetMinScalar;  ///< scale the scatterTarget pattern depending on range
+	Bool m_scatterTargetCenteredAtShooter;  ///< if the scatter target pattern is centered at the shooter
+
+	UnsignedInt m_scatterTargetResetTime;  ///< if this much time between shots has passed, we reset the scatter targets
 
 	mutable HistoricWeaponDamageList m_historicDamage;
 };  
@@ -772,6 +783,9 @@ public:
 	Bool isClearGoalFiringLineOfSightTerrain(const Object* source, const Coord3D& goalPos, const Object* victim) const;
 	Bool isClearGoalFiringLineOfSightTerrain(const Object* source, const Coord3D& goalPos, const Coord3D& victimPos) const;
 
+	ObjectID setBonusRefObjID(void) { return m_bonusRefObjID; }
+	void setBonusRefObjID(ObjectID id) { m_bonusRefObjID = id; }
+
 	static void calcProjectileLaunchPosition(
 		const Object* launcher, 
 		WeaponSlotType wslot, 
@@ -842,6 +856,8 @@ private:
 	Real											m_scatterTargetsAngle;		 ///< Random angle chosen for scatterTarget pattern
 	UnsignedInt										m_nextPreAttackFXFrame;			///< the frame when we are next allowed to play a preAttackFX
 	ObjectID									m_continuousLaserID;				///< the object that is tracking our continuous laser if we have one.
+	ObjectID									m_bonusRefObjID;					///< for weapons fired from projectiles, we compute the bonus from the original source object instead.
+
 	// setter function for status that should not be used outside this class
 	void setStatus( WeaponStatus status) { m_status = status; }
 };
