@@ -247,6 +247,8 @@ static DrawableIconType drawableIconNameToIndex( const char *iconName )
 const UnsignedInt HEALING_ICON_DISPLAY_TIME	= LOGICFRAMES_PER_SECOND * 3;
 const UnsignedInt DEFAULT_HEAL_ICON_WIDTH		= 32;
 const UnsignedInt DEFAULT_HEAL_ICON_HEIGHT	= 32;
+
+//Note: These constants are now obsolete and are only here for reference.
 const RGBColor SICKLY_GREEN_POISONED_COLOR	= {-1.0f,  1.0f, -1.0f};
 const RGBColor DARK_GRAY_DISABLED_COLOR			= {-0.5f, -0.5f, -0.5f};
 const RGBColor RED_IRRADIATED_COLOR					= { 1.0f, -1.0f, -1.0f};
@@ -254,6 +256,8 @@ const RGBColor SUBDUAL_DAMAGE_COLOR					= {-0.2f, -0.2f,  0.8f};
 const RGBColor FRENZY_COLOR									= { 0.2f, -0.2f, -0.2f};
 const RGBColor FRENZY_COLOR_INFANTRY				= { 0.0f, -0.7f, -0.7f};
 const RGBColor SHIELDED_COLOR = { -0.1f, -0.2f, -0.2f};  //TODO: Make configurable
+// ---
+
 const Int MAX_ENABLED_MODULES								= 16;
 
 // ------------------------------------------------------------------------------------------------

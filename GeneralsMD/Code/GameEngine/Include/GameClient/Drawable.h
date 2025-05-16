@@ -245,8 +245,41 @@ enum TintStatus CPP_11(: Int)
 	TINT_STATUS_POISONED		= 0x00000004,///< drawable tint color is open-sore red
 	TINT_STATUS_GAINING_SUBDUAL_DAMAGE		= 0x00000008,///< When gaining subdual damage, we tint SUBDUAL_DAMAGE_COLOR
 	TINT_STATUS_FRENZY			= 0x00000010,///< When frenzied, we tint FRENZY_COLOR
-	TINT_STATUS_SHIELDED          = 0x00000020,///<  When shielded, we tint SHIELDED_COLOR
+	// New generic entries:
+	TINT_STATUS_SHIELDED = 0x00000020,///<  When shielded, we tint SHIELDED_COLOR
+	TINT_STATUS_DEMORALIZED  = 0x00000040,
+	TINT_STATUS_BOOST  = 0x00000080,
+	TINT_STATUS_EXTRA1 = 0x00000100,
+	TINT_STATUS_EXTRA2 = 0x00000200,
+	TINT_STATUS_EXTRA3 = 0x00000400,
+	TINT_STATUS_EXTRA4 = 0x00000800,
+	TINT_STATUS_EXTRA5 = 0x00001000,
+	TINT_STATUS_EXTRA6 = 0x00002000,
+	TINT_STATUS_EXTRA7 = 0x00004000,
+	TINT_STATUS_EXTRA8 = 0x00008000,
+	
+};
 
+// Tint status types can now be used via ini
+static const char* TintStatusNames[] =
+{
+	"DISABLED",
+	"IRRADIATED",
+	"POISONED",
+	"GAINING_SUBDUAL_DAMAGE",
+	"FRENZY",
+	"SHIELDED",
+	"DEMORALIZED",
+	"BOOST",
+	"EXTRA1",
+	"EXTRA2",
+	"EXTRA3",
+	"EXTRA4",
+	"EXTRA5",
+	"EXTRA6",
+	"EXTRA7",
+	"EXTRA8",
+	NULL
 };
 
 //-----------------------------------------------------------------------------
