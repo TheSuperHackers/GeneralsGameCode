@@ -259,7 +259,7 @@ WindowMsgHandledType DifficultySelectSystem( GameWindow *window, UnsignedInt msg
 				//TheScriptEngine->setGlobalDifficulty(s_AIDiff); // CANNOT DO THIS! REPLAYS WILL BREAK!
 				WindowLayout *layout = window->winGetLayout();
 				layout->destroyWindows();
-				layout->deleteInstance();
+				MemoryPoolObject::deleteInstance(layout);
 				setupGameStart(TheCampaignManager->getCurrentMap(), s_AIDiff);
 				// start the game
 			}
@@ -269,7 +269,7 @@ WindowMsgHandledType DifficultySelectSystem( GameWindow *window, UnsignedInt msg
 				TheWindowManager->winUnsetModal(window);
 				WindowLayout *layout = window->winGetLayout();
 				layout->destroyWindows();
-				layout->deleteInstance();
+				MemoryPoolObject::deleteInstance(layout);
 				
 			}
 			else if ( controlID == radioButtonEasyAIID )

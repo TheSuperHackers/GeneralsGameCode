@@ -60,7 +60,7 @@ ScienceStore::~ScienceStore()
 		ScienceInfo* si = *it;
 		++it;
 		if (si) {
-			si->deleteInstance();
+			MemoryPoolObject::deleteInstance(si);
 		}
 	}
 }

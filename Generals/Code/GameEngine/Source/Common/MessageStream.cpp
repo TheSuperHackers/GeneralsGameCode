@@ -79,7 +79,7 @@ GameMessage::~GameMessage( )
 	for( arg = m_argList; arg; arg=nextArg )
 	{
 		nextArg = arg->m_next;
-		arg->deleteInstance();
+		MemoryPoolObject::deleteInstance(arg);
 	}
 
 	// detach message from list
@@ -678,7 +678,7 @@ GameMessageList::~GameMessageList()
 		// set list ptr to null to avoid it trying to remove itself from the list
 		// that we are in the process of nuking...
 		msg->friend_setList(NULL);
-		msg->deleteInstance();
+		MemoryPoolObject::deleteInstance(msg);
 	}
 }
 
@@ -1064,7 +1064,7 @@ void MessageStream::propagateMessages( void )
 				next = msg->next();
 				if (disp == DESTROY_MESSAGE)
 				{
-					msg->deleteInstance();
+					MemoryPoolObject::deleteInstance(msg);
 				}
 			} 
 			else 
@@ -1151,7 +1151,7 @@ void CommandList::destroyAllMessages( void )
 	for( msg=m_firstMessage; msg; msg=next )
 	{
 		next = msg->next();
-		msg->deleteInstance();
+		MemoryPoolObject::deleteInstance(msg);
 	}
 	
 	m_firstMessage = NULL;

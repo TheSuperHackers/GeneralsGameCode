@@ -147,22 +147,22 @@ FireWeaponWhenDamagedBehavior::FireWeaponWhenDamagedBehavior( Thing *thing, cons
 FireWeaponWhenDamagedBehavior::~FireWeaponWhenDamagedBehavior( void )
 {
 	if (m_reactionWeaponPristine)
-		m_reactionWeaponPristine->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_reactionWeaponPristine);
 	if (m_reactionWeaponDamaged)
-		m_reactionWeaponDamaged->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_reactionWeaponDamaged);
 	if (m_reactionWeaponReallyDamaged)
-		m_reactionWeaponReallyDamaged->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_reactionWeaponReallyDamaged);
 	if (m_reactionWeaponRubble)
-		m_reactionWeaponRubble->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_reactionWeaponRubble);
 
 	if (m_continuousWeaponPristine)
-		m_continuousWeaponPristine->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_continuousWeaponPristine);
 	if (m_continuousWeaponDamaged)
-		m_continuousWeaponDamaged->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_continuousWeaponDamaged);
 	if (m_continuousWeaponReallyDamaged)
-		m_continuousWeaponReallyDamaged->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_continuousWeaponReallyDamaged);
 	if (m_continuousWeaponRubble)
-		m_continuousWeaponRubble->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_continuousWeaponRubble);
 }
 
 //-------------------------------------------------------------------------------------------------

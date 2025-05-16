@@ -186,7 +186,7 @@ WindowMsgHandledType PopupCommunicatorSystem( GameWindow *window, UnsignedInt ms
 			{
         WindowLayout *popupCommunicatorLayout = window->winGetLayout();
         popupCommunicatorLayout->destroyWindows();
-				popupCommunicatorLayout->deleteInstance();
+				MemoryPoolObject::deleteInstance(popupCommunicatorLayout);
 				popupCommunicatorLayout = NULL;
 			}  // end if
 	

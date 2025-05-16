@@ -126,7 +126,7 @@ WebBrowser::~WebBrowser()
 	while (url != NULL) {
 		WebBrowserURL *temp = url;
 		url = url->m_next;
-		temp->deleteInstance();
+		MemoryPoolObject::deleteInstance(temp);
 		temp = NULL;
 	}
 }

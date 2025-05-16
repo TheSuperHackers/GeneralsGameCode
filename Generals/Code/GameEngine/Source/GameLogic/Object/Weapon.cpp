@@ -320,12 +320,12 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(NULL)
 WeaponTemplate::~WeaponTemplate()
 {
 	if (m_nextTemplate) {
-		m_nextTemplate->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_nextTemplate);
 	}
 
 	// delete any extra-bonus that's present
 	if (m_extraBonus)
-		m_extraBonus->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_extraBonus);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1373,7 +1373,7 @@ WeaponStore::~WeaponStore()
 	{
 		WeaponTemplate* wt = m_weaponTemplateVector[i];
 		if (wt)
-			wt->deleteInstance();
+			MemoryPoolObject::deleteInstance(wt);
 	}
 	m_weaponTemplateVector.clear();
 }
@@ -1384,7 +1384,7 @@ void WeaponStore::handleProjectileDetonation(const WeaponTemplate* wt, const Obj
 	Weapon* w = TheWeaponStore->allocateNewWeapon(wt, PRIMARY_WEAPON);
 	w->loadAmmoNow(source);
 	w->fireProjectileDetonationWeapon(source, pos, extraBonusFlags);
-	w->deleteInstance();
+	MemoryPoolObject::deleteInstance(w);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1395,7 +1395,7 @@ void WeaponStore::createAndFireTempWeapon(const WeaponTemplate* wt, const Object
 	Weapon* w = TheWeaponStore->allocateNewWeapon(wt, PRIMARY_WEAPON);
 	w->loadAmmoNow(source);
 	w->fireWeapon(source, pos);
-	w->deleteInstance();
+	MemoryPoolObject::deleteInstance(w);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1407,7 +1407,7 @@ void WeaponStore::createAndFireTempWeapon(const WeaponTemplate* wt, const Object
 	Weapon* w = TheWeaponStore->allocateNewWeapon(wt, PRIMARY_WEAPON);
 	w->loadAmmoNow(source);
 	w->fireWeapon(source, target);
-	w->deleteInstance();
+	MemoryPoolObject::deleteInstance(w);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1512,7 +1512,7 @@ void WeaponStore::reset()
 		{
 			WeaponTemplate *override = wt;
 			wt = wt->friend_clearNextTemplate();
-			override->deleteInstance();
+			MemoryPoolObject::deleteInstance(override);
 		}
 	}
 

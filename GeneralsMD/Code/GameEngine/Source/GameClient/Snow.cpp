@@ -103,7 +103,7 @@ SnowManager::~SnowManager()
 	// TheSuperHackers @fix Mauller 13/04/2025 Delete the instance of the weather settings
 	if (TheWeatherSetting)
 	{
-		((WeatherSetting*)TheWeatherSetting.getNonOverloadedPointer())->deleteInstance();
+		MemoryPoolObject::deleteInstance(((WeatherSetting*)TheWeatherSetting.getNonOverloadedPointer()));
 		TheWeatherSetting=NULL;
 	}
 }

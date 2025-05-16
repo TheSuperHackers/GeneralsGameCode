@@ -83,7 +83,7 @@ void Radar::deleteListResources( void )
 		m_localObjectList->friend_getObject()->friend_setRadarData( NULL );
 
 		// delete the head of the list
-		m_localObjectList->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_localObjectList);
 
 		// set head of the list to the next object
 		m_localObjectList = nextObject;
@@ -101,7 +101,7 @@ void Radar::deleteListResources( void )
 		m_objectList->friend_getObject()->friend_setRadarData( NULL );
 
 		// delete the head of the list
-		m_objectList->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_objectList);
 
 		// set head of the list to the next object
 		m_objectList = nextObject;
@@ -573,7 +573,7 @@ Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 			obj->friend_setRadarData( NULL );
 
 			// delete the object instance
-			radarObject->deleteInstance();
+			MemoryPoolObject::deleteInstance(radarObject);
 
 			// all done, object found and deleted
 			return TRUE;

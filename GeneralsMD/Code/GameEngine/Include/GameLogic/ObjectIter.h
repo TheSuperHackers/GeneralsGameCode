@@ -67,7 +67,7 @@ enum IterOrderType CPP_11(: Int)
 	{
 		// do something with other
 	}
-	iter->deleteInstance();								// you own it, so you must delete it
+	MemoryPoolObject::deleteInstance(iter);								// you own it, so you must delete it
 
 	note that the iterator is required to deal intelligently with deleted objects; 
 	in particular, next() will check if an obj has been killed and simply skip it.

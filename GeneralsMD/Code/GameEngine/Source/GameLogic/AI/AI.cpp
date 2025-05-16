@@ -69,11 +69,11 @@ void TAiData::addFactionBuildList(AISideBuildList *buildList)
 	while (info) {
 		if (buildList->m_side == info->m_side) {
 			if (info->m_buildList)
-				info->m_buildList->deleteInstance();
+				MemoryPoolObject::deleteInstance(info->m_buildList);
 			info->m_buildList = buildList->m_buildList;
 			buildList->m_buildList = NULL;
 			buildList->m_next = NULL;
-			buildList->deleteInstance();
+			MemoryPoolObject::deleteInstance(buildList);
 			return;
 		}
 		info = info->m_next;
@@ -89,7 +89,7 @@ TAiData::~TAiData()
 	while (info) { 
 		AISideInfo *cur = info;
 		info = info->m_next;
-		cur->deleteInstance();
+		MemoryPoolObject::deleteInstance(cur);
 	}
 
 	AISideBuildList *build = m_sideBuildLists;
@@ -97,7 +97,7 @@ TAiData::~TAiData()
 	while (build) { 
 		AISideBuildList *cur = build;
 		build = build->m_next;
-		cur->deleteInstance();
+		MemoryPoolObject::deleteInstance(cur);
 	}
 
 }
@@ -115,7 +115,7 @@ AISideBuildList::AISideBuildList( AsciiString side ) :
 AISideBuildList::~AISideBuildList()
 {
 	if (m_buildList) {
-		m_buildList->deleteInstance(); // note - deletes all in the list.
+		MemoryPoolObject::deleteInstance(m_buildList); // note - deletes all in the list.
 	}
 	m_buildList = NULL;
 }
@@ -474,7 +474,7 @@ void AI::destroyGroup( AIGroup *group )
 	m_groupList.erase( i );
 
 	// destroy group
-	group->deleteInstance();
+	MemoryPoolObject::deleteInstance(group);
 }
 
 /**

@@ -155,7 +155,7 @@ public:
 	{
 		for (Int i = 0; i < TTAUDIO_COUNT; ++i)
 			if (m_audio[i])
-				m_audio[i]->deleteInstance();
+				MemoryPoolObject::deleteInstance(m_audio[i]);
 	}
 
 	AudioArray(const AudioArray& that)

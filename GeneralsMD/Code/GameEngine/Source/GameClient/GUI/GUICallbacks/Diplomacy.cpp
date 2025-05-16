@@ -290,7 +290,7 @@ void ResetDiplomacy( void )
 	{
 		TheInGameUI->unregisterWindowLayout(theLayout);
 		theLayout->destroyWindows();
-		theLayout->deleteInstance();
+		MemoryPoolObject::deleteInstance(theLayout);
 		InitBuddyControls(-1);
 	}
 	theLayout = NULL;

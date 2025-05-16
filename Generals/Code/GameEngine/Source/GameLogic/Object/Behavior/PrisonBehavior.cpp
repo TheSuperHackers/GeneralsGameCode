@@ -157,7 +157,7 @@ void PrisonBehavior::onDelete( void )
 
 		// delete element and set next to head
 		visual = m_visualList->m_next;
-		m_visualList->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_visualList);
 		m_visualList = visual;
 
 	}  // end while
@@ -363,7 +363,7 @@ void PrisonBehavior::removeVisual( Object *obj )
 				m_visualList = visual->m_next;
 
 			// delete the element
-			visual->deleteInstance();
+			MemoryPoolObject::deleteInstance(visual);
 
 			break;  // exit for
 

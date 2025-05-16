@@ -760,7 +760,7 @@ void finishSinglePlayerInit( void )
 
 	//
 	s_blankLayout->destroyWindows();
-	s_blankLayout->deleteInstance();
+	MemoryPoolObject::deleteInstance(s_blankLayout);
 	s_blankLayout = NULL;
 
 	// set keyboard focus to main parent

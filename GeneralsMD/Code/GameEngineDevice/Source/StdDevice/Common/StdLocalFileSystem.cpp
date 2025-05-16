@@ -157,7 +157,7 @@ File * StdLocalFileSystem::openFile(const Char *filename, Int access /* = 0 */)
 	
 	if (file->open(path.string().c_str(), access) == FALSE) {
 		file->close();
-		file->deleteInstance();
+		MemoryPoolObject::deleteInstance(file);
 		file = NULL;
 	} else {
 		file->deleteOnClose();
@@ -178,7 +178,7 @@ File * StdLocalFileSystem::openFile(const Char *filename, Int access /* = 0 */)
 //			return ramFile;
 //		}	else {
 //			ramFile->close();
-//			ramFile->deleteInstance();
+//			MemoryPoolObject::deleteInstance(ramFile);
 //		}
 //	}
 

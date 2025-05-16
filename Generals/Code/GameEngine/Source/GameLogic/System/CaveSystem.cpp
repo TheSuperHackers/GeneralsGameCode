@@ -55,7 +55,7 @@ void CaveSystem::reset()
 		TunnelTracker *currentTracker = *iter;
 		if( currentTracker )// could be NULL, since we don't slide back to fill deleted entries so offsets don't shift
 		{
-			currentTracker->deleteInstance();
+			MemoryPoolObject::deleteInstance(currentTracker);
 		}
 	}
 	m_tunnelTrackerVector.clear();

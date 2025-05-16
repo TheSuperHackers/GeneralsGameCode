@@ -149,7 +149,7 @@ void W3DRadar::deleteResources( void )
 		m_terrainTexture->Release_Ref();
 	m_terrainTexture = NULL;
 	if( m_terrainImage )
-		m_terrainImage->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_terrainImage);
 	m_terrainImage = NULL;
 
 	//
@@ -159,7 +159,7 @@ void W3DRadar::deleteResources( void )
 		m_overlayTexture->Release_Ref();
 	m_overlayTexture = NULL;
 	if( m_overlayImage )
-		m_overlayImage->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_overlayImage);
 	m_overlayImage = NULL;
 
 	//
@@ -169,7 +169,7 @@ void W3DRadar::deleteResources( void )
 		m_shroudTexture->Release_Ref();
 	m_shroudTexture = NULL;
 	if( m_shroudImage )
-		m_shroudImage->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_shroudImage);
 	m_shroudImage = NULL;
 
 }  // end deleteResources

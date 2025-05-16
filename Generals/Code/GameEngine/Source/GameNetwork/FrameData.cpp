@@ -50,7 +50,7 @@ FrameData::FrameData()
 FrameData::~FrameData() 
 {
 	if (m_commandList != NULL) {
-		m_commandList->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_commandList);
 		m_commandList = NULL;
 	}
 }

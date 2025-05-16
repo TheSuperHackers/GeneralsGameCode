@@ -1315,7 +1315,7 @@ ParticleSystem::~ParticleSystem()
 
 	// destroy all particles "in the air"
 	while (m_systemParticlesHead)
-		m_systemParticlesHead->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_systemParticlesHead);
 
 	m_attachedToDrawableID = INVALID_DRAWABLE_ID;
 	m_attachedToObjectID = INVALID_ID;
@@ -2162,7 +2162,7 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 		{
 			oldParticle = p;
 			p = p->m_systemNext;
-			oldParticle->deleteInstance();
+			MemoryPoolObject::deleteInstance(oldParticle);
 		} else {
 			p = p->m_systemNext;
 		}
@@ -2958,7 +2958,7 @@ ParticleSystemManager::~ParticleSystemManager()
 	TemplateMap::iterator begin(m_templateMap.begin());
 	TemplateMap::iterator end(m_templateMap.end());
 	for (; begin != end; ++begin) {
-		(*begin).second->deleteInstance();
+		MemoryPoolObject::deleteInstance((*begin).second);
 	}
 }
 
@@ -2994,7 +2994,7 @@ void ParticleSystemManager::reset( void )
 {
 	while (getParticleSystemCount()) {
 		if (m_allParticleSystemList.front()) {
-			m_allParticleSystemList.front()->deleteInstance();
+			MemoryPoolObject::deleteInstance(m_allParticleSystemList.front());
 		}
 	}
 
@@ -3048,7 +3048,7 @@ void ParticleSystemManager::update( void )
 		if (sys->update(m_localPlayerIndex) == false)
 		{
 			++it;
-			sys->deleteInstance();
+			MemoryPoolObject::deleteInstance(sys);
 		} else {
 			++it;
 		}
@@ -3151,7 +3151,7 @@ ParticleSystemTemplate *ParticleSystemManager::newTemplate( const AsciiString &n
 		sysTemplate = newInstance(ParticleSystemTemplate)( name );
 
 		if (! m_templateMap.insert(std::make_pair(name, sysTemplate)).second) {
-			sysTemplate->deleteInstance();
+			MemoryPoolObject::deleteInstance(sysTemplate);
 			sysTemplate = NULL;
 		}
 	}
@@ -3312,7 +3312,7 @@ Int ParticleSystemManager::removeOldestParticles( UnsignedInt count,
 		{
 			if( m_allParticlesHead[ i ] ) 
 			{
-				m_allParticlesHead[ i ]->deleteInstance();
+				MemoryPoolObject::deleteInstance(m_allParticlesHead[ i ]);
 				break;  // exit for
 			}
 		}

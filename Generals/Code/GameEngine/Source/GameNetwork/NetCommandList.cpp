@@ -115,7 +115,7 @@ void NetCommandList::reset() {
 		temp = m_first->getNext();
 		m_first->setNext(NULL);
 		m_first->setPrev(NULL);
-		m_first->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_first);
 		m_first = temp;
 	}
 	m_last = NULL;
@@ -160,7 +160,7 @@ NetCommandRef * NetCommandList::addMessage(NetCommandMsg *cmdMsg) {
 			if (isEqualCommandMsg(m_lastMessageInserted->getCommand(), msg->getCommand())) {
 
 				// This command is already in the list, don't duplicate it.
-				msg->deleteInstance();
+				MemoryPoolObject::deleteInstance(msg);
 				msg = NULL;
 				return NULL;
 			}
@@ -191,7 +191,7 @@ NetCommandRef * NetCommandList::addMessage(NetCommandMsg *cmdMsg) {
 		if (isEqualCommandMsg(m_last->getCommand(), msg->getCommand())) {
 
 			// This command is already in the list, don't duplicate it.
-			msg->deleteInstance();
+			MemoryPoolObject::deleteInstance(msg);
 			msg = NULL;
 			return NULL;
 		}
@@ -209,7 +209,7 @@ NetCommandRef * NetCommandList::addMessage(NetCommandMsg *cmdMsg) {
 		if (isEqualCommandMsg(m_first->getCommand(), msg->getCommand())) {
 
 			// This command is already in the list, don't duplicate it.
-			msg->deleteInstance();
+			MemoryPoolObject::deleteInstance(msg);
 			msg = NULL;
 			return NULL;
 		}
@@ -235,7 +235,7 @@ NetCommandRef * NetCommandList::addMessage(NetCommandMsg *cmdMsg) {
 		if (isEqualCommandMsg(m_last->getCommand(), msg->getCommand())) {
 
 			// This command is already in the list, don't duplicate it.
-			msg->deleteInstance();
+			MemoryPoolObject::deleteInstance(msg);
 			msg = NULL;
 			return NULL;
 		}
@@ -259,7 +259,7 @@ NetCommandRef * NetCommandList::addMessage(NetCommandMsg *cmdMsg) {
 		if (isEqualCommandMsg(m_last->getCommand(), msg->getCommand())) {
 
 			// This command is already in the list, don't duplicate it.
-			msg->deleteInstance();
+			MemoryPoolObject::deleteInstance(msg);
 			msg = NULL;
 			return NULL;
 		}
@@ -284,7 +284,7 @@ NetCommandRef * NetCommandList::addMessage(NetCommandMsg *cmdMsg) {
 		if (isEqualCommandMsg(m_last->getCommand(), msg->getCommand())) {
 
 			// This command is already in the list, don't duplicate it.
-			msg->deleteInstance();
+			MemoryPoolObject::deleteInstance(msg);
 			msg = NULL;
 			return NULL;
 		}
@@ -303,7 +303,7 @@ NetCommandRef * NetCommandList::addMessage(NetCommandMsg *cmdMsg) {
 		if (isEqualCommandMsg(m_first->getCommand(), msg->getCommand())) {
 
 			// This command is already in the list, don't duplicate it.
-			msg->deleteInstance();
+			MemoryPoolObject::deleteInstance(msg);
 			return NULL;
 		}
 
@@ -320,7 +320,7 @@ NetCommandRef * NetCommandList::addMessage(NetCommandMsg *cmdMsg) {
 		if (isEqualCommandMsg(tempmsg->getCommand(), msg->getCommand())) {
 
 		// This command is already in the list, don't duplicate it.
-		msg->deleteInstance();
+		MemoryPoolObject::deleteInstance(msg);
 		msg = NULL;
 		return NULL;
 	}

@@ -744,7 +744,7 @@ Anim2DCollection::~Anim2DCollection( void )
 		nextTemplate = m_templateList->friend_getNextTemplate();
 
 		// delete this template
-		m_templateList->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_templateList);
 
 		// set the head of our list to the next template
 		m_templateList = nextTemplate;

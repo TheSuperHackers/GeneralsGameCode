@@ -85,11 +85,11 @@ SidesInfo::~SidesInfo(void)
 
 void SidesInfo::init(const Dict* d)
 {
-	m_pBuildList->deleteInstance();
+	MemoryPoolObject::deleteInstance(m_pBuildList);
 	m_pBuildList = NULL;
 	m_dict.clear();
 	if (m_scripts) 
-		m_scripts->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_scripts);
 	m_scripts = NULL;
 	if (d)
 		m_dict = *d;
@@ -303,12 +303,12 @@ Bool SidesList::ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, v
 	for (i=0; i<count; i++) {
 		if (i<TheSidesList->getNumSides()) {
 			ScriptList *pSL = TheSidesList->getSideInfo(i)->getScriptList();
-			pSL->deleteInstance();
+			MemoryPoolObject::deleteInstance(pSL);
 			TheSidesList->getSideInfo(i)->setScriptList(scripts[i]);
 			scripts[i] = NULL;
 		} else {
 			// Read in more players worth than we have.
-			scripts[i]->deleteInstance();
+			MemoryPoolObject::deleteInstance(scripts[i]);
 			scripts[i] = NULL;
 		}
 	}
@@ -539,7 +539,7 @@ void SidesList::prepareForMP_or_Skirmish(void)
 					getSkirmishSideInfo(curSide)->setScriptList(scripts[i]);
 					scripts[i] = NULL;
 					if (pSL) 
-						pSL->deleteInstance();
+						MemoryPoolObject::deleteInstance(pSL);
 					scripts[i] = NULL;
 				}
 				for (i=0; i<MAX_PLAYER_COUNT; i++) {
@@ -945,7 +945,7 @@ BuildListInfo::~BuildListInfo(void)
 		while (cur) {
 			next = cur->getNext();
 			cur->setNextBuildList(NULL); // prevents recursion. 
-			cur->deleteInstance();
+			MemoryPoolObject::deleteInstance(cur);
 			cur = next; 
 		}
 	}

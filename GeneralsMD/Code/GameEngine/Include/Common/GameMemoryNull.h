@@ -108,9 +108,9 @@ protected:
 
 public:
 
-	void deleteInstance() 
+	static void deleteInstance(MemoryPoolObject* object) 
 	{
-		delete this;
+		delete object;
 	}
 };
 

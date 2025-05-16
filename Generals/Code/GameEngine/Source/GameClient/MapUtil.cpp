@@ -171,7 +171,7 @@ static Bool ParseObjectDataChunk(DataChunkInput &file, DataChunkInfo *info, void
 		m_supplyPositions.push_back(loc);
 	}
 
-	pThisOne->deleteInstance();
+	MemoryPoolObject::deleteInstance(pThisOne);
 	return TRUE;
 }
 
@@ -1155,7 +1155,7 @@ Image *getMapPreviewImage( AsciiString mapName )
 	Region2D uv;
 	mapPreviewImage = TheMappedImageCollection->findImageByName("MapPreview");
 	if(mapPreviewImage)
-		mapPreviewImage->deleteInstance();
+		MemoryPoolObject::deleteInstance(mapPreviewImage);
 	
 	mapPreviewImage = TheMappedImageCollection->newImage();
 	mapPreviewImage->setName("MapPreview");
@@ -1186,7 +1186,7 @@ Image *getMapPreviewImage( AsciiString mapName )
 			file.registerParser( AsciiString("MapPreview"), AsciiString::TheEmptyString, parseMapPreviewChunk );
 			if (!file.parse(NULL)) {
 				DEBUG_ASSERTCRASH(false,("Unable to read MapPreview info."));
-				mapPreviewImage->deleteInstance();
+				MemoryPoolObject::deleteInstance(mapPreviewImage);
 				return NULL;
 			}
 		}
@@ -1194,7 +1194,7 @@ Image *getMapPreviewImage( AsciiString mapName )
 	}
 	else
 	{
-		mapPreviewImage->deleteInstance();
+		MemoryPoolObject::deleteInstance(mapPreviewImage);
 		return NULL;
 	}
 	

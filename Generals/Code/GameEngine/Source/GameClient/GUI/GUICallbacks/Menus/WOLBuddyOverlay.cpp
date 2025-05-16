@@ -696,7 +696,7 @@ void deleteNotificationBox( void )
 	if(noticeLayout)
 	{
 		noticeLayout->destroyWindows();
-		noticeLayout->deleteInstance();
+		MemoryPoolObject::deleteInstance(noticeLayout);
 		noticeLayout = NULL;
 	}
 }
@@ -1178,7 +1178,7 @@ static void closeRightClickMenu(GameWindow *win)
 		if(!winLay)
 			return;
 		winLay->destroyWindows();					
-		winLay->deleteInstance();
+		MemoryPoolObject::deleteInstance(winLay);
 		winLay = NULL;
 
 	}

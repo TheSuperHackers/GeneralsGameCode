@@ -262,7 +262,7 @@ PhysicsBehavior::~PhysicsBehavior()
 {
 	if (m_bounceSound)
 	{
-		m_bounceSound->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_bounceSound);
 		m_bounceSound = NULL;
 	}
 }
@@ -611,7 +611,7 @@ void PhysicsBehavior::setBounceSound(const AudioEventRTS* bounceSound)
 	{
 		if (m_bounceSound)
 		{
-			m_bounceSound->deleteInstance();
+			MemoryPoolObject::deleteInstance(m_bounceSound);
 			m_bounceSound = NULL;
 		}
 	}

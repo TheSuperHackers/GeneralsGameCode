@@ -65,7 +65,7 @@ ObjectOptions::ObjectOptions(CWnd* pParent /*=NULL*/)
 ObjectOptions::~ObjectOptions(void)
 {
 	if (m_objectsList) {
-		m_objectsList->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_objectsList);
 	}
 	m_objectsList = NULL;
 }
