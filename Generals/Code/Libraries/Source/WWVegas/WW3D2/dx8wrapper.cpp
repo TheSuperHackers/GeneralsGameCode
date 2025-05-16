@@ -238,7 +238,7 @@ void Non_Fatal_Log_DX8_ErrorCode(unsigned res,const char * file,int line)
 // TheSuperHackers @info helmutbuhler 14/04/2025
 // Helper function that moves x and y such that the inner rect fits into the outer rect.
 // If the inner rect already is in the outer rect, then this does nothing.
-// If the inner rect is larger than outer rect, then the inner rect will be aligned to the top left of the outer rect.
+// If the inner rect is larger than the outer rect, then the inner rect will be aligned to the top left of the outer rect.
 void MoveRectIntoOtherRect(const RECT& inner, const RECT& outer, int* x, int* y)
 {
 	int dx = 0;
@@ -849,7 +849,7 @@ void DX8Wrapper::Resize_And_Position_Window()
 		{
 			::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, width, height, SWP_NOSIZE | SWP_NOMOVE);
 
-			DEBUG_LOG(("Window sized to w:%d h:%d\n", width, height));
+			DEBUG_LOG(("Window resized to w:%d h:%d\n", width, height));
 		}
 		else
 		{
@@ -872,7 +872,7 @@ void DX8Wrapper::Resize_And_Position_Window()
 
 			::SetWindowPos (_Hwnd, NULL, left, top, width, height, SWP_NOZORDER);
 
-			DEBUG_LOG(("Window positioned to x:%d y:%d, sized to w:%d h:%d\n", left, top, width, height));
+			DEBUG_LOG(("Window positioned to x:%d y:%d, resized to w:%d h:%d\n", left, top, width, height));
 		}
 	}
 }

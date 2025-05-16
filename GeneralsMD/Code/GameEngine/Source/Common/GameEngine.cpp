@@ -374,7 +374,7 @@ void GameEngine::init( int argc, char *argv[] )
 		// TheSuperHackers @bugfix helmutbuhler 14/04/2025
 		// Pump messages during startup to ensure that the application window is correctly
 		// positioned on slower computers and in debug builds by a later call to SetWindowPos.
-		// It is unclear what the issue with SetWindowPos really is.
+		// It is unclear what the issue with SetWindowPos is when it fails to reposition the window.
 		serviceWindowsOS();
 
 
