@@ -3507,6 +3507,9 @@ void AIUpdateInterface::privateAttackTeam( const Team *team, Int maxShotsToFire,
  */
 void AIUpdateInterface::privateAttackPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource )
 {
+	//DEBUG_LOG(("AIUpdateInterface::privateAttackPosition: Order %s to fire at pos, type = %d\n",
+	//	getObject()->getTemplate()->getName().str(), cmdSource));
+
 	//Resetting the locomotor here was initially added for scripting purposes. It has been moved
 	//to the responsibility of the script to reset the locomotor before moving. This is needed because
 	//other systems (like the battle drone) change the locomotor based on what it's trying to do, and
@@ -4721,43 +4724,48 @@ void AIUpdateInterface::evaluateMoraleBonus( void )
 
 #ifdef ALLOW_DEMORALIZE
 	// if we are are not demoralized we can have horde and nationalism effects
-	if( demoralized == FALSE )
+	if (demoralized == FALSE)
 #endif
 	{
 
 #ifdef ALLOW_DEMORALIZE
 		// demoralized
-		us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_DEMORALIZED );
+		us->clearWeaponBonusCondition(WEAPONBONUSCONDITION_DEMORALIZED);
 #endif		
-		
+
 		//Lorenzen temporarily disabled, since it fights with the horde buff
 		//Drawable *draw = us->getDrawable();
 		//if ( draw && !us->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 		//	draw->setTerrainDecal(TERRAIN_DECAL_NONE);
 
 		// horde
-		if( horde )
+		if (horde)
 		{
-			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
+			us->setWeaponBonusCondition(WEAPONBONUSCONDITION_HORDE);
+
 
 		}  // end if
-		else
-			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
+		else {
+			us->clearWeaponBonusCondition(WEAPONBONUSCONDITION_HORDE);
+		}
 
 		// nationalism
-		if( nationalism )
-    {
-			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
-      // fanaticism
-      if ( fanaticism )
-        us->setWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );// FOR THE NEW GC INFANTRY GENERAL
-      else 
-        us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
-    }
-		else
-			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
+		if (horde && nationalism)
+		{
+			us->setWeaponBonusCondition(WEAPONBONUSCONDITION_NATIONALISM);
+		}
+		else {
+			us->clearWeaponBonusCondition(WEAPONBONUSCONDITION_NATIONALISM);
+		}
 
-
+		// fanaticism
+		if (horde && fanaticism)
+		{
+			us->setWeaponBonusCondition(WEAPONBONUSCONDITION_FANATICISM);// FOR THE NEW GC INFANTRY GENERAL
+		}
+		else {
+			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
+		}
 
 	}  // end if
 #ifdef ALLOW_DEMORALIZE

@@ -1927,6 +1927,7 @@ Weapon& Weapon::operator=(const Weapon& that)
 Weapon::~Weapon()
 {
 }
+
 //-------------------------------------------------------------------------------------------------
 // DEBUG
 static void debug_printWeaponBonus(WeaponBonus* bonus, AsciiString name) {

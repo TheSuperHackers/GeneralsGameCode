@@ -522,6 +522,8 @@ public:
 		Coord3D intermedPt;
 		Bool intermed = false;
 		Real orient = atan2(ppinfo.runwayPrep.y - ppinfo.parkingSpace.y, ppinfo.runwayPrep.x - ppinfo.parkingSpace.x);
+
+
 		if (fabs(stdAngleDiff(orient, ppinfo.parkingOrientation)) > PI/128)
 		{
 			intermedPt.z = (ppinfo.parkingSpace.z + ppinfo.runwayPrep.z) * 0.5f;
@@ -1024,6 +1026,7 @@ public:
 		else
 		{
 			ParkingPlaceBehaviorInterface::PPInfo ppinfo;
+
 			if (!pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), &ppinfo))
 				return STATE_FAILURE;
 			m_parkingLoc = ppinfo.parkingSpace;
@@ -1454,6 +1457,16 @@ public:
 		jetAI->friend_setTakeoffInProgress(false);
 		jetAI->friend_setLandingInProgress(false);
 		jetAI->friend_setUseSpecialReturnLoco(false);
+
+		// AW: Workaround for VTOL aircraft rotating towards 0 degrees on reloading.
+		if (!jetAI->friend_needsRunway()) {
+			ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
+			ParkingPlaceBehaviorInterface::PPInfo ppinfo;
+			if ((pp) && pp->reserveSpace(jet->getID(), jetAI->friend_getParkingOffset(), &ppinfo)) {
+				// DEBUG_LOG((">> JetOrHeliReloadAmmoState - onEnter - parkingOrientation = %f.\n", ppinfo.parkingOrientation));
+				jetAI->setLocomotorGoalOrientation(ppinfo.parkingOrientation);
+			}
+		}
 		
 		m_reloadTime = 0;
 		for (Int i = 0; i < WEAPONSLOT_COUNT;	++i)
@@ -1484,6 +1497,7 @@ public:
 	virtual StateReturnType update()
 	{
 		Object* jet = getMachineOwner();
+
 		UnsignedInt now = TheGameLogic->getFrame();
 		Bool allDone = true;
 		for (Int i = 0; i < WEAPONSLOT_COUNT;	++i)

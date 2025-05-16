@@ -520,6 +520,8 @@ public:
 	//-allAdvice feature
 	//Bool m_allAdvice;
 
+	Bool m_useOldMoveSpeed;
+
 
 	// the trailing '\' is included!
   const AsciiString &getPath_UserData() const { return m_userDataDir; }
