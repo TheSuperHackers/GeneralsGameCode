@@ -232,7 +232,7 @@ public:
 
 	virtual void setGuardBandBias( const Coord2D *gb ) { m_guardBandBias.x = gb->x; m_guardBandBias.y = gb->y; }
 
-
+	virtual void adjustFovToAspectRatio(const Int width, const Int height);
 private:
 
 	CameraClass *m_3DCamera;												///< camera representation for 3D scene
