@@ -59,12 +59,12 @@ Connection::Connection() {
  */
 Connection::~Connection() {
 	if (m_user != NULL) {
-		MemoryPoolObject::deleteInstance(m_user);
+		deleteInstance(m_user);
 		m_user = NULL;
 	}
 
 	if (m_netCommandList != NULL) {
-		MemoryPoolObject::deleteInstance(m_netCommandList);
+		deleteInstance(m_netCommandList);
 		m_netCommandList = NULL;
 	}
 }
@@ -76,7 +76,7 @@ void Connection::init() {
 	m_transport = NULL;
 
 	if (m_user != NULL) {
-		MemoryPoolObject::deleteInstance(m_user);
+		deleteInstance(m_user);
 		m_user = NULL;
 	}
 
@@ -124,7 +124,7 @@ void Connection::attachTransport(Transport *transport) {
  */
 void Connection::setUser(User *user) {
 	if (m_user != NULL) {
-		MemoryPoolObject::deleteInstance(m_user);
+		deleteInstance(m_user);
 	}
 
 	m_user = user;
@@ -164,7 +164,7 @@ void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
 		NetCommandRef *tempref = NEW_NETCOMMANDREF(msg);
 
 		Bool msgFits = packet->addCommand(tempref);
-		MemoryPoolObject::deleteInstance(tempref); // delete the temporary reference.
+		deleteInstance(tempref); // delete the temporary reference.
 		tempref = NULL;
 
 		if (!msgFits) {
@@ -186,15 +186,15 @@ void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
 					ref1 = ref1->getNext();
 				}
 
-				MemoryPoolObject::deleteInstance(tempPacket);
+				deleteInstance(tempPacket);
 				tempPacket = NULL;
 				++tempPacketPtr;
 
-				MemoryPoolObject::deleteInstance(list);
+				deleteInstance(list);
 				list = NULL;
 			}
 
-			MemoryPoolObject::deleteInstance(origref);
+			deleteInstance(origref);
 			origref = NULL;
 
 			return;
@@ -234,7 +234,7 @@ void Connection::clearCommandsExceptFrom( Int playerIndex )
 			m_netCommandList->removeMessage(tmp);
 			NetCommandRef *toDelete = tmp;
 			tmp = tmp->getNext();
-			MemoryPoolObject::deleteInstance(toDelete);
+			deleteInstance(toDelete);
 		} else {
 			tmp = tmp->getNext();
 		}
@@ -305,7 +305,7 @@ UnsignedInt Connection::doSend() {
 						msg->setTimeLastSent(curtime);
 					} else {
 						m_netCommandList->removeMessage(msg);
-						MemoryPoolObject::deleteInstance(msg);
+						deleteInstance(msg);
 					}
 				}
 			}
@@ -326,7 +326,7 @@ UnsignedInt Connection::doSend() {
 			m_lastTimeSent = curtime;
 		}
 		if (packet != NULL) {
-			MemoryPoolObject::deleteInstance(packet); // delete the packet now that we're done with it.
+			deleteInstance(packet); // delete the packet now that we're done with it.
 		}
 	}
 

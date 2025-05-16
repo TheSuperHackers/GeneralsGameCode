@@ -2014,7 +2014,7 @@ void WorldHeightMapEdit::removeFirstObject(void)
 	MapObject *firstObj = MapObject::TheMapObjectListPtr;
 	MapObject::TheMapObjectListPtr = firstObj->getNext();
 	firstObj->setNextMap(NULL); // so we don't delete the whole list.
-	MemoryPoolObject::deleteInstance(firstObj);
+	deleteInstance(firstObj);
 }
 
 //=============================================================================

@@ -258,7 +258,7 @@ void ScriptConditionsDlg::OnNew()
 		loadList();
 		setSel(pSavOr, pCond);
 	} else {
-		MemoryPoolObject::deleteInstance(pCond);
+		deleteInstance(pCond);
 	}
 }
 

@@ -703,7 +703,7 @@ void GameEngine::reset( void )
 	if(background)
 	{
 		background->destroyWindows();
-		MemoryPoolObject::deleteInstance(background);
+		deleteInstance(background);
 		background = NULL;
 	}
 }

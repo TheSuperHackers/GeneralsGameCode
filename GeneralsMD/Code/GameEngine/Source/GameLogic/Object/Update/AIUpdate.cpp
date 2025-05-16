@@ -104,7 +104,7 @@ AIUpdateModuleData::~AIUpdateModuleData()
 		{
 			TurretAIData* td = const_cast<TurretAIData*>(m_turretData[i]);
 			if (td)
-				MemoryPoolObject::deleteInstance(td);
+				deleteInstance(td);
 		}
 	}
 }
@@ -644,13 +644,13 @@ AIUpdateInterface::~AIUpdateInterface( void )
 
 	if( m_stateMachine ) {
 		m_stateMachine->halt();
-		MemoryPoolObject::deleteInstance(m_stateMachine);
+		deleteInstance(m_stateMachine);
 	}
 
 	for (int i = 0; i < MAX_TURRETS; i++)
 	{
 		if (m_turretAI[i])
-			MemoryPoolObject::deleteInstance(m_turretAI[i]);
+			deleteInstance(m_turretAI[i]);
 		m_turretAI[i] = NULL;
 	}
 	m_stateMachine = NULL;
@@ -2026,7 +2026,7 @@ void AIUpdateInterface::destroyPath( void )
 {
 	// destroy previous path
 	if (m_path)
-		MemoryPoolObject::deleteInstance(m_path);
+		deleteInstance(m_path);
 
 	m_path = NULL;
 	m_waitingForPath = FALSE; // we no longer need it.

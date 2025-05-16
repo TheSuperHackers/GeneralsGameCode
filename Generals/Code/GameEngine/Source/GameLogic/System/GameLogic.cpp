@@ -321,7 +321,7 @@ GameLogic::~GameLogic()
 	if (m_background)
 	{
 		m_background->destroyWindows();
-		MemoryPoolObject::deleteInstance(m_background);
+		deleteInstance(m_background);
 		m_background = NULL;
 	}
 
@@ -1014,7 +1014,7 @@ void GameLogic::startNewGame( Bool saveGame )
 				if(m_background)
 				{
 					m_background->destroyWindows();
-					MemoryPoolObject::deleteInstance(m_background);
+					deleteInstance(m_background);
 					m_background = NULL;
 				}
 				m_loadScreen = getLoadScreen( saveGame );
@@ -1121,7 +1121,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	if(m_background)
 	{
 		m_background->destroyWindows();
-		MemoryPoolObject::deleteInstance(m_background);
+		deleteInstance(m_background);
 		m_background = NULL;
 	}
 	setFPMode();
@@ -1398,7 +1398,7 @@ void GameLogic::startNewGame( Bool saveGame )
 				}
 				for (Int i=0; i<count; ++i)
 				{
-					MemoryPoolObject::deleteInstance(scripts[i]);
+					deleteInstance(scripts[i]);
 				}
 			}
 		}

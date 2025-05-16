@@ -94,7 +94,7 @@ SupplyTruckAIUpdate::SupplyTruckAIUpdate( Thing *thing, const ModuleData* module
 //-------------------------------------------------------------------------------------------------
 SupplyTruckAIUpdate::~SupplyTruckAIUpdate( void )
 {
-	MemoryPoolObject::deleteInstance(m_supplyTruckStateMachine);
+	deleteInstance(m_supplyTruckStateMachine);
 } 
 
 

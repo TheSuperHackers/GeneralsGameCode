@@ -115,7 +115,7 @@ void SimpleObjectIterator::makeEmpty()
 	while (m_firstClump)
 	{
 		Clump *next = m_firstClump->m_nextClump;
-		MemoryPoolObject::deleteInstance(m_firstClump);
+		deleteInstance(m_firstClump);
 		m_firstClump = next;
 		--m_clumpCount;
 	}

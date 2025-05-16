@@ -738,7 +738,7 @@ AIStateMachine::~AIStateMachine()
 {
 	if (m_goalSquad) 
 	{
-		MemoryPoolObject::deleteInstance(m_goalSquad);
+		deleteInstance(m_goalSquad);
 	}
 }
 
@@ -3522,7 +3522,7 @@ AIAttackMoveToState::AIAttackMoveToState( StateMachine *machine ) : AIMoveToStat
 //----------------------------------------------------------------------------------------------------------
 AIAttackMoveToState::~AIAttackMoveToState()
 {
-	MemoryPoolObject::deleteInstance(m_attackMoveMachine);
+	deleteInstance(m_attackMoveMachine);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -4377,7 +4377,7 @@ AIFollowWaypointPathState ( machine, asGroup, false )
 //-------------------------------------------------------------------------------------------------
 AIAttackFollowWaypointPathState::~AIAttackFollowWaypointPathState()
 {
-	MemoryPoolObject::deleteInstance(m_attackFollowMachine);
+	deleteInstance(m_attackFollowMachine);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -5385,7 +5385,7 @@ AIAttackState::~AIAttackState()
 	if (m_attackMachine) 
 	{
 		m_attackMachine->halt();
-		MemoryPoolObject::deleteInstance(m_attackMachine);
+		deleteInstance(m_attackMachine);
 	}
 }
 
@@ -5700,7 +5700,7 @@ void AIAttackState::onExit( StateExitType status )
 	// destroy the attack machine
 	if (m_attackMachine)
 	{
-		MemoryPoolObject::deleteInstance(m_attackMachine);
+		deleteInstance(m_attackMachine);
 		m_attackMachine = NULL;
 	}
 
@@ -5794,7 +5794,7 @@ AIAttackSquadState::~AIAttackSquadState()
 {
 	if (m_attackSquadMachine)	{
 		m_attackSquadMachine->halt();
-		MemoryPoolObject::deleteInstance(m_attackSquadMachine);
+		deleteInstance(m_attackSquadMachine);
 	}
 }
 
@@ -5919,7 +5919,7 @@ void AIAttackSquadState::onExit( StateExitType status )
 	if( m_attackSquadMachine )
 	{
 		// destroy the attack machine
-		MemoryPoolObject::deleteInstance(m_attackSquadMachine);
+		deleteInstance(m_attackSquadMachine);
 		m_attackSquadMachine = NULL;
 	}
 }
@@ -6031,7 +6031,7 @@ AIDockState::~AIDockState()
 {
 	if (m_dockMachine) {
 		m_dockMachine->halt();
-		MemoryPoolObject::deleteInstance(m_dockMachine);
+		deleteInstance(m_dockMachine);
 	}
 }
 
@@ -6135,7 +6135,7 @@ void AIDockState::onExit( StateExitType status )
 	// destroy the dock machine
 	if (m_dockMachine) {
 		m_dockMachine->halt();// GS, you have to halt before you delete to do cleanup.
-		MemoryPoolObject::deleteInstance(m_dockMachine);
+		deleteInstance(m_dockMachine);
 		m_dockMachine = NULL;
 	}	else {
 		DEBUG_LOG(("Dock exited immediately\n"));
@@ -6611,7 +6611,7 @@ AIGuardState::~AIGuardState()
 {
 	if (m_guardMachine)	{
 		m_guardMachine->halt();
-		MemoryPoolObject::deleteInstance(m_guardMachine);
+		deleteInstance(m_guardMachine);
 	}
 }
 
@@ -6721,7 +6721,7 @@ StateReturnType AIGuardState::onEnter()
 //----------------------------------------------------------------------------------------------------------
 void AIGuardState::onExit( StateExitType status )
 {
-	MemoryPoolObject::deleteInstance(m_guardMachine);
+	deleteInstance(m_guardMachine);
 	m_guardMachine = NULL;
 
 	Object *obj = getMachineOwner();
@@ -6762,7 +6762,7 @@ AIGuardRetaliateState::~AIGuardRetaliateState()
 {
 	if (m_guardRetaliateMachine)	{
 		m_guardRetaliateMachine->halt();
-		MemoryPoolObject::deleteInstance(m_guardRetaliateMachine);
+		deleteInstance(m_guardRetaliateMachine);
 	}
 }
 
@@ -6868,7 +6868,7 @@ StateReturnType AIGuardRetaliateState::onEnter()
 //----------------------------------------------------------------------------------------------------------
 void AIGuardRetaliateState::onExit( StateExitType status )
 {
-	MemoryPoolObject::deleteInstance(m_guardRetaliateMachine);
+	deleteInstance(m_guardRetaliateMachine);
 	m_guardRetaliateMachine = NULL;
 
 	Object *obj = getMachineOwner();
@@ -6907,7 +6907,7 @@ AITunnelNetworkGuardState::~AITunnelNetworkGuardState()
 {
 	if (m_guardMachine)	{
 		m_guardMachine->halt();
-		MemoryPoolObject::deleteInstance(m_guardMachine);
+		deleteInstance(m_guardMachine);
 	}
 }
 
@@ -6999,7 +6999,7 @@ StateReturnType AITunnelNetworkGuardState::onEnter()
 //----------------------------------------------------------------------------------------------------------
 void AITunnelNetworkGuardState::onExit( StateExitType status )
 {
-	MemoryPoolObject::deleteInstance(m_guardMachine);
+	deleteInstance(m_guardMachine);
 	m_guardMachine = NULL;
 
 	Object *obj = getMachineOwner();
@@ -7045,7 +7045,7 @@ AIHuntState::~AIHuntState()
 	if (m_huntMachine) 
 	{
 		m_huntMachine->halt();
-		MemoryPoolObject::deleteInstance(m_huntMachine);
+		deleteInstance(m_huntMachine);
 	}
 }
 
@@ -7123,7 +7123,7 @@ StateReturnType AIHuntState::onEnter()
 void AIHuntState::onExit( StateExitType status )
 {
 	// destroy the hunt machine
-	MemoryPoolObject::deleteInstance(m_huntMachine);
+	deleteInstance(m_huntMachine);
 	m_huntMachine = NULL;
 
 	Object *obj = getMachineOwner();
@@ -7252,7 +7252,7 @@ AIAttackAreaState::~AIAttackAreaState()
 {
 	if (m_attackMachine) {
 		m_attackMachine->halt();
-		MemoryPoolObject::deleteInstance(m_attackMachine);
+		deleteInstance(m_attackMachine);
 	}
 }
 
@@ -7327,7 +7327,7 @@ StateReturnType AIAttackAreaState::onEnter()
 void AIAttackAreaState::onExit( StateExitType status )
 {
 	// destroy the hunt machine
-	MemoryPoolObject::deleteInstance(m_attackMachine);
+	deleteInstance(m_attackMachine);
 	m_attackMachine = NULL;
 }
 

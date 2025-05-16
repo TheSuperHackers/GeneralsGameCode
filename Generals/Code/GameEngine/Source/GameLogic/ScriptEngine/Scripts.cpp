@@ -199,7 +199,7 @@ void ScriptList::reset(void)
 	{
 		ScriptList* pList = TheSidesList->getSideInfo(i)->getScriptList();
 		TheSidesList->getSideInfo(i)->setScriptList(NULL);
-		MemoryPoolObject::deleteInstance(pList);
+		deleteInstance(pList);
 	}
 }
 
@@ -221,11 +221,11 @@ m_firstScript(NULL)
 ScriptList::~ScriptList(void) 
 {
 	if (m_firstGroup) {
-		MemoryPoolObject::deleteInstance(m_firstGroup);
+		deleteInstance(m_firstGroup);
 		m_firstGroup = NULL;
 	}
 	if (m_firstScript) {
-		MemoryPoolObject::deleteInstance(m_firstScript);
+		deleteInstance(m_firstScript);
 		m_firstScript = NULL;
 	}
 }
@@ -418,7 +418,7 @@ void ScriptList::discard(void)
 {
 	m_firstGroup = NULL;
 	m_firstScript = NULL;
-	MemoryPoolObject::deleteInstance(this);
+	deleteInstance(this);
 }
 
 /**
@@ -490,7 +490,7 @@ void ScriptList::deleteScript(Script *pScr)
 	}
 	// Clear the link & delete.
 	pCur->setNextScript(NULL);
-	MemoryPoolObject::deleteInstance(pCur);
+	deleteInstance(pCur);
 }
 
 /**
@@ -515,7 +515,7 @@ void ScriptList::deleteGroup(ScriptGroup *pGrp)
 	}
 	// Clear the link & delete.
 	pCur->setNextGroup(NULL);
-	MemoryPoolObject::deleteInstance(pCur);
+	deleteInstance(pCur);
 }
 
 /**
@@ -532,7 +532,7 @@ Bool ScriptList::ParseScriptsDataChunk(DataChunkInput &file, DataChunkInfo *info
 	DEBUG_ASSERTCRASH(s_numInReadList==0, ("Leftover scripts floating aroung."));
 	for (i=0; i<s_numInReadList; i++) {
 		if (s_readLists[i]) {
-			MemoryPoolObject::deleteInstance(s_readLists[i]);
+			deleteInstance(s_readLists[i]);
 			s_readLists[i] = NULL;
 		}
 	}
@@ -656,7 +656,7 @@ ScriptGroup::~ScriptGroup(void)
 {
 	if (m_firstScript) {
 		// Delete the first script.  m_firstScript deletes the entire list.
-		MemoryPoolObject::deleteInstance(m_firstScript);
+		deleteInstance(m_firstScript);
 		m_firstScript = NULL;
 	}
 	if (m_nextGroup) {
@@ -666,7 +666,7 @@ ScriptGroup::~ScriptGroup(void)
 		while (cur) {
 			next = cur->getNext();
 			cur->setNextGroup(NULL); // prevents recursion. 
-			MemoryPoolObject::deleteInstance(cur);
+			deleteInstance(cur);
 			cur = next; 
 		}
 	}
@@ -822,7 +822,7 @@ void ScriptGroup::deleteScript(Script *pScr)
 	}
 	// Clear link & delete.
 	pCur->setNextScript(NULL);
-	MemoryPoolObject::deleteInstance(pCur);
+	deleteInstance(pCur);
 }
 
 /**
@@ -935,19 +935,19 @@ Script::~Script(void)
 		while (cur) {
 			next = cur->getNext();
 			cur->setNextScript(NULL); // prevents recursion. 
-			MemoryPoolObject::deleteInstance(cur);
+			deleteInstance(cur);
 			cur = next; 
 		}
 	}
 	if (m_condition) {
-		MemoryPoolObject::deleteInstance(m_condition);
+		deleteInstance(m_condition);
 	}
 	if (m_action) {
-		MemoryPoolObject::deleteInstance(m_action);
+		deleteInstance(m_action);
 	}
 
 	if (m_actionFalse) {
-		MemoryPoolObject::deleteInstance(m_actionFalse);
+		deleteInstance(m_actionFalse);
 	}
 }
 
@@ -996,10 +996,10 @@ Script *Script::duplicate(void) const
 {
 	Script *pNew = newInstance(Script);	
 	if (pNew->m_condition) {
-		MemoryPoolObject::deleteInstance(pNew->m_condition);
+		deleteInstance(pNew->m_condition);
 	}
 	if (pNew->m_action) {
-		MemoryPoolObject::deleteInstance(pNew->m_action);
+		deleteInstance(pNew->m_action);
 	}
 	pNew->m_scriptName = m_scriptName;
 	pNew->m_comment = m_comment;
@@ -1035,10 +1035,10 @@ Script *Script::duplicateAndQualify(const AsciiString& qualifier,
 {
 	Script *pNew = newInstance(Script);
 	if (pNew->m_condition) {
-		MemoryPoolObject::deleteInstance(pNew->m_condition);
+		deleteInstance(pNew->m_condition);
 	}
 	if (pNew->m_action) {
-		MemoryPoolObject::deleteInstance(pNew->m_action);
+		deleteInstance(pNew->m_action);
 	}
 	pNew->m_scriptName = m_scriptName;
 	pNew->m_scriptName.concat(qualifier);
@@ -1084,17 +1084,17 @@ void Script::updateFrom(Script *pSrc)
 	this->m_normal = pSrc->m_normal;
 	this->m_hard = pSrc->m_hard;
 	if (this->m_condition) {
-		MemoryPoolObject::deleteInstance(this->m_condition);
+		deleteInstance(this->m_condition);
 	}
 	this->m_condition = pSrc->m_condition;
 	pSrc->m_condition = NULL;
 	if (this->m_action) {
-		MemoryPoolObject::deleteInstance(this->m_action);
+		deleteInstance(this->m_action);
 	}
 	this->m_action = pSrc->m_action;
 	pSrc->m_action = NULL;
 	if (this->m_actionFalse) {
-		MemoryPoolObject::deleteInstance(this->m_actionFalse);
+		deleteInstance(this->m_actionFalse);
 	}
 	this->m_actionFalse = pSrc->m_actionFalse;
 	pSrc->m_actionFalse = NULL;
@@ -1119,7 +1119,7 @@ void Script::deleteOrCondition(OrCondition *pCond)
 		m_condition = pCur->getNextOrCondition();
 	}
 	pCur->setNextOrCondition(NULL);
-	MemoryPoolObject::deleteInstance(pCur);
+	deleteInstance(pCur);
 }
 
 
@@ -1142,7 +1142,7 @@ void Script::deleteAction(ScriptAction *pAct)
 		m_action = pCur->getNext();
 	}
 	pCur->setNextAction(NULL);
-	MemoryPoolObject::deleteInstance(pCur);
+	deleteInstance(pCur);
 }
 
 
@@ -1165,7 +1165,7 @@ void Script::deleteFalseAction(ScriptAction *pAct)
 		m_actionFalse = pCur->getNext();
 	}
 	pCur->setNextAction(NULL);
-	MemoryPoolObject::deleteInstance(pCur);
+	deleteInstance(pCur);
 }
 
 
@@ -1344,7 +1344,7 @@ OrCondition *Script::findPreviousOrCondition( OrCondition *curOr )
 OrCondition::~OrCondition(void) 
 {
 	if (m_firstAnd) {
-		MemoryPoolObject::deleteInstance(m_firstAnd);
+		deleteInstance(m_firstAnd);
 		m_firstAnd = NULL;
 	}
 	if (m_nextOr) {
@@ -1353,7 +1353,7 @@ OrCondition::~OrCondition(void)
 		while (cur) {
 			next = cur->getNextOrCondition();
 			cur->setNextOrCondition(NULL); // prevents recursion. 
-			MemoryPoolObject::deleteInstance(cur);
+			deleteInstance(cur);
 			cur = next; 
 		}
 	}
@@ -1426,7 +1426,7 @@ void OrCondition::deleteCondition(Condition *pCond)
 	DEBUG_ASSERTCRASH(pCur, ("Couldn't find condition."));
 	if (pCur==NULL) 
 		return;
-	MemoryPoolObject::deleteInstance(pCur);
+	deleteInstance(pCur);
 }
 
 
@@ -1532,7 +1532,7 @@ void Condition::setConditionType(enum ConditionType type)
 	Int i;
 	for (i=0; i<m_numParms; i++) {
 		if (m_parms[i]) 
-			MemoryPoolObject::deleteInstance(m_parms[i]);
+			deleteInstance(m_parms[i]);
 		m_parms[i] = NULL;
 	}
 	m_conditionType = type;
@@ -1590,7 +1590,7 @@ Condition::~Condition(void)
 {
 	Int i;
 	for (i=0; i<m_numParms; i++) {
-		MemoryPoolObject::deleteInstance(m_parms[i]);
+		deleteInstance(m_parms[i]);
 		m_parms[i] = NULL;
 	}
 	if (m_nextAndCondition) {
@@ -1599,7 +1599,7 @@ Condition::~Condition(void)
 		while (cur) {
 			next = cur->getNext();
 			cur->setNextCondition(NULL); // prevents recursion. 
-			MemoryPoolObject::deleteInstance(cur);
+			deleteInstance(cur);
 			cur = next; 
 		}
 	}
@@ -2223,7 +2223,7 @@ void ScriptAction::setActionType(enum ScriptActionType type)
 	Int i;
 	for (i=0; i<m_numParms; i++) {
 		if (m_parms[i]) 
-			MemoryPoolObject::deleteInstance(m_parms[i]);
+			deleteInstance(m_parms[i]);
 		m_parms[i] = NULL;
 	}
 	m_actionType = type;
@@ -2289,7 +2289,7 @@ ScriptAction::~ScriptAction(void)
 {
 	Int i;
 	for (i=0; i<m_numParms; i++) {
-		MemoryPoolObject::deleteInstance(m_parms[i]);
+		deleteInstance(m_parms[i]);
 		m_parms[i] = NULL;
 	}
 	if (m_nextAction) {
@@ -2298,7 +2298,7 @@ ScriptAction::~ScriptAction(void)
 		while (cur) {
 			next = cur->getNext();
 			cur->setNextAction(NULL); // prevents recursion. 
-			MemoryPoolObject::deleteInstance(cur);
+			deleteInstance(cur);
 			cur = next; 
 		}
 	}
@@ -2409,7 +2409,7 @@ Bool ScriptAction::ParseActionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 			if (pScriptAction->m_numParms == 1)
 			{		
 				Bool flank = pScriptAction->m_parms[0]->getInt()!=0;
-				MemoryPoolObject::deleteInstance(pScriptAction->m_parms[0]);
+				deleteInstance(pScriptAction->m_parms[0]);
 				pScriptAction->m_numParms = 0;
 				if (flank) pScriptAction->m_actionType = SKIRMISH_BUILD_BASE_DEFENSE_FLANK;
 			}

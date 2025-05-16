@@ -779,7 +779,7 @@ void RecorderClass::writeToFile(GameMessage * msg) {
 		writeArgument(msg->getArgumentDataType(i), *(msg->getArgument(i)));
 	}
 
-	MemoryPoolObject::deleteInstance(parser);
+	deleteInstance(parser);
 	parser = NULL;
 
 	fflush(m_file); ///< @todo should this be in the final release?
@@ -1369,17 +1369,17 @@ void RecorderClass::appendNextCommand() {
 
 	if (type == GameMessage::MSG_CLEAR_GAME_DATA || type == GameMessage::MSG_BEGIN_NETWORK_MESSAGES)
 	{
-		MemoryPoolObject::deleteInstance(msg);
+		deleteInstance(msg);
 		msg = NULL;
 	}
 
 	if (m_doingAnalysis)
 	{
-		MemoryPoolObject::deleteInstance(msg);
+		deleteInstance(msg);
 		msg = NULL;
 	}
 
-	MemoryPoolObject::deleteInstance(parser);
+	deleteInstance(parser);
 	parser = NULL;
 }
 
@@ -1514,7 +1514,7 @@ void RecorderClass::cullBadCommands() {
 				(msg->getType() < GameMessage::MSG_END_NETWORK_MESSAGES) &&
 				(msg->getType() != GameMessage::MSG_LOGIC_CRC)) {
 
-			MemoryPoolObject::deleteInstance(msg);
+			deleteInstance(msg);
 		}
 
 		msg = next;

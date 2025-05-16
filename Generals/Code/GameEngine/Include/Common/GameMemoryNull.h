@@ -114,6 +114,11 @@ public:
 	}
 };
 
+inline void deleteInstance(MemoryPoolObject* object)
+{
+	MemoryPoolObject::deleteInstance(object);
+}
+
 
 /**
 	Initialize the memory manager. Construct a new MemoryPoolFactory and 

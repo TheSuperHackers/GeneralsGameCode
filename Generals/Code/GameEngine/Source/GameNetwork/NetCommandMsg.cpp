@@ -66,12 +66,12 @@ void NetCommandMsg::attach() {
 void NetCommandMsg::detach() {
 	--m_referenceCount;
 	if (m_referenceCount == 0) {
-		MemoryPoolObject::deleteInstance(this);
+		deleteInstance(this);
 		return;
 	}
 	DEBUG_ASSERTCRASH(m_referenceCount > 0, ("Invalid reference count for NetCommandMsg")); // Just to make sure...
 	if (m_referenceCount < 0) {
-		MemoryPoolObject::deleteInstance(this);
+		deleteInstance(this);
 	}
 }
 
@@ -123,7 +123,7 @@ NetGameCommandMsg::~NetGameCommandMsg() {
 	GameMessageArgument *arg = m_argList;
 	while (arg != NULL) {
 		m_argList = m_argList->m_next;
-		MemoryPoolObject::deleteInstance(arg);
+		deleteInstance(arg);
 		arg = m_argList;
 	}
 }

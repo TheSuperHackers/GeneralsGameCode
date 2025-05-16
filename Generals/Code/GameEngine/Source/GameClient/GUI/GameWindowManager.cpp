@@ -122,7 +122,7 @@ void GameWindowManager::processDestroyList( void )
 
 		// free the memory
 		if (doDestroy)
-			MemoryPoolObject::deleteInstance(doDestroy);
+			deleteInstance(doDestroy);
 
 	}  // end for
 
@@ -1613,7 +1613,7 @@ Int GameWindowManager::winUnsetModal( GameWindow *window )
 
 	// remove from top of list
 	next = m_modalHead->next;
-	MemoryPoolObject::deleteInstance(m_modalHead);
+	deleteInstance(m_modalHead);
 	m_modalHead = next;
 
 	return WIN_ERR_OK;

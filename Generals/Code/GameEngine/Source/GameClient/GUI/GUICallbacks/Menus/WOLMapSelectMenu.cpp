@@ -382,7 +382,7 @@ WindowMsgHandledType WOLMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 				showGameSpyGameOptionsUnderlyingGUIElements( TRUE );
 
 				WOLMapSelectLayout->destroyWindows();
-				MemoryPoolObject::deleteInstance(WOLMapSelectLayout);
+				deleteInstance(WOLMapSelectLayout);
 				WOLMapSelectLayout = NULL;
 				WOLPositionStartSpots();
 			}  // end if
@@ -446,7 +446,7 @@ WindowMsgHandledType WOLMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 					WOLDisplayGameOptions();
 
 					WOLMapSelectLayout->destroyWindows();
-					MemoryPoolObject::deleteInstance(WOLMapSelectLayout);
+					deleteInstance(WOLMapSelectLayout);
 					WOLMapSelectLayout = NULL;
 
 					showGameSpyGameOptionsUnderlyingGUIElements( TRUE );

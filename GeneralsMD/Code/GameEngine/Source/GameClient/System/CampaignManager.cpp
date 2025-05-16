@@ -136,7 +136,7 @@ Campaign::~Campaign( void )
 		Mission *mission = *it;
 		it = m_missions.erase( it );
 		if(mission)
-			MemoryPoolObject::deleteInstance(mission);
+			deleteInstance(mission);
 	}
 }
 
@@ -157,7 +157,7 @@ Mission *Campaign::newMission( AsciiString name )
 		if(mission->m_name.compare(name) == 0)
 		{
 			m_missions.erase( it );
-			MemoryPoolObject::deleteInstance(mission);
+			deleteInstance(mission);
 			break;
 		}
 		else
@@ -242,7 +242,7 @@ CampaignManager::~CampaignManager( void )
 		Campaign *campaign = *it;
 		it = m_campaignList.erase( it );
 		if(campaign)
-			MemoryPoolObject::deleteInstance(campaign);
+			deleteInstance(campaign);
 	}
 }
 
@@ -404,7 +404,7 @@ Campaign *CampaignManager::newCampaign(AsciiString name)
 		if(campaign->m_name.compare(name) == 0)
 		{
 			m_campaignList.erase( it );
-			MemoryPoolObject::deleteInstance(campaign);
+			deleteInstance(campaign);
 			break;
 		}
 		else

@@ -976,7 +976,7 @@ ControlBar::~ControlBar( void )
 	if(m_scienceLayout)
 	{
 		m_scienceLayout->destroyWindows();
-		MemoryPoolObject::deleteInstance(m_scienceLayout);
+		deleteInstance(m_scienceLayout);
 	}
 	m_scienceLayout = NULL;
 	m_genArrow = NULL;
@@ -1008,7 +1008,7 @@ ControlBar::~ControlBar( void )
 	while( m_commandSets )
 	{
 		set = m_commandSets->friend_getNext();
-		MemoryPoolObject::deleteInstance(m_commandSets);
+		deleteInstance(m_commandSets);
 		m_commandSets = set;
 
 	}  // end while
@@ -1018,21 +1018,21 @@ ControlBar::~ControlBar( void )
 	while( m_commandButtons )
 	{
 		button = m_commandButtons->friend_getNext();
-		MemoryPoolObject::deleteInstance(m_commandButtons);
+		deleteInstance(m_commandButtons);
 		m_commandButtons = button;
 
 	}  // end while
 	if(m_buildToolTipLayout)
 	{
 		m_buildToolTipLayout->destroyWindows();
-		MemoryPoolObject::deleteInstance(m_buildToolTipLayout);
+		deleteInstance(m_buildToolTipLayout);
 		m_buildToolTipLayout = NULL;
 	}
 
 	if(m_specialPowerLayout)
 	{
 		m_specialPowerLayout->destroyWindows();
-		MemoryPoolObject::deleteInstance(m_specialPowerLayout);
+		deleteInstance(m_specialPowerLayout);
 		m_specialPowerLayout = NULL;
 	}
 
@@ -3234,7 +3234,7 @@ void ControlBar::initSpecialPowershortcutBar( Player *player)
 	if(m_specialPowerLayout)
 	{
 		m_specialPowerLayout->destroyWindows();
-		MemoryPoolObject::deleteInstance(m_specialPowerLayout);
+		deleteInstance(m_specialPowerLayout);
 		m_specialPowerLayout = NULL;
 	}
 	m_specialPowerShortcutParent = NULL;

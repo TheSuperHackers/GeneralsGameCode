@@ -411,7 +411,7 @@ public:
 	Bool isInList(Object **pListHead) const;
 
 	// this is intended for use ONLY by GameLogic.
-	static void friend_deleteInstance(MemoryPoolObject* object) { MemoryPoolObject::deleteInstance(object); }
+	static void friend_deleteInstance(Object* object) { deleteInstance(object); }
 
 	/// cache the partition module (should be called only by PartitionData)
 	void friend_setPartitionData(PartitionData *pd) { m_partitionData = pd; }

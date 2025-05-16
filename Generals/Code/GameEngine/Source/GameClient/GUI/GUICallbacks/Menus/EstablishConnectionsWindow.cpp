@@ -157,7 +157,7 @@ void HideEstablishConnectionsWindow( void ) {
 //	establishConnectionsLayout->hide(TRUE);
 //	TheWindowManager->winDestroy(establishConnectionsLayout);
 	establishConnectionsLayout->destroyWindows();
-	MemoryPoolObject::deleteInstance(establishConnectionsLayout);
+	deleteInstance(establishConnectionsLayout);
 	establishConnectionsLayout = NULL;
 	if (!TheGameSpyGame->isQMGame())
 	{

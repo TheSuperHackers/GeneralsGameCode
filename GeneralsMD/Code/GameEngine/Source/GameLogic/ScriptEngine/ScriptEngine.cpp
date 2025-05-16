@@ -6706,7 +6706,7 @@ void ScriptEngine::removeObjectTypes(ObjectTypes *typesToRemove)
 	}
 
 	// delete it.
-	MemoryPoolObject::deleteInstance(typesToRemove);
+	deleteInstance(typesToRemove);
 
 	// remove it from the main array of stuff
 	m_allObjectTypeLists.erase(it);
@@ -8077,14 +8077,14 @@ ScriptEngine::VecSequentialScriptPtrIt ScriptEngine::cleanupSequentialScript(Vec
 		while (seqScript) {
 			scriptToDelete = seqScript;
 			seqScript = seqScript->m_nextScriptInSequence;
-			MemoryPoolObject::deleteInstance(scriptToDelete);
+			deleteInstance(scriptToDelete);
 			scriptToDelete = NULL;
 		}
 		(*it) = NULL;
 	} else {
 		// we want to make sure to not delete any dangling scripts.
 		(*it) = scriptToDelete->m_nextScriptInSequence;
-		MemoryPoolObject::deleteInstance(scriptToDelete);
+		deleteInstance(scriptToDelete);
 		scriptToDelete = NULL;
 	}
 

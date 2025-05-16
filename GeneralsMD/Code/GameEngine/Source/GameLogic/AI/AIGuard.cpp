@@ -462,13 +462,13 @@ void AIGuardInnerState::onExit( StateExitType status )
 	if (m_attackState) 
 	{
 		m_attackState->onExit(status);
-		MemoryPoolObject::deleteInstance(m_attackState);
+		deleteInstance(m_attackState);
 		m_attackState = NULL;
 	}
 	else if (m_enterState)
 	{
 		m_enterState->onExit(status);
-		MemoryPoolObject::deleteInstance(m_enterState);
+		deleteInstance(m_enterState);
 		m_enterState = NULL;
 	}
 	
@@ -590,7 +590,7 @@ void AIGuardOuterState::onExit( StateExitType status )
 	if (m_attackState) 
 	{
 		m_attackState->onExit(status);
-		MemoryPoolObject::deleteInstance(m_attackState);
+		deleteInstance(m_attackState);
 		m_attackState = NULL;
 	}
 }
@@ -870,7 +870,7 @@ void AIGuardAttackAggressorState::onExit( StateExitType status )
 	if (m_attackState) 
 	{
 		m_attackState->onExit(status);
-		MemoryPoolObject::deleteInstance(m_attackState);
+		deleteInstance(m_attackState);
 		m_attackState = NULL;
 	}
 

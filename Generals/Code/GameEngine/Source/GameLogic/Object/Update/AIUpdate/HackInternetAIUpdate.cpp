@@ -158,7 +158,7 @@ void HackInternetAIUpdate::aiDoCommand(const AICommandParms* parms)
 void HackInternetAIUpdate::hackInternet()
 {
 	//if (m_hackInternetStateMachine)
-	//	MemoryPoolObject::deleteInstance(m_hackInternetStateMachine);
+	//	deleteInstance(m_hackInternetStateMachine);
 	//m_hackInternetStateMachine = NULL;
 
 	// must make the state machine AFTER initing the other stuff, since it may inquire of its values...

@@ -226,7 +226,7 @@ SpecialPowerStore::~SpecialPowerStore( void )
 
 	// delete all templates
 	for( Int i = 0; i < m_specialPowerTemplates.size(); ++i )
-		MemoryPoolObject::deleteInstance(m_specialPowerTemplates[ i ]);
+		deleteInstance(m_specialPowerTemplates[ i ]);
 
 	// erase the list
 	m_specialPowerTemplates.clear();

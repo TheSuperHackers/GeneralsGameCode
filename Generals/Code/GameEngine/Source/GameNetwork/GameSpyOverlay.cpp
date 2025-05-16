@@ -267,7 +267,7 @@ void GameSpyCloseOverlay( GSOverlayType overlay )
 	{
 		overlayLayouts[overlay]->runShutdown();
 		overlayLayouts[overlay]->destroyWindows();
-		MemoryPoolObject::deleteInstance(overlayLayouts[overlay]);
+		deleteInstance(overlayLayouts[overlay]);
 		overlayLayouts[overlay] = NULL;
 	}
 }

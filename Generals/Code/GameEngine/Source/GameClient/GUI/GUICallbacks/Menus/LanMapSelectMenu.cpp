@@ -345,7 +345,7 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 			{
 				
 				mapSelectLayout->destroyWindows();
-				MemoryPoolObject::deleteInstance(mapSelectLayout);
+				deleteInstance(mapSelectLayout);
 				mapSelectLayout = NULL;
 				// set the controls to NULL since they've been destroyed.
 				NullifyControls();
@@ -391,7 +391,7 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 
 					
 					mapSelectLayout->destroyWindows();
-					MemoryPoolObject::deleteInstance(mapSelectLayout);
+					deleteInstance(mapSelectLayout);
 					mapSelectLayout = NULL;
 
 					// set the controls to NULL since they've been destroyed.

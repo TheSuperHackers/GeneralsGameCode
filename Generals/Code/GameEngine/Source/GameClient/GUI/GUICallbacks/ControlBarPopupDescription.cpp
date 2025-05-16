@@ -163,7 +163,7 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 		else
 		{
 //			m_buildToolTipLayout->destroyWindows();
-//			MemoryPoolObject::deleteInstance(m_buildToolTipLayout);
+//			deleteInstance(m_buildToolTipLayout);
 //			m_buildToolTipLayout = NULL;
 			m_buildToolTipLayout->hide(TRUE);
 			prevWindow = NULL;
@@ -206,7 +206,7 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 		//	if (m_buildToolTipLayout)
 		//	{
 		//		m_buildToolTipLayout->destroyWindows();
-		//		MemoryPoolObject::deleteInstance(m_buildToolTipLayout);
+		//		deleteInstance(m_buildToolTipLayout);
 		//
 		//	}
 
@@ -649,7 +649,7 @@ void ControlBar::deleteBuildTooltipLayout( void )
 //		return;
 //	
 //	m_buildToolTipLayout->destroyWindows();
-//	MemoryPoolObject::deleteInstance(m_buildToolTipLayout);
+//	deleteInstance(m_buildToolTipLayout);
 //	m_buildToolTipLayout = NULL;
 	if(theAnimateWindowManager)
 		delete theAnimateWindowManager;

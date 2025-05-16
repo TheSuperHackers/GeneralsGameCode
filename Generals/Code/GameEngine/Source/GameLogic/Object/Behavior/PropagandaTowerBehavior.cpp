@@ -263,7 +263,7 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 				prev->next = curr->next;
 			else
 				m_insideList = curr->next;
-			MemoryPoolObject::deleteInstance(curr);
+			deleteInstance(curr);
 				
 		}  // end else
 
@@ -371,7 +371,7 @@ void PropagandaTowerBehavior::removeAllInfluence( void )
 	{
 
 		o = m_insideList->next;
-		MemoryPoolObject::deleteInstance(m_insideList);
+		deleteInstance(m_insideList);
 		m_insideList = o;
 
 	}  // end while
@@ -503,7 +503,7 @@ void PropagandaTowerBehavior::doScan( void )
 	{
 
 		next = m_insideList->next;
-		MemoryPoolObject::deleteInstance(m_insideList);
+		deleteInstance(m_insideList);
 		m_insideList = next;
 
 	}  // end while

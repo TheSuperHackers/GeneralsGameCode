@@ -99,7 +99,7 @@ TerrainTypeCollection::~TerrainTypeCollection( void )
 		temp = m_terrainList->friend_getNext();
 
 		// delete the head of the type list
-		MemoryPoolObject::deleteInstance(m_terrainList);
+		deleteInstance(m_terrainList);
 
 		// set the new head of the type list
 		m_terrainList = temp;

@@ -291,7 +291,7 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 	if(m_background)
 	{
 		m_background->destroyWindows();
-		MemoryPoolObject::deleteInstance(m_background);
+		deleteInstance(m_background);
 		m_background = NULL;
 	}
 	

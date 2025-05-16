@@ -929,7 +929,7 @@ void ScriptDialog::OnNewFolder()
 			savSel.m_objType = ListType::GROUP_TYPE;
 			updateSelection(savSel);
 		} else {
-			MemoryPoolObject::deleteInstance(pNewGroup);
+			deleteInstance(pNewGroup);
 		}
 	}
 	updateIcons(TVI_ROOT);
@@ -970,7 +970,7 @@ void ScriptDialog::OnNewScript()
 	if (IDOK == editDialog.DoModal()) {
 		insertScript(pNewScript);
 	}	else {
-		MemoryPoolObject::deleteInstance(pNewScript);
+		deleteInstance(pNewScript);
 	}
 	updateIcons(TVI_ROOT);
 }		
@@ -1069,7 +1069,7 @@ void ScriptDialog::OnEditScript()
 		}
 	}
 	updateIcons(TVI_ROOT);
-	MemoryPoolObject::deleteInstance(pDup);
+	deleteInstance(pDup);
 }
 
 void ScriptDialog::OnCopyScript() 
@@ -1508,7 +1508,7 @@ void ScriptDialog::OnSave()
 			DEBUG_CRASH(("threw exception in ScriptDialog::OnSave"));
 	}
 	if (!doAllScripts) {
-		MemoryPoolObject::deleteInstance(scripts[0]);
+		deleteInstance(scripts[0]);
 	}
 	theFile.Close();
 }
@@ -1725,7 +1725,7 @@ Bool ScriptDialog::ParseObjectDataChunk(DataChunkInput &file, DataChunkInfo *inf
 		if (duplicate) break;
 	}
 	if (duplicate) {
-		MemoryPoolObject::deleteInstance(pThisOne);
+		deleteInstance(pThisOne);
 		return true;
 	}
 
@@ -1920,7 +1920,7 @@ Bool ScriptDialog::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChunk
 			}
 		}
 		if (duplicate ) {
-			MemoryPoolObject::deleteInstance(pTrig);
+			deleteInstance(pTrig);
 		} else {
 			if (pPrevTrig) {
 				pPrevTrig->setNextPoly(pTrig);

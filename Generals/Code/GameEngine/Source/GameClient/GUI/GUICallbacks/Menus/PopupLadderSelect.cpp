@@ -596,7 +596,7 @@ static void closeRightClickMenu(GameWindow *win)
 		if(!winLay)
 			return;
 		winLay->destroyWindows();					
-		MemoryPoolObject::deleteInstance(winLay);
+		deleteInstance(winLay);
 		winLay = NULL;
 
 	}
