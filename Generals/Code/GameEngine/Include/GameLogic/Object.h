@@ -158,8 +158,6 @@ class Object : public Thing, public Snapshot
 {
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Object, "ObjectPool" )		
-	/// destructor is non-public in order to require the use of TheGameLogic->destroyObject()
-	MEMORY_POOL_DELETEINSTANCE_VISIBILITY(protected)
 
 public:
 
@@ -764,6 +762,9 @@ private:
 	Bool													m_isReceivingDifficultyBonus;
 
 };  // end class Object
+
+// deleteInstance is not meant to be used with Object in order to require the use of TheGameLogic->destroyObject()
+void deleteInstance(Object* object) CPP_11(= delete);
 
 // describe an object as an AsciiString: e.g. "Object 102 (KillerBuggy) [GLARocketBuggy, owned by player 2 (GLAIntroPlayer)]"
 AsciiString DebugDescribeObject(const Object *obj);

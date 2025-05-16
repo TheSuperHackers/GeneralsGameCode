@@ -914,22 +914,6 @@ public:
 };
 
 
-// ----------------------------------------------------------------------------
-/**
-	Sometimes you want to make a class's destructor protected so that it can only
-	be destroyed under special circumstances. MemoryPoolObject short-circuits this
-	by making the destructor always be protected, and the true delete technique
-	(namely, deleteInstance) always public by default. You can simulate the behavior
-	you really want by including this macro 
-*/
-#define MEMORY_POOL_DELETEINSTANCE_VISIBILITY(ARGVIS)\
-ARGVIS: \
-	static void deleteInstance(MemoryPoolObject* object) { \
-		MemoryPoolObject::deleteInstance(object); \
-	} \
-public: 
-
-
 #define EMPTY_DTOR(CLASS) inline CLASS::~CLASS() { }
 
 #endif // _GAME_MEMORY_H_
