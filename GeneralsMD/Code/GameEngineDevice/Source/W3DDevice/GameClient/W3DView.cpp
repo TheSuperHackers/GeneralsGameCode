@@ -119,18 +119,7 @@ inline Real maxf(Real a, Real b) { if (a > b) return a; else return b; }
 //-------------------------------------------------------------------------------------------------
 static void normAngle(Real &angle)
 {
-	if (angle < -10*PI) {
-		angle = 0;
-	}
-	if (angle > 10*PI) {
-		angle = 0;
-	}
-	while (angle < -PI) {
-		angle += 2*PI;
-	}
-	while (angle > PI) {
-		angle -= 2*PI;
-	}
+	angle = angle - (TWO_PI * floorf((angle + PI) / TWO_PI));
 }
 
 #define TERRAIN_SAMPLE_SIZE 40.0f
@@ -1945,15 +1934,7 @@ void W3DView::setHeightAboveGround(Real z)
 
   // if our zoom is limited, we will stay within a predefined distance from the terrain
 	if( m_zoomLimited )
-	{
-
-		if (m_heightAboveGround < m_minHeightAboveGround)
-			m_heightAboveGround = m_minHeightAboveGround;
-
-		if (m_heightAboveGround > m_maxHeightAboveGround)
-			m_heightAboveGround = m_maxHeightAboveGround;
-
-	}
+		m_heightAboveGround = clamp<Real>(m_minHeightAboveGround, m_heightAboveGround, m_maxHeightAboveGround);
 
 	m_doingMoveCameraOnWaypointPath = false;
 	m_CameraArrivedAtWaypointOnPathFlag = false;
@@ -1969,13 +1950,7 @@ void W3DView::setHeightAboveGround(Real z)
 //-------------------------------------------------------------------------------------------------
 void W3DView::setZoom(Real z)
 {
-	m_zoom = z;
-
-	if (m_zoom < m_minZoom)
-		m_zoom = m_minZoom;
-
-	if (m_zoom > m_maxZoom)
-		m_zoom = m_maxZoom;
+	m_zoom = clamp<Real>(m_minZoom, z, m_maxZoom);
 
 	m_doingMoveCameraOnWaypointPath = false;
 	m_CameraArrivedAtWaypointOnPathFlag = false;

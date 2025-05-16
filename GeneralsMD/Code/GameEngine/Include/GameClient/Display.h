@@ -97,6 +97,12 @@ public:
 #endif
 
 	//---------------------------------------------------------------------------------------
+	// Display scaling methods
+	virtual Real getWidthScale( void );
+	virtual Real getHeightScale( void );
+	virtual Real getAspectRatioScale( void );
+
+	//---------------------------------------------------------------------------------------
 	// View management
 	virtual void attachView( View *view );												///< Attach the given view to the world
 	virtual View *getFirstView( void ) { return m_viewList; }				///< Return the first view of the world

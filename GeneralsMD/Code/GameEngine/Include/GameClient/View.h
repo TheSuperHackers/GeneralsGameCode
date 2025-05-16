@@ -43,6 +43,9 @@
 #define DEFAULT_VIEW_ORIGIN_X 0
 #define DEFAULT_VIEW_ORIGIN_Y 0
 
+#define DEFAULT_VIEW_MAX_ZOOM 1.3f
+#define DEFAULT_VIEW_MIN_ZOOM 0.2f
+
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 class Drawable;
 class ViewLocation;
