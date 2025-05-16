@@ -1927,22 +1927,6 @@ Weapon& Weapon::operator=(const Weapon& that)
 Weapon::~Weapon()
 {
 }
-//-------------------------------------------------------------------------------------------------
-// DEBUG
-static void debug_printWeaponBonus(WeaponBonus* bonus, AsciiString name) {
-	const char* bonusNames[] = {
-		"DAMAGE",
-		"RADIUS",
-		"RANGE",
-		"RATE_OF_FIRE",
-		"PRE_ATTACK"
-	};
-	DEBUG_LOG((">>> Weapon bonus for '%s':\n", name.str()));
-	for (int i = 0; i < 5; i++) {
-		DEBUG_LOG((">>> -- '%s' : %f\n", bonusNames[i], bonus->getField(static_cast<WeaponBonus::Field>(i))));
-	}
-}
-
 
 //-------------------------------------------------------------------------------------------------
 // DEBUG
