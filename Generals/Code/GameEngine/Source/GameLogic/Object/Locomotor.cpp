@@ -512,7 +512,7 @@ LocomotorStore::~LocomotorStore()
 	// delete all the templates, then clear out the table.
 	LocomotorTemplateMap::iterator it;
 	for (it = m_locomotorTemplates.begin(); it != m_locomotorTemplates.end(); ++it) {
-		it->second->deleteInstance();
+		MemoryPoolObject::deleteInstance(it->second);
 	}
 
 	m_locomotorTemplates.clear();
@@ -2727,7 +2727,7 @@ void LocomotorSet::clear()
 	for (int i = 0; i < m_locomotors.size(); ++i)
 	{
 		if (m_locomotors[i])
-			m_locomotors[i]->deleteInstance();
+			MemoryPoolObject::deleteInstance(m_locomotors[i]);
 	}
 	m_locomotors.clear();
 	m_validLocomotorSurfaces = 0;

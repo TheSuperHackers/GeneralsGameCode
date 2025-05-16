@@ -192,7 +192,7 @@ void File::close( void )
 		m_open = FALSE;
 		if ( m_deleteOnClose )
 		{
-			this->deleteInstance(); // on special cases File object will delete itself when closing
+			MemoryPoolObject::deleteInstance(this); // on special cases File object will delete itself when closing
 		}
 	}
 }

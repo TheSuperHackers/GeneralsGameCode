@@ -755,13 +755,13 @@ protected:
 	
 public: 
 
-	void deleteInstance() 
+	static void deleteInstance(MemoryPoolObject* mpo) 
 	{	
-		if (this)
+		if (mpo)
 		{
-			MemoryPool *pool = this->getObjectMemoryPool(); // save this, since the dtor will nuke our vtbl
-			this->~MemoryPoolObject();	// it's virtual, so the right one will be called.
-			pool->freeBlock((void *)this); 
+			MemoryPool *pool = mpo->getObjectMemoryPool(); // save this, since the dtor will nuke our vtbl
+			mpo->~MemoryPoolObject();	// it's virtual, so the right one will be called.
+			pool->freeBlock((void *)mpo); 
 		}
 	} 
 };
@@ -903,7 +903,7 @@ public:
 	MemoryPoolObjectHolder(MemoryPoolObject *mpo = NULL) : m_mpo(mpo) { }
 	void hold(MemoryPoolObject *mpo) { DEBUG_ASSERTCRASH(!m_mpo, ("already holding")); m_mpo = mpo; }
 	void release() { m_mpo = NULL; }
-	~MemoryPoolObjectHolder() { m_mpo->deleteInstance(); }
+	~MemoryPoolObjectHolder() { MemoryPoolObject::deleteInstance(m_mpo); }
 };
 
 
@@ -915,7 +915,11 @@ public:
 	you really want by including this macro 
 */
 #define MEMORY_POOL_DELETEINSTANCE_VISIBILITY(ARGVIS)\
-ARGVIS:	void deleteInstance() { MemoryPoolObject::deleteInstance(); } public: 
+ARGVIS: \
+	static void deleteInstance(MemoryPoolObject* object) { \
+		MemoryPoolObject::deleteInstance(object); \
+	} \
+public: 
 
 
 #define EMPTY_DTOR(CLASS) inline CLASS::~CLASS() { }

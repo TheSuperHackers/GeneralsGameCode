@@ -245,7 +245,7 @@ GroveTool::GroveTool(void) :
 GroveTool::~GroveTool(void) 
 {
 	if (m_headMapObj) {
-		m_headMapObj->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_headMapObj);
 	}
 }
 

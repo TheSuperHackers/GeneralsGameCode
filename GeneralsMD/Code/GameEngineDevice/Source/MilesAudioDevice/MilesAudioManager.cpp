@@ -597,7 +597,7 @@ void MilesAudioManager::pauseAudio( AudioAffect which )
 		AudioRequest *req = (*ait);
 		if( req && req->m_request == AR_Play ) 
 		{
-			req->deleteInstance();
+			MemoryPoolObject::deleteInstance(req);
 			ait = m_audioRequests.erase(ait);
 		}
 		else
@@ -983,7 +983,7 @@ void MilesAudioManager::killAudioEventImmediately( AudioHandle audioEvent )
 		AudioRequest *req = (*ait);
 		if( req && req->m_request == AR_Play && req->m_handleToInteractOn == audioEvent ) 
 		{
-			req->deleteInstance();
+			MemoryPoolObject::deleteInstance(req);
 			ait = m_audioRequests.erase(ait);
 			return;
 		}
@@ -2257,7 +2257,7 @@ void MilesAudioManager::processRequestList( void )
 		if (!req->m_requiresCheckForSample || checkForSample(req)) {
 			processRequest(req);
 		}
-		req->deleteInstance();
+		MemoryPoolObject::deleteInstance(req);
 		it = m_audioRequests.erase(it);
 	}
 }

@@ -79,7 +79,7 @@ FireWeaponUpdate::FireWeaponUpdate( Thing *thing, const ModuleData* moduleData )
 FireWeaponUpdate::~FireWeaponUpdate( void )
 {
 	if (m_weapon)
-		m_weapon->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_weapon);
 }
 
 //-------------------------------------------------------------------------------------------------

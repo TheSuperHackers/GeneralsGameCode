@@ -4698,7 +4698,7 @@ void ScriptActions::doUnitStartSequentialScript(const AsciiString& unitName, con
 	
 	TheScriptEngine->appendSequentialScript(seqScript);
 
-	seqScript->deleteInstance();
+	MemoryPoolObject::deleteInstance(seqScript);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4795,7 +4795,7 @@ void ScriptActions::doTeamStartSequentialScript(const AsciiString& teamName, con
 	
 	TheScriptEngine->appendSequentialScript(seqScript);
 
-	seqScript->deleteInstance();
+	MemoryPoolObject::deleteInstance(seqScript);
 }
 
 //-------------------------------------------------------------------------------------------------

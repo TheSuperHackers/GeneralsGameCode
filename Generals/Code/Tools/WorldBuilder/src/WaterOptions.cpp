@@ -255,7 +255,7 @@ void WaterOptions::OnMakeRiver()
 					for (i=0; i<pNew->getNumPoints(); i++) {
 						theTrigger->addPoint(*pNew->getPoint(i));
 					}
-					pNew->deleteInstance();
+					MemoryPoolObject::deleteInstance(pNew);
 				}
 			}
 		}

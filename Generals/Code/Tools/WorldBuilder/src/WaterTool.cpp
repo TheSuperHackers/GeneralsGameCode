@@ -473,7 +473,7 @@ void WaterTool::fillTheArea(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 	
 	if (pNew->getNumPoints()>2) {
 		PolygonTrigger *pBetter = adjustSpacing(pNew, WaterOptions::getSpacing());
-		pNew->deleteInstance();
+		MemoryPoolObject::deleteInstance(pNew);
 		pNew = pBetter;
 		pNew->setWaterArea(true);
 		AddPolygonUndoable *pUndo = new AddPolygonUndoable(pNew);
@@ -483,7 +483,7 @@ void WaterTool::fillTheArea(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 		m_poly_dragPointNdx = -1;
 		WaterOptions::update();
 	}	else {
-		pNew->deleteInstance();
+		MemoryPoolObject::deleteInstance(pNew);
 	}
 
 }

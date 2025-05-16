@@ -95,7 +95,7 @@ PickUnitDialog::PickUnitDialog(UINT id, CWnd* pParent /*=NULL*/)
 PickUnitDialog::~PickUnitDialog()
 {
 	if (m_objectsList) {
-		m_objectsList->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_objectsList);
 	}
 	m_objectsList = NULL;
 }

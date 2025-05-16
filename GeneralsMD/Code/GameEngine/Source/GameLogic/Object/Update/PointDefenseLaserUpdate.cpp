@@ -216,7 +216,7 @@ void PointDefenseLaserUpdate::fireWhenReady()
 				Weapon* w = TheWeaponStore->allocateNewWeapon( wt, TERTIARY_WEAPON );
 				w->loadAmmoNow( getObject() );
 				w->fireWeapon( getObject(), target );
-				w->deleteInstance();
+				MemoryPoolObject::deleteInstance(w);
 
 				// And now that we have shot, set our internal reload timer.
 				m_nextShotAvailableInFrames = wt->getDelayBetweenShots( bonus );

@@ -336,7 +336,7 @@ GameLogic::~GameLogic()
 	if (m_background)
 	{
 		m_background->destroyWindows();
-		m_background->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_background);
 		m_background = NULL;
 	}
 
@@ -1151,7 +1151,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 				if(m_background)
 				{
 					m_background->destroyWindows();
-					m_background->deleteInstance();
+					MemoryPoolObject::deleteInstance(m_background);
 					m_background = NULL;
 				}
 				m_loadScreen = getLoadScreen( loadingSaveGame );
@@ -1281,7 +1281,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	if(m_background)
 	{
 		m_background->destroyWindows();
-		m_background->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_background);
 		m_background = NULL;
 	}
 	setFPMode();
@@ -1558,7 +1558,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 				}
 				for (Int i=0; i<count; ++i)
 				{
-					scripts[i]->deleteInstance();
+					MemoryPoolObject::deleteInstance(scripts[i]);
 				}
 			}
 		}
@@ -2537,7 +2537,7 @@ void GameLogic::processDestroyList( void )
 		// remove object from lookup table
 		removeObjectFromLookupTable( currentObject );
 
-		currentObject->friend_deleteInstance();//actual delete
+		Object::friend_deleteInstance(currentObject);//actual delete
 	}
 
 	m_objectsToDestroy.clear();//list full of bad pointers now, clear it.  If anyone's deletion resulted

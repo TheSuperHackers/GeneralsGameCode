@@ -108,7 +108,7 @@ class Overridable : public MemoryPoolObject
 		{
 			if ( m_isOverride )
 			{
-				deleteInstance();
+				MemoryPoolObject::deleteInstance(this);
 				return NULL;
 			}
 			else if ( m_nextOverride )
@@ -123,7 +123,7 @@ class Overridable : public MemoryPoolObject
 __inline Overridable::~Overridable() 
 {
 	if (m_nextOverride) 
-		m_nextOverride->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_nextOverride);
 }
 
 

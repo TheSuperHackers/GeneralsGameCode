@@ -309,7 +309,7 @@ void Display::update( void )
 				{
 					//display the copyrighttext;		
 					if(m_copyrightDisplayString)
-						m_copyrightDisplayString->deleteInstance();
+						MemoryPoolObject::deleteInstance(m_copyrightDisplayString);
 					m_copyrightDisplayString = TheDisplayStringManager->newDisplayString();
 					m_copyrightDisplayString->setText(TheGameText->fetch("GUI:EACopyright"));
 					if (TheGlobalLanguageData && TheGlobalLanguageData->m_copyrightFont.name.isNotEmpty())

@@ -138,7 +138,7 @@ MapObject::~MapObject(void)
 		while (cur) {
 			next = cur->getNext();
 			cur->setNextMap(NULL); // prevents recursion. 
-			cur->deleteInstance();
+			MemoryPoolObject::deleteInstance(cur);
 			cur = next;
 		}
 	}
@@ -424,7 +424,7 @@ void WorldHeightMap::freeListOfMapObjects(void)
 {
 	if (MapObject::TheMapObjectListPtr) 
 	{
-		MapObject::TheMapObjectListPtr->deleteInstance();
+		MemoryPoolObject::deleteInstance(MapObject::TheMapObjectListPtr);
 		MapObject::TheMapObjectListPtr = NULL;
 	}
 	MapObject::getWorldDict()->clear();

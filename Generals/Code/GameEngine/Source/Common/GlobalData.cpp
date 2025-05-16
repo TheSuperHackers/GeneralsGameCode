@@ -1061,7 +1061,7 @@ GlobalData::~GlobalData( void )
 	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("~GlobalData: theOriginal is not original\n") );
 
 	if (m_weaponBonusSet)
-		m_weaponBonusSet->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_weaponBonusSet);
 
 	if( m_theOriginal == this )	{
 		m_theOriginal = NULL;

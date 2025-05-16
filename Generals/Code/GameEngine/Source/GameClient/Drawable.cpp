@@ -136,7 +136,7 @@ void DrawableIconInfo::clear()
 	for (int i = 0; i < MAX_ICONS; ++i)
 	{
 		if (m_icon[i])
-			m_icon[i]->deleteInstance();
+			MemoryPoolObject::deleteInstance(m_icon[i]);
 		m_icon[i] = NULL;
 		m_keepTillFrame[i] = 0;
 	}
@@ -148,7 +148,7 @@ void DrawableIconInfo::killIcon(DrawableIconType t)
 {
 	if (m_icon[t])
 	{
-		m_icon[t]->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_icon[t]);
 		m_icon[t] = NULL;
 		m_keepTillFrame[t] = 0;
 	}
@@ -500,7 +500,7 @@ Drawable::~Drawable()
 	{
 		for (Module** m = m_modules[i]; m && *m; ++m)
 		{
-			(*m)->deleteInstance();
+			MemoryPoolObject::deleteInstance((*m));
 			*m = NULL;	// in case other modules call findModule from their dtor!
 		}
 		delete [] m_modules[i]; 
@@ -510,7 +510,7 @@ Drawable::~Drawable()
 	stopAmbientSound();
 	if (m_ambientSound)
 	{
-		m_ambientSound->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_ambientSound);
 		m_ambientSound = NULL;
 	}
 
@@ -524,17 +524,17 @@ Drawable::~Drawable()
 
 	// delete any icons present
 	if (m_iconInfo)
-		m_iconInfo->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_iconInfo);
 
 	if (m_selectionFlashEnvelope)
-		m_selectionFlashEnvelope->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_selectionFlashEnvelope);
 
 	if (m_colorTintEnvelope)
-		m_colorTintEnvelope->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_colorTintEnvelope);
 
 	if (m_locoInfo)
 	{
-		m_locoInfo->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_locoInfo);
 		m_locoInfo = NULL;
 	}
 }
@@ -3916,7 +3916,7 @@ void Drawable::startAmbientSound(BodyDamageType dt, TimeOfDay tod)
 		else
 		{
 			DEBUG_CRASH( ("Ambient sound %s missing! Skipping...", m_ambientSound->m_event.getEventName().str() ) );
-			m_ambientSound->deleteInstance();
+			MemoryPoolObject::deleteInstance(m_ambientSound);
 			m_ambientSound = NULL;
 		}
 	}
@@ -4277,7 +4277,7 @@ void Drawable::xfer( Xfer *xfer )
 	if( xfer->getXferMode() == XFER_LOAD && m_ambientSound )
 	{
 		TheAudio->killAudioEventImmediately( m_ambientSound->m_event.getPlayingHandle() );
-		m_ambientSound->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_ambientSound);
 		m_ambientSound = NULL;
 	}
 

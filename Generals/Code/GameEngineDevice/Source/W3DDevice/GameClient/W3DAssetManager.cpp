@@ -109,7 +109,7 @@ public:
 	virtual const char*					Get_Name(void) const			{ return Name.str(); }
 	virtual int									Get_Class_ID(void) const	{ return Proto->Class_ID(); }
 	virtual RenderObjClass *		Create(void);
-	virtual void								DeleteSelf()							{	deleteInstance(); }
+	virtual void								DeleteSelf()							{	MemoryPoolObject::deleteInstance(this); }
 
 protected:
 	//virtual ~W3DPrototypeClass(void);

@@ -297,7 +297,7 @@ StateMachine::~StateMachine()
 	for( i = m_stateMap.begin(); i != m_stateMap.end(); ++i )
 	{
 		if ((*i).second)
-			(*i).second->deleteInstance();
+			MemoryPoolObject::deleteInstance((*i).second);
 	}
 }
 

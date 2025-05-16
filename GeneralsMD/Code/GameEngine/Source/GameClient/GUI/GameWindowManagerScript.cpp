@@ -2660,7 +2660,7 @@ WindowLayout *GameWindowManager::winCreateLayout( AsciiString filename )
 	if( layout->load( filename ) == FALSE )
 	{
 
-		layout->deleteInstance();
+		MemoryPoolObject::deleteInstance(layout);
 		return NULL;
 
 	}  // end if

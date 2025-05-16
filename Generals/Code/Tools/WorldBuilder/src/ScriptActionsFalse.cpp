@@ -190,7 +190,7 @@ void ScriptActionsFalse::OnNew()
 		m_index++;
 		loadList();
 	} else {
-		pAct->deleteInstance();
+		MemoryPoolObject::deleteInstance(pAct);
 	}
 }
 

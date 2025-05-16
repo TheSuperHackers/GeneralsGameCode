@@ -68,7 +68,7 @@ GameMessageParser::~GameMessageParser()
 	GameMessageParserArgumentType *temp = NULL;
 	while (m_first != NULL) {
 		temp = m_first->getNext();
-		m_first->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_first);
 		m_first = temp;
 	}
 }

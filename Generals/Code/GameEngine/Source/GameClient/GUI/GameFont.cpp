@@ -123,7 +123,7 @@ void FontLibrary::deleteAllFonts( void )
 		releaseFontData( font );
 
 		// delete the font list element
-		font->deleteInstance();
+		MemoryPoolObject::deleteInstance(font);
 
 	}  // end while
 
@@ -214,7 +214,7 @@ GameFont *FontLibrary::getFont( AsciiString name, Int pointSize, Bool bold )
 	{
 
 		DEBUG_CRASH(( "getFont: Unable to load font data pointer '%s'\n", name ));
-		font->deleteInstance();
+		MemoryPoolObject::deleteInstance(font);
 		return NULL;
 
 	}  // end if

@@ -307,7 +307,7 @@ WaterRenderObjClass::~WaterRenderObjClass(void)
 	{	WaterSettings[i].m_skyTextureFile.clear();
 		WaterSettings[i].m_waterTextureFile.clear();
 	}
-	((WaterTransparencySetting*)TheWaterTransparency.getNonOverloadedPointer())->deleteInstance();
+	MemoryPoolObject::deleteInstance(((WaterTransparencySetting*)TheWaterTransparency.getNonOverloadedPointer()));
 	TheWaterTransparency = NULL;
 	ReleaseResources();
 

@@ -50,7 +50,7 @@ FenceTool::FenceTool(void) :
 FenceTool::~FenceTool(void) 
 {
 	if (m_mapObjectList) {
-		m_mapObjectList->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_mapObjectList);
 	}
 	m_mapObjectList = NULL;
 }
@@ -99,7 +99,7 @@ void FenceTool::updateMapObjectList(Coord3D downPt, Coord3D curPt, WbView* pView
 	pCurObj->setNextMap(NULL);
 	if (pXtraObjects) {
 		p3View->removeFenceListObjects(pXtraObjects);
-		pXtraObjects->deleteInstance();
+		MemoryPoolObject::deleteInstance(pXtraObjects);
 		pXtraObjects = NULL;
 	}
 
@@ -155,7 +155,7 @@ void FenceTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 	m_downPt2d = viewPt;
 	m_downPt3d = cpt;
 	if (m_mapObjectList) {
-		m_mapObjectList->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_mapObjectList);
 		m_mapObjectList = NULL;
 	}
 	if (FenceOptions::hasSelectedObject()) {

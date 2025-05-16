@@ -331,7 +331,7 @@ void DataChunkOutput::closeDataChunk( void )
 	DEBUG_LOG(("Closing chunk %s at %d (%x)\n", m_contents.getName(c->id).str(), here, here));
 #endif
 	m_chunkStack = m_chunkStack->next;
-	c->deleteInstance();
+	MemoryPoolObject::deleteInstance(c);
 }
 
 void DataChunkOutput::writeReal( Real r ) 
@@ -437,7 +437,7 @@ DataChunkTableOfContents::~DataChunkTableOfContents()
 	for( m=m_list; m; m=next )
 	{
 		next = m->next;
-		m->deleteInstance();
+		MemoryPoolObject::deleteInstance(m);
 	}
 }
 
@@ -601,7 +601,7 @@ DataChunkInput::~DataChunkInput()
 	UserParser *p, *next;
 	for (p=m_parserList; p; p=next) {
 		next = p->next;
-		p->deleteInstance();
+		MemoryPoolObject::deleteInstance(p);
 	}
 
 }
@@ -699,7 +699,7 @@ void DataChunkInput::clearChunkStack( void )
 	for( c=m_chunkStack; c; c=next )
 	{
 		next = c->next;
-		c->deleteInstance();
+		MemoryPoolObject::deleteInstance(c);
 	}
 
 	m_chunkStack = NULL;
@@ -772,7 +772,7 @@ void DataChunkInput::closeDataChunk( void )
 	// pop the chunk off the stack
 	InputChunk *c = m_chunkStack;
 	m_chunkStack = m_chunkStack->next;
-	c->deleteInstance();
+	MemoryPoolObject::deleteInstance(c);
 }
 
 

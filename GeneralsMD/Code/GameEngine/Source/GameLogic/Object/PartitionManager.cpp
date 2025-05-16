@@ -2479,7 +2479,7 @@ void PartitionContactList::resetContactList()
 	for (PartitionContactListNode* cd = m_contactList; cd; cd = cdnext)
 	{
 		cdnext = cd->m_next;
-		cd->deleteInstance();
+		MemoryPoolObject::deleteInstance(cd);
 	}
 
 	memset(m_contactHash, 0, sizeof(m_contactHash));
@@ -2913,7 +2913,7 @@ void PartitionManager::unRegisterObject( Object* object )
 		m_moduleList = next;
 
 	// delete module
-	mod->deleteInstance();
+	MemoryPoolObject::deleteInstance(mod);
 
 }
 
@@ -2971,7 +2971,7 @@ void PartitionManager::unRegisterGhostObject( GhostObject* object )
 		m_moduleList = next;
 
 	// delete module
-	mod->deleteInstance();
+	MemoryPoolObject::deleteInstance(mod);
 }
 
 /** 
@@ -4014,7 +4014,7 @@ void PartitionManager::processPendingUndoShroudRevealQueue( Bool considerTimesta
 
 		undoShroudReveal( thisInfo->m_where.x, thisInfo->m_where.y, thisInfo->m_howFar, thisInfo->m_forWhom );
 
-		thisInfo->deleteInstance();
+		MemoryPoolObject::deleteInstance(thisInfo);
 		m_pendingUndoShroudReveals.pop();
 	}
 }
@@ -4035,7 +4035,7 @@ void PartitionManager::resetPendingUndoShroudRevealQueue()
 	while( !m_pendingUndoShroudReveals.empty() )
 	{
 		SightingInfo *thisInfo = m_pendingUndoShroudReveals.front();
-		thisInfo->deleteInstance();
+		MemoryPoolObject::deleteInstance(thisInfo);
 		m_pendingUndoShroudReveals.pop();
 	}
 }

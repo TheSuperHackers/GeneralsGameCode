@@ -81,7 +81,7 @@ PolygonTrigger::~PolygonTrigger(void)
 		while (cur) {
 			next = cur->getNext();
 			cur->setNextPoly(NULL); // prevents recursion. 
-			cur->deleteInstance();
+			MemoryPoolObject::deleteInstance(cur);
 			cur = next; 
 		}
 	}
@@ -189,7 +189,7 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 		if (numPoints<2) {
 			DEBUG_LOG(("Deleting polygon trigger '%s' with %d points.\n", 
 					pTrig->getTriggerName().str(), numPoints));
-			pTrig->deleteInstance();
+			MemoryPoolObject::deleteInstance(pTrig);
 			continue;
 		}
 		if (pPrevTrig) {
@@ -336,7 +336,7 @@ void PolygonTrigger::deleteTriggers(void)
 	PolygonTrigger *pList = ThePolygonTriggerListPtr;	
 	ThePolygonTriggerListPtr = NULL;
 	s_currentID = 1;
-	pList->deleteInstance();
+	MemoryPoolObject::deleteInstance(pList);
 }
 
 /**

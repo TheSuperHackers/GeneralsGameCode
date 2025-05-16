@@ -164,7 +164,7 @@ void BuildAssistant::reset( void )
 		sellInfo = (*it);
 
 		// delete our data and erase this entry from the list
-		sellInfo->deleteInstance();
+		MemoryPoolObject::deleteInstance(sellInfo);
 
 	}  // end for
 
@@ -205,7 +205,7 @@ void BuildAssistant::update( void )
 		if( obj == NULL )
 		{
 
-			sellInfo->deleteInstance();			
+			MemoryPoolObject::deleteInstance(sellInfo);			
 			m_sellList.erase( thisIterator );		
 			continue;
 
@@ -281,7 +281,7 @@ void BuildAssistant::update( void )
 			TheGameLogic->destroyObject( obj );
 
 			// remove this object from the sell list
-			sellInfo->deleteInstance();
+			MemoryPoolObject::deleteInstance(sellInfo);
 			m_sellList.erase( thisIterator );
 
 		}  // end if

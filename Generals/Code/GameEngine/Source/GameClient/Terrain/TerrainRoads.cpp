@@ -258,7 +258,7 @@ TerrainRoadCollection::~TerrainRoadCollection( void )
 		temp = m_roadList->friend_getNext();
 
 		// delete this road
-		m_roadList->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_roadList);
 
 		// set the new head of the list
 		m_roadList = temp;
@@ -273,7 +273,7 @@ TerrainRoadCollection::~TerrainRoadCollection( void )
 		temp = m_bridgeList->friend_getNext();
 
 		// delete this bridge
-		m_bridgeList->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_bridgeList);
 
 		// set the new head of the list
 		m_bridgeList = temp;

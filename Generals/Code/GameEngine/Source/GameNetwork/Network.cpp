@@ -476,11 +476,11 @@ void Network::GetCommandsFromCommandList() {
 				m_conMgr->sendLocalGameMessage(msg, getExecutionFrame());
 			}
 			TheCommandList->removeMessage(msg); // This does not destroy msg's prev and next pointers, so they should still be valid.
-			msg->deleteInstance();
+			MemoryPoolObject::deleteInstance(msg);
 		} else {
 			if (processCommand(msg)) {
 				TheCommandList->removeMessage(msg);
-				msg->deleteInstance();
+				MemoryPoolObject::deleteInstance(msg);
 			}
 		}
 		msg = next;
@@ -514,7 +514,7 @@ Bool Network::processCommand(GameMessage *msg)
 			if (TheGameLogic->getFrame() == 1) {
 				m_localStatus = NETLOCALSTATUS_INGAME;
 				NetCommandList *netcmdlist = m_conMgr->getFrameCommandList(0); // clear out frame 0 since we skipped it
-				netcmdlist->deleteInstance();
+				MemoryPoolObject::deleteInstance(netcmdlist);
 			} else {
 				return FALSE;
 			}
@@ -611,7 +611,7 @@ void Network::RelayCommandsToCommandList(UnsignedInt frame) {
 	}
 	m_playersToDisconnect.clear();
 
-	netcmdlist->deleteInstance();
+	MemoryPoolObject::deleteInstance(netcmdlist);
 }
 
 /**

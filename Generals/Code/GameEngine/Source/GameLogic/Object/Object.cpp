@@ -549,13 +549,13 @@ Object::~Object()
 	setTeam( NULL );
 
 	// Object's set of these persist for the life of the object.
-	m_partitionLastLook->deleteInstance();
+	MemoryPoolObject::deleteInstance(m_partitionLastLook);
 	m_partitionLastLook = NULL;
-	m_partitionLastShroud->deleteInstance();
+	MemoryPoolObject::deleteInstance(m_partitionLastShroud);
 	m_partitionLastShroud = NULL;
-	m_partitionLastThreat->deleteInstance();
+	MemoryPoolObject::deleteInstance(m_partitionLastThreat);
 	m_partitionLastThreat = NULL;
-	m_partitionLastValue->deleteInstance();
+	MemoryPoolObject::deleteInstance(m_partitionLastValue);
 	m_partitionLastValue = NULL;
 
 	// remove the object from the partition system if present
@@ -573,7 +573,7 @@ Object::~Object()
 	// delete any modules present
 	for (BehaviorModule** b = m_behaviors; *b; ++b)
 	{
-		(*b)->deleteInstance();
+		MemoryPoolObject::deleteInstance((*b));
 		*b = NULL;	// in case other modules call findModule from their dtor!
 	}
 
@@ -581,7 +581,7 @@ Object::~Object()
 	m_behaviors = NULL;
 
 	if( m_experienceTracker )
-		m_experienceTracker->deleteInstance();
+		MemoryPoolObject::deleteInstance(m_experienceTracker);
 
 	m_experienceTracker = NULL;
 
