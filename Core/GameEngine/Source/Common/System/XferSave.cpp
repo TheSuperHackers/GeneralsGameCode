@@ -91,7 +91,7 @@ XferSave::~XferSave( void )
 		{
 
 			next = m_blockStack->next;
-			MemoryPoolObject::deleteInstance(m_blockStack);
+			deleteInstance(m_blockStack);
 			m_blockStack = next;
 
 		}  // end while
@@ -247,7 +247,7 @@ void XferSave::endBlock( void )
 	fseek( m_fileFP, currentFilePos, SEEK_SET );
 
 	// delete the block data as it's all used up now
-	MemoryPoolObject::deleteInstance(top);
+	deleteInstance(top);
 
 }  // end endBlock
 

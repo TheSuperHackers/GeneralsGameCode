@@ -49,7 +49,7 @@ CrateSystem::~CrateSystem()
 		CrateTemplate *currentTemplate = m_crateTemplateVector[templateIndex];
 		if( currentTemplate )
 		{
-			MemoryPoolObject::deleteInstance(currentTemplate);
+			deleteInstance(currentTemplate);
 		}
 	}
 	m_crateTemplateVector.clear();

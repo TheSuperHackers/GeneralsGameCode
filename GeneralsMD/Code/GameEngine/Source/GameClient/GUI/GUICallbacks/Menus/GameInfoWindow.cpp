@@ -94,7 +94,7 @@ void DestroyGameInfoWindow(void)
 	if (gameInfoWindowLayout)
 	{
 		gameInfoWindowLayout->destroyWindows();
-		MemoryPoolObject::deleteInstance(gameInfoWindowLayout);
+		deleteInstance(gameInfoWindowLayout);
 		gameInfoWindowLayout = NULL;		
 	}
 }

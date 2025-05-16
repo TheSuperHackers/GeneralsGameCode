@@ -121,13 +121,13 @@ void destroyQuitMenu()
 	if(fullQuitMenuLayout)
 	{
 		fullQuitMenuLayout->destroyWindows();
-		MemoryPoolObject::deleteInstance(fullQuitMenuLayout);
+		deleteInstance(fullQuitMenuLayout);
 	}
 	fullQuitMenuLayout = NULL;
 	if(noSaveLoadQuitMenuLayout)
 	{
 		noSaveLoadQuitMenuLayout->destroyWindows();
-		MemoryPoolObject::deleteInstance(noSaveLoadQuitMenuLayout);
+		deleteInstance(noSaveLoadQuitMenuLayout);
 	}
 	noSaveLoadQuitMenuLayout = NULL;
 	quitMenuLayout = NULL;

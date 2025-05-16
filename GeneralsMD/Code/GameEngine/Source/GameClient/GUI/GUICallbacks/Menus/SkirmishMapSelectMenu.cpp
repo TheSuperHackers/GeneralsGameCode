@@ -525,7 +525,7 @@ WindowMsgHandledType SkirmishMapSelectMenuSystem( GameWindow *window, UnsignedIn
 				showSkirmishGameOptionsUnderlyingGUIElements(TRUE);
 
 				skirmishMapSelectLayout->destroyWindows();
-				MemoryPoolObject::deleteInstance(skirmishMapSelectLayout);
+				deleteInstance(skirmishMapSelectLayout);
 				skirmishMapSelectLayout = NULL;
 				skirmishPositionStartSpots();
 				//TheShell->pop();
@@ -587,7 +587,7 @@ WindowMsgHandledType SkirmishMapSelectMenuSystem( GameWindow *window, UnsignedIn
 				skirmishUpdateSlotList();
 
 				skirmishMapSelectLayout->destroyWindows();
-				MemoryPoolObject::deleteInstance(skirmishMapSelectLayout);
+				deleteInstance(skirmishMapSelectLayout);
 				skirmishMapSelectLayout = NULL;
 					//TheShell->pop();
 

@@ -205,7 +205,7 @@ ImageCollection::ImageCollection( void )
 ImageCollection::~ImageCollection( void )
 {
   for (std::map<unsigned,Image *>::iterator i=m_imageMap.begin();i!=m_imageMap.end();++i)
-    MemoryPoolObject::deleteInstance(i->second);
+    deleteInstance(i->second);
 }  // end ~ImageCollection
 
 //-------------------------------------------------------------------------------------------------

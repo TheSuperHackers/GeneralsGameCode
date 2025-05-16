@@ -73,7 +73,7 @@ File * Win32LocalFileSystem::openFile(const Char *filename, Int access /* = 0 */
 
 	if (file->open(filename, access) == FALSE) {
 		file->close();
-		MemoryPoolObject::deleteInstance(file);
+		deleteInstance(file);
 		file = NULL;
 	} else {
 		file->deleteOnClose();
@@ -94,7 +94,7 @@ File * Win32LocalFileSystem::openFile(const Char *filename, Int access /* = 0 */
 //			return ramFile;
 //		}	else {
 //			ramFile->close();
-//			MemoryPoolObject::deleteInstance(ramFile);
+//			deleteInstance(ramFile);
 //		}
 //	}
 

@@ -216,7 +216,7 @@ ImageCollection::~ImageCollection( void )
 	{
 
 		next = image->m_next;
-		MemoryPoolObject::deleteInstance(image);
+		deleteInstance(image);
 		image = next;
 
 	}  // end while

@@ -208,7 +208,7 @@ AddObjectUndoable::~AddObjectUndoable(void)
 {
 	m_pDoc = NULL;  // not ref counted.
 	if (m_objectToAdd && !m_addedToList) {
-		MemoryPoolObject::deleteInstance(m_objectToAdd);
+		deleteInstance(m_objectToAdd);
 		m_objectToAdd=NULL;
 	}
 }
@@ -858,7 +858,7 @@ void DictItemUndoable::Undo(void)
 DeleteInfo::~DeleteInfo(void)
 {
 	if (m_didDelete && m_objectToDelete) {
-		MemoryPoolObject::deleteInstance(m_objectToDelete);
+		deleteInstance(m_objectToDelete);
 	}
 	DeleteInfo *pCur = m_next;
 	DeleteInfo *tmp;
@@ -1050,7 +1050,7 @@ AddPolygonUndoable::~AddPolygonUndoable(void)
 {
 	if (m_trigger && !m_isTriggerInList) {
 		DEBUG_ASSERTCRASH(m_trigger->getNext()==NULL, ("Logic error."));
-		MemoryPoolObject::deleteInstance(m_trigger);
+		deleteInstance(m_trigger);
 	}
 	m_trigger=NULL;
 }
@@ -1322,7 +1322,7 @@ DeletePolygonUndoable::~DeletePolygonUndoable(void)
 {
 	if (m_trigger && !m_isTriggerInList) {
 		DEBUG_ASSERTCRASH(m_trigger->getNext()==NULL, ("Logic error."));
-		MemoryPoolObject::deleteInstance(m_trigger);
+		deleteInstance(m_trigger);
 	}
 	m_trigger=NULL;
 }

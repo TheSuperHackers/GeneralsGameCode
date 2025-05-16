@@ -767,6 +767,10 @@ public:
 	} 
 };
 
+inline void deleteInstance(MemoryPoolObject* mpo)
+{
+	MemoryPoolObject::deleteInstance(mpo);
+}
 
 
 // INLINING ///////////////////////////////////////////////////////////////////
@@ -906,7 +910,7 @@ public:
 	MemoryPoolObjectHolder(MemoryPoolObject *mpo = NULL) : m_mpo(mpo) { }
 	void hold(MemoryPoolObject *mpo) { DEBUG_ASSERTCRASH(!m_mpo, ("already holding")); m_mpo = mpo; }
 	void release() { m_mpo = NULL; }
-	~MemoryPoolObjectHolder() { MemoryPoolObject::deleteInstance(m_mpo); }
+	~MemoryPoolObjectHolder() { deleteInstance(m_mpo); }
 };
 
 

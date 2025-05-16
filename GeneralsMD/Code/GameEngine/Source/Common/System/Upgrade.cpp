@@ -245,7 +245,7 @@ UpgradeCenter::~UpgradeCenter( void )
 		next = m_upgradeList->friend_getNext();
 
 		// delete head of list
-		MemoryPoolObject::deleteInstance(m_upgradeList);
+		deleteInstance(m_upgradeList);
 
 		// set head to next element
 		m_upgradeList = next;

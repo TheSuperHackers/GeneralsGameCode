@@ -79,7 +79,7 @@ PolygonTrigger::~PolygonTrigger(void)
 		while (cur) {
 			next = cur->getNext();
 			cur->setNextPoly(NULL); // prevents recursion. 
-			MemoryPoolObject::deleteInstance(cur);
+			deleteInstance(cur);
 			cur = next; 
 		}
 	}
@@ -320,7 +320,7 @@ void PolygonTrigger::deleteTriggers(void)
 	PolygonTrigger *pList = ThePolygonTriggerListPtr;	
 	ThePolygonTriggerListPtr = NULL;
 	s_currentID = 1;
-	MemoryPoolObject::deleteInstance(pList);
+	deleteInstance(pList);
 }
 
 /**

@@ -618,7 +618,7 @@ Bool InGameUI::removeSuperweapon(Int playerIndex, const AsciiString& powerName, 
 			{
 				SuperweaponInfo *info = *listIt;
 				swList.erase(listIt);
-				MemoryPoolObject::deleteInstance(info);
+				deleteInstance(info);
 				if (swList.size() == 0)
 				{
 					m_superweapons[playerIndex].erase(mapIt);
@@ -758,7 +758,7 @@ void InGameUI::removeNamedTimer( const AsciiString& timerName )
 	if (mapIt != m_namedTimers.end())
 	{
 		TheDisplayStringManager->freeDisplayString( mapIt->second->displayString );
-		MemoryPoolObject::deleteInstance(mapIt->second);
+		deleteInstance(mapIt->second);
 		m_namedTimers.erase(mapIt);
 		return;
 	}
@@ -1932,7 +1932,7 @@ void InGameUI::reset( void )
 			for (SuperweaponList::iterator listIt = mapIt->second.begin(); listIt != mapIt->second.end(); ++listIt)
 			{
 				SuperweaponInfo *info = *listIt;
-				MemoryPoolObject::deleteInstance(info);
+				deleteInstance(info);
 			}
 			mapIt->second.clear();
 		}
@@ -1943,7 +1943,7 @@ void InGameUI::reset( void )
 	{
 		NamedTimerInfo *info = timerIt->second;
 		TheDisplayStringManager->freeDisplayString(info->displayString);
-		MemoryPoolObject::deleteInstance(info);
+		deleteInstance(info);
 	}
 	m_namedTimers.clear();
 	m_namedTimerLastFlashFrame = 0;
@@ -5103,7 +5103,7 @@ void InGameUI::updateFloatingText( void )
 			if( a <= 0)
 			{
 				it = m_floatingTextList.erase(it);
-				MemoryPoolObject::deleteInstance(ftd);
+				deleteInstance(ftd);
 				continue; // don't do the ++it below
 			}
 
@@ -5165,7 +5165,7 @@ void InGameUI::clearFloatingText( void )
 	{
 		ftd = *it;
 		it = m_floatingTextList.erase(it);
-		MemoryPoolObject::deleteInstance(ftd);
+		deleteInstance(ftd);
 	}
 	
 }
@@ -5230,12 +5230,12 @@ void InGameUI::clearPopupMessageData( void )
 	if(m_popupMessageData->layout)
 	{
 		m_popupMessageData->layout->destroyWindows();
-		MemoryPoolObject::deleteInstance(m_popupMessageData->layout);
+		deleteInstance(m_popupMessageData->layout);
 		m_popupMessageData->layout = NULL;
 	}
 	if( m_popupMessageData->pause )
 		TheGameLogic->setGamePaused(FALSE, m_popupMessageData->pauseMusic);
-	MemoryPoolObject::deleteInstance(m_popupMessageData);
+	deleteInstance(m_popupMessageData);
 	m_popupMessageData = NULL;
 	
 }
@@ -5342,7 +5342,7 @@ void InGameUI::clearWorldAnimations( void )
 		{
 
 			// delete the animation instance
-			MemoryPoolObject::deleteInstance(wad->m_anim);
+			deleteInstance(wad->m_anim);
 
 			// delete the world animation data
 			delete wad;
@@ -5385,7 +5385,7 @@ void InGameUI::updateAndDrawWorldAnimations( void )
 			{
 
 				// delete this element and continue
-				MemoryPoolObject::deleteInstance(wad->m_anim);
+				deleteInstance(wad->m_anim);
 				delete wad;
 				it = m_worldAnimationList.erase( it );
 				continue;
@@ -5656,7 +5656,7 @@ void InGameUI::recreateControlBar( void )
 {
 	GameWindow *win = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd")));
 	if(win)
-		MemoryPoolObject::deleteInstance(win);
+		deleteInstance(win);
 	
 	m_idleWorkerWin = NULL;	
 	

@@ -1151,7 +1151,7 @@ void INI::parseDynamicAudioEventRTS( INI *ini, void * /*instance*/, void *store,
 	{
 		if (*theSound)
 		{
-			MemoryPoolObject::deleteInstance((*theSound));
+			deleteInstance(*theSound);
 			*theSound = NULL;
 		}
 	}

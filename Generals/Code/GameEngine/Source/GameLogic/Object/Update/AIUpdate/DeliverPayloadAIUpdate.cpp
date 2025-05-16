@@ -138,7 +138,7 @@ DeliverPayloadAIUpdate::~DeliverPayloadAIUpdate( void )
 	m_deliveryDecal.clear();
 
 	if (m_deliverPayloadStateMachine)
-		MemoryPoolObject::deleteInstance(m_deliverPayloadStateMachine);
+		deleteInstance(m_deliverPayloadStateMachine);
 } 
 
 //-------------------------------------------------------------------------------------------------
@@ -261,7 +261,7 @@ void DeliverPayloadAIUpdate::deliverPayload(
 	//****************************************************
 	
 	if (m_deliverPayloadStateMachine)
-		MemoryPoolObject::deleteInstance(m_deliverPayloadStateMachine);
+		deleteInstance(m_deliverPayloadStateMachine);
 	m_deliverPayloadStateMachine = NULL;
 
 	m_moveToPos = *moveToPos;

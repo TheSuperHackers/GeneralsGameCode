@@ -251,7 +251,7 @@ Eva::~Eva()
 	EvaCheckInfoPtrVecIt it;
 	for (it = m_allCheckInfos.begin(); it != m_allCheckInfos.end(); ++it) {
 		if (*it)
-			MemoryPoolObject::deleteInstance((*it));
+			deleteInstance(*it);
 	}
 }
 

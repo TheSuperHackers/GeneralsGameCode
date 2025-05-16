@@ -1500,7 +1500,7 @@ ObjectCreationListStore::~ObjectCreationListStore()
 	for (ObjectCreationNuggetVector::iterator i = m_nuggets.begin(); i != m_nuggets.end(); ++i)
 	{
 		if (*i)
-			MemoryPoolObject::deleteInstance((*i));
+			deleteInstance(*i);
 	}
 	m_nuggets.clear();
 }

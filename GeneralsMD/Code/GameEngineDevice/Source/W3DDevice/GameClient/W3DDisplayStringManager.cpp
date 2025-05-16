@@ -160,7 +160,7 @@ void W3DDisplayStringManager::freeDisplayString( DisplayString *string )
 	}
 
 	// free data
-	MemoryPoolObject::deleteInstance(string);
+	deleteInstance(string);
 
 }  // end freeDisplayString
 

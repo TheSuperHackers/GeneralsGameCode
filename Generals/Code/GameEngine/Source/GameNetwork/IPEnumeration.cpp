@@ -44,7 +44,7 @@ IPEnumeration::~IPEnumeration( void )
 	while (ip)
 	{
 		ip = ip->getNext();
-		MemoryPoolObject::deleteInstance(m_IPlist);
+		deleteInstance(m_IPlist);
 		m_IPlist = ip;
 	}
 }

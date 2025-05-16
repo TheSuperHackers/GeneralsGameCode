@@ -117,7 +117,7 @@ static void clearWinList(AnimateWindowList &winList)
 		win = *(winList.begin());
 		winList.pop_front();
 		if (win)
-			MemoryPoolObject::deleteInstance(win);
+			deleteInstance(win);
 		win = NULL;
 	}
 }

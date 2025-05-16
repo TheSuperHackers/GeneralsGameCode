@@ -97,7 +97,7 @@ Shell::~Shell( void )
 	if(m_background)
 	{
 		m_background->destroyWindows();
-		MemoryPoolObject::deleteInstance(m_background);
+		deleteInstance(m_background);
 		m_background = NULL;
 	}
 
@@ -114,7 +114,7 @@ Shell::~Shell( void )
 	{
 
 		m_saveLoadMenuLayout->destroyWindows();
-		MemoryPoolObject::deleteInstance(m_saveLoadMenuLayout);
+		deleteInstance(m_saveLoadMenuLayout);
 		m_saveLoadMenuLayout = NULL;
 
 	}  //end if
@@ -124,7 +124,7 @@ Shell::~Shell( void )
 	{
 
 		m_popupReplayLayout->destroyWindows();
-		MemoryPoolObject::deleteInstance(m_popupReplayLayout);
+		deleteInstance(m_popupReplayLayout);
 		m_popupReplayLayout = NULL;
 
 	}  //end if
@@ -132,7 +132,7 @@ Shell::~Shell( void )
 	// delete the options menu if present.
 	if (m_optionsLayout != NULL) {
 		m_optionsLayout->destroyWindows();
-		MemoryPoolObject::deleteInstance(m_optionsLayout);
+		deleteInstance(m_optionsLayout);
 		m_optionsLayout = NULL;
 	}
 
@@ -200,7 +200,7 @@ void Shell::update( void )
 		{
 			
 			m_background->destroyWindows();
-			MemoryPoolObject::deleteInstance(m_background);
+			deleteInstance(m_background);
 			m_background = NULL;
 			
 		}
@@ -644,7 +644,7 @@ void Shell::doPop( Bool impendingPush )
 	currentTop->destroyWindows();
 
 	// release the screen object back to the memory pool
-	MemoryPoolObject::deleteInstance(currentTop);
+	deleteInstance(currentTop);
 
 	// run the init for the new top of the stack if present
 	WindowLayout *newTop = top();
@@ -707,7 +707,7 @@ void Shell::shutdownComplete( WindowLayout *screen, Bool impendingPush )
 		if(m_background)
 		{
 			m_background->destroyWindows();
-			MemoryPoolObject::deleteInstance(m_background);
+			deleteInstance(m_background);
 			m_background = NULL;
 			m_clearBackground = FALSE;
 		}
@@ -834,7 +834,7 @@ WindowLayout *Shell::getOptionsLayout( Bool create )
 void Shell::destroyOptionsLayout() {
 	if (m_optionsLayout != NULL) {
 		m_optionsLayout->destroyWindows();
-		MemoryPoolObject::deleteInstance(m_optionsLayout);
+		deleteInstance(m_optionsLayout);
 		m_optionsLayout = NULL;
 	}
 }

@@ -128,7 +128,7 @@ NetCommandWrapperList::~NetCommandWrapperList() {
 	NetCommandWrapperListNode *temp;
 	while (m_list != NULL) {
 		temp = m_list->m_next;
-		MemoryPoolObject::deleteInstance(m_list);
+		deleteInstance(m_list);
 		m_list = temp;
 	}
 }
@@ -141,7 +141,7 @@ void NetCommandWrapperList::reset() {
 	NetCommandWrapperListNode *temp;
 	while (m_list != NULL) {
 		temp = m_list->m_next;
-		MemoryPoolObject::deleteInstance(m_list);
+		deleteInstance(m_list);
 		m_list = temp;
 	}
 }
@@ -192,7 +192,7 @@ NetCommandList * NetCommandWrapperList::getReadyCommands()
 			NetCommandRef *ret = retlist->addMessage(msg->getCommand());
 			ret->setRelay(msg->getRelay());
 
-			MemoryPoolObject::deleteInstance(msg);
+			deleteInstance(msg);
 			msg = NULL;
 
 			removeFromList(temp);
@@ -223,11 +223,11 @@ void NetCommandWrapperList::removeFromList(NetCommandWrapperListNode *node) {
 
 	if (prev == NULL) {
 		m_list = temp->m_next;
-		MemoryPoolObject::deleteInstance(temp);
+		deleteInstance(temp);
 		temp = NULL;
 	} else {
 		prev->m_next = temp->m_next;
-		MemoryPoolObject::deleteInstance(temp);
+		deleteInstance(temp);
 		temp = NULL;
 	}
 }

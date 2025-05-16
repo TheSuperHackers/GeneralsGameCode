@@ -570,7 +570,7 @@ void GameClient::update( void )
 
 
 					legal->destroyWindows();
-					MemoryPoolObject::deleteInstance(legal);
+					deleteInstance(legal);
 
 				}
 				TheWritableGlobalData->m_breakTheMovie = TRUE;
@@ -850,7 +850,7 @@ void GameClient::destroyDrawable( Drawable *draw )
 	removeDrawableFromLookupTable( draw );
 
 	// free storage
-	MemoryPoolObject::deleteInstance(draw);
+	deleteInstance(draw);
 
 }
 

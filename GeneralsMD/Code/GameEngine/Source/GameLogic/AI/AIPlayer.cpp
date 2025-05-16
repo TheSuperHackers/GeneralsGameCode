@@ -436,7 +436,7 @@ static void deleteQueue(TeamInQueue* o)
 {
 	if (o)
 	{
-		MemoryPoolObject::deleteInstance(o);
+		deleteInstance(o);
 	}
 }
 
@@ -866,7 +866,7 @@ void AIPlayer::aiPreTeamDestroy( const Team *deletedTeam )
 			if (team->m_team == deletedTeam) {
 				// The members of the team all got killed before we could finish building the team.
 				removeFrom_TeamBuildQueue(team);
-				MemoryPoolObject::deleteInstance(team);
+				deleteInstance(team);
 				iter = iterate_TeamBuildQueue();
 			}
 		}
@@ -878,7 +878,7 @@ void AIPlayer::aiPreTeamDestroy( const Team *deletedTeam )
 			if (team->m_team == deletedTeam) {
 				// The members of the team all got killed before we could activate the team.
 				removeFrom_TeamReadyQueue(team);
-				MemoryPoolObject::deleteInstance(team);
+				deleteInstance(team);
 				iter = iterate_TeamReadyQueue();
 			}
 		}
@@ -2634,7 +2634,7 @@ void AIPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadiu
 		}	else {
 			//disband.
 			if (!theTeam->getPrototype()->getIsSingleton()) {
-				MemoryPoolObject::deleteInstance(theTeam);
+				deleteInstance(theTeam);
 				theTeam = NULL;
 			}
 			AsciiString teamName = teamProto->getName();
@@ -2826,7 +2826,7 @@ void AIPlayer::checkReadyTeams( void )
 						TheScriptEngine->AppendDebugMessage(teamName, false);
 					}
 				}
-				MemoryPoolObject::deleteInstance(team);
+				deleteInstance(team);
 				iter = iterate_TeamReadyQueue();
 			}																		 
 		}
@@ -2858,7 +2858,7 @@ void AIPlayer::checkQueuedTeams( void )
 					// Disband.
 					removeFrom_TeamBuildQueue(team);
 					team->disband();
-					MemoryPoolObject::deleteInstance(team);
+					deleteInstance(team);
 					if (isSkirmishAI()) {
 						TheScriptEngine->clearTeamFlags();
 					}
@@ -3489,7 +3489,7 @@ TeamInQueue::~TeamInQueue()
 	for( order = m_workOrders; order; order = next )
 	{
 		next = order->m_next;
-		MemoryPoolObject::deleteInstance(order);
+		deleteInstance(order);
 	}
 	// If we have a team, activate it.  If it is empty, Team.cpp will remove empty active teams.
 	if (m_team) m_team->setActive();
@@ -3590,7 +3590,7 @@ void TeamInQueue::disband()
 	if (m_team != newTeam) {
 		m_team->transferUnitsTo(newTeam);
 		if (!m_team->getPrototype()->getIsSingleton()) {
-			MemoryPoolObject::deleteInstance(m_team);
+			deleteInstance(m_team);
 		}
 		m_team = NULL;
 	}

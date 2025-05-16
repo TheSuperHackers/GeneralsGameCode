@@ -1647,7 +1647,7 @@ WindowMsgHandledType SkirmishGameOptionsMenuSystem( GameWindow *window, Unsigned
 					if( skirmishMapSelectLayout )
 						{
 							skirmishMapSelectLayout->destroyWindows();
-							MemoryPoolObject::deleteInstance(skirmishMapSelectLayout);
+							deleteInstance(skirmishMapSelectLayout);
 							skirmishMapSelectLayout = NULL;
 						}
 					TheShell->pop();

@@ -246,7 +246,7 @@ Path::~Path( void )
 	for( node = m_path; node; node = nextNode )
 	{
 		nextNode = node->getNext();
-		MemoryPoolObject::deleteInstance(node);
+		deleteInstance(node);
 	}
 }
 
@@ -3435,7 +3435,7 @@ void Pathfinder::reset( void )
 	debugPathPos.z = 0.0f;
 
 	if (debugPath)
-		MemoryPoolObject::deleteInstance(debugPath);
+		deleteInstance(debugPath);
 
 	debugPath = NULL;
 	m_frameToShowObstacles = 0;
@@ -5884,7 +5884,7 @@ Path *Pathfinder::findPath( Object *obj, const LocomotorSet& locomotorSet, const
 	m_zoneManager.clearPassableFlags();
 	Path *hPat = findHierarchicalPath(isHuman, locomotorSet, from, rawTo, false);
 	if (hPat) {
-		MemoryPoolObject::deleteInstance(hPat);
+		deleteInstance(hPat);
 	}	else {
 		m_zoneManager.setAllPassable();
 	}
@@ -5926,11 +5926,11 @@ Path *Pathfinder::findPath( Object *obj, const LocomotorSet& locomotorSet, const
 					path->getFirstNode()->setCanOptimize(linkNode->getCanOptimize());
 					path->getFirstNode()->setNextOptimized(path->getFirstNode()->getNext());
 				}
-				MemoryPoolObject::deleteInstance(linkPath);
+				deleteInstance(linkPath);
 			}
 			prior = node;
 		}
-		MemoryPoolObject::deleteInstance(pat);
+		deleteInstance(pat);
 		path->optimize(obj, locomotorSet.getValidSurfaces(), false);
 		if (TheGlobalData->m_debugAI) {
 			setDebugPath(path);
@@ -6485,7 +6485,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 
 	Path *hPat = internal_findHierarchicalPath(isHuman, LOCOMOTORSURFACE_GROUND, from, rawTo, false, false);
 	if (hPat) {
-		MemoryPoolObject::deleteInstance(hPat);
+		deleteInstance(hPat);
 	}	else {
 		m_zoneManager.setAllPassable();
 	}
@@ -7541,7 +7541,7 @@ Bool Pathfinder::slowDoesPathExist( Object *obj,
 	m_ignoreObstacleID = INVALID_ID;
 	Bool found = (path!=NULL);
 	if (path) {
-		MemoryPoolObject::deleteInstance(path);
+		deleteInstance(path);
 		path = NULL;
 	}
 	return found;
@@ -8161,7 +8161,7 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 		m_zoneManager.clearPassableFlags();
 		Path *hPat = findClosestHierarchicalPath(isHuman, locomotorSet, from, rawTo, false);
 		if (hPat) {
-			MemoryPoolObject::deleteInstance(hPat);
+			deleteInstance(hPat);
 			gotHierarchicalPath = true;
 		}	else {
 			m_zoneManager.setAllPassable();
@@ -8485,7 +8485,7 @@ void Pathfinder::setDebugPath(Path *newDebugpath)
 	{
 		// copy the path for debugging
 		if (debugPath)
-			MemoryPoolObject::deleteInstance(debugPath);
+			deleteInstance(debugPath);
 
 		debugPath = newInstance(Path);
 					
@@ -10019,7 +10019,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 	m_zoneManager.clearPassableFlags();
 	Path *hPat = findClosestHierarchicalPath(isHuman, locomotorSet, from, victimPos, isCrusher);
 	if (hPat) {
-		MemoryPoolObject::deleteInstance(hPat);
+		deleteInstance(hPat);
 	}	else {
 		m_zoneManager.setAllPassable();
 	}

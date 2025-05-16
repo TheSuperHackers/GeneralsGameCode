@@ -188,7 +188,7 @@ AudioManager::~AudioManager()
 	for (it = m_allAudioEventInfo.begin(); it != m_allAudioEventInfo.end(); ++it) {
 		AudioEventInfo *eventInfo = (*it).second;
 		if (eventInfo) {
-			MemoryPoolObject::deleteInstance(eventInfo);
+			deleteInstance(eventInfo);
 			eventInfo = NULL;
 		}
 	}
@@ -811,7 +811,7 @@ AudioRequest *AudioManager::allocateAudioRequest( Bool useAudioEvent )
 void AudioManager::releaseAudioRequest( AudioRequest *requestToRelease )
 {
 	if (requestToRelease) {
-		MemoryPoolObject::deleteInstance(requestToRelease);
+		deleteInstance(requestToRelease);
 	}
 }
 
@@ -894,7 +894,7 @@ void AudioManager::removeLevelSpecificAudioEventInfos(void)
 
     if ( it->second->isLevelSpecific() )
     {
-      MemoryPoolObject::deleteInstance(it->second);
+      deleteInstance(it->second);
       m_allAudioEventInfo.erase( it );
     }
 

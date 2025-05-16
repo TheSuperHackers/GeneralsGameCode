@@ -80,7 +80,7 @@ public:
 	~ObjectTypesTemp()
 	{
 		if (m_types)
-			MemoryPoolObject::deleteInstance(m_types);
+			deleteInstance(m_types);
 	}
 };
 
@@ -120,7 +120,7 @@ public:
 TransportStatus::~TransportStatus() 
 { 
 	if (m_nextStatus) 
-		MemoryPoolObject::deleteInstance(m_nextStatus); 
+		deleteInstance(m_nextStatus); 
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -156,7 +156,7 @@ void ScriptConditions::init( void )
 void ScriptConditions::reset( void )
 {
 
-	MemoryPoolObject::deleteInstance(s_transportStatuses);
+	deleteInstance(s_transportStatuses);
 	s_transportStatuses = NULL;
 	// Empty for now.  jba.
 }  // end reset

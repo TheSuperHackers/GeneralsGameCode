@@ -1375,7 +1375,7 @@ void WOLGameSetupMenuShutdown( WindowLayout *layout, void *userData )
 	if( WOLMapSelectLayout )
 	{
 		WOLMapSelectLayout->destroyWindows();
-		MemoryPoolObject::deleteInstance(WOLMapSelectLayout);
+		deleteInstance(WOLMapSelectLayout);
 		WOLMapSelectLayout = NULL;
 	}
 	parentWOLGameSetup = NULL;
@@ -2503,7 +2503,7 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 					if( WOLMapSelectLayout )
 					{
 						WOLMapSelectLayout->destroyWindows();
-						MemoryPoolObject::deleteInstance(WOLMapSelectLayout);
+						deleteInstance(WOLMapSelectLayout);
 						WOLMapSelectLayout = NULL;
 					}
 
