@@ -592,14 +592,14 @@ File* LocalFile::convertToRAMFile()
 		else
 		{
 			this->close();
-			this->deleteInstance();
+			deleteInstance(this);
 		}
 		return ramFile;
 	}	
 	else 
 	{
 		ramFile->close();
-		ramFile->deleteInstance();
+		deleteInstance(ramFile);
 		return this;
 	}
 }

@@ -660,7 +660,7 @@ MetaMap::~MetaMap()
 	while (m_metaMaps)
 	{
 		MetaMapRec *next = m_metaMaps->m_next;
-		m_metaMaps->deleteInstance();
+		deleteInstance(m_metaMaps);
 		m_metaMaps = next;
 	}
 }

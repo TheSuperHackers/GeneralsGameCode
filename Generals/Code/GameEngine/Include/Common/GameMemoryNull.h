@@ -108,11 +108,16 @@ protected:
 
 public:
 
-	void deleteInstance() 
+	static void deleteInstance(MemoryPoolObject* object) 
 	{
-		delete this;
+		delete object;
 	}
 };
+
+inline void deleteInstance(MemoryPoolObject* object)
+{
+	MemoryPoolObject::deleteInstance(object);
+}
 
 
 /**
