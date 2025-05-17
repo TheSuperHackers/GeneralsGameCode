@@ -38,6 +38,7 @@
 #include "Common/GameMemory.h"
 #include "Common/SubsystemInterface.h"
 #include "GameClient/Color.h"
+#include "GameClient/TintStatus.h"
 #include "Common/STLTypedefs.h"
 #include "Common/GameCommon.h"
 #include "Common/Money.h"
@@ -50,6 +51,7 @@ class INI;
 class WeaponBonusSet;
 enum BodyDamageType CPP_11(: Int);
 enum AIDebugOptions CPP_11(: Int);
+//enum DrawableColorTint CPP_11(: Int);
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -520,6 +522,8 @@ public:
 	//-allAdvice feature
 	//Bool m_allAdvice;
 
+	DrawableColorTint	m_colorTintTypes[TINT_STATUS_COUNT];
+
 	Bool m_useOldMoveSpeed;
 
 
@@ -546,6 +550,9 @@ private:
 	GlobalData(const GlobalData& that) = delete;
 	GlobalData& operator=(const GlobalData& that) = default;
 #endif
+
+	static void setColorTintEntry(DrawableColorTint* arr, int index, RGBColor color, RGBColor colorInfantry, UnsignedInt attackFrames, UnsignedInt decayFrames);
+	static void parseTintStatusType(INI* ini, void* instance, void* store, const void* userData);
 
 };
 

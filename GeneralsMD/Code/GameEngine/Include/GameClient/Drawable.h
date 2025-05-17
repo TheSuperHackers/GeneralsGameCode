@@ -39,6 +39,7 @@
 #include "GameClient/Color.h"
 #include "WWMath/matrix3d.h"
 #include "GameClient/DrawableInfo.h"
+#include "GameClient/TintStatus.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class PositionalSound;
@@ -238,49 +239,7 @@ enum DrawableStatus CPP_11(: Int)
 	DRAWABLE_STATUS_NO_SAVE								= 0x00000010,		///< do *not* save this drawable (UI fluff only). ignored (error, actually) if attached to an object
 };
 
-enum TintStatus CPP_11(: Int)
-{
-	TINT_STATUS_DISABLED		= 0x00000001,///< drawable tint color is deathly dark grey
-	TINT_STATUS_IRRADIATED	= 0x00000002,///< drawable tint color is sickly green
-	TINT_STATUS_POISONED		= 0x00000004,///< drawable tint color is open-sore red
-	TINT_STATUS_GAINING_SUBDUAL_DAMAGE		= 0x00000008,///< When gaining subdual damage, we tint SUBDUAL_DAMAGE_COLOR
-	TINT_STATUS_FRENZY			= 0x00000010,///< When frenzied, we tint FRENZY_COLOR
-	// New generic entries:
-	TINT_STATUS_SHIELDED = 0x00000020,///<  When shielded, we tint SHIELDED_COLOR
-	TINT_STATUS_DEMORALIZED  = 0x00000040,
-	TINT_STATUS_BOOST  = 0x00000080,
-	TINT_STATUS_EXTRA1 = 0x00000100,
-	TINT_STATUS_EXTRA2 = 0x00000200,
-	TINT_STATUS_EXTRA3 = 0x00000400,
-	TINT_STATUS_EXTRA4 = 0x00000800,
-	TINT_STATUS_EXTRA5 = 0x00001000,
-	TINT_STATUS_EXTRA6 = 0x00002000,
-	TINT_STATUS_EXTRA7 = 0x00004000,
-	TINT_STATUS_EXTRA8 = 0x00008000,
-	
-};
-
-// Tint status types can now be used via ini
-static const char* TintStatusNames[] =
-{
-	"DISABLED",
-	"IRRADIATED",
-	"POISONED",
-	"GAINING_SUBDUAL_DAMAGE",
-	"FRENZY",
-	"SHIELDED",
-	"DEMORALIZED",
-	"BOOST",
-	"EXTRA1",
-	"EXTRA2",
-	"EXTRA3",
-	"EXTRA4",
-	"EXTRA5",
-	"EXTRA6",
-	"EXTRA7",
-	"EXTRA8",
-	NULL
-};
+// -------------------
 
 //-----------------------------------------------------------------------------
 //Keep this enum in sync with the TerrainDecalTextureName array in drawable.cpp
@@ -337,14 +296,18 @@ public:
 	void friend_bindToObject( Object *obj ); ///< bind this drawable to an object ID. for use ONLY by GameLogic!
 	void setIndicatorColor(Color color);
 	
-	void setTintStatus( TintStatus statusBits ) { BitSet( m_tintStatus, statusBits ); };
-	void clearTintStatus( TintStatus statusBits ) { BitClear( m_tintStatus, statusBits ); };
-	Bool testTintStatus( TintStatus statusBits ) const { return BitIsSet( m_tintStatus, statusBits ); };
+	//void setTintStatus( TintStatus statusBits ) { BitSet( m_tintStatus, statusBits ); };
+	//void clearTintStatus( TintStatus statusBits ) { BitClear( m_tintStatus, statusBits ); };
+	//Bool testTintStatus( TintStatus statusBits ) const { return BitIsSet( m_tintStatus, statusBits ); };
+
+	void setTintStatus(TintStatus statusType) { m_tintStatus.set(statusType); };
+	void clearTintStatus(TintStatus statusType) { m_tintStatus.set(statusType, 0); };
+	Bool testTintStatus(TintStatus statusType) const { return m_tintStatus.test(statusType); };
+	
 	TintEnvelope *getColorTintEnvelope( void ) { return m_colorTintEnvelope; }
 	void setColorTintEnvelope( TintEnvelope &source ) { if (m_colorTintEnvelope) *m_colorTintEnvelope = source; }
 
-  
-  void imitateStealthLook( Drawable& otherDraw );
+    void imitateStealthLook( Drawable& otherDraw );
 
 	void setTerrainDecal(TerrainDecalType type);	///<decal that is to appear under the drawable
 	void setTerrainDecalSize(Real x, Real y);
@@ -712,8 +675,8 @@ private:
   DynamicAudioEventInfo *m_customSoundAmbientInfo; ///< If not NULL, info about the ambient sound to attach to this object
 
 	UnsignedInt m_status;				///< status bits (see DrawableStatus enum)
-	UnsignedInt m_tintStatus;				///< tint color status bits (see TintStatus enum)
-	UnsignedInt m_prevTintStatus;///< for edge testing with m_tintStatus
+	TintStatusFlags m_tintStatus;				///< tint color status bits (see TintStatus enum)
+	TintStatusFlags m_prevTintStatus;///< for edge testing with m_tintStatus
 	
 	enum FadingMode
 	{

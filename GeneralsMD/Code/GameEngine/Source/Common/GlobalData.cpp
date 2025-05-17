@@ -53,6 +53,7 @@
 
 #include "GameClient/Color.h"
 #include "GameClient/TerrainVisual.h"
+#include "GameClient/TintStatus.h"
 
 #include "GameNetwork/FirewallHelper.h"
 
@@ -523,9 +524,49 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 #endif
 
 	{ "UseVanillaDiagonalMoveSpeed",	      INI::parseBool,		NULL,			offsetof(GlobalData, m_useOldMoveSpeed) },
+	{ "TintStatus",	 GlobalData::parseTintStatusType, NULL, offsetof(GlobalData, m_colorTintTypes) },
 	{ NULL,					NULL,						NULL,						0 }  // keep this last
 
 };
+
+
+
+// Helper function
+/*static*/ void GlobalData::setColorTintEntry(DrawableColorTint* arr, int index, RGBColor color, RGBColor colorInfantry, UnsignedInt attackFrames, UnsignedInt decayFrames)
+{
+	arr[index].color = color;
+	arr[index].colorInfantry = colorInfantry;
+	arr[index].attackFrames = attackFrames;
+	arr[index].decayFrames = decayFrames;
+}
+
+//-------------------------------------------------------------------------------------------------
+/*static*/ void GlobalData::parseTintStatusType(INI* ini, void* instance, void* store, const void* userData)
+{
+	DEBUG_LOG(("parseTintStatusType 1\n"));
+
+	return;
+
+	//ConstCharPtrArray nameList = (ConstCharPtrArray)userData;
+	//TintStatus tintType = (TintStatus)INI::scanIndexList(ini->getNextToken(), nameList);
+	
+	TintStatus tintType = (TintStatus)INI::scanIndexList(ini->getNextToken(), TintStatusFlags::getBitNames());
+
+	DEBUG_LOG(("parseTintStatusType 2\n"));
+
+	DrawableColorTint* colorTintTypes = (DrawableColorTint*)(store);
+	DrawableColorTint* tintEntry = &colorTintTypes[tintType];
+
+	DEBUG_LOG(("parseTintStatusType 3\n"));
+
+	INI::parseRGBColor(ini, instance, &tintEntry->color, NULL);
+	INI::parseRGBColor(ini, instance, &tintEntry->colorInfantry, NULL);
+
+	DEBUG_LOG(("parseTintStatusType 4\n"));
+
+	INI::parseUnsignedInt(ini, instance, &tintEntry->attackFrames, NULL);
+	INI::parseUnsignedInt(ini, instance, &tintEntry->decayFrames, NULL);
+}
 
 
 //-------------------------------------------------------------------------------------------------
@@ -1091,6 +1132,34 @@ GlobalData::GlobalData()
 	m_clientRetaliationModeEnabled = TRUE; //On by default.
 
 	m_useOldMoveSpeed = FALSE;  //Fix is enabled by default
+
+	// --------------------------------------------------------------------------
+	// INIT TINT STATUS TYPES:
+
+	//old consts for reference. Do not use this outside initialization here.
+	// const RGBColor SICKLY_GREEN_POISONED_COLOR	= {-1.0f,  1.0f, -1.0f};
+	const RGBColor DARK_GRAY_DISABLED_COLOR			= {-0.5f, -0.5f, -0.5f};
+	// const RGBColor RED_IRRADIATED_COLOR					= { 1.0f, -1.0f, -1.0f};
+	const RGBColor SUBDUAL_DAMAGE_COLOR					= {-0.2f, -0.2f,  0.8f};
+	const RGBColor FRENZY_COLOR									= { 0.2f, -0.2f, -0.2f};
+	const RGBColor FRENZY_COLOR_INFANTRY				= { 0.0f, -0.7f, -0.7f};
+
+	setColorTintEntry(m_colorTintTypes, TINT_STATUS_DISABLED, DARK_GRAY_DISABLED_COLOR, DARK_GRAY_DISABLED_COLOR, 30, 30 );
+	// setColorTintEntry(m_colorTintTypes, TINT_STATUS_IRRADIATED, RED_IRRADIATED_COLOR, RED_IRRADIATED_COLOR, 30, 30 );
+	// setColorTintEntry(m_colorTintTypes, TINT_STATUS_POISONED, SICKLY_GREEN_POISONED_COLOR, SICKLY_GREEN_POISONED_COLOR, 30, 30 );
+	setColorTintEntry(m_colorTintTypes, TINT_STATUS_GAINING_SUBDUAL_DAMAGE, SUBDUAL_DAMAGE_COLOR, SUBDUAL_DAMAGE_COLOR, 150, 150 );
+	setColorTintEntry(m_colorTintTypes, TINT_STATUS_FRENZY, FRENZY_COLOR, FRENZY_COLOR_INFANTRY, 30, 30);
+
+
+	for (i = 0; i < TINT_STATUS_COUNT; i++) {
+		DrawableColorTint tc = m_colorTintTypes[i];
+
+		DEBUG_LOG((">> GLOBAL_DATA: m_colorTintTypes[%d] = {(%f, %f, %f), (%f, %f, %f), %d, %d}\n",
+			i, tc.color.red, tc.color.green, tc.color.blue, tc.colorInfantry.red, tc.colorInfantry.green, tc.colorInfantry.blue,
+			tc.attackFrames, tc.decayFrames));
+	}
+	// ------------------------------------------------------------------------------
+
 
 }  // end GlobalData
 
