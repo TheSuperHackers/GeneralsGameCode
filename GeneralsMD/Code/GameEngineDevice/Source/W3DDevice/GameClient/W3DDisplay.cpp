@@ -555,34 +555,6 @@ void W3DDisplay::setGamma(Real gamma, Real bright, Real contrast, Bool calibrate
 	DX8Wrapper::Set_Gamma(gamma,bright,contrast,calibrate, false);
 }
 
-/*Giant hack in order to keep the game from getting stuck when alt-tabbing*/
-void Reset_D3D_Device(bool active)
-{
-	if (TheDisplay && WW3D::Is_Initted() && !TheDisplay->getWindowed())
-	{
-		if (active)
-		{	
-			//switch back to desired mode when user alt-tabs back into game
-			WW3D::Set_Render_Device( WW3D::Get_Render_Device(),TheDisplay->getWidth(),TheDisplay->getHeight(),TheDisplay->getBitDepth(),TheDisplay->getWindowed(),true, true);
-			OSVERSIONINFO	osvi;
-			osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFO);
-			if (GetVersionEx(&osvi))
-			{	//check if we're running Win9x variant since they have buggy alt-tab that requires
-				//reloading all textures.
-				if (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
-				{	//only do this on Win9x boxes because it makes alt-tab very slow.
-						WW3D::_Invalidate_Textures();
-				}
-			}
-		}
-		else
-		{
-			//switch to windowed mode whenever the user alt-tabs out of game. Don't restore assets after reset since we'll do it when returning.
-			WW3D::Set_Render_Device( WW3D::Get_Render_Device(),TheDisplay->getWidth(),TheDisplay->getHeight(),TheDisplay->getBitDepth(),TheDisplay->getWindowed(),true, true, false);
-		}
-	}
-}
-
 /** Set resolution of display */
 //=============================================================================
 Bool W3DDisplay::setDisplayMode( UnsignedInt xres, UnsignedInt yres, UnsignedInt bitdepth, Bool windowed )
