@@ -372,7 +372,8 @@ class AudioManager : public SubsystemInterface
 		Bool m_disallowSpeech			: 1;
 };
 
-
+// TheSuperHackers @feature helmutbuhler 17/05/2025
+// AudioManager that does nothing. Used for Headless Mode.
 class AudioManagerDummy : public AudioManager
 {
 #if defined(_DEBUG) || defined(_INTERNAL)
