@@ -282,7 +282,7 @@ extern GameClient *TheGameClient;
 //				m_2DScene = NULL
 //				m_3DScene = NULL
 //				(m_assetManager remains!)
-//			TheWindowManager = DummyGameWindowManager
+//			TheWindowManager = GameWindowManagerDummy
 //			TheIMEManager = NULL
 //			TheTerrainVisual is partially disabled:
 //				TheTerrainTracksRenderObjClassSystem = NULL

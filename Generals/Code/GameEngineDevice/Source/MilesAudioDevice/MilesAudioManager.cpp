@@ -66,7 +66,7 @@
 
 #include "Common/file.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
@@ -114,7 +114,7 @@ MilesAudioManager::~MilesAudioManager()
 }
 
 //-------------------------------------------------------------------------------------------------
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 AudioHandle MilesAudioManager::addAudioEvent( const AudioEventRTS *eventToAdd )
 {
 	if (TheGlobalData->m_preloadReport) {
@@ -127,7 +127,7 @@ AudioHandle MilesAudioManager::addAudioEvent( const AudioEventRTS *eventToAdd )
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FILE *fp )
 {
@@ -446,7 +446,7 @@ void MilesAudioManager::init()
 	AudioManager::init();
 #ifdef INTENSE_DEBUG
 	DEBUG_LOG(("Sound has temporarily been disabled in debug builds only. jkmcd\n"));
-	// for now, _DEBUG builds only should have no sound. ask jkmcd or srj about this.
+	// for now, RTS_DEBUG builds only should have no sound. ask jkmcd or srj about this.
 	return;
 #endif
 
@@ -467,13 +467,17 @@ void MilesAudioManager::postProcessLoad()
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::reset()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	dumpAllAssetsUsed();
 	m_allEventsLoaded.clear();
 #endif
 
 	AudioManager::reset();
 	stopAllAudioImmediately();
+  removeAllAudioRequests();
+  // This must come after stopAllAudioImmediately() and removeAllAudioRequests(), to ensure that
+  // sounds pointing to the temporary AudioEventInfo handles are deleted before their info is deleted
+  removeLevelSpecificAudioEventInfos();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -603,6 +607,7 @@ void MilesAudioManager::pauseAudio( AudioAffect which )
 	}
 }
 
+
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::resumeAudio( AudioAffect which )
 {
@@ -651,19 +656,6 @@ void MilesAudioManager::pauseAmbient( Bool shouldPause )
 {
 
 }
-
-//-------------------------------------------------------------------------------------------------
-void MilesAudioManager::stopAllAmbientsBy( Object *obj )
-{
-
-}
-
-//-------------------------------------------------------------------------------------------------
-void MilesAudioManager::stopAllAmbientsBy( Drawable *draw )
-{
-
-}
-
 
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
@@ -1174,6 +1166,16 @@ void MilesAudioManager::stopAllAudioImmediately( void )
 		it = m_playingStreams.erase(it);
 	}
 
+  for (it = m_fadingAudio.begin(); it != m_fadingAudio.end(); ) {
+    playing = (*it);
+    if (!playing) {
+      continue;
+    }
+    
+    releasePlayingAudio(playing);
+    it = m_fadingAudio.erase(it);
+  }
+  
 	std::list<HAUDIO>::iterator hit;
 	for (hit = m_audioForcePlayed.begin(); hit != m_audioForcePlayed.end(); ++hit) {
 		if (*hit) {
@@ -2390,6 +2392,44 @@ void MilesAudioManager::processPlayingList( void )
 	}
 }
 
+//Patch for a rare bug (only on about 5% of in-studio machines suffer, and not all the time) .
+//The actual mechanics of this problem are still elusive as of the date of this comment. 8/21/03
+//but the cause is clear. Some cinematics do a radical change in the microphone position, which
+//calls for a radical 3DSoundVolume adjustment. If this happens while a stereo stream is *ENDING*,
+//low-level code gets caught in a tight loop. (Hangs) on some machines.
+//To prevent this condition, we just suppress the updating of 3DSoundVolume while one of these
+//is on the list. Since the music tracks play continuously, they never *END* during these cinematics.
+//so we filter them out as, *NOT SENSITIVE*... we do want to update 3DSoundVolume during music, 
+//which is almost all of the time.
+
+Bool MilesAudioManager::has3DSensitiveStreamsPlaying( void ) const
+{
+  if ( m_playingStreams.empty() )
+    return FALSE;
+
+	for ( std::list< PlayingAudio* >::const_iterator it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it ) 
+  {
+		const PlayingAudio *playing = (*it);
+
+    if ( ! playing )
+      continue;
+
+    if ( playing->m_audioEventRTS->getAudioEventInfo()->m_soundType != AT_Music )
+    {
+      return TRUE;
+    }
+
+    if ( playing->m_audioEventRTS->getEventName().startsWith("Game_") == FALSE ) 
+    {
+      return TRUE;
+    }
+  }	
+  
+  return FALSE; 
+
+}
+
+
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::processFadingList( void )
 {
@@ -2489,7 +2529,14 @@ Bool MilesAudioManager::checkForSample( AudioRequest *req )
 		return true;
 	}
 
-	if (req->m_pendingEvent->getAudioEventInfo()->m_type != AT_SoundEffect) {
+  if ( req->m_pendingEvent->getAudioEventInfo() == NULL )
+  {
+    // Fill in event info
+    getInfoForAudioEvent( req->m_pendingEvent );
+  }
+  
+	if (req->m_pendingEvent->getAudioEventInfo()->m_type != AT_SoundEffect) 
+  {
 		return true;
 	}
 
@@ -3017,7 +3064,7 @@ void AILCALLBACK setStreamCompleted( HSTREAM streamCompleted )
 //-------------------------------------------------------------------------------------------------
 U32 AILCALLBACK streamingFileOpen(char const *fileName, U32 *file_handle)
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (sizeof(U32) != sizeof(File*)) {
 		RELEASE_CRASH(("streamingFileOpen - This function requires work in order to compile on non 32-bit platforms.\n"));
 	}
@@ -3277,7 +3324,7 @@ Bool AudioFileCache::freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNee
 }
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::dumpAllAssetsUsed()
 {

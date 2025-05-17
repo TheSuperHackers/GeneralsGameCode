@@ -53,9 +53,10 @@
 #include "GameLogic/Module/SpawnBehavior.h"
 #include "GameLogic/Module/SpecialPowerModule.h"
 #include "GameLogic/Module/StealthUpdate.h"
+#include "GameLogic/Module/SpecialPowerUpdateModule.h"
 #include "GameLogic/ObjectIter.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -637,6 +638,39 @@ Bool AIGroup::friend_computeGroundPath( const Coord3D *pos, CommandSourceType cm
 	m_groundPath = TheAI->pathfinder()->findGroundPath(&center, pos, PATH_DIAMETER_IN_CELLS, false);
 	return m_groundPath!=NULL;
 
+}
+
+static void clampToMap(Coord3D *dest, PlayerType pt)
+// Clamps to the player's current visible map area. jba. [8/28/2003] 
+{
+	Region3D extent;
+	if (pt==PLAYER_COMPUTER) {
+		// AI gets to operate inside the pathable shrouded area. [8/28/2003]
+		TheTerrainLogic->getMaximumPathfindExtent(&extent);
+	} else {
+		// Human player has to stay within the visible map.
+		TheTerrainLogic->getExtent(&extent);
+	}
+
+	extent.hi.x -= PATHFIND_CELL_SIZE_F;
+	extent.hi.y -= PATHFIND_CELL_SIZE_F;
+	extent.lo.x += PATHFIND_CELL_SIZE_F;
+	extent.lo.y += PATHFIND_CELL_SIZE_F;
+	if (!extent.isInRegionNoZ(dest)) {
+		// clamp to in region. [8/28/2003]	
+		if (dest->x < extent.lo.x) {
+			dest->x = extent.lo.x;
+		}
+		if (dest->y < extent.lo.y) {
+			dest->y = extent.lo.y;
+		}
+		if (dest->x > extent.hi.x) {
+			dest->x = extent.hi.x;
+		}
+		if (dest->y > extent.hi.y) {
+			dest->y = extent.hi.y;
+		}
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1471,6 +1505,36 @@ Bool AIGroup::friend_moveVehicleToPos( const Coord3D *pos, CommandSourceType cmd
 //-------------------------------------------------------------------------------------------------
 // AI Command Interface implementation for AIGroup
 //
+const Int STD_WAYPOINT_CLAMP_MARGIN = ( PATHFIND_CELL_SIZE_F * 4.0f );
+const Int STD_AIRCRAFT_EXTRA_MARGIN = ( PATHFIND_CELL_SIZE_F * 10.0f );
+
+void clampWaypointPosition( Coord3D &position, Int margin )
+{
+	Region3D mapExtent;
+	TheTerrainLogic->getExtent(&mapExtent);
+  
+  // trim some fat off of all sides,
+  mapExtent.hi.x -= margin;
+  mapExtent.hi.y -= margin;
+  mapExtent.lo.x += margin;
+  mapExtent.lo.y += margin;
+
+	if ( mapExtent.isInRegionNoZ( &position ) == FALSE )
+  {
+    if ( position.x > mapExtent.hi.x )
+      position.x = mapExtent.hi.x;
+    else if ( position.x < mapExtent.lo.x )
+      position.x = mapExtent.lo.x;
+
+    if ( position.y > mapExtent.hi.y )
+      position.y = mapExtent.hi.y;
+    else if ( position.y < mapExtent.lo.y )
+      position.y = mapExtent.lo.y;
+
+    position.z = TheTerrainLogic->getGroundHeight( position.x, position.y );
+  }
+}
+
 
 /**
  * Move to given position(s)
@@ -1708,6 +1772,39 @@ void AIGroup::groupScatter( CommandSourceType cmdSource )
 		ai->aiMoveToPosition( &dest, cmdSource );
 	}
 }
+
+
+const Real CIRCLE = ( 2.0f * PI );
+
+void getHelicopterOffset( Coord3D& posOut, Int idx )
+{
+  if (idx == 0)
+    return;
+  
+  Real assumedHeliDiameter = 70.0f;
+  Real radius = assumedHeliDiameter;
+  Real circumference = radius * CIRCLE;
+  Real angle = 0;
+  Real angleBetweenEachChopper = assumedHeliDiameter / circumference * CIRCLE;
+  for (Int h = 1; h < idx; ++h )
+  {
+    angle += angleBetweenEachChopper;
+
+    if ( angle > CIRCLE )
+    {
+      radius += assumedHeliDiameter;
+      circumference = radius * CIRCLE;
+      angleBetweenEachChopper = assumedHeliDiameter / circumference * CIRCLE;
+      angle -= CIRCLE;
+    }
+  }
+
+  Coord3D tempCtr = posOut;
+  posOut.x = tempCtr.x + (sin(angle) * radius);
+  posOut.y = tempCtr.y + (cos(angle) * radius);
+
+}
+
 
 /**
  * Move to given position(s), tightening the formation
@@ -2513,7 +2610,7 @@ void AIGroup::groupDoSpecialPower( UnsignedInt specialPowerID, UnsignedInt comma
  * don't use AIUpdateInterfaces!!! No special power uses an AIUpdateInterface immediately, but special
  * abilities, which are derived from special powers do... and are unit triggered. Those do have AI.
  */
-void AIGroup::groupDoSpecialPowerAtLocation( UnsignedInt specialPowerID, const Coord3D *location, const Object *objectInWay, UnsignedInt commandOptions )
+void AIGroup::groupDoSpecialPowerAtLocation( UnsignedInt specialPowerID, const Coord3D *location, Real angle, const Object *objectInWay, UnsignedInt commandOptions )
 {
 	//This one requires a position
 	std::list<Object *>::iterator i;
@@ -2538,7 +2635,7 @@ void AIGroup::groupDoSpecialPowerAtLocation( UnsignedInt specialPowerID, const C
 			{
 				if( TheActionManager->canDoSpecialPowerAtLocation( object, location, CMD_FROM_PLAYER, spTemplate, objectInWay, commandOptions ) )
 				{
-					mod->doSpecialPowerAtLocation( location, commandOptions );
+					mod->doSpecialPowerAtLocation( location, angle, commandOptions );
 
 					object->friend_setUndetectedDefector( FALSE );// My secret is out
 				}

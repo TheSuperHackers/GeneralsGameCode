@@ -130,7 +130,7 @@ extern void externalAddTree(Coord3D location, Real scale, Real angle, AsciiStrin
 #endif
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -436,10 +436,6 @@ void GameLogic::reset( void )
 	m_thingTemplateBuildableOverrides.clear();
 	m_controlBarOverrides.clear();
 
-	// destroy all objects
-	// TheSuperHackers @info xezon 10/04/2025 Objects need to be destroyed before clearing the object vector.
-	destroyAllObjectsImmediate();
-
 	// set the hash to be rather large. We need to optimize this value later.
 //	m_objHash.clear();
 //	m_objHash.resize(OBJ_HASH_SIZE);
@@ -450,6 +446,9 @@ void GameLogic::reset( void )
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
 	setFPMode();
+
+	// destroy all objects
+	destroyAllObjectsImmediate();
 
 	m_nextObjID = (ObjectID)1;
 
@@ -2566,7 +2565,7 @@ void GameLogic::processCommandList( CommandList *list )
 
 	for( msg = list->getFirstMessage(); msg; msg = msg->next() )
 	{
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		DEBUG_ASSERTCRASH(msg != NULL && msg != (GameMessage*)0xdeadbeef, ("bad msg"));
 #endif
 		logicMessageDispatcher( msg, NULL );
@@ -3610,11 +3609,11 @@ void GameLogic::update( void )
 		Total_Load_3D_Assets=0;
 	#endif
 
-#ifdef _PROFILE
+#ifdef RTS_PROFILE
     Profile::StartRange("map_load");
 #endif
 		startNewGame( FALSE );
-#ifdef _PROFILE
+#ifdef RTS_PROFILE
     Profile::StopRange("map_load");
 #endif
 		m_startNewGame = FALSE;
@@ -3892,7 +3891,8 @@ void GameLogic::removeObjectFromLookupTable( Object *obj )
 {
 
 	// sanity
-	if( obj == NULL )
+	// TheSuperHackers @fix Mauller/Xezon 24/04/2025 Prevent out of range access to vector lookup table
+	if( obj == NULL || static_cast<size_t>(obj->getID()) >= m_objVector.size() )
 		return;
 
 	// remove from lookup table
@@ -4277,7 +4277,6 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic )
 		while( drawable )
 		{
 			drawable->startAmbientSound();
-			TheAudio->stopAllAmbientsBy( drawable );
 			drawable = drawable->getNextDrawable();
 		}
 #endif

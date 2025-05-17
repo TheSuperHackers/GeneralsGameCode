@@ -33,7 +33,7 @@
 #include "GameNetwork/IPEnumeration.h"
 #include <cstdarg>
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -120,6 +120,8 @@ extern Bool inCRCGen;
 
 void CRCDebugStartNewGame()
 {
+	if (TheGameLogic->isInShellGame())
+		return;
 	if (g_saveDebugCRCPerFrame)
 	{
 		// Create folder for frame data, if it doesn't exist yet.

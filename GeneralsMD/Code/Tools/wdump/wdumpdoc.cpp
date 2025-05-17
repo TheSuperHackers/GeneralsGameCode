@@ -24,7 +24,7 @@
 #include "wdumpDoc.h"
 
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -87,7 +87,7 @@ void CWdumpDoc::Serialize(CArchive& ar)
 /////////////////////////////////////////////////////////////////////////////
 // CWdumpDoc diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void CWdumpDoc::AssertValid() const
 {
 	CDocument::AssertValid();
@@ -97,7 +97,7 @@ void CWdumpDoc::Dump(CDumpContext& dc) const
 {
 	CDocument::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CWdumpDoc commands

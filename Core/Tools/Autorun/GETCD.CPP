@@ -206,7 +206,7 @@ int	GetCDClass::Get_CD_Drive_For_This_Volume ( const char *volume_label )
 
 		} else {
 
-#if _DEBUG
+#if RTS_DEBUG
 			LPVOID lpMsgBuf;
 			FormatMessage( 
 				FORMAT_MESSAGE_ALLOCATE_BUFFER | 

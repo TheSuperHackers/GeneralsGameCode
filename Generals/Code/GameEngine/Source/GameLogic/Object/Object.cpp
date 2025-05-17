@@ -101,7 +101,7 @@
 #include "Common/CRCDebug.h"
 #include "Common/MiscAudio.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -142,8 +142,7 @@ extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBCo
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-#ifdef DEBUG_LOGGING
-AsciiString DescribeObject(const Object *obj)
+AsciiString DebugDescribeObject(const Object *obj)
 {
 	if (!obj)
 		return "<No Object>";
@@ -167,7 +166,6 @@ AsciiString DescribeObject(const Object *obj)
 
 	return ret;
 }
-#endif // DEBUG_LOGGING
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -205,7 +203,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	m_formationID(NO_FORMATION_ID),
 	m_isReceivingDifficultyBonus(FALSE)
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_hasDiedAlready = false;
 #endif
 	//Modules have not been created yet!
@@ -499,7 +497,7 @@ void Object::initObject()
 
 	// Kris -- All missiles must be projectiles! This is the perfect place to assert them!
 	// srj: yes, but only in debug...
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if( !isKindOf( KINDOF_PROJECTILE ) )
 	{
 		if( isKindOf( KINDOF_SMALL_MISSILE ) || isKindOf( KINDOF_BALLISTIC_MISSILE ) )
@@ -2335,7 +2333,7 @@ void Object::setTriggerAreaFlagsForChangeInPosition()
 			if (m_team) 
 				m_team->setEnteredExited();
 			TheGameLogic->updateObjectsChangedTriggerAreas();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 			//TheScriptEngine->AppendDebugMessage("Object exited.", false);
 #endif
 		}
@@ -2370,7 +2368,7 @@ void Object::setTriggerAreaFlagsForChangeInPosition()
 					m_team->setEnteredExited();
 				TheGameLogic->updateObjectsChangedTriggerAreas();
 				++m_numTriggerAreasActive;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 				//TheScriptEngine->AppendDebugMessage("Object entered.", false);
 #endif
 			} 
@@ -3858,7 +3856,7 @@ void Object::xfer( Xfer *xfer )
 	//m_body;
 	//m_ai;
 	//m_physics;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	//m_hasDiedAlready;
 #endif
 
@@ -4022,7 +4020,7 @@ void Object::onCapture( Player *oldOwner, Player *newOwner )
 void Object::onDie( DamageInfo *damageInfo )
 {
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	DEBUG_ASSERTCRASH(m_hasDiedAlready == false, ("Object::onDie has been called multiple times. This is invalid. jkmcd"));
 	m_hasDiedAlready = true;
 #endif
@@ -4484,7 +4482,7 @@ void Object::unshroud()
 //-------------------------------------------------------------------------------------------------
 Real Object::getVisionRange() const
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(m_visionRange, 0, 0);
@@ -4520,7 +4518,7 @@ Real Object::getShroudClearingRange() const
 		shroudClearingRange = getGeometryInfo().getBoundingCircleRadius();
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(shroudClearingRange, 0, 0);
@@ -4577,7 +4575,7 @@ void Object::setShroudClearingRange( Real newShroudClearingRange )
 //-------------------------------------------------------------------------------------------------
 Real Object::getShroudRange() const
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(m_shroudRange, 0, 0);
@@ -4671,7 +4669,7 @@ void Object::doSpecialPowerAtObject( const SpecialPowerTemplate *specialPowerTem
 /** Execute special power */
 //-------------------------------------------------------------------------------------------------
 void Object::doSpecialPowerAtLocation( const SpecialPowerTemplate *specialPowerTemplate, 
-																			 const Coord3D *loc, UnsignedInt commandOptions, Bool forced )
+																			 const Coord3D *loc, Real angle, UnsignedInt commandOptions, Bool forced )
 {
 
 	if (isDisabled())
@@ -4684,15 +4682,14 @@ void Object::doSpecialPowerAtLocation( const SpecialPowerTemplate *specialPowerT
 	// get the module and execute
 	SpecialPowerModuleInterface *mod = getSpecialPowerModule( specialPowerTemplate );
 	if( mod )
-		mod->doSpecialPowerAtLocation( loc, commandOptions );
+		mod->doSpecialPowerAtLocation( loc, angle, commandOptions );
 
 }  
 
 //-------------------------------------------------------------------------------------------------
 /** Execute special power */
 //-------------------------------------------------------------------------------------------------
-void Object::doSpecialPowerAtMultipleLocations( const SpecialPowerTemplate *specialPowerTemplate, 
-																								const Coord3D *locations, Int locCount, UnsignedInt commandOptions, Bool forced )
+void Object::doSpecialPowerUsingWaypoints( const SpecialPowerTemplate *specialPowerTemplate, const Waypoint *way, UnsignedInt commandOptions, Bool forced )
 {
 
 	if (isDisabled())
@@ -4705,7 +4702,7 @@ void Object::doSpecialPowerAtMultipleLocations( const SpecialPowerTemplate *spec
 	// get the module and execute
 	SpecialPowerModuleInterface *mod = getSpecialPowerModule( specialPowerTemplate );
 	if( mod )
-		mod->doSpecialPowerAtMultipleLocations( locations, locCount, commandOptions );
+		mod->doSpecialPowerUsingWaypoints( way, commandOptions );
 
 }
 
@@ -4918,7 +4915,7 @@ void Object::doCommandButtonAtPosition( const CommandButton *commandButton, cons
 				if( commandButton->getSpecialPowerTemplate() )
 				{
 					CommandOption commandOptions = (CommandOption)(commandButton->getOptions() | COMMAND_FIRED_BY_SCRIPT);
-					doSpecialPowerAtLocation( commandButton->getSpecialPowerTemplate(), pos, commandOptions, cmdSource == CMD_FROM_SCRIPT );
+					doSpecialPowerAtLocation( commandButton->getSpecialPowerTemplate(), pos, INVALID_ANGLE, commandOptions, cmdSource == CMD_FROM_SCRIPT );
 				}
 				break;
 			}
@@ -5040,6 +5037,26 @@ SpecialPowerModuleInterface* Object::findSpecialPowerModuleInterface( SpecialPow
 }
 
 // ------------------------------------------------------------------------------------------------
+// Search our special power modules for the first occurrence of a shortcut special.
+// ------------------------------------------------------------------------------------------------
+SpecialPowerModuleInterface* Object::findAnyShortcutSpecialPowerModuleInterface() const
+{
+	for( BehaviorModule** m = m_behaviors; *m; ++m )
+	{
+		SpecialPowerModuleInterface* sp = (*m)->getSpecialPower();
+		if (!sp)
+			continue;
+
+		const SpecialPowerTemplate *spTemplate = sp->getSpecialPowerTemplate();
+		if( spTemplate && spTemplate->isShortcutPower() )
+		{
+			return sp; 
+		}
+	}
+	return NULL;
+}
+
+// ------------------------------------------------------------------------------------------------
 /** Get spawn behavior interface from object */
 // ------------------------------------------------------------------------------------------------
 SpawnBehaviorInterface* Object::getSpawnBehaviorInterface() const
@@ -5073,6 +5090,26 @@ SpecialPowerUpdateInterface* Object::findSpecialPowerWithOverridableDestinationA
 	}  // end for
 	return NULL;
 }
+
+// ------------------------------------------------------------------------------------------------
+// Simply find the special power module that is potentially allowed to plot positions to target.
+// ------------------------------------------------------------------------------------------------
+SpecialPowerUpdateInterface* Object::findSpecialPowerWithOverridableDestination( SpecialPowerType type ) const
+{
+	for( BehaviorModule** u = m_behaviors; *u; ++u )
+	{
+		SpecialPowerUpdateInterface *spInterface = (*u)->getSpecialPowerUpdateInterface();
+		if( spInterface )
+		{
+			if( spInterface->doesSpecialPowerHaveOverridableDestination() )
+			{
+				return spInterface;
+			}
+		}
+	}  // end for
+	return NULL;
+}
+
 
 // ------------------------------------------------------------------------------------------------
 // Search our special ability updates for a specific one.

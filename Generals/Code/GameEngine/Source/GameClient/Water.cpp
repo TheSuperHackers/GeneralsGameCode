@@ -64,7 +64,10 @@ const FieldParse WaterTransparencySetting::m_waterTransparencySettingFieldParseT
 
 	{ "TransparentWaterDepth",			INI::parseReal,				NULL,			offsetof( WaterTransparencySetting, m_transparentWaterDepth ) },
 	{ "TransparentWaterMinOpacity",	INI::parseReal,				NULL,			offsetof( WaterTransparencySetting, m_minWaterOpacity ) },
-
+	{ "StandingWaterColor",	INI::parseRGBColor,			NULL,			offsetof( WaterTransparencySetting, m_standingWaterColor ) },
+	{ "StandingWaterTexture",INI::parseAsciiString,		NULL,			offsetof( WaterTransparencySetting, m_standingWaterTexture ) },
+	{ "AdditiveBlending", INI::parseBool,				NULL,			offsetof( WaterTransparencySetting, m_additiveBlend) },
+	{ "RadarWaterColor", INI::parseRGBColor,			NULL,			offsetof( WaterTransparencySetting, m_radarColor) },
 	{ "SkyboxTextureN",							INI::parseAsciiString,NULL,			offsetof( WaterTransparencySetting, m_skyboxTextureN ) },
 	{ "SkyboxTextureE",							INI::parseAsciiString,NULL,			offsetof( WaterTransparencySetting, m_skyboxTextureE ) },
 	{ "SkyboxTextureS",							INI::parseAsciiString,NULL,			offsetof( WaterTransparencySetting, m_skyboxTextureS ) },

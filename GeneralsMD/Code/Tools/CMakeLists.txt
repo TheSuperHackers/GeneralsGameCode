@@ -2,7 +2,6 @@
 
 # Build useful tool binaries.
 if(RTS_BUILD_ZEROHOUR_TOOLS)
-    add_subdirectory(DebugWindow)
     add_subdirectory(GUIEdit)
     add_subdirectory(ImagePacker)
     add_subdirectory(MapCacheBuilder)

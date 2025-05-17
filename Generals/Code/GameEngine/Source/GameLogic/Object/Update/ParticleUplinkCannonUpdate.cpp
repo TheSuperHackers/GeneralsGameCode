@@ -59,7 +59,7 @@
 #include "GameLogic/Module/LaserUpdate.h"
 #include "GameLogic/Module/ActiveBody.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -268,14 +268,14 @@ void ParticleUplinkCannonUpdate::onObjectCreated()
 }
 
 //-------------------------------------------------------------------------------------------------
-void ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, UnsignedInt commandOptions, Int locationCount )
+Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions )
 {
 	const ParticleUplinkCannonUpdateModuleData *data = getParticleUplinkCannonUpdateModuleData();
 
 	if( m_specialPowerModule->getSpecialPowerTemplate() != specialPowerTemplate )
 	{
 		//Check to make sure our modules are connected.
-		return;
+		return FALSE;
 	}
 
 	if( !BitIsSet( commandOptions, COMMAND_FIRED_BY_SCRIPT ) )
@@ -306,6 +306,7 @@ void ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 		SpecialPowerModule *spModule = (SpecialPowerModule*)spmInterface;
 		spModule->markSpecialPowerTriggered( &m_initialTargetPosition );
 	}
+	return TRUE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -870,7 +871,8 @@ void ParticleUplinkCannonUpdate::createGroundToOrbitLaser( UnsignedInt growthFra
 	if( beam )
 	{
 		TheGameClient->destroyDrawable( beam );
-		m_orbitToTargetBeamID = INVALID_DRAWABLE_ID;
+		// TheSuperHackers @fix helmutbuhler 19/04/2025 Invalidate the relevant drawable ID.
+		m_groundToOrbitBeamID = INVALID_DRAWABLE_ID;
 	}
 
 	if( data->m_particleBeamLaserName.isNotEmpty() )

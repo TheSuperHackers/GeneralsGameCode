@@ -23,7 +23,7 @@
 #include "wdump.h"
 #include "WDLView.h"
 #include "WDumpDoc.h"
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
@@ -61,7 +61,7 @@ void CWDumpListView::OnDraw(CDC* pDC)
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpListView diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void CWDumpListView::AssertValid() const
 {
 	CListView::AssertValid();
@@ -71,7 +71,7 @@ void CWDumpListView::Dump(CDumpContext& dc) const
 {
 	CListView::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CWDumpListView message handlers

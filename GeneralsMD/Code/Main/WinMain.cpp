@@ -54,6 +54,7 @@
 #include "Common/MessageStream.h"
 #include "Common/Registry.h"
 #include "Common/Team.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/GameClient.h"
 #include "GameLogic/GameLogic.h"  ///< @todo for demo, remove
@@ -69,7 +70,7 @@
 
 #include <rts/profile.h>
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
@@ -86,8 +87,6 @@ const Char *g_strFile = "data\\Generals.str";
 const Char *g_csfFile = "data\\%s\\Generals.csf";
 const char *gAppPrefix = ""; /// So WB can have a different debug log file name.
 
-static HANDLE GeneralsMutex = NULL;
-#define GENERALS_GUID "685EAFF2-3216-4265-B047-251C5F4B82F3"
 #define DEFAULT_XRESOLUTION 800
 #define DEFAULT_YRESOLUTION 600
 
@@ -370,10 +369,12 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
             // Prevent moving/sizing and power loss in fullscreen mode
             switch( wParam )
             {
+                case SC_KEYMENU:
+                    // TheSuperHackers @bugfix Mauller 10/05/2025 Always handle this command to prevent halting the game when left Alt is pressed.
+                    return 1;
                 case SC_MOVE:
                 case SC_SIZE:
                 case SC_MAXIMIZE:
-                case SC_KEYMENU:
                 case SC_MONITORPOWER:
                     if( FALSE == ApplicationIsWindowed )
                         return 1;
@@ -765,7 +766,7 @@ void munkeeFunc(void)
 
 void checkProtection(void)
 {
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 	__try
 	{
 		munkeeFunc();
@@ -841,7 +842,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 {
 	checkProtection();
 
-#ifdef _PROFILE
+#ifdef RTS_PROFILE
   Profile::StartRange("init");
 #endif
 
@@ -919,7 +920,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			return 0;
 		}
 
-		#ifdef _DEBUG
+		#ifdef RTS_DEBUG
 			// Turn on Memory heap tracking
 			int tmpFlag = _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG );
 			tmpFlag |= (_CRTDBG_LEAK_CHECK_DF|_CRTDBG_ALLOC_MEM_DF);
@@ -935,7 +936,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 // Force "splash image" to be loaded from a file, not a resource so same exe can be used in different localizations.
-#if defined _DEBUG || defined _INTERNAL || defined _PROFILE
+#if defined RTS_DEBUG || defined RTS_INTERNAL || defined RTS_PROFILE
 
 			// check both localized directory and root dir
 		char filePath[_MAX_PATH];
@@ -997,22 +998,15 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif
 
 
-		//Create a mutex with a unique name to Generals in order to determine if
-		//our app is already running.
-		//WARNING: DO NOT use this number for any other application except Generals.
-		GeneralsMutex = CreateMutex(NULL, FALSE, GENERALS_GUID);
-		if (GetLastError() == ERROR_ALREADY_EXISTS)
+		// TheSuperHackers @refactor The instance mutex now lives in its own class.
+
+		if (!rts::ClientInstance::initialize())
 		{
-			HWND ccwindow = FindWindow(GENERALS_GUID, NULL);
+			HWND ccwindow = FindWindow(rts::ClientInstance::getFirstInstanceName(), NULL);
 			if (ccwindow)
 			{
 				SetForegroundWindow(ccwindow);
 				ShowWindow(ccwindow, SW_RESTORE);
-			}
-			if (GeneralsMutex != NULL)
-			{
-				CloseHandle(GeneralsMutex);
-				GeneralsMutex = NULL;
 			}
 
 			DEBUG_LOG(("Generals is already running...Bail!\n"));
@@ -1022,7 +1016,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			DEBUG_SHUTDOWN();
 			return 0;
 		}
-		DEBUG_LOG(("Create GeneralsMutex okay.\n"));
+		DEBUG_LOG(("Create Generals Mutex okay.\n"));
 
 #ifdef DO_COPY_PROTECTION
 		if (!CopyProtect::notifyLauncher())
@@ -1052,7 +1046,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	#ifdef MEMORYPOOL_DEBUG
 		TheMemoryPoolFactory->debugMemoryReport(REPORT_POOLINFO | REPORT_POOL_OVERFLOW | REPORT_SIMPLE_LEAKS, 0, 0);
 	#endif
-	#if defined(_DEBUG) || defined(_INTERNAL)
+	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		TheMemoryPoolFactory->memoryPoolUsageReport("AAAMemStats");
 	#endif
 

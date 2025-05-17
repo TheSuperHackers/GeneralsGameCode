@@ -59,7 +59,7 @@
 #include "WorldBuilderView.h"
 #include "MapPreview.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -910,7 +910,7 @@ void CWorldBuilderDoc::autoSave(void)
 /////////////////////////////////////////////////////////////////////////////
 // CWorldBuilderDoc diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void CWorldBuilderDoc::AssertValid() const
 {
 	CDocument::AssertValid();
@@ -920,7 +920,7 @@ void CWorldBuilderDoc::Dump(CDumpContext& dc) const
 {
 	CDocument::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CWorldBuilderDoc commands

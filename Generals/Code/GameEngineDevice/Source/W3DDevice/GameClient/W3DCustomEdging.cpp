@@ -358,7 +358,7 @@ void W3DCustomEdging::drawEdging(WorldHeightMap *pMap, Int minX, Int maxX, Int m
 	DX8Wrapper::Set_Index_Buffer(m_indexEdging,0);
 	DX8Wrapper::Set_Vertex_Buffer(m_vertexEdging);
 	DX8Wrapper::Set_Shader(detailAlphaTestShader);
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	//DX8Wrapper::Set_Shader(detailShader); // shows clipping.
 #endif	
 	

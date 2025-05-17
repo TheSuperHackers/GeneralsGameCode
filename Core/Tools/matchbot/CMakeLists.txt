@@ -64,7 +64,11 @@ set_target_properties(core_matchbot PROPERTIES OUTPUT_NAME matchbot)
 
 target_sources(core_matchbot PRIVATE ${MATCHBOT_SRC})
 
-target_include_directories(core_matchbot PRIVATE . wlib wnet)
+target_include_directories(core_matchbot PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    wlib
+    wnet
+)
 
 target_link_libraries(core_matchbot PRIVATE
     gamespy::gamespy

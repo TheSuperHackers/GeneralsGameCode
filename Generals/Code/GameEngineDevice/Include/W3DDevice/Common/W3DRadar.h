@@ -76,12 +76,12 @@ protected:
 	void initializeTextureFormats( void );				///< find format to use for the radar texture
 	void deleteResources( void );									///< delete resources used
 	void drawEvents( Int pixelX, Int pixelY, Int width, Int height);		///< draw all of the radar events
- 	void drawHeroIcon( Int pixelX, Int pixelY, Int width, Int height, const Coord3D *pos );	//< draw a hero icon
+	void drawHeroIcon( Int pixelX, Int pixelY, Int width, Int height, const Coord3D *pos );	//< draw a hero icon
 	void drawViewBox( Int pixelX, Int pixelY, Int width, Int height );  ///< draw view box
 	void buildTerrainTexture( TerrainLogic *terrain );	 ///< create the terrain texture of the radar
 	void drawIcons( Int pixelX, Int pixelY, Int width, Int height );	///< draw all of the radar icons
 	void renderObjectList( const RadarObject *listHead, TextureClass *texture, Bool calcHero = FALSE );			 ///< render an object list to the texture
- 	void interpolateColorForHeight( RGBColor *color, 
+	void interpolateColorForHeight( RGBColor *color, 
 																	Real height, 
 																	Real hiZ, 
 																	Real midZ, 
@@ -118,7 +118,7 @@ protected:
 	Real m_viewZoom;															///< camera zoom used for the view box we have	
 	ICoord2D m_viewBox[ 4 ];											///< radar cell points for the 4 corners of view box
 
- 	std::list<const Coord3D *> m_cachedHeroPosList;					//< cache of hero positions for drawing icons in radar overlay
+	std::list<const Coord3D *> m_cachedHeroPosList;					//< cache of hero positions for drawing icons in radar overlay
 };
 
 

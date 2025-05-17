@@ -61,7 +61,7 @@
 #include "GameLogic/Module/SupplyWarehouseDockUpdate.h"
 #include "GameLogic/PartitionManager.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -626,7 +626,7 @@ Object *AIPlayer::buildStructureWithDozer(const ThingTemplate *bldgPlan, BuildLi
 
 
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	if (TheGlobalData->m_debugAI == AI_DEBUG_PATHS)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -1041,7 +1041,13 @@ Bool AIPlayer::isLocationSafe(const Coord3D *pos, const ThingTemplate *tthing )
 void AIPlayer::onUnitProduced( Object *factory, Object *unit )
 {
 	Bool found = false;
-	Bool supplyTruck;
+	// TheSuperHackers @fix Mauller 26/04/2025 Fixes uninitialized variable.
+	// To keep retail compatibility it needs to be set true in VS6 builds.
+#if defined(_MSC_VER) && _MSC_VER < 1300
+	Bool supplyTruck = true;
+#else
+	Bool supplyTruck = false;
+#endif
 
 	// factory could be NULL at the start of the game.
 	if (factory == NULL) {
@@ -1770,9 +1776,16 @@ void AIPlayer::buildBySupplies(Int minimumCash, const AsciiString& thingName)
 																									 BuildAssistant::NO_OBJECT_OVERLAP,
 																									 NULL, m_player ) != LBC_OK ) {
 			// Warn. 
-			AsciiString bldgName = tTemplate->getName();
-			bldgName.concat(" - buildAISupplyCenter unable to place.  Attempting to adjust position.");
-			TheScriptEngine->AppendDebugMessage(bldgName, false);
+			const Coord3D *warehouseLocation = bestSupplyWarehouse->getPosition();
+			AsciiString debugMessage;
+			debugMessage.format(" %s - buildBySupplies unable to place near dock at (%.2f,%.2f).  Attempting to adjust position.",
+													tTemplate->getName().str(),
+													warehouseLocation->x,
+													warehouseLocation->y
+													);
+			TheScriptEngine->AppendDebugMessage(debugMessage, false);
+			if( TheGlobalData->m_debugSupplyCenterPlacement )
+				DEBUG_LOG(("%s", debugMessage.str()));
 			// try to fix.
 			Real posOffset;
 			// Wiggle it a little :)
@@ -1789,12 +1802,16 @@ void AIPlayer::buildBySupplies(Int minimumCash, const AsciiString& thingName)
 																							 BuildAssistant::NO_OBJECT_OVERLAP,
 																							 NULL, m_player ) == LBC_OK;
 					if (valid) break;
+					if( TheGlobalData->m_debugSupplyCenterPlacement )
+						DEBUG_LOG(("buildBySupplies -- Fail at (%.2f,%.2f)\n", newPos.x, newPos.y));
 					newPos.y = yPos+posOffset;
 					valid = TheBuildAssistant->isLocationLegalToBuild( &newPos, tTemplate, angle,
 																							 BuildAssistant::CLEAR_PATH |
 																							 BuildAssistant::TERRAIN_RESTRICTIONS |
 																							 BuildAssistant::NO_OBJECT_OVERLAP,
 																							 NULL, m_player ) == LBC_OK;
+					if( !valid && TheGlobalData->m_debugSupplyCenterPlacement )
+						DEBUG_LOG(("buildBySupplies -- Fail at (%.2f,%.2f)\n", newPos.x, newPos.y));
 				}
 				if (valid) break;
 				xPos = location.x-offset;
@@ -1807,17 +1824,26 @@ void AIPlayer::buildBySupplies(Int minimumCash, const AsciiString& thingName)
 																							 BuildAssistant::NO_OBJECT_OVERLAP,
 																							 NULL, m_player ) == LBC_OK;
 					if (valid) break;
+					if( TheGlobalData->m_debugSupplyCenterPlacement )
+						DEBUG_LOG(("buildBySupplies -- Fail at (%.2f,%.2f)\n", newPos.x, newPos.y));
 					newPos.x = xPos+posOffset;
 					valid = TheBuildAssistant->isLocationLegalToBuild( &newPos, tTemplate, angle,
 																							 BuildAssistant::CLEAR_PATH |
 																							 BuildAssistant::TERRAIN_RESTRICTIONS |
 																							 BuildAssistant::NO_OBJECT_OVERLAP,
 																							 NULL, m_player ) == LBC_OK;
+					if( !valid && TheGlobalData->m_debugSupplyCenterPlacement )
+						DEBUG_LOG(("buildBySupplies -- Fail at (%.2f,%.2f)\n", newPos.x, newPos.y));
 				}
 				if (valid) break;
 			}
 		}
-		if (valid) location = newPos;
+		if (valid) 
+		{
+			if( TheGlobalData->m_debugSupplyCenterPlacement )
+				DEBUG_LOG(("buildAISupplyCenter -- SUCCESS at (%.2f,%.2f)\n", newPos.x, newPos.y));
+			location = newPos;
+		}
 		TheTerrainVisual->removeAllBibs();	// isLocationLegalToBuild adds bib feedback, turn it off.  jba.
 		location.z = 0; // All build list locations are ground relative.
 		m_player->addToPriorityBuildList(thingName, &location, angle);

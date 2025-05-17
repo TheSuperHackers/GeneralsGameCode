@@ -37,3 +37,13 @@
 #else
     #define CPP_11(code)
 #endif
+
+#if __cplusplus >= 201703L
+#define REGISTER
+#else
+#define REGISTER register
+#endif
+
+#if __cplusplus < 201103L
+#define static_assert(expr, msg)
+#endif

@@ -1,5 +1,5 @@
 /*
-**	Command & Conquer Generals(tm)
+**	Command & Conquer Generals Zero Hour(tm)
 **	Copyright 2025 Electronic Arts Inc.
 **
 **	This program is free software: you can redistribute it and/or modify
@@ -34,6 +34,14 @@
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
 
+#ifdef RTS_INTERNAL
+// for occasional debugging...
+//#pragma optimize("", off)
+//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
+
+
+
 Bool TheDebugIgnoreSyncErrors = FALSE;
 extern Int DX8Wrapper_PreserveFPU;
 
@@ -50,7 +58,7 @@ Bool g_clientDeepCRC = FALSE;
 Bool g_logObjectCRCs = FALSE;
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 extern Bool g_useStringFile;
 #endif
 
@@ -155,7 +163,18 @@ Int parseFPUPreserve(char *args[], int argc)
 	return 2;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+//=============================================================================
+//=============================================================================
+Int parseUseWaveEditor(char *args[], int num)
+{
+	if (TheWritableGlobalData)
+	{
+		TheWritableGlobalData->m_usingWaterTrackEditor = TRUE;
+	}
+	return 1;
+}
+
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 //=============================================================================
 //=============================================================================
@@ -197,7 +216,7 @@ Int parseNoMilCap(char *args[], int)
 	}
 	return 1;
 }
-#endif // _DEBUG || _INTERNAL
+#endif // RTS_DEBUG || RTS_INTERNAL
 
 //=============================================================================
 //=============================================================================
@@ -340,7 +359,7 @@ Int parseNoDraw(char *args[], int argc)
 	return 1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 //=============================================================================
 //=============================================================================
@@ -352,7 +371,7 @@ Int parseLogToConsole(char *args[], int)
 	return 1;
 }
 
-#endif // _DEBUG || _INTERNAL
+#endif // RTS_DEBUG || RTS_INTERNAL
 
 //=============================================================================
 //=============================================================================
@@ -428,7 +447,7 @@ Int parseYRes(char *args[], int num)
 	return 1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 //=============================================================================
 //=============================================================================
 Int parseLatencyAverage(char *args[], int num)
@@ -519,17 +538,6 @@ Int parseNoStaticLOD(char *args[], int num)
 
 //=============================================================================
 //=============================================================================
-Int parseUseWaveEditor(char *args[], int num)
-{
-	if (TheWritableGlobalData)
-	{
-		TheWritableGlobalData->m_usingWaterTrackEditor = TRUE;
-	}
-	return 1;
-}
-
-//=============================================================================
-//=============================================================================
 Int parseFPSLimit(char *args[], int num)
 {
 	if (TheWritableGlobalData && num > 1)
@@ -611,7 +619,7 @@ Int parseMunkee(char *args[], int)
 	}
 	return 1;
 }
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 Int parseScriptDebug(char *args[], int)
 {
@@ -644,7 +652,18 @@ Int parseBuildMapCache(char *args[], int)
 	return 1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+Int parsePreload( char *args[], int num )
+{
+	if( TheWritableGlobalData )
+		TheWritableGlobalData->m_preloadAssets = TRUE;
+	return 1;
+}
+#endif
+
+
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) 
 Int parseDisplayDebug(char *args[], int)
 {
 	if (TheWritableGlobalData)
@@ -664,12 +683,6 @@ Int parseFile(char *args[], int num)
 	return 2;
 }
 
-Int parsePreload( char *args[], int num )
-{
-	if( TheWritableGlobalData )
-		TheWritableGlobalData->m_preloadAssets = TRUE;
-	return 1;
-}
 
 Int parsePreloadEverything( char *args[], int num )
 {
@@ -702,7 +715,7 @@ Int parseVTune ( char *args[], int num )
 }
 /// end stuff for VTUNE
 
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 //=============================================================================
 //=============================================================================
@@ -716,7 +729,7 @@ Int parseNoFX(char *args[], int)
 	return 1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Int parseNoShroud(char *args[], int)
 {
 	if (TheWritableGlobalData)
@@ -745,7 +758,7 @@ Int parseNoMoveCamera(char *args[], int)
 	return 1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Int parseNoCinematic(char *args[], int)
 {
 	if (TheWritableGlobalData)
@@ -777,17 +790,36 @@ Int parseNoShellMap(char *args[], int)
 	return 1;
 }
 
-#if (defined(_DEBUG) || defined(_INTERNAL))
+Int parseNoShaders(char *args[], int)
+{
+	if (TheWritableGlobalData)
+	{
+		TheWritableGlobalData->m_chipSetType = 1;	//force to a voodoo card which uses least amount of features.
+	}
+	return 1;
+}
+
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 Int parseNoLogo(char *args[], int)
 {
 	if (TheWritableGlobalData)
 	{
 		TheWritableGlobalData->m_playIntro = FALSE;
 		TheWritableGlobalData->m_afterIntro = TRUE;
+		TheWritableGlobalData->m_playSizzle = FALSE;
 	}
 	return 1;
 }
 #endif
+
+Int parseNoSizzle( char *args[], int )
+{
+	if (TheWritableGlobalData)
+	{
+		TheWritableGlobalData->m_playSizzle = FALSE;
+	}
+	return 1;
+}
 
 Int parseShellMap(char *args[], int num)
 {
@@ -818,8 +850,12 @@ Int parseWinCursors(char *args[], int num)
 
 Int parseQuickStart( char *args[], int num )
 {
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
   parseNoLogo( args, num );
+#else
+	//Kris: Patch 1.01 -- Allow release builds to skip the sizzle video, but still force the EA logo to show up.
+	//This is for legal reasons.
+	parseNoSizzle( args, num );
 #endif
 	parseNoShellMap( args, num );
 	parseNoWindowAnimation( args, num );
@@ -835,6 +871,29 @@ Int parseConstantDebug( char *args[], int num )
 	return 1;
 }
 
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+Int parseExtraLogging( char *args[], int num )
+{
+	if (TheWritableGlobalData)
+	{
+		TheWritableGlobalData->m_extraLogging = TRUE;
+	}
+	return 1;
+}
+#endif
+
+//-allAdvice feature
+/*
+Int parseAllAdvice( char *args[], int num )
+{
+	if( TheWritableGlobalData )
+	{
+		TheWritableGlobalData->m_allAdvice = TRUE;
+	}
+	return 1;
+}
+*/
+
 Int parseShowTeamDot( char *args[], int num )
 {
 	if( TheWritableGlobalData )
@@ -845,7 +904,7 @@ Int parseShowTeamDot( char *args[], int num )
 }
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Int parseSelectAll( char *args[], int num )
 {
 	if( TheWritableGlobalData )
@@ -913,7 +972,7 @@ Int parseDemoLoadScreen(char *args[], int num)
 	return 1;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Int parseSaveStats(char *args[], int num)
 {
 	if (TheWritableGlobalData  && num > 1)
@@ -925,7 +984,7 @@ Int parseSaveStats(char *args[], int num)
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Int parseSaveAllStats(char *args[], int num)
 {
 	if (TheWritableGlobalData  && num > 1)
@@ -938,7 +997,7 @@ Int parseSaveAllStats(char *args[], int num)
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Int parseLocalMOTD(char *args[], int num)
 {
 	if (TheWritableGlobalData  && num > 1)
@@ -950,7 +1009,7 @@ Int parseLocalMOTD(char *args[], int num)
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Int parseCameraDebug(char *args[], int num)
 {
 	if (TheWritableGlobalData)
@@ -961,7 +1020,7 @@ Int parseCameraDebug(char *args[], int num)
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Int parseBenchmark(char *args[], int num)
 {
 	if (TheWritableGlobalData && num > 1)
@@ -971,6 +1030,20 @@ Int parseBenchmark(char *args[], int num)
 	}
 	return 2;
 }
+#endif
+
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#ifdef DUMP_PERF_STATS
+Int parseStats(char *args[], int num)
+{
+	if (TheWritableGlobalData && num > 1)
+	{
+		TheWritableGlobalData->m_dumpStatsAtInterval = TRUE;
+		TheWritableGlobalData->m_statsInterval  = atoi(args[1]);
+	}
+	return 2;
+}
+#endif
 #endif
 
 #ifdef DEBUG_CRASHING
@@ -1056,14 +1129,14 @@ Int parseMod(char *args[], Int num)
 		}
 
 		// now check for dir-ness
-		struct stat statBuf;
-		if (stat(modPath.str(), &statBuf) != 0)
+		struct _stat statBuf;
+		if (_stat(modPath.str(), &statBuf) != 0)
 		{
 			DEBUG_LOG(("Could not _stat() mod.\n"));
 			return 2; // could not stat the file/dir.
 		}
 
-		if (statBuf.st_mode & S_IFDIR)
+		if (statBuf.st_mode & _S_IFDIR)
 		{
 			if (!modPath.endsWith("\\") && !modPath.endsWith("/"))
 				modPath.concat('\\');
@@ -1129,7 +1202,11 @@ static CommandLineParam params[] =
 	{ "-scriptDebug", parseScriptDebug },
 	{ "-playStats", parsePlayStats },
 	{ "-mod", parseMod },
-#if (defined(_DEBUG) || defined(_INTERNAL))
+	{ "-noshaders", parseNoShaders },
+	{ "-quickstart", parseQuickStart },
+	{ "-useWaveEditor", parseUseWaveEditor },
+
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 	{ "-noaudio", parseNoAudio },
 	{ "-map", parseMapName },
 	{ "-nomusic", parseNoMusic },
@@ -1137,7 +1214,10 @@ static CommandLineParam params[] =
 	{ "-noLogOrCrash", parseNoLogOrCrash },
 	{ "-FPUPreserve", parseFPUPreserve },
 	{ "-benchmark", parseBenchmark },
-	{ "-saveStats", parseSaveStats },
+#ifdef DUMP_PERF_STATS
+	{ "-stats", parseStats }, 
+#endif
+  { "-saveStats", parseSaveStats },
 	{ "-localMOTD", parseLocalMOTD },
 	{ "-UseCSF", parseUseCSF },
 	{ "-NoInputDisable", parseNoInputDisable },
@@ -1191,7 +1271,7 @@ static CommandLineParam params[] =
 	// Number of frames between each CRC that is written to replay files in singleplayer games.
 	{ "-ReplayCRCInterval", parseReplayCRCInterval },
 #endif
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 	{ "-saveAllStats", parseSaveAllStats },
 	{ "-noDraw", parseNoDraw },
 	{ "-nomilcap", parseNoMilCap },
@@ -1207,7 +1287,6 @@ static CommandLineParam params[] =
 	{ "-lowDetail", parseLowDetail },
 	{ "-noDynamicLOD", parseNoDynamicLOD },
 	{ "-noStaticLOD", parseNoStaticLOD },
-	{ "-useWaveEditor", parseUseWaveEditor },
 	{ "-fps", parseFPSLimit },
 	{ "-wireframe", parseWireframe },
 	{ "-showCollision", parseShowCollision },
@@ -1218,8 +1297,10 @@ static CommandLineParam params[] =
 	{ "-munkee", parseMunkee },
 	{ "-displayDebug", parseDisplayDebug },
 	{ "-file", parseFile },
-	{ "-preload", parsePreload },
-	{ "-preloadEverything", parsePreloadEverything },
+  
+//	{ "-preload", parsePreload },
+	
+  { "-preloadEverything", parsePreloadEverything },
 	{ "-logAssets", parseLogAssets },
 	{ "-netMinPlayers", parseNetMinPlayers },
 	{ "-DemoLoadScreen", parseDemoLoadScreen },
@@ -1239,7 +1320,6 @@ static CommandLineParam params[] =
 	{ "-noShellAnim", parseNoWindowAnimation },
 	{ "-winCursors", parseWinCursors },
 	{ "-constantDebug", parseConstantDebug },
-	{ "-quickstart", parseQuickStart },
 	{ "-seed", parseSeed },
 	{ "-noagpfix", parseIncrAGPBuf },
 	{ "-noFPSLimit", parseNoFPSLimit },
@@ -1247,6 +1327,8 @@ static CommandLineParam params[] =
 	{ "-jumpToFrame", parseJumpToFrame },
 	{ "-updateImages", parseUpdateImages },
 	{ "-showTeamDot", parseShowTeamDot },
+	{ "-extraLogging", parseExtraLogging },
+
 #endif
 
 #ifdef DEBUG_LOGGING
@@ -1261,6 +1343,15 @@ static CommandLineParam params[] =
 #ifdef DEBUG_STACKTRACE
 	{ "-ignoreStackTrace", parseIgnoreStackTrace },
 #endif
+
+	//-allAdvice feature
+	//{ "-allAdvice", parseAllAdvice },
+
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+  { "-preload", parsePreload },
+#endif
+
+
 };
 
 // parseCommandLine ===========================================================

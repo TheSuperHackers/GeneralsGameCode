@@ -123,3 +123,13 @@ void Money::loadPostProcess( void )
 
 }  // end loadPostProcess
 
+
+// ------------------------------------------------------------------------------------------------
+/** Parse a money amount for the ini file. E.g. DefaultStartingMoney = 10000 */
+// ------------------------------------------------------------------------------------------------
+void Money::parseMoneyAmount( INI *ini, void *instance, void *store, const void* userData )
+{
+  // Someday, maybe, have mulitple fields like Gold:10000 Wood:1000 Tiberian:10
+  Money * money = (Money *)store;
+  INI::parseUnsignedInt( ini, instance, &money->m_money, userData );
+}

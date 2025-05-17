@@ -63,6 +63,7 @@ class WeaponTemplate;
 class DamageInfo;
 class ParticleSystemTemplate;
 class CommandButton;
+class Waypoint;
 enum CommandOption CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
@@ -257,20 +258,6 @@ public:
 	virtual void onSlaverDamage( const DamageInfo *info ) = 0;
 	virtual	Bool isSelfTasking() const = 0;
 
-};
-
-//-------------------------------------------------------------------------------------------------
-class SpecialPowerUpdateInterface
-{
-public:
-	virtual void initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, UnsignedInt commandOptions, Int locationCount = 0 ) = 0;
-	virtual Bool isSpecialAbility() const = 0;
-	virtual Bool isSpecialPower() const = 0;
-	virtual Bool isActive() const = 0;
-	virtual CommandOption getCommandOption() const = 0;
-	virtual Bool doesSpecialPowerHaveOverridableDestinationActive() const = 0;
-	virtual void setSpecialPowerOverridableDestination( const Coord3D *loc ) = 0;
-	virtual Bool isPowerCurrentlyInUse( const CommandButton *command = NULL ) const = 0;
 };
 
 //-------------------------------------------------------------------------------------------------

@@ -94,7 +94,7 @@
 
 
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void __cdecl Msg( int line, const char *file, const char *fmt, ... );
 void __cdecl Msg( int line, const char *filename, const wchar_t *fmt, unsigned int codepage=1252, ... );
 void 	Delete_Msg_File( void );

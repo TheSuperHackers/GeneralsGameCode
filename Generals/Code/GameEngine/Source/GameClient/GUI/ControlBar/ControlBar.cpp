@@ -82,7 +82,7 @@
 
 #include "GameNetwork/GameInfo.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -132,6 +132,36 @@ static void commandButtonTooltip(GameWindow *window,
 {
 	TheControlBar->showBuildTooltipLayout(window);
 }
+
+/// mark the UI as dirty so the context of everything is re-evaluated
+void ControlBar::markUIDirty( void )
+{ 
+  m_UIDirty = TRUE;
+
+#if defined( RTS_INTERNAL ) || defined( RTS_DEBUG )
+	UnsignedInt now = TheGameLogic->getFrame();
+	if( now == m_lastFrameMarkedDirty )
+	{
+		//Do nothing.
+	}
+	else if( now == m_lastFrameMarkedDirty + 1 )
+	{
+		m_consecutiveDirtyFrames++;
+	}
+	else
+	{
+		m_consecutiveDirtyFrames = 1;
+	}
+	m_lastFrameMarkedDirty = now;
+
+	if( m_consecutiveDirtyFrames > 20 )
+	{
+		DEBUG_CRASH( ("Serious flaw in interface system! Either new code or INI has caused the interface to be marked dirty every frame. This problem actually causes the interface to completely lockup not allowing you to click normal game buttons.") );
+	}
+
+#endif
+}
+
 
 void ControlBar::populatePurchaseScience( Player* player )
 {
@@ -699,6 +729,41 @@ void CommandButton::copyImagesFrom( const CommandButton *button, Bool markUIDirt
 	}
 }
 
+//-------------------------------------------------------------------------------------------------
+// bleah. shouldn't be const, but is. sue me. (Kris) -snork!
+void CommandButton::copyButtonTextFrom( const CommandButton *button, Bool shortcutButton, Bool markUIDirtyIfChanged ) const
+{
+	//This function was added to change the strings when you upgrade from a DaisyCutter to a MOAB. All other special
+	//powers are the same.
+	Bool change = FALSE;
+	if( shortcutButton )
+	{
+		//Not the best code, but conflicting label means shortcut label (most won't have any string specified).
+		if( button->getConflictingLabel().isNotEmpty() && m_textLabel.compare( button->getConflictingLabel() ) )
+		{
+			m_textLabel = button->getConflictingLabel();
+			change = TRUE;
+		}
+	}
+	else
+	{	
+		//Copy the text from the purchase science button if it exists (most won't).
+		if( button->getTextLabel().isNotEmpty() && m_textLabel.compare( button->getTextLabel() ) )
+		{
+			m_textLabel = button->getTextLabel();
+			change = TRUE;
+		}
+	}
+	if( button->getDescriptionLabel().isNotEmpty() && m_descriptionLabel.compare( button->getDescriptionLabel() ) )
+	{
+		m_descriptionLabel = button->getDescriptionLabel();
+		change = TRUE;
+	}
+	if( markUIDirtyIfChanged && change )
+	{
+		TheControlBar->markUIDirty();
+	}
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse a single command button definition */
@@ -872,6 +937,11 @@ ControlBar::ControlBar( void )
 	m_radarAttackGlowOn = FALSE;
 	m_remainingRadarAttackGlowFrames = 0;
 	m_radarAttackGlowWindow = NULL;
+
+#if defined( RTS_INTERNAL ) || defined( RTS_DEBUG )
+	m_lastFrameMarkedDirty = 0;
+	m_consecutiveDirtyFrames = 0;
+#endif
 
 }  // end ControlBar
 

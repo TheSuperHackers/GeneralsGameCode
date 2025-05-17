@@ -631,7 +631,7 @@ protected:
 
   void clearCustomSoundAmbient( bool restartSound ); //< Return to using defaults
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	void validatePos() const;
 #endif
 

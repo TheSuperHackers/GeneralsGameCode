@@ -488,7 +488,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "KeyboardCameraRotateSpeed", INI::parseReal, NULL, offsetof( GlobalData, m_keyboardCameraRotateSpeed ) },
 	{ "PlayStats",									INI::parseInt,				NULL,			offsetof( GlobalData, m_playStats ) },
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	{ "DisableCameraFade",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableCameraFade ) },
 	{ "DisableScriptedInputDisabling",			INI::parseBool,		NULL,			offsetof( GlobalData, m_disableScriptedInputDisabling ) },
 	{ "DisableMilitaryCaption",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableMilitaryCaption ) },
@@ -500,6 +500,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "ShroudOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_shroudOn ) },
 	{ "FogOfWarOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_fogOfWarOn ) },
 	{ "ShowCollisionExtents",				INI::parseBool,				NULL,			offsetof( GlobalData, m_showCollisionExtents ) },
+  { "ShowAudioLocations",  				INI::parseBool,				NULL,			offsetof( GlobalData, m_showAudioLocations ) },
 	{ "DebugProjectileTileWidth",		INI::parseReal,				NULL,			offsetof( GlobalData, m_debugProjectileTileWidth) },
 	{ "DebugProjectileTileDuration",INI::parseInt,				NULL,			offsetof( GlobalData, m_debugProjectileTileDuration) },
 	{ "DebugProjectileTileColor",		INI::parseRGBColor,		NULL,			offsetof( GlobalData, m_debugProjectileTileColor) },
@@ -518,6 +519,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "UseLocalMOTD",								INI::parseBool,				NULL,			offsetof( GlobalData, m_useLocalMOTD ) },
 	{ "BaseStatsDir",								INI::parseAsciiString,NULL,			offsetof( GlobalData, m_baseStatsDir ) },
 	{ "LocalMOTDPath",							INI::parseAsciiString,NULL,			offsetof( GlobalData, m_MOTDPath ) },
+	{ "ExtraLogging",								INI::parseBool,				NULL,			offsetof( GlobalData, m_extraLogging ) },
 #endif
 
 	{ NULL,					NULL,						NULL,						0 }  // keep this last
@@ -541,7 +543,9 @@ GlobalData::GlobalData()
 		m_theOriginal = this;
 	m_next = NULL;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+  m_TiVOFastMode = FALSE;
+
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_wireframe = 0;
 	m_stateMachineDebug = FALSE;
 	m_useCameraConstraints = TRUE;
@@ -550,6 +554,7 @@ GlobalData::GlobalData()
 	m_jabberOn = FALSE;
 	m_munkeeOn = FALSE;
 	m_showCollisionExtents = FALSE;
+  m_showAudioLocations = FALSE;
 	m_debugCamera = FALSE;
 	m_specialPowerUsesDelay = TRUE;
 	m_debugVisibility = FALSE;
@@ -581,6 +586,7 @@ GlobalData::GlobalData()
 	m_useLocalMOTD = FALSE;
 	m_baseStatsDir = ".\\";
 	m_MOTDPath = "MOTD.txt";
+	m_extraLogging = FALSE;
 #endif
 
 #ifdef DEBUG_CRASHING
@@ -806,6 +812,7 @@ GlobalData::GlobalData()
 	// End Add
 
 	m_debugAI = AI_DEBUG_NONE;
+	m_debugSupplyCenterPlacement = FALSE;
 	m_debugAIObstacles = FALSE;
 	m_showClientPhysics = TRUE;
 	m_showTerrainNormals = FALSE;
@@ -957,6 +964,7 @@ GlobalData::GlobalData()
 	m_shellMapName.set("Maps\\ShellMap1\\ShellMap1.map");
 	m_shellMapOn =TRUE;
 	m_playIntro = TRUE;
+	m_playSizzle = TRUE;
 	m_afterIntro = FALSE;
 	m_allowExitOutOfMovies = FALSE;
 	m_loadScreenRender = FALSE;

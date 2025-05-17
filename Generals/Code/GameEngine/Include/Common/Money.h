@@ -82,8 +82,15 @@ public:
 
 	void setPlayerIndex(Int ndx) { m_playerIndex = ndx; }
 	
-protected:
+  static void parseMoneyAmount( INI *ini, void *instance, void *store, const void* userData );
 
+  // Does the amount of this == the amount of that (compare everything except m_playerIndex)
+  Bool amountEqual( const Money & that ) const
+  {
+    return m_money == that.m_money;
+  }
+
+protected:
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );

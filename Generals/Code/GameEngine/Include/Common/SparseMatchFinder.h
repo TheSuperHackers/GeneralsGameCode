@@ -36,7 +36,7 @@
 #include "Common/BitFlags.h"
 #include "Common/STLTypedefs.h"
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	#define SPARSEMATCH_DEBUG
 #else
 	#undef SPARSEMATCH_DEBUG
@@ -69,6 +69,26 @@ private:
 		Bool operator()(const BITSET& a, const BITSET& b) const
 		{
 			return (a == b);
+		}
+	};
+
+	struct MapHelper
+	{
+		bool operator()(const BITSET& a, const BITSET& b) const
+		{
+			int i;
+			if (a.size() < b.size()) {
+				return true;
+			}
+			for (i = 0; i < a.size(); ++i) {
+				bool aVal = a.test(i);
+				bool bVal = b.test(i);
+				if (aVal && bVal) continue;
+				if (!aVal && !bVal) continue;
+				if (!aVal) return true;
+				return false;
+			}
+			return false; // all bits match.
 		}
 	};
 

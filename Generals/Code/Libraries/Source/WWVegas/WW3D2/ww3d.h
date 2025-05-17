@@ -22,13 +22,13 @@
  *                                                                                             *
  *                 Project Name : WW3D                                                         *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/ww3d2/ww3d.h                                      $*
+ *                     $Archive:: /Commando/Code/ww3d2/ww3d.h                                 $*
  *                                                                                             *
- *                      $Author:: Vss_sync                                                    $*
+ *                      $Author:: Steve_t                                                     $*
  *                                                                                             *
- *                     $Modtime:: 8/29/01 9:39p                                               $*
+ *                     $Modtime:: 1/02/02 4:17p                                               $*
  *                                                                                             *
- *                    $Revision:: 32                                                          $*
+ *                    $Revision:: 42                                                          $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -64,6 +64,7 @@ class		LightEnvironmentClass;
 class		MaterialPassClass;
 class 	StaticSortListClass;
 
+#define MESH_RENDER_SNAPSHOT_ENABLED
 #define SNAPSHOT_SAY(x) if (WW3D::Is_Snapshot_Activated()) { WWDEBUG_SAY(x); }
 //#define SNAPSHOT_SAY(x)
 
@@ -99,8 +100,13 @@ public:
 		NPATCHES_GAP_FILLING_FORCE
 	};
 
+	enum ScreenShotFormatEnum {
+		TGA,
+		BMP
+	};
 
-	static WW3DErrorType		Init(void * hwnd, char *defaultpal = NULL);
+
+	static WW3DErrorType		Init(void * hwnd, char *defaultpal = NULL, bool lite = false);
 	static WW3DErrorType		Shutdown(void);
 	static bool					Is_Initted(void)								{ return IsInitted; }
 
@@ -110,7 +116,7 @@ public:
 
 	static int					Get_Render_Device(void);
 	static WW3DErrorType		Set_Render_Device( int dev=-1, int resx=-1, int resy=-1, int bits=-1, int windowed=-1, bool resize_window = false, bool reset_device=false, bool restore_assets=true);
-	static WW3DErrorType		Set_Render_Device( const char *dev_name, int resx=-1, int resy=-1, int bits=-1, int windowed=-1, bool resize_window = false  );	
+	static WW3DErrorType		Set_Render_Device( const char *dev_name, int resx=-1, int resy=-1, int bits=-1, int windowed=-1, bool resize_window = false  );
 	static WW3DErrorType		Set_Next_Render_Device(void);
 	static WW3DErrorType		Set_Any_Render_Device( void );
 
@@ -130,7 +136,11 @@ public:
 	static WW3DErrorType		Registry_Save_Render_Device( const char * sub_key );
 	static WW3DErrorType		Registry_Save_Render_Device( const char * sub_key, int device, int width, int height, int depth, bool windowed, int texture_depth );
 	static WW3DErrorType		Registry_Load_Render_Device( const char * sub_key, bool resize_window = false );
-	static bool					Registry_Load_Render_Device( const char * sub_key, char *device, int device_len, int &width, int &height, int &depth, int &windowed, int& texture_depth);		
+	static bool					Registry_Load_Render_Device( const char * sub_key, char *device, int device_len, int &width, int &height, int &depth, int &windowed, int& texture_depth);
+
+	// 0 = bilinear, 1 = trilinear, 2 = anisotropic
+	static void					Set_Texture_Filter(int filter);
+	static int					Get_Texture_Filter() { return TextureFilter; }
 
 	/*
 	** Rendering functions
@@ -139,8 +149,7 @@ public:
 	** special cases like generating a shadow texture for an object.  Basically this function will have the
 	** entire scene rendering overhead.
 	*/
-	static WW3DErrorType		Begin_Render(bool clear = false,bool clearz = true,const Vector3 & color = Vector3(0,0,0), float dest_alpha=0.0f);
-
+	static WW3DErrorType		Begin_Render(bool clear = false,bool clearz = true,const Vector3 & color = Vector3(0,0,0), float dest_alpha=0.0f, void(*network_callback)(void) = NULL);
 	static WW3DErrorType		Render(const LayerListClass & layerlist);
 	static WW3DErrorType		Render(const LayerClass & layer);
 	static WW3DErrorType		Render(SceneClass * scene,CameraClass * cam,bool clear = false,bool clearz = false,const Vector3 & color = Vector3(0,0,0));
@@ -148,6 +157,8 @@ public:
 	static void					Flush(RenderInfoClass & rinfo);	// NOTE: "normal" usage should *NEVER* require the user to call this function
 
 	static WW3DErrorType		End_Render(bool flip_frame = true);
+
+	static bool					Is_Rendering( void ) { return( IsRendering ); }
 
 	static void Flip_To_Primary(void);
 
@@ -168,7 +179,7 @@ public:
 	** Screen/Movie capturing
 	** These functions allow you to create screenshots and movies.
 	*/
-	static void					Make_Screen_Shot( const char * filename = "ScreenShot");
+	static void					Make_Screen_Shot( const char * filename = "ScreenShot", const float gamma = 1.3f, const ScreenShotFormatEnum format = TGA);
 	static void					Start_Movie_Capture( const char * filename_base = "Movie", float frame_rate = 15);
 	static void					Stop_Movie_Capture( void);
 	static void					Toggle_Movie_Capture( const char * filename_base = "Movie", float frame_rate = 15);
@@ -178,8 +189,8 @@ public:
 	static float				Get_Movie_Capture_Frame_Rate( void);
 	static void					Pause_Movie(bool mode);
 	static bool					Is_Movie_Paused();
-	static bool					Is_Recording_Next_Frame(); 
-	static bool					Is_Movie_Ready(); 
+	static bool					Is_Recording_Next_Frame();
+	static bool					Is_Movie_Ready();
 
    /*
 	** Set_Ext_Swap_Interval - how many vertical retraces to wait before flipping frames
@@ -276,6 +287,14 @@ public:
 	static void					Override_Current_Static_Sort_Lists(StaticSortListClass * sort_list);
 	static void					Reset_Current_Static_Sort_Lists_To_Default(void);
 
+	/*
+	** Overbright modify on load - when this mode is set meshes will be
+	** modified at load time. All shaders which originally had the primary
+	** gradient set to MODULATE will be changed to MODULATE2X instead.
+	*/
+	static void					Enable_Overbright_Modify_On_Load(bool onoff)	{ OverbrightModifyOnLoad = onoff; }
+	static bool					Is_Overbright_Modify_On_Load_Enabled(void)	{ return OverbrightModifyOnLoad; }
+
 	static bool					Is_Snapshot_Activated()						{ return SnapshotActivated; }
 	static void					Activate_Snapshot(bool b)					{ SnapshotActivated=b; }
 
@@ -284,6 +303,9 @@ public:
    static long             UserStat0;
    static long             UserStat1;
    static long             UserStat2;
+
+	// Gamma control
+	static void					Set_Gamma(float gamma,float bright,float contrast,bool calibrate=true);
 
 private:
 
@@ -296,7 +318,6 @@ private:
 
 	static void					Read_Gerd_Render_Device_Description(RenderDeviceDescClass &desc);
 	static void					Update_Pixel_Center(void);
-	static void					Set_Polygon_Mode(int mode);
 	static void					Allocate_Debug_Resources(void);
 	static void					Release_Debug_Resources(void);
 
@@ -328,6 +349,8 @@ private:
 	static bool							AreStaticSortListsEnabled;
 	static bool							MungeSortOnLoad;
 
+	static bool							OverbrightModifyOnLoad;
+
 	static FrameGrabClass *			Movie;
 	static bool							PauseRecord;
 	static bool							RecordNextFrame;
@@ -341,6 +364,8 @@ private:
 	static PrelitModeEnum			PrelitMode;
 	static bool							ExposePrelit;
 
+	static int							TextureFilter;
+
 	static bool							SnapshotActivated;
 	static bool							ThumbnailEnabled;
 
@@ -349,6 +374,8 @@ private:
 	static unsigned NPatchesLevel;
 	static bool							IsTexturingEnabled;
 	static bool							IsColoringEnabled;
+
+	static bool							Lite;
 
 	// This is the default native screen size which will be set for each
 	// RenderObject on construction. The native screen size is the screen size

@@ -200,6 +200,7 @@ protected:
 WW3DAssetManager::WW3DAssetManager(void) :
 	PrototypeLoaders		(PROTOLOADERS_VECTOR_SIZE),
 	Prototypes				(PROTOTYPES_VECTOR_SIZE),
+
 	WW3D_Load_On_Demand		(false),
 	Activate_Fog_On_Load		(false),
 	MetalManager(0)
@@ -212,7 +213,10 @@ WW3DAssetManager::WW3DAssetManager(void) :
 	Prototypes.Set_Growth_Step(PROTOTYPES_GROWTH_RATE);
 
 	// install the default loaders
+#ifndef USE_WWSHADE
 	Register_Prototype_Loader(&_MeshLoader);
+#endif
+
 	Register_Prototype_Loader(&_HModelLoader);
 	Register_Prototype_Loader(&_CollectionLoader);
 	Register_Prototype_Loader(&_BoxLoader);
@@ -798,7 +802,8 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 
 		// If we can't find it, try the parent directory
 		if ( Load_3D_Assets( filename ) == false ) {
-			StringClass	new_filename = StringClass("..\\") + filename;
+			StringClass	new_filename(StringClass("..\\"),true);
+			new_filename+=filename;
 			Load_3D_Assets( new_filename );
 		}
 
@@ -1024,7 +1029,8 @@ HTreeClass *	WW3DAssetManager::Get_HTree(const char * name)
 
 		// If we can't find it, try the parent directory
 		if ( Load_3D_Assets( filename ) == false ) {
-			StringClass	new_filename = StringClass("..\\") + filename;
+			StringClass	new_filename("..\\",true);
+			new_filename+=filename;
 			Load_3D_Assets( new_filename );
 		}
 

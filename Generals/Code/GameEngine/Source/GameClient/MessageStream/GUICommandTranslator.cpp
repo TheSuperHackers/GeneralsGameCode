@@ -47,7 +47,7 @@
 #include "GameClient/GUICommandTranslator.h"
 #include "GameClient/CommandXlat.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -492,7 +492,10 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 
 				// get out of GUI command mode if we completed the command one way or another
 				if( commandStatus == COMMAND_COMPLETE )
+				{
+					TheInGameUI->setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( TRUE );
 					TheInGameUI->setGUICommand( NULL );
+				}
 			}  // end if
 
 			break;

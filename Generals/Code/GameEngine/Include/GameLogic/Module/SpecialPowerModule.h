@@ -64,8 +64,8 @@ public:
 	virtual void pauseCountdown( Bool pause ) = 0;
 	virtual void doSpecialPower( UnsignedInt commandOptions ) = 0;
 	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions ) = 0;
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, UnsignedInt commandOptions ) = 0;
-	virtual void doSpecialPowerAtMultipleLocations( const Coord3D *locations, Int locCount, UnsignedInt commandOptions ) = 0;
+	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions ) = 0;
+	virtual void doSpecialPowerUsingWaypoints( const Waypoint *way, UnsignedInt commandOptions ) = 0;
 	virtual void markSpecialPowerTriggered( const Coord3D *location ) = 0;
 	virtual void startPowerRecharge() = 0;	
 	virtual const AudioEventRTS& getInitiateSound() const = 0;
@@ -134,8 +134,8 @@ public:
 	//
 	virtual void doSpecialPower( UnsignedInt commandOptions );
 	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtMultipleLocations( const Coord3D *locations, Int locCount, UnsignedInt commandOptions );
+	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
+	virtual void doSpecialPowerUsingWaypoints( const Waypoint *way, UnsignedInt commandOptions );
 
 	/**
 	 Now, there are special powers that require some preliminary processing before the actual
@@ -157,10 +157,7 @@ public:
 
 protected:
 
-	void initiateIntentToDoSpecialPower( const Object *targetObj, 
-																			 const Coord3D *targetPos, 
-																			 UnsignedInt commandOptions, 
-																			 Int locationCount = 0 );
+	Bool initiateIntentToDoSpecialPower( const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions );
 	void triggerSpecialPower( const Coord3D *location );
 	void createViewObject( const Coord3D *location );
 	void resolveSpecialPower( void );

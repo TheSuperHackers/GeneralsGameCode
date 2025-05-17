@@ -379,26 +379,15 @@ extern WindowMsgHandledType PassMessagesToParentSystem( GameWindow *window,
 																															 WindowMsgData mData1, 
 																															 WindowMsgData mData2 );
 
-
-// TheSuperHackers @feature helmutbuhler 24/04/2025
-// GameWindow that does nothing. Used for Headless Mode.
-class DummyGameWindow : public GameWindow
-{
-	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(DummyGameWindow, "DummyGameWindow")
-public:
-	//virtual ~DummyGameWindow();
-	virtual void winDrawBorder() { }
-};
-
 // TheSuperHackers @feature helmutbuhler 24/04/2025
 // GameWindowManager that does nothing. Used for Headless Mode.
-class DummyGameWindowManager : public GameWindowManager
+class GameWindowManagerDummy : public GameWindowManager
 {
 public:
 	virtual GameWindow *winGetWindowFromId(GameWindow *window, Int id);
 	virtual GameWindow *winCreateFromScript(AsciiString filenameString, WindowLayoutInfo *info);
 
-	virtual GameWindow *allocateNewWindow() { return newInstance(DummyGameWindow); }
+	virtual GameWindow *allocateNewWindow() { return newInstance(GameWindowDummy); }
 
 	virtual GameWinDrawFunc getPushButtonImageDrawFunc() { return NULL; }
 	virtual GameWinDrawFunc getPushButtonDrawFunc() { return NULL; }
