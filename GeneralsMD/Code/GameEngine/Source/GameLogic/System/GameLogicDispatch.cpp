@@ -291,8 +291,7 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 	HideControlBar();
 	closeWindows();
 
-	if (TheMouse != NULL)
-		TheMouse->setVisibility(TRUE);
+	TheMouse->setVisibility(TRUE);
 
 	if(m_background)
 	{

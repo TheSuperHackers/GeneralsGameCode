@@ -324,14 +324,11 @@ void GameClient::init( void )
 	if( TheFontLibrary )
 		TheFontLibrary->init();
 
-	if (!TheGlobalData->m_headless)
-	{
-		// create the mouse
-		TheMouse = createMouse();
-		TheMouse->parseIni();
-		TheMouse->initCursorResources();
- 		TheMouse->setName("TheMouse");
-	}
+	// create the mouse
+	TheMouse = TheGlobalData->m_headless ? NEW MouseDummy : createMouse();
+	TheMouse->parseIni();
+	TheMouse->initCursorResources();
+ 	TheMouse->setName("TheMouse");
 
 	// instantiate the display
 	TheDisplay = createGameDisplay();
@@ -403,10 +400,11 @@ void GameClient::init( void )
  		TheRayEffects->setName("TheRayEffects");
 	}
 
+	TheMouse->init();	//finish initializing the mouse.
+
 	// set the limits of the mouse now that we've created the display and such
 	if( TheMouse )
 	{
-		TheMouse->init();	//finish initializing the mouse.
 		TheMouse->setPosition( 0, 0 );
 		TheMouse->setMouseLimits();
  		TheMouse->setName("TheMouse");
