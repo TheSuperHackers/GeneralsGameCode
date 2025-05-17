@@ -5301,10 +5301,10 @@ void Object::doStatusDamage( ObjectStatusTypes status, Real duration )
 }
 
 //-------------------------------------------------------------------------------------------------
-void Object::doTempWeaponBonus( WeaponBonusConditionType status, UnsignedInt duration )
+void Object::doTempWeaponBonus( WeaponBonusConditionType status, UnsignedInt duration, TintStatus tintStatus)
 {
 	if(m_tempWeaponBonusHelper)
-		m_tempWeaponBonusHelper->doTempWeaponBonus(status, duration);
+		m_tempWeaponBonusHelper->doTempWeaponBonus(status, duration, tintStatus);
 }
 
 //-------------------------------------------------------------------------------------------------

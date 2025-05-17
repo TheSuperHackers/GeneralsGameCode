@@ -57,10 +57,12 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 #include "GameLogic/Module/UpdateModule.h"
+
 //-----------------------------------------------------------------------------
 // FORWARD REFERENCES /////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
 enum WeaponBonusConditionType CPP_11(: Int);
+enum TintStatus CPP_11(: Int);
 
 //-----------------------------------------------------------------------------
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
@@ -77,6 +79,7 @@ public:
 	UnsignedInt								m_bonusDelay;							///< How often to pulse
 	Real											m_bonusRange;							///< How far to affect
 	WeaponBonusConditionType	m_bonusConditionType;			///< Status to give
+	TintStatus m_tintStatus;         ///< tint color to apply
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 };

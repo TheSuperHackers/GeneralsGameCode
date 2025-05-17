@@ -119,6 +119,7 @@ static const char *TheDrawableIconNames[] =
 // -----
 const char* TintStatusFlags::s_bitNameList[] =
 {
+	"NONE",
 	"DISABLED",
 	"IRRADIATED",
 	"POISONED",

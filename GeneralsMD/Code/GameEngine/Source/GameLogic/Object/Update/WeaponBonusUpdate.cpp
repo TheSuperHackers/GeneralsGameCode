@@ -61,6 +61,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Weapon.h"
+#include "GameClient/TintStatus.h"
 
 //-----------------------------------------------------------------------------
 WeaponBonusUpdateModuleData::WeaponBonusUpdateModuleData()
@@ -71,6 +72,7 @@ WeaponBonusUpdateModuleData::WeaponBonusUpdateModuleData()
 	m_bonusDelay = 0;
 	m_bonusRange = 0;
 	m_bonusConditionType = WEAPONBONUSCONDITION_INVALID;
+	m_tintStatus = TINT_STATUS_FRENZY;
 }
 
 //-----------------------------------------------------------------------------
@@ -85,6 +87,7 @@ void WeaponBonusUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "BonusDelay",							INI::parseDurationUnsignedInt,	NULL, offsetof( WeaponBonusUpdateModuleData, m_bonusDelay ) },
 		{ "BonusRange",							INI::parseReal,									NULL, offsetof( WeaponBonusUpdateModuleData, m_bonusRange ) },
 		{ "BonusConditionType",			INI::parseIndexList,	TheWeaponBonusNames, offsetof( WeaponBonusUpdateModuleData, m_bonusConditionType ) },
+		{ "TintStatusType",			TintStatusFlags::parseSingleBitFromINI,	NULL, offsetof( WeaponBonusUpdateModuleData, m_tintStatus ) },
 		{ 0, 0, 0, 0 }
 	};
   p.add(dataFieldParse);
@@ -112,13 +115,14 @@ struct tempWeaponBonusData // Hey Steven, bite me!  hahahaha  _Lowercase_ since 
 	UnsignedInt m_duration;
 	KindOfMaskType m_requiredMask;
 	KindOfMaskType m_forbiddenMask;
+	TintStatus m_tintStatus;
 };
 void containIteratingDoTempWeaponBonus( Object *passenger, void *voidData)
 {
 	tempWeaponBonusData *data = (tempWeaponBonusData *)voidData;
 
 	if( passenger->isKindOfMulti(data->m_requiredMask, data->m_forbiddenMask) )
-		passenger->doTempWeaponBonus(data->m_type, data->m_duration);
+		passenger->doTempWeaponBonus(data->m_type, data->m_duration, data->m_tintStatus);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -148,12 +152,14 @@ UpdateSleepTime WeaponBonusUpdate::update( void )
 	weaponBonusData.m_duration = data->m_bonusDuration;
 	weaponBonusData.m_requiredMask = data->m_requiredAffectKindOf;
 	weaponBonusData.m_forbiddenMask = data->m_forbiddenAffectKindOf;
+	weaponBonusData.m_tintStatus = data->m_tintStatus;
+
 	
 	for( Object *currentObj = iter->first(); currentObj != NULL; currentObj = iter->next() )
 	{
 		if( currentObj->isKindOfMulti(data->m_requiredAffectKindOf, data->m_forbiddenAffectKindOf) )
 		{
-			currentObj->doTempWeaponBonus(data->m_bonusConditionType, data->m_bonusDuration);
+			currentObj->doTempWeaponBonus(data->m_bonusConditionType, data->m_bonusDuration, data->m_tintStatus);
 		}
 
 		if( currentObj->getContain() )
