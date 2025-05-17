@@ -376,7 +376,7 @@ class AudioManager : public SubsystemInterface
 // AudioManager that does nothing. Used for Headless Mode.
 class AudioManagerDummy : public AudioManager
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual void audioDebugDisplay(DebugDisplayInterface* dd, void* userData, FILE* fp) {}
 #endif
 	virtual void stopAudio(AudioAffect which) {}
