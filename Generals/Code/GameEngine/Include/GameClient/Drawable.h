@@ -545,6 +545,7 @@ public:
 	void killIcon(DrawableIconType t) { if (m_iconInfo) m_iconInfo->killIcon(t); }
 	Bool hasIconInfo() const { return m_iconInfo != NULL; }
 
+  const AudioEventRTS * getAmbientSound() const { return m_ambientSound == NULL ? NULL : &m_ambientSound->m_event; }
 protected:
 
 	// snapshot methods
@@ -590,7 +591,7 @@ protected:
 
 	const AudioEventRTS& getAmbientSoundByDamage(BodyDamageType dt);
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	void validatePos() const;
 #endif
 

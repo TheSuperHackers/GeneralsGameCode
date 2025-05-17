@@ -488,6 +488,10 @@ void GUIEdit::init( void )
 	// add status bar to the bottom
 	createStatusBar();
 
+	// create the name key generator
+	TheNameKeyGenerator = new NameKeyGenerator;
+	TheNameKeyGenerator->init();
+
 	// create file system
 	TheFileSystem = new FileSystem;
 	TheLocalFileSystem = new Win32LocalFileSystem;
@@ -521,10 +525,6 @@ void GUIEdit::init( void )
 	// create the name key generator
 	TheWritableGlobalData = new GlobalData;
 	TheWritableGlobalData->init();
-
-	// create the name key generator
-	TheNameKeyGenerator = new NameKeyGenerator;
-	TheNameKeyGenerator->init();
 
 	// create the message stream
 	TheMessageStream = new MessageStream;

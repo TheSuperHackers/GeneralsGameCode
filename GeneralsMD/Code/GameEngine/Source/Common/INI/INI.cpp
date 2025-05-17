@@ -60,7 +60,7 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/Weapon.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -123,6 +123,7 @@ static const BlockParse theTypeTable[] =
 	{ "Object",							INI::parseObjectDefinition },
 	{ "ObjectCreationList",	INI::parseObjectCreationListDefinition },
 	{ "ObjectReskin",				INI::parseObjectReskinDefinition },
+	{ "ObjectExtend",				INI::parseObjectExtendDefinition },
 	{ "ParticleSystem",			INI::parseParticleSystemDefinition },
 	{ "PlayerTemplate",			INI::parsePlayerTemplateDefinition },
 	{ "Road",								INI::parseTerrainRoadDefinition },
@@ -1030,6 +1031,36 @@ void INI::parseRGBColor( INI* ini, void * /*instance*/, void *store, const void*
 	theColor->blue	= (Real)colors[ 2 ] / 255.0f;
 
 }
+
+
+//-------------------------------------------------------------------------------------------------
+/** Parse a color in the form of
+	*
+	* RGB_COLOR = R:100 G:114 B:245
+	* and store in "RGBColor" structure pointed to by 'store' 
+	* Negative numbers are allowed! */
+	//-------------------------------------------------------------------------------------------------
+void INI::parseRGBColorSigned(INI* ini, void* /*instance*/, void* store, const void* /*userData*/)
+{
+	const char* names[3] = { "R", "G", "B" };
+	Int colors[3];
+	for (Int i = 0; i < 3; i++)
+	{
+		colors[i] = scanInt(ini->getNextSubToken(names[i]));
+		if (colors[i] < -255)
+			throw INI_INVALID_DATA;
+		if (colors[i] > 255)
+			throw INI_INVALID_DATA;
+	}
+
+	// assign the color components to the "RGBColor" pointer at 'store'
+	RGBColor* theColor = (RGBColor*)store;
+	theColor->red = (Real)colors[0] / 255.0f;
+	theColor->green = (Real)colors[1] / 255.0f;
+	theColor->blue = (Real)colors[2] / 255.0f;
+
+}
+
 
 //-------------------------------------------------------------------------------------------------
 /** Parse a color in the form of

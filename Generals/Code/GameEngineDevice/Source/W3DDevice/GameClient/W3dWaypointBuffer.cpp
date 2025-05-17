@@ -86,7 +86,7 @@
 
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -105,16 +105,9 @@ W3DWaypointBuffer::W3DWaypointBuffer(void)
 	m_line = new SegmentedLineClass;
 
 	m_texture = WW3DAssetManager::Get_Instance()->Get_Texture( "EXLaser.tga" );
-	if( m_texture )
-	{
-		m_line->Set_Texture( m_texture );
-	}
-	ShaderClass lineShader=ShaderClass::_PresetAdditiveShader;
-	lineShader.Set_Depth_Compare(ShaderClass::PASS_ALWAYS);
-	m_line->Set_Shader( lineShader );	//pick the alpha blending mode you want - see shader.h for others.
-	m_line->Set_Width( 1.5f );
-	m_line->Set_Color( Vector3( 0.25f, 0.5f, 1.0f ) );
-	m_line->Set_Texture_Mapping_Mode( SegLineRendererClass::TILED_TEXTURE_MAP );	//this tiles the texture across the line
+
+
+  setDefaultLineStyle();
 }
 
 //=============================================================================
@@ -125,6 +118,8 @@ W3DWaypointBuffer::W3DWaypointBuffer(void)
 W3DWaypointBuffer::~W3DWaypointBuffer(void)
 {
 	REF_PTR_RELEASE( m_waypointNodeRobj );
+	REF_PTR_RELEASE( m_texture );
+	REF_PTR_RELEASE( m_line );
 }
 
 //=============================================================================
@@ -134,6 +129,21 @@ W3DWaypointBuffer::~W3DWaypointBuffer(void)
 //=============================================================================
 void W3DWaypointBuffer::freeWaypointBuffers()
 {
+}
+
+
+void W3DWaypointBuffer::setDefaultLineStyle( void )
+{
+	if( m_texture )
+	{
+		m_line->Set_Texture( m_texture );
+	}
+	ShaderClass lineShader=ShaderClass::_PresetAdditiveShader;
+	lineShader.Set_Depth_Compare(ShaderClass::PASS_ALWAYS);
+	m_line->Set_Shader( lineShader );	//pick the alpha blending mode you want - see shader.h for others.
+	m_line->Set_Width( 1.5f );
+	m_line->Set_Color( Vector3( 0.25f, 0.5f, 1.0f ) );
+	m_line->Set_Texture_Mapping_Mode( SegLineRendererClass::TILED_TEXTURE_MAP );	//this tiles the texture across the line
 }
 
 
@@ -418,7 +428,6 @@ void W3DWaypointBuffer::drawWaypoints(RenderInfoClass &rinfo)
 					m_line->Render( localRinfo );
 
 				}
-
 				
 			}
 		}

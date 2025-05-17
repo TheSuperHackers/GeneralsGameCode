@@ -34,8 +34,10 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/ObjectHelper.h"
+#include "GameClient/TintStatus.h"
 
 enum WeaponBonusConditionType CPP_11(: Int);
+// enum TintStatus CPP_11(: Int);
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -60,10 +62,11 @@ public:
 	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
 	virtual UpdateSleepTime update();
 
-	void doTempWeaponBonus( WeaponBonusConditionType status, UnsignedInt duration );
+	void doTempWeaponBonus( WeaponBonusConditionType status, UnsignedInt duration, TintStatus tintStatus = TINT_STATUS_INVALID);
 
 protected:
 	WeaponBonusConditionType m_currentBonus;
+	TintStatus m_currentTint;
 	UnsignedInt m_frameToRemove;
 	void clearTempWeaponBonus();
 };

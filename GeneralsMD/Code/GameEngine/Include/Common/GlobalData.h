@@ -38,6 +38,7 @@
 #include "Common/GameMemory.h"
 #include "Common/SubsystemInterface.h"
 #include "GameClient/Color.h"
+#include "GameClient/TintStatus.h"
 #include "Common/STLTypedefs.h"
 #include "Common/GameCommon.h"
 #include "Common/Money.h"
@@ -50,6 +51,7 @@ class INI;
 class WeaponBonusSet;
 enum BodyDamageType CPP_11(: Int);
 enum AIDebugOptions CPP_11(: Int);
+//enum DrawableColorTint CPP_11(: Int);
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -449,14 +451,14 @@ public:
 	Real				m_keyboardCameraRotateSpeed;    ///< How fast the camera rotates when rotated via keyboard controls.
   Int					m_playStats;									///< Int whether we want to log play stats or not, if <= 0 then we don't log
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	Bool m_specialPowerUsesDelay ;
 #endif
   Bool m_TiVOFastMode;            ///< When true, the client speeds up the framerate... set by HOTKEY!
   
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool m_wireframe;
 	Bool m_stateMachineDebug;
 	Bool m_useCameraConstraints;
@@ -520,6 +522,9 @@ public:
 	//-allAdvice feature
 	//Bool m_allAdvice;
 
+	DrawableColorTint	m_colorTintTypes[TINT_STATUS_COUNT];
+	Bool	m_colorTintTypes2; // [TINT_STATUS_COUNT] ;
+
 	Bool m_useOldMoveSpeed;
 
 
@@ -546,6 +551,9 @@ private:
 	GlobalData(const GlobalData& that) = delete;
 	GlobalData& operator=(const GlobalData& that) = default;
 #endif
+
+	static void setColorTintEntry(DrawableColorTint* arr, int index, RGBColor color, RGBColor colorInfantry, UnsignedInt attackFrames, UnsignedInt decayFrames);
+	static void parseTintStatusType(INI* ini, void* instance, void* store, const void* userData);
 
 };
 

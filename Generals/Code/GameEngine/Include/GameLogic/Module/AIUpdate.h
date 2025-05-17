@@ -412,6 +412,8 @@ public:
 	Real getLocomotorDistanceToGoal();
 	const Locomotor *getCurLocomotor() const {return m_curLocomotor;}
 	Locomotor *getCurLocomotor() { return m_curLocomotor; }
+	LocomotorSetType getCurLocomotorSetType() const { return m_curLocomotorSet; }
+	Bool hasLocomotorForSurface(LocomotorSurfaceType surfaceType);
 
 	// turret stuff.
 	WhichTurretType getWhichTurretForWeaponSlot(WeaponSlotType wslot, Real* turretAngle, Real* turretPitch = NULL) const;
@@ -476,6 +478,7 @@ public:
 	void friend_endingMove(void);
 
 	void friend_setPath(Path *newPath);
+	Path* friend_getPath() { return m_path; }
 
 	void friend_setGoalObject(Object *obj);
 

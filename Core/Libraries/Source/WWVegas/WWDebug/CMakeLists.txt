@@ -1,4 +1,3 @@
-# Set source files
 set(WWDEBUG_SRC
     wwdebug.cpp
     wwdebug.h
@@ -9,7 +8,6 @@ set(WWDEBUG_SRC
     wwprofile.h
 )
 
-# Targets to build.
 add_library(core_wwdebug STATIC)
 set_target_properties(core_wwdebug PROPERTIES OUTPUT_NAME wwdebug)
 

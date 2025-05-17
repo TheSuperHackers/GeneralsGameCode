@@ -19,6 +19,10 @@ target_include_directories(zi_libraries_source_wwvegas_ww3d2 INTERFACE "Librarie
 target_include_directories(zi_libraries_source_wwvegas_wwmath INTERFACE "Libraries/Source/WWVegas/WWMath")
 target_include_directories(zi_libraries_source_wwvegas_wwsaveload INTERFACE "Libraries/Source/WWVegas/WWSaveLoad")
 target_include_directories(zi_main INTERFACE "Main")
+
+target_compile_definitions(zi_always INTERFACE
+    RTS_ZEROHOUR=1
+)
 target_link_libraries(zi_always INTERFACE
     core_utility
     zi_libraries_include

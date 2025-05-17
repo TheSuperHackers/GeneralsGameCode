@@ -70,7 +70,7 @@
 #include "GameLogic/Powers.h"
 #include "GameLogic/Weapon.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -299,7 +299,7 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 	// there must be a module tag present, and it must be unique across all module infos
 	// for this thing template
 	//
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	// get module info
 	const Nugget *nugget;
 	
@@ -688,7 +688,7 @@ void ThingTemplate::parseRemoveModule(INI *ini, void *instance, void *store, con
 	Bool removed = self->removeModuleInfo(modToRemove, removedModuleName);
 	if (!removed)
 	{
-		DEBUG_ASSERTCRASH(removed, ("RemoveModule %s was not found for %s.\n",modToRemove, self->getName().str()));
+		DEBUG_ASSERTCRASH(removed, ("RemoveModule %s was not found for %s. The game will crash now!\n",modToRemove, self->getName().str()));
 		throw INI_INVALID_DATA;
 	}
 
@@ -802,7 +802,7 @@ void ThingTemplate::parseArmorTemplateSet( INI* ini, void *instance, void * /*st
 
 	ArmorTemplateSet ws;
 	ws.parseArmorTemplateSet(ini);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES)
 	{
 		for (ArmorTemplateSetVector::const_iterator it = self->m_armorTemplateSets.begin(); it != self->m_armorTemplateSets.end(); ++it)
@@ -830,7 +830,7 @@ void ThingTemplate::parseWeaponTemplateSet( INI* ini, void *instance, void * /*s
 
 	WeaponTemplateSet ws;
 	ws.parseWeaponTemplateSet(ini, self);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES)
 	{
 		for (WeaponTemplateSetVector::const_iterator it = self->m_weaponTemplateSets.begin(); it != self->m_weaponTemplateSets.end(); ++it)
@@ -925,7 +925,7 @@ AIUpdateModuleData *ThingTemplate::friend_getAIModuleInfo(void)
 //-------------------------------------------------------------------------------------------------
 void ThingTemplate::validateAudio()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 	#define AUDIO_TEST(y) \
 		if (!get##y()->getEventName().isEmpty() && get##y()->getEventName().compareNoCase("NoSound") != 0) { \
@@ -1019,7 +1019,7 @@ void ThingTemplate::validate()
 
 	validateAudio();
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	
 	if (getName() == "DefaultThingTemplate")
 		return;
@@ -1115,6 +1115,20 @@ ThingTemplate::~ThingTemplate()
 void ThingTemplate::resolveNames()
 {
 	Int i, j;
+	
+	//Kris: July 31, 2003
+	//NOTE: Make sure that all code in this function supports caching properly. For example,
+	//      templates can be partially overridden by map.ini files. When this happens, strings
+	//      that have been parsed are looked up, cached, then cleared. The problem is if a string
+	//      gets cached, but not overridden, it will be clear the next time we call this function.
+	//      so we will want to make sure we don't NULL out cached data if the string is empty. A
+	//      concrete example is overriding an object with prerequisites. We just override the portrait.
+	//      So the 1st time we call this function, we get the standard template data. During this first
+	//      call, the strings are looked up, cached, and cleared. Then we override the portrait in the 
+	//      map.ini. The next time we call this function, we look up all the strings again. The prereq
+	//      names didn't used to check for empty strings so they would NULL out all the previous prereqs
+	//      the object had. So be sure to make sure all string lookups don't blindly lookup things -- check
+	//      if the string isNotEmpty first!
 
 	for (i = 0; i < m_prereqInfo.size(); i++)
 	{
@@ -1385,7 +1399,7 @@ Int ThingTemplate::calcTimeToBuild( const Player* player) const
 	Real factionModifier = 1 + player->getProductionTimeChangePercent( getName() );
 	buildTime *= factionModifier;
 
-#if defined (_DEBUG) || defined (_INTERNAL)
+#if defined (RTS_DEBUG) || defined (RTS_INTERNAL)
 	if( player->buildsInstantly() )
 	{
 		buildTime = 1;

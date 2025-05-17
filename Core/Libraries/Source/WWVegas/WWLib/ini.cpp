@@ -1560,7 +1560,7 @@ double INIClass::Get_Double(char const * section, char const * entry, double def
 
 	INIEntry * entryptr = Find_Entry(section, entry);
 	if (entryptr != NULL && entryptr->Value != NULL) {
-		float val = defvalue;
+		double val = defvalue;
 		sscanf(entryptr->Value, "%lf", &val);
 		defvalue = val;
 		if (strchr(entryptr->Value, '%') != NULL) {

@@ -2,27 +2,17 @@
 
 # Build useful tool binaries.
 if(RTS_BUILD_GENERALS_TOOLS)
-    add_subdirectory(DebugWindow)
     add_subdirectory(GUIEdit)
     add_subdirectory(ImagePacker)
     add_subdirectory(MapCacheBuilder)
     add_subdirectory(ParticleEditor)
+    add_subdirectory(W3DView)
     add_subdirectory(WorldBuilder)
 endif()
 
 # Build less useful tool/test binaries.
 if(RTS_BUILD_GENERALS_EXTRAS)
     add_subdirectory(Autorun)
-    add_subdirectory(Babylon)
-    add_subdirectory(buildVersionUpdate)
-    add_subdirectory(CRCDiff)
     add_subdirectory(Launcher)
-    add_subdirectory(mangler)
-    add_subdirectory(matchbot)
     add_subdirectory(PATCHGET)
-    add_subdirectory(textureCompress)
-    add_subdirectory(timingTest)
-    add_subdirectory(versionUpdate)
-    add_subdirectory(wolSetup)
-    add_subdirectory(WW3D)
 endif()

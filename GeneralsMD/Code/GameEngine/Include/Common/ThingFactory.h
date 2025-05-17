@@ -96,6 +96,8 @@ public:
 
 	static void parseObjectDefinition( INI* ini, const AsciiString& name, const AsciiString& reskinFrom );
 
+	static void parseObjectExtendDefinition( INI* ini, const AsciiString& name, const AsciiString& extendFrom );
+
 private:
 
 	/// free all template databse data

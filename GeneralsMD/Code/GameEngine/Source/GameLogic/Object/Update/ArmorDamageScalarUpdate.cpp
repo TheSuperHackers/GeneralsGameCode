@@ -66,6 +66,7 @@
 #include "GameLogic/Weapon.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/ParticleSys.h"
+#include "GameClient/TintStatus.h"
 
 //-----------------------------------------------------------------------------
 ArmorDamageScalarUpdateModuleData::ArmorDamageScalarUpdateModuleData()
@@ -81,7 +82,8 @@ ArmorDamageScalarUpdateModuleData::ArmorDamageScalarUpdateModuleData()
 	m_damageFx = NULL;
 	m_effectParticleSystem = NULL;
 	m_scaleParticleCount = false;
-	m_applyTint = false;
+	m_tintStatus = TINT_STATUS_INVALID;
+	//m_applyTint = false;
 	// m_sparksPerCubicFoot = 0.001f;
 }
 
@@ -102,7 +104,8 @@ void ArmorDamageScalarUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "OverrideDamageFX",			INI::parseDamageFX,	NULL, offsetof(ArmorDamageScalarUpdateModuleData, m_damageFx) },
 		{ "EffectParticleSystem",		INI::parseParticleSystemTemplate, NULL, offsetof(ArmorDamageScalarUpdateModuleData, m_effectParticleSystem) },
 		{ "ScaleParticleSystem",			INI::parseBool, NULL, offsetof(ArmorDamageScalarUpdateModuleData, m_scaleParticleCount) },
-		{ "ApplyColorTint",					INI::parseBool, NULL, offsetof(ArmorDamageScalarUpdateModuleData, m_applyTint)},
+		{ "TintStatusType",			TintStatusFlags::parseSingleBitFromINI,	NULL, offsetof(ArmorDamageScalarUpdateModuleData, m_tintStatus) },
+		//{ "ApplyColorTint",					INI::parseBool, NULL, offsetof(ArmorDamageScalarUpdateModuleData, m_applyTint)},
 		//{ "ParticlesPerCubicFoot",		INI::parseReal, NULL, offsetof(ArmorDamageScalarUpdateModuleData, m_sparksPerCubicFoot) },
 		{ 0, 0, 0, 0 }
 	};
@@ -242,9 +245,9 @@ void ArmorDamageScalarUpdate::applyEffectToObject(Object *obj) {
 	Drawable* drw = obj->getDrawable();
 	if (drw)
 	{
-		if (data->m_applyTint)
+		if (data->m_tintStatus > TINT_STATUS_INVALID && data->m_tintStatus < TINT_STATUS_COUNT)
 		{
-			drw->setTintStatus(TINT_STATUS_SHIELDED);
+			drw->setTintStatus(data->m_tintStatus);
 		}
 
 		const ParticleSystemTemplate* tmp = data->m_effectParticleSystem;
@@ -300,9 +303,12 @@ void ArmorDamageScalarUpdate::removeEffectFromObject(Object* obj) {
 	}
 
 	Drawable* drw = obj->getDrawable();
-	if (data->m_applyTint && drw != NULL) {
-		drw->clearTintStatus(TINT_STATUS_SHIELDED);
+
+	if (data->m_tintStatus > TINT_STATUS_INVALID && data->m_tintStatus < TINT_STATUS_COUNT)
+	{
+		drw->clearTintStatus(data->m_tintStatus);
 	}
+
 }
 
 // ------------------------------------------------------------------------------------------------

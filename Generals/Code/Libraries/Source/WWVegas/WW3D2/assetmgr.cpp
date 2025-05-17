@@ -200,6 +200,7 @@ protected:
 WW3DAssetManager::WW3DAssetManager(void) :
 	PrototypeLoaders		(PROTOLOADERS_VECTOR_SIZE),
 	Prototypes				(PROTOTYPES_VECTOR_SIZE),
+
 	WW3D_Load_On_Demand		(false),
 	Activate_Fog_On_Load		(false),
 	MetalManager(0)
@@ -212,7 +213,10 @@ WW3DAssetManager::WW3DAssetManager(void) :
 	Prototypes.Set_Growth_Step(PROTOTYPES_GROWTH_RATE);
 
 	// install the default loaders
+#ifndef USE_WWSHADE
 	Register_Prototype_Loader(&_MeshLoader);
+#endif
+
 	Register_Prototype_Loader(&_HModelLoader);
 	Register_Prototype_Loader(&_CollectionLoader);
 	Register_Prototype_Loader(&_BoxLoader);
@@ -798,7 +802,8 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 
 		// If we can't find it, try the parent directory
 		if ( Load_3D_Assets( filename ) == false ) {
-			StringClass	new_filename = StringClass("..\\") + filename;
+			StringClass	new_filename(StringClass("..\\"),true);
+			new_filename+=filename;
 			Load_3D_Assets( new_filename );
 		}
 
@@ -1024,7 +1029,8 @@ HTreeClass *	WW3DAssetManager::Get_HTree(const char * name)
 
 		// If we can't find it, try the parent directory
 		if ( Load_3D_Assets( filename ) == false ) {
-			StringClass	new_filename = StringClass("..\\") + filename;
+			StringClass	new_filename("..\\",true);
+			new_filename+=filename;
 			Load_3D_Assets( new_filename );
 		}
 
@@ -1095,10 +1101,20 @@ TextureClass * WW3DAssetManager::Get_Texture
 	const char * filename, 
 	MipCountType mip_level_count,
 	WW3DFormat texture_format,
-	bool allow_compression
+	bool allow_compression,
+	TextureBaseClass::TexAssetType type,
+	bool allow_reduction
 )
 {
 	WWPROFILE( "WW3DAssetManager::Get_Texture 1" );
+
+	/*
+	** We cannot currently mip-map bumpmaps
+	*/
+	if (texture_format==WW3D_FORMAT_U8V8) 
+	{
+		mip_level_count=MIP_LEVELS_1;
+	}
 
 	/*
 	** Bail if the user isn't really asking for anything
@@ -1114,11 +1130,10 @@ TextureClass * WW3DAssetManager::Get_Texture
 	/*
 	** See if the texture has already been loaded.
 	*/
-
 	TextureClass* tex = TextureHash.Get(lower_case_name);
 	if (tex && texture_format!=WW3D_FORMAT_UNKNOWN) 
 	{
-		WWASSERT_PRINT(tex->Get_Texture_Format()==texture_format,("Texture %s has already been loaded witt different format",filename));
+		WWASSERT_PRINT(tex->Get_Texture_Format()==texture_format,("Texture %s has already been loaded with different format",filename));
 	}
 
 	/*
@@ -1126,7 +1141,10 @@ TextureClass * WW3DAssetManager::Get_Texture
 	*/
 	if (!tex) 
 	{
-		tex = NEW_REF (TextureClass, (lower_case_name, NULL, mip_level_count, texture_format, allow_compression));
+		if (type==TextureBaseClass::TEX_REGULAR)
+		{
+			tex = NEW_REF (TextureClass, (lower_case_name, NULL, mip_level_count, texture_format, allow_compression));
+		}
 		TextureHash.Insert(tex->Get_Texture_Name(),tex);
 	}
 

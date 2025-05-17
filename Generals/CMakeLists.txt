@@ -2,15 +2,6 @@ cmake_minimum_required(VERSION 3.25)
 
 project(g_generals LANGUAGES C CXX)
 
-# Do we want to build extra SDK stuff or just the game binary?
-option(RTS_BUILD_GENERALS_TOOLS "Build tools for Generals" ON)
-add_feature_info(GeneralsTools RTS_BUILD_GENERALS_TOOLS "Build Generals Mod Tools")
-option(RTS_BUILD_GENERALS_EXTRAS "Build extra tools/tests for Generals" OFF)
-add_feature_info(GeneralsExtras RTS_BUILD_GENERALS_EXTRAS "Build Generals Extra Tools/Tests")
-
-# Do we want to build documentation?
-option(RTS_BUILD_GENERALS_DOCS "Build documentation for Generals" OFF)
-add_feature_info(GeneralsDocs RTS_BUILD_GENERALS_DOCS "Build Generals Documentation")
 if (RTS_BUILD_GENERALS_DOCS)
     find_package(Doxygen REQUIRED)
     doxygen_add_docs(g_docs Code)
@@ -72,5 +63,10 @@ if(RTS_INSTALL_PREFIX_GENERALS AND NOT "${RTS_INSTALL_PREFIX_GENERALS}" STREQUAL
     if(TARGET g_mapcachebuilder)
         install(TARGETS g_mapcachebuilder RUNTIME DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}")
         install(FILES $<TARGET_PDB_FILE:g_mapcachebuilder> DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}" OPTIONAL)
+    endif()
+
+    if(TARGET g_w3dview)
+        install(TARGETS g_w3dview RUNTIME DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}")
+        install(FILES $<TARGET_PDB_FILE:g_w3dview> DESTINATION "${RTS_INSTALL_PREFIX_GENERALS}" OPTIONAL)
     endif()
 endif()

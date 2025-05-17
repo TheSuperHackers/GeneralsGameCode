@@ -39,6 +39,9 @@
 #include <memory.h>
 #include "WWFILE.H"
 
+// TheSuperHackers @compile feliwir 17/04/2025 include _vsnprintf macros
+#include <Utility/compat.h>
+
 #pragma warning(disable : 4514)
 
 int FileClass::Printf(char *str, ...)

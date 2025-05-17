@@ -43,6 +43,7 @@
 #include "Common/RandomValue.h"
 #include "Common/GlobalData.h"
 #include "Common/ResourceGatheringManager.h"
+#include "Common/Upgrade.h"
 
 #include "GameClient/Drawable.h"
 #include "GameClient/GameText.h"
@@ -61,7 +62,7 @@
 #include "GameLogic/Module/WorkerAIUpdate.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -205,7 +206,7 @@ void WorkerAIUpdate::createMachines( void )
 		m_workerMachine->initDefaultState();// this has to wait until all three are in place since
 		// an immediate transition check will ask questions of the machines.
 
-//#ifdef _DEBUG
+//#ifdef RTS_DEBUG
 //		m_workerMachine->setDebugOutput(TRUE);
 //		m_dozerMachine->setDebugOutput(TRUE);
 //		m_supplyTruckStateMachine->setDebugOutput(TRUE);
@@ -775,6 +776,9 @@ void WorkerAIUpdate::internalCancelTask( DozerTask task )
 
 	// sanity
 	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'\n", task) );
+	
+	if(task < 0 || task >= DOZER_NUM_TASKS)
+		return;  //DAMNIT!  You CANNOT assert and then not handle the damn error!  The.  Code.  Must.  Not.  Crash.
 
 	// call the single method that gets called for completing and canceling tasks
 	internalTaskCompleteOrCancelled( task );

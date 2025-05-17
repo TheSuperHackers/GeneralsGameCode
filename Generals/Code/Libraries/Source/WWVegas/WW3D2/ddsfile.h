@@ -16,6 +16,8 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// 08/06/02 KM Added cube map and volume texture support
+
 #ifndef DDSFILE_H
 #define DDSFILE_H
 
@@ -178,14 +180,21 @@ class DDSFileClass
 {
 	unsigned Width;
 	unsigned Height;
+	unsigned Depth;
+	unsigned FullWidth;
+	unsigned FullHeight;
+	unsigned FullDepth;
 	unsigned MipLevels;
+	unsigned long DateTime;
 	unsigned ReductionFactor;
 	unsigned char* DDSMemory;
 	WW3DFormat Format;
+	DDSType	Type;
 	unsigned* LevelSizes;
 	unsigned* LevelOffsets;
+	unsigned CubeFaceSize;
 	LegacyDDSURFACEDESC2 SurfaceDesc;
-	StringClass Name;
+	char Name[256];
 
 	static unsigned Calculate_DXTC_Surface_Size(unsigned width, unsigned height, WW3DFormat format);
 
@@ -197,22 +206,59 @@ public:
 
 	unsigned Get_Width(unsigned level) const;
 	unsigned Get_Height(unsigned level) const;
+	unsigned Get_Depth(unsigned level) const;
+	unsigned Get_Full_Width() const { return FullWidth; }		// Get the width of level 0 of non-reduced texture
+	unsigned Get_Full_Height() const { return FullHeight; }		// Get the height of level 0 of non-reduced texture
+	unsigned Get_Full_Depth() const { return FullDepth; }
+	unsigned long Get_Date_Time() const { return DateTime; }
 
 	unsigned Get_Mip_Level_Count() const { return MipLevels; }
 	const unsigned char* Get_Memory_Pointer(unsigned level) const;
 	unsigned Get_Level_Size(unsigned level) const;
 	WW3DFormat Get_Format() const { return Format; }
 
+	DDSType Get_Type() const { return Type; }
+
 	// Copy pixels to the destination surface.
-	void Copy_Level_To_Surface(unsigned level,IDirect3DSurface8* d3d_surface);
+	void Copy_Level_To_Surface(unsigned level,IDirect3DSurface8* d3d_surface,const Vector3& hsv_shift=Vector3(0.0f,0.0f,0.0f));
 	void Copy_Level_To_Surface(
 		unsigned level,
 		WW3DFormat dest_format, 
 		unsigned dest_width, 
 		unsigned dest_height, 
 		unsigned char* dest_surface, 
-		unsigned dest_pitch);
+		unsigned dest_pitch,
+		const Vector3& hsv_shift=Vector3(0.0f,0.0f,0.0f));
 
+	// cube map
+	const unsigned char* Get_CubeMap_Memory_Pointer(unsigned face, unsigned level) const;
+	void Copy_CubeMap_Level_To_Surface
+	(
+		unsigned face,
+		unsigned level,
+		WW3DFormat dest_format,
+		unsigned width,
+		unsigned height,
+		unsigned char* surf,
+		unsigned pitch,
+		const Vector3& hsv_shift=Vector3(0.0f,0.0f,0.0f)
+	);
+
+	// volume texture
+	const unsigned char* Get_Volume_Memory_Pointer(unsigned level) const;
+	void Copy_Volume_Level_To_Surface
+	(
+		unsigned level,
+		unsigned depth,
+		WW3DFormat dest_format,
+		unsigned width,
+		unsigned height,
+		unsigned char* vol,
+		unsigned row_pitch,
+		unsigned slice_pitch,
+		const Vector3& hsv_shift=Vector3(0.0f,0.0f,0.0f)
+	);
+	
 	// Get pixel in A8R8G8B8 format. This isn't the fastest possible way of reading data from DDS.
 	unsigned Get_Pixel(unsigned level,unsigned x,unsigned y) const;
 
@@ -225,7 +271,8 @@ public:
 		WW3DFormat dest_format,				// Destination surface format, A8R8G8B8 is fastest
 		unsigned level,						// DDS mipmap level to copy from
 		unsigned source_x,					// DDS x offset to copy from, must be aligned by 4!
-		unsigned source_y) const;			// DDS y offset to copy from, must be aligned by 4!
+		unsigned source_y,					// DDS y offset to copy from, must be aligned by 4!
+		const Vector3& hsv_shift=Vector3(0.0f,0.0f,0.0f)) const;
 
 	bool Load();
 	bool Is_Available() const { return !!LevelSizes; }

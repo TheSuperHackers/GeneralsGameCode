@@ -24,7 +24,7 @@
 #include "ScriptProperties.h"
 #include "GameLogic/Scripts.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma message("************************************** WARNING, optimization disabled for debugging purposes")

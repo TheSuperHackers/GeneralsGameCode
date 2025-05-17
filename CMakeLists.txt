@@ -56,7 +56,6 @@ endif()
 include(cmake/config.cmake)
 include(cmake/gamespy.cmake)
 include(cmake/lzhl.cmake)
-include(cmake/zlib.cmake)
 
 add_subdirectory(Dependencies/Benchmark)
 if (IS_VS6_BUILD)

@@ -42,7 +42,7 @@
 #include "GameLogic/Object.h"
 //#include "GameLogic/PartitionManager.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -164,10 +164,29 @@ void HackInternetAIUpdate::hackInternet()
 	// must make the state machine AFTER initing the other stuff, since it may inquire of its values...
 	//m_hackInternetStateMachine = newInstance(HackInternetStateMachine)( getObject() );
 	//m_hackInternetStateMachine->initDefaultState();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	//m_hackInternetStateMachine->setName("HackInternetSpecificAI");
 #endif
 		getStateMachine()->setState(UNPACKING);
+}
+
+// ------------------------------------------------------------------------------------------------
+UnsignedInt HackInternetAIUpdate::getUnpackTime() const
+{
+	// Not yet contained at the time this is queried
+	return getHackInternetAIUpdateModuleData()->m_unpackTime;
+}
+
+// ------------------------------------------------------------------------------------------------
+UnsignedInt HackInternetAIUpdate::getPackTime() const
+{
+	return getHackInternetAIUpdateModuleData()->m_packTime; 
+}
+
+// ------------------------------------------------------------------------------------------------
+UnsignedInt HackInternetAIUpdate::getCashUpdateDelay() const
+{
+	return getHackInternetAIUpdateModuleData()->m_cashUpdateDelay; 
 }
 
 // ------------------------------------------------------------------------------------------------
