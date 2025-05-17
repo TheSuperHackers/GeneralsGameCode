@@ -70,7 +70,7 @@ protected:
 	bool updateRadius();
 	void setDecayFrames( UnsignedInt decayFrames );
 	void xfer( Xfer *xfer );
-	void setLaserRadiusUpdateBase(const LaserRadiusUpdateBase& other);
+	void setLaserRadiusUpdateBase(const LaserRadiusUpdateBase& other) { *this = other; }
 	Real getWidthScale() const { return m_currentWidthScalar; }
 
 private:
@@ -113,7 +113,7 @@ public:
 	//Actually puts the laser in the world.
 	void initLaser( const Object *parent, const Object *target, const Coord3D *startPos, const Coord3D *endPos, AsciiString parentBoneName, Int sizeDeltaFrames = 0 );
 
-	const LaserRadiusUpdateBase& getLaserRadiusUpdateBase() const;
+	const LaserRadiusUpdateBase& getLaserRadiusUpdateBase() const { return *this; }
 	using LaserRadiusUpdateBase::setDecayFrames;
 	using LaserRadiusUpdateBase::getWidthScale;
 
