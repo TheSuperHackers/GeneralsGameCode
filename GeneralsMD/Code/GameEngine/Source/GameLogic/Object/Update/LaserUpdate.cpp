@@ -299,18 +299,6 @@ void LaserRadiusUpdateBase::xfer( Xfer *xfer )
 }
 
 //-------------------------------------------------------------------------------------------------
-void LaserRadiusUpdateBase::setLaserRadiusUpdateBase(const LaserRadiusUpdateBase& other)
-{
-	static_cast<LaserRadiusUpdateBase&>(*this) = other;
-}
-
-//-------------------------------------------------------------------------------------------------
-const LaserRadiusUpdateBase& LaserUpdate::getLaserRadiusUpdateBase() const
-{
-	return static_cast<const LaserRadiusUpdateBase&>(*this);
-}
-
-//-------------------------------------------------------------------------------------------------
 void LaserUpdate::initLaser( const Object *parent, const Object *target, const Coord3D *startPos, const Coord3D *endPos, AsciiString parentBoneName, Int sizeDeltaFrames )
 {
 	const LaserUpdateModuleData *data = getLaserUpdateModuleData();
