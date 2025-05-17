@@ -281,7 +281,7 @@ Real W3DTerrainLogic::getGroundHeight( Real x, Real y, Coord3D* normal ) const
 {
 #define USE_THE_TERRAIN_OBJECT
 #ifdef USE_THE_TERRAIN_OBJECT
-	// TheSuperHackers @logic-client-separation helmutbuhler 04/11/2025
+	// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
 	// W3DTerrainLogic shouldn't depend on TheTerrainRenderObject!
 	if (TheTerrainRenderObject) 
 	{
@@ -360,7 +360,7 @@ Real W3DTerrainLogic::getLayerHeight( Real x, Real y, PathfindLayerEnum layer, C
 //-------------------------------------------------------------------------------------------------
 Bool W3DTerrainLogic::isCliffCell( Real x, Real y) const
 {
-	// TheSuperHackers @logic-client-separation helmutbuhler 04/11/2025
+	// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
 	// W3DTerrainLogic shouldn't depend on TheTerrainRenderObject!
 	return TheTerrainRenderObject->isCliffCell(x,y);
 
