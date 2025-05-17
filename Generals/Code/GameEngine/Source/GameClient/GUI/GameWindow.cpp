@@ -136,7 +136,36 @@ GameWindow::~GameWindow( void )
 		delete m_editData;
 	m_editData = NULL;
 
+	clearTransitionWindows();
+
 }  // end ~GameWindow
+
+// GameWindow::addTransitionWindow ====================================================
+//=============================================================================
+void GameWindow::addTransitionWindow( TransitionWindow* transitionWindow )
+{
+
+	m_transitionWindows.push_back(transitionWindow);
+
+}  // end addTransitionWindow
+
+// GameWindow::clearTransitionWindows ====================================================
+//=============================================================================
+void GameWindow::clearTransitionWindows( void )
+{
+
+	if (m_transitionWindows.empty())
+		return;
+
+	std::vector<TransitionWindow*>::iterator it = m_transitionWindows.begin();
+	while ( it != m_transitionWindows.end() )
+	{
+		TransitionWindow *transitionWindow = *it;
+		transitionWindow->cleanup(this);
+		it = m_transitionWindows.erase(it);
+	}
+
+}  // end clearTransitionWindows
 
 // GameWindow::normalizeWindowRegion ==========================================
 /** Puts the upper left corner in the window's region.lo field */
