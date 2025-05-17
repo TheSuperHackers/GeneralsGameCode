@@ -2598,6 +2598,8 @@ Bool Weapon::privateFireWeapon(
 	Bool reloaded = false;
 	if (m_ammoInClip > 0)
 	{
+		// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+		// barrelCount shouln't depend on Drawable, which belongs to client.
 		Int barrelCount = sourceObj->getDrawable()->getBarrelCount(m_wslot);
 		if (m_curBarrel >= barrelCount)
 		{

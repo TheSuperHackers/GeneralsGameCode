@@ -1382,6 +1382,8 @@ void ControlBar::reset( void )
 //-------------------------------------------------------------------------------------------------
 void ControlBar::update( void )
 {
+	if (TheGlobalData->m_headless)
+		return;
 	getStarImage();
 	updateRadarAttackGlow();
 	if(m_controlBarSchemeManager)

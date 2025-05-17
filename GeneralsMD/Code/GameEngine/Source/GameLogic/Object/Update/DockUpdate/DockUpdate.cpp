@@ -510,6 +510,10 @@ void DockUpdate::loadDockPositions()
 			if( m_numberApproachPositions != DYNAMIC_APPROACH_VECTOR_FLAG )
 			{
 				// Dynamic means no bones
+
+				// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+				// We shouldn't depend on bones of a drawable here!
+
 				// TheSuperHackers @fix helmutbuhler 19/04/2025 Zero initialize array to prevent uninitialized memory reads.
 				// Important: the entire target vector is used for serialization and crc and must not contain random data.
 				Coord3D approachBones[DEFAULT_APPROACH_VECTOR_SIZE] = {0};

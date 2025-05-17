@@ -1298,7 +1298,7 @@ void InGameUI::setRadiusCursor(RadiusCursorType cursorType, const SpecialPowerTe
 //-------------------------------------------------------------------------------------------------
 void InGameUI::handleRadiusCursor()
 {
-	if (!m_curRadiusCursor.isEmpty())
+	if (!m_curRadiusCursor.isEmpty() && TheMouse != NULL)
 	{
 		const MouseIO* mouseIO = TheMouse->getMouseStatus();
 		Coord3D pos;
@@ -1337,6 +1337,8 @@ void InGameUI::handleRadiusCursor()
 
 void InGameUI::triggerDoubleClickAttackMoveGuardHint( void ) 
 {
+	if (TheMouse == NULL)
+		return;
   m_duringDoubleClickAttackMoveGuardHintTimer = 11; 
 	const MouseIO* mouseIO = TheMouse->getMouseStatus();
 	TheTacticalView->screenToTerrain( &mouseIO->pos, &m_duringDoubleClickAttackMoveGuardHintStashedPosition );
@@ -2951,8 +2953,9 @@ void InGameUI::setGUICommand( const CommandButton *command )
 		}
 		setRadiusCursorNone();
 	}
-
-	m_mouseModeCursor = TheMouse->getMouseCursor();
+	
+	if (TheMouse != NULL)
+		m_mouseModeCursor = TheMouse->getMouseCursor();
 
 }  // end setGUICommand
 

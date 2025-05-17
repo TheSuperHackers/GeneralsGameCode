@@ -232,22 +232,24 @@ void W3DTerrainVisual::init( void )
 	m_terrainRenderObject->Set_Collision_Type( PICK_TYPE_TERRAIN );
 	TheTerrainRenderObject = m_terrainRenderObject;
 
-	// initialize track drawing system
-	TheTerrainTracksRenderObjClassSystem = NEW TerrainTracksRenderObjClassSystem;
-	TheTerrainTracksRenderObjClassSystem->init(W3DDisplay::m_3DScene);
+	if (!TheGlobalData->m_headless)
+	{
+		// initialize track drawing system
+		TheTerrainTracksRenderObjClassSystem = NEW TerrainTracksRenderObjClassSystem;
+		TheTerrainTracksRenderObjClassSystem->init(W3DDisplay::m_3DScene);
 
-	// initialize object shadow drawing system
-	TheW3DShadowManager = NEW W3DShadowManager;
- 	TheW3DShadowManager->init();
+		// initialize object shadow drawing system
+		TheW3DShadowManager = NEW W3DShadowManager;
+ 		TheW3DShadowManager->init();
 	
-	// create a water plane render object
-	TheWaterRenderObj=m_waterRenderObject = NEW_REF( WaterRenderObjClass, () );
-	m_waterRenderObject->init(TheGlobalData->m_waterPositionZ, TheGlobalData->m_waterExtentX, TheGlobalData->m_waterExtentY, W3DDisplay::m_3DScene, (WaterRenderObjClass::WaterType)TheGlobalData->m_waterType);	//create a water plane that's 128x128 units
-	m_waterRenderObject->Set_Position(Vector3(TheGlobalData->m_waterPositionX,TheGlobalData->m_waterPositionY,TheGlobalData->m_waterPositionZ));	//place water in world
+		// create a water plane render object
+		TheWaterRenderObj=m_waterRenderObject = NEW_REF( WaterRenderObjClass, () );
+		m_waterRenderObject->init(TheGlobalData->m_waterPositionZ, TheGlobalData->m_waterExtentX, TheGlobalData->m_waterExtentY, W3DDisplay::m_3DScene, (WaterRenderObjClass::WaterType)TheGlobalData->m_waterType);	//create a water plane that's 128x128 units
+		m_waterRenderObject->Set_Position(Vector3(TheGlobalData->m_waterPositionX,TheGlobalData->m_waterPositionY,TheGlobalData->m_waterPositionZ));	//place water in world
 
-	// create smudge rendering system.
-	TheSmudgeManager = NEW(W3DSmudgeManager);
-	TheSmudgeManager->init();
+		// create smudge rendering system.
+		TheSmudgeManager = NEW(W3DSmudgeManager);
+		TheSmudgeManager->init();
 
 #ifdef DO_UNIT_TIMINGS
 #pragma MESSAGE("********************* WARNING- Doing UNIT TIMINGS. ")
@@ -261,10 +263,11 @@ void W3DTerrainVisual::init( void )
 			W3DDisplay::m_3DScene->Add_Render_Object( m_waterRenderObject);
 		}
 #endif
-	if (TheGlobalData->m_useCloudPlane)
-		m_waterRenderObject->toggleCloudLayer(true);
-	else
-		m_waterRenderObject->toggleCloudLayer(false);
+		if (TheGlobalData->m_useCloudPlane)
+			m_waterRenderObject->toggleCloudLayer(true);
+		else
+			m_waterRenderObject->toggleCloudLayer(false);
+	}
 
 	// set the vertex animated water properties
 	Int waterSettingIndex = 0;  // use index 0 settings by default
@@ -634,7 +637,7 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 	}
 
 
-	RefRenderObjListIterator *it = W3DDisplay::m_3DScene->createLightsIterator();
+	RefRenderObjListIterator *it = W3DDisplay::m_3DScene ? W3DDisplay::m_3DScene->createLightsIterator() : NULL;
 	// apply the heightmap to the terrain render object
 
 #ifdef DO_SEISMIC_SIMULATIONS
@@ -655,13 +658,17 @@ Bool W3DTerrainVisual::load( AsciiString filename )
 	 it = NULL;
 	}
 	// add our terrain render object to the scene
-	W3DDisplay::m_3DScene->Add_Render_Object( m_terrainRenderObject );
+	if (W3DDisplay::m_3DScene != NULL)
+		W3DDisplay::m_3DScene->Add_Render_Object( m_terrainRenderObject );
 
 #if defined RTS_DEBUG || defined RTS_INTERNAL
 	// Icon drawing utility object for pathfinding.
-	W3DDebugIcons *icons = NEW W3DDebugIcons;
- 	W3DDisplay::m_3DScene->Add_Render_Object( icons );
-	icons->Release_Ref(); // belongs to scene.
+	if (W3DDisplay::m_3DScene != NULL)
+	{
+		W3DDebugIcons *icons = NEW W3DDebugIcons;
+ 		W3DDisplay::m_3DScene->Add_Render_Object( icons );
+		icons->Release_Ref(); // belongs to scene.
+	}
 #endif
 
 #ifdef DO_UNIT_TIMINGS

@@ -155,7 +155,8 @@ void W3DRenderObjectSnapshot::update(RenderObjClass *robj, DrawableInfo *drawInf
 // ------------------------------------------------------------------------------------------------
 void W3DRenderObjectSnapshot::addToScene(void)
 {
-	((SimpleSceneClass *)W3DDisplay::m_3DScene)->Add_Render_Object(m_robj);
+	if (W3DDisplay::m_3DScene != NULL)
+		((SimpleSceneClass *)W3DDisplay::m_3DScene)->Add_Render_Object(m_robj);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -457,7 +458,7 @@ void W3DGhostObject::restoreParentObject(void)
 				//removed by the ghost object manager, so restore it.  If we have a render
 				//object that is in the scene, then it was probably added because the model
 				//changed while the object was ghosted (for damage states, garrison, etc.).
-				if (robj->Peek_Scene() == NULL)
+				if (robj->Peek_Scene() == NULL && W3DDisplay::m_3DScene != NULL)
 					((SimpleSceneClass *)W3DDisplay::m_3DScene)->Add_Render_Object(robj);
 			}
 		}

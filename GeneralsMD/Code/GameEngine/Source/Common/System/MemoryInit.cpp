@@ -416,6 +416,7 @@ static PoolSizeRec sizes[] =
 	{ "Overridable", 32, 32 },
 
 	{ "W3DGameWindow", 700, 256 },
+	{ "GameWindowDummy", 700, 256 },
 	{ "SuccessState", 32, 32 },
 	{ "FailureState", 32, 32 },
 	{ "ContinueState", 32, 32 },

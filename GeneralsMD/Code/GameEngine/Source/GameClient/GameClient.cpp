@@ -270,10 +270,13 @@ void GameClient::init( void )
 		TheDisplayStringManager->setName("TheDisplayStringManager");
 	}
 	
-	// create the keyboard
-	TheKeyboard = createKeyboard();
-	TheKeyboard->init();
-	TheKeyboard->setName("TheKeyboard");
+	if (!TheGlobalData->m_headless)
+	{
+		// create the keyboard
+		TheKeyboard = createKeyboard();
+		TheKeyboard->init();
+		TheKeyboard->setName("TheKeyboard");
+	}
 
 	// allocate and load image collection for the GUI and just load the 256x256 ones for now
 	TheMappedImageCollection = MSGNEW("GameClientSubsystem") ImageCollection;
@@ -321,11 +324,14 @@ void GameClient::init( void )
 	if( TheFontLibrary )
 		TheFontLibrary->init();
 
-	// create the mouse
-	TheMouse = createMouse();
-	TheMouse->parseIni();
-	TheMouse->initCursorResources();
- 	TheMouse->setName("TheMouse");
+	if (!TheGlobalData->m_headless)
+	{
+		// create the mouse
+		TheMouse = createMouse();
+		TheMouse->parseIni();
+		TheMouse->initCursorResources();
+ 		TheMouse->setName("TheMouse");
+	}
 
 	// instantiate the display
 	TheDisplay = createGameDisplay();
@@ -340,7 +346,7 @@ void GameClient::init( void )
 	}
 
 	// create the window manager
-	TheWindowManager = createWindowManager();
+	TheWindowManager = TheGlobalData->m_headless ? NEW GameWindowManagerDummy : createWindowManager();
 	if( TheWindowManager )
 	{
 
@@ -397,11 +403,10 @@ void GameClient::init( void )
  		TheRayEffects->setName("TheRayEffects");
 	}
 
-	TheMouse->init();	//finish initializing the mouse.
-
 	// set the limits of the mouse now that we've created the display and such
 	if( TheMouse )
 	{
+		TheMouse->init();	//finish initializing the mouse.
 		TheMouse->setPosition( 0, 0 );
 		TheMouse->setMouseLimits();
  		TheMouse->setName("TheMouse");
@@ -535,7 +540,7 @@ void GameClient::update( void )
 	//Initial Game Codition.  We must show the movie first and then we can display the shell	
 	if(TheGlobalData->m_afterIntro && !TheDisplay->isMoviePlaying())
 	{
-		if( playSizzle && TheGlobalData->m_playSizzle )
+		if( playSizzle && TheGlobalData->m_playSizzle && !TheGlobalData->m_headless )
 		{
 			TheWritableGlobalData->m_allowExitOutOfMovies = TRUE;
 			if(TheGameLODManager && TheGameLODManager->didMemPass())
@@ -626,10 +631,9 @@ void GameClient::update( void )
 	if(TheGlobalData->m_playIntro || TheGlobalData->m_afterIntro)
 	{
 		// redraw all views, update the GUI
+		if (!TheGlobalData->m_headless)
 		{
 			TheDisplay->DRAW();
-		}
-		{
 			TheDisplay->UPDATE();
 		}
 		return;
@@ -749,10 +753,12 @@ void GameClient::update( void )
 	}
 
 	// update display
+	if (!TheGlobalData->m_headless)
 	{
 		TheDisplay->UPDATE();
 	}
 
+	if (!TheGlobalData->m_headless)
 	{
 		USE_PERF_TIMER(GameClient_draw)
 			

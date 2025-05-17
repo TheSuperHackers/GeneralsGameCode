@@ -3205,7 +3205,8 @@ void ScriptActions::doDisableInput()
 #endif
 	{
 		TheInGameUI->setInputEnabled(false);
-		TheMouse->setVisibility(false);
+		if (TheMouse != NULL)
+			TheMouse->setVisibility(false);
 		TheInGameUI->deselectAllDrawables();
 		TheInGameUI->clearAttackMoveToMode();
 		TheInGameUI->setWaypointMode( FALSE );

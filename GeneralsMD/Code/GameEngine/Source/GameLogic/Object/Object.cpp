@@ -6094,6 +6094,9 @@ const AsciiString& Object::getCommandSetString() const
 //=============================================================================
 Bool Object::canProduceUpgrade( const UpgradeTemplate *upgrade )
 {
+	// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+	// TheControlBar belongs to the client, we shouldn't depend on that to check this.
+
 	// We need to have the button to make the upgrade.  CommandSets are a weird Logic/Client hybrid.
 	const CommandSet *set = TheControlBar->findCommandSet(getCommandSetString());
 
