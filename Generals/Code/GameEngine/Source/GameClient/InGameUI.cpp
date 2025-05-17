@@ -2025,6 +2025,7 @@ void InGameUI::messageColor( const RGBColor *rgbColor, UnicodeString format, ...
 	va_start( args, format );
 	WideChar buf[ UnicodeString::MAX_FORMAT_BUF_LEN ];
 	int result = _vsnwprintf(buf, sizeof( buf )/sizeof( WideChar ) - 1, format.str(), args );
+	va_end(args);
 
 	if( result >= 0 )
 	{
