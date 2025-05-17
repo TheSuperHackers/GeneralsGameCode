@@ -382,8 +382,6 @@ class AudioManagerDummy : public AudioManager
 	virtual void pauseAudio(AudioAffect which) {}
 	virtual void resumeAudio(AudioAffect which) {}
 	virtual void pauseAmbient(Bool shouldPause) {}
-	virtual AudioHandle addAudioEvent(const AudioEventRTS* eventToAdd) { return 0; }
-	virtual void removeAudioEvent(AudioHandle audioEvent) {}
 	virtual void killAudioEventImmediately(AudioHandle audioEvent) {}
 	virtual void nextMusicTrack() {}
 	virtual void prevMusicTrack() {}
