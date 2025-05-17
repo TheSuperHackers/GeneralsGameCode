@@ -112,7 +112,7 @@
 #include "Common/AudioEventInfo.h"
 #include "Common/DynamicAudioEventInfo.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -153,8 +153,7 @@ extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBCo
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-#ifdef DEBUG_LOGGING
-AsciiString DescribeObject(const Object *obj)
+AsciiString DebugDescribeObject(const Object *obj)
 {
 	if (!obj)
 		return "<No Object>";
@@ -178,7 +177,6 @@ AsciiString DescribeObject(const Object *obj)
 
 	return ret;
 }
-#endif // DEBUG_LOGGING
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -225,7 +223,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	m_visionSpiedMask (PLAYERMASK_NONE),
 	m_numTriggerAreasActive(0)
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_hasDiedAlready = false;
 #endif
 	//Modules have not been created yet!
@@ -572,7 +570,7 @@ void Object::initObject()
 
 	// Kris -- All missiles must be projectiles! This is the perfect place to assert them!
 	// srj: yes, but only in debug...
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if( !isKindOf( KINDOF_PROJECTILE ) )
 	{
 		if( isKindOf( KINDOF_SMALL_MISSILE ) || isKindOf( KINDOF_BALLISTIC_MISSILE ) )
@@ -2666,7 +2664,7 @@ void Object::setTriggerAreaFlagsForChangeInPosition()
 			if (m_team) 
 				m_team->setEnteredExited();
 			TheGameLogic->updateObjectsChangedTriggerAreas();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 			//TheScriptEngine->AppendDebugMessage("Object exited.", false);
 #endif
 		}
@@ -2701,7 +2699,7 @@ void Object::setTriggerAreaFlagsForChangeInPosition()
 					m_team->setEnteredExited();
 				TheGameLogic->updateObjectsChangedTriggerAreas();
 				++m_numTriggerAreasActive;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 				//TheScriptEngine->AppendDebugMessage("Object entered.", false);
 #endif
 			} 
@@ -3922,10 +3920,6 @@ void Object::onDisabledEdge(Bool becomingDisabled)
 //-------------------------------------------------------------------------------------------------
 void Object::crc( Xfer *xfer )
 {
-	// This is evil - we cast the const Matrix3D * to a Matrix3D * because the XferCRC class must use
-	// the same interface as the XferLoad class for save game restore.  This only works because
-	// XferCRC does not modify its data.
-
 #ifdef DEBUG_CRC
 //	g_logObjectCRCs = TRUE;
 //	Bool g_logAllObjects = TRUE;
@@ -3934,7 +3928,7 @@ void Object::crc( Xfer *xfer )
 	Bool doLogging = g_logObjectCRCs /* && getControllingPlayer()->getPlayerType() == PLAYER_HUMAN */;
 	if (doLogging)
 	{
-		tmp.format("CRC of Object %d (%s), owned by player %d, ", m_id, getTemplate()->getName().str(), getControllingPlayer()->getPlayerIndex());
+		tmp.format("CRC of Object %d (%s), owned by player %d, team: %d, ", m_id, getTemplate()->getName().str(), getControllingPlayer()->getPlayerIndex(), this->getTeam() ? this->getTeam()->getID() : TEAM_ID_INVALID);
 		logString.concat(tmp);
 	}
 #endif // DEBUG_CRC
@@ -3948,6 +3942,9 @@ void Object::crc( Xfer *xfer )
 	}
 #endif // DEBUG_CRC
 
+	// This is evil - we cast the const Matrix3D * to a Matrix3D * because the XferCRC class must use
+	// the same interface as the XferLoad class for save game restore.  This only works because
+	// XferCRC does not modify its data.
 	xfer->xferUser((Matrix3D *)getTransformMatrix(),	sizeof(Matrix3D));
 #ifdef DEBUG_CRC
 	if (doLogging)
@@ -3961,25 +3958,6 @@ void Object::crc( Xfer *xfer )
 	}
 #endif // DEBUG_CRC
 	
-
-#ifdef DEBUG_CRC
-	if (doLogging)
-	{
-		const Matrix3D *mtx = getTransformMatrix();
-		CRCDEBUG_LOG(("CRC of Object %d (%s), owned by player %d, ", m_id, getTemplate()->getName().str(), getControllingPlayer()->getPlayerIndex()));
-		DUMPMATRIX3D(mtx);
-	}
-#endif // DEBUG_CRC
-
-
-
-
-
-
-
-
-
-
 
 	xfer->xferUser(&m_id,															sizeof(m_id));
 #ifdef DEBUG_CRC
@@ -4446,7 +4424,7 @@ void Object::xfer( Xfer *xfer )
 	//m_body;
 	//m_ai;
 	//m_physics;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	//m_hasDiedAlready;
 #endif
 
@@ -4612,7 +4590,7 @@ void Object::onDie( DamageInfo *damageInfo )
 
 	checkAndDetonateBoobyTrap(NULL);// Already dying, so no need to handle death case of explosion
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	DEBUG_ASSERTCRASH(m_hasDiedAlready == false, ("Object::onDie has been called multiple times. This is invalid. jkmcd"));
 	m_hasDiedAlready = true;
 #endif
@@ -5162,7 +5140,7 @@ void Object::unshroud()
 //-------------------------------------------------------------------------------------------------
 Real Object::getVisionRange() const
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(m_visionRange, 0, 0);
@@ -5198,7 +5176,7 @@ Real Object::getShroudClearingRange() const
 		shroudClearingRange = getGeometryInfo().getBoundingCircleRadius();
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(shroudClearingRange, 0, 0);
@@ -5255,7 +5233,7 @@ void Object::setShroudClearingRange( Real newShroudClearingRange )
 //-------------------------------------------------------------------------------------------------
 Real Object::getShroudRange() const
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(m_shroudRange, 0, 0);

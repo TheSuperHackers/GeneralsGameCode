@@ -62,7 +62,7 @@
 #include "GameLogic/Module/SupplyWarehouseDockUpdate.h"
 #include "GameLogic/PartitionManager.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -633,7 +633,7 @@ Object *AIPlayer::buildStructureWithDozer(const ThingTemplate *bldgPlan, BuildLi
 
 
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	if (TheGlobalData->m_debugAI == AI_DEBUG_PATHS)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -1048,7 +1048,13 @@ Bool AIPlayer::isLocationSafe(const Coord3D *pos, const ThingTemplate *tthing )
 void AIPlayer::onUnitProduced( Object *factory, Object *unit )
 {
 	Bool found = false;
+	// TheSuperHackers @fix Mauller 26/04/2025 Fixes uninitialized variable.
+	// To keep retail compatibility this needs to remain uninitialized in VS6 builds.
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	Bool supplyTruck;
+#else
+	Bool supplyTruck = false;
+#endif
 
 	// factory could be NULL at the start of the game.
 	if (factory == NULL) {
@@ -2598,7 +2604,7 @@ void AIPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadiu
 						AIUpdateInterface *ai = unit->getAIUpdateInterface();
 						if (ai) 
 						{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 							Coord3D pos = *unit->getPosition();
 							Coord3D to = teamProto->getTemplateInfo()->m_homeLocation;
 							DEBUG_LOG(("Moving unit from %f,%f to %f,%f\n", pos.x, pos.y , to.x, to.y ));

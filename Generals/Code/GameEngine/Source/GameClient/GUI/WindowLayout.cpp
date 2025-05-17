@@ -33,7 +33,7 @@
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Shell.h"
 #include "GameClient/GameWindowManager.h"
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 
 // for occasional debugging...
 //#pragma optimize("", off)

@@ -61,7 +61,7 @@
 #include	<assert.h>
 #include	<stdlib.h>
 #include <string.h>
-#include <new.h>
+#include <new>
 
 #ifdef _MSC_VER
 #pragma warning (disable : 4702) // unreachable code, happens with some uses of these templates
@@ -317,7 +317,7 @@ template<class T>
 inline int VectorClass<T>::ID(T const * ptr)
 {
 	if (!IsValid) return(0);
-	return(((unsigned long)ptr - (unsigned long)&(*this)[0]) / sizeof(T));
+	return(((uintptr_t)ptr - (uintptr_t)&(*this)[0]) / sizeof(T));
 }
 
 

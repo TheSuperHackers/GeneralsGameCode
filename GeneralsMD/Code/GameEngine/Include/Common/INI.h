@@ -184,6 +184,7 @@ public:
 	// data type parsing (the highest level of what type of thing we're parsing)
 	static void parseObjectDefinition( INI *ini );
 	static void parseObjectReskinDefinition( INI *ini );
+	static void parseObjectExtendDefinition( INI* ini );
 	static void parseWeaponTemplateDefinition( INI *ini );
 	static void parseScienceDefinition( INI *ini );
 	static void parseRankDefinition( INI *ini );
@@ -275,6 +276,7 @@ public:
 	static void parseAnim2DTemplate( INI *ini, void *instance, void *store, const void *userData );
 	static void parsePercentToReal( INI *ini, void *instance, void *store, const void* userData );
 	static void parseRGBColor( INI *ini, void *instance, void *store, const void* userData );
+	static void parseRGBColorSigned( INI *ini, void *instance, void *store, const void* userData );
 	static void parseRGBAColorInt( INI *ini, void *instance, void *store, const void* userData );
 	static void parseColorInt( INI *ini, void *instance, void *store, const void* userData );
 	static void parseCoord3D( INI *ini, void *instance, void *store, const void* userData );

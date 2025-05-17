@@ -66,25 +66,25 @@ jobs:
           - preset: "vc6"
             tools: true
             extras: true
-          - preset: "vc6prof"
+          - preset: "vc6-profile"
             tools: true
             extras: true
-          - preset: "vc6int"
+          - preset: "vc6-internal"
             tools: true
             extras: true
-          - preset: "vc6dbg"
+          - preset: "vc6-debug"
             tools: true
             extras: true
-          - preset: "win32"
+          - preset: "win32-vcpkg"
             tools: true
             extras: true
-          - preset: "win32prof"
+          - preset: "win32-vcpkg-profile"
             tools: true
             extras: true
-          - preset: "win32int"
+          - preset: "win32-vcpkg-internal"
             tools: true
             extras: true
-          - preset: "win32dbg"
+          - preset: "win32-vcpkg-debug"
             tools: true
             extras: true
       fail-fast: false
@@ -106,25 +106,25 @@ jobs:
           - preset: "vc6"
             tools: true
             extras: true
-          - preset: "vc6prof"
+          - preset: "vc6-profile"
             tools: true
             extras: true
-          - preset: "vc6int"
+          - preset: "vc6-internal"
             tools: true
             extras: true
-          - preset: "vc6dbg"
+          - preset: "vc6-debug"
             tools: true
             extras: true
           - preset: "win32"
             tools: true
             extras: true
-          - preset: "win32prof"
+          - preset: "win32-profile"
             tools: true
             extras: true
-          - preset: "win32int"
+          - preset: "win32-internal"
             tools: true
             extras: true
-          - preset: "win32dbg"
+          - preset: "win32-debug"
             tools: true
             extras: true
       fail-fast: false

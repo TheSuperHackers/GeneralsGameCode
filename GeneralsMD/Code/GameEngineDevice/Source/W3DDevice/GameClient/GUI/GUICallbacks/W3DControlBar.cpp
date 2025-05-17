@@ -39,7 +39,7 @@
 #include "GameClient/ControlBarScheme.h"
 #include "GameClient/MapUtil.h"
 #include "GameLogic/GameLogic.h"
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -497,8 +497,14 @@ void W3DCommandBarGenExpDraw( GameWindow *window, WinInstanceData *instData )
 	static const Image *endBar = TheMappedImageCollection->findImageByName("GenExpBarTop1");
 	static const Image *beginBar = TheMappedImageCollection->findImageByName("GenExpBarBottom1");
 	static const Image *centerBar = TheMappedImageCollection->findImageByName("GenExpBar1");
-	Int progress;
-	progress = ((player->getSkillPoints() - player->getSkillPointsLevelDown()) * 100) /(player->getSkillPointsLevelUp() - player->getSkillPointsLevelDown());
+	Int progress = 0;
+	Int skillPointsRequired = player->getSkillPointsLevelUp() - player->getSkillPointsLevelDown();
+
+	// TheSuperHackers @bugfix Mauller 04/05/2025 Prevent possible division by zero
+	if ( skillPointsRequired > 0)
+	{
+		progress = ( ((player->getSkillPoints() - player->getSkillPointsLevelDown()) * 100) / skillPointsRequired );
+	}
 	
 	if(progress <= 0)
 		return;

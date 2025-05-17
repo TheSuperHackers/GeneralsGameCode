@@ -676,17 +676,17 @@ void Dump_Exception_Info(EXCEPTION_POINTERS *e_info)
 			/*
 			** The stack contents cannot be read so just print up question marks.
 			*/
-			sprintf(scrap, "%08X: ", stackptr);
+			sprintf(scrap, "%p: ", static_cast<void*>(stackptr));
 			strcat(scrap, "????????\r\n");
 		} else {
 			/*
 			** If this stack address is in our memory space then try to match it with a code symbol.
 			*/
 			if (IsBadCodePtr((FARPROC)*stackptr)) {
-				sprintf(scrap, "%08X: %08X ", stackptr, *stackptr);
+				sprintf(scrap, "%p: %08lX ", static_cast<void*>(stackptr), *stackptr);
 				strcat(scrap, "DATA_PTR\r\n");
 			} else {
-				sprintf(scrap, "%08X: %08X", stackptr, *stackptr);
+				sprintf(scrap, "%p: %08lX", static_cast<void*>(stackptr), *stackptr);
 
 				if (symbols_available) {
 					symptr->SizeOfStruct = sizeof(symbol);
@@ -783,17 +783,17 @@ int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info)
 	}
 
 	/*
-	** If there was a breakpoint then chances are it was set by a debugger. In _DEBUG mode
+	** If there was a breakpoint then chances are it was set by a debugger. In RTS_DEBUG mode
 	** we probably should ignore breakpoints. Breakpoints become more significant in release
 	** mode since there probably isn't a debugger present.
 	*/
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	if (exception_code == EXCEPTION_BREAKPOINT) {
 		return (EXCEPTION_CONTINUE_SEARCH);
 	}
 #else
 	exception_code = exception_code;
-#endif	//_DEBUG
+#endif	//RTS_DEBUG
 
 #ifdef WWDEBUG
 	//CONTEXT *context;
@@ -818,7 +818,7 @@ int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info)
 
 #if (0)
 #ifdef _DEBUG_PRINT
-#ifndef _DEBUG
+#ifndef RTS_DEBUG
 			/*
 			** Copy the exception debug file to the network. No point in doing this for the debug version
 			** since symbols are not normally available.
@@ -833,7 +833,7 @@ int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info)
 				}
 			}
 			DebugString ("Debug file copied\n");
-#endif	//_DEBUG
+#endif	//RTS_DEBUG
 #endif	//_DEBUG_PRINT
 #endif	//(0)
 
@@ -852,9 +852,9 @@ int Exception_Handler(int exception_code, EXCEPTION_POINTERS *e_info)
 	** EXCEPTION_EXECUTE_HANDLER to let us fall out of winmain.
 	*/
 	if (ExitOnException) {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		_CrtSetDbgFlag(0);
-#endif //_DEBUG
+#endif //RTS_DEBUG
 		TryingToExit = true;
 
 		unsigned long id = Get_Main_Thread_ID();

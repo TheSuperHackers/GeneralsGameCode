@@ -1,4 +1,3 @@
-# Set source files
 set(WWLIB_SRC
     always.h
     argv.cpp
@@ -71,8 +70,6 @@ set(WWLIB_SRC
     #md5.h
     mempool.h
     mmsys.h
-    mpu.cpp
-    MPU.H
     multilist.cpp
     multilist.h
     mutex.cpp
@@ -91,8 +88,6 @@ set(WWLIB_SRC
     RANDOM.H
     rawfile.cpp
     RAWFILE.H
-    rcfile.cpp
-    rcfile.h
     readline.cpp
     readline.h
     realcrc.cpp
@@ -102,8 +97,6 @@ set(WWLIB_SRC
     refcount.h
     #regexpr.cpp
     #regexpr.h
-    registry.cpp
-    registry.h
     #search.h
     sharebuf.h
     Signaler.h
@@ -134,14 +127,10 @@ set(WWLIB_SRC
     uarray.h
     vector.cpp
     Vector.H
-    verchk.cpp
-    verchk.h
     visualc.h
     widestring.cpp
     widestring.h
     win.h
-    WWCOMUtil.cpp
-    WWCOMUtil.h
     wwfile.cpp
     WWFILE.H
     wwstring.cpp
@@ -152,14 +141,28 @@ set(WWLIB_SRC
     XSTRAW.H
 )
 
-# Targets to build.
+if(WIN32)
+    list(APPEND WWLIB_SRC
+        mpu.cpp
+        MPU.H
+        rcfile.cpp
+        rcfile.h
+        registry.cpp
+        registry.h
+        verchk.cpp
+        verchk.h
+        WWCOMUtil.cpp
+        WWCOMUtil.h
+    )
+endif()
+
 add_library(core_wwlib STATIC)
 set_target_properties(core_wwlib PROPERTIES OUTPUT_NAME wwlib)
 
 target_sources(core_wwlib PRIVATE ${WWLIB_SRC})
 
 target_include_directories(core_wwlib PUBLIC
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_link_libraries(core_wwlib PRIVATE

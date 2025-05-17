@@ -130,7 +130,7 @@ extern void externalAddTree(Coord3D location, Real scale, Real angle, AsciiStrin
 #endif
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -436,21 +436,19 @@ void GameLogic::reset( void )
 	m_thingTemplateBuildableOverrides.clear();
 	m_controlBarOverrides.clear();
 
-	// destroy all objects
-	// TheSuperHackers @info xezon 10/04/2025 Objects need to be destroyed before clearing the object vector.
-	destroyAllObjectsImmediate();
-
 	// set the hash to be rather large. We need to optimize this value later.
-	m_objHash.clear();
-#if USING_STLPORT
-	m_objHash.resize(OBJ_HASH_SIZE);
-#else
-	m_objHash.reserve(OBJ_HASH_SIZE);
-#endif
+//	m_objHash.clear();
+//	m_objHash.resize(OBJ_HASH_SIZE);
+	m_objVector.clear();
+	m_objVector.resize(OBJ_HASH_SIZE, NULL);
+
 	m_gamePaused = FALSE;
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
 	setFPMode();
+
+	// destroy all objects
+	destroyAllObjectsImmediate();
 
 	m_nextObjID = (ObjectID)1;
 
@@ -1114,6 +1112,15 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	GetPrecisionTimer(&startTime64);
 	#endif
 
+	// reset the frame counter
+	m_frame = 0;
+
+#ifdef DEBUG_CRC
+	// TheSuperHackers @info helmutbuhler 04/09/2025
+	// Let CRC Logger know that a new game was started.
+	CRCDebugStartNewGame();
+#endif
+
 	setLoadingMap( TRUE );
 
 	if( loadingSaveGame == FALSE )
@@ -1286,8 +1293,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	if(m_loadScreen)
 		updateLoadProgress(LOAD_PROGRESS_POST_PARTICLE_INI_LOAD);
 
-	// reset the frame counter
-	m_frame = 0;
+	DEBUG_ASSERTCRASH(m_frame == 0, ("framecounter expected to be 0 here\n"));
 
 	// before loading the map, load the map.ini file in the same directory.
 	loadMapINI( TheGlobalData->m_mapName );
@@ -2550,7 +2556,7 @@ void GameLogic::processCommandList( CommandList *list )
 
 	for( msg = list->getFirstMessage(); msg; msg = msg->next() )
 	{
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		DEBUG_ASSERTCRASH(msg != NULL && msg != (GameMessage*)0xdeadbeef, ("bad msg"));
 #endif
 		logicMessageDispatcher( msg, NULL );
@@ -3594,11 +3600,11 @@ void GameLogic::update( void )
 		Total_Load_3D_Assets=0;
 	#endif
 
-#ifdef _PROFILE
+#ifdef RTS_PROFILE
     Profile::StartRange("map_load");
 #endif
 		startNewGame( FALSE );
-#ifdef _PROFILE
+#ifdef RTS_PROFILE
     Profile::StopRange("map_load");
 #endif
 		m_startNewGame = FALSE;
@@ -3657,7 +3663,7 @@ void GameLogic::update( void )
 	Bool generateForMP = (isMPGameOrReplay && (m_frame % TheGameInfo->getCRCInterval()) == 0);
 #ifdef DEBUG_CRC
 	Bool generateForSolo = isSoloGameOrReplay && ((m_frame && (m_frame%100 == 0)) ||
-		(getFrame() > TheCRCFirstFrameToLog && getFrame() < TheCRCLastFrameToLog && ((m_frame % REPLAY_CRC_INTERVAL) == 0)));
+		(getFrame() >= TheCRCFirstFrameToLog && getFrame() < TheCRCLastFrameToLog && ((m_frame % REPLAY_CRC_INTERVAL) == 0)));
 #else
 	Bool generateForSolo = isSoloGameOrReplay && ((m_frame % REPLAY_CRC_INTERVAL) == 0);
 #endif // DEBUG_CRC
@@ -3670,14 +3676,14 @@ void GameLogic::update( void )
 			GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_LOGIC_CRC );
 			msg->appendIntegerArgument( m_CRC );
 			msg->appendBooleanArgument( (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_PLAYBACK) ); // playback CRC
-			//DEBUG_LOG(("Appended CRC of %8.8X on frame %d\n", m_CRC, m_frame));
+			DEBUG_LOG(("Appended CRC on frame %d: %8.8X\n", m_frame, m_CRC));
 		}
 		else
 		{
 			GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_LOGIC_CRC );
 			msg->appendIntegerArgument( m_CRC );
 			msg->appendBooleanArgument( (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_PLAYBACK) ); // playback CRC
-			//DEBUG_LOG(("Appended Playback CRC of %8.8X on frame %d\n", m_CRC, m_frame));
+			DEBUG_LOG(("Appended Playback CRC on frame %d: %8.8X\n", m_frame, m_CRC));
 		}
 	}
 
@@ -3860,7 +3866,12 @@ void GameLogic::addObjectToLookupTable( Object *obj )
 		return;
 
 	// add to lookup
-	m_objHash[ obj->getID() ] = obj;
+//	m_objHash[ obj->getID() ] = obj;
+	ObjectID newID = obj->getID();
+	while( newID >= m_objVector.size() ) // Fail case is hella rare, so faster to double up on size() call
+		m_objVector.resize(m_objVector.size() * 2, NULL);
+
+	m_objVector[ newID ] = obj;
 
 }  // end addObjectToLookupTable
 
@@ -3871,11 +3882,13 @@ void GameLogic::removeObjectFromLookupTable( Object *obj )
 {
 
 	// sanity
-	if( obj == NULL )
+	// TheSuperHackers @fix Mauller/Xezon 24/04/2025 Prevent out of range access to vector lookup table
+	if( obj == NULL || static_cast<size_t>(obj->getID()) >= m_objVector.size() )
 		return;
 
 	// remove from lookup table
-	m_objHash.erase( obj->getID() );
+//	m_objHash.erase( obj->getID() );
+	m_objVector[ obj->getID() ] = NULL;
 
 }  // end removeObjectFromLookupTable
 
@@ -4027,6 +4040,12 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	{
 		AsciiString crcName;
 #ifdef DEBUG_CRC
+		// TheSuperHackers @info helmutbuhler 04/09/2025
+		// This allows you to save the binary data that is involved in the crc calculation
+		// to a binary file per frame.
+		// This was apparently used early in development and isn't that useful, because diffing
+		// that binary data is very difficult. The CRC logging is much easier to diff and also more
+		// granular than this because it can capture changes between two frames.
 		if (isInGameLogicUpdate() && g_keepCRCSaves && m_frame < 5)
 		{
 			xferCRC = NEW XferDeepCRC;
@@ -4249,7 +4268,6 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic )
 		while( drawable )
 		{
 			drawable->startAmbientSound();
-			TheAudio->stopAllAmbientsBy( drawable );
 			drawable = drawable->getNextDrawable();
 		}
 #endif

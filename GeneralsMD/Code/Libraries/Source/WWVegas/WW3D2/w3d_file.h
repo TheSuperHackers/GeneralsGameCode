@@ -315,6 +315,11 @@ April 5, 2025
   Added W3D_CHUNK_FX_SHADERS and subchunks, which were added in BFME2. These 
   chunks are used to define usage of a specific shader and pass params.
 
+April 21, 2025
+
+	Added W3D_CHUNK_VERTEX_TANGENT and W3D_CHUNK_VERTEX_BINORMAL chunks. These are used to define
+	normal mapping information for a mesh. They were added in BFME2.
+
 ********************************************************************************/
 
 
@@ -397,6 +402,9 @@ enum {
 				W3D_CHUNK_DEFORM_KEYFRAME				=0x0000005A,	// a keyframe of deform information in the set
 					W3D_CHUNK_DEFORM_DATA				=0x0000005B,	// deform information about a single vertex
 
+		W3D_CHUNK_VERTEX_TANGENTS = 0x00000060,         // array of tangents (array of W3dVectorStruct's)
+		W3D_CHUNK_VERTEX_BINORMALS = 0x00000061,         // array of binormals (array of W3dVectorStruct's)
+				
 		W3D_CHUNK_PS2_SHADERS							=0x00000080,	// Shader info specific to the Playstation 2.
 		
 		W3D_CHUNK_AABTREE									=0x00000090,	// Axis-Aligned Box Tree for hierarchical polygon culling

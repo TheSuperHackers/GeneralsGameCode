@@ -59,7 +59,7 @@
 #include "GameLogic/Weapon.h"
 #include "Common/AudioEventInfo.h"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #define NO_INTENSE_DEBUG 1
 #endif
 

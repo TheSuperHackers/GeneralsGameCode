@@ -26,9 +26,9 @@
  *                                                                                             *
  *                       Author:: Greg_h                                                       *
  *                                                                                             *
- *                     $Modtime:: 6/26/01 7:01p                                               $*
+ *                     $Modtime:: 12/10/01 11:18a                                             $*
  *                                                                                             *
- *                    $Revision:: 3                                                           $*
+ *                    $Revision:: 4                                                           $*
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
@@ -188,7 +188,8 @@ protected:
     struct {
 			HAnimClass *			Motion;
 			float		  				Frame;
-			int								AnimMode;
+			float						PrevFrame;
+			int						AnimMode;
 			mutable int				LastSyncTime;
 			float							animDirection;
 			float							frameRateMultiplier;	// 020607 srj -- added
@@ -201,6 +202,8 @@ protected:
 			HAnimClass *			Motion1;
 			float		  				Frame0;
 			float		  				Frame1;
+			float						PrevFrame0;
+			float						PrevFrame1;
 			float		  				Percentage;
 		} ModeInterp;
 

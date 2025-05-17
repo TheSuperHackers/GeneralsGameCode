@@ -305,7 +305,7 @@ public:
 		return m_info.size(); 
 	}
 	
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool containsPartialName(const char* n) const
 	{
 		for (size_t i = 0; i < m_info.size(); i++)
@@ -625,6 +625,9 @@ public:
 	Real getFactoryExtraBibWidth() const { return m_factoryExtraBibWidth; }
 
 	void setCopiedFromDefault();
+
+	// Only set non removable modules as copied when using ObjectExtend
+	void setCopiedFromDefaultExtended();
 
 	void setReskinnedFrom(const ThingTemplate* tt) { DEBUG_ASSERTCRASH(m_reskinnedFrom == NULL, ("should be null")); m_reskinnedFrom = tt; }
 

@@ -47,7 +47,7 @@
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 Shell *TheShell = NULL;  ///< the shell singleton definition
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -460,7 +460,7 @@ void Shell::showShell( Bool runInit )
 
 	if (!TheGlobalData->m_shellMapOn && m_screenCount == 0)
   {
-#ifdef _PROFILE
+#ifdef RTS_PROFILE
     Profile::StopRange("init");
 #endif
 	//else

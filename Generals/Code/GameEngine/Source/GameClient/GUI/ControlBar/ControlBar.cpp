@@ -82,7 +82,7 @@
 
 #include "GameNetwork/GameInfo.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -132,6 +132,36 @@ static void commandButtonTooltip(GameWindow *window,
 {
 	TheControlBar->showBuildTooltipLayout(window);
 }
+
+/// mark the UI as dirty so the context of everything is re-evaluated
+void ControlBar::markUIDirty( void )
+{ 
+  m_UIDirty = TRUE;
+
+#if defined( RTS_INTERNAL ) || defined( RTS_DEBUG )
+	UnsignedInt now = TheGameLogic->getFrame();
+	if( now == m_lastFrameMarkedDirty )
+	{
+		//Do nothing.
+	}
+	else if( now == m_lastFrameMarkedDirty + 1 )
+	{
+		m_consecutiveDirtyFrames++;
+	}
+	else
+	{
+		m_consecutiveDirtyFrames = 1;
+	}
+	m_lastFrameMarkedDirty = now;
+
+	if( m_consecutiveDirtyFrames > 20 )
+	{
+		DEBUG_CRASH( ("Serious flaw in interface system! Either new code or INI has caused the interface to be marked dirty every frame. This problem actually causes the interface to completely lockup not allowing you to click normal game buttons.") );
+	}
+
+#endif
+}
+
 
 void ControlBar::populatePurchaseScience( Player* player )
 {
@@ -252,7 +282,11 @@ void ControlBar::populatePurchaseScience( Player* player )
 
 			setControlCommand( m_sciencePurchaseWindowsRank3[ i ], commandButton );
 			ScienceType	st = SCIENCE_INVALID; 
-			st = commandButton->getScienceVec()[ 0 ];
+			ScienceVec sv = commandButton->getScienceVec();
+			if (! sv.empty())
+			{
+				st = sv[ 0 ];
+			}
 
 			if( player->isScienceDisabled( st ) )
 			{
@@ -695,6 +729,41 @@ void CommandButton::copyImagesFrom( const CommandButton *button, Bool markUIDirt
 	}
 }
 
+//-------------------------------------------------------------------------------------------------
+// bleah. shouldn't be const, but is. sue me. (Kris) -snork!
+void CommandButton::copyButtonTextFrom( const CommandButton *button, Bool shortcutButton, Bool markUIDirtyIfChanged ) const
+{
+	//This function was added to change the strings when you upgrade from a DaisyCutter to a MOAB. All other special
+	//powers are the same.
+	Bool change = FALSE;
+	if( shortcutButton )
+	{
+		//Not the best code, but conflicting label means shortcut label (most won't have any string specified).
+		if( button->getConflictingLabel().isNotEmpty() && m_textLabel.compare( button->getConflictingLabel() ) )
+		{
+			m_textLabel = button->getConflictingLabel();
+			change = TRUE;
+		}
+	}
+	else
+	{	
+		//Copy the text from the purchase science button if it exists (most won't).
+		if( button->getTextLabel().isNotEmpty() && m_textLabel.compare( button->getTextLabel() ) )
+		{
+			m_textLabel = button->getTextLabel();
+			change = TRUE;
+		}
+	}
+	if( button->getDescriptionLabel().isNotEmpty() && m_descriptionLabel.compare( button->getDescriptionLabel() ) )
+	{
+		m_descriptionLabel = button->getDescriptionLabel();
+		change = TRUE;
+	}
+	if( markUIDirtyIfChanged && change )
+	{
+		TheControlBar->markUIDirty();
+	}
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Parse a single command button definition */
@@ -869,6 +938,11 @@ ControlBar::ControlBar( void )
 	m_remainingRadarAttackGlowFrames = 0;
 	m_radarAttackGlowWindow = NULL;
 
+#if defined( RTS_INTERNAL ) || defined( RTS_DEBUG )
+	m_lastFrameMarkedDirty = 0;
+	m_consecutiveDirtyFrames = 0;
+#endif
+
 }  // end ControlBar
 
 //-------------------------------------------------------------------------------------------------
@@ -940,6 +1014,10 @@ ControlBar::~ControlBar( void )
 	}
 
 	m_radarAttackGlowWindow = NULL;
+
+	if (m_rightHUDCameoWindow && m_rightHUDCameoWindow->winGetUserData())
+		delete m_rightHUDCameoWindow->winGetUserData();
+
 }  // end ~ControlBar
 void ControlBarPopupDescriptionUpdateFunc( WindowLayout *layout, void *param );
 
@@ -1017,9 +1095,12 @@ void ControlBar::init( void )
 			id = TheNameKeyGenerator->nameToKey( windowName.str() );
 			m_commandWindows[ i ] = 
 				TheWindowManager->winGetWindowFromId( m_contextParent[ CP_COMMAND ], id );
-			m_commandWindows[ i ]->winGetPosition(&commandPos.x, &commandPos.y);
-			m_commandWindows[ i ]->winGetSize(&commandSize.x, &commandSize.y);
-			m_commandWindows[ i ]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
+			if (m_commandWindows[ i ])
+			{
+				m_commandWindows[ i ]->winGetPosition(&commandPos.x, &commandPos.y);
+				m_commandWindows[ i ]->winGetSize(&commandSize.x, &commandSize.y);
+				m_commandWindows[ i ]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
+			}
 
 	// removed from multiplayer branch
 //			windowName.format( "ControlBar.wnd:CommandMarker%02d", i + 1 );
@@ -1052,7 +1133,7 @@ void ControlBar::init( void )
 			m_sciencePurchaseWindowsRank3[ i ]->winSetStatus( WIN_STATUS_USE_OVERLAY_STATES );
 		}  // end for i
 		
-		for( i = 0; i < MAX_PURCHASE_SCIENCE_RANK_8; i++ )
+		for( i = 0; i < MAX_PURCHASE_SCIENCE_RANK_8; i++ ) 
 		{
 			windowName.format( "GeneralsExpPoints.wnd:ButtonRank8Number%d", i );
 			id = TheNameKeyGenerator->nameToKey( windowName.str() );
@@ -1933,7 +2014,10 @@ CommandSet* ControlBar::findNonConstCommandSet( const AsciiString& name )
 const CommandButton *ControlBar::findCommandButton( const AsciiString& name ) 
 { 
 	CommandButton *btn =  findNonConstCommandButton(name); 
-	btn = (CommandButton *)btn->friend_getFinalOverride();
+	if( btn )
+	{
+		btn = (CommandButton *)btn->friend_getFinalOverride();
+	}
 	return btn; 
 }
 
@@ -2059,7 +2143,11 @@ void ControlBar::switchToContext( ControlBarContext context, Drawable *draw )
 			//Clear any potentially flashing buttons!
 			for( int i = 0; i < MAX_COMMANDS_PER_SET; i++ )
 			{
-				m_commandWindows[ i ]->winClearStatus( WIN_STATUS_FLASHING );
+				// the implementation won't necessarily use the max number of windows possible
+				if (m_commandWindows[ i ]) 
+				{
+					m_commandWindows[ i ]->winClearStatus( WIN_STATUS_FLASHING );
+				}
 			}
 			// if there is a current selected drawable then we wil display a selection portrait if present
 			if( draw )
@@ -2506,8 +2594,7 @@ void ControlBar::setPortraitByObject( Object *obj )
 				setPortraitByObject( NULL );
 				return;
 			}
-			static NameKeyType key_StealthUpdate = NAMEKEY("StealthUpdate");
-			StealthUpdate* stealth = (StealthUpdate *)obj->findUpdateModule(key_StealthUpdate);
+			StealthUpdate* stealth = obj->getStealth();
 			if( stealth && stealth->isDisguised() )
 			{
 				//Fake player upgrades too!

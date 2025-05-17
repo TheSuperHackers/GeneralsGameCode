@@ -63,6 +63,24 @@ GlobalData* TheWritableGlobalData = NULL;				///< The global data singleton
 //-------------------------------------------------------------------------------------------------
 GlobalData* GlobalData::m_theOriginal = NULL;
 
+
+
+//-------------------------------------------------------------------------------------------------
+/*static*/ void GlobalData::parseTintStatusType(INI* ini, void* instance, void* store, const void* userData)
+{
+	TintStatus tintType = (TintStatus)INI::scanIndexList(ini->getNextToken(), TintStatusFlags::getBitNames());
+
+	DrawableColorTint* colorTintTypes = (DrawableColorTint*)(store);
+	DrawableColorTint* tintEntry = &colorTintTypes[tintType];
+
+	INI::parseRGBColorSigned(ini, instance, &tintEntry->color, NULL);
+	INI::parseRGBColorSigned(ini, instance, &tintEntry->colorInfantry, NULL);
+
+	INI::parseUnsignedInt(ini, instance, &tintEntry->attackFrames, NULL);
+	INI::parseUnsignedInt(ini, instance, &tintEntry->decayFrames, NULL);
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -489,7 +507,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "KeyboardCameraRotateSpeed", INI::parseReal, NULL, offsetof( GlobalData, m_keyboardCameraRotateSpeed ) },
 	{ "PlayStats",									INI::parseInt,				NULL,			offsetof( GlobalData, m_playStats ) },
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	{ "DisableCameraFade",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableCameraFade ) },
 	{ "DisableScriptedInputDisabling",			INI::parseBool,		NULL,			offsetof( GlobalData, m_disableScriptedInputDisabling ) },
 	{ "DisableMilitaryCaption",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableMilitaryCaption ) },
@@ -540,34 +558,6 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	arr[index].decayFrames = decayFrames;
 }
 
-//-------------------------------------------------------------------------------------------------
-/*static*/ void GlobalData::parseTintStatusType(INI* ini, void* instance, void* store, const void* userData)
-{
-	DEBUG_LOG(("parseTintStatusType 1\n"));
-
-	return;
-
-	//ConstCharPtrArray nameList = (ConstCharPtrArray)userData;
-	//TintStatus tintType = (TintStatus)INI::scanIndexList(ini->getNextToken(), nameList);
-	
-	TintStatus tintType = (TintStatus)INI::scanIndexList(ini->getNextToken(), TintStatusFlags::getBitNames());
-
-	DEBUG_LOG(("parseTintStatusType 2\n"));
-
-	DrawableColorTint* colorTintTypes = (DrawableColorTint*)(store);
-	DrawableColorTint* tintEntry = &colorTintTypes[tintType];
-
-	DEBUG_LOG(("parseTintStatusType 3\n"));
-
-	INI::parseRGBColor(ini, instance, &tintEntry->color, NULL);
-	INI::parseRGBColor(ini, instance, &tintEntry->colorInfantry, NULL);
-
-	DEBUG_LOG(("parseTintStatusType 4\n"));
-
-	INI::parseUnsignedInt(ini, instance, &tintEntry->attackFrames, NULL);
-	INI::parseUnsignedInt(ini, instance, &tintEntry->decayFrames, NULL);
-}
-
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -585,12 +575,12 @@ GlobalData::GlobalData()
 		m_theOriginal = this;
 	m_next = NULL;
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	m_specialPowerUsesDelay = TRUE;
 #endif
   m_TiVOFastMode = FALSE;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_wireframe = 0;
 	m_stateMachineDebug = FALSE;
 	m_useCameraConstraints = TRUE;

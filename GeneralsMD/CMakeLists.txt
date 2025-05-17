@@ -2,15 +2,6 @@ cmake_minimum_required(VERSION 3.25)
 
 project(z_generals LANGUAGES C CXX)
 
-# Do we want to build extra SDK stuff or just the game binary?
-option(RTS_BUILD_ZEROHOUR_TOOLS "Build tools for Zero Hour" ON)
-add_feature_info(ZeroHourTools RTS_BUILD_ZEROHOUR_TOOLS "Build Zero Hour Mod Tools")
-option(RTS_BUILD_ZEROHOUR_EXTRAS "Build extra tools/tests for Zero Hour" OFF)
-add_feature_info(ZeroHourExtras RTS_BUILD_ZEROHOUR_EXTRAS "Build Zero Hour Extra Tools/Tests")
-
-# Do we want to build documentation?
-option(RTS_BUILD_ZEROHOUR_DOCS "Build documentation for Zero Hour" OFF)
-add_feature_info(ZeroHourDocs RTS_BUILD_ZEROHOUR_DOCS "Build Zero Hour Documentation")
 if (RTS_BUILD_ZEROHOUR_DOCS)
     find_package(Doxygen REQUIRED)
     doxygen_add_docs(z_docs Code)

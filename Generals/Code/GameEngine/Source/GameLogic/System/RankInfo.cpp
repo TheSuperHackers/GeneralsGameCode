@@ -35,11 +35,33 @@
 
 RankInfoStore* TheRankInfoStore = NULL;
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
+
+//-----------------------------------------------------------------------------
+RankInfo::~RankInfo()
+{
+}
+
+
+//-----------------------------------------------------------------------------
+RankInfoStore::~RankInfoStore()
+{
+	Int level;
+	for (level =0; level < getRankLevelCount(); level++)
+	{
+		RankInfo* ri = m_rankInfos[level];
+		if (ri)
+		{
+			ri->deleteInstance();
+		}
+	}
+	m_rankInfos.clear();
+}
+
 
 //-----------------------------------------------------------------------------
 void RankInfoStore::init()

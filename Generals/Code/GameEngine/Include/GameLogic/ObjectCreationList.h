@@ -27,6 +27,9 @@
 // Desc:   General Effects Descriptions
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+// Kris: August 23, 2003
+// All OCLs return the first object that is created (or NULL if not applicable).
+
 #pragma once
 
 #ifndef _ObjectCreationList_H_
@@ -81,19 +84,19 @@ public:
 		needed. Note that primary can be null, so you must check for this.
 		Bool useOwner determines whether we are creating the the master object or not (for deliverpayload)
 	*/
-	virtual void create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const = 0;
+	virtual Object* create( const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const = 0;
 
 	/**
 		the object-based version... by default, just call the location-based implementation.
 		Note that primary can be null, so you must check for this.
 	*/
-	virtual void create( const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const;
+	virtual Object* create( const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const;
 
 	/**
 		A variation used by DeliverPayload -- the createOwner Bool specifies whether we are creating the transport
 		object, or using the existing one.
 	*/
-	virtual void create( const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 ) const;
+	virtual Object* create( const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 ) const;
 };  
 EMPTY_DTOR(ObjectCreationNugget)
 
@@ -132,30 +135,44 @@ public:
 
 	void addObjectCreationNugget(ObjectCreationNugget* nugget);
 
-	inline static void create( const ObjectCreationList* ocl, const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 )
+	// Kris: August 23, 2003
+	// All OCLs return the first object that is created (or NULL if not applicable).
+	inline static Object* create( const ObjectCreationList* ocl, const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 )
 	{
-		if (ocl) ocl->create( primaryObj, primary, secondary, createOwner, lifetimeFrames );
+		if( ocl ) 
+			return ocl->createInternal( primaryObj, primary, secondary, createOwner, lifetimeFrames );
+		return NULL;
 	}
 
+	// Kris: August 23, 2003
+	// All OCLs return the first object that is created (or NULL if not applicable).
 	/// inline convenience method to avoid having to check for null.
-	inline static void create(const ObjectCreationList* ocl, const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, UnsignedInt lifetimeFrames = 0 )
+	inline static Object* create(const ObjectCreationList* ocl, const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, UnsignedInt lifetimeFrames = 0 )
 	{
-		if (ocl) ocl->create( primaryObj, primary, secondary, lifetimeFrames );
+		if (ocl) 
+			return ocl->createInternal( primaryObj, primary, secondary, lifetimeFrames );
+		return NULL;
 	}
 
+	// Kris: August 23, 2003
+	// All OCLs return the first object that is created (or NULL if not applicable).
 	/// inline convenience method to avoid having to check for null.
-	inline static void create( const ObjectCreationList* ocl, const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 )
+	inline static Object* create( const ObjectCreationList* ocl, const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 )
 	{
-		if (ocl) ocl->create( primary, secondary, lifetimeFrames );
+		if (ocl) 
+			return ocl->createInternal( primary, secondary, lifetimeFrames );
+		return NULL;
 	}
 
 protected:
 
 private:
 
-	void create(const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 ) const;
-	void create(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const;
-	void create(const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const;
+	// Kris: August 23, 2003
+	// All OCLs return the first object that is created (or NULL if not applicable).
+	Object* createInternal(const Object* primaryObj, const Coord3D *primary, const Coord3D *secondary, Bool createOwner, UnsignedInt lifetimeFrames = 0 ) const;
+	Object* createInternal(const Object* primaryObj, const Coord3D *primary, const Coord3D* secondary, UnsignedInt lifetimeFrames = 0 ) const;
+	Object* createInternal(const Object* primary, const Object* secondary, UnsignedInt lifetimeFrames = 0 ) const;
 
 	// note, this list doesn't own the nuggets; all nuggets are owned by the Store.
 	typedef std::vector<ObjectCreationNugget*> ObjectCreationNuggetVector;

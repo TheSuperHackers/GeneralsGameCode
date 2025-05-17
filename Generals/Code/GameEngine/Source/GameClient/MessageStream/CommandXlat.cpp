@@ -86,14 +86,14 @@
 #include "GameNetwork/GameSpyOverlay.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 /*non-static*/ Real TheSkateDistOverride = 0.0f;
 
 void countObjects(Object *obj, void *userData)
@@ -2202,7 +2202,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		return DESTROY_MESSAGE;
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	ExtentModType extentModType = EXTENTMOD_INVALID;
 	Real extentModAmount = 0.0f;
 #endif
@@ -2828,7 +2828,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEPLOY:
-			#ifdef _DEBUG
+			#ifdef RTS_DEBUG
 			DEBUG_ASSERTCRASH(FALSE, ("unimplemented meta command MSG_META_DEPLOY !"));
 			#endif
 			/// @todo srj implement me
@@ -2837,7 +2837,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_FOLLOW:
-			#ifdef _DEBUG
+			#ifdef RTS_DEBUG
 			DEBUG_ASSERTCRASH(FALSE, ("unimplemented meta command MSG_META_FOLLOW !"));
 			#endif
 			/// @todo srj implement me
@@ -3050,7 +3050,24 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_CAMERA_RESET:
 			TheInGameUI->resetCamera();
 			break;
-			
+		case GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY:
+		{
+			if( TheGlobalData )
+			{
+				#if !defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
+				if (TheGameLogic->isInReplayGame())
+				#endif
+				{
+					TheWritableGlobalData->m_TiVOFastMode = 1 - TheGlobalData->m_TiVOFastMode;
+					TheInGameUI->message( UnicodeString( L"m_TiVOFastMode: %s" ),
+																TheGlobalData->m_TiVOFastMode ? L"ON" : L"OFF" );
+				}
+			}  // end if
+
+			disp = DESTROY_MESSAGE;
+			break;
+
+		}  // end toggle special power delays
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_BEGIN_FORCEMOVE:
 			DEBUG_ASSERTCRASH(!TheInGameUI->isInForceMoveToMode(), ("forceMoveToMode mismatch"));
@@ -3354,7 +3371,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		}  // end case GameMessage::MSG_MOUSE_LEFT_CLICK
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		//------------------------------------------------------------------------- BEGIN DEMO MESSAGES
 		//------------------------------------------------------------------------- BEGIN DEMO MESSAGES
 		//------------------------------------------------------------------------- BEGIN DEMO MESSAGES
@@ -4545,11 +4562,11 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//--------------------------------------------------------------------------- END DEMO MESSAGES
 		//--------------------------------------------------------------------------- END DEMO MESSAGES
 		//--------------------------------------------------------------------------- END DEMO MESSAGES
-#endif // #if defined(_DEBUG) || defined(_INTERNAL)
+#endif // #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 		//------------------------------------------------------------------------DEMO MESSAGES
 		//-----------------------------------------------------------------------------------------
-#if defined(_INTERNAL) || defined(_DEBUG) 
+#if defined(RTS_INTERNAL) || defined(RTS_DEBUG) 
 		case GameMessage::MSG_META_DEMO_TOGGLE_AUDIODEBUG:
 		{
 			if (TheDisplay->getDebugDisplayCallback() == AudioDebugDisplay)
@@ -4560,7 +4577,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			break;
 		}
 
-#endif//defined(_INTERNAL) || defined(_DEBUG) 
+#endif//defined(RTS_INTERNAL) || defined(RTS_DEBUG) 
 		
 #ifdef DUMP_PERF_STATS
 		//------------------------------------------------------------------------DEMO MESSAGES

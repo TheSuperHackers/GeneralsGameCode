@@ -80,7 +80,7 @@ public:
 	BaikonurLaunchPower( Thing *thing, const ModuleData *moduleData );
 
 	virtual void doSpecialPower( UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, UnsignedInt commandOptions );
+	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
 
 protected:
 

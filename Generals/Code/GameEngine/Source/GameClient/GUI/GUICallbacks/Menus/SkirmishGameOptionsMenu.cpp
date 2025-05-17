@@ -67,7 +67,7 @@
 #include "GameNetwork/IPEnumeration.h"
 #include "WWDownload/Registry.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -411,7 +411,7 @@ static MessageBoxReturnType cancelStartBecauseOfNoCD( void *userData )
 
 Bool IsFirstCDPresent(void)
 {
-#if !defined(_INTERNAL) && !defined(_DEBUG)
+#if !defined(RTS_INTERNAL) && !defined(RTS_DEBUG)
 	return TheFileSystem->areMusicFilesOnCD();
 #else
 	return TRUE;
@@ -778,7 +778,12 @@ void updateMapStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[
 	if (it == TheMapCache->end())
 	{
 		for (Int i = 0; i < MAX_SLOTS; ++i)
-			buttonMapStartPositions[i]->winHide(TRUE);
+    {
+      if ( buttonMapStartPositions[i] != NULL )
+      {
+  			buttonMapStartPositions[i]->winHide(TRUE);
+      }
+    }
 		return;
 	}
 	MapMetaData mmd = it->second;
@@ -786,14 +791,20 @@ void updateMapStartSpots( GameInfo *myGame, GameWindow *buttonMapStartPositions[
 	Int i = 0;
 	for(; i < MAX_SLOTS; ++i)
 	{
-		GadgetButtonSetText(buttonMapStartPositions[i], UnicodeString::TheEmptyString);
-		if (!onLoadScreen)
-		{
-			buttonMapStartPositions[i]->winSetTooltip(TheGameText->fetch("TOOLTIP:StartPosition"));
-		}
+    if ( buttonMapStartPositions[i] != NULL )
+    {
+		  GadgetButtonSetText(buttonMapStartPositions[i], UnicodeString::TheEmptyString);
+		  if (!onLoadScreen)
+		  {
+			  buttonMapStartPositions[i]->winSetTooltip(TheGameText->fetch("TOOLTIP:StartPosition"));
+		  }
+    }
 	}
 	for( i = 0; i < MAX_SLOTS; ++i)
 	{
+    if ( buttonMapStartPositions[i] == NULL )
+      continue;
+
 		GameSlot *gs =myGame->getSlot(i);
 		if(onLoadScreen)
 		{

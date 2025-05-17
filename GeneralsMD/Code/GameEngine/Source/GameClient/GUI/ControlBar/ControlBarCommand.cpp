@@ -61,7 +61,7 @@
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetPushButton.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -207,9 +207,6 @@ void ControlBar::doTransportInventoryUI( Object *transport, const CommandSet *co
 			// show the window, but disable by default unless something is actually loaded in there
 			m_commandWindows[ i ]->winHide( FALSE );
 			m_commandWindows[ i ]->winEnable( FALSE );
-
-      
-///////// poopy
 
 			//Clear any potential veterancy rank, or else we'll see it when it's empty!
 			GadgetButtonDrawOverlayImage( m_commandWindows[ i ], NULL );

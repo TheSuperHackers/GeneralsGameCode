@@ -25,7 +25,7 @@ set_target_properties(core_compression PROPERTIES OUTPUT_NAME compression)
 target_sources(core_compression PRIVATE ${COMPRESSION_SRC})
 
 target_include_directories(core_compression INTERFACE
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_link_libraries(core_compression PRIVATE
@@ -34,7 +34,17 @@ target_link_libraries(core_compression PRIVATE
     corei_libraries_include
 )
 
+
 target_link_libraries(core_compression PUBLIC
     liblzhl
-    libzlib
 )
+
+find_package(ZLIB)
+if (ZLIB_FOUND)
+    # Adds zlib from vcpkg
+    target_link_libraries(core_compression PUBLIC ZLIB::ZLIB)
+else()
+    # Adds zlib from github repository
+    include(${CMAKE_SOURCE_DIR}/cmake/zlib.cmake)
+    target_link_libraries(core_compression PUBLIC libzlib)
+endif()
