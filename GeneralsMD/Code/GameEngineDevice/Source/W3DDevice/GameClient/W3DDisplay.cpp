@@ -578,7 +578,10 @@ void Reset_D3D_Device(bool active)
 		else
 		{
 			//switch to windowed mode whenever the user alt-tabs out of game. Don't restore assets after reset since we'll do it when returning.
-			WW3D::Set_Render_Device( WW3D::Get_Render_Device(),TheDisplay->getWidth(),TheDisplay->getHeight(),TheDisplay->getBitDepth(),TheDisplay->getWindowed(),true, true, false);
+			
+			// TheSuperHackers @bugfix aliendroid1 02/MAY/2025 Fixed crash when alt-tabbing out of the game
+				//WW3D::Set_Render_Device( WW3D::Get_Render_Device(),TheDisplay->getWidth(),TheDisplay->getHeight(),TheDisplay->getBitDepth(),TheDisplay->getWindowed(),true, true, false);
+				WW3D::Set_Render_Device( WW3D::Get_Render_Device(),TheDisplay->getWidth(),TheDisplay->getHeight(),TheDisplay->getBitDepth(),1,true, true, false);
 		}
 	}
 }
