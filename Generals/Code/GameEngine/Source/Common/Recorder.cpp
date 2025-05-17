@@ -1041,6 +1041,9 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 			// the mismatch first happened in case the NetCRCInterval is set to 1 during the game.
 			DEBUG_CRASH(("Replay has gone out of sync!  All bets are off!\nInGame:%8.8X Replay:%8.8X\nFrame:%d",
 				playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1));
+
+			// TheSuperHackers @tweak Pause the game on mismatch.
+			TheGameLogic->setGamePaused(true);
 		}
 		return;
 	}
