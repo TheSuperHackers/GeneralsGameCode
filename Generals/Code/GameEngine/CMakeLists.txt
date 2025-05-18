@@ -39,6 +39,7 @@ set(GAMEENGINE_SRC
     Include/Common/FunctionLexicon.h
     Include/Common/GameAudio.h
     Include/Common/GameCommon.h
+    Include/Common/GameDefines.h
     Include/Common/GameEngine.h
     Include/Common/GameLOD.h
     Include/Common/GameMemory.h
