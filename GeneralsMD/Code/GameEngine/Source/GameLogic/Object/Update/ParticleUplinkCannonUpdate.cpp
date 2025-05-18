@@ -625,8 +625,10 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				m_orbitToTargetLaserRadius.updateRadius();
 				const Real logicalLaserRadius = update->getTemplateLaserRadius() * m_orbitToTargetLaserRadius.getWidthScale();
 				damageRadius = logicalLaserRadius * data->m_damageRadiusScalar;
+#if RETAIL_COMPATIBLE_LOGIC
 				DEBUG_ASSERTCRASH(logicalLaserRadius == visualLaserRadius,
-					("ParticleUplinkCannonUpdate's laser radius does not match LaserUpdate's laser radius - will cause mismatch in VS6 retail compatible builds"));
+					("ParticleUplinkCannonUpdate's laser radius does not match LaserUpdate's laser radius - will cause mismatch in VS6 retail compatible builds\n"));
+#endif
 			}
 
 			//Create scorch marks periodically
@@ -1397,6 +1399,10 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 	// orbit to target beam
 	xfer->xferDrawableID( &m_orbitToTargetBeamID );
 
+#if !RETAIL_COMPATIBLE_LOGIC
+	m_orbitToTargetLaserRadius.xfer( xfer );
+#endif
+
 	// connector system ID
 	xfer->xferUser( &m_connectorSystemID, sizeof( ParticleSystemID ) );
 
@@ -1485,9 +1491,10 @@ void ParticleUplinkCannonUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
+#if RETAIL_COMPATIBLE_LOGIC
 	// TheSuperHackers @info xezon 17/05/2025
-	// For legacy compatibility, this transfers the loaded visual laser radius settings
-	// from the Drawable's LaserUpdate to the local LaserRadiusUpdate.
+	// For retail game compatibility, this transfers the loaded visual laser radius
+	// settings from the Drawable's LaserUpdate to the local LaserRadiusUpdate.
 	if( m_orbitToTargetBeamID != INVALID_DRAWABLE_ID )
 	{
 		Drawable* drawable = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
@@ -1505,5 +1512,6 @@ void ParticleUplinkCannonUpdate::loadPostProcess( void )
 			DEBUG_CRASH(( "ParticleUplinkCannonUpdate::loadPostProcess - Unable to find drawable for m_orbitToTargetBeamID\n" ));
 		}
 	}
+#endif
 
 }  // end loadPostProcess
