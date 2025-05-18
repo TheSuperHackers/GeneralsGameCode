@@ -1504,7 +1504,7 @@ void ParticleUplinkCannonUpdate::loadPostProcess( void )
 			LaserUpdate *update = (LaserUpdate*)drawable->findClientUpdateModule( nameKeyClientUpdate );
 			if( update != NULL )
 			{
-				m_orbitToTargetLaserRadius.setLaserRadiusUpdateBase(update->getLaserRadiusUpdateBase());
+				m_orbitToTargetLaserRadius = update->getLaserRadiusUpdateBase();
 			}
 		}
 		else
