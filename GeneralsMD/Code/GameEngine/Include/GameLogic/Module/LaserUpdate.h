@@ -61,16 +61,16 @@ private:
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-class LaserRadiusUpdateBase
+class LaserRadiusUpdate
 {
-protected:
-	LaserRadiusUpdateBase();
+public:
+	LaserRadiusUpdate();
 
 	void initRadius( Int sizeDeltaFrames );
 	bool updateRadius();
 	void setDecayFrames( UnsignedInt decayFrames );
 	void xfer( Xfer *xfer );
-	void setLaserRadiusUpdateBase(const LaserRadiusUpdateBase& other) { *this = other; }
+	void setLaserRadiusUpdateBase(const LaserRadiusUpdate& other) { *this = other; }
 	Real getWidthScale() const { return m_currentWidthScalar; }
 
 private:
@@ -84,22 +84,9 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-class LaserRadiusUpdate : private LaserRadiusUpdateBase
-{
-public:
-	using LaserRadiusUpdateBase::initRadius;
-	using LaserRadiusUpdateBase::updateRadius;
-	using LaserRadiusUpdateBase::setDecayFrames;
-	using LaserRadiusUpdateBase::xfer;
-	using LaserRadiusUpdateBase::setLaserRadiusUpdateBase;
-	using LaserRadiusUpdateBase::getWidthScale;
-};
-
-//-------------------------------------------------------------------------------------------------
 /** The laser update module */
 //-------------------------------------------------------------------------------------------------
-class LaserUpdate : public ClientUpdateModule, private LaserRadiusUpdateBase
+class LaserUpdate : public ClientUpdateModule
 {
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( LaserUpdate, "LaserUpdate" )
@@ -113,9 +100,9 @@ public:
 	//Actually puts the laser in the world.
 	void initLaser( const Object *parent, const Object *target, const Coord3D *startPos, const Coord3D *endPos, AsciiString parentBoneName, Int sizeDeltaFrames = 0 );
 
-	const LaserRadiusUpdateBase& getLaserRadiusUpdateBase() const { return *this; }
-	using LaserRadiusUpdateBase::setDecayFrames;
-	using LaserRadiusUpdateBase::getWidthScale;
+	const LaserRadiusUpdate& getLaserRadiusUpdateBase() const { return m_laserRadius; }
+	void setDecayFrames( UnsignedInt decayFrames ) { m_laserRadius.setDecayFrames(decayFrames); }
+	Real getWidthScale() const { return m_laserRadius.getWidthScale(); }
 
 	const Coord3D* getStartPos() const { return &m_startPos; }
 	const Coord3D* getEndPos() const { return &m_endPos; }
@@ -144,6 +131,8 @@ protected:
 	ParticleSystemID m_particleSystemID;
 	ParticleSystemID m_targetParticleSystemID;
 	AsciiString m_parentBoneName;
+
+	LaserRadiusUpdate m_laserRadius;
 };
 
 

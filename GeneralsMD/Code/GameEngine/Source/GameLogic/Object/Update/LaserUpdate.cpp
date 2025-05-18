@@ -74,7 +74,7 @@ LaserUpdateModuleData::LaserUpdateModuleData()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-LaserRadiusUpdateBase::LaserRadiusUpdateBase()
+LaserRadiusUpdate::LaserRadiusUpdate()
 {
 	m_widening = false;
 	m_widenStartFrame = 0;
@@ -208,11 +208,11 @@ void LaserUpdate::clientUpdate( void )
 {
 	updateStartPos();
 	updateEndPos();
-	m_dirty |= updateRadius();
+	m_dirty |= m_laserRadius.updateRadius();
 }
 
 //-------------------------------------------------------------------------------------------------
-bool LaserRadiusUpdateBase::updateRadius()
+bool LaserRadiusUpdate::updateRadius()
 {
 	bool updated = false;
 	if( m_decaying )
@@ -243,7 +243,7 @@ bool LaserRadiusUpdateBase::updateRadius()
 }
 
 //-------------------------------------------------------------------------------------------------
-void LaserRadiusUpdateBase::setDecayFrames( UnsignedInt decayFrames )
+void LaserRadiusUpdate::setDecayFrames( UnsignedInt decayFrames )
 {
 	if( decayFrames > 0 )
 	{
@@ -255,7 +255,7 @@ void LaserRadiusUpdateBase::setDecayFrames( UnsignedInt decayFrames )
 }
 
 //-------------------------------------------------------------------------------------------------
-void LaserRadiusUpdateBase::initRadius( Int sizeDeltaFrames )
+void LaserRadiusUpdate::initRadius( Int sizeDeltaFrames )
 {
 	if( sizeDeltaFrames > 0 )
 	{
@@ -274,7 +274,7 @@ void LaserRadiusUpdateBase::initRadius( Int sizeDeltaFrames )
 }
 
 //-------------------------------------------------------------------------------------------------
-void LaserRadiusUpdateBase::xfer( Xfer *xfer )
+void LaserRadiusUpdate::xfer( Xfer *xfer )
 {
 	// widening
 	xfer->xferBool( &m_widening );
@@ -304,7 +304,7 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 	const LaserUpdateModuleData *data = getLaserUpdateModuleData();
 	ParticleSystem *system;
 
-	initRadius( sizeDeltaFrames );
+	m_laserRadius.initRadius( sizeDeltaFrames );
 
 	// Write down the bone name override
 	m_parentBoneName = parentBoneName;
@@ -503,7 +503,7 @@ void LaserUpdate::xfer( Xfer *xfer )
 	// target particle system id
 	xfer->xferUser( &m_targetParticleSystemID, sizeof( ParticleSystemID ) );
 
-	LaserRadiusUpdateBase::xfer( xfer );
+	m_laserRadius.xfer( xfer );
 
 	xfer->xferDrawableID(&m_parentID);
 	xfer->xferDrawableID(&m_targetID);
