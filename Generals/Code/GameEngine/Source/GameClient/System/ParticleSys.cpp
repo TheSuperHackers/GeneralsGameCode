@@ -3036,18 +3036,19 @@ void ParticleSystemManager::update( void )
 	m_lastLogicFrameUpdate = TheGameLogic->getFrame();
 
 	//USE_PERF_TIMER(ParticleSystemManager)
-	ParticleSystem *sys;
-
-	for(ParticleSystemListIt it = m_allParticleSystemList.begin(); it != m_allParticleSystemList.end();) 
+	ParticleSystemListIt it = m_allParticleSystemList.begin(); 
+	while( it != m_allParticleSystemList.end() )  
 	{
-		sys = (*it++); // increase iterator before potential erasure from the container!
+		// TheSuperHackers @info Must increment the list iterator before potential element erasure from the list.
+		ParticleSystem* sys = *it++;
+
 		if (!sys) {
 			continue;
 		}
 
 		if (sys->update(m_localPlayerIndex) == false)
 		{
-			sys->deleteInstance();
+			deleteInstance(sys);
 		}
 	}
 }
