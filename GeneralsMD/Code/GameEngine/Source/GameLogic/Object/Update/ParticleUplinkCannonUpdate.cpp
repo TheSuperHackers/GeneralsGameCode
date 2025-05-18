@@ -625,7 +625,7 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				m_orbitToTargetLaserRadius.updateRadius();
 				const Real logicalLaserRadius = update->getTemplateLaserRadius() * m_orbitToTargetLaserRadius.getWidthScale();
 				damageRadius = logicalLaserRadius * data->m_damageRadiusScalar;
-#if RETAIL_COMPATIBLE_LOGIC
+#if RETAIL_COMPATIBLE_XFER_CRC
 				DEBUG_ASSERTCRASH(logicalLaserRadius == visualLaserRadius,
 					("ParticleUplinkCannonUpdate's laser radius does not match LaserUpdate's laser radius - will cause mismatch in VS6 retail compatible builds\n"));
 #endif
@@ -1368,7 +1368,7 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 	const ParticleUplinkCannonUpdateModuleData *data = getParticleUplinkCannonUpdateModuleData();
 
 	// version
-#if RETAIL_COMPATIBLE_LOGIC
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	const XferVersion currentVersion = 3;
 #else
 	const XferVersion currentVersion = 4;
@@ -1496,7 +1496,7 @@ void ParticleUplinkCannonUpdate::loadPostProcess( void )
 	// extend base class
 	UpdateModule::loadPostProcess();
 
-#if RETAIL_COMPATIBLE_LOGIC
+#if RETAIL_COMPATIBLE_XFER_SAVE
 	// TheSuperHackers @info xezon 17/05/2025
 	// For retail game compatibility, this transfers the loaded visual laser radius
 	// settings from the Drawable's LaserUpdate to the local LaserRadiusUpdate.
