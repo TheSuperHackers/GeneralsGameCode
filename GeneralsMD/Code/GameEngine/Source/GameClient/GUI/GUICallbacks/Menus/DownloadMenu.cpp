@@ -82,11 +82,14 @@ static void closeDownloadWindow( void )
 	if (!parent)
 		return;
 
-  WindowLayout *menuLayout = parent->winGetLayout();
-	menuLayout->runShutdown();
-  menuLayout->destroyWindows();
-	deleteInstance(menuLayout);
-	menuLayout = NULL;
+	WindowLayout *menuLayout = parent->winGetLayout();
+	if (menuLayout)
+	{
+		menuLayout->runShutdown();
+		menuLayout->destroyWindows();
+		deleteInstance(menuLayout);
+		menuLayout = NULL;
+	}
 
 	GameWindow *mainWin = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY("MainMenu.wnd:MainMenuParent") );
 	if (mainWin)
