@@ -3040,17 +3040,14 @@ void ParticleSystemManager::update( void )
 
 	for(ParticleSystemListIt it = m_allParticleSystemList.begin(); it != m_allParticleSystemList.end();) 
 	{
-		sys = (*it);
+		sys = (*it++); // increase iterator before potential erasure from the container!
 		if (!sys) {
 			continue;
 		}
 
 		if (sys->update(m_localPlayerIndex) == false)
 		{
-			++it;
 			sys->deleteInstance();
-		} else {
-			++it;
 		}
 	}
 }
