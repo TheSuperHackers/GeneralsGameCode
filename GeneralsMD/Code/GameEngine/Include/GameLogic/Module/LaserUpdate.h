@@ -70,7 +70,6 @@ public:
 	bool updateRadius();
 	void setDecayFrames( UnsignedInt decayFrames );
 	void xfer( Xfer *xfer );
-	void setLaserRadiusUpdateBase(const LaserRadiusUpdate& other) { *this = other; }
 	Real getWidthScale() const { return m_currentWidthScalar; }
 
 private:
