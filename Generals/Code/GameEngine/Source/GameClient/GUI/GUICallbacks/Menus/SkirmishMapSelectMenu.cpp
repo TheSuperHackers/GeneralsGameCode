@@ -521,9 +521,13 @@ WindowMsgHandledType SkirmishMapSelectMenuSystem( GameWindow *window, UnsignedIn
 			{
 				showSkirmishGameOptionsUnderlyingGUIElements(TRUE);
 
-				skirmishMapSelectLayout->destroyWindows();
-				deleteInstance(skirmishMapSelectLayout);
-				skirmishMapSelectLayout = NULL;
+				if (skirmishMapSelectLayout)
+				{
+					skirmishMapSelectLayout->destroyWindows();
+					deleteInstance(skirmishMapSelectLayout);
+					skirmishMapSelectLayout = NULL;
+				}
+
 				skirmishPositionStartSpots();
 				//TheShell->pop();
 				//do you need this ??
@@ -583,9 +587,12 @@ WindowMsgHandledType SkirmishMapSelectMenuSystem( GameWindow *window, UnsignedIn
 					skirmishPositionStartSpots();
 					skirmishUpdateSlotList();
 
-					skirmishMapSelectLayout->destroyWindows();
-					deleteInstance(skirmishMapSelectLayout);
-					skirmishMapSelectLayout = NULL;
+					if (skirmishMapSelectLayout)
+					{
+						skirmishMapSelectLayout->destroyWindows();
+						deleteInstance(skirmishMapSelectLayout);
+						skirmishMapSelectLayout = NULL;
+					}
 					//TheShell->pop();
 
 				}  // end if

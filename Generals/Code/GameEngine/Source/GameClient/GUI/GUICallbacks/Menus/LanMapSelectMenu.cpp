@@ -344,9 +344,13 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 			else if ( controlID == buttonBack )
 			{
 				
-				mapSelectLayout->destroyWindows();
-				deleteInstance(mapSelectLayout);
-				mapSelectLayout = NULL;
+				if (mapSelectLayout)
+				{
+					mapSelectLayout->destroyWindows();
+					deleteInstance(mapSelectLayout);
+					mapSelectLayout = NULL;
+				}
+
 				// set the controls to NULL since they've been destroyed.
 				NullifyControls();
 				showLANGameOptionsUnderlyingGUIElements(TRUE);
@@ -390,9 +394,12 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 					}
 
 					
-					mapSelectLayout->destroyWindows();
-					deleteInstance(mapSelectLayout);
-					mapSelectLayout = NULL;
+					if (mapSelectLayout)
+					{
+						mapSelectLayout->destroyWindows();
+						deleteInstance(mapSelectLayout);
+						mapSelectLayout = NULL;
+					}
 
 					// set the controls to NULL since they've been destroyed.
 					NullifyControls();

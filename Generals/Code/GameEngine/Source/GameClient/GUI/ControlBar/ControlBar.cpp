@@ -954,8 +954,8 @@ ControlBar::~ControlBar( void )
 	{
 		m_scienceLayout->destroyWindows();
 		deleteInstance(m_scienceLayout);
+		m_scienceLayout = NULL;
 	}
-	m_scienceLayout = NULL;
 	m_genArrow = NULL;
 	if(m_videoManager)
 		delete m_videoManager;

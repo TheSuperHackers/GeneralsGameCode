@@ -184,10 +184,13 @@ WindowMsgHandledType PopupCommunicatorSystem( GameWindow *window, UnsignedInt ms
       
 			if( controlID == buttonOkID )
 			{
-        WindowLayout *popupCommunicatorLayout = window->winGetLayout();
-        popupCommunicatorLayout->destroyWindows();
-				deleteInstance(popupCommunicatorLayout);
-				popupCommunicatorLayout = NULL;
+				WindowLayout *popupCommunicatorLayout = window->winGetLayout();
+				if (popupCommunicatorLayout)
+				{
+					popupCommunicatorLayout->destroyWindows();
+					deleteInstance(popupCommunicatorLayout);
+					popupCommunicatorLayout = NULL;
+				}
 			}  // end if
 	
 			break;

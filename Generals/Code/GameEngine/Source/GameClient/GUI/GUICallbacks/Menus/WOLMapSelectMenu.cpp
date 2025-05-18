@@ -381,9 +381,13 @@ WindowMsgHandledType WOLMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 			{
 				showGameSpyGameOptionsUnderlyingGUIElements( TRUE );
 
-				WOLMapSelectLayout->destroyWindows();
-				deleteInstance(WOLMapSelectLayout);
-				WOLMapSelectLayout = NULL;
+				if (WOLMapSelectLayout)
+				{
+					WOLMapSelectLayout->destroyWindows();
+					deleteInstance(WOLMapSelectLayout);
+					WOLMapSelectLayout = NULL;
+				}
+
 				WOLPositionStartSpots();
 			}  // end if
 			else if ( controlID == radioButtonSystemMapsID )
@@ -445,9 +449,12 @@ WindowMsgHandledType WOLMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 					WOLDisplaySlotList();
 					WOLDisplayGameOptions();
 
-					WOLMapSelectLayout->destroyWindows();
-					deleteInstance(WOLMapSelectLayout);
-					WOLMapSelectLayout = NULL;
+					if (WOLMapSelectLayout)
+					{
+						WOLMapSelectLayout->destroyWindows();
+						deleteInstance(WOLMapSelectLayout);
+						WOLMapSelectLayout = NULL;
+					}
 
 					showGameSpyGameOptionsUnderlyingGUIElements( TRUE );
 

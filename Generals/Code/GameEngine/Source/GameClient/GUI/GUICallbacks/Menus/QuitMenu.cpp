@@ -122,14 +122,14 @@ void destroyQuitMenu()
 	{
 		fullQuitMenuLayout->destroyWindows();
 		deleteInstance(fullQuitMenuLayout);
+		fullQuitMenuLayout = NULL;
 	}
-	fullQuitMenuLayout = NULL;
 	if(noSaveLoadQuitMenuLayout)
 	{
 		noSaveLoadQuitMenuLayout->destroyWindows();
 		deleteInstance(noSaveLoadQuitMenuLayout);
+		noSaveLoadQuitMenuLayout = NULL;
 	}
-	noSaveLoadQuitMenuLayout = NULL;
 	quitMenuLayout = NULL;
 	isVisible = FALSE;
 }

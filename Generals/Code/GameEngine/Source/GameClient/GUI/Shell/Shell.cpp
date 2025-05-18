@@ -629,15 +629,18 @@ void Shell::doPop( Bool impendingPush )
 
 	// there better be a top of the stack since we're popping
 	DEBUG_ASSERTCRASH( currentTop, ("Shell: No top of stack and we want to pop!\n") );
-		
-	// remove this screen from our list
-	unlinkScreen( currentTop );
 
-	// delete all the windows in the screen
-	currentTop->destroyWindows();
+	if (currentTop)
+	{
+		// remove this screen from our list
+		unlinkScreen(currentTop);
 
-	// release the screen object back to the memory pool
-	deleteInstance(currentTop);
+		// delete all the windows in the screen
+		currentTop->destroyWindows();
+
+		// release the screen object back to the memory pool
+		deleteInstance(currentTop);
+	}
 
 	// run the init for the new top of the stack if present
 	WindowLayout *newTop = top();

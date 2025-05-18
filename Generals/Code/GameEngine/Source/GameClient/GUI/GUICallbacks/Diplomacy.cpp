@@ -292,8 +292,8 @@ void ResetDiplomacy( void )
 		theLayout->destroyWindows();
 		deleteInstance(theLayout);
 		InitBuddyControls(-1);
+		theLayout = NULL;
 	}
-	theLayout = NULL;
 	theWindow = NULL;
 	if (theAnimateWindowManager)
 		delete theAnimateWindowManager;
