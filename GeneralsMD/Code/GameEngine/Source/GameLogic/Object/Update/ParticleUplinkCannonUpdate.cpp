@@ -1369,9 +1369,9 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 
 	// version
 #if RETAIL_COMPATIBLE_LOGIC
-	XferVersion currentVersion = 3;
+	const XferVersion currentVersion = 3;
 #else
-	XferVersion currentVersion = 4;
+	const XferVersion currentVersion = 4;
 #endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
@@ -1480,7 +1480,7 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 		xfer->xferUnsignedInt( &m_nextDestWaypointID );
 	}
 
-	if( currentVersion >= 4 )
+	if( version >= 4 )
 	{
 		m_orbitToTargetLaserRadius.xfer( xfer );
 	}
