@@ -99,7 +99,7 @@ public:
 	//Actually puts the laser in the world.
 	void initLaser( const Object *parent, const Object *target, const Coord3D *startPos, const Coord3D *endPos, AsciiString parentBoneName, Int sizeDeltaFrames = 0 );
 
-	const LaserRadiusUpdate& getLaserRadiusUpdateBase() const { return m_laserRadius; }
+	const LaserRadiusUpdate& getLaserRadiusUpdate() const { return m_laserRadius; }
 	void setDecayFrames( UnsignedInt decayFrames ) { m_laserRadius.setDecayFrames(decayFrames); }
 	Real getWidthScale() const { return m_laserRadius.getWidthScale(); }
 
