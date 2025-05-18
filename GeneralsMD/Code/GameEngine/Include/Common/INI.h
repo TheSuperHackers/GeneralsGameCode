@@ -276,7 +276,7 @@ public:
 	static void parseAnim2DTemplate( INI *ini, void *instance, void *store, const void *userData );
 	static void parsePercentToReal( INI *ini, void *instance, void *store, const void* userData );
 	static void parseRGBColor( INI *ini, void *instance, void *store, const void* userData );
-	static void parseRGBColorSigned( INI *ini, void *instance, void *store, const void* userData );
+	static void parseRGBColorReal( INI *ini, void *instance, void *store, const void* userData );
 	static void parseRGBAColorInt( INI *ini, void *instance, void *store, const void* userData );
 	static void parseColorInt( INI *ini, void *instance, void *store, const void* userData );
 	static void parseCoord3D( INI *ini, void *instance, void *store, const void* userData );

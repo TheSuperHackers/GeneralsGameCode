@@ -73,8 +73,8 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	DrawableColorTint* colorTintTypes = (DrawableColorTint*)(store);
 	DrawableColorTint* tintEntry = &colorTintTypes[tintType];
 
-	INI::parseRGBColorSigned(ini, instance, &tintEntry->color, NULL);
-	INI::parseRGBColorSigned(ini, instance, &tintEntry->colorInfantry, NULL);
+	INI::parseRGBColorReal(ini, instance, &tintEntry->color, NULL);
+	INI::parseRGBColorReal(ini, instance, &tintEntry->colorInfantry, NULL);
 
 	INI::parseUnsignedInt(ini, instance, &tintEntry->attackFrames, NULL);
 	INI::parseUnsignedInt(ini, instance, &tintEntry->decayFrames, NULL);
