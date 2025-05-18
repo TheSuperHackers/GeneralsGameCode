@@ -1368,7 +1368,11 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 	const ParticleUplinkCannonUpdateModuleData *data = getParticleUplinkCannonUpdateModuleData();
 
 	// version
+#if RETAIL_COMPATIBLE_LOGIC
 	XferVersion currentVersion = 3;
+#else
+	XferVersion currentVersion = 4;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -1398,10 +1402,6 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 
 	// orbit to target beam
 	xfer->xferDrawableID( &m_orbitToTargetBeamID );
-
-#if !RETAIL_COMPATIBLE_LOGIC
-	m_orbitToTargetLaserRadius.xfer( xfer );
-#endif
 
 	// connector system ID
 	xfer->xferUser( &m_connectorSystemID, sizeof( ParticleSystemID ) );
@@ -1478,6 +1478,11 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 		xfer->xferBool( &m_manualTargetMode );
 		xfer->xferBool( &m_scriptedWaypointMode );
 		xfer->xferUnsignedInt( &m_nextDestWaypointID );
+	}
+
+	if( currentVersion >= 4 )
+	{
+		m_orbitToTargetLaserRadius.xfer( xfer );
 	}
 
 }  // end xfer
