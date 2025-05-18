@@ -216,7 +216,7 @@ ImageCollection::~ImageCollection( void )
 	{
 
 		next = image->m_next;
-		image->deleteInstance();
+		deleteInstance(image);
 		image = next;
 
 	}  // end while

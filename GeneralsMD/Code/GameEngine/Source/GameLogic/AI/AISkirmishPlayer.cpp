@@ -840,7 +840,7 @@ void AISkirmishPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recr
 		}	else {
 			//disband.
 			if (!theTeam->getPrototype()->getIsSingleton()) {
-				theTeam->deleteInstance();
+				deleteInstance(theTeam);
 				theTeam = NULL;
 			}
 			AsciiString teamName = teamProto->getName();

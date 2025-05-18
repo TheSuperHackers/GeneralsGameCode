@@ -1420,7 +1420,7 @@ void TerrainLogic::deleteWaypoints(void)
 	for (pWay = getFirstWaypoint(); pWay; pWay = pNext) {
 		pNext = pWay->getNext();
 		pWay->setNext(NULL);
-		pWay->deleteInstance();
+		deleteInstance(pWay);
 	}
 	m_waypointListHead = NULL;
 }
@@ -1994,7 +1994,7 @@ void TerrainLogic::deleteBridges(void)
 	for (pBridge = getFirstBridge(); pBridge; pBridge = pNext) {
 		pNext = pBridge->getNext();
 		pBridge->setNext(NULL);
-		pBridge->deleteInstance();
+		deleteInstance(pBridge);
 	}
 	m_bridgeListHead = NULL;
 }
@@ -2050,7 +2050,7 @@ void TerrainLogic::deleteBridge( Bridge *bridge )
 		TheGameLogic->destroyObject( bridgeObj );
 
 	// delete the bridge in question
-	bridge->deleteInstance();
+	deleteInstance(bridge);
 
 }  // end deleteBridge
 

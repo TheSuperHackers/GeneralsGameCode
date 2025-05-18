@@ -1113,7 +1113,7 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 					if( mapSelectLayout )
 						{
 							mapSelectLayout->destroyWindows();
-							mapSelectLayout->deleteInstance();
+							deleteInstance(mapSelectLayout);
 							mapSelectLayout = NULL;
 						}
 					TheLAN->RequestGameLeave();
