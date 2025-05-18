@@ -35,6 +35,7 @@
 #include "Common/PlayerList.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
+#include "Common/GlobalData.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/GameClient.h"
 #include "GameLogic/GameLogic.h"
@@ -435,7 +436,7 @@ void W3DGhostObject::removeParentObject(void)
 void W3DGhostObject::restoreParentObject(void)
 {
 	Drawable *draw=m_parentObject->getDrawable();
-	if (!draw)
+	if (!draw || TheGlobalData->m_headless)
 		return;
 
 	//Notify drawable that it's okay to render its render objects again.
@@ -458,7 +459,7 @@ void W3DGhostObject::restoreParentObject(void)
 				//removed by the ghost object manager, so restore it.  If we have a render
 				//object that is in the scene, then it was probably added because the model
 				//changed while the object was ghosted (for damage states, garrison, etc.).
-				if (robj->Peek_Scene() == NULL && W3DDisplay::m_3DScene != NULL)
+				if (robj->Peek_Scene() == NULL)
 					((SimpleSceneClass *)W3DDisplay::m_3DScene)->Add_Render_Object(robj);
 			}
 		}
