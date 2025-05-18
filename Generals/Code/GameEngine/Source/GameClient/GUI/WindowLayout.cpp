@@ -173,10 +173,6 @@ void WindowLayout::removeWindow( GameWindow *window )
 //-------------------------------------------------------------------------------------------------
 void WindowLayout::destroyWindows( void )
 {
-	if (this == NULL)
-	{
-		return;
-	}
 	GameWindow *window;
 
 	while( (window = getFirstWindow()) != 0 )
