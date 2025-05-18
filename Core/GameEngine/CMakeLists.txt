@@ -44,6 +44,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/GameCommon.h
 #    Include/Common/GameEngine.h
 #    Include/Common/GameLOD.h
+#    Include/Common/GameMacros.h
 #    Include/Common/GameMemory.h
 #    Include/Common/GameMusic.h
 #    Include/Common/GameSounds.h
