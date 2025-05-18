@@ -18,6 +18,10 @@
 
 #pragma once
 
-#ifndef RETAIL_COMPATIBLE_LOGIC
-#define RETAIL_COMPATIBLE_LOGIC (1) // Game is expected to be compatible with retail Generals 1.08, Zero Hour 1.04
+#ifndef RETAIL_COMPATIBLE_XFER_CRC
+#define RETAIL_COMPATIBLE_XFER_CRC (1) // Game is expected to be Xfer CRC compatible with retail Generals 1.08, Zero Hour 1.04
+#endif
+
+#ifndef RETAIL_COMPATIBLE_XFER_SAVE
+#define RETAIL_COMPATIBLE_XFER_SAVE (1) // Game is expected to be Xfer Save compatible with retail Generals 1.08, Zero Hour 1.04
 #endif
