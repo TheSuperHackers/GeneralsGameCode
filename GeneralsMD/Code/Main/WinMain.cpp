@@ -697,7 +697,6 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
    // Create our main window
 	windowStyle =  WS_POPUP|WS_VISIBLE;
 	if (runWindowed) 
-		// TheSuperHackers @feature @ShizCalev 04/04/2025 - Borderless Windowed support
 		if(!ApplicationIsBorderless)
 			windowStyle |= WS_DLGFRAME | WS_CAPTION | WS_SYSMENU;
 	else
@@ -929,7 +928,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			//added a preparse step for this flag because it affects window creation style
 			if (stricmp(token,"-win")==0)
 				ApplicationIsWindowed=true;
-			// TheSuperHackers @feature @ShizCalev 04/04/2025 - Borderless Windowed support
 			if(stricmp(token,"-noborder")==0)
 				ApplicationIsBorderless=true;
 			token = nextParam(NULL, "\" ");	   
