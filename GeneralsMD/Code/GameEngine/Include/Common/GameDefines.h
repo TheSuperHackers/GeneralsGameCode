@@ -18,6 +18,9 @@
 
 #pragma once
 
+// Note: Retail compatibility must not be broken before this project officially does.
+// Use RETAIL_COMPATIBLE_XFER_CRC and RETAIL_COMPATIBLE_XFER_SAVE to guard breaking changes.
+
 #ifndef RETAIL_COMPATIBLE_XFER_CRC
 #define RETAIL_COMPATIBLE_XFER_CRC (1) // Game is expected to be Xfer CRC compatible with retail Generals 1.08, Zero Hour 1.04
 #endif
