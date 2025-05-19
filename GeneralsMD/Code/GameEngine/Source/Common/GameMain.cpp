@@ -33,246 +33,12 @@
 #include "GameLogic/GameLogic.h"
 #include "GameClient/GameClient.h"
 
-#if 0
-bool SimulateReplayInProcess(AsciiString filename)
-{
-	STARTUPINFO si = { sizeof(STARTUPINFO) };
-	si.dwFlags = STARTF_FORCEOFFFEEDBACK;
-	PROCESS_INFORMATION pi = { 0 };
-	AsciiString command;
-	command.format("generalszh.exe -win -xres 800 -yres 600 -simReplay \"%s\"", filename.str());
-	//printf("Starting Exe for Replay \"%s\": %s\n", filename.str(), command.str());
-	//fflush(stdout);
-	CreateProcessA(NULL, (LPSTR)command.str(),
-		NULL, NULL, TRUE, 0,
-		NULL, 0, &si, &pi);
-	CloseHandle(pi.hThread);
-	WaitForSingleObject(pi.hProcess, INFINITE);
-	DWORD exitcode = 1;
-	GetExitCodeProcess(pi.hProcess, &exitcode);
-	CloseHandle(pi.hProcess);
-	return exitcode != 0;
-}
-#else
+#include "Common/WorkerProcess.h"
 
-// We need Job-related functions, but these aren't defined in the Windows-headers that VC6 uses.
-// So we define them here and load them dynamically.
-#if defined(_MSC_VER) && _MSC_VER < 1300
-struct JOBOBJECT_BASIC_LIMIT_INFORMATION2
-{
-	LARGE_INTEGER PerProcessUserTimeLimit;
-	LARGE_INTEGER PerJobUserTimeLimit;
-	DWORD LimitFlags;
-	SIZE_T MinimumWorkingSetSize;
-	SIZE_T MaximumWorkingSetSize;
-	DWORD ActiveProcessLimit;
-	ULONG_PTR Affinity;
-	DWORD PriorityClass;
-	DWORD SchedulingClass;
-};
-struct IO_COUNTERS
-{
-	ULONGLONG ReadOperationCount;
-	ULONGLONG WriteOperationCount;
-	ULONGLONG OtherOperationCount;
-	ULONGLONG ReadTransferCount;
-	ULONGLONG WriteTransferCount;
-	ULONGLONG OtherTransferCount;
-};
-struct JOBOBJECT_EXTENDED_LIMIT_INFORMATION
-{
-	JOBOBJECT_BASIC_LIMIT_INFORMATION2 BasicLimitInformation;
-	IO_COUNTERS IoInfo;
-	SIZE_T ProcessMemoryLimit;
-	SIZE_T JobMemoryLimit;
-	SIZE_T PeakProcessMemoryUsed;
-	SIZE_T PeakJobMemoryUsed;
-};
-
-#define JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE 0x00002000
-const int JobObjectExtendedLimitInformation = 9;
-
-typedef HANDLE (WINAPI *PFN_CreateJobObjectW)(LPSECURITY_ATTRIBUTES, LPCWSTR);
-typedef BOOL (WINAPI *PFN_SetInformationJobObject)(HANDLE, JOBOBJECTINFOCLASS, LPVOID, DWORD);
-typedef BOOL (WINAPI *PFN_AssignProcessToJobObject)(HANDLE, HANDLE);
-
-static PFN_CreateJobObjectW CreateJobObjectW = (PFN_CreateJobObjectW)GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "CreateJobObjectW");
-static PFN_SetInformationJobObject SetInformationJobObject = (PFN_SetInformationJobObject)GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "SetInformationJobObject");
-static PFN_AssignProcessToJobObject AssignProcessToJobObject = (PFN_AssignProcessToJobObject)GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "AssignProcessToJobObject");
-#endif
-
-class ReplayProcess
-{
-public:
-	ReplayProcess()
-	{
-		m_processHandle = NULL;
-		m_readHandle = NULL;
-		m_jobHandle = NULL;
-		m_exitcode = 0;
-		m_isDone = false;
-	}
-
-	bool StartProcess(AsciiString filename)
-	{
-		m_stdOutput = "";
-		m_isDone = false;
-
-		PROCESS_INFORMATION pi = { 0 };
-
-		SECURITY_ATTRIBUTES saAttr = { sizeof(SECURITY_ATTRIBUTES) };
-		saAttr.bInheritHandle = TRUE;
-		HANDLE writeHandle = NULL;
-		CreatePipe(&m_readHandle, &writeHandle, &saAttr, 0);
-		SetHandleInformation(m_readHandle, HANDLE_FLAG_INHERIT, 0);
-
-		STARTUPINFOW si = { sizeof(STARTUPINFOW) };
-		si.dwFlags = STARTF_FORCEOFFFEEDBACK; // Prevent cursor wait animation
-		si.hStdError = writeHandle;
-		si.hStdOutput = writeHandle;
-		si.dwFlags |= STARTF_USESTDHANDLES;
-
-		WideChar exePath[1024];
-		GetModuleFileNameW(NULL, exePath, 1024);
-		UnicodeString filenameWide;
-		filenameWide.translate(filename);
-
-		UnicodeString command;
-		command.format(L"\"%s\" -win -xres 800 -yres 600 -ignoreAsserts -headless -simReplay \"%s\"", exePath, filenameWide.str());
-		//wprintf(L"Starting Exe for Replay \"%s\": %s\n", filenameWide.str(), command.str());
-		//fflush(stdout);
-
-		if (!CreateProcessW(NULL, (LPWSTR)command.str(),
-				NULL, NULL, /*bInheritHandles=*/TRUE, 0,
-				NULL, 0, &si, &pi))
-		{
-			CloseHandle(writeHandle);
-			CloseHandle(m_readHandle);
-			m_readHandle = NULL;
-			return false;
-		}
-
-		CloseHandle(pi.hThread);
-		CloseHandle(writeHandle);
-		m_processHandle = pi.hProcess;
-
-		// We want to make sure that when our process is killed, our workers automatically terminate as well.
-		// In Windows, the way to do this is to attach the worker to a job we own.
-		m_jobHandle = CreateJobObjectW(NULL, NULL);
-		if (m_jobHandle != NULL)
-		{
-			JOBOBJECT_EXTENDED_LIMIT_INFORMATION jobInfo = { 0 };
-			jobInfo.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
-			SetInformationJobObject(m_jobHandle, (JOBOBJECTINFOCLASS)JobObjectExtendedLimitInformation, &jobInfo, sizeof(jobInfo));
-			AssignProcessToJobObject(m_jobHandle, m_processHandle);
-		}
-
-		return true;
-	}
-
-	bool IsRunning() const
-	{
-		return m_processHandle != NULL;
-	}
-	
-	bool IsDone(DWORD *exitcode, AsciiString *stdOutput)
-	{
-		*exitcode = m_exitcode;
-		*stdOutput = m_stdOutput;
-		return m_isDone;
-	}
-
-	void Update()
-	{
-		if (!IsRunning())
-			return;
-
-		while (true)
-		{
-			// Call PeekNamedPipe to make sure ReadFile won't block
-			DWORD bytesAvailable = 0;
-			BOOL success = PeekNamedPipe(m_readHandle, NULL, 0, NULL, &bytesAvailable, NULL);
-			if (!success)
-				break;
-			if (bytesAvailable == 0)
-			{
-				// Child process is still running and we have all output so far
-				return;
-			}
-
-			DWORD readBytes = 0;
-			char buffer[1024];
-			success = ReadFile(m_readHandle, buffer, 1024-1, &readBytes, NULL);
-			if (!success)
-				break;
-			DEBUG_ASSERTCRASH(readBytes != 0, ("expected readBytes to be non null"));
-
-			// Remove \r, otherwise each new line is doubled when we output it again
-			for (int i = 0; i < readBytes; i++)
-				if (buffer[i] == '\r')
-					buffer[i] = ' ';
-			buffer[readBytes] = 0;
-			m_stdOutput.concat(buffer);
-		}
-
-		// Pipe broke, that means the process already exited. But we call this just to make sure
-		WaitForSingleObject(m_processHandle, INFINITE);
-		GetExitCodeProcess(m_processHandle, &m_exitcode);
-		CloseHandle(m_processHandle);
-		m_processHandle = NULL;
-
-		CloseHandle(m_readHandle);
-		m_readHandle = NULL;
-
-		if (m_jobHandle != NULL)
-		{
-			CloseHandle(m_jobHandle); // This kills the process if still running
-			m_jobHandle = NULL;
-		}
-
-		m_isDone = true;
-	}
-
-	void Cancel()
-	{
-		if (m_processHandle != NULL)
-		{
-			TerminateProcess(m_processHandle, 1);
-			CloseHandle(m_processHandle);
-			m_processHandle = NULL;
-		}
-
-		if (m_readHandle != NULL)
-		{
-			CloseHandle(m_readHandle);
-			m_readHandle = NULL;
-		}
-
-		if (m_jobHandle != NULL)
-		{
-			CloseHandle(m_jobHandle);
-			m_jobHandle = NULL;
-		}
-
-		m_stdOutput = "";
-		m_isDone = false;
-	}
-
-private:
-	HANDLE m_processHandle;
-	HANDLE m_readHandle;
-	HANDLE m_jobHandle;
-	AsciiString m_stdOutput;
-	DWORD m_exitcode;
-	bool m_isDone;
-};
-
-
-#endif
 
 int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filenames);
 
-// TheSuperHackers @feature helmutbuhler 04/13/2025
+// TheSuperHackers @feature helmutbuhler 13/04/2025
 // Simulate a list of replays without graphics.
 // Returns exitcode 1 if mismatch or other error occured
 int SimulateReplayList(const std::vector<AsciiString> &filenames)
@@ -288,73 +54,44 @@ int SimulateReplayList(const std::vector<AsciiString> &filenames)
 	for (size_t i = 0; i < filenames.size(); i++)
 	{
 		AsciiString filename = filenames[i];
-		if (filenames.size() == 1)
+		printf("Simulating Replay \"%s\"\n", filename.str());
+		fflush(stdout);
+		DWORD startTime = GetTickCount();
+		if (TheRecorder->simulateReplay(filename))
 		{
-			printf("Simulating Replay \"%s\"\n", filename.str());
-			fflush(stdout);
-			DWORD startTime = GetTickCount();
-			if (TheRecorder->simulateReplay(filename))
+			UnsignedInt totalTime = TheRecorder->getFrameDuration() / LOGICFRAMES_PER_SECOND;
+			while (TheRecorder->isPlaybackInProgress())
 			{
-				UnsignedInt totalTime = TheRecorder->getFrameDuration() / LOGICFRAMES_PER_SECOND;
-				while (TheRecorder->isPlaybackInProgress())
-				{
-					TheGameClient->updateHeadless();
-					//TheParticleSystemManager->reset();
+				TheGameClient->updateHeadless();
+				//TheParticleSystemManager->reset();
 
-					if (TheGameLogic->getFrame() && TheGameLogic->getFrame() % (600*LOGICFRAMES_PER_SECOND) == 0)
-					{
-						// Print progress report
-						UnsignedInt gameTime = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
-						UnsignedInt realTime = (GetTickCount()-startTime) / 1000;
-						printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d\n",
-								realTime/60, realTime%60, gameTime/60, gameTime%60, totalTime/60, totalTime%60);
-						fflush(stdout);
-					}
-					TheGameLogic->UPDATE();
-					if (TheRecorder->sawCRCMismatch())
-					{
-						numErrors++;
-						break;
-					}
+				if (TheGameLogic->getFrame() && TheGameLogic->getFrame() % (600*LOGICFRAMES_PER_SECOND) == 0)
+				{
+					// Print progress report
+					UnsignedInt gameTime = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
+					UnsignedInt realTime = (GetTickCount()-startTime) / 1000;
+					printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d\n",
+							realTime/60, realTime%60, gameTime/60, gameTime%60, totalTime/60, totalTime%60);
+					fflush(stdout);
 				}
-				UnsignedInt gameTime = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
-				UnsignedInt realTime = (GetTickCount()-startTime) / 1000;
-				printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d\n",
-						realTime/60, realTime%60, gameTime/60, gameTime%60, totalTime/60, totalTime%60);
-				fflush(stdout);
+				TheGameLogic->UPDATE();
+				if (TheRecorder->sawCRCMismatch())
+				{
+					numErrors++;
+					break;
+				}
 			}
-			else
-			{
-				printf("Cannot open replay\n");
-				numErrors++;
-			}
+			UnsignedInt gameTime = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
+			UnsignedInt realTime = (GetTickCount()-startTime) / 1000;
+			printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d\n",
+					realTime/60, realTime%60, gameTime/60, gameTime%60, totalTime/60, totalTime%60);
+			fflush(stdout);
 		}
 		else
 		{
-			/*printf("%d/%d ", i+1, filenames.size());
-			fflush(stdout);
-			//bool error = SimulateReplayInProcess(filename);
-			ReplayProcess p;
-			p.StartProcess(filename);
-			DWORD exitcode;
-			AsciiString stdOutput;
-			while (!p.Update(&exitcode, &stdOutput))
-			{}
-			printf("%s", stdOutput.str());
-			fflush(stdout);
-			numErrors += exitcode == 0 ? 0 : 1;*/
+			printf("Cannot open replay\n");
+			numErrors++;
 		}
-		/*if (i == TheGlobalData->m_simulateReplayList.size()-1)
-		{
-			if (TheGameLogic->isInGame())
-			{
-				TheGameLogic->clearGameData();
-			}
-			delete TheGameEngine;
-			TheGameEngine = NULL;
-			TheGameEngine = CreateGameEngine();
-			TheGameEngine->init(argc, argv);
-		}*/
 	}
 	if (TheGlobalData->m_simulateReplayList.size() > 1)
 	{
@@ -387,7 +124,7 @@ int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filenames)
 {
 	DWORD totalStartTime = GetTickCount();
 
-	std::vector<ReplayProcess> processes;
+	std::vector<WorkerProcess> processes;
 	const int maxProcesses = 20;
 	int filenamePositionStarted = 0;
 	int filenamePositionDone = 0;
@@ -426,7 +163,7 @@ int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filenames)
 		// Add new processes when we are below the limit and there are replays left
 		while (numProcessesRunning < maxProcesses && filenamePositionStarted < filenames.size())
 		{
-			ReplayProcess p;
+			WorkerProcess p;
 			p.StartProcess(filenames[filenamePositionStarted]);
 			processes.push_back(p);
 			filenamePositionStarted++;
