@@ -1327,6 +1327,13 @@ protected:
 
 		if( sourceObj && sourceObj->getControllingPlayer() )
 			debrisOwner = sourceObj->getControllingPlayer()->getDefaultTeam();
+
+		if (!debrisOwner)
+		{
+			// TheSuperHackers @bugfix Caball009 2025-05-19 Do not create debris objects without a valid team pointer
+			// the default team pointer may have been reset in Player::preTeamDestroy
+			return NULL;
+		}
 		
 		Object* container = NULL;
 		Object *firstObject = NULL;
