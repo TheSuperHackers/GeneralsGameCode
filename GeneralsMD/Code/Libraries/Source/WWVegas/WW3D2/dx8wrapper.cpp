@@ -1118,7 +1118,10 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	bool ret;
 
 	if (reset_device)
+	{
+		WWDEBUG_SAY(("DX8Wrapper::Set_Render_Device is resetting the device.\n"));
 		ret = Reset_Device(restore_assets);	//reset device without restoring data - we're likely switching out of the app.
+	}
 	else
 		ret = Create_Device();
 
@@ -1190,6 +1193,7 @@ void DX8Wrapper::Set_Swap_Interval(int swap)
 		default: _PresentParameters.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_ONE ; break;
 	}
 
+	WWDEBUG_SAY(("DX8Wrapper::Set_Swap_Interval is resetting the device.\n"));
 	Reset_Device();
 }
 
@@ -1259,6 +1263,7 @@ bool DX8Wrapper::Set_Device_Resolution(int width,int height,int bits,int windowe
 			Resize_And_Position_Window();
 		}
 #pragma message("TODO: support changing windowed status and changing the bit depth")
+		WWDEBUG_SAY(("DX8Wrapper::Set_Device_Resolution is resetting the device.\n"));
 		return Reset_Device();
 	} else {
 		return false;
@@ -1749,6 +1754,7 @@ void DX8Wrapper::End_Scene(bool flip_frames)
 		if (hr==D3DERR_DEVICELOST) {
 			hr=_Get_D3D_Device8()->TestCooperativeLevel();
 			if (hr==D3DERR_DEVICENOTRESET) {
+				WWDEBUG_SAY(("DX8Wrapper::End_Scene is resetting the device.\n"));
 				Reset_Device();
 			}
 			else {

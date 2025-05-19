@@ -817,7 +817,8 @@ WW3DErrorType WW3D::Begin_Render(bool clear,bool clearz,const Vector3 & color, f
         // Check if the device needs to be reset
         if( D3DERR_DEVICENOTRESET == hr )
         {
-			DX8Wrapper::Reset_Device();
+            WWDEBUG_SAY(("WW3D::Begin_Render is resetting the device.\n"));
+            DX8Wrapper::Reset_Device();
         }
 
 		return WW3D_ERROR_GENERIC;
