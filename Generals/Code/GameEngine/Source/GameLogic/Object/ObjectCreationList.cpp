@@ -1236,8 +1236,9 @@ protected:
 			return NULL; // don't spawn useful objects for dead players.  Avoid the zombie units from Yuri's.
 
 		// Object type debris might need this information to process visual UpgradeModules.
-		Team *debrisOwner = NULL;
-		if( sourceObj )
+		Team *debrisOwner = ThePlayerList->getNeutralPlayer() ? ThePlayerList->getNeutralPlayer()->getDefaultTeam() : NULL;
+
+		if( sourceObj && sourceObj->getControllingPlayer() )
 			debrisOwner = sourceObj->getControllingPlayer()->getDefaultTeam();
 		
 		Object* container = NULL;
