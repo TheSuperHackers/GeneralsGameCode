@@ -26,7 +26,7 @@ class WorkerProcess
 public:
 	WorkerProcess();
 
-	bool StartProcess(AsciiString filename);
+	bool StartProcess(UnicodeString command);
 
 	bool IsRunning() const;
 

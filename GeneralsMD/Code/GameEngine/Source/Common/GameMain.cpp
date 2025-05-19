@@ -124,6 +124,9 @@ int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filenames)
 {
 	DWORD totalStartTime = GetTickCount();
 
+	WideChar exePath[1024];
+	GetModuleFileNameW(NULL, exePath, 1024);
+
 	std::vector<WorkerProcess> processes;
 	const int maxProcesses = 20;
 	int filenamePositionStarted = 0;
@@ -163,9 +166,15 @@ int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filenames)
 		// Add new processes when we are below the limit and there are replays left
 		while (numProcessesRunning < maxProcesses && filenamePositionStarted < filenames.size())
 		{
+			UnicodeString filenameWide;
+			filenameWide.translate(filenames[filenamePositionStarted]);
+			UnicodeString command;
+			command.format(L"\"%s\" -headless -simReplay \"%s\"", exePath, filenameWide.str());
+
 			WorkerProcess p;
-			p.StartProcess(filenames[filenamePositionStarted]);
+			p.StartProcess(command);
 			processes.push_back(p);
+
 			filenamePositionStarted++;
 			numProcessesRunning++;
 		}

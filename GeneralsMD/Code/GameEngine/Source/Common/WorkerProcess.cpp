@@ -74,13 +74,12 @@ WorkerProcess::WorkerProcess()
 	m_isDone = false;
 }
 
-bool WorkerProcess::StartProcess(AsciiString filename)
+bool WorkerProcess::StartProcess(UnicodeString command)
 {
 	m_stdOutput = "";
 	m_isDone = false;
 
-	PROCESS_INFORMATION pi = { 0 };
-
+	// Create pipe for reading console output
 	SECURITY_ATTRIBUTES saAttr = { sizeof(SECURITY_ATTRIBUTES) };
 	saAttr.bInheritHandle = TRUE;
 	HANDLE writeHandle = NULL;
@@ -89,19 +88,11 @@ bool WorkerProcess::StartProcess(AsciiString filename)
 
 	STARTUPINFOW si = { sizeof(STARTUPINFOW) };
 	si.dwFlags = STARTF_FORCEOFFFEEDBACK; // Prevent cursor wait animation
+	si.dwFlags |= STARTF_USESTDHANDLES;
 	si.hStdError = writeHandle;
 	si.hStdOutput = writeHandle;
-	si.dwFlags |= STARTF_USESTDHANDLES;
-
-	WideChar exePath[1024];
-	GetModuleFileNameW(NULL, exePath, 1024);
-	UnicodeString filenameWide;
-	filenameWide.translate(filename);
-
-	UnicodeString command;
-	command.format(L"\"%s\" -win -xres 800 -yres 600 -ignoreAsserts -headless -simReplay \"%s\"", exePath, filenameWide.str());
-	//wprintf(L"Starting Exe for Replay \"%s\": %s\n", filenameWide.str(), command.str());
-	//fflush(stdout);
+	
+	PROCESS_INFORMATION pi = { 0 };
 
 	if (!CreateProcessW(NULL, (LPWSTR)command.str(),
 			NULL, NULL, /*bInheritHandles=*/TRUE, 0,
@@ -119,7 +110,7 @@ bool WorkerProcess::StartProcess(AsciiString filename)
 
 	// We want to make sure that when our process is killed, our workers automatically terminate as well.
 	// In Windows, the way to do this is to attach the worker to a job we own.
-	m_jobHandle = CreateJobObjectW(NULL, NULL);
+	m_jobHandle = CreateJobObjectW != NULL ? CreateJobObjectW(NULL, NULL) : NULL;
 	if (m_jobHandle != NULL)
 	{
 		JOBOBJECT_EXTENDED_LIMIT_INFORMATION jobInfo = { 0 };
@@ -167,7 +158,7 @@ void WorkerProcess::Update()
 		if (!success)
 			break;
 		DEBUG_ASSERTCRASH(readBytes != 0, ("expected readBytes to be non null"));
-
+		
 		// Remove \r, otherwise each new line is doubled when we output it again
 		for (int i = 0; i < readBytes; i++)
 			if (buffer[i] == '\r')
