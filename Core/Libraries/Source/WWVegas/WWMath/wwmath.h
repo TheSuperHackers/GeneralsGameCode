@@ -601,7 +601,7 @@ WWINLINE int WWMath::Float_To_Int_Floor (const float& f)
 // Inverse square root
 // ----------------------------------------------------------------------------
 
-#if defined(_MSC_VER) && defined(_M_IX86)
+#if defined(_MSC_VER) && defined(_M_IX86) && !defined(__clang__)
 WWINLINE __declspec(naked) float __fastcall WWMath::Inv_Sqrt(float a)
 {
 	__asm {
