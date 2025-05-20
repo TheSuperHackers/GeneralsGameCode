@@ -254,12 +254,14 @@ if(RTS_BUILD_OPTION_OPENAL)
 
     if(OpenAL_FOUND)
         target_sources(z_gameenginedevice PRIVATE
+            Include/OpenALDevice/FFmpegOpenALAudioStream.h
             Include/OpenALDevice/OpenALAudioManager.h
-        #    Include/OpenALDevice/OpenALAudioStream.h
+            Include/OpenALDevice/OpenALAudioStream.h
+            Source/OpenALDevice/FFmpegOpenALAudioStream.cpp
             Source/OpenALDevice/OpenALAudioFileCache.h
             Source/OpenALDevice/OpenALAudioFileCache.cpp
             Source/OpenALDevice/OpenALAudioManager.cpp
-        #    Source/OpenALDevice/OpenALAudioStream.cpp
+            Source/OpenALDevice/OpenALAudioStream.cpp
         )
 
         target_link_libraries(z_gameenginedevice PRIVATE OpenAL::OpenAL)

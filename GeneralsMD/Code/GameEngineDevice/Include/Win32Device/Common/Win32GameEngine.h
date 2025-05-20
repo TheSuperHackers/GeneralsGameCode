@@ -38,9 +38,10 @@
 #include "Common/GameEngine.h"
 #include "GameLogic/GameLogic.h"
 #include "GameNetwork/NetworkInterface.h"
-#include "MilesAudioDevice/MilesAudioManager.h"
 #ifdef RTS_HAS_OPENAL
 #include "OpenALDevice/OpenALAudioManager.h"
+#else
+#include "MilesAudioDevice/MilesAudioManager.h"
 #endif
 #include "Win32Device/Common/Win32BIGFileSystem.h"
 #include "Win32Device/Common/Win32LocalFileSystem.h"

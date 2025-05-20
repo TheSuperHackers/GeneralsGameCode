@@ -41,7 +41,7 @@
 
 #include "Lib/BaseType.h"
 #include "OpenALDevice/OpenALAudioManager.h"
-//#include "OpenALAudioDevice/OpenALAudioStream.h"
+#include "OpenALDevice/OpenALAudioStream.h"
 #include "OpenALAudioFileCache.h"
 
 #include "Common/AudioAffect.h"
@@ -55,7 +55,6 @@
 #include "Common/GameSounds.h"
 #include "Common/CRCDebug.h"
 #include "Common/GlobalData.h"
-#include "Common/ScopedMutex.h"
 
 #include "GameClient/DebugDisplay.h"
 #include "GameClient/Drawable.h"
@@ -632,7 +631,7 @@ void OpenALAudioManager::pauseAudio(AudioAffect which)
 		AudioRequest *req = (*ait);
 		if( req && req->m_request == AR_Play ) 
 		{
-			req->deleteInstance();
+			deleteInstance(req);
 			ait = m_audioRequests.erase(ait);
 		}
 		else
@@ -767,54 +766,54 @@ void OpenALAudioManager::playAudioEvent(AudioEventRTS* event)
 
 			OpenALAudioStream* stream;
 			if (!handleToKill || foundSoundToReplace) {
-				//stream = new OpenALAudioStream;
-				//// When we need more data ask FFmpeg for more data.
-				//stream->setRequireDataCallback([ffmpegFile, stream]() {
-				//	ffmpegFile->decodePacket();
-				//	});
-				//
-				//// When we receive a frame from FFmpeg, send it to OpenAL.
-				//ffmpegFile->setFrameCallback([stream](AVFrame* frame, int stream_idx, int stream_type, void* user_data) {
-				//	if (stream_type != AVMEDIA_TYPE_AUDIO) {
-				//		return;
-				//	}
+				stream = new OpenALAudioStream;
+				// When we need more data ask FFmpeg for more data.
+				stream->setRequireDataCallback([ffmpegFile, stream]() {
+					ffmpegFile->decodePacket();
+					});
 
-				//	DEBUG_LOG(("Received audio frame\n"));
+				// When we receive a frame from FFmpeg, send it to OpenAL.
+				ffmpegFile->setFrameCallback([stream](AVFrame* frame, int stream_idx, int stream_type, void* user_data) {
+					if (stream_type != AVMEDIA_TYPE_AUDIO) {
+						return;
+					}
 
-				//	AVSampleFormat sampleFmt = static_cast<AVSampleFormat>(frame->format);
-				//	const int bytesPerSample = av_get_bytes_per_sample(sampleFmt);
-				//	ALenum format = OpenALAudioManager::getALFormat(frame->ch_layout.nb_channels, bytesPerSample * 8);
-				//	const int frameSize =
-				//		av_samples_get_buffer_size(NULL, frame->ch_layout.nb_channels, frame->nb_samples, sampleFmt, 1);
-				//	uint8_t* frameData = frame->data[0];
+					DEBUG_LOG(("Received audio frame\n"));
 
-				//	// We need to interleave the samples if the format is planar
-				//	if (av_sample_fmt_is_planar(static_cast<AVSampleFormat>(frame->format))) {
-				//		uint8_t* audioBuffer = static_cast<uint8_t*>(av_malloc(frameSize));
+					AVSampleFormat sampleFmt = static_cast<AVSampleFormat>(frame->format);
+					const int bytesPerSample = av_get_bytes_per_sample(sampleFmt);
+					ALenum format = OpenALAudioManager::getALFormat(frame->ch_layout.nb_channels, bytesPerSample * 8);
+					const int frameSize =
+						av_samples_get_buffer_size(NULL, frame->ch_layout.nb_channels, frame->nb_samples, sampleFmt, 1);
+					uint8_t* frameData = frame->data[0];
 
-				//		// Write the samples into our audio buffer
-				//		for (int sample_idx = 0; sample_idx < frame->nb_samples; sample_idx++)
-				//		{
-				//			int byte_offset = sample_idx * bytesPerSample;
-				//			for (int channel_idx = 0; channel_idx < frame->ch_layout.nb_channels; channel_idx++)
-				//			{
-				//				uint8_t* dst = &audioBuffer[byte_offset * frame->ch_layout.nb_channels + channel_idx * bytesPerSample];
-				//				uint8_t* src = &frame->data[channel_idx][byte_offset];
-				//				memcpy(dst, src, bytesPerSample);
-				//			}
-				//		}
-				//		stream->bufferData(audioBuffer, frameSize, format, frame->sample_rate);
-				//		av_freep(&audioBuffer);
-				//	}
-				//	else
-				//		stream->bufferData(frameData, frameSize, format, frame->sample_rate);
-				// });
+					// We need to interleave the samples if the format is planar
+					if (av_sample_fmt_is_planar(static_cast<AVSampleFormat>(frame->format))) {
+						uint8_t* audioBuffer = static_cast<uint8_t*>(av_malloc(frameSize));
+
+						// Write the samples into our audio buffer
+						for (int sample_idx = 0; sample_idx < frame->nb_samples; sample_idx++)
+						{
+							int byte_offset = sample_idx * bytesPerSample;
+							for (int channel_idx = 0; channel_idx < frame->ch_layout.nb_channels; channel_idx++)
+							{
+								uint8_t* dst = &audioBuffer[byte_offset * frame->ch_layout.nb_channels + channel_idx * bytesPerSample];
+								uint8_t* src = &frame->data[channel_idx][byte_offset];
+								memcpy(dst, src, bytesPerSample);
+							}
+						}
+						stream->bufferData(audioBuffer, frameSize, format, frame->sample_rate);
+						av_freep(&audioBuffer);
+					}
+					else
+						stream->bufferData(frameData, frameSize, format, frame->sample_rate);
+				 });
 
 				// Decode packets before starting the stream.
-				//for (int i = 0; i < AL_STREAM_BUFFER_COUNT; i++) {
-				//	if (!ffmpegFile->decodePacket())
-				//		break;
-				//}
+				for (int i = 0; i < AL_STREAM_BUFFER_COUNT; i++) {
+					if (!ffmpegFile->decodePacket())
+						break;
+				}
 			}
 			else {
 				stream = NULL;
@@ -1061,7 +1060,7 @@ void OpenALAudioManager::killAudioEventImmediately(AudioHandle audioEvent)
 		AudioRequest *req = (*ait);
 		if( req && req->m_request == AR_Play && req->m_handleToInteractOn == audioEvent ) 
 		{
-			req->deleteInstance();
+			deleteInstance(req);
 			ait = m_audioRequests.erase(ait);
 			return;
 		}
@@ -2305,7 +2304,7 @@ void OpenALAudioManager::processRequestList(void)
 		if (!req->m_requiresCheckForSample || checkForSample(req)) {
 			processRequest(req);
 		}
-		req->deleteInstance();
+		deleteInstance(req);
 		it = m_audioRequests.erase(it);
 	}
 }
@@ -2945,7 +2944,7 @@ void* OpenALAudioManager::getHandleForBink(void)
 {
 	if (!m_binkAudio) {
 		DEBUG_LOG(("Creating Bink audio stream\n"));
-		//m_binkAudio = NEW OpenALAudioStream;
+		m_binkAudio = NEW OpenALAudioStream;
 	}
 	return m_binkAudio;
 }
