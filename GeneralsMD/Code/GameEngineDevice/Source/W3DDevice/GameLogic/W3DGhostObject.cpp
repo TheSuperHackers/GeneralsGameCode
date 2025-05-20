@@ -435,8 +435,10 @@ void W3DGhostObject::removeParentObject(void)
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObject::restoreParentObject(void)
 {
+	if (TheGlobalData->m_headless)
+		return;
 	Drawable *draw=m_parentObject->getDrawable();
-	if (!draw || TheGlobalData->m_headless)
+	if (!draw)
 		return;
 
 	//Notify drawable that it's okay to render its render objects again.

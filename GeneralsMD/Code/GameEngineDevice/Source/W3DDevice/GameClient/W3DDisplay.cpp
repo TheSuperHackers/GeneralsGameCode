@@ -2109,7 +2109,9 @@ void W3DDisplay::createLightPulse( const Coord3D *pos, const RGBColor *color,
 																	 UnsignedInt decayFrameTime//, Bool donut
 																	 )
 {
-	if (innerRadius+attenuationWidth<2.0*PATHFIND_CELL_SIZE_F + 1.0f || m_3DScene == NULL) {
+	if (m_3DScene == NULL)
+		return;
+	if (innerRadius+attenuationWidth<2.0*PATHFIND_CELL_SIZE_F + 1.0f) {
 		return; // it basically won't make any visual difference.  jba.
 	}
 	W3DDynamicLight * theDynamicLight = m_3DScene->getADynamicLight();
