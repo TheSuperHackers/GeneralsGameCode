@@ -83,9 +83,13 @@ inline char* skipNonWhitespace(char* p)
 	return p;
 }
 
-void AsciiString::freeBytes(void)
+// -----------------------------------------------------
+AsciiString::AsciiString(const AsciiString& stringSrc) : m_data(stringSrc.m_data)
 {
-	TheDynamicMemoryAllocator->freeBytes(m_data);
+	ScopedCriticalSection scopedCriticalSection(TheAsciiStringCriticalSection);
+	if (m_data)
+		++m_data->m_refCount;
+	validate();
 }
 
 // -----------------------------------------------------
@@ -164,6 +168,70 @@ void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData
 
 
 // -----------------------------------------------------
+void AsciiString::releaseBuffer()
+{
+	ScopedCriticalSection scopedCriticalSection(TheAsciiStringCriticalSection);
+
+	validate();
+	if (m_data)
+	{
+		if (--m_data->m_refCount == 0)
+		{
+			TheDynamicMemoryAllocator->freeBytes(m_data);
+		}
+		m_data = 0;
+	}
+	validate();
+}
+
+// -----------------------------------------------------
+AsciiString::AsciiString(const char* s) : m_data(0)
+{
+	//DEBUG_ASSERTCRASH(isMemoryManagerOfficiallyInited(), ("Initializing AsciiStrings prior to main (ie, as static vars) can cause memory leak reporting problems. Are you sure you want to do this?\n"));
+	int len = (s)?strlen(s):0;
+	if (len)
+	{
+		ensureUniqueBufferOfSize(len + 1, false, s, NULL);
+	}
+	validate();
+}
+
+// -----------------------------------------------------
+void AsciiString::set(const AsciiString& stringSrc)
+{
+	ScopedCriticalSection scopedCriticalSection(TheAsciiStringCriticalSection);
+
+	validate();
+	if (&stringSrc != this)
+	{
+		releaseBuffer();
+		m_data = stringSrc.m_data;
+		if (m_data)
+			++m_data->m_refCount;
+	}
+	validate();
+}
+
+// -----------------------------------------------------
+void AsciiString::set(const char* s)
+{
+	validate();
+	if (!m_data || s != peek())
+	{
+		int len = s ? strlen(s) : 0;
+		if (len)
+		{
+			ensureUniqueBufferOfSize(len + 1, false, s, NULL);
+		}
+		else
+		{
+			releaseBuffer();
+		}
+	}
+	validate();
+}
+
+// -----------------------------------------------------
 char*  AsciiString::getBufferForRead(Int len)
 {
 	validate();
@@ -182,6 +250,25 @@ void AsciiString::translate(const UnicodeString& stringSrc)
 	Int len = stringSrc.getLength();
 	for (Int i = 0; i < len; i++)
 		concat((char)stringSrc.getCharAt(i));
+	validate();
+}
+
+// -----------------------------------------------------
+void AsciiString::concat(const char* s)
+{
+	validate();
+	int addlen = strlen(s);
+	if (addlen == 0)
+		return;	// my, that was easy
+
+	if (m_data)
+	{
+		ensureUniqueBufferOfSize(getLength() + addlen + 1, true, NULL, s);
+	}
+	else
+	{
+		set(s);
+	}
 	validate();
 }
 

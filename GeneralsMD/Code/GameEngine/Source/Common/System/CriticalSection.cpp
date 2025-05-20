@@ -27,7 +27,7 @@
 #include "Common/CriticalSection.h"
 
 // Definitions.
-FastCriticalSectionClass TheAsciiStringCriticalSection;
+CriticalSection *TheAsciiStringCriticalSection = NULL;
 CriticalSection *TheUnicodeStringCriticalSection = NULL;
 CriticalSection *TheDmaCriticalSection = NULL;
 CriticalSection *TheMemoryPoolCriticalSection = NULL;
