@@ -404,7 +404,7 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	** server we think we are talking to.
 	*/
 	found = false;
-	for (Int i=0; i<connectionVector.size(); ++i) {
+	for (size_t i=0; i<connectionVector.size(); ++i) {
 		ConnInfoStruct connection = connectionVector[i];
 
 		temp = ntohl(connection.RemoteIP);

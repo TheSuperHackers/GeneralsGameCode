@@ -65,6 +65,7 @@
 class GameWindow;
 class WindowLayout;
 class GameFont;
+class TransitionWindow;
 struct GameWindowEditData;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -240,6 +241,9 @@ public:
 	/// draw border for this window only, NO child windows or anything
 	virtual void winDrawBorder( void ) = 0;
 
+	void linkTransitionWindow( TransitionWindow* transitionWindow );
+	void unlinkTransitionWindow( TransitionWindow* transitionWindow );
+
 	Int winSetWindowId( Int id );  ///< set id for this window
 	Int winGetWindowId( void );  ///< return window id for this window
 	Int winSetSize( Int width, Int height );  ///< set size
@@ -380,6 +384,8 @@ protected:
 	void freeImages( void ) { }
 	Bool isEnabled( void );  ///< see if we and our parents are enabled
 
+	void unlinkFromTransitionWindows( void );
+
 	void normalizeWindowRegion( void );  ///< put UL corner in window region.lo
 
 	GameWindow *findFirstLeaf( void );  ///< return first leaf of branch
@@ -421,6 +427,9 @@ protected:
 
 	// game window edit data for the GUIEditor only
 	GameWindowEditData *m_editData;
+
+	// vector of window transitions that have a relation to the current GameWindow
+	std::vector<TransitionWindow*> m_transitionWindows;
 
 };  // end class GameWindow
 

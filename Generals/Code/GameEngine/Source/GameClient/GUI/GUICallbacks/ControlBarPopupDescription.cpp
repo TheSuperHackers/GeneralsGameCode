@@ -266,7 +266,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 		ScienceType	st = SCIENCE_INVALID; 
 		if(commandButton->getScienceVec().size() > 1)
 		{
-			for(Int j = 0; j < commandButton->getScienceVec().size(); ++j)
+			for(size_t j = 0; j < commandButton->getScienceVec().size(); ++j)
 			{
 				st = commandButton->getScienceVec()[ j ];
 				

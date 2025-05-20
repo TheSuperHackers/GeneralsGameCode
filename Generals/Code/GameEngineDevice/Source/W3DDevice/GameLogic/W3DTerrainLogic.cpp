@@ -231,7 +231,7 @@ void W3DTerrainLogic::getMaximumPathfindExtent( Region3D *extent ) const
 
 	// Note - m_boundaries are stored in height map grids wide, so we have to
 	// multiply by the grid width.
-	Int i;
+	size_t i;
 	for (i=0; i<m_boundaries.size(); i++) {
 		if (extent->hi.x < m_boundaries[i].x*MAP_XY_FACTOR) {
 			extent->hi.x = m_boundaries[i].x*MAP_XY_FACTOR;

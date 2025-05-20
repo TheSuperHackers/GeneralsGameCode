@@ -835,7 +835,7 @@ Bool AIUpdateInterface::chooseLocomotorSetExplicit(LocomotorSetType wst)
 	{
 		m_locomotorSet.clear();
 		m_curLocomotor = NULL;
-		for (Int i = 0; i < set->size(); ++i)
+		for (size_t i = 0; i < set->size(); ++i)
 		{
 			const LocomotorTemplate* lt = set->at(i);
 			if (lt)

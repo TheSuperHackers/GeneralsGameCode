@@ -413,7 +413,7 @@ static void findHighFileNumber( AsciiString filename, void *userData )
 
 	// strip off the extension at the end of the filename
 	AsciiString nameOnly = filename;
-	for( Int count = 0; count < strlen( SAVE_GAME_EXTENSION ); count++ )
+	for( size_t count = 0; count < strlen( SAVE_GAME_EXTENSION ); count++ )
 		nameOnly.removeLastChar();
 	
 	// convert filename (which is only numbers) to a number

@@ -317,7 +317,7 @@ NATConnectionState NAT::connectionUpdate() {
 
 	// check to see if its time to send out our keepalives.
 	if (timeGetTime() >= m_nextKeepaliveTime) {
-		for (Int node = 0; node < m_numNodes; ++node) {
+		for (UnsignedInt node = 0; node < m_numNodes; ++node) {
 			if (m_myConnections[node] == TRUE) {
 				// we've made this connection, send a keepalive.
 				Int slotIndex = m_connectionNodes[node].m_slotIndex;
@@ -637,7 +637,7 @@ Int NAT::getSlotPort(Int slot) {
 }
 
 void NAT::generatePortNumbers(GameSlot *slotList[], Int localSlot) {
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
+	for (UnsignedInt i = 0; i < (UnsignedInt)MAX_SLOTS; ++i) {
 		if (slotList[i] != NULL) {
 			if ((i == localSlot) && (TheWritableGlobalData->m_firewallPortOverride != 0)) {
 				slotList[i]->setPort(TheWritableGlobalData->m_firewallPortOverride);
@@ -950,7 +950,7 @@ Bool NAT::allConnectionsDone() {
 
 Bool NAT::allConnectionsDoneThisRound() {
 	Bool retval = TRUE;
-	for (Int i = 0; (i < m_numNodes) && (retval == TRUE); ++i) {
+	for (UnsignedInt i = 0; (i < m_numNodes) && (retval == TRUE); ++i) {
 		if ((m_connectionStates[i] != NATCONNECTIONSTATE_DONE) && (m_connectionStates[i] != NATCONNECTIONSTATE_FAILED)) {
 			retval = FALSE;
 		}

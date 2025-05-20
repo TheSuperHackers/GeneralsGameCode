@@ -3475,7 +3475,7 @@ void WaterRenderObjClass::xfer( Xfer *xfer )
 	}  // end if
 
 	// xfer each of the mesh data points
-	for( Int i = 0; i < m_meshDataSize; ++i )
+	for( UnsignedInt i = 0; i < m_meshDataSize; ++i )
 	{
 
 		// height

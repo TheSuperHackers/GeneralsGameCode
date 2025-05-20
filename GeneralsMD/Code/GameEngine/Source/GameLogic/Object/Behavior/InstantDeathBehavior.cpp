@@ -136,12 +136,12 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 
 	const InstantDeathBehaviorModuleData* d = getInstantDeathBehaviorModuleData();
 
-	Int idx, listSize;
+	size_t idx, listSize;
 
 	listSize = d->m_fx.size();
 	if (listSize > 0)
 	{
-		idx = GameLogicRandomValue(0, listSize-1);
+		idx = (size_t)GameLogicRandomValue(0, listSize-1);
 		const FXListVec& v = d->m_fx;
 		DEBUG_ASSERTCRASH(idx>=0&&idx<v.size(),("bad idx"));
 		const FXList* fxl = v[idx];
@@ -151,7 +151,7 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 	listSize = d->m_ocls.size();
 	if (listSize > 0)
 	{
-		idx = GameLogicRandomValue(0, listSize-1);
+		idx = (size_t)GameLogicRandomValue(0, listSize-1);
 		const OCLVec& v = d->m_ocls;
 		DEBUG_ASSERTCRASH(idx>=0&&idx<v.size(),("bad idx"));
 		const ObjectCreationList* ocl = v[idx];
@@ -161,7 +161,7 @@ void InstantDeathBehavior::onDie( const DamageInfo *damageInfo )
 	listSize = d->m_weapons.size();
 	if (listSize > 0)
 	{
-		idx = GameLogicRandomValue(0, listSize-1);
+		idx = (size_t)GameLogicRandomValue(0, listSize-1);
 		const WeaponTemplateVec& v = d->m_weapons;
 		DEBUG_ASSERTCRASH(idx>=0&&idx<v.size(),("bad idx"));
 		const WeaponTemplate* wt = v[idx];

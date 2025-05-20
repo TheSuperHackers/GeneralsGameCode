@@ -46,7 +46,7 @@ NetCommandWrapperListNode::NetCommandWrapperListNode(NetWrapperCommandMsg *msg)
 	m_chunksPresent = NEW Bool[m_numChunks];	// pool[]ify
 	m_numChunksPresent = 0;
 
-	for (Int i = 0; i < m_numChunks; ++i) {
+	for (UnsignedInt i = 0; i < m_numChunks; ++i) {
 		m_chunksPresent[i] = FALSE;
 	}
 

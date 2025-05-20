@@ -270,7 +270,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 		{
 			if( commandButton->getScienceVec().size() > 1 ) 						
 			{
-				for(Int j = 0; j < commandButton->getScienceVec().size(); ++j)
+				for(size_t j = 0; j < commandButton->getScienceVec().size(); ++j)
 				{
 					st = commandButton->getScienceVec()[ j ];
 					
@@ -493,7 +493,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 			{
 
 				//Do we have a prerequisite science?
-				for( Int i = 0; i < commandButton->getScienceVec().size(); i++ )
+				for( size_t i = 0; i < commandButton->getScienceVec().size(); i++ )
 				{
 					ScienceType st = commandButton->getScienceVec()[ i ];
 					if( !player->hasScience( st ) )
