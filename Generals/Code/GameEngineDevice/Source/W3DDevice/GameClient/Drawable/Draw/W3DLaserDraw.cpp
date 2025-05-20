@@ -202,7 +202,8 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 				}
 
 				// add to scene
-				W3DDisplay::m_3DScene->Add_Render_Object( line );	//add it to our scene so it gets rendered with other objects.
+				if (W3DDisplay::m_3DScene != NULL)
+					W3DDisplay::m_3DScene->Add_Render_Object( line );	//add it to our scene so it gets rendered with other objects.
 
 				// hide the render object until the first time we come to draw it and
 				// set the correct position
@@ -226,7 +227,8 @@ W3DLaserDraw::~W3DLaserDraw( void )
 	{
 
 		// remove line from scene
-		W3DDisplay::m_3DScene->Remove_Render_Object( m_line3D[ i ] );
+		if (W3DDisplay::m_3DScene != NULL)
+			W3DDisplay::m_3DScene->Remove_Render_Object( m_line3D[ i ] );
 
 		// delete line
 		REF_PTR_RELEASE( m_line3D[ i ] );

@@ -724,8 +724,7 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 	ShowWindow( hWnd, nCmdShow );
 	UpdateWindow( hWnd );
 
-	// save our application instance and window handle for future use
-	ApplicationHInstance = hInstance;
+	// save our application window handle for future use
 	ApplicationHWnd = hWnd;
 	gInitializing = false;
 	if (!runWindowed) {
@@ -861,13 +860,21 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		char * argv[20];
 		argv[0] = NULL;
 
+		Bool headless = false;
+
 		char *token;
 		token = nextParam(lpCmdLine, "\" ");
 		while (argc < 20 && token != NULL) {
 			argv[argc++] = strtrim(token);
+
 			//added a preparse step for this flag because it affects window creation style
-			if (stricmp(token,"-win")==0)
-				ApplicationIsWindowed=true;
+			if (stricmp(token, "-win") == 0)
+				ApplicationIsWindowed = true;
+
+			// preparse for headless as well. We need to know about this before we create the window.
+			if (stricmp(token, "-headless") == 0)
+				headless = true;
+
 			token = nextParam(NULL, "\" ");	   
 		}
 
@@ -907,8 +914,11 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
  		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp",	IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
 
 		// register windows class and create application window
-		if( initializeAppWindows( hInstance, nCmdShow, ApplicationIsWindowed) == false )
+		if(!headless && initializeAppWindows( hInstance, nCmdShow, ApplicationIsWindowed) == false )
 			return 0;
+		
+		// save our application instance for future use
+		ApplicationHInstance = hInstance;
 
 		if (gLoadScreenBitmap!=NULL) {
 			::DeleteObject(gLoadScreenBitmap);

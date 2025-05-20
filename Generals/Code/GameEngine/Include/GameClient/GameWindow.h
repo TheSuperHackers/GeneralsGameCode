@@ -320,7 +320,7 @@ public:
 	// window instance data
 	Int winSetInstanceData( WinInstanceData *data );  ///< copy over instance data
 	WinInstanceData *winGetInstanceData( void );  ///< get instance data
-	void *winGetUserData( void );  ///< get the window user data
+	virtual void *winGetUserData( void );  ///< get the window user data
 	void winSetUserData( void *userData );  ///< set the user data
 
 	// heirarchy methods
@@ -423,6 +423,16 @@ protected:
 	GameWindowEditData *m_editData;
 
 };  // end class GameWindow
+
+// TheSuperHackers @feature helmutbuhler 24/04/2025
+// GameWindow that does nothing. Used for Headless Mode.
+class GameWindowDummy : public GameWindow
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameWindowDummy, "GameWindowDummy")
+public:
+	virtual void winDrawBorder() {}
+	virtual void* winGetUserData(void) { return NULL; }
+};
 
 // ModalWindow ----------------------------------------------------------------
 //-----------------------------------------------------------------------------

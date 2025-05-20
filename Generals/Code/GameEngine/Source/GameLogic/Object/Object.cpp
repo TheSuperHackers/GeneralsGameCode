@@ -5243,9 +5243,12 @@ Int Object::getMultiLogicalBonePosition(const char* boneNamePrefix, Int maxBones
 //=============================================================================
 Bool Object::canProduceUpgrade( const UpgradeTemplate *upgrade )
 {
+	// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+	// TheControlBar belongs to the client, we shouldn't depend on that to check this.
+
 	// We need to have the button to make the upgrade.  CommandSets are a weird Logic/Client hybrid.
- 	const CommandSet *set = TheControlBar->findCommandSet(getCommandSetString());
- 
+	const CommandSet *set = TheControlBar->findCommandSet(getCommandSetString());
+
  	for( Int buttonIndex = 0; buttonIndex < MAX_COMMANDS_PER_SET; buttonIndex++ )
  	{
  		const CommandButton *button = set->getCommandButton(buttonIndex);

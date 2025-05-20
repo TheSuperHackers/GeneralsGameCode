@@ -2213,6 +2213,8 @@ const WaterHandle* TerrainLogic::getWaterHandle( Real x, Real y )
 
 	/**@todo: Remove this after we have all water types included
 		in water triggers.  For now do special check for water grid mesh. */
+	// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+	// We shouldn't depend on TerrainVisual here.
 	Real meshZ;
 	if( TheTerrainVisual->getWaterGridHeight( x, y, &meshZ ) )
 	{	

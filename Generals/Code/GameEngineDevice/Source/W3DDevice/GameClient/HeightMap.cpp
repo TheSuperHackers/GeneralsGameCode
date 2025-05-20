@@ -1156,7 +1156,7 @@ Int HeightMapRenderObjClass::updateBlock(Int x0, Int y0, Int x1, Int y1,  WorldH
 	DEBUG_ASSERTCRASH(x0>=0&&y0>=0 && x1<m_x && y1<m_y && x0<=x1 && y0<=y1, ("Invalid updates."));
 #endif
 	Invalidate_Cached_Bounding_Volumes();
-	if (pMap) {
+	if (pMap && m_treeBuffer != NULL) {
 		REF_PTR_SET(m_stageZeroTexture, pMap->getTerrainTexture());
 		REF_PTR_SET(m_stageOneTexture, pMap->getAlphaTerrainTexture());
 	}
@@ -2671,7 +2671,7 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 	if (m_stageOneTexture == NULL) {
 		needToAllocate = true;
 	}
-	if (data && needToAllocate)
+	if (data && needToAllocate && m_treeBuffer != NULL)
 	{	//requested heightmap different from old one.
 		//allocate a new one.
 		freeMapResources();	//free old data and ib/vb
