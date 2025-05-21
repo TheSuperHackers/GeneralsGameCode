@@ -1243,8 +1243,7 @@ protected:
 
 		if (!debrisOwner)
 		{
-			// TheSuperHackers @bugfix Caball009 2025-05-19 Do not create debris objects without a valid team pointer
-			// the default team pointer may have been reset in Player::preTeamDestroy
+			// TheSuperHackers @fix Caball009 19/05/2025 Do not create debris objects without a valid team pointer
 			return NULL;
 		}
 		
