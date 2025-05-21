@@ -201,6 +201,10 @@ TurretAIData::TurretAIData()
 	m_initiallyDisabled = false;
 	m_firesWhileTurning = FALSE;
 	m_isAllowsPitch = false;
+
+	m_minTurretAngle = 0.0;
+	m_maxTurretAngle = 0.0;
+	m_hasLimitedTurretAngle = false;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -258,6 +262,9 @@ void TurretAIData::buildFieldParse(MultiIniFieldParse& p)
 		{ "RecenterTime",						INI::parseDurationUnsignedInt,				NULL, offsetof( TurretAIData, m_recenterTime ) },
 		{ "InitiallyDisabled",			INI::parseBool,												NULL, offsetof( TurretAIData, m_initiallyDisabled ) },
 		{ "FiresWhileTurning",			INI::parseBool,												NULL, offsetof( TurretAIData, m_firesWhileTurning ) },
+		{ "MinTurretAngle",             INI::parseAngleReal,									NULL, offsetof(TurretAIData, m_minTurretAngle) },
+		{ "MaxTurretAngle",             INI::parseAngleReal,									NULL, offsetof(TurretAIData, m_maxTurretAngle) },
+		{ "TurretAngleLimited",             INI::parseBool,									NULL, offsetof(TurretAIData, m_hasLimitedTurretAngle) },
 		{ 0, 0, 0, 0 }
 	};
   p.add(dataFieldParse);
@@ -398,6 +405,53 @@ Bool TurretAI::friend_turnTowardsAngle(Real desiredAngle, Real rateModifier, Rea
 	Real actualAngle = origAngle;
 	Real turnRate = getTurnRate() * rateModifier;
 	Real angleDiff = normalizeAngle(desiredAngle - actualAngle);
+
+	// ---
+	if (hasLimitedTurretAngle()) {
+		Real minAngle = getMinTurretAngle();
+		Real maxAngle = getMaxTurretAngle();
+
+		bool isWithinLimit = true;
+		if ((desiredAngle > maxAngle)) {
+			desiredAngle = maxAngle;
+			// desiredAngle = getNaturalTurretAngle();
+			isWithinLimit = false;
+		}
+		else if (desiredAngle < minAngle) {
+			desiredAngle = minAngle;
+			// desiredAngle = getNaturalTurretAngle();
+			isWithinLimit = false;
+		}
+		if (!isWithinLimit) {
+			angleDiff = normalizeAngle(desiredAngle - actualAngle);
+			// Are we close enough to the desired angle to just snap there?
+			if (fabs(angleDiff) < turnRate)
+			{
+				// we are centered
+				actualAngle = desiredAngle;
+
+				getOwner()->clearModelConditionState(MODELCONDITION_TURRET_ROTATE);
+			}
+			else
+			{
+				if (angleDiff > 0)
+					actualAngle += turnRate;
+				else
+					actualAngle -= turnRate;
+
+				getOwner()->setModelConditionState(MODELCONDITION_TURRET_ROTATE);
+				m_playRotSound = true;
+			}
+
+			m_angle = normalizeAngle(actualAngle);
+
+			if (m_angle != origAngle)
+				getOwner()->reactToTurretChange(m_whichTurret, origAngle, m_pitch);
+
+			return false;
+		}
+	}
+	// -----
 
 	// Are we close enough to the desired angle to just snap there?
 	if (fabs(angleDiff) < turnRate)

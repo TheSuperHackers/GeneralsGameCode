@@ -767,6 +767,28 @@ Real AIUpdateInterface::getTurretTurnRate(WhichTurretType tur) const
 }
 
 //=============================================================================
+Bool AIUpdateInterface::hasLimitedTurretAngle(WhichTurretType tur) const
+{
+	return (tur != TURRET_INVALID && m_turretAI[tur] != NULL) && m_turretAI[tur]->hasLimitedTurretAngle();
+}
+
+//=============================================================================
+Real AIUpdateInterface::getMinTurretAngle(WhichTurretType tur) const
+{
+	return (tur != TURRET_INVALID && m_turretAI[tur] != NULL) ?
+		m_turretAI[tur]->getMinTurretAngle() :
+		0.0f;
+}
+
+//=============================================================================
+Real AIUpdateInterface::getMaxTurretAngle(WhichTurretType tur) const
+{
+	return (tur != TURRET_INVALID && m_turretAI[tur] != NULL) ?
+		m_turretAI[tur]->getMaxTurretAngle() :
+		0.0f;
+}
+
+//=============================================================================
 WhichTurretType AIUpdateInterface::getWhichTurretForCurWeapon() const
 {
 	for (int i = 0; i < MAX_TURRETS; ++i)

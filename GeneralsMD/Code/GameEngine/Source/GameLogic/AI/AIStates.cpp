@@ -5030,10 +5030,28 @@ StateReturnType AIAttackAimAtTargetState::update()
 		{
 			sourceAI->setTurretTargetPosition(tur, getMachineGoalPosition());
 		}
+		// If we have limited Turret Angle, we need to turn until we are in range
+		if (sourceAI->hasLimitedTurretAngle(tur)) {
+			Real relAngle = m_isAttackingObject ?
+				ThePartitionManager->getRelativeAngle2D(source, victim) :
+				ThePartitionManager->getRelativeAngle2D(source, getMachineGoalPosition());
+			Real maxAngle = sourceAI->getMaxTurretAngle(tur);
+			Real minAngle = sourceAI->getMinTurretAngle(tur);
+			if ((relAngle < maxAngle) && (relAngle > minAngle)) {
+				// If the target is inside our maximum turret angle, we can continue
+				return STATE_CONTINUE;
+			}
+			else {
+				Locomotor* curLoco = sourceAI->getCurLocomotor();
+				if (!curLoco)
+					return STATE_FAILURE;
+			}
+
+		}
 		// if we have a turret, but it is incapable of turning, turn ourself.
 		// (gotta do this for units like the Comanche, which have fake "turrets"
 		// solely to allow for attacking-on-the-move...)
-		if (sourceAI->getTurretTurnRate(tur) != 0.0f)	
+		else if (sourceAI->getTurretTurnRate(tur) != 0.0f)	
 		{
 			// The Body can never return Success if the weapon is on the turret, or else we end
 			// up shooting the current weapon (which is on the turret) in the wrong direction.
@@ -5062,20 +5080,46 @@ StateReturnType AIAttackAimAtTargetState::update()
 		{
 			aimDelta = REL_THRESH;
 		}
+		Real aimDeltaNeg = -aimDelta;
 
-		//DEBUG_LOG(("AIM: desired %f, actual %f, delta %f, aimDelta %f, goalpos %f %f\n",rad2deg(obj->getOrientation() + relAngle),rad2deg(obj->getOrientation()),rad2deg(relAngle),rad2deg(aimDelta),victim->getPosition()->x,victim->getPosition()->y));
-		if (m_canTurnInPlace)
-		{
-			if (fabs(relAngle) > aimDelta) 
+		if (sourceAI->hasLimitedTurretAngle(tur)) {
+			aimDelta += sourceAI->getMaxTurretAngle(tur);
+			aimDeltaNeg += sourceAI->getMinTurretAngle(tur);
+
+			if (m_canTurnInPlace)
 			{
-				Real desiredAngle = source->getOrientation() + relAngle;
-				sourceAI->setLocomotorGoalOrientation(desiredAngle);
-				m_setLocomotor = true;
+				if (relAngle < aimDeltaNeg)
+				{
+					Real desiredAngle = source->getOrientation() + relAngle - aimDeltaNeg - REL_THRESH;
+					sourceAI->setLocomotorGoalOrientation(desiredAngle);
+					m_setLocomotor = true;
+				}
+				else if (relAngle > aimDelta) {
+					Real desiredAngle = source->getOrientation() + relAngle - aimDelta + REL_THRESH;
+					sourceAI->setLocomotorGoalOrientation(desiredAngle);
+					m_setLocomotor = true;
+				}
+			}
+			else
+			{
+				sourceAI->setLocomotorGoalPositionExplicit(m_isAttackingObject ? *victim->getPosition() : *getMachineGoalPosition());
 			}
 		}
-		else
-		{
-			sourceAI->setLocomotorGoalPositionExplicit(m_isAttackingObject ? *victim->getPosition() : *getMachineGoalPosition());
+		else {
+			//DEBUG_LOG(("AIM: desired %f, actual %f, delta %f, aimDelta %f, goalpos %f %f\n",rad2deg(obj->getOrientation() + relAngle),rad2deg(obj->getOrientation()),rad2deg(relAngle),rad2deg(aimDelta),victim->getPosition()->x,victim->getPosition()->y));
+			if (m_canTurnInPlace)
+			{
+				if (fabs(relAngle) > aimDelta)
+				{
+					Real desiredAngle = source->getOrientation() + relAngle;
+					sourceAI->setLocomotorGoalOrientation(desiredAngle);
+					m_setLocomotor = true;
+				}
+			}
+			else
+			{
+				sourceAI->setLocomotorGoalPositionExplicit(m_isAttackingObject ? *victim->getPosition() : *getMachineGoalPosition());
+			}
 		}
 
 		if (fabs(relAngle) < aimDelta /*&& !m_preAttackFrames*/ )
