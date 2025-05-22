@@ -308,9 +308,18 @@ Bool GameLogic::isInSinglePlayerGame( void )
 //-------------------------------------------------------------------------------------------------
 void GameLogic::destroyAllObjectsImmediate()
 {
-	// destroy all remaining objects
 	Object *obj;
 	Object *nextObj;
+
+	// TheSuperHackers @bugfix Set all remaining objects effectively dead to avoid triggering their
+	// death modules that eventually would spawn new objects, such as debris, which could then crash the game.
+	// See https://github.com/TheSuperHackers/GeneralsGameCode/issues/896
+	for( obj = m_objList; obj; obj = obj->getNextObject() )
+	{
+		obj->setEffectivelyDead(true);
+	}
+
+	// destroy all remaining objects
 	for( obj = m_objList; obj; obj = nextObj )
 	{
 		nextObj = obj->getNextObject();
