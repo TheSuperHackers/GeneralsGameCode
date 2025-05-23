@@ -296,7 +296,7 @@ void GameLogic::destroyAllObjectsImmediate()
 	Object *obj;
 	Object *nextObj;
 
-	// TheSuperHackers @bugfix Set all remaining objects effectively dead to avoid triggering their
+	// TheSuperHackers @bugfix xezon 22/05/2025 Set all remaining objects effectively dead to avoid triggering their
 	// death modules that eventually would spawn new objects, such as debris, which could then crash the game.
 	// See https://github.com/TheSuperHackers/GeneralsGameCode/issues/896
 	for( obj = m_objList; obj; obj = obj->getNextObject() )
