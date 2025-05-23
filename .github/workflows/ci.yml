@@ -3,6 +3,8 @@ name: GenCI
 permissions:
   contents: read
   pull-requests: write
+  pages: write
+  id-token: write
 
 on:
   push:
@@ -34,7 +36,7 @@ jobs:
         uses: dorny/paths-filter@v3
         id: filter
         with:
-          token: ''
+          token: '' # Using GITHUB_TOKEN implicitly for local checkout, or '' if not needed for API calls
           filters: |
             generals:
               - 'Generals/**'
@@ -63,34 +65,34 @@ jobs:
     strategy:
       matrix:
         include:
-          - preset: "vc6"
+          - preset: 'vc6'
             tools: true
             extras: true
-          - preset: "vc6-profile"
+          - preset: 'vc6-profile'
             tools: true
             extras: true
-          - preset: "vc6-internal"
+          - preset: 'vc6-internal'
             tools: true
             extras: true
-          - preset: "vc6-debug"
+          - preset: 'vc6-debug'
             tools: true
             extras: true
-          - preset: "win32-vcpkg"
+          - preset: 'win32-vcpkg'
             tools: true
             extras: true
-          - preset: "win32-vcpkg-profile"
+          - preset: 'win32-vcpkg-profile'
             tools: true
             extras: true
-          - preset: "win32-vcpkg-internal"
+          - preset: 'win32-vcpkg-internal'
             tools: true
             extras: true
-          - preset: "win32-vcpkg-debug"
+          - preset: 'win32-vcpkg-debug'
             tools: true
             extras: true
       fail-fast: false
     uses: ./.github/workflows/build-toolchain.yml
     with:
-      game: "Generals"
+      game: 'Generals'
       preset: ${{ matrix.preset }}
       tools: ${{ matrix.tools }}
       extras: ${{ matrix.extras }}
@@ -103,35 +105,159 @@ jobs:
     strategy:
       matrix:
         include:
-          - preset: "vc6"
+          - preset: 'vc6'
             tools: true
             extras: true
-          - preset: "vc6-profile"
+          - preset: 'vc6-profile'
             tools: true
             extras: true
-          - preset: "vc6-internal"
+          - preset: 'vc6-internal'
             tools: true
             extras: true
-          - preset: "vc6-debug"
+          - preset: 'vc6-debug'
             tools: true
             extras: true
-          - preset: "win32"
+          - preset: 'win32'
             tools: true
             extras: true
-          - preset: "win32-profile"
+          - preset: 'win32-profile'
             tools: true
             extras: true
-          - preset: "win32-internal"
+          - preset: 'win32-internal'
             tools: true
             extras: true
-          - preset: "win32-debug"
+          - preset: 'win32-debug'
             tools: true
             extras: true
       fail-fast: false
     uses: ./.github/workflows/build-toolchain.yml
     with:
-      game: "GeneralsMD"
+      game: 'GeneralsMD'
       preset: ${{ matrix.preset }}
       tools: ${{ matrix.tools }}
       extras: ${{ matrix.extras }}
     secrets: inherit
+
+  # New job to prepare content for GitHub Pages
+  prepare-gh-pages:
+    name: Prepare GitHub Pages
+    # Only run for pushes to the main branch,
+    # and only if the build jobs it needs were scheduled to run and succeeded.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs:
+      [build-generals, build-generalsmd] # Runs if both build jobs (if triggered) succeed.
+      # If a build job is skipped due to path filtering, this job will also be skipped.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all workflow artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./all-build-artifacts/ # Download all artifacts into this directory
+          # Artifacts will be in subdirectories named after the artifact name by default
+
+      - name: List downloaded artifacts (for debugging)
+        run: |
+          echo "Downloaded artifacts structure:"
+          ls -R ./all-build-artifacts/
+
+      - name: Create Pages content directory
+        run: mkdir ./_site
+
+      - name: Generate index.html and organize artifacts
+        shell: bash
+        run: |
+          SITE_DIR="./_site"
+          INDEX_HTML="$SITE_DIR/index.html"
+          DOWNLOADS_DEST_DIR="$SITE_DIR/downloads" # Store actual files here
+
+          mkdir -p "$DOWNLOADS_DEST_DIR"
+
+          echo "<!DOCTYPE html>" > "$INDEX_HTML"
+          echo "<html lang='en'>" >> "$INDEX_HTML"
+          echo "<head><meta charset='UTF-8'><title>Build Artifacts</title></head>" >> "$INDEX_HTML"
+          echo "<body>" >> "$INDEX_HTML"
+          echo "<h1>Build Artifacts</h1>" >> "$INDEX_HTML"
+          echo "<p>Commit: <a href='${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}'>${{ github.sha }}</a></p>" >> "$INDEX_HTML"
+          echo "<p>Workflow Run: <a href='${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'>#${{ github.run_number }}</a></p>" >> "$INDEX_HTML"
+          echo "<p>Last updated: $(TZ=UTC date -u +"%Y-%m-%d %H:%M:%S %Z")</p>" >> "$INDEX_HTML"
+          echo "<ul>" >> "$INDEX_HTML"
+
+          # Artifacts were downloaded into subdirectories under ./all-build-artifacts/
+          # e.g., ./all-build-artifacts/Generals-vc6+t+e/Game.exe
+          shopt -s nullglob # Ensures loop doesn't run if no matches
+          artifact_count=0
+          for artifact_bundle_src_dir in ./all-build-artifacts/*; do
+            if [ -d "$artifact_bundle_src_dir" ]; then
+              artifact_bundle_name=$(basename "$artifact_bundle_src_dir")
+              echo "Processing artifact bundle: $artifact_bundle_name"
+              
+              echo "  <li>" >> "$INDEX_HTML"
+              echo "    <strong>$artifact_bundle_name</strong>" >> "$INDEX_HTML"
+              echo "    <ul>" >> "$INDEX_HTML"
+              
+              # Create a target directory for this specific bundle's files within 'downloads'
+              # This keeps the URL structure cleaner: /downloads/BUNDLE_NAME/file.exe
+              current_bundle_target_dir="$DOWNLOADS_DEST_DIR/$artifact_bundle_name"
+              mkdir -p "$current_bundle_target_dir"
+              
+              file_in_bundle_count=0
+              for file_path in "$artifact_bundle_src_dir"/*; do
+                if [ -f "$file_path" ]; then
+                  file_name=$(basename "$file_path")
+                  # Relative path for the link from site root (index.html)
+                  link_path="downloads/$artifact_bundle_name/$file_name"
+                  
+                  cp "$file_path" "$current_bundle_target_dir/$file_name"
+                  echo "      <li><a href=\"$link_path\">$file_name</a></li>" >> "$INDEX_HTML"
+                  file_in_bundle_count=$((file_in_bundle_count + 1))
+                fi
+              done
+
+              if [ "$file_in_bundle_count" -eq 0 ]; then
+                echo "      <li>No files found in this artifact bundle.</li>" >> "$INDEX_HTML"
+              fi
+              echo "    </ul>" >> "$INDEX_HTML"
+              echo "  </li>" >> "$INDEX_HTML"
+              artifact_count=$((artifact_count + 1))
+            fi
+          done
+          shopt -u nullglob
+
+          if [ "$artifact_count" -eq 0 ]; then
+             echo "  <li>No build artifacts were found or processed for this run.</li>" >> "$INDEX_HTML"
+          fi
+
+          echo "</ul>" >> "$INDEX_HTML"
+          echo "</body></html>" >> "$INDEX_HTML"
+
+          echo "Generated index.html content:"
+          cat "$INDEX_HTML"
+          echo "Site structure in $SITE_DIR:"
+          ls -R "$SITE_DIR"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site # Upload the directory we just prepared
+
+  # New job to deploy to GitHub Pages
+  deploy-gh-pages:
+    name: Deploy to GitHub Pages
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: prepare-gh-pages # Runs only if prepare-gh-pages completes successfully
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    # Permissions are inherited from the workflow level but specified here for clarity
+    permissions:
+      pages: write
+      id-token: write
+    concurrency: # Optional: ensures only one deployment to Pages at a time for this repo
+      group: ${{ github.repository }}-pages
+      cancel-in-progress: false
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        # This action automatically picks up the artifact uploaded by actions/upload-pages-artifact
