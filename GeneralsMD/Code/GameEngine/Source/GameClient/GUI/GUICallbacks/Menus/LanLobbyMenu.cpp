@@ -42,6 +42,7 @@
 #include "Common/QuotedPrintable.h"
 #include "Common/UserPreferences.h"
 #include "GameClient/AnimateWindowManager.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/GameText.h"
 #include "GameClient/MapUtil.h"
 #include "GameClient/Mouse.h"
@@ -73,34 +74,52 @@ static Bool justEntered = FALSE;
 
 LANPreferences::LANPreferences( void )
 {
-	// note, the superclass will put this in the right dir automatically, this is just a leaf name
-	load("Network.ini");
+	loadDefault();
 }
 
 LANPreferences::~LANPreferences()
 {
 }
 
+Bool LANPreferences::loadDefault()
+{
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		AsciiString fname;
+		fname.format("Network_Instance%.2u.ini", rts::ClientInstance::getInstanceId());
+		return load(fname);
+	}
+
+	return load("Network.ini");
+}
+
 UnicodeString LANPreferences::getUserName(void)
 {
 	UnicodeString ret;
+
 	LANPreferences::const_iterator it = find("UserName");
-	if (it == end())
+	if (it != end())
 	{
-		IPEnumeration IPs;
-		ret.translate(IPs.getMachineName());
+		// Found an user name. Use it if valid.
+		ret = QuotedPrintableToUnicodeString(it->second);
+		ret.trim();
+		if (!ret.isEmpty())
+		{
+			return ret;
+		}
+	}
+
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		// TheSuperHackers @feature Use the instance id as default user name
+		// to avoid duplicate names for multiple client instances.
+		ret.format(L"Instance%.2d", rts::ClientInstance::getInstanceId());
 		return ret;
 	}
 
-	ret = QuotedPrintableToUnicodeString(it->second);
-	ret.trim();
-	if (ret.isEmpty())
-	{
-		IPEnumeration IPs;
-		ret.translate(IPs.getMachineName());
-		return ret;
-	}
-	
+	// Use machine name as default user name.
+	IPEnumeration IPs;
+	ret.translate(IPs.getMachineName());
 	return ret;
 }
 
