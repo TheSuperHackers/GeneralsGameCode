@@ -31,6 +31,7 @@
 #include "Common/LocalFileSystem.h"
 #include "Common/version.h"
 #include "Common/Recorder.h"
+#include "Common/ReplayListCsv.h"
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
@@ -442,7 +443,6 @@ Int parseSimReplayList(char *args[], int num)
 {
 	if (TheWritableGlobalData && num > 1)
 	{
-		void ReadReplayListFromCsv(AsciiString filename, std::vector<AsciiString>* replayList);
 		AsciiString filename = args[1];
 		ReadReplayListFromCsv(filename, &TheWritableGlobalData->m_simulateReplayList);
 		return 2;
