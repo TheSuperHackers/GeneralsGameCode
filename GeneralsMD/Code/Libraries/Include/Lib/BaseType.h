@@ -406,4 +406,9 @@ struct RGBAColorInt
 
 };
 
+// Modulo function working with negative values, required for angles
+inline Real nmod(Real x, Real y) {
+    return fmod(fmod(x, y) + y, y);
+}
+
 #endif // _BASE_TYPE_H_

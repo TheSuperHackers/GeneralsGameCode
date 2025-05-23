@@ -404,12 +404,21 @@ Bool TurretAI::friend_turnTowardsAngle(Real desiredAngle, Real rateModifier, Rea
 	Real origAngle = getTurretAngle();
 	Real actualAngle = origAngle;
 	Real turnRate = getTurnRate() * rateModifier;
-	Real angleDiff = normalizeAngle(desiredAngle - actualAngle);
+	// Real angleDiff = normalizeAngle(desiredAngle - actualAngle);
+	Real angleDiff = stdAngleDiffMod(desiredAngle, actualAngle);
 
 	// ---
 	if (hasLimitedTurretAngle()) {
 		Real minAngle = getMinTurretAngle();
 		Real maxAngle = getMaxTurretAngle();
+
+		if (maxAngle < minAngle) { // This might be a backwards facing configuration
+			maxAngle = nmod(maxAngle, 2.0 * PI);
+			desiredAngle = nmod(desiredAngle, 2.0 * PI);
+		}
+
+		//DEBUG_LOG((">>> TurretAI::friend_turnTowardsAngle: minAngle = %f, maxAngle = %f, desiredAngle = %f, angleDiff = %f.\n",
+		//	minAngle / PI * 180.0, maxAngle / PI * 180.0, desiredAngle / PI * 180.0, angleDiff / PI * 180.0));
 
 		bool isWithinLimit = true;
 		if ((desiredAngle > maxAngle)) {
@@ -423,7 +432,8 @@ Bool TurretAI::friend_turnTowardsAngle(Real desiredAngle, Real rateModifier, Rea
 			isWithinLimit = false;
 		}
 		if (!isWithinLimit) {
-			angleDiff = normalizeAngle(desiredAngle - actualAngle);
+			// angleDiff = normalizeAngle(desiredAngle - actualAngle);
+			angleDiff = stdAngleDiffMod(desiredAngle, actualAngle);
 			// Are we close enough to the desired angle to just snap there?
 			if (fabs(angleDiff) < turnRate)
 			{
@@ -452,6 +462,7 @@ Bool TurretAI::friend_turnTowardsAngle(Real desiredAngle, Real rateModifier, Rea
 		}
 	}
 	// -----
+	desiredAngle = normalizeAngle(desiredAngle);
 
 	// Are we close enough to the desired angle to just snap there?
 	if (fabs(angleDiff) < turnRate)
@@ -477,7 +488,10 @@ Bool TurretAI::friend_turnTowardsAngle(Real desiredAngle, Real rateModifier, Rea
 	if( m_angle != origAngle )
 		getOwner()->reactToTurretChange( m_whichTurret, origAngle, m_pitch );
 
-	Bool aligned = fabs(m_angle - desiredAngle) <= relThresh;
+	// Bool aligned = fabs(m_angle - desiredAngle) <= relThresh;
+	Bool aligned = fabs(stdAngleDiffMod(m_angle, desiredAngle)) <= relThresh;
+
+	// DEBUG_LOG((">>> TurretAI::friend_turnTowardsAngle: aligned = %d, actualAngle = %f, m_angle = %f, desiredAngle = %f, relThresh = %f\n", aligned, actualAngle * PI / 180.0, m_angle * PI / 180.0, desiredAngle * PI / 180.0, relThresh * PI / 180.0));
 
 	return aligned;
 }

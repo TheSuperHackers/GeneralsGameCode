@@ -201,6 +201,7 @@ public:
 #ifdef ALLOW_SURRENDER
  	UnsignedInt						m_surrenderDuration;					///< when we surrender, how long we stay surrendered.
 #endif
+	Real m_attackAngle;
 
 	
   AIUpdateModuleData();
@@ -331,6 +332,8 @@ public:
 	virtual void joinTeam( void );			///< This unit just got added to a team & needs to catch up.
 	
 	Bool areTurretsLinked() const { return getAIUpdateModuleData()->m_turretsLinked; }
+
+	Real getAttackAngle() const { return getAIUpdateModuleData()->m_attackAngle; }
 
 	// this is present solely for some transports to override, so that they can land before 
 	// allowing people to exit...

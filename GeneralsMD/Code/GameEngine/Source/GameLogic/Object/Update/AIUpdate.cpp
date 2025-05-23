@@ -93,6 +93,7 @@ AIUpdateModuleData::AIUpdateModuleData()
 
   m_forbidPlayerCommands = FALSE;
 	m_turretsLinked = FALSE;
+	m_attackAngle = 0.0f;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -140,8 +141,9 @@ const LocomotorTemplateVector* AIUpdateModuleData::findLocomotorTemplateVector(L
 #ifdef ALLOW_SURRENDER
 		{ "SurrenderDuration",					INI::parseDurationUnsignedInt,		NULL, offsetof(AIUpdateModuleData, m_surrenderDuration) },
 #endif
-    { "ForbidPlayerCommands",				INI::parseBool,										NULL, offsetof(AIUpdateModuleData, m_forbidPlayerCommands) },
-    { "TurretsLinked",							INI::parseBool,										NULL, offsetof( AIUpdateModuleData, m_turretsLinked ) },
+		{ "ForbidPlayerCommands",				INI::parseBool,										NULL, offsetof(AIUpdateModuleData, m_forbidPlayerCommands) },
+		{ "TurretsLinked",							INI::parseBool,										NULL, offsetof(AIUpdateModuleData, m_turretsLinked) },
+		{ "PreferredAttackAngle",				INI::parseAngleReal,					NULL, offsetof(AIUpdateModuleData, m_attackAngle) },
 		{ 0, 0, 0, 0 }
 	};
   p.add(dataFieldParse);

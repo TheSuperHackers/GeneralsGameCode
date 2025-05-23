@@ -5037,6 +5037,10 @@ StateReturnType AIAttackAimAtTargetState::update()
 				ThePartitionManager->getRelativeAngle2D(source, getMachineGoalPosition());
 			Real maxAngle = sourceAI->getMaxTurretAngle(tur);
 			Real minAngle = sourceAI->getMinTurretAngle(tur);
+			if (maxAngle < minAngle) { // This might be a backwards facing configuration
+				maxAngle = nmod(maxAngle, 2.0 * PI);
+			}
+
 			if ((relAngle < maxAngle) && (relAngle > minAngle)) {
 				// If the target is inside our maximum turret angle, we can continue
 				return STATE_CONTINUE;
@@ -5071,6 +5075,12 @@ StateReturnType AIAttackAimAtTargetState::update()
 											ThePartitionManager->getRelativeAngle2D( source, victim ) : 
 											ThePartitionManager->getRelativeAngle2D( source, getMachineGoalPosition() );
 
+		// do we prefer a different angle?
+		Real attackAngle = sourceAI->getAttackAngle();
+
+		// relAngle -= attackAngle;
+		// relAngle = normalizeAngle(relAngle);
+
 		const Real REL_THRESH = 0.035f;	// about 2 degrees. (getRelativeAngle2D is current only accurate to about 1.25 degrees)
 
 		Weapon* weapon = source->getCurrentWeapon();
@@ -5080,32 +5090,79 @@ StateReturnType AIAttackAimAtTargetState::update()
 		{
 			aimDelta = REL_THRESH;
 		}
-		Real aimDeltaNeg = -aimDelta;
+		//Real aimDeltaNeg = -aimDelta;
 
 		if (sourceAI->hasLimitedTurretAngle(tur)) {
-			aimDelta += sourceAI->getMaxTurretAngle(tur);
-			aimDeltaNeg += sourceAI->getMinTurretAngle(tur);
+			Real maxAngle = sourceAI->getMaxTurretAngle(tur) + aimDelta;
+			Real minAngle = sourceAI->getMinTurretAngle(tur) - aimDelta;
+			if (maxAngle < minAngle) { // This might be a backwards facing configuration
+				maxAngle = nmod(maxAngle, 2.0 * PI);
+				relAngle = nmod(relAngle, 2.0 * PI);
+			}
 
+			//aimDelta += maxAngle;
+			//aimDeltaNeg += minAngle;
+
+			
 			if (m_canTurnInPlace)
+			{
+				// if out of turret turn range:
+				if (relAngle > maxAngle || relAngle < minAngle) {
+
+					// if (normalizeAngle(fabs(relAngle - maxAngle)) < normalizeAngle(fabs(relAngle - minAngle)))
+					if (fabs(relAngle - maxAngle) < fabs(relAngle - minAngle))
+					{
+						Real desiredAngle = source->getOrientation() + relAngle - maxAngle + REL_THRESH * 2;
+						desiredAngle = normalizeAngle(desiredAngle);
+						//DEBUG_LOG((">>> AIStates: relAngle = %f, aimDelta = %f, minAngle = %f, maxAngle = %f, desiredAngle = %f.\n",
+						//	relAngle / PI * 180.0, aimDelta / PI * 180.0, minAngle / PI * 180.0, maxAngle / PI * 180.0, desiredAngle / PI * 180.0));
+
+						sourceAI->setLocomotorGoalOrientation(desiredAngle);
+						m_setLocomotor = true;
+					}
+					else {
+						Real desiredAngle = source->getOrientation() + relAngle - minAngle - REL_THRESH * 2;
+						desiredAngle = normalizeAngle(desiredAngle);
+						DEBUG_LOG((">>> AIStates: relAngle = %f, aimDelta = %f, minAngle = %f, maxAngle = %f, desiredAngle = %f.\n",
+							relAngle / PI * 180.0, aimDelta / PI * 180.0, minAngle / PI * 180.0, maxAngle / PI * 180.0, desiredAngle / PI * 180.0));
+
+
+						sourceAI->setLocomotorGoalOrientation(desiredAngle);
+						m_setLocomotor = true;
+					}
+				}
+			}
+
+			/*if (m_canTurnInPlace)
 			{
 				if (relAngle < aimDeltaNeg)
 				{
-					Real desiredAngle = source->getOrientation() + relAngle - aimDeltaNeg - REL_THRESH;
+					Real desiredAngle = source->getOrientation() + relAngle - aimDeltaNeg - REL_THRESH - attackAngle;
+					desiredAngle = normalizeAngle(desiredAngle);
+					DEBUG_LOG((">>> AIStates: relAngle = %f, aimDelta = %f, aimDeltaNeg = %f, desiredAngle = %f.\n",
+						relAngle / PI * 180.0, aimDelta / PI * 180.0, aimDeltaNeg / PI * 180.0, desiredAngle / PI * 180.0));
+
 					sourceAI->setLocomotorGoalOrientation(desiredAngle);
 					m_setLocomotor = true;
 				}
 				else if (relAngle > aimDelta) {
-					Real desiredAngle = source->getOrientation() + relAngle - aimDelta + REL_THRESH;
+					Real desiredAngle = source->getOrientation() + relAngle - aimDelta + REL_THRESH - attackAngle;
+					desiredAngle = normalizeAngle(desiredAngle);
+					DEBUG_LOG((">>> AIStates: relAngle = %f, aimDelta = %f, aimDeltaNeg = %f, desiredAngle = %f.\n",
+						relAngle /PI * 180.0, aimDelta / PI * 180.0, aimDeltaNeg / PI * 180.0, desiredAngle / PI * 180.0));
+
+
 					sourceAI->setLocomotorGoalOrientation(desiredAngle);
 					m_setLocomotor = true;
 				}
-			}
+			}*/
 			else
 			{
 				sourceAI->setLocomotorGoalPositionExplicit(m_isAttackingObject ? *victim->getPosition() : *getMachineGoalPosition());
 			}
 		}
 		else {
+			relAngle -= attackAngle;
 			//DEBUG_LOG(("AIM: desired %f, actual %f, delta %f, aimDelta %f, goalpos %f %f\n",rad2deg(obj->getOrientation() + relAngle),rad2deg(obj->getOrientation()),rad2deg(relAngle),rad2deg(aimDelta),victim->getPosition()->x,victim->getPosition()->y));
 			if (m_canTurnInPlace)
 			{
