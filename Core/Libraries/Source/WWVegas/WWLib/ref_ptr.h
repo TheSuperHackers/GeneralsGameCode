@@ -216,6 +216,8 @@
 					};
 */
 
+#define ALLOW_AUTOMATIC_REF_COUNT_PTR_CONSTRUCTION
+
 class DummyPtrType;
 
 template <class T>
@@ -416,7 +418,7 @@ bool operator <(const RefCountPtr<LHS> & lhs, const RefCountPtr<RHS> & rhs)
 template <class RHS>
 bool operator ==(DummyPtrType * dummy, const RefCountPtr<RHS> & rhs)
 {
-	FAIL_IF(0 != dummy) {
+	if (0 != dummy) {
 		return false;
 	}
 
@@ -428,7 +430,7 @@ bool operator ==(DummyPtrType * dummy, const RefCountPtr<RHS> & rhs)
 template <class RHS>
 bool operator !=(DummyPtrType * dummy, const RefCountPtr<RHS> & rhs)
 {
-	FAIL_IF(0 != dummy) {
+	if (0 != dummy) {
 		return true;
 	}
 
