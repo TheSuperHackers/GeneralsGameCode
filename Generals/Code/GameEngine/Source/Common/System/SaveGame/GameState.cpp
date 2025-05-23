@@ -59,7 +59,7 @@
 #include "GameLogic/SidesList.h"
 #include "GameLogic/TerrainLogic.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -236,7 +236,7 @@ UnicodeString getUnicodeDateBuffer(SYSTEMTIME timeVal)
 								 DATE_SHORTDATE,
 								 &timeVal,
 								 NULL,
-								 dateBuffer, sizeof(dateBuffer) );
+								 dateBuffer, ARRAY_SIZE(dateBuffer) );
 	displayDateBuffer.set(dateBuffer);
 	return displayDateBuffer;
 	//displayDateBuffer.format( L"%ls", dateBuffer );
@@ -270,7 +270,7 @@ UnicodeString getUnicodeTimeBuffer(SYSTEMTIME timeVal)
 								 &timeVal,
 								 NULL,
 								 timeBuffer,
-								 sizeof(timeBuffer) );
+								 ARRAY_SIZE(timeBuffer) );
 	displayTimeBuffer.set(timeBuffer);
 	return displayTimeBuffer;
 }
@@ -413,7 +413,7 @@ static void findHighFileNumber( AsciiString filename, void *userData )
 
 	// strip off the extension at the end of the filename
 	AsciiString nameOnly = filename;
-	for( Int count = 0; count < strlen( SAVE_GAME_EXTENSION ); count++ )
+	for( size_t count = 0; count < strlen( SAVE_GAME_EXTENSION ); count++ )
 		nameOnly.removeLastChar();
 	
 	// convert filename (which is only numbers) to a number

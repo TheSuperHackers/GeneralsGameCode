@@ -53,7 +53,7 @@
 #include "GameClient/DisconnectMenu.h"
 #include "GameClient/InGameUI.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -65,7 +65,7 @@
 ConnectionManager::~ConnectionManager(void)
 {
 	if (m_localUser != NULL) {
-		m_localUser->deleteInstance();
+		deleteInstance(m_localUser);
 		m_localUser = NULL;
 	}
 
@@ -78,14 +78,14 @@ ConnectionManager::~ConnectionManager(void)
 	Int i = 0;
 	for (; i < MAX_SLOTS; ++i) {
 		if (m_frameData[i] != NULL) {
-			m_frameData[i]->deleteInstance();
+			deleteInstance(m_frameData[i]);
 			m_frameData[i] = NULL;
 		}
 	}
 
 	for (i = 0; i < NUM_CONNECTIONS; ++i) {
 		if (m_connections[i] != NULL) {
-			m_connections[i]->deleteInstance();
+			deleteInstance(m_connections[i]);
 			m_connections[i] = NULL;
 		}
 	}
@@ -102,17 +102,17 @@ ConnectionManager::~ConnectionManager(void)
 	}
 
 	if (m_pendingCommands != NULL) {
-		m_pendingCommands->deleteInstance();
+		deleteInstance(m_pendingCommands);
 		m_pendingCommands = NULL;
 	}
 
 	if (m_relayedCommands != NULL) {
-		m_relayedCommands->deleteInstance();
+		deleteInstance(m_relayedCommands);
 		m_relayedCommands = NULL;
 	}
 
 	if (m_netCommandWrapperList != NULL) {
-		m_netCommandWrapperList->deleteInstance();
+		deleteInstance(m_netCommandWrapperList);
 		m_netCommandWrapperList = NULL;
 	}
 
@@ -180,7 +180,7 @@ void ConnectionManager::init()
 
 	for (i = 0; i < MAX_SLOTS; ++i) {
 		if (m_frameData[i] != NULL) {
-			m_frameData[i]->deleteInstance();
+			deleteInstance(m_frameData[i]);
 			m_frameData[i] = NULL;
 		}
 	}
@@ -231,18 +231,18 @@ void ConnectionManager::reset()
 		m_transport = NULL;
 	}
 
-	Int i = 0;
-	for (; i < NUM_CONNECTIONS; ++i) {
+	UnsignedInt i = 0;
+	for (; i < (UnsignedInt)NUM_CONNECTIONS; ++i) {
 		if (m_connections[i] != NULL) {
-			m_connections[i]->deleteInstance();
+			deleteInstance(m_connections[i]);
 			m_connections[i] = NULL;
 		}
 	}
 
-	for (i=0; i<MAX_SLOTS; ++i)
+	for (i=0; i<(UnsignedInt)MAX_SLOTS; ++i)
 	{
 		if (m_frameData[i] != NULL) {
-			m_frameData[i]->deleteInstance();
+			deleteInstance(m_frameData[i]);
 			m_frameData[i] = NULL;
 		}
 	}
@@ -278,7 +278,7 @@ void ConnectionManager::reset()
 		m_latencyAverages[i] = 0.0;
 	}
 
-	for (i = 0; i < MAX_SLOTS; ++i) {
+	for (i = 0; i < (UnsignedInt)MAX_SLOTS; ++i) {
 		m_packetRouterFallback[i] = -1;
 	}
 
@@ -383,10 +383,10 @@ void ConnectionManager::doRelay() {
 			++numPackets;
 
 			// Delete this packet since we won't be needing it anymore.
-			packet->deleteInstance();
+			deleteInstance(packet);
 			packet = NULL;
 
-			cmdList->deleteInstance();
+			deleteInstance(cmdList);
 			cmdList = NULL;
 
 			// signal that this has been processed.
@@ -410,10 +410,10 @@ void ConnectionManager::doRelay() {
 	++numPackets;
 
 	// Delete this packet since we won't be needing it anymore.
-	packet->deleteInstance();
+	deleteInstance(packet);
 	packet = NULL;
 
-	cmdList->deleteInstance();
+	deleteInstance(cmdList);
 	cmdList = NULL;
 }
 
@@ -682,7 +682,7 @@ void ConnectionManager::processChat(NetChatCommandMsg *msg)
 
 void ConnectionManager::processFile(NetFileCommandMsg *msg) 
 {
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 	UnicodeString log;
 	log.format(L"Saw file transfer: '%hs' of %d bytes from %d", msg->getPortableFilename().str(), msg->getFileLength(), msg->getPlayerID());
 	DEBUG_LOG(("%ls\n", log.str()));
@@ -827,14 +827,14 @@ void ConnectionManager::processFrameInfo(NetFrameCommandMsg *msg) {
  * it doesn't keep resending it.
  */
 void ConnectionManager::processAckStage1(NetCommandMsg *msg) {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool doDebug = (msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTFRAME) ? TRUE : FALSE;
 #endif
 
 	UnsignedByte playerID = msg->getPlayerID();
 	NetCommandRef *ref = NULL;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (doDebug == TRUE) {
 		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::processAck - processing ack for command %d from player %d\n", ((NetAckStage1CommandMsg *)msg)->getCommandID(), playerID));
 	}
@@ -853,7 +853,7 @@ void ConnectionManager::processAckStage1(NetCommandMsg *msg) {
 			m_frameMetrics.processLatencyResponse(((NetFrameCommandMsg *)(ref->getCommand()))->getExecutionFrame());
 		}
 
-		ref->deleteInstance();
+		deleteInstance(ref);
 		ref = NULL;
 	}
 }
@@ -880,7 +880,7 @@ void ConnectionManager::processAckStage2(NetCommandMsg *msg) {
 		//DEBUG_LOG(("ConnectionManager::processAckStage2 - removing command %d from the pending commands list.\n", commandID));
 		DEBUG_ASSERTCRASH((m_localSlot == playerID), ("Found a command in the pending commands list that wasn't originated by the local player"));
 		m_pendingCommands->removeMessage(ref);
-		ref->deleteInstance();
+		deleteInstance(ref);
 		ref = NULL;
 	} else {
 		//DEBUG_LOG(("ConnectionManager::processAckStage2 - Couldn't find command %d from player %d in the pending commands list.\n", commandID, playerID));
@@ -898,7 +898,7 @@ void ConnectionManager::processAckStage2(NetCommandMsg *msg) {
 			m_relayedCommands->removeMessage(ref);
 			NetAckStage2CommandMsg *ackmsg = newInstance(NetAckStage2CommandMsg)(ref->getCommand());
 			sendLocalCommand(ackmsg, 1 << ackmsg->getOriginalPlayerID());
-			ref->deleteInstance();
+			deleteInstance(ref);
 			ref = NULL;
 
 			ackmsg->detach();
@@ -1035,7 +1035,7 @@ void ConnectionManager::ackCommand(NetCommandRef *ref, UnsignedInt localSlot) {
 		}
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool doDebug = (msg->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTFRAME) ? TRUE : FALSE;
 #endif
 
@@ -1045,7 +1045,7 @@ void ConnectionManager::ackCommand(NetCommandRef *ref, UnsignedInt localSlot) {
 		ackmsg = bothmsg;
 		commandID = bothmsg->getCommandID();
 		originalPlayerID = bothmsg->getOriginalPlayerID();
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		if (doDebug) {
 			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::ackCommand - doing ack both for command %d from player %d\n", bothmsg->getCommandID(), bothmsg->getOriginalPlayerID()));
 		}
@@ -1055,7 +1055,7 @@ void ConnectionManager::ackCommand(NetCommandRef *ref, UnsignedInt localSlot) {
 		ackmsg = stage1msg;
 		commandID = stage1msg->getCommandID();
 		originalPlayerID = stage1msg->getOriginalPlayerID();
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		if (doDebug) {
 			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::ackCommand - doing ack stage 1 for command %d from player %d\n", stage1msg->getCommandID(), stage1msg->getOriginalPlayerID()));
 		}
@@ -1196,7 +1196,7 @@ void ConnectionManager::update(Bool isInGame) {
 			if (m_connections[i]->isQuitting() && m_connections[i]->isQueueEmpty())
 			{
 				DEBUG_LOG(("ConnectionManager::update - deleting connection for slot %d\n", i));
-				m_connections[i]->deleteInstance();
+				deleteInstance(m_connections[i]);
 				m_connections[i] = NULL;
 			}
 		}
@@ -1204,7 +1204,7 @@ void ConnectionManager::update(Bool isInGame) {
 		if ((m_frameData[i] != NULL) && (m_frameData[i]->getIsQuitting() == TRUE)) {
 			if (m_frameData[i]->getQuitFrame() == TheGameLogic->getFrame()) {
 				DEBUG_LOG(("ConnectionManager::update - deleting frame data for slot %d on quitting frame %d\n", i, m_frameData[i]->getQuitFrame()));
-				m_frameData[i]->deleteInstance();
+				deleteInstance(m_frameData[i]);
 				m_frameData[i] = NULL;
 			}
 		}
@@ -1554,7 +1554,7 @@ Int commandsReadyDebugSpewage = 0;
  */
 Bool ConnectionManager::allCommandsReady(UnsignedInt frame, Bool justTesting /* = FALSE */) {
 	Bool retval = TRUE;
-	FrameDataReturnType frameRetVal;
+	FrameDataReturnType frameRetVal = FRAMEDATA_NOTREADY;
 //	retval = FALSE;  // ****for testing purposes only!!!!!!****
 	Int i = 0;
 	for (; (i < MAX_SLOTS) && retval; ++i) {
@@ -1730,13 +1730,13 @@ PlayerLeaveCode ConnectionManager::disconnectPlayer(Int slot) {
 
 	if ((m_frameData[slot] != NULL) && (m_frameData[slot]->getIsQuitting() == FALSE)) {
 		DEBUG_LOG(("ConnectionManager::disconnectPlayer - deleting player %d frame data\n", slot));
-		m_frameData[slot]->deleteInstance();
+		deleteInstance(m_frameData[slot]);
 		m_frameData[slot] = NULL;
 	}
 
 	if (m_connections[slot] != NULL && !m_connections[slot]->isQuitting()) {
 		DEBUG_LOG(("ConnectionManager::disconnectPlayer - deleting player %d connection\n", slot));
-		m_connections[slot]->deleteInstance();
+		deleteInstance(m_connections[slot]);
 		m_connections[slot] = NULL;
 	}
 
@@ -2315,7 +2315,7 @@ Int ConnectionManager::getSlotAverageFPS(Int slot) {
 	return m_fpsAverages[slot];
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 void ConnectionManager::debugPrintConnectionCommands() {
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::debugPrintConnectionCommands - begin commands\n"));
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
@@ -2342,12 +2342,12 @@ void ConnectionManager::notifyOthersOfCurrentFrame(Int frame) {
 	NetCommandRef *ref = NEW_NETCOMMANDREF(msg);
 	ref->setRelay(1 << m_localSlot);
 	m_disconnectManager->processDisconnectCommand(ref, this);
-	ref->deleteInstance();
+	deleteInstance(ref);
 
 	msg->detach();
 
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("ConnectionManager::notifyOthersOfCurrentFrame - start screen on debug stuff\n"));
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	debugPrintConnectionCommands();
 #endif
 }
@@ -2365,7 +2365,7 @@ void ConnectionManager::notifyOthersOfNewFrame(UnsignedInt frame) {
 	NetCommandRef *ref = NEW_NETCOMMANDREF(msg);
 	ref->setRelay(1 << m_localSlot);
 	m_disconnectManager->processDisconnectCommand(ref, this);
-	ref->deleteInstance();
+	deleteInstance(ref);
 
 	msg->detach();
 }

@@ -44,7 +44,7 @@
 #include "GameLogic/Module/BodyModule.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -265,7 +265,7 @@ UpdateSleepTime PropagandaTowerBehavior::update( void )
 				prev->next = curr->next;
 			else
 				m_insideList = curr->next;
-			curr->deleteInstance();
+			deleteInstance(curr);
 				
 		}  // end else
 
@@ -373,7 +373,7 @@ void PropagandaTowerBehavior::removeAllInfluence( void )
 	{
 
 		o = m_insideList->next;
-		m_insideList->deleteInstance();
+		deleteInstance(m_insideList);
 		m_insideList = o;
 
 	}  // end while
@@ -548,7 +548,7 @@ void PropagandaTowerBehavior::doScan( void )
 	{
 
 		next = m_insideList->next;
-		m_insideList->deleteInstance();
+		deleteInstance(m_insideList);
 		m_insideList = next;
 
 	}  // end while

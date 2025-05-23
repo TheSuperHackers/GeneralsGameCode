@@ -72,7 +72,7 @@
 #include "GameClient/GameText.h"
 #include "GameClient/HeaderTemplate.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -2660,7 +2660,7 @@ WindowLayout *GameWindowManager::winCreateLayout( AsciiString filename )
 	if( layout->load( filename ) == FALSE )
 	{
 
-		layout->deleteInstance();
+		deleteInstance(layout);
 		return NULL;
 
 	}  // end if

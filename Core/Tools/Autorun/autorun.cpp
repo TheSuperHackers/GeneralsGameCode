@@ -86,7 +86,7 @@
 #include <process.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
+#include <Utility/stdio_adapter.h>
 #include <sys/stat.h>
 #include <time.h>
 #include <winuser.h>
@@ -314,7 +314,7 @@ const char *gAppPrefix = "ar_"; // prefix to the debug log.
 
 int			FlickerPositions[ NUM_FLICKER_POSITIONS ][2];
 
-#if( _DEBUG )
+#if( RTS_DEBUG )
 char		szCDDrive[ MAX_PATH ];
 #endif
 
@@ -1008,7 +1008,7 @@ void MainWindow::Register( void )
 
 	if ( !RegisterClassEx((const WNDCLASSEX *) &wndclass ) ) {
 
-	#if(_DEBUG)
+	#if(RTS_DEBUG)
 		LPVOID szMessage; 
 
 		FormatMessage( 
@@ -2472,7 +2472,7 @@ void MainWindow::Create_Buttons( HWND hWnd, RECT *dlg_rect )
 		ButtonList[0]->Set_State( DrawButton::FOCUS_STATE );
 	}
 
-#if( _DEBUG )
+#if( RTS_DEBUG )
 	Msg( __LINE__, TEXT(__FILE__), TEXT("----------------------------------------------------------------------------------"));
 	for( i=0; i<NUM_BUTTONS; i++ ) {
 		if ( ButtonList[i]) {
@@ -3019,7 +3019,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 					}
 				}
 
-				#if(_DEBUG)
+				#if(RTS_DEBUG)
 					Msg( __LINE__, TEXT(__FILE__), TEXT("----------------------------- WM_INITDIALOG ---------------------------" ));
 					Msg( __LINE__, TEXT(__FILE__), TEXT("DeskTopWindowRect(w/o tray) = [%d,%d,%d,%d]"), tray_rect.left, tray_rect.top, tray_rect.right, tray_rect.bottom );
 					Msg( __LINE__, TEXT(__FILE__), TEXT("DeskTopWindowRect	= [%d,%d,%d,%d]"), rect.left, rect.top, rect.right, rect.bottom );
@@ -3730,7 +3730,7 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 						unsigned int success;
 
 						char filepath[MAX_PATH];
-						_snprintf(filepath, MAX_PATH, "%s%s", szArgvPath, SC4AVI_FILENAME);
+						snprintf(filepath, MAX_PATH, "%s%s", szArgvPath, SC4AVI_FILENAME);
 
 						success = GlobalMainWindow->Run_OpenFile(cd_drive, filepath, true);
 //						if (success != 0) {
@@ -3771,10 +3771,10 @@ BOOL CALLBACK  Dialog_Box_Proc( HWND window_handle, UINT message, WPARAM w_param
 
 						GetCurrentDirectory(MAX_PATH, olddir);
 
-						_snprintf(newdir, MAX_PATH, "%ssupport", szArgvPath);
+						snprintf(newdir, MAX_PATH, "%ssupport", szArgvPath);
 						SetCurrentDirectory(newdir);
 
-						_snprintf(filepath, MAX_PATH, "%s%s", szArgvPath, fname.c_str());
+						snprintf(filepath, MAX_PATH, "%s%s", szArgvPath, fname.c_str());
 
 						unsigned int success;
 						success = GlobalMainWindow->Run_OpenFile(cd_drive, filepath, false);
@@ -4691,7 +4691,7 @@ BOOL Options( Command_Line_Arguments *Orgs )
 					}
 					break;
 
-			#if( _DEBUG )
+			#if( RTS_DEBUG )
 
 				case 'c':
 					if( buffer[2] == 'd' ) {
@@ -5236,7 +5236,7 @@ unsigned int LaunchObjectClass::Launch ( void )
 		abc = _chdir( filepath );
 	}
 
-#if (_DEBUG)
+#if (RTS_DEBUG)
 
 	int cde = _getdrive();
 	_getcwd( szBuffer, _MAX_PATH );

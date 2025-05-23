@@ -37,7 +37,7 @@
 
 //#define DETERMINISTIC				// to allow repetition for debugging
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -249,7 +249,7 @@ Int GetGameClientRandomValue( int lo, int hi, const char *file, int line )
 /**/
 #ifdef DEBUG_RANDOM_CLIENT
 DEBUG_LOG(( "%d: GetGameClientRandomValue = %d (%d - %d), %s line %d\n",
-				TheGameLogic->getFrame(), rval, lo, hi, file, line ));
+				TheGameLogic ? TheGameLogic->getFrame() : -1, rval, lo, hi, file, line ));
 #endif
 /**/
 

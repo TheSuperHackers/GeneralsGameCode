@@ -53,12 +53,12 @@ enum PlayingWhich CPP_11(: Int)
 
 struct PlayingAudio
 {
-//	union
-//	{
+	union
+	{
 		HSAMPLE m_sample;
 		H3DSAMPLE m_3DSample;
 		HSTREAM m_stream;
-//	};
+	};
 
 	PlayingAudioType m_type;
 	volatile PlayingStatus m_status;	// This member is adjusted by another running thread.
@@ -73,9 +73,7 @@ struct PlayingAudio
 		m_audioEventRTS(NULL), 
 		m_requestStop(false), 
 		m_cleanupAudioEventRTS(true),
-		m_sample(0), 
-		m_3DSample(0),
-		m_stream(0),
+		m_sample(NULL), 
 		m_framesFaded(0)
 	{ }
 };
@@ -138,7 +136,7 @@ class MilesAudioManager : public AudioManager
 {
 
 	public:
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		virtual void audioDebugDisplay(DebugDisplayInterface *dd, void *, FILE *fp = NULL );
 		virtual AudioHandle addAudioEvent( const AudioEventRTS *eventToAdd );	///< Add an audio event (event must be declared in an INI file)
 #endif
@@ -323,7 +321,7 @@ class MilesAudioManager : public AudioManager
 		UnsignedInt m_num3DSamples;
 		UnsignedInt m_numStreams;
 		
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		typedef std::set<AsciiString> SetAsciiString;
 		typedef SetAsciiString::iterator SetAsciiStringIt;
 		SetAsciiString m_allEventsLoaded;

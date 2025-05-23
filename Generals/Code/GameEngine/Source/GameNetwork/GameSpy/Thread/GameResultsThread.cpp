@@ -217,8 +217,8 @@ static void WrapHTTP( const std::string& hostname, std::string& results )
 		"Content-Length: %d\r\n"
 		"\r\n";
 
-	char szHdr[256] = {0};
-	_snprintf( szHdr, 255, HEADER, hostname.c_str(), results.length() );
+	char szHdr[256];
+	snprintf( szHdr, 256, HEADER, hostname.c_str(), results.length() );
 	results = szHdr + results;
 } //WrapHTTP
 

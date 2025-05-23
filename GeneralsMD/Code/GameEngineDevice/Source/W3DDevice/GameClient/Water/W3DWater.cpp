@@ -66,7 +66,7 @@
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -314,7 +314,7 @@ WaterRenderObjClass::~WaterRenderObjClass(void)
 	{	WaterSettings[i].m_skyTextureFile.clear();
 		WaterSettings[i].m_waterTextureFile.clear();
 	}
-	((WaterTransparencySetting*)TheWaterTransparency.getNonOverloadedPointer())->deleteInstance();
+	deleteInstance((WaterTransparencySetting*)TheWaterTransparency.getNonOverloadedPointer());
 	TheWaterTransparency = NULL;
 	ReleaseResources();
 
@@ -3475,7 +3475,7 @@ void WaterRenderObjClass::xfer( Xfer *xfer )
 	}  // end if
 
 	// xfer each of the mesh data points
-	for( Int i = 0; i < m_meshDataSize; ++i )
+	for( UnsignedInt i = 0; i < m_meshDataSize; ++i )
 	{
 
 		// height

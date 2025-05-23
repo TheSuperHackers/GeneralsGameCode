@@ -61,7 +61,7 @@ UnsignedInt WindowLayoutCurrentVersion = 2;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -122,7 +122,7 @@ void GameWindowManager::processDestroyList( void )
 
 		// free the memory
 		if (doDestroy)
-			doDestroy->deleteInstance();
+			deleteInstance(doDestroy);
 
 	}  // end for
 
@@ -1613,7 +1613,7 @@ Int GameWindowManager::winUnsetModal( GameWindow *window )
 
 	// remove from top of list
 	next = m_modalHead->next;
-	m_modalHead->deleteInstance();
+	deleteInstance(m_modalHead);
 	m_modalHead = next;
 
 	return WIN_ERR_OK;
@@ -4096,4 +4096,34 @@ void GameWindowManager::registerTabList( GameWindowList tabList )
 void GameWindowManager::clearTabList( void )
 {
 	m_tabList.clear();
+}
+
+
+GameWindow *GameWindowManagerDummy::winGetWindowFromId(GameWindow *window, Int id)
+{
+	window = GameWindowManager::winGetWindowFromId(window, id);
+	if (window != NULL)
+		return window;
+
+	// Just return any window, callers expect this to be non-null
+	return m_windowList;
+}
+
+WindowMsgHandledType DummyWindowSystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
+{
+	return MSG_IGNORED;
+}
+
+GameWindow *GameWindowManagerDummy::winCreateFromScript(AsciiString filenameString, WindowLayoutInfo *info)
+{
+	WindowLayoutInfo scriptInfo;
+	GameWindow* dummyWindow = winCreate(NULL, 0, 0, 0, 100, 100, DummyWindowSystem, NULL);
+	scriptInfo.windows.push_back(dummyWindow);
+	if (info)
+		*info = scriptInfo;
+	return dummyWindow;
+}
+
+GameWindowDummy::~GameWindowDummy()
+{
 }

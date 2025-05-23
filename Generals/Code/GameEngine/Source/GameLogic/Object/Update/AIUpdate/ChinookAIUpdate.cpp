@@ -48,7 +48,7 @@
 
 const Real BIGNUM = 99999.0f;
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -656,7 +656,7 @@ public:
 		}
 
 		UnsignedInt now = TheGameLogic->getFrame();
-		for (Int i = 0; i < m_ropes.size(); ++i)
+		for (size_t i = 0; i < m_ropes.size(); ++i)
 		{
 			if (m_ropes[i].ropeDrawable)
 			{

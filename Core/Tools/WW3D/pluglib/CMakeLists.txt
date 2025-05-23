@@ -58,4 +58,10 @@ set_target_properties(core_pluglib PROPERTIES OUTPUT_NAME pluglib)
 
 target_sources(core_pluglib PRIVATE ${PLUGLIB_SRC})
 
-target_link_libraries(core_pluglib PRIVATE maxsdk)
+target_link_libraries(core_pluglib PUBLIC
+    core_utility
+)
+
+target_link_libraries(core_pluglib PRIVATE
+    maxsdk
+)

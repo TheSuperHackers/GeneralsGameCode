@@ -42,7 +42,7 @@ CommandList *TheCommandList = NULL;
 
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -79,7 +79,7 @@ GameMessage::~GameMessage( )
 	for( arg = m_argList; arg; arg=nextArg )
 	{
 		nextArg = arg->m_next;
-		arg->deleteInstance();
+		deleteInstance(arg);
 	}
 
 	// detach message from list
@@ -347,7 +347,7 @@ AsciiString GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
 	CHECK_IF(MSG_META_CHAT_EVERYONE)
 	CHECK_IF(MSG_META_DIPLOMACY)
 	CHECK_IF(MSG_META_OPTIONS)
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	CHECK_IF(MSG_META_HELP)
 #endif
 	CHECK_IF(MSG_META_TOGGLE_LOWER_DETAILS)
@@ -405,7 +405,7 @@ AsciiString GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
     CHECK_IF(MSG_META_TOGGLE_FAST_FORWARD_REPLAY)
     
     
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	CHECK_IF(MSG_META_DEMO_TOGGLE_BEHIND_BUILDINGS)
 	CHECK_IF(MSG_META_DEMO_TOGGLE_LETTERBOX)
 	CHECK_IF(MSG_META_DEMO_TOGGLE_MESSAGE_TEXT)
@@ -518,12 +518,12 @@ AsciiString GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
 	CHECK_IF(MSG_META_DEBUG_SLEEPY_UPDATE_PERFORMANCE)
 	CHECK_IF(MSG_META_DEBUG_WIN)
 	CHECK_IF(MSG_META_DEMO_TOGGLE_DEBUG_STATS)
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 
-#if defined(_INTERNAL) || defined(_DEBUG)
+#if defined(RTS_INTERNAL) || defined(RTS_DEBUG)
 	CHECK_IF(MSG_META_DEMO_TOGGLE_AUDIODEBUG)
-#endif//defined(_INTERNAL) || defined(_DEBUG)
+#endif//defined(RTS_INTERNAL) || defined(RTS_DEBUG)
 #ifdef DUMP_PERF_STATS
 	CHECK_IF(MSG_META_DEMO_PERFORM_STATISTICAL_DUMP)
 #endif//DUMP_PERF_STATS
@@ -666,7 +666,7 @@ AsciiString GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
 	CHECK_IF(MSG_SELF_DESTRUCT)
 	CHECK_IF(MSG_CREATE_FORMATION)
 	CHECK_IF(MSG_LOGIC_CRC)
-#if defined(_DEBUG) || defined(_INTERNAL)  
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)  
 	CHECK_IF(MSG_DEBUG_KILL_SELECTION)
 	CHECK_IF(MSG_DEBUG_HURT_OBJECT)
 	CHECK_IF(MSG_DEBUG_KILL_OBJECT)
@@ -711,7 +711,7 @@ GameMessageList::~GameMessageList()
 		// set list ptr to null to avoid it trying to remove itself from the list
 		// that we are in the process of nuking...
 		msg->friend_setList(NULL);
-		msg->deleteInstance();
+		deleteInstance(msg);
 	}
 }
 
@@ -999,7 +999,7 @@ void MessageStream::removeTranslator( TranslatorID id )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 Bool isInvalidDebugCommand( GameMessage::Type t )
 {
@@ -1087,7 +1087,7 @@ void MessageStream::propagateMessages( void )
 		for( msg=m_firstMessage; msg; msg=next )
 		{			
 			if (ss->m_translator 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 				&& !isInvalidDebugCommand(msg->getType())
 #endif
 				)
@@ -1096,7 +1096,7 @@ void MessageStream::propagateMessages( void )
 				next = msg->next();
 				if (disp == DESTROY_MESSAGE)
 				{
-					msg->deleteInstance();
+					deleteInstance(msg);
 				}
 			} 
 			else 
@@ -1183,7 +1183,7 @@ void CommandList::destroyAllMessages( void )
 	for( msg=m_firstMessage; msg; msg=next )
 	{
 		next = msg->next();
-		msg->deleteInstance();
+		deleteInstance(msg);
 	}
 	
 	m_firstMessage = NULL;

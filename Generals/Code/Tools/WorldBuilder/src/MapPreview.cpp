@@ -411,13 +411,15 @@ void MapPreview::buildMapPreviewTexture( CString tgaName )
 		}  // end for x
 
 	}  // end for y
-	Targa tga;
-	tga.Header.Width = MAP_PREVIEW_WIDTH;
-	tga.Header.Height = MAP_PREVIEW_HEIGHT;
-	tga.Header.PixelDepth = 32;
-	tga.Header.ImageType = TGA_TRUECOLOR;
-	tga.SetImage((char *)m_pixelBuffer);
-	tga.Save(tgaName,TGAF_IMAGE, FALSE);
+	{
+		Targa tga;
+		tga.Header.Width = MAP_PREVIEW_WIDTH;
+		tga.Header.Height = MAP_PREVIEW_HEIGHT;
+		tga.Header.PixelDepth = 32;
+		tga.Header.ImageType = TGA_TRUECOLOR;
+		tga.SetImage((char *)m_pixelBuffer);
+		tga.Save(tgaName,TGAF_IMAGE, FALSE);
+	}
 
 }  // end buildTerrainTexture
 

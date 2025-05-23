@@ -25,7 +25,7 @@
 #include <windows.h>
 #include <lmcons.h>
 #include <stdlib.h>
-#include <stdio.h>
+#include <Utility/stdio_adapter.h>
 #include <string.h>
 
 #include "resource.h"
@@ -57,8 +57,7 @@ static void logStuff(const char *fmt, ...)
 	static char buffer[1024];
 	va_list va;
 	va_start( va, fmt );
-	_vsnprintf(buffer, 1024, fmt, va );
-	buffer[1023] = 0;
+	vsnprintf(buffer, 1024, fmt, va );
 	va_end( va );
 
 	puts(buffer);
@@ -84,8 +83,7 @@ static void debugLog(const char *fmt, ...)
 	static char buffer[1024];
 	va_list va;
 	va_start( va, fmt );
-	_vsnprintf(buffer, 1024, fmt, va );
-	buffer[1023] = 0;
+	vsnprintf(buffer, 1024, fmt, va );
 	va_end( va );
 
 	OutputDebugString( buffer );

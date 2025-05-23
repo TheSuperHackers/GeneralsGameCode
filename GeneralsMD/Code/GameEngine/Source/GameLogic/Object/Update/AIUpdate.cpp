@@ -73,7 +73,7 @@
 
 #define SLEEPY_AI
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -104,7 +104,7 @@ AIUpdateModuleData::~AIUpdateModuleData()
 		{
 			TurretAIData* td = const_cast<TurretAIData*>(m_turretData[i]);
 			if (td)
-				td->deleteInstance();
+				deleteInstance(td);
 		}
 	}
 }
@@ -644,13 +644,13 @@ AIUpdateInterface::~AIUpdateInterface( void )
 
 	if( m_stateMachine ) {
 		m_stateMachine->halt();
-		m_stateMachine->deleteInstance();
+		deleteInstance(m_stateMachine);
 	}
 
 	for (int i = 0; i < MAX_TURRETS; i++)
 	{
 		if (m_turretAI[i])
-			m_turretAI[i]->deleteInstance();
+			deleteInstance(m_turretAI[i]);
 		m_turretAI[i] = NULL;
 	}
 	m_stateMachine = NULL;
@@ -841,7 +841,7 @@ Bool AIUpdateInterface::chooseLocomotorSetExplicit(LocomotorSetType wst)
 	{
 		m_locomotorSet.clear();
 		m_curLocomotor = NULL;
-		for (Int i = 0; i < set->size(); ++i)
+		for (size_t i = 0; i < set->size(); ++i)
 		{
 			const LocomotorTemplate* lt = set->at(i);
 			if (lt)
@@ -2026,7 +2026,7 @@ void AIUpdateInterface::destroyPath( void )
 {
 	// destroy previous path
 	if (m_path)
-		m_path->deleteInstance();
+		deleteInstance(m_path);
 
 	m_path = NULL;
 	m_waitingForPath = FALSE; // we no longer need it.
@@ -2205,7 +2205,7 @@ UpdateSleepTime AIUpdateInterface::doLocomotor( void )
 							// obstacles, and follow the intermediate path points.
 							ClosestPointOnPathInfo info;
 							CRCDEBUG_LOG(("AIUpdateInterface::doLocomotor() - calling computePointOnPath() for %s\n",
-								DescribeObject(getObject()).str()));
+								DebugDescribeObject(getObject()).str()));
 							getPath()->computePointOnPath(getObject(), m_locomotorSet, *getObject()->getPosition(), info);
 							onPathDistToGoal = info.distAlongPath;
 							goalPos = info.posOnPath;
@@ -2332,7 +2332,7 @@ void AIUpdateInterface::setLocomotorGoalPositionExplicit(const Coord3D& newPos)
 {
 	m_locomotorGoalType = POSITION_EXPLICIT;
 	m_locomotorGoalData = newPos;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 if (_isnan(m_locomotorGoalData.x) || _isnan(m_locomotorGoalData.y) || _isnan(m_locomotorGoalData.z))
 {
 	DEBUG_CRASH(("NAN in setLocomotorGoalPositionExplicit"));
@@ -2345,7 +2345,7 @@ void AIUpdateInterface::setLocomotorGoalOrientation(Real angle)
 {
 	m_locomotorGoalType = ANGLE;
 	m_locomotorGoalData.x = angle;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 if (_isnan(m_locomotorGoalData.x) || _isnan(m_locomotorGoalData.y) || _isnan(m_locomotorGoalData.z))
 {
 	DEBUG_CRASH(("NAN in setLocomotorGoalOrientation"));

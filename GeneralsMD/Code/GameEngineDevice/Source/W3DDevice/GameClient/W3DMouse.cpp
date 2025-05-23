@@ -47,7 +47,7 @@
 #include "mutex.h"
 #include "thread.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
@@ -235,9 +235,11 @@ void W3DMouse::initD3DAssets(void)
 			for (Int j=0; j < MAX_2D_CURSOR_ANIM_FRAMES; j++)
 			{
 				cursorTextures[i][j]=NULL;//am->Get_Texture(m_cursorInfo[i].textureName.str());
-				m_currentD3DSurface[i]=NULL;
 			}
 		}
+
+		for (Int x = 0; x < MAX_2D_CURSOR_ANIM_FRAMES; x++)
+			m_currentD3DSurface[x]=NULL;
 	}
 }
 

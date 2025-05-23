@@ -49,7 +49,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/TerrainLogic.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -1215,7 +1215,7 @@ ParticleSystem::~ParticleSystem()
 
 	// destroy all particles "in the air"
 	while (m_systemParticlesHead)
-		m_systemParticlesHead->deleteInstance();
+		deleteInstance(m_systemParticlesHead);
 
 	m_attachedToDrawableID = INVALID_DRAWABLE_ID;
 	m_attachedToObjectID = INVALID_ID;
@@ -2072,7 +2072,7 @@ Bool ParticleSystem::update( Int localPlayerIndex  )
 		{
 			oldParticle = p;
 			p = p->m_systemNext;
-			oldParticle->deleteInstance();
+			deleteInstance(oldParticle);
 		} else {
 			p = p->m_systemNext;
 		}
@@ -2860,7 +2860,7 @@ ParticleSystemManager::~ParticleSystemManager()
 	TemplateMap::iterator begin(m_templateMap.begin());
 	TemplateMap::iterator end(m_templateMap.end());
 	for (; begin != end; ++begin) {
-		(*begin).second->deleteInstance();
+		deleteInstance((*begin).second);
 	}
 }
 
@@ -2896,7 +2896,7 @@ void ParticleSystemManager::reset( void )
 {
 	while (getParticleSystemCount()) {
 		if (m_allParticleSystemList.front()) {
-			m_allParticleSystemList.front()->deleteInstance();
+			deleteInstance(m_allParticleSystemList.front());
 		}
 	}
 
@@ -2938,21 +2938,19 @@ void ParticleSystemManager::update( void )
 	m_lastLogicFrameUpdate = TheGameLogic->getFrame();
 
 	//USE_PERF_TIMER(ParticleSystemManager)
-	ParticleSystem *sys;
-
-	for(ParticleSystemListIt it = m_allParticleSystemList.begin(); it != m_allParticleSystemList.end();) 
+	ParticleSystemListIt it = m_allParticleSystemList.begin(); 
+	while( it != m_allParticleSystemList.end() )  
 	{
-		sys = (*it);
+		// TheSuperHackers @info Must increment the list iterator before potential element erasure from the list.
+		ParticleSystem* sys = *it++;
+
 		if (!sys) {
 			continue;
 		}
 
 		if (sys->update(m_localPlayerIndex) == false)
 		{
-			++it;
-			sys->deleteInstance();
-		} else {
-			++it;
+			deleteInstance(sys);
 		}
 	}
 }
@@ -3053,7 +3051,7 @@ ParticleSystemTemplate *ParticleSystemManager::newTemplate( const AsciiString &n
 		sysTemplate = newInstance(ParticleSystemTemplate)( name );
 
 		if (! m_templateMap.insert(std::make_pair(name, sysTemplate)).second) {
-			sysTemplate->deleteInstance();
+			deleteInstance(sysTemplate);
 			sysTemplate = NULL;
 		}
 	}
@@ -3214,7 +3212,7 @@ Int ParticleSystemManager::removeOldestParticles( UnsignedInt count,
 		{
 			if( m_allParticlesHead[ i ] ) 
 			{
-				m_allParticlesHead[ i ]->deleteInstance();
+				deleteInstance(m_allParticlesHead[ i ]);
 				break;  // exit for
 			}
 		}

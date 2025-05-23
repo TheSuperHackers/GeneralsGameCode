@@ -388,7 +388,7 @@ void WorldHeightMapEdit::loadBaseImages(void)
 {
  
  	/// @todo - take this out when we are done evaluating terrain textures. 
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
  	loadDirectoryOfImages("..\\TestArt\\TestTerrain");
 #endif
 
@@ -2014,7 +2014,7 @@ void WorldHeightMapEdit::removeFirstObject(void)
 	MapObject *firstObj = MapObject::TheMapObjectListPtr;
 	MapObject::TheMapObjectListPtr = firstObj->getNext();
 	firstObj->setNextMap(NULL); // so we don't delete the whole list.
-	firstObj->deleteInstance();
+	deleteInstance(firstObj);
 }
 
 //=============================================================================

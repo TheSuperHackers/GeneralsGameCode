@@ -57,7 +57,7 @@
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -696,7 +696,7 @@ void deleteNotificationBox( void )
 	if(noticeLayout)
 	{
 		noticeLayout->destroyWindows();
-		noticeLayout->deleteInstance();
+		deleteInstance(noticeLayout);
 		noticeLayout = NULL;
 	}
 }
@@ -1178,7 +1178,7 @@ static void closeRightClickMenu(GameWindow *win)
 		if(!winLay)
 			return;
 		winLay->destroyWindows();					
-		winLay->deleteInstance();
+		deleteInstance(winLay);
 		winLay = NULL;
 
 	}

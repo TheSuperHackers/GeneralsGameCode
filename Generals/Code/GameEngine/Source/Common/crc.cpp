@@ -28,6 +28,7 @@
 #include "Common/crc.h"
 #include "Common/Debug.h"
 
+#ifdef RTS_DEBUG
 
 void CRC::addCRC( UnsignedByte val )
 {
@@ -79,3 +80,4 @@ UnsignedInt CRC::get( void )
 
 }  // end skip
 
+#endif

@@ -55,7 +55,7 @@
 
 const Real CLOSE_ENOUGH = (25.0f);
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -429,7 +429,7 @@ void AITNGuardInnerState::onExit( StateExitType status )
 	if (m_attackState) 
 	{
 		m_attackState->onExit(status);
-		m_attackState->deleteInstance();
+		deleteInstance(m_attackState);
 		m_attackState = NULL;
 	}
 }
@@ -526,7 +526,7 @@ void AITNGuardOuterState::onExit( StateExitType status )
 	if (m_attackState) 
 	{
 		m_attackState->onExit(status);
-		m_attackState->deleteInstance();
+		deleteInstance(m_attackState);
 		m_attackState = NULL;
 	}
 }
@@ -832,7 +832,7 @@ void AITNGuardAttackAggressorState::onExit( StateExitType status )
 	if (m_attackState) 
 	{
 		m_attackState->onExit(status);
-		m_attackState->deleteInstance();
+		deleteInstance(m_attackState);
 		m_attackState = NULL;
 	}
 

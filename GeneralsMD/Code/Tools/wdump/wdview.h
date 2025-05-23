@@ -52,7 +52,7 @@ public:
 // Implementation
 public:
 	virtual ~CWdumpView();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
@@ -68,7 +68,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-#ifndef _DEBUG  // debug version in wdumpView.cpp
+#ifndef RTS_DEBUG  // debug version in wdumpView.cpp
 inline CWdumpDoc* CWdumpView::GetDocument()
    { return (CWdumpDoc*)m_pDocument; }
 #endif

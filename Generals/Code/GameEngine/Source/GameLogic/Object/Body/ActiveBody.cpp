@@ -57,7 +57,7 @@
 #include "GameLogic/Module/DieModule.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -850,7 +850,7 @@ void ActiveBody::deleteAllParticleSystems( void )
 		nextBodySystem = m_particleSystems->m_next;
 
 		// destroy this entry
-		m_particleSystems->deleteInstance();
+		deleteInstance(m_particleSystems);
 
 		// set the body systems head to the next
 		m_particleSystems = nextBodySystem;

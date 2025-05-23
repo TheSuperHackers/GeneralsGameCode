@@ -79,7 +79,7 @@ PolygonTrigger::~PolygonTrigger(void)
 		while (cur) {
 			next = cur->getNext();
 			cur->setNextPoly(NULL); // prevents recursion. 
-			cur->deleteInstance();
+			deleteInstance(cur);
 			cur = next; 
 		}
 	}
@@ -189,7 +189,7 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 		// before water areas existed, so create a default one.
 		PolygonTrigger *pTrig = newInstance(PolygonTrigger)(4);
 		pTrig->setWaterArea(true);
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		pTrig->setTriggerName("AutoAddedWaterAreaTrigger");
 #endif
 		pTrig->m_triggerID = maxTriggerId++;
@@ -320,7 +320,7 @@ void PolygonTrigger::deleteTriggers(void)
 	PolygonTrigger *pList = ThePolygonTriggerListPtr;	
 	ThePolygonTriggerListPtr = NULL;
 	s_currentID = 1;
-	pList->deleteInstance();
+	deleteInstance(pList);
 }
 
 /**

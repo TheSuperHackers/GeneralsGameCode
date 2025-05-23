@@ -37,7 +37,7 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 
 //#pragma optimize("", off)
@@ -297,7 +297,7 @@ StateMachine::~StateMachine()
 	for( i = m_stateMap.begin(); i != m_stateMap.end(); ++i )
 	{
 		if ((*i).second)
-			(*i).second->deleteInstance();
+			deleteInstance((*i).second);
 	}
 }
 
@@ -839,7 +839,7 @@ void StateMachine::xfer( Xfer *xfer )
 	}
 
 	Bool snapshotAllStates = false;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	//snapshotAllStates = true;
 #endif
 	xfer->xferBool(&snapshotAllStates);

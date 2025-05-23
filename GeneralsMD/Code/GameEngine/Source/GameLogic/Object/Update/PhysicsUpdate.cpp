@@ -71,7 +71,7 @@ const Int MOTIVE_FRAMES = LOGICFRAMES_PER_SECOND / 3;
 
 #define SLEEPY_PHYSICS
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -262,7 +262,7 @@ PhysicsBehavior::~PhysicsBehavior()
 {
 	if (m_bounceSound)
 	{
-		m_bounceSound->deleteInstance();
+		deleteInstance(m_bounceSound);
 		m_bounceSound = NULL;
 	}
 }
@@ -611,7 +611,7 @@ void PhysicsBehavior::setBounceSound(const AudioEventRTS* bounceSound)
 	{
 		if (m_bounceSound)
 		{
-			m_bounceSound->deleteInstance();
+			deleteInstance(m_bounceSound);
 			m_bounceSound = NULL;
 		}
 	}

@@ -44,7 +44,7 @@
 #include "GameClient/MapUtil.h"
 #include "GameNetwork/GUIUtil.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -344,9 +344,13 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 			else if ( controlID == buttonBack )
 			{
 				
-				mapSelectLayout->destroyWindows();
-				mapSelectLayout->deleteInstance();
-				mapSelectLayout = NULL;
+				if (mapSelectLayout)
+				{
+					mapSelectLayout->destroyWindows();
+					deleteInstance(mapSelectLayout);
+					mapSelectLayout = NULL;
+				}
+
 				// set the controls to NULL since they've been destroyed.
 				NullifyControls();
 				showLANGameOptionsUnderlyingGUIElements(TRUE);
@@ -390,9 +394,12 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 					}
 
 					
-					mapSelectLayout->destroyWindows();
-					mapSelectLayout->deleteInstance();
-					mapSelectLayout = NULL;
+					if (mapSelectLayout)
+					{
+						mapSelectLayout->destroyWindows();
+						deleteInstance(mapSelectLayout);
+						mapSelectLayout = NULL;
+					}
 
 					// set the controls to NULL since they've been destroyed.
 					NullifyControls();

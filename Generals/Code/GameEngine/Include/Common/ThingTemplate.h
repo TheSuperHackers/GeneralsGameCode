@@ -159,7 +159,7 @@ public:
 	{
 		for (Int i = 0; i < TTAUDIO_COUNT; ++i)
 			if (m_audio[i])
-				m_audio[i]->deleteInstance();
+				deleteInstance(m_audio[i]);
 	}
 
 	AudioArray(const AudioArray& that)
@@ -286,7 +286,7 @@ public:
 		return m_info.size(); 
 	}
 	
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool containsPartialName(const char* n) const
 	{
 		for (size_t i = 0; i < m_info.size(); i++)

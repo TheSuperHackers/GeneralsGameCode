@@ -331,7 +331,7 @@ void DataChunkOutput::closeDataChunk( void )
 	DEBUG_LOG(("Closing chunk %s at %d (%x)\n", m_contents.getName(c->id).str(), here, here));
 #endif
 	m_chunkStack = m_chunkStack->next;
-	c->deleteInstance();
+	deleteInstance(c);
 }
 
 void DataChunkOutput::writeReal( Real r ) 
@@ -366,6 +366,16 @@ void DataChunkOutput::writeUnicodeString( UnicodeString theString )
 	UnsignedShort len = theString.getLength();
 	::fwrite( (const char *)&len, sizeof(UnsignedShort) , 1, m_tmp_file );
 	::fwrite( theString.str(), len*sizeof(WideChar) , 1, m_tmp_file ); 
+}
+
+void DataChunkOutput::writeNameKey( const NameKeyType key ) 
+{ 
+		AsciiString kname = TheNameKeyGenerator->keyToName(key);
+		Int keyAndType = m_contents.allocateID(kname);
+		keyAndType <<= 8;
+		Dict::DataType t = Dict::DICT_ASCIISTRING;
+		keyAndType |= (t & 0xff);
+		writeInt(keyAndType);
 }
 
 void DataChunkOutput::writeDict( const Dict& d ) 
@@ -427,7 +437,7 @@ DataChunkTableOfContents::~DataChunkTableOfContents()
 	for( m=m_list; m; m=next )
 	{
 		next = m->next;
-		m->deleteInstance();
+		deleteInstance(m);
 	}
 }
 
@@ -591,7 +601,7 @@ DataChunkInput::~DataChunkInput()
 	UserParser *p, *next;
 	for (p=m_parserList; p; p=next) {
 		next = p->next;
-		p->deleteInstance();
+		deleteInstance(p);
 	}
 
 }
@@ -689,7 +699,7 @@ void DataChunkInput::clearChunkStack( void )
 	for( c=m_chunkStack; c; c=next )
 	{
 		next = c->next;
-		c->deleteInstance();
+		deleteInstance(c);
 	}
 
 	m_chunkStack = NULL;
@@ -762,7 +772,7 @@ void DataChunkInput::closeDataChunk( void )
 	// pop the chunk off the stack
 	InputChunk *c = m_chunkStack;
 	m_chunkStack = m_chunkStack->next;
-	c->deleteInstance();
+	deleteInstance(c);
 }
 
 
@@ -878,6 +888,20 @@ void DataChunkInput::readArrayOfBytes(char *ptr, Int len)
 	DEBUG_ASSERTCRASH(m_chunkStack->dataLeft>=len, ("Read past end of chunk."));
 	m_file->read( ptr, len ); 
 	decrementDataLeft( len );
+}
+
+NameKeyType DataChunkInput::readNameKey(void)
+{
+		Int keyAndType = readInt();
+#ifdef DEBUG_CRASHING
+		Dict::DataType t = (Dict::DataType)(keyAndType & 0xff);
+		DEBUG_ASSERTCRASH(t==Dict::DICT_ASCIISTRING,("Invalid key data."));
+#endif
+		keyAndType >>= 8;
+
+		AsciiString kname = m_contents.getName(keyAndType);
+		NameKeyType k = TheNameKeyGenerator->nameToKey(kname);
+		return k;
 }
 
 Dict DataChunkInput::readDict() 

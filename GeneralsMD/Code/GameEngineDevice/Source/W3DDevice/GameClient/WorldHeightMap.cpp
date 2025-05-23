@@ -54,7 +54,7 @@
 
 #include "Common/file.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -134,7 +134,7 @@ MapObject::~MapObject(void)
 		while (cur) {
 			next = cur->getNext();
 			cur->setNextMap(NULL); // prevents recursion. 
-			cur->deleteInstance();
+			deleteInstance(cur);
 			cur = next;
 		}
 	}
@@ -432,7 +432,7 @@ void WorldHeightMap::freeListOfMapObjects(void)
 {
 	if (MapObject::TheMapObjectListPtr) 
 	{
-		MapObject::TheMapObjectListPtr->deleteInstance();
+		deleteInstance(MapObject::TheMapObjectListPtr);
 		MapObject::TheMapObjectListPtr = NULL;
 	}
 	MapObject::getWorldDict()->clear();

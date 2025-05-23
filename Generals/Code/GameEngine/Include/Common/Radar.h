@@ -169,6 +169,7 @@ public:
 	Bool isRadarWindow( GameWindow *window ) { return (m_radarWindow == window) && (m_radarWindow != NULL); }
 
 	Bool radarToWorld( const ICoord2D *radar, Coord3D *world );		///< radar point to world point on terrain
+	Bool radarToWorld2D( const ICoord2D *radar, Coord3D *world );		///< radar point to world point (x,y only!)
 	Bool worldToRadar( const Coord3D *world, ICoord2D *radar );		///< translate world point to radar (x,y)
 	Bool localPixelToRadar( const ICoord2D *pixel, ICoord2D *radar );	///< translate pixel (with UL of radar being (0,0)) to logical radar coords
 	Bool screenPixelToWorld( const ICoord2D *pixel, Coord3D *world ); ///< translate pixel (with UL of the screen being (0,0)) to world position in the world
@@ -289,6 +290,16 @@ protected:
 
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern Radar *TheRadar;  ///< the radar singleton extern
+
+// TheSuperHackers @feature helmutbuhler 10/04/2025
+// Radar that does nothing. Used for Headless Mode.
+class RadarDummy : public Radar
+{
+public:
+	virtual void draw(Int pixelX, Int pixelY, Int width, Int height) { }
+	virtual void clearShroud() { }
+	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting) { }
+};
 
 #endif  // __RADAR_H_
 

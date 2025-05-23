@@ -82,7 +82,7 @@
 	#include "GameLogic/Module/ParkingPlaceBehavior.h"
 #endif
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -162,7 +162,7 @@ void DrawableIconInfo::clear()
 	for (int i = 0; i < MAX_ICONS; ++i)
 	{
 		if (m_icon[i])
-			m_icon[i]->deleteInstance();
+			deleteInstance(m_icon[i]);
 		m_icon[i] = NULL;
 		m_keepTillFrame[i] = 0;
 	}
@@ -174,7 +174,7 @@ void DrawableIconInfo::killIcon(DrawableIconType t)
 {
 	if (m_icon[t])
 	{
-		m_icon[t]->deleteInstance();
+		deleteInstance(m_icon[t]);
 		m_icon[t] = NULL;
 		m_keepTillFrame[t] = 0;
 	}
@@ -549,7 +549,7 @@ Drawable::~Drawable()
 	{
 		for (Module** m = m_modules[i]; m && *m; ++m)
 		{
-			(*m)->deleteInstance();
+			deleteInstance(*m);
 			*m = NULL;	// in case other modules call findModule from their dtor!
 		}
 		delete [] m_modules[i]; 
@@ -559,7 +559,7 @@ Drawable::~Drawable()
 	stopAmbientSound();
 	if (m_ambientSound)
 	{
-		m_ambientSound->deleteInstance();
+		deleteInstance(m_ambientSound);
 		m_ambientSound = NULL;
 	}
 
@@ -574,17 +574,17 @@ Drawable::~Drawable()
 
 	// delete any icons present
 	if (m_iconInfo)
-		m_iconInfo->deleteInstance();
+		deleteInstance(m_iconInfo);
 
 	if (m_selectionFlashEnvelope)
-		m_selectionFlashEnvelope->deleteInstance();
+		deleteInstance(m_selectionFlashEnvelope);
 
 	if (m_colorTintEnvelope)
-		m_colorTintEnvelope->deleteInstance();
+		deleteInstance(m_colorTintEnvelope);
 
 	if (m_locoInfo)
 	{
-		m_locoInfo->deleteInstance();
+		deleteInstance(m_locoInfo);
 		m_locoInfo = NULL;
 	}
 }
@@ -2527,7 +2527,7 @@ const AudioEventRTS& Drawable::getAmbientSoundByDamage(BodyDamageType dt)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void Drawable::validatePos() const
 {
 	const Coord3D* ourPos = getPosition();
@@ -2655,7 +2655,7 @@ void Drawable::draw( View *view )
 
 
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	validatePos();
 #endif
 
@@ -4540,7 +4540,7 @@ void Drawable::startAmbientSound(BodyDamageType dt, TimeOfDay tod, Bool onlyIfPe
 		else
 		{
 			DEBUG_CRASH( ("Ambient sound %s missing! Skipping...", m_ambientSound->m_event.getEventName().str() ) );
-			m_ambientSound->deleteInstance();
+			deleteInstance(m_ambientSound);
 			m_ambientSound = NULL;
 		}
 	}
@@ -4935,7 +4935,7 @@ void Drawable::xfer( Xfer *xfer )
 	if( xfer->getXferMode() == XFER_LOAD && m_ambientSound )
 	{
 		TheAudio->killAudioEventImmediately( m_ambientSound->m_event.getPlayingHandle() );
-		m_ambientSound->deleteInstance();
+		deleteInstance(m_ambientSound);
 		m_ambientSound = NULL;
 	}
 
@@ -5387,7 +5387,7 @@ void Drawable::xfer( Xfer *xfer )
             }
             else
             {
-              customizedInfo->deleteInstance();
+              deleteInstance(customizedInfo);
               customizedInfo = NULL;
             }
           }
@@ -5395,7 +5395,7 @@ void Drawable::xfer( Xfer *xfer )
           {
             // since Xfer can throw exceptions -- don't leak memory!
             if ( customizedInfo != NULL ) 
-              customizedInfo->deleteInstance();
+              deleteInstance(customizedInfo);
 
             throw; //rethrow
           }

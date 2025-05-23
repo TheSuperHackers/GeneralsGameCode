@@ -71,7 +71,7 @@
 #include "WWMath/matrix3d.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
@@ -188,7 +188,7 @@ AudioManager::~AudioManager()
 	for (it = m_allAudioEventInfo.begin(); it != m_allAudioEventInfo.end(); ++it) {
 		AudioEventInfo *eventInfo = (*it).second;
 		if (eventInfo) {
-			eventInfo->deleteInstance();
+			deleteInstance(eventInfo);
 			eventInfo = NULL;
 		}
 	}
@@ -248,7 +248,7 @@ void AudioManager::init()
 				break;
 			}
 			// We loop infinitely on the splash screen if we don't allow breaking out of this loop.
-//#if !defined( _DEBUG ) && !defined( _INTERNAL )
+//#if !defined( RTS_DEBUG ) && !defined( RTS_INTERNAL )
 			else
 			{
 				// Display the warning.
@@ -811,7 +811,7 @@ AudioRequest *AudioManager::allocateAudioRequest( Bool useAudioEvent )
 void AudioManager::releaseAudioRequest( AudioRequest *requestToRelease )
 {
 	if (requestToRelease) {
-		requestToRelease->deleteInstance();
+		deleteInstance(requestToRelease);
 	}
 }
 
@@ -894,7 +894,7 @@ void AudioManager::removeLevelSpecificAudioEventInfos(void)
 
     if ( it->second->isLevelSpecific() )
     {
-      it->second->deleteInstance();
+      deleteInstance(it->second);
       m_allAudioEventInfo.erase( it );
     }
 

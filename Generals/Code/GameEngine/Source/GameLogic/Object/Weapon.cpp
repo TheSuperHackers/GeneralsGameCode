@@ -86,7 +86,7 @@
 	const DistanceCalculationType ATTACK_RANGE_CALC_TYPE = FROM_BOUNDINGSPHERE_3D;
 #endif
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -320,12 +320,12 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(NULL)
 WeaponTemplate::~WeaponTemplate()
 {
 	if (m_nextTemplate) {
-		m_nextTemplate->deleteInstance();
+		deleteInstance(m_nextTemplate);
 	}
 
 	// delete any extra-bonus that's present
 	if (m_extraBonus)
-		m_extraBonus->deleteInstance();
+		deleteInstance(m_extraBonus);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -743,11 +743,37 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 	ObjectID* projectileID
 ) const
 {
+
+	//-extraLogging 
+	#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+		AsciiString targetStr;
+		if( TheGlobalData->m_extraLogging )
+		{
+			if( victimObj )
+				targetStr.format( "%s", victimObj->getTemplate()->getName().str() );
+			else if( victimPos )
+				targetStr.format( "%d,%d,%d", victimPos->x, victimPos->y, victimPos->z );
+			else
+				targetStr.format( "SELF." );
+
+			DEBUG_LOG( ("%d - WeaponTemplate::fireWeaponTemplate() begin - %s attacking %s - ", 
+				TheGameLogic->getFrame(), sourceObj->getTemplate()->getName().str(), targetStr.str() ) );
+		}
+	#endif
+	//end -extraLogging 
+
 	//CRCDEBUG_LOG(("WeaponTemplate::fireWeaponTemplate() from %s\n", DescribeObject(sourceObj).str()));
 	DEBUG_ASSERTCRASH(specificBarrelToUse >= 0, ("specificBarrelToUse should no longer be -1\n"));
 
 	if (sourceObj == NULL || (victimObj == NULL && victimPos == NULL))
 	{
+		//-extraLogging 
+		#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+			if( TheGlobalData->m_extraLogging )
+				DEBUG_LOG( ("FAIL 1 (sourceObj %d == NULL || (victimObj %d == NULL && victimPos %d == NULL)\n", sourceObj != 0, victimObj != 0, victimPos != 0) );
+		#endif
+		//end -extraLogging 
+
 		return 0;
 	}
 
@@ -819,6 +845,14 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		if (distSqr > attackRangeSqr)
 		{
 			//DEBUG_ASSERTCRASH(distSqr < 5*5 || distSqr < attackRangeSqr*1.2f, ("*** victim is out of range (%f vs %f) of this weapon -- why did we attempt to fire?\n",sqrtf(distSqr),sqrtf(attackRangeSqr)));
+			
+			//-extraLogging 
+			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+				if( TheGlobalData->m_extraLogging )
+					DEBUG_LOG( ("FAIL 2 (distSqr %.2f > attackRangeSqr %.2f)\n", distSqr, attackRangeSqr ) );
+			#endif
+			//end -extraLogging 
+
 			return 0;
 		}
 	}
@@ -833,6 +867,14 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 #endif
 		{
 			DEBUG_ASSERTCRASH(distSqr > minAttackRangeSqr*0.8f, ("*** victim is closer than min attack range (%f vs %f) of this weapon -- why did we attempt to fire?\n",sqrtf(distSqr),sqrtf(minAttackRangeSqr)));
+
+			//-extraLogging 
+			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+				if( TheGlobalData->m_extraLogging )
+					DEBUG_LOG( ("FAIL 3 (distSqr %.2f< minAttackRangeSqr %.2f - 0.5f && !isProjectileDetonation %d)\n", distSqr, minAttackRangeSqr, isProjectileDetonation ) );
+			#endif
+			//end -extraLogging 
+
 			return 0;
 		}
 	}
@@ -921,6 +963,15 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			// go ahead and do it now
 			//DEBUG_LOG(("WeaponTemplate::fireWeaponTemplate: firing weapon immediately!\n"));
 			dealDamageInternal(sourceID, damageID, damagePos, bonus, isProjectileDetonation);
+
+			//-extraLogging 
+			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+				if( TheGlobalData->m_extraLogging )
+					DEBUG_LOG( ("EARLY 4 (delayed damage applied now)\n") );
+			#endif
+			//end -extraLogging 
+
+
 			return TheGameLogic->getFrame();
 		}
 		else
@@ -933,6 +984,15 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 				//DEBUG_LOG(("WeaponTemplate::fireWeaponTemplate: firing weapon in %d frames (= %d)!\n", delayInWholeFrames,when));
 				TheWeaponStore->setDelayedDamage(this, damagePos, when, sourceID, damageID, bonus);
 			}
+
+			//-extraLogging 
+			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+				if( TheGlobalData->m_extraLogging )
+					DEBUG_LOG( ("EARLY 5 (delaying damage applied until frame %d)\n", when ) );
+			#endif
+			//end -extraLogging 
+
+
 			return when;
 		}
 	}
@@ -1040,6 +1100,13 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			// actually, this is ok, for things like Firestorm.... (srj)
 			projectile->setPosition(&projectileDestination);
 		}
+		//-extraLogging 
+		#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+			if( TheGlobalData->m_extraLogging )
+				DEBUG_LOG( ("DONE\n") );
+		#endif
+		//end -extraLogging 
+
 		return 0;
 	}
 }
@@ -1302,11 +1369,11 @@ WeaponStore::~WeaponStore()
 {
 	deleteAllDelayedDamage();
 
-	for (Int i = 0; i < m_weaponTemplateVector.size(); i++)
+	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
 	{
 		WeaponTemplate* wt = m_weaponTemplateVector[i];
 		if (wt)
-			wt->deleteInstance();
+			deleteInstance(wt);
 	}
 	m_weaponTemplateVector.clear();
 }
@@ -1317,7 +1384,7 @@ void WeaponStore::handleProjectileDetonation(const WeaponTemplate* wt, const Obj
 	Weapon* w = TheWeaponStore->allocateNewWeapon(wt, PRIMARY_WEAPON);
 	w->loadAmmoNow(source);
 	w->fireProjectileDetonationWeapon(source, pos, extraBonusFlags);
-	w->deleteInstance();
+	deleteInstance(w);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1328,7 +1395,7 @@ void WeaponStore::createAndFireTempWeapon(const WeaponTemplate* wt, const Object
 	Weapon* w = TheWeaponStore->allocateNewWeapon(wt, PRIMARY_WEAPON);
 	w->loadAmmoNow(source);
 	w->fireWeapon(source, pos);
-	w->deleteInstance();
+	deleteInstance(w);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1340,7 +1407,7 @@ void WeaponStore::createAndFireTempWeapon(const WeaponTemplate* wt, const Object
 	Weapon* w = TheWeaponStore->allocateNewWeapon(wt, PRIMARY_WEAPON);
 	w->loadAmmoNow(source);
 	w->fireWeapon(source, target);
-	w->deleteInstance();
+	deleteInstance(w);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1357,7 +1424,7 @@ const WeaponTemplate *WeaponStore::findWeaponTemplate( AsciiString name ) const
 WeaponTemplate *WeaponStore::findWeaponTemplatePrivate( NameKeyType key ) const
 {
 	// search weapon list for name
-	for (Int i = 0; i < m_weaponTemplateVector.size(); i++)
+	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
 		if( m_weaponTemplateVector[ i ]->getNameKey() == key )
 			return m_weaponTemplateVector[i];
 
@@ -1426,7 +1493,7 @@ void WeaponStore::deleteAllDelayedDamage()
 void WeaponStore::resetWeaponTemplates( void )
 {
 
-	for (Int i = 0; i < m_weaponTemplateVector.size(); i++)
+	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
 	{
 		WeaponTemplate* wt = m_weaponTemplateVector[i];
 		wt->reset();
@@ -1438,14 +1505,14 @@ void WeaponStore::resetWeaponTemplates( void )
 void WeaponStore::reset()
 {
 	// clean up any overriddes.
-	for (Int i = 0; i < m_weaponTemplateVector.size(); ++i)
+	for (size_t i = 0; i < m_weaponTemplateVector.size(); ++i)
 	{
 		WeaponTemplate *wt = m_weaponTemplateVector[i];
 		if (wt->isOverride()) 
 		{
 			WeaponTemplate *override = wt;
 			wt = wt->friend_clearNextTemplate();
-			override->deleteInstance();
+			deleteInstance(override);
 		}
 	}
 
@@ -1475,7 +1542,7 @@ void WeaponStore::postProcessLoad()
 		return;
 	}
 
-	for (Int i = 0; i < m_weaponTemplateVector.size(); i++)
+	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
 	{
 		WeaponTemplate* wt = m_weaponTemplateVector[i];
 		if (wt)
@@ -1518,7 +1585,7 @@ void WeaponStore::postProcessLoad()
 	if (weapon->m_projectileName.isNone())
 		weapon->m_projectileName.clear();
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (!weapon->getFireSound().getEventName().isEmpty() && weapon->getFireSound().getEventName().compareNoCase("NoSound") != 0) 
 	{ 
 		DEBUG_ASSERTCRASH(TheAudio->isValidAudioEvent(&weapon->getFireSound()), ("Invalid FireSound %s in Weapon '%s'.", weapon->getFireSound().getEventName().str(), weapon->getName().str())); 
@@ -2319,6 +2386,8 @@ Bool Weapon::privateFireWeapon(
 	Bool reloaded = false;
 	if (m_ammoInClip > 0)
 	{
+		// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+		// barrelCount shouln't depend on Drawable, which belongs to client.
 		Int barrelCount = sourceObj->getDrawable()->getBarrelCount(m_wslot);
 		if (m_curBarrel >= barrelCount)
 		{

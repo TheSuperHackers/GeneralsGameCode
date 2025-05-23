@@ -59,7 +59,7 @@
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 BuildAssistant *TheBuildAssistant = NULL;
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -164,7 +164,7 @@ void BuildAssistant::reset( void )
 		sellInfo = (*it);
 
 		// delete our data and erase this entry from the list
-		sellInfo->deleteInstance();
+		deleteInstance(sellInfo);
 
 	}  // end for
 
@@ -205,7 +205,7 @@ void BuildAssistant::update( void )
 		if( obj == NULL )
 		{
 
-			sellInfo->deleteInstance();			
+			deleteInstance(sellInfo);			
 			m_sellList.erase( thisIterator );		
 			continue;
 
@@ -281,7 +281,7 @@ void BuildAssistant::update( void )
 			TheGameLogic->destroyObject( obj );
 
 			// remove this object from the sell list
-			sellInfo->deleteInstance();
+			deleteInstance(sellInfo);
 			m_sellList.erase( thisIterator );
 
 		}  // end if

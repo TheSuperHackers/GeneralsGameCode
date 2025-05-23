@@ -61,7 +61,8 @@
 #include "GameClient/GadgetStaticText.h"
 #include "GameClient/Mouse.h"
 #include "GameClient/SelectionXlat.h"
-#ifdef _INTERNAL
+#include "GameClient/GameWindowTransitions.h"
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -136,7 +137,50 @@ GameWindow::~GameWindow( void )
 		delete m_editData;
 	m_editData = NULL;
 
+	unlinkFromTransitionWindows();
+
 }  // end ~GameWindow
+
+// GameWindow::linkTransitionWindow ============================================
+//=============================================================================
+void GameWindow::linkTransitionWindow( TransitionWindow* transitionWindow )
+{
+
+	m_transitionWindows.push_back(transitionWindow);
+
+}  // end linkTransitionWindow
+
+// GameWindow::unlinkTransitionWindow =========================================
+//=============================================================================
+void GameWindow::unlinkTransitionWindow( TransitionWindow* transitionWindow )
+{
+
+	std::vector<TransitionWindow*>::iterator it = m_transitionWindows.begin();
+	while ( it != m_transitionWindows.end() )
+	{
+		if ( *it == transitionWindow )
+		{
+			*it = m_transitionWindows.back();
+			m_transitionWindows.pop_back();
+			return;
+		}
+		++it;
+	}
+
+}  // end unlinkTransitionWindow
+
+// GameWindow::unlinkFromTransitionWindows =========================================
+//=============================================================================
+void GameWindow::unlinkFromTransitionWindows( void )
+{
+
+	while ( !m_transitionWindows.empty() )
+	{
+		m_transitionWindows.back()->unlinkGameWindow(this);
+		m_transitionWindows.pop_back();
+	}
+
+}  // end unlinkFromTransitionWindows
 
 // GameWindow::normalizeWindowRegion ==========================================
 /** Puts the upper left corner in the window's region.lo field */
@@ -657,6 +701,16 @@ Int GameWindow::winEnable( Bool enable )
 	return WIN_ERR_OK;
 
 }  // end WinEnable
+
+// GameWindow::winGetEnabled ======================================================
+/** Enable or disable a window based on the enable parameter.
+	* A disabled window can be seen but accepts no input. */
+//=============================================================================
+Bool GameWindow::winGetEnabled( void )
+{
+  return BitIsSet( m_status, WIN_STATUS_ENABLED );
+
+}  // end winGetEnabled
 
 // GameWindow::winHide ========================================================
 /** Hide or show a window based on the hide parameter.

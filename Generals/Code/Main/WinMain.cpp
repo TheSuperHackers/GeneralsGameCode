@@ -53,6 +53,7 @@
 #include "Common/StackDump.h"
 #include "Common/MessageStream.h"
 #include "Common/Team.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/GameClient.h"
 #include "GameLogic/GameLogic.h"  ///< @todo for demo, remove
@@ -66,7 +67,7 @@
 #include "resource.h"
 #include "trim.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
@@ -83,12 +84,8 @@ const Char *g_strFile = "data\\Generals.str";
 const Char *g_csfFile = "data\\%s\\Generals.csf";
 const char *gAppPrefix = ""; /// So WB can have a different debug log file name.
 
-static HANDLE GeneralsMutex = NULL;
-#define GENERALS_GUID "685EAFF2-3216-4265-B047-251C5F4B82F3"
 #define DEFAULT_XRESOLUTION 800
 #define DEFAULT_YRESOLUTION 600
-
-extern void Reset_D3D_Device(bool active);
 
 static Bool gInitializing = false;
 static Bool gDoPaint = true;
@@ -367,10 +364,12 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
             // Prevent moving/sizing and power loss in fullscreen mode
             switch( wParam )
             {
+                case SC_KEYMENU:
+                    // TheSuperHackers @bugfix Mauller 10/05/2025 Always handle this command to prevent halting the game when left Alt is pressed.
+                    return 1;
                 case SC_MOVE:
                 case SC_SIZE:
                 case SC_MAXIMIZE:
-                case SC_KEYMENU:
                 case SC_MONITORPOWER:
                     if( FALSE == ApplicationIsWindowed )
                         return 1;
@@ -425,14 +424,20 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			//-------------------------------------------------------------------------
 			case WM_ACTIVATEAPP:
 			{
-//				DWORD threadId=GetCurrentThreadId();
 				if ((bool) wParam != isWinMainActive)
-				{	isWinMainActive = (BOOL) wParam;
+				{
+					// TheSuperHackers @bugfix xezon 11/05/2025 This event originally called DX8Wrapper::Reset_Device,
+					// intended to clear resources on a lost device in fullscreen, but effectively also in
+					// windowed mode, if the DXMaximizedWindowedMode shim was applied in newer versions of Windows,
+					// which lead to unfortunate application crashing. Resetting the device on WM_ACTIVATEAPP instead
+					// of TestCooperativeLevel() == D3DERR_DEVICENOTRESET is not a requirement. There are other code
+					// paths that take care of that.
+
+					isWinMainActive = (BOOL) wParam;
 					
 					if (TheGameEngine)
 						TheGameEngine->setIsActive(isWinMainActive);
 
-					Reset_D3D_Device(isWinMainActive);
 					if (isWinMainActive)
 					{	//restore mouse cursor to our custom version.
 						if (TheWin32Mouse)
@@ -723,8 +728,7 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 	ShowWindow( hWnd, nCmdShow );
 	UpdateWindow( hWnd );
 
-	// save our application instance and window handle for future use
-	ApplicationHInstance = hInstance;
+	// save our application window handle for future use
 	ApplicationHWnd = hWnd;
 	gInitializing = false;
 	if (!runWindowed) {
@@ -744,7 +748,7 @@ void munkeeFunc(void)
 
 void checkProtection(void)
 {
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 	__try
 	{
 		munkeeFunc();
@@ -860,13 +864,21 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		char * argv[20];
 		argv[0] = NULL;
 
+		Bool headless = false;
+
 		char *token;
 		token = nextParam(lpCmdLine, "\" ");
 		while (argc < 20 && token != NULL) {
 			argv[argc++] = strtrim(token);
+
 			//added a preparse step for this flag because it affects window creation style
-			if (stricmp(token,"-win")==0)
-				ApplicationIsWindowed=true;
+			if (stricmp(token, "-win") == 0)
+				ApplicationIsWindowed = true;
+
+			// preparse for headless as well. We need to know about this before we create the window.
+			if (stricmp(token, "-headless") == 0)
+				headless = true;
+
 			token = nextParam(NULL, "\" ");	   
 		}
 
@@ -887,7 +899,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			return 0;
 		}
 
-		#ifdef _DEBUG
+		#ifdef RTS_DEBUG
 			// Turn on Memory heap tracking
 			int tmpFlag = _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG );
 			tmpFlag |= (_CRTDBG_LEAK_CHECK_DF|_CRTDBG_ALLOC_MEM_DF);
@@ -906,8 +918,11 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
  		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp",	IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
 
 		// register windows class and create application window
-		if( initializeAppWindows( hInstance, nCmdShow, ApplicationIsWindowed) == false )
+		if(!headless && initializeAppWindows( hInstance, nCmdShow, ApplicationIsWindowed) == false )
 			return 0;
+		
+		// save our application instance for future use
+		ApplicationHInstance = hInstance;
 
 		if (gLoadScreenBitmap!=NULL) {
 			::DeleteObject(gLoadScreenBitmap);
@@ -942,22 +957,15 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #endif
 
 
-		//Create a mutex with a unique name to Generals in order to determine if
-		//our app is already running.
-		//WARNING: DO NOT use this number for any other application except Generals.
-		GeneralsMutex = CreateMutex(NULL, FALSE, GENERALS_GUID);
-		if (GetLastError() == ERROR_ALREADY_EXISTS)
+		// TheSuperHackers @refactor The instance mutex now lives in its own class.
+
+		if (!rts::ClientInstance::initialize())
 		{
-			HWND ccwindow = FindWindow(GENERALS_GUID, NULL);
+			HWND ccwindow = FindWindow(rts::ClientInstance::getFirstInstanceName(), NULL);
 			if (ccwindow)
 			{
 				SetForegroundWindow(ccwindow);
 				ShowWindow(ccwindow, SW_RESTORE);
-			}
-			if (GeneralsMutex != NULL)
-			{
-				CloseHandle(GeneralsMutex);
-				GeneralsMutex = NULL;
 			}
 
 			DEBUG_LOG(("Generals is already running...Bail!\n"));
@@ -967,7 +975,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			DEBUG_SHUTDOWN();
 			return 0;
 		}
-		DEBUG_LOG(("Create GeneralsMutex okay.\n"));
+		DEBUG_LOG(("Create Generals Mutex okay.\n"));
 
 #ifdef DO_COPY_PROTECTION
 		if (!CopyProtect::notifyLauncher())
@@ -997,7 +1005,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	#ifdef MEMORYPOOL_DEBUG
 		TheMemoryPoolFactory->debugMemoryReport(REPORT_POOLINFO | REPORT_POOL_OVERFLOW | REPORT_SIMPLE_LEAKS, 0, 0);
 	#endif
-	#if defined(_DEBUG) || defined(_INTERNAL)
+	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		TheMemoryPoolFactory->memoryPoolUsageReport("AAAMemStats");
 	#endif
 

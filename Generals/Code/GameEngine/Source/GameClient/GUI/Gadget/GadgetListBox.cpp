@@ -63,7 +63,7 @@
 #include "GameClient/GameWindowGlobal.h"
 #include "GameClient/Keyboard.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -2221,6 +2221,8 @@ Int GadgetListBoxAddEntryText( GameWindow *listbox,
 	addInfo.width = -1;
 
 	ListboxData *listData = (ListboxData *)listbox->winGetUserData();
+	if (listData == NULL)
+		return -1;
 	Bool wasFull = (listData->listLength <= listData->endPos);
 	Int newEntryOffset = (wasFull)?0:1;
 	Int oldBottomIndex = GadgetListBoxGetBottomVisibleEntry(listbox);

@@ -62,7 +62,7 @@
 #include "GameLogic/Module/WorkerAIUpdate.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -132,13 +132,13 @@ WorkerAIUpdate::~WorkerAIUpdate( void )
 
 	// delete our behavior state machine
 	if( m_dozerMachine )
-		m_dozerMachine->deleteInstance();
+		deleteInstance(m_dozerMachine);
 
 	if( m_supplyTruckStateMachine )
-		m_supplyTruckStateMachine->deleteInstance();
+		deleteInstance(m_supplyTruckStateMachine);
 
 	if( m_workerMachine )
-		m_workerMachine->deleteInstance();
+		deleteInstance(m_workerMachine);
 
 }
 
@@ -206,7 +206,7 @@ void WorkerAIUpdate::createMachines( void )
 		m_workerMachine->initDefaultState();// this has to wait until all three are in place since
 		// an immediate transition check will ask questions of the machines.
 
-//#ifdef _DEBUG
+//#ifdef RTS_DEBUG
 //		m_workerMachine->setDebugOutput(TRUE);
 //		m_dozerMachine->setDebugOutput(TRUE);
 //		m_supplyTruckStateMachine->setDebugOutput(TRUE);

@@ -53,7 +53,7 @@
 #include "GameClient/DisconnectMenu.h"
 #include "GameLogic/ScriptEngine.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -121,15 +121,15 @@ void destroyQuitMenu()
 	if(fullQuitMenuLayout)
 	{
 		fullQuitMenuLayout->destroyWindows();
-		fullQuitMenuLayout->deleteInstance();
+		deleteInstance(fullQuitMenuLayout);
+		fullQuitMenuLayout = NULL;
 	}
-	fullQuitMenuLayout = NULL;
 	if(noSaveLoadQuitMenuLayout)
 	{
 		noSaveLoadQuitMenuLayout->destroyWindows();
-		noSaveLoadQuitMenuLayout->deleteInstance();
+		deleteInstance(noSaveLoadQuitMenuLayout);
+		noSaveLoadQuitMenuLayout = NULL;
 	}
-	noSaveLoadQuitMenuLayout = NULL;
 	quitMenuLayout = NULL;
 	isVisible = FALSE;
 }

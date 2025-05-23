@@ -57,7 +57,7 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/SidesList.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -105,7 +105,7 @@ Bool st_particleSystemNeedsStopping = FALSE; ///< Set along with st_particleSyst
 #define FORMAT_STRING_LEADING_STRING		"%s%.2f"
 // That's it for particle editor
 
-#if defined(_INTERNAL)
+#if defined(RTS_INTERNAL)
 	#define DO_VTUNE_STUFF
 #endif
 
@@ -194,7 +194,7 @@ Int AttackPriorityInfo::getPriority(const ThingTemplate *tThing) const
 	return priority;
 }
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 /** Dump the info. */
 //-------------------------------------------------------------------------------------------------
 void AttackPriorityInfo::dumpPriorityInfo(void)
@@ -5615,7 +5615,7 @@ void ScriptEngine::update( void )
 			_adjustVariable(m_flags[k].name.str(), m_flags[k].value);
 		}
 	}
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	if (TheGameLogic->getFrame()==0) {
 		for (i=0; i<m_numAttackInfo; i++) {
 			m_attackPriorityInfo[i].dumpPriorityInfo();
@@ -6377,7 +6377,7 @@ void ScriptEngine::setCounter( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setFade( ScriptAction *pAction )
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_disableCameraFade)
 	{
 		m_fade = FADE_NONE;
@@ -6592,7 +6592,7 @@ void ScriptEngine::setPriorityThing( ScriptAction *pAction )
 	{
 		// Found a list by this name, so we have a bunch of things
 
-		for( Int typeIndex = 0; typeIndex < types->getListSize(); typeIndex ++ )
+		for( size_t typeIndex = 0; typeIndex < types->getListSize(); typeIndex ++ )
 		{
 			AsciiString thisTypeName = types->getNthInList(typeIndex);
 			const ThingTemplate *thisType = TheThingFactory->findTemplate(thisTypeName);
@@ -6706,7 +6706,7 @@ void ScriptEngine::removeObjectTypes(ObjectTypes *typesToRemove)
 	}
 
 	// delete it.
-	typesToRemove->deleteInstance();
+	deleteInstance(typesToRemove);
 
 	// remove it from the main array of stuff
 	m_allObjectTypeLists.erase(it);
@@ -8077,14 +8077,14 @@ ScriptEngine::VecSequentialScriptPtrIt ScriptEngine::cleanupSequentialScript(Vec
 		while (seqScript) {
 			scriptToDelete = seqScript;
 			seqScript = seqScript->m_nextScriptInSequence;
-			scriptToDelete->deleteInstance();
+			deleteInstance(scriptToDelete);
 			scriptToDelete = NULL;
 		}
 		(*it) = NULL;
 	} else {
 		// we want to make sure to not delete any dangling scripts.
 		(*it) = scriptToDelete->m_nextScriptInSequence;
-		scriptToDelete->deleteInstance();
+		deleteInstance(scriptToDelete);
 		scriptToDelete = NULL;
 	}
 
@@ -9332,7 +9332,7 @@ void ScriptEngine::loadPostProcess( void )
 
 }  // end loadPostProcess
 
-//#if defined(_DEBUG) || defined(_INTERNAL)
+//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 void ScriptEngine::debugVictory( void )
 {
 	ScriptAction *action = newInstance(ScriptAction)(ScriptAction::VICTORY);

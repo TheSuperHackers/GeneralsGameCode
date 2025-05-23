@@ -53,7 +53,7 @@
 #include "WW3D2/texture.h"
 #include "WW3D2/dx8caps.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -147,7 +147,7 @@ void W3DRadar::deleteResources( void )
 		m_terrainTexture->Release_Ref();
 	m_terrainTexture = NULL;
 	if( m_terrainImage )
-		m_terrainImage->deleteInstance();
+		deleteInstance(m_terrainImage);
 	m_terrainImage = NULL;
 
 	//
@@ -157,7 +157,7 @@ void W3DRadar::deleteResources( void )
 		m_overlayTexture->Release_Ref();
 	m_overlayTexture = NULL;
 	if( m_overlayImage )
-		m_overlayImage->deleteInstance();
+		deleteInstance(m_overlayImage);
 	m_overlayImage = NULL;
 
 	//
@@ -167,7 +167,7 @@ void W3DRadar::deleteResources( void )
 		m_shroudTexture->Release_Ref();
 	m_shroudTexture = NULL;
 	if( m_shroudImage )
-		m_shroudImage->deleteInstance();
+		deleteInstance(m_shroudImage);
 	m_shroudImage = NULL;
 
 }  // end deleteResources
@@ -1255,7 +1255,7 @@ void W3DRadar::buildTerrainTexture( TerrainLogic *terrain )
 //-------------------------------------------------------------------------------------------------
 void W3DRadar::clearShroud()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (!TheGlobalData->m_shroudOn)
 		return;
 #endif
@@ -1275,7 +1275,7 @@ void W3DRadar::clearShroud()
 //-------------------------------------------------------------------------------------------------
 void W3DRadar::setShroudLevel(Int shroudX, Int shroudY, CellShroudStatus setting)
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (!TheGlobalData->m_shroudOn)
 		return;
 #endif
@@ -1412,7 +1412,7 @@ void W3DRadar::draw( Int pixelX, Int pixelY, Int width, Int height )
  	TheDisplay->drawImage( m_overlayImage, ul.x, ul.y, lr.x, lr.y );
 
 	// draw the shroud image
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if( TheGlobalData->m_shroudOn )
 #else
 	if (true)

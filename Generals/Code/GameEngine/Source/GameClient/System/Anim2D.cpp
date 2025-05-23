@@ -38,7 +38,7 @@
 #include "GameClient/Image.h"
 #include "GameLogic/GameLogic.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -744,7 +744,7 @@ Anim2DCollection::~Anim2DCollection( void )
 		nextTemplate = m_templateList->friend_getNextTemplate();
 
 		// delete this template
-		m_templateList->deleteInstance();
+		deleteInstance(m_templateList);
 
 		// set the head of our list to the next template
 		m_templateList = nextTemplate;
