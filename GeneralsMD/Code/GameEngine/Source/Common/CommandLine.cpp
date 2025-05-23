@@ -1282,7 +1282,7 @@ static CommandLineParam params[] =
 	// If you do not call this, all replays will be simulated in sequence in the same process.
 	{ "-jobs", parseJobs },
 
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 	{ "-noaudio", parseNoAudio },
 	{ "-map", parseMapName },
 	{ "-nomusic", parseNoMusic },
