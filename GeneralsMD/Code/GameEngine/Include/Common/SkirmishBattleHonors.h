@@ -52,6 +52,8 @@ public:
 	SkirmishBattleHonors();
 	virtual ~SkirmishBattleHonors();
 
+	Bool loadDefault();
+
 	void setWins(Int val);
 	Int getWins(void) const;
 
