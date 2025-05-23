@@ -6649,7 +6649,13 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
 		Bool neighborFlags[8] = {false, false, false, false, false, false, false};
 
+		// TheSuperHackers @fix Mauller 23/05/2025 Fixes uninitialized variable.
+		// To keep retail compatibility it needs to be uninitialized in VC6 builds.
+#if defined(_MSC_VER) && _MSC_VER < 1300
+		UnsignedInt newCostSoFar;
+#else
 		UnsignedInt newCostSoFar = 0;
+#endif
 
 		for( int i=0; i<numNeighbors; i++ )
 		{
