@@ -3,6 +3,8 @@ name: GenCI
 permissions:
   contents: read
   pull-requests: write
+  pages: write
+  id-token: write
 
 on:
   push:
@@ -135,3 +137,141 @@ jobs:
       tools: ${{ matrix.tools }}
       extras: ${{ matrix.extras }}
     secrets: inherit
+
+  # New job to prepare content for GitHub Pages
+  prepare-gh-pages:
+    name: Prepare GitHub Pages
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [build-generals, build-generalsmd]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code (main branch)
+        uses: actions/checkout@v4
+        with:
+          path: main-repo
+
+      - name: Download all workflow artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./current-build-artifacts/
+
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages-root
+
+      - name: Prepare historical artifacts and update index.html
+        shell: bash
+        run: |
+          GH_PAGES_ROOT="./gh-pages-root"
+          BUILD_ARTIFACTS_DIR="$GH_PAGES_ROOT/builds"
+          CURRENT_BUILD_ID="${{ github.run_id }}"
+          CURRENT_BUILD_SHA="${{ github.sha }}"
+          CURRENT_BUILD_TIMESTAMP="$(TZ=UTC date -u +"%Y-%m-%d_%H-%M-%S")"
+          CURRENT_BUILD_NAME="${CURRENT_BUILD_TIMESTAMP}_${CURRENT_BUILD_ID}_${CURRENT_BUILD_SHA:0:7}"
+
+          mkdir -p "$BUILD_ARTIFACTS_DIR/$CURRENT_BUILD_NAME"
+
+          shopt -s nullglob
+          for artifact_bundle_src_dir in ./current-build-artifacts/*; do
+            if [ -d "$artifact_bundle_src_dir" ]; then
+              artifact_bundle_name=$(basename "$artifact_bundle_src_dir")
+              mkdir -p "$BUILD_ARTIFACTS_DIR/$CURRENT_BUILD_NAME/$artifact_bundle_name"
+              cp -R "$artifact_bundle_src_dir"/* "$BUILD_ARTIFACTS_DIR/$CURRENT_BUILD_NAME/$artifact_bundle_name/"
+            fi
+          done
+          shopt -u nullglob
+
+          # Clean up old builds, keeping only the last 5
+          MAX_BUILDS_TO_KEEP=5
+          BUILD_DIRS=($(ls -r "$BUILD_ARTIFACTS_DIR")) # List in reverse chronological order
+          NUM_BUILDS=${#BUILD_DIRS[@]}
+
+          if [ "$NUM_BUILDS" -gt "$MAX_BUILDS_TO_KEEP" ]; then
+            echo "Cleaning up old builds. Keeping $MAX_BUILDS_TO_KEEP most recent."
+            for (( i=MAX_BUILDS_TO_KEEP; i<NUM_BUILDS; i++ )); do
+              OLD_BUILD_DIR="${BUILD_ARTIFACTS_DIR}/${BUILD_DIRS[$i]}"
+              echo "Deleting old build: $OLD_BUILD_DIR"
+              rm -rf "$OLD_BUILD_DIR"
+            done
+          else
+            echo "Number of builds ($NUM_BUILDS) is within the limit ($MAX_BUILDS_TO_KEEP). No cleanup needed."
+          fi
+
+          INDEX_HTML="$GH_PAGES_ROOT/index.html"
+          echo "<!DOCTYPE html>" > "$INDEX_HTML"
+          echo "<html lang='en'>" >> "$INDEX_HTML"
+          echo "<head><meta charset='UTF-8'><title>Build Artifacts History</title></head>" >> "$INDEX_HTML"
+          echo "<body>" >> "$INDEX_HTML"
+          echo "<h1>Build Artifacts History</h1>" >> "$INDEX_HTML"
+          echo "<p>This page lists historical build artifacts.</p>" >> "$INDEX_HTML"
+          echo "<ul>" >> "$INDEX_HTML"
+
+          for build_dir in $(ls -r "$BUILD_ARTIFACTS_DIR"); do
+            if [ -d "$BUILD_ARTIFACTS_DIR/$build_dir" ]; then
+              echo "  <li><a href=\"builds/$build_dir/index.html\">Build: $build_dir</a></li>" >> "$INDEX_HTML"
+              BUILD_INDEX_HTML="$BUILD_ARTIFACTS_DIR/$build_dir/index.html"
+              echo "<!DOCTYPE html>" > "$BUILD_INDEX_HTML"
+              echo "<html lang='en'>" >> "$BUILD_INDEX_HTML"
+              echo "<head><meta charset='UTF-8'><title>Artifacts for $build_dir</title></head>" >> "$BUILD_INDEX_HTML"
+              echo "<body>" >> "$BUILD_INDEX_HTML"
+              echo "<h1>Artifacts for Build: $build_dir</h1>" >> "$BUILD_INDEX_HTML"
+              echo "<p>Commit: <a href='${{ github.server_url }}/${{ github.repository }}/commit/${CURRENT_BUILD_SHA}'>${CURRENT_BUILD_SHA}</a></p>" >> "$BUILD_INDEX_HTML"
+              echo "<p>Workflow Run: <a href='${{ github.server_url }}/${{ github.repository }}/actions/runs/${CURRENT_BUILD_ID}'>#${CURRENT_BUILD_ID}</a></p>" >> "$BUILD_INDEX_HTML"
+              echo "<p>Generated: $(TZ=UTC date -u +"%Y-%m-%d %H:%M:%S %Z")</p>" >> "$BUILD_INDEX_HTML"
+              echo "<ul>" >> "$BUILD_INDEX_HTML"
+
+              for artifact_bundle_sub_dir in "$BUILD_ARTIFACTS_DIR/$build_dir"/*; do
+                if [ -d "$artifact_bundle_sub_dir" ]; then
+                  artifact_bundle_name=$(basename "$artifact_bundle_sub_dir")
+                  echo "  <li><strong>$artifact_bundle_name</strong>" >> "$BUILD_INDEX_HTML"
+                  echo "    <ul>" >> "$BUILD_INDEX_HTML"
+                  for file_path in "$artifact_bundle_sub_dir"/*; do
+                    if [ -f "$file_path" ]; then
+                      file_name=$(basename "$file_path")
+                      link_path="./$artifact_bundle_name/$file_name"
+                      echo "      <li><a href=\"$link_path\">$file_name</a></li>" >> "$BUILD_INDEX_HTML"
+                    fi
+                  done
+                  echo "    </ul>" >> "$BUILD_INDEX_HTML"
+                  echo "  </li>" >> "$BUILD_INDEX_HTML"
+                fi
+              done
+              echo "</ul>" >> "$BUILD_INDEX_HTML"
+              echo "<p><a href=\"../index.html\">Back to History</a></p>" >> "$BUILD_INDEX_HTML"
+              echo "</body></html>" >> "$BUILD_INDEX_HTML"
+            fi
+          done
+
+          echo "</ul>" >> "$INDEX_HTML"
+          echo "</body></html>" >> "$INDEX_HTML"
+
+          echo "Generated main index.html content:"
+          cat "$INDEX_HTML"
+          echo "Site structure in $GH_PAGES_ROOT:"
+          ls -R "$GH_PAGES_ROOT"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./gh-pages-root
+
+  deploy-gh-pages:
+    name: Deploy to GitHub Pages
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: prepare-gh-pages
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: ${{ github.repository }}-pages
+      cancel-in-progress: false
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
