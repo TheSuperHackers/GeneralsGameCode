@@ -89,12 +89,13 @@ CreateObjectDie::~CreateObjectDie( void )
 //-------------------------------------------------------------------------------------------------
 void CreateObjectDie::onDie( const DamageInfo * damageInfo )
 {
+	const CreateObjectDieModuleData *data = getCreateObjectDieModuleData();
 	if (!isDieApplicable(damageInfo))
 		return;
 
 	Object *damageDealer = TheGameLogic->findObjectByID( damageInfo->in.m_sourceID );
 
-	ObjectCreationList::create(getCreateObjectDieModuleData()->m_ocl, getObject(), damageDealer);
+	ObjectCreationList::create( data->m_ocl, getObject(), damageDealer );
 }  // end onDie
 
 // ------------------------------------------------------------------------------------------------
