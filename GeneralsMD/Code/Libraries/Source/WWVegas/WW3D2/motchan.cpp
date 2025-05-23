@@ -1309,7 +1309,7 @@ return;
 		value-=ValueOffset;
 		value*=inv_scale;
 		int ivalue=WWMath::Float_To_Int_Floor(value);
-		CompressedData[i]=unsigned short(ivalue);
+		CompressedData[i]=(unsigned short)(ivalue);
 
 		float new_scale=ValueScale/65535.0f;
 		float new_value=int(CompressedData[i]);
