@@ -328,6 +328,7 @@ public:
 	AsciiString m_pendingFile;				///< If this is specified, use this map at the next game start
 	
 	std::vector<AsciiString> m_simulateReplayList; ///< If not empty, simulate this list of replays and exit. (TheSuperHackers @feature helmutbuhler 13/04/2025)
+	Int m_simulateReplayJobs; ///< Maximum number of processes to use for simulation, or -1 for sequential simulation
 
 	Int m_maxParticleCount;						///< maximum number of particles that can exist
 	Int m_maxFieldParticleCount;			///< maximum number of field-type particles that can exist (roughly)

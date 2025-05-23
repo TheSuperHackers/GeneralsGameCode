@@ -450,6 +450,21 @@ Int parseSimReplayList(char *args[], int num)
 	return 1;
 }
 
+Int parseJobs(char *args[], int num)
+{
+	if (TheWritableGlobalData && num > 1)
+	{
+		TheWritableGlobalData->m_simulateReplayJobs = atoi(args[1]);
+		if (TheGlobalData->m_simulateReplayJobs < -1 || TheGlobalData->m_simulateReplayJobs == 0)
+		{
+			DEBUG_CRASH(("Invalid number of jobs %d", TheGlobalData->m_simulateReplayJobs));
+			exit(1);
+		}
+		return 2;
+	}
+	return 1;
+}
+
 Int parseXRes(char *args[], int num)
 {
 	if (TheWritableGlobalData && num > 1)
@@ -1247,6 +1262,12 @@ static CommandLineParam params[] =
 	// TheSuperHackers @feature helmutbuhler 28/04/2025
 	// Pass in a csv file to simulate multiple replays. The file must be in the replay folder.
 	{ "-simReplayList", parseSimReplayList },
+
+	// TheSuperHackers @feature helmutbuhler 23/05/2025
+	// Simulate each replay in a separate process and use up two N processes at the same time.
+	// (If you have 4 cores, call it with -jobs 4)
+	// If you do not call this, all replays will be simulated in sequence in the same process.
+	{ "-jobs", parseJobs },
 
 #if (defined(_DEBUG) || defined(_INTERNAL))
 	{ "-noaudio", parseNoAudio },

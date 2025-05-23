@@ -97,7 +97,7 @@ static int SimulateReplayListSingleProcess(const std::vector<AsciiString> &filen
 	return numErrors != 0 ? 1 : 0;
 }
 
-static int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filenames)
+static int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filenames, int maxProcesses)
 {
 	DWORD totalStartTime = GetTickCount();
 
@@ -105,7 +105,6 @@ static int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filena
 	GetModuleFileNameW(NULL, exePath, 1024);
 
 	std::vector<WorkerProcess> processes;
-	const int maxProcesses = 20;
 	int filenamePositionStarted = 0;
 	int filenamePositionDone = 0;
 	int numErrors = 0;
@@ -178,10 +177,10 @@ static int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filena
 	return numErrors != 0 ? 1 : 0;
 }
 
-int SimulateReplayList(const std::vector<AsciiString> &filenames)
+int SimulateReplayList(const std::vector<AsciiString> &filenames, int maxProcesses)
 {
-	if (filenames.size() == 1)
+	if (maxProcesses == -1)
 		return SimulateReplayListSingleProcess(filenames);
 	else
-		return SimulateReplayListMultiProcess(filenames);
+		return SimulateReplayListMultiProcess(filenames, maxProcesses);
 }

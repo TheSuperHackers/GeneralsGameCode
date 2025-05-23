@@ -44,7 +44,7 @@ Int GameMain( int argc, char *argv[] )
 
 	if (!TheGlobalData->m_simulateReplayList.empty())
 	{
-		exitcode = SimulateReplayList(TheGlobalData->m_simulateReplayList);
+		exitcode = SimulateReplayList(TheGlobalData->m_simulateReplayList, TheGlobalData->m_simulateReplayJobs);
 	}
 	else
 	{
