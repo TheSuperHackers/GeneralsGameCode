@@ -63,6 +63,20 @@ LaserUpdateModuleData::LaserUpdateModuleData()
 	p.add(dataFieldParse);
 }
 
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+LaserRadiusUpdate::LaserRadiusUpdate()
+{
+	m_widening = false;
+	m_widenStartFrame = 0;
+	m_widenFinishFrame = 0;
+	m_currentWidthScalar = 1.0f;
+	m_decaying = false;
+	m_decayStartFrame = 0;
+	m_decayFinishFrame = 0;
+}
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 LaserUpdate::LaserUpdate( Thing *thing, const ModuleData* moduleData ) : ClientUpdateModule( thing, moduleData )
@@ -75,13 +89,6 @@ LaserUpdate::LaserUpdate( Thing *thing, const ModuleData* moduleData ) : ClientU
 	//
 	m_particleSystemID = INVALID_PARTICLE_SYSTEM_ID;
 	m_targetParticleSystemID = INVALID_PARTICLE_SYSTEM_ID;
-	m_widening = false;
-	m_widenStartFrame = 0;
-	m_widenFinishFrame = 0;
-	m_currentWidthScalar = 1.0f;
-	m_decaying = false;
-	m_decayStartFrame = 0;
-	m_decayFinishFrame = 0;
 } 
 
 //-------------------------------------------------------------------------------------------------
@@ -101,19 +108,22 @@ LaserUpdate::~LaserUpdate( void )
 //-------------------------------------------------------------------------------------------------
 void LaserUpdate::clientUpdate( void )
 {
-/// @todo srj use SLEEPY_UPDATE here
+	m_dirty |= m_laserRadius.updateRadius();
+}
+
+//-------------------------------------------------------------------------------------------------
+bool LaserRadiusUpdate::updateRadius()
+{
+	bool updated = false;
 	if( m_decaying )
 	{
 		UnsignedInt now = TheGameLogic->getFrame();
 		m_currentWidthScalar = 1.0f - (Real)(now - m_decayStartFrame) / (Real)(m_decayFinishFrame - m_decayStartFrame);
-		m_dirty = true;
+		updated = true;
 		if( m_currentWidthScalar <= 0.0f )
 		{
 			m_currentWidthScalar = 0.0f;
-
-			//When decay is finished... delete the laser.
-			//TheGameLogic->destroyObject( getObject() );
-			return;
+			//m_decaying = false // ?????
 		}
 	}
 	else if( m_widening )
@@ -121,17 +131,19 @@ void LaserUpdate::clientUpdate( void )
 		//We need to resize our laser width based on the growth ratio completed.
 		UnsignedInt now = TheGameLogic->getFrame();
 		m_currentWidthScalar = (Real)(now - m_widenStartFrame) / (Real)(m_widenFinishFrame - m_widenStartFrame);
-		m_dirty = true;
+		updated = true;
 		if( m_currentWidthScalar >= 1.0f )
 		{
 			m_currentWidthScalar = 1.0f;
 			m_widening = false;
 		}
 	}
-	return;
+
+	return updated;
 }
 
-void LaserUpdate::setDecayFrames( UnsignedInt decayFrames )
+//-------------------------------------------------------------------------------------------------
+void LaserRadiusUpdate::setDecayFrames( UnsignedInt decayFrames )
 {
 	if( decayFrames > 0 )
 	{
@@ -142,12 +154,9 @@ void LaserUpdate::setDecayFrames( UnsignedInt decayFrames )
 	}
 }
 
-
 //-------------------------------------------------------------------------------------------------
-void LaserUpdate::initLaser( const Object *parent, const Coord3D *startPos, const Coord3D *endPos, Int sizeDeltaFrames )
+void LaserRadiusUpdate::initRadius( Int sizeDeltaFrames )
 {
-	const LaserUpdateModuleData *data = getLaserUpdateModuleData();
-	ParticleSystem *system;
 	if( sizeDeltaFrames > 0 )
 	{
 		m_widening = true;
@@ -162,6 +171,40 @@ void LaserUpdate::initLaser( const Object *parent, const Coord3D *startPos, cons
 		m_decayFinishFrame = m_decayStartFrame - sizeDeltaFrames;
 		m_currentWidthScalar = 1.0f;
 	}
+}
+
+//-------------------------------------------------------------------------------------------------
+void LaserRadiusUpdate::xfer( Xfer *xfer )
+{
+	// widening
+	xfer->xferBool( &m_widening );
+
+	// decaying
+	xfer->xferBool( &m_decaying );
+
+	// widen start frame
+	xfer->xferUnsignedInt( &m_widenStartFrame );
+
+	// widen finish frame
+	xfer->xferUnsignedInt( &m_widenFinishFrame );
+
+	// current width scalar
+	xfer->xferReal( &m_currentWidthScalar );
+
+	// decay start frame
+	xfer->xferUnsignedInt( &m_decayStartFrame );
+
+	// decay finish frame
+	xfer->xferUnsignedInt( &m_decayFinishFrame );
+}
+
+//-------------------------------------------------------------------------------------------------
+void LaserUpdate::initLaser( const Object *parent, const Coord3D *startPos, const Coord3D *endPos, Int sizeDeltaFrames )
+{
+	const LaserUpdateModuleData *data = getLaserUpdateModuleData();
+	ParticleSystem *system;
+
+	m_laserRadius.initRadius( sizeDeltaFrames );
 
 	//Compute startPos
 	if( parent && data->m_parentFireBoneName.isNotEmpty() )
@@ -277,7 +320,7 @@ void LaserUpdate::initLaser( const Object *parent, const Coord3D *startPos, cons
 }
 
 //-------------------------------------------------------------------------------------------------
-Real LaserUpdate::getCurrentLaserRadius() const
+Real LaserUpdate::getTemplateLaserRadius() const
 {
 	const Drawable *draw = getDrawable();
 	const LaserDrawInterface* ldi = NULL;
@@ -290,10 +333,16 @@ Real LaserUpdate::getCurrentLaserRadius() const
 			//While it appears the logic is accessing client data, it is actually accessing template module
 			//data from the client. This value is INI constant thus can't change. It's grouped with other 
 			//laser defining attributes and having it there makes it easier for artists.
-			return ldi->getLaserTemplateWidth() * m_currentWidthScalar;
+			return ldi->getLaserTemplateWidth();
 		}
 	}
 	return 0.0f;
+}
+
+//-------------------------------------------------------------------------------------------------
+Real LaserUpdate::getCurrentLaserRadius() const
+{
+	return getTemplateLaserRadius() * getWidthScale();
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -338,26 +387,7 @@ void LaserUpdate::xfer( Xfer *xfer )
 	// target particle system id
 	xfer->xferUser( &m_targetParticleSystemID, sizeof( ParticleSystemID ) );
 
-	// widening
-	xfer->xferBool( &m_widening );
-
-	// decaying
-	xfer->xferBool( &m_decaying );
-
-	// widen start frame
-	xfer->xferUnsignedInt( &m_widenStartFrame );
-
-	// widen finish frame
-	xfer->xferUnsignedInt( &m_widenFinishFrame );
-
-	// current width scalar
-	xfer->xferReal( &m_currentWidthScalar );
-
-	// decay start frame
-	xfer->xferUnsignedInt( &m_decayStartFrame );
-
-	// decay finish frame
-	xfer->xferUnsignedInt( &m_decayFinishFrame );
+	m_laserRadius.xfer( xfer );
 
 }  // end xfer
 
