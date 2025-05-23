@@ -3461,7 +3461,10 @@ void initMemoryManager()
 #endif
 	{
 		DEBUG_CRASH(("Wrong operator new/delete linked in! Fix this...\n"));
+
+#if !defined(__clang__)
 		exit(-1);
+#endif
 	}
 
 	theMainInitFlag = true;
