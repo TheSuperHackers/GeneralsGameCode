@@ -19,5 +19,5 @@
 #pragma once
 
 
-void WriteOutReplayList();
+bool WriteOutReplayList(AsciiString relativeFolder);
 void ReadReplayListFromCsv(AsciiString filename, std::vector<AsciiString>* replayList);

@@ -48,26 +48,30 @@ Bool GetReplayMapInfo(const AsciiString& filename, RecorderClass::ReplayHeader *
 	return true;
 }
 
-void WriteOutReplayList()
+bool WriteOutReplayList(AsciiString relativeFolder)
 {
+	AsciiString dir;
+	dir.format("%s%s", TheRecorder->getReplayDir().str(), relativeFolder.str());
+	if (!dir.endsWith("\\") && !dir.endsWith("/"))
+		dir.concat('/');
 	AsciiString fname;
-	fname.format("%sreplay_list.csv", TheRecorder->getReplayDir().str());
+	fname.format("%s/replay_list.csv", dir.str());
 	FILE *fp = fopen(fname.str(), "wt");
 	if (!fp)
-		return;
+		return false;
 
 	// Get list of replay filenames
 	AsciiString asciisearch;
 	asciisearch = "*";
 	asciisearch.concat(TheRecorder->getReplayExtention());
 	FilenameList replayFilenamesSet;
-	TheFileSystem->getFileListInDirectory(TheRecorder->getReplayDir(), asciisearch, replayFilenamesSet, FALSE);
+	TheFileSystem->getFileListInDirectory(dir, asciisearch, replayFilenamesSet, FALSE);
 	std::vector<AsciiString> replayFilenames;
 	for (FilenameListIter it = replayFilenamesSet.begin(); it != replayFilenamesSet.end(); ++it)
 	{
 		replayFilenames.push_back(*it);
 	}
-	
+
 	TheMapCache->updateCache();
 
 	std::set<int> foundSeeds;
@@ -81,10 +85,11 @@ void WriteOutReplayList()
 		const MapMetaData *md = NULL;
 		if (i != -1)
 		{
-			filename.set(replayFilenames[i].reverseFind('\\') + 1);
+			filename.set(replayFilenames[i].str() + TheRecorder->getReplayDir().getLength());
 			Bool success = GetReplayMapInfo(filename, &header, &info, &md);
 			if (!success)
 				continue;
+			filename.set(replayFilenames[i].str() + dir.getLength());
 		}
 		int numHumans = 0, numAIs = 0;
 		for (int slot = 0; slot < MAX_SLOTS; slot++)
@@ -128,7 +133,7 @@ void WriteOutReplayList()
 		else
 			fprintf(fp, ",\"%s\"", filename.str());
 
-		fprintf(fp, ",%s", i == -1 ? "map_exists" : md ? "1" : "0");
+		fprintf(fp, ",%s", i == -1 ? "mapExists" : md ? "1" : "0");
 		fprintf(fp, ",%s", i == -1 ? "mismatch"   : header.desyncGame ? "1" : "0");
 		fprintf(fp, ",%s", i == -1 ? "crash"      : header.endTime == 0 ? "1" : "0");
 		fprintf(fp, i == -1 ? ",frames" : ",%d",    header.frameDuration);
@@ -170,6 +175,7 @@ void WriteOutReplayList()
 #endif
 	}
 	fclose(fp);
+	return true;
 }
 
 static bool ReadLineFromFile(FILE *fp, AsciiString *str)

@@ -461,6 +461,15 @@ Int parseSimReplayList(char *args[], int num)
 	return 1;
 }
 
+Int parseWriteReplayList(char *args[], int num)
+{
+	if (TheWritableGlobalData && num > 1)
+	{
+		TheWritableGlobalData->m_writeReplayList = args[1];
+	}
+	return 1;
+}
+
 Int parseJobs(char *args[], int num)
 {
 	if (TheWritableGlobalData && num > 1)
@@ -1281,6 +1290,11 @@ static CommandLineParam params[] =
 	// (If you have 4 cores, call it with -jobs 4)
 	// If you do not call this, all replays will be simulated in sequence in the same process.
 	{ "-jobs", parseJobs },
+
+	// TheSuperHackers @feature helmutbuhler 23/05/2025
+	// Write replay list into a csv file. Append a subfolder of the replay folder or . for all
+	// replays in the replay folder.
+	{ "-writeReplayList", parseWriteReplayList },
 
 #if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 	{ "-noaudio", parseNoAudio },

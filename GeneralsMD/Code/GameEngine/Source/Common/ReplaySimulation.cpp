@@ -70,7 +70,7 @@ static int SimulateReplayListSingleProcess(const std::vector<AsciiString> &filen
 			numErrors++;
 		}
 	}
-	if (TheGlobalData->m_simulateReplayList.size() > 1)
+	if (filenames.size() > 1)
 	{
 		if (numErrors)
 			printf("Errors occured: %d\n", numErrors);
