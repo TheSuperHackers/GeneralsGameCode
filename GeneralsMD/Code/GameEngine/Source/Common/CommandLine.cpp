@@ -445,6 +445,7 @@ Int parseSimReplay(char *args[], int num)
 		AsciiString filename = args[1];
 		ConvertShortReplayPathToLongReplayPath(filename);
 		TheWritableGlobalData->m_simulateReplayList.push_back(filename);
+		TheWritableGlobalData->m_headless = TRUE;
 		return 2;
 	}
 	return 1;
@@ -456,6 +457,7 @@ Int parseSimReplayList(char *args[], int num)
 	{
 		AsciiString filename = args[1];
 		ReadReplayListFromCsv(filename, &TheWritableGlobalData->m_simulateReplayList);
+		TheWritableGlobalData->m_headless = TRUE;
 		return 2;
 	}
 	return 1;
@@ -466,6 +468,7 @@ Int parseWriteReplayList(char *args[], int num)
 	if (TheWritableGlobalData && num > 1)
 	{
 		TheWritableGlobalData->m_writeReplayList = args[1];
+		TheWritableGlobalData->m_headless = TRUE;
 	}
 	return 1;
 }
@@ -920,15 +923,6 @@ Int parseQuickStart( char *args[], int num )
 	return 1;
 }
 
-Int parseHeadless( char *args[], int num )
-{
-	if (TheWritableGlobalData)
-	{
-		TheWritableGlobalData->m_headless = TRUE;
-	}
-	return 1;
-}
-
 Int parseConstantDebug( char *args[], int num )
 {
 	if (TheWritableGlobalData)
@@ -1273,9 +1267,6 @@ static CommandLineParam params[] =
 	{ "-quickstart", parseQuickStart },
 	{ "-useWaveEditor", parseUseWaveEditor },
 
-	// TheSuperHackers @feature helmutbuhler 11/04/2025
-	// This runs the game without a window, graphics, input and audio. Used for testing.
-	{ "-headless", parseHeadless },
 	// TheSuperHackers @feature helmutbuhler 13/04/2025
 	// Simulate replay without graphics. Pass the filename including .rep afterwards.
 	// You can pass this multiple times to check multiple replays.

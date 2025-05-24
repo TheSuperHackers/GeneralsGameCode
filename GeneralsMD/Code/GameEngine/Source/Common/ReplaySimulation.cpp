@@ -145,7 +145,7 @@ static int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filena
 			UnicodeString filenameWide;
 			filenameWide.translate(filenames[filenamePositionStarted]);
 			UnicodeString command;
-			command.format(L"\"%s\" -headless -simReplay \"%s\"", exePath, filenameWide.str());
+			command.format(L"\"%s\" -simReplay \"%s\"", exePath, filenameWide.str());
 
 			WorkerProcess p;
 			p.StartProcess(command);
