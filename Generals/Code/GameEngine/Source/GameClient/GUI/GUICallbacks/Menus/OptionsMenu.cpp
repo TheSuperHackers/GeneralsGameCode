@@ -702,7 +702,21 @@ void OptionPreferences::getResolution(Int *xres, Int *yres)
 	*xres=selectedXRes;
 	*yres=selectedYRes;
 }
+void OptionPreferences::getRenderDeviceIndex(Int* index)
+{
+	*index = TheGlobalData->m_renderDeviceIndex;
 
+
+	OptionPreferences::const_iterator it = find("RenderDeviceIndex");
+	if (it == end())
+		return;
+
+	Int selectedDev;
+	if (sscanf(it->second.str(), "%d", &selectedDev) != 1)
+		return;
+
+	*index = selectedDev;
+}
 Real OptionPreferences::getMusicVolume(void)
 {
 	OptionPreferences::const_iterator it = find("MusicVolume");

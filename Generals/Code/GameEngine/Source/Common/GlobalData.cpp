@@ -76,6 +76,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "DumpAssetUsage",						INI::parseBool,				NULL,			offsetof( GlobalData, m_dumpAssetUsage ) },
 	{ "FramesPerSecondLimit",			INI::parseInt,				NULL,			offsetof( GlobalData, m_framesPerSecondLimit ) },
 	{ "ChipsetType",							INI::parseInt,				NULL,			offsetof( GlobalData, m_chipSetType ) },
+	{ "RenderDeviceIndex",							INI::parseInt,				NULL,			offsetof(GlobalData, m_renderDeviceIndex) },
 	{ "MaxShellScreens",					INI::parseInt,				NULL,			offsetof( GlobalData, m_maxShellScreens ) },
 	{ "UseCloudMap",							INI::parseBool,				NULL,			offsetof( GlobalData, m_useCloudMap ) },
 	{ "UseLightMap",							INI::parseBool,				NULL,			offsetof( GlobalData, m_useLightMap ) },
@@ -1232,5 +1233,9 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 
 	TheWritableGlobalData->m_xResolution = xres;
 	TheWritableGlobalData->m_yResolution = yres;
+
+	Int renderDeviceIndex = 0;
+	optionPref.getRenderDeviceIndex(&renderDeviceIndex);
+	TheWritableGlobalData->m_renderDeviceIndex = renderDeviceIndex;
 }
 

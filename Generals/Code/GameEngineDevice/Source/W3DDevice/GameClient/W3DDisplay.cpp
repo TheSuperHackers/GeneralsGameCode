@@ -539,6 +539,9 @@ void W3DDisplay::setHeight( UnsignedInt height )
 
 }  // end set height
 
+
+
+
 // W3DDisplay::initAssets =====================================================
 /** */
 //=============================================================================
@@ -662,42 +665,44 @@ void W3DDisplay::init( void )
 		WW3D::Set_Thumbnail_Enabled(false);
 		WW3D::Set_Screen_UV_Bias( TRUE );  ///< this makes text look good :)
 			
-		setWindowed( TheGlobalData->m_windowed );
+    setWindowed( TheGlobalData->m_windowed );
 
-		// create a 2D renderer helper
-		m_2DRender = NEW Render2DClass;
-		DEBUG_ASSERTCRASH( m_2DRender, ("Cannot create Render2DClass") );
+    // create a 2D renderer helper
+    m_2DRender = NEW Render2DClass;
+    DEBUG_ASSERTCRASH( m_2DRender, ("Cannot create Render2DClass") );
 
-		// set our default width and height and bit depth
-		/// @todo we should set this according to options read from a file
-		setWidth( TheGlobalData->m_xResolution );
-		setHeight( TheGlobalData->m_yResolution );
-		setBitDepth( W3D_DISPLAY_DEFAULT_BIT_DEPTH );
+    // set our default width, height, bit depth, and render device
 
-		if( WW3D::Set_Render_Device( 0, 
-																 getWidth(), 
-																 getHeight(), 
-																 getBitDepth(), 
-																 getWindowed(), 
-																 true ) != WW3D_ERROR_OK ) 
-		{
-			// Getting the device at the default bit depth (32) didn't work, so try
-			// getting a 16 bit display.  (Voodoo 1-3 only supported 16 bit.) jba.
-			setBitDepth( 16 );
-			if( WW3D::Set_Render_Device( 0, 
-																	 getWidth(), 
-																	 getHeight(), 
-																	 getBitDepth(), 
-																	 getWindowed(), 
-																	 true ) != WW3D_ERROR_OK ) 
-			{
+    setWidth( TheGlobalData->m_xResolution );
+    setHeight( TheGlobalData->m_yResolution );
+    setRenderDevice(TheGlobalData->m_renderDeviceIndex);
+    // @todo we should set this according to options read from a file
+    setBitDepth( W3D_DISPLAY_DEFAULT_BIT_DEPTH );
 
-				WW3D::Shutdown();
-				WWMath::Shutdown();
-				throw ERROR_INVALID_D3D;	//failed to initialize.  User probably doesn't have DX 8.1
-				DEBUG_ASSERTCRASH( 0, ("Unable to set render device\n") );
-				return;
-			}
+    if( WW3D::Set_Render_Device( getRenderDevice(),
+                                 getWidth(), 
+                                 getHeight(), 
+                                 getBitDepth(), 
+                                 getWindowed(), 
+                                 true ) != WW3D_ERROR_OK ) 
+    {
+      // Getting the device at the default bit depth (32) didn't work, so try
+      // getting a 16 bit display.  (Voodoo 1-3 only supported 16 bit.) jba.
+      setBitDepth( 16 );
+      if( WW3D::Set_Render_Device(   getRenderDevice(), 
+                                     getWidth(), 
+                                     getHeight(), 
+                                     getBitDepth(), 
+                                     getWindowed(), 
+                                     true ) != WW3D_ERROR_OK ) 
+      {
+
+          WW3D::Shutdown();
+          WWMath::Shutdown();
+          throw ERROR_INVALID_D3D;	//failed to initialize.  User probably doesn't have DX 8.1
+          DEBUG_ASSERTCRASH( 0, ("Unable to set render device\n") );
+          return;
+      }
 
 		}  // end if
 

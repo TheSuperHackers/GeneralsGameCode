@@ -80,8 +80,10 @@ public:
 	// Display attribute methods
 	virtual void setWidth( UnsignedInt width );										///< Sets the width of the display		
 	virtual void setHeight( UnsignedInt height );									///< Sets the height of the display
+	virtual void setRenderDevice(UnsignedInt device);									///< Sets the render device to use (0 = default, 1 = 2nd device, etc.)
 	virtual UnsignedInt getWidth( void ) { return m_width; }			///< Returns the width of the display
 	virtual UnsignedInt getHeight( void ) { return m_height; }		///< Returns the height of the display
+	virtual UnsignedInt getRenderDevice( void) { return m_renderDeviceIndex; };
 	virtual void setBitDepth( UnsignedInt bitDepth ) { m_bitDepth = bitDepth; }
 	virtual UnsignedInt getBitDepth( void ) { return m_bitDepth; }
 	virtual void setWindowed( Bool windowed ) { m_windowed = windowed; }  ///< set windowd/fullscreen flag
@@ -187,6 +189,7 @@ protected:
 	virtual void deleteViews( void );   ///< delete all views
 	UnsignedInt m_width, m_height;			///< Dimensions of the display
 	UnsignedInt m_bitDepth;							///< bit depth of the display
+	UnsignedInt m_renderDeviceIndex;			///< index of the render device to use
 	Bool m_windowed;										///< TRUE when windowed, FALSE when fullscreen
 	View *m_viewList;										///< All of the views into the world
 
