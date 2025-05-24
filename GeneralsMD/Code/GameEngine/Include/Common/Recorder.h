@@ -74,9 +74,8 @@ public:
 	UnsignedInt getFrameDuration() { return m_playbackFrameDuration; }			///< valid during playback only
 	void stopPlayback();															///< Stops playback.  Its fine to call this even if not playing back a file.
 	Bool simulateReplay(AsciiString filename);
-#if 1
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	Bool analyzeReplay( AsciiString filename );
-	void stopAnalysis();
 #endif
 	Bool isPlaybackInProgress();
 

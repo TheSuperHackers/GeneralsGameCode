@@ -916,7 +916,7 @@ Bool RecorderClass::simulateReplay(AsciiString filename)
 	return success;
 }
 
-#if 1
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 Bool RecorderClass::analyzeReplay( AsciiString filename )
 {
 	m_doingAnalysis = TRUE;
@@ -924,10 +924,7 @@ Bool RecorderClass::analyzeReplay( AsciiString filename )
 }
 
 
-void RecorderClass::stopAnalysis()
-{
-	m_doingAnalysis = FALSE;
-}
+
 #endif
 
 Bool RecorderClass::isPlaybackInProgress( void )
