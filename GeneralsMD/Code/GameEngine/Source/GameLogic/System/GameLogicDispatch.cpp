@@ -269,16 +269,8 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 	{
 		shellGame = TRUE;
 		TheTransitionHandler->setGroup("FadeWholeScreen");
-		if (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_SIMULATION_PLAYBACK)
-		{
-			// Get back directly to replay menu after simulation is complete
-			TheShell->showShell(TRUE);
-		}
-		else
-		{
-			TheShell->push("Menus/ScoreScreen.wnd");
-			TheShell->showShell(FALSE); // by passing in false, we don't want to run the Init on the shell screen we just pushed on
-		}
+		TheShell->push("Menus/ScoreScreen.wnd");
+		TheShell->showShell(FALSE); // by passing in false, we don't want to run the Init on the shell screen we just pushed on
 		TheTransitionHandler->reverse("FadeWholeScreen");
 
 		void FixupScoreScreenMovieWindow( void );
