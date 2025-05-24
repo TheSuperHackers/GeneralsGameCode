@@ -30,6 +30,7 @@
 
 #include "Common/GameEngine.h"
 #include "Common/ReplaySimulation.h"
+#include "Common/ReplayListCsv.h"
 
 
 /**
@@ -45,6 +46,11 @@ Int GameMain( int argc, char *argv[] )
 	if (!TheGlobalData->m_simulateReplayList.empty())
 	{
 		exitcode = SimulateReplayList(TheGlobalData->m_simulateReplayList, TheGlobalData->m_simulateReplayJobs);
+	}
+	else if (!TheGlobalData->m_writeReplayList.isEmpty())
+	{
+		bool success = WriteOutReplayList(TheGlobalData->m_writeReplayList);
+		exitcode = success ? 0 : 1;
 	}
 	else
 	{
