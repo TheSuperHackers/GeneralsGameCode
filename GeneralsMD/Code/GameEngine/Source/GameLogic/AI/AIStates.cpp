@@ -5005,9 +5005,13 @@ StateReturnType AIAttackAimAtTargetState::onEnter()
 
 StateReturnType AIAttackAimAtTargetState::update()
 {
+
 	// contained by AIAttackState, so no separate timer
 	Object* source = getMachineOwner();
 	AIUpdateInterface* sourceAI = source->getAI();
+
+
+	// DEBUG_LOG((">>> attackAngle = %f, useAttackAngle = %d, mirrored = %d, canTurnInPlace = %d\n", sourceAI->getAttackAngle() * 180 / PI, sourceAI->useAttackAngle(), sourceAI->isAttackAngleMirrored(), m_canTurnInPlace));
 
 	if (!source->hasAnyWeapon())
 		return STATE_FAILURE;
@@ -5039,7 +5043,10 @@ StateReturnType AIAttackAimAtTargetState::update()
 			Real minAngle = sourceAI->getMinTurretAngle(tur);
 			if (maxAngle < minAngle) { // This might be a backwards facing configuration
 				maxAngle = nmod(maxAngle, 2.0 * PI);
+				relAngle = nmod(relAngle, 2.0 * PI);
 			}
+
+			// DEBUG_LOG((">>> (hasLimited) relAngle = %f, minAngle = %f, maxAngle = %f.\n", relAngle * 180 / PI, minAngle * 180 / PI, maxAngle * 180 / PI));
 
 			if ((relAngle < maxAngle) && (relAngle > minAngle)) {
 				// If the target is inside our maximum turret angle, we can continue
@@ -5075,12 +5082,6 @@ StateReturnType AIAttackAimAtTargetState::update()
 											ThePartitionManager->getRelativeAngle2D( source, victim ) : 
 											ThePartitionManager->getRelativeAngle2D( source, getMachineGoalPosition() );
 
-		// do we prefer a different angle?
-		Real attackAngle = sourceAI->getAttackAngle();
-
-		// relAngle -= attackAngle;
-		// relAngle = normalizeAngle(relAngle);
-
 		const Real REL_THRESH = 0.035f;	// about 2 degrees. (getRelativeAngle2D is current only accurate to about 1.25 degrees)
 
 		Weapon* weapon = source->getCurrentWeapon();
@@ -5090,27 +5091,22 @@ StateReturnType AIAttackAimAtTargetState::update()
 		{
 			aimDelta = REL_THRESH;
 		}
-		//Real aimDeltaNeg = -aimDelta;
 
-		if (sourceAI->hasLimitedTurretAngle(tur)) {
+		if (sourceAI->hasLimitedTurretAngle(tur) && !sourceAI->useAttackAngle()) {
 			Real maxAngle = sourceAI->getMaxTurretAngle(tur) + aimDelta;
 			Real minAngle = sourceAI->getMinTurretAngle(tur) - aimDelta;
 			if (maxAngle < minAngle) { // This might be a backwards facing configuration
 				maxAngle = nmod(maxAngle, 2.0 * PI);
 				relAngle = nmod(relAngle, 2.0 * PI);
 			}
-
-			//aimDelta += maxAngle;
-			//aimDeltaNeg += minAngle;
-
 			
 			if (m_canTurnInPlace)
 			{
 				// if out of turret turn range:
 				if (relAngle > maxAngle || relAngle < minAngle) {
 
-					// if (normalizeAngle(fabs(relAngle - maxAngle)) < normalizeAngle(fabs(relAngle - minAngle)))
-					if (fabs(relAngle - maxAngle) < fabs(relAngle - minAngle))
+					// if (fabs(relAngle - maxAngle) < fabs(relAngle - minAngle))
+					if (fabs(stdAngleDiffMod(relAngle, maxAngle)) < fabs(stdAngleDiffMod(relAngle, minAngle)))
 					{
 						Real desiredAngle = source->getOrientation() + relAngle - maxAngle + REL_THRESH * 2;
 						desiredAngle = normalizeAngle(desiredAngle);
@@ -5162,7 +5158,27 @@ StateReturnType AIAttackAimAtTargetState::update()
 			}
 		}
 		else {
-			relAngle -= attackAngle;
+
+			// DEBUG_LOG((">>> (2) attackAngle = %f, useAttackAngle = %d, mirrored = %d, canTurnInPlace = %d\n", sourceAI->getAttackAngle() * 180 / PI, sourceAI->useAttackAngle(), sourceAI->isAttackAngleMirrored(), m_canTurnInPlace));
+
+
+			// Check preferredAttackAngle
+			if (sourceAI->useAttackAngle()) {
+				Real attackAngle = sourceAI->getAttackAngle();
+
+				if (sourceAI->isAttackAngleMirrored()) {
+
+					// check which side is closer
+					if (fabs(stdAngleDiffMod(relAngle, attackAngle)) > fabs(stdAngleDiffMod(relAngle, attackAngle + PI))) {
+						attackAngle = attackAngle + PI;
+					}
+				}
+
+				relAngle -= attackAngle;
+				relAngle = normalizeAngle(relAngle);
+			}
+
+
 			//DEBUG_LOG(("AIM: desired %f, actual %f, delta %f, aimDelta %f, goalpos %f %f\n",rad2deg(obj->getOrientation() + relAngle),rad2deg(obj->getOrientation()),rad2deg(relAngle),rad2deg(aimDelta),victim->getPosition()->x,victim->getPosition()->y));
 			if (m_canTurnInPlace)
 			{

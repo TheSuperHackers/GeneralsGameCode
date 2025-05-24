@@ -202,6 +202,8 @@ public:
  	UnsignedInt						m_surrenderDuration;					///< when we surrender, how long we stay surrendered.
 #endif
 	Real m_attackAngle;
+	Bool m_useAttackAngle;
+	Bool m_attackAngleMirrored;
 
 	
   AIUpdateModuleData();
@@ -215,6 +217,7 @@ public:
 
 private:
 	static void parseTurret( INI* ini, void *instance, void *store, const void* /*userData*/ );
+	static void parseAttackAngle( INI* ini, void *instance, void *store, const void* /*userData*/ );
 
 
 };
@@ -334,6 +337,8 @@ public:
 	Bool areTurretsLinked() const { return getAIUpdateModuleData()->m_turretsLinked; }
 
 	Real getAttackAngle() const { return getAIUpdateModuleData()->m_attackAngle; }
+	Bool useAttackAngle() const { return getAIUpdateModuleData()->m_useAttackAngle; }
+	Bool isAttackAngleMirrored() const { return getAIUpdateModuleData()->m_attackAngleMirrored; }
 
 	// this is present solely for some transports to override, so that they can land before 
 	// allowing people to exit...

@@ -248,6 +248,7 @@ public:
 
 	static void parseTurretSweep(INI* ini, void *instance, void *store, const void* userData);
 	static void parseTurretSweepSpeed(INI* ini, void *instance, void *store, const void* userData);
+	static void parseMinMaxAngle(INI* ini, void *instance, void *store, const void* userData);
 };
 EMPTY_DTOR(TurretAIData)
 

@@ -236,6 +236,18 @@ void TurretAIData::parseTurretSweepSpeed(INI* ini, void *instance, void * /*stor
 	INI::parseReal( ini, instance, &self->m_turretSweepSpeedModifier[wslot], NULL );
 }
 
+
+//-------------------------------------------------------------------------------------------------
+/*static*/ void TurretAIData::parseMinMaxAngle(INI* ini, void* instance, void* store, const void* userData)
+{
+	DEBUG_LOG((">> parseMinMaxAngle (1)\n"));
+	INI::parseAngleReal(ini, instance, store, userData);
+	TurretAIData* self = (TurretAIData*)instance;
+	self->m_hasLimitedTurretAngle = TRUE;
+	DEBUG_LOG((">> parseMinMaxAngle (2), self->m_hasLimitedTurretAngle = %d\n", self->m_hasLimitedTurretAngle));
+}
+
+
 //----------------------------------------------------------------------------------------------------------
 void TurretAIData::buildFieldParse(MultiIniFieldParse& p) 
 {
@@ -262,9 +274,9 @@ void TurretAIData::buildFieldParse(MultiIniFieldParse& p)
 		{ "RecenterTime",						INI::parseDurationUnsignedInt,				NULL, offsetof( TurretAIData, m_recenterTime ) },
 		{ "InitiallyDisabled",			INI::parseBool,												NULL, offsetof( TurretAIData, m_initiallyDisabled ) },
 		{ "FiresWhileTurning",			INI::parseBool,												NULL, offsetof( TurretAIData, m_firesWhileTurning ) },
-		{ "MinTurretAngle",             INI::parseAngleReal,									NULL, offsetof(TurretAIData, m_minTurretAngle) },
-		{ "MaxTurretAngle",             INI::parseAngleReal,									NULL, offsetof(TurretAIData, m_maxTurretAngle) },
-		{ "TurretAngleLimited",             INI::parseBool,									NULL, offsetof(TurretAIData, m_hasLimitedTurretAngle) },
+		{ "MinTurretAngle",             TurretAIData::parseMinMaxAngle,									NULL, offsetof(TurretAIData, m_minTurretAngle) },
+		{ "MaxTurretAngle",             TurretAIData::parseMinMaxAngle,									NULL, offsetof(TurretAIData, m_maxTurretAngle) },
+		// { "TurretAngleLimited",             INI::parseBool,									NULL, offsetof(TurretAIData, m_hasLimitedTurretAngle) },
 		{ 0, 0, 0, 0 }
 	};
   p.add(dataFieldParse);
