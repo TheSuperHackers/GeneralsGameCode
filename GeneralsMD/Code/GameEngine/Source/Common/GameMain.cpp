@@ -29,23 +29,39 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
+#include "Common/ReplaySimulation.h"
+#include "Common/ReplayListCsv.h"
 
 
 /**
  * This is the entry point for the game system.
  */
-void GameMain( int argc, char *argv[] )
+Int GameMain( int argc, char *argv[] )
 {
+	int exitcode = 0;
 	// initialize the game engine using factory function
 	TheGameEngine = CreateGameEngine();
 	TheGameEngine->init(argc, argv);
 
-	// run it
-	TheGameEngine->execute();
+	if (!TheGlobalData->m_simulateReplayList.empty())
+	{
+		exitcode = SimulateReplayList(TheGlobalData->m_simulateReplayList, TheGlobalData->m_simulateReplayJobs);
+	}
+	else if (!TheGlobalData->m_writeReplayList.isEmpty())
+	{
+		bool success = WriteOutReplayList(TheGlobalData->m_writeReplayList);
+		exitcode = success ? 0 : 1;
+	}
+	else
+	{
+		// run it
+		TheGameEngine->execute();
+	}
 
 	// since execute() returned, we are exiting the game
 	delete TheGameEngine;
 	TheGameEngine = NULL;
 
+	return exitcode;
 }
 
