@@ -1356,8 +1356,18 @@ void WW3D::Make_Screen_Shot( const char * filename_base , const float gamma, con
 	surface->Release_Ref();
 	surface = NULL;
 
-	D3DLOCKED_RECT lrect;
+	struct Rect
+	{
+		int Pitch;
+		void* pBits;
+	} lrect;
+
 	lrect.pBits = surfaceCopy->Lock(&lrect.Pitch);
+	if (lrect.pBits == NULL)
+	{
+		surfaceCopy->Release_Ref();
+		return;
+	}
 
 	unsigned int x,y,index,index2,width,height;
 
@@ -1696,8 +1706,18 @@ void WW3D::Update_Movie_Capture( void )
 	surface->Release_Ref();
 	surface = NULL;
 
-	D3DLOCKED_RECT lrect;
+	struct Rect
+	{
+		int Pitch;
+		void* pBits;
+	} lrect;
+
 	lrect.pBits = surfaceCopy->Lock(&lrect.Pitch);
+	if (lrect.pBits == NULL)
+	{
+		surfaceCopy->Release_Ref();
+		return;
+	}
 
 	unsigned int x,y,index,index2,width,height;
 

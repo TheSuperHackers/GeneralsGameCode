@@ -2864,8 +2864,18 @@ void W3DDisplay::takeScreenShot(void)
 	surface->Release_Ref();
 	surface = NULL;
 
-	D3DLOCKED_RECT lrect;
+	struct Rect
+	{
+		int Pitch;
+		void* pBits;
+	} lrect;
+
 	lrect.pBits = surfaceCopy->Lock(&lrect.Pitch);
+	if (lrect.pBits == NULL)
+	{
+		surfaceCopy->Release_Ref();
+		return;
+	}
 
 	unsigned int x,y,index,index2,width,height;
 
