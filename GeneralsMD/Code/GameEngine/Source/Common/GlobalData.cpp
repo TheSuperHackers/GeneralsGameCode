@@ -960,8 +960,6 @@ GlobalData::GlobalData()
 	m_simulateReplayList.clear();
 	m_simulateReplayJobs = -1;
 
-	m_writeReplayList = "";
-
 	for (i = LEVEL_FIRST; i <= LEVEL_LAST; ++i)
 		m_healthBonus[i] = 1.0f;
 

@@ -334,7 +334,6 @@ public:
 	
 	std::vector<AsciiString> m_simulateReplayList; ///< If not empty, simulate this list of replays and exit. (TheSuperHackers @feature helmutbuhler 13/04/2025)
 	Int m_simulateReplayJobs; ///< Maximum number of processes to use for simulation, or -1 for sequential simulation
-	AsciiString m_writeReplayList; ///< If not empty, write out list of replays in this subfolder into a csv file (TheSuperHackers @feature helmutbuhler 24/05/2025)
 
 	Int m_maxParticleCount;						///< maximum number of particles that can exist
 	Int m_maxFieldParticleCount;			///< maximum number of field-type particles that can exist (roughly)
