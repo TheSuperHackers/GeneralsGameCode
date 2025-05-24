@@ -434,16 +434,26 @@ void OpenContain::removeAllContained( Bool exposeStealthUnits )
 //-------------------------------------------------------------------------------------------------
 void OpenContain::killAllContained( void )
 {
-	ContainedItemsList::iterator it = m_containList.begin();
+	// TheSuperHackers @bugfix xezon 23/05/2025 Empty m_containList straight away
+	// to prevent a potential child call to catastrophically modify the m_containList as well.
+	// This scenario can happen if the killed occupant(s) apply deadly damage on death
+	// to the host container, which then attempts to remove all remaining occupants
+	// on the death of the host container. This is reproducible by shooting with
+	// Neutron Shells on a GLA Technical containing GLA Terrorists.
+	ContainedItemsList list;
+	list.swap(m_containList);
+	m_containListSize = 0;
 
- 	while ( it != m_containList.end() )
+	ContainedItemsList::iterator it = list.begin();
+
+ 	while ( it != list.end() )
 	{
     Object *rider = *it;
 
-
+    DEBUG_ASSERTCRASH( rider, ("Contain list must not contain NULL element"));
     if ( rider )
     {
-	    it = m_containList.erase(it);
+	    it = list.erase(it);
 	    m_containListSize--;
 
       onRemoving( rider );
@@ -472,6 +482,7 @@ void OpenContain::harmAndForceExitAllContained( DamageInfo *info )
 	{
 		Object *rider = *it;
 
+		DEBUG_ASSERTCRASH( rider, ("Contain list must not contain NULL element"));
 		if ( rider )
 		{
 		  removeFromContain( rider, true );
@@ -490,7 +501,7 @@ void OpenContain::harmAndForceExitAllContained( DamageInfo *info )
 
   DEBUG_ASSERTCRASH( m_containListSize == 0, ("harmAndForceExitAllContained just made a booboo, list size != zero.") );
 
-}  // end removeAllContained
+}  // end harmAndForceExitAllContained
 
 
 //-------------------------------------------------------------------------------------------------
