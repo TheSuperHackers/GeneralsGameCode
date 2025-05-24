@@ -1043,9 +1043,8 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 	if (samePlayer || (localPlayerIndex < 0))
 	{
 		UnsignedInt playbackCRC = m_crcInfo->readCRC();
-		Int mismatchFrame = TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1;
 		//DEBUG_LOG(("RecorderClass::handleCRCMessage() - Comparing CRCs of InGame:%8.8X Replay:%8.8X Frame:%d from Player %d\n",
-		//	playbackCRC, newCRC, mismatchFrame, playerIndex));
+		//	playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1, playerIndex));
 		if (TheGameLogic->getFrame() > 0 && newCRC != playbackCRC && !m_crcInfo->sawCRCMismatch())
 		{
 			m_crcInfo->setSawCRCMismatch();
@@ -1064,11 +1063,11 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 			// Note: We subtract the queue size from the frame no. This way we calculate the correct frame
 			// the mismatch first happened in case the NetCRCInterval is set to 1 during the game.
 			DEBUG_CRASH(("Replay has gone out of sync!  All bets are off!\nInGame:%8.8X Replay:%8.8X\nFrame:%d",
-				playbackCRC, newCRC, mismatchFrame));
+				playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1));
 
 			// TheSuperHackers @info helmutbuhler 13/04/2025
 			// Print Mismatch to console in case we are in SimulateReplayList
-			printf("CRC Mismatch in Frame %d\n", mismatchFrame);
+			printf("CRC Mismatch in Frame %d\n", TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1);
 
 			// TheSuperHackers @tweak Pause the game on mismatch.
 			TheGameLogic->setGamePaused(true);
