@@ -598,7 +598,7 @@ Real WeaponTemplate::estimateWeaponTemplateDamage(
 
   
   // hmm.. must be shooting a firebase or such, if there is noone home to take the bullet, return 0!
-  if ( victimObj->isKindOf( KINDOF_STRUCTURE) && damageType == DAMAGE_SNIPER )
+  if ( victimObj && victimObj->isKindOf( KINDOF_STRUCTURE) && damageType == DAMAGE_SNIPER )
   {
     if ( victimObj->getContain() )
     {
@@ -610,7 +610,7 @@ Real WeaponTemplate::estimateWeaponTemplateDamage(
 
 
 
-	if (damageType == DAMAGE_SURRENDER || m_allowAttackGarrisonedBldgs)
+	if ( victimObj && (damageType == DAMAGE_SURRENDER || m_allowAttackGarrisonedBldgs) )
 	{
 		ContainModuleInterface* contain = victimObj->getContain();
 		if( contain && contain->getContainCount() > 0 && contain->isGarrisonable() && !contain->isImmuneToClearBuildingAttacks() )

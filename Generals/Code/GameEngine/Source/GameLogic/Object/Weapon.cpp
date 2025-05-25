@@ -584,7 +584,7 @@ Real WeaponTemplate::estimateWeaponTemplateDamage(
 	}
 
 // this stays, even if ALLOW_SURRENDER is not defed, since flashbangs still use 'em
-	if (damageType == DAMAGE_SURRENDER || m_allowAttackGarrisonedBldgs)
+	if ( victimObj && (damageType == DAMAGE_SURRENDER || m_allowAttackGarrisonedBldgs) )
 	{
 		ContainModuleInterface* contain = victimObj->getContain();
 		if( contain && contain->getContainCount() > 0 && contain->isGarrisonable() && !contain->isImmuneToClearBuildingAttacks() )
