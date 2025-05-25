@@ -61,6 +61,7 @@ LaserUpdateModuleData::LaserUpdateModuleData()
 	m_widenDurationFrames = 0;
 	m_decayDurationFrames = 0;
 	m_hasMultiDraw = FALSE;
+	m_useHouseColor = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -78,6 +79,7 @@ LaserUpdateModuleData::LaserUpdateModuleData()
 		{ "BeamGrowDuration",				INI::parseDurationUnsignedInt,		NULL, offsetof(LaserUpdateModuleData, m_widenDurationFrames) },
 		{ "BeamShrinkDuration",				INI::parseDurationUnsignedInt,		NULL, offsetof(LaserUpdateModuleData, m_decayDurationFrames) },
 		{ "UseMultiLaserDraw",			INI::parseBool,		NULL, offsetof(LaserUpdateModuleData, m_hasMultiDraw) },
+		{ "UseHouseColoredParticles",			INI::parseBool,		NULL, offsetof(LaserUpdateModuleData, m_useHouseColor) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
@@ -437,6 +439,9 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 					if( system )
 					{
 						m_particleSystemID = system->getSystemID();
+						if (data->m_useHouseColor) {
+							system->tintColorsAllFrames(m_hexColor);
+						}
 					}
 				}
 			}
@@ -451,6 +456,9 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 					if( system )
 					{
 						m_targetParticleSystemID = system->getSystemID();
+						if (data->m_useHouseColor) {
+							system->tintColorsAllFrames(m_hexColor);
+						}
 					}
 				}
 			}

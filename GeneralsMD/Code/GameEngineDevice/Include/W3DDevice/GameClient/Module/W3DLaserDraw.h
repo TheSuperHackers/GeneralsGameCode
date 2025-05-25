@@ -104,9 +104,6 @@ protected:
 
 	Int	        m_hexColor;  ///< player house color
 
-private:
-	void handleHouseColor(Real& innerRed, Real& innerGreen, Real& innerBlue, Real& outerRed, Real& outerGreen, Real& outerBlue);
-
 };
 
 #endif // __W3DLASERDRAW_H_

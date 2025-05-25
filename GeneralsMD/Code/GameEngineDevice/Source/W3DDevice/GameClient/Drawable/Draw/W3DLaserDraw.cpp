@@ -364,8 +364,6 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 			updateColor = true;
 		}
 
-		// handleHouseColor(innerRed, innerGreen, innerBlue, outerRed, outerGreen, outerBlue);
-
 		// DEBUG_LOG(("LaserDraw (doDrawModule): AppliedHousecolor: Inner RGB = %f, %f, %f -- Outer RGB = %f, %f, %f\n", innerRed, innerGreen, innerBlue, outerRed, outerGreen, outerBlue));
 
 
@@ -558,53 +556,6 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 	}
 	
 	return;
-}
-
-// ----------------------------------------------------------------------------------------------
-void W3DLaserDraw::handleHouseColor(Real& innerRed, Real& innerGreen, Real& innerBlue, Real& outerRed, Real& outerGreen, Real& outerBlue) {
-	const W3DLaserDrawModuleData* data = getW3DLaserDrawModuleData();
-	DEBUG_LOG(("LaserDraw: Try to ApplyHousecolor: data->m_useHouseColorInner = %d, data->m_useHouseColorOuter = %d, m_hexColor = %d\n", data->m_useHouseColorInner, data->m_useHouseColorOuter, m_hexColor));
-
-	if (data->m_useHouseColorInner || data->m_useHouseColorOuter) {
-
-		//if (m_hexColor == 0) {
-		//	Drawable* draw = getDrawable();
-		//	if (draw) {
-		//		Object* obj = draw->getObject();
-		//		if (obj)
-		//		{
-		//			if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
-		//				m_hexColor = obj->getNightIndicatorColor();
-		//			else
-		//				m_hexColor = obj->getIndicatorColor();
-
-		//			DEBUG_LOG(("LaserDraw: set m_hexColor: %d\n", m_hexColor));
-
-		//		}
-		//		else {
-		//			DEBUG_LOG(("LaserDraw: obj is null\n"));
-		//		}
-		//	}
-		//	else {
-		//		DEBUG_LOG(("LaserDraw: draw is null\n"));
-		//	}
-		//}
-
-		RGBColor myHouseColor;
-		myHouseColor.setFromInt(m_hexColor);
-		DEBUG_LOG(("LaserDraw: ApplyHousecolor: RGB = %f, %f, %f -- data->m_useHouseColorInner = %d, data->m_useHouseColorOuter = %d\n", myHouseColor.red, myHouseColor.green, myHouseColor.blue, data->m_useHouseColorInner, data->m_useHouseColorOuter));
-
-		if (data->m_useHouseColorInner) {
-			(innerRed) *= myHouseColor.red;
-			(innerGreen) *= myHouseColor.green;
-			(innerBlue) *= myHouseColor.blue;
-		}
-		if (data->m_useHouseColorOuter) {
-			(outerRed) *= myHouseColor.red;
-			(outerGreen) *= myHouseColor.green;
-			(outerBlue) *= myHouseColor.blue;
-		}
-	}
 }
 
 

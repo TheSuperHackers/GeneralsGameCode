@@ -58,6 +58,7 @@ public:
 	UnsignedInt m_decayDurationFrames;  ///< If non-zero, beam shrinks over duration (tries to get time from lifetimeUpdate)
 
 	Bool m_hasMultiDraw;  ///< Enable this to support tracking multiple LaserDraw modules
+	Bool m_useHouseColor;  ///< Enable this to color particles with house color
 
 	LaserUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
