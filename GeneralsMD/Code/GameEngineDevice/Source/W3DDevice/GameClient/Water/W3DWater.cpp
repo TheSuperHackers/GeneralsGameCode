@@ -2631,7 +2631,7 @@ void WaterRenderObjClass::setGridResolution(Real gridCellsX, Real gridCellsY, Re
 {
 	m_gridCellSize=cellSize;
 
-	if (m_gridCellsX != gridCellsX || m_gridCellsY != m_gridCellsY)
+	if (m_gridCellsX != gridCellsX || m_gridCellsY != gridCellsY)
 	{	//resolutoin has changed
 		m_gridCellsX=gridCellsX;
 		m_gridCellsY=gridCellsY;
