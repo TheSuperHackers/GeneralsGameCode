@@ -95,7 +95,7 @@ class TestSeismicFilter : public SeismicSimulationFilterBase
       Int centerY = node->m_center.y + border ;
   
       UnsignedInt workspaceWidth = radius*2;
-      Real *workspace = NEW( Real[ sqr(workspaceWidth) ] );
+      Real *workspace = NEW Real[ sqr(workspaceWidth) ];
       Real *workspaceEnd = workspace + sqr(workspaceWidth);
 
 
