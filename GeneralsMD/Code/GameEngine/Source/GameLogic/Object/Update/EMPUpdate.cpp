@@ -198,8 +198,8 @@ void EMPUpdate::doDisableAttack( void )
 		}
 	}
 
-	SimpleObjectIterator *iter;
-	Object *curVictim;
+	SimpleObjectIterator *iter = NULL;
+	Object *curVictim = NULL;
 
 	if (radius > 0.0f)
 	{
@@ -499,8 +499,8 @@ void LeafletDropBehavior::doDisableAttack( void )
 	Real curVictimDistSqr;
 	const Coord3D *pos = object->getPosition();
 
-	SimpleObjectIterator *iter;
-	Object *curVictim;
+	SimpleObjectIterator *iter = NULL;
+	Object *curVictim = NULL;
 
 	if (radius > 0.0f)
 	{
