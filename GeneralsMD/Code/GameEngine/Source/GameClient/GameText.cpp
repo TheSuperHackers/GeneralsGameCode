@@ -630,6 +630,7 @@ void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *w
 				}
 
 				state = 1;
+				FALLTHROUGH;
 			case 1:
 				if ( ( ch >= 'a' && ch <= 'z') || ( ch >= 'A' && ch <='Z') || (ch >= '0' && ch <= '9') || ch == '_' )
 				{
@@ -638,6 +639,7 @@ void GameTextManager::readToEndOfQuote( File *file, Char *in, Char *out, Char *w
 					break;
 				}
 				state = 2;
+				FALLTHROUGH;
 			case 2:
 				break;
 		}

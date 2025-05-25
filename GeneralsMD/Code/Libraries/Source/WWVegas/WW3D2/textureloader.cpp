@@ -895,7 +895,7 @@ void TextureLoader::Process_Foreground_Thumbnail(TextureLoadTaskClass *task)
 	switch (task->Get_State()) {
 		case TextureLoadTaskClass::STATE_NONE:
 			Load_Thumbnail(task->Peek_Texture());
-			// NOTE: fall-through is intentional
+			FALLTHROUGH; // NOTE: fall-through is intentional
 
 		case TextureLoadTaskClass::STATE_COMPLETE:
 			task->Destroy();
@@ -1260,12 +1260,15 @@ void TextureLoadTaskClass::Finish_Load(void)
 				Apply_Missing_Texture();
 				break;
 			}
+			FALLTHROUGH;
 
 		case STATE_LOAD_BEGUN:
 			Load();
+			FALLTHROUGH;
 
 		case STATE_LOAD_MIPMAP:
 			End_Load();
+			FALLTHROUGH;
 
 		default:
 			break;
