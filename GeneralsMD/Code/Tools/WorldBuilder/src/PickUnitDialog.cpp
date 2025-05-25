@@ -39,6 +39,7 @@ ReplaceUnitDialog::ReplaceUnitDialog(CWnd* pParent /*=NULL*/)
 	: PickUnitDialog(IDD, pParent)
 {
 	m_objectsList = NULL;
+	m_objectsListModified = false;
 	m_currentObjectIndex = -1;
 	m_currentObjectName[0] = 0;
 	for (int i = ES_FIRST; i<ES_NUM_SORTING_TYPES; i++)	{
@@ -63,6 +64,8 @@ BEGIN_MESSAGE_MAP(ReplaceUnitDialog, CDialog)
 	//{{AFX_MSG_MAP(ReplaceUnitDialog)
 	//}}AFX_MSG_MAP
     ON_BN_CLICKED(IDIGNORE, OnIgnore)  // Handle the "Proceed without replace" button
+	// ON_BN_CLICKED(IDC_OBJECT_SEARCH_BUTTON_PICK, OnSearch)
+	// ON_BN_CLICKED(IDC_OBJECT_SEARCH_RESET_BTN_PICK, OnReset)
 END_MESSAGE_MAP()
 
 PickUnitDialog::PickUnitDialog(CWnd* pParent /*=NULL*/)
@@ -113,6 +116,8 @@ void PickUnitDialog::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(PickUnitDialog, CDialog)
 	//{{AFX_MSG_MAP(PickUnitDialog)
 	ON_WM_MOVE()
+	ON_BN_CLICKED(IDC_OBJECT_SEARCH_BUTTON_PICK, OnSearch)
+	ON_BN_CLICKED(IDC_OBJECT_SEARCH_RESET_BTN_PICK, OnReset)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -195,6 +200,13 @@ BOOL PickUnitDialog::OnInitDialog()
 		TVS_SHOWSELALWAYS|TVS_DISABLEDRAGDROP, rect, this, IDC_TERRAIN_TREEVIEW);
 	m_objectTreeView.ShowWindow(SW_SHOW);
 
+	pWnd = GetDlgItem(IDC_TERRAIN_SWATCHES);
+	pWnd->GetWindowRect(&rect);
+	ScreenToClient(&rect);
+	rect.DeflateRect(2,2,2,2);
+	m_objectPreview.Create(NULL, "", WS_CHILD, rect, this, IDC_TERRAIN_SWATCHES);
+	m_objectPreview.ShowWindow(SW_SHOW);
+
 	MapObject *pMap =  m_objectsList;
 	Int index = 0;
 	while (pMap) {
@@ -276,6 +288,29 @@ BOOL PickUnitDialog::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 		}
 	}
 	
+
+	// Update the preview based on the currently selected object index
+	if (m_currentObjectIndex >= 0)
+	{
+		MapObject* pMap = m_objectsList;
+		int i = 0;
+		while (pMap)
+		{
+			if (i == m_currentObjectIndex)
+			{
+				m_objectPreview.SetThingTemplate(pMap->getThingTemplate());
+				break;
+			}
+			i++;
+			pMap = pMap->getNext();
+		}
+	}
+	else
+	{
+		m_objectPreview.SetThingTemplate(NULL);
+	}
+	m_objectPreview.Invalidate();
+
 	return CDialog::OnNotify(wParam, lParam, pResult);
 }
 
@@ -393,6 +428,114 @@ void PickUnitDialog::addObject( MapObject *mapObject, const char *pPath, Int ind
 
 	}
 
+}
+
+// void PickUnitDialog::OnOK()
+// {
+// 	if (GetFocus() == GetDlgItem(IDC_OBJECT_SEARCH_EDIT_PICK)){
+// 		OnSearch(); 
+// 	} else {
+// 		CDialog::OnOK();
+// 	}
+// }
+
+// Add the function that handles the search button click
+void PickUnitDialog::OnReset()
+{
+	m_objectTreeView.DeleteAllItems(); // Clear current tree
+
+	// Repopulate list
+	MapObject* pMap = m_objectsList;
+	Int index = 0;
+	while (pMap)
+	{
+		addObject(pMap, pMap->getName().str(), index, TVI_ROOT);
+		index++;
+		pMap = pMap->getNext();
+	}
+
+	m_objectsListModified = false;
+}
+
+// Add the function that handles the search button click
+void PickUnitDialog::OnSearch()
+{
+    UpdateData(TRUE);
+
+    CString searchText;
+    GetDlgItemText(IDC_OBJECT_SEARCH_EDIT_PICK, searchText);
+    searchText.MakeLower();
+
+    m_objectTreeView.DeleteAllItems(); // Clear current tree
+
+    if (searchText.IsEmpty())
+    {
+		::MessageBeep(MB_ICONEXCLAMATION);
+
+        // Repopulate full list if search is empty
+        MapObject* pMap = m_objectsList;
+		Int index = 0;
+		while (pMap)
+		{
+			addObject(pMap, pMap->getName().str(), index, TVI_ROOT);
+			index++;
+			pMap = pMap->getNext();
+		}
+
+		m_objectsListModified = false;
+
+        return;
+    }
+
+    MapObject* pMap = m_objectsList;
+    int index = 0;
+    int matchCount = 0;
+
+    while (pMap)
+    {
+        CString name = pMap->getName().str();
+        CString lowerName = name;
+        lowerName.MakeLower();
+
+        if (lowerName.Find(searchText) != -1)
+        {
+            addObject(pMap, name, index, TVI_ROOT);
+            matchCount++;
+        }
+
+        pMap = pMap->getNext();
+        index++;
+    }
+
+    if (matchCount == 0)
+    {
+        MessageBox("No matches found.", "Search", MB_OK | MB_ICONINFORMATION);
+    }
+    else
+    {
+        // Expand all items in the tree
+        HTREEITEM hRoot = m_objectTreeView.GetRootItem();
+        if (hRoot)
+        {
+            ExpandAllItems(m_objectTreeView, hRoot);
+        }
+
+		m_objectsListModified = true;
+    }
+}
+
+
+void PickUnitDialog::ExpandAllItems(CTreeCtrl& treeCtrl, HTREEITEM hItem)
+{
+    while (hItem)
+    {
+        treeCtrl.Expand(hItem, TVE_EXPAND);
+        HTREEITEM hChild = treeCtrl.GetChildItem(hItem);
+        if (hChild)
+            ExpandAllItems(treeCtrl, hChild);
+
+        hItem = treeCtrl.GetNextSiblingItem(hItem);
+    }
 }
 
 AsciiString PickUnitDialog::getPickedUnit(void)

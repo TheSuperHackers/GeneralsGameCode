@@ -59,6 +59,8 @@
 #include "WorldBuilderView.h"
 #include "MapPreview.h"
 
+#include "TileTool.h"
+
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
@@ -104,8 +106,14 @@ BEGIN_MESSAGE_MAP(CWorldBuilderDoc, CDocument)
 	ON_COMMAND(ID_TS_CANONICAL, OnTsCanonical)
 	ON_UPDATE_COMMAND_UI(ID_TS_CANONICAL, OnUpdateTsCanonical)
 	ON_COMMAND(ID_FILE_RESIZE, OnFileResize)
-	ON_COMMAND(ID_FILE_JUMPTOGAME, OnJumpToGame)
+	
+	ON_COMMAND(ID_FILE_GENERATE_MAPSTRNINI, OnGenerateMapStrAndIni)
+	ON_COMMAND(ID_FILE_WBSETTINGS, OnOpenWorldbuilderSettings)
+	ON_COMMAND(ID_FILE_JUMPTOFOLDER, OnJumpToFolder)
+	ON_COMMAND(ID_FILE_JUMPTOGAME, OnJumpToGameWithDebug)
 	ON_COMMAND(ID_FILE_JUMPTOGAME_WD, OnJumpToGameWithoutDebug)
+	ON_COMMAND(ID_FILE_JUMPTOGAME_WM, OnJumpToGameWithWaveEdit)
+
 	ON_COMMAND(ID_TS_REMAP, OnTsRemap)
 	ON_COMMAND(ID_EDIT_LINK_CENTERS, OnEditLinkCenters)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_LINK_CENTERS, OnUpdateEditLinkCenters)
@@ -682,41 +690,191 @@ void CWorldBuilderDoc::validate(void)
 	}
 }
 
-void CWorldBuilderDoc::OnJumpToGame()
+void CWorldBuilderDoc::OnJumpToFolder()
 {
 	try {
-		DoFileSave();
-		CString filename;
+		// DoFileSave();
 		DEBUG_LOG(("strTitle=%s strPathName=%s\n", m_strTitle, m_strPathName));
-		if (strstr(m_strPathName, TheGlobalData->getPath_UserData().str()) != NULL)
-			filename.Format("%sMaps\\%s", TheGlobalData->getPath_UserData().str(), m_strTitle);
-		else
-			filename.Format("Maps\\%s", m_strTitle);
 
-		/** 
-		 * Adriane [Deathscythe] : spawnl cant read spaces sadly,
-		 * Shellexcute fortunately does the job 
-		*/
-		CString gameExePath;
-		gameExePath.Format("\"%s\\generals.exe\"", WbApp()->getCurrentGameDirectory().str());
+		char folderPath[_MAX_PATH];
+		strcpy(folderPath, m_strPathName);
 
-		DEBUG_LOG(("Loading gameExePath=%s\n", gameExePath));
-		// 	/*int retval =*/ _spawnl(_P_NOWAIT, "\\projects\\rts\\run\\rtsi.exe", "ignored", "-scriptDebug", "-win", "-file", filename, NULL);
-        ShellExecute(NULL, "open", 
-            gameExePath, 
-            CString("-scriptDebug -win -file \"" + filename + "\""), // Arguments
-            NULL, 
-            SW_SHOWNORMAL
-		);
-		
+		// Remove the filename to get the folder path
+		char* lastSlash = strrchr(folderPath, '\\');
+		if (lastSlash) {
+			*lastSlash = '\0';
+		}
+
+		DWORD attr = GetFileAttributes(folderPath);
+		if (attr != (DWORD)-1 && (attr & FILE_ATTRIBUTE_DIRECTORY)) {
+			ShellExecute(NULL, "open", folderPath, NULL, NULL, SW_SHOW);
+		} else {
+			AfxMessageBox("The map folder does not exist yet. Save the map first.", MB_ICONEXCLAMATION | MB_OK);
+		}
+
 	} catch (...) {
 	}
 }
 
-void CWorldBuilderDoc::OnJumpToGameWithoutDebug()
+void CWorldBuilderDoc::OnGenerateMapStrAndIni()
 {
 	try {
-		DoFileSave();
+		char folderPath[_MAX_PATH];
+		strcpy(folderPath, m_strPathName);
+
+		// Remove the filename to get the map folder
+		char* lastSlash = strrchr(folderPath, '\\');
+		if (lastSlash) {
+			*lastSlash = '\0';
+		}
+
+		// Check if the folder exists
+		DWORD attr = GetFileAttributes(folderPath);
+		if (attr == (DWORD)-1 || !(attr & FILE_ATTRIBUTE_DIRECTORY)) {
+			AfxMessageBox("Map folder does not exist. Please save the map first.", MB_ICONEXCLAMATION | MB_OK);
+			return;
+		}
+
+		CString strPath = CString(folderPath) + "\\map.str";
+		CString iniPath = CString(folderPath) + "\\map.ini";
+
+		BOOL createdAnyFile = FALSE;
+
+		// Only generate map.str if it doesn't exist
+		if (GetFileAttributes(strPath) == (DWORD)-1) {
+			CStdioFile strFile;
+			if (strFile.Open(strPath, CFile::modeCreate | CFile::modeWrite | CFile::typeText)) {
+				strFile.WriteString("//==============================================================================\n");
+				strFile.WriteString("// MAP.STR - Custom String Table for Map\n");
+				strFile.WriteString("//------------------------------------------------------------------------------\n");
+				strFile.WriteString("// Notes:\n");
+				strFile.WriteString("// - Each entry starts with a label (e.g., Sample:01), followed by the text in quotes.\n");
+				strFile.WriteString("// - You can use up to 3 newline breaks (\\n) in a single string.\n");
+				strFile.WriteString("// - SCRIPT: prefixed entries are meant for use in scripting (e.g., timers or UI boxes).\n");
+				strFile.WriteString("//==============================================================================\n\n");
+
+				strFile.WriteString("//------------------------------------------------------------------------------\n");
+				strFile.WriteString("// Sample simple message (no line breaks)\n");
+				strFile.WriteString("//------------------------------------------------------------------------------\n");
+				strFile.WriteString("Sample:01\n");
+				strFile.WriteString("\"Bold Text\"\n");
+				strFile.WriteString("End\n\n");
+
+				strFile.WriteString("//------------------------------------------------------------------------------\n");
+				strFile.WriteString("// Sample multiline message (maximum of 3 line breaks)\n");
+				strFile.WriteString("//------------------------------------------------------------------------------\n");
+				strFile.WriteString("Sample:02\n");
+				strFile.WriteString("\"Bold Header:\n\\nSample Message (non-bold)\n\\nAnother message line\n\\nFinal message line\"\n");
+				strFile.WriteString("End\n\n");
+
+				strFile.WriteString("//------------------------------------------------------------------------------\n");
+				strFile.WriteString("// Script-related message used for UI popups or map timers\n");
+				strFile.WriteString("//------------------------------------------------------------------------------\n");
+				strFile.WriteString("SCRIPT:_PeaceTimeActivated\n");
+				strFile.WriteString("\"Hint:\n\\nGeneral Adriane alt-tabbed to check memes.\n\\nPerfect time for a base tour.\"\n");
+				strFile.WriteString("End\n\n");
+
+				strFile.WriteString("SCRIPT:TimerName\n");
+				strFile.WriteString("\"Commander Newgate will arrive in:\"\n");
+				strFile.WriteString("End\n");
+
+				strFile.Close();
+				createdAnyFile = TRUE;
+			}
+		}
+
+		// Only generate map.ini if it doesn't exist
+		if (GetFileAttributes(iniPath) == (DWORD)-1) {
+			CStdioFile iniFile;
+			if (iniFile.Open(iniPath, CFile::modeCreate | CFile::modeWrite | CFile::typeText)) {
+				iniFile.WriteString("; map.ini - custom INI file for map overrides\n");
+				iniFile.WriteString("; Add your unit, object, or behavior overrides here.\n");
+				iniFile.Close();
+				createdAnyFile = TRUE;
+			}
+		}
+
+		if (createdAnyFile) {
+			AfxMessageBox("Template map.str and/or map.ini file(s) have been created.", MB_OK | MB_ICONINFORMATION);
+		} else {
+			AfxMessageBox("Both map.str and map.ini already exist. No new files were created.", MB_OK | MB_ICONINFORMATION);
+		}
+
+		OnJumpToFolder();
+	} catch (...) {
+		AfxMessageBox("An error occurred while generating the template files.", MB_ICONERROR | MB_OK);
+	}
+}
+void CWorldBuilderDoc::OnOpenWorldbuilderSettings()
+{
+	try {
+		// Build the path to the INI file
+		CString iniPath;
+		iniPath.Format("%sWorldBuilder.ini", TheGlobalData->getPath_UserData().str());
+
+		// Open the file with the default editor (usually Notepad)
+		ShellExecute(NULL, "open", iniPath, NULL, NULL, SW_SHOW);
+
+	} catch (...) {
+	}
+}
+
+void CWorldBuilderDoc::OnJumpToGameWithDebug(){
+	OnJumpToGame(true, false);
+}
+
+void CWorldBuilderDoc::OnJumpToGameWithoutDebug(){
+	OnJumpToGame(false, false);
+}
+
+void CWorldBuilderDoc::OnJumpToGameWithWaveEdit(){
+	OnJumpToGame(false, true);
+}
+
+void CWorldBuilderDoc::OnJumpToGame(Bool withDebug, Bool waveEdit)
+{
+	try {
+		CString gameDir = AfxGetApp()->GetProfileString("WorldbuilderApp", "GameDirectory", "");
+		if (gameDir.IsEmpty()) {
+			AfxMessageBox(
+				"Unable to launch the game because the game directory has not been set in your worldbuilder settings."
+				" To fix this, find the [WorldbuilderApp] section in your worldbuilder settings file and under it add the following entry:\n\n"
+				"GameDirectory=YourGameFolderPath\n"
+				"Example:\nGameDirectory=C:\\Program Files (x86)\\Command and Conquer Generals Zero Hour",
+				MB_ICONEXCLAMATION | MB_OK
+			);
+
+			OnOpenWorldbuilderSettings();
+			return;
+		}
+
+		if (m_strPathName.IsEmpty()) {
+			AfxMessageBox(
+				"Nice try, genius.\nMaybe save the map before pulling off stunts like this?",
+				MB_ICONEXCLAMATION | MB_OK
+			);
+
+			if (!DoSave(NULL)) {
+				AfxMessageBox(
+					"Why are you doing this to me!?, I will not be able to launch the game without you saving the damn map!",
+					MB_ICONEXCLAMATION | MB_OK
+				);
+				return;
+			}
+		}
+
+		// Warn the user and ask for confirmation before saving and launching
+		int result = AfxMessageBox(
+			"Hold up!\nMonsieur, do you want us to save your map first?\nIf you only want to preview your current map file, then hit No.",
+			MB_ICONWARNING | MB_YESNO
+		);
+
+		if (result == IDYES) {
+			DoFileSave();
+		}
+
+		// force to save the file 
+		// DoFileSave();
 		CString filename;
 		DEBUG_LOG(("strTitle=%s strPathName=%s\n", m_strTitle, m_strPathName));
 		if (strstr(m_strPathName, TheGlobalData->getPath_UserData().str()) != NULL)
@@ -729,13 +887,30 @@ void CWorldBuilderDoc::OnJumpToGameWithoutDebug()
 		 * Shellexcute fortunately does the job 
 		*/
 		CString gameExePath;
-		gameExePath.Format("\"%s\\generals.exe\"", WbApp()->getCurrentGameDirectory().str());
+		gameExePath.Format("\"%s\\generals.exe\"", gameDir);
 
-		DEBUG_LOG(("Loading gameExePath=%s\n", gameExePath));
+		DEBUG_LOG(("Loading gameExePath=%s\n", gameExePath)); 
 		// 	/*int retval =*/ _spawnl(_P_NOWAIT, "\\projects\\rts\\run\\rtsi.exe", "ignored", "-scriptDebug", "-win", "-file", filename, NULL);
+
+
+		CString args = CString("-win -file \"" + filename + "\"");
+        if (withDebug) {
+            args = CString("-scriptDebug ") + args;
+        }
+
+		if (waveEdit){
+			AfxMessageBox(
+				"You are about to run the game with wave edit mode ON, Please take notes:\n\n"
+				"Hotkeys:\n Tab : Toggle Wave Edit Mode\n Ctrl + R : Reload/Clear\n Ctrl + Z : Undo (max of 15)\n LMB : Start placing waves\n"
+				" 2nd LMB : Add the end of the wave point\n Space : Cycle Wave type",
+				MB_ICONEXCLAMATION | MB_OK
+			);
+			args = CString("-useWaveEditor ") + args;
+		}
+
         ShellExecute(NULL, "open", 
             gameExePath, 
-            CString("-win -file \"" + filename + "\""), // Arguments
+            args, // Arguments
             NULL, 
             SW_SHOWNORMAL
 		);
@@ -1468,6 +1643,10 @@ BOOL CWorldBuilderDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	DEBUG_LOG(("Looking for map-specific text in [%s]\n", s.str()));
 	TheGameText->initMapStringFile(s);
 
+	// TODO: make the copy passable into new document
+	TileTool::clearCopiedTiles();
+	// TerrainMaterial::OnImportFavoritesFromMapFolder();
+
 	// // use same logic to construct map.ini path -- doesnt work -- look like the worldbuilder doesnt have the parser for map inis
 	// AsciiString iniPath = lpszPathName;
 	// while (iniPath.getLength() && iniPath.getCharAt(iniPath.getLength()-1) != '\\')
@@ -1496,6 +1675,16 @@ BOOL CWorldBuilderDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		return FALSE;
 	
 	Create3DView();
+
+	// WbApp()->OnRefreshAppAbout();
+	// DEBUG_LOG(("strTitle=%s strPathName=%s\n", lpszPathName, m_strPathName));
+	// CString fullPath = lpszPathName;
+	// int lastSlash = fullPath.ReverseFind('\\');
+	// if (lastSlash != -1)
+	// {
+	// 	fullPath = fullPath.Left(lastSlash);
+	// }
+	// TerrainMaterial::ReloadFavorites(fullPath);
 	
 	return TRUE;
 }
@@ -2601,9 +2790,15 @@ writeRawDict( theLogFile, "Scripts",d );
 		fclose(theLogFile);
 
 
-		AfxMessageBox("Action completed. The file is located to your gamedirectory.", MB_OK | MB_ICONINFORMATION);
+		AfxMessageBox("Action completed. The file is located on your worldbuilder directory.", MB_OK | MB_ICONINFORMATION);
+		CString openDir = AfxGetApp()->GetProfileString("WorldbuilderApp", "OpenDirectory", "");
+		CString dumpPath;
+		dumpPath.Format("%s\\%s.txt", openDir, m_strTitle);
 
+		DEBUG_LOG(("dumpPath %s", dumpPath ));
 
+		// Open the file with the default editor (usually Notepad)
+		ShellExecute(NULL, "open", dumpPath, NULL, NULL, SW_SHOW);
 		open = false;
 	} catch (...) {
 		if (open) {
@@ -2731,6 +2926,11 @@ void CWorldBuilderDoc::changeBoundary(Int ndx, ICoord2D *border)
 {
 	m_heightMap->changeBoundary(ndx, border);
 }
+
+// void CWorldBuilderDoc::removeBoundary(Int ndx, ICoord2D *border)
+// {
+// 	m_heightMap->removeBoundary(ndx, border);
+// }
 
 void CWorldBuilderDoc::removeLastBoundary(void)
 {

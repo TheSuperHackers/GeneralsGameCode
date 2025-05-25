@@ -122,7 +122,7 @@ void PointerTool::checkForPropertiesPanel(void)
 	MapObject *theMapObj = WaypointOptions::getSingleSelectedWaypoint();
 	PolygonTrigger *theTrigger = WaypointOptions::getSingleSelectedPolygon();
 	MapObject *theLightObj = LightOptions::getSingleSelectedLight(); 
-	MapObject *theObj = MapObjectProps::getMultipleMapObjects(); 
+	MapObject *theObj = MapObjectProps::getSingleSelectedObject(); 
 	if (theMapObj) {
 		CMainFrame::GetMainFrame()->showOptionsDialog(IDD_WAYPOINT_OPTIONS);
 		WaypointOptions::update();

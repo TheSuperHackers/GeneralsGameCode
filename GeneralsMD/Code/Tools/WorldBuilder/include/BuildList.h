@@ -77,6 +77,7 @@ protected:
 	afx_msg void OnChangeZOffset();
 	afx_msg void OnChangeAngle();
 	afx_msg void OnExport();
+	afx_msg void OnForcedShowObjects();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -88,6 +89,7 @@ protected:
 	WBPopupSliderButton m_angleSlider;
 	Real				m_angle;
 	Real				m_height;
+	Bool                m_forcedShowObjects;
 
 	static BuildList	*m_staticThis;
 	static Bool			m_updating;

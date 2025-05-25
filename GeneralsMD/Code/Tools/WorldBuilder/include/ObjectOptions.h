@@ -70,6 +70,8 @@ protected:
 	afx_msg void OnSelchangeOwningteam();
 	afx_msg void OnSearch();
 	afx_msg void OnReset();
+	afx_msg void OnPreviewAmbientSound();
+	afx_msg void OnPreviewBuildZone();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -80,6 +82,10 @@ protected:
 	static Int				m_currentObjectIndex;
 	static char				m_currentObjectName[NAME_MAX_LEN];
 	static AsciiString	m_curOwnerName;
+
+	Bool m_isObjectOptsWindowOpen ;
+	Bool m_bPreviewAmbient;
+	Bool m_bPreviewBuildZone;
 
 	CTreeCtrl					m_objectTreeView;
 	MapObject					*m_objectsList;

@@ -56,6 +56,7 @@ void ScorchOptions::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(ScorchOptions, CDialog)
 	//{{AFX_MSG_MAP(ScorchOptions)
+	ON_WM_MOVE()
 	ON_CBN_SELENDOK(IDC_SCORCHTYPE, OnChangeScorchtype)
 	ON_EN_CHANGE(IDC_SIZE_EDIT, OnChangeSizeEdit)
 	//}}AFX_MSG_MAP
@@ -256,4 +257,14 @@ void ScorchOptions::getAllSelectedDicts(void)
 		}
 		m_allSelectedDicts.push_back(pMapObj->getProperties());
 	}
+}
+
+void ScorchOptions::OnMove(int x, int y)
+{
+  /**
+   * Adriane [Deathscythe] -- Bug fix
+   * This is required to save the top and left position values.
+   * The handler is defined in COptionsPanel and must be called explicitly.
+   */
+	COptionsPanel::OnMove(x, y); // forward to base 
 }

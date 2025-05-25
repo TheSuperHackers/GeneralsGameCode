@@ -104,6 +104,7 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(MapObjectProps)
 	virtual BOOL OnInitDialog();
+	afx_msg void OnMove(int x, int y);
 	virtual void OnOK();
 	virtual void OnCancel();
 	afx_msg void OnSelchangeProperties();
@@ -197,7 +198,7 @@ protected:
 	virtual void PopSliderFinished(const long sliderID, long theVal);
 
 public:
-	static MapObject *getMultipleMapObjects(void);
+	static MapObject *getSingleSelectedObject(void);
 	static void update(void);
   
 private:

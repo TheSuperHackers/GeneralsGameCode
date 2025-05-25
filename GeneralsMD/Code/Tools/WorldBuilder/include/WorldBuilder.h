@@ -90,6 +90,7 @@ public:
 // Implementation
 	//{{AFX_MSG(CWorldBuilderApp)
 	afx_msg void OnAppAbout();
+	afx_msg void OnRefreshAppAbout();
 	afx_msg void OnResetWindows();
 	afx_msg void OnFileOpen();
 	afx_msg void OnTexturesizingMapclifftextures();

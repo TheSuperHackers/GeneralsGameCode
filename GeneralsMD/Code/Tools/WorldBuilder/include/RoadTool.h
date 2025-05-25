@@ -28,7 +28,6 @@
 #include "Tool.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 class WorldHeightMapEdit;
-#define ROAD_SNAP_DISTANCE (1.0f)
 /*************************************************************************/
 /**                             RoadTool
 	 Does the Add a section of road tool operation. 

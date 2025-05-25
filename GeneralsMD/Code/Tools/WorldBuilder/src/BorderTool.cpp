@@ -24,12 +24,14 @@
 #include "MainFrm.h"
 #include "wbview3d.h"
 #include "WorldBuilderDoc.h"
+#include "CUndoable.h"
 
 const long BOUNDARY_PICK_DISTANCE = 5.0f;
 
 BorderTool::BorderTool() : Tool(ID_BORDERTOOL, IDC_POINTER), 
 													 m_mouseDown(false),
 													 m_addingNewBorder(false), 
+													 m_lastBoundaryPosValid(false), 
 													 m_modifyBorderNdx(-1)
 
 { }
@@ -79,6 +81,9 @@ void BorderTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 
 		current.x = REAL_TO_INT((new3DPoint.x / MAP_XY_FACTOR) + 0.5f);
 		current.y = REAL_TO_INT((new3DPoint.y / MAP_XY_FACTOR) + 0.5f);
+
+		// m_lastBoundaryPos = current; // save last position
+		// m_lastBoundaryPosValid = true;
 		pDoc->changeBoundary(count - 1, &current);
 		return;
 	}
@@ -133,6 +138,19 @@ void BorderTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		
 		ICoord2D initialBoundary = { 1, 1 };
 		pDoc->addBoundary(&initialBoundary);
+
+		// Commented for now -- need heavy testing before saving in actual
+		// if (m_lastBoundaryPosValid) {
+		// 	AddBoundaryUndoable *pUndo = new AddBoundaryUndoable(pDoc, &m_lastBoundaryPos);
+		// 	pDoc->AddAndDoUndoable(pUndo);
+		// 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
+		// } else {
+		// 	ICoord2D initialBoundary = { 1, 1 };
+		// 	AddBoundaryUndoable *pUndo = new AddBoundaryUndoable(pDoc, &initialBoundary);
+		// 	pDoc->AddAndDoUndoable(pUndo);
+		// 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
+		// }
+
 		return;
 	}
 
@@ -153,6 +171,18 @@ void BorderTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		
 		ICoord2D initialBoundary = { 1, 1 };
 		pDoc->addBoundary(&initialBoundary);
+
+		// Commented for now -- need heavy testing before saving in actual
+		// if (m_lastBoundaryPosValid) {
+		// 	AddBoundaryUndoable *pUndo = new AddBoundaryUndoable(pDoc, &m_lastBoundaryPos);
+		// 	pDoc->AddAndDoUndoable(pUndo);
+		// 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
+		// } else {
+		// 	ICoord2D initialBoundary = { 1, 1 };
+		// 	AddBoundaryUndoable *pUndo = new AddBoundaryUndoable(pDoc, &initialBoundary);
+		// 	pDoc->AddAndDoUndoable(pUndo);
+		// 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
+		// }
 	} 
 	else
 	{

@@ -35,6 +35,7 @@
 // TileTool class.
 //
 
+std::vector<TileTool::TileTextureData> TileTool::m_copiedTileTextures;
 
 /// Constructor
 TileTool::TileTool(void) :
@@ -58,41 +59,211 @@ void TileTool::activate()
 	DrawObject::setBrushFeedbackParms(true, 1, 0);
 }
 
+// struct TileTextureData {
+//     int xOffset;
+//     int yOffset;
+//     int textureClass;
+//     int blendTileNdx;
+//     int extraBlendTileNdx;
+// };
+// std::vector<TileTextureData> m_copiedTileTextures;
+
+void applyRotation(int rotation, int xOffset, int yOffset, int& outX, int& outY)
+{
+    switch (rotation)
+    {
+        case 0:
+            outX = xOffset;
+            outY = yOffset;
+            break;
+        case 90:
+            outX = -yOffset;
+            outY = xOffset;
+            break;
+        case 180:
+            outX = -xOffset;
+            outY = -yOffset;
+            break;
+        case 270:
+            outX = yOffset;
+            outY = -xOffset;
+            break;
+        default:
+            outX = xOffset;
+            outY = yOffset;
+            break;
+    }
+}
+
+void TileTool::clearCopiedTiles() {
+    m_copiedTileTextures.clear();
+}
 
 /// Common mouse down code for left and right clicks.
 void TileTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
 {
-	if (m == TRACK_L)
-		m_textureClassToDraw = TerrainMaterial::getFgTexClass();
-	else if (m == TRACK_R)
-		m_textureClassToDraw = TerrainMaterial::getBgTexClass();
-	else
-		return;
+    if (m != TRACK_L && m != TRACK_R) return; 
+    Coord3D cpt;
+    pView->viewToDocCoords(viewPt, &cpt);
+
+    CPoint ndx;
+    Int width = getWidth();
+    pView->viewToDocCoords(viewPt, &cpt);
+    getCenterIndex(&cpt, width, &ndx, pDoc);
+
+	Int rotation = TerrainMaterial::getCopyRotation();
+
+    // Check if we are in copy select mode (we'll copy the texture at the selected tile)
+    if (TerrainMaterial::isCopySelectMode()) {
+		DEBUG_LOG(("Selected...\n"));
+		int halfWidth = getWidth() / 2;
+		m_copiedTileTextures.clear();
+
+		for (int dy = -halfWidth; dy <= halfWidth; ++dy) {
+			for (int dx = -halfWidth; dx <= halfWidth; ++dx) {
+				int x = ndx.x + dx;
+				int y = ndx.y + dy;
+
+				// Ensure we're within bounds
+				if (x >= 0 && y >= 0 &&
+					x < pDoc->GetHeightMap()->getStoredWidth() &&
+					y < pDoc->GetHeightMap()->getStoredHeight()) {
+
+					//int tex = pDoc->GetHeightMap()->getTextureClass(x, y, true); // Get the texture class
+					int baseTex = pDoc->GetHeightMap()->getTextureClass(x, y, true);
+					int ndx = y * pDoc->GetHeightMap()->getStoredWidth() + x;
+
+					TileTextureData tile;
+					tile.xOffset = dx;
+					tile.yOffset = dy;
+					tile.textureClass = baseTex;
+					tile.blendTileNdx = pDoc->GetHeightMap()->m_blendTileNdxes[ndx];
+					tile.extraBlendTileNdx = pDoc->GetHeightMap()->m_extraBlendTileNdxes[ndx];
+
+					m_copiedTileTextures.push_back(tile);
+		// 			DEBUG_LOG(("Copied tile at (%d, %d) -> offset (%d, %d): Texture=%d, BlendNdx=%d, ExtraBlendNdx=%d\n",
+        //    x, y, dx, dy, baseTex, tile.blendTileNdx, tile.extraBlendTileNdx));
+				}
+			}
+		}
+	}
+	else if (TerrainMaterial::isCopyApplyMode()) {
+		bool allTexturesValid = true;
+
+		WorldHeightMapEdit* liveMap = pDoc->GetHeightMap();
+		int mapWidth = liveMap->getStoredWidth();
+		int mapHeight = liveMap->getStoredHeight();
+
+		for (int ix = 0; ix < m_copiedTileTextures.size() && allTexturesValid; ++ix) {
+			const TileTextureData& tile = m_copiedTileTextures[ix];
+			bool textureFound = false;
+			
+			for (int y = 0; y < mapHeight && !textureFound; ++y) {
+				for (int x = 0; x < mapWidth && !textureFound; ++x) {
+					if (liveMap->getTextureClass(x, y, true) == tile.textureClass) {
+						textureFound = true;
+					}
+				}
+			}
+
+			if (!textureFound) {
+				allTexturesValid = false;
+			}
+		}
+
+		// If any texture class is missing, show an error and abort the operation
+		if (!allTexturesValid) {
+			AfxMessageBox(_T("One or more of the copied texture classes are no longer on the map. Aborting the operation. Please Select a new set of tiles."), MB_OK | MB_ICONWARNING);
+			
+			clearCopiedTiles();
+			return;
+		}
+
+		REF_PTR_RELEASE(m_htMapEditCopy);
+		m_htMapEditCopy = pDoc->GetHeightMap()->duplicate();
+		WorldHeightMapEdit* workingMap = m_htMapEditCopy;
+
+		int rotation = TerrainMaterial::getCopyRotation();
+		IRegion2D updateRegion = { INT_MAX, INT_MAX, 0, 0 };
+
+		for (size_t i = 0; i < m_copiedTileTextures.size(); ++i) {
+			const TileTextureData& tile = m_copiedTileTextures[i];
+
+			int rotatedXOffset, rotatedYOffset;
+			applyRotation(rotation, tile.xOffset, tile.yOffset, rotatedXOffset, rotatedYOffset);
+
+			int tx = ndx.x + rotatedXOffset;
+			int ty = ndx.y + rotatedYOffset;
+
+			if (tx >= 0 && ty >= 0 &&
+				tx < workingMap->getStoredWidth() &&
+				ty < workingMap->getStoredHeight()) {
+
+				workingMap->setTextureClass(tx, ty, tile.textureClass);
+
+				if (tx < updateRegion.lo.x) updateRegion.lo.x = tx;
+				if (ty < updateRegion.lo.y) updateRegion.lo.y = ty;
+				if (tx + 1 > updateRegion.hi.x) updateRegion.hi.x = tx + 1;
+				if (ty + 1 > updateRegion.hi.y) updateRegion.hi.y = ty + 1;
+
+				int mapNdx = ty * workingMap->getStoredWidth() + tx;
+
+				// Adriane [Deathscythe] TODO: support rotation for all
+				// if(rotation == 0){
+				// 	workingMap->m_blendTileNdxes[mapNdx] = tile.blendTileNdx;
+				// 	workingMap->m_extraBlendTileNdxes[mapNdx] = tile.extraBlendTileNdx;	
+				// }
+			}
+		}
+
+		// workingMap->optimizeTiles();
+		// Commit the working copy as the new map (with undo)
+		pDoc->updateHeightMap(workingMap, true, updateRegion);
+		pView->UpdateWindow();
+	} 
+		else {
+
+		Bool shiftKey = (0x8000 & ::GetAsyncKeyState(VK_SHIFT)) != 0;
+        if (shiftKey){
+			m_textureClassToDraw = TerrainMaterial::getBgTexClass();
+		}
+        else {
+		    m_textureClassToDraw = TerrainMaterial::getFgTexClass();
+		}
+    }
 
 //	WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
 	// just in case, release it.
-	REF_PTR_RELEASE(m_htMapEditCopy);
-	m_htMapEditCopy = pDoc->GetHeightMap()->duplicate();
-	m_prevXIndex = -1;
-	m_prevYIndex = -1;
-	m_prevViewPt = viewPt;
-	mouseMoved(m, viewPt, pView, pDoc);
+	// REF_PTR_RELEASE(m_htMapEditCopy);
+	// m_htMapEditCopy = pDoc->GetHeightMap()->duplicate();
+
+    m_prevXIndex = -1;
+    m_prevYIndex = -1;
+    m_prevViewPt = viewPt;
+
+    if (!TerrainMaterial::isCopySelectMode() && !TerrainMaterial::isCopyApplyMode()) {
+		REF_PTR_RELEASE(m_htMapEditCopy);
+		m_htMapEditCopy = pDoc->GetHeightMap()->duplicate();
+        mouseMoved(m, viewPt, pView, pDoc); // Only paint in normal mode
+    }
 }
 
 /// Common mouse up code for left and right clicks.
 void TileTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
 {
 	if (m != TRACK_L && m != TRACK_R) return;
-#define DONT_DO_FULL_UPDATE
-#ifdef DO_FULL_UPDATE
-	m_htMapEditCopy->optimizeTiles(); // force to optimize tileset
-	IRegion2D partialRange = {0,0,0,0};
-	pDoc->updateHeightMap(m_htMapEditCopy, false, partialRange);
-#endif
-	WBDocUndoable *pUndo = new WBDocUndoable(pDoc, m_htMapEditCopy);
-	pDoc->AddAndDoUndoable(pUndo);
-	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-	REF_PTR_RELEASE(m_htMapEditCopy);
+	if (m_htMapEditCopy) {
+	#define DONT_DO_FULL_UPDATE
+	#ifdef DO_FULL_UPDATE
+		m_htMapEditCopy->optimizeTiles(); // force to optimize tileset
+		IRegion2D partialRange = {0,0,0,0};
+		pDoc->updateHeightMap(m_htMapEditCopy, false, partialRange);
+	#endif
+		WBDocUndoable *pUndo = new WBDocUndoable(pDoc, m_htMapEditCopy);
+		pDoc->AddAndDoUndoable(pUndo);
+		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
+		REF_PTR_RELEASE(m_htMapEditCopy);
+	}
 }
 
 /// Common mouse moved code for left and right clicks.
@@ -105,6 +276,9 @@ void TileTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 	pView->viewToDocCoords(viewPt, &cpt);
 	DrawObject::setFeedbackPos(cpt);
 	if (m != TRACK_L && m != TRACK_R) return;
+
+	if (TerrainMaterial::isCopySelectMode() || TerrainMaterial::isCopyApplyMode()) return;
+
 	Int dx = m_prevViewPt.x - viewPt.x;
 	Int dy = m_prevViewPt.y - viewPt.y;
 	Int count = sqrt(dx*dx + dy*dy);
@@ -180,6 +354,7 @@ void TileTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 **                             BigTileTool
 ***************************************************************************/
 Int BigTileTool::m_currentWidth = 0;
+Int BigTileTool::m_copyModeWidth = 0;
 
 /// Constructor
 BigTileTool::BigTileTool(void)

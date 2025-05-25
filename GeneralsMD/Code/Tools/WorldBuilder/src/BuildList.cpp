@@ -40,7 +40,7 @@
 BuildList *BuildList::m_staticThis = NULL;
 Bool BuildList::m_updating = false;
 
-
+#define BUILDLIST_OPTION_PANEL "BuildListOptionPanel"
 /////////////////////////////////////////////////////////////////////////////
 // BuildList dialog
 
@@ -82,6 +82,7 @@ BEGIN_MESSAGE_MAP(BuildList, COptionsPanel)
 	ON_EN_CHANGE(IDC_MAPOBJECT_ZOffset, OnChangeZOffset)
 	ON_EN_CHANGE(IDC_MAPOBJECT_Angle, OnChangeAngle)
 	ON_BN_CLICKED(IDC_EXPORT, OnExport)
+	ON_BN_CLICKED(IDC_SHOW_OBJECTS, OnForcedShowObjects)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -108,8 +109,21 @@ BOOL BuildList::OnInitDialog()
 	OnSelchangeBuildList();
 	m_staticThis = this;
 	m_updating = false;
+
+	CButton *pButton = (CButton*)GetDlgItem(IDC_SHOW_OBJECTS);
+	m_forcedShowObjects=::AfxGetApp()->GetProfileInt(BUILDLIST_OPTION_PANEL, "ForceShowBuildListObjects", 0);
+	pButton->SetCheck(m_forcedShowObjects ? 1:0);
+	OnForcedShowObjects();
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+void BuildList::OnForcedShowObjects()
+{
+	CButton *pButton = (CButton*)GetDlgItem(IDC_SHOW_OBJECTS);
+	m_forcedShowObjects = (pButton->GetCheck() == 1);
+	::AfxGetApp()->WriteProfileInt(BUILDLIST_OPTION_PANEL, "ForceShowBuildListObjects", m_forcedShowObjects ? 1 : 0);
 }
 
 /// Load the sides in the sides list.

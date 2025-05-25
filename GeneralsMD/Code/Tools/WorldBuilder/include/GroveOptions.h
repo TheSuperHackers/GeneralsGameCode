@@ -44,6 +44,7 @@ class GroveOptions : public COptionsPanel
 	protected:
 		std::vector<std::pair<Int, Int> >	mVecGroup;
 		VecPairNameDisplayName mVecDisplayNames;
+		VecPairNameDisplayName mVecDisplayNames_PropsOnly;
 
 		Int	mNumTrees;
 	
@@ -63,6 +64,7 @@ class GroveOptions : public COptionsPanel
 	protected:
 		void _setTreesToLists(void);
 		void _buildTreeList(void);
+		void _buildTreeListProps(void);
 		void _setDefaultRatios(void);
 		void _setDefaultNumTrees(void);
 		void _setDefaultPlacementAllowed(void);
@@ -76,6 +78,7 @@ class GroveOptions : public COptionsPanel
 		afx_msg void _updateGroveMakeup(void);
 		afx_msg void _updatePlacementAllowed(void);
 
+		virtual void OnMove(int x, int y);
 		virtual void OnOK();
 		virtual void OnClose();
 	DECLARE_MESSAGE_MAP()

@@ -347,7 +347,7 @@ void TeamIdentity::loadUnitsInfo(int idcMinUnit, NameKeyType keyMinUnit,
 		// next tier uses the editor sorting bits that design can specify in the INI
 		// fuck this rules
 		EditorSortingType sort = tTemplate->getEditorSorting();
-		// if (( sort != ES_VEHICLE ) && (sort != ES_INFANTRY)) continue; <<<--- fuck this line in particular
+		// if (( sort != ES_VEHICLE ) && (sort != ES_INFANTRY)) continue; // <<<--- fuck this line in particular
 
 		Int ndx = pCombo->AddString(tTemplate->getName().str());
 		if (type == tTemplate->getName()) {

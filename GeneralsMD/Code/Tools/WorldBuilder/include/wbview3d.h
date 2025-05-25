@@ -24,6 +24,9 @@
 #if !defined(AFX_WBVIEW3D_H__832D8241_87F6_11D5_8CE0_00010297BBAC__INCLUDED_)
 #define AFX_WBVIEW3D_H__832D8241_87F6_11D5_8CE0_00010297BBAC__INCLUDED_
 
+#define OBJECT_OPTION_PANEL "ObjectOptionPanel"
+#define BUILDLIST_OPTION_PANEL "BuildListOptionPanel"
+
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
@@ -166,6 +169,7 @@ private:
 	SkeletonSceneClass			*m_transparentObjectsScene;
 	CameraClass							*m_camera;
 	WBHeightMap							*m_heightMapRenderObj;
+	Bool m_validTerrain;
 
 	RenderObjClass					*m_objectToolTrackingObj;
 	Bool										m_showObjToolTrackingObj;
@@ -214,6 +218,8 @@ private:
 	Bool										m_showWeaponRanges;
 	Bool										m_highlightTestArt;
 	Bool										m_showLetterbox;
+
+	Bool m_showBuildZoneFeedback;
 
 
 	ID3DXFont*							m3DFont;
@@ -307,6 +313,10 @@ public:
 
 	Bool getShowTerrain();
 	Bool getShowWireframe();
+
+	// void setShowBuildZoneFeedBack(Bool toggle) {m_showBuildZoneFeedback = toggle;}
+	Bool getShowBuildZoneFeedBack(void) { return ::AfxGetApp()->GetProfileInt(OBJECT_OPTION_PANEL, "PreviewBuildZone", 0);}
+	Bool getShowBuildListObjects(void) { return ::AfxGetApp()->GetProfileInt(BUILDLIST_OPTION_PANEL, "ForceShowBuildListObjects", 0);}
 
 	void setObjTracking(MapObject *pMapObj, Coord3D pos, Real angle, Bool show);
 	void setViewLayersList(Bool showLayersList) { m_showLayersList = showLayersList; }

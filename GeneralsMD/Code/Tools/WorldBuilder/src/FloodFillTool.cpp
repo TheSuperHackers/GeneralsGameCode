@@ -57,7 +57,7 @@ FloodFillTool::~FloodFillTool(void)
 void FloodFillTool::activate() 
 {
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_TERRAIN_MATERIAL);
-	TerrainMaterial::setToolOptions(true);
+	TerrainMaterial::setToolOptions(true, true);
 	DrawObject::setDoBrushFeedback(false);
 	m_adjustCliffTextures = false;
 }

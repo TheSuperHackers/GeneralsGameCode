@@ -111,7 +111,7 @@ void GroveTool::plantTree( Coord3D *pos )
 
 	
 	int runningCum = 0;
-	for (int i = 1; i <= 5; ++i) {
+	for (int i = 1; i <= 11; ++i) {
 		runningCum +=  TheGroveOptions->getNumType(i);
 		if (randVal < runningCum) {
 			if (TheGroveOptions->getTypeName(i).isEmpty()) {
@@ -410,7 +410,6 @@ void GroveTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBui
 	pView->doRectFeedback(false, box);
 	pView->Invalidate();
 
-	DEBUG_LOG(("Test\n"));
 	// Call the grove placement regardless of dragging, to support single clicks.
 	_plantGroveInBox(m_downPt, viewPt, pView, pDoc);
 
@@ -449,7 +448,7 @@ void GroveTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 void GroveTool::addObj(Coord3D *pos, AsciiString name)
 {
 	MapObject *pCur = ObjectOptions::getObjectNamed(name);
-	DEBUG_ASSERTCRASH(pCur!=NULL, ("oops"));
+	// DEBUG_ASSERTCRASH(pCur!=NULL, ("oops"));
 	if (!pCur) return;
 	Coord3D theLoc = *pos;
 	theLoc.z = 0;
@@ -461,87 +460,16 @@ void GroveTool::addObj(Coord3D *pos, AsciiString name)
 }
 
 
-#define SQRT_2	(1.41421356f)
+/**
+ * Adriane [Deathscythe] -- Bug fix
+ * Old check for cliff is broken -- since theres already a check under the 
+ * terrainrenderobject we just use that instead
+ */
 static Bool _positionIsTooCliffyForTrees(Coord3D pos)
 {
-	Coord3D otherPos;
-	
-	otherPos = pos;
-	otherPos.x += MAP_XY_FACTOR;
-	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, NULL);
-	
-	if (((pos.z / otherPos.z / 1) > MAX_TREE_RISE_OVER_RUN) ||
-		  ((otherPos.z / pos.z / 1) > MAX_TREE_RISE_OVER_RUN)) {
-		return true;
-	}
+    if (TheTerrainRenderObject == NULL) {
+        return false;
+    }
 
-	otherPos = pos;
-	otherPos.y += MAP_XY_FACTOR;
-	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, NULL);
-	
-	if (((pos.z / otherPos.z / 1) > MAX_TREE_RISE_OVER_RUN) || 
-			((otherPos.z / pos.z / 1) > MAX_TREE_RISE_OVER_RUN)) {
-		return true;
-	}
-
-	otherPos = pos;
-	otherPos.y -= MAP_XY_FACTOR;
-	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, NULL);
-	
-	if (((pos.z / otherPos.z / 1) > MAX_TREE_RISE_OVER_RUN) || 
-			((otherPos.z / pos.z / 1) > MAX_TREE_RISE_OVER_RUN)) {
-		return true;
-	}
-
-	otherPos = pos;
-	otherPos.x -= MAP_XY_FACTOR;
-	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, NULL);
-	
-	if (((pos.z / otherPos.z / 1) > MAX_TREE_RISE_OVER_RUN) || 
-			((otherPos.z / pos.z / 1) > MAX_TREE_RISE_OVER_RUN)) {
-		return true;
-	}
-
-	otherPos = pos;
-	otherPos.x += MAP_XY_FACTOR;
-	otherPos.y += MAP_XY_FACTOR;
-	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, NULL);
-	
-	if (((pos.z / otherPos.z / SQRT_2) > MAX_TREE_RISE_OVER_RUN) || 
-			((otherPos.z / pos.z / SQRT_2) > MAX_TREE_RISE_OVER_RUN)) {
-		return true;
-	}
-
-	otherPos = pos;
-	otherPos.x += MAP_XY_FACTOR;
-	otherPos.y -= MAP_XY_FACTOR;
-	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, NULL);
-	
-	if (((pos.z / otherPos.z / SQRT_2) > MAX_TREE_RISE_OVER_RUN) || 
-			((otherPos.z / pos.z / SQRT_2) > MAX_TREE_RISE_OVER_RUN)) {
-		return true;
-	}
-
-	otherPos = pos;
-	otherPos.x -= MAP_XY_FACTOR;
-	otherPos.y -= MAP_XY_FACTOR;
-	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, NULL);
-	
-	if (((pos.z / otherPos.z / SQRT_2) > MAX_TREE_RISE_OVER_RUN) || 
-			((otherPos.z / pos.z / SQRT_2) > MAX_TREE_RISE_OVER_RUN)) {
-		return true;
-	}
-
-	otherPos = pos;
-	otherPos.x -= MAP_XY_FACTOR;
-	otherPos.y += MAP_XY_FACTOR;
-	otherPos.z = TheTerrainRenderObject->getHeightMapHeight(otherPos.x, otherPos.y, NULL);
-	
-	if (((pos.z / otherPos.z / SQRT_2) > MAX_TREE_RISE_OVER_RUN) || 
-			((otherPos.z / pos.z / SQRT_2) > MAX_TREE_RISE_OVER_RUN)) {
-		return true;
-	}
-
-	return false;
+    return TheTerrainRenderObject->isCliffCell(pos.x, pos.y);
 }
-#undef SQRT_2

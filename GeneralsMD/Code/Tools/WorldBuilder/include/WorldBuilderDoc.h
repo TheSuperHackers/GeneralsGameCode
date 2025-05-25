@@ -121,6 +121,8 @@ public:
 	static CWorldBuilderView *GetActive2DView();
 	static WbView3d *GetActive3DView();
 
+	CString getMapPath() const { return m_strPathName; }
+
 	void invalObject(MapObject *pMapObj);
 	void invalCell(int xIndex, int yIndex);
 
@@ -186,8 +188,15 @@ protected:
 	afx_msg void OnTsCanonical();
 	afx_msg void OnUpdateTsCanonical(CCmdUI* pCmdUI);
 	afx_msg void OnFileResize();
-	afx_msg void OnJumpToGame();
+	afx_msg void OnGenerateMapStrAndIni();
+	afx_msg void OnJumpToFolder();
+	afx_msg void OnOpenWorldbuilderSettings();
+
+	void OnJumpToGame(Bool withDebug, Bool waveEdit);
 	afx_msg void OnJumpToGameWithoutDebug();
+	afx_msg void OnJumpToGameWithDebug();
+	afx_msg void OnJumpToGameWithWaveEdit();
+
 	afx_msg void OnTsRemap();
 	afx_msg void OnEditLinkCenters();
 	afx_msg void OnUpdateEditLinkCenters(CCmdUI* pCmdUI);

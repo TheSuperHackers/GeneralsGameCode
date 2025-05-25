@@ -276,6 +276,8 @@ BEGIN_MESSAGE_MAP(MeshMoldOptions, COptionsPanel)
 	ON_BN_CLICKED(IDC_RAISE, OnRaise)
 	ON_BN_CLICKED(IDC_RAISE_LOWER, OnRaiseLower)
 	ON_BN_CLICKED(IDC_LOWER, OnLower)
+	ON_BN_CLICKED(IDC_OPEN_MOLDS_FOLDER, OnOpenMoldsFolder)
+	ON_BN_CLICKED(IDC_OPEN_LINK_MOLDS, OnOpenLinkCreateMolds)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -287,6 +289,28 @@ void MeshMoldOptions::OnPreview()
 	CButton *pButton = (CButton*)this->GetDlgItem(IDC_PREVIEW);
 	m_doingPreview = (pButton->GetCheck() == 1);
 	MeshMoldTool::updateMeshLocation(true);
+}
+
+
+void MeshMoldOptions::OnOpenMoldsFolder() 
+{
+	CString openDir = AfxGetApp()->GetProfileString("WorldbuilderApp", "OpenDirectory", "");
+	openDir += "\\Data\\Editor\\Molds";
+	
+	CString gameDir = openDir + "\\Data\\Editor\\Molds";
+
+	DWORD attr = GetFileAttributes(openDir);
+	if (attr != (DWORD)-1 && (attr & FILE_ATTRIBUTE_DIRECTORY)) {
+		ShellExecute(NULL, "open", openDir, NULL, NULL, SW_SHOW);
+	} else {
+		AfxMessageBox("The GameDirectory\\Data\\Editor\\Molds folder does not exist. Please create it manually.", MB_ICONEXCLAMATION | MB_OK);
+		ShellExecute(NULL, "open", gameDir, NULL, NULL, SW_SHOW);
+	}
+}
+
+void MeshMoldOptions::OnOpenLinkCreateMolds() 
+{
+	ShellExecute(NULL, "open", "https://www.youtube.com/watch?v=szBIzP0yy98", NULL, NULL, SW_SHOWNORMAL);
 }
 
 void MeshMoldOptions::OnApplyMesh() 

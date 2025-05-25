@@ -66,6 +66,17 @@ protected:
 	afx_msg void OnImpassable();
 	afx_msg void OnPassableCheck();
 	afx_msg void OnPassable();
+	afx_msg void OnCopySelect();
+	afx_msg void OnCopyApply();
+	afx_msg void OnCopyMode();
+	
+	afx_msg void OnSetFavorite();
+	afx_msg void OnDeleteFavorite();
+	afx_msg void OnRotate0();
+	afx_msg void OnRotate90();
+	afx_msg void OnRotate180();
+	afx_msg void OnRotate270();
+	afx_msg void OnImportFavoritesFromMapFolder();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -73,9 +84,11 @@ protected:
 protected:
 	static TerrainMaterial	*m_staticThis;
 	Bool										m_updating;
+	Bool m_forceUpdatingWidth;
 	static Int							m_currentFgTexture;
 	static Int							m_currentBgTexture;
 	CTreeCtrl								m_terrainTreeView;
+	CTreeCtrl m_favTreeView;
 	TerrainSwatches					m_terrainSwatches;
 	WBPopupSliderButton			m_widthPopup;
 	Int											m_currentWidth;
@@ -83,10 +96,17 @@ protected:
 	static Bool m_paintingPathingInfo;	 // If true, we are painting passable/impassable.  If false, normal texture painting.
 	static Bool m_paintingPassable;
 
+	static Bool m_onCopySelectMode;
+	static Bool m_onCopyApplyMode;
+	static Int m_copyRotation; 
+	CString m_lastLoadedMapPath;
+
 protected:
 	void addTerrain(char *pPath, Int terrainNdx, HTREEITEM parent);
 	HTREEITEM findOrAdd(HTREEITEM parent, const char *pLabel);
 	void updateLabel(void);
+	void SaveFavoritesToMapFolder();
+
 
 public:
 	static Int getFgTexClass(void) {return m_currentFgTexture;}
@@ -96,11 +116,16 @@ public:
 	static void setBgTexClass(Int texClass);
 	static void updateTextures(WorldHeightMapEdit *pMap);
 	static void updateTextureSelection(void);
-	static void setToolOptions(Bool singleCell);
+	static void setToolOptions(Bool singleCell, Bool floodfill = false);
 	static void setWidth(Int width);
 
 	static Bool isPaintingPathingInfo(void) {return m_paintingPathingInfo;}
 	static Bool isPaintingPassable(void) {return m_paintingPassable;}
+
+	static Bool isCopySelectMode(void) {return m_onCopySelectMode;}
+	static Bool isCopyApplyMode(void) {return m_onCopyApplyMode;}
+	static Int getCopyRotation(void) {return m_copyRotation;}
+	// static void ReloadFavorites();
 
 public:
 	Bool setTerrainTreeViewSelection(HTREEITEM parent, Int selection);

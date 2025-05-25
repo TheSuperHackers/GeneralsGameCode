@@ -57,6 +57,8 @@ WbView::WbView() :
 	m_pickConstraint(ES_NONE),
 	m_doRulerFeedback(RULER_NONE)
 {
+	Int showWater = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowWater", 1);
+	m_showWater = (showWater!=0);
 	Int showWay = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowWaypoints", 1);
 	m_showWaypoints = (showWay!=0);
 	Int showPoly = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowPolygonTriggers", 1);
@@ -109,6 +111,8 @@ BEGIN_MESSAGE_MAP(WbView, CView)
 	ON_COMMAND(ID_EDIT_GLOBALLIGHTOPTIONS, OnEditGloballightoptions)
 	ON_COMMAND(ID_VIEW_SHOWWAYPOINTS, OnViewShowwaypoints)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWWAYPOINTS, OnUpdateViewShowwaypoints)
+	ON_COMMAND(ID_VIEW_SHOWWATER, OnViewShowWater)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWWATER, OnUpdateViewShowWater)
 	ON_COMMAND(ID_VIEW_SHOWPOLYGONTRIGGERS, OnViewShowpolygontriggers)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWPOLYGONTRIGGERS, OnUpdateViewShowpolygontriggers)
 	ON_COMMAND(ID_EDIT_PLAYERLIST, OnEditPlayerlist)
@@ -266,6 +270,10 @@ void WbView::mouseMove(TTrackingMode m, CPoint viewPt)
 		pObj = picked3dObjectInView(viewPt);
 	}
 	Real height = TheTerrainRenderObject->getHeightMapHeight(cpt.x, cpt.y, NULL);
+	Real heightCell = TheTerrainRenderObject->getHeightMapHeight(cpt.x, cpt.y, NULL);
+	heightCell = height / 0.627 + 0.16;
+	height = height + 0.05;
+
 	CString str, str2, str3;
 	// If a layer has been activated, display it.
 	if (strcmp(AsciiString::TheEmptyString.str(), LayersList::TheActiveLayerName.c_str()) != 0) {
@@ -274,7 +282,9 @@ void WbView::mouseMove(TTrackingMode m, CPoint viewPt)
 		str.Format("%d object(s), ", totalObjects);
 	}
 	str2.Format("%d waypoint(s), ", totalWaypoints);
-	str3.Format("(%.2f,%.2f), height %.2f", cpt.x, cpt.y, height);
+
+	// Adriane [Deathscythe] -- Semi precise cell calc , todo fix it still sometimes off by something
+	str3.Format("(%.2f,%.2f), height (Feet): %.2f Height (Cell): %.2f ", cpt.x, cpt.y, height, heightCell);
 	str += str2;
 	str += str3;
 	if (numSelected) {
@@ -389,7 +399,7 @@ void WbView::OnMButtonDown(UINT nFlags, CPoint point)
 TPickedStatus WbView::picked(MapObject *pObj, Coord3D docPt)
 {
 	Coord3D cloc = *pObj->getLocation();
-	if (!m_showObjects && !pObj->isWaypoint()) {
+	if (!m_showObjects && !pObj->isSelected() && !pObj->isWaypoint()) {
 		return PICK_NONE;
 	}
 	if (!m_showWaypoints && !WaypointTool::isActive() && pObj->isWaypoint()) {
@@ -786,6 +796,19 @@ void WbView::OnUpdateViewShowwaypoints(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_showWaypoints?1:0);
 }
+
+void WbView::OnViewShowWater() 
+{
+	m_showWater = !m_showWater;
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowWater", m_showWater?1:0);
+	PointerTool::clearSelection();
+}
+
+void WbView::OnUpdateViewShowWater(CCmdUI* pCmdUI) 
+{
+	pCmdUI->SetCheck(m_showWater?1:0);
+}
+
 
 void WbView::OnViewShowpolygontriggers() 
 {

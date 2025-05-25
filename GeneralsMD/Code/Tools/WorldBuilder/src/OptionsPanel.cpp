@@ -66,8 +66,13 @@ void COptionsPanel::OnMove(int x, int y)
 	if (this->IsWindowVisible() && !this->IsIconic()) {
 		CRect frameRect;
 		GetWindowRect(&frameRect);
+		// DEBUG_LOG(("Saving Options Panel LocationY...\n"));
 		::AfxGetApp()->WriteProfileInt(OPTIONS_PANEL_SECTION, "Top", frameRect.top);
 		::AfxGetApp()->WriteProfileInt(OPTIONS_PANEL_SECTION, "Left", frameRect.left);
+
+		// CString msg;
+		// msg.Format("Top: %d\nLeft: %d", frameRect.top, frameRect.left);
+		// AfxMessageBox(msg, MB_OK | MB_ICONWARNING);
 	}
 	
 }

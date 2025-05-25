@@ -51,6 +51,8 @@ RoadTool::~RoadTool(void)
 {
 	m_mapObj = NULL;
 }
+
+#define ROAD_SNAP_DISTANCE (static_cast<float>(atof(::AfxGetApp()->GetProfileString("RoadOptionPanel", "RoadSnappingDistance", "1.0"))))
 //-----------------------------------------------------------------------------
 //         Public Functions                                               
 //-----------------------------------------------------------------------------

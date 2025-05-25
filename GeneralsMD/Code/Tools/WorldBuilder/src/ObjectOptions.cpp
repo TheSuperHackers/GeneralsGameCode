@@ -39,8 +39,15 @@
 #include "GameLogic/SidesList.h"
 #include "GameClient/Color.h"
 
+#include "wbview3d.h"
+
+// This is used to allow sounds to be played via PlaySound
+#include <mmsystem.h>
 #include <list>
 
+#define OBJECT_OPTION_PANEL "ObjectOptionPanel"
+
+// bool ObjectOptions::m_isObjectOptsWindowOpen  = false;
 ObjectOptions *ObjectOptions::m_staticThis = NULL;
 Bool ObjectOptions::m_updating = false;
 char ObjectOptions::m_currentObjectName[NAME_MAX_LEN];
@@ -57,6 +64,8 @@ ObjectOptions::ObjectOptions(CWnd* pParent /*=NULL*/)
 	m_objectsListModified = false;
 	strcpy(m_currentObjectName, "No Selection");
 	m_curOwnerName.clear();
+	m_bPreviewAmbient = false;
+	m_isObjectOptsWindowOpen  = false;
 	//{{AFX_DATA_INIT(ObjectOptions)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
@@ -88,9 +97,31 @@ BEGIN_MESSAGE_MAP(ObjectOptions, COptionsPanel)
 	ON_CBN_SELCHANGE(IDC_OWNINGTEAM, OnSelchangeOwningteam)
 	ON_BN_CLICKED(IDC_OBJECT_SEARCH_BUTTON, OnSearch)
 	ON_BN_CLICKED(IDC_OBJECT_SEARCH_RESET_BTN, OnReset)
+	ON_BN_CLICKED(IDC_TOGGLE_PREVIEW_SOUND, OnPreviewAmbientSound)
+	ON_BN_CLICKED(IDC_TOGGLE_PREV_FEEDBACK, OnPreviewBuildZone)
 	ON_WM_SHOWWINDOW()
+	ON_WM_CLOSE()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
+
+void ObjectOptions::OnPreviewBuildZone()
+{
+	CButton *pButton = (CButton*)GetDlgItem(IDC_TOGGLE_PREV_FEEDBACK);
+	m_bPreviewBuildZone = (pButton->GetCheck() == 1);
+	::AfxGetApp()->WriteProfileInt(OBJECT_OPTION_PANEL, "PreviewBuildZone", m_bPreviewBuildZone ? 1 : 0);
+
+	// CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
+	// if (pDoc==NULL) return;
+	// WbView3d *p3View = pDoc->GetActive3DView();
+	// p3View->setShowBuildZoneFeedBack(m_bPreviewBuildZone);
+}
+
+void ObjectOptions::OnPreviewAmbientSound()
+{
+	CButton *pButton = (CButton*)GetDlgItem(IDC_TOGGLE_PREVIEW_SOUND);
+	m_bPreviewAmbient = (pButton->GetCheck() == 1);
+	::AfxGetApp()->WriteProfileInt(OBJECT_OPTION_PANEL, "PreviewSound", m_bPreviewAmbient ? 1 : 0);
+}
 
 /////////////////////////////////////////////////////////////////////////////
 static Int findSideListEntryWithPlayerOfSide(AsciiString side)
@@ -368,6 +399,16 @@ BOOL ObjectOptions::OnInitDialog()
 		pMap = pMap->getNext();
 	}
 
+	CButton *pButton = (CButton*)GetDlgItem(IDC_TOGGLE_PREVIEW_SOUND);
+	m_bPreviewAmbient=::AfxGetApp()->GetProfileInt(OBJECT_OPTION_PANEL, "PreviewSound", 1);
+	pButton->SetCheck(m_bPreviewAmbient ? 1:0);
+	OnPreviewAmbientSound();
+
+	pButton = (CButton*)GetDlgItem(IDC_TOGGLE_PREV_FEEDBACK);
+	m_bPreviewBuildZone=::AfxGetApp()->GetProfileInt(OBJECT_OPTION_PANEL, "PreviewBuildZone", 0);
+	pButton->SetCheck(m_bPreviewBuildZone ? 1:0);
+	OnPreviewBuildZone();
+
 
 	m_staticThis = this;
 	m_updating = false;
@@ -574,7 +615,9 @@ Bool ObjectOptions::setObjectTreeViewSelection(HTREEITEM parent, Int selection)
 		item.cchTextMax = sizeof(buffer)-2;				
 		m_objectTreeView.GetItem(&item);
 		if (item.lParam == selection) {
+			// m_isObjectOptsWindowOpen  = true;
 			m_objectTreeView.SelectItem(child);
+			// m_isObjectOptsWindowOpen  = false;
 			return(true);
 		}
 		if (setObjectTreeViewSelection(child, selection)) 
@@ -619,7 +662,36 @@ BOOL ObjectOptions::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			if (item.lParam >= 0) {
 				m_currentObjectIndex = item.lParam;
 				strcpy(m_currentObjectName, buffer);
-			}	else if (m_objectTreeView.ItemHasChildren(item.hItem)) {
+			
+				MapObject* obj = getCurMapObject();
+				if (obj && m_isObjectOptsWindowOpen  && m_bPreviewAmbient) {
+					const ThingTemplate* thingTemplate = obj->getThingTemplate();
+					if (thingTemplate) {
+						const AudioEventRTS* event = thingTemplate->getSoundAmbient();
+			
+						if (event) {
+							const AudioEventInfo* audioInfo = event->getAudioEventInfo();
+			
+							if (!audioInfo && TheAudio) {
+								audioInfo = TheAudio->findAudioEventInfo(event->getEventName());
+							}
+			
+							if (audioInfo) {
+								AudioEventRTS eventToPlay;
+								eventToPlay.setEventName(event->getEventName());
+								eventToPlay.setAudioEventInfo(audioInfo);
+								eventToPlay.generateFilename();
+
+								DEBUG_LOG(("String Event %s\n",eventToPlay.getFilename().str()));
+			
+								if (!eventToPlay.getFilename().isEmpty()) {
+									PlaySound(eventToPlay.getFilename().str(), NULL, SND_ASYNC | SND_FILENAME | SND_PURGE);
+								}
+							}
+						}
+					}
+				}
+			} else if (m_objectTreeView.ItemHasChildren(item.hItem)) {
 				strcpy(m_currentObjectName, "No Selection");
 				m_currentObjectIndex = -1;
 			}
@@ -834,6 +906,7 @@ void ObjectOptions::OnSearch()
 
     if (searchText.IsEmpty())
     {
+		::MessageBeep(MB_ICONEXCLAMATION);
         // Repopulate full list if search is empty
         MapObject* pMap = m_objectsList;
 		Int index = 0;
@@ -976,6 +1049,8 @@ void ObjectOptions::OnShowWindow(BOOL bShow, UINT nStatus)
 	 * Call reset when we modify the object list from a search and the dialog is about to commit seppuku.
 	 * For some shitty reason, the object list here is tied to the Fence Tool — make sure to reset it.
 	 */
+	m_isObjectOptsWindowOpen = bShow;
+
 	if (!bShow && m_objectsListModified)
 	{
 		OnReset();

@@ -505,6 +505,7 @@ void EditAction::OnSearch()
 
     if (searchText.IsEmpty())
     {
+		::MessageBeep(MB_ICONEXCLAMATION);
 		OnReset();
 
         return;

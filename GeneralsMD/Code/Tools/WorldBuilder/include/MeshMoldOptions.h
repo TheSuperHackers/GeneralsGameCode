@@ -74,6 +74,9 @@ protected:
 	afx_msg void OnRaise();
 	afx_msg void OnRaiseLower();
 	afx_msg void OnLower();
+
+	afx_msg void OnOpenMoldsFolder();
+	afx_msg void OnOpenLinkCreateMolds();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

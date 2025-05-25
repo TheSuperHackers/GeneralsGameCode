@@ -73,6 +73,7 @@
 #include "W3DDevice/Common/W3DConvert.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "DrawObject.h"
+#include "GameLogic/PolygonTrigger.h"
 #include "Common/MapObject.h"
 #include "Common/GlobalData.h"
 #include "ShadowOptions.h"
@@ -340,6 +341,71 @@ void SkeletonSceneClass::Remove_Render_Object(RenderObjClass * obj)
 	}
 }
 
+// Bool pleaseHelpMeIamUnderTheWata( Real x, Real y)
+// {
+// 	ICoord3D iLoc;
+// 	iLoc.x = (floor(x+0.5f));
+// 	iLoc.y = (floor(y+0.5f));
+// 	iLoc.z = 0;
+// 	// Look for water areas.
+// 	for (PolygonTrigger *pTrig=PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
+// 		if (!pTrig->isWaterArea()) {
+// 			continue;
+// 		}
+// 		// See if point is in a water area
+// 		if (pTrig->pointInTrigger(iLoc)) {
+// 			Real wZ = pTrig->getPoint(0)->z;
+// 			// See if the ground height is less than the water level.
+// 			Real curHeight = TheTerrainRenderObject->getHeightMapHeight(x, y, NULL);
+// 			return (curHeight<wZ);
+// 		}
+// 	}
+// 	return false;
+// }
+
+/**
+ * Adriane [Deathscythe]
+ * Non computationaly expensive suggested check :P 
+ */
+Bool isInsideMapStructureObject(Real x, Real y)
+{
+	MapObject* pObj = MapObject::getFirstMapObject();
+
+	while (pObj) {
+		const ThingTemplate* t = pObj->getThingTemplate();
+		if (!t || !t->isKindOf(KINDOF_STRUCTURE)) {
+			pObj = pObj->getNext();
+			continue;
+		}
+
+		const Coord3D* pos = pObj->getLocation();
+		const GeometryInfo& geom = t->getTemplateGeometryInfo();
+
+		Real halfSizeX = geom.getMajorRadius();
+		Real halfSizeY = geom.getMinorRadius();
+
+		Real angle = pObj->getAngle(); // Assuming this gives rotation in radians around Z
+		Real cosA = (Real)cos(-angle); // Inverse rotate
+		Real sinA = (Real)sin(-angle);
+
+		// Translate point to object-local space
+		Real dx = x - pos->x;
+		Real dy = y - pos->y;
+
+		Real localX = dx * cosA - dy * sinA;
+		Real localY = dx * sinA + dy * cosA;
+
+		// Check if point is within the axis-aligned bounding box in local space
+		if (fabs(localX) <= halfSizeX && fabs(localY) <= halfSizeY) {
+			return true;
+		}
+
+		pObj = pObj->getNext();
+	}
+
+	return false;
+}
+
 
 void WbView3d::setObjTracking(MapObject *pMapObj,  Coord3D pos, Real angle, Bool show)
 {
@@ -355,6 +421,76 @@ void WbView3d::setObjTracking(MapObject *pMapObj,  Coord3D pos, Real angle, Bool
 	if (m_objectToolTrackingObj == NULL) {
 		return;
 	}
+	
+	// DEBUG_LOG(("getShowBuildZoneFeedBack", getShowBuildZoneFeedBack()));
+
+	m_validTerrain = true; // always true
+	if(getShowBuildZoneFeedBack()){
+		const Coord3D *loc = pMapObj->getLocation();
+		const ThingTemplate *t = pMapObj->getThingTemplate();
+		Real objectAngle = pMapObj->getAngle();
+
+		Real halfSizeX = 1.0f;
+		Real halfSizeY = 1.0f;
+		
+		if (t) {
+			const GeometryInfo &geom = t->getTemplateGeometryInfo();
+			halfSizeX = geom.getMajorRadius();
+			halfSizeY = geom.getMinorRadius();
+		}
+
+		// outer margin for the bounding box of the object 
+		// halfSizeY += 10.0f;
+		// halfSizeX += 10.0f;
+		
+		const int numSamples = 5;
+		Bool terrainValid = true;
+		
+		Real cosA = (Real)cos(angle);
+		Real sinA = (Real)sin(angle);
+		bool anyCliff = false;
+		bool anyBadBuild = false;
+
+		Real objectSize = max(halfSizeX, halfSizeY); // or use a better approximation
+
+		for (int i = -numSamples; i <= numSamples && !anyCliff; ++i) {
+			for (int j = -numSamples; j <= numSamples && !anyCliff; ++j) {
+
+				// skip outer circle if desired
+				Real fx = (Real)i / (Real)numSamples;
+				Real fy = (Real)j / (Real)numSamples;
+				if ((fx * fx + fy * fy) > 1.0f)
+					continue;
+
+				Real offsetX = fx * halfSizeX;
+				Real offsetY = fy * halfSizeY;
+
+				Real rotatedX = offsetX * cosA - offsetY * sinA;
+				Real rotatedY = offsetX * sinA + offsetY * cosA;
+
+				Real sampleX = pos.x + rotatedX;
+				Real sampleY = pos.y + rotatedY;
+
+				if (m_heightMapRenderObj->isCliffCell(sampleX, sampleY)) {
+					// DEBUG_LOG(("Cliff terrain at sample (%.2f, %.2f)\n", sampleX, sampleY));
+					anyCliff = true;
+					break;
+				}
+
+				if (i == 0 && j == 0 && m_heightMapRenderObj->isBadBuildLocation(pos.x, pos.y, objectAngle, halfSizeX, halfSizeY) || 
+					isInsideMapStructureObject(sampleX, sampleY)) {
+					// DEBUG_LOG(("Bad build location at (%.2f, %.2f) for object size %.2f\n", sampleX, sampleY, objectSize));
+					anyBadBuild = true;
+				}
+
+				
+			}
+		}
+
+	
+		m_validTerrain = !anyCliff && !anyBadBuild;
+	}
+
 	pos.z += m_heightMapRenderObj->getHeightMapHeight(pos.x, pos.y, NULL);
 	Matrix3D renderObjPos(true);	// init to identity
 	renderObjPos.Translate(pos.x, pos.y, pos.z);
@@ -411,6 +547,8 @@ WbView3d::WbView3d() :
 	m_showWeaponRanges(false),
 	m_highlightTestArt(false),
 	m_showLetterbox(false),
+	m_validTerrain(true),
+	m_showBuildZoneFeedback(false),
   m_showSoundCircles(false)
 {
 	TheTacticalView = &bogusTacticalView;  
@@ -752,10 +890,10 @@ void WbView3d::setupCamera()
 		if (m_projection) {
 			camtransform.Make_Identity();
 			camtransform.Set_Translation(Vector3(targetPos.X, targetPos.Y, lookDistance));
-			m_heightMapRenderObj->setFlattenHeights(true);
+			// m_heightMapRenderObj->setFlattenHeights(true);
 			//m_camera->Set_Projection_Type(CameraClass::ORTHO);
 		} else {
-			m_heightMapRenderObj->setFlattenHeights(false);
+			// m_heightMapRenderObj->setFlattenHeights(false);
 			//m_camera->Set_Projection_Type(CameraClass::PERSPECTIVE);
 		}
 	}
@@ -1021,7 +1159,15 @@ void WbView3d::updateScorches(void)
 // ----------------------------------------------------------------------------
 void WbView3d::updateTrees(void)
 {
+	/** 
+	 * Adriane [Deathscythe] -- Bug fix 
+	 * Do not render them trees when we dont need too
+	 */
 	TheTerrainRenderObject->removeAllTrees();
+	if (!m_showModels) {
+        return;
+    }
+
 	TheTerrainRenderObject->removeAllProps();
 	MapObject *pMapObj;
 	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext())
@@ -1217,7 +1363,7 @@ void WbView3d::invalBuildListItemInView(BuildListInfo *pBuildToInval)
 			if (!found && pBuildToInval) { 
 				continue;
 			}
-			if (!BuildListTool::isActive() && !pBuild->isInitiallyBuilt()) {
+			if (!BuildListTool::isActive() && !pBuild->isInitiallyBuilt() && !getShowBuildListObjects()) {
 				continue;
 			}
 			// Update.
@@ -1392,7 +1538,7 @@ AsciiString WbView3d::getModelNameAndScale(MapObject *pMapObj, Real *scale, Body
 		{
 
 			// get visual data from the thing template
-			modelName = getBestModelName(tTemplate, state);
+			modelName = getBestModelNameWBPrev(tTemplate, state);
 			*scale = tTemplate->getAssetScale();
 
 		}  // end if
@@ -1512,40 +1658,121 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 
 
 		if (!renderObj) {
-			Real scale = 1.0; 
-			AsciiString modelName = getModelNameAndScale(pMapObj, &scale, curDamageState);
-			// set render object, or create if we need to
-			if( renderObj == NULL && modelName.isEmpty() == FALSE && 
-					strncmp( modelName.str(), "No ", 3 ) ) 
-			{
-
-				if (!getShowModels()) {
-					continue;
+			Real scale = 1.0;
+		
+			const ThingTemplate* tTemplate = pMapObj->getThingTemplate();
+			if (tTemplate) {
+				scale = tTemplate->getAssetScale();
+		
+				// Setup model condition flags from the current damage state
+				ModelConditionFlags state;
+				switch (curDamageState) {
+					case BODY_PRISTINE:
+					default:
+						state.clear();
+						break;
+					case BODY_DAMAGED:
+						state.set(MODELCONDITION_DAMAGED);
+						break;
+					case BODY_REALLYDAMAGED:
+						state.set(MODELCONDITION_REALLY_DAMAGED);
+						break;
+					case BODY_RUBBLE:
+						state.set(MODELCONDITION_RUBBLE);
+						break;
 				}
-				renderObj = m_assetManager->Create_Render_Obj( modelName.str(), scale, playerColor);
-				if( m_showShadows )
-				{
-					Shadow::ShadowTypeInfo shadowInfo;
-					shadowInfo.allowUpdates=FALSE;	//shadow image will never update
-					shadowInfo.allowWorldAlign=TRUE;	//shadow image will wrap around world objects
-					if (tTemplate && tTemplate->getShadowType() != SHADOW_NONE && !(pMapObj->getFlags() & FLAG_DONT_RENDER))
-					{	//add correct type of shadow
-						strcpy(shadowInfo.m_ShadowName,tTemplate->getShadowTextureName().str());
-						DEBUG_ASSERTCRASH(shadowInfo.m_ShadowName[0] != '\0', ("this should be validated in ThingTemplate now"));
-						shadowInfo.m_type=(ShadowType)tTemplate->getShadowType();
-						shadowInfo.m_sizeX=tTemplate->getShadowSizeX();
-						shadowInfo.m_sizeY=tTemplate->getShadowSizeY();
-						shadowInfo.m_offsetX=tTemplate->getShadowOffsetX();
-						shadowInfo.m_offsetY=tTemplate->getShadowOffsetY();
-						shadowObj=TheW3DShadowManager->addShadow(renderObj, &shadowInfo);
-					} else if (!tTemplate) {
-						shadowInfo.m_type=(ShadowType)SHADOW_VOLUME;
-						shadowObj=TheW3DShadowManager->addShadow(renderObj, &shadowInfo);
+		
+				if (getShowGarrisoned()) {
+					state.set(MODELCONDITION_GARRISONED);
+				}
+		
+				// Check weather conditions
+				Int objWeather = 0;
+				Bool exists = FALSE;
+				if (pMapObj && pMapObj->getProperties()) {
+					objWeather = pMapObj->getProperties()->getInt(TheKey_objectWeather, &exists);
+				}
+				switch (objWeather) {
+					default:
+					case 0:
+						if (TheGlobalData->m_weather == WEATHER_SNOWY) {
+							state.set(MODELCONDITION_SNOW);
+						}
+						break;
+					case 2:
+						state.set(MODELCONDITION_SNOW);
+						break;
+				}
+		
+				// Check time of day
+				Int objTime = 0;
+				if (pMapObj && pMapObj->getProperties()) {
+					objTime = pMapObj->getProperties()->getInt(TheKey_objectTime, &exists);
+				}
+				switch (objTime) {
+					default:
+					case 0:
+						if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT) {
+							state.set(MODELCONDITION_NIGHT);
+						}
+						break;
+					case 2:
+						state.set(MODELCONDITION_NIGHT);
+						break;
+				}
+		
+				const ModuleInfo& mi = tTemplate->getDrawModuleInfo();
+				// DEBUG_LOG(("Draw Module Count: %d \n", mi.getCount()));
+				if (mi.getCount() > 0) {
+					for (int i = 0; i < mi.getCount(); ++i) {
+						const ModuleData* mdd = mi.getNthData(i);
+						// DEBUG_LOG(("Processing Module Number: %d \n", i));
+						const W3DModelDrawModuleData* md = mdd ? mdd->getAsW3DModelDrawModuleData() : NULL;
+						if (md) {
+							AsciiString modelName = md->getBestModelNameForWB(state);
+							// DEBUG_LOG(("Processing ModelName: %s\n", modelName.str()));
+							if (!modelName.isEmpty() && strncmp(modelName.str(), "No ", 3) != 0) {
+								if (!getShowModels()) continue;
+		
+								// Create the sub-model render object
+								RenderObjClass* subRenderObj = m_assetManager->Create_Render_Obj(modelName.str(), scale, playerColor);
+								if (subRenderObj) {
+									// Handle shadow for each sub model
+									if (m_showShadows) {
+										Shadow::ShadowTypeInfo shadowInfo;
+										shadowInfo.allowUpdates = FALSE;    // Shadow image will never update
+										shadowInfo.allowWorldAlign = TRUE;  // Shadow image will wrap around world objects
+										
+										if (tTemplate->getShadowType() != SHADOW_NONE && !(pMapObj->getFlags() & FLAG_DONT_RENDER)) {
+											strcpy(shadowInfo.m_ShadowName, tTemplate->getShadowTextureName().str());
+											DEBUG_ASSERTCRASH(shadowInfo.m_ShadowName[0] != '\0', ("this should be validated in ThingTemplate now"));
+											shadowInfo.m_type = (ShadowType)tTemplate->getShadowType();
+											shadowInfo.m_sizeX = tTemplate->getShadowSizeX();
+											shadowInfo.m_sizeY = tTemplate->getShadowSizeY();
+											shadowInfo.m_offsetX = tTemplate->getShadowOffsetX();
+											shadowInfo.m_offsetY = tTemplate->getShadowOffsetY();
+											// DEBUG_LOG(("processing shadow"));
+											TheW3DShadowManager->addShadow(subRenderObj, &shadowInfo);
+										} else {
+											shadowInfo.m_type = (ShadowType)SHADOW_VOLUME;
+											TheW3DShadowManager->addShadow(subRenderObj, &shadowInfo);
+										}
+									}
+		
+									// Attach submodels properly
+									if (!renderObj) {
+										renderObj = subRenderObj;  // First model is the main renderObj
+									} else {
+										renderObj->Add_Sub_Object_To_Bone(subRenderObj, 0);  // Attach to root
+										subRenderObj->Release_Ref();  // Release ref after attaching
+									}
+								}
+							}
+						}
 					}
 				}
-			}  // end if
+			}
 		}
-
 		if (renderObj && !(pMapObj->getFlags() & FLAG_DONT_RENDER)) {
 			pMapObj->setRenderObj(renderObj);
 			pMapObj->setShadowObj(shadowObj);
@@ -2201,13 +2428,24 @@ void WbView3d::redraw(void)
 		m_drawObject->setWaypointIconColor(waypointIconColor);
 		Int unitIconColor  = parseHexColorFromProfile(ICON_COLOR_SECTION, "Units", "FF00FF");
 		m_drawObject->setUnitIconColor(unitIconColor);
-		Int defaultIconColor  = parseHexColorFromProfile(ICON_COLOR_SECTION, "Defaukt", "00FFFF");
+		Int treeIconColor  = parseHexColorFromProfile(ICON_COLOR_SECTION, "Tree", "00FF00");
+		m_drawObject->setTreeIconColor(treeIconColor);
+
+		Int defaultIconColor  = parseHexColorFromProfile(ICON_COLOR_SECTION, "Default", "00FFFF");
 		m_drawObject->setDefaultIconColor(defaultIconColor);
 
-		m_drawObject->setDrawObjects(m_showObjects, 
+		m_drawObject->setDrawObjects(
+			m_showObjects, 
 			m_showWaypoints || WaypointTool::isActive(),
-			m_showPolygonTriggers || PolygonTool::isActive(),
-      m_showBoundingBoxes, m_showSightRanges, m_showWeaponRanges, m_showSoundCircles, m_highlightTestArt, m_showLetterbox);
+			m_showPolygonTriggers || PolygonTool::isActive() || WaterTool::isActive(),
+			m_showBoundingBoxes, 
+			m_showSightRanges, 
+			m_showWeaponRanges, 
+			m_showSoundCircles, 
+			m_highlightTestArt, 
+			m_showLetterbox,
+			m_showWater
+		);
 	}
 
 	WW3D::Sync( GetTickCount() );
@@ -2266,7 +2504,11 @@ void WbView3d::render()
 			DX8TextureCategoryClass::SetForceMultiply(true);
 			TheDX8MeshRenderer.Enable_Lighting(false);
 			Real lightLevel = 1.0f;
-			m_transparentObjectsScene->Set_Ambient_Light(Vector3(lightLevel,lightLevel,lightLevel)); 
+			if(m_validTerrain){
+				m_transparentObjectsScene->Set_Ambient_Light(Vector3(lightLevel,lightLevel,lightLevel)); 
+			} else {
+				m_transparentObjectsScene->Set_Ambient_Light(Vector3(1.0f, 0.0f, 0.0f)); // Red light
+			}
 			WW3D::Render(m_transparentObjectsScene, m_camera);
 			TheDX8MeshRenderer.Enable_Lighting(true);
 			DX8TextureCategoryClass::SetForceMultiply(false);
@@ -2456,6 +2698,7 @@ void WbView3d::initWW3D()
 #if 1
 		TheWritableGlobalData->m_useShadowVolumes = true;
 		TheWritableGlobalData->m_useShadowDecals = true;
+		// TheWritableGlobalData->m_useTreeSway = false;
 		TheWritableGlobalData->m_enableBehindBuildingMarkers = false;	//this is only for the game.
 		// TheWritableGlobalData->m_textureReductionFactor = 4;
 		if (TheW3DShadowManager==NULL)
@@ -2599,13 +2842,18 @@ void WbView3d::drawLabels(HDC hdc)
 				}
 
 			}
-
-			if (pMapObj->isWaypoint() && m_showWaypoints) {
+			Bool exists;
+			AsciiString objectDictName = pMapObj->getProperties()->getAsciiString(TheKey_objectName, &exists);			
+			if (!pMapObj->getProperties()->getAsciiString(TheKey_objectName, &exists).isEmpty() && !(pMapObj->getFlags() & (FLAG_ROAD_FLAGS|FLAG_BRIDGE_FLAGS))) { 
+				name = objectDictName;
+				pos = *pMapObj->getLocation();
+				pos.z += m_heightMapRenderObj->getHeightMapHeight(pos.x, pos.y, NULL);
+			} else if (pMapObj->isWaypoint() && m_showWaypoints) {
 				name = pMapObj->getWaypointName();
 				pos = *pMapObj->getLocation();
 				pos.z = m_heightMapRenderObj->getHeightMapHeight(pos.x, pos.y, NULL);
 			} else if (pMapObj->getThingTemplate() && !(pMapObj->getFlags() & (FLAG_ROAD_FLAGS|FLAG_BRIDGE_FLAGS)) &&
-								 pMapObj->getRenderObj() == NULL && !pMapObj->getThingTemplate()->isKindOf(KINDOF_OPTIMIZED_TREE)) { 
+				pMapObj->getRenderObj() == NULL && !pMapObj->getThingTemplate()->isKindOf(KINDOF_OPTIMIZED_TREE)) { 
 				name = pMapObj->getThingTemplate()->getName();
 				pos = *pMapObj->getLocation();
 				pos.z += m_heightMapRenderObj->getHeightMapHeight(pos.x, pos.y, NULL);
@@ -2620,7 +2868,7 @@ void WbView3d::drawLabels(HDC hdc)
 					case 3: name = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel3, &exists);; break;
 					default: name.clear();
 				}
-				if (!name.isEmpty() && m_showWaypoints) {
+				if (!name.isEmpty() && m_showWaypoints || !objectDictName.isEmpty()) {
 					CPoint pt;
 					Vector3 world, screen;
 					world.Set( pos.x+MAP_XY_FACTOR/2, pos.y, pos.z );
@@ -2645,7 +2893,7 @@ void WbView3d::drawLabels(HDC hdc)
 						// coords now
 						//
 						Int sx, sy;
-						W3DLogicalScreenToPixelScreen( screen.X, screen.Y,
+						W3DLogicalScreenToPixelScreenHackedForWBLabels( screen.X, screen.Y,
 																					 &sx, &sy,
 																					 rClient.right-rClient.left, rClient.bottom-rClient.top );
 						pt.x = rClient.left+sx;
@@ -2657,6 +2905,12 @@ void WbView3d::drawLabels(HDC hdc)
 							red = 0; green = 255;
 						} else {
 							red = 255, green = 0;
+						}
+
+						// Modify color for 'objectDictName' if it's not empty
+						if (!objectDictName.isEmpty()) {
+							red = 255;
+							green = 255;
 						}
 
 						if (m3DFont && !hdc) {
@@ -2676,6 +2930,57 @@ void WbView3d::drawLabels(HDC hdc)
 							::SetTextColor(hdc, RGB(red,green,0));
 							::TextOut(hdc, pt.x, pt.y, name.str(), name.getLength());
 						}
+					}
+				}
+			}
+		}
+
+		/**
+		 * Adriane [Deathscythe]
+		 * Lets support the labels of poly triggers cause why not
+		 */
+		PolygonTrigger *pTrig;
+		for (pTrig = PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
+			AsciiString triggerName = pTrig->getTriggerName();
+			if (!triggerName.isEmpty() && pTrig->getNumPoints() > 0 && m_showPolygonTriggers) {
+				// Loop through all points of the polygon
+				for (Int i = 0; i < pTrig->getNumPoints(); ++i) {
+					ICoord3D iLoc = *pTrig->getPoint(i); // Get each point
+					Coord3D loc;
+					loc.x = iLoc.x;
+					loc.y = iLoc.y;
+					loc.z = m_heightMapRenderObj->getHeightMapHeight(loc.x, loc.y, NULL);
+
+					Vector3 world, screen;
+					CPoint pt;
+
+					world.Set(loc.x + MAP_XY_FACTOR / 2, loc.y, loc.z);
+					if (CameraClass::INSIDE_FRUSTUM != m_camera->Project(screen, world)) {
+						continue;
+					}
+
+					CRect rClient;
+					GetClientRect(&rClient);
+
+					Int sx, sy;
+					W3DLogicalScreenToPixelScreenHackedForWBLabels(screen.X, screen.Y,
+												&sx, &sy,
+												rClient.right - rClient.left, rClient.bottom - rClient.top);
+					pt.x = rClient.left + sx;
+					pt.y = rClient.top + sy;
+
+					// Draw the label for each point
+					if (m3DFont && !hdc) {
+						RECT rct;
+						rct.top = rct.bottom = pt.y;
+						rct.left = rct.right = pt.x;
+						m3DFont->DrawText(triggerName.str(), triggerName.getLength(), &rct, 
+										DT_LEFT | DT_NOCLIP | DT_TOP | DT_SINGLELINE,
+										0xAFFF8800); // Light violet color
+					} else if (!m3DFont) {
+						::SetBkMode(hdc, TRANSPARENT);
+						::SetTextColor(hdc, RGB(238, 130, 238)); // Light violet color
+						::TextOut(hdc, pt.x, pt.y, triggerName.str(), triggerName.getLength());
 					}
 				}
 			}
@@ -3014,6 +3319,18 @@ BOOL WbView3d::OnEraseBkgnd(CDC* pDC)
 
 void WbView3d::OnViewShowentire3dmap() 
 {
+	if(m_showEntireMap){
+		::MessageBeep(MB_ICONINFORMATION);
+		int response = ::AfxMessageBox(
+			"You may have accidentally pressed CTRL+A. Are you sure you want to toggle the full map view?", 
+			MB_YESNO | MB_ICONQUESTION
+		);
+
+		if (response == IDNO){
+			return;
+		}
+	}
+
 	m_showEntireMap = !m_showEntireMap;	
 	IRegion2D range = {0,0,0,0};
 	this->updateHeightMapInView(WbDoc()->GetHeightMap(), false, range);
@@ -3029,7 +3346,7 @@ void WbView3d::OnUpdateViewShowentire3dmap(CCmdUI* pCmdUI)
 void WbView3d::OnViewShowtopdownview() 
 {
 	m_projection = !m_projection;
-	m_heightMapRenderObj->setFlattenHeights(m_projection);
+	// m_heightMapRenderObj->setFlattenHeights(m_projection);
 	invalObjectInView(NULL);
 	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowTopDownView", m_projection?1:0);
 }
@@ -3073,6 +3390,16 @@ void WbView3d::OnEditSelectmacrotexture()
 void WbView3d::OnViewShowshadows() 
 {
 	m_showShadows = !m_showShadows;
+	
+    /**
+     * Adriane [Deathscythe] Bug fix
+     * We need to apply the setting change first before we check.
+     * These values are checked when adding shadows, so they should be updated before that.
+     */
+	TheWritableGlobalData->m_useShadowDecals = m_showShadows;
+	TheWritableGlobalData->m_useShadowVolumes = m_showShadows;
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowShadows", m_showShadows?1:0);
+
 	if (m_showShadows) {
 		int w,h,bits;
 		Bool windowed;
@@ -3088,9 +3415,7 @@ void WbView3d::OnViewShowshadows()
 	} else {
 		TheW3DShadowManager->removeAllShadows();
 	}
-	TheWritableGlobalData->m_useShadowDecals = m_showShadows;
-	TheWritableGlobalData->m_useShadowVolumes = m_showShadows;
-	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowShadows", m_showShadows?1:0);
+
 }
 
 void WbView3d::OnUpdateViewShowshadows(CCmdUI* pCmdUI) 

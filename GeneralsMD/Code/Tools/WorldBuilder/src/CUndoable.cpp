@@ -200,6 +200,56 @@ void WBDocUndoable::Undo(void)
 }
 
 /*************************************************************************
+**                             AddBoundaryUndoable
+***************************************************************************/
+//
+// AddBoundaryUndoable - destructor.
+//
+AddBoundaryUndoable::~AddBoundaryUndoable(void)
+{
+	m_pDoc = NULL;  // not ref counted.
+	if (m_boundaryToAdd && !m_addedToList) {
+		delete m_boundaryToAdd;
+		m_boundaryToAdd=NULL;
+	}
+}
+
+//
+// AddBoundaryUndoable - create a new undoable.	Adds a polygon trigger.
+//
+AddBoundaryUndoable::AddBoundaryUndoable(CWorldBuilderDoc *pDoc, ICoord2D *pBoundaryToAdd):
+	m_pDoc(NULL),
+	m_boundaryToAdd(NULL)
+{
+	m_pDoc = pDoc; // not ref counted.
+		if (pBoundaryToAdd)
+		m_boundaryToAdd = new ICoord2D(*pBoundaryToAdd); // ← allocate a copy on the heap
+}
+//
+/// Add the boundary.
+//
+void AddBoundaryUndoable::Do(void)
+{
+	// The call to LayersList must be done here because only the WorldBuilder knows about Layers.
+	// TheLayersList->addPolygonTriggerToLayersList(m_trigger, m_trigger->getLayerName()); 
+	// PolygonTrigger::addPolygonTrigger(m_trigger);
+	m_pDoc->addBoundary(m_boundaryToAdd);
+	m_addedToList = true;
+}
+
+//
+// Remove the boundary.
+//
+void AddBoundaryUndoable::Undo(void)
+{
+	// The call to LayersList must be done here because only the WorldBuilder knows about Layers.
+	// TheLayersList->removePolygonTriggerFromLayersList(m_trigger);
+	// PolygonTrigger::removePolygonTrigger(m_trigger);
+	m_pDoc->removeLastBoundary();
+	m_addedToList = false;
+}
+
+/*************************************************************************
 **                             AddObjectUndoable
 ***************************************************************************/
 //

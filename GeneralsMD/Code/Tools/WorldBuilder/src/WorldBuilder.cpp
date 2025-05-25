@@ -32,6 +32,8 @@
 #include "WBFrameWnd.h"
 #include "wbview3d.h"
 
+#include "TerrainMaterial.h"
+
 //#include <wsys/StdFileSystem.h>
 #include "W3DDevice/GameClient/W3DFileSystem.h"
 #include "Common/GlobalData.h"
@@ -113,6 +115,8 @@ Win32Mouse *TheWin32Mouse = NULL;
 const char *gAppPrefix = "wb_"; /// So WB can have a different debug log file name.
 const Char *g_strFile = "data\\Generals.str";
 const Char *g_csfFile = "data\\%s\\Generals.csf";
+
+static Bool g_aboutPageOn = false;
 
 /////////////////////////////////////////////////////////////////////////////
 // WBGameFileClass - extends the file system a bit so we can get at some 
@@ -461,7 +465,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	// such as the name of your company or organization.
 	//SetRegistryKey(_T("Local AppWizard-Generated Applications"));
 
-	LoadStdProfileSettings();  // Load standard INI file options (including MRU)
+	LoadStdProfileSettings(10);  // Load standard INI file options (including MRU)
 
 	// Register the application's document templates.  Document templates
 	//  serve as the connection between documents, frame windows and views.
@@ -657,7 +661,12 @@ protected:
 	afx_msg void OnRefreshQueryObject();
 	afx_msg void OnRefreshQueryWaypoint();
 	afx_msg void OnWindowPosChanging(WINDOWPOS* lpwndpos);
+
+	void DoShrink();
+	afx_msg void OnShrink();
+	afx_msg void OnExpand();
 	virtual void OnOK();
+	virtual void OnClose();
 	virtual BOOL OnInitDialog();
 	DECLARE_MESSAGE_MAP()
 };
@@ -665,7 +674,10 @@ protected:
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 	ON_WM_MOVE()
+	ON_WM_CLOSE()
 	ON_BN_CLICKED(IDC_FIND_HKEY_BUTTON, OnFindButtonClicked)
+	ON_BN_CLICKED(IDC_EXPAND, OnExpand)
+	ON_BN_CLICKED(IDC_SHRINK, OnShrink)
 
 	ON_BN_CLICKED(IDC_FIND_OBJ_BUTTON, OnCenterOnSelectedButtonObject)
 	ON_BN_CLICKED(IDC_REFRESH_OBJ_BUTTON, OnRefreshQueryObject)
@@ -680,6 +692,42 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
+// This can only be clicked once unless vice versa have been clicked get me?
+void CAboutDlg::OnExpand() 
+{
+	CRect rect;
+	GetWindowRect(&rect);
+
+	const int expandBy = 350;
+	const int maxWidth = 690; // Nice number
+
+	int currentWidth = rect.Width();
+	int newWidth = min(currentWidth + expandBy, maxWidth); // Clamp to maxWidth
+	int delta = newWidth - currentWidth;
+
+	// Expand the window to the left
+	// MoveWindow expects coordinates relative to parent, convert
+	// ScreenToClient(&rect);
+	SetWindowPos(NULL, rect.left - 500, rect.top, newWidth, rect.Height(), SWP_NOZORDER | SWP_NOMOVE);
+
+	GetDlgItem(IDC_EXPAND)->EnableWindow(FALSE);
+}
+
+void CAboutDlg::DoShrink(){
+	CRect rect;
+	GetWindowRect(&rect);
+	int newWidth = max(rect.Width() - 350, 300); // Don't shrink below 300 width (adjust as needed)
+
+	// ScreenToClient(&rect);
+	SetWindowPos(NULL, rect.left + 350, rect.top, newWidth, rect.Height(), SWP_NOZORDER | SWP_NOMOVE);
+
+	GetDlgItem(IDC_EXPAND)->EnableWindow(TRUE);
+}
+
+void CAboutDlg::OnShrink() 
+{
+	DoShrink();
+}
 
 CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
 {
@@ -789,11 +837,19 @@ void CAboutDlg::OnCenterOnSelectedButtonWP()
 BOOL CAboutDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
+	// DoShrink();
+	g_aboutPageOn = true;
 
 	m_bLaunchOnStartUpAbout=::AfxGetApp()->GetProfileInt(ABOUT_SECTION, "LaunchOnStartUp", 1);
 	CButton *pButton = (CButton*)GetDlgItem(IDC_LAUNCH_ONSTARTUP);
 	pButton->SetCheck(m_bLaunchOnStartUpAbout ? 1:0);
 
+    // Load the icon for the app about
+    HWND hWnd = GetSafeHwnd();
+    HICON hIcon = LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR_MAINFRAME));
+    SetClassLong(hWnd, GCL_HICON, (LONG)hIcon);
+    SetClassLong(hWnd, GCL_HICONSM, (LONG)hIcon);
+	
 	OnRefreshQueryObject();
 	OnRefreshQueryWaypoint();
 
@@ -852,6 +908,12 @@ void CAboutDlg::OnOK()
     // }
 }
 
+void CAboutDlg::OnClose() 
+{
+	g_aboutPageOn = false;
+	CDialog::OnClose();
+}
+
 void CAboutDlg::OnFindButtonClicked()
 {
 	CEdit* pFindBox = (CEdit*)GetDlgItem(IDC_FIND_QUERY);
@@ -900,10 +962,56 @@ void CAboutDlg::OnFindButtonClicked()
 }
 
 
+// This is supposed to be called upon under a new opened map
+void CWorldBuilderApp::OnRefreshAppAbout()
+{
+	if(!g_aboutPageOn) return; //  if we are not even on then dont do a refresh...
+
+	static CAboutDlg* pAboutDlg = NULL;
+
+	if (pAboutDlg != NULL) {
+		if (pAboutDlg->GetSafeHwnd()) {
+			pAboutDlg->DestroyWindow();
+		}
+		delete pAboutDlg;
+		pAboutDlg = NULL;
+	}
+
+	g_aboutPageOn = true;
+
+	pAboutDlg = new CAboutDlg;
+
+	if (pAboutDlg->Create(IDD_ABOUTBOX, AfxGetMainWnd()))
+	{
+		int top  = ::AfxGetApp()->GetProfileInt(ABOUT_SECTION, "Top", -1);
+		int left = ::AfxGetApp()->GetProfileInt(ABOUT_SECTION, "Left", -1);
+
+		if (top != -1 && left != -1)
+		{
+			CRect rect;
+			pAboutDlg->GetWindowRect(&rect);
+			int width  = rect.Width();
+			int height = rect.Height();
+
+			pAboutDlg->SetWindowPos(NULL, left, top, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
+		}
+
+		pAboutDlg->ShowWindow(SW_SHOW);
+	}
+	else
+	{
+		delete pAboutDlg;
+		pAboutDlg = NULL;
+	}
+}
 
 // App command to run the dialog
 void CWorldBuilderApp::OnAppAbout()
 {
+	if (g_aboutPageOn) {
+		return;
+	}
+	g_aboutPageOn = true;
 
 	CAboutDlg* pAboutDlg = new CAboutDlg;
 
@@ -945,16 +1053,6 @@ void CWorldBuilderApp::OnAppAbout()
 		{ "E", "Subtract Brush" },
 		{ "R", "Feather Tool" },
 		{ "T", "Mold Tool  " }, // artificially spaced it out -- theres a bug with tabs
-		{ "Alt+1", "Show Objects" },
-		{ "Alt+2", "Show Waypoints" },
-		{ "Alt+3", "Show Polygon Triggers" },
-		{ "Alt+4", "Show Labels" },
-		{ "Alt+5", "Show Models" },
-		{ "Alt+6", "Show Bounding Boxes" },
-		{ "Alt+7", "Show Sight Ranges" },
-		{ "Alt+8", "Show Weapon Ranges" },
-		{ "Alt+9", "Show Map Boundaries" },
-		{ "Alt+0", "Show Terrain" },
 		{ "Y", "Water Tool" },
 		{ "A", "Tile Tool    " }, // artificially spaced it out -- theres a bug with tabs
 		{ "S", "Big Tile Tool" },
@@ -973,37 +1071,90 @@ void CWorldBuilderApp::OnAppAbout()
 		{ "F3", "Border Tool" },
 		{ "F4", "Script Editor" },
 		{ "F5", "Team Editor" },
+
+		{ "==", "===============================" },
+
+		{ "Ctrl+M", "Select Similar" },
+		{ "Ctrl+R", "Replace Selected..." },
+
+		{ "Ctrl+W", "Show Wireframe 3D View" },
+		{ "Ctrl+F", "Show From Top Down View" },
+		{ "Ctrl+U", "Show Clouds" }, 
+		{ "Ctrl+D", "Change Time Of Day" },
+		{ "Ctrl+I", "Show Impassable Areas" },
+		{ "Ctrl+A", "Show All of 3D Map" },
+		{ "Ctrl+Shift+G", "Snap To Grid" },
+
+		{ "==", "===============================" },
+
+		{ "Alt+1", "Show Objects" },
+		{ "Alt+2", "Show Waypoints" },
+		{ "Alt+3", "Show Polygon Triggers" },
+		{ "Alt+4", "Show Labels" },
+		{ "Alt+5", "Show Models" },
+		{ "Alt+6", "Show Bounding Boxes" },
+		{ "Alt+7", "Show Sight Ranges" },
+		{ "Alt+8", "Show Weapon Ranges" },
+		{ "Alt+9", "Show Map Boundaries" },
+		{ "Alt+0", "Show Terrain" },
+
+		{ "==", "===============================" },
+
+		{ "Ctrl+0", "Select Anything" },
+        { "Ctrl+1", "Select Buildings" },
+        { "Ctrl+2", "Select Infantry" },
+        { "Ctrl+3", "Select Vehicles" },
+        { "Ctrl+4", "Select Shrubbery" },
+        { "Ctrl+5", "Select Props" },
+        { "Ctrl+6", "Select Natural" },
+        { "Ctrl+7", "Select Debris" },
+        { "Ctrl+8", "Select Waypoints & Areas" },
+        { "Ctrl+9", "Select Roads" },
+
+		{ "==", "===============================" },
+
+		{ "Ctrl+Z", "Undo Mode  " },
+		{ "Ctrl+X", "Cut Mode   " }, // artificially spaced it out -- theres a bug with tabs
+		{ "Ctrl+C", "Copy Mode  " },
+		{ "Ctrl+V", "Paste Mode " }, // artificially spaced it out -- theres a bug with tabs
+		{ "Ctrl+N", "New File   " },
+		{ "Ctrl+O", "Open File" },
+		{ "Ctrl+S", "Save File" },
+		
 	};
 	
 	CString text;
 	int numHotkeys = sizeof(hotkeys) / sizeof(hotkeys[0]);
-	const int maxFirstColumnLength = 17; // You can tweak this number (roughly key + description length)
-	
+	const int maxFirstColumnLength = 17;
+
 	for (int i = 0; i < numHotkeys; i++)
 	{
+		// Check for separator
+		if (strcmp(hotkeys[i].key, "==") == 0)
+		{
+			CString separatorLine;
+			separatorLine.Format("%s\t%s", hotkeys[i].key, hotkeys[i].description);
+			text += separatorLine + NEWLINE;
+			continue;
+		}
+
 		CString firstEntry;
 		firstEntry.Format("%s\t%s", hotkeys[i].key, hotkeys[i].description);
-	
-		if (strlen(hotkeys[i].description) >= maxFirstColumnLength || (i + 1) >= numHotkeys)
+
+		// Look ahead to check if next entry is a separator or too long
+		bool isLast = (i + 1 >= numHotkeys);
+		bool nextIsSeparator = !isLast && strcmp(hotkeys[i + 1].key, "==") == 0;
+
+		if (strlen(hotkeys[i].description) >= maxFirstColumnLength || isLast || nextIsSeparator)
 		{
-			// Only one entry on this line
-			text += firstEntry;
-			text += "\t";
-			text += NEWLINE;
+			text += firstEntry + "\t" + NEWLINE;
 		}
 		else
 		{
-			// Two entries per line
 			CString secondEntry;
 			secondEntry.Format("%s\t%s", hotkeys[i + 1].key, hotkeys[i + 1].description);
-	
-			text += firstEntry;
-			text += "\t"; // space between columns
-			text += secondEntry;
-			text += "\t";
-			text += NEWLINE;
-	
-			i++; // skip the next one because we already used it
+			text += firstEntry + "\t" + secondEntry + "\t" + NEWLINE;
+			i++; // Skip the next one since it's already used
 		}
 	}
 	

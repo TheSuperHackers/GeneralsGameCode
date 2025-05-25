@@ -193,60 +193,81 @@ void BuildListTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CW
 	pView->viewToDocCoords(viewPt, &cpt, false);
 
 	WbView3d *p3View = pDoc->GetActive3DView();
+
 	if (isDoingAdd()) {
-		Coord3D loc = cpt;
 		MapObject *pCur = ObjectOptions::getObjectNamed(m_pickBuildingDlg.getPickedUnit());
-		loc.z = 0;
-		if (pCur) { 
-			// Display the transparent version of this object.
-			p3View->setObjTracking(pCur, loc, 0, true);
-		} else {
-			// Don't display anything. 
-			p3View->setObjTracking(NULL, loc, 0, false);
+		if (!pCur) {
+			p3View->setObjTracking(NULL, cpt, 0, false);
+			return;
 		}
+
+		Coord3D loc;
+		Real angle = 0;
+
+		if (m == TRACK_L) {
+			// Dragging: rotate around the clicked point
+			loc = m_downPt3d;
+			pView->snapPoint(&loc);
+			loc.z = ObjectOptions::getCurObjectHeight();
+			angle = ObjectTool::calcAngle(m_downPt3d, cpt, pView);
+		} else {
+			// Hovering: follow the mouse
+			loc = cpt;
+			pView->snapPoint(&loc);
+			loc.z = ObjectOptions::getCurObjectHeight();
+		}
+
+		p3View->setObjTracking(pCur, loc, angle, true);
+
+		// Trigger visual update for ghost object
+		pView->Invalidate();
+		pDoc->updateAllViews();
 		return;
 	}
+
 	p3View->setObjTracking(NULL, cpt, 0, false);
 
 	if (m == TRACK_NONE) {
-		// See if the cursor is over an object.
+		// See if the cursor is over an object
 		BuildListInfo *pInfo = pView->pickedBuildObjectInView(viewPt);
-		m_mouseUpMove	= false;
+		m_mouseUpMove = false;
 		m_mouseUpRotate = false;
+
 		if (pInfo) {
 			Coord3D center = *pInfo->getLocation();
 			center.x -= cpt.x;
 			center.y -= cpt.y;
 			center.z = 0;
 			Real len = center.length();
-			// Check and see if we are within 1 cell size of the center.
-			if (pInfo->isSelected() && len>0.5f*MAP_XY_FACTOR && len < 1.5f*MAP_XY_FACTOR) {
+
+			// Check if within 1 cell of center
+			if (pInfo->isSelected() && len > 0.5f * MAP_XY_FACTOR && len < 1.5f * MAP_XY_FACTOR) {
 				m_mouseUpRotate = true;
-			}	else {
+			} else {
 				m_mouseUpMove = true;
 			}
 		}
-		return;	// setCursor will use the value of m_mouseUpRotate.  jba.
+		return; // let setCursor() use the updated flags
 	}
 
-	if (m != TRACK_L) return;
-	if (!m_moving || !m_curObject) return;
+	if (m != TRACK_L || !m_moving || !m_curObject) return;
 
 	Coord3D loc = *m_curObject->getLocation();
+
 	if (m_rotating) {
 		Real angle = ObjectTool::calcAngle(m_downPt3d, cpt, pView);
 		m_curObject->setAngle(angle);
 	} else {
 		pView->snapPoint(&cpt);
-		Real xOffset = (cpt.x-m_prevPt3d.x);
-		Real yOffset = (cpt.y-m_prevPt3d.y);
+		Real xOffset = (cpt.x - m_prevPt3d.x);
+		Real yOffset = (cpt.y - m_prevPt3d.y);
 		loc.x += xOffset;
 		loc.y += yOffset;
 		m_curObject->setLocation(loc);
 	}
+
 	p3View->invalBuildListItemInView(m_curObject);
 	m_prevPt3d = cpt;
-	
 }
 
 
@@ -269,9 +290,10 @@ void BuildListTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 	pView->viewToDocCoords(viewPt, &cpt, false); // Don't constrain.
 
 	Coord3D loc = m_downPt3d;
-	pView->snapPoint(&loc);
+	pView->snapPoint(&loc); // lock to grid
 	loc.z = ObjectOptions::getCurObjectHeight();
-	Real angle = justAClick ? 0 : ObjectTool::calcAngle(loc, cpt, pView);
+	
+	Real angle = ObjectTool::calcAngle(m_downPt3d, cpt, pView); // always calc angle
 	if (!m_pickBuildingDlg.getPickedUnit().isEmpty()) {
 		BuildList::addBuilding(loc, angle, m_pickBuildingDlg.getPickedUnit());
 	}

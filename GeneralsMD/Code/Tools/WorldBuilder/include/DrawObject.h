@@ -83,7 +83,19 @@ public:
 	Int freeMapResources(void);
 	int initData(void);
 
-  void setDrawObjects(Bool val, Bool waypoints, Bool poly, Bool bounding, Bool sight, Bool weapon, Bool sound, Bool testart, Bool letterbox) { m_drawObjects = val; m_drawWaypoints=waypoints; m_drawPolygonAreas = poly; m_drawBoundingBoxes = bounding; m_drawSightRanges = sight; m_drawWeaponRanges = weapon; m_drawSoundRanges = sound; m_drawTestArtHighlight = testart, m_drawLetterbox = letterbox;}	
+    void setDrawObjects(Bool val, Bool waypoints, Bool poly, Bool bounding, Bool sight, Bool weapon, Bool sound, Bool testart, Bool letterbox, Bool water) { 
+		m_drawObjects = val; 
+		m_drawWaypoints=waypoints; 
+		m_drawPolygonAreas = poly; 
+		m_drawBoundingBoxes = bounding; 
+		m_drawSightRanges = sight; 
+		m_drawWeaponRanges = weapon; 
+		m_drawSoundRanges = sound; 
+		m_drawTestArtHighlight = testart, 
+		m_drawLetterbox = letterbox;
+		m_showWater = water;
+	}
+
 	static void setDoBrushFeedback(Bool val) { m_toolWantsFeedback = val; m_meshFeedback=false;}	
 	static void setDoMeshFeedback(Bool val) { m_meshFeedback = val; }	
 	static void setDoRampFeedback(Bool val) { m_rampFeedback = val; }
@@ -107,6 +119,7 @@ public:
 	static void setWaypointIconColor(int val) { m_waypointIconColor = val; }
 	static void setUnitIconColor(int val) { m_unitIconColor = val; }
 	static void setDefaultIconColor(int val) { m_defaultIconColor = val; }
+	static void setTreeIconColor(int val) { m_treeIconColor = val; }
 
 	MeshClass *peekMesh(void) {return m_moldMesh;};
 	void getMeshBounds(SphereClass *pSphere) {*pSphere = m_moldMeshBounds;};
@@ -136,6 +149,7 @@ protected:
   Bool                      m_drawSoundRanges;
 	Bool											m_drawTestArtHighlight;
 	Bool											m_drawLetterbox;
+	Bool                                            m_showWater;
 
 	DX8VertexBufferClass			*m_vertexFeedback;	///< Vertex buffer for brush feedback.
 	DX8IndexBufferClass				*m_indexFeedback;	///< indices defining a triangle strip for the feedback on terrain
@@ -174,9 +188,11 @@ protected: // static state vars.
 	static Int								m_waypointIconColor;
 	static Int								m_unitIconColor;
 	static Int								m_defaultIconColor;
+	static Int								m_treeIconColor;
+
 protected:
   void addCircleToLineRenderer( const Coord3D & center, Real radius, Real width, unsigned long color, CameraClass* camera );
-	Int updateVB(DX8VertexBufferClass	*vertexBufferTile, Int color, Bool doArrow, Bool doDiamond);
+	Int updateVB(DX8VertexBufferClass	*vertexBufferTile, Int color, Bool doArrow, Bool doDiamond, Bool disableColoring = true);
 	void updatePolygonVB(PolygonTrigger *pTrig, Bool selected, Bool isOpen);
 	void updateFeedbackVB(void);
 	void updateMeshVB(void);

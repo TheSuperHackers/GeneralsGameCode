@@ -87,7 +87,7 @@ IDB_FOLDERSCRIPT        BITMAP  DISCARDABLE     "foldersc.bmp"
 IDB_FOLDERSCRIPTB       BITMAP  DISCARDABLE     "foldersb.bmp"
 IDB_WORLDBUILDERSPLASH  BITMAP  DISCARDABLE     "WorldBuilder.bmp"
 28727                   BITMAP  DISCARDABLE     "bmp28727.bmp"
-
+IDB_PHLOGO              BITMAP  DISCARDABLE     "ph.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -183,15 +183,19 @@ BEGIN
         MENUITEM "&Close",                      ID_FILE_CLOSE
         MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
         MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
-        MENUITEM "&Jump to Game\tCtrl+J",       ID_FILE_JUMPTOGAME
-        MENUITEM "Jump to Game Without Debugging", ID_FILE_JUMPTOGAME_WD
         MENUITEM SEPARATOR
         MENUITEM "Resize...",                   ID_FILE_RESIZE
         MENUITEM SEPARATOR
-        MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT
-        MENUITEM "Print Pre&view",              ID_FILE_PRINT_PREVIEW
-        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM "&Jump to Game (With Debug)\tCtrl+J", ID_FILE_JUMPTOGAME
+        MENUITEM "Jump to Game (No Debug)",     ID_FILE_JUMPTOGAME_WD
+        MENUITEM "Jump to Game (Wave Edit Mode)", ID_FILE_JUMPTOGAME_WM
+        MENUITEM SEPARATOR
+        MENUITEM "Open Map folder",             ID_FILE_JUMPTOFOLDER
+        MENUITEM "Open Worldbuilder Settings",  ID_FILE_WBSETTINGS
+        MENUITEM SEPARATOR
         MENUITEM "Dump Map To File",            ID_FILE_DUMPTOFILE
+        MENUITEM "Generate Map INI and STR Template", 
+                                                ID_FILE_GENERATE_MAPSTRNINI
         MENUITEM SEPARATOR
         MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
         MENUITEM SEPARATOR
@@ -208,11 +212,12 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Delete\tDel",                 ID_EDIT_DELETE
         MENUITEM SEPARATOR
-        MENUITEM "Select Duplicate Objects",    ID_EDIT_SELECTDUP
+        MENUITEM "Select Duplicates / Overlapping Objects", 
+                                                ID_EDIT_SELECTDUP
         MENUITEM "Select Objects w/bad teams",  ID_EDIT_SELECTINVALIDTEAM
         MENUITEM "Select Si&milar\tCtrl+M",     ID_EDIT_SELECTSIMILAR
         MENUITEM "Select Macrotexture...",      ID_EDIT_SELECTMACROTEXTURE
-        MENUITEM "Replace Selected...",         ID_EDIT_REPLACE
+        MENUITEM "Replace Selected... \tCtrl+R", ID_EDIT_REPLACE
         POPUP "Pick Constraint"
         BEGIN
             MENUITEM "Anything\tCtrl+0",            ID_EDIT_PICKANYTHING
@@ -240,9 +245,10 @@ BEGIN
     END
     POPUP "&View"
     BEGIN
-        MENUITEM "Show Grid\tCtrl+G",           IDM_ShowGrid
-        MENUITEM "Show Texture\tCtrl+T",        ID_VIEW_SHOWTEXTURE
-        MENUITEM SEPARATOR
+        // MENUITEM "Show Grid\tCtrl+G",           IDM_ShowGrid
+        // MENUITEM "Show Texture\tCtrl+T",        ID_VIEW_SHOWTEXTURE
+        // MENUITEM SEPARATOR
+        MENUITEM "Show Water Mesh",             ID_VIEW_SHOWWATER
         MENUITEM "Show Terrain",                ID_VIEW_SHOW_TERRAIN
         MENUITEM "Show Object Icons\tCtrl+B",   ID_VIEW_SHOW_OBJECTS
         MENUITEM "Show Waypoints",              ID_VIEW_SHOWWAYPOINTS
@@ -310,32 +316,21 @@ BEGIN
     END
     POPUP "Texture Sizing"
     BEGIN
-        MENUITEM "Map Cliff Textures",          ID_TEXTURESIZING_MAPCLIFFTEXTURES
-
-        MENUITEM "Remove Cliff Tex Mapping",    ID_TEXTURESIZING_REMOVECLIFFTEXMAPPING
-
-        MENUITEM SEPARATOR
         MENUITEM "Optimize tiles and blend tiles.", ID_TS_CANONICAL
         MENUITEM SEPARATOR
         MENUITEM "Remap Textures...",           ID_TS_REMAP
         MENUITEM SEPARATOR
         MENUITEM "Texture Sizing Info...",      ID_TS_INFO
-        MENUITEM SEPARATOR
-        MENUITEM "Tile 4x4",                    ID_TEXTURESIZING_TILE4X4
-        MENUITEM "Tile 6x6",                    ID_TEXTURESIZING_TILE6X6
-        MENUITEM "Tile 8x8",                    ID_TEXTURESIZING_TILE8X8
     END
     POPUP "Validation"
     BEGIN
-        MENUITEM "Generate Report",             ID_VALIDATION_GENERATEMAPREPORT
-        , GRAYED
         MENUITEM "Fix Teams",                   ID_VALIDATION_FIXTEAMS
     END
     POPUP "Help"
     BEGIN
         MENUITEM "&About World Builder...",     ID_APP_ABOUT
     END
-    POPUP "&Hotkeys"
+    POPUP "Tools"
     BEGIN
         MENUITEM "Lock Angle\tTab",             ID_LOCK_HORIZONTAL
         MENUITEM SEPARATOR
@@ -429,8 +424,6 @@ BEGIN
     "B",            ID_VIEW_SHOW_OBJECTS,   VIRTKEY, CONTROL, NOINVERT
     "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
     "D",            ID_VIEW_TIME_OF_DAY,    VIRTKEY, CONTROL, NOINVERT
-    "E",            ID_VIEW_SHOWTERRAIN,    VIRTKEY, CONTROL, NOINVERT
-    "F",            ID_TOGGLE_PITCH_AND_ROTATE, VIRTKEY, NOINVERT
     "F",            ID_VIEW_SHOWTOPDOWNVIEW, VIRTKEY, CONTROL, NOINVERT
     "G",            IDM_ShowGrid,           VIRTKEY, CONTROL, NOINVERT
     "G",            ID_VIEW_SNAPTOGRID,     VIRTKEY, SHIFT, CONTROL, 
@@ -441,8 +434,6 @@ BEGIN
     "M",            ID_EDIT_SELECTSIMILAR,  VIRTKEY, CONTROL, NOINVERT
     "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
     "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
-    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL, NOINVERT
-    "R",            ID_VIEW_SHOWCONTOURS,   VIRTKEY, CONTROL, NOINVERT
     "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
     "T",            ID_VIEW_SHOWTEXTURE,    VIRTKEY, CONTROL, NOINVERT
     "U",            ID_VIEW_SHOWCLOUDS,     VIRTKEY, CONTROL, NOINVERT
@@ -464,6 +455,7 @@ BEGIN
     "W",            ID_BRUSH_ADD_TOOL,      VIRTKEY 
     "E",            ID_BRUSH_SUBTRACT_TOOL, VIRTKEY 
     "R",            ID_FEATHERTOOL,         VIRTKEY 
+    "R",            ID_EDIT_REPLACE,        VIRTKEY, CONTROL, NOINVERT
     "T",            ID_MOLD_TOOL,           VIRTKEY 
     "1",            ID_VIEW_SHOW_OBJECTS,   VIRTKEY, ALT
     "2",            ID_VIEW_SHOWWAYPOINTS,  VIRTKEY, ALT
@@ -501,38 +493,43 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 235, 304
-STYLE DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_ABOUTBOX DIALOGEX 0, 0, 456, 192
+STYLE WS_MINIMIZEBOX | WS_CAPTION | WS_SYSMENU
 CAPTION "About Generals World Builder"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    LTEXT           "Adriane [ Deathscythe ] Community Worldbuilder Version 3.0",
-                    IDC_STATIC,6,6,224,8,SS_NOPREFIX
-    GROUPBOX        "Collaborators / Testers:",IDC_STATIC,6,42,170,41
+    LTEXT           "Adriane [ Deathscythe ] Community Worldbuilder V3.0",
+                    IDC_STATIC,4,3,216,11,SS_NOPREFIX | SS_CENTERIMAGE | 
+                    WS_BORDER
+    GROUPBOX        "Collaborators / Testers:",IDC_STATIC,55,43,164,44
     LTEXT           "This is a fan-modified tool of the original ZH worldbuilder. All trademarks belong to their respective owners.",
-                    IDC_STATIC,6,18,224,22
-    EDITTEXT        IDC_HOTKEYLIST,6,192,224,104,ES_MULTILINE | 
+                    IDC_STATIC,55,14,164,25
+    EDITTEXT        IDC_HOTKEYLIST,237,21,215,151,ES_MULTILINE | 
                     ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
-    LTEXT           "Hotkey List    Search:",IDC_STATIC,6,177,72,11,
+    LTEXT           "Hotkey List    Search:",IDC_STATIC,239,3,72,13,
                     SS_CENTERIMAGE
-    EDITTEXT        IDC_FIND_QUERY,81,174,110,14
-    PUSHBUTTON      "Find",IDC_FIND_HKEY_BUTTON,206,174,24,14
-    LTEXT           "Kabuse [Hotkey layout] , Gramantio [Tester .. (WIP)",
-                    IDC_STATIC,13,52,160,22
+    EDITTEXT        IDC_FIND_QUERY,312,3,110,14
+    PUSHBUTTON      "Find",IDC_FIND_HKEY_BUTTON,428,3,24,14
+    LTEXT           "Kabuse [Hotkey layout] | Gramantio [Tester] | Veloxious [Tester] | Muska [Tester]",
+                    IDC_STATIC,62,55,152,31
     CONTROL         "Launch this window on app startup",IDC_LAUNCH_ONSTARTUP,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,86,129,14
-    COMBOBOX        IDC_FIND_QUERY_OBJ,15,115,135,172,CBS_DROPDOWN | 
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,173,147,14
+    COMBOBOX        IDC_FIND_QUERY_OBJ,15,107,135,329,CBS_DROPDOWN | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Find",IDC_FIND_OBJ_BUTTON,153,114,34,14
-    PUSHBUTTON      "Refresh",IDC_REFRESH_OBJ_BUTTON,189,114,34,14
-    GROUPBOX        "Object Finder:",IDC_STATIC,6,101,224,35
-    GROUPBOX        "Waypoint Finder:",IDC_STATIC,6,137,224,35
-    COMBOBOX        IDC_FIND_QUERY_WP,15,150,135,206,CBS_DROPDOWN | CBS_SORT | 
+    PUSHBUTTON      "Find",IDC_FIND_OBJ_BUTTON,153,106,22,14
+    PUSHBUTTON      "Refresh",IDC_REFRESH_OBJ_BUTTON,177,106,29,14
+    GROUPBOX        "Object Finder:",IDC_STATIC,4,93,216,35
+    GROUPBOX        "Waypoint Finder:",IDC_STATIC,4,132,216,35
+    COMBOBOX        IDC_FIND_QUERY_WP,15,145,135,294,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Find",IDC_FIND_WP_BUTTON,153,148,34,14
-    PUSHBUTTON      "Refresh",IDC_REFRESH_WP_BUTTON,189,148,34,14
-    CONTROL         28727,IDC_STATIC,"Static",SS_BITMAP,186,43,44,41,
+    PUSHBUTTON      "Find",IDC_FIND_WP_BUTTON,153,143,21,14
+    PUSHBUTTON      "Refresh",IDC_REFRESH_WP_BUTTON,178,143,28,14
+    CONTROL         28727,IDC_STATIC,"Static",SS_BITMAP,4,47,44,41,
                     WS_EX_DLGMODALFRAME
+    CONTROL         251,IDC_STATIC,"Static",SS_BITMAP,4,16,46,23,
+                    WS_EX_DLGMODALFRAME
+    PUSHBUTTON      "EXPAND >>",IDC_EXPAND,159,173,61,14
+    PUSHBUTTON      "<< SHRINK",IDC_SHRINK,391,173,61,14
 END
 
 IDD_CellWidth DIALOG DISCARDABLE  0, 0, 186, 95
@@ -617,22 +614,47 @@ CAPTION "Terrain Material Options"
 FONT 8, "MS Sans Serif"
 BEGIN
     CONTROL         "",IDC_TERRAIN_TREEVIEW,"Static",SS_BLACKFRAME | 
-                    SS_SUNKEN,5,5,190,219
-    PUSHBUTTON      "Swap",IDC_SWAP_TEXTURES,170,227,25,16
+                    SS_SUNKEN,5,5,190,134
+    PUSHBUTTON      "Swap",IDC_SWAP_TEXTURES,170,273,25,16
     CONTROL         "",IDC_TERRAIN_SWATCHES,"Static",SS_BLACKFRAME | 
-                    SS_SUNKEN,130,245,65,55
-    LTEXT           "Gravel",IDC_TERRAIN_NAME,5,232,86,9
-    EDITTEXT        IDC_SIZE_EDIT,53,310,17,12,ES_AUTOHSCROLL
-    RTEXT           "Size in cells:",-1,11,311,40,8
-    PUSHBUTTON      "1",IDC_SIZE_POPUP,72,310,8,12,BS_BITMAP
-    GROUPBOX        "Brush Width",-1,5,300,190,34
-    LTEXT           "35 FT.",IDC_WIDTH_LABEL,59,323,43,8
+                    SS_SUNKEN,130,215,65,55
+    LTEXT           "Gravel",IDC_TERRAIN_NAME,5,222,121,9
+    EDITTEXT        IDC_SIZE_EDIT,53,246,17,12,ES_AUTOHSCROLL
+    RTEXT           "Size in cells:",IDC_STATIC,11,247,40,8
+    PUSHBUTTON      "1",IDC_SIZE_POPUP,72,246,8,12,BS_BITMAP
+    GROUPBOX        "Brush Width",IDC_STATIC,5,236,123,34
+    LTEXT           "35 FT.",IDC_WIDTH_LABEL,59,258,43,8
     CONTROL         "Paint passable/impassable terrain",IDC_PASSABLE_CHECK,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,337,164,12
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,274,122,12
     CONTROL         "Passable",IDC_PASSABLE,"Button",BS_AUTORADIOBUTTON,27,
-                    352,98,10
+                    289,55,10
     CONTROL         "Impassable",IDC_IMPASSABLE,"Button",BS_AUTORADIOBUTTON,
-                    27,363,98,10
+                    27,300,61,10
+    CONTROL         "Copy Texture",IDC_TERRAIN_COPY_SELECT,"Button",
+                    BS_AUTORADIOBUTTON | WS_GROUP,27,327,58,10
+    CONTROL         "Paste Texture",IDC_TERRAIN_COPY_APPLY,"Button",
+                    BS_AUTORADIOBUTTON,27,338,57,10
+    CONTROL         "Toggle Texture Copy",IDC_COPY_MODE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,5,316,89,8
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,5,311,
+                    189,1
+    CONTROL         "0",IDC_TERRAIN_ROTATE1,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,115,327,28,10
+    CONTROL         "90",IDC_TERRAIN_ROTATE2,"Button",BS_AUTORADIOBUTTON,115,
+                    338,28,10
+    CONTROL         "180",IDC_TERRAIN_ROTATE3,"Button",BS_AUTORADIOBUTTON,
+                    150,327,28,10
+    CONTROL         "270",IDC_TERRAIN_ROTATE4,"Button",BS_AUTORADIOBUTTON,
+                    150,338,28,10
+    LTEXT           "Hold shift key to swap textures",IDC_DEV_NOTE,11,360,
+                    176,13
+    GROUPBOX        "Developer Note:",IDC_STATIC,5,350,190,29
+    CONTROL         "",IDC_TERRAIN_TREEVIEW_FAV,"Static",SS_BLACKFRAME | 
+                    SS_SUNKEN,5,152,190,57
+    LTEXT           "Favorites:",IDC_STATIC,5,142,36,8
+    PUSHBUTTON      "Set as favorite",IDC_SET_FAV,54,140,52,10
+    PUSHBUTTON      "Delete favorite",IDC_DEL_FAV,110,140,52,10
+    PUSHBUTTON      "Import",IDC_REL_FAV,165,140,30,10
 END
 
 IDD_MOUND_OPTIONS DIALOG DISCARDABLE  0, 0, 200, 146
@@ -666,17 +688,23 @@ BEGIN
     EDITTEXT        IDC_OBJECT_SEARCH_EDIT,31,5,106,12,ES_AUTOHSCROLL
     PUSHBUTTON      "Find",IDC_OBJECT_SEARCH_BUTTON,141,5,26,12
     CONTROL         "",IDC_TERRAIN_TREEVIEW,"Static",SS_BLACKFRAME | 
-                    SS_SUNKEN,3,21,193,259
+                    SS_SUNKEN,3,21,193,230
     CONTROL         "",IDC_TERRAIN_SWATCHES,"Static",SS_BLACKFRAME | 
-                    SS_SUNKEN,139,292,57,49
-    LTEXT           "Light Tank",IDC_OBJECT_NAME,52,282,75,9
-    EDITTEXT        IDC_OBJECT_HEIGHT_EDIT,97,292,26,12,ES_AUTOHSCROLL
-    LTEXT           "Height (0==on terrain)",IDC_STATIC,3,293,74,8
-    LTEXT           "Object Name:",IDC_STATIC,3,281,48,9
-    LTEXT           "Default Owner:",IDC_STATIC,3,335,48,8
-    COMBOBOX        IDC_OWNINGTEAM,3,346,193,104,CBS_DROPDOWNLIST | 
+                    SS_SUNKEN,139,263,57,49
+    LTEXT           "Light Tank",IDC_OBJECT_NAME,52,254,144,9
+    EDITTEXT        IDC_OBJECT_HEIGHT_EDIT,97,263,26,12,ES_AUTOHSCROLL
+    LTEXT           "Height (0==on terrain)",IDC_STATIC,3,265,74,8
+    LTEXT           "Object Name:",IDC_STATIC,3,253,48,9
+    LTEXT           "Default Owner:",IDC_STATIC,3,303,48,8
+    COMBOBOX        IDC_OWNINGTEAM,3,315,193,104,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "Reset",IDC_OBJECT_SEARCH_RESET_BTN,170,5,26,12
+    CONTROL         "Preview Ambient Sound on Selection (if available)",
+                    IDC_TOGGLE_PREVIEW_SOUND,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,10,345,175,12
+    CONTROL         "Show Build Zone Feedback",IDC_TOGGLE_PREV_FEEDBACK,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,358,175,12
+    GROUPBOX        "Tool Options:",IDC_STATIC,3,335,193,39
 END
 
 IDD_CONTOUR_OPTIONS DIALOG DISCARDABLE  0, 0, 148, 126
@@ -718,20 +746,24 @@ CAPTION "Road Options"
 FONT 8, "MS Sans Serif"
 BEGIN
     CONTROL         "",IDC_ROAD_TREEVIEW,"Static",SS_BLACKFRAME | SS_SUNKEN,
-                    5,5,190,247
-    LTEXT           "Two lane",IDC_ROAD_NAME,17,274,86,9
-    GROUPBOX        "Current road type:",IDC_STATIC,11,262,184,27
-    GROUPBOX        "Corner Type:",IDC_STATIC,11,298,183,45
-    CONTROL         199,IDC_STATIC,"Static",SS_BITMAP,19,310,11,30
+                    5,5,190,226
+    LTEXT           "Two lane",IDC_ROAD_NAME,17,245,86,9
+    GROUPBOX        "Current road type:",IDC_STATIC,5,233,190,27
+    GROUPBOX        "Corner Type:",IDC_STATIC,5,261,190,45
+    CONTROL         199,IDC_STATIC,"Static",SS_BITMAP,19,273,11,30
     CONTROL         "Broad Curve",IDC_BROAD_CURVE,"Button",
-                    BS_AUTORADIOBUTTON,33,311,82,8
+                    BS_AUTORADIOBUTTON,33,274,82,8
     CONTROL         "Tight Curve.",IDC_TIGHT_CURVE,"Button",
-                    BS_AUTORADIOBUTTON,33,321,82,8
-    CONTROL         "Angled.",IDC_ANGLED,"Button",BS_AUTORADIOBUTTON,33,331,
+                    BS_AUTORADIOBUTTON,33,284,82,8
+    CONTROL         "Angled.",IDC_ANGLED,"Button",BS_AUTORADIOBUTTON,33,294,
                     82,8
     CONTROL         "Add end cap and/or Join to different road.",IDC_JOIN,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,346,158,11
-    PUSHBUTTON      "Apply To Selection",IDC_APPLY_ROAD,123,363,72,14
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,33,309,158,11
+    PUSHBUTTON      "Apply To Selection",IDC_APPLY_ROAD,123,326,72,14
+    EDITTEXT        IDC_ROAD_SNAP_POINT_EDIT,84,360,31,12,ES_AUTOHSCROLL
+    LTEXT           "Road Snap Distance:",IDC_STATIC,11,362,70,8
+    GROUPBOX        "Tool Option:",IDC_STATIC,5,350,190,27
+    LTEXT           "(Min: 0.0 - Max: 5.0)",IDC_STATIC,121,362,67,8
 END
 
 IDD_NO_OPTIONS DIALOG DISCARDABLE  0, 0, 169, 109
@@ -767,32 +799,40 @@ BEGIN
                     IDC_WIDTH_LABEL3,5,138,187,34
 END
 
-IDD_MESHMOLD_OPTIONS DIALOG DISCARDABLE  0, 0, 200, 245
+IDD_MESHMOLD_OPTIONS DIALOG DISCARDABLE  0, 0, 200, 382
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
 CAPTION "Mesh Mold Options"
 FONT 8, "MS Sans Serif"
 BEGIN
     CONTROL         "",IDC_MESHMOLD_TREEVIEW,"Static",SS_BLACKFRAME | 
-                    SS_SUNKEN,5,5,190,93
-    PUSHBUTTON      "Apply",IDC_APPLY_MESH,5,224,56,17
+                    SS_SUNKEN,5,5,190,204
+    PUSHBUTTON      "Apply",IDC_APPLY_MESH,5,358,56,17
     CONTROL         "Preview",IDC_PREVIEW,"Button",BS_AUTOCHECKBOX | 
-                    BS_LEFTTEXT | WS_TABSTOP,147,225,40,10
-    RTEXT           "Angle (deg)",IDC_STATIC,5,142,41,10
-    EDITTEXT        IDC_ANGLE_EDIT,50,140,29,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "1",IDC_ANGLE_POPUP,83,140,8,12,BS_BITMAP
-    RTEXT           "Height (ft)",IDC_STATIC,9,124,37,10
-    EDITTEXT        IDC_HEIGHT_EDIT,50,122,29,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "1",IDC_HEIGHT_POPUP,83,122,8,12,BS_BITMAP
-    RTEXT           "Scale (%)",IDC_STATIC,9,106,37,10
-    EDITTEXT        IDC_SCALE_EDIT,50,104,29,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "1",IDC_SCALE_POPUP,83,104,8,12,BS_BITMAP
-    GROUPBOX        "Adjust Heights:",IDC_STATIC,5,159,190,53
-    CONTROL         "Raise Only",IDC_RAISE,"Button",BS_AUTORADIOBUTTON,16,
-                    169,71,9
-    CONTROL         "Lower Only",IDC_LOWER,"Button",BS_AUTORADIOBUTTON,16,
-                    183,57,8
+                    BS_LEFTTEXT | WS_TABSTOP,147,359,40,10
+    RTEXT           "Angle (deg)",IDC_STATIC,5,306,41,10
+    EDITTEXT        IDC_ANGLE_EDIT,50,304,29,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "1",IDC_ANGLE_POPUP,83,304,8,12,BS_BITMAP
+    RTEXT           "Height (ft)",IDC_STATIC,103,290,37,10
+    EDITTEXT        IDC_HEIGHT_EDIT,144,288,29,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "1",IDC_HEIGHT_POPUP,177,288,8,12,BS_BITMAP
+    RTEXT           "Scale (%)",IDC_STATIC,9,290,37,10
+    EDITTEXT        IDC_SCALE_EDIT,50,288,29,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "1",IDC_SCALE_POPUP,83,288,8,12,BS_BITMAP
+    GROUPBOX        "Adjust Heights:",IDC_STATIC,5,327,190,23
+    CONTROL         "Raise Only",IDC_RAISE,"Button",BS_AUTORADIOBUTTON,13,
+                    337,50,9
+    CONTROL         "Lower Only",IDC_LOWER,"Button",BS_AUTORADIOBUTTON,67,
+                    337,49,8
     CONTROL         "Raise and Lower",IDC_RAISE_LOWER,"Button",
-                    BS_AUTORADIOBUTTON,16,196,77,8
+                    BS_AUTORADIOBUTTON,117,337,69,8
+    GROUPBOX        "Developer Note:",IDC_STATIC,5,211,190,71
+    LTEXT           "This tool allows the use of custom molds. Click 'Create'  to access the AGX750 tutorial.",
+                    IDC_STATIC,13,223,175,20
+    PUSHBUTTON      "Open Molds Folder",IDC_OPEN_MOLDS_FOLDER,116,242,71,12
+    PUSHBUTTON      "Create Custom Mold",IDC_OPEN_LINK_MOLDS,13,242,71,12
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,5,258,189,1
+    LTEXT           "Hold Shift and drag with the mouse to increase or decrease the height.",
+                    IDC_STATIC,13,262,175,16
 END
 
 IDD_MACRO_TEXTURE DIALOG DISCARDABLE  0, 0, 146, 166
@@ -882,40 +922,40 @@ BEGIN
     EDITTEXT        IDC_RADIUS_EDIT,15,125,60,11,ES_AUTOHSCROLL
 END
 
-IDD_OPEN_MAP DIALOG DISCARDABLE  0, 0, 186, 235
+IDD_OPEN_MAP DIALOG DISCARDABLE  0, 0, 306, 234
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Open Map"
 FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,129,196,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,129,215,50,14
-    LISTBOX         IDC_OPEN_LIST,15,26,155,162,LBS_SORT | 
+    DEFPUSHBUTTON   "OK",IDOK,246,212,50,16
+    PUSHBUTTON      "Cancel",IDCANCEL,192,212,50,16
+    LISTBOX         IDC_OPEN_LIST,7,25,289,184,LBS_SORT | 
                     LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Open Map:",IDC_STATIC,15,15,36,8
-    PUSHBUTTON      "Browse...",IDC_BROWSE,16,195,61,16
+    LTEXT           "Open Map:",IDC_STATIC,7,6,67,17,SS_CENTERIMAGE
+    PUSHBUTTON      "Browse...",IDC_BROWSE,7,212,61,16
     CONTROL         "System Maps",IDC_SYSTEMMAPS,"Button",BS_AUTORADIOBUTTON | 
-                    BS_PUSHLIKE,58,6,54,16
+                    BS_PUSHLIKE,242,6,54,17
     CONTROL         "User Maps",IDC_USERMAPS,"Button",BS_AUTORADIOBUTTON | 
-                    BS_PUSHLIKE,115,6,55,16
+                    BS_PUSHLIKE,183,6,55,17
 END
 
-IDD_SAVE_MAP DIALOG DISCARDABLE  0, 0, 186, 234
+IDD_SAVE_MAP DIALOG DISCARDABLE  0, 0, 306, 234
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Save Map As:"
 FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,129,197,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,129,214,50,14
-    LISTBOX         IDC_SAVE_LIST,13,25,157,136,LBS_SORT | 
+    DEFPUSHBUTTON   "OK",IDOK,243,190,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,243,213,50,14
+    LISTBOX         IDC_SAVE_LIST,7,25,292,149,LBS_SORT | 
                     LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Browse...",IDC_BROWSE,7,197,50,14
-    GROUPBOX        "Map name:",IDC_STATIC,7,166,172,27
-    EDITTEXT        IDC_SAVE_MAP_EDIT,13,175,157,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Browse...",IDC_BROWSE,7,212,51,15
+    GROUPBOX        "Map name:",IDC_STATIC,7,179,292,30
+    EDITTEXT        IDC_SAVE_MAP_EDIT,15,191,219,12,ES_AUTOHSCROLL
     CONTROL         "System Maps",IDC_SYSTEMMAPS,"Button",BS_AUTORADIOBUTTON | 
-                    BS_PUSHLIKE,66,6,54,16
+                    BS_PUSHLIKE,186,6,54,16
     CONTROL         "User Maps",IDC_USERMAPS,"Button",BS_AUTORADIOBUTTON | 
-                    BS_PUSHLIKE,123,6,55,16
-    LTEXT           "Existing maps:",IDC_STATIC,13,15,46,8
+                    BS_PUSHLIKE,243,6,55,16
+    LTEXT           "Existing maps:",IDC_STATIC,7,6,61,17,SS_CENTERIMAGE
 END
 
 IDD_PROPEDIT DIALOG DISCARDABLE  0, 0, 200, 84
@@ -980,40 +1020,43 @@ BEGIN
     LTEXT           "Color:",IDC_STATIC,27,118,20,8
 END
 
-IDD_BUILD_LIST_PANEL DIALOG DISCARDABLE  0, 0, 200, 245
+IDD_BUILD_LIST_PANEL DIALOG DISCARDABLE  0, 0, 200, 382
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
 CAPTION "Build List"
 FONT 8, "MS Sans Serif"
 BEGIN
-    COMBOBOX        IDC_SIDES_COMBO,9,10,184,133,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_SIDES_COMBO,9,10,184,199,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     GROUPBOX        "Side:",IDC_STATIC,2,0,195,28
-    LISTBOX         IDC_BUILD_LIST,9,42,183,125,LBS_NOINTEGRALHEIGHT | 
+    LISTBOX         IDC_BUILD_LIST,9,42,183,241,LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Build List",IDC_STATIC,2,31,196,167
+    GROUPBOX        "Build List",IDC_STATIC,2,31,196,285
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN | 
-                    WS_DISABLED,16,224,177,16
-    GROUPBOX        "Power Used:",IDC_STATIC,7,214,190,28,WS_DISABLED
+                    WS_DISABLED,16,342,177,16
+    GROUPBOX        "Power Used:",IDC_STATIC,8,332,190,28,WS_DISABLED
     CONTROL         "Structure Already Built",IDC_ALREADY_BUILD,"Button",
                     BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,
-                    100,169,90,10
-    RTEXT           "Rebuilds:",IDC_STATIC,111,184,35,8
-    COMBOBOX        IDC_REBUILDS,149,182,43,64,CBS_DROPDOWN | WS_VSCROLL | 
+                    100,287,90,10
+    RTEXT           "Rebuilds:",IDC_STATIC,112,302,35,8
+    COMBOBOX        IDC_REBUILDS,150,300,43,64,CBS_DROPDOWN | WS_VSCROLL | 
                     WS_TABSTOP
-    PUSHBUTTON      "Up",IDC_MOVE_UP,9,172,22,11
-    PUSHBUTTON      "Down",IDC_MOVE_DOWN,9,184,22,11
-    DEFPUSHBUTTON   "Add Building",IDC_ADD_BUILDING,4,200,52,13
-    PUSHBUTTON      "Delete",IDC_DELETE_BUILDING,36,178,27,11
-    CONTROL         "Progress1",IDC_POWER,"msctls_progress32",WS_DISABLED,19,
-                    227,170,9
-    EDITTEXT        IDC_MAPOBJECT_ZOffset,83,200,24,14,ES_AUTOHSCROLL
-    LTEXT           "Z:",IDC_STATIC,71,203,8,8
-    EDITTEXT        IDC_MAPOBJECT_Angle,152,200,24,14,ES_AUTOHSCROLL
-    LTEXT           "Angle:",IDC_STATIC,129,203,19,8
-    PUSHBUTTON      "1",IDC_HEIGHT_POPUP,109,201,8,12,BS_BITMAP
-    PUSHBUTTON      "1",IDC_ANGLE_POPUP,177,201,8,12,BS_BITMAP
-    PUSHBUTTON      "Export",IDC_EXPORT,72,171,24,11
-    PUSHBUTTON      "Import",IDC_IMPORT,72,183,24,11
+    PUSHBUTTON      "Up",IDC_MOVE_UP,10,290,22,11
+    PUSHBUTTON      "Down",IDC_MOVE_DOWN,10,303,22,11
+    DEFPUSHBUTTON   "Add Building",IDC_ADD_BUILDING,4,318,52,13
+    PUSHBUTTON      "Delete",IDC_DELETE_BUILDING,36,297,27,11
+    CONTROL         "Progress1",IDC_POWER,"msctls_progress32",WS_DISABLED,20,
+                    345,170,9
+    EDITTEXT        IDC_MAPOBJECT_ZOffset,84,318,24,14,ES_AUTOHSCROLL
+    LTEXT           "Z:",IDC_STATIC,72,321,8,8
+    EDITTEXT        IDC_MAPOBJECT_Angle,152,318,24,14,ES_AUTOHSCROLL
+    LTEXT           "Angle:",IDC_STATIC,130,321,19,8
+    PUSHBUTTON      "1",IDC_HEIGHT_POPUP,110,319,8,12,BS_BITMAP
+    PUSHBUTTON      "1",IDC_ANGLE_POPUP,178,319,8,12,BS_BITMAP
+    PUSHBUTTON      "Export",IDC_EXPORT,72,289,24,11
+    PUSHBUTTON      "Import",IDC_IMPORT,72,300,24,11
+    CONTROL         "Don't Hide Objects When Tool Is Closed",
+                    IDC_SHOW_OBJECTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,
+                    362,181,10
 END
 
 IDD_SHADOW_OPTIONS DIALOG DISCARDABLE  0, 0, 119, 137
@@ -1476,45 +1519,65 @@ BEGIN
                     IDC_STATIC,183,18,106,70
 END
 
-IDD_GROVE_OPTIONS DIALOG DISCARDABLE  0, 0, 200, 268
+IDD_GROVE_OPTIONS DIALOG DISCARDABLE  0, 0, 200, 353
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
 CAPTION "Grove Options"
 FONT 8, "MS Sans Serif"
 BEGIN
-    COMBOBOX        IDC_Grove_Type1,32,36,164,81,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_Grove_Type1,32,36,164,243,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "%",IDC_STATIC,15,26,8,8
     EDITTEXT        IDC_Grove_Per1,8,36,20,13,ES_AUTOHSCROLL | ES_NUMBER
-    COMBOBOX        IDC_Grove_Type2,32,52,164,80,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_Grove_Type2,32,52,164,229,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_Grove_Per2,8,51,20,13,ES_AUTOHSCROLL | ES_NUMBER
-    COMBOBOX        IDC_Grove_Type3,32,66,164,77,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_Grove_Type3,32,66,164,212,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_Grove_Per3,8,66,20,13,ES_AUTOHSCROLL | ES_NUMBER
-    COMBOBOX        IDC_Grove_Type4,32,81,164,78,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_Grove_Type4,32,81,164,200,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
     EDITTEXT        IDC_Grove_Per4,8,81,20,13,ES_AUTOHSCROLL | ES_NUMBER
     LTEXT           "Tree Type",IDC_STATIC,34,26,34,8
-    EDITTEXT        IDC_Grove_PerTotal,8,112,20,13,ES_AUTOHSCROLL | 
+    EDITTEXT        IDC_Grove_PerTotal,8,232,20,13,ES_AUTOHSCROLL | 
                     ES_READONLY | ES_NUMBER
-    LTEXT           "% Total",IDC_STATIC,33,114,24,8
-    COMBOBOX        IDC_Grove_Type5,32,95,164,77,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_Grove_Per5,8,96,20,13,ES_AUTOHSCROLL | ES_NUMBER
-    EDITTEXT        IDC_Grove_NumberTrees,8,130,40,14,ES_AUTOHSCROLL
-    LTEXT           "Total Tree Count",IDC_STATIC,52,133,54,8
+    LTEXT           "% Total",IDC_STATIC,33,234,24,8
+    COMBOBOX        IDC_Grove_Type5,32,96,164,173,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_Grove_Per5,8,97,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_Grove_NumberTrees,8,250,40,14,ES_AUTOHSCROLL
+    LTEXT           "Total Tree Count",IDC_STATIC,52,253,54,8
     CONTROL         "Allow Water Placement",IDC_Grove_AllowWaterPlacement,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,149,89,10
-    CONTROL         "Allow Cliff Placement",IDC_Grove_AllowCliffPlacement,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,161,81,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,269,89,10
+    CONTROL         "Allow Impassable Placement",
+                    IDC_Grove_AllowCliffPlacement,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,8,282,81,10
     LTEXT           "Grove Set:",IDC_STATIC,3,7,41,13,SS_CENTERIMAGE
     COMBOBOX        IDC_Grove_SetName,44,7,152,100,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Save Set",IDC_Grove_SaveSet,92,247,104,14,NOT 
+    PUSHBUTTON      "Save Set",IDC_Grove_SaveSet,92,332,104,14,NOT 
                     WS_VISIBLE | WS_DISABLED
-    GROUPBOX        "Developer Note:",IDC_STATIC,3,180,193,55
+    GROUPBOX        "Developer Note:",IDC_STATIC,3,293,193,34
     LTEXT           "Left click to place a tree, left click and drag to place mutiple trees with randomization.",
-                    IDC_STATIC,9,191,179,34
+                    IDC_STATIC,10,301,179,21
+    GROUPBOX        "Other Props:",IDC_STATIC,3,192,193,32
+    COMBOBOX        IDC_Grove_Type6,32,112,164,173,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_Grove_Per6,8,113,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    COMBOBOX        IDC_Grove_Type7,32,126,164,173,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_Grove_Per7,8,127,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    COMBOBOX        IDC_Grove_Type8,32,142,164,173,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_Grove_Per8,8,143,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    COMBOBOX        IDC_Grove_Type9,32,156,164,173,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_Grove_Per9,8,156,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    COMBOBOX        IDC_Grove_Type10,32,171,164,173,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_Grove_Per10,8,171,20,13,ES_AUTOHSCROLL | ES_NUMBER
+    COMBOBOX        IDC_Grove_Type11,32,205,164,173,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_Grove_Per11,8,205,20,13,ES_AUTOHSCROLL | ES_NUMBER
 END
 
 IDD_FENCE_OPTIONS DIALOG DISCARDABLE  0, 0, 200, 342
@@ -1565,15 +1628,21 @@ BEGIN
                     WS_VSCROLL | WS_TABSTOP
 END
 
-IDD_PICKUNIT DIALOG DISCARDABLE  0, 0, 267, 298
+IDD_PICKUNIT DIALOGEX 0, 0, 200, 382
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Pick A Unit"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,210,7,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,210,24,50,14
+    DEFPUSHBUTTON   "OK",IDOK,63,330,133,30
+    PUSHBUTTON      "Cancel",IDCANCEL,63,364,133,14
     CONTROL         "",IDC_OBJECT_TREEVIEW,"Static",SS_BLACKFRAME | 
-                    SS_SUNKEN,7,7,198,284
+                    SS_SUNKEN,3,20,193,305
+    LTEXT           "Search:",IDC_STATIC,3,5,25,8
+    EDITTEXT        IDC_OBJECT_SEARCH_EDIT_PICK,31,5,106,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Find",IDC_OBJECT_SEARCH_BUTTON_PICK,141,5,26,12
+    PUSHBUTTON      "Reset",IDC_OBJECT_SEARCH_RESET_BTN_PICK,170,5,26,12
+    CONTROL         "",IDC_TERRAIN_SWATCHES,"Static",SS_BLACKFRAME,3,329,57,
+                    49,WS_EX_STATICEDGE
 END
 
 IDD_BASE_BUILDING_PROPS DIALOG DISCARDABLE  0, 0, 229, 135
@@ -1658,17 +1727,19 @@ BEGIN
                     WS_TABSTOP,7,7,207,148
 END
 
-IDD_REPLACEUNIT DIALOG DISCARDABLE  0, 0, 267, 325
+IDD_REPLACEUNIT DIALOG DISCARDABLE  0, 0, 242, 325
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Replace Missing Unit"
 FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,7,304,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,63,304,50,14
-    PUSHBUTTON      "Continue without replacing...",IDIGNORE,135,304,125,14
+    DEFPUSHBUTTON   "OK",IDOK,7,283,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,83,283,50,14
+    PUSHBUTTON      "Continue without replacing...",IDIGNORE,7,304,125,14
     CONTROL         "",IDC_OBJECT_TREEVIEW,"Static",SS_BLACKFRAME | 
-                    SS_SUNKEN,7,18,253,282
+                    SS_SUNKEN,7,18,228,246
     LTEXT           "Static",IDC_MISSINGLABEL,7,7,195,8
+    CONTROL         "",IDC_TERRAIN_SWATCHES,"Static",SS_BLACKFRAME | 
+                    SS_SUNKEN | NOT WS_VISIBLE,178,269,57,49
 END
 
 IDD_WATER_OPTIONS DIALOG DISCARDABLE  0, 0, 200, 181
@@ -2073,10 +2144,10 @@ GUIDELINES DESIGNINFO DISCARDABLE
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
-        LEFTMARGIN, 6
-        RIGHTMARGIN, 230
-        TOPMARGIN, 6
-        BOTTOMMARGIN, 296
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 452
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 187
     END
 
     IDD_CellWidth, DIALOG
@@ -2108,7 +2179,7 @@ BEGIN
         LEFTMARGIN, 5
         RIGHTMARGIN, 195
         TOPMARGIN, 5
-        BOTTOMMARGIN, 373
+        BOTTOMMARGIN, 379
     END
 
     IDD_MOUND_OPTIONS, DIALOG
@@ -2124,7 +2195,7 @@ BEGIN
         LEFTMARGIN, 3
         RIGHTMARGIN, 196
         TOPMARGIN, 5
-        BOTTOMMARGIN, 358
+        BOTTOMMARGIN, 374
     END
 
     IDD_CONTOUR_OPTIONS, DIALOG
@@ -2170,7 +2241,7 @@ BEGIN
         LEFTMARGIN, 5
         RIGHTMARGIN, 195
         TOPMARGIN, 5
-        BOTTOMMARGIN, 241
+        BOTTOMMARGIN, 375
     END
 
     IDD_MACRO_TEXTURE, DIALOG
@@ -2200,7 +2271,7 @@ BEGIN
     IDD_OPEN_MAP, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 179
+        RIGHTMARGIN, 296
         TOPMARGIN, 6
         BOTTOMMARGIN, 228
     END
@@ -2208,7 +2279,7 @@ BEGIN
     IDD_SAVE_MAP, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 179
+        RIGHTMARGIN, 299
         TOPMARGIN, 6
         BOTTOMMARGIN, 227
     END
@@ -2232,6 +2303,7 @@ BEGIN
     IDD_BUILD_LIST_PANEL, DIALOG
     BEGIN
         RIGHTMARGIN, 198
+        BOTTOMMARGIN, 379
     END
 
     IDD_SHADOW_OPTIONS, DIALOG
@@ -2379,7 +2451,7 @@ BEGIN
         LEFTMARGIN, 3
         RIGHTMARGIN, 196
         TOPMARGIN, 7
-        BOTTOMMARGIN, 261
+        BOTTOMMARGIN, 346
     END
 
     IDD_FENCE_OPTIONS, DIALOG
@@ -2408,10 +2480,10 @@ BEGIN
 
     IDD_PICKUNIT, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 260
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 291
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 196
+        TOPMARGIN, 5
+        BOTTOMMARGIN, 378
     END
 
     IDD_BASE_BUILDING_PROPS, DIALOG
@@ -2457,7 +2529,7 @@ BEGIN
     IDD_REPLACEUNIT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 260
+        RIGHTMARGIN, 235
         TOPMARGIN, 7
         BOTTOMMARGIN, 318
     END
@@ -2937,7 +3009,7 @@ BEGIN
     IDS_CONFIRM_REMOVE_CLIFF_MAPPING 
                             "Remove all cliff mapping in the entire map?"
     IDS_NUM_SELECTED_ON_TEAM "For team %s, %d units selected."
-    IDS_MAX_OBJECTS         "The object count has exceeded %d. Please reduce the number of objects in this map or performance will suffer. I SHIT YOU NOT you will not see this message again. Theres a high chance you'll softlock this motherfucker when loading a map with this many objects. DON'T SAY WE DIDN'T WARN YOUR ASS."
+    IDS_MAX_OBJECTS         "The object count has exceeded %d. Please reduce the number of objects in this map or performance will suffer. I shit you not — you will not see this message again. There's a high chance you'll softlock this motherfucker when loading a map with this many objects. Don't say we didn't warn you."
     IDS_REPLACEOWNER        "Team %s has an invalid owner. Please select a valid owner from the list below:"
 END
 

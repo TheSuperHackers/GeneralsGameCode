@@ -103,6 +103,7 @@ void MapObjectProps::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(MapObjectProps, CDialog)
+  ON_WM_MOVE()
 	//{{AFX_MSG_MAP(MapObjectProps)
 	ON_BN_CLICKED(IDC_CUSTOMIZE_CHECKBOX, customizeToDict)
 	ON_BN_CLICKED(IDC_EDITPROP, OnEditprop)
@@ -236,10 +237,21 @@ void MapObjectProps::_DictToName(void)
     name = m_dictToEdit->getAsciiString(TheKey_objectName, &exists);
   }
   
+  // Then, if there's multiple units selected, add the Single Selection Only string
+  if (m_allSelectedDicts.size() > 1) {
+    name = "Single Select Only You Dumb Ass!";
+  }
+
   CWnd* pItem = GetDlgItem(IDC_MAPOBJECT_Name);
   if (pItem) 
   {
     pItem->SetWindowText(name.str());
+    
+    if (m_allSelectedDicts.size() > 1){
+      pItem->EnableWindow(FALSE); // Disable the control when multiple units are selected
+    } else {
+      pItem->EnableWindow(TRUE); // Ensure the control is enabled when only one unit is selected
+    }
   }
 }
 
@@ -292,6 +304,12 @@ void MapObjectProps::_TeamToDict(void)
 void MapObjectProps::_NameToDict(void)
 {
   getAllSelectedDicts();
+
+  // We only work for single selections
+  if (m_allSelectedDicts.size() != 1) {
+    return;
+  }
+    
   
   CWnd *owner = GetDlgItem(IDC_MAPOBJECT_Name);
   CString cstr;
@@ -1660,13 +1678,14 @@ void MapObjectProps::updateTheUI(void)
 /// Move *all* data from object to dialog controls
 void MapObjectProps::updateTheUI(MapObject *pMapObj)
 {
-  _DictToName();
   _DictToTeam();
   // _DictToScript();
   _DictToWeather();
   _DictToTime();
   _DictToScale();
   _DictToPrebuiltUpgrades();
+  // load this dogshit after the prebuilt upgrades idk why but the selection check here works 
+  _DictToName(); 
 	_DictToHealth();
   _DictToHPs();
   _DictToEnabled();
@@ -2813,7 +2832,7 @@ void MapObjectProps::enableButtons()
 }
 
 
-/*static*/ MapObject *MapObjectProps::getMultipleMapObjects(void)
+/*static*/ MapObject *MapObjectProps::getSingleSelectedObject(void)
 {
 	MapObject *pMapObj; 
 	MapObject *theMapObj = NULL; 
@@ -2834,9 +2853,15 @@ void MapObjectProps::enableButtons()
 	return(NULL);
 }
 
-
-
-
+void MapObjectProps::OnMove(int x, int y)
+{
+  /**
+   * Adriane [Deathscythe] -- Bug fix
+   * This is required to save the top and left position values.
+   * The handler is defined in COptionsPanel and must be called explicitly.
+   */
+	COptionsPanel::OnMove(x, y); // forward to base 
+}
 
 void MapObjectProps::OnOK()
 {

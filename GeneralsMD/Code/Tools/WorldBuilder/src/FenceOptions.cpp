@@ -508,6 +508,7 @@ void FenceOptions::OnSearch()
 
     if (searchText.IsEmpty())
     {
+		::MessageBeep(MB_ICONEXCLAMATION);
         // Repopulate full list if search is empty
 		MapObject *pMap =  m_objectsList;
 		Int index = 0;

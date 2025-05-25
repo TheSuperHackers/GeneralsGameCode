@@ -92,6 +92,18 @@ void W3DLogicalScreenToPixelScreen( Real logX, Real logY,
 
 }  // end W3DLogicalScreenToPixelScreen
 
+/**
+ * Adriane [Deathscythe] -- Bug fix
+ * I dont want to brick the old one so i created this one instead for backwards compatibility 
+ * and since it also only edit the ui labels postions
+ */
+void W3DLogicalScreenToPixelScreenHackedForWBLabels( Real logX, Real logY,
+	Int *screenX, Int *screenY,
+	Int screenWidth, Int screenHeight )
+{
+	*screenX = REAL_TO_INT((screenWidth  * (logX + 1.0f)) / 2.0f);
+	*screenY = REAL_TO_INT((screenHeight * (-logY + 1.0f)) /1.85f);
+}  
 //=============================================================================
 // PixelScreenToW3DLogicalScreen
 //=============================================================================

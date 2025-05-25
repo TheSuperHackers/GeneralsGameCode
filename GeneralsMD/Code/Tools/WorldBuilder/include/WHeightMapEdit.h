@@ -119,6 +119,7 @@ public: // Editing methods.
 	void blendTile(Int xIndex, Int yIndex, Int srcXIndex, Int srcYIndex, Int srcClass, Int edgeClass);
 	void autoBlendOut(Int xIndex, Int yIndex, Int edgeIndex = -1);
 	Int getTextureClass(Int xIndex, Int yIndex, Bool baseClass=false);
+	Bool setTextureClass(Int xIndex, Int yIndex, Int textureClass);
 	void setHeight(Int xIndex, Int yIndex, UnsignedByte height);
 	void setCliff(Int xIndex, Int yIndex, Bool impassable) {setCliffState(xIndex, yIndex, impassable);}
 	Bool setTileNdx(Int xIndex, Int yIndex, Int textureClass, Bool singleTile);

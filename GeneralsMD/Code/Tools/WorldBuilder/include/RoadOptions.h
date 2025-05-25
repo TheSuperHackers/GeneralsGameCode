@@ -69,6 +69,7 @@ protected:
 	afx_msg void OnBroadCurve();
 	afx_msg void OnJoin();
 	afx_msg void OnApplyRoad();
+	afx_msg void OnEditSnapPoint();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

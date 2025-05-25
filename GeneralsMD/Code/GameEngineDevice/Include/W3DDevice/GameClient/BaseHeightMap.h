@@ -210,6 +210,8 @@ public:
 	Bool getMaximumVisibleBox(const FrustumClass &frustum,  AABoxClass *box, Bool ignoreMaxHeight);	///<3d extent of visible terrain.
 	Real getHeightMapHeight(Real x, Real y, Coord3D* normal) const;	///<return height and normal at given point
 	Bool isCliffCell(Real x, Real y);	///<return height and normal at given point
+	Bool isBadBuildLocation(Real x, Real y, Real angle, Real halfSizeX, Real halfSizeY);
+	Bool pleaseHelpMeIamUnderTheWata(Real x, Real y);
 	Real getMinHeight(void) const {return m_minHeight;}	///<return minimum height of entire terrain
 	Real getMaxHeight(void) const {return m_maxHeight;}	///<return maximum height of entire terrain
 	Real getMaxCellHeight(Real x, Real y) const;	///< returns maximum height of the 4 cell corners.

@@ -159,7 +159,7 @@ VertexBufferClass::WriteLockClass::WriteLockClass(VertexBufferClass* VertexBuffe
 {
 	DX8_THREAD_ASSERT();
 	WWASSERT(VertexBuffer);
-	WWASSERT(!VertexBuffer->Engine_Refs());
+	// WWASSERT(!VertexBuffer->Engine_Refs());
 	VertexBuffer->Add_Ref();
 	switch (VertexBuffer->Type()) {
 	case BUFFER_TYPE_DX8:

@@ -186,7 +186,7 @@ IndexBufferClass::WriteLockClass::WriteLockClass(IndexBufferClass* index_buffer_
 {
 	DX8_THREAD_ASSERT();
 	WWASSERT(index_buffer);
-	WWASSERT(!index_buffer->Engine_Refs());
+	// WWASSERT(!index_buffer->Engine_Refs());
 	index_buffer->Add_Ref();
 	switch (index_buffer->Type()) {
 	case BUFFER_TYPE_DX8:

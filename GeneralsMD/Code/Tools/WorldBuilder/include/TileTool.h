@@ -25,6 +25,8 @@
 #ifndef TILETOOL_H
 #define TILETOOL_H
 
+#define TILE_OPTION_PANEL "TileOptionPanel"
+
 #include "Tool.h"
 class WorldHeightMapEdit;
 /*************************************************************************
@@ -33,6 +35,17 @@ class WorldHeightMapEdit;
 class TileTool : public Tool 
 {
 protected:
+
+	struct TileTextureData {
+		int xOffset;
+		int yOffset;
+		int textureClass;
+		int blendTileNdx;
+		int extraBlendTileNdx;
+	};
+
+	static std::vector<TileTextureData> m_copiedTileTextures;
+
 	WorldHeightMapEdit *m_htMapEditCopy; //< ref counted.
 	Int									m_textureClassToDraw;
 	CPoint							m_prevViewPt;
@@ -48,6 +61,7 @@ public:
 	virtual WorldHeightMapEdit *getHeightMap(void) {return m_htMapEditCopy;};
 	virtual void activate(); ///< Become the current tool.
 	virtual Int getWidth(void) {return 1;};
+	static void clearCopiedTiles(); ///< Called under open new document 
 };
 
 /*************************************************************************
@@ -58,6 +72,7 @@ class BigTileTool : public TileTool
 
 protected:
 	static Int m_currentWidth;
+	static Int m_copyModeWidth; 
 
 public:
  	virtual void activate(); ///< Become the current tool.
@@ -68,5 +83,17 @@ public:
 	static void setWidth(Int width) ;
 	virtual Int getWidth(void) {return m_currentWidth;};
 
+	static Int getCopyModeWidth(void) {
+		return ::AfxGetApp()->GetProfileInt(TILE_OPTION_PANEL, "CopyModeWidth", 20);
+	}
+	static Int getTileToolWidth(void) {
+		return ::AfxGetApp()->GetProfileInt(TILE_OPTION_PANEL, "TileToolWidth", 3);
+	}
+	static void setCopyModeWidth(Int width) {
+		::AfxGetApp()->WriteProfileInt(TILE_OPTION_PANEL, "CopyModeWidth", width);
+	}
+	static void setTileToolWidth(Int width) {
+		::AfxGetApp()->WriteProfileInt(TILE_OPTION_PANEL, "TileToolWidth", width);
+	}
 };
 #endif //TOOL_H

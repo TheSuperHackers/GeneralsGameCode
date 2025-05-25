@@ -114,6 +114,10 @@ public:
 		STRETCH_DRAW_HEIGHT = 65
 	};
 
+	// We need to expose this for the blending of textures for copy mode
+	Short  *m_extraBlendTileNdxes;  ///< matches m_Data, indexes into m_extraBlendedTiles.  0 means no blend info.	
+	Short  *m_blendTileNdxes;  ///< matches m_Data, indexes into m_blendedTiles.  0 means no blend info.	
+
 protected:
 	Int m_width;				///< Height map width.
 	Int m_height;				///< Height map height (y size of array).
@@ -133,10 +137,7 @@ protected:
 
 	/// Texture indices.
 	Short  *m_tileNdxes;  ///< matches m_Data, indexes into m_SourceTiles.
-	Short  *m_blendTileNdxes;  ///< matches m_Data, indexes into m_blendedTiles.  0 means no blend info.	
 	Short  *m_cliffInfoNdxes;  ///< matches m_Data, indexes into m_cliffInfo.	 0 means no cliff info.
-	Short  *m_extraBlendTileNdxes;  ///< matches m_Data, indexes into m_extraBlendedTiles.  0 means no blend info.	
-
 	
 	Int m_numBitmapTiles;	// Number of tiles initialized from bitmaps in m_SourceTiles.
 	Int m_numEdgeTiles;	// Number of tiles initialized from bitmaps in m_SourceTiles.
@@ -253,6 +254,9 @@ public:  // height map info.
 		else 
 			return(0);
 	};
+
+	inline Int getStoredWidth() const {return m_width; }
+	inline Int getStoredHeight() const {return m_height; }
 
 	void getUVForBlend(Int edgeClass, Region2D *range);
 

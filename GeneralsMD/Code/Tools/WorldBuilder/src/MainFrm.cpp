@@ -474,11 +474,16 @@ void CMainFrame::showOptionsDialog(Int dialogID)
 		if (m_curOptions) {
 			m_curOptions->GetWindowRect(&frameRect);
 		}
-		newOptions->SetWindowPos(m_curOptions, frameRect.left, frameRect.top, 
+		/**
+		 * Adriane [Deathscythe] -- Bug fix
+		 * These panels just wouldn't behave, so I had to force them to use the actual saved position values
+		 * as their base location.
+		 */
+		int top = ::AfxGetApp()->GetProfileInt(OPTIONS_PANEL_SECTION, "Top", 10);
+		int left = ::AfxGetApp()->GetProfileInt(OPTIONS_PANEL_SECTION, "Left", 10);
+		newOptions->SetWindowPos(m_curOptions, left, top, 
 			m_optionsPanelWidth, m_optionsPanelHeight, 
 			SWP_NOZORDER | SWP_NOACTIVATE );
-		::AfxGetApp()->WriteProfileInt(OPTIONS_PANEL_SECTION, "Top", frameRect.top);
-		::AfxGetApp()->WriteProfileInt(OPTIONS_PANEL_SECTION, "Left", frameRect.left);
 		newOptions->ShowWindow(SW_SHOWNA);
 		if (m_curOptions) {
 			m_curOptions->ShowWindow(SW_HIDE);

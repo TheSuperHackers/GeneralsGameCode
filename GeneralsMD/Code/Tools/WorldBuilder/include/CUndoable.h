@@ -276,6 +276,22 @@ public:
 		virtual void Undo(void);
 };
 
+class AddBoundaryUndoable : public Undoable
+{
+protected:
+	CWorldBuilderDoc *m_pDoc;  ///< Not ref counted.  This undoable should be in a list attached to the doc anyway. 
+	ICoord2D				 *m_boundaryToAdd;
+	Bool						m_addedToList;
+
+public:
+		AddBoundaryUndoable(CWorldBuilderDoc *pDoc, ICoord2D *pBoundaryToAdd);
+public:
+		// destructor. 
+		~AddBoundaryUndoable(void);
+		virtual void Do(void);
+		virtual void Undo(void);
+};
+
 ///                            AddPolygonUndoable
 /** An undoable that actually undoes something.  Adds a polygon. */
 class AddPolygonUndoable : public Undoable

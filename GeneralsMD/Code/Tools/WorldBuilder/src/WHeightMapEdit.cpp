@@ -855,6 +855,16 @@ Int WorldHeightMapEdit::getTextureClass(Int xIndex, Int yIndex, Bool baseClass)
 	}
 	return getTextureClassFromNdx(textureNdx);	//get globalTextureClass index
 }
+
+Bool WorldHeightMapEdit::setTextureClass(Int xIndex, Int yIndex, Int textureClass)
+{
+	if (xIndex < 0 || yIndex < 0 || xIndex >= m_width || yIndex >= m_height)
+		return false;
+
+	return setTileNdx(xIndex, yIndex, textureClass, true);
+}
+
+
 /*Get index of sub-tile that would show up here if it wasn't blended but tiled across*/
 Int WorldHeightMapEdit::getBlendTileNdxForClass(Int xIndex, Int yIndex, Int textureClass)
 {
@@ -3355,6 +3365,16 @@ void WorldHeightMapEdit::changeBoundary(Int ndx, ICoord2D *border)
 
 	m_boundaries[ndx] = (*border);
 }
+
+// void WorldHeightMapEdit::removeBoundary(Int ndx, ICoord2D *border)
+// {
+// 	if (!border || ndx < 0 || ndx >= m_boundaries.size()) {
+// 		DEBUG_CRASH(("Invalid border change request. jkmcd"));
+// 		return;
+// 	}
+
+// 	m_boundaries[ndx] = (*border);
+// }
 
 void WorldHeightMapEdit::removeLastBoundary(void)
 {

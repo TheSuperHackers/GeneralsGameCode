@@ -151,6 +151,11 @@
 #define IDC_FIND_BUTTON                 248
 #define IDC_RESET_BUTTON                249
 #define IDB_FOLDERSCRIPTB               250
+#define IDB_PHLOGO                      251
+#define IDC_OBJECT_SEARCH_EDIT_PICK     252
+#define IDC_OBJECT_SEARCH_BUTTON_PICK   253
+#define IDC_OBJECT_SEARCH_RESET_BTN_PICK 254
+#define IDC_ROAD_SNAP_POINT_EDIT        255
 #define IDC_HEIGHT_COMBO                1000
 #define IDC_CELL_WIDTH                  1001
 #define IDC_INITIAL_HEIGHT              1002
@@ -178,9 +183,11 @@
 #define IDC_BROWSE                      1013
 #define IDC_TOP_RIGHT                   1013
 #define IDC_UNIT_TYPE3_BUTTON           1013
+#define IDC_OPEN_MOLDS_FOLDER           1013
 #define IDC_NEWPROP                     1014
 #define IDC_CENTER_LEFT                 1014
 #define IDC_UNIT_TYPE4_BUTTON           1014
+#define IDC_OPEN_LINK_MOLDS             1014
 #define IDC_NEWTEAM                     1015
 #define IDC_CENTER                      1015
 #define IDC_UNIT_TYPE5_BUTTON           1015
@@ -212,14 +219,18 @@
 #define IDC_WIDTH_LABEL3                1032
 #define IDC_TERRAIN_TREEVIEW            1033
 #define IDC_SLIDER3                     1034
+#define IDC_TERRAIN_TREEVIEW_FAV        1034
 #define IDC_SWAP_TEXTURES               1035
 #define IDC_SIZE_POPUP                  1036
 #define IDC_SIZE_EDIT                   1037
 #define IDC_MESHMOLD_TREEVIEW           1038
+#define IDC_SET_FAV                     1038
 #define IDC_PREVIEW                     1039
 #define IDC_RADIUS_POPUP                1039
+#define IDC_DEL_FAV                     1039
 #define IDC_ANGLE_EDIT                  1040
 #define IDC_RATE_EDIT                   1040
+#define IDC_REL_FAV                     1040
 #define IDC_FB_EDIT                     1041
 #define IDC_RATE_POPUP                  1041
 #define IDC_FB_POPUP                    1042
@@ -267,6 +278,7 @@
 #define IDC_RADIO_TERRAIN               1077
 #define IDC_EXPORT                      1077
 #define IDC_RADIO_OBJECTS               1078
+#define IDC_SHOW_OBJECTS                1078
 #define IDC_RADIO_EVERYTHING            1079
 #define IDC_TIME_OF_DAY_CAPTION         1080
 #define IDC_ALPHA_EDIT                  1081
@@ -368,6 +380,7 @@
 #define IDC_MAKE_RIVER                  1167
 #define IDC_WAYPOINT_LOCATIONY          1167
 #define IDC_COMPRESS                    1167
+#define IDC_COPY_MODE                   1167
 #define IDC_PLAYERISCOMPUTER            1168
 #define IDC_CHECK3                      1168
 #define IDC_TEAM_STARTS_FULL            1168
@@ -475,21 +488,33 @@
 #define IDC_Grove_Per5                  1220
 #define IDC_Grove_NumberTrees           1221
 #define IDC_FENCE_SPACING_EDIT          1222
+#define IDC_Grove_Type6                 1222
+#define IDC_Grove_Per6                  1223
 #define IDC_AUTO_REINFORCE              1224
 #define IDC_PERIMETER_DEFENSE           1224
+#define IDC_Grove_Type7                 1224
 #define IDC_AI_RECRUITABLE              1225
 #define IDC_ATTACK_COMMON_TARGET        1225
+#define IDC_Grove_Per7                  1225
 #define IDC_BASE_DEFENSE                1226
 #define IDC_TEAM_NAME                   1226
+#define IDC_Grove_Type8                 1226
 #define IDC_PRODUCTION_CONDITION        1227
+#define IDC_Grove_Per8                  1227
 #define IDC_PRODUCTION_PRIORITY         1228
+#define IDC_Grove_Type9                 1228
 #define IDC_PRIORITY_INCREASE           1229
 #define IDC_ENEMY_INTERACTIONS          1229
+#define IDC_Grove_Per9                  1229
 #define IDC_PRIORITY_DECREASE           1230
+#define IDC_Grove_Type10                1230
 #define IDC_MAPOBJECT_StartingHealthEdit 1231
+#define IDC_Grove_Per10                 1231
 #define IDC_MAPOBJECT_Enabled           1232
+#define IDC_Grove_Type11                1232
 #define IDC_MAPOBJECT_Destructible      1233
 #define IDC_MAPOBJECT_Indestructible    1233
+#define IDC_Grove_Per11                 1233
 #define IDC_MAPOBJECT_Sellable          1234
 #define IDC_MAPOBJECT_Whiner            1235
 #define IDC_MAPOBJECT_Deployed          1236
@@ -583,6 +608,7 @@
 #define IDC_MAX_RANGE_EDIT              1351
 #define IDC_VOLUME_EDIT                 1352
 #define IDC_MAPOBJECT_XYPosition        1353
+#define IDC_DEV_NOTE                    1354
 #define IDC_STATIC_MAPOBJECT_GENERAL    1379
 #define IDC_STATIC_MAPOBJECT_LOGICAL    1380
 #define IDC_STATIC_MAPOBJECT_SOUND      1381
@@ -592,6 +618,10 @@
 #define IDC_HELP_TEXT                   1385
 #define ID_FILE_JUMPTOGAME_WD           1386
 #define IDC_FENCE_ONLY                  1387
+#define ID_FILE_JUMPTOFOLDER            1388
+#define ID_FILE_WBSETTINGS              1389
+#define ID_FILE_GENERATE_MAPSTRNINI     1390
+#define ID_FILE_JUMPTOGAME_WM           1391
 #define ID_BRUSH_TOOL                   32771
 #define IDM_ShowGrid                    32772
 #define ID_FEATHERTOOL                  32791
@@ -658,6 +688,7 @@
 #define ID_WAYPOINT_TOOL                32964
 #define ID_EDIT_GLOBALLIGHTOPTIONS      32965
 #define ID_VIEW_SHOWWAYPOINTS           32966
+#define ID_VIEW_SHOWWATER               32967
 #define ID_POLYGON_TOOL                 32968
 #define ID_VIEW_SHOWPOLYGONTRIGGERS     32969
 #define ID_EDIT_PLAYERLIST              32970
@@ -790,6 +821,17 @@
 #define IDC_FIND_WP_BUTTON              61493
 #define IDC_REFRESH_WP_BUTTON           61494
 #define IDB_WB_LOGO                     61495
+#define IDC_EXPAND                      61495
+#define IDC_TOGGLE_PREVIEW_SOUND        61496
+#define IDC_DECREASE                    61496
+#define IDC_SHRINK                      61496
+#define IDC_TOGGLE_PREV_FEEDBACK        61497
+#define IDC_TERRAIN_COPY_SELECT         61498
+#define IDC_TERRAIN_COPY_APPLY          61499
+#define IDC_TERRAIN_ROTATE1             61500
+#define IDC_TERRAIN_ROTATE2             61501
+#define IDC_TERRAIN_ROTATE3             61502
+#define IDC_TERRAIN_ROTATE4             61503
 
 // Next default values for new objects
 // 
@@ -798,7 +840,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        242
 #define _APS_NEXT_COMMAND_VALUE         33347
-#define _APS_NEXT_CONTROL_VALUE         1354
+#define _APS_NEXT_CONTROL_VALUE         1355
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -27,7 +27,9 @@ class BorderTool : public Tool
 		Bool m_addingNewBorder;
 		Int m_modifyBorderNdx;
 		ModificationType m_modificationType;
-		
+
+		ICoord2D m_lastBoundaryPos;
+		Bool m_lastBoundaryPosValid;
 	
 	public:
 		BorderTool();

@@ -62,6 +62,7 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(ScorchOptions)
 	virtual BOOL OnInitDialog();
+	afx_msg void OnMove(int x, int y);
 	afx_msg void OnChangeScorchtype();
 	afx_msg void OnChangeSizeEdit();
 	//}}AFX_MSG

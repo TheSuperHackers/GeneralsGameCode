@@ -195,6 +195,17 @@ void FenceTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		// Don't display anything. 
 		p3View->setObjTracking(NULL, loc, angle, false);
 	}
+
+	/**
+	 * Adriane [Deathscythe]
+	 * This is computationally expensive mf — but honestly, who cares? ;)
+	 * It's your processor that's going to suffer, not mine.
+	 *
+	 * Triggers re-renders whenever the mouse moves
+	 * while holding the ghost 3D preview.
+	 */     
+	pView->Invalidate();  
+	pDoc->updateAllViews();         
 }
 
 /** Execute the tool on mouse up - Place an object. */

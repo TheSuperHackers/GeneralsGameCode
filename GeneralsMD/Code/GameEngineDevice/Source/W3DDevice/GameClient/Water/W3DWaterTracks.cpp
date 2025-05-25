@@ -1099,6 +1099,17 @@ Will need to move this code to an external editor at some pont. */
 
 extern HWND ApplicationHWnd;
 
+#define MAX_UNDOS 15
+
+struct UndoEntry
+{
+	WaterTracksObj* track;
+	WaterTracksObj* track2;
+};
+
+static UndoEntry undoStack[MAX_UNDOS];
+static int undoCount = 0;
+
 //TODO: Fix editor so it actually draws the wave segment instead of line while editing
 //Could freeze all the water while editing?  Or keep setting elapsed time on current segment.
 //Have to make it so seamless merge of segments at final position.
@@ -1139,7 +1150,7 @@ static void TestWaterUpdate(void)
 //		track->init(1.5f,8.0f,Vector2(139.0f,66.0f),Vector2(138.8f,67.6f),"wave2.tga");
 	}
 
-	if (GetAsyncKeyState(VK_F5) & 0x8001)	//check if F5 pressed since last call
+	if (GetAsyncKeyState(0x31) & 0x8001)	//check if F5 pressed since last call
 	{	
 		if (trackEditModeReset)
 		{
@@ -1179,7 +1190,7 @@ static void TestWaterUpdate(void)
 		{
 			ScreenToClient( ApplicationHWnd, &screenPoint);
 
-			if (GetAsyncKeyState(VK_F6) & 0x8001)
+			if (GetAsyncKeyState(VK_LBUTTON) & 0x8001)
 			{
 				if (addPointReset)
 				{
@@ -1225,6 +1236,19 @@ static void TestWaterUpdate(void)
 							UnicodeString string;
 							string.format(L"Added End");
 							TheInGameUI->message(string);
+
+							// Save to undo stack
+							if (undoCount >= MAX_UNDOS)
+							{
+								// Shift everything down to make room
+								for (int i = 1; i < MAX_UNDOS; ++i)
+									undoStack[i - 1] = undoStack[i];
+
+								undoCount = MAX_UNDOS - 1;
+							}
+							undoStack[undoCount].track = track;
+							undoStack[undoCount].track2 = track2;
+							undoCount++;
 						}
 						haveStart=0;	//reset for next segment
 						haveEnd=0;
@@ -1235,23 +1259,36 @@ static void TestWaterUpdate(void)
 			else
 				addPointReset=1;
 
-			if (GetAsyncKeyState(VK_DELETE) & 0x8001)
-			{	//delete last segment added
-				if (deleteTrackReset && track)
-				{	deleteTrackReset=0;
-					TheWaterTracksRenderSystem->unbindTrack(track);
-					if (track2)
-						TheWaterTracksRenderSystem->unbindTrack(track2);
-					haveStart=0;	//reset for next segment
-					haveEnd=0;
-					track=NULL;
-					track2=NULL;
+			if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) && (GetAsyncKeyState(0x5A) & 0x8001)) // Ctrl+Z
+			{
+				if (deleteTrackReset && undoCount > 0)
+				{
+					deleteTrackReset = 0;
+
+					undoCount--;
+					UndoEntry* last = &undoStack[undoCount];
+
+					if (last->track)
+						TheWaterTracksRenderSystem->unbindTrack(last->track);
+					if (last->track2)
+						TheWaterTracksRenderSystem->unbindTrack(last->track2);
+
+					haveStart = 0;
+					haveEnd = 0;
+					track = NULL;
+					track2 = NULL;
+
+					UnicodeString string;
+					string.format(L"Undo Last Wave Segment");
+					TheInGameUI->message(string);
 				}
 			}
 			else
-				deleteTrackReset=1;
-
-			if (GetAsyncKeyState(VK_INSERT) & 0x8001)
+			{
+				deleteTrackReset = 1;
+			}
+		
+			if (GetAsyncKeyState(VK_SPACE) & 0x8001)
 			{	//change current wave type
 				if (changeTypeReset)
 				{	changeTypeReset=0;
@@ -1267,7 +1304,7 @@ static void TestWaterUpdate(void)
 			else
 				changeTypeReset=1;
 
-			if (GetAsyncKeyState(VK_F7) & 0x8001)
+			if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) && (GetAsyncKeyState(0x53) & 0x8001)) // Ctrl + S
 			{	//save all segments added
 				if (saveTracksReset)
 				{	saveTracksReset=0;
@@ -1284,7 +1321,7 @@ static void TestWaterUpdate(void)
 			else
 				saveTracksReset=1;
 
-			if (GetAsyncKeyState(VK_F8) & 0x8001)
+			if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) && (GetAsyncKeyState(0x52) & 0x8001)) // Ctrl + R
 			{	//load tracks for map
 				if (loadTracksReset)
 				{	loadTracksReset=0;

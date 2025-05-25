@@ -73,6 +73,7 @@ protected:
  	Bool					m_showNames;					///< Flag whether names are drawn in the 2d and 3d view.
 	Bool					m_showGarrisoned;
 	Bool					m_showWaypoints;
+	Bool					m_showWater;
 	Bool					m_showPolygonTriggers;
  	Bool					m_showTerrain;			  ///< Flag whether terrain is rendered or not. (Useful for debugging)
 
@@ -212,6 +213,8 @@ protected:
 	afx_msg void OnEditGloballightoptions();
 	afx_msg void OnViewShowwaypoints();
 	afx_msg void OnUpdateViewShowwaypoints(CCmdUI* pCmdUI);
+	afx_msg void OnViewShowWater();
+	afx_msg void OnUpdateViewShowWater(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowpolygontriggers();
 	afx_msg void OnUpdateViewShowpolygontriggers(CCmdUI* pCmdUI);
 	afx_msg void OnEditPlayerlist();

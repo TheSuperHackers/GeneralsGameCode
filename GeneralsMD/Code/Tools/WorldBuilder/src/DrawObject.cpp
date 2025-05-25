@@ -20,6 +20,9 @@
 
 #include "DrawObject.h"
 
+// This is used to allow sounds to be played via PlaySound
+#include <mmsystem.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -95,6 +98,7 @@ const Real HANDLE_SIZE = (2.0f) * LINE_THICKNESS;
 int DrawObject::m_defaultIconColor = 0x00FFFF; // or whatever the default value is
 int DrawObject::m_waypointIconColor = 0x00FF00;
 int DrawObject::m_unitIconColor = 0xFF00FF;
+int DrawObject::m_treeIconColor = 0x00FF00;
 int DrawObject::m_roadIconColor = 0xFFFF00;
 
 Bool DrawObject::m_squareFeedback = false;
@@ -573,11 +577,33 @@ void DrawObject::updateRampVB(void)
 #endif
 }
 
-/** updateBoundaryVB puts boundaries into m_vertexFeedback. */
+/** Returns the water height if the point is underwater, or -FLT_MAX if not */
+Real GetWaterHeightIfUnderwater(Real x, Real y)
+{
+    ICoord3D iLoc;
+    iLoc.x = (floor(x + 0.5f));
+    iLoc.y = (floor(y + 0.5f));
+    iLoc.z = 0;
+
+    for (PolygonTrigger *pTrig = PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
+        if (!pTrig->isWaterArea()) {
+            continue;
+        }
+
+        if (pTrig->pointInTrigger(iLoc)) {
+            Real waterZ = pTrig->getPoint(0)->z;
+            Real terrainZ = TheTerrainRenderObject->getHeightMapHeight(x, y, NULL);
+            if (terrainZ < waterZ) {
+                return waterZ;
+            }
+        }
+    }
+
+    return -FLT_MAX; // Not underwater
+}
+
 void DrawObject::updateBoundaryVB(void)
 {
-//	const Int theAlpha = 64;
-
 	m_feedbackVertexCount = 0;
 	m_feedbackIndexCount = 0;
 	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexFeedback, D3DLOCK_DISCARD);
@@ -591,151 +617,102 @@ void DrawObject::updateBoundaryVB(void)
  	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
 	Int numBoundaries = pDoc->getNumBoundaries();
 
-	Int i, j;
-	for (i = 0; i < numBoundaries; ++i) {
+	const float stepSize = 10.0f * MAP_XY_FACTOR; // Adjust smoothness here
+
+	for (Int i = 0; i < numBoundaries; ++i) {
 		ICoord2D curBoundary;
 		pDoc->getBoundary(i, &curBoundary);
 		if (curBoundary.x == 0 || curBoundary.y == 0) {
-			// do not show feedback, this is a defunct boundary
-			continue;
+			continue; // Skip defunct boundaries
 		}
 
-		for (j = 0; j < 4; ++j) {
-			Coord3D startPt, endPt;
+		// Define the 4 corner points of the boundary rectangle in order:
+		// (0,0), (0, y), (x, y), (x, 0)
+		Coord3D corners[4];
+		// Corner 0: (0,0)
+		corners[0].x = 0 * MAP_XY_FACTOR;
+		corners[0].y = 0 * MAP_XY_FACTOR;
+		corners[0].z = TheTerrainRenderObject->getHeightMapHeight(corners[0].x, corners[0].y, NULL);
+		// Corner 1: (0, y)
+		corners[1].x = 0 * MAP_XY_FACTOR;
+		corners[1].y = curBoundary.y * MAP_XY_FACTOR;
+		corners[1].z = TheTerrainRenderObject->getHeightMapHeight(corners[1].x, corners[1].y, NULL);
+		// Corner 2: (x, y)
+		corners[2].x = curBoundary.x * MAP_XY_FACTOR;
+		corners[2].y = curBoundary.y * MAP_XY_FACTOR;
+		corners[2].z = TheTerrainRenderObject->getHeightMapHeight(corners[2].x, corners[2].y, NULL);
+		// Corner 3: (x, 0)
+		corners[3].x = curBoundary.x * MAP_XY_FACTOR;
+		corners[3].y = 0 * MAP_XY_FACTOR;
+		corners[3].z = TheTerrainRenderObject->getHeightMapHeight(corners[3].x, corners[3].y, NULL);
 
-			if (j == 0) {
-				startPt.x = startPt.y = 0;
-				startPt.x *= MAP_XY_FACTOR;
-				startPt.y *= MAP_XY_FACTOR;
-				startPt.z = TheTerrainRenderObject->getHeightMapHeight(startPt.x, startPt.y, NULL);
-				endPt.x = 0;
-				endPt.y = curBoundary.y;
-				endPt.x *= MAP_XY_FACTOR;
-				endPt.y *= MAP_XY_FACTOR;
-				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, NULL);
-			} else if (j == 1) {
-				startPt = endPt;
-				endPt.x = curBoundary.x;
-				endPt.y = curBoundary.y;
-				endPt.x *= MAP_XY_FACTOR;
-				endPt.y *= MAP_XY_FACTOR;
-				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, NULL);
-			} else if (j == 2) {
-				startPt = endPt;
-				endPt.x = curBoundary.x;
-				endPt.y = 0;
-				endPt.x *= MAP_XY_FACTOR;
-				endPt.y *= MAP_XY_FACTOR;
-				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, NULL);
-			} else if (j == 3) {
-				startPt = endPt;
-				endPt.x = 0;
-				endPt.y = 0;
-				endPt.x *= MAP_XY_FACTOR;
-				endPt.y *= MAP_XY_FACTOR;
-				endPt.z = TheTerrainRenderObject->getHeightMapHeight(endPt.x, endPt.y, NULL);
+		// Loop over edges (corner j → corner (j+1)%4)
+		for (int j = 0; j < 4; ++j) {
+			Coord3D startPt = corners[j];
+			Coord3D endPt = corners[(j + 1) % 4];
+
+			Vector3 edgeVec(endPt.x - startPt.x, endPt.y - startPt.y, 0);
+			float edgeLength = sqrtf(edgeVec.X * edgeVec.X + edgeVec.Y * edgeVec.Y);
+			int segments = max(1, (int)(edgeLength / stepSize));
+
+
+			for (int s = 0; s < segments; ++s) {
+				float t1 = (float)s / segments;
+				float t2 = (float)(s + 1) / segments;
+
+				Coord3D p1, p2;
+				p1.x = startPt.x + (endPt.x - startPt.x) * t1;
+				p1.y = startPt.y + (endPt.y - startPt.y) * t1;
+				p1.z = TheTerrainRenderObject->getHeightMapHeight(p1.x, p1.y, NULL);
+				if(m_showWater) {
+					Real waterHeight1 = GetWaterHeightIfUnderwater(p1.x, p1.y);
+					if (waterHeight1 != -FLT_MAX) {
+						p1.z = waterHeight1 + 4.5f; // Draw slightly above water
+					}
+				}
+				p2.x = startPt.x + (endPt.x - startPt.x) * t2;
+				p2.y = startPt.y + (endPt.y - startPt.y) * t2;
+				p2.z = TheTerrainRenderObject->getHeightMapHeight(p2.x, p2.y, NULL);
+				if(m_showWater) {
+					Real waterHeight2 = GetWaterHeightIfUnderwater(p2.x, p2.y);
+					if (waterHeight2 != -FLT_MAX) {
+						p2.z = waterHeight2 + 4.5f;
+					}
+				}
+				// Calculate perpendicular normal for thickness
+				Vector3 dir(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z);
+				dir.Normalize();
+				dir *= LINE_THICKNESS;
+				dir.Rotate_Z(PI / 2);
+
+				// Check buffer capacity
+				if (m_feedbackVertexCount + 4 > NUM_FEEDBACK_VERTEX || m_feedbackIndexCount + 6 > NUM_FEEDBACK_INDEX)
+					return;
+
+				DWORD color = BORDER_COLORS[i % BORDER_COLORS_SIZE].m_borderColor;
+
+				#define ADD_VERT(px, py, pz) \
+					curVb->x = px; curVb->y = py; curVb->z = pz; \
+					curVb->u1 = 0; curVb->v1 = 0; curVb->diffuse = color; ++curVb; ++m_feedbackVertexCount;
+
+				ADD_VERT(p1.x + dir.X, p1.y + dir.Y, p1.z);
+				ADD_VERT(p1.x - dir.X, p1.y - dir.Y, p1.z);
+				ADD_VERT(p2.x + dir.X, p2.y + dir.Y, p2.z);
+				ADD_VERT(p2.x - dir.X, p2.y - dir.Y, p2.z);
+
+				*curIb++ = m_feedbackVertexCount - 4;
+				*curIb++ = m_feedbackVertexCount - 2;
+				*curIb++ = m_feedbackVertexCount - 3;
+				*curIb++ = m_feedbackVertexCount - 4;
+				*curIb++ = m_feedbackVertexCount - 1;
+				*curIb++ = m_feedbackVertexCount - 2;
+				m_feedbackIndexCount += 6;
 			}
-
-			if (m_feedbackVertexCount + 8 > NUM_FEEDBACK_VERTEX) {
-				return;
-			}
-
-			if (m_feedbackIndexCount + 12 > NUM_FEEDBACK_INDEX) {
-				return;
-			}
-
-			Vector3 normal(endPt.x - startPt.x, endPt.y - startPt.y, endPt.z - startPt.z);
-			normal.Normalize();
-			normal *= LINE_THICKNESS;
-			normal.Rotate_Z(PI/2);
-
-			curVb->u1 = 0;
-			curVb->v1 = 0;
-			curVb->x = startPt.x+normal.X;
-			curVb->y = startPt.y+normal.Y;
-			curVb->z = startPt.z;
-			curVb->diffuse = BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor;
-			curVb++;
-			m_feedbackVertexCount++;
-			curVb->u1 = 0;
-			curVb->v1 = 0;
-			curVb->x = startPt.x-normal.X;
-			curVb->y = startPt.y-normal.Y;
-			curVb->z = startPt.z;
-			curVb->diffuse = BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor;
-			curVb++;
-			m_feedbackVertexCount++;
-			curVb->u1 = 0;
-			curVb->v1 = 0;
-			curVb->x = endPt.x+normal.X;
-			curVb->y = endPt.y+normal.Y;
-			curVb->z = endPt.z;
-			curVb->diffuse = BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor;
-			curVb++;
-			m_feedbackVertexCount++;
-			curVb->u1 = 0;
-			curVb->v1 = 0;
-			curVb->x = endPt.x-normal.X;
-			curVb->y = endPt.y-normal.Y;
-			curVb->z = endPt.z;
-			curVb->diffuse = BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor;
-			curVb++;
-			m_feedbackVertexCount++;
-
-			*curIb++ = m_feedbackVertexCount-3;
-			*curIb++ = m_feedbackVertexCount-1;
-			*curIb++ = m_feedbackVertexCount-2;
-			*curIb++ = m_feedbackVertexCount-4;
-			*curIb++ = m_feedbackVertexCount-3;
-			*curIb++ = m_feedbackVertexCount-2;
-			m_feedbackIndexCount+=6;
-
-			// draw a little nugget
-			curVb->u1 = 0;
-			curVb->v1 = 0;
-			curVb->x = startPt.x;
-			curVb->y = startPt.y - HANDLE_SIZE;
-			curVb->z = startPt.z;
-			curVb->diffuse = BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor;
-			curVb++;
-			m_feedbackVertexCount++;
-
-			curVb->u1 = 0;
-			curVb->v1 = 0;
-			curVb->x = startPt.x - HANDLE_SIZE;
-			curVb->y = startPt.y;
-			curVb->z = startPt.z;
-			curVb->diffuse = BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor;
-			curVb++;
-			m_feedbackVertexCount++;
-
-			curVb->u1 = 0;
-			curVb->v1 = 0;
-			curVb->x = startPt.x;
-			curVb->y = startPt.y + HANDLE_SIZE;
-			curVb->z = startPt.z;
-			curVb->diffuse = BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor;
-			curVb++;
-			m_feedbackVertexCount++;
-
-			curVb->u1 = 0;
-			curVb->v1 = 0;
-			curVb->x = startPt.x + HANDLE_SIZE;
-			curVb->y = startPt.y;
-			curVb->z = startPt.z;
-			curVb->diffuse = BORDER_COLORS[i % BORDER_COLORS_SIZE ].m_borderColor;
-			curVb++;
-			m_feedbackVertexCount++;
-
-			*curIb++ = m_feedbackVertexCount - 4;
-			*curIb++ = m_feedbackVertexCount - 2;
-			*curIb++ = m_feedbackVertexCount - 3;
-			*curIb++ = m_feedbackVertexCount - 4;
-			*curIb++ = m_feedbackVertexCount - 1;
-			*curIb++ = m_feedbackVertexCount - 2;
-			m_feedbackIndexCount+=6;
 		}
-		// need to push handles in heie.
+
+		// Optional: You can still draw the handles ("little nuggets") here if needed,
+		// but now the edges follow terrain better.
+
 	}
 }
 
@@ -1385,7 +1362,7 @@ but doesn't, really.
 
 /** updateVB puts a circle with an arrow into the vertex buffer. */
 
-Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Bool doDiamond)
+Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Bool doDiamond, Bool disableColoring)
 {
 	Int i, k;
 
@@ -1412,8 +1389,18 @@ Int DrawObject::updateVB(DX8VertexBufferClass	*pVB, Int color, Bool doArrow, Boo
 	// g = 105;
 	// b = 180; // hot pink!
 	const Int theAlpha = 127;
-	static const Int highlightColors[NUM_HIGHLIGHT] = { ((255<<8) + (255<<16)) , 
-				((255<<16)), (255<<8) };
+
+	Int highlightColors[NUM_HIGHLIGHT] = {
+		(255<<8) + (255<<16),
+		(255<<16),
+		(255<<8)
+	};
+
+	if(disableColoring){
+		highlightColors[0] = (255) + (255<<8) + (255<<16) + (255<<24); // White
+		highlightColors[1] = (255) + (255<<8) + (255<<16) + (255<<24); // White
+		highlightColors[2] = (255) + (255<<8) + (255<<16) + (255<<24); // White
+	}
 	Int diffuse =  b + (g<<8) + (r<<16) + (theAlpha<<24);	 // b g<<8 r<<16 a<<24.
 	if (pVB )
 	{
@@ -1640,10 +1627,13 @@ void DrawObject::updateVBWithBoundingBox(MapObject *pMapObj, CameraClass* camera
 		return;
 	}
 
-	unsigned long color = 0xFFAA00AA; // Purple
+	unsigned long color = 0xFFFFFF00; // Yellow
 	
 	GeometryInfo ginfo = pMapObj->getThingTemplate()->getTemplateGeometryInfo();
 
+	// Bool isSmall =  ginfo.getIsSmall() || pMapObj->getThingTemplate()->isKindOf(KINDOF_LOW_OVERLAPPABLE) || pMapObj->getThingTemplate()->isKindOf(KINDOF_STRUCTURE) ;
+	Bool isSmall =  !pMapObj->getThingTemplate()->isKindOf(KINDOF_STRUCTURE);
+		
 	Coord3D pos = *pMapObj->getLocation();
 	if (TheTerrainRenderObject) {
 		// Make sure that the position is on the terrain.
@@ -1658,10 +1648,12 @@ void DrawObject::updateVBWithBoundingBox(MapObject *pMapObj, CameraClass* camera
 			Real angle = pMapObj->getAngle();
 			Real c = (Real)cos(angle);
 			Real s = (Real)sin(angle);
-			Real exc = ginfo.getMajorRadius()*c;
-			Real eyc = ginfo.getMinorRadius()*c;
-			Real exs = ginfo.getMajorRadius()*s;
-			Real eys = ginfo.getMinorRadius()*s;
+			Real exc = ginfo.getMajorRadius() * c;
+			Real eyc = ginfo.getMinorRadius() * c;
+			Real exs = ginfo.getMajorRadius() * s;
+			Real eys = ginfo.getMinorRadius() * s;
+
+			// Original 4 corners (base)
 			Coord3D pts[4];
 			pts[0].x = pos.x - exc - eys;
 			pts[0].y = pos.y + eyc - exs;
@@ -1675,44 +1667,136 @@ void DrawObject::updateVBWithBoundingBox(MapObject *pMapObj, CameraClass* camera
 			pts[3].x = pos.x - exc + eys;
 			pts[3].y = pos.y - eyc - exs;
 			pts[3].z = 0;
-			Real z = pos.z;
-			for (int i = 0; i < 2; i++) {
-				for (int corner = 0; corner < 4; corner++) {
-					ICoord2D start, end;
-					pts[corner].z = z;
-					pts[(corner+1)&3].z = z;
-					bool shouldStart = worldToScreen(&pts[corner], &start, camera);
-					bool shouldEnd = worldToScreen(&pts[(corner+1)&3], &end, camera);
-					if (shouldStart && shouldEnd) {
-						m_lineRenderer->Add_Line(Vector2(start.x, start.y), Vector2(end.x, end.y), BOUNDING_BOX_LINE_WIDTH, color);
-					}
+		
+			// Margin size for outer box
+			const Real margin = 18.0f;
+		
+			// Expanded corners for the green box
+			Coord3D expandedPts[4];
+			Coord3D center = pos;
+		
+			for (int i = 0; i < 4; ++i) {
+				Coord3D dir;
+				dir.x = pts[i].x - center.x;
+				dir.y = pts[i].y - center.y;
+				Real len = (Real)sqrt(dir.x * dir.x + dir.y * dir.y);
+				if (len != 0) {
+					dir.x /= len;
+					dir.y /= len;
 				}
+				expandedPts[i].x = pts[i].x + dir.x * margin;
+				expandedPts[i].y = pts[i].y + dir.y * margin;
+				expandedPts[i].z = 0;
+			}
+		
+			const Real cutSize = 10.0f; // Fixed size of beveled corner cut in world units
 
-				z += ginfo.getMaxHeightAbovePosition();
-			}  
+			for (int boxLayer = 0; boxLayer < 2; ++boxLayer) {
+				if (boxLayer == 1 && isSmall)
+					continue; // Skip green box for small objects
+
+				unsigned long lineColor = (boxLayer == 0) ? 0xFFFFFF00 : 0xFF00C8C8; // Yellow or Green
+				Real z = pos.z;
+
+				for (int heightStep = 0; heightStep < 2; ++heightStep) {
+					if (boxLayer == 1 && heightStep == 1)
+						continue; // Skip top layer for green box
+
+					if (boxLayer == 0) {
+						// Draw purple box normally
+						for (int corner = 0; corner < 4; ++corner) {
+							int next = (corner + 1) & 3;
+							pts[corner].z = z;
+							pts[next].z = z;
+
+							ICoord2D start, end;
+							if (worldToScreen(&pts[corner], &start, camera) &&
+								worldToScreen(&pts[next], &end, camera)) {
+								m_lineRenderer->Add_Line(Vector2(start.x, start.y), Vector2(end.x, end.y), BOUNDING_BOX_LINE_WIDTH, lineColor);
+							}
+						}
+					} else {
+						// Draw green box with beveled corners (bottom layer only)
+						Coord3D trimmed[4][2]; // [corner][0=prev bevel, 1=next bevel]
+
+						// Draw main trimmed sides
+						for (int corner = 0; corner < 4; ++corner) {
+							int next = (corner + 1) & 3;
+
+							Coord3D start3D = expandedPts[corner];
+							Coord3D end3D = expandedPts[next];
+
+							// Compute direction vector
+							Coord3D dir;
+							dir.x = end3D.x - start3D.x;
+							dir.y = end3D.y - start3D.y;
+							dir.z = 0;
+
+							// Normalize
+							Real len = sqrt(dir.x * dir.x + dir.y * dir.y);
+							if (len < cutSize * 2.0f) {
+								// Too short to bevel properly, skip beveling
+								dir.x = dir.y = 0.0f;
+							} else {
+								dir.x /= len;
+								dir.y /= len;
+							}
+
+							// Compute trimmed ends
+							Coord3D trimmedStart, trimmedEnd;
+							trimmedStart.x = start3D.x + dir.x * cutSize;
+							trimmedStart.y = start3D.y + dir.y * cutSize;
+							trimmedStart.z = z;
+
+							trimmedEnd.x = end3D.x - dir.x * cutSize;
+							trimmedEnd.y = end3D.y - dir.y * cutSize;
+							trimmedEnd.z = z;
+
+							trimmed[corner][1] = trimmedStart;
+							trimmed[next][0] = trimmedEnd;
+
+							ICoord2D s, e;
+							if (worldToScreen(&trimmedStart, &s, camera) && worldToScreen(&trimmedEnd, &e, camera)) {
+								m_lineRenderer->Add_Line(Vector2(s.x, s.y), Vector2(e.x, e.y), BOUNDING_BOX_LINE_WIDTH, lineColor);
+							}
+						}
+
+						// Draw beveled corners
+						for (int cornerx = 0; cornerx < 4; ++cornerx) {
+							ICoord2D a, b;
+							if (worldToScreen(&trimmed[cornerx][0], &a, camera) &&
+								worldToScreen(&trimmed[cornerx][1], &b, camera)) {
+								m_lineRenderer->Add_Line(Vector2(a.x, a.y), Vector2(b.x, b.y), BOUNDING_BOX_LINE_WIDTH, lineColor);
+							}
+						}
+					}
+
+					z += ginfo.getMaxHeightAbovePosition(); // Top layer (only used for purple)
+				}
+			}
 			break;
-		}  
-
+		}
 		//---------------------------------------------------------------------------------------------
-		case GEOMETRY_SPHERE:	// not quite right, but close enough
+		case GEOMETRY_SPHERE: // not quite right, but close enough
 		case GEOMETRY_CYLINDER:
 		{ 
-			Real angle, inc = PI/4.0f;
+			Real angle, inc = PI / 4.0f;
 			Real radius = ginfo.getMajorRadius();
 			Coord3D pnt, lastPnt;
 			ICoord2D start, end;
 			Real z = pos.z;
-
+		
 			bool shouldEnd, shouldStart;
+		
 			// Draw the cylinder.
-			for (int i=0; i<2; i++) {
+			for (int i = 0; i < 2; i++) {
 				angle = 0.0f;
 				lastPnt.x = pos.x + radius * (Real)cos(angle);
 				lastPnt.y = pos.y + radius * (Real)sin(angle);
 				lastPnt.z = z;
 				shouldEnd = worldToScreen(&lastPnt, &end, camera);
-
-				for( angle = inc; angle <= 2.0f * PI; angle += inc ) {
+		
+				for (angle = inc; angle <= 2.0f * PI; angle += inc) {
 					pnt.x = pos.x + radius * (Real)cos(angle);
 					pnt.y = pos.y + radius * (Real)sin(angle);
 					pnt.z = z;
@@ -1724,23 +1808,56 @@ void DrawObject::updateVBWithBoundingBox(MapObject *pMapObj, CameraClass* camera
 					end = start;
 					shouldEnd = shouldStart;
 				}
-
+		
 				// Next time around, draw the top of the cylinder.
 				z += ginfo.getMaxHeightAbovePosition();
-			}	
-
+			}
+		
 			// Draw centerline
 			pnt.x = pos.x;
 			pnt.y = pos.y;
 			pnt.z = pos.z;
-			shouldStart = worldToScreen( &pnt, &start, camera);
+			shouldStart = worldToScreen(&pnt, &start, camera);
 			pnt.z = pos.z + ginfo.getMaxHeightAbovePosition();
-			shouldEnd = worldToScreen( &pnt, &end, camera);
+			shouldEnd = worldToScreen(&pnt, &end, camera);
 			if (shouldStart && shouldEnd) {
 				m_lineRenderer->Add_Line(Vector2(start.x, start.y), Vector2(end.x, end.y), BOUNDING_BOX_LINE_WIDTH, color);
 			}
+		
+			// Draw green outer margin (similar to GEOMETRY_BOX's green box)
+			if (!isSmall) {
+				const Real margin = 14.0f;
+				const Real outerRadius = radius + margin;
+				const unsigned long greenColor = 0xFF00C8C8;
+				const Real fineInc = PI / 4.0f; // Reduced segments for performance
+		
+				Coord3D pnt, lastPnt;
+				ICoord2D start, end;
+				bool shouldStart, shouldEnd;
+		
+				angle = 0.0f;
+				lastPnt.x = pos.x + outerRadius * (Real)cos(angle);
+				lastPnt.y = pos.y + outerRadius * (Real)sin(angle);
+				lastPnt.z = pos.z;
+				shouldEnd = worldToScreen(&lastPnt, &end, camera);
+		
+				for (angle = fineInc; angle <= 2.0f * PI + fineInc; angle += fineInc) {
+					pnt.x = pos.x + outerRadius * (Real)cos(angle);
+					pnt.y = pos.y + outerRadius * (Real)sin(angle);
+					pnt.z = pos.z;
+					shouldStart = worldToScreen(&pnt, &start, camera);
+		
+					if (shouldStart && shouldEnd) {
+						m_lineRenderer->Add_Line(Vector2(start.x, start.y), Vector2(end.x, end.y), BOUNDING_BOX_LINE_WIDTH, greenColor);
+					}
+		
+					lastPnt = pnt;
+					end = start;
+					shouldEnd = shouldStart;
+				}
+			}
 			break;
-		}	
+		}
 	} 
 }
 
@@ -1904,6 +2021,14 @@ void DrawObject::updateVBWithSoundRanges(MapObject *pMapObj, CameraClass* camera
 
     const AudioEventRTS * event = thingTemplate->getSoundAmbient();
 
+	// AudioEventRTS event;
+	// event.setEventName(comboText);
+	// event.setAudioEventInfo(TheAudio->findAudioEventInfo(comboText));
+	// event.generateFilename();
+	
+	// if (!event.getFilename().isEmpty()) {
+	// 	PlaySound(event.getFilename().str(), NULL, SND_ASYNC | SND_FILENAME | SND_PURGE);
+	// }
     if ( event == NULL )
     {
       return;
@@ -1928,7 +2053,17 @@ void DrawObject::updateVBWithSoundRanges(MapObject *pMapObj, CameraClass* camera
         return;
       }
     }
+
+	// AudioEventRTS eventToPlay;
+	// eventToPlay.setEventName(event->getEventName());
+	// eventToPlay.setAudioEventInfo(audioInfo);
+	// eventToPlay.generateFilename();
+	
+	// if (!eventToPlay.getFilename().isEmpty()) {
+	// 	PlaySound(eventToPlay.getFilename().str(), NULL, SND_ASYNC | SND_FILENAME | SND_PURGE);
+	// }
   }
+
 
   // Should have set up audioInfo or returned by now
   DEBUG_ASSERTCRASH( audioInfo != NULL, ("Managed to finish setting up audio info without setting it?!?" ) );
@@ -2198,13 +2333,15 @@ if (pMapObj->isSelected()) {
 					updateVBWithTestArtHighlight(pMapObj, &rinfo.Camera); 
 				}
 
-				if (!m_drawObjects) {
+				if (!m_drawObjects && !pMapObj->isSelected()) {
 					continue;
 				}
 				if (BuildListTool::isActive()) {
 					continue;
 				}
 			}
+
+			Bool isTree = false;
 
 			int settingColor;
 			
@@ -2214,6 +2351,9 @@ if (pMapObj->isSelected()) {
 				settingColor = m_roadIconColor;
 			} else if ( pMapObj->getThingTemplate() && (pMapObj->getThingTemplate()->getEditorSorting() == ES_INFANTRY || pMapObj->getThingTemplate()->getEditorSorting() == ES_VEHICLE) ) {
 				settingColor = m_unitIconColor;
+			} else if ( pMapObj->getThingTemplate() && pMapObj->getThingTemplate()->getEditorSorting() == ES_SHRUBBERY) {
+				settingColor = m_treeIconColor;
+				// isTree = true; 
 			} else { // Everything else
 				settingColor = m_defaultIconColor;
 			}
@@ -2242,8 +2382,6 @@ if (pMapObj->isSelected()) {
 				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile2);
 			}
 			
-			///@todo - remove the istree stuff, or get the info from the thing template.  jba.
-			Bool isTree = false;
 
 			Vector3 vec(loc.x, loc.y, loc.z);
 			Matrix3D tm(Transform);
@@ -2350,10 +2488,10 @@ if (pMapObj->isSelected()) {
 			}
 			const Int GREEN = 0x00FF00; // GREEN in BGR.
 			if (count&1) {
-				updateVB(m_vertexBufferTile1, GREEN, true, false);
+				updateVB(m_vertexBufferTile1, GREEN, true, false, false);
 				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile1);
 			} else {
-				updateVB(m_vertexBufferTile2, GREEN, true, false);
+				updateVB(m_vertexBufferTile2, GREEN, true, false, false);
 				DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile2);
 			}
 			count++;
@@ -2435,8 +2573,12 @@ if (pMapObj->isSelected()) {
 #if 1
 	if (m_boundaryFeedback) {
 		updateBoundaryVB();
-		if (m_feedbackIndexCount>0) {
- 			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
+		if (m_feedbackIndexCount > 0) {
+			DX8Wrapper::Set_DX8_Render_State(D3DRS_ZENABLE, TRUE);
+			DX8Wrapper::Set_DX8_Render_State(D3DRS_ZWRITEENABLE, TRUE);
+			DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHABLENDENABLE, FALSE);
+
+			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
 			DX8Wrapper::Set_Index_Buffer(m_indexFeedback,0);
 			DX8Wrapper::Set_Shader(m_shaderClass);
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_CULLMODE, D3DCULL_NONE);
@@ -2467,14 +2609,14 @@ if (pMapObj->isSelected()) {
   DX8Wrapper::Set_Index_Buffer(m_indexBuffer,0);
  	DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferWater);
 
-	if (m_waterDrawObject) {
+	if (m_waterDrawObject && m_showWater) {
 		m_waterDrawObject->renderWater();
 	}
 
 	if (m_drawLetterbox) {
 		int w = m_winSize.x;
 		int h = m_winSize.y;
-		int size = (int)((h - (9.0f / 16.0f * w)) * 0.5f);
+		int size = 200; // or whatever fixed height you want
 		RectClass rect(0, 0, w, size);
 		m_lineRenderer->Add_Quad(rect, 0xFF000000);
 		rect.Set(0, h - size, w, h);

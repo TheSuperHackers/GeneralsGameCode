@@ -46,6 +46,10 @@ Int TerrainMaterial::m_currentBgTexture(6);
 Bool TerrainMaterial::m_paintingPathingInfo;
 Bool TerrainMaterial::m_paintingPassable;
 
+Bool TerrainMaterial::m_onCopyApplyMode(false);
+Bool TerrainMaterial::m_onCopySelectMode(false);
+Int TerrainMaterial::m_copyRotation(0);
+
 TerrainMaterial::TerrainMaterial(CWnd* pParent /*=NULL*/) :
 	m_updating(false),
 	m_currentWidth(3)
@@ -72,6 +76,20 @@ BEGIN_MESSAGE_MAP(TerrainMaterial, COptionsPanel)
 	ON_BN_CLICKED(IDC_IMPASSABLE, OnImpassable)
 	ON_BN_CLICKED(IDC_PASSABLE_CHECK, OnPassableCheck)
 	ON_BN_CLICKED(IDC_PASSABLE, OnPassable)
+
+	ON_BN_CLICKED(IDC_COPY_MODE, OnCopyMode)
+	ON_BN_CLICKED(IDC_TERRAIN_COPY_SELECT, OnCopySelect)
+	ON_BN_CLICKED(IDC_TERRAIN_COPY_APPLY, OnCopyApply)
+
+	ON_BN_CLICKED(IDC_TERRAIN_ROTATE1, OnRotate0)
+	ON_BN_CLICKED(IDC_TERRAIN_ROTATE2, OnRotate90)
+	ON_BN_CLICKED(IDC_TERRAIN_ROTATE3, OnRotate180)
+	ON_BN_CLICKED(IDC_TERRAIN_ROTATE4, OnRotate270)
+
+	ON_BN_CLICKED(IDC_SET_FAV, OnSetFavorite)
+	ON_BN_CLICKED(IDC_DEL_FAV, OnDeleteFavorite)
+
+	ON_BN_CLICKED(IDC_REL_FAV, OnImportFavoritesFromMapFolder)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -114,22 +132,65 @@ void TerrainMaterial::setWidth(Int width)
 /// Sets the tool option - single & multi tile use this panel, 
 // and only multi tile uses the width.
 /** Update the ui for the tool. */
-void TerrainMaterial::setToolOptions(Bool singleCell) 
+void TerrainMaterial::setToolOptions(Bool singleCell, Bool floodfill) 
 { 
 	CString buf;
 	if (m_staticThis ) {
 		m_staticThis->m_updating = true;
+
+		CButton* pCheckBox = (CButton*)m_staticThis->GetDlgItem(IDC_COPY_MODE);
+		Bool isChecked = (pCheckBox->GetCheck() != 0);
+		if(isChecked && singleCell){
+			pCheckBox->SetCheck(false);
+		}
+		pCheckBox->EnableWindow(!singleCell);
+		
 		CWnd *pEdit = m_staticThis->GetDlgItem(IDC_SIZE_EDIT);
 		if (pEdit) {
 			pEdit->EnableWindow(!singleCell);
 			if (singleCell) {
 				pEdit->SetWindowText("1");
+
+				pEdit = m_staticThis->GetDlgItem(IDC_TERRAIN_COPY_SELECT);
+				pEdit->EnableWindow(!singleCell);
+
+				pEdit = m_staticThis->GetDlgItem(IDC_TERRAIN_COPY_APPLY);
+				pEdit->EnableWindow(!singleCell);
+
+				pEdit = m_staticThis->GetDlgItem(IDC_TERRAIN_ROTATE1);
+				pEdit->EnableWindow(!singleCell);
+
+				pEdit = m_staticThis->GetDlgItem(IDC_TERRAIN_ROTATE2);
+				pEdit->EnableWindow(!singleCell);
+
+				pEdit = m_staticThis->GetDlgItem(IDC_TERRAIN_ROTATE3);
+				pEdit->EnableWindow(!singleCell);
+
+				pEdit = m_staticThis->GetDlgItem(IDC_TERRAIN_ROTATE4);
+				pEdit->EnableWindow(!singleCell);
+
 			}
 		}
 		pEdit = m_staticThis->GetDlgItem(IDC_SIZE_POPUP);
 		if (pEdit) {
 			pEdit->EnableWindow(!singleCell);
 		}
+
+		pEdit = m_staticThis->GetDlgItem(IDC_DEV_NOTE);
+		if(pEdit){
+			pEdit->SetWindowText(floodfill ? 
+				"Hold Shift and click texture to replace" : 
+				"Hold Shift to swap textures");
+		}
+
+		// pEdit = m_staticThis->GetDlgItem(IDC_COPY_MODE);
+		// pEdit->EnableWindow(!singleCell);
+
+		if(singleCell){
+			m_onCopySelectMode = false;
+			m_onCopyApplyMode = false;
+		}
+
 		m_staticThis->m_updating = false;
 	}
 }
@@ -193,7 +254,176 @@ Bool TerrainMaterial::setTerrainTreeViewSelection(HTREEITEM parent, Int selectio
 	return(false);
 }
 
+void TerrainMaterial::OnSetFavorite()
+{
+    HTREEITEM hSelected = m_terrainTreeView.GetSelectedItem();
+    if (!hSelected)
+        return;
 
+    CString itemText = m_terrainTreeView.GetItemText(hSelected);
+    DWORD_PTR itemData = m_terrainTreeView.GetItemData(hSelected);
+
+    // Check if item already exists in favorites
+    HTREEITEM hItem = m_favTreeView.GetRootItem();
+    while (hItem)
+    {
+        CString favText = m_favTreeView.GetItemText(hItem);
+        DWORD_PTR favData = m_favTreeView.GetItemData(hItem);
+
+        if (favText == itemText && favData == itemData)
+        {
+            ::MessageBeep(MB_ICONEXCLAMATION); // Already exists
+            return;
+        }
+
+        hItem = m_favTreeView.GetNextSiblingItem(hItem);
+    }
+
+    // Add to favorites
+    HTREEITEM hNewItem = m_favTreeView.InsertItem(itemText);
+    m_favTreeView.SetItemData(hNewItem, itemData);
+	DEBUG_LOG(("Added favorite: Name=%s, ID=%d\n", itemText, (int)itemData));
+	SaveFavoritesToMapFolder();
+}
+
+void TerrainMaterial::OnDeleteFavorite()
+{
+    HTREEITEM hSelected = m_favTreeView.GetSelectedItem();
+    if (!hSelected)
+    {
+        ::MessageBeep(MB_ICONEXCLAMATION); // Nothing selected
+        return;
+    }
+
+    m_favTreeView.DeleteItem(hSelected);
+}
+
+void TerrainMaterial::SaveFavoritesToMapFolder()
+{
+    CString mapPath = CWorldBuilderDoc::GetActiveDoc()->GetPathName();
+    if (mapPath.IsEmpty()) return;
+
+    char folderPath[_MAX_PATH];
+    strncpy(folderPath, mapPath, _MAX_PATH - 1);
+    folderPath[_MAX_PATH - 1] = '\0';
+    char* lastSlash = strrchr(folderPath, '\\');
+    if (lastSlash) *lastSlash = '\0';
+
+    CString iniPath;
+    iniPath.Format("%s\\texture_favorites.ini", folderPath);
+
+    // Open the file manually for writing
+    FILE* file = fopen(iniPath, "w");
+    if (!file) return;
+
+    // Write a comment at the top of the file
+    fprintf(file, "; This file is autogenerated by Adriane's Worldbuilder\n");
+    fprintf(file, "; You can copy this file to another map and import it as your own, Please dont mess with format will ya?\n\n");
+    fprintf(file, "; DO NOT fucking toy with the values unless you know what you are doing!\n");
+
+    // Write the section header
+    fprintf(file, "[FavoriteTextures]\n");
+
+    int index = 0;
+    HTREEITEM hItem = m_favTreeView.GetRootItem();
+    while (hItem)
+    {
+        int textureId = (int)m_favTreeView.GetItemData(hItem);
+        CString name = m_favTreeView.GetItemText(hItem);
+
+        CString key, value;
+        key.Format("Texture_%d", index++);
+        value.Format("%d|%s", textureId, name);
+
+        fprintf(file, "%s=%s\n", key, value);
+
+        hItem = m_favTreeView.GetNextSiblingItem(hItem);
+    }
+
+    fclose(file);
+}
+
+void TerrainMaterial::OnImportFavoritesFromMapFolder()
+{
+    int result = ::MessageBox(
+        AfxGetMainWnd()->GetSafeHwnd(),
+        "This will import the custom favorite textures from this map if there's one.\n\nDo you want to continue?",
+        "Import Favorites",
+        MB_YESNO | MB_ICONQUESTION
+    );
+
+    if (result == IDNO)
+    {
+        return;
+    }
+
+    CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
+    if (!pDoc) return;
+
+    CString mapPath = pDoc->getMapPath();
+    if (mapPath.IsEmpty()) return;
+
+    char folderPath[_MAX_PATH];
+    strncpy(folderPath, mapPath, _MAX_PATH - 1);
+    folderPath[_MAX_PATH - 1] = '\0';
+    char* lastSlash = strrchr(folderPath, '\\');
+    if (lastSlash) *lastSlash = '\0';
+
+    CString iniPath;
+    iniPath.Format("%s\\texture_favorites.ini", folderPath);
+
+    for (int i = 0; i < 100; ++i)
+    {
+        CString key;
+        key.Format("Texture_%d", i);
+
+        DEBUG_LOG(("Loading Favorites!"));
+
+        char buffer[512] = { 0 };
+        ::GetPrivateProfileString("FavoriteTextures", key, "", buffer, sizeof(buffer) - 1, iniPath);
+        if (strlen(buffer) == 0)
+            break;
+
+        char* sep = strchr(buffer, '|');
+        if (!sep) continue;
+
+        *sep = '\0';
+        int textureId = atoi(buffer);
+        CString name = sep + 1;
+
+        if (textureId <= 0 || name.IsEmpty())
+            continue;
+
+        // Check if already in favorites
+        bool alreadyExists = false;
+        HTREEITEM hItem = m_favTreeView.GetRootItem();
+        while (hItem)
+        {
+            CString existingName = m_favTreeView.GetItemText(hItem);
+            DWORD_PTR existingId = m_favTreeView.GetItemData(hItem);
+
+            if (existingId == (DWORD_PTR)textureId && existingName == name)
+            {
+                alreadyExists = true;
+                break;
+            }
+
+            hItem = m_favTreeView.GetNextSiblingItem(hItem);
+        }
+
+        if (alreadyExists)
+        {
+            DEBUG_LOG(("Skipped duplicate favorite: ID=%d, Name=%s\n", textureId, name));
+            continue;
+        }
+
+        HTREEITEM hNewItem = m_favTreeView.InsertItem(name);
+        if (hNewItem)
+            m_favTreeView.SetItemData(hNewItem, textureId);
+
+        DEBUG_LOG(("Loaded favorite: ID=%d, Name=%s\n", textureId, name));
+    }
+}
 /////////////////////////////////////////////////////////////////////////////
 // TerrainMaterial message handlers
 
@@ -215,6 +445,18 @@ BOOL TerrainMaterial::OnInitDialog()
 
 	pWnd = GetDlgItem(IDC_TERRAIN_SWATCHES);
 	pWnd->GetWindowRect(&rect);
+
+	CWnd* pFavWnd = GetDlgItem(IDC_TERRAIN_TREEVIEW_FAV);
+	CRect favRect;
+	pFavWnd->GetWindowRect(&favRect);
+	ScreenToClient(&favRect);
+	favRect.DeflateRect(2, 2, 2, 2);
+
+	m_favTreeView.Create(
+		TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS | TVS_SHOWSELALWAYS,
+		favRect, this, IDC_TERRAIN_TREEVIEW_FAV);
+	m_favTreeView.ShowWindow(SW_SHOW);
+
 	ScreenToClient(&rect);
 	rect.DeflateRect(2,2,2,2);
 	m_terrainSwatches.Create(NULL, "", WS_CHILD, rect, this, IDC_TERRAIN_SWATCHES);
@@ -222,6 +464,11 @@ BOOL TerrainMaterial::OnInitDialog()
 
 	m_paintingPathingInfo = false;
 	m_paintingPassable = false;
+
+	m_onCopySelectMode = false;
+	m_onCopyApplyMode = false;
+	m_copyRotation = 0;
+
 	CButton *button = (CButton *)GetDlgItem(IDC_PASSABLE_CHECK);
 	button->SetCheck(false);
 	button = (CButton *)GetDlgItem(IDC_PASSABLE);
@@ -229,6 +476,28 @@ BOOL TerrainMaterial::OnInitDialog()
 	button->EnableWindow(false);
 	button = (CButton *)GetDlgItem(IDC_IMPASSABLE);
 	button->SetCheck(true);
+	button->EnableWindow(false);
+
+	button = (CButton *)GetDlgItem(IDC_COPY_MODE);
+	button->SetCheck(false);
+	button = (CButton *)GetDlgItem(IDC_TERRAIN_COPY_SELECT);
+	button->SetCheck(false);
+	button->EnableWindow(false);
+	button = (CButton *)GetDlgItem(IDC_TERRAIN_COPY_APPLY);
+	button->SetCheck(false);
+	button->EnableWindow(false);
+
+	button = (CButton *)GetDlgItem(IDC_TERRAIN_ROTATE1);
+	button->SetCheck(true);
+	button->EnableWindow(false);
+
+	button = (CButton *)GetDlgItem(IDC_TERRAIN_ROTATE2);
+	button->EnableWindow(false);
+
+	button = (CButton *)GetDlgItem(IDC_TERRAIN_ROTATE3);
+	button->EnableWindow(false);
+
+	button = (CButton *)GetDlgItem(IDC_TERRAIN_ROTATE4);
 	button->EnableWindow(false);
 
 	m_widthPopup.SetupPopSliderButton(this, IDC_SIZE_POPUP, this);
@@ -404,6 +673,13 @@ void TerrainMaterial::OnChangeSizeEdit()
 			m_updating = true;
 			if (1==sscanf(buffer, "%d", &width)) {
 				m_currentWidth = width;
+				if(!m_forceUpdatingWidth){
+					if( isCopySelectMode() || isCopyApplyMode() ){
+						BigTileTool::setCopyModeWidth(width);
+					} else {
+						BigTileTool::setTileToolWidth(width);
+					}
+				}
 				BigTileTool::setWidth(m_currentWidth);
 				sprintf(buffer, "%.1f FEET.", m_currentWidth*MAP_XY_FACTOR);
 				pEdit = m_staticThis->GetDlgItem(IDC_WIDTH_LABEL);
@@ -506,6 +782,41 @@ BOOL TerrainMaterial::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 			}
 		}
 	}
+
+	if (pHdr->hdr.hwndFrom == m_favTreeView.m_hWnd) {
+		if (pHdr->hdr.code == TVN_SELCHANGED) {
+			HTREEITEM hItem = m_favTreeView.GetSelectedItem();
+			TVITEM item;
+			::memset(&item, 0, sizeof(item));
+			item.mask = TVIF_HANDLE | TVIF_PARAM;
+			item.hItem = hItem;
+			m_favTreeView.GetItem(&item);
+
+			if (item.lParam >= 0) {
+				Int texClass = item.lParam;
+
+				CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
+				if (!pDoc) return 0;
+				WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
+				if (!pMap) return 0;
+				if (m_updating) return 0;
+
+				if (pMap->canFitTexture(texClass)) {
+					m_currentFgTexture = texClass;
+					updateLabel();
+					m_terrainSwatches.Invalidate();
+				} else {
+					if (m_currentFgTexture != texClass) {
+						::AfxMessageBox(IDS_TEXTURE_TOO_LARGE);
+						::AfxGetMainWnd()->SetFocus();
+					}
+					m_currentFgTexture = texClass;
+					updateLabel();
+					m_terrainSwatches.Invalidate();
+				}
+			}
+		}
+	}
 	
 	return CDialog::OnNotify(wParam, lParam, pResult);
 }
@@ -544,6 +855,14 @@ void TerrainMaterial::OnPassableCheck()
 			}
 		}
 	}
+
+	button = (CButton *)GetDlgItem(IDC_COPY_MODE);
+	button->EnableWindow(!isChecked);
+
+	if(isChecked){
+		m_onCopyApplyMode = false;
+		m_onCopySelectMode = false;
+	}
 }
 
 void TerrainMaterial::OnPassable() 
@@ -551,4 +870,110 @@ void TerrainMaterial::OnPassable()
 	m_paintingPassable = true;
 	CButton *button = (CButton *)GetDlgItem(IDC_IMPASSABLE);
 	button->SetCheck(0);
+}
+
+
+void TerrainMaterial::OnCopyMode() 
+{
+	// DEBUG_LOG(("Copy Mode toggled\n"));
+
+	m_onCopyApplyMode = false;
+	m_onCopySelectMode = false;
+
+	CButton *owner = (CButton*) GetDlgItem(IDC_COPY_MODE);
+	Bool isChecked = (owner->GetCheck() != 0);
+
+	CButton *button = (CButton *)GetDlgItem(IDC_TERRAIN_COPY_APPLY);
+	button->EnableWindow(isChecked);
+
+	button = (CButton *)GetDlgItem(IDC_TERRAIN_COPY_SELECT);
+	button->EnableWindow(isChecked);
+
+	// Disable pathing controls when copy mode is active
+	button = (CButton *)GetDlgItem(IDC_PASSABLE_CHECK);
+	button->EnableWindow(!isChecked);
+	m_terrainSwatches.EnableWindow(!isChecked);
+	m_terrainTreeView.EnableWindow(!isChecked);
+
+
+	if (isChecked) {
+		m_forceUpdatingWidth = true;
+		// BigTileTool::setWidth(BigTileTool::getTileToolWidth());
+		TerrainMaterial::setWidth(BigTileTool::getCopyModeWidth());
+		m_forceUpdatingWidth = false;
+
+		// Default to "Select" mode when Copy Mode is enabled
+		CButton* selectBtn = (CButton*)GetDlgItem(IDC_TERRAIN_COPY_SELECT);
+		selectBtn->SetCheck(TRUE);
+
+		CButton* applyBtn = (CButton*)GetDlgItem(IDC_TERRAIN_COPY_APPLY);
+		applyBtn->SetCheck(FALSE);
+
+		OnCopySelect(); // Activate select mode logic
+	} else {
+		m_forceUpdatingWidth = true;
+		// BigTileTool::setWidth(BigTileTool::getTileToolWidth());
+		TerrainMaterial::setWidth(BigTileTool::getTileToolWidth());
+		m_forceUpdatingWidth = false;
+		// int width = BigTileTool::getCopyModeWidth();
+		// CString str;
+		// str.Format(_T("%d"), width); // or %f if it's float/double
+
+		// if (m_staticThis) {
+		// 	m_staticThis->m_updating = true;
+		// 	CWnd *pEdit = m_staticThis->GetDlgItem(IDC_SIZE_EDIT);
+		// 	if (pEdit) {
+		// 		pEdit->SetWindowText(str);
+		// 	}
+		// 	m_staticThis->m_updating = false;
+		// }
+	}
+
+	button = (CButton *)GetDlgItem(IDC_TERRAIN_ROTATE1);
+	// button->SetCheck(true);
+	button->EnableWindow(isChecked);
+
+	button = (CButton *)GetDlgItem(IDC_TERRAIN_ROTATE2);
+	button->EnableWindow(isChecked);
+
+	button = (CButton *)GetDlgItem(IDC_TERRAIN_ROTATE3);
+	button->EnableWindow(isChecked);
+
+	button = (CButton *)GetDlgItem(IDC_TERRAIN_ROTATE4);
+	button->EnableWindow(isChecked);
+}
+
+void TerrainMaterial::OnCopySelect() 
+{
+	m_onCopyApplyMode = false;
+	m_onCopySelectMode = true;
+	// DEBUG_LOG(("Copy Select Mode\n"));
+}
+
+void TerrainMaterial::OnCopyApply() 
+{
+	m_onCopySelectMode = false;
+	m_onCopyApplyMode = true;
+	// DEBUG_LOG(("Copy Apply Mode\n"));
+}
+
+
+void TerrainMaterial::OnRotate0() 
+{
+	m_copyRotation = 0;
+}
+
+void TerrainMaterial::OnRotate90() 
+{
+	m_copyRotation = 90;
+}
+
+void TerrainMaterial::OnRotate180() 
+{
+	m_copyRotation = 180;
+}
+
+void TerrainMaterial::OnRotate270() 
+{
+	m_copyRotation = 270;
 }

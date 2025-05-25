@@ -79,12 +79,36 @@ BEGIN_MESSAGE_MAP(RoadOptions, COptionsPanel)
 	ON_BN_CLICKED(IDC_BROAD_CURVE, OnBroadCurve)
 	ON_BN_CLICKED(IDC_JOIN, OnJoin)
 	ON_BN_CLICKED(IDC_APPLY_ROAD, OnApplyRoad)
+	ON_EN_CHANGE(IDC_ROAD_SNAP_POINT_EDIT, OnEditSnapPoint)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // RoadOptions data access method.
 
+void RoadOptions::OnEditSnapPoint() 
+{
+	if (m_updating) return;
+
+	CWnd *pWnd = m_staticThis->GetDlgItem(IDC_ROAD_SNAP_POINT_EDIT);
+	if (pWnd) {
+		CString val;
+		pWnd->GetWindowText(val);
+
+		double snapDistance = atof(val);
+		if (snapDistance > 5.0)
+			snapDistance = 5.0;
+		if (snapDistance < 0.2)
+			snapDistance = 0.2;
+
+		// Store as string if using non-integer values
+		CString strVal;
+		strVal.Format("%.2f", snapDistance);
+		::AfxGetApp()->WriteProfileString("RoadOptionPanel", "RoadSnappingDistance", strVal);
+
+		// m_customSnap = true; // Uncomment if needed
+	}
+}
 
 void RoadOptions::updateLabel(void)
 {
@@ -218,6 +242,15 @@ BOOL RoadOptions::OnInitDialog()
 	CWnd *pWnd = GetDlgItem(IDC_ROAD_TREEVIEW);
 	CRect rect;
 	pWnd->GetWindowRect(&rect);
+
+	// Load saved snap distance from profile
+	CString roadSnappingDistance = ::AfxGetApp()->GetProfileString("RoadOptionPanel", "RoadSnappingDistance", "1.0");
+	DEBUG_LOG(("Snapping Disntance %s",roadSnappingDistance));
+	// Set the snap distance to the edit box
+	pWnd = GetDlgItem(IDC_ROAD_SNAP_POINT_EDIT);
+	if (pWnd) {
+		pWnd->SetWindowText(roadSnappingDistance);
+	}
 
 	ScreenToClient(&rect);
 	rect.DeflateRect(2,2,2,2);
