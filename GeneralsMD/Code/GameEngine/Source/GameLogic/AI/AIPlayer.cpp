@@ -1069,7 +1069,7 @@ void AIPlayer::onUnitProduced( Object *factory, Object *unit )
 		if (found) break;
 		for( order = team->m_workOrders; order; order = order->m_next )
 		{
-			if (order->m_factoryID == factory->getID() && order->m_numCompleted < order->m_numRequired && unit->getTemplate()->isEquivalentTo(order->m_thing))
+			if (order->m_factoryID == factory->getID() && order->m_numCompleted < order->m_numRequired && ThingTemplate::isEquivalentTo(unit->getTemplate(), order->m_thing))
 			{
 				// found associated order, mark it complete.
 				order->m_numCompleted++;

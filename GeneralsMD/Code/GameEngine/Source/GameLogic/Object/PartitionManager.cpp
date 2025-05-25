@@ -5129,7 +5129,7 @@ Bool PartitionFilterPlayerAffiliation::allow( Object *other )
 //-----------------------------------------------------------------------------
 Bool PartitionFilterThing::allow( Object *other )
 {
-	return (m_tThing->isEquivalentTo(other->getTemplate()) == m_match);
+	return (ThingTemplate::isEquivalentTo(m_tThing, other->getTemplate()) == m_match);
 }
 
 //-----------------------------------------------------------------------------

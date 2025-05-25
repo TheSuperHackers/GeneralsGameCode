@@ -1622,7 +1622,7 @@ void Team::countObjectsByThingTemplate(Int numTmplates, const ThingTemplate* con
 		for (Int i = 0; i < numTmplates; ++i)
 		{
 			//Kris: Compare
-			if( !objtmpl->isEquivalentTo( things[i] ) )
+			if( !ThingTemplate::isEquivalentTo(objtmpl, things[i]) )
 			{
 				continue;
 			}
@@ -2341,7 +2341,7 @@ Object *Team::tryToRecruit(const ThingTemplate *tTemplate, const Coord3D *teamHo
 	Object *recruit = NULL;
 	for( obj = TheGameLogic->getFirstObject(); obj; obj = obj->getNextObject() )
 	{
-		if (!obj->getTemplate()->isEquivalentTo(tTemplate)) 
+		if (!ThingTemplate::isEquivalentTo(obj->getTemplate(), tTemplate))
 		{
 			// it might be ok, if tTemplate is really just a "build-variations" template...
 			if (!isInBuildVariations(tTemplate, obj->getTemplate()))
@@ -2447,7 +2447,7 @@ void Team::killTeam(void)
 	// now find objects to kill
 	for (DLINK_ITERATOR<Object> iter = iterate_TeamMemberList(); !iter.done(); iter.advance()) {
 		Object *obj = iter.cur();
-		if (!obj || obj->isDestroyed() || (obj->isEffectivelyDead() && !obj->getTemplate()->isEquivalentTo(beaconTemplate)))
+		if (!obj || obj->isDestroyed() || (obj->isEffectivelyDead() && !ThingTemplate::isEquivalentTo(obj->getTemplate(), beaconTemplate)))
 		{
 			continue;
 		}

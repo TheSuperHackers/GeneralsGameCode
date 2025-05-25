@@ -184,7 +184,7 @@ static Bool similarUnitSelection( Drawable *test, void *userData )
 		if (!object)
 			return FALSE;
 
-		Bool isEquivalent = object->getTemplate()->isEquivalentTo( selectedType );
+		Bool isEquivalent = ThingTemplate::isEquivalentTo(object->getTemplate(), selectedType);
 		if( data->isCarBomb && !isEquivalent && object->testStatus( OBJECT_STATUS_IS_CARBOMB ) )
 		{
 			isEquivalent = TRUE;
