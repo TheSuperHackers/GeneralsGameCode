@@ -153,10 +153,7 @@ void AIPlayer::onStructureProduced( Object *factory, Object *bldg )
 	for( info = m_player->getBuildList(); info; info = info->getNext() )
 	{
 		const ThingTemplate *bldgPlan = TheThingFactory->findTemplate( info->getTemplateName() );
-		if (!bldgPlan) {																											 
-			continue;
-		}		
-		if (!bldgPlan->isEquivalentTo(bldg->getTemplate())) {
+		if (!ThingTemplate::isEquivalentTo(bldgPlan, bldg->getTemplate())) {
 			continue; // not the same kind of building we're looking for.
 		}
 		// check for hole.
