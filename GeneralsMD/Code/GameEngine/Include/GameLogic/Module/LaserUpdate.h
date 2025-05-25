@@ -98,6 +98,8 @@ public:
 
 	Real getLifeTimeProgress() const;
 
+	Int getPlayerColor() const { return m_hexColor; };
+
 	void updateContinuousLaser(const Object* parent, const Object* target, const Coord3D* startPos, const Coord3D* endPos);
 
 	virtual void clientUpdate();
@@ -137,6 +139,8 @@ protected:
 	UnsignedInt m_fadeOutFinishFrame;
 
 	AsciiString m_parentBoneName;
+
+	Int m_hexColor;
 
 	// Bool m_isMultiDraw;
 };

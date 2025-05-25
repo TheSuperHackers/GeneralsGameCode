@@ -30,6 +30,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
+#include "Common/GlobalData.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/Xfer.h"
@@ -113,6 +114,8 @@ LaserUpdate::LaserUpdate( Thing *thing, const ModuleData* moduleData ) : ClientU
 	m_parentID = INVALID_DRAWABLE_ID;
 	m_targetID = INVALID_DRAWABLE_ID;
 	m_parentBoneName.clear();
+
+	m_hexColor = 0;
 
 	// m_isMultiDraw = FALSE;
 } 
@@ -335,6 +338,14 @@ void LaserUpdate::initLaser( const Object *parent, const Object *target, const C
 			if (update) {
 				m_dieFrame = update->getDieFrame();
 			}
+
+			//if (m_useHouseColor) {
+			if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
+				m_hexColor = obj->getNightIndicatorColor();
+			else
+				m_hexColor = obj->getIndicatorColor();
+
+			//}
 		}
 	}
 
@@ -726,6 +737,8 @@ void LaserUpdate::xfer( Xfer *xfer )
 	xfer->xferDrawableID(&m_targetID);
 
 	xfer->xferAsciiString(&m_parentBoneName);
+
+	xfer->xferInt(&m_hexColor);
 
 	// multi draw
 	// xfer->xferBool(&m_isMultiDraw);
