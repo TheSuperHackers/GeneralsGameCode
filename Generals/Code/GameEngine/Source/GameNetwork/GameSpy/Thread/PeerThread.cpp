@@ -2221,7 +2221,7 @@ static void listGroupRoomsCallback(PEER peer, PEERBool success,
 		}
 		else
 		{
-			resp.groupRoomName.empty();
+			resp.groupRoomName.clear();
 		}
 		TheGameSpyPeerMessageQueue->addResponse(resp);
 #ifdef SERVER_DEBUGGING
