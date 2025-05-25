@@ -4287,7 +4287,7 @@ Locomotor* Pathfinder::chooseBestLocomotorForPosition(PathfindLayerEnum layer, L
 	if (t == PathfindCell::CELL_RUBBLE) {
 		return LOCOMOTORSURFACE_RUBBLE | LOCOMOTORSURFACE_AIR;
 	}
-	if ( (t == PathfindCell::CELL_CLIFF) ) {
+	if ( t == PathfindCell::CELL_CLIFF ) {
 		return LOCOMOTORSURFACE_CLIFF | LOCOMOTORSURFACE_AIR;
 	}
 	return NO_SURFACES;
