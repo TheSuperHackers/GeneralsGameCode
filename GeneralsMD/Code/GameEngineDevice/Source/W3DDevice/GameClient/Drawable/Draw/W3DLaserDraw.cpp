@@ -152,34 +152,34 @@ W3DLaserDraw::W3DLaserDraw(Thing* thing, const ModuleData* moduleData) :
 	GameGetColorComponentsReal(data->m_innerColor, &innerRed, &innerGreen, &innerBlue, &innerAlpha);
 	GameGetColorComponentsReal(data->m_outerColor, &outerRed, &outerGreen, &outerBlue, &outerAlpha);
 
-	DEBUG_LOG(("LaserDraw (Constructor): INIT 1\n"));
+	//DEBUG_LOG(("LaserDraw (Constructor): INIT 1\n"));
 
-	//Get the updatemodule that drives it...
-	Drawable* draw = getDrawable();
-	if (draw) {
-		static NameKeyType key_LaserUpdate = NAMEKEY("LaserUpdate");
-		LaserUpdate* update = (LaserUpdate*)draw->findClientUpdateModule(key_LaserUpdate);
-		if (update) {
+	////Get the updatemodule that drives it...
+	//Drawable* draw = getDrawable();
+	//if (draw) {
+	//	static NameKeyType key_LaserUpdate = NAMEKEY("LaserUpdate");
+	//	LaserUpdate* update = (LaserUpdate*)draw->findClientUpdateModule(key_LaserUpdate);
+	//	if (update) {
 
-			if (m_hexColor <= 0) {
-				m_hexColor = update->getPlayerColor();
-			}
+	//		if (m_hexColor <= 0) {
+	//			m_hexColor = update->getPlayerColor();
+	//		}
 
-			// handleHouseColor(&innerRed, &innerGreen, &innerBlue, &outerRed, &outerGreen, &outerBlue);
-			handleHouseColor(innerRed, innerGreen, innerBlue, outerRed, outerGreen, outerBlue);
+	//		// handleHouseColor(&innerRed, &innerGreen, &innerBlue, &outerRed, &outerGreen, &outerBlue);
+	//		handleHouseColor(innerRed, innerGreen, innerBlue, outerRed, outerGreen, outerBlue);
 
-			DEBUG_LOG(("LaserDraw (Constructor): AppliedHousecolor: Inner RGB = %f, %f, %f -- Outer RGB = %f, %f, %f\n", innerRed, innerGreen, innerBlue, outerRed, outerGreen, outerBlue));
+	//		DEBUG_LOG(("LaserDraw (Constructor): AppliedHousecolor: Inner RGB = %f, %f, %f -- Outer RGB = %f, %f, %f\n", innerRed, innerGreen, innerBlue, outerRed, outerGreen, outerBlue));
 
-		}
-		else {
-			// DEBUG_ASSERTCRASH(0, ("W3DLaserDraw::doDrawModule() expects its owner drawable %s to have a ClientUpdate = LaserUpdate module.", draw->getTemplate()->getName().str()));
-			DEBUG_LOG(("W3DLaserDraw::(Constructor) expects its owner drawable %s to have a ClientUpdate = LaserUpdate module.", draw->getTemplate()->getName().str()));
-			return;
-		}
-	}
-	else {
-		DEBUG_LOG(("W3DLaserDraw::(Constructor) Draw is null\n"));
-	}
+	//	}
+	//	else {
+	//		// DEBUG_ASSERTCRASH(0, ("W3DLaserDraw::doDrawModule() expects its owner drawable %s to have a ClientUpdate = LaserUpdate module.", draw->getTemplate()->getName().str()));
+	//		DEBUG_LOG(("W3DLaserDraw::(Constructor) expects its owner drawable %s to have a ClientUpdate = LaserUpdate module.", draw->getTemplate()->getName().str()));
+	//		return;
+	//	}
+	//}
+	//else {
+	//	DEBUG_LOG(("W3DLaserDraw::(Constructor) Draw is null\n"));
+	//}
 
 	//Make sure our beams range between 1 and the maximum cap.
 #ifdef I_WANT_TO_BE_FIRED
@@ -316,10 +316,9 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 	{
 		update->setDirty(false);
 
-		//// House Color (we assume it won't change)
-		//if (m_hexColor <= 0) {
-		//	m_hexColor = update->getPlayerColor();
-		//}
+		m_hexColor = update->getPlayerColor();
+		// DEBUG_LOG(("LaserDraw (doDrawModule 2): m_hexColor = %d\n", m_hexColor));
+
 
 		// Texture animation
 		float u_offset = 0;
@@ -339,6 +338,36 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 		}
 
 		Vector3 laserPoints[ 2 ];
+
+
+		//Get the color components for calculation purposes.
+		Real innerRed, innerGreen, innerBlue, innerAlpha, outerRed, outerGreen, outerBlue, outerAlpha;
+		GameGetColorComponentsReal(data->m_innerColor, &innerRed, &innerGreen, &innerBlue, &innerAlpha);
+		GameGetColorComponentsReal(data->m_outerColor, &outerRed, &outerGreen, &outerBlue, &outerAlpha);
+
+		bool updateColor = false;
+		RGBColor houseColor;
+		if ((data->m_useHouseColorInner || data->m_useHouseColorOuter)) {
+			houseColor.setFromInt(m_hexColor);
+
+			if (data->m_useHouseColorInner) {
+				innerRed *= houseColor.red;
+				innerGreen *= houseColor.green;
+				innerBlue *= houseColor.blue;
+			}
+			if (data->m_useHouseColorOuter) {
+				outerRed *= houseColor.red;
+				outerGreen *= houseColor.green;
+				outerBlue *= houseColor.blue;
+			}
+
+			updateColor = true;
+		}
+
+		// handleHouseColor(innerRed, innerGreen, innerBlue, outerRed, outerGreen, outerBlue);
+
+		// DEBUG_LOG(("LaserDraw (doDrawModule): AppliedHousecolor: Inner RGB = %f, %f, %f -- Outer RGB = %f, %f, %f\n", innerRed, innerGreen, innerBlue, outerRed, outerGreen, outerBlue));
+
 
 		for( int segment = 0; segment < data->m_segments; segment++ )
 		{
@@ -439,24 +468,26 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 			}
 
 			//Get the color components for calculation purposes.
-			Real innerRed, innerGreen, innerBlue, innerAlpha, outerRed, outerGreen, outerBlue, outerAlpha;
-			GameGetColorComponentsReal( data->m_innerColor, &innerRed, &innerGreen, &innerBlue, &innerAlpha );
-			GameGetColorComponentsReal( data->m_outerColor, &outerRed, &outerGreen, &outerBlue, &outerAlpha );
-
-			// handleHouseColor(innerRed, innerGreen, innerBlue, outerRed, outerGreen, outerBlue);
-
-			// DEBUG_LOG(("LaserDraw (doDrawModule): AppliedHousecolor: Inner RGB = %f, %f, %f -- Outer RGB = %f, %f, %f\n", innerRed, innerGreen, innerBlue, outerRed, outerGreen, outerBlue));
+			//Real innerRed, innerGreen, innerBlue, innerAlpha, outerRed, outerGreen, outerBlue, outerAlpha;
+			//GameGetColorComponentsReal(data->m_innerColor, &innerRed, &innerGreen, &innerBlue, &innerAlpha);
+			//GameGetColorComponentsReal(data->m_outerColor, &outerRed, &outerGreen, &outerBlue, &outerAlpha);
 
 			for( Int i = data->m_numBeams - 1; i >= 0; i-- )
 			{
 
-				Real alpha, width;
+				Real red, green, blue, alpha, width;
 				int index = segment * data->m_numBeams + i;
 
 				if( data->m_numBeams == 1 )
 				{	
 					width = data->m_innerBeamWidth * update->getWidthScale();
 					alpha = innerAlpha * update->getAlphaScale();
+
+					if (updateColor) {
+						red = innerRed * innerAlpha;
+						green = innerGreen * innerAlpha;
+						blue = innerBlue * innerAlpha;
+					}
 				}
 				else
 				{
@@ -470,6 +501,12 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 					width *= ultimateScale;
 					alpha		= innerAlpha							+ scale * (outerAlpha - innerAlpha);
 					alpha *= ultimateAlpha;
+
+					if (updateColor) {
+						red = innerRed + scale * (outerRed - innerRed) * innerAlpha;
+						green = innerGreen + scale * (outerGreen - innerGreen) * innerAlpha;
+						blue = innerBlue + scale * (outerBlue - innerBlue) * innerAlpha;
+					}
 				}
 
 
@@ -493,9 +530,29 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 					uvoffset.U = u_offset;
 					m_line3D[index]->Set_Current_UV_Offset(uvoffset);
 				}
+				
+				if (updateColor) {
+					m_line3D[index]->Set_Color(Vector3(red, green, blue));
+				}
 
 				m_line3D[ index ]->Set_Width( width );
 				m_line3D[ index ]->Set_Points( 2, &laserPoints[0] );
+
+
+				//--
+				//if ((data->m_useHouseColorInner || data->m_useHouseColorOuter)) { //&& m_hexColor > 0) {
+
+				//	RGBColor myHouseColor;
+				//	myHouseColor.setFromInt(m_hexColor);
+
+				//	Vector3 color;
+				//	m_line3D[index]->Get_Color(color);
+				//	color.X *= myHouseColor.red;
+				//	color.Y *= myHouseColor.green;
+				//	color.Z *= myHouseColor.blue;
+
+				//	m_line3D[index]->Set_Color(color);
+				//}
 			}
 		}
 	}
