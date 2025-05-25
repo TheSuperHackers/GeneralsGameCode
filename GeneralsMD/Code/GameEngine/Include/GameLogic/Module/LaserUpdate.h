@@ -58,6 +58,7 @@ public:
 	UnsignedInt m_decayDurationFrames;  ///< If non-zero, beam shrinks over duration (tries to get time from lifetimeUpdate)
 
 	Bool m_hasMultiDraw;  ///< Enable this to support tracking multiple LaserDraw modules
+	Bool m_useHouseColor;  ///< Enable this to color particles with house color
 
 	LaserUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
@@ -98,6 +99,8 @@ public:
 
 	Real getLifeTimeProgress() const;
 
+	Int getPlayerColor() const { return m_hexColor; };
+
 	void updateContinuousLaser(const Object* parent, const Object* target, const Coord3D* startPos, const Coord3D* endPos);
 
 	virtual void clientUpdate();
@@ -137,6 +140,8 @@ protected:
 	UnsignedInt m_fadeOutFinishFrame;
 
 	AsciiString m_parentBoneName;
+
+	Int m_hexColor;
 
 	// Bool m_isMultiDraw;
 };

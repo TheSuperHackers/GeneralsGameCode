@@ -345,7 +345,8 @@ public:
 
 	typedef Int Color;
 
-	void tintAllColors( Color tintColor );
+	void tintAllColors( Color tintColor);
+	void tintColorsAllFrames( Color tintColor);
 	
 	GameClientRandomVariable m_colorScale;								///< color coefficient
 
