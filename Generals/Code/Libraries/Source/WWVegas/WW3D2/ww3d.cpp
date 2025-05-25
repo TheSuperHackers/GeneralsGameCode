@@ -592,7 +592,7 @@ const RenderDeviceDescClass & WW3D::Get_Render_Device_Desc(int deviceidx)
  *   5/19/99    GTH : Created.                                                                 *
  *   1/25/2001  gth : converted to DX8                                                         *
  *=============================================================================================*/
-const int WW3D::Get_Render_Device_Count(void)
+int WW3D::Get_Render_Device_Count(void)
 {
 	return DX8Wrapper::Get_Render_Device_Count();
 }

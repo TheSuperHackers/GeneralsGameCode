@@ -452,9 +452,9 @@ public:
 	virtual void					Scale(float scale) 															{ };
 	virtual void					Scale(float scalex, float scaley, float scalez)						{ };
  	virtual void					Set_ObjectScale(float scale) { ObjectScale=scale;}	//set's a scale factor that's factored into transform matrix.									{ScaleFactor=scale; };
-	const float						Get_ObjectScale( void ) const { return ObjectScale; };
+	float							Get_ObjectScale( void ) const { return ObjectScale; };
  	void							Set_ObjectColor(unsigned int color) { ObjectColor=color;}	//the color that was used to modify the asset for player team color (for Generals). -MW
-	const unsigned int				Get_ObjectColor( void ) const { return ObjectColor; };
+	unsigned int					Get_ObjectColor( void ) const { return ObjectColor; };
 
    virtual int						Get_Sort_Level(void) const													{ return 0; /* SORT_LEVEL_NONE */ }
    virtual void					Set_Sort_Level(int level)													{ }
