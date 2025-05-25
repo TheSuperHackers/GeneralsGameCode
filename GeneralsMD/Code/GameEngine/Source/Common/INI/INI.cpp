@@ -87,6 +87,7 @@ static const BlockParse theTypeTable[] =
 	{ "AIData",							INI::parseAIDataDefinition },
 	{ "Animation",					INI::parseAnim2DDefinition },
 	{ "Armor",							INI::parseArmorDefinition },
+	{ "ArmorExtend",							INI::parseArmorExtendDefinition },
 	{ "AudioEvent",					INI::parseAudioEventDefinition },
 	{ "AudioSettings",			INI::parseAudioSettingsDefinition },
 	{ "Bridge",							INI::parseTerrainBridgeDefinition },

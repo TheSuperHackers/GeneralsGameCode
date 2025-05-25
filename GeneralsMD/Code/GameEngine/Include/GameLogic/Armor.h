@@ -54,6 +54,8 @@ public:
 
 	void clear();
 
+	void copyFrom(const ArmorTemplate* other);
+
 	/**
 		This is the real "meat" of the class: given a damage type and amount, adjust the damage
 		and return the amount that should be dealt. 
@@ -119,6 +121,7 @@ public:
 	}
 
 	static void parseArmorDefinition(INI* ini);
+	static void parseArmorExtendDefinition(INI* ini);
 
 private:
 
