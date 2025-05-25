@@ -302,7 +302,7 @@ void GadgetTabControlCreateSubPanes( GameWindow *tabControl )///< Create User Wi
 
 	for( Int paneIndex = 0; paneIndex < NUM_TAB_PANES; paneIndex++ )
 	{
-		if( (tabData->subPanes[paneIndex] == NULL) )//This one is blank
+		if( tabData->subPanes[paneIndex] == NULL )//This one is blank
 		{
 			tabData->subPanes[paneIndex] = TheWindowManager->winCreate( tabControl,
 																																	WIN_STATUS_NONE, x, y,
