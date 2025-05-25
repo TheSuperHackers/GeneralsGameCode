@@ -91,8 +91,11 @@ AIUpdateModuleData::AIUpdateModuleData()
 	m_surrenderDuration = LOGICFRAMES_PER_SECOND * 120;
 #endif
 
-  m_forbidPlayerCommands = FALSE;
+    m_forbidPlayerCommands = FALSE;
 	m_turretsLinked = FALSE;
+	m_attackAngle = 0.0f;
+	m_useAttackAngle = FALSE;
+	m_attackAngleMirrored = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -140,12 +143,40 @@ const LocomotorTemplateVector* AIUpdateModuleData::findLocomotorTemplateVector(L
 #ifdef ALLOW_SURRENDER
 		{ "SurrenderDuration",					INI::parseDurationUnsignedInt,		NULL, offsetof(AIUpdateModuleData, m_surrenderDuration) },
 #endif
-    { "ForbidPlayerCommands",				INI::parseBool,										NULL, offsetof(AIUpdateModuleData, m_forbidPlayerCommands) },
-    { "TurretsLinked",							INI::parseBool,										NULL, offsetof( AIUpdateModuleData, m_turretsLinked ) },
+		{ "ForbidPlayerCommands",				INI::parseBool,										NULL, offsetof(AIUpdateModuleData, m_forbidPlayerCommands) },
+		{ "TurretsLinked",							INI::parseBool,										NULL, offsetof(AIUpdateModuleData, m_turretsLinked) },
+		{ "PreferredAttackAngle",				AIUpdateModuleData::parseAttackAngle,					NULL, offsetof(AIUpdateModuleData, m_attackAngle) },
 		{ 0, 0, 0, 0 }
 	};
   p.add(dataFieldParse);
 }
+
+//-------------------------------------------------------------------------------------------------
+/*static*/ void AIUpdateModuleData::parseAttackAngle(INI* ini, void* instance, void* store, const void* /*userData*/)
+{
+	AIUpdateModuleData* self = (AIUpdateModuleData*)instance;
+
+	const char* token = ini->getNextToken();
+
+	// Disable if None (not really needed actually)
+	if (stricmp(token, "None") == 0) {
+		// self->m_useAttackAngle = FALSE;
+		return;
+	}
+
+	// Parse Angle and store in m_attackAngle
+	const Real RADS_PER_DEGREE = PI / 180.0f;
+	*(Real*)store = INI::scanReal(token) * RADS_PER_DEGREE;
+
+	self->m_useAttackAngle = TRUE;
+
+	// Check for Mirrored keyword
+	token = ini->getNextTokenOrNull();
+	if (token != NULL && stricmp(token, "MIRRORED") == 0) {
+		self->m_attackAngleMirrored = TRUE;
+	}
+}
+
 
 //-------------------------------------------------------------------------------------------------
 /*static*/ void AIUpdateModuleData::parseTurret(INI* ini, void *instance, void * store, const void* /*userData*/)
@@ -764,6 +795,28 @@ Real AIUpdateInterface::getTurretTurnRate(WhichTurretType tur) const
 	return (tur != TURRET_INVALID && m_turretAI[tur] != NULL) ?
 					m_turretAI[tur]->getTurnRate() :
 					0.0f;
+}
+
+//=============================================================================
+Bool AIUpdateInterface::hasLimitedTurretAngle(WhichTurretType tur) const
+{
+	return (tur != TURRET_INVALID && m_turretAI[tur] != NULL) && m_turretAI[tur]->hasLimitedTurretAngle();
+}
+
+//=============================================================================
+Real AIUpdateInterface::getMinTurretAngle(WhichTurretType tur) const
+{
+	return (tur != TURRET_INVALID && m_turretAI[tur] != NULL) ?
+		m_turretAI[tur]->getMinTurretAngle() :
+		0.0f;
+}
+
+//=============================================================================
+Real AIUpdateInterface::getMaxTurretAngle(WhichTurretType tur) const
+{
+	return (tur != TURRET_INVALID && m_turretAI[tur] != NULL) ?
+		m_turretAI[tur]->getMaxTurretAngle() :
+		0.0f;
 }
 
 //=============================================================================
