@@ -201,6 +201,9 @@ public:
 #ifdef ALLOW_SURRENDER
  	UnsignedInt						m_surrenderDuration;					///< when we surrender, how long we stay surrendered.
 #endif
+	Real m_attackAngle;
+	Bool m_useAttackAngle;
+	Bool m_attackAngleMirrored;
 
 	
   AIUpdateModuleData();
@@ -214,6 +217,7 @@ public:
 
 private:
 	static void parseTurret( INI* ini, void *instance, void *store, const void* /*userData*/ );
+	static void parseAttackAngle( INI* ini, void *instance, void *store, const void* /*userData*/ );
 
 
 };
@@ -332,6 +336,10 @@ public:
 	
 	Bool areTurretsLinked() const { return getAIUpdateModuleData()->m_turretsLinked; }
 
+	Real getAttackAngle() const { return getAIUpdateModuleData()->m_attackAngle; }
+	Bool useAttackAngle() const { return getAIUpdateModuleData()->m_useAttackAngle; }
+	Bool isAttackAngleMirrored() const { return getAIUpdateModuleData()->m_attackAngleMirrored; }
+
 	// this is present solely for some transports to override, so that they can land before 
 	// allowing people to exit...
 	virtual AIFreeToExitType getAiFreeToExit(const Object* exiter) const { return FREE_TO_EXIT; }
@@ -438,6 +446,11 @@ public:
 	Bool isWeaponSlotOnTurretAndAimingAtTarget(WeaponSlotType wslot, const Object* victim) const;
 	Bool getTurretRotAndPitch(WhichTurretType tur, Real* turretAngle, Real* turretPitch) const;
 	Real getTurretTurnRate(WhichTurretType tur) const;
+
+	Real getMinTurretAngle(WhichTurretType tur) const;
+	Real getMaxTurretAngle(WhichTurretType tur) const;
+	Bool hasLimitedTurretAngle(WhichTurretType tur) const;
+
 	void setTurretTargetObject(WhichTurretType tur, Object* o, Bool isForceAttacking = FALSE);
 	Object *getTurretTargetObject( WhichTurretType tur, Bool clearDeadTargets = TRUE );
 	void setTurretTargetPosition(WhichTurretType tur, const Coord3D* pos);

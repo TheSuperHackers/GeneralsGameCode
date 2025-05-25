@@ -496,6 +496,12 @@ inline Real stdAngleDiff(Real a1, Real a2)
 	return normalizeAngle(a1 - a2);
 }
 
+// normalized angle difference between a1 and a2, respecting negative values and wraparound
+inline Real stdAngleDiffMod(Real a1, Real a2) {
+	return normalizeAngle(nmod(a1 - a2, 2 * PI));
+}
+
+
 // ------------------------------------------------------------------------
 // NOTE NOTE NOTE: Keep TheRelationShipNames in sync with this enum
 enum Relationship CPP_11(: Int)

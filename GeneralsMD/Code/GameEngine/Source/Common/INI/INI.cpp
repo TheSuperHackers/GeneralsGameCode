@@ -1037,28 +1037,28 @@ void INI::parseRGBColor( INI* ini, void * /*instance*/, void *store, const void*
 //-------------------------------------------------------------------------------------------------
 /** Parse a color in the form of
 	*
-	* RGB_COLOR = R:100 G:114 B:245
+	* RGB_COLOR = R:0.5 G:0.3 B:0.6
 	* and store in "RGBColor" structure pointed to by 'store' 
-	* Negative numbers are allowed! */
+	* Negative numbers, and values greater 1 are allowed! */
 	//-------------------------------------------------------------------------------------------------
-void INI::parseRGBColorSigned(INI* ini, void* /*instance*/, void* store, const void* /*userData*/)
+void INI::parseRGBColorReal(INI* ini, void* /*instance*/, void* store, const void* /*userData*/)
 {
 	const char* names[3] = { "R", "G", "B" };
-	Int colors[3];
+	Real colors[3];
 	for (Int i = 0; i < 3; i++)
 	{
-		colors[i] = scanInt(ini->getNextSubToken(names[i]));
-		if (colors[i] < -255)
-			throw INI_INVALID_DATA;
-		if (colors[i] > 255)
-			throw INI_INVALID_DATA;
+		colors[i] = scanReal(ini->getNextSubToken(names[i]));
+		//if (colors[i] < -255)
+		//	throw INI_INVALID_DATA;
+		//if (colors[i] > 255)
+		//	throw INI_INVALID_DATA;
 	}
 
 	// assign the color components to the "RGBColor" pointer at 'store'
 	RGBColor* theColor = (RGBColor*)store;
-	theColor->red = (Real)colors[0] / 255.0f;
-	theColor->green = (Real)colors[1] / 255.0f;
-	theColor->blue = (Real)colors[2] / 255.0f;
+	theColor->red = colors[0];
+	theColor->green = colors[1];
+	theColor->blue = colors[2];
 
 }
 
