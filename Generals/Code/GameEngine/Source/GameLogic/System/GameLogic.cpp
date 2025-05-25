@@ -784,6 +784,8 @@ static void populateRandomSideAndColor( GameInfo *game )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
+static const WaypointMap s_emptyWaypoints = WaypointMap();
+
 static void populateRandomStartPosition( GameInfo *game )
 {
 	if(!game)
@@ -804,12 +806,13 @@ static void populateRandomStartPosition( GameInfo *game )
 		{
 			if (i != j && (i<numPlayers && j<numPlayers))
 			{
+				const WaypointMap& waypoints = md ? md->m_waypoints : s_emptyWaypoints;
 				AsciiString w1, w2;
 				w1.format("Player_%d_Start", i+1);
 				w2.format("Player_%d_Start", j+1);
-				WaypointMap::const_iterator c1 = md->m_waypoints.find(w1);
-				WaypointMap::const_iterator c2 = md->m_waypoints.find(w2);
-				if (c1 == md->m_waypoints.end() || c2 == md->m_waypoints.end())
+				WaypointMap::const_iterator c1 = waypoints.find(w1);
+				WaypointMap::const_iterator c2 = waypoints.find(w2);
+				if (c1 == waypoints.end() || c2 == waypoints.end())
 				{
 					// couldn't find a waypoint.  must be kinda far away.
 					startSpotDistance[i][j] = 1000000.0f;
