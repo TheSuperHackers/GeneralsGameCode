@@ -2543,7 +2543,7 @@ void AIPlayer::checkQueuedTeams( void )
 		for ( DLINK_ITERATOR<TeamInQueue> iter = iterate_TeamBuildQueue(); !iter.done(); iter.advance())
 		{
 			TeamInQueue *team = iter.cur();
-			if (team && team->isAllBuilt())
+			if (team->isAllBuilt())
 			{
 				// Move to ready queue
 				removeFrom_TeamBuildQueue(team);

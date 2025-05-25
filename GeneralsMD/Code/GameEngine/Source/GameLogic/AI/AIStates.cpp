@@ -5231,7 +5231,7 @@ StateReturnType AIAttackFireWeaponState::update()
 		rather than addressing the situation, we just punt and wait for it to clear
 		up on its own.
 	*/
-	if (m_att && !m_att->isWeaponSlotOkToFire(wslot))
+	if (!m_att->isWeaponSlotOkToFire(wslot))
 	{
 		return STATE_FAILURE;
 	}
@@ -5269,7 +5269,7 @@ StateReturnType AIAttackFireWeaponState::update()
 			(victim->isDestroyed() || victim->isEffectivelyDead() || (victim->isKindOf(KINDOF_MINE) && victim->testStatus(OBJECT_STATUS_MASKED)))
 		)
 		{
-			const Coord3D* originalVictimPos = m_att ? m_att->getOriginalVictimPos() : NULL;
+			const Coord3D* originalVictimPos = m_att->getOriginalVictimPos();
 			if (originalVictimPos)
 			{
 				// note that it is important to use getLastCommandSource here; this allows
