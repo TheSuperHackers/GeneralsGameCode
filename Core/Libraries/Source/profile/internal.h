@@ -46,7 +46,7 @@
 class ProfileFastCS
 {
   ProfileFastCS(const ProfileFastCS&);
-  ProfileFastCS& operator=(const ProfileFastCS&) {};
+  ProfileFastCS& operator=(const ProfileFastCS&) { return *this; }
   
 	static HANDLE testEvent;
 
@@ -111,7 +111,7 @@ public:
 	class Lock
 	{
     Lock(const Lock&);
-	Lock& operator=(const Lock&) {};
+	Lock& operator=(const Lock&) { return *this; }
 
 		ProfileFastCS& CriticalSection;
 

@@ -135,7 +135,7 @@ class GapFillerClass : public W3DMPO
 	ShaderClass* ShaderArray[MeshMatDescClass::MAX_PASSES];
 	MeshModelClass* mmc;
 
-	GapFillerClass& operator = (const GapFillerClass & that) {}
+	GapFillerClass& operator = (const GapFillerClass&) { return *this; }
 public:
 	GapFillerClass(MeshModelClass* mmc);
 	GapFillerClass(const GapFillerClass& that);
