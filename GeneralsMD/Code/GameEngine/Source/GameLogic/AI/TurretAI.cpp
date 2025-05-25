@@ -240,11 +240,9 @@ void TurretAIData::parseTurretSweepSpeed(INI* ini, void *instance, void * /*stor
 //-------------------------------------------------------------------------------------------------
 /*static*/ void TurretAIData::parseMinMaxAngle(INI* ini, void* instance, void* store, const void* userData)
 {
-	DEBUG_LOG((">> parseMinMaxAngle (1)\n"));
 	INI::parseAngleReal(ini, instance, store, userData);
 	TurretAIData* self = (TurretAIData*)instance;
 	self->m_hasLimitedTurretAngle = TRUE;
-	DEBUG_LOG((">> parseMinMaxAngle (2), self->m_hasLimitedTurretAngle = %d\n", self->m_hasLimitedTurretAngle));
 }
 
 
