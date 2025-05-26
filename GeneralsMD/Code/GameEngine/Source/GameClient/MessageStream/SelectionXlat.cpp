@@ -1099,10 +1099,13 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 					m_lastGroupSelTime = now;
 				}
 
+				Bool performSelection = TRUE;
+
 				// check for double-press to jump view
 				if ( now - m_lastGroupSelTime < 20 && group == m_lastGroupSelGroup )
 				{
 					DEBUG_LOG(("META: DOUBLETAP select team %d",group));
+					performSelection = FALSE;
 					Player *player = ThePlayerList->getLocalPlayer();
 					if (player)
 					{
@@ -1114,12 +1117,15 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 							if (numObjs > 0)
 							{
 								// if theres someone in the group, center the camera on them.
-								TheTacticalView->lookAt( objlist[numObjs-1]->getDrawable()->getPosition() );
+								Drawable* drawable = objlist[numObjs - 1]->getDrawable();
+								TheTacticalView->lookAt( drawable->getPosition() );
+								performSelection = !TheInGameUI->isDrawableSelected( drawable->getID() );
 							}
 						}
 					}
 				} 
-				else 
+				
+				if ( performSelection )
 				{
 					TheInGameUI->deselectAllDrawables( false ); //No need to post message because we're just creating a new group!
 
