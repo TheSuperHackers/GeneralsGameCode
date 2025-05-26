@@ -1124,20 +1124,21 @@ void TeamsInfoRec::addTeam(const Dict* d)
 	if (m_numTeams >= m_numTeamsAllocated)
 	{
 	// pool[]ify
-		TeamsInfo* nti = NEW TeamsInfo[m_numTeamsAllocated + TEAM_ALLOC_CHUNK];	// throws on failure
+		const Int newNumTeamsAllocated = max(m_numTeams, m_numTeamsAllocated + TEAM_ALLOC_CHUNK);
+		TeamsInfo* nti = NEW TeamsInfo[newNumTeamsAllocated];	// throws on failure
 		
 		Int i;
 
 		for (i = 0; i < m_numTeams; i++)
 			nti[i] = m_teams[i];
 
-		for ( ; i < m_numTeamsAllocated + TEAM_ALLOC_CHUNK; i++) 
+		for ( ; i < newNumTeamsAllocated; i++)
 			nti[i].clear(); 
 		
 		delete [] m_teams;
 
 		m_teams = nti;
-		m_numTeamsAllocated += TEAM_ALLOC_CHUNK;
+		m_numTeamsAllocated = newNumTeamsAllocated;
 	}
 
 	m_teams[m_numTeams++].init(d);
