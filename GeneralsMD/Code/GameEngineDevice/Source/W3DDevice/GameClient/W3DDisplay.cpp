@@ -2932,6 +2932,8 @@ static void CreateBMPFile(LPTSTR pszFile, char *image, Int width, Int height)
     PBITMAPINFO pbmi; 
 
     pbmi = (PBITMAPINFO) LocalAlloc(LPTR,sizeof(BITMAPINFOHEADER));
+    if (pbmi == NULL)
+        return;
     pbmi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER); 
     pbmi->bmiHeader.biWidth = width; 
     pbmi->bmiHeader.biHeight = height; 
