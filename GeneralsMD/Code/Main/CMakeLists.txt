@@ -19,7 +19,6 @@ target_link_libraries(z_generals PRIVATE
     dxguid
     imm32
     milesstub
-    safedisc
     vfw32
     winmm
     z_gameengine

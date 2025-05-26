@@ -20,7 +20,6 @@ target_link_libraries(g_generals PRIVATE
     gi_always
     imm32
     milesstub
-    safedisc
     vfw32
     winmm
 )
