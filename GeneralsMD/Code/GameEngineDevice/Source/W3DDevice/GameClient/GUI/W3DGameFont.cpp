@@ -137,10 +137,11 @@ void W3DFontLibrary::releaseFontData( GameFont *font )
 		if(((FontCharsClass *)(font->fontData))->AlternateUnicodeFont)
 			((FontCharsClass *)(font->fontData))->AlternateUnicodeFont->Release_Ref();
 		((FontCharsClass *)(font->fontData))->Release_Ref();
+
+		font->fontData = NULL;
 	}
-	font->fontData = NULL;
-	
-}  // end releaseFont
+
+}  // end releaseFontData
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 
