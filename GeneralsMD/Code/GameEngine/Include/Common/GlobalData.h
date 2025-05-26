@@ -331,6 +331,10 @@ public:
 	Bool m_buildMapCache;
 	AsciiString m_initialFile;				///< If this is specified, load a specific map/replay from the command-line
 	AsciiString m_pendingFile;				///< If this is specified, use this map at the next game start
+	
+	std::vector<AsciiString> m_simulateReplayList; ///< If not empty, simulate this list of replays and exit. (TheSuperHackers @feature helmutbuhler 13/04/2025)
+	Int m_simulateReplayJobs; ///< Maximum number of processes to use for simulation, or -1 for sequential simulation
+	AsciiString m_writeReplayList; ///< If not empty, write out list of replays in this subfolder into a csv file (TheSuperHackers @feature helmutbuhler 24/05/2025)
 
 	Int m_maxParticleCount;						///< maximum number of particles that can exist
 	Int m_maxFieldParticleCount;			///< maximum number of field-type particles that can exist (roughly)
