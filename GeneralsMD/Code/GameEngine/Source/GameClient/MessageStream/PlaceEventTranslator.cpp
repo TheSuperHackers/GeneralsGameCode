@@ -296,9 +296,12 @@ GameMessageDisposition PlaceEventTranslator::translateGameMessage(const GameMess
 					TheInGameUI->displayCantBuildMessage( lbc );
 
 					//Cannot build here -- play the voice sound from the dozer
-					AudioEventRTS sound = *builderObj->getTemplate()->getPerUnitSound( "VoiceNoBuild" );
-					sound.setObjectID( builderObj->getID() );
-					TheAudio->addAudioEvent( &sound );
+					if (builderObj)
+					{
+						AudioEventRTS sound = *builderObj->getTemplate()->getPerUnitSound( "VoiceNoBuild" );
+						sound.setObjectID( builderObj->getID() );
+						TheAudio->addAudioEvent( &sound );
+					}
 
 					// play a can't do that sound (UI beep type sound)
 					static AudioEventRTS noCanDoSound( "NoCanDoSound" );
