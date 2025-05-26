@@ -1575,6 +1575,7 @@ Shadow* W3DProjectedShadowManager::addDecal(Shadow::ShadowTypeInfo *shadowInfo)
 			break;
 		case SHADOW_PROJECTION:
 			m_numProjectionShadows++;
+			break;
 		default:
 			break;
 	}
@@ -1711,6 +1712,7 @@ Shadow* W3DProjectedShadowManager::addDecal(RenderObjClass *robj, Shadow::Shadow
 			break;
 		case SHADOW_PROJECTION:
 			m_numProjectionShadows++;
+			break;
 		default:
 			break;
 	}
@@ -1907,6 +1909,7 @@ W3DProjectedShadow* W3DProjectedShadowManager::addShadow(RenderObjClass *robj, S
 			break;
 		case SHADOW_PROJECTION:
 			m_numProjectionShadows++;
+			break;
 		default:
 			break;
 	}
@@ -2037,6 +2040,7 @@ void W3DProjectedShadowManager::removeShadow (W3DProjectedShadow *shadow)
 						break;
 					case SHADOW_PROJECTION:
 						m_numProjectionShadows--;
+						break;
 					default:
 						break;
 				}
@@ -2062,6 +2066,7 @@ void W3DProjectedShadowManager::removeShadow (W3DProjectedShadow *shadow)
 					break;
 				case SHADOW_PROJECTION:
 					m_numProjectionShadows--;
+					break;
 				default:
 					break;
 			}
