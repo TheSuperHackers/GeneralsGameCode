@@ -83,6 +83,12 @@ void ReplaceObjectUpgrade::upgradeImplementation( )
 		return;
 	}
 
+	AIGroup* currentGroup = TheAI->createGroup();
+	me->getControllingPlayer()->getCurrentSelectionAsAIGroup(currentGroup);
+
+	Int oldObjectSquadNumber = me->getControllingPlayer()->getSquadNumberForObject(me);
+	Bool oldObjectSelected = currentGroup->isMember(me);
+
 	// Remove us first since occupation of cells is apparently not a refcount, but a flag.  If I don't remove, then the new
 	// thing will be placed, and then on deletion I will remove "his" marks.
 	TheAI->pathfinder()->removeObjectFromPathfindMap( me );
@@ -105,6 +111,16 @@ void ReplaceObjectUpgrade::upgradeImplementation( )
 	if( replacementObject->getControllingPlayer() )
 	{
 		replacementObject->getControllingPlayer()->onStructureConstructionComplete(me, replacementObject, FALSE);
+
+		if (oldObjectSelected)
+		{
+			TheGameLogic->selectObject(replacementObject, TRUE, replacementObject->getControllingPlayer()->getPlayerMask(), replacementObject->isLocallyControlled());
+		}
+
+		if (oldObjectSquadNumber != NO_HOTKEY_SQUAD)
+		{
+			replacementObject->getControllingPlayer()->addObjectToSquad(replacementObject, oldObjectSquadNumber);
+		}
 	}
 }
 

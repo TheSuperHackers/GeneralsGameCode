@@ -3784,6 +3784,18 @@ void Player::setCurrentlySelectedAIGroup(AIGroup *group) {
 }
 
 //-------------------------------------------------------------------------------------------------
+/** Add an object to a squad */
+//-------------------------------------------------------------------------------------------------
+void Player::addObjectToSquad(Object* obj, Int squadNumber)
+{
+	if (m_squads[squadNumber] == NULL) {
+		return;
+	}
+
+	m_squads[squadNumber]->addObject(obj);
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Select a hotkey team based on this GameMessage */
 //-------------------------------------------------------------------------------------------------
 Squad *Player::getHotkeySquad(Int squadNumber)

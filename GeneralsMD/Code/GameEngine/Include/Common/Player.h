@@ -646,6 +646,9 @@ public:
 	// adds the given AIGroup to the current selection of this player.
 	void addAIGroupToCurrentSelection(AIGroup *group);
 
+	// adds an object to the player's specified hotkey team.
+	void addObjectToSquad(Object* obj, Int squadNumber);
+
 	// return the requested hotkey squad
 	Squad *getHotkeySquad(Int squadNumber);
 
