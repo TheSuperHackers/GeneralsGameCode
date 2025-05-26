@@ -3264,6 +3264,11 @@ Object *PartitionManager::getClosestObjects(
 	Object* closestObj = NULL;
 	Real closestDistSqr = maxDist * maxDist;	// if it's not closer than this, we shouldn't consider it anyway...
 	Coord3D closestVec;
+#if !RETAIL_COMPATIBLE_CRC // TheSuperHackers @info This should be safe to initialize because it is unused, but let us be extra safe for now.
+	closestVec.x = maxDist;
+	closestVec.y = maxDist;
+	closestVec.z = maxDist;
+#endif
 
 #ifdef FASTER_GCO
 
