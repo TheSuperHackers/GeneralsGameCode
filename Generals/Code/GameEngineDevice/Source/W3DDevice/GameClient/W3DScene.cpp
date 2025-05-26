@@ -391,8 +391,7 @@ void RTS3DScene::Visibility_Check(CameraClass * camera)
 	m_translucentObjectsCount=0;
 	m_numNonOccluderOrOccludee=0;
 
-	Int currentFrame=0;
-	if (TheGameLogic) currentFrame = TheGameLogic->getFrame();
+	Int currentFrame=TheGameLogic->getFrame();
 	if (currentFrame <= TheGlobalData->m_defaultOcclusionDelay)
 		currentFrame = TheGlobalData->m_defaultOcclusionDelay+1;	//make sure occlusion is enabled when game starts (frame 0).
 
