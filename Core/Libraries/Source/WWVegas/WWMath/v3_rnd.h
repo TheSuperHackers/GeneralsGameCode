@@ -129,7 +129,7 @@ class Vector3SolidBoxRandomizer : public Vector3Randomizer {
 	private:
 
 		// Derived classes should have a private dummy assignment operator to block usage
-		Vector3SolidBoxRandomizer& operator = (const Vector3SolidBoxRandomizer&) CPP_11(= delete);
+		Vector3SolidBoxRandomizer & operator = (const Vector3SolidBoxRandomizer&) CPP_11(= delete);
 
 		Vector3	Extents;
 };
