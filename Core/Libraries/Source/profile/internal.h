@@ -37,6 +37,7 @@
 #include "internal_highlevel.h"
 #include "internal_cmd.h"
 #include "internal_result.h"
+#include "Utility/CppMacros.h"
 
 #if !(defined(_MSC_VER) && _MSC_VER < 1300)
 #include <atomic>
