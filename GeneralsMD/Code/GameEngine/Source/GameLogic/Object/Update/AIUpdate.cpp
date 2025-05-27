@@ -2625,6 +2625,9 @@ Bool AIUpdateInterface::isAllowedToRespondToAiCommands(const AICommandParms* par
 //-------------------------------------------------------------------------------------------------
 void AIUpdateInterface::aiDoCommand(const AICommandParms* parms)
 {
+	// TheSuperHackers @info The AiCommandParms for m_obj, m_otherObj and m_team should be null tested before use.
+	// These variables could relate to a deleted object when a pending command is reconstituted.
+
 	if (!isAllowedToRespondToAiCommands(parms))
 		return;
 
@@ -3215,6 +3218,12 @@ void AIUpdateInterface::privateMoveAwayFromUnit( Object *unit, CommandSourceType
 	{
 		return;
 	}
+
+	// TheSuperHacker @bugfix Mauller 26/05/2025 Fix dereferencing a nullptr when a delayed ai command refers to a deleted object.
+	// This can occur when a hacker is told to move away from an object when in its hacking state and is transitioning to a movement state.
+	if (!unit)
+		return;
+
 	ObjectID id = unit->getID();
 	if (m_stateMachine->getTemporaryState() == AI_MOVE_OUT_OF_THE_WAY) {
 		if (m_moveOutOfWay1 == id) {
