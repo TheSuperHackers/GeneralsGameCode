@@ -997,9 +997,9 @@ GlobalData::GlobalData()
 	const Int blockSize = 65536;
 	CRC exeCRC;
 	File *fp;
-	// TheSuperHackers @tweak 27/05/2025 SkyAero/xezon
+	// TheSuperHackers @tweak SkyAero/xezon 27/05/2025
 	// Simulate the EXE's CRC value to force Network and Replay compatibility with another build.
-#if (defined(_MSC_VER) && _MSC_VER < 1300)   && 0 // NOT
+#if (defined(_MSC_VER) && _MSC_VER < 1300)
 
 #define GENERALSMD_104_CD_EXE_CRC    0x4f6c5afe
 #define GENERALSMD_104_STEAM_EXE_CRC 0xcb430f5f
