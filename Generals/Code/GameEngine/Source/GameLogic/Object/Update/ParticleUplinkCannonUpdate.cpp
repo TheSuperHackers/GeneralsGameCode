@@ -564,7 +564,7 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				m_orbitToTargetLaserRadius.updateRadius();
 				const Real logicalLaserRadius = update->getTemplateLaserRadius() * m_orbitToTargetLaserRadius.getWidthScale();
 				damageRadius = logicalLaserRadius * data->m_damageRadiusScalar;
-#if RETAIL_COMPATIBLE_XFER_CRC
+#if RETAIL_COMPATIBLE_CRC
 				DEBUG_ASSERTCRASH(logicalLaserRadius == visualLaserRadius,
 					("ParticleUplinkCannonUpdate's laser radius does not match LaserUpdate's laser radius - will cause mismatch in VS6 retail compatible builds\n"));
 #endif
