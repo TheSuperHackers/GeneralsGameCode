@@ -419,6 +419,7 @@ template <class RHS>
 bool operator ==(DummyPtrType * dummy, const RefCountPtr<RHS> & rhs)
 {
 	if (0 != dummy) {
+		WWASSERT(0);
 		return false;
 	}
 
@@ -431,6 +432,7 @@ template <class RHS>
 bool operator !=(DummyPtrType * dummy, const RefCountPtr<RHS> & rhs)
 {
 	if (0 != dummy) {
+		WWASSERT(0);
 		return true;
 	}
 

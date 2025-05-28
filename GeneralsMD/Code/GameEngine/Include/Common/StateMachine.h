@@ -486,9 +486,9 @@ EMPTY_DTOR(SleepState)
 //-----------------------------------------------------------------------------------------------------------
 // TheSuperHackers @info Misappropriates deleteInstance to call Release_Ref to keep the StateMachine fix small.
 // @todo Replace calls to deleteInstance with RefCountPtr<StateMachine> when so appropriate.
-inline void deleteInstance(StateMachine* state)
+inline void deleteInstance(StateMachine* machine)
 {
-	state->Release_Ref();
+	machine->Release_Ref();
 }
 
 
