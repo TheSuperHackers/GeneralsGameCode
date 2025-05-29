@@ -1043,7 +1043,10 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 				playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1));
 
 			// TheSuperHackers @tweak Pause the game on mismatch.
-			TheGameLogic->setGamePaused(true);
+			Bool pause = TRUE;
+			Bool pauseMusic = FALSE;
+			Bool pauseInput = FALSE;
+			TheGameLogic->setGamePaused(pause, pauseMusic, pauseInput);
 		}
 		return;
 	}

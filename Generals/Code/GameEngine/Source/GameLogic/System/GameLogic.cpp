@@ -239,7 +239,11 @@ GameLogic::GameLogic( void )
 	m_startNewGame = FALSE;
 	m_gameMode = GAME_NONE;
 	m_rankLevelLimit = 1000;
+	m_pauseFrame = 0;
 	m_gamePaused = FALSE;
+	m_pauseSound = FALSE;
+	m_pauseMusic = FALSE;
+	m_pauseInput = FALSE;
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
 	m_loadScreen = NULL;
@@ -400,7 +404,11 @@ void GameLogic::init( void )
 	//ThePlayerList->setLocalPlayer(0);
 
 	m_CRC = 0;
+	m_pauseFrame = 0;
 	m_gamePaused = FALSE;
+	m_pauseSound = FALSE;
+	m_pauseMusic = FALSE;
+	m_pauseInput = FALSE;
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
 	for(Int i = 0; i < MAX_SLOTS; ++i)
@@ -436,7 +444,12 @@ void GameLogic::reset( void )
 #else
 	m_objHash.reserve(OBJ_HASH_SIZE);
 #endif
+
+	m_pauseFrame = 0;
 	m_gamePaused = FALSE;
+	m_pauseSound = FALSE;
+	m_pauseMusic = FALSE;
+	m_pauseInput = FALSE;
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
 	setFPMode();
@@ -3299,6 +3312,20 @@ void GameLogic::update( void )
 }
 
 // ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void GameLogic::preUpdate()
+{
+	if (m_pauseFrame == m_frame && m_pauseFrame != 0)
+	{
+		m_pauseFrame = 0;
+		Bool pause = TRUE;
+		Bool pauseMusic = FALSE;
+		Bool pauseInput = FALSE;
+		TheGameLogic->setGamePaused(pause, pauseMusic, pauseInput);
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
 /** Return the first object in the world list */
 // ------------------------------------------------------------------------------------------------
 Object *GameLogic::getFirstObject( void )
@@ -3647,7 +3674,17 @@ Bool GameLogic::isGamePaused( void )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void GameLogic::setGamePaused( Bool paused, Bool pauseMusic )
+void GameLogic::setGamePausedInFrame( UnsignedInt frame )
+{
+	if (frame >= m_frame)
+	{
+		m_pauseFrame = frame;
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void GameLogic::setGamePaused( Bool paused, Bool pauseMusic, Bool pauseInput )
 {
 	// We need to ignore an unpause called when we are unpaused or else:
 	// Mouse is hidden for some reason (script or something)
@@ -3661,29 +3698,32 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic )
 
 	// GameUnpaused
 	// Set mouse the way it "was" <--- Was counting on right answer being set in Pause.
-	if( paused == m_gamePaused )
+
+	pauseGameLogic(paused);
+	pauseGameSound(paused);
+	pauseGameMusic(paused && pauseMusic);
+	pauseGameInput(paused && pauseInput);
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void GameLogic::pauseGameLogic(Bool paused)
+{
+	m_gamePaused = paused;
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void GameLogic::pauseGameSound(Bool paused)
+{
+	if(m_pauseSound == paused)
 		return;
 
-	m_gamePaused = paused; 
+	m_pauseSound = paused;
 
-	AudioAffect audToAffect = (AudioAffect)(pauseMusic ? AudioAffect_All : (AudioAffect_All & ~AudioAffect_Music));
-	
 	if(paused)
 	{
-		// remember the state of the mouse/input so we can return to the same state once we "unpause"
-		m_inputEnabledMemory = TheInGameUI->getInputEnabled();
-		m_mouseVisibleMemory = TheMouse->getVisibility();
-		
-		// Make sure the mouse is visible and the cursor is an arrow
-		TheMouse->setVisibility(TRUE);
-		TheMouse->setCursor( Mouse::ARROW );
-		
-		// if Input is enabled, disable it
-		if(m_inputEnabledMemory)
-		{
-			TheInGameUI->setInputEnabled(FALSE);
-		}
-		TheAudio->pauseAudio(audToAffect);
+		TheAudio->pauseAudio((AudioAffect)(AudioAffect_All & ~AudioAffect_Music));
 
 		//Stop all ambient sounds!
 		Drawable *drawable = TheGameClient->getDrawableList();
@@ -3695,11 +3735,7 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic )
 	}
 	else
 	{
-		// set the mouse/input states to what they were before we paused.
-		TheMouse->setVisibility(m_mouseVisibleMemory);
-		if(m_inputEnabledMemory)
-			TheInGameUI->setInputEnabled(TRUE);
-		TheAudio->resumeAudio(audToAffect);
+		TheAudio->resumeAudio((AudioAffect)(AudioAffect_All & ~AudioAffect_Music));
 
 		//Start all ambient sounds!
 		Drawable *drawable = TheGameClient->getDrawableList();
@@ -3707,6 +3743,61 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic )
 		{
 			drawable->startAmbientSound();
 			drawable = drawable->getNextDrawable();
+		}
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void GameLogic::pauseGameMusic(Bool paused)
+{
+	if(m_pauseMusic == paused)
+		return;
+
+	m_pauseMusic = paused;
+
+	if(paused)
+	{
+		TheAudio->pauseAudio(AudioAffect_Music);
+	}
+	else
+	{
+		TheAudio->resumeAudio(AudioAffect_Music);
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void GameLogic::pauseGameInput(Bool paused)
+{
+	if(m_pauseInput == paused)
+		return;
+
+	m_pauseInput = paused;
+
+	if(paused)
+	{
+		// remember the state of the mouse/input so we can return to the same state once we "unpause"
+		m_inputEnabledMemory = TheInGameUI->getInputEnabled();
+		m_mouseVisibleMemory = TheMouse->getVisibility();
+
+		// Make sure the mouse is visible and the cursor is an arrow
+		TheMouse->setVisibility(TRUE);
+		TheMouse->setCursor( Mouse::ARROW );
+
+		// if Input is enabled, disable it
+		if(m_inputEnabledMemory)
+		{
+			TheInGameUI->setInputEnabled(FALSE);
+		}
+	}
+	else
+	{
+		// set the mouse/input states to what they were before we paused.
+		TheMouse->setVisibility(m_mouseVisibleMemory);
+		if(m_inputEnabledMemory)
+		{
+			TheInGameUI->setInputEnabled(TRUE);
 		}
 	}
 }
