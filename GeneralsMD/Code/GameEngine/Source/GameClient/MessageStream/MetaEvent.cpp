@@ -181,7 +181,9 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "END_CAMERA_ZOOM_OUT",											GameMessage::MSG_META_END_CAMERA_ZOOM_OUT },
 	{ "CAMERA_RESET",															GameMessage::MSG_META_CAMERA_RESET },
 	{ "TOGGLE_CAMERA_TRACKING_DRAWABLE",					GameMessage::MSG_META_TOGGLE_CAMERA_TRACKING_DRAWABLE },
-	{ "TOGGLE_FAST_FORWARD_REPLAY",              GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY },
+	{ "TOGGLE_FAST_FORWARD_REPLAY",								GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY },
+	{ "TOGGLE_PAUSE",															GameMessage::MSG_META_TOGGLE_PAUSE },
+	{ "STEP_FRAME",																GameMessage::MSG_META_STEP_FRAME },
   	{ "DEMO_INSTANT_QUIT",												GameMessage::MSG_META_DEMO_INSTANT_QUIT },
 
 #if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
@@ -716,6 +718,31 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 		throw INI_INVALID_DATA;
 
 	ini->initFromINI(map, TheMetaMapFieldParseTable);
+}
+
+//-------------------------------------------------------------------------------------------------
+/*static */ void MetaMap::generateMetaMap()
+{
+	{
+		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_TOGGLE_PAUSE);
+		if (map->m_key == MappableKeyType::MK_NONE)
+		{
+			map->m_key = MappableKeyType::MK_P;
+			map->m_transition = MappableKeyTransition::DOWN;
+			map->m_modState = MappableKeyModState::NONE;
+			map->m_usableIn = CommandUsableInType::COMMANDUSABLE_GAME;
+		}
+	}
+	{
+		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_STEP_FRAME);
+		if (map->m_key == MappableKeyType::MK_NONE)
+		{
+			map->m_key = MappableKeyType::MK_O;
+			map->m_transition = MappableKeyTransition::DOWN;
+			map->m_modState = MappableKeyModState::NONE;
+			map->m_usableIn = CommandUsableInType::COMMANDUSABLE_GAME;
+		}
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
