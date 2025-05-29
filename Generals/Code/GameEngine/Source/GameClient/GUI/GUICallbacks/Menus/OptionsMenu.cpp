@@ -41,6 +41,7 @@
 #include "Common/Registry.h"
 #include "Common/version.h"
 
+#include "GameClient/ClientInstance.h"
 #include "GameClient/GameClient.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/WindowLayout.h"
@@ -223,14 +224,24 @@ enum Detail CPP_11(: Int)
 
 OptionPreferences::OptionPreferences( void )
 {
-	// note, the superclass will put this in the right dir automatically, this is just a leaf name
-	load("Options.ini");
+	loadFromIniFile();
 }
 
 OptionPreferences::~OptionPreferences()
 {
 }
 
+Bool OptionPreferences::loadFromIniFile()
+{
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		AsciiString fname;
+		fname.format("Options_Instance%.2u.ini", rts::ClientInstance::getInstanceId());
+		return load(fname);
+	}
+
+	return load("Options.ini");
+}
 
 Int OptionPreferences::getCampaignDifficulty(void)
 {

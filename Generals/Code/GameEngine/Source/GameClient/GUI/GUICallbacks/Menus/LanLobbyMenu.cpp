@@ -42,6 +42,7 @@
 #include "Common/QuotedPrintable.h"
 #include "Common/UserPreferences.h"
 #include "GameClient/AnimateWindowManager.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/GameText.h"
 #include "GameClient/MapUtil.h"
 #include "GameClient/Mouse.h"
@@ -73,12 +74,23 @@ static Bool justEntered = FALSE;
 
 LANPreferences::LANPreferences( void )
 {
-	// note, the superclass will put this in the right dir automatically, this is just a leaf name
-	load("Network.ini");
+	loadFromIniFile();
 }
 
 LANPreferences::~LANPreferences()
 {
+}
+
+Bool LANPreferences::loadFromIniFile()
+{
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		AsciiString fname;
+		fname.format("Network_Instance%.2u.ini", rts::ClientInstance::getInstanceId());
+		return load(fname);
+	}
+
+	return load("Network.ini");
 }
 
 UnicodeString LANPreferences::getUserName(void)
