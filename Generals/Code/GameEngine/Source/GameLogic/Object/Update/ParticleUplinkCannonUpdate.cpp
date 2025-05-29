@@ -575,8 +575,10 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 			const Real logicalLaserRadius = templateLaserRadius * m_orbitToTargetLaserRadius.getWidthScale();
 			damageRadius = logicalLaserRadius * data->m_damageRadiusScalar;
 			scorchRadius = logicalLaserRadius * data->m_scorchMarkScalar;
-			DEBUG_ASSERTCRASH_RETAIL_COMPATIBLE_CRC(logicalLaserRadius == visualLaserRadius,
+#if defined(RETAIL_COMPATIBLE_CRC)
+			DEBUG_ASSERTCRASH(logicalLaserRadius == visualLaserRadius,
 				("ParticleUplinkCannonUpdate's laser radius does not match LaserUpdate's laser radius - will cause mismatch in VS6 retail compatible builds\n"));
+#endif
 
 			//Create scorch marks periodically
 			if( m_nextScorchMarkFrame <= now )
