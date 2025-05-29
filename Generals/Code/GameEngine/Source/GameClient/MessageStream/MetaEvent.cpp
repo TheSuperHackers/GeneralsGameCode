@@ -663,23 +663,23 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 {
 	{
 		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_SELECT_ALL_AIRCRAFT);
-		if (map->m_key == MappableKeyType::MK_NONE)
+		if (map->m_key == MK_NONE)
 		{
-			map->m_key = MappableKeyType::MK_W;
-			map->m_transition = MappableKeyTransition::DOWN;
-			map->m_modState = MappableKeyModState::NONE;
-			map->m_usableIn = CommandUsableInType::COMMANDUSABLE_GAME;
-			map->m_category = MappableKeyCategories::CATEGORY_SELECTION;
+			map->m_key = MK_W;
+			map->m_transition = DOWN;
+			map->m_modState = NONE;
+			map->m_usableIn = COMMANDUSABLE_GAME;
+			map->m_category = CATEGORY_SELECTION;
 		}
 	}
 	{
 		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY);
-		if (map->m_key == MappableKeyType::MK_NONE)
+		if (map->m_key == MK_NONE)
 		{
-			map->m_key = MappableKeyType::MK_F;
-			map->m_transition = MappableKeyTransition::DOWN;
-			map->m_modState = MappableKeyModState::NONE;
-			map->m_usableIn = CommandUsableInType::COMMANDUSABLE_GAME;
+			map->m_key = MK_F;
+			map->m_transition = DOWN;
+			map->m_modState = NONE;
+			map->m_usableIn = COMMANDUSABLE_GAME;
 		}
 	}
 	{
