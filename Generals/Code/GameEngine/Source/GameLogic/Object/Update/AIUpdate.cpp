@@ -3881,6 +3881,9 @@ void AIUpdateInterface::privateGuardTunnelNetwork( GuardMode guardMode, CommandS
  */
 void AIUpdateInterface::privateGuardObject( Object *objectToGuard, GuardMode guardMode, CommandSourceType cmdSource )
 {
+	if (!objectToGuard)
+		return;
+
 	if (getObject()->isMobile() == FALSE)
 		return;
 
@@ -4657,10 +4660,8 @@ void AIUpdateInterface::privateCommandButtonPosition( const CommandButton *comma
 // ------------------------------------------------------------------------------------------------
 void AIUpdateInterface::privateCommandButtonObject( const CommandButton *commandButton, Object *obj, CommandSourceType cmdSource )
 {
-	if( !commandButton )
-	{
+	if( !commandButton || !obj )
 		return;
-	}
 
 	if (getObject()->isKindOf(KINDOF_PROJECTILE))
 		return;
