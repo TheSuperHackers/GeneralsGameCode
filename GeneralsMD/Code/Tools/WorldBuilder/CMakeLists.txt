@@ -212,6 +212,8 @@ target_include_directories(z_worldbuilder PRIVATE
 target_link_libraries(z_worldbuilder PRIVATE
     core_debug
     core_profile
+    corei_gameengine_include
+    corei_gameenginedevice_include
     d3d8lib
     dbghelplib
     imm32

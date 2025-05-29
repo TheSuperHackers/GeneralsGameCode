@@ -9,6 +9,7 @@ target_compile_definitions(core_wwcommon INTERFACE
 target_link_libraries(core_wwcommon INTERFACE
     core_config
     core_utility
+    corei_gameengine_include
     d3d8lib
     milesstub
     stlport

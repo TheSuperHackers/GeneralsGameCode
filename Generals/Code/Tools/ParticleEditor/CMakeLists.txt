@@ -39,6 +39,7 @@ target_include_directories(g_particleeditor PRIVATE
 target_compile_definitions(g_particleeditor PRIVATE _AFXDLL)
 
 target_link_libraries(g_particleeditor PRIVATE
+    corei_gameengine_include
     corei_libraries_source_wwvegas
     corei_libraries_source_wwvegas_wwlib
     d3d8lib

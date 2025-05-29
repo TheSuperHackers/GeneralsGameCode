@@ -3,6 +3,7 @@ set_target_properties(z_wwdownload PROPERTIES OUTPUT_NAME wwdownload)
 
 target_link_libraries(z_wwdownload PRIVATE
     corei_wwdownload
+    corei_gameengine_include
     zi_always
     zi_gameengine_include
 )

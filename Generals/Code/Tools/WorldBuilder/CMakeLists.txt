@@ -208,6 +208,8 @@ target_link_libraries(g_worldbuilder PRIVATE
     d3d8lib
     dbghelplib
     core_browserdispatch
+    corei_gameengine_include
+    corei_gameenginedevice_include
     g_gameengine
     g_gameenginedevice
     gi_gameengine_include
