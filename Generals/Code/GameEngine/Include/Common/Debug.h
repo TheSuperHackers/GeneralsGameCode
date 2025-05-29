@@ -48,6 +48,8 @@
 #ifndef __DEBUG_H_
 #define __DEBUG_H_
 
+#include "Common/GameDefines.h"
+
 class AsciiString;
 
 #if defined(RTS_DEBUG) && defined(RTS_INTERNAL)
@@ -212,6 +214,15 @@ class AsciiString;
 //	#define RELEASE_CRASH(m)				do { ReleaseCrash(m); } while (0)
 
 #endif
+
+#if defined(RETAIL_COMPATIBLE_CRC)
+	#define DEBUG_CRASH_RETAIL_COMPATIBLE_CRC(c, m) DEBUG_CRASH(m)
+	#define DEBUG_ASSERTCRASH_RETAIL_COMPATIBLE_CRC(c, m) DEBUG_ASSERTCRASH(c, m)
+#else
+	#define DEBUG_CRASH_RETAIL_COMPATIBLE_CRC(c, m) ((void)0)
+	#define DEBUG_ASSERTCRASH_RETAIL_COMPATIBLE_CRC(c, m) ((void)0)
+#endif
+
 
 DEBUG_EXTERN_C void ReleaseCrash(const char* reason);
 DEBUG_EXTERN_C void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m);
