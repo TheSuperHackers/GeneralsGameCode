@@ -82,7 +82,7 @@ bool ClientInstance::isInitialized()
 
 UnsignedInt ClientInstance::getInstanceIndex()
 {
-	DEBUG_ASSERTLOG(!isInitialized(), ("ClientInstance::isInitialized() failed"));
+	DEBUG_ASSERTLOG(isInitialized(), ("ClientInstance::isInitialized() failed"));
 	return s_instanceIndex;
 }
 
