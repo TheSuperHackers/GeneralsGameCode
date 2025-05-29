@@ -47,7 +47,7 @@ public:
 	SkirmishPreferences();
 	virtual ~SkirmishPreferences();
 
-	Bool loadDefault();
+	Bool loadFromIniFile();
 
 	virtual Bool write(void);
 	AsciiString getSlotList(void);

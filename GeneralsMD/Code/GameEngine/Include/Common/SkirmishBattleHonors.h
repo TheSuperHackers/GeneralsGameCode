@@ -52,7 +52,7 @@ public:
 	SkirmishBattleHonors();
 	virtual ~SkirmishBattleHonors();
 
-	Bool loadDefault();
+	Bool loadFromIniFile();
 
 	void setWins(Int val);
 	Int getWins(void) const;

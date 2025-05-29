@@ -95,7 +95,7 @@ public:
 	GameSpyLoginPreferences();
 	virtual ~GameSpyLoginPreferences();
 
-	Bool loadDefault();
+	Bool loadFromIniFile();
 
 	virtual Bool load(AsciiString fname);
 	virtual Bool write(void);
@@ -139,14 +139,14 @@ static AsciiString obfuscate( AsciiString in )
 
 GameSpyLoginPreferences::GameSpyLoginPreferences()
 {
-	loadDefault();
+	loadFromIniFile();
 }
 
 GameSpyLoginPreferences::~GameSpyLoginPreferences()
 {
 }
 
-Bool GameSpyLoginPreferences::loadDefault()
+Bool GameSpyLoginPreferences::loadFromIniFile()
 {
 	if (rts::ClientInstance::getInstanceId() > 1u)
 	{

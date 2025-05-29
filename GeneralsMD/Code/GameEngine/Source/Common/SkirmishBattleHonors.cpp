@@ -80,14 +80,14 @@
 
 SkirmishBattleHonors::SkirmishBattleHonors()
 {
-	loadDefault();
+	loadFromIniFile();
 }
 
 SkirmishBattleHonors::~SkirmishBattleHonors()
 {
 }
 
-Bool SkirmishBattleHonors::loadDefault()
+Bool SkirmishBattleHonors::loadFromIniFile()
 {
 	if (rts::ClientInstance::getInstanceId() > 1u)
 	{

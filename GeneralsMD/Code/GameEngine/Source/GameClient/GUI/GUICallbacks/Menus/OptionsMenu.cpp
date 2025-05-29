@@ -233,14 +233,14 @@ enum Detail CPP_11(: Int)
 
 OptionPreferences::OptionPreferences( void )
 {
-	loadDefault();
+	loadFromIniFile();
 }
 
 OptionPreferences::~OptionPreferences()
 {
 }
 
-Bool OptionPreferences::loadDefault()
+Bool OptionPreferences::loadFromIniFile()
 {
 	if (rts::ClientInstance::getInstanceId() > 1u)
 	{

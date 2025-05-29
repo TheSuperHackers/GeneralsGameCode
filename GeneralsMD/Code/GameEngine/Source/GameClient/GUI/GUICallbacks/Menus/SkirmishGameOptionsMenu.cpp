@@ -181,14 +181,14 @@ static Int getNextSelectablePlayer(Int start)
 
 SkirmishPreferences::SkirmishPreferences( void )
 {
-	loadDefault();
+	loadFromIniFile();
 }
 
 SkirmishPreferences::~SkirmishPreferences()
 {
 }
 
-Bool SkirmishPreferences::loadDefault()
+Bool SkirmishPreferences::loadFromIniFile()
 {
 	if (rts::ClientInstance::getInstanceId() > 1u)
 	{

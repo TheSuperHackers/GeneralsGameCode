@@ -74,14 +74,14 @@ static Bool justEntered = FALSE;
 
 LANPreferences::LANPreferences( void )
 {
-	loadDefault();
+	loadFromIniFile();
 }
 
 LANPreferences::~LANPreferences()
 {
 }
 
-Bool LANPreferences::loadDefault()
+Bool LANPreferences::loadFromIniFile()
 {
 	if (rts::ClientInstance::getInstanceId() > 1u)
 	{

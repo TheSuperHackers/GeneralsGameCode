@@ -82,7 +82,7 @@ public:
 	OptionPreferences(  );
 	virtual ~OptionPreferences();
 
-	Bool loadDefault();
+	Bool loadFromIniFile();
 
 	UnsignedInt getLANIPAddress(void);				// convenience function
 	UnsignedInt getOnlineIPAddress(void);			// convenience function
@@ -140,7 +140,7 @@ public:
 	LANPreferences();
 	virtual ~LANPreferences();
 
-	Bool loadDefault();
+	Bool loadFromIniFile();
 
 	UnicodeString getUserName(void);		// convenience function
 	Int getPreferredFaction(void);			// convenience function
