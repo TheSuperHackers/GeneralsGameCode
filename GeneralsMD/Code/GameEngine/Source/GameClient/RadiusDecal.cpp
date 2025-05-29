@@ -195,17 +195,21 @@ RadiusDecal::~RadiusDecal()
 // ------------------------------------------------------------------------------------------------
 void RadiusDecal::update()
 {
-	DEBUG_LOG(("RadiusDecal::update() - (0)\n"));
 	if (m_decal && m_template)
 	{
-		UnsignedInt now = TheGameLogic->getFrame();
-		// m_template->debugPrint();
-		Real theta = (2*PI) * (Real)(now % m_template->m_opacityThrobTime) / (Real)m_template->m_opacityThrobTime;
-		Real percent = 0.5f * (Sin(theta) + 1.0f);
 		Int opac;
-		if( TheGameLogic->getDrawIconUI() )
+		if (TheGameLogic->getDrawIconUI())
 		{
-			opac = REAL_TO_INT((m_template->m_minOpacity + percent * (m_template->m_maxOpacity - m_template->m_minOpacity)) * 255.0f);
+			if (m_template->m_opacityThrobTime > 0) {
+				UnsignedInt now = TheGameLogic->getFrame();
+				// m_template->debugPrint();
+				Real theta = (2 * PI) * (Real)(now % m_template->m_opacityThrobTime) / (Real)m_template->m_opacityThrobTime;
+				Real percent = 0.5f * (Sin(theta) + 1.0f);
+				opac = REAL_TO_INT((m_template->m_minOpacity + percent * (m_template->m_maxOpacity - m_template->m_minOpacity)) * 255.0f);
+			}
+			else {
+				opac = REAL_TO_INT(m_template->m_maxOpacity * 255.0f);
+			}
 		}
 		else
 		{

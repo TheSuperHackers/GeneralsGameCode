@@ -91,10 +91,8 @@ void RadiusDecalBehavior::createRadiusDecal( void )
 	const RadiusDecalTemplate& tmpl = data->m_decalTemplate;
 	m_radiusDecal.clear();
 	if (tmpl.valid()) {
-		// DEBUG
-		DEBUG_LOG(("RadiusDecalBehavior::createRadiusDecal: \n"));
-		tmpl.debugPrint();
-
+		// DEBUG_LOG(("RadiusDecalBehavior::createRadiusDecal: \n"));
+		// tmpl.debugPrint();
 		tmpl.createRadiusDecal(*(getObject()->getPosition()), data->m_decalRadius, getObject()->getControllingPlayer(), m_radiusDecal);
 		setWakeFrame(getObject(), m_radiusDecal.isEmpty() ? UPDATE_SLEEP_FOREVER : UPDATE_SLEEP_NONE);
 	}
@@ -113,12 +111,9 @@ void RadiusDecalBehavior::killRadiusDecal()
 }
 
 // -----------------------------------------------------------------------------------------------
-// Actual cleanup of the decal. This handles the case if the decal is null
 void RadiusDecalBehavior::clearDecal()
 {
-	//if (m_radiusDecal != NULL && !m_radiusDecal.isEmpty()) {
-		m_radiusDecal.clear();
-	//}
+	m_radiusDecal.clear();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -136,12 +131,6 @@ UpdateSleepTime RadiusDecalBehavior::update( void )
 		clearDecal();
 		return UPDATE_SLEEP_FOREVER;
 	}
-
-	// If we reach this point, the upgrade is active: Create the decal if it doesn't exist.
-	//if (m_radiusDecal == NULL || m_radiusDecal.isEmpty()) {
-	//if (m_radiusDecal.isEmpty()) {
-	//	createRadiusDecal();
-	//}
 
 	// This should be our usual case
 	if (!m_radiusDecal.isEmpty()) {
