@@ -123,7 +123,7 @@ void RadiusDecalTemplate::xferRadiusDecalTemplate( Xfer *xfer )
 		{ "Style",											INI::parseBitString32,				TheShadowNames,		offsetof( RadiusDecalTemplate, m_shadowType ) },
 		{ "OpacityMin",									INI::parsePercentToReal,			NULL,							offsetof( RadiusDecalTemplate, m_minOpacity ) },
 		{ "OpacityMax",									INI::parsePercentToReal,			NULL,							offsetof( RadiusDecalTemplate, m_maxOpacity) },
-		{ "OpacityThrobTime",						INI::parseDurationUnsignedInt,NULL,							offsetof( RadiusDecalTemplate, m_opacityThrobTime ) },
+		{ "OpacityThrobTime",						INI::parseDurationUnsignedInt, NULL,							offsetof( RadiusDecalTemplate, m_opacityThrobTime ) },
 		{ "Color",											INI::parseColorInt,						NULL,							offsetof( RadiusDecalTemplate, m_color ) },
 		{ "OnlyVisibleToOwningPlayer",	INI::parseBool,								NULL,							offsetof( RadiusDecalTemplate, m_onlyVisibleToOwningPlayer ) },
 		{ 0, 0, 0, 0 }
@@ -195,9 +195,11 @@ RadiusDecal::~RadiusDecal()
 // ------------------------------------------------------------------------------------------------
 void RadiusDecal::update()
 {
+	DEBUG_LOG(("RadiusDecal::update() - (0)\n"));
 	if (m_decal && m_template)
 	{
 		UnsignedInt now = TheGameLogic->getFrame();
+		// m_template->debugPrint();
 		Real theta = (2*PI) * (Real)(now % m_template->m_opacityThrobTime) / (Real)m_template->m_opacityThrobTime;
 		Real percent = 0.5f * (Sin(theta) + 1.0f);
 		Int opac;
