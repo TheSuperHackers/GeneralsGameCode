@@ -725,22 +725,22 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 {
 	{
 		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_TOGGLE_PAUSE);
-		if (map->m_key == MappableKeyType::MK_NONE)
+		if (map->m_key == MK_NONE)
 		{
-			map->m_key = MappableKeyType::MK_P;
-			map->m_transition = MappableKeyTransition::DOWN;
-			map->m_modState = MappableKeyModState::NONE;
-			map->m_usableIn = CommandUsableInType::COMMANDUSABLE_GAME;
+			map->m_key = MK_P;
+			map->m_transition = DOWN;
+			map->m_modState = NONE;
+			map->m_usableIn = COMMANDUSABLE_GAME;
 		}
 	}
 	{
 		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_STEP_FRAME);
-		if (map->m_key == MappableKeyType::MK_NONE)
+		if (map->m_key == MK_NONE)
 		{
-			map->m_key = MappableKeyType::MK_O;
-			map->m_transition = MappableKeyTransition::DOWN;
-			map->m_modState = MappableKeyModState::NONE;
-			map->m_usableIn = CommandUsableInType::COMMANDUSABLE_GAME;
+			map->m_key = MK_O;
+			map->m_transition = DOWN;
+			map->m_modState = NONE;
+			map->m_usableIn = COMMANDUSABLE_GAME;
 		}
 	}
 }
