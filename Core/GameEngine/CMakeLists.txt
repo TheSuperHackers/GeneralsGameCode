@@ -1167,6 +1167,10 @@ target_precompile_headers(corei_gameengine_private INTERFACE
 #    Include/Precompiled/PreRTS.h
 )
 
+if (IS_VS6_BUILD)
+    target_compile_options(corei_gameengine_private INTERFACE $<$<CXX_COMPILER_ID:MSVC>:/Zm500>)
+endif()
+
 target_include_directories(corei_gameengine_public INTERFACE
     Include
 )
