@@ -63,8 +63,12 @@ public:
 
 	Real						m_lockDistance;				///< If I get this close to my target, guaranteed hit.
 	Bool						m_detonateCallsKill;			///< if true, kill() will be called, instead of KILL_SELF state, which calls destroy.
-  Int             m_killSelfDelay;      ///< If I have detonated and entered the KILL-SELF state, how ling do I wait before I Kill/destroy self?
-	MissileAIUpdateModuleData();
+    Int             m_killSelfDelay;      ///< If I have detonated and entered the KILL-SELF state, how ling do I wait before I Kill/destroy self?
+	
+	Real m_randomPathEndDistance;
+	Real m_randomPathOffset;
+
+    MissileAIUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);
 
@@ -89,6 +93,7 @@ public:
 		DEAD					= 5,
 		KILL					= 6, ///< Hit victim (cheat).
 		KILL_SELF			= 7, ///< Destroy self.
+		ATTACK_RANDOM_PATH = 8, ///< fly toward victim
 	};
 
 	virtual ProjectileUpdateInterface* getProjectileUpdateInterface() { return this; }
@@ -121,6 +126,7 @@ private:
 	ObjectID							m_victimID;								///< ID of object that I am rocketing towards (INVALID_ID if not yet launched)
 	UnsignedInt						m_fuelExpirationDate;			///< how long 'til we run out of fuel
 	Real									m_noTurnDistLeft;					///< when zero, ok to start turning
+	Real									m_randomPathDistLeft;					///< when zero, leave random path
 	Real									m_maxAccel;
 	Coord3D								m_originalTargetPos;			///< When firing uphill, we aim high to clear the brow of the hill.  jba.
 	Coord3D								m_prevPos;
@@ -137,7 +143,7 @@ private:
 	void doPrelaunchState();
 	void doLaunchState();
 	void doIgnitionState();
-	void doAttackState(Bool turnOK);
+	void doAttackState(Bool turnOK, Bool randomPath = FALSE);
 	void doKillState();
 	void doKillSelfState();
 	void doDeadState();
