@@ -1527,8 +1527,7 @@ RecorderClass::CullBadCommandsResult RecorderClass::cullBadCommands() {
 
 			deleteInstance(msg);
 		}
-
-		if (msg->getType() == GameMessage::MSG_CLEAR_GAME_DATA)
+		else if (msg->getType() == GameMessage::MSG_CLEAR_GAME_DATA)
 		{
 			result.hasClearGameDataMessage = true;
 		}
