@@ -1734,6 +1734,7 @@ W3DModelDraw::W3DModelDraw(Thing *thing, const ModuleData* moduleData) : DrawMod
 	m_shadowEnabled = TRUE;
 	m_terrainDecal = NULL;
 	m_trackRenderObject = NULL;
+	m_isFirstDrawModule = FALSE;
 	m_whichAnimInCurState = -1;
 	m_nextState = NULL;
 	m_nextStateAnimLoopDuration = NO_NEXT_DURATION;
@@ -1759,24 +1760,30 @@ W3DModelDraw::W3DModelDraw(Thing *thing, const ModuleData* moduleData) : DrawMod
 
 	Drawable* draw = getDrawable();
 
-  if ( draw )
-  {
-	  Object* obj = draw->getObject();
-	  if (obj)
-	  {	
-		  if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
-			  m_hexColor = obj->getNightIndicatorColor();
-		  else
-			  m_hexColor = obj->getIndicatorColor();
-	  }
+	if (draw)
+	{
+		Object* obj = draw->getObject();
+		if (obj)
+		{
+			if (TheGlobalData->m_timeOfDay == TIME_OF_DAY_NIGHT)
+				m_hexColor = obj->getNightIndicatorColor();
+			else
+				m_hexColor = obj->getIndicatorColor();
+		}
 
-    // THE VAST MAJORITY OF THESE SHOULD BE TRUE
-    if ( ! getW3DModelDrawModuleData()->m_receivesDynamicLights)
-    {
-      draw->setReceivesDynamicLights( FALSE );
-		  DEBUG_LOG(("setReceivesDynamicLights = FALSE: %s\n", draw->getTemplate()->getName().str()));
-    }
-  }
+		// THE VAST MAJORITY OF THESE SHOULD BE TRUE
+		if (!getW3DModelDrawModuleData()->m_receivesDynamicLights)
+		{
+			draw->setReceivesDynamicLights(FALSE);
+			DEBUG_LOG(("setReceivesDynamicLights = FALSE: %s\n", draw->getTemplate()->getName().str()));
+		}
+
+		// Check existing draw modules. If they are null, we are the first!
+		DrawModule** drawModules = draw->getDrawModules();
+		if ((*drawModules) == NULL) {
+			m_isFirstDrawModule = TRUE;
+		}
+	}
 
 	setModelState(info);
 }
@@ -1859,7 +1866,8 @@ void W3DModelDraw::allocateShadows(void)
 	const ThingTemplate *tmplate=getDrawable()->getTemplate();
 
 	//Check if we don't already have a shadow but need one for this type of model.
-	if (m_shadow == NULL && m_renderObject && TheW3DShadowManager && tmplate->getShadowType() != SHADOW_NONE)
+	if (m_shadow == NULL && m_renderObject && TheW3DShadowManager && tmplate->getShadowType() != SHADOW_NONE
+		&& m_isFirstDrawModule)
 	{	
 		Shadow::ShadowTypeInfo shadowInfo;
 		strcpy(shadowInfo.m_ShadowName, tmplate->getShadowTextureName().str());
@@ -2734,6 +2742,8 @@ Bool W3DModelDraw::updateBonesForClientParticleSystems()
 //-------------------------------------------------------------------------------------------------
 void W3DModelDraw::setTerrainDecal(TerrainDecalType type)
 {
+	// DEBUG_LOG(("W3DModelDraw::setTerrainDecal - type = %d. invalid = %d\n", type, type == TERRAIN_DECAL_NONE || type >= TERRAIN_DECAL_MAX));
+
 	if (m_terrainDecal)
 		m_terrainDecal->release();
 
@@ -3068,7 +3078,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 		}
 
 		// set up shadows
-		if (m_renderObject && TheW3DShadowManager && tmplate->getShadowType() != SHADOW_NONE)
+		if (m_renderObject && TheW3DShadowManager && tmplate->getShadowType() != SHADOW_NONE && m_isFirstDrawModule)
 		{	
 			Shadow::ShadowTypeInfo shadowInfo;
 			strcpy(shadowInfo.m_ShadowName, tmplate->getShadowTextureName().str());
@@ -4328,6 +4338,9 @@ void W3DModelDraw::xfer( Xfer *xfer )
 	// when loading, update the sub objects if we have any
 	if( xfer->getXferMode() == XFER_LOAD && m_subObjectVec.empty() == FALSE )
 		updateSubObjects();
+
+	// New stuff:
+	xfer->xferBool( &m_isFirstDrawModule );
 
 }  // end xfer
 
