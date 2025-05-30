@@ -443,7 +443,7 @@ Bool ProductionUpdate::queueCreateUnit( const ThingTemplate *unitType, Productio
 	for( std::vector<QuantityModifier>::const_iterator it = data->m_quantityModifiers.begin(); it != data->m_quantityModifiers.end(); ++it )
   {
 		const ThingTemplate* productionTemplate = TheThingFactory->findTemplate( it->m_templateName );
-		if( productionTemplate && productionTemplate->isEquivalentTo( unitType ) )
+		if( ThingTemplate::isEquivalentTo(productionTemplate, unitType) )
 		{
 			production->m_productionQuantityTotal = it->m_quantity;
 			break;

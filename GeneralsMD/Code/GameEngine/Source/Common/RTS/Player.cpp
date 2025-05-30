@@ -1382,7 +1382,7 @@ static void doFindMostReadyWeaponForThing( Object *obj, void *userData )
 		return;
 	}
 	
-	if( info->thing->isEquivalentTo( obj->getTemplate() ) )
+	if( ThingTemplate::isEquivalentTo(info->thing, obj->getTemplate()) )
 	{
 		if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) 
 				&& !obj->testStatus( OBJECT_STATUS_SOLD ) 
@@ -1414,7 +1414,7 @@ static void doFindMostReadySpecialPowerForThing( Object *obj, void *userData )
 		return;
 	}
 	
-	if( info->thing->isEquivalentTo( obj->getTemplate() ) )
+	if( ThingTemplate::isEquivalentTo(info->thing, obj->getTemplate()) )
 	{
 		if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) 
 				&& !obj->testStatus( OBJECT_STATUS_SOLD ) 
@@ -1450,7 +1450,7 @@ static void doFindExistingObjectWithThingTemplate( Object *obj, void *userData )
 		return;
 	}
 	
-	if( info->thing->isEquivalentTo( obj->getTemplate() ) )
+	if( ThingTemplate::isEquivalentTo(info->thing, obj->getTemplate()) )
 	{
 		if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) 
 				&& !obj->testStatus( OBJECT_STATUS_SOLD ) 
@@ -2161,7 +2161,7 @@ void Player::transferAssetsFromThat(Player *that)
 			for (DLINK_ITERATOR<Object> iterObj = team->iterate_TeamMemberList(); !iterObj.done(); iterObj.advance()) 
 			{
 				Object *obj = iterObj.cur();
-				if (!obj || obj->getTemplate()->isEquivalentTo(beaconTemplate))  // don't transfer NULL objs or beacons
+				if (!obj || ThingTemplate::isEquivalentTo(obj->getTemplate(), beaconTemplate)) // don't transfer NULL objs or beacons
 				{
 					continue;
 				}
@@ -2868,7 +2868,7 @@ static void countExisting( Object *obj, void *userData )
   TypeCountData *typeCountData = (TypeCountData *)userData;
   
   // Compare templates
-  if ( typeCountData->type->isEquivalentTo( obj->getTemplate() ) ||
+  if ( ThingTemplate::isEquivalentTo(typeCountData->type, obj->getTemplate()) ||
        ( typeCountData->linkKey != NAMEKEY_INVALID && obj->getTemplate() != NULL && typeCountData->linkKey == obj->getTemplate()->getMaxSimultaneousLinkKey() ) )
   {
     typeCountData->count++;

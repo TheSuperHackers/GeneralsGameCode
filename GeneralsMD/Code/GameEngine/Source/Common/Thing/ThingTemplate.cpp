@@ -1476,43 +1476,43 @@ UnsignedInt ThingTemplate::getMaxSimultaneousOfType() const
 
 
 //-------------------------------------------------------------------------------------------------
-Bool ThingTemplate::isEquivalentTo(const ThingTemplate* tt) const
+Bool ThingTemplate::isEquivalentTo(const ThingTemplate* lhs, const ThingTemplate* rhs)
 {
 	// sanity
-	if (!(this && tt)) 
+	if (!lhs || !rhs)
 		return false;
 
 	// sanity
-	if (this == tt) 
+	if (lhs == rhs)
 		return true;
 	
-	if (this->getFinalOverride() == tt->getFinalOverride()) 
+	if (lhs->getFinalOverride() == rhs->getFinalOverride())
 		return true;
 
-	// This reskinned from that?
-	if (this->m_reskinnedFrom == tt)
+	// lhs reskinned from rhs?
+	if (lhs->m_reskinnedFrom == rhs)
 		return true;
 
-	// That reskinned from this?
-	if (this == tt->m_reskinnedFrom)
+	// rhs reskinned from lhs?
+	if (lhs == rhs->m_reskinnedFrom)
 		return true;
 
-	// This reskinned from that reskinned from?
+	// lhs reskinned from rhs reskinned from?
 	// Kris: added case (chassis 2 compared to chassis 3 -- NULL possible if not reskinned)
-	if( this->m_reskinnedFrom && this->m_reskinnedFrom == tt->m_reskinnedFrom )
+	if( lhs->m_reskinnedFrom && lhs->m_reskinnedFrom == rhs->m_reskinnedFrom )
 		return true;
 
-	// Is this thing a build variation of that thing or vice versa
+	// Is lhs thing a build variation of rhs thing or vice versa
 	Int i;
 
-	Int numVariations = m_buildVariations.size();
+	Int numVariations = lhs->m_buildVariations.size();
 	for (i = 0; i < numVariations; ++i) 
-		if (m_buildVariations[i].compareNoCase(tt->getName()) == 0)
+		if (lhs->m_buildVariations[i].compareNoCase(rhs->getName()) == 0)
 			return true;
 	
-	numVariations = tt->m_buildVariations.size();
+	numVariations = rhs->m_buildVariations.size();
 	for (i = 0; i < numVariations; ++i)
-		if (tt->m_buildVariations[i].compareNoCase(getName()) == 0)
+		if (rhs->m_buildVariations[i].compareNoCase(lhs->getName()) == 0)
 			return true;
 
 	// Guess we're not equivalent.

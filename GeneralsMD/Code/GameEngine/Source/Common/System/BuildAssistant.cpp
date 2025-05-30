@@ -1278,7 +1278,7 @@ Bool BuildAssistant::isPossibleToMakeUnit( Object *builder, const ThingTemplate 
 		if( commandButton &&
 				(commandButton->getCommandType() == GUI_COMMAND_UNIT_BUILD ||
 				 commandButton->getCommandType() == GUI_COMMAND_DOZER_CONSTRUCT) &&
-				commandButton->getThingTemplate()->isEquivalentTo(whatToBuild) )
+				ThingTemplate::isEquivalentTo(commandButton->getThingTemplate(), whatToBuild) )
 			foundCommand = commandButton;
 
 	}  // end for i
