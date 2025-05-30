@@ -491,7 +491,8 @@ Coord3D DockUpdate::computeApproachPosition( Int positionIndex, Object *forWhom 
 // ------------------------------------------------------------------------------------------------
 void DockUpdate::loadDockPositions()
 {
-	Drawable *myDrawable = getObject()->getDrawable();
+	Object *obj = getObject();
+	Drawable *myDrawable = obj->getDrawable();
 
 	if (myDrawable)
 	{
