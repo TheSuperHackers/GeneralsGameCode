@@ -58,6 +58,23 @@ const Real BIGNUM = 99999.0f;
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
 
+
+//-------------------------------------------------------------------------------------------------
+static void adjustVector(Coord3D* vec, const Matrix3D* mtx)
+{
+	if (mtx)
+	{
+		Vector3 vectmp;
+		vectmp.X = vec->x;
+		vectmp.Y = vec->y;
+		vectmp.Z = vec->z;
+		vectmp = mtx->Rotate_Vector(vectmp);
+		vec->x = vectmp.X;
+		vec->y = vectmp.Y;
+		vec->z = vectmp.Z;
+	}
+}
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -80,6 +97,8 @@ MissileAIUpdateModuleData::MissileAIUpdateModuleData()
 	m_distanceScatterWhenJammed = 75.0f;
     m_detonateCallsKill = FALSE;
     m_killSelfDelay   = 3; // just long enough for the contrail to catch up to me
+	m_turnRateInitial = 0;
+	m_turnRateAttacking = BIGNUM;
 }
 
 //-----------------------------------------------------------------------------
@@ -102,6 +121,9 @@ void MissileAIUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "DistanceScatterWhenJammed",INI::parseReal,		NULL, offsetof( MissileAIUpdateModuleData, m_distanceScatterWhenJammed ) },
 		{ "DistanceToTravelOnRandomPath",INI::parseReal,		NULL, offsetof( MissileAIUpdateModuleData, m_randomPathEndDistance ) },
 		{ "RandomPathOffset",INI::parseReal,		NULL, offsetof( MissileAIUpdateModuleData, m_randomPathOffset ) },
+
+		{ "InitialTurnRate", INI::parseAngularVelocityReal,		NULL, offsetof(MissileAIUpdateModuleData, m_turnRateInitial) },
+		{ "AttackingTurnRate", INI::parseAngularVelocityReal,		NULL, offsetof(MissileAIUpdateModuleData, m_turnRateAttacking) },
 
 		{ "GarrisonHitKillRequiredKindOf", KindOfMaskType::parseFromINI, NULL, offsetof( MissileAIUpdateModuleData, m_garrisonHitKillKindof ) },
 		{ "GarrisonHitKillForbiddenKindOf", KindOfMaskType::parseFromINI, NULL, offsetof( MissileAIUpdateModuleData, m_garrisonHitKillKindofNot ) },
@@ -180,6 +202,7 @@ void MissileAIUpdate::switchToState(MissileStateType s)
 {
 	if (m_state != s)
 	{
+		DEBUG_LOG((">>> MissileAI enter state %d. prev state = %d\n", s, m_state));
 		m_state = s;
 		m_stateTimestamp = TheGameLogic->getFrame();
 	}
@@ -525,15 +548,18 @@ void MissileAIUpdate::doAttackState(Bool turnOK, Bool randomPath)
 	{
 		if (curLoco)
 		{
-			if (randomPath) {
+			if (randomPath) { //ATTACK_RANDOM_PATH state
 				if (m_randomPathDistLeft <= 0) {
-					// Weare leaving randomPath state. Reestablish target.
+					// Weare leaving randomPath state. Re-establish target.
 
 					Object* victim = TheGameLogic->findObjectByID(m_victimID);
 
 					if (victim && d->m_tryToFollowTarget)
 					{
+						DEBUG_LOG((">>> MissileAI - EndRandomPath: victim is not null.\n"));
+
 						getStateMachine()->setGoalPosition(victim->getPosition());
+						getStateMachine()->setGoalObject(victim);
 						aiMoveToObject(const_cast<Object*>(victim), CMD_FROM_AI);
 						m_originalTargetPos = *victim->getPosition();
 						m_isTrackingTarget = TRUE;// Remember that I was originally shot at a moving object, so if the 
@@ -542,6 +568,8 @@ void MissileAIUpdate::doAttackState(Bool turnOK, Bool randomPath)
 					}
 					else
 					{
+						DEBUG_LOG((">>> MissileAI - EndRandomPath: victim is  null.\n"));
+
 						// Otherwise, we are just a Coord shot.
 						Coord3D initialPos = m_originalTargetPos;
 						if (d->m_lockDistance > 0.0f) {
@@ -556,7 +584,9 @@ void MissileAIUpdate::doAttackState(Bool turnOK, Bool randomPath)
 			}
 			else {
 				curLoco->setMaxAcceleration(m_maxAccel);
-				curLoco->setMaxTurnRate(turnOK ? BIGNUM : 0);
+				// curLoco->setMaxTurnRate(turnOK ? BIGNUM : 0);
+				DEBUG_LOG((">>> MissileAI setMaxTurnRate = %f\n", turnOK ? d->m_turnRateAttacking : d->m_turnRateInitial));
+				curLoco->setMaxTurnRate(turnOK ? d->m_turnRateAttacking : d->m_turnRateInitial);
 			}
 		}
 	}
@@ -581,6 +611,7 @@ void MissileAIUpdate::doAttackState(Bool turnOK, Bool randomPath)
 					// Ground pos.  Change to original goal.
 					aiMoveToPosition(&m_originalTargetPos, CMD_FROM_AI );
 				}
+				// DEBUG_LOG((">>> MissileAI enter KILL state. prev state = %d\n", m_state));
 				switchToState(KILL); 
 				return;
 			}
@@ -600,36 +631,65 @@ void MissileAIUpdate::doAttackState(Bool turnOK, Bool randomPath)
 
 	}
 
-	if (m_noTurnDistLeft <= 0.0f)
+	// Have we finished NOTURN?
+	if (m_noTurnDistLeft <= 0.0f && m_state == ATTACK_NOTURN)
 	{
-		// We first reach random path state
-		if (d->m_randomPathEndDistance > 0.0 && !randomPath) {
-			m_randomPathDistLeft = d->m_randomPathEndDistance;
+		if (d->m_randomPathEndDistance > 0.0) {  //!randomPath
+			// -----------------------------------
+			// We first reach random path state
+			// -----------------------------------
+			//m_randomPathDistLeft = d->m_randomPathEndDistance;
 
 			// Pick a random position near the target as new goal, and forget tracking the target for now
-			Coord3D targetPosition;
+			Coord3D targetPos;
 			if (m_isTrackingTarget && getGoalObject())
-				targetPosition = *getGoalObject()->getPosition();
+				targetPos = *getGoalObject()->getPosition();
 			else
-				targetPosition = *getGoalPosition();
+				targetPos = *getGoalPosition();
 
-			//TODO, make it spherical or cylindrical?
-			Real scatter = d->m_randomPathOffset;
-			targetPosition.x += GameLogicRandomValue(-scatter, scatter);
-			targetPosition.y += GameLogicRandomValue(-scatter, scatter);
-			targetPosition.z += GameLogicRandomValue(-scatter*0.5, scatter*0.5);
+			// get halfway position
+			targetPos.add(getObject()->getPosition());
+			targetPos.scale(0.5);
+
+			// TODO: add flag or check for Z scattering
+
+			// TODO: get polar offset (orient to object?)
+			Vector3 objPos(getObject()->getPosition()->x, getObject()->getPosition()->y, getObject()->getPosition()->z);
+			Vector3 curDir(targetPos.x - objPos.X, targetPos.y - objPos.Y, targetPos.y - objPos.Y);
+			m_randomPathDistLeft = curDir.Length() * 0.5;
+
+			DEBUG_LOG((">>> MissileAI - StartRandomPath: m_randomPathDistLeft = %f\n", m_randomPathDistLeft));
+
+			curDir.Normalize();	// buildTransformMatrix wants it this way
+			Matrix3D mtx;
+			mtx.buildTransformMatrix(objPos, curDir);
+
+			// Real scatter = d->m_randomPathOffset;
+			Coord3D offset = {
+				// 0, 0, 100.0f
+				GameLogicRandomValue(-scatter, scatter),
+				GameLogicRandomValue(-scatter, scatter),
+				GameLogicRandomValue(0, scatter * 0.5)
+			};
+			adjustVector(&offset, &mtx);
+
+			targetPos.add(&offset);
+
+			getStateMachine()->setGoalPosition(&targetPos);
 			getStateMachine()->setGoalObject(NULL);
-			aiMoveToPosition(&targetPosition, CMD_FROM_AI);
+			aiMoveToPosition(&targetPos, CMD_FROM_AI);
 			m_isTrackingTarget = FALSE;
 
 			Locomotor* curLoco = getCurLocomotor();
 			if (curLoco)
 			{
 				curLoco->setMaxAcceleration(m_maxAccel);
-				curLoco->setMaxTurnRate(50.0f); // TODO
+				curLoco->setMaxTurnRate(d->m_turnRateAttacking); // TODO: Extra turnrate value?
+				DEBUG_LOG((">>> MissileAI setMaxTurnRate = %f\n", d->m_turnRateAttacking));
 			}
 
 			switchToState(ATTACK_RANDOM_PATH);
+			// -----------------------------------
 		}
 		else {
 			switchToState(ATTACK);
@@ -668,8 +728,10 @@ void MissileAIUpdate::doKillState(void)
 
 	if (curLoco)
 	{
+		const MissileAIUpdateModuleData* d = getMissileAIUpdateModuleData();
 		curLoco->setMaxAcceleration(m_maxAccel);
-		curLoco->setMaxTurnRate(BIGNUM);
+		curLoco->setMaxTurnRate(d->m_turnRateAttacking * 2.0f);
+		DEBUG_LOG((">>> MissileAI (killState) setMaxTurnRate = %f\n", d->m_turnRateAttacking * 2.0f));
 	}
 	if (isIdle()) {
 		// we finished the move
@@ -784,7 +846,7 @@ UpdateSleepTime MissileAIUpdate::update()
 			break;
 
 		case ATTACK_RANDOM_PATH:
-			doAttackState(false, true);
+			doAttackState(true, true);
 			break;
 
 		case ATTACK:
