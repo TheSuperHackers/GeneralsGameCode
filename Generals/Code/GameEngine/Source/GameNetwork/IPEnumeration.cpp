@@ -25,6 +25,8 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "GameNetwork/IPEnumeration.h"
+#include "GameNetwork/networkutil.h"
+#include "GameClient/ClientInstance.h"
 
 IPEnumeration::IPEnumeration( void )
 {
@@ -84,7 +86,7 @@ EnumeratedIP * IPEnumeration::getAddresses( void )
 	HOSTENT* hostEnt = gethostbyname(hostname);
 	if (hostEnt == NULL)
 	{
-		DEBUG_LOG(("Failed call to gethostnyname; WSAGetLastError returned %d\n", WSAGetLastError()));
+		DEBUG_LOG(("Failed call to gethostbyname; WSAGetLastError returned %d\n", WSAGetLastError()));
 		return NULL;
 	}
 	
@@ -94,62 +96,70 @@ EnumeratedIP * IPEnumeration::getAddresses( void )
 		DEBUG_LOG(("gethostbyname returns oddly-sized IP addresses!\n"));
 		return NULL;
 	}
-	
+
+#if defined(RTS_MULTI_INSTANCE)
+	// TheSuperHackers @feature Add one unique local host IP address for each multi client instance.
+	const UnsignedInt id = rts::ClientInstance::getInstanceId();
+	addNewIP(
+		127,
+		(UnsignedByte)(id >> 16),
+		(UnsignedByte)(id >> 8),
+		(UnsignedByte)(id));
+#endif
+
 	// construct a list of addresses
 	int numAddresses = 0;
 	char *entry;
 	while ( (entry = hostEnt->h_addr_list[numAddresses++]) != 0 )
 	{
-		EnumeratedIP *newIP = newInstance(EnumeratedIP);
-
-		AsciiString str;
-		str.format("%d.%d.%d.%d", (unsigned char)entry[0], (unsigned char)entry[1], (unsigned char)entry[2], (unsigned char)entry[3]);
-
-		UnsignedInt testIP = *((UnsignedInt *)entry);
-		UnsignedInt ip = ntohl(testIP);
-
-		/*
-		ip = *entry++;
-		ip <<= 8;
-		ip += *entry++;
-		ip <<= 8;
-		ip += *entry++;
-		ip <<= 8;
-		ip += *entry++;
-		*/
-
-		newIP->setIPstring(str);
-		newIP->setIP(ip);
-
-		DEBUG_LOG(("IP: 0x%8.8X / 0x%8.8X (%s)\n", testIP, ip, str.str()));
-
-		// Add the IP to the list in ascending order
-		if (!m_IPlist)
-		{
-			m_IPlist = newIP;
-			newIP->setNext(NULL);
-		}
-		else
-		{
-			if (newIP->getIP() < m_IPlist->getIP())
-			{
-				newIP->setNext(m_IPlist);
-				m_IPlist = newIP;
-			}
-			else
-			{
-				EnumeratedIP *p = m_IPlist;
-				while (p->getNext() && p->getNext()->getIP() < newIP->getIP())
-				{
-					p = p->getNext();
-				}
-				newIP->setNext(p->getNext());
-				p->setNext(newIP);
-			}
-		}
+		addNewIP(
+			(UnsignedByte)entry[0],
+			(UnsignedByte)entry[1],
+			(UnsignedByte)entry[2],
+			(UnsignedByte)entry[3]);
 	}
 
 	return m_IPlist;
+}
+
+void IPEnumeration::addNewIP( UnsignedByte a, UnsignedByte b, UnsignedByte c, UnsignedByte d )
+{
+	EnumeratedIP *newIP = newInstance(EnumeratedIP);
+
+	AsciiString str;
+	str.format("%d.%d.%d.%d", (int)a, (int)b, (int)c, (int)d);
+
+	UnsignedInt ip = AssembleIp(a, b, c, d);
+
+	newIP->setIPstring(str);
+	newIP->setIP(ip);
+
+	DEBUG_LOG(("IP: 0x%8.8X (%s)\n", ip, str.str()));
+
+	// Add the IP to the list in ascending order
+	if (!m_IPlist)
+	{
+		m_IPlist = newIP;
+		newIP->setNext(NULL);
+	}
+	else
+	{
+		if (newIP->getIP() < m_IPlist->getIP())
+		{
+			newIP->setNext(m_IPlist);
+			m_IPlist = newIP;
+		}
+		else
+		{
+			EnumeratedIP *p = m_IPlist;
+			while (p->getNext() && p->getNext()->getIP() < newIP->getIP())
+			{
+				p = p->getNext();
+			}
+			newIP->setNext(p->getNext());
+			p->setNext(newIP);
+		}
+	}
 }
 
 AsciiString IPEnumeration::getMachineName( void )
