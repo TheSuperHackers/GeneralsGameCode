@@ -454,7 +454,6 @@ void OpenContain::killAllContained( void )
     if ( rider )
     {
 	    it = list.erase(it);
-	    m_containListSize--;
 
       onRemoving( rider );
 	    rider->onRemovedFrom( getObject() );
