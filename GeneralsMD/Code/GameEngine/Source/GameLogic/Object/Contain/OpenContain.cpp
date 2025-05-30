@@ -469,7 +469,7 @@ void OpenContain::killAllContained( void )
 
   DEBUG_ASSERTCRASH( m_containListSize == 0, ("killallcontain just made a booboo, list size != zero.") );
 
-}  // end removeAllContained
+}  // end killAllContained
 
 //--------------------------------------------------------------------------------------------------------
 /** Force all contained objects in the contained list to exit, and kick them in the pants on the way out*/
