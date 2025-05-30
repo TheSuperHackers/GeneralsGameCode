@@ -66,6 +66,9 @@ W3DDefaultDraw::W3DDefaultDraw(Thing *thing, const ModuleData* moduleData) : Dra
 		shadowInfo.m_sizeY=0;
 		shadowInfo.m_offsetX=0;
 		shadowInfo.m_offsetY=0;
+
+		DEBUG_LOG(("W3DDefaultDraw::W3DDefaultDraw - addShadow\n"));
+
   		m_shadow = TheW3DShadowManager->addShadow(m_renderObject, &shadowInfo);
 
 
