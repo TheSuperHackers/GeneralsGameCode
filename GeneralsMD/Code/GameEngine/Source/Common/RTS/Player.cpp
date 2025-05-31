@@ -1675,10 +1675,26 @@ void Player::onStructureCreated( Object *builder, Object *structure )
 
 }  // end onStructureCreated
 
+
+const SpecialPowerTemplate* findSpecialPowerWithEvaDetected(const Object* structure) {
+	for (BehaviorModule** m = structure->getBehaviorModules(); *m; ++m)
+	{
+		SpecialPowerModuleInterface* sp = (*m)->getSpecialPower();
+		if (!sp)
+			continue;
+
+		if (sp->getSpecialPowerTemplate()->getEvaDetectedEnemy() > EVA_FIRST || sp->getSpecialPowerTemplate()->getEvaDetectedAlly() > EVA_FIRST || sp->getSpecialPowerTemplate()->getEvaDetectedOwn() > EVA_FIRST) {
+			//Specialpower has an eva, return
+			return sp->getSpecialPowerTemplate();
+		}
+	}
+	return NULL;
+}
+
 //-------------------------------------------------------------------------------------------------
 /// a structure that was under construction has become completed
 //-------------------------------------------------------------------------------------------------
-void Player::onStructureConstructionComplete( Object *builder, Object *structure, Bool isRebuild )
+void Player::onStructureConstructionComplete(Object* builder, Object* structure, Bool isRebuild)
 {
 	// When a a structure is completed, it becomes "real" as far as scripting is 
 	// concerned. jba.
@@ -1698,70 +1714,99 @@ void Player::onStructureConstructionComplete( Object *builder, Object *structure
 	structure->friend_adjustPowerForPlayer(TRUE);
 
 	// ai notification callback
-	if( m_ai )
-		m_ai->onStructureProduced( builder, structure );
+	if (m_ai)
+		m_ai->onStructureProduced(builder, structure);
 
 	// the GUI needs to re-evaluate the information being displayed to the user now
-	if( TheControlBar )
+	if (TheControlBar)
 		TheControlBar->markUIDirty();
-	
+
 	// This object may require us to play some EVA sounds.
-	Player *localPlayer = ThePlayerList->getLocalPlayer();
+	Player* localPlayer = ThePlayerList->getLocalPlayer();
 
-	if( structure->hasSpecialPower( SPECIAL_PARTICLE_UPLINK_CANNON ) || 
-			structure->hasSpecialPower( SUPW_SPECIAL_PARTICLE_UPLINK_CANNON ) ||
-			structure->hasSpecialPower( LAZR_SPECIAL_PARTICLE_UPLINK_CANNON ) )
-  {
-    if ( localPlayer == structure->getControllingPlayer() )
-    {
-		  TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_ParticleCannon);
-    }
-    else if ( localPlayer->getRelationship(structure->getTeam()) != ENEMIES )
-    {
-      // Note: treating NEUTRAL as ally. Is this correct?
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_ParticleCannon);
-    }
-    else
-    {
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_ParticleCannon);
-    }
-  }
+	//Check if structure has a specialPower with new custom eva sounds
+	const SpecialPowerTemplate* specialPowerTemp = findSpecialPowerWithEvaDetected(structure);
+	if (specialPowerTemp != NULL) {
+		// Check if SpecialPower eva event instead of hardcoded stuff
+		bool isOwn = localPlayer == structure->getControllingPlayer();
+		bool isAlly = localPlayer->getRelationship(structure->getTeam()) != ENEMIES;
+		bool isEnemy = !isOwn && !isAlly;
 
-	if( structure->hasSpecialPower( SPECIAL_NEUTRON_MISSILE ) || 
-			structure->hasSpecialPower( NUKE_SPECIAL_NEUTRON_MISSILE ) || 
-			structure->hasSpecialPower( SUPW_SPECIAL_NEUTRON_MISSILE ) )
-  {
-    if ( localPlayer == structure->getControllingPlayer() )
-    {
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_Nuke);
-    }
-    else if ( localPlayer->getRelationship(structure->getTeam()) != ENEMIES )
-    {
-      // Note: treating NEUTRAL as ally. Is this correct?
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_Nuke);
-    }
-    else
-    {
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_Nuke);
-    }
-  }
-  
-	if (structure->hasSpecialPower(SPECIAL_SCUD_STORM))
-  {
-    if ( localPlayer == structure->getControllingPlayer() )
-    {
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_ScudStorm);
-    }
-    else if ( localPlayer->getRelationship(structure->getTeam()) != ENEMIES )
-    {
-      // Note: treating NEUTRAL as ally. Is this correct?
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_ScudStorm);
-    }
-    else
-    {
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_ScudStorm);
-    }
-  }
+		//Check SpecialPower Eva
+		EvaMessage eva = EVA_Invalid;
+
+		if (isOwn) {
+			eva = specialPowerTemp->getEvaDetectedOwn();
+		}
+		else if (isAlly) {
+			eva = specialPowerTemp->getEvaDetectedAlly();
+		}
+		else if (isEnemy) {
+			eva = specialPowerTemp->getEvaDetectedEnemy();
+		}
+
+		if (eva > EVA_FIRST) {
+			TheEva->setShouldPlay(eva);
+		}
+
+	}
+	else {
+		//Do default hardcoded check 
+		if (structure->hasSpecialPower(SPECIAL_PARTICLE_UPLINK_CANNON) ||
+			structure->hasSpecialPower(SUPW_SPECIAL_PARTICLE_UPLINK_CANNON) ||
+			structure->hasSpecialPower(LAZR_SPECIAL_PARTICLE_UPLINK_CANNON))
+		{
+			if (localPlayer == structure->getControllingPlayer())
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_ParticleCannon);
+			}
+			else if (localPlayer->getRelationship(structure->getTeam()) != ENEMIES)
+			{
+				// Note: treating NEUTRAL as ally. Is this correct?
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_ParticleCannon);
+			}
+			else
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_ParticleCannon);
+			}
+		}
+
+		if (structure->hasSpecialPower(SPECIAL_NEUTRON_MISSILE) ||
+			structure->hasSpecialPower(NUKE_SPECIAL_NEUTRON_MISSILE) ||
+			structure->hasSpecialPower(SUPW_SPECIAL_NEUTRON_MISSILE))
+		{
+			if (localPlayer == structure->getControllingPlayer())
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_Nuke);
+			}
+			else if (localPlayer->getRelationship(structure->getTeam()) != ENEMIES)
+			{
+				// Note: treating NEUTRAL as ally. Is this correct?
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_Nuke);
+			}
+			else
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_Nuke);
+			}
+		}
+
+		if (structure->hasSpecialPower(SPECIAL_SCUD_STORM))
+		{
+			if (localPlayer == structure->getControllingPlayer())
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_ScudStorm);
+			}
+			else if (localPlayer->getRelationship(structure->getTeam()) != ENEMIES)
+			{
+				// Note: treating NEUTRAL as ally. Is this correct?
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_ScudStorm);
+			}
+			else
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_ScudStorm);
+			}
+		}
+	}
 }  // end onStructureConstructionComplete
 
 //=============================================================================

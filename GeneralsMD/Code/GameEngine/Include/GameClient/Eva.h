@@ -40,6 +40,7 @@ class INI;
 // Keep in sync with TheEvaMessageNames AND Eva::s_shouldPlayFuncs
 enum EvaMessage CPP_11(: Int)
 {
+	EVA_None = -2, //< Explicitely turn off eva event for vanilla ZH Special Powers
   EVA_Invalid = -1,
     
 	EVA_FIRST = 0,
@@ -96,6 +97,77 @@ enum EvaMessage CPP_11(: Int)
 	EVA_SuperweaponLaunched_Own_Sneak_Attack,
   EVA_SuperweaponLaunched_Ally_Sneak_Attack,
   EVA_SuperweaponLaunched_Enemy_Sneak_Attack,
+
+	//New constants by OFS
+	  Eva_SuperweaponDetected_Own_Ion_Cannon,
+	  Eva_SuperweaponDetected_Ally_Ion_Cannon,
+	  Eva_SuperweaponDetected_Enemy_Ion_Cannon,
+	  Eva_SuperweaponLaunched_Own_Ion_Cannon,
+	  Eva_SuperweaponLaunched_Ally_Ion_Cannon,
+	  Eva_SuperweaponLaunched_Enemy_Ion_Cannon,
+	  Eva_SuperweaponReady_Own_Ion_Cannon,
+	  Eva_SuperweaponReady_Ally_Ion_Cannon,
+	  Eva_SuperweaponReady_Enemy_Ion_Cannon,
+
+	  Eva_SuperweaponDetected_Own_Cluster_Missile,
+	  Eva_SuperweaponDetected_Ally_Cluster_Missile,
+	  Eva_SuperweaponDetected_Enemy_Cluster_Missile,
+	  Eva_SuperweaponLaunched_Own_Cluster_Missile,
+	  Eva_SuperweaponLaunched_Ally_Cluster_Missile,
+	  Eva_SuperweaponLaunched_Enemy_Cluster_Missile,
+	  Eva_SuperweaponReady_Own_Cluster_Missile,
+	  Eva_SuperweaponReady_Ally_Cluster_Missile,
+	  Eva_SuperweaponReady_Enemy_Cluster_Missile,
+
+	  Eva_SuperweaponDetected_Own_Sunstorm_Missile,
+	  Eva_SuperweaponDetected_Ally_Sunstorm_Missile,
+	  Eva_SuperweaponDetected_Enemy_Sunstorm_Missile,
+	  Eva_SuperweaponLaunched_Own_Sunstorm_Missile,
+	  Eva_SuperweaponLaunched_Ally_Sunstorm_Missile,
+	  Eva_SuperweaponLaunched_Enemy_Sunstorm_Missile,
+	  Eva_SuperweaponReady_Own_Sunstorm_Missile,
+	  Eva_SuperweaponReady_Ally_Sunstorm_Missile,
+	  Eva_SuperweaponReady_Enemy_Sunstorm_Missile,
+
+	  Eva_SuperweaponDetected_Own_Meteor_Strike,
+	  Eva_SuperweaponDetected_Ally_Meteor_Strike,
+	  Eva_SuperweaponDetected_Enemy_Meteor_Strike,
+	  Eva_SuperweaponLaunched_Own_Meteor_Strike,
+	  Eva_SuperweaponLaunched_Ally_Meteor_Strike,
+	  Eva_SuperweaponLaunched_Enemy_Meteor_Strike,
+	  Eva_SuperweaponReady_Own_Meteor_Strike,
+	  Eva_SuperweaponReady_Ally_Meteor_Strike,
+	  Eva_SuperweaponReady_Enemy_Meteor_Strike,
+
+	  Eva_SuperweaponDetected_Own_Punisher_Cannon,
+	  Eva_SuperweaponDetected_Ally_Punisher_Cannon,
+	  Eva_SuperweaponDetected_Enemy_Punisher_Cannon,
+	  Eva_SuperweaponLaunched_Own_Punisher_Cannon,
+	  Eva_SuperweaponLaunched_Ally_Punisher_Cannon,
+	  Eva_SuperweaponLaunched_Enemy_Punisher_Cannon,
+	  Eva_SuperweaponReady_Own_Punisher_Cannon,
+	  Eva_SuperweaponReady_Ally_Punisher_Cannon,
+	  Eva_SuperweaponReady_Enemy_Punisher_Cannon,
+
+	  Eva_SuperweaponDetected_Own_Chemical_Missile,
+	  Eva_SuperweaponDetected_Ally_Chemical_Missile,
+	  Eva_SuperweaponDetected_Enemy_Chemical_Missile,
+	  Eva_SuperweaponLaunched_Own_Chemical_Missile,
+	  Eva_SuperweaponLaunched_Ally_Chemical_Missile,
+	  Eva_SuperweaponLaunched_Enemy_Chemical_Missile,
+	  Eva_SuperweaponReady_Own_Chemical_Missile,
+	  Eva_SuperweaponReady_Ally_Chemical_Missile,
+	  Eva_SuperweaponReady_Enemy_Chemical_Missile,
+
+	  Eva_SuperweaponDetected_Own_Chronosphere,
+	  Eva_SuperweaponDetected_Ally_Chronosphere,
+	  Eva_SuperweaponDetected_Enemy_Chronosphere,
+	  Eva_SuperweaponLaunched_Own_Chronosphere,
+	  Eva_SuperweaponLaunched_Ally_Chronosphere,
+	  Eva_SuperweaponLaunched_Enemy_Chronosphere,
+	  Eva_SuperweaponReady_Own_Chronosphere,
+	  Eva_SuperweaponReady_Ally_Chronosphere,
+	  Eva_SuperweaponReady_Enemy_Chronosphere,
 
 	EVA_COUNT,
 };

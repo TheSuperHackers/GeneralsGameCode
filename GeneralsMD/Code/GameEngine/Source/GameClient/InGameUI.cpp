@@ -3583,54 +3583,81 @@ void InGameUI::postDraw( void )
                   
                     Player *localPlayer = ThePlayerList->getLocalPlayer();
                   
-                    if( type == SPECIAL_PARTICLE_UPLINK_CANNON || type == SUPW_SPECIAL_PARTICLE_UPLINK_CANNON || type == LAZR_SPECIAL_PARTICLE_UPLINK_CANNON )
-                    {
-                      if ( localPlayer == owningObject->getControllingPlayer() )
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Own_ParticleCannon);
-                      }
-                      else if ( localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES )
-                      {
-                        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_ParticleCannon);
-                      }
-                      else
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_ParticleCannon);
-                      }
-                    }
-                    else if( type == SPECIAL_NEUTRON_MISSILE || type == NUKE_SPECIAL_NEUTRON_MISSILE || type == SUPW_SPECIAL_NEUTRON_MISSILE )
-                    {
-                      if ( localPlayer == owningObject->getControllingPlayer() )
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Own_Nuke);
-                      }
-                      else if ( localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES )
-                      {
-                        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_Nuke);
-                      }
-                      else
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_Nuke);
-                      }
-                    }
-                    else if (type == SPECIAL_SCUD_STORM)
-                    {
-                      if ( localPlayer == owningObject->getControllingPlayer() )
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Own_ScudStorm);
-                      }
-                      else if ( localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES )
-                      {
-                        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_ScudStorm);
-                      }
-                      else
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_ScudStorm);
-                      }
-                    }
+					// Check if SpecialPower eva event instead of hardcoded stuff
+					bool isOwn = localPlayer == owningObject->getControllingPlayer();
+					bool isAlly = localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES;
+					bool isEnemy = !isOwn && !isAlly;
+					bool isDefault = type < SPECIAL_ION_CANNON; // first new Special Power
+
+					//Check SpecialPower Eva
+					const SpecialPowerTemplate* specialPowerTemp = module->getSpecialPowerTemplate();
+					EvaMessage eva = EVA_Invalid;
+
+					if (isOwn) {
+						eva = specialPowerTemp->getEvaReadyOwn();
+					}
+					else if (isAlly) {
+						eva = specialPowerTemp->getEvaReadyAlly();
+					}
+					else if (isEnemy) {
+						eva = specialPowerTemp->getEvaReadyEnemy();
+					}
+
+					if (eva > EVA_FIRST) {
+						TheEva->setShouldPlay(eva);
+					}
+					else if (eva == EVA_Invalid && isDefault) {
+						//DO the hardcoded vanilla stuff
+
+						if (type == SPECIAL_PARTICLE_UPLINK_CANNON || type == SUPW_SPECIAL_PARTICLE_UPLINK_CANNON || type == LAZR_SPECIAL_PARTICLE_UPLINK_CANNON)
+						{
+							if (localPlayer == owningObject->getControllingPlayer())
+							{
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Own_ParticleCannon);
+							}
+							else if (localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES)
+							{
+								// Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_ParticleCannon);
+							}
+							else
+							{
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_ParticleCannon);
+							}
+						}
+						else if (type == SPECIAL_NEUTRON_MISSILE || type == NUKE_SPECIAL_NEUTRON_MISSILE || type == SUPW_SPECIAL_NEUTRON_MISSILE)
+						{
+							if (localPlayer == owningObject->getControllingPlayer())
+							{
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Own_Nuke);
+							}
+							else if (localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES)
+							{
+								// Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_Nuke);
+							}
+							else
+							{
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_Nuke);
+							}
+						}
+						else if (type == SPECIAL_SCUD_STORM)
+						{
+							if (localPlayer == owningObject->getControllingPlayer())
+							{
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Own_ScudStorm);
+							}
+							else if (localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES)
+							{
+								// Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_ScudStorm);
+							}
+							else
+							{
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_ScudStorm);
+							}
+						}
+					}
                   }
                   info->m_evaReadyPlayed = true;
                 }
