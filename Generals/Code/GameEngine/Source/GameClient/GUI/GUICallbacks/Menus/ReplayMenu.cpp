@@ -444,6 +444,26 @@ void reallyLoadReplay(void)
 	}	
 }
 
+static void loadReplay(UnicodeString filename)
+{
+	AsciiString asciiFilename;
+	asciiFilename.translate(filename);
+
+	if(TheRecorder->testVersionPlayback(asciiFilename))
+	{
+		MessageBoxOkCancel(TheGameText->fetch("GUI:OlderReplayVersionTitle"), TheGameText->fetch("GUI:OlderReplayVersion"), reallyLoadReplay, NULL);
+	}
+	else
+	{
+		TheRecorder->playbackFile(asciiFilename);
+
+		if(parentReplayMenu != NULL)
+		{
+			parentReplayMenu->winHide(TRUE);
+		}
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 /** single player menu window system callback */
 //-------------------------------------------------------------------------------------------------
@@ -490,28 +510,11 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 				if( controlID == listboxReplayFilesID ) 
 				{
 					int rowSelected = mData2;
-				
+
 					if (rowSelected >= 0)
 					{
-						UnicodeString filename;
-						filename = GetReplayFilenameFromListbox(listboxReplayFiles, rowSelected);
-
-						AsciiString asciiFilename;
-						asciiFilename.translate(filename);
-
-						if(TheRecorder->testVersionPlayback(asciiFilename))
-						{
-							MessageBoxOkCancel(TheGameText->fetch("GUI:OlderReplayVersionTitle"), TheGameText->fetch("GUI:OlderReplayVersion"),reallyLoadReplay ,NULL);
-						}
-						else
-						{
-							TheRecorder->playbackFile(asciiFilename);
-
-							if(parentReplayMenu != NULL)
-							{
-								parentReplayMenu->winHide(TRUE);
-							}
-						}
+						UnicodeString filename = GetReplayFilenameFromListbox(listboxReplayFiles, rowSelected);
+						loadReplay(filename);
 					}
 				}
 				break;
@@ -564,25 +567,8 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 					}
 
 					filename = GetReplayFilenameFromListbox(listboxReplayFiles, selected);
-
-					AsciiString asciiFilename;
-					asciiFilename.translate(filename);
-
-					if(TheRecorder->testVersionPlayback(asciiFilename))
-					{
-						MessageBoxOkCancel(TheGameText->fetch("GUI:OlderReplayVersionTitle"), TheGameText->fetch("GUI:OlderReplayVersion"),reallyLoadReplay ,NULL);
-					}
-					else
-					{
-						TheRecorder->playbackFile(asciiFilename);
-
-						if(parentReplayMenu != NULL)
-						{
-							parentReplayMenu->winHide(TRUE);
-						}	
-					}
-					
-				}				
+					loadReplay(filename);
+				}
 			}  // end else if
 			else if( controlID == buttonBackID )
 			{
