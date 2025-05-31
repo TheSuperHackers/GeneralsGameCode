@@ -133,6 +133,15 @@ const char* SpecialPowerMaskType::s_bitNameList[] =
 	
 	"SPECIAL_BATTLESHIP_BOMBARDMENT",
 
+	//new constants by OFS
+	"SPECIAL_ION_CANNON",
+	"SPECIAL_CLUSTER_MISSILE",
+	"SPECIAL_SUNSTORM_MISSILE",
+	"SPECIAL_METEOR_STRIKE",
+	"SPECIAL_PUNISHER_CANNON",
+	"SPECIAL_CHEMICAL_MISSILE",
+	"SPECIAL_CHRONOSPHERE",
+
 	NULL
 };
 
@@ -207,6 +216,17 @@ void SpecialPowerStore::parseSpecialPowerDefinition( INI *ini )
 	{ "RadiusCursorRadius",				INI::parseReal,										NULL,	offsetof( SpecialPowerTemplate, m_radiusCursorRadius ) },
 	{ "ShortcutPower",						INI::parseBool,										NULL, offsetof( SpecialPowerTemplate, m_shortcutPower ) },
 	{ "AcademyClassify",					INI::parseIndexList,			TheAcademyClassificationTypeNames, offsetof( SpecialPowerTemplate, m_academyClassificationType ) },
+	{ "BehaviorEnum",						INI::parseIndexList,			SpecialPowerMaskType::getBitNames(), offsetof(SpecialPowerTemplate, m_type_behavior) },
+	{ "EvaDetectedOwn",						INI::parseEvaNameIndexList,			TheEvaMessageNames, offsetof(SpecialPowerTemplate, m_eva_detected_own) },
+	{ "EvaDetectedAlly",						INI::parseEvaNameIndexList,			TheEvaMessageNames, offsetof(SpecialPowerTemplate, m_eva_detected_ally) },
+	{ "EvaDetectedEnemy",						INI::parseEvaNameIndexList,			TheEvaMessageNames, offsetof(SpecialPowerTemplate, m_eva_detected_enemy) },
+	{ "EvaLaunchedOwn",						INI::parseEvaNameIndexList,			TheEvaMessageNames, offsetof(SpecialPowerTemplate, m_eva_launched_own) },
+	{ "EvaLaunchedAlly",						INI::parseEvaNameIndexList,			TheEvaMessageNames, offsetof(SpecialPowerTemplate, m_eva_launched_ally) },
+	{ "EvaLaunchedEnemy",						INI::parseEvaNameIndexList,			TheEvaMessageNames, offsetof(SpecialPowerTemplate, m_eva_launched_enemy) },
+	{ "EvaReadyOwn",						INI::parseEvaNameIndexList,			TheEvaMessageNames, offsetof(SpecialPowerTemplate, m_eva_ready_own) },
+	{ "EvaReadyAlly",						INI::parseEvaNameIndexList,			TheEvaMessageNames, offsetof(SpecialPowerTemplate, m_eva_ready_ally) },
+	{ "EvaReadyEnemy",						INI::parseEvaNameIndexList,			TheEvaMessageNames, offsetof(SpecialPowerTemplate, m_eva_ready_enemy) },
+
 	{ NULL,	NULL, NULL,	0 }  // keep this last
 
 };
@@ -226,6 +246,16 @@ SpecialPowerTemplate::SpecialPowerTemplate()
 	m_viewObjectRange = 0;
 	m_radiusCursorRadius = 0;
 	m_shortcutPower = FALSE;
+	m_type_behavior = SPECIAL_INVALID;
+	m_eva_detected_own = EVA_Invalid;
+	m_eva_detected_ally = EVA_Invalid;
+	m_eva_detected_enemy = EVA_Invalid;
+	m_eva_launched_own = EVA_Invalid;
+	m_eva_launched_ally = EVA_Invalid;
+	m_eva_launched_enemy = EVA_Invalid;
+	m_eva_ready_own = EVA_Invalid;
+	m_eva_ready_ally = EVA_Invalid;
+	m_eva_ready_enemy = EVA_Invalid;
 
 }  // end SpecialPowerTemplate
 
