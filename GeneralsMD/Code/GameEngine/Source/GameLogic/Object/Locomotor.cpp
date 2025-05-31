@@ -1136,6 +1136,9 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 				dx *= dist;
 				dy *= dist;
 				dz *= dist;
+
+				// DEBUG_LOG((">>> Locomotor Braking - d(xyz) = %f / %f / %f\n", dx * vel, dy * vel, dz * vel));
+
 				pos.x += dx * vel;
 				pos.y += dy * vel;
 				pos.z += dz * vel;
@@ -1981,6 +1984,25 @@ void Locomotor::moveTowardsPositionThrust(Object* obj, PhysicsBehavior *physics,
 		Bool adjust = true;
 		if( obj->getStatusBits().test( OBJECT_STATUS_BRAKING ) ) 
 		{
+			//Real closeInDist = 150.0f;  // TODO: get/set this from missileAI? 
+			//Real af = 1.0f - __min((onPathDistToGoal / closeInDist), 1.0);
+
+			//if (af > 0.0f) {
+
+			//	vel.Set(
+			//		vel.X * (1.0f - af) + (goalPos.x - pos.x) * af,
+			//		vel.Y * (1.0f - af) + (goalPos.y - pos.y) * af,
+			//		vel.Z * (1.0f - af) + (goalPos.z - pos.z) * af
+			//	);
+			//	if (isNearlyZero(sqr(vel.X) + sqr(vel.Y) + sqr(vel.Z))) {
+			//		// we are at target.
+			//		adjust = false;
+			//	}
+			//	maxTurnRate = (1.0f + (af * 2.0f) ) * maxTurnRate;
+			//}
+			
+			// DEBUG_LOG((">>> moveTowardsPositionThrust - Braking - maxTurnRate = %f\n", maxTurnRate));
+
 			// align to target, cause that's where we're going anyway.
 
 			vel.Set(goalPos.x - pos.x, goalPos.y-pos.y, goalPos.z-pos.z);

@@ -65,11 +65,12 @@ public:
 	Bool						m_detonateCallsKill;			///< if true, kill() will be called, instead of KILL_SELF state, which calls destroy.
     Int             m_killSelfDelay;      ///< If I have detonated and entered the KILL-SELF state, how ling do I wait before I Kill/destroy self?
 	
-	Real	m_turnRateAttacking;
-	Real	m_turnRateInitial;
+	// Real	m_turnRateAttacking;    ///< Turn rate of the missile after ignition and no-turn stage
+	// Real	m_turnRateInitial;      ///< Turn rate of the missile during no-turn stage
 
-	Real m_randomPathEndDistance;
-	Real m_randomPathOffset;
+	Real	m_zDirFactor;          ///< Z correction factor for AA weapons with no pitch
+
+	Real m_randomPathOffset;       ///< Max distance to scatter for random path offset
 
     MissileAIUpdateModuleData();
 

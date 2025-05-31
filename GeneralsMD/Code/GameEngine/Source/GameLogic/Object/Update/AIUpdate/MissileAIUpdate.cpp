@@ -97,8 +97,9 @@ MissileAIUpdateModuleData::MissileAIUpdateModuleData()
 	m_distanceScatterWhenJammed = 75.0f;
     m_detonateCallsKill = FALSE;
     m_killSelfDelay   = 3; // just long enough for the contrail to catch up to me
-	m_turnRateInitial = 0;
-	m_turnRateAttacking = BIGNUM;
+	// m_turnRateInitial = 0;
+	// m_turnRateAttacking = BIGNUM;
+	m_zDirFactor = 2.0f;
 }
 
 //-----------------------------------------------------------------------------
@@ -119,19 +120,22 @@ void MissileAIUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "UseWeaponSpeed",				  INI::parseBool,			NULL, offsetof( MissileAIUpdateModuleData, m_useWeaponSpeed ) },
 		{ "DetonateOnNoFuel",			  INI::parseBool,			NULL, offsetof( MissileAIUpdateModuleData, m_detonateOnNoFuel ) },
 		{ "DistanceScatterWhenJammed",INI::parseReal,		NULL, offsetof( MissileAIUpdateModuleData, m_distanceScatterWhenJammed ) },
-		{ "DistanceToTravelOnRandomPath",INI::parseReal,		NULL, offsetof( MissileAIUpdateModuleData, m_randomPathEndDistance ) },
+		
 		{ "RandomPathOffset",INI::parseReal,		NULL, offsetof( MissileAIUpdateModuleData, m_randomPathOffset ) },
 
-		{ "InitialTurnRate", INI::parseAngularVelocityReal,		NULL, offsetof(MissileAIUpdateModuleData, m_turnRateInitial) },
-		{ "AttackingTurnRate", INI::parseAngularVelocityReal,		NULL, offsetof(MissileAIUpdateModuleData, m_turnRateAttacking) },
+		// Note (AW): these values don't really do much, MaxThrustAngle in locomotor handles the movement.
+		// { "InitialTurnRate", INI::parseAngularVelocityReal,		NULL, offsetof(MissileAIUpdateModuleData, m_turnRateInitial) },
+		// { "AttackingTurnRate", INI::parseAngularVelocityReal,		NULL, offsetof(MissileAIUpdateModuleData, m_turnRateAttacking) },
 
 		{ "GarrisonHitKillRequiredKindOf", KindOfMaskType::parseFromINI, NULL, offsetof( MissileAIUpdateModuleData, m_garrisonHitKillKindof ) },
 		{ "GarrisonHitKillForbiddenKindOf", KindOfMaskType::parseFromINI, NULL, offsetof( MissileAIUpdateModuleData, m_garrisonHitKillKindofNot ) },
 		{ "GarrisonHitKillCount", INI::parseUnsignedInt, NULL, offsetof( MissileAIUpdateModuleData, m_garrisonHitKillCount ) },
 		{ "GarrisonHitKillFX", INI::parseFXList, NULL, offsetof( MissileAIUpdateModuleData, m_garrisonHitKillFX ) },
-    { "DetonateCallsKill", INI::parseBool,   NULL, offsetof( MissileAIUpdateModuleData, m_detonateCallsKill ) },
-    { "KillSelfDelay",     INI::parseDurationUnsignedInt, NULL, offsetof( MissileAIUpdateModuleData, m_killSelfDelay ) },
-    { 0, 0, 0, 0 }
+		{ "DetonateCallsKill", INI::parseBool,   NULL, offsetof( MissileAIUpdateModuleData, m_detonateCallsKill ) },
+		{ "KillSelfDelay",     INI::parseDurationUnsignedInt, NULL, offsetof( MissileAIUpdateModuleData, m_killSelfDelay ) },
+		{ "ZCorrectionFactor", INI::parseReal,   NULL, offsetof(MissileAIUpdateModuleData, m_zDirFactor) },
+
+		{ 0, 0, 0, 0 }
 	};
 
   p.add(dataFieldParse);
@@ -202,7 +206,7 @@ void MissileAIUpdate::switchToState(MissileStateType s)
 {
 	if (m_state != s)
 	{
-		DEBUG_LOG((">>> MissileAI enter state %d. prev state = %d\n", s, m_state));
+		// DEBUG_LOG((">>> MissileAI enter state %d. prev state = %d\n", s, m_state));
 		m_state = s;
 		m_stateTimestamp = TheGameLogic->getFrame();
 	}
@@ -260,21 +264,30 @@ void MissileAIUpdate::projectileFireAtObjectOrPosition( const Object *victim, co
 		}
 	}
 
-	Real deltaZ = victimPos->z - obj->getPosition()->z;
-	Real dx = victimPos->x - obj->getPosition()->x;
-	Real dy = victimPos->y - obj->getPosition()->y;
-	Real xyDist = sqrt(sqr(dx)+sqr(dy));
-	if (xyDist<1) xyDist = 1;
-	Real zFactor = 0;
-	if (deltaZ>0) {
-		zFactor = deltaZ/xyDist;
+	Vector3 dir;
+
+	if (d->m_zDirFactor > 0) {
+		Real deltaZ = victimPos->z - obj->getPosition()->z;
+		Real dx = victimPos->x - obj->getPosition()->x;
+		Real dy = victimPos->y - obj->getPosition()->y;
+		Real xyDist = sqrt(sqr(dx) + sqr(dy));
+		if (xyDist < 1) xyDist = 1;
+		Real zFactor = 0;
+		if (deltaZ > 0) {
+			zFactor = deltaZ / xyDist;
+		}
+		dir = getObject()->getTransformMatrix()->Get_X_Vector();
+		dir.Normalize();
+		dir.Z += d->m_zDirFactor * zFactor;
+		dir.Normalize();
+	}
+	else {
+		dir = getObject()->getTransformMatrix()->Get_X_Vector();
+		dir.Normalize();
 	}
 
-
-	Vector3 dir = getObject()->getTransformMatrix()->Get_X_Vector();
-	dir.Normalize();
-	dir.Z += 2*zFactor;
-	dir.Normalize();
+	DEBUG_LOG((">>> MissileAI FIREPROJ - dir = (%f/%f/%f)\n", dir.X, dir.Y, dir.Z));
+	
 	PhysicsBehavior* physics = getObject()->getPhysics();
 	if (physics && initialVelToUse > 0)
 	{
@@ -286,6 +299,8 @@ void MissileAIUpdate::projectileFireAtObjectOrPosition( const Object *victim, co
 		force.z = forceMag * dir.Z;
 
 		physics->applyMotiveForce( &force );
+
+		DEBUG_LOG((">>> MissileAI FIREPROJ - force = (%f/%f/%f)\n", force.x, force.y, force.z));
 	}
 
 	Vector3 objPos(obj->getPosition()->x, obj->getPosition()->y, obj->getPosition()->z);
@@ -320,7 +335,7 @@ void MissileAIUpdate::projectileFireAtObjectOrPosition( const Object *victim, co
 		m_victimID = INVALID_ID;
 	}
 
-  setCurrentVictim( victim );/// extending access to the victim via the parent class
+    setCurrentVictim( victim );/// extending access to the victim via the parent class
 	m_prevPos = *getObject()->getPosition();
 }
 
@@ -584,9 +599,9 @@ void MissileAIUpdate::doAttackState(Bool turnOK, Bool randomPath)
 			}
 			else {
 				curLoco->setMaxAcceleration(m_maxAccel);
-				// curLoco->setMaxTurnRate(turnOK ? BIGNUM : 0);
-				DEBUG_LOG((">>> MissileAI setMaxTurnRate = %f\n", turnOK ? d->m_turnRateAttacking : d->m_turnRateInitial));
-				curLoco->setMaxTurnRate(turnOK ? d->m_turnRateAttacking : d->m_turnRateInitial);
+				curLoco->setMaxTurnRate(turnOK ? BIGNUM : 0);
+				// DEBUG_LOG((">>> MissileAI setMaxTurnRate = %f\n", turnOK ? d->m_turnRateAttacking : d->m_turnRateInitial));
+				// curLoco->setMaxTurnRate(turnOK ? d->m_turnRateAttacking : d->m_turnRateInitial);
 			}
 		}
 	}
@@ -624,9 +639,12 @@ void MissileAIUpdate::doAttackState(Bool turnOK, Bool randomPath)
 		Real distanceToTargetSquared = ThePartitionManager->getDistanceSquared( getObject(), getGoalPosition(), FROM_CENTER_2D );
 		Real diveDistanceSquared = d->m_diveDistance;
 		if (curLoco && curLoco->getPreferredHeight()) {
-				diveDistanceSquared *= diveDistanceSquared;
-			if( distanceToTargetSquared < diveDistanceSquared )
-				curLoco->setUsePreciseZPos( true );
+			diveDistanceSquared *= diveDistanceSquared;
+			if (distanceToTargetSquared < diveDistanceSquared) {
+				curLoco->setUsePreciseZPos(true);
+				DEBUG_LOG((">>> MissileAI - AttackState - DIVE - distanceToTarget = %f\n", sqrt(distanceToTargetSquared)));
+			}
+
 		}
 
 	}
@@ -634,12 +652,10 @@ void MissileAIUpdate::doAttackState(Bool turnOK, Bool randomPath)
 	// Have we finished NOTURN?
 	if (m_noTurnDistLeft <= 0.0f && m_state == ATTACK_NOTURN)
 	{
-		if (d->m_randomPathEndDistance > 0.0) {  //!randomPath
+		if (d->m_randomPathOffset > 0.0) {
 			// -----------------------------------
 			// We first reach random path state
 			// -----------------------------------
-			//m_randomPathDistLeft = d->m_randomPathEndDistance;
-
 			// Pick a random position near the target as new goal, and forget tracking the target for now
 			Coord3D targetPos;
 			if (m_isTrackingTarget && getGoalObject())
@@ -664,9 +680,8 @@ void MissileAIUpdate::doAttackState(Bool turnOK, Bool randomPath)
 			Matrix3D mtx;
 			mtx.buildTransformMatrix(objPos, curDir);
 
-			// Real scatter = d->m_randomPathOffset;
+			Real scatter = d->m_randomPathOffset;
 			Coord3D offset = {
-				// 0, 0, 100.0f
 				GameLogicRandomValue(-scatter, scatter),
 				GameLogicRandomValue(-scatter, scatter),
 				GameLogicRandomValue(0, scatter * 0.5)
@@ -674,6 +689,11 @@ void MissileAIUpdate::doAttackState(Bool turnOK, Bool randomPath)
 			adjustVector(&offset, &mtx);
 
 			targetPos.add(&offset);
+
+			// Make sure Z is above ground
+			PathfindLayerEnum layer = TheTerrainLogic->getHighestLayerForDestination(&targetPos);
+			Real minHeight = TheTerrainLogic->getLayerHeight(targetPos.x, targetPos.y, layer) + APPROACH_HEIGHT;
+			targetPos.z = __max(targetPos.z, minHeight);
 
 			getStateMachine()->setGoalPosition(&targetPos);
 			getStateMachine()->setGoalObject(NULL);
@@ -684,8 +704,8 @@ void MissileAIUpdate::doAttackState(Bool turnOK, Bool randomPath)
 			if (curLoco)
 			{
 				curLoco->setMaxAcceleration(m_maxAccel);
-				curLoco->setMaxTurnRate(d->m_turnRateAttacking); // TODO: Extra turnrate value?
-				DEBUG_LOG((">>> MissileAI setMaxTurnRate = %f\n", d->m_turnRateAttacking));
+				// curLoco->setMaxTurnRate(d->m_turnRateAttacking);
+				curLoco->setMaxTurnRate(BIGNUM);
 			}
 
 			switchToState(ATTACK_RANDOM_PATH);
@@ -728,10 +748,10 @@ void MissileAIUpdate::doKillState(void)
 
 	if (curLoco)
 	{
-		const MissileAIUpdateModuleData* d = getMissileAIUpdateModuleData();
+		// const MissileAIUpdateModuleData* d = getMissileAIUpdateModuleData();
 		curLoco->setMaxAcceleration(m_maxAccel);
-		curLoco->setMaxTurnRate(d->m_turnRateAttacking * 2.0f);
-		DEBUG_LOG((">>> MissileAI (killState) setMaxTurnRate = %f\n", d->m_turnRateAttacking * 2.0f));
+		// curLoco->setMaxTurnRate(__min(d->m_turnRateAttacking * 2.0f, BIGNUM));
+		curLoco->setMaxTurnRate(BIGNUM);
 	}
 	if (isIdle()) {
 		// we finished the move
@@ -743,7 +763,7 @@ void MissileAIUpdate::doKillState(void)
 				closeEnough = curLoco->getMaxSpeedForCondition(BODY_PRISTINE);
 			}
 			Real distanceToTargetSq = ThePartitionManager->getDistanceSquared( getObject(), getGoalObject(), FROM_BOUNDINGSPHERE_3D);
-			//DEBUG_LOG(("Distance to target %f, closeEnough %f\n", sqrt(distanceToTargetSq), closeEnough));
+			// DEBUG_LOG((">>> MissileAI KILL (Idle) - Distance to target %f, closeEnough %f\n", sqrt(distanceToTargetSq), closeEnough));
 			if (distanceToTargetSq < closeEnough*closeEnough) {
 				Coord3D pos = *getGoalObject()->getPosition();
 				getObject()->setPosition(&pos);
