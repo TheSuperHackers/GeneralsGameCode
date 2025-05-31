@@ -439,8 +439,17 @@ void RecorderClass::update() {
  * Do the update for the next frame of this playback.
  */
 void RecorderClass::updatePlayback() {
-	cullBadCommands();	// Remove any bad commands that have been inserted by the local user that shouldn't be
-											// executed during playback.
+	// Remove any bad commands that have been inserted by the local user that shouldn't be
+	// executed during playback.
+	CullBadCommandsResult result = cullBadCommands();
+
+	if (result.hasClearGameDataMessage) {
+		// TheSuperHackers @bugfix Stop appending more commands if the replay playback is about to end.
+		// Previously this would be able to append more commands, which could have unintended consequences,
+		// such as crashing the game when a MSG_PLACE_BEACON is appended after MSG_CLEAR_GAME_DATA.
+		// MSG_CLEAR_GAME_DATA is supposed to be processed later this frame, which will then stop this playback.
+		return;
+	}
 
 	if (m_nextFrame == -1) {
 		// This is reached if there are no more commands to be executed.
@@ -1504,9 +1513,11 @@ void RecorderClass::readArgument(GameMessageArgumentDataType type, GameMessage *
 /**
  * This needs to be called for every frame during playback. Basically it prevents the user from inserting.
  */
-void RecorderClass::cullBadCommands() {
+RecorderClass::CullBadCommandsResult RecorderClass::cullBadCommands() {
+	CullBadCommandsResult result;
+
 	if (m_doingAnalysis)
-		return;
+		return result;
 
 	GameMessage *msg = TheCommandList->getFirstMessage();
 	GameMessage *next = NULL;
@@ -1519,9 +1530,15 @@ void RecorderClass::cullBadCommands() {
 
 			deleteInstance(msg);
 		}
+		else if (msg->getType() == GameMessage::MSG_CLEAR_GAME_DATA)
+		{
+			result.hasClearGameDataMessage = true;
+		}
 
 		msg = next;
 	}
+
+	return result;
 }
 
 /**
