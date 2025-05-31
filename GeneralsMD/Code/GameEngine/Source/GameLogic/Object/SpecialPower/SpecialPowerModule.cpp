@@ -510,6 +510,8 @@ void SpecialPowerModule::createViewObject( const Coord3D *location )
 	if( viewObject == NULL )
 		return;
 
+	viewObject->setProducer(getObject());
+
 	viewObject->setPosition( location );
 	viewObject->setShroudClearingRange( visionRange );
 
