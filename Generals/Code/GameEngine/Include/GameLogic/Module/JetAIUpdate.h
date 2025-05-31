@@ -103,6 +103,7 @@ public:
 	virtual Bool isTemporarilyPreventingAimSuccess() const;
 	virtual Bool isDoingGroundMovement() const;
 	virtual void notifyVictimIsDead();
+	virtual Bool isOutOfSpecialReloadAmmo() const;
 
 	const Coord3D* friend_getProducerLocation() const { return &m_producerLocation; }
 	Real friend_getOutOfAmmoDamagePerSecond() const { return getJetAIUpdateModuleData()->m_outOfAmmoDamagePerSecond; }

@@ -3957,12 +3957,14 @@ void AIUpdateInterface::privateHackInternet( CommandSourceType cmdSource )
 /// if we are attacking "fromID", stop that and attack "toID" instead
 void AIUpdateInterface::transferAttack(ObjectID fromID, ObjectID toID)
 {
+	Object *newTarget = TheGameLogic->findObjectByID( toID );
+
 	if (m_currentVictimID == fromID)
 		m_currentVictimID = toID;
 
 	Object* goalObj = getStateMachine()->getGoalObject();
 	if (goalObj && goalObj->getID() == fromID)
-		getStateMachine()->setGoalObject(TheGameLogic->findObjectByID(toID));
+		getStateMachine()->setGoalObject( newTarget );
 }
 
 //----------------------------------------------------------------------------------------------------------
