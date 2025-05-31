@@ -55,6 +55,9 @@ class CRCInfo;
 
 class RecorderClass : public SubsystemInterface {
 public:
+	struct ReplayHeader;
+
+public:
 	RecorderClass();																	///< Constructor.
 	virtual ~RecorderClass();													///< Destructor.
 
@@ -68,7 +71,8 @@ public:
 	// Methods dealing with playback.
 	void updatePlayback();														///< The update function for playing back a file.
 	Bool playbackFile(AsciiString filename);					///< Starts playback of the specified file.
-	Bool testVersionPlayback(AsciiString filename);   ///< Returns if the playback is a valid playback file for this version or not.
+	Bool replayMatchesGameVersion(AsciiString filename); ///< Returns true if the playback is a valid playback file for this version.
+	static Bool replayMatchesGameVersion(const ReplayHeader& header); ///< Returns true if the playback is a valid playback file for this version.
 	AsciiString getCurrentReplayFilename( void );			///< valid during playback only
 	void stopPlayback();															///< Stops playback.  Its fine to call this even if not playing back a file.
 #if defined RTS_DEBUG || defined RTS_INTERNAL
