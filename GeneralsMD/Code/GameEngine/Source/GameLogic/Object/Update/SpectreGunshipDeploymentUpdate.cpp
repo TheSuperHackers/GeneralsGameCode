@@ -235,7 +235,7 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 	  if( shipSPMInterface )
 	  {
 		  SpecialPowerModule *spModule = (SpecialPowerModule*)shipSPMInterface;
-		  spModule->markSpecialPowerTriggered( &m_initialTargetPosition );
+		  spModule->markSpecialPowerTriggered( &m_initialTargetPosition, false );
       spModule->doSpecialPowerAtLocation( &m_initialTargetPosition, INVALID_ANGLE, commandOptions );
 
 	  }
@@ -252,7 +252,7 @@ Bool SpectreGunshipDeploymentUpdate::initiateIntentToDoSpecialPower(const Specia
 	if( spmInterface )
 	{
 		SpecialPowerModule *spModule = (SpecialPowerModule*)spmInterface;
-		spModule->markSpecialPowerTriggered( &m_initialTargetPosition );
+		spModule->markSpecialPowerTriggered( &m_initialTargetPosition, false );
 	}
   
   return TRUE;

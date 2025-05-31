@@ -471,11 +471,11 @@ Bool SpecialPowerModule::initiateIntentToDoSpecialPower( const Object *targetObj
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerModule::triggerSpecialPower( const Coord3D *location )
+void SpecialPowerModule::triggerSpecialPower( const Coord3D *location, bool makeSelectable )
 {
 	aboutToDoSpecialPower( location );	// do BEFORE recharge
 
-	createViewObject(location);
+	createViewObject( location, makeSelectable );
 	
 	// we won't be able to use the power for X number of frames now
 	startPowerRecharge();
@@ -483,7 +483,7 @@ void SpecialPowerModule::triggerSpecialPower( const Coord3D *location )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerModule::createViewObject( const Coord3D *location )
+void SpecialPowerModule::createViewObject( const Coord3D *location, bool makeSelectable )
 {
 	const SpecialPowerModuleData *modData = getSpecialPowerModuleData();
 	const SpecialPowerTemplate *powerTemplate = modData->m_specialPowerTemplate;
@@ -510,7 +510,8 @@ void SpecialPowerModule::createViewObject( const Coord3D *location )
 	if( viewObject == NULL )
 		return;
 
-	viewObject->setProducer(getObject());
+	if ( makeSelectable )
+		viewObject->setProducer(getObject());
 
 	viewObject->setPosition( location );
 	viewObject->setShroudClearingRange( visionRange );
@@ -525,9 +526,9 @@ void SpecialPowerModule::createViewObject( const Coord3D *location )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerModule::markSpecialPowerTriggered( const Coord3D *location )
+void SpecialPowerModule::markSpecialPowerTriggered( const Coord3D *location, bool makeSelectable )
 {
-	triggerSpecialPower( location );
+	triggerSpecialPower( location, makeSelectable );
 }
 
 
@@ -679,7 +680,7 @@ void SpecialPowerModule::doSpecialPower( UnsignedInt commandOptions )
 	//is the napalm strike. If we don't call this now, it's up to the update module to do so.
 	if( !getSpecialPowerModuleData()->m_updateModuleStartsAttack )
 	{
-		triggerSpecialPower( NULL );// Location-less trigger
+		triggerSpecialPower( NULL, false );// Location-less trigger
 	}
 } 
 
@@ -701,7 +702,7 @@ void SpecialPowerModule::doSpecialPowerAtObject( Object *obj, UnsignedInt comman
 	//is the napalm strike. If we don't call this now, it's up to the update module to do so.
 	if( !getSpecialPowerModuleData()->m_updateModuleStartsAttack )
 	{
-		triggerSpecialPower( obj->getPosition() );
+		triggerSpecialPower( obj->getPosition(), false );
 	}
 }  
 
@@ -723,7 +724,7 @@ void SpecialPowerModule::doSpecialPowerAtLocation( const Coord3D *loc, Real angl
 	//is the napalm strike. If we don't call this now, it's up to the update module to do so.
 	if( !getSpecialPowerModuleData()->m_updateModuleStartsAttack )
 	{
-		triggerSpecialPower( loc );
+		triggerSpecialPower( loc, false );
 	}
 }  
 
@@ -745,7 +746,7 @@ void SpecialPowerModule::doSpecialPowerUsingWaypoints( const Waypoint *way, Unsi
 	//is the napalm strike. If we don't call this now, it's up to the update module to do so.
 	if( !getSpecialPowerModuleData()->m_updateModuleStartsAttack )
 	{
-		triggerSpecialPower( NULL );// This type doesn't create view objects
+		triggerSpecialPower( NULL, false );// This type doesn't create view objects
 	}
 }
 

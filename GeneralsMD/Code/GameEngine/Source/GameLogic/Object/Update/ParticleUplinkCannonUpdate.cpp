@@ -350,7 +350,7 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 	if( spmInterface )
 	{
 		SpecialPowerModule *spModule = (SpecialPowerModule*)spmInterface;
-		spModule->markSpecialPowerTriggered( &m_initialTargetPosition );
+		spModule->markSpecialPowerTriggered( &m_initialTargetPosition, true );
 	}
 	return TRUE;
 }
