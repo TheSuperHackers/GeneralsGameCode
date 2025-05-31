@@ -30,6 +30,8 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
+#include "Common/AudioEventRTS.h"
+#include "Common/AudioHandleSpecialValues.h"
 #include "Common/RandomValue.h"
 #include "GameClient/Shell.h"
 #include "GameClient/WindowLayout.h"
@@ -508,6 +510,18 @@ void Shell::showShellMap(Bool useShellMap )
 			top()->bringForward();
 		m_shellMapOn = FALSE;
 		m_clearBackground = FALSE;
+
+		// MUSIC
+		// TODO
+		//AsciiString musicName = "Shell";
+		//if (!musicName.isEmpty())
+		//{
+		//	TheAudio->removeAudioEvent(AHSV_StopTheMusicFade);
+		//	AudioEventRTS event(musicName);
+		//	event.setShouldFade(TRUE);
+		//	TheAudio->addAudioEvent(&event);
+		//	TheAudio->update();//Since GameEngine::update() is suspended until after I am gone... 
+		//}
 	}
 }
 
