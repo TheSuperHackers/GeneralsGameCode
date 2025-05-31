@@ -3245,9 +3245,9 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		{
 			if( TheGlobalData )
 			{
-				#if !defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
+#if !defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
 				if (TheGameLogic->isInReplayGame())
-				#endif
+#endif
 				{
 					TheWritableGlobalData->m_TiVOFastMode = 1 - TheGlobalData->m_TiVOFastMode;
 					TheInGameUI->message( UnicodeString( L"m_TiVOFastMode: %s" ),
@@ -3258,7 +3258,38 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			disp = DESTROY_MESSAGE;
 			break;
 
-		}  // end toggle special power delays
+		}
+		case GameMessage::MSG_META_TOGGLE_PAUSE:
+		{
+#if !defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
+			if (TheGameLogic->isInReplayGame())
+#endif
+			{
+				if (TheGameLogic->isGamePaused())
+				{
+					TheGameLogic->setGamePaused(FALSE);
+				}
+				else
+				{
+					Bool pause = TRUE;
+					Bool pauseMusic = FALSE;
+					Bool pauseInput = FALSE;
+					TheGameLogic->setGamePaused(pause, pauseMusic, pauseInput);
+				}
+			}
+			break;
+		}
+		case GameMessage::MSG_META_STEP_FRAME:
+		{
+#if !defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
+			if (TheGameLogic->isInReplayGame())
+#endif
+			{
+				TheGameLogic->setGamePaused(FALSE);
+				TheGameLogic->setGamePausedInFrame(TheGameLogic->getFrame() + 1);
+			}
+			break;
+		}
 
 #if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
     case GameMessage::MSG_CHEAT_RUNSCRIPT1:
