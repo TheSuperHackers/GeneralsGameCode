@@ -6,25 +6,29 @@
         "patch": 0
     },
     "configurePresets": [
-        {
-            "name": "vc6",
-            "displayName": "Windows 32bit VC6 Release",
-            "generator": "NMake Makefiles",
-            "hidden": false,
-            "binaryDir": "${sourceDir}/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL",
-                "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "$<$<CONFIG:Release,Debug,RelWithDebInfo>:ProgramDatabase>",
-                "CMAKE_BUILD_TYPE": "Release",
-                "RTS_FLAGS": "/W3"
-            },
-            "vendor": {
-                "jetbrains.com/clion": {
-                    "toolchain": "Visual Studio 6"
-                }
-            }
+      {
+        "name": "vc6",
+        "displayName": "Windows 32bit VC6 Release",
+        "generator": "Visual Studio 17 2022",
+        "architecture": {
+          "value": "Win32"
         },
+        "toolset": "v60",
+        "hidden": false,
+        "binaryDir": "${sourceDir}/build/${presetName}",
+        "cacheVariables": {
+          "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+          "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL",
+          "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "$<$<CONFIG:Release,Debug,RelWithDebInfo>:ProgramDatabase>",
+          "CMAKE_BUILD_TYPE": "Release",
+          "RTS_FLAGS": "/W3"
+        },
+        "vendor": {
+          "jetbrains.com/clion": {
+            "toolchain": "Visual Studio 6"
+          }
+        }
+      },
         {
             "name": "vc6-profile",
             "displayName": "Windows 32bit VC6 Profile",
