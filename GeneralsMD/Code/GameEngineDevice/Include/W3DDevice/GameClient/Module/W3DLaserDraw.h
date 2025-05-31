@@ -58,6 +58,10 @@ public:
 	Real m_arcHeight;
 	Real m_segmentOverlapRatio;
 	Real m_tilingScalar;
+	UnsignedInt m_gridColumns;
+	UnsignedInt m_gridColumnsTotal;
+	Bool m_useHouseColorInner;
+	Bool m_useHouseColorOuter;
 
 	W3DLaserDrawModuleData();
 	~W3DLaserDrawModuleData();
@@ -97,6 +101,8 @@ protected:
 	TextureClass *m_texture;
 	Real m_textureAspectRatio;			///< aspect ratio of texture
 	Bool m_selfDirty;								// not saved
+
+	Int	        m_hexColor;  ///< player house color
 
 };
 

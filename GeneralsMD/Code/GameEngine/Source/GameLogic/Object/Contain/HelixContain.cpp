@@ -47,7 +47,7 @@
 #include "GameLogic/Weapon.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -135,16 +135,17 @@ UpdateSleepTime HelixContain::update()
 
 void HelixContain::redeployOccupants( void )
 {
-  Coord3D firePos = *getObject()->getPosition();
-  firePos.z += 8;
-  
+	// Removed by AndiW: This restores proper firebones, if the parent vehicle model has them
 
-	for (ContainedItemsList::iterator it = m_containList.begin(); it != m_containList.end(); ++it)
-  {
-    Object* rider = *it;
-    if (rider)
-      rider->setPosition( &firePos );
-  }
+	// Coord3D firePos = *getObject()->getPosition();
+	// firePos.z += 8;
+	// for (ContainedItemsList::iterator it = m_containList.begin(); it != m_containList.end(); ++it)
+	// {
+	//   Object* rider = *it;
+	//   if (rider)
+	//     rider->setPosition( &firePos );
+	// }
+	OpenContain::redeployOccupants();
 }
 
 
@@ -395,8 +396,8 @@ void HelixContain::onContaining( Object *obj, Bool wasSelected )
 	TransportContain::onContaining( obj, wasSelected );
 
 	// give the object a garrisoned version of its weapon
-	obj->setWeaponBonusCondition( WEAPONBONUSCONDITION_GARRISONED );
-  obj->setDisabled( DISABLED_HELD );
+	// obj->setWeaponBonusCondition( WEAPONBONUSCONDITION_GARRISONED );
+    obj->setDisabled( DISABLED_HELD );
   
 
   if ( obj->isKindOf( KINDOF_PORTABLE_STRUCTURE ) && getObject()->testStatus( OBJECT_STATUS_STEALTHED ) )

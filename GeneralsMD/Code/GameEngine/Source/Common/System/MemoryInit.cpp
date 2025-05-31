@@ -49,7 +49,7 @@
 #include "Lib/BaseType.h"
 #include "Common/GameMemory.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -211,6 +211,7 @@ static PoolSizeRec sizes[] =
 	{ "GarrisonContain", 256, 32 },
 	{ "HealCrateCollide", 32, 32 },
 	{ "HeightDieUpdate", 32, 32 },
+	{ "ScatterShotUpdate", 128, 64 },
 	{ "FireWeaponWhenDamagedBehavior", 32, 32 },
 	{ "FireWeaponWhenDeadBehavior", 128, 64 },
 	{ "GenerateMinefieldBehavior", 32, 32 },
@@ -272,6 +273,7 @@ static PoolSizeRec sizes[] =
 	{ "AnimationSteeringUpdate", 1024, 32 },
 	{ "SupplyWarehouseCripplingBehavior", 16, 16 },
 	{ "CostModifierUpgrade", 32, 32 },
+	{ "ProductionTimeModifierUpgrade", 32, 32 },
 	{ "CashBountyPower", 32, 32 },
 	{ "CleanupAreaPower", 32, 32 },
 	{ "ObjectCreationUpgrade", 196, 32 },
@@ -346,6 +348,7 @@ static PoolSizeRec sizes[] =
 	{ "ChinookAIUpdate", 32, 32 },
 	{ "WanderAIUpdate", 32, 32 },
 	{ "WaveGuideUpdate", 16, 16 },
+	{ "ArmorDamageScalarUpdate", 256, 32 },
 	{ "WeaponBonusUpgrade", 512, 128 },
 	{ "WeaponSetUpgrade", 512, 128 },
 	{ "ArmorUpgrade", 512, 128 },
@@ -556,6 +559,7 @@ static PoolSizeRec sizes[] =
 	{ "AttackPriorityInfo", 32, 32 },
 	{ "SequentialScript", 32, 32 },
 	{ "Win32LocalFile", 1024, 256 },
+	{ "StdLocalFile", 1024, 256 },
 	{ "RAMFile", 32, 32 },
 	{ "BattlePlanBonuses", 32, 32 },
 	{ "KindOfPercentProductionChange", 32, 32 },

@@ -128,6 +128,7 @@
 #include "GameLogic/Module/AssaultTransportAIUpdate.h"
 #include "GameLogic/Module/HeightDieUpdate.h"
 #include "GameLogic/Module/HordeUpdate.h"
+#include "GameLogic/Module/ScatterShotUpdate.h"
 #include "GameLogic/Module/JetAIUpdate.h"
 #include "GameLogic/Module/LaserUpdate.h"
 #include "GameLogic/Module/PointDefenseLaserUpdate.h"
@@ -186,6 +187,7 @@
 #include "GameLogic/Module/WanderAIUpdate.h"
 #include "GameLogic/Module/WaveGuideUpdate.h"
 #include "GameLogic/Module/WeaponBonusUpdate.h"
+#include "GameLogic/Module/ArmorDamageScalarUpdate.h"
 #include "GameLogic/Module/WorkerAIUpdate.h"
 #include "GameLogic/Module/PowerPlantUpdate.h"
 #include "GameLogic/Module/CheckpointUpdate.h"
@@ -211,6 +213,7 @@
 #include "GameLogic/Module/WeaponSetUpgrade.h"
 #include "GameLogic/Module/WeaponBonusUpgrade.h"
 #include "GameLogic/Module/CostModifierUpgrade.h"
+#include "GameLogic/Module/ProductionTimeModifierUpgrade.h"
 #include "GameLogic/Module/ExperienceScalarUpgrade.h"
 #include "GameLogic/Module/MaxHealthUpgrade.h"
 
@@ -286,7 +289,7 @@ ModuleFactory *TheModuleFactory = NULL;  ///< the module factory singleton
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -407,6 +410,7 @@ void ModuleFactory::init( void )
   addModule( LeafletDropBehavior );
 	addModule( AutoDepositUpdate );
 	addModule( WeaponBonusUpdate );
+	addModule( ArmorDamageScalarUpdate );
 	addModule( MissileAIUpdate );
 	addModule( NeutronMissileUpdate );
 	addModule( FireSpreadUpdate );
@@ -415,6 +419,7 @@ void ModuleFactory::init( void )
 	addModule( FloatUpdate );
 	addModule( TensileFormationUpdate );
 	addModule( HeightDieUpdate );
+	addModule( ScatterShotUpdate );
 	addModule( ChinookAIUpdate );
 	addModule( JetAIUpdate );
 	addModule( AIUpdateInterface );
@@ -476,6 +481,7 @@ void ModuleFactory::init( void )
 
 	// upgrade modules
 	addModule( CostModifierUpgrade );
+	addModule( ProductionTimeModifierUpgrade );
 	addModule( ActiveShroudUpgrade );
 	addModule( ArmorUpgrade );
 	addModule( CommandSetUpgrade );

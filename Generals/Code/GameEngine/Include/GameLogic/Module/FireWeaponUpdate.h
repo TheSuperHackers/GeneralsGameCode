@@ -65,6 +65,8 @@ public:
 	virtual UpdateSleepTime update();
 
 protected:
+
+	Bool isOkayToFire();
 	
 	Weapon* m_weapon;
 

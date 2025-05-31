@@ -56,7 +56,7 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/SidesList.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -104,7 +104,7 @@ Bool st_particleSystemNeedsStopping = FALSE; ///< Set along with st_particleSyst
 #define FORMAT_STRING_LEADING_STRING		"%s%.2f"
 // That's it for particle editor
 
-#if defined(_INTERNAL)
+#if defined(RTS_INTERNAL)
 	#define DO_VTUNE_STUFF
 #endif
 
@@ -193,7 +193,7 @@ Int AttackPriorityInfo::getPriority(const ThingTemplate *tThing) const
 	return priority;
 }
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 /** Dump the info. */
 //-------------------------------------------------------------------------------------------------
 void AttackPriorityInfo::dumpPriorityInfo(void)
@@ -4880,7 +4880,7 @@ void ScriptEngine::update( void )
 			_adjustVariable(m_flags[k].name.str(), m_flags[k].value);
 		}
 	}
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	if (TheGameLogic->getFrame()==0) {
 		for (i=0; i<m_numAttackInfo; i++) {
 			m_attackPriorityInfo[i].dumpPriorityInfo();
@@ -5656,7 +5656,7 @@ void ScriptEngine::setCounter( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setFade( ScriptAction *pAction )
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_disableCameraFade)
 	{
 		m_fade = FADE_NONE;
@@ -8609,7 +8609,7 @@ void ScriptEngine::loadPostProcess( void )
 
 }  // end loadPostProcess
 
-//#if defined(_DEBUG) || defined(_INTERNAL)
+//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 void ScriptEngine::debugVictory( void )
 {
 	ScriptAction *action = newInstance(ScriptAction)(ScriptAction::VICTORY);

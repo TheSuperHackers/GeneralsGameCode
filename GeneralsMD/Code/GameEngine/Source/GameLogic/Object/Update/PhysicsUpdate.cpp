@@ -71,7 +71,7 @@ const Int MOTIVE_FRAMES = LOGICFRAMES_PER_SECOND / 3;
 
 #define SLEEPY_PHYSICS
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -140,6 +140,7 @@ PhysicsBehaviorModuleData::PhysicsBehaviorModuleData()
 	m_pitchRollYawFactor = 2.0f;
 	m_vehicleCrashesIntoBuildingWeaponTemplate = TheWeaponStore->findWeaponTemplate("VehicleCrashesIntoBuildingWeapon");
 	m_vehicleCrashesIntoNonBuildingWeaponTemplate = TheWeaponStore->findWeaponTemplate("VehicleCrashesIntoNonBuildingWeapon");
+	m_vehicleCrashAllowAirborne = FALSE;
 
 }
 
@@ -190,7 +191,7 @@ static void parseFrictionPerSec( INI* ini, void * /*instance*/, void *store, con
 
 		{ "VehicleCrashesIntoBuildingWeaponTemplate", INI::parseWeaponTemplate, NULL, offsetof(PhysicsBehaviorModuleData, m_vehicleCrashesIntoBuildingWeaponTemplate) },
 		{ "VehicleCrashesIntoNonBuildingWeaponTemplate", INI::parseWeaponTemplate, NULL, offsetof(PhysicsBehaviorModuleData, m_vehicleCrashesIntoNonBuildingWeaponTemplate) },
-
+		{ "VehicleCrashWeaponAllowAirborne", INI::parseBool, NULL, offsetof(PhysicsBehaviorModuleData, m_vehicleCrashAllowAirborne) },
 		{ 0, 0, 0, 0 }
 	};
   p.add(dataFieldParse);
@@ -963,21 +964,32 @@ Real PhysicsBehavior::getVelocityMagnitude() const
 Real PhysicsBehavior::getForwardSpeed2D() const
 {
 	const Coord3D *dir = getObject()->getUnitDirectionVector2D();
-
 	Real vx = m_vel.x * dir->x;
 	Real vy = m_vel.y * dir->y;
-
 	Real dot = vx + vy;
 
-	Real speedSquared = vx*vx + vy*vy;
-//	DEBUG_ASSERTCRASH( speedSquared != 0, ("zero speedSquared will overflow sqrtf()!") );// lorenzen... sanity check
-	
-	Real speed = (Real)sqrtf( speedSquared );
+	if (TheGlobalData->m_useOldMoveSpeed) {
 
-	if (dot >= 0.0f)
-		return speed;
+		Real speedSquared = vx * vx + vy * vy;
+		//	DEBUG_ASSERTCRASH( speedSquared != 0, ("zero speedSquared will overflow sqrtf()!") );// lorenzen... sanity check
 
-	return -speed;
+		Real speed = (Real)sqrtf(speedSquared);
+
+		if (dot >= 0.0f)
+			return speed;
+
+		return -speed;
+	}
+	else {
+		//Note: using fixes from https://github.com/TheSuperHackers/GeneralsGameCode/issues/123#issuecomment-2827246587
+
+		//Return the speed of the unit - Magnitude of the velocity is the speed
+		if (dot >= 0.0f)
+			return (Real)sqrtf(sqr(m_vel.x) + sqr(m_vel.y));
+
+		//Negative dot product means the unit is moving in reverse
+		return -(Real)sqrtf(sqr(m_vel.x) + sqr(m_vel.y));
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -988,19 +1000,29 @@ Real PhysicsBehavior::getForwardSpeed2D() const
 Real PhysicsBehavior::getForwardSpeed3D() const
 {
 	Vector3 dir = getObject()->getTransformMatrix()->Get_X_Vector();
-
 	Real vx = m_vel.x * dir.X;
 	Real vy = m_vel.y * dir.Y;
 	Real vz = m_vel.z * dir.Z;
-
 	Real dot = vx + vy + vz;
 
-	Real speed = (Real)sqrtf( vx*vx + vy*vy + vz*vz );
+	if (TheGlobalData->m_useOldMoveSpeed) {
+		Real speed = (Real)sqrtf(vx * vx + vy * vy + vz * vz);
 
-	if (dot >= 0.0f)
-		return speed;
+		if (dot >= 0.0f)
+			return speed;
 
-	return -speed;
+		return -speed;
+	}
+	else {
+		//Note: using fixes from https://github.com/TheSuperHackers/GeneralsGameCode/issues/123#issuecomment-2827246587
+
+		//Return the speed of the unit - Magnitude of the velocity is the speed
+		if (dot >= 0.0f)
+			return (Real)sqrtf(sqr(m_vel.x) + sqr(m_vel.y) + sqr(m_vel.z));
+
+		//Negative dot product means the unit is moving in reverse
+		return -(Real)sqrtf(sqr(m_vel.x) + sqr(m_vel.y) + sqr(m_vel.z));
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1391,8 +1413,15 @@ void PhysicsBehavior::onCollide( Object *other, const Coord3D *loc, const Coord3
 				else
 				{
 					// fall into a nonbuilding -- whatever. if we're a vehicle, quietly do a little damage.
-					if (obj->isKindOf(KINDOF_VEHICLE))
+					if (obj->isKindOf(KINDOF_VEHICLE) && (!other->isAirborneTarget() || getPhysicsBehaviorModuleData()->m_vehicleCrashAllowAirborne))
 					{
+						//DEBUG_LOG((
+						//	">>> PhysicsUpdate - fire vehicleCrashesIntoNonBuildingWeapon; obj = %s (%d); other = %s (%d).\n",
+						//	obj->getTemplate()->getName().str(),
+						//	obj->getID(),
+						//	other->getTemplate()->getName().str(),
+						//	other->getID()
+						//	));
 						TheWeaponStore->createAndFireTempWeapon(getPhysicsBehaviorModuleData()->m_vehicleCrashesIntoNonBuildingWeaponTemplate, obj, obj->getPosition());
 					}
 				}

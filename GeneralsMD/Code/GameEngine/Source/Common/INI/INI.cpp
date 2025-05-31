@@ -30,6 +30,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 #define DEFINE_DEATH_NAMES
+#define DEFINE_WEAPONBONUSCONDITION_NAMES
 
 #include "Common/INI.h"
 #include "Common/INIException.h"
@@ -59,7 +60,7 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/Weapon.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -86,6 +87,7 @@ static const BlockParse theTypeTable[] =
 	{ "AIData",							INI::parseAIDataDefinition },
 	{ "Animation",					INI::parseAnim2DDefinition },
 	{ "Armor",							INI::parseArmorDefinition },
+	{ "ArmorExtend",							INI::parseArmorExtendDefinition },
 	{ "AudioEvent",					INI::parseAudioEventDefinition },
 	{ "AudioSettings",			INI::parseAudioSettingsDefinition },
 	{ "Bridge",							INI::parseTerrainBridgeDefinition },
@@ -122,6 +124,7 @@ static const BlockParse theTypeTable[] =
 	{ "Object",							INI::parseObjectDefinition },
 	{ "ObjectCreationList",	INI::parseObjectCreationListDefinition },
 	{ "ObjectReskin",				INI::parseObjectReskinDefinition },
+	{ "ObjectExtend",				INI::parseObjectExtendDefinition },
 	{ "ParticleSystem",			INI::parseParticleSystemDefinition },
 	{ "PlayerTemplate",			INI::parsePlayerTemplateDefinition },
 	{ "Road",								INI::parseTerrainRoadDefinition },
@@ -713,6 +716,40 @@ void INI::parseAsciiStringVectorAppend( INI* ini, void * /*instance*/, void *sto
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
+/* static */void INI::parseWeaponBonusVector( INI *ini, void * /*instance*/, void *store, const void *userData )
+{
+	WeaponBonusConditionTypeVec* asv = (WeaponBonusConditionTypeVec*)store;
+	asv->clear();
+	for (const char *token = ini->getNextTokenOrNull(); token != NULL; token = ini->getNextTokenOrNull())
+	{
+		if (stricmp(token, "None") == 0)
+		{
+			asv->clear();
+			return;
+		}
+		asv->push_back((WeaponBonusConditionType)INI::scanIndexList(token, TheWeaponBonusNames));
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+/* static */void INI::parseWeaponBonusVectorKeepDefault(INI* ini, void* /*instance*/, void* store, const void* userData)
+{
+	WeaponBonusConditionTypeVec* asv = (WeaponBonusConditionTypeVec*)store;
+	// asv->clear();
+	for (const char* token = ini->getNextTokenOrNull(); token != NULL; token = ini->getNextTokenOrNull())
+	{
+		if (stricmp(token, "None") == 0)
+		{
+			asv->clear();
+			return;
+		}
+		asv->push_back((WeaponBonusConditionType)INI::scanIndexList(token, TheWeaponBonusNames));
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 AsciiString INI::getNextQuotedAsciiString()
 {
 	AsciiString result;
@@ -995,6 +1032,36 @@ void INI::parseRGBColor( INI* ini, void * /*instance*/, void *store, const void*
 	theColor->blue	= (Real)colors[ 2 ] / 255.0f;
 
 }
+
+
+//-------------------------------------------------------------------------------------------------
+/** Parse a color in the form of
+	*
+	* RGB_COLOR = R:0.5 G:0.3 B:0.6
+	* and store in "RGBColor" structure pointed to by 'store' 
+	* Negative numbers, and values greater 1 are allowed! */
+	//-------------------------------------------------------------------------------------------------
+void INI::parseRGBColorReal(INI* ini, void* /*instance*/, void* store, const void* /*userData*/)
+{
+	const char* names[3] = { "R", "G", "B" };
+	Real colors[3];
+	for (Int i = 0; i < 3; i++)
+	{
+		colors[i] = scanReal(ini->getNextSubToken(names[i]));
+		//if (colors[i] < -255)
+		//	throw INI_INVALID_DATA;
+		//if (colors[i] > 255)
+		//	throw INI_INVALID_DATA;
+	}
+
+	// assign the color components to the "RGBColor" pointer at 'store'
+	RGBColor* theColor = (RGBColor*)store;
+	theColor->red = colors[0];
+	theColor->green = colors[1];
+	theColor->blue = colors[2];
+
+}
+
 
 //-------------------------------------------------------------------------------------------------
 /** Parse a color in the form of
@@ -1433,6 +1500,22 @@ void INI::parseLookupList( INI* ini, void * /*instance*/, void *store, const voi
 {
 	ConstLookupListRecArray lookupList = (ConstLookupListRecArray)userData;
 	*(Int *)store = scanLookupList(ini->getNextToken(), lookupList);
+}
+
+//-------------------------------------------------------------------------------------------------
+/** Special Handling for None = -2 (Eva_NONE), otherwise like parseIndexList **/
+//-------------------------------------------------------------------------------------------------
+void INI::parseEvaNameIndexList(INI* ini, void* /*instance*/, void* store, const void* userData)
+{
+	const char* token = ini->getNextToken();
+	if (stricmp(token, "None") == 0) {
+		*(Int*)store = -2;
+	}
+	else {
+		//like parseIndexList
+		ConstCharPtrArray nameList = (ConstCharPtrArray)userData;
+		*(Int*)store = scanIndexList(token, nameList);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

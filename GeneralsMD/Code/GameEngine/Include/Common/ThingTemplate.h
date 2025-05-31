@@ -236,6 +236,25 @@ static const char *BuildableStatusNames[] =
 };
 #endif	// end DEFINE_BUILDABLE_STATUS_NAMES
 
+enum AmmoPipsStyle CPP_11(: Int)
+{
+		AMMO_PIPS_DEFAULT = 0,  ///< Default style, showing each shot in clip
+		AMMO_PIPS_BAR,	///< Show percentage bar
+		AMMO_PIPS_SINGLE,  ///< like default, but show a single pip only (full or empty)
+	
+		AMMO_PIPS_NUM_TYPES								// leave this last
+};
+#ifdef DEFINE_AMMO_PIPS_STYLE_NAMES
+static const char* AmmoPipsStyleNames[] =
+{
+	"DEFAULT",
+	"PERCENTAGE_BAR",
+	"SINGLE",
+
+	NULL
+};
+#endif  // end DEFINE_AMMO_PIPS_STYLE_NAMES
+
 //-------------------------------------------------------------------------------------------------
 enum ModuleParseMode CPP_11(: Int)
 {
@@ -286,7 +305,7 @@ public:
 		return m_info.size(); 
 	}
 	
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool containsPartialName(const char* n) const
 	{
 		for (size_t i = 0; i < m_info.size(); i++)
@@ -420,6 +439,9 @@ public:
 	const UnicodeString& getDisplayName() const { return m_displayName; }  ///< return display name
 
 	RadarPriorityType getDefaultRadarPriority() const { return (RadarPriorityType)m_radarPriority; }  ///< return radar priority from INI
+
+	AmmoPipsStyle getAmmoPipsStyle() const { return (AmmoPipsStyle)m_ammoPipsStyle; }  ///< return ammo pips style from ini
+
 
 	// note, you should not call this directly; rather, call Object::getTransportSlotCount().
 	Int getRawTransportSlotCount() const { return m_transportSlotCount; }
@@ -604,6 +626,9 @@ public:
 
 	void setCopiedFromDefault();
 
+	// Only set non removable modules as copied when using ObjectExtend
+	void setCopiedFromDefaultExtended();
+
 	void setReskinnedFrom(const ThingTemplate* tt) { DEBUG_ASSERTCRASH(m_reskinnedFrom == NULL, ("should be null")); m_reskinnedFrom = tt; }
 
 	Bool isPrerequisite() const { return m_isPrerequisite; }
@@ -769,7 +794,7 @@ private:
 	Byte					m_moduleParsingMode;
 	UnsignedByte	m_crusherLevel;							///< crusher > crushable level to actually crush
 	UnsignedByte	m_crushableLevel;						///< Specifies the level of crushability (must be hit by a crusher greater than this to crush me).
-
+	Byte					m_ammoPipsStyle;                ///< How ammo pips are displayed for this thing
 
 };
 

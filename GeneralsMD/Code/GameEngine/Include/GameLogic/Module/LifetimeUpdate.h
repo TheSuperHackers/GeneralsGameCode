@@ -75,6 +75,7 @@ public:
 	// virtual destructor prototype provided by memory pool declaration
 
 	void setLifetimeRange( UnsignedInt minFrames, UnsignedInt maxFrames );
+	void resetLifetime(void);
 	UnsignedInt getDieFrame() const { return m_dieFrame; }
 
 	virtual UpdateSleepTime update( void );

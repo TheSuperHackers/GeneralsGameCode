@@ -36,7 +36,7 @@
 #include "GameLogic/Module/LifetimeUpdate.h"
 #include "GameLogic/Object.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -75,6 +75,15 @@ LifetimeUpdate::~LifetimeUpdate( void )
 void LifetimeUpdate::setLifetimeRange( UnsignedInt minFrames, UnsignedInt maxFrames )
 {
 	UnsignedInt delay = calcSleepDelay(minFrames, maxFrames);
+	setWakeFrame(getObject(), UPDATE_SLEEP(delay));
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void LifetimeUpdate::resetLifetime(void)
+{
+	const LifetimeUpdateModuleData* d = getLifetimeUpdateModuleData();
+	UnsignedInt delay = delay = calcSleepDelay(d->m_minFrames, d->m_maxFrames);
 	setWakeFrame(getObject(), UPDATE_SLEEP(delay));
 }
 

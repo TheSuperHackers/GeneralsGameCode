@@ -41,9 +41,9 @@
 #define CRC_H
 
 #include	<stdlib.h>
-#ifdef _UNIX
-	#include "osdep.h"
-#endif
+
+// TheSuperHackers @compile feliwir 17/04/2025 include _ltrotl macros
+#include <Utility/intrin_compat.h>
 
 /*
 **	This is a CRC engine class. It will process submitted data and generate a CRC from it.

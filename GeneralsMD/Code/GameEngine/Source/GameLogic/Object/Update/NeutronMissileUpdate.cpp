@@ -528,7 +528,12 @@ UpdateSleepTime NeutronMissileUpdate::update( void )
 	}
 	return UPDATE_SLEEP_NONE;
 }
-
+// ------------------------------------------------------------------------------------------------
+const Coord3D* NeutronMissileUpdate::getTargetPosition()
+{
+	const Coord3D* constPos = &m_targetPos;
+	return constPos;
+}
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------

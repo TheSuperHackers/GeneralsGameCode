@@ -129,16 +129,17 @@ set(GAMEENGINE_SRC
     Include/Common/UserPreferences.h
     Include/Common/version.h
     Include/Common/WellKnownKeys.h
-    Include/Common/Xfer.h
-    Include/Common/XferCRC.h
-    Include/Common/XferDeepCRC.h
-    Include/Common/XferLoad.h
-    Include/Common/XferSave.h
+#    Include/Common/Xfer.h
+#    Include/Common/XferCRC.h
+#    Include/Common/XferDeepCRC.h
+#    Include/Common/XferLoad.h
+#    Include/Common/XferSave.h
     Include/GameClient/Anim2D.h
     Include/GameClient/AnimateWindowManager.h
     Include/GameClient/CampaignManager.h
     Include/GameClient/CDCheck.h
     Include/GameClient/ChallengeGenerals.h
+    Include/GameClient/ClientInstance.h
     Include/GameClient/ClientRandomValue.h
     Include/GameClient/Color.h
     Include/GameClient/CommandXlat.h
@@ -220,6 +221,7 @@ set(GAMEENGINE_SRC
     Include/GameClient/Statistics.h
     Include/GameClient/TerrainRoads.h
     Include/GameClient/TerrainVisual.h
+    Include/GameClient/TintStatus.h
     Include/GameClient/VideoPlayer.h
     Include/GameClient/View.h
     Include/GameClient/Water.h
@@ -285,6 +287,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/ConvertToCarBombCrateCollide.h
     Include/GameLogic/Module/ConvertToHijackedVehicleCrateCollide.h
     Include/GameLogic/Module/CostModifierUpgrade.h
+    Include/GameLogic/Module/ProductionTimeModifierUpgrade.h
     Include/GameLogic/Module/CountermeasuresBehavior.h
     Include/GameLogic/Module/CrateCollide.h
     Include/GameLogic/Module/CreateCrateDie.h
@@ -414,6 +417,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/SabotageSupplyCenterCrateCollide.h
     Include/GameLogic/Module/SabotageSupplyDropzoneCrateCollide.h
     Include/GameLogic/Module/SalvageCrateCollide.h
+    Include/GameLogic/Module/ScatterShotUpdate.h
     Include/GameLogic/Module/ShroudCrateCollide.h
     Include/GameLogic/Module/SlavedUpdate.h
     Include/GameLogic/Module/SlowDeathBehavior.h
@@ -468,6 +472,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/WanderAIUpdate.h
     Include/GameLogic/Module/WaveGuideUpdate.h
     Include/GameLogic/Module/WeaponBonusUpdate.h
+    Include/GameLogic/Module/ArmorDamageScalarUpdate.h
     Include/GameLogic/Module/WeaponBonusUpgrade.h
     Include/GameLogic/Module/WeaponSetUpgrade.h
     Include/GameLogic/Module/WorkerAIUpdate.h
@@ -663,10 +668,10 @@ set(GAMEENGINE_SRC
     Source/Common/System/Trig.cpp
     Source/Common/System/UnicodeString.cpp
     Source/Common/System/Upgrade.cpp
-    Source/Common/System/Xfer.cpp
-    Source/Common/System/XferCRC.cpp
-    Source/Common/System/XferLoad.cpp
-    Source/Common/System/XferSave.cpp
+#    Source/Common/System/Xfer.cpp
+#    Source/Common/System/XferCRC.cpp
+#    Source/Common/System/XferLoad.cpp
+#    Source/Common/System/XferSave.cpp
     Source/Common/TerrainTypes.cpp
     Source/Common/Thing/DrawModule.cpp
     Source/Common/Thing/Module.cpp
@@ -676,6 +681,7 @@ set(GAMEENGINE_SRC
     Source/Common/Thing/ThingTemplate.cpp
     Source/Common/UserPreferences.cpp
     Source/Common/version.cpp
+    Source/GameClient/ClientInstance.cpp
     Source/GameClient/Color.cpp
     Source/GameClient/Credits.cpp
     Source/GameClient/Display.cpp
@@ -1029,6 +1035,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Update/ProneUpdate.cpp
     Source/GameLogic/Object/Update/RadarUpdate.cpp
     Source/GameLogic/Object/Update/RadiusDecalUpdate.cpp
+    Source/GameLogic/Object/Update/ScatterShotUpdate.cpp
     Source/GameLogic/Object/Update/SlavedUpdate.cpp
     Source/GameLogic/Object/Update/SmartBombTargetHomingUpdate.cpp
     Source/GameLogic/Object/Update/SpecialAbilityUpdate.cpp
@@ -1046,10 +1053,12 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Update/UpdateModule.cpp
     Source/GameLogic/Object/Update/WaveGuideUpdate.cpp
     Source/GameLogic/Object/Update/WeaponBonusUpdate.cpp
+    Source/GameLogic/Object/Update/ArmorDamageScalarUpdate.cpp
     Source/GameLogic/Object/Upgrade/ActiveShroudUpgrade.cpp
     Source/GameLogic/Object/Upgrade/ArmorUpgrade.cpp
     Source/GameLogic/Object/Upgrade/CommandSetUpgrade.cpp
     Source/GameLogic/Object/Upgrade/CostModifierUpgrade.cpp
+    Source/GameLogic/Object/Upgrade/ProductionTimeModifierUpgrade.cpp
     Source/GameLogic/Object/Upgrade/ExperienceScalarUpgrade.cpp
     Source/GameLogic/Object/Upgrade/GrantScienceUpgrade.cpp
     Source/GameLogic/Object/Upgrade/LocomotorSetUpgrade.cpp
@@ -1158,22 +1167,13 @@ target_include_directories(z_gameengine PRIVATE
 )
 
 target_link_libraries(z_gameengine PRIVATE
+    corei_gameengine_private
     zi_always
 )
 
 target_link_libraries(z_gameengine PUBLIC
-    d3d8lib
-    gamespy::gamespy
-    core_config
-    core_utility
-    stlport
-    core_browserdispatch
-    core_compression
+    corei_gameengine_public
     z_wwvegas
-)
-
-target_compile_definitions(z_gameengine PRIVATE
-    IG_DEBUG_STACKTRACE
 )
 
 target_precompile_headers(z_gameengine PRIVATE Include/Precompiled/PreRTS.h)

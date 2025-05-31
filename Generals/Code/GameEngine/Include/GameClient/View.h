@@ -83,6 +83,16 @@ public:
 		SHAKE_COUNT 
 	};
 
+  // Return values for worldToScreenTriReturn
+  enum WorldToScreenReturn CPP_11(: Int)
+  {
+    WTS_INSIDE_FRUSTUM = 0, // On the screen (inside frustum of camera)
+    WTS_OUTSIDE_FRUSTUM,    // Return is valid but off the screen (outside frustum of camera)
+    WTS_INVALID,            // No transform possible
+
+    WTS_COUNT
+  };
+
 public:
 
 	View( void );
@@ -183,7 +193,8 @@ public:
 	virtual void setFieldOfView( Real angle ) { m_FOV = angle; }				///< Set the horizontal field of view angle
 	virtual Real getFieldOfView( void ) { return m_FOV; }								///< Get the horizontal field of view angle
 
-	virtual Bool worldToScreen( const Coord3D *w, ICoord2D *s ) = 0;										///< Transform world coordinate "w" into screen coordinate "s"
+  Bool worldToScreen( const Coord3D *w, ICoord2D *s ) { return worldToScreenTriReturn( w, s ) == WTS_INSIDE_FRUSTUM; }	///< Transform world coordinate "w" into screen coordinate "s"
+  virtual WorldToScreenReturn worldToScreenTriReturn(const Coord3D *w, ICoord2D *s ) = 0; ///< Like worldToScreen(), but with a more informative return value
 	virtual void screenToWorld( const ICoord2D *s, Coord3D *w ) = 0;										///< Transform screen coordinate "s" into world coordinate "w"
 	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world ) = 0;  ///< transform screen coord to a point on the 3D terrain
 	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) = 0;  ///< transform screen point to world point at the specified world Z value

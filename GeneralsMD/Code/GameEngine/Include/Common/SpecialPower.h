@@ -42,6 +42,8 @@
 #include "Common/Overridable.h"
 #include "Common/Override.h"
 
+#include "GameClient/Eva.h"
+
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class ObjectCreationList;
 class Object;
@@ -114,6 +116,7 @@ public:
 	AsciiString getName( void ) const { return getFO()->m_name; }
 	UnsignedInt getID( void ) const { return getFO()->m_id; }
 	SpecialPowerType getSpecialPowerType( void ) const { return getFO()->m_type; }
+	SpecialPowerType getSpecialPowerBehaviorType( void ) const { return getFO()->m_type_behavior; }
 	UnsignedInt getReloadTime( void ) const { return getFO()->m_reloadTime; }
 	ScienceType getRequiredScience( void ) const { return getFO()->m_requiredScience; }
 	const AudioEventRTS *getInitiateSound( void ) const { return &getFO()->m_initiateSound; }
@@ -126,7 +129,16 @@ public:
 	Real getRadiusCursorRadius() const { return getFO()->m_radiusCursorRadius; }
 	Bool isShortcutPower() const { return getFO()->m_shortcutPower; }
 	AcademyClassificationType getAcademyClassificationType() const { return m_academyClassificationType; }
-
+	EvaMessage getEvaDetectedOwn( void ) const { return getFO()->m_eva_detected_own; }
+	EvaMessage getEvaDetectedAlly( void ) const { return getFO()->m_eva_detected_ally; }
+	EvaMessage getEvaDetectedEnemy( void ) const { return getFO()->m_eva_detected_enemy; }
+	EvaMessage getEvaLaunchedOwn(void) const { return getFO()->m_eva_launched_own; }
+	EvaMessage getEvaLaunchedAlly(void) const { return getFO()->m_eva_launched_ally; }
+	EvaMessage getEvaLaunchedEnemy(void) const { return getFO()->m_eva_launched_enemy; }
+	EvaMessage getEvaReadyOwn(void) const { return getFO()->m_eva_ready_own; }
+	EvaMessage getEvaReadyAlly(void) const { return getFO()->m_eva_ready_ally; }
+	EvaMessage getEvaReadyEnemy(void) const { return getFO()->m_eva_ready_enemy; }
+ 
 private: 
 
 	const SpecialPowerTemplate* getFO() const { return (const SpecialPowerTemplate*)friend_getFinalOverride(); }
@@ -147,6 +159,16 @@ private:
 	Bool							m_publicTimer;				///< display a countdown timer for this special power for all to see
 	Bool							m_sharedNSync;				///< If true, this is a special that is shared between all of a player's command centers
 	Bool							m_shortcutPower;		///< Is this shortcut power capable of being fired by the side panel?
+	SpecialPowerType	m_type_behavior; //< behave like a default special power, used by new ones only
+	EvaMessage m_eva_detected_own; //< eva event when constructed by self
+	EvaMessage m_eva_detected_ally; //< eva event when constructed by ally
+	EvaMessage m_eva_detected_enemy; //< eva event when constructed by enemy
+	EvaMessage m_eva_launched_own; //< eva event when launched by self
+	EvaMessage m_eva_launched_ally; //< eva event when launched by ally
+	EvaMessage m_eva_launched_enemy; //< eva event when launched by enemy
+	EvaMessage m_eva_ready_own; //< eva event when own ready
+	EvaMessage m_eva_ready_ally; //< eva event when ally ready
+	EvaMessage m_eva_ready_enemy; //< eva event when enemy ready
 
 	static const FieldParse m_specialPowerFieldParse[];		///< the parse table
 

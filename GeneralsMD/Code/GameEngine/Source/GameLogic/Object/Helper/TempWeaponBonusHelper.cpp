@@ -43,6 +43,7 @@
 TempWeaponBonusHelper::TempWeaponBonusHelper( Thing *thing, const ModuleData *modData ) : ObjectHelper( thing, modData ) 
 { 
 	m_currentBonus = WEAPONBONUSCONDITION_INVALID;
+	m_currentTint = TINT_STATUS_INVALID;
 	m_frameToRemove = 0;
 
 	setWakeFrame(getObject(), UPDATE_SLEEP_FOREVER);
@@ -75,18 +76,23 @@ void TempWeaponBonusHelper::clearTempWeaponBonus()
 		m_currentBonus = WEAPONBONUSCONDITION_INVALID;
 		m_frameToRemove = 0;
 
-		if( getObject()->getDrawable() )
-    {
-			getObject()->getDrawable()->clearTintStatus(TINT_STATUS_FRENZY);
-//      if (getObject()->isKindOf(KINDOF_INFANTRY))
-//        getObject()->getDrawable()->setSecondMaterialPassOpacity( 0.0f );
-    }
+		if (getObject()->getDrawable())
+		{
+			if (m_currentTint > TINT_STATUS_INVALID && m_currentTint < TINT_STATUS_COUNT) {
+				getObject()->getDrawable()->clearTintStatus(m_currentTint);
+				m_currentTint = TINT_STATUS_INVALID;
+			}
+
+			// getObject()->getDrawable()->clearTintStatus(TINT_STATUS_FRENZY);
+			//      if (getObject()->isKindOf(KINDOF_INFANTRY))
+			//        getObject()->getDrawable()->setSecondMaterialPassOpacity( 0.0f );
+		}
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-void TempWeaponBonusHelper::doTempWeaponBonus( WeaponBonusConditionType status, UnsignedInt duration )
+void TempWeaponBonusHelper::doTempWeaponBonus( WeaponBonusConditionType status, UnsignedInt duration, TintStatus tintStatus)
 {
 	// Clear any different status we may have.  Re-getting the same status will just reset the timer
 	if( m_currentBonus != status )
@@ -96,12 +102,18 @@ void TempWeaponBonusHelper::doTempWeaponBonus( WeaponBonusConditionType status, 
 	m_currentBonus = status;
 	m_frameToRemove = TheGameLogic->getFrame() + duration;
 
-	if( getObject()->getDrawable() )
-  {
-		getObject()->getDrawable()->setTintStatus(TINT_STATUS_FRENZY);
-//    if (getObject()->isKindOf(KINDOF_INFANTRY))
-//      getObject()->getDrawable()->setSecondMaterialPassOpacity( 1.0f );
-  }
+	if (getObject()->getDrawable())
+	{
+		if (tintStatus > TINT_STATUS_INVALID && tintStatus < TINT_STATUS_COUNT) {
+			getObject()->getDrawable()->setTintStatus(tintStatus);
+			m_currentTint = tintStatus;
+		}
+
+		// getObject()->getDrawable()->setTintStatus(TINT_STATUS_FRENZY);
+
+		//    if (getObject()->isKindOf(KINDOF_INFANTRY))
+		//      getObject()->getDrawable()->setSecondMaterialPassOpacity( 1.0f );
+	}
 
 	setWakeFrame( getObject(), UPDATE_SLEEP(duration) );
 }
@@ -134,6 +146,7 @@ void TempWeaponBonusHelper::xfer( Xfer *xfer )
 	ObjectHelper::xfer( xfer );
 
 	xfer->xferUser( &m_currentBonus, sizeof(WeaponBonusConditionType) );// an enum
+	xfer->xferUser( &m_currentTint, sizeof(TintStatus) );// an enum
 	xfer->xferUnsignedInt( &m_frameToRemove );
 
 }  // end xfer

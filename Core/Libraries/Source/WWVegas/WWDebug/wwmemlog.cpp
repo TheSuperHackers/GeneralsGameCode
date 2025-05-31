@@ -43,7 +43,6 @@
 #include "wwdebug.h"
 #include "Vector.H"
 #include "FastAllocator.h"
-#include <windows.h>
 
 #define USE_FAST_ALLOCATOR
 
@@ -70,7 +69,8 @@
 ** Enable one of the following #defines to specify which thread-sychronization
 ** method to use.
 */
-#ifndef _UNIX
+#ifdef _WIN32
+#include <windows.h>
 #define MEMLOG_USE_MUTEX					0
 #define MEMLOG_USE_CRITICALSECTION		1
 #define MEMLOG_USE_FASTCRITICALSECTION	0
@@ -288,6 +288,10 @@ WWINLINE void * Get_Mem_Log_Mutex(void)
 	}
 	return _MemLogCriticalSectionHandle;
 
+#endif
+
+#if DISABLE_MEMLOG
+	return NULL;
 #endif
 }
 

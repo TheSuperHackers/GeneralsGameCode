@@ -52,6 +52,14 @@ public:
 	
 	Real m_punchThroughScalar;	///< If non-zero, length modifier when we used to have a target object and now don't
 
+	UnsignedInt m_fadeInDurationFrames;  ///< If non-zero, beam fades in over duration
+	UnsignedInt m_fadeOutDurationFrames;  ///< If non-zero, beam fades out over duration (tries to get time from lifetimeUpdate)
+	UnsignedInt m_widenDurationFrames;  ///< If non-zero, beam grows to max size over duration
+	UnsignedInt m_decayDurationFrames;  ///< If non-zero, beam shrinks over duration (tries to get time from lifetimeUpdate)
+
+	Bool m_hasMultiDraw;  ///< Enable this to support tracking multiple LaserDraw modules
+	Bool m_useHouseColor;  ///< Enable this to color particles with house color
+
 	LaserUpdateModuleData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
@@ -84,9 +92,16 @@ public:
 	Real getCurrentLaserRadius() const;
 
 	void setDirty( Bool dirty ) { m_dirty = dirty; }
-	Bool isDirty() { return m_dirty; }
+	Bool isDirty() { return m_dirty || getLaserUpdateModuleData()->m_hasMultiDraw; }
 
 	Real getWidthScale() const { return m_currentWidthScalar; }
+	Real getAlphaScale() const { return m_currentAlphaScalar; }
+
+	Real getLifeTimeProgress() const;
+
+	Int getPlayerColor() const { return m_hexColor; };
+
+	void updateContinuousLaser(const Object* parent, const Object* target, const Coord3D* startPos, const Coord3D* endPos);
 
 	virtual void clientUpdate();
 
@@ -102,6 +117,9 @@ protected:
 	DrawableID m_parentID;
 	DrawableID m_targetID;
 
+	UnsignedInt m_startFrame;  ///< the frame this laser is initialized
+	UnsignedInt m_dieFrame;   ///< the frame this laser is scheduled to die
+
 	Bool m_dirty;
 	ParticleSystemID m_particleSystemID;
 	ParticleSystemID m_targetParticleSystemID;
@@ -112,7 +130,20 @@ protected:
 	Real m_currentWidthScalar;
 	UnsignedInt m_decayStartFrame;
 	UnsignedInt m_decayFinishFrame;
+
+	Bool m_fadingIn;
+	Bool m_fadingOut;
+	UnsignedInt m_fadeInStartFrame;
+	UnsignedInt m_fadeInFinishFrame;
+	Real m_currentAlphaScalar;
+	UnsignedInt m_fadeOutStartFrame;
+	UnsignedInt m_fadeOutFinishFrame;
+
 	AsciiString m_parentBoneName;
+
+	Int m_hexColor;
+
+	// Bool m_isMultiDraw;
 };
 
 

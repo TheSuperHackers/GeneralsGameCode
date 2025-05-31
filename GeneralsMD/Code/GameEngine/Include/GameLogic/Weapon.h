@@ -205,6 +205,7 @@ enum WeaponBonusConditionType CPP_11(: Int)
 	WEAPONBONUSCONDITION_FRENZY_ONE,
 	WEAPONBONUSCONDITION_FRENZY_TWO,
 	WEAPONBONUSCONDITION_FRENZY_THREE,
+	WEAPONBONUSCONDITION_CONTAINED,
 
 	WEAPONBONUSCONDITION_COUNT
 };
@@ -243,10 +244,15 @@ static const char *TheWeaponBonusNames[] =
 	"FRENZY_ONE",
 	"FRENZY_TWO",
 	"FRENZY_THREE",
+	"CONTAINED",
 
 	NULL
 };
 #endif
+
+
+typedef std::vector<WeaponBonusConditionType> WeaponBonusConditionTypeVec;
+
 
 // For WeaponBonusConditionFlags
 // part of detangling
@@ -447,9 +453,13 @@ public:
 	inline const ObjectCreationList* getFireOCL(VeterancyLevel v) const { return m_fireOCLs[v]; }
 	inline const ObjectCreationList* getProjectileDetonationOCL(VeterancyLevel v) const { return m_projectileDetonationOCLs[v]; }
 	inline const ParticleSystemTemplate* getProjectileExhaust(VeterancyLevel v) const { return m_projectileExhausts[v]; }
+	inline const FXList* getPreAttackFX(VeterancyLevel v) const { return m_preAttackFXs[v]; }
+	inline UnsignedInt getPreAttackFXDelay() const { return m_preAttackFXDelay; }
 
 	inline const AudioEventRTS& getFireSound() const { return m_fireSound; }
 	inline UnsignedInt getFireSoundLoopTime() const { return m_fireSoundLoopTime; }
+	inline UnsignedInt getContinuousLaserLoopTime() const { return m_continuousLaserLoopTime; }
+	inline UnsignedInt getScatterTargetResetTime() const { return m_scatterTargetResetTime; }
 	inline const std::vector<Coord2D>& getScatterTargetsVector() const { return m_scatterTargets; }
 	inline const WeaponBonusSet* getExtraBonus() const { return m_extraBonus; }
 	inline Int getShotsPerBarrel() const { return m_shotsPerBarrel; }
@@ -460,11 +470,28 @@ public:
 	inline Bool isPlayFXWhenStealthed() const { return m_playFXWhenStealthed; }
 	inline Bool getDieOnDetonate() const { return m_dieOnDetonate; }
 
+	inline Bool isScatterTargetAligned() const { return m_scatterTargetAligned; }
+	inline Bool isScatterTargetRandom() const { return m_scatterTargetRandom; }
+	inline Bool isScatterTargetRandomAngle() const { return m_scatterTargetRandomAngle; }
+	inline Real getScatterTargetMinScalar () const { return m_scatterTargetMinScalar; }
+	inline Bool isScatterTargetCenteredAtShooter() const { return m_scatterTargetCenteredAtShooter; }
+
 	Bool shouldProjectileCollideWith(
 		const Object* projectileLauncher, 
 		const Object* projectile, 
 		const Object* thingWeCollidedWith,
 		ObjectID intendedVictimID	// could be INVALID_ID for a position-shot
+	) const;
+
+	void createPreAttackFX
+	(
+		const Object* sourceObj,
+		WeaponSlotType wslot,
+		Int specificBarrelToUse,
+		const Object* victimObj,
+		const Coord3D* victimPos
+		//const WeaponBonus& bonus,
+		//Weapon *firingWeapon,
 	) const;
 	
 	void postProcessLoad();
@@ -556,6 +583,18 @@ private:
 	ObjectStatusTypes m_damageStatusType;		///< If our damage is Status damage, the status we apply
 	UnsignedInt m_suspendFXDelay;						///< The fx can be suspended for any delay, in frames, then they will execute as normal
 	Bool m_dieOnDetonate;
+	const FXList* m_preAttackFXs[LEVEL_COUNT];			///< FX played when preattack starts
+	UnsignedInt m_preAttackFXDelay;						///< Delay after starting a preattackFX before we can play it again (default = 200 ms)
+
+	UnsignedInt m_continuousLaserLoopTime;  ///< time between shots the continuos laser object is kept alive instead of creating a new one
+
+	Bool m_scatterTargetAligned;		///< if the scatter target pattern is aligned to the shooter
+	Bool m_scatterTargetRandom;		///< if the scatter target pattern is fired in a random order
+	Bool m_scatterTargetRandomAngle;  ///< if the scatter target pattern is randomly aligned
+	Real m_scatterTargetMinScalar;  ///< scale the scatterTarget pattern depending on range
+	Bool m_scatterTargetCenteredAtShooter;  ///< if the scatter target pattern is centered at the shooter
+
+	UnsignedInt m_scatterTargetResetTime;  ///< if this much time between shots has passed, we reset the scatter targets
 
 	mutable HistoricWeaponDamageList m_historicDamage;
 };  
@@ -597,6 +636,8 @@ public:
 	void fireProjectileDetonationWeapon(const Object *source, const Coord3D* pos, WeaponBonusConditionFlags extraBonusFlags, Bool inflictDamage = TRUE );
 
 	void preFireWeapon( const Object *source, const Object *victim );
+
+	void preFireWeapon(const Object* source, const Coord3D* pos);
 
 	//Currently, this function was added to allow a script to force fire a weapon,
 	//and immediately gain control of the weapon that was fired to give it special orders...
@@ -660,10 +701,13 @@ public:
 	UnsignedInt getLastReloadStartedFrame() const { return m_whenLastReloadStarted; }
 	Real getPercentReadyToFire() const;
 
+	UnsignedInt getNextPreAttackFXFrame() const { return m_nextPreAttackFXFrame; }
+
 	// do not ever use this unless you are weaponset.cpp
 	void setPossibleNextShotFrame( UnsignedInt frameNum ) { m_whenWeCanFireAgain = frameNum; }
 	void setPreAttackFinishedFrame( UnsignedInt frameNum ) { m_whenPreAttackFinished = frameNum; }
 	void setLastReloadStartedFrame( UnsignedInt frameNum ) { m_whenLastReloadStarted = frameNum; }
+	void setNextPreAttackFXFrame(UnsignedInt frameNum) { m_nextPreAttackFXFrame = frameNum; }
 
 	//Transfer the reload times and status from the passed in weapon.
 	void transferNextShotStatsFrom( const Weapon &weapon );
@@ -680,7 +724,9 @@ public:
 	void newProjectileFired( const Object *sourceObj, const Object *projectile, const Object *victimObj, const Coord3D *victimPos );///<I just made this projectile and may need to keep track of it 
 	
 	Bool isLaser() const { return m_template->getLaserName().isNotEmpty(); }
-	void createLaser( const Object *sourceObj, const Object *victimObj, const Coord3D *victimPos );
+	// void createLaser( const Object *sourceObj, const Object *victimObj, const Coord3D *victimPos );
+	ObjectID createLaser(const Object* sourceObj, const Object* victimObj, const Coord3D* victimPos); //now returns the object ID
+	void handleContinuousLaser(const Object* sourceObj, const Object* victimObj, const Coord3D* victimPos);
 
 	inline const WeaponTemplate* getTemplate() const { return m_template; }
 	inline WeaponSlotType getWeaponSlot() const { return m_wslot; }
@@ -701,6 +747,7 @@ public:
  	inline UnsignedInt getAutoReloadWhenIdleFrames() const { return m_template->getAutoReloadWhenIdleFrames(); }
 	inline const AudioEventRTS& getFireSound() const { return m_template->getFireSound(); }
 	inline UnsignedInt getFireSoundLoopTime() const { return m_template->getFireSoundLoopTime(); }
+	inline UnsignedInt getContinuousLaserLoopTime() const { return m_template->getContinuousLaserLoopTime(); }
 	inline DamageType getDamageType() const { return m_template->getDamageType(); }
 	inline DeathType getDeathType() const { return m_template->getDeathType(); }
 	inline Real getContinueAttackRange() const { return m_template->getContinueAttackRange(); }
@@ -735,6 +782,9 @@ public:
 
 	Bool isClearGoalFiringLineOfSightTerrain(const Object* source, const Coord3D& goalPos, const Object* victim) const;
 	Bool isClearGoalFiringLineOfSightTerrain(const Object* source, const Coord3D& goalPos, const Coord3D& victimPos) const;
+
+	ObjectID setBonusRefObjID(void) { return m_bonusRefObjID; }
+	void setBonusRefObjID(ObjectID id) { m_bonusRefObjID = id; }
 
 	static void calcProjectileLaunchPosition(
 		const Object* launcher, 
@@ -803,6 +853,10 @@ private:
 	std::vector<Int>					m_scatterTargetsUnused;			///< A running memory of which targets I've used, so I can shoot them all at random
 	Bool											m_pitchLimited;
 	Bool											m_leechWeaponRangeActive;		///< This weapon has unlimited range until attack state is aborted!
+	Real											m_scatterTargetsAngle;		 ///< Random angle chosen for scatterTarget pattern
+	UnsignedInt										m_nextPreAttackFXFrame;			///< the frame when we are next allowed to play a preAttackFX
+	ObjectID									m_continuousLaserID;				///< the object that is tracking our continuous laser if we have one.
+	ObjectID									m_bonusRefObjID;					///< for weapons fired from projectiles, we compute the bonus from the original source object instead.
 
 	// setter function for status that should not be used outside this class
 	void setStatus( WeaponStatus status) { m_status = status; }

@@ -31,6 +31,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include <stdlib.h>
 
+#include "Common/GlobalData.h"
 #include "Common/Thing.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
@@ -52,7 +53,7 @@
 #include "WW3D2/assetmgr.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -75,6 +76,10 @@ W3DLaserDrawModuleData::W3DLaserDrawModuleData()
 	m_arcHeight = 0.0f;
 	m_segmentOverlapRatio = 0.0f;
 	m_tilingScalar = 1.0f;
+	m_gridColumnsTotal = 1;
+	m_gridColumns = 1;
+	m_useHouseColorOuter = FALSE;
+	m_useHouseColorInner = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -105,6 +110,10 @@ void W3DLaserDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
     { "ArcHeight",						INI::parseReal,									NULL, offsetof( W3DLaserDrawModuleData, m_arcHeight ) },
 		{ "SegmentOverlapRatio",	INI::parseReal,									NULL, offsetof( W3DLaserDrawModuleData, m_segmentOverlapRatio ) },
 		{ "TilingScalar",					INI::parseReal,									NULL, offsetof( W3DLaserDrawModuleData, m_tilingScalar ) },
+		{ "TextureGridTotalColumns",		INI::parseUnsignedInt,							NULL, offsetof(W3DLaserDrawModuleData, m_gridColumnsTotal) },
+		{ "TextureGridColumns",				INI::parseUnsignedInt,							NULL, offsetof(W3DLaserDrawModuleData, m_gridColumns) },
+		{ "UseHouseColorOuter",				INI::parseBool,							NULL, offsetof(W3DLaserDrawModuleData, m_useHouseColorOuter) },
+		{ "UseHouseColorInner",				INI::parseBool,							NULL, offsetof(W3DLaserDrawModuleData, m_useHouseColorInner) },
 		{ 0, 0, 0, 0 }
 	};
   p.add(dataFieldParse);
@@ -113,34 +122,64 @@ void W3DLaserDrawModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) : 
-	DrawModule( thing, moduleData ),
+W3DLaserDraw::W3DLaserDraw(Thing* thing, const ModuleData* moduleData) :
+	DrawModule(thing, moduleData),
 	m_line3D(NULL),
 	m_texture(NULL),
 	m_textureAspectRatio(1.0f),
-	m_selfDirty(TRUE)
+	m_selfDirty(TRUE),
+	m_hexColor(0)
 {
-	Vector3 dummyPos1( 0.0f, 0.0f, 0.0f );
-	Vector3 dummyPos2( 1.0f, 1.0f, 1.0f );
+	Vector3 dummyPos1(0.0f, 0.0f, 0.0f);
+	Vector3 dummyPos2(1.0f, 1.0f, 1.0f);
 	Int i;
 
-	const W3DLaserDrawModuleData *data = getW3DLaserDrawModuleData();
+	const W3DLaserDrawModuleData* data = getW3DLaserDrawModuleData();
 
-	m_texture = WW3DAssetManager::Get_Instance()->Get_Texture( data->m_textureName.str() );
+	m_texture = WW3DAssetManager::Get_Instance()->Get_Texture(data->m_textureName.str());
 	if (m_texture)
 	{
 		if (!m_texture->Is_Initialized())
 			m_texture->Init();	//make sure texture is actually loaded before accessing surface.
 
-		SurfaceClass::SurfaceDescription surfaceDesc; 
+		SurfaceClass::SurfaceDescription surfaceDesc;
 		m_texture->Get_Level_Description(surfaceDesc);
-		m_textureAspectRatio = (Real)surfaceDesc.Width/(Real)surfaceDesc.Height;
+		m_textureAspectRatio = (Real)surfaceDesc.Width / (Real)surfaceDesc.Height;
 	}
 
 	//Get the color components for calculation purposes.
 	Real innerRed, innerGreen, innerBlue, innerAlpha, outerRed, outerGreen, outerBlue, outerAlpha;
-	GameGetColorComponentsReal( data->m_innerColor, &innerRed, &innerGreen, &innerBlue, &innerAlpha );
-	GameGetColorComponentsReal( data->m_outerColor, &outerRed, &outerGreen, &outerBlue, &outerAlpha );
+	GameGetColorComponentsReal(data->m_innerColor, &innerRed, &innerGreen, &innerBlue, &innerAlpha);
+	GameGetColorComponentsReal(data->m_outerColor, &outerRed, &outerGreen, &outerBlue, &outerAlpha);
+
+	//DEBUG_LOG(("LaserDraw (Constructor): INIT 1\n"));
+
+	////Get the updatemodule that drives it...
+	//Drawable* draw = getDrawable();
+	//if (draw) {
+	//	static NameKeyType key_LaserUpdate = NAMEKEY("LaserUpdate");
+	//	LaserUpdate* update = (LaserUpdate*)draw->findClientUpdateModule(key_LaserUpdate);
+	//	if (update) {
+
+	//		if (m_hexColor <= 0) {
+	//			m_hexColor = update->getPlayerColor();
+	//		}
+
+	//		// handleHouseColor(&innerRed, &innerGreen, &innerBlue, &outerRed, &outerGreen, &outerBlue);
+	//		handleHouseColor(innerRed, innerGreen, innerBlue, outerRed, outerGreen, outerBlue);
+
+	//		DEBUG_LOG(("LaserDraw (Constructor): AppliedHousecolor: Inner RGB = %f, %f, %f -- Outer RGB = %f, %f, %f\n", innerRed, innerGreen, innerBlue, outerRed, outerGreen, outerBlue));
+
+	//	}
+	//	else {
+	//		// DEBUG_ASSERTCRASH(0, ("W3DLaserDraw::doDrawModule() expects its owner drawable %s to have a ClientUpdate = LaserUpdate module.", draw->getTemplate()->getName().str()));
+	//		DEBUG_LOG(("W3DLaserDraw::(Constructor) expects its owner drawable %s to have a ClientUpdate = LaserUpdate module.", draw->getTemplate()->getName().str()));
+	//		return;
+	//	}
+	//}
+	//else {
+	//	DEBUG_LOG(("W3DLaserDraw::(Constructor) Draw is null\n"));
+	//}
 
 	//Make sure our beams range between 1 and the maximum cap.
 #ifdef I_WANT_TO_BE_FIRED
@@ -201,7 +240,13 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 				line->Set_UV_Offset_Rate( Vector2(0.0f, data->m_scrollRate) );	//amount to scroll texture on each draw
 				if( m_texture )
 				{
-					line->Set_Texture_Mapping_Mode(SegLineRendererClass::TILED_TEXTURE_MAP);	//this tiles the texture across the line
+					if (data->m_gridColumnsTotal > 1) {
+						line->Set_Texture_Mapping_Mode(SegLineRendererClass::GRID_TILED_TEXTURE_MAP);	//allows animated U coordinates
+						line->Set_U_Scale(1.0f / (Real)(data->m_gridColumnsTotal));
+					}
+					else {
+						line->Set_Texture_Mapping_Mode(SegLineRendererClass::TILED_TEXTURE_MAP);	//this tiles the texture across the line
+					}
 				}
 
 				// add to scene
@@ -237,6 +282,8 @@ W3DLaserDraw::~W3DLaserDraw( void )
 	}  // end for i
 
 	delete [] m_line3D;
+	// TheSuperHackers @fix Mauller 11/03/2025 Free reference counted material
+	REF_PTR_RELEASE(m_texture);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -268,9 +315,57 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 	if (update->isDirty() || m_selfDirty)
 	{
 		update->setDirty(false);
-		m_selfDirty = false;
+
+		m_hexColor = update->getPlayerColor();
+		// DEBUG_LOG(("LaserDraw (doDrawModule 2): m_hexColor = %d\n", m_hexColor));
+
+
+		// Texture animation
+		float u_offset = 0;
+		if (data->m_gridColumnsTotal > 1) {
+			float prog = update->getLifeTimeProgress();
+			int currentFrame = (int)(data->m_gridColumns * prog);
+			if (currentFrame == data->m_gridColumns)
+				currentFrame = data->m_gridColumns - 1;
+
+			u_offset = (1.0f / (float)data->m_gridColumnsTotal) * (float)currentFrame;
+
+			// We stay dirty if we want to animate the beam
+			m_selfDirty = true;
+		}
+		else {
+			m_selfDirty = false;
+		}
 
 		Vector3 laserPoints[ 2 ];
+
+
+		//Get the color components for calculation purposes.
+		Real innerRed, innerGreen, innerBlue, innerAlpha, outerRed, outerGreen, outerBlue, outerAlpha;
+		GameGetColorComponentsReal(data->m_innerColor, &innerRed, &innerGreen, &innerBlue, &innerAlpha);
+		GameGetColorComponentsReal(data->m_outerColor, &outerRed, &outerGreen, &outerBlue, &outerAlpha);
+
+		bool updateColor = false;
+		RGBColor houseColor;
+		if ((data->m_useHouseColorInner || data->m_useHouseColorOuter)) {
+			houseColor.setFromInt(m_hexColor);
+
+			if (data->m_useHouseColorInner) {
+				innerRed *= houseColor.red;
+				innerGreen *= houseColor.green;
+				innerBlue *= houseColor.blue;
+			}
+			if (data->m_useHouseColorOuter) {
+				outerRed *= houseColor.red;
+				outerGreen *= houseColor.green;
+				outerBlue *= houseColor.blue;
+			}
+
+			updateColor = true;
+		}
+
+		// DEBUG_LOG(("LaserDraw (doDrawModule): AppliedHousecolor: Inner RGB = %f, %f, %f -- Outer RGB = %f, %f, %f\n", innerRed, innerGreen, innerBlue, outerRed, outerGreen, outerBlue));
+
 
 		for( int segment = 0; segment < data->m_segments; segment++ )
 		{
@@ -371,20 +466,26 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 			}
 
 			//Get the color components for calculation purposes.
-			Real innerRed, innerGreen, innerBlue, innerAlpha, outerRed, outerGreen, outerBlue, outerAlpha;
-			GameGetColorComponentsReal( data->m_innerColor, &innerRed, &innerGreen, &innerBlue, &innerAlpha );
-			GameGetColorComponentsReal( data->m_outerColor, &outerRed, &outerGreen, &outerBlue, &outerAlpha );
+			//Real innerRed, innerGreen, innerBlue, innerAlpha, outerRed, outerGreen, outerBlue, outerAlpha;
+			//GameGetColorComponentsReal(data->m_innerColor, &innerRed, &innerGreen, &innerBlue, &innerAlpha);
+			//GameGetColorComponentsReal(data->m_outerColor, &outerRed, &outerGreen, &outerBlue, &outerAlpha);
 
 			for( Int i = data->m_numBeams - 1; i >= 0; i-- )
 			{
 
-				Real alpha, width;
+				Real red, green, blue, alpha, width;
 				int index = segment * data->m_numBeams + i;
 
 				if( data->m_numBeams == 1 )
 				{	
 					width = data->m_innerBeamWidth * update->getWidthScale();
-					alpha = innerAlpha;
+					alpha = innerAlpha * update->getAlphaScale();
+
+					if (updateColor) {
+						red = innerRed * innerAlpha;
+						green = innerGreen * innerAlpha;
+						blue = innerBlue * innerAlpha;
+					}
 				}
 				else
 				{
@@ -393,9 +494,17 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 					//0.2 means min value + 20% of the diff between min and max
 					Real scale = i / ( data->m_numBeams - 1.0f);
 					Real ultimateScale = update->getWidthScale();
+					Real ultimateAlpha = update->getAlphaScale();
 					width		= (data->m_innerBeamWidth	+ scale * (data->m_outerBeamWidth - data->m_innerBeamWidth));
 					width *= ultimateScale;
 					alpha		= innerAlpha							+ scale * (outerAlpha - innerAlpha);
+					alpha *= ultimateAlpha;
+
+					if (updateColor) {
+						red = innerRed + scale * (outerRed - innerRed) * innerAlpha;
+						green = innerGreen + scale * (outerGreen - innerGreen) * innerAlpha;
+						blue = innerBlue + scale * (outerBlue - innerBlue) * innerAlpha;
+					}
 				}
 
 
@@ -414,14 +523,41 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 					m_line3D[ index ]->Set_Texture_Tile_Factor( tileFactor );	//number of times to tile texture across each segment
 				}
 
+				if (u_offset > 0) {
+					Vector2 uvoffset = m_line3D[index]->Get_Current_UV_Offset();
+					uvoffset.U = u_offset;
+					m_line3D[index]->Set_Current_UV_Offset(uvoffset);
+				}
+				
+				if (updateColor) {
+					m_line3D[index]->Set_Color(Vector3(red, green, blue));
+				}
+
 				m_line3D[ index ]->Set_Width( width );
 				m_line3D[ index ]->Set_Points( 2, &laserPoints[0] );
+
+
+				//--
+				//if ((data->m_useHouseColorInner || data->m_useHouseColorOuter)) { //&& m_hexColor > 0) {
+
+				//	RGBColor myHouseColor;
+				//	myHouseColor.setFromInt(m_hexColor);
+
+				//	Vector3 color;
+				//	m_line3D[index]->Get_Color(color);
+				//	color.X *= myHouseColor.red;
+				//	color.Y *= myHouseColor.green;
+				//	color.Z *= myHouseColor.blue;
+
+				//	m_line3D[index]->Set_Color(color);
+				//}
 			}
 		}
 	}
 	
 	return;
 }
+
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */

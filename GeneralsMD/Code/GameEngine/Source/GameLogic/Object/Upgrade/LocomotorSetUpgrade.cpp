@@ -35,6 +35,34 @@
 #include "GameLogic/Module/LocomotorSetUpgrade.h"
 #include "GameLogic/Module/AIUpdate.h"
 
+
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+LocomotorSetUpgradeModuleData::LocomotorSetUpgradeModuleData(void)
+{
+	m_setUpgraded = TRUE;
+	// m_needsParkedAircraft = FALSE;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void LocomotorSetUpgradeModuleData::buildFieldParse(MultiIniFieldParse& p)
+{
+
+	UpgradeModuleData::buildFieldParse(p);
+
+	static const FieldParse dataFieldParse[] =
+	{
+		{ "EnableUpgrade", INI::parseBool, NULL, offsetof(LocomotorSetUpgradeModuleData, m_setUpgraded) },
+		//{ "NeedsParkedAircraft", INI::parseBool, NULL, offsetof(WeaponSetUpgradeModuleData, m_needsParkedAircraft) },
+		{ 0, 0, 0, 0 }
+	};
+
+	p.add(dataFieldParse);
+
+}  // end buildFieldParse
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 LocomotorSetUpgrade::LocomotorSetUpgrade( Thing *thing, const ModuleData* moduleData ) : UpgradeModule( thing, moduleData )
@@ -51,9 +79,10 @@ LocomotorSetUpgrade::~LocomotorSetUpgrade( void )
 //-------------------------------------------------------------------------------------------------
 void LocomotorSetUpgrade::upgradeImplementation( )
 {
+	const LocomotorSetUpgradeModuleData* data = getLocomotorSetUpgradeModuleData();
 	AIUpdateInterface* ai = getObject()->getAIUpdateInterface();
 	if (ai)
-		ai->setLocomotorUpgrade(true);
+		ai->setLocomotorUpgrade(data->m_setUpgraded);
 }
 
 // ------------------------------------------------------------------------------------------------

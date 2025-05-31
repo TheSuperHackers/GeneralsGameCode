@@ -68,7 +68,7 @@
 #include "WW3D2/meshmdl.h"
 #include "Common/BitFlagsIO.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -85,7 +85,7 @@ static inline Bool isValidTimeToCalcLogicStuff()
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-#if defined(DEBUG_CRC) && (defined(_DEBUG) || defined(_INTERNAL))
+#if defined(DEBUG_CRC) && (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 #include <cstdarg>
 class LogClass
 {
@@ -205,11 +205,11 @@ LogClass BonePosLog("bonePositions.txt");
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
 extern AsciiString TheThingTemplateBeingParsedName;
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 extern Real TheSkateDistOverride;
 #endif
 
@@ -476,7 +476,7 @@ static Bool findSingleSubObj(RenderObjClass* robj, const AsciiString& boneName, 
 			if (test == childObject)
 			{
 				boneIndex = robj->Get_Sub_Object_Bone_Index(0, subObj);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 				test->Release_Ref();
 				test = robj->Get_Sub_Object_On_Bone(0, boneIndex);
 				DEBUG_ASSERTCRASH(test != NULL && test == childObject, ("*** ASSET ERROR: Hmm, bone problem"));
@@ -743,7 +743,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 // since this class has no idea which object it refers to, it must assume that the projectilelaunchbonename
 // is required if the fxBoneName is specified
 // this is not always true, since some weapons have no launched projectiles, hence the caveat in the assert message
-//#if defined(_DEBUG) || defined(_INTERNAL)
+//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 //    if (
 //          ( m_modelName.startsWith("UV") || m_modelName.startsWith("NV") || m_modelName.startsWith("AV") ||
 //            m_modelName.startsWith("uv") || m_modelName.startsWith("nv") || m_modelName.startsWith("av")
@@ -773,7 +773,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				{
 					sprintf(buffer, "%s%02d", mfName.str(), i);
 					findPristineBone(NAMEKEY(buffer), &info.m_muzzleFlashBone);
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
 					if (info.m_muzzleFlashBone)
 						info.m_muzzleFlashBoneName = buffer;
 #endif
@@ -821,7 +821,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				if (!mfName.isEmpty())
 					findPristineBone(NAMEKEY(mfName), &info.m_muzzleFlashBone);
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
 				if (info.m_muzzleFlashBone)
 					info.m_muzzleFlashBoneName = mfName;
 #endif
@@ -986,7 +986,7 @@ void ModelConditionInfo::loadAnimations() const
 void ModelConditionInfo::clear()
 { 
 	int i;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_description.clear();
 #endif
 	m_conditionsYesVec.clear();
@@ -1482,7 +1482,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 				info.m_conditionsYesVec.clear();
 				info.m_conditionsYesVec.push_back(blankConditions);
 
-	#if defined(_DEBUG) || defined(_INTERNAL)
+	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 				info.m_description.clear();
 				info.m_description.concat(TheThingTemplateBeingParsedName);
 				info.m_description.concat(" DEFAULT");
@@ -1513,7 +1513,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 			}
 
 			info.m_transitionSig = buildTransitionSig(firstKey, secondKey);
-	#if defined(_DEBUG) || defined(_INTERNAL)
+	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 			info.m_description.clear();
 			info.m_description.concat(TheThingTemplateBeingParsedName);
 			info.m_description.concat(" TRANSITION: ");
@@ -1537,7 +1537,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 			
 			ModelConditionFlags conditionsYes;
 
-	#if defined(_DEBUG) || defined(_INTERNAL)
+	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 			AsciiString description;
 			conditionsYes.parse(ini, &description);
 
@@ -1589,7 +1589,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 	//	}
 			
 			ModelConditionFlags conditionsYes;
-	#if defined(_DEBUG) || defined(_INTERNAL) || defined(DEBUG_CRASHING)
+	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
 			AsciiString description;
 			conditionsYes.parse(ini, &description);
 
@@ -1889,18 +1889,18 @@ void W3DModelDraw::setShadowsEnabled(Bool enable)
 }
 
 /**collect some stats about the rendering cost of this draw module */
-#if defined(_DEBUG) || defined(_INTERNAL)	
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
 void W3DModelDraw::getRenderCost(RenderCost & rc) const
 {
 	getRenderCostRecursive(rc,m_renderObject);
 	if (m_shadow)
 		m_shadow->getRenderCost(rc);
 }
-#endif //_DEBUG || _INTERNAL
+#endif //RTS_DEBUG || RTS_INTERNAL
 
 
 /**recurse through sub-objs to collect stats about the rendering cost of this draw module */
-#if defined(_DEBUG) || defined(_INTERNAL)	
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
 void W3DModelDraw::getRenderCostRecursive(RenderCost & rc,RenderObjClass * robj) const 
 {
 	if (robj == NULL) return;
@@ -1937,7 +1937,7 @@ void W3DModelDraw::getRenderCostRecursive(RenderCost & rc,RenderObjClass * robj)
 		}
 	}
 }
-#endif //_DEBUG || _INTERNAL
+#endif //RTS_DEBUG || RTS_INTERNAL
 
 //-------------------------------------------------------------------------------------------------
 void W3DModelDraw::setFullyObscuredByShroud(Bool fullyObscured)
@@ -2262,7 +2262,7 @@ Real W3DModelDraw::getCurAnimDistanceCovered() const
 	if (m_curState != NULL && m_whichAnimInCurState >= 0)
 	{
 		const W3DAnimationInfo& animInfo = m_curState->m_animations[m_whichAnimInCurState];
-	#if defined(_DEBUG) || defined(_INTERNAL)
+	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		if (TheSkateDistOverride != 0.0f)
 			return TheSkateDistOverride;
 	#endif
@@ -2822,7 +2822,7 @@ void W3DModelDraw::nukeCurrentRender(Matrix3D* xform)
 }
 
 //-------------------------------------------------------------------------------------------------
-#if defined(_DEBUG) || defined(_INTERNAL)	//art wants to see buildings without flags as a test.
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	//art wants to see buildings without flags as a test.
 void W3DModelDraw::hideGarrisonFlags(Bool hide)
 {
 	if (!m_renderObject)
@@ -3048,7 +3048,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 		rebuildWeaponRecoilInfo(newState);
 		doHideShowSubObjs(&newState->m_hideShowVec);
 
-#if defined(_DEBUG) || defined(_INTERNAL)	//art wants to see buildings without flags as a test.
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	//art wants to see buildings without flags as a test.
 		if (TheGlobalData->m_hideGarrisonFlags && draw->isKindOf(KINDOF_STRUCTURE))
 			hideGarrisonFlags(TRUE);
 #endif
@@ -3277,7 +3277,7 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 		//BONEPOS_LOG(("can't find best info\n"));
 		return false;
 	}
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	CRCDEBUG_LOG(("W3DModelDraw::getProjectileLaunchOffset() for %s\n",
 		stateToUse->getDescription().str()));
 #endif
@@ -3773,6 +3773,72 @@ Bool W3DModelDraw::handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelTo
 
 	return handled;
 } 
+
+
+//-------------------------------------------------------------------------------------------------
+Bool W3DModelDraw::handleWeaponPreAttackFX(WeaponSlotType wslot, Int specificBarrelToUse, const FXList* fxl, Real weaponSpeed, const Coord3D* victimPos, Real damageRadius)
+{
+	//Note: This is mostly a copy of handleWeaponFireFX
+
+	//DEBUG_LOG((">>> handleWeaponPreAttackFX - Slot: %d, Barrel: %d, Pos: '(%f, %f, %f)' \n",
+	//	(Int)wslot,
+	//	specificBarrelToUse,
+	//	victimPos->x, victimPos->y, victimPos->z));
+
+	if (!m_curState || !(m_curState->m_validStuff & ModelConditionInfo::BARRELS_VALID))
+		return false;
+
+	const ModelConditionInfo::WeaponBarrelInfoVec& wbvec = m_curState->m_weaponBarrelInfoVec[wslot];
+	if (wbvec.empty())
+	{
+		return false;
+	}
+
+	Bool handled = false;
+
+	if (specificBarrelToUse < 0 || specificBarrelToUse > wbvec.size())
+		specificBarrelToUse = 0;
+
+	const ModelConditionInfo::WeaponBarrelInfo& info = wbvec[specificBarrelToUse];
+
+	if (fxl)
+	{
+		if (info.m_fxBone && m_renderObject)
+		{
+			const Object* logicObject = getDrawable()->getObject();
+			/*DEBUG_LOG((">>> handleWeaponPreAttackFX - 1.5 - m_renderObject= '%s' \n",
+				m_renderObject ? "Not Null" : "Null"));*/
+			if (!m_renderObject->Is_Hidden() || (logicObject == NULL))
+			{
+				// I can ask the drawable's bone position if I am not hidden (if I have no object I have no choice)
+				Matrix3D mtx = m_renderObject->Get_Bone_Transform(info.m_fxBone);
+				Coord3D pos;
+				pos.x = mtx.Get_X_Translation();
+				pos.y = mtx.Get_Y_Translation();
+				pos.z = mtx.Get_Z_Translation();
+				FXList::doFXPos(fxl, &pos, &mtx, weaponSpeed, victimPos, damageRadius);
+			}
+			else
+			{
+				// Else, I should just use my logic position for the effect placement.
+				// Things in transports regularly fire from inside (hidden), so this is not weird.
+				const Matrix3D* mtx;
+				Coord3D pos;
+				mtx = logicObject->getTransformMatrix();
+				pos = *(logicObject->getPosition());
+				FXList::doFXPos(fxl, &pos, mtx, weaponSpeed, victimPos, damageRadius);
+			}
+
+			handled = true;
+		}
+		else
+		{
+			DEBUG_LOG(("*** no FXBone found for a non-null FXL\n"));
+		}
+	}
+
+	return handled;
+}
 
 //-------------------------------------------------------------------------------------------------
 void W3DModelDraw::setAnimationLoopDuration(UnsignedInt numFrames)
@@ -4298,7 +4364,7 @@ void W3DModelDrawModuleData::xfer( Xfer *x )
 	{
 		ModelConditionInfo *info = &(*it);
 		x->xferByte(&(info->m_validStuff));
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		x->xferAsciiString(&(info->m_description));
 #endif
 		if (info->m_validStuff)

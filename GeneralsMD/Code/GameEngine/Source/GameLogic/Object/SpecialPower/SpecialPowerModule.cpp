@@ -54,7 +54,7 @@
 #include "GameClient/ControlBar.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -288,7 +288,7 @@ Bool SpecialPowerModule::isModuleForPower( const SpecialPowerTemplate *specialPo
 //-------------------------------------------------------------------------------------------------
 Bool SpecialPowerModule::isReady() const
 {
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	// this is a cheat ... remove this for release!
 	if( TheGlobalData->m_specialPowerUsesDelay == FALSE )
 		return TRUE;
@@ -326,7 +326,7 @@ Real SpecialPowerModule::getPercentReady() const
 		return 0.99999f;
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	if( TheGlobalData->m_specialPowerUsesDelay == FALSE ) 
 		return 1.0f;
 #endif
@@ -388,7 +388,7 @@ Bool SpecialPowerModule::isScriptOnly() const
 //-------------------------------------------------------------------------------------------------
 void SpecialPowerModule::startPowerRecharge()
 {
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	// this is a cheat ... remove this for release!
 	if( TheGlobalData->m_specialPowerUsesDelay == FALSE ) 
 		return;
@@ -544,96 +544,122 @@ void SpecialPowerModule::aboutToDoSpecialPower( const Coord3D *location )
 
   Player *localPlayer = ThePlayerList->getLocalPlayer();
 
-  // Only play the EVA sounds if this is not the local player, and the local player doesn't consider the 
-	// person an enemy.
-	// Kris: Actually, all players need to hear these warnings.
-  // Ian: But now there are different Eva messages depending on who launched
-	//if (localPlayer != getObject()->getControllingPlayer() && localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES) 
-  {
-		if( type == SPECIAL_PARTICLE_UPLINK_CANNON || type == SUPW_SPECIAL_PARTICLE_UPLINK_CANNON || type == LAZR_SPECIAL_PARTICLE_UPLINK_CANNON )
-    {
-      if ( localPlayer == getObject()->getControllingPlayer() )
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_ParticleCannon);
-      }
-      else if ( localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES )
-      {
-        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_ParticleCannon);
-      }
-      else
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_ParticleCannon);
-      }
-    }
-    else if( type == SPECIAL_NEUTRON_MISSILE || type == NUKE_SPECIAL_NEUTRON_MISSILE || type == SUPW_SPECIAL_NEUTRON_MISSILE )
-    {
-      if ( localPlayer == getObject()->getControllingPlayer() )
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_Nuke);
-      }
-      else if ( localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES )
-      {
-        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_Nuke);
-      }
-      else
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_Nuke);
-      }
-    }
-		else if (type == SPECIAL_SCUD_STORM)
-    {
-      if ( localPlayer == getObject()->getControllingPlayer() )
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_ScudStorm);
-      }
-      else if ( localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES )
-      {
-        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_ScudStorm);
-      }
-      else
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_ScudStorm);
-      }
-    }
-		else if (type == SPECIAL_GPS_SCRAMBLER || type == SLTH_SPECIAL_GPS_SCRAMBLER )
-    {
-			// This is Ghetto.  Voices should be ini lines in the special power entry.  You shouldn't have to 
-			// add to an enum to get a new voice
-      if ( localPlayer == getObject()->getControllingPlayer() )
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_GPS_Scrambler);
-      }
-      else if ( localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES )
-      {
-        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_GPS_Scrambler);
-      }
-      else
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_GPS_Scrambler);
-      }
-    }
-		else if (type == SPECIAL_SNEAK_ATTACK)
-    {
-      if ( localPlayer == getObject()->getControllingPlayer() )
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_Sneak_Attack);
-      }
-      else if ( localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES )
-      {
-        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_Sneak_Attack);
-      }
-      else
-      {
-        TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_Sneak_Attack);
-      }
-    }
-	}
+  // Check if SpecialPower eva event instead of hardcoded stuff
+  bool isOwn = localPlayer == getObject()->getControllingPlayer();
+  bool isAlly = localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES;
+  bool isEnemy = !isOwn && !isAlly;
+  bool isDefault = type < SPECIAL_ION_CANNON; // first new Special Power
 
+  //Check SpecialPower Eva
+  const SpecialPowerTemplate* specialPowerTemp = getSpecialPowerModuleData()->m_specialPowerTemplate;
+  EvaMessage eva = EVA_Invalid;
+
+  if (isOwn) {
+	  eva = specialPowerTemp->getEvaLaunchedOwn();
+  }
+  else if (isAlly) {
+	  eva = specialPowerTemp->getEvaLaunchedAlly();
+  }
+  else if (isEnemy) {
+	  eva = specialPowerTemp->getEvaLaunchedEnemy();
+  }
+
+  if (eva > EVA_FIRST) {
+	  TheEva->setShouldPlay(eva);
+  }
+  else if (eva == EVA_Invalid && isDefault) { 
+	//Do the old hardcoded stuff for undefined default powers
+
+	  // Only play the EVA sounds if this is not the local player, and the local player doesn't consider the 
+		// person an enemy.
+		// Kris: Actually, all players need to hear these warnings.
+	  // Ian: But now there are different Eva messages depending on who launched
+		//if (localPlayer != getObject()->getControllingPlayer() && localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES) 
+	  {
+		  if (type == SPECIAL_PARTICLE_UPLINK_CANNON || type == SUPW_SPECIAL_PARTICLE_UPLINK_CANNON || type == LAZR_SPECIAL_PARTICLE_UPLINK_CANNON)
+		  {
+			  if (localPlayer == getObject()->getControllingPlayer())
+			  {
+				  TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_ParticleCannon);
+			  }
+			  else if (localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES)
+			  {
+				  // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+				  TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_ParticleCannon);
+			  }
+			  else
+			  {
+				  TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_ParticleCannon);
+			  }
+		  }
+		  else if (type == SPECIAL_NEUTRON_MISSILE || type == NUKE_SPECIAL_NEUTRON_MISSILE || type == SUPW_SPECIAL_NEUTRON_MISSILE)
+		  {
+			  if (localPlayer == getObject()->getControllingPlayer())
+			  {
+				  TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_Nuke);
+			  }
+			  else if (localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES)
+			  {
+				  // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+				  TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_Nuke);
+			  }
+			  else
+			  {
+				  TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_Nuke);
+			  }
+		  }
+		  else if (type == SPECIAL_SCUD_STORM)
+		  {
+			  if (localPlayer == getObject()->getControllingPlayer())
+			  {
+				  TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_ScudStorm);
+			  }
+			  else if (localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES)
+			  {
+				  // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+				  TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_ScudStorm);
+			  }
+			  else
+			  {
+				  TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_ScudStorm);
+			  }
+		  }
+		  else if (type == SPECIAL_GPS_SCRAMBLER || type == SLTH_SPECIAL_GPS_SCRAMBLER)
+		  {
+			  // This is Ghetto.  Voices should be ini lines in the special power entry.  You shouldn't have to 
+			  // add to an enum to get a new voice
+			  if (localPlayer == getObject()->getControllingPlayer())
+			  {
+				  TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_GPS_Scrambler);
+			  }
+			  else if (localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES)
+			  {
+				  // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+				  TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_GPS_Scrambler);
+			  }
+			  else
+			  {
+				  TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_GPS_Scrambler);
+			  }
+		  }
+		  else if (type == SPECIAL_SNEAK_ATTACK)
+		  {
+			  if (localPlayer == getObject()->getControllingPlayer())
+			  {
+				  TheEva->setShouldPlay(EVA_SuperweaponLaunched_Own_Sneak_Attack);
+			  }
+			  else if (localPlayer->getRelationship(getObject()->getTeam()) != ENEMIES)
+			  {
+				  // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+				  TheEva->setShouldPlay(EVA_SuperweaponLaunched_Ally_Sneak_Attack);
+			  }
+			  else
+			  {
+				  TheEva->setShouldPlay(EVA_SuperweaponLaunched_Enemy_Sneak_Attack);
+			  }
+		  }
+	  }
+  }
 	// get module data
 	const SpecialPowerModuleData *modData = getSpecialPowerModuleData();
 

@@ -35,7 +35,7 @@
 #include "GameLogic/AIStateMachine.h"
 #include "GameLogic/Module/AIUpdate.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -134,6 +134,7 @@ public:
 	void friend_addWaypointToGoalPath( const Coord3D &pos );
 	AICommandType friend_getPendingCommandType() const;
 	void friend_purgePendingCommand();
+	Bool isParkedInHangar() const;
 
 protected:
 

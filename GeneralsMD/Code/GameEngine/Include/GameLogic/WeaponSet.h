@@ -103,6 +103,11 @@ static const ModelConditionFlagType TheWeaponSetTypeToModelConditionTypeMap[WEAP
 	/*WEAPONSET_RIDER6*/								MODELCONDITION_RIDER6,
 	/*WEAPONSET_RIDER7*/								MODELCONDITION_RIDER7,
 	/*WEAPONSET_RIDER8*/								MODELCONDITION_RIDER8,
+	/*WEAPONSET_PLAYER_UPGRADE2*/						MODELCONDITION_WEAPONSET_PLAYER_UPGRADE2,
+	/*WEAPONSET_PLAYER_UPGRADE3*/						MODELCONDITION_WEAPONSET_PLAYER_UPGRADE3,
+	/*WEAPONSET_PLAYER_UPGRADE4*/						MODELCONDITION_WEAPONSET_PLAYER_UPGRADE4,
+	/*WEAPONSET_GARRISONED*/							MODELCONDITION_INVALID,  //No actual conditionstates needed for Garrisoned and contained
+	/*WEAPONSET_CONTAINED*/								MODELCONDITION_INVALID
 };
 #endif
 
@@ -131,6 +136,7 @@ private:
 	KindOfMaskType					m_preferredAgainst[WEAPONSLOT_COUNT];
 	Bool										m_isReloadTimeShared;
 	Bool										m_isWeaponLockSharedAcrossSets; ///< A weapon set so similar that it is safe to hold locks across
+	Bool										m_isWeaponReloadSharedAcrossSets; ///< Keep current ammo count and reload progress between sets
 
 	static void parseWeapon(INI* ini, void *instance, void *store, const void* userData);
 	static void parseAutoChoose(INI* ini, void *instance, void *store, const void* userData);
@@ -150,6 +156,7 @@ public:
 	Bool testWeaponSetFlag( WeaponSetType wst ) const;
 	Bool isSharedReloadTime( void ) const { return m_isReloadTimeShared; }
 	Bool isWeaponLockSharedAcrossSets() const {return m_isWeaponLockSharedAcrossSets; }
+	Bool isWeaponReloadSharedAcrossSets() const { return m_isWeaponReloadSharedAcrossSets; }
 
 	Bool hasAnyWeapons() const;
 	inline const WeaponTemplate* getNth(WeaponSlotType n) const { return m_template[n]; } 
@@ -158,7 +165,7 @@ public:
 
 	inline Int getConditionsYesCount() const { return 1; }
 	inline const WeaponSetFlags& getNthConditionsYes(Int i) const { return m_types; }
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	inline AsciiString getDescription() const { return AsciiString("ArmorTemplateSet"); }
 #endif
 };

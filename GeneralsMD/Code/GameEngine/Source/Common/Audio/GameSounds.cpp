@@ -56,7 +56,7 @@
 #include "GameLogic/PartitionManager.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif

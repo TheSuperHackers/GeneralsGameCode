@@ -327,7 +327,7 @@ public:
 	void onUpgradeCompleted( const UpgradeTemplate *upgradeTemplate );				///< An upgrade just finished, do things like tell all objects to recheck UpgradeModules
 	void onUpgradeRemoved(){}					///< An upgrade just got removed, this doesn't do anything now.
  
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	/// Prereq disabling cheat key
 	void toggleIgnorePrereqs(){ m_DEMO_ignorePrereqs = !m_DEMO_ignorePrereqs; }
 	Bool ignoresPrereqs() const { return m_DEMO_ignorePrereqs; }
@@ -338,7 +338,7 @@ public:
 
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	/// No time building cheat key
 	void toggleInstantBuild(){ m_DEMO_instantBuild = !m_DEMO_instantBuild; }
 	Bool buildsInstantly() const { return m_DEMO_instantBuild; }
@@ -385,6 +385,14 @@ public:
 	void addKindOfProductionCostChange( KindOfMaskType kindOf, Real percent);
 	/// Returns production cost change based on typeof (Used for upgrades)
 	Real getProductionCostChangeBasedOnKindOf( KindOfMaskType kindOf ) const;
+
+	/// Decrement the ref counter on the typeof production list node
+	void removeKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent);
+	/// add type of production cost change (Used for upgrades)
+	void addKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent);
+	/// Returns production cost change based on typeof (Used for upgrades)
+	Real getProductionTimeChangeBasedOnKindOf(KindOfMaskType kindOf) const;
+
 
 	/** Return bonus or penalty for construction of this thing.
 	*/
@@ -802,21 +810,25 @@ private:
 	Real									m_cashBountyPercent;
 
 	/// @todo REMOVE (not disable) these cheat keys
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool									m_DEMO_ignorePrereqs;		///< Can I ignore prereq checks?
 	Bool									m_DEMO_freeBuild;				///< Can I build everything for no money?
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	Bool									m_DEMO_instantBuild;		///< Can I build anything in one frame?
 #endif
 
 	ScoreKeeper						m_scoreKeeper;					///< The local scorekeeper for this player
 
+	// Production Cost modifier
 	typedef std::list<KindOfPercentProductionChange*> KindOfPercentProductionChangeList;
 	typedef KindOfPercentProductionChangeList::iterator KindOfPercentProductionChangeListIt;
 	mutable KindOfPercentProductionChangeList m_kindOfPercentProductionChangeList;
 	
+	// Production Time modifier (we can re-use the same types)
+	mutable KindOfPercentProductionChangeList m_kindOfPercentProductionTimeChangeList;
+
 
 	typedef std::list<SpecialPowerReadyTimerType> SpecialPowerReadyTimerList;
 	typedef SpecialPowerReadyTimerList::iterator SpecialPowerReadyTimerListIterator;

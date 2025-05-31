@@ -45,11 +45,11 @@ class State;
 class StateMachine;
 class Object;
 
-#undef STATE_MACHINE_DEBUG
-#if defined(_DEBUG)
+//#undef STATE_MACHINE_DEBUG
+#if defined(RTS_DEBUG)
 	#define STATE_MACHINE_DEBUG
 #endif
-#if defined(_INTERNAL)
+#if defined(RTS_INTERNAL)
 	#define STATE_MACHINE_DEBUG	//uncomment to debug state machines in internal.  jba.
 #endif
 
@@ -169,6 +169,7 @@ public:
 
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const {return m_name;}
+	std::vector<StateID> *getTransitions(void);
 #endif
 
 	// for internal use by the StateMachine class ---------------------------------------------------------
@@ -318,7 +319,7 @@ public:
 	//
 	StateReturnType internalSetState( StateID newStateID );	///< for internal use only - change the current state of the machine
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	UnsignedInt peekSleepTill() const { return m_sleepTill; }
 #endif
 

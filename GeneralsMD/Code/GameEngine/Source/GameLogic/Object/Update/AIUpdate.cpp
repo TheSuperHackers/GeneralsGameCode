@@ -73,7 +73,7 @@
 
 #define SLEEPY_AI
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -91,8 +91,11 @@ AIUpdateModuleData::AIUpdateModuleData()
 	m_surrenderDuration = LOGICFRAMES_PER_SECOND * 120;
 #endif
 
-  m_forbidPlayerCommands = FALSE;
+    m_forbidPlayerCommands = FALSE;
 	m_turretsLinked = FALSE;
+	m_attackAngle = 0.0f;
+	m_useAttackAngle = FALSE;
+	m_attackAngleMirrored = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -140,12 +143,40 @@ const LocomotorTemplateVector* AIUpdateModuleData::findLocomotorTemplateVector(L
 #ifdef ALLOW_SURRENDER
 		{ "SurrenderDuration",					INI::parseDurationUnsignedInt,		NULL, offsetof(AIUpdateModuleData, m_surrenderDuration) },
 #endif
-    { "ForbidPlayerCommands",				INI::parseBool,										NULL, offsetof(AIUpdateModuleData, m_forbidPlayerCommands) },
-    { "TurretsLinked",							INI::parseBool,										NULL, offsetof( AIUpdateModuleData, m_turretsLinked ) },
+		{ "ForbidPlayerCommands",				INI::parseBool,										NULL, offsetof(AIUpdateModuleData, m_forbidPlayerCommands) },
+		{ "TurretsLinked",							INI::parseBool,										NULL, offsetof(AIUpdateModuleData, m_turretsLinked) },
+		{ "PreferredAttackAngle",				AIUpdateModuleData::parseAttackAngle,					NULL, offsetof(AIUpdateModuleData, m_attackAngle) },
 		{ 0, 0, 0, 0 }
 	};
   p.add(dataFieldParse);
 }
+
+//-------------------------------------------------------------------------------------------------
+/*static*/ void AIUpdateModuleData::parseAttackAngle(INI* ini, void* instance, void* store, const void* /*userData*/)
+{
+	AIUpdateModuleData* self = (AIUpdateModuleData*)instance;
+
+	const char* token = ini->getNextToken();
+
+	// Disable if None (not really needed actually)
+	if (stricmp(token, "None") == 0) {
+		// self->m_useAttackAngle = FALSE;
+		return;
+	}
+
+	// Parse Angle and store in m_attackAngle
+	const Real RADS_PER_DEGREE = PI / 180.0f;
+	*(Real*)store = INI::scanReal(token) * RADS_PER_DEGREE;
+
+	self->m_useAttackAngle = TRUE;
+
+	// Check for Mirrored keyword
+	token = ini->getNextTokenOrNull();
+	if (token != NULL && stricmp(token, "MIRRORED") == 0) {
+		self->m_attackAngleMirrored = TRUE;
+	}
+}
+
 
 //-------------------------------------------------------------------------------------------------
 /*static*/ void AIUpdateModuleData::parseTurret(INI* ini, void *instance, void * store, const void* /*userData*/)
@@ -767,6 +798,28 @@ Real AIUpdateInterface::getTurretTurnRate(WhichTurretType tur) const
 }
 
 //=============================================================================
+Bool AIUpdateInterface::hasLimitedTurretAngle(WhichTurretType tur) const
+{
+	return (tur != TURRET_INVALID && m_turretAI[tur] != NULL) && m_turretAI[tur]->hasLimitedTurretAngle();
+}
+
+//=============================================================================
+Real AIUpdateInterface::getMinTurretAngle(WhichTurretType tur) const
+{
+	return (tur != TURRET_INVALID && m_turretAI[tur] != NULL) ?
+		m_turretAI[tur]->getMinTurretAngle() :
+		0.0f;
+}
+
+//=============================================================================
+Real AIUpdateInterface::getMaxTurretAngle(WhichTurretType tur) const
+{
+	return (tur != TURRET_INVALID && m_turretAI[tur] != NULL) ?
+		m_turretAI[tur]->getMaxTurretAngle() :
+		0.0f;
+}
+
+//=============================================================================
 WhichTurretType AIUpdateInterface::getWhichTurretForCurWeapon() const
 {
 	for (int i = 0; i < MAX_TURRETS; ++i)
@@ -800,7 +853,7 @@ Real AIUpdateInterface::getCurLocomotorSpeed() const
 	if (m_curLocomotor != NULL)
 		return m_curLocomotor->getMaxSpeedForCondition(getObject()->getBodyModule()->getDamageState());
 
-	DEBUG_LOG(("no current locomotor!"));
+	// DEBUG_LOG(("no current locomotor!"));
 	return 0.0f;
 }
 
@@ -2205,7 +2258,7 @@ UpdateSleepTime AIUpdateInterface::doLocomotor( void )
 							// obstacles, and follow the intermediate path points.
 							ClosestPointOnPathInfo info;
 							CRCDEBUG_LOG(("AIUpdateInterface::doLocomotor() - calling computePointOnPath() for %s\n",
-								DescribeObject(getObject()).str()));
+								DebugDescribeObject(getObject()).str()));
 							getPath()->computePointOnPath(getObject(), m_locomotorSet, *getObject()->getPosition(), info);
 							onPathDistToGoal = info.distAlongPath;
 							goalPos = info.posOnPath;
@@ -2332,7 +2385,7 @@ void AIUpdateInterface::setLocomotorGoalPositionExplicit(const Coord3D& newPos)
 {
 	m_locomotorGoalType = POSITION_EXPLICIT;
 	m_locomotorGoalData = newPos;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 if (_isnan(m_locomotorGoalData.x) || _isnan(m_locomotorGoalData.y) || _isnan(m_locomotorGoalData.z))
 {
 	DEBUG_CRASH(("NAN in setLocomotorGoalPositionExplicit"));
@@ -2345,7 +2398,7 @@ void AIUpdateInterface::setLocomotorGoalOrientation(Real angle)
 {
 	m_locomotorGoalType = ANGLE;
 	m_locomotorGoalData.x = angle;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 if (_isnan(m_locomotorGoalData.x) || _isnan(m_locomotorGoalData.y) || _isnan(m_locomotorGoalData.z))
 {
 	DEBUG_CRASH(("NAN in setLocomotorGoalOrientation"));
@@ -3507,6 +3560,9 @@ void AIUpdateInterface::privateAttackTeam( const Team *team, Int maxShotsToFire,
  */
 void AIUpdateInterface::privateAttackPosition( const Coord3D *pos, Int maxShotsToFire, CommandSourceType cmdSource )
 {
+	//DEBUG_LOG(("AIUpdateInterface::privateAttackPosition: Order %s to fire at pos, type = %d\n",
+	//	getObject()->getTemplate()->getName().str(), cmdSource));
+
 	//Resetting the locomotor here was initially added for scripting purposes. It has been moved
 	//to the responsibility of the script to reset the locomotor before moving. This is needed because
 	//other systems (like the battle drone) change the locomotor based on what it's trying to do, and
@@ -4721,43 +4777,48 @@ void AIUpdateInterface::evaluateMoraleBonus( void )
 
 #ifdef ALLOW_DEMORALIZE
 	// if we are are not demoralized we can have horde and nationalism effects
-	if( demoralized == FALSE )
+	if (demoralized == FALSE)
 #endif
 	{
 
 #ifdef ALLOW_DEMORALIZE
 		// demoralized
-		us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_DEMORALIZED );
+		us->clearWeaponBonusCondition(WEAPONBONUSCONDITION_DEMORALIZED);
 #endif		
-		
+
 		//Lorenzen temporarily disabled, since it fights with the horde buff
 		//Drawable *draw = us->getDrawable();
 		//if ( draw && !us->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 		//	draw->setTerrainDecal(TERRAIN_DECAL_NONE);
 
 		// horde
-		if( horde )
+		if (horde)
 		{
-			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
+			us->setWeaponBonusCondition(WEAPONBONUSCONDITION_HORDE);
+
 
 		}  // end if
-		else
-			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
+		else {
+			us->clearWeaponBonusCondition(WEAPONBONUSCONDITION_HORDE);
+		}
 
 		// nationalism
-		if( nationalism )
-    {
-			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
-      // fanaticism
-      if ( fanaticism )
-        us->setWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );// FOR THE NEW GC INFANTRY GENERAL
-      else 
-        us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
-    }
-		else
-			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
+		if (horde && nationalism)
+		{
+			us->setWeaponBonusCondition(WEAPONBONUSCONDITION_NATIONALISM);
+		}
+		else {
+			us->clearWeaponBonusCondition(WEAPONBONUSCONDITION_NATIONALISM);
+		}
 
-
+		// fanaticism
+		if (horde && fanaticism)
+		{
+			us->setWeaponBonusCondition(WEAPONBONUSCONDITION_FANATICISM);// FOR THE NEW GC INFANTRY GENERAL
+		}
+		else {
+			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_FANATICISM );
+		}
 
 	}  // end if
 #ifdef ALLOW_DEMORALIZE

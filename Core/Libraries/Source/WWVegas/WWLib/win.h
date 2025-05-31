@@ -49,6 +49,8 @@
 **	4069, 4200, 4237, 4103, 4001, 4035, 4164. Makes you wonder, eh?
 */
 
+#ifdef _WIN32
+
 // When including windows, lets just bump the warning level back to 3...
 #if (_MSC_VER >= 1200)
 #pragma warning(push, 3)
@@ -69,23 +71,22 @@
 #pragma warning(pop)
 #endif
 
-#ifdef _WINDOWS
 extern HINSTANCE	ProgramInstance;
 extern HWND			MainWindow;
 extern bool GameInFocus;
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 
 void __cdecl Print_Win32Error(unsigned long win32Error);
 
-#else // _DEBUG
+#else // RTS_DEBUG
 
 #define Print_Win32Error
 
-#endif // _DEBUG
+#endif // RTS_DEBUG
 
-#else // _WINDOWS
+#else // _WIN32
 //#include <unistd.h>	// file does not exist
-#endif // _WINDOWS
+#endif // _WIN32
 
 #endif // WIN_H

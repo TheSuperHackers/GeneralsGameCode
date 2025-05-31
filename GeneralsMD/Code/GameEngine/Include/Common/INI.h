@@ -184,6 +184,7 @@ public:
 	// data type parsing (the highest level of what type of thing we're parsing)
 	static void parseObjectDefinition( INI *ini );
 	static void parseObjectReskinDefinition( INI *ini );
+	static void parseObjectExtendDefinition( INI* ini );
 	static void parseWeaponTemplateDefinition( INI *ini );
 	static void parseScienceDefinition( INI *ini );
 	static void parseRankDefinition( INI *ini );
@@ -205,6 +206,7 @@ public:
 	static void parseWeatherDefinition( INI *ini );
 	static void parseMappedImageDefinition( INI *ini );
 	static void parseArmorDefinition( INI *ini );
+	static void parseArmorExtendDefinition( INI *ini );
 	static void parseDamageFXDefinition( INI *ini );
 	static void parseDrawGroupNumberDefinition( INI *ini );
 	static void parseTerrainDefinition( INI *ini );
@@ -275,6 +277,7 @@ public:
 	static void parseAnim2DTemplate( INI *ini, void *instance, void *store, const void *userData );
 	static void parsePercentToReal( INI *ini, void *instance, void *store, const void* userData );
 	static void parseRGBColor( INI *ini, void *instance, void *store, const void* userData );
+	static void parseRGBColorReal( INI *ini, void *instance, void *store, const void* userData );
 	static void parseRGBAColorInt( INI *ini, void *instance, void *store, const void* userData );
 	static void parseColorInt( INI *ini, void *instance, void *store, const void* userData );
 	static void parseCoord3D( INI *ini, void *instance, void *store, const void* userData );
@@ -289,6 +292,8 @@ public:
 	static void parseUpgradeTemplate( INI *ini, void *instance, void *store, const void *userData );
 	static void parseScience( INI *ini, void *instance, void *store, const void *userData );
 	static void parseScienceVector( INI *ini, void *instance, void *store, const void *userData );
+	static void parseWeaponBonusVector( INI *ini, void *instance, void *store, const void *userData );
+	static void parseWeaponBonusVectorKeepDefault( INI *ini, void *instance, void *store, const void *userData );
 	static void parseGameClientRandomVariable( INI* ini, void *instance, void *store, const void* userData );
 	static void parseBitString8( INI *ini, void *instance, void *store, const void* userData );
 	static void parseBitString32( INI *ini, void *instance, void *store, const void* userData );
@@ -317,6 +322,8 @@ public:
 	static void parseVeterancyLevelFlags(INI* ini, void* instance, void* store, const void* userData);
 	static void parseSoundsList( INI* ini, void *instance, void *store, const void* /*userData*/ );
 	
+	// like parseIndexList but special handling for NONE to return -2 (EVA_None)
+	static void parseEvaNameIndexList(INI* ini, void* instance, void* store, const void* userData);
 	
 	/**
 		return the next token. if seps is null (or omitted), the standard seps are used.

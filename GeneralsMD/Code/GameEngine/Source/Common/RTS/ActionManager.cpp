@@ -64,7 +64,7 @@
 
 #include "GameLogic/ExperienceTracker.h"//LORENZEN
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -1471,6 +1471,16 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 	SpecialPowerModuleInterface *mod = obj->getSpecialPowerModule( spTemplate );
 	if( mod )
 	{
+
+		//use a behaviortype for custom sp
+		SpecialPowerType behaviorType = spTemplate->getSpecialPowerType();
+		if (behaviorType >= SPECIAL_ION_CANNON) { //first custom SP
+			behaviorType = spTemplate->getSpecialPowerBehaviorType();
+			if (behaviorType == SPECIAL_INVALID) {
+				behaviorType == SPECIAL_NEUTRON_MISSILE; // Default to behave like neutron missile, common behavior
+			}
+		} 
+
 		if (checkSourceRequirements)
 		{
 			if( mod->getPercentReady() < 1.0f )
@@ -1481,7 +1491,7 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 		}
     
 		// First check terrain type, if it is cared about.  Don't return a true, since there are more checks.
-		switch( spTemplate->getSpecialPowerType() )
+		switch(behaviorType)
 		{
 			case SPECIAL_PARADROP_AMERICA:
 			case INFA_SPECIAL_PARADROP_AMERICA:
@@ -1494,7 +1504,7 @@ Bool ActionManager::canDoSpecialPowerAtLocation( const Object *obj, const Coord3
 		}
 
 		// Last check is shroudedness, if it is cared about
-		switch( spTemplate->getSpecialPowerType() )
+		switch(behaviorType)
 		{
 			case SPECIAL_DAISY_CUTTER:
 			case AIRF_SPECIAL_DAISY_CUTTER:
@@ -1609,11 +1619,21 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 			}
 		}
 
+
+		//use a behaviortype for custom sp
+		SpecialPowerType behaviorType = spTemplate->getSpecialPowerType();
+		if (behaviorType >= SPECIAL_ION_CANNON) { //first custom SP
+			behaviorType = spTemplate->getSpecialPowerBehaviorType();
+			if (behaviorType == SPECIAL_INVALID) {
+				behaviorType == SPECIAL_NEUTRON_MISSILE; // Default to behave like neutron missile, common behavior
+			}
+		}
+
 		// if the target is in the shroud, we can't do anything
 		if (isObjectShroudedForAction(obj, target, commandSource))
 			return FALSE;
 
-		switch( spTemplate->getSpecialPowerType() )
+		switch(behaviorType)
 		{
 			case SPECIAL_CASH_BOUNTY:
 				return false;
@@ -1812,11 +1832,11 @@ Bool ActionManager::canDoSpecialPowerAtObject( const Object *obj, const Object *
 							//We also don't want to allow a unit that can place timed charges on a building to be able to place
 							//remote charges (or vice-versa). So we're going to look for the other special ability update and
 							//reject if the other one has it planted...
-							if( spTemplate->getSpecialPowerType() == SPECIAL_REMOTE_CHARGES )
+							if( behaviorType == SPECIAL_REMOTE_CHARGES )
 							{
 								spUpdate = obj->findSpecialAbilityUpdate( SPECIAL_TIMED_CHARGES );
 							}
-							else if( spTemplate->getSpecialPowerType() == SPECIAL_TIMED_CHARGES )
+							else if( behaviorType == SPECIAL_TIMED_CHARGES )
 							{
 								spUpdate = obj->findSpecialAbilityUpdate( SPECIAL_REMOTE_CHARGES );
 							}
@@ -1864,7 +1884,16 @@ Bool ActionManager::canDoSpecialPower( const Object *obj, const SpecialPowerTemp
 			}
 		}
 
-		switch( spTemplate->getSpecialPowerType() )
+		//use a behaviortype for custom sp
+		SpecialPowerType behaviorType = spTemplate->getSpecialPowerType();
+		if (behaviorType >= SPECIAL_ION_CANNON) { //first custom SP
+			behaviorType = spTemplate->getSpecialPowerBehaviorType();
+			if (behaviorType == SPECIAL_INVALID) {
+				behaviorType == SPECIAL_NEUTRON_MISSILE; // Default to behave like neutron missile, common behavior
+			}
+		}
+
+		switch( behaviorType )
 		{
 			case SPECIAL_MISSILE_DEFENDER_LASER_GUIDED_MISSILES:
 			case SPECIAL_TANKHUNTER_TNT_ATTACK:

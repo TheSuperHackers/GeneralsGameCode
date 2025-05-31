@@ -101,7 +101,7 @@
 
 #include "GameNetwork/GameInfo.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -431,12 +431,12 @@ void Player::init(const PlayerTemplate* pt)
 
 	m_unitsShouldHunt = FALSE;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_DEMO_ignorePrereqs = FALSE;
 	m_DEMO_freeBuild = FALSE;
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	m_DEMO_instantBuild = FALSE;
 #endif
 
@@ -513,6 +513,15 @@ void Player::init(const PlayerTemplate* pt)
 		KindOfPercentProductionChange *tof = *it;
 		it = m_kindOfPercentProductionChangeList.erase( it );
 		if(tof)
+			tof->deleteInstance();
+	}
+
+	it = m_kindOfPercentProductionTimeChangeList.begin();
+	while (it != m_kindOfPercentProductionTimeChangeList.end())
+	{
+		KindOfPercentProductionChange* tof = *it;
+		it = m_kindOfPercentProductionTimeChangeList.erase(it);
+		if (tof)
 			tof->deleteInstance();
 	}
 
@@ -1292,7 +1301,7 @@ static void doFindSpecialPowerSourceObject( Object *obj, void *userData )
 			{
 				UnsignedInt readyFrame = spmInterface->getReadyFrame();
 				
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 				// Everything is ready if timers are debug off'd
 				if( ! TheGlobalData->m_specialPowerUsesDelay )
 					readyFrame = 0;
@@ -1349,7 +1358,7 @@ static void doCountSpecialPowersReady( Object *obj, void *userData )
 				
 				UnsignedInt readyFrame = spmInterface->getReadyFrame();
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 				// Everything is ready if timers are debug off'd
 				if( ! TheGlobalData->m_specialPowerUsesDelay )
 					readyFrame = 0;
@@ -1652,6 +1661,10 @@ void Player::preTeamDestroy( const Team *team )
 	// ai notification callback
 	if( m_ai )
 		m_ai->aiPreTeamDestroy( team );
+
+	// TheSuperHackers @bugfix Mauller/Xezon 03/05/2025 Clear the default team to prevent dangling pointer usage
+	if( m_defaultTeam == team )
+		m_defaultTeam = NULL;
 }  // preTeamDestroy
 
 //-------------------------------------------------------------------------------------------------
@@ -1662,10 +1675,26 @@ void Player::onStructureCreated( Object *builder, Object *structure )
 
 }  // end onStructureCreated
 
+
+const SpecialPowerTemplate* findSpecialPowerWithEvaDetected(const Object* structure) {
+	for (BehaviorModule** m = structure->getBehaviorModules(); *m; ++m)
+	{
+		SpecialPowerModuleInterface* sp = (*m)->getSpecialPower();
+		if (!sp)
+			continue;
+
+		if (sp->getSpecialPowerTemplate()->getEvaDetectedEnemy() > EVA_FIRST || sp->getSpecialPowerTemplate()->getEvaDetectedAlly() > EVA_FIRST || sp->getSpecialPowerTemplate()->getEvaDetectedOwn() > EVA_FIRST) {
+			//Specialpower has an eva, return
+			return sp->getSpecialPowerTemplate();
+		}
+	}
+	return NULL;
+}
+
 //-------------------------------------------------------------------------------------------------
 /// a structure that was under construction has become completed
 //-------------------------------------------------------------------------------------------------
-void Player::onStructureConstructionComplete( Object *builder, Object *structure, Bool isRebuild )
+void Player::onStructureConstructionComplete(Object* builder, Object* structure, Bool isRebuild)
 {
 	// When a a structure is completed, it becomes "real" as far as scripting is 
 	// concerned. jba.
@@ -1685,70 +1714,99 @@ void Player::onStructureConstructionComplete( Object *builder, Object *structure
 	structure->friend_adjustPowerForPlayer(TRUE);
 
 	// ai notification callback
-	if( m_ai )
-		m_ai->onStructureProduced( builder, structure );
+	if (m_ai)
+		m_ai->onStructureProduced(builder, structure);
 
 	// the GUI needs to re-evaluate the information being displayed to the user now
-	if( TheControlBar )
+	if (TheControlBar)
 		TheControlBar->markUIDirty();
-	
+
 	// This object may require us to play some EVA sounds.
-	Player *localPlayer = ThePlayerList->getLocalPlayer();
+	Player* localPlayer = ThePlayerList->getLocalPlayer();
 
-	if( structure->hasSpecialPower( SPECIAL_PARTICLE_UPLINK_CANNON ) || 
-			structure->hasSpecialPower( SUPW_SPECIAL_PARTICLE_UPLINK_CANNON ) ||
-			structure->hasSpecialPower( LAZR_SPECIAL_PARTICLE_UPLINK_CANNON ) )
-  {
-    if ( localPlayer == structure->getControllingPlayer() )
-    {
-		  TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_ParticleCannon);
-    }
-    else if ( localPlayer->getRelationship(structure->getTeam()) != ENEMIES )
-    {
-      // Note: treating NEUTRAL as ally. Is this correct?
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_ParticleCannon);
-    }
-    else
-    {
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_ParticleCannon);
-    }
-  }
+	//Check if structure has a specialPower with new custom eva sounds
+	const SpecialPowerTemplate* specialPowerTemp = findSpecialPowerWithEvaDetected(structure);
+	if (specialPowerTemp != NULL) {
+		// Check if SpecialPower eva event instead of hardcoded stuff
+		bool isOwn = localPlayer == structure->getControllingPlayer();
+		bool isAlly = localPlayer->getRelationship(structure->getTeam()) != ENEMIES;
+		bool isEnemy = !isOwn && !isAlly;
 
-	if( structure->hasSpecialPower( SPECIAL_NEUTRON_MISSILE ) || 
-			structure->hasSpecialPower( NUKE_SPECIAL_NEUTRON_MISSILE ) || 
-			structure->hasSpecialPower( SUPW_SPECIAL_NEUTRON_MISSILE ) )
-  {
-    if ( localPlayer == structure->getControllingPlayer() )
-    {
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_Nuke);
-    }
-    else if ( localPlayer->getRelationship(structure->getTeam()) != ENEMIES )
-    {
-      // Note: treating NEUTRAL as ally. Is this correct?
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_Nuke);
-    }
-    else
-    {
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_Nuke);
-    }
-  }
-  
-	if (structure->hasSpecialPower(SPECIAL_SCUD_STORM))
-  {
-    if ( localPlayer == structure->getControllingPlayer() )
-    {
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_ScudStorm);
-    }
-    else if ( localPlayer->getRelationship(structure->getTeam()) != ENEMIES )
-    {
-      // Note: treating NEUTRAL as ally. Is this correct?
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_ScudStorm);
-    }
-    else
-    {
-      TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_ScudStorm);
-    }
-  }
+		//Check SpecialPower Eva
+		EvaMessage eva = EVA_Invalid;
+
+		if (isOwn) {
+			eva = specialPowerTemp->getEvaDetectedOwn();
+		}
+		else if (isAlly) {
+			eva = specialPowerTemp->getEvaDetectedAlly();
+		}
+		else if (isEnemy) {
+			eva = specialPowerTemp->getEvaDetectedEnemy();
+		}
+
+		if (eva > EVA_FIRST) {
+			TheEva->setShouldPlay(eva);
+		}
+
+	}
+	else {
+		//Do default hardcoded check 
+		if (structure->hasSpecialPower(SPECIAL_PARTICLE_UPLINK_CANNON) ||
+			structure->hasSpecialPower(SUPW_SPECIAL_PARTICLE_UPLINK_CANNON) ||
+			structure->hasSpecialPower(LAZR_SPECIAL_PARTICLE_UPLINK_CANNON))
+		{
+			if (localPlayer == structure->getControllingPlayer())
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_ParticleCannon);
+			}
+			else if (localPlayer->getRelationship(structure->getTeam()) != ENEMIES)
+			{
+				// Note: treating NEUTRAL as ally. Is this correct?
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_ParticleCannon);
+			}
+			else
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_ParticleCannon);
+			}
+		}
+
+		if (structure->hasSpecialPower(SPECIAL_NEUTRON_MISSILE) ||
+			structure->hasSpecialPower(NUKE_SPECIAL_NEUTRON_MISSILE) ||
+			structure->hasSpecialPower(SUPW_SPECIAL_NEUTRON_MISSILE))
+		{
+			if (localPlayer == structure->getControllingPlayer())
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_Nuke);
+			}
+			else if (localPlayer->getRelationship(structure->getTeam()) != ENEMIES)
+			{
+				// Note: treating NEUTRAL as ally. Is this correct?
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_Nuke);
+			}
+			else
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_Nuke);
+			}
+		}
+
+		if (structure->hasSpecialPower(SPECIAL_SCUD_STORM))
+		{
+			if (localPlayer == structure->getControllingPlayer())
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Own_ScudStorm);
+			}
+			else if (localPlayer->getRelationship(structure->getTeam()) != ENEMIES)
+			{
+				// Note: treating NEUTRAL as ally. Is this correct?
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Ally_ScudStorm);
+			}
+			else
+			{
+				TheEva->setShouldPlay(EVA_SuperweaponDetected_Enemy_ScudStorm);
+			}
+		}
+	}
 }  // end onStructureConstructionComplete
 
 //=============================================================================
@@ -2502,7 +2560,15 @@ Bool Player::addSkillPointsForKill(const Object* killer, const Object* victim)
 		return false;
 	
 	Int victimLevel = victim->getVeterancyLevel();
+
 	Int skillValue = victim->getTemplate()->getSkillPointValue(victimLevel);
+
+	//New: We can now upgrade XP value, so we check the XP tracker for a scalar
+	const ExperienceTracker* xpTracker = victim->getExperienceTracker();
+	if (xpTracker)
+	{
+		skillValue *= xpTracker->getExperienceValueScalar();
+	}
 	
 	return addSkillPoints(skillValue);
 }
@@ -2939,7 +3005,7 @@ Bool Player::canBuild(const ThingTemplate *tmplate) const
 				prereqsOK = false;
 		}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		if (ignoresPrereqs())
 			prereqsOK = true;
 #endif
@@ -3892,6 +3958,78 @@ Real Player::getProductionCostChangeBasedOnKindOf( KindOfMaskType kindOf ) const
 }
 
 //-------------------------------------------------------------------------------------------------
+/** addKindOfProductionTimeChange adds a production change to the typeof list */
+//-------------------------------------------------------------------------------------------------
+void Player::addKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent)
+{
+	KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionTimeChangeList.begin();
+	while (it != m_kindOfPercentProductionTimeChangeList.end())
+	{
+
+		KindOfPercentProductionChange* tof = *it;
+		if (tof->m_percent == percent && tof->m_kindOf == kindOf)
+		{
+			tof->m_ref++;
+			return;
+		}
+		++it;
+	}
+
+	KindOfPercentProductionChange* newTof = newInstance(KindOfPercentProductionChange);
+	newTof->m_kindOf = kindOf;
+	newTof->m_percent = percent;
+	newTof->m_ref = 1;
+	m_kindOfPercentProductionTimeChangeList.push_back(newTof);
+
+}
+
+//-------------------------------------------------------------------------------------------------
+/** removeKindOfProductionTimeChange adds a production change to the typeof list */
+//-------------------------------------------------------------------------------------------------
+void Player::removeKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent)
+{
+	KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionTimeChangeList.begin();
+	while (it != m_kindOfPercentProductionTimeChangeList.end())
+	{
+
+		KindOfPercentProductionChange* tof = *it;
+		if (tof->m_percent == percent && tof->m_kindOf == kindOf)
+		{
+			tof->m_ref--;
+			if (tof->m_ref == 0)
+			{
+				m_kindOfPercentProductionTimeChangeList.erase(it);
+				if (tof)
+					tof->deleteInstance();
+			}
+			return;
+		}
+		++it;
+	}
+	DEBUG_ASSERTCRASH(FALSE, ("removeKindOfProductionTimeChange was called with kindOf=%d and percent=%f. We could not find the entry in the list with these variables. CLH.", kindOf, percent));
+}
+
+//-------------------------------------------------------------------------------------------------
+/** getProductionTimeChangeBasedOnKindOf gets the time percentage change based off of Kindof Mask */
+//-------------------------------------------------------------------------------------------------
+Real Player::getProductionTimeChangeBasedOnKindOf(KindOfMaskType kindOf) const
+{
+	Real start = 1.0f;
+	KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionTimeChangeList.begin();
+	while (it != m_kindOfPercentProductionTimeChangeList.end())
+	{
+
+		KindOfPercentProductionChange* tof = *it;
+		if (TEST_KINDOFMASK_MULTI(kindOf, tof->m_kindOf, KINDOFMASK_NONE))
+		{
+			start *= (1 + tof->m_percent);
+		}
+		++it;
+	}
+	return (start);
+}
+
+//-------------------------------------------------------------------------------------------------
 /** setAttackedBy */
 //-------------------------------------------------------------------------------------------------
 void Player::setAttackedBy( Int playerNdx )
@@ -4358,7 +4496,7 @@ void Player::xfer( Xfer *xfer )
 	// score keeper
 	xfer->xferSnapshot( &m_scoreKeeper );
 
-	// size of and data for kindof percent production change list
+	// size of and data for kindof percent production COST change list
 	UnsignedShort percentProductionChangeCount = m_kindOfPercentProductionChangeList.size();
 	xfer->xferUnsignedShort( &percentProductionChangeCount );
 	KindOfPercentProductionChange *entry;
@@ -4413,6 +4551,66 @@ void Player::xfer( Xfer *xfer )
 
 			// put at end of list
 			m_kindOfPercentProductionChangeList.push_back( entry );
+
+		}  // end for i
+
+	}  // end else, load
+
+	// size of and data for kindof percent production TIME change list
+	UnsignedShort percentProductionTimeChangeCount = m_kindOfPercentProductionTimeChangeList.size();
+	xfer->xferUnsignedShort(&percentProductionTimeChangeCount);
+	entry = NULL;
+	if (xfer->getXferMode() == XFER_SAVE)
+	{
+		KindOfPercentProductionChangeListIt it;
+
+		// save each item
+		for (it = m_kindOfPercentProductionTimeChangeList.begin();
+			it != m_kindOfPercentProductionTimeChangeList.end();
+			++it)
+		{
+
+			// get entry data
+			entry = *it;
+
+			// kind of mask type
+			entry->m_kindOf.xfer(xfer);
+
+			// percent
+			xfer->xferReal(&entry->m_percent);
+
+			// ref
+			xfer->xferUnsignedInt(&entry->m_ref);
+
+		}  // end for
+
+	}  // end if, save
+	else
+	{
+
+		// sanity, list must be empty right now
+		if (m_kindOfPercentProductionTimeChangeList.size() != 0)
+		{
+
+			DEBUG_CRASH(("Player::xfer - m_kindOfPercentProductionTimeChangeList should be empty but is not\n"));
+			throw SC_INVALID_DATA;
+
+		}  // end if
+
+		// read each entry
+		for (UnsignedInt i = 0; i < percentProductionTimeChangeCount; ++i)
+		{
+
+			// allocate new entry
+			entry = newInstance(KindOfPercentProductionChange);
+
+			// read data
+			entry->m_kindOf.xfer(xfer);
+			xfer->xferReal(&entry->m_percent);
+			xfer->xferUnsignedInt(&entry->m_ref);
+
+			// put at end of list
+			m_kindOfPercentProductionTimeChangeList.push_back(entry);
 
 		}  // end for i
 

@@ -547,7 +547,7 @@ void IndexClass<INDEX, T>::Set_Archive(NodeElement const * node) const
 template<class INDEX, class T>
 bool IndexClass<INDEX, T>::Add_Index(INDEX const & id, T const & data)
 {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	/*
 	**	Ensure that two elements with the same index are not added to the 
 	**	array.

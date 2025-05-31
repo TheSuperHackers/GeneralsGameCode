@@ -45,7 +45,6 @@ Win32LocalFileSystem::~Win32LocalFileSystem() {
 File * Win32LocalFileSystem::openFile(const Char *filename, Int access /* = 0 */) 
 {
 	//USE_PERF_TIMER(Win32LocalFileSystem_openFile)
-	Win32LocalFile *file = newInstance( Win32LocalFile );	
 
 	// sanity check
 	if (strlen(filename) <= 0) {
@@ -68,6 +67,9 @@ File * Win32LocalFileSystem::openFile(const Char *filename, Int access /* = 0 */
 			dirName.concat(token);
 		}
 	}
+
+	// TheSuperHackers @fix Mauller 21/04/2025 Create new file handle when necessary to prevent memory leak
+	Win32LocalFile *file = newInstance( Win32LocalFile );	
 
 	if (file->open(filename, access) == FALSE) {
 		file->close();

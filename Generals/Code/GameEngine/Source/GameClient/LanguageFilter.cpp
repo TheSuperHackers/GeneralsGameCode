@@ -29,7 +29,7 @@
 #include "Common/FileSystem.h"
 #include "Common/file.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -58,7 +58,7 @@ void LanguageFilter::init() {
 		return;
 	}
 
-	WideChar word[128];
+	wchar_t word[128];
 	while (readWord(file1, word)) {
 		Int wordLen = wcslen(word);
 		if (wordLen == 0) {

@@ -74,6 +74,7 @@
 #include "GameLogic/Module/AssistedTargetingUpdate.h"
 #include "GameLogic/Module/ProjectileStreamUpdate.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
+#include "GameLogic/Module/LifetimeUpdate.h"
 #include "GameLogic/TerrainLogic.h"
 
 #define RATIONALIZE_ATTACK_RANGE
@@ -85,7 +86,7 @@
 	const DistanceCalculationType ATTACK_RANGE_CALC_TYPE = FROM_BOUNDINGSPHERE_3D;
 #endif
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -243,6 +244,16 @@ const FieldParse WeaponTemplate::TheWeaponTemplateFieldParseTable[] =
 	{ "ContinueAttackRange",			INI::parseReal,													NULL,							offsetof(WeaponTemplate, m_continueAttackRange) },
 	{ "SuspendFXDelay",						INI::parseDurationUnsignedInt,					NULL,							offsetof(WeaponTemplate, m_suspendFXDelay) },		
 	{ "MissileCallsOnDie",			INI::parseBool,													NULL,							offsetof(WeaponTemplate, m_dieOnDetonate) },
+	{ "ScatterTargetAligned", INI::parseBool, NULL, offsetof(WeaponTemplate, m_scatterTargetAligned) },
+	{ "ScatterTargetRandomOrder", INI::parseBool, NULL, offsetof(WeaponTemplate, m_scatterTargetRandom) },
+	{ "ScatterTargetRandomAngle", INI::parseBool, NULL, offsetof(WeaponTemplate, m_scatterTargetRandomAngle) },
+	{ "ScatterTargetMinScalar", INI::parseReal, NULL, offsetof(WeaponTemplate, m_scatterTargetMinScalar) },
+	{ "ScatterTargetCenteredAtShooter", INI::parseBool, NULL, offsetof(WeaponTemplate, m_scatterTargetCenteredAtShooter) },
+	{ "ScatterTargetResetTime", INI::parseDurationUnsignedInt, NULL, offsetof(WeaponTemplate, m_scatterTargetResetTime) },
+	{ "PreAttackFX", parseAllVetLevelsFXList, NULL,	offsetof(WeaponTemplate, m_preAttackFXs) },
+	{ "VeterancyPreAttackFX", parsePerVetLevelFXList, NULL, offsetof(WeaponTemplate, m_preAttackFXs) },
+	{ "PreAttackFXDelay",						INI::parseDurationUnsignedInt,					NULL,							offsetof(WeaponTemplate, m_preAttackFXDelay) },
+	{ "ContinuousLaserLoopTime",				INI::parseDurationUnsignedInt,					NULL,							offsetof(WeaponTemplate, m_continuousLaserLoopTime) },
 	{ NULL,												NULL,																		NULL,							0 }  // keep this last
 
 };
@@ -306,6 +317,7 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(NULL)
 	m_minDelayBetweenShots					= 0;
 	m_maxDelayBetweenShots					= 0;
 	m_fireSoundLoopTime							= 0;
+	m_continuousLaserLoopTime = 0;
 	m_extraBonus										= NULL;
 	m_shotsPerBarrel								= 1;
 	m_antiMask											= WEAPON_ANTI_GROUND;	// but not air or projectile.
@@ -327,6 +339,13 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(NULL)
 	m_damageStatusType							= OBJECT_STATUS_NONE;
 	m_suspendFXDelay								= 0;
 	m_dieOnDetonate						= FALSE;
+	m_scatterTargetAligned = FALSE;
+	m_scatterTargetRandom = TRUE;
+	m_scatterTargetRandomAngle = FALSE;
+	m_scatterTargetMinScalar = 0;
+	m_scatterTargetCenteredAtShooter = FALSE;
+	m_scatterTargetResetTime = 0;
+	m_preAttackFXDelay = 6; // Non-Zero default! 6 frames = 200ms. This should be a good base value to avoid spamming
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -776,7 +795,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 {
 
 	//-extraLogging 
-	#if (defined(_DEBUG) || defined(_INTERNAL))
+	#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 		AsciiString targetStr;
 		if( TheGlobalData->m_extraLogging )
 		{
@@ -799,7 +818,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 	if (sourceObj == NULL || (victimObj == NULL && victimPos == NULL))
 	{
 		//-extraLogging 
-		#if (defined(_DEBUG) || defined(_INTERNAL))
+		#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 			if( TheGlobalData->m_extraLogging )
 				DEBUG_LOG( ("FAIL 1 (sourceObj %d == NULL || (victimObj %d == NULL && victimPos %d == NULL)\n", sourceObj != 0, victimObj != 0, victimPos != 0) );
 		#endif
@@ -878,7 +897,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			//DEBUG_ASSERTCRASH(distSqr < 5*5 || distSqr < attackRangeSqr*1.2f, ("*** victim is out of range (%f vs %f) of this weapon -- why did we attempt to fire?\n",sqrtf(distSqr),sqrtf(attackRangeSqr)));
 			
 			//-extraLogging 
-			#if (defined(_DEBUG) || defined(_INTERNAL))
+			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 				if( TheGlobalData->m_extraLogging )
 					DEBUG_LOG( ("FAIL 2 (distSqr %.2f > attackRangeSqr %.2f)\n", distSqr, attackRangeSqr ) );
 			#endif
@@ -900,7 +919,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			DEBUG_ASSERTCRASH(distSqr > minAttackRangeSqr*0.8f, ("*** victim is closer than min attack range (%f vs %f) of this weapon -- why did we attempt to fire?\n",sqrtf(distSqr),sqrtf(minAttackRangeSqr)));
 
 			//-extraLogging 
-			#if (defined(_DEBUG) || defined(_INTERNAL))
+			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 				if( TheGlobalData->m_extraLogging )
 					DEBUG_LOG( ("FAIL 3 (distSqr %.2f< minAttackRangeSqr %.2f - 0.5f && !isProjectileDetonation %d)\n", distSqr, minAttackRangeSqr, isProjectileDetonation ) );
 			#endif
@@ -1041,14 +1060,49 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 				{
 					projectileDestination.set( victimObj->getPosition() );
 				}
-				firingWeapon->createLaser( sourceObj, victimObj, &projectileDestination );
+				if (firingWeapon->getContinuousLaserLoopTime() > 0)
+					firingWeapon->handleContinuousLaser(sourceObj, victimObj, &projectileDestination);
+				else
+					firingWeapon->createLaser(sourceObj, victimObj, &projectileDestination);
 			}
 			else
 			{
 				//We are missing our intended target, so now we want to aim at the ground at the projectile offset.
 				damageID = INVALID_ID;
-				firingWeapon->createLaser( sourceObj, NULL, &projectileDestination );
+				if (firingWeapon->getContinuousLaserLoopTime() > 0)
+					firingWeapon->handleContinuousLaser(sourceObj, NULL, &projectileDestination);
+				else
+					firingWeapon->createLaser(sourceObj, NULL, &projectileDestination);
 			}
+
+			// Handle Detonation OCL
+			Coord3D targetPos; // We need a better position to match the visual laser;
+			targetPos.set(&projectileDestination);
+			if (victimObj && !victimObj->isKindOf(KINDOF_PROJECTILE) && !victimObj->isAirborneTarget())
+			{
+				//Targets are positioned on the ground, so raise the beam up so we're not shooting their feet.
+				//Projectiles are a different story, target their exact position.
+				targetPos.z += 10.0f;
+			}
+
+			VeterancyLevel vet = sourceObj->getVeterancyLevel();
+			const ObjectCreationList* detOCL = getProjectileDetonationOCL(vet);
+			Real laserAngle = atan2(v.y, v.x);  //TODO: check if this should be inverted
+			if (detOCL) {
+				//TODO: should we consider a proper 3D matrix?
+				ObjectCreationList::create(detOCL, sourceObj, &targetPos, NULL, laserAngle);
+			}
+			// Handle Detonation FX
+			const FXList* fx = getProjectileDetonateFX(vet);
+			if (fx != NULL) {
+				Matrix3D laserMtx;
+				Vector3 pos(sourcePos->x, sourcePos->y, sourcePos->z);
+				Vector3 dir(v.x, v.y, v.z);
+				dir.Normalize(); //This is fantastically crucial for calling buildTransformMatrix!!!!!
+				laserMtx.buildTransformMatrix(pos, dir);
+				FXList::doFXPos(fx, &targetPos, &laserMtx, 0.0f, NULL, getPrimaryDamageRadius(bonus));
+			}
+
 			if( inflictDamage )
 			{
 				dealDamageInternal( sourceID, damageID, &projectileDestination, bonus, isProjectileDetonation );
@@ -1067,7 +1121,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			}
 
 			//-extraLogging 
-			#if (defined(_DEBUG) || defined(_INTERNAL))
+			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 				if( TheGlobalData->m_extraLogging )
 					DEBUG_LOG( ("EARLY 4 (delayed damage applied now)\n") );
 			#endif
@@ -1088,7 +1142,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			}
 
 			//-extraLogging 
-			#if (defined(_DEBUG) || defined(_INTERNAL))
+			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 				if( TheGlobalData->m_extraLogging )
 					DEBUG_LOG( ("EARLY 5 (delaying damage applied until frame %d)\n", when ) );
 			#endif
@@ -1179,7 +1233,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			
 		}
 		//-extraLogging 
-		#if (defined(_DEBUG) || defined(_INTERNAL))
+		#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 			if( TheGlobalData->m_extraLogging )
 				DEBUG_LOG( ("DONE\n") );
 		#endif
@@ -1188,7 +1242,55 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		return 0;
 	}
 }
+//-------------------
+void WeaponTemplate::createPreAttackFX
+(
+	const Object* sourceObj,
+	WeaponSlotType wslot,
+	Int specificBarrelToUse,
+	const Object* victimObj,
+	const Coord3D* victimPos
+	//const WeaponBonus& bonus,
+	//Weapon *firingWeapon,
+) const
+{
+	// PLAY PRE ATTACK FX
+	VeterancyLevel v = sourceObj->getVeterancyLevel();
+	const FXList* fx = getPreAttackFX(v);
 
+	if (fx) {
+		Coord3D targetPos;
+		if (victimObj)
+		{
+			victimObj->getGeometryInfo().getCenterPosition(*victimObj->getPosition(), targetPos);
+		}
+		else if (victimPos)
+		{
+			targetPos.set(victimPos);
+		}
+
+		/*DEBUG_LOG((">>> INFO - creating PRE_ATTACK FX for '%s' with victim '%s' and pos '(%f, %f, %f)' \n",
+			sourceObj->getTemplate()->getName().str(),
+			victimObj ? victimObj->getTemplate()->getName().str() : "None",
+			targetPos.x, targetPos.y, targetPos.z));*/
+
+		Bool handled = false;
+		handled = sourceObj->getDrawable()->handleWeaponPreAttackFX(wslot,
+			specificBarrelToUse,
+			fx,
+			getWeaponSpeed(),
+			0.0f, //TODO: Enable recoil stats if we want to have PreAttack specific recoil amount
+			0.0f,
+			&targetPos,
+			0.0f
+		);
+		if (handled == false && fx != NULL)
+		{
+			const Coord3D* where = isContactWeapon() ? &targetPos : sourceObj->getDrawable()->getPosition();
+			FXList::doFXPos(fx, where, sourceObj->getDrawable()->getTransformMatrix(), getWeaponSpeed(), &targetPos, 0.0f);
+		}
+	}
+}
 //-------------------------------------------------------------------------------------------------
 void WeaponTemplate::trimOldHistoricDamage() const
 {
@@ -1731,7 +1833,7 @@ void WeaponStore::postProcessLoad()
 	if (weapon->m_projectileName.isNone())
 		weapon->m_projectileName.clear();
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (!weapon->getFireSound().getEventName().isEmpty() && weapon->getFireSound().getEventName().compareNoCase("NoSound") != 0) 
 	{ 
 		DEBUG_ASSERTCRASH(TheAudio->isValidAudioEvent(&weapon->getFireSound()), ("Invalid FireSound %s in Weapon '%s'.", weapon->getFireSound().getEventName().str(), weapon->getName().str())); 
@@ -1764,6 +1866,10 @@ Weapon::Weapon(const WeaponTemplate* tmpl, WeaponSlotType wslot)
 	m_numShotsForCurBarrel = 	m_template->getShotsPerBarrel();
 	m_lastFireFrame = 0;
 	m_suspendFXFrame = TheGameLogic->getFrame() + m_template->getSuspendFXDelay();
+	m_scatterTargetsAngle = 0;
+	m_nextPreAttackFXFrame = 0;
+	m_continuousLaserID = INVALID_ID;
+	m_bonusRefObjID = INVALID_ID;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1785,6 +1891,9 @@ Weapon::Weapon(const Weapon& that)
 	this->m_numShotsForCurBarrel = m_template->getShotsPerBarrel();
 	this->m_lastFireFrame = 0;
 	this->m_suspendFXFrame = that.getSuspendFXFrame();
+	this->m_nextPreAttackFXFrame = 0;
+	this->m_continuousLaserID = INVALID_ID;
+	this->m_bonusRefObjID = INVALID_ID;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1808,6 +1917,8 @@ Weapon& Weapon::operator=(const Weapon& that)
 		this->m_suspendFXFrame = that.getSuspendFXFrame();
 		this->m_numShotsForCurBarrel = m_template->getShotsPerBarrel();
 		this->m_projectileStreamID = INVALID_ID;
+		this->m_nextPreAttackFXFrame = 0;
+		this->m_continuousLaserID = INVALID_ID;
 	}
 	return *this;
 }
@@ -1818,17 +1929,42 @@ Weapon::~Weapon()
 }
 
 //-------------------------------------------------------------------------------------------------
+// DEBUG
+static void debug_printWeaponBonus(WeaponBonus* bonus, AsciiString name) {
+	const char* bonusNames[] = {
+		"DAMAGE",
+		"RADIUS",
+		"RANGE",
+		"RATE_OF_FIRE",
+		"PRE_ATTACK"
+	};
+	DEBUG_LOG((">>> Weapon bonus for '%s':\n", name.str()));
+	for (int i = 0; i < 5; i++) {
+		DEBUG_LOG((">>> -- '%s' : %f\n", bonusNames[i], bonus->getField(static_cast<WeaponBonus::Field>(i))));
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
 void Weapon::computeBonus(const Object *source, WeaponBonusConditionFlags extraBonusFlags, WeaponBonus& bonus) const
 {
+	// TODO: Do we need this eventually?
+	const Object* bonusRefObj = NULL;
+	if (m_bonusRefObjID != INVALID_ID) {
+		bonusRefObj = TheGameLogic->findObjectByID(m_bonusRefObjID);
+	}
+	else {
+		bonusRefObj = source;
+	}
+
 	bonus.clear();
-	WeaponBonusConditionFlags flags = source->getWeaponBonusCondition();
+	WeaponBonusConditionFlags flags = bonusRefObj->getWeaponBonusCondition();
 	//CRCDEBUG_LOG(("Weapon::computeBonus() - flags are %X for %s\n", flags, DescribeObject(source).str()));
 	flags |= extraBonusFlags;
 	
-	if( source->getContainedBy() )
+	if (bonusRefObj->getContainedBy())
 	{
 		// We may be able to add in our container's flags
-		const ContainModuleInterface *theirContain = source->getContainedBy()->getContain();
+		const ContainModuleInterface *theirContain = bonusRefObj->getContainedBy()->getContain();
 		if( theirContain && theirContain->isWeaponBonusPassedToPassengers() )
 			flags |= theirContain->getWeaponBonusPassedToPassengers();
 	}
@@ -1892,8 +2028,12 @@ void Weapon::rebuildScatterTargets()
 	if (scatterTargetsCount)
 	{
 		// When I reload, I need to rebuild the list of ScatterTargets to shoot at.
-		for (Int targetIndex = 0; targetIndex < scatterTargetsCount; targetIndex++)
-			m_scatterTargetsUnused.push_back( targetIndex );
+		for (Int targetIndex = scatterTargetsCount - 1; targetIndex >= 0; targetIndex--)
+			m_scatterTargetsUnused.push_back(targetIndex);
+
+		if (m_template->isScatterTargetRandomAngle()) {
+			m_scatterTargetsAngle = GameLogicRandomValueReal(0, PI * 2);
+		}
 	}
 }
 
@@ -2439,18 +2579,18 @@ void Weapon::newProjectileFired(const Object *sourceObj, const Object *projectil
 }
 
 //-------------------------------------------------------------------------------------------------
-void Weapon::createLaser( const Object *sourceObj, const Object *victimObj, const Coord3D *victimPos )
+ObjectID Weapon::createLaser( const Object *sourceObj, const Object *victimObj, const Coord3D *victimPos )
 {
 	const ThingTemplate* pst = TheThingFactory->findTemplate(m_template->getLaserName());
 	if( !pst )
 	{
 		DEBUG_CRASH( ("Weapon::createLaser(). %s could not find template for its laser %s.", 
 			sourceObj->getTemplate()->getName().str(), m_template->getLaserName().str() ) );
-		return;
+		return INVALID_ID;
 	}
 	Object* laser = TheThingFactory->newObject( pst, sourceObj->getControllingPlayer()->getDefaultTeam() );
 	if( laser == NULL )
-		return;
+		return INVALID_ID;
 
 	// Give it a good basis in reality to ensure it can draw when on screen.
 	laser->setPosition(sourceObj->getPosition());
@@ -2473,8 +2613,58 @@ void Weapon::createLaser( const Object *sourceObj, const Object *victimObj, cons
 			update->initLaser( sourceObj, victimObj, sourceObj->getPosition(), &pos, m_template->getLaserBoneName() );
 		}
 	}
+
+	return laser->getID();
+}
+//-------------------------------------------------------------------------------------------------
+void Weapon::handleContinuousLaser(const Object* sourceObj, const Object* victimObj, const Coord3D* victimPos)
+{
+	UnsignedInt frameNow = TheGameLogic->getFrame();
+	Object* continuousLaser = TheGameLogic->findObjectByID(m_continuousLaserID);
+
+	if (m_lastFireFrame + m_template->getContinuousLaserLoopTime() < frameNow ||
+		continuousLaser == NULL) {
+		// We are outside the loop time, or the laser doesn't exist -> create a new laser
+		ObjectID laserId = createLaser(sourceObj, victimObj, victimPos);
+		continuousLaser = TheGameLogic->findObjectByID(laserId);
+		if (continuousLaser == NULL) {
+			return;
+		}
+		m_continuousLaserID = laserId;
+		return;
+	}
+
+	// We have an existing laser
+	continuousLaser->setPosition(sourceObj->getPosition());
+
+	//Check for laser update
+	Drawable* draw = continuousLaser->getDrawable();
+	if (draw)
+	{
+		// Try to update lifetime of the laser
+		static NameKeyType key_LifetimeUpdate = NAMEKEY("LifetimeUpdate");
+		LifetimeUpdate* lt_update = (LifetimeUpdate*)continuousLaser->findUpdateModule(key_LifetimeUpdate);
+		if (lt_update) {
+			lt_update->resetLifetime();
+		}
+
+		static NameKeyType key_LaserUpdate = NAMEKEY("LaserUpdate");
+		LaserUpdate* update = (LaserUpdate*)draw->findClientUpdateModule(key_LaserUpdate);
+		if (update)
+		{
+			Coord3D pos = *victimPos;
+			if (victimObj && !victimObj->isKindOf(KINDOF_PROJECTILE) && !victimObj->isAirborneTarget())
+			{
+				//Targets are positioned on the ground, so raise the beam up so we're not shooting their feet.
+				//Projectiles are a different story, target their exact position.
+				pos.z += 10.0f;
+			}
+			update->updateContinuousLaser(sourceObj, victimObj, sourceObj->getPosition(), &pos);
+		}
+	}
 }
 
+//-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 // return true if we auto-reloaded our clip after firing.
 //DECLARE_PERF_TIMER(fireWeapon)
@@ -2587,6 +2777,8 @@ Bool Weapon::privateFireWeapon(
 	WeaponBonus bonus;
 	computeBonus(sourceObj, extraBonusFlags, bonus);
 
+	// debug_printWeaponBonus(&bonus, m_template->getName());
+
 	DEBUG_ASSERTCRASH(getStatus() != OUT_OF_AMMO, ("Hmm, firing weapon that is OUT_OF_AMMO"));
 	DEBUG_ASSERTCRASH(getStatus() == READY_TO_FIRE, ("Hmm, Weapon is firing more often than should be possible"));
 	DEBUG_ASSERTCRASH(m_ammoInClip > 0, ("Hmm, firing an empty weapon"));
@@ -2605,32 +2797,84 @@ Bool Weapon::privateFireWeapon(
 			m_numShotsForCurBarrel = m_template->getShotsPerBarrel();
 		}
 
-		if( m_scatterTargetsUnused.size() )
+		if( m_scatterTargetsUnused.size() && !isProjectileDetonation)
 		{
+			// If we haven't fired for this long: reset the scatter targets.
+			if (m_template->getScatterTargetResetTime() > 0) {
+				UnsignedInt frameNow = TheGameLogic->getFrame();
+				if (m_lastFireFrame + m_template->getScatterTargetResetTime() < frameNow) {
+					rebuildScatterTargets();
+				}
+			}
+
+
 			// If I have a set scatter pattern, I need to offset the target by a random pick from that pattern
 			if( victimObj )
 			{
 				victimPos = victimObj->getPosition();
 				victimObj = NULL;
 			}
-			Coord3D targetPos = *victimPos; // need to copy, as this pointer is actually inside somebody potentially
-			Int randomPick = GameLogicRandomValue( 0, m_scatterTargetsUnused.size() - 1 );
-			Int targetIndex = m_scatterTargetsUnused[randomPick];
+			Coord3D  targetPos = *victimPos; // need to copy, as this pointer is actually inside somebody potentially
+
+			Int targetIndex = 0;
+			if (m_template->isScatterTargetRandom()) {
+				Int randomPick = GameLogicRandomValue(0, m_scatterTargetsUnused.size() - 1);
+				targetIndex = m_scatterTargetsUnused[randomPick];
+				// To erase from a vector, put the last on the one you used and pop the back.
+				m_scatterTargetsUnused[randomPick] = m_scatterTargetsUnused.back();
+				m_scatterTargetsUnused.pop_back();
+			}
+			else {
+				//We actually pick from the back of the the order of targets
+				targetIndex = m_scatterTargetsUnused[m_scatterTargetsUnused.size() - 1];
+				m_scatterTargetsUnused.pop_back();
+			}
 
 			Real scatterTargetScalar = getScatterTargetScalar();// essentially a radius, but operates only on this scatterTarget table
 			Coord2D scatterOffset = m_template->getScatterTargetsVector().at( targetIndex );
 
+			// Scale scatter target based on range
+			if (Real minScale = m_template->getScatterTargetMinScalar() > 0) {
+				Real minRange = m_template->getMinimumAttackRange();
+				Real maxRange = m_template->getUnmodifiedAttackRange();
+				Real range = sqrt(ThePartitionManager->getDistanceSquared(sourceObj, victimPos, FROM_CENTER_2D));
+				Real rangeRatio = (range - minRange) / (maxRange - minRange);
+				scatterTargetScalar = (rangeRatio * (scatterTargetScalar - minScale)) + minScale;
+				// DEBUG_LOG((">>> Weapon: Range = %f, RangeRatio = %f, TargetScalar = %f\n", range, rangeRatio, scatterTargetScalar));
+			}
+
 			scatterOffset.x *= scatterTargetScalar;
 			scatterOffset.y *= scatterTargetScalar;
+
+			// New: align scatter pattern to shooter, and/or use a random angle
+			if (m_template->isScatterTargetAligned() || m_scatterTargetsAngle != 0.0f) {
+				// DEBUG_LOG((">>> Weapon: m_scatterTargetsAngle = %f\n", m_scatterTargetsAngle));
+
+				const Coord3D srcPos = *sourceObj->getPosition();
+
+				Real angle = m_scatterTargetsAngle;
+				if (m_template->isScatterTargetAligned()) {
+					angle += atan2(targetPos.y - srcPos.y, targetPos.x - srcPos.x);
+					// angle += atan2(srcPos.y - targetPos.y, srcPos.x - targetPos.x);
+				}
+
+				Real cosA = Cos(angle);
+				Real sinA = Sin(angle);
+				Real scatterOffsetRotX = scatterOffset.x * cosA - scatterOffset.y * sinA;
+				Real scatterOffsetRotY = scatterOffset.x * sinA + scatterOffset.y * cosA;
+				scatterOffset.x = scatterOffsetRotX;
+				scatterOffset.y = scatterOffsetRotY;
+			}
+
+			if (m_template->isScatterTargetCenteredAtShooter()) {
+				targetPos = *sourceObj->getPosition();
+			}
 
 			targetPos.x += scatterOffset.x;
 			targetPos.y += scatterOffset.y;
 
 			targetPos.z = TheTerrainLogic->getGroundHeight(targetPos.x, targetPos.y);
 
-			// To erase from a vector, put the last on the one you used and pop the back.
-			m_scatterTargetsUnused[randomPick] = m_scatterTargetsUnused.back();
-			m_scatterTargetsUnused.pop_back();
 			m_template->fireWeaponTemplate(sourceObj, m_wslot, m_curBarrel, victimObj, &targetPos, bonus, isProjectileDetonation, ignoreRanges, this, projectileID, inflictDamage );
 		}
 		else
@@ -2700,14 +2944,69 @@ Bool Weapon::privateFireWeapon(
 //-------------------------------------------------------------------------------------------------
 void Weapon::preFireWeapon( const Object *source, const Object *victim )
 {
-	Int delay = getPreAttackDelay( source, victim );
-	if( delay > 0 )
+	Int delay = getPreAttackDelay(source, victim);
+	if (delay > 0)
 	{
-		setStatus( PRE_ATTACK );
-		setPreAttackFinishedFrame( TheGameLogic->getFrame() + delay );
-		if( m_template->isLeechRangeWeapon() )
+		Bool allowFX = TheGameLogic->getFrame() > getNextPreAttackFXFrame();
+
+		setStatus(PRE_ATTACK);
+		setPreAttackFinishedFrame(TheGameLogic->getFrame() + delay);
+		if (m_template->isLeechRangeWeapon())
 		{
-			setLeechRangeActive( TRUE );
+			setLeechRangeActive(TRUE);
+		}
+
+		if (allowFX) {
+
+			// Fix currentBarrel
+			Int curBarrel = m_curBarrel;
+			Int barrelCount = source->getDrawable()->getBarrelCount(m_wslot);
+		
+			if (curBarrel >= barrelCount)
+			{
+				curBarrel = 0;
+			}
+
+			getTemplate()->createPreAttackFX(source, m_wslot, curBarrel, victim, NULL);
+			// Add delay to avoid spamming the FX
+			if (m_template->getPreAttackFXDelay() > 0) {
+				setNextPreAttackFXFrame(TheGameLogic->getFrame() + m_template->getPreAttackFXDelay());
+			}
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+// Same as above but with target location instead of object
+void Weapon::preFireWeapon(const Object* source, const Coord3D* pos)
+{
+	Int delay = getPreAttackDelay(source, NULL);
+	if (delay > 0)
+	{
+		Bool allowFX = TheGameLogic->getFrame() > getNextPreAttackFXFrame();
+
+		setStatus(PRE_ATTACK);
+		setPreAttackFinishedFrame(TheGameLogic->getFrame() + delay);
+		if (m_template->isLeechRangeWeapon())
+		{
+			setLeechRangeActive(TRUE);
+		}
+
+		if (allowFX) {
+			// Fix currentBarrel
+			Int curBarrel = m_curBarrel;
+			Int barrelCount = source->getDrawable()->getBarrelCount(m_wslot);
+
+			if (curBarrel >= barrelCount)
+			{
+				curBarrel = 0;
+			}
+
+			getTemplate()->createPreAttackFX(source, m_wslot, curBarrel, NULL, pos);
+			// Add delay to avoid spamming the FX
+			if (m_template->getPreAttackFXDelay() > 0) {
+				setNextPreAttackFXFrame(TheGameLogic->getFrame() + m_template->getPreAttackFXDelay());
+			}
 		}
 	}
 }
@@ -3003,7 +3302,7 @@ void Weapon::processRequestAssistance( const Object *requestingObject, Object *v
 #endif
 	}
 
-//#if defined(_DEBUG) || defined(_INTERNAL)
+//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 //  Real muzzleHeight = attachTransform.Get_Z_Translation();
 //  DEBUG_ASSERTCRASH( muzzleHeight > 0.001f, ("YOUR TURRET HAS A VERY LOW PROJECTILE LAUNCH POSITION, BUT FOUND A VALID BONE. DID YOU PICK THE WRONG ONE? %s", launcher->getTemplate()->getName().str()));
 //#endif
@@ -3226,6 +3525,16 @@ void Weapon::crc( Xfer *xfer )
 	}
 #endif // DEBUG_CRC
 
+	// m_nextPreAttackFXFrame
+	xfer->xferUnsignedInt(&m_nextPreAttackFXFrame);
+#ifdef DEBUG_CRC
+	if (doLogging)
+	{
+		tmp.format("m_nextPreAttackFXFrame %d ", m_nextPreAttackFXFrame);
+		logString.concat(tmp);
+	}
+#endif // DEBUG_CRC
+
 	// when last reload started
 	xfer->xferUnsignedInt( &m_whenLastReloadStarted );
 #ifdef DEBUG_CRC
@@ -3347,6 +3656,28 @@ void Weapon::crc( Xfer *xfer )
 	}
 #endif // DEBUG_CRC
 
+	// scatter targets random angle
+	xfer->xferReal(&m_scatterTargetsAngle);
+#ifdef DEBUG_CRC
+	if (doLogging)
+	{
+		tmp.format("m_scatterTargetsAngle %d ", m_scatterTargetsAngle);
+		logString.concat(tmp);
+	}
+#endif // DEBUG_CRC
+
+
+	// continuous laser object
+	xfer->xferObjectID(&m_continuousLaserID);
+#ifdef DEBUG_CRC
+	if (doLogging)
+	{
+		tmp.format("m_continuousLaserID %d ", m_continuousLaserID);
+		logString.concat(tmp);
+	}
+#endif // DEBUG_CRC
+
+
 
 #ifdef DEBUG_CRC
 	if (doLogging)
@@ -3354,6 +3685,7 @@ void Weapon::crc( Xfer *xfer )
 		CRCDEBUG_LOG(("%s\n", logString.str()));
 	}
 #endif // DEBUG_CRC
+
 
 }  // end crc
 
@@ -3395,6 +3727,9 @@ void Weapon::xfer( Xfer *xfer )
 
 	// wehn pre attack finished
 	xfer->xferUnsignedInt( &m_whenPreAttackFinished );
+
+	// when next preAttack FX
+	xfer->xferUnsignedInt( &m_nextPreAttackFXFrame);
 
 	// when last reload started
 	xfer->xferUnsignedInt( &m_whenLastReloadStarted );
@@ -3463,6 +3798,13 @@ void Weapon::xfer( Xfer *xfer )
 	// leech weapon range active
 	xfer->xferBool( &m_leechWeaponRangeActive );
 
+	// scatter targets random angle
+	xfer->xferReal( &m_scatterTargetsAngle );
+
+	// continuous laser object
+	xfer->xferObjectID(&m_continuousLaserID);
+
+
 }  // end xfer
 
 // ------------------------------------------------------------------------------------------------
@@ -3476,6 +3818,15 @@ void Weapon::loadPostProcess( void )
 		if( projectileStream == NULL )
 		{
 			m_projectileStreamID = INVALID_ID;
+		}
+	}
+
+	if (m_continuousLaserID != INVALID_ID)
+	{
+		Object* continuousLaser = TheGameLogic->findObjectByID(m_continuousLaserID);
+		if (continuousLaser == NULL)
+		{
+			m_continuousLaserID = INVALID_ID;
 		}
 	}
 }

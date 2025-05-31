@@ -239,11 +239,16 @@ public:
 	Bool						m_firesWhileTurning;    ///< so the firing state does not instantly expire the turning state
 	Bool						m_isAllowsPitch;				///< This type of turret can pitch up and down as well as spin
 
+	Real						m_minTurretAngle;         ///< Minimum turn angle for turret
+	Real						m_maxTurretAngle;         ///< Maximum turn angle for turret
+	Bool						m_hasLimitedTurretAngle;   ///< this type of turret has limited angles
+
 	TurretAIData();
 	static void buildFieldParse(MultiIniFieldParse& p);
 
 	static void parseTurretSweep(INI* ini, void *instance, void *store, const void* userData);
 	static void parseTurretSweepSpeed(INI* ini, void *instance, void *store, const void* userData);
+	static void parseMinMaxAngle(INI* ini, void *instance, void *store, const void* userData);
 };
 EMPTY_DTOR(TurretAIData)
 
@@ -285,6 +290,11 @@ public:
 	UnsignedInt getMaxIdleScanInterval() const { return m_data->m_maxIdleScanInterval;	}
 	UnsignedInt getRecenterTime() const { return m_data->m_recenterTime;	}
 	Object* getOwner() { return m_owner; }
+
+	Real getMinTurretAngle() const { return m_data->m_minTurretAngle; }
+	Real getMaxTurretAngle() const { return m_data->m_maxTurretAngle; }
+	Real hasLimitedTurretAngle() const { return m_data->m_hasLimitedTurretAngle; }
+
 	const Object* getOwner() const { return m_owner; }
 
 	Bool isOwnersCurWeaponOnTurret() const;

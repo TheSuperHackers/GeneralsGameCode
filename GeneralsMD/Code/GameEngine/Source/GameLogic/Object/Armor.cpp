@@ -63,6 +63,13 @@ void ArmorTemplate::clear()
 	}
 }
 
+void ArmorTemplate::copyFrom(const ArmorTemplate* other) {
+	for (int i = 0; i < DAMAGE_NUM_TYPES; i++)
+	{
+		m_damageCoefficient[i] = other->m_damageCoefficient[i];
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 Real ArmorTemplate::adjustDamage(DamageType t, Real damage) const 
 { 
@@ -146,8 +153,38 @@ const ArmorTemplate* ArmorStore::findArmorTemplate(AsciiString name) const
 }
 
 //-------------------------------------------------------------------------------------------------
+/*static */ void ArmorStore::parseArmorExtendDefinition(INI* ini)
+{
+	static const FieldParse myFieldParse[] =
+	{
+		{ "Armor", ArmorTemplate::parseArmorCoefficients, NULL, 0 }
+	};
+
+	const char* new_armor_name = ini->getNextToken();
+
+	const char* parent = ini->getNextToken();
+	const ArmorTemplate* parentTemplate = TheArmorStore->findArmorTemplate(parent);
+	if (parentTemplate == NULL) {
+		DEBUG_CRASH(("ArmorExtend must extend a previously defined Armor (%s).\n", parent));
+		throw INI_INVALID_DATA;
+	}
+
+	NameKeyType key = TheNameKeyGenerator->nameToKey(new_armor_name);
+	ArmorTemplate& armorTmpl = TheArmorStore->m_armorTemplates[key];
+	armorTmpl.clear();
+	armorTmpl.copyFrom(parentTemplate);
+
+	ini->initFromINI(&armorTmpl, myFieldParse);
+}
+
+//-------------------------------------------------------------------------------------------------
 /*static*/ void INI::parseArmorDefinition(INI *ini)
 {
 	ArmorStore::parseArmorDefinition(ini);
 }
 
+//-------------------------------------------------------------------------------------------------
+/*static*/ void INI::parseArmorExtendDefinition(INI* ini)
+{
+	ArmorStore::parseArmorExtendDefinition(ini);
+}

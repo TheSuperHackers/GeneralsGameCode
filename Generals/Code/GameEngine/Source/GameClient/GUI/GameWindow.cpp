@@ -61,7 +61,7 @@
 #include "GameClient/GadgetStaticText.h"
 #include "GameClient/Mouse.h"
 #include "GameClient/SelectionXlat.h"
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -657,6 +657,16 @@ Int GameWindow::winEnable( Bool enable )
 	return WIN_ERR_OK;
 
 }  // end WinEnable
+
+// GameWindow::winGetEnabled ======================================================
+/** Enable or disable a window based on the enable parameter.
+	* A disabled window can be seen but accepts no input. */
+//=============================================================================
+Bool GameWindow::winGetEnabled( void )
+{
+  return BitIsSet( m_status, WIN_STATUS_ENABLED );
+
+}  // end winGetEnabled
 
 // GameWindow::winHide ========================================================
 /** Hide or show a window based on the hide parameter.

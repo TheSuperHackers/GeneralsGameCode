@@ -36,7 +36,7 @@
 #include "GameLogic/Object.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -48,6 +48,7 @@ ExperienceTracker::ExperienceTracker(Object *parent) :
 	m_currentLevel(LEVEL_REGULAR),
 	m_experienceSink(INVALID_ID),
 	m_experienceScalar( 1.0f ),
+	m_experienceValueScalar(1.0f ),
 	m_currentExperience(0) // Added By Sadullah Nader
 {
 }
@@ -64,7 +65,7 @@ Int ExperienceTracker::getExperienceValue( const Object* killer ) const
 	if( killer->getRelationship( m_parent ) == ALLIES )
 		return 0;
 
-	return m_parent->getTemplate()->getExperienceValue(m_currentLevel);
+	return m_parent->getTemplate()->getExperienceValue(m_currentLevel) * m_experienceValueScalar;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -265,6 +266,9 @@ void ExperienceTracker::xfer( Xfer *xfer )
 
 	// experience scalar
 	xfer->xferReal( &m_experienceScalar );
+
+	// experience value scalar
+	xfer->xferReal(&m_experienceValueScalar);
 
 }  // end xfer
 

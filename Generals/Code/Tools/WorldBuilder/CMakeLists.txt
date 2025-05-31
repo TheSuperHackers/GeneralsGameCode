@@ -1,4 +1,3 @@
-# Set source files
 set(WORLDBUILDER_SRC
     "src/addplayerdialog.cpp"
     "src/AutoEdgeOutTool.cpp"
@@ -195,11 +194,10 @@ set(WORLDBUILDER_SRC
     "include/WorldBuilderView.h"
 )
 
-# Targets to build.
 add_executable(g_worldbuilder WIN32)
 
 target_include_directories(g_worldbuilder PRIVATE
-    .
+    ${CMAKE_CURRENT_SOURCE_DIR}
     include
     res
 )

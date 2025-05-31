@@ -47,7 +47,7 @@
 
 const UnsignedInt WAIT_INDEFINITELY = 0xffffffff;
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -201,6 +201,10 @@ TurretAIData::TurretAIData()
 	m_initiallyDisabled = false;
 	m_firesWhileTurning = FALSE;
 	m_isAllowsPitch = false;
+
+	m_minTurretAngle = 0.0;
+	m_maxTurretAngle = 0.0;
+	m_hasLimitedTurretAngle = false;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -232,6 +236,16 @@ void TurretAIData::parseTurretSweepSpeed(INI* ini, void *instance, void * /*stor
 	INI::parseReal( ini, instance, &self->m_turretSweepSpeedModifier[wslot], NULL );
 }
 
+
+//-------------------------------------------------------------------------------------------------
+/*static*/ void TurretAIData::parseMinMaxAngle(INI* ini, void* instance, void* store, const void* userData)
+{
+	INI::parseAngleReal(ini, instance, store, userData);
+	TurretAIData* self = (TurretAIData*)instance;
+	self->m_hasLimitedTurretAngle = TRUE;
+}
+
+
 //----------------------------------------------------------------------------------------------------------
 void TurretAIData::buildFieldParse(MultiIniFieldParse& p) 
 {
@@ -258,6 +272,9 @@ void TurretAIData::buildFieldParse(MultiIniFieldParse& p)
 		{ "RecenterTime",						INI::parseDurationUnsignedInt,				NULL, offsetof( TurretAIData, m_recenterTime ) },
 		{ "InitiallyDisabled",			INI::parseBool,												NULL, offsetof( TurretAIData, m_initiallyDisabled ) },
 		{ "FiresWhileTurning",			INI::parseBool,												NULL, offsetof( TurretAIData, m_firesWhileTurning ) },
+		{ "MinTurretAngle",             TurretAIData::parseMinMaxAngle,									NULL, offsetof(TurretAIData, m_minTurretAngle) },
+		{ "MaxTurretAngle",             TurretAIData::parseMinMaxAngle,									NULL, offsetof(TurretAIData, m_maxTurretAngle) },
+		// { "TurretAngleLimited",             INI::parseBool,									NULL, offsetof(TurretAIData, m_hasLimitedTurretAngle) },
 		{ 0, 0, 0, 0 }
 	};
   p.add(dataFieldParse);
@@ -308,7 +325,7 @@ TurretAI::TurretAI(Object* owner, const TurretAIData* data, WhichTurretType tur)
 	m_angle = getNaturalTurretAngle();
 	m_pitch = getNaturalTurretPitch();
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	char smbuf[256];
 	sprintf(smbuf, "TurretStateMachine for tur %08lx slot %d",this,tur);
 	const char* smname = smbuf;
@@ -397,7 +414,65 @@ Bool TurretAI::friend_turnTowardsAngle(Real desiredAngle, Real rateModifier, Rea
 	Real origAngle = getTurretAngle();
 	Real actualAngle = origAngle;
 	Real turnRate = getTurnRate() * rateModifier;
-	Real angleDiff = normalizeAngle(desiredAngle - actualAngle);
+	// Real angleDiff = normalizeAngle(desiredAngle - actualAngle);
+	Real angleDiff = stdAngleDiffMod(desiredAngle, actualAngle);
+
+	// ---
+	if (hasLimitedTurretAngle()) {
+		Real minAngle = getMinTurretAngle();
+		Real maxAngle = getMaxTurretAngle();
+
+		if (maxAngle < minAngle) { // This might be a backwards facing configuration
+			maxAngle = nmod(maxAngle, 2.0 * PI);
+			desiredAngle = nmod(desiredAngle, 2.0 * PI);
+		}
+
+		//DEBUG_LOG((">>> TurretAI::friend_turnTowardsAngle: minAngle = %f, maxAngle = %f, desiredAngle = %f, angleDiff = %f.\n",
+		//	minAngle / PI * 180.0, maxAngle / PI * 180.0, desiredAngle / PI * 180.0, angleDiff / PI * 180.0));
+
+		bool isWithinLimit = true;
+		if ((desiredAngle > maxAngle)) {
+			desiredAngle = maxAngle;
+			// desiredAngle = getNaturalTurretAngle();
+			isWithinLimit = false;
+		}
+		else if (desiredAngle < minAngle) {
+			desiredAngle = minAngle;
+			// desiredAngle = getNaturalTurretAngle();
+			isWithinLimit = false;
+		}
+		if (!isWithinLimit) {
+			// angleDiff = normalizeAngle(desiredAngle - actualAngle);
+			angleDiff = stdAngleDiffMod(desiredAngle, actualAngle);
+			// Are we close enough to the desired angle to just snap there?
+			if (fabs(angleDiff) < turnRate)
+			{
+				// we are centered
+				actualAngle = desiredAngle;
+
+				getOwner()->clearModelConditionState(MODELCONDITION_TURRET_ROTATE);
+			}
+			else
+			{
+				if (angleDiff > 0)
+					actualAngle += turnRate;
+				else
+					actualAngle -= turnRate;
+
+				getOwner()->setModelConditionState(MODELCONDITION_TURRET_ROTATE);
+				m_playRotSound = true;
+			}
+
+			m_angle = normalizeAngle(actualAngle);
+
+			if (m_angle != origAngle)
+				getOwner()->reactToTurretChange(m_whichTurret, origAngle, m_pitch);
+
+			return false;
+		}
+	}
+	// -----
+	desiredAngle = normalizeAngle(desiredAngle);
 
 	// Are we close enough to the desired angle to just snap there?
 	if (fabs(angleDiff) < turnRate)
@@ -423,7 +498,10 @@ Bool TurretAI::friend_turnTowardsAngle(Real desiredAngle, Real rateModifier, Rea
 	if( m_angle != origAngle )
 		getOwner()->reactToTurretChange( m_whichTurret, origAngle, m_pitch );
 
-	Bool aligned = fabs(m_angle - desiredAngle) <= relThresh;
+	// Bool aligned = fabs(m_angle - desiredAngle) <= relThresh;
+	Bool aligned = fabs(stdAngleDiffMod(m_angle, desiredAngle)) <= relThresh;
+
+	// DEBUG_LOG((">>> TurretAI::friend_turnTowardsAngle: aligned = %d, actualAngle = %f, m_angle = %f, desiredAngle = %f, relThresh = %f\n", aligned, actualAngle * PI / 180.0, m_angle * PI / 180.0, desiredAngle * PI / 180.0, relThresh * PI / 180.0));
 
 	return aligned;
 }
@@ -689,7 +767,7 @@ UpdateSleepTime TurretAI::updateTurretAI()
 {
 	USE_PERF_TIMER(TurretAI)
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	DEBUG_ASSERTCRASH(!m_enabled ||
 							m_turretStateMachine->peekSleepTill() == 0 || 
 							m_turretStateMachine->peekSleepTill() >= m_sleepUntil, ("Turret Machine is less sleepy than turret"));
@@ -748,7 +826,7 @@ UpdateSleepTime TurretAI::updateTurretAI()
 
 	m_sleepUntil = now + subMachineSleep;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	DEBUG_ASSERTCRASH(!m_enabled ||
 							m_turretStateMachine->peekSleepTill() == 0 || 
 							m_turretStateMachine->peekSleepTill() >= m_sleepUntil, ("Turret Machine is less sleepy than turret"));

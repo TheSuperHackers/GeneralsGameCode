@@ -34,20 +34,41 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/UpgradeModule.h"
+#include "GameLogic/WeaponSet.h"
+
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Thing;
+//enum ModelConditionFlagType CPP_11(: Int);
+enum WeaponSetType CPP_11(: Int);
 
-//-------------------------------------------------------------------------------------------------
-/** The default	die module */
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+class WeaponSetUpgradeModuleData : public UpgradeModuleData
+{
+
+public:
+
+	WeaponSetUpgradeModuleData(void);
+
+	static void buildFieldParse(MultiIniFieldParse& p);
+
+	WeaponSetType m_weaponSetFlag;  ///< The weaponset flag to set (default = WEAPONSET_PLAYER_UPGRADE)
+	WeaponSetFlags m_weaponSetFlagsToClear;  ///< The weaponset flags to clear. This is needed if we want to disable a previous upgrade.
+	Bool m_needsParkedAircraft;   ///< Aircraft attempting this upgrade needs to be stationary in hangar
+
+};
 //-------------------------------------------------------------------------------------------------
 class WeaponSetUpgrade : public UpgradeModule
 {
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( WeaponSetUpgrade, "WeaponSetUpgrade" )
-	MAKE_STANDARD_MODULE_MACRO( WeaponSetUpgrade );
+	MAKE_STANDARD_MODULE_MACRO_WITH_MODULE_DATA(WeaponSetUpgrade, WeaponSetUpgradeModuleData);
 
 public:
+
+	virtual Bool wouldUpgrade(UpgradeMaskType keyMask) const;
 
 	WeaponSetUpgrade( Thing *thing, const ModuleData* moduleData );
 	// virtual destructor prototype defined by MemoryPoolObject

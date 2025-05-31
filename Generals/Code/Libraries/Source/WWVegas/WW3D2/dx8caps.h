@@ -22,16 +22,17 @@
  *                                                                                             *
  *                 Project Name : DX8 Caps                                                     *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/ww3d2/dx8caps.h                                   $*
+ *                     $Archive:: /Commando/Code/ww3d2/dx8caps.h                              $*
  *                                                                                             *
  *              Original Author:: Hector Yee                                                   *
  *                                                                                             *
- *                      $Author:: Vss_sync                                                    $*
+ *                       Author : Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/27/02 1:27p                                              $*
  *                                                                                             *
- *                     $Modtime:: 8/29/01 8:16p                                               $*
+ *                    $Revision:: 24                                                          $*
  *                                                                                             *
- *                    $Revision:: 8                                                           $*
- *                                                                                             *
+ * 06/27/02 KM Z Format support																						*
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -217,6 +218,7 @@ public:
 	bool Support_Bump_Envmap() const { return SupportBumpEnvmap; }
 	bool Support_Bump_Envmap_Luminance() const { return SupportBumpEnvmapLuminance; }
 	bool Support_Dot3() const { return SupportDot3; }
+	int Get_Max_Textures_Per_Pass() const { return MaxTexturesPerPass; }
 
 	// -------------------------------------------------------------------------
 	//
@@ -232,6 +234,8 @@ public:
 	int Get_Max_Simultaneous_Textures()	const { return MaxSimultaneousTextures;}
 
 	bool Support_Texture_Format(WW3DFormat format) const { return SupportTextureFormat[format]; }
+	bool Support_Render_To_Texture_Format(WW3DFormat format) const { return SupportRenderToTextureFormat[format]; }
+	bool Support_Depth_Stencil_Format(WW3DZFormat format) const { return SupportDepthStencilFormat[format]; }
 
 	D3DCAPS8 const & Get_DX8_Caps() const { return (SupportTnL?hwVPCaps:swVPCaps); }
 
@@ -239,13 +243,28 @@ public:
 	D3DCAPS8 const & Get_SW_VP_Caps() const { return swVPCaps; };
 
 private:
+	static VendorIdType Define_Vendor(unsigned vendor_id);
+	static DeviceTypeATI Get_ATI_Device(unsigned device_id);
+	static DeviceType3DLabs Get_3DLabs_Device(unsigned device_id);
+	static DeviceTypeNVidia Get_NVidia_Device(unsigned device_id);
+	static DeviceType3Dfx Get_3Dfx_Device(unsigned device_id);
+	static DeviceTypeMatrox Get_Matrox_Device(unsigned device_id);
+	static DeviceTypePowerVR Get_PowerVR_Device(unsigned device_id);
+	static DeviceTypeS3 Get_S3_Device(unsigned device_id);
+	static DeviceTypeIntel Get_Intel_Device(unsigned device_id);
+
 	void Init_Caps(IDirect3DDevice8* D3DDevice);
 	void Check_Texture_Format_Support(WW3DFormat display_format,const D3DCAPS8& caps);
+	void Check_Render_To_Texture_Support(WW3DFormat display_format,const D3DCAPS8& caps);
+	void Check_Depth_Stencil_Support(WW3DFormat display_format, const D3DCAPS8& caps);
 	void Check_Texture_Compression_Support(const D3DCAPS8& caps);
 	void Check_Bumpmap_Support(const D3DCAPS8& caps);
 	void Check_Shader_Support(const D3DCAPS8& caps);
 	void Check_Maximum_Texture_Support(const D3DCAPS8& caps);
 	void Vendor_Specific_Hacks(const D3DADAPTER_IDENTIFIER8& adapter_id);
+
+	int MaxDisplayWidth;
+	int MaxDisplayHeight;
 
 	D3DCAPS8 hwVPCaps;
 	D3DCAPS8 swVPCaps;
@@ -256,10 +275,14 @@ private:
 	bool SupportBumpEnvmap;
 	bool SupportBumpEnvmapLuminance;
 	bool SupportTextureFormat[WW3D_FORMAT_COUNT];
+	bool SupportRenderToTextureFormat[WW3D_FORMAT_COUNT];
+	bool SupportDepthStencilFormat[WW3D_ZFORMAT_COUNT];
 	bool SupportDot3;
+	int MaxTexturesPerPass;
 	int VertexShaderVersion;
 	int PixelShaderVersion;
 	int MaxSimultaneousTextures;
+	IDirect3D8* Direct3D; // warning XDK name conflict KJM
 };
 
 

@@ -54,13 +54,13 @@
 #include "Common/Team.h"
 #include "Common/WellKnownKeys.h"
 #include "Common/Xfer.h"
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #include "GameLogic/Object.h"
 #endif
 #include "GameLogic/SidesList.h"
 #include "GameNetwork/NetworkDefs.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")

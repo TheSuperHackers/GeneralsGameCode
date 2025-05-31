@@ -1,5 +1,4 @@
-set(ZLIB_PARENT_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/zlib-1.1.4-src)
-set(ZLIB_DIR ${ZLIB_PARENT_DIR}/ZLib)
+set(ZLIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/zlib-1.1.4-src/ZLib)
 
 FetchContent_Populate(zlib DOWNLOAD_EXTRACT_TIMESTAMP
     GIT_REPOSITORY https://github.com/TheSuperHackers/zlib-1.1.4
@@ -26,6 +25,6 @@ target_sources(libzlib PRIVATE
     "${ZLIB_DIR}/inffast.c"
 )
 
-target_include_directories(libzlib PUBLIC ${ZLIB_PARENT_DIR})
+target_include_directories(libzlib PUBLIC ${ZLIB_DIR})
 
 target_compile_definitions(libzlib PUBLIC Z_PREFIX)

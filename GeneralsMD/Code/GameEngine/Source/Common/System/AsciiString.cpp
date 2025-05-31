@@ -89,7 +89,7 @@ void AsciiString::freeBytes(void)
 }
 
 // -----------------------------------------------------
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void AsciiString::validate() const
 {
 	if (!m_data) return;
@@ -142,7 +142,7 @@ void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData
 	AsciiStringData* newData = (AsciiStringData*)TheDynamicMemoryAllocator->allocateBytesDoNotZero(actualBytes, "STR_AsciiString::ensureUniqueBufferOfSize");
 	newData->m_refCount = 1;
 	newData->m_numCharsAllocated = (actualBytes - sizeof(AsciiStringData))/sizeof(char);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	newData->m_debugptr = newData->peek();	// just makes it easier to read in the debugger
 #endif
 
@@ -284,12 +284,7 @@ void AsciiString::format(const char* format, ...)
 // -----------------------------------------------------
 void AsciiString::format_va(const AsciiString& format, va_list args)
 {
-	validate();
-	char buf[MAX_FORMAT_BUF_LEN];
-  if (_vsnprintf(buf, sizeof(buf)/sizeof(char)-1, format.str(), args) < 0)
-			throw ERROR_OUT_OF_MEMORY;
-	set(buf);
-	validate();
+	format_va(format.str(), args);
 }
 
 // -----------------------------------------------------
@@ -297,10 +292,16 @@ void AsciiString::format_va(const char* format, va_list args)
 {
 	validate();
 	char buf[MAX_FORMAT_BUF_LEN];
-  if (_vsnprintf(buf, sizeof(buf)/sizeof(char)-1, format, args) < 0)
-			throw ERROR_OUT_OF_MEMORY;
-	set(buf);
-	validate();
+	const int result = _vsnprintf(buf, sizeof(buf)/sizeof(char)-1, format, args);
+	if (result >= 0)
+	{
+		set(buf);
+		validate();
+	}
+	else
+	{
+		DEBUG_ASSERTCRASH(false, ("AsciiString::format_va failed with code:%d format:\"%s\"", result, format));
+	}
 }
 
 // -----------------------------------------------------

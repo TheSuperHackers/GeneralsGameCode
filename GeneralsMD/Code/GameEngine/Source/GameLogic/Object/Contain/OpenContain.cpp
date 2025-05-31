@@ -57,7 +57,7 @@
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Weapon.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -110,6 +110,7 @@ OpenContainModuleData::OpenContainModuleData( void )
  		{ "AllowAlliesInside",				INI::parseBool,	NULL, offsetof( OpenContainModuleData, m_allowAlliesInside ) },
  		{ "AllowEnemiesInside",				INI::parseBool,	NULL, offsetof( OpenContainModuleData, m_allowEnemiesInside ) },
  		{ "AllowNeutralInside",				INI::parseBool,	NULL, offsetof( OpenContainModuleData, m_allowNeutralInside ) },
+		{ "PassengerWeaponBonusList",       INI::parseWeaponBonusVectorKeepDefault, NULL, offsetof(OpenContainModuleData, m_passengerWeaponBonusVec) },
 		{ 0, 0, 0, 0 }
 	};
   p.add(dataFieldParse);
@@ -157,6 +158,11 @@ OpenContain::OpenContain( Thing *thing, const ModuleData* moduleData ) : UpdateM
 		m_firePoints[ i ].Make_Identity();
 	}  // end for i
 
+	//DEBUG_LOG(("OpenContain(): ('%s') m_passengerWeaponBonusVec:\n", getObject()->getTemplate()->getName().str()));
+	//const OpenContainModuleData* d = getOpenContainModuleData();
+	//for (i = 0; i < d->m_passengerWeaponBonusVec.size(); i++) {
+	//	DEBUG_LOG(("-- (%d)\n", d->m_passengerWeaponBonusVec[i]));
+	//}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -306,7 +312,7 @@ void OpenContain::addToContain( Object *rider )
 		wasSelected = TRUE;
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if( !isValidContainerFor( rider, false ) )
 	{
 		Object *reportObject = rider;
@@ -631,7 +637,7 @@ void OpenContain::removeFromContainViaIterator( ContainedItemsList::iterator it,
 {
 
 /*
-	#ifdef _DEBUG
+	#ifdef RTS_DEBUG
 		TheInGameUI->message( UnicodeString( L"'%S(%d)' no longer contains '%S(%d)'" ), 
 													getObject()->getTemplate()->getName().str(),
 													getObject()->getID(),
@@ -738,6 +744,12 @@ void OpenContain::scatterToNearbyPosition(Object* rider)
 //-------------------------------------------------------------------------------------------------
 void OpenContain::onContaining( Object *rider, Bool wasSelected )
 {
+
+	const OpenContainModuleData* d = getOpenContainModuleData();
+	for (Int i = 0; i < d->m_passengerWeaponBonusVec.size(); i++) {
+		rider->setWeaponBonusCondition(d->m_passengerWeaponBonusVec[i]);
+	}
+
 	// Play audio
 	if( m_loadSoundsEnabled )
 	{

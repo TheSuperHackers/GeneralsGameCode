@@ -49,9 +49,6 @@
 #include "wwstring.h"
 #include "trim.h"
 #include <wchar.h>
-#ifdef _UNIX
-#include "osdep.h"
-#endif
 
 //////////////////////////////////////////////////////////////////////
 //

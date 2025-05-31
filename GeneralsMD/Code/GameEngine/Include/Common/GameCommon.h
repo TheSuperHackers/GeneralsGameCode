@@ -60,7 +60,7 @@
 #include "Lib/BaseType.h"
 
 // ----------------------------------------------------------------------------------------------
-#if defined(_INTERNAL) || defined(_DEBUG)
+#if defined(RTS_INTERNAL) || defined(RTS_DEBUG)
 	#define DUMP_PERF_STATS
 #else
 	#define NO_DUMP_PERF_STATS
@@ -230,6 +230,9 @@ enum CommandSourceType CPP_11(: Int)
 	CMD_FROM_AI,
 	CMD_FROM_DOZER,							// Special rare command when the dozer originates a command to attack a mine. Mines are not ai-attackable, and it seems deceitful for the dozer to generate a player or script command. jba.
 	CMD_DEFAULT_SWITCH_WEAPON,	// Special case: A weapon that can be chosen -- this is the default case (machine gun vs flashbang).
+	CMD_SYNC_TO_PRIMARY,  // This weapon can only be used when PRIMARY is fired
+	CMD_SYNC_TO_SECONDARY,  // This weapon can only be used when SECONDARY is fired
+	CMD_SYNC_TO_TERTIARY,  // This weapon can only be used when TERTIARY is fired
 
 };		///< the source of a command
 
@@ -492,6 +495,12 @@ inline Real stdAngleDiff(Real a1, Real a2)
 {
 	return normalizeAngle(a1 - a2);
 }
+
+// normalized angle difference between a1 and a2, respecting negative values and wraparound
+inline Real stdAngleDiffMod(Real a1, Real a2) {
+	return normalizeAngle(nmod(a1 - a2, 2 * PI));
+}
+
 
 // ------------------------------------------------------------------------
 // NOTE NOTE NOTE: Keep TheRelationShipNames in sync with this enum

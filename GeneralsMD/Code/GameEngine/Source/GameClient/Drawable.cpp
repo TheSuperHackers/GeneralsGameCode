@@ -76,13 +76,14 @@
 #include "GameClient/LanguageFilter.h"
 #include "GameClient/Shadow.h"
 #include "GameClient/GameText.h"
+#include "GameClient/TintStatus.h"
 
 //#define KRIS_BRUTAL_HACK_FOR_AIRCRAFT_CARRIER_DEBUGGING 
 #ifdef KRIS_BRUTAL_HACK_FOR_AIRCRAFT_CARRIER_DEBUGGING
 	#include "GameLogic/Module/ParkingPlaceBehavior.h"
 #endif
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -115,6 +116,29 @@ static const char *TheDrawableIconNames[] =
 };
 
 
+// -----
+const char* TintStatusFlags::s_bitNameList[] =
+{
+	"NONE",
+	"DISABLED",
+	"IRRADIATED",
+	"POISONED",
+	"GAINING_SUBDUAL_DAMAGE",
+	"FRENZY",
+	"SHIELDED",
+	"DEMORALIZED",
+	"BOOST",
+	"EXTRA1",
+	"EXTRA2",
+	"EXTRA3",
+	"EXTRA4",
+	"EXTRA5",
+	"EXTRA6",
+	"EXTRA7",
+	"EXTRA8",
+	NULL
+};
+
 /** 
  * Returns a special DynamicAudioEventInfo which can be used to mark a sound as "no sound".
  * E.g. if m_customSoundAmbientInfo equals the value returned from this function, we
@@ -134,8 +158,6 @@ static DynamicAudioEventInfo  * getNoSoundMarker()
 
   return marker;
 }
-
-
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -247,12 +269,17 @@ static DrawableIconType drawableIconNameToIndex( const char *iconName )
 const UnsignedInt HEALING_ICON_DISPLAY_TIME	= LOGICFRAMES_PER_SECOND * 3;
 const UnsignedInt DEFAULT_HEAL_ICON_WIDTH		= 32;
 const UnsignedInt DEFAULT_HEAL_ICON_HEIGHT	= 32;
-const RGBColor SICKLY_GREEN_POISONED_COLOR	= {-1.0f,  1.0f, -1.0f};
-const RGBColor DARK_GRAY_DISABLED_COLOR			= {-0.5f, -0.5f, -0.5f};
-const RGBColor RED_IRRADIATED_COLOR					= { 1.0f, -1.0f, -1.0f};
-const RGBColor SUBDUAL_DAMAGE_COLOR					= {-0.2f, -0.2f,  0.8f};
-const RGBColor FRENZY_COLOR									= { 0.2f, -0.2f, -0.2f};
-const RGBColor FRENZY_COLOR_INFANTRY				= { 0.0f, -0.7f, -0.7f};
+
+//Note: These constants are now obsolete and are only here for reference.
+//const RGBColor SICKLY_GREEN_POISONED_COLOR	= {-1.0f,  1.0f, -1.0f};
+//const RGBColor DARK_GRAY_DISABLED_COLOR			= {-0.5f, -0.5f, -0.5f};
+//const RGBColor RED_IRRADIATED_COLOR					= { 1.0f, -1.0f, -1.0f};
+//const RGBColor SUBDUAL_DAMAGE_COLOR					= {-0.2f, -0.2f,  0.8f};
+//const RGBColor FRENZY_COLOR									= { 0.2f, -0.2f, -0.2f};
+//const RGBColor FRENZY_COLOR_INFANTRY				= { 0.0f, -0.7f, -0.7f};
+//const RGBColor SHIELDED_COLOR = { -0.1f, -0.2f, -0.2f};
+// ---
+
 const Int MAX_ENABLED_MODULES								= 16;
 
 // ------------------------------------------------------------------------------------------------
@@ -434,8 +461,8 @@ Drawable::Drawable( const ThingTemplate *thingTemplate, DrawableStatus statusBit
 	m_object = NULL;
 
 	// tintStatusTracking
-	m_tintStatus = 0;
-	m_prevTintStatus = 0;
+	// m_tintStatus = 0;
+	// m_prevTintStatus = 0;
 
 #ifdef DIRTY_CONDITION_FLAGS
 	m_isModelDirty = true;
@@ -1253,47 +1280,84 @@ void Drawable::updateDrawable( void )
 	// we'll use an ifelseif ladder since we are scanning bits
 	if( m_prevTintStatus != m_tintStatus )// edge test 
 	{
-		if ( testTintStatus( TINT_STATUS_DISABLED ) )
-		{
-			if (m_colorTintEnvelope == NULL)
-				m_colorTintEnvelope = newInstance(TintEnvelope);
-			m_colorTintEnvelope->play( &DARK_GRAY_DISABLED_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
-		}
-		else if( testTintStatus(TINT_STATUS_GAINING_SUBDUAL_DAMAGE) )
-		{
-			// Disabled has precendence, so it goes first
-			if (m_colorTintEnvelope == NULL)
-				m_colorTintEnvelope = newInstance(TintEnvelope);
-			m_colorTintEnvelope->play( &SUBDUAL_DAMAGE_COLOR, 150, 150, SUSTAIN_INDEFINITELY);
-		}
-		else if( testTintStatus(TINT_STATUS_FRENZY) )
-		{
-			// Disabled has precendence, so it goes first
-			if (m_colorTintEnvelope == NULL)
-				m_colorTintEnvelope = newInstance(TintEnvelope);
 
-      m_colorTintEnvelope->play( isKindOf( KINDOF_INFANTRY) ? &FRENZY_COLOR_INFANTRY:&FRENZY_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
-		
-    }
-//		else if ( testTintStatus( TINT_STATUS_POISONED) )
-//		{
-//			if (m_colorTintEnvelope == NULL)
-//				m_colorTintEnvelope = newInstance(TintEnvelope);
-//			m_colorTintEnvelope->play( &SICKLY_GREEN_POISONED_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
-//		}
-//		else if ( testTintStatus( TINT_STATUS_IRRADIATED) )
-//		{
-//			if (m_colorTintEnvelope == NULL)
-//				m_colorTintEnvelope = newInstance(TintEnvelope);
-//			m_colorTintEnvelope->play( &RED_IRRADIATED_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
-//		}
-		else 
-		{ 
+		bool hasStatus = false;
+
+		// New: Check the global list
+		for (int i = 0; i < TINT_STATUS_COUNT; i++) {
+
+			TintStatus tintStatus = (TintStatus)i;
+
+			if (testTintStatus(tintStatus)) {
+				if (m_colorTintEnvelope == NULL)
+					m_colorTintEnvelope = newInstance(TintEnvelope);
+
+				DrawableColorTint tintColor = TheGlobalData->m_colorTintTypes[i];
+
+				m_colorTintEnvelope->play(
+					isKindOf(KINDOF_INFANTRY) ? &tintColor.colorInfantry : &tintColor.color,
+					tintColor.attackFrames, tintColor.decayFrames, SUSTAIN_INDEFINITELY);
+
+				hasStatus = true;
+				break;
+			}
+		}
+
+		if (!hasStatus) {
 			// NO TINTING SHOULD BE PRESENT
 			if (m_colorTintEnvelope == NULL)
 				m_colorTintEnvelope = newInstance(TintEnvelope);
 			m_colorTintEnvelope->release(); // head on back to normal, now
 		}
+
+//		if ( testTintStatus( TINT_STATUS_DISABLED ) )
+//		{
+//			if (m_colorTintEnvelope == NULL)
+//				m_colorTintEnvelope = newInstance(TintEnvelope);
+//			m_colorTintEnvelope->play( &DARK_GRAY_DISABLED_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
+//		}
+//		else if( testTintStatus(TINT_STATUS_GAINING_SUBDUAL_DAMAGE) )
+//		{
+//			// Disabled has precendence, so it goes first
+//			if (m_colorTintEnvelope == NULL)
+//				m_colorTintEnvelope = newInstance(TintEnvelope);
+//			m_colorTintEnvelope->play( &SUBDUAL_DAMAGE_COLOR, 150, 150, SUSTAIN_INDEFINITELY);
+//		}
+//		else if (testTintStatus(TINT_STATUS_FRENZY))
+//		{
+//			// Disabled has precendence, so it goes first
+//			if (m_colorTintEnvelope == NULL)
+//				m_colorTintEnvelope = newInstance(TintEnvelope);
+//
+//			m_colorTintEnvelope->play(isKindOf(KINDOF_INFANTRY) ? &FRENZY_COLOR_INFANTRY : &FRENZY_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
+//		}
+//		else if (testTintStatus(TINT_STATUS_SHIELDED))
+//		{
+//			// Disabled has precendence, so it goes first
+//			if (m_colorTintEnvelope == NULL)
+//				m_colorTintEnvelope = newInstance(TintEnvelope);
+//
+//			m_colorTintEnvelope->play( &SHIELDED_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
+//		}
+////		else if ( testTintStatus( TINT_STATUS_POISONED) )
+////		{
+////			if (m_colorTintEnvelope == NULL)
+////				m_colorTintEnvelope = newInstance(TintEnvelope);
+////			m_colorTintEnvelope->play( &SICKLY_GREEN_POISONED_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
+////		}
+////		else if ( testTintStatus( TINT_STATUS_IRRADIATED) )
+////		{
+////			if (m_colorTintEnvelope == NULL)
+////				m_colorTintEnvelope = newInstance(TintEnvelope);
+////			m_colorTintEnvelope->play( &RED_IRRADIATED_COLOR, 30, 30, SUSTAIN_INDEFINITELY);
+////		}
+//		else 
+//		{ 
+//			// NO TINTING SHOULD BE PRESENT
+//			if (m_colorTintEnvelope == NULL)
+//				m_colorTintEnvelope = newInstance(TintEnvelope);
+//			m_colorTintEnvelope->release(); // head on back to normal, now
+//		}
 
 	}
 
@@ -2527,7 +2591,7 @@ const AudioEventRTS& Drawable::getAmbientSoundByDamage(BodyDamageType dt)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void Drawable::validatePos() const
 {
 	const Coord3D* ourPos = getPosition();
@@ -2655,7 +2719,7 @@ void Drawable::draw( View *view )
 
 
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	validatePos();
 #endif
 
@@ -2884,54 +2948,124 @@ void Drawable::drawEmoticon( const IRegion2D *healthBarRegion )
 // ------------------------------------------------------------------------------------------------
 void Drawable::drawAmmo( const IRegion2D *healthBarRegion )
 {
-	const Object *obj = getObject();			
-
-	if (!(
-				TheGlobalData->m_showObjectHealth && 
-				(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
-				obj->getControllingPlayer() == ThePlayerList->getLocalPlayer()
-			))
+	if (!healthBarRegion)
 		return;
 
-	Int numTotal;
-	Int numFull;
+	const Object* obj = getObject();
+
+	if (!(
+		TheGlobalData->m_showObjectHealth &&
+		(isSelected() || (TheInGameUI && (TheInGameUI->getMousedOverDrawableID() == getID()))) &&
+		obj->getControllingPlayer() == ThePlayerList->getLocalPlayer()
+		))
+		return;
+
+	Int numTotal;  	 // getClipSize();
+	Int numFull;	// getRemainingAmmo();
 	if (!obj->getAmmoPipShowingInfo(numTotal, numFull))
 		return;
 
-	if (!s_fullAmmo || !s_emptyAmmo)
-		return;
+	AmmoPipsStyle pipsStyle = obj->getTemplate()->getAmmoPipsStyle();
+	switch (pipsStyle)
+	{
+	case AMMO_PIPS_DEFAULT:
+	case AMMO_PIPS_SINGLE:
+	{
 
+		if (!s_fullAmmo || !s_emptyAmmo)
+			return;
 
-	
 #ifdef SCALE_ICONS_WITH_ZOOM_ML
-	Real scale = TheGlobalData->m_ammoPipScaleFactor / CLAMP_ICON_ZOOM_FACTOR( TheTacticalView->getZoom() );
+		Real scale = TheGlobalData->m_ammoPipScaleFactor / CLAMP_ICON_ZOOM_FACTOR(TheTacticalView->getZoom());
 #else
-	Real scale = 1.0f;
+		Real scale = 1.0f;
 #endif
 
-	Int boxWidth  = REAL_TO_INT(s_emptyAmmo->getImageWidth() * scale);
-	Int boxHeight = REAL_TO_INT(s_emptyAmmo->getImageHeight() * scale);
-	const Int SPACING = 1;
-	//Int totalWidth = (boxWidth+SPACING)*numTotal;
+		Int boxWidth = REAL_TO_INT(s_emptyAmmo->getImageWidth() * scale);
+		Int boxHeight = REAL_TO_INT(s_emptyAmmo->getImageHeight() * scale);
+		const Int SPACING = 1;
+		//Int totalWidth = (boxWidth+SPACING)*numTotal;
 
-	ICoord2D screenCenter;
-	Coord3D pos = *obj->getPosition();
-	pos.x += TheGlobalData->m_ammoPipWorldOffset.x;
-	pos.y += TheGlobalData->m_ammoPipWorldOffset.y;
-	pos.z += TheGlobalData->m_ammoPipWorldOffset.z + obj->getGeometryInfo().getMaxHeightAbovePosition();
-	if( !TheTacticalView->worldToScreen( &pos, &screenCenter ) )
+		ICoord2D screenCenter;
+		Coord3D pos = *obj->getPosition();
+		pos.x += TheGlobalData->m_ammoPipWorldOffset.x;
+		pos.y += TheGlobalData->m_ammoPipWorldOffset.y;
+		pos.z += TheGlobalData->m_ammoPipWorldOffset.z + obj->getGeometryInfo().getMaxHeightAbovePosition();
+		if (!TheTacticalView->worldToScreen(&pos, &screenCenter))
+			return;
+
+		Real bounding = obj->getGeometryInfo().getBoundingSphereRadius() * scale;
+		//Int posx = screenCenter.x + REAL_TO_INT(TheGlobalData->m_ammoPipScreenOffset.x*bounding) - totalWidth;
+		//**CHANGING CODE: Left justify with health bar min
+		Int posx = healthBarRegion->lo.x;
+		Int posy = screenCenter.y + REAL_TO_INT(TheGlobalData->m_ammoPipScreenOffset.y * bounding);
+
+		// Draw only one pip, either full or empty
+		if (pipsStyle == AMMO_PIPS_SINGLE) {
+			if (numTotal <= 0) return;
+
+			Real ammoRatio = (Real)numFull / (Real)numTotal;
+
+			if (numFull == numTotal) { // Full
+				TheDisplay->drawImage(s_fullAmmo, posx, posy + 1, posx + boxWidth, posy + 1 + boxHeight);
+			}
+			else if (numFull == 0) { // Empty
+				TheDisplay->drawImage(s_emptyAmmo, posx, posy + 1, posx + boxWidth, posy + 1 + boxHeight);
+			}
+			else { // partial
+				// Color color = GameMakeColor(255 * ammoRatio, 255 * ammoRatio, 255 * ammoRatio, 255);
+				Color color = GameMakeColor(255, 255, 255, 255 * ammoRatio);
+				TheDisplay->drawImage(s_emptyAmmo, posx, posy + 1, posx + boxWidth, posy + 1 + boxHeight);
+				TheDisplay->drawImage(s_fullAmmo, posx, posy + 1, posx + boxWidth, posy + 1 + boxHeight, color);
+			}
+		}
+		else {  // Default style
+			for (Int i = 0; i < numTotal; ++i)
+			{
+				TheDisplay->drawImage(i < numFull ? s_fullAmmo : s_emptyAmmo, posx, posy + 1, posx + boxWidth, posy + 1 + boxHeight);
+				posx += boxWidth + SPACING;
+			}
+		}
+
+		
 		return;
 
-	Real bounding = obj->getGeometryInfo().getBoundingSphereRadius() * scale;
-	//Int posx = screenCenter.x + REAL_TO_INT(TheGlobalData->m_ammoPipScreenOffset.x*bounding) - totalWidth;
-	//**CHANGING CODE: Left justify with health bar min
-	Int posx = healthBarRegion->lo.x;
-	Int posy = screenCenter.y + REAL_TO_INT(TheGlobalData->m_ammoPipScreenOffset.y*bounding);
-	for (Int i = 0; i < numTotal; ++i)
-	{
-		TheDisplay->drawImage(i < numFull ? s_fullAmmo : s_emptyAmmo, posx, posy + 1, posx + boxWidth, posy + 1 + boxHeight);
-		posx += boxWidth + SPACING;
 	}
+	case AMMO_PIPS_BAR:
+	{
+		if (numTotal <= 0) return;
+
+		Color color, outlineColor;
+
+		color = GameMakeColor(255, 255, 0, 255);  // yellow bar
+		outlineColor = GameMakeColor(0, 0, 0, 255);  // black outline
+
+		Real ammoRatio = (Real)numFull / (Real)numTotal;
+
+		Real healthBoxWidth = healthBarRegion->hi.x - healthBarRegion->lo.x;
+
+		Real healthBoxHeight = max(3, healthBarRegion->hi.y - healthBarRegion->lo.y) * 1.5f;
+		Real healthBoxOutlineSize = 1.0f;
+
+		Real yOffset = 5;
+
+		// draw the health (actually ammo) box outline
+		TheDisplay->drawOpenRect(healthBarRegion->lo.x, healthBarRegion->lo.y + yOffset, healthBoxWidth, healthBoxHeight,
+			healthBoxOutlineSize, outlineColor);
+
+		if (numFull > 0) {
+
+			// draw a filled bar for the ammo count
+			TheDisplay->drawFillRect(healthBarRegion->lo.x + 1, healthBarRegion->lo.y + yOffset + 1,
+				(healthBoxWidth - 2) * ammoRatio, healthBoxHeight - 2,
+				color);
+		}
+
+
+		return;
+	}
+	}
+
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -4263,6 +4397,32 @@ Bool Drawable::handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelToUse,
 } 
 
 //-------------------------------------------------------------------------------------------------
+Bool Drawable::handleWeaponPreAttackFX(WeaponSlotType wslot, Int specificBarrelToUse, const FXList* fxl, Real weaponSpeed, Real recoilAmount, Real recoilAngle, const Coord3D* victimPos, Real damageRadius)
+{
+	if (recoilAmount != 0.0f)
+	{
+		// adjust recoil from absolute to relative.
+		if (getObject())
+			recoilAngle -= getObject()->getOrientation();
+		// flip direction 180 degrees.
+		recoilAngle += PI;
+		if (m_locoInfo)
+		{
+			m_locoInfo->m_accelerationPitchRate += recoilAmount * Cos(recoilAngle);
+			m_locoInfo->m_accelerationRollRate += recoilAmount * Sin(recoilAngle);
+		}
+	}
+
+	for (DrawModule** dm = getDrawModules(); *dm; ++dm)
+	{
+		ObjectDrawInterface* di = (*dm)->getObjectDrawInterface();
+		if (di && di->handleWeaponPreAttackFX(wslot, specificBarrelToUse, fxl, weaponSpeed, victimPos, damageRadius))
+			return true;
+	}
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
 Int Drawable::getBarrelCount(WeaponSlotType wslot) const
 {
 	for (const DrawModule** dm = getDrawModules(); *dm; ++dm)
@@ -5083,10 +5243,12 @@ void Drawable::xfer( Xfer *xfer )
 	xfer->xferUnsignedInt( &m_status );
 
 	// tint status
-	xfer->xferUnsignedInt( &m_tintStatus );
+	//xfer->xferUnsignedInt( &m_tintStatus );
+	m_tintStatus.xfer(xfer);
 
 	// prev tint status
-	xfer->xferUnsignedInt( &m_prevTintStatus );
+	//xfer->xferUnsignedInt( &m_prevTintStatus );
+	m_prevTintStatus.xfer(xfer);
 
 	// fading mode
 	xfer->xferUser( &m_fadeMode, sizeof( FadingMode ) );

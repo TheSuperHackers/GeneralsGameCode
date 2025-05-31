@@ -243,6 +243,7 @@ public:
 
 	UnsignedInt m_noDraw;					///< Used to disable drawing, to profile game logic code.
 	AIDebugOptions m_debugAI;			///< Used to display AI debug information
+	Bool m_debugSupplyCenterPlacement; ///< Dumps to log everywhere it thinks about placing a supply center
 	Bool m_debugAIObstacles;			///< Used to display AI obstacle debug information
 	Bool m_showObjectHealth;			///< debug display object health
 	Bool m_scriptDebug;						///< Should we attempt to load the script debugger window (.DLL)
@@ -326,6 +327,7 @@ public:
 	AsciiString m_shellMapName;				///< Holds the shell map name
 	Bool m_shellMapOn;								///< User can set the shell map not to load
 	Bool m_playIntro;									///< Flag to say if we're to play the intro or not
+	Bool m_playSizzle;								///< Flag to say whether we play the sizzle movie after the logo movie.
 	Bool m_afterIntro;								///< we need to tell the game our intro is done
 	Bool m_allowExitOutOfMovies;			///< flag to allow exit out of movies only after the Intro has played
 
@@ -435,7 +437,11 @@ public:
 	Real				m_keyboardCameraRotateSpeed;    ///< How fast the camera rotates when rotated via keyboard controls.
   Int					m_playStats;									///< Int whether we want to log play stats or not, if <= 0 then we don't log
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+  Bool m_TiVOFastMode;            ///< When true, the client speeds up the framerate... set by HOTKEY!
+  
+
+
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool m_wireframe;
 	Bool m_stateMachineDebug;
 	Bool m_useCameraConstraints;
@@ -470,6 +476,7 @@ public:
 	Int m_debugProjectileTileDuration;		///< How long should these tiles stay around, in frames?
 	RGBColor m_debugProjectileTileColor;	///< What color should these tiles be?
 	Bool m_showCollisionExtents;	///< Used to display collision extents
+  Bool m_showAudioLocations;    ///< Used to display audio markers and ambient sound radii
 	Bool m_saveStats;
 	Bool m_saveAllStats;
 	Bool m_useLocalMOTD;
@@ -480,6 +487,7 @@ public:
 	Int m_latencyPeriod;					///< Period of sinusoidal modulation of latency
 	Int m_latencyNoise;						///< Max amplitude of jitter to throw in
 	Int m_packetLoss;							///< Percent of packets to drop
+	Bool m_extraLogging;					///< More expensive debug logging to catch crashes.
 #endif
 
 #ifdef DEBUG_CRASHING

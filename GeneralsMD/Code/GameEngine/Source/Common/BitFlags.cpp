@@ -170,6 +170,11 @@ const char* ModelConditionFlags::s_bitNameList[] =
 	"USER_2",
 	
 	"DISGUISED",
+
+	// New Weaponsets
+	"WEAPONSET_PLAYER_UPGRADE2",
+	"WEAPONSET_PLAYER_UPGRADE3",
+	"WEAPONSET_PLAYER_UPGRADE4",
 	
 	NULL
 };
@@ -184,6 +189,9 @@ const char* ArmorSetFlags::s_bitNameList[] =
 	"SECOND_LIFE",
 	"CRATE_UPGRADE_ONE",
 	"CRATE_UPGRADE_TWO",
+	"PLAYER_UPGRADE2",
+	"PLAYER_UPGRADE3",
+	"PLAYER_UPGRADE4",
 
 	NULL
 };

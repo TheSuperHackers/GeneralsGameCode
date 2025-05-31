@@ -90,7 +90,7 @@
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.		 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -2222,7 +2222,7 @@ void InGameUI::createGarrisonHint( const GameMessage *msg )
 	}
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 #define AI_DEBUG_TOOLTIPS		1
 
 #ifdef AI_DEBUG_TOOLTIPS
@@ -2231,7 +2231,7 @@ void InGameUI::createGarrisonHint( const GameMessage *msg )
 #include "GameLogic/AIPathfind.h"
 #endif // AI_DEBUG_TOOLTIPS
 
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 //-------------------------------------------------------------------------------------------------
 /** Details of what is mouse hovered over right now are in this message.  Terrain might result
@@ -2307,7 +2307,7 @@ void InGameUI::createMouseoverHint( const GameMessage *msg )
  			else
  				m_mousedOverDrawableID = draw->getID();
 
-#if defined(_DEBUG) || defined(_INTERNAL) //Extra hacky, sorry, but I need to use this in constantdebug report
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) //Extra hacky, sorry, but I need to use this in constantdebug report
 			if ( TheGlobalData->m_constantDebugUpdate == TRUE )
 				m_mousedOverDrawableID = draw->getID();
 #endif
@@ -2533,7 +2533,7 @@ void InGameUI::createCommandHint( const GameMessage *msg )
 	{
 		const Object* obj = draw->getObject();
 		Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		ObjectShroudStatus ss = (!obj || !TheGlobalData->m_shroudOn) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
 #else
 		ObjectShroudStatus ss = (!obj) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
@@ -3583,54 +3583,81 @@ void InGameUI::postDraw( void )
                   
                     Player *localPlayer = ThePlayerList->getLocalPlayer();
                   
-                    if( type == SPECIAL_PARTICLE_UPLINK_CANNON || type == SUPW_SPECIAL_PARTICLE_UPLINK_CANNON || type == LAZR_SPECIAL_PARTICLE_UPLINK_CANNON )
-                    {
-                      if ( localPlayer == owningObject->getControllingPlayer() )
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Own_ParticleCannon);
-                      }
-                      else if ( localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES )
-                      {
-                        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_ParticleCannon);
-                      }
-                      else
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_ParticleCannon);
-                      }
-                    }
-                    else if( type == SPECIAL_NEUTRON_MISSILE || type == NUKE_SPECIAL_NEUTRON_MISSILE || type == SUPW_SPECIAL_NEUTRON_MISSILE )
-                    {
-                      if ( localPlayer == owningObject->getControllingPlayer() )
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Own_Nuke);
-                      }
-                      else if ( localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES )
-                      {
-                        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_Nuke);
-                      }
-                      else
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_Nuke);
-                      }
-                    }
-                    else if (type == SPECIAL_SCUD_STORM)
-                    {
-                      if ( localPlayer == owningObject->getControllingPlayer() )
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Own_ScudStorm);
-                      }
-                      else if ( localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES )
-                      {
-                        // Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_ScudStorm);
-                      }
-                      else
-                      {
-                        TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_ScudStorm);
-                      }
-                    }
+					// Check if SpecialPower eva event instead of hardcoded stuff
+					bool isOwn = localPlayer == owningObject->getControllingPlayer();
+					bool isAlly = localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES;
+					bool isEnemy = !isOwn && !isAlly;
+					bool isDefault = type < SPECIAL_ION_CANNON; // first new Special Power
+
+					//Check SpecialPower Eva
+					const SpecialPowerTemplate* specialPowerTemp = module->getSpecialPowerTemplate();
+					EvaMessage eva = EVA_Invalid;
+
+					if (isOwn) {
+						eva = specialPowerTemp->getEvaReadyOwn();
+					}
+					else if (isAlly) {
+						eva = specialPowerTemp->getEvaReadyAlly();
+					}
+					else if (isEnemy) {
+						eva = specialPowerTemp->getEvaReadyEnemy();
+					}
+
+					if (eva > EVA_FIRST) {
+						TheEva->setShouldPlay(eva);
+					}
+					else if (eva == EVA_Invalid && isDefault) {
+						//DO the hardcoded vanilla stuff
+
+						if (type == SPECIAL_PARTICLE_UPLINK_CANNON || type == SUPW_SPECIAL_PARTICLE_UPLINK_CANNON || type == LAZR_SPECIAL_PARTICLE_UPLINK_CANNON)
+						{
+							if (localPlayer == owningObject->getControllingPlayer())
+							{
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Own_ParticleCannon);
+							}
+							else if (localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES)
+							{
+								// Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_ParticleCannon);
+							}
+							else
+							{
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_ParticleCannon);
+							}
+						}
+						else if (type == SPECIAL_NEUTRON_MISSILE || type == NUKE_SPECIAL_NEUTRON_MISSILE || type == SUPW_SPECIAL_NEUTRON_MISSILE)
+						{
+							if (localPlayer == owningObject->getControllingPlayer())
+							{
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Own_Nuke);
+							}
+							else if (localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES)
+							{
+								// Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_Nuke);
+							}
+							else
+							{
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_Nuke);
+							}
+						}
+						else if (type == SPECIAL_SCUD_STORM)
+						{
+							if (localPlayer == owningObject->getControllingPlayer())
+							{
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Own_ScudStorm);
+							}
+							else if (localPlayer->getRelationship(owningObject->getTeam()) != ENEMIES)
+							{
+								// Note: counting relationship NEUTRAL as ally. Not sure if this makes a difference???
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Ally_ScudStorm);
+							}
+							else
+							{
+								TheEva->setShouldPlay(EVA_SuperweaponReady_Enemy_ScudStorm);
+							}
+						}
+					}
                   }
                   info->m_evaReadyPlayed = true;
                 }
@@ -5001,7 +5028,7 @@ void InGameUI::addFloatingText(const UnicodeString& text,const Coord3D *pos, Col
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 inline Bool isClose(Real a, Real b) { return fabs(a-b) <= 1.0f; }
 inline Bool isClose(const Coord3D& a, const Coord3D& b) 
 {

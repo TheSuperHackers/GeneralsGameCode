@@ -37,6 +37,7 @@
 #define DEFINE_EDITOR_SORTING_NAMES				// for EditorSortingNames[]
 #define DEFINE_RADAR_PRIORITY_NAMES				// for RadarPriorityNames[]
 #define DEFINE_BUILDABLE_STATUS_NAMES			// for BuildableStatusNames[]
+#define DEFINE_AMMO_PIPS_STYLE_NAMES			// for AmmoPipsStyleNames[]
 
 #include "Common/DamageFX.h"
 #include "Common/GameAudio.h"
@@ -72,7 +73,7 @@
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.	
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -249,7 +250,7 @@ const FieldParse ThingTemplate::s_objectFieldParseTable[] =
   { "MaxSimultaneousLinkKey",	NameKeyGenerator::parseStringAsNameKeyType,		NULL, offsetof(ThingTemplate, m_maxSimultaneousLinkKey ) }, 
 	{ "CrusherLevel",					INI::parseUnsignedByte,			NULL, offsetof( ThingTemplate, m_crusherLevel ) },
 	{ "CrushableLevel",				INI::parseUnsignedByte,			NULL, offsetof( ThingTemplate, m_crushableLevel ) },
-
+	{ "AmmoPipsStyle",  INI::parseByteSizedIndexList, AmmoPipsStyleNames, offsetof(ThingTemplate, m_ammoPipsStyle) },
 	{ 0, 0, 0, 0 }  // keep this last
 
 };
@@ -309,7 +310,7 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 	// there must be a module tag present, and it must be unique across all module infos
 	// for this thing template
 	//
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	// get module info
 	const Nugget *nugget;
 	
@@ -908,7 +909,7 @@ void ThingTemplate::parseArmorTemplateSet( INI* ini, void *instance, void * /*st
 
 	ArmorTemplateSet ws;
 	ws.parseArmorTemplateSet(ini);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES)
 	{
 		for (ArmorTemplateSetVector::const_iterator it = self->m_armorTemplateSets.begin(); it != self->m_armorTemplateSets.end(); ++it)
@@ -936,7 +937,7 @@ void ThingTemplate::parseWeaponTemplateSet( INI* ini, void *instance, void * /*s
 
 	WeaponTemplateSet ws;
 	ws.parseWeaponTemplateSet(ini, self);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES)
 	{
 		for (WeaponTemplateSetVector::const_iterator it = self->m_weaponTemplateSets.begin(); it != self->m_weaponTemplateSets.end(); ++it)
@@ -1047,6 +1048,7 @@ ThingTemplate::ThingTemplate() :
 	m_crusherLevel = 0;			//Unspecified, this object is unable to crush anything!
 	m_crushableLevel = 255; //Unspecified, this object is unable to be crushed by anything!
 
+	m_ammoPipsStyle = AMMO_PIPS_DEFAULT;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1068,7 +1070,7 @@ AIUpdateModuleData *ThingTemplate::friend_getAIModuleInfo(void)
 //-------------------------------------------------------------------------------------------------
 void ThingTemplate::validateAudio()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 	#define AUDIO_TEST(y) \
 		if (!get##y()->getEventName().isEmpty() && get##y()->getEventName().compareNoCase("NoSound") != 0) { \
@@ -1158,7 +1160,7 @@ void ThingTemplate::validate()
 
 	validateAudio();
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	
 	if (getName() == "DefaultThingTemplate")
 		return;
@@ -1240,6 +1242,18 @@ void ThingTemplate::setCopiedFromDefault()
 	m_behaviorModuleInfo.setCopiedFromDefault(true);
 	m_drawModuleInfo.setCopiedFromDefault(true);
 	m_clientUpdateModuleInfo.setCopiedFromDefault(true);
+}
+
+//-------------------------------------------------------------------------------------------------
+void ThingTemplate::setCopiedFromDefaultExtended()
+{
+	//only set weapons and armors as copied, so they get cleared when defining new ones as they
+	// cannot be removed with RemoveModule
+	m_armorCopiedFromDefault = true;
+	m_weaponsCopiedFromDefault = true;
+	//m_behaviorModuleInfo.setCopiedFromDefault(true);
+	//m_drawModuleInfo.setCopiedFromDefault(true);
+	//m_clientUpdateModuleInfo.setCopiedFromDefault(true);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1552,9 +1566,10 @@ Int ThingTemplate::calcTimeToBuild( const Player* player) const
 	buildTime *= player->getHandicap()->getHandicap(Handicap::BUILDTIME, this);
 
 	Real factionModifier = 1 + player->getProductionTimeChangePercent( getName() );
+	factionModifier *= player->getProductionTimeChangeBasedOnKindOf(m_kindof);
 	buildTime *= factionModifier;
 
-#if defined (_DEBUG) || defined (_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined (RTS_DEBUG) || defined (RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	if( player->buildsInstantly() )
 	{
 		buildTime = 1;

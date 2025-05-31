@@ -48,7 +48,7 @@
 #include "GameNetwork/NAT.h"
 #include "GameNetwork/NetworkInterface.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -584,7 +584,7 @@ void GameSpyStagingRoom::startGame(Int gameID)
 		}
 	}
 
-//#if defined(_DEBUG) || defined(_INTERNAL)
+//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (numHumans < 2)
 	{
 		launchGame();
@@ -592,7 +592,7 @@ void GameSpyStagingRoom::startGame(Int gameID)
 			TheGameSpyInfo->leaveStagingRoom();
 	}
 	else
-//#endif // defined(_DEBUG) || defined(_INTERNAL)
+//#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	{
 		TheNAT = NEW NAT();
 		TheNAT->attachSlotList(m_slot, getLocalSlotNum(), m_localIP);
@@ -669,7 +669,7 @@ AsciiString GameSpyStagingRoom::generateGameSpyGameResultsPacket( void )
 			Int gsPlayerID = slot->getProfileID();
 			Bool disconnected = slot->disconnected();
 
-			AsciiString result = "loss", side = "USA";
+			AsciiString result = "loss";
 			if (disconnected)
 				result = "discon";
 			else if (TheNetwork->sawCRCMismatch())
@@ -677,9 +677,9 @@ AsciiString GameSpyStagingRoom::generateGameSpyGameResultsPacket( void )
 			else if (TheVictoryConditions->hasAchievedVictory(p))
 				result = "win";
 
-			side = p->getPlayerTemplate()->getSide();
+			AsciiString side = p->getPlayerTemplate()->getSide();
 			if (side == "America")
-				side = "USA";
+				side = "USA";  //conform to GameSpy
 
 			AsciiString playerStr;
 			playerStr.format("\\player_%d\\%s\\pid_%d\\%d\\team_%d\\%d\\result_%d\\%s\\side_%d\\%s",
