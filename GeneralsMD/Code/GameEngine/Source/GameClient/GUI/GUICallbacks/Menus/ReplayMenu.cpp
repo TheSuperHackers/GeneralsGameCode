@@ -491,8 +491,32 @@ static void loadReplay(UnicodeString filename)
 	AsciiString asciiFilename;
 	asciiFilename.translate(filename);
 
-	if(!TheRecorder->replayMatchesGameVersion(asciiFilename))
+	RecorderClass::ReplayHeader header;
+	ReplayGameInfo info;
+	const MapMetaData *mapData;
+
+	if(!readReplayMapInfo(asciiFilename, header, info, mapData))
 	{
+		// TheSuperHackers @bugfix Prompts a message box when the replay was deleted by the user while the Replay Menu was opened.
+
+		UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFoundTitle", L"REPLAY NOT FOUND");
+		UnicodeString body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFound", L"This replay cannot be loaded because the file no longer exists on this device.");
+
+		MessageBoxOk(title, body, NULL);
+	}
+	else if(mapData == NULL)
+	{
+		// TheSuperHackers @bugfix Prompts a message box when the map used by the replay was not found.
+
+		UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayMapNotFoundTitle", L"MAP NOT FOUND");
+		UnicodeString body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayMapNotFound", L"This replay cannot be loaded because the map was not found on this device.");
+
+		MessageBoxOk(title, body, NULL);
+	}
+	else if(!TheRecorder->replayMatchesGameVersion(header))
+	{
+		// Pressing OK loads the replay.
+
 		MessageBoxOkCancel(TheGameText->fetch("GUI:OlderReplayVersionTitle"), TheGameText->fetch("GUI:OlderReplayVersion"), reallyLoadReplay, NULL);
 	}
 	else

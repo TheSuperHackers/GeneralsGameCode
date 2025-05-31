@@ -28,3 +28,7 @@
 #ifndef RETAIL_COMPATIBLE_XFER_SAVE
 #define RETAIL_COMPATIBLE_XFER_SAVE (1) // Game is expected to be Xfer Save compatible with retail Generals 1.08, Zero Hour 1.04
 #endif
+
+#ifndef ENABLE_GAMETEXT_SUBSTITUTES
+#define ENABLE_GAMETEXT_SUBSTITUTES (1) // The code can provide substitute texts when labels and strings are missing in the STR or CSF translation file
+#endif
