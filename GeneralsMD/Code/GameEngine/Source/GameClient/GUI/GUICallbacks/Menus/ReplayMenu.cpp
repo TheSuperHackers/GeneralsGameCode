@@ -475,7 +475,7 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 		case GWM_INPUT_FOCUS:
 		{
 
-			// if we're givin the opportunity to take the keyboard focus we must say we want it
+			// if we're given the opportunity to take the keyboard focus we must say we want it
 			if( mData1 == TRUE )
 				*(Bool *)mData2 = TRUE;
 
@@ -498,11 +498,19 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 
 						AsciiString asciiFilename;
 						asciiFilename.translate(filename);
-						TheRecorder->playbackFile(asciiFilename);
 
-						if(parentReplayMenu != NULL)
+						if(TheRecorder->testVersionPlayback(asciiFilename))
 						{
-							parentReplayMenu->winHide(TRUE);
+							MessageBoxOkCancel(TheGameText->fetch("GUI:OlderReplayVersionTitle"), TheGameText->fetch("GUI:OlderReplayVersion"),reallyLoadReplay ,NULL);
+						}
+						else
+						{
+							TheRecorder->playbackFile(asciiFilename);
+
+							if(parentReplayMenu != NULL)
+							{
+								parentReplayMenu->winHide(TRUE);
+							}	
 						}
 					}
 				}
