@@ -32,6 +32,7 @@
 #include "Common/ObjectStatusTypes.h"
 #include "Common/BitFlagsIO.h"
 
+template<>
 const char* ObjectStatusMaskType::s_bitNameList[] = 
 {
 	"NONE",

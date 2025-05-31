@@ -96,7 +96,7 @@ public:
 		TEXTURE_ADDRESS_CLAMP
 	};
 
-	TextureFilterClass(MipCountType mip_level_count);
+	TextureFilterClass(MipCountType mip_level_count=MIP_LEVELS_1);
 
 	void Apply(unsigned int stage);
 
