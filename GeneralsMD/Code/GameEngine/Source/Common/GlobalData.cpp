@@ -999,7 +999,7 @@ GlobalData::GlobalData()
 	File *fp;
 	// TheSuperHackers @tweak SkyAero/xezon 27/05/2025
 	// Simulate the EXE's CRC value to force Network and Replay compatibility with another build.
-#if (defined(_MSC_VER) && _MSC_VER < 1300) && defined(RETAIL_COMPATIBLE_CRC)
+#if (defined(_MSC_VER) && _MSC_VER < 1300) && RETAIL_COMPATIBLE_CRC
 
 #define GENERALSMD_104_CD_EXE_CRC    0x4f6c5afe
 #define GENERALSMD_104_STEAM_EXE_CRC 0xcb430f5f
