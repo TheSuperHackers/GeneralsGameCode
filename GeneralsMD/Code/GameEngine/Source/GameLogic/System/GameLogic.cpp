@@ -1574,12 +1574,15 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 				if (count)
 				{
 					ScriptList *pSL = TheSidesList->getSideInfo(0)->getScriptList();
-					Script *next = scripts[0]->getScript();
-					while (next)
+					if (pSL != NULL)
 					{
-						Script *dupe = next->duplicate();
-						pSL->addScript(dupe, 0);
-						next = next->getNext();
+						Script *next = scripts[0]->getScript();
+						while (next)
+						{
+							Script *dupe = next->duplicate();
+							pSL->addScript(dupe, 0);
+							next = next->getNext();
+						}
 					}
 				}
 				for (Int i=0; i<count; ++i)
