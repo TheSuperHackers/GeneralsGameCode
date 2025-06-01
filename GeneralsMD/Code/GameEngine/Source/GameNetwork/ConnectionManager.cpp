@@ -688,7 +688,7 @@ void ConnectionManager::processFile(NetFileCommandMsg *msg)
 	DEBUG_LOG(("%ls\n", log.str()));
 #endif
 
-	if (TheFileSystem->doesFileExist(msg->getRealFilename().str()))
+	if (TheFileSystem->doesFileExist(msg->getRealFilename().str(), FALSE))
 	{
 		DEBUG_LOG(("File exists already!\n"));
 		//return;
