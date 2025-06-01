@@ -723,8 +723,8 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 //-------------------------------------------------------------------------------------------------
 /*static */ void MetaMap::generateMetaMap()
 {
-	// TheSuperHackers @info A default mapping for MSG_META_SELECT_ALL_AIRCRAFT is not recommended,
-	// because it will cause key mapping conflicts with original game languages.
+	// TheSuperHackers @info A default mapping for MSG_META_SELECT_ALL_AIRCRAFT would be useful for Generals
+	// but is not recommended, because it will cause key mapping conflicts with original game languages.
 
 	{
 		// Is mostly useful for Generals.
