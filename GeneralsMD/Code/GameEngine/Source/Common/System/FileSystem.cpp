@@ -193,7 +193,7 @@ File*		FileSystem::openFile( const Char *filename, Int access )
 // FileSystem::doesFileExist
 //============================================================================
 
-Bool FileSystem::doesFileExist(const Char *filename) const
+Bool FileSystem::doesFileExist(const Char *filename, Bool cacheAbsence) const
 {
 	USE_PERF_TIMER(FileSystem)
 
@@ -212,8 +212,9 @@ Bool FileSystem::doesFileExist(const Char *filename) const
     m_fileExist[key]=true;
 		return TRUE;
 	}
-
-  m_fileExist[key]=false;
+	if (cacheAbsence) {
+		m_fileExist[key] = false;
+	}
 	return FALSE;
 }
 
