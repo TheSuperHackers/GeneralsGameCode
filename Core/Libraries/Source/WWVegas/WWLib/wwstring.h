@@ -128,7 +128,7 @@ public:
 
 	TCHAR *		Get_Buffer (int new_length);
 	TCHAR *		Peek_Buffer (void);
-	const TCHAR * Peek_Buffer (void) const;
+	const TCHAR * c_str (void) const;
 
 	bool Copy_Wide (const WCHAR *source);
 
@@ -562,10 +562,10 @@ StringClass::Peek_Buffer (void)
 }
 
 ///////////////////////////////////////////////////////////////////
-//	Peek_Buffer
+//	c_str (formerly Peek_Buffer)
 ///////////////////////////////////////////////////////////////////
 inline const TCHAR *
-StringClass::Peek_Buffer (void) const
+StringClass::c_str (void) const
 {
 	return m_Buffer;
 }
