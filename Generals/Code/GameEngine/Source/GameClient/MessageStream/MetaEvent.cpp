@@ -661,18 +661,11 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 //-------------------------------------------------------------------------------------------------
 /*static */ void MetaMap::generateMetaMap()
 {
+	// TheSuperHackers @info A default mapping for MSG_META_SELECT_ALL_AIRCRAFT is not recommended,
+	// because it will cause key mapping conflicts with original game languages.
+
 	{
-		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_SELECT_ALL_AIRCRAFT);
-		if (map->m_key == MK_NONE)
-		{
-			map->m_key = MK_W;
-			map->m_transition = DOWN;
-			map->m_modState = NONE;
-			map->m_usableIn = COMMANDUSABLE_GAME;
-			map->m_category = CATEGORY_SELECTION;
-		}
-	}
-	{
+		// Is mostly useful for Generals.
 		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY);
 		if (map->m_key == MK_NONE)
 		{
@@ -683,6 +676,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 		}
 	}
 	{
+		// Is useful for Generals and Zero Hour.
 		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_TOGGLE_PAUSE);
 		if (map->m_key == MK_NONE)
 		{
@@ -693,6 +687,7 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 		}
 	}
 	{
+		// Is useful for Generals and Zero Hour.
 		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_STEP_FRAME);
 		if (map->m_key == MK_NONE)
 		{
