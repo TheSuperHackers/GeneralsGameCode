@@ -131,7 +131,7 @@ public:
 	void update();
 
 	File* openFile( const Char *filename, Int access = 0 );		///< opens a File interface to the specified file
-	Bool doesFileExist(const Char *filename, Bool cacheAbsence = TRUE) const;	///< returns TRUE if the file exists.  filename should have no directory.
+	Bool doesFileExist(const Char *filename) const;								///< returns TRUE if the file exists.  filename should have no directory.
 	void getFileListInDirectory(const AsciiString& directory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const; ///< search the given directory for files matching the searchName (egs. *.ini, *.rep).  Possibly search subdirectories.
 	Bool getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const; ///< fills in the FileInfo struct for the file given. returns TRUE if successful.
 

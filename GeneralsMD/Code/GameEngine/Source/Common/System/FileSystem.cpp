@@ -179,6 +179,11 @@ File*		FileSystem::openFile( const Char *filename, Int access )
 	if ( TheLocalFileSystem != NULL )
 	{
 		file = TheLocalFileSystem->openFile( filename, access );
+		if (file != NULL && (file->getAccess() & File::CREATE))
+		{
+			unsigned key = TheNameKeyGenerator->nameToLowercaseKey(filename);
+			m_fileExist[key] = true;
+		}
 	}
 
 	if ( (TheArchiveFileSystem != NULL) && (file == NULL) )
@@ -193,7 +198,7 @@ File*		FileSystem::openFile( const Char *filename, Int access )
 // FileSystem::doesFileExist
 //============================================================================
 
-Bool FileSystem::doesFileExist(const Char *filename, Bool cacheAbsence) const
+Bool FileSystem::doesFileExist(const Char *filename) const
 {
 	USE_PERF_TIMER(FileSystem)
 
@@ -212,9 +217,8 @@ Bool FileSystem::doesFileExist(const Char *filename, Bool cacheAbsence) const
     m_fileExist[key]=true;
 		return TRUE;
 	}
-	if (cacheAbsence) {
-		m_fileExist[key] = false;
-	}
+
+  m_fileExist[key]=false;
 	return FALSE;
 }
 
