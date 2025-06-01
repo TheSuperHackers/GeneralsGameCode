@@ -281,7 +281,7 @@ FileClass * SimpleFileFactoryClass::Get_File( char const *filename )
 
 			if (strchr(subdir,';'))
 			{
-				char *tokstart=subdir.Peek_Buffer();
+				char *tokstart=subdir.str();
 				const char *tok;
 				while((tok=strtok(tokstart, ";")) != NULL) {
 					tokstart=NULL;

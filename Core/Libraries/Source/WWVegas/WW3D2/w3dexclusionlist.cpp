@@ -58,7 +58,7 @@ W3DExclusionListClass::~W3DExclusionListClass(void)
 bool	W3DExclusionListClass::Is_Excluded(PrototypeClass * proto) const
 {
 	StringClass copy = proto->Get_Name();
-	char * root_name = copy.Peek_Buffer();
+	char * root_name = copy.str();
 	
 	// don't preserve munged prototypes
 	if (strchr(root_name,'#') != NULL) {
@@ -86,7 +86,7 @@ bool	W3DExclusionListClass::Is_Excluded(HAnimClass * hanim) const
 {
 	// For HAnims, the name to check is the one trailing the '.'
 	StringClass copy = hanim->Get_Name();
-	char * root_name = copy.Peek_Buffer();
+	char * root_name = copy.str();
 
 	char * tmp = strchr(root_name,'.');
 	if (tmp) {

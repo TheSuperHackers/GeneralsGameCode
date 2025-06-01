@@ -158,7 +158,7 @@ Build_List_From_String
 				// Copy this entry into its own string
 				//
 				StringClass entry_string = entry;
-				char *delim_start = ::strstr (entry_string.Peek_Buffer(), delimiter);				
+				char *delim_start = ::strstr (entry_string.str(), delimiter);
 				if (delim_start != NULL) {
 					delim_start[0] = 0;
 				}
@@ -281,7 +281,7 @@ AnimatedSoundMgrClass::Initialize (const char *ini_filename)
 			//	Get the animation name from the section name
 			//
 			StringClass animation_name = section->Section;
-			::strupr (animation_name.Peek_Buffer ());
+			::strupr (animation_name.str());
 
 			// OutputDebugString( "MBL Section / animation: " );
 			// OutputDebugString( animation_name.Peek_Buffer()	);
@@ -469,7 +469,7 @@ AnimatedSoundMgrClass::Find_Sound_List (HAnimClass *anim)
 	//
 	//	Make the name uppercase
 	//
-	::strupr (full_name.Peek_Buffer ());
+	::strupr (full_name.str ());
 
 	//
 	//	Lookup the sound list for this animation

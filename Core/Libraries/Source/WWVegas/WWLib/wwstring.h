@@ -127,7 +127,7 @@ public:
 	void Trim(void);
 
 	TCHAR *		Get_Buffer (int new_length);
-	TCHAR *		Peek_Buffer (void);
+	TCHAR *		str (void);
 	const TCHAR * c_str (void) const;
 
 	bool Copy_Wide (const WCHAR *source);
@@ -553,10 +553,10 @@ StringClass::Get_Buffer (int new_length)
 }
 
 ///////////////////////////////////////////////////////////////////
-//	Peek_Buffer
+//	str (formerly Peek_Buffer)
 ///////////////////////////////////////////////////////////////////
 inline TCHAR *
-StringClass::Peek_Buffer (void)
+StringClass::str (void)
 {
 	return m_Buffer;
 }

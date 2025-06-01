@@ -178,7 +178,7 @@ void HTreeManagerClass::Free_All_Trees_With_Exclusion_List(const W3DExclusionLis
 	{
 		// Insert to hash table for fast name based search
 		StringClass lower_case_name(TreePtr[treeidx]->Get_Name(),true);
-		_strlwr(lower_case_name.Peek_Buffer());
+		_strlwr(lower_case_name.str());
 		TreeHash.Insert(lower_case_name,TreePtr[treeidx]);
 	}
 }
@@ -224,7 +224,7 @@ int HTreeManagerClass::Load_Tree(ChunkLoadClass & cload)
 
 		// Insert to hash table for fast name based search
 		StringClass lower_case_name(newtree->Get_Name(),true);
-		_strlwr(lower_case_name.Peek_Buffer());
+		_strlwr(lower_case_name.str());
 		TreeHash.Insert(lower_case_name,newtree);
 	}
 
@@ -298,7 +298,7 @@ char *HTreeManagerClass::Get_Tree_Name(const int idx)
 HTreeClass * HTreeManagerClass::Get_Tree(const char * name)
 {
 	StringClass lower_case_name(name,true);
-	_strlwr(lower_case_name.Peek_Buffer());
+	_strlwr(lower_case_name.str());
 	return TreeHash.Get(lower_case_name);
 
 //	for (int i=0; i<NumTrees; i++) {

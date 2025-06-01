@@ -1063,7 +1063,7 @@ TextureClass* WW3DAssetManager::Get_Bumpmap_Based_On_Texture(TextureClass* textu
 	WWASSERT(texture->Get_Texture_Name() && strlen(texture->Get_Texture_Name()));
 	StringClass bump_name="__Bumpmap-";
 	bump_name+=texture->Get_Texture_Name();
-	_strlwr(bump_name.Peek_Buffer());	// lower case
+	_strlwr(bump_name.str());	// lower case
 
 	/*
 	** See if the texture has already been generated.
@@ -1125,7 +1125,7 @@ TextureClass * WW3DAssetManager::Get_Texture
 	}
 
 	StringClass lower_case_name(filename,true);
-	_strlwr(lower_case_name.Peek_Buffer());
+	_strlwr(lower_case_name.str());
 
 	/*
 	** See if the texture has already been loaded.
