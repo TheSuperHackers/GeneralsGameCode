@@ -449,7 +449,7 @@ static void loadReplay(UnicodeString filename)
 	AsciiString asciiFilename;
 	asciiFilename.translate(filename);
 
-	if(TheRecorder->testVersionPlayback(asciiFilename))
+	if(!TheRecorder->replayMatchesGameVersion(asciiFilename))
 	{
 		MessageBoxOkCancel(TheGameText->fetch("GUI:OlderReplayVersionTitle"), TheGameText->fetch("GUI:OlderReplayVersion"), reallyLoadReplay, NULL);
 	}

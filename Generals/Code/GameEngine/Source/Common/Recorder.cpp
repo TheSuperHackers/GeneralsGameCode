@@ -1055,19 +1055,22 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 }
 
 /**
- * Return true if this version of the file is the same as our version of the game
+ * Returns true if this version of the file is the same as our version of the game
  */
-Bool RecorderClass::testVersionPlayback(AsciiString filename)
+Bool RecorderClass::replayMatchesGameVersion(AsciiString filename)
 {
-
 	ReplayHeader header;
 	header.forPlayback = TRUE;
 	header.filename = filename;
-	Bool success = readReplayHeader( header );
-	if (!success)
+	if ( readReplayHeader( header ) )
 	{
-		return FALSE;
+		return replayMatchesGameVersion( header );
 	}
+	return FALSE;
+}
+
+Bool RecorderClass::replayMatchesGameVersion(const ReplayHeader& header)
+{
 	Bool versionStringDiff = header.versionString != TheVersion->getUnicodeVersion();
 	Bool versionTimeStringDiff = header.versionTimeString != TheVersion->getUnicodeBuildTime();
 	Bool versionNumberDiff = header.versionNumber != TheVersion->getVersionNumber();
@@ -1077,10 +1080,9 @@ Bool RecorderClass::testVersionPlayback(AsciiString filename)
 
 	if(exeDifferent || iniDifferent)
 	{
-		return TRUE;
+		return FALSE;
 	}
-	return FALSE;
-
+	return TRUE;
 }
 
 /**
