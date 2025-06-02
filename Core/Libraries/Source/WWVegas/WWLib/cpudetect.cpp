@@ -959,7 +959,7 @@ void CPUDetectClass::Init_Processor_Log()
 #ifdef WIN32
    SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo));
 #elif defined(_UNIX)
-   SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo.c_str()));
+   SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo.str()));
 #endif
 
 	SYSLOG(("Processor: %s\r\n",CPUDetectClass::Get_Processor_String()));
@@ -974,7 +974,7 @@ void CPUDetectClass::Init_Processor_Log()
 #ifdef WIN32
    SYSLOG(("Processor type: %s\r\n", cpu_type));
 #elif defined(_UNIX)
-   SYSLOG(("Processor type: %s\r\n", cpu_type.c_str()));
+   SYSLOG(("Processor type: %s\r\n", cpu_type.str()));
 #endif
 
 	SYSLOG(("\r\n"));
