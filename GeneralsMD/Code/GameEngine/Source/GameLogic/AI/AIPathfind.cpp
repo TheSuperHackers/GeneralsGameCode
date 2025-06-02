@@ -6561,10 +6561,14 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 	zone2 =  m_zoneManager.getEffectiveZone(locomotorSet.getValidSurfaces(), isCrusher, goalCell->getZone());
 
 	if (layer==LAYER_WALL && zone1 == 0) {
+		goalCell->releaseInfo();
+		parentCell->releaseInfo();
 		return NULL;
 	}
 
 	if (destinationLayer==LAYER_WALL && zone2 == 0) {
+		goalCell->releaseInfo();
+		parentCell->releaseInfo();
 		return NULL;
 	}
 
@@ -6646,7 +6650,6 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 			Path *path =  buildActualPath( obj, locomotorSet.getValidSurfaces(), from, goalCell, centerInCell, false );
 			parentCell->releaseInfo();
 			cleanOpenAndClosedLists();
-			goalCell->releaseInfo();
 			return path;
 		}	
 
@@ -7101,6 +7104,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	PathfindLayerEnum layer = TheTerrainLogic->getLayerForDestination(from);
 	PathfindCell *parentCell = getClippedCell( layer,&clipFrom );
 	if (parentCell == NULL) {
+		goalCell->releaseInfo();
 		return NULL;
 	}
 	if (parentCell!=goalCell) {
@@ -7165,7 +7169,6 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 			Path *path =  buildGroundPath(crusher, from, goalCell, centerInCell, pathDiameter );
 			parentCell->releaseInfo();
 			cleanOpenAndClosedLists();
-			goalCell->releaseInfo();
 			return path;
 		}	
 
@@ -8264,7 +8267,6 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 
 	if (parentCell!=goalCell) {
 		if (!parentCell->allocateInfo(startCellNdx)) {
-			desiredCell->releaseInfo();
 			goalCell->releaseInfo();
 			return FALSE;
 		}
@@ -8379,6 +8381,8 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 
 			if (!newCell->allocateInfo(newCellCoord)) {
 				// Out of cells for pathing...
+				cleanOpenAndClosedLists();
+				goalCell->releaseInfo();
  				return cellCount;
 			}								
 			cellCount++;
@@ -8563,17 +8567,16 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 		parentCell = m_openList;
 		m_openList = parentCell->removeFromOpenList(m_openList);
 
-		// put parent cell onto closed list - its evaluation is finished
-		m_closedList = parentCell->putOnClosedList( m_closedList );
-
 		if (parentCell==goalCell) {	 
 			Int cost = parentCell->getTotalCost();
 			m_isTunneling = false;
 			parentCell->releaseInfo();
 			cleanOpenAndClosedLists();
-			goalCell->releaseInfo();
 			return cost;
 		}
+
+		// put parent cell onto closed list - its evaluation is finished
+		m_closedList = parentCell->putOnClosedList( m_closedList );
 
 		if (cellCount > MAX_CELL_COUNT) {
 			continue;
@@ -8635,8 +8638,11 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 
 			if (!newCell->allocateInfo(newCellCoord)) {
 				// Out of cells for pathing...
+				parentCell->releaseInfo();
+				cleanOpenAndClosedLists();
+				goalCell->releaseInfo();
  				return cellCount;
-			}								
+			}						
 			cellCount++;
 
 			newCostSoFar = newCell->costSoFar( parentCell );
@@ -8822,6 +8828,7 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 	if (parentCell!=goalCell) {
 		worldToCell(&clipFrom, &pos2d);
 		if (!parentCell->allocateInfo(pos2d)) {
+			goalCell->releaseInfo();
 			return NULL;
 		}
 	}
@@ -9117,13 +9124,11 @@ void Pathfinder::prependCells( Path *path, const Coord3D *fromPos,
 		prevCell = cell;
 	}
 
-	if (cell->hasInfo()) {
-		m_zoneManager.setPassable(cell->getXIndex(), cell->getYIndex(), true);
-		if (goalCellNull) {
-			// Very short path.
-			adjustCoordToCell(cell->getXIndex(), cell->getYIndex(), center, pos, cell->getLayer());
-			path->prependNode( &pos, cell->getLayer() );
-		}
+	m_zoneManager.setPassable(cell->getXIndex(), cell->getYIndex(), true);
+	if (goalCellNull) {
+		// Very short path.
+		adjustCoordToCell(cell->getXIndex(), cell->getYIndex(), center, pos, cell->getLayer());
+		path->prependNode( &pos, cell->getLayer() );
 	}
 
 	// put actual start position as first node on the path, so it begins right at the unit's feet
@@ -10524,7 +10529,6 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 	}	
 	if (startNode == originalPath->getLastNode()) {
 		parentCell->releaseInfo();
-		cleanOpenAndClosedLists();
 		return NULL; // no open nodes.
 	}
 	PathfindCell *candidateGoal;
@@ -10532,6 +10536,7 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 	ICoord2D goalCellNdx;
 	worldToCell(&goalPos, &goalCellNdx);
 	if (!candidateGoal->allocateInfo(goalCellNdx)) {
+		parentCell->releaseInfo();
 		return NULL;
 	}
 
