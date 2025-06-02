@@ -134,7 +134,7 @@ TextFileClass::Read_Line (StringClass &string)
 	if (retval) {
 		
 		int len				= string.Get_Length ();
-		char *raw_string	= string.str();
+		const char *raw_string	= string.c_str();
 		
 		//
 		// Strip the CR\LF or LF from the string
