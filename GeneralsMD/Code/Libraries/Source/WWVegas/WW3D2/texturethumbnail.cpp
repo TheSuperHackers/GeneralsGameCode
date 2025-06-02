@@ -39,7 +39,7 @@ static void Create_Hash_Name(StringClass& name, const StringClass& thumb_name)
 	int len=name.Get_Length();
 	WWASSERT(!stricmp(&name[len-4],".tga") || !stricmp(&name[len-4],".dds"));
 	name[len-4]='\0';
-	_strlwr(name.str());
+	_strlwr(name.Peek_Buffer());
 }
 
 	/*	file_auto_ptr my_tga_file(_TheFileFactory,filename);

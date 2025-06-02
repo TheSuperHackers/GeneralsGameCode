@@ -281,11 +281,11 @@ FileClass * SimpleFileFactoryClass::Get_File( char const *filename )
 
 			if (strchr(subdir,';'))
 			{
-				char *tokstart=subdir.str();
+				char *tokstart=subdir.Peek_Buffer();
 				const char *tok;
 				while((tok=strtok(tokstart, ";")) != NULL) {
 					tokstart=NULL;
-					new_name.Format("%s%s",tok,stripped_name.c_str());
+					new_name.Format("%s%s",tok,stripped_name.str());
 					file->Set_Name( new_name );	// Call Set_Name to force an allocated name
 					if (file->Open()) {
 						file->Close();

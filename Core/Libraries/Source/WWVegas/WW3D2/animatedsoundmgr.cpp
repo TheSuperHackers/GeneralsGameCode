@@ -158,7 +158,7 @@ Build_List_From_String
 				// Copy this entry into its own string
 				//
 				StringClass entry_string = entry;
-				char *delim_start = ::strstr (entry_string.str(), delimiter);
+				char *delim_start = ::strstr (entry_string.Peek_Buffer(), delimiter);
 				if (delim_start != NULL) {
 					delim_start[0] = 0;
 				}
@@ -228,7 +228,7 @@ Is_In_Param_List
 			// OutputDebugString( "\n" );
 
 			// if ( stricmp( string.Peek_Buffer(), param_to_check ) == 0 ) // Breaks with whitespaces
-			if ( strstr( string.c_str(), param_to_check ) != 0 )
+			if ( strstr( string.str(), param_to_check ) != 0 )
 			{
 			 	return( true );
 			}
@@ -281,7 +281,7 @@ AnimatedSoundMgrClass::Initialize (const char *ini_filename)
 			//	Get the animation name from the section name
 			//
 			StringClass animation_name = section->Section;
-			::strupr (animation_name.str());
+			::strupr (animation_name.Peek_Buffer());
 
 			// OutputDebugString( "MBL Section / animation: " );
 			// OutputDebugString( animation_name.Peek_Buffer()	);
@@ -447,7 +447,7 @@ AnimatedSoundMgrClass::Get_Embedded_Sound_Name (HAnimClass *anim)
 		return NULL;
 	}
 
-	return list->BoneName.c_str();
+	return list->BoneName.str();
 }
 
 
@@ -469,7 +469,7 @@ AnimatedSoundMgrClass::Find_Sound_List (HAnimClass *anim)
 	//
 	//	Make the name uppercase
 	//
-	::strupr (full_name.str ());
+	::strupr (full_name.Peek_Buffer ());
 
 	//
 	//	Lookup the sound list for this animation
@@ -527,7 +527,7 @@ AnimatedSoundMgrClass::Trigger_Sound
 						//
 						// Stop the audio
 						//
-						SoundLibrary->Stop_Playing_Audio( sound_list->List[index]->SoundName.c_str() );
+						SoundLibrary->Stop_Playing_Audio( sound_list->List[index]->SoundName.str() );
 					}
 					else
 					{
@@ -536,11 +536,11 @@ AnimatedSoundMgrClass::Trigger_Sound
 						//
 						if (sound_list->List[index]->Is2D == true) 
 						{
-							SoundLibrary->Play_2D_Audio(sound_list->List[index]->SoundName.c_str());
+							SoundLibrary->Play_2D_Audio(sound_list->List[index]->SoundName.str());
 						} 
 						else 
 						{
-							SoundLibrary->Play_3D_Audio(sound_list->List[index]->SoundName.c_str(), tm);
+							SoundLibrary->Play_3D_Audio(sound_list->List[index]->SoundName.str(), tm);
 						}
 					}
 

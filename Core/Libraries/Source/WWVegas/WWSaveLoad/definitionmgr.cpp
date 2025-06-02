@@ -242,7 +242,7 @@ DefinitionMgrClass::Find_Typed_Definition (const char *name, uint32 class_id, bo
 	WWASSERT(DefinitionHash != NULL);
 
 	StringClass lower_case_name(name,true);
-	_strlwr(lower_case_name.str());
+	_strlwr(lower_case_name.Peek_Buffer());
 	DynamicVectorClass<DefinitionClass*>* defs = DefinitionHash->Get(lower_case_name);
 
 	if (defs) {

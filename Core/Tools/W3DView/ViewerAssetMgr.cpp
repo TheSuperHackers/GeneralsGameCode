@@ -76,7 +76,7 @@ ViewerAssetMgrClass::Get_Texture (const char * tga_filename, MipCountType mip_le
 	//	
 
 	StringClass lower_case_name(tga_filename,true);
-	_strlwr(lower_case_name.str());
+	_strlwr(lower_case_name.Peek_Buffer());
 	TextureClass* tex = TextureHash.Get(lower_case_name);	
 
 	//

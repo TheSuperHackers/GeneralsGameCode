@@ -1008,8 +1008,8 @@ bool W3DAssetManager::Load_3D_Assets( const char * filename )
 		if (logfile)
 		{	
 			StringClass lower_case_name(filename,true);
-			_strlwr(lower_case_name.str());
-			fprintf(logfile,"3D: %s\n",lower_case_name.c_str());
+			_strlwr(lower_case_name.Peek_Buffer());
+			fprintf(logfile,"3D: %s\n",lower_case_name.str());
 			fclose(logfile);
 		}
 	}
