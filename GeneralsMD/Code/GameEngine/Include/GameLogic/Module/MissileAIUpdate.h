@@ -72,6 +72,8 @@ public:
 
 	Real m_randomPathOffset;       ///< Max distance to scatter for random path offset
 
+	Bool m_applyLauncherBonus;     ///< Apply the launcher's weapon bonus flags (for any non-detonate triggered weapon)
+
     MissileAIUpdateModuleData();
 
 	static void buildFieldParse(MultiIniFieldParse& p);

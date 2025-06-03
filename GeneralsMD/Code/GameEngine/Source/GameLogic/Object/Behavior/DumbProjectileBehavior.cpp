@@ -71,7 +71,8 @@ DumbProjectileBehaviorModuleData::DumbProjectileBehaviorModuleData() :
 	m_secondPercentIndent(0.0f),	
 	m_garrisonHitKillCount(0),
 	m_garrisonHitKillFX(NULL),
-	m_flightPathAdjustDistPerFrame(0.0f)
+	m_flightPathAdjustDistPerFrame(0.0f),
+	m_applyLauncherBonus(FALSE)
 {
 }
 
@@ -99,6 +100,7 @@ void DumbProjectileBehaviorModuleData::buildFieldParse(MultiIniFieldParse& p)
 
 		{ "FlightPathAdjustDistPerSecond", INI::parseVelocityReal, NULL, offsetof( DumbProjectileBehaviorModuleData, m_flightPathAdjustDistPerFrame ) },
 
+		{ "ApplyLauncherBonus", INI::parseBool,  NULL, offsetof(DumbProjectileBehaviorModuleData, m_applyLauncherBonus) },
 
 		{ 0, 0, 0, 0 }
 	};
@@ -341,6 +343,11 @@ void DumbProjectileBehavior::projectileLaunchAtObjectOrPosition(
 
 	m_launcherID = launcher ? launcher->getID() : INVALID_ID;
 	m_extraBonusFlags = launcher ? launcher->getWeaponBonusCondition() : 0;
+
+	if (d->m_applyLauncherBonus && m_extraBonusFlags != 0) {
+		getObject()->setWeaponBonusConditionFlags(m_extraBonusFlags);
+	}
+
 	m_victimID = victim ? victim->getID() : INVALID_ID;
 	m_detonationWeaponTmpl = detWeap;
 	m_lifespanFrame = TheGameLogic->getFrame() + d->m_maxLifespan;

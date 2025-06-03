@@ -100,6 +100,7 @@ MissileAIUpdateModuleData::MissileAIUpdateModuleData()
 	// m_turnRateInitial = 0;
 	// m_turnRateAttacking = BIGNUM;
 	m_zDirFactor = 2.0f;
+	m_applyLauncherBonus = FALSE;
 }
 
 //-----------------------------------------------------------------------------
@@ -134,7 +135,7 @@ void MissileAIUpdateModuleData::buildFieldParse(MultiIniFieldParse& p)
 		{ "DetonateCallsKill", INI::parseBool,   NULL, offsetof( MissileAIUpdateModuleData, m_detonateCallsKill ) },
 		{ "KillSelfDelay",     INI::parseDurationUnsignedInt, NULL, offsetof( MissileAIUpdateModuleData, m_killSelfDelay ) },
 		{ "ZCorrectionFactor", INI::parseReal,   NULL, offsetof(MissileAIUpdateModuleData, m_zDirFactor) },
-
+		{ "ApplyLauncherBonus", INI::parseBool,  NULL, offsetof(MissileAIUpdateModuleData, m_applyLauncherBonus) },
 		{ 0, 0, 0, 0 }
 	};
 
@@ -230,6 +231,10 @@ void MissileAIUpdate::projectileLaunchAtObjectOrPosition(
 	m_launcherID = launcher ? launcher->getID() : INVALID_ID;
 	m_detonationWeaponTmpl = detWeap;
 	m_extraBonusFlags = launcher ? launcher->getWeaponBonusCondition() : 0;
+
+	if (getMissileAIUpdateModuleData()->m_applyLauncherBonus && m_extraBonusFlags != 0) {
+		getObject()->setWeaponBonusConditionFlags(m_extraBonusFlags);
+	}
 
 	Weapon::positionProjectileForLaunch(getObject(), launcher, wslot, specificBarrelToUse);
 

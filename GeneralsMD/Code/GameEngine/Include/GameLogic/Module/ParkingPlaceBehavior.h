@@ -50,6 +50,7 @@ public:
 	Real					m_landingDeckHeightOffset;
 	Bool					m_hasRunways;			// if true, each col has a runway in front of it
 	Bool					m_parkInHangars;	// if true, park at the hangar production spot, not the "real" parking place
+	// Real                    m_damageScalar;     // Damage reduction for parked aircraft
 
 	ParkingPlaceBehaviorModuleData()
 	{
@@ -62,6 +63,7 @@ public:
 		m_landingDeckHeightOffset = 0.0f;
 		m_hasRunways = false;
 		m_parkInHangars = false;
+		//m_damageScalar = 1.0f;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
@@ -78,7 +80,8 @@ public:
 			{ "ParkInHangars",			     INI::parseBool, NULL, offsetof( ParkingPlaceBehaviorModuleData, m_parkInHangars ) },
 			{ "HealAmountPerSecond",     INI::parseReal, NULL, offsetof( ParkingPlaceBehaviorModuleData, m_healAmount ) },
 //			{ "ExtraHealAmount4Helicopters",  INI::parseReal, NULL, offsetof( ParkingPlaceBehaviorModuleData, m_extraHealAmount4Helicopters ) },
-
+			// { "ParkedUnitsDamageScalar",     INI::parseReal, NULL, offsetof(ParkingPlaceBehaviorModuleData, m_damageScalar) },
+			// { "ParkedUnitsDamageScalarUpgraded",     INI::parseReal, NULL, offsetof(ParkingPlaceBehaviorModuleData, m_damageScalarUpgraded) },
 
 
 			//{ "TimeForFullHeal",	INI::parseDurationUnsignedInt,	NULL, offsetof( ParkingPlaceBehaviorModuleData, m_framesForFullHeal ) },
