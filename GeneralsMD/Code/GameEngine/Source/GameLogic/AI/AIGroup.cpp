@@ -56,7 +56,7 @@
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
 #include "GameLogic/ObjectIter.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -107,7 +107,7 @@ AIGroup::~AIGroup()
 		}
 	}
 	if (m_groundPath) {
-		m_groundPath->deleteInstance();
+		deleteInstance(m_groundPath);
 		m_groundPath = NULL;
 	}
 	//DEBUG_LOG(( "AIGroup #%d destroyed\n", m_id ));
@@ -409,7 +409,7 @@ void AIGroup::recompute( void )
 	getCenter( &center );
 
 	if (m_groundPath) {
-		m_groundPath->deleteInstance();
+		deleteInstance(m_groundPath);
 		m_groundPath = NULL;
 	}
 
@@ -714,7 +714,7 @@ Bool AIGroup::friend_moveInfantryToPos( const Coord3D *pos, CommandSourceType cm
 		}
 	}
 	if (startNode==NULL || endNode==NULL) {
-		m_groundPath->deleteInstance();
+		deleteInstance(m_groundPath);
 		m_groundPath = NULL;
 		return false;
 	}
@@ -1076,7 +1076,7 @@ void AIGroup::friend_moveFormationToPos( const Coord3D *pos, CommandSourceType c
 			tmpNode = tmpNode->getNextOptimized();
 		}
 		if (startNode==NULL || endNode==NULL) {
-			m_groundPath->deleteInstance();
+			deleteInstance(m_groundPath);
 			m_groundPath = NULL;
 			startNode = NULL;
 			endNode = NULL;
@@ -1183,7 +1183,7 @@ Bool AIGroup::friend_moveVehicleToPos( const Coord3D *pos, CommandSourceType cmd
 		endNode = NULL;
 	}
 	if (startNode==NULL || endNode==NULL) {
-		m_groundPath->deleteInstance();
+		deleteInstance(m_groundPath);
 		m_groundPath = NULL;
 		return false;
 	}
@@ -3007,7 +3007,7 @@ void AIGroup::setAttitude( AttitudeType tude )
  */
 AttitudeType AIGroup::getAttitude( void ) const
 {
-	return AI_PASSIVE;
+	return ATTITUDE_PASSIVE;
 }
 
 void AIGroup::setMineClearingDetail( Bool set )

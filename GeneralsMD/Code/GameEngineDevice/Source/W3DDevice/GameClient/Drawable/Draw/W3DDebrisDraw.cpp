@@ -39,9 +39,9 @@
 #include "GameClient/FXList.h"
 #include "GameLogic/TerrainLogic.h"
 
-#include "WW3D2/HAnim.h"
-#include "WW3D2/HLod.h"
-#include "WW3D2/RendObj.h"
+#include "WW3D2/hanim.h"
+#include "WW3D2/hlod.h"
+#include "WW3D2/rendobj.h"
 #include "W3DDevice/GameClient/Module/W3DDebrisDraw.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
@@ -73,7 +73,8 @@ W3DDebrisDraw::~W3DDebrisDraw(void)
 	}
 	if (m_renderObject)
 	{
-		W3DDisplay::m_3DScene->Remove_Render_Object(m_renderObject);
+		if (W3DDisplay::m_3DScene != NULL)
+			W3DDisplay::m_3DScene->Remove_Render_Object(m_renderObject);
   	REF_PTR_RELEASE(m_renderObject);
  		m_renderObject = NULL; 	
 	}
@@ -111,7 +112,8 @@ void W3DDebrisDraw::setModelName(AsciiString name, Color color, ShadowType t)
 		DEBUG_ASSERTCRASH(m_renderObject, ("Debris model %s not found!\n",name.str()));
 		if (m_renderObject)
 		{
-			W3DDisplay::m_3DScene->Add_Render_Object(m_renderObject);
+			if (W3DDisplay::m_3DScene != NULL)
+				W3DDisplay::m_3DScene->Add_Render_Object(m_renderObject);
 
 			m_renderObject->Set_User_Data(getDrawable()->getDrawableInfo());
 			

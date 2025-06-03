@@ -42,7 +42,7 @@
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 #include "GameNetwork/GameSpy/GSConfig.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -317,7 +317,7 @@ NATConnectionState NAT::connectionUpdate() {
 
 	// check to see if its time to send out our keepalives.
 	if (timeGetTime() >= m_nextKeepaliveTime) {
-		for (Int node = 0; node < m_numNodes; ++node) {
+		for (UnsignedInt node = 0; node < m_numNodes; ++node) {
 			if (m_myConnections[node] == TRUE) {
 				// we've made this connection, send a keepalive.
 				Int slotIndex = m_connectionNodes[node].m_slotIndex;
@@ -480,7 +480,8 @@ void NAT::establishConnectionPaths() {
 
 	// determine how many nodes we have.
 	m_numNodes = 0;
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
+	Int i = 0;
+	for (; i < MAX_SLOTS; ++i) {
 		if (m_slotList[i] != NULL) {
 			if (m_slotList[i]->isHuman()) {
 				DEBUG_LOG(("NAT::establishConnectionPaths - slot %d is %ls\n", i, m_slotList[i]->getName().str()));
@@ -575,7 +576,7 @@ void NAT::establishConnectionPaths() {
 	}
 
 // sanity check
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	for (i = 0; i < m_numNodes; ++i) {
 		DEBUG_ASSERTCRASH(connectionAssigned[i] == TRUE, ("connection number %d not assigned", i));
 	}
@@ -636,7 +637,7 @@ Int NAT::getSlotPort(Int slot) {
 }
 
 void NAT::generatePortNumbers(GameSlot *slotList[], Int localSlot) {
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
+	for (UnsignedInt i = 0; i < (UnsignedInt)MAX_SLOTS; ++i) {
 		if (slotList[i] != NULL) {
 			if ((i == localSlot) && (TheWritableGlobalData->m_firewallPortOverride != 0)) {
 				slotList[i]->setPort(TheWritableGlobalData->m_firewallPortOverride);
@@ -659,7 +660,8 @@ void NAT::doThisConnectionRound() {
 	// clear out the states from the last round.
 	m_targetNodeNumber = -1;
 
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
+	Int i = 0;
+	for (; i < MAX_SLOTS; ++i) {
 		setConnectionState(i, NATCONNECTIONSTATE_NOSTATE);
 	}
 
@@ -948,7 +950,7 @@ Bool NAT::allConnectionsDone() {
 
 Bool NAT::allConnectionsDoneThisRound() {
 	Bool retval = TRUE;
-	for (Int i = 0; (i < m_numNodes) && (retval == TRUE); ++i) {
+	for (UnsignedInt i = 0; (i < m_numNodes) && (retval == TRUE); ++i) {
 		if ((m_connectionStates[i] != NATCONNECTIONSTATE_DONE) && (m_connectionStates[i] != NATCONNECTIONSTATE_FAILED)) {
 			retval = FALSE;
 		}
@@ -1305,7 +1307,8 @@ void NAT::setConnectionState(Int nodeNumber, NATConnectionState state) {
 	// find the menu slot of the target node.
 	Int slotIndex = m_connectionNodes[m_targetNodeNumber].m_slotIndex;
 	Int slot = 0;
-	for (Int i = 0; i < MAX_SLOTS; ++i) {
+	Int i = 0;
+	for (; i < MAX_SLOTS; ++i) {
 		if (m_slotList[i] != NULL) {
 			if (m_slotList[i]->isHuman()) {
 				if (i != m_connectionNodes[m_localNodeNumber].m_slotIndex) {

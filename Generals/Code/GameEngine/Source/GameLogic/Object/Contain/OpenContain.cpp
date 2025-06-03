@@ -57,7 +57,7 @@
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Weapon.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -284,7 +284,7 @@ void OpenContain::addToContain( Object *rider )
 	if( rider == NULL )
 		return;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if( !isValidContainerFor( rider, false ) )
 	{
 		Object *reportObject = rider;
@@ -515,7 +515,7 @@ void OpenContain::removeFromContainViaIterator( ContainedItemsList::iterator it,
 {
 
 /*
-	#ifdef _DEBUG
+	#ifdef RTS_DEBUG
 		TheInGameUI->message( UnicodeString( L"'%S(%d)' no longer contains '%S(%d)'" ), 
 													getObject()->getTemplate()->getName().str(),
 													getObject()->getID(),
@@ -533,8 +533,7 @@ void OpenContain::removeFromContainViaIterator( ContainedItemsList::iterator it,
 		m_stealthUnitsContained--;
 		if( exposeStealthUnits )
 		{
-			static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-			StealthUpdate* stealth = (StealthUpdate*)rider->findUpdateModule( key_StealthUpdate );
+			StealthUpdate* stealth = rider->getStealth();
 			if( stealth )
 			{
 				stealth->markAsDetected();
@@ -700,8 +699,7 @@ void OpenContain::onCollide( Object *other, const Coord3D *loc, const Coord3D *n
 				if( rider->isKindOf( KINDOF_STEALTH_GARRISON ) )
 				{
 					// aiExit is needed to walk away from the building well, but it doesn't take the Unstealth flag
-					static const NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-					StealthUpdate* stealth = (StealthUpdate*)rider->findUpdateModule( key_StealthUpdate );
+					StealthUpdate* stealth = rider->getStealth();
 					if( stealth )
 					{
 						stealth->markAsDetected();
@@ -1239,8 +1237,7 @@ void OpenContain::markAllPassengersDetected( )
 		// call it
 		if( rider->isKindOf( KINDOF_STEALTH_GARRISON ) )
 		{
-			static const NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-			StealthUpdate* stealth = (StealthUpdate*)rider->findUpdateModule( key_StealthUpdate );
+			StealthUpdate* stealth = rider->getStealth();
 			if( stealth )
 			{
 				stealth->markAsDetected();
@@ -1283,7 +1280,7 @@ void OpenContain::processDamageToContained()
 		ContainedItemsList::const_iterator it;
 		it = items->begin();
 
-		while( *it )
+		while( it != items->end() )
 		{
 			Object *object = *it;
 

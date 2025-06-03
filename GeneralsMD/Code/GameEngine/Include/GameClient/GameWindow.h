@@ -65,6 +65,7 @@
 class GameWindow;
 class WindowLayout;
 class GameFont;
+class TransitionWindow;
 struct GameWindowEditData;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -78,7 +79,7 @@ enum { WIN_COLOR_UNDEFINED = GAME_COLOR_UNDEFINED };
 typedef UnsignedInt WindowMsgData;
 
 //-----------------------------------------------------------------------------
-enum WindowMsgHandledType { MSG_IGNORED, MSG_HANDLED };
+enum WindowMsgHandledType CPP_11(: Int) { MSG_IGNORED, MSG_HANDLED };
 
 // callback types -------------------------------------------------------------
 typedef void (*GameWinMsgBoxFunc)( void ); //used for the Message box callbacks.
@@ -113,7 +114,7 @@ enum
 
 // Game window messages -------------------------------------------------------
 //-----------------------------------------------------------------------------
-enum GameWindowMessage
+enum GameWindowMessage CPP_11(: Int)
 {
 
 	GWM_NONE = 0,
@@ -141,7 +142,7 @@ enum GameWindowMessage
 /** These return codes are returned when after processing events through
 	* the window system */
 //-----------------------------------------------------------------------------
-enum WinInputReturnCode
+enum WinInputReturnCode CPP_11(: Int)
 {
 	WIN_INPUT_NOT_USED = 0,
 	WIN_INPUT_USED,
@@ -242,6 +243,9 @@ public:
 	/// draw border for this window only, NO child windows or anything
 	virtual void winDrawBorder( void ) = 0;
 
+	void linkTransitionWindow( TransitionWindow* transitionWindow );
+	void unlinkTransitionWindow( TransitionWindow* transitionWindow );
+
 	Int winSetWindowId( Int id );  ///< set id for this window
 	Int winGetWindowId( void );  ///< return window id for this window
 	Int winSetSize( Int width, Int height );  ///< set size
@@ -322,7 +326,7 @@ public:
 	// window instance data
 	Int winSetInstanceData( WinInstanceData *data );  ///< copy over instance data
 	WinInstanceData *winGetInstanceData( void );  ///< get instance data
-	void *winGetUserData( void );  ///< get the window user data
+	virtual void *winGetUserData( void );  ///< get the window user data
 	void winSetUserData( void *userData );  ///< set the user data
 
 	// heirarchy methods
@@ -382,6 +386,8 @@ protected:
 	void freeImages( void ) { }
 	Bool isEnabled( void );  ///< see if we and our parents are enabled
 
+	void unlinkFromTransitionWindows( void );
+
 	void normalizeWindowRegion( void );  ///< put UL corner in window region.lo
 
 	GameWindow *findFirstLeaf( void );  ///< return first leaf of branch
@@ -424,7 +430,20 @@ protected:
 	// game window edit data for the GUIEditor only
 	GameWindowEditData *m_editData;
 
+	// vector of window transitions that have a relation to the current GameWindow
+	std::vector<TransitionWindow*> m_transitionWindows;
+
 };  // end class GameWindow
+
+// TheSuperHackers @feature helmutbuhler 24/04/2025
+// GameWindow that does nothing. Used for Headless Mode.
+class GameWindowDummy : public GameWindow
+{
+	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(GameWindowDummy, "GameWindowDummy")
+public:
+	virtual void winDrawBorder() {}
+	virtual void* winGetUserData(void) { return NULL; }
+};
 
 // ModalWindow ----------------------------------------------------------------
 //-----------------------------------------------------------------------------

@@ -60,13 +60,13 @@ class WindowLayout;
 class Anim2DTemplate;
 class Anim2D;
 class Shadow;
-enum LegalBuildCode;
-enum KindOfType;
-enum ShadowType;
-enum CanAttackResult;
+enum LegalBuildCode CPP_11(: Int);
+enum KindOfType CPP_11(: Int);
+enum ShadowType CPP_11(: Int);
+enum CanAttackResult CPP_11(: Int);
 
 // ------------------------------------------------------------------------------------------------
-enum RadiusCursorType
+enum RadiusCursorType CPP_11(: Int)
 {
 	RADIUSCURSOR_NONE = 0,
 	RADIUSCURSOR_ATTACK_DAMAGE_AREA,
@@ -288,7 +288,7 @@ enum
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 // ------------------------------------------------------------------------------------------------
-enum WorldAnimationOptions
+enum WorldAnimationOptions CPP_11(: Int)
 {
 	WORLD_ANIM_NO_OPTIONS								= 0x00000000,
 	WORLD_ANIM_FADE_ON_EXPIRE						= 0x00000001,
@@ -431,7 +431,7 @@ public:  // ********************************************************************
 	// build interface
 	virtual void placeBuildAvailable( const ThingTemplate *build, Drawable *buildDrawable );				///< built thing being placed
 	virtual const ThingTemplate *getPendingPlaceType( void );					///< get item we're trying to place
-	virtual const ObjectID getPendingPlaceSourceObjectID( void );			///< get producing object
+	virtual ObjectID getPendingPlaceSourceObjectID( void );			///< get producing object
 	virtual Bool getPreventLeftClickDeselectionInAlternateMouseModeForOneClick() const { return m_preventLeftClickDeselectionInAlternateMouseModeForOneClick; }
 	virtual void setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( Bool set ) { m_preventLeftClickDeselectionInAlternateMouseModeForOneClick = set; }
 	virtual void setPlacementStart( const ICoord2D *start );					///< placement anchor point (for choosing angles)
@@ -593,7 +593,7 @@ public:
 													Real durationInSeconds,
 													Real zRisePerSecond );
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual void DEBUG_addFloatingText(const AsciiString& text,const Coord3D * pos, Color color);
 #endif
 
@@ -613,7 +613,7 @@ protected:
 	{
 		MOVE_HINT = 0,
 		ATTACK_HINT,
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		DEBUG_HINT,
 #endif
 		NUM_HINT_TYPES  // keep this one last

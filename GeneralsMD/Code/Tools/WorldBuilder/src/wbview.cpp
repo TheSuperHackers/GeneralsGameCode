@@ -19,24 +19,24 @@
 // wbview.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
 #include "CUndoable.h"
 #include "CFixTeamOwnerDialog.h"
-#include "worldbuilder.h"
-#include "worldbuilderdoc.h"
+#include "WorldBuilder.h"
+#include "WorldBuilderDoc.h"
 #include "wbview.h"
-#include "wheightmapedit.h"
+#include "WHeightMapEdit.h"
 #include "MainFrm.h"
 #include "Common/Debug.h"
 #include "Common/ThingTemplate.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "GlobalLightOptions.h"
-#include "PlayerListDlg.h"
-#include "TeamsDialog.h"
+#include "playerlistdlg.h"
+#include "teamsdialog.h"
 #include "LayersList.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -159,7 +159,7 @@ void WbView::OnDraw(CDC* pDC)
 /////////////////////////////////////////////////////////////////////////////
 // WbView diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void WbView::AssertValid() const
 {
 	CView::AssertValid();
@@ -169,7 +169,7 @@ void WbView::Dump(CDumpContext& dc) const
 {
 	CView::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // WbView message handlers

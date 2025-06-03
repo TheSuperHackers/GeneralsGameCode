@@ -68,7 +68,7 @@ protected:
 //-------------------------------------------------------------------------------------------------
 /** Dozer behaviors that use action sub state machines */
 //-------------------------------------------------------------------------------------------------
-enum DozerTask // These enums are saved in the game save file, so DO NOT renumber them. jba.
+enum DozerTask CPP_11(: Int) // These enums are saved in the game save file, so DO NOT renumber them. jba.
 {
 	DOZER_TASK_INVALID = -1,
 	DOZER_TASK_FIRST = 0,
@@ -81,7 +81,7 @@ enum DozerTask // These enums are saved in the game save file, so DO NOT renumbe
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum DozerDockPoint	 // These enums are saved in the game save file, so DO NOT renumber them. jba.
+enum DozerDockPoint CPP_11(: Int)	 // These enums are saved in the game save file, so DO NOT renumber them. jba.
 {
 	DOZER_DOCK_POINT_START	= 0,
 	DOZER_DOCK_POINT_ACTION	= 1,
@@ -91,7 +91,7 @@ enum DozerDockPoint	 // These enums are saved in the game save file, so DO NOT r
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum DozerBuildSubTask  // These enums are saved in the game save file, so DO NOT renumber them. jba.
+enum DozerBuildSubTask CPP_11(: Int)  // These enums are saved in the game save file, so DO NOT renumber them. jba.
 {
 	DOZER_SELECT_BUILD_DOCK_LOCATION		= 0,
 	DOZER_MOVING_TO_BUILD_DOCK_LOCATION	=	1,

@@ -245,7 +245,7 @@ void LANDisplayGameList( GameWindow *gameListbox, LANGameInfo *gameList )
 AsciiString GenerateGameOptionsString( void )
 {
 	if(!TheLAN->GetMyGame() || !TheLAN->GetMyGame()->amIHost())
-		return AsciiString.TheEmptyString;
+		return AsciiString::TheEmptyString;
 
 	return GameInfoToAsciiString(TheLAN->GetMyGame());
 }

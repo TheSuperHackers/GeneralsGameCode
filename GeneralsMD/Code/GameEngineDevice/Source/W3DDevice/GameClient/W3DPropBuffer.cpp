@@ -54,17 +54,17 @@
 #include "Common/PerfTimer.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
-#include "WW3D2/Camera.h"
-#include "WW3D2/RInfo.h"
-#include "WW3D2/Light.h"
-#include "WW3D2/DX8Wrapper.h"
+#include "WW3D2/camera.h"
+#include "WW3D2/rinfo.h"
+#include "WW3D2/light.h"
+#include "WW3D2/dx8wrapper.h"
 #include "WW3D2/dx8renderer.h"
 #include "W3DDevice/GameClient/Module/W3DPropDraw.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
 #include "W3DDevice/GameClient/BaseHeightMap.h"
 #include "GameLogic/PartitionManager.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")

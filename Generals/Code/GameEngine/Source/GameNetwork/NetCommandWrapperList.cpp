@@ -46,7 +46,7 @@ NetCommandWrapperListNode::NetCommandWrapperListNode(NetWrapperCommandMsg *msg)
 	m_chunksPresent = NEW Bool[m_numChunks];	// pool[]ify
 	m_numChunksPresent = 0;
 
-	for (Int i = 0; i < m_numChunks; ++i) {
+	for (UnsignedInt i = 0; i < m_numChunks; ++i) {
 		m_chunksPresent[i] = FALSE;
 	}
 
@@ -128,7 +128,7 @@ NetCommandWrapperList::~NetCommandWrapperList() {
 	NetCommandWrapperListNode *temp;
 	while (m_list != NULL) {
 		temp = m_list->m_next;
-		m_list->deleteInstance();
+		deleteInstance(m_list);
 		m_list = temp;
 	}
 }
@@ -141,7 +141,7 @@ void NetCommandWrapperList::reset() {
 	NetCommandWrapperListNode *temp;
 	while (m_list != NULL) {
 		temp = m_list->m_next;
-		m_list->deleteInstance();
+		deleteInstance(m_list);
 		m_list = temp;
 	}
 }
@@ -192,7 +192,7 @@ NetCommandList * NetCommandWrapperList::getReadyCommands()
 			NetCommandRef *ret = retlist->addMessage(msg->getCommand());
 			ret->setRelay(msg->getRelay());
 
-			msg->deleteInstance();
+			deleteInstance(msg);
 			msg = NULL;
 
 			removeFromList(temp);
@@ -223,11 +223,11 @@ void NetCommandWrapperList::removeFromList(NetCommandWrapperListNode *node) {
 
 	if (prev == NULL) {
 		m_list = temp->m_next;
-		temp->deleteInstance();
+		deleteInstance(temp);
 		temp = NULL;
 	} else {
 		prev->m_next = temp->m_next;
-		temp->deleteInstance();
+		deleteInstance(temp);
 		temp = NULL;
 	}
 }

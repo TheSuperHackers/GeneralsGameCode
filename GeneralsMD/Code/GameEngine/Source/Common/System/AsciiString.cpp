@@ -83,13 +83,17 @@ inline char* skipNonWhitespace(char* p)
 	return p;
 }
 
-void AsciiString::freeBytes(void)
+// -----------------------------------------------------
+AsciiString::AsciiString(const AsciiString& stringSrc) : m_data(stringSrc.m_data)
 {
-	TheDynamicMemoryAllocator->freeBytes(m_data);
+	ScopedCriticalSection scopedCriticalSection(TheAsciiStringCriticalSection);
+	if (m_data)
+		++m_data->m_refCount;
+	validate();
 }
 
 // -----------------------------------------------------
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void AsciiString::validate() const
 {
 	if (!m_data) return;
@@ -127,21 +131,20 @@ void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData
 	{
 		// no buffer manhandling is needed (it's already large enough, and unique to us)
 		if (strToCopy)
-			strcpy(m_data->peek(), strToCopy);
+			// TheSuperHackers @fix Mauller 04/04/2025 Replace strcpy with safer memmove as memory regions can overlap when part of string is copied to itself
+			memmove(m_data->peek(), strToCopy, strlen(strToCopy) + 1);
 		if (strToCat)
 			strcat(m_data->peek(), strToCat);
 		return;
 	}
 
+	DEBUG_ASSERTCRASH(numCharsNeeded <= MAX_LEN, ("AsciiString::ensureUniqueBufferOfSize exceeds max string length %d with requested length %d", MAX_LEN, numCharsNeeded));
 	int minBytes = sizeof(AsciiStringData) + numCharsNeeded*sizeof(char);
-	if (minBytes > MAX_LEN)
-		throw ERROR_OUT_OF_MEMORY;
-
 	int actualBytes = TheDynamicMemoryAllocator->getActualAllocationSize(minBytes);
 	AsciiStringData* newData = (AsciiStringData*)TheDynamicMemoryAllocator->allocateBytesDoNotZero(actualBytes, "STR_AsciiString::ensureUniqueBufferOfSize");
 	newData->m_refCount = 1;
 	newData->m_numCharsAllocated = (actualBytes - sizeof(AsciiStringData))/sizeof(char);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	newData->m_debugptr = newData->peek();	// just makes it easier to read in the debugger
 #endif
 
@@ -165,6 +168,70 @@ void AsciiString::ensureUniqueBufferOfSize(int numCharsNeeded, Bool preserveData
 
 
 // -----------------------------------------------------
+void AsciiString::releaseBuffer()
+{
+	ScopedCriticalSection scopedCriticalSection(TheAsciiStringCriticalSection);
+
+	validate();
+	if (m_data)
+	{
+		if (--m_data->m_refCount == 0)
+		{
+			TheDynamicMemoryAllocator->freeBytes(m_data);
+		}
+		m_data = 0;
+	}
+	validate();
+}
+
+// -----------------------------------------------------
+AsciiString::AsciiString(const char* s) : m_data(0)
+{
+	//DEBUG_ASSERTCRASH(isMemoryManagerOfficiallyInited(), ("Initializing AsciiStrings prior to main (ie, as static vars) can cause memory leak reporting problems. Are you sure you want to do this?\n"));
+	int len = (s)?strlen(s):0;
+	if (len)
+	{
+		ensureUniqueBufferOfSize(len + 1, false, s, NULL);
+	}
+	validate();
+}
+
+// -----------------------------------------------------
+void AsciiString::set(const AsciiString& stringSrc)
+{
+	ScopedCriticalSection scopedCriticalSection(TheAsciiStringCriticalSection);
+
+	validate();
+	if (&stringSrc != this)
+	{
+		releaseBuffer();
+		m_data = stringSrc.m_data;
+		if (m_data)
+			++m_data->m_refCount;
+	}
+	validate();
+}
+
+// -----------------------------------------------------
+void AsciiString::set(const char* s)
+{
+	validate();
+	if (!m_data || s != peek())
+	{
+		int len = s ? strlen(s) : 0;
+		if (len)
+		{
+			ensureUniqueBufferOfSize(len + 1, false, s, NULL);
+		}
+		else
+		{
+			releaseBuffer();
+		}
+	}
+	validate();
+}
+
+// -----------------------------------------------------
 char*  AsciiString::getBufferForRead(Int len)
 {
 	validate();
@@ -183,6 +250,25 @@ void AsciiString::translate(const UnicodeString& stringSrc)
 	Int len = stringSrc.getLength();
 	for (Int i = 0; i < len; i++)
 		concat((char)stringSrc.getCharAt(i));
+	validate();
+}
+
+// -----------------------------------------------------
+void AsciiString::concat(const char* s)
+{
+	validate();
+	int addlen = strlen(s);
+	if (addlen == 0)
+		return;	// my, that was easy
+
+	if (m_data)
+	{
+		ensureUniqueBufferOfSize(getLength() + addlen + 1, true, NULL, s);
+	}
+	else
+	{
+		set(s);
+	}
 	validate();
 }
 
@@ -283,12 +369,7 @@ void AsciiString::format(const char* format, ...)
 // -----------------------------------------------------
 void AsciiString::format_va(const AsciiString& format, va_list args)
 {
-	validate();
-	char buf[MAX_FORMAT_BUF_LEN];
-  if (_vsnprintf(buf, sizeof(buf)/sizeof(char)-1, format.str(), args) < 0)
-			throw ERROR_OUT_OF_MEMORY;
-	set(buf);
-	validate();
+	format_va(format.str(), args);
 }
 
 // -----------------------------------------------------
@@ -296,10 +377,16 @@ void AsciiString::format_va(const char* format, va_list args)
 {
 	validate();
 	char buf[MAX_FORMAT_BUF_LEN];
-  if (_vsnprintf(buf, sizeof(buf)/sizeof(char)-1, format, args) < 0)
-			throw ERROR_OUT_OF_MEMORY;
-	set(buf);
-	validate();
+	const int result = vsnprintf(buf, sizeof(buf)/sizeof(char), format, args);
+	if (result >= 0)
+	{
+		set(buf);
+		validate();
+	}
+	else
+	{
+		DEBUG_CRASH(("AsciiString::format_va failed with code:%d format:\"%s\"", result, format));
+	}
 }
 
 // -----------------------------------------------------

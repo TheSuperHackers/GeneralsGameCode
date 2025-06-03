@@ -46,7 +46,7 @@
 //----------------------------------------------------------------------------
 
 #include "PreRTS.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 
 #include "Common/ArchiveFileSystem.h"
@@ -236,7 +236,7 @@ Bool FileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) co
 	if (fileInfo == NULL) {
 		return FALSE;
 	}
-	memset(fileInfo, 0, sizeof(fileInfo));
+	memset(fileInfo, 0, sizeof(*fileInfo));
 	
 	if (TheLocalFileSystem->getFileInfo(filename, fileInfo)) {
 		return TRUE;
@@ -266,6 +266,9 @@ Bool FileSystem::createDirectory(AsciiString directory)
 //============================================================================
 Bool FileSystem::areMusicFilesOnCD()
 {
+#if 1
+    return TRUE;
+#else
 	if (!TheCDManager) {
 		DEBUG_LOG(("FileSystem::areMusicFilesOnCD() - No CD Manager; returning false\n"));
 		return FALSE;
@@ -294,6 +297,7 @@ Bool FileSystem::areMusicFilesOnCD()
 		}
 	}
 	return FALSE;
+#endif
 }
 //============================================================================
 // FileSystem::loadMusicFilesFromCD

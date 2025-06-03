@@ -34,10 +34,10 @@
 #include <coltest.h>
 #include <rinfo.h>
 #include <camera.h>
-#include "WW3D2/DX8Wrapper.h"
-#include "WW3D2/Shader.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/shader.h"
 #include "Common/GlobalData.h"
-#include "common/MapObject.h"
+#include "Common/MapObject.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/ScriptEngine.h"
 
@@ -328,7 +328,7 @@ void W3DStatusCircle::Render(RenderInfoClass & rinfo)
 		setIndex = true;
 
 		Vector3 vec(0.95f, 0.67f, 0);
-		Matrix3 rot(true);
+		Matrix3x3 rot(true);
 
 		tm.Set_Translation(vec);
 

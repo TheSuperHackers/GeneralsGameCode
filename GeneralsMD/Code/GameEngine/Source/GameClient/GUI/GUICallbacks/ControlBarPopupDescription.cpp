@@ -85,7 +85,7 @@
 #include "GameClient/GameText.h"
 #include "GameClient/GUICallbacks.h"
 #include "GameClient/InGameUI.h"
-#include "GameClient/Controlbar.h"
+#include "GameClient/ControlBar.h"
 #include "GameClient/DisplayStringManager.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/OverchargeBehavior.h"
@@ -93,7 +93,7 @@
 #include "GameLogic/ScriptEngine.h"
 
 #include "GameNetwork/NetworkInterface.h"
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -163,7 +163,7 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 		else
 		{
 //			m_buildToolTipLayout->destroyWindows();
-//			m_buildToolTipLayout->deleteInstance();
+//			deleteInstance(m_buildToolTipLayout);
 //			m_buildToolTipLayout = NULL;
 			m_buildToolTipLayout->hide(TRUE);
 			prevWindow = NULL;
@@ -184,7 +184,7 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 
 	if(!cmdButton)
 		return;
-	if(BitTest(cmdButton->winGetStyle(), GWS_PUSH_BUTTON))
+	if(BitIsSet(cmdButton->winGetStyle(), GWS_PUSH_BUTTON))
 	{
 		const CommandButton *commandButton = (const CommandButton *)GadgetButtonGetData(cmdButton);
 		
@@ -206,7 +206,7 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 		//	if (m_buildToolTipLayout)
 		//	{
 		//		m_buildToolTipLayout->destroyWindows();
-		//		m_buildToolTipLayout->deleteInstance();
+		//		deleteInstance(m_buildToolTipLayout);
 		//
 		//	}
 
@@ -219,7 +219,7 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 	else
 	{
 		// we're a generic window
-		if(!BitTest(cmdButton->winGetStyle(), GWS_USER_WINDOW) && !BitTest(cmdButton->winGetStyle(), GWS_STATIC_TEXT))
+		if(!BitIsSet(cmdButton->winGetStyle(), GWS_USER_WINDOW) && !BitIsSet(cmdButton->winGetStyle(), GWS_STATIC_TEXT))
 			return;
 		populateBuildTooltipLayout(NULL, cmdButton);
 	}
@@ -240,7 +240,7 @@ void ControlBar::repopulateBuildTooltipLayout( void )
 {
 	if(!prevWindow || !m_buildToolTipLayout)
 		return;
-	if(!BitTest(prevWindow->winGetStyle(), GWS_PUSH_BUTTON))
+	if(!BitIsSet(prevWindow->winGetStyle(), GWS_PUSH_BUTTON))
 		return;
 	const CommandButton *commandButton = (const CommandButton *)GadgetButtonGetData(prevWindow);
 	populateBuildTooltipLayout(commandButton);
@@ -253,7 +253,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 
 	Player *player = ThePlayerList->getLocalPlayer();
 	UnicodeString name, cost, descrip;
-	UnicodeString requires = UnicodeString::TheEmptyString, requiresList;
+	UnicodeString requiresFormat = UnicodeString::TheEmptyString, requiresList;
 	Bool firstRequirement = true;
 	const ProductionPrerequisite *prereq;
 	Bool fireScienceButton = false;
@@ -270,7 +270,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 		{
 			if( commandButton->getScienceVec().size() > 1 ) 						
 			{
-				for(Int j = 0; j < commandButton->getScienceVec().size(); ++j)
+				for(size_t j = 0; j < commandButton->getScienceVec().size(); ++j)
 				{
 					st = commandButton->getScienceVec()[ j ];
 					
@@ -425,17 +425,17 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 					if (firstRequirement)
 						firstRequirement = false;
 					else
-						requires.concat(L", ");
+						requiresFormat.concat(L", ");
 				}
-				requires.concat(requiresList);
+				requiresFormat.concat(requiresList);
 			}
-			if( !requires.isEmpty() )
+			if( !requiresFormat.isEmpty() )
 			{
 				UnicodeString requireFormat = TheGameText->fetch("CONTROLBAR:Requirements");
-				requires.format(requireFormat.str(), requires.str());
+				requiresFormat.format(requireFormat.str(), requiresFormat.str());
 				if(!descrip.isEmpty())
 					descrip.concat(L"\n");
-				descrip.concat(requires);
+				descrip.concat(requiresFormat);
 
 			}
 		}
@@ -493,7 +493,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 			{
 
 				//Do we have a prerequisite science?
-				for( Int i = 0; i < commandButton->getScienceVec().size(); i++ )
+				for( size_t i = 0; i < commandButton->getScienceVec().size(); i++ )
 				{
 					ScienceType st = commandButton->getScienceVec()[ i ];
 					if( !player->hasScience( st ) )
@@ -514,8 +514,8 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 				{
 					if( !descrip.isEmpty() )
 						descrip.concat(L"\n");
-					requires.format( TheGameText->fetch( "CONTROLBAR:Requirements" ).str(), TheGameText->fetch( "CONTROLBAR:GeneralsPromotion" ).str() );
-					descrip.concat( requires );
+					requiresFormat.format( TheGameText->fetch( "CONTROLBAR:Requirements" ).str(), TheGameText->fetch( "CONTROLBAR:GeneralsPromotion" ).str() );
+					descrip.concat( requiresFormat );
 				}
 			}
 		}	
@@ -543,17 +543,17 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 						if (firstRequirement)
 							firstRequirement = false;
 						else
-							requires.concat(L", ");
+							requiresFormat.concat(L", ");
 					}
-					requires.concat(requiresList);
+					requiresFormat.concat(requiresList);
 				}
-				if( !requires.isEmpty() )
+				if( !requiresFormat.isEmpty() )
 				{
 					UnicodeString requireFormat = TheGameText->fetch("CONTROLBAR:Requirements");
-					requires.format(requireFormat.str(), requires.str());
+					requiresFormat.format(requireFormat.str(), requiresFormat.str());
 					if(!descrip.isEmpty())
 						descrip.concat(L"\n");
-					descrip.concat(requires);
+					descrip.concat(requiresFormat);
 				}
 			}
 
@@ -707,7 +707,7 @@ void ControlBar::deleteBuildTooltipLayout( void )
 //		return;
 //	
 //	m_buildToolTipLayout->destroyWindows();
-//	m_buildToolTipLayout->deleteInstance();
+//	deleteInstance(m_buildToolTipLayout);
 //	m_buildToolTipLayout = NULL;
 	if(theAnimateWindowManager)
 		delete theAnimateWindowManager;

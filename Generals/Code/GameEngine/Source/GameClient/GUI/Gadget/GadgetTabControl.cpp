@@ -48,7 +48,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Language.h"
-#include "Gameclient/GameWindowManager.h"
+#include "GameClient/GameWindowManager.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/GadgetTabControl.h"
 
@@ -302,7 +302,7 @@ void GadgetTabControlCreateSubPanes( GameWindow *tabControl )///< Create User Wi
 
 	for( Int paneIndex = 0; paneIndex < NUM_TAB_PANES; paneIndex++ )
 	{
-		if( (tabData->subPanes[paneIndex] == NULL) )//This one is blank
+		if( tabData->subPanes[paneIndex] == NULL )//This one is blank
 		{
 			tabData->subPanes[paneIndex] = TheWindowManager->winCreate( tabControl,
 																																	WIN_STATUS_NONE, x, y,
@@ -315,7 +315,7 @@ void GadgetTabControlCreateSubPanes( GameWindow *tabControl )///< Create User Wi
 			sprintf( buffer, "Pane %d", paneIndex );
 			instData->m_decoratedNameString = buffer;
 			//set enabled status to that of Parent
-			tabData->subPanes[paneIndex]->winEnable( BitTest(tabControl->winGetStatus(), WIN_STATUS_ENABLED) );
+			tabData->subPanes[paneIndex]->winEnable( BitIsSet(tabControl->winGetStatus(), WIN_STATUS_ENABLED) );
 		}
 		else//this one exists, tabCount will control keeping extra panes perma-hidden
 		{

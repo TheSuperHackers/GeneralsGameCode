@@ -43,7 +43,7 @@
 #include "dx8fvf.h"
 #include "dx8caps.h"
 #include "thread.h"
-#include <D3dx8core.h>
+#include <d3dx8core.h>
 
 #define DEFAULT_VB_SIZE 5000
 
@@ -149,7 +149,7 @@ void VertexBufferClass::Release_Engine_Ref() const
 //
 // ----------------------------------------------------------------------------
 
-VertexBufferClass::WriteLockClass::WriteLockClass(VertexBufferClass* VertexBuffer)
+VertexBufferClass::WriteLockClass::WriteLockClass(VertexBufferClass* VertexBuffer, int flags)
 	:
 	VertexBufferLockClass(VertexBuffer)
 {
@@ -174,7 +174,7 @@ VertexBufferClass::WriteLockClass::WriteLockClass(VertexBufferClass* VertexBuffe
 			0,
 			0,
 			(unsigned char**)&Vertices,
-			0));	// Default (no) flags
+			flags));	//flags
 		break;
 	case BUFFER_TYPE_SORTING:
 		Vertices=static_cast<SortingVertexBufferClass*>(VertexBuffer)->VertexBuffer;
@@ -434,7 +434,7 @@ void DX8VertexBufferClass::Create_Vertex_Buffer(UsageType usage)
 		((usage&USAGE_SOFTWAREPROCESSING) ? D3DUSAGE_SOFTWAREPROCESSING : 0);
 
 	// New Code
-	if (!DX8Caps::Use_TnL()) {
+	if (!DX8Wrapper::Get_Current_Caps()->Support_TnL()) {
 		usage_flags|=D3DUSAGE_SOFTWAREPROCESSING;
 	}
 
@@ -772,7 +772,7 @@ void DynamicVBAccessClass::Allocate_DX8_Dynamic_Buffer()
 	// Create a new vb if one doesn't exist currently
 	if (!_DynamicDX8VertexBuffer) {
 		unsigned usage=DX8VertexBufferClass::USAGE_DYNAMIC;
-		if (DX8Caps::Support_NPatches()) {
+		if (DX8Wrapper::Get_Current_Caps()->Support_NPatches()) {
 			usage|=DX8VertexBufferClass::USAGE_NPATCHES;
 		}
 

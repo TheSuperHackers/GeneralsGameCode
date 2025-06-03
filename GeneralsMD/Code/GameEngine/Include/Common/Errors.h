@@ -54,7 +54,7 @@
 	to add to this list as necessary; however, there should generally be very
 	few codes needed.
 */
-enum ErrorCode
+enum ErrorCode CPP_11(: UnsignedInt)
 {
 	ERROR_BASE									= 0xdead0001,								// a nice, distinctive value
 

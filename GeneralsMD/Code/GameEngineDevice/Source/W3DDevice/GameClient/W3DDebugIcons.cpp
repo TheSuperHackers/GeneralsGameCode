@@ -51,9 +51,9 @@
 #include "Common/GlobalData.h"
 #include "GameLogic/GameLogic.h"
 #include "Common/MapObject.h"
-#include "WW3D2/DX8Wrapper.h"
+#include "WW3D2/dx8wrapper.h"
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 
 // Texturing, no zbuffer, disabled zbuffer write, primary gradient, alpha blending
 #define SC_OPAQUE ( SHADE_CNST(ShaderClass::PASS_ALWAYS, ShaderClass::DEPTH_WRITE_DISABLE, ShaderClass::COLOR_WRITE_ENABLE, ShaderClass::SRCBLEND_ONE, \
@@ -247,7 +247,6 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 		shadeR = 0;
 		shadeG = 0;
 		shadeB = 255;
-		try {
 		for(;  numVertex<numRect*4 && k<m_numDebugIcons; k++) {
 			Int theAlpha = 64;
 			const Int FADE_FRAMES = 100;
@@ -300,11 +299,6 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 			curIndex += 6;
 			numVertex += 4;
 		}
-		IndexBufferExceptionFunc();
-		} catch(...) {
-			IndexBufferExceptionFunc();
-		}
-
 		}	
 		if (numVertex == 0) break;
 		DX8Wrapper::Set_Shader(ShaderClass(SC_ALPHA));
@@ -318,4 +312,4 @@ void W3DDebugIcons::Render(RenderInfoClass & rinfo)
 	}
 }
 
-#endif // _DEBUG or _INTERNAL
+#endif // RTS_DEBUG or RTS_INTERNAL

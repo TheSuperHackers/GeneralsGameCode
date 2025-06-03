@@ -39,7 +39,7 @@
 #include "Common/GameType.h"
 #include "Common/MultiplayerSettings.h"
 #include "Common/NameKeyGenerator.h"
-#include "Common/OVERRIDE.h"
+#include "Common/Override.h"
 #include "Common/PlayerTemplate.h"
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
@@ -83,7 +83,7 @@
 
 #include "GameNetwork/GameInfo.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -139,7 +139,7 @@ void ControlBar::markUIDirty( void )
 { 
   m_UIDirty = TRUE;
 
-#if defined( _INTERNAL ) || defined( _DEBUG )
+#if defined( RTS_INTERNAL ) || defined( RTS_DEBUG )
 	UnsignedInt now = TheGameLogic->getFrame();
 	if( now == m_lastFrameMarkedDirty )
 	{
@@ -206,7 +206,7 @@ void ControlBar::populatePurchaseScience( Player* player )
 		commandButton = commandSet1->getCommandButton(i);
 
 		// if button is not present, just hide the window
-		if( commandButton == NULL || BitTest( commandButton->getOptions(), SCRIPT_ONLY ) )
+		if( commandButton == NULL || BitIsSet( commandButton->getOptions(), SCRIPT_ONLY ) )
 		{
 			// hide window on interface
 			m_sciencePurchaseWindowsRank1[ i ]->winHide( TRUE );
@@ -266,7 +266,7 @@ void ControlBar::populatePurchaseScience( Player* player )
 		commandButton = commandSet3->getCommandButton(i);
 
 		// if button is not present, just hide the window
-		if( commandButton == NULL || BitTest( commandButton->getOptions(), SCRIPT_ONLY ) )
+		if( commandButton == NULL || BitIsSet( commandButton->getOptions(), SCRIPT_ONLY ) )
 		{
 			// hide window on interface
 			m_sciencePurchaseWindowsRank3[ i ]->winHide( TRUE );
@@ -329,7 +329,7 @@ void ControlBar::populatePurchaseScience( Player* player )
 		commandButton = commandSet8->getCommandButton(i);
 
 		// if button is not present, just hide the window
-		if( commandButton == NULL || BitTest( commandButton->getOptions(), SCRIPT_ONLY ) )
+		if( commandButton == NULL || BitIsSet( commandButton->getOptions(), SCRIPT_ONLY ) )
 		{
 			// hide window on interface
 			m_sciencePurchaseWindowsRank8[ i ]->winHide( TRUE );
@@ -638,7 +638,7 @@ Bool CommandButton::isValidToUseOn(const Object *sourceObj, const Object *target
 		return false;
 	}
 
-	if( BitTest( m_options, COMMAND_OPTION_NEED_OBJECT_TARGET ) && !targetObj ) 
+	if( BitIsSet( m_options, COMMAND_OPTION_NEED_OBJECT_TARGET ) && !targetObj ) 
 	{
 		return false;
 	}
@@ -649,7 +649,7 @@ Bool CommandButton::isValidToUseOn(const Object *sourceObj, const Object *target
 		pos.set( targetLocation );
 	}
 
-	if( BitTest( m_options, NEED_TARGET_POS ) && !targetLocation ) 
+	if( BitIsSet( m_options, NEED_TARGET_POS ) && !targetLocation ) 
 	{
 		if( targetObj )
 		{
@@ -661,12 +661,12 @@ Bool CommandButton::isValidToUseOn(const Object *sourceObj, const Object *target
 		}
 	}
 	
-	if( BitTest( m_options, COMMAND_OPTION_NEED_OBJECT_TARGET ) ) 
+	if( BitIsSet( m_options, COMMAND_OPTION_NEED_OBJECT_TARGET ) ) 
 	{
 		return TheActionManager->canDoSpecialPowerAtObject( sourceObj, targetObj, commandSource, m_specialPower, m_options, false );
 	}
 
-	if( BitTest( m_options, NEED_TARGET_POS ) ) 
+	if( BitIsSet( m_options, NEED_TARGET_POS ) ) 
 	{
 		return TheActionManager->canDoSpecialPowerAtLocation( sourceObj, &pos, commandSource, m_specialPower, NULL, m_options, false );
 	}
@@ -729,7 +729,7 @@ const FieldParse CommandSet::m_commandSetFieldParseTable[] =
 //-------------------------------------------------------------------------------------------------
 Bool CommandButton::isContextCommand() const
 {
-	return BitTest( m_options, CONTEXTMODE_COMMAND );
+	return BitIsSet( m_options, CONTEXTMODE_COMMAND );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -961,7 +961,7 @@ ControlBar::ControlBar( void )
 	m_remainingRadarAttackGlowFrames = 0;
 	m_radarAttackGlowWindow = NULL;
 
-#if defined( _INTERNAL ) || defined( _DEBUG )
+#if defined( RTS_INTERNAL ) || defined( RTS_DEBUG )
 	m_lastFrameMarkedDirty = 0;
 	m_consecutiveDirtyFrames = 0;
 #endif
@@ -976,9 +976,9 @@ ControlBar::~ControlBar( void )
 	if(m_scienceLayout)
 	{
 		m_scienceLayout->destroyWindows();
-		m_scienceLayout->deleteInstance();
+		deleteInstance(m_scienceLayout);
+		m_scienceLayout = NULL;
 	}
-	m_scienceLayout = NULL;
 	m_genArrow = NULL;
 	if(m_videoManager)
 		delete m_videoManager;
@@ -1008,7 +1008,7 @@ ControlBar::~ControlBar( void )
 	while( m_commandSets )
 	{
 		set = m_commandSets->friend_getNext();
-		m_commandSets->deleteInstance();
+		deleteInstance(m_commandSets);
 		m_commandSets = set;
 
 	}  // end while
@@ -1018,21 +1018,21 @@ ControlBar::~ControlBar( void )
 	while( m_commandButtons )
 	{
 		button = m_commandButtons->friend_getNext();
-		m_commandButtons->deleteInstance();
+		deleteInstance(m_commandButtons);
 		m_commandButtons = button;
 
 	}  // end while
 	if(m_buildToolTipLayout)
 	{
 		m_buildToolTipLayout->destroyWindows();
-		m_buildToolTipLayout->deleteInstance();
+		deleteInstance(m_buildToolTipLayout);
 		m_buildToolTipLayout = NULL;
 	}
 
 	if(m_specialPowerLayout)
 	{
 		m_specialPowerLayout->destroyWindows();
-		m_specialPowerLayout->deleteInstance();
+		deleteInstance(m_specialPowerLayout);
 		m_specialPowerLayout = NULL;
 	}
 
@@ -1382,6 +1382,8 @@ void ControlBar::reset( void )
 //-------------------------------------------------------------------------------------------------
 void ControlBar::update( void )
 {
+	if (TheGlobalData->m_headless)
+		return;
 	getStarImage();
 	updateRadarAttackGlow();
 	if(m_controlBarSchemeManager)
@@ -1450,9 +1452,12 @@ void ControlBar::update( void )
 
 		}  
 		else // get the first and only drawble in the selection list
-			drawToEvaluateFor = TheInGameUI->getAllSelectedDrawables()->front();
-		Object *obj = drawToEvaluateFor ? drawToEvaluateFor->getObject() : NULL;
-		setPortraitByObject( obj );
+			// TheSuperHackers @fix Mauller 07/04/2025 The first access to this can return an empty list
+			if (!TheInGameUI->getAllSelectedDrawables()->empty()) {
+				drawToEvaluateFor = TheInGameUI->getAllSelectedDrawables()->front();
+				Object *obj = drawToEvaluateFor ? drawToEvaluateFor->getObject() : NULL;
+				setPortraitByObject( obj );
+			}
 		
 		return;
 	}
@@ -2449,7 +2454,7 @@ void ControlBar::setControlCommand( GameWindow *button, const CommandButton *com
 	// set the button gadget control to be a normal button or a check like button if
 	// the command says it needs one
 	//
-	if( BitTest( commandButton->getOptions(), CHECK_LIKE ))
+	if( BitIsSet( commandButton->getOptions(), CHECK_LIKE ))
 		GadgetButtonEnableCheckLike( button, TRUE, FALSE );
 	else
 		GadgetButtonEnableCheckLike( button, FALSE, FALSE );
@@ -3196,7 +3201,7 @@ void ControlBar::triggerRadarAttackGlow( void )
 		return;
 	m_radarAttackGlowOn = TRUE;
 	m_remainingRadarAttackGlowFrames = RADAR_ATTACK_GLOW_FRAMES;
-	if(BitTest(m_radarAttackGlowWindow->winGetStatus(),WIN_STATUS_ENABLED) == TRUE)
+	if(BitIsSet(m_radarAttackGlowWindow->winGetStatus(),WIN_STATUS_ENABLED) == TRUE)
 		m_radarAttackGlowWindow->winEnable(FALSE);
 }
 
@@ -3214,15 +3219,15 @@ void ControlBar::updateRadarAttackGlow ( void )
 	
 	if(m_remainingRadarAttackGlowFrames % RADAR_ATTACK_GLOW_NUM_TIMES == 0)
 	{
-		m_radarAttackGlowWindow->winEnable(!BitTest(m_radarAttackGlowWindow->winGetStatus(),WIN_STATUS_ENABLED));
+		m_radarAttackGlowWindow->winEnable(!BitIsSet(m_radarAttackGlowWindow->winGetStatus(),WIN_STATUS_ENABLED));
 	}
 
 	
 }
 void ControlBar::initSpecialPowershortcutBar( Player *player)
 {
-
-	for( Int i = 0; i < MAX_SPECIAL_POWER_SHORTCUTS; ++i )
+	Int i = 0;
+	for( ; i < MAX_SPECIAL_POWER_SHORTCUTS; ++i )
 	{
 		m_specialPowerShortcutButtonParents[i] = NULL;
 		m_specialPowerShortcutButtons[i] = NULL;
@@ -3231,7 +3236,7 @@ void ControlBar::initSpecialPowershortcutBar( Player *player)
 	if(m_specialPowerLayout)
 	{
 		m_specialPowerLayout->destroyWindows();
-		m_specialPowerLayout->deleteInstance();
+		deleteInstance(m_specialPowerLayout);
 		m_specialPowerLayout = NULL;
 	}
 	m_specialPowerShortcutParent = NULL;
@@ -3320,7 +3325,7 @@ void ControlBar::populateSpecialPowerShortcut( Player *player)
 		else
 		{
 
-			if( BitTest( commandButton->getOptions(), NEED_UPGRADE ) )
+			if( BitIsSet( commandButton->getOptions(), NEED_UPGRADE ) )
 			{
 				const UpgradeTemplate *upgrade = commandButton->getUpgradeTemplate();
 				if( upgrade && !ThePlayerList->getLocalPlayer()->hasUpgradeComplete( upgrade->getUpgradeMask() ) )
@@ -3335,7 +3340,7 @@ void ControlBar::populateSpecialPowerShortcut( Player *player)
 			// commands that require sciences we don't have are hidden so they never show up
 			// cause we can never pick "another" general technology throughout the game
 			//
-			if( BitTest( commandButton->getOptions(), NEED_SPECIAL_POWER_SCIENCE ) )
+			if( BitIsSet( commandButton->getOptions(), NEED_SPECIAL_POWER_SCIENCE ) )
 			{
 				const SpecialPowerTemplate *power = commandButton->getSpecialPowerTemplate();
 
@@ -3368,7 +3373,7 @@ void ControlBar::populateSpecialPowerShortcut( Player *player)
 						//button specifying a vector of sciences in the command button.
 						Int bestIndex = -1;
 						ScienceType science;
-						for( Int scienceIndex = 0; scienceIndex < commandButton->getScienceVec().size(); ++scienceIndex )
+						for( size_t scienceIndex = 0; scienceIndex < commandButton->getScienceVec().size(); ++scienceIndex )
 						{
 							science = commandButton->getScienceVec()[ scienceIndex ];
 							

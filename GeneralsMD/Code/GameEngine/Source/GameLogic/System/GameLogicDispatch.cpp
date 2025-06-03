@@ -74,7 +74,7 @@
 #include "GameClient/GameText.h"
 #include "GameClient/GameWindowTransitions.h"
 #include "GameClient/GameWindowManager.h"
-#include "GameClient/GuiCallbacks.h"
+#include "GameClient/GUICallbacks.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/KeyDefs.h"
 #include "GameClient/Mouse.h"
@@ -86,7 +86,7 @@
 #include "GameNetwork/NetworkInterface.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -265,7 +265,7 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 	TheScriptActions->closeWindows(FALSE); // Close victory or defeat windows.
 
 	Bool shellGame = FALSE;
-	if ((!isInShellGame() || !isInGame()) && showScoreScreen)
+	if ((!isInShellGame() || !isInGame()) && showScoreScreen && !TheGlobalData->m_headless)
 	{
 		shellGame = TRUE;
 		TheTransitionHandler->setGroup("FadeWholeScreen");
@@ -296,7 +296,7 @@ void GameLogic::clearGameData( Bool showScoreScreen )
 	if(m_background)
 	{
 		m_background->destroyWindows();
-		m_background->deleteInstance();
+		deleteInstance(m_background);
 		m_background = NULL;
 	}
 
@@ -351,7 +351,7 @@ void GameLogic::prepareNewGame( Int gameMode, GameDifficulty diff, Int rankPoint
 //-------------------------------------------------------------------------------------------------
 void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	DEBUG_ASSERTCRASH(msg != NULL && msg != (GameMessage*)0xdeadbeef, ("bad msg"));
 #endif
 
@@ -452,7 +452,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_CLEAR_GAME_DATA:
 		{
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 			if (TheDisplay && TheGlobalData->m_dumpAssetUsage)
 				TheDisplay->dumpAssetUsage(TheGlobalData->m_mapName.str());
 #endif
@@ -914,7 +914,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			break;
 		}
 		
-#if defined(_DEBUG) || defined(_INTERNAL) || defined (_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined (_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DEBUG_KILL_SELECTION:
 		{
@@ -1788,7 +1788,8 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			if (msg->getArgument(0)->boolean)
 			{
 				// transfer control to any living ally
-				for (Int i=0; i<ThePlayerList->getPlayerCount(); ++i)
+				Int i=0;
+				for (; i<ThePlayerList->getPlayerCount(); ++i)
 				{
 					if (i != msg->getPlayerIndex())
 					{
@@ -1944,13 +1945,13 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 				if (thisPlayer->isLocalPlayer())
 				{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 					// don't even put this in release, cause someone might hack it.
 					if (!TheDebugIgnoreSyncErrors)
 					{
 #endif
 						m_shouldValidateCRCs = TRUE;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 					}
 #endif
 				}

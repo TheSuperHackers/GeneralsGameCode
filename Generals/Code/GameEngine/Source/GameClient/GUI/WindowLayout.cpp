@@ -33,7 +33,7 @@
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Shell.h"
 #include "GameClient/GameWindowManager.h"
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 
 // for occasional debugging...
 //#pragma optimize("", off)
@@ -173,10 +173,6 @@ void WindowLayout::removeWindow( GameWindow *window )
 //-------------------------------------------------------------------------------------------------
 void WindowLayout::destroyWindows( void )
 {
-	if (this == NULL)
-	{
-		return;
-	}
 	GameWindow *window;
 
 	while( (window = getFirstWindow()) != 0 )

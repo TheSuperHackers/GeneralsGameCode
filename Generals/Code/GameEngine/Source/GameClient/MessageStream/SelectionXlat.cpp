@@ -56,7 +56,7 @@
 #include "GameClient/SelectionXlat.h"
 #include "GameClient/TerrainVisual.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -65,7 +65,7 @@
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 static Bool TheHurtSelectionMode = false;
 static Bool TheHandOfGodSelectionMode = false;
 static Bool TheDebugSelectionMode = false;
@@ -163,7 +163,7 @@ Bool CanSelectDrawable( const Drawable *draw, Bool dragSelecting )
 	while (window)
 	{
 		// check to see if it or any of its parents are opaque.  If so, we can't select anything.
-		if (!BitTest( window->winGetStatus(), WIN_STATUS_SEE_THRU ))
+		if (!BitIsSet( window->winGetStatus(), WIN_STATUS_SEE_THRU ))
 		{
 			return FALSE;
 		}
@@ -188,7 +188,7 @@ Bool CanSelectDrawable( const Drawable *draw, Bool dragSelecting )
 	}
 
 	// You cannot select something that has a logic override of unselectability or masked
-	if( BitTest( obj->getStatusBits(), OBJECT_STATUS_UNSELECTABLE | OBJECT_STATUS_MASKED ) )
+	if( obj->getStatusBits().testForAny( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_UNSELECTABLE, OBJECT_STATUS_MASKED ) ) )
 	{
 		return FALSE;
 	}
@@ -478,7 +478,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			// Single point. If there's a unit in there, double click will select all of them.
 			if (region.height() == 0 && region.width() == 0) 
 			{
-				Bool selectAcrossMap = (BitTest(modifiers, KEY_STATE_ALT) ? TRUE : FALSE);
+				Bool selectAcrossMap = (BitIsSet(modifiers, KEY_STATE_ALT) ? TRUE : FALSE);
 
 				// only allow things that are selectable. Also, we aren't allowed to 
 				Drawable *picked = TheTacticalView->pickDrawable( &region.lo, FALSE, PICK_TYPE_SELECTABLE);
@@ -511,9 +511,9 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 				// Yay. Either select across the screen or the world depending on selectAcrossMap
 				if (selectAcrossMap)
-					TheInGameUI->selectAcrossMap();
+					TheInGameUI->selectMatchingAcrossMap();
 				else 
-					TheInGameUI->selectAcrossScreen();
+					TheInGameUI->selectMatchingAcrossScreen();
 
 				// emit "picked" message
 				GameMessage *pickMsg = TheMessageStream->appendMessage( GameMessage::MSG_AREA_SELECTION );
@@ -783,7 +783,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 				if (newDrawablesSelected == 1 && draw) 
 				{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 					if (TheHandOfGodSelectionMode && draw)
 					{
 						Object* obj = draw->getObject();
@@ -869,6 +869,30 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				IRegion2D selectionRegion;
 				buildRegion( &m_selectFeedbackAnchor, &msg->getArgument(0)->pixel, &selectionRegion );
 				dragMsg->appendPixelRegionArgument( selectionRegion );
+			}
+			else 
+			{
+				// left click behavior (not right drag)
+
+				//Added support to cancel the GUI command without deselecting the unit(s) involved
+				//when you right click.
+				if( !TheInGameUI->getGUICommand() && !TheKeyboard->isShift() && !TheKeyboard->isCtrl() && !TheKeyboard->isAlt() )
+				{
+					//No GUI command mode, so deselect everyone if we're in alternate mouse mode.
+					if( TheGlobalData->m_useAlternateMouse && TheInGameUI->getPendingPlaceSourceObjectID() == INVALID_ID )
+					{
+						if( !TheInGameUI->getPreventLeftClickDeselectionInAlternateMouseModeForOneClick() )
+						{
+							deselectAll();
+						}
+						else
+						{
+							//Prevent deselection of unit if it just issued some type of UI order such as attack move, guard, 
+							//initiating construction of a new structure.
+							TheInGameUI->setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( FALSE );
+						}
+					}
+				}
 			}
 
 			break;
@@ -1175,7 +1199,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		}
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_HAND_OF_GOD_MODE:
 		{
@@ -1186,7 +1210,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		}
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_HURT_ME_MODE:
 		{
@@ -1197,7 +1221,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		}
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_DEBUG_SELECTION:
 		{

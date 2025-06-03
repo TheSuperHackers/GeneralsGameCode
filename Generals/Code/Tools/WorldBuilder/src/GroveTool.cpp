@@ -29,14 +29,14 @@
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
 #include "WorldBuilderView.h"
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 #include "GameLogic/LogicRandomValue.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "Common/Debug.h"
 #include "DrawObject.h"
 #include "GroveOptions.h"
 #include "GameLogic/PolygonTrigger.h"
-#include "MapObjectProps.h"
+#include "mapobjectprops.h"
 
 #define DRAG_THRESHOLD	5
 #define MAX_TREE_RISE_OVER_RUN		(1.5f)
@@ -245,7 +245,7 @@ GroveTool::GroveTool(void) :
 GroveTool::~GroveTool(void) 
 {
 	if (m_headMapObj) {
-		m_headMapObj->deleteInstance();
+		deleteInstance(m_headMapObj);
 	}
 }
 

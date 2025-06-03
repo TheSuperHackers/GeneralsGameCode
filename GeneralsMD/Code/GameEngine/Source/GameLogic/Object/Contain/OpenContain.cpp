@@ -57,7 +57,7 @@
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Weapon.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -306,7 +306,7 @@ void OpenContain::addToContain( Object *rider )
 		wasSelected = TRUE;
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if( !isValidContainerFor( rider, false ) )
 	{
 		Object *reportObject = rider;
@@ -631,7 +631,7 @@ void OpenContain::removeFromContainViaIterator( ContainedItemsList::iterator it,
 {
 
 /*
-	#ifdef _DEBUG
+	#ifdef RTS_DEBUG
 		TheInGameUI->message( UnicodeString( L"'%S(%d)' no longer contains '%S(%d)'" ), 
 													getObject()->getTemplate()->getName().str(),
 													getObject()->getID(),
@@ -1448,7 +1448,7 @@ void OpenContain::processDamageToContained(Real percentDamage)
 		ContainedItemsList::const_iterator it;
 		it = items->begin();
 
-		while( *it )
+		while( it != items->end() )
 		{
 			Object *object = *it;
 

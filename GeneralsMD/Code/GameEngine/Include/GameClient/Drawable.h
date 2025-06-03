@@ -37,7 +37,7 @@
 #include "Common/Thing.h"
 #include "Common/Geometry.h"
 #include "GameClient/Color.h"
-#include "WWMath/Matrix3D.h"
+#include "WWMath/matrix3d.h"
 #include "GameClient/DrawableInfo.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ class ModuleInfo;
 class Anim2DTemplate;
 class Image;
 class DynamicAudioEventInfo;
-enum BodyDamageType;
+enum BodyDamageType CPP_11(: Int);
 
 // this is a very worthwhile performance win. left conditionally defined for now, just 
 // in case, but probably should be made permanent soon. (srj)
@@ -77,7 +77,7 @@ enum BodyDamageType;
 //      each time I add a new icon, and made the arrays dynamic...
 // CD: No so good, core engine components should not be made dynamic in this way
 
-enum DrawableIconType
+enum DrawableIconType CPP_11(: Int)
 {
 /** NOTE: This enum MUST appear in the same order as TheDrawableIconNames array to be
 	* indexed correctly using that array */
@@ -213,7 +213,7 @@ private:
 EMPTY_DTOR(TintEnvelope)
 
 //-----------------------------------------------------------------------------
-enum StealthLookType
+enum StealthLookType CPP_11(: Int)
 {
 	STEALTHLOOK_NONE,								///< unit is not stealthed at all
 	STEALTHLOOK_VISIBLE_FRIENDLY,		///< unit is stealthed-but-visible due to friendly status
@@ -228,7 +228,7 @@ enum StealthLookType
 // ------------------------------------------------------------------------------------------------
 /** Drawable status bits */
 // ------------------------------------------------------------------------------------------------
-enum DrawableStatus
+enum DrawableStatus CPP_11(: Int)
 {
 	DRAWABLE_STATUS_NONE									= 0x00000000,		///< no status
 	DRAWABLE_STATUS_DRAWS_IN_MIRROR				=	0x00000001,		///< drawable can reflect
@@ -238,7 +238,7 @@ enum DrawableStatus
 	DRAWABLE_STATUS_NO_SAVE								= 0x00000010,		///< do *not* save this drawable (UI fluff only). ignored (error, actually) if attached to an object
 };
 
-enum TintStatus
+enum TintStatus CPP_11(: Int)
 {
 	TINT_STATUS_DISABLED		= 0x00000001,///< drawable tint color is deathly dark grey
 	TINT_STATUS_IRRADIATED	= 0x00000002,///< drawable tint color is sickly green
@@ -254,7 +254,7 @@ enum TintStatus
 // Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
 // existing values!
 //
-enum TerrainDecalType
+enum TerrainDecalType CPP_11(: Int)
 {
 #ifdef ALLOW_DEMORALIZE
 	TERRAIN_DECAL_DEMORALIZED = 0,
@@ -305,7 +305,7 @@ public:
 	
 	void setTintStatus( TintStatus statusBits ) { BitSet( m_tintStatus, statusBits ); };
 	void clearTintStatus( TintStatus statusBits ) { BitClear( m_tintStatus, statusBits ); };
-	Bool testTintStatus( TintStatus statusBits ) const { return BitTest( m_tintStatus, statusBits ); };
+	Bool testTintStatus( TintStatus statusBits ) const { return BitIsSet( m_tintStatus, statusBits ); };
 	TintEnvelope *getColorTintEnvelope( void ) { return m_colorTintEnvelope; }
 	void setColorTintEnvelope( TintEnvelope &source ) { if (m_colorTintEnvelope) *m_colorTintEnvelope = source; }
 
@@ -349,7 +349,7 @@ public:
 
 	void reactToBodyDamageStateChange(BodyDamageType newState);
 	
-	const Real getScale (void) const ;
+	Real getScale (void) const ;
 
 	// access to modules
 	//---------------------------------------------------------------------------
@@ -371,7 +371,7 @@ public:
 	UnsignedInt getShroudClearFrame( void ) { return m_shroudClearFrame; }
  
 	void setShadowsEnabled(Bool enable);
-	Bool getShadowsEnabled() const { return BitTest(m_status, DRAWABLE_STATUS_SHADOWS); }
+	Bool getShadowsEnabled() const { return BitIsSet(m_status, DRAWABLE_STATUS_SHADOWS); }
 
 	void releaseShadows(void);	///< frees all shadow resources used by this module - used by Options screen.
 	void allocateShadows(void); ///< create shadow resources if not already present. Used by Options screen.
@@ -382,7 +382,7 @@ public:
   // Put on ice until later... M Lorenzen
   //	inline UnsignedByte getFullyObscuredByShroudWithCheatSpy(void) {return (UnsignedByte)m_drawableFullyObscuredByShroud | 128;}//8 looks like a zero in most fonts
 
-	Bool getDrawsInMirror() const { return BitTest(m_status, DRAWABLE_STATUS_DRAWS_IN_MIRROR) || isKindOf(KINDOF_CAN_CAST_REFLECTIONS); }
+	Bool getDrawsInMirror() const { return BitIsSet(m_status, DRAWABLE_STATUS_DRAWS_IN_MIRROR) || isKindOf(KINDOF_CAN_CAST_REFLECTIONS); }
 
 	void colorFlash( const RGBColor *color, UnsignedInt decayFrames = DEF_DECAY_FRAMES, UnsignedInt attackFrames = 0, UnsignedInt sustainAtPeak = FALSE );  ///< flash a drawable in the color specified for a short time
 	void colorTint( const RGBColor *color );	 ///< tint this drawable the color specified
@@ -631,7 +631,7 @@ protected:
 
   void clearCustomSoundAmbient( bool restartSound ); //< Return to using defaults
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	void validatePos() const;
 #endif
 

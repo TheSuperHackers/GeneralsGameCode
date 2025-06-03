@@ -65,7 +65,7 @@ void ParticlePanelParticle::InitPanel( void )
 	findString += PREFIX;
 	findString += POSTFIX;
 //	DEBUG_LOG(("ParticlePanedParticle::InitPanel - looking for textures, search string is '%s'\n", findString.begin()));
-	BOOL bWorkin = finder.FindFile(findString.begin());
+	BOOL bWorkin = finder.FindFile(findString.c_str());
 	while (bWorkin) {
 		bWorkin = finder.FindNextFile();
 		pWnd->AddString(finder.GetFileName());
@@ -142,7 +142,7 @@ void ParticlePanelDrawable::performUpdate( IN Bool toUI )
 				pWnd->AddString(NONE_STRING);
 				const std::list<std::string> &r = pParent->getAllThingTemplates();
 				for (cit = r.begin(); cit != r.end(); ++cit) {
-					pWnd->AddString(cit->begin());
+					pWnd->AddString(cit->c_str());
 				}
 			}
 

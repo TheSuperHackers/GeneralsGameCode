@@ -39,7 +39,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include <dsound.h>
-#include "Lib/Basetype.h"
+#include "Lib/BaseType.h"
 #include "MilesAudioDevice/MilesAudioManager.h"
 
 #include "Common/AudioAffect.h"
@@ -64,9 +64,9 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/TerrainLogic.h"
 
-#include "Common/File.h"
+#include "Common/file.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
@@ -114,7 +114,7 @@ MilesAudioManager::~MilesAudioManager()
 }
 
 //-------------------------------------------------------------------------------------------------
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 AudioHandle MilesAudioManager::addAudioEvent( const AudioEventRTS *eventToAdd )
 {
 	if (TheGlobalData->m_preloadReport) {
@@ -127,7 +127,7 @@ AudioHandle MilesAudioManager::addAudioEvent( const AudioEventRTS *eventToAdd )
 }
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FILE *fp )
 {
@@ -446,7 +446,7 @@ void MilesAudioManager::init()
 	AudioManager::init();
 #ifdef INTENSE_DEBUG
 	DEBUG_LOG(("Sound has temporarily been disabled in debug builds only. jkmcd\n"));
-	// for now, _DEBUG builds only should have no sound. ask jkmcd or srj about this.
+	// for now, RTS_DEBUG builds only should have no sound. ask jkmcd or srj about this.
 	return;
 #endif
 
@@ -467,13 +467,17 @@ void MilesAudioManager::postProcessLoad()
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::reset()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	dumpAllAssetsUsed();
 	m_allEventsLoaded.clear();
 #endif
 
 	AudioManager::reset();
 	stopAllAudioImmediately();
+  removeAllAudioRequests();
+  // This must come after stopAllAudioImmediately() and removeAllAudioRequests(), to ensure that
+  // sounds pointing to the temporary AudioEventInfo handles are deleted before their info is deleted
+  removeLevelSpecificAudioEventInfos();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -500,7 +504,7 @@ void MilesAudioManager::stopAudio( AudioAffect which )
 	std::list<PlayingAudio *>::iterator it;
 
 	PlayingAudio *playing = NULL;
-	if (BitTest(which, AudioAffect_Sound)) {
+	if (BitIsSet(which, AudioAffect_Sound)) {
 		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it) {
 			playing = *it;
 			if (playing) {
@@ -511,7 +515,7 @@ void MilesAudioManager::stopAudio( AudioAffect which )
 		}
 	}
 
-	if (BitTest(which, AudioAffect_Sound3D)) {
+	if (BitIsSet(which, AudioAffect_Sound3D)) {
 		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it) {
 			playing = *it;
 			if (playing) {
@@ -522,16 +526,16 @@ void MilesAudioManager::stopAudio( AudioAffect which )
 		}
 	}
 
-	if (BitTest(which, AudioAffect_Speech | AudioAffect_Music)) {
+	if (BitIsSet(which, AudioAffect_Speech | AudioAffect_Music)) {
 		for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
 			playing = *it;
 			if (playing) {
 				if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music) {
-					if (!BitTest(which, AudioAffect_Music)) {
+					if (!BitIsSet(which, AudioAffect_Music)) {
 						continue;
 					}
 				} else {
-					if (!BitTest(which, AudioAffect_Speech)) {
+					if (!BitIsSet(which, AudioAffect_Speech)) {
 						continue;
 					}
 				}
@@ -549,7 +553,7 @@ void MilesAudioManager::pauseAudio( AudioAffect which )
 	std::list<PlayingAudio *>::iterator it;
 
 	PlayingAudio *playing = NULL;
-	if (BitTest(which, AudioAffect_Sound)) {
+	if (BitIsSet(which, AudioAffect_Sound)) {
 		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it) {
 			playing = *it;
 			if (playing) {
@@ -558,7 +562,7 @@ void MilesAudioManager::pauseAudio( AudioAffect which )
 		}
 	}
 
-	if (BitTest(which, AudioAffect_Sound3D)) {
+	if (BitIsSet(which, AudioAffect_Sound3D)) {
 		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it) {
 			playing = *it;
 			if (playing) {
@@ -567,16 +571,16 @@ void MilesAudioManager::pauseAudio( AudioAffect which )
 		}
 	}
 
-	if (BitTest(which, AudioAffect_Speech | AudioAffect_Music)) {
+	if (BitIsSet(which, AudioAffect_Speech | AudioAffect_Music)) {
 		for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
 			playing = *it;
 			if (playing) {
 				if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music) {
-					if (!BitTest(which, AudioAffect_Music)) {
+					if (!BitIsSet(which, AudioAffect_Music)) {
 						continue;
 					}
 				} else {
-					if (!BitTest(which, AudioAffect_Speech)) {
+					if (!BitIsSet(which, AudioAffect_Speech)) {
 						continue;
 					}
 				}
@@ -593,7 +597,7 @@ void MilesAudioManager::pauseAudio( AudioAffect which )
 		AudioRequest *req = (*ait);
 		if( req && req->m_request == AR_Play ) 
 		{
-			req->deleteInstance();
+			deleteInstance(req);
 			ait = m_audioRequests.erase(ait);
 		}
 		else
@@ -603,13 +607,14 @@ void MilesAudioManager::pauseAudio( AudioAffect which )
 	}
 }
 
+
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::resumeAudio( AudioAffect which )
 {
 	std::list<PlayingAudio *>::iterator it;
 
 	PlayingAudio *playing = NULL;
-	if (BitTest(which, AudioAffect_Sound)) {
+	if (BitIsSet(which, AudioAffect_Sound)) {
 		for (it = m_playingSounds.begin(); it != m_playingSounds.end(); ++it) {
 			playing = *it;
 			if (playing) {
@@ -618,7 +623,7 @@ void MilesAudioManager::resumeAudio( AudioAffect which )
 		}
 	}
 
-	if (BitTest(which, AudioAffect_Sound3D)) {
+	if (BitIsSet(which, AudioAffect_Sound3D)) {
 		for (it = m_playing3DSounds.begin(); it != m_playing3DSounds.end(); ++it) {
 			playing = *it;
 			if (playing) {
@@ -627,16 +632,16 @@ void MilesAudioManager::resumeAudio( AudioAffect which )
 		}
 	}
 
-	if (BitTest(which, AudioAffect_Speech | AudioAffect_Music)) {
+	if (BitIsSet(which, AudioAffect_Speech | AudioAffect_Music)) {
 		for (it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it) {
 			playing = *it;
 			if (playing) {
 				if (playing->m_audioEventRTS->getAudioEventInfo()->m_soundType == AT_Music) {
-					if (!BitTest(which, AudioAffect_Music)) {
+					if (!BitIsSet(which, AudioAffect_Music)) {
 						continue;
 					}
 				} else {
-					if (!BitTest(which, AudioAffect_Speech)) {
+					if (!BitIsSet(which, AudioAffect_Speech)) {
 						continue;
 					}
 				}
@@ -651,19 +656,6 @@ void MilesAudioManager::pauseAmbient( Bool shouldPause )
 {
 
 }
-
-//-------------------------------------------------------------------------------------------------
-void MilesAudioManager::stopAllAmbientsBy( Object *obj )
-{
-
-}
-
-//-------------------------------------------------------------------------------------------------
-void MilesAudioManager::stopAllAmbientsBy( Drawable *draw )
-{
-
-}
-
 
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
@@ -991,7 +983,7 @@ void MilesAudioManager::killAudioEventImmediately( AudioHandle audioEvent )
 		AudioRequest *req = (*ait);
 		if( req && req->m_request == AR_Play && req->m_handleToInteractOn == audioEvent ) 
 		{
-			req->deleteInstance();
+			deleteInstance(req);
 			ait = m_audioRequests.erase(ait);
 			return;
 		}
@@ -1174,6 +1166,16 @@ void MilesAudioManager::stopAllAudioImmediately( void )
 		it = m_playingStreams.erase(it);
 	}
 
+  for (it = m_fadingAudio.begin(); it != m_fadingAudio.end(); ) {
+    playing = (*it);
+    if (!playing) {
+      continue;
+    }
+    
+    releasePlayingAudio(playing);
+    it = m_fadingAudio.erase(it);
+  }
+  
 	std::list<HAUDIO>::iterator hit;
 	for (hit = m_audioForcePlayed.begin(); hit != m_audioForcePlayed.end(); ++hit) {
 		if (*hit) {
@@ -2085,9 +2087,9 @@ Bool MilesAudioManager::killLowestPrioritySoundImmediately( AudioEventRTS *event
 
 				if( playing->m_audioEventRTS && playing->m_audioEventRTS == lowestPriorityEvent ) 
 				{
-					//Release this 3D sound channel immediately because we are going to play another sound in it's place.
+					//Release this sound channel immediately because we are going to play another sound in it's place.
 					releasePlayingAudio( playing );
-					m_playing3DSounds.erase( it );
+					m_playingSounds.erase( it );
 					return TRUE;
 				}
 			}
@@ -2255,7 +2257,7 @@ void MilesAudioManager::processRequestList( void )
 		if (!req->m_requiresCheckForSample || checkForSample(req)) {
 			processRequest(req);
 		}
-		req->deleteInstance();
+		deleteInstance(req);
 		it = m_audioRequests.erase(it);
 	}
 }
@@ -2328,7 +2330,7 @@ void MilesAudioManager::processPlayingList( void )
 				{
 					Real volForConsideration = getEffectiveVolume(playing->m_audioEventRTS);
 					volForConsideration /= (m_sound3DVolume > 0.0f ? m_soundVolume : 1.0f);
-					Bool playAnyways = BitTest( playing->m_audioEventRTS->getAudioEventInfo()->m_type, ST_GLOBAL) || playing->m_audioEventRTS->getAudioEventInfo()->m_priority == AP_CRITICAL;
+					Bool playAnyways = BitIsSet( playing->m_audioEventRTS->getAudioEventInfo()->m_type, ST_GLOBAL) || playing->m_audioEventRTS->getAudioEventInfo()->m_priority == AP_CRITICAL;
 					if( volForConsideration < m_audioSettings->m_minVolume && !playAnyways ) 
 					{
 						// don't want to get an additional callback for this sample
@@ -2389,6 +2391,44 @@ void MilesAudioManager::processPlayingList( void )
 		m_volumeHasChanged = false;
 	}
 }
+
+//Patch for a rare bug (only on about 5% of in-studio machines suffer, and not all the time) .
+//The actual mechanics of this problem are still elusive as of the date of this comment. 8/21/03
+//but the cause is clear. Some cinematics do a radical change in the microphone position, which
+//calls for a radical 3DSoundVolume adjustment. If this happens while a stereo stream is *ENDING*,
+//low-level code gets caught in a tight loop. (Hangs) on some machines.
+//To prevent this condition, we just suppress the updating of 3DSoundVolume while one of these
+//is on the list. Since the music tracks play continuously, they never *END* during these cinematics.
+//so we filter them out as, *NOT SENSITIVE*... we do want to update 3DSoundVolume during music, 
+//which is almost all of the time.
+
+Bool MilesAudioManager::has3DSensitiveStreamsPlaying( void ) const
+{
+  if ( m_playingStreams.empty() )
+    return FALSE;
+
+	for ( std::list< PlayingAudio* >::const_iterator it = m_playingStreams.begin(); it != m_playingStreams.end(); ++it ) 
+  {
+		const PlayingAudio *playing = (*it);
+
+    if ( ! playing )
+      continue;
+
+    if ( playing->m_audioEventRTS->getAudioEventInfo()->m_soundType != AT_Music )
+    {
+      return TRUE;
+    }
+
+    if ( playing->m_audioEventRTS->getEventName().startsWith("Game_") == FALSE ) 
+    {
+      return TRUE;
+    }
+  }	
+  
+  return FALSE; 
+
+}
+
 
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::processFadingList( void )
@@ -2489,7 +2529,14 @@ Bool MilesAudioManager::checkForSample( AudioRequest *req )
 		return true;
 	}
 
-	if (req->m_pendingEvent->getAudioEventInfo()->m_type != AT_SoundEffect) {
+  if ( req->m_pendingEvent->getAudioEventInfo() == NULL )
+  {
+    // Fill in event info
+    getInfoForAudioEvent( req->m_pendingEvent );
+  }
+  
+	if (req->m_pendingEvent->getAudioEventInfo()->m_type != AT_SoundEffect) 
+  {
 		return true;
 	}
 
@@ -3017,7 +3064,7 @@ void AILCALLBACK setStreamCompleted( HSTREAM streamCompleted )
 //-------------------------------------------------------------------------------------------------
 U32 AILCALLBACK streamingFileOpen(char const *fileName, U32 *file_handle)
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (sizeof(U32) != sizeof(File*)) {
 		RELEASE_CRASH(("streamingFileOpen - This function requires work in order to compile on non 32-bit platforms.\n"));
 	}
@@ -3277,7 +3324,7 @@ Bool AudioFileCache::freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNee
 }
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::dumpAllAssetsUsed()
 {

@@ -42,7 +42,7 @@ class WorldHeightMap;
 class RenderObjClass;
 class ThingTemplate;
 class Shadow;
-enum WaypointID;
+enum WaypointID CPP_11(: Int);
 
 #define MAP_XY_FACTOR			(10.0f)	 //How wide and tall each height map square is in world space.
 #define MAP_HEIGHT_SCALE	(MAP_XY_FACTOR/16.0f)		//divide all map heights by 8.

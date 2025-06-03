@@ -65,7 +65,7 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
-enum ChinookFlightStatus // Stored in save file, don't renumber.  jba. 
+enum ChinookFlightStatus CPP_11(: Int) // Stored in save file, don't renumber.  jba. 
 {
 	CHINOOK_TAKING_OFF				= 0,
 	CHINOOK_FLYING						= 1,

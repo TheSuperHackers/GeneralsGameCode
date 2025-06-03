@@ -40,26 +40,25 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "always.h"
 #include "GameClient/View.h"
-#include "WW3D2/Camera.h"
-#include "WW3D2/Light.h"
-#include "WW3D2/DX8Wrapper.h"
-#include "WW3D2/HLod.h"
+#include "WW3D2/camera.h"
+#include "WW3D2/light.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/hlod.h"
 #include "WW3D2/mesh.h"
 #include "WW3D2/meshmdl.h"
 #include "Lib/BaseType.h"
-#include "W3DDevice/GameClient/W3DGranny.h"
-#include "W3DDevice/GameClient/Heightmap.h"
-#include "D3dx8math.h"
-#include "common/GlobalData.h"
-#include "common/drawmodule.h"
+#include "W3DDevice/GameClient/HeightMap.h"
+#include "d3dx8math.h"
+#include "Common/GlobalData.h"
+#include "Common/DrawModule.h"
 #include "W3DDevice/GameClient/W3DVolumetricShadow.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "WW3D2/statistics.h"
 #include "GameLogic/TerrainLogic.h"
-#include "WW3D2/DX8Caps.h"
+#include "WW3D2/dx8caps.h"
 #include "GameClient/Drawable.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -273,8 +272,8 @@ class W3DShadowGeometryMesh
 	friend class W3DVolumetricShadow;
 	
 public:
-	W3DShadowGeometryMesh::W3DShadowGeometryMesh( void );
-	W3DShadowGeometryMesh::~W3DShadowGeometryMesh( void );
+	W3DShadowGeometryMesh( void );
+	~W3DShadowGeometryMesh( void );
 
 	/// @todo: Cache/Store face normals someplace so they are not recomputed when lights move.
 	Vector3 *GetPolygonNormal (long dwPolyNormId, Vector3 *pvNorm)
@@ -326,7 +325,7 @@ protected:
 	int GetNumVertex (void)	{	return m_numVerts;}
 	///Get indices to the 3 vertices of this face.
 	virtual int GetPolygonIndex (long dwPolyId, short *psIndexList, int dwNSize) const
-	{	const Vector3i *polyi=&m_polygons[dwPolyId];
+	{	const TriIndex *polyi=&m_polygons[dwPolyId];
 		*psIndexList++ = m_parentVerts[polyi->I];
 		*psIndexList++ = m_parentVerts[polyi->J];
 		*psIndexList++ = m_parentVerts[polyi->K];
@@ -344,7 +343,7 @@ protected:
 	Vector3	*m_polygonNormals;	///<array of face normals
 	Int m_numVerts;	 ///< number of actual vertices after duplicates are removed.
 	Int m_numPolygons; ///<number of polygons in source geometry
-	const Vector3i	*m_polygons;	///<array of 3 vertex indices per face
+	const TriIndex	*m_polygons;	///<array of 3 vertex indices per face
 	UnsignedShort *m_parentVerts;	///<array of parent vertex indices for each vertex.
 	/// the neighbor info indexed by polygon id
 	PolyNeighbor *m_polyNeighbors;
@@ -749,43 +748,6 @@ Int W3DShadowGeometry::initFromMesh(RenderObjClass *robj)
 Int W3DShadowGeometry::init(RenderObjClass *robj)
 {
 	return TRUE;
-//	m_robj=robj;
-/*	//code to deal with granny - don't think we'll use shadow volumes on these!?
-	granny_file *fileInfo=robj->getPrototype().m_file;
-
-	for (Int modelIndex=0; modelIndex<fileInfo->ModelCount; modelIndex++)
-	{
-		granny_model *sourceModel =  fileInfo->Models[modelIndex];
-		if (stricmp(sourceModel->Name,"AABOX") == 0)
-		{	//found a collision box, copy out data
-			int MeshCount = sourceModel->MeshBindingCount;
-			if (MeshCount==1)
-			{
-				granny_mesh *sourceMesh = sourceModel->MeshBindings[0].Mesh;
-				granny_pn33_vertex *Vertices = (granny_pn33_vertex *)sourceMesh->PrimaryVertexData->Vertices;
-				Vector3 points[24];
-
-				assert (sourceMesh->PrimaryVertexData->VertexCount <= 24);
-
-				for (Int boxVertex=0; boxVertex<sourceMesh->PrimaryVertexData->VertexCount; boxVertex++)
-				{	points[boxVertex].Set(Vertices[boxVertex].Position[0],
-										  Vertices[boxVertex].Position[1],
-										  Vertices[boxVertex].Position[2]);
-				}
-				box.Init(points,sourceMesh->PrimaryVertexData->VertexCount);
-			}
-		}
-		else
-		{	//mesh is part of model
-			int meshCount = sourceModel->MeshBindingCount;
-			for (Int meshIndex=0; meshIndex<meshCount; meshIndex++)
-			{
-				granny_mesh *sourceMesh = sourceModel->MeshBindings[meshIndex].Mesh;
-				if (sourceMesh->PrimaryVertexData)
-					vertexCount+=sourceMesh->PrimaryVertexData->VertexCount;
-			}
-		}
-	}*/
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1209,7 +1171,7 @@ void W3DVolumetricShadow::updateOptimalExtrusionPadding(void)
 // getRenderCost ============================================================
 // Returns number of draw calls for this shadow.
 // ============================================================================
-#if defined(_DEBUG) || defined(_INTERNAL)	
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
 void W3DVolumetricShadow::getRenderCost(RenderCost & rc) const
 {
 	Int drawCount = 0;
@@ -1296,10 +1258,11 @@ void W3DVolumetricShadow::RenderMeshVolume(Int meshIndex, Int lightIndex, const 
 	if( numVerts == 0 || numPolys == 0 )
 		return;
 
-	Matrix4 mWorld(*meshXform);
+	Matrix4x4 mWorld(*meshXform);
 
 	///@todo: W3D always does transpose on all of matrix sets.  Slow???  Better to hack view matrix.
-	m_pDev->SetTransform(D3DTS_WORLD,(_D3DMATRIX *)&mWorld.Transpose());
+	Matrix4x4 mWorldTransposed = mWorld.Transpose();
+	m_pDev->SetTransform(D3DTS_WORLD,(_D3DMATRIX *)&mWorldTransposed);
 	
 	W3DBufferManager::W3DVertexBufferSlot *vbSlot=m_shadowVolumeVB[lightIndex][ meshIndex ];
 	if (!vbSlot)
@@ -1412,9 +1375,9 @@ void W3DVolumetricShadow::RenderDynamicMeshVolume(Int meshIndex, Int lightIndex,
 
 	m_pDev->SetIndices(shadowIndexBufferD3D,nShadowStartBatchVertex);
 	
-	Matrix4 mWorld(*meshXform);
-
-	m_pDev->SetTransform(D3DTS_WORLD,(_D3DMATRIX *)&mWorld.Transpose());
+	Matrix4x4 mWorld(*meshXform);
+	Matrix4x4 mWorldTransposed = mWorld.Transpose();
+	m_pDev->SetTransform(D3DTS_WORLD,(_D3DMATRIX *)&mWorldTransposed);
 
 	if (shadowVertexBufferD3D != lastActiveVertexBuffer)
 	{	m_pDev->SetStreamSource(0,shadowVertexBufferD3D,sizeof(SHADOW_DYNAMIC_VOLUME_VERTEX));
@@ -1567,9 +1530,9 @@ void W3DVolumetricShadow::RenderMeshVolumeBounds(Int meshIndex, Int lightIndex, 
 
 
 	//todo: replace this with mesh transform
-	Matrix4 mWorld(1);	//identity since boxes are pre-transformed to world space.
-
-	m_pDev->SetTransform(D3DTS_WORLD,(_D3DMATRIX *)&mWorld.Transpose());
+	Matrix4x4 mWorld(1);	//identity since boxes are pre-transformed to world space.
+	Matrix4x4 mWorldTransposed = mWorld.Transpose();
+	m_pDev->SetTransform(D3DTS_WORLD,(_D3DMATRIX *)&mWorldTransposed);
 	
 	m_pDev->SetStreamSource(0,shadowVertexBufferD3D,sizeof(SHADOW_DYNAMIC_VOLUME_VERTEX));
 	m_pDev->SetVertexShader(SHADOW_DYNAMIC_VOLUME_FVF);
@@ -1865,7 +1828,7 @@ to reduce fill rate usage.*/
 void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const Matrix3D *meshXform, const AABoxClass &meshBox, float floorZ )
 {
 	Vector3 lightPosObject;
-	Matrix4 worldToObject;
+	Matrix4x4 worldToObject;
 	Vector3 objectCenter;
 	Vector3 toLight;
 	Vector3 toPrevLight;
@@ -1877,8 +1840,8 @@ void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const 
 	Bool isMeshRotating = false;	//flag if mesh has rotated since last update. Translation doesn't matter for infinite light source.
 	Bool isLightMoving = false;	//flag if light has moved since last update.
 
-	Matrix4 objectToWorld(*meshXform);
-	Matrix4 *prevXForm=&m_objectXformHistory[ lightIndex ][meshIndex];
+	Matrix4x4 objectToWorld(*meshXform);
+	Matrix4x4 *prevXForm=&m_objectXformHistory[ lightIndex ][meshIndex];
 
 	//
 	// build the shadow silhouette and construct shadow volume from
@@ -1960,7 +1923,7 @@ void W3DVolumetricShadow::updateMeshVolume(Int meshIndex, Int lightIndex, const 
 		D3DXMatrixInverse((D3DXMATRIX*)&worldToObject, &det, (D3DXMATRIX*)&objectToWorld);
 
 		// find out light position in object space
-		Matrix4::Transform_Vector(worldToObject,lightPosWorld,&lightPosObject);
+		Matrix4x4::Transform_Vector(worldToObject,lightPosWorld,&lightPosObject);
 
 		//Updating shadow volumes is expensive, so verify that this volume is even visible.
 
@@ -2377,7 +2340,7 @@ void W3DVolumetricShadow::buildSilhouette(Int meshIndex, Vector3 *lightPosObject
 				// ignore neighbors that are marked as processed as those
 				// onces have already detected edges if present
 				//
-				if( BitTest( otherNeighbor->status, POLY_PROCESSED ) )
+				if( BitIsSet( otherNeighbor->status, POLY_PROCESSED ) )
 					continue;  // for j
 
 			}  // end if
@@ -2390,7 +2353,7 @@ void W3DVolumetricShadow::buildSilhouette(Int meshIndex, Vector3 *lightPosObject
 			// if we have no neighbor we just record the fact that we have
 			// real model end edges to add after this inner j loop;
 			//
-			if( BitTest( polyNeighbor->status, POLY_VISIBLE ) )
+			if( BitIsSet( polyNeighbor->status, POLY_VISIBLE ) )
 			{
 
 				// check for no neighbor edges
@@ -2400,7 +2363,7 @@ void W3DVolumetricShadow::buildSilhouette(Int meshIndex, Vector3 *lightPosObject
 					visibleNeighborless = TRUE;
 
 				}  // end if
-				else if( BitTest( otherNeighbor->status, POLY_VISIBLE ) == FALSE )
+				else if( BitIsSet( otherNeighbor->status, POLY_VISIBLE ) == FALSE )
 				{
 
 					// "we" are visible and "they" are not
@@ -2410,7 +2373,7 @@ void W3DVolumetricShadow::buildSilhouette(Int meshIndex, Vector3 *lightPosObject
 
 			}  // end if
 			else if( otherNeighbor != NULL &&
-							 BitTest( otherNeighbor->status, POLY_VISIBLE ) )
+							 BitIsSet( otherNeighbor->status, POLY_VISIBLE ) )
 			{
 
 				// "they" are visible and "we" are not
@@ -2845,8 +2808,10 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 		vertexCount);
 
 	DEBUG_ASSERTCRASH(vbSlot != NULL, ("Can't allocate vertex buffer slot for shadow volume"));
-
-	DEBUG_ASSERTCRASH(vbSlot->m_size >= vertexCount,("Overflowing Shadow Vertex Buffer Slot"));
+	if (vbSlot != NULL)
+	{
+		DEBUG_ASSERTCRASH(vbSlot->m_size >= vertexCount,("Overflowing Shadow Vertex Buffer Slot"));
+	}
 
 	DEBUG_ASSERTCRASH(m_shadowVolume[ volumeIndex ][meshIndex]->GetNumPolygon() == 0,("Updating Existing Static Shadow Volume"));
 
@@ -2854,8 +2819,10 @@ void W3DVolumetricShadow::constructVolumeVB( Vector3 *lightPosObject,Real shadow
 	ibSlot=m_shadowVolumeIB[ volumeIndex ][meshIndex] = TheW3DBufferManager->getSlot(polygonCount*3);
 
 	DEBUG_ASSERTCRASH(ibSlot != NULL, ("Can't allocate index buffer slot for shadow volume"));
-
-	DEBUG_ASSERTCRASH(ibSlot->m_size >= (polygonCount*3),("Overflowing Shadow Index Buffer Slot"));
+	if (ibSlot != NULL)
+	{
+		DEBUG_ASSERTCRASH(ibSlot->m_size >= (polygonCount*3),("Overflowing Shadow Index Buffer Slot"));
+	}
 
 	if (!ibSlot || !vbSlot)
 	{	//could not allocate storage to hold buffers
@@ -3380,7 +3347,7 @@ void W3DVolumetricShadowManager::renderShadows( Bool forceStencilFill )
 		m_pDev->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 	#else
 		//disable writes to color buffer
-		if (DX8Caps::Get_Default_Caps().PrimitiveMiscCaps & D3DPMISCCAPS_COLORWRITEENABLE)
+		if (DX8Wrapper::Get_Current_Caps()->Get_DX8_Caps().PrimitiveMiscCaps & D3DPMISCCAPS_COLORWRITEENABLE)
 		{	DX8Wrapper::_Get_D3D_Device8()->GetRenderState(D3DRS_COLORWRITEENABLE, &oldColorWriteEnable);
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_COLORWRITEENABLE,0);
 		}
@@ -3944,7 +3911,7 @@ Error:
 }
 
 /*
-** Iterator converter from HashableClass to GrannyAnimClass
+** Iterator converter from HashableClass to W3DShadowGeometry
 */
 W3DShadowGeometry * W3DShadowGeometryManagerIterator::Get_Current_Geom( void )	
 { 

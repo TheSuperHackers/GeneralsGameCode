@@ -125,31 +125,31 @@ static void clearBufferToSpaces( void )
 //=============================================================================
 static Bool saveType( GameWindow *window, FILE *fp, Int dataIndent )
 {
-	char *type;
+	const char *type;
 
-	if( BitTest( window->winGetStyle(), GWS_PUSH_BUTTON ) )
+	if( BitIsSet( window->winGetStyle(), GWS_PUSH_BUTTON ) )
 		type = "PUSHBUTTON";
-	else if( BitTest( window->winGetStyle(), GWS_RADIO_BUTTON ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_RADIO_BUTTON ) )
 		type = "RADIOBUTTON";
-	else if( BitTest( window->winGetStyle(), GWS_TAB_CONTROL ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_TAB_CONTROL ) )
 		type = "TABCONTROL";
-	else if( BitTest( window->winGetStyle(), GWS_TAB_PANE ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_TAB_PANE ) )
 		type = "TABPANE";
-	else if( BitTest( window->winGetStyle(), GWS_CHECK_BOX ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_CHECK_BOX ) )
 		type = "CHECKBOX";
-	else if( BitTest( window->winGetStyle(), GWS_VERT_SLIDER ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_VERT_SLIDER ) )
 		type = "VERTSLIDER";
-	else if( BitTest( window->winGetStyle(), GWS_HORZ_SLIDER ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_HORZ_SLIDER ) )
 		type = "HORZSLIDER";
-	else if( BitTest( window->winGetStyle(), GWS_SCROLL_LISTBOX ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_SCROLL_LISTBOX ) )
 		type = "SCROLLLISTBOX";
-	else if( BitTest( window->winGetStyle(), GWS_COMBO_BOX ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_COMBO_BOX ) )
 		type = "COMBOBOX";
-	else if( BitTest( window->winGetStyle(), GWS_ENTRY_FIELD ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_ENTRY_FIELD ) )
 		type = "ENTRYFIELD";
-	else if( BitTest( window->winGetStyle(), GWS_STATIC_TEXT ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_STATIC_TEXT ) )
 		type = "STATICTEXT";
-	else if( BitTest( window->winGetStyle(), GWS_PROGRESS_BAR ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_PROGRESS_BAR ) )
 		type = "PROGRESSBAR";
 	else
 		type = "USER";
@@ -225,7 +225,7 @@ static Bool saveStatus( GameWindow *window, FILE *fp, Int dataIndent )
 	{
 
 		bit = 1 << i;
-		if( BitTest( window->winGetStatus(), bit ) )
+		if( BitIsSet( window->winGetStatus(), bit ) )
 		{
 			
 			// if this is an additional bit add a +
@@ -269,7 +269,7 @@ static Bool saveStyle( GameWindow *window, FILE *fp, Int dataIndent )
 	{
 
 		bit = 1 << i;
-		if( BitTest( window->winGetStyle(), bit ) )
+		if( BitIsSet( window->winGetStyle(), bit ) )
 		{
 			
 			// if this is an additional bit add a +
@@ -486,7 +486,7 @@ static Bool saveTextColor( GameWindow *window, FILE *fp, Int dataIndent )
 // tokenIsEnabledData =========================================================
 /** Token refers to enabled draw data */
 //=============================================================================
-static Bool tokenIsEnabledData( char *token )
+static Bool tokenIsEnabledData( const char *token )
 {
 
 
@@ -507,7 +507,7 @@ static Bool tokenIsEnabledData( char *token )
 // tokenIsDisabledData ========================================================
 /** Token refers to Disabled draw data */
 //=============================================================================
-static Bool tokenIsDisabledData( char *token )
+static Bool tokenIsDisabledData( const char *token )
 {
 
 	if( strcmp( token, "DISABLEDDRAWDATA" ) == 0 ||
@@ -527,7 +527,7 @@ static Bool tokenIsDisabledData( char *token )
 // tokenIsHiliteData ==========================================================
 /** Token refers to Hilite draw data */
 //=============================================================================
-static Bool tokenIsHiliteData( char *token )
+static Bool tokenIsHiliteData( const char *token )
 {
 
 	if( strcmp( token, "HILITEDRAWDATA" ) == 0 ||
@@ -547,7 +547,7 @@ static Bool tokenIsHiliteData( char *token )
 // saveDrawData ===============================================================
 /** Save the draw data array */
 //=============================================================================
-static Bool saveDrawData( char *token, GameWindow *window, 
+static Bool saveDrawData( const char *token, GameWindow *window,
 													FILE *fp, Int dataIndent )
 {
 	Int i;
@@ -964,20 +964,20 @@ static Bool saveTabControlData( GameWindow *window, FILE *fp, Int dataIndent )
 static Bool saveGadgetData( GameWindow *window, FILE *fp, Int dataIndent )
 {
 
-	if( BitTest( window->winGetStyle(), GWS_SCROLL_LISTBOX ) )
+	if( BitIsSet( window->winGetStyle(), GWS_SCROLL_LISTBOX ) )
 		return saveListboxData( window, fp, dataIndent );
-	else if( BitTest( window->winGetStyle(), GWS_COMBO_BOX ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_COMBO_BOX ) )
 		return saveComboBoxData( window, fp, dataIndent );
-	else if( BitTest( window->winGetStyle(), GWS_RADIO_BUTTON ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_RADIO_BUTTON ) )
 		return saveRadioButtonData( window, fp, dataIndent );
-	else if( BitTest( window->winGetStyle(), GWS_VERT_SLIDER | 
+	else if( BitIsSet( window->winGetStyle(), GWS_VERT_SLIDER | 
 																					 GWS_HORZ_SLIDER ) )
 		return saveSliderData( window, fp, dataIndent );
-	else if( BitTest( window->winGetStyle(), GWS_STATIC_TEXT ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_STATIC_TEXT ) )
 		return saveStaticTextData( window, fp, dataIndent );
-	else if( BitTest( window->winGetStyle(), GWS_ENTRY_FIELD ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_ENTRY_FIELD ) )
 		return saveTextEntryData( window, fp, dataIndent );
-	else if( BitTest( window->winGetStyle(), GWS_TAB_CONTROL ) )
+	else if( BitIsSet( window->winGetStyle(), GWS_TAB_CONTROL ) )
 		return saveTabControlData( window, fp, dataIndent );
 
 	return TRUE;
@@ -1021,7 +1021,7 @@ static Bool saveWindow( FILE *fp, GameWindow *window, Int indent )
 	saveDrawData( "DISABLEDDRAWDATA", window, fp, dataIndent );
 	saveDrawData( "HILITEDRAWDATA", window, fp, dataIndent );
 
-	if( BitTest( window->winGetStyle(), GWS_TAB_CONTROL ) )
+	if( BitIsSet( window->winGetStyle(), GWS_TAB_CONTROL ) )
 	{//Seems cleaner to put this before the children list since this Gadget needs both
 		saveGadgetData( window, fp, dataIndent );
 	}
@@ -1031,7 +1031,7 @@ static Bool saveWindow( FILE *fp, GameWindow *window, Int indent )
 	// themselves, only generic stuff, except for the Tab Control again, which
 	// is the gadget with children exception
 	//
-	if( (TheEditor->windowIsGadget( window ) == FALSE)  ||  BitTest(window->winGetStyle(), GWS_TAB_CONTROL) )
+	if( (TheEditor->windowIsGadget( window ) == FALSE)  ||  BitIsSet(window->winGetStyle(), GWS_TAB_CONTROL) )
 	{
 
 		child = window->winGetChild();
@@ -1158,7 +1158,7 @@ void GUIEdit::updateRadioScreenIdentifiers( GameWindow *window, Int screenID )
 		return;
 
 	// is this a radio button
-	if( BitTest( window->winGetStyle(), GWS_RADIO_BUTTON ) )
+	if( BitIsSet( window->winGetStyle(), GWS_RADIO_BUTTON ) )
 	{
 		RadioButtonData *radioData = (RadioButtonData *)window->winGetUserData();
 

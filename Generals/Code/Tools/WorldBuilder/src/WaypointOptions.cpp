@@ -19,14 +19,14 @@
 // WaypointOptions.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "Lib\BaseType.h"
+#include "Lib/BaseType.h"
 #include "CUndoable.h"
 #include "WaypointOptions.h"
 #include "WorldBuilder.h"
 #include "WorldBuilderDoc.h"
-#include "WbView3d.h"
+#include "wbview3d.h"
 #include "PolygonTool.h"
 #include "WaypointTool.h"
 #include "GameLogic/PolygonTrigger.h"
@@ -337,7 +337,7 @@ void WaypointOptions::OnChangeSelectedWaypoint()
 	Bool foundWaypoint = false;
 	for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
 		if (pMapObj->isWaypoint()) {
-			if (pMapObj->getWaypointName() != AsciiString.TheEmptyString) {
+			if (pMapObj->getWaypointName() != AsciiString::TheEmptyString) {
 				if (pMapObj->getWaypointName() == name) {
 					foundWaypoint = true;
 					waypt = pMapObj;

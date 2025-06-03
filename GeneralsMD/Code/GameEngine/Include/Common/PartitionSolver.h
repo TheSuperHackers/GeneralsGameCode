@@ -59,7 +59,7 @@ typedef std::vector<PairObjectIDAndUInt> SpacesVec;
 // the first ObjectID is the id of the entry, while the second is the id of the hole
 typedef std::vector<PairObjectID> SolutionVec;
 
-enum SolutionType
+enum SolutionType CPP_11(: Int)
 {
 	PREFER_FAST_SOLUTION = 0,
 	PREFER_CORRECT_SOLUTION = 0x7FFFFFFF

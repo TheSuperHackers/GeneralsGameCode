@@ -46,7 +46,7 @@ class INI;
 	* order of this geometry and the fact that the values start at 1
 	*/
 //-------------------------------------------------------------------------------------------------
-enum GeometryType
+enum GeometryType CPP_11(: Int)
 {
 	GEOMETRY_SPHERE = 0,	///< partition/collision testing as sphere. (majorRadius = radius)
 	GEOMETRY_CYLINDER,		///< partition/collision testing as cylinder. (majorRadius = radius, height = height)
@@ -67,8 +67,8 @@ static const char *GeometryNames[] =
 #endif  // end DEFINE_GEOMETRY_NAMES
 
 //-------------------------------------------------------------------------------------------------
-#if defined(_DEBUG) || defined(_INTERNAL)
-enum ExtentModType
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+enum ExtentModType CPP_11(: Int)
 {
 	EXTENTMOD_INVALID = 0,
 	EXTENTMOD_TYPE = 1,
@@ -188,7 +188,7 @@ public:
 	// given an object with this geom, SET how far above the object's canonical position its max z should extend.
 	void setMaxHeightAbovePosition(Real z);
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	void tweakExtents(ExtentModType extentModType, Real extentModAmount);
 	AsciiString getDescriptiveString() const;
 #endif

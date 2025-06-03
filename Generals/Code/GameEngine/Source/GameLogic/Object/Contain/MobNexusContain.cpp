@@ -348,7 +348,7 @@ UpdateSleepTime MobNexusContain::update()
 				ContainedItemsList::const_iterator it;
 				it = items->begin();
 
-				while( *it )
+				while( it != items->end() )
 				{
 					Object *object = *it;
 
@@ -442,8 +442,7 @@ Bool MobNexusContain::tryToEvacuate( Bool exposeStealthedUnits )
 
 			if( obj->isKindOf( KINDOF_STEALTH_GARRISON ) && exposeStealthedUnits )
 			{
-				static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-				StealthUpdate* stealth = (StealthUpdate*)obj->findUpdateModule( key_StealthUpdate );
+				StealthUpdate* stealth = obj->getStealth();
 				if( stealth )
 				{
 					stealth->markAsDetected();

@@ -75,7 +75,7 @@ public:
 	// virtual destructor prototype provided by memory pool object
 
 	virtual void doSpecialPowerAtObject( const Object *obj, UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, UnsignedInt commandOptions );
+	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
 
 protected:
 

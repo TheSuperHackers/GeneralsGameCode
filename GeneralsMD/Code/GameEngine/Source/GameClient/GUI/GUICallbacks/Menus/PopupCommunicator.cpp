@@ -117,7 +117,7 @@ WindowMsgHandledType PopupCommunicatorInput( GameWindow *window, UnsignedInt msg
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
@@ -184,10 +184,13 @@ WindowMsgHandledType PopupCommunicatorSystem( GameWindow *window, UnsignedInt ms
       
 			if( controlID == buttonOkID )
 			{
-        WindowLayout *popupCommunicatorLayout = window->winGetLayout();
-        popupCommunicatorLayout->destroyWindows();
-				popupCommunicatorLayout->deleteInstance();
-				popupCommunicatorLayout = NULL;
+				WindowLayout *popupCommunicatorLayout = window->winGetLayout();
+				if (popupCommunicatorLayout)
+				{
+					popupCommunicatorLayout->destroyWindows();
+					deleteInstance(popupCommunicatorLayout);
+					popupCommunicatorLayout = NULL;
+				}
 			}  // end if
 	
 			break;

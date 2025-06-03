@@ -32,7 +32,6 @@
 #include "Common/AudioAffect.h"
 #include "Common/AudioHandleSpecialValues.h"
 #include "Common/BuildAssistant.h"
-#include "Common/CopyProtection.h"
 #include "Common/CRCDebug.h"
 #include "Common/GameAudio.h"
 #include "Common/GameEngine.h"
@@ -118,11 +117,11 @@ FILE *g_UT_timingLog=NULL;
 FILE *g_UT_commaLog=NULL;
 // Note - this is only for gathering timing data!  DO NOT DO THIS IN REGULAR CODE!!!  JBA
 #define BRUTAL_TIMING_HACK
-#include "../../gameenginedevice/include/W3DDevice/GameClient/Module/W3DModelDraw.h"
+#include "../../GameEngineDevice/Include/W3DDevice/GameClient/Module/W3DModelDraw.h"
 #endif
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -293,9 +292,18 @@ Bool GameLogic::isInSinglePlayerGame( void )
 //-------------------------------------------------------------------------------------------------
 void GameLogic::destroyAllObjectsImmediate()
 {
-	// destroy all remaining objects
 	Object *obj;
 	Object *nextObj;
+
+	// TheSuperHackers @bugfix xezon 22/05/2025 Set all remaining objects effectively dead to avoid triggering their
+	// death modules that eventually would spawn new objects, such as debris, which could then crash the game.
+	// See https://github.com/TheSuperHackers/GeneralsGameCode/issues/896
+	for( obj = m_objList; obj; obj = obj->getNextObject() )
+	{
+		obj->setEffectivelyDead(true);
+	}
+
+	// destroy all remaining objects
 	for( obj = m_objList; obj; obj = nextObj )
 	{
 		nextObj = obj->getNextObject();
@@ -321,7 +329,7 @@ GameLogic::~GameLogic()
 	if (m_background)
 	{
 		m_background->destroyWindows();
-		m_background->deleteInstance();
+		deleteInstance(m_background);
 		m_background = NULL;
 	}
 
@@ -423,7 +431,11 @@ void GameLogic::reset( void )
 
 	// set the hash to be rather large. We need to optimize this value later.
 	m_objHash.clear();
+#if USING_STLPORT
 	m_objHash.resize(OBJ_HASH_SIZE);
+#else
+	m_objHash.reserve(OBJ_HASH_SIZE);
+#endif
 	m_gamePaused = FALSE;
 	m_inputEnabledMemory = TRUE;
 	m_mouseVisibleMemory = TRUE;
@@ -600,7 +612,6 @@ LoadScreen *GameLogic::getLoadScreen( Bool saveGame )
 	case GAME_SHELL:
 		return NEW ShellGameLoadScreen;
 		break;
-#if !defined(_PLAYTEST)
 	case GAME_SINGLE_PLAYER:
 		if(TheCampaignManager->getCurrentMission() && saveGame == FALSE )
 			return NEW SinglePlayerLoadScreen;
@@ -616,7 +627,6 @@ LoadScreen *GameLogic::getLoadScreen( Bool saveGame )
 	case GAME_REPLAY:
 		return NEW ShellGameLoadScreen;
 		break;
-#endif
 	case GAME_INTERNET:
 		return NEW GameSpyLoadScreen;
 		break;
@@ -719,7 +729,7 @@ static void populateRandomSideAndColor( GameInfo *game )
 			// get a few values at random to get rid of the dreck.
 			// there's no mathematical basis for this, but empirically, it helps a lot.
 			UnsignedInt silly = GetGameLogicRandomSeed() % 7;
-			for (Int poo = 0; poo < silly; ++poo) 
+			for (UnsignedInt poo = 0; poo < silly; ++poo) 
 			{
 				GameLogicRandomValue(0, 1);	// ignore result
 			}
@@ -975,6 +985,15 @@ void GameLogic::startNewGame( Bool saveGame )
 	GetPrecisionTimer(&startTime64);
 	#endif
 
+	// reset the frame counter
+	m_frame = 0;
+
+#ifdef DEBUG_CRC
+	// TheSuperHackers @info helmutbuhler 04/09/2025
+	// Let CRC Logger know that a new game was started.
+	CRCDebugStartNewGame();
+#endif
+
 	if( saveGame == FALSE )
 	{
 
@@ -994,7 +1013,6 @@ void GameLogic::startNewGame( Bool saveGame )
 
 		if( m_startNewGame == FALSE )
 		{
-#if !defined(_PLAYTEST)
 			/// @todo: Here is where we would look at the game mode & play an intro movie or something.
 			// Failing that, we just set the flag so the actual game can start from a uniform
 			// entry point (startNewGame() called from update()).
@@ -1004,7 +1022,7 @@ void GameLogic::startNewGame( Bool saveGame )
 				if(m_background)
 				{
 					m_background->destroyWindows();
-					m_background->deleteInstance();
+					deleteInstance(m_background);
 					m_background = NULL;
 				}
 				m_loadScreen = getLoadScreen( saveGame );
@@ -1015,7 +1033,6 @@ void GameLogic::startNewGame( Bool saveGame )
 				}
 
 			}
-#endif
 
 			m_startNewGame = TRUE;
 			return;
@@ -1027,6 +1044,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	m_rankLevelLimit = 1000;	// this is reset every game.
 	setDefaults( saveGame );
 	TheWritableGlobalData->m_loadScreenRender = TRUE;	///< mark it so only a few select things are rendered during load	
+	TheWritableGlobalData->m_TiVOFastMode = FALSE;	//always disable the TIVO fast-forward mode at the start of a new game.
 
 	m_showBehindBuildingMarkers = TRUE;
 	m_drawIconUI = TRUE;
@@ -1056,12 +1074,10 @@ void GameLogic::startNewGame( Bool saveGame )
 		{
 			TheGameInfo = game = TheRecorder->getGameInfo();
 		}
-#if !defined(_PLAYTEST)
-    else if(m_gameMode == GAME_SKIRMISH )
-    {
-      TheGameInfo = game = TheSkirmishGameInfo;
-    }
-#endif
+		else if(m_gameMode == GAME_SKIRMISH)
+		{
+		  TheGameInfo = game = TheSkirmishGameInfo;
+		}
 	}
 
 	checkForDuplicateColors( game );
@@ -1101,7 +1117,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	if(!m_loadScreen)
 	{
 		m_loadScreen = getLoadScreen( saveGame );
-		if(m_loadScreen)
+		if(m_loadScreen && !TheGlobalData->m_headless)
 		{
 			TheMouse->setVisibility(FALSE);
 			m_loadScreen->init(game);
@@ -1113,7 +1129,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	if(m_background)
 	{
 		m_background->destroyWindows();
-		m_background->deleteInstance();
+		deleteInstance(m_background);
 		m_background = NULL;
 	}
 	setFPMode();
@@ -1125,8 +1141,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	if(m_loadScreen)
 		updateLoadProgress(LOAD_PROGRESS_POST_PARTICLE_INI_LOAD);
 
-	// reset the frame counter
-	m_frame = 0;
+	DEBUG_ASSERTCRASH(m_frame == 0, ("framecounter expected to be 0 here\n"));
 
 	// before loading the map, load the map.ini file in the same directory.
 	loadMapINI( TheGlobalData->m_mapName );
@@ -1391,7 +1406,7 @@ void GameLogic::startNewGame( Bool saveGame )
 				}
 				for (Int i=0; i<count; ++i)
 				{
-					scripts[i]->deleteInstance();
+					deleteInstance(scripts[i]);
 				}
 			}
 		}
@@ -1880,7 +1895,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	}
 
 	// if we're in a load game, don't fade yet
-	if( saveGame == FALSE )
+	if(saveGame == FALSE && TheTransitionHandler != NULL)
 	{
 		TheTransitionHandler->setGroup("FadeWholeScreen");
 		while(!TheTransitionHandler->isFinished())
@@ -1920,14 +1935,17 @@ void GameLogic::startNewGame( Bool saveGame )
 
 	if(m_gameMode == GAME_SHELL)
 	{
-		if(TheShell->getScreenCount() == 0)
-			TheShell->push( AsciiString("Menus/MainMenu.wnd") );
-		else if (TheShell->top())
+		if (!TheGlobalData->m_headless)
 		{
-			TheShell->top()->hide(FALSE);
-			TheShell->top()->bringForward();
+			if(TheShell->getScreenCount() == 0)
+				TheShell->push( AsciiString("Menus/MainMenu.wnd") );
+			else if (TheShell->top())
+			{
+				TheShell->top()->hide(FALSE);
+				TheShell->top()->bringForward();
+			}
+			HideControlBar();
 		}
-		HideControlBar();
 	}
 	else
 	{
@@ -1973,7 +1991,9 @@ void GameLogic::startNewGame( Bool saveGame )
 
 	// Turn off shadows
 	TheWritableGlobalData->m_useShadowVolumes = false;
+#ifdef DEBUG_CRASHING
 	TheWritableGlobalData->m_debugIgnoreAsserts = TRUE;
+#endif
 
 	// Just look somewhere.  lookAt does some terrain specific setup, so it is good
 	// to call it.  jba
@@ -2208,7 +2228,7 @@ void GameLogic::processDestroyList( void )
 		// remove object from lookup table
 		removeObjectFromLookupTable( currentObject );
 
-		currentObject->friend_deleteInstance();//actual delete
+		Object::friend_deleteInstance(currentObject);//actual delete
 	}
 
 	m_objectsToDestroy.clear();//list full of bad pointers now, clear it.  If anyone's deletion resulted
@@ -2227,7 +2247,7 @@ void GameLogic::processCommandList( CommandList *list )
 
 	for( msg = list->getFirstMessage(); msg; msg = msg->next() )
 	{
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		DEBUG_ASSERTCRASH(msg != NULL && msg != (GameMessage*)0xdeadbeef, ("bad msg"));
 #endif
 		logicMessageDispatcher( msg, NULL );
@@ -2280,7 +2300,7 @@ void GameLogic::processCommandList( CommandList *list )
 				DEBUG_LOG(("CRC from player %d (%ls) = %X\n", crcIt->first,
 					player?player->getPlayerDisplayName().str():L"<NONE>", crcIt->second));
 			}
-#endif DEBUG_LOGGING
+#endif // DEBUG_LOGGING
 			TheNetwork->setSawCRCMismatch();
 		}
 	}
@@ -2388,8 +2408,8 @@ void GameLogic::deselectObject(Object *obj, PlayerMaskType playerMask, Bool affe
 // ------------------------------------------------------------------------------------------------
 inline void GameLogic::validateSleepyUpdate() const
 {
-// pretty slow, so do only for DEBUG for now. turn on if you suspect wonkiness.
-#ifdef _DEBUG
+// pretty slow, so do only for DEBUG_CRASHING for now. turn on if you suspect wonkiness.
+#ifdef DEBUG_CRASHING
 	#define SLEEPY_DEBUG
 #endif
 #ifdef SLEEPY_DEBUG
@@ -2506,9 +2526,9 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 	UpdateModulePtr* pI = &m_sleepyUpdates[i];
 
 	// our children are i*2 and i*2+1
-  Int child = ((i+1)<<1)-1;
-	UpdateModulePtr* pChild = &m_sleepyUpdates[child];
-	UpdateModulePtr* pSZ = &m_sleepyUpdates[m_sleepyUpdates.size()];	// yes, this is off the end.
+  Int child = ((i)<<1)+1;
+	UpdateModulePtr* pChild = &m_sleepyUpdates[0] + child;
+	UpdateModulePtr* pSZ = &m_sleepyUpdates[0] + m_sleepyUpdates.size();	// yes, this is off the end.
 
   while (pChild < pSZ) 
 	{
@@ -2538,13 +2558,13 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 		i = child;
 		pI = pChild;
 
-		child = ((i+1)<<1)-1;
-		pChild = &m_sleepyUpdates[child];
+		child = ((i)<<1)+1;
+		pChild = &m_sleepyUpdates[0] + child;
   }
 #else
 	// our children are i*2 and i*2+1
 	Int sz = m_sleepyUpdates.size();
-  Int child = ((i+1)<<1)-1;
+  Int child = ((i)<<1)+1;
   while (child < sz) 
 	{
 		// choose the higher-priority of the two children; we must be higher-pri than that.
@@ -2567,7 +2587,7 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 		a->friend_setIndexInLogic(i);
 		b->friend_setIndexInLogic(child);
 		i = child;
-		child = ((i+1)<<1)-1;
+		child = ((i)<<1)+1;
   }
 #endif
 	return i;
@@ -3119,10 +3139,9 @@ void GameLogic::update( void )
 	Bool isMPGameOrReplay = (TheRecorder && TheRecorder->isMultiplayer() && getGameMode() != GAME_SHELL && getGameMode() != GAME_NONE);
 	Bool isSoloGameOrReplay = (TheRecorder && !TheRecorder->isMultiplayer() && getGameMode() != GAME_SHELL && getGameMode() != GAME_NONE);
 	Bool generateForMP = (isMPGameOrReplay && (m_frame % TheGameInfo->getCRCInterval()) == 0);
-//#if defined(_DEBUG) || defined(_INTERNAL)
 #ifdef DEBUG_CRC
 	Bool generateForSolo = isSoloGameOrReplay && ((m_frame && (m_frame%100 == 0)) ||
-		(getFrame() > TheCRCFirstFrameToLog && getFrame() < TheCRCLastFrameToLog && ((m_frame % REPLAY_CRC_INTERVAL) == 0)));
+		(getFrame() >= TheCRCFirstFrameToLog && getFrame() < TheCRCLastFrameToLog && ((m_frame % REPLAY_CRC_INTERVAL) == 0)));
 #else
 	Bool generateForSolo = isSoloGameOrReplay && ((m_frame % REPLAY_CRC_INTERVAL) == 0);
 #endif // DEBUG_CRC
@@ -3135,14 +3154,14 @@ void GameLogic::update( void )
 			GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_LOGIC_CRC );
 			msg->appendIntegerArgument( m_CRC );
 			msg->appendBooleanArgument( (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_PLAYBACK) ); // playback CRC
-			//DEBUG_LOG(("Appended CRC of %8.8X on frame %d\n", m_CRC, m_frame));
+			DEBUG_LOG(("Appended CRC on frame %d: %8.8X\n", m_frame, m_CRC));
 		}
 		else
 		{
 			GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_LOGIC_CRC );
 			msg->appendIntegerArgument( m_CRC );
 			msg->appendBooleanArgument( (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_PLAYBACK) ); // playback CRC
-			//DEBUG_LOG(("Appended Playback CRC of %8.8X on frame %d\n", m_CRC, m_frame));
+			DEBUG_LOG(("Appended Playback CRC on frame %d: %8.8X\n", m_frame, m_CRC));
 		}
 	}
 
@@ -3260,18 +3279,6 @@ void GameLogic::update( void )
 	TheWeaponStore->UPDATE();	
 	TheLocomotorStore->UPDATE();	
 	TheVictoryConditions->UPDATE();
-
-#ifdef DO_COPY_PROTECTION
-	if (!isInShellGame() && isInGame())
-	{
-		if ((m_frame == 1024) && !CopyProtect::validate())
-		{
-			DEBUG_LOG(("Copy protection failed - bailing"));
-			GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_SELF_DESTRUCT);
-			msg->appendBooleanArgument(FALSE);
-		}
-	}
-#endif
 
 	{
 		//Handle disabled statii (and re-enable objects once frame matches)
@@ -3402,7 +3409,7 @@ void GameLogic::registerObject( Object *obj )
 	* GameLogic/Client for those purposes, or we could put the allocation pools
 	* in the GameLogic and GameClient themselves */
 // ------------------------------------------------------------------------------------------------
-Object *GameLogic::friend_createObject( const ThingTemplate *thing, ObjectStatusBits statusBits, Team *team )
+Object *GameLogic::friend_createObject( const ThingTemplate *thing, const ObjectStatusMaskType &statusBits, Team *team )
 {
 	Object *obj;
 
@@ -3432,7 +3439,7 @@ void GameLogic::destroyObject( Object *obj )
 	}
 
 	// mark object as destroyed
-	obj->setStatus( OBJECT_STATUS_DESTROYED );
+	obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DESTROYED ) );
 
 	// We desperately need to stop here, or else the destructor of the statemachine will try to do
 	// stopping logic, which uses virtual functions and deleted modules, which will crash us.
@@ -3478,6 +3485,12 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	{
 		AsciiString crcName;
 #ifdef DEBUG_CRC
+		// TheSuperHackers @info helmutbuhler 04/09/2025
+		// This allows you to save the binary data that is involved in the crc calculation
+		// to a binary file per frame.
+		// This was apparently used early in development and isn't that useful, because diffing
+		// that binary data is very difficult. The CRC logging is much easier to diff and also more
+		// granular than this because it can capture changes between two frames.
 		if (isInGameLogicUpdate() && g_keepCRCSaves && m_frame < 5)
 		{
 			xferCRC = NEW XferDeepCRC;
@@ -3693,7 +3706,6 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic )
 		while( drawable )
 		{
 			drawable->startAmbientSound();
-			TheAudio->stopAllAmbientsBy( drawable );
 			drawable = drawable->getNextDrawable();
 		}
 	}

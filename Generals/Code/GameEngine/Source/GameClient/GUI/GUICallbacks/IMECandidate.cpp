@@ -112,7 +112,7 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 	textRegion.hi.y = origin.y + size.y;
 
 	// get the right colors for drawing
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 
 		textSelectColor		= window->winGetDisabledTextColor();
@@ -121,7 +121,7 @@ void IMECandidateTextAreaDraw( GameWindow *window, WinInstanceData *instData )
 		textBorder	= window->winGetDisabledTextBorderColor();
 
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
 		textColor		= window->winGetEnabledTextColor();
@@ -244,14 +244,14 @@ void IMECandidateMainDraw( GameWindow *window, WinInstanceData *instData )
 	window->winGetSize( &size.x, &size.y );
 
 	// get the right colors for drawing
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 
 		backColor		= window->winGetDisabledColor( 0 );
 		backBorder	= window->winGetDisabledBorderColor( 0 );
 
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
 		backColor		= window->winGetHiliteColor( 0 );

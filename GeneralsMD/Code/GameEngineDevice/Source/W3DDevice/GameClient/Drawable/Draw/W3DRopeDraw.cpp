@@ -40,11 +40,11 @@
 #include "GameLogic/GameLogic.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/Module/W3DRopeDraw.h"
-#include "WW3D2/Line3D.h"
+#include "WW3D2/line3d.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "Common/GameState.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -107,8 +107,11 @@ void W3DRopeDraw::buildSegments()
 																	 m_color.blue,  // blue
 																	 0.5f );  // transparency
 
-		W3DDisplay::m_3DScene->Add_Render_Object( info.line );
-		W3DDisplay::m_3DScene->Add_Render_Object( info.softLine );
+		if (W3DDisplay::m_3DScene)
+		{
+			W3DDisplay::m_3DScene->Add_Render_Object( info.line );
+			W3DDisplay::m_3DScene->Add_Render_Object( info.softLine );
+		}
 		m_segments.push_back(info);
 	}
 }
@@ -122,12 +125,14 @@ void W3DRopeDraw::tossSegments()
 	{
 		if (it->line)
 		{
-			W3DDisplay::m_3DScene->Remove_Render_Object(it->line);
+			if (W3DDisplay::m_3DScene)
+				W3DDisplay::m_3DScene->Remove_Render_Object(it->line);
 			REF_PTR_RELEASE((it->line));
 		}
 		if (it->softLine)
 		{
-			W3DDisplay::m_3DScene->Remove_Render_Object(it->softLine);
+			if (W3DDisplay::m_3DScene)
+				W3DDisplay::m_3DScene->Remove_Render_Object(it->softLine);
 			REF_PTR_RELEASE((it->softLine));
 		}
 	}

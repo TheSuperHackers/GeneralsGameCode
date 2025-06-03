@@ -47,7 +47,7 @@
 
 extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -69,11 +69,11 @@ void TAiData::addFactionBuildList(AISideBuildList *buildList)
 	while (info) {
 		if (buildList->m_side == info->m_side) {
 			if (info->m_buildList)
-				info->m_buildList->deleteInstance();
+				deleteInstance(info->m_buildList);
 			info->m_buildList = buildList->m_buildList;
 			buildList->m_buildList = NULL;
 			buildList->m_next = NULL;
-			buildList->deleteInstance();
+			deleteInstance(buildList);
 			return;
 		}
 		info = info->m_next;
@@ -89,7 +89,7 @@ TAiData::~TAiData()
 	while (info) { 
 		AISideInfo *cur = info;
 		info = info->m_next;
-		cur->deleteInstance();
+		deleteInstance(cur);
 	}
 
 	AISideBuildList *build = m_sideBuildLists;
@@ -97,7 +97,7 @@ TAiData::~TAiData()
 	while (build) { 
 		AISideBuildList *cur = build;
 		build = build->m_next;
-		cur->deleteInstance();
+		deleteInstance(cur);
 	}
 
 }
@@ -115,7 +115,7 @@ AISideBuildList::AISideBuildList( AsciiString side ) :
 AISideBuildList::~AISideBuildList()
 {
 	if (m_buildList) {
-		m_buildList->deleteInstance(); // note - deletes all in the list.
+		deleteInstance(m_buildList); // note - deletes all in the list.
 	}
 	m_buildList = NULL;
 }
@@ -474,7 +474,7 @@ void AI::destroyGroup( AIGroup *group )
 	m_groupList.erase( i );
 
 	// destroy group
-	group->deleteInstance();
+	deleteInstance(group);
 }
 
 /**
@@ -527,7 +527,7 @@ public:
 		return true;
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterLiveMapEnemies"; }
 #endif
 };
@@ -557,7 +557,7 @@ public:
 		return false;
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterWithinAttackRange"; }
 #endif
 };
@@ -863,7 +863,7 @@ Real AI::getAdjustedVisionRangeForObject(const Object *object, Int factorsToCons
 		}
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		// ICK. This really nasty statement is used so that we only initialize this color once.

@@ -89,7 +89,8 @@ class ParticleBufferClass : public RenderObjClass
 		ParticleBufferClass(ParticleEmitterClass *emitter, unsigned int buffer_size,
 			ParticlePropertyStruct<Vector3> &color, ParticlePropertyStruct<float> &opacity,
 			ParticlePropertyStruct<float> &size, ParticlePropertyStruct<float> &rotation,
-			float orient_rnd, ParticlePropertyStruct<float> &frame, Vector3 accel,
+			float orient_rnd, ParticlePropertyStruct<float> &frame,
+			ParticlePropertyStruct<float> &blurtime, Vector3 accel,
 			float max_age, TextureClass *tex, ShaderClass shader, bool pingpong,
 			int render_mode, int frame_mode, const W3dEmitterLinePropertiesStruct * line_props);
 
@@ -151,6 +152,7 @@ class ParticleBufferClass : public RenderObjClass
 		void Reset_Size(ParticlePropertyStruct<float> &new_props);
 		void Reset_Rotations(ParticlePropertyStruct<float> &new_rotations, float orient_rnd);
 		void Reset_Frames(ParticlePropertyStruct<float> &new_frames);
+		void Reset_Blur_Times(ParticlePropertyStruct<float> &new_blur_times);
 
 		// This informs the buffer that the emitter is dead, so it can release
 		// its pointer to it and be removed itself after all its particles dies
@@ -217,6 +219,7 @@ class ParticleBufferClass : public RenderObjClass
 		void						Get_Size_Key_Frames (ParticlePropertyStruct<float>	&sizes) const;
 		void						Get_Rotation_Key_Frames (ParticlePropertyStruct<float> &rotations) const;
 		void						Get_Frame_Key_Frames (ParticlePropertyStruct<float> &frames) const;
+		void						Get_Blur_Time_Key_Frames (ParticlePropertyStruct<float> &blurtimes) const;
 		float						Get_Initial_Orientation_Random (void) const { return InitialOrientationRandom; }
 
 		// Total Active Particle Buffer Count
@@ -329,6 +332,10 @@ class ParticleBufferClass : public RenderObjClass
 		unsigned int * FrameKeyFrameTimes;		// 0th entry is always 0
 		float *			FrameKeyFrameValues;
 		float *			FrameKeyFrameDeltas;
+		unsigned int	NumBlurTimeKeyFrames;
+		unsigned int * BlurTimeKeyFrameTimes;		// 0th entry is always 0
+		float *			BlurTimeKeyFrameValues;
+		float *			BlurTimeKeyFrameDeltas;
 
 		// These tables are indexed by the array position in the particle buffer.
 		// The table size is either the smallest power of two equal or larger
@@ -350,12 +357,15 @@ class ParticleBufferClass : public RenderObjClass
 		float *			RandomOrientationEntries;
 		unsigned int	NumRandomFrameEntriesMinus1;			// 2^n - 1 so can be used as a mask also
 		float *			RandomFrameEntries;
+		unsigned int	NumRandomBlurTimeEntriesMinus1;		// 2^n - 1 so can be used as a mask also
+		float *			RandomBlurTimeEntries;
 		
 		Vector3			ColorRandom;
 		float				OpacityRandom;
 		float				SizeRandom;
 		float				RotationRandom;
 		float				FrameRandom;
+		float				BlurTimeRandom;
 		float				InitialOrientationRandom;
 
 		// This object implements particle rendering
@@ -375,6 +385,7 @@ class ParticleBufferClass : public RenderObjClass
 		ShareBufferClass<float> *		Alpha;
 		ShareBufferClass<float> *		Size;
 		ShareBufferClass<uint8> *		Frame;
+		ShareBufferClass<Vector3> *	TailPosition;	// Only used for line groups
 		ShareBufferClass<uint8> *		Orientation;
 		ShareBufferClass<unsigned int> *	APT;
 

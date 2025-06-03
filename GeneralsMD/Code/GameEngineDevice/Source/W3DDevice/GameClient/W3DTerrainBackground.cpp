@@ -51,15 +51,15 @@
 #include <string.h>
 #include <assetmgr.h>
 #include <texture.h>
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 #include "GameClient/View.h"
 #include "W3DDevice/GameClient/TerrainTex.h"
 #include "W3DDevice/GameClient/HeightMap.h"
-#include "WW3D2/DX8Wrapper.h"
-#include "WW3D2/DX8Renderer.h"
-#include "WW3D2/Camera.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/dx8renderer.h"
+#include "WW3D2/camera.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -562,7 +562,7 @@ void W3DTerrainBackground::doTesselatedUpdate(const IRegion2D &partialRange, Wor
 	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexTerrain);
 	ib = lockIdxBuffer.Get_Index_Array();
 	fillVBRecursive(ib, 0, 0, m_width, ndx, m_curNumTerrainIndices);
-	delete ndx;
+	delete[] ndx;
 	ndx = NULL;
 
 	MinMaxAABoxClass bounds;

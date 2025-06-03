@@ -363,7 +363,7 @@ WindowMsgHandledType SkirmishMapSelectMenuInput( GameWindow *window, UnsignedInt
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 						AsciiString buttonName( "SkirmishMapSelectMenu.wnd:ButtonBack" );
 						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
@@ -521,9 +521,13 @@ WindowMsgHandledType SkirmishMapSelectMenuSystem( GameWindow *window, UnsignedIn
 			{
 				showSkirmishGameOptionsUnderlyingGUIElements(TRUE);
 
-				skirmishMapSelectLayout->destroyWindows();
-				skirmishMapSelectLayout->deleteInstance();
-				skirmishMapSelectLayout = NULL;
+				if (skirmishMapSelectLayout)
+				{
+					skirmishMapSelectLayout->destroyWindows();
+					deleteInstance(skirmishMapSelectLayout);
+					skirmishMapSelectLayout = NULL;
+				}
+
 				skirmishPositionStartSpots();
 				//TheShell->pop();
 				//do you need this ??
@@ -583,9 +587,12 @@ WindowMsgHandledType SkirmishMapSelectMenuSystem( GameWindow *window, UnsignedIn
 					skirmishPositionStartSpots();
 					skirmishUpdateSlotList();
 
-					skirmishMapSelectLayout->destroyWindows();
-					skirmishMapSelectLayout->deleteInstance();
-					skirmishMapSelectLayout = NULL;
+					if (skirmishMapSelectLayout)
+					{
+						skirmishMapSelectLayout->destroyWindows();
+						deleteInstance(skirmishMapSelectLayout);
+						skirmishMapSelectLayout = NULL;
+					}
 					//TheShell->pop();
 
 				}  // end if

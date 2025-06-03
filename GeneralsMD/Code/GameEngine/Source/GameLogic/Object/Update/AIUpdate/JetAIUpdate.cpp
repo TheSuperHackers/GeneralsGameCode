@@ -49,14 +49,14 @@
 
 const Real BIGNUM = 99999.0f;
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
 
 //-------------------------------------------------------------------------------------------------
-enum TaxiType
+enum TaxiType CPP_11(: Int)
 {
 	FROM_HANGAR,
 	FROM_PARKING,
@@ -64,7 +64,7 @@ enum TaxiType
 };
 
 //-------------------------------------------------------------------------------------------------
-enum JetAIStateType
+enum JetAIStateType CPP_11(: Int)
 {
 	// note that these must be distinct (numerically) from AIStateType. ick.
 	JETAISTATETYPE_FIRST = 1000,
@@ -154,7 +154,7 @@ private:
 public:
 	PartitionFilterHasParkingPlace(ObjectID id) : m_id(id) { }
 protected:
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterHasParkingPlace"; }
 #endif
 	virtual Bool allow(Object *objOther)
@@ -549,7 +549,7 @@ public:
 					std::vector<Coord3D>::const_iterator it;
 					for( it = pTaxiLocations->begin(); it != pTaxiLocations->end(); it++ )
 					{
-						movePath->appendNode( it, LAYER_GROUND );
+						movePath->appendNode( &(*it), LAYER_GROUND );
 					}
 				}
 
@@ -617,7 +617,7 @@ public:
 							firstNode = FALSE;
 							continue;
 						}
-						movePath->appendNode( it, LAYER_GROUND );
+						movePath->appendNode( &(*it), LAYER_GROUND );
 					}
 					movePath->appendNode( &ppinfo.runwayPrep, LAYER_GROUND );
 				}

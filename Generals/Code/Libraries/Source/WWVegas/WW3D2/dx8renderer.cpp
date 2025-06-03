@@ -59,7 +59,6 @@
 #include "stripoptimizer.h"
 #include "meshgeometry.h"
 
-
 /*
 ** Global Instance of the DX8MeshRender
 */
@@ -73,16 +72,6 @@ static DynamicVectorClass<Vector3>				_TempNormalBuffer;
 static MultiListClass<MeshModelClass>			_RegisteredMeshList;
 static TextureCategoryList							texture_category_delete_list;
 static FVFCategoryList								fvf_category_container_delete_list;
-
-//void Whatever(const Vector3* locations,unsigned vertex_count,const Vector3i* polygon_indices,unsigned polygon_count);
-void Whatever(
-	Vector3i* added_polygon_indices,
-	unsigned& added_polygon_count,
-	const Vector3* locations,
-	unsigned vertex_count,
-	const Vector3i* polygon_indices,
-	unsigned polygon_count);
-
 
 // helper data structure
 class PolyRemover : public MultiListObjectClass
@@ -269,7 +258,8 @@ void DX8TextureCategoryClass::Remove_Polygon_Renderer(DX8PolygonRendererClass* p
 
 void DX8FVFCategoryContainer::Remove_Texture_Category(DX8TextureCategoryClass* tex_category)
 {
-	for (unsigned pass=0;pass<passes;++pass) {
+	unsigned pass=0;
+	for (;pass<passes;++pass) {
 		texture_category_list[pass].Remove(tex_category);
 	}
 	for (pass=0; pass<passes; pass++) {
@@ -809,7 +799,7 @@ class Vertex_Split_Table
 	MeshModelClass* mmc;
 	bool npatch_enable;
 	unsigned polygon_count;
-	Vector3i* polygon_array;
+	TriIndex* polygon_array;
 
 	bool allocated_polygon_array;
 
@@ -820,7 +810,7 @@ public:
 		npatch_enable(false),
 		allocated_polygon_array(false)
 	{
-		if (DX8Caps::Support_NPatches() && mmc->Needs_Vertex_Normals()) {
+		if (DX8Wrapper::Get_Current_Caps()->Support_NPatches() && mmc->Needs_Vertex_Normals()) {
 			if (mmc->Get_Flag(MeshGeometryClass::ALLOW_NPATCHES)) {
 				npatch_enable=true;
 			}
@@ -831,20 +821,20 @@ public:
 		if (gap_filler) polygon_count+=gap_filler->Get_Polygon_Count();
 //		if (mmc->Get_Gap_Filler_Polygon_Count()) {
 			allocated_polygon_array=true;
-			polygon_array=W3DNEWARRAY Vector3i[polygon_count];
+			polygon_array=W3DNEWARRAY TriIndex[polygon_count];
 			memcpy(
 				polygon_array,
 				mmc->Get_Polygon_Array(),
-				mmc->Get_Polygon_Count()*sizeof(Vector3i));
+				mmc->Get_Polygon_Count()*sizeof(TriIndex));
 			if (gap_filler) {
 				memcpy(
 					polygon_array+mmc->Get_Polygon_Count(),
 					gap_filler->Get_Polygon_Array(),
-					gap_filler->Get_Polygon_Count()*sizeof(Vector3i));
+					gap_filler->Get_Polygon_Count()*sizeof(TriIndex));
 			}
 //		}
 //		else {
-//			polygon_array=const_cast<Vector3i*>(mmc->Get_Polygon_Array());
+//			polygon_array=const_cast<TriIndex*>(mmc->Get_Polygon_Array());
 //		}
 
 	}
@@ -974,7 +964,7 @@ void DX8RigidFVFCategoryContainer::Add_Mesh(MeshModelClass* mmc_)
 			vertex_buffer=NEW_REF(DX8VertexBufferClass,(
 				FVF,
 				vb_size,
-				(DX8Caps::Support_NPatches() && WW3D::Get_NPatches_Level()>1) ? DX8VertexBufferClass::USAGE_NPATCHES : DX8VertexBufferClass::USAGE_DEFAULT));
+				(DX8Wrapper::Get_Current_Caps()->Support_NPatches() && WW3D::Get_NPatches_Level()>1) ? DX8VertexBufferClass::USAGE_NPATCHES : DX8VertexBufferClass::USAGE_DEFAULT));
 		}
 	}
 
@@ -1172,7 +1162,7 @@ void DX8FVFCategoryContainer::Generate_Texture_Categories(Vertex_Split_Table& sp
 		else {
 			index_buffer=NEW_REF(DX8IndexBufferClass,(
 				ib_size,
-				(DX8Caps::Support_NPatches() && WW3D::Get_NPatches_Level()>1) ? DX8IndexBufferClass::USAGE_NPATCHES : DX8IndexBufferClass::USAGE_DEFAULT));
+				(DX8Wrapper::Get_Current_Caps()->Support_NPatches() && WW3D::Get_NPatches_Level()>1) ? DX8IndexBufferClass::USAGE_NPATCHES : DX8IndexBufferClass::USAGE_DEFAULT));
 		}
 	}
 
@@ -1498,8 +1488,8 @@ unsigned DX8TextureCategoryClass::Add_Mesh(
 		if (index_buffer->Type()==BUFFER_TYPE_SORTING || index_buffer->Type()==BUFFER_TYPE_DYNAMIC_SORTING) {
 			stripify=false;
 		}
-#endif;
-		const Vector3i* src_indices=(const Vector3i*)split_table.Get_Polygon_Array(pass);//mmc->Get_Polygon_Array();
+#endif // ;
+		const TriIndex* src_indices=(const TriIndex*)split_table.Get_Polygon_Array(pass);//mmc->Get_Polygon_Array();
 
 		if (stripify) {
 			int* triangles=W3DNEWARRAY int[index_count];
@@ -2032,7 +2022,8 @@ void DX8MeshRendererClass::Register_Mesh_Type(MeshModelClass* mmc)
 			/*
 			** Search for an existing FVF Category Container that matches this mesh
 			*/
-			for (int i=0;i<texture_category_container_lists_rigid.Count();++i) {
+			int i=0;
+			for (;i<texture_category_container_lists_rigid.Count();++i) {
 				FVFCategoryList * list=texture_category_container_lists_rigid[i];
 				WWASSERT(list);
 				DX8FVFCategoryContainer * container=list->Peek_Head();

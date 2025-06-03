@@ -26,17 +26,17 @@
 // W3D Particle System implementation
 // Author: Michael S. Booth, November 2001
 
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 #include "GameClient/Color.h"
 #include "W3DDevice/GameClient/W3DParticleSys.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/W3DDisplay.h"
-#include "W3DDevice/GameClient/heightmap.h"
+#include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DSmudge.h"
 #include "W3DDevice/GameClient/W3DSnow.h"
-#include "WW3D2/Camera.h"
+#include "WW3D2/camera.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -49,7 +49,6 @@
 //-------------------------------------------------------------------------------------------------
 
 
-#include "Common/QuickTrig.h"
 W3DParticleSystemManager::W3DParticleSystemManager()
 {
 	m_pointGroup = NULL;

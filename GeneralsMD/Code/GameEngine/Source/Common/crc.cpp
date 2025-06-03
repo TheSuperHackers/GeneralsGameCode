@@ -25,10 +25,10 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "Common/CRC.h"
+#include "Common/crc.h"
 #include "Common/Debug.h"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 
 void CRC::addCRC( UnsignedByte val )
 {

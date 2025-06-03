@@ -32,7 +32,7 @@
 #include "string.h"
 #include "Compression.h"
 #include "Common/DataChunk.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 
 // If verbose, lots of debug logging.
@@ -275,7 +275,7 @@ DataChunkOutput::~DataChunkOutput()
 	::fclose(m_tmp_file);
 }
 
-void DataChunkOutput::openDataChunk( char *name, DataChunkVersionType ver )
+void DataChunkOutput::openDataChunk( const char *name, DataChunkVersionType ver )
 {
 	// allocate (or get existing) ID from the table of m_contents
 	UnsignedInt id = m_contents.allocateID( AsciiString(name) );
@@ -331,7 +331,7 @@ void DataChunkOutput::closeDataChunk( void )
 	DEBUG_LOG(("Closing chunk %s at %d (%x)\n", m_contents.getName(c->id).str(), here, here));
 #endif
 	m_chunkStack = m_chunkStack->next;
-	c->deleteInstance();
+	deleteInstance(c);
 }
 
 void DataChunkOutput::writeReal( Real r ) 
@@ -437,7 +437,7 @@ DataChunkTableOfContents::~DataChunkTableOfContents()
 	for( m=m_list; m; m=next )
 	{
 		next = m->next;
-		m->deleteInstance();
+		deleteInstance(m);
 	}
 }
 
@@ -601,7 +601,7 @@ DataChunkInput::~DataChunkInput()
 	UserParser *p, *next;
 	for (p=m_parserList; p; p=next) {
 		next = p->next;
-		p->deleteInstance();
+		deleteInstance(p);
 	}
 
 }
@@ -699,7 +699,7 @@ void DataChunkInput::clearChunkStack( void )
 	for( c=m_chunkStack; c; c=next )
 	{
 		next = c->next;
-		c->deleteInstance();
+		deleteInstance(c);
 	}
 
 	m_chunkStack = NULL;
@@ -772,7 +772,7 @@ void DataChunkInput::closeDataChunk( void )
 	// pop the chunk off the stack
 	InputChunk *c = m_chunkStack;
 	m_chunkStack = m_chunkStack->next;
-	c->deleteInstance();
+	deleteInstance(c);
 }
 
 
@@ -893,7 +893,7 @@ void DataChunkInput::readArrayOfBytes(char *ptr, Int len)
 NameKeyType DataChunkInput::readNameKey(void)
 {
 		Int keyAndType = readInt();
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#ifdef DEBUG_CRASHING
 		Dict::DataType t = (Dict::DataType)(keyAndType & 0xff);
 		DEBUG_ASSERTCRASH(t==Dict::DICT_ASCIISTRING,("Invalid key data."));
 #endif

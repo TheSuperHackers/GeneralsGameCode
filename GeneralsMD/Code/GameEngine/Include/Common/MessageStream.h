@@ -46,8 +46,8 @@ typedef UnsignedInt TranslatorID;								///< Unique identifiers for message str
 
 class Drawable;
 class GameMessageList;
-enum ObjectID;
-enum DrawableID;
+enum ObjectID CPP_11(: Int);
+enum DrawableID CPP_11(: Int);
 
 union GameMessageArgumentType														///< Union of possible data for given message type
 {
@@ -65,7 +65,7 @@ union GameMessageArgumentType														///< Union of possible data for given
 	WideChar				wChar;
 };
 
-enum GameMessageArgumentDataType 
+enum GameMessageArgumentDataType CPP_11(: Int) 
 {
 	ARGUMENTDATATYPE_INTEGER,
 	ARGUMENTDATATYPE_REAL,
@@ -236,7 +236,7 @@ public:
 		MSG_META_CHAT_EVERYONE,											///< send chat msg to everyone (incl. observers)
 		MSG_META_DIPLOMACY,													///< bring up diplomacy screen
 		MSG_META_OPTIONS,														///< bring up options screen
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		MSG_META_HELP,															///< bring up help screen
 #endif
 
@@ -298,7 +298,7 @@ public:
 
 		// META items that are really for debug/demo/development use only...
 		// They do not get built into RELEASE builds.
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		MSG_META_DEMO_TOGGLE_BEHIND_BUILDINGS,			///< Toggles showing units behind buildings or not
 		MSG_META_DEMO_TOGGLE_LETTERBOX,							///< enable/disable letterbox mode
 		MSG_META_DEMO_TOGGLE_MESSAGE_TEXT,					///< toggle the text from the UI messages
@@ -416,11 +416,11 @@ public:
 		MSG_META_DEBUG_WIN,													///< Instant Win
 		MSG_META_DEMO_TOGGLE_DEBUG_STATS,						///< show/hide the debug stats
 		/// @todo END section to REMOVE (not disable) for release
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
-#if defined(_INTERNAL) || defined(_DEBUG)
+#if defined(RTS_INTERNAL) || defined(RTS_DEBUG)
 		MSG_META_DEMO_TOGGLE_AUDIODEBUG,						///< show/hide the audio debug info
-#endif//defined(_INTERNAL) || defined(_DEBUG)
+#endif//defined(RTS_INTERNAL) || defined(RTS_DEBUG)
 #ifdef DUMP_PERF_STATS
 		MSG_META_DEMO_PERFORM_STATISTICAL_DUMP,			///< dump performance stats for this frame to StatisticsDump.txt
 #endif//DUMP_PERF_STATS
@@ -595,7 +595,7 @@ public:
 
 		MSG_BEGIN_DEBUG_NETWORK_MESSAGES = 1900,		///< network messages that exist only in debug/internal builds. all grouped separately.
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 		// all debug/internal-only messages must go here.
 		MSG_DEBUG_KILL_SELECTION,
 		MSG_DEBUG_HURT_OBJECT,
@@ -716,7 +716,7 @@ protected:
 	What to do with a GameMessage after a translator has handled it.
 	Use a custom enum (rather than a Bool) to make the code more obvious.
 */
-enum GameMessageDisposition
+enum GameMessageDisposition CPP_11(: Int)
 {
 	KEEP_MESSAGE,			///< continue processing this message thru other translators
 	DESTROY_MESSAGE		///< destroy this message immediately and don't hand it to any other translators

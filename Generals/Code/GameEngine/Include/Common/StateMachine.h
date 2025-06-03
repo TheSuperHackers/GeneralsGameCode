@@ -37,6 +37,8 @@
 #include "Common/Snapshot.h"
 #include "Common/Xfer.h"
 
+#include "refcount.h"
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -45,11 +47,11 @@ class State;
 class StateMachine;
 class Object;
 
-#undef STATE_MACHINE_DEBUG
-#if defined(_DEBUG)
+//#undef STATE_MACHINE_DEBUG
+#if defined(RTS_DEBUG)
 	#define STATE_MACHINE_DEBUG
 #endif
-#if defined(_INTERNAL)
+#if defined(RTS_INTERNAL)
 	#define STATE_MACHINE_DEBUG	//uncomment to debug state machines in internal.  jba.
 #endif
 
@@ -64,7 +66,7 @@ typedef Bool (*StateTransFuncPtr)( State *state, void* userData );
 /**
  * State return codes
  */
-enum StateReturnType 
+enum StateReturnType CPP_11(: Int) 
 { 
 	// note that all positive values are reserved for STATE_SLEEP!
 
@@ -120,7 +122,7 @@ enum
 /** 
  * Parameters for onExit().
  */
-enum StateExitType
+enum StateExitType CPP_11(: Int)
 {
 	EXIT_NORMAL,							///< state exited due to normal state transitioning
 	EXIT_RESET								///< state exited due to state machine reset
@@ -169,6 +171,7 @@ public:
 
 #ifdef STATE_MACHINE_DEBUG
 	virtual AsciiString getName() const {return m_name;}
+	std::vector<StateID> *getTransitions(void);
 #endif
 
 	// for internal use by the StateMachine class ---------------------------------------------------------
@@ -235,7 +238,7 @@ inline State::~State() { }
 /**
  * A finite state machine.
  */
-class StateMachine : public MemoryPoolObject, public Snapshot
+class StateMachine : public MemoryPoolObject, public Snapshot, public RefCountClass
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( StateMachine, "StateMachinePool" );
 
@@ -318,7 +321,7 @@ public:
 	//
 	StateReturnType internalSetState( StateID newStateID );	///< for internal use only - change the current state of the machine
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	UnsignedInt peekSleepTill() const { return m_sleepTill; }
 #endif
 
@@ -338,6 +341,12 @@ protected:
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess();	
+
+	// RefCountClass interface
+	virtual void Delete_This()
+	{
+		MemoryPoolObject::deleteInstanceInternal(this);
+	}
 
 protected:
 
@@ -470,6 +479,15 @@ protected:
 	virtual void loadPostProcess(){};
 };
 EMPTY_DTOR(SleepState)
+
+
+//-----------------------------------------------------------------------------------------------------------
+// TheSuperHackers @info Misappropriates deleteInstance to call Release_Ref to keep the StateMachine fix small.
+// @todo Replace calls to deleteInstance with RefCountPtr<StateMachine> when so appropriate.
+inline void deleteInstance(StateMachine* machine)
+{
+	machine->Release_Ref();
+}
 
 
 #endif // _STATE_MACHINE_H_

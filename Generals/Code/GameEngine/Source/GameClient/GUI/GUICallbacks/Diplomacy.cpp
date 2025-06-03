@@ -55,9 +55,9 @@
 #include "GameNetwork/GameInfo.h"
 #include "GameNetwork/NetworkInterface.h"
 #include "GameNetwork/GameSpy/BuddyDefs.h"
-#include "GameNetwork/GameSpy/peerDefs.h"
+#include "GameNetwork/GameSpy/PeerDefs.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -290,10 +290,10 @@ void ResetDiplomacy( void )
 	{
 		TheInGameUI->unregisterWindowLayout(theLayout);
 		theLayout->destroyWindows();
-		theLayout->deleteInstance();
+		deleteInstance(theLayout);
 		InitBuddyControls(-1);
+		theLayout = NULL;
 	}
-	theLayout = NULL;
 	theWindow = NULL;
 	if (theAnimateWindowManager)
 		delete theAnimateWindowManager;

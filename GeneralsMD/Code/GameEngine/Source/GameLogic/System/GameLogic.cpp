@@ -32,7 +32,6 @@
 #include "Common/AudioAffect.h"
 #include "Common/AudioHandleSpecialValues.h"
 #include "Common/BuildAssistant.h"
-#include "Common/CopyProtection.h"
 #include "Common/CRCDebug.h"
 #include "Common/GameAudio.h"
 #include "Common/GameEngine.h"
@@ -125,12 +124,12 @@ FILE *g_UT_timingLog=NULL;
 FILE *g_UT_commaLog=NULL;
 // Note - this is only for gathering timing data!  DO NOT DO THIS IN REGULAR CODE!!!  JBA
 #define BRUTAL_TIMING_HACK
-#include "../../gameenginedevice/include/W3DDevice/GameClient/Module/W3DModelDraw.h"
+#include "../../GameEngineDevice/Include/W3DDevice/GameClient/Module/W3DModelDraw.h"
 extern void externalAddTree(Coord3D location, Real scale, Real angle, AsciiString name);
 #endif
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -308,9 +307,18 @@ Bool GameLogic::isInSinglePlayerGame( void )
 //-------------------------------------------------------------------------------------------------
 void GameLogic::destroyAllObjectsImmediate()
 {
-	// destroy all remaining objects
 	Object *obj;
 	Object *nextObj;
+
+	// TheSuperHackers @bugfix xezon 22/05/2025 Set all remaining objects effectively dead to avoid triggering their
+	// death modules that eventually would spawn new objects, such as debris, which could then crash the game.
+	// See https://github.com/TheSuperHackers/GeneralsGameCode/issues/896
+	for( obj = m_objList; obj; obj = obj->getNextObject() )
+	{
+		obj->setEffectivelyDead(true);
+	}
+
+	// destroy all remaining objects
 	for( obj = m_objList; obj; obj = nextObj )
 	{
 		nextObj = obj->getNextObject();
@@ -336,7 +344,7 @@ GameLogic::~GameLogic()
 	if (m_background)
 	{
 		m_background->destroyWindows();
-		m_background->deleteInstance();
+		deleteInstance(m_background);
 		m_background = NULL;
 	}
 
@@ -736,6 +744,9 @@ static void populateRandomSideAndColor( GameInfo *game )
 		// Prevent from selecting the disabled Generals.
 		// This is also enforced at GUI setup (GUIUtil.cpp).
 		// @todo: unlock these when something rad happens
+
+		// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+		// TheChallengeGenerals belongs to client, we shouldn't depend on that here.
 		Bool disallowLockedGenerals = TRUE;
 		const GeneralPersona *general = TheChallengeGenerals->getGeneralByTemplateName(ptTest->getName());
 		Bool startsLocked = general ? !general->isStartingEnabled() : FALSE;
@@ -764,7 +775,7 @@ static void populateRandomSideAndColor( GameInfo *game )
 			// get a few values at random to get rid of the dreck.
 			// there's no mathematical basis for this, but empirically, it helps a lot.
 			UnsignedInt silly = GetGameLogicRandomSeed() % 7;
-			for (Int poo = 0; poo < silly; ++poo) 
+			for (UnsignedInt poo = 0; poo < silly; ++poo) 
 			{
 				GameLogicRandomValue(0, 1);	// ignore result
 			}
@@ -1036,7 +1047,7 @@ static void populateRandomStartPosition( GameInfo *game )
 			}
 		}
 	} //for i
-#endif 0
+#endif // 0
 
 	// now go back & assign observer spots
 	Int numPlayersInGame = 0;
@@ -1112,6 +1123,15 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	GetPrecisionTimer(&startTime64);
 	#endif
 
+	// reset the frame counter
+	m_frame = 0;
+
+#ifdef DEBUG_CRC
+	// TheSuperHackers @info helmutbuhler 04/09/2025
+	// Let CRC Logger know that a new game was started.
+	CRCDebugStartNewGame();
+#endif
+
 	setLoadingMap( TRUE );
 
 	if( loadingSaveGame == FALSE )
@@ -1142,7 +1162,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 				if(m_background)
 				{
 					m_background->destroyWindows();
-					m_background->deleteInstance();
+					deleteInstance(m_background);
 					m_background = NULL;
 				}
 				m_loadScreen = getLoadScreen( loadingSaveGame );
@@ -1257,7 +1277,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	//****************************//
 
 	// Get the m_loadScreen for this kind of game
-	if(!m_loadScreen)
+	if(!m_loadScreen && !TheGlobalData->m_headless)
 	{
 		m_loadScreen = getLoadScreen( loadingSaveGame );
 		if(m_loadScreen)
@@ -1272,7 +1292,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	if(m_background)
 	{
 		m_background->destroyWindows();
-		m_background->deleteInstance();
+		deleteInstance(m_background);
 		m_background = NULL;
 	}
 	setFPMode();
@@ -1284,8 +1304,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	if(m_loadScreen)
 		updateLoadProgress(LOAD_PROGRESS_POST_PARTICLE_INI_LOAD);
 
-	// reset the frame counter
-	m_frame = 0;
+	DEBUG_ASSERTCRASH(m_frame == 0, ("framecounter expected to be 0 here\n"));
 
 	// before loading the map, load the map.ini file in the same directory.
 	loadMapINI( TheGlobalData->m_mapName );
@@ -1550,7 +1569,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 				}
 				for (Int i=0; i<count; ++i)
 				{
-					scripts[i]->deleteInstance();
+					deleteInstance(scripts[i]);
 				}
 			}
 		}
@@ -1973,6 +1992,9 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 				// The game will start, but the cheater will be instantly defeated because he has no troops.
 				// This is also enforced at GUI setup (GUIUtil.cpp and UserPreferences.cpp).
 				// @todo: unlock these when something rad happens
+				
+				// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+				// TheChallengeGenerals belongs to client, we shouldn't depend on that here.
 				Bool disallowLockedGenerals = TRUE;
 				const GeneralPersona *general = TheChallengeGenerals->getGeneralByTemplateName(pt->getName());
 				Bool startsLocked = general ? !general->isStartingEnabled() : FALSE;
@@ -2178,7 +2200,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	}
 
 	// if we're in a load game, don't fade yet
-	if( loadingSaveGame == FALSE )
+	if(loadingSaveGame == FALSE && TheTransitionHandler != NULL)
 	{
 		TheTransitionHandler->setGroup("FadeWholeScreen");
 		while(!TheTransitionHandler->isFinished())
@@ -2218,14 +2240,17 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 
 	if(m_gameMode == GAME_SHELL)
 	{
-		if(TheShell->getScreenCount() == 0)
-			TheShell->push( AsciiString("Menus/MainMenu.wnd") );
-		else if (TheShell->top())
+		if (!TheGlobalData->m_headless)
 		{
-			TheShell->top()->hide(FALSE);
-			TheShell->top()->bringForward();
+			if(TheShell->getScreenCount() == 0)
+				TheShell->push( AsciiString("Menus/MainMenu.wnd") );
+			else if (TheShell->top())
+			{
+				TheShell->top()->hide(FALSE);
+				TheShell->top()->bringForward();
+			}
+			HideControlBar();
 		}
-		HideControlBar();
 	}
 	else
 	{
@@ -2271,7 +2296,9 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 
 	// Turn off shadows
 	TheWritableGlobalData->m_useShadowVolumes = false;
+#ifdef DEBUG_CRASHING
 	TheWritableGlobalData->m_debugIgnoreAsserts = TRUE;
+#endif
 
 	// Just look somewhere.  lookAt does some terrain specific setup, so it is good
 	// to call it.  jba
@@ -2527,7 +2554,7 @@ void GameLogic::processDestroyList( void )
 		// remove object from lookup table
 		removeObjectFromLookupTable( currentObject );
 
-		currentObject->friend_deleteInstance();//actual delete
+		Object::friend_deleteInstance(currentObject);//actual delete
 	}
 
 	m_objectsToDestroy.clear();//list full of bad pointers now, clear it.  If anyone's deletion resulted
@@ -2546,7 +2573,7 @@ void GameLogic::processCommandList( CommandList *list )
 
 	for( msg = list->getFirstMessage(); msg; msg = msg->next() )
 	{
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		DEBUG_ASSERTCRASH(msg != NULL && msg != (GameMessage*)0xdeadbeef, ("bad msg"));
 #endif
 		logicMessageDispatcher( msg, NULL );
@@ -2599,7 +2626,7 @@ void GameLogic::processCommandList( CommandList *list )
 				DEBUG_LOG(("CRC from player %d (%ls) = %X\n", crcIt->first,
 					player?player->getPlayerDisplayName().str():L"<NONE>", crcIt->second));
 			}
-#endif DEBUG_LOGGING
+#endif // DEBUG_LOGGING
 			TheNetwork->setSawCRCMismatch();
 		}
 	}
@@ -2716,8 +2743,8 @@ void GameLogic::deselectObject(Object *obj, PlayerMaskType playerMask, Bool affe
 // ------------------------------------------------------------------------------------------------
 inline void GameLogic::validateSleepyUpdate() const
 {
-// pretty slow, so do only for DEBUG for now. turn on if you suspect wonkiness.
-#ifdef _DEBUG
+// pretty slow, so do only for DEBUG_CRASHING for now. turn on if you suspect wonkiness.
+#ifdef DEBUG_CRASHING
 	#define SLEEPY_DEBUG
 #endif
 #ifdef SLEEPY_DEBUG
@@ -2834,9 +2861,9 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 	UpdateModulePtr* pI = &m_sleepyUpdates[i];
 
 	// our children are i*2 and i*2+1
-  Int child = ((i+1)<<1)-1;
-	UpdateModulePtr* pChild = &m_sleepyUpdates[child];
-	UpdateModulePtr* pSZ = &m_sleepyUpdates[m_sleepyUpdates.size()];	// yes, this is off the end.
+  Int child = ((i)<<1)+1;
+	UpdateModulePtr* pChild = &m_sleepyUpdates[0] + child;
+	UpdateModulePtr* pSZ = &m_sleepyUpdates[0] + m_sleepyUpdates.size();	// yes, this is off the end.
 
   while (pChild < pSZ) 
 	{
@@ -2866,13 +2893,13 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 		i = child;
 		pI = pChild;
 
-		child = ((i+1)<<1)-1;
-		pChild = &m_sleepyUpdates[child];
+		child = ((i)<<1)+1;
+		pChild = &m_sleepyUpdates[0] + child;
   }
 #else
 	// our children are i*2 and i*2+1
 	Int sz = m_sleepyUpdates.size();
-  Int child = ((i+1)<<1)-1;
+  Int child = ((i)<<1)+1;
   while (child < sz) 
 	{
 		// choose the higher-priority of the two children; we must be higher-pri than that.
@@ -2895,7 +2922,7 @@ Int GameLogic::rebalanceChildSleepyUpdate(Int i)
 		a->friend_setIndexInLogic(i);
 		b->friend_setIndexInLogic(child);
 		i = child;
-		child = ((i+1)<<1)-1;
+		child = ((i)<<1)+1;
   }
 #endif
 	return i;
@@ -3590,11 +3617,11 @@ void GameLogic::update( void )
 		Total_Load_3D_Assets=0;
 	#endif
 
-#ifdef _PROFILE
+#ifdef RTS_PROFILE
     Profile::StartRange("map_load");
 #endif
 		startNewGame( FALSE );
-#ifdef _PROFILE
+#ifdef RTS_PROFILE
     Profile::StopRange("map_load");
 #endif
 		m_startNewGame = FALSE;
@@ -3651,12 +3678,12 @@ void GameLogic::update( void )
 	Bool isMPGameOrReplay = (TheRecorder && TheRecorder->isMultiplayer() && getGameMode() != GAME_SHELL && getGameMode() != GAME_NONE);
 	Bool isSoloGameOrReplay = (TheRecorder && !TheRecorder->isMultiplayer() && getGameMode() != GAME_SHELL && getGameMode() != GAME_NONE);
 	Bool generateForMP = (isMPGameOrReplay && (m_frame % TheGameInfo->getCRCInterval()) == 0);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_CRC
 	Bool generateForSolo = isSoloGameOrReplay && ((m_frame && (m_frame%100 == 0)) ||
-		(getFrame() > TheCRCFirstFrameToLog && getFrame() < TheCRCLastFrameToLog && ((m_frame % REPLAY_CRC_INTERVAL) == 0)));
+		(getFrame() >= TheCRCFirstFrameToLog && getFrame() < TheCRCLastFrameToLog && ((m_frame % REPLAY_CRC_INTERVAL) == 0)));
 #else
 	Bool generateForSolo = isSoloGameOrReplay && ((m_frame % REPLAY_CRC_INTERVAL) == 0);
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // DEBUG_CRC
 
 	if (generateForSolo || generateForMP)
 	{
@@ -3666,14 +3693,14 @@ void GameLogic::update( void )
 			GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_LOGIC_CRC );
 			msg->appendIntegerArgument( m_CRC );
 			msg->appendBooleanArgument( (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_PLAYBACK) ); // playback CRC
-			//DEBUG_LOG(("Appended CRC of %8.8X on frame %d\n", m_CRC, m_frame));
+			DEBUG_LOG(("Appended CRC on frame %d: %8.8X\n", m_frame, m_CRC));
 		}
 		else
 		{
 			GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_LOGIC_CRC );
 			msg->appendIntegerArgument( m_CRC );
 			msg->appendBooleanArgument( (TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_PLAYBACK) ); // playback CRC
-			//DEBUG_LOG(("Appended Playback CRC of %8.8X on frame %d\n", m_CRC, m_frame));
+			DEBUG_LOG(("Appended Playback CRC on frame %d: %8.8X\n", m_frame, m_CRC));
 		}
 	}
 
@@ -3792,18 +3819,6 @@ void GameLogic::update( void )
 	TheLocomotorStore->UPDATE();	
 	TheVictoryConditions->UPDATE();
 
-#ifdef DO_COPY_PROTECTION
-	if (!isInShellGame() && isInGame())
-	{
-		if ((m_frame == 1024) && !CopyProtect::validate())
-		{
-			DEBUG_LOG(("Copy protection failed - bailing"));
-			GameMessage *msg = TheMessageStream->appendMessage(GameMessage::MSG_SELF_DESTRUCT);
-			msg->appendBooleanArgument(FALSE);
-		}
-	}
-#endif
-
 	{
 		//Handle disabled statii (and re-enable objects once frame matches)
 		for( Object *obj = m_objList; obj; obj = obj->getNextObject() )
@@ -3872,7 +3887,8 @@ void GameLogic::removeObjectFromLookupTable( Object *obj )
 {
 
 	// sanity
-	if( obj == NULL )
+	// TheSuperHackers @fix Mauller/Xezon 24/04/2025 Prevent out of range access to vector lookup table
+	if( obj == NULL || static_cast<size_t>(obj->getID()) >= m_objVector.size() )
 		return;
 
 	// remove from lookup table
@@ -4029,13 +4045,19 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	{
 		AsciiString crcName;
 #ifdef DEBUG_CRC
+		// TheSuperHackers @info helmutbuhler 04/09/2025
+		// This allows you to save the binary data that is involved in the crc calculation
+		// to a binary file per frame.
+		// This was apparently used early in development and isn't that useful, because diffing
+		// that binary data is very difficult. The CRC logging is much easier to diff and also more
+		// granular than this because it can capture changes between two frames.
 		if (isInGameLogicUpdate() && g_keepCRCSaves && m_frame < 5)
 		{
 			xferCRC = NEW XferDeepCRC;
 			crcName.format("logicFrame%d.crc", (m_frame%5));
 		}
 		else
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 		{
 			xferCRC = NEW XferCRC;
 			crcName = "lightCRC";
@@ -4091,7 +4113,7 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 			CRCGEN_LOG(("CRC after module factory for frame %d is 0x%8.8X\n", m_frame, xferCRC->getCRC()));
 		}
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	marker = "MARKER:ThePlayerList";
 	xferCRC->xferAsciiString(&marker);
@@ -4251,7 +4273,6 @@ void GameLogic::setGamePaused( Bool paused, Bool pauseMusic )
 		while( drawable )
 		{
 			drawable->startAmbientSound();
-			TheAudio->stopAllAmbientsBy( drawable );
 			drawable = drawable->getNextDrawable();
 		}
 #endif

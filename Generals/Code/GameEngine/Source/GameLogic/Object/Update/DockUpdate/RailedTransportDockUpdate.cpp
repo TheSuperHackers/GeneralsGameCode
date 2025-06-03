@@ -137,7 +137,7 @@ Bool RailedTransportDockUpdate::action( Object *docker, Object *drone )
 
 		// don't let the user interact with this object anymore
 		TheGameLogic->deselectObject(docker, PLAYERMASK_ALL, TRUE);
-		docker->setStatus( OBJECT_STATUS_UNSELECTABLE );
+		docker->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNSELECTABLE ) );
 
 		// hold the object so physics doesn't mess with it anymore
 		docker->setDisabled( DISABLED_HELD );
@@ -400,7 +400,7 @@ void RailedTransportDockUpdate::doPushOutDocking( void )
 				unloader->clearDisabled( DISABLED_HELD );
 
 				// we can now be selected by the player again
-				unloader->clearStatus( OBJECT_STATUS_UNSELECTABLE );
+				unloader->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNSELECTABLE ) );
 
 				// tell the unloader to move to one of the dock positions and out of the way
 				Drawable *draw = us->getDrawable();

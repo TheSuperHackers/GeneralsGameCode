@@ -62,7 +62,7 @@
 
 #include "GameLogic/Module/ContainModule.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -1081,7 +1081,7 @@ Bool AcademyStats::calculateAcademyAdvice( AcademyAdviceInfo *info )
 	info->numTips = 0;
 
 	//Build the header for each string.
-	for( Int i = 0; i < maxAdviceTips; i++ )
+	for( UnsignedInt i = 0; i < maxAdviceTips; i++ )
 	{
 		info->advice[ i ].format( UnicodeString( L"\n\n" ) );
 	}

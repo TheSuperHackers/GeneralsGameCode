@@ -31,8 +31,8 @@
 #ifndef __BEZIERSEGMENT_H__
 #define __BEZIERSEGMENT_H__
 
-#include <D3DX8Math.h>
-#include "Common/STLTypeDefs.h"
+#include <d3dx8math.h>
+#include "Common/STLTypedefs.h"
 
 #define USUAL_TOLERANCE 1.0f
 
@@ -49,7 +49,7 @@ class BezierSegment
 									Real x2, Real y2, Real z2,
 									Real x3, Real y3, Real z3);
 
-		BezierSegment(Real cp[16]);
+		BezierSegment(Real cp[12]);
 
 
 		BezierSegment(const Coord3D& cp0, 

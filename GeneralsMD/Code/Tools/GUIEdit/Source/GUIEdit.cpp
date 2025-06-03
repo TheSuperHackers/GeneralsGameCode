@@ -87,13 +87,13 @@
 #include "Win32Device/Common/Win32LocalFileSystem.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
 
-#include "Resource.h"
+#include "resource.h"
 #include "WinMain.h"
 #include "GUIEdit.h"
 #include "HierarchyView.h"
 #include "EditWindow.h"
 #include "GUIEditWindowManager.h"
-#include "GUIEditDisplay.H"
+#include "GUIEditDisplay.h"
 #include "DialogProc.h"
 #include "LayoutScheme.h"
 
@@ -208,8 +208,8 @@ char *GUIEdit::openDialog( void )
 void GUIEdit::setUnsaved( Bool unsaved )
 {
 //	char *saveStatus = " *";
-	char *unsavedFilename = "New File";
-	char *filename;
+	const char *unsavedFilename = "New File";
+	const char *filename;
 
 	// which filename to use in title bar
 	if( strlen( m_saveFilename ) == 0 )
@@ -248,9 +248,9 @@ void GUIEdit::setUnsaved( Bool unsaved )
 	* to this method.  We will also extract the filename only from the
 	* full path and save that separately */
 //=============================================================================
-void GUIEdit::setSaveFile( char *fullPathAndFilename )
+void GUIEdit::setSaveFile( const char *fullPathAndFilename )
 {
-  char *ptr;
+  const char *ptr;
 
 	// copy over the full path and filename
 	strcpy( m_savePathAndFilename, fullPathAndFilename );
@@ -748,7 +748,7 @@ void GUIEdit::update( void )
 // GUIEdit::writeConfigFile ===================================================
 /** Write the guiedit config file */
 //=============================================================================
-Bool GUIEdit::writeConfigFile( char *filename )
+Bool GUIEdit::writeConfigFile( const char *filename )
 {
 	FILE *fp;
 
@@ -803,7 +803,7 @@ Bool GUIEdit::writeConfigFile( char *filename )
 // GUIEdit::readConfigFile ====================================================
 /** Read the guiedit config file */
 //=============================================================================
-Bool GUIEdit::readConfigFile( char *filename )
+Bool GUIEdit::readConfigFile( const char *filename )
 {
 	FILE *fp;
 
@@ -868,7 +868,7 @@ Bool GUIEdit::readConfigFile( char *filename )
 // GUIEdit::readFontFile ======================================================
 /** Read the font file defintitions and load them */
 //=============================================================================
-void GUIEdit::readFontFile( char *filename )
+void GUIEdit::readFontFile( const char *filename )
 {
 	FILE *fp;
 
@@ -936,7 +936,7 @@ void GUIEdit::readFontFile( char *filename )
 /** If we can, write a file containing a definition of all the fonts
 	* we have loaded */
 //=============================================================================
-void GUIEdit::writeFontFile( char *filename )
+void GUIEdit::writeFontFile( const char *filename )
 {
 	FILE *fp;
 
@@ -1161,7 +1161,7 @@ static GameWindow *pointInChild( Int x, Int y , GameWindow *win)
 		child->winGetSize(&tempX,&tempY);
 		if( x >= origin.x && x <= origin.x + tempX &&
 				y >= origin.y && y <= origin.y + tempY &&
-				BitTest( child->winGetStatus(), WIN_STATUS_HIDDEN ) == FALSE)
+				BitIsSet( child->winGetStatus(), WIN_STATUS_HIDDEN ) == FALSE)
 			return child->winPointInChild( x, y );
 
 	}  // end for child
@@ -1204,7 +1204,7 @@ static GameWindow *pointInAnyChild( Int x, Int y, Bool ignoreHidden, GameWindow 
 				y >= origin.y && y <= origin.y + tempY )
 		{
 
-			if( !(ignoreHidden == TRUE &&	BitTest( child->winGetStatus(), WIN_STATUS_HIDDEN )) )
+			if( !(ignoreHidden == TRUE &&	BitIsSet( child->winGetStatus(), WIN_STATUS_HIDDEN )) )
 				return pointInChild( x, y , child);
 
 		}  // end if
@@ -1262,7 +1262,7 @@ GameWindow *GUIEdit::getWindowAtPos( Int x, Int y )
 		if( parent )
 		{
 		
-			if( BitTest( parent->winGetStyle(), GWS_VERT_SLIDER |
+			if( BitIsSet( parent->winGetStyle(), GWS_VERT_SLIDER |
 																					GWS_HORZ_SLIDER |
 																					GWS_SCROLL_LISTBOX |
 																					GWS_COMBO_BOX |
@@ -1280,22 +1280,22 @@ GameWindow *GUIEdit::getWindowAtPos( Int x, Int y )
 				// a slider, therefore in that situation only we want to return the
 				// parent of the slider
 				//
-				if( BitTest( parent->winGetStyle(), GWS_HORZ_SLIDER | 
+				if( BitIsSet( parent->winGetStyle(), GWS_HORZ_SLIDER | 
 																						GWS_VERT_SLIDER ) )
 				{
 					GameWindow *grandParent = parent->winGetParent();
 
-					if( grandParent && BitTest( grandParent->winGetStyle(),
+					if( grandParent && BitIsSet( grandParent->winGetStyle(),
 																			GWS_SCROLL_LISTBOX ) )
 						pick = grandParent;
 
 				}  // end if
 
 				//must check to see of the parent of a scroll box is a combo box
-				if(BitTest(pick->winGetStyle(), GWS_SCROLL_LISTBOX))
+				if(BitIsSet(pick->winGetStyle(), GWS_SCROLL_LISTBOX))
 				{
 					GameWindow *grandParent = pick->winGetParent();
-					if( grandParent && BitTest( grandParent->winGetStyle(), GWS_COMBO_BOX))
+					if( grandParent && BitIsSet( grandParent->winGetStyle(), GWS_COMBO_BOX))
 						pick = grandParent;
 				}					
 			}  // end if
@@ -3382,7 +3382,7 @@ void GUIEdit::createStatusBar( void )
 // GUIEdit::statusMessage =====================================================
 /** Set a message in the status bar */
 //=============================================================================
-void GUIEdit::statusMessage( StatusPart part, char *message )
+void GUIEdit::statusMessage( StatusPart part, const char *message )
 {
 
 	// check for out of bounds part
@@ -3550,7 +3550,7 @@ void GUIEdit::stripNameDecorations( GameWindow *root )
 	if( !instData->m_decoratedNameString.isEmpty() )
 	{
 		char nameOnly[ MAX_WINDOW_NAME_LEN ];
-		char *c;
+		const char *c;
 
 		// skip past the "filename.wnd:" to the name only
 		c = strchr( instData->m_decoratedNameString.str(), ':' );
@@ -4551,7 +4551,7 @@ Bool GUIEdit::windowIsGadget( GameWindow *window )
 	if( window == NULL )
 		return FALSE;
 
-	return BitTest( window->winGetStyle(), GWS_GADGET_WINDOW );
+	return BitIsSet( window->winGetStyle(), GWS_GADGET_WINDOW );
 
 }  // end windowIsGadget
 

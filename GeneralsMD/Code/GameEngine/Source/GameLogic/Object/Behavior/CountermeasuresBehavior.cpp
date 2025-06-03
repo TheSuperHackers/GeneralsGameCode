@@ -47,7 +47,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/PartitionManager.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -166,8 +166,9 @@ ObjectID CountermeasuresBehavior::calculateCountermeasureToDivertTo( const Objec
 
 	//Start at the end of the list and go towards the beginning.
 	CountermeasuresVec::iterator it = m_counterMeasures.end();
+	DEBUG_ASSERTCRASH(iteratorMax <= (Int)m_counterMeasures.size(), ("Unsafe size"));
 	//end is actually the end so advance the iterator.
-	if( it )
+	if( it != m_counterMeasures.begin() )
 	{
 		--it;
 		while( iteratorMax-- )
@@ -300,7 +301,7 @@ void CountermeasuresBehavior::launchVolley()
 	Object *obj = getObject();
 
 	Real volleySize = (Real)data->m_volleySize;
-	for( int i = 0; i < data->m_volleySize; i++ )
+	for( UnsignedInt i = 0; i < data->m_volleySize; i++ )
 	{
 		//Each flare in a volley will calculate a different vector to fly out. We have a +/- angle to 
 		//spread out equally. With only one flare, it'll come straight out the back. Two flares will

@@ -61,7 +61,7 @@
 
 // TYPE DEFINES ///////////////////////////////////////////////////////////////
 
-enum MouseButtonState
+enum MouseButtonState CPP_11(: Int)
 {
 	MBS_Up = 0,
 	MBS_Down,
@@ -281,7 +281,7 @@ public:
 	void mouseNotifyResolutionChange(void);
 
 	Bool isClick(const ICoord2D *anchor, const ICoord2D *dest, UnsignedInt previousMouseClick, UnsignedInt currentMouseClick);
-	
+
 	AsciiString m_tooltipFontName;		///< tooltip font
 	Int m_tooltipFontSize;						///< tooltip font
 	Bool m_tooltipFontIsBold;					///< tooltip font
@@ -370,7 +370,20 @@ protected:
 
 };  // end class Mouse
 
-// INLINING ///////////////////////////////////////////////////////////////////
+// TheSuperHackers @feature helmutbuhler 17/05/2025
+// Mouse that does nothing. Used for Headless Mode.
+class MouseDummy : public Mouse
+{
+	virtual void parseIni() {}
+	virtual void update() {}
+	virtual void initCursorResources() {}
+	virtual void createStreamMessages() {}
+	virtual void setCursor(MouseCursor cursor) {}
+	virtual void capture() {}
+	virtual void releaseCapture() {}
+	virtual UnsignedByte getMouseEvent(MouseIO *result, Bool flush) { return MOUSE_NONE; }
+};
+
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
 extern Mouse *TheMouse;  ///< extern mouse singleton definition

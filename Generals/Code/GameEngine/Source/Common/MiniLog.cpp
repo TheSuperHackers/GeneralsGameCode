@@ -61,6 +61,8 @@ LogClass::~LogClass()
 
 void LogClass::log(const char *fmt, ...)
 {
+	if (!m_fp)
+		return;
 	static char buf[1024];
 	static Int lastFrame = 0;
 	static Int lastIndex = 0;
@@ -72,8 +74,7 @@ void LogClass::log(const char *fmt, ...)
 
 	va_list va;
 	va_start( va, fmt );
-	_vsnprintf(buf, 1024, fmt, va );
-	buf[1023] = 0;
+	vsnprintf(buf, 1024, fmt, va );
 	va_end( va );
 
 	char *tmp = buf;

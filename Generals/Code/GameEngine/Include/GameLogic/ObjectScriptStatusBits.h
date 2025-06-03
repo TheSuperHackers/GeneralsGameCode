@@ -33,7 +33,7 @@
 //-------------------------------------------------------------------------------------------------
 /** Object status bits */
 //-------------------------------------------------------------------------------------------------
-enum ObjectScriptStatusBit
+enum ObjectScriptStatusBit CPP_11(: Int)
 {
 	OBJECT_STATUS_SCRIPT_DISABLED						= 0x01,		///< this object is disabled via script
 	OBJECT_STATUS_SCRIPT_UNPOWERED					= 0x02,		///< this object is unpowered via script

@@ -35,6 +35,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
 #include "Common/Science.h"
+#include "GameLogic/Module/LaserUpdate.h"
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
@@ -42,7 +43,7 @@ class SpecialPowerModule;
 class ParticleSystem;
 class FXList;
 class AudioEventRTS;
-enum ParticleSystemID;
+enum ParticleSystemID CPP_11(: Int);
 
 #define MAX_OUTER_NODES 16
 
@@ -113,7 +114,7 @@ private:
 
 };
 
-enum PUCStatus
+enum PUCStatus CPP_11(: Int)
 {
 	STATUS_IDLE,
 	STATUS_CHARGING,
@@ -126,7 +127,7 @@ enum PUCStatus
 	STATUS_PACKING,
 };
 
-enum LaserStatus
+enum LaserStatus CPP_11(: Int)
 {
 	LASERSTATUS_NONE,
 	LASERSTATUS_BORN,
@@ -134,7 +135,7 @@ enum LaserStatus
 	LASERSTATUS_DEAD,
 };
 
-enum IntensityTypes
+enum IntensityTypes CPP_11(: Int)
 {
 	IT_LIGHT,
 	IT_MEDIUM,
@@ -218,6 +219,7 @@ protected:
 	DrawableID				m_laserBeamIDs[ MAX_OUTER_NODES ];
 	DrawableID				m_groundToOrbitBeamID;
 	DrawableID				m_orbitToTargetBeamID;
+	LaserRadiusUpdate	m_orbitToTargetLaserRadius;
 	ParticleSystemID	m_connectorSystemID;
 	ParticleSystemID	m_laserBaseSystemID;
 

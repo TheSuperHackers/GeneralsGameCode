@@ -37,12 +37,15 @@
 #include "Common/SpecialPowerMaskType.h"
 #include "Common/DisabledTypes.h"
 #include "Common/Thing.h"
+#include "Common/ObjectStatusTypes.h"
+#include "Common/Upgrade.h"
 
 #include "GameClient/Color.h"
 
 #include "GameLogic/WeaponBonusConditionFlags.h"
 #include "GameLogic/WeaponSet.h"
 #include "GameLogic/WeaponSetFlags.h"
+#include "GameLogic/Module/StealthUpdate.h"
 
 //-----------------------------------------------------------------------------
 //           Forward References
@@ -100,21 +103,21 @@ class ObjectRepulsorHelper;
 class ObjectWeaponStatusHelper;
 class ObjectDefectionHelper;
 
-enum CommandSourceType;
-enum DamageType;
-enum HackerAttackMode;
-enum NameKeyType;
-enum SpecialPowerType;
-enum WeaponBonusConditionType;
-enum WeaponChoiceCriteria;
-enum WeaponSetConditionType;
-enum WeaponSetType;
-enum WeaponStatus;
-enum RadarPriorityType;
-enum CanAttackResult;
+enum CommandSourceType CPP_11(: Int);
+enum DamageType CPP_11(: Int);
+enum HackerAttackMode CPP_11(: Int);
+enum NameKeyType CPP_11(: Int);
+enum SpecialPowerType CPP_11(: Int);
+enum WeaponBonusConditionType CPP_11(: Int);
+enum WeaponChoiceCriteria CPP_11(: Int);
+enum WeaponSetConditionType CPP_11(: Int);
+enum WeaponSetType CPP_11(: Int);
+enum WeaponStatus CPP_11(: Int);
+enum RadarPriorityType CPP_11(: Int);
+enum CanAttackResult CPP_11(: Int);
 
-// For ObjectStatusBits and TheObjectStatusBitNames
-#include "GameLogic/ObjectStatusBits.h"
+// For ObjectStatusTypes
+#include "Common/ObjectStatusTypes.h"
 
 // For ObjectScriptStatusBit
 #include "GameLogic/ObjectScriptStatusBits.h"
@@ -138,7 +141,7 @@ struct TTriggerInfo
 //----------------------------------------------------
 
 
-enum CrushSquishTestType
+enum CrushSquishTestType CPP_11(: Int)
 {
 	TEST_CRUSH_ONLY, 
 	TEST_SQUISH_ONLY, 
@@ -155,13 +158,11 @@ class Object : public Thing, public Snapshot
 {
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Object, "ObjectPool" )		
-	/// destructor is non-public in order to require the use of TheGameLogic->destroyObject()
-	MEMORY_POOL_DELETEINSTANCE_VISIBILITY(protected)
 
 public:
 
 	/// Object constructor automatically attaches all objects to "TheGameLogic"
-	Object(const ThingTemplate *thing, ObjectStatusBits statusBits, Team *team);
+	Object(const ThingTemplate *thing, const ObjectStatusMaskType &objectStatusMask, Team *team);
 
 	void initObject();
 
@@ -194,8 +195,8 @@ public:
 	void maskObject( Bool mask );				///< mask/unmask object
 
 	// cannot set velocity, since this is calculated from position every frame
-	Bool isDestroyed() const { return (m_status & OBJECT_STATUS_DESTROYED) != 0; }		///< Returns TRUE if object has been destroyed
-	Bool isAirborneTarget() const { return (m_status & OBJECT_STATUS_AIRBORNE_TARGET) != 0; }	///< Our locomotor will control marking us as a valid target for anti air weapons or not
+	Bool isDestroyed() const { return m_status.test( OBJECT_STATUS_DESTROYED ); }		///< Returns TRUE if object has been destroyed
+	Bool isAirborneTarget() const { return m_status.test( OBJECT_STATUS_AIRBORNE_TARGET ); }	///< Our locomotor will control marking us as a valid target for anti air weapons or not
 	Bool isUsingAirborneLocomotor( void ) const;										///< returns true if the current locomotor is an airborne one
 
 	/// central place for us to put any additional capture logic
@@ -243,12 +244,12 @@ public:
 	Bool isLocallyControlled() const;
 	Bool isNeutralControlled() const;
 	
-	Bool getIsUndetectedDefector(void) const { return BitTest(m_privateStatus, UNDETECTED_DEFECTOR); }
+	Bool getIsUndetectedDefector(void) const { return BitIsSet(m_privateStatus, UNDETECTED_DEFECTOR); }
 	void friend_setUndetectedDefector(Bool status);
 
-	inline Bool isOffMap() const { return BitTest(m_privateStatus, OFF_MAP); }
+	inline Bool isOffMap() const { return BitIsSet(m_privateStatus, OFF_MAP); }
 
-	inline Bool isCaptured() const { return BitTest(m_privateStatus, CAPTURED); }
+	inline Bool isCaptured() const { return BitIsSet(m_privateStatus, CAPTURED); }
 	void setCaptured(Bool isCaptured);
 
 	inline const GeometryInfo& getGeometryInfo() const { return m_geometryInfo; }
@@ -269,6 +270,7 @@ public:
 
 	BodyModuleInterface* getBodyModule() const { return m_body; }
 	ContainModuleInterface* getContain() const { return m_contain; }
+	StealthUpdate* getStealth() const { return m_stealth; }
 	SpawnBehaviorInterface* getSpawnBehaviorInterface() const;
 
 
@@ -302,16 +304,18 @@ public:
 
 	// Ditto for special powers -- Kris
 	SpecialPowerModuleInterface* findSpecialPowerModuleInterface( SpecialPowerType type ) const;
+	SpecialPowerModuleInterface* findAnyShortcutSpecialPowerModuleInterface() const;
 	SpecialAbilityUpdate* findSpecialAbilityUpdate( SpecialPowerType type ) const;
 	SpecialPowerCompletionDie* findSpecialPowerCompletionDie() const;
 	SpecialPowerUpdateInterface* findSpecialPowerWithOverridableDestinationActive( SpecialPowerType type = SPECIAL_INVALID ) const;
+	SpecialPowerUpdateInterface* findSpecialPowerWithOverridableDestination( SpecialPowerType type = SPECIAL_INVALID ) const;
 
-	inline UnsignedInt getStatusBits() const { return m_status; }
-	inline Bool testStatus(ObjectStatusBits bit) const { return (m_status & bit) != 0; }
-	void setStatus( ObjectStatusBits bits, Bool set = true );
-	inline void clearStatus( ObjectStatusBits bits ) { setStatus(bits, false); }
+	inline ObjectStatusMaskType getStatusBits() const { return m_status; }
+	inline Bool testStatus( ObjectStatusTypes bit ) const { return m_status.test( bit ); }
+	void setStatus( ObjectStatusMaskType objectStatus, Bool set = true );
+	inline void clearStatus( ObjectStatusMaskType objectStatus ) { setStatus( objectStatus, false ); }
 	void updateUpgradeModules();	///< We need to go through our Upgrade Modules and see which should be activated
-	Int64 getObjectCompletedUpgradeMask() const { return m_objectUpgradesCompleted; } ///< Upgrades I complete locally
+	UpgradeMaskType getObjectCompletedUpgradeMask() const { return m_objectUpgradesCompleted; } ///< Upgrades I complete locally
 
 	//This function sucks.
 	//It was added for objects that can disguise as other objects and contain upgraded subobject overrides. 
@@ -322,7 +326,7 @@ public:
 	void forceRefreshSubObjectUpgradeStatus();
 
 	// Useful for status bits that can be set by the scripting system
-	inline Bool testScriptStatusBit(ObjectScriptStatusBit b) const { return BitTest(m_scriptStatus, b); }
+	inline Bool testScriptStatusBit(ObjectScriptStatusBit b) const { return BitIsSet(m_scriptStatus, b); }
 	void setScriptStatus( ObjectScriptStatusBit bit, Bool set = true );
 	inline void clearScriptStatus( ObjectScriptStatusBit bit ) { setScriptStatus(bit, false); }
 
@@ -380,7 +384,7 @@ public:
 	Bool isInList(Object **pListHead) const;
 
 	// this is intended for use ONLY by GameLogic.
-	void friend_deleteInstance() { deleteInstance(); }
+	static void friend_deleteInstance(Object* object) { deleteInstance(object); }
 
 	/// cache the partition module (should be called only by PartitionData)
 	void friend_setPartitionData(PartitionData *pd) { m_partitionData = pd; }
@@ -421,9 +425,9 @@ public:
 	SpecialPowerModuleInterface *getSpecialPowerModule( const SpecialPowerTemplate *specialPowerTemplate ) const;
 	void doSpecialPower( const SpecialPowerTemplate *specialPowerTemplate, UnsignedInt commandOptions, Bool forced = false );	///< execute power
 	void doSpecialPowerAtObject( const SpecialPowerTemplate *specialPowerTemplate, Object *obj, UnsignedInt commandOptions, Bool forced = false );	///< execute power
-	void doSpecialPowerAtLocation( const SpecialPowerTemplate *specialPowerTemplate, const Coord3D *loc, UnsignedInt commandOptions, Bool forced = false );	///< execute power
-	void doSpecialPowerAtMultipleLocations( const SpecialPowerTemplate *specialPowerTemplate,
-																					const Coord3D *locations, Int locCount, UnsignedInt commandOptions, Bool forced = false );	///< execute power
+	void doSpecialPowerAtLocation( const SpecialPowerTemplate *specialPowerTemplate, const Coord3D *loc, Real angle, UnsignedInt commandOptions, Bool forced = false );	///< execute power
+	void doSpecialPowerUsingWaypoints( const SpecialPowerTemplate *specialPowerTemplate, const Waypoint *way, UnsignedInt commandOptions, Bool forced = false );	///< execute power
+
 	void doCommandButton( const CommandButton *commandButton, CommandSourceType cmdSource );
 	void doCommandButtonAtObject( const CommandButton *commandButton, Object *obj, CommandSourceType cmdSource );
 	void doCommandButtonAtPosition( const CommandButton *commandButton, const Coord3D *pos, CommandSourceType cmdSource );
@@ -435,7 +439,7 @@ public:
 	void setCommandSetStringOverride( AsciiString newCommandSetString ) { m_commandSetStringOverride = newCommandSetString; }
 
  	/// People are faking their commandsets, and, Suprise!, they are authoritative.  Challenge everything.
- 	Bool Object::canProduceUpgrade( const UpgradeTemplate *upgrade );
+ 	Bool canProduceUpgrade( const UpgradeTemplate *upgrade );
 
 	// Weapons & Damage -------------------------------------------------------------------------------------------------
 	void reloadAllAmmo(Bool now);
@@ -448,7 +452,7 @@ public:
 	Weapon* getWeaponInWeaponSlot(WeaponSlotType wslot) const { return m_weaponSet.getWeaponInWeaponSlot(wslot); }
 
 	// see if this current weapon set's weapons has shared reload times
-	const Bool isReloadTimeShared() const { return m_weaponSet.isSharedReloadTime(); }
+	Bool isReloadTimeShared() const { return m_weaponSet.isSharedReloadTime(); }
 
 	Weapon* getCurrentWeapon(WeaponSlotType* wslot = NULL);
 	const Weapon* getCurrentWeapon(WeaponSlotType* wslot = NULL) const;
@@ -655,7 +659,7 @@ private:
 
 	Object *			m_next;
 	Object *			m_prev;
-	UnsignedInt		m_status;									///< status bits (see ObjectStatusBits enum)
+	ObjectStatusMaskType		m_status;									///< status bits (see ObjectStatusMaskType)
 
 	GeometryInfo	m_geometryInfo;
 
@@ -689,6 +693,7 @@ private:
 	// cache these, for convenience
 	ContainModuleInterface*				m_contain;
 	BodyModuleInterface*					m_body;
+	StealthUpdate*						m_stealth;
 
 	AIUpdateInterface*						m_ai;	///< ai interface (if any), cached for handy access. (duplicate of entry in the module array!)
 	PhysicsBehavior*							m_physics;	///< physics interface (if any), cached for handy access. (duplicate of entry in the module array!)
@@ -703,7 +708,7 @@ private:
 	UnsignedInt										m_containedByFrame;	///< frame we were contained by m_containedBy
 
 	Real													m_constructionPercent;			///< for objects being built ... this is the amount completed (0.0 to 100.0)
-	Int64													m_objectUpgradesCompleted;	///< Bit field of upgrades locally completed.
+	UpgradeMaskType								m_objectUpgradesCompleted;	///< Bit field of upgrades locally completed.
 
 	Team*													m_team;								///< team that is current owner of this guy
 	AsciiString										m_originalTeamName;		///< team that was the original ("birth") team of this guy
@@ -747,7 +752,7 @@ private:
 	// --------- BYTE-SIZED THINGS GO HERE
 	Bool													m_isSelectable;
 	Bool													m_modulesReady;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool													m_hasDiedAlready;
 #endif
 	UnsignedByte									m_scriptStatus;					///< status as set by scripting, corresponds to ORed ObjectScriptStatusBits
@@ -758,12 +763,13 @@ private:
 
 };  // end class Object
 
-#ifdef DEBUG_LOGGING
-// describe an object as an AsciiString: e.g. "Object 102 (KillerBuggy) [GLARocketBuggy, owned by player 2 (GLAIntroPlayer)]"
-AsciiString DescribeObject(const Object *obj);
-#endif // DEBUG_LOGGING
+// deleteInstance is not meant to be used with Object in order to require the use of TheGameLogic->destroyObject()
+void deleteInstance(Object* object) CPP_11(= delete);
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+// describe an object as an AsciiString: e.g. "Object 102 (KillerBuggy) [GLARocketBuggy, owned by player 2 (GLAIntroPlayer)]"
+AsciiString DebugDescribeObject(const Object *obj);
+
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	#define DEBUG_OBJECT_ID_EXISTS
 #else
 	#undef DEBUG_OBJECT_ID_EXISTS

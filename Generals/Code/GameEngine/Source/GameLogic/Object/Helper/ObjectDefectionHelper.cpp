@@ -36,7 +36,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/ObjectDefectionHelper.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -81,8 +81,7 @@ UpdateSleepTime ObjectDefectionHelper::update()
 	}
 
 	// dead or attacking... our cover is blown.
-	if (obj->isEffectivelyDead() || 
-			(obj->getStatusBits() & OBJECT_STATUS_IS_FIRING_WEAPON)!= 0)
+	if( obj->isEffectivelyDead() || obj->getStatusBits().test( OBJECT_STATUS_IS_FIRING_WEAPON ) )
 	{
 		// PLEASE NOTE:
 		// checking the is_attacking statusbit above, only handles weapon related attacks...

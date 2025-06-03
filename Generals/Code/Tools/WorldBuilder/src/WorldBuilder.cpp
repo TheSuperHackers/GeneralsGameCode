@@ -19,22 +19,22 @@
 // WorldBuilder.cpp : Defines the class behaviors for the application.
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include <eh.h>
 #include "WorldBuilder.h"
-#include "EulaDialog.h"
+#include "euladialog.h"
 #include "MainFrm.h"
 #include "OpenMap.h"
 #include "SplashScreen.h"
-#include "Textureloader.h"
+#include "textureloader.h"
 #include "WorldBuilderDoc.h"
 #include "WorldBuilderView.h"
 #include "WBFrameWnd.h"
-#include "WbView3d.h"
+#include "wbview3d.h"
 
 //#include <wsys/StdFileSystem.h>
 #include "W3DDevice/GameClient/W3DFileSystem.h"
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 #include "WHeightMapEdit.h"
 //#include "Common/GameFileSystem.h"
 #include "Common/FileSystem.h"
@@ -79,11 +79,11 @@
 #include "MilesAudioDevice/MilesAudioManager.h"
 
 #include <io.h>
-#include "win32device/GameClient/Win32Mouse.h"
+#include "Win32Device/GameClient/Win32Mouse.h"
 #include "Win32Device/Common/Win32LocalFileSystem.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -103,7 +103,7 @@ void initSubsystem(SUBSYSTEM*& sysref, SUBSYSTEM* sys, const char* path1 = NULL,
 #define OPEN_FILE_DIR "OpenDirectory"
 
 Win32Mouse *TheWin32Mouse = NULL;
-char *gAppPrefix = "wb_"; /// So WB can have a different debug log file name.
+const char *gAppPrefix = "wb_"; /// So WB can have a different debug log file name.
 const Char *g_strFile = "data\\Generals.str";
 const Char *g_csfFile = "data\\%s\\Generals.csf";
 
@@ -282,11 +282,11 @@ BOOL CWorldBuilderApp::InitInstance()
 	// start the log
 	DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
 	DEBUG_LOG(("starting Worldbuilder.\n"));
-#ifdef _INTERNAL
-	DEBUG_LOG(("_INTERNAL defined.\n"));
+#ifdef RTS_INTERNAL
+	DEBUG_LOG(("RTS_INTERNAL defined.\n"));
 #endif
-#ifdef _DEBUG
-	DEBUG_LOG(("_DEBUG defined.\n"));
+#ifdef RTS_DEBUG
+	DEBUG_LOG(("RTS_DEBUG defined.\n"));
 #endif
 	initMemoryManager();
 #ifdef MEMORYPOOL_CHECKPOINTING
@@ -339,11 +339,11 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	initSubsystem(TheWritableGlobalData, new GlobalData(), "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
 	
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	ini.load( AsciiString( "Data\\INI\\GameDataDebug.ini" ), INI_LOAD_MULTIFILE, NULL );
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_CRASHING
 	TheWritableGlobalData->m_debugIgnoreAsserts = true;
 #endif
 
@@ -411,7 +411,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	DEBUG_ASSERTCRASH(!TheGlobalData->m_useHalfHeightMap, ("TheGlobalData->m_useHalfHeightMap : Don't use this setting in WB."));
 	TheWritableGlobalData->m_useHalfHeightMap = false;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	// WB never uses the shroud.
 	TheWritableGlobalData->m_shroudOn = FALSE;
 #endif

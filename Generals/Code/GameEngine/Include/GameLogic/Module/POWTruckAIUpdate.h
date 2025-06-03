@@ -56,7 +56,7 @@ public:
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum POWTruckTask	// Stored in save file, do not renumber.  jba.
+enum POWTruckTask CPP_11(: Int)	// Stored in save file, do not renumber.  jba.
 {
 	POW_TRUCK_TASK_WAITING						= 0, ///< Waiting for something to do 
 	POW_TRUCK_TASK_FIND_TARGET				= 1, ///< We need to search out a target to collect

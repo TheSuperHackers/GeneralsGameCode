@@ -200,6 +200,7 @@ HMorphAnimClass::HMorphAnimClass(void) :
 	PivotChannel(NULL)
 {
 	memset(Name,0,sizeof(Name));
+	memset(AnimName,0,sizeof(AnimName));	
 	memset(HierarchyName,0,sizeof(HierarchyName));
 }
 
@@ -230,7 +231,7 @@ void HMorphAnimClass::Free(void)
 }
 
 
-int Build_List_From_String
+static int Build_List_From_String
 (
 	const char *	buffer,
 	const char *	delimiter,
@@ -251,7 +252,8 @@ int Build_List_From_String
 		//
 		// Determine how many entries there will be in the list
 		//
-		for (const char *entry = buffer;
+		const char *entry = buffer;
+		for (;
 			  (entry != NULL) && (entry[1] != 0);
 			  entry = ::strstr (entry, delimiter))
 		{
@@ -294,7 +296,7 @@ int Build_List_From_String
 				// Copy this entry into its own string
 				//
 				StringClass entry_string = entry;
-				char *delim_start = ::strstr (entry_string, delimiter);				
+				char *delim_start = ::strstr (entry_string.Peek_Buffer(), delimiter);				
 				if (delim_start != NULL) {
 					delim_start[0] = 0;
 				}
@@ -488,7 +490,7 @@ void HMorphAnimClass::Set_Name(const char * name)
 	// Try to find the separator (a period)
 	//
 	StringClass full_name	= name;
-	char *separator			= ::strchr (full_name, '.');
+	char *separator			= ::strchr (full_name.Peek_Buffer(), '.');
 	if (separator != NULL) {
 		
 		//

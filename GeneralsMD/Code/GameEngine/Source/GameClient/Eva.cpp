@@ -31,7 +31,7 @@
 #include "Common/PlayerList.h"
 #include "GameLogic/GameLogic.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -251,7 +251,7 @@ Eva::~Eva()
 	EvaCheckInfoPtrVecIt it;
 	for (it = m_allCheckInfos.begin(); it != m_allCheckInfos.end(); ++it) {
 		if (*it)
-			(*it)->deleteInstance();
+			deleteInstance(*it);
 	}
 }
 

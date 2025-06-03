@@ -154,9 +154,9 @@ Bitmap2DObjClass::Bitmap2DObjClass
 			// create the texture and turn MIP-mapping off.
 			SurfaceClass *piece_surface=NEW_REF(SurfaceClass,(pot,pot,sd.Format));			
 			piece_surface->Copy(0,0,tlpx,tlpy,pot,pot,surface);
-			TextureClass *piece_texture =NEW_REF(TextureClass,(piece_surface,TextureClass::MIP_LEVELS_1));			
-			piece_texture->Set_U_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
-			piece_texture->Set_V_Addr_Mode(TextureClass::TEXTURE_ADDRESS_CLAMP);
+			TextureClass *piece_texture =NEW_REF(TextureClass,(piece_surface,MIP_LEVELS_1));			
+			piece_texture->Get_Filter().Set_U_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
+			piece_texture->Get_Filter().Set_V_Addr_Mode(TextureFilterClass::TEXTURE_ADDRESS_CLAMP);
 			REF_PTR_RELEASE(piece_surface);			
 
 			// calculate our actual texture coordinates based on the difference between
@@ -213,12 +213,12 @@ Bitmap2DObjClass::Bitmap2DObjClass
 	//Set_Aspect(resh/(float)resw);
 
 	// Find the dimensions of the texture:
-	SurfaceClass::SurfaceDescription sd;
-	texture->Get_Level_Description(sd);
+//	SurfaceClass::SurfaceDescription sd;
+//	texture->Get_Level_Description(sd);
 		
 	// convert image width and image height to normalized values
-	float vw = (float) sd.Width / (float)resw;
-	float vh = (float) sd.Height / (float)resh;
+	float vw = (float) texture->Get_Width() / (float)resw;
+	float vh = (float) texture->Get_Height() / (float)resh;
 
 	// if we requested the image to be centered around a point adjust the
 	// coordinates accordingly.
@@ -236,7 +236,7 @@ Bitmap2DObjClass::Bitmap2DObjClass
 	if (additive) {
 		shader = ShaderClass::_PresetAdditive2DShader;
 	} else {
-		if (ignore_alpha == false && Has_Alpha(sd.Format)) {
+		if (ignore_alpha == false && Has_Alpha(texture->Get_Texture_Format())) {
 			shader = ShaderClass::_PresetAlpha2DShader;
 		} else {
 			shader = ShaderClass::_PresetOpaque2DShader;

@@ -46,7 +46,7 @@ class LocomotorTemplate;
 // Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
 // existing values!
 //
-enum LocomotorSurfaceType
+enum LocomotorSurfaceType CPP_11(: Int)
 {
 	LOCOMOTORSURFACE_GROUND			= (1 << 0),									///< clear, unobstructed ground
 	LOCOMOTORSURFACE_WATER			= (1 << 1),									///< water area

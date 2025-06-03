@@ -61,8 +61,8 @@ class Object;
 class SoundManager;
 
 
-enum AudioAffect;
-enum AudioType;
+enum AudioAffect CPP_11(: Int);
+enum AudioType CPP_11(: Int);
 
 struct AudioEventInfo;
 struct AudioRequest;
@@ -136,7 +136,7 @@ class AudioManager : public SubsystemInterface
 	public:
 		AudioManager();
 		virtual ~AudioManager();
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		virtual void audioDebugDisplay(DebugDisplayInterface *dd, void *userData, FILE *fp = NULL ) = 0;
 #endif
 
@@ -151,10 +151,6 @@ class AudioManager : public SubsystemInterface
 		virtual void pauseAudio( AudioAffect which ) = 0;
 		virtual void resumeAudio( AudioAffect which ) = 0;
 		virtual void pauseAmbient( Bool shouldPause ) = 0;
-
-		// device dependent stops.
-		virtual void stopAllAmbientsBy( Object* obj ) = 0;
-		virtual void stopAllAmbientsBy( Drawable* draw ) = 0;
 
 		// for focus issues
 		virtual void loseFocus( void );
@@ -240,6 +236,8 @@ class AudioManager : public SubsystemInterface
 		// on zoom.
 		virtual void set3DVolumeAdjustment( Real volumeAdjustment );
 
+    virtual Bool has3DSensitiveStreamsPlaying( void ) const = 0;
+
  		virtual void *getHandleForBink( void ) = 0;
  		virtual void releaseHandleForBink( void ) = 0;
 
@@ -257,13 +255,14 @@ class AudioManager : public SubsystemInterface
 		virtual void processRequestList( void );
 	
 		virtual AudioEventInfo *newAudioEventInfo( AsciiString newEventName );
+    virtual void addAudioEventInfo( AudioEventInfo * newEventInfo );
 		virtual AudioEventInfo *findAudioEventInfo( AsciiString eventName ) const;
 
 		const AudioSettings *getAudioSettings( void ) const;
 		const MiscAudio *getMiscAudio( void ) const;
 
 		// This function should only be called by AudioManager, MusicManager and SoundManager
-		virtual void releaseAudioEventRTS( AudioEventRTS *eventToRelease );
+		virtual void releaseAudioEventRTS( AudioEventRTS *&eventToRelease );
 
 		// For INI
 		AudioSettings *friend_getAudioSettings( void );
@@ -298,6 +297,7 @@ class AudioManager : public SubsystemInterface
 
 		// For Worldbuilder, to build lists from which to select
 		virtual void findAllAudioEventsOfType( AudioType audioType, std::vector<AudioEventInfo*>& allEvents );
+    virtual const AudioEventInfoHash & getAllAudioEvents() const { return m_allAudioEventInfo; }
 
 		Real getZoomVolume() const { return m_zoomVolume; }
 	protected:
@@ -316,7 +316,11 @@ class AudioManager : public SubsystemInterface
 
 		// For tracking purposes
 		virtual AudioHandle allocateNewHandle( void );	
-
+    // Remove all AudioEventInfo's with the m_isLevelSpecific flag
+    virtual void removeLevelSpecificAudioEventInfos( void );
+    
+    void removeAllAudioRequests( void );
+    
 	protected:
 		AudioSettings *m_audioSettings;
 		MiscAudio *m_miscAudio;
@@ -366,6 +370,57 @@ class AudioManager : public SubsystemInterface
 		// Next 8
 		Bool m_disallowSpeech			: 1;
 };
+
+// TheSuperHackers @feature helmutbuhler 17/05/2025
+// AudioManager that does nothing. Used for Headless Mode.
+class AudioManagerDummy : public AudioManager
+{
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+	virtual void audioDebugDisplay(DebugDisplayInterface* dd, void* userData, FILE* fp) {}
+#endif
+	virtual void stopAudio(AudioAffect which) {}
+	virtual void pauseAudio(AudioAffect which) {}
+	virtual void resumeAudio(AudioAffect which) {}
+	virtual void pauseAmbient(Bool shouldPause) {}
+	virtual void killAudioEventImmediately(AudioHandle audioEvent) {}
+	virtual void nextMusicTrack() {}
+	virtual void prevMusicTrack() {}
+	virtual Bool isMusicPlaying() const { return false; }
+	virtual Bool hasMusicTrackCompleted(const AsciiString& trackName, Int numberOfTimes) const { return false; }
+	virtual AsciiString getMusicTrackName() const { return ""; }
+	virtual void openDevice() {}
+	virtual void closeDevice() {}
+	virtual void* getDevice() { return NULL; }
+	virtual void notifyOfAudioCompletion(UnsignedInt audioCompleted, UnsignedInt flags) {}
+	virtual UnsignedInt getProviderCount(void) const { return 0; };
+	virtual AsciiString getProviderName(UnsignedInt providerNum) const { return ""; }
+	virtual UnsignedInt getProviderIndex(AsciiString providerName) const { return 0; }
+	virtual void selectProvider(UnsignedInt providerNdx) {}
+	virtual void unselectProvider(void) {}
+	virtual UnsignedInt getSelectedProvider(void) const { return 0; }
+	virtual void setSpeakerType(UnsignedInt speakerType) {}
+	virtual UnsignedInt getSpeakerType(void) { return 0; }
+	virtual UnsignedInt getNum2DSamples(void) const { return 0; }
+	virtual UnsignedInt getNum3DSamples(void) const { return 0; }
+	virtual UnsignedInt getNumStreams(void) const { return 0; }
+	virtual Bool doesViolateLimit(AudioEventRTS* event) const { return false; }
+	virtual Bool isPlayingLowerPriority(AudioEventRTS* event) const { return false; }
+	virtual Bool isPlayingAlready(AudioEventRTS* event) const { return false; }
+	virtual Bool isObjectPlayingVoice(UnsignedInt objID) const { return false; }
+	virtual void adjustVolumeOfPlayingAudio(AsciiString eventName, Real newVolume) {}
+	virtual void removePlayingAudio(AsciiString eventName) {}
+	virtual void removeAllDisabledAudio() {}
+	virtual Bool has3DSensitiveStreamsPlaying(void) const { return false; }
+	virtual void* getHandleForBink(void) { return NULL; }
+	virtual void releaseHandleForBink(void) {}
+	virtual void friend_forcePlayAudioEventRTS(const AudioEventRTS* eventToPlay) {}
+	virtual void setPreferredProvider(AsciiString providerNdx) {}
+	virtual void setPreferredSpeaker(AsciiString speakerType) {}
+	virtual Real getFileLengthMS(AsciiString strToLoad) const { return -1; }
+	virtual void closeAnySamplesUsingFile(const void* fileToClose) {}
+	virtual void setDeviceListenerPosition(void) {}
+};
+
 
 extern AudioManager *TheAudio;
 

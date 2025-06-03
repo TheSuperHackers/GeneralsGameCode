@@ -133,7 +133,7 @@ enum
 };
 
 // Gadget game messages (sent to their owners)
-enum GadgetGameMessage
+enum GadgetGameMessage CPP_11(: Int)
 {
 
 	// Generic messages supported by all gadgets
