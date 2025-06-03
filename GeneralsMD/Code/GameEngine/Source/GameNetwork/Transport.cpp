@@ -387,7 +387,7 @@ Bool Transport::queueSend(UnsignedInt addr, UnsignedShort port, const UnsignedBy
 
 	if (len < 1 || len > MAX_PACKET_SIZE)
 	{
-		DEBUG_LOG(("Transport::queueSend: Invalid Packet size\n"));
+		DEBUG_LOG(("Transport::queueSend - Invalid Packet size\n"));
 		return false;
 	}
 
