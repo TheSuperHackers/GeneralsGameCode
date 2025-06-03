@@ -92,20 +92,8 @@ AIGroup::~AIGroup()
 {
 //	DEBUG_LOG(("***AIGROUP %x is being destructed.\n", this));
 	// disassociate each member from the group
-	std::list<Object *>::iterator i;
-	for( i = m_memberList.begin(); i != m_memberList.end(); /* empty */ )
-	{
-		Object *member = *i;
-		if (member)
-		{
-			member->leaveGroup();
-			i = m_memberList.begin();	// jump back to the beginning, cause ai->leaveGroup will remove this element. 
-		}
-		else
-		{
-			i = m_memberList.erase(i);
-		}
-	}
+	removeAll();
+
 	if (m_groundPath) {
 		deleteInstance(m_groundPath);
 		m_groundPath = NULL;
@@ -223,13 +211,31 @@ Bool AIGroup::remove( Object *obj )
 	// list has changed, properties need recomputation
 	m_dirty = true;
 
-	// if the group is empty, no-one is using it any longer, so destroy it
 	if (isEmpty()) {
-		TheAI->destroyGroup( this );
 		return TRUE;
 	}
 
 	return FALSE;
+}
+
+/**
+ * Remove all objects from group
+ */
+void AIGroup::removeAll( void )
+{
+	std::list<Object *> memberList;
+	memberList.swap(m_memberList);
+	m_memberListSize = 0;
+	
+	std::list<Object *>::iterator i = memberList.begin();
+	for ( ; i != memberList.end(); ++i)
+	{
+		Object *member = *i;
+		if (member)
+			member->leaveGroup();
+	}
+
+	m_dirty = true;
 }
 
 /**
