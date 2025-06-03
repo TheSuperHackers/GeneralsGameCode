@@ -163,9 +163,10 @@ StatDumpClass::StatDumpClass( const char *fname )
 		}
 		pEnd--;
 	}
-	AsciiString fullPath;
-	fullPath.format( "%s\\%s", buffer, fname );
-	m_fp = fopen( fullPath.str(), "wt" );
+	// TheSuperHackers @bugfix Caball009 03/06/2025 Use std::string instead of AsciiString here to avoid possible static initialization order fiasco
+	// TheDynamicMemoryAllocator is used by AsciiString and may not have been initialized yet
+	const std::string fullPath = std::string(buffer) + "\\" + fname;
+	m_fp = fopen(fullPath.c_str(), "wt");
 }
 
 //=============================================================================
