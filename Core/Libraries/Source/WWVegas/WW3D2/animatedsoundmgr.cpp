@@ -281,7 +281,7 @@ AnimatedSoundMgrClass::Initialize (const char *ini_filename)
 			//	Get the animation name from the section name
 			//
 			StringClass animation_name = section->Section;
-			::strupr (animation_name.Peek_Buffer());
+			::strupr (animation_name.Peek_Buffer ());
 
 			// OutputDebugString( "MBL Section / animation: " );
 			// OutputDebugString( animation_name.Peek_Buffer()	);
