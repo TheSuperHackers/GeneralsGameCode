@@ -1866,8 +1866,9 @@ void W3DModelDraw::allocateShadows(void)
 	const ThingTemplate *tmplate=getDrawable()->getTemplate();
 
 	//Check if we don't already have a shadow but need one for this type of model.
-	if (m_shadow == NULL && m_renderObject && TheW3DShadowManager && tmplate->getShadowType() != SHADOW_NONE
-		&& m_isFirstDrawModule)
+	ShadowType type = tmplate->getShadowType();
+	if (m_shadow == NULL && m_renderObject && TheW3DShadowManager && type != SHADOW_NONE
+		&& (m_isFirstDrawModule || !(type == SHADOW_DECAL || type == SHADOW_ALPHA_DECAL || type == SHADOW_ADDITIVE_DECAL)))
 	{	
 		Shadow::ShadowTypeInfo shadowInfo;
 		strcpy(shadowInfo.m_ShadowName, tmplate->getShadowTextureName().str());
@@ -3078,7 +3079,9 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 		}
 
 		// set up shadows
-		if (m_renderObject && TheW3DShadowManager && tmplate->getShadowType() != SHADOW_NONE && m_isFirstDrawModule)
+		ShadowType type = tmplate->getShadowType();
+		if (m_renderObject && TheW3DShadowManager && type != SHADOW_NONE &&
+			(m_isFirstDrawModule || !(type == SHADOW_DECAL || type == SHADOW_ALPHA_DECAL || type == SHADOW_ADDITIVE_DECAL)))
 		{	
 			Shadow::ShadowTypeInfo shadowInfo;
 			strcpy(shadowInfo.m_ShadowName, tmplate->getShadowTextureName().str());
