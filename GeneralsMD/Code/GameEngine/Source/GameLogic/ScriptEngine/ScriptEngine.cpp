@@ -7933,9 +7933,9 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 		}
 
 		AIUpdateInterface *ai = obj ? obj->getAIUpdateInterface() : NULL;
-		AIGroup *aigroup = (team ? TheAI->createGroup() : NULL);
+		RefCountPtr<AIGroup> aigroup = team ? TheAI->createGroup() : NULL;
 		if (aigroup) {
-			team->getTeamAsAIGroup(aigroup);
+			team->getTeamAsAIGroup(aigroup.Peek());
 		}
 
 		if( ai || aigroup ) {
@@ -8019,8 +8019,8 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 						itAdvanced = true;
 					} else if (team) {
 						// attempt to rebuild the aigroup, as it probably expired during the action execution
-						aigroup = (team ? TheAI->createGroup() : NULL);
-						team->getTeamAsAIGroup(aigroup);
+						aigroup = team ? TheAI->createGroup() : NULL;
+						team->getTeamAsAIGroup(aigroup.Peek());
 					}
 
 					if (aigroup && aigroup->isIdle()) {

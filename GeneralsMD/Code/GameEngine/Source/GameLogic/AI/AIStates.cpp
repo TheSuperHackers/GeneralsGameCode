@@ -4171,8 +4171,8 @@ StateReturnType AIFollowWaypointPathState::update()
 	if (m_moveAsGroup) {
 		if (obj->getControllingPlayer()->isSkirmishAIPlayer()) {
 			Team *team = obj->getTeam();
-			AIGroup *group = TheAI->createGroup();
-			team->getTeamAsAIGroup(group);
+			RefCountPtr<AIGroup> group = TheAI->createGroup();
+			team->getTeamAsAIGroup(group.Peek());
 
 			Coord3D pos;
 			group->getCenter(&pos);

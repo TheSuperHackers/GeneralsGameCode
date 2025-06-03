@@ -37,6 +37,8 @@
 #include "Common/GameType.h"
 #include "GameLogic/Damage.h"
 #include "Common/STLTypedefs.h"
+#include "refcount.h"
+#include "ref_ptr.h"
 
 class AIGroup;
 class AttackPriorityInfo;
@@ -272,7 +274,7 @@ public:
 	void loadPostProcess( void );
 
 	// AI Groups -----------------------------------------------------------------------------------------------
-	AIGroup *createGroup( void );					///< instantiate a new AI Group
+	RefCountPtr<AIGroup> createGroup( void );	///< instantiate a new AI Group
 	void destroyGroup( AIGroup *group );	///< destroy the given AI Group
 	AIGroup *findGroup( UnsignedInt id );	///< return the AI Group with the given ID
 
@@ -880,7 +882,7 @@ public:
  * An "AIGroup" is a simple collection of AI objects, used by the AI
  * for such things as Group Pathfinding.
  */
-class AIGroup : public MemoryPoolObject, public Snapshot
+class AIGroup : public MemoryPoolObject, public Snapshot, public RefCountClass
 {
 private:
 	void groupAttackObjectPrivate( Bool forced, Object *victim, Int maxShotsToFire, CommandSourceType cmdSource );					///< attack given object
@@ -980,13 +982,15 @@ public:
 
 	void add( Object *obj );								///< add object to group
 	
-	// returns true if remove destroyed the group for us.
+	// Returns true if the group was emptied.
 	Bool remove( Object *obj);
+
+	void removeAll( void );
 	
 	// If the group contains any objects not owned by ownerPlayer, return TRUE.
 	Bool containsAnyObjectsNotOwnedByPlayer( const Player *ownerPlayer );
 
-	// Remove any objects that aren't owned by the player, and return true if the group was destroyed due to emptiness
+	// Removes any objects that aren't owned by the player, and returns true if the group was emptied.
 	Bool removeAnyObjectsNotOwnedByPlayer( const Player *ownerPlayer );
 	
 	UnsignedInt getID( void );
@@ -1000,6 +1004,11 @@ public:
 	Bool setWeaponLockForGroup( WeaponSlotType weaponSlot, WeaponLockType lockType ); ///< Set the groups' weapon choice.  
 	void releaseWeaponLockForGroup(WeaponLockType lockType);///< Clear each guys weapon choice
 	void setWeaponSetFlag( WeaponSetType wst );
+
+	virtual void Delete_This(void)
+	{
+		TheAI->destroyGroup(this);
+	}
 
 protected:
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AIGroup, "AIGroupPool" );		///< @todo Set real numbers for mem alloc

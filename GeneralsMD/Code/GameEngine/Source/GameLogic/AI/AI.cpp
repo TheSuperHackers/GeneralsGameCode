@@ -333,18 +333,11 @@ void AI::reset( void )
 		m_aiData = m_aiData->m_next;
 		delete cur;
 	}
-	while (m_groupList.size())
-	{
-		AIGroup *groupToRemove = m_groupList.front();
-		if (groupToRemove)
-		{
-			destroyGroup(groupToRemove);
-		}
-		else
-		{
-			m_groupList.pop_front(); // NULL group, just kill from list.  Shouldn't really happen, but just in case.
-		}
-	}
+
+	DEBUG_ASSERTCRASH(m_groupList.empty(), ("AI::m_groupList is expected empty already\n"));
+
+	m_groupList.clear(); // Clear just in case...
+
 	m_nextGroupID = 0;
 	m_nextFormationID = NO_FORMATION_ID;
 	getNextFormationID(); // increment once past NO_FORMATION_ID.  jba.
@@ -443,14 +436,14 @@ void AI::parseAiDataDefinition( INI* ini )
 /**
  * Create a new AI Group
  */
-AIGroup *AI::createGroup( void )
+RefCountPtr<AIGroup> AI::createGroup( void )
 {
 	// create a new instance
-	AIGroup *group = newInstance(AIGroup);
+	RefCountPtr<AIGroup> group = RefCountPtr<AIGroup>::Create_NoAddRef(newInstance(AIGroup));
 
 	// add it to the list
 //	DEBUG_LOG(("***AIGROUP %x is being added to m_groupList.\n", group ));
-	m_groupList.push_back( group );
+	m_groupList.push_back( group.Peek() );
 
 	return group;
 }
