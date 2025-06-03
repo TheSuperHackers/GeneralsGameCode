@@ -48,6 +48,8 @@
 #include "LISTNODE.H"
 #endif
 
+#include "wwdebug.h"
+
 class RefCountClass;
 
 
@@ -148,7 +150,7 @@ public:
 																				Dec_Total_Refs(this);
 																				#endif
 																				NumRefs--; 
-																				assert(NumRefs >= 0); 
+																				WWASSERT(NumRefs >= 0); 
 																				if (NumRefs == 0) const_cast<RefCountClass*>(this)->Delete_This(); 
 																			}
 
@@ -182,7 +184,7 @@ protected:
 		#ifndef NDEBUG
 		Remove_Active_Ref(this);	
 		#endif
-		assert(NumRefs == 0);
+		WWASSERT(NumRefs == 0);
 	}
 
 private:
