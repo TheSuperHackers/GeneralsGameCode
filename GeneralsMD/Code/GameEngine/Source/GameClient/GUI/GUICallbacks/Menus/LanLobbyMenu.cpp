@@ -337,7 +337,7 @@ static void playerTooltip(GameWindow *window,
 	tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getName().str(), player->getLogin().str(), player->getHost().str());
 #if defined(_DEBUG) || defined(_INTERNAL)
 	UnicodeString ip;
-	ip.format(L" - %d.%d.%d.%d", PRINT_IP_HELPER(player->getIP()));
+	ip.format(L" - %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(player->getIP()));
 	tooltip.concat(ip);
 #endif
 	TheMouse->setCursorTooltip( tooltip );
@@ -430,7 +430,7 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 	}
 #if defined(_DEBUG) || defined(_INTERNAL)
 	UnicodeString str;
-	str.format(L"%s: %d.%d.%d.%d", IPSource, PRINT_IP_HELPER(IP));
+	str.format(L"%s: %d.%d.%d.%d", IPSource, PRINTF_IP_AS_4_INTS(IP));
 	GadgetListBoxAddEntryText(listboxChatWindow, str, chatSystemColor, -1, 0);
 #endif
 

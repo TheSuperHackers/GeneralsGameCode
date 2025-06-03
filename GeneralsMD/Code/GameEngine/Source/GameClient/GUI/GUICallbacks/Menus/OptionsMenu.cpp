@@ -287,7 +287,7 @@ void OptionPreferences::setLANIPAddress( AsciiString IP )
 void OptionPreferences::setLANIPAddress( UnsignedInt IP )
 {
 	AsciiString tmp;
-	tmp.format("%d.%d.%d.%d", PRINT_IP_HELPER(IP));
+	tmp.format("%d.%d.%d.%d", PRINTF_IP_AS_4_INTS(IP));
 	(*this)["IPAddress"] = tmp;
 }
 
@@ -315,7 +315,7 @@ void OptionPreferences::setOnlineIPAddress( AsciiString IP )
 void OptionPreferences::setOnlineIPAddress( UnsignedInt IP )
 {
 	AsciiString tmp;
-	tmp.format("%d.%d.%d.%d", PRINT_IP_HELPER(IP));
+	tmp.format("%d.%d.%d.%d", PRINTF_IP_AS_4_INTS(IP));
 	(*this)["GameSpyIPAddress"] = tmp;
 }
 

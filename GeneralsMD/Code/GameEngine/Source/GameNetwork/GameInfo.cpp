@@ -445,7 +445,7 @@ void GameInfo::setSlot( Int slotNum, GameSlot slotInfo )
 #endif
 
 	DEBUG_LOG(("GameInfo::setSlot - setting slot %d to be player %ls with IP %d.%d.%d.%d\n", slotNum, slotInfo.getName().str(),
-							PRINT_IP_HELPER(ip)));
+							PRINTF_IP_AS_4_INTS(ip)));
 }
 
 GameSlot* GameInfo::getSlot( Int slotNum )

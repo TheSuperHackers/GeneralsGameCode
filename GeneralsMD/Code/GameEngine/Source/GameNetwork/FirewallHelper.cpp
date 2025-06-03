@@ -364,7 +364,7 @@ Bool FirewallHelperClass::sendToManglerFromPort(UnsignedInt address, UnsignedSho
 	packet.length = sizeof(ManglerData);
 
 	DEBUG_LOG(("FirewallHelperClass::sendToManglerFromPort - Sending from port %d to %d.%d.%d.%d:%d\n", (UnsignedInt)port,
-		PRINT_IP_HELPER(address), MANGLER_PORT));
+		PRINTF_IP_AS_4_INTS(address), MANGLER_PORT));
 /*
 	DEBUG_LOG(("Buffer = "));
 	for (i = 0; i < sizeof(ManglerData); ++i) {

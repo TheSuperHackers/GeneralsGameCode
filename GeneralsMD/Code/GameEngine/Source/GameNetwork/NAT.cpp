@@ -326,7 +326,7 @@ NATConnectionState NAT::connectionUpdate() {
 				if (slot != NULL) {
 					UnsignedInt ip = slot->getIP();
 					DEBUG_LOG(("NAT::connectionUpdate - sending keep alive to node %d at %d.%d.%d.%d:%d\n", node,
-											PRINT_IP_HELPER(ip), slot->getPort()));
+											PRINTF_IP_AS_4_INTS(ip), slot->getPort()));
 					m_transport->queueSend(ip, slot->getPort(), (const unsigned char *)"KEEPALIVE", strlen("KEEPALIVE") + 1);
 				}
 			}
@@ -344,7 +344,7 @@ NATConnectionState NAT::connectionUpdate() {
 			UnsignedInt ip = m_transport->m_inBuffer[i].addr;
 #endif
 			DEBUG_LOG(("NAT::connectionUpdate - got a packet from %d.%d.%d.%d:%d, length = %d\n",
-									PRINT_IP_HELPER(ip), m_transport->m_inBuffer[i].port, m_transport->m_inBuffer[i].length));
+									PRINTF_IP_AS_4_INTS(ip), m_transport->m_inBuffer[i].port, m_transport->m_inBuffer[i].length));
 			UnsignedByte *data = m_transport->m_inBuffer[i].data;
 			if (memcmp(data, "PROBE", strlen("PROBE")) == 0) {
 				Int fromNode = atoi((char *)data + strlen("PROBE"));
@@ -360,8 +360,8 @@ NATConnectionState NAT::connectionUpdate() {
 						UnsignedInt slotIP = targetSlot->getIP();
 #endif
 						DEBUG_LOG(("NAT::connectionUpdate - incomming packet has different from address than we expected, incoming: %d.%d.%d.%d expected: %d.%d.%d.%d\n",
-												PRINT_IP_HELPER(fromIP),
-												PRINT_IP_HELPER(slotIP)));
+												PRINTF_IP_AS_4_INTS(fromIP),
+												PRINTF_IP_AS_4_INTS(slotIP)));
 						targetSlot->setIP(fromIP);
 					}
 					if (m_transport->m_inBuffer[i].port != targetSlot->getPort()) {
@@ -378,7 +378,7 @@ NATConnectionState NAT::connectionUpdate() {
 			if (memcmp(data, "KEEPALIVE", strlen("KEEPALIVE")) == 0) {
 				// keep alive packet, just toss it.
 				DEBUG_LOG(("NAT::connectionUpdate - got keepalive from %d.%d.%d.%d:%d\n",
-										PRINT_IP_HELPER(ip), m_transport->m_inBuffer[i].port));
+										PRINTF_IP_AS_4_INTS(ip), m_transport->m_inBuffer[i].port));
 				m_transport->m_inBuffer[i].length = 0;
 			}
 		}
@@ -435,7 +435,7 @@ NATConnectionState NAT::connectionUpdate() {
 				} else {
 					if (TheFirewallHelper != NULL) {
 						DEBUG_LOG(("NAT::connectionUpdate - trying to send to the mangler again. mangler address: %d.%d.%d.%d, from port: %d, packet ID:%d\n",
-							PRINT_IP_HELPER(m_manglerAddress), m_spareSocketPort, m_packetID));
+							PRINTF_IP_AS_4_INTS(m_manglerAddress), m_spareSocketPort, m_packetID));
 						TheFirewallHelper->sendToManglerFromPort(m_manglerAddress, m_spareSocketPort, m_packetID);
 					}
 //					m_manglerRetryTime = TheGameSpyConfig->getRetryInterval() + timeGetTime();
@@ -620,7 +620,7 @@ void NAT::attachSlotList(GameSlot *slotList[], Int localSlot, UnsignedInt localI
 	m_localIP = localIP;
 	m_transport = new Transport;
 	DEBUG_LOG(("NAT::attachSlotList - initting the transport socket with address %d.%d.%d.%d:%d\n",
-							PRINT_IP_HELPER(m_localIP), getSlotPort(localSlot)));
+							PRINTF_IP_AS_4_INTS(m_localIP), getSlotPort(localSlot)));
 
 	m_startingPortNumber = NETWORK_BASE_PORT_NUMBER + ((timeGetTime() / 1000) % 20000);
 	DEBUG_LOG(("NAT::attachSlotList - using %d as the starting port number\n", m_startingPortNumber));
@@ -690,8 +690,8 @@ void NAT::doThisConnectionRound() {
 #endif
 				
 				DEBUG_LOG(("NAT::doThisConnectionRound - Target slot has IP %d.%d.%d.%d  Local slot has IP %d.%d.%d.%d\n",
-							PRINT_IP_HELPER(targetIP),
-							PRINT_IP_HELPER(localIP)));
+							PRINTF_IP_AS_4_INTS(targetIP),
+							PRINTF_IP_AS_4_INTS(localIP)));
 
 				if (((targetSlot->getNATBehavior() & FirewallHelperClass::FIREWALL_TYPE_NETGEAR_BUG) == 0) &&
 						((localSlot->getNATBehavior() & FirewallHelperClass::FIREWALL_TYPE_NETGEAR_BUG) != 0)) {
@@ -727,7 +727,7 @@ void NAT::doThisConnectionRound() {
 
 void NAT::sendAProbe(UnsignedInt ip, UnsignedShort port, Int fromNode) {
 	DEBUG_LOG(("NAT::sendAProbe - sending a probe from port %d to %d.%d.%d.%d:%d\n", getSlotPort(m_connectionNodes[m_localNodeNumber].m_slotIndex),
-							PRINT_IP_HELPER(ip), port));
+							PRINTF_IP_AS_4_INTS(ip), port));
 	AsciiString str;
 	str.format("PROBE%d", fromNode);
 	m_transport->queueSend(ip, port, (unsigned char *)str.str(), str.getLength() + 1);
@@ -765,8 +765,8 @@ void NAT::sendMangledSourcePort() {
 #endif
 		DEBUG_LOG(("NAT::sendMangledSourcePort - target and I are behind the same NAT, no mangling\n"));
 		DEBUG_LOG(("NAT::sendMangledSourcePort - I am %ls, target is %ls, my IP is %d.%d.%d.%d, target IP is %d.%d.%d.%d\n", localSlot->getName().str(), targetSlot->getName().str(),
-								PRINT_IP_HELPER(localip),
-								PRINT_IP_HELPER(targetip)));
+								PRINTF_IP_AS_4_INTS(localip),
+								PRINTF_IP_AS_4_INTS(targetip)));
 
 		sendMangledPortNumberToTarget(sourcePort, targetSlot);
 		m_sourcePorts[m_targetNodeNumber] = sourcePort;
@@ -828,7 +828,7 @@ void NAT::sendMangledSourcePort() {
 	memcpy(&m_manglerAddress, &(hostInfo->h_addr_list[0][0]), 4);
 	m_manglerAddress = ntohl(m_manglerAddress);
 	DEBUG_LOG(("NAT::sendMangledSourcePort - mangler %s address is %d.%d.%d.%d\n", manglerName, 
-							PRINT_IP_HELPER(m_manglerAddress)));
+							PRINTF_IP_AS_4_INTS(m_manglerAddress)));
 
 	DEBUG_LOG(("NAT::sendMangledSourcePort - NAT behavior = 0x%08x\n", fwType));
 
@@ -1040,7 +1040,7 @@ void NAT::gotMangledPort(Int nodeNumber, UnsignedShort mangledPort) {
 		UnsignedInt ip = targetSlot->getIP();
 #endif
 		DEBUG_LOG(("NAT::gotMangledPort - don't have a netgear or we have already been probed, or both my target and I have a netgear, send a PROBE. Sending to %d.%d.%d.%d:%d\n",
-								PRINT_IP_HELPER(ip), targetSlot->getPort()));
+								PRINTF_IP_AS_4_INTS(ip), targetSlot->getPort()));
 
 		sendAProbe(targetSlot->getIP(), targetSlot->getPort(), m_localNodeNumber);
 		notifyTargetOfProbe(targetSlot);
@@ -1271,7 +1271,7 @@ void NAT::processGlobalMessage(Int slotNum, const char *options) {
 		UnsignedShort port = (UnsignedShort)intport;
 
 		DEBUG_LOG(("NAT::processGlobalMessage - got port message from node %d, port: %d, internal address: %d.%d.%d.%d\n", node, port,
-								PRINT_IP_HELPER(addr)));
+								PRINTF_IP_AS_4_INTS(addr)));
 
 		if ((node >= 0) && (node < m_numNodes)) {
 			if (port < 1024) {

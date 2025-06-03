@@ -230,7 +230,7 @@ Bool Transport::doSend() {
 			// Send this message
 			if ((bytesSent = m_udpsock->Write((unsigned char *)(&m_outBuffer[i]), bytesToSend, m_outBuffer[i].addr, m_outBuffer[i].port)) > 0)
 			{
-				//DEBUG_LOG(("Sending %d bytes to %d.%d.%d.%d:%d\n", bytesToSend, PRINT_IP_HELPER(m_outBuffer[i].addr), m_outBuffer[i].port));
+				//DEBUG_LOG(("Sending %d bytes to %d.%d.%d.%d:%d\n", bytesToSend, PRINTF_IP_AS_4_INTS(m_outBuffer[i].addr), m_outBuffer[i].port));
 				m_outgoingPackets[m_statisticsSlot]++;
 				m_outgoingBytes[m_statisticsSlot] += m_outBuffer[i].length + sizeof(TransportMessageHeader);
 				m_outBuffer[i].length = 0;  // Remove from queue
@@ -238,7 +238,7 @@ Bool Transport::doSend() {
 				{
 					DEBUG_LOG(("Transport::doSend - wanted to send %d bytes, only sent %d bytes to %d.%d.%d.%d:%d\n",
 						bytesToSend, bytesSent,
-						PRINT_IP_HELPER(m_outBuffer[i].addr), m_outBuffer[i].port));
+						PRINTF_IP_AS_4_INTS(m_outBuffer[i].addr), m_outBuffer[i].port));
 				}
 			}
 			else
