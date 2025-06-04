@@ -1699,6 +1699,19 @@ public:
 
 		return AIInternalMoveToState::onEnter();
 	}
+
+	virtual StateReturnType update()
+	{
+		Object* jet = getMachineOwner();
+		ParkingPlaceBehaviorInterface* pp = getPP(jet->getProducerID());
+
+		if (!pp)
+		{
+			return STATE_FAILURE;
+		}
+
+		return AIInternalMoveToState::update();
+	}
 };
 EMPTY_DTOR(JetOrHeliReturnForLandingState)
 
