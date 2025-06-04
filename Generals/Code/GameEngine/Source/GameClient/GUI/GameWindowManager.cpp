@@ -4097,3 +4097,33 @@ void GameWindowManager::clearTabList( void )
 {
 	m_tabList.clear();
 }
+
+
+GameWindow *GameWindowManagerDummy::winGetWindowFromId(GameWindow *window, Int id)
+{
+	window = GameWindowManager::winGetWindowFromId(window, id);
+	if (window != NULL)
+		return window;
+
+	// Just return any window, callers expect this to be non-null
+	return m_windowList;
+}
+
+WindowMsgHandledType DummyWindowSystem(GameWindow *window, UnsignedInt msg, WindowMsgData mData1, WindowMsgData mData2)
+{
+	return MSG_IGNORED;
+}
+
+GameWindow *GameWindowManagerDummy::winCreateFromScript(AsciiString filenameString, WindowLayoutInfo *info)
+{
+	WindowLayoutInfo scriptInfo;
+	GameWindow* dummyWindow = winCreate(NULL, 0, 0, 0, 100, 100, DummyWindowSystem, NULL);
+	scriptInfo.windows.push_back(dummyWindow);
+	if (info)
+		*info = scriptInfo;
+	return dummyWindow;
+}
+
+GameWindowDummy::~GameWindowDummy()
+{
+}

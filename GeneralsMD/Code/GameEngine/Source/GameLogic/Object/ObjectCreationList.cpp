@@ -322,7 +322,7 @@ public:
 		}
 		
 		Object *firstTransport = NULL;
-		for( Int formationIndex = 0; formationIndex < m_formationSize; formationIndex++ )
+		for( UnsignedInt formationIndex = 0; formationIndex < m_formationSize; formationIndex++ )
 		{
 			Coord3D offset;
 			offset.zero();

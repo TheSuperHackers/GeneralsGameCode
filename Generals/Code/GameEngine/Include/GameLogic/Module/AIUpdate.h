@@ -344,7 +344,7 @@ public:
 	virtual void aiDoCommand(const AICommandParms* parms);
 	
 	virtual const Coord3D *getGuardLocation( void ) const { return &m_locationToGuard;	}
-	virtual const ObjectID getGuardObject( void ) const { return m_objectToGuard; }
+	virtual ObjectID getGuardObject( void ) const { return m_objectToGuard; }
 	virtual const PolygonTrigger *getAreaToGuard( void ) const { return m_areaToGuard; }
 	virtual GuardTargetType getGuardTargetType() const { return m_guardTargetType[1]; }
 	virtual void clearGuardTargetType() { m_guardTargetType[1] = m_guardTargetType[0]; m_guardTargetType[0] = GUARDTARGET_NONE; }

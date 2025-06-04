@@ -63,7 +63,7 @@ Bool UnitCrateCollide::executeCrateBehavior( Object *other )
 		return FALSE;
 	}
 
-	for( Int unitIndex = 0; unitIndex < unitCount; unitIndex++ )
+	for( UnsignedInt unitIndex = 0; unitIndex < unitCount; unitIndex++ )
 	{
 		Team *creationTeam = other->getControllingPlayer()->getDefaultTeam();
 		Object *newObj = TheThingFactory->newObject( unitType, creationTeam );

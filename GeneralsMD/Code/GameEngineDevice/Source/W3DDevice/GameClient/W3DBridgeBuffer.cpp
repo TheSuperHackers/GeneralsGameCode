@@ -768,6 +768,8 @@ void W3DBridgeBuffer::freeBridgeBuffers(void)
 //=============================================================================
 void W3DBridgeBuffer::allocateBridgeBuffers(void)
 {
+	if (TheGlobalData->m_headless)
+		return;
 	m_vertexBridge=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZNDUV1,MAX_BRIDGE_VERTEX+4,DX8VertexBufferClass::USAGE_DYNAMIC));
 	m_indexBridge=NEW_REF(DX8IndexBufferClass,(MAX_BRIDGE_INDEX+4, DX8IndexBufferClass::USAGE_DYNAMIC));
 	m_vertexMaterial=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
@@ -808,6 +810,8 @@ void W3DBridgeBuffer::clearAllBridges(void)
 //=============================================================================
 void W3DBridgeBuffer::loadBridges(W3DTerrainLogic *pTerrainLogic, Bool saveGame)
 {
+	// TheSuperHackers @logic-client-separation helmutbuhler 26/4/2025
+	// W3DBridgeBuffer shouldn't add objects to W3DTerrainLogic
 	clearAllBridges();
 	MapObject *pMapObj;
 	MapObject *pMapObj2;

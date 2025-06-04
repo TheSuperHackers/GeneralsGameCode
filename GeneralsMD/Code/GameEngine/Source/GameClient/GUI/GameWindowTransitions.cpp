@@ -158,6 +158,9 @@ TransitionWindow::TransitionWindow( void )
 
 TransitionWindow::~TransitionWindow( void )
 {
+	if (m_win)
+		m_win->unlinkTransitionWindow(this);
+
 	m_win = NULL;
 	if(m_transition)
 		delete m_transition;
@@ -179,6 +182,10 @@ Bool TransitionWindow::init( void )
 
 	m_transition = getTransitionForStyle( m_style );
 	m_transition->init(m_win);
+
+	// TheSuperHackers @fix Mauller 15/05/2025 Link TransitionWindow to the GameWindow so the GameWindow can unlink itself when it is destroyed
+	if(m_win)
+		m_win->linkTransitionWindow(this);
 
 	return TRUE;
 }
@@ -216,6 +223,15 @@ void TransitionWindow::draw( void )
 {
 	if(m_transition)
 		m_transition->draw();
+}
+
+void TransitionWindow::unlinkGameWindow(GameWindow* win)
+{
+	if (m_win != win)
+		return;
+
+	m_transition->unlinkGameWindow(win);
+	m_win = NULL;
 }
 
 Int TransitionWindow::getTotalFrames( void )

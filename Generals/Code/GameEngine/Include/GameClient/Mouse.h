@@ -370,7 +370,20 @@ protected:
 
 };  // end class Mouse
 
-// INLINING ///////////////////////////////////////////////////////////////////
+// TheSuperHackers @feature helmutbuhler 17/05/2025
+// Mouse that does nothing. Used for Headless Mode.
+class MouseDummy : public Mouse
+{
+	virtual void parseIni() {}
+	virtual void update() {}
+	virtual void initCursorResources() {}
+	virtual void createStreamMessages() {}
+	virtual void setCursor(MouseCursor cursor) {}
+	virtual void capture() {}
+	virtual void releaseCapture() {}
+	virtual UnsignedByte getMouseEvent(MouseIO *result, Bool flush) { return MOUSE_NONE; }
+};
+
 
 // EXTERNALS //////////////////////////////////////////////////////////////////
 extern Mouse *TheMouse;  ///< extern mouse singleton definition

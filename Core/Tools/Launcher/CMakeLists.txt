@@ -21,8 +21,6 @@ set(LAUNCHER_SRC
     "patch.h"
     "process.cpp"
     "process.h"
-    "Protect.cpp"
-    "Protect.h"
     "resource.h"
     "streamer.cpp"
     "streamer.h"
@@ -66,7 +64,6 @@ target_link_libraries(corei_launcher INTERFACE
     comctl32
     core_config
     core_utility
-    safedisc
 )
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")

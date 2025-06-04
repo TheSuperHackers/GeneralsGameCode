@@ -156,7 +156,7 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 	//Allocate an array of lines equal to the number of beams * segments
 	m_line3D = NEW SegmentedLineClass *[ data->m_numBeams * data->m_segments ];
 
-	for( int segment = 0; segment < data->m_segments; segment++ )
+	for( UnsignedInt segment = 0; segment < data->m_segments; segment++ )
 	{
 		//We don't care about segment positioning yet until we actually set the position
 		
@@ -205,7 +205,8 @@ W3DLaserDraw::W3DLaserDraw( Thing *thing, const ModuleData* moduleData ) :
 				}
 
 				// add to scene
-				W3DDisplay::m_3DScene->Add_Render_Object( line );	//add it to our scene so it gets rendered with other objects.
+				if (W3DDisplay::m_3DScene != NULL)
+					W3DDisplay::m_3DScene->Add_Render_Object( line );	//add it to our scene so it gets rendered with other objects.
 
 				// hide the render object until the first time we come to draw it and
 				// set the correct position
@@ -225,11 +226,12 @@ W3DLaserDraw::~W3DLaserDraw( void )
 {
 	const W3DLaserDrawModuleData *data = getW3DLaserDrawModuleData();
 
-	for( int i = 0; i < data->m_numBeams * data->m_segments; i++ )
+	for( UnsignedInt i = 0; i < data->m_numBeams * data->m_segments; i++ )
 	{
 
 		// remove line from scene
-		W3DDisplay::m_3DScene->Remove_Render_Object( m_line3D[ i ] );
+		if (W3DDisplay::m_3DScene != NULL)
+			W3DDisplay::m_3DScene->Remove_Render_Object( m_line3D[ i ] );
 
 		// delete line
 		REF_PTR_RELEASE( m_line3D[ i ] );
@@ -274,7 +276,7 @@ void W3DLaserDraw::doDrawModule(const Matrix3D* transformMtx)
 
 		Vector3 laserPoints[ 2 ];
 
-		for( int segment = 0; segment < data->m_segments; segment++ )
+		for( UnsignedInt segment = 0; segment < data->m_segments; segment++ )
 		{
 			if( data->m_arcHeight > 0.0f && data->m_segments > 1 )
 			{

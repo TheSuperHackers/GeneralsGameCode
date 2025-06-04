@@ -371,6 +371,57 @@ class AudioManager : public SubsystemInterface
 		Bool m_disallowSpeech			: 1;
 };
 
+// TheSuperHackers @feature helmutbuhler 17/05/2025
+// AudioManager that does nothing. Used for Headless Mode.
+class AudioManagerDummy : public AudioManager
+{
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+	virtual void audioDebugDisplay(DebugDisplayInterface* dd, void* userData, FILE* fp) {}
+#endif
+	virtual void stopAudio(AudioAffect which) {}
+	virtual void pauseAudio(AudioAffect which) {}
+	virtual void resumeAudio(AudioAffect which) {}
+	virtual void pauseAmbient(Bool shouldPause) {}
+	virtual void killAudioEventImmediately(AudioHandle audioEvent) {}
+	virtual void nextMusicTrack() {}
+	virtual void prevMusicTrack() {}
+	virtual Bool isMusicPlaying() const { return false; }
+	virtual Bool hasMusicTrackCompleted(const AsciiString& trackName, Int numberOfTimes) const { return false; }
+	virtual AsciiString getMusicTrackName() const { return ""; }
+	virtual void openDevice() {}
+	virtual void closeDevice() {}
+	virtual void* getDevice() { return NULL; }
+	virtual void notifyOfAudioCompletion(UnsignedInt audioCompleted, UnsignedInt flags) {}
+	virtual UnsignedInt getProviderCount(void) const { return 0; };
+	virtual AsciiString getProviderName(UnsignedInt providerNum) const { return ""; }
+	virtual UnsignedInt getProviderIndex(AsciiString providerName) const { return 0; }
+	virtual void selectProvider(UnsignedInt providerNdx) {}
+	virtual void unselectProvider(void) {}
+	virtual UnsignedInt getSelectedProvider(void) const { return 0; }
+	virtual void setSpeakerType(UnsignedInt speakerType) {}
+	virtual UnsignedInt getSpeakerType(void) { return 0; }
+	virtual UnsignedInt getNum2DSamples(void) const { return 0; }
+	virtual UnsignedInt getNum3DSamples(void) const { return 0; }
+	virtual UnsignedInt getNumStreams(void) const { return 0; }
+	virtual Bool doesViolateLimit(AudioEventRTS* event) const { return false; }
+	virtual Bool isPlayingLowerPriority(AudioEventRTS* event) const { return false; }
+	virtual Bool isPlayingAlready(AudioEventRTS* event) const { return false; }
+	virtual Bool isObjectPlayingVoice(UnsignedInt objID) const { return false; }
+	virtual void adjustVolumeOfPlayingAudio(AsciiString eventName, Real newVolume) {}
+	virtual void removePlayingAudio(AsciiString eventName) {}
+	virtual void removeAllDisabledAudio() {}
+	virtual Bool has3DSensitiveStreamsPlaying(void) const { return false; }
+	virtual void* getHandleForBink(void) { return NULL; }
+	virtual void releaseHandleForBink(void) {}
+	virtual void friend_forcePlayAudioEventRTS(const AudioEventRTS* eventToPlay) {}
+	virtual void setPreferredProvider(AsciiString providerNdx) {}
+	virtual void setPreferredSpeaker(AsciiString speakerType) {}
+	virtual Real getFileLengthMS(AsciiString strToLoad) const { return -1; }
+	virtual void closeAnySamplesUsingFile(const void* fileToClose) {}
+	virtual void setDeviceListenerPosition(void) {}
+};
+
+
 extern AudioManager *TheAudio;
 
 #endif // __COMMON_GAMEAUDIO_H_

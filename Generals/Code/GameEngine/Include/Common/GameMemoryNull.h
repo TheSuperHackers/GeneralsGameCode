@@ -108,7 +108,7 @@ protected:
 
 public:
 
-	static void deleteInstance(MemoryPoolObject* mpo) 
+	static void deleteInstanceInternal(MemoryPoolObject* mpo) 
 	{
 		delete mpo;
 	}
@@ -116,7 +116,7 @@ public:
 
 inline void deleteInstance(MemoryPoolObject* mpo)
 {
-	MemoryPoolObject::deleteInstance(mpo);
+	MemoryPoolObject::deleteInstanceInternal(mpo);
 }
 
 

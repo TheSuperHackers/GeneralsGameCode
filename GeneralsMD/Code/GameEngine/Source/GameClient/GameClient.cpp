@@ -218,7 +218,7 @@ GameClient::~GameClient()
 	TheVideoPlayer = NULL;
 
 	// destroy all translators
-	for( Int i = 0; i < m_numTranslators; i++ )
+	for( UnsignedInt i = 0; i < m_numTranslators; i++ )
 		TheMessageStream->removeTranslator( m_translators[ i ] );	
 	m_numTranslators = 0;
 	m_commandTranslator = NULL;
@@ -270,10 +270,13 @@ void GameClient::init( void )
 		TheDisplayStringManager->setName("TheDisplayStringManager");
 	}
 	
-	// create the keyboard
-	TheKeyboard = createKeyboard();
-	TheKeyboard->init();
-	TheKeyboard->setName("TheKeyboard");
+	if (!TheGlobalData->m_headless)
+	{
+		// create the keyboard
+		TheKeyboard = createKeyboard();
+		TheKeyboard->init();
+		TheKeyboard->setName("TheKeyboard");
+	}
 
 	// allocate and load image collection for the GUI and just load the 256x256 ones for now
 	TheMappedImageCollection = MSGNEW("GameClientSubsystem") ImageCollection;
@@ -322,7 +325,7 @@ void GameClient::init( void )
 		TheFontLibrary->init();
 
 	// create the mouse
-	TheMouse = createMouse();
+	TheMouse = TheGlobalData->m_headless ? NEW MouseDummy : createMouse();
 	TheMouse->parseIni();
 	TheMouse->initCursorResources();
  	TheMouse->setName("TheMouse");
@@ -340,7 +343,7 @@ void GameClient::init( void )
 	}
 
 	// create the window manager
-	TheWindowManager = createWindowManager();
+	TheWindowManager = TheGlobalData->m_headless ? NEW GameWindowManagerDummy : createWindowManager();
 	if( TheWindowManager )
 	{
 
@@ -535,7 +538,7 @@ void GameClient::update( void )
 	//Initial Game Codition.  We must show the movie first and then we can display the shell	
 	if(TheGlobalData->m_afterIntro && !TheDisplay->isMoviePlaying())
 	{
-		if( playSizzle && TheGlobalData->m_playSizzle )
+		if( playSizzle && TheGlobalData->m_playSizzle && !TheGlobalData->m_headless )// Remove headless-check with Replay Simulation PR
 		{
 			TheWritableGlobalData->m_allowExitOutOfMovies = TRUE;
 			if(TheGameLODManager && TheGameLODManager->didMemPass())
@@ -626,10 +629,9 @@ void GameClient::update( void )
 	if(TheGlobalData->m_playIntro || TheGlobalData->m_afterIntro)
 	{
 		// redraw all views, update the GUI
+		if (!TheGlobalData->m_headless)// Remove headless-check with Replay Simulation PR
 		{
 			TheDisplay->DRAW();
-		}
-		{
 			TheDisplay->UPDATE();
 		}
 		return;
@@ -749,10 +751,12 @@ void GameClient::update( void )
 	}
 
 	// update display
+	if (!TheGlobalData->m_headless)// Remove headless-check with Replay Simulation PR
 	{
 		TheDisplay->UPDATE();
 	}
 
+	if (!TheGlobalData->m_headless)// Remove headless-check with Replay Simulation PR
 	{
 		USE_PERF_TIMER(GameClient_draw)
 			
@@ -1124,7 +1128,7 @@ void GameClient::preloadAssets( TimeOfDay timeOfDay )
 
 	GlobalMemoryStatus(&before);
 	extern std::vector<AsciiString>	debrisModelNamesGlobalHack;
-	Int i=0;
+	size_t i=0;
 	for (; i<debrisModelNamesGlobalHack.size(); ++i)
 	{
 		TheDisplay->preloadModelAssets(debrisModelNamesGlobalHack[i]);

@@ -37,6 +37,8 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Object.h"
 
+#include "ref_ptr.h"
+
 #ifdef RTS_INTERNAL
 // for occasional debugging...
 
@@ -433,13 +435,19 @@ StateReturnType StateMachine::updateStateMachine()
 
 	if (m_currentState)
 	{
+		// TheSuperHackers @bugfix xezon 20/05/2025 Defer the deletion of this state machine.
+		// Calling m_currentState->update() can release this state machine in certain circumstances,
+		// for example if something kills the entity of this state machine as a result of this state update.
+		// See https://github.com/TheSuperHackers/GeneralsGameCode/issues/212
+		RefCountPtr<StateMachine> refThis(this);
+
 		// update() can change m_currentState, so save it for a moment...
 		State* stateBeforeUpdate = m_currentState;
 
 		// execute this state
 		StateReturnType status = m_currentState->update();
 
-		// it is possible that the state's update() method may cause the state to be destroyed
+		// it is possible that the state's update() method clears the state machine.
 		if (m_currentState == NULL)
 		{
 			return STATE_FAILURE;

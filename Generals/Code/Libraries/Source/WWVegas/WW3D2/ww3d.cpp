@@ -592,7 +592,7 @@ const RenderDeviceDescClass & WW3D::Get_Render_Device_Desc(int deviceidx)
  *   5/19/99    GTH : Created.                                                                 *
  *   1/25/2001  gth : converted to DX8                                                         *
  *=============================================================================================*/
-const int WW3D::Get_Render_Device_Count(void)
+int WW3D::Get_Render_Device_Count(void)
 {
 	return DX8Wrapper::Get_Render_Device_Count();
 }
@@ -817,7 +817,8 @@ WW3DErrorType WW3D::Begin_Render(bool clear,bool clearz,const Vector3 & color, f
         // Check if the device needs to be reset
         if( D3DERR_DEVICENOTRESET == hr )
         {
-			DX8Wrapper::Reset_Device();
+            WWDEBUG_SAY(("WW3D::Begin_Render is resetting the device.\n"));
+            DX8Wrapper::Reset_Device();
         }
 
 		return WW3D_ERROR_GENERIC;
@@ -1346,24 +1347,37 @@ void WW3D::Make_Screen_Shot( const char * filename_base , const float gamma, con
 		gamma_lut[i] = (unsigned char) (256.0f * powf(i / 256.0f, recip));
 	}
 
-	// Lock front buffer and copy
+	// TheSuperHackers @bugfix xezon 21/05/2025 Get the back buffer and create a copy of the surface.
+	// Originally this code took the front buffer and tried to lock it. This does not work when the
+	// render view clips outside the desktop boundaries. It crashed the game.
+	SurfaceClass* surface = DX8Wrapper::_Get_DX8_Back_Buffer();
 
-	IDirect3DSurface8 *fb;
-	fb=DX8Wrapper::_Get_DX8_Front_Buffer();
-	D3DSURFACE_DESC desc;
-	fb->GetDesc(&desc);
+	SurfaceClass::SurfaceDescription surfaceDesc;
+	surface->Get_Description(surfaceDesc);
 
-	RECT bounds;
-	GetWindowRect(_Hwnd,&bounds);
+	SurfaceClass* surfaceCopy = NEW_REF(SurfaceClass, (DX8Wrapper::_Create_DX8_Surface(surfaceDesc.Width, surfaceDesc.Height, surfaceDesc.Format)));
+	DX8Wrapper::_Copy_DX8_Rects(surface->Peek_D3D_Surface(), NULL, 0, surfaceCopy->Peek_D3D_Surface(), NULL);
 
-	D3DLOCKED_RECT lrect;
+	surface->Release_Ref();
+	surface = NULL;
 
-	DX8_ErrorCode(fb->LockRect(&lrect,&bounds,D3DLOCK_READONLY));
+	struct Rect
+	{
+		int Pitch;
+		void* pBits;
+	} lrect;
+
+	lrect.pBits = surfaceCopy->Lock(&lrect.Pitch);
+	if (lrect.pBits == NULL)
+	{
+		surfaceCopy->Release_Ref();
+		return;
+	}
 
 	unsigned int x,y,index,index2,width,height;
 
-	width=bounds.right-bounds.left;
-	height=bounds.bottom-bounds.top;
+	width = surfaceDesc.Width;
+	height = surfaceDesc.Height;
 
 	unsigned char *image=W3DNEWARRAY unsigned char[3*width*height];
 
@@ -1382,7 +1396,9 @@ void WW3D::Make_Screen_Shot( const char * filename_base , const float gamma, con
 		}
 	}
 
-	fb->Release();
+	surfaceCopy->Unlock();
+	surfaceCopy->Release_Ref();
+	surfaceCopy = NULL;
 
 	switch (format) {
 		case TGA:
@@ -1681,24 +1697,37 @@ void WW3D::Update_Movie_Capture( void )
 	WWPROFILE("WW3D::Update_Movie_Capture");
 	WWDEBUG_SAY(( "Updating\n"));
 
-		// Lock front buffer and copy
+	// TheSuperHackers @bugfix xezon 21/05/2025 Get the back buffer and create a copy of the surface.
+	// Originally this code took the front buffer and tried to lock it. This does not work when the
+	// render view clips outside the desktop boundaries. It crashed the game.
+	SurfaceClass* surface = DX8Wrapper::_Get_DX8_Back_Buffer();
 
-	IDirect3DSurface8 *fb;
-	fb=DX8Wrapper::_Get_DX8_Front_Buffer();
-	D3DSURFACE_DESC desc;
-	fb->GetDesc(&desc);
+	SurfaceClass::SurfaceDescription surfaceDesc;
+	surface->Get_Description(surfaceDesc);
 
-	RECT bounds;
-	GetWindowRect(_Hwnd,&bounds);
+	SurfaceClass* surfaceCopy = NEW_REF(SurfaceClass, (DX8Wrapper::_Create_DX8_Surface(surfaceDesc.Width, surfaceDesc.Height, surfaceDesc.Format)));
+	DX8Wrapper::_Copy_DX8_Rects(surface->Peek_D3D_Surface(), NULL, 0, surfaceCopy->Peek_D3D_Surface(), NULL);
 
-	D3DLOCKED_RECT lrect;
+	surface->Release_Ref();
+	surface = NULL;
 
-	DX8_ErrorCode(fb->LockRect(&lrect,&bounds,D3DLOCK_READONLY));
+	struct Rect
+	{
+		int Pitch;
+		void* pBits;
+	} lrect;
+
+	lrect.pBits = surfaceCopy->Lock(&lrect.Pitch);
+	if (lrect.pBits == NULL)
+	{
+		surfaceCopy->Release_Ref();
+		return;
+	}
 
 	unsigned int x,y,index,index2,width,height;
 
-	width=bounds.right-bounds.left;
-	height=bounds.bottom-bounds.top;
+	width = surfaceDesc.Width;
+	height = surfaceDesc.Height;
 
 	char *image=(char *)Movie->GetBuffer();
 
@@ -1717,7 +1746,9 @@ void WW3D::Update_Movie_Capture( void )
 		}
 	}
 
-	fb->Release();
+	surfaceCopy->Unlock();
+	surfaceCopy->Release_Ref();
+	surfaceCopy = NULL;
 
 	Movie->Grab(image);
 #endif

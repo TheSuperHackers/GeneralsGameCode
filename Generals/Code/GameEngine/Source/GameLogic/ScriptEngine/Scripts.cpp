@@ -1858,7 +1858,7 @@ AsciiString Parameter::getUiText(void) const
 			if (m_int >= KINDOF_FIRST && m_int < KINDOF_COUNT )
 				uiText.format("Kind is '%s'", KindOfMaskType::getNameFromSingleBit(m_int));
 			else 
-				uiText.format("Kind is '???'");
+				uiText.format("Kind is ???");
 			break;
 		case SIDE:
 			uiText.format("Player '%s'", uiString.str());
@@ -1979,7 +1979,7 @@ AsciiString Parameter::getUiText(void) const
 			if (m_int >= BSTATUS_YES && m_int < BSTATUS_NUM_TYPES )
 				uiText.format("Buildable (%s)", BuildableStatusNames[m_int - BSTATUS_YES]);
 			else 
-				uiText.format("Buildable (???)");
+				uiText.format("Buildable ???");
 			break;
 		
 		case SURFACES_ALLOWED:
@@ -2003,7 +2003,7 @@ AsciiString Parameter::getUiText(void) const
 		case OBJECT_STATUS:
 		{
 			if (m_string.isEmpty()) {
-				uiText.format("Object Status is '???'");
+				uiText.format("Object Status is ???");
 			} else {
 				uiText.format("Object Status is '%s'", m_string.str());
 			}

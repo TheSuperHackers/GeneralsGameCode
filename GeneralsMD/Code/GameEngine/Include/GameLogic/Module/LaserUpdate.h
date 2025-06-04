@@ -59,9 +59,31 @@ private:
 
 };
 
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+class LaserRadiusUpdate
+{
+public:
+	LaserRadiusUpdate();
+
+	void initRadius( Int sizeDeltaFrames );
+	bool updateRadius();
+	void setDecayFrames( UnsignedInt decayFrames );
+	void xfer( Xfer *xfer );
+	Real getWidthScale() const { return m_currentWidthScalar; }
+
+private:
+	Bool m_widening;
+	Bool m_decaying;
+	UnsignedInt m_widenStartFrame;
+	UnsignedInt m_widenFinishFrame;
+	Real m_currentWidthScalar;
+	UnsignedInt m_decayStartFrame;
+	UnsignedInt m_decayFinishFrame;
+};
 
 //-------------------------------------------------------------------------------------------------
-/** The default	update module */
+/** The laser update module */
 //-------------------------------------------------------------------------------------------------
 class LaserUpdate : public ClientUpdateModule
 {
@@ -76,17 +98,19 @@ public:
 
 	//Actually puts the laser in the world.
 	void initLaser( const Object *parent, const Object *target, const Coord3D *startPos, const Coord3D *endPos, AsciiString parentBoneName, Int sizeDeltaFrames = 0 );
-	void setDecayFrames( UnsignedInt decayFrames );
 
-	const Coord3D* getStartPos() { return &m_startPos; }
-	const Coord3D* getEndPos() { return &m_endPos; }
+	const LaserRadiusUpdate& getLaserRadiusUpdate() const { return m_laserRadius; }
+	void setDecayFrames( UnsignedInt decayFrames ) { m_laserRadius.setDecayFrames(decayFrames); }
+	Real getWidthScale() const { return m_laserRadius.getWidthScale(); }
 
+	const Coord3D* getStartPos() const { return &m_startPos; }
+	const Coord3D* getEndPos() const { return &m_endPos; }
+
+	Real getTemplateLaserRadius() const;
 	Real getCurrentLaserRadius() const;
 
 	void setDirty( Bool dirty ) { m_dirty = dirty; }
-	Bool isDirty() { return m_dirty; }
-
-	Real getWidthScale() const { return m_currentWidthScalar; }
+	Bool isDirty() const { return m_dirty; }
 
 	virtual void clientUpdate();
 
@@ -105,14 +129,9 @@ protected:
 	Bool m_dirty;
 	ParticleSystemID m_particleSystemID;
 	ParticleSystemID m_targetParticleSystemID;
-	Bool m_widening;
-	Bool m_decaying;
-	UnsignedInt m_widenStartFrame;
-	UnsignedInt m_widenFinishFrame;
-	Real m_currentWidthScalar;
-	UnsignedInt m_decayStartFrame;
-	UnsignedInt m_decayFinishFrame;
 	AsciiString m_parentBoneName;
+
+	LaserRadiusUpdate m_laserRadius;
 };
 
 

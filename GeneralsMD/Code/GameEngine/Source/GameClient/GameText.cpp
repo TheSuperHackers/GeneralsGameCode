@@ -323,7 +323,7 @@ void GameTextManager::init( void )
 		return;
 	}
 
-	if( (m_textCount == 0) )
+	if( m_textCount == 0 )
 	{
 		return;
 	}
