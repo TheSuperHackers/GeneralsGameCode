@@ -353,7 +353,7 @@ static void Log_Textures(bool inited,unsigned& total_count, unsigned& total_mem)
 		Create_Number_String(number,texmem);
 
 		WWDEBUG_SAY(("%32s	%4d * %4d (%15s), init %d, size: %14s bytes, refs: %d\n",
-			tex->Get_Texture_Name(),
+			tex->Get_Texture_Name().str(),
 			desc.Width,
 			desc.Height,
 			tex_format.str(),
@@ -1275,7 +1275,7 @@ void WW3DAssetManager::Log_All_Textures(void)
 		else {
 			tmp+=" ";
 		}
-		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp.str(),t->Get_Texture_Name()));
+		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp.str(),t->Get_Texture_Name().str()));
 	}
 
 	// Log procedural textures -------------------------------
@@ -1299,7 +1299,7 @@ void WW3DAssetManager::Log_All_Textures(void)
 		else {
 			tmp+=" ";
 		}
-		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp.str(),t->Get_Texture_Name()));
+		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp.str(),t->Get_Texture_Name().str()));
 	}
 
 	// Log "ordinary" textures -------------------------------
@@ -1324,7 +1324,7 @@ void WW3DAssetManager::Log_All_Textures(void)
 		else {
 			tmp+=" ";
 		}
-		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp.str(),t->Get_Texture_Name()));
+		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp.str(),t->Get_Texture_Name().str()));
 	}
 
 }
