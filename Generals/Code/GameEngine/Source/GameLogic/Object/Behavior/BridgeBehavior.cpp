@@ -651,7 +651,7 @@ void BridgeBehavior::onBodyDamageStateChange( const DamageInfo* damageInfo,
 
 	// sanity
 	DEBUG_ASSERTCRASH( bridgeTemplate, ("BridgeBehavior: Unable to find bridge template '%s' in bridge object '%s'\n",	
-																		 bridgeTemplateName,
+																		 bridgeTemplateName.str(),
 																		 us->getTemplate()->getName().str()) );
 
 	//

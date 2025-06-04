@@ -124,8 +124,8 @@ class TextureClass : public W3DMPO, public RefCountClass
 		// Names
 		void	Set_Texture_Name(const char * name);
 		void	Set_Full_Path(const char * path)			{ FullPath = path; }
-		const char * Get_Texture_Name(void) const		{ return Name; }
-		const char * Get_Full_Path(void) const			{ if (FullPath.Is_Empty ()) return Name; return FullPath; }
+		const StringClass& Get_Texture_Name(void) const		{ return Name; }
+		const StringClass& Get_Full_Path(void) const			{ if (FullPath.Is_Empty ()) return Name; return FullPath; }
 
 		unsigned Get_ID() const { return texture_id; }	// Each textrure has a unique id
 

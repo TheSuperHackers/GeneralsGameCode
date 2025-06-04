@@ -857,7 +857,7 @@ typedef MapDisplayToFileNameList::iterator MapDisplayToFileNameListIter;
 			}
 			*/
 
-			DEBUG_ASSERTCRASH(it != TheMapCache->end(), ("Map %s not found in map cache.", *tempit));
+			DEBUG_ASSERTCRASH(it != TheMapCache->end(), ("Map %s not found in map cache.", tempit->str()));
 			if (it->first.startsWithNoCase(mapDir.str()) && isMultiplayer == it->second.m_isMultiplayer && !it->second.m_displayName.isEmpty())
 			{
 				/// @todo: mapDisplayName = TheGameText->fetch(it->second.m_displayName.str());

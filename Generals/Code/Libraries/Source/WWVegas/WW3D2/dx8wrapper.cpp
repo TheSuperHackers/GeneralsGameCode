@@ -908,7 +908,7 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	DX8Wrapper_IsWindowed = IsWindowed;
 
 	WWDEBUG_SAY(("Attempting Set_Render_Device: name: %s (%s:%s), width: %d, height: %d, windowed: %d\n",
-		_RenderDeviceNameTable[CurRenderDevice],_RenderDeviceDescriptionTable[CurRenderDevice].Get_Driver_Name(),
+		_RenderDeviceNameTable[CurRenderDevice].str(),_RenderDeviceDescriptionTable[CurRenderDevice].Get_Driver_Name(),
 		_RenderDeviceDescriptionTable[CurRenderDevice].Get_Driver_Version(),ResolutionWidth,ResolutionHeight,(IsWindowed ? 1 : 0)));
 
 #ifdef _WINDOWS
@@ -1023,7 +1023,7 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	Get_Format_Name(DisplayFormat,&displayFormat);
 	Get_Format_Name(_PresentParameters.BackBufferFormat,&backbufferFormat);
 
-	WWDEBUG_SAY(("Using Display/BackBuffer Formats: %s/%s\n",displayFormat,backbufferFormat));
+	WWDEBUG_SAY(("Using Display/BackBuffer Formats: %s/%s\n",displayFormat.str(),backbufferFormat.str()));
 	
 	bool ret;
 

@@ -956,11 +956,7 @@ void CPUDetectClass::Init_Processor_Log()
 		(OSVersionBuildNumber&0xff000000)>>24,
 		(OSVersionBuildNumber&0xff0000)>>16,
 		(OSVersionBuildNumber&0xffff)));
-#ifdef WIN32
-   SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo));
-#elif defined(_UNIX)
-   SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo.str()));
-#endif
+	SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo.str()));
 
 	SYSLOG(("Processor: %s\r\n",CPUDetectClass::Get_Processor_String()));
 	SYSLOG(("Clock speed: ~%dMHz\r\n",CPUDetectClass::Get_Processor_Speed()));
@@ -971,11 +967,7 @@ void CPUDetectClass::Init_Processor_Log()
 	case 2: cpu_type="Dual"; break;
 	case 3: cpu_type="*Intel Reserved*"; break;
 	}
-#ifdef WIN32
-   SYSLOG(("Processor type: %s\r\n", cpu_type));
-#elif defined(_UNIX)
-   SYSLOG(("Processor type: %s\r\n", cpu_type.str()));
-#endif
+	SYSLOG(("Processor type: %s\r\n", cpu_type.str()));
 
 	SYSLOG(("\r\n"));
 

@@ -673,8 +673,8 @@ void AIRappelState::onExit( StateExitType status )
 */
 AIStateMachine::AIStateMachine( Object *obj, AsciiString name ) : StateMachine( obj, name )
 {
-	DEBUG_ASSERTCRASH(getOwner(), ("An AI State Machine '%s' was constructed without an owner, please tell JKMCD", name));
-	DEBUG_ASSERTCRASH(getOwner()->getAI(), ("An AI State Machine '%s' was constructed without an AIUpdateInterface, please tell JKMCD", name));
+	DEBUG_ASSERTCRASH(getOwner(), ("An AI State Machine '%s' was constructed without an owner, please tell JKMCD", name.str()));
+	DEBUG_ASSERTCRASH(getOwner()->getAI(), ("An AI State Machine '%s' was constructed without an AIUpdateInterface, please tell JKMCD", name.str()));
 
 	m_goalPath.clear();
 	m_goalWaypoint = NULL;

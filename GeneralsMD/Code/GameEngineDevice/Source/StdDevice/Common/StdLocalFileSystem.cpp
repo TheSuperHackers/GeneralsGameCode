@@ -262,7 +262,7 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 		auto iter = std::filesystem::directory_iterator(fixedDirectory, ec);
 
 		if (ec) {
-			DEBUG_LOG(("StdLocalFileSystem::getFileListInDirectory - Error opening subdirectory %s\n", fixedDirectory));
+			DEBUG_LOG(("StdLocalFileSystem::getFileListInDirectory - Error opening subdirectory %s\n", fixedDirectory.c_str()));
 			return;
 		}
 
