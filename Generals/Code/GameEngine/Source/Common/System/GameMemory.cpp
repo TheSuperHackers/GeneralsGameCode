@@ -3471,7 +3471,6 @@ void initMemoryManager()
 #endif
 	{
 		DEBUG_CRASH(("Wrong operator new/delete linked in! Fix this...\n"));
-		exit(-1);
 	}
 
 	theMainInitFlag = true;
