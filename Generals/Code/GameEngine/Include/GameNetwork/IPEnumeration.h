@@ -73,6 +73,7 @@ public:
 	AsciiString getMachineName( void );			///< Return the Network Neighborhood machine name
 
 protected:
+	void addNewIP( UnsignedByte a, UnsignedByte b, UnsignedByte c, UnsignedByte d );
 
 	EnumeratedIP *m_IPlist;
 	Bool m_isWinsockInitialized;

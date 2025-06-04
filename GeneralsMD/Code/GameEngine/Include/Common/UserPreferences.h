@@ -55,6 +55,7 @@ public:
 	UserPreferences();
 	virtual ~UserPreferences();
 
+	// Loads or creates a file with the given name in the user data directory.
 	virtual Bool load(AsciiString fname);
 	virtual Bool write(void);
 	
@@ -80,6 +81,9 @@ class OptionPreferences : public UserPreferences
 public:
 	OptionPreferences(  );
 	virtual ~OptionPreferences();
+
+	Bool loadFromIniFile();
+
 	UnsignedInt getLANIPAddress(void);				// convenience function
 	UnsignedInt getOnlineIPAddress(void);			// convenience function
 	void setLANIPAddress(AsciiString IP);			// convenience function
@@ -135,6 +139,9 @@ class LANPreferences : public UserPreferences
 public:
 	LANPreferences();
 	virtual ~LANPreferences();
+
+	Bool loadFromIniFile();
+
 	UnicodeString getUserName(void);		// convenience function
 	Int getPreferredFaction(void);			// convenience function
 	Int getPreferredColor(void);				// convenience function

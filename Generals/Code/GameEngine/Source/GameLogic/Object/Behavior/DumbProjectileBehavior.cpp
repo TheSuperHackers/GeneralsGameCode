@@ -678,7 +678,7 @@ UpdateSleepTime DumbProjectileBehavior::update()
 void DumbProjectileBehavior::displayFlightPath()
 {
 	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
-	for( Int pointIndex = 0; pointIndex < m_flightPath.size(); ++pointIndex )
+	for( size_t pointIndex = 0; pointIndex < m_flightPath.size(); ++pointIndex )
 	{
 		addIcon(&m_flightPath[pointIndex], TheGlobalData->m_debugProjectileTileWidth, 
 										TheGlobalData->m_debugProjectileTileDuration, 

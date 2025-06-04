@@ -46,6 +46,9 @@ class SkirmishPreferences : public UserPreferences
 public:
 	SkirmishPreferences();
 	virtual ~SkirmishPreferences();
+
+	Bool loadFromIniFile();
+
 	virtual Bool write(void);
 	AsciiString getSlotList(void);
 	void setSlotList(void);

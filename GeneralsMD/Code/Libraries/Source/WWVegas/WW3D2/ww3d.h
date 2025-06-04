@@ -110,7 +110,7 @@ public:
 	static WW3DErrorType		Shutdown(void);
 	static bool					Is_Initted(void)								{ return IsInitted; }
 
-	static const int			Get_Render_Device_Count(void);
+	static int					Get_Render_Device_Count(void);
 	static const char *		Get_Render_Device_Name(int device_index);
 	static const RenderDeviceDescClass &								Get_Render_Device_Desc(int device = -1);
 

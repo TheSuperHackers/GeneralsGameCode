@@ -231,15 +231,15 @@ void ConnectionManager::reset()
 		m_transport = NULL;
 	}
 
-	Int i = 0;
-	for (; i < NUM_CONNECTIONS; ++i) {
+	UnsignedInt i = 0;
+	for (; i < (UnsignedInt)NUM_CONNECTIONS; ++i) {
 		if (m_connections[i] != NULL) {
 			deleteInstance(m_connections[i]);
 			m_connections[i] = NULL;
 		}
 	}
 
-	for (i=0; i<MAX_SLOTS; ++i)
+	for (i=0; i<(UnsignedInt)MAX_SLOTS; ++i)
 	{
 		if (m_frameData[i] != NULL) {
 			deleteInstance(m_frameData[i]);
@@ -278,7 +278,7 @@ void ConnectionManager::reset()
 		m_latencyAverages[i] = 0.0;
 	}
 
-	for (i = 0; i < MAX_SLOTS; ++i) {
+	for (i = 0; i < (UnsignedInt)MAX_SLOTS; ++i) {
 		m_packetRouterFallback[i] = -1;
 	}
 
@@ -1932,10 +1932,7 @@ void ConnectionManager::parseUserList(const GameInfo *game)
 	char *listPos;
 
 	DEBUG_LOG(("ConnectionManager::parseUserList - looking for local user at %d.%d.%d.%d:%d\n",
-		(m_localAddr >> 24) & 0xff,
-		(m_localAddr >> 16) & 0xff,
-		(m_localAddr >> 8) & 0xff,
-		m_localAddr & 0xff,
+		PRINTF_IP_AS_4_INTS(m_localAddr),
 		m_localPort));
 
 	int numUsers = 0;

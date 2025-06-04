@@ -193,7 +193,7 @@ void HostDirectConnectGame()
 
 	UnsignedInt localIP = TheLAN->GetLocalIP();
 	UnicodeString localIPString;
-	localIPString.format(L"%d.%d.%d.%d", localIP >> 24, (localIP & 0xff0000) >> 16, (localIP & 0xff00) >> 8, localIP & 0xff);
+	localIPString.format(L"%d.%d.%d.%d", PRINTF_IP_AS_4_INTS(localIP));
 
 	UnicodeString name;
 	name = GadgetTextEntryGetText(editPlayerName);
@@ -347,7 +347,7 @@ void NetworkDirectConnectInit( WindowLayout *layout, void *userData )
 	}
 
 	UnsignedInt ip = TheLAN->GetLocalIP();
-	ipstr.format(L"%d.%d.%d.%d", ip >> 24, (ip & 0xff0000) >> 16, (ip & 0xff00) >> 8, ip & 0xff);
+	ipstr.format(L"%d.%d.%d.%d", PRINTF_IP_AS_4_INTS(ip));
 	GadgetStaticTextSetText(staticLocalIP, ipstr);
 
 	TheLAN->RequestLobbyLeave(true);

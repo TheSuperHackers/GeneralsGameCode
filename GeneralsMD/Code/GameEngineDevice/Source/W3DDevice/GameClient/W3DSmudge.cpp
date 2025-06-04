@@ -192,6 +192,8 @@ Int copyRect(unsigned char *buf, Int bufSize, int oX, int oY, int width, int hei
 	memcpy(buf,lrect.pBits,bufSize);
 	result = bufSize;
 
+	tempSurface->UnlockRect();
+
 error:
 	if (surface)
 		surface->Release();

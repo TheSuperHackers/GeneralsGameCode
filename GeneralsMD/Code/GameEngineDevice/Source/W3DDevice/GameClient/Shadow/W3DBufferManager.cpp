@@ -210,8 +210,8 @@ Bool W3DBufferManager::ReAcquireResources(void)
 }
 
 /**Searches through previously allocated vertex buffer slots and returns a matching type.  If none found,
-   creates a new slot and adds it to the pool.  Returns an integer slotId used to reference the VB.
-   Returns -1 in case of failure.
+   creates a new slot and adds it to the pool.  Returns a pointer to the VB slot.
+   Returns NULL in case of failure.
 */
 W3DBufferManager::W3DVertexBufferSlot *W3DBufferManager::getSlot(VBM_FVF_TYPES fvfType, Int size)
 {
@@ -222,9 +222,14 @@ W3DBufferManager::W3DVertexBufferSlot *W3DBufferManager::getSlot(VBM_FVF_TYPES f
 	size = (size + (MIN_SLOT_SIZE-1)) & (~(MIN_SLOT_SIZE-1));
 	Int sizeIndex = (size >> MIN_SLOT_SIZE_SHIFT)-1;
 
-	DEBUG_ASSERTCRASH(sizeIndex < MAX_VB_SIZES && size, ("Allocating too large vertex buffer slot"));
+	DEBUG_ASSERTCRASH(sizeIndex < MAX_VB_SIZES && size > 0, ("Allocating too large vertex buffer slot"));
+	// TheSuperHackers @bugfix xezon 18/05/2025 Protect against indexing slots beyond the max size.
+	// This will happen when a mesh is too complex to draw shadows with.
+	if (sizeIndex >= MAX_VB_SIZES || size <= 0) {
+		return NULL;
+	}
 
-	if ((vbSlot=m_W3DVertexBufferSlots[fvfType][sizeIndex]) != 0)
+	if ((vbSlot=m_W3DVertexBufferSlots[fvfType][sizeIndex]) != NULL)
 	{	//found a previously allocated slot matching required size
 		m_W3DVertexBufferSlots[fvfType][sizeIndex]=vbSlot->m_nextSameSize;
 		if (vbSlot->m_nextSameSize)
@@ -260,31 +265,32 @@ W3DBufferManager::W3DVertexBufferSlot * W3DBufferManager::allocateSlotStorage(VB
 	W3DVertexBufferSlot *vbSlot;
 //	Int sizeIndex = (size >> MIN_SLOT_SIZE_SHIFT)-1;
 
-	DEBUG_ASSERTCRASH(m_numEmptySlotsAllocated < MAX_NUMBER_SLOTS, ("Nore more VB Slots"));
+	DEBUG_ASSERTCRASH(m_numEmptySlotsAllocated < MAX_NUMBER_SLOTS, ("No more VB Slots"));
+	// TheSuperHackers @bugfix xezon 18/05/2025 Protect against allocating slot storage beyond the max size.
+	// This will happen when there are too many meshes in the scene to draw shadows with.
+	if (m_numEmptySlotsAllocated >= MAX_NUMBER_SLOTS) {
+		return NULL;
+	}
 
 	pVB=m_W3DVertexBuffers[fvfType];
 	while (pVB)
 	{
 		if ((pVB->m_size - pVB->m_startFreeIndex) >= size)
 		{	//found enough free space in this vertex buffer
-
-			if (m_numEmptySlotsAllocated < MAX_NUMBER_SLOTS)
-			{	//we're allowing more slots to be allocated.
-				vbSlot=&m_W3DVertexBufferEmptySlots[m_numEmptySlotsAllocated];
-				vbSlot->m_size=size;
-				vbSlot->m_start=pVB->m_startFreeIndex;
-				vbSlot->m_VB=pVB;
-				//Link to VB list of slots
-				vbSlot->m_nextSameVB=pVB->m_usedSlots;
-				vbSlot->m_prevSameVB=NULL;	//this will be the new head
-				if (pVB->m_usedSlots)
-					pVB->m_usedSlots->m_prevSameVB=vbSlot;
-				vbSlot->m_prevSameSize=vbSlot->m_nextSameSize=NULL;
-				pVB->m_usedSlots=vbSlot;
-				pVB->m_startFreeIndex += size;
-				m_numEmptySlotsAllocated++;
-				return vbSlot;
-			}
+			vbSlot=&m_W3DVertexBufferEmptySlots[m_numEmptySlotsAllocated];
+			vbSlot->m_size=size;
+			vbSlot->m_start=pVB->m_startFreeIndex;
+			vbSlot->m_VB=pVB;
+			//Link to VB list of slots
+			vbSlot->m_nextSameVB=pVB->m_usedSlots;
+			vbSlot->m_prevSameVB=NULL;	//this will be the new head
+			if (pVB->m_usedSlots)
+				pVB->m_usedSlots->m_prevSameVB=vbSlot;
+			vbSlot->m_prevSameSize=vbSlot->m_nextSameSize=NULL;
+			pVB->m_usedSlots=vbSlot;
+			pVB->m_startFreeIndex += size;
+			m_numEmptySlotsAllocated++;
+			return vbSlot;
 		}
 		pVB = pVB->m_nextVB;
 	}
@@ -324,8 +330,8 @@ W3DBufferManager::W3DVertexBufferSlot * W3DBufferManager::allocateSlotStorage(VB
 
 //******************************** Index Buffer code ******************************************************
 /**Searches through previously allocated index buffer slots and returns a matching type.  If none found,
-   creates a new slot and adds it to the pool.  Returns an integer slotId used to reference the VB.
-   Returns -1 in case of failure.
+   creates a new slot and adds it to the pool.  Returns a pointer to the IB slot.
+   Returns NULL in case of failure.
 */
 W3DBufferManager::W3DIndexBufferSlot *W3DBufferManager::getSlot(Int size)
 {
@@ -336,9 +342,14 @@ W3DBufferManager::W3DIndexBufferSlot *W3DBufferManager::getSlot(Int size)
 	size = (size + (MIN_SLOT_SIZE-1)) & (~(MIN_SLOT_SIZE-1));
 	Int sizeIndex = (size >> MIN_SLOT_SIZE_SHIFT)-1;
 
-	DEBUG_ASSERTCRASH(sizeIndex < MAX_IB_SIZES && size, ("Allocating too large index buffer slot"));
+	DEBUG_ASSERTCRASH(sizeIndex < MAX_IB_SIZES && size > 0, ("Allocating too large index buffer slot"));
+	// TheSuperHackers @bugfix xezon 18/05/2025 Protect against indexing slots beyond the max size.
+	// This will happen when a mesh is too complex to draw shadows with.
+	if (sizeIndex >= MAX_IB_SIZES || size <= 0) {
+		return NULL;
+	}
 
-	if ((ibSlot=m_W3DIndexBufferSlots[sizeIndex]) != 0)
+	if ((ibSlot=m_W3DIndexBufferSlots[sizeIndex]) != NULL)
 	{	//found a previously allocated slot matching required size
 		m_W3DIndexBufferSlots[sizeIndex]=ibSlot->m_nextSameSize;
 		if (ibSlot->m_nextSameSize)
@@ -374,31 +385,32 @@ W3DBufferManager::W3DIndexBufferSlot * W3DBufferManager::allocateSlotStorage(Int
 	W3DIndexBufferSlot *ibSlot;
 //	Int sizeIndex = (size >> MIN_SLOT_SIZE_SHIFT)-1;
 
-	DEBUG_ASSERTCRASH(m_numEmptyIndexSlotsAllocated < MAX_NUMBER_SLOTS, ("Nore more IB Slots"));
+	DEBUG_ASSERTCRASH(m_numEmptyIndexSlotsAllocated < MAX_NUMBER_SLOTS, ("No more IB Slots"));
+	// TheSuperHackers @bugfix xezon 18/05/2025 Protect against allocating slot storage beyond the max size.
+	// This will happen when there are too many meshes in the scene to draw shadows with.
+	if (m_numEmptyIndexSlotsAllocated >= MAX_NUMBER_SLOTS) {
+		return NULL;
+	}
 
 	pIB=m_W3DIndexBuffers;
 	while (pIB)
 	{
 		if ((pIB->m_size - pIB->m_startFreeIndex) >= size)
 		{	//found enough free space in this index buffer
-
-			if (m_numEmptyIndexSlotsAllocated < MAX_NUMBER_SLOTS)
-			{	//we're allowing more slots to be allocated.
-				ibSlot=&m_W3DIndexBufferEmptySlots[m_numEmptyIndexSlotsAllocated];
-				ibSlot->m_size=size;
-				ibSlot->m_start=pIB->m_startFreeIndex;
-				ibSlot->m_IB=pIB;
-				//Link to IB list of slots
-				ibSlot->m_nextSameIB=pIB->m_usedSlots;
-				ibSlot->m_prevSameIB=NULL;	//this will be the new head
-				if (pIB->m_usedSlots)
-					pIB->m_usedSlots->m_prevSameIB=ibSlot;
-				ibSlot->m_prevSameSize=ibSlot->m_nextSameSize=NULL;
-				pIB->m_usedSlots=ibSlot;
-				pIB->m_startFreeIndex += size;
-				m_numEmptyIndexSlotsAllocated++;
-				return ibSlot;
-			}
+			ibSlot=&m_W3DIndexBufferEmptySlots[m_numEmptyIndexSlotsAllocated];
+			ibSlot->m_size=size;
+			ibSlot->m_start=pIB->m_startFreeIndex;
+			ibSlot->m_IB=pIB;
+			//Link to IB list of slots
+			ibSlot->m_nextSameIB=pIB->m_usedSlots;
+			ibSlot->m_prevSameIB=NULL;	//this will be the new head
+			if (pIB->m_usedSlots)
+				pIB->m_usedSlots->m_prevSameIB=ibSlot;
+			ibSlot->m_prevSameSize=ibSlot->m_nextSameSize=NULL;
+			pIB->m_usedSlots=ibSlot;
+			pIB->m_startFreeIndex += size;
+			m_numEmptyIndexSlotsAllocated++;
+			return ibSlot;
 		}
 		pIB = pIB->m_nextIB;
 	}

@@ -249,7 +249,7 @@ Int GetGameClientRandomValue( int lo, int hi, const char *file, int line )
 /**/
 #ifdef DEBUG_RANDOM_CLIENT
 DEBUG_LOG(( "%d: GetGameClientRandomValue = %d (%d - %d), %s line %d\n",
-				TheGameLogic->getFrame(), rval, lo, hi, file, line ));
+				TheGameLogic ? TheGameLogic->getFrame() : -1, rval, lo, hi, file, line ));
 #endif
 /**/
 

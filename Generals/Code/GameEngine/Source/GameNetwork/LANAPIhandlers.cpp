@@ -416,7 +416,7 @@ void LANAPI::handleJoinAccept( LANMessage *msg, UnsignedInt senderIP )
 
 				LANPreferences prefs;
 				AsciiString entry;
-				entry.format("%d.%d.%d.%d:%s", senderIP >> 24, (senderIP & 0xff0000) >> 16, (senderIP & 0xff00) >> 8, senderIP & 0xff, UnicodeStringToQuotedPrintable(m_currentGame->getSlot(0)->getName()).str());
+				entry.format("%d.%d.%d.%d:%s", PRINTF_IP_AS_4_INTS(senderIP), UnicodeStringToQuotedPrintable(m_currentGame->getSlot(0)->getName()).str());
 				prefs["RemoteIP0"] = entry;
 				prefs.write();
 

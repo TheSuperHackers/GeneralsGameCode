@@ -129,7 +129,7 @@ struct TrackPoint
 	};
 
 
-	const Int getHandle( void )
+	Int getHandle( void )
 	{
 		return m_handle;
 	};

@@ -291,6 +291,16 @@ protected:
 // EXTERNALS //////////////////////////////////////////////////////////////////////////////////////
 extern Radar *TheRadar;  ///< the radar singleton extern
 
+// TheSuperHackers @feature helmutbuhler 10/04/2025
+// Radar that does nothing. Used for Headless Mode.
+class RadarDummy : public Radar
+{
+public:
+	virtual void draw(Int pixelX, Int pixelY, Int width, Int height) { }
+	virtual void clearShroud() { }
+	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting) { }
+};
+
 #endif  // __RADAR_H_
 
 

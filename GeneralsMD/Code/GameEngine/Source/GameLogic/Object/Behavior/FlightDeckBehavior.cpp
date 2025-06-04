@@ -195,7 +195,7 @@ void FlightDeckBehavior::buildInfo(Bool createUnits)
 			std::vector<AsciiString>::const_iterator it;
 
 			Int counter = 0; 
-			for( it = spaces.begin(); it != spaces.end(), counter < row;	it++, counter++ )
+			for( it = spaces.begin(); it != spaces.end() && counter < row; it++, counter++ )
 			{
 				//just iterate to the spaces.
 			}

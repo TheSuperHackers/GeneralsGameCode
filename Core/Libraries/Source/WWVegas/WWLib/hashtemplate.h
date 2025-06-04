@@ -415,7 +415,7 @@ template <class KeyType, class ValueType> inline HashTemplateClass<KeyType,Value
 template <> inline unsigned int HashTemplateKeyClass<StringClass>::Get_Hash_Value(const StringClass& s)
 {
 	unsigned int len=s.Get_Length();
-	unsigned char* buffer=(unsigned char*)s.Peek_Buffer();
+	unsigned const char* buffer=(unsigned const char*)s.str();
 	if (len<8) {
 		unsigned int hval=0;
 		for (unsigned int a=0;a<len;++a) {

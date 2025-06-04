@@ -301,7 +301,7 @@ void CountermeasuresBehavior::launchVolley()
 	Object *obj = getObject();
 
 	Real volleySize = (Real)data->m_volleySize;
-	for( int i = 0; i < data->m_volleySize; i++ )
+	for( UnsignedInt i = 0; i < data->m_volleySize; i++ )
 	{
 		//Each flare in a volley will calculate a different vector to fly out. We have a +/- angle to 
 		//spread out equally. With only one flare, it'll come straight out the back. Two flares will

@@ -562,7 +562,7 @@ void W3DTerrainBackground::doTesselatedUpdate(const IRegion2D &partialRange, Wor
 	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexTerrain);
 	ib = lockIdxBuffer.Get_Index_Array();
 	fillVBRecursive(ib, 0, 0, m_width, ndx, m_curNumTerrainIndices);
-	delete ndx;
+	delete[] ndx;
 	ndx = NULL;
 
 	MinMaxAABoxClass bounds;

@@ -43,15 +43,7 @@ bit8 Create_Process(Process &process)
 
     DBGMSG("PROCESS CMD="<<cmdargs<<"  DIR="<<process.directory);
 
-#ifndef COPY_PROTECT
-		retval=CreateProcess(NULL,cmdargs,NULL,NULL,FALSE, 0  ,NULL, NULL/*process.directory*/,&si,&piProcess);
-#else
-#ifdef USE_GAMEDIR_FROM_LCF
-		retval=CreateProcess(NULL,cmdargs,NULL,NULL,TRUE, 0  ,NULL, process.directory,&si,&piProcess);
-#else
-		retval=CreateProcess(NULL,cmdargs,NULL,NULL,TRUE, 0  ,NULL, NULL/*process.directory*/,&si,&piProcess);
-#endif
-#endif
+    retval=CreateProcess(NULL,cmdargs,NULL,NULL,FALSE, 0  ,NULL, NULL/*process.directory*/,&si,&piProcess);
 
     DBGMSG("("<<retval<<") New process:  HANDLE " << (void *)piProcess.hProcess << "   ID "
       << (DWORD)piProcess.dwProcessId);

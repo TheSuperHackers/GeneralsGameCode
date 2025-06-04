@@ -62,9 +62,6 @@
 #include "configfile.h"
 #include <windows.h>
 
-#ifdef COPY_PROTECT
-#include "Protect.h"
-#endif
 #include <Debug/DebugPrint.h>
 
 #define UPDATE_RETVAL 123456789  // if a program returns this it means it wants to check for patches
@@ -97,16 +94,7 @@ void RunGame(char *thePath, ConfigFile &config, Process &proc)
 			launchgame = false;
 			myChdir(thePath);
 			
-#ifndef COPY_PROTECT
 			Create_Process(proc);
-#else // COPY_PROTECT
-
-			InitializeProtect();
-			Create_Process(proc);
-			SendProtectMessage(proc.hProcess, proc.dwThreadID);
-			
-#endif // COPY_PROTECT
-			
 			DWORD exit_code;
 			Wait_Process(proc, &exit_code);
 			
@@ -124,9 +112,6 @@ void RunGame(char *thePath, ConfigFile &config, Process &proc)
 				Wait_Process(patchgrab);  // wait for completion
 			}
 			
-#ifdef COPY_PROTECT
-			ShutdownProtect();
-#endif
 		}
 		else
 		{

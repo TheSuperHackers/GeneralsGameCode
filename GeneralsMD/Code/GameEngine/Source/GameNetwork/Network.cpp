@@ -710,7 +710,7 @@ void Network::update( void )
 
 	liteupdate();
 
-	if ((m_localStatus == NETLOCALSTATUS_LEFT)) {// || (m_localStatus == NETLOCALSTATUS_LEAVING)) {
+	if (m_localStatus == NETLOCALSTATUS_LEFT) {// || (m_localStatus == NETLOCALSTATUS_LEAVING)) {
 		endOfGameCheck();
 	}
 

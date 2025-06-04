@@ -656,7 +656,7 @@ public:
 		}
 
 		UnsignedInt now = TheGameLogic->getFrame();
-		for (Int i = 0; i < m_ropes.size(); ++i)
+		for (size_t i = 0; i < m_ropes.size(); ++i)
 		{
 			if (m_ropes[i].ropeDrawable)
 			{
