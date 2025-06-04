@@ -241,7 +241,7 @@ void HeaderTemplateManager::populateGameFonts( void )
 		HeaderTemplate *hTemplate = *it;
 		Real pointSize = TheGlobalLanguageData->adjustFontSize(hTemplate->m_point);
 		GameFont *font = TheFontLibrary->getFont(hTemplate->m_fontName, pointSize,hTemplate->m_bold);
-		DEBUG_ASSERTCRASH(font,("HeaderTemplateManager::populateGameFonts - Could not find font %s %d",hTemplate->m_fontName, hTemplate->m_point));
+		DEBUG_ASSERTCRASH(font,("HeaderTemplateManager::populateGameFonts - Could not find font %s %d",hTemplate->m_fontName.str(), hTemplate->m_point));
 
 		hTemplate->m_font = font;
 		

@@ -1079,7 +1079,7 @@ void RailroadBehavior::hitchNewCarriagebyTemplate( ObjectID locoID, const Templa
 					("%s could not hitch a %s without a RailroadBehavior... \nwhat kind of nutty conductor are you? \nThe next carriage would have been a %s.", 
 					locomotive->getTemplate()->getName().str(),
 					newCarriage->getTemplate()->getName().str(),
-					*iter
+					iter->str()
 					) );
 			}
 
