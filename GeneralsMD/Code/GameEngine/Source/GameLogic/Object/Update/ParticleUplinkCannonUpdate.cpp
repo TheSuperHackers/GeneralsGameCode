@@ -623,8 +623,8 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				if( update )
 				{
 					update->initLaser( NULL, NULL, &orbitPosition, &m_currentTargetPosition, "" );
-					// TheSuperHackers @info The GameLogic has a dependency on this drawable.
-					// @todo The logical laser radius for the damage should probably be part of ParticleUplinkCannonUpdateModuleData.
+					// TheSuperHackers @logic-client-separation The GameLogic has a dependency on this drawable.
+					// The logical laser radius for the damage should probably be part of ParticleUplinkCannonUpdateModuleData.
 					templateLaserRadius = update->getTemplateLaserRadius();
 					visualLaserRadius = update->getCurrentLaserRadius();
 				}
