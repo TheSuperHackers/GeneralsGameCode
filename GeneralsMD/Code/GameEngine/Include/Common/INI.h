@@ -299,6 +299,7 @@ public:
 	static void parseBitString32( INI *ini, void *instance, void *store, const void* userData );
 	static void parseByteSizedIndexList( INI *ini, void *instance, void *store, const void* userData );
 	static void parseIndexList( INI *ini, void *instance, void *store, const void* userData );
+	static void parseIndexListOrNone( INI *ini, void *instance, void *store, const void* userData );
 	static void parseLookupList( INI *ini, void *instance, void *store, const void* userData );
 	static void parseThingTemplate( INI *ini, void *instance, void *store, const void* userData );
 	static void parseArmorTemplate( INI *ini, void *instance, void *store, const void* userData );

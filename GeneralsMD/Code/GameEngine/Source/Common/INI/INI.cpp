@@ -1471,6 +1471,22 @@ void INI::parseIndexList( INI* ini, void * /*instance*/, void *store, const void
 } 
 
 //-------------------------------------------------------------------------------------------------
+/** returns -1 if "None", otherwise like parseIndexList **/
+//-------------------------------------------------------------------------------------------------
+void INI::parseIndexListOrNone(INI* ini, void* /*instance*/, void* store, const void* userData)
+{
+	const char* token = ini->getNextToken();
+	if (stricmp(token, "None") == 0) {
+		*(Int*)store = -1;
+	}
+	else {
+		//like parseIndexList
+		ConstCharPtrArray nameList = (ConstCharPtrArray)userData;
+		*(Int*)store = scanIndexList(token, nameList);
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Parse a single string token, check for that token in the index list
 	* of names provided and store the index into that list.
 	*
