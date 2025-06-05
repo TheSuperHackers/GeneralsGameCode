@@ -2991,20 +2991,17 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			}
 			else
 			{
-				if (!(TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_PLAYBACK))
+				Bool hide = false;
+				if (TheWindowManager)
 				{
-					Bool hide = false;
-					if (TheWindowManager)
-					{
-						Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
-						GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
+					Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
+					GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
 
-						if (window)
-							hide = !window->winIsHidden();
-					}
-
-					ToggleControlBar();
+					if (window)
+						hide = !window->winIsHidden();
 				}
+
+				ToggleControlBar();
 			}
 			disp = DESTROY_MESSAGE;
 			break;
