@@ -169,12 +169,9 @@ inline HWND getThreadHWND()
 
 // ----------------------------------------------------------------------------
 
-int MessageBoxWrapper( LPCSTR lpText, LPCSTR lpCaption, UINT uType, bool alwaysShowMessageBox )
+int MessageBoxWrapper( LPCSTR lpText, LPCSTR lpCaption, UINT uType )
 {
 	HWND threadHWND = getThreadHWND();
-	if (!threadHWND && !alwaysShowMessageBox)
-		return (uType & MB_ABORTRETRYIGNORE)?IDIGNORE:IDYES;
-
 	return ::MessageBox(threadHWND, lpText, lpCaption, uType);
 }
 
@@ -270,7 +267,7 @@ static int doCrashBox(const char *buffer, Bool logResult)
 	int result;
 
 	if (!ignoringAsserts()) {
-		result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING|MB_DEFBUTTON3, true);
+		result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING|MB_DEFBUTTON3);
 		//result = MessageBoxWrapper(buffer, "Assertion Failure", MB_ABORTRETRYIGNORE|MB_TASKMODAL|MB_ICONWARNING);
 	}	else {
 		result = IDIGNORE;
@@ -436,7 +433,7 @@ void DebugLog(const char *format, ...)
   va_end(arg);
 
 	if (strlen(theBuffer) >= sizeof(theBuffer))
-		MessageBoxWrapper("String too long for debug buffer", "", MB_OK|MB_TASKMODAL, true);
+		MessageBoxWrapper("String too long for debug buffer", "", MB_OK|MB_TASKMODAL);
 
 	whackFunnyCharacters(theBuffer);
 	doLogOutput(theBuffer);
@@ -498,7 +495,7 @@ void DebugCrash(const char *format, ...)
 				ShowWindow(ApplicationHWnd, SW_HIDE);
 			}
 		}
-		MessageBoxWrapper("String too long for debug buffers", "", MB_OK|MB_TASKMODAL, true);
+		MessageBoxWrapper("String too long for debug buffer", "", MB_OK|MB_TASKMODAL);
 	}
 
 #ifdef DEBUG_LOGGING
@@ -525,7 +522,7 @@ void DebugCrash(const char *format, ...)
 		int yn;
 		if (!ignoringAsserts()) 
 		{
-			yn = MessageBoxWrapper("Ignore this crash from now on?", "", MB_YESNO|MB_TASKMODAL, true);
+			yn = MessageBoxWrapper("Ignore this crash from now on?", "", MB_YESNO|MB_TASKMODAL);
 		}	
 		else 
 		{
