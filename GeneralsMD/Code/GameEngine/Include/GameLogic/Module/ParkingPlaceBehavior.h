@@ -50,9 +50,16 @@ public:
 	Real					m_landingDeckHeightOffset;
 	Bool					m_hasRunways;			// if true, each col has a runway in front of it
 	Bool					m_parkInHangars;	// if true, park at the hangar production spot, not the "real" parking place
+	Real                    m_damageScalar;     // Damage reduction for parked aircraft
+	Real                    m_damageScalarUpgraded;     // Damage reduction for parked aircraft
+	AsciiString				m_damageScalarUpgradeTrigger; // Upgrade template for damageScalar upgrade
+
+	KindOfMaskType	m_kindof;			///< the kind(s) of units that can land here
+	KindOfMaskType	m_kindofnot;		///< the kind(s) of units that must not land here
 
 	ParkingPlaceBehaviorModuleData()
 	{
+		m_damageScalarUpgradeTrigger.clear();
 		//m_framesForFullHeal = 0;
 		m_healAmount = 0;
 //    m_extraHealAmount4Helicopters = 0;
@@ -62,6 +69,8 @@ public:
 		m_landingDeckHeightOffset = 0.0f;
 		m_hasRunways = false;
 		m_parkInHangars = false;
+		m_damageScalar = 1.0f;
+		m_damageScalarUpgraded = 1.0f;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
@@ -78,8 +87,13 @@ public:
 			{ "ParkInHangars",			     INI::parseBool, NULL, offsetof( ParkingPlaceBehaviorModuleData, m_parkInHangars ) },
 			{ "HealAmountPerSecond",     INI::parseReal, NULL, offsetof( ParkingPlaceBehaviorModuleData, m_healAmount ) },
 //			{ "ExtraHealAmount4Helicopters",  INI::parseReal, NULL, offsetof( ParkingPlaceBehaviorModuleData, m_extraHealAmount4Helicopters ) },
+			{ "ParkedUnitsDamageScalar",     INI::parseReal, NULL, offsetof(ParkingPlaceBehaviorModuleData, m_damageScalar) },
+			{ "ParkedUnitsDamageScalarUpgraded",     INI::parseReal, NULL, offsetof(ParkingPlaceBehaviorModuleData, m_damageScalarUpgraded) },
+			{ "DamageScalarUpgradedTriggeredBy", INI::parseAsciiString,	NULL, offsetof(ParkingPlaceBehaviorModuleData, m_damageScalarUpgradeTrigger) },
+			{ "DamageScalarUpgradedTriggeredBy", INI::parseAsciiString,	NULL, offsetof(ParkingPlaceBehaviorModuleData, m_damageScalarUpgradeTrigger) },
 
-
+			{ "RequiredKindOf", KindOfMaskType::parseFromINI, NULL, offsetof(ParkingPlaceBehaviorModuleData, m_kindof) },
+			{ "ForbiddenKindOf", KindOfMaskType::parseFromINI, NULL, offsetof(ParkingPlaceBehaviorModuleData, m_kindofnot) },
 
 			//{ "TimeForFullHeal",	INI::parseDurationUnsignedInt,	NULL, offsetof( ParkingPlaceBehaviorModuleData, m_framesForFullHeal ) },
 			{ 0, 0, 0, 0 }
@@ -210,8 +224,15 @@ private:
 	ParkingPlaceInfo* findPPI(ObjectID id);
 	ParkingPlaceInfo* findEmptyPPI();
 
+	void applyDamageScalar(Object* obj, Real scalarNew, Real scalarOld = 1.0f);
+	void removeDamageScalar(Object* obj, Real scalar);
+	Real getDamageScalar();
+	void updateDamageScalars();
+
 	Coord3D m_heliRallyPoint;		
 	Bool m_heliRallyPointExists;				///< Only move to the rally point if this is true
+	
+	Bool m_damageScalarUpgradeApplied;
 };
 
 #endif // __ParkingPlaceBehavior_H_
