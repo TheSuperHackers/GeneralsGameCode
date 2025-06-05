@@ -60,13 +60,6 @@
 #define WWMATH_OOSQRT2		0.707106781f
 #define WWMATH_OOSQRT3		0.577350269f
 
-// (DRM 05/07/01) Temporarily eliminated _fastcall
-// on non-Microsoft compatible compilers. Jani
-// should be replacing this soon.
-#ifndef _MSC_VER
-#define __fastcall
-#endif // _MSC_VER
-
 /* 
 **	Macros to convert between degrees and radians
 */
@@ -123,7 +116,7 @@ static WWINLINE int Float_To_Int_Floor(const float& f);
 static WWINLINE float Cos(float val);
 static WWINLINE float Sin(float val);
 static WWINLINE float Sqrt(float val);
-static float __fastcall Inv_Sqrt(float a);	// Some 30% faster inverse square root than regular C++ compiled, from Intel's math library
+static float Inv_Sqrt(float a);	// Some 30% faster inverse square root than regular C++ compiled, from Intel's math library
 static WWINLINE long	 Float_To_Long(float f);
 #else
 static float Cos(float val);
@@ -601,7 +594,7 @@ WWINLINE int WWMath::Float_To_Int_Floor (const float& f)
 // ----------------------------------------------------------------------------
 
 #if defined(_MSC_VER) && defined(_M_IX86)
-WWINLINE float __fastcall WWMath::Inv_Sqrt(float a)
+WWINLINE float WWMath::Inv_Sqrt(float a)
 {
 	float retval;
 
