@@ -90,7 +90,6 @@ public:
 			{ "ParkedUnitsDamageScalar",     INI::parseReal, NULL, offsetof(ParkingPlaceBehaviorModuleData, m_damageScalar) },
 			{ "ParkedUnitsDamageScalarUpgraded",     INI::parseReal, NULL, offsetof(ParkingPlaceBehaviorModuleData, m_damageScalarUpgraded) },
 			{ "DamageScalarUpgradedTriggeredBy", INI::parseAsciiString,	NULL, offsetof(ParkingPlaceBehaviorModuleData, m_damageScalarUpgradeTrigger) },
-			{ "DamageScalarUpgradedTriggeredBy", INI::parseAsciiString,	NULL, offsetof(ParkingPlaceBehaviorModuleData, m_damageScalarUpgradeTrigger) },
 
 			{ "RequiredKindOf", KindOfMaskType::parseFromINI, NULL, offsetof(ParkingPlaceBehaviorModuleData, m_kindof) },
 			{ "ForbiddenKindOf", KindOfMaskType::parseFromINI, NULL, offsetof(ParkingPlaceBehaviorModuleData, m_kindofnot) },
