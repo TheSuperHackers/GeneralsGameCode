@@ -46,6 +46,7 @@
 #include <math.h>
 #include <float.h>
 #include <assert.h>
+#include <float.h>
 
 /*
 ** Some global constants.
@@ -123,15 +124,16 @@ static WWINLINE int Float_To_Int_Floor(const float& f);
 static WWINLINE float Cos(float val);
 static WWINLINE float Sin(float val);
 static WWINLINE float Sqrt(float val);
-static WWINLINE float Inv_Sqrt(float a);	// Some 30% faster inverse square root than regular C++ compiled, from Intel's math library
+static float __fastcall Inv_Sqrt(float a);	// Some 30% faster inverse square root than regular C++ compiled, from Intel's math library
 static WWINLINE long	 Float_To_Long(float f);
 #else
-static WWINLINE float Cos(float val);
-static WWINLINE float Sin(float val);
-static WWINLINE float Sqrt(float val);
-static WWINLINE float Inv_Sqrt(float a);
-static WWINLINE long	Float_To_Long(float f);
+static float Cos(float val);
+static float Sin(float val);
+static float Sqrt(float val);
+static float Inv_Sqrt(float a);
+static long	Float_To_Long(float f);
 #endif
+
 
 static WWINLINE float Fast_Sin(float val);
 static WWINLINE float Fast_Inv_Sin(float val);
@@ -600,9 +602,9 @@ WWINLINE int WWMath::Float_To_Int_Floor (const float& f)
 // ----------------------------------------------------------------------------
 
 #if defined(_MSC_VER) && defined(_M_IX86)
-WWINLINE float WWMath::Inv_Sqrt(float a)
+WWINLINE float __fastcall WWMath::Inv_Sqrt(float a)
 {
-	float result;
+	float retval;
 
 	__asm {
 		mov		eax, 0be6eb508h
@@ -645,10 +647,10 @@ WWINLINE float WWMath::Inv_Sqrt(float a)
 		;r3 = st(0)
 		fmulp	st(1), st
 
-		fstp result
+		fstp retval
 	}
 
-	return result;
+	return retval;
 }
 #else
 WWINLINE float WWMath::Inv_Sqrt(float val)
