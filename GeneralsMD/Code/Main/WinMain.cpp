@@ -42,14 +42,12 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "WinMain.h"
 #include "Lib/BaseType.h"
-#include "Common/CopyProtection.h"
 #include "Common/CriticalSection.h"
 #include "Common/GlobalData.h"
 #include "Common/GameEngine.h"
 #include "Common/GameSounds.h"
 #include "Common/Debug.h"
 #include "Common/GameMemory.h"
-#include "Common/SafeDisc/CdaPfn.h"
 #include "Common/StackDump.h"
 #include "Common/MessageStream.h"
 #include "Common/Registry.h"
@@ -316,11 +314,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 				return TheIMEManager->result();
 			}
 		}
-		
-#ifdef DO_COPY_PROTECTION
-		// Check for messages from the launcher
-		CopyProtect::checkForMessage(message, lParam);
-#endif
 
 #ifdef	DEBUG_WINDOWS_MESSAGES
 		static msgCount=0;
@@ -759,28 +752,7 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 
 	return true;  // success
 
-}  // end initializeAppWindows
-
-void munkeeFunc(void);
-CDAPFN_DECLARE_GLOBAL(munkeeFunc, CDAPFN_OVERHEAD_L5, CDAPFN_CONSTRAINT_NONE);
-void munkeeFunc(void)
-{
-	CDAPFN_ENDMARK(munkeeFunc);
-}
-
-void checkProtection(void)
-{
-#ifdef RTS_INTERNAL
-	__try
-	{
-		munkeeFunc();
-	}
-	__except(EXCEPTION_EXECUTE_HANDLER)
-	{
-		exit(0); // someone is messing with us.
-	}
-#endif
-}
+}  // end initializeAppWindow
 
 char *nextParam(char *newSource, const char *seps)
 {
@@ -845,7 +817,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
                       LPSTR lpCmdLine, Int nCmdShow )
 {
 	Int exitcode = 1;
-	checkProtection();
 
 #ifdef RTS_PROFILE
   Profile::StartRange("init");
@@ -994,19 +965,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			AsciiString(VERSION_BUILDUSER), AsciiString(VERSION_BUILDLOC),
 			AsciiString(__TIME__), AsciiString(__DATE__));
 
-#ifdef DO_COPY_PROTECTION
-		if (!CopyProtect::isLauncherRunning())
-		{
-			DEBUG_LOG(("Launcher is not running - about to bail\n"));
-			delete TheVersion;
-			TheVersion = NULL;
-			shutdownMemoryManager();
-			DEBUG_SHUTDOWN();
-			return exitcode;
-		}
-#endif
-
-
 		// TheSuperHackers @refactor The instance mutex now lives in its own class.
 
 		if (!headless && !rts::ClientInstance::initialize())
@@ -1027,27 +985,10 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		}
 		DEBUG_LOG(("Create Generals Mutex okay.\n"));
 
-#ifdef DO_COPY_PROTECTION
-		if (!CopyProtect::notifyLauncher())
-		{
-			DEBUG_LOG(("Could not talk to the launcher - about to bail\n"));
-			delete TheVersion;
-			TheVersion = NULL;
-			shutdownMemoryManager();
-			DEBUG_SHUTDOWN();
-			return exitcode;
-		}
-#endif
-
 		DEBUG_LOG(("CRC message is %d\n", GameMessage::MSG_LOGIC_CRC));
 
 		// run the game main loop
 		exitcode = GameMain(argc, argv);
-
-#ifdef DO_COPY_PROTECTION
-		// Clean up copy protection
-		CopyProtect::shutdown();
-#endif
 
 		delete TheVersion;
 		TheVersion = NULL;

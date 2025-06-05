@@ -211,7 +211,7 @@ AnimatedSoundOptionsDialogClass::Load_Animated_Sound_Settings (void)
 		file->Close ();
 		_TheFileFactory->Return_File (file);
 	} else {
-		WWDEBUG_SAY (("Failed to load file %s\n", sound_def_lib_path.Peek_Buffer ()));
+		WWDEBUG_SAY (("Failed to load file %s\n", sound_def_lib_path.str ()));
 	}
 
 	//

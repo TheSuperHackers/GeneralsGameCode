@@ -86,9 +86,9 @@ bool	W3DExclusionListClass::Is_Excluded(HAnimClass * hanim) const
 {
 	// For HAnims, the name to check is the one trailing the '.'
 	StringClass copy = hanim->Get_Name();
-	char * root_name = copy.Peek_Buffer();
+	const char * root_name = copy.str();
 
-	char * tmp = strchr(root_name,'.');
+	const char * tmp = strchr(root_name,'.');
 	if (tmp) {
 		return Is_Excluded(tmp + 1);
 	} else { 

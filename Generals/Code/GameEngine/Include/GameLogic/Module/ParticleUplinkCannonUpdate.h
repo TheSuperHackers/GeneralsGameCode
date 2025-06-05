@@ -34,6 +34,7 @@
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "Common/KindOf.h"
+#include "GameLogic/Module/LaserUpdate.h"
 #include "GameLogic/Module/SpecialPowerUpdateModule.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
@@ -216,6 +217,7 @@ protected:
 	DrawableID				m_laserBeamIDs[ MAX_OUTER_NODES ];
 	DrawableID				m_groundToOrbitBeamID;
 	DrawableID				m_orbitToTargetBeamID;
+	LaserRadiusUpdate	m_orbitToTargetLaserRadius;
 	ParticleSystemID	m_connectorSystemID;
 	ParticleSystemID	m_laserBaseSystemID;
 

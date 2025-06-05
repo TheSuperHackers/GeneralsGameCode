@@ -41,6 +41,7 @@
 #include "Common/SkirmishPreferences.h"
 #include "GameLogic/GameLogic.h"
 #include "GameClient/AnimateWindowManager.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/Shell.h"
@@ -172,12 +173,23 @@ static Int getNextSelectablePlayer(Int start)
 
 SkirmishPreferences::SkirmishPreferences( void )
 {
-	// note, the superclass will put this in the right dir automatically, this is just a leaf name
-	load("Skirmish.ini");
+	loadFromIniFile();
 }
 
 SkirmishPreferences::~SkirmishPreferences()
 {
+}
+
+Bool SkirmishPreferences::loadFromIniFile()
+{
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		AsciiString fname;
+		fname.format("Skirmish_Instance%.2u.ini", rts::ClientInstance::getInstanceId());
+		return load(fname);
+	}
+
+	return load("Skirmish.ini");
 }
 
 AsciiString SkirmishPreferences::getSlotList(void)

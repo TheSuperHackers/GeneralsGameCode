@@ -41,6 +41,7 @@
 #include "Common/Registry.h"
 #include "Common/version.h"
 
+#include "GameClient/ClientInstance.h"
 #include "GameClient/GameClient.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/WindowLayout.h"
@@ -232,14 +233,24 @@ enum Detail CPP_11(: Int)
 
 OptionPreferences::OptionPreferences( void )
 {
-	// note, the superclass will put this in the right dir automatically, this is just a leaf name
-	load("Options.ini");
+	loadFromIniFile();
 }
 
 OptionPreferences::~OptionPreferences()
 {
 }
 
+Bool OptionPreferences::loadFromIniFile()
+{
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		AsciiString fname;
+		fname.format("Options_Instance%.2u.ini", rts::ClientInstance::getInstanceId());
+		return load(fname);
+	}
+
+	return load("Options.ini");
+}
 
 Int OptionPreferences::getCampaignDifficulty(void)
 {
@@ -287,7 +298,7 @@ void OptionPreferences::setLANIPAddress( AsciiString IP )
 void OptionPreferences::setLANIPAddress( UnsignedInt IP )
 {
 	AsciiString tmp;
-	tmp.format("%d.%d.%d.%d", ((IP & 0xff000000) >> 24), ((IP & 0xff0000) >> 16), ((IP & 0xff00) >> 8), (IP & 0xff));
+	tmp.format("%d.%d.%d.%d", PRINTF_IP_AS_4_INTS(IP));
 	(*this)["IPAddress"] = tmp;
 }
 
@@ -315,7 +326,7 @@ void OptionPreferences::setOnlineIPAddress( AsciiString IP )
 void OptionPreferences::setOnlineIPAddress( UnsignedInt IP )
 {
 	AsciiString tmp;
-	tmp.format("%d.%d.%d.%d", ((IP & 0xff000000) >> 24), ((IP & 0xff0000) >> 16), ((IP & 0xff00) >> 8), (IP & 0xff));
+	tmp.format("%d.%d.%d.%d", PRINTF_IP_AS_4_INTS(IP));
 	(*this)["GameSpyIPAddress"] = tmp;
 }
 

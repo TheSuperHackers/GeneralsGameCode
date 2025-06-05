@@ -37,6 +37,8 @@
 #include "Common/Snapshot.h"
 #include "Common/Xfer.h"
 
+#include "refcount.h"
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -236,7 +238,7 @@ inline State::~State() { }
 /**
  * A finite state machine.
  */
-class StateMachine : public MemoryPoolObject, public Snapshot
+class StateMachine : public MemoryPoolObject, public Snapshot, public RefCountClass
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( StateMachine, "StateMachinePool" );
 
@@ -339,6 +341,12 @@ protected:
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess();	
+
+	// RefCountClass interface
+	virtual void Delete_This()
+	{
+		MemoryPoolObject::deleteInstanceInternal(this);
+	}
 
 protected:
 
@@ -471,6 +479,15 @@ protected:
 	virtual void loadPostProcess(){};
 };
 EMPTY_DTOR(SleepState)
+
+
+//-----------------------------------------------------------------------------------------------------------
+// TheSuperHackers @info Misappropriates deleteInstance to call Release_Ref to keep the StateMachine fix small.
+// @todo Replace calls to deleteInstance with RefCountPtr<StateMachine> when so appropriate.
+inline void deleteInstance(StateMachine* machine)
+{
+	machine->Release_Ref();
+}
 
 
 #endif // _STATE_MACHINE_H_

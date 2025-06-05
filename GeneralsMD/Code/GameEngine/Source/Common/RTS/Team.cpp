@@ -165,7 +165,7 @@ void TeamRelationMap::loadPostProcess( void )
 // STATIC FUNCTIONS ///////////////////////////////////////////////////////////
 static Bool locoSetMatches(LocomotorSurfaceTypeMask lstm, UnsignedInt surfaceBitFlags)
 {
-	surfaceBitFlags = surfaceBitFlags & 0x01 | ((surfaceBitFlags & 0x02) << 2);
+	surfaceBitFlags = (surfaceBitFlags & 0x01) | ((surfaceBitFlags & 0x02) << 2);
 	return (surfaceBitFlags & lstm) != 0;
 }
 
