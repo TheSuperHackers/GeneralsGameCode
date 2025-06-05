@@ -43,7 +43,6 @@
 #define WWMATH_H
 
 #include "always.h"
-#include <string.h>
 #include <math.h>
 #include <float.h>
 #include <assert.h>
