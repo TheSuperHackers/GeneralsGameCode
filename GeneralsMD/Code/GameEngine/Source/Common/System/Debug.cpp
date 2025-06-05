@@ -423,8 +423,10 @@ void DebugLog(const char *format, ...)
 	ScopedCriticalSection scopedCriticalSection(TheDebugLogCriticalSection);
 #endif
 
+#ifdef DEBUG_LOGGING
 	if (theDebugFlags == 0)
-		MessageBoxWrapper("DebugLog - Debug not inited properly", "", MB_OK|MB_TASKMODAL, false);
+		doLogOutput("DebugCrash - Debug not inited properly");
+#endif
 
 	format = prepBuffer(format, theBuffer);
 
@@ -476,7 +478,9 @@ void DebugCrash(const char *format, ...)
 				ShowWindow(ApplicationHWnd, SW_HIDE);
 			}
 		}
-		MessageBoxWrapper("DebugCrash - Debug not inited properly", "", MB_OK|MB_TASKMODAL, false);
+#ifdef DEBUG_LOGGING
+		doLogOutput("DebugCrash - Debug not inited properly");
+#endif
 	}
 
 	format = prepBuffer(format, theCrashBuffer);
