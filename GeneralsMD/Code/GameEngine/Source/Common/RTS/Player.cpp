@@ -3983,25 +3983,32 @@ Real Player::getProductionCostChangeBasedOnKindOf( KindOfMaskType kindOf ) const
 //-------------------------------------------------------------------------------------------------
 /** addKindOfProductionTimeChange adds a production change to the typeof list */
 //-------------------------------------------------------------------------------------------------
-void Player::addKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent)
+void Player::addKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent,
+	UnsignedInt sourceTemplateID /*= INVALID_ID*/,
+	Bool stackUniqueType /*= FALSE*/, Bool stackWithAny /*= FALSE*/)
 {
-	KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionTimeChangeList.begin();
-	while (it != m_kindOfPercentProductionTimeChangeList.end())
-	{
+	if (!stackWithAny) { // We always stack, no need to check
 
-		KindOfPercentProductionChange* tof = *it;
-		if (tof->m_percent == percent && tof->m_kindOf == kindOf)
+		KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionTimeChangeList.begin();
+		while (it != m_kindOfPercentProductionTimeChangeList.end())
 		{
-			tof->m_ref++;
-			return;
+			KindOfPercentProductionChange* tof = *it;
+			if (tof->m_percent == percent && tof->m_kindOf == kindOf &&
+				(!stackUniqueType || (tof->m_templateID == sourceTemplateID && tof->m_templateID != INVALID_ID)))
+			{
+				tof->m_ref++;
+				return;
+			}
+			++it;
 		}
-		++it;
 	}
 
 	KindOfPercentProductionChange* newTof = newInstance(KindOfPercentProductionChange);
 	newTof->m_kindOf = kindOf;
 	newTof->m_percent = percent;
 	newTof->m_ref = 1;
+	newTof->m_stackWithAny = stackWithAny;
+	newTof->m_templateID = sourceTemplateID;
 	m_kindOfPercentProductionTimeChangeList.push_back(newTof);
 
 }
@@ -4009,14 +4016,19 @@ void Player::addKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent)
 //-------------------------------------------------------------------------------------------------
 /** removeKindOfProductionTimeChange adds a production change to the typeof list */
 //-------------------------------------------------------------------------------------------------
-void Player::removeKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent)
+void Player::removeKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent,
+	UnsignedInt sourceTemplateID /*= INVALID_ID*/,
+	Bool stackUniqueType /*= FALSE*/, Bool stackWithAny /*= FALSE*/)
 {
 	KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionTimeChangeList.begin();
 	while (it != m_kindOfPercentProductionTimeChangeList.end())
 	{
 
 		KindOfPercentProductionChange* tof = *it;
-		if (tof->m_percent == percent && tof->m_kindOf == kindOf)
+		if (tof->m_percent == percent && tof->m_kindOf == kindOf &&
+			(!stackWithAny || tof->m_stackWithAny) &&
+			(!stackUniqueType || tof->m_templateID == sourceTemplateID)
+			)
 		{
 			tof->m_ref--;
 			if (tof->m_ref == 0)
@@ -4024,6 +4036,9 @@ void Player::removeKindOfProductionTimeChange(KindOfMaskType kindOf, Real percen
 				m_kindOfPercentProductionTimeChangeList.erase(it);
 				if (tof)
 					tof->deleteInstance();
+			}
+			else if (stackWithAny) {
+				DEBUG_CRASH(("KindOfProductionTime: StackWithAny should never have count > 1.\n"));
 			}
 			return;
 		}

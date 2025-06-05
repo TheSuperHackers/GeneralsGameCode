@@ -394,9 +394,13 @@ public:
 	Real getProductionCostChangeBasedOnKindOf( KindOfMaskType kindOf ) const;
 
 	/// Decrement the ref counter on the typeof production list node
-	void removeKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent);
+	void removeKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent,
+		UnsignedInt sourceTemplateID = INVALID_ID,
+		Bool stackUniqueType = FALSE, Bool stackWithAny = FALSE);
 	/// add type of production cost change (Used for upgrades)
-	void addKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent);
+	void addKindOfProductionTimeChange(KindOfMaskType kindOf, Real percent,
+		UnsignedInt sourceTemplateID = INVALID_ID,
+		Bool stackUniqueType = FALSE, Bool stackWithAny = FALSE);
 	/// Returns production cost change based on typeof (Used for upgrades)
 	Real getProductionTimeChangeBasedOnKindOf(KindOfMaskType kindOf) const;
 

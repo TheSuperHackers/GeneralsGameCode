@@ -125,20 +125,20 @@ CostModifierUpgrade::~CostModifierUpgrade( void )
 //-------------------------------------------------------------------------------------------------
 void CostModifierUpgrade::onDelete( void )
 {
+	const CostModifierUpgradeModuleData* d = getCostModifierUpgradeModuleData();
+	
 	// This is a global one time upgrade. Don't remove it.
-	if (getCostModifierUpgradeModuleData()->m_isOneShot)
+	if (d->m_isOneShot)
 		return;
 
 	// if we haven't been upgraded there is nothing to clean up
 	if( isAlreadyUpgraded() == FALSE )
 		return;
 
-	const CostModifierUpgradeModuleData* d = getCostModifierUpgradeModuleData();
-
 	Bool stackWithAny = d->m_stackingType == SAME_TYPE;
 	Bool stackUniqueType = d->m_stackingType == OTHER_TYPE;
 
-	// remove the radar from the player
+	// remove the bonus from the player
 	Player *player = getObject()->getControllingPlayer();
 	if (player) {
 		player->removeKindOfProductionCostChange(d->m_kindOf, d->m_percentage,
