@@ -45,6 +45,7 @@
 #include "always.h"
 //#include <bit>
 //#include <limits>
+#include <string.h>
 #include <math.h>
 #include <float.h>
 #include <assert.h>
