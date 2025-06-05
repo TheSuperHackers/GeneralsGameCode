@@ -127,18 +127,14 @@ static WWINLINE int Float_To_Int_Floor(const float& f);
 static WWINLINE float Cos(float val);
 static WWINLINE float Sin(float val);
 static WWINLINE float Sqrt(float val);
+static WWINLINE float Inv_Sqrt(float a);	// Some 30% faster inverse square root than regular C++ compiled, from Intel's math library
 static WWINLINE long	 Float_To_Long(float f);
 #else
-static float Cos(float val);
-static float Sin(float val);
-static float Sqrt(float val);
-static long	Float_To_Long(float f);
-#endif
-
-#if defined(_MSC_VER) && _MSC_VER < 1300
-static WWINLINE float __fastcall Inv_Sqrt(float val);	// Some 30% faster inverse square root than regular C++ compiled, from Intel's math library
-#else
-static WWINLINE float __fastcall Inv_Sqrt(float val);
+static WWINLINE float Cos(float val);
+static WWINLINE float Sin(float val);
+static WWINLINE float Sqrt(float val);
+static WWINLINE float Inv_Sqrt(float a);
+static WWINLINE long	Float_To_Long(float f);
 #endif
 
 static WWINLINE float Fast_Sin(float val);
@@ -607,16 +603,16 @@ WWINLINE int WWMath::Float_To_Int_Floor (const float& f)
 // Inverse square root
 // ----------------------------------------------------------------------------
 
-#if defined(_MSC_VER) && _MSC_VER < 1300
-WWINLINE float __fastcall WWMath::Inv_Sqrt(float val)
+#if defined(_MSC_VER) && defined(_M_IX86)
+WWINLINE float WWMath::Inv_Sqrt(float a)
 {
 	float result;
 
 	__asm {
 		mov		eax, 0be6eb508h
 		mov		DWORD PTR [esp-12],03fc00000h ;  1.5 on the stack
-		sub		eax, DWORD PTR [val]; val
-		sub		DWORD PTR [val], 800000h ; val/2 a=Y0
+		sub		eax, DWORD PTR [a]; a
+		sub		DWORD PTR [a], 800000h ; a/2 a=Y0
 		shr		eax, 1     ; firs approx in eax=R0
 		mov		DWORD PTR [esp-8], eax
 
@@ -624,7 +620,7 @@ WWINLINE float __fastcall WWMath::Inv_Sqrt(float val)
 		fmul	st, st            ;r*r
 		fld		DWORD PTR [esp-8] ;r
 		fxch	st(1)
-		fmul	DWORD PTR [val];val ;r*r*y0
+		fmul	DWORD PTR [a];a ;r*r*y0
 		fld		DWORD PTR [esp-12];load 1.5
 		fld		st(0)
 		fsub	st,st(2)			   ;r1 = 1.5 - y1
@@ -652,48 +648,16 @@ WWINLINE float __fastcall WWMath::Inv_Sqrt(float val)
 		;x3 = st(1)
 		;r3 = st(0)
 		fmulp	st(1), st
+
 		fstp result
 	}
 
 	return result;
 }
 #else
-WWINLINE float __fastcall WWMath::Inv_Sqrt(float val)
+WWINLINE float WWMath::Inv_Sqrt(float val)
 {
-	//static_assert(std::endian::native == std::endian::little);
-	//static_assert(std::numeric_limits<float>::is_iec559 && std::numeric_limits<double>::is_iec559);
-
-	uint32_t input_bits;
-	memcpy(&input_bits, &val, sizeof(input_bits));
-
-	const uint32_t half_input_bits = input_bits - 0x800000;
-	const uint32_t approx_bits = (0xBE6EB508 - input_bits) >> 1;
-
-	float half_input;
-	float approx_float;
-	memcpy(&half_input, &half_input_bits, sizeof(half_input));
-	memcpy(&approx_float, &approx_bits, sizeof(approx_float));
-
-	const double d00 = approx_float;
-	const double d01 = half_input;
-
-	const double d02 = static_cast<float>(d00 * d00);
-	const double d03 = static_cast<float>(d01 * d02);
-	const double d04 = static_cast<float>(1.5 - d03);
-
-	const double d05 = static_cast<float>(d03 * d04);
-	const double d06 = static_cast<float>(d04 * d05);
-	const double d07 = static_cast<float>(1.5 - d06);
-
-	const double d08 = static_cast<float>(d06 * d07);
-	const double d09 = static_cast<float>(d07 * d08);
-	const double d10 = static_cast<float>(1.5 - d09);
-
-	const double mul1 = static_cast<float>(d00 * d04);
-	const double mul2 = static_cast<float>(mul1 * d07);
-	const double mul3 = static_cast<float>(mul2 * d10);
-
-	return static_cast<float>(mul3);
+	return 1.0f / (float)sqrt(val);
 }
 #endif
 
