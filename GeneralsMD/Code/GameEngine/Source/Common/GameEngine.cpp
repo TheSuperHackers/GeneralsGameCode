@@ -208,7 +208,7 @@ GameEngine::~GameEngine()
 	TheGameResultsQueue->endThreads();
 
 	// TheSuperHackers @fix helmutbuhler 03/06/2025
-	// We need to reset all subsystems before shutdown to fix crashes due to circular dependencies
+	// Reset all subsystems before deletion to prevent crashing due to cross dependencies.
 	reset();
 
 	TheSubsystemList->shutdownAll();
