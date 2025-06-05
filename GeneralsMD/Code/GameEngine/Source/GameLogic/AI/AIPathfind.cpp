@@ -1292,6 +1292,12 @@ Bool PathfindCell::allocateInfo( const ICoord2D &pos )
  */
 void PathfindCell::releaseInfo( void ) 
 { 
+	// TheSuperHackers @bugfix Mauller/SkyAero 05/06/2025 Parent cell links need clearing to prevent dangling pointers on starting points that can link them to an invalid parent cell.
+	// Parent cells are only cleared within Pathfinder::prependCells, so cells that do not make it onto the final path do not get their parent cell cleared.
+	// Cells with a special flags also do not get their pathfindinfo cleared and therefore can leave a parent cell set on a starting cell.
+	if (m_info) {
+		m_info->m_pathParent = NULL;
+	}
 	if (m_type==PathfindCell::CELL_OBSTACLE) {
 		return;
 	}
@@ -6646,8 +6652,8 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 			m_isTunneling = false;
 			// construct and return path
 			Path *path =  buildActualPath( obj, locomotorSet.getValidSurfaces(), from, goalCell, centerInCell, false );
-			parentCell->releaseInfo();
 			cleanOpenAndClosedLists();
+			parentCell->releaseInfo();
 			return path;
 		}	
 
@@ -6723,8 +6729,8 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 #endif
 
 	m_isTunneling = false;
-	parentCell->releaseInfo();
 	cleanOpenAndClosedLists();
+	parentCell->releaseInfo();
 	goalCell->releaseInfo();
 	return NULL;
 }
@@ -7164,8 +7170,8 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 			m_isTunneling = false;
 			// construct and return path
 			Path *path =  buildGroundPath(crusher, from, goalCell, centerInCell, pathDiameter );
-			parentCell->releaseInfo();
 			cleanOpenAndClosedLists();
+			parentCell->releaseInfo();
 			return path;
 		}	
 
@@ -7369,8 +7375,8 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	TheGameLogic->incrementOverallFailedPathfinds();
 #endif
 	m_isTunneling = false;
-	parentCell->releaseInfo();
 	cleanOpenAndClosedLists();
+	parentCell->releaseInfo();
 	goalCell->releaseInfo();
 	return NULL;
 }
@@ -7749,8 +7755,8 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 #endif
 			}
 #endif
-			parentCell->releaseInfo();
 			cleanOpenAndClosedLists();
+			parentCell->releaseInfo();
 			goalCell->releaseInfo();
 			return path;
 		}	
@@ -7948,8 +7954,8 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 		}
 #endif
 #endif
-		parentCell->releaseInfo();
 		cleanOpenAndClosedLists();
+		parentCell->releaseInfo();
 		goalCell->releaseInfo();
 		return path;
 	}
@@ -7996,8 +8002,8 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 	TheGameLogic->incrementOverallFailedPathfinds();
 #endif
 	m_isTunneling = false;
-	parentCell->releaseInfo();
 	cleanOpenAndClosedLists();
+	parentCell->releaseInfo();
 	goalCell->releaseInfo();
 	return NULL;
 }
@@ -8434,8 +8440,8 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 	}
 #endif
 	m_isTunneling = false;
-	parentCell->releaseInfo();
 	cleanOpenAndClosedLists();
+	parentCell->releaseInfo();
 	goalCell->releaseInfo();
 	return false;
 }
@@ -8565,8 +8571,8 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 		if (parentCell==goalCell) {	 
 			Int cost = parentCell->getTotalCost();
 			m_isTunneling = false;
-			parentCell->releaseInfo();
 			cleanOpenAndClosedLists();
+			parentCell->releaseInfo();
 			return cost;
 		}
 
@@ -8633,8 +8639,8 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 
 			if (!newCell->allocateInfo(newCellCoord)) {
 				// Out of cells for pathing...
-				parentCell->releaseInfo();
 				cleanOpenAndClosedLists();
+				parentCell->releaseInfo();
 				goalCell->releaseInfo();
  				return cellCount;
 			}						
@@ -8684,8 +8690,8 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 	}
 
 	m_isTunneling = false;
-	parentCell->releaseInfo();
 	cleanOpenAndClosedLists();
+	parentCell->releaseInfo();
 	goalCell->releaseInfo();
 	return MAX_COST;
 }
@@ -8889,8 +8895,8 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 			m_isTunneling = false;
 			// construct and return path
 			Path *path = buildActualPath( obj, locomotorSet.getValidSurfaces(), from, goalCell, centerInCell, blocked);
-			parentCell->releaseInfo();
 			cleanOpenAndClosedLists();
+			parentCell->releaseInfo();
 			goalCell->releaseInfo();
 			return path;
 		}	
@@ -8970,8 +8976,8 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 		rawTo->y = closesetCell->getYIndex()*PATHFIND_CELL_SIZE_F + PATHFIND_CELL_SIZE_F/2.0f;
 		// construct and return path
 		Path *path = buildActualPath( obj, locomotorSet.getValidSurfaces(), from, closesetCell, centerInCell, blocked );
-		parentCell->releaseInfo();
 		cleanOpenAndClosedLists();
+		parentCell->releaseInfo();
 		goalCell->releaseInfo();
 		return path;
 	}
@@ -8992,8 +8998,8 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 	TheGameLogic->incrementOverallFailedPathfinds();
 #endif
 	m_isTunneling = false;
-	parentCell->releaseInfo();
 	cleanOpenAndClosedLists();
+	parentCell->releaseInfo();
 	goalCell->releaseInfo();
 	return NULL;
 }
@@ -9116,14 +9122,12 @@ void Pathfinder::prependCells( Path *path, const Coord3D *fromPos,
 		}
 		prevCell = cell;
 	}
-
 	m_zoneManager.setPassable(cell->getXIndex(), cell->getYIndex(), true);
 	if (goalCellNull) {
 		// Very short path.
 		adjustCoordToCell(cell->getXIndex(), cell->getYIndex(), center, pos, cell->getLayer());
 		path->prependNode( &pos, cell->getLayer() );
 	}
-
 	// put actual start position as first node on the path, so it begins right at the unit's feet
 	if (fromPos->x != path->getFirstNode()->getPosition()->x || fromPos->y != path->getFirstNode()->getPosition()->y) {
 		path->prependNode( fromPos, cell->getLayer() );
@@ -10381,8 +10385,8 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 			m_isTunneling = false;
 			// construct and return path
 			Path *newPath = buildActualPath( obj, locomotorSet.getValidSurfaces(), obj->getPosition(), parentCell, centerInCell, false);
-			parentCell->releaseInfo();
 			cleanOpenAndClosedLists();
+			parentCell->releaseInfo();
 			return newPath;
 		}	
 		// put parent cell onto closed list - its evaluation is finished
@@ -10403,8 +10407,8 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 	DEBUG_LOG(("Unit '%s', time %f", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
 
 	m_isTunneling = false;
-	parentCell->releaseInfo();
 	cleanOpenAndClosedLists();
+	parentCell->releaseInfo();
 	return NULL;
 }
 
@@ -10563,8 +10567,8 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 
 			// cleanup the path by checking line of sight
 			path->optimize(obj, locomotorSet.getValidSurfaces(), blocked);
-			parentCell->releaseInfo();
 			cleanOpenAndClosedLists();
+			parentCell->releaseInfo();
 			candidateGoal->releaseInfo();
 
 			return path;
@@ -10588,8 +10592,8 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 	}
 #endif
 	m_isTunneling = false;
-	parentCell->releaseInfo();
 	cleanOpenAndClosedLists();
+	parentCell->releaseInfo();
 	candidateGoal->releaseInfo();
 	return NULL;
 }
@@ -10883,8 +10887,8 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 					}
 				}
 				Path *path = buildActualPath( obj, locomotorSet.getValidSurfaces(), obj->getPosition(), parentCell, centerInCell, false);
-				parentCell->releaseInfo();
 				cleanOpenAndClosedLists();
+				parentCell->releaseInfo();
 				goalCell->releaseInfo();
 				return path;
 			}
@@ -10941,8 +10945,8 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 	TheGameLogic->incrementOverallFailedPathfinds();
 #endif
 	m_isTunneling = false;
-	parentCell->releaseInfo();
 	cleanOpenAndClosedLists();
+	parentCell->releaseInfo();
 	goalCell->releaseInfo();
 	return NULL;
 }
@@ -11065,8 +11069,8 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 #endif
 			// construct and return path
 			Path *path = buildActualPath( obj, locomotorSet.getValidSurfaces(), obj->getPosition(), parentCell, centerInCell, false);
-			parentCell->releaseInfo();
 			cleanOpenAndClosedLists();
+			parentCell->releaseInfo();
 			return path;
 		}	
 
@@ -11100,8 +11104,8 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 	TheGameLogic->incrementOverallFailedPathfinds();
 #endif
 	m_isTunneling = false;
-	parentCell->releaseInfo();
 	cleanOpenAndClosedLists();
+	parentCell->releaseInfo();
 	return NULL;
 }
 
