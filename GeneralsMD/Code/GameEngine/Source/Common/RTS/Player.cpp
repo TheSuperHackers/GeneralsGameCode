@@ -3888,25 +3888,40 @@ void Player::addAIGroupToCurrentSelection(AIGroup *group) {
 //-------------------------------------------------------------------------------------------------
 /** addTypeOfProductionCostChange adds a production change to the typeof list */
 //-------------------------------------------------------------------------------------------------
-void Player::addKindOfProductionCostChange(	KindOfMaskType kindOf, Real percent )
+void Player::addKindOfProductionCostChange(	KindOfMaskType kindOf, Real percent,
+	UnsignedInt sourceTemplateID /*= INVALID_ID*/,
+	Bool stackUniqueType /*= FALSE*/, Bool stackWithAny /*= FALSE*/)
 {
-	KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionChangeList.begin();
-	while(it != m_kindOfPercentProductionChangeList.end())
-	{
-		
-		KindOfPercentProductionChange *tof = *it;
-		if( tof->m_percent == percent && tof->m_kindOf == kindOf)
+	// Possible cases:
+	// 1. Default behavior: No stacking of bonus with SAME perecentage
+	// 2. Stack with bonus from OTHER templates but SAME percentage
+	//   - Keep separate entries for each templateID
+	// 3. Stack with bonus from SAME template and SAME percentage
+	//   - Keep separate entry for each Object (need to track ObjectID)
+	//   - Don't track Object, just track that we can stack, then just remove first matching entry that can stack
+
+	if (!stackWithAny) { // We always stack, no need to check
+
+		KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionChangeList.begin();
+		while (it != m_kindOfPercentProductionChangeList.end())
 		{
-			tof->m_ref++;
-			return;
+			KindOfPercentProductionChange* tof = *it;
+			if (tof->m_percent == percent && tof->m_kindOf == kindOf &&
+				(!stackUniqueType || (tof->m_templateID == sourceTemplateID && tof->m_templateID != INVALID_ID)))
+			{
+				tof->m_ref++;
+				return;
+			}
+			++it;
 		}
-		++it;
-	}	
+	}
 
 	KindOfPercentProductionChange *newTof = newInstance( KindOfPercentProductionChange );
 	newTof->m_kindOf = kindOf;
 	newTof->m_percent = percent;
 	newTof->m_ref = 1;
+	newTof->m_stackWithAny = stackWithAny;
+	newTof->m_templateID = sourceTemplateID;
 	m_kindOfPercentProductionChangeList.push_back(newTof);
 
 }
@@ -3914,14 +3929,19 @@ void Player::addKindOfProductionCostChange(	KindOfMaskType kindOf, Real percent 
 //-------------------------------------------------------------------------------------------------
 /** addTypeOfProductionCostChange adds a production change to the typeof list */
 //-------------------------------------------------------------------------------------------------
-void Player::removeKindOfProductionCostChange(	KindOfMaskType kindOf, Real percent )
+void Player::removeKindOfProductionCostChange(	KindOfMaskType kindOf, Real percent,
+	UnsignedInt sourceTemplateID /*= INVALID_ID*/,
+	Bool stackUniqueType /*= FALSE*/, Bool stackWithAny /*= FALSE*/)
 {
 	KindOfPercentProductionChangeListIt it = m_kindOfPercentProductionChangeList.begin();
 	while(it != m_kindOfPercentProductionChangeList.end())
 	{
 		
 		KindOfPercentProductionChange* tof = *it;
-		if( tof->m_percent == percent && tof->m_kindOf == kindOf)
+		if( tof->m_percent == percent && tof->m_kindOf == kindOf &&
+			(!stackWithAny || tof->m_stackWithAny) &&
+			(!stackUniqueType || tof->m_templateID == sourceTemplateID)
+			)
 		{
 			tof->m_ref--;
 			if(tof->m_ref == 0)
@@ -3929,6 +3949,9 @@ void Player::removeKindOfProductionCostChange(	KindOfMaskType kindOf, Real perce
 				m_kindOfPercentProductionChangeList.erase( it );
 				if(tof)
 					tof->deleteInstance();
+			}
+			else if (stackWithAny) {
+				DEBUG_CRASH(("KindOfProductionCost: StackWithAny should never have count > 1.\n"));
 			}
 			return;
 		}

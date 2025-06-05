@@ -53,6 +53,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/Player.h"
+#include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
 #include "GameLogic/Module/CostModifierUpgrade.h"
 #include "GameLogic/Object.h"
@@ -77,6 +78,8 @@ CostModifierUpgradeModuleData::CostModifierUpgradeModuleData( void )
 
 	m_kindOf = KINDOFMASK_NONE;
 	m_percentage = 0;
+	m_isOneShot = FALSE;
+	m_stackingType = NO_STACKING;
 
 }  // end CostModifierUpgradeModuleData
 
@@ -90,6 +93,9 @@ CostModifierUpgradeModuleData::CostModifierUpgradeModuleData( void )
 	{
 		{ "EffectKindOf",		KindOfMaskType::parseFromINI, NULL, offsetof( CostModifierUpgradeModuleData, m_kindOf ) },
 		{ "Percentage",			INI::parsePercentToReal, NULL, offsetof( CostModifierUpgradeModuleData, m_percentage ) },
+		{ "IsOneShotUpgrade",		INI::parseBool, NULL, offsetof( CostModifierUpgradeModuleData, m_isOneShot) },
+		{ "BonusStacksWith",		INI::parseIndexList, TheBonusStackingTypeNames, offsetof( CostModifierUpgradeModuleData, m_stackingType) },
+		
 		{ 0, 0, 0, 0 } 
 	};
 	p.add(dataFieldParse);
@@ -119,15 +125,25 @@ CostModifierUpgrade::~CostModifierUpgrade( void )
 //-------------------------------------------------------------------------------------------------
 void CostModifierUpgrade::onDelete( void )
 {
+	// This is a global one time upgrade. Don't remove it.
+	if (getCostModifierUpgradeModuleData()->m_isOneShot)
+		return;
 
 	// if we haven't been upgraded there is nothing to clean up
 	if( isAlreadyUpgraded() == FALSE )
 		return;
 
+	const CostModifierUpgradeModuleData* d = getCostModifierUpgradeModuleData();
+
+	Bool stackWithAny = d->m_stackingType == SAME_TYPE;
+	Bool stackUniqueType = d->m_stackingType == OTHER_TYPE;
+
 	// remove the radar from the player
 	Player *player = getObject()->getControllingPlayer();
-	if( player )
-		player->removeKindOfProductionCostChange(getCostModifierUpgradeModuleData()->m_kindOf,getCostModifierUpgradeModuleData()->m_percentage );
+	if (player) {
+		player->removeKindOfProductionCostChange(d->m_kindOf, d->m_percentage,
+			getObject()->getTemplate()->getTemplateID(), stackUniqueType, stackWithAny);
+	}
 
 	// this upgrade module is now "not upgraded"
 	setUpgradeExecuted(FALSE);
@@ -138,23 +154,34 @@ void CostModifierUpgrade::onDelete( void )
 //-------------------------------------------------------------------------------------------------
 void CostModifierUpgrade::onCapture( Player *oldOwner, Player *newOwner )
 {
+	const CostModifierUpgradeModuleData* d = getCostModifierUpgradeModuleData();
+
+	// This is a global one time upgrade. Don't remove or transfer it.
+	if (d->m_isOneShot)
+		return;
 
 	// do nothing if we haven't upgraded yet
 	if( isAlreadyUpgraded() == FALSE )
 		return;
 
-	// remove radar from old player and add to new player
+	// remove bonus from old player and add to new player
+	Bool stackUniqueType = d->m_stackingType == OTHER_TYPE;
+	Bool stackWithAny = d->m_stackingType == SAME_TYPE;
+
+
 	if( oldOwner )
 	{
+		oldOwner->removeKindOfProductionCostChange(d->m_kindOf, d->m_percentage,
+			getObject()->getTemplate()->getTemplateID(), stackUniqueType, stackWithAny);
 
-		oldOwner->removeKindOfProductionCostChange(getCostModifierUpgradeModuleData()->m_kindOf,getCostModifierUpgradeModuleData()->m_percentage );
 		setUpgradeExecuted(FALSE);
 
 	}  // end if
 	if( newOwner )
 	{
+		newOwner->addKindOfProductionCostChange(d->m_kindOf, d->m_percentage,
+			getObject()->getTemplate()->getTemplateID(), stackUniqueType, stackWithAny);
 
-		newOwner->addKindOfProductionCostChange(getCostModifierUpgradeModuleData()->m_kindOf,getCostModifierUpgradeModuleData()->m_percentage );
 		setUpgradeExecuted(TRUE);
 
 	}  // end if
@@ -165,10 +192,17 @@ void CostModifierUpgrade::onCapture( Player *oldOwner, Player *newOwner )
 //-------------------------------------------------------------------------------------------------
 void CostModifierUpgrade::upgradeImplementation( void )
 {
+	const CostModifierUpgradeModuleData * d = getCostModifierUpgradeModuleData();
+
 	Player *player = getObject()->getControllingPlayer();
 
 	// update the player with another TypeOfProductionCostChange
-	player->addKindOfProductionCostChange(getCostModifierUpgradeModuleData()->m_kindOf,getCostModifierUpgradeModuleData()->m_percentage );
+
+	Bool stackWithAny = d->m_stackingType == SAME_TYPE;
+	Bool stackUniqueType = d->m_stackingType == OTHER_TYPE;
+
+	player->addKindOfProductionCostChange(d->m_kindOf, d->m_percentage,
+		getObject()->getTemplate()->getTemplateID(), stackUniqueType, stackWithAny);
 
 }  // end upgradeImplementation
 
