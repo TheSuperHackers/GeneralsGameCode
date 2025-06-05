@@ -502,7 +502,8 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				break;
 		}
 
-		if( orbitalBirthFrame <= now && now < orbitalDeathFrame )
+		const Bool isFiring = m_laserStatus != LASERSTATUS_NONE && m_laserStatus != LASERSTATUS_DEAD;
+		if ( isFiring )
 		{
 		
 			if( !m_manualTargetMode && !m_scriptedWaypointMode )
