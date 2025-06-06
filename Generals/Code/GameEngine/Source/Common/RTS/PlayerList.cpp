@@ -83,13 +83,10 @@ PlayerList::PlayerList() :
 //-----------------------------------------------------------------------------
 PlayerList::~PlayerList() 
 {
-	try {
-		// the world is happier if we reinit things before destroying them,
-		// to avoid debug warnings
-		init();
-	} catch (...) {
-		// nothing
-	}
+	// the world is happier if we reinit things before destroying them,
+	// to avoid debug warnings
+	init();
+
 	for( Int i = 0; i < MAX_PLAYER_COUNT; ++i )
 		delete m_players[ i ];
 }
