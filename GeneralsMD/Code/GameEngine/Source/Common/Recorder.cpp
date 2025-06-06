@@ -1072,7 +1072,7 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 				playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1));
 
 			// TheSuperHackers @info helmutbuhler 13/04/2025
-			// Print Mismatch to console in case we are in SimulateReplayList
+			// Print Mismatch to console in case we are in SimulateReplays
 			printf("CRC Mismatch in Frame %d\n", TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1);
 
 			// TheSuperHackers @tweak Pause the game on mismatch.

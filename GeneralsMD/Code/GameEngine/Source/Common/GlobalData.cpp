@@ -957,7 +957,7 @@ GlobalData::GlobalData()
 	m_initialFile.clear();
 	m_pendingFile.clear();
 	
-	m_simulateReplayList.clear();
+	m_simulateReplays.clear();
 	m_simulateReplayJobs = -1;
 
 	for (i = LEVEL_FIRST; i <= LEVEL_LAST; ++i)

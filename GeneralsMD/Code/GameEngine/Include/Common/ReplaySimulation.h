@@ -22,4 +22,4 @@
 // Simulate a list of replays without graphics.
 // Returns exitcode 1 if mismatch or other error occured
 // Returns exitcode 0 if all replays were successfully simulated without mismatches
-int SimulateReplayList(const std::vector<AsciiString> &filenames, int maxProcesses);
+int SimulateReplays(const std::vector<AsciiString> &filenames, int maxProcesses);

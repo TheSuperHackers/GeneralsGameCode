@@ -443,7 +443,7 @@ Int parseSimReplay(char *args[], int num)
 	{
 		AsciiString filename = args[1];
 		ConvertShortReplayPathToLongReplayPath(filename);
-		TheWritableGlobalData->m_simulateReplayList.push_back(filename);
+		TheWritableGlobalData->m_simulateReplays.push_back(filename);
 		TheWritableGlobalData->m_headless = TRUE;
 		return 2;
 	}

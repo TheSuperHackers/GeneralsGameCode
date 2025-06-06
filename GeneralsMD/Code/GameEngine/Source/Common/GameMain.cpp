@@ -42,9 +42,9 @@ Int GameMain( int argc, char *argv[] )
 	TheGameEngine = CreateGameEngine();
 	TheGameEngine->init(argc, argv);
 
-	if (!TheGlobalData->m_simulateReplayList.empty())
+	if (!TheGlobalData->m_simulateReplays.empty())
 	{
-		exitcode = SimulateReplayList(TheGlobalData->m_simulateReplayList, TheGlobalData->m_simulateReplayJobs);
+		exitcode = SimulateReplays(TheGlobalData->m_simulateReplays, TheGlobalData->m_simulateReplayJobs);
 	}
 	else
 	{

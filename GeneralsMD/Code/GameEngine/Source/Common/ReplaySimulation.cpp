@@ -23,7 +23,7 @@
 #include "GameLogic/GameLogic.h"
 #include "GameClient/GameClient.h"
 
-static int SimulateReplayListSingleProcess(const std::vector<AsciiString> &filenames)
+static int SimulateReplaysInThisProcess(const std::vector<AsciiString> &filenames)
 {
 	// Note that we use printf here because this is run from cmd.
 	int numErrors = 0;
@@ -97,7 +97,7 @@ static int SimulateReplayListSingleProcess(const std::vector<AsciiString> &filen
 	return numErrors != 0 ? 1 : 0;
 }
 
-static int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filenames, int maxProcesses)
+static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &filenames, int maxProcesses)
 {
 	DWORD totalStartTime = GetTickCount();
 
@@ -177,10 +177,10 @@ static int SimulateReplayListMultiProcess(const std::vector<AsciiString> &filena
 	return numErrors != 0 ? 1 : 0;
 }
 
-int SimulateReplayList(const std::vector<AsciiString> &filenames, int maxProcesses)
+int SimulateReplays(const std::vector<AsciiString> &filenames, int maxProcesses)
 {
 	if (maxProcesses == -1)
-		return SimulateReplayListSingleProcess(filenames);
+		return SimulateReplaysInThisProcess(filenames);
 	else
-		return SimulateReplayListMultiProcess(filenames, maxProcesses);
+		return SimulateReplaysInWorkerProcesses(filenames, maxProcesses);
 }
