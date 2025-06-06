@@ -160,7 +160,7 @@
 		ALLOW_AUTOMATIC_REF_COUNT_PTR_CONSTRUCTION is defined.
 		This may be useful when migrating existing code to use RefCountPtr, but is not completely safe,
 		since it is not possible to determine if the pointer is being Get'd or Peek'd.
-		Please note that the constructor WILL add a reference to the object, which errors on the side
+		Please note that the constructor WILL add a reference to the object, which errs on the side
 		of leaking references rather than prematurely deleting objects.  Whenever possible, use the
 		explicit global Create_* functions rather than the automatic conversion.
 
@@ -225,7 +225,7 @@ class RefCountPtr
 	public:
 
 		// Creates a RefCountPtr<T> and does not increment the reference counter of the passed object.
-		// Is generally used for "New" and "Get" functions.
+		// Is generally used for objects returned by operator new and "Get" functions.
 		static RefCountPtr<T> Create_NoAddRef(T *t)
 		{
 			WWASSERT(t == NULL || t->Num_Refs() >= 1);
@@ -233,7 +233,7 @@ class RefCountPtr
 		}
 
 		// Creates a RefCountPtr<T> and increments the reference counter of the passed object.
-		// Is generally used for "Peek" functions.
+		// Is generally used for objects returned by "Peek" functions.
 		static RefCountPtr<T> Create_AddRef(T *t)
 		{
 			return RefCountPtr<T>(t, RefCountPtr<T>::PEEK);
