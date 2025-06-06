@@ -82,7 +82,7 @@ void selectObjectOfType( Object* obj, void* selectObjectsInfo )
 	}
 
 	//Do the templates match?
-	if( obj->getTemplate()->isEquivalentTo( soInfo->thingTemplate ) )
+	if( ThingTemplate::isEquivalentTo(obj->getTemplate(), soInfo->thingTemplate) )
 	{
 		//Okay, then add it to the selected group.
 		soInfo->msg->appendObjectIDArgument( obj->getID() );
