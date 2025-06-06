@@ -29,8 +29,8 @@
 #include "Common/CommandLine.h"
 #include "Common/CRCDebug.h"
 #include "Common/LocalFileSystem.h"
-#include "Common/version.h"
 #include "Common/Recorder.h"
+#include "Common/version.h"
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
@@ -109,15 +109,6 @@ static void ConvertShortMapPathToLongMapPath(AsciiString &mapName)
 	actualpath.concat(".map");
 
 	mapName = actualpath;
-}
-
-static void ConvertShortReplayPathToLongReplayPath(AsciiString &filename)
-{
-	if (!filename.endsWithNoCase(RecorderClass::getReplayExtention()))
-	{
-		DEBUG_CRASH(("Invalid replay name %s", filename.str()));
-		exit(1);
-	}
 }
 
 //=============================================================================
@@ -442,7 +433,11 @@ Int parseSimReplay(char *args[], int num)
 	if (TheWritableGlobalData && num > 1)
 	{
 		AsciiString filename = args[1];
-		ConvertShortReplayPathToLongReplayPath(filename);
+		if (!filename.endsWithNoCase(RecorderClass::getReplayExtention()))
+		{
+			DEBUG_CRASH(("Invalid replay name \"%s\"", filename.str()));
+			exit(1);
+		}
 		TheWritableGlobalData->m_simulateReplays.push_back(filename);
 		TheWritableGlobalData->m_headless = TRUE;
 		return 2;

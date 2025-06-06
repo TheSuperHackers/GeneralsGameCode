@@ -1071,8 +1071,7 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 			DEBUG_CRASH(("Replay has gone out of sync!  All bets are off!\nInGame:%8.8X Replay:%8.8X\nFrame:%d",
 				playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1));
 
-			// TheSuperHackers @info helmutbuhler 13/04/2025
-			// Print Mismatch to console in case we are in SimulateReplays
+			// Print Mismatch in case we are simulating replays from console.
 			printf("CRC Mismatch in Frame %d\n", TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1);
 
 			// TheSuperHackers @tweak Pause the game on mismatch.
