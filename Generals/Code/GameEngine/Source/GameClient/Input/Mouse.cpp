@@ -857,7 +857,7 @@ void Mouse::setCursorTooltip( UnicodeString tooltip, Int delay, const RGBColor *
 		m_lastTooltipWidth = width;
 	}
 
-	if (forceRecalc || !m_isTooltipEmpty && tooltip.compare(m_tooltipDisplayString->getText()))
+	if (forceRecalc || (!m_isTooltipEmpty && tooltip.compare(m_tooltipDisplayString->getText())))
 	{
 		m_tooltipDisplayString->setText(tooltip);
 		//DEBUG_LOG(("Tooltip: %ls\n", tooltip.str()));

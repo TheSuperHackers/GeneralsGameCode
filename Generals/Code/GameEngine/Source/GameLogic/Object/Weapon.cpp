@@ -1039,7 +1039,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 
 		firingWeapon->newProjectileFired( sourceObj, projectile );//The actual logic weapon needs to know this was created. 
 
-		if( m_scatterRadius > 0.0f || m_infantryInaccuracyDist > 0.0f && victimObj && victimObj->isKindOf( KINDOF_INFANTRY ) )
+		if( m_scatterRadius > 0.0f || (m_infantryInaccuracyDist > 0.0f && victimObj && victimObj->isKindOf( KINDOF_INFANTRY )) )
 		{
 			// This weapon scatters, so clear the victimObj, as we are no longer shooting it directly,
 			// and find a random point within the radius to shoot at as victimPos
