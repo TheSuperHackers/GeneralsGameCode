@@ -792,7 +792,7 @@ void CPUDetectClass::Init_Processor_String()
 			case INTEL_PROCESSOR_PENTIUM4:						str+="Pentium4"; break;
 			}
 		}
-		strncpy(ProcessorString,str.Peek_Buffer(),sizeof(ProcessorString));
+		strncpy(ProcessorString,str.str(),sizeof(ProcessorString));
 	}
 
 }
@@ -959,7 +959,7 @@ void CPUDetectClass::Init_Processor_Log()
 #ifdef WIN32
    SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo));
 #elif defined(_UNIX)
-   SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo.Peek_Buffer()));
+   SYSLOG(("OS-Info: %s\r\n", OSVersionExtraInfo.str()));
 #endif
 
 	SYSLOG(("Processor: %s\r\n",CPUDetectClass::Get_Processor_String()));
@@ -974,7 +974,7 @@ void CPUDetectClass::Init_Processor_Log()
 #ifdef WIN32
    SYSLOG(("Processor type: %s\r\n", cpu_type));
 #elif defined(_UNIX)
-   SYSLOG(("Processor type: %s\r\n", cpu_type.Peek_Buffer()));
+   SYSLOG(("Processor type: %s\r\n", cpu_type.str()));
 #endif
 
 	SYSLOG(("\r\n"));

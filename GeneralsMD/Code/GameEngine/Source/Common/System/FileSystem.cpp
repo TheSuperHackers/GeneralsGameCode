@@ -179,6 +179,11 @@ File*		FileSystem::openFile( const Char *filename, Int access )
 	if ( TheLocalFileSystem != NULL )
 	{
 		file = TheLocalFileSystem->openFile( filename, access );
+		if (file != NULL && (file->getAccess() & File::CREATE))
+		{
+			unsigned key = TheNameKeyGenerator->nameToLowercaseKey(filename);
+			m_fileExist[key] = true;
+		}
 	}
 
 	if ( (TheArchiveFileSystem != NULL) && (file == NULL) )

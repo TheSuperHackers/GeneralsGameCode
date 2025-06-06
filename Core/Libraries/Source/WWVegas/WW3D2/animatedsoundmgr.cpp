@@ -228,7 +228,7 @@ Is_In_Param_List
 			// OutputDebugString( "\n" );
 
 			// if ( stricmp( string.Peek_Buffer(), param_to_check ) == 0 ) // Breaks with whitespaces
-			if ( strstr( string.Peek_Buffer(), param_to_check ) != 0 )
+			if ( strstr( string.str(), param_to_check ) != 0 )
 			{
 			 	return( true );
 			}
@@ -447,7 +447,7 @@ AnimatedSoundMgrClass::Get_Embedded_Sound_Name (HAnimClass *anim)
 		return NULL;
 	}
 
-	return list->BoneName.Peek_Buffer();
+	return list->BoneName.str();
 }
 
 
@@ -527,7 +527,7 @@ AnimatedSoundMgrClass::Trigger_Sound
 						//
 						// Stop the audio
 						//
-						SoundLibrary->Stop_Playing_Audio( sound_list->List[index]->SoundName.Peek_Buffer() );
+						SoundLibrary->Stop_Playing_Audio( sound_list->List[index]->SoundName.str() );
 					}
 					else
 					{
@@ -536,11 +536,11 @@ AnimatedSoundMgrClass::Trigger_Sound
 						//
 						if (sound_list->List[index]->Is2D == true) 
 						{
-							SoundLibrary->Play_2D_Audio(sound_list->List[index]->SoundName.Peek_Buffer());
+							SoundLibrary->Play_2D_Audio(sound_list->List[index]->SoundName.str());
 						} 
 						else 
 						{
-							SoundLibrary->Play_3D_Audio(sound_list->List[index]->SoundName.Peek_Buffer(), tm);
+							SoundLibrary->Play_3D_Audio(sound_list->List[index]->SoundName.str(), tm);
 						}
 					}
 
