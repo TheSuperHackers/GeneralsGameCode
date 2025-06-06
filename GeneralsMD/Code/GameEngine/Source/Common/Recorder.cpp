@@ -477,11 +477,11 @@ void RecorderClass::stopPlayback() {
 		m_file = NULL;
 	}
 	m_fileName.clear();
-	// Don't clear the game data if the replay is over - let things continue
-//#ifdef DEBUG_CRC
+
 	if (!m_doingAnalysis)
-		TheMessageStream->appendMessage(GameMessage::MSG_CLEAR_GAME_DATA);
-//#endif
+	{
+		TheCommandList->appendMessage(newInstance(GameMessage)(GameMessage::MSG_CLEAR_GAME_DATA));
+	}
 }
 
 /**
