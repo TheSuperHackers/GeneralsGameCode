@@ -936,7 +936,7 @@ Bool RecorderClass::analyzeReplay( AsciiString filename )
 
 #endif
 
-Bool RecorderClass::isPlaybackInProgress( void )
+Bool RecorderClass::isPlaybackInProgress( void ) const
 {
 	return isPlaybackMode() && m_nextFrame != -1;
 }
@@ -977,7 +977,7 @@ public:
 	UnsignedInt getLocalPlayer(void) { return m_localPlayer; }
 
 	void setSawCRCMismatch(void) { m_sawCRCMismatch = TRUE; }
-	Bool sawCRCMismatch(void) { return m_sawCRCMismatch; }
+	Bool sawCRCMismatch(void) const { return m_sawCRCMismatch; }
 
 protected:
 
@@ -1025,7 +1025,7 @@ UnsignedInt CRCInfo::readCRC(void)
 	return val;
 }
 
-Bool RecorderClass::sawCRCMismatch()
+Bool RecorderClass::sawCRCMismatch() const
 {
 	return m_crcInfo->sawCRCMismatch();
 }

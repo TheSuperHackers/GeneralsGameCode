@@ -75,13 +75,13 @@ public:
 	Bool replayMatchesGameVersion(AsciiString filename); ///< Returns true if the playback is a valid playback file for this version.
 	static Bool replayMatchesGameVersion(const ReplayHeader& header); ///< Returns true if the playback is a valid playback file for this version.
 	AsciiString getCurrentReplayFilename( void );			///< valid during playback only
-	UnsignedInt getFrameDuration() { return m_playbackFrameDuration; }			///< valid during playback only
+	UnsignedInt getFrameDuration() const { return m_playbackFrameDuration; }			///< valid during playback only
 	void stopPlayback();															///< Stops playback.  Its fine to call this even if not playing back a file.
 	Bool simulateReplay(AsciiString filename);
 #if defined RTS_DEBUG || defined RTS_INTERNAL
 	Bool analyzeReplay( AsciiString filename );
 #endif
-	Bool isPlaybackInProgress();
+	Bool isPlaybackInProgress() const;
 
 public:
 	void handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool fromPlayback);
@@ -113,7 +113,7 @@ public:
 	Bool readReplayHeader( ReplayHeader& header );
 
 	RecorderModeType getMode();												///< Returns the current operating mode.
-	Bool isPlaybackMode() { return m_mode == RECORDERMODETYPE_PLAYBACK || m_mode == RECORDERMODETYPE_SIMULATION_PLAYBACK; }
+	Bool isPlaybackMode() const { return m_mode == RECORDERMODETYPE_PLAYBACK || m_mode == RECORDERMODETYPE_SIMULATION_PLAYBACK; }
 	void initControls();															///< Show or Hide the Replay controls
 
 	AsciiString getReplayDir();												///< Returns the directory that holds the replay files.
@@ -128,7 +128,7 @@ public:
 
 	void logPlayerDisconnect(UnicodeString player, Int slot);
 	void logCRCMismatch( void );
-	Bool sawCRCMismatch();
+	Bool sawCRCMismatch() const;
 	void cleanUpReplayFile( void );										///< after a crash, send replay/debug info to a central repository
 
 	void stopRecording();															///< Stop recording and close m_file.
