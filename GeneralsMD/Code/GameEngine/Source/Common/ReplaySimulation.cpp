@@ -36,7 +36,7 @@ static int SimulateReplaysInThisProcess(const std::vector<AsciiString> &filename
 		DWORD startTime = GetTickCount();
 		if (TheRecorder->simulateReplay(filename))
 		{
-			UnsignedInt totalTime = TheRecorder->getFrameDuration() / LOGICFRAMES_PER_SECOND;
+			UnsignedInt totalTime = TheRecorder->getPlaybackFrameCount() / LOGICFRAMES_PER_SECOND;
 			while (TheRecorder->isPlaybackInProgress())
 			{
 				TheGameClient->updateHeadless();

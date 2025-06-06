@@ -67,8 +67,8 @@ typedef int32_t replay_time_t;
 static time_t startTime;
 static const UnsignedInt startTimeOffset = 6;
 static const UnsignedInt endTimeOffset = startTimeOffset + sizeof(replay_time_t);
-static const UnsignedInt framesOffset = endTimeOffset + sizeof(replay_time_t);
-static const UnsignedInt desyncOffset = framesOffset + sizeof(UnsignedInt);
+static const UnsignedInt frameCountOffset = endTimeOffset + sizeof(replay_time_t);
+static const UnsignedInt desyncOffset = frameCountOffset + sizeof(UnsignedInt);
 static const UnsignedInt quitEarlyOffset = desyncOffset + sizeof(Bool);
 static const UnsignedInt disconOffset = quitEarlyOffset + sizeof(Bool);
 
@@ -232,7 +232,7 @@ void RecorderClass::logGameEnd( void )
 
 	time_t t;
 	time(&t);
-	UnsignedInt duration = TheGameLogic->getFrame();
+	UnsignedInt frameCount = TheGameLogic->getFrame();
 	UnsignedInt fileSize = ftell(m_file);
 	// move to appropriate offset
 	if (!fseek(m_file, endTimeOffset, SEEK_SET))
@@ -242,10 +242,10 @@ void RecorderClass::logGameEnd( void )
 		fwrite(&tmp, sizeof(replay_time_t), 1, m_file);
 	}
 	// move to appropriate offset
-	if (!fseek(m_file, framesOffset, SEEK_SET))
+	if (!fseek(m_file, frameCountOffset, SEEK_SET))
 	{
-		// save off duration
-		fwrite(&duration, sizeof(UnsignedInt), 1, m_file);
+		// save off frameCount
+		fwrite(&frameCount, sizeof(UnsignedInt), 1, m_file);
 	}
 	// move back to end of stream
 #ifdef DEBUG_CRASHING
@@ -272,7 +272,7 @@ void RecorderClass::logGameEnd( void )
 			if (logFP)
 			{
 				struct tm *t2 = localtime(&t);
-				duration = t - startTime;
+				time_t duration = t - startTime;
 				Int minutes = duration/60;
 				Int seconds = duration%60;
 				fprintf(logFP, "Game end at   %s(%d:%2.2d elapsed time)\n", asctime(t2), minutes, seconds);
@@ -408,7 +408,7 @@ void RecorderClass::init() {
 	m_gameInfo.setSeed(GetGameLogicRandomSeed());
 	m_wasDesync = FALSE;
 	m_doingAnalysis = FALSE;
-	m_playbackFrameDuration = 0;
+	m_playbackFrameCount = 0;
 }
 
 /**
@@ -854,7 +854,7 @@ Bool RecorderClass::readReplayHeader(ReplayHeader& header)
 	fread(&tmp, sizeof(replay_time_t), 1, m_file);
 	header.endTime = tmp;
 
-	fread(&header.frameDuration, sizeof(UnsignedInt), 1, m_file);
+	fread(&header.frameCount, sizeof(UnsignedInt), 1, m_file);
 
 	fread(&header.desyncGame, sizeof(Bool), 1, m_file);
 	fread(&header.quitEarly, sizeof(Bool), 1, m_file);
@@ -1244,7 +1244,7 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	}
 
 	m_currentReplayFilename = filename;
-	m_playbackFrameDuration = header.frameDuration;
+	m_playbackFrameCount = header.frameCount;
 	return TRUE;
 }
 

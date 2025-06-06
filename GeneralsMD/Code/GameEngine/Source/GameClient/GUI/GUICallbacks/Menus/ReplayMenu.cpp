@@ -199,7 +199,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 //					time_t totalSeconds = header.endTime - header.startTime;
 //					Int mins = totalSeconds/60;
 //					Int secs = totalSeconds%60;
-//					Real fps = header.frameDuration/totalSeconds;
+//					Real fps = header.frameCount/totalSeconds;
 //					extraStr.format(L"%d:%d (%g fps) %hs", mins, secs, fps, header.desyncGame?"OOS ":"");
 //
 //					for (Int i=0; i<MAX_SLOTS; ++i)
@@ -221,7 +221,7 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 //					time_t totalSeconds = header.endTime - header.startTime;
 //					Int mins = totalSeconds/60;
 //					Int secs = totalSeconds%60;
-//					Real fps = header.frameDuration/totalSeconds;
+//					Real fps = header.frameCount/totalSeconds;
 //					extraStr.format(L"%d:%d (%g fps)", mins, secs, fps);
 //				}
 

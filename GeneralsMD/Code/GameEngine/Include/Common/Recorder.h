@@ -75,7 +75,7 @@ public:
 	Bool replayMatchesGameVersion(AsciiString filename); ///< Returns true if the playback is a valid playback file for this version.
 	static Bool replayMatchesGameVersion(const ReplayHeader& header); ///< Returns true if the playback is a valid playback file for this version.
 	AsciiString getCurrentReplayFilename( void );			///< valid during playback only
-	UnsignedInt getFrameDuration() const { return m_playbackFrameDuration; }			///< valid during playback only
+	UnsignedInt getPlaybackFrameCount() const { return m_playbackFrameCount; }			///< valid during playback only
 	void stopPlayback();															///< Stops playback.  Its fine to call this even if not playing back a file.
 	Bool simulateReplay(AsciiString filename);
 #if defined RTS_DEBUG || defined RTS_INTERNAL
@@ -103,7 +103,7 @@ public:
 		UnsignedInt iniCRC;
 		time_t startTime;
 		time_t endTime;
-		UnsignedInt frameDuration;
+		UnsignedInt frameCount;
 		Bool quitEarly;
 		Bool desyncGame;
 		Bool playerDiscons[MAX_SLOTS];
@@ -159,7 +159,7 @@ protected:
 	Int m_currentFilePosition;
 	RecorderModeType m_mode;
 	AsciiString m_currentReplayFilename;							///< valid during playback only
-	UnsignedInt m_playbackFrameDuration;
+	UnsignedInt m_playbackFrameCount;
 
 	ReplayGameInfo m_gameInfo;
 	Bool m_wasDesync;
