@@ -1517,7 +1517,7 @@ void OpenContain::processDamageToContained(Real percentDamage)
 
 	while ( it != list.end() )
 	{
-		Object *object = *it++;
+		Object *object = *it;
 
 		DEBUG_ASSERTCRASH( object, ("Contain list must not contain NULL element\n") );
 
@@ -1533,20 +1533,12 @@ void OpenContain::processDamageToContained(Real percentDamage)
 
 		if( !object->isEffectivelyDead() && percentDamage == 1.0f )
 			object->kill(); // in case we are carrying flame proof troops we have been asked to kill
-	}
 
-	// Now remove all killed objects from the list.
-	it = list.begin();
-
-	while ( it != list.end() )
-	{
-		Object *object = *it;
-
-		if (object->isEffectivelyDead())
+		if ( object->isEffectivelyDead() )
 		{
 			onRemoving( object );
 			object->onRemovedFrom( getObject() );
-			it = list.erase(it);
+			it = list.erase( it );
 		}
 		else
 		{
