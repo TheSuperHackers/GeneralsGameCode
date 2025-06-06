@@ -74,9 +74,9 @@ WorkerProcess::WorkerProcess()
 	m_isDone = false;
 }
 
-bool WorkerProcess::StartProcess(UnicodeString command)
+bool WorkerProcess::startProcess(UnicodeString command)
 {
-	m_stdOutput = "";
+	m_stdOutput.clear();
 	m_isDone = false;
 
 	// Create pipe for reading console output
@@ -122,21 +122,21 @@ bool WorkerProcess::StartProcess(UnicodeString command)
 	return true;
 }
 
-bool WorkerProcess::IsRunning() const
+bool WorkerProcess::isRunning() const
 {
 	return m_processHandle != NULL;
 }
 
-bool WorkerProcess::IsDone(DWORD *exitcode, AsciiString *stdOutput) const
+bool WorkerProcess::isDone(DWORD *exitcode, AsciiString *stdOutput) const
 {
 	*exitcode = m_exitcode;
 	*stdOutput = m_stdOutput;
 	return m_isDone;
 }
 
-void WorkerProcess::Update()
+void WorkerProcess::update()
 {
-	if (!IsRunning())
+	if (!isRunning())
 		return;
 
 	while (true)
@@ -182,9 +182,9 @@ void WorkerProcess::Update()
 	m_isDone = true;
 }
 
-void WorkerProcess::Kill()
+void WorkerProcess::kill()
 {
-	if (!IsRunning())
+	if (!isRunning())
 		return;
 
 	if (m_processHandle != NULL)
@@ -206,7 +206,7 @@ void WorkerProcess::Kill()
 		m_jobHandle = NULL;
 	}
 
-	m_stdOutput = "";
+	m_stdOutput.clear();
 	m_isDone = false;
 }
 

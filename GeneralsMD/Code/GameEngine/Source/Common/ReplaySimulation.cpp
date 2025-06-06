@@ -113,14 +113,14 @@ static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &file
 	{
 		int i;
 		for (i = 0; i < processes.size(); i++)
-			processes[i].Update();
+			processes[i].update();
 
 		// Get result of finished processes and print output in order
 		while (processes.size() != 0)
 		{
 			DWORD exitcode;
 			AsciiString stdOutput;
-			if (!processes[0].IsDone(&exitcode, &stdOutput))
+			if (!processes[0].isDone(&exitcode, &stdOutput))
 				break;
 			printf("%d/%d %s", filenamePositionDone+1, filenames.size(), stdOutput.str());
 			if (exitcode != 0)
@@ -135,7 +135,7 @@ static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &file
 		int numProcessesRunning = 0;
 		for (i = 0; i < processes.size(); i++)
 		{
-			if (processes[i].IsRunning())
+			if (processes[i].isRunning())
 				numProcessesRunning++;
 		}
 
@@ -148,7 +148,7 @@ static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &file
 			command.format(L"\"%s\" -simReplay \"%s\"", exePath, filenameWide.str());
 
 			WorkerProcess p;
-			p.StartProcess(command);
+			p.startProcess(command);
 			processes.push_back(p);
 
 			filenamePositionStarted++;
