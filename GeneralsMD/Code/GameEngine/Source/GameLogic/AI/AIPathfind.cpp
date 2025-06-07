@@ -1238,7 +1238,7 @@ Bool PathfindCell::startPathfind( PathfindCell *goalCell  )
 	if (goalCell) {
 		m_info->m_totalCost = costToGoal( goalCell );
 	}
-	m_info->m_open = TRUE;
+	m_info->m_open = FALSE;
 	m_info->m_closed = FALSE;
 	return true;
 }
