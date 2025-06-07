@@ -102,11 +102,6 @@ void TunnelContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
 	if( owningPlayer == NULL )
 		return; //game tear down.  We do the onRemove* stuff first because this is allowed to fail but that still needs to be done
 
-	if( ! owningPlayer->getTunnelSystem()->isInContainer( obj ) )
-	{
-		return;
-	}
-
 	owningPlayer->getTunnelSystem()->removeFromContain( obj, exposeStealthUnits );
 
 }
@@ -116,16 +111,17 @@ void TunnelContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
 //-------------------------------------------------------------------------------------------------
 void TunnelContain::removeAllContained( Bool exposeStealthUnits )
 {
+	ContainedItemsList list;
 	Player *owningPlayer = getObject()->getControllingPlayer();
-	const ContainedItemsList *fullList = owningPlayer->getTunnelSystem()->getContainedItemsList();
+	owningPlayer->getTunnelSystem()->swapContainedItemsList(list);
 
-	Object *obj;
-	ContainedItemsList::const_iterator it;
-	it = (*fullList).begin();
-	while( it != (*fullList).end() )
+	ContainedItemsList::iterator it = list.begin();
+
+	while ( it != list.end() )
 	{
-		obj = *it;
-		it++;
+		Object *obj = *it++;
+		DEBUG_ASSERTCRASH( obj, ("Contain list must not contain NULL element"));
+
 		removeFromContain( obj, exposeStealthUnits );
 	}
 }
