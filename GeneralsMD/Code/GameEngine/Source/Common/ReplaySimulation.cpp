@@ -27,13 +27,13 @@ static int SimulateReplaysInThisProcess(const std::vector<AsciiString> &filename
 {
 	// Note that we use printf here because this is run from cmd.
 	int numErrors = 0;
-	DWORD totalStartTime = GetTickCount();
+	DWORD totalStartTimeMillis = GetTickCount();
 	for (size_t i = 0; i < filenames.size(); i++)
 	{
 		AsciiString filename = filenames[i];
 		printf("Simulating Replay \"%s\"\n", filename.str());
 		fflush(stdout);
-		DWORD startTime = GetTickCount();
+		DWORD startTimeMillis = GetTickCount();
 		if (TheRecorder->simulateReplay(filename))
 		{
 			UnsignedInt totalTimeSec = TheRecorder->getPlaybackFrameCount() / LOGICFRAMES_PER_SECOND;
@@ -46,7 +46,7 @@ static int SimulateReplaysInThisProcess(const std::vector<AsciiString> &filename
 				{
 					// Print progress report
 					UnsignedInt gameTimeSec = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
-					UnsignedInt realTimeSec = (GetTickCount()-startTime) / 1000;
+					UnsignedInt realTimeSec = (GetTickCount()-startTimeMillis) / 1000;
 					printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d\n",
 							realTimeSec/60, realTimeSec%60, gameTimeSec/60, gameTimeSec%60, totalTimeSec/60, totalTimeSec%60);
 					fflush(stdout);
@@ -59,7 +59,7 @@ static int SimulateReplaysInThisProcess(const std::vector<AsciiString> &filename
 				}
 			}
 			UnsignedInt gameTimeSec = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
-			UnsignedInt realTimeSec = (GetTickCount()-startTime) / 1000;
+			UnsignedInt realTimeSec = (GetTickCount()-startTimeMillis) / 1000;
 			printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d\n",
 					realTimeSec/60, realTimeSec%60, gameTimeSec/60, gameTimeSec%60, totalTimeSec/60, totalTimeSec%60);
 			fflush(stdout);
@@ -77,7 +77,7 @@ static int SimulateReplaysInThisProcess(const std::vector<AsciiString> &filename
 		else
 			printf("Successfully simulated all replays\n");
 
-		UnsignedInt realTime = (GetTickCount()-totalStartTime) / 1000;
+		UnsignedInt realTime = (GetTickCount()-totalStartTimeMillis) / 1000;
 		printf("Total Time: %d:%02d:%02d\n", realTime/60/60, realTime/60%60, realTime%60);
 		fflush(stdout);
 	}
@@ -99,7 +99,7 @@ static int SimulateReplaysInThisProcess(const std::vector<AsciiString> &filename
 
 static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &filenames, int maxProcesses)
 {
-	DWORD totalStartTime = GetTickCount();
+	DWORD totalStartTimeMillis = GetTickCount();
 
 	WideChar exePath[1024];
 	GetModuleFileNameW(NULL, exePath, 1024);
@@ -170,7 +170,7 @@ static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &file
 	else
 		printf("Successfully simulated all replays\n");
 
-	UnsignedInt realTime = (GetTickCount()-totalStartTime) / 1000;
+	UnsignedInt realTime = (GetTickCount()-totalStartTimeMillis) / 1000;
 	printf("Total Wall Time: %d:%02d:%02d\n", realTime/60/60, realTime/60%60, realTime%60);
 	fflush(stdout);
 
