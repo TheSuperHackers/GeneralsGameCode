@@ -151,7 +151,7 @@ bool WorkerProcess::fetchStdOutput()
 
 		DWORD readBytes = 0;
 		char buffer[1024];
-		success = ReadFile(m_readHandle, buffer, 1024-1, &readBytes, NULL);
+		success = ReadFile(m_readHandle, buffer, ARRAY_SIZE(buffer)-1, &readBytes, NULL);
 		if (!success)
 			return true;
 		DEBUG_ASSERTCRASH(readBytes != 0, ("expected readBytes to be non null"));

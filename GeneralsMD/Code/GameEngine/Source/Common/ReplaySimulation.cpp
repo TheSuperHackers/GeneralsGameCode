@@ -40,7 +40,6 @@ static int SimulateReplaysInThisProcess(const std::vector<AsciiString> &filename
 			while (TheRecorder->isPlaybackInProgress())
 			{
 				TheGameClient->updateHeadless();
-				//TheParticleSystemManager->reset();
 
 				if (TheGameLogic->getFrame() && TheGameLogic->getFrame() % (600*LOGICFRAMES_PER_SECOND) == 0)
 				{
