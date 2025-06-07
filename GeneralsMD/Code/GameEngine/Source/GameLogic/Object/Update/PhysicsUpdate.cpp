@@ -141,7 +141,7 @@ PhysicsBehaviorModuleData::PhysicsBehaviorModuleData()
 	m_vehicleCrashesIntoBuildingWeaponTemplate = TheWeaponStore->findWeaponTemplate("VehicleCrashesIntoBuildingWeapon");
 	m_vehicleCrashesIntoNonBuildingWeaponTemplate = TheWeaponStore->findWeaponTemplate("VehicleCrashesIntoNonBuildingWeapon");
 	m_vehicleCrashAllowAirborne = FALSE;
-
+	m_bounceFactor = 1.0f;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -185,6 +185,8 @@ static void parseFrictionPerSec( INI* ini, void * /*instance*/, void *store, con
 		{ "AllowCollideForce",	INI::parseBool,		NULL, offsetof( PhysicsBehaviorModuleData, m_allowCollideForce ) },
 		{ "KillWhenRestingOnGround", INI::parseBool, NULL, offsetof( PhysicsBehaviorModuleData, m_killWhenRestingOnGround) },
 
+		{ "BounceFactor",			INI::parseReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_bounceFactor) },
+		
 		{ "MinFallHeightForDamage",			parseHeightToSpeed,		NULL, offsetof( PhysicsBehaviorModuleData, m_minFallSpeedForDamage) },
 		{ "FallHeightDamageFactor",			INI::parseReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_fallHeightDamageFactor) },
 		{ "PitchRollYawFactor",			INI::parseReal,		NULL, offsetof( PhysicsBehaviorModuleData, m_pitchRollYawFactor) },
@@ -508,8 +510,12 @@ Bool PhysicsBehavior::handleBounce(Real oldZ, Real newZ, Real groundZ, Coord3D* 
 	if (getFlag(ALLOW_BOUNCE) && newZ <= groundZ)
 	{
 		const Real MIN_STIFF = 0.01f;
-		const Real MAX_STIFF = 0.99f;
+		// const Real MAX_STIFF = 0.99f;
+		const Real MAX_STIFF = 10.0f; // Why not more? :D
 		Real stiffness = TheGlobalData->m_groundStiffness;
+
+		stiffness *= getPhysicsBehaviorModuleData()->m_bounceFactor;
+
 		if (stiffness < MIN_STIFF) stiffness = MIN_STIFF;
 		if (stiffness > MAX_STIFF) stiffness = MAX_STIFF;
 
