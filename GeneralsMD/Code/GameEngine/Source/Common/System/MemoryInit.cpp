@@ -194,6 +194,7 @@ static PoolSizeRec sizes[] =
 	{ "HackInternetAIUpdate", 32, 32 },
 	{ "MissileAIUpdate", 512, 32 },
 	{ "DumbProjectileBehavior", 64, 32 },
+	{ "FreeFallProjectileBehavior", 32, 32 },
 	{ "DestroyDie", 1024, 32 },
 	{ "UpgradeDie", 128, 32 },
 	{ "KeepObjectDie", 128, 32 },
