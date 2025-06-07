@@ -149,8 +149,8 @@ void TunnelContain::harmAndForceExitAllContained( DamageInfo *info )
 //-------------------------------------------------------------------------------------------------
 void TunnelContain::killAllContained( void )
 {
-	// TheSuperHackers @bugfix xezon 04/06/2025 Empty the TunnelSystem's m_containList straight away
-	// to prevent a potential child call to catastrophically modify the m_containList as well.
+	// TheSuperHackers @bugfix xezon 04/06/2025 Empty the TunnelSystem's Contained Items List
+	// straight away to prevent a potential child call to catastrophically modify it as well.
 	// This scenario can happen if the killed occupant(s) apply deadly damage on death
 	// to the host container, which then attempts to remove all remaining occupants
 	// on the death of the host container. This is reproducible by shooting with
