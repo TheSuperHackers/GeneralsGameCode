@@ -396,6 +396,13 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 			// scroll the view
 			if (m_isScrolling)
 			{
+
+				// TheSuperHackers @bugfix Mauller 07/06/2025 Adjust the viewport scrolling so it is independent of GameClient FPS
+				// The scaling is based on the current logic rate, this provides a consistent scroll speed at all GameClient FPS
+				// This also fixes scrolling within replays when fast forwarding due to the uncapped FPS
+				// When the FPS is in excess of the expected frame rate, the ratio will reduce the offset of the cameras movement
+				const Real logicToFpsRatio = TheGlobalData->m_framesPerSecondLimit / TheDisplay->getCurrentFPS();
+
 				switch (m_scrollType)
 				{
 				case SCROLL_RMB:
@@ -416,8 +423,8 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 								m_anchor.y = m_currentPos.y - maxY;
 						}
 
-						offset.x = TheGlobalData->m_horizontalScrollSpeedFactor * (m_currentPos.x - m_anchor.x);
-						offset.y = TheGlobalData->m_verticalScrollSpeedFactor * (m_currentPos.y - m_anchor.y);
+						offset.x = TheGlobalData->m_horizontalScrollSpeedFactor * logicToFpsRatio * (m_currentPos.x - m_anchor.x);
+						offset.y = TheGlobalData->m_verticalScrollSpeedFactor * logicToFpsRatio * (m_currentPos.y - m_anchor.y);
 						Coord2D vec;
 						vec.x = offset.x;
 						vec.y = offset.y;
@@ -431,19 +438,19 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 					{
 						if (scrollDir[DIR_UP])
 						{
-							offset.y -= TheGlobalData->m_verticalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.y -= TheGlobalData->m_verticalScrollSpeedFactor * logicToFpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (scrollDir[DIR_DOWN])
 						{
-							offset.y += TheGlobalData->m_verticalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.y += TheGlobalData->m_verticalScrollSpeedFactor * logicToFpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (scrollDir[DIR_LEFT])
 						{
-							offset.x -= TheGlobalData->m_horizontalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.x -= TheGlobalData->m_horizontalScrollSpeedFactor * logicToFpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (scrollDir[DIR_RIGHT])
 						{
-							offset.x += TheGlobalData->m_horizontalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.x += TheGlobalData->m_horizontalScrollSpeedFactor * logicToFpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 					}
 					break;
@@ -453,19 +460,19 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 						UnsignedInt width  = TheDisplay->getWidth();
 						if (m_currentPos.y < edgeScrollSize)
 						{
-							offset.y -= TheGlobalData->m_verticalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.y -= TheGlobalData->m_verticalScrollSpeedFactor * logicToFpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (m_currentPos.y >= height-edgeScrollSize)
 						{
-							offset.y += TheGlobalData->m_verticalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.y += TheGlobalData->m_verticalScrollSpeedFactor * logicToFpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (m_currentPos.x < edgeScrollSize)
 						{
-							offset.x -= TheGlobalData->m_horizontalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.x -= TheGlobalData->m_horizontalScrollSpeedFactor * logicToFpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 						if (m_currentPos.x >= width-edgeScrollSize)
 						{
-							offset.x += TheGlobalData->m_horizontalScrollSpeedFactor * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
+							offset.x += TheGlobalData->m_horizontalScrollSpeedFactor * logicToFpsRatio * SCROLL_AMT * TheGlobalData->m_keyboardScrollFactor;
 						}
 					}
 					break;

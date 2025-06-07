@@ -145,7 +145,8 @@ public:
 	static W3DAssetManager *m_assetManager;		///< W3D asset manager
 
 	void drawFPSStats( void );								///< draw the fps on the screen
-	virtual Real getAverageFPS( void );								///< return the average FPS.
+	virtual Real getAverageFPS( void );						///< return the average FPS.
+	virtual Real getCurrentFPS( void );						///< return the current FPS.
 	virtual Int getLastFrameDrawCalls( void );				///< returns the number of draw calls issued in the previous frame
 
 protected:
@@ -166,6 +167,7 @@ protected:
 	IRegion2D m_clipRegion;									///< the clipping region for images
 	Bool m_isClippedEnabled;	///<used by 2D drawing operations to define clip re
 	Real m_averageFPS;		///<average fps over the last 30 frames.
+	Real m_currentFPS;		///<current fps value.
 #if defined(RTS_DEBUG)
 	Int64 m_timerAtCumuFPSStart;
 #endif
