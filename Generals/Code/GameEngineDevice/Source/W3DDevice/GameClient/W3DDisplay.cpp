@@ -870,8 +870,8 @@ void W3DDisplay::updateAverageFPS(void)
 		if (historyOffset >= FPS_HISTORY_SIZE)
 			historyOffset = 0;
 
-		double currentFPS = 1.0/elapsedSeconds; 
-		fpsHistory[historyOffset++] = currentFPS;
+		m_currentFPS = 1.0/elapsedSeconds; 
+		fpsHistory[historyOffset++] = m_currentFPS;
 		numSamples++;
 		if (numSamples > FPS_HISTORY_SIZE)
 			numSamples = FPS_HISTORY_SIZE;
@@ -1595,6 +1595,11 @@ void W3DDisplay::calculateTerrainLOD( void )
 Real W3DDisplay::getAverageFPS()
 {
 	return m_averageFPS;
+}
+
+Real W3DDisplay::getCurrentFPS()
+{
+	return m_currentFPS;
 }
 
 Int W3DDisplay::getLastFrameDrawCalls()
