@@ -104,6 +104,7 @@ public:
 	Bool m_windowed;
 	Int m_xResolution;
 	Int m_yResolution;
+	Int m_renderDeviceIndex;
 	Int m_maxShellScreens;  ///< this many shells layouts can be loaded at once
 	Bool m_useCloudMap;
 	Int  m_use3WayTerrainBlends;	///< 0 is none, 1 is normal, 2 is debug.
