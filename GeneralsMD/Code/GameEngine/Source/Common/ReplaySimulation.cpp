@@ -117,11 +117,11 @@ static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &file
 		// Get result of finished processes and print output in order
 		while (processes.size() != 0)
 		{
-			DWORD exitcode;
-			AsciiString stdOutput;
-			if (!processes[0].isDone(&exitcode, &stdOutput))
+			if (!processes[0].isDone())
 				break;
+			AsciiString stdOutput = processes[0].getStdOutput();
 			printf("%d/%d %s", filenamePositionDone+1, filenames.size(), stdOutput.str());
+			DWORD exitcode = processes[0].getExitCode();
 			if (exitcode != 0)
 				printf("Error!\n");
 			fflush(stdout);

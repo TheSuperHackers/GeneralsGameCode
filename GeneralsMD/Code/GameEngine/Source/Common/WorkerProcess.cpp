@@ -127,11 +127,19 @@ bool WorkerProcess::isRunning() const
 	return m_processHandle != NULL;
 }
 
-bool WorkerProcess::isDone(DWORD *exitcode, AsciiString *stdOutput) const
+bool WorkerProcess::isDone() const
 {
-	*exitcode = m_exitcode;
-	*stdOutput = m_stdOutput;
 	return m_isDone;
+}
+
+DWORD WorkerProcess::getExitCode() const
+{
+	return m_exitcode;
+}
+
+AsciiString WorkerProcess::getStdOutput() const
+{
+	return m_stdOutput;
 }
 
 bool WorkerProcess::fetchStdOutput()

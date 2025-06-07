@@ -27,13 +27,16 @@ public:
 	WorkerProcess();
 
 	bool startProcess(UnicodeString command);
+	
+	void update();
 
 	bool isRunning() const;
 
 	// returns true iff the process exited.
-	// Sets the parameters if return value is true.
-	bool isDone(DWORD *exitcode, AsciiString *stdOutput) const;
-	void update();
+	bool isDone() const;
+
+	DWORD getExitCode() const;
+	AsciiString getStdOutput() const;
 
 	// Terminate Process if it's running
 	void kill();
