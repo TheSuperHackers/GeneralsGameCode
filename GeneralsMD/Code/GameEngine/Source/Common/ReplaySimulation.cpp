@@ -36,18 +36,19 @@ static int SimulateReplaysInThisProcess(const std::vector<AsciiString> &filename
 		DWORD startTime = GetTickCount();
 		if (TheRecorder->simulateReplay(filename))
 		{
-			UnsignedInt totalTime = TheRecorder->getPlaybackFrameCount() / LOGICFRAMES_PER_SECOND;
+			UnsignedInt totalTimeSec = TheRecorder->getPlaybackFrameCount() / LOGICFRAMES_PER_SECOND;
 			while (TheRecorder->isPlaybackInProgress())
 			{
 				TheGameClient->updateHeadless();
 
-				if (TheGameLogic->getFrame() && TheGameLogic->getFrame() % (600*LOGICFRAMES_PER_SECOND) == 0)
+				const int progressFrameInterval = 10*60*LOGICFRAMES_PER_SECOND;
+				if (TheGameLogic->getFrame() != 0 && TheGameLogic->getFrame() % progressFrameInterval == 0)
 				{
 					// Print progress report
-					UnsignedInt gameTime = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
-					UnsignedInt realTime = (GetTickCount()-startTime) / 1000;
+					UnsignedInt gameTimeSec = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
+					UnsignedInt realTimeSec = (GetTickCount()-startTime) / 1000;
 					printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d\n",
-							realTime/60, realTime%60, gameTime/60, gameTime%60, totalTime/60, totalTime%60);
+							realTimeSec/60, realTimeSec%60, gameTimeSec/60, gameTimeSec%60, totalTimeSec/60, totalTimeSec%60);
 					fflush(stdout);
 				}
 				TheGameLogic->UPDATE();
@@ -57,10 +58,10 @@ static int SimulateReplaysInThisProcess(const std::vector<AsciiString> &filename
 					break;
 				}
 			}
-			UnsignedInt gameTime = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
-			UnsignedInt realTime = (GetTickCount()-startTime) / 1000;
+			UnsignedInt gameTimeSec = TheGameLogic->getFrame() / LOGICFRAMES_PER_SECOND;
+			UnsignedInt realTimeSec = (GetTickCount()-startTime) / 1000;
 			printf("Elapsed Time: %02d:%02d Game Time: %02d:%02d/%02d:%02d\n",
-					realTime/60, realTime%60, gameTime/60, gameTime%60, totalTime/60, totalTime%60);
+					realTimeSec/60, realTimeSec%60, gameTimeSec/60, gameTimeSec%60, totalTimeSec/60, totalTimeSec%60);
 			fflush(stdout);
 		}
 		else
