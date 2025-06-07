@@ -48,7 +48,7 @@ public:
 enum RecorderModeType CPP_11(: Int) {
 	RECORDERMODETYPE_RECORD,
 	RECORDERMODETYPE_PLAYBACK,
-	RECORDERMODETYPE_SIMULATION_PLAYBACK, // Play back replay without any graphics (TheSuperHackers @feature helmutbuhler 13/04/2025)
+	RECORDERMODETYPE_SIMULATION_PLAYBACK, // Play back replay without any graphics
 	RECORDERMODETYPE_NONE // this is a valid state to be in on the shell map, or in saved games
 };
 
