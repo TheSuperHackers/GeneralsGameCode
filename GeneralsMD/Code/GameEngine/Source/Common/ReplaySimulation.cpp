@@ -82,18 +82,6 @@ static int SimulateReplaysInThisProcess(const std::vector<AsciiString> &filename
 		fflush(stdout);
 	}
 
-	// TheSuperHackers @todo helmutbuhler 04/05/2025
-	// Some replays cause a crash inside TheGameLogic->clearGameData().
-	// It likely has to do with Contains. We really gotta fix this, but for now we just terminate.
-	TerminateProcess(GetCurrentProcess(), numErrors != 0 ? 1 : 0);
-
-	// TheSuperHackers @todo helmutbuhler 04/13/2025
-	// There is a bug somewhere in the destructor of TheGameEngine which doesn't properly
-	// clean up the players and causes a crash unless this is called.
-	if (TheGameLogic->isInGame())
-	{
-		TheGameLogic->clearGameData();
-	}
 	return numErrors != 0 ? 1 : 0;
 }
 
