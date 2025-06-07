@@ -227,8 +227,8 @@ void AIGroup::removeAll( void )
 	memberList.swap(m_memberList);
 	m_memberListSize = 0;
 	
-	std::list<Object *>::iterator i = memberList.begin();
-	for ( ; i != memberList.end(); ++i)
+	std::list<Object *>::iterator i;
+	for ( i = memberList.begin(); i != memberList.end(); ++i )
 	{
 		Object *member = *i;
 		if (member)
