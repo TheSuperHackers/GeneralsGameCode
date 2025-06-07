@@ -39,6 +39,11 @@ public:
 	void kill();
 
 private:
+	// returns true if all output has been received
+	// returns false if the worker is still running
+	bool fetchStdOutput();
+
+private:
 	HANDLE m_processHandle;
 	HANDLE m_readHandle;
 	HANDLE m_jobHandle;

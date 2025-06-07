@@ -134,29 +134,26 @@ bool WorkerProcess::isDone(DWORD *exitcode, AsciiString *stdOutput) const
 	return m_isDone;
 }
 
-void WorkerProcess::update()
+bool WorkerProcess::fetchStdOutput()
 {
-	if (!isRunning())
-		return;
-
 	while (true)
 	{
 		// Call PeekNamedPipe to make sure ReadFile won't block
 		DWORD bytesAvailable = 0;
 		BOOL success = PeekNamedPipe(m_readHandle, NULL, 0, NULL, &bytesAvailable, NULL);
 		if (!success)
-			break;
+			return true;
 		if (bytesAvailable == 0)
 		{
 			// Child process is still running and we have all output so far
-			return;
+			return false;
 		}
 
 		DWORD readBytes = 0;
 		char buffer[1024];
 		success = ReadFile(m_readHandle, buffer, 1024-1, &readBytes, NULL);
 		if (!success)
-			break;
+			return true;
 		DEBUG_ASSERTCRASH(readBytes != 0, ("expected readBytes to be non null"));
 		
 		// Remove \r, otherwise each new line is doubled when we output it again
@@ -165,6 +162,18 @@ void WorkerProcess::update()
 				buffer[i] = ' ';
 		buffer[readBytes] = 0;
 		m_stdOutput.concat(buffer);
+	}
+}
+
+void WorkerProcess::update()
+{
+	if (!isRunning())
+		return;
+
+	if (!fetchStdOutput())
+	{
+		// There is still potential output pending
+		return;
 	}
 
 	// Pipe broke, that means the process already exited. But we call this just to make sure
