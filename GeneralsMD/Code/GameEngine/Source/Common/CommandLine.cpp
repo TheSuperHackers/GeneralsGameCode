@@ -452,7 +452,7 @@ Int parseJobs(char *args[], int num)
 		TheWritableGlobalData->m_simulateReplayJobs = atoi(args[1]);
 		if (TheGlobalData->m_simulateReplayJobs < SIMULATE_REPLAYS_SEQUENTIAL || TheGlobalData->m_simulateReplayJobs == 0)
 		{
-			DEBUG_CRASH(("Invalid number of jobs %d", TheGlobalData->m_simulateReplayJobs));
+			DEBUG_CRASH(("Invalid number of jobs: %d", TheGlobalData->m_simulateReplayJobs));
 			exit(1);
 		}
 		return 2;
