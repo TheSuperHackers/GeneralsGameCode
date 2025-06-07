@@ -90,7 +90,7 @@ static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &file
 	DWORD totalStartTimeMillis = GetTickCount();
 
 	WideChar exePath[1024];
-	GetModuleFileNameW(NULL, exePath, 1024);
+	GetModuleFileNameW(NULL, exePath, ARRAY_SIZE(exePath));
 
 	std::vector<WorkerProcess> processes;
 	int filenamePositionStarted = 0;
@@ -135,9 +135,8 @@ static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &file
 			UnicodeString command;
 			command.format(L"\"%s\" -simReplay \"%s\"", exePath, filenameWide.str());
 
-			WorkerProcess p;
-			p.startProcess(command);
-			processes.push_back(p);
+			processes.push_back(WorkerProcess());
+			processes.back().startProcess(command);
 
 			filenamePositionStarted++;
 			numProcessesRunning++;
@@ -153,10 +152,7 @@ static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &file
 	DEBUG_ASSERTCRASH(filenamePositionStarted == filenames.size(), ("inconsistent file position 1"));
 	DEBUG_ASSERTCRASH(filenamePositionDone == filenames.size(), ("inconsistent file position 2"));
 
-	if (numErrors)
-		printf("Errors occured: %d\n", numErrors);
-	else
-		printf("Successfully simulated all replays\n");
+	printf("Simulation of all replays completed. Errors occured: %d\n", numErrors);
 
 	UnsignedInt realTime = (GetTickCount()-totalStartTimeMillis) / 1000;
 	printf("Total Wall Time: %d:%02d:%02d\n", realTime/60/60, realTime/60%60, realTime%60);
@@ -167,7 +163,7 @@ static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &file
 
 int SimulateReplays(const std::vector<AsciiString> &filenames, int maxProcesses)
 {
-	if (maxProcesses == -1)
+	if (maxProcesses == SIMULATE_REPLAYS_SEQUENTIAL)
 		return SimulateReplaysInThisProcess(filenames);
 	else
 		return SimulateReplaysInWorkerProcesses(filenames, maxProcesses);
