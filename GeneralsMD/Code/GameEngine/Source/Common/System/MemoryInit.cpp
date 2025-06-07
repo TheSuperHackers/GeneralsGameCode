@@ -276,6 +276,7 @@ static PoolSizeRec sizes[] =
 	{ "SupplyWarehouseCripplingBehavior", 16, 16 },
 	{ "CostModifierUpgrade", 32, 32 },
 	{ "ProductionTimeModifierUpgrade", 32, 32 },
+	{ "UnitProductionBonusUpgrade", 64, 32 },
 	{ "CashBountyPower", 32, 32 },
 	{ "CleanupAreaPower", 32, 32 },
 	{ "ObjectCreationUpgrade", 196, 32 },

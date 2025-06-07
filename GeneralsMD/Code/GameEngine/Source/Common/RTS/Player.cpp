@@ -2045,6 +2045,36 @@ Real Player::getProductionTimeChangePercent( AsciiString buildTemplateName ) con
 }	
 
 //=============================================================================
+void Player::addProductionCostChangePercent(AsciiString buildTemplateName, Real percent)
+{
+	// First check if the entry exists
+	ProductionChangeMap::iterator it = m_productionCostChanges.find(NAMEKEY(buildTemplateName));
+	if (it != m_productionCostChanges.end())
+	{
+		(*it).second += percent;  // Additive stacking
+		return;
+	}
+	// If we haven't found it, add it
+	m_productionCostChanges[NAMEKEY(buildTemplateName)] = percent;
+	//TODO: remove the entry if we end up at 0?
+}
+
+//=============================================================================
+void Player::addProductionTimeChangePercent(AsciiString buildTemplateName, Real percent)
+{
+	// First check if the entry exists
+	ProductionChangeMap::iterator it = m_productionTimeChanges.find(NAMEKEY(buildTemplateName));
+	if (it != m_productionTimeChanges.end())
+	{
+		(*it).second += percent;  // Additive stacking
+		return;
+	}
+	// If we haven't found it, add it
+	m_productionTimeChanges[NAMEKEY(buildTemplateName)] = percent;
+	//TODO: remove the entry if we end up at 0?
+}
+
+//=============================================================================
 VeterancyLevel Player::getProductionVeterancyLevel( AsciiString buildTemplateName ) const 
 { 
 	NameKeyType templateNameKey = NAMEKEY(buildTemplateName);
@@ -4781,6 +4811,78 @@ void Player::xfer( Xfer *xfer )
 	}
 	else
 		m_unitsShouldHunt = FALSE;
+
+
+	// -------------------------
+	// Xfer ProductionCostChangeMap
+	// -------------------------
+	{
+		UnsignedShort entriesCount = m_productionCostChanges.size();
+		xfer->xferUnsignedShort(&entriesCount);
+		ProductionChangeMap::iterator it;
+		if (xfer->getXferMode() == XFER_SAVE)
+		{
+			// iterate each prototype and xfer if it needs to be in the save file
+			for (it = m_productionCostChanges.begin(); it != m_productionCostChanges.end(); ++it)
+			{
+				AsciiString templateName = KEYNAME((*it).first);
+				xfer->xferAsciiString(&templateName);
+				xfer->xferReal(&((*it).second));
+			}  //end for, it
+
+		}  // end if, saving
+		else
+		{
+			for (UnsignedShort i = 0; i < entriesCount; ++i)
+			{
+				AsciiString templateName;
+				Real bonusPercent;
+
+				xfer->xferAsciiString(&templateName);
+				xfer->xferReal(&bonusPercent);
+
+				m_productionCostChanges[NAMEKEY(templateName)] = bonusPercent;
+
+			}  // end for, i
+
+		}  // end else, loading
+	}
+	//------------------------
+	// Xfer ProductionTimeChangeMap
+	// -------------------------
+	{
+		UnsignedShort entriesCount = m_productionTimeChanges.size();
+		xfer->xferUnsignedShort(&entriesCount);
+		ProductionChangeMap::iterator it;
+		if (xfer->getXferMode() == XFER_SAVE)
+		{
+			// iterate each prototype and xfer if it needs to be in the save file
+			for (it = m_productionTimeChanges.begin(); it != m_productionTimeChanges.end(); ++it)
+			{
+				AsciiString templateName = KEYNAME((*it).first);
+				xfer->xferAsciiString(&templateName);
+				xfer->xferReal(&((*it).second));
+			}  //end for, it
+
+		}  // end if, saving
+		else
+		{
+			for (UnsignedShort i = 0; i < entriesCount; ++i)
+			{
+				AsciiString templateName;
+				Real bonusPercent;
+
+				xfer->xferAsciiString(&templateName);
+				xfer->xferReal(&bonusPercent);
+
+				m_productionTimeChanges[NAMEKEY(templateName)] = bonusPercent;
+
+			}  // end for, i
+
+		}  // end else, loading
+	}
+	//------------------------
+
 
 }  // end xfer
 
