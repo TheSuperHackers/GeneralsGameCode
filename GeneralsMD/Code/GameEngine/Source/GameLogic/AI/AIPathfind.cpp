@@ -7194,11 +7194,11 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 		Bool neighborFlags[8] = {false, false, false, false, false, false, false};
 
 		// TheSuperHackers @fix Mauller 23/05/2025 Fixes uninitialized variable.
-		// To keep retail compatibility it needs to be uninitialized in VC6 builds.
-#if defined(_MSC_VER) && _MSC_VER < 1300
-		UnsignedInt newCostSoFar;
-#else
+		// To keep retail compatibility it needs to be uninitialized.
+#if defined IGNORE_COMPATABILITY
 		UnsignedInt newCostSoFar = 0;
+#else
+		UnsignedInt newCostSoFar;
 #endif
 
 		for( int i=0; i<numNeighbors; i++ )
