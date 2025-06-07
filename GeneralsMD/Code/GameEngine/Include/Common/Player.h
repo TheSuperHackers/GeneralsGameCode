@@ -417,6 +417,12 @@ public:
 	*/
 	VeterancyLevel getProductionVeterancyLevel( AsciiString buildTemplateName ) const;
 
+
+	// These values can now be set via module
+	void addProductionCostChangePercent(AsciiString buildTemplateName, Real percent);
+	void addProductionTimeChangePercent(AsciiString buildTemplateName, Real percent);
+
+
 	// Friend function for the script engine's usage.
 	void friend_setSkillset(Int skillSet);
 
