@@ -138,15 +138,15 @@
 		copying.
 
 		To create a RefCountPtr<T> from a raw pointer, use the global template functions
-		Create_NEW should be used when wrapping a pointer that has just been created with NEW
-		Create_Get should be used when wrapping a pointer that has been returned from a "Get" function
+		Create_NoAddRef should be used when wrapping a pointer that has just been created with NEW
+		Create_NoAddRef should be used when wrapping a pointer that has been returned from a "Get" function
 			(the function added a reference prior to returning the pointer)
-		Create_Peek should be used when wrapping a pointer that has been returned from a "Peek" function
+		Create_AddRef should be used when wrapping a pointer that has been returned from a "Peek" function
 			(the function did not add a reference prior to returning the pointer).
 
-		Create_Get and Create_Peek are provided to allow old code to migrate from manual reference count
+		Create_NoAddRef and Create_AddRef are provided to allow old code to migrate from manual reference count
 		management to RefCountPtr.  New code written with RefCountPtr should rarely if ever use
-		Create_Get and Create_Peek.
+		Create_NoAddRef and Create_AddRef.
 
 		If it is absolutely necessary to extract the raw pointer, use Peek.  Peek does not add a new
 		reference to the object.  Using a Peek'd object after its RefCountPtr has gone out of scope requires
@@ -158,7 +158,7 @@
 
 		Automatic construction of a RefCountPtr from a raw pointer is enabled if 
 		ALLOW_AUTOMATIC_REF_COUNT_PTR_CONSTRUCTION is defined.
-		This may be useful when migrating existing code to use RefCountPtr, but is completely safe,
+		This may be useful when migrating existing code to use RefCountPtr, but is not completely safe,
 		since it is not possible to determine if the pointer is being Get'd or Peek'd.
 		Please note that the constructor WILL add a reference to the object, which errs on the side
 		of leaking references rather than prematurely deleting objects.  Whenever possible, use the
@@ -216,7 +216,6 @@
 					};
 */
 
-#define ALLOW_AUTOMATIC_REF_COUNT_PTR_CONSTRUCTION
 
 class DummyPtrType;
 
@@ -224,17 +223,18 @@ template <class T>
 class RefCountPtr
 {
 	public:
-		friend RefCountPtr<T> Create_NEW(T *t) 
-		{
-		  return RefCountPtr<T>(t, RefCountPtr<T>::GET);
-		}
 
-		friend RefCountPtr<T> Create_Get(T *t)
+		// Creates a RefCountPtr<T> and does not increment the reference counter of the passed object.
+		// Is generally used for objects returned by operator new and "Get" functions.
+		static RefCountPtr<T> Create_NoAddRef(T *t)
 		{
+			WWASSERT(t == NULL || t->Num_Refs() >= 1);
 			return RefCountPtr<T>(t, RefCountPtr<T>::GET);
 		}
 
-		friend RefCountPtr<T> Create_Peek(T *t)
+		// Creates a RefCountPtr<T> and increments the reference counter of the passed object.
+		// Is generally used for objects returned by "Peek" functions.
+		static RefCountPtr<T> Create_AddRef(T *t)
 		{
 			return RefCountPtr<T>(t, RefCountPtr<T>::PEEK);
 		}
@@ -373,20 +373,28 @@ class RefCountPtr
 
 		T & operator *(void) const
 		{
-			G_ASSERT(0 != Referent);
+			WWASSERT(0 != Referent);
 			return *Referent;
 		}
 
-		// Note : This should typiccally only be used when mixing code that uses RefCountPtr and 
+		// Note : This should typically only be used when mixing code that uses RefCountPtr and 
 		//   manually managed ref counts on raw points.
-		// Code that consistently uses RefCountPtr should never get ahold of a raw T*
+		// Code that consistently uses RefCountPtr should never get a hold of a raw T*
 		T * Peek(void) const
 		{
 			return Referent;
 		}
 
+		// Releases the held pointer without changing its reference counter.
+		T * Release(void)
+		{
+			T * p = Referent;
+			Referent = 0;
+			return p;
+		}
+
 	private:
-		enum ReferenceHandling { GET, PEEK};
+		enum ReferenceHandling { GET, PEEK };
 
 		RefCountPtr(T * referent, ReferenceHandling reference_handling)
 			: Referent(referent)
@@ -442,7 +450,7 @@ bool operator !=(DummyPtrType * dummy, const RefCountPtr<RHS> & rhs)
 template <class Derived, class Base>
 RefCountPtr<Derived> Static_Cast(const RefCountPtr<Base> & base) 
 {
-	return Create_Peek((Derived *)base.Peek());
+	return RefCountPtr<Derived>::Create_AddRef((Derived *)base.Peek());
 }
 
 #endif
