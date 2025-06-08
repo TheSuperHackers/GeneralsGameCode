@@ -216,6 +216,7 @@ set(GAMEENGINE_SRC
     Include/GameClient/Shell.h
     Include/GameClient/ShellHooks.h
     Include/GameClient/ShellMenuScheme.h
+    Include/GameClient/ShellUtil.h
     Include/GameClient/Smudge.h
     Include/GameClient/Snow.h
     Include/GameClient/Statistics.h
@@ -785,6 +786,7 @@ set(GAMEENGINE_SRC
     Source/GameClient/GUI/ProcessAnimateWindow.cpp
     Source/GameClient/GUI/Shell/Shell.cpp
     Source/GameClient/GUI/Shell/ShellMenuScheme.cpp
+    Source/GameClient/GUI/Shell/ShellUtil.cpp
     Source/GameClient/GUI/WindowLayout.cpp
     Source/GameClient/GUI/WindowVideoManager.cpp
     Source/GameClient/GUI/WinInstanceData.cpp
