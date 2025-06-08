@@ -1149,7 +1149,7 @@ static void saveOptions( void )
 	//-------------------------------------------------------------------------------------------------
 	// HTTP Proxy
 	GameWindow *textEntryHTTPProxy = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("OptionsMenu.wnd:TextEntryHTTPProxy"));
-	if (textEntryHTTPProxy)
+	if (textEntryHTTPProxy && textEntryHTTPProxy->winGetEnabled())
 	{
 		UnicodeString uStr = GadgetTextEntryGetText(textEntryHTTPProxy);
 		AsciiString aStr;
@@ -1161,7 +1161,7 @@ static void saveOptions( void )
 	//-------------------------------------------------------------------------------------------------
 	// Firewall Port Override
 	GameWindow *textEntryFirewallPortOverride = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("OptionsMenu.wnd:TextEntryFirewallPortOverride"));
-	if (textEntryFirewallPortOverride)
+	if (textEntryFirewallPortOverride && textEntryFirewallPortOverride->winGetEnabled())
 	{
 		UnicodeString uStr = GadgetTextEntryGetText(textEntryFirewallPortOverride);
 		AsciiString aStr;
@@ -1812,17 +1812,25 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	{
 		// disable controls that you can't change the options for in game
 		comboBoxLANIP->winEnable(FALSE);
+
 		if (comboBoxOnlineIP)
 			comboBoxOnlineIP->winEnable(FALSE);
+
 		checkSendDelay->winEnable(FALSE);
+
 		buttonFirewallRefresh->winEnable(FALSE);
 
 		if (comboBoxDetail)
 			comboBoxDetail->winEnable(FALSE);
 
-
 		if (comboBoxResolution)
 			comboBoxResolution->winEnable(FALSE);
+
+		if (textEntryFirewallPortOverride)
+			textEntryFirewallPortOverride->winEnable(FALSE);
+
+		if (textEntryHTTPProxy)
+			textEntryHTTPProxy->winEnable(FALSE);
 
 //		if (checkAudioSurround)
 //			checkAudioSurround->winEnable(FALSE);
