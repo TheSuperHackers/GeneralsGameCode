@@ -243,6 +243,15 @@ WindowLayout *Shell::findScreenByFilename( AsciiString filename )
 }  // end findScreenByFilename
 
 //-------------------------------------------------------------------------------------------------
+WindowLayout *Shell::getScreenLayout( Int index ) const
+{
+	if (index >= 0 && index < m_screenCount)
+		return m_screenStack[index];
+
+	return NULL;
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Hide or unhide all window layouts loaded */
 //-------------------------------------------------------------------------------------------------
 void Shell::hide( Bool hide )

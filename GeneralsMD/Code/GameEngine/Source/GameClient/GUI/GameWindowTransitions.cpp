@@ -346,6 +346,33 @@ void TransitionGroup::skip ( void )
 	}
 }
 
+Int TransitionGroup::getHiddenGameWindowCount(Bool hidden) const
+{
+	Int count = 0;
+	TransitionWindowList::const_iterator it = m_transitionWindowList.begin();
+	while (it != m_transitionWindowList.end())
+	{
+		TransitionWindow *tWin = *it;
+		if (tWin->m_win != NULL)
+		{
+			if (TheWindowManager->isHidden(tWin->m_win) == hidden)
+				++count;
+		}
+		else
+		{
+			GameWindow* gameWin = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(tWin->m_winName));
+			if (gameWin != NULL)
+			{
+				if (TheWindowManager->isHidden(gameWin) == hidden)
+					++count;
+			}
+		}
+
+		++it;
+	}
+	return count;
+}
+
 void TransitionGroup::draw ( void )
 {
 	TransitionWindowList::iterator it = m_transitionWindowList.begin();
@@ -458,14 +485,14 @@ void GameWindowTransitionsHandler::draw( void )
 		m_secondaryDrawGroup->draw();
 }
 
-void GameWindowTransitionsHandler::setGroup(AsciiString groupName, Bool immidiate )
+void GameWindowTransitionsHandler::setGroup(AsciiString groupName, Bool immediate, Bool skip )
 {
-	if(groupName.isEmpty() && immidiate)
+	if(groupName.isEmpty() && immediate)
 		m_currentGroup = NULL;
-	if(immidiate && m_currentGroup)
+	if(immediate && m_currentGroup)
 	{
 		m_currentGroup->skip();
-		m_currentGroup = findGroup(groupName);
+		m_currentGroup = findGroupInternal(groupName);
 		if(m_currentGroup)
 			m_currentGroup->init();
 		return;
@@ -475,23 +502,28 @@ void GameWindowTransitionsHandler::setGroup(AsciiString groupName, Bool immidiat
 	{
 		if(!m_currentGroup->isFireOnce() && !m_currentGroup->isReversed())
 			m_currentGroup->reverse();
-		m_pendingGroup = findGroup(groupName);
+		m_pendingGroup = findGroupInternal(groupName);
 		if(m_pendingGroup)
+		{
 			m_pendingGroup->init();
+			if (skip)
+				m_pendingGroup->skip();
+		}
 		return;
 	}
 
-	m_currentGroup = findGroup(groupName);
+	m_currentGroup = findGroupInternal(groupName);
 	if(m_currentGroup)
+	{
 		m_currentGroup->init();
-
-	
-	
+		if (skip)
+			m_currentGroup->skip();
+	}
 }
 
 void GameWindowTransitionsHandler::reverse( AsciiString groupName )
 {
-	TransitionGroup *g = findGroup(groupName);
+	TransitionGroup *g = findGroupInternal(groupName);
 	if( m_currentGroup == g )
 	{
 		m_currentGroup->reverse();
@@ -516,7 +548,7 @@ void GameWindowTransitionsHandler::reverse( AsciiString groupName )
 
 void GameWindowTransitionsHandler::remove( AsciiString groupName,  Bool skipPending )
 {
-	TransitionGroup *g = findGroup(groupName);
+	TransitionGroup *g = findGroupInternal(groupName);
 	if(m_pendingGroup == g)
 	{
 		if(skipPending)
@@ -538,7 +570,7 @@ TransitionGroup *GameWindowTransitionsHandler::getNewGroup( AsciiString name )
 	if(name.isEmpty())
 		return NULL;
 
-	// test to see if we're trying to add an already exisitng group.
+	// test to see if we're trying to add an already existing group.
 	if(findGroup(name))
 	{
 		DEBUG_ASSERTCRASH(FALSE, ("GameWindowTransitionsHandler::getNewGroup - We already have a group %s", name.str()));
@@ -557,10 +589,15 @@ Bool GameWindowTransitionsHandler::isFinished( void )
 	return TRUE;
 }
 
+const TransitionGroup *GameWindowTransitionsHandler::findGroup( AsciiString groupName ) const
+{
+	return const_cast<GameWindowTransitionsHandler*>(this)->findGroup(groupName);
+}
+
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-TransitionGroup *GameWindowTransitionsHandler::findGroup( AsciiString groupName )
+TransitionGroup *GameWindowTransitionsHandler::findGroupInternal( AsciiString groupName )
 {
 	if(groupName.isEmpty())
 		return NULL;
