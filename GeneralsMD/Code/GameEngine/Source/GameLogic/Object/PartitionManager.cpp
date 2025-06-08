@@ -983,6 +983,9 @@ static CollideTestProc theCollideTestProcs[] =
 //-----------------------------------------------------------------------------
 PartitionManager *ThePartitionManager = NULL;  ///< the object manager singleton
 
+CellAndObjectIntersection* coiInCells[32'768];
+PartitionCell* firstCell;
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -1472,6 +1475,9 @@ void PartitionCell::friend_addToCellList(CellAndObjectIntersection *coi)
 	{
 		coi->friend_addToCellList(&m_firstCoiInCell);
 		++m_coiCount;
+
+		const auto index = std::distance(firstCell, this);
+		coiInCells[index] = m_firstCoiInCell;
 	}
 }
 
@@ -1482,6 +1488,9 @@ void PartitionCell::friend_removeFromCellList(CellAndObjectIntersection *coi)
 	{
 		coi->friend_removeFromCellList(&m_firstCoiInCell);
 		--m_coiCount;
+
+		const auto index = std::distance(firstCell, this);
+		coiInCells[index] = m_firstCoiInCell;
 	}
 }
 
@@ -2627,6 +2636,7 @@ void PartitionManager::init()
 		m_cellCountY = REAL_TO_INT_CEIL(m_worldExtents.height() * m_cellSizeInv);
 		m_totalCellCount = m_cellCountX * m_cellCountY;
 		m_cells = MSGNEW("PartitionManager_Cells") PartitionCell[m_totalCellCount];
+		firstCell = m_cells;
 		for (Int x = 0; x < m_cellCountX; x++)
 		{
 			for (Int y = 0; y < m_cellCountY; y++)
@@ -2715,6 +2725,9 @@ void PartitionManager::shutdown()
 	
 	delete [] m_cells;
 	m_cells = NULL;
+
+	memset(coiInCells, NULL, sizeof(coiInCells));
+	firstCell = NULL;
 
 	m_cellSize = m_cellSizeInv = 0.0f;
 	m_cellCountX = 0;
@@ -3284,8 +3297,6 @@ Object *PartitionManager::getClosestObjects(
 	Int maxRadiusLimit = maxRadius;
 #endif
 
-	Bool foundAny = false;
-
 	static Int theIterFlag = 1;	// nonzero, thanks
 	++theIterFlag;
 
@@ -3295,28 +3306,32 @@ Object *PartitionManager::getClosestObjects(
 	*/
   for (Int curRadius = 0; curRadius <= maxRadiusLimit; ++curRadius)
   {
+	  const bool skipCheck = cellCenterX - curRadius - 1 >= 0 && cellCenterX + curRadius + 1 < m_cellCountX
+		  && cellCenterY - curRadius - 1 >= 0 && cellCenterY + curRadius + 1 < m_cellCountY;
+
     const OffsetVec& offsets = m_radiusVec[curRadius];
-		if (offsets.empty())
-			continue;
     for (OffsetVec::const_iterator it = offsets.begin(); it != offsets.end(); ++it)
 		{
-			PartitionCell* thisCell = getCellAt(cellCenterX + it->x, cellCenterY + it->y);
-			if (thisCell == NULL)
+			const Int x = cellCenterX + it->x;
+			const Int y = cellCenterY + it->y;
+			if (!skipCheck && (x < 0 || y < 0 || x >= m_cellCountX || y >= m_cellCountY))
+			{
 				continue;
+			}
 
-			for (CellAndObjectIntersection *thisCoi = thisCell->getFirstCoiInCell(); thisCoi; thisCoi = thisCoi->getNextCoi())
+			for (CellAndObjectIntersection *thisCoi = coiInCells[y * m_cellCountX + x]; thisCoi; thisCoi = thisCoi->getNextCoi())
 			{
 				PartitionData *thisMod = thisCoi->getModule();
-				Object *thisObj = thisMod->getObject();
-
-				// never compare against ourself.
-				if (thisObj == obj || thisObj == NULL) 
-					continue;
-
 				// since an object can exist in multiple COIs, we use this to avoid processing
 				// the same one more than once.
 				if (thisMod->friend_getDoneFlag() == theIterFlag)
 					continue;
+
+				Object *thisObj = thisMod->getObject();
+				// never compare against ourself.
+				if (thisObj == obj || thisObj == NULL) 
+					continue;
+
 				thisMod->friend_setDoneFlag(theIterFlag);
 			
 				Real thisDistSqr;
@@ -3342,12 +3357,8 @@ Object *PartitionManager::getClosestObjects(
 					closestDistSqr = thisDistSqr;
 					closestVec = distVec;
 
-					if (!foundAny)
-					{
-						// if not adding to iterArg, we want to stop once we have the closest object. 
-						maxRadiusLimit = curRadius;
-					}
-					foundAny = true;
+					// if not adding to iterArg, we want to stop once we have the closest object. 
+					maxRadiusLimit = curRadius;
 				}
 
 			} // next coi
@@ -3355,6 +3366,7 @@ Object *PartitionManager::getClosestObjects(
   } // next radius
 
 #else // not FASTER_GCO
+	Bool foundAny = false;
 
 	CellOutwardIterator iter(this, cellCenterX, cellCenterY);
 	if (maxDist < HUGE_DIST)
