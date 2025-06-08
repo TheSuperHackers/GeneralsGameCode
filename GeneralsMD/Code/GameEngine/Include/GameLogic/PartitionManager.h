@@ -1248,7 +1248,7 @@ private:
 			y(static_cast<Coord>(coord.y))
 		{}
 
-		Coord x{}, y{};
+		Coord x, y;
 	};
 
 	typedef std::vector<ICoord2D_16>		OffsetVec;
