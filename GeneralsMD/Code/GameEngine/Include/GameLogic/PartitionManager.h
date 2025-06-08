@@ -1235,7 +1235,23 @@ class PartitionManager : public SubsystemInterface, public Snapshot
 private:
 
 #ifdef FASTER_GCO
-	typedef std::vector<ICoord2D>		OffsetVec;
+	struct ICoord2D_16
+	{
+		typedef int16_t Coord;
+
+		ICoord2D_16(Coord x, Coord y) :
+			x(x),
+			y(y)
+		{}
+		ICoord2D_16(ICoord2D coord) :
+			x(static_cast<Coord>(coord.x)),
+			y(static_cast<Coord>(coord.y))
+		{}
+
+		Coord x{}, y{};
+	};
+
+	typedef std::vector<ICoord2D_16>		OffsetVec;
 	typedef std::vector<OffsetVec>	RadiusVec;
 #endif
 
