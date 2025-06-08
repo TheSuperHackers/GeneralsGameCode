@@ -7441,7 +7441,7 @@ void Pathfinder::processHierarchicalCell( const ICoord2D &scanCell, const ICoord
 		}
 		
 		newCell->allocateInfo(scanCell);
-		if (!newCell->getClosed() && !newCell->getOpen()) {
+		if (newCell->hasInfo() && !newCell->getClosed() && !newCell->getOpen()) {
 			m_closedList = newCell->putOnClosedList(m_closedList);
 		}
 
@@ -7599,7 +7599,11 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 			// Close parent cell;
 			m_openList = parentCell->removeFromOpenList(m_openList);
 			m_closedList = parentCell->putOnClosedList(m_closedList);
-			startCell->allocateInfo(ndx);
+			if (!startCell->allocateInfo(ndx)) {
+				cleanOpenAndClosedLists();
+				goalCell->releaseInfo();
+				return NULL;
+			}
 			startCell->setParentCellHierarchical(parentCell);
 			cellCount++;
 			Int curCost = startCell->costToHierGoal(parentCell);
@@ -7611,7 +7615,11 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 			m_openList = startCell->putOnSortedOpenList( m_openList );
 
 			cellCount++;
-			cell->allocateInfo(toNdx);
+			if(!cell->allocateInfo(toNdx)) {
+				cleanOpenAndClosedLists();
+				goalCell->releaseInfo();
+				return NULL;
+			}
 			curCost = cell->costToHierGoal(parentCell);
 			remCost = cell->costToHierGoal(goalCell);
 			cell->setCostSoFar(curCost);
@@ -7695,13 +7703,21 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 					PathfindCell *startCell = getCell(LAYER_GROUND, ndx.x, ndx.y); 
 					if (startCell==NULL) continue;
 					if (startCell != parentCell) {
-						startCell->allocateInfo(ndx);
+						if(!startCell->allocateInfo(ndx)) {
+							cleanOpenAndClosedLists();
+							goalCell->releaseInfo();
+							return NULL;
+						}
 						startCell->setParentCellHierarchical(parentCell);
 						if (!startCell->getClosed() && !startCell->getOpen()) {
 							m_closedList = startCell->putOnClosedList(m_closedList);
 						}
 					}
-					cell->allocateInfo(toNdx);
+					if(!cell->allocateInfo(toNdx)) {
+						cleanOpenAndClosedLists();
+						goalCell->releaseInfo();
+						return NULL;
+					}
 					cell->setParentCellHierarchical(startCell);
 
 					cellCount++;
