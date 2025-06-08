@@ -769,8 +769,12 @@ private:
 	
 	static Bool							s_staticImagesInited;
 	static const Image*			s_veterancyImage[LEVEL_COUNT];
+
 	static const Image*			s_fullAmmo;
 	static const Image*			s_emptyAmmo;
+	static const Image*         s_fullAmmoThin;
+	static const Image*         s_emptyAmmoThin;
+
 	static const Image*			s_fullContainer;
 	static const Image*			s_emptyContainer;
 	static Anim2DTemplate**	s_animationTemplates;

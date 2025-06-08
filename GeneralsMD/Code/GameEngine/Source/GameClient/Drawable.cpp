@@ -289,6 +289,10 @@ const Int MAX_ENABLED_MODULES								= 16;
 /*static*/ const Image*			Drawable::s_veterancyImage[LEVEL_COUNT]	= { NULL };
 /*static*/ const Image*			Drawable::s_fullAmmo = NULL;
 /*static*/ const Image*			Drawable::s_emptyAmmo = NULL;
+
+/*static*/ const Image*         Drawable::s_fullAmmoThin = NULL;
+/*static*/ const Image*         Drawable::s_emptyAmmoThin = NULL;
+
 /*static*/ const Image*			Drawable::s_fullContainer = NULL;
 /*static*/ const Image*			Drawable::s_emptyContainer = NULL;
 /*static*/ Anim2DTemplate**	Drawable::s_animationTemplates = NULL;
@@ -309,6 +313,10 @@ const Int MAX_ENABLED_MODULES								= 16;
 
 	s_fullAmmo	= TheMappedImageCollection->findImageByName("SCPAmmoFull");
 	s_emptyAmmo	= TheMappedImageCollection->findImageByName("SCPAmmoEmpty");
+
+	s_fullAmmoThin = TheMappedImageCollection->findImageByName("SCPAmmoThinFull");
+	s_emptyAmmoThin = TheMappedImageCollection->findImageByName("SCPAmmoThinEmpty");
+
 	s_fullContainer	= TheMappedImageCollection->findImageByName("SCPPipFull");
 	s_emptyContainer	= TheMappedImageCollection->findImageByName("SCPPipEmpty");
 	
@@ -2981,7 +2989,6 @@ void Drawable::drawAmmo( const IRegion2D *healthBarRegion )
 #else
 		Real scale = 1.0f;
 #endif
-
 		Int boxWidth = REAL_TO_INT(s_emptyAmmo->getImageWidth() * scale);
 		Int boxHeight = REAL_TO_INT(s_emptyAmmo->getImageHeight() * scale);
 		const Int SPACING = 1;
@@ -3031,6 +3038,34 @@ void Drawable::drawAmmo( const IRegion2D *healthBarRegion )
 		
 		return;
 
+	}
+	case AMMO_PIPS_THIN:
+	{
+		if (!s_fullAmmoThin || !s_emptyAmmoThin)
+			return;
+
+		Real scale = 1.0f;
+		Int boxWidth = REAL_TO_INT(s_emptyAmmoThin->getImageWidth() * scale);
+		Int boxHeight = REAL_TO_INT(s_emptyAmmoThin->getImageHeight() * scale);
+		const Int SPACING = 0; // 1;
+		ICoord2D screenCenter;
+		Coord3D pos = *obj->getPosition();
+		pos.x += TheGlobalData->m_ammoPipWorldOffset.x;
+		pos.y += TheGlobalData->m_ammoPipWorldOffset.y;
+		pos.z += TheGlobalData->m_ammoPipWorldOffset.z + obj->getGeometryInfo().getMaxHeightAbovePosition();
+		if (!TheTacticalView->worldToScreen(&pos, &screenCenter))
+			return;
+
+		Real bounding = obj->getGeometryInfo().getBoundingSphereRadius() * scale;
+		Int posx = healthBarRegion->lo.x;
+		Int posy = screenCenter.y + REAL_TO_INT(TheGlobalData->m_ammoPipScreenOffset.y * bounding);
+
+		for (Int i = 0; i < numTotal; ++i)
+		{
+			TheDisplay->drawImage(i < numFull ? s_fullAmmoThin : s_emptyAmmoThin, posx, posy + 1, posx + boxWidth, posy + 1 + boxHeight);
+			posx += boxWidth + SPACING;
+		}
+		return;
 	}
 	case AMMO_PIPS_BAR:
 	{
