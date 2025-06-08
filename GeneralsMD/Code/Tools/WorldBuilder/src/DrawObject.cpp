@@ -1783,7 +1783,17 @@ void DrawObject::updateVBWithWeaponRange(MapObject *pMapObj, CameraClass* camera
 		return;
 	}
 
-  const unsigned long colors[WEAPONSLOT_COUNT] = {0xFF00FF00, 0xFFE0F00A, 0xFFFF0000}; // Green, Yellow, Red
+  // const unsigned long colors[WEAPONSLOT_COUNT] = {0xFF00FF00, 0xFFE0F00A, 0xFFFF0000}; // Green, Yellow, Red
+	const unsigned long colors[WEAPONSLOT_COUNT] = {
+	  0xFF00FF00, // Green
+	  0xFFFFFF00, // Yellow
+	  0xFFFF0000, // Red
+	  0xFF0000FF, // Blue
+	  0xFF00FFFF, // Cyan
+	  0xFFFF00FF, // Magenta
+	  0xFF000000, // Black
+	  0xFFFFFFFF  // White
+	};
 
 	
 	Coord3D pos = *pMapObj->getLocation();

@@ -510,6 +510,21 @@ void pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type m
 						case TERTIARY_WEAPON:
 							soundToPlayPtr = templ->getPerUnitSound( "VoiceTertiaryWeaponMode" );
 							break;
+						case WEAPON_FOUR:
+							soundToPlayPtr = templ->getPerUnitSound( "VoicerWeaponModeFour" );
+							break;
+						case WEAPON_FIVE:
+							soundToPlayPtr = templ->getPerUnitSound( "VoicerWeaponModeFive" );
+							break;
+						case WEAPON_SIX:
+							soundToPlayPtr = templ->getPerUnitSound( "VoicerWeaponModeSix" );
+							break;
+						case WEAPON_SEVEN:
+							soundToPlayPtr = templ->getPerUnitSound( "VoicerWeaponModeSeven" );
+							break;
+						case WEAPON_EIGHT:
+							soundToPlayPtr = templ->getPerUnitSound( "VoicerWeaponModeEight" );
+							break;
 					}
 					objectWithSound = obj;
 					skip = true;
