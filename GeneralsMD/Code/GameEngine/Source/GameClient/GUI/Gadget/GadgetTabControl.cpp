@@ -141,10 +141,9 @@ WindowMsgHandledType GadgetTabControlSystem( GameWindow *tabControl, UnsignedInt
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
-			TabControlData *tabData = (TabControlData *)tabControl->winGetUserData();
-
 			// free tab control user data
-			delete tabData;
+			delete (TabControlData *)tabControl->winGetUserData();
+			tabControl->winSetUserData( NULL );
 
 			break;
 		
