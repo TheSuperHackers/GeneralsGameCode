@@ -983,7 +983,7 @@ static CollideTestProc theCollideTestProcs[] =
 //-----------------------------------------------------------------------------
 PartitionManager *ThePartitionManager = NULL;  ///< the object manager singleton
 
-CellAndObjectIntersection* coiInCells[32'768];
+CellAndObjectIntersection* coiInCells[32768];
 PartitionCell* firstCell;
 
 //-----------------------------------------------------------------------------
