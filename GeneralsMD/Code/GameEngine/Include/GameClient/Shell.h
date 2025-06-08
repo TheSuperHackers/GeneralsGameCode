@@ -141,8 +141,6 @@ public:
 
 	WindowLayout *findScreenByFilename( AsciiString filename );		///< find screen
 	inline Bool isShellActive( void ) { return m_isShellActive; }  ///<	Returns true if the shell is active
-	
-	inline Int getScreenCount(void) { return m_screenCount; }			///< Return the current number of screens
 
 	void registerWithAnimateManager( GameWindow *win, AnimTypes animType, Bool needsToFinish, UnsignedInt delayMS = 0);
 	Bool isAnimFinished( void );
@@ -151,6 +149,9 @@ public:
 
 	void loadScheme( AsciiString name );
 	ShellMenuSchemeManager *getShellMenuSchemeManager( void ) { return m_schemeManager;	}
+
+	Int getScreenCount( void ) const { return m_screenCount; } ///< Return the current number of screens
+	WindowLayout *getScreenLayout( Int index ) const;
 
 	WindowLayout *getSaveLoadMenuLayout( void );		///< create if necessary and return layout for save load menu
 	WindowLayout *getPopupReplayLayout( void );			///< create if necessary and return layout for replay save menu

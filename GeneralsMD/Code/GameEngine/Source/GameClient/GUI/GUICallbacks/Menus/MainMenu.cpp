@@ -52,6 +52,7 @@
 #include "GameClient/MapUtil.h"
 #include "GameClient/Shell.h"
 #include "GameClient/ShellHooks.h"
+#include "GameClient/ShellUtil.h"
 #include "GameClient/KeyDefs.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetStaticText.h"
@@ -761,18 +762,7 @@ void DeclineResolution()
 		optionPref["Resolution"] = prefString;
 		optionPref.write();
 
-		// delete the shell
-		delete TheShell;
-		TheShell = NULL;
-
-		// create the shell
-		TheShell = MSGNEW("GameClientSubsystem") Shell;
-		if( TheShell )
-			TheShell->init();
-		
-		TheInGameUI->recreateControlBar();
-
-		TheShell->push( AsciiString("Menus/MainMenu.wnd") );
+		shell::recreateShell();
 	}
 }
 
@@ -860,7 +850,11 @@ void MainMenuUpdate( WindowLayout *layout, void *userData )
 	{
 		if(initialGadgetDelay == 1)
 		{
-			TheTransitionHandler->setGroup("MainMenuDefaultMenuLogoFade");
+			const TransitionGroup* transitionGroup = TheTransitionHandler->findGroup("MainMenuDefaultMenuLogoFade");
+			if (transitionGroup != NULL && transitionGroup->getHiddenGameWindowCount() > 0)
+			{
+				TheTransitionHandler->setGroup("MainMenuDefaultMenuLogoFade");
+			}
 			TheWindowManager->winSetFocus( parentMainMenu );
 			initialGadgetDelay = 2;
 			justEntered = FALSE;

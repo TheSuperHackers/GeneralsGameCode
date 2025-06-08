@@ -257,7 +257,7 @@ public:
 	virtual void winSetLoneWindow( GameWindow *window );  ///< set the open window
 
 	virtual Bool isEnabled( GameWindow *win );  ///< is window or parents enabled
-	virtual Bool isHidden( GameWindow *win );  ///< is parent or parents hidden
+	virtual Bool isHidden( GameWindow *win );  ///< is window or parents hidden
 	virtual void addWindowToParent( GameWindow *window, GameWindow *parent );
 	virtual void addWindowToParentAtEnd( GameWindow *window, GameWindow *parent );
 

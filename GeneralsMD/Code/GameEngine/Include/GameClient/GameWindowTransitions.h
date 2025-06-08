@@ -622,7 +622,7 @@ public:
 // standard vars
 	NameKeyType	m_winID;
 	GameWindow *m_win;
-	Transition *m_transition; // each window is allowed one trasition
+	Transition *m_transition; // each window is allowed one transition
 	Int m_currentFrameDelay;	// this will change based on if we're going forward or backwards
 };
 
@@ -638,7 +638,11 @@ public:
 	Bool isFinished( void );
 	void reverse( void );
 	void draw( void );
-	
+
+	// Returns the number of hidden (or shown) game windows that this transition refers to.
+	// Can be used to test whether the transition is necessary to play.
+	Int getHiddenGameWindowCount(Bool hidden = true) const;
+
 	void skip ( void );
 	AsciiString getName( void ) { return m_name; }
 	void setName( AsciiString name){ m_name = name;	}
@@ -646,11 +650,12 @@ public:
 	Bool isReversed( void );
 	Bool isFireOnce( void ) { return m_fireOnce; }
 	Bool m_fireOnce;
+
 private:
 	typedef std::list<TransitionWindow *> TransitionWindowList;
 	TransitionWindowList m_transitionWindowList;
 	Int m_directionMultiplier;
-	Int m_currentFrame; ///< maintain how long we've spent on this transition;
+	Int m_currentFrame; ///< maintain how long we've spent on this transition.
 	AsciiString m_name;
 };
 
@@ -671,18 +676,20 @@ public:
 	static const FieldParse m_gameWindowTransitionsFieldParseTable[];																				///< the parse table
 	static void parseWindow( INI* ini, void *instance, void *store, const void *userData );
 
-	void setGroup(AsciiString groupName, Bool immidiate = FALSE);		// THis will be the next group to fire off.
+	void setGroup(AsciiString groupName, Bool immediate = FALSE, Bool skip = FALSE); // This will be the next group to fire off.
 	void reverse( AsciiString groupName );// reverse the animations for the current group.
 	void remove( AsciiString groupName, Bool skipPending = FALSE );// remove the animation from the current or pending groups.
 	TransitionGroup *getNewGroup( AsciiString name );
+	const TransitionGroup *findGroup( AsciiString groupName ) const;
+
 private:
-	TransitionGroup *findGroup( AsciiString groupName );
+	TransitionGroup *findGroupInternal( AsciiString groupName );
 	typedef std::list<TransitionGroup *> TransitionGroupList;
 	TransitionGroupList m_transitionGroupList;
 	TransitionGroup *m_currentGroup;
 	TransitionGroup *m_pendingGroup;
 	TransitionGroup *m_drawGroup;
-	TransitionGroup *m_secondaryDrawGroup; // needed to draw the last frame of the previvous draw group once more.
+	TransitionGroup *m_secondaryDrawGroup; // needed to draw the last frame of the previous draw group once more.
 };
 
 void PushButtonImageDrawThree(GameWindow *window, Int alpha );
