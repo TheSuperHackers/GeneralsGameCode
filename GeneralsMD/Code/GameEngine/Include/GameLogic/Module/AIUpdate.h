@@ -83,6 +83,7 @@ enum LocomotorSetType CPP_11(: Int)
 	LOCOMOTORSET_TAXIING,			// set used for normally-airborne items while taxiing on ground
 	LOCOMOTORSET_SUPERSONIC,	// set used for high-speed attacks
 	LOCOMOTORSET_SLUGGISH,		// set used for abnormally slow (but not damaged) speeds
+	LOCOMOTORSET_VTOL,          // set used for VTOL aircraft to take off and land
 
 	LOCOMOTORSET_COUNT	///< keep last, please
 };
@@ -107,6 +108,7 @@ static const char *TheLocomotorSetNames[] =
 	"SET_TAXIING",
 	"SET_SUPERSONIC",
 	"SET_SLUGGISH",
+	"SET_VTOL",
 
 	NULL
 };
