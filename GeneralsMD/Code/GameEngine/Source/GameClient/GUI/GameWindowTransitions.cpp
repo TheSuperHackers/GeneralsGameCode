@@ -485,45 +485,44 @@ void GameWindowTransitionsHandler::draw( void )
 		m_secondaryDrawGroup->draw();
 }
 
-void GameWindowTransitionsHandler::setGroup(AsciiString groupName, Bool immediate, Bool skip )
+TransitionGroup *GameWindowTransitionsHandler::setGroup(AsciiString groupName, Bool immediate )
 {
 	if(groupName.isEmpty() && immediate)
 		m_currentGroup = NULL;
 	if(immediate && m_currentGroup)
 	{
 		m_currentGroup->skip();
-		m_currentGroup = findGroupInternal(groupName);
+		m_currentGroup = findGroup(groupName);
 		if(m_currentGroup)
+		{
 			m_currentGroup->init();
-		return;
+		}
+		return m_currentGroup;
 	}
 	
 	if(m_currentGroup)
 	{
 		if(!m_currentGroup->isFireOnce() && !m_currentGroup->isReversed())
 			m_currentGroup->reverse();
-		m_pendingGroup = findGroupInternal(groupName);
+		m_pendingGroup = findGroup(groupName);
 		if(m_pendingGroup)
 		{
 			m_pendingGroup->init();
-			if (skip)
-				m_pendingGroup->skip();
 		}
-		return;
+		return m_pendingGroup;
 	}
 
-	m_currentGroup = findGroupInternal(groupName);
+	m_currentGroup = findGroup(groupName);
 	if(m_currentGroup)
 	{
 		m_currentGroup->init();
-		if (skip)
-			m_currentGroup->skip();
 	}
+	return m_currentGroup;
 }
 
 void GameWindowTransitionsHandler::reverse( AsciiString groupName )
 {
-	TransitionGroup *g = findGroupInternal(groupName);
+	TransitionGroup *g = findGroup(groupName);
 	if( m_currentGroup == g )
 	{
 		m_currentGroup->reverse();
@@ -548,7 +547,7 @@ void GameWindowTransitionsHandler::reverse( AsciiString groupName )
 
 void GameWindowTransitionsHandler::remove( AsciiString groupName,  Bool skipPending )
 {
-	TransitionGroup *g = findGroupInternal(groupName);
+	TransitionGroup *g = findGroup(groupName);
 	if(m_pendingGroup == g)
 	{
 		if(skipPending)
@@ -589,15 +588,7 @@ Bool GameWindowTransitionsHandler::isFinished( void )
 	return TRUE;
 }
 
-const TransitionGroup *GameWindowTransitionsHandler::findGroup( AsciiString groupName ) const
-{
-	return const_cast<GameWindowTransitionsHandler*>(this)->findGroup(groupName);
-}
-
-//-----------------------------------------------------------------------------
-// PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
-//-----------------------------------------------------------------------------
-TransitionGroup *GameWindowTransitionsHandler::findGroupInternal( AsciiString groupName )
+TransitionGroup *GameWindowTransitionsHandler::findGroup( AsciiString groupName )
 {
 	if(groupName.isEmpty())
 		return NULL;

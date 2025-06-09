@@ -91,9 +91,10 @@ void recreateShell()
 	}
 
 	// Show the main menu logo and buttons right away.
-	const Bool immediate = true;
-	const Bool skip = true;
-	TheTransitionHandler->setGroup("MainMenuDefaultMenuLogoFade", immediate, skip);
+	if (TransitionGroup* transitionGroup = TheTransitionHandler->setGroup("MainMenuDefaultMenuLogoFade", true))
+	{
+		transitionGroup->skip();
+	}
 
 	TheInGameUI->recreateControlBar();
 }
