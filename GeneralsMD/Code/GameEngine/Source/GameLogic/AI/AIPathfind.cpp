@@ -6159,9 +6159,9 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 		ICoord2D newCellCoord;
 		PathfindCell *newCell;
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
-		Bool neighborFlags[8] = {false, false, false, false, false, false, false};
+		Bool neighborFlags[8] = {false, false, false, false, false, false, false, false};
 
-		UnsignedInt newCostSoFar;
+		UnsignedInt newCostSoFar = 0;
 
 
 
@@ -7130,6 +7130,11 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	// "closed" list is initially empty
 	m_closedList = NULL;
 
+	// TheSuperHackers @fix helmutbuhler This was originally uninitialized and in the loop below.
+#if defined(_MSC_VER) && _MSC_VER < 1300
+	UnsignedInt newCostSoFar = 0;
+#endif
+
 	//
 	// Continue search until "open" list is empty, or
 	// until goal is found.
@@ -7191,12 +7196,12 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 		ICoord2D newCellCoord;
 		PathfindCell *newCell;
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
-		Bool neighborFlags[8] = {false, false, false, false, false, false, false};
+		Bool neighborFlags[8] = {false, false, false, false, false, false, false, false};
 
 		// TheSuperHackers @fix Mauller 23/05/2025 Fixes uninitialized variable.
 		// To keep retail compatibility it needs to be uninitialized in VC6 builds.
 #if defined(_MSC_VER) && _MSC_VER < 1300
-		UnsignedInt newCostSoFar;
+		// newCostSoFar defined in outer block.
 #else
 		UnsignedInt newCostSoFar = 0;
 #endif
@@ -8319,9 +8324,9 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 		ICoord2D newCellCoord;
 		PathfindCell *newCell;
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
-		Bool neighborFlags[8] = {false, false, false, false, false, false, false};
+		Bool neighborFlags[8] = {false, false, false, false, false, false, false, false};
 
-		UnsignedInt newCostSoFar;
+		UnsignedInt newCostSoFar = 0;
 
 		for( int i=0; i<numNeighbors; i++ )
 		{
@@ -8572,9 +8577,9 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 		ICoord2D newCellCoord;
 		PathfindCell *newCell;
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
-		Bool neighborFlags[8] = {false, false, false, false, false, false, false};
+		Bool neighborFlags[8] = {false, false, false, false, false, false, false, false};
 
-		UnsignedInt newCostSoFar;
+		UnsignedInt newCostSoFar = 0;
 
 		for( int i=0; i<numNeighbors; i++ )
 		{
