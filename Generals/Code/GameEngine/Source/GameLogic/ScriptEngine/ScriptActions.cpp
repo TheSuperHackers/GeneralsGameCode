@@ -2874,7 +2874,7 @@ void ScriptActions::doCameraMotionBlur(Bool zoomIn, Bool saturate)
 {
 	if (TheTacticalView->setViewFilter(FT_VIEW_MOTION_BLUR_FILTER))
 	{
-		enum FilterModes mode;
+		FilterModes mode;
 		if (saturate) {
 			if (zoomIn) {
 				mode = FM_VIEW_MB_IN_SATURATE;
@@ -6429,7 +6429,7 @@ void ScriptActions::executeAction( ScriptAction *pAction )
 			doCameraMotionBlurJump(pAction->getParameter(0)->getString(), pAction->getParameter(1)->getInt());
 			return;
 		case ScriptAction::CAMERA_MOTION_BLUR_FOLLOW:
-			TheTacticalView->setViewFilterMode((enum FilterModes)(FM_VIEW_MB_PAN_ALPHA+pAction->getParameter(0)->getInt())); 						 
+			TheTacticalView->setViewFilterMode((FilterModes)(FM_VIEW_MB_PAN_ALPHA+pAction->getParameter(0)->getInt())); 						 
 			TheTacticalView->setViewFilter(FT_VIEW_MOTION_BLUR_FILTER);
 			return;
 		case ScriptAction::CAMERA_MOTION_BLUR_END_FOLLOW:
