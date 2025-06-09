@@ -46,7 +46,6 @@ target_include_directories(g_guiedit PRIVATE
 )
 
 target_link_libraries(g_guiedit PRIVATE
-    benchmark
     comctl32
     d3d8lib
     dbghelplib
