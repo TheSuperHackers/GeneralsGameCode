@@ -494,9 +494,7 @@ TransitionGroup *GameWindowTransitionsHandler::setGroup(AsciiString groupName, B
 		m_currentGroup->skip();
 		m_currentGroup = findGroup(groupName);
 		if(m_currentGroup)
-		{
 			m_currentGroup->init();
-		}
 		return m_currentGroup;
 	}
 	
@@ -506,17 +504,13 @@ TransitionGroup *GameWindowTransitionsHandler::setGroup(AsciiString groupName, B
 			m_currentGroup->reverse();
 		m_pendingGroup = findGroup(groupName);
 		if(m_pendingGroup)
-		{
 			m_pendingGroup->init();
-		}
 		return m_pendingGroup;
 	}
 
 	m_currentGroup = findGroup(groupName);
 	if(m_currentGroup)
-	{
 		m_currentGroup->init();
-	}
 	return m_currentGroup;
 }
 
