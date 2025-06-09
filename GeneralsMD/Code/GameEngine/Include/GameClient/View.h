@@ -50,6 +50,7 @@ class Thing;
 class Waypoint;
 class LookAtTranslator;
 enum FilterTypes CPP_11(: Int);
+enum FilterModes CPP_11(: Int);
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -150,9 +151,9 @@ public:
 	virtual void cameraEnableSlaveMode(const AsciiString & thingtemplateName, const AsciiString & boneName) {}
 	virtual void cameraDisableSlaveMode(void) {}
 	virtual	void Add_Camera_Shake(const Coord3D & position,float radius, float duration, float power) {}
-	virtual enum FilterModes getViewFilterMode(void) {return (enum FilterModes)0;}			///< Turns on viewport special effect (black & white mode)
+	virtual FilterModes getViewFilterMode(void) {return (FilterModes)0;}			///< Turns on viewport special effect (black & white mode)
 	virtual FilterTypes getViewFilterType(void) {return (FilterTypes)0;}			///< Turns on viewport special effect (black & white mode)
-	virtual Bool setViewFilterMode(enum FilterModes filterMode) { return FALSE; }			///< Turns on viewport special effect (black & white mode)
+	virtual Bool setViewFilterMode(FilterModes filterMode) { return FALSE; }			///< Turns on viewport special effect (black & white mode)
 	virtual void setViewFilterPos(const Coord3D *pos) { };			///<  Passes a position to the special effect filter.
 	virtual Bool setViewFilter( FilterTypes filter) { return FALSE;}			///< Turns on viewport special effect (black & white mode)
 
