@@ -32,7 +32,7 @@
 #define IUNKNOWN_NOEXCEPT
 #endif
 
-#if __cplusplus >= 201103L && !defined(__clang__)
+#if __cplusplus >= 201103L
     #define CPP_11(code) code
 #else
     #define CPP_11(code)
