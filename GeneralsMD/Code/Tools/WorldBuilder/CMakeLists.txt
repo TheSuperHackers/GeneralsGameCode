@@ -220,8 +220,6 @@ target_link_libraries(z_worldbuilder PRIVATE
     core_browserdispatch
     z_gameengine
     z_gameenginedevice
-    zi_gameengine_include
-    zi_gameenginedevice_include
     zi_always
 )
 

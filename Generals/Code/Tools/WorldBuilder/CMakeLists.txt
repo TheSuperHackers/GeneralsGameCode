@@ -210,8 +210,6 @@ target_link_libraries(g_worldbuilder PRIVATE
     core_browserdispatch
     g_gameengine
     g_gameenginedevice
-    gi_gameengine_include
-    gi_gameenginedevice_include
     gi_always
     imm32
     vfw32
