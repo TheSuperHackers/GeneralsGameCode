@@ -46,7 +46,6 @@ target_include_directories(z_guiedit PRIVATE
 )
 
 target_link_libraries(z_guiedit PRIVATE
-    benchmark
     comctl32
     core_debug
     core_profile
