@@ -676,14 +676,13 @@ public:
 	static const FieldParse m_gameWindowTransitionsFieldParseTable[];																				///< the parse table
 	static void parseWindow( INI* ini, void *instance, void *store, const void *userData );
 
-	void setGroup(AsciiString groupName, Bool immediate = FALSE, Bool skip = FALSE); // This will be the next group to fire off.
+	TransitionGroup *setGroup(AsciiString groupName, Bool immediate = FALSE); // This will be the next group to fire off.
 	void reverse( AsciiString groupName );// reverse the animations for the current group.
 	void remove( AsciiString groupName, Bool skipPending = FALSE );// remove the animation from the current or pending groups.
 	TransitionGroup *getNewGroup( AsciiString name );
-	const TransitionGroup *findGroup( AsciiString groupName ) const;
+	TransitionGroup *findGroup( AsciiString groupName );
 
 private:
-	TransitionGroup *findGroupInternal( AsciiString groupName );
 	typedef std::list<TransitionGroup *> TransitionGroupList;
 	TransitionGroupList m_transitionGroupList;
 	TransitionGroup *m_currentGroup;
