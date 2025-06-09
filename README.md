@@ -13,26 +13,25 @@
 
 # Welcome to the Generals Game Code Project
 
-GeneralsGameCode is a community-driven project aimed at maintaining and improving the classic RTS game, *Command &
+GeneralsGameCode is a community-driven project aimed at fixing and improving the classic RTS game, *Command &
 Conquer: Generals* and its expansion *Zero Hour*. This repository contains the source code for both games, with a
 primary focus on *Zero Hour*.
 
-Additionally, there is a separate repository for managing game assets such as graphics, localization files, and more.
-You can find it [here](https://github.com/TheSuperHackers/GeneralsGamePatch/) and contribute to it as well.
+Additionally, there is a complementary project repository for fixing and improving game data and assets such as
+INI scripts, GUI, AI, maps, models, textures, audio, localization. You can find it
+[here](https://github.com/TheSuperHackers/GeneralsGamePatch/) and contribute to it as well.
 
 ## Project Overview
 
 The game was originally developed using Visual Studio 6 and C++98. We've updated the code to be compatible with Visual
 Studio 2022 and C++20.
 
-The main goal of this project is to fix critical bugs and implement improvements while maintaining compatibility with
-the original *Zero Hour* version 1.04 in the initial stages. We'll focus on resolving critical bugs, with future plans
-to break compatibility with version 1.04 once the community around the project is established, allowing for further bug
-fixes and the addition of new features.
+The initial goal of this project is to fix critical bugs and implement improvements while maintaining compatibility with
+the original *Generals* version 1.08 and *Zero Hour* version 1.04. Once we can break retail compatibility, more fixes
+and features will be possible to implement.
 
 ## Current Focus and Future Plans
 
-This project is in the early stages and heavily work in progress, with ongoing work on bug fixes and enhancements.
 Here's an overview of our current focus and future plans
 
 - **Modernizing the Codebase**: Transitioning to modern C++ standards and refactoring old code.
@@ -40,8 +39,7 @@ Here's an overview of our current focus and future plans
 - **Minor Bug Fixes**: Addressing minor bugs (e.g., UI issues, graphical glitches).
 - **Cross-Platform Support**: Adding support for more platforms (e.g., Linux, macOS).
 - **Engine Improvements**: Enhancing the game engine to improve performance and stability.
-- **Client-Side Features**: Enhancing the game’s client with features such as an improved replay viewer and UI updates.
-- **New Gameplay Features**: Adding new in-game features (e.g., new units, balance changes).
+- **Client-Side Features**: Enhancing the game's client with features such as an improved replay viewer and UI updates.
 - **Multiplayer Improvements**: Implementing a new game server and an upgraded matchmaking lobby.
 - **Tooling Improvements**: Developing new or improving existing tools for modding and game development.
 - **Community-Driven Improvements**: Once the community grows, we plan to incorporate more features, updates, and
@@ -49,7 +47,7 @@ Here's an overview of our current focus and future plans
 
 ## Running the Game
 
-To run *Zero Hour* using this project, you need to have the original *Command & Conquer: Generals and Zero Hour* game
+To run *Generals* or *Zero Hour* using this project, you need to have the original *Command & Conquer: Generals and Zero Hour* game
 installed. The easiest way to get it is through *Command & Conquer The Ultimate Collection*
 on [Steam](https://store.steampowered.com/bundle/39394). Once the game is ready, download the latest version of the
 project from [GitHub Releases](https://github.com/TheSuperHackers/GeneralsGameCode/releases), extract the necessary 
@@ -69,7 +67,7 @@ includes guides for building with Docker, CLion, and links to forks supporting a
 
 ## Contributing
 
-We welcome contributions to the project! If you’re interested in contributing, you should have knowledge of C++. Join
+We welcome contributions to the project! If you’re interested in contributing, you need to have knowledge of C++. Join
 the developer chat on Discord for more information on how to get started. Please make sure to read our
 [Contributing Guidelines](CONTRIBUTING.md) before submitting a pull request. You can also check out 
 the [Wiki](https://github.com/TheSuperHackers/GeneralsGameCode/wiki) for more detailed documentation.
