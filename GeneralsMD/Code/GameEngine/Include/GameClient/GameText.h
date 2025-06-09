@@ -78,6 +78,10 @@ class GameTextInterface : public SubsystemInterface
 
 		virtual UnicodeString fetch( const Char *label, Bool *exists = NULL ) = 0;		///< Returns the associated labeled unicode text
 		virtual UnicodeString fetch( AsciiString label, Bool *exists = NULL ) = 0;		///< Returns the associated labeled unicode text
+
+		// Do not call this directly, but use the FETCH_OR_SUBSTITUTE macro
+		virtual UnicodeString fetchOrSubstitute( const Char *label, const WideChar *substituteText ) = 0;
+
 		// This function is not performance tuned.. Its really only for Worldbuilder. jkmcd
 		virtual AsciiStringVec& getStringsWithLabelPrefix(AsciiString label) = 0;
 
@@ -91,6 +95,15 @@ extern GameTextInterface* CreateGameTextInterface( void );
 //----------------------------------------------------------------------------
 //           Inlining                                                       
 //----------------------------------------------------------------------------
+
+// TheSuperHackers @info This is meant to be used like:
+// TheGameText->FETCH_OR_SUBSTITUTE("GUI:LabelName", L"Substitute Fallback Text")
+// The substitute text will be compiled out if ENABLE_GAMETEXT_SUBSTITUTES is not defined.
+#if ENABLE_GAMETEXT_SUBSTITUTES
+#define FETCH_OR_SUBSTITUTE(labelA, substituteTextW) fetchOrSubstitute(labelA, substituteTextW)
+#else
+#define FETCH_OR_SUBSTITUTE(labelA, substituteTextW) fetch(labelA)
+#endif
 
 
 #endif // __GAMECLIENT_GAMETEXT_H_

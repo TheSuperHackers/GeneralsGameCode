@@ -152,6 +152,8 @@ class GameTextManager : public GameTextInterface
 
 		virtual UnicodeString fetch( const Char *label, Bool *exists = NULL );		///< Returns the associated labeled unicode text
 		virtual UnicodeString fetch( AsciiString label, Bool *exists = NULL );		///< Returns the associated labeled unicode text
+		virtual UnicodeString fetchOrSubstitute( const Char *label, const WideChar *substituteText );
+
 		virtual AsciiStringVec& getStringsWithLabelPrefix(AsciiString label);
 
 		virtual void					initMapStringFile( const AsciiString& filename );
@@ -1339,6 +1341,19 @@ UnicodeString GameTextManager::fetch( const Char *label, Bool *exists )
 UnicodeString GameTextManager::fetch( AsciiString label, Bool *exists )
 {
 	return fetch(label.str(), exists);
+}
+
+//============================================================================
+// GameTextManager::fetchOrSubstitute
+//============================================================================
+
+UnicodeString GameTextManager::fetchOrSubstitute( const Char *label, const WideChar *substituteText )
+{
+	Bool exists;
+	UnicodeString str = fetch(label, &exists);
+	if (!exists)
+		str = substituteText;
+	return str;
 }
 
 //============================================================================

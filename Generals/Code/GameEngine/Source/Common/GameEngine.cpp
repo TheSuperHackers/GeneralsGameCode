@@ -209,6 +209,10 @@ GameEngine::~GameEngine()
 
 	TheGameResultsQueue->endThreads();
 
+	// TheSuperHackers @fix helmutbuhler 03/06/2025
+	// Reset all subsystems before deletion to prevent crashing due to cross dependencies.
+	reset();
+
 	TheSubsystemList->shutdownAll();
 	delete TheSubsystemList;
 	TheSubsystemList = NULL;

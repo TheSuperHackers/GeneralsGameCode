@@ -91,10 +91,6 @@ typedef struct tConnInfoStruct {
 	unsigned short RemotePort;
 } ConnInfoStruct;
 
-#ifndef ARRAY_SIZE
-#define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
-#endif
-
 /***********************************************************************************************
  * Get_Local_Chat_Connection_Address -- Which address are we using to talk to the chat server? *
  *                                                                                             *
