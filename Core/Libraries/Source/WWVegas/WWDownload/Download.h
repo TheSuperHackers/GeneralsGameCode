@@ -64,7 +64,7 @@ public:
 			m_predictionTimes[i] = 0;
 		}
 	}
-	~CDownload() { delete m_Ftp; }
+	virtual ~CDownload() { delete m_Ftp; }
 
 public:
 	virtual HRESULT PumpMessages();

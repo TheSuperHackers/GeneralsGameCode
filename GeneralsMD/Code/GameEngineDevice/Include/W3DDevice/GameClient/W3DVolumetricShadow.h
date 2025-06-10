@@ -102,7 +102,7 @@ class W3DVolumetricShadow	: public Shadow
 	public:
 
 		W3DVolumetricShadow( void );
-		~W3DVolumetricShadow( void );
+		virtual ~W3DVolumetricShadow( void );
 
 	protected:
 

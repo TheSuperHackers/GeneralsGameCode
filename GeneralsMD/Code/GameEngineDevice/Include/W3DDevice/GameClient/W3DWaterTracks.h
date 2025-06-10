@@ -42,7 +42,7 @@ class WaterTracksObj
 public:
 
 	WaterTracksObj(void);
-	~WaterTracksObj(void);
+	virtual ~WaterTracksObj(void);
 
 	virtual void					Render(void) {};	///<draw this object
 	virtual void					Get_Obj_Space_Bounding_Sphere(SphereClass & sphere) const;	///<bounding sphere of this object

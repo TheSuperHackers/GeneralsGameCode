@@ -51,7 +51,7 @@ class ConnectionManager
 {
 public:
 	ConnectionManager();
-	~ConnectionManager();
+	virtual ~ConnectionManager();
 
 	virtual void init();				///< Initialize this instance.
 	virtual void reset();				///< Take this instance back to the initial state.
