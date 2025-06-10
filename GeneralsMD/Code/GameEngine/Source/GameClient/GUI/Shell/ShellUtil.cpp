@@ -28,75 +28,34 @@
 namespace shell
 {
 
-namespace
+void recreateUI()
 {
-	struct ScreenInfo
-	{
-		ScreenInfo() : isHidden(false) {}
-		AsciiString filename;
-		bool isHidden;
-	};
+	TheShell->recreateWindowLayouts();
+
+	showMainMenuButtons();
+
+	TheInGameUI->recreateControlBar();
 }
 
-void recreateShell()
+void showMainMenuButtons()
 {
-	// collect state of the current shell
-	const Int screenCount = TheShell->getScreenCount();
-	std::vector<ScreenInfo> screenStackInfos;
-	Bool showOptions = false;
-
-	{
-		screenStackInfos.resize(screenCount);
-		Int screenIndex = 0;
-		for (; screenIndex < screenCount; ++screenIndex)
-		{
-			const WindowLayout* layout = TheShell->getScreenLayout(screenIndex);
-			ScreenInfo& screenInfo = screenStackInfos[screenIndex];
-			screenInfo.filename = layout->getFilename();
-			screenInfo.isHidden = layout->isHidden();
-		}
-
-		const WindowLayout* optionsLayout = TheShell->getOptionsLayout(false);
-		if (optionsLayout != NULL)
-		{
-			DEBUG_ASSERTCRASH(!optionsLayout->isHidden(), ("options menu layout is hidden\n"));
-			showOptions = true;
-		}
-	}
-
-	// recreate the shell
-	delete TheShell;
-	TheShell = MSGNEW("GameClientSubsystem") Shell;
-	TheShell->init();
-
-	// restore the screen stack
+	Int screenCount = TheShell->getScreenCount();
 	Int screenIndex = 0;
 	for (; screenIndex < screenCount; ++screenIndex)
 	{
-		const ScreenInfo& screenInfo = screenStackInfos[screenIndex];
-		TheShell->push(screenInfo.filename);
-
 		WindowLayout* layout = TheShell->getScreenLayout(screenIndex);
-		layout->hide(screenInfo.isHidden);
+		if (0 == layout->getFilename().compareNoCase("Menus/MainMenu.wnd"))
+		{
+			if (!layout->isHidden())
+			{
+				if (TransitionGroup* transitionGroup = TheTransitionHandler->setGroup("MainMenuDefaultMenuLogoFade", true))
+				{
+					transitionGroup->skip();
+				}
+			}
+			break;
+		}
 	}
-
-	if (showOptions)
-	{
-		// restore the options menu
-		WindowLayout* layout = TheShell->getOptionsLayout(true);
-		DEBUG_ASSERTCRASH(layout != NULL, ("options menu layout is NULL\n"));
-		layout->runInit();
-		layout->hide(false);
-		layout->bringForward();
-	}
-
-	// Show the main menu logo and buttons right away.
-	if (TransitionGroup* transitionGroup = TheTransitionHandler->setGroup("MainMenuDefaultMenuLogoFade", true))
-	{
-		transitionGroup->skip();
-	}
-
-	TheInGameUI->recreateControlBar();
 }
 
 } // namespace shell
