@@ -21,8 +21,9 @@
 namespace shell
 {
 
-// Will recreate the Shell with the same state that it was left with.
-// Currently works correctly in the Main Menu only.
-void recreateShell();
+// Will recreate the UI. Currently works correctly in the Main Menu only.
+void recreateUI();
+
+void showMainMenuButtons();
 
 }
