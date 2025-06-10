@@ -1042,11 +1042,11 @@ void AIPlayer::onUnitProduced( Object *factory, Object *unit )
 {
 	Bool found = false;
 	// TheSuperHackers @fix Mauller 26/04/2025 Fixes uninitialized variable.
-	// To keep retail compatibility it needs to be set true in VS6 builds.
-#if defined(_MSC_VER) && _MSC_VER < 1300
-	Bool supplyTruck = true;
-#else
+	// To keep retail compatibility it needs to be set true.
+#if defined IGNORE_COMPATABILITY
 	Bool supplyTruck = false;
+#else
+	Bool supplyTruck = true;
 #endif
 
 	// factory could be NULL at the start of the game.

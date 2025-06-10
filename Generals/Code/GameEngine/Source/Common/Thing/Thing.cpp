@@ -195,11 +195,8 @@ void Thing::setPosition( const Coord3D *pos )
 }
 
 //=============================================================================
-void Thing::setOrientation( Real angle )
+void Thing::setOrientation(Real angle)
 {
-	//USE_PERF_TIMER(ThingMatrixStuff)
-	Coord3D u, x, y, z, pos;
-
 	// setOrientation always forces us straight up in the Z axis,
 	// or aligned with the terrain if we have the magic flag set.
 	// don't want this? call setTransformMatrix instead.
@@ -208,40 +205,26 @@ void Thing::setOrientation( Real angle )
 	Coord3D oldPos = m_cachedPos;
 	Matrix3D oldMtx = m_transform;
 
-	pos.x = m_transform.Get_X_Translation();
-	pos.y = m_transform.Get_Y_Translation();
-	pos.z = m_transform.Get_Z_Translation();
-	if( m_template->isKindOf( KINDOF_STICK_TO_TERRAIN_SLOPE) )
+	m_cachedAngle = normalizeAngle(angle);
+	Coord3D pos = { m_transform[0][3], m_transform[1][3] ,m_transform[2][3] };
+	m_cachedPos = pos;
+
+	if (m_template->isKindOf(KINDOF_STICK_TO_TERRAIN_SLOPE))
 	{
-		Matrix3D mtx;
-		const Bool stickToGround = true;	// yes, set the "z" pos				
-		TheTerrainLogic->alignOnTerrain(angle, pos, stickToGround, m_transform );
+		TheTerrainLogic->alignOnTerrain(angle, m_cachedPos, true, m_transform);
 	}
 	else
 	{
-		z.x = 0.0f;
-		z.y = 0.0f;
-		z.z = 1.0f;
-
-		u.x = Cos(angle);
-		u.y = Sin(angle);
-		u.z = 0.0f;
-
-		y.crossProduct( &z, &u, &y );
-		x.crossProduct( &y, &z, &x );
-
-		m_transform.Set(  x.x, y.x, z.x, pos.x,
-											x.y, y.y, z.y, pos.y,
-											x.z, y.z, z.z, pos.z );
+		Real a = Sin(angle);
+		Real b = Cos(angle);
+		m_transform[0][0] = b; m_transform[0][1] = -a; m_transform[0][2] = 0;
+		m_transform[1][0] = a; m_transform[1][1] = b; m_transform[1][2] = 0;
+		m_transform[2][0] = 0; m_transform[2][1] = 0; m_transform[2][2] = 1;
 	}
 
-	//DEBUG_ASSERTCRASH(-PI <= angle && angle <= PI, ("Please pass only normalized (-PI..PI) angles to setOrientation (%f).\n", angle));
-	m_cachedAngle = normalizeAngle(angle);
-	m_cachedPos = pos;
 	m_cacheFlags &= ~VALID_DIRVECTOR;	// but don't clear the altitude flags.
 
 	reactToTransformChange(&oldMtx, &oldPos, oldAngle);
-	DEBUG_ASSERTCRASH(!(_isnan(getPosition()->x) || _isnan(getPosition()->y) || _isnan(getPosition()->z)), ("Drawable/Object position NAN! '%s'\n", m_template->getName().str() ));
 }
 
 //=============================================================================
