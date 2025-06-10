@@ -6159,7 +6159,7 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 		ICoord2D newCellCoord;
 		PathfindCell *newCell;
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
-		Bool neighborFlags[8] = {false, false, false, false, false, false, false, false};
+		Bool neighborFlags[8] = { 0 };
 
 		UnsignedInt newCostSoFar = 0;
 
@@ -7196,7 +7196,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 		ICoord2D newCellCoord;
 		PathfindCell *newCell;
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
-		Bool neighborFlags[8] = {false, false, false, false, false, false, false, false};
+		Bool neighborFlags[8] = { 0 };
 
 		// TheSuperHackers @fix Mauller 23/05/2025 Fixes uninitialized variable.
 		// To keep retail compatibility it needs to be uninitialized in VC6 builds.
@@ -8324,7 +8324,7 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 		ICoord2D newCellCoord;
 		PathfindCell *newCell;
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
-		Bool neighborFlags[8] = {false, false, false, false, false, false, false, false};
+		Bool neighborFlags[8] = { 0 };
 
 		UnsignedInt newCostSoFar = 0;
 
@@ -8577,7 +8577,7 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 		ICoord2D newCellCoord;
 		PathfindCell *newCell;
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
-		Bool neighborFlags[8] = {false, false, false, false, false, false, false, false};
+		Bool neighborFlags[8] = { 0 };
 
 		UnsignedInt newCostSoFar = 0;
 
