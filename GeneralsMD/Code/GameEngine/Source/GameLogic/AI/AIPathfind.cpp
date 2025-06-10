@@ -7265,6 +7265,8 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 				}								
 				cellCount++;
 
+#if RETAIL_COMPATIBLE_CRC
+				// TheSuperHackers @fix helmutbuhler 11/06/2025 The indentation was wrong on retail here.
 				newCostSoFar = newCell->costSoFar( parentCell );
 				if (clearDiameter<pathDiameter) {
 					int delta = pathDiameter-clearDiameter;
@@ -7272,6 +7274,15 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 				}
 				newCell->setBlockedByAlly(false);
 			}
+#else
+			}
+			newCostSoFar = newCell->costSoFar( parentCell );
+			if (clearDiameter<pathDiameter) {
+				int delta = pathDiameter-clearDiameter;
+				newCostSoFar += 0.6f*(delta*COST_ORTHOGONAL);
+			}
+			newCell->setBlockedByAlly(false);
+#endif
 			Int costRemaining = 0;
 			costRemaining = newCell->costToGoal( goalCell );
 
