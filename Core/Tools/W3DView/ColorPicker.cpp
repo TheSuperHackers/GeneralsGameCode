@@ -22,11 +22,11 @@
 //
 //
 
-#include "stdafx.h"
-#include "colorpicker.h"
-#include "colorpickerdialogclass.h"
+#include "StdAfx.h"
+#include "ColorPicker.h"
+#include "ColorPickerDialogClass.h"
 #include <math.h>
-#include "utils.h"
+#include "Utils.h"
 
 
 #ifdef RTS_DEBUG

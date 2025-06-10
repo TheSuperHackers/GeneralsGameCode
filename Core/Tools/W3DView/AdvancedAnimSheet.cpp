@@ -19,14 +19,14 @@
 // AdvancedAnimSheet.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "w3dview.h"
-#include "W3dViewDoc.h"
+#include "StdAfx.h"
+#include "W3DView.h"
+#include "W3DViewDoc.h"
 #include "AdvancedAnimSheet.h"
 
-#include "AssetMgr.h"
-#include "HAnim.h"
-#include "HTree.h"
+#include "assetmgr.h"
+#include "hanim.h"
+#include "htree.h"
 #include "Utils.h"
 
 

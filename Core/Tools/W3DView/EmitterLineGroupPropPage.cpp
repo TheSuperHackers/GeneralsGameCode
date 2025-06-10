@@ -19,14 +19,14 @@
 // EmitterLineGroupPropPage.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "w3dview.h"
+#include "StdAfx.h"
+#include "W3DView.h"
 #include "EmitterLineGroupPropPage.h"
 #include "w3d_file.h"
 #include "EmitterInstanceList.h"
 #include "Utils.h"
-#include "ColorBar.H"
-#include "ParticleBlurTimeKeyDialog.H"
+#include "ColorBar.h"
+#include "ParticleBlurTimeKeyDialog.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW
