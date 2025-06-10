@@ -491,6 +491,7 @@ static PoolSizeRec sizes[] =
 	{ "HeliTakeoffOrLandingState", 64, 32 },
 	{ "VtolTakeoffOrLandingState", 64, 32 },
 	{ "JetOrHeliParkOrientState", 64, 32 },
+	{ "VtolParkOrientState", 64, 32 },
 	{ "JetOrHeliReloadAmmoState", 64, 32 },
 	{ "SupplyTruckBusyState", 600, 32 },
 	{ "SupplyTruckIdleState", 600, 32 },

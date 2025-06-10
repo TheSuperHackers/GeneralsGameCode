@@ -279,6 +279,11 @@ enum ModelConditionFlagType CPP_11(: Int)
 	MODELCONDITION_RELOADING_H,
 	MODELCONDITION_USING_WEAPON_H,
 
+	// VTOL
+	MODELCONDITION_TAKEOFF,
+	MODELCONDITION_LANDING,
+
+
 //
 // Note: these values are saved in save files, so you MUST NOT REMOVE OR CHANGE
 // existing values!
