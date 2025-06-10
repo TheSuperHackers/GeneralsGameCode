@@ -1302,7 +1302,7 @@ static void saveOptions( void )
 				prefString.format("%d %d", xres, yres );
 				(*pref)["Resolution"] = prefString;
 
-				shell::recreateShell();
+				shell::recreateUI();
 			}
 		}
 	}

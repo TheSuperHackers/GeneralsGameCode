@@ -762,7 +762,7 @@ void DeclineResolution()
 		optionPref["Resolution"] = prefString;
 		optionPref.write();
 
-		shell::recreateShell();
+		shell::recreateUI();
 	}
 }
 

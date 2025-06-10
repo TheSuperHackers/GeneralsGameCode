@@ -125,6 +125,8 @@ public:
 	virtual void update( void );		
 	//===============================================================================================
 
+	void recreateWindowLayouts();
+
 	void showShellMap(Bool useShellMap );										///< access function to turn on and off the shell map
 
 	void hide( Bool hide );																	///< show/hide all shell layouts
@@ -159,6 +161,9 @@ public:
 	void destroyOptionsLayout( void );							///< destroy the shell's options layout.
 
 protected:
+
+	void construct( void );
+	void deconstruct( void );
 
 	void linkScreen( WindowLayout *screen );								///< link screen to list
 	void unlinkScreen( WindowLayout *screen );							///< remove screen from list
