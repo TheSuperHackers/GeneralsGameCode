@@ -36,6 +36,7 @@
 class ProfileResultFileCSV: public ProfileResultInterface
 {
   ProfileResultFileCSV(void) {}
+  virtual ~ProfileResultFileCSV() {}
 
   void WriteThread(ProfileFuncLevel::Thread &thread);
   
@@ -84,6 +85,7 @@ public:
 private:
 
   ProfileResultFileDOT(const char *fileName, const char *frameName, int foldThreshold);
+  virtual ~ProfileResultFileDOT() {}
 
   struct FoldHelper
   {
