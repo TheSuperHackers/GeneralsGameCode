@@ -7131,7 +7131,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	m_closedList = NULL;
 
 	// TheSuperHackers @fix helmutbuhler This was originally uninitialized and in the loop below.
-#if defined(_MSC_VER) && _MSC_VER < 1300
+#if RETAIL_COMPATIBLE_CRC
 	UnsignedInt newCostSoFar = 0;
 #endif
 
@@ -7199,8 +7199,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 		Bool neighborFlags[8] = { 0 };
 
 		// TheSuperHackers @fix Mauller 23/05/2025 Fixes uninitialized variable.
-		// To keep retail compatibility it needs to be uninitialized in VC6 builds.
-#if defined(_MSC_VER) && _MSC_VER < 1300
+#if RETAIL_COMPATIBLE_CRC
 		// newCostSoFar defined in outer block.
 #else
 		UnsignedInt newCostSoFar = 0;
