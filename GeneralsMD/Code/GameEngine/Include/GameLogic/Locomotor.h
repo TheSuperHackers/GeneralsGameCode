@@ -361,6 +361,8 @@ public:
 
 	void startMove(void); ///< Indicates that a move is starting, primarily to reset the donut timer. jba.
 
+	static Real getSurfaceHtAtPt(Real x, Real y);
+
 protected:
 	void moveTowardsPositionLegs(Object* obj, PhysicsBehavior *physics, const Coord3D& goalPos, Real onPathDistToGoal, Real desiredSpeed);
 	void moveTowardsPositionLegsWander(Object* obj, PhysicsBehavior *physics, const Coord3D& goalPos, Real onPathDistToGoal, Real desiredSpeed);
@@ -389,7 +391,6 @@ protected:
 	Bool handleBehaviorZ(Object* obj, PhysicsBehavior *physics, const Coord3D& goalPos);
 	PhysicsTurningType rotateObjAroundLocoPivot(Object* obj, const Coord3D& goalPos, Real maxTurnRate, Real *relAngle = NULL);
 
-	Real getSurfaceHtAtPt(Real x, Real y);
 	Real calcLiftToUseAtPt(Object* obj, PhysicsBehavior *physics, Real curZ, Real surfaceAtPt, Real preferredHeight);
 
 	Bool fixInvalidPosition(Object* obj, PhysicsBehavior *physics);

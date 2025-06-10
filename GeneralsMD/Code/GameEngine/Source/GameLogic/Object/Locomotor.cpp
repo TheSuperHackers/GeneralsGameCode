@@ -2050,7 +2050,7 @@ void Locomotor::moveTowardsPositionThrust(Object* obj, PhysicsBehavior *physics,
 }
 
 //-------------------------------------------------------------------------------------------------
-Real Locomotor::getSurfaceHtAtPt(Real x, Real y)
+/*static*/ Real Locomotor::getSurfaceHtAtPt(Real x, Real y)
 {
 	Real ht = 0;
 

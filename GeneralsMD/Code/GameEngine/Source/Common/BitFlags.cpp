@@ -207,6 +207,9 @@ const char* ModelConditionFlags::s_bitNameList[] =
 	"BETWEEN_FIRING_SHOTS_H",
 	"RELOADING_H",
 	"USING_WEAPON_H",
+
+	"TAKEOFF",
+	"LANDING",
 	
 	NULL
 };
