@@ -106,7 +106,7 @@ CHierarchyPropPage::OnInitDialog (void)
         if (pCHierarchy)
         {
             CString stringDesc;
-            stringDesc.Format (IDS_HIERARCHY_PROP_DESC, m_stringHierarchyName);
+            stringDesc.Format (IDS_HIERARCHY_PROP_DESC, m_stringHierarchyName.GetString());
 
             // Put the description onto the dialog
             SetDlgItemText (IDC_DESCRIPTION, stringDesc);
