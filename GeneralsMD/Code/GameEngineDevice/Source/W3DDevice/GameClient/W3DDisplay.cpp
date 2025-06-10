@@ -163,8 +163,7 @@ StatDumpClass::StatDumpClass( const char *fname )
 		}
 		pEnd--;
 	}
-	// TheSuperHackers @bugfix Caball009 03/06/2025 Use std::string instead of AsciiString here to avoid possible static initialization order fiasco
-	// TheDynamicMemoryAllocator is used by AsciiString and may not have been initialized yet
+	// TheSuperHackers @fix Caball009 03/06/2025 Don't use AsciiString here anymore because its memory allocator may not have been initialized yet.
 	const std::string fullPath = std::string(buffer) + "\\" + fname;
 	m_fp = fopen(fullPath.c_str(), "wt");
 }
