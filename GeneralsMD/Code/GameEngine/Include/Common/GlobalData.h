@@ -555,7 +555,7 @@ private:
 #if defined(_DEBUG) || defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	static union
 	{
-		GlobalData* TheWritableGlobalData = NULL;						///< The global data singleton
+		GlobalData* TheWritableGlobalData;								///< The global data singleton
 		const GlobalData* TheGlobalData;								///< Const shorthand for above singleton
 	};
 #else
