@@ -57,6 +57,11 @@
 #include "GameNetwork/FirewallHelper.h"
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
+#if !defined(_DEBUG) && !defined(RTS_DEBUG) && !defined(RTS_INTERNAL)
+	GlobalData* TheWritableGlobalData = NULL;				///< The global data singleton
+#endif
+
+//-------------------------------------------------------------------------------------------------
 GlobalData* GlobalData::m_theOriginal = NULL;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
