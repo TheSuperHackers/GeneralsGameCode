@@ -555,6 +555,10 @@ private:
 // singleton
 extern GlobalData* TheWritableGlobalData;
 
-#define TheGlobalData ((const GlobalData*)TheWritableGlobalData)
+#if defined(_DEBUG) || defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+	extern const GlobalData* TheGlobalData;
+#else
+	#define TheGlobalData ((const GlobalData*)TheWritableGlobalData)
+#endif
 
 #endif

@@ -58,6 +58,9 @@
 
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 GlobalData* TheWritableGlobalData = NULL;				///< The global data singleton
+#if defined(_DEBUG) || defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+	const GlobalData* TheGlobalData = NULL;
+#endif
 
 //-------------------------------------------------------------------------------------------------
 GlobalData* GlobalData::m_theOriginal = NULL;
@@ -1124,6 +1127,10 @@ GlobalData::~GlobalData( void )
 	if( m_theOriginal == this )	{
 		m_theOriginal = NULL;
 		TheWritableGlobalData = NULL;
+
+#if defined(_DEBUG) || defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+		TheGlobalData = TheWritableGlobalData;
+#endif
 	}
 
 }  // end ~GlobalData
@@ -1172,6 +1179,10 @@ GlobalData *GlobalData::newOverride( void )
 	// set this new instance as the 'most current override' where we will access all data from
 	TheWritableGlobalData = override;
 
+#if defined(_DEBUG) || defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+	TheGlobalData = TheWritableGlobalData;
+#endif
+
 	return override;
 
 }  // end newOveride
@@ -1208,6 +1219,10 @@ void GlobalData::reset( void )
 
 	}  // end while
 
+#if defined(_DEBUG) || defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+	TheGlobalData = TheWritableGlobalData;
+#endif
+
 	//
 	// we now have the one single global data in TheWritableGlobalData singleton, lets sanity check
 	// some of all that
@@ -1241,6 +1256,10 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 
 	}  // end else
 	// If we're multifile, then continue loading stuff into the Global Data as normal.
+
+#if defined(_DEBUG) || defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+	TheGlobalData = TheWritableGlobalData;
+#endif
 
 	// parse the ini weapon definition
 	ini->initFromINI( TheWritableGlobalData, s_GlobalDataFieldParseTable );
