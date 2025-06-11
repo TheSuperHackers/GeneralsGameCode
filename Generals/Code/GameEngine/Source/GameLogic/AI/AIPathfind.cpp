@@ -6586,6 +6586,11 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	// "closed" list is initially empty
 	m_closedList = NULL;
 
+	// TheSuperHackers @fix helmutbuhler This was originally uninitialized and in the loop below.
+#if RETAIL_COMPATIBLE_CRC
+	UnsignedInt newCostSoFar = 0;
+#endif
+
 	//
 	// Continue search until "open" list is empty, or
 	// until goal is found.
@@ -7660,11 +7665,6 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 
 	// "closed" list is initially empty
 	m_closedList = NULL;
-
-	// TheSuperHackers @fix helmutbuhler This was originally uninitialized and in the loop below.
-#if RETAIL_COMPATIBLE_CRC
-	UnsignedInt newCostSoFar = 0;
-#endif
 
 	//
 	// Continue search until "open" list is empty, or
