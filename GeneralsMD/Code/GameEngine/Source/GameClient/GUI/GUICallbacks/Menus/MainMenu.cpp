@@ -52,7 +52,6 @@
 #include "GameClient/MapUtil.h"
 #include "GameClient/Shell.h"
 #include "GameClient/ShellHooks.h"
-#include "GameClient/ShellUtil.h"
 #include "GameClient/KeyDefs.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetStaticText.h"
@@ -762,7 +761,9 @@ void DeclineResolution()
 		optionPref["Resolution"] = prefString;
 		optionPref.write();
 
-		shell::recreateUI();
+		TheShell->recreateWindowLayouts();
+
+		TheInGameUI->recreateControlBar();
 	}
 }
 
