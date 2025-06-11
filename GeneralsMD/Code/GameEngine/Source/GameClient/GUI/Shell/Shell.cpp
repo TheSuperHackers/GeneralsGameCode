@@ -239,12 +239,11 @@ namespace
 }
 
 //-------------------------------------------------------------------------------------------------
-void Shell::recreateWindowLayouts()
+void Shell::recreateWindowLayouts( void )
 {
 		// collect state of the current shell
 	const Int screenCount = getScreenCount();
 	std::vector<ScreenInfo> screenStackInfos;
-	Bool showOptions = false;
 
 	{
 		screenStackInfos.resize(screenCount);
@@ -255,13 +254,6 @@ void Shell::recreateWindowLayouts()
 			ScreenInfo& screenInfo = screenStackInfos[screenIndex];
 			screenInfo.filename = layout->getFilename();
 			screenInfo.isHidden = layout->isHidden();
-		}
-
-		const WindowLayout* optionsLayout = getOptionsLayout(false);
-		if (optionsLayout != NULL)
-		{
-			DEBUG_ASSERTCRASH(!optionsLayout->isHidden(), ("options menu layout is hidden\n"));
-			showOptions = true;
 		}
 	}
 
@@ -279,16 +271,6 @@ void Shell::recreateWindowLayouts()
 
 		WindowLayout* layout = getScreenLayout(screenIndex);
 		layout->hide(screenInfo.isHidden);
-	}
-
-	if (showOptions)
-	{
-		// restore the options menu
-		WindowLayout* layout = getOptionsLayout(true);
-		DEBUG_ASSERTCRASH(layout != NULL, ("options menu layout is NULL\n"));
-		layout->runInit();
-		layout->hide(false);
-		layout->bringForward();
 	}
 }
 

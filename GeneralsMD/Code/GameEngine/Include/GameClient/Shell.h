@@ -125,7 +125,7 @@ public:
 	virtual void update( void );		
 	//===============================================================================================
 
-	void recreateWindowLayouts();
+	void recreateWindowLayouts( void );
 
 	void showShellMap(Bool useShellMap );										///< access function to turn on and off the shell map
 

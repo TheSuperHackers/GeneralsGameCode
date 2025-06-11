@@ -850,11 +850,7 @@ void MainMenuUpdate( WindowLayout *layout, void *userData )
 	{
 		if(initialGadgetDelay == 1)
 		{
-			const TransitionGroup* transitionGroup = TheTransitionHandler->findGroup("MainMenuDefaultMenuLogoFade");
-			if (transitionGroup != NULL && transitionGroup->getHiddenGameWindowCount() > 0)
-			{
-				TheTransitionHandler->setGroup("MainMenuDefaultMenuLogoFade");
-			}
+			TheTransitionHandler->setGroup("MainMenuDefaultMenuLogoFade");
 			TheWindowManager->winSetFocus( parentMainMenu );
 			initialGadgetDelay = 2;
 			justEntered = FALSE;
