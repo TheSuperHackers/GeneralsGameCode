@@ -1083,7 +1083,6 @@ GlobalData::~GlobalData( void )
 	if( m_theOriginal == this )	{
 		m_theOriginal = NULL;
 		TheWritableGlobalData = NULL;
-
 	}
 
 }  // end ~GlobalData
