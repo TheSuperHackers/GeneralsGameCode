@@ -54,7 +54,6 @@
 #include "GameClient/GadgetSlider.h"
 #include "GameClient/HeaderTemplate.h"
 #include "GameClient/Shell.h"
-#include "GameClient/ShellUtil.h"
 #include "GameClient/KeyDefs.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/Mouse.h"
@@ -1302,7 +1301,9 @@ static void saveOptions( void )
 				prefString.format("%d %d", xres, yres );
 				(*pref)["Resolution"] = prefString;
 
-				shell::recreateUI();
+				TheShell->recreateWindowLayouts();
+
+				TheInGameUI->recreateControlBar();
 			}
 		}
 	}
