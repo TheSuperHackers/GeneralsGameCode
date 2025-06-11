@@ -2048,6 +2048,8 @@ WindowMsgHandledType OptionsMenuSystem( GameWindow *window, UnsignedInt msg,
 				if (pref)
 				{
 					pref->write();
+					delete pref;
+					pref = NULL;
 				}
 
 				comboBoxLANIP = NULL;
