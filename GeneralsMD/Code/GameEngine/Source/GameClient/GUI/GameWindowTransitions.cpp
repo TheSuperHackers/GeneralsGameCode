@@ -346,33 +346,6 @@ void TransitionGroup::skip ( void )
 	}
 }
 
-Int TransitionGroup::getHiddenGameWindowCount(Bool hidden) const
-{
-	Int count = 0;
-	TransitionWindowList::const_iterator it = m_transitionWindowList.begin();
-	while (it != m_transitionWindowList.end())
-	{
-		TransitionWindow *tWin = *it;
-		if (tWin->m_win != NULL)
-		{
-			if (TheWindowManager->isHidden(tWin->m_win) == hidden)
-				++count;
-		}
-		else
-		{
-			GameWindow* gameWin = TheWindowManager->winGetWindowFromId(NULL, TheNameKeyGenerator->nameToKey(tWin->m_winName));
-			if (gameWin != NULL)
-			{
-				if (TheWindowManager->isHidden(gameWin) == hidden)
-					++count;
-			}
-		}
-
-		++it;
-	}
-	return count;
-}
-
 void TransitionGroup::draw ( void )
 {
 	TransitionWindowList::iterator it = m_transitionWindowList.begin();

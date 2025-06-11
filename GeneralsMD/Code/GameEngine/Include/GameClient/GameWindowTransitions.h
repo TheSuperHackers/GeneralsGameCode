@@ -639,10 +639,6 @@ public:
 	void reverse( void );
 	void draw( void );
 
-	// Returns the number of hidden (or shown) game windows that this transition refers to.
-	// Can be used to test whether the transition is necessary to play.
-	Int getHiddenGameWindowCount(Bool hidden = true) const;
-
 	void skip ( void );
 	AsciiString getName( void ) { return m_name; }
 	void setName( AsciiString name){ m_name = name;	}

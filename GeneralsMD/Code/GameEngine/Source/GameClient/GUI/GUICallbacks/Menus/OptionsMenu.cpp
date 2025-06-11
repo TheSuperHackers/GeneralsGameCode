@@ -2061,6 +2061,7 @@ WindowMsgHandledType OptionsMenuSystem( GameWindow *window, UnsignedInt msg,
 					GameSpyCloseOverlay(GSOVERLAY_OPTIONS);
 				else
 				{
+					DestroyOptionsLayout();
 					if (dispChanged)
 					{
 						DoResolutionDialog();

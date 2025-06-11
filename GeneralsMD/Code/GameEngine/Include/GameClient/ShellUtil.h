@@ -24,6 +24,4 @@ namespace shell
 // Will recreate the UI. Currently works correctly in the Main Menu only.
 void recreateUI();
 
-void showMainMenuButtons();
-
 }
