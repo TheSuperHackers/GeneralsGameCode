@@ -212,7 +212,7 @@ void ParticleUplinkCannonUpdate::killEverything()
 	removeAllEffects();
 
 	//This laser is independent from the other effects and needs to be specially handled.
-	if( m_orbitToTargetBeamID != INVALID_DRAWABLE_ID )
+	if( m_orbitToTargetBeamID )
 	{
 		Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
 		if( beam )
@@ -220,8 +220,8 @@ void ParticleUplinkCannonUpdate::killEverything()
 			TheGameClient->destroyDrawable( beam );
 		}
 		m_orbitToTargetBeamID = INVALID_DRAWABLE_ID;
+		m_orbitToTargetLaserRadius = LaserRadiusUpdate();
 	}
-	m_orbitToTargetLaserRadius = LaserRadiusUpdate();
 
 	TheAudio->removeAudioEvent( m_powerupSound.getPlayingHandle() );
 	TheAudio->removeAudioEvent( m_unpackToReadySound.getPlayingHandle() );
@@ -457,43 +457,40 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				break;
 			case LASERSTATUS_BORN:
 			{
-				if( orbitalDecayStart <= now )
+				Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
+				if( beam )
 				{
-					Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
-					if( beam )
+					//m_annihilationSound.setPosition( beam->getPosition() );
+					if( orbitalDecayStart <= now )
 					{
-						//m_annihilationSound.setPosition( beam->getPosition() );
 						static NameKeyType nameKeyClientUpdate = NAMEKEY( "LaserUpdate" );
 						LaserUpdate *update = (LaserUpdate*)beam->findClientUpdateModule( nameKeyClientUpdate );
 						if( update )
 						{
 							update->setDecayFrames( data->m_widthGrowFrames );
+							m_orbitToTargetLaserRadius.setDecayFrames( data->m_widthGrowFrames );
 						}
+						m_laserStatus = LASERSTATUS_DECAYING;
 					}
-					m_orbitToTargetLaserRadius.setDecayFrames( data->m_widthGrowFrames );
-					m_laserStatus = LASERSTATUS_DECAYING;
 				}
 				break;
 			}
 			case LASERSTATUS_DECAYING:
 			{
-				if( orbitalDeathFrame <= now )
+				Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
+				if( beam )
 				{
+					//m_annihilationSound.setPosition( beam->getPosition() );
 					TheAudio->removeAudioEvent( m_annihilationSound.getPlayingHandle() );
-					if ( m_orbitToTargetBeamID != INVALID_DRAWABLE_ID )
+					if( orbitalDeathFrame <= now )
 					{
-						Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
-						if( beam )
-						{
-							//m_annihilationSound.setPosition( beam->getPosition() );
-							TheGameClient->destroyDrawable( beam );
-						}
+						TheGameClient->destroyDrawable( beam );
 						m_orbitToTargetBeamID = INVALID_DRAWABLE_ID;
+						m_orbitToTargetLaserRadius = LaserRadiusUpdate();
+						m_laserStatus = LASERSTATUS_DEAD;
+						m_startAttackFrame = 0;
+						setLogicalStatus( STATUS_IDLE );
 					}
-					m_orbitToTargetLaserRadius = LaserRadiusUpdate();
-					m_laserStatus = LASERSTATUS_DEAD;
-					m_startAttackFrame = 0;
-					setLogicalStatus( STATUS_IDLE );
 				}
 				break;
 			}
@@ -502,8 +499,8 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				break;
 		}
 
-		const Bool isFiring = m_laserStatus != LASERSTATUS_NONE && m_laserStatus != LASERSTATUS_DEAD;
-		if ( isFiring )
+		Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
+		if( beam && orbitalBirthFrame <= now && now <= orbitalDeathFrame )
 		{
 		
 			if( !m_manualTargetMode && !m_scriptedWaypointMode )
@@ -612,35 +609,27 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 
 			Real scorchRadius = 0.0f;
 			Real damageRadius = 0.0f;
-			Real templateLaserRadius = 13.0f;
-			Real visualLaserRadius = 0.0f;
 
 			//Reset the laser position
-			Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
-			if ( beam )
+			static NameKeyType nameKeyClientUpdate = NAMEKEY( "LaserUpdate" );
+			LaserUpdate *update = (LaserUpdate*)beam->findClientUpdateModule( nameKeyClientUpdate );
+			if( update )
 			{
-				static NameKeyType nameKeyClientUpdate = NAMEKEY( "LaserUpdate" );
-				LaserUpdate *update = (LaserUpdate*)beam->findClientUpdateModule( nameKeyClientUpdate );
-				if( update )
-				{
-					update->initLaser( NULL, NULL, &orbitPosition, &m_currentTargetPosition, "" );
-					// TheSuperHackers @logic-client-separation The GameLogic has a dependency on this drawable.
-					// The logical laser radius for the damage should probably be part of ParticleUplinkCannonUpdateModuleData.
-					templateLaserRadius = update->getTemplateLaserRadius();
-					visualLaserRadius = update->getCurrentLaserRadius();
-				}
-			}
-			// TheSuperHackers @refactor helmutbuhler/xezon 17/05/2025
-			// Originally the damageRadius was calculated with a value updated by LaserUpdate::clientUpdate.
-			// To no longer rely on GameClient updates, this class now maintains a copy of the LaserRadiusUpdate.
-			m_orbitToTargetLaserRadius.updateRadius();
-			const Real logicalLaserRadius = templateLaserRadius * m_orbitToTargetLaserRadius.getWidthScale();
-			damageRadius = logicalLaserRadius * data->m_damageRadiusScalar;
-			scorchRadius = logicalLaserRadius * data->m_scorchMarkScalar;
-#if defined(RETAIL_COMPATIBLE_CRC)
-			DEBUG_ASSERTCRASH(logicalLaserRadius == visualLaserRadius,
-				("ParticleUplinkCannonUpdate's laser radius does not match LaserUpdate's laser radius - will cause mismatch in VS6 retail compatible builds\n"));
+				update->initLaser( NULL, NULL, &orbitPosition, &m_currentTargetPosition, "" );
+				const Real visualLaserRadius = update->getCurrentLaserRadius();
+				scorchRadius = visualLaserRadius * data->m_scorchMarkScalar;
+
+				// TheSuperHackers @refactor helmutbuhler/xezon 17/05/2025
+				// Originally the damage radius was calculated with a value updated by LaserUpdate::clientUpdate().
+				// To no longer rely on client updates, this class now maintains a logical copy of the visual laser radius.
+				m_orbitToTargetLaserRadius.updateRadius();
+				const Real logicalLaserRadius = update->getTemplateLaserRadius() * m_orbitToTargetLaserRadius.getWidthScale();
+				damageRadius = logicalLaserRadius * data->m_damageRadiusScalar;
+#if RETAIL_COMPATIBLE_XFER_CRC
+				DEBUG_ASSERTCRASH(logicalLaserRadius == visualLaserRadius,
+					("ParticleUplinkCannonUpdate's laser radius does not match LaserUpdate's laser radius - will cause mismatch in VS6 retail compatible builds\n"));
 #endif
+			}
 
 			//Create scorch marks periodically
 			if( m_nextScorchMarkFrame <= now )
@@ -999,15 +988,13 @@ void ParticleUplinkCannonUpdate::createOrbitToTargetLaser( UnsignedInt growthFra
 {
 	const ParticleUplinkCannonUpdateModuleData *data = getParticleUplinkCannonUpdateModuleData();
 
-	if ( m_orbitToTargetBeamID != INVALID_DRAWABLE_ID )
+	Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
+	if( beam )
 	{
-		Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
-		if( beam )
-		{
-			TheAudio->removeAudioEvent( m_annihilationSound.getPlayingHandle() );
-			TheGameClient->destroyDrawable( beam );
-		}
+		TheAudio->removeAudioEvent( m_annihilationSound.getPlayingHandle() );
+		TheGameClient->destroyDrawable( beam );
 		m_orbitToTargetBeamID = INVALID_DRAWABLE_ID;
+		m_orbitToTargetLaserRadius = LaserRadiusUpdate();
 	}
 
 	if( data->m_particleBeamLaserName.isNotEmpty() )
@@ -1027,6 +1014,7 @@ void ParticleUplinkCannonUpdate::createOrbitToTargetLaser( UnsignedInt growthFra
 					orbitPosition.set( &m_initialTargetPosition );
 					orbitPosition.z += 500.0f;
 					update->initLaser( NULL, NULL, &orbitPosition, &m_initialTargetPosition, "", growthFrames );
+					m_orbitToTargetLaserRadius.initRadius( growthFrames );
 				}
 			}
 		}
@@ -1037,9 +1025,6 @@ void ParticleUplinkCannonUpdate::createOrbitToTargetLaser( UnsignedInt growthFra
 			m_annihilationSound.setPlayingHandle( TheAudio->addAudioEvent( &m_annihilationSound ) );
 		}
 	}
-
-	m_orbitToTargetLaserRadius = LaserRadiusUpdate();
-	m_orbitToTargetLaserRadius.initRadius( growthFrames );
 }
 
 //-------------------------------------------------------------------------------------------------
