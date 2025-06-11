@@ -751,7 +751,11 @@ void DeinitLanGameGadgets( void )
 	listboxChatWindowLanGame = NULL;
 	textEntryChat = NULL;
 	textEntryMapDisplay = NULL;
-	windowMap = NULL;
+	if (windowMap)
+	{
+		windowMap->winSetUserData(NULL);
+		windowMap = NULL;
+	}
 	for (Int i = 0; i < MAX_SLOTS; i++)
 	{
 		comboBoxPlayer[i] = NULL;
@@ -1035,6 +1039,9 @@ WindowMsgHandledType LanGameOptionsMenuSystem( GameWindow *window, UnsignedInt m
 		//-------------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 			{
+				if (windowMap)
+					windowMap->winSetUserData(NULL);
+
 				break;
 			} // case GWM_DESTROY:
 		//-------------------------------------------------------------------------------------------------
