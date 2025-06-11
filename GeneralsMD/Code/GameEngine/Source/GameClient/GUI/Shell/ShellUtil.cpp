@@ -32,30 +32,7 @@ void recreateUI()
 {
 	TheShell->recreateWindowLayouts();
 
-	showMainMenuButtons();
-
 	TheInGameUI->recreateControlBar();
-}
-
-void showMainMenuButtons()
-{
-	Int screenCount = TheShell->getScreenCount();
-	Int screenIndex = 0;
-	for (; screenIndex < screenCount; ++screenIndex)
-	{
-		WindowLayout* layout = TheShell->getScreenLayout(screenIndex);
-		if (0 == layout->getFilename().compareNoCase("Menus/MainMenu.wnd"))
-		{
-			if (!layout->isHidden())
-			{
-				if (TransitionGroup* transitionGroup = TheTransitionHandler->setGroup("MainMenuDefaultMenuLogoFade", true))
-				{
-					transitionGroup->skip();
-				}
-			}
-			break;
-		}
-	}
 }
 
 } // namespace shell
