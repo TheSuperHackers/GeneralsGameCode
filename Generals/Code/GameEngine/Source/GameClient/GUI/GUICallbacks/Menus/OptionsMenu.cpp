@@ -923,11 +923,14 @@ static void saveOptions( void )
 	
 	//-------------------------------------------------------------------------------------------------
 	// send Delay
-	TheWritableGlobalData->m_firewallSendDelay = GadgetCheckBoxIsChecked(checkSendDelay);
-	if (TheGlobalData->m_firewallSendDelay) {
-		(*pref)["SendDelay"] = AsciiString("yes");
-	} else {
-		(*pref)["SendDelay"] = AsciiString("no");
+	if (checkSendDelay && checkSendDelay->winGetEnabled())
+	{
+		TheWritableGlobalData->m_firewallSendDelay = GadgetCheckBoxIsChecked(checkSendDelay);
+		if (TheGlobalData->m_firewallSendDelay) {
+			(*pref)["SendDelay"] = AsciiString("yes");
+		} else {
+			(*pref)["SendDelay"] = AsciiString("no");
+		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -1000,29 +1003,33 @@ static void saveOptions( void )
 
 	//-------------------------------------------------------------------------------------------------
 	// LOD
-	Bool levelChanged=FALSE;
-	GadgetComboBoxGetSelectedPos( comboBoxDetail, &index );
-	//The levels stored by the LOD Manager are inverted compared to GUI so find correct one:
-	switch (index) {
-	case HIGHDETAIL:
-		levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_HIGH);
-		break;
-	case MEDIUMDETAIL:
-		levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_MEDIUM);
-		break;
-	case LOWDETAIL:
-		levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_LOW);
-		break;
-	case CUSTOMDETAIL:
-		levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_CUSTOM);
-		break;
-	default:
-		DEBUG_ASSERTCRASH(FALSE,("LOD passed in was %d, %d is not a supported LOD",index,index));
-		break;
-	}
+	if (comboBoxDetail && comboBoxDetail->winGetEnabled())
+	{
+		Bool levelChanged=FALSE;
+		GadgetComboBoxGetSelectedPos( comboBoxDetail, &index );
 
-	if (levelChanged)
-	        (*pref)["StaticGameLOD"] = TheGameLODManager->getStaticGameLODLevelName(TheGameLODManager->getStaticLODLevel());
+		//The levels stored by the LOD Manager are inverted compared to GUI so find correct one:
+		switch (index) {
+		case HIGHDETAIL:
+			levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_HIGH);
+			break;
+		case MEDIUMDETAIL:
+			levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_MEDIUM);
+			break;
+		case LOWDETAIL:
+			levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_LOW);
+			break;
+		case CUSTOMDETAIL:
+			levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_CUSTOM);
+			break;
+		default:
+			DEBUG_ASSERTCRASH(FALSE,("LOD passed in was %d, %d is not a supported LOD",index,index));
+			break;
+		}
+
+		if (levelChanged)
+			(*pref)["StaticGameLOD"] = TheGameLODManager->getStaticGameLODLevelName(TheGameLODManager->getStaticLODLevel());
+	}
 
 	//-------------------------------------------------------------------------------------------------
 	// Resolution
@@ -1034,12 +1041,11 @@ static void saveOptions( void )
 	oldDispSettings.bitDepth = TheDisplay->getBitDepth();
 	oldDispSettings.windowed = TheDisplay->getWindowed();
 	
-	if (index < TheDisplay->getDisplayModeCount() && index >= 0)
+	if (comboBoxResolution && comboBoxResolution->winGetEnabled() && index < TheDisplay->getDisplayModeCount() && index >= 0)
 	{
 		TheDisplay->getDisplayModeDescription(index,&xres,&yres,&bitDepth);
 		if (TheGlobalData->m_xResolution != xres || TheGlobalData->m_yResolution != yres)
 		{
-			
 			if (TheDisplay->setDisplayMode(xres,yres,bitDepth,TheDisplay->getWindowed()))
 			{
 				dispChanged = TRUE;
@@ -1077,19 +1083,27 @@ static void saveOptions( void )
 
 	//-------------------------------------------------------------------------------------------------
 	// IP address
-	UnsignedInt ip;
-	GadgetComboBoxGetSelectedPos(comboBoxLANIP, &index);
-	if (index>=0 && TheGlobalData)
+	if (comboBoxLANIP && comboBoxLANIP->winGetEnabled())
 	{
-		ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxLANIP, index);
-		TheWritableGlobalData->m_defaultIP = ip;
-		pref->setLANIPAddress(ip);
+		UnsignedInt ip;
+		GadgetComboBoxGetSelectedPos(comboBoxLANIP, &index);
+		if (index>=0 && TheGlobalData)
+		{
+			ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxLANIP, index);
+			TheWritableGlobalData->m_defaultIP = ip;
+			pref->setLANIPAddress(ip);
+		}
 	}
-	GadgetComboBoxGetSelectedPos(comboBoxOnlineIP, &index);
-	if (index>=0)
+
+	if (comboBoxOnlineIP && comboBoxOnlineIP->winGetEnabled())
 	{
-		ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxOnlineIP, index);
-		pref->setOnlineIPAddress(ip);
+		UnsignedInt ip;
+		GadgetComboBoxGetSelectedPos(comboBoxOnlineIP, &index);
+		if (index>=0)
+		{
+			ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxOnlineIP, index);
+			pref->setOnlineIPAddress(ip);
+		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
