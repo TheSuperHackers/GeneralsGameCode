@@ -552,13 +552,15 @@ private:
 
 };
 
-// singleton
-extern GlobalData* TheWritableGlobalData;
-
 #if defined(_DEBUG) || defined(RTS_DEBUG) || defined(RTS_INTERNAL)
-	extern const GlobalData* TheGlobalData;
+	static union
+	{
+		GlobalData* TheWritableGlobalData = NULL;						///< The global data singleton
+		const GlobalData* TheGlobalData;								///< Const shorthand for above singleton
+	};
 #else
-	#define TheGlobalData ((const GlobalData*)TheWritableGlobalData)
+	inline GlobalData* TheWritableGlobalData = NULL;					///< The global data singleton
+	#define TheGlobalData ((const GlobalData*)TheWritableGlobalData)	///< Const shorthand for above singleton
 #endif
 
 #endif
