@@ -1635,7 +1635,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 
 	if (selectedResIndex == -1)	//check if saved mode no longer available
 	{
-		// TheSuperHackers @tweak xezon 08/06/2025 Now adds the current resolution instead of defaulting to 800 x 600.
+		// TheSuperHackers @bugfix xezon 08/06/2025 Now adds the current resolution instead of defaulting to 800 x 600.
 		// This avoids force changing the resolution when the user has set a custom resolution in the Option Preferences.
 		Int xres = TheDisplay->getWidth();
 		Int yres = TheDisplay->getHeight();
