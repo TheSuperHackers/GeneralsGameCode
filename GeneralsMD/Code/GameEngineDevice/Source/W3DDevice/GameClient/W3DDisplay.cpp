@@ -752,15 +752,31 @@ void W3DDisplay::init( void )
 				setBitDepth( 16 );
 				break;
 			case 2:
+			{
 				// TheSuperHackers @bugfix xezon 11/06/2025 Now tries a safe default resolution
-				// if the previous one did not succeed. This is unlikely to happen but is possible
-				// if the user writes an unsupported resolution into to the Option Preferences.
-				TheWritableGlobalData->m_xResolution = 800;
-				TheWritableGlobalData->m_yResolution = 600;
-				setWidth( TheGlobalData->m_xResolution );
-				setHeight( TheGlobalData->m_yResolution );
+				// if the custom resolution did not succeed. This is unlikely to happen but is possible
+				// if the user writes an unsupported resolution into to the Option Preferences or if the
+				// graphics adapter does not support 800 x 600 to begin with.
+				const Int minW = 800;
+				const Int minH = 600;
+				Int xres = minW;
+				Int yres = minH;
+				Int bitDepth = 32;
+				Int displayModeCount = getDisplayModeCount();
+				Int displayModeIndex = 0;
+				for (; displayModeIndex < displayModeCount; ++displayModeIndex)
+				{
+					getDisplayModeDescription(0, &xres, &yres, &bitDepth);
+					if (xres * yres >= minW * minH)
+						break; // Is good enough. Use it.
+				}
+				TheWritableGlobalData->m_xResolution = xres;
+				TheWritableGlobalData->m_yResolution = yres;
+				setWidth( xres );
+				setHeight( yres );
 				setBitDepth( 32 );
 				break;
+			}
 			case 3:
 				setBitDepth( 16 );
 				break;
