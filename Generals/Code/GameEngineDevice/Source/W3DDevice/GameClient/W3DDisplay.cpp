@@ -115,7 +115,6 @@ static void drawFramerateBar(void);
 #endif
 
 // DEFINE AND ENUMS ///////////////////////////////////////////////////////////
-#define W3D_DISPLAY_DEFAULT_BIT_DEPTH 32
 
 #define no_SAMPLE_DYNAMIC_LIGHT	1
 #ifdef SAMPLE_DYNAMIC_LIGHT
@@ -668,38 +667,58 @@ void W3DDisplay::init( void )
 		m_2DRender = NEW Render2DClass;
 		DEBUG_ASSERTCRASH( m_2DRender, ("Cannot create Render2DClass") );
 
-		// set our default width and height and bit depth
-		/// @todo we should set this according to options read from a file
-		setWidth( TheGlobalData->m_xResolution );
-		setHeight( TheGlobalData->m_yResolution );
-		setBitDepth( W3D_DISPLAY_DEFAULT_BIT_DEPTH );
-
-		if( WW3D::Set_Render_Device( 0, 
-																 getWidth(), 
-																 getHeight(), 
-																 getBitDepth(), 
-																 getWindowed(), 
-																 true ) != WW3D_ERROR_OK ) 
+		WW3DErrorType renderDeviceError;
+		Int attempt = 0;
+		do
 		{
-			// Getting the device at the default bit depth (32) didn't work, so try
-			// getting a 16 bit display.  (Voodoo 1-3 only supported 16 bit.) jba.
-			setBitDepth( 16 );
-			if( WW3D::Set_Render_Device( 0, 
-																	 getWidth(), 
-																	 getHeight(), 
-																	 getBitDepth(), 
-																	 getWindowed(), 
-																	 true ) != WW3D_ERROR_OK ) 
+			switch (attempt)
 			{
-
-				WW3D::Shutdown();
-				WWMath::Shutdown();
-				throw ERROR_INVALID_D3D;	//failed to initialize.  User probably doesn't have DX 8.1
-				DEBUG_ASSERTCRASH( 0, ("Unable to set render device\n") );
-				return;
+			case 0:
+				// set our default width and height and bit depth
+				setWidth( TheGlobalData->m_xResolution );
+				setHeight( TheGlobalData->m_yResolution );
+				setBitDepth( 32 );
+				break;
+			case 1:
+				// Getting the device at the default bit depth (32) didn't work, so try
+				// getting a 16 bit display.  (Voodoo 1-3 only supported 16 bit.) jba.
+				setBitDepth( 16 );
+				break;
+			case 2:
+				// TheSuperHackers @bugfix xezon 11/06/2025 Now tries a safe default resolution
+				// if the previous one did not succeed. This is unlikely to happen but is possible
+				// if the user writes an unsupported resolution into to the Option Preferences.
+				TheWritableGlobalData->m_xResolution = 800;
+				TheWritableGlobalData->m_yResolution = 600;
+				setWidth( TheGlobalData->m_xResolution );
+				setHeight( TheGlobalData->m_yResolution );
+				setBitDepth( 32 );
+				break;
+			case 3:
+				setBitDepth( 16 );
+				break;
 			}
 
-		}  // end if
+			renderDeviceError = WW3D::Set_Render_Device(
+				0, 
+				getWidth(), 
+				getHeight(), 
+				getBitDepth(), 
+				getWindowed(), 
+				true );
+
+			++attempt;
+		}
+		while (attempt < 4 && renderDeviceError != WW3D_ERROR_OK);
+
+		if (renderDeviceError != WW3D_ERROR_OK)
+		{
+			WW3D::Shutdown();
+			WWMath::Shutdown();
+			throw ERROR_INVALID_D3D;	//failed to initialize.  User probably doesn't have DX 8.1
+			DEBUG_ASSERTCRASH( 0, ("Unable to set render device\n") );
+			return;
+		}
 
 		//Check if level was never set and default to setting most suitable for system.
 		if (TheGameLODManager->getStaticLODLevel() == STATIC_GAME_LOD_UNKNOWN)
