@@ -502,7 +502,10 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				break;
 		}
 
-		const Bool isFiring = m_laserStatus != LASERSTATUS_NONE && m_laserStatus != LASERSTATUS_DEAD;
+		// TheSuperHackers @info helmutbuhler 12/06/2025
+		// Note that this code is very brittle for retail compatibility. Inlining isFiring
+		// can cause incompatibility in some circumstances.
+		const Bool isFiring = orbitalBirthFrame <= now && now < orbitalDeathFrame;
 		if ( isFiring )
 		{
 		
