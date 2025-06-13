@@ -19,19 +19,19 @@
 // AnimatedSoundOptionsDialog.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "w3dview.h"
-#include "globals.h"
-#include "animatedsoundoptionsdialog.h"
+#include "StdAfx.h"
+#include "W3DView.h"
+#include "Globals.h"
+#include "AnimatedSoundOptionsDialog.h"
 #include "ffactory.h"
 #include "animatedsoundmgr.h"
 #include "wwsaveload.h"
 #include "definitionmgr.h"
-#include "wwfile.h"
+#include "WWFILE.H"
 #include "chunkio.h"
 #include "wwdebug.h"
-#include "restrictedfiledialog.h"
-#include "utils.h"
+#include "RestrictedFileDialog.h"
+#include "Utils.h"
 
 
 #ifdef RTS_DEBUG

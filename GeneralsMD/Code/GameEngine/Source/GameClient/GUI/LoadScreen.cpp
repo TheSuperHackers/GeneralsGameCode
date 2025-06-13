@@ -1306,6 +1306,11 @@ MultiPlayerLoadScreen::MultiPlayerLoadScreen( void )
 	
 MultiPlayerLoadScreen::~MultiPlayerLoadScreen( void )
 {
+	if(m_mapPreview)
+	{
+		m_mapPreview->winSetUserData(NULL);
+	}
+
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
 		m_progressBars[i] = NULL;
@@ -1574,6 +1579,11 @@ GameSpyLoadScreen::GameSpyLoadScreen( void )
 	
 GameSpyLoadScreen::~GameSpyLoadScreen( void )
 {
+	if(m_mapPreview)
+	{
+		m_mapPreview->winSetUserData(NULL);
+	}
+
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
 		m_progressBars[i] = NULL;

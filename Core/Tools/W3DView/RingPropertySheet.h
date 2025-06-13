@@ -42,9 +42,9 @@
 #ifndef __RING_PROPERTY_SHEET_H
 #define __RING_PROPERTY_SHEET_H
 
-#include "RingColorPropPage.H"
-#include "RingGeneralPropPage.H"
-#include "RingSizePropPage.H"
+#include "RingColorPropPage.h"
+#include "RingGeneralPropPage.h"
+#include "RingSizePropPage.h"
 
 
 // Forward declarations

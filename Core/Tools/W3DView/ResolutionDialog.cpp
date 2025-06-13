@@ -19,10 +19,10 @@
 // ResolutionDialog.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "w3dview.h"
+#include "StdAfx.h"
+#include "W3DView.h"
 #include "ResolutionDialog.h"
-#include "WW3D.H"
+#include "ww3d.h"
 #include "Globals.h"
 #include "GraphicView.h"
 #include "Utils.h"

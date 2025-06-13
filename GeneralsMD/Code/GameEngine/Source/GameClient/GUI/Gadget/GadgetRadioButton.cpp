@@ -370,10 +370,9 @@ WindowMsgHandledType GadgetRadioButtonSystem( GameWindow *window, UnsignedInt ms
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
-			RadioButtonData *radioData = (RadioButtonData *)window->winGetUserData();
-
 			// free radio button user data
-			delete radioData;
+			delete (RadioButtonData *)window->winGetUserData();
+			window->winSetUserData( NULL );
 
 			break;
 		

@@ -534,6 +534,9 @@ IMEManager::~IMEManager()
 {
 	if ( m_candidateWindow )
 	{
+		m_candidateWindow->winSetUserData( NULL );
+		m_candidateTextArea->winSetUserData( NULL );
+
 		TheWindowManager->winDestroy( m_candidateWindow );
 	}
 

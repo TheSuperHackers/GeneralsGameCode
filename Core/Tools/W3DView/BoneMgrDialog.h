@@ -25,7 +25,7 @@
 // BoneMgrDialog.h : header file
 //
 
-#include "Resource.H"
+#include "resource.h"
 #include "Vector.H"
 
 // Forward declarations

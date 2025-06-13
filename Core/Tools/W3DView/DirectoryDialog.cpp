@@ -35,9 +35,9 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "stdafx.h"
-#include "directorydialog.h"
-#include "utils.h"
+#include "StdAfx.h"
+#include "DirectoryDialog.h"
+#include "Utils.h"
 
 
 ////////////////////////////////////////////////////////////////////////////

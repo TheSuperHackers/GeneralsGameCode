@@ -21,8 +21,8 @@
 
 #include "stdafx.h"
 #include "wdump.h"
-#include "WDLView.h"
-#include "WDumpDoc.h"
+#include "wdlview.h"
+#include "wdumpdoc.h"
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE

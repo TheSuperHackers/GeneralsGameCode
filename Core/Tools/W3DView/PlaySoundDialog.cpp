@@ -19,10 +19,10 @@
 // PlaySoundDialog.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "playsounddialog.h"
-#include "utils.h"
-#include "audiblesound.h"
+#include "StdAfx.h"
+#include "PlaySoundDialog.h"
+#include "Utils.h"
+#include "AudibleSound.h"
 
 
 #ifdef RTS_DEBUG

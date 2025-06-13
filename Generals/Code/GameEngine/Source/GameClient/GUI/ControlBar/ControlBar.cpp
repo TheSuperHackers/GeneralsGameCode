@@ -1016,7 +1016,10 @@ ControlBar::~ControlBar( void )
 	m_radarAttackGlowWindow = NULL;
 
 	if (m_rightHUDCameoWindow && m_rightHUDCameoWindow->winGetUserData())
+	{
 		delete m_rightHUDCameoWindow->winGetUserData();
+		m_rightHUDCameoWindow->winSetUserData(NULL);
+	}
 
 }  // end ~ControlBar
 void ControlBarPopupDescriptionUpdateFunc( WindowLayout *layout, void *param );

@@ -370,6 +370,8 @@ WindowMsgHandledType GadgetTextEntrySystem( GameWindow *window, UnsignedInt msg,
 
 			// free all edit data
 			delete( (EntryData *)window->winGetUserData() );
+			window->winSetUserData(NULL);
+			e = NULL;
 			break;
 
 		// ------------------------------------------------------------------------

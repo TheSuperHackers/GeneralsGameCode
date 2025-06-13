@@ -19,10 +19,10 @@
 // RestrictedFileDialog.cpp : implementation file
 //
 
-#include "StdAfx.H"
-#include "W3DView.H"
-#include "RestrictedFileDialog.H"
-#include "Utils.H"
+#include "StdAfx.h"
+#include "W3DView.h"
+#include "RestrictedFileDialog.h"
+#include "Utils.h"
 
 
 #ifdef RTS_DEBUG

@@ -35,13 +35,13 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "StdAfx.H"
-#include "ViewerScene.H"
-#include "Camera.H"
-#include "WW3D.H"
+#include "StdAfx.h"
+#include "ViewerScene.h"
+#include "camera.h"
+#include "ww3d.h"
 
-#include "RendObj.H"
-#include "AssetMgr.H"
+#include "rendobj.h"
+#include "assetmgr.h"
 #include "rinfo.h"
 #include "lightenvironment.h"
 

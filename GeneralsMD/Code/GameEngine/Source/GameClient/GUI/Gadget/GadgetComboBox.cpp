@@ -595,11 +595,9 @@ WindowMsgHandledType GadgetComboBoxSystem( GameWindow *window, UnsignedInt msg,
 		case GWM_DESTROY:
 		{
 			TheWindowManager->winSetLoneWindow(NULL); // if we are transitioning screens, close all combo boxes
-			if (comboData)
-			{
-				delete(comboData);
-				comboData = NULL;
-			}
+			delete (ComboBoxData *)window->winGetUserData();
+			window->winSetUserData(NULL);
+			comboData = NULL;
 			break;
 		}  // end destroy
 

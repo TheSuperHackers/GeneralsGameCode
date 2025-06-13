@@ -19,12 +19,12 @@
 // EmitterFramePropPage.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "w3dview.h"
+#include "StdAfx.h"
+#include "W3DView.h"
 #include "EmitterFramePropPage.h"
-#include "Utils.H"
-#include "ParticleFrameKeyDialog.H"
-#include "EmitterInstanceList.H"
+#include "Utils.h"
+#include "ParticleFrameKeyDialog.h"
+#include "EmitterInstanceList.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

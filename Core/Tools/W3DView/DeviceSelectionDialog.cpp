@@ -19,15 +19,14 @@
 // DeviceSelectionDialog.cpp : implementation file
 //
 
-#include "StdAfx.H"
+#include "StdAfx.h"
 
 #include "W3DView.h"
 #include "DeviceSelectionDialog.h"
-#include "WW3D.H"
-#include "Resource.H"
+#include "ww3d.h"
+#include "resource.h"
 #include "Globals.h"
-#include "W3DView.H"
-#include "Utils.H"
+#include "Utils.h"
 #include "rddesc.h"
 
 #ifdef RTS_DEBUG

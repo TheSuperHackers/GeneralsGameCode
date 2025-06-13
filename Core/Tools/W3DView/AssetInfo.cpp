@@ -35,11 +35,11 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "StdAfx.H"
-#include "AssetInfo.H"
+#include "StdAfx.h"
+#include "AssetInfo.h"
 //#include "HModel.H"
-#include "AssetMgr.H"
-#include "HTree.H"
+#include "assetmgr.h"
+#include "htree.h"
 
 /////////////////////////////////////////////////////////////////
 //

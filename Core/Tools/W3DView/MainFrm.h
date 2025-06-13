@@ -27,8 +27,8 @@
 #pragma once
 #endif // _MSC_VER >= 1000
 
-#include "DataTreeView.H"
-#include "Toolbar.H"
+#include "DataTreeView.h"
+#include "Toolbar.h"
 
 
 #if defined(_MSC_VER) && _MSC_VER < 1300

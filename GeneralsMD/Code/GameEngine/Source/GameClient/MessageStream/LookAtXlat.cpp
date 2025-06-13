@@ -52,7 +52,7 @@
 
 LookAtTranslator *TheLookAtTranslator = NULL;
 
-static enum
+enum
 {
 	DIR_UP = 0,
 	DIR_DOWN,

@@ -115,9 +115,9 @@ void AcademyStats::init( const Player *player )
 	const PlayerTemplate *plyrTemplate = player->getPlayerTemplate();
 
 	if( !plyrTemplate ||
-			plyrTemplate->getBaseSide().compareNoCase( "USA" ) &&
+			( plyrTemplate->getBaseSide().compareNoCase( "USA" ) &&
 			plyrTemplate->getBaseSide().compareNoCase( "China" ) &&
-			plyrTemplate->getBaseSide().compareNoCase( "GLA" ) )
+			plyrTemplate->getBaseSide().compareNoCase( "GLA" ) ) )
 	{
 		//Admittedly, this is a massive violation of data driven design. Shame on me!
 		//Unknown side... don't provide ANY advice. Simplicity reasons.

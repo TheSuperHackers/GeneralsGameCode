@@ -25,10 +25,10 @@
 // EmitterColorPropPage.h : header file
 //
 
-#include "Resource.H"
-#include "Vector3.H"
-#include "ColorBar.H"
-#include "Part_Emt.H"
+#include "resource.h"
+#include "vector3.h"
+#include "ColorBar.h"
+#include "part_emt.h"
 
 // Forward declarations
 class EmitterInstanceListClass;

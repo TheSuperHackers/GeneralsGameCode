@@ -23,8 +23,8 @@
 //  Implementation of a 'fancy' toolbar using hi-color buttons
 //
 
-#include "stdafx.h"
-#include "Toolbar.H"
+#include "StdAfx.h"
+#include "Toolbar.h"
 
 
 

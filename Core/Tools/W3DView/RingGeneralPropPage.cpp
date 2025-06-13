@@ -19,10 +19,10 @@
 // RingGeneralPropPage.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "w3dview.h"
+#include "StdAfx.h"
+#include "W3DView.h"
 #include "RingGeneralPropPage.h"
-#include "utils.h"
+#include "Utils.h"
 #include "assetmgr.h"
 #include "texture.h"
 

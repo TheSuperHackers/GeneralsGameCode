@@ -27,7 +27,7 @@
 
 #include "resource.h"
 #include "sphereobj.h"
-#include "colorbar.h"
+#include "ColorBar.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //

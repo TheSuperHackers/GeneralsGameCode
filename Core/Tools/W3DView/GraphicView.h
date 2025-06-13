@@ -44,7 +44,7 @@ class ParticleEmitterClass;
 /////////////////////////////////////////////////////////////////////////////
 // CGraphicView view
 
-#include "Camera.H"
+#include "camera.h"
 
 class CGraphicView : public CView
 {

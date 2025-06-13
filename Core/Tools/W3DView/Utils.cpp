@@ -24,17 +24,17 @@
 //
 
 
-#include "StdAfx.H"
-#include "W3DViewDoc.H"
-#include "MainFrm.H"
-#include "DataTreeView.H"
-#include "Utils.H"
-#include "Texture.H"
-#include "AssetMgr.H"
-#include "Agg_Def.H"
-#include "HLod.H"
+#include "StdAfx.h"
+#include "W3DViewDoc.h"
+#include "MainFrm.h"
+#include "DataTreeView.h"
+#include "Utils.h"
+#include "texture.h"
+#include "assetmgr.h"
+#include "agg_def.h"
+#include "hlod.h"
 #include <VFW.H>
-#include "RCFile.H"
+#include "rcfile.h"
 
 
 ////////////////////////////////////////////////////////////////////////////

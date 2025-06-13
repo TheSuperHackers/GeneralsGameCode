@@ -19,10 +19,10 @@
 // ParticleFrameKeyDialog.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "w3dview.h"
+#include "StdAfx.h"
+#include "W3DView.h"
 #include "ParticleFrameKeyDialog.h"
-#include "Utils.H"
+#include "Utils.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

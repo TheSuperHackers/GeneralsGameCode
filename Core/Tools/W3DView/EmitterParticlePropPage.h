@@ -25,9 +25,9 @@
 // EmitterParticlePropPage.h : header file
 //
 
-#include "Resource.H"
-#include "Vector3.H"
-#include "V3_Rnd.H"
+#include "resource.h"
+#include "vector3.h"
+#include "v3_rnd.h"
 
 // Forward delcarations
 class EmitterInstanceListClass;

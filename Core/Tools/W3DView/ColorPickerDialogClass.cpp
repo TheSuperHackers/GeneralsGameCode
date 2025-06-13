@@ -19,10 +19,10 @@
 // ColorPickerDialogClass.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "colorpickerdialogclass.h"
-#include "colorbar.h"
-#include "colorpicker.h"
+#include "StdAfx.h"
+#include "ColorPickerDialogClass.h"
+#include "ColorBar.h"
+#include "ColorPicker.h"
 
 
 #ifdef RTS_DEBUG

@@ -67,9 +67,13 @@ static NameKeyType winMapPreviewID = NAMEKEY_INVALID;
 
 static void NullifyControls()
 {
-	mapList = NULL;
-	winMapPreview = NULL;
 	parent = NULL;
+	mapList = NULL;
+	if (winMapPreview)
+	{
+		winMapPreview->winSetUserData(NULL);
+		winMapPreview = NULL;
+	}
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
 		buttonMapStartPosition[i] = NULL;

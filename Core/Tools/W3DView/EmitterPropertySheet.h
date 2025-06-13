@@ -25,16 +25,16 @@
 // EmitterPropertySheet.h : header file
 //
 
-#include "EmitterColorPropPage.H"
-#include "EmitterGeneralPropPage.H"
-#include "EmitterParticlePropPage.H"
-#include "EmitterPhysicsPropPage.H"
-#include "EmitterSizePropPage.H"
-#include "EmitterUserPropPage.H"
-#include "EmitterLinePropPage.H"
-#include "EmitterRotationPropPage.H"
-#include "EmitterFramePropPage.H"
-#include "EmitterLineGroupPropPage.H"
+#include "EmitterColorPropPage.h"
+#include "EmitterGeneralPropPage.h"
+#include "EmitterParticlePropPage.h"
+#include "EmitterPhysicsPropPage.h"
+#include "EmitterSizePropPage.h"
+#include "EmitterUserPropPage.h"
+#include "EmitterLinePropPage.h"
+#include "EmitterRotationPropPage.h"
+#include "EmitterFramePropPage.h"
+#include "EmitterLineGroupPropPage.h"
 
 // Forward declarations
 class ParticleEmitterClass;

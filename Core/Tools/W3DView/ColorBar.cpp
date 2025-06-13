@@ -22,9 +22,9 @@
 //
 //
 
-#include "stdafx.h"
-#include "colorbar.h"
-#include "colorutils.h"
+#include "StdAfx.h"
+#include "ColorBar.h"
+#include "ColorUtils.h"
 #include "resource.h"
 #include <math.h>
 

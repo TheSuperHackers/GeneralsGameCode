@@ -114,9 +114,9 @@ LogClass::LogClass(const char *fname)
 		}
 		pEnd--;
 	}
-	AsciiString fullPath;
-	fullPath.format("%s\\%s", buffer, fname);
-	m_fp = fopen(fullPath.str(), "wt");
+	// TheSuperHackers @fix Caball009 03/06/2025 Don't use AsciiString here anymore because its memory allocator may not have been initialized yet.
+	const std::string fullPath = std::string(buffer) + "\\" + fname;
+	m_fp = fopen(fullPath.c_str(), "wt");
 }
 
 LogClass::~LogClass()

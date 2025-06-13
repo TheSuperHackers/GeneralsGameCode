@@ -19,12 +19,12 @@
 // TexturePathDialog.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "w3dview.h"
-#include "w3dviewdoc.h"
+#include "StdAfx.h"
+#include "W3DView.h"
+#include "W3DViewDoc.h"
 #include "TexturePathDialog.h"
-#include "utils.h"
-#include "directorydialog.h"
+#include "Utils.h"
+#include "DirectoryDialog.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

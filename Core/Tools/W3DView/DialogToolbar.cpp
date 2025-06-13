@@ -34,8 +34,8 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "StdAfx.H"
-#include "DialogToolbar.H"
+#include "StdAfx.h"
+#include "DialogToolbar.h"
 #include "AfxPriv.H"
 
 

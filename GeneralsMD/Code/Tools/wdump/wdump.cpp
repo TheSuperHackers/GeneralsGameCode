@@ -22,11 +22,11 @@
 #include "stdafx.h"
 #include "wdump.h"
 
-#include "MainFrm.h"
-#include "wdumpDoc.h"
-#include "wdView.h"
+#include "mainfrm.h"
+#include "wdumpdoc.h"
+#include "wdview.h"
 
-#include "FCNTL.H"
+#include "fcntl.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

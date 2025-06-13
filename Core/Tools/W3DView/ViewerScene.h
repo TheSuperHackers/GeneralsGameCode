@@ -43,9 +43,9 @@
 #ifndef __VIEWER_SCENE_H
 #define __VIEWER_SCENE_H
 
-#include "Scene.H"
-#include "AABox.H"
-#include "Sphere.H"
+#include "scene.h"
+#include "aabox.h"
+#include "sphere.h"
 
 
 class RenderObjIterator;

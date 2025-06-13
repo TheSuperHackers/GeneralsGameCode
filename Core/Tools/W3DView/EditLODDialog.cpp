@@ -19,13 +19,13 @@
 // EditLODDialog.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "W3DView.h"
 #include "EditLODDialog.h"
-#include "DistLod.H"
-#include "Utils.H"
-#include "RendObj.H"
-#include "W3DViewDoc.H"
+#include "distlod.h"
+#include "Utils.h"
+#include "rendobj.h"
+#include "W3DViewDoc.h"
 
 
 #ifdef RTS_DEBUG

@@ -37,10 +37,10 @@
 
 #include "StdAfx.h"
 
-#include "ViewerAssetMgr.H"
+#include "ViewerAssetMgr.h"
 #include "texture.h"
 #include "ww3d.h"
-#include "Utils.H"
+#include "Utils.h"
 
 
 ////////////////////////////////////////////////////////////////////////

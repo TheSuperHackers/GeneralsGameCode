@@ -19,13 +19,13 @@
 // MeshPropPage.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "W3DView.h"
 #include "MeshPropPage.h"
-#include "RendObj.H"
-#include "AssetMgr.H"
-#include "Mesh.H"
-#include "MeshMdl.H"
+#include "rendobj.h"
+#include "assetmgr.h"
+#include "mesh.h"
+#include "meshmdl.h"
 #include "w3d_file.h"
 
 #ifdef RTS_DEBUG

@@ -24,11 +24,11 @@
 //
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
-#include "globals.h"
+#include "Globals.h"
 #include "assetmgr.h"
-#include "viewerassetmgr.h"
+#include "ViewerAssetMgr.h"
 
 // Main asset manager for the application.
 ViewerAssetMgrClass *_TheAssetMgr = NULL;

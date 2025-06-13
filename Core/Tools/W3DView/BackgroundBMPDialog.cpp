@@ -19,11 +19,11 @@
 // BackgroundBMPDialog.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "w3dview.h"
+#include "StdAfx.h"
+#include "W3DView.h"
 #include "BackgroundBMPDialog.h"
-#include "W3DViewDoc.H"
-#include "Utils.H"
+#include "W3DViewDoc.h"
+#include "Utils.h"
 
 
 #ifdef RTS_DEBUG

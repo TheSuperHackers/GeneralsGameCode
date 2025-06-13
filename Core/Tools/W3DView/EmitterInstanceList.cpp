@@ -31,9 +31,9 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "StdAfx.H"
-#include "EmitterInstanceList.H"
-#include "Utils.H"
+#include "StdAfx.h"
+#include "EmitterInstanceList.h"
+#include "Utils.h"
 
 /////////////////////////////////////////////////////////////////////
 //

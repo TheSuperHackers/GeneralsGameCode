@@ -27,7 +27,7 @@
 
 #include "resource.h"
 #include "ringobj.h"
-#include "colorbar.h"
+#include "ColorBar.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //

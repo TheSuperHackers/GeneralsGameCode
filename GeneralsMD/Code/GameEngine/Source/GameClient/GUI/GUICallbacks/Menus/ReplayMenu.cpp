@@ -182,19 +182,25 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 	
 	GadgetListBoxReset(listbox);
 
+	// TheSuperHackers @tweak xezon 08/06/2025 Now shows missing maps in red color.
 	enum {
 		COLOR_SP = 0,
 		COLOR_SP_CRC_MISMATCH,
 		COLOR_MP,
 		COLOR_MP_CRC_MISMATCH,
+		COLOR_MISSING_MAP,
+		COLOR_MISSING_MAP_CRC_MISMATCH,
 		COLOR_MAX
 	};
-	Color colors[COLOR_MAX] = {
+	Color colors[] = {
 		GameMakeColor( 255, 255, 255, 255 ),
 		GameMakeColor( 128, 128, 128, 255 ),
 		GameMakeColor( 255, 255, 255, 255 ),
-		GameMakeColor( 128, 128, 128, 255 )
+		GameMakeColor( 128, 128, 128, 255 ),
+		GameMakeColor( 243,  24,  24, 255 ),
+		GameMakeColor( 128,  32,  32, 255 )
 	};
+	static_assert(ARRAY_SIZE(colors) == COLOR_MAX, "Mismatch between colors array size and COLOR_MAX");
 
 	AsciiString asciistr;
 	AsciiString asciisearch;
@@ -270,10 +276,18 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 
 			// pick a color
 			Color color;
-			if (header.versionString == TheVersion->getUnicodeVersion() && header.versionNumber == TheVersion->getVersionNumber() &&
-				header.exeCRC == TheGlobalData->m_exeCRC && header.iniCRC == TheGlobalData->m_iniCRC)
+			Color mapColor;
+
+			const Bool hasMap = mapData != NULL;
+
+			const Bool isCrcCompatible =
+				   header.versionString == TheVersion->getUnicodeVersion()
+				&& header.versionNumber == TheVersion->getVersionNumber()
+				&& header.exeCRC == TheGlobalData->m_exeCRC
+				&& header.iniCRC == TheGlobalData->m_iniCRC;
+
+			if (isCrcCompatible)
 			{
-				// good version
 				if (header.localPlayerIndex >= 0)
 				{
 					// MP
@@ -284,10 +298,14 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 					// SP
 					color = colors[COLOR_SP];
 				}
+
+				if (hasMap)
+					mapColor = color;
+				else
+					mapColor = colors[COLOR_MISSING_MAP];
 			}
 			else
 			{
-				// bad version
 				if (header.localPlayerIndex >= 0)
 				{
 					// MP
@@ -298,12 +316,17 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 					// SP
 					color = colors[COLOR_SP_CRC_MISMATCH];
 				}
+
+				if (hasMap)
+					mapColor = color;
+				else
+					mapColor = colors[COLOR_MISSING_MAP_CRC_MISMATCH];
 			}
 
 			Int insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
 			GadgetListBoxAddEntryText(listbox, displayTimeBuffer, color, insertionIndex, 1);
 			GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 2);
-			GadgetListBoxAddEntryText(listbox, mapStr, color, insertionIndex, 3);
+			GadgetListBoxAddEntryText(listbox, mapStr, mapColor, insertionIndex, 3);
 			//GadgetListBoxAddEntryText(listbox, extraStr, color, insertionIndex, 4);
 		}
 	}

@@ -25,8 +25,8 @@
 // EmitterPhysicsPropPage.h : header file
 //
 
-#include "Resource.H"
-#include "Vector3.H"
+#include "resource.h"
+#include "vector3.h"
 
 // Forward delcarations
 class EmitterInstanceListClass;
