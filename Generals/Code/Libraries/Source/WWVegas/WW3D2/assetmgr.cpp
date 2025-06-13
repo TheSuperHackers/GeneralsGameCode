@@ -353,12 +353,12 @@ static void Log_Textures(bool inited,unsigned& total_count, unsigned& total_mem)
 		Create_Number_String(number,texmem);
 
 		WWDEBUG_SAY(("%32s	%4d * %4d (%15s), init %d, size: %14s bytes, refs: %d\n",
-			tex->Get_Texture_Name(),
+			tex->Get_Texture_Name().str(),
 			desc.Width,
 			desc.Height,
-			tex_format,
+			tex_format.str(),
 			tex->Is_Initialized(),
-			number,
+			number.str(),
 			tex->Num_Refs()));
 
 	}	
@@ -378,7 +378,7 @@ void WW3DAssetManager::Log_Texture_Statistics()
 	Create_Number_String(number,total_initialized_tex_mem);
 	WWDEBUG_SAY(("\n%d initialized textures, totalling %14s bytes\n\n",
 		total_initialized_count,
-		number));
+		number.str()));
 
 	WWDEBUG_SAY(("\nUn-initialized textures ---------------------------------------\n\n"));
 	Log_Textures(false,total_uninitialized_count,total_uninitialized_tex_mem);
@@ -386,7 +386,7 @@ void WW3DAssetManager::Log_Texture_Statistics()
 	Create_Number_String(number,total_uninitialized_tex_mem);
 	WWDEBUG_SAY(("\n%d un-initialized textures, totalling, totalling %14s bytes\n\n",
 		total_uninitialized_count,
-		number));
+		number.str()));
 /*
 	RenderObjIterator * rite=WW3DAssetManager::Get_Instance()->Create_Render_Obj_Iterator();
 	if (rite) {
@@ -1275,7 +1275,7 @@ void WW3DAssetManager::Log_All_Textures(void)
 		else {
 			tmp+=" ";
 		}
-		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp,t->Get_Texture_Name()));
+		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp.str(),t->Get_Texture_Name().str()));
 	}
 
 	// Log procedural textures -------------------------------
@@ -1299,7 +1299,7 @@ void WW3DAssetManager::Log_All_Textures(void)
 		else {
 			tmp+=" ";
 		}
-		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp,t->Get_Texture_Name()));
+		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp.str(),t->Get_Texture_Name().str()));
 	}
 
 	// Log "ordinary" textures -------------------------------
@@ -1324,7 +1324,7 @@ void WW3DAssetManager::Log_All_Textures(void)
 		else {
 			tmp+=" ";
 		}
-		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp,t->Get_Texture_Name()));
+		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp.str(),t->Get_Texture_Name().str()));
 	}
 
 }

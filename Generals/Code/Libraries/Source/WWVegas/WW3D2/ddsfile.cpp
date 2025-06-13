@@ -83,7 +83,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	{
 		StringClass tmp(0,true);
 		tmp.Format("File %s loading failed.\nTried to read %d bytes, got %d. (SurfDesc.size=%d)\n",name,sizeof(LegacyDDSURFACEDESC2),read_bytes,SurfaceDesc.Size);
-		WWASSERT_PRINT(0,tmp);
+		WWASSERT_PRINT(0,tmp.str());
 		return;
 	}
 
