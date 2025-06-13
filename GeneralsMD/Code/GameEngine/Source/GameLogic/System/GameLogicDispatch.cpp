@@ -1713,7 +1713,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					if (beacon)
 					{
 						const ThingTemplate *thing = TheThingFactory->findTemplate( beacon->getControllingPlayer()->getPlayerTemplate()->getBeaconTemplate() );
-						if (thing->isEquivalentTo(beacon->getTemplate()))
+						if (ThingTemplate::isEquivalentTo(thing, beacon->getTemplate()))
 						{
 							if (beacon->getControllingPlayer() == thisPlayer)
 							{

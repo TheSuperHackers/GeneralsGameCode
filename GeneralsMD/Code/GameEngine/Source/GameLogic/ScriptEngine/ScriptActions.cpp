@@ -671,7 +671,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 			{
 				continue;
 			}
-			if (obj->getTemplate()->isEquivalentTo(transport->getTemplate()) ) 
+			if (ThingTemplate::isEquivalentTo(obj->getTemplate(), transport->getTemplate()))
 			{
 				// it's our transport.
 				continue;
@@ -740,7 +740,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 					continue;
 				}
 				AIUpdateInterface *ai = obj->getAIUpdateInterface();
-				if (obj->getTemplate()->isEquivalentTo(transport->getTemplate()) ) 
+				if (ThingTemplate::isEquivalentTo(obj->getTemplate(), transport->getTemplate()))
 				{
 					if( dp )
 					{
