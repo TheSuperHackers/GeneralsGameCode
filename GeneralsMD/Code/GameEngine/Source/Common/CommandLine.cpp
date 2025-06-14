@@ -1429,15 +1429,18 @@ char *nextParam(char *newSource, const char *seps)
 
 void parseCommandLine(bool phase2)
 {
-	if (TheGlobalData != NULL)
-		return;
-	TheWritableGlobalData = NEW GlobalData;
+	if (!phase2)
+	{
+		if (TheGlobalData != NULL)
+			return;
+		TheWritableGlobalData = NEW GlobalData;
+	}
 
 	std::vector<char*> argv;
 	argv.push_back(NULL);
 
-	char *cmdLine = GetCommandLineA();
-	char *token = nextParam(cmdLine, "\" ");
+	std::string cmdLine = GetCommandLineA();
+	char *token = nextParam(&*cmdLine.begin(), "\" ");
 	while (token != NULL)
 	{
 		argv.push_back(strtrim(token));
@@ -1483,7 +1486,7 @@ void parseCommandLine(bool phase2)
 				continue;
 			if (strnicmp(argv[arg], params[param].name, len) == 0)
 			{
-				arg += params[param].func(argv.data()+arg, argc-arg);
+				arg += params[param].func(&*argv.begin()+arg, argc-arg);
 				found = true;
 				break;
 			}
