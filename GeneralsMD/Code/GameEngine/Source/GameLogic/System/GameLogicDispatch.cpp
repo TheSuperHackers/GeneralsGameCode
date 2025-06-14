@@ -1715,13 +1715,13 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 						continue;
 					}
 
-					Player* controllingPlayer = beacon->getControllingPlayer();
+					Player *controllingPlayer = beacon->getControllingPlayer();
 					if (!controllingPlayer)
 					{
 						continue;
 					}
 
-					const PlayerTemplate* playerTemplate = controllingPlayer->getPlayerTemplate();
+					const PlayerTemplate *playerTemplate = controllingPlayer->getPlayerTemplate();
 					if (!playerTemplate)
 					{
 						continue;
