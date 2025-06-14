@@ -151,7 +151,7 @@ static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &file
 			UnicodeString filenameWide;
 			filenameWide.translate(filenames[filenamePositionStarted]);
 			UnicodeString command;
-			command.format(L"\"%s\"%s%s -ignoreAsserts -simReplay \"%s\"",
+			command.format(L"\"%s\"%s%s -replay \"%s\"",
 				exePath,
 				TheGlobalData->m_windowed ? L" -win" : L"",
 				TheGlobalData->m_headless ? L" -headless" : L"",

@@ -440,7 +440,7 @@ Int parseHeadless( char *args[], int num )
 	return 1;
 }
 
-Int parseSimReplay(char *args[], int num)
+Int parseReplay(char *args[], int num)
 {
 	if (TheWritableGlobalData && num > 1)
 	{
@@ -1262,7 +1262,7 @@ static CommandLineParam params[] =
 	// TheSuperHackers @feature helmutbuhler 13/04/2025
 	// Simulate replay without graphics. Pass the filename including .rep afterwards.
 	// You can pass this multiple times to check multiple replays.
-	{ "-simReplay", parseSimReplay },
+	{ "-replay", parseReplay },
 
 	// TheSuperHackers @feature helmutbuhler 23/05/2025
 	// Simulate each replay in a separate process and use up two N processes at the same time.
