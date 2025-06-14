@@ -33,6 +33,7 @@
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
+#include "trim.h"
 
 #ifdef RTS_INTERNAL
 // for occasional debugging...
@@ -1199,10 +1200,20 @@ Int parseClearDebugLevel(char *args[], int num)
 }
 #endif
 
-static CommandLineParam params[] =
+// Phase 1 Params are parsed before Windows Creation
+static CommandLineParam paramsPhase1[] =
+{
+	{ "-win", parseWin },
+
+	// TheSuperHackers @feature helmutbuhler 11/04/2025
+	// This runs the game without a window, graphics, input and audio. Used for testing.
+	{ "-headless", parseHeadless },
+};
+
+// Phase 2 Params are parsed during Engine Init
+static CommandLineParam paramsPhase2[] =
 {
 	{ "-noshellmap", parseNoShellMap },
-	{ "-win", parseWin },
 	{ "-xres", parseXRes },
 	{ "-yres", parseYRes },
 	{ "-fullscreen", parseNoWin },
@@ -1214,10 +1225,6 @@ static CommandLineParam params[] =
 	{ "-noshaders", parseNoShaders },
 	{ "-quickstart", parseQuickStart },
 	{ "-useWaveEditor", parseUseWaveEditor },
-
-	// TheSuperHackers @feature helmutbuhler 11/04/2025
-	// This runs the game without a window, graphics, input and audio. Used for testing.
-	{ "-headless", parseHeadless },
 
 #if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 	{ "-noaudio", parseNoAudio },
@@ -1367,55 +1374,143 @@ static CommandLineParam params[] =
 
 };
 
-// parseCommandLine ===========================================================
-/** Parse command-line parameters. */
-//=============================================================================
-void parseCommandLine(int argc, char *argv[])
+char *nextParam(char *newSource, const char *seps)
 {
+	static char *source = NULL;
+	if (newSource)
+	{
+		source = newSource;
+	}
+	if (!source)
+	{
+		return NULL;
+	}
+
+	// find first separator
+	char *first = source;//strpbrk(source, seps);
+	if (first)
+	{
+		// go past separator
+		char *firstSep = strpbrk(first, seps);
+		char firstChar[2] = {0,0};
+		if (firstSep == first)
+		{
+			firstChar[0] = *first;
+			while (*first == firstChar[0]) first++;
+		}
+
+		// find end
+		char *end;
+		if (firstChar[0])
+			end = strpbrk(first, firstChar);
+		else
+			end = strpbrk(first, seps);
+
+		// trim string & save next start pos
+		if (end)
+		{
+			source = end+1;
+			*end = 0;
+
+			if (!*source)
+				source = NULL;
+		}
+		else
+		{
+			source = NULL;
+		}
+
+		if (first && !*first)
+			first = NULL;
+	}
+
+	return first;
+}
+
+void parseCommandLine(bool phase2)
+{
+	if (TheGlobalData != NULL)
+		return;
+	TheWritableGlobalData = NEW GlobalData;
+
+	std::vector<char*> argv;
+	argv.push_back(NULL);
+
+	char *cmdLine = GetCommandLineA();
+	char *token = nextParam(cmdLine, "\" ");
+	while (token != NULL)
+	{
+		argv.push_back(strtrim(token));
+		token = nextParam(NULL, "\" ");	   
+	}
+	int argc = argv.size();
+
+	/*if (argc>2 && strcmp(argv[1],"-DX")==0) {  
+		Int i;
+		DEBUG_LOG(("\n--- DX STACK DUMP\n"));
+		for (i=2; i<argc; i++) {
+			Int pc;
+			pc = 0;
+			sscanf(argv[i], "%x",  &pc);
+			char name[_MAX_PATH], file[_MAX_PATH];
+			unsigned int line;
+			unsigned int addr;
+			GetFunctionDetails((void*)pc, name, file, &line, &addr);
+			DEBUG_LOG(("0x%x - %s, %s, line %d address 0x%x\n", pc, name, file, line, addr));
+		}
+		DEBUG_LOG(("\n--- END OF DX STACK DUMP\n"));
+		return 0;
+	}*/
+
+	int arg = 1;
+
+#ifdef DEBUG_LOGGING
+	if (!phase2)
+	{
+		DEBUG_LOG(("Command-line args:"));
+		int debugFlags = DebugGetFlags();
+		DebugSetFlags(debugFlags & ~DEBUG_FLAG_PREPEND_TIME); // turn off timestamps
+		for (arg=1; arg<argc; arg++)
+		{
+			DEBUG_LOG((" %s", argv[arg]));
+		}
+		DEBUG_LOG(("\n"));
+		DebugSetFlags(debugFlags); // turn timestamps back on iff they were on before
+		arg = 1;
+	}
+#endif // DEBUG_LOGGING
+
+	CommandLineParam* params = phase2 ? paramsPhase2 : paramsPhase1;
+	int numParams = phase2 ? ARRAY_SIZE(paramsPhase2) : ARRAY_SIZE(paramsPhase1);
+
 	// To parse command-line parameters, we loop through a table holding arguments
 	// and functions to handle them.  Comparisons can be case-(in)sensitive, and
 	// can check the entire string (for testing the presence of a flag) or check
 	// just the start (for a key=val argument).  The handling function can also
 	// look at the next argument(s), to accomodate multi-arg parameters, e.g. "-p 1234".
-	int arg=1, param;
-	Bool found;
-
-#ifdef DEBUG_LOGGING
-	DEBUG_LOG(("Command-line args:"));
-	int debugFlags = DebugGetFlags();
-	DebugSetFlags(debugFlags & ~DEBUG_FLAG_PREPEND_TIME); // turn off timestamps
-	for (arg=1; arg<argc; arg++)
-	{
-		DEBUG_LOG((" %s", argv[arg]));
-	}
-	DEBUG_LOG(("\n"));
-	DebugSetFlags(debugFlags); // turn timestamps back on iff they were on before
-	arg = 1;
-#endif // DEBUG_LOGGING
-
 	while (arg<argc)
 	{
 		// Look at arg #i
-		found = false;
-		for (param=0; !found && param<sizeof(params)/sizeof(params[0]); ++param)
+		Bool found = false;
+		for (int param=0; !found && param<numParams; ++param)
 		{
 			int len = strlen(params[param].name);
 			int len2 = strlen(argv[arg]);
 			if (len2 != len)
 				continue;
-			if (!strnicmp(argv[arg], params[param].name, len))
+			if (strnicmp(argv[arg], params[param].name, len) == 0)
 			{
-				arg += params[param].func(argv+arg, argc-arg);
+				arg += params[param].func(argv.data()+arg, argc-arg);
 				found = true;
+				break;
 			}
-		}	// for
+		}
 		if (!found)
 		{
 			arg++;
 		}
 	}
 
-	TheArchiveFileSystem->loadMods();
+	if (phase2)
+		TheArchiveFileSystem->loadMods();
 }
-
-
