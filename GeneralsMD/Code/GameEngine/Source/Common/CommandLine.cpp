@@ -1445,23 +1445,6 @@ void parseCommandLine(bool phase2)
 	}
 	int argc = argv.size();
 
-	/*if (argc>2 && strcmp(argv[1],"-DX")==0) {  
-		Int i;
-		DEBUG_LOG(("\n--- DX STACK DUMP\n"));
-		for (i=2; i<argc; i++) {
-			Int pc;
-			pc = 0;
-			sscanf(argv[i], "%x",  &pc);
-			char name[_MAX_PATH], file[_MAX_PATH];
-			unsigned int line;
-			unsigned int addr;
-			GetFunctionDetails((void*)pc, name, file, &line, &addr);
-			DEBUG_LOG(("0x%x - %s, %s, line %d address 0x%x\n", pc, name, file, line, addr));
-		}
-		DEBUG_LOG(("\n--- END OF DX STACK DUMP\n"));
-		return 0;
-	}*/
-
 	int arg = 1;
 
 #ifdef DEBUG_LOGGING
