@@ -30,7 +30,6 @@ target_link_libraries(corei_imagepacker INTERFACE
     core_debug
     core_profile
     core_wwcommon
-    dbghelplib
     imm32
     vfw32
     winmm

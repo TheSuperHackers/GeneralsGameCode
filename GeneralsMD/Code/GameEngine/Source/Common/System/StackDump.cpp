@@ -31,6 +31,7 @@
 #include "Common/StackDump.h"
 #include "Common/Debug.h"
 
+#include "DbgHelpLoader.h"
 
 //*****************************************************************************
 //	Prototypes
@@ -45,14 +46,6 @@ void WriteStackLine(void*address, void (*callback)(const char*));
 //	Mis-named globals :-)
 //*****************************************************************************
 static CONTEXT gsContext;
-static Bool gsInit=FALSE;
-
-BOOL (__stdcall *gsSymGetLineFromAddr)(
-		IN  HANDLE                  hProcess,
-		IN  DWORD                   dwAddr,
-		OUT PDWORD                  pdwDisplacement,
-		OUT PIMAGEHLP_LINE          Line
-			);
 
 
 //*****************************************************************************
@@ -72,7 +65,8 @@ void StackDump(void (*callback)(const char*))
 		callback = StackDumpDefaultHandler;
 	}
 
-	InitSymbolInfo();
+	if (!InitSymbolInfo())
+		return;
 
 	DWORD myeip,myesp,myebp;
 
@@ -101,7 +95,8 @@ void StackDumpFromContext(DWORD eip,DWORD esp,DWORD ebp, void (*callback)(const 
 		callback = StackDumpDefaultHandler;
 	}
 
-	InitSymbolInfo();
+	if (!InitSymbolInfo())
+		return;
 
 	MakeStackTrace(eip,esp,ebp, 0,  callback);
 }
@@ -111,27 +106,20 @@ void StackDumpFromContext(DWORD eip,DWORD esp,DWORD ebp, void (*callback)(const 
 //*****************************************************************************
 BOOL InitSymbolInfo()
 {
-	if (gsInit == TRUE)
+	if (DbgHelpLoader::isLoaded())
 		return TRUE;
 
-	gsInit = TRUE;
+	if (!DbgHelpLoader::load())
+		return FALSE;
 
 	atexit(UninitSymbolInfo);
-
-	// See if we have the line from address function
-	// We use GetProcAddress to stop link failures at dll loadup
-	HINSTANCE hInstDebugHlp = GetModuleHandle("dbghelp.dll");
-
-	gsSymGetLineFromAddr = (BOOL (__stdcall *)(	IN  HANDLE,IN  DWORD,OUT PDWORD,OUT PIMAGEHLP_LINE))
-							GetProcAddress(hInstDebugHlp , "SymGetLineFromAddr");
 
 	char pathname[_MAX_PATH+1];
 	char drive[10];
 	char directory[_MAX_PATH+1];
 	HANDLE process;
 
-
-	::SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME | SYMOPT_LOAD_LINES | SYMOPT_OMAP_FIND_NEAREST);
+	DbgHelpLoader::symSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME | SYMOPT_LOAD_LINES | SYMOPT_OMAP_FIND_NEAREST);
 
 	process = GetCurrentProcess();
 
@@ -145,18 +133,18 @@ BOOL InitSymbolInfo()
 	// append the current directory to build a search path for SymInit
 	::lstrcat(pathname, ";.;");
 
-	if(::SymInitialize(process, pathname, FALSE))
+	if(DbgHelpLoader::symInitialize(process, pathname, FALSE))
 	{
 		// regenerate the name of the app
 		::GetModuleFileName(NULL, pathname, _MAX_PATH);
-		if(::SymLoadModule(process, NULL, pathname, NULL, 0, 0))
+		if(DbgHelpLoader::symLoadModule(process, NULL, pathname, NULL, 0, 0))
 		{
 				//Load any other relevant modules (ie dlls) here
 				return TRUE;
 		}
-		::SymCleanup(process);
 	}
 
+	DbgHelpLoader::unload();
 	return(FALSE);
 }
 
@@ -165,14 +153,7 @@ BOOL InitSymbolInfo()
 //*****************************************************************************
 void UninitSymbolInfo(void)
 {
-	if (gsInit == FALSE)
-	{
-		return;
-	}
-
-	gsInit = FALSE;
-
-	::SymCleanup(GetCurrentProcess());
+	DbgHelpLoader::unload();
 }
 
 
@@ -217,14 +198,14 @@ stack_frame.AddrFrame.Offset = myebp;
 			unsigned int skip = skipFrames;
 			while (b_ret&&skip)
 			{
-					b_ret = StackWalk(      IMAGE_FILE_MACHINE_I386,
+					b_ret = DbgHelpLoader::stackWalk(      IMAGE_FILE_MACHINE_I386,
 											process,
 											thread,
 											&stack_frame,
 											NULL, //&gsContext,
 											NULL,
-											SymFunctionTableAccess,
-											SymGetModuleBase,
+											DbgHelpLoader::symFunctionTableAccess,
+											DbgHelpLoader::symGetModuleBase,
 											NULL);
 					skip--;
 			}
@@ -233,14 +214,14 @@ stack_frame.AddrFrame.Offset = myebp;
 			while(b_ret&&skip)
 			{
 
-					b_ret = StackWalk(      IMAGE_FILE_MACHINE_I386,
+					b_ret = DbgHelpLoader::stackWalk(      IMAGE_FILE_MACHINE_I386,
 											process,
 											thread,
 											&stack_frame,
 											NULL, //&gsContext,
 											NULL,
-											SymFunctionTableAccess,
-											SymGetModuleBase,
+											DbgHelpLoader::symFunctionTableAccess,
+											DbgHelpLoader::symGetModuleBase,
 											NULL);
 
 
@@ -256,7 +237,9 @@ stack_frame.AddrFrame.Offset = myebp;
 //*****************************************************************************
 void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* linenumber, unsigned int* address)
 {
-	InitSymbolInfo();
+	if (!InitSymbolInfo())
+		return;
+
 	if (name)
 	{
 		strcpy(name, "<Unknown>");
@@ -285,8 +268,8 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
     psymbol->SizeOfStruct = sizeof(symbol_buffer);
     psymbol->MaxNameLength = 512;
 
-    if (SymGetSymFromAddr(process, (DWORD) pointer, &displacement, psymbol))
-    {
+	if (DbgHelpLoader::symGetSymFromAddr(process, (DWORD) pointer, &displacement, psymbol))
+	{
 		if (name)
 		{
 			strcpy(name, psymbol->Name);
@@ -294,32 +277,27 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
 		}
 
 		// Get line now
-		if (gsSymGetLineFromAddr)
+
+		IMAGEHLP_LINE line;
+		memset(&line,0,sizeof(line));
+		line.SizeOfStruct = sizeof(line);
+
+		if (DbgHelpLoader::symGetLineFromAddr(process, (DWORD) pointer, &displacement, &line))
 		{
-			// Unsupported for win95/98 at least with my current dbghelp.dll
-
-			IMAGEHLP_LINE line;
-			memset(&line,0,sizeof(line));
-			line.SizeOfStruct = sizeof(line);
-
-
-			if (gsSymGetLineFromAddr(process, (DWORD) pointer, &displacement, &line))
+			if (filename)
 			{
-				if (filename)
-				{
-					strcpy(filename, line.FileName);
-				}
-				if (linenumber)
-				{
-					*linenumber = (unsigned int)line.LineNumber;
-				}
-				if (address)
-				{
-					*address = (unsigned int)line.Address;
-				}
+				strcpy(filename, line.FileName);
+			}
+			if (linenumber)
+			{
+				*linenumber = (unsigned int)line.LineNumber;
+			}
+			if (address)
+			{
+				*address = (unsigned int)line.Address;
 			}
 		}
-    }
+	}
 }
 
 
@@ -328,7 +306,8 @@ void GetFunctionDetails(void *pointer, char*name, char*filename, unsigned int* l
 //*****************************************************************************
 void FillStackAddresses(void**addresses, unsigned int count, unsigned int skip)
 {
-	InitSymbolInfo();
+	if (!InitSymbolInfo())
+		return;
 
 	STACKFRAME	stack_frame;
 
@@ -378,28 +357,28 @@ stack_frame.AddrFrame.Offset = myebp;
 		// Skip some?
 		while (stillgoing&&skip)
 		{
-			stillgoing = StackWalk(IMAGE_FILE_MACHINE_I386,
+			stillgoing = DbgHelpLoader::stackWalk(IMAGE_FILE_MACHINE_I386,
 								process,
 								thread,
 								&stack_frame,
 								NULL,	//&gsContext,
 								NULL,
-								SymFunctionTableAccess,
-								SymGetModuleBase,
+								DbgHelpLoader::symFunctionTableAccess,
+								DbgHelpLoader::symGetModuleBase,
 								NULL) != 0;
 			skip--;
 		}
 
 		while(stillgoing&&count)
 		{
-			stillgoing = StackWalk(IMAGE_FILE_MACHINE_I386,
+			stillgoing = DbgHelpLoader::stackWalk(IMAGE_FILE_MACHINE_I386,
 								process,
 								thread,
 								&stack_frame,
 								NULL, //&gsContext,
 								NULL,
-								SymFunctionTableAccess,
-								SymGetModuleBase,
+								DbgHelpLoader::symFunctionTableAccess,
+								DbgHelpLoader::symGetModuleBase,
 								NULL) != 0;
 			if (stillgoing)
 			{
@@ -438,7 +417,8 @@ void StackDumpFromAddresses(void**addresses, unsigned int count, void (*callback
 		callback = StackDumpDefaultHandler;
 	}
 
-	InitSymbolInfo();
+	if (!InitSymbolInfo())
+		return;
 
 	while ((count--) && (*addresses!=NULL))
 	{
