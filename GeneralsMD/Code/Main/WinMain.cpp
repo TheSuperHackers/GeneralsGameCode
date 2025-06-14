@@ -873,8 +873,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 				ApplicationIsWindowed = true;
 
 			// preparse for headless commandline options as well. We need to know about this before we create the window.
-			if (stricmp(token, "-simReplay") == 0)
-				headless = true;
 			
 			token = nextParam(NULL, "\" ");	   
 		}

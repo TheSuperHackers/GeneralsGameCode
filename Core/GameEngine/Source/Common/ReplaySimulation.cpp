@@ -22,11 +22,29 @@
 #include "Common/WorkerProcess.h"
 #include "GameLogic/GameLogic.h"
 #include "GameClient/GameClient.h"
+#include "Common/GameEngine.h"
 
 static int SimulateReplaysInThisProcess(const std::vector<AsciiString> &filenames)
 {
-	// Note that we use printf here because this is run from cmd.
 	int numErrors = 0;
+	if (!TheGlobalData->m_headless)
+	{
+		// If we are not in headless mode, we need to run the replay in the engine.
+		for (size_t i = 0; i < filenames.size(); i++)
+		{
+			AsciiString filename = filenames[i];
+			TheRecorder->playbackFile(filenames[i]);
+			TheWritableGlobalData->m_showReplayContinueButton = i != filenames.size()-1;
+			TheGameEngine->execute();
+			if (TheRecorder->sawCRCMismatch())
+				numErrors++;
+			if (!TheGlobalData->m_showReplayContinueButton)
+				break;
+			TheGameEngine->setQuitting(FALSE);
+		}
+		return numErrors != 0 ? 1 : 0;
+	}
+	// Note that we use printf here because this is run from cmd.
 	DWORD totalStartTimeMillis = GetTickCount();
 	for (size_t i = 0; i < filenames.size(); i++)
 	{
@@ -133,7 +151,11 @@ static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &file
 			UnicodeString filenameWide;
 			filenameWide.translate(filenames[filenamePositionStarted]);
 			UnicodeString command;
-			command.format(L"\"%s\" -simReplay \"%s\"", exePath, filenameWide.str());
+			command.format(L"\"%s\"%s%s -ignoreAsserts -simReplay \"%s\"",
+				exePath,
+				TheGlobalData->m_windowed ? L" -win" : L"",
+				TheGlobalData->m_headless ? L" -headless" : L"",
+				filenameWide.str());
 
 			processes.push_back(WorkerProcess());
 			processes.back().startProcess(command);
