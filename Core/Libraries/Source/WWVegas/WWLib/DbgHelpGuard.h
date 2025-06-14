@@ -43,5 +43,5 @@ public:
 private:
 
 	ScopedFileRenamer m_dbgHelpRenamer;
-	bool m_wasLoaded;
+	bool m_requiresLoad;
 };
