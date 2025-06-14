@@ -346,14 +346,14 @@ void OpenContain::addToContain( Object *rider )
 		addOrRemoveObjFromWorld(rider, false);
 	}
 
-	// ensure our contents are positions correctly.
-	redeployOccupants();
-
 	// trigger an onContaining event for the object that just "ate" something
 	if( getObject()->getContain() )
 	{
 		getObject()->getContain()->onContaining( rider, wasSelected );
 	}
+
+	// ensure our contents are positions correctly.
+	redeployOccupants();
 
 	// trigger an onContainedBy event for the object that just got "eaten" by us
 	rider->onContainedBy( getObject() );
