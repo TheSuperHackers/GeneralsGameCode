@@ -428,6 +428,18 @@ Int parseMapName(char *args[], int num)
 	return 1;
 }
 
+Int parseHeadless( char *args[], int num )
+{
+	if (TheWritableGlobalData)
+	{
+		TheWritableGlobalData->m_headless = TRUE;
+		TheWritableGlobalData->m_playIntro = FALSE;
+		TheWritableGlobalData->m_afterIntro = TRUE;
+		TheWritableGlobalData->m_playSizzle = FALSE;
+	}
+	return 1;
+}
+
 Int parseSimReplay(char *args[], int num)
 {
 	if (TheWritableGlobalData && num > 1)
@@ -1242,6 +1254,10 @@ static CommandLineParam params[] =
 	{ "-noshaders", parseNoShaders },
 	{ "-quickstart", parseQuickStart },
 	{ "-useWaveEditor", parseUseWaveEditor },
+
+	// TheSuperHackers @feature helmutbuhler 11/04/2025
+	// This runs the game without a window, graphics, input and audio. You can combine this with -replay
+	{ "-headless", parseHeadless },
 
 	// TheSuperHackers @feature helmutbuhler 13/04/2025
 	// Simulate replay without graphics. Pass the filename including .rep afterwards.
