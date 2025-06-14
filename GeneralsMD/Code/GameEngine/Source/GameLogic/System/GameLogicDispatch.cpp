@@ -1710,16 +1710,27 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				for (VecObjectID::const_iterator it = selectedObjects.begin(); it != selectedObjects.end(); ++it)
 				{
 					Object *beacon = findObjectByID(*it);
-
-					if (!beacon || !beacon->getControllingPlayer() || !beacon->getControllingPlayer()->getPlayerTemplate())
+					if (!beacon)
 					{
 						continue;
 					}
 
-					const ThingTemplate *thing = TheThingFactory->findTemplate( beacon->getControllingPlayer()->getPlayerTemplate()->getBeaconTemplate() );
+					Player* controllingPlayer = beacon->getControllingPlayer();
+					if (!controllingPlayer)
+					{
+						continue;
+					}
+
+					const PlayerTemplate* playerTemplate = controllingPlayer->getPlayerTemplate();
+					if (!playerTemplate)
+					{
+						continue;
+					}
+
+					const ThingTemplate *thing = TheThingFactory->findTemplate( playerTemplate->getBeaconTemplate() );
 					if (thing->isEquivalentTo(beacon->getTemplate()))
 					{
-						if (beacon->getControllingPlayer() == thisPlayer)
+						if (controllingPlayer == thisPlayer)
 						{
 							TheGameLogic->destroyObject(beacon); // the owner is telling it to go away.  such is life.
 
