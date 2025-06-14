@@ -38,7 +38,11 @@
 #include "Common/GameEngine.h"
 #include "GameLogic/GameLogic.h"
 #include "GameNetwork/NetworkInterface.h"
+#ifdef RTS_HAS_OPENAL
+#include "OpenALDevice/OpenALAudioManager.h"
+#else
 #include "MilesAudioDevice/MilesAudioManager.h"
+#endif
 #include "Win32Device/Common/Win32BIGFileSystem.h"
 #include "Win32Device/Common/Win32LocalFileSystem.h"
 #include "W3DDevice/Common/W3DModuleFactory.h"
@@ -102,6 +106,10 @@ inline ParticleSystemManager* Win32GameEngine::createParticleSystemManager( void
 inline NetworkInterface *Win32GameEngine::createNetwork( void ) { return NetworkInterface::createNetwork(); }
 inline Radar *Win32GameEngine::createRadar( void ) { return NEW W3DRadar; }
 inline WebBrowser *Win32GameEngine::createWebBrowser( void ) { return NEW CComObject<W3DWebBrowser>; }
+#ifdef RTS_HAS_OPENAL
+inline AudioManager *Win32GameEngine::createAudioManager( void ) { return NEW OpenALAudioManager; }
+#else
 inline AudioManager *Win32GameEngine::createAudioManager( void ) { return NEW MilesAudioManager; }
+#endif
  
 #endif  // end __WIN32GAMEENGINE_H_
