@@ -42,7 +42,7 @@ void DbgHelpGuard::deactivate()
 	else if (DbgHelpLoader::isLoaded())
 	{
 		DbgHelpLoader::unload();
-		m_wasLoaded = true;
+		m_requiresLoad = true;
 		m_dbgHelpRenamer.rename("dbghelp.dll", "dbghelp.dll.bak");
 	}
 	else
@@ -56,8 +56,9 @@ void DbgHelpGuard::reactivate()
 	m_dbgHelpRenamer.revert();
 	DbgHelpLoader::unblockLoad();
 
-	if (m_wasLoaded)
+	if (m_requiresLoad)
 	{
 		DbgHelpLoader::load();
+		m_requiresLoad = false;
 	}
 }
