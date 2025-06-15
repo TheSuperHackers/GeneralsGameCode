@@ -194,6 +194,18 @@ void Display::setHeight( UnsignedInt height )
 
 }  // end setHeight
 
+
+// Display::setRenderDevice =========================================================
+/** Set the render device for the display */
+//=============================================================================
+void Display::setRenderDevice(UnsignedInt dev)
+{
+	m_renderDeviceIndex = dev;
+}
+
+
+
+
 //============================================================================
 // Display::playLogoMovie
 // minMovieLength is in milliseconds

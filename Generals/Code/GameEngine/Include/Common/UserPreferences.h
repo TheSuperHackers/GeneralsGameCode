@@ -109,6 +109,7 @@ public:
  	Real getGammaValue(void);
 	Int	 getTextureReduction(void);
 	void getResolution(Int *xres, Int *yres);
+	void getRenderDeviceIndex(Int* index);
 	Bool get3DShadowsEnabled(void);
 	Bool get2DShadowsEnabled(void);
 	Bool getCloudShadowsEnabled(void);
