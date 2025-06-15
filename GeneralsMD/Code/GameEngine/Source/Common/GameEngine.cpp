@@ -364,7 +364,7 @@ void GameEngine::init( int argc, char *argv[] )
 	#endif/////////////////////////////////////////////////////////////////////////////////////////////
 
 
-		DEBUG_ASSERTCRASH(TheWritableGlobalData,("TheWritableGlobalData expected to be created"));
+		DEBUG_ASSERTCRASH(TheWritableGlobalData,("TheWritableGlobalData expected to be created\n"));
 		initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", TheWritableGlobalData, &xferCRC, "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
 
 
@@ -389,7 +389,9 @@ void GameEngine::init( int argc, char *argv[] )
 	#endif
 		
 		// special-case: parse command-line parameters after loading global data
-		parseCommandLine(true);
+		parseCommandLineForEngineInit();
+
+		TheArchiveFileSystem->loadMods();
 
 		// doesn't require resets so just create a single instance here.
 		TheGameLODManager = MSGNEW("GameEngineSubsystem") GameLODManager;

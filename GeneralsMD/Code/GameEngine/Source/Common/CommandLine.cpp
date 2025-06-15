@@ -1200,8 +1200,9 @@ Int parseClearDebugLevel(char *args[], int num)
 }
 #endif
 
-// Phase 1 Params are parsed before Windows Creation
-static CommandLineParam paramsPhase1[] =
+// Initial Params are parsed before Windows Creation.
+// Note that except for TheGlobalData, no other global objects exist yet when these are parsed.
+static CommandLineParam paramsInitial[] =
 {
 	{ "-win", parseWin },
 
@@ -1210,8 +1211,8 @@ static CommandLineParam paramsPhase1[] =
 	{ "-headless", parseHeadless },
 };
 
-// Phase 2 Params are parsed during Engine Init
-static CommandLineParam paramsPhase2[] =
+// These Params are parsed during Engine Init before INI data is loaded
+static CommandLineParam paramsForEngineInit[] =
 {
 	{ "-noshellmap", parseNoShellMap },
 	{ "-xres", parseXRes },
@@ -1427,20 +1428,12 @@ char *nextParam(char *newSource, const char *seps)
 	return first;
 }
 
-void parseCommandLine(bool phase2)
+static void parseCommandLine(const CommandLineParam* params, int numParams)
 {
-	if (!phase2)
-	{
-		if (TheGlobalData != NULL)
-			return;
-		TheWritableGlobalData = NEW GlobalData;
-	}
-
 	std::vector<char*> argv;
-	argv.push_back(NULL);
 
 	std::string cmdLine = GetCommandLineA();
-	char *token = nextParam(&*cmdLine.begin(), "\" ");
+	char *token = nextParam(&cmdLine[0], "\" ");
 	while (token != NULL)
 	{
 		argv.push_back(strtrim(token));
@@ -1448,26 +1441,20 @@ void parseCommandLine(bool phase2)
 	}
 	int argc = argv.size();
 
-	int arg = 1;
+	int arg = 0;
 
 #ifdef DEBUG_LOGGING
-	if (!phase2)
+	DEBUG_LOG(("Command-line args:"));
+	int debugFlags = DebugGetFlags();
+	DebugSetFlags(debugFlags & ~DEBUG_FLAG_PREPEND_TIME); // turn off timestamps
+	for (arg=0; arg<argc; arg++)
 	{
-		DEBUG_LOG(("Command-line args:"));
-		int debugFlags = DebugGetFlags();
-		DebugSetFlags(debugFlags & ~DEBUG_FLAG_PREPEND_TIME); // turn off timestamps
-		for (arg=1; arg<argc; arg++)
-		{
-			DEBUG_LOG((" %s", argv[arg]));
-		}
-		DEBUG_LOG(("\n"));
-		DebugSetFlags(debugFlags); // turn timestamps back on iff they were on before
-		arg = 1;
+		DEBUG_LOG((" %s", argv[arg]));
 	}
+	DEBUG_LOG(("\n"));
+	DebugSetFlags(debugFlags); // turn timestamps back on iff they were on before
+	arg = 0;
 #endif // DEBUG_LOGGING
-
-	CommandLineParam* params = phase2 ? paramsPhase2 : paramsPhase1;
-	int numParams = phase2 ? ARRAY_SIZE(paramsPhase2) : ARRAY_SIZE(paramsPhase1);
 
 	// To parse command-line parameters, we loop through a table holding arguments
 	// and functions to handle them.  Comparisons can be case-(in)sensitive, and
@@ -1486,7 +1473,7 @@ void parseCommandLine(bool phase2)
 				continue;
 			if (strnicmp(argv[arg], params[param].name, len) == 0)
 			{
-				arg += params[param].func(&*argv.begin()+arg, argc-arg);
+				arg += params[param].func(&argv[0]+arg, argc-arg);
 				found = true;
 				break;
 			}
@@ -1496,7 +1483,19 @@ void parseCommandLine(bool phase2)
 			arg++;
 		}
 	}
-
-	if (phase2)
-		TheArchiveFileSystem->loadMods();
 }
+
+void parseInitialCommandLineAndInitGlobalData()
+{
+	if (TheGlobalData != NULL)
+		return;
+	TheWritableGlobalData = NEW GlobalData;
+	parseCommandLine(paramsInitial, ARRAY_SIZE(paramsInitial));
+}
+
+void parseCommandLineForEngineInit()
+{
+	parseCommandLine(paramsForEngineInit, ARRAY_SIZE(paramsForEngineInit));
+}
+
+

@@ -798,7 +798,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		}
 		::SetCurrentDirectory(buffer);
 
-		parseCommandLine(false);
+		parseInitialCommandLineAndInitGlobalData();
 
 		#ifdef RTS_DEBUG
 			// Turn on Memory heap tracking

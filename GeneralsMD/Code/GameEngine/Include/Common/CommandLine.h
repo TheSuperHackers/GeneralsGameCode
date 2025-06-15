@@ -31,6 +31,8 @@
 #ifndef _COMMAND_LINE_H_
 #define _COMMAND_LINE_H_
 
-void parseCommandLine(bool phase2); ///< Parse command-line parameters
+void parseInitialCommandLineAndInitGlobalData();
+
+void parseCommandLineForEngineInit();
 
 #endif // _COMMAND_LINE_H_
