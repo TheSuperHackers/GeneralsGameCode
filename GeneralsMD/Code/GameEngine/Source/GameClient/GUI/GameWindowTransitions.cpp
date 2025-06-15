@@ -485,8 +485,8 @@ void GameWindowTransitionsHandler::setGroup(AsciiString groupName, Bool immidiat
 	if(m_currentGroup)
 		m_currentGroup->init();
 
-
-
+	
+	
 }
 
 void GameWindowTransitionsHandler::reverse( AsciiString groupName )
