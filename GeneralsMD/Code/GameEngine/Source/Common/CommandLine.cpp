@@ -1238,7 +1238,7 @@ static CommandLineParam paramsForEngineInit[] =
 #ifdef DUMP_PERF_STATS
 	{ "-stats", parseStats }, 
 #endif
-  { "-saveStats", parseSaveStats },
+	{ "-saveStats", parseSaveStats },
 	{ "-localMOTD", parseLocalMOTD },
 	{ "-UseCSF", parseUseCSF },
 	{ "-NoInputDisable", parseNoInputDisable },
@@ -1318,10 +1318,10 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-munkee", parseMunkee },
 	{ "-displayDebug", parseDisplayDebug },
 	{ "-file", parseFile },
-  
+
 //	{ "-preload", parsePreload },
 	
-  { "-preloadEverything", parsePreloadEverything },
+	{ "-preloadEverything", parsePreloadEverything },
 	{ "-logAssets", parseLogAssets },
 	{ "-netMinPlayers", parseNetMinPlayers },
 	{ "-DemoLoadScreen", parseDemoLoadScreen },
@@ -1369,7 +1369,7 @@ static CommandLineParam paramsForEngineInit[] =
 	//{ "-allAdvice", parseAllAdvice },
 
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
-  { "-preload", parsePreload },
+	{ "-preload", parsePreload },
 #endif
 
 
