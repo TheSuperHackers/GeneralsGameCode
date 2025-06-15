@@ -411,7 +411,7 @@ void Connection::doRetryMetrics() {
 	}
 }
 
-#if defined(RTS_DEBUG) || (RTS_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 void Connection::debugPrintCommands() {
 	NetCommandRef *ref = m_netCommandList->getFirstMessage();
 	while (ref != NULL) {
