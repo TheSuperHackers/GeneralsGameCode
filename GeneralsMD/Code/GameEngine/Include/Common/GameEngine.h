@@ -114,6 +114,6 @@ extern GameEngine *TheGameEngine;
 extern GameEngine *CreateGameEngine( void );
 
 /// The entry point for the game system
-extern void GameMain( int argc, char *argv[] );
+extern Int GameMain( int argc, char *argv[] );
 
 #endif // _GAME_ENGINE_H_

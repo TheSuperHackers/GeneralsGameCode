@@ -956,6 +956,10 @@ GlobalData::GlobalData()
 	m_buildMapCache = FALSE;
 	m_initialFile.clear();
 	m_pendingFile.clear();
+	
+	m_simulateReplays.clear();
+	m_simulateReplayJobs = SIMULATE_REPLAYS_SEQUENTIAL;
+	m_showReplayContinueButton = FALSE;
 
 	for (i = LEVEL_FIRST; i <= LEVEL_LAST; ++i)
 		m_healthBonus[i] = 1.0f;
