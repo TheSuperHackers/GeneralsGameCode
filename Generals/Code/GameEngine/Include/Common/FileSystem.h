@@ -136,6 +136,7 @@ public:
 	Bool areMusicFilesOnCD();
 	void loadMusicFilesFromCD();
 	void unloadMusicFilesFromCD();
+	AsciiString normalizePath(const AsciiString& path) const;	///< normalizes a file path. The path can refer to a directory. File path must be absolute, but does not need to exist. Returns an empty string on failure.
 protected:
 
 

@@ -339,3 +339,11 @@ void FileSystem::unloadMusicFilesFromCD()
 
 	TheArchiveFileSystem->closeArchiveFile( MUSIC_BIG );
 }
+
+//============================================================================
+// FileSystem::normalizePath
+//============================================================================
+AsciiString FileSystem::normalizePath(const AsciiString& path) const
+{
+	return TheLocalFileSystem->normalizePath(path);
+}

@@ -49,6 +49,7 @@ public:
 	virtual Bool getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const;
 
 	virtual Bool createDirectory(AsciiString directory);
+	virtual AsciiString normalizePath(const AsciiString& filePath) const;
 
 protected:
 };

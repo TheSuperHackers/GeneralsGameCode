@@ -783,7 +783,7 @@ AsciiString GameState::getFilePathInSaveDirectory(const AsciiString& leaf) const
 //-------------------------------------------------------------------------------------------------
 Bool GameState::isInSaveDirectory(const AsciiString& path) const
 {
-	return path.startsWithNoCase(getSaveDirectory());
+	return isPathInDirectory(path, getSaveDirectory());
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -902,10 +902,13 @@ AsciiString GameState::realMapPathToPortableMapPath(const AsciiString& in) const
 AsciiString GameState::portableMapPathToRealMapPath(const AsciiString& in) const
 {
 	AsciiString prefix;
+	// The directory where the real map path should be contained in.
+	AsciiString containingBasePath;
 	if (in.startsWithNoCase(PORTABLE_SAVE))
 	{
 		// the save dir ends with "\\"
 		prefix = getSaveDirectory();
+		containingBasePath = prefix;
 		prefix.concat(getMapLeafName(in));
 	}
 	else if (in.startsWithNoCase(PORTABLE_MAPS))
@@ -913,6 +916,7 @@ AsciiString GameState::portableMapPathToRealMapPath(const AsciiString& in) const
 		// the map dir DOES NOT end with "\\", must add it
 		prefix = TheMapCache->getMapDir();
 		prefix.concat("\\");
+		containingBasePath = prefix;
 		prefix.concat(getMapLeafAndDirName(in));
 	}
 	else if (in.startsWithNoCase(PORTABLE_USER_MAPS))
@@ -920,6 +924,7 @@ AsciiString GameState::portableMapPathToRealMapPath(const AsciiString& in) const
 		// the map dir DOES NOT end with "\\", must add it
 		prefix = TheMapCache->getUserMapDir();
 		prefix.concat("\\");
+		containingBasePath = prefix;
 		prefix.concat(getMapLeafAndDirName(in));
 	}
 	else
@@ -927,10 +932,54 @@ AsciiString GameState::portableMapPathToRealMapPath(const AsciiString& in) const
 		DEBUG_CRASH(("Map file was not found in any of the expected directories; this is impossible"));
 		//throw INI_INVALID_DATA;
 		// uncaught exceptions crash us. better to just use a bad path.
-		prefix = in;
+		return AsciiString::TheEmptyString;
 	}
+
+	if (!isPathInDirectory(prefix, containingBasePath))
+	{
+		return AsciiString::TheEmptyString;
+	}
+
 	prefix.toLower();
 	return prefix;
+}
+
+Bool GameState::isPathInDirectory(const AsciiString& testPath, const AsciiString& basePath) const
+{
+	AsciiString filePathNormalized = TheFileSystem->normalizePath(testPath);
+	AsciiString basePathNormalized = TheFileSystem->normalizePath(basePath);
+
+	if (basePathNormalized.isEmpty())
+	{
+		DEBUG_CRASH(("Unable to normalize base directory path '%s'.\n", basePath.str()));
+		return false;
+	}
+	else if (filePathNormalized.isEmpty())
+	{
+		DEBUG_CRASH(("Unable to normalize file path '%s'.\n", testPath.str()));
+		return false;
+	}
+#ifdef _WIN32
+	if (!basePathNormalized.endsWith("\\"))
+	{
+		basePathNormalized.concat("\\");
+	}
+
+	if (!filePathNormalized.startsWithNoCase(basePathNormalized))
+#else
+	if (!basePathNormalized.endsWith("/"))
+	{
+		basePathNormalized.concat("/");
+	}
+
+	if (!filePathNormalized.startsWith(basePathNormalized))
+#endif
+	{
+		DEBUG_CRASH(("Normalized file path for '%s': '%s' was outside the expected base path of '%s' (normalized: '%s').\n", testPath.str(), filePathNormalized.str(), basePath.str(), basePathNormalized.str()));
+		return false;
+	}
+
+	return true;
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -688,7 +688,16 @@ void ConnectionManager::processFile(NetFileCommandMsg *msg)
 	DEBUG_LOG(("%ls\n", log.str()));
 #endif
 
-	if (TheFileSystem->doesFileExist(msg->getRealFilename().str()))
+	AsciiString realFileName = msg->getRealFilename();
+	DEBUG_ASSERTLOG((!realFileName.isEmpty(), "Got a file name transferred that failed to normalize: '%s'!\n", msg->getPortableFilename().str()));
+
+	if (realFileName.isEmpty())
+	{
+		// As the file name failed to normalize (in other words is bogus), do nothing and let the transfer time out.
+		return;
+	}
+
+	if (TheFileSystem->doesFileExist(realFileName.str()))
 	{
 		DEBUG_LOG(("File exists already!\n"));
 		//return;
@@ -720,13 +729,13 @@ void ConnectionManager::processFile(NetFileCommandMsg *msg)
 	}
 #endif // COMPRESS_TARGAS
 
-	File *fp = TheFileSystem->openFile(msg->getRealFilename().str(), File::CREATE | File::BINARY | File::WRITE);
+	File *fp = TheFileSystem->openFile(realFileName.str(), File::CREATE | File::BINARY | File::WRITE);
 	if (fp)
 	{
 		fp->write(buf, len);
 		fp->close();
 		fp = NULL;
-		DEBUG_LOG(("Wrote %d bytes to file %s!\n",len,msg->getRealFilename().str()));
+		DEBUG_LOG(("Wrote %d bytes to file %s!\n", len, realFileName.str()));
 
 	}
 	else

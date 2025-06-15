@@ -214,3 +214,16 @@ Bool Win32LocalFileSystem::createDirectory(AsciiString directory)
 	}
 	return FALSE;
 }
+
+AsciiString Win32LocalFileSystem::normalizePath(const AsciiString& filePath) const
+{
+	TCHAR normalizeBuffer[MAX_PATH];
+	DWORD charsWritten = GetFullPathName(filePath.str(), MAX_PATH, normalizeBuffer, NULL);
+	if (charsWritten == 0 || charsWritten > MAX_PATH)
+	{
+		// empty string is used as a non-success
+		return AsciiString::TheEmptyString;
+	}
+
+	return AsciiString(normalizeBuffer);
+}

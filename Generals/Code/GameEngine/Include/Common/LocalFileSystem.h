@@ -50,6 +50,7 @@ public:
 	virtual void getFileListInDirectory(const AsciiString& currentDirectory, const AsciiString& originalDirectory, const AsciiString& searchName, FilenameList &filenameList, Bool searchSubdirectories) const = 0; ///< search the given directory for files matching the searchName (egs. *.ini, *.rep).  Possibly search subdirectories.
 	virtual Bool getFileInfo(const AsciiString& filename, FileInfo *fileInfo) const = 0; ///< see FileSystem.h
 	virtual Bool createDirectory(AsciiString directory) = 0; ///< see FileSystem.h
+	virtual AsciiString normalizePath(const AsciiString& filePath) const = 0;	///< see FileSystem.h
 
 protected:
 };

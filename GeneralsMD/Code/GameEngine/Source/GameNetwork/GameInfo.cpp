@@ -1081,7 +1081,14 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 			mapName.concat(token);
 			mapName.concat('.');
 			mapName.concat(TheMapCache->getMapExtension());
-			mapName = TheGameState->portableMapPathToRealMapPath(mapName);
+			AsciiString realMapName = TheGameState->portableMapPathToRealMapPath(mapName);
+			if (realMapName.isEmpty())
+			{
+				optionsOk = FALSE;
+				DEBUG_LOG(("ParseAsciiStringToGameInfo - saw bogus map name ('%s'); quitting\n", mapName.str()));
+				break;
+			}
+			mapName = realMapName;
 			sawMap = true;
 			DEBUG_LOG(("ParseAsciiStringToGameInfo - map name is %s\n", mapName.str()));
 		}
