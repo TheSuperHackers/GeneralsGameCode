@@ -90,6 +90,8 @@ set(GAMEENGINEDEVICE_SRC
     Include/Win32Device/GameClient/Win32DIKeyboard.h
     Include/Win32Device/GameClient/Win32DIMouse.h
     Include/Win32Device/GameClient/Win32Mouse.h
+    Source/MilesAudioDevice/MilesAudioFileCache.h
+    Source/MilesAudioDevice/MilesAudioFileCache.cpp
     Source/MilesAudioDevice/MilesAudioManager.cpp
     Source/VideoDevice/Bink/BinkVideoPlayer.cpp
     Source/W3DDevice/Common/System/W3DFunctionLexicon.cpp
@@ -244,5 +246,25 @@ if(RTS_BUILD_OPTION_FFMPEG)
         target_link_directories(z_gameenginedevice PRIVATE ${FFMPEG_LIBRARY_DIRS})
         target_link_libraries(z_gameenginedevice PRIVATE ${FFMPEG_LIBRARIES})
         target_compile_definitions(z_gameenginedevice PUBLIC RTS_HAS_FFMPEG)
+    endif()
+endif()
+
+if(RTS_BUILD_OPTION_OPENAL)
+    find_package(OpenAL CONFIG REQUIRED)
+
+    if(OpenAL_FOUND)
+        target_sources(z_gameenginedevice PRIVATE
+            Include/OpenALDevice/FFmpegOpenALAudioStream.h
+            Include/OpenALDevice/OpenALAudioManager.h
+            Include/OpenALDevice/OpenALAudioStream.h
+            Source/OpenALDevice/FFmpegOpenALAudioStream.cpp
+            Source/OpenALDevice/OpenALAudioFileCache.h
+            Source/OpenALDevice/OpenALAudioFileCache.cpp
+            Source/OpenALDevice/OpenALAudioManager.cpp
+            Source/OpenALDevice/OpenALAudioStream.cpp
+        )
+
+        target_link_libraries(z_gameenginedevice PRIVATE OpenAL::OpenAL)
+        target_compile_definitions(z_gameenginedevice PUBLIC RTS_HAS_OPENAL)
     endif()
 endif()

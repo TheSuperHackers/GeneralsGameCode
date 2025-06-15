@@ -1,6 +1,6 @@
 /*
 **	Command & Conquer Generals Zero Hour(tm)
-**	Copyright 2025 Electronic Arts Inc.
+**	Copyright 2025 TheSuperHackers
 **
 **	This program is free software: you can redistribute it and/or modify
 **	it under the terms of the GNU General Public License as published by
@@ -16,17 +16,20 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// FILE: MilesAudioManager.h //////////////////////////////////////////////////////////////////////////
-// MilesAudioManager implementation
-// Author: John K. McDonald, July 2002
+// FILE: OpenALAudioManager.h //////////////////////////////////////////////////////////////////////////
+// OpenALAudioManager implementation
+// Author: Stephan Vedder, April 2025
 #pragma once
 #include "Common/AsciiString.h"
 #include "Common/GameAudio.h"
-#include "mss/mss.h"
+#include <AL/al.h>
+#include <AL/alc.h>
 
 class AudioEventRTS;
 
 enum { MAXPROVIDERS = 64 };
+
+#define AL_MAX_PLAYBACK_DEVICES 64
 
 enum PlayingAudioType CPP_11(: Int)
 {
@@ -54,15 +57,17 @@ enum PlayingWhich CPP_11(: Int)
 struct ProviderInfo
 {
   AsciiString name;
-  HPROVIDER id;
 	Bool m_isValid;
 };
 
-struct PlayingAudio;
-class MilesAudioFileCache;
-class MilesAudioManager : public AudioManager
+class PlayingAudio;
+class OpenALAudioFileCache;
+class OpenALAudioStream;
+class OpenALAudioManager : public AudioManager
 {
-
+	friend class OpenALAudioStream;
+	friend class FFmpegVideoStream;
+	friend class OpenALAudioFileCache;
 	public:
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		virtual void audioDebugDisplay(DebugDisplayInterface *dd, void *, FILE *fp = NULL );
@@ -75,8 +80,8 @@ class MilesAudioManager : public AudioManager
 		virtual void reset();
 		virtual void update();
 
-		MilesAudioManager();
-		virtual ~MilesAudioManager();
+		OpenALAudioManager();
+		virtual ~OpenALAudioManager();
 
 
 		virtual void nextMusicTrack( void );
@@ -87,7 +92,7 @@ class MilesAudioManager : public AudioManager
 
 		virtual void openDevice( void );
 		virtual void closeDevice( void );
-		virtual void *getDevice( void ) { return m_digitalHandle; }
+		virtual void *getDevice( void ) { return m_alcDevice; }
 
 		virtual void stopAudio( AudioAffect which );
 		virtual void pauseAudio( AudioAffect which );
@@ -100,8 +105,8 @@ class MilesAudioManager : public AudioManager
 		///< NOTE NOTE NOTE !!DO NOT USE THIS IN FOR GAMELOGIC PURPOSES!! NOTE NOTE NOTE
 		virtual Bool isCurrentlyPlaying( AudioHandle handle );
 
-		virtual void notifyOfAudioCompletion( UnsignedInt audioCompleted, UnsignedInt flags );
-		virtual PlayingAudio *findPlayingAudioFrom( UnsignedInt audioCompleted, UnsignedInt flags );
+		virtual void notifyOfAudioCompletion( ALuint source, UnsignedInt flags );
+		virtual PlayingAudio *findPlayingAudioFrom( ALuint source, UnsignedInt flags );
 
 		virtual UnsignedInt getProviderCount( void ) const;
 		virtual AsciiString getProviderName( UnsignedInt providerNum ) const;
@@ -144,7 +149,7 @@ class MilesAudioManager : public AudioManager
 
 		virtual void setHardwareAccelerated(Bool accel);
 		virtual void setSpeakerSurround(Bool surround);
-		
+
 		virtual void setPreferredProvider(AsciiString provider) { m_pref3DProvider = provider; }
 		virtual void setPreferredSpeaker(AsciiString speakerType) { m_prefSpeaker = speakerType; }
 
@@ -166,13 +171,13 @@ class MilesAudioManager : public AudioManager
 		// Looping functions
 		Bool startNextLoop( PlayingAudio *looping );
 
-		void playStream( AudioEventRTS *event, HSTREAM stream );
-		// Returns the file handle for attachment to the PlayingAudio structure
-		void *playSample( AudioEventRTS *event, HSAMPLE sample );
-		void *playSample3D( AudioEventRTS *event, H3DSAMPLE sample3D );
+		void playStream( AudioEventRTS *event, OpenALAudioStream* stream );
+		// Returns the buffer handle representing audio data for attachment to the PlayingAudio structure
+		ALuint playSample( AudioEventRTS *event, PlayingAudio *audio );
+		ALuint playSample3D( AudioEventRTS *event, PlayingAudio * audio );
 
 	protected:
-		void buildProviderList( void );
+		void enumerateDevices( void );
 		void createListener( void );
 		void initDelayFilter( void );
 		Bool isValidProvider( void );
@@ -183,27 +188,23 @@ class MilesAudioManager : public AudioManager
 		void stopAudioEvent( AudioHandle handle );
 		void pauseAudioEvent( AudioHandle handle );
 
-		void *loadFileForRead( AudioEventRTS *eventToLoadFrom );
-		void closeFile( void *fileRead );
+		ALuint loadBufferForRead( AudioEventRTS *eventToLoadFrom );
+		void closeBuffer( ALuint bufferToClose );
 
 		PlayingAudio *allocatePlayingAudio( void );
-		void releaseMilesHandles( PlayingAudio *release );
+		void releaseOpenALHandles( PlayingAudio *release );
 		void releasePlayingAudio( PlayingAudio *release );
-		
-		void stopAllAudioImmediately( void );
-		void freeAllMilesHandles( void );
 
-		HSAMPLE getFirst2DSample( AudioEventRTS *event );
-		H3DSAMPLE getFirst3DSample( AudioEventRTS *event );
+		void stopAllAudioImmediately( void );
+		void freeAllOpenALHandles( void );
+
+		PlayingAudio *getFirst2DSample( AudioEventRTS *event );
+		PlayingAudio *getFirst3DSample( AudioEventRTS *event );
 
 		void adjustPlayingVolume( PlayingAudio *audio );
-		
-		void stopAllSpeech( void );
-		
-	protected:
-		void initFilters( HSAMPLE sample, const AudioEventRTS *eventInfo );
-		void initFilters3D( H3DSAMPLE sample, const AudioEventRTS *eventInfo, const Coord3D *pos );
 
+		void stopAllSpeech( void );
+		static ALenum getALFormat( uint8_t channels, uint8_t bitsPerSample );
 	protected:
 		ProviderInfo m_provider3D[MAXPROVIDERS];
 		UnsignedInt m_providerCount;
@@ -213,18 +214,6 @@ class MilesAudioManager : public AudioManager
 
 		AsciiString m_pref3DProvider;
 		AsciiString m_prefSpeaker;
-
-		HDIGDRIVER m_digitalHandle;
-		H3DPOBJECT m_listener;
-		HPROVIDER m_delayFilter;
-
-		// This is a list of all handles that are forcibly played. They always play as UI sounds.
-		std::list<HAUDIO> m_audioForcePlayed;
-
-		// Available handles for play. Note that there aren't handles open in advance for 
-		// streaming things, only 2-D and 3-D sounds.
-		std::list<HSAMPLE> m_availableSamples;
-		std::list<H3DSAMPLE> m_available3DSamples;
 
 		// Currently Playing stuff. Useful if we have to preempt it. 
 		// This should rarely if ever happen, as we mirror this in Sounds, and attempt to 
@@ -243,8 +232,7 @@ class MilesAudioManager : public AudioManager
 		// in the sound engine
 		std::list<PlayingAudio *> m_stoppedAudio;
 
-		MilesAudioFileCache *m_audioCache;
-		PlayingAudio *m_binkHandle;
+		OpenALAudioFileCache *m_audioCache;
 		UnsignedInt m_num2DSamples;
 		UnsignedInt m_num3DSamples;
 		UnsignedInt m_numStreams;
@@ -256,5 +244,10 @@ class MilesAudioManager : public AudioManager
 		void dumpAllAssetsUsed();
 #endif
 
+		AsciiString m_alDevicesList[AL_MAX_PLAYBACK_DEVICES];
+		int m_alMaxDevicesIndex;
+		ALCdevice *m_alcDevice = nullptr;
+		ALCcontext *m_alcContext = nullptr;
+		OpenALAudioStream* m_binkAudio = nullptr;
 };
 
