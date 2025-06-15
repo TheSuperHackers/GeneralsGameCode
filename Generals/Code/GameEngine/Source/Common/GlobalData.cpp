@@ -992,9 +992,9 @@ GlobalData::GlobalData()
 	// Simulate the EXE's CRC value to force Network and Replay compatibility with another build.
 #if (defined(_MSC_VER) && _MSC_VER < 1300) && RETAIL_COMPATIBLE_CRC
 
-#define GENERALS_108_CD_EXE_CRC    0x93d1eab4
-#define GENERALS_108_STEAM_EXE_CRC 0x8d6e4dd7
-#define GENERALS_108_EAAPP_EXE_CRC 0xb07fbd50
+#define GENERALS_108_CD_EXE_CRC    0x93d1eab4u
+#define GENERALS_108_STEAM_EXE_CRC 0x8d6e4dd7u
+#define GENERALS_108_EAAPP_EXE_CRC 0xb07fbd50u
 
 	exeCRC.set(GENERALS_108_CD_EXE_CRC);
 	DEBUG_LOG(("Fake EXE CRC is 0x%8.8X\n", exeCRC.get()));
