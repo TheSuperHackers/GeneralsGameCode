@@ -73,7 +73,6 @@
 #include "d3dx8tex.h"
 #include "dx8caps.h"
 #include "Common/GameLOD.h"
-#include "benchmark.h"
 
 #ifdef RTS_INTERNAL
 // for occasional debugging...
@@ -3114,7 +3113,10 @@ Bool W3DShaderManager::testMinimumRequirements(ChipsetType *videoChipType, CpuTy
 
 	if (intBenchIndex && floatBenchIndex && memBenchIndex)
 	{
-		RunBenchmark(0, NULL, floatBenchIndex, intBenchIndex, memBenchIndex);
+		// Cheeky stub that just returns "good" results.
+		*intBenchIndex = 10.0;
+		*floatBenchIndex = 10.0;
+		*memBenchIndex = 10.0;
 	}
 
 	return TRUE;

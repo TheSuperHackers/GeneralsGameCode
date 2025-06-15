@@ -222,7 +222,6 @@ target_link_libraries(z_gameenginedevice PRIVATE
 )
 
 target_link_libraries(z_gameenginedevice PUBLIC
-    benchmark
     binkstub
     d3d8lib
     milesstub
