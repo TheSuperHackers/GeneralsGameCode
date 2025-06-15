@@ -671,7 +671,7 @@ public:
 	static const FieldParse m_gameWindowTransitionsFieldParseTable[];																				///< the parse table
 	static void parseWindow( INI* ini, void *instance, void *store, const void *userData );
 
-	void setGroup(AsciiString groupName, Bool immidiate = FALSE); // This will be the next group to fire off.
+	void setGroup(AsciiString groupName, Bool immidiate = FALSE);		// THis will be the next group to fire off.
 	void reverse( AsciiString groupName );// reverse the animations for the current group.
 	void remove( AsciiString groupName, Bool skipPending = FALSE );// remove the animation from the current or pending groups.
 	TransitionGroup *getNewGroup( AsciiString name );
@@ -682,7 +682,7 @@ private:
 	TransitionGroup *m_currentGroup;
 	TransitionGroup *m_pendingGroup;
 	TransitionGroup *m_drawGroup;
-	TransitionGroup *m_secondaryDrawGroup; // needed to draw the last frame of the previous draw group once more.
+	TransitionGroup *m_secondaryDrawGroup; // needed to draw the last frame of the previvous draw group once more.
 };
 
 void PushButtonImageDrawThree(GameWindow *window, Int alpha );
