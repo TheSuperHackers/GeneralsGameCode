@@ -1710,34 +1710,48 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				for (VecObjectID::const_iterator it = selectedObjects.begin(); it != selectedObjects.end(); ++it)
 				{
 					Object *beacon = findObjectByID(*it);
-					if (beacon)
+					if (!beacon)
 					{
-						const ThingTemplate *thing = TheThingFactory->findTemplate( beacon->getControllingPlayer()->getPlayerTemplate()->getBeaconTemplate() );
-						if (thing->isEquivalentTo(beacon->getTemplate()))
+						continue;
+					}
+
+					Player *controllingPlayer = beacon->getControllingPlayer();
+					if (!controllingPlayer)
+					{
+						continue;
+					}
+
+					const PlayerTemplate *playerTemplate = controllingPlayer->getPlayerTemplate();
+					if (!playerTemplate)
+					{
+						continue;
+					}
+
+					const ThingTemplate *thing = TheThingFactory->findTemplate( playerTemplate->getBeaconTemplate() );
+					if (thing->isEquivalentTo(beacon->getTemplate()))
+					{
+						if (controllingPlayer == thisPlayer)
 						{
-							if (beacon->getControllingPlayer() == thisPlayer)
-							{
-								TheGameLogic->destroyObject(beacon); // the owner is telling it to go away.  such is life.
+							TheGameLogic->destroyObject(beacon); // the owner is telling it to go away.  such is life.
 
-								TheControlBar->markUIDirty(); // check if we should un-grey out the button
-							}
-							else if (thisPlayer == ThePlayerList->getLocalPlayer())
+							TheControlBar->markUIDirty(); // check if we should un-grey out the button
+						}
+						else if (thisPlayer == ThePlayerList->getLocalPlayer())
+						{
+							Drawable *beaconDrawable = beacon->getDrawable();
+							if (beaconDrawable)
 							{
-								Drawable *beaconDrawable = beacon->getDrawable();
-								if (beaconDrawable)
+
+								static NameKeyType nameKeyClientUpdate = NAMEKEY("BeaconClientUpdate");
+								ClientUpdateModule ** clientModules = beaconDrawable->getClientUpdateModules();
+								if (clientModules)
 								{
-
-									static NameKeyType nameKeyClientUpdate = NAMEKEY("BeaconClientUpdate");
-									ClientUpdateModule ** clientModules = beaconDrawable->getClientUpdateModules();
-									if (clientModules)
+									while (*clientModules)
 									{
-										while (*clientModules)
-										{
-											if ((*clientModules)->getModuleNameKey() == nameKeyClientUpdate)
-												(*(BeaconClientUpdate **)clientModules)->hideBeacon();
+										if ((*clientModules)->getModuleNameKey() == nameKeyClientUpdate)
+											(*(BeaconClientUpdate **)clientModules)->hideBeacon();
 
-											++clientModules;
-										}
+										++clientModules;
 									}
 								}
 							}
