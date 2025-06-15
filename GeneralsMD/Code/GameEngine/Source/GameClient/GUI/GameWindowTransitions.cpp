@@ -458,17 +458,17 @@ void GameWindowTransitionsHandler::draw( void )
 		m_secondaryDrawGroup->draw();
 }
 
-TransitionGroup *GameWindowTransitionsHandler::setGroup(AsciiString groupName, Bool immediate )
+void GameWindowTransitionsHandler::setGroup(AsciiString groupName, Bool immidiate )
 {
-	if(groupName.isEmpty() && immediate)
+	if(groupName.isEmpty() && immidiate)
 		m_currentGroup = NULL;
-	if(immediate && m_currentGroup)
+	if(immidiate && m_currentGroup)
 	{
 		m_currentGroup->skip();
 		m_currentGroup = findGroup(groupName);
 		if(m_currentGroup)
 			m_currentGroup->init();
-		return m_currentGroup;
+		return;
 	}
 	
 	if(m_currentGroup)
@@ -478,13 +478,16 @@ TransitionGroup *GameWindowTransitionsHandler::setGroup(AsciiString groupName, B
 		m_pendingGroup = findGroup(groupName);
 		if(m_pendingGroup)
 			m_pendingGroup->init();
-		return m_pendingGroup;
+		return;
 	}
 
 	m_currentGroup = findGroup(groupName);
 	if(m_currentGroup)
 		m_currentGroup->init();
-	return m_currentGroup;
+
+
+
+	return;
 }
 
 void GameWindowTransitionsHandler::reverse( AsciiString groupName )
@@ -536,7 +539,7 @@ TransitionGroup *GameWindowTransitionsHandler::getNewGroup( AsciiString name )
 	if(name.isEmpty())
 		return NULL;
 
-	// test to see if we're trying to add an already existing group.
+	// test to see if we're trying to add an already exisitng group.
 	if(findGroup(name))
 	{
 		DEBUG_ASSERTCRASH(FALSE, ("GameWindowTransitionsHandler::getNewGroup - We already have a group %s", name.str()));
@@ -555,6 +558,9 @@ Bool GameWindowTransitionsHandler::isFinished( void )
 	return TRUE;
 }
 
+//-----------------------------------------------------------------------------
+// PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
+//-----------------------------------------------------------------------------
 TransitionGroup *GameWindowTransitionsHandler::findGroup( AsciiString groupName )
 {
 	if(groupName.isEmpty())
