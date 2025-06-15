@@ -207,6 +207,7 @@ class PathfindCellInfo
 {
 	friend class PathfindCell;
 public:
+	static void initializeCellInfos(void);
 	static void allocateCellInfos(void);
 	static void releaseCellInfos(void);
 
