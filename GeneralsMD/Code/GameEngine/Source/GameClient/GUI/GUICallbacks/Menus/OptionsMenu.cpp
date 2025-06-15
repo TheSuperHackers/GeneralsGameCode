@@ -1119,18 +1119,9 @@ static void saveOptions( void )
 				prefString.format("%d %d", xres, yres );
 				(*pref)["Resolution"] = prefString;
 
-				// delete the shell
-				delete TheShell;
-				TheShell = NULL;
+				TheShell->recreateWindowLayouts();
 
-				// create the shell
-				TheShell = MSGNEW("GameClientSubsystem") Shell;
-				if( TheShell )
-					TheShell->init();
-				
 				TheInGameUI->recreateControlBar();
-
-				TheShell->push( AsciiString("Menus/MainMenu.wnd") );
 			}
 		}
 	}

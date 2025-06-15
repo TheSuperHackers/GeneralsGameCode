@@ -125,6 +125,8 @@ public:
 	virtual void update( void );		
 	//===============================================================================================
 
+	void recreateWindowLayouts( void );
+
 	void showShellMap(Bool useShellMap );										///< access function to turn on and off the shell map
 
 	void hide( Bool hide );																	///< show/hide all shell layouts
@@ -141,8 +143,6 @@ public:
 
 	WindowLayout *findScreenByFilename( AsciiString filename );		///< find screen
 	inline Bool isShellActive( void ) { return m_isShellActive; }  ///<	Returns true if the shell is active
-	
-	inline Int getScreenCount(void) { return m_screenCount; }			///< Return the current number of screens
 
 	void registerWithAnimateManager( GameWindow *win, AnimTypes animType, Bool needsToFinish, UnsignedInt delayMS = 0);
 	Bool isAnimFinished( void );
@@ -152,12 +152,18 @@ public:
 	void loadScheme( AsciiString name );
 	ShellMenuSchemeManager *getShellMenuSchemeManager( void ) { return m_schemeManager;	}
 
+	Int getScreenCount( void ) const { return m_screenCount; } ///< Return the current number of screens
+	WindowLayout *getScreenLayout( Int index ) const;
+
 	WindowLayout *getSaveLoadMenuLayout( void );		///< create if necessary and return layout for save load menu
 	WindowLayout *getPopupReplayLayout( void );			///< create if necessary and return layout for replay save menu
 	WindowLayout *getOptionsLayout( Bool create );	///< return layout for options menu, create if necessary and we are allowed to.
 	void destroyOptionsLayout( void );							///< destroy the shell's options layout.
 
 protected:
+
+	void construct( void );
+	void deconstruct( void );
 
 	void linkScreen( WindowLayout *screen );								///< link screen to list
 	void unlinkScreen( WindowLayout *screen );							///< remove screen from list
