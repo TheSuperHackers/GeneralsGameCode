@@ -33,6 +33,7 @@
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
+#include "trim.h"
 
 #ifdef RTS_INTERNAL
 // for occasional debugging...
@@ -1199,25 +1200,32 @@ Int parseClearDebugLevel(char *args[], int num)
 }
 #endif
 
-static CommandLineParam params[] =
+// Initial Params are parsed before Windows Creation.
+// Note that except for TheGlobalData, no other global objects exist yet when these are parsed.
+static CommandLineParam paramsInitial[] =
+{
+	{ "-win", parseWin },
+	{ "-fullscreen", parseNoWin },
+
+	// TheSuperHackers @feature helmutbuhler 11/04/2025
+	// This runs the game without a window, graphics, input and audio. Used for testing.
+	{ "-headless", parseHeadless },
+};
+
+// These Params are parsed during Engine Init before INI data is loaded
+static CommandLineParam paramsForEngineInit[] =
 {
 	{ "-noshellmap", parseNoShellMap },
-	{ "-win", parseWin },
 	{ "-xres", parseXRes },
 	{ "-yres", parseYRes },
-	{ "-fullscreen", parseNoWin },
 	{ "-fullVersion", parseFullVersion },
-	{	"-particleEdit", parseParticleEdit },
+	{ "-particleEdit", parseParticleEdit },
 	{ "-scriptDebug", parseScriptDebug },
 	{ "-playStats", parsePlayStats },
 	{ "-mod", parseMod },
 	{ "-noshaders", parseNoShaders },
 	{ "-quickstart", parseQuickStart },
 	{ "-useWaveEditor", parseUseWaveEditor },
-
-	// TheSuperHackers @feature helmutbuhler 11/04/2025
-	// This runs the game without a window, graphics, input and audio. Used for testing.
-	{ "-headless", parseHeadless },
 
 #if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 	{ "-noaudio", parseNoAudio },
@@ -1230,7 +1238,7 @@ static CommandLineParam params[] =
 #ifdef DUMP_PERF_STATS
 	{ "-stats", parseStats }, 
 #endif
-  { "-saveStats", parseSaveStats },
+	{ "-saveStats", parseSaveStats },
 	{ "-localMOTD", parseLocalMOTD },
 	{ "-UseCSF", parseUseCSF },
 	{ "-NoInputDisable", parseNoInputDisable },
@@ -1310,10 +1318,10 @@ static CommandLineParam params[] =
 	{ "-munkee", parseMunkee },
 	{ "-displayDebug", parseDisplayDebug },
 	{ "-file", parseFile },
-  
+
 //	{ "-preload", parsePreload },
 	
-  { "-preloadEverything", parsePreloadEverything },
+	{ "-preloadEverything", parsePreloadEverything },
 	{ "-logAssets", parseLogAssets },
 	{ "-netMinPlayers", parseNetMinPlayers },
 	{ "-DemoLoadScreen", parseDemoLoadScreen },
@@ -1361,61 +1369,133 @@ static CommandLineParam params[] =
 	//{ "-allAdvice", parseAllAdvice },
 
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
-  { "-preload", parsePreload },
+	{ "-preload", parsePreload },
 #endif
 
 
 };
 
-// parseCommandLine ===========================================================
-/** Parse command-line parameters. */
-//=============================================================================
-void parseCommandLine(int argc, char *argv[])
+char *nextParam(char *newSource, const char *seps)
 {
-	// To parse command-line parameters, we loop through a table holding arguments
-	// and functions to handle them.  Comparisons can be case-(in)sensitive, and
-	// can check the entire string (for testing the presence of a flag) or check
-	// just the start (for a key=val argument).  The handling function can also
-	// look at the next argument(s), to accomodate multi-arg parameters, e.g. "-p 1234".
-	int arg=1, param;
-	Bool found;
+	static char *source = NULL;
+	if (newSource)
+	{
+		source = newSource;
+	}
+	if (!source)
+	{
+		return NULL;
+	}
+
+	// find first separator
+	char *first = source;//strpbrk(source, seps);
+	if (first)
+	{
+		// go past separator
+		char *firstSep = strpbrk(first, seps);
+		char firstChar[2] = {0,0};
+		if (firstSep == first)
+		{
+			firstChar[0] = *first;
+			while (*first == firstChar[0]) first++;
+		}
+
+		// find end
+		char *end;
+		if (firstChar[0])
+			end = strpbrk(first, firstChar);
+		else
+			end = strpbrk(first, seps);
+
+		// trim string & save next start pos
+		if (end)
+		{
+			source = end+1;
+			*end = 0;
+
+			if (!*source)
+				source = NULL;
+		}
+		else
+		{
+			source = NULL;
+		}
+
+		if (first && !*first)
+			first = NULL;
+	}
+
+	return first;
+}
+
+static void parseCommandLine(const CommandLineParam* params, int numParams)
+{
+	std::vector<char*> argv;
+
+	std::string cmdLine = GetCommandLineA();
+	char *token = nextParam(&cmdLine[0], "\" ");
+	while (token != NULL)
+	{
+		argv.push_back(strtrim(token));
+		token = nextParam(NULL, "\" ");	   
+	}
+	int argc = argv.size();
+
+	int arg = 0;
 
 #ifdef DEBUG_LOGGING
 	DEBUG_LOG(("Command-line args:"));
 	int debugFlags = DebugGetFlags();
 	DebugSetFlags(debugFlags & ~DEBUG_FLAG_PREPEND_TIME); // turn off timestamps
-	for (arg=1; arg<argc; arg++)
+	for (arg=0; arg<argc; arg++)
 	{
 		DEBUG_LOG((" %s", argv[arg]));
 	}
 	DEBUG_LOG(("\n"));
 	DebugSetFlags(debugFlags); // turn timestamps back on iff they were on before
-	arg = 1;
+	arg = 0;
 #endif // DEBUG_LOGGING
 
+	// To parse command-line parameters, we loop through a table holding arguments
+	// and functions to handle them.  Comparisons can be case-(in)sensitive, and
+	// can check the entire string (for testing the presence of a flag) or check
+	// just the start (for a key=val argument).  The handling function can also
+	// look at the next argument(s), to accomodate multi-arg parameters, e.g. "-p 1234".
 	while (arg<argc)
 	{
 		// Look at arg #i
-		found = false;
-		for (param=0; !found && param<sizeof(params)/sizeof(params[0]); ++param)
+		Bool found = false;
+		for (int param=0; !found && param<numParams; ++param)
 		{
 			int len = strlen(params[param].name);
 			int len2 = strlen(argv[arg]);
 			if (len2 != len)
 				continue;
-			if (!strnicmp(argv[arg], params[param].name, len))
+			if (strnicmp(argv[arg], params[param].name, len) == 0)
 			{
-				arg += params[param].func(argv+arg, argc-arg);
+				arg += params[param].func(&argv[0]+arg, argc-arg);
 				found = true;
+				break;
 			}
-		}	// for
+		}
 		if (!found)
 		{
 			arg++;
 		}
 	}
+}
 
-	TheArchiveFileSystem->loadMods();
+void parseInitialCommandLineAndInitGlobalData()
+{
+	if (TheGlobalData != NULL)
+		return;
+	TheWritableGlobalData = NEW GlobalData;
+	parseCommandLine(paramsInitial, ARRAY_SIZE(paramsInitial));
+}
+
+void parseCommandLineForEngineInit()
+{
+	parseCommandLine(paramsForEngineInit, ARRAY_SIZE(paramsForEngineInit));
 }
 
 
