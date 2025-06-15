@@ -219,7 +219,7 @@ BOOL CColorAlphaDialog::OnInitDialog()
 	return CDialog::OnInitDialog();
 }
 
-#define ONCOLORDLG(x) void CColorAlphaDialog::OnColor##x##() { onColorPress( x ); }
+#define ONCOLORDLG(x) void CColorAlphaDialog::OnColor##x() { onColorPress( x ); }
 ONCOLORDLG(1)
 ONCOLORDLG(2)
 ONCOLORDLG(3)

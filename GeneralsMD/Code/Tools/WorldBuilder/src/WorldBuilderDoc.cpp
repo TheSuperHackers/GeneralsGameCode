@@ -681,11 +681,11 @@ void CWorldBuilderDoc::OnJumpToGame()
 		CString filename;
 		DEBUG_LOG(("strTitle=%s strPathName=%s\n", m_strTitle, m_strPathName));
 		if (strstr(m_strPathName, TheGlobalData->getPath_UserData().str()) != NULL)
-			filename.Format("%sMaps\\%s", TheGlobalData->getPath_UserData().str(), m_strTitle);
+			filename.Format("%sMaps\\%s", TheGlobalData->getPath_UserData().str(), static_cast<const char*>(m_strTitle));
 		else
-			filename.Format("Maps\\%s", m_strTitle);
+			filename.Format("Maps\\%s", static_cast<const char*>(m_strTitle));
 
-		/*int retval =*/ _spawnl(_P_NOWAIT, "\\projects\\rts\\run\\rtsi.exe", "ignored", "-scriptDebug", "-win", "-file", filename, NULL);
+		/*int retval =*/ _spawnl(_P_NOWAIT, "\\projects\\rts\\run\\rtsi.exe", "ignored", "-scriptDebug", "-win", "-file", static_cast<const char*>(filename), NULL);
 	} catch (...) {
 	}
 }

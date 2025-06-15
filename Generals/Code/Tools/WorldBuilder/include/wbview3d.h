@@ -39,7 +39,7 @@
 #include "dx8wrapper.h"
 
 //#include "GameLogic/Module/BodyModule.h" -- Yikes... not necessary to include this! (KM)
-enum BodyDamageType; //Ahhhh much better!
+enum BodyDamageType CPP_11(: Int); //Ahhhh much better!
 
 class WorldHeightMap;
 class LayerClass;

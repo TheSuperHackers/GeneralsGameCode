@@ -3847,7 +3847,7 @@ CMainFrame::OnAddToLineup (void)
 		{
 			// Tell the user that the render object could not be created.
 			CString msg;
-			msg.Format("Unable to create render object '%s'!", dlg.m_Object);
+			msg.Format("Unable to create render object '%s'!", static_cast<const char*>(dlg.m_Object));
 			::AfxMessageBox(msg, MB_OK | MB_ICONINFORMATION);
 		}
 	}

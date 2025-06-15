@@ -107,7 +107,7 @@ CMeshPropPage::OnInitDialog (void)
         if (pCMesh)
         {
             CString stringDesc;
-            stringDesc.Format (IDS_MESH_PROP_DESC, m_stringMeshName);
+            stringDesc.Format (IDS_MESH_PROP_DESC, static_cast<const char*>(m_stringMeshName));
 
             // Put the description onto the dialog
             SetDlgItemText (IDC_DESCRIPTION, stringDesc);
