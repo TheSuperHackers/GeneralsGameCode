@@ -1205,6 +1205,7 @@ Int parseClearDebugLevel(char *args[], int num)
 static CommandLineParam paramsInitial[] =
 {
 	{ "-win", parseWin },
+	{ "-fullscreen", parseNoWin },
 
 	// TheSuperHackers @feature helmutbuhler 11/04/2025
 	// This runs the game without a window, graphics, input and audio. Used for testing.
@@ -1217,9 +1218,8 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-noshellmap", parseNoShellMap },
 	{ "-xres", parseXRes },
 	{ "-yres", parseYRes },
-	{ "-fullscreen", parseNoWin },
 	{ "-fullVersion", parseFullVersion },
-	{	"-particleEdit", parseParticleEdit },
+	{ "-particleEdit", parseParticleEdit },
 	{ "-scriptDebug", parseScriptDebug },
 	{ "-playStats", parsePlayStats },
 	{ "-mod", parseMod },
