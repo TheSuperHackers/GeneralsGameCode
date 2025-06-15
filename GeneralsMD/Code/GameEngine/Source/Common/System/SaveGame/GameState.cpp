@@ -1391,7 +1391,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 				{
 
 					DEBUG_CRASH(( "Error saving block '%s' in file '%s'\n",
-												blockName.str(), xfer->getIdentifier() ));
+												blockName.str(), xfer->getIdentifier().str() ));
 					throw;
 
 				}  // end catch
@@ -1437,7 +1437,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 				{
 
 					// log the block not found
-					DEBUG_LOG(( "GameState::xferSaveData - Skipping unknown block '%s'\n", token ));
+					DEBUG_LOG(( "GameState::xferSaveData - Skipping unknown block '%s'\n", token.str() ));
 
 					//
 					// block was not found, this could have been a block from an older file
@@ -1468,7 +1468,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 				{
 
 					DEBUG_CRASH(( "Error loading block '%s' in file '%s'\n",
-												blockInfo->blockName.str(), xfer->getIdentifier() ));
+												blockInfo->blockName.str(), xfer->getIdentifier().str() ));
 					throw;
 
 				}  // end catch

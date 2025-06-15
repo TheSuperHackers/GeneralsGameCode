@@ -116,7 +116,7 @@ void SendStatsToOtherPlayers(const GameInfo *game)
 	subStats.locale = fullStats.locale;
 	subStats.gamesAsRandom = fullStats.gamesAsRandom;
 	GetAdditionalDisconnectsFromUserFile(&subStats);
-	fullStr.format("%d %s", TheGameSpyInfo->getLocalProfileID(), TheGameSpyPSMessageQueue->formatPlayerKVPairs( subStats ));
+	fullStr.format("%d %s", TheGameSpyInfo->getLocalProfileID(), TheGameSpyPSMessageQueue->formatPlayerKVPairs( subStats ).c_str());
 	req.options = fullStr.str();
 
 	Int localIndex = game->getLocalSlotNum();

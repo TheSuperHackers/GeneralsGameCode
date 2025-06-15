@@ -320,7 +320,7 @@ TextureClass::~TextureClass(void)
 	TextureLoadTask=NULL;
 
 	if (!Initialized) {
-		WWDEBUG_SAY(("Warning: Texture %s was loaded but never used\n",Get_Texture_Name()));
+		WWDEBUG_SAY(("Warning: Texture %s was loaded but never used\n",Get_Texture_Name().str()));
 	}
 
 	if (D3DTexture) {
