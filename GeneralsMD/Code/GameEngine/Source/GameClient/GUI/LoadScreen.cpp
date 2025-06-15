@@ -1255,14 +1255,6 @@ void ShellGameLoadScreen::init( GameInfo *game )
 		if(win)
 			win->winHide(FALSE);
 		firstLoad = FALSE;
-
-		UnsignedInt showTime = timeGetTime();
-		while(showTime + 3000 > timeGetTime())
-		{	
-			LoadScreen::update(0);
-			Sleep(100);
-		}
-
 	}
 	m_progressBar->winHide(FALSE);	
 }
