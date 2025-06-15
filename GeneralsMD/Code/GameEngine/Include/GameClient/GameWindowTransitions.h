@@ -622,7 +622,7 @@ public:
 // standard vars
 	NameKeyType	m_winID;
 	GameWindow *m_win;
-	Transition *m_transition; // each window is allowed one transition
+	Transition *m_transition; // each window is allowed one trasition
 	Int m_currentFrameDelay;	// this will change based on if we're going forward or backwards
 };
 
@@ -638,7 +638,7 @@ public:
 	Bool isFinished( void );
 	void reverse( void );
 	void draw( void );
-
+	
 	void skip ( void );
 	AsciiString getName( void ) { return m_name; }
 	void setName( AsciiString name){ m_name = name;	}
@@ -646,12 +646,11 @@ public:
 	Bool isReversed( void );
 	Bool isFireOnce( void ) { return m_fireOnce; }
 	Bool m_fireOnce;
-
 private:
 	typedef std::list<TransitionWindow *> TransitionWindowList;
 	TransitionWindowList m_transitionWindowList;
 	Int m_directionMultiplier;
-	Int m_currentFrame; ///< maintain how long we've spent on this transition.
+	Int m_currentFrame; ///< maintain how long we've spent on this transition;
 	AsciiString m_name;
 };
 
@@ -672,13 +671,12 @@ public:
 	static const FieldParse m_gameWindowTransitionsFieldParseTable[];																				///< the parse table
 	static void parseWindow( INI* ini, void *instance, void *store, const void *userData );
 
-	TransitionGroup *setGroup(AsciiString groupName, Bool immediate = FALSE); // This will be the next group to fire off.
+	void setGroup(AsciiString groupName, Bool immidiate = FALSE); // This will be the next group to fire off.
 	void reverse( AsciiString groupName );// reverse the animations for the current group.
 	void remove( AsciiString groupName, Bool skipPending = FALSE );// remove the animation from the current or pending groups.
 	TransitionGroup *getNewGroup( AsciiString name );
-	TransitionGroup *findGroup( AsciiString groupName );
-
 private:
+	TransitionGroup *findGroup( AsciiString groupName );
 	typedef std::list<TransitionGroup *> TransitionGroupList;
 	TransitionGroupList m_transitionGroupList;
 	TransitionGroup *m_currentGroup;
