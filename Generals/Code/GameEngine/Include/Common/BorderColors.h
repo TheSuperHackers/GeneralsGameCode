@@ -23,7 +23,7 @@
 struct BorderColor
 {
 	const char *m_colorName;
-	long m_borderColor;
+	unsigned long m_borderColor;
 };
 
 const BorderColor BORDER_COLORS[] = 
