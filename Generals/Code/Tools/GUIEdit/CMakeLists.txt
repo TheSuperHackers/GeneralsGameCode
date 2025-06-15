@@ -49,7 +49,6 @@ target_link_libraries(g_guiedit PRIVATE
     benchmark
     comctl32
     d3d8lib
-    dbghelplib
     g_gameengine
     g_gameenginedevice
     g_wwvegas
