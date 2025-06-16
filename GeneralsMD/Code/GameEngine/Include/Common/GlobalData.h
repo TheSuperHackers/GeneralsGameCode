@@ -76,6 +76,7 @@ public:
 
 	Bool setTimeOfDay( TimeOfDay tod );		///< Use this function to set the Time of day;
 
+	static void initFirstGlobalData();
 	static void parseGameDataDefinition( INI* ini );
 
 	//-----------------------------------------------------------------------------------------------

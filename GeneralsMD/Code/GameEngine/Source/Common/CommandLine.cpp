@@ -1487,9 +1487,11 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 
 void parseInitialCommandLineAndInitGlobalData()
 {
+	// We need the GlobalData initialized before parsing the command line.
+	// Note that this function is potentially called multiple times and only initializes the first time.
 	if (TheGlobalData != NULL)
 		return;
-	TheWritableGlobalData = NEW GlobalData;
+	GlobalData::initFirstGlobalData();
 	parseCommandLine(paramsInitial, ARRAY_SIZE(paramsInitial));
 }
 
