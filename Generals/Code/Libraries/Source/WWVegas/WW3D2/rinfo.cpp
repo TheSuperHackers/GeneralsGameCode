@@ -101,7 +101,7 @@ MaterialPassClass * RenderInfoClass::Peek_Additional_Pass(int i)
 void RenderInfoClass::Push_Override_Flags(RINFO_OVERRIDE_FLAGS flg)
 {
 	// copy to the end of the array
-	WWASSERT(OverrideFlagLevel<MAX_OVERRIDE_FLAG_LEVEL);
+	WWASSERT(OverrideFlagLevel<MAX_OVERRIDE_FLAG_LEVEL - 1);
 	OverrideFlagLevel++;
 	OverrideFlag[OverrideFlagLevel]=flg;
 }

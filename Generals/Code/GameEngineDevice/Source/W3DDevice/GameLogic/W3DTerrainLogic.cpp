@@ -231,7 +231,7 @@ void W3DTerrainLogic::getMaximumPathfindExtent( Region3D *extent ) const
 
 	// Note - m_boundaries are stored in height map grids wide, so we have to
 	// multiply by the grid width.
-	Int i;
+	size_t i;
 	for (i=0; i<m_boundaries.size(); i++) {
 		if (extent->hi.x < m_boundaries[i].x*MAP_XY_FACTOR) {
 			extent->hi.x = m_boundaries[i].x*MAP_XY_FACTOR;
@@ -281,6 +281,8 @@ Real W3DTerrainLogic::getGroundHeight( Real x, Real y, Coord3D* normal ) const
 {
 #define USE_THE_TERRAIN_OBJECT
 #ifdef USE_THE_TERRAIN_OBJECT
+	// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+	// W3DTerrainLogic shouldn't depend on TheTerrainRenderObject!
 	if (TheTerrainRenderObject) 
 	{
 		return TheTerrainRenderObject->getHeightMapHeight(x,y,normal);
@@ -358,7 +360,8 @@ Real W3DTerrainLogic::getLayerHeight( Real x, Real y, PathfindLayerEnum layer, C
 //-------------------------------------------------------------------------------------------------
 Bool W3DTerrainLogic::isCliffCell( Real x, Real y) const
 {
-
+	// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+	// W3DTerrainLogic shouldn't depend on TheTerrainRenderObject!
 	return TheTerrainRenderObject->isCliffCell(x,y);
 
 }  // end isCliffCell

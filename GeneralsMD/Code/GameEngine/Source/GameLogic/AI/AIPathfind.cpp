@@ -264,7 +264,7 @@ Path::~Path( void )
 	for( node = m_path; node; node = nextNode )
 	{
 		nextNode = node->getNext();
-		node->deleteInstance();
+		deleteInstance(node);
 	}
 }
 
@@ -3877,7 +3877,7 @@ void Pathfinder::reset( void )
 	debugPathPos.z = 0.0f;
 
 	if (debugPath)
-		debugPath->deleteInstance();
+		deleteInstance(debugPath);
 
 	debugPath = NULL;
 	m_frameToShowObstacles = 0;
@@ -4778,7 +4778,7 @@ Locomotor* Pathfinder::chooseBestLocomotorForPosition(PathfindLayerEnum layer, L
 	if (t == PathfindCell::CELL_RUBBLE) {
 		return LOCOMOTORSURFACE_RUBBLE | LOCOMOTORSURFACE_AIR;
 	}
-	if ( (t == PathfindCell::CELL_CLIFF) ) {
+	if ( t == PathfindCell::CELL_CLIFF ) {
 		return LOCOMOTORSURFACE_CLIFF | LOCOMOTORSURFACE_AIR;
 	}
 	return NO_SURFACES;
@@ -6159,9 +6159,9 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 		ICoord2D newCellCoord;
 		PathfindCell *newCell;
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
-		Bool neighborFlags[8] = {false, false, false, false, false, false, false};
+		Bool neighborFlags[8] = { 0 };
 
-		UnsignedInt newCostSoFar;
+		UnsignedInt newCostSoFar = 0;
 
 
 
@@ -6402,7 +6402,7 @@ Path *Pathfinder::findPath( Object *obj, const LocomotorSet& locomotorSet, const
 	m_zoneManager.clearPassableFlags();
 	Path *hPat = findHierarchicalPath(isHuman, locomotorSet, from, rawTo, false);
 	if (hPat) {
-		hPat->deleteInstance();
+		deleteInstance(hPat);
 	}	else {
 		m_zoneManager.setAllPassable();
 	}
@@ -6444,11 +6444,11 @@ Path *Pathfinder::findPath( Object *obj, const LocomotorSet& locomotorSet, const
 					path->getFirstNode()->setCanOptimize(linkNode->getCanOptimize());
 					path->getFirstNode()->setNextOptimized(path->getFirstNode()->getNext());
 				}
-				linkPath->deleteInstance();
+				deleteInstance(linkPath);
 			}
 			prior = node;
 		}
-		pat->deleteInstance();
+		deleteInstance(pat);
 		path->optimize(obj, locomotorSet.getValidSurfaces(), false);
 		if (TheGlobalData->m_debugAI) {
 			setDebugPath(path);
@@ -7029,7 +7029,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 
 	Path *hPat = internal_findHierarchicalPath(isHuman, LOCOMOTORSURFACE_GROUND, from, rawTo, false, false);
 	if (hPat) {
-		hPat->deleteInstance();
+		deleteInstance(hPat);
 	}	else {
 		m_zoneManager.setAllPassable();
 	}
@@ -7130,6 +7130,11 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	// "closed" list is initially empty
 	m_closedList = NULL;
 
+	// TheSuperHackers @fix helmutbuhler This was originally uninitialized and in the loop below.
+#if RETAIL_COMPATIBLE_CRC
+	UnsignedInt newCostSoFar = 0;
+#endif
+
 	//
 	// Continue search until "open" list is empty, or
 	// until goal is found.
@@ -7191,9 +7196,14 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 		ICoord2D newCellCoord;
 		PathfindCell *newCell;
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
-		Bool neighborFlags[8] = {false, false, false, false, false, false, false};
+		Bool neighborFlags[8] = { 0 };
 
+		// TheSuperHackers @fix Mauller 23/05/2025 Fixes uninitialized variable.
+#if RETAIL_COMPATIBLE_CRC
+		// newCostSoFar defined in outer block.
+#else
 		UnsignedInt newCostSoFar = 0;
+#endif
 
 		for( int i=0; i<numNeighbors; i++ )
 		{
@@ -7255,6 +7265,8 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 				}								
 				cellCount++;
 
+#if RETAIL_COMPATIBLE_CRC
+				// TheSuperHackers @fix helmutbuhler 11/06/2025 The indentation was wrong on retail here.
 				newCostSoFar = newCell->costSoFar( parentCell );
 				if (clearDiameter<pathDiameter) {
 					int delta = pathDiameter-clearDiameter;
@@ -7262,6 +7274,15 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 				}
 				newCell->setBlockedByAlly(false);
 			}
+#else
+			}
+			newCostSoFar = newCell->costSoFar( parentCell );
+			if (clearDiameter<pathDiameter) {
+				int delta = pathDiameter-clearDiameter;
+				newCostSoFar += 0.6f*(delta*COST_ORTHOGONAL);
+			}
+			newCell->setBlockedByAlly(false);
+#endif
 			Int costRemaining = 0;
 			costRemaining = newCell->costToGoal( goalCell );
 
@@ -8161,7 +8182,7 @@ Bool Pathfinder::slowDoesPathExist( Object *obj,
 	m_ignoreObstacleID = INVALID_ID;
 	Bool found = (path!=NULL);
 	if (path) {
-		path->deleteInstance();
+		deleteInstance(path);
 		path = NULL;
 	}
 	return found;
@@ -8313,9 +8334,9 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 		ICoord2D newCellCoord;
 		PathfindCell *newCell;
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
-		Bool neighborFlags[8] = {false, false, false, false, false, false, false};
+		Bool neighborFlags[8] = { 0 };
 
-		UnsignedInt newCostSoFar;
+		UnsignedInt newCostSoFar = 0;
 
 		for( int i=0; i<numNeighbors; i++ )
 		{
@@ -8566,9 +8587,9 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 		ICoord2D newCellCoord;
 		PathfindCell *newCell;
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
-		Bool neighborFlags[8] = {false, false, false, false, false, false, false};
+		Bool neighborFlags[8] = { 0 };
 
-		UnsignedInt newCostSoFar;
+		UnsignedInt newCostSoFar = 0;
 
 		for( int i=0; i<numNeighbors; i++ )
 		{
@@ -8781,7 +8802,7 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 		m_zoneManager.clearPassableFlags();
 		Path *hPat = findClosestHierarchicalPath(isHuman, locomotorSet, from, rawTo, false);
 		if (hPat) {
-			hPat->deleteInstance();
+			deleteInstance(hPat);
 			gotHierarchicalPath = true;
 		}	else {
 			m_zoneManager.setAllPassable();
@@ -9108,7 +9129,7 @@ void Pathfinder::setDebugPath(Path *newDebugpath)
 	{
 		// copy the path for debugging
 		if (debugPath)
-			debugPath->deleteInstance();
+			deleteInstance(debugPath);
 
 		debugPath = newInstance(Path);
 					
@@ -10664,7 +10685,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 	m_zoneManager.clearPassableFlags();
 	Path *hPat = findClosestHierarchicalPath(isHuman, locomotorSet, from, victimPos, isCrusher);
 	if (hPat) {
-		hPat->deleteInstance();
+		deleteInstance(hPat);
 	}	else {
 		m_zoneManager.setAllPassable();
 	}

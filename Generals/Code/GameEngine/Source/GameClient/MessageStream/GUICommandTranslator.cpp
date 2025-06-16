@@ -54,7 +54,7 @@
 #endif
 
 // PRIVATE ////////////////////////////////////////////////////////////////////////////////////////
-static enum CommandStatus
+enum CommandStatus
 {
 	COMMAND_INCOMPLETE = 0,
 	COMMAND_COMPLETE
@@ -492,7 +492,10 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 
 				// get out of GUI command mode if we completed the command one way or another
 				if( commandStatus == COMMAND_COMPLETE )
+				{
+					TheInGameUI->setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( TRUE );
 					TheInGameUI->setGUICommand( NULL );
+				}
 			}  // end if
 
 			break;

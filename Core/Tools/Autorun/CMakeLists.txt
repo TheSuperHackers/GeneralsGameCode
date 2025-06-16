@@ -54,6 +54,7 @@ target_sources(corei_autorun INTERFACE ${AUTORUN_SRC})
 
 target_link_libraries(corei_autorun INTERFACE
     core_config
+    core_utility
     winmm
 )
 

@@ -806,9 +806,8 @@ static void PlayerUTMCallback(PEER peer, const char * nick,
 void GOABasicCallback(PEER peer, PEERBool playing, char * outbuf,
 											int maxlen, void * param)
 {
-	_snprintf(outbuf, maxlen, "\\gamename\\c&cgenerals\\gamever\\%s\\location\\%d",
+	snprintf(outbuf, maxlen, "\\gamename\\c&cgenerals\\gamever\\%s\\location\\%d",
 		TheVersion->getAsciiVersion().str(), 0);
-	outbuf[maxlen-1] = 0;
 	DEBUG_LOG(("GOABasicCallback: [%s]\n", outbuf));
 	TheGameSpyGame->gotGOACall();
 }
@@ -816,9 +815,8 @@ void GOABasicCallback(PEER peer, PEERBool playing, char * outbuf,
 void GOAInfoCallback(PEER peer, PEERBool playing, char * outbuf,
 										 int maxlen, void * param)
 {
-	_snprintf(outbuf, maxlen, "\\hostname\\%s\\hostport\\%d\\mapname\\%s\\gametype\\%s\\numplayers\\%d\\maxplayers\\%d\\gamemode\\%s",
+	snprintf(outbuf, maxlen, "\\hostname\\%s\\hostport\\%d\\mapname\\%s\\gametype\\%s\\numplayers\\%d\\maxplayers\\%d\\gamemode\\%s",
 		TheGameSpyChat->getLoginName().str(), 0, TheGameSpyGame->getMap().str(), "battle", TheGameSpyGame->getNumPlayers(), TheGameSpyGame->getMaxPlayers(), "wait");
-	outbuf[maxlen-1] = 0;
 	DEBUG_LOG(("GOAInfoCallback: [%s]\n", outbuf));
 	TheGameSpyGame->gotGOACall();
 }
@@ -826,9 +824,8 @@ void GOAInfoCallback(PEER peer, PEERBool playing, char * outbuf,
 void GOARulesCallback(PEER peer, PEERBool playing, char * outbuf,
 											int maxlen, void * param)
 {
-	_snprintf(outbuf, maxlen, "\\password\\0\\seed\\%d",
+	snprintf(outbuf, maxlen, "\\password\\0\\seed\\%d",
 		TheGameSpyGame->getSeed());
-	outbuf[maxlen-1] = 0;
 	DEBUG_LOG(("GOARulesCallback: [%s]\n", outbuf));
 	TheGameSpyGame->gotGOACall();
 }
@@ -878,8 +875,7 @@ void GOAPlayersCallback(PEER peer, PEERBool playing, char * outbuf,
 			i, slot->getStartPos());
 		buf.concat(tmp);
 	}
-	_snprintf(outbuf, maxlen, buf.str());
-	outbuf[maxlen-1] = 0;
+	snprintf(outbuf, maxlen, buf.str());
 	DEBUG_LOG(("GOAPlayersCallback: [%s]\n", outbuf));
 	TheGameSpyGame->gotGOACall();
 }

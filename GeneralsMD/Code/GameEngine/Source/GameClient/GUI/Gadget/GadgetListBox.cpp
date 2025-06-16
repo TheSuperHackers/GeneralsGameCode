@@ -1980,7 +1980,11 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 				delete[]( list->columnWidthPercentage );
 			if( list->multiSelect )
 				delete[]( list->selections );
-			delete( list );
+
+			delete (ListboxData *)window->winGetUserData();
+			window->winSetUserData( NULL );
+			list = NULL;
+
 			break;
 
 		}  // end destroy
@@ -2221,6 +2225,8 @@ Int GadgetListBoxAddEntryText( GameWindow *listbox,
 	addInfo.width = -1;
 
 	ListboxData *listData = (ListboxData *)listbox->winGetUserData();
+	if (listData == NULL)
+		return -1;
 	Bool wasFull = (listData->listLength <= listData->endPos);
 	Int newEntryOffset = (wasFull)?0:1;
 	Int oldBottomIndex = GadgetListBoxGetBottomVisibleEntry(listbox);

@@ -19,26 +19,26 @@
 // W3DView.cpp : Defines the class behaviors for the application.
 //
 
-#include "stdafx.h"
-#include "w3dview.h"
+#include "StdAfx.h"
+#include "W3DView.h"
 
-#include "mainfrm.h"
-#include "w3dviewdoc.h"
-#include "w3dviewview.h"
-#include "utils.h"
-#include "colorutils.h"
+#include "MainFrm.h"
+#include "W3DViewDoc.h"
+#include "W3DViewView.h"
+#include "Utils.h"
+#include "ColorUtils.h"
 #include "verchk.h"
 #include "wwmath.h"
-#include "wwaudio.h"
-#include "viewerassetmgr.h"
-#include "globals.h"
-#include "animatedsoundoptionsdialog.h"
+#include "WWAudio.h"
+#include "ViewerAssetMgr.h"
+#include "Globals.h"
+#include "AnimatedSoundOptionsDialog.h"
 #include "animatedsoundmgr.h"
 
 
 #undef STRICT
 #include "ww3d.h"
-#include "AssetMgr.H"
+#include "assetmgr.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

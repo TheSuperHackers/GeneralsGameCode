@@ -600,9 +600,8 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 						
 						if(newColumns > 1)
 						{
-							char *percentages = new char[60];
-							char *token;
-							GetDlgItemText(hWndDialog,EDIT_COLUMN_PERCENT,percentages,200);
+							Char percentages[200];
+							GetDlgItemText(hWndDialog,EDIT_COLUMN_PERCENT,percentages,sizeof(percentages));
 							if(strlen(percentages) == 0)
 							{
 								MessageBox(NULL,"You have specified a column amount greater then 1, please enter the same about of percentages","whoops",MB_OK | MB_ICONSTOP | MB_APPLMODAL);
@@ -612,7 +611,7 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 							Int *newPercentages = new Int[newColumns];
 							Int i = 0;
 							Int total = 0;
-							token = strtok( percentages, "," );
+							Char *token = strtok( percentages, "," );
 							while( token != NULL )
 							{			
 								newPercentages[i] = atoi(token);
@@ -621,23 +620,26 @@ static LRESULT CALLBACK listboxPropertiesCallback( HWND hWndDialog,
 								i++;
 								if(i > newColumns && token)
 								{
-									Char *whoopsMsg = new char[250];
+									Char whoopsMsg[250];
 									sprintf(whoopsMsg,"You have Specified %d columns but I have read in more then that for the percentages, please double check your data", newColumns);
 									MessageBox(NULL, whoopsMsg,"Whoops",MB_OK | MB_ICONSTOP | MB_APPLMODAL);
+									delete[] newPercentages;
 									return 0;
 								}
 								else if( i < newColumns && !token )
 								{
-									Char *whoopsMsg = new char[250];
+									Char whoopsMsg[250];
 									sprintf(whoopsMsg,"You have Specified %d columns but I have read in only %d for the percentages, please double check your data", newColumns, i );
 									MessageBox(NULL, whoopsMsg,"Whoops",MB_OK | MB_ICONSTOP | MB_APPLMODAL);
+									delete[] newPercentages;
 									return 0;
 								}
 								else if((total > 100 ) || (total < 100 && !token ))
 								{
-									Char *whoopsMsg = new char[250];
+									Char whoopsMsg[250];
 									sprintf(whoopsMsg,"Please Double check to make sure your percentages add up to 100.");
 									MessageBox(NULL, whoopsMsg,"Whoops",MB_OK | MB_ICONSTOP | MB_APPLMODAL);
+									delete[] newPercentages;
 									return 0;
 								}
 							}						
@@ -941,8 +943,8 @@ HWND InitListboxPropertiesDialog( GameWindow *window )
 	SetDlgItemInt( dialog, EDIT_NUM_COLUMNS, listData->columns, FALSE );
 	if(listData->columns > 1)
 	{
-		char *percentages = new char[60];
-		char *tempStr = new char[60];
+		Char percentages[200];
+		Char tempStr[33];
 		sprintf(percentages,"%d",listData->columnWidthPercentage[0]);
 		for(Int i = 1; i < listData->columns; i++ )
 		{

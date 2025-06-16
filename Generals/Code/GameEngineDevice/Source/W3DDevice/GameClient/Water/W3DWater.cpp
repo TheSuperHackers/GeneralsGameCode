@@ -307,7 +307,7 @@ WaterRenderObjClass::~WaterRenderObjClass(void)
 	{	WaterSettings[i].m_skyTextureFile.clear();
 		WaterSettings[i].m_waterTextureFile.clear();
 	}
-	((WaterTransparencySetting*)TheWaterTransparency.getNonOverloadedPointer())->deleteInstance();
+	deleteInstance((WaterTransparencySetting*)TheWaterTransparency.getNonOverloadedPointer());
 	TheWaterTransparency = NULL;
 	ReleaseResources();
 
@@ -2608,8 +2608,8 @@ void WaterRenderObjClass::setGridResolution(Real gridCellsX, Real gridCellsY, Re
 {
 	m_gridCellSize=cellSize;
 
-	if (m_gridCellsX != gridCellsX || m_gridCellsY != m_gridCellsY)
-	{	//resolutoin has changed
+	if (m_gridCellsX != gridCellsX || m_gridCellsY != gridCellsY)
+	{	//resolution has changed
 		m_gridCellsX=gridCellsX;
 		m_gridCellsY=gridCellsY;
 
@@ -3441,7 +3441,7 @@ void WaterRenderObjClass::xfer( Xfer *xfer )
 	}  // end if
 
 	// xfer each of the mesh data points
-	for( Int i = 0; i < m_meshDataSize; ++i )
+	for( UnsignedInt i = 0; i < m_meshDataSize; ++i )
 	{
 
 		// height

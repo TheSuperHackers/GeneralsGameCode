@@ -1156,7 +1156,7 @@ Int HeightMapRenderObjClass::updateBlock(Int x0, Int y0, Int x1, Int y1,  WorldH
 	DEBUG_ASSERTCRASH(x0>=0&&y0>=0 && x1<m_x && y1<m_y && x0<=x1 && y0<=y1, ("Invalid updates."));
 #endif
 	Invalidate_Cached_Bounding_Volumes();
-	if (pMap) {
+	if (pMap && m_treeBuffer != NULL) {
 		REF_PTR_SET(m_stageZeroTexture, pMap->getTerrainTexture());
 		REF_PTR_SET(m_stageOneTexture, pMap->getAlphaTerrainTexture());
 	}
@@ -1338,33 +1338,46 @@ HeightMapRenderObjClass::HeightMapRenderObjClass(void)
 	m_useDepthFade = false;
 	m_disableTextures = false;
 	TheTerrainRenderObject = this;
+
 	m_treeBuffer = NULL;
-	m_treeBuffer = NEW W3DTreeBuffer;
 	m_bibBuffer = NULL;
-	m_bibBuffer = NEW W3DBibBuffer;
-	m_curImpassableSlope = 45.0f;	// default to 45 degrees.
 #ifdef TEST_CUSTOM_EDGING
 	m_customEdging = NULL;
-	m_customEdging = NEW W3DCustomEdging;
 #endif
 	m_bridgeBuffer = NULL;
-	m_bridgeBuffer = NEW W3DBridgeBuffer;
-	m_waypointBuffer = NEW W3DWaypointBuffer;
+	m_waypointBuffer = NULL;
 #ifdef DO_ROADS
 	m_roadBuffer = NULL;
-	m_roadBuffer = NEW W3DRoadBuffer;
 #endif
 #ifdef DO_SCORCH
 	m_vertexScorch = NULL;
 	m_indexScorch = NULL;
 	m_scorchTexture = NULL;
 	clearAllScorches();
+	m_shroud = NULL;
 #endif
+	m_bridgeBuffer = NEW W3DBridgeBuffer;
+
+	if (TheGlobalData->m_headless)
+		return;
+
+	m_treeBuffer = NEW W3DTreeBuffer;
+
+	m_bibBuffer = NEW W3DBibBuffer;
+
+	m_curImpassableSlope = 45.0f;	// default to 45 degrees.
+
+#ifdef TEST_CUSTOM_EDGING
+	m_customEdging = NEW W3DCustomEdging;
+#endif
+	m_waypointBuffer = NEW W3DWaypointBuffer;
+#ifdef DO_ROADS
+	m_roadBuffer = NEW W3DRoadBuffer;
+#endif
+
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_shroudOn)
 		m_shroud = NEW W3DShroud;
-	else
-		m_shroud = NULL;
 #else
 	m_shroud = NEW W3DShroud;
 #endif
@@ -1455,7 +1468,8 @@ void HeightMapRenderObjClass::ReleaseResources(void)
 		m_bibBuffer->freeBibBuffers();
 	}
 #ifdef TEST_CUSTOM_EDGING
-	m_customEdging ->freeEdgingBuffers();
+	if (m_customEdging)
+		m_customEdging ->freeEdgingBuffers();
 #endif
 	if (m_bridgeBuffer) {
 		m_bridgeBuffer->freeBridgeBuffers();
@@ -1527,7 +1541,8 @@ void HeightMapRenderObjClass::ReAcquireResources(void)
 		m_bibBuffer->allocateBibBuffers();
 	}
 #ifdef TEST_CUSTOM_EDGING
-	m_customEdging ->allocateEdgingBuffers();
+	if (m_customEdging)
+		m_customEdging ->allocateEdgingBuffers();
 #endif
 	if (m_bridgeBuffer) {
 		m_bridgeBuffer->allocateBridgeBuffers();
@@ -1577,7 +1592,8 @@ void HeightMapRenderObjClass::reset(void)
 	}
 	clearAllScorches();
 #ifdef TEST_CUSTOM_EDGING
-	m_customEdging ->clearAllEdging();
+	if (m_customEdging)
+		m_customEdging ->clearAllEdging();
 #endif
 #ifdef DO_ROADS
 	if (m_roadBuffer) {
@@ -2590,7 +2606,8 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 	if (m_shroud)
 		m_shroud->init(m_map,TheGlobalData->m_partitionCellSize,TheGlobalData->m_partitionCellSize);
 #ifdef DO_ROADS
-	m_roadBuffer->setMap(m_map);
+	if (m_roadBuffer)
+		m_roadBuffer->setMap(m_map);
 #endif
 	HeightSampleType *data = NULL;
 	if (pMap) {
@@ -2668,10 +2685,10 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 	// If the size changed, we need to allocate.
 	Bool needToAllocate = (x != m_x || y != m_y);
 	// If the textures aren't allocated (usually because of a hardware reset) need to allocate.
-	if (m_stageOneTexture == NULL) {
+	if (m_stageOneTexture == NULL && m_treeBuffer) {
 		needToAllocate = true;
 	}
-	if (data && needToAllocate)
+	if (data && needToAllocate && m_treeBuffer != NULL)
 	{	//requested heightmap different from old one.
 		//allocate a new one.
 		freeMapResources();	//free old data and ib/vb
@@ -3371,7 +3388,8 @@ void HeightMapRenderObjClass::addTree(Coord3D location, Real scale, Real angle,
 void HeightMapRenderObjClass::addTerrainBib(Vector3 corners[4], 
 																						ObjectID id, Bool highlight)
 {
-	m_bibBuffer->addBib(corners, id, highlight); 
+	if (m_bibBuffer)
+		m_bibBuffer->addBib(corners, id, highlight); 
 };
 
 //=============================================================================
@@ -3382,7 +3400,8 @@ void HeightMapRenderObjClass::addTerrainBib(Vector3 corners[4],
 void HeightMapRenderObjClass::addTerrainBibDrawable(Vector3 corners[4], 
 																						DrawableID id, Bool highlight)
 {
-	m_bibBuffer->addBibDrawable(corners, id, highlight); 
+	if (m_bibBuffer)
+		m_bibBuffer->addBibDrawable(corners, id, highlight); 
 };
 
 //=============================================================================
@@ -3392,7 +3411,8 @@ void HeightMapRenderObjClass::addTerrainBibDrawable(Vector3 corners[4],
 //=============================================================================
 void HeightMapRenderObjClass::removeTerrainBibHighlighting()
 {
-	m_bibBuffer->removeHighlighting(  ); 
+	if (m_bibBuffer)
+		m_bibBuffer->removeHighlighting(  ); 
 };
 
 //=============================================================================
@@ -3402,7 +3422,8 @@ void HeightMapRenderObjClass::removeTerrainBibHighlighting()
 //=============================================================================
 void HeightMapRenderObjClass::removeAllTerrainBibs()
 {
-	m_bibBuffer->clearAllBibs(  ); 
+	if (m_bibBuffer)
+		m_bibBuffer->clearAllBibs(  ); 
 };
 
 //=============================================================================
@@ -3412,7 +3433,8 @@ void HeightMapRenderObjClass::removeAllTerrainBibs()
 //=============================================================================
 void HeightMapRenderObjClass::removeTerrainBib(ObjectID id)
 {
-	m_bibBuffer->removeBib( id ); 
+	if (m_bibBuffer)
+		m_bibBuffer->removeBib( id ); 
 };
 
 //=============================================================================
@@ -3422,7 +3444,8 @@ void HeightMapRenderObjClass::removeTerrainBib(ObjectID id)
 //=============================================================================
 void HeightMapRenderObjClass::removeTerrainBibDrawable(DrawableID id)
 {
-	m_bibBuffer->removeBibDrawable( id ); 
+	if (m_bibBuffer)
+		m_bibBuffer->removeBibDrawable( id ); 
 };
 
 //=============================================================================

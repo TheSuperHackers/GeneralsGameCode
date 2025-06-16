@@ -288,36 +288,41 @@ BaseHeightMapRenderObjClass::BaseHeightMapRenderObjClass(void)
 	m_useDepthFade = false;
 	m_disableTextures = false;
 	TheTerrainRenderObject = this;
+
 	m_treeBuffer = NULL; 
-
-	m_treeBuffer = NEW W3DTreeBuffer;
-
 	m_propBuffer = NULL; 
-
-	m_propBuffer = NEW W3DPropBuffer;
-
-
 	m_bibBuffer = NULL;
-	m_bibBuffer = NEW W3DBibBuffer;
-	m_curImpassableSlope = 45.0f;	// default to 45 degrees.
 	m_bridgeBuffer = NULL;
-	m_bridgeBuffer = NEW W3DBridgeBuffer;
-	m_waypointBuffer = NEW W3DWaypointBuffer;
+	m_waypointBuffer = NULL;
 #ifdef DO_ROADS
 	m_roadBuffer = NULL;
-	m_roadBuffer = NEW W3DRoadBuffer;
 #endif
 #ifdef DO_SCORCH
 	m_vertexScorch = NULL;
 	m_indexScorch = NULL;
 	m_scorchTexture = NULL;
 	clearAllScorches();
+	m_shroud = NULL;
+#endif
+	m_bridgeBuffer = NEW W3DBridgeBuffer;
+
+	if (TheGlobalData->m_headless)
+		return;
+
+	m_treeBuffer = NEW W3DTreeBuffer;
+
+	m_propBuffer = NEW W3DPropBuffer;
+
+	m_bibBuffer = NEW W3DBibBuffer;
+
+	m_curImpassableSlope = 45.0f;	// default to 45 degrees.
+	m_waypointBuffer = NEW W3DWaypointBuffer;
+#ifdef DO_ROADS
+	m_roadBuffer = NEW W3DRoadBuffer;
 #endif
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_shroudOn)
 		m_shroud = NEW W3DShroud;
-	else
-		m_shroud = NULL;
 #else
 	m_shroud = NEW W3DShroud;
 #endif
@@ -1791,7 +1796,8 @@ Int BaseHeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pM
 	if (m_shroud)
 		m_shroud->init(m_map,TheGlobalData->m_partitionCellSize,TheGlobalData->m_partitionCellSize);
 #ifdef DO_ROADS
-	m_roadBuffer->setMap(m_map);
+	if (m_roadBuffer)
+		m_roadBuffer->setMap(m_map);
 #endif
 	HeightSampleType *data = NULL;
 	if (pMap) {
@@ -1846,7 +1852,7 @@ Int BaseHeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pM
 	m_curNumScorchIndices=0;
 	// If the textures aren't allocated (usually because of a hardware reset) need to allocate.
 	Bool needToAllocate = false;
-	if (m_stageTwoTexture == NULL) {
+	if (m_stageTwoTexture == NULL && m_treeBuffer) {
 		needToAllocate = true;
 	}
 	if (data && needToAllocate)
@@ -2300,7 +2306,8 @@ void BaseHeightMapRenderObjClass::notifyShroudChanged(void)
 void BaseHeightMapRenderObjClass::addTerrainBib(Vector3 corners[4], 
 																						ObjectID id, Bool highlight)
 {
-	m_bibBuffer->addBib(corners, id, highlight); 
+	if (m_bibBuffer)
+		m_bibBuffer->addBib(corners, id, highlight); 
 };
 
 //=============================================================================
@@ -2311,7 +2318,8 @@ void BaseHeightMapRenderObjClass::addTerrainBib(Vector3 corners[4],
 void BaseHeightMapRenderObjClass::addTerrainBibDrawable(Vector3 corners[4], 
 																						DrawableID id, Bool highlight)
 {
-	m_bibBuffer->addBibDrawable(corners, id, highlight); 
+	if (m_bibBuffer)
+		m_bibBuffer->addBibDrawable(corners, id, highlight); 
 };
 
 //=============================================================================
@@ -2321,7 +2329,8 @@ void BaseHeightMapRenderObjClass::addTerrainBibDrawable(Vector3 corners[4],
 //=============================================================================
 void BaseHeightMapRenderObjClass::removeTerrainBibHighlighting()
 {
-	m_bibBuffer->removeHighlighting(  ); 
+	if (m_bibBuffer)
+		m_bibBuffer->removeHighlighting(  ); 
 };
 
 //=============================================================================
@@ -2331,7 +2340,8 @@ void BaseHeightMapRenderObjClass::removeTerrainBibHighlighting()
 //=============================================================================
 void BaseHeightMapRenderObjClass::removeAllTerrainBibs()
 {
-	m_bibBuffer->clearAllBibs(  ); 
+	if (m_bibBuffer)
+		m_bibBuffer->clearAllBibs(  ); 
 };
 
 //=============================================================================
@@ -2341,7 +2351,8 @@ void BaseHeightMapRenderObjClass::removeAllTerrainBibs()
 //=============================================================================
 void BaseHeightMapRenderObjClass::removeTerrainBib(ObjectID id)
 {
-	m_bibBuffer->removeBib( id ); 
+	if (m_bibBuffer)
+		m_bibBuffer->removeBib( id ); 
 };
 
 //=============================================================================
@@ -2351,7 +2362,8 @@ void BaseHeightMapRenderObjClass::removeTerrainBib(ObjectID id)
 //=============================================================================
 void BaseHeightMapRenderObjClass::removeTerrainBibDrawable(DrawableID id)
 {
-	m_bibBuffer->removeBibDrawable( id ); 
+	if (m_bibBuffer)
+		m_bibBuffer->removeBibDrawable( id ); 
 };
 
 //=============================================================================
@@ -2368,7 +2380,8 @@ void BaseHeightMapRenderObjClass::staticLightingChanged( void )
 	m_scorchesInBuffer = 0; // If we just allocated the buffers, we got no scorches in the buffer.
 	m_curNumScorchVertices=0;
 	m_curNumScorchIndices=0;
-	m_roadBuffer->updateLighting();
+	if (m_roadBuffer)
+		m_roadBuffer->updateLighting();
 
 }
 

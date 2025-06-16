@@ -164,8 +164,6 @@ class Object : public Thing, public Snapshot
 {
 
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE(Object, "ObjectPool" )		
-	/// destructor is non-public in order to require the use of TheGameLogic->destroyObject()
-	MEMORY_POOL_DELETEINSTANCE_VISIBILITY(protected)
 
 public:
 
@@ -411,7 +409,7 @@ public:
 	Bool isInList(Object **pListHead) const;
 
 	// this is intended for use ONLY by GameLogic.
-	void friend_deleteInstance() { deleteInstance(); }
+	static void friend_deleteInstance(Object* object) { deleteInstance(object); }
 
 	/// cache the partition module (should be called only by PartitionData)
 	void friend_setPartitionData(PartitionData *pd) { m_partitionData = pd; }
@@ -483,7 +481,7 @@ public:
 	UnsignedInt getWeaponInWeaponSlotCommandSourceMask( WeaponSlotType wSlot ) const { return m_weaponSet.getNthCommandSourceMask( wSlot ); }
 
 	// see if this current weapon set's weapons has shared reload times
-	const Bool isReloadTimeShared() const { return m_weaponSet.isSharedReloadTime(); }
+	Bool isReloadTimeShared() const { return m_weaponSet.isSharedReloadTime(); }
 
 	Weapon* getCurrentWeapon(WeaponSlotType* wslot = NULL);
 	const Weapon* getCurrentWeapon(WeaponSlotType* wslot = NULL) const;
@@ -810,6 +808,9 @@ private:
 	Bool													m_isReceivingDifficultyBonus;
 
 };  // end class Object
+
+// deleteInstance is not meant to be used with Object in order to require the use of TheGameLogic->destroyObject()
+void deleteInstance(Object* object) CPP_11(= delete);
 
 // describe an object as an AsciiString: e.g. "Object 102 (KillerBuggy) [GLARocketBuggy, owned by player 2 (GLAIntroPlayer)]"
 AsciiString DebugDescribeObject(const Object *obj);

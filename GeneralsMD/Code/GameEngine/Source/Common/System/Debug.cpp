@@ -704,8 +704,7 @@ void ReleaseCrash(const char *reason)
 	}
 //#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 //	/* static */ char buff[8192]; // not so static so we can be threadsafe
-//	_snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);/
-//	buff[8191] = 0;
+//	snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);/
 //	::MessageBox(NULL, buff, "Technical Difficulties...", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
 //#else
 //	::MessageBox(NULL, "Sorry, a serious error occurred.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
@@ -749,8 +748,7 @@ void ReleaseCrash(const char *reason)
 	}
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	/* static */ char buff[8192]; // not so static so we can be threadsafe
-	_snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);
-	buff[8191] = 0;
+	snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);
 	::MessageBox(NULL, buff, "Technical Difficulties...", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
 #else
 // crash error messaged changed 3/6/03 BGC

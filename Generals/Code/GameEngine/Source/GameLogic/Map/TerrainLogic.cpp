@@ -1420,7 +1420,7 @@ void TerrainLogic::deleteWaypoints(void)
 	for (pWay = getFirstWaypoint(); pWay; pWay = pNext) {
 		pNext = pWay->getNext();
 		pWay->setNext(NULL);
-		pWay->deleteInstance();
+		deleteInstance(pWay);
 	}
 	m_waypointListHead = NULL;
 }
@@ -1994,7 +1994,7 @@ void TerrainLogic::deleteBridges(void)
 	for (pBridge = getFirstBridge(); pBridge; pBridge = pNext) {
 		pNext = pBridge->getNext();
 		pBridge->setNext(NULL);
-		pBridge->deleteInstance();
+		deleteInstance(pBridge);
 	}
 	m_bridgeListHead = NULL;
 }
@@ -2050,7 +2050,7 @@ void TerrainLogic::deleteBridge( Bridge *bridge )
 		TheGameLogic->destroyObject( bridgeObj );
 
 	// delete the bridge in question
-	bridge->deleteInstance();
+	deleteInstance(bridge);
 
 }  // end deleteBridge
 
@@ -2213,6 +2213,8 @@ const WaterHandle* TerrainLogic::getWaterHandle( Real x, Real y )
 
 	/**@todo: Remove this after we have all water types included
 		in water triggers.  For now do special check for water grid mesh. */
+	// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+	// We shouldn't depend on TerrainVisual here.
 	Real meshZ;
 	if( TheTerrainVisual->getWaterGridHeight( x, y, &meshZ ) )
 	{	

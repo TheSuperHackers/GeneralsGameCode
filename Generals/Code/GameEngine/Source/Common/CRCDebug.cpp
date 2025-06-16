@@ -120,6 +120,8 @@ extern Bool inCRCGen;
 
 void CRCDebugStartNewGame()
 {
+	if (TheGameLogic->isInShellGame())
+		return;
 	if (g_saveDebugCRCPerFrame)
 	{
 		// Create folder for frame data, if it doesn't exist yet.
@@ -207,8 +209,7 @@ static void addCRCDebugLineInternal(bool count, const char *fmt, va_list args)
 		DebugStrings[nextDebugString][0] = 0;
 	Int len = strlen(DebugStrings[nextDebugString]);
 
-	_vsnprintf(DebugStrings[nextDebugString]+len, MaxStringLen-len, fmt, args);
-	DebugStrings[nextDebugString][MaxStringLen-1] = 0;
+	vsnprintf(DebugStrings[nextDebugString]+len, MaxStringLen-len, fmt, args);
 
 	char *tmp = DebugStrings[nextDebugString];
 	while (tmp && *tmp)
@@ -256,9 +257,8 @@ void addCRCGenLine(const char *fmt, ...)
 	static char buf[MaxStringLen];
 	va_list va;
 	va_start( va, fmt );
-	_vsnprintf(buf, MaxStringLen, fmt, va );
+	vsnprintf(buf, MaxStringLen, fmt, va );
 	va_end( va );
-	buf[MaxStringLen-1] = 0;
 	addCRCDebugLine("%s", buf);
 
 	//DEBUG_LOG(("%s", buf));
@@ -269,8 +269,7 @@ void addCRCDumpLine(const char *fmt, ...)
 	/*
 	va_list va;
 	va_start( va, fmt );
-	_vsnprintf(DumpStrings[nextDumpString], MaxStringLen, fmt, va );
-	DumpStrings[nextDumpString][MaxStringLen-1] = 0;
+	vsnprintf(DumpStrings[nextDumpString], MaxStringLen, fmt, va );
 	va_end( va );
 
 	++nextDumpString;

@@ -1,6 +1,11 @@
 # Game Memory features
 option(RTS_GAMEMEMORY_ENABLE "Enables the memory pool and dynamic memory allocator." ON)
 
+# Disable Game Memory if ASAN is enabled - Game Memory overrides new/delete and interferes with ASAN
+if(RTS_BUILD_OPTION_ASAN)
+    set(RTS_GAMEMEMORY_ENABLE OFF)
+endif()
+
 # Memory pool features
 option(RTS_MEMORYPOOL_OVERRIDE_MALLOC "Enables the Dynamic Memory Allocator for malloc calls." OFF)
 option(RTS_MEMORYPOOL_MPSB_DLINK "Adds a backlink to MemoryPoolSingleBlock. Makes it faster to free raw DMA blocks, but increases memory consumption." ON)

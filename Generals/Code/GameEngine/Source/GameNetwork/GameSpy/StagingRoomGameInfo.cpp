@@ -91,10 +91,6 @@ typedef struct tConnInfoStruct {
 	unsigned short RemotePort;
 } ConnInfoStruct;
 
-#ifndef ARRAY_SIZE
-#define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
-#endif
-
 /***********************************************************************************************
  * Get_Local_Chat_Connection_Address -- Which address are we using to talk to the chat server? *
  *                                                                                             *
@@ -404,7 +400,7 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	** server we think we are talking to.
 	*/
 	found = false;
-	for (Int i=0; i<connectionVector.size(); ++i) {
+	for (size_t i=0; i<connectionVector.size(); ++i) {
 		ConnInfoStruct connection = connectionVector[i];
 
 		temp = ntohl(connection.RemoteIP);
@@ -669,7 +665,7 @@ AsciiString GameSpyStagingRoom::generateGameSpyGameResultsPacket( void )
 			Int gsPlayerID = slot->getProfileID();
 			Bool disconnected = slot->disconnected();
 
-			AsciiString result = "loss", side = "USA";
+			AsciiString result = "loss";
 			if (disconnected)
 				result = "discon";
 			else if (TheNetwork->sawCRCMismatch())
@@ -677,9 +673,9 @@ AsciiString GameSpyStagingRoom::generateGameSpyGameResultsPacket( void )
 			else if (TheVictoryConditions->hasAchievedVictory(p))
 				result = "win";
 
-			side = p->getPlayerTemplate()->getSide();
+			AsciiString side = p->getPlayerTemplate()->getSide();
 			if (side == "America")
-				side = "USA";
+				side = "USA";  //conform to GameSpy
 
 			AsciiString playerStr;
 			playerStr.format("\\player_%d\\%s\\pid_%d\\%d\\team_%d\\%d\\result_%d\\%s\\side_%d\\%s",

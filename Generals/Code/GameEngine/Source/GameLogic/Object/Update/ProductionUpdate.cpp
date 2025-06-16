@@ -217,6 +217,8 @@ ProductionUpdate::~ProductionUpdate( void )
 
 		production = m_productionQueue;
 		removeFromProductionQueue( production );
+		// TheSuperHackers @fix Mauller 13/04/2025 Delete instance of production item
+		deleteInstance(production);
 
 	}  // end while
 
@@ -368,7 +370,7 @@ void ProductionUpdate::cancelUpgrade( const UpgradeTemplate *upgrade )
 	removeFromProductionQueue( production );
 
 	// delete production instance
-	production->deleteInstance();
+	deleteInstance(production);
 
 	//
 	// remove the IN_PRODUCTION status of this upgrade from the player, object upgrades don't
@@ -484,7 +486,7 @@ void ProductionUpdate::cancelUnitCreate( ProductionID productionID )
 			removeFromProductionQueue( production );
 
 			// delete the production entry
-			production->deleteInstance();
+			deleteInstance(production);
 
 			return;
 
@@ -681,7 +683,7 @@ UpdateSleepTime ProductionUpdate::update( void )
 		removeFromProductionQueue( production );
 
 		// delete the production entry
-		production->deleteInstance();
+		deleteInstance(production);
 
 		return UPDATE_SLEEP_NONE;
 
@@ -871,7 +873,7 @@ UpdateSleepTime ProductionUpdate::update( void )
 					removeFromProductionQueue( production );
 					
 					// delete the production entry
-					production->deleteInstance();
+					deleteInstance(production);
 				}
 
 			}  // end if we found an exit interface
@@ -887,7 +889,7 @@ UpdateSleepTime ProductionUpdate::update( void )
 				removeFromProductionQueue( production );
 
 				// delete the production entry
-				production->deleteInstance();
+				deleteInstance(production);
 
 			}  // end else
 	
@@ -972,7 +974,7 @@ UpdateSleepTime ProductionUpdate::update( void )
 			removeFromProductionQueue( production );
 
 			// delete the production entry
-			production->deleteInstance();
+			deleteInstance(production);
 
 		}  // end else, production upgrade
 

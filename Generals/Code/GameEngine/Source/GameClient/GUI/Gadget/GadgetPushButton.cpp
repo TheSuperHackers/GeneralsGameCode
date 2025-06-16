@@ -442,12 +442,10 @@ WindowMsgHandledType GadgetPushButtonSystem( GameWindow *window, UnsignedInt msg
 		// ------------------------------------------------------------------------
 		case GWM_DESTROY:
 		{
-			PushButtonData *pData = (PushButtonData *)window->winGetUserData();
-			if(pData)
-				delete pData;
+			delete (PushButtonData *)window->winGetUserData();
 			window->winSetUserData(NULL);
-		}
 			break;
+		}
 
 		// ------------------------------------------------------------------------
 		case GWM_INPUT_FOCUS:

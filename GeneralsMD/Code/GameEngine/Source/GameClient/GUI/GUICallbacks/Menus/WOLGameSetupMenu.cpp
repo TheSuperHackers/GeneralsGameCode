@@ -84,9 +84,8 @@ void slotListDebugLog(const char *fmt, ...)
 	static char buf[1024];
 	va_list va;
 	va_start( va, fmt );
-	_vsnprintf(buf, 1024, fmt, va );
+	vsnprintf(buf, 1024, fmt, va );
 	va_end( va );
-	buf[1023] = 0;
 
 	DEBUG_LOG(("%s", buf));
 	if (g_debugSlots)
@@ -1301,7 +1300,11 @@ void DeinitWOLGameGadgets( void )
 	listboxGameSetupChat = NULL;
 	textEntryChat = NULL;
 	textEntryMapDisplay = NULL;
-	windowMap = NULL;
+	if (windowMap)
+	{
+		windowMap->winSetUserData(NULL);
+		windowMap = NULL;
+	}
 	checkBoxUseStats = NULL;
   checkBoxLimitSuperweapons = NULL;
   comboBoxStartingCash = NULL;
@@ -1555,7 +1558,7 @@ void WOLGameSetupMenuShutdown( WindowLayout *layout, void *userData )
 	if( WOLMapSelectLayout )
 	{
 		WOLMapSelectLayout->destroyWindows();
-		WOLMapSelectLayout->deleteInstance();
+		deleteInstance(WOLMapSelectLayout);
 		WOLMapSelectLayout = NULL;
 	}
 	parentWOLGameSetup = NULL;
@@ -2596,6 +2599,9 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 		//-------------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 			{
+				if (windowMap)
+					windowMap->winSetUserData(NULL);
+
 				break;
 			} // case GWM_DESTROY:
 		//-------------------------------------------------------------------------------------------------
@@ -2699,7 +2705,7 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 					if( WOLMapSelectLayout )
 					{
 						WOLMapSelectLayout->destroyWindows();
-						WOLMapSelectLayout->deleteInstance();
+						deleteInstance(WOLMapSelectLayout);
 						WOLMapSelectLayout = NULL;
 					}
 

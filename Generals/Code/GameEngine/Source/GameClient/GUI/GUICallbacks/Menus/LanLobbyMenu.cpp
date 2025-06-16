@@ -42,6 +42,7 @@
 #include "Common/QuotedPrintable.h"
 #include "Common/UserPreferences.h"
 #include "GameClient/AnimateWindowManager.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/GameText.h"
 #include "GameClient/MapUtil.h"
 #include "GameClient/Mouse.h"
@@ -73,34 +74,52 @@ static Bool justEntered = FALSE;
 
 LANPreferences::LANPreferences( void )
 {
-	// note, the superclass will put this in the right dir automatically, this is just a leaf name
-	load("Network.ini");
+	loadFromIniFile();
 }
 
 LANPreferences::~LANPreferences()
 {
 }
 
+Bool LANPreferences::loadFromIniFile()
+{
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		AsciiString fname;
+		fname.format("Network_Instance%.2u.ini", rts::ClientInstance::getInstanceId());
+		return load(fname);
+	}
+
+	return load("Network.ini");
+}
+
 UnicodeString LANPreferences::getUserName(void)
 {
 	UnicodeString ret;
+
 	LANPreferences::const_iterator it = find("UserName");
-	if (it == end())
+	if (it != end())
 	{
-		IPEnumeration IPs;
-		ret.translate(IPs.getMachineName());
+		// Found an user name. Use it if valid.
+		ret = QuotedPrintableToUnicodeString(it->second);
+		ret.trim();
+		if (!ret.isEmpty())
+		{
+			return ret;
+		}
+	}
+
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		// TheSuperHackers @feature Use the instance id as default user name
+		// to avoid duplicate names for multiple client instances.
+		ret.format(L"Instance%.2d", rts::ClientInstance::getInstanceId());
 		return ret;
 	}
 
-	ret = QuotedPrintableToUnicodeString(it->second);
-	ret.trim();
-	if (ret.isEmpty())
-	{
-		IPEnumeration IPs;
-		ret.translate(IPs.getMachineName());
-		return ret;
-	}
-	
+	// Use machine name as default user name.
+	IPEnumeration IPs;
+	ret.translate(IPs.getMachineName());
 	return ret;
 }
 
@@ -293,6 +312,11 @@ static void playerTooltip(GameWindow *window,
 	}
 	UnicodeString tooltip;
 	tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getName().str(), player->getLogin().str(), player->getHost().str());
+#if defined(_DEBUG) || defined(_INTERNAL)
+	UnicodeString ip;
+	ip.format(L" - %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(player->getIP()));
+	tooltip.concat(ip);
+#endif
 	TheMouse->setCursorTooltip( tooltip );
 }
 
@@ -358,7 +382,7 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 	// Choose an IP address, then initialize the LAN singleton
 	UnsignedInt IP = TheGlobalData->m_defaultIP;
 	IPEnumeration IPs;
-
+	const WideChar* IPSource;
 	if (!IP)
 	{
 		EnumeratedIP *IPlist = IPs.getAddresses();
@@ -374,23 +398,18 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 			/// @todo: display error and exit lan lobby if no IPs are found
 		}
 
-		//UnicodeString str;
-		//str.format(L"Local IP chosen: %hs", IPlist->getIPstring().str());
-		//GadgetListBoxAddEntryText(listboxChatWindow, str, chatSystemColor, -1, 0);
+		IPSource = L"Local IP chosen";
 		IP = IPlist->getIP();
 	}
 	else
 	{
-		/*
-		UnicodeString str;
-		str.format(L"Default local IP: %d.%d.%d.%d",
-			(IP >> 24),
-			(IP >> 16) & 0xFF,
-			(IP >> 8) & 0xFF,
-			IP & 0xFF);
-		GadgetListBoxAddEntryText(listboxChatWindow, str, chatSystemColor, -1, 0);
-		*/
+		IPSource = L"Default local IP";
 	}
+#if defined(_DEBUG) || defined(_INTERNAL)
+	UnicodeString str;
+	str.format(L"%s: %d.%d.%d.%d", IPSource, PRINTF_IP_AS_4_INTS(IP));
+	GadgetListBoxAddEntryText(listboxChatWindow, str, chatSystemColor, -1, 0);
+#endif
 
 	// TheLAN->init() sets us to be in a LAN menu screen automatically.
 	TheLAN->init();

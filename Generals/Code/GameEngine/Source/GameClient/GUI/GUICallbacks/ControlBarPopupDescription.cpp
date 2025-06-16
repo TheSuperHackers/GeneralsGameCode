@@ -163,7 +163,7 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 		else
 		{
 //			m_buildToolTipLayout->destroyWindows();
-//			m_buildToolTipLayout->deleteInstance();
+//			deleteInstance(m_buildToolTipLayout);
 //			m_buildToolTipLayout = NULL;
 			m_buildToolTipLayout->hide(TRUE);
 			prevWindow = NULL;
@@ -206,7 +206,7 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 		//	if (m_buildToolTipLayout)
 		//	{
 		//		m_buildToolTipLayout->destroyWindows();
-		//		m_buildToolTipLayout->deleteInstance();
+		//		deleteInstance(m_buildToolTipLayout);
 		//
 		//	}
 
@@ -266,7 +266,7 @@ void ControlBar::populateBuildTooltipLayout( const CommandButton *commandButton,
 		ScienceType	st = SCIENCE_INVALID; 
 		if(commandButton->getScienceVec().size() > 1)
 		{
-			for(Int j = 0; j < commandButton->getScienceVec().size(); ++j)
+			for(size_t j = 0; j < commandButton->getScienceVec().size(); ++j)
 			{
 				st = commandButton->getScienceVec()[ j ];
 				
@@ -649,7 +649,7 @@ void ControlBar::deleteBuildTooltipLayout( void )
 //		return;
 //	
 //	m_buildToolTipLayout->destroyWindows();
-//	m_buildToolTipLayout->deleteInstance();
+//	deleteInstance(m_buildToolTipLayout);
 //	m_buildToolTipLayout = NULL;
 	if(theAnimateWindowManager)
 		delete theAnimateWindowManager;

@@ -46,7 +46,6 @@
 #include <math.h>
 #include <float.h>
 #include <assert.h>
-#include <float.h>
 
 /*
 ** Some global constants.
@@ -60,13 +59,6 @@
 #define WWMATH_SQRT3			1.732050808f
 #define WWMATH_OOSQRT2		0.707106781f
 #define WWMATH_OOSQRT3		0.577350269f
-
-// (DRM 05/07/01) Temporarily eliminated _fastcall
-// on non-Microsoft compatible compilers. Jani
-// should be replacing this soon.
-#ifndef _MSC_VER
-#define __fastcall
-#endif // _MSC_VER
 
 /* 
 **	Macros to convert between degrees and radians
@@ -124,14 +116,14 @@ static WWINLINE int Float_To_Int_Floor(const float& f);
 static WWINLINE float Cos(float val);
 static WWINLINE float Sin(float val);
 static WWINLINE float Sqrt(float val);
-static float __fastcall Inv_Sqrt(float a);	// Some 30% faster inverse square root than regular C++ compiled, from Intel's math library
+static WWINLINE float Inv_Sqrt(float a);	// Some 30% faster inverse square root than regular C++ compiled, from Intel's math library
 static WWINLINE long	 Float_To_Long(float f);
 #else
-static float Cos(float val);
-static float Sin(float val);
-static float Sqrt(float val);
-static float Inv_Sqrt(float a);
-static long	Float_To_Long(float f);
+static WWINLINE float Cos(float val);
+static WWINLINE float Sin(float val);
+static WWINLINE float Sqrt(float val);
+static WWINLINE float Inv_Sqrt(float a);
+static WWINLINE long	Float_To_Long(float f);
 #endif
 
 
@@ -146,36 +138,37 @@ static WWINLINE float Fast_Asin(float val);
 static WWINLINE float Asin(float val);
 
 
-static float		Atan(float x) { return static_cast<float>(atan(x)); }
-static float		Atan2(float y,float x) { return static_cast<float>(atan2(y,x)); }
-static float		Sign(float val);
-static float		Ceil(float val) { return ceilf(val); }
-static float		Floor(float val) { return floorf(val); }
-static bool			Fast_Is_Float_Positive(const float & val);
-static bool			Is_Power_Of_2(const unsigned int val);
+static WWINLINE float		Atan(float x) { return static_cast<float>(atan(x)); }
+static WWINLINE float		Atan2(float y,float x) { return static_cast<float>(atan2(y,x)); }
+static WWINLINE float		Sign(float val);
+static WWINLINE float		Ceil(float val) { return ceilf(val); }
+static WWINLINE float		Floor(float val) { return floorf(val); }
+static WWINLINE bool			Fast_Is_Float_Positive(const float & val);
+static WWINLINE bool			Is_Power_Of_2(const unsigned int val);
 
 static float		Random_Float(void);
-static float		Random_Float(float min,float max);
-static float		Clamp(float val, float min = 0.0f, float max = 1.0f);
-static double		Clamp(double val, double min = 0.0f, double max = 1.0f);
-static int			Clamp_Int(int val, int min_val, int max_val);
-static float		Wrap(float val, float min = 0.0f, float max = 1.0f);
-static double		Wrap(double val, double min = 0.0f, double max = 1.0f);
-static float		Min(float a, float b);
-static float		Max(float a, float b);
 
-static int			Float_As_Int(const float f) { return *((int*)&f); }
+static WWINLINE float		Random_Float(float min,float max);
+static WWINLINE float		Clamp(float val, float min = 0.0f, float max = 1.0f);
+static WWINLINE double		Clamp(double val, double min = 0.0f, double max = 1.0f);
+static WWINLINE int			Clamp_Int(int val, int min_val, int max_val);
+static WWINLINE float		Wrap(float val, float min = 0.0f, float max = 1.0f);
+static WWINLINE double		Wrap(double val, double min = 0.0f, double max = 1.0f);
+static WWINLINE float		Min(float a, float b);
+static WWINLINE float		Max(float a, float b);
 
-static float		Lerp(float a, float b, float lerp );
-static double		Lerp(double a, double b, float lerp );
+static WWINLINE int			Float_As_Int(const float f) { return *((int*)&f); }
 
-static long			Float_To_Long(double f);
+static WWINLINE float		Lerp(float a, float b, float lerp );
+static WWINLINE double		Lerp(double a, double b, float lerp );
 
-static unsigned char Unit_Float_To_Byte(float f) { return (unsigned char)(f*255.0f); }
-static float			Byte_To_Unit_Float(unsigned char byte) { return ((float)byte) / 255.0f; }
+static WWINLINE long			Float_To_Long(double f);
 
-static bool			Is_Valid_Float(float x);
-static bool			Is_Valid_Double(double x);
+static WWINLINE unsigned char Unit_Float_To_Byte(float f) { return (unsigned char)(f*255.0f); }
+static WWINLINE float			Byte_To_Unit_Float(unsigned char byte) { return ((float)byte) / 255.0f; }
+
+static WWINLINE bool			Is_Valid_Float(float x);
+static WWINLINE bool			Is_Valid_Double(double x);
 
 };
 
@@ -602,13 +595,15 @@ WWINLINE int WWMath::Float_To_Int_Floor (const float& f)
 // ----------------------------------------------------------------------------
 
 #if defined(_MSC_VER) && defined(_M_IX86)
-WWINLINE __declspec(naked) float __fastcall WWMath::Inv_Sqrt(float a)
+WWINLINE float WWMath::Inv_Sqrt(float a)
 {
+	float retval;
+
 	__asm {
 		mov		eax, 0be6eb508h
 		mov		DWORD PTR [esp-12],03fc00000h ;  1.5 on the stack
-		sub		eax, DWORD PTR [esp+4]; a
-		sub		DWORD PTR [esp+4], 800000h ; a/2 a=Y0
+		sub		eax, DWORD PTR [a]; a
+		sub		DWORD PTR [a], 800000h ; a/2 a=Y0
 		shr		eax, 1     ; firs approx in eax=R0
 		mov		DWORD PTR [esp-8], eax
 
@@ -616,7 +611,7 @@ WWINLINE __declspec(naked) float __fastcall WWMath::Inv_Sqrt(float a)
 		fmul	st, st            ;r*r
 		fld		DWORD PTR [esp-8] ;r
 		fxch	st(1)
-		fmul	DWORD PTR [esp+4];a ;r*r*y0
+		fmul	DWORD PTR [a];a ;r*r*y0
 		fld		DWORD PTR [esp-12];load 1.5
 		fld		st(0)
 		fsub	st,st(2)			   ;r1 = 1.5 - y1
@@ -644,8 +639,11 @@ WWINLINE __declspec(naked) float __fastcall WWMath::Inv_Sqrt(float a)
 		;x3 = st(1)
 		;r3 = st(0)
 		fmulp	st(1), st
-		ret 4
+
+		fstp retval
 	}
+
+	return retval;
 }
 #else
 WWINLINE float WWMath::Inv_Sqrt(float val)

@@ -31,10 +31,10 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "stdafx.h"
-#include "w3dview.h"
+#include "StdAfx.h"
+#include "W3DView.h"
 #include "OpacitySettingsDialog.h"
-#include "ColorBar.H"
+#include "ColorBar.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

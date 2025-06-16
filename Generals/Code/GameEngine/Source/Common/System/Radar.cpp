@@ -83,7 +83,7 @@ void Radar::deleteListResources( void )
 		m_localObjectList->friend_getObject()->friend_setRadarData( NULL );
 
 		// delete the head of the list
-		m_localObjectList->deleteInstance();
+		deleteInstance(m_localObjectList);
 
 		// set head of the list to the next object
 		m_localObjectList = nextObject;
@@ -101,7 +101,7 @@ void Radar::deleteListResources( void )
 		m_objectList->friend_getObject()->friend_setRadarData( NULL );
 
 		// delete the head of the list
-		m_objectList->deleteInstance();
+		deleteInstance(m_objectList);
 
 		// set head of the list to the next object
 		m_objectList = nextObject;
@@ -570,7 +570,7 @@ Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 			obj->friend_setRadarData( NULL );
 
 			// delete the object instance
-			radarObject->deleteInstance();
+			deleteInstance(radarObject);
 
 			// all done, object found and deleted
 			return TRUE;
@@ -614,11 +614,11 @@ void Radar::removeObject( Object *obj )
 
 //-------------------------------------------------------------------------------------------------
 /** Translate a 2D spot on the radar (from (0,0) to (RADAR_CELL_WIDTH,RADAR_CELL_HEIGHT)
-	* to a 3D spot in the world on the terrain
+	* to a 3D spot in the world. Does not determine Z value!
 	* Return TRUE if the radar points translates to a valid world position
 	* Return FALSE if the radar point is not a valid world position */
 //-------------------------------------------------------------------------------------------------		
-Bool Radar::radarToWorld( const ICoord2D *radar, Coord3D *world )
+Bool Radar::radarToWorld2D( const ICoord2D *radar, Coord3D *world )
 {
 	Int x, y;
 
@@ -643,6 +643,19 @@ Bool Radar::radarToWorld( const ICoord2D *radar, Coord3D *world )
 	// translate to world
 	world->x = x * m_xSample;
 	world->y = y * m_ySample;
+  return TRUE;
+}
+
+//-------------------------------------------------------------------------------------------------
+/** Translate a 2D spot on the radar (from (0,0) to (RADAR_CELL_WIDTH,RADAR_CELL_HEIGHT)
+	* to a 3D spot in the world on the terrain
+	* Return TRUE if the radar points translates to a valid world position
+	* Return FALSE if the radar point is not a valid world position */
+//-------------------------------------------------------------------------------------------------		
+Bool Radar::radarToWorld( const ICoord2D *radar, Coord3D *world )
+{
+  if (!radarToWorld2D(radar,world))
+    return FALSE;
 
 	// find the terrain height here
 	world->z = TheTerrainLogic->getGroundHeight( world->x, world->y );
@@ -1241,8 +1254,15 @@ void Radar::tryUnderAttackEvent( const Object *obj )
 // ------------------------------------------------------------------------------------------------
 void Radar::tryInfiltrationEvent( const Object *obj )
 {
+
+	//Sanity!
+	if( !obj )
+	{
+		return;
+	}
+
 	// We should only be warned against infiltrations that are taking place against us.
-	if (obj->getControllingPlayer() != ThePlayerList->getLocalPlayer())
+	if( obj->getControllingPlayer() != ThePlayerList->getLocalPlayer() )
 		return;
 
 	// create the radar event

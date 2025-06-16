@@ -22,8 +22,8 @@
 //
 //
 
-#include "StdAfx.H"
-#include "ColorUtils.H"
+#include "StdAfx.h"
+#include "ColorUtils.h"
 
 
 /////////////////////////////////////////////////////////////////////////////

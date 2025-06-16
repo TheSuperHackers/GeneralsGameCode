@@ -42,14 +42,12 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "WinMain.h"
 #include "Lib/BaseType.h"
-#include "Common/CopyProtection.h"
 #include "Common/CriticalSection.h"
 #include "Common/GlobalData.h"
 #include "Common/GameEngine.h"
 #include "Common/GameSounds.h"
 #include "Common/Debug.h"
 #include "Common/GameMemory.h"
-#include "Common/SafeDisc/CdaPfn.h"
 #include "Common/StackDump.h"
 #include "Common/MessageStream.h"
 #include "Common/Registry.h"
@@ -89,8 +87,6 @@ const char *gAppPrefix = ""; /// So WB can have a different debug log file name.
 
 #define DEFAULT_XRESOLUTION 800
 #define DEFAULT_YRESOLUTION 600
-
-extern void Reset_D3D_Device(bool active);
 
 static Bool gInitializing = false;
 static Bool gDoPaint = true;
@@ -318,11 +314,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 				return TheIMEManager->result();
 			}
 		}
-		
-#ifdef DO_COPY_PROTECTION
-		// Check for messages from the launcher
-		CopyProtect::checkForMessage(message, lParam);
-#endif
 
 #ifdef	DEBUG_WINDOWS_MESSAGES
 		static msgCount=0;
@@ -369,10 +360,12 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
             // Prevent moving/sizing and power loss in fullscreen mode
             switch( wParam )
             {
+                case SC_KEYMENU:
+                    // TheSuperHackers @bugfix Mauller 10/05/2025 Always handle this command to prevent halting the game when left Alt is pressed.
+                    return 1;
                 case SC_MOVE:
                 case SC_SIZE:
                 case SC_MAXIMIZE:
-                case SC_KEYMENU:
                 case SC_MONITORPOWER:
                     if( FALSE == ApplicationIsWindowed )
                         return 1;
@@ -446,14 +439,20 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 			//-------------------------------------------------------------------------
 			case WM_ACTIVATEAPP:
 			{
-//				DWORD threadId=GetCurrentThreadId();
 				if ((bool) wParam != isWinMainActive)
-				{	isWinMainActive = (BOOL) wParam;
+				{
+					// TheSuperHackers @bugfix xezon 11/05/2025 This event originally called DX8Wrapper::Reset_Device,
+					// intended to clear resources on a lost device in fullscreen, but effectively also in
+					// windowed mode, if the DXMaximizedWindowedMode shim was applied in newer versions of Windows,
+					// which lead to unfortunate application crashing. Resetting the device on WM_ACTIVATEAPP instead
+					// of TestCooperativeLevel() == D3DERR_DEVICENOTRESET is not a requirement. There are other code
+					// paths that take care of that.
+
+					isWinMainActive = (BOOL) wParam;
 					
 					if (TheGameEngine)
 						TheGameEngine->setIsActive(isWinMainActive);
 
-					Reset_D3D_Device(isWinMainActive);
 					if (isWinMainActive)
 					{	//restore mouse cursor to our custom version.
 						if (TheWin32Mouse)
@@ -744,8 +743,7 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 	ShowWindow( hWnd, nCmdShow );
 	UpdateWindow( hWnd );
 
-	// save our application instance and window handle for future use
-	ApplicationHInstance = hInstance;
+	// save our application window handle for future use
 	ApplicationHWnd = hWnd;
 	gInitializing = false;
 	if (!runWindowed) {
@@ -754,28 +752,7 @@ static Bool initializeAppWindows( HINSTANCE hInstance, Int nCmdShow, Bool runWin
 
 	return true;  // success
 
-}  // end initializeAppWindows
-
-void munkeeFunc(void);
-CDAPFN_DECLARE_GLOBAL(munkeeFunc, CDAPFN_OVERHEAD_L5, CDAPFN_CONSTRAINT_NONE);
-void munkeeFunc(void)
-{
-	CDAPFN_ENDMARK(munkeeFunc);
-}
-
-void checkProtection(void)
-{
-#ifdef RTS_INTERNAL
-	__try
-	{
-		munkeeFunc();
-	}
-	__except(EXCEPTION_EXECUTE_HANDLER)
-	{
-		exit(0); // someone is messing with us.
-	}
-#endif
-}
+}  // end initializeAppWindow
 
 char *nextParam(char *newSource, const char *seps)
 {
@@ -839,7 +816,6 @@ static CriticalSection critSec1, critSec2, critSec3, critSec4, critSec5;
 Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
                       LPSTR lpCmdLine, Int nCmdShow )
 {
-	checkProtection();
 
 #ifdef RTS_PROFILE
   Profile::StartRange("init");
@@ -884,13 +860,21 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		char * argv[20];
 		argv[0] = NULL;
 
+		Bool headless = false;
+
 		char *token;
 		token = nextParam(lpCmdLine, "\" ");
 		while (argc < 20 && token != NULL) {
 			argv[argc++] = strtrim(token);
+			
 			//added a preparse step for this flag because it affects window creation style
-			if (stricmp(token,"-win")==0)
-				ApplicationIsWindowed=true;
+			if (stricmp(token, "-win") == 0)
+				ApplicationIsWindowed = true;
+
+			// preparse for headless as well. We need to know about this before we create the window.
+			if (stricmp(token, "-headless") == 0)
+				headless = true;
+			
 			token = nextParam(NULL, "\" ");	   
 		}
 
@@ -949,10 +933,12 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp", IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
 #endif
 
-
 		// register windows class and create application window
-		if( initializeAppWindows( hInstance, nCmdShow, ApplicationIsWindowed) == false )
+		if(!headless && initializeAppWindows(hInstance, nCmdShow, ApplicationIsWindowed) == false)
 			return 0;
+		
+		// save our application instance for future use
+		ApplicationHInstance = hInstance;
 
 		if (gLoadScreenBitmap!=NULL) {
 			::DeleteObject(gLoadScreenBitmap);
@@ -974,19 +960,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			AsciiString(VERSION_BUILDUSER), AsciiString(VERSION_BUILDLOC),
 			AsciiString(__TIME__), AsciiString(__DATE__));
 
-#ifdef DO_COPY_PROTECTION
-		if (!CopyProtect::isLauncherRunning())
-		{
-			DEBUG_LOG(("Launcher is not running - about to bail\n"));
-			delete TheVersion;
-			TheVersion = NULL;
-			shutdownMemoryManager();
-			DEBUG_SHUTDOWN();
-			return 0;
-		}
-#endif
-
-
 		// TheSuperHackers @refactor The instance mutex now lives in its own class.
 
 		if (!rts::ClientInstance::initialize())
@@ -1007,27 +980,10 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		}
 		DEBUG_LOG(("Create Generals Mutex okay.\n"));
 
-#ifdef DO_COPY_PROTECTION
-		if (!CopyProtect::notifyLauncher())
-		{
-			DEBUG_LOG(("Could not talk to the launcher - about to bail\n"));
-			delete TheVersion;
-			TheVersion = NULL;
-			shutdownMemoryManager();
-			DEBUG_SHUTDOWN();
-			return 0;
-		}
-#endif
-
 		DEBUG_LOG(("CRC message is %d\n", GameMessage::MSG_LOGIC_CRC));
 
 		// run the game main loop
 		GameMain(argc, argv);
-
-#ifdef DO_COPY_PROTECTION
-		// Clean up copy protection
-		CopyProtect::shutdown();
-#endif
 
 		delete TheVersion;
 		TheVersion = NULL;

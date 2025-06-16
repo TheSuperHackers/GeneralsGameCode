@@ -629,15 +629,15 @@ Object::~Object()
 	setTeam( NULL );
 
 	// Object's set of these persist for the life of the object.
-	m_partitionLastLook->deleteInstance();
+	deleteInstance(m_partitionLastLook);
 	m_partitionLastLook = NULL;
-	m_partitionRevealAllLastLook->deleteInstance();
+	deleteInstance(m_partitionRevealAllLastLook);
 	m_partitionRevealAllLastLook = NULL;
-	m_partitionLastShroud->deleteInstance();
+	deleteInstance(m_partitionLastShroud);
 	m_partitionLastShroud = NULL;
-	m_partitionLastThreat->deleteInstance();
+	deleteInstance(m_partitionLastThreat);
 	m_partitionLastThreat = NULL;
-	m_partitionLastValue->deleteInstance();
+	deleteInstance(m_partitionLastValue);
 	m_partitionLastValue = NULL;
 
 	// remove the object from the partition system if present
@@ -655,7 +655,7 @@ Object::~Object()
 	// delete any modules present
 	for (BehaviorModule** b = m_behaviors; *b; ++b)
 	{
-		(*b)->deleteInstance();
+		deleteInstance(*b);
 		*b = NULL;	// in case other modules call findModule from their dtor!
 	}
 
@@ -663,7 +663,7 @@ Object::~Object()
 	m_behaviors = NULL;
 
 	if( m_experienceTracker )
-		m_experienceTracker->deleteInstance();
+		deleteInstance(m_experienceTracker);
 
 	m_experienceTracker = NULL;
 
@@ -3771,7 +3771,7 @@ void Object::updateObjValuesFromMapProperties(Dict* properties)
 
     if ( audioToModify != NULL )
     {
-      audioToModify->deleteInstance();
+      deleteInstance(audioToModify);
       audioToModify = NULL;
     }
 
@@ -6094,6 +6094,9 @@ const AsciiString& Object::getCommandSetString() const
 //=============================================================================
 Bool Object::canProduceUpgrade( const UpgradeTemplate *upgrade )
 {
+	// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+	// TheControlBar belongs to the client, we shouldn't depend on that to check this.
+
 	// We need to have the button to make the upgrade.  CommandSets are a weird Logic/Client hybrid.
 	const CommandSet *set = TheControlBar->findCommandSet(getCommandSetString());
 

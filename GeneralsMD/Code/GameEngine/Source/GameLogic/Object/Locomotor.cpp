@@ -524,7 +524,7 @@ LocomotorStore::~LocomotorStore()
 	// delete all the templates, then clear out the table.
 	LocomotorTemplateMap::iterator it;
 	for (it = m_locomotorTemplates.begin(); it != m_locomotorTemplates.end(); ++it) {
-		it->second->deleteInstance();
+		deleteInstance(it->second);
 	}
 
 	m_locomotorTemplates.clear();
@@ -2745,7 +2745,7 @@ void LocomotorSet::xferSelfAndCurLocoPtr(Xfer *xfer, Locomotor** loco)
 		}
 		else
 		{
-			for (int i = 0; i < m_locomotors.size(); ++i)
+			for (size_t i = 0; i < m_locomotors.size(); ++i)
 			{
 				if (m_locomotors[i]->getTemplateName() == name)
 				{
@@ -2763,10 +2763,10 @@ void LocomotorSet::xferSelfAndCurLocoPtr(Xfer *xfer, Locomotor** loco)
 //-------------------------------------------------------------------------------------------------
 void LocomotorSet::clear()
 {
-	for (int i = 0; i < m_locomotors.size(); ++i)
+	for (size_t i = 0; i < m_locomotors.size(); ++i)
 	{
 		if (m_locomotors[i])
-			m_locomotors[i]->deleteInstance();
+			deleteInstance(m_locomotors[i]);
 	}
 	m_locomotors.clear();
 	m_validLocomotorSurfaces = 0;

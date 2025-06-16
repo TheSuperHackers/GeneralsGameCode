@@ -313,7 +313,7 @@ public:
 		}
 		
 		Object *firstTransport = NULL;
-		for( Int formationIndex = 0; formationIndex < m_formationSize; formationIndex++ )
+		for( UnsignedInt formationIndex = 0; formationIndex < m_formationSize; formationIndex++ )
 		{
 			Coord3D offset;
 			offset.zero();
@@ -1500,7 +1500,7 @@ ObjectCreationListStore::~ObjectCreationListStore()
 	for (ObjectCreationNuggetVector::iterator i = m_nuggets.begin(); i != m_nuggets.end(); ++i)
 	{
 		if (*i)
-			(*i)->deleteInstance();
+			deleteInstance(*i);
 	}
 	m_nuggets.clear();
 }

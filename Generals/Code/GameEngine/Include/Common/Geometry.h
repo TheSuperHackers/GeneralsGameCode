@@ -179,6 +179,7 @@ public:
 
 	/// note that the pt is generated using game logic random, not game client random!
 	void makeRandomOffsetWithinFootprint(Coord3D& pt) const;
+	void makeRandomOffsetOnPerimeter(Coord3D& pt) const; //Chooses a random point on the extent border.
 
 	void clipPointToFootprint(const Coord3D& geomCenter, Coord3D& ptToClip) const;
 

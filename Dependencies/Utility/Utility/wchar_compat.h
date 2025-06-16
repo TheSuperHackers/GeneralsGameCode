@@ -26,7 +26,6 @@ typedef WCHAR* LPWSTR;
 
 #define _wcsicmp wcscasecmp
 #define wcsicmp wcscasecmp
-#define _vsnwprintf vswprintf
 
 // MultiByteToWideChar
 #define CP_ACP 0

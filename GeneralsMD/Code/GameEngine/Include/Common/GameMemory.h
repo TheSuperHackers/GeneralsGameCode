@@ -755,16 +755,21 @@ protected:
 	
 public: 
 
-	void deleteInstance() 
+	static void deleteInstanceInternal(MemoryPoolObject* mpo) 
 	{	
-		if (this)
+		if (mpo)
 		{
-			MemoryPool *pool = this->getObjectMemoryPool(); // save this, since the dtor will nuke our vtbl
-			this->~MemoryPoolObject();	// it's virtual, so the right one will be called.
-			pool->freeBlock((void *)this); 
+			MemoryPool *pool = mpo->getObjectMemoryPool(); // save this, since the dtor will nuke our vtbl
+			mpo->~MemoryPoolObject();	// it's virtual, so the right one will be called.
+			pool->freeBlock((void *)mpo); 
 		}
 	} 
 };
+
+inline void deleteInstance(MemoryPoolObject* mpo)
+{
+	MemoryPoolObject::deleteInstanceInternal(mpo);
+}
 
 
 // INLINING ///////////////////////////////////////////////////////////////////
@@ -903,19 +908,8 @@ public:
 	MemoryPoolObjectHolder(MemoryPoolObject *mpo = NULL) : m_mpo(mpo) { }
 	void hold(MemoryPoolObject *mpo) { DEBUG_ASSERTCRASH(!m_mpo, ("already holding")); m_mpo = mpo; }
 	void release() { m_mpo = NULL; }
-	~MemoryPoolObjectHolder() { m_mpo->deleteInstance(); }
+	~MemoryPoolObjectHolder() { deleteInstance(m_mpo); }
 };
-
-
-/**
-	Sometimes you want to make a class's destructor protected so that it can only
-	be destroyed under special circumstances. MemoryPoolObject short-circuits this
-	by making the destructor always be protected, and the true delete technique
-	(namely, deleteInstance) always public by default. You can simulate the behavior
-	you really want by including this macro 
-*/
-#define MEMORY_POOL_DELETEINSTANCE_VISIBILITY(ARGVIS)\
-ARGVIS:	void deleteInstance() { MemoryPoolObject::deleteInstance(); } public: 
 
 
 #define EMPTY_DTOR(CLASS) inline CLASS::~CLASS() { }

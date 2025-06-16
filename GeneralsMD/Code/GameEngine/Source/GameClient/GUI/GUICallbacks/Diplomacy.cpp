@@ -290,10 +290,10 @@ void ResetDiplomacy( void )
 	{
 		TheInGameUI->unregisterWindowLayout(theLayout);
 		theLayout->destroyWindows();
-		theLayout->deleteInstance();
+		deleteInstance(theLayout);
 		InitBuddyControls(-1);
+		theLayout = NULL;
 	}
-	theLayout = NULL;
 	theWindow = NULL;
 	if (theAnimateWindowManager)
 		delete theAnimateWindowManager;

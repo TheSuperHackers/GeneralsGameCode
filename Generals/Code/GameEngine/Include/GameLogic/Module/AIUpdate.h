@@ -344,7 +344,7 @@ public:
 	virtual void aiDoCommand(const AICommandParms* parms);
 	
 	virtual const Coord3D *getGuardLocation( void ) const { return &m_locationToGuard;	}
-	virtual const ObjectID getGuardObject( void ) const { return m_objectToGuard; }
+	virtual ObjectID getGuardObject( void ) const { return m_objectToGuard; }
 	virtual const PolygonTrigger *getAreaToGuard( void ) const { return m_areaToGuard; }
 	virtual GuardTargetType getGuardTargetType() const { return m_guardTargetType[1]; }
 	virtual void clearGuardTargetType() { m_guardTargetType[1] = m_guardTargetType[0]; m_guardTargetType[0] = GUARDTARGET_NONE; }
@@ -412,6 +412,8 @@ public:
 	Real getLocomotorDistanceToGoal();
 	const Locomotor *getCurLocomotor() const {return m_curLocomotor;}
 	Locomotor *getCurLocomotor() { return m_curLocomotor; }
+	LocomotorSetType getCurLocomotorSetType() const { return m_curLocomotorSet; }
+	Bool hasLocomotorForSurface(LocomotorSurfaceType surfaceType);
 
 	// turret stuff.
 	WhichTurretType getWhichTurretForWeaponSlot(WeaponSlotType wslot, Real* turretAngle, Real* turretPitch = NULL) const;
@@ -476,6 +478,7 @@ public:
 	void friend_endingMove(void);
 
 	void friend_setPath(Path *newPath);
+	Path* friend_getPath() { return m_path; }
 
 	void friend_setGoalObject(Object *obj);
 

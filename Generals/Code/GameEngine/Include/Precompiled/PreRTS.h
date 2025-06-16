@@ -69,7 +69,7 @@ class STLSpecialAlloc;
 #include <snmp.h>
 #include <stdarg.h>
 #include <stddef.h>
-#include <stdio.h>
+#include <Utility/stdio_adapter.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -111,6 +111,7 @@ class STLSpecialAlloc;
 #include "Common/SubsystemInterface.h"
 
 #include "Common/GameCommon.h"
+#include "Common/GameDefines.h"
 #include "Common/GameMemory.h"
 #include "Common/GameType.h"
 #include "Common/GlobalData.h"

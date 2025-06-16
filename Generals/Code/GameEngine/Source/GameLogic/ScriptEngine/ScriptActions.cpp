@@ -616,7 +616,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 		PartitionSolver partition(vecOfUnits, vecOfTransports, PREFER_FAST_SOLUTION);
 		partition.solve();
 		SolutionVec solution = partition.getSolution();
-		for (int i = 0; i < solution.size(); ++i) {
+		for (size_t i = 0; i < solution.size(); ++i) {
 			Object *unit = TheGameLogic->findObjectByID(solution[i].first);
 			Object *trans = TheGameLogic->findObjectByID(solution[i].second);
 			if (!unit || !trans) {
@@ -1455,7 +1455,7 @@ void ScriptActions::doLoadAllTransports(const AsciiString& teamName)
 	PartitionSolver partition(vecOfUnits, vecOfTransports, PREFER_FAST_SOLUTION);
 	partition.solve();
 	SolutionVec solution = partition.getSolution();
-	for (int i = 0; i < solution.size(); ++i) {
+	for (size_t i = 0; i < solution.size(); ++i) {
 		Object *unit = TheGameLogic->findObjectByID(solution[i].first);
 		Object *trans = TheGameLogic->findObjectByID(solution[i].second);
 		if (!unit || !trans) {
@@ -4367,7 +4367,7 @@ void ScriptActions::doUnitStartSequentialScript(const AsciiString& unitName, con
 	
 	TheScriptEngine->appendSequentialScript(seqScript);
 
-	seqScript->deleteInstance();
+	deleteInstance(seqScript);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4464,7 +4464,7 @@ void ScriptActions::doTeamStartSequentialScript(const AsciiString& teamName, con
 	
 	TheScriptEngine->appendSequentialScript(seqScript);
 
-	seqScript->deleteInstance();
+	deleteInstance(seqScript);
 }
 
 //-------------------------------------------------------------------------------------------------

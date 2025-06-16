@@ -152,6 +152,8 @@ class GameTextManager : public GameTextInterface
 
 		virtual UnicodeString fetch( const Char *label, Bool *exists = NULL );		///< Returns the associated labeled unicode text
 		virtual UnicodeString fetch( AsciiString label, Bool *exists = NULL );		///< Returns the associated labeled unicode text
+		virtual UnicodeString fetchOrSubstitute( const Char *label, const WideChar *substituteText );
+
 		virtual AsciiStringVec& getStringsWithLabelPrefix(AsciiString label);
 
 		virtual void					initMapStringFile( const AsciiString& filename );
@@ -323,7 +325,7 @@ void GameTextManager::init( void )
 		return;
 	}
 
-	if( (m_textCount == 0) )
+	if( m_textCount == 0 )
 	{
 		return;
 	}
@@ -379,8 +381,13 @@ void GameTextManager::init( void )
 		ourName = s;
 	}
 
+	AsciiString ourNameA;
+	ourNameA.translate(ourName);	//get ASCII version for Win 9x
+
 	extern HWND ApplicationHWnd;  ///< our application window handle
 	if (ApplicationHWnd) {
+		//Set it twice because Win 9x does not support SetWindowTextW.
+		::SetWindowText(ApplicationHWnd, ourNameA.str());
 		::SetWindowTextW(ApplicationHWnd, ourName.str());
 	}
 
@@ -1334,6 +1341,19 @@ UnicodeString GameTextManager::fetch( const Char *label, Bool *exists )
 UnicodeString GameTextManager::fetch( AsciiString label, Bool *exists )
 {
 	return fetch(label.str(), exists);
+}
+
+//============================================================================
+// GameTextManager::fetchOrSubstitute
+//============================================================================
+
+UnicodeString GameTextManager::fetchOrSubstitute( const Char *label, const WideChar *substituteText )
+{
+	Bool exists;
+	UnicodeString str = fetch(label, &exists);
+	if (!exists)
+		str = substituteText;
+	return str;
 }
 
 //============================================================================

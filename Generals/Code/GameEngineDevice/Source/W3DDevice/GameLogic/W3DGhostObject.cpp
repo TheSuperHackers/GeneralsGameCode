@@ -35,6 +35,7 @@
 #include "Common/PlayerList.h"
 #include "Common/ThingTemplate.h"
 #include "Common/Xfer.h"
+#include "Common/GlobalData.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/GameClient.h"
 #include "GameLogic/GameLogic.h"
@@ -151,7 +152,8 @@ void W3DRenderObjectSnapshot::update(RenderObjClass *robj, DrawableInfo *drawInf
 // ------------------------------------------------------------------------------------------------
 void W3DRenderObjectSnapshot::addToScene(void)
 {
-	((SimpleSceneClass *)W3DDisplay::m_3DScene)->Add_Render_Object(m_robj);
+	if (W3DDisplay::m_3DScene != NULL)
+		((SimpleSceneClass *)W3DDisplay::m_3DScene)->Add_Render_Object(m_robj);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -429,6 +431,8 @@ void W3DGhostObject::removeParentObject(void)
 // ------------------------------------------------------------------------------------------------
 void W3DGhostObject::restoreParentObject(void)
 {
+	if (TheGlobalData->m_headless)
+		return;
 	Drawable *draw=m_parentObject->getDrawable();
 	if (!draw)
 		return;

@@ -104,7 +104,7 @@ AIUpdateModuleData::~AIUpdateModuleData()
 		{
 			TurretAIData* td = const_cast<TurretAIData*>(m_turretData[i]);
 			if (td)
-				td->deleteInstance();
+				deleteInstance(td);
 		}
 	}
 }
@@ -644,13 +644,13 @@ AIUpdateInterface::~AIUpdateInterface( void )
 
 	if( m_stateMachine ) {
 		m_stateMachine->halt();
-		m_stateMachine->deleteInstance();
+		deleteInstance(m_stateMachine);
 	}
 
 	for (int i = 0; i < MAX_TURRETS; i++)
 	{
 		if (m_turretAI[i])
-			m_turretAI[i]->deleteInstance();
+			deleteInstance(m_turretAI[i]);
 		m_turretAI[i] = NULL;
 	}
 	m_stateMachine = NULL;
@@ -841,7 +841,7 @@ Bool AIUpdateInterface::chooseLocomotorSetExplicit(LocomotorSetType wst)
 	{
 		m_locomotorSet.clear();
 		m_curLocomotor = NULL;
-		for (Int i = 0; i < set->size(); ++i)
+		for (size_t i = 0; i < set->size(); ++i)
 		{
 			const LocomotorTemplate* lt = set->at(i);
 			if (lt)
@@ -2026,7 +2026,7 @@ void AIUpdateInterface::destroyPath( void )
 {
 	// destroy previous path
 	if (m_path)
-		m_path->deleteInstance();
+		deleteInstance(m_path);
 
 	m_path = NULL;
 	m_waitingForPath = FALSE; // we no longer need it.
@@ -2625,6 +2625,9 @@ Bool AIUpdateInterface::isAllowedToRespondToAiCommands(const AICommandParms* par
 //-------------------------------------------------------------------------------------------------
 void AIUpdateInterface::aiDoCommand(const AICommandParms* parms)
 {
+	// TheSuperHackers @info The AiCommandParms for m_obj, m_otherObj and m_team should be null tested before use.
+	// These variables could relate to a deleted object when a pending command is reconstituted.
+
 	if (!isAllowedToRespondToAiCommands(parms))
 		return;
 
@@ -3215,6 +3218,12 @@ void AIUpdateInterface::privateMoveAwayFromUnit( Object *unit, CommandSourceType
 	{
 		return;
 	}
+
+	// TheSuperHacker @bugfix Mauller 26/05/2025 Fix dereferencing a nullptr when a delayed ai command refers to a deleted object.
+	// This can occur when a hacker is told to move away from an object when in its hacking state and is transitioning to a movement state.
+	if (!unit)
+		return;
+
 	ObjectID id = unit->getID();
 	if (m_stateMachine->getTemporaryState() == AI_MOVE_OUT_OF_THE_WAY) {
 		if (m_moveOutOfWay1 == id) {
@@ -4091,6 +4100,9 @@ void AIUpdateInterface::privateGuardTunnelNetwork( GuardMode guardMode, CommandS
  */
 void AIUpdateInterface::privateGuardObject( Object *objectToGuard, GuardMode guardMode, CommandSourceType cmdSource )
 {
+	if (!objectToGuard)
+		return;
+
 	if (getObject()->isMobile() == FALSE)
 		return;
 
@@ -4927,10 +4939,8 @@ void AIUpdateInterface::privateCommandButtonPosition( const CommandButton *comma
 // ------------------------------------------------------------------------------------------------
 void AIUpdateInterface::privateCommandButtonObject( const CommandButton *commandButton, Object *obj, CommandSourceType cmdSource )
 {
-	if( !commandButton )
-	{
+	if( !commandButton || !obj )
 		return;
-	}
 
 	if (getObject()->isKindOf(KINDOF_PROJECTILE))
 		return;

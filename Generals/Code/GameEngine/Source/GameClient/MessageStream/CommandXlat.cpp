@@ -2213,7 +2213,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_SELECT_MATCHING_UNITS:
 		{
 
-			TheInGameUI->selectMatchingUnits();
+			TheInGameUI->selectUnitsMatchingCurrentSelection();
 
 			disp = DESTROY_MESSAGE;
 			break;
@@ -2739,7 +2739,51 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_SELECT_ALL:
+		case GameMessage::MSG_META_SELECT_ALL_AIRCRAFT:
 		{
+			KindOfMaskType requiredKindofs;
+			KindOfMaskType disqualifyingKindofs;
+			disqualifyingKindofs.set(KINDOF_DOZER);
+			disqualifyingKindofs.set(KINDOF_HARVESTER);
+			disqualifyingKindofs.set(KINDOF_IGNORES_SELECT_ALL);
+			Bool selectAircraft = FALSE;
+			
+			if( t == GameMessage::MSG_META_SELECT_ALL_AIRCRAFT )
+			{
+				requiredKindofs.set(KINDOF_AIRCRAFT);
+				selectAircraft = TRUE;
+			}
+
+			//Kris: Patch 1.03. We need to deselect all the units if any of the units we have selected
+			//are incompatible with the select all type we are triggering. This is a fix for the SCUDSTORM
+			//exploit.
+			const DrawableList *drawList = TheInGameUI->getAllSelectedDrawables();
+			Drawable *draw;
+			for( DrawableListCIt it = drawList->begin(); it != drawList->end(); ++it )
+			{
+				draw = *it;
+				if( selectAircraft && (draw->isAnyKindOf( disqualifyingKindofs ) || !draw->isKindOf( KINDOF_AIRCRAFT )) )
+				{
+					TheInGameUI->deselectAllDrawables();
+					break;
+				}
+				else if( !selectAircraft && (draw->isAnyKindOf( disqualifyingKindofs ) || draw->isKindOf( KINDOF_STRUCTURE )) )
+				{
+					TheInGameUI->deselectAllDrawables();
+					break;
+				}
+			}
+
+			TheInGameUI->selectAllUnitsByType(requiredKindofs, disqualifyingKindofs);
+
+			disp = DESTROY_MESSAGE;
+			break;
+
+
+
+
+
+/*
 			TheInGameUI->deselectAllDrawables();
 
 			GameMessage *teamMsg = TheMessageStream->appendMessage( GameMessage::MSG_CREATE_SELECTED_GROUP );
@@ -2785,10 +2829,6 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 						TheInGameUI->setDisplayedMaxWarning( FALSE );
 					}
 				}
-				/*else
-				{
-					TheInGameUI->deselectDrawable(draw);
-				}*/
 
 				draw = draw->getNextDrawable();
 			}
@@ -2800,6 +2840,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 			disp = DESTROY_MESSAGE;
 			break;
+*/
 
 		}  // end select all
 
@@ -3050,7 +3091,55 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_CAMERA_RESET:
 			TheInGameUI->resetCamera();
 			break;
-			
+		case GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY:
+		{
+			if( TheGlobalData )
+			{
+#if !defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
+				if (TheGameLogic->isInReplayGame())
+#endif
+				{
+					TheWritableGlobalData->m_TiVOFastMode = 1 - TheGlobalData->m_TiVOFastMode;
+					TheInGameUI->message( UnicodeString( L"m_TiVOFastMode: %s" ),
+																TheGlobalData->m_TiVOFastMode ? L"ON" : L"OFF" );
+				}
+			}  // end if
+
+			disp = DESTROY_MESSAGE;
+			break;
+
+		}
+		case GameMessage::MSG_META_TOGGLE_PAUSE:
+		{
+#if !defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
+			if (TheGameLogic->isInReplayGame())
+#endif
+			{
+				if (TheGameLogic->isGamePaused())
+				{
+					TheGameLogic->setGamePaused(FALSE);
+				}
+				else
+				{
+					Bool pause = TRUE;
+					Bool pauseMusic = FALSE;
+					Bool pauseInput = FALSE;
+					TheGameLogic->setGamePaused(pause, pauseMusic, pauseInput);
+				}
+			}
+			break;
+		}
+		case GameMessage::MSG_META_STEP_FRAME:
+		{
+#if !defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
+			if (TheGameLogic->isInReplayGame())
+#endif
+			{
+				TheGameLogic->setGamePaused(FALSE);
+				TheGameLogic->setGamePausedInFrame(TheGameLogic->getFrame() + 1);
+			}
+			break;
+		}
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_BEGIN_FORCEMOVE:
 			DEBUG_ASSERTCRASH(!TheInGameUI->isInForceMoveToMode(), ("forceMoveToMode mismatch"));
@@ -4212,7 +4301,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			{
 				// cheese festival: do NOT imitate this code. it is for debug purposes only.
 				std::vector<AsciiString> v = TheScienceStore->friend_getScienceNames();
-				for (int i = 0; i < v.size(); ++i) 
+				for (size_t i = 0; i < v.size(); ++i) 
 				{
 					ScienceType st = TheScienceStore->getScienceFromInternalName(v[i]);
 					if (st != SCIENCE_INVALID && TheScienceStore->isScienceGrantable(st))

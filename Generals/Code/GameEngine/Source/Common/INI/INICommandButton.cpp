@@ -32,6 +32,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/INI.h"
+#include "Common/SpecialPower.h"
 #include "GameClient/ControlBar.h"
 
 //-------------------------------------------------------------------------------------------------
@@ -72,6 +73,21 @@ void ControlBar::parseCommandButtonDefinition( INI *ini )
 
 	// parse the ini definition
 	ini->initFromINI( button, button->getFieldParse() );
+	
+
+	//Make sure buttons with special power templates also have the appropriate option set.
+	const SpecialPowerTemplate *spTemplate = button->getSpecialPowerTemplate();
+	Bool needsTemplate = BitIsSet( button->getOptions(), NEED_SPECIAL_POWER_SCIENCE );
+	if( spTemplate && !needsTemplate )
+	{
+		DEBUG_CRASH( ("[LINE: %d in '%s'] CommandButton %s has SpecialPower = %s but the button also requires Options = NEED_SPECIAL_POWER_SCIENCE. Failure to do so will cause bugs such as invisible side shortcut buttons",
+			ini->getLineNum(), ini->getFilename().str(), name.str(), spTemplate->getName().str() ) );
+	}
+	else if( !spTemplate && needsTemplate )
+	{
+		DEBUG_CRASH( ("[LINE: %d in '%s'] CommandButton %s has Options = NEED_SPECIAL_POWER_SCIENCE but doesn't specify a SpecialPower = xxxx. Please evaluate INI.",
+			ini->getLineNum(), ini->getFilename().str(), name.str() ) );
+	}
 
 }  // end parseCommandButtonDefinition
 

@@ -163,6 +163,17 @@ Int parseFPUPreserve(char *args[], int argc)
 	return 2;
 }
 
+//=============================================================================
+//=============================================================================
+Int parseUseWaveEditor(char *args[], int num)
+{
+	if (TheWritableGlobalData)
+	{
+		TheWritableGlobalData->m_usingWaterTrackEditor = TRUE;
+	}
+	return 1;
+}
+
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 //=============================================================================
@@ -527,17 +538,6 @@ Int parseNoStaticLOD(char *args[], int num)
 
 //=============================================================================
 //=============================================================================
-Int parseUseWaveEditor(char *args[], int num)
-{
-	if (TheWritableGlobalData)
-	{
-		TheWritableGlobalData->m_usingWaterTrackEditor = TRUE;
-	}
-	return 1;
-}
-
-//=============================================================================
-//=============================================================================
 Int parseFPSLimit(char *args[], int num)
 {
 	if (TheWritableGlobalData && num > 1)
@@ -859,6 +859,15 @@ Int parseQuickStart( char *args[], int num )
 #endif
 	parseNoShellMap( args, num );
 	parseNoWindowAnimation( args, num );
+	return 1;
+}
+
+Int parseHeadless( char *args[], int num )
+{
+	if (TheWritableGlobalData)
+	{
+		TheWritableGlobalData->m_headless = TRUE;
+	}
 	return 1;
 }
 
@@ -1204,6 +1213,11 @@ static CommandLineParam params[] =
 	{ "-mod", parseMod },
 	{ "-noshaders", parseNoShaders },
 	{ "-quickstart", parseQuickStart },
+	{ "-useWaveEditor", parseUseWaveEditor },
+
+	// TheSuperHackers @feature helmutbuhler 11/04/2025
+	// This runs the game without a window, graphics, input and audio. Used for testing.
+	{ "-headless", parseHeadless },
 
 #if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 	{ "-noaudio", parseNoAudio },
@@ -1286,7 +1300,6 @@ static CommandLineParam params[] =
 	{ "-lowDetail", parseLowDetail },
 	{ "-noDynamicLOD", parseNoDynamicLOD },
 	{ "-noStaticLOD", parseNoStaticLOD },
-	{ "-useWaveEditor", parseUseWaveEditor },
 	{ "-fps", parseFPSLimit },
 	{ "-wireframe", parseWireframe },
 	{ "-showCollision", parseShowCollision },

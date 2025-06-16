@@ -39,9 +39,9 @@
 #ifndef __SCREENCURSOR_H
 #define __SCREENCURSOR_H
 
-#include "Resource.H"
+#include "resource.h"
 #include "rendobj.h"
-#include "vector3i.h"
+#include "Vector3i.h"
 
 // Forward declarations
 class VertexMaterialClass;

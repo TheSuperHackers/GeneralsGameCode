@@ -158,7 +158,7 @@ void HackInternetAIUpdate::aiDoCommand(const AICommandParms* parms)
 void HackInternetAIUpdate::hackInternet()
 {
 	//if (m_hackInternetStateMachine)
-	//	m_hackInternetStateMachine->deleteInstance();
+	//	deleteInstance(m_hackInternetStateMachine);
 	//m_hackInternetStateMachine = NULL;
 
 	// must make the state machine AFTER initing the other stuff, since it may inquire of its values...
@@ -168,6 +168,25 @@ void HackInternetAIUpdate::hackInternet()
 	//m_hackInternetStateMachine->setName("HackInternetSpecificAI");
 #endif
 		getStateMachine()->setState(UNPACKING);
+}
+
+// ------------------------------------------------------------------------------------------------
+UnsignedInt HackInternetAIUpdate::getUnpackTime() const
+{
+	// Not yet contained at the time this is queried
+	return getHackInternetAIUpdateModuleData()->m_unpackTime;
+}
+
+// ------------------------------------------------------------------------------------------------
+UnsignedInt HackInternetAIUpdate::getPackTime() const
+{
+	return getHackInternetAIUpdateModuleData()->m_packTime; 
+}
+
+// ------------------------------------------------------------------------------------------------
+UnsignedInt HackInternetAIUpdate::getCashUpdateDelay() const
+{
+	return getHackInternetAIUpdateModuleData()->m_cashUpdateDelay; 
 }
 
 // ------------------------------------------------------------------------------------------------

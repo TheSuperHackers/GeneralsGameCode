@@ -19,12 +19,12 @@
 // RingSizePropPage.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "w3dview.h"
-#include "ringsizeproppage.h"
-#include "colorutils.h"
-#include "utils.h"
-#include "scaledialog.h"
+#include "StdAfx.h"
+#include "W3DView.h"
+#include "RingSizePropPage.h"
+#include "ColorUtils.h"
+#include "Utils.h"
+#include "ScaleDialog.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

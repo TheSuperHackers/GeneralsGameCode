@@ -91,10 +91,6 @@ typedef struct tConnInfoStruct {
 	unsigned short RemotePort;
 } ConnInfoStruct;
 
-#ifndef ARRAY_SIZE
-#define ARRAY_SIZE(a) (sizeof(a)/sizeof(a[0]))
-#endif
-
 /***********************************************************************************************
  * Get_Local_Chat_Connection_Address -- Which address are we using to talk to the chat server? *
  *                                                                                             *
@@ -404,7 +400,7 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	** server we think we are talking to.
 	*/
 	found = false;
-	for (Int i=0; i<connectionVector.size(); ++i) {
+	for (size_t i=0; i<connectionVector.size(); ++i) {
 		ConnInfoStruct connection = connectionVector[i];
 
 		temp = ntohl(connection.RemoteIP);

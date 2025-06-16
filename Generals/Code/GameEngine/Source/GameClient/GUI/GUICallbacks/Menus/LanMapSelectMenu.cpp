@@ -106,9 +106,13 @@ static void showLANGameOptionsUnderlyingGUIElements( Bool show )
 
 static void NullifyControls()
 {
-	mapList = NULL;
-	winMapPreview = NULL;
 	parent = NULL;
+	mapList = NULL;
+	if (winMapPreview)
+	{
+		winMapPreview->winSetUserData(NULL);
+		winMapPreview = NULL;
+	}
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
 		buttonMapStartPosition[i] = NULL;
@@ -344,9 +348,13 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 			else if ( controlID == buttonBack )
 			{
 				
-				mapSelectLayout->destroyWindows();
-				mapSelectLayout->deleteInstance();
-				mapSelectLayout = NULL;
+				if (mapSelectLayout)
+				{
+					mapSelectLayout->destroyWindows();
+					deleteInstance(mapSelectLayout);
+					mapSelectLayout = NULL;
+				}
+
 				// set the controls to NULL since they've been destroyed.
 				NullifyControls();
 				showLANGameOptionsUnderlyingGUIElements(TRUE);
@@ -390,9 +398,12 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 					}
 
 					
-					mapSelectLayout->destroyWindows();
-					mapSelectLayout->deleteInstance();
-					mapSelectLayout = NULL;
+					if (mapSelectLayout)
+					{
+						mapSelectLayout->destroyWindows();
+						deleteInstance(mapSelectLayout);
+						mapSelectLayout = NULL;
+					}
 
 					// set the controls to NULL since they've been destroyed.
 					NullifyControls();

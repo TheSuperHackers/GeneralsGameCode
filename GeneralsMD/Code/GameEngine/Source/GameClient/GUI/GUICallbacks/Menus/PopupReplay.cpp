@@ -288,7 +288,7 @@ void reallySaveReplay(void)
 		if(DeleteFile(filename.str()) == 0)
 		{
 			wchar_t buffer[1024];
-			FormatMessageW ( FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, sizeof(buffer), NULL);
+			FormatMessageW ( FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, ARRAY_SIZE(buffer), NULL);
 			UnicodeString errorStr;
 			errorStr.set(buffer);
 			errorStr.trim();
@@ -313,7 +313,7 @@ void reallySaveReplay(void)
 	if(CopyFile(oldFilename.str(),filename.str(), FALSE) == 0)
 	{
 		wchar_t buffer[1024];
-		FormatMessageW( FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, sizeof(buffer), NULL);
+		FormatMessageW( FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), 0, buffer, ARRAY_SIZE(buffer), NULL);
 		UnicodeString errorStr;
 		errorStr.set(buffer);
 		errorStr.trim();

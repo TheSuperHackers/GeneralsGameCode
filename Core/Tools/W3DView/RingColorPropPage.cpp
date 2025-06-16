@@ -19,12 +19,12 @@
 // RingColorPropPage.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "w3dview.h"
-#include "ringcolorproppage.h"
-#include "opacitysettingsdialog.h"
-#include "colorutils.h"
-#include "utils.h"
+#include "StdAfx.h"
+#include "W3DView.h"
+#include "RingColorPropPage.h"
+#include "OpacitySettingsDialog.h"
+#include "ColorUtils.h"
+#include "Utils.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

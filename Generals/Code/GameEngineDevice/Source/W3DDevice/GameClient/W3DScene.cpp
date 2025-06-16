@@ -1771,3 +1771,160 @@ void RTS3DInterfaceScene::Customized_Render( RenderInfoClass &rinfo )
 
 }  // end Customized_Render
 
+
+
+/// The following is an :archive" of a partial attempt at detecting the mapshroud hack
+/*
+ *
+	
+void RTS3DScene::Visibility_Check(CameraClass * camera)
+{
+#ifdef DIRTY_CONDITION_FLAGS
+	StDrawableDirtyStuffLocker lockDirtyStuff;
+#endif
+
+	RefRenderObjListIterator it(&RenderList);
+	DrawableInfo *drawInfo = NULL;
+	Drawable	*draw = NULL;
+	RenderObjClass * robj;
+
+	m_numPotentialOccluders=0;
+	m_numPotentialOccludees=0;
+	m_translucentObjectsCount=0;
+	m_numNonOccluderOrOccludee=0;
+
+	Int currentFrame=0;
+	if (TheGameLogic) currentFrame = TheGameLogic->getFrame();
+	if (currentFrame <= TheGlobalData->m_defaultOcclusionDelay)
+		currentFrame = TheGlobalData->m_defaultOcclusionDelay+1;	//make sure occlusion is enabled when game starts (frame 0).
+
+
+	if (ShaderClass::Is_Backface_Culling_Inverted()) 
+	{	//we are rendering reflections
+		///@todo: Have better flag to detect reflection pass
+
+		// Loop over all top-level RenderObjects in this scene. If the bounding sphere is not in front
+		// of all the frustum planes, it is invisible.
+		for (it.First(); !it.Is_Done(); it.Next()) {
+
+			robj = it.Peek_Obj();
+
+			draw=NULL;
+			drawInfo = (DrawableInfo *)robj->Get_User_Data();
+			if (drawInfo)
+				draw=drawInfo->m_drawable;
+
+			if( draw )
+			{
+				if (robj->Is_Force_Visible()) {
+					robj->Set_Visible(true);
+				} else {
+					robj->Set_Visible(draw->getDrawsInMirror() && !camera->Cull_Sphere(robj->Get_Bounding_Sphere()));
+				}
+			}
+			else
+			{	//perform normal culling on non-drawables
+				if (robj->Is_Force_Visible()) {
+					robj->Set_Visible(true);
+				} else {
+					robj->Set_Visible(!camera->Cull_Sphere(robj->Get_Bounding_Sphere()));
+				}
+			}
+		}
+	}
+	else
+	{
+
+		// Loop over all top-level RenderObjects in this scene. If the bounding sphere is not in front
+		// of all the frustum planes, it is invisible.
+		for (it.First(); !it.Is_Done(); it.Next()) {
+
+			robj = it.Peek_Obj();
+
+			if (robj->Is_Force_Visible()) {
+				robj->Set_Visible(true);
+			} else if (robj->Is_Hidden()) {
+				robj->Set_Visible(false);
+			} else {
+
+				UnsignedByte isVisible = 0;
+        
+
+        //Cheater Foil
+        isVisible |= (UnsignedByte)(camera->Cull_Sphere(robj->Get_Bounding_Sphere()) == FALSE);
+        isVisible |= (UnsignedByte)(draw->isDrawableEffectivelyHidden());
+        isVisible |= (draw->getFullyObscuredByShroudWithCheatSpy());
+				robj->Set_VisibleWithCheatSpy(isVisible);
+				if (robj->Is_VisibleWithCheatSpy())//this will clear for the bit set above
+          
+				{	//need to keep track of occluders and ocludees for subsequent code.
+					drawInfo = (DrawableInfo *)robj->Get_User_Data();
+					if (drawInfo && (draw=drawInfo->m_drawable) != NULL)
+					{
+
+//            now handled above in the cheater foil <<<<<<<<<<<<
+//						if (draw->isDrawableEffectivelyHidden() || draw->getFullyObscuredByShroud())
+//						{	robj->Set_Visible(false);
+//							continue;
+//						}
+						//assume normal rendering.
+						drawInfo->m_flags = DrawableInfo::ERF_IS_NORMAL;	//clear any rendering flags that may be in effect.
+
+
+						if (draw->getEffectiveOpacity() != 1.0f && m_translucentObjectsCount < TheGlobalData->m_maxVisibleTranslucentObjects)
+						{	drawInfo->m_flags |= DrawableInfo::ERF_IS_TRANSLUCENT;	//object is translucent
+							m_translucentObjectsBuffer[m_translucentObjectsCount++] = robj;
+						}
+						if (TheGlobalData->m_enableBehindBuildingMarkers && TheGameLogic->getShowBehindBuildingMarkers())
+						{
+							//visible drawable. Check if it's either an occluder or occludee
+							if (draw->isKindOf(KINDOF_STRUCTURE) && m_numPotentialOccluders < TheGlobalData->m_maxVisibleOccluderObjects)
+							{	//object which could occlude other objects that need to be visible.
+								//Make sure this object is not translucent so it's not rendered twice (from m_potentialOccluders and m_translucentObjectsBuffer)
+								if (drawInfo->m_flags ^ DrawableInfo::ERF_IS_TRANSLUCENT)
+									m_potentialOccluders[m_numPotentialOccluders++]=robj;
+								drawInfo->m_flags |= DrawableInfo::ERF_POTENTIAL_OCCLUDER;
+							}
+							else
+							if (draw->getObject() &&
+									(draw->isKindOf(KINDOF_SCORE) || draw->isKindOf(KINDOF_SCORE_CREATE) || draw->isKindOf(KINDOF_SCORE_DESTROY) || draw->isKindOf(KINDOF_MP_COUNT_FOR_VICTORY)) &&
+									(draw->getObject()->getSafeOcclusionFrame()) <= currentFrame && m_numPotentialOccludees < TheGlobalData->m_maxVisibleOccludeeObjects)
+							{	//object which could be occluded but still needs to be visible.
+								//We process transucent units twice (also in m_translucentObjectsBuffer) because we need to see them when occluded.
+								m_potentialOccludees[m_numPotentialOccludees++]=robj;
+								drawInfo->m_flags |= DrawableInfo::ERF_POTENTIAL_OCCLUDEE;
+							}
+							else
+							if (drawInfo->m_flags == DrawableInfo::ERF_IS_NORMAL && m_numNonOccluderOrOccludee < TheGlobalData->m_maxVisibleNonOccluderOrOccludeeObjects)
+							{	//regular object with no custom effects but still needs to be delayed to get the occlusion feature to work correctly.
+								//Make sure this object is not translucent so it's not rendered twice (from m_potentialOccluders and m_translucentObjectsBuffer)
+								if (drawInfo->m_flags ^ DrawableInfo::ERF_IS_TRANSLUCENT)	//make sure not translucent
+									m_nonOccludersOrOccludees[m_numNonOccluderOrOccludee++]=robj;
+								drawInfo->m_flags |= DrawableInfo::ERF_IS_NON_OCCLUDER_OR_OCCLUDEE;
+							}
+						}
+
+
+					}
+				}
+
+//				robj->Set_Visible(isVisible); //now handled above in the cheater foil
+			}
+
+			///@todo: We're not using LOD yet so I disabled this code. MW
+			// Also, should check how multiple passes (reflections) get along
+			// with the LOD manager - we're rendering double the load it thinks we are.
+			// Prepare visible objects for LOD:
+			//	if (robj->Is_Really_Visible()) {
+			//			robj->Prepare_LOD(*camera);
+			//		}
+		}
+	}
+
+   Visibility_Checked = true;
+}
+
+
+ *
+ */
+

@@ -165,7 +165,7 @@ void TeamRelationMap::loadPostProcess( void )
 // STATIC FUNCTIONS ///////////////////////////////////////////////////////////
 static Bool locoSetMatches(LocomotorSurfaceTypeMask lstm, UnsignedInt surfaceBitFlags)
 {
-	surfaceBitFlags = surfaceBitFlags & 0x01 | ((surfaceBitFlags & 0x02) << 2);
+	surfaceBitFlags = (surfaceBitFlags & 0x01) | ((surfaceBitFlags & 0x02) << 2);
 	return (surfaceBitFlags & lstm) != 0;
 }
 
@@ -214,7 +214,7 @@ void TeamFactory::clear()
 	m_prototypes.clear();
 	for (TeamPrototypeMap::iterator it = tmp.begin(); it != tmp.end(); ++it)
 	{
-		it->second->deleteInstance();
+		deleteInstance(it->second);
 	}
 }
 
@@ -836,7 +836,7 @@ TeamPrototype::TeamPrototype( TeamFactory *tf,
 		if (o)
 		{
 			TheTeamFactory->teamAboutToBeDeleted(o);
-			o->deleteInstance();
+			deleteInstance(o);
 		}
 	}
 
@@ -852,7 +852,7 @@ TeamPrototype::~TeamPrototype()
 
 	if (m_productionConditionScript) 
 	{
-		m_productionConditionScript->deleteInstance();
+		deleteInstance(m_productionConditionScript);
 	}
 	m_productionConditionScript = NULL;
 
@@ -860,7 +860,7 @@ TeamPrototype::~TeamPrototype()
 	{
 		if (m_genericScriptsToRun[i]) 
 		{
-			m_genericScriptsToRun[i]->deleteInstance();
+			deleteInstance(m_genericScriptsToRun[i]);
 			m_genericScriptsToRun[i] = NULL;
 		}
 	}
@@ -1086,7 +1086,7 @@ void TeamPrototype::updateState(void)
 
 				// So remove it
 				TheTeamFactory->teamAboutToBeDeleted(iter.cur());
-				iter.cur()->deleteInstance();
+				deleteInstance(iter.cur());
 
 				done = false;
 				break; // Not sure what state the iterator is in after deleting a member of the list. jba
@@ -1385,8 +1385,8 @@ Team::~Team()
 		m_proto->removeFrom_TeamInstanceList(this);
 
 	// delete the relation maps (the destructor clears the actual map if any data is present)
-	m_teamRelations->deleteInstance();
-	m_playerRelations->deleteInstance();
+	deleteInstance(m_teamRelations);
+	deleteInstance(m_playerRelations);
 
 	// make sure the xfer list is clear
 	m_xferMemberIDList.clear();

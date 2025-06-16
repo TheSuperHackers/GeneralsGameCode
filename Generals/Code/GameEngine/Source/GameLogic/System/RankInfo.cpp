@@ -56,7 +56,7 @@ RankInfoStore::~RankInfoStore()
 		RankInfo* ri = m_rankInfos[level];
 		if (ri)
 		{
-			ri->deleteInstance();
+			deleteInstance(ri);
 		}
 	}
 	m_rankInfos.clear();

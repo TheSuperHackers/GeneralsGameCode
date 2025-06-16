@@ -38,7 +38,7 @@
 
 #include "widestring.h"
 #include "win.h"
-#include <stdio.h>
+#include <Utility/stdio_adapter.h>
 
 
 ///////////////////////////////////////////////////////////////////
@@ -258,7 +258,7 @@ WideStringClass::Format_Args (const WCHAR *format, va_list arg_list )
 	//
 	//	Format the string
 	//
-	int retval = _vsnwprintf (temp_buffer, 512, format, arg_list);
+	int retval = vswprintf (temp_buffer, 512, format, arg_list);
 	
 	//
 	//	Copy the string into our buffer
@@ -292,7 +292,7 @@ WideStringClass::Format (const WCHAR *format, ...)
 	//
 	//	Format the string
 	//
-	int retval = _vsnwprintf (temp_buffer, 512, format, arg_list);
+	int retval = vswprintf (temp_buffer, 512, format, arg_list);
 	
 	//
 	//	Copy the string into our buffer

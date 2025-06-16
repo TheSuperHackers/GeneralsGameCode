@@ -19,7 +19,6 @@ set(GAMEENGINE_SRC
     Include/Common/CDManager.h
     Include/Common/ClientUpdateModule.h
     Include/Common/CommandLine.h
-    Include/Common/CopyProtection.h
     Include/Common/crc.h
     Include/Common/CRCDebug.h
     Include/Common/CriticalSection.h
@@ -40,6 +39,7 @@ set(GAMEENGINE_SRC
     Include/Common/FunctionLexicon.h
     Include/Common/GameAudio.h
     Include/Common/GameCommon.h
+#    Include/Common/GameDefines.h
     Include/Common/GameEngine.h
     Include/Common/GameLOD.h
     Include/Common/GameMemory.h
@@ -123,11 +123,11 @@ set(GAMEENGINE_SRC
     Include/Common/UserPreferences.h
     Include/Common/version.h
     Include/Common/WellKnownKeys.h
-    Include/Common/Xfer.h
-    Include/Common/XferCRC.h
-    Include/Common/XferDeepCRC.h
-    Include/Common/XferLoad.h
-    Include/Common/XferSave.h
+#    Include/Common/Xfer.h
+#    Include/Common/XferCRC.h
+#    Include/Common/XferDeepCRC.h
+#    Include/Common/XferLoad.h
+#    Include/Common/XferSave.h
     Include/GameClient/Anim2D.h
     Include/GameClient/AnimateWindowManager.h
     Include/GameClient/CampaignManager.h
@@ -588,7 +588,6 @@ set(GAMEENGINE_SRC
     Source/Common/System/AsciiString.cpp
     Source/Common/System/BuildAssistant.cpp
     Source/Common/System/CDManager.cpp
-    Source/Common/System/CopyProtection.cpp
     Source/Common/System/CriticalSection.cpp
     Source/Common/System/DataChunk.cpp
     Source/Common/System/Debug.cpp
@@ -621,10 +620,10 @@ set(GAMEENGINE_SRC
     Source/Common/System/Trig.cpp
     Source/Common/System/UnicodeString.cpp
     Source/Common/System/Upgrade.cpp
-    Source/Common/System/Xfer.cpp
-    Source/Common/System/XferCRC.cpp
-    Source/Common/System/XferLoad.cpp
-    Source/Common/System/XferSave.cpp
+#    Source/Common/System/Xfer.cpp
+#    Source/Common/System/XferCRC.cpp
+#    Source/Common/System/XferLoad.cpp
+#    Source/Common/System/XferSave.cpp
     Source/Common/TerrainTypes.cpp
     Source/Common/Thing/DrawModule.cpp
     Source/Common/Thing/Module.cpp
@@ -1075,27 +1074,19 @@ target_sources(g_gameengine PRIVATE ${GAMEENGINE_SRC})
 target_include_directories(g_gameengine PUBLIC
     Include
 )
+
 target_include_directories(g_gameengine PRIVATE
     Include/Precompiled
 )
 
 target_link_libraries(g_gameengine PRIVATE
+    corei_gameengine_private
     gi_always
 )
 
 target_link_libraries(g_gameengine PUBLIC
-    d3d8lib
-    core_browserdispatch
-    core_compression
+    corei_gameengine_public
     g_wwvegas
-    core_config
-    core_utility
-    gamespy::gamespy
-    stlport
-)
-
-target_compile_definitions(g_gameengine PRIVATE
-    IG_DEBUG_STACKTRACE
 )
 
 target_precompile_headers(g_gameengine PRIVATE Include/Precompiled/PreRTS.h)

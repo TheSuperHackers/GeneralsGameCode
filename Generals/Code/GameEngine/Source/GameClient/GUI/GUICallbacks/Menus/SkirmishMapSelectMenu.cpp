@@ -67,9 +67,13 @@ static NameKeyType winMapPreviewID = NAMEKEY_INVALID;
 
 static void NullifyControls()
 {
-	mapList = NULL;
-	winMapPreview = NULL;
 	parent = NULL;
+	mapList = NULL;
+	if (winMapPreview)
+	{
+		winMapPreview->winSetUserData(NULL);
+		winMapPreview = NULL;
+	}
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
 		buttonMapStartPosition[i] = NULL;
@@ -521,9 +525,13 @@ WindowMsgHandledType SkirmishMapSelectMenuSystem( GameWindow *window, UnsignedIn
 			{
 				showSkirmishGameOptionsUnderlyingGUIElements(TRUE);
 
-				skirmishMapSelectLayout->destroyWindows();
-				skirmishMapSelectLayout->deleteInstance();
-				skirmishMapSelectLayout = NULL;
+				if (skirmishMapSelectLayout)
+				{
+					skirmishMapSelectLayout->destroyWindows();
+					deleteInstance(skirmishMapSelectLayout);
+					skirmishMapSelectLayout = NULL;
+				}
+
 				skirmishPositionStartSpots();
 				//TheShell->pop();
 				//do you need this ??
@@ -583,9 +591,12 @@ WindowMsgHandledType SkirmishMapSelectMenuSystem( GameWindow *window, UnsignedIn
 					skirmishPositionStartSpots();
 					skirmishUpdateSlotList();
 
-					skirmishMapSelectLayout->destroyWindows();
-					skirmishMapSelectLayout->deleteInstance();
-					skirmishMapSelectLayout = NULL;
+					if (skirmishMapSelectLayout)
+					{
+						skirmishMapSelectLayout->destroyWindows();
+						deleteInstance(skirmishMapSelectLayout);
+						skirmishMapSelectLayout = NULL;
+					}
 					//TheShell->pop();
 
 				}  // end if
