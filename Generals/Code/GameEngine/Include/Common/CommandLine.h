@@ -31,6 +31,12 @@
 #ifndef _COMMAND_LINE_H_
 #define _COMMAND_LINE_H_
 
-void parseCommandLine(int argc, char *argv[]); ///< Parse command-line parameters
+class CommandLine
+{
+public:
+
+	static void parseCommandLineForStartup();
+	static void parseCommandLineForEngineInit();
+};
 
 #endif // _COMMAND_LINE_H_
