@@ -502,9 +502,11 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				break;
 		}
 
+#if RETAIL_COMPATIBLE_CRC
 		// TheSuperHackers @info helmutbuhler 12/06/2025
 		// Note that this code is very brittle for retail compatibility. Inlining isFiring
 		// can cause incompatibility in some circumstances.
+#endif
 		const Bool isFiring = orbitalBirthFrame <= now && now < orbitalDeathFrame;
 		if ( isFiring )
 		{
