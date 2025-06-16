@@ -1202,7 +1202,7 @@ Int parseClearDebugLevel(char *args[], int num)
 
 // Initial Params are parsed before Windows Creation.
 // Note that except for TheGlobalData, no other global objects exist yet when these are parsed.
-static CommandLineParam paramsInitial[] =
+static CommandLineParam paramsForStartup[] =
 {
 	{ "-win", parseWin },
 	{ "-fullscreen", parseNoWin },
@@ -1485,19 +1485,30 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 	}
 }
 
-void parseInitialCommandLineAndInitGlobalData()
+void createGlobalData()
 {
-	// We need the GlobalData initialized before parsing the command line.
-	// Note that this function is potentially called multiple times and only initializes the first time.
-	if (TheGlobalData != NULL)
-		return;
-	GlobalData::initFirstGlobalData();
-	parseCommandLine(paramsInitial, ARRAY_SIZE(paramsInitial));
+	if (TheGlobalData == NULL)
+		TheWritableGlobalData = NEW GlobalData;
 }
 
-void parseCommandLineForEngineInit()
+void CommandLine::parseCommandLineForStartup()
 {
+	createGlobalData();
+
+	if (TheGlobalData->m_commandLineData.m_hasParsedCommandLineForStartup)
+		return;
+	TheWritableGlobalData->m_commandLineData.m_hasParsedCommandLineForStartup = true;
+
+	parseCommandLine(paramsForStartup, ARRAY_SIZE(paramsForStartup));
+}
+
+void CommandLine::parseCommandLineForEngineInit()
+{
+	createGlobalData();
+
+	DEBUG_ASSERTCRASH(!TheWritableGlobalData->m_commandLineData.m_hasParsedCommandLineForEngineInit,
+		("parseCommandLineForEngineInit is expected to be called once only\n"));
+	TheWritableGlobalData->m_commandLineData.m_hasParsedCommandLineForEngineInit = true;
+
 	parseCommandLine(paramsForEngineInit, ARRAY_SIZE(paramsForEngineInit));
 }
-
-

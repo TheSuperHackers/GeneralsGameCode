@@ -31,8 +31,12 @@
 #ifndef _COMMAND_LINE_H_
 #define _COMMAND_LINE_H_
 
-void parseInitialCommandLineAndInitGlobalData();
+class CommandLine
+{
+public:
 
-void parseCommandLineForEngineInit();
+	static void parseCommandLineForStartup();
+	static void parseCommandLineForEngineInit();
+};
 
 #endif // _COMMAND_LINE_H_

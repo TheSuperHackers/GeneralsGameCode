@@ -1217,12 +1217,6 @@ void GlobalData::reset( void )
 
 }  // end ResetGlobalData
 
-void GlobalData::initFirstGlobalData()
-{
-	DEBUG_ASSERTCRASH( TheWritableGlobalData == NULL, ("Expected TheWritableGlobalData == NULL\n") );
-	TheWritableGlobalData = NEW GlobalData;
-}
-
 //-------------------------------------------------------------------------------------------------
 /** Parse GameData entry */
 //-------------------------------------------------------------------------------------------------
@@ -1243,7 +1237,7 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	{
 
 		// we don't have any global data instance at all yet, create one
-		GlobalData::initFirstGlobalData();
+		TheWritableGlobalData = NEW GlobalData;
 
 	}  // end else
 	// If we're multifile, then continue loading stuff into the Global Data as normal.

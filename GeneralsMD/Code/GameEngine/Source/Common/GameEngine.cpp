@@ -389,7 +389,7 @@ void GameEngine::init( int argc, char *argv[] )
 	#endif
 		
 		// special-case: parse command-line parameters after loading global data
-		parseCommandLineForEngineInit();
+		CommandLine::parseCommandLineForEngineInit();
 
 		TheArchiveFileSystem->loadMods();
 
