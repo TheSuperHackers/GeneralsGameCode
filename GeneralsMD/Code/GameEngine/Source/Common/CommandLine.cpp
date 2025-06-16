@@ -1388,6 +1388,8 @@ void createGlobalData()
 
 void CommandLine::parseCommandLineForStartup()
 {
+	// We need the GlobalData initialized before parsing the command line.
+	// Note that this function is potentially called multiple times and only initializes the first time.
 	createGlobalData();
 
 	if (TheGlobalData->m_commandLineData.m_hasParsedCommandLineForStartup)
@@ -1401,7 +1403,9 @@ void CommandLine::parseCommandLineForEngineInit()
 {
 	createGlobalData();
 
-	DEBUG_ASSERTCRASH(!TheWritableGlobalData->m_commandLineData.m_hasParsedCommandLineForEngineInit,
+	DEBUG_ASSERTCRASH(TheGlobalData->m_commandLineData.m_hasParsedCommandLineForStartup,
+		("parseCommandLineForStartup is expected to be called before parseCommandLineForEngineInit\n"));
+	DEBUG_ASSERTCRASH(!TheGlobalData->m_commandLineData.m_hasParsedCommandLineForEngineInit,
 		("parseCommandLineForEngineInit is expected to be called once only\n"));
 	TheWritableGlobalData->m_commandLineData.m_hasParsedCommandLineForEngineInit = true;
 
