@@ -789,7 +789,6 @@ void RecorderClass::writeToFile(GameMessage * msg) {
 	deleteInstance(parser);
 	parser = NULL;
 
-	fflush(m_file); ///< @todo should this be in the final release?
 }
 
 void RecorderClass::writeArgument(GameMessageArgumentDataType type, const GameMessageArgumentType arg) {
