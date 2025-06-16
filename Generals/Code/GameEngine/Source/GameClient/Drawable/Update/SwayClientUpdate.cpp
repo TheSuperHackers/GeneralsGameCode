@@ -43,7 +43,7 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/GameLogic.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -136,7 +136,7 @@ void SwayClientUpdate::clientUpdate( void )
 	
 	// burned things don't sway.
 	Object* obj = draw->getObject();
-	if (obj && (obj->getStatusBits() & OBJECT_STATUS_BURNED) != 0)
+	if( obj && obj->getStatusBits().test( OBJECT_STATUS_BURNED ) )
 		stopSway();
 
 }

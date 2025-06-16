@@ -42,12 +42,12 @@
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 struct FieldParse;
-typedef enum _TerrainLOD;
+enum _TerrainLOD CPP_11(: Int);
 class GlobalData;
 class INI;
 class WeaponBonusSet;
-enum BodyDamageType;
-enum AIDebugOptions;
+enum BodyDamageType CPP_11(: Int);
+enum AIDebugOptions CPP_11(: Int);
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -96,6 +96,11 @@ public:
 	Bool m_dumpAssetUsage;
 	Int m_framesPerSecondLimit;
 	Int	m_chipSetType;	///<See W3DShaderManager::ChipsetType for options
+
+	// TheSuperHackers @feature helmutbuhler 11/04/2025
+	// Run game without graphics, input or audio.
+	Bool m_headless;
+
 	Bool m_windowed;
 	Int m_xResolution;
 	Int m_yResolution;
@@ -243,6 +248,7 @@ public:
 
 	UnsignedInt m_noDraw;					///< Used to disable drawing, to profile game logic code.
 	AIDebugOptions m_debugAI;			///< Used to display AI debug information
+	Bool m_debugSupplyCenterPlacement; ///< Dumps to log everywhere it thinks about placing a supply center
 	Bool m_debugAIObstacles;			///< Used to display AI obstacle debug information
 	Bool m_showObjectHealth;			///< debug display object health
 	Bool m_scriptDebug;						///< Should we attempt to load the script debugger window (.DLL)
@@ -326,6 +332,7 @@ public:
 	AsciiString m_shellMapName;				///< Holds the shell map name
 	Bool m_shellMapOn;								///< User can set the shell map not to load
 	Bool m_playIntro;									///< Flag to say if we're to play the intro or not
+	Bool m_playSizzle;								///< Flag to say whether we play the sizzle movie after the logo movie.
 	Bool m_afterIntro;								///< we need to tell the game our intro is done
 	Bool m_allowExitOutOfMovies;			///< flag to allow exit out of movies only after the Intro has played
 
@@ -435,7 +442,11 @@ public:
 	Real				m_keyboardCameraRotateSpeed;    ///< How fast the camera rotates when rotated via keyboard controls.
   Int					m_playStats;									///< Int whether we want to log play stats or not, if <= 0 then we don't log
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+  Bool m_TiVOFastMode;            ///< When true, the client speeds up the framerate... set by HOTKEY!
+  
+
+
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool m_wireframe;
 	Bool m_stateMachineDebug;
 	Bool m_useCameraConstraints;
@@ -469,9 +480,8 @@ public:
 	Real m_debugProjectileTileWidth;			///< How wide should these tiles be?
 	Int m_debugProjectileTileDuration;		///< How long should these tiles stay around, in frames?
 	RGBColor m_debugProjectileTileColor;	///< What color should these tiles be?
-	Bool m_debugIgnoreAsserts;						///< Ignore all asserts.
-	Bool m_debugIgnoreStackTrace;					///< No stacktraces for asserts.
 	Bool m_showCollisionExtents;	///< Used to display collision extents
+  Bool m_showAudioLocations;    ///< Used to display audio markers and ambient sound radii
 	Bool m_saveStats;
 	Bool m_saveAllStats;
 	Bool m_useLocalMOTD;
@@ -482,6 +492,15 @@ public:
 	Int m_latencyPeriod;					///< Period of sinusoidal modulation of latency
 	Int m_latencyNoise;						///< Max amplitude of jitter to throw in
 	Int m_packetLoss;							///< Percent of packets to drop
+	Bool m_extraLogging;					///< More expensive debug logging to catch crashes.
+#endif
+
+#ifdef DEBUG_CRASHING
+	Bool m_debugIgnoreAsserts;						///< Ignore all asserts.
+#endif
+
+#ifdef DEBUG_STACKTRACE
+	Bool m_debugIgnoreStackTrace;					///< No stacktraces for asserts.
 #endif
 
 	Bool				m_isBreakableMovie;							///< if we enter a breakable movie, set this flag
@@ -510,9 +529,13 @@ private:
 	GlobalData *newOverride( void );		/** create a new override, copy data from previous
 																			override, and return it */
 
-
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	GlobalData(const GlobalData& that) { DEBUG_CRASH(("unimplemented")); }
 	GlobalData& operator=(const GlobalData& that) { DEBUG_CRASH(("unimplemented")); return *this; }
+#else
+	GlobalData(const GlobalData& that) = delete;
+	GlobalData& operator=(const GlobalData& that) = default;
+#endif
 
 };
 

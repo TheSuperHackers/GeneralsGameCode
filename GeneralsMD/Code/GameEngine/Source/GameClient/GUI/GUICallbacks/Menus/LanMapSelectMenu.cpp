@@ -44,7 +44,7 @@
 #include "GameClient/MapUtil.h"
 #include "GameNetwork/GUIUtil.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -106,9 +106,13 @@ static void showLANGameOptionsUnderlyingGUIElements( Bool show )
 
 static void NullifyControls()
 {
-	mapList = NULL;
-	winMapPreview = NULL;
 	parent = NULL;
+	mapList = NULL;
+	if (winMapPreview)
+	{
+		winMapPreview->winSetUserData(NULL);
+		winMapPreview = NULL;
+	}
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
 		buttonMapStartPosition[i] = NULL;
@@ -227,7 +231,7 @@ WindowMsgHandledType LanMapSelectMenuInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 						AsciiString buttonName( "LanMapSelectMenu.wnd:ButtonBack" );
 						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
@@ -344,9 +348,13 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 			else if ( controlID == buttonBack )
 			{
 				
-				mapSelectLayout->destroyWindows();
-				mapSelectLayout->deleteInstance();
-				mapSelectLayout = NULL;
+				if (mapSelectLayout)
+				{
+					mapSelectLayout->destroyWindows();
+					deleteInstance(mapSelectLayout);
+					mapSelectLayout = NULL;
+				}
+
 				// set the controls to NULL since they've been destroyed.
 				NullifyControls();
 				showLANGameOptionsUnderlyingGUIElements(TRUE);
@@ -390,9 +398,12 @@ WindowMsgHandledType LanMapSelectMenuSystem( GameWindow *window, UnsignedInt msg
 					}
 
 					
-					mapSelectLayout->destroyWindows();
-					mapSelectLayout->deleteInstance();
-					mapSelectLayout = NULL;
+					if (mapSelectLayout)
+					{
+						mapSelectLayout->destroyWindows();
+						deleteInstance(mapSelectLayout);
+						mapSelectLayout = NULL;
+					}
 
 					// set the controls to NULL since they've been destroyed.
 					NullifyControls();

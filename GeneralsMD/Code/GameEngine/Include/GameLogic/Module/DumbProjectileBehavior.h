@@ -33,13 +33,13 @@
 
 #include "Common/GameType.h"
 #include "Common/GlobalData.h"
-#include "Common/STLTypeDefs.h"
+#include "Common/STLTypedefs.h"
 #include "GameLogic/Module/BehaviorModule.h"
 #include "GameLogic/Module/CollideModule.h"
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/WeaponBonusConditionFlags.h"
 #include "Common/INI.h"
-#include "WWMath/Matrix3D.h"
+#include "WWMath/matrix3d.h"
 
 class ParticleSystem;
 class FXList;
@@ -120,7 +120,7 @@ private:
   Bool                  m_hasDetonated;           ///< 
 
 	Bool calcFlightPath(Bool recalcNumSegments);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	void displayFlightPath();	///< Uses little debug icons in worldspace to show the path chosen when it is decided upon
 #endif
 

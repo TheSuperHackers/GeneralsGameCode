@@ -48,16 +48,17 @@
 #include "GameClient/GameText.h"
 #include "Common/Language.h"
 #include "Common/Registry.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/LanguageFilter.h"
 #include "Common/Debug.h"
 #include "Common/UnicodeString.h"
 #include "Common/AsciiString.h"
 #include "Common/GlobalData.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -68,7 +69,7 @@
 //         Externals                                                     
 //----------------------------------------------------------------------------
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 Bool g_useStringFile = TRUE;
 #endif
 
@@ -151,6 +152,8 @@ class GameTextManager : public GameTextInterface
 
 		virtual UnicodeString fetch( const Char *label, Bool *exists = NULL );		///< Returns the associated labeled unicode text
 		virtual UnicodeString fetch( AsciiString label, Bool *exists = NULL );		///< Returns the associated labeled unicode text
+		virtual UnicodeString fetchOrSubstitute( const Char *label, const WideChar *substituteText );
+
 		virtual AsciiStringVec& getStringsWithLabelPrefix(AsciiString label);
 
 		virtual void					initMapStringFile( const AsciiString& filename );
@@ -167,7 +170,7 @@ class GameTextManager : public GameTextInterface
 		StringInfo			*m_stringInfo;
 		StringLookUp		*m_stringLUT;
 		Bool						m_initialized;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		Bool						m_jabberWockie;
 		Bool						m_munkee;
 #endif
@@ -248,7 +251,7 @@ GameTextManager::GameTextManager()
 	m_stringLUT(NULL),
 	m_initialized(FALSE),
 	m_noStringList(NULL),
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_jabberWockie(FALSE),
 	m_munkee(FALSE),
 	m_useStringFile(g_useStringFile),
@@ -301,7 +304,7 @@ void GameTextManager::init( void )
 	m_initialized = TRUE;
 
 	m_maxLabelLen = 0;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if(TheGlobalData)
 	{
 		m_jabberWockie = TheGlobalData->m_jabberOn;
@@ -322,7 +325,7 @@ void GameTextManager::init( void )
 		return;
 	}
 
-	if( (m_textCount == 0) )
+	if( m_textCount == 0 )
 	{
 		return;
 	}
@@ -370,6 +373,14 @@ void GameTextManager::init( void )
 	qsort( m_stringLUT, m_textCount, sizeof(StringLookUp), compareLUT  );
 
 	UnicodeString ourName = fetch("GUI:Command&ConquerGenerals");
+
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		UnicodeString s;
+		s.format(L"Instance:%.2u - %s", rts::ClientInstance::getInstanceId(), ourName.str());
+		ourName = s;
+	}
+
 	AsciiString ourNameA;
 	ourNameA.translate(ourName);	//get ASCII version for Win 9x
 
@@ -695,7 +706,7 @@ void GameTextManager::translateCopy( WideChar *outbuf, Char *inbuf )
 {
 	Int slash = FALSE;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if ( m_jabberWockie )
 	{
 		static Char buffer[MAX_UITEXT_LENGTH*2];
@@ -1330,6 +1341,19 @@ UnicodeString GameTextManager::fetch( const Char *label, Bool *exists )
 UnicodeString GameTextManager::fetch( AsciiString label, Bool *exists )
 {
 	return fetch(label.str(), exists);
+}
+
+//============================================================================
+// GameTextManager::fetchOrSubstitute
+//============================================================================
+
+UnicodeString GameTextManager::fetchOrSubstitute( const Char *label, const WideChar *substituteText )
+{
+	Bool exists;
+	UnicodeString str = fetch(label, &exists);
+	if (!exists)
+		str = substituteText;
+	return str;
 }
 
 //============================================================================

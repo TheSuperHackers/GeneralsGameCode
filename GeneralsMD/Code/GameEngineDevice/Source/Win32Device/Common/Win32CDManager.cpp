@@ -50,7 +50,7 @@
 #include "Common/GameMemory.h"
 #include "Common/FileSystem.h"
 
-#include "Win32DEvice/Common/Win32CDManager.h"
+#include "Win32Device/Common/Win32CDManager.h"
 
 //----------------------------------------------------------------------------
 //         Externals                                                     

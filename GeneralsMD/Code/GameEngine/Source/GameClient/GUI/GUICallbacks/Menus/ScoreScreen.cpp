@@ -56,7 +56,6 @@
 #include "Common/AudioEventRTS.h"
 #include "Common/AudioHandleSpecialValues.h"
 #include "Common/BattleHonors.h"
-#include "Common/CopyProtection.h"
 #include "Common/GameEngine.h"
 #include "Common/GameLOD.h"
 #include "Common/GameState.h"
@@ -101,7 +100,7 @@
 #include "GameClient/InGameUI.h"
 #include "GameClient/ChallengeGenerals.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -481,7 +480,7 @@ WindowMsgHandledType ScoreScreenInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
@@ -785,11 +784,7 @@ void displayChallengeWinLoss( const Image *imageGeneral, const UnicodeString str
 
 void finishSinglePlayerInit( void )
 {
-	Bool copyProtectOK = TRUE;
-#ifdef DO_COPY_PROTECTION
-	copyProtectOK = CopyProtect::validate();
-#endif
-	if(copyProtectOK && TheCampaignManager->isVictorious())
+	if(TheCampaignManager->isVictorious())
 	{
 		if (TheCampaignManager->getCurrentCampaign()
 		 && TheCampaignManager->getCurrentCampaign()->isChallengeCampaign())
@@ -935,9 +930,12 @@ void finishSinglePlayerInit( void )
 	TheInGameUI->freeMessageResources();
 
 	//
-	s_blankLayout->destroyWindows();
-	s_blankLayout->deleteInstance();
-	s_blankLayout = NULL;
+	if (s_blankLayout)
+	{
+		s_blankLayout->destroyWindows();
+		deleteInstance(s_blankLayout);
+		s_blankLayout = NULL;
+	}
 
 	// set keyboard focus to main parent
 	TheWindowManager->winSetFocus( parent );
@@ -1511,7 +1509,7 @@ void populatePlayerInfo( Player *player, Int pos)
 				AcademyAdviceInfo info;
 				if( player->getAcademyStats()->calculateAcademyAdvice( &info ) )
 				{
-					for( Int i = 0; i < info.numTips; i++ )
+					for( UnsignedInt i = 0; i < info.numTips; i++ )
 					{
 						GadgetListBoxAddEntryText( listboxAcademyWindowScoreScreen, info.advice[ i ],	GameSpyColor[GSCOLOR_DEFAULT], -1 );
 					}
@@ -1663,7 +1661,8 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 					Bool sawAnyDisconnects = FALSE;
 					Bool anyNonAI = FALSE;
 					Bool anyAI = FALSE;
-					for (Int i=0; i<MAX_SLOTS; ++i)
+					Int i=0;
+					for (; i<MAX_SLOTS; ++i)
 					{
 						const GameSlot *slot = TheGameInfo->getConstSlot(i);
 						if (slot->isOccupied() && i != localSlotNum )

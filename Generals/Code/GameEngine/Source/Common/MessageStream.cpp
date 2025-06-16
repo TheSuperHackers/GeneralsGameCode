@@ -41,6 +41,15 @@ MessageStream *TheMessageStream = NULL;
 CommandList *TheCommandList = NULL;
 
 
+
+#ifdef RTS_INTERNAL
+// for occasional debugging...
+//#pragma optimize("", off)
+//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
+
+
+
 //------------------------------------------------------------------------------------------------
 // GameMessage
 //
@@ -70,7 +79,7 @@ GameMessage::~GameMessage( )
 	for( arg = m_argList; arg; arg=nextArg )
 	{
 		nextArg = arg->m_next;
-		arg->deleteInstance();
+		deleteInstance(arg);
 	}
 
 	// detach message from list
@@ -104,7 +113,8 @@ GameMessageArgumentDataType GameMessage::getArgumentDataType( Int argIndex )
 		return ARGUMENTDATATYPE_UNKNOWN;
 	}
 	int i=0;
-	for (GameMessageArgument *a = m_argList; a && (i < argIndex); a=a->m_next, ++i );
+	GameMessageArgument *a = m_argList;
+	for (; a && (i < argIndex); a=a->m_next, ++i );
 
 	if (a != NULL)
 	{
@@ -326,6 +336,7 @@ AsciiString GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
 	CHECK_IF(MSG_META_VIEW_LAST_RADAR_EVENT)
 	CHECK_IF(MSG_META_SELECT_HERO)
 	CHECK_IF(MSG_META_SELECT_ALL)
+	CHECK_IF(MSG_META_SELECT_ALL_AIRCRAFT)
 	CHECK_IF(MSG_META_SCATTER)
 	CHECK_IF(MSG_META_STOP)
 	CHECK_IF(MSG_META_DEPLOY)
@@ -336,7 +347,7 @@ AsciiString GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
 	CHECK_IF(MSG_META_CHAT_EVERYONE)
 	CHECK_IF(MSG_META_DIPLOMACY)
 	CHECK_IF(MSG_META_OPTIONS)
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	CHECK_IF(MSG_META_HELP)
 #endif
 	CHECK_IF(MSG_META_TOGGLE_LOWER_DETAILS)
@@ -363,7 +374,13 @@ AsciiString GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
 	CHECK_IF(MSG_META_BEGIN_CAMERA_ZOOM_OUT)
 	CHECK_IF(MSG_META_END_CAMERA_ZOOM_OUT)
 	CHECK_IF(MSG_META_CAMERA_RESET)
-#if defined(_DEBUG) || defined(_INTERNAL)
+
+
+    CHECK_IF(MSG_META_TOGGLE_FAST_FORWARD_REPLAY)
+    CHECK_IF(MSG_META_TOGGLE_PAUSE)
+    CHECK_IF(MSG_META_STEP_FRAME)
+
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	CHECK_IF(MSG_META_DEMO_TOGGLE_BEHIND_BUILDINGS)
 	CHECK_IF(MSG_META_DEMO_TOGGLE_LETTERBOX)
 	CHECK_IF(MSG_META_DEMO_TOGGLE_MESSAGE_TEXT)
@@ -472,12 +489,12 @@ AsciiString GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
 	CHECK_IF(MSG_META_DEBUG_DUMP_ALL_PLAYER_OBJECTS)
 	CHECK_IF(MSG_META_DEBUG_WIN)
 	CHECK_IF(MSG_META_DEMO_TOGGLE_DEBUG_STATS)
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 
-#if defined(_INTERNAL) || defined(_DEBUG) || defined(_PLAYTEST)
+#if defined(RTS_INTERNAL) || defined(RTS_DEBUG)
 	CHECK_IF(MSG_META_DEMO_TOGGLE_AUDIODEBUG)
-#endif//defined(_INTERNAL) || defined(_DEBUG) || defined(_PLAYTEST)
+#endif//defined(RTS_INTERNAL) || defined(RTS_DEBUG)
 #ifdef DUMP_PERF_STATS
 	CHECK_IF(MSG_META_DEMO_PERFORM_STATISTICAL_DUMP)
 #endif//DUMP_PERF_STATS
@@ -619,7 +636,7 @@ AsciiString GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
 	CHECK_IF(MSG_SELF_DESTRUCT)
 	CHECK_IF(MSG_CREATE_FORMATION)
 	CHECK_IF(MSG_LOGIC_CRC)
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	CHECK_IF(MSG_DEBUG_KILL_SELECTION)
 	CHECK_IF(MSG_DEBUG_HURT_OBJECT)
 	CHECK_IF(MSG_DEBUG_KILL_OBJECT)
@@ -662,7 +679,7 @@ GameMessageList::~GameMessageList()
 		// set list ptr to null to avoid it trying to remove itself from the list
 		// that we are in the process of nuking...
 		msg->friend_setList(NULL);
-		msg->deleteInstance();
+		deleteInstance(msg);
 	}
 }
 
@@ -950,7 +967,7 @@ void MessageStream::removeTranslator( TranslatorID id )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 Bool isInvalidDebugCommand( GameMessage::Type t )
 {
@@ -1039,7 +1056,7 @@ void MessageStream::propagateMessages( void )
 		for( msg=m_firstMessage; msg; msg=next )
 		{			
 			if (ss->m_translator 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 				&& !isInvalidDebugCommand(msg->getType())
 #endif
 				)
@@ -1048,7 +1065,7 @@ void MessageStream::propagateMessages( void )
 				next = msg->next();
 				if (disp == DESTROY_MESSAGE)
 				{
-					msg->deleteInstance();
+					deleteInstance(msg);
 				}
 			} 
 			else 
@@ -1135,7 +1152,7 @@ void CommandList::destroyAllMessages( void )
 	for( msg=m_firstMessage; msg; msg=next )
 	{
 		next = msg->next();
-		msg->deleteInstance();
+		deleteInstance(msg);
 	}
 	
 	m_firstMessage = NULL;

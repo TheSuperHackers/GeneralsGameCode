@@ -325,7 +325,6 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 		DynamicIBAccessClass::WriteLockClass lock(&iba);
 		unsigned short *ibptr = lock.Get_Index_Array();
 		unsigned short j, idx;
-		try {
 		switch (LineMode)	{
 			case TETRAHEDRON:
 				for (j=0; j<LineCount; j++) {
@@ -382,10 +381,6 @@ void	LineGroupClass::Render(RenderInfoClass &rinfo)
 					*ibptr++ = idx + 4;
 				}			
 				break;
-		}
-		IndexBufferExceptionFunc();
-		} catch(...) {
-			IndexBufferExceptionFunc();
 		}
 	}	// writing to ib
 

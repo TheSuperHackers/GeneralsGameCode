@@ -82,11 +82,14 @@ static void closeDownloadWindow( void )
 	if (!parent)
 		return;
 
-  WindowLayout *menuLayout = parent->winGetLayout();
-	menuLayout->runShutdown();
-  menuLayout->destroyWindows();
-	menuLayout->deleteInstance();
-	menuLayout = NULL;
+	WindowLayout *menuLayout = parent->winGetLayout();
+	if (menuLayout)
+	{
+		menuLayout->runShutdown();
+		menuLayout->destroyWindows();
+		deleteInstance(menuLayout);
+		menuLayout = NULL;
+	}
 
 	GameWindow *mainWin = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY("MainMenu.wnd:MainMenuParent") );
 	if (mainWin)
@@ -348,7 +351,7 @@ WindowMsgHandledType DownloadMenuInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 						AsciiString buttonName( "DownloadMenu.wnd:ButtonCancel" );
 						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );

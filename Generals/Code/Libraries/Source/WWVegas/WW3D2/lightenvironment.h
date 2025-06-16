@@ -114,6 +114,7 @@ public:
 	static void			Set_Lighting_LOD_Cutoff(float inten);
 	static float		Get_Lighting_LOD_Cutoff(void);
 
+	static int			Get_Max_Lights() { return MAX_LIGHTS; }
 	enum { MAX_LIGHTS = 4 };	//Made this public, so other code can tell how many lights are allowed. - MW
 
 protected:

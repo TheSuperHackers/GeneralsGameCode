@@ -79,6 +79,7 @@ class SpecialPowerTemplate;
 class WeaponTemplate;
 class DamageInfo;
 class ParticleSystemTemplate;
+class StealthUpdate;
 
 
 //-------------------------------------------------------------------------------------------------
@@ -163,6 +164,7 @@ public:
 	virtual SpecialPowerModuleInterface* getSpecialPower() { return NULL; }
 	virtual UpdateModuleInterface* getUpdate() { return NULL; }
 	virtual UpgradeModuleInterface* getUpgrade() { return NULL; }
+	virtual StealthUpdate* getStealth() { return NULL; }
 
 	virtual ParkingPlaceBehaviorInterface* getParkingPlaceBehaviorInterface() { return NULL; }
 	virtual RebuildHoleBehaviorInterface* getRebuildHoleBehaviorInterface() { return NULL; }

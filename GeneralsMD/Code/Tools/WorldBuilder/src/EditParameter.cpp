@@ -19,9 +19,9 @@
 // EditParameter.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "worldbuilder.h"
+#include "WorldBuilder.h"
 
 // This is used to allow sounds to be played via PlaySound
 #include <mmsystem.h>
@@ -37,7 +37,7 @@
 
 #include "Common/AudioEventInfo.h"
 #include "Common/BorderColors.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/GameAudio.h"
 #include "Common/Player.h"
@@ -55,7 +55,7 @@
 #include "GameClient/Anim2D.h"
 #include "GameClient/ShellHooks.h"
 
-#include "GameLogic/Ai.h"
+#include "GameLogic/AI.h"
 #include "GameLogic/PolygonTrigger.h"
 #include "GameLogic/Scripts.h"
 #include "GameLogic/SidesList.h"
@@ -64,7 +64,7 @@
 #include "W3DDevice/GameClient/W3DGameFont.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
@@ -1316,7 +1316,7 @@ Bool EditParameter::loadFontNames(CComboBox *pCombo, AsciiString match)
 // EditParameter::readFontFile ======================================================
 /** Read the font file defintitions and load them */
 //=============================================================================
-void EditParameter::readFontFile( char *filename )
+void EditParameter::readFontFile( const char *filename )
 {
 	File *fp;
 
@@ -1899,7 +1899,7 @@ BOOL EditParameter::OnInitDialog()
 			pList->InsertString(-1, "Normal");
 			pList->InsertString(-1, "Alert");
 			pList->InsertString(-1, "Agressive");
-			pList->SetCurSel(m_parameter->getInt() - AI_SLEEP);
+			pList->SetCurSel(m_parameter->getInt() - ATTITUDE_SLEEP);
 			showList = true;
 			break;
 
@@ -2257,7 +2257,7 @@ void EditParameter::OnOK()
 			m_parameter->friend_setInt(pList->GetCurSel() + Parameter::REL_ENEMY);
 			break;
 		case Parameter::AI_MOOD:
-			m_parameter->friend_setInt(pList->GetCurSel() + AI_SLEEP);
+			m_parameter->friend_setInt(pList->GetCurSel() + ATTITUDE_SLEEP);
 			break;
 		case Parameter::SKIRMISH_WAYPOINT_PATH:	{
 			CString cstr;			 

@@ -37,9 +37,9 @@
 
 #define MAX_RIDERS 8 //***NOTE: If you change this, make sure you update the parsing section!
 
-enum WeaponSetType;
-enum ObjectStatusType;
-enum LocomotorSetType;
+enum WeaponSetType CPP_11(: Int);
+enum ObjectStatusType CPP_11(: Int);
+enum LocomotorSetType CPP_11(: Int);
 
 struct RiderInfo
 {

@@ -105,7 +105,7 @@ class AnimateWindowManager;
 class GameWindow;
 class ShellMenuSchemeManager;
 
-enum AnimTypes;
+enum AnimTypes CPP_11(: Int);
 
 //-------------------------------------------------------------------------------------------------
 /** This is the interface to the shell system to load, display, and

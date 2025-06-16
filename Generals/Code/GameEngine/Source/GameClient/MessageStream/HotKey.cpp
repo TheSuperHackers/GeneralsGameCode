@@ -55,7 +55,7 @@
 #include "GameClient/MetaEvent.h"
 #include "GameClient/GameWindow.h"
 #include "GameClient/GameWindowManager.h"
-#include "GameClient/keyboard.h"
+#include "GameClient/Keyboard.h"
 #include "GameClient/GameText.h"
 #include "Common/AudioEventRTS.h"
 //-----------------------------------------------------------------------------
@@ -100,7 +100,7 @@ GameMessageDisposition HotKeyTranslator::translateGameMessage(const GameMessage 
 			return disp;
 		WideChar key = TheKeyboard->getPrintableKey(msg->getArgument(0)->integer, 0);
 		UnicodeString uKey;
-		uKey.set(&key);
+		uKey.concat(key);
 		AsciiString aKey;
 		aKey.translate(uKey);
 		if(TheHotKeyManager && TheHotKeyManager->executeHotKey(aKey))
@@ -171,9 +171,9 @@ Bool HotKeyManager::executeHotKey( const AsciiString& keyIn )
 	GameWindow *win = it->second.m_win;
 	if( !win )
 		return FALSE;
-	if( !BitTest( win->winGetStatus(), WIN_STATUS_HIDDEN ) )
+	if( !BitIsSet( win->winGetStatus(), WIN_STATUS_HIDDEN ) )
 	{
-		if( BitTest( win->winGetStatus(), WIN_STATUS_ENABLED ) )
+		if( BitIsSet( win->winGetStatus(), WIN_STATUS_ENABLED ) )
  		{
  			TheWindowManager->winSendSystemMsg( win->winGetParent(), GBM_SELECTED, (WindowMsgData)win, win->winGetWindowId() );
  

@@ -56,7 +56,7 @@ void DelayedUpgrade::upgradeImplementation( )
 	DelayedUpgradeUpdateInterface *upgradeUpdate = NULL;
 	Object *me = getObject();
 
-	Int64 activation, conflicting;
+	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks(activation, conflicting);
 
 	for (BehaviorModule** u = me->getBehaviorModules(); *u; ++u)

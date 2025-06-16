@@ -73,7 +73,7 @@
 
 #define SLEEPY_AI
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -104,7 +104,7 @@ AIUpdateModuleData::~AIUpdateModuleData()
 		{
 			TurretAIData* td = const_cast<TurretAIData*>(m_turretData[i]);
 			if (td)
-				td->deleteInstance();
+				deleteInstance(td);
 		}
 	}
 }
@@ -258,7 +258,7 @@ AIUpdateInterface::AIUpdateInterface( Thing *thing, const ModuleData* moduleData
 	for (i = 0; i < MAX_TURRETS; i++)
 		m_turretAI[i] = NULL;
 	m_turretSyncFlag = TURRET_INVALID;
-	m_attitude = AI_NORMAL;
+	m_attitude = ATTITUDE_NORMAL;
 	m_nextMoodCheckTime = 0;
 #ifdef ALLOW_DEMORALIZE
 	m_demoralizedFramesLeft = 0;
@@ -644,13 +644,13 @@ AIUpdateInterface::~AIUpdateInterface( void )
 
 	if( m_stateMachine ) {
 		m_stateMachine->halt();
-		m_stateMachine->deleteInstance();
+		deleteInstance(m_stateMachine);
 	}
 
 	for (int i = 0; i < MAX_TURRETS; i++)
 	{
 		if (m_turretAI[i])
-			m_turretAI[i]->deleteInstance();
+			deleteInstance(m_turretAI[i]);
 		m_turretAI[i] = NULL;
 	}
 	m_stateMachine = NULL;
@@ -841,7 +841,7 @@ Bool AIUpdateInterface::chooseLocomotorSetExplicit(LocomotorSetType wst)
 	{
 		m_locomotorSet.clear();
 		m_curLocomotor = NULL;
-		for (Int i = 0; i < set->size(); ++i)
+		for (size_t i = 0; i < set->size(); ++i)
 		{
 			const LocomotorTemplate* lt = set->at(i);
 			if (lt)
@@ -2026,7 +2026,7 @@ void AIUpdateInterface::destroyPath( void )
 {
 	// destroy previous path
 	if (m_path)
-		m_path->deleteInstance();
+		deleteInstance(m_path);
 
 	m_path = NULL;
 	m_waitingForPath = FALSE; // we no longer need it.
@@ -2205,7 +2205,7 @@ UpdateSleepTime AIUpdateInterface::doLocomotor( void )
 							// obstacles, and follow the intermediate path points.
 							ClosestPointOnPathInfo info;
 							CRCDEBUG_LOG(("AIUpdateInterface::doLocomotor() - calling computePointOnPath() for %s\n",
-								DescribeObject(getObject()).str()));
+								DebugDescribeObject(getObject()).str()));
 							getPath()->computePointOnPath(getObject(), m_locomotorSet, *getObject()->getPosition(), info);
 							onPathDistToGoal = info.distAlongPath;
 							goalPos = info.posOnPath;
@@ -2332,7 +2332,7 @@ void AIUpdateInterface::setLocomotorGoalPositionExplicit(const Coord3D& newPos)
 {
 	m_locomotorGoalType = POSITION_EXPLICIT;
 	m_locomotorGoalData = newPos;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 if (_isnan(m_locomotorGoalData.x) || _isnan(m_locomotorGoalData.y) || _isnan(m_locomotorGoalData.z))
 {
 	DEBUG_CRASH(("NAN in setLocomotorGoalPositionExplicit"));
@@ -2345,7 +2345,7 @@ void AIUpdateInterface::setLocomotorGoalOrientation(Real angle)
 {
 	m_locomotorGoalType = ANGLE;
 	m_locomotorGoalData.x = angle;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 if (_isnan(m_locomotorGoalData.x) || _isnan(m_locomotorGoalData.y) || _isnan(m_locomotorGoalData.z))
 {
 	DEBUG_CRASH(("NAN in setLocomotorGoalOrientation"));
@@ -2625,6 +2625,9 @@ Bool AIUpdateInterface::isAllowedToRespondToAiCommands(const AICommandParms* par
 //-------------------------------------------------------------------------------------------------
 void AIUpdateInterface::aiDoCommand(const AICommandParms* parms)
 {
+	// TheSuperHackers @info The AiCommandParms for m_obj, m_otherObj and m_team should be null tested before use.
+	// These variables could relate to a deleted object when a pending command is reconstituted.
+
 	if (!isAllowedToRespondToAiCommands(parms))
 		return;
 
@@ -3215,6 +3218,12 @@ void AIUpdateInterface::privateMoveAwayFromUnit( Object *unit, CommandSourceType
 	{
 		return;
 	}
+
+	// TheSuperHacker @bugfix Mauller 26/05/2025 Fix dereferencing a nullptr when a delayed ai command refers to a deleted object.
+	// This can occur when a hacker is told to move away from an object when in its hacking state and is transitioning to a movement state.
+	if (!unit)
+		return;
+
 	ObjectID id = unit->getID();
 	if (m_stateMachine->getTemporaryState() == AI_MOVE_OUT_OF_THE_WAY) {
 		if (m_moveOutOfWay1 == id) {
@@ -4091,6 +4100,9 @@ void AIUpdateInterface::privateGuardTunnelNetwork( GuardMode guardMode, CommandS
  */
 void AIUpdateInterface::privateGuardObject( Object *objectToGuard, GuardMode guardMode, CommandSourceType cmdSource )
 {
+	if (!objectToGuard)
+		return;
+
 	if (getObject()->isMobile() == FALSE)
 		return;
 
@@ -4336,11 +4348,11 @@ UnsignedInt AIUpdateInterface::getMoodMatrixValue( void ) const
 		returnVal |= MM_Controller_AI;
 		switch (getAttitude())
 		{
-			case AI_SLEEP:			returnVal |= MM_Mood_Sleep; break;
-			case AI_PASSIVE:		returnVal |= MM_Mood_Passive; break;
-			case AI_NORMAL:			returnVal |= MM_Mood_Normal; break;
-			case AI_ALERT:			returnVal |= MM_Mood_Alert; break;
-			case AI_AGGRESSIVE:	returnVal |= MM_Mood_Aggressive; break;
+			case ATTITUDE_SLEEP:			returnVal |= MM_Mood_Sleep; break;
+			case ATTITUDE_PASSIVE:		returnVal |= MM_Mood_Passive; break;
+			case ATTITUDE_NORMAL:			returnVal |= MM_Mood_Normal; break;
+			case ATTITUDE_ALERT:			returnVal |= MM_Mood_Alert; break;
+			case ATTITUDE_AGGRESSIVE:	returnVal |= MM_Mood_Aggressive; break;
 			default: 
 				DEBUG_CRASH(("Unknown mood '%d' in getMoodMatrixValue. (Team '%s'). Using normal. (jkmcd)", getAttitude(), getObject()->getTeam()->getName().str() ));
 				returnVal |= MM_Mood_Normal;
@@ -4515,7 +4527,7 @@ Object* AIUpdateInterface::getNextMoodTarget( Bool calledByAI, Bool calledDuring
 	}
 
 // srj sez: this should ignore calledDuringIdle, despite what the name of the bit implies.
-	if (isAttacking() && BitTest(d->m_autoAcquireEnemiesWhenIdle, AAS_Idle_Not_While_Attacking))
+	if (isAttacking() && BitIsSet(d->m_autoAcquireEnemiesWhenIdle, AAS_Idle_Not_While_Attacking))
 	{
 		return NULL;
 	}
@@ -4555,7 +4567,7 @@ Object* AIUpdateInterface::getNextMoodTarget( Bool calledByAI, Bool calledDuring
 			}
 		}
 		
-		if (teamVictim && getAttitude()>=AI_NORMAL) 
+		if (teamVictim && getAttitude()>=ATTITUDE_NORMAL) 
 			return teamVictim;
 	}
 
@@ -4927,10 +4939,8 @@ void AIUpdateInterface::privateCommandButtonPosition( const CommandButton *comma
 // ------------------------------------------------------------------------------------------------
 void AIUpdateInterface::privateCommandButtonObject( const CommandButton *commandButton, Object *obj, CommandSourceType cmdSource )
 {
-	if( !commandButton )
-	{
+	if( !commandButton || !obj )
 		return;
-	}
 
 	if (getObject()->isKindOf(KINDOF_PROJECTILE))
 		return;

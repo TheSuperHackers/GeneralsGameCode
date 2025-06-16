@@ -21,7 +21,7 @@
 // Author: John Ahlquist, April 2001
 
 #include "StdAfx.h" 
-#include "Resource.h"
+#include "resource.h"
 
 #include "CUndoable.h"
 #include "PointerTool.h"
@@ -35,7 +35,7 @@
 #include "mapobjectprops.h"
 #include "ObjectOptions.h"
 #include "BuildList.h"
-#include "WbView3D.h"
+#include "wbview3d.h"
 #include "LayersList.h"
 #include "Common/WellKnownKeys.h"
 #include "WorldBuilder.h"	// for MAX_OBJECTS_IN_MAP 
@@ -208,7 +208,7 @@ AddObjectUndoable::~AddObjectUndoable(void)
 {
 	m_pDoc = NULL;  // not ref counted.
 	if (m_objectToAdd && !m_addedToList) {
-		m_objectToAdd->deleteInstance();
+		deleteInstance(m_objectToAdd);
 		m_objectToAdd=NULL;
 	}
 }
@@ -723,6 +723,7 @@ m_pDoc(pDoc)
 	m_new = newSL;
 	// ensure the new setup is valid. (don't mess with the old one.)
 	Bool modified = m_new.validateSides();
+	(void)modified;
 	DEBUG_ASSERTLOG(!modified,("*** had to clean up sides in SidesListUndoable! (caller should do this)\n"));
 }
 
@@ -857,7 +858,7 @@ void DictItemUndoable::Undo(void)
 DeleteInfo::~DeleteInfo(void)
 {
 	if (m_didDelete && m_objectToDelete) {
-		m_objectToDelete->deleteInstance();
+		deleteInstance(m_objectToDelete);
 	}
 	DeleteInfo *pCur = m_next;
 	DeleteInfo *tmp;
@@ -1049,7 +1050,7 @@ AddPolygonUndoable::~AddPolygonUndoable(void)
 {
 	if (m_trigger && !m_isTriggerInList) {
 		DEBUG_ASSERTCRASH(m_trigger->getNext()==NULL, ("Logic error."));
-		m_trigger->deleteInstance();
+		deleteInstance(m_trigger);
 	}
 	m_trigger=NULL;
 }
@@ -1321,7 +1322,7 @@ DeletePolygonUndoable::~DeletePolygonUndoable(void)
 {
 	if (m_trigger && !m_isTriggerInList) {
 		DEBUG_ASSERTCRASH(m_trigger->getNext()==NULL, ("Logic error."));
-		m_trigger->deleteInstance();
+		deleteInstance(m_trigger);
 	}
 	m_trigger=NULL;
 }

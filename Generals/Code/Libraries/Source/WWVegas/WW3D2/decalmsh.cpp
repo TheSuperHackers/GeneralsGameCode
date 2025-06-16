@@ -26,12 +26,13 @@
  *                                                                                             *
  *              Original Author:: Greg Hjelstrom                                               *
  *                                                                                             *
- *                      $Author:: Greg_h                                                      $*
+ *                      $Author:: Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
- *                     $Modtime:: 7/26/01 9:03a                                               $*
+ *                    $Revision:: 24                                                          $*
  *                                                                                             *
- *                    $Revision:: 20                                                          $*
- *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  *   DecalMeshClass::DecalMeshClass -- Constructor                                             *
@@ -454,7 +455,7 @@ bool RigidDecalMeshClass::Create_Decal
 	** Grab pointers to the parent mesh's components
 	*/
 	MeshModelClass * model = Parent->Peek_Model();
-	const Vector3i * src_polys		= model->Get_Polygon_Array();
+	const TriIndex * src_polys		= model->Get_Polygon_Array();
 	const Vector3 * src_verts		= model->Get_Vertex_Array();
 	const Vector3 * src_vnorms		= model->Get_Vertex_Normal_Array();
 
@@ -474,13 +475,13 @@ bool RigidDecalMeshClass::Create_Decal
 	PlaneClass planes[4];
 	Vector3 extent;
 
-	Matrix3::Rotate_Vector(localbox.Basis,Vector3(localbox.Extent.X,0,0),&extent);
+	Matrix3x3::Rotate_Vector(localbox.Basis,Vector3(localbox.Extent.X,0,0),&extent);
 	Vector3 direction(localbox.Basis.Get_X_Vector());
 	
 	planes[0].Set(-direction,localbox.Center + extent);
 	planes[1].Set(direction,localbox.Center - extent);
 	
-	Matrix3::Rotate_Vector(localbox.Basis,Vector3(0,localbox.Extent.Y,0),&extent);
+	Matrix3x3::Rotate_Vector(localbox.Basis,Vector3(0,localbox.Extent.Y,0),&extent);
 	direction.Set(localbox.Basis.Get_Y_Vector());
 	
 	planes[2].Set(-direction,localbox.Center + extent);
@@ -506,7 +507,7 @@ bool RigidDecalMeshClass::Create_Decal
 			** Copy src_polys[apt[i]] into our clip polygon
 			*/
 			_DecalPoly0.Reset();
-			const Vector3i & poly = src_polys[apt[i]];
+			const TriIndex & poly = src_polys[apt[i]];
 			for (j=0; j<3; j++) {
 				_DecalPoly0.Add_Vertex(src_verts[poly[j]] /*+ zbias_offset*/,src_vnorms[poly[j]]);
 			}
@@ -540,7 +541,7 @@ bool RigidDecalMeshClass::Create_Decal
 					** Add the triangle, its plane equation, and the per-tri materials
 					*/
 					added_polys = true;
-					Polys.Add(Vector3i(first_vert,first_vert + j,first_vert + j + 1));
+					Polys.Add(TriIndex(first_vert,first_vert + j,first_vert + j + 1));
 					Shaders.Add(material->Peek_Shader());
 					Textures.Add(material->Get_Texture());					// Get_Texture gives us a reference...
 				}
@@ -935,7 +936,7 @@ bool SkinDecalMeshClass::Create_Decal(DecalGeneratorClass * generator,
 	** Grab pointers to the parent mesh's components
 	*/
 	MeshModelClass * model = Parent->Peek_Model();
-	const Vector3i * src_polys = model->Get_Polygon_Array();
+	const TriIndex * src_polys = model->Get_Polygon_Array();
 
 	/*
 	** Grab a pointer to the material settings
@@ -955,7 +956,7 @@ bool SkinDecalMeshClass::Create_Decal(DecalGeneratorClass * generator,
 	int first_vert = ParentVertexIndices.Count();
 	for (i = 0; i < apt.Count(); i++) {
 		int offset = first_vert + i * 3;
-		Polys.Add(Vector3i(offset, offset + 1, offset + 2), face_size_hint);
+		Polys.Add(TriIndex(offset, offset + 1, offset + 2), face_size_hint);
 		
 		Shaders.Add(material->Peek_Shader(), face_size_hint);
 		Textures.Add(material->Get_Texture(), face_size_hint);		// Get_Texture gives us a reference...

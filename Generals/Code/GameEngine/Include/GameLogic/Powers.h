@@ -48,7 +48,7 @@ enum
 };
 
 #ifdef DEFINE_POWER_NAMES
-static char *PowerNames[] = 
+static const char *PowerNames[] = 
 {
 	"NONE",
 	"FASTER",

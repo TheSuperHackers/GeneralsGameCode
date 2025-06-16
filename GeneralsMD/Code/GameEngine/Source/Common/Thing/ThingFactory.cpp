@@ -48,7 +48,7 @@
 #include "GameClient/Drawable.h"
 #include "Common/INI.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -74,7 +74,7 @@ void ThingFactory::freeDatabase( void )
 	{
 		ThingTemplate* tmpl = m_firstTemplate;
 		m_firstTemplate = m_firstTemplate->friend_getNextTemplate();
-		tmpl->deleteInstance();
+		deleteInstance(tmpl);
 	}
 
 	m_templateHashMap.clear();
@@ -111,7 +111,11 @@ ThingFactory::ThingFactory()
 	m_firstTemplate = NULL;
 	m_nextTemplateID = 1;	// not zero!
 
+#ifdef USING_STLPORT
 	m_templateHashMap.resize( TEMPLATE_HASH_SIZE );
+#else
+	m_templateHashMap.reserve( TEMPLATE_HASH_SIZE );
+#endif
 }  // end ThingFactory
 
 //-------------------------------------------------------------------------------------------------
@@ -362,7 +366,7 @@ Drawable *ThingFactory::newDrawable(const ThingTemplate *tmplate, DrawableStatus
 
 }  // end newDrawableByType
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
 AsciiString TheThingTemplateBeingParsedName;
 #endif
 
@@ -371,7 +375,7 @@ AsciiString TheThingTemplateBeingParsedName;
 //-------------------------------------------------------------------------------------------------
 /*static*/ void ThingFactory::parseObjectDefinition( INI* ini, const AsciiString& name, const AsciiString& reskinFrom )
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
 	TheThingTemplateBeingParsedName = name;
 #endif
 
@@ -430,7 +434,7 @@ AsciiString TheThingTemplateBeingParsedName;
 		thingTemplate->resolveNames();
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(DEBUG_CRASHING)
 	TheThingTemplateBeingParsedName.clear();
 #endif
 }

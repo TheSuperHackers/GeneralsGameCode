@@ -64,7 +64,7 @@
 #include "shader.h"
 #include "vertmaterial.h"
 #include "Lib/BaseType.h"
-#include "common/GameType.h"
+#include "Common/GameType.h"
 
 class SegmentedLineClass;
 
@@ -79,7 +79,9 @@ public:
 	void drawWaypoints(RenderInfoClass &rinfo);
 	void freeWaypointBuffers();
 
+
 private:
+  void setDefaultLineStyle();
 
 	RenderObjClass *m_waypointNodeRobj;
 	SegmentedLineClass *m_line;

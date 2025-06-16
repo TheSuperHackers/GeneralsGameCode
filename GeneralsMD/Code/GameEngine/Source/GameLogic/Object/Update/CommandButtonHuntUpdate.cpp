@@ -45,14 +45,14 @@
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/ObjectIter.h"
-#include "GameLogic/Module\CommandButtonHuntUpdate.h"
-#include "GameLogic/Module\AIUpdate.h"
-#include "GameLogic/Module\CollideModule.h"
-#include "GameLogic/Module\SpecialAbilityUpdate.h"
-#include "GameLogic/Module\SpecialPowerModule.h"
+#include "GameLogic/Module/CommandButtonHuntUpdate.h"
+#include "GameLogic/Module/AIUpdate.h"
+#include "GameLogic/Module/CollideModule.h"
+#include "GameLogic/Module/SpecialAbilityUpdate.h"
+#include "GameLogic/Module/SpecialPowerModule.h"
 #include "GameLogic/ScriptEngine.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")

@@ -39,7 +39,7 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class ObjectCreationList;
 
-enum OCLCreateLocType
+enum OCLCreateLocType CPP_11(: Int)
 {
 	CREATE_AT_EDGE_NEAR_SOURCE,
 	CREATE_AT_EDGE_NEAR_TARGET,
@@ -90,7 +90,7 @@ public:
 
 	virtual void doSpecialPower( UnsignedInt commandOptions );
 	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, UnsignedInt commandOptions );
+	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
 
 protected:
 

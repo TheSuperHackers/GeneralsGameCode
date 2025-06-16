@@ -76,7 +76,7 @@
 #include "GameClient/Shadow.h"
 #include "GameClient/GameText.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -136,7 +136,7 @@ void DrawableIconInfo::clear()
 	for (int i = 0; i < MAX_ICONS; ++i)
 	{
 		if (m_icon[i])
-			m_icon[i]->deleteInstance();
+			deleteInstance(m_icon[i]);
 		m_icon[i] = NULL;
 		m_keepTillFrame[i] = 0;
 	}
@@ -148,7 +148,7 @@ void DrawableIconInfo::killIcon(DrawableIconType t)
 {
 	if (m_icon[t])
 	{
-		m_icon[t]->deleteInstance();
+		deleteInstance(m_icon[t]);
 		m_icon[t] = NULL;
 		m_keepTillFrame[t] = 0;
 	}
@@ -281,7 +281,7 @@ const Int MAX_ENABLED_MODULES								= 16;
 {
 	if( s_animationTemplates )
 	{
-		delete s_animationTemplates;
+		delete[] s_animationTemplates;
 		s_animationTemplates = NULL;
 	}
 }
@@ -500,7 +500,7 @@ Drawable::~Drawable()
 	{
 		for (Module** m = m_modules[i]; m && *m; ++m)
 		{
-			(*m)->deleteInstance();
+			deleteInstance(*m);
 			*m = NULL;	// in case other modules call findModule from their dtor!
 		}
 		delete [] m_modules[i]; 
@@ -510,7 +510,7 @@ Drawable::~Drawable()
 	stopAmbientSound();
 	if (m_ambientSound)
 	{
-		m_ambientSound->deleteInstance();
+		deleteInstance(m_ambientSound);
 		m_ambientSound = NULL;
 	}
 
@@ -524,17 +524,17 @@ Drawable::~Drawable()
 
 	// delete any icons present
 	if (m_iconInfo)
-		m_iconInfo->deleteInstance();
+		deleteInstance(m_iconInfo);
 
 	if (m_selectionFlashEnvelope)
-		m_selectionFlashEnvelope->deleteInstance();
+		deleteInstance(m_selectionFlashEnvelope);
 
 	if (m_colorTintEnvelope)
-		m_colorTintEnvelope->deleteInstance();
+		deleteInstance(m_colorTintEnvelope);
 
 	if (m_locoInfo)
 	{
-		m_locoInfo->deleteInstance();
+		deleteInstance(m_locoInfo);
 		m_locoInfo = NULL;
 	}
 }
@@ -1042,7 +1042,7 @@ void Drawable::fadeIn( UnsignedInt frames )		///< decloak object
 
 
 //-------------------------------------------------------------------------------------------------
-const Real Drawable::getScale (void) const 
+Real Drawable::getScale (void) const
 { 
 	return m_instanceScale; 
 //	return getTemplate()->getAssetScale(); 
@@ -2083,7 +2083,7 @@ const AudioEventRTS& Drawable::getAmbientSoundByDamage(BodyDamageType dt)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 void Drawable::validatePos() const
 {
 	const Coord3D* ourPos = getPosition();
@@ -2126,8 +2126,7 @@ void Drawable::setStealthLook(StealthLookType look)
 				if( obj )
 				{
 					//Try to get the stealthupdate module and see if the opacity value is overriden.
-					static NameKeyType key_StealthUpdate = NAMEKEY("StealthUpdate");
-					StealthUpdate* stealth = (StealthUpdate *)obj->findUpdateModule(key_StealthUpdate);
+					StealthUpdate* stealth = obj->getStealth();
 					if( stealth )
 					{
 						if( stealth->isDisguised() )
@@ -2210,7 +2209,7 @@ void Drawable::draw( View *view )
 
 
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	validatePos();
 #endif
 
@@ -2750,7 +2749,7 @@ void Drawable::drawHealing(const IRegion2D* healthBarRegion)
 	const Object *obj = getObject();			
 
 	// we do show show icons for things that explicitly forbid it
-	if( obj->isKindOf( KINDOF_NO_HEAL_ICON ) || BitTest( obj->getStatusBits(), OBJECT_STATUS_SOLD ))
+	if( obj->isKindOf( KINDOF_NO_HEAL_ICON ) || obj->getStatusBits().test( OBJECT_STATUS_SOLD ) )
 		return;
 
 
@@ -3204,8 +3203,8 @@ void Drawable::drawConstructPercent( const IRegion2D *healthBarRegion )
 	// this data is in an attached object
 	Object *obj = getObject();
 
-	if( obj == NULL || BitTest( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE ||
-			BitTest( obj->getStatusBits(), OBJECT_STATUS_SOLD ) == TRUE )
+	if( obj == NULL || !obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ||
+			obj->getStatusBits().test( OBJECT_STATUS_SOLD ) )
 	{
 		// no object, or we are now complete get rid of the string if we have one
 		if( m_constructDisplayString )
@@ -3395,7 +3394,7 @@ void Drawable::drawHealthBar(const IRegion2D* healthBarRegion)
 		//
 
 		Color color, outlineColor;
-		if( BitTest( obj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) || (obj->isDisabled() && !obj->isDisabledByType(DISABLED_HELD)) )
+		if( obj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) || (obj->isDisabled() && !obj->isDisabledByType(DISABLED_HELD)) )
 		{
 			color = GameMakeColor( 0, healthRatio * 255.0f, 255, 255 );//blue to cyan
 			outlineColor = GameMakeColor( 0, healthRatio * 128.0f, 128, 255 );//dark blue to dark cyan
@@ -3893,7 +3892,7 @@ void Drawable::startAmbientSound(BodyDamageType dt, TimeOfDay tod)
 		const AudioEventInfo *info = m_ambientSound->m_event.getAudioEventInfo();
 		if( info )
 		{
-			if( BitTest( info->m_type, ST_GLOBAL) || info->m_priority == AP_CRITICAL )
+			if( BitIsSet( info->m_type, ST_GLOBAL) || info->m_priority == AP_CRITICAL )
 			{
 				//Play it anyways.
 				m_ambientSound->m_event.setDrawableID(getID());
@@ -3917,7 +3916,7 @@ void Drawable::startAmbientSound(BodyDamageType dt, TimeOfDay tod)
 		else
 		{
 			DEBUG_CRASH( ("Ambient sound %s missing! Skipping...", m_ambientSound->m_event.getEventName().str() ) );
-			m_ambientSound->deleteInstance();
+			deleteInstance(m_ambientSound);
 			m_ambientSound = NULL;
 		}
 	}
@@ -4278,7 +4277,7 @@ void Drawable::xfer( Xfer *xfer )
 	if( xfer->getXferMode() == XFER_LOAD && m_ambientSound )
 	{
 		TheAudio->killAudioEventImmediately( m_ambientSound->m_event.getPlayingHandle() );
-		m_ambientSound->deleteInstance();
+		deleteInstance(m_ambientSound);
 		m_ambientSound = NULL;
 	}
 

@@ -36,6 +36,7 @@
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
 #include "Common/STLTypedefs.h"
+#include "Common/ObjectStatusTypes.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "Common/STLTypedefs.h"
 #include "GameLogic/Module/UpdateModule.h"	// needed for DIRECT_UPDATEMODULE_ACCESS
@@ -65,20 +66,17 @@ class WindowLayout;
 class TerrainLogic;
 class GhostObjectManager;
 class CommandButton;
-enum BuildableStatus;
-enum ObjectStatusBits;
+enum BuildableStatus CPP_11(: Int);
 
 typedef const CommandButton* ConstCommandButtonPtr;
 
 // What kind of game we're in.
 enum
 {
-#if !defined(_PLAYTEST)
 	GAME_SINGLE_PLAYER,
 	GAME_LAN,
 	GAME_SKIRMISH,
 	GAME_REPLAY,
-#endif
 	GAME_SHELL,
 	GAME_INTERNET,
 	GAME_NONE
@@ -112,6 +110,8 @@ public:
 	virtual void init( void );															///< Initialize or re-initialize the instance
 	virtual void reset( void );															///< Reset the logic system
 	virtual void update( void );														///< update the world
+
+	void preUpdate();
 
 	void processCommandList( CommandList *list );		///< process the command list
 
@@ -147,7 +147,7 @@ public:
 
 	//-----------------------------------------------------------------------------------------------
 	/// create an object given the thing template. (Only for use by ThingFactory.)
-	Object *friend_createObject( const ThingTemplate *thing, ObjectStatusBits statusBits, Team *team );
+	Object *friend_createObject( const ThingTemplate *thing, const ObjectStatusMaskType &objectStatusMask, Team *team );
 	void destroyObject( Object *obj );							///< Mark object as destroyed for later deletion
 	Object *findObjectByID( ObjectID id );								///< Given an ObjectID, return a pointer to the object.
 	Object *getFirstObject( void );									///< Returns the "first" object in the world. When used with the object method "getNextObject()", all objects in the world can be iterated.
@@ -164,12 +164,10 @@ public:
 	void setGameMode( Int mode );
 	Int getGameMode( void );
 	Bool isInGame( void );
-#if !defined(_PLAYTEST)
 	Bool isInLanGame( void );
 	Bool isInSinglePlayerGame( void );
 	Bool isInSkirmishGame( void );
 	Bool isInReplayGame( void );
-#endif
 	Bool isInInternetGame( void );
 	Bool isInShellGame( void );
 	Bool isInMultiplayerGame( void );
@@ -202,9 +200,11 @@ public:
 
 	void bindObjectAndDrawable(Object* obj, Drawable* draw);
 
-	void setGamePaused( Bool paused, Bool pauseMusic = TRUE );
+	void setGamePausedInFrame( UnsignedInt frame );
+	UnsignedInt getGamePauseFrame() const { return m_pauseFrame; }
+	void setGamePaused( Bool paused, Bool pauseMusic = TRUE, Bool pauseInput = TRUE );
 	Bool isGamePaused( void );
-	Bool getInputEnabledMemory( void ) { return m_inputEnabledMemory; }
+	Bool getInputEnabledMemory( void ) const { return m_inputEnabledMemory; }
 
 	void processProgress(Int playerId, Int percentage);
 	void processProgressComplete(Int playerId);
@@ -247,6 +247,11 @@ protected:
 	virtual void loadPostProcess( void );
 
 private:
+
+	void pauseGameLogic(Bool paused);
+	void pauseGameSound(Bool paused);
+	void pauseGameMusic(Bool paused);
+	void pauseGameInput(Bool paused);
 
 	void pushSleepyUpdate(UpdateModulePtr u);
 	UpdateModulePtr peekSleepyUpdate() const;
@@ -334,7 +339,12 @@ private:
 
 	LoadScreen *getLoadScreen( Bool saveGame );
 	LoadScreen *m_loadScreen;
+
+	UnsignedInt m_pauseFrame;
 	Bool m_gamePaused;
+	Bool m_pauseSound;
+	Bool m_pauseMusic;
+	Bool m_pauseInput;
 	Bool m_inputEnabledMemory;// Latches used to remember what to restore to after we unpause
 	Bool m_mouseVisibleMemory;
 
@@ -378,14 +388,10 @@ inline UnsignedInt GameLogic::getFrame( void ) { return m_frame; }
 inline Bool GameLogic::isInGame( void ) { return !(m_gameMode == GAME_NONE); }
 inline void GameLogic::setGameMode( Int mode ) { m_gameMode = mode; }
 inline Int  GameLogic::getGameMode( void ) { return m_gameMode; }
-#if !defined(_PLAYTEST)
 inline Bool GameLogic::isInLanGame( void ) { return (m_gameMode == GAME_LAN); }
 inline Bool GameLogic::isInSkirmishGame( void ) { return (m_gameMode == GAME_SKIRMISH); }
 inline Bool GameLogic::isInMultiplayerGame( void ) { return ((m_gameMode == GAME_LAN) || (m_gameMode == GAME_INTERNET)) ; }
 inline Bool GameLogic::isInReplayGame( void ) { return (m_gameMode == GAME_REPLAY); }
-#else
-inline Bool GameLogic::isInMultiplayerGame( void ) { return ((m_gameMode == GAME_INTERNET)) ; }
-#endif
 inline Bool GameLogic::isInInternetGame( void ) { return (m_gameMode == GAME_INTERNET); }
 inline Bool GameLogic::isInShellGame( void ) { return (m_gameMode == GAME_SHELL); }
 //Check for loading scene

@@ -86,7 +86,7 @@
 #include "GameLogic/VictoryConditions.h"
 #include "GameLogic/AIPathfind.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -643,7 +643,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 		PartitionSolver partition(vecOfUnits, vecOfTransports, PREFER_FAST_SOLUTION);
 		partition.solve();
 		SolutionVec solution = partition.getSolution();
-		for (int i = 0; i < solution.size(); ++i) {
+		for (size_t i = 0; i < solution.size(); ++i) {
 			Object *unit = TheGameLogic->findObjectByID(solution[i].first);
 			Object *trans = TheGameLogic->findObjectByID(solution[i].second);
 			if (!unit || !trans) {
@@ -1503,7 +1503,7 @@ void ScriptActions::doLoadAllTransports(const AsciiString& teamName)
 	PartitionSolver partition(vecOfUnits, vecOfTransports, PREFER_FAST_SOLUTION);
 	partition.solve();
 	SolutionVec solution = partition.getSolution();
-	for (int i = 0; i < solution.size(); ++i) {
+	for (size_t i = 0; i < solution.size(); ++i) {
 		Object *unit = TheGameLogic->findObjectByID(solution[i].first);
 		Object *trans = TheGameLogic->findObjectByID(solution[i].second);
 		if (!unit || !trans) {
@@ -2044,7 +2044,7 @@ void ScriptActions::doTeamHuntWithCommandButton(const AsciiString& teamName, con
 			case GUI_COMMAND_SPECIAL_POWER:
 				if( commandButton->getSpecialPowerTemplate() )
 				{
-					if (BitTest( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET )) 
+					if (BitIsSet( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET )) 
 					{
 						// OK, we can hunt with a power that targets an object.
 						break;
@@ -2575,7 +2575,8 @@ void ScriptActions::doDisplayCinematicText(const AsciiString& displayText, const
 	char buf[256];
 	char *c;
 	strcpy(buf, fontType.str());
-	for( c = buf; c != '\0'; *c++ )
+	// TheSuperHackers @fix xezon 16/03/2025 Fixes potential buffer overrun via prior c!='\0' test.
+	for( c = buf; *c != '\0'; c++ )
 	{
 		if( *c != ' ' && *c++ != '-' ) 
 			fontName.concat(c);
@@ -2583,12 +2584,12 @@ void ScriptActions::doDisplayCinematicText(const AsciiString& displayText, const
 			break;
 	}
 	while( *c != ':' )
-		*c++;
-	*c++;  // eat through " - Size:"
+		c++;
+	c++;  // eat through " - Size:"
 
 	// get font size
 	AsciiString fontSize = AsciiString::TheEmptyString;
-	for( ; *c != '\0'; *c++ )
+	for( ; *c != '\0'; c++ )
 	{
 		if( *c != '\0' && *c != ' ' )
 		{
@@ -3199,7 +3200,7 @@ void ScriptActions::doMergeTeamIntoTeam(const AsciiString& teamSrcName, const As
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doDisableInput()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (!TheGlobalData->m_disableScriptedInputDisabling)
 #endif
 	{
@@ -3851,7 +3852,7 @@ void ScriptActions::doUnfreezeTime(void)
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doMilitaryCaption(const AsciiString& briefing, Int duration)
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_disableMilitaryCaption)
 		duration = 1;
 #endif
@@ -4697,7 +4698,7 @@ void ScriptActions::doUnitStartSequentialScript(const AsciiString& unitName, con
 	
 	TheScriptEngine->appendSequentialScript(seqScript);
 
-	seqScript->deleteInstance();
+	deleteInstance(seqScript);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4794,7 +4795,7 @@ void ScriptActions::doTeamStartSequentialScript(const AsciiString& teamName, con
 	
 	TheScriptEngine->appendSequentialScript(seqScript);
 
-	seqScript->deleteInstance();
+	deleteInstance(seqScript);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5206,7 +5207,7 @@ void ScriptActions::doMoveUnitTowardsNearest( const AsciiString& unitName, const
 			Real closestDist;
 			Real dist;
 
-			for( Int typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
+			for( size_t typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
 			{
 				AsciiString thisTypeName = objectTypes->getNthInList( typeIndex );
 				const ThingTemplate *thisType = TheThingFactory->findTemplate( thisTypeName );
@@ -5252,7 +5253,8 @@ void ScriptActions::doMoveTeamTowardsNearest( const AsciiString& teamName, const
 
 	//Get the first object (to use in the partition filter checks).
 	Object *teamObj = NULL;
-	for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance())
+	DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList();
+	for (; !iter.done(); iter.advance())
 	{
 		teamObj = iter.cur();
 		if( teamObj ) 
@@ -5294,7 +5296,7 @@ void ScriptActions::doMoveTeamTowardsNearest( const AsciiString& teamName, const
 		{
 			Real closestDist;
 			Real dist;
-			for( Int typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
+			for( size_t typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
 			{
 				AsciiString thisTypeName = objectTypes->getNthInList( typeIndex );
 				const ThingTemplate *thisType = TheThingFactory->findTemplate( thisTypeName );
@@ -5784,7 +5786,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 			Real closestDist;
 			Real dist;
 
-			for( Int typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
+			for( size_t typeIndex = 0; typeIndex < objectTypes->getListSize(); typeIndex++ )
 			{
 				AsciiString thisTypeName = objectTypes->getNthInList( typeIndex );
 				const ThingTemplate *thisType = TheThingFactory->findTemplate( thisTypeName );
@@ -6751,7 +6753,7 @@ void ScriptActions::executeAction( ScriptAction *pAction )
 				                     pAction->getParameter(2)->getInt());
 			return;
 		case ScriptAction::DEBUG_CRASH_BOX:
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_CRASHING
 			{
 				const char* MSG = "Your Script requested the following message be displayed:\n\n";
 				const char* MSG2 = "\n\nTHIS IS NOT A BUG. DO NOT REPORT IT.";

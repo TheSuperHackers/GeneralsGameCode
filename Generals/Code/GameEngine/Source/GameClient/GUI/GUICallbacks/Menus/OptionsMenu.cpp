@@ -30,7 +30,7 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "GameSpy/ghttp/ghttp.h"
+#include "gamespy/ghttp/ghttp.h"
 
 #include "Common/AudioAffect.h"
 #include "Common/AudioSettings.h"
@@ -39,8 +39,9 @@
 #include "Common/UserPreferences.h"
 #include "Common/GameLOD.h"
 #include "Common/Registry.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 
+#include "GameClient/ClientInstance.h"
 #include "GameClient/GameClient.h"
 #include "GameClient/InGameUI.h"
 #include "GameClient/WindowLayout.h"
@@ -75,7 +76,7 @@
 // This is for non-RC builds only!!!
 #define VERBOSE_VERSION L"Release"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -210,7 +211,7 @@ extern void DoResolutionDialog();
 static Bool ignoreSelected = FALSE;
 WindowLayout *OptionsLayout = NULL;
 
-enum Detail
+enum Detail CPP_11(: Int)
 {
 	HIGHDETAIL = 0,
 	MEDIUMDETAIL,
@@ -223,14 +224,24 @@ enum Detail
 
 OptionPreferences::OptionPreferences( void )
 {
-	// note, the superclass will put this in the right dir automatically, this is just a leaf name
-	load("Options.ini");
+	loadFromIniFile();
 }
 
 OptionPreferences::~OptionPreferences()
 {
 }
 
+Bool OptionPreferences::loadFromIniFile()
+{
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		AsciiString fname;
+		fname.format("Options_Instance%.2u.ini", rts::ClientInstance::getInstanceId());
+		return load(fname);
+	}
+
+	return load("Options.ini");
+}
 
 Int OptionPreferences::getCampaignDifficulty(void)
 {
@@ -278,7 +289,7 @@ void OptionPreferences::setLANIPAddress( AsciiString IP )
 void OptionPreferences::setLANIPAddress( UnsignedInt IP )
 {
 	AsciiString tmp;
-	tmp.format("%d.%d.%d.%d", ((IP & 0xff000000) >> 24), ((IP & 0xff0000) >> 16), ((IP & 0xff00) >> 8), (IP & 0xff));
+	tmp.format("%d.%d.%d.%d", PRINTF_IP_AS_4_INTS(IP));
 	(*this)["IPAddress"] = tmp;
 }
 
@@ -306,7 +317,7 @@ void OptionPreferences::setOnlineIPAddress( AsciiString IP )
 void OptionPreferences::setOnlineIPAddress( UnsignedInt IP )
 {
 	AsciiString tmp;
-	tmp.format("%d.%d.%d.%d", ((IP & 0xff000000) >> 24), ((IP & 0xff0000) >> 16), ((IP & 0xff00) >> 8), (IP & 0xff));
+	tmp.format("%d.%d.%d.%d", PRINTF_IP_AS_4_INTS(IP));
 	(*this)["GameSpyIPAddress"] = tmp;
 }
 
@@ -436,9 +447,9 @@ UnsignedShort OptionPreferences::getFirewallPortOverride()
 		return TheGlobalData->m_firewallPortOverride;
 	}
 
- 	Int override = atoi(it->second.str());
- 	if (override < 0 || override > 65535)
- 		override = 0;
+	Int override = atoi(it->second.str());
+	if (override < 0 || override > 65535)
+		override = 0;
 	return override;
 }
 
@@ -777,7 +788,8 @@ static void setDefaults( void )
 		GadgetComboBoxSetSelectedPos( comboBoxResolution, defaultResIndex );	//should be 800x600 (our lowest supported mode)
 	}
 
- 	//-------------------------------------------------------------------------------------------------
+
+	//-------------------------------------------------------------------------------------------------
 	// Mouse Mode
 	GadgetCheckBoxSetChecked(checkAlternateMouse, FALSE);
 
@@ -911,11 +923,14 @@ static void saveOptions( void )
 	
 	//-------------------------------------------------------------------------------------------------
 	// send Delay
-	TheWritableGlobalData->m_firewallSendDelay = GadgetCheckBoxIsChecked(checkSendDelay);
-	if (TheGlobalData->m_firewallSendDelay) {
-		(*pref)["SendDelay"] = AsciiString("yes");
-	} else {
-		(*pref)["SendDelay"] = AsciiString("no");
+	if (checkSendDelay && checkSendDelay->winGetEnabled())
+	{
+		TheWritableGlobalData->m_firewallSendDelay = GadgetCheckBoxIsChecked(checkSendDelay);
+		if (TheGlobalData->m_firewallSendDelay) {
+			(*pref)["SendDelay"] = AsciiString("yes");
+		} else {
+			(*pref)["SendDelay"] = AsciiString("no");
+		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
@@ -988,29 +1003,33 @@ static void saveOptions( void )
 
 	//-------------------------------------------------------------------------------------------------
 	// LOD
-	Bool levelChanged=FALSE;
-	GadgetComboBoxGetSelectedPos( comboBoxDetail, &index );
-	//The levels stored by the LOD Manager are inverted compared to GUI so find correct one:
-	switch (index) {
-	case HIGHDETAIL:
-		levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_HIGH);
-		break;
-	case MEDIUMDETAIL:
-		levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_MEDIUM);
-		break;
-	case LOWDETAIL:
-		levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_LOW);
-		break;
-	case CUSTOMDETAIL:
-		levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_CUSTOM);
-		break;
-	default:
-		DEBUG_ASSERTCRASH(FALSE,("LOD passed in was %d, %d is not a supported LOD",index,index));
-		break;
-	}
+	if (comboBoxDetail && comboBoxDetail->winGetEnabled())
+	{
+		Bool levelChanged=FALSE;
+		GadgetComboBoxGetSelectedPos( comboBoxDetail, &index );
 
-	if (levelChanged)
-	        (*pref)["StaticGameLOD"] = TheGameLODManager->getStaticGameLODLevelName(TheGameLODManager->getStaticLODLevel());
+		//The levels stored by the LOD Manager are inverted compared to GUI so find correct one:
+		switch (index) {
+		case HIGHDETAIL:
+			levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_HIGH);
+			break;
+		case MEDIUMDETAIL:
+			levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_MEDIUM);
+			break;
+		case LOWDETAIL:
+			levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_LOW);
+			break;
+		case CUSTOMDETAIL:
+			levelChanged=TheGameLODManager->setStaticLODLevel(STATIC_GAME_LOD_CUSTOM);
+			break;
+		default:
+			DEBUG_ASSERTCRASH(FALSE,("LOD passed in was %d, %d is not a supported LOD",index,index));
+			break;
+		}
+
+		if (levelChanged)
+			(*pref)["StaticGameLOD"] = TheGameLODManager->getStaticGameLODLevelName(TheGameLODManager->getStaticLODLevel());
+	}
 
 	//-------------------------------------------------------------------------------------------------
 	// Resolution
@@ -1022,12 +1041,11 @@ static void saveOptions( void )
 	oldDispSettings.bitDepth = TheDisplay->getBitDepth();
 	oldDispSettings.windowed = TheDisplay->getWindowed();
 	
-	if (index < TheDisplay->getDisplayModeCount() && index >= 0)
+	if (comboBoxResolution && comboBoxResolution->winGetEnabled() && index < TheDisplay->getDisplayModeCount() && index >= 0)
 	{
 		TheDisplay->getDisplayModeDescription(index,&xres,&yres,&bitDepth);
 		if (TheGlobalData->m_xResolution != xres || TheGlobalData->m_yResolution != yres)
 		{
-			
 			if (TheDisplay->setDisplayMode(xres,yres,bitDepth,TheDisplay->getWindowed()))
 			{
 				dispChanged = TRUE;
@@ -1065,25 +1083,33 @@ static void saveOptions( void )
 
 	//-------------------------------------------------------------------------------------------------
 	// IP address
-	UnsignedInt ip;
-	GadgetComboBoxGetSelectedPos(comboBoxLANIP, &index);
-	if (index>=0 && TheGlobalData)
+	if (comboBoxLANIP && comboBoxLANIP->winGetEnabled())
 	{
-		ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxLANIP, index);
-		TheWritableGlobalData->m_defaultIP = ip;
-		pref->setLANIPAddress(ip);
+		UnsignedInt ip;
+		GadgetComboBoxGetSelectedPos(comboBoxLANIP, &index);
+		if (index>=0 && TheGlobalData)
+		{
+			ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxLANIP, index);
+			TheWritableGlobalData->m_defaultIP = ip;
+			pref->setLANIPAddress(ip);
+		}
 	}
-	GadgetComboBoxGetSelectedPos(comboBoxOnlineIP, &index);
-	if (index>=0)
+
+	if (comboBoxOnlineIP && comboBoxOnlineIP->winGetEnabled())
 	{
-		ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxOnlineIP, index);
-		pref->setOnlineIPAddress(ip);
+		UnsignedInt ip;
+		GadgetComboBoxGetSelectedPos(comboBoxOnlineIP, &index);
+		if (index>=0)
+		{
+			ip = (UnsignedInt)GadgetComboBoxGetItemData(comboBoxOnlineIP, index);
+			pref->setOnlineIPAddress(ip);
+		}
 	}
 
 	//-------------------------------------------------------------------------------------------------
 	// HTTP Proxy
 	GameWindow *textEntryHTTPProxy = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("OptionsMenu.wnd:TextEntryHTTPProxy"));
-	if (textEntryHTTPProxy)
+	if (textEntryHTTPProxy && textEntryHTTPProxy->winGetEnabled())
 	{
 		UnicodeString uStr = GadgetTextEntryGetText(textEntryHTTPProxy);
 		AsciiString aStr;
@@ -1092,23 +1118,23 @@ static void saveOptions( void )
 		ghttpSetProxy(aStr.str());
 	}
 
-   	//-------------------------------------------------------------------------------------------------
- 	// Firewall Port Override
- 	GameWindow *textEntryFirewallPortOverride = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("OptionsMenu.wnd:TextEntryFirewallPortOverride"));
- 	if (textEntryFirewallPortOverride)
- 	{
- 		UnicodeString uStr = GadgetTextEntryGetText(textEntryFirewallPortOverride);
- 		AsciiString aStr;
- 		aStr.translate(uStr);
- 		Int override = atoi(aStr.str());
- 		if (override < 0 || override > 65535)
- 			override = 0;
- 		if (TheGlobalData->m_firewallPortOverride != override)
- 		{	TheWritableGlobalData->m_firewallPortOverride = override;
- 		    aStr.format("%d", override);
- 			(*pref)["FirewallPortOverride"] = aStr;
- 		}
- 	}
+	//-------------------------------------------------------------------------------------------------
+	// Firewall Port Override
+	GameWindow *textEntryFirewallPortOverride = TheWindowManager->winGetWindowFromId(NULL, NAMEKEY("OptionsMenu.wnd:TextEntryFirewallPortOverride"));
+	if (textEntryFirewallPortOverride && textEntryFirewallPortOverride->winGetEnabled())
+	{
+		UnicodeString uStr = GadgetTextEntryGetText(textEntryFirewallPortOverride);
+		AsciiString aStr;
+		aStr.translate(uStr);
+		Int override = atoi(aStr.str());
+		if (override < 0 || override > 65535)
+			override = 0;
+		if (TheGlobalData->m_firewallPortOverride != override)
+		{	TheWritableGlobalData->m_firewallPortOverride = override;
+		    aStr.format("%d", override);
+			(*pref)["FirewallPortOverride"] = aStr;
+		}
+	}
 
 	//-------------------------------------------------------------------------------------------------
 	// antialiasing
@@ -1120,6 +1146,7 @@ static void saveOptions( void )
 		prefString.format("%d", index);
 		(*pref)["AntiAliasing"] = prefString;
   }
+
 
 	//-------------------------------------------------------------------------------------------------
 	// mouse mode
@@ -1297,10 +1324,6 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	comboBoxAntiAliasing   = TheWindowManager->winGetWindowFromId( NULL, comboBoxAntiAliasingID );
 	comboBoxResolutionID   = TheNameKeyGenerator->nameToKey( AsciiString( "OptionsMenu.wnd:ComboBoxResolution" ) );
 	comboBoxResolution     = TheWindowManager->winGetWindowFromId( NULL, comboBoxResolutionID );
-#ifdef _PLAYTEST
-	if (comboBoxResolution)
-		comboBoxResolution->winEnable(FALSE);
-#endif _PLAYTEST
 	comboBoxDetailID			 = TheNameKeyGenerator->nameToKey( AsciiString( "OptionsMenu.wnd:ComboBoxDetail" ) );
 	comboBoxDetail		   = TheWindowManager->winGetWindowFromId( NULL, comboBoxDetailID );
 
@@ -1389,7 +1412,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 
 	Color color =  GameMakeColor(255,255,255,255);
 
-  enum AliasingMode
+  enum AliasingMode CPP_11(: Int)
   {
     OFF = 0,
     LOW,
@@ -1521,7 +1544,8 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	AsciiString selectedAliasingMode = (*pref)["AntiAliasing"];
 	GadgetComboBoxReset(comboBoxAntiAliasing);
 	AsciiString temp;
-	for (Int i=0; i < NUM_ALIASING_MODES; ++i)
+	Int i=0;
+	for (; i < NUM_ALIASING_MODES; ++i)
 	{
 		temp.format("GUI:AntiAliasing%d", i);
 		str = TheGameText->fetch( temp );
@@ -1538,7 +1562,6 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	AsciiString selectedResolution = (*pref) ["Resolution"];
 	Int selectedXRes=800,selectedYRes=600;
 	Int selectedResIndex=-1;
-	Int defaultResIndex=0;	//index of default video mode that should always exist
 	if (!selectedResolution.isEmpty())
 	{	//try to parse 2 integers out of string
 		if (sscanf(selectedResolution.str(),"%d%d", &selectedXRes, &selectedYRes) != 2)
@@ -1554,21 +1577,20 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 		TheDisplay->getDisplayModeDescription(i,&xres,&yres,&bitDepth);
 		str.format(L"%d x %d",xres,yres);
 		GadgetComboBoxAddEntry( comboBoxResolution, str, color);
-		if (xres == 800 && yres == 600)	//keep track of default mode in case we need it.
-			defaultResIndex=i;
 		if (xres == selectedXRes && yres == selectedYRes)
 			selectedResIndex=i;
 	}
 
 	if (selectedResIndex == -1)	//check if saved mode no longer available
-	{	//pick default resolution
-		selectedXRes = 800;
-		selectedXRes = 600;
-		selectedResIndex = defaultResIndex;
+	{
+		// TheSuperHackers @bugfix xezon 08/06/2025 Now adds the current resolution instead of defaulting to 800 x 600.
+		// This avoids force changing the resolution when the user has set a custom resolution in the Option Preferences.
+		Int xres = TheDisplay->getWidth();
+		Int yres = TheDisplay->getHeight();
+		str.format(L"%d x %d",xres,yres);
+		GadgetComboBoxAddEntry( comboBoxResolution, str, color );
+		selectedResIndex = GadgetComboBoxGetLength( comboBoxResolution ) - 1;
 	}
-
-	TheWritableGlobalData->m_xResolution = selectedXRes;
-	TheWritableGlobalData->m_yResolution = selectedYRes;
 
 	GadgetComboBoxSetSelectedPos( comboBoxResolution, selectedResIndex );
 
@@ -1732,17 +1754,25 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	{
 		// disable controls that you can't change the options for in game
 		comboBoxLANIP->winEnable(FALSE);
+
 		if (comboBoxOnlineIP)
 			comboBoxOnlineIP->winEnable(FALSE);
+
 		checkSendDelay->winEnable(FALSE);
+
 		buttonFirewallRefresh->winEnable(FALSE);
 
 		if (comboBoxDetail)
 			comboBoxDetail->winEnable(FALSE);
 
-
 		if (comboBoxResolution)
 			comboBoxResolution->winEnable(FALSE);
+
+		if (textEntryFirewallPortOverride)
+			textEntryFirewallPortOverride->winEnable(FALSE);
+
+		if (textEntryHTTPProxy)
+			textEntryHTTPProxy->winEnable(FALSE);
 
 //		if (checkAudioSurround)
 //			checkAudioSurround->winEnable(FALSE);
@@ -1815,7 +1845,7 @@ WindowMsgHandledType OptionsMenuInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 						AsciiString buttonName( "OptionsMenu.wnd:ButtonBack" );
 						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );

@@ -45,7 +45,7 @@ public:
 	}
 };
 
-enum RecorderModeType {
+enum RecorderModeType CPP_11(: Int) {
 	RECORDERMODETYPE_RECORD,
 	RECORDERMODETYPE_PLAYBACK,
 	RECORDERMODETYPE_NONE // this is a valid state to be in on the shell map, or in saved games
@@ -54,6 +54,9 @@ enum RecorderModeType {
 class CRCInfo;
 
 class RecorderClass : public SubsystemInterface {
+public:
+	struct ReplayHeader;
+
 public:
 	RecorderClass();																	///< Constructor.
 	virtual ~RecorderClass();													///< Destructor.
@@ -68,10 +71,11 @@ public:
 	// Methods dealing with playback.
 	void updatePlayback();														///< The update function for playing back a file.
 	Bool playbackFile(AsciiString filename);					///< Starts playback of the specified file.
-	Bool testVersionPlayback(AsciiString filename);   ///< Returns if the playback is a valid playback file for this version or not.
+	Bool replayMatchesGameVersion(AsciiString filename); ///< Returns true if the playback is a valid playback file for this version.
+	static Bool replayMatchesGameVersion(const ReplayHeader& header); ///< Returns true if the playback is a valid playback file for this version.
 	AsciiString getCurrentReplayFilename( void );			///< valid during playback only
 	void stopPlayback();															///< Stops playback.  Its fine to call this even if not playing back a file.
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	Bool analyzeReplay( AsciiString filename );
 	Bool isAnalysisInProgress( void );
 #endif
@@ -137,7 +141,13 @@ protected:
 	void writeArgument(GameMessageArgumentDataType type, const GameMessageArgumentType arg);
 	void readArgument(GameMessageArgumentDataType type, GameMessage *msg);
 
-	void cullBadCommands();														///< prevent the user from giving mouse commands that he shouldn't be able to do during playback.
+	struct CullBadCommandsResult
+	{
+		CullBadCommandsResult() : hasClearGameDataMessage(false) {}
+		Bool hasClearGameDataMessage;
+	};
+
+	CullBadCommandsResult cullBadCommands(); ///< prevent the user from giving mouse commands that he shouldn't be able to do during playback.
 
 	FILE *m_file;
 	AsciiString m_fileName;

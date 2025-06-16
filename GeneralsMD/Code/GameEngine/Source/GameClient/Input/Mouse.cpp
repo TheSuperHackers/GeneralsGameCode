@@ -47,7 +47,7 @@
 
 #include "GameLogic/ScriptEngine.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -1088,7 +1088,7 @@ Int Mouse::getCursorIndex(const AsciiString& name)
 
 	/** @todo This is silly to have to define these names from INI in the code ... 
 		* that should be changed (CBD) */
-	static char *CursorININames[NUM_MOUSE_CURSORS] =
+	static const char *CursorININames[NUM_MOUSE_CURSORS] =
 	{
 		//"InvalidMouseCursor",  // this entry is not actually a mouse cursor, but just a
 														 // reminder that it does exist

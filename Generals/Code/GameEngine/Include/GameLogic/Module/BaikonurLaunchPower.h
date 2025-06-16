@@ -53,7 +53,7 @@
 class Object;
 class SpecialPowerTemplate;
 struct FieldParse;
-enum ScienceType;
+enum ScienceType CPP_11(: Int);
 
 class BaikonurLaunchPowerModuleData : public SpecialPowerModuleData
 {
@@ -80,7 +80,7 @@ public:
 	BaikonurLaunchPower( Thing *thing, const ModuleData *moduleData );
 
 	virtual void doSpecialPower( UnsignedInt commandOptions );
-	virtual void doSpecialPowerAtLocation( const Coord3D *loc, UnsignedInt commandOptions );
+	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions );
 
 protected:
 

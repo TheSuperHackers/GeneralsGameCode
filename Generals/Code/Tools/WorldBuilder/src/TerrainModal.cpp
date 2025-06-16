@@ -21,11 +21,11 @@
 
 #define DEFINE_TERRAIN_TYPE_NAMES
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
-#include "Lib\BaseType.h"
+#include "Lib/BaseType.h"
 #include "TerrainModal.h"
-#include "terrainmaterial.h"
+#include "TerrainMaterial.h"
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
 #include "Common/TerrainTypes.h"
@@ -113,7 +113,7 @@ BOOL TerrainModal::OnInitDialog()
 
 /** Locate the child item in tree item parent with name pLabel.  If not
 found, add it.  Either way, return child. */
-HTREEITEM TerrainModal::findOrAdd(HTREEITEM parent, char *pLabel)
+HTREEITEM TerrainModal::findOrAdd(HTREEITEM parent, const char *pLabel)
 {
 	TVINSERTSTRUCT ins;
 	char buffer[_MAX_PATH];
@@ -137,7 +137,7 @@ HTREEITEM TerrainModal::findOrAdd(HTREEITEM parent, char *pLabel)
 	ins.hInsertAfter = TVI_LAST;
 	ins.item.mask = TVIF_PARAM|TVIF_TEXT;
 	ins.item.lParam = -1;
-	ins.item.pszText = pLabel;
+	ins.item.pszText = const_cast<LPSTR>(pLabel);
 	ins.item.cchTextMax = strlen(pLabel);				
 	child = m_terrainTreeView.InsertItem(&ins);
 	return(child);

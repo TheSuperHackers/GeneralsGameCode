@@ -29,7 +29,7 @@
 
 #include "Lib/BaseType.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
-#include "WbView.h"
+#include "wbview.h"
 
 //#include "WW3D_SimpleWindow.h"
 
@@ -60,7 +60,7 @@ public:
 // Implementation
 public:
 	virtual ~CWorldBuilderView();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif

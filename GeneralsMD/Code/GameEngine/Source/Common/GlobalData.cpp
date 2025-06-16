@@ -38,14 +38,14 @@
 #define DEFINE_BODYDAMAGETYPE_NAMES
 #define DEFINE_PANNING_NAMES
 
-#include "Common/CRC.h"
-#include "Common/File.h"
+#include "Common/crc.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/GameAudio.h"
 #include "Common/INI.h"
-#include "Common/registry.h"
+#include "Common/Registry.h"
 #include "Common/UserPreferences.h"
-#include "Common/Version.h"
+#include "Common/version.h"
 
 #include "GameLogic/AI.h"
 #include "GameLogic/Weapon.h"
@@ -488,7 +488,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "KeyboardCameraRotateSpeed", INI::parseReal, NULL, offsetof( GlobalData, m_keyboardCameraRotateSpeed ) },
 	{ "PlayStats",									INI::parseInt,				NULL,			offsetof( GlobalData, m_playStats ) },
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	{ "DisableCameraFade",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableCameraFade ) },
 	{ "DisableScriptedInputDisabling",			INI::parseBool,		NULL,			offsetof( GlobalData, m_disableScriptedInputDisabling ) },
 	{ "DisableMilitaryCaption",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableMilitaryCaption ) },
@@ -543,12 +543,12 @@ GlobalData::GlobalData()
 		m_theOriginal = this;
 	m_next = NULL;
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	m_specialPowerUsesDelay = TRUE;
 #endif
   m_TiVOFastMode = FALSE;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_wireframe = 0;
 	m_stateMachineDebug = FALSE;
 	m_useCameraConstraints = TRUE;
@@ -571,8 +571,6 @@ GlobalData::GlobalData()
 	m_debugCashValueMap = FALSE;
 	m_maxDebugValue = 10000;
 	m_debugCashValueMapTileDuration = LOGICFRAMES_PER_SECOND; // Changed By Sadullah Nader
-	m_debugIgnoreAsserts = FALSE;
-	m_debugIgnoreStackTrace = FALSE;
 	m_vTune = false;
 	m_checkForLeaks = TRUE;
 	m_benchmarkTimer = -1;
@@ -595,6 +593,14 @@ GlobalData::GlobalData()
 	m_extraLogging = FALSE;
 #endif
 
+#ifdef DEBUG_CRASHING
+	m_debugIgnoreAsserts = FALSE;
+#endif
+
+#ifdef DEBUG_STACKTRACE
+	m_debugIgnoreStackTrace = FALSE;
+#endif
+
 	m_playStats = -1;
 	m_incrementalAGPBuf = FALSE;
 	m_mapName.clear();
@@ -607,6 +613,7 @@ GlobalData::GlobalData()
 	m_dumpAssetUsage = FALSE;
 	m_framesPerSecondLimit = 0;
 	m_chipSetType = 0;
+	m_headless = FALSE;
 	m_windowed = 0;
 	m_xResolution = 800;
 	m_yResolution = 600;
@@ -988,23 +995,42 @@ GlobalData::GlobalData()
 	
 	// lets CRC the executable!  Whee!
 	const Int blockSize = 65536;
-	Char buffer[ _MAX_PATH ];
 	CRC exeCRC;
-	GetModuleFileName( NULL, buffer, sizeof( buffer ) );
-	File *fp = TheFileSystem->openFile(buffer, File::READ | File::BINARY);
-	if (fp != NULL) {
-		unsigned char crcBlock[blockSize];
-		Int amtRead = 0;
-		while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
-		{
-			exeCRC.computeCRC(crcBlock, amtRead);
+	File *fp;
+	// TheSuperHackers @tweak SkyAero/xezon 27/05/2025
+	// Simulate the EXE's CRC value to force Network and Replay compatibility with another build.
+#if (defined(_MSC_VER) && _MSC_VER < 1300) && RETAIL_COMPATIBLE_CRC
+
+#define GENERALSMD_104_CD_EXE_CRC    0x4f6c5afe
+#define GENERALSMD_104_STEAM_EXE_CRC 0xcb430f5f
+#define GENERALSMD_104_EAAPP_EXE_CRC 0x488d90f9
+
+	exeCRC.set(GENERALSMD_104_CD_EXE_CRC);
+	DEBUG_LOG(("Fake EXE CRC is 0x%8.8X\n", exeCRC.get()));
+
+#else
+	{
+		Char buffer[ _MAX_PATH ];
+		GetModuleFileName( NULL, buffer, sizeof( buffer ) );
+		fp = TheFileSystem->openFile(buffer, File::READ | File::BINARY);
+		if (fp != NULL) {
+			unsigned char crcBlock[blockSize];
+			Int amtRead = 0;
+			while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
+			{
+				exeCRC.computeCRC(crcBlock, amtRead);
+			}
+			DEBUG_LOG(("EXE CRC is 0x%8.8X\n", exeCRC.get()));
+			fp->close();
+			fp = NULL;
 		}
-		fp->close();
-		fp = NULL;
 	}
+#endif
+
+	UnsignedInt version = 0;
 	if (TheVersion)
 	{
-		UnsignedInt version = TheVersion->getVersionNumber();
+		version = TheVersion->getVersionNumber();
 		exeCRC.computeCRC( &version, sizeof(UnsignedInt) );
 	}
 	// Add in MP scripts to the EXE CRC, since the game will go out of sync if they change
@@ -1032,7 +1058,7 @@ GlobalData::GlobalData()
 	}
 
 	m_exeCRC = exeCRC.get();
-	DEBUG_LOG(("EXE CRC: 0x%8.8X\n", m_exeCRC));
+	DEBUG_LOG(("EXE+Version(%d.%d)+SCB CRC is 0x%8.8X\n", version >> 16, version & 0xffff, m_exeCRC));
 	
 	m_movementPenaltyDamageState = BODY_REALLYDAMAGED;
 	
@@ -1093,7 +1119,7 @@ GlobalData::~GlobalData( void )
 	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("~GlobalData: theOriginal is not original\n") );
 
 	if (m_weaponBonusSet)
-		m_weaponBonusSet->deleteInstance();
+		deleteInstance(m_weaponBonusSet);
 
 	if( m_theOriginal == this )	{
 		m_theOriginal = NULL;
@@ -1129,6 +1155,7 @@ Bool GlobalData::setTimeOfDay( TimeOfDay tod )
 //-------------------------------------------------------------------------------------------------
 GlobalData *GlobalData::newOverride( void )
 {
+	// TheSuperHackers @info This copy is not implemented in VS6 builds
 	GlobalData *override = NEW GlobalData;
 
 	// copy the data from the latest override (TheWritableGlobalData) to the newly created instance

@@ -42,7 +42,7 @@
 #include "Common/StackDump.h"
 #include "Common/SubsystemInterface.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -646,7 +646,7 @@ Bool PSThreadClass::tryLogin( Int id, std::string nick, std::string password, st
 	return m_loginOK;
 }
 
-static void getPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, char *data, int len, void *instance)
+static void getPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, time_t modified, char *data, int len, void *instance)
 {
 	DEBUG_LOG(("Data get callback: localid: %d profileid: %d success: %d len: %d data: %s\n",localid, profileid, success, len, data));
 	PSThreadClass *t = (PSThreadClass *)instance;
@@ -738,7 +738,7 @@ static void getPersistentDataCallback(int localid, int profileid, persisttype_t 
 	TheGameSpyPSMessageQueue->addResponse(resp);
 }
 
-static void setPersistentDataLocaleCallback(int localid, int profileid, persisttype_t type, int index, int success, void *instance)
+static void setPersistentDataLocaleCallback(int localid, int profileid, persisttype_t type, int index, int success, time_t modified, void *instance)
 {
 	DEBUG_LOG(("Data save callback: localid: %d profileid: %d success: %d\n", localid, profileid, success));
 
@@ -749,7 +749,7 @@ static void setPersistentDataLocaleCallback(int localid, int profileid, persistt
 	t->decrOpCount();
 }
 
-static void setPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, void *instance)
+static void setPersistentDataCallback(int localid, int profileid, persisttype_t type, int index, int success, time_t modified, void *instance)
 {
 	DEBUG_LOG(("Data save callback: localid: %d profileid: %d success: %d\n", localid, profileid, success));
 
@@ -787,7 +787,7 @@ void preAuthCDCallback(int localid, int profileid, int authenticated, char *errm
 	authInfo->id = profileid;
 }
 
-static void getPreorderCallback(int localid, int profileid, persisttype_t type, int index, int success, char *data, int len, void *instance)
+static void getPreorderCallback(int localid, int profileid, persisttype_t type, int index, int success, time_t modified, char *data, int len, void *instance)
 {
 	PSThreadClass *t = (PSThreadClass *)instance;
 	if (!t)
@@ -875,7 +875,8 @@ void PSThreadClass::Thread_Function()
 					if (tryConnect())
 					{
 						incrOpCount();
-						GetPersistDataValues(0, req.player.id, pd_public_rw, 0, "", getPersistentDataCallback, this);
+						gsi_char keys[] = "";
+						GetPersistDataValues(0, req.player.id, pd_public_rw, 0, keys, getPersistentDataCallback, this);
 					}
 				}
 				break;
@@ -1034,7 +1035,10 @@ void PSThreadClass::Thread_Function()
 						DEBUG_LOG(("Looking for preorder status for %d (success=%d, done=%d) from CDKey %s with hash %s\n",
 							cdAuthInfo.id, cdAuthInfo.success, cdAuthInfo.done, req.cdkey.c_str(), cdkeyHash));
 						if (cdAuthInfo.done && cdAuthInfo.success)
-							GetPersistDataValues(0, cdAuthInfo.id, pd_public_ro, 0, "\\preorder", getPreorderCallback, this);
+						{
+							gsi_char keys[] = "\\preorder";
+							GetPersistDataValues(0, cdAuthInfo.id, pd_public_ro, 0, keys, getPreorderCallback, this);
+						}
 						else
 							decrOpCount();
 					}
@@ -1363,15 +1367,13 @@ std::string GameSpyPSMessageQueueInterface::formatPlayerKVPairs( PSPlayerStats s
 
 	if (stats.options.length())
 	{
-		_snprintf(kvbuf, 256, "\\options\\%s", stats.options.c_str());
-		kvbuf[255] = 0;
+		snprintf(kvbuf, 256, "\\options\\%s", stats.options.c_str());
 		s.append(kvbuf);
 	}
 
 	if (stats.systemSpec.length())
 	{
-		_snprintf(kvbuf, 256, "\\systemSpec\\%s", stats.systemSpec.c_str());
-		kvbuf[255] = 0;
+		snprintf(kvbuf, 256, "\\systemSpec\\%s", stats.systemSpec.c_str());
 		s.append(kvbuf);
 	}
 
@@ -1467,8 +1469,7 @@ std::string GameSpyPSMessageQueueInterface::formatPlayerKVPairs( PSPlayerStats s
 	}
 	if (stats.lastLadderHost.length())
 	{
-		_snprintf(kvbuf, 256, "\\ladderHost\\%s", stats.lastLadderHost.c_str());
-		kvbuf[255] = 0;
+		snprintf(kvbuf, 256, "\\ladderHost\\%s", stats.lastLadderHost.c_str());
 		s.append(kvbuf);
 	}
 

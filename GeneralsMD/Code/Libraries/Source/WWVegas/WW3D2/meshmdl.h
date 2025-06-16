@@ -45,7 +45,7 @@
 #include "vector2.h"
 #include "vector3.h"
 #include "vector4.h"
-#include "vector3i.h"
+#include "Vector3i.h"
 #include "sharebuf.h"
 #include "shader.h"
 #include "wwdebug.h"
@@ -135,7 +135,7 @@ class GapFillerClass : public W3DMPO
 	ShaderClass* ShaderArray[MeshMatDescClass::MAX_PASSES];
 	MeshModelClass* mmc;
 
-	GapFillerClass& operator = (const GapFillerClass & that) {}
+	GapFillerClass& operator = (const GapFillerClass&) CPP_11(= delete);
 public:
 	GapFillerClass(MeshModelClass* mmc);
 	GapFillerClass(const GapFillerClass& that);

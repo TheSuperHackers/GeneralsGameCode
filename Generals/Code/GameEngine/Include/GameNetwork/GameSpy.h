@@ -31,7 +31,7 @@
 #ifndef __GameSpy_H__
 #define __GameSpy_H__
 
-#include "GameSpy/Peer/Peer.h"
+#include "gamespy/peer/peer.h"
 
 #include "GameClient/Color.h"
 #include "Common/STLTypedefs.h"
@@ -118,7 +118,7 @@ void ListGroupRoomsCallback(PEER peer, PEERBool success,
 														int maxWaiting, int numGames,
 														int numPlaying, void * param);					///< Called while listing group rooms
 
-enum GameSpyColors {
+enum GameSpyColors CPP_11(: Int) {
 	GSCOLOR_DEFAULT = 0,
 	GSCOLOR_CURRENTROOM,
 	GSCOLOR_ROOM,

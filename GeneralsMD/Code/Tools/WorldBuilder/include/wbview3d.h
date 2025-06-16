@@ -33,10 +33,10 @@
 #include "Lib/BaseType.h"
 #include "rendobj.h"
 #include "robjlist.h"
-#include "WbView.h"
-#include "common/gameType.h"
-#include "common/GlobalData.h"
-#include "common/ModelState.h"
+#include "wbview.h"
+#include "Common/GameType.h"
+#include "Common/GlobalData.h"
+#include "Common/ModelState.h"
 #include "dx8wrapper.h"
 
 //#include "GameLogic/Module/BodyModule.h" -- Yikes... not necessary to include this! (KM)
@@ -86,7 +86,7 @@ public:
 // Implementation
 protected:
 	virtual ~WbView3d();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif

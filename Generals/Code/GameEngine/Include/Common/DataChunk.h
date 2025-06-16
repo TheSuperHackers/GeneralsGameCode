@@ -126,7 +126,7 @@ public:
 	DataChunkOutput(  OutputStream *pOut  );
 	~DataChunkOutput();
 
-	void openDataChunk( char *name, DataChunkVersionType ver );
+	void openDataChunk( const char *name, DataChunkVersionType ver );
 	void closeDataChunk( void );
 
 	void writeReal(Real r);
@@ -136,6 +136,7 @@ public:
 	void writeUnicodeString(UnicodeString string);
 	void writeArrayOfBytes(char *ptr, Int len);
 	void writeDict(const Dict& d);
+	void writeNameKey(const NameKeyType key);
 };
 
 //----------------------------------------------------------------------
@@ -228,6 +229,8 @@ public:
 	UnicodeString readUnicodeString(void);
 	Dict readDict(void);
 	void readArrayOfBytes(char *ptr, Int len);
+
+	NameKeyType readNameKey(void);
 };
 
 

@@ -37,7 +37,7 @@
 
 #include "mapper.h"
 #include "ww3d.h"
-#include "ini.h"
+#include "INI.H"
 #include "chunkio.h"
 #include "w3derr.h"
 #include "meshmatdesc.h"
@@ -46,7 +46,7 @@
 #include "matinfo.h"
 #include "rendobj.h"
 #include "mesh.h"
-#include <random.h>
+#include <RANDOM.H>
 #include <bound.h>
 
 Random4Class rand4;
@@ -1040,7 +1040,7 @@ BumpEnvTextureMapperClass::BumpEnvTextureMapperClass(float rad_per_sec, float sc
 {
 }
 
-BumpEnvTextureMapperClass::BumpEnvTextureMapperClass(INIClass &ini, char *section, unsigned int stage) :	
+BumpEnvTextureMapperClass::BumpEnvTextureMapperClass(INIClass &ini, const char *section, unsigned int stage) :	
 	LinearOffsetTextureMapperClass(ini, section, stage),
 	LastUsedSyncTime(WW3D::Get_Sync_Time()),
 	CurrentAngle(0.0f)

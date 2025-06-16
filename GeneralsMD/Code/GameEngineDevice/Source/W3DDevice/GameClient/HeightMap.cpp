@@ -47,7 +47,7 @@
 //-----------------------------------------------------------------------------
 
 
-#include "W3DDevice/GameClient/heightmap.h"
+#include "W3DDevice/GameClient/HeightMap.h"
 
 #ifndef USE_FLAT_HEIGHT_MAP // Flat height map uses flattened textures. jba. [3/20/2003]
 
@@ -87,16 +87,16 @@
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "W3DDevice/GameClient/W3DWater.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
-#include "WW3D2/DX8Wrapper.h"
-#include "WW3D2/Light.h"
-#include "WW3D2/Scene.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/light.h"
+#include "WW3D2/scene.h"
 #include "W3DDevice/GameClient/W3DPoly.h"
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 
 #include "Common/PerfTimer.h"
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.		 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -140,13 +140,13 @@ void HeightMapRenderObjClass::freeIndexVertexBuffers(void)
 	if (m_vertexBufferTiles) {
 		for (int i=0; i<m_numVertexBufferTiles; i++)
 			REF_PTR_RELEASE(m_vertexBufferTiles[i]);
-		delete m_vertexBufferTiles;
+		delete[] m_vertexBufferTiles;
 		m_vertexBufferTiles = NULL;
 	}
 	if (m_vertexBufferBackup) {
 		for (int i=0; i<m_numVertexBufferTiles; i++)
-			delete m_vertexBufferBackup[i];
-		delete m_vertexBufferBackup;
+			delete[] m_vertexBufferBackup[i];
+		delete[] m_vertexBufferBackup;
 		m_vertexBufferBackup = NULL;
 	}
 	m_numVertexBufferTiles = 0;
@@ -179,7 +179,7 @@ UnsignedInt HeightMapRenderObjClass::doTheDynamicLight(VERTEX_FORMAT *vb, VERTEX
 #else
 	Real shadeR, shadeG, shadeB;
 	Int diffuse = vbMirror->diffuse;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	//vbMirror->diffuse += 30;	// Shows which vertexes are geting touched by dynamic light. debug only.
 #endif
 	
@@ -272,7 +272,7 @@ Int HeightMapRenderObjClass::getXWithOrigin(Int x)
 	x -= m_originX;
 	if (x<0) x+= m_x-1;
 	if (x>= m_x-1) x-=m_x-1;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	DEBUG_ASSERTCRASH (x>=0, ("X out of range."));
 	DEBUG_ASSERTCRASH (x<m_x-1, ("X out of range."));
 #endif
@@ -293,7 +293,7 @@ Int HeightMapRenderObjClass::getYWithOrigin(Int y)
 	y -= m_originY;
 	if (y<0) y+= m_y-1;
 	if (y>= m_y-1) y-=m_y-1;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	DEBUG_ASSERTCRASH (y>=0, ("Y out of range."));
 	DEBUG_ASSERTCRASH (y<m_y-1, ("Y out of range."));
 #endif
@@ -328,7 +328,7 @@ Int HeightMapRenderObjClass::updateVB(DX8VertexBufferClass	*pVB, char *data, Int
 	REF_PTR_SET(m_map, pMap);	//update our heightmap pointer in case it changed since last call.
 	if (m_vertexBufferTiles && pMap)
 	{
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		assert(x0 >= originX && y0 >= originY && x1>x0 && y1>y0 && x1<=originX+VERTEX_BUFFER_TILE_LENGTH && y1<=originY+VERTEX_BUFFER_TILE_LENGTH);
 #endif 
 
@@ -583,7 +583,7 @@ Int HeightMapRenderObjClass::updateVBForLight(DX8VertexBufferClass	*pVB, char *d
 
 	if (m_vertexBufferTiles && m_map)
 	{
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		assert(x0 >= originX && y0 >= originY && x1>x0 && y1>y0 && x1<=originX+VERTEX_BUFFER_TILE_LENGTH && y1<=originY+VERTEX_BUFFER_TILE_LENGTH);
 #endif 
 
@@ -730,7 +730,7 @@ Int HeightMapRenderObjClass::updateVBForLightOptimized(DX8VertexBufferClass	*pVB
 
 	if (m_vertexBufferTiles && m_map)
 	{
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		assert(x0 >= originX && y0 >= originY && x1>x0 && y1>y0 && x1<=originX+VERTEX_BUFFER_TILE_LENGTH && y1<=originY+VERTEX_BUFFER_TILE_LENGTH);
 #endif 
 
@@ -1017,7 +1017,7 @@ The vertex coordinates and texture coordinates, as well as static lighting are u
 */
 Int HeightMapRenderObjClass::updateBlock(Int x0, Int y0, Int x1, Int y1,  WorldHeightMap *pMap, RefRenderObjListIterator *pLightsIterator)
 {	
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	DEBUG_ASSERTCRASH(x0>=0,  ("HeightMapRenderObjClass::UpdateBlock parameters extend beyond left edge."));
 	DEBUG_ASSERTCRASH(y0>=0,  ("HeightMapRenderObjClass::UpdateBlock parameters extend beyond bottom edge."));
 	DEBUG_ASSERTCRASH(x1<m_x, ("HeightMapRenderObjClass::UpdateBlock parameters extend beyond right edge."));
@@ -1026,7 +1026,7 @@ Int HeightMapRenderObjClass::updateBlock(Int x0, Int y0, Int x1, Int y1,  WorldH
 	DEBUG_ASSERTCRASH(y0<=y1, ("HeightMapRenderObjClass::UpdateBlock parameters have inside-out rectangle (on Y)."));
 #endif
 	Invalidate_Cached_Bounding_Volumes();
-	if (pMap) {
+	if (pMap && m_treeBuffer != NULL) {
 		REF_PTR_SET(m_stageZeroTexture, pMap->getTerrainTexture());
 		REF_PTR_SET(m_stageOneTexture, pMap->getAlphaTerrainTexture());
 	}
@@ -1326,7 +1326,7 @@ Int HeightMapRenderObjClass::initHeightData(Int x, Int y, WorldHeightMap *pMap, 
 	if (m_stageOneTexture == NULL) {
 		needToAllocate = true;
 	}
-	if (data && needToAllocate)
+	if (data && needToAllocate && m_treeBuffer != NULL)
 	{	//requested heightmap different from old one.
 		freeIndexVertexBuffers();
 		//Create static index buffers.  These will index the vertex buffers holding the map.
@@ -2284,7 +2284,6 @@ void HeightMapRenderObjClass::renderExtraBlendTiles(void)
 		Int drawStartX=m_map->getDrawOrgX();
 		Int drawStartY=m_map->getDrawOrgY();
 
-		try {
 		for (Int j=0; j<m_numExtraBlendTiles; j++)
 		{
 			if (vertexCount >= (maxBlendTiles*4))
@@ -2385,10 +2384,6 @@ void HeightMapRenderObjClass::renderExtraBlendTiles(void)
 				indexCount +=6;
 			}//tile has 3rd blend layer and is visible
 		}	//for all extre blend tiles
-		IndexBufferExceptionFunc();
-		} catch(...) {
-			IndexBufferExceptionFunc();
-		}
 	}//unlock vertex buffer
 
 	if (vertexCount)

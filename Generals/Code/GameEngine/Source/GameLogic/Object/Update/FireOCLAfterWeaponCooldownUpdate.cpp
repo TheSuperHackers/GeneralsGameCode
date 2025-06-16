@@ -44,12 +44,18 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ObjectCreationList.h"
 #include "GameLogic/Weapon.h"
-#include "GameLogic/Weaponset.h"
+#include "GameLogic/WeaponSet.h"
 
 #include "GameLogic/Module/FireOCLAfterWeaponCooldownUpdate.h"
 #include "GameLogic/Module/LifetimeUpdate.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Module/BodyModule.h"
+
+#ifdef RTS_INTERNAL
+// for occasional debugging...
+//#pragma optimize("", off)
+//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
 
 //-------------------------------------------------------------------------------------------------
 FireOCLAfterWeaponCooldownUpdateModuleData::FireOCLAfterWeaponCooldownUpdateModuleData()
@@ -96,7 +102,7 @@ FireOCLAfterWeaponCooldownUpdate::~FireOCLAfterWeaponCooldownUpdate( void )
 UpdateSleepTime FireOCLAfterWeaponCooldownUpdate::update( void )
 {	
 	const FireOCLAfterWeaponCooldownUpdateModuleData* data = getFireOCLAfterWeaponCooldownUpdateModuleData();
-	Int64 activation, conflicting;
+	UpgradeMaskType activation, conflicting;
 	getUpgradeActivationMasks( activation, conflicting );
 	Bool validThisFrame = true;
 	Bool validToFireOCL = true;
@@ -120,9 +126,10 @@ UpdateSleepTime FireOCLAfterWeaponCooldownUpdate::update( void )
 		validThisFrame = false;
 	}
 
-	Int64 objectMask = obj->getObjectCompletedUpgradeMask();
-	Int64 playerMask = obj->getControllingPlayer()->getCompletedUpgradeMask();
-	Int64 maskToCheck = playerMask | objectMask;
+	UpgradeMaskType objectMask = obj->getObjectCompletedUpgradeMask();
+	UpgradeMaskType playerMask = obj->getControllingPlayer()->getCompletedUpgradeMask();
+	UpgradeMaskType maskToCheck = playerMask;
+	maskToCheck.set( objectMask );
 	if( validThisFrame && !testUpgradeConditions( maskToCheck ) )
 	{
 		//Can't use this period if this object doesn't have any of the upgrades

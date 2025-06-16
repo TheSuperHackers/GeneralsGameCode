@@ -38,7 +38,7 @@
 // forward declarations ///////////////////////////////////////////////////////////////////////////
 struct AudioEventInfo;
 
-enum OwnerType
+enum OwnerType CPP_11(: Int)
 {
 	OT_Positional,
 	OT_Drawable,
@@ -47,7 +47,7 @@ enum OwnerType
 	OT_INVALID
 };
 
-enum PortionToPlay
+enum PortionToPlay CPP_11(: Int)
 {
 	PP_Attack,
 	PP_Sound,
@@ -55,7 +55,7 @@ enum PortionToPlay
 	PP_Done
 };
 
-enum AudioPriority;
+enum AudioPriority CPP_11(: Int);
 
 // This is called AudioEventRTS because AudioEvent is a typedef in ww3d
 // You might want this to be memory pooled (I personally do), but it can't

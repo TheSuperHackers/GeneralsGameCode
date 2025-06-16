@@ -276,7 +276,7 @@ void MeshGeometryClass::Reset_Geometry(int polycount,int vertcount)
 
 	// allocate new geometry arrays
 	if ((polycount != 0) && (vertcount != 0)) {
-		Poly = NEW_REF(ShareBufferClass<Vector3i>,(PolyCount, "MeshGeometryClass::Poly"));
+		Poly = NEW_REF(ShareBufferClass<TriIndex>,(PolyCount, "MeshGeometryClass::Poly"));
 		PolySurfaceType = NEW_REF(ShareBufferClass<uint8>,(PolyCount, "MeshGeometryClass::PolySurfaceType"));
 		Vertex = NEW_REF(ShareBufferClass<Vector3>,(VertexCount, "MeshGeometryClass::Vertex"));
 
@@ -440,7 +440,7 @@ void MeshGeometryClass::Generate_Rigid_APT(const Vector3 & view_dir, SimpleDynVe
 {
 	const Vector3 * loc = Get_Vertex_Array();
 	const Vector4 * norms = Get_Plane_Array();
-	const Vector3i * polys = Get_Polygon_Array();
+	const TriIndex * polys = Get_Polygon_Array();
 	TriClass tri;
 
 	for (int poly_counter = 0; poly_counter < PolyCount; poly_counter++) {
@@ -480,7 +480,7 @@ void MeshGeometryClass::Generate_Rigid_APT(const OBBoxClass & local_box, SimpleD
 		// Beware, this is gonna be expensive!
 		const Vector3 * loc = Get_Vertex_Array();
 		const Vector4 * norms = Get_Plane_Array();
-		const Vector3i * polys = Get_Polygon_Array();
+		const TriIndex * polys = Get_Polygon_Array();
 		TriClass tri;
 
 		for (int poly_counter = 0; poly_counter < PolyCount; poly_counter++) {
@@ -519,7 +519,7 @@ void MeshGeometryClass::Generate_Rigid_APT(const OBBoxClass & local_box,const Ve
 		// Beware, this is gonna be expensive!
 		const Vector3 * loc = Get_Vertex_Array();
 		const Vector4 * norms = Get_Plane_Array();
-		const Vector3i * polys = Get_Polygon_Array();
+		const TriIndex * polys = Get_Polygon_Array();
 		TriClass tri;
 
 		for (int poly_counter = 0; poly_counter < PolyCount; poly_counter++) {
@@ -557,7 +557,7 @@ void MeshGeometryClass::Generate_Skin_APT(const OBBoxClass & world_box, SimpleDy
 	WWASSERT(world_vertex_locs);
 
 	// Beware, this is gonna be expensive!
-	const Vector3i * polys = Get_Polygon_Array();
+	const TriIndex * polys = Get_Polygon_Array();
 	TriClass tri;
 
 	for (int poly_counter=0; poly_counter < PolyCount; poly_counter++) {
@@ -828,7 +828,7 @@ int MeshGeometryClass::cast_semi_infinite_axis_aligned_ray(const Vector3 & start
 	
 		const Vector3 * loc = Get_Vertex_Array();
 		const Vector4 * plane = Get_Plane_Array();
-		const Vector3i * polyverts = Get_Polygon_Array();
+		const TriIndex * polyverts = Get_Polygon_Array();
 
 		// These tables translate between the axis_dir representation (which is an integer in which 0
 		// indicates a ray along the positive x axis, 1 along the negative x axis, 2 the positive y
@@ -1030,7 +1030,7 @@ bool MeshGeometryClass::intersect_obbox_brute_force(OBBoxIntersectionTestClass &
 {
 	TriClass tri;
 	const Vector3 * loc = Get_Vertex_Array();
-	const Vector3i * polyverts = Get_Polygon_Array();
+	const TriIndex * polyverts = Get_Polygon_Array();
 #ifndef COMPUTE_NORMALS
 	const Vector4 * norms = Get_Plane_Array();
 #endif
@@ -1079,7 +1079,7 @@ bool MeshGeometryClass::cast_ray_brute_force(RayCollisionTestClass & raytest)
 	int srtri;
 	TriClass tri;
 	const Vector3 * loc = Get_Vertex_Array();
-	const Vector3i * polyverts = Get_Polygon_Array();
+	const TriIndex * polyverts = Get_Polygon_Array();
 #ifndef COMPUTE_NORMALS
 	const Vector4 * norms = Get_Plane_Array();
 #endif
@@ -1138,7 +1138,7 @@ bool MeshGeometryClass::cast_aabox_brute_force(AABoxCollisionTestClass & boxtest
 	int polyhit = -1;
 
 	const Vector3 * loc = Get_Vertex_Array();
-	const Vector3i * polyverts = Get_Polygon_Array();
+	const TriIndex * polyverts = Get_Polygon_Array();
 #ifndef COMPUTE_NORMALS
 	const Vector4 * norms = Get_Plane_Array();
 #endif
@@ -1196,7 +1196,7 @@ bool MeshGeometryClass::cast_obbox_brute_force(OBBoxCollisionTestClass & boxtest
 	int polyhit = -1;
 
 	const Vector3 * loc = Get_Vertex_Array();
-	const Vector3i * polyverts = Get_Polygon_Array();
+	const TriIndex * polyverts = Get_Polygon_Array();
 #ifndef COMPUTE_NORMALS
 	const Vector4 * norms = Get_Plane_Array();
 #endif
@@ -1249,7 +1249,7 @@ void MeshGeometryClass::Compute_Plane_Equations(Vector4 * peq)
 {
 	WWASSERT(peq!=NULL);
 
-	Vector3i * poly	= Poly->Get_Array();
+	TriIndex * poly	= Poly->Get_Array();
 	Vector3 * vert		= Vertex->Get_Array();
 
 	for(int pidx = 0; pidx < PolyCount; pidx++)
@@ -1290,7 +1290,7 @@ void MeshGeometryClass::Compute_Vertex_Normals(Vector3 * vnorm)
 	}
 
 	const Vector4 * peq = Get_Plane_Array();
-	Vector3i * poly = Poly->Get_Array();
+	TriIndex * poly = Poly->Get_Array();
 	const uint32 * shadeIx	= Get_Vertex_Shade_Index_Array(false);
 
 	// Two cases, with or without vertex shade indices.  The vertex shade indices
@@ -1513,7 +1513,7 @@ void MeshGeometryClass::Compute_Plane(int pidx,PlaneClass * set_plane) const
 {
 	WWASSERT(pidx >= 0);
 	WWASSERT(pidx < PolyCount);
-	Vector3i & poly = Poly->Get_Array()[pidx];
+	TriIndex & poly = Poly->Get_Array()[pidx];
 	Vector3 * verts = Vertex->Get_Array();
 
 	set_plane->Set(verts[poly.I],verts[poly.J],verts[poly.K]);
@@ -1839,7 +1839,7 @@ WW3DErrorType MeshGeometryClass::read_triangles(ChunkLoadClass & cload)
 	W3dTriStruct tri;
 
 	// cache pointers to various arrays in the surrender mesh
-	Vector3i * vi = get_polys();
+	TriIndex * vi = get_polys();
 	Set_Flag(DIRTY_PLANES,false);
 	Vector4 * peq = get_planes();
 	uint8 * surface_types = Get_Poly_Surface_Type_Array();

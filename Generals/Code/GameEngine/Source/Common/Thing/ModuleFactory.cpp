@@ -259,7 +259,7 @@ ModuleFactory *TheModuleFactory = NULL;  ///< the module factory singleton
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -589,7 +589,7 @@ Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const M
 	{
 		Module* mod = (*mt->m_createProc)( thing, moduleData );
 
-#ifdef _DEBUG
+#ifdef DEBUG_CRASHING
 		if (type == MODULETYPE_BEHAVIOR)
 		{
 			BehaviorModule* bm = (BehaviorModule*)mod;

@@ -40,7 +40,7 @@ class Image;
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum Anim2DMode
+enum Anim2DMode CPP_11(: Int)
 {
 	
 	ANIM_2D_INVALID = 0,
@@ -56,7 +56,7 @@ enum Anim2DMode
 
 };
 #ifdef DEFINE_ANIM_2D_MODE_NAMES
-static char *Anim2DModeNames[] = 
+static const char *Anim2DModeNames[] = 
 {
 	"NONE",
 	"ONCE",
@@ -120,7 +120,7 @@ protected:
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum Anim2DStatus
+enum Anim2DStatus CPP_11(: Int)
 {
 	ANIM_2D_STATUS_NONE			= 0x00,
 	ANIM_2D_STATUS_FROZEN		= 0x01,

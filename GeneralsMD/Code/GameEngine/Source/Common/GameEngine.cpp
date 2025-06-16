@@ -42,7 +42,7 @@
 #include "Common/INIException.h"
 #include "Common/MessageStream.h"
 #include "Common/ThingFactory.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/ArchiveFileSystem.h"
 #include "Common/LocalFileSystem.h"
@@ -106,9 +106,9 @@
 #include "GameNetwork/LANAPI.h"
 #include "GameNetwork/GameSpy/GameResultsThread.h"
 
-#include "Common/Version.h"
+#include "Common/version.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -190,7 +190,7 @@ GameEngine::GameEngine( void )
 	m_quitting = FALSE;
 	m_isActive = FALSE;
 
-	_Module.Init(NULL, ApplicationHInstance);
+	_Module.Init(NULL, ApplicationHInstance, NULL);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -206,6 +206,10 @@ GameEngine::~GameEngine()
 //	TheShell = NULL;
 
 	TheGameResultsQueue->endThreads();
+
+	// TheSuperHackers @fix helmutbuhler 03/06/2025
+	// Reset all subsystems before deletion to prevent crashing due to cross dependencies.
+	reset();
 
 	TheSubsystemList->shutdownAll();
 	delete TheSubsystemList;
@@ -258,9 +262,9 @@ void GameEngine::init( int argc, char *argv[] )
 		if (TheVersion)
 		{
 			DEBUG_LOG(("================================================================================\n"));
-	#if defined _DEBUG
+	#if defined RTS_DEBUG
 			const char *buildType = "Debug";
-	#elif defined _INTERNAL
+	#elif defined RTS_INTERNAL
 			const char *buildType = "Internal";
 	#else
 			const char *buildType = "Release";
@@ -371,8 +375,14 @@ void GameEngine::init( int argc, char *argv[] )
 	#endif/////////////////////////////////////////////////////////////////////////////////////////////
 
 
+		// TheSuperHackers @bugfix helmutbuhler 14/04/2025
+		// Pump messages during startup to ensure that the application window is correctly
+		// positioned on slower computers and in debug builds by a later call to SetWindowPos.
+		// It is unclear what the issue with SetWindowPos is when it fails to reposition the window.
+		serviceWindowsOS();
 
-	#if defined(_DEBUG) || defined(_INTERNAL)
+
+	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		// If we're in Debug or Internal, load the Debug info as well.
 		ini.load( AsciiString( "Data\\INI\\GameDataDebug.ini" ), INI_LOAD_OVERWRITE, NULL );
 	#endif
@@ -431,7 +441,7 @@ void GameEngine::init( int argc, char *argv[] )
   startTime64 = endTime64;//Reset the clock ////////////////////////////////////////////////////////
 	DEBUG_LOG(("%s", Buf));////////////////////////////////////////////////////////////////////////////
 	#endif/////////////////////////////////////////////////////////////////////////////////////////////
-		initSubsystem(TheAudio,"TheAudio", createAudioManager(), NULL);
+		initSubsystem(TheAudio,"TheAudio", TheGlobalData->m_headless ? NEW AudioManagerDummy : createAudioManager(), NULL);
 		if (!TheAudio->isMusicAlreadyLoaded())
 			setQuitting(TRUE);
 
@@ -507,7 +517,7 @@ void GameEngine::init( int argc, char *argv[] )
 		initSubsystem(TheCrateSystem,"TheCrateSystem", MSGNEW("GameEngineSubsystem") CrateSystem(), &xferCRC, "Data\\INI\\Default\\Crate.ini", "Data\\INI\\Crate.ini");
 		initSubsystem(ThePlayerList,"ThePlayerList", MSGNEW("GameEngineSubsystem") PlayerList(), NULL);
 		initSubsystem(TheRecorder,"TheRecorder", createRecorder(), NULL);
-		initSubsystem(TheRadar,"TheRadar", createRadar(), NULL);
+		initSubsystem(TheRadar,"TheRadar", TheGlobalData->m_headless ? NEW RadarDummy : createRadar(), NULL);
 		initSubsystem(TheVictoryConditions,"TheVictoryConditions", createVictoryConditions(), NULL);
 
 
@@ -524,7 +534,9 @@ void GameEngine::init( int argc, char *argv[] )
 		fname.format("Data\\%s\\CommandMap.ini", GetRegistryLanguage().str());
 		initSubsystem(TheMetaMap,"TheMetaMap", MSGNEW("GameEngineSubsystem") MetaMap(), NULL, fname.str(), "Data\\INI\\CommandMap.ini");
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+		TheMetaMap->generateMetaMap();
+
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		ini.load("Data\\INI\\CommandMapDebug.ini", INI_LOAD_MULTIFILE, NULL);
 #endif
 
@@ -574,33 +586,6 @@ void GameEngine::init( int argc, char *argv[] )
 		// If this really needs to take place, please make sure that pressing cancel on the audio 
 		// load music dialog will still cause the game to quit.
 		// m_quitting = FALSE;
-
-		// for fingerprinting, we need to ensure the presence of these files
-
-
-#if !defined(_INTERNAL) && !defined(_DEBUG)
-		AsciiString dirName;
-    dirName = TheArchiveFileSystem->getArchiveFilenameForFile("generalsbzh.sec");
-
-    if (dirName.compareNoCase("genseczh.big") != 0)
-		{
-			DEBUG_LOG(("generalsbzh.sec was not found in genseczh.big - it was in '%s'\n", dirName.str()));
-			m_quitting = TRUE;
-		}
-		
-		dirName = TheArchiveFileSystem->getArchiveFilenameForFile("generalsazh.sec");
-		const char *noPath = dirName.reverseFind('\\');
-		if (noPath) {
-			dirName = noPath + 1;
-		}
-
-		if (dirName.compareNoCase("musiczh.big") != 0)
-		{
-			DEBUG_LOG(("generalsazh.sec was not found in musiczh.big - it was in '%s'\n", dirName.str()));
-			m_quitting = TRUE;
-		}
-#endif
-
 
 		// initialize the MapCache
 		TheMapCache = MSGNEW("GameEngineSubsystem") MapCache;
@@ -730,7 +715,7 @@ void GameEngine::reset( void )
 	if(background)
 	{
 		background->destroyWindows();
-		background->deleteInstance();
+		deleteInstance(background);
 		background = NULL;
 	}
 }
@@ -769,6 +754,7 @@ void GameEngine::update( void )
 			TheCDManager->UPDATE();
 		}
 
+		TheGameLogic->preUpdate();
 
 		if ((TheNetwork == NULL && !TheGameLogic->isGamePaused()) || (TheNetwork && TheNetwork->isFrameDataReady()))
 		{
@@ -790,7 +776,7 @@ void GameEngine::execute( void )
 {
 	
 	DWORD prevTime = timeGetTime();
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	DWORD startTime = timeGetTime() / 1000;
 #endif
 
@@ -807,7 +793,7 @@ void GameEngine::execute( void )
 
 		{
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 			{
 				// enter only if in benchmark mode
 				if (TheGlobalData->m_benchmarkTimer > 0)
@@ -865,7 +851,7 @@ void GameEngine::execute( void )
 
 		// I'm disabling this in internal because many people need alt-tab capability.  If you happen to be
 		// doing performance tuning, please just change this on your local system. -MDC
-		#if defined(_DEBUG) || defined(_INTERNAL)
+		#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 					::Sleep(1); // give everyone else a tiny time slice.
 		#endif
 

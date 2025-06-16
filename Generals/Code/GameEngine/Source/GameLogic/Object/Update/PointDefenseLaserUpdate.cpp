@@ -30,20 +30,20 @@
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
-#include "Common\BitFlagsIO.h"
-#include "Common\RandomValue.h"
-#include "Common\ThingTemplate.h"
-#include "Common\Xfer.h"
+#include "Common/BitFlagsIO.h"
+#include "Common/RandomValue.h"
+#include "Common/ThingTemplate.h"
+#include "Common/Xfer.h"
 
-#include "GameClient\Drawable.h"
+#include "GameClient/Drawable.h"
 
-#include "GameLogic\GameLogic.h"
-#include "GameLogic\PartitionManager.h"
-#include "GameLogic\Object.h"
-#include "GameLogic\ObjectIter.h"
-#include "GameLogic\Module\PointDefenseLaserUpdate.h"
-#include "GameLogic\Module\PhysicsUpdate.h"
-#include "GameLogic\Weapon.h"
+#include "GameLogic/GameLogic.h"
+#include "GameLogic/PartitionManager.h"
+#include "GameLogic/Object.h"
+#include "GameLogic/ObjectIter.h"
+#include "GameLogic/Module/PointDefenseLaserUpdate.h"
+#include "GameLogic/Module/PhysicsUpdate.h"
+#include "GameLogic/Weapon.h"
 
 
 
@@ -216,7 +216,7 @@ void PointDefenseLaserUpdate::fireWhenReady()
 				Weapon* w = TheWeaponStore->allocateNewWeapon( wt, TERTIARY_WEAPON );
 				w->loadAmmoNow( getObject() );
 				w->fireWeapon( getObject(), target );
-				w->deleteInstance();
+				deleteInstance(w);
 
 				// And now that we have shot, set our internal reload timer.
 				m_nextShotAvailableInFrames = wt->getDelayBetweenShots( bonus );

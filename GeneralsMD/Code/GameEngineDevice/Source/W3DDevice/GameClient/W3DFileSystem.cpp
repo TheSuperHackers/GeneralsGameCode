@@ -41,7 +41,7 @@
 // #define MAINTAIN_LEGACY_FILES
 
 #include "Common/Debug.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/GlobalData.h"
 #include "Common/MapObject.h"
@@ -425,7 +425,7 @@ int GameFileClass::Size(void)
 //-------------------------------------------------------------------------------------------------
 int GameFileClass::Write(void const *buffer, Int len) 
 {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #endif
 	return(0);
 }

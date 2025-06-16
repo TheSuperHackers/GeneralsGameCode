@@ -34,7 +34,7 @@
 
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "GameLogic/Module/TransportContain.h"
-#include "GameLOgic/GameLogic.h"
+#include "GameLogic/GameLogic.h"
 
 
 typedef std::vector<AsciiString> TemplateNameList;

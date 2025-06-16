@@ -32,9 +32,10 @@
 #define _CRC_H_
 
 #include "Lib/BaseType.h"
-#include "winsock2.h" // for htonl
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
+
+//#include "winsock2.h" // for htonl
 
 class CRC
 {
@@ -45,6 +46,13 @@ public:
 	void clear( void ) { crc = 0; }									///< Clears the CRC to 0
 //	UnsignedInt get( void ) { return htonl(crc); }	///< Get the combined CRC
 	UnsignedInt get( void );
+
+#if (defined(_MSC_VER) && _MSC_VER < 1300) && RETAIL_COMPATIBLE_CRC
+  void set( UnsignedInt v )
+  {
+    crc = v;
+  }
+#endif
 
 private:
 	void addCRC( UnsignedByte val );									///< CRC a 4-byte block
@@ -66,7 +74,8 @@ public:
     if (!buf||len<1)
       return;
     
-    /* C++ version left in for reference purposes
+#if !(defined(_MSC_VER) && _MSC_VER < 1300)
+    // C++ version left in for reference purposes
 	  for (UnsignedByte *uintPtr=(UnsignedByte *)buf;len>0;len--,uintPtr++)
     {
     	int hibit;
@@ -83,8 +92,7 @@ public:
 	    crc += *uintPtr;
 	    crc += hibit;
     }
-    */
-
+#else
     // ASM version, verified by comparing resulting data with C++ version data
     unsigned *crcPtr=&crc;
     _asm
@@ -104,6 +112,7 @@ public:
       jns lp
       mov dword ptr [edi],ebx
     };
+#endif
   }
 
   /// Clears the CRC to 0
@@ -117,6 +126,13 @@ public:
   {
     return crc;
   }
+
+#if (defined(_MSC_VER) && _MSC_VER < 1300) && RETAIL_COMPATIBLE_CRC
+  void set( UnsignedInt v )
+  {
+    crc = v;
+  }
+#endif
 
 private:
 	UnsignedInt crc;

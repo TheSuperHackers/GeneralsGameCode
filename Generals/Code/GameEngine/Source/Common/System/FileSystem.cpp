@@ -46,7 +46,7 @@
 //----------------------------------------------------------------------------
 
 #include "PreRTS.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 
 #include "Common/ArchiveFileSystem.h"
@@ -224,7 +224,7 @@ Bool FileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) co
 	if (fileInfo == NULL) {
 		return FALSE;
 	}
-	memset(fileInfo, 0, sizeof(fileInfo));
+	memset(fileInfo, 0, sizeof(*fileInfo));
 	
 	if (TheLocalFileSystem->getFileInfo(filename, fileInfo)) {
 		return TRUE;

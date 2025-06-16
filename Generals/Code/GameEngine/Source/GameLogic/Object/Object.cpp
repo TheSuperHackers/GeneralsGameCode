@@ -101,7 +101,7 @@
 #include "Common/CRCDebug.h"
 #include "Common/MiscAudio.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -142,8 +142,7 @@ extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBCo
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-#ifdef DEBUG_LOGGING
-AsciiString DescribeObject(const Object *obj)
+AsciiString DebugDescribeObject(const Object *obj)
 {
 	if (!obj)
 		return "<No Object>";
@@ -167,11 +166,10 @@ AsciiString DescribeObject(const Object *obj)
 
 	return ret;
 }
-#endif // DEBUG_LOGGING
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-Object::Object( const ThingTemplate *tt, ObjectStatusBits statusBits, Team *team ) : 
+Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatusMask, Team *team ) : 
 	Thing(tt),
 	m_indicatorColor(0),
 	m_ai(NULL),
@@ -183,6 +181,7 @@ Object::Object( const ThingTemplate *tt, ObjectStatusBits statusBits, Team *team
 	m_behaviors(NULL),
 	m_body(NULL),
 	m_contain(NULL),
+	m_stealth(NULL),
 	m_partitionData(NULL),
 	m_radarData(NULL),
 	m_drawable(NULL),
@@ -204,7 +203,7 @@ Object::Object( const ThingTemplate *tt, ObjectStatusBits statusBits, Team *team
 	m_formationID(NO_FORMATION_ID),
 	m_isReceivingDifficultyBonus(FALSE)
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_hasDiedAlready = false;
 #endif
 	//Modules have not been created yet!
@@ -254,13 +253,12 @@ Object::Object( const ThingTemplate *tt, ObjectStatusBits statusBits, Team *team
 	m_producerID = INVALID_ID;
 	m_builderID = INVALID_ID;
 
-	m_status = statusBits;
+	m_status = objectStatusMask;
 	m_layer = LAYER_GROUND;
 
 	m_group = NULL;
 
 	m_constructionPercent = CONSTRUCTION_COMPLETE;  // complete by default
-	m_objectUpgradesCompleted = 0;
 
 	m_visionRange = tt->friend_getVisionRange();
 	m_shroudClearingRange = tt->friend_getShroudClearingRange();
@@ -365,6 +363,13 @@ Object::Object( const ThingTemplate *tt, ObjectStatusBits statusBits, Team *team
 		{
 			DEBUG_ASSERTCRASH(m_contain == NULL, ("Duplicate containers"));
 			m_contain = contain;
+		}
+
+		StealthUpdate* stealth = newMod->getStealth();
+		if ( stealth )
+		{
+			DEBUG_ASSERTCRASH( m_stealth == NULL, ("DuplicateStealthUpdates!") );
+			m_stealth = stealth;
 		}
 
 		AIUpdateInterface* ai = newMod->getAIUpdateInterface();
@@ -492,7 +497,7 @@ void Object::initObject()
 
 	// Kris -- All missiles must be projectiles! This is the perfect place to assert them!
 	// srj: yes, but only in debug...
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if( !isKindOf( KINDOF_PROJECTILE ) )
 	{
 		if( isKindOf( KINDOF_SMALL_MISSILE ) || isKindOf( KINDOF_BALLISTIC_MISSILE ) )
@@ -544,13 +549,13 @@ Object::~Object()
 	setTeam( NULL );
 
 	// Object's set of these persist for the life of the object.
-	m_partitionLastLook->deleteInstance();
+	deleteInstance(m_partitionLastLook);
 	m_partitionLastLook = NULL;
-	m_partitionLastShroud->deleteInstance();
+	deleteInstance(m_partitionLastShroud);
 	m_partitionLastShroud = NULL;
-	m_partitionLastThreat->deleteInstance();
+	deleteInstance(m_partitionLastThreat);
 	m_partitionLastThreat = NULL;
-	m_partitionLastValue->deleteInstance();
+	deleteInstance(m_partitionLastValue);
 	m_partitionLastValue = NULL;
 
 	// remove the object from the partition system if present
@@ -568,7 +573,7 @@ Object::~Object()
 	// delete any modules present
 	for (BehaviorModule** b = m_behaviors; *b; ++b)
 	{
-		(*b)->deleteInstance();
+		deleteInstance(*b);
 		*b = NULL;	// in case other modules call findModule from their dtor!
 	}
 
@@ -576,7 +581,7 @@ Object::~Object()
 	m_behaviors = NULL;
 
 	if( m_experienceTracker )
-		m_experienceTracker->deleteInstance();
+		deleteInstance(m_experienceTracker);
 
 	m_experienceTracker = NULL;
 
@@ -629,11 +634,11 @@ Bool Object::isHero() const
 //-------------------------------------------------------------------------------------------------
 void Object::onContainedBy( Object *containedBy )
 {
-	setStatus(OBJECT_STATUS_UNSELECTABLE);
+	setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNSELECTABLE ) );
 	if (containedBy && containedBy->getContain()->isEnclosingContainerFor(this))
-		setStatus(OBJECT_STATUS_MASKED);
+		setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ) );
 	else
-		clearStatus(OBJECT_STATUS_MASKED);
+		clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ) );
 	m_containedBy = containedBy;
 	m_containedByFrame = TheGameLogic->getFrame();
 }
@@ -643,8 +648,7 @@ void Object::onContainedBy( Object *containedBy )
 //-------------------------------------------------------------------------------------------------
 void Object::onRemovedFrom( Object *removedFrom )
 {
-	clearStatus(OBJECT_STATUS_UNSELECTABLE);
-	clearStatus(OBJECT_STATUS_MASKED);
+	clearStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_MASKED, OBJECT_STATUS_UNSELECTABLE ) );
 	m_containedBy = NULL;
 	m_containedByFrame = 0;
 }
@@ -857,20 +861,18 @@ void Object::setOrRestoreTeam( Team* team, Bool restoring )
 }
 
 //=============================================================================
-void Object::setStatus( ObjectStatusBits bits, Bool set )
+void Object::setStatus( ObjectStatusMaskType objectStatus, Bool set )
 {
-	UnsignedInt oldStatus = m_status;
+	ObjectStatusMaskType oldStatus = m_status;
 
 	if (set)
-		m_status |= bits;
+		m_status.set( objectStatus );
 	else
-		m_status &= ~bits;
+		m_status.clear( objectStatus );
 
 	if (m_status != oldStatus)
 	{
-		if (set 
-				&& (bits & OBJECT_STATUS_REPULSOR) != 0
-				&& m_repulsorHelper != NULL)
+		if( set && objectStatus.test( OBJECT_STATUS_REPULSOR ) && m_repulsorHelper != NULL )
 		{
 			// Damaged repulsable civilians scare (repulse) other civs, but only
 			// for a short amount of time... use the repulsor helper to turn off repulsion shortly.
@@ -879,7 +881,7 @@ void Object::setStatus( ObjectStatusBits bits, Bool set )
 
 		// when an object's construction status changes, it needs to have its partition data updated,
 		// in order to maintain the shroud correctly.
-		if ((m_status & OBJECT_STATUS_UNDER_CONSTRUCTION) != (oldStatus & OBJECT_STATUS_UNDER_CONSTRUCTION))
+		if( m_status.test( OBJECT_STATUS_UNDER_CONSTRUCTION ) != oldStatus.test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 		{
 
 			// CHECK FOR MINES, AND DETONATE THEM NOW 
@@ -1673,7 +1675,7 @@ void Object::attemptDamage( DamageInfo *damageInfo )
 	if( damageInfo->out.m_actualDamageDealt > 0.0f &&
 			damageInfo->in.m_damageType != DAMAGE_PENALTY &&
 			damageInfo->in.m_damageType != DAMAGE_HEALING &&
-			!BitTest(damageInfo->in.m_sourcePlayerMask, getControllingPlayer()->getPlayerMask()) && 
+			!BitIsSet(damageInfo->in.m_sourcePlayerMask, getControllingPlayer()->getPlayerMask()) && 
 			m_radarData != NULL &&
 			getControllingPlayer() == ThePlayerList->getLocalPlayer() )
 		TheRadar->tryUnderAttackEvent( this );
@@ -2117,7 +2119,7 @@ void Object::onCollide( Object *other, const Coord3D *loc, const Coord3D *normal
 			continue;
 
 		// check each time thru the loop, in case a collide module sets it
-		if (getStatusBits() & OBJECT_STATUS_NO_COLLISIONS)
+		if( getStatusBits().test( OBJECT_STATUS_NO_COLLISIONS ) )
 		{
 #ifdef DEBUG_CRC
 			//DEBUG_LOG(("Object::onCollide() - OBJECT_STATUS_NO_COLLISIONS set\n"));
@@ -2151,9 +2153,10 @@ Bool Object::isSalvageCrate() const
  */
 void Object::updateUpgradeModules()
 {
-	Int64 playerMask = getControllingPlayer()->getCompletedUpgradeMask();
-	Int64 objectMask = getObjectCompletedUpgradeMask();
-	Int64 maskToCheck = playerMask | objectMask;
+	UpgradeMaskType playerMask = getControllingPlayer()->getCompletedUpgradeMask();
+	UpgradeMaskType objectMask = getObjectCompletedUpgradeMask();
+	UpgradeMaskType maskToCheck = playerMask;
+	maskToCheck.set( objectMask );
 	// We need to add in all of the already owned upgrades to handle "AND" requiring upgrades.
 	// We combine all the masks in case someone has a Object AND Player combination
 
@@ -2330,7 +2333,7 @@ void Object::setTriggerAreaFlagsForChangeInPosition()
 			if (m_team) 
 				m_team->setEnteredExited();
 			TheGameLogic->updateObjectsChangedTriggerAreas();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 			//TheScriptEngine->AppendDebugMessage("Object exited.", false);
 #endif
 		}
@@ -2365,7 +2368,7 @@ void Object::setTriggerAreaFlagsForChangeInPosition()
 					m_team->setEnteredExited();
 				TheGameLogic->updateObjectsChangedTriggerAreas();
 				++m_numTriggerAreasActive;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 				//TheScriptEngine->AppendDebugMessage("Object entered.", false);
 #endif
 			} 
@@ -2856,7 +2859,7 @@ Bool Object::isAbleToAttack() const
 	//******************************************************
 
 	// For things that may or may not be able to normally attack, but are under a status condition
-	if (getStatusBits() & OBJECT_STATUS_NO_ATTACK)
+	if( getStatusBits().test( OBJECT_STATUS_NO_ATTACK ) )
 		return false;
 
 	// if we're contained within a transport we cannot attack unless it specifically allows us
@@ -2936,7 +2939,7 @@ Bool Object::isAbleToAttack() const
 		return true;
 
 	// for garrisonned buildings that can attack sometimes
-	if (getStatusBits() & OBJECT_STATUS_CAN_ATTACK)
+	if( getStatusBits().test( OBJECT_STATUS_CAN_ATTACK ) )
 		return true;
 	
 	// for weaponless transports.  This will make me think I can, but I will check if I literally can by looking
@@ -2984,7 +2987,7 @@ void Object::maskObject( Bool mask )
 {
 
 	// set or clear the mask bit
-	setStatus( OBJECT_STATUS_MASKED, mask );
+	setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_MASKED ), mask );
 
 	//
 	// when masking objects they become unselected ... we do this in any situation for
@@ -3359,10 +3362,6 @@ void Object::onDisabledEdge(Bool becomingDisabled)
 //-------------------------------------------------------------------------------------------------
 void Object::crc( Xfer *xfer )
 {
-	// This is evil - we cast the const Matrix3D * to a Matrix3D * because the XferCRC class must use
-	// the same interface as the XferLoad class for save game restore.  This only works because
-	// XferCRC does not modify its data.
-
 #ifdef DEBUG_CRC
 //	g_logObjectCRCs = TRUE;
 //	Bool g_logAllObjects = TRUE;
@@ -3371,7 +3370,7 @@ void Object::crc( Xfer *xfer )
 	Bool doLogging = g_logObjectCRCs /* && getControllingPlayer()->getPlayerType() == PLAYER_HUMAN */;
 	if (doLogging)
 	{
-		tmp.format("CRC of Object %d (%s), owned by player %d, ", m_id, getTemplate()->getName().str(), getControllingPlayer()->getPlayerIndex());
+		tmp.format("CRC of Object %d (%s), owned by player %d, team: %d, ", m_id, getTemplate()->getName().str(), getControllingPlayer()->getPlayerIndex(), this->getTeam() ? this->getTeam()->getID() : TEAM_ID_INVALID);
 		logString.concat(tmp);
 	}
 #endif // DEBUG_CRC
@@ -3385,6 +3384,9 @@ void Object::crc( Xfer *xfer )
 	}
 #endif // DEBUG_CRC
 
+	// This is evil - we cast the const Matrix3D * to a Matrix3D * because the XferCRC class must use
+	// the same interface as the XferLoad class for save game restore.  This only works because
+	// XferCRC does not modify its data.
 	xfer->xferUser((Matrix3D *)getTransformMatrix(),	sizeof(Matrix3D));
 #ifdef DEBUG_CRC
 	if (doLogging)
@@ -3398,16 +3400,6 @@ void Object::crc( Xfer *xfer )
 	}
 #endif // DEBUG_CRC
 	
-
-#ifdef DEBUG_CRC
-	if (doLogging)
-	{
-		const Matrix3D *mtx = getTransformMatrix();
-		CRCDEBUG_LOG(("CRC of Object %d (%s), owned by player %d, ", m_id, getTemplate()->getName().str(), getControllingPlayer()->getPlayerIndex()));
-		DUMPMATRIX3D(mtx);
-	}
-#endif //DEBUG_CRC
-
 
 	xfer->xferUser(&m_id,															sizeof(m_id));
 #ifdef DEBUG_CRC
@@ -3491,13 +3483,14 @@ void Object::crc( Xfer *xfer )
 	* 5: m_isReceivingDifficultyBonus
 	* 6: We do indeed need to save m_containedBy.  The comment misrepresents what the contain module will do.
 	* 7: save full mtx, not pos+orient.
+	* 8: Kris: Conversion of object status bits from UnsignedInt to BitFlags<>
 	*/
 //-------------------------------------------------------------------------------------------------
 void Object::xfer( Xfer *xfer )
 {
 	
 	// version
-	const XferVersion currentVersion = 7;
+	const XferVersion currentVersion = 8;
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -3556,7 +3549,29 @@ void Object::xfer( Xfer *xfer )
 	xfer->xferAsciiString( &m_name );
 
 	// status
-	xfer->xferUnsignedInt( &m_status );
+	if( version >= 8 )
+	{
+		m_status.xfer( xfer );
+	}
+	else
+	{
+		//We are loading an old version, so we must convert it from a 32-bit int to a bitflag
+		UnsignedInt oldStatus;
+		xfer->xferUnsignedInt( &oldStatus );
+
+		//Clear our status
+		m_status.clear();
+
+		for( int i = 0; i < 32; i++ )
+		{
+			UnsignedInt bit = 1<<i;
+			if( oldStatus & bit )
+			{
+				ObjectStatusTypes status = (ObjectStatusTypes)(i+1);
+				m_status.set( MAKE_OBJECT_STATUS_MASK( status ) );
+			}
+		}
+	}
 
 	// script status
 	xfer->xferUnsignedByte( &m_scriptStatus );
@@ -3841,7 +3856,7 @@ void Object::xfer( Xfer *xfer )
 	//m_body;
 	//m_ai;
 	//m_physics;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	//m_hasDiedAlready;
 #endif
 
@@ -3888,7 +3903,11 @@ void Object::loadPostProcess()
 //-------------------------------------------------------------------------------------------------
 Bool Object::hasUpgrade( const UpgradeTemplate *upgradeT ) const 
 {
-	return BitTest( m_objectUpgradesCompleted, upgradeT->getUpgradeMask() );
+	if( m_objectUpgradesCompleted.testForAll( upgradeT->getUpgradeMask() ) )
+	{
+		return TRUE;
+	}
+	return FALSE;
 }  // end hasUpgrade
 
 //-------------------------------------------------------------------------------------------------
@@ -3896,9 +3915,12 @@ Bool Object::hasUpgrade( const UpgradeTemplate *upgradeT ) const
 //-------------------------------------------------------------------------------------------------
 Bool Object::affectedByUpgrade( const UpgradeTemplate *upgradeT ) const 
 {
-	Int64 objectMask = getObjectCompletedUpgradeMask();
-	Int64 playerMask = getControllingPlayer()->getCompletedUpgradeMask();
-	Int64 maskToCheck = playerMask | objectMask | upgradeT->getUpgradeMask();
+	UpgradeMaskType objectMask = getObjectCompletedUpgradeMask();
+	UpgradeMaskType playerMask = getControllingPlayer()->getCompletedUpgradeMask();
+	UpgradeMaskType maskToCheck = playerMask;
+	maskToCheck.set( objectMask );
+	maskToCheck.set( upgradeT->getUpgradeMask() );
+
 	// We need to add in all of the already owned upgrades to handle "AND" requiring upgrades.
 	// We combine all the masks in case someone has a Object AND Player combination
 
@@ -3925,7 +3947,7 @@ void Object::giveUpgrade( const UpgradeTemplate *upgradeT )
 {
 	if (upgradeT)
 	{
-		BitSet( m_objectUpgradesCompleted, upgradeT->getUpgradeMask() );
+		m_objectUpgradesCompleted.set( upgradeT->getUpgradeMask() );
 
 		//
 		// iterate through all the upgrade modules of this object and call the method to
@@ -3940,13 +3962,15 @@ void Object::giveUpgrade( const UpgradeTemplate *upgradeT )
 //-------------------------------------------------------------------------------------------------
 void Object::removeUpgrade( const UpgradeTemplate *upgradeT )
 {
-	BitClear( m_objectUpgradesCompleted, upgradeT->getUpgradeMask() );
+	m_objectUpgradesCompleted.clear( upgradeT->getUpgradeMask() );
 	for (BehaviorModule** module = m_behaviors; *module; ++module)
 	{
 		UpgradeModuleInterface* upgrade = (*module)->getUpgrade();
 		if (!upgrade)
 			continue;
 
+		// Whoa, please note that while the function is called Object::RemoveUpgrade, it is not removing anything
+		// in the sense of undoing the effects.  It is just resetting the upgrade so it may be run again.
 		upgrade->resetUpgrade( upgradeT->getUpgradeMask() );
 	}
 }
@@ -3996,7 +4020,7 @@ void Object::onCapture( Player *oldOwner, Player *newOwner )
 void Object::onDie( DamageInfo *damageInfo )
 {
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	DEBUG_ASSERTCRASH(m_hasDiedAlready == false, ("Object::onDie has been called multiple times. This is invalid. jkmcd"));
 	m_hasDiedAlready = true;
 #endif
@@ -4220,9 +4244,7 @@ void Object::addValue()
 	if (!getControllingPlayer()) 
 		return;
 
-	if( ((getStatusBits() & OBJECT_STATUS_UNDER_CONSTRUCTION) != 0) 
-			|| ( isEffectivelyDead() )
-			|| ( getShroudClearingRange() <= 0.0f ))
+	if( getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) || isEffectivelyDead() || getShroudClearingRange() <= 0.0f )
 		return;
 
 
@@ -4272,9 +4294,7 @@ void Object::addThreat()
 	if (!getControllingPlayer()) 
 		return;
 
-	if( ((getStatusBits() & OBJECT_STATUS_UNDER_CONSTRUCTION) != 0) 
-			|| ( isEffectivelyDead() )
-			|| ( getShroudClearingRange() <= 0.0f ))
+	if( getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) || isEffectivelyDead() || getShroudClearingRange() <= 0.0f )
 		return;
 
 
@@ -4416,10 +4436,7 @@ void Object::shroud()
 	if ( controller )
 	{
 		// things under construction don't  shroud. (srj), nor do dead or blind things
-		if( ((getStatusBits() & OBJECT_STATUS_UNDER_CONSTRUCTION) == 0)
-				&& ( ! isEffectivelyDead() )
-				&& ( getShroudRange() > 0.0f )
-			)
+		if( !getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) && !isEffectivelyDead()	&& getShroudRange() > 0.0f )
 		{
 			PlayerMaskType shroudingMask = 0;
 			for( Int currentIndex = ThePlayerList->getPlayerCount() - 1; currentIndex >=0; currentIndex-- )
@@ -4465,7 +4482,7 @@ void Object::unshroud()
 //-------------------------------------------------------------------------------------------------
 Real Object::getVisionRange() const
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(m_visionRange, 0, 0);
@@ -4494,13 +4511,14 @@ Real Object::getShroudClearingRange() const
 {
 	Real shroudClearingRange=m_shroudClearingRange;
 
-	if ((getStatusBits() & OBJECT_STATUS_UNDER_CONSTRUCTION))
-	{	//structures under construction have limited vision range.  For now, base it
+	if( getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
+	{	
+		//structures under construction have limited vision range.  For now, base it
 		//on the geometry extents so the structure can only see itself.
 		shroudClearingRange = getGeometryInfo().getBoundingCircleRadius();
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(shroudClearingRange, 0, 0);
@@ -4557,7 +4575,7 @@ void Object::setShroudClearingRange( Real newShroudClearingRange )
 //-------------------------------------------------------------------------------------------------
 Real Object::getShroudRange() const
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(m_shroudRange, 0, 0);
@@ -4651,7 +4669,7 @@ void Object::doSpecialPowerAtObject( const SpecialPowerTemplate *specialPowerTem
 /** Execute special power */
 //-------------------------------------------------------------------------------------------------
 void Object::doSpecialPowerAtLocation( const SpecialPowerTemplate *specialPowerTemplate, 
-																			 const Coord3D *loc, UnsignedInt commandOptions, Bool forced )
+																			 const Coord3D *loc, Real angle, UnsignedInt commandOptions, Bool forced )
 {
 
 	if (isDisabled())
@@ -4664,15 +4682,14 @@ void Object::doSpecialPowerAtLocation( const SpecialPowerTemplate *specialPowerT
 	// get the module and execute
 	SpecialPowerModuleInterface *mod = getSpecialPowerModule( specialPowerTemplate );
 	if( mod )
-		mod->doSpecialPowerAtLocation( loc, commandOptions );
+		mod->doSpecialPowerAtLocation( loc, angle, commandOptions );
 
 }  
 
 //-------------------------------------------------------------------------------------------------
 /** Execute special power */
 //-------------------------------------------------------------------------------------------------
-void Object::doSpecialPowerAtMultipleLocations( const SpecialPowerTemplate *specialPowerTemplate, 
-																								const Coord3D *locations, Int locCount, UnsignedInt commandOptions, Bool forced )
+void Object::doSpecialPowerUsingWaypoints( const SpecialPowerTemplate *specialPowerTemplate, const Waypoint *way, UnsignedInt commandOptions, Bool forced )
 {
 
 	if (isDisabled())
@@ -4685,7 +4702,7 @@ void Object::doSpecialPowerAtMultipleLocations( const SpecialPowerTemplate *spec
 	// get the module and execute
 	SpecialPowerModuleInterface *mod = getSpecialPowerModule( specialPowerTemplate );
 	if( mod )
-		mod->doSpecialPowerAtMultipleLocations( locations, locCount, commandOptions );
+		mod->doSpecialPowerUsingWaypoints( way, commandOptions );
 
 }
 
@@ -4898,7 +4915,7 @@ void Object::doCommandButtonAtPosition( const CommandButton *commandButton, cons
 				if( commandButton->getSpecialPowerTemplate() )
 				{
 					CommandOption commandOptions = (CommandOption)(commandButton->getOptions() | COMMAND_FIRED_BY_SCRIPT);
-					doSpecialPowerAtLocation( commandButton->getSpecialPowerTemplate(), pos, commandOptions, cmdSource == CMD_FROM_SCRIPT );
+					doSpecialPowerAtLocation( commandButton->getSpecialPowerTemplate(), pos, INVALID_ANGLE, commandOptions, cmdSource == CMD_FROM_SCRIPT );
 				}
 				break;
 			}
@@ -5020,6 +5037,26 @@ SpecialPowerModuleInterface* Object::findSpecialPowerModuleInterface( SpecialPow
 }
 
 // ------------------------------------------------------------------------------------------------
+// Search our special power modules for the first occurrence of a shortcut special.
+// ------------------------------------------------------------------------------------------------
+SpecialPowerModuleInterface* Object::findAnyShortcutSpecialPowerModuleInterface() const
+{
+	for( BehaviorModule** m = m_behaviors; *m; ++m )
+	{
+		SpecialPowerModuleInterface* sp = (*m)->getSpecialPower();
+		if (!sp)
+			continue;
+
+		const SpecialPowerTemplate *spTemplate = sp->getSpecialPowerTemplate();
+		if( spTemplate && spTemplate->isShortcutPower() )
+		{
+			return sp; 
+		}
+	}
+	return NULL;
+}
+
+// ------------------------------------------------------------------------------------------------
 /** Get spawn behavior interface from object */
 // ------------------------------------------------------------------------------------------------
 SpawnBehaviorInterface* Object::getSpawnBehaviorInterface() const
@@ -5053,6 +5090,26 @@ SpecialPowerUpdateInterface* Object::findSpecialPowerWithOverridableDestinationA
 	}  // end for
 	return NULL;
 }
+
+// ------------------------------------------------------------------------------------------------
+// Simply find the special power module that is potentially allowed to plot positions to target.
+// ------------------------------------------------------------------------------------------------
+SpecialPowerUpdateInterface* Object::findSpecialPowerWithOverridableDestination( SpecialPowerType type ) const
+{
+	for( BehaviorModule** u = m_behaviors; *u; ++u )
+	{
+		SpecialPowerUpdateInterface *spInterface = (*u)->getSpecialPowerUpdateInterface();
+		if( spInterface )
+		{
+			if( spInterface->doesSpecialPowerHaveOverridableDestination() )
+			{
+				return spInterface;
+			}
+		}
+	}  // end for
+	return NULL;
+}
+
 
 // ------------------------------------------------------------------------------------------------
 // Search our special ability updates for a specific one.
@@ -5186,9 +5243,12 @@ Int Object::getMultiLogicalBonePosition(const char* boneNamePrefix, Int maxBones
 //=============================================================================
 Bool Object::canProduceUpgrade( const UpgradeTemplate *upgrade )
 {
+	// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+	// TheControlBar belongs to the client, we shouldn't depend on that to check this.
+
 	// We need to have the button to make the upgrade.  CommandSets are a weird Logic/Client hybrid.
- 	const CommandSet *set = TheControlBar->findCommandSet(getCommandSetString());
- 
+	const CommandSet *set = TheControlBar->findCommandSet(getCommandSetString());
+
  	for( Int buttonIndex = 0; buttonIndex < MAX_COMMANDS_PER_SET; buttonIndex++ )
  	{
  		const CommandButton *button = set->getCommandButton(buttonIndex);

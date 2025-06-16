@@ -67,7 +67,7 @@ public:
 };
 
 //-------------------------------------------------------------------------------------------------
-enum ChinookFlightStatus // Stored in save file, don't renumber.  jba. 
+enum ChinookFlightStatus CPP_11(: Int) // Stored in save file, don't renumber.  jba. 
 {
 	CHINOOK_TAKING_OFF				= 0,
 	CHINOOK_FLYING						= 1,
@@ -110,7 +110,7 @@ public:
 	void recordOriginalPosition( const Coord3D &pos ) { m_originalPos.set( &pos ); }
 	const Coord3D* getOriginalPosition() const { return &m_originalPos; }
 	
-	Int ChinookAIUpdate::getUpgradedSupplyBoost() const;
+	Int getUpgradedSupplyBoost() const;
 
 protected:
 

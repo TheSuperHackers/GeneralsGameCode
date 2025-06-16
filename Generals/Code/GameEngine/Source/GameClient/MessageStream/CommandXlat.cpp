@@ -86,14 +86,14 @@
 #include "GameNetwork/GameSpyOverlay.h"
 #include "GameNetwork/GameSpy/BuddyThread.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 /*non-static*/ Real TheSkateDistOverride = 0.0f;
 
 void countObjects(Object *obj, void *userData)
@@ -993,7 +993,7 @@ GameMessage::Type CommandTranslator::issueSpecialPowerCommand( const CommandButt
 	Drawable* sourceDraw = ignoreSelObj ? ignoreSelObj->getDrawable() : TheInGameUI->getFirstSelectedDrawable();
 	ObjectID specificSource = ignoreSelObj ? ignoreSelObj->getID() : INVALID_ID;
 
-	if( BitTest( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
+	if( BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
 	{
 		// OBJECT BASED SPECIAL
 		if (!command->isValidObjectTarget(sourceDraw, target))
@@ -1017,7 +1017,7 @@ GameMessage::Type CommandTranslator::issueSpecialPowerCommand( const CommandButt
 
 		}
 	}
-	else if( BitTest( command->getOptions(), NEED_TARGET_POS ) )
+	else if( BitIsSet( command->getOptions(), NEED_TARGET_POS ) )
 	{
 		//LOCATION BASED SPECIAL
 		msgType = GameMessage::MSG_DO_SPECIAL_POWER_AT_LOCATION;
@@ -1075,7 +1075,7 @@ GameMessage::Type CommandTranslator::issueCombatDropCommand( const CommandButton
 		return GameMessage::MSG_INVALID;
 	}
 
-	if( target != NULL && BitTest( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
+	if( target != NULL && BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
 	{
 
 		// OBJECT BASED SPECIAL
@@ -1092,7 +1092,7 @@ GameMessage::Type CommandTranslator::issueCombatDropCommand( const CommandButton
 		}
 		return msgType;
 	}
-	else if ( BitTest( command->getOptions(), NEED_TARGET_POS ) )
+	else if ( BitIsSet( command->getOptions(), NEED_TARGET_POS ) )
 	{
 		GameMessage::Type msgType = GameMessage::MSG_COMBATDROP_AT_LOCATION;
 		if( commandType == DO_COMMAND )
@@ -1119,7 +1119,7 @@ GameMessage::Type CommandTranslator::issueFireWeaponCommand( const CommandButton
 		return msgType;
 	}
 
-	if( BitTest( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
+	if( BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
 	{
 		//OBJECT BASED FIRE WEAPON
 		if (!target || !target->getObject())
@@ -1128,7 +1128,7 @@ GameMessage::Type CommandTranslator::issueFireWeaponCommand( const CommandButton
 		if (!command->isValidObjectTarget(TheInGameUI->getFirstSelectedDrawable(), target))
 			return msgType;
 
-		if( BitTest( command->getOptions(), ATTACK_OBJECTS_POSITION ) )
+		if( BitIsSet( command->getOptions(), ATTACK_OBJECTS_POSITION ) )
 		{
 			//Actually, you know what.... we want to attack the object's location instead.
 			msgType = GameMessage::MSG_DO_WEAPON_AT_LOCATION;
@@ -1164,7 +1164,7 @@ GameMessage::Type CommandTranslator::issueFireWeaponCommand( const CommandButton
 			}
 		}
 	}
-	else if( BitTest( command->getOptions(), NEED_TARGET_POS ) )
+	else if( BitIsSet( command->getOptions(), NEED_TARGET_POS ) )
 	{
 		//LOCATION BASED FIRE WEAPON
 		msgType = GameMessage::MSG_DO_WEAPON_AT_LOCATION;
@@ -1352,10 +1352,9 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 	//drawable is invalid... then convert it to a position to be evaluated instead.
 	//Added: shrubberies are the exception for interactions...
 	//Removed: GS Took out ObjectStatusUnselectable, since that status only prevents selection, not everything
-	if (obj == NULL || 
-		(BitTest(obj->getStatusBits(), OBJECT_STATUS_MASKED) && 
-		!obj->isKindOf(KINDOF_SHRUBBERY) && !obj->isKindOf(KINDOF_FORCEATTACKABLE)) 
-	)
+	if( obj == NULL || 
+			obj->getStatusBits().test( OBJECT_STATUS_MASKED ) && 
+			!obj->isKindOf(KINDOF_SHRUBBERY) && !obj->isKindOf(KINDOF_FORCEATTACKABLE) ) 
 	{
 		//Nulling out the draw and obj pointer will force the remainder of this code to evaluate 
 		//a position interaction.
@@ -1424,7 +1423,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				|| command->getCommandType() == GUI_COMMAND_SPECIAL_POWER
 				|| command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER))
 		{
-			if( obj && obj->isKindOf( KINDOF_SHRUBBERY ) && !BitTest( command->getOptions(), ALLOW_SHRUBBERY_TARGET ) )
+			if( obj && obj->isKindOf( KINDOF_SHRUBBERY ) && !BitIsSet( command->getOptions(), ALLOW_SHRUBBERY_TARGET ) )
 			{
 				//If our object is a shrubbery, and we don't allow targetting it... then null it out.
 				//Nulling out the draw and obj pointer will force the remainder of this code to evaluate 
@@ -1433,7 +1432,7 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 				obj = NULL;
 			}
 
-			if( obj && obj->isKindOf( KINDOF_MINE ) && !BitTest( command->getOptions(), ALLOW_MINE_TARGET ) )
+			if( obj && obj->isKindOf( KINDOF_MINE ) && !BitIsSet( command->getOptions(), ALLOW_MINE_TARGET ) )
 			{
 				//If our object is a mine, and we don't allow targetting it... then null it out.
 				//Nulling out the draw and obj pointer will force the remainder of this code to evaluate 
@@ -1445,27 +1444,27 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 			//Kris: September 27, 2002
 			//Added relationship tests to make sure we're not attempting a context-command on a restricted relationship.
 			//This case prevents rebels from using tranq darts on allies.
-			if( obj && BitTest( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
+			if( obj && BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
 			{
 				Relationship relationship = ThePlayerList->getLocalPlayer()->getRelationship( obj->getTeam() );
 				switch( relationship )
 				{
 					case ALLIES:
-						if( !BitTest( command->getOptions(), NEED_TARGET_ALLY_OBJECT ) )
+						if( !BitIsSet( command->getOptions(), NEED_TARGET_ALLY_OBJECT ) )
 						{
 							draw = NULL;
 							obj = NULL;
 						}	
 						break;
 					case ENEMIES:
-						if( !BitTest( command->getOptions(), NEED_TARGET_ENEMY_OBJECT ) )
+						if( !BitIsSet( command->getOptions(), NEED_TARGET_ENEMY_OBJECT ) )
 						{
 							draw = NULL;
 							obj = NULL;
 						}	
 						break;
 					case NEUTRAL:
-						if( !BitTest( command->getOptions(), NEED_TARGET_NEUTRAL_OBJECT ) )
+						if( !BitIsSet( command->getOptions(), NEED_TARGET_NEUTRAL_OBJECT ) )
 						{
 							draw = NULL;
 							obj = NULL;
@@ -2203,7 +2202,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		return DESTROY_MESSAGE;
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	ExtentModType extentModType = EXTENTMOD_INVALID;
 	Real extentModAmount = 0.0f;
 #endif
@@ -2214,7 +2213,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_SELECT_MATCHING_UNITS:
 		{
 
-			TheInGameUI->selectMatchingUnits();
+			TheInGameUI->selectUnitsMatchingCurrentSelection();
 
 			disp = DESTROY_MESSAGE;
 			break;
@@ -2740,7 +2739,51 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_SELECT_ALL:
+		case GameMessage::MSG_META_SELECT_ALL_AIRCRAFT:
 		{
+			KindOfMaskType requiredKindofs;
+			KindOfMaskType disqualifyingKindofs;
+			disqualifyingKindofs.set(KINDOF_DOZER);
+			disqualifyingKindofs.set(KINDOF_HARVESTER);
+			disqualifyingKindofs.set(KINDOF_IGNORES_SELECT_ALL);
+			Bool selectAircraft = FALSE;
+			
+			if( t == GameMessage::MSG_META_SELECT_ALL_AIRCRAFT )
+			{
+				requiredKindofs.set(KINDOF_AIRCRAFT);
+				selectAircraft = TRUE;
+			}
+
+			//Kris: Patch 1.03. We need to deselect all the units if any of the units we have selected
+			//are incompatible with the select all type we are triggering. This is a fix for the SCUDSTORM
+			//exploit.
+			const DrawableList *drawList = TheInGameUI->getAllSelectedDrawables();
+			Drawable *draw;
+			for( DrawableListCIt it = drawList->begin(); it != drawList->end(); ++it )
+			{
+				draw = *it;
+				if( selectAircraft && (draw->isAnyKindOf( disqualifyingKindofs ) || !draw->isKindOf( KINDOF_AIRCRAFT )) )
+				{
+					TheInGameUI->deselectAllDrawables();
+					break;
+				}
+				else if( !selectAircraft && (draw->isAnyKindOf( disqualifyingKindofs ) || draw->isKindOf( KINDOF_STRUCTURE )) )
+				{
+					TheInGameUI->deselectAllDrawables();
+					break;
+				}
+			}
+
+			TheInGameUI->selectAllUnitsByType(requiredKindofs, disqualifyingKindofs);
+
+			disp = DESTROY_MESSAGE;
+			break;
+
+
+
+
+
+/*
 			TheInGameUI->deselectAllDrawables();
 
 			GameMessage *teamMsg = TheMessageStream->appendMessage( GameMessage::MSG_CREATE_SELECTED_GROUP );
@@ -2786,10 +2829,6 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 						TheInGameUI->setDisplayedMaxWarning( FALSE );
 					}
 				}
-				/*else
-				{
-					TheInGameUI->deselectDrawable(draw);
-				}*/
 
 				draw = draw->getNextDrawable();
 			}
@@ -2801,6 +2840,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 			disp = DESTROY_MESSAGE;
 			break;
+*/
 
 		}  // end select all
 
@@ -2829,7 +2869,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEPLOY:
-			#ifdef _DEBUG
+			#ifdef RTS_DEBUG
 			DEBUG_ASSERTCRASH(FALSE, ("unimplemented meta command MSG_META_DEPLOY !"));
 			#endif
 			/// @todo srj implement me
@@ -2838,7 +2878,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_FOLLOW:
-			#ifdef _DEBUG
+			#ifdef RTS_DEBUG
 			DEBUG_ASSERTCRASH(FALSE, ("unimplemented meta command MSG_META_FOLLOW !"));
 			#endif
 			/// @todo srj implement me
@@ -2859,11 +2899,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_CHAT_ALLIES:
-#if !defined(_PLAYTEST)
 			if (TheGameLogic->isInMultiplayerGame() && !TheGameLogic->isInReplayGame())
-#else
-			if (TheGameLogic->isInMultiplayerGame())
-#endif
 			{
 				Player *localPlayer = ThePlayerList->getLocalPlayer();
 				if (localPlayer && localPlayer->isPlayerActive() || !TheGlobalData->m_netMinPlayers)
@@ -2877,11 +2913,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_CHAT_EVERYONE:
-#if !defined(_PLAYTEST)
 			if (TheGameLogic->isInMultiplayerGame() && !TheGameLogic->isInReplayGame())
-#else
-			if (TheGameLogic->isInMultiplayerGame())
-#endif
 			{
 				Player *localPlayer = ThePlayerList->getLocalPlayer();
 				if (localPlayer && localPlayer->isPlayerActive() || !TheGlobalData->m_netMinPlayers)
@@ -2906,13 +2938,9 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_PLACE_BEACON:
-#if !defined(_PLAYTEST)
 			if (TheGameLogic->isInMultiplayerGame() && !TheGameLogic->isInReplayGame() &&
 				ThePlayerList->getLocalPlayer()->isPlayerActive() &&
 				(TheGlobalData->m_netMinPlayers==0 || TheGameInfo->isMultiPlayer()))
-#else
-			if (TheGameLogic->isInMultiplayerGame() && ThePlayerList->getLocalPlayer()->isPlayerActive() && TheGameInfo->isMultiPlayer())
-#endif
 			{
 				Int count;
 				const ThingTemplate *thing = TheThingFactory->findTemplate( ThePlayerList->getLocalPlayer()->getPlayerTemplate()->getBeaconTemplate() );
@@ -2929,11 +2957,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_REMOVE_BEACON:
-#if !defined(_PLAYTEST)
 			if (TheGameLogic->isInMultiplayerGame() && !TheGameLogic->isInReplayGame())
-#else
-			if (TheGameLogic->isInMultiplayerGame())
-#endif
+
 			{
 				TheMessageStream->appendMessage( GameMessage::MSG_REMOVE_BEACON );
 			}
@@ -3066,7 +3091,55 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_CAMERA_RESET:
 			TheInGameUI->resetCamera();
 			break;
-			
+		case GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY:
+		{
+			if( TheGlobalData )
+			{
+#if !defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
+				if (TheGameLogic->isInReplayGame())
+#endif
+				{
+					TheWritableGlobalData->m_TiVOFastMode = 1 - TheGlobalData->m_TiVOFastMode;
+					TheInGameUI->message( UnicodeString( L"m_TiVOFastMode: %s" ),
+																TheGlobalData->m_TiVOFastMode ? L"ON" : L"OFF" );
+				}
+			}  // end if
+
+			disp = DESTROY_MESSAGE;
+			break;
+
+		}
+		case GameMessage::MSG_META_TOGGLE_PAUSE:
+		{
+#if !defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
+			if (TheGameLogic->isInReplayGame())
+#endif
+			{
+				if (TheGameLogic->isGamePaused())
+				{
+					TheGameLogic->setGamePaused(FALSE);
+				}
+				else
+				{
+					Bool pause = TRUE;
+					Bool pauseMusic = FALSE;
+					Bool pauseInput = FALSE;
+					TheGameLogic->setGamePaused(pause, pauseMusic, pauseInput);
+				}
+			}
+			break;
+		}
+		case GameMessage::MSG_META_STEP_FRAME:
+		{
+#if !defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
+			if (TheGameLogic->isInReplayGame())
+#endif
+			{
+				TheGameLogic->setGamePaused(FALSE);
+				TheGameLogic->setGamePausedInFrame(TheGameLogic->getFrame() + 1);
+			}
+			break;
+		}
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_BEGIN_FORCEMOVE:
 			DEBUG_ASSERTCRASH(!TheInGameUI->isInForceMoveToMode(), ("forceMoveToMode mismatch"));
@@ -3370,7 +3443,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		}  // end case GameMessage::MSG_MOUSE_LEFT_CLICK
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		//------------------------------------------------------------------------- BEGIN DEMO MESSAGES
 		//------------------------------------------------------------------------- BEGIN DEMO MESSAGES
 		//------------------------------------------------------------------------- BEGIN DEMO MESSAGES
@@ -3624,7 +3697,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_BW_VIEW:
 		{   //We're not testing BW mode anymore, so use this message for toggling wireframe mode.
-			static mode=0;
+			static Int mode=0;
 			if (mode == 0)
 			{	//First turn on wireframe
 				TheTacticalView->set3DWireFrameMode(TRUE);
@@ -4228,7 +4301,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			{
 				// cheese festival: do NOT imitate this code. it is for debug purposes only.
 				std::vector<AsciiString> v = TheScienceStore->friend_getScienceNames();
-				for (int i = 0; i < v.size(); ++i) 
+				for (size_t i = 0; i < v.size(); ++i) 
 				{
 					ScienceType st = TheScienceStore->getScienceFromInternalName(v[i]);
 					if (st != SCIENCE_INVALID && TheScienceStore->isScienceGrantable(st))
@@ -4546,7 +4619,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			break;
 		}
 
-		//------------------------------------------------------------------------PLAYTEST DEMO MESSAGES
+		//------------------------------------------------------------------------DEMO MESSAGES
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_DEBUG_STATS:
 		{
@@ -4561,11 +4634,11 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//--------------------------------------------------------------------------- END DEMO MESSAGES
 		//--------------------------------------------------------------------------- END DEMO MESSAGES
 		//--------------------------------------------------------------------------- END DEMO MESSAGES
-#endif // #if defined(_DEBUG) || defined(_INTERNAL)
+#endif // #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
-		//------------------------------------------------------------------------PLAYTEST DEMO MESSAGES
+		//------------------------------------------------------------------------DEMO MESSAGES
 		//-----------------------------------------------------------------------------------------
-#if defined(_INTERNAL) || defined(_DEBUG) || defined(_PLAYTEST)
+#if defined(RTS_INTERNAL) || defined(RTS_DEBUG) 
 		case GameMessage::MSG_META_DEMO_TOGGLE_AUDIODEBUG:
 		{
 			if (TheDisplay->getDebugDisplayCallback() == AudioDebugDisplay)
@@ -4576,10 +4649,10 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			break;
 		}
 
-#endif//defined(_INTERNAL) || defined(_DEBUG) || defined(_PLAYTEST)
+#endif//defined(RTS_INTERNAL) || defined(RTS_DEBUG) 
 		
 #ifdef DUMP_PERF_STATS
-		//------------------------------------------------------------------------PLAYTEST DEMO MESSAGES
+		//------------------------------------------------------------------------DEMO MESSAGES
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_PERFORM_STATISTICAL_DUMP:
 			//Dump performance statistics for this frame.

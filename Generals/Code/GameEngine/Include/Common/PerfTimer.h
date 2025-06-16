@@ -31,7 +31,9 @@
 #ifndef __PERFTIMER_H__
 #define __PERFTIMER_H__
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#include "Utility/intrin_compat.h"
+
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	/*
 		NOTE NOTE NOTE: never check this in with this enabled, since there is a nonzero time penalty
 		for running in this mode. Only enable it for local builds for testing purposes! (srj)
@@ -71,16 +73,7 @@ __forceinline void GetPrecisionTimer(Int64* t)
 #ifdef USE_QPF
 	QueryPerformanceCounter((LARGE_INTEGER*)t);
 #else
-	// CPUID is needed to force serialization of any previous instructions. 
-	__asm 
-	{
-		// for now, I am commenting this out. It throws the timings off a bit more (up to .001%) jkmcd
-		//		CPUID
-		RDTSC
-		MOV ECX,[t]
-		MOV [ECX], EAX
-		MOV [ECX+4], EDX
-	}
+	*t = _rdtsc();
 #endif
 }
 #endif
@@ -160,7 +153,7 @@ void PerfGather::stopTimer()
 
 	++m_callCount;
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	DEBUG_ASSERTCRASH(*m_activeHead != NULL, ("m_activeHead is null, uh oh"));
 	DEBUG_ASSERTCRASH(*m_activeHead == this, ("I am not the active timer, uh oh"));
 	DEBUG_ASSERTCRASH(m_activeHead >= &m_active[0] && m_activeHead <= &m_active[MAX_ACTIVE_STACK-1], ("active under/over flow"));

@@ -26,7 +26,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "GameNetwork/FrameData.h"
-#include "GameNetwork/NetworkUtil.h"
+#include "GameNetwork/networkutil.h"
 
 /**
  * Constructor
@@ -50,7 +50,7 @@ FrameData::FrameData()
 FrameData::~FrameData() 
 {
 	if (m_commandList != NULL) {
-		m_commandList->deleteInstance();
+		deleteInstance(m_commandList);
 		m_commandList = NULL;
 	}
 }

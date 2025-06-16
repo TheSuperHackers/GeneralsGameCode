@@ -50,7 +50,7 @@
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -120,7 +120,7 @@ public:
 
 	virtual Bool allow(Object *objOther);
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterStealthedOrStealthGarrisoned"; }
 #endif
 };
@@ -130,7 +130,7 @@ Bool PartitionFilterStealthedOrStealthGarrisoned::allow( Object *objOther)
 	if( ! objOther )
 		return FALSE;
 
-	if( objOther->getStatusBits() & OBJECT_STATUS_STEALTHED )
+	if( objOther->getStatusBits().test( OBJECT_STATUS_STEALTHED ) )
 		return TRUE;
 
 	ContainModuleInterface *contain = objOther->getContain();
@@ -207,8 +207,7 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 		if ( them->isEffectivelyDead() )
 			continue;
 
-		static NameKeyType key_StealthUpdate = NAMEKEY("StealthUpdate");
-		StealthUpdate* stealth = (StealthUpdate *)them->findUpdateModule(key_StealthUpdate);
+		StealthUpdate* stealth = them->getStealth();
 		if ( stealth ) 
 		{
 
@@ -324,8 +323,7 @@ UpdateSleepTime StealthDetectorUpdate::update( void )
 				{
 					rider = *it;
 
-					static NameKeyType key_StealthUpdate = NAMEKEY("StealthUpdate");
-					StealthUpdate* stealth = (StealthUpdate *)rider->findUpdateModule(key_StealthUpdate);
+					StealthUpdate* stealth = rider->getStealth();
 					if ( stealth ) 
 					{
 						// we have found someone

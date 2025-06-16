@@ -49,7 +49,7 @@
 #include "GUIEdit.h"
 #include "Properties.h"
 #include "LayoutScheme.h"
-#include "Resource.h"
+#include "resource.h"
 #include "GameClient/GadgetComboBox.h"
 #include "GameClient/GadgetListBox.h"
 #include "GameClient/GadgetSlider.h"

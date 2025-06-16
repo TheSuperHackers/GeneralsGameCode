@@ -19,11 +19,11 @@
 // ShadowOptions.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "worldbuilder.h"
-#include "Lib\BaseType.h"
+#include "StdAfx.h"
+#include "WorldBuilder.h"
+#include "Lib/BaseType.h"
 #include "rendobj.h"
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 #include "ShadowOptions.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
 

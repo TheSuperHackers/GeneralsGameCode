@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <Type Name="UnicodeString">
+        <DisplayString Condition="m_data != nullptr">{(const wchar_t *)(&amp; m_data[1]),su}</DisplayString>
+        <DisplayString Condition="m_data == nullptr">""</DisplayString>
+        <Expand>
+            <Item Name="[data]" Optional="true" Condition="m_data != nullptr">m_data</Item>
+            <Item Name="[str]" Optional="true" Condition="m_data != nullptr">(const wchar_t *)(&amp; m_data[1])</Item>
+        </Expand>
+    </Type>
+</AutoVisualizer>

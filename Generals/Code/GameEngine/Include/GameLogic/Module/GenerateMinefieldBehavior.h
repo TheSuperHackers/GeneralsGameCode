@@ -95,7 +95,7 @@ protected:
 	virtual void upgradeImplementation();
 	virtual Bool isSubObjectsUpgrade() { return false; }
 
-	virtual void getUpgradeActivationMasks(Int64& activation, Int64& conflicting) const
+	virtual void getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
 	{
 		getGenerateMinefieldBehaviorModuleData()->m_upgradeMuxData.getUpgradeActivationMasks(activation, conflicting);
 	}

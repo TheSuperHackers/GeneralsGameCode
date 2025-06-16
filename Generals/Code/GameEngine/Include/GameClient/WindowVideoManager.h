@@ -69,7 +69,7 @@ class VideoBuffer;
 //-----------------------------------------------------------------------------
 
 
-enum WindowVideoPlayType
+enum WindowVideoPlayType CPP_11(: Int)
 {
 	WINDOW_PLAY_MOVIE_ONCE = 0,
 	WINDOW_PLAY_MOVIE_LOOP,
@@ -78,7 +78,7 @@ enum WindowVideoPlayType
 	WINDOW_PLAY_MOVIE_COUNT
 };
 
-enum WindowVideoStates
+enum WindowVideoStates CPP_11(: Int)
 {
 	WINDOW_VIDEO_STATE_START = 0,
 	WINDOW_VIDEO_STATE_STOP,

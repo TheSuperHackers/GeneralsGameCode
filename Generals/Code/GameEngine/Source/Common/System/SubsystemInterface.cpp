@@ -29,14 +29,14 @@
 #include "Common/SubsystemInterface.h"
 #include "Common/Xfer.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
 
 #ifdef DUMP_PERF_STATS
-#include "GameLogic\GameLogic.h"
+#include "GameLogic/GameLogic.h"
 #include "Common/PerfTimer.h"
 
 Real SubsystemInterface::s_msConsumed = 0;
@@ -137,7 +137,7 @@ void SubsystemInterfaceList::addSubsystem(SubsystemInterface* sys)
 void SubsystemInterfaceList::removeSubsystem(SubsystemInterface* sys)
 {
 #ifdef DUMP_PERF_STATS
-	for (SubsystemList::iterator it = m_allSubsystems.begin(); it != m_subsystems.end(); ++it)
+	for (SubsystemList::iterator it = m_allSubsystems.begin(); it != m_allSubsystems.end(); ++it)
 	{	 
 		if ( (*it) == sys) {
 			m_allSubsystems.erase(it);

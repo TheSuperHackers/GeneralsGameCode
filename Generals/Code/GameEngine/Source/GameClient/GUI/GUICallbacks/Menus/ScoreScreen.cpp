@@ -53,7 +53,6 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/BattleHonors.h"
-#include "Common/CopyProtection.h"
 #include "Common/GameEngine.h"
 #include "Common/GameLOD.h"
 #include "Common/GameState.h"
@@ -99,7 +98,7 @@
 //Added By Saad
 #include "GameClient/InGameUI.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -269,7 +268,6 @@ void ScoreScreenInit( WindowLayout *layout, void *userData )
 		buttonSaveReplay->winEnable(FALSE);
 
 	s_needToFinishSinglePlayerInit = FALSE;
-#if !defined(_PLAYTEST)
 	if (TheGameLogic->isInReplayGame())
 	{
 		if (buttonSaveReplay)
@@ -288,14 +286,12 @@ void ScoreScreenInit( WindowLayout *layout, void *userData )
 		}
 	}
 	else
-#endif
 	{
 		if(TheGameLogic->isInInternetGame())
 		{
 			initInternetMultiPlayer();
 			TheTransitionHandler->setGroup("ScoreScreenShow");
 		}
-#if !defined(_PLAYTEST)
 		else if( TheGameLogic->isInLanGame())
 		{
 			initLANMultiPlayer();
@@ -311,7 +307,6 @@ void ScoreScreenInit( WindowLayout *layout, void *userData )
 			overidePlayerDisplayName = TRUE;
 			initSinglePlayer();
 		}
-#endif
 	}
 
 	// Make Sure the layout is visible
@@ -393,7 +388,7 @@ WindowMsgHandledType ScoreScreenInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
@@ -459,7 +454,6 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 			{
 				if(!buttonIsFinishCampaign)
 					ReplayWasPressed = TRUE;
-#if !defined(_PLAYTEST)
 				if( screenType == SCORESCREEN_SINGLEPLAYER)	
 				{
 					AsciiString mapName = TheCampaignManager->getCurrentMap();
@@ -474,7 +468,6 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 						CheckForCDAtGameStart( startNextCampaignGame );
 					}
 				}
-#endif
 			}
 			else if ( controlID == buttonBuddiesID )	
 			{
@@ -571,8 +564,6 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 //-----------------------------------------------------------------------------
 // PRIVATE FUNCTIONS //////////////////////////////////////////////////////////
 //-----------------------------------------------------------------------------
-
-#if !defined(_PLAYTEST)
 
 /** Special Init path for making this a single player Score Screen */
 //-------------------------------------------------------------------------------------------------
@@ -685,11 +676,7 @@ void initSinglePlayer( void )
 
 void finishSinglePlayerInit( void )
 {
-	Bool copyProtectOK = TRUE;
-#ifdef DO_COPY_PROTECTION
-	copyProtectOK = CopyProtect::validate();
-#endif
-	if(copyProtectOK && TheCampaignManager->isVictorious())
+	if(TheCampaignManager->isVictorious())
 	{
 		TheCampaignManager->gotoNextMission();
 
@@ -767,9 +754,12 @@ void finishSinglePlayerInit( void )
 	TheInGameUI->freeMessageResources();
 
 	//
-	s_blankLayout->destroyWindows();
-	s_blankLayout->deleteInstance();
-	s_blankLayout = NULL;
+	if (s_blankLayout)
+	{
+		s_blankLayout->destroyWindows();
+		deleteInstance(s_blankLayout);
+		s_blankLayout = NULL;
+	}
 
 	// set keyboard focus to main parent
 	TheWindowManager->winSetFocus( parent );
@@ -794,7 +784,6 @@ void finishSinglePlayerInit( void )
 	// need to do this here
 	TheTransitionHandler->setGroup("ScoreScreenShow");
 }
-#endif
 
 /** Special Init path for making this a single player replay Score Screen */
 //-------------------------------------------------------------------------------------------------
@@ -1410,7 +1399,8 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 					Bool sawAnyDisconnects = FALSE;
 					Bool anyNonAI = FALSE;
 					Bool anyAI = FALSE;
-					for (Int i=0; i<MAX_SLOTS; ++i)
+					Int i=0;
+					for (; i<MAX_SLOTS; ++i)
 					{
 						const GameSlot *slot = TheGameInfo->getConstSlot(i);
 						if (slot->isOccupied() && i != localSlotNum && !slot->isAI())

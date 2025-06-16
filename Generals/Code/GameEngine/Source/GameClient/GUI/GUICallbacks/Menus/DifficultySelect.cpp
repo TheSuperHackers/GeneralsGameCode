@@ -182,7 +182,7 @@ WindowMsgHandledType DifficultySelectInput( GameWindow *window, UnsignedInt msg,
 //					// send a simulated selected event to the parent window of the
 //					// back/exit button
 //					//
-//					if( BitTest( state, KEY_STATE_UP ) )
+//					if( BitIsSet( state, KEY_STATE_UP ) )
 //					{
 //						AsciiString buttonName( "SkirmishMapSelectMenu.wnd:ButtonBack" );
 //						NameKeyType buttonID = TheNameKeyGenerator->nameToKey( buttonName );
@@ -258,8 +258,12 @@ WindowMsgHandledType DifficultySelectSystem( GameWindow *window, UnsignedInt msg
 				pref.write();
 				//TheScriptEngine->setGlobalDifficulty(s_AIDiff); // CANNOT DO THIS! REPLAYS WILL BREAK!
 				WindowLayout *layout = window->winGetLayout();
-				layout->destroyWindows();
-				layout->deleteInstance();
+				if (layout)
+				{
+					layout->destroyWindows();
+					deleteInstance(layout);
+				}
+
 				setupGameStart(TheCampaignManager->getCurrentMap(), s_AIDiff);
 				// start the game
 			}
@@ -268,8 +272,11 @@ WindowMsgHandledType DifficultySelectSystem( GameWindow *window, UnsignedInt msg
 				TheCampaignManager->setCampaign( AsciiString::TheEmptyString );
 				TheWindowManager->winUnsetModal(window);
 				WindowLayout *layout = window->winGetLayout();
-				layout->destroyWindows();
-				layout->deleteInstance();
+				if (layout)
+				{
+					layout->destroyWindows();
+					deleteInstance(layout);
+				}
 				
 			}
 			else if ( controlID == radioButtonEasyAIID )

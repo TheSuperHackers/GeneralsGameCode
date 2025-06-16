@@ -56,7 +56,7 @@
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/GameSpy/GSConfig.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -102,7 +102,8 @@ FirewallHelperClass::FirewallHelperClass(void)
 	m_lastBehavior = FIREWALL_TYPE_UNKNOWN;
 	m_sourcePortAllocationDelta = 0;
 	m_lastSourcePortAllocationDelta = 0;
-	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
+	Int i = 0;
+	for (; i < MAX_SPARE_SOCKETS; ++i) {
 		m_spareSockets[i].port = 0;
 		m_messages[i].length = 0;
 		m_mangledPorts[i] = 0;
@@ -363,10 +364,7 @@ Bool FirewallHelperClass::sendToManglerFromPort(UnsignedInt address, UnsignedSho
 	packet.length = sizeof(ManglerData);
 
 	DEBUG_LOG(("FirewallHelperClass::sendToManglerFromPort - Sending from port %d to %d.%d.%d.%d:%d\n", (UnsignedInt)port,
-		(address & 0xFF000000) >> 24,
-		(address & 0xFF0000) >> 16,
-		(address & 0xFF00) >> 8,
-		(address & 0xFF), MANGLER_PORT));
+		PRINTF_IP_AS_4_INTS(address), MANGLER_PORT));
 /*
 	DEBUG_LOG(("Buffer = "));
 	for (i = 0; i < sizeof(ManglerData); ++i) {
@@ -446,7 +444,8 @@ UnsignedShort FirewallHelperClass::getManglerResponse(UnsignedShort packetID, In
 
 	sockaddr_in addr;
 
-	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
+	Int i = 0;
+	for (; i < MAX_SPARE_SOCKETS; ++i) {
 		if (m_spareSockets[i].udp != NULL) {
 			ManglerMessage *message = findEmptyMessage();
 			if (message == NULL) {
@@ -910,7 +909,8 @@ Bool FirewallHelperClass::detectionTest3Update() {
 		** We should use a non-linear set of source ports so we can detect the NAT32 relative offset
 		** case.
 		*/
-		for (Int i=0 ; i<NUM_TEST_PORTS ; i++) {
+		Int i=0;
+		for (; i<NUM_TEST_PORTS ; i++) {
 			m_sparePorts[i] = getNextTemporarySourcePort(i);
 			if (!openSpareSocket(m_sparePorts[i])) {
 
@@ -957,7 +957,8 @@ Bool FirewallHelperClass::detectionTest3Update() {
 }
 
 Bool FirewallHelperClass::detectionTest3WaitForResponsesUpdate() {
-	for (Int i = 0; i < NUM_TEST_PORTS; ++i) {
+	Int i = 0;
+	for (; i < NUM_TEST_PORTS; ++i) {
 		if (m_mangledPorts[i] == 0) {
 			m_mangledPorts[i] = getManglerResponse(m_packetID + i);
 			if (m_mangledPorts[i] != 0) {
@@ -1526,7 +1527,8 @@ Int FirewallHelperClass::getFirewallRetries(FirewallBehaviorType behavior)
  *  returns TRUE if successful, FALSE otherwise.
  */
 Bool FirewallHelperClass::openSpareSocket(UnsignedShort port) {
-	for (Int i = 0; i < MAX_SPARE_SOCKETS; ++i) {
+	Int i = 0;
+	for (; i < MAX_SPARE_SOCKETS; ++i) {
 		if (m_spareSockets[i].port == 0) {
 			break;
 		}

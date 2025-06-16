@@ -33,7 +33,7 @@
 
 #include "Common/STLTypedefs.h"
 
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/GameEngine.h"
 #include "Common/GameSpyMiscPreferences.h"
@@ -41,6 +41,7 @@
 #include "Common/Registry.h"
 #include "Common/UserPreferences.h"
 #include "GameClient/AnimateWindowManager.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/WindowLayout.h"
 #include "GameClient/Gadget.h"
 #include "GameClient/GameText.h"
@@ -68,7 +69,7 @@
 
 #include "GameNetwork/WOLBrowser/WebBrowser.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -83,7 +84,7 @@ static Bool useWebBrowserForTOS = FALSE;
 
 static Bool isShuttingDown = false;
 static Bool buttonPushed = false;
-static char *nextScreen = NULL;
+static const char *nextScreen = NULL;
 
 static const UnsignedInt loginTimeoutInMS = 10000;
 static UnsignedInt loginAttemptTime = 0;
@@ -91,8 +92,10 @@ static UnsignedInt loginAttemptTime = 0;
 class GameSpyLoginPreferences : public UserPreferences
 {
 public:
-	GameSpyLoginPreferences() { m_emailPasswordMap.clear(); m_emailNickMap.clear(); }
-	virtual ~GameSpyLoginPreferences() { m_emailPasswordMap.clear(); m_emailNickMap.clear(); }
+	GameSpyLoginPreferences();
+	virtual ~GameSpyLoginPreferences();
+
+	Bool loadFromIniFile();
 
 	virtual Bool load(AsciiString fname);
 	virtual Bool write(void);
@@ -117,22 +120,44 @@ static AsciiString obfuscate( AsciiString in )
 {
 	char *buf = NEW char[in.getLength() + 1];
 	strcpy(buf, in.str());
-	static const char *xor = "1337Munkee";
+	static const char *xorWord = "1337Munkee";
 	char *c = buf;
-	const char *c2 = xor;
+	const char *c2 = xorWord;
 	while (*c)
 	{
 		if (!*c2)
-			c2 = xor;
+			c2 = xorWord;
 		if (*c != *c2)
 			*c = *c++ ^ *c2++;
 		else
 			c++, c2++;
 	}
 	AsciiString out = buf;
-	delete buf;
+	delete[] buf;
 	return out;
 }
+
+GameSpyLoginPreferences::GameSpyLoginPreferences()
+{
+	loadFromIniFile();
+}
+
+GameSpyLoginPreferences::~GameSpyLoginPreferences()
+{
+}
+
+Bool GameSpyLoginPreferences::loadFromIniFile()
+{
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		AsciiString fname;
+		fname.format("GameSpyLogin_Instance%.2u.ini", rts::ClientInstance::getInstanceId());
+		return load(fname);
+	}
+
+	return load("GameSpyLogin.ini");
+}
+
 
 Bool GameSpyLoginPreferences::load( AsciiString fname )
 {
@@ -288,7 +313,6 @@ AsciiStringList GameSpyLoginPreferences::getEmails( void )
 	return theList;
 }
 
-static const char *PREF_FILENAME = "GameSpyLogin.ini";
 static GameSpyLoginPreferences *loginPref = NULL;
 
 static void startPings( void )
@@ -433,7 +457,6 @@ void WOLLoginMenuInit( WindowLayout *layout, void *userData )
 	if (!loginPref)
 	{
 		loginPref = NEW GameSpyLoginPreferences;
-		loginPref->load(PREF_FILENAME);
 	}
 	
 	// if the ESRB warning is blank (other country) hide the box
@@ -589,7 +612,7 @@ void WOLLoginMenuInit( WindowLayout *layout, void *userData )
 #endif // ALLOW_NON_PROFILED_LOGIN
 		// Read login names from registry...
 		GadgetComboBoxReset(comboBoxEmail);
-		GadgetTextEntrySetText(textEntryPassword, UnicodeString.TheEmptyString);
+		GadgetTextEntrySetText(textEntryPassword, UnicodeString::TheEmptyString);
 
 		// look for cached nicks to add
 		AsciiString lastName;
@@ -911,7 +934,7 @@ WindowMsgHandledType WOLLoginMenuInput( GameWindow *window, UnsignedInt msg,
 					// send a simulated selected event to the parent window of the
 					// back/exit button
 					//
-					if( BitTest( state, KEY_STATE_UP ) )
+					if( BitIsSet( state, KEY_STATE_UP ) )
 					{
 						TheWindowManager->winSendSystemMsg( window, GBM_SELECTED, 
 																							(WindowMsgData)buttonBack, buttonBackID );
@@ -1467,7 +1490,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 
 							}
 
-							delete fileBuf;
+							delete[] fileBuf;
 							fileBuf = NULL;
 
 							theFile->close();

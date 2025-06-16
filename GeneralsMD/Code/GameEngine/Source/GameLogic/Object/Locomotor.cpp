@@ -46,7 +46,7 @@
 #include "GameLogic/Module/BodyModule.h"
 #include "GameLogic/Module/AIUpdate.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -524,7 +524,7 @@ LocomotorStore::~LocomotorStore()
 	// delete all the templates, then clear out the table.
 	LocomotorTemplateMap::iterator it;
 	for (it = m_locomotorTemplates.begin(); it != m_locomotorTemplates.end(); ++it) {
-		it->second->deleteInstance();
+		deleteInstance(it->second);
 	}
 
 	m_locomotorTemplates.clear();
@@ -989,7 +989,7 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 	// do not allow for invalid positions that the pathfinder cannot handle ... for airborne
 	// objects we don't need the pathfinder so we'll ignore this
 	//
-	if( BitTest( m_template->m_surfaces, LOCOMOTORSURFACE_AIR ) == false &&
+	if( BitIsSet( m_template->m_surfaces, LOCOMOTORSURFACE_AIR ) == false &&
 			!TheAI->pathfinder()->validMovementTerrain(obj->getLayer(), this, obj->getPosition()) && 
 			!getFlag(ALLOW_INVALID_POSITION)) 
 	{
@@ -1043,7 +1043,7 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 		{
 			*blocked = false;
 		}
-		if (treatAsAirborne && BitTest( m_template->m_surfaces, LOCOMOTORSURFACE_AIR ) ) 
+		if (treatAsAirborne && BitIsSet( m_template->m_surfaces, LOCOMOTORSURFACE_AIR ) ) 
 		{
 			// Airborne flying objects don't collide for now.  jba.
 			*blocked = false;
@@ -2745,7 +2745,7 @@ void LocomotorSet::xferSelfAndCurLocoPtr(Xfer *xfer, Locomotor** loco)
 		}
 		else
 		{
-			for (int i = 0; i < m_locomotors.size(); ++i)
+			for (size_t i = 0; i < m_locomotors.size(); ++i)
 			{
 				if (m_locomotors[i]->getTemplateName() == name)
 				{
@@ -2763,10 +2763,10 @@ void LocomotorSet::xferSelfAndCurLocoPtr(Xfer *xfer, Locomotor** loco)
 //-------------------------------------------------------------------------------------------------
 void LocomotorSet::clear()
 {
-	for (int i = 0; i < m_locomotors.size(); ++i)
+	for (size_t i = 0; i < m_locomotors.size(); ++i)
 	{
 		if (m_locomotors[i])
-			m_locomotors[i]->deleteInstance();
+			deleteInstance(m_locomotors[i]);
 	}
 	m_locomotors.clear();
 	m_validLocomotorSurfaces = 0;

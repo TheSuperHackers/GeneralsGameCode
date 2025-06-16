@@ -26,7 +26,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "GameNetwork/Connection.h"
-#include "GameNetwork/NetworkUtil.h"
+#include "GameNetwork/networkutil.h"
 #include "GameLogic/GameLogic.h"
 
 enum { MaxQuitFlushTime = 30000 }; // wait this many milliseconds at most to retry things before quitting
@@ -59,12 +59,12 @@ Connection::Connection() {
  */
 Connection::~Connection() {
 	if (m_user != NULL) {
-		m_user->deleteInstance();
+		deleteInstance(m_user);
 		m_user = NULL;
 	}
 
 	if (m_netCommandList != NULL) {
-		m_netCommandList->deleteInstance();
+		deleteInstance(m_netCommandList);
 		m_netCommandList = NULL;
 	}
 }
@@ -76,7 +76,7 @@ void Connection::init() {
 	m_transport = NULL;
 
 	if (m_user != NULL) {
-		m_user->deleteInstance();
+		deleteInstance(m_user);
 		m_user = NULL;
 	}
 
@@ -124,7 +124,7 @@ void Connection::attachTransport(Transport *transport) {
  */
 void Connection::setUser(User *user) {
 	if (m_user != NULL) {
-		m_user->deleteInstance();
+		deleteInstance(m_user);
 	}
 
 	m_user = user;
@@ -164,7 +164,7 @@ void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
 		NetCommandRef *tempref = NEW_NETCOMMANDREF(msg);
 
 		Bool msgFits = packet->addCommand(tempref);
-		tempref->deleteInstance(); // delete the temporary reference.
+		deleteInstance(tempref); // delete the temporary reference.
 		tempref = NULL;
 
 		if (!msgFits) {
@@ -186,15 +186,15 @@ void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
 					ref1 = ref1->getNext();
 				}
 
-				tempPacket->deleteInstance();
+				deleteInstance(tempPacket);
 				tempPacket = NULL;
 				++tempPacketPtr;
 
-				list->deleteInstance();
+				deleteInstance(list);
 				list = NULL;
 			}
 
-			origref->deleteInstance();
+			deleteInstance(origref);
 			origref = NULL;
 
 			return;
@@ -206,14 +206,14 @@ void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
 		if (ref != NULL) {
 
 /*
-#if ((defined(_DEBUG)) || (defined(_INTERNAL)))
+#if ((defined(RTS_DEBUG)) || (defined(RTS_INTERNAL)))
 			if (msg->getNetCommandType() == NETCOMMANDTYPE_GAMECOMMAND) {
 				DEBUG_LOG(("Connection::sendNetCommandMsg - added game command %d to net command list for frame %d.\n",
 					msg->getID(), msg->getExecutionFrame()));
 			} else if (msg->getNetCommandType() == NETCOMMANDTYPE_FRAMEINFO) {
 				DEBUG_LOG(("Connection::sendNetCommandMsg - added frame info for frame %d\n", msg->getExecutionFrame()));
 			}
-#endif // _DEBUG || _INTERNAL
+#endif // RTS_DEBUG || RTS_INTERNAL
 */
 
 			ref->setRelay(relay);
@@ -234,7 +234,7 @@ void Connection::clearCommandsExceptFrom( Int playerIndex )
 			m_netCommandList->removeMessage(tmp);
 			NetCommandRef *toDelete = tmp;
 			tmp = tmp->getNext();
-			toDelete->deleteInstance();
+			deleteInstance(toDelete);
 		} else {
 			tmp = tmp->getNext();
 		}
@@ -305,7 +305,7 @@ UnsignedInt Connection::doSend() {
 						msg->setTimeLastSent(curtime);
 					} else {
 						m_netCommandList->removeMessage(msg);
-						msg->deleteInstance();
+						deleteInstance(msg);
 					}
 				}
 			}
@@ -326,7 +326,7 @@ UnsignedInt Connection::doSend() {
 			m_lastTimeSent = curtime;
 		}
 		if (packet != NULL) {
-			packet->deleteInstance(); // delete the packet now that we're done with it.
+			deleteInstance(packet); // delete the packet now that we're done with it.
 		}
 	}
 
@@ -371,7 +371,7 @@ NetCommandRef * Connection::processAck(UnsignedShort commandID, UnsignedByte ori
 		return NULL;
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool doDebug = FALSE;
 	if (temp->getCommand()->getNetCommandType() == NETCOMMANDTYPE_DISCONNECTFRAME) {
 		doDebug = TRUE;
@@ -384,7 +384,7 @@ NetCommandRef * Connection::processAck(UnsignedShort commandID, UnsignedByte ori
 	m_averageLatency += lat / CONNECTION_LATENCY_HISTORY_LENGTH;
 	m_latencies[index] = lat;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (doDebug == TRUE) {
 		DEBUG_LOG(("Connection::processAck - disconnect frame command %d found, removing from command list.\n", commandID));
 	}
@@ -411,7 +411,7 @@ void Connection::doRetryMetrics() {
 	}
 }
 
-#if defined(_DEBUG) || (_INTERNAL)
+#if defined(RTS_DEBUG) || (RTS_INTERNAL)
 void Connection::debugPrintCommands() {
 	NetCommandRef *ref = m_netCommandList->getFirstMessage();
 	while (ref != NULL) {

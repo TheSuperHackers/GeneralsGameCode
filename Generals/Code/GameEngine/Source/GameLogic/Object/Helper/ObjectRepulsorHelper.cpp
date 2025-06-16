@@ -45,7 +45,7 @@ ObjectRepulsorHelper::~ObjectRepulsorHelper( void )
 UpdateSleepTime ObjectRepulsorHelper::update()
 {
 	// if we ever get here, clear this.
-	getObject()->setStatus(OBJECT_STATUS_REPULSOR, FALSE);
+	getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_REPULSOR ) );
 
 	// then go back to sleep until we are forcibly awakened.
 	return UPDATE_SLEEP_FOREVER; 

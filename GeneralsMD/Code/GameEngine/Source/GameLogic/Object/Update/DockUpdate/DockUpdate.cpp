@@ -96,7 +96,7 @@ DockUpdate::DockUpdate( Thing *thing, const ModuleData* moduleData ) : UpdateMod
 		m_approachPositionReached.resize(DEFAULT_APPROACH_VECTOR_SIZE);
 	}
 
-	for( Int vectorIndex = 0; vectorIndex < m_approachPositions.size(); ++vectorIndex )
+	for( size_t vectorIndex = 0; vectorIndex < m_approachPositions.size(); ++vectorIndex )
 	{
 		// Whatever size we are, init everything.
 		m_approachPositions[vectorIndex].zero();
@@ -118,7 +118,7 @@ Bool DockUpdate::isClearToApproach( Object const* docker ) const
 
 	ObjectID dockerID = docker->getID();
 
-	for( Int positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
+	for( size_t positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
 	{
 		if( m_approachPositionOwners[positionIndex] == INVALID_ID )
 		{
@@ -146,7 +146,8 @@ Bool DockUpdate::reserveApproachPosition( Object* docker, Coord3D *position, Int
 
 	ObjectID dockerID = docker->getID();
 
-	for( Int positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
+	Int positionIndex = 0;
+	for( ; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
 	{
 		if( m_approachPositionOwners[positionIndex] == dockerID )
 		{
@@ -314,7 +315,7 @@ void DockUpdate::getExitPosition( Object* docker, Coord3D *position )
 void DockUpdate::onApproachReached( Object* docker )
 {
 	ObjectID dockerID = docker->getID();
-	for( Int positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
+	for( size_t positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
 	{
 		if( m_approachPositionOwners[positionIndex] == dockerID )
 		{
@@ -334,7 +335,7 @@ void DockUpdate::onEnterReached( Object* docker )
 	m_dockerInside = TRUE;
 
 	ObjectID dockerID = docker->getID();
-	for( Int positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
+	for( size_t positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
 	{
 		if( m_approachPositionOwners[positionIndex] == dockerID )
 		{
@@ -380,7 +381,7 @@ void DockUpdate::onExitReached( Object* docker )
 void DockUpdate::cancelDock( Object* docker )
 {
 	ObjectID dockerID = docker->getID();
-	for( Int positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
+	for( size_t positionIndex = 0; positionIndex < m_approachPositionOwners.size(); ++positionIndex )
 	{
 		if( m_approachPositionOwners[positionIndex] == dockerID )
 		{
@@ -417,7 +418,7 @@ UpdateSleepTime DockUpdate::update()
 	if( m_activeDocker == INVALID_ID  &&  !m_dockCrippled )
 	{
 		// if setDockCrippled has been called, I will never give enterance permission.
-		for( Int positionIndex = 0; positionIndex < m_approachPositionReached.size(); ++positionIndex )
+		for( size_t positionIndex = 0; positionIndex < m_approachPositionReached.size(); ++positionIndex )
 		{
 			if( m_approachPositionReached[positionIndex] )
 			{
@@ -509,7 +510,13 @@ void DockUpdate::loadDockPositions()
 			if( m_numberApproachPositions != DYNAMIC_APPROACH_VECTOR_FLAG )
 			{
 				// Dynamic means no bones
-				Coord3D approachBones[DEFAULT_APPROACH_VECTOR_SIZE];
+
+				// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+				// We shouldn't depend on bones of a drawable here!
+
+				// TheSuperHackers @fix helmutbuhler 19/04/2025 Zero initialize array to prevent uninitialized memory reads.
+				// Important: the entire target vector is used for serialization and crc and must not contain random data.
+				Coord3D approachBones[DEFAULT_APPROACH_VECTOR_SIZE] = {0};
 				m_numberApproachPositionBones = myDrawable->getPristineBonePositions( "DockWaiting", 1, approachBones, NULL, m_numberApproachPositions);
 				if( m_numberApproachPositions == m_approachPositions.size() )//safeguard: will always be true
 				{
@@ -583,7 +590,8 @@ void DockUpdate::xfer( Xfer *xfer )
 	Int vectorSize = m_approachPositions.size();
 	xfer->xferInt( &vectorSize );
 	m_approachPositions.resize(vectorSize);
-	for( Int vectorIndex = 0; vectorIndex < vectorSize; ++vectorIndex )
+	Int vectorIndex = 0;
+	for( ; vectorIndex < vectorSize; ++vectorIndex )
 	{
 		// Okay, this is cool.  On save, the size and a bunch of coords will be written.
 		// on load, vectorSize will be at 0 from the .size, but will then get set

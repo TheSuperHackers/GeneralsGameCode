@@ -207,7 +207,7 @@ inline BehaviorModule::BehaviorModule( Thing *thing, const ModuleData* moduleDat
 inline BehaviorModule::~BehaviorModule() { }
 
 
-enum RunwayReservationType
+enum RunwayReservationType CPP_11(: Int)
 {
 	RESERVATION_TAKEOFF,
 	RESERVATION_LANDING,

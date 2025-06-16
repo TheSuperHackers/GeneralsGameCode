@@ -24,8 +24,8 @@
 #define _SMUDGE_H_
 
 #include "WW3D2/dllist.h"
-#include "WWMATH/Vector2.h"
-#include "WWMATH/Vector3.h"
+#include "WWMath/vector2.h"
+#include "WWMath/vector3.h"
 
 #define SET_SMUDGE_PARAMETERS(smudge,pos,offset,size,opacity) (smudge->m_pos=pos;smudge->m_offset=offset;smudge->m_size=size;smudge->m_opacity=opacity;)
 

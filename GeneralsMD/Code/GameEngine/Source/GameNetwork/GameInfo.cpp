@@ -29,7 +29,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/CRCDebug.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/GameState.h"
 #include "GameClient/GameText.h"
@@ -45,7 +45,7 @@
 #include "GameNetwork/LANAPICallbacks.h"	// for testing packet size
 #include "strtok_r.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -445,7 +445,7 @@ void GameInfo::setSlot( Int slotNum, GameSlot slotInfo )
 #endif
 
 	DEBUG_LOG(("GameInfo::setSlot - setting slot %d to be player %ls with IP %d.%d.%d.%d\n", slotNum, slotInfo.getName().str(),
-							ip >> 24, (ip >> 16) & 0xff, (ip >> 8) & 0xff, ip & 0xff));
+							PRINTF_IP_AS_4_INTS(ip)));
 }
 
 GameSlot* GameInfo::getSlot( Int slotNum )
@@ -770,7 +770,8 @@ void GameInfo::adjustSlotsForMap()
 		Int numPlayerSlots = 0;
 
 		// first get the number of occupied slots.
-		for (Int i = 0; i < MAX_SLOTS; ++i)
+		Int i = 0;
+		for (; i < MAX_SLOTS; ++i)
 		{
 			GameSlot *tempSlot = getSlot(i);
 			if (tempSlot->isOccupied())

@@ -53,7 +53,7 @@
 #include "GameLogic/Weapon.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -195,7 +195,7 @@ WeaponSet::~WeaponSet()
 {
 	for (Int i = 0; i < WEAPONSLOT_COUNT; ++i)
 		if (m_weapons[i])
-			m_weapons[i]->deleteInstance();
+			deleteInstance(m_weapons[i]);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -317,7 +317,7 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 		{
 			if (m_weapons[i] != NULL)
 			{
-				m_weapons[i]->deleteInstance();
+				deleteInstance(m_weapons[i]);
 				m_weapons[i] = NULL;
 			}
 

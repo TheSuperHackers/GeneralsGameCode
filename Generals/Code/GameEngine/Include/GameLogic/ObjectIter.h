@@ -39,7 +39,7 @@ class Object;
 
 //-------------------------------------------------------------------------------------------
 /** */
-enum IterOrderType
+enum IterOrderType CPP_11(: Int)
 {
 	ITER_FASTEST,										///< iterate in arbitrary order
 	ITER_SORTED_NEAR_TO_FAR,				///< iterate in nearest-to-farthest order (may be slower)
@@ -67,7 +67,7 @@ enum IterOrderType
 	{
 		// do something with other
 	}
-	iter->deleteInstance();								// you own it, so you must delete it
+	deleteInstance(iter);								// you own it, so you must delete it
 
 	note that the iterator is required to deal intelligently with deleted objects; 
 	in particular, next() will check if an obj has been killed and simply skip it.
