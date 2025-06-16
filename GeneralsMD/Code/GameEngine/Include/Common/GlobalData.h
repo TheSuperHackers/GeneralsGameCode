@@ -70,9 +70,9 @@ public:
 	GlobalData();
 	virtual ~GlobalData();
 
-	void init();
-	void reset();
-	void update() { }
+	virtual void init();
+	virtual void reset();
+	virtual void update() { }
 
 	Bool setTimeOfDay( TimeOfDay tod );		///< Use this function to set the Time of day;
 
