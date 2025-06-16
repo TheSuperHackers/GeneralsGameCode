@@ -5645,9 +5645,9 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 		ICoord2D newCellCoord;
 		PathfindCell *newCell;
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
-		Bool neighborFlags[8] = {false, false, false, false, false, false, false};
+		Bool neighborFlags[8] = { 0 };
 
-		UnsignedInt newCostSoFar;
+		UnsignedInt newCostSoFar = 0;
 
 
 
@@ -6586,6 +6586,11 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	// "closed" list is initially empty
 	m_closedList = NULL;
 
+	// TheSuperHackers @fix helmutbuhler This was originally uninitialized and in the loop below.
+#if RETAIL_COMPATIBLE_CRC
+	UnsignedInt newCostSoFar = 0;
+#endif
+
 	//
 	// Continue search until "open" list is empty, or
 	// until goal is found.
@@ -6647,12 +6652,11 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 		ICoord2D newCellCoord;
 		PathfindCell *newCell;
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
-		Bool neighborFlags[8] = {false, false, false, false, false, false, false};
+		Bool neighborFlags[8] = { 0 };
 
 		// TheSuperHackers @fix Mauller 23/05/2025 Fixes uninitialized variable.
-		// To keep retail compatibility it needs to be uninitialized in VC6 builds.
-#if defined(_MSC_VER) && _MSC_VER < 1300
-		UnsignedInt newCostSoFar;
+#if RETAIL_COMPATIBLE_CRC
+		// newCostSoFar defined in outer block.
 #else
 		UnsignedInt newCostSoFar = 0;
 #endif
@@ -6717,6 +6721,8 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 				}								
 				cellCount++;
 
+#if RETAIL_COMPATIBLE_CRC
+				// TheSuperHackers @fix helmutbuhler 11/06/2025 The indentation was wrong on retail here.
 				newCostSoFar = newCell->costSoFar( parentCell );
 				if (clearDiameter<pathDiameter) {
 					int delta = pathDiameter-clearDiameter;
@@ -6724,6 +6730,15 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 				}
 				newCell->setBlockedByAlly(false);
 			}
+#else
+			}
+			newCostSoFar = newCell->costSoFar( parentCell );
+			if (clearDiameter<pathDiameter) {
+				int delta = pathDiameter-clearDiameter;
+				newCostSoFar += 0.6f*(delta*COST_ORTHOGONAL);
+			}
+			newCell->setBlockedByAlly(false);
+#endif
 			Int costRemaining = 0;
 			costRemaining = newCell->costToGoal( goalCell );
 
@@ -7699,9 +7714,9 @@ Bool Pathfinder::pathDestination( 	Object *obj, const LocomotorSet& locomotorSet
 		ICoord2D newCellCoord;
 		PathfindCell *newCell;
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
-		Bool neighborFlags[8] = {false, false, false, false, false, false, false};
+		Bool neighborFlags[8] = { 0 };
 
-		UnsignedInt newCostSoFar;
+		UnsignedInt newCostSoFar = 0;
 
 		for( int i=0; i<numNeighbors; i++ )
 		{
@@ -7952,9 +7967,9 @@ Int Pathfinder::checkPathCost(Object *obj, const LocomotorSet& locomotorSet, con
 		ICoord2D newCellCoord;
 		PathfindCell *newCell;
 		const Int adjacent[5] = {0, 1, 2, 3, 0};
-		Bool neighborFlags[8] = {false, false, false, false, false, false, false};
+		Bool neighborFlags[8] = { 0 };
 
-		UnsignedInt newCostSoFar;
+		UnsignedInt newCostSoFar = 0;
 
 		for( int i=0; i<numNeighbors; i++ )
 		{

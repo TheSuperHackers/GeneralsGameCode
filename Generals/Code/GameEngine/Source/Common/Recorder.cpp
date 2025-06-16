@@ -1042,14 +1042,20 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 			// problem is fixed. -MDC 3/20/2003
 			// 
 			// TheSuperHackers @tweak helmutbuhler 03/04/2025
-			// More than 20 years later, but finally fixed and reenabled!
+			// More than 20 years later, but finally fixed and re-enabled!
 			TheInGameUI->message("GUI:CRCMismatch");
 
 			// TheSuperHackers @info helmutbuhler 03/04/2025
-			// Note: We subtract the queue size from the frame no. This way we calculate the correct frame
+			// Note: We subtract the queue size from the frame number. This way we calculate the correct frame
 			// the mismatch first happened in case the NetCRCInterval is set to 1 during the game.
-			DEBUG_CRASH(("Replay has gone out of sync!  All bets are off!\nInGame:%8.8X Replay:%8.8X\nFrame:%d",
-				playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1));
+			const UnsignedInt mismatchFrame = TheGameLogic->getFrame() - m_crcInfo->GetQueueSize() - 1;
+
+			// Now also prints a UI message for it.
+			const UnicodeString mismatchDetailsStr = TheGameText->FETCH_OR_SUBSTITUTE("GUI:CRCMismatchDetails", L"InGame:%8.8X Replay:%8.8X Frame:%d");
+			TheInGameUI->message(mismatchDetailsStr, playbackCRC, newCRC, mismatchFrame);
+
+			DEBUG_LOG(("Replay has gone out of sync!\nInGame:%8.8X Replay:%8.8X\nFrame:%d\n",
+				playbackCRC, newCRC, mismatchFrame));
 
 			// TheSuperHackers @tweak Pause the game on mismatch.
 			Bool pause = TRUE;
@@ -1300,16 +1306,6 @@ void RecorderClass::appendNextCommand() {
 	}
 
 	GameMessage *msg = newInstance(GameMessage)(type);
-	if (type == GameMessage::MSG_BEGIN_NETWORK_MESSAGES || type == GameMessage::MSG_CLEAR_GAME_DATA)
-	{
-	}
-	else
-	{
-		if (!m_doingAnalysis)
-		{
-			TheCommandList->appendMessage(msg);
-		}
-	}
 
 #ifdef DEBUG_LOGGING
 	AsciiString commandName = msg->getCommandAsAsciiString();
@@ -1381,13 +1377,11 @@ void RecorderClass::appendNextCommand() {
 		}
 	}
 
-	if (type == GameMessage::MSG_CLEAR_GAME_DATA || type == GameMessage::MSG_BEGIN_NETWORK_MESSAGES)
+	if (type != GameMessage::MSG_BEGIN_NETWORK_MESSAGES && type != GameMessage::MSG_CLEAR_GAME_DATA && !m_doingAnalysis)
 	{
-		deleteInstance(msg);
-		msg = NULL;
+		TheCommandList->appendMessage(msg);
 	}
-
-	if (m_doingAnalysis)
+	else
 	{
 		deleteInstance(msg);
 		msg = NULL;

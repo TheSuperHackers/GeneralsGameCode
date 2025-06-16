@@ -19,13 +19,13 @@
 // SphereColorPropPage.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "w3dview.h"
-#include "spherecolorproppage.h"
-#include "opacitysettingsdialog.h"
-#include "colorutils.h"
-#include "utils.h"
-#include "opacityvectordialog.h"
+#include "StdAfx.h"
+#include "W3DView.h"
+#include "SphereColorPropPage.h"
+#include "OpacitySettingsDialog.h"
+#include "ColorUtils.h"
+#include "Utils.h"
+#include "OpacityVectorDialog.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

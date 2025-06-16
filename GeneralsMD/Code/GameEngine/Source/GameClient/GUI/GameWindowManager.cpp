@@ -120,6 +120,8 @@ void GameWindowManager::processDestroyList( void )
 		// send the destroy message to the window we're about to kill
 		winSendSystemMsg( doDestroy, GWM_DESTROY, 0, 0 );
 
+		DEBUG_ASSERTCRASH(doDestroy->winGetUserData() == NULL, ("Win user data is expected to be deleted now"));
+
 		// free the memory
 		if (doDestroy)
 			deleteInstance(doDestroy);

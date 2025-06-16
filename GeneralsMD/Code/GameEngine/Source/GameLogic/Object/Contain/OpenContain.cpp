@@ -1452,20 +1452,17 @@ void OpenContain::processDamageToContained(Real percentDamage)
 {
 	const OpenContainModuleData *data = getOpenContainModuleData();
 
+#if RETAIL_COMPATIBLE_CRC
+
 	const ContainedItemsList* items = getContainedItemsList();
 	if( items )
 	{
-		ContainedItemsList::const_iterator it;
-		it = items->begin();
+		ContainedItemsList::const_iterator it = items->begin();
+		const size_t listSize = items->size();
 
 		while( it != items->end() )
 		{
-			Object *object = *it;
-
-			//Advance to the next iterator before we apply the damage.
-			//It's possible that the damage will kill the unit and foobar
-			//the iterator list.
-			++it;
+			Object *object = *it++;
 
 			//Calculate the damage to be inflicted on each unit.
 			Real damage = object->getBodyModule()->getMaxHealth() * percentDamage;
@@ -1478,9 +1475,82 @@ void OpenContain::processDamageToContained(Real percentDamage)
 			object->attemptDamage( &damageInfo );
 
 			if( !object->isEffectivelyDead() && percentDamage == 1.0f )
-				object->kill(); // in case we are carrying flame proof troops we have been asked to kill			
+				object->kill(); // in case we are carrying flame proof troops we have been asked to kill
+
+			// TheSuperHackers @info Calls to Object::attemptDamage and Object::kill will not remove
+			// the occupant from the host container straight away. Instead it will be removed when the
+			// Object deletion is finalized in a Game Logic update. This will lead to strange behavior
+			// where the occupant will be removed after death with a delay. This behavior cannot be
+			// changed without breaking retail compatibility.
+
+			// TheSuperHackers @bugfix xezon 05/06/2025 Stop iterating when the list was cleared.
+			// This scenario can happen if the killed occupant(s) apply deadly damage on death
+			// to the host container, which then attempts to remove all remaining occupants
+			// on the death of the host container. This is reproducible by destroying a
+			// GLA Battle Bus with at least 2 half damaged GLA Terrorists inside.
+			if (listSize != items->size())
+			{
+				DEBUG_ASSERTCRASH( listSize == 0, ("List is expected empty\n") );
+				break;
+			}
 		}
 	}
+
+#else
+
+	// TheSuperHackers @bugfix xezon 05/06/2025 Temporarily empty the m_containList
+	// to prevent a potential child call to catastrophically modify the m_containList.
+	// This scenario can happen if the killed occupant(s) apply deadly damage on death
+	// to the host container, which then attempts to remove all remaining occupants
+	// on the death of the host container. This is reproducible by destroying a
+	// GLA Battle Bus with at least 2 half damaged GLA Terrorists inside.
+
+	// Caveat: While the m_containList is empty, it will not be possible to apply damage
+	// on death of a unit to another unit in the host container. If this functionality
+	// is desired, then this implementation needs to be revisited.
+
+	ContainedItemsList list;
+	m_containList.swap(list);
+	m_containListSize = 0;
+
+	ContainedItemsList::iterator it = list.begin();
+
+	while ( it != list.end() )
+	{
+		Object *object = *it;
+
+		DEBUG_ASSERTCRASH( object, ("Contain list must not contain NULL element\n") );
+
+		// Calculate the damage to be inflicted on each unit.
+		Real damage = object->getBodyModule()->getMaxHealth() * percentDamage;
+
+		DamageInfo damageInfo;
+		damageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
+		damageInfo.in.m_deathType = data->m_isBurnedDeathToUnits ? DEATH_BURNED : DEATH_NORMAL;
+		damageInfo.in.m_sourceID = getObject()->getID();
+		damageInfo.in.m_amount = damage;
+		object->attemptDamage( &damageInfo );
+
+		if( !object->isEffectivelyDead() && percentDamage == 1.0f )
+			object->kill(); // in case we are carrying flame proof troops we have been asked to kill
+
+		if ( object->isEffectivelyDead() )
+		{
+			onRemoving( object );
+			object->onRemovedFrom( getObject() );
+			it = list.erase( it );
+		}
+		else
+		{
+			++it;
+		}
+	}
+
+	// Swap the list back where it belongs.
+	m_containList.swap(list);
+	m_containListSize = (UnsignedInt)m_containList.size();
+
+#endif // RETAIL_COMPATIBLE_CRC
 }
 
 //-------------------------------------------------------------------------------------------------

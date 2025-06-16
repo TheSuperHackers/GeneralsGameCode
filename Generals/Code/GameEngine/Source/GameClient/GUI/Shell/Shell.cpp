@@ -282,7 +282,7 @@ void Shell::push( AsciiString filename, Bool shutdownImmediate )
 	{
 	
 		DEBUG_LOG(( "Unable to load screen '%s', max '%d' reached\n",
-								filename, MAX_SHELL_STACK ));
+								filename.str(), MAX_SHELL_STACK ));
 		return;
 
 	}  // end if

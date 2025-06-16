@@ -40,7 +40,7 @@
 #include <afxdlgs.h> // FileDialog class
 
 #include "chunkio.h"
-#include "vector3i.h"
+#include "Vector3i.h"
 #include "w3d_file.h"
 
 
