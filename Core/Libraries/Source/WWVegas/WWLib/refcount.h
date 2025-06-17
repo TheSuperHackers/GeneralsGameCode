@@ -249,10 +249,53 @@ public:
 	*/
 	static bool							Validate_Active_Ref(RefCountClass * obj);
 
-#endif
+#endif // NDEBUG
 
 };
 
 
+// This template class is meant to be used as a class member for compact reference counter placements.
+// A 1 byte reference counter can be alright if the counter is not reaching the boundaries.
+template <typename IntegerType>
+class RefCountValue
+{
+public:
 
-#endif
+	RefCountValue(void)
+		: NumRefs(1)
+	{
+	}
+
+	~RefCountValue(void)
+	{
+		WWASSERT(NumRefs == IntegerType(0));
+	}
+
+	void Add_Ref(void) const
+	{
+		WWASSERT(NumRefs < IntegerType(0)-1);
+		++NumRefs;
+	}
+
+	// Can pass static function or 'operator delete'.
+	template <typename ObjectType, typename DeleteType>
+	void Release_Ref(void(*deleteFunction)(DeleteType*), ObjectType* objectToDelete) const
+	{
+		WWASSERT(NumRefs != IntegerType(0));
+		if (--NumRefs == IntegerType(0))
+		{
+			deleteFunction(objectToDelete);
+		}
+	}
+
+	IntegerType Num_Refs(void) const
+	{
+		return NumRefs;
+	}
+
+private:
+	mutable IntegerType NumRefs;
+};
+
+
+#endif // REFCOUNT_H
