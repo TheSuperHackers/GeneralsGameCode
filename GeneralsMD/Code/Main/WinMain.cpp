@@ -889,7 +889,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		DEBUG_LOG(("CRC message is %d\n", GameMessage::MSG_LOGIC_CRC));
 
 		// run the game main loop
-		exitcode = GameMain(0, NULL);
+		exitcode = GameMain();
 
 		delete TheVersion;
 		TheVersion = NULL;
