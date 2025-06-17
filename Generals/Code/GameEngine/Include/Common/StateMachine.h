@@ -238,7 +238,7 @@ inline State::~State() { }
 /**
  * A finite state machine.
  */
-class StateMachine : public MemoryPoolObject, public Snapshot, public RefCountClass
+class StateMachine : public MemoryPoolObject, public Snapshot
 {
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( StateMachine, "StateMachinePool" );
 
@@ -263,6 +263,10 @@ public:
 	virtual StateReturnType initDefaultState();	
 
 	virtual StateReturnType setState( StateID newStateID );			///< change the current state of the machine (which may cause further state changes, due to onEnter)
+
+	void Add_Ref() const { m_refCount.Add_Ref(); }
+	void Release_Ref() const { m_refCount.Release_Ref(MemoryPoolObject::deleteInstanceInternal, this); }
+	void Num_Refs() const { m_refCount.Num_Refs(); }
 
 	StateID getCurrentStateID() const { return m_currentState ? m_currentState->getID() : INVALID_STATE_ID; }	///< return the id of the current state of the machine
 	Bool isInIdleState() const { return m_currentState ? m_currentState->isIdle() : true; }	// stateless things are considered 'idle'
@@ -342,12 +346,6 @@ protected:
 	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess();	
 
-	// RefCountClass interface
-	virtual void Delete_This()
-	{
-		MemoryPoolObject::deleteInstanceInternal(this);
-	}
-
 protected:
 
 	/**
@@ -383,6 +381,8 @@ private:
 
 	Bool					m_locked;													///< whether this machine is locked or not
 	Bool					m_defaultStateInited;							///< if initDefaultState has been called
+
+	RefCountValue<UnsignedByte> m_refCount;
 
 #ifdef STATE_MACHINE_DEBUG
 	Bool					m_debugOutput;
