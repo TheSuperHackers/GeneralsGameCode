@@ -277,9 +277,9 @@ public:
 		++NumRefs;
 	}
 
-	// Can pass static function or 'operator delete'.
-	template <typename ObjectType, typename DeleteType>
-	void Release_Ref(void(*deleteFunction)(DeleteType*), const ObjectType* objectToDelete) const
+	// Can pass static function of type void(*)(DeleteType*) or 'operator delete'.
+	template <typename DeleteFunction, typename ObjectType>
+	void Release_Ref(DeleteFunction deleteFunction, const ObjectType* objectToDelete) const
 	{
 		WWASSERT(NumRefs != IntegerType(0));
 		if (--NumRefs == IntegerType(0))
