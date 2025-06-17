@@ -431,6 +431,11 @@ Int parseReplay(char *args[], int num)
 		TheWritableGlobalData->m_afterIntro = TRUE;
 		TheWritableGlobalData->m_playSizzle = FALSE;
 		TheWritableGlobalData->m_shellMapOn = FALSE;
+
+		// Make replay playback possible while other clients (possible retail) are running
+		TheWritableGlobalData->m_multiInstance = TRUE;
+		TheWritableGlobalData->m_avoidFirstInstance = TRUE;
+
 		return 2;
 	}
 	return 1;
@@ -448,6 +453,12 @@ Int parseJobs(char *args[], int num)
 		}
 		return 2;
 	}
+	return 1;
+}
+
+Int parseMultiInstance(char *args[], int num)
+{
+	TheWritableGlobalData->m_multiInstance = TRUE;
 	return 1;
 }
 
@@ -1155,6 +1166,9 @@ static CommandLineParam paramsForStartup[] =
 	// (If you have 4 cores, call it with -jobs 4)
 	// If you do not call this, all replays will be simulated in sequence in the same process.
 	{ "-jobs", parseJobs },
+
+	// Allows multiple instances to run
+	{ "-multiInstance", parseMultiInstance },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded

@@ -868,7 +868,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 		// TheSuperHackers @refactor The instance mutex now lives in its own class.
 
-		if (!TheGlobalData->m_headless && !rts::ClientInstance::initialize())
+		if (!rts::ClientInstance::initialize())
 		{
 			HWND ccwindow = FindWindow(rts::ClientInstance::getFirstInstanceName(), NULL);
 			if (ccwindow)

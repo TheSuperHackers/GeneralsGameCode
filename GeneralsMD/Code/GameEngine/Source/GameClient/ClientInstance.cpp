@@ -16,6 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "PreRTS.h"
+#include "Common/CommandLine.h"
 #include "GameClient/ClientInstance.h"
 
 #define GENERALS_GUID "685EAFF2-3216-4265-B047-251C5F4B82F3"
@@ -31,44 +32,52 @@ bool ClientInstance::initialize()
 	{
 		return true;
 	}
+	
+	CommandLine::parseCommandLineForStartup();
+
+	if (TheGlobalData->m_avoidFirstInstance)
+		++s_instanceIndex;
 
 	// Create a mutex with a unique name to Generals in order to determine if our app is already running.
 	// WARNING: DO NOT use this number for any other application except Generals.
 	while (true)
 	{
-#if defined(RTS_MULTI_INSTANCE)
-		std::string guidStr = getFirstInstanceName();
-		if (s_instanceIndex > 0u)
+		if (TheGlobalData->m_multiInstance)
 		{
-			char idStr[33];
-			itoa(s_instanceIndex, idStr, 10);
-			guidStr.push_back('-');
-			guidStr.append(idStr);
-		}
-		s_mutexHandle = CreateMutex(NULL, FALSE, guidStr.c_str());
-		if (GetLastError() == ERROR_ALREADY_EXISTS)
-		{
-			if (s_mutexHandle != NULL)
+			std::string guidStr = getFirstInstanceName();
+			if (s_instanceIndex > 0u)
 			{
-				CloseHandle(s_mutexHandle);
-				s_mutexHandle = NULL;
+				char idStr[33];
+				itoa(s_instanceIndex, idStr, 10);
+				guidStr.push_back('-');
+				guidStr.append(idStr);
 			}
-			// Try again with a new instance.
-			++s_instanceIndex;
-			continue;
-		}
-#else
-		s_mutexHandle = CreateMutex(NULL, FALSE, getFirstInstanceName());
-		if (GetLastError() == ERROR_ALREADY_EXISTS)
-		{
-			if (s_mutexHandle != NULL)
+			s_mutexHandle = CreateMutex(NULL, FALSE, guidStr.c_str());
+			if (GetLastError() == ERROR_ALREADY_EXISTS)
 			{
-				CloseHandle(s_mutexHandle);
-				s_mutexHandle = NULL;
+				if (s_mutexHandle != NULL)
+				{
+					CloseHandle(s_mutexHandle);
+					s_mutexHandle = NULL;
+				}
+				// Try again with a new instance.
+				++s_instanceIndex;
+				continue;
 			}
-			return false;
 		}
-#endif
+		else
+		{
+			s_mutexHandle = CreateMutex(NULL, FALSE, getFirstInstanceName());
+			if (GetLastError() == ERROR_ALREADY_EXISTS)
+			{
+				if (s_mutexHandle != NULL)
+				{
+					CloseHandle(s_mutexHandle);
+					s_mutexHandle = NULL;
+				}
+				return false;
+			}
+		}
 		break;
 	}
 
