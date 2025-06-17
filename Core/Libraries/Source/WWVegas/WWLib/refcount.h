@@ -103,6 +103,10 @@ struct ActiveRefStruct
 typedef DataNode<RefCountClass *>	RefCountNodeClass;
 typedef List<RefCountNodeClass *>	RefCountListClass;
 
+/*
+** Note that Add_Ref and Release_Ref are always const, because copying, destroying and reference
+** counting const objects is meant to work.
+*/
 class RefCountClass
 {
 public:
@@ -254,8 +258,13 @@ public:
 };
 
 
-// This template class is meant to be used as a class member for compact reference counter placements.
-// A 1 byte reference counter can be alright if the counter is not reaching the boundaries.
+/*
+** This template class is meant to be used as a class member for compact reference counter placements.
+** A 1 byte reference counter can be alright if the counter is not reaching the value limits.
+* 
+** Note that Add_Ref and Release_Ref are always const, because copying, destroying and reference
+** counting const objects is meant to work.
+*/
 template <typename IntegerType>
 class RefCountValue
 {
@@ -271,13 +280,22 @@ public:
 		WWASSERT(NumRefs == IntegerType(0));
 	}
 
+	/*
+	** Add_Ref, call this function if you are going to keep a pointer to this object.
+	*/
 	void Add_Ref(void) const
 	{
 		WWASSERT(NumRefs != ~IntegerType(0));
 		++NumRefs;
 	}
 
-	// Can pass static function of type void(*)(DeleteType*) or 'operator delete'.
+	/*
+	** Release_Ref, call this function when you no longer need the pointer to this object.
+	** You can pass a static function of type void(*)(DeleteType*) or 'operator delete'.
+	**
+	** Note that this function takes a const ObjectType*, because this function is expected
+	** to be called from within a const function as well.
+	*/
 	template <typename DeleteFunction, typename ObjectType>
 	void Release_Ref(DeleteFunction deleteFunction, const ObjectType* objectToDelete) const
 	{
@@ -288,6 +306,9 @@ public:
 		}
 	}
 
+	/*
+	** Check the number of references to this object.
+	*/
 	IntegerType Num_Refs(void) const
 	{
 		return NumRefs;
