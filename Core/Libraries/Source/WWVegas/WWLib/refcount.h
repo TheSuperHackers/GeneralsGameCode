@@ -273,7 +273,7 @@ public:
 
 	void Add_Ref(void) const
 	{
-		WWASSERT(NumRefs < IntegerType(0)-1);
+		WWASSERT(NumRefs != ~IntegerType(0));
 		++NumRefs;
 	}
 
@@ -294,6 +294,7 @@ public:
 	}
 
 private:
+
 	mutable IntegerType NumRefs;
 };
 
