@@ -406,7 +406,7 @@ Int parseMapName(char *args[], int num)
 	return 1;
 }
 
-Int parseHeadless( char *args[], int num )
+Int parseHeadless(char *args[], int num)
 {
 	TheWritableGlobalData->m_headless = TRUE;
 	TheWritableGlobalData->m_playIntro = FALSE;
@@ -422,7 +422,7 @@ Int parseReplay(char *args[], int num)
 		AsciiString filename = args[1];
 		if (!filename.endsWithNoCase(RecorderClass::getReplayExtention()))
 		{
-			DEBUG_CRASH(("Invalid replay name \"%s\"", filename.str()));
+			printf("Invalid replay name \"%s\"\n", filename.str());
 			exit(1);
 		}
 		TheWritableGlobalData->m_simulateReplays.push_back(filename);
@@ -448,7 +448,7 @@ Int parseJobs(char *args[], int num)
 		TheWritableGlobalData->m_simulateReplayJobs = atoi(args[1]);
 		if (TheGlobalData->m_simulateReplayJobs < SIMULATE_REPLAYS_SEQUENTIAL || TheGlobalData->m_simulateReplayJobs == 0)
 		{
-			DEBUG_CRASH(("Invalid number of jobs: %d", TheGlobalData->m_simulateReplayJobs));
+			printf("Invalid number of jobs: %d\n", TheGlobalData->m_simulateReplayJobs);
 			exit(1);
 		}
 		return 2;
