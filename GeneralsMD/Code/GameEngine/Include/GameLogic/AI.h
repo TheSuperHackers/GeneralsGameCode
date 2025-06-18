@@ -882,7 +882,7 @@ public:
  * An "AIGroup" is a simple collection of AI objects, used by the AI
  * for such things as Group Pathfinding.
  */
-class AIGroup : public MemoryPoolObject, public Snapshot, public RefCountClass
+class AIGroup : public MemoryPoolObject, public Snapshot
 {
 private:
 	void groupAttackObjectPrivate( Bool forced, Object *victim, Int maxShotsToFire, CommandSourceType cmdSource );					///< attack given object
@@ -893,6 +893,10 @@ public:
 	void crc( Xfer *xfer );
 	void xfer( Xfer *xfer );
 	void loadPostProcess( void );
+
+	void Add_Ref() const { m_refCount.Add_Ref(); }
+	void Release_Ref() const { m_refCount.Release_Ref(destroy, this); }
+	void Num_Refs() const { m_refCount.Num_Refs(); }
 
 	void groupMoveToPosition( const Coord3D *pos, Bool addWaypoint, CommandSourceType cmdSource );
 	void groupMoveToAndEvacuate( const Coord3D *pos, CommandSourceType cmdSource );			///< move to given position(s)
@@ -1005,11 +1009,6 @@ public:
 	void releaseWeaponLockForGroup(WeaponLockType lockType);///< Clear each guys weapon choice
 	void setWeaponSetFlag( WeaponSetType wst );
 
-	virtual void Delete_This(void)
-	{
-		TheAI->destroyGroup(this);
-	}
-
 protected:
 	MEMORY_POOL_GLUE_WITH_USERLOOKUP_CREATE( AIGroup, "AIGroupPool" );		///< @todo Set real numbers for mem alloc
 
@@ -1025,6 +1024,11 @@ private:
 	friend class AI;
 	AIGroup( void );
 
+	static void destroy(AIGroup* self)
+	{
+		TheAI->destroyGroup(self);
+	}
+
 	void recompute( void );									///< recompute various group info, such as speed, leader, etc
 
 	ListObjectPtr m_memberList;							///< the list of member Objects
@@ -1032,6 +1036,8 @@ private:
 
 	Real m_speed;														///< maximum speed of group (slowest member)
 	Bool m_dirty;														///< "dirty bit" - if true then group speed, leader, needs recompute
+
+	RefCountValue<UnsignedShort> m_refCount;	///< the reference counter
 
 	UnsignedInt m_id;												///< the unique ID of this group
 	Path *m_groundPath;											///< Group ground path.
