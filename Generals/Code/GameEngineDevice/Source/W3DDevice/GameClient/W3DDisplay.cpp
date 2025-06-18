@@ -429,6 +429,15 @@ W3DDisplay::~W3DDisplay()
 
 }  // end ~W3DDisplay
 
+// TheSuperHackers @tweak valeronm 20/03/2025 Only accept 24-bit modes with min width 800
+inline Bool isResolutionSupported(const ResolutionDescClass &res)
+{
+	static const Int minWidth = 800;
+	static const Int minBitDepth = 24;
+
+	return res.Width >= minWidth && res.BitDepth >= minBitDepth;
+}
+
 /*Return number of screen modes supported by the current device*/
 Int W3DDisplay::getDisplayModeCount(void)
 {
@@ -452,8 +461,8 @@ Int W3DDisplay::getDisplayModeCount(void)
 	for (int res = 0; res < resolutions.Count ();  res ++)
 	{
 		// Is this the resolution we are looking for?
-		if (resolutions[res].BitDepth >= 24 && resolutions[res].Width >= 800 && (fabs((Real)resolutions[res].Width/(Real)resolutions[res].Height - 1.3333f)) < 0.01f)	//only accept 4:3 aspect ratio modes.
-		{	
+		if (isResolutionSupported(resolutions[res]))
+		{
 			numResolutions++;
 		}
 	}
@@ -470,7 +479,7 @@ void W3DDisplay::getDisplayModeDescription(Int modeIndex, Int *xres, Int *yres, 
 	for (int res = 0; res < resolutions.Count ();  res ++)
 	{
 		// Is this the resolution we are looking for?
-		if (resolutions[res].BitDepth >= 24 && resolutions[res].Width >= 800 && (fabs((Real)resolutions[res].Width/(Real)resolutions[res].Height - 1.3333f)) < 0.01f)	//only accept 4:3 aspect ratio modes.
+		if (isResolutionSupported(resolutions[res]))
 		{	
 			if (numResolutions == modeIndex)
 			{	//found the mode
