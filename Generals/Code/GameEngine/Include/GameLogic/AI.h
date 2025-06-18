@@ -855,7 +855,7 @@ public:
 
 	void Add_Ref() const { m_refCount.Add_Ref(); }
 	void Release_Ref() const { m_refCount.Release_Ref(destroy, this); }
-	void Num_Refs() const { m_refCount.Num_Refs(); }
+	Int Num_Refs() const { return m_refCount.Num_Refs(); }
 
 	void groupMoveToPosition( const Coord3D *pos, Bool addWaypoint, CommandSourceType cmdSource );
 	void groupMoveToAndEvacuate( const Coord3D *pos, CommandSourceType cmdSource );			///< move to given position(s)
