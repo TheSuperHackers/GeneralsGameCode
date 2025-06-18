@@ -33,7 +33,6 @@ class DbgHelpLoader
 {
 private:
 
-  static int BlockLoadCounter;
   static DbgHelpLoader* Inst; // Is singleton class
 
   DbgHelpLoader();
@@ -46,12 +45,6 @@ public:
 
   // Returns whether dbghelp.dll is loaded from the system directory
   static bool isLoadedFromSystem();
-
-  // Blocks loading a dbghelp.dll
-  static void blockLoad();
-
-  // Unblocks loading a dbghelp.dll. Returns true if unblocked.
-  static bool unblockLoad();
 
   static bool load();
   static bool reload();

@@ -19,7 +19,6 @@
 #include "DbgHelpLoader.h"
 
 
-int DbgHelpLoader::BlockLoadCounter = 0;
 DbgHelpLoader* DbgHelpLoader::Inst = NULL;
 
 DbgHelpLoader::DbgHelpLoader()
@@ -53,21 +52,8 @@ bool DbgHelpLoader::isLoadedFromSystem()
   return Inst != NULL && Inst->m_loadedFromSystem;
 }
 
-void DbgHelpLoader::blockLoad()
-{
-  ++BlockLoadCounter;
-}
-
-bool DbgHelpLoader::unblockLoad()
-{
-  return --BlockLoadCounter == 0;
-}
-
 bool DbgHelpLoader::load()
 {
-  if (BlockLoadCounter > 0)
-    return false;
-
   if (Inst == NULL)
   {
     // Cannot use new/delete here when this is loaded during game memory initialization.

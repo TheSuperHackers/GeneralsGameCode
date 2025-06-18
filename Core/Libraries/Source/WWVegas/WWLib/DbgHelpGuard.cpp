@@ -22,43 +22,38 @@
 
 
 DbgHelpGuard::DbgHelpGuard()
+	: m_hasLoaded(false)
 {
-	deactivate();
+	activate();
 }
 
 DbgHelpGuard::~DbgHelpGuard()
 {
-	reactivate();
+	deactivate();
 }
 
-void DbgHelpGuard::deactivate()
+void DbgHelpGuard::activate()
 {
-	DbgHelpLoader::blockLoad();
-
 	if (DbgHelpLoader::isLoadedFromSystem())
 	{
 		// This is ok. Do nothing.
 	}
 	else if (DbgHelpLoader::isLoaded())
 	{
-		DbgHelpLoader::unload();
-		m_requiresLoad = true;
-		m_dbgHelpRenamer.rename("dbghelp.dll", "dbghelp.dll.bak");
+		// This is maybe not ok. But do nothing until this becomes a user facing problem.
 	}
 	else
 	{
-		m_dbgHelpRenamer.rename("dbghelp.dll", "dbghelp.dll.bak");
+		// Front load the DLL now to prevent other code from loading the potentially wrong DLL.
+		m_hasLoaded = DbgHelpLoader::load();
 	}
 }
 
-void DbgHelpGuard::reactivate()
+void DbgHelpGuard::deactivate()
 {
-	m_dbgHelpRenamer.revert();
-	DbgHelpLoader::unblockLoad();
-
-	if (m_requiresLoad)
+	if (m_hasLoaded)
 	{
-		DbgHelpLoader::load();
-		m_requiresLoad = false;
+		DbgHelpLoader::unload();
+		m_hasLoaded = false;
 	}
 }
