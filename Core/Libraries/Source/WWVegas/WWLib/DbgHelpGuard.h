@@ -20,15 +20,13 @@
 
 #include "always.h"
 
-#include "ScopedFileRenamer.h"
 
-
-// This class temporarily unloads dbghelp.dll and prevents it from loading during its lifetime.
+// This class temporarily loads and unloads dbghelp.dll from the desired location to prevent
+// other code from potentially loading it from an undesired location.
 // This helps avoid crashing on boot using recent AMD/ATI drivers, which attempt to load and use
 // dbghelp.dll from the game install directory but are unable to do so correctly because
 // the dbghelp.dll that ships with the game is very old and the AMD/ATI code does not handle
-// that correctly. This workaround is not required if the dbghelp.dll was loaded from the system
-// directory.
+// that correctly.
 
 class DbgHelpGuard
 {
@@ -37,11 +35,10 @@ public:
 	DbgHelpGuard();
 	~DbgHelpGuard();
 
+	void activate();
 	void deactivate();
-	void reactivate();
 
 private:
 
-	ScopedFileRenamer m_dbgHelpRenamer;
-	bool m_requiresLoad;
+	bool m_hasLoaded;
 };
