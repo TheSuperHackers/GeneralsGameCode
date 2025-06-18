@@ -18,11 +18,12 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/GameEngine.h"
+#include "Common/LocalFileSystem.h"
 #include "Common/Recorder.h"
 #include "Common/WorkerProcess.h"
 #include "GameLogic/GameLogic.h"
 #include "GameClient/GameClient.h"
-#include "Common/GameEngine.h"
 
 static int SimulateReplaysInThisProcess(const std::vector<AsciiString> &filenames)
 {
@@ -183,10 +184,53 @@ static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &file
 	return numErrors != 0 ? 1 : 0;
 }
 
+std::vector<AsciiString> ResolveFilenameWildcards(const std::vector<AsciiString> &filenames)
+{
+	// If some filename contains wildcards, search for actual filenames.
+	// Note that we cannot do this in parseReplay because we require TheLocalFileSystem initialized.
+	std::vector<AsciiString> filenamesResolved;
+	for (std::vector<AsciiString>::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename)
+	{
+		if (filename->find('*') || filename->find('?'))
+		{
+			AsciiString dir1 = TheRecorder->getReplayDir();
+			AsciiString dir2 = *filename;
+			AsciiString wildcard = *filename;
+			{
+				int len = dir2.getLength();
+				while (len)
+				{
+					char c = dir2.getCharAt(len-1);
+					if (c == '/' || c == '\\')
+					{
+						wildcard.set(wildcard.str()+dir2.getLength());
+						break;
+					}
+					dir2.removeLastChar();
+					len--;
+				}
+			}
+
+			FilenameList files;
+			TheLocalFileSystem->getFileListInDirectory(dir2.str(), dir1.str(), wildcard, files, FALSE);
+			for (FilenameList::iterator it = files.begin(); it != files.end(); ++it)
+			{
+				AsciiString file;
+				file.set(it->str() + dir1.getLength());
+				filenamesResolved.push_back(file);
+			}
+		}
+		else
+			filenamesResolved.push_back(*filename);
+	}
+	return filenamesResolved;
+}
+
 int SimulateReplays(const std::vector<AsciiString> &filenames, int maxProcesses)
 {
+	std::vector<AsciiString> filenamesResolved = ResolveFilenameWildcards(filenames);
 	if (maxProcesses == SIMULATE_REPLAYS_SEQUENTIAL)
-		return SimulateReplaysInThisProcess(filenames);
+		return SimulateReplaysInThisProcess(filenamesResolved);
 	else
-		return SimulateReplaysInWorkerProcesses(filenames, maxProcesses);
+		return SimulateReplaysInWorkerProcesses(filenamesResolved, maxProcesses);
 }
