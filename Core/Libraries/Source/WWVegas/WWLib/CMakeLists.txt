@@ -103,8 +103,6 @@ set(WWLIB_SRC
     #regexpr.cpp
     #regexpr.h
     #search.h
-    ScopedFileRenamer.cpp
-    ScopedFileRenamer.h
     sharebuf.h
     Signaler.h
     simplevec.h
