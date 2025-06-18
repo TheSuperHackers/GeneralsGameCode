@@ -338,7 +338,7 @@ void GameLogic::prepareNewGame( Int gameMode, GameDifficulty diff, Int rankPoint
 //-------------------------------------------------------------------------------------------------
 /** This message handles dispatches object command messages to the
   * appropriate objects.
-	* @todo Rename this to "CommandProcessor", or similiar. */
+	* @todo Rename this to "CommandProcessor", or similar. */
 //-------------------------------------------------------------------------------------------------
 void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 {
@@ -350,7 +350,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 	DEBUG_ASSERTCRASH( thisPlayer, ("logicMessageDispatcher: Processing message from unknown player (player index '%d')\n", 
 																	msg->getPlayerIndex()) );
 	
-	AIGroup *currentlySelectedGroup = NULL;
+	RefCountPtr<AIGroup> currentlySelectedGroup;
 
 	if (isInGame())
 	{
@@ -360,16 +360,13 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			{
 				currentlySelectedGroup = TheAI->createGroup(); // can't do this outside a game - it'll cause sync errors galore.
 				CRCGEN_LOG(( "Creating AIGroup %d in GameLogic::logicMessageDispatcher()\n", (currentlySelectedGroup)?currentlySelectedGroup->getID():0 ));
-				thisPlayer->getCurrentSelectionAsAIGroup(currentlySelectedGroup);
+				thisPlayer->getCurrentSelectionAsAIGroup(currentlySelectedGroup.Peek());
 
-				// We can't issue commands to groups that contain units that don't belong the issuing player, so pretend like 
+				// We can't issue commands to groups that contain units that don't belong to the issuing player, so pretend like
 				// there's nothing selected. Also, if currentlySelectedGroup is empty, go ahead and delete it, so that we can skip
 				// any processing on it.
 				if (currentlySelectedGroup->isEmpty())
-				{
-					TheAI->destroyGroup(currentlySelectedGroup);
 					currentlySelectedGroup = NULL;
-				}
 
 				// If there are any units that the player doesn't own, then remove them from the "currentlySelectedGroup"
 				if (currentlySelectedGroup)
@@ -449,8 +446,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 #endif
 
 			if (currentlySelectedGroup)
-				TheAI->destroyGroup(currentlySelectedGroup);
-			currentlySelectedGroup = NULL;
+			{
+				currentlySelectedGroup->removeAll();
+				currentlySelectedGroup = NULL;
+			}
 			TheGameLogic->clearGameData();
 			break;
 
@@ -651,10 +650,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = TheGameLogic->findObjectByID(sourceID);
 			if (source != NULL)
 			{
-				AIGroup* theGroup = TheAI->createGroup();
+				RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupDoSpecialPower( specialPowerID, options );
-				TheAI->destroyGroup(theGroup);
+				theGroup->removeAll();
 			}
 			else
 			{
@@ -689,10 +688,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = TheGameLogic->findObjectByID(sourceID);
 			if (source != NULL)
 			{
-				AIGroup* theGroup = TheAI->createGroup();
+				RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupDoSpecialPowerAtLocation( specialPowerID, &targetCoord, INVALID_ANGLE, objectInWay, options );
-				TheAI->destroyGroup(theGroup);
+				theGroup->removeAll();
 			}
 			else
 			{
@@ -728,10 +727,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = TheGameLogic->findObjectByID(sourceID);
 			if (source != NULL)
 			{
-				AIGroup* theGroup = TheAI->createGroup();
+				RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupDoSpecialPowerAtObject( specialPowerID, target, options );
-				TheAI->destroyGroup(theGroup);
+				theGroup->removeAll();
 			}
 			else
 			{
@@ -974,7 +973,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_EXIT:
 		{
 			Object *objectWantingToExit = TheGameLogic->findObjectByID( msg->getArgument( 0 )->objectID );
-			Object *objectContainingExiter = getSingleObjectFromSelection(currentlySelectedGroup);
+			Object *objectContainingExiter = getSingleObjectFromSelection(currentlySelectedGroup.Peek());
 
 			// sanity
 			if( objectWantingToExit == NULL )
@@ -1161,10 +1160,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = TheGameLogic->findObjectByID(sourceID);
 			if (source != NULL)
 			{
-				AIGroup* theGroup = TheAI->createGroup();
+				RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupOverrideSpecialPowerDestination( spType, loc, CMD_FROM_PLAYER );
-				TheAI->destroyGroup(theGroup);
+				theGroup->removeAll();
 			}
 			else
 			{
@@ -1273,7 +1272,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_CANCEL_UPGRADE:
 		{
-			Object *producer = getSingleObjectFromSelection(currentlySelectedGroup);
+			Object *producer = getSingleObjectFromSelection(currentlySelectedGroup.Peek());
 			const UpgradeTemplate *upgradeT = TheUpgradeCenter->findUpgradeByKey( (NameKeyType)(msg->getArgument( 0 )->integer) );
 
 			// sanity
@@ -1299,7 +1298,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_QUEUE_UNIT_CREATE:
 		{
-			Object *producer = getSingleObjectFromSelection(currentlySelectedGroup);
+			Object *producer = getSingleObjectFromSelection(currentlySelectedGroup.Peek());
 			const ThingTemplate *whatToCreate;
 			ProductionID productionID;
 
@@ -1332,7 +1331,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		//-------------------------------------------------------------------------------------------------
 		case GameMessage::MSG_CANCEL_UNIT_CREATE:
 		{
-			Object *producer = getSingleObjectFromSelection(currentlySelectedGroup);
+			Object *producer = getSingleObjectFromSelection(currentlySelectedGroup.Peek());
 			ProductionID productionID = (ProductionID)msg->getArgument( 0 )->integer;
 			
 			// sanity
@@ -1364,7 +1363,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Real angle;
 
 			// get player, what to place, and location
-			Object *constructorObject = getSingleObjectFromSelection(currentlySelectedGroup);
+			Object *constructorObject = getSingleObjectFromSelection(currentlySelectedGroup.Peek());
 			place = TheThingFactory->findByTemplateID( msg->getArgument( 0 )->integer );
 			loc = msg->getArgument( 1 )->location;
 			angle = msg->getArgument( 2 )->real;
@@ -1411,7 +1410,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		{
 
 			// get the building to cancel construction on
-			Object *building = getSingleObjectFromSelection(currentlySelectedGroup);
+			Object *building = getSingleObjectFromSelection(currentlySelectedGroup.Peek());
 			if( building == NULL )
 				break;
 
@@ -1535,7 +1534,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Player *player = ThePlayerList->getNthPlayer(msg->getPlayerIndex());
 
 			if (player == NULL) {
-				DEBUG_CRASH(("GameLogicDispatch - MSG_CREATE_SELECTED_GROUP had an invalid player nubmer"));
+				DEBUG_CRASH(("GameLogicDispatch - MSG_REMOVE_FROM_SELECTED_GROUP had an invalid player nubmer"));
 				break;
 			}
 
@@ -1545,7 +1544,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				if (!objToRemove) {
 					continue;
 				}
-				
+
 				TheGameLogic->deselectObject(objToRemove, player->getPlayerMask());
 			}
 
@@ -1672,10 +1671,8 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_REMOVE_BEACON:
 		{
-	
-			AIGroup *allSelectedObjects = NULL;
-			allSelectedObjects = TheAI->createGroup();
-			thisPlayer->getCurrentSelectionAsAIGroup(allSelectedObjects); // need to act on all objects, so we can hide teammates' beacons.
+			RefCountPtr<AIGroup> allSelectedObjects = TheAI->createGroup();
+			thisPlayer->getCurrentSelectionAsAIGroup(allSelectedObjects.Peek()); // need to act on all objects, so we can hide teammates' beacons.
 			if( allSelectedObjects )
 			{
 				const VecObjectID& selectedObjects = allSelectedObjects->getAllIDs();
@@ -1715,11 +1712,6 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 							}
 						}
 					}
-				}
-				if (allSelectedObjects->isEmpty())
-				{
-					TheAI->destroyGroup(allSelectedObjects);
-					allSelectedObjects = NULL;
 				}
 			}
 			break;
@@ -1983,9 +1975,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 	}
 	/**/
 
-	if( currentlySelectedGroup != NULL )
+	if( currentlySelectedGroup )
 	{
-		TheAI->destroyGroup(currentlySelectedGroup);
+		currentlySelectedGroup->removeAll();
+		currentlySelectedGroup = NULL;
 	}
 
 }  // end logicMessageDispatches

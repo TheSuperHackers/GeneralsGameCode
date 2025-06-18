@@ -394,12 +394,12 @@ void ScriptActions::doMoveToWaypoint(const AsciiString& team, const AsciiString&
 	// The team is the team based on the name, and the calling team (if any) and the team that
 	// triggered the condition.  jba. :)
 	if (theTeam) {
-		AIGroup* theGroup = TheAI->createGroup();
+		RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 		if (!theGroup) {
 			return;
 		}
 
-		theTeam->getTeamAsAIGroup(theGroup);
+		theTeam->getTeamAsAIGroup(theGroup.Peek());
 		Waypoint *way = TheTerrainLogic->getWaypointByName(waypoint);
 		if (way) {
 			Coord3D destination = *way->getLocation();
@@ -756,12 +756,12 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 			theTeam->setActive();
 			if (needToMoveToDestination) 
 			{
-				AIGroup* theGroup = TheAI->createGroup();
+				RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 				if (!theGroup) 
 				{
 					return;
 				}
-				theTeam->getTeamAsAIGroup(theGroup);
+				theTeam->getTeamAsAIGroup(theGroup.Peek());
 				theGroup->groupMoveToPosition( &destination, false, CMD_FROM_SCRIPT );
 			}
 		}
@@ -1015,12 +1015,12 @@ void ScriptActions::doAttack(const AsciiString& attackerName, const AsciiString&
 	if( attackingTeam == NULL || victimTeam == NULL )
 		return;
 
-	AIGroup *aiGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> aiGroup = TheAI->createGroup();
 	if (!aiGroup) {
 		return;
 	}
 
-	attackingTeam->getTeamAsAIGroup(aiGroup);
+	attackingTeam->getTeamAsAIGroup(aiGroup.Peek());
 	aiGroup->groupAttackTeam(victimTeam, NO_MAX_SHOTS_LIMIT, CMD_FROM_SCRIPT);
 
 }
@@ -1260,12 +1260,12 @@ void ScriptActions::updateTeamSetAttitude(const AsciiString& teamName, Int attit
 		return;
 	}
 
-	AIGroup *pAIGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> pAIGroup = TheAI->createGroup();
 	if (!pAIGroup) {
 		return;
 	}
 
-	theSrcTeam->getTeamAsAIGroup(pAIGroup);
+	theSrcTeam->getTeamAsAIGroup(pAIGroup.Peek());
 	pAIGroup->setAttitude((AttitudeType) attitude);
 }
 
@@ -1369,12 +1369,12 @@ void ScriptActions::doTeamAttackArea(const AsciiString& teamName, const AsciiStr
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
 
-	theTeam->getTeamAsAIGroup(theGroup);
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
 
 	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(areaName);
 	if (!pTrig) {
@@ -1401,12 +1401,12 @@ void ScriptActions::doTeamAttackNamed(const AsciiString& teamName, const AsciiSt
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
 
-	theTeam->getTeamAsAIGroup(theGroup);
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
 	theGroup->groupAttackObject(theVictim, NO_MAX_SHOTS_LIMIT, CMD_FROM_SCRIPT);
 }
 
@@ -1508,8 +1508,8 @@ void ScriptActions::doTeamEnterNamed(const AsciiString& teamName, const AsciiStr
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
-	theSrcTeam->getTeamAsAIGroup(theGroup);
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
+	theSrcTeam->getTeamAsAIGroup(theGroup.Peek());
 
 	theGroup->groupEnter(theTransport, CMD_FROM_SCRIPT);
 }
@@ -1544,8 +1544,8 @@ void ScriptActions::doTeamExitAll(const AsciiString& teamName)
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
-	theTeamOfTransports->getTeamAsAIGroup(theGroup);
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
+	theTeamOfTransports->getTeamAsAIGroup(theGroup.Peek());
 
 	theGroup->groupEvacuate( CMD_FROM_SCRIPT );
 }
@@ -1614,11 +1614,11 @@ void ScriptActions::doTeamFollowSkirmishApproachPath(const AsciiString& teamName
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
-	theTeam->getTeamAsAIGroup(theGroup);
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
 	Int count = 0;
 	Coord3D pos;
 	pos.x=pos.y=pos.z=0;
@@ -1677,11 +1677,11 @@ void ScriptActions::doTeamMoveToSkirmishApproachPath(const AsciiString& teamName
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
-	theTeam->getTeamAsAIGroup(theGroup);
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
 	Int count = 0;
 	Coord3D pos;
 	pos.x=pos.y=pos.z=0;
@@ -1725,11 +1725,11 @@ void ScriptActions::doTeamFollowWaypoints(const AsciiString& teamName, const Asc
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
-	theTeam->getTeamAsAIGroup(theGroup);
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
 	Int count = 0;
 	Coord3D pos;
 	pos.x=pos.y=pos.z=0;
@@ -1772,11 +1772,11 @@ void ScriptActions::doTeamFollowWaypointsExact(const AsciiString& teamName, cons
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
-	theTeam->getTeamAsAIGroup(theGroup);
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
 	Int count = 0;
 	Coord3D pos;
 	pos.x=pos.y=pos.z=0;
@@ -1864,11 +1864,11 @@ void ScriptActions::doTeamGuardPosition(const AsciiString& teamName, const Ascii
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
-	theTeam->getTeamAsAIGroup(theGroup);
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
 	Coord3D position = *way->getLocation();
 
 	theGroup->groupGuardPosition( &position, GUARDMODE_NORMAL, CMD_FROM_SCRIPT );
@@ -1885,11 +1885,11 @@ void ScriptActions::doTeamGuardObject(const AsciiString& teamName, const AsciiSt
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
-	theTeam->getTeamAsAIGroup(theGroup);
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
 
 	theGroup->groupGuardObject( theUnit, GUARDMODE_NORMAL, CMD_FROM_SCRIPT );
 }
@@ -1905,11 +1905,11 @@ void ScriptActions::doTeamGuardArea(const AsciiString& teamName, const AsciiStri
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
-	theTeam->getTeamAsAIGroup(theGroup);
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
 
 	theGroup->groupGuardArea( pTrig, GUARDMODE_NORMAL, CMD_FROM_SCRIPT );
 }
@@ -1943,11 +1943,11 @@ void ScriptActions::doTeamHunt(const AsciiString& teamName)
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
-	theTeam->getTeamAsAIGroup(theGroup);
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
 
 	theGroup->groupHunt( CMD_FROM_SCRIPT );
 }
@@ -3242,12 +3242,12 @@ void ScriptActions::doTeamGarrisonSpecificBuilding(const AsciiString& teamName, 
 		return;
 	}
 	
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
 	
-	theTeam->getTeamAsAIGroup(theGroup);
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
 	theGroup->groupEnter(theBuilding, CMD_FROM_SCRIPT);
 }
 
@@ -4082,13 +4082,13 @@ void ScriptActions::doTeamUseCommandButtonAbility( const AsciiString& team, cons
 	}
 
 
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if( !theGroup ) 
 	{
 		return;
 	}
 
-	theTeam->getTeamAsAIGroup( theGroup );
+	theTeam->getTeamAsAIGroup( theGroup.Peek() );
 	
 	theGroup->groupDoCommandButton( commandButton, CMD_FROM_SCRIPT );
 }
@@ -4117,13 +4117,13 @@ void ScriptActions::doTeamUseCommandButtonAbilityOnNamed( const AsciiString& tea
 	}
 
 
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if( !theGroup ) 
 	{
 		return;
 	}
 
-	theTeam->getTeamAsAIGroup( theGroup );
+	theTeam->getTeamAsAIGroup( theGroup.Peek() );
 	
 	theGroup->groupDoCommandButtonAtObject( commandButton, theObj, CMD_FROM_SCRIPT );
 }
@@ -4152,13 +4152,13 @@ void ScriptActions::doTeamUseCommandButtonAbilityAtWaypoint( const AsciiString& 
 	}
 
 
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if( !theGroup ) 
 	{
 		return;
 	}
 
-	theTeam->getTeamAsAIGroup( theGroup );
+	theTeam->getTeamAsAIGroup( theGroup.Peek() );
 	
 	theGroup->groupDoCommandButtonAtPosition( commandButton, pWaypoint->getLocation(), CMD_FROM_SCRIPT );
 }
@@ -4236,12 +4236,12 @@ void ScriptActions::doTeamStop(const AsciiString& teamName, Bool shouldDisband)
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
 
-	theTeam->getTeamAsAIGroup(theGroup);
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
 	theGroup->groupIdle(CMD_FROM_SCRIPT);
 
 	if (shouldDisband) {
@@ -4449,12 +4449,12 @@ void ScriptActions::doTeamStartSequentialScript(const AsciiString& teamName, con
 	}
 
 	// Idle the team so the seq script will start executing. jba.
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
 
-	team->getTeamAsAIGroup(theGroup);
+	team->getTeamAsAIGroup(theGroup.Peek());
 	theGroup->groupIdle(CMD_FROM_SCRIPT);
 
 
@@ -4556,12 +4556,12 @@ void ScriptActions::doTeamIdleForFramecount(const AsciiString& teamName, Int fra
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if (!theGroup) {
 		return;
 	}
 
-	theTeam->getTeamAsAIGroup(theGroup);
+	theTeam->getTeamAsAIGroup(theGroup.Peek());
 	Coord3D center;
 	theGroup->getCenter(&center);
 
@@ -4942,8 +4942,8 @@ void ScriptActions::doSkirmishAttackNearestGroupWithValue( const AsciiString& te
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
-	team->getTeamAsAIGroup(theGroup);
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
+	team->getTeamAsAIGroup(theGroup.Peek());
 
 	Player *player = team->getControllingPlayer();
 
@@ -4971,8 +4971,8 @@ void ScriptActions::doSkirmishCommandButtonOnMostValuable( const AsciiString& te
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
-	team->getTeamAsAIGroup(theGroup);
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
+	team->getTeamAsAIGroup(theGroup.Peek());
 
 	Player *player = team->getControllingPlayer();
 	if (!player)
@@ -5034,8 +5034,8 @@ void ScriptActions::doTeamUseCommandButtonOnNamed( const AsciiString& teamName, 
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
-	team->getTeamAsAIGroup(theGroup);
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
+	team->getTeamAsAIGroup(theGroup.Peek());
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if(!commandButton) {
@@ -5073,8 +5073,8 @@ void ScriptActions::doTeamUseCommandButtonOnNearestEnemy( const AsciiString& tea
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
-	team->getTeamAsAIGroup(theGroup);
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
+	team->getTeamAsAIGroup(theGroup.Peek());
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if(!commandButton) {
@@ -5119,8 +5119,8 @@ void ScriptActions::doTeamUseCommandButtonOnNearestGarrisonedBuilding( const Asc
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
-	team->getTeamAsAIGroup(theGroup);
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
+	team->getTeamAsAIGroup(theGroup.Peek());
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if(!commandButton) {
@@ -5167,8 +5167,8 @@ void ScriptActions::doTeamUseCommandButtonOnNearestKindof( const AsciiString& te
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
-	team->getTeamAsAIGroup(theGroup);
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
+	team->getTeamAsAIGroup(theGroup.Peek());
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if (!commandButton) {
@@ -5214,8 +5214,8 @@ void ScriptActions::doTeamUseCommandButtonOnNearestBuilding( const AsciiString& 
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
-	team->getTeamAsAIGroup(theGroup);
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
+	team->getTeamAsAIGroup(theGroup.Peek());
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if (!commandButton) {
@@ -5261,8 +5261,8 @@ void ScriptActions::doTeamUseCommandButtonOnNearestBuildingClass( const AsciiStr
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
-	team->getTeamAsAIGroup(theGroup);
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
+	team->getTeamAsAIGroup(theGroup.Peek());
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if (!commandButton) {
@@ -5309,8 +5309,8 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
-	team->getTeamAsAIGroup(theGroup);
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
+	team->getTeamAsAIGroup(theGroup.Peek());
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if (!commandButton) {
@@ -5400,8 +5400,8 @@ void ScriptActions::doTeamCaptureNearestUnownedFactionUnit( const AsciiString& t
 		return;
 	}
 
-	AIGroup *theGroup = TheAI->createGroup();
-	team->getTeamAsAIGroup(theGroup);
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
+	team->getTeamAsAIGroup(theGroup.Peek());
 
 	PartitionFilterPlayerAffiliation f1(team->getControllingPlayer(), ALLOW_ENEMIES | ALLOW_NEUTRAL, true);
 	PartitionFilterUnmannedObject f2(true);
@@ -5516,12 +5516,12 @@ void ScriptActions::doTeamEmoticon(const AsciiString& teamName, const AsciiStrin
 		return;
 	}
 
-	AIGroup* theGroup = TheAI->createGroup();
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
 	if( !theGroup ) 
 	{
 		return;
 	}
-	theTeam->getTeamAsAIGroup( theGroup );
+	theTeam->getTeamAsAIGroup( theGroup.Peek() );
 	
 	Int frames = (Int)( duration * LOGICFRAMES_PER_SECOND );
 	theGroup->groupSetEmoticon( emoticonName, frames );
