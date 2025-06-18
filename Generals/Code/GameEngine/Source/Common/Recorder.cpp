@@ -1306,16 +1306,6 @@ void RecorderClass::appendNextCommand() {
 	}
 
 	GameMessage *msg = newInstance(GameMessage)(type);
-	if (type == GameMessage::MSG_BEGIN_NETWORK_MESSAGES || type == GameMessage::MSG_CLEAR_GAME_DATA)
-	{
-	}
-	else
-	{
-		if (!m_doingAnalysis)
-		{
-			TheCommandList->appendMessage(msg);
-		}
-	}
 
 #ifdef DEBUG_LOGGING
 	AsciiString commandName = msg->getCommandAsAsciiString();
@@ -1387,13 +1377,11 @@ void RecorderClass::appendNextCommand() {
 		}
 	}
 
-	if (type == GameMessage::MSG_CLEAR_GAME_DATA || type == GameMessage::MSG_BEGIN_NETWORK_MESSAGES)
+	if (type != GameMessage::MSG_BEGIN_NETWORK_MESSAGES && type != GameMessage::MSG_CLEAR_GAME_DATA && !m_doingAnalysis)
 	{
-		deleteInstance(msg);
-		msg = NULL;
+		TheCommandList->appendMessage(msg);
 	}
-
-	if (m_doingAnalysis)
+	else
 	{
 		deleteInstance(msg);
 		msg = NULL;

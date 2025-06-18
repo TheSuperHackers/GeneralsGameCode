@@ -194,7 +194,7 @@ void W3DBridge::init(Vector3 fromLoc, Vector3 toLoc, AsciiString bridgeTemplateN
 /** Loads a bridge model(if not already loaded) and gets meshes for use at 
 specified location.  */
 //=============================================================================
-Bool W3DBridge::load(enum BodyDamageType curDamageState)
+Bool W3DBridge::load(BodyDamageType curDamageState)
 {
 	REF_PTR_RELEASE(m_bridgeTexture);
 	REF_PTR_RELEASE(m_leftMesh);
@@ -1131,7 +1131,7 @@ void W3DBridgeBuffer::drawBridges(CameraClass * camera, Bool wireframe, TextureC
 			m_bridges[info.bridgeIndex].setEnabled(true);
 			if (m_bridges[info.bridgeIndex].getDamageState() != info.curDamageState) {
 				changed = true;
-				enum BodyDamageType curState = m_bridges[info.bridgeIndex].getDamageState();
+				BodyDamageType curState = m_bridges[info.bridgeIndex].getDamageState();
 				m_bridges[info.bridgeIndex].setDamageState(info.curDamageState);
 				if (!m_bridges[info.bridgeIndex].load(info.curDamageState)) {
 					// put the old model back.

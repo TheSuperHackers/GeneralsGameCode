@@ -45,6 +45,7 @@
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 struct FieldParse;
 enum _TerrainLOD CPP_11(: Int);
+class CommandLine;
 class GlobalData;
 class INI;
 class WeaponBonusSet;
@@ -54,6 +55,21 @@ enum AIDebugOptions CPP_11(: Int);
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 
 const Int MAX_GLOBAL_LIGHTS	= 3;
+
+//-------------------------------------------------------------------------------------------------
+class CommandLineData
+{
+	friend class CommandLine;
+	friend class GlobalData;
+
+	CommandLineData()
+		: m_hasParsedCommandLineForStartup(false)
+		, m_hasParsedCommandLineForEngineInit(false)
+	{}
+
+	Bool m_hasParsedCommandLineForStartup;
+	Bool m_hasParsedCommandLineForEngineInit;
+};
 
 //-------------------------------------------------------------------------------------------------
 /** Global data container class
@@ -70,9 +86,9 @@ public:
 	GlobalData();
 	virtual ~GlobalData();
 
-	void init();
-	void reset();
-	void update() { }
+	virtual void init();
+	virtual void reset();
+	virtual void update() { }
 
 	Bool setTimeOfDay( TimeOfDay tod );		///< Use this function to set the Time of day;
 
@@ -89,6 +105,8 @@ public:
 	//-----------------------------------------------------------------------------------------------
 	//-----------------------------------------------------------------------------------------------
 	//-----------------------------------------------------------------------------------------------
+
+	CommandLineData m_commandLineData;
 
 	AsciiString m_mapName;  ///< hack for now, this whole this is going away
 	AsciiString m_moveHintName;

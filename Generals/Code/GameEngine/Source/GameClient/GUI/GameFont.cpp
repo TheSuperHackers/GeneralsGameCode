@@ -213,7 +213,7 @@ GameFont *FontLibrary::getFont( AsciiString name, Int pointSize, Bool bold )
 	if( loadFontData( font ) == FALSE )
 	{
 
-		DEBUG_CRASH(( "getFont: Unable to load font data pointer '%s'\n", name ));
+		DEBUG_CRASH(( "getFont: Unable to load font data pointer '%s'\n", name.str() ));
 		deleteInstance(font);
 		return NULL;
 

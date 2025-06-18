@@ -4032,8 +4032,12 @@ void Pathfinder::classifyFence( Object *obj, Bool insert )
 	IRegion2D cellBounds;
 	cellBounds.lo.x = REAL_TO_INT_FLOOR((pos->x + 0.5f)/PATHFIND_CELL_SIZE_F);
 	cellBounds.lo.y = REAL_TO_INT_FLOOR((pos->y + 0.5f)/PATHFIND_CELL_SIZE_F);
+	// TheSuperHackers @fix Mauller 16/06/2025 Fixes uninitialized variables.
+	// To keep retail compatibility they need to be uninitialized in VC6 builds.
+#if !(defined(_MSC_VER) && _MSC_VER < 1300)
 	cellBounds.hi.x = REAL_TO_INT_CEIL((pos->x + 0.5f)/PATHFIND_CELL_SIZE_F);
 	cellBounds.hi.y = REAL_TO_INT_CEIL((pos->y + 0.5f)/PATHFIND_CELL_SIZE_F);
+#endif
 	Bool didAnything = false;
 
  	for (Int iy = 0; iy < numStepsY; ++iy, tl_x += ydx, tl_y += ydy)

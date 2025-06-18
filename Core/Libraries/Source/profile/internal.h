@@ -93,7 +93,7 @@ public:
 
 	void ThreadSafeSetFlag()
 	{
-		while (Flag.test_and_set(std::memory_order_acquire)) {
+		while (Flag.test_and_set(std::memory_order_acq_rel)) {
 			Flag.wait(true, std::memory_order_relaxed);
 		}
 	}
