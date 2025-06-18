@@ -267,7 +267,7 @@ public:
 
 	void Add_Ref() const { m_refCount.Add_Ref(); }
 	void Release_Ref() const { m_refCount.Release_Ref(MemoryPoolObject::deleteInstanceInternal, this); }
-	void Num_Refs() const { m_refCount.Num_Refs(); }
+	UnsignedByte Num_Refs() const { return m_refCount.Num_Refs(); }
 
 	StateID getCurrentStateID() const { return m_currentState ? m_currentState->getID() : INVALID_STATE_ID; }	///< return the id of the current state of the machine
 	Bool isInIdleState() const { return m_currentState ? m_currentState->isIdle() : true; }	// stateless things are considered 'idle'
