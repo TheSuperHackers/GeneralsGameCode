@@ -123,6 +123,9 @@ public:
 		#endif
 	}
 
+	/*
+	** The reference counter value cannot be copied.
+	*/
 	RefCountClass(const RefCountClass & ) : 
 		NumRefs(1)		
 		#ifndef NDEBUG
@@ -134,6 +137,8 @@ public:
 		Inc_Total_Refs(this);
 		#endif
 	}
+
+	RefCountClass& operator=(const RefCountClass&) { return *this; }
 
 	/*
 	** Add_Ref, call this function if you are going to keep a pointer
@@ -279,6 +284,12 @@ public:
 	{
 		WWASSERT(NumRefs == IntegerType(0));
 	}
+
+	/*
+	** The reference counter value cannot be copied.
+	*/
+	RefCountValue(const RefCountValue&) : NumRefs(1) {}
+	RefCountValue& operator=(const RefCountValue&) { return *this; }
 
 	/*
 	** Add_Ref, call this function if you are going to keep a pointer to this object.
