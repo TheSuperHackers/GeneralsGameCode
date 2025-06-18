@@ -1157,8 +1157,9 @@ static CommandLineParam paramsForStartup[] =
 	{ "-headless", parseHeadless },
 
 	// TheSuperHackers @feature helmutbuhler 13/04/2025
-	// Simulate replay without graphics. Pass the filename including .rep afterwards.
-	// You can pass this multiple times to check multiple replays.
+	// Play back a replay. Pass the filename including .rep afterwards.
+	// You can pass this multiple times to play back multiple replays.
+	// You can also include wildcards. The file must be in the replay folder or in a subfolder.
 	{ "-replay", parseReplay },
 
 	// TheSuperHackers @feature helmutbuhler 23/05/2025
