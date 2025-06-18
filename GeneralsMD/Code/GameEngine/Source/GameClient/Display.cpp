@@ -161,6 +161,10 @@ Bool Display::setDisplayMode( UnsignedInt xres, UnsignedInt yres, UnsignedInt bi
 	TheTacticalView->setHeight((Real)oldViewHeight/(Real)oldDisplayHeight*(Real)yres);
 	TheTacticalView->setOrigin((Real)oldViewOriginX/(Real)oldDisplayWidth*(Real)xres,
 	(Real)oldViewOriginY/(Real)oldDisplayHeight*(Real)yres);
+
+	// TheSuperHackers @tweak valeronm 25/03/2025 Adjust camera FOV according to display resolution
+	TheTacticalView->adjustFovToAspectRatio(xres, yres);
+
 	return TRUE;
 }
 
