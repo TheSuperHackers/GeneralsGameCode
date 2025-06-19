@@ -29,7 +29,6 @@ target_link_libraries(corei_imagepacker INTERFACE
     benchmark
     comctl32
     core_debug
-    core_profile
     dbghelplib
     imm32
     vfw32
