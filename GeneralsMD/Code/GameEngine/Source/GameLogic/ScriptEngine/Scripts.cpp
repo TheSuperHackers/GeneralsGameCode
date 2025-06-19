@@ -2556,8 +2556,8 @@ ScriptAction *ScriptAction::ParseAction(DataChunkInput &file, DataChunkInfo *inf
 				pScriptAction->m_numParms = 2;
 				// Default it to TRUE, as per conversation with JohnL
 				pScriptAction->m_parms[1] = newInstance(Parameter)(Parameter::BOOLEAN, 1);
-				break;
 			}
+			break;
 		case CAMERA_MOD_SET_FINAL_ZOOM:
 		case CAMERA_MOD_SET_FINAL_PITCH:
 			if (pScriptAction->getNumParameters() == 1)
