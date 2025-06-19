@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Rule Name="Microsoft.CodeAnalysis" PageTemplate="Microsoft.CodeAnalysis.Template" SwitchPrefix="/" Order="200" xmlns="http://schemas.microsoft.com/build/2009/properties" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+  <Rule.DisplayName>
+    <sys:String>Code Analysis</sys:String>
+  </Rule.DisplayName>
+
+  <Rule.Categories>
+    <Category Name="General">
+      <Category.DisplayName>
+        <sys:String>General</sys:String>
+      </Category.DisplayName>
+    </Category>
+  </Rule.Categories>
+
+  <Rule.DataSource>
+    <DataSource Persistence="ProjectFile" HasConfigurationCondition="true" />
+  </Rule.DataSource>
+
+  <StringProperty Name="CodeAnalysisCulture" />
+  <StringProperty Name="CodeAnalysisModuleSuppressionsFile" />
+  <StringProperty Name="CodeAnalysisInputAssembly" />
+  <StringProperty Name="CodeAnalysisLogFile" />
+  <StringProperty Name="CodeAnalysisRuleAssemblies" />
+  <StringProperty Name="CodeAnalysisRules" />
+  <StringProperty Name="CodeAnalysisRuleDirectories" />
+  <StringProperty Name="CodeAnalysisRuleSet" />
+  <StringProperty Name="CodeAnalysisRuleSetDirectories" />
+  <BoolProperty Name="CodeAnalysisUseTypeNameInSuppression" />
+  <BoolProperty Name="CodeAnalysisIgnoreGeneratedCode" />
+  <BoolProperty Name="RunCodeAnalysis" />
+  <BoolProperty Name="CodeAnalysisOverrideRuleVisibilities" />
+  <BoolProperty Name="CodeAnalysisFailOnMissingRules" />
+  <BoolProperty Name="CodeAnalysisIgnoreBuiltInRuleSets" />
+  <BoolProperty Name="CodeAnalysisIgnoreBuiltInRules" />
+</Rule>

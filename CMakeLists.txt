@@ -30,6 +30,11 @@ if (CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR)
     message(FATAL_ERROR "Building in-source is not supported! Create a build dir and remove ${CMAKE_SOURCE_DIR}/CMakeCache.txt")
 endif()
 
+# Sets vs17 Generator to use v60 toolchain for vc6 builds. Must be set before any langauge is set.
+if(${IS_VS6_BUILD})
+    set(CMAKE_GENERATOR_TOOLSET "v60,VCTargetsPath=${CMAKE_SOURCE_DIR}/Dependencies/vctargetspath/v4.0" CACHE STRING "Toolset and VCTargetsPath" FORCE)
+endif()
+
 # Top level project, doesn't really affect anything.
 project(genzh LANGUAGES C CXX)
 

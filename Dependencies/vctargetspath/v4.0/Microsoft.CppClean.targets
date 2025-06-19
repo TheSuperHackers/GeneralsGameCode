@@ -1,0 +1,98 @@
+<!--
+***********************************************************************************************
+Microsoft.CppClean.targets
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will impact
+          the way you build your projects from the command-line or the IDE.
+
+Copyright (C) Microsoft Corporation. All rights reserved.
+***********************************************************************************************
+-->
+
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <UsingTask TaskName="CppClean" AssemblyName="Microsoft.Build.CppTasks.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+
+  <!-- *******************************************************************************************
+        Cpp Clean Section
+       ******************************************************************************************* -->
+  <!-- CppClean: Delete all intermediate and final build outputs. -->
+  <PropertyGroup>
+    <CleanDependsOn>
+      $(CleanDependsOn);
+      CppClean
+    </CleanDependsOn>
+
+    <CppCleanDependsOn>
+      BeforeCppClean;
+      $(CppCleanDependsOn);
+      CoreCppClean;
+      AfterCppClean;
+    </CppCleanDependsOn>
+  </PropertyGroup>
+  <Target Name="CppClean"
+          DependsOnTargets="$(CppCleanDependsOn)">
+
+  </Target>
+
+  <!-- BeforeCppClean: Redefine this target in your project in order to run tasks just before Clean. -->
+  <Target Name="BeforeCppClean">
+  </Target>
+
+  <!-- AfterCppClean: Redefine this target in your project in order to run tasks just after Clean. -->
+  <Target Name="AfterCppClean">
+  </Target>
+
+  <!-- CoreCppClean -->
+  <PropertyGroup>
+    <CoreCppCleanDependsOn></CoreCppCleanDependsOn>
+    <CppCleanLogFile>$(TargetName).Build.CppClean.log</CppCleanLogFile>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <CoreCppClean>
+      <DoDelete               Condition="'%(CoreCppClean.DoDelete)'               == ''">TRUE</DoDelete>
+      <FilePatternsToDelete   Condition="'%(CoreCppClean.FilePatternsToDelete)'   == ''">$(ExtensionsToDeleteOnClean)</FilePatternsToDelete>
+      <FilesExcludedFromClean Condition="'%(CoreCppClean.FilesExcludedFromClean)' == ''">$(CppCleanLogFile)</FilesExcludedFromClean>
+    </CoreCppClean>
+  </ItemDefinitionGroup>
+
+  <ItemGroup>
+    <CoreCppClean Include="$(IntDir)"/>
+    <!-- Files in OutDir will be deleted using the filepattern which will get evaluated to real full paths -->
+  </ItemGroup>
+
+  <Target
+      Name="CoreCppClean"
+      DependsOnTargets="$(CoreCppCleanDependsOn)">
+
+    <!-- Make sure the directory exists. -->
+    <MakeDir Directories="$(IntDir)"/>
+
+    <!-- Delete all the files based on the FoldersToClean and ExtensionsToDeleteOnClean -->
+    <CppClean
+      FoldersToClean                     ="@(CoreCppClean)"
+      FilesExcludedFromClean	           ="%(CoreCppClean.FilesExcludedFromClean)"
+      DoDelete                      	   ="%(CoreCppClean.DoDelete)"
+      FilePatternsToDeleteOnClean        ="%(CoreCppClean.FilePatternsToDelete)"
+      >
+      <Output TaskParameter="DeletedFiles" ItemName="DeletedFilesByCppCleanTask"/>
+    </CppClean>
+
+    <!-- Write new list of current files back to disk. -->
+    <WriteLinesToFile File="$(IntDir)$(CppCleanLogFile)" Lines="@(DeletedFilesByCppCleanTask)" Overwrite="true"/>
+
+  </Target>
+
+  <PropertyGroup>
+    <CppCleanDependsOn>$(CppCleanDependsOn);PGInstrumentedClean</CppCleanDependsOn>
+  </PropertyGroup>
+
+  <Target Name="PGInstrumentedClean" >
+    <ItemGroup>
+      <InstrumentedClean Include="$(OutDir)$(TargetName)!*.pgc" />
+    </ItemGroup>
+    <Delete Files="@(InstrumentedClean)"/>
+  </Target>
+</Project>

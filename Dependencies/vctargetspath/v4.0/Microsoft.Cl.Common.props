@@ -1,0 +1,99 @@
+<!--
+***********************************************************************************************
+Microsoft.Cl.Common.props
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+
+Copyright (C) Microsoft Corporation. All rights reserved.
+***********************************************************************************************
+-->
+
+
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- *******************************************************************************************
+        CLCompile
+       ******************************************************************************************* -->
+
+  <!-- Default cl options -->
+
+  <ItemDefinitionGroup Condition="'$(UseDebugLibraries)' == 'true'">
+    <ClCompile>
+      <RuntimeLibrary                   Condition="'%(ClCompile.RuntimeLibrary)'                == ''">MultiThreadedDebugDll</RuntimeLibrary>
+      <BasicRuntimeChecks               Condition="'%(ClCompile.BasicRuntimeChecks)'            == ''">EnableFastChecks</BasicRuntimeChecks>
+      <Optimization                     Condition="'%(ClCompile.Optimization)'                  == ''">Disabled</Optimization>
+      <MinimalRebuild                   Condition="'%(ClCompile.MinimalRebuild)'                == ''">true</MinimalRebuild>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AssemblerOutput                  Condition="'%(ClCompile.AssemblerOutput)'               == ''">NoListing</AssemblerOutput>
+      <AssemblerListingLocation         Condition="'%(ClCompile.AssemblerListingLocation)'      == ''">$(IntDir)</AssemblerListingLocation>
+      <AcceptableNonZeroExitCodes       Condition="'%(ClCompile.AcceptableNonZeroExitCodes)'    == ''">$(AcceptableNonZeroExitCodes)</AcceptableNonZeroExitCodes>
+      <UndefineAllPreprocessorDefinitions Condition="'%(ClCompile.UndefineAllPreprocessorDefinitions)' == ''">false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation                Condition="'%(ClCompile.BrowseInformation)'             == ''">false</BrowseInformation>
+      <BrowseInformationFile            Condition="'%(ClCompile.BrowseInformationFile)'         == ''">$(IntDir)</BrowseInformationFile>
+      <BasicRuntimeChecks               Condition="'%(ClCompile.BasicRuntimeChecks)'            == ''">Default</BasicRuntimeChecks>
+      <CompileAs                        Condition="'%(ClCompile.CompileAs)'                     == ''">Default</CompileAs>
+      <DisableLanguageExtensions        Condition="'%(ClCompile.DisableLanguageExtensions)'     == ''">false</DisableLanguageExtensions>
+      <ErrorReporting                   Condition="'%(ClCompile.ErrorReporting)'                == ''
+                                                   and '$(BuildingInsideVisualStudio)'          == 'true'">Prompt</ErrorReporting>
+      <ErrorReporting                   Condition="'%(ClCompile.ErrorReporting)'                == ''">Queue</ErrorReporting>
+      <ExpandAttributedSource           Condition="'%(ClCompile.ExpandAttributedSource)'        == ''">false</ExpandAttributedSource>
+      <ExceptionHandling                Condition="'%(ClCompile.ExceptionHandling)'             == ''">Sync</ExceptionHandling>
+      <EnableFiberSafeOptimizations     Condition="'%(ClCompile.EnableFiberSafeOptimizations)'  == ''">false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet     Condition="'%(ClCompile.EnableEnhancedInstructionSet)'  == ''">NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel               Condition="'%(ClCompile.FloatingPointModel)'            == ''">Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope   Condition="'%(ClCompile.ForceConformanceInForLoopScope)'== ''">true</ForceConformanceInForLoopScope>
+      <ForcedIncludeFiles               Condition="'%(ClCompile.ForcedIncludeFiles)'            == ''"></ForcedIncludeFiles>
+      <ForcedUsingFiles                 Condition="'%(ClCompile.ForcedUsingFiles)'              == ''"></ForcedUsingFiles>
+      <GenerateXMLDocumentationFiles    Condition="'%(ClCompile.GenerateXMLDocumentationFiles)' == ''">false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion          Condition="'%(ClCompile.InlineFunctionExpansion)'       == ''">Default</InlineFunctionExpansion>
+      <IntrinsicFunctions               Condition="'%(ClCompile.IntrinsicFunctions)'            == ''">false</IntrinsicFunctions>
+      <IgnoreStandardIncludePath        Condition="'%(ClCompile.IgnoreStandardIncludePath)'     == ''">false</IgnoreStandardIncludePath>
+      <MinimalRebuild                   Condition="'%(ClCompile.MinimalRebuild)'                == '' and
+                                                  ('$(CLRSupport)'                              == '' or
+                                                   '$(CLRSupport)'                              == 'false')">false</MinimalRebuild>
+      <OmitDefaultLibName               Condition="'%(ClCompile.OmitDefaultLibName)'            == ''">false</OmitDefaultLibName>
+      <FavorSizeOrSpeed                 Condition="'%(ClCompile.FavorSizeOrSpeed)'              == ''">Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization         Condition="'%(ClCompile.WholeProgramOptimization)'      == ''">false</WholeProgramOptimization>
+      <Optimization                     Condition="'%(ClCompile.Optimization)'                  == '' and
+                                                   ('%(ClCompile.BasicRuntimeChecks)'           == '' or
+                                                   '%(ClCompile.BasicRuntimeChecks)'            == 'Default')">MaxSpeed</Optimization>
+      <ObjectFileName                   Condition="'%(ClCompile.ObjectFileName)'                == ''">$(IntDir)</ObjectFileName>
+      <CallingConvention                Condition="'%(ClCompile.CallingConvention)'             == '' and
+                                                  ('$(CLRSupport)'                              == '' or
+                                                   '$(CLRSupport)'                              == 'false')">Cdecl</CallingConvention>
+      <ProgramDataBaseFileName          Condition="'%(ClCompile.ProgramDataBaseFileName)'       == '' and
+                                              	   '$(PlatformToolsetVersion)'                  != ''">$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader                Condition="'%(ClCompile.PrecompiledHeader)'             == ''">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile            Condition="'%(ClCompile.PrecompiledHeaderFile)'         == ''">StdAfx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile      Condition="'%(ClCompile.PrecompiledHeaderOutputFile)'   == ''">$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <ProgramDataBaseFileName          Condition="'%(ClCompile.ProgramDataBaseFileName)'       == ''">$(IntDir)vc100.pdb</ProgramDataBaseFileName>
+      <PreprocessToFile                 Condition="'%(ClCompile.PreprocessToFile)'              == ''">false</PreprocessToFile>
+      <PreprocessKeepComments           Condition="'%(ClCompile.PreprocessKeepComments)'        == ''">false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers    Condition="'%(ClCompile.PreprocessSuppressLineNumbers)' == ''">false</PreprocessSuppressLineNumbers>
+      <ProcessorNumber                  Condition="'$(CL_MPCount)'                              != ''">$(CL_MPCount)</ProcessorNumber>
+      <RuntimeLibrary                   Condition="'%(ClCompile.RuntimeLibrary)'                == ''">MultiThreadedDll</RuntimeLibrary>
+      <ShowIncludes                     Condition="'%(ClCompile.ShowIncludes)'                  == ''">false</ShowIncludes>
+      <SuppressStartupBanner            Condition="'%(ClCompile.SuppressStartupBanner)'         == ''">true</SuppressStartupBanner>
+      <BufferSecurityCheck              Condition="'%(ClCompile.BufferSecurityCheck)'           == ''">true</BufferSecurityCheck>
+      <StructMemberAlignment            Condition="'%(ClCompile.StructMemberAlignment)'         == ''">Default</StructMemberAlignment>
+      <SmallerTypeCheck                 Condition="'%(ClCompile.SmallerTypeCheck)'              == ''">false</SmallerTypeCheck>
+      <TrackerLogDirectory              Condition="'%(ClCompile.TrackerLogDirectory)'           == ''">$(IntDir)</TrackerLogDirectory>
+      <MinimalRebuildFromTracking       Condition="'%(ClCompile.MinimalRebuildFromTracking)'    == ''">true</MinimalRebuildFromTracking>
+      <TreatWarningAsError              Condition="'%(ClCompile.TreatWarningAsError)'           == ''">false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType        Condition="'%(ClCompile.TreatWChar_tAsBuiltInType)'     == ''">true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths                     Condition="'%(ClCompile.UseFullPaths)'                  == ''">false</UseFullPaths>
+      <WarningLevel                     Condition="'%(ClCompile.WarningLevel)'                  == ''">Level1</WarningLevel>
+      <XMLDocumentationFileName         Condition="'%(ClCompile.XMLDocumentationFileName)'      == ''">$(IntDir)</XMLDocumentationFileName>
+      <DebugInformationFormat           Condition="'%(ClCompile.DebugInformationFormat)'        == ''">ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+
+
+</Project>

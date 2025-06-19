@@ -1089,4 +1089,8 @@ target_link_libraries(g_gameengine PUBLIC
     g_wwvegas
 )
 
+if (IS_VS6_BUILD)
+    target_compile_options(g_gameengine PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/Zm800>)
+endif()
+
 target_precompile_headers(g_gameengine PRIVATE Include/Precompiled/PreRTS.h)

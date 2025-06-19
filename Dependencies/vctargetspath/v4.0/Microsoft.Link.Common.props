@@ -1,0 +1,74 @@
+<!--
+***********************************************************************************************
+Microsoft.Link.Common.props
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+
+Copyright (C) Microsoft Corporation. All rights reserved.
+***********************************************************************************************
+-->
+
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- *******************************************************************************************
+        Link
+       ******************************************************************************************* -->
+  <!-- Default link options -->
+  <ItemDefinitionGroup>
+    <Link>
+      <AllowIsolation              Condition="'%(Link.AllowIsolation)'              == ''">true</AllowIsolation>
+      <SuppressStartupBanner       Condition="'%(Link.SuppressStartupBanner)'       == ''">true</SuppressStartupBanner>
+      <TrackerLogDirectory         Condition="'%(Link.TrackerLogDirectory)'         == ''">$(IntDir)</TrackerLogDirectory>
+      <MinimalRebuildFromTracking  Condition="'%(Link.MinimalRebuildFromTracking)'  == ''">true</MinimalRebuildFromTracking>
+      <ImportLibrary               Condition="'%(Link.ImportLibrary)'               == '' and
+                                              '$(IgnoreImportLibrary)'              != 'true' and
+                                             ('$(CLRSupport)'                       == 'false' or
+                                              '$(CLRSupport)'                       == '') and
+                                              '%(Link.LinkDll)'                     == 'true'">$(OutDir)$(TargetName).lib</ImportLibrary>
+      <OutputFile                  Condition="'%(Link.OutputFile)'                  == ''">$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <ManifestFile                Condition="'%(Link.ManifestFile)'                == ''">$(IntDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
+      <ProgramDatabaseFile         Condition="'%(Link.ProgramDatabaseFile)'         == ''">$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
+      <Profile                     Condition="'%(Link.Profile)'                     == ''">false</Profile>
+      <ProfileGuidedDatabase       Condition="'%(Link.ProfileGuidedDatabase)'       == ''">$(TargetDir)$(TargetName).pgd</ProfileGuidedDatabase>
+      <EnableUAC                   Condition="'%(Link.EnableUAC)'                   == ''">true</EnableUAC>
+      <UACExecutionLevel           Condition="'%(Link.UACExecutionLevel)'           == ''">AsInvoker</UACExecutionLevel>
+      <UACUIAccess                 Condition="'%(Link.UACUIAccess)'                 == ''">false</UACUIAccess>
+      <LinkErrorReporting          Condition="'%(Link.LinkErrorReporting)'              == '' and
+                                              '$(BuildingInsideVisualStudio)'       == 'true'">PromptImmediately</LinkErrorReporting>
+      <LinkErrorReporting          Condition="'%(Link.LinkErrorReporting)'          == ''">QueueForNextLogin</LinkErrorReporting>
+      <AcceptableNonZeroExitCodes  Condition="'%(Link.AcceptableNonZeroExitCodes)'  == ''">$(AcceptableNonZeroExitCodes)</AcceptableNonZeroExitCodes>
+      <RandomizedBaseAddress       Condition="'%(Link.RandomizedBaseAddress)'       == ''">true</RandomizedBaseAddress>
+      <DataExecutionPrevention     Condition="'%(Link.DataExecutionPrevention)'     == ''">true</DataExecutionPrevention>
+      <CLRImageType                Condition="'%(Link.CLRImageType)'                == ''">Default</CLRImageType>
+      <KeyFile                     Condition="'%(Link.KeyFile)'                     == ''"></KeyFile>
+      <DelaySign                   Condition="'%(Link.DelaySign)'                   == ''"></DelaySign>
+      <Driver                      Condition="'%(Link.Driver)'                      == ''">NotSet</Driver>
+      <RegisterOutput              Condition="'%(Link.RegisterOutput)'              == ''">false</RegisterOutput>
+      <PerUserRedirection          Condition="'%(Link.PerUserRedirection)'          == ''">false</PerUserRedirection>
+      <TurnOffAssemblyGeneration   Condition="'%(Link.TurnOffAssemblyGeneration)'   == ''">false</TurnOffAssemblyGeneration>
+      <GenerateMapFile             Condition="'%(Link.GenerateMapFile)'             == ''">false</GenerateMapFile>
+      <MapExports                  Condition="'%(Link.MapExports)'                  == ''">false</MapExports>
+      <SwapRunFromCD               Condition="'%(Link.SwapRunFromCD)'               == ''">false</SwapRunFromCD>
+      <SwapRunFromNET              Condition="'%(Link.SwapRunFromNET)'              == ''">false</SwapRunFromNET>
+      <IgnoreEmbeddedIDL           Condition="'%(Link.IgnoreEmbeddedIDL)'           == ''">false</IgnoreEmbeddedIDL>
+      <TypeLibraryResourceID       Condition="'%(Link.TypeLibraryResourceID)'       == ''">1</TypeLibraryResourceID>
+      <NoEntryPoint                Condition="'%(Link.NoEntryPoint)'                == ''">false</NoEntryPoint>
+      <SetChecksum                 Condition="'%(Link.SetChecksum)'                 == ''">false</SetChecksum>
+      <ShowProgress                Condition="'%(Link.ShowProgress)'                == ''">NotSet</ShowProgress>
+    </Link>
+
+    <ImpLib>
+      <OutputFile                                                                               >$(OutDir)$(TargetName).lib</OutputFile>
+      <LinkErrorReporting          Condition="'%(ImpLib.LinkErrorReporting)'              == '' and
+                                              '$(BuildingInsideVisualStudio)'       == 'true'"  >PromptImmediately</LinkErrorReporting>
+      <LinkErrorReporting          Condition="'%(ImpLib.LinkErrorReporting)'          == ''"    >QueueForNextLogin</LinkErrorReporting>
+      <TrackerLogDirectory         Condition="'%(ImpLib.TrackerLogDirectory)'          == ''"   >$(IntDir)</TrackerLogDirectory>
+      <MinimalRebuildFromTracking  Condition="'%(ImpLib.MinimalRebuildFromTracking)'   == ''"   >true</MinimalRebuildFromTracking>
+      <SuppressStartupBanner       Condition="'%(ImpLib.SuppressStartupBanner)'        == ''"   >true</SuppressStartupBanner>
+      <AcceptableNonZeroExitCodes  Condition="'%(ImpLib.AcceptableNonZeroExitCodes)'   == ''"   >$(AcceptableNonZeroExitCodes)</AcceptableNonZeroExitCodes>
+    </ImpLib>
+  </ItemDefinitionGroup>
+
+</Project>

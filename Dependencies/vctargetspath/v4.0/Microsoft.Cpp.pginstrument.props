@@ -1,0 +1,35 @@
+﻿<!--
+***********************************************************************************************
+Microsoft.Cpp.pginstrument.props
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+
+Copyright (C) Microsoft Corporation. All rights reserved.
+***********************************************************************************************
+-->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_PropertySheetDisplayName>PGO - Instrumented Build Properties</_PropertySheetDisplayName>
+    <LocalDebuggerEnvironment Condition="'$(Platform)'=='Win32'">$(VCInstallDir)bin;$(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
+	  <LocalDebuggerEnvironment Condition="'$(Platform)'=='X64'">$(VCInstallDir)bin\amd64;$(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
+	  <LocalDebuggerEnvironment Condition="'$(Platform)'=='IA64'">$(VCInstallDir)bin\ia64;$(LocalDebuggerEnvironment)</LocalDebuggerEnvironment>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <LinkTimeCodeGeneration>PGInstrument</LinkTimeCodeGeneration>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <Lib>
+      <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
+    </Lib>
+  </ItemDefinitionGroup>
+</Project>

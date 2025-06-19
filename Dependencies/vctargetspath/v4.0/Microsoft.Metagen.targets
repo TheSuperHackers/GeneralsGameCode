@@ -1,0 +1,126 @@
+<!--
+***********************************************************************************************
+Microsoft.MetaGen.targets
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+
+This file is required to build Visual C++ projects
+using Managed Incremental Build.
+
+Copyright (C) Microsoft Corporation. All rights reserved.
+***********************************************************************************************
+-->
+
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+
+  <UsingTask TaskName="METAGEN"                           AssemblyName="Microsoft.Build.CppTasks.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+  <UsingTask TaskName="MIBPreProcessDependencyGraph"      AssemblyName="Microsoft.Build.CppTasks.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+  <UsingTask TaskName="MIBPostProcessDependencyGraph"     AssemblyName="Microsoft.Build.CppTasks.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+  
+  <!--
+    ============================================================
+    MetaGen
+
+    Generates the assembly metagen file
+    ============================================================
+    --> 
+
+  <Target Name="ComputeMetaGenInputs"/>
+  <Target Name="MetaGenInputsOutputs"
+          Condition="'$(EnableManagedIncrementalBuild)' == 'True'"
+          AfterTargets="$(MetagenInputTarget)"
+     >
+    <ItemGroup>
+      <MetaGen Condition="'$(OutputAssemblyFile)' != ''" Include="$(OutputAssemblyFile)" />
+    </ItemGroup>
+  </Target>
+ 
+  <Target Name="MetaGen"
+          Condition="'@(MetaGen)' != ''"
+	  AfterTargets="MetaGenInputsOutputs"
+          Inputs="$(OutputAssemblyFile)"
+          Outputs="$(IntDir)\metagen.write.1.tlog"
+	>
+    <PropertyGroup>
+      <MIBProcessDependencyGraphExcludedFolders Condition="'$(MIBProcessDependencyGraphExcludedFolders)' == ''">$(ExcludePath);$(FrameworkDir);$(VSInstallDir);$(_FullFrameworkReferenceAssemblyPaths)</MIBProcessDependencyGraphExcludedFolders>
+      <MIBSearchPaths>$(ReferencePath);@(ClCompile->'%(AdditionalUsingDirectories)'->Distinct())</MIBSearchPaths>
+    </PropertyGroup>
+    
+    <METAGEN
+      AssemblyFile                       ="@(MetaGen)"
+      SearchPath                         ="$(MIBSearchPaths)"
+      Sources                            ="@(ClCompile)"
+      ExcludedInputPaths                 ="$(MIBProcessDependencyGraphExcludedFolders)"
+      IntDir                             ="$([System.IO.Path]::GetFullPath($(IntDir)))"
+      
+      ContinueOnError                    ="true"
+      
+      TLogReadFiles                      ="@(CLTLogReadFiles)"
+      TLogWriteFiles                     ="@(CLTLogWriteFiles)"
+      />
+  </Target>
+
+  <!--
+    ============================================================
+    ManagedIncrementalBuildProcessDependencyGraph Targets
+    ============================================================
+    -->
+
+  <PropertyGroup>
+    <ManagedIncrementalBuildProcessDependencyGraphBeforeTarget Condition="'$(ManagedIncrementalBuildProcessDependencyGraphBeforeTarget)' == '' and '$(Language)' == 'c++'">
+      ClCompile
+    </ManagedIncrementalBuildProcessDependencyGraphBeforeTarget>
+    <ManagedIncrementalBuildProcessDependencyGraphAfterTarget Condition="'$(ManagedIncrementalBuildProcessDependencyGraphAfterTarget)' == '' and '$(Language)' == 'c++'">
+      ClCompile
+    </ManagedIncrementalBuildProcessDependencyGraphAfterTarget>
+  </PropertyGroup>
+  
+  <Target Name="ManagedIncrementalBuildPreProcessDependencyGraph"
+          Condition="'@(ClCompile)' != '' and '$(EnableManagedIncrementalBuild)' == 'True'" 
+          DependsOnTargets="GetReferenceAssemblyPaths"
+	  BeforeTargets="$(ManagedIncrementalBuildProcessDependencyGraphBeforeTarget)"
+	>
+    <PropertyGroup>
+      <MIBProcessDependencyGraphExcludedFolders Condition="'$(MIBProcessDependencyGraphExcludedFolders)' == ''">$(ExcludePath);$(FrameworkDir);$(VSInstallDir);$(_FullFrameworkReferenceAssemblyPaths)</MIBProcessDependencyGraphExcludedFolders>
+      <MIBSearchPaths>$(ReferencePath);@(ClCompile->'%(AdditionalUsingDirectories)'->Distinct())</MIBSearchPaths>
+    </PropertyGroup>
+    
+    <MIBPreProcessDependencyGraph
+        Sources                            ="@(ClCompile)"
+        SearchPath                         ="$(MIBSearchPaths)"
+        ExcludedInputPaths                 ="$(MIBProcessDependencyGraphExcludedFolders)"
+        IntDir                             ="$([System.IO.Path]::GetFullPath($(IntDir)))"
+        
+        ContinueOnError                    ="true"
+        
+        TLogReadFiles                      ="@(CLTLogReadFiles)"
+        TLogWriteFiles                     ="@(CLTLogWriteFiles)"
+      />
+  </Target>
+
+  <Target Name="ManagedIncrementalBuildPostProcessDependencyGraph"
+          Condition="'@(ClCompile)' != '' and '$(EnableManagedIncrementalBuild)' == 'True'"
+          DependsOnTargets="GetReferenceAssemblyPaths"
+	  AfterTargets="$(ManagedIncrementalBuildProcessDependencyGraphAfterTarget)"
+	>
+    <PropertyGroup>
+      <MIBProcessDependencyGraphExcludedFolders Condition="'$(MIBProcessDependencyGraphExcludedFolders)' == ''">$(ExcludePath);$(FrameworkDir);$(VSInstallDir);$(_FullFrameworkReferenceAssemblyPaths)</MIBProcessDependencyGraphExcludedFolders>
+      <MIBSearchPaths>$(ReferencePath);@(ClCompile->'%(AdditionalUsingDirectories)'->Distinct())</MIBSearchPaths>
+    </PropertyGroup>
+
+    <MIBPostProcessDependencyGraph
+        Sources                            ="@(ClCompile)"
+        SearchPath                         ="$(MIBSearchPaths)"
+        ExcludedInputPaths                 ="$(MIBProcessDependencyGraphExcludedFolders)"
+        IntDir                             ="$([System.IO.Path]::GetFullPath($(IntDir)))"
+        
+        ContinueOnError                    ="true"
+        
+        TLogReadFiles                      ="@(CLTLogReadFiles)"
+        TLogWriteFiles                     ="@(CLTLogWriteFiles)"
+      />
+  </Target>
+</Project>

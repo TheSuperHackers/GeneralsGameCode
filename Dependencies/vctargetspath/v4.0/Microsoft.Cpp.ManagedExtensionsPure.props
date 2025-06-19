@@ -1,0 +1,39 @@
+﻿<!--
+***********************************************************************************************
+Microsoft.Cpp.ManagedExtensionsPure.props
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+
+Copyright (C) Microsoft Corporation. All rights reserved.
+***********************************************************************************************
+-->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_PropertySheetDisplayName>C++ Pure MSIL CLR Support</_PropertySheetDisplayName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <CompileAsManaged>Pure</CompileAsManaged>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MinimalRebuild></MinimalRebuild>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <FixedBaseAddress>false</FixedBaseAddress>
+      <AssemblyDebug Condition="'$(UseDebugLibraries)' == 'true'">true</AssemblyDebug>
+    </Link>
+  </ItemDefinitionGroup>
+  <!-- UNDONE (amitmo): Amit, follow up if we still need this. -->
+  <!-- we dont't have GeneratedProxyLanguage tool for XSD. How to handle this? -->
+  <!--<ItemDefinitionGroup>
+    <XSD>
+      <GeneratedProxyLanguage>_ATL_DLL</GeneratedProxyLanguage>
+    </XSD>
+  </ItemDefinitionGroup>-->
+</Project>

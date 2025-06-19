@@ -1,0 +1,224 @@
+﻿<!--
+***********************************************************************************************
+Microsoft.Cpp.Props
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+
+Copyright (C) Microsoft Corporation. All rights reserved.
+***********************************************************************************************
+-->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- *******************************************************************************************
+        Cpp settings mapping file
+       ******************************************************************************************* -->
+  <!-- Default values -->
+  <PropertyGroup>
+    <TargetExt />
+  </PropertyGroup>
+
+  <!-- Specific values -->
+  <PropertyGroup Condition="'$(ConfigurationType)' == 'Application'">
+    <LinkCompiled>true</LinkCompiled>
+    <TargetExt>.exe</TargetExt>
+    <OutputType>exe</OutputType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(ConfigurationType)' == 'DynamicLibrary'">
+    <LinkCompiled>true</LinkCompiled>
+    <!-- $(GenerateImportLib) should be set to true when you want to generate the import library as part of the BuildCompile pass rather than wait
+         until the BuildLink pass for Linker to generate it. This allows circular dependencies between dlls to be satisfied when building using passes -->
+    <ImpLibCompiled Condition="'$(GenerateImportLib)'=='true'">true</ImpLibCompiled>
+    <TargetExt>.dll</TargetExt>
+    <OutputType>library</OutputType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(ConfigurationType)' == 'StaticLibrary'">
+    <LibCompiled>true</LibCompiled>
+    <TargetExt>.lib</TargetExt>
+    <OutputType>staticlibrary</OutputType>
+  </PropertyGroup>
+
+  <!-- Default debugger properties -->
+  <PropertyGroup>
+
+    <!-- Local Windows debugger -->
+    <LocalDebuggerDebuggerType>Auto</LocalDebuggerDebuggerType>
+    <!-- LocalDebuggerCommand is defined into an empty $(TargetPath) for the property page, it is later redefined to its proper value. -->
+    <LocalDebuggerCommand Condition="'$(TargetPath)' != ''">$(TargetPath)</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory>$(ProjectDir)</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerMergeEnvironment>true</LocalDebuggerMergeEnvironment>
+    <LocalDebuggerAttach>False</LocalDebuggerAttach>
+    <LocalDebuggerSQLDebugging>False</LocalDebuggerSQLDebugging>
+
+    <!-- Remote Windows debugger -->
+    <RemoteDebuggerDebuggerType>Auto</RemoteDebuggerDebuggerType>
+    <RemoteDebuggerWorkingDirectory>$(ProjectDir)</RemoteDebuggerWorkingDirectory>
+    <RemoteDebuggerServerName>$(COMPUTERNAME)</RemoteDebuggerServerName>
+    <RemoteDebuggerConnection>RemoteWithAuthentication</RemoteDebuggerConnection>
+    <RemoteDebuggerAttach>False</RemoteDebuggerAttach>
+    <RemoteDebuggerSQLDebugging>False</RemoteDebuggerSQLDebugging>
+
+    <!-- MPI Cluster Debugger -->
+    <MpiDebuggerSchedulerNode>localhost/1</MpiDebuggerSchedulerNode>
+    <MpiDebuggerApplicationCommand Condition="'$(TargetPath)' != ''">$(TargetFileName)</MpiDebuggerApplicationCommand>
+    <MpiDebuggerDebuggerType>Auto</MpiDebuggerDebuggerType>
+    <MpiDebuggerNetworkSecurityMode>AnyAddress</MpiDebuggerNetworkSecurityMode>
+    <MpiDebuggerSchedulerTimeout>5000</MpiDebuggerSchedulerTimeout>
+    <MpiDebuggerDeployCommonRuntime>True</MpiDebuggerDeployCommonRuntime>
+    <MpiDebuggerCleanupDeployment>True</MpiDebuggerCleanupDeployment>
+
+    <!-- Web Browser debugger -->
+    <WebBrowserDebuggerDebuggerType>Auto</WebBrowserDebuggerDebuggerType>
+
+    <!-- Web Service debugger-->
+    <WebServiceDebuggerDebuggerType>Auto</WebServiceDebuggerDebuggerType>
+    <WebServiceDebuggerSQLDebugging>False</WebServiceDebuggerSQLDebugging>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Language>C++</Language>
+    <DefaultLanguageSourceExtension>.cpp</DefaultLanguageSourceExtension>
+  </PropertyGroup>
+
+  <!-- Import CL and Link defaults-->
+  <Import Project="$(VCTargetsPath)\Microsoft.Cl.Common.props"/>
+  <Import Project="$(VCTargetsPath)\Microsoft.Link.Common.props"/>
+  <Import Condition="exists('$(VCTargetsPath)\Microsoft.CodeAnalysis.props')" Project="$(VCTargetsPath)\Microsoft.CodeAnalysis.props"/>
+
+  <!-- Define defaults for all tools for property page-->
+  <PropertyGroup>
+    <TargetName Condition="'$(TargetName)' == ''">$(ProjectName)</TargetName>
+    <ExtensionsToDeleteOnClean Condition="'$(ExtensionsToDeleteOnClean)' == ''">*.cdf;*.cache;*.obj;*.ilk;*.resources;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;*.meta;*.tlog;*.manifest;*.res;*.pch;*.exp;*.idb;*.rep;*.xdc;*.pdb;*_manifest.rc;*.bsc;*.sbr;*.xml</ExtensionsToDeleteOnClean>
+    <IncludeVersionInInteropName Condition="'$(IncludeVersionInInteropName)'==''" >true</IncludeVersionInInteropName>
+    <InteropOutputPath Condition="'$(InteropOutputPath)'==''" >Interop\</InteropOutputPath>
+    <EmbedManifest Condition="'$(EmbedManifest)'==''">true</EmbedManifest>
+    <PreBuildEventUseInBuild Condition="'$(PreBuildEventUseInBuild)' == ''">true</PreBuildEventUseInBuild>
+    <PreLinkEventUseInBuild Condition="'$(PreLinkEventUseInBuild)' == ''">true</PreLinkEventUseInBuild>
+    <PostBuildEventUseInBuild Condition="'$(PostBuildEventUseInBuild)' == ''">true</PostBuildEventUseInBuild>
+    <DocumentLibraryDependencies Condition="'$(DocumentLibraryDependencies)' == ''">true</DocumentLibraryDependencies>
+
+    <!-- CLR enabled -->
+    <IgnoreImportLibrary Condition="$(IgnoreImportLibrary)=='' and '$(CLRSupport)'!='' and '$(CLRSupport)'!='false'">true</IgnoreImportLibrary>
+    <IgnoreImportLibrary Condition="$(IgnoreImportLibrary)==''">false</IgnoreImportLibrary>
+    <GenerateManifest Condition="$(GenerateManifest)==''">true</GenerateManifest>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <CustomBuild>
+      <Message Condition="'%(CustomBuild.Message)'==''" >Performing Custom Build Tools</Message>
+    </CustomBuild>
+    <CustomBuildStep>
+      <Message Condition="'%(CustomBuildStep.Message)'==''" >Performing Custom Build Step</Message>
+    </CustomBuildStep>
+    <Lib>
+      <TrackerLogDirectory         Condition="'%(Lib.TrackerLogDirectory)'          == ''">$(IntDir)</TrackerLogDirectory>
+      <MinimalRebuildFromTracking  Condition="'%(Lib.MinimalRebuildFromTracking)'   == ''">true</MinimalRebuildFromTracking>
+      <OutputFile                  Condition="'%(Lib.OutputFile)'                   == ''">$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <SuppressStartupBanner       Condition="'%(Lib.SuppressStartupBanner)'        == ''">true</SuppressStartupBanner>
+      <AcceptableNonZeroExitCodes  Condition="'%(Lib.AcceptableNonZeroExitCodes)'   == ''">$(AcceptableNonZeroExitCodes)</AcceptableNonZeroExitCodes>
+    </Lib>
+    <Midl>
+      <TypeLibraryName              Condition="'%(Midl.TypeLibraryName)'                    == ''">$(IntDir)$(ProjectName).tlb</TypeLibraryName>
+      <TargetEnvironment            Condition="'%(Midl.TargetEnvironment)'                  == ''">Win32</TargetEnvironment>
+      <WarningLevel                 Condition="'%(Midl.WarningLevel)'                       == ''">1</WarningLevel>
+      <DefaultCharType              Condition="'%(Midl.DefaultCharType)'                    == ''">Signed</DefaultCharType>
+      <SuppressStartupBanner        Condition="'%(Midl.SuppressStartupBanner)'              == ''">true</SuppressStartupBanner>
+      <TrackerLogDirectory          Condition="'%(Midl.TrackerLogDirectory)'                == ''">$(IntDir)</TrackerLogDirectory>
+      <MinimalRebuildFromTracking   Condition="'%(Midl.MinimalRebuildFromTracking)'         == ''">true</MinimalRebuildFromTracking>
+      <AcceptableNonZeroExitCodes   Condition="'%(Midl.AcceptableNonZeroExitCodes)'         == ''">$(AcceptableNonZeroExitCodes)</AcceptableNonZeroExitCodes>
+      <IgnoreStandardIncludePath    Condition="'%(Midl.IgnoreStandardIncludePath)'          == ''">false</IgnoreStandardIncludePath>
+      <WarnAsError                  Condition="'%(Midl.WarnAsError)'                        == ''">false</WarnAsError>
+      <GenerateTypeLibrary          Condition="'%(Midl.GenerateTypeLibrary)'                == ''">true</GenerateTypeLibrary>
+      <ErrorCheckAllocations        Condition="'%(Midl.ErrorCheckAllocations)'              == ''">false</ErrorCheckAllocations>
+      <ErrorCheckBounds             Condition="'%(Midl.ErrorCheckBounds)'                   == ''">false</ErrorCheckBounds>
+      <ErrorCheckEnumRange          Condition="'%(Midl.ErrorCheckEnumRange)'                == ''">false</ErrorCheckEnumRange>
+      <ErrorCheckRefPointers        Condition="'%(Midl.ErrorCheckRefPointers)'              == ''">false</ErrorCheckRefPointers>
+      <ErrorCheckStubData           Condition="'%(Midl.ErrorCheckStubData)'                 == ''">false</ErrorCheckStubData>
+      <StructMemberAlignment        Condition="'%(Midl.StructMemberAlignment)'              == ''">NotSet</StructMemberAlignment>
+      <HeaderFileName               Condition="'%(Midl.HeaderFileName)'                     == ''">%(Filename)_h.h</HeaderFileName>
+    </Midl>
+    <ResourceCompile>
+      <ResourceOutputFileName       Condition="'%(ResourceCompile.ResourceOutputFileName)'        == ''">$(IntDir)%(Filename).res</ResourceOutputFileName>
+      <Culture                      Condition="'%(ResourceCompile.Culture)'                       == ''">0x0409</Culture>
+      <TrackerLogDirectory          Condition="'%(ResourceCompile.TrackerLogDirectory)'           == ''">$(IntDir)</TrackerLogDirectory>
+      <MinimalRebuildFromTracking   Condition="'%(ResourceCompile.MinimalRebuildFromTracking)'    == ''">true</MinimalRebuildFromTracking>
+      <AcceptableNonZeroExitCodes   Condition="'%(ResourceCompile.AcceptableNonZeroExitCodes)'    == ''">$(AcceptableNonZeroExitCodes)</AcceptableNonZeroExitCodes>
+    </ResourceCompile>
+    <Manifest>
+      <TrackerLogDirectory          Condition="'%(Manifest.TrackerLogDirectory)'            == ''">$(IntDir)</TrackerLogDirectory>
+      <MinimalRebuildFromTracking   Condition="'%(Manifest.MinimalRebuildFromTracking)'     == ''">true</MinimalRebuildFromTracking>
+      <SuppressStartupBanner        Condition="'%(Manifest.SuppressStartupBanner)'          == ''">true</SuppressStartupBanner>
+      <AcceptableNonZeroExitCodes   Condition="'%(Manifest.AcceptableNonZeroExitCodes)'     == ''">$(AcceptableNonZeroExitCodes)</AcceptableNonZeroExitCodes>
+      <VerboseOutput                Condition="'%(Manifest.VerboseOutput)'                  == ''">true</VerboseOutput>
+      <GenerateCatalogFiles         Condition="'%(Manifest.GenerateCatalogFiles)'           == ''">false</GenerateCatalogFiles>
+      <UpdateFileHashes             Condition="'%(Manifest.UpdateFileHashes)'               == ''">false</UpdateFileHashes>
+      <OutputManifestFile           Condition="'$(EmbedManifest)'                           == 'false'" >$(TargetPath).manifest</OutputManifestFile>
+      <OutputManifestFile           Condition="'$(EmbedManifest)'                           == 'true' AND '$(EmbedManifestBy)'=='LINK'">$(IntDir)$(TargetName)$(TargetExt).embed.manifest</OutputManifestFile>
+    </Manifest>
+    <ManifestResourceCompile>
+      <ResourceOutputFileName       Condition="'%(ManifestResourceCompile.ResourceOutputFileName)' == ''">$(IntDir)$(TargetName)$(TargetExt).embed.manifest.res</ResourceOutputFileName>
+    </ManifestResourceCompile>
+    <XdcMake>
+      <TrackerLogDirectory          Condition="'%(XdcMake.TrackerLogDirectory)'            == ''">$(IntDir)</TrackerLogDirectory>
+      <MinimalRebuildFromTracking   Condition="'%(XdcMake.MinimalRebuildFromTracking)'     == ''">true</MinimalRebuildFromTracking>
+      <SuppressStartupBanner        Condition="'%(XdcMake.SuppressStartupBanner)'          == ''">true</SuppressStartupBanner>
+      <OutputFile                   Condition="'%(XdcMake.OutputFile)'                     == ''">$(OutDir)$(TargetName).xml</OutputFile>
+      <AcceptableNonZeroExitCodes   Condition="'%(XdcMake.AcceptableNonZeroExitCodes)'     == ''">$(AcceptableNonZeroExitCodes)</AcceptableNonZeroExitCodes>
+      <UseUnicodeResponseFiles      Condition="'%(XdcMake.UseUnicodeResponseFiles)'        == ''">true</UseUnicodeResponseFiles>
+      <ValidateIntelliSense         Condition="'%(XdcMake.ValidateIntelliSense)'           == ''">false</ValidateIntelliSense>
+    </XdcMake>
+    <BscMake>
+      <TrackerLogDirectory          Condition="'%(BscMake.TrackerLogDirectory)'            == ''">$(IntDir)</TrackerLogDirectory>
+      <MinimalRebuildFromTracking   Condition="'%(BscMake.MinimalRebuildFromTracking)'     == ''">true</MinimalRebuildFromTracking>
+      <SuppressStartupBanner        Condition="'%(BscMake.SuppressStartupBanner)'          == ''">true</SuppressStartupBanner>
+      <PreserveSBR                  Condition="'%(BscMake.PreserveSBR)'                    == ''">false</PreserveSBR>
+      <OutputFile                   Condition="'%(BscMake.OutputFile)'                     == ''">$(OutDir)$(TargetName).bsc</OutputFile>
+      <AcceptableNonZeroExitCodes   Condition="'%(BscMake.AcceptableNonZeroExitCodes)'     == ''">$(AcceptableNonZeroExitCodes)</AcceptableNonZeroExitCodes>
+    </BscMake>
+    <XSD>
+      <TrackerLogDirectory          Condition="'%(XSD.TrackerLogDirectory)'            == ''">$(IntDir)</TrackerLogDirectory>
+      <MinimalRebuildFromTracking   Condition="'%(XSD.MinimalRebuildFromTracking)'     == ''">true</MinimalRebuildFromTracking>
+      <SuppressStartupBanner        Condition="'%(XSD.SuppressStartupBanner)'          == ''">true</SuppressStartupBanner>
+      <Language                     Condition="'%(XSD.Language)'                       == ''">cpp</Language>
+      <Namespace                    Condition="'%(XSD.Namespace)'                      == ''">$(TargetName)</Namespace>
+      <GenerateFromSchema           Condition="'%(XSD.GenerateFromSchema)'             == ''">dataset</GenerateFromSchema>
+      <AcceptableNonZeroExitCodes   Condition="'%(XSD.AcceptableNonZeroExitCodes)'     == ''">$(AcceptableNonZeroExitCodes)</AcceptableNonZeroExitCodes>
+    </XSD>
+    <CustomBuild>
+      <TrackerLogDirectory          Condition="'%(CustomBuild.TrackerLogDirectory)'        == ''">$(IntDir)</TrackerLogDirectory>
+      <MinimalRebuildFromTracking   Condition="'%(CustomBuild.MinimalRebuildFromTracking)' == ''">true</MinimalRebuildFromTracking>
+      <AcceptableNonZeroExitCodes   Condition="'%(CustomBuild.AcceptableNonZeroExitCodes)' == ''">$(AcceptableNonZeroExitCodes)</AcceptableNonZeroExitCodes>
+    </CustomBuild>
+    <ProjectReference>
+      <LinkLibraryDependencies Condition="'%(ProjectReference.LinkLibraryDependencies)' == '' and '$(ConfigurationType)' == 'StaticLibrary'">false</LinkLibraryDependencies>
+      <LinkLibraryDependencies Condition="'%(ProjectReference.LinkLibraryDependencies)' == ''">true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs Condition="'%(ProjectReference.UseLibraryDependencyInputs)' == ''">false</UseLibraryDependencyInputs>
+      <ReferenceOutputAssembly Condition="'%(ProjectReference.ReferenceOutputAssembly)' == ''">true</ReferenceOutputAssembly>
+      <Private Condition="'%(ProjectReference.Private)' == ''">true</Private>
+    </ProjectReference>
+    <Reference>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+    </Reference>
+    <COMReference>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+    </COMReference>
+  </ItemDefinitionGroup>
+
+  <ItemGroup>
+    <!--  Unique items for the project-->
+    <CustomBuildStep Include="$(ProjectName)" />
+    <PreBuildEvent Include="$(ProjectName)" />
+    <PreLinkEvent Include="$(ProjectName)" />
+    <PostBuildEvent Include="$(ProjectName)" />
+  </ItemGroup>
+
+  <!-- Import Platform specific settings -->
+  <Import Condition="'$(Platform)' 	!= '' and exists('$(VCTargetsPath)\Platforms\$(Platform)\Microsoft.Cpp.$(Platform).props')" Project="$(VCTargetsPath)\Platforms\$(Platform)\Microsoft.Cpp.$(Platform).props"/>
+
+</Project>

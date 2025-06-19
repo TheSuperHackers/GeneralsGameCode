@@ -1,0 +1,75 @@
+﻿<!--
+***********************************************************************************************
+Microsoft.Cpp.Default.props
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+
+Copyright (C) Microsoft Corporation. All rights reserved.
+***********************************************************************************************
+-->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <Platform Condition="'$(Platform)' == ''">Win32</Platform>
+
+    <!-- When the Framework Version is <= 3.5, set PlatformToolset to use the 9.0 toolset.
+         When the Framework Version is >= 4.0, set PlatformToolset to use the 10.0 toolset.
+         If Targetframeworkversion does not exist, then leave the default toolset -->
+    <PlatformToolset Condition="'$(PlatformToolset)' == '' and
+                                 ('$(TargetFrameworkVersion)' == 'v3.5' or
+                                  '$(TargetFrameworkVersion)' == 'v3.0' or
+                                  '$(TargetFrameworkVersion)' == 'v2.0')">v90</PlatformToolset>
+  </PropertyGroup>
+
+  <!-- This is the Cpp defaults settings mapping file. It defines all the project properties values
+       (equivalent of System Macros) and also all the ItemDefinitionGroup defaults for each known
+       ItemGroup (known as the default of the defaults in the current Project System) -->
+
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <ConfigurationType Condition="'$(ConfigurationType)' == ''">Application</ConfigurationType>
+  </PropertyGroup>
+
+  <!-- Allow platforms to define the defaults first -->
+  <Import Condition="Exists('$(VCTargetsPath)\Platforms\$(Platform)\Microsoft.Cpp.$(Platform).default.props')" Project="$(VCTargetsPath)\Platforms\$(Platform)\Microsoft.Cpp.$(Platform).default.props"/>
+
+  <!-- Default OutputPath -->
+  <PropertyGroup>
+    <OutputPath Condition="'$(OutputPath)' == ''">$(OutDir)</OutputPath>
+    <OutputPath Condition="'$(OutputPath)' != '' and !HasTrailingSlash('$(OutputPath)')">$(OutputPath)\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ProjectName Condition=" '$(ProjectName)' == '' ">$(MSBuildProjectName)</ProjectName>
+    <TargetName Condition=" '$(TargetName)' == '' and '$(AssemblyName)' != ''">$(AssemblyName)</TargetName>
+    <ProjectFileName Condition=" '$(ProjectFileName)' == '' ">$(MSBuildProjectFile)</ProjectFileName>
+    <ProjectExt Condition=" '$(ProjectExt)' == '' ">$(MSBuildProjectExtension)</ProjectExt>
+
+    <ProjectDir Condition=" '$(ProjectDir)' == '' ">$(MSBuildProjectDirectory)\</ProjectDir>
+    <ProjectPath Condition=" '$(ProjectPath)' == '' ">$(ProjectDir)$(ProjectFileName)</ProjectPath>
+    <PlatformName Condition=" '$(PlatformName)' == '' ">$(Platform)</PlatformName>
+    <SolutionDir Condition="'$(SolutionDir)'==''">$(ProjectDir)</SolutionDir>
+
+    <UserRootDir Condition="'$(UserRootDir)' == '' ">$(LocalAppData)\Microsoft\MSBuild\v4.0</UserRootDir>
+
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildProjectFullPath);$(MSBuildToolsPath)\Microsoft.Common.targets</MSBuildAllProjects>
+    <MSBuildAllProjects Condition="Exists('$(MSBuildProjectFullPath).user')">$(MSBuildAllProjects);$(MSBuildProjectFullPath).user</MSBuildAllProjects>
+
+    <WholeProgramOptimizationDelayImport Condition="'$(WholeProgramOptimization)' != ''">true</WholeProgramOptimizationDelayImport>
+    <WholeProgramOptimization Condition="'$(WholeProgramOptimization)' == ''">false</WholeProgramOptimization>
+    <CLRSupport Condition="'$(CLRSupport)' == ''">false</CLRSupport>
+    <UseOfATL Condition="'$(UseOfATL)' == ''">false</UseOfATL>
+    <UseOfMFC Condition="'$(UseOfMFC)' == ''">false</UseOfMFC>
+    <SQLDebugging Condition="'$(SQLDebugging)' == ''">false</SQLDebugging>
+    <Attach Condition="'$(Attach)' == ''">false</Attach>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <BuildLog>
+      <Path>$(IntDir)\$(MSBuildProjectName).log</Path>
+    </BuildLog>
+  </ItemDefinitionGroup>
+</Project>

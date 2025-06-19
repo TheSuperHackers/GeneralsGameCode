@@ -1,0 +1,901 @@
+<!--
+***********************************************************************************************
+Microsoft.CppCommon.targets
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+
+This file defines the steps/targets common to building Visual C++ projects.
+
+Copyright (C) Microsoft Corporation. All rights reserved.
+***********************************************************************************************
+-->
+
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <UsingTask TaskName="VCMessage" AssemblyName="Microsoft.Build.CppTasks.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+
+  <PropertyGroup>
+  <!-- Ensure that IntDir and OutDir will contain proper trailing slash.  Also set the flag to warn the user.  -->
+    <IntDirTrailingSlashWarning Condition="'$(IntDir)' != '' and !HasTrailingSlash('$(IntDir)')">true</IntDirTrailingSlashWarning>
+    <OutDirTrailingSlashWarning Condition="'$(OutDir)' != '' and !HasTrailingSlash('$(OutDir)')">true</OutDirTrailingSlashWarning>
+    <IntDir Condition="'$(IntDir)' != '' and !HasTrailingSlash('$(IntDir)')">$(IntDir)\</IntDir>
+    <OutDir Condition="'$(OutDir)' != '' and !HasTrailingSlash('$(OutDir)')">$(OutDir)\</OutDir>
+  </PropertyGroup>
+
+  <PropertyGroup>
+  <!-- Yield optimization properties -->
+    <YieldDuringToolExecution Condition="'$(YieldDuringToolExecution)' == ''">true</YieldDuringToolExecution>
+    <ClYieldDuringToolExecution Condition="'$(ClYieldDuringToolExecution)' == ''">$(YieldDuringToolExecution)</ClYieldDuringToolExecution>
+    <MidlYieldDuringToolExecution Condition="'$(MidlYieldDuringToolExecution)' == ''">$(YieldDuringToolExecution)</MidlYieldDuringToolExecution>
+  </PropertyGroup>
+
+  <!-- Define the Target Macros-->
+  <PropertyGroup>
+    <TargetPath Condition="'$(TargetPath)' == ''">$([System.IO.Path]::Combine($(ProjectDir),$(OutDir)$(TargetName)$(TargetExt)))</TargetPath>
+    <TargetFileName Condition=" '$(TargetFileName)'=='' ">$([System.IO.Path]::GetFileName('$(TargetPath)'))</TargetFileName>
+    <TargetDir      Condition=" '$(TargetDir)'==''"      >$([System.IO.Path]::GetDirectoryName('$(TargetPath)'))</TargetDir>
+    <LocalDebuggerCommand Condition="'$(LocalDebuggerCommand)'==''">$(TargetPath)</LocalDebuggerCommand>
+    <ExtensionsToDeleteOnClean>$(ExtensionsToDeleteOnClean);$(TargetPath).manifest;$(OutDir)$(TargetName).tlb;$(OutDir)$(TargetName).pdb;$(TargetPath);$(OutDir)$(TargetName).bsc;$(OutDir)$(TargetName).ilk;$(TargetPath).intermediate.manifest</ExtensionsToDeleteOnClean>
+    <IntermediateOutputPath Condition="'$(IntermediateOutputPath)'==''">$(IntDir)</IntermediateOutputPath>
+  </PropertyGroup>
+
+  <!-- If we are compiling managed -->
+  <PropertyGroup Condition="'$(EmbedManifest)'=='true' AND '$(CLRSupport)'!='' AND '$(CLRSupport)'!='false' AND
+      ('$(ConfigurationType)'=='Application' OR '$(ConfigurationType)'=='DynamicLibrary' ) ">
+    <EmbedManifestBy Condition="'$(LinkKeyFile)'=='' AND '$(LinkDelaySign)'!='true'">MT</EmbedManifestBy>
+    <EmbedManifestBy Condition="'$(LinkKeyFile)'!='' OR '$(LinkDelaySign)'=='true'">LINK</EmbedManifestBy>
+  </PropertyGroup>
+  <!-- If we are compiling native -->
+  <PropertyGroup Condition="'$(GenerateManifest)' == 'true' AND '$(EmbedManifest)'=='true' AND ('$(CLRSupport)'=='false' or '$(CLRSupport)'=='') AND
+      ('$(ConfigurationType)'=='Application' OR '$(ConfigurationType)'=='DynamicLibrary' ) ">
+    <EmbedManifestBy Condition="'$(LinkIncremental)'=='true'">LINK</EmbedManifestBy>
+    <EmbedManifestBy Condition="'$(LinkIncremental)'!='true'">MT</EmbedManifestBy>
+  </PropertyGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.CppBuild.targets"/>
+
+  <UsingTask TaskName="LIB"         AssemblyName="Microsoft.Build.CppTasks.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+  <UsingTask TaskName="MIDL"        AssemblyName="Microsoft.Build.CppTasks.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+  <UsingTask TaskName="RC"          AssemblyName="Microsoft.Build.CppTasks.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+  <UsingTask TaskName="Mt"          AssemblyName="Microsoft.Build.CppTasks.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+  <UsingTask TaskName="XSD"         AssemblyName="Microsoft.Build.CppTasks.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+  <UsingTask TaskName="XDCMake"     AssemblyName="Microsoft.Build.CppTasks.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+  <UsingTask TaskName="BscMake"     AssemblyName="Microsoft.Build.CppTasks.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+  <UsingTask TaskName="CustomBuild" AssemblyName="Microsoft.Build.CppTasks.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
+
+  <!-- *******************************************************************************************
+        AvailableItemName
+       ******************************************************************************************* -->
+  <!-- Creates a connection between item names and the targets to build them. -->
+  <ItemGroup>
+    <AvailableItemName Include="ClCompile">
+      <Targets>ClCompile</Targets>
+    </AvailableItemName>
+    <AvailableItemName Include="Midl">
+      <Targets>Midl</Targets>
+    </AvailableItemName>
+    <AvailableItemName Include="ResourceCompile">
+      <Targets>ResourceCompile</Targets>
+    </AvailableItemName>
+    <AvailableItemName Include="EmbeddedResource">
+      <Targets>ResGen</Targets>
+    </AvailableItemName>
+    <AvailableItemName Include="CustomBuild">
+      <Targets>CustomBuild</Targets>
+    </AvailableItemName>
+    <AvailableItemName Include="Xsd">
+      <Targets>Xsd</Targets>
+    </AvailableItemName>
+  </ItemGroup>
+
+  <!-- *******************************************************************************************
+        Build Events
+       ******************************************************************************************* -->
+  <PropertyGroup>
+    <BuildSuffix>
+:VCEnd</BuildSuffix>
+  </PropertyGroup>
+
+  <Target Name="PreBuildEvent" Condition="'$(PreBuildEventUseInBuild)'!='false'">
+    <Message Text="Description: %(PreBuildEvent.Message)" Condition="'%(PreBuildEvent.Message)' != '' and '%(PreBuildEvent.Command)' != ''"/>
+    <Exec Command="%(PreBuildEvent.Command)$(BuildSuffix)" Condition="'%(PreBuildEvent.Command)' != ''"/>
+  </Target>
+
+  <Target Name="PreLinkEvent" Condition="'$(PreLinkEventUseInBuild)'!='false'">
+    <Message Text="Description: %(PreLinkEvent.Message)" Condition="'%(PreLinkEvent.Message)' != '' and '%(PreLinkEvent.Command)' != ''"/>
+    <Exec Command="%(PreLinkEvent.Command)$(BuildSuffix)" Condition="'%(PreLinkEvent.Command)' != ''"/>
+  </Target>
+
+  <Target Name="PostBuildEvent" Condition="'$(PostBuildEventUseInBuild)'!='false'">
+    <Message Text="Description: %(PostBuildEvent.Message)" Condition="'%(PostBuildEvent.Message)' != '' and '%(PostBuildEvent.Command)' != ''"/>
+    <Exec Command="%(PostBuildEvent.Command)$(BuildSuffix)" Condition="'%(PostBuildEvent.Command)' != ''"/>
+  </Target>
+
+  <!-- *******************************************************************************************
+        Custom Build
+       ******************************************************************************************* -->
+  <PropertyGroup Condition="'$(CustomBuildAfterTargets)'!='' or '$(CustomBuildBeforeTargets)'!=''">
+    <CustomBuildToolBeforeTargets>$(CustomBuildBeforeTargets)</CustomBuildToolBeforeTargets>
+    <CustomBuildToolAfterTargets>$(CustomBuildAfterTargets)</CustomBuildToolAfterTargets>
+  </PropertyGroup>
+
+  <!--If no before/after targets are set, then set the default-->
+  <PropertyGroup Condition="'$(CustomBuildAfterTargets)'=='' and '$(CustomBuildBeforeTargets)'==''">
+    <CustomBuildToolBeforeTargets>Midl</CustomBuildToolBeforeTargets>
+    <CustomBuildToolAfterTargets>PreBuildEvent</CustomBuildToolAfterTargets>
+    <CustomBuildBeforeTargets>PostBuildEvent</CustomBuildBeforeTargets>
+    <CustomBuildAfterTargets>BscMake</CustomBuildAfterTargets>
+  </PropertyGroup>
+
+  <!--  If Selective File Build is enabled, then dont let custom interupt the build order-->
+  <PropertyGroup Condition="'$(SelectedFiles)'!=''">
+    <CustomBuildToolBeforeTargets></CustomBuildToolBeforeTargets>
+    <CustomBuildToolAfterTargets></CustomBuildToolAfterTargets>
+    <CustomBuildBeforeTargets></CustomBuildBeforeTargets>
+    <CustomBuildAfterTargets></CustomBuildAfterTargets>
+  </PropertyGroup>
+
+  <Target Name="CustomBuild"
+          Condition="'@(CustomBuild)' != ''"
+          DependsOnTargets="SelectCustomBuild;ComputeCustomBuildOutput"
+          BeforeTargets="$(CustomBuildToolBeforeTargets)"
+          AfterTargets="$(CustomBuildToolAfterTargets)"
+          >
+
+    <PropertyGroup>
+      <CustomBuildToolArchitecture Condition="'$(CustomBuildToolArchitecture)' == ''">$(DefaultToolArchitecture)</CustomBuildToolArchitecture>
+    </PropertyGroup>
+
+    <CustomBuild
+      Sources                     ="@(CustomBuild)"
+      BuildSuffix                 ="$(BuildSuffix)"
+
+      TrackerLogDirectory         ="%(CustomBuild.TrackerLogDirectory)"
+      MinimalRebuildFromTracking  ="%(CustomBuild.MinimalRebuildFromTracking)"
+
+      TLogReadFiles               ="@(CustomBuildTLogReadFiles)"
+      TLogWriteFiles              ="@(CustomBuildTLogWriteFiles)"
+      TrackFileAccess             ="$(TrackFileAccess)"
+      ToolArchitecture            ="$(CustomBuildToolArchitecture)"
+      TrackerFrameworkPath        ="$(CustomBuildTrackerFrameworkPath)"
+      TrackerSdkPath              ="$(CustomBuildTrackerSdkPath)"
+
+      AcceptableNonZeroExitCodes  ="%(CustomBuild.AcceptableNonZeroExitCodes)"
+      >
+    </CustomBuild>
+  </Target>
+
+  <Target Name="CustomBuildStep"
+          Condition="'@(CustomBuildStep)' != '' and '$(SelectedFiles)'==''"
+          Inputs="%(CustomBuildStep.Inputs);$(ProjectFileName)"
+          Outputs="%(CustomBuildStep.Outputs)"
+          DependsOnTargets="ComputeCustomBuildOutput"
+          BeforeTargets="$(CustomBuildBeforeTargets)"
+          AfterTargets="$(CustomBuildAfterTargets)"
+          >
+    <Message Text="Description: %(CustomBuildStep.Message)" Condition="%(CustomBuildStep.Message) != ''"/>
+
+    <!-- Appended tlog to track custom build events -->
+    <WriteLinesToFile File="$(IntDir)$(ProjectName).write.1.tlog" Lines="@(CustomBuildStep->'^%(Identity)');@(CustomBuildStep->MetaData('Outputs')->FullPath()->Distinct())"/>
+
+    <Exec Command="%(CustomBuildStep.Command)$(BuildSuffix)" />
+  </Target>
+
+  <!-- *******************************************************************************************
+        Lib
+       ******************************************************************************************* -->
+
+  <Target Name="Lib"
+          Condition="'@(Lib)' != ''">
+    <ItemGroup>
+      <Lib>
+        <MinimalRebuildFromTracking Condition="'$(BuildType)' != 'Build' or '$(ForceRebuild)' == 'true'">false</MinimalRebuildFromTracking>
+      </Lib>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <LibToolArchitecture Condition="'$(LibToolArchitecture)' == ''">$(DefaultToolArchitecture)</LibToolArchitecture>
+    </PropertyGroup>
+
+    <LIB
+      Sources                         ="@(Lib)"
+
+      AdditionalDependencies          ="%(Lib.AdditionalDependencies)"
+      AdditionalLibraryDirectories    ="%(Lib.AdditionalLibraryDirectories)"
+      AdditionalOptions               ="$(LibAdditionalOptions)"
+      DisplayLibrary                  ="%(Lib.DisplayLibrary)"
+      ErrorReporting                  ="%(Lib.LinkErrorReporting)"
+      ExportNamedFunctions            ="%(Lib.ExportNamedFunctions)"
+      ForceSymbolReferences           ="%(Lib.ForceSymbolReferences)"
+      IgnoreAllDefaultLibraries       ="%(Lib.IgnoreAllDefaultLibraries)"
+      IgnoreSpecificDefaultLibraries  ="%(Lib.IgnoreSpecificDefaultLibraries)"
+      LinkTimeCodeGeneration          ="%(Lib.LinkTimeCodeGeneration)"
+      ModuleDefinitionFile            ="%(Lib.ModuleDefinitionFile)"
+      Name                            ="%(Lib.Name)"
+      OutputFile                      ="%(Lib.OutputFile)"
+      RemoveObjects                   ="%(Lib.RemoveObjects)"
+      SubSystem                       ="%(Lib.SubSystem)"
+      SuppressStartupBanner           ="%(Lib.SuppressStartupBanner)"
+      TargetMachine                   ="%(Lib.TargetMachine)"
+      TreatLibWarningAsErrors         ="%(Lib.TreatLibWarningAsErrors)"
+      Verbose                         ="%(Lib.Verbose)"
+
+      TrackerLogDirectory             ="%(Lib.TrackerLogDirectory)"
+
+      TLogReadFiles                   ="@(LIBTLogReadFiles)"
+      TLogWriteFiles                  ="@(LIBTLogWriteFiles)"
+      ToolExe                         ="$(LIBToolExe)"
+      ToolPath                        ="$(LIBToolPath)"
+      TrackFileAccess                 ="$(TrackFileAccess)"
+      MinimalRebuildFromTracking      ="%(Lib.MinimalRebuildFromTracking)"
+      ToolArchitecture                ="$(LibToolArchitecture)"
+      TrackerFrameworkPath            ="$(LibTrackerFrameworkPath)"
+      TrackerSdkPath                  ="$(LibTrackerSdkPath)"
+
+      AcceptableNonZeroExitCodes      ="%(Lib.AcceptableNonZeroExitCodes)"
+      >
+    </LIB>
+
+    <Message Text="$(MSBuildProjectFile) -&gt; $(TargetPath)" Importance="High" />
+  </Target>
+
+  <Target Name="ImpLib"
+          Condition="'@(ImpLib)' != '' and '$(IgnoreImportLibrary)' != 'true' and '$(GenerateImportLib)' == 'true'">
+    <ItemGroup>
+      <ImpLib>
+        <MinimalRebuildFromTracking Condition="'$(BuildType)' != 'Build' or '$(ForceRebuild)' == 'true'">false</MinimalRebuildFromTracking>
+      </ImpLib>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <LibUseEmptyDef Condition="'%(ImpLib.ModuleDefinitionFile)' == ''">/DEF:</LibUseEmptyDef>
+      <LibToolArchitecture Condition="'$(LibToolArchitecture)' == ''">$(DefaultToolArchitecture)</LibToolArchitecture>
+    </PropertyGroup>
+
+    <LIB
+      Sources                         ="@(ImpLib)"
+
+      AdditionalDependencies          ="%(ImpLib.AdditionalDependencies)"
+      AdditionalLibraryDirectories    ="%(ImpLib.AdditionalLibraryDirectories)"
+      AdditionalOptions               ="$(ImpLibAdditionalOptions) $(LibUseEmptyDef)"
+      DisplayLibrary                  ="%(ImpLib.DisplayLibrary)"
+      ErrorReporting                  ="%(ImpLib.LinkErrorReporting)"
+      ExportNamedFunctions            ="%(ImpLib.ExportNamedFunctions)"
+      ForceSymbolReferences           ="%(ImpLib.ForceSymbolReferences)"
+      IgnoreAllDefaultLibraries       ="%(ImpLib.IgnoreAllDefaultLibraries)"
+      IgnoreSpecificDefaultLibraries  ="%(ImpLib.IgnoreSpecificDefaultLibraries)"
+      LinkTimeCodeGeneration          ="%(ImpLib.LinkTimeCodeGeneration)"
+      ModuleDefinitionFile            ="%(ImpLib.ModuleDefinitionFile)"
+      Name                            ="%(ImpLib.Name)"
+      OutputFile                      ="%(ImpLib.OutputFile)"
+      RemoveObjects                   ="%(ImpLib.RemoveObjects)"
+      SubSystem                       ="%(ImpLib.SubSystem)"
+      SuppressStartupBanner           ="%(ImpLib.SuppressStartupBanner)"
+      TargetMachine                   ="%(ImpLib.TargetMachine)"
+      TreatLibWarningAsErrors         ="%(ImpLib.TreatLibWarningAsErrors)"
+      Verbose                         ="%(ImpLib.Verbose)"
+
+      TrackerLogDirectory             ="%(ImpLib.TrackerLogDirectory)"
+
+      TLogReadFiles                   ="@(LIBTLogReadFiles)"
+      TLogWriteFiles                  ="@(LIBTLogWriteFiles)"
+      ToolExe                         ="$(LIBToolExe)"
+      ToolPath                        ="$(LIBToolPath)"
+      TrackFileAccess                 ="$(TrackFileAccess)"
+      MinimalRebuildFromTracking      ="%(ImpLib.MinimalRebuildFromTracking)"
+      ToolArchitecture                ="$(LibToolArchitecture)"
+      TrackerFrameworkPath            ="$(LibTrackerFrameworkPath)"
+      TrackerSdkPath                  ="$(LibTrackerSdkPath)"
+
+      AcceptableNonZeroExitCodes      ="%(ImpLib.AcceptableNonZeroExitCodes)"
+      >
+    </LIB>
+
+  </Target>
+
+  <!-- *******************************************************************************************
+        MIDL
+       ******************************************************************************************* -->
+  <Target Name="Midl"
+          Condition="'@(Midl)' != ''"
+          DependsOnTargets="SelectMidl">
+
+    <ItemGroup>
+      <Midl Condition="'@(Midl)' != ''">
+        <MinimalRebuildFromTracking   Condition="'$(BuildType)' != 'Build' or '$(ForceRebuild)' == 'true'">false</MinimalRebuildFromTracking>
+      </Midl>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <MidlToolArchitecture Condition="'$(MidlToolArchitecture)' == ''">$(DefaultToolArchitecture)</MidlToolArchitecture>
+    </PropertyGroup>
+
+    <MIDL
+      Condition                           ="'%(Midl.ExcludedFromBuild)'!='true'"
+      Source                              ="@(Midl)"
+
+      AdditionalIncludeDirectories        ="%(Midl.AdditionalIncludeDirectories)"
+      AdditionalOptions                   ="%(Midl.AdditionalOptions)"
+      ApplicationConfigurationMode        ="%(Midl.ApplicationConfigurationMode)"
+      ClientStubFile                      ="%(Midl.ClientStubFile)"
+      CPreprocessOptions                  ="%(Midl.CPreprocessOptions)"
+      DefaultCharType                     ="%(Midl.DefaultCharType)"
+      DllDataFileName                     ="%(Midl.DllDataFileName)"
+      EnableErrorChecks                   ="%(Midl.EnableErrorChecks)"
+      ErrorCheckAllocations               ="%(Midl.ErrorCheckAllocations)"
+      ErrorCheckBounds                    ="%(Midl.ErrorCheckBounds)"
+      ErrorCheckEnumRange                 ="%(Midl.ErrorCheckEnumRange)"
+      ErrorCheckRefPointers               ="%(Midl.ErrorCheckRefPointers)"
+      ErrorCheckStubData                  ="%(Midl.ErrorCheckStubData)"
+      ExcludedInputPaths                  ="$(ExcludePath)"
+      GenerateClientFiles                 ="%(Midl.GenerateClientFiles)"
+      GenerateServerFiles                 ="%(Midl.GenerateServerFiles)"
+      GenerateStublessProxies             ="%(Midl.GenerateStublessProxies)"
+      GenerateTypeLibrary                 ="%(Midl.GenerateTypeLibrary)"
+      HeaderFileName                      ="%(Midl.HeaderFileName)"
+      IgnoreStandardIncludePath           ="%(Midl.IgnoreStandardIncludePath)"
+      InterfaceIdentifierFileName         ="%(Midl.InterfaceIdentifierFileName)"
+      LocaleID                            ="%(Midl.LocaleID)"
+      MkTypLibCompatible                  ="%(Midl.MkTypLibCompatible)"
+      OutputDirectory                     ="%(Midl.OutputDirectory)"
+      PreprocessorDefinitions             ="%(Midl.PreprocessorDefinitions)"
+      ProxyFileName                       ="%(Midl.ProxyFileName)"
+      RedirectOutputAndErrors             ="%(Midl.RedirectOutputAndErrors)"
+      ServerStubFile                      ="%(Midl.ServerStubFile)"
+      StructMemberAlignment               ="%(Midl.StructMemberAlignment)"
+      SuppressCompilerWarnings            ="%(Midl.SuppressCompilerWarnings)"
+      SuppressStartupBanner               ="%(Midl.SuppressStartupBanner)"
+      TargetEnvironment                   ="%(Midl.TargetEnvironment)"
+      TypeLibFormat                       ="%(Midl.TypeLibFormat)"
+      TypeLibraryName                     ="%(Midl.TypeLibraryName)"
+      UndefinePreprocessorDefinitions     ="%(Midl.UndefinePreprocessorDefinitions)"
+      ValidateAllParameters               ="%(Midl.ValidateAllParameters)"
+      WarnAsError                         ="%(Midl.WarnAsError)"
+      WarningLevel                        ="%(Midl.WarningLevel)"
+
+      TrackerLogDirectory                 ="%(Midl.TrackerLogDirectory)"
+      MinimalRebuildFromTracking          ="%(Midl.MinimalRebuildFromTracking)"
+      ToolArchitecture                    ="$(MidlToolArchitecture)"
+      TrackerFrameworkPath                ="$(MidlTrackerFrameworkPath)"
+      TrackerSdkPath                      ="$(MidlTrackerSdkPath)"
+
+      TLogReadFiles                       ="@(MIDLTLogReadFiles)"
+      TLogWriteFiles                      ="@(MIDLTLogWriteFiles)"
+      ToolExe                             ="$(MIDLToolExe)"
+      ToolPath                            ="$(MIDLToolPath)"
+      TrackFileAccess                     ="$(TrackFileAccess)"
+
+      AcceptableNonZeroExitCodes          ="%(Midl.AcceptableNonZeroExitCodes)"
+      YieldDuringToolExecution            ="$(MidlYieldDuringToolExecution)"
+      >
+    </MIDL>
+  </Target>
+
+   <!-- *******************************************************************************************
+        ResourceCompile
+       ******************************************************************************************* -->
+  <Target Name="ResourceCompile"
+          Condition="'@(ResourceCompile)' != ''"
+          DependsOnTargets="SelectResourceCompile">
+
+    <ItemGroup>
+      <ResourceCompile Condition="'@(ResourceCompile)' != ''">
+        <MinimalRebuildFromTracking   Condition="'$(BuildType)' != 'Build' or '$(ForceRebuild)' == 'true'">false</MinimalRebuildFromTracking>
+      </ResourceCompile>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <RCToolArchitecture Condition="'$(RCToolArchitecture)' == ''">$(DefaultToolArchitecture)</RCToolArchitecture>
+    </PropertyGroup>
+
+    <RC
+      Condition                       ="'%(ResourceCompile.ExcludedFromBuild)'!='true'"
+      Source                          ="%(Identity)"
+      AdditionalIncludeDirectories    ="%(ResourceCompile.AdditionalIncludeDirectories)"
+      AdditionalOptions               ="%(ResourceCompile.AdditionalOptions)"
+      Culture                         ="%(ResourceCompile.Culture)"
+      IgnoreStandardIncludePath       ="%(ResourceCompile.IgnoreStandardIncludePath)"
+
+      NullTerminateStrings            ="%(ResourceCompile.NullTerminateStrings)"
+      PreprocessorDefinitions         ="%(ResourceCompile.PreprocessorDefinitions)"
+      ResourceOutputFileName          ="%(ResourceCompile.ResourceOutputFileName)"
+      SuppressStartupBanner           ="%(ResourceCompile.SuppressStartupBanner)"
+      ShowProgress                    ="%(ResourceCompile.ShowProgress)"
+      UndefinePreprocessorDefinitions ="%(ResourceCompile.UndefinePreprocessorDefinitions)"
+
+      TrackerLogDirectory             ="%(ResourceCompile.TrackerLogDirectory)"
+      MinimalRebuildFromTracking      ="%(ResourceCompile.MinimalRebuildFromTracking)"
+      ToolArchitecture                ="$(RCToolArchitecture)"
+      TrackerFrameworkPath            ="$(RCTrackerFrameworkPath)"
+      TrackerSdkPath                  ="$(RCTrackerSdkPath)"
+
+      TLogReadFiles                   ="@(RCTLogReadFiles)"
+      TLogWriteFiles                  ="@(RCTLogWriteFiles)"
+      ToolExe                         ="$(RCToolExe)"
+      ToolPath                        ="$(RCToolPath)"
+      TrackFileAccess                 ="$(TrackFileAccess)"
+
+      AcceptableNonZeroExitCodes      ="%(ResourceCompile.AcceptableNonZeroExitCodes)"
+      >
+    </RC>
+  </Target>
+
+  <!-- *******************************************************************************************
+        Managed Resource Compile
+       ******************************************************************************************* -->
+  <Target Name="BeforeResGen" DependsOnTargets="CreateManifestResourceNames"/>
+
+  <Target Name="ResGen" DependsOnTargets="$(ResGenDependsOn)"/>
+
+  <Target Name="_ResGen" DependsOnTargets="ResGen" Condition="'@(EmbeddedResource)'!=''"/>
+
+  <PropertyGroup>
+    <CreateManifestResourceNamesDependsOn></CreateManifestResourceNamesDependsOn>
+    <!-- CopyFilesToOutputDirectory target will copy the managed files to the output directory.
+         This flag will skip the primary output. -->
+    <SkipCopyBuildProduct>true</SkipCopyBuildProduct>
+    <BuildingProject>true</BuildingProject>
+  </PropertyGroup>
+
+  <Target Name="CreateManifestResourceNames"
+          Condition="'@(EmbeddedResource)' != ''"
+          DependsOnTargets="$(CreateManifestResourceNamesDependsOn)"
+          >
+
+    <ItemGroup>
+      <_Temporary Remove="@(_Temporary)"/>
+    </ItemGroup>
+
+    <!-- Create manifest names for culture and non-culture Resx files, and for non-culture Non-Resx resources -->
+    <CreateCSharpManifestResourceName
+      ResourceFiles="@(EmbeddedResource)"
+      RootNamespace="$(RootNamespace)"
+      Condition="'%(EmbeddedResource.ManifestResourceName)' == '' and ('%(EmbeddedResource.WithCulture)' == 'false' or '%(EmbeddedResource.Type)' == 'Resx')"
+      >
+
+      <Output TaskParameter="ResourceFilesWithManifestResourceNames" ItemName="_Temporary"/>
+
+    </CreateCSharpManifestResourceName>
+
+    <!-- Create manifest names for all culture non-resx resources -->
+    <CreateCSharpManifestResourceName
+      ResourceFiles="@(EmbeddedResource)"
+      RootNamespace="$(RootNamespace)"
+      PrependCultureAsDirectory="false"
+      Condition="'%(EmbeddedResource.ManifestResourceName)' == '' and '%(EmbeddedResource.WithCulture)' == 'true' and '%(EmbeddedResource.Type)' == 'Non-Resx'"
+      >
+
+      <Output TaskParameter="ResourceFilesWithManifestResourceNames" ItemName="_Temporary"/>
+
+    </CreateCSharpManifestResourceName>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="@(EmbeddedResource)" Condition="'%(EmbeddedResource.ManifestResourceName)' == ''"/>
+      <EmbeddedResource Include="@(_Temporary)"/>
+      <_Temporary Remove="@(_Temporary)"/>
+    </ItemGroup>
+  </Target>
+
+    <!--
+    ============================================================
+                                        GenerateSatelliteAssemblies
+
+    al.exe to create the satellite assemblies into the OutDir.
+    ============================================================
+    -->
+    <Target Name="GenerateSatelliteAssemblies"
+            Inputs="$(MSBuildAllProjects);@(_SatelliteAssemblyResourceInputs);$(OutDir)$(TargetName)$(TargetExt)"
+            Outputs="$(OutDir)%(Culture)\$(TargetName).resources.dll"
+            Condition="'@(_SatelliteAssemblyResourceInputs)' != ''">
+
+        <MakeDir
+            Directories="@(EmbeddedResource->'$(OutDir)%(Culture)')" />
+
+        <AL AlgorithmId="$(Satellite_AlgorithmId)"
+            BaseAddress="$(Satellite_BaseAddress)"
+            CompanyName="$(Satellite_CompanyName)"
+            Configuration="$(Satellite_Configuration)"
+            Copyright="$(Satellite_Copyright)"
+            Culture="%(Culture)"
+            DelaySign="$(DelaySign)"
+            Description="$(Satellite_Description)"
+            EmbedResources="@(_SatelliteAssemblyResourceInputs)"
+            EnvironmentVariables="$(AlEnvironment)"
+            EvidenceFile="$(Satellite_EvidenceFile)"
+            FileVersion="$(Satellite_FileVersion)"
+            Flags="$(Satellite_Flags)"
+            GenerateFullPaths="$(Satellite_GenerateFullPaths)"
+            KeyContainer="$(KeyContainerName)"
+            KeyFile="$(KeyOriginatorFile)"
+            LinkResources="@(Satellite_LinkResource)"
+            MainEntryPoint="$(Satellite_MainEntryPoint)"
+            OutputAssembly="$(OutDir)%(Culture)\$(TargetName).resources.dll"
+            Platform="$(PlatformTarget)"
+            ProductName="$(Satellite_ProductName)"
+            ProductVersion="$(Satellite_ProductVersion)"
+            ResponseFiles="@(AlResponseFile)"
+            SourceModules="@(Satellite_SourceModule)"
+            TargetType="$(Satellite_TargetType)"
+            TemplateFile="$(OutDir)$(TargetName)$(TargetExt)"
+            Title="$(Satellite_Title)"
+            ToolPath="$(AlToolPath)"
+            SdkToolsPath="$(TargetFrameworkSDKToolsDirectory)"
+            Trademark="$(Satellite_Trademark)"
+            Version="$(Satellite_Version)"
+            Win32Icon="$(Satellite_Win32Icon)"
+            Win32Resource="$(Satellite_Win32Resource)">
+
+            <Output TaskParameter="OutputAssembly" ItemName="GenerateSatelliteAssembliesOutputs"/>
+
+        </AL>
+        <WriteLinesToFile File="$(IntDir)$(ProjectName).write.1.tlog" Lines="^$(ProjectPath);@(GenerateSatelliteAssembliesOutputs->FullPath()->Distinct())"/>
+    </Target>
+
+  <!-- *******************************************************************************************
+        MT
+       ******************************************************************************************* -->
+  <Target Name="Manifest"
+          Condition="'@(Manifest)' != ''"
+          DependsOnTargets="MakeDirsForManifest">
+    <PropertyGroup>
+      <ManifestAdditionalManifestFiles Condition="'%(Manifest.AdditionalManifestFiles)'!=''">%(Manifest.AdditionalManifestFiles)</ManifestAdditionalManifestFiles>
+      <ManifestAdditionalManifestFiles Condition="'%(Manifest.EnableDPIAwareness)'=='true'">$(ManifestAdditionalManifestFiles);$(VCInstallDir)Include\Manifest\dpiaware.manifest</ManifestAdditionalManifestFiles>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Manifest>
+        <OutputResourceManifests Condition="'$(EmbedManifest)' == 'true' AND '$(EmbedManifestBy)'=='MT' AND '$(ConfigurationType)'=='Application'" >%(Link.OutputFile);#1</OutputResourceManifests>
+        <OutputResourceManifests Condition="'$(EmbedManifest)' == 'true' AND '$(EmbedManifestBy)'=='MT' AND '$(ConfigurationType)'=='DynamicLibrary'" >%(Link.OutputFile);#2</OutputResourceManifests>
+      </Manifest>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <ManifestToolArchitecture Condition="'$(ManifestToolArchitecture)' == ''">$(DefaultToolArchitecture)</ManifestToolArchitecture>
+      <RCToolArchitecture Condition="'$(RCToolArchitecture)' == ''">$(DefaultToolArchitecture)</RCToolArchitecture>
+    </PropertyGroup>
+
+    <!-- Deleting the outputs incase it came from an older build. This will force a clean MT instead of an incremental run.-->
+    <Delete Condition="('$(BuildType)' != 'Build' or '$(ForceRebuild)' == 'true') and '$(EmbedManifestby)'=='LINK'" Files="@(Manifest->Metadata('OutputManifestFile')->Distinct());@(Manifest->Metadata('OutputResourceManifests')->Distinct())" />
+
+    <Mt
+      Sources                     ="@(Manifest);$(ManifestAdditionalManifestFiles)"
+      AdditionalOptions           ="%(Manifest.AdditionalOptions)"
+      AssemblyIdentity            ="%(Manifest.AssemblyIdentity)"
+      ComponentFileName           ="%(Manifest.ComponentFileName)"
+      GenerateCatalogFiles        ="%(Manifest.GenerateCatalogFiles)"
+      GenerateCategoryTags        ="%(Manifest.GenerateCategoryTags)"
+      InputResourceManifests      ="%(Manifest.InputResourceManifests)"
+      OutputResourceManifests     ="%(Manifest.OutputResourceManifests)"
+      ManifestFromManagedAssembly ="%(Manifest.ManifestFromManagedAssembly)"
+      OutputManifestFile          ="%(Manifest.OutputManifestFile)"
+      RegistrarScriptFile         ="%(Manifest.RegistrarScriptFile)"
+      ReplacementsFile            ="%(Manifest.ReplacementsFile)"
+      SuppressDependencyElement   ="%(Manifest.SuppressDependencyElement)"
+      SuppressStartupBanner       ="%(Manifest.SuppressStartupBanner)"
+      TypeLibraryFile             ="%(Manifest.TypeLibraryFile)"
+      UpdateFileHashes            ="%(Manifest.UpdateFileHashes)"
+      UpdateFileHashesSearchPath  ="%(Manifest.UpdateFileHashesSearchPath)"
+      VerboseOutput               ="%(Manifest.VerboseOutput)"
+      MinimalRebuildFromTracking  ="$(LinkSkippedExecution)"
+
+      TrackerLogDirectory         ="%(Manifest.TrackerLogDirectory)"
+      ToolArchitecture            ="$(ManifestToolArchitecture)"
+      TrackerFrameworkPath        ="$(ManifestTrackerFrameworkPath)"
+      TrackerSdkPath              ="$(ManifestTrackerSdkPath)"
+
+      ManifestToIgnore            ="$(_ManifestToIgnore)"
+
+      TLogReadFiles               ="@(MtTLogReadFiles)"
+      TLogWriteFiles              ="@(MtTLogWriteFiles)"
+      ToolExe                     ="$(MtToolExe)"
+      ToolPath                    ="$(MtToolPath)"
+      TrackFileAccess             ="$(TrackFileAccess)"
+
+      AcceptableNonZeroExitCodes  ="%(Manifest.AcceptableNonZeroExitCodes)"
+      >
+    </Mt>
+
+    <ItemGroup>
+      <ManifestResourceCompile Condition="'@(ManifestResourceCompile)' != ''">
+        <MinimalRebuildFromTracking   Condition="'$(BuildType)' != 'Build' or '$(ForceRebuild)' == 'true'">false</MinimalRebuildFromTracking>
+      </ManifestResourceCompile>
+    </ItemGroup>
+
+    <!-- If we are embedding with Link, we need to regenerate the .res file with the updated manifest.
+         The .rc should have been auto-generated by the previous ManifestResourceCompile target. -->
+    <RC
+      Condition                       ="'$(EmbedManifestby)'=='LINK'"
+      Source                          ="@(ManifestResourceCompile)"
+      ResourceOutputFileName          ="%(ManifestResourceCompile.ResourceOutputFileName)"
+      SuppressStartupBanner           ="%(ManifestResourceCompile.SuppressStartupBanner)"
+      MinimalRebuildFromTracking      ="%(ManifestResourceCompile.MinimalRebuildFromTracking)"
+      TrackerLogDirectory             ="%(ManifestResourceCompile.TrackerLogDirectory)"
+      ToolArchitecture                ="$(RCToolArchitecture)"
+      TrackerFrameworkPath            ="$(RCTrackerFrameworkPath)"
+      TrackerSdkPath                  ="$(RCTrackerSdkPath)"
+
+      TLogReadFiles                   ="@(RCTLogReadFiles)"
+      TLogWriteFiles                  ="@(RCTLogWriteFiles)"
+      ToolExe                         ="$(RCToolExe)"
+      ToolPath                        ="$(RCToolPath)"
+      TrackFileAccess                 ="$(TrackFileAccess)"
+      >
+     <Output TaskParameter="SourcesCompiled" ItemName="RCSourcesCompiled"/>
+    </RC>
+
+    <!-- If RC did produce an output, then force link to embed that manifest.
+         This enforcement is required for projects residing on FAT32 drives. -->
+    <ItemGroup Condition="'$(EmbedManifestby)'=='LINK'">
+      <Link>
+        <MinimalRebuildFromTracking Condition="@(RCSourcesCompiled)!=''">false</MinimalRebuildFromTracking>
+      </Link>
+    </ItemGroup>
+  </Target>
+
+<!-- Makes the the directories that Manifest uses -->
+  <Target Name="MakeDirsForManifest">
+    <!-- List of directories and files whose directories should be made prior to running Manifest -->
+      <ItemGroup Condition="'@(Manifest)'!=''">
+        <ManifestDirsToMake Include="@(Manifest->'%(OutputManifestFile)')" />
+        <ManifestDirsToMake Include="@(Manifest->'%(OutputResourceManifests)')" />
+      </ItemGroup>
+
+      <ItemGroup Condition="'@(ManifestResourceCompile)'!=''">
+        <ManifestDirsToMake Include="@(ManifestResourceCompile->'%(ResourceOutputFileName)')" />
+      </ItemGroup>
+    <MakeDir Directories="@(ManifestDirsToMake->'%(RootDir)%(Directory)')" />
+  </Target>
+
+
+  <!-- *******************************************************************************************
+        ManifestResourceCompile
+       ******************************************************************************************* -->
+  <ItemGroup Condition="'$(EmbedManifestBy)'=='LINK'">
+    <ManifestResourceCompile Include="$(IntDir)$(TargetName)_manifest.rc">
+      <MinimalRebuildFromTracking   >true</MinimalRebuildFromTracking>
+      <TrackerLogDirectory          >$(IntDir)</TrackerLogDirectory>
+    </ManifestResourceCompile>
+  </ItemGroup>
+
+
+  <Target Name="ManifestResourceCompile"
+          Condition="'$(EmbedManifestBy)' == 'LINK'">
+
+    <!-- This goes into the rc file as a string so '\' needs to be escaped: IntDir already has one '\',
+         so we add one more here. -->
+    <PropertyGroup>
+      <InputManifest>%(Manifest.OutputManifestFile)</InputManifest>
+      <InputManifest>$(InputManifest.Replace(`\`,`\\`))</InputManifest>
+    </PropertyGroup>
+
+    <WriteLinesToFile
+      Condition="!EXISTS('$(InputManifest)')"
+      File="$(InputManifest)"
+      Lines=""
+      Overwrite="false"
+      Encoding ="Unicode"
+     />
+
+    <WriteLinesToFile
+      Condition="'$(ConfigurationType)'=='Application' AND !EXISTS('@(ManifestResourceCompile)')"
+      File="@(ManifestResourceCompile)"
+      Lines="1 /* CREATEPROCESS_MANIFEST_RESOURCE_ID */ 24 /* RT_MANIFEST */ &quot;$(InputManifest)&quot;"
+      Overwrite="false"
+      Encoding ="Unicode"
+     />
+
+    <WriteLinesToFile
+      Condition="'$(ConfigurationType)'=='DynamicLibrary' AND !EXISTS('@(ManifestResourceCompile)')"
+      File="@(ManifestResourceCompile)"
+      Lines="2 /* ISOLATIONAWARE_MANIFEST_RESOURCE_ID */ 24 /* RT_MANIFEST */ &quot;$(InputManifest)&quot;"
+      Overwrite="false"
+      Encoding ="Unicode"
+     />
+
+    <ItemGroup>
+      <ManifestResourceCompile Condition="'@(ManifestResourceCompile)' != ''">
+        <MinimalRebuildFromTracking   Condition="'$(BuildType)' != 'Build' or '$(ForceRebuild)' == 'true'">false</MinimalRebuildFromTracking>
+      </ManifestResourceCompile>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <RCToolArchitecture Condition="'$(RCToolArchitecture)' == ''">$(DefaultToolArchitecture)</RCToolArchitecture>
+    </PropertyGroup>
+
+    <RC
+      Source                          ="@(ManifestResourceCompile)"
+      ResourceOutputFileName          ="%(ManifestResourceCompile.ResourceOutputFileName)"
+      SuppressStartupBanner           ="%(ManifestResourceCompile.SuppressStartupBanner)"
+      TrackerLogDirectory             ="%(ManifestResourceCompile.TrackerLogDirectory)"
+      MinimalRebuildFromTracking      ="%(ManifestResourceCompile.MinimalRebuildFromTracking)"
+      ToolArchitecture                ="$(RCToolArchitecture)"
+      TrackerFrameworkPath            ="$(RCTrackerFrameworkPath)"
+      TrackerSdkPath                  ="$(RCTrackerSdkPath)"
+
+      TLogReadFiles                   ="@(RCTLogReadFiles)"
+      TLogWriteFiles                  ="@(RCTLogWriteFiles)"
+      ToolExe                         ="$(RCToolExe)"
+      ToolPath                        ="$(RCToolPath)"
+      TrackFileAccess                 ="$(TrackFileAccess)"
+      >
+    </RC>
+  </Target>
+
+  <!-- *******************************************************************************************
+        RegisterDll
+       ******************************************************************************************* -->
+  <Target Name="RegisterOutput"
+          Condition="'$(EmbedManifest)'=='true' and '$(LinkSkippedExecution)' != 'true'">
+
+    <Exec Command="regsvr32 /s &quot;%(Link.OutputFile)&quot;" Condition="'$(ConfigurationType)'=='DynamicLibrary' and '%(Link.RegisterOutput)'=='true' and '%(Link.PerUserRedirection)'!='true'" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="_RegisterOutputExitCode"/>
+    </Exec>
+    <Exec Command="regsvr32 /s /n /i:user &quot;%(Link.OutputFile)&quot;" Condition="'$(ConfigurationType)'=='DynamicLibrary' and '%(Link.RegisterOutput)'=='true' and '%(Link.PerUserRedirection)'=='true'" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="_RegisterOutputExitCode"/>
+    </Exec>
+    <Exec Command="&quot;%(Link.OutputFile)&quot; /RegServer" Condition="'$(ConfigurationType)'=='Application' and '%(Link.RegisterOutput)'=='true' and '%(Link.PerUserRedirection)'!='true'" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="_RegisterOutputExitCode"/>
+    </Exec>
+    <Exec Command="&quot;%(Link.OutputFile)&quot; /RegServerRedirect" Condition="'$(ConfigurationType)'=='Application' and '%(Link.RegisterOutput)'=='true' and '%(Link.PerUserRedirection)'=='true'" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="_RegisterOutputExitCode"/>
+    </Exec>
+    <VCMessage Code="MSB8011" Type="Error" Condition="'$(_RegisterOutputExitCode)' != '' and '$(_RegisterOutputExitCode)' != '0'" />
+  </Target>
+
+  <!-- *******************************************************************************************
+        XDCMake
+       ******************************************************************************************* -->
+  <Target Name="XdcMake"
+          Condition="'@(XdcMake)' != ''">
+
+    <ItemGroup>
+      <XdcMake Condition="'@(XdcMake)' != ''">
+        <MinimalRebuildFromTracking Condition="'$(BuildType)' != 'Build' or '$(ForceRebuild)' == 'true'">false</MinimalRebuildFromTracking>
+      </XdcMake>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <XDCMakeToolArchitecture Condition="'$(XDCMakeToolArchitecture)' == ''">ManagedIL</XDCMakeToolArchitecture>
+    </PropertyGroup>
+
+    <XDCMake
+      Sources                     ="@(XdcMake)"
+      SuppressStartupBanner       ="%(XdcMake.SuppressStartupBanner)"
+      OutputFile                  ="%(XdcMake.OutputFile)"
+      SlashOld                    ="true"
+      ProjectName                 ="$(ProjectName)"
+      TrackerLogDirectory         ="%(XdcMake.TrackerLogDirectory)"
+      MinimalRebuildFromTracking  ="%(XdcMake.MinimalRebuildFromTracking)"
+      ToolArchitecture            ="$(XDCMakeToolArchitecture)"
+      TrackerFrameworkPath        ="$(XDCMakeTrackerFrameworkPath)"
+      TrackerSdkPath              ="$(XDCMakeTrackerSdkPath)"
+
+      TLogReadFiles               ="@(XDCMakeTLogReadFiles)"
+      TLogWriteFiles              ="@(XDCMakeTLogWriteFiles)"
+      ToolExe                     ="$(XDCMakeToolExe)"
+      ToolPath                    ="$(XDCMakeToolPath)"
+      TrackFileAccess             ="$(TrackFileAccess)"
+
+      AcceptableNonZeroExitCodes  ="%(XdcMake.AcceptableNonZeroExitCodes)"
+      >
+    </XDCMake>
+  </Target>
+
+  <!-- *******************************************************************************************
+          BscMake
+       ******************************************************************************************* -->
+  <Target Name="BscMake"
+          Condition="'@(BscMake)' != ''">
+
+    <ItemGroup>
+      <BscMake Condition="'@(BscMake)' != ''">
+        <MinimalRebuildFromTracking Condition="'$(BuildType)' != 'Build' or '$(ForceRebuild)' == 'true'">false</MinimalRebuildFromTracking>
+      </BscMake>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <BSCMakeToolArchitecture Condition="'$(BSCMakeToolArchitecture)' == ''">$(DefaultToolArchitecture)</BSCMakeToolArchitecture>
+    </PropertyGroup>
+
+    <BSCMake
+      Sources                     ="@(BscMake)"
+      SuppressStartupBanner       ="%(BscMake.SuppressStartupBanner)"
+      OutputFile                  ="%(BscMake.OutputFile)"
+      PreserveSBR                 ="%(BscMake.PreserveSBR)"
+
+      TrackerLogDirectory         ="%(BscMake.TrackerLogDirectory)"
+      MinimalRebuildFromTracking  ="%(BscMake.MinimalRebuildFromTracking)"
+      ToolArchitecture            ="$(BSCMakeToolArchitecture)"
+      TrackerFrameworkPath        ="$(BSCMakeTrackerFrameworkPath)"
+      TrackerSdkPath              ="$(BSCMakeTrackerSdkPath)"
+
+      TLogReadFiles               ="@(BSCMakeTLogReadFiles)"
+      TLogWriteFiles              ="@(BSCMakeTLogWriteFiles)"
+      ToolExe                     ="$(BSCMakeToolExe)"
+      ToolPath                    ="$(BSCMakeToolPath)"
+      TrackFileAccess             ="$(TrackFileAccess)"
+
+      AcceptableNonZeroExitCodes  ="%(BscMake.AcceptableNonZeroExitCodes)"
+      >
+    </BSCMake>
+  </Target>
+
+  <!-- *******************************************************************************************
+          XSD
+       ******************************************************************************************* -->
+  <Target Name="Xsd"
+          Condition="'@(Xsd)' != ''"
+          DependsOnTargets="SelectXsd">
+
+    <ItemGroup>
+      <Xsd Condition="'@(Xsd)' != ''">
+        <MinimalRebuildFromTracking Condition="'$(BuildType)' != 'Build' or '$(ForceRebuild)' == 'true'">false</MinimalRebuildFromTracking>
+      </Xsd>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <XSDToolArchitecture Condition="'$(XSDToolArchitecture)' == ''">ManagedIL</XSDToolArchitecture>
+    </PropertyGroup>
+
+    <XSD
+      Condition                          ="'%(Xsd.ExcludedFromBuild)'!='true'"
+      Sources                            ="%(Xsd.Identity)"
+      SuppressStartupBanner              ="%(Xsd.SuppressStartupBanner)"
+      GenerateFromSchema                 ="%(Xsd.GenerateFromSchema)"
+      Language                           ="%(Xsd.Language)"
+      TrackerLogDirectory                ="%(Xsd.TrackerLogDirectory)"
+      ToolArchitecture                   ="$(XSDToolArchitecture)"
+      TrackerFrameworkPath               ="$(XSDTrackerFrameworkPath)"
+      TrackerSdkPath                     ="$(XSDTrackerSdkPath)"
+
+      TLogReadFiles                      ="@(XSDTLogReadFiles)"
+      TLogWriteFiles                     ="@(XSDTLogWriteFiles)"
+      ToolExe                            ="$(XSDToolExe)"
+      ToolPath                           ="$(XSDToolPath)"
+      TrackFileAccess                    ="$(TrackFileAccess)"
+      MinimalRebuildFromTracking         ="%(Xsd.MinimalRebuildFromTracking)"
+
+      AcceptableNonZeroExitCodes         ="%(Xsd.AcceptableNonZeroExitCodes)"
+      />
+  </Target>
+
+  <!-- *******************************************************************************************
+          GetNativeManifest : Override GetNativeManifest in Microsoft.Common.targets
+       ******************************************************************************************* -->
+  <Target
+        Name="GetNativeManifest"
+        Returns="@(ComputedApplicationManifest)">
+
+    <ItemGroup>
+      <Link Include="tmp" Condition="'@(Link)' == ''">
+        <DeleteSoon>true</DeleteSoon>
+      </Link>
+      <Manifest Include="tmp" Condition="'@(Manifest)' == ''">
+        <DeleteSoon>true</DeleteSoon>
+      </Manifest>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_HasNativeManifest>true</_HasNativeManifest>
+      <_HasNativeManifest Condition="'$(GenerateManifest)' != 'true'">false</_HasNativeManifest>
+      <_HasNativeManifest Condition="'$(EmbedManifest)' != 'false'">false</_HasNativeManifest>
+      <_HasNativeManifest Condition="'%(Manifest.AssemblyIdentity)' == ''">false</_HasNativeManifest>
+      <_HasNativeManifest Condition="!Exists('@(Manifest->Metadata('OutputManifestFile')->FullPath()->Distinct())')">false</_HasNativeManifest>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ComputedApplicationManifest Include="@(Manifest->Metadata('OutputManifestFile')->Filename()->Distinct())" Condition="'$(_HasNativeManifest)' == 'true'">
+        <HintPath>@(Manifest->Metadata('OutputManifestFile')->FullPath()->Distinct())</HintPath>
+      </ComputedApplicationManifest>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Link Remove="@(Link)" Condition="'%(Link.DeleteSoon)' == 'true'" />
+      <Manifest Remove="@(Manifest)" Condition="'%(Manifest.DeleteSoon)' == 'true'" />
+    </ItemGroup>
+
+  </Target>
+
+</Project>

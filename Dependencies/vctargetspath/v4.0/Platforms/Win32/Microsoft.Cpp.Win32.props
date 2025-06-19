@@ -1,0 +1,78 @@
+﻿<!--
+***********************************************************************************************
+Microsoft.Cpp.Win32.props
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+
+Copyright (C) Microsoft Corporation. All rights reserved.
+***********************************************************************************************
+-->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(VCTargetsPath)\Platforms\Win32\ImportBefore\*.props" Condition="Exists('$(VCTargetsPath)\Platforms\Win32\ImportBefore')" />
+
+  <Import Condition="(exists('$(VCTargetsPath)\Platforms\Win32\PlatformToolsets\$(PlatformToolset)\Microsoft.Cpp.Win32.$(PlatformToolset).props'))" Project="$(VCTargetsPath)\Platforms\Win32\PlatformToolsets\$(PlatformToolset)\Microsoft.Cpp.Win32.$(PlatformToolset).props"/>
+
+  <PropertyGroup>
+    <DebuggerFlavor Condition="'$(DebuggerFlavor)'==''">WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <EnablePREfast Condition="'%(ClCompile.EnablePREfast)' == ''">false</EnablePREfast>
+      <OmitFramePointers Condition="'%(ClCompile.OmitFramePointers)' == ''">false</OmitFramePointers>
+      <DebugInformationFormat  Condition="'$(UseDebugLibraries)' == 'true'">EditAndContinue</DebugInformationFormat>
+    </ClCompile>  
+    <Link>
+      <TargetMachine Condition="'%(Link.TargetMachine)' == ''">MachineX86</TargetMachine>
+    </Link>
+    <ImpLib>
+      <TargetMachine Condition="'%(ImpLib.TargetMachine)' == ''">MachineX86</TargetMachine>
+    </ImpLib>
+  </ItemDefinitionGroup>
+
+  <!-- Whole Program Optimization -->
+  <PropertyGroup>
+    <WholeProgramOptimizationAvailabilityTrue Condition="(exists('$(VCTargetsPath)\microsoft.Cpp.WholeProgramOptimization.props'))">true</WholeProgramOptimizationAvailabilityTrue>
+    <WholeProgramOptimizationAvailabilityInstrument Condition="(exists('$(VCTargetsPath)\microsoft.Cpp.pginstrument.props'))">true</WholeProgramOptimizationAvailabilityInstrument>
+    <WholeProgramOptimizationAvailabilityOptimize Condition="(exists('$(VCTargetsPath)\microsoft.Cpp.pgoptimize.props'))">true</WholeProgramOptimizationAvailabilityOptimize>
+    <WholeProgramOptimizationAvailabilityUpdate Condition="(exists('$(VCTargetsPath)\microsoft.Cpp.pgupdate.props'))">true</WholeProgramOptimizationAvailabilityUpdate>
+  </PropertyGroup>
+
+  <ImportGroup Label="PropertySheets">
+    <!-- Core Windows Libraries -->
+    <Import Condition="'$(NonCoreWin)' != 'true' and ( '$(UseOfMFC)' == 'false' OR '$(UseOfMFC)' == '')" Project="$(VCTargetsPath)\microsoft.Cpp.CoreWin.props"/>
+
+    <!-- MFC -->
+    <Import Condition="'$(UseOfMFC)' == 'Static'"   Project="$(VCTargetsPath)\microsoft.Cpp.MFCStatic.props"/>
+    <Import Condition="'$(UseOfMFC)' == 'Dynamic'"  Project="$(VCTargetsPath)\microsoft.Cpp.MFCDynamic.props"/>
+
+    <!-- ATL -->
+    <Import Condition="'$(UseOfATL)' == 'Static'"   Project="$(VCTargetsPath)\microsoft.Cpp.ATLStatic.props"/>
+    <Import Condition="'$(UseOfATL)' == 'Dynamic'"  Project="$(VCTargetsPath)\microsoft.Cpp.ATLDynamic.props"/>
+
+    <!-- Character Set -->
+    <Import Condition="'$(CharacterSet)' == 'Unicode'"    Project="$(VCTargetsPath)\microsoft.Cpp.unicodesupport.props"/>
+    <Import Condition="'$(CharacterSet)' == 'MultiByte'"  Project="$(VCTargetsPath)\microsoft.Cpp.MultiByteCharSupport.props"/>
+
+    <!-- Configuration Type -->
+    <Import Condition="'$(ConfigurationType)' == 'DynamicLibrary'"  Project="$(VCTargetsPath)\microsoft.Cpp.WinDLL.props"/>
+    <Import Condition="'$(ConfigurationType)' == 'Application'"     Project="$(VCTargetsPath)\microsoft.Cpp.Application.props"/>
+
+    <!-- Whole Program Optimization -->
+    <Import Condition="'$(WholeProgramOptimizationDelayImport)' != 'true' and '$(WholeProgramOptimization)' == 'true'"          Project="$(VCTargetsPath)\microsoft.Cpp.WholeProgramOptimization.props"/>
+    <Import Condition="'$(WholeProgramOptimizationDelayImport)' != 'true' and '$(WholeProgramOptimization)' == 'PGInstrument'"  Project="$(VCTargetsPath)\microsoft.Cpp.pginstrument.props"/>
+    <Import Condition="'$(WholeProgramOptimizationDelayImport)' != 'true' and '$(WholeProgramOptimization)' == 'PGOptimize'"    Project="$(VCTargetsPath)\microsoft.Cpp.pgoptimize.props"/>
+    <Import Condition="'$(WholeProgramOptimizationDelayImport)' != 'true' and '$(WholeProgramOptimization)' == 'PGUpdate'"      Project="$(VCTargetsPath)\microsoft.Cpp.pgupdate.props"/>
+
+    <!-- Common Language Runtime Support  -->
+    <Import Condition="'$(CLRSupport)' == 'true'"       Project="$(VCTargetsPath)\microsoft.Cpp.ManagedExtensions.props"/>
+    <Import Condition="'$(CLRSupport)' == 'Pure'"       Project="$(VCTargetsPath)\microsoft.Cpp.ManagedExtensionsPure.props"/>
+    <Import Condition="'$(CLRSupport)' == 'Safe'"       Project="$(VCTargetsPath)\microsoft.Cpp.ManagedExtensionsSafe.props"/>
+    <Import Condition="'$(CLRSupport)' == 'OldSyntax'"  Project="$(VCTargetsPath)\microsoft.Cpp.ManagedExtensionsOldSyntax.props"/>
+  </ImportGroup>
+
+  <Import Project="$(VCTargetsPath)\Platforms\Win32\ImportAfter\*.props" Condition="Exists('$(VCTargetsPath)\Platforms\Win32\ImportAfter')" />
+</Project>

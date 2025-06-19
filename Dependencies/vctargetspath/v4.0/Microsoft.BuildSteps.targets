@@ -1,0 +1,227 @@
+<!--
+***********************************************************************************************
+Microsoft.BuildSteps.targets
+
+WARNING:  DO NOT MODIFY this file unless you are knowledgeable about MSBuild and have
+          created a backup copy.  Incorrect changes to this file will make it
+          impossible to load or build your projects from the command-line or the IDE.
+
+This file defines the steps in the standard build process for C++ projects.  It
+contains all the steps that are specific to building Visual C++ projects.
+
+Copyright (C) Microsoft Corporation. All rights reserved.
+***********************************************************************************************
+-->
+
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+   <PropertyGroup>
+      <!-- CLRSupport = pure, safe, true etc are supported -->
+      <GenerateTargetFrameworkAttribute Condition="'$(CLRSupport)' == '' or '$(CLRSupport)' == 'false' or '$(CLRSupport)' == 'oldsyntax'">false</GenerateTargetFrameworkAttribute>
+
+      <!-- By default we do not want to build project to project references if they are disabled in the solution configuration -->
+      <OnlyReferenceAndBuildProjectsEnabledInSolutionConfiguration Condition="'$(OnlyReferenceAndBuildProjectsEnabledInSolutionConfiguration)' == ''">true</OnlyReferenceAndBuildProjectsEnabledInSolutionConfiguration>
+   </PropertyGroup>
+
+   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.Targets" />
+
+    <!--
+    ============================================================
+                                        GenerateTargetFrameworkMonikerAttribute
+
+    Emit any specified code fragments into a temporary source file for the compiler.
+    Overridden for C++ special care is needed when using precompiled headers.
+    ============================================================
+    -->
+
+    <Target Name="GenerateTargetFrameworkMonikerAttribute"
+            BeforeTargets="ClCompile"
+            DependsOnTargets="PrepareForBuild;GetReferenceAssemblyPaths"
+            Inputs="$(VCTargetsPath)\Microsoft.BuildSteps.targets"
+            Outputs="$(TargetFrameworkMonikerAssemblyAttributesPath)"
+            Condition="'$(GenerateTargetFrameworkAttribute)' == 'true'">
+
+        <PropertyGroup>
+          <!-- This attribute is only available in mscorlib v4 and later -->
+          <AdditionalSourcesText Condition="'$(GenerateTargetFrameworkAttribute)' == 'true' and '$(TargetingClr2Framework)' != 'true'">
+            $(AdditionalSourcesText)
+#using &lt;mscorlib.dll&gt;
+[assembly: System::Runtime::Versioning::TargetFrameworkAttribute(L&quot;$(TargetFrameworkMoniker)&quot;, FrameworkDisplayName=L&quot;$(TargetFrameworkMonikerDisplayName)&quot;)]%3b
+          </AdditionalSourcesText>
+        </PropertyGroup>
+
+        <!-- This is a file shared between projects so we have to take care to handle simultaneous writes (by ContinueOnError)
+             and a race between clean from one project and build from another (by not adding to FilesWritten so it doesn't clean) -->
+        <WriteLinesToFile
+            File="$(TargetFrameworkMonikerAssemblyAttributesPath)"
+            Lines="$(AdditionalSourcesText)"
+            Condition="'$(AdditionalSourcesText)' != ''"
+            ContinueOnError="true"
+            Overwrite="true"/>
+
+        <ItemGroup>
+           <ClCompile Include="$(TargetFrameworkMonikerAssemblyAttributesPath)" Condition="'@(ClCompile)' != '' and '$(AdditionalSourcesText)' != ''">
+              <!-- Since we didn't emit any necessary #include "stdafx.h" or similar -->
+              <PrecompiledHeader>NotUsing</PrecompiledHeader>
+              <!-- The appropriate CompileAsManaged setting will automatically be set depending on the current CLRSupport value -->
+           </ClCompile>
+        </ItemGroup>
+
+    </Target>
+
+  <!-- CPP build is done in 3 steps:
+          1. Generate sources (BuildGenerateSources)
+          2. Compile          (BuildCompile)
+          3. Link             (BuildLink)
+       Each step can be executed separately. Populate BuildSteps with one or more steps
+       before importing this project to build only particular steps. -->
+  <PropertyGroup>
+    <BuildSteps Condition="'$(BuildSteps)' == ''">
+      SetBuildDefaultEnvironmentVariables;
+      SetUserMacroEnvironmentVariables;
+      ResolveReferences;
+      PrepareForBuild;
+      InitializeBuildStatus;
+      BuildGenerateSources;
+      BuildCompile;
+      BuildLink;
+    </BuildSteps>
+
+    <BuildDependsOn>
+      _PrepareForBuild;
+      $(BuildSteps);
+      AfterBuild;
+      FinalizeBuildStatus;
+    </BuildDependsOn>
+
+    <RebuildDependsOn>
+      _PrepareForRebuild;
+      $(RebuildDependsOn);
+    </RebuildDependsOn>
+
+    <CleanDependsOn>
+      _PrepareForClean;
+      $(CleanDependsOn);
+    </CleanDependsOn>
+  </PropertyGroup>
+
+  <Target
+      Name="Build"
+      Condition=" '$(_InvalidConfigurationWarning)' != 'true' "
+      DependsOnTargets="_DetermineManagedStateFromCL;$(BuildDependsOn)"
+      Returns="@(ManagedTargetPath)" >
+    <ItemGroup>
+      <ManagedTargetPath Include="$(TargetPath)" Condition="'$(ManagedAssembly)' == 'true'" />
+    </ItemGroup>
+  </Target>
+
+  <Target
+      Name="Rebuild"
+      Condition=" '$(_InvalidConfigurationWarning)' != 'true' "
+      DependsOnTargets="_DetermineManagedStateFromCL;$(RebuildDependsOn)"
+      Returns="@(ManagedTargetPath)">
+    <ItemGroup>
+      <ManagedTargetPath Include="$(TargetPath)" Condition="'$(ManagedAssembly)' == 'true'" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_PrepareForBuild" >
+    <PropertyGroup>
+      <BuildType Condition="'$(BuildType)' == ''">Build</BuildType>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <!-- We only want to run our targets for vcxproj, not csproj.  This allows our us to target 3.5 toolset.-->
+      <Link Include="@(CustomBuild)" Condition="'%(CustomBuild.ExcludedFromBuild)'!='true' and ('%(CustomBuild.Extension)'=='.obj' or '%(CustomBuild.Extension)'=='.lib')" />
+      <Lib Include="@(CustomBuild)" Condition="'%(CustomBuild.ExcludedFromBuild)'!='true' and ('%(CustomBuild.Extension)'=='.obj' or '%(CustomBuild.Extension)'=='.lib')" />
+
+      <!-- Remove CustomBuild ItemGroup that doesn't meet the condition. This prevents showing "Skipping target "CustomBuild" because it has no outputs. -->
+      <CustomBuildStep Remove="@(CustomBuildStep)" Condition="'%(CustomBuildStep.Command)' == ''" />
+      <CustomBuild Remove="@(CustomBuild)" Condition="'%(CustomBuild.Command)' == '' or '%(CustomBuild.ExcludedFromBuild)'=='true'" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_PrepareForRebuild">
+    <PropertyGroup>
+      <BuildType Condition="'$(BuildType)' == ''">Rebuild</BuildType>
+      <_ClCompileGenerateXMLDocumentationFiles Condition="%(ClCompile.GenerateXMLDocumentationFiles) == 'true'">true</_ClCompileGenerateXMLDocumentationFiles>
+    </PropertyGroup>
+    <!-- We only want to run our targets for vcxproj, not csproj.  This allows our us to target 3.5 toolset.-->
+    <ItemGroup>
+      <CustomBuildStep Remove="@(CustomBuildStep)" Condition="'%(CustomBuildStep.Command)' == ''" />
+      <CustomBuild Remove="@(CustomBuild)" Condition="'%(CustomBuild.Command)' == '' or '%(CustomBuild.ExcludedFromBuild)'=='true'" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_PrepareForClean">
+    <PropertyGroup>
+      <BuildType Condition="'$(BuildType)' == ''">Clean</BuildType>
+    </PropertyGroup>
+    <Delete Files="$(LastBuildState)" Condition="Exists($(LastBuildState))"/>
+  </Target>
+
+  <Target Name="AfterBuild">
+  </Target>
+
+  <PropertyGroup>
+    <TLogLocation>$(IntDir)</TLogLocation>
+    <LastBuildUnsuccessful>$(IntDir)$(ProjectName).unsuccessfulbuild</LastBuildUnsuccessful>
+    <LastBuildState>$(IntDir)$(ProjectName).lastbuildstate</LastBuildState>
+  </PropertyGroup>
+
+
+  <!-- *******************************************************************************************
+        BeforeBuildGenerateSources
+       ******************************************************************************************* -->
+  <!-- Redefine this target in your project in order to run tasks just before BuildGenerateSources -->
+  <Target Name="BeforeBuildGenerateSources"/>
+
+  <PropertyGroup>
+    <BeforeBuildGenerateSourcesTargets>
+      $(BeforeBuildGenerateSourcesTargets);
+      BeforeBuildGenerateSources;
+    </BeforeBuildGenerateSourcesTargets>
+
+    <AfterBuildGenerateSourcesTargets>
+      $(AfterBuildGenerateSourcesTargets);
+      AfterBuildGenerateSources;
+    </AfterBuildGenerateSourcesTargets>
+  </PropertyGroup>
+
+  <!-- *******************************************************************************************
+        AfterBuildGenerateSources
+       ******************************************************************************************* -->
+  <!-- Redefine this target in your project in order to run tasks just after BuildGenerateSources -->
+  <Target Name="AfterBuildGenerateSources"/>
+
+  <!-- *******************************************************************************************
+        BeforeBuildCompile
+       ******************************************************************************************* -->
+  <!-- Redefine this target in your project in order to run tasks just before BuildCompile -->
+  <Target Name="BeforeBuildCompile"/>
+
+  <!-- *******************************************************************************************
+        AfterBuildCompile
+       ******************************************************************************************* -->
+  <!-- Redefine this target in your project in order to run tasks just after BuildCompile -->
+  <Target Name="AfterBuildCompile"/>
+
+  <Target Name="LibLinkOnly"
+          DependsOnTargets="$(CommonBuildOnlyTargets)$(BeforeBuildLinkTargets);$(BuildLibTargets);$(BuildLinkTargets);$(AfterBuildLinkTargets)">
+  </Target>
+  
+  <!-- *******************************************************************************************
+          Utility targets to get files from project from another project using the MSBuild task
+       ******************************************************************************************* -->
+  <Target Name="GetClCompile" Returns="@(ClCompile)"/>
+  <Target Name="GetResourceCompile" Returns="@(ResourceCompile)"/>
+  <Target Name="GetMidl" Returns="@(Midl)"/>
+  <Target Name="GetImpLib" Returns="@(ImpLib)"/>
+  <Target Name="GetLib" Returns="@(Lib)"/>
+  <Target Name="GetLink" Returns="@(Link)"/>
+  <Target Name="GetCustomBuild" Returns="@(CustomBuild)"/>
+  <Target Name="GetXsd" Returns="@(Xsd)"/>
+  <Target Name="GetXdcMake" Returns="@(XdcMake)"/>
+  <Target Name="GetBscMake" Returns="@(BscMake)"/>
+
+</Project>

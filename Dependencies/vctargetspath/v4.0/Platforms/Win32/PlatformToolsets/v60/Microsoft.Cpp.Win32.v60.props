@@ -1,0 +1,58 @@
+<!--
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Daffodil for Visual Studio  <http://daffodil.codeplex.com>
+- Native multi-targeting support for Visual Studio 6 in Visual Studio 2010
+
+2.4  [2012-11-09]
+
+Owen Wengerd, ManuSoft
+http://www.manusoft.com
+
+Credits
+  Some aspects of this project are based on information in this MSDN blog post:
+  http://blogs.msdn.com/b/vcblog/archive/2009/12/08/c-native-multi-targeting.aspx
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(VCTargetsPath)\Platforms\Win32\PlatformToolsets\v60\ImportBefore\*.props" Condition="Exists('$(VCTargetsPath)\Platforms\Win32\PlatformToolsets\v60\ImportBefore')" />
+  <PropertyGroup>
+    <PlatformToolsetVersion>60</PlatformToolsetVersion>
+    <VCInstallDir>$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\DevStudio\6.0\Products\Microsoft Visual C++@ProductDir)</VCInstallDir>
+    <VCInstallDir Condition="'$(VCInstallDir)' == ''">$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\DevStudio\6.0\Products\Microsoft Visual C++@ProductDir)</VCInstallDir>
+    <VCInstallDir Condition="!HasTrailingSlash('$(VCInstallDir)')">$(VCInstallDir)\</VCInstallDir>
+    <VSInstallDir>$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\6.0\Setup@VsCommonDir)</VSInstallDir>
+    <VSInstallDir Condition="'$(VSInstallDir)' == ''">$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\VisualStudio\6.0\Setup@VsCommonDir)</VSInstallDir>
+    <VSInstallDir Condition="!HasTrailingSlash('$(VSInstallDir)')">$(VSInstallDir)\</VSInstallDir>
+    <WindowsSdkDir Condition="'$(WindowsSdkDir)' == ''">$(VCInstallDir)</WindowsSdkDir>
+    <ExecutablePath Condition="'$(ExecutablePath)' == ''">$(VSInstallDir)MSDev98\Bin;$(VCInstallDir)BIN;$(VSInstallDir)TOOLS;$(VSInstallDir)TOOLS\WINNT;$(PATH);</ExecutablePath>
+    <IncludePath Condition="'$(IncludePath)' == ''">$(VCInstallDir)INCLUDE;$(VCInstallDir)MFC\INCLUDE;$(VCInstallDir)ATL\INCLUDE;</IncludePath>
+    <ReferencePath Condition="'$(ReferencePath)' == ''">$(VCInstallDir)MFC\LIB;</ReferencePath>
+    <LibraryPath Condition="'$(LibraryPath)' == ''">$(VCInstallDir)LIB;$(VCInstallDir)MFC\LIB;</LibraryPath>
+    <SourcePath Condition="'$(SourcePath)' == ''">$(VCInstallDir)MFC\SRC;$(VCInstallDir)MFC\INCLUDE;$(VCInstallDir)ATL\INCLUDE;$(VCInstallDir)CRT\SRC;</SourcePath>
+    <ExcludePath Condition="'$(ExcludePath)' == ''">$(VCInstallDir)INCLUDE;$(VCInstallDir)MFC\INCLUDE;$(VCInstallDir)ATL\INCLUDE;$(VCInstallDir)MFC\LIB;</ExcludePath>
+    <NativeExecutablePath Condition="'$(NativeExecutablePath)' == ''">$(ExecutablePath)</NativeExecutablePath>
+    <TargetFrameworkVersion></TargetFrameworkVersion>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <CLRSupport>false</CLRSupport>
+    <WholeProgramOptimizationDelayImport>true</WholeProgramOptimizationDelayImport>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AssumeNoAliasing>false</AssumeNoAliasing>
+      <AssumeXFunctionAliasing>false</AssumeXFunctionAliasing>
+      <FloatConsistency>Default</FloatConsistency>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <IncrementalCompilation>false</IncrementalCompilation>
+      <StringPooling>false</StringPooling>
+      <TargetProcessor>Blend</TargetProcessor>
+      <DebugInformationFormat>None</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <DebugInformationFormat>CV</DebugInformationFormat>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Platforms\Win32\PlatformToolsets\v60\ImportAfter\*.props" Condition="Exists('$(VCTargetsPath)\Platforms\Win32\PlatformToolsets\v60\ImportAfter')" />
+</Project>
