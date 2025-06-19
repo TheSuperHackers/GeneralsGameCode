@@ -2480,6 +2480,7 @@ void W3DVolumetricShadow::buildSilhouette(Int meshIndex, Vector3 *lightPosObject
 					geomMesh->GetPolyNeighbor( 
 						polyNeighbor->neighbor[ j ].neighborIndex );
 
+				ASSUME(otherNeighbor != NULL);
 				//
 				// ignore neighbors that are marked as processed as those
 				// onces have already detected edges if present

@@ -25,6 +25,12 @@
 #define NOEXCEPT_17
 #endif
 
+#if __cplusplus >= 202302L
+#define ASSUME(c) [[assume(c)]]
+#else
+#define ASSUME(c)
+#endif
+
 // noexcept for methods of IUNKNOWN interface
 #if defined(_MSC_VER)
 #define IUNKNOWN_NOEXCEPT NOEXCEPT_17
