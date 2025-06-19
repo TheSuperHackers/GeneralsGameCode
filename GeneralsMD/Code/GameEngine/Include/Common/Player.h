@@ -634,7 +634,7 @@ public:
 	// add to the player's current selection this hotkey team.
 	void processAddTeamGameMessage(Int hotkeyNum, GameMessage *msg);
 
-	// returns an AIGroup object that is the currently selected group.
+	// fills an AIGroup object that is the currently selected group.
 	void getCurrentSelectionAsAIGroup(AIGroup *group);
 
 	// sets the currently selected group to be the given AIGroup

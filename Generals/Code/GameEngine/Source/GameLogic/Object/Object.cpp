@@ -563,9 +563,8 @@ Object::~Object()
 		ThePartitionManager->unRegisterObject( this );
 
 	// if we are in a group, remove us
-	if (m_group)
-		m_group->remove( this );
-	
+	leaveGroup();
+
 	// note, do NOT free these, there are just a shadow copy!
 	m_ai = NULL;
 	m_physics = NULL;
@@ -3841,7 +3840,7 @@ void Object::xfer( Xfer *xfer )
 	}
 
 	// Doesn't need to be saved.  These are created as needed.  jba.
-	//AIGroup*		m_group;															///< if non-NULL, we are part of this group of agents
+	//m_group;
 
 	// don't need to save m_partitionData.
 	DEBUG_ASSERTCRASH(!(xfer->getXferMode() == XFER_LOAD && m_partitionData == NULL), ("should not be in partitionmgr yet"));
@@ -5446,7 +5445,7 @@ RadarPriorityType Object::getRadarPriority( void ) const
 // ------------------------------------------------------------------------------------------------
 AIGroup *Object::getGroup(void)
 {
-	return m_group;
+	return m_group.Peek();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5456,7 +5455,7 @@ void Object::enterGroup( AIGroup *group )
 	// if we are in another group, remove ourselves from it first
 	leaveGroup();
 
-	m_group = group;
+	m_group = RefCountPtr<AIGroup>::Create_AddRef(group);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5467,7 +5466,7 @@ void Object::leaveGroup( void )
 	if (m_group)
 	{
 		// to avoid recursion, set m_group to NULL before removing
-		AIGroup *group = m_group;
+		RefCountPtr<AIGroup> group = m_group;
 		m_group = NULL;
 		group->remove( this );
 	}
