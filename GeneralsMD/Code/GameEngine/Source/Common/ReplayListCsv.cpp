@@ -223,7 +223,7 @@ static void NextToken(AsciiString *string, AsciiString *token, char separator)
 	string->set(*tokenEnd == 0 ? tokenEnd : tokenEnd+1);
 }
 
-void ReadReplayListFromCsv(AsciiString filename, std::vector<AsciiString>* replayList)
+bool ReadReplayListFromCsv(AsciiString filename, std::vector<AsciiString>* replayList)
 {
 	// Get path of csv file relative to replay folder.
 	// Later we will search for replays in that path.
@@ -244,7 +244,7 @@ void ReadReplayListFromCsv(AsciiString filename, std::vector<AsciiString>* repla
 	fname.format("%s%s", TheRecorder->getReplayDir().str(), filename.str());
 	FILE *fp = fopen(fname.str(), "rt");
 	if (!fp)
-		return;
+		return false;
 
 	// Parse header
 	AsciiString line, token;
@@ -279,4 +279,5 @@ void ReadReplayListFromCsv(AsciiString filename, std::vector<AsciiString>* repla
 		// Ignore remaining columns
 	}
 	fclose(fp);
+	return true;
 }

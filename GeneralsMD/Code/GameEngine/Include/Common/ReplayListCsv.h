@@ -20,4 +20,4 @@
 
 
 bool WriteOutReplayList(AsciiString relativeFolder);
-void ReadReplayListFromCsv(AsciiString filename, std::vector<AsciiString>* replayList);
+bool ReadReplayListFromCsv(AsciiString filename, std::vector<AsciiString>* replayList);

@@ -448,15 +448,20 @@ Int parseSimReplayList(char *args[], int num)
 	if (num > 1)
 	{
 		AsciiString filename = args[1];
-		ReadReplayListFromCsv(filename, &TheWritableGlobalData->m_simulateReplays);
+		bool success = ReadReplayListFromCsv(filename, &TheWritableGlobalData->m_simulateReplays);
+		if (!success)
+		{
+			printf("Cannot open csv file: \"%s\"\n", filename.str());
+			exit(1);
+		}
 		TheWritableGlobalData->m_playIntro = FALSE;
 		TheWritableGlobalData->m_afterIntro = TRUE;
 		TheWritableGlobalData->m_playSizzle = FALSE;
 		TheWritableGlobalData->m_shellMapOn = FALSE;
 
 		// Make replay playback possible while other clients (possible retail) are running
-		rts::ClientInstance::setMultiInstance(TRUE);
-		rts::ClientInstance::skipPrimaryInstance();
+		rts::ClientInstance::s_multiInstance = TRUE;
+		rts::ClientInstance::s_avoidFirstInstance = TRUE;
 		return 2;
 	}
 	return 1;
