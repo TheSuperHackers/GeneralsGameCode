@@ -476,6 +476,8 @@ WindowMsgHandledType PopupReplaySystem( GameWindow *window, UnsignedInt msg,
 					}
 				}
 			}
+
+			break;
 		}
 
 		default:
