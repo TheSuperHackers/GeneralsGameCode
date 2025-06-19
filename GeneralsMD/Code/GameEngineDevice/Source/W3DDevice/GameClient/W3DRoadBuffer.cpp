@@ -3245,7 +3245,7 @@ void W3DRoadBuffer::updateLighting(void)
 		Reactor.)
 
 	Result: 
-	As soon as the fence is set up, the player who Alt-tab'd would get Zero Hour crashing to desktop with Serious Error occured.
+	As soon as the fence is set up, the player who Alt-tab'd would get Zero Hour crashing to desktop with Serious Error occurred.
 	*/
 	if( !m_roads )
 	{

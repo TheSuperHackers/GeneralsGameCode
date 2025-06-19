@@ -20,6 +20,6 @@
 
 // TheSuperHackers @feature helmutbuhler 13/04/2025
 // Simulate a list of replays without graphics.
-// Returns exitcode 1 if mismatch or other error occured
+// Returns exitcode 1 if mismatch or other error occurred
 // Returns exitcode 0 if all replays were successfully simulated without mismatches
 int SimulateReplays(const std::vector<AsciiString> &filenames, int maxProcesses);

@@ -91,10 +91,7 @@ static int SimulateReplaysInThisProcess(const std::vector<AsciiString> &filename
 	}
 	if (filenames.size() > 1)
 	{
-		if (numErrors)
-			printf("Errors occured: %d\n", numErrors);
-		else
-			printf("Successfully simulated all replays\n");
+		printf("Simulation of all replays completed. Errors occurred: %d\n", numErrors);
 
 		UnsignedInt realTime = (GetTickCount()-totalStartTimeMillis) / 1000;
 		printf("Total Time: %d:%02d:%02d\n", realTime/60/60, realTime/60%60, realTime%60);
@@ -175,7 +172,7 @@ static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &file
 	DEBUG_ASSERTCRASH(filenamePositionStarted == filenames.size(), ("inconsistent file position 1"));
 	DEBUG_ASSERTCRASH(filenamePositionDone == filenames.size(), ("inconsistent file position 2"));
 
-	printf("Simulation of all replays completed. Errors occured: %d\n", numErrors);
+	printf("Simulation of all replays completed. Errors occurred: %d\n", numErrors);
 
 	UnsignedInt realTime = (GetTickCount()-totalStartTimeMillis) / 1000;
 	printf("Total Wall Time: %d:%02d:%02d\n", realTime/60/60, realTime/60%60, realTime%60);
