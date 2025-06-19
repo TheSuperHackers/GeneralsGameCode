@@ -163,6 +163,8 @@ WindowMsgHandledType GadgetTabControlSystem( GameWindow *tabControl, UnsignedInt
 
 			if( parent )
 				return TheWindowManager->winSendSystemMsg( parent, msg, mData1, mData2 );
+
+			break;
 		}
 
 		default:
