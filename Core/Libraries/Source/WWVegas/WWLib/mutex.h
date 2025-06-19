@@ -184,7 +184,7 @@ public:
       BitSet:
         ;
 #else
-        while (cs.Flag.test_and_set(std::memory_order_acquire)) {
+        while (cs.Flag.test_and_set(std::memory_order_acq_rel)) {
             cs.Flag.wait(true, std::memory_order_relaxed);
         }
 #endif

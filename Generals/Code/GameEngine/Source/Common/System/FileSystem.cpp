@@ -224,7 +224,7 @@ Bool FileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) co
 	if (fileInfo == NULL) {
 		return FALSE;
 	}
-	memset(fileInfo, 0, sizeof(fileInfo));
+	memset(fileInfo, 0, sizeof(*fileInfo));
 	
 	if (TheLocalFileSystem->getFileInfo(filename, fileInfo)) {
 		return TRUE;

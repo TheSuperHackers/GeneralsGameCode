@@ -226,19 +226,20 @@ Bool Transport::doSend() {
 		if (m_outBuffer[i].length != 0)
 		{
 			int bytesSent = 0;
+			int bytesToSend = m_outBuffer[i].length + sizeof(TransportMessageHeader);
 			// Send this message
-			if ((bytesSent = m_udpsock->Write((unsigned char *)(&m_outBuffer[i]), m_outBuffer[i].length + sizeof(TransportMessageHeader), m_outBuffer[i].addr, m_outBuffer[i].port)) > 0)
+			if ((bytesSent = m_udpsock->Write((unsigned char *)(&m_outBuffer[i]), bytesToSend, m_outBuffer[i].addr, m_outBuffer[i].port)) > 0)
 			{
-				//DEBUG_LOG(("Sending %d bytes to %d:%d\n", m_outBuffer[i].length + sizeof(TransportMessageHeader), m_outBuffer[i].addr, m_outBuffer[i].port));
+				//DEBUG_LOG(("Sending %d bytes to %d.%d.%d.%d:%d\n", bytesToSend, PRINTF_IP_AS_4_INTS(m_outBuffer[i].addr), m_outBuffer[i].port));
 				m_outgoingPackets[m_statisticsSlot]++;
 				m_outgoingBytes[m_statisticsSlot] += m_outBuffer[i].length + sizeof(TransportMessageHeader);
 				m_outBuffer[i].length = 0;  // Remove from queue
-//				DEBUG_LOG(("Transport::doSend - sent %d butes to %d.%d.%d.%d:%d\n", bytesSent,
-//					(m_outBuffer[i].addr >> 24) & 0xff,
-//					(m_outBuffer[i].addr >> 16) & 0xff,
-//					(m_outBuffer[i].addr >> 8) & 0xff,
-//					m_outBuffer[i].addr & 0xff,
-//					m_outBuffer[i].port));
+				if (bytesSent != bytesToSend)
+				{
+					DEBUG_LOG(("Transport::doSend - wanted to send %d bytes, only sent %d bytes to %d.%d.%d.%d:%d\n",
+						bytesToSend, bytesSent,
+						PRINTF_IP_AS_4_INTS(m_outBuffer[i].addr), m_outBuffer[i].port));
+				}
 			}
 			else
 			{
@@ -320,6 +321,7 @@ Bool Transport::doRecv()
 
 		if (len <= sizeof(TransportMessageHeader) || !isGeneralsPacket( &incomingMessage ))
 		{
+			DEBUG_LOG(("Transport::doRecv - unknownPacket! len = %d\n", len));
 			m_unknownPackets[m_statisticsSlot]++;
 			m_unknownBytes[m_statisticsSlot] += len;
 			continue;
@@ -385,6 +387,7 @@ Bool Transport::queueSend(UnsignedInt addr, UnsignedShort port, const UnsignedBy
 
 	if (len < 1 || len > MAX_PACKET_SIZE)
 	{
+		DEBUG_LOG(("Transport::queueSend - Invalid Packet size\n"));
 		return false;
 	}
 
@@ -414,6 +417,7 @@ Bool Transport::queueSend(UnsignedInt addr, UnsignedShort port, const UnsignedBy
 			return true;
 		}
 	}
+	DEBUG_LOG(("Send Queue is getting full, dropping packets\n"));
 	return false;
 }
 

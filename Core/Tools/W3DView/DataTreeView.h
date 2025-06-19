@@ -26,7 +26,7 @@
 //
 
 #include "AfxCView.H"
-#include "AssetTypes.H"
+#include "AssetTypes.h"
 #include "Vector.H"
 
 // Forward declarations

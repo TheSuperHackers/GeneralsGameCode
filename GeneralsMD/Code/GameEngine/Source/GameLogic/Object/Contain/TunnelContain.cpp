@@ -149,18 +149,27 @@ void TunnelContain::harmAndForceExitAllContained( DamageInfo *info )
 //-------------------------------------------------------------------------------------------------
 void TunnelContain::killAllContained( void )
 {
-	Player *owningPlayer = getObject()->getControllingPlayer();
-	const ContainedItemsList *fullList = owningPlayer->getTunnelSystem()->getContainedItemsList();
+	// TheSuperHackers @bugfix xezon 04/06/2025 Empty the TunnelSystem's Contained Items List
+	// straight away to prevent a potential child call to catastrophically modify it as well.
+	// This scenario can happen if the killed occupant(s) apply deadly damage on death
+	// to the host container, which then attempts to remove all remaining occupants
+	// on the death of the host container. This is reproducible by shooting with
+	// Neutron Shells on a GLA Tunnel containing GLA Terrorists.
 
-	Object *obj;
-	ContainedItemsList::const_iterator it;
-	it = (*fullList).begin();
-	while( it != (*fullList).end() )
+	ContainedItemsList list;
+	Player *owningPlayer = getObject()->getControllingPlayer();
+	owningPlayer->getTunnelSystem()->swapContainedItemsList(list);
+
+	ContainedItemsList::iterator it = list.begin();
+
+	while ( it != list.end() )
 	{
-		obj = *it;
-		it++;
+		Object *obj = *it++;
+		DEBUG_ASSERTCRASH( obj, ("Contain list must not contain NULL element"));
+
 		removeFromContain( obj, true );
-    obj->kill();
+
+		obj->kill();
 	}
 }
 //-------------------------------------------------------------------------------------------------

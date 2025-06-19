@@ -43,9 +43,9 @@
 #ifndef __ASSET_INFO_H
 #define __ASSET_INFO_H
 
-#include "RendObj.H"
-#include "Utils.H"
-#include "AssetTypes.H"
+#include "rendobj.h"
+#include "Utils.h"
+#include "AssetTypes.h"
 
 
 /////////////////////////////////////////////////////////////////////////////

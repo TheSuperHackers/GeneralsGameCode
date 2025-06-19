@@ -1577,7 +1577,8 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_PLACE_BEACON:
 		{
-			// how many does this player have active?
+			if (thisPlayer->getPlayerTemplate() == NULL)
+				break;
 			Coord3D pos = msg->getArgument( 0 )->location;
 			Region3D r;
 			TheTerrainLogic->getExtent(&r);
@@ -1586,6 +1587,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			const ThingTemplate *thing = TheThingFactory->findTemplate( thisPlayer->getPlayerTemplate()->getBeaconTemplate() );
 			if (thing && !TheVictoryConditions->hasSinglePlayerBeenDefeated(thisPlayer))
 			{
+				// how many does this player have active?
 				Int count;
 				thisPlayer->countObjectsByThingTemplate( 1, &thing, false, &count );
 				DEBUG_LOG(("Player already has %d beacons active\n", count));

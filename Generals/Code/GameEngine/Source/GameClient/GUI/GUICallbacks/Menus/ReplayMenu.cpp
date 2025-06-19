@@ -102,6 +102,75 @@ UnicodeString GetReplayFilenameFromListbox(GameWindow *listbox, Int index)
 	return fname;
 }
 
+//-------------------------------------------------------------------------------------------------
+
+static Bool readReplayMapInfo(const AsciiString& filename, RecorderClass::ReplayHeader &header, ReplayGameInfo &info, const MapMetaData *&mapData)
+{
+	header.forPlayback = FALSE;
+	header.filename = filename;
+
+	if (TheRecorder != NULL && TheRecorder->readReplayHeader(header))
+	{
+		if (ParseAsciiStringToGameInfo(&info, header.gameOptions))
+		{
+			if (TheMapCache != NULL)
+				mapData = TheMapCache->findMap(info.getMap());
+			else
+				mapData = NULL;
+
+			return true;
+		}
+	}
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+static void removeReplayExtension(UnicodeString& replayName)
+{
+	const Int extensionLength = TheRecorder->getReplayExtention().getLength();
+		for (Int k=0; k < extensionLength; ++k)
+			replayName.removeLastChar();
+}
+
+//-------------------------------------------------------------------------------------------------
+
+static UnicodeString createReplayName(const AsciiString& filename)
+{
+	AsciiString lastReplayFName = TheRecorder->getLastReplayFileName();
+	lastReplayFName.concat(TheRecorder->getReplayExtention());
+	UnicodeString replayName;
+
+	if (lastReplayFName.compareNoCase(filename) == 0)
+	{
+		replayName = TheGameText->fetch("GUI:LastReplay");
+	}
+	else
+	{
+		replayName.translate(filename);
+		removeReplayExtension(replayName);
+	}
+	return replayName;
+}
+
+//-------------------------------------------------------------------------------------------------
+
+static UnicodeString createMapName(const AsciiString& filename, const ReplayGameInfo& info, const MapMetaData *mapData)
+{
+	UnicodeString mapName;
+	if (!mapData)
+	{
+		// TheSuperHackers @bugfix helmutbuhler 08/03/2025 Just use the filename.
+		// Displaying a long map path string would break the map list gui.
+		const char* filename = info.getMap().reverseFind('\\');
+		mapName.translate(filename ? filename + 1 : info.getMap());
+	}
+	else
+	{
+		mapName = mapData->m_displayName;
+	}
+	return mapName;
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Populate the listbox with the names of the available replay files */
@@ -113,19 +182,25 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 	
 	GadgetListBoxReset(listbox);
 
+	// TheSuperHackers @tweak xezon 08/06/2025 Now shows missing maps in red color.
 	enum {
 		COLOR_SP = 0,
 		COLOR_SP_CRC_MISMATCH,
 		COLOR_MP,
 		COLOR_MP_CRC_MISMATCH,
+		COLOR_MISSING_MAP,
+		COLOR_MISSING_MAP_CRC_MISMATCH,
 		COLOR_MAX
 	};
-	Color colors[COLOR_MAX] = {
+	Color colors[] = {
 		GameMakeColor( 255, 255, 255, 255 ),
 		GameMakeColor( 128, 128, 128, 255 ),
 		GameMakeColor( 255, 255, 255, 255 ),
-		GameMakeColor( 128, 128, 128, 255 )
+		GameMakeColor( 128, 128, 128, 255 ),
+		GameMakeColor( 243,  24,  24, 255 ),
+		GameMakeColor( 128,  32,  32, 255 )
 	};
+	static_assert(ARRAY_SIZE(colors) == COLOR_MAX, "Mismatch between colors array size and COLOR_MAX");
 
 	AsciiString asciistr;
 	AsciiString asciisearch;
@@ -145,124 +220,114 @@ void PopulateReplayFileListbox(GameWindow *listbox)
 		// just want the filename
 		asciistr.set((*it).reverseFind('\\') + 1);
 
-		// lets get some info about the replay
 		RecorderClass::ReplayHeader header;
-		header.forPlayback = FALSE;
-		header.filename = asciistr;
-		Bool success = TheRecorder && TheMapCache && TheRecorder->readReplayHeader( header );
-		if (success)
+		ReplayGameInfo info;
+		const MapMetaData *mapData;
+
+		if (readReplayMapInfo(asciistr, header, info, mapData))
 		{
-			ReplayGameInfo info;
-			if (ParseAsciiStringToGameInfo( &info, header.gameOptions ))
-			{
+			// columns are: name, date, version, map, extra
 
-				// columns are: name, date, version, map, extra
+			// name
+			UnicodeString replayNameToShow = createReplayName(asciistr);
 
-				// name
-				header.replayName.translate(asciistr);
-				for (Int tmp=0; tmp < TheRecorder->getReplayExtention().getLength(); ++tmp)
-					header.replayName.removeLastChar();
+			UnicodeString displayTimeBuffer = getUnicodeTimeBuffer(header.timeVal);
 
-				UnicodeString replayNameToShow = header.replayName;
+			//displayTimeBuffer.format( L"%ls", timeBuffer);
 
-				AsciiString lastReplayFName = TheRecorder->getLastReplayFileName();
-				lastReplayFName.concat(TheRecorder->getReplayExtention());
-				if (lastReplayFName.compareNoCase(asciistr) == 0)
-					replayNameToShow = TheGameText->fetch("GUI:LastReplay");
+			// version (no-op)
 
-				UnicodeString displayTimeBuffer = getUnicodeTimeBuffer(header.timeVal);
+			// map
+			UnicodeString mapStr = createMapName(asciistr, info, mapData);
 
-				//displayTimeBuffer.format( L"%ls", timeBuffer);
-
-				// version (no-op)
-
-				// map
-				UnicodeString mapStr;
-				const MapMetaData *md = TheMapCache->findMap(info.getMap());
-				if (!md)
-				{
-					// TheSuperHackers @bugfix helmutbuhler 08/03/2025 Just use the filename.
-					// Displaying a long map path string would break the map list gui.
-					const char* filename = info.getMap().reverseFind('\\');
-					mapStr.translate(filename ? filename + 1 : info.getMap());
-				}
-				else
-				{
-					mapStr = md->m_displayName;
-				}
-
-//				// extra
-//				UnicodeString extraStr;
-//				if (header.localPlayerIndex >= 0)
-//				{
-//					// MP game
-//					time_t totalSeconds = header.endTime - header.startTime;
-//					Int mins = totalSeconds/60;
-//					Int secs = totalSeconds%60;
-//					Real fps = header.frameDuration/totalSeconds;
-//					extraStr.format(L"%d:%d (%g fps) %hs", mins, secs, fps, header.desyncGame?"OOS ":"");
+//			// extra
+//			UnicodeString extraStr;
+//			if (header.localPlayerIndex >= 0)
+//			{
+//				// MP game
+//				time_t totalSeconds = header.endTime - header.startTime;
+//				Int mins = totalSeconds/60;
+//				Int secs = totalSeconds%60;
+//				Real fps = header.frameDuration/totalSeconds;
+//				extraStr.format(L"%d:%d (%g fps) %hs", mins, secs, fps, header.desyncGame?"OOS ":"");
 //
-//					for (Int i=0; i<MAX_SLOTS; ++i)
+//				for (Int i=0; i<MAX_SLOTS; ++i)
+//				{
+//					const GameSlot *slot = info.getConstSlot(i);
+//					if (slot && slot->isHuman())
 //					{
-//						const GameSlot *slot = info.getConstSlot(i);
-//						if (slot && slot->isHuman())
-//						{
-//							if (i)
-//								extraStr.concat(L", ");
-//							if (header.playerDiscons[i])
-//								extraStr.concat(L'*');
-//							extraStr.concat(info.getConstSlot(i)->getName());
-//						}
+//						if (i)
+//							extraStr.concat(L", ");
+//						if (header.playerDiscons[i])
+//							extraStr.concat(L'*');
+//						extraStr.concat(info.getConstSlot(i)->getName());
 //					}
 //				}
-//				else
-//				{
-//					// solo game
-//					time_t totalSeconds = header.endTime - header.startTime;
-//					Int mins = totalSeconds/60;
-//					Int secs = totalSeconds%60;
-//					Real fps = header.frameDuration/totalSeconds;
-//					extraStr.format(L"%d:%d (%g fps)", mins, secs, fps);
-//				}
+//			}
+//			else
+//			{
+//				// solo game
+//				time_t totalSeconds = header.endTime - header.startTime;
+//				Int mins = totalSeconds/60;
+//				Int secs = totalSeconds%60;
+//				Real fps = header.frameDuration/totalSeconds;
+//				extraStr.format(L"%d:%d (%g fps)", mins, secs, fps);
+//			}
 
-				// pick a color
-				Color color;
-				if (header.versionString == TheVersion->getUnicodeVersion() && header.versionNumber == TheVersion->getVersionNumber() &&
-					header.exeCRC == TheGlobalData->m_exeCRC && header.iniCRC == TheGlobalData->m_iniCRC)
+			// pick a color
+			Color color;
+			Color mapColor;
+
+			const Bool hasMap = mapData != NULL;
+
+			const Bool isCrcCompatible =
+				   header.versionString == TheVersion->getUnicodeVersion()
+				&& header.versionNumber == TheVersion->getVersionNumber()
+				&& header.exeCRC == TheGlobalData->m_exeCRC
+				&& header.iniCRC == TheGlobalData->m_iniCRC;
+
+			if (isCrcCompatible)
+			{
+				if (header.localPlayerIndex >= 0)
 				{
-					// good version
-					if (header.localPlayerIndex >= 0)
-					{
-						// MP
-						color = colors[COLOR_MP];
-					}
-					else
-					{
-						// SP
-						color = colors[COLOR_SP];
-					}
+					// MP
+					color = colors[COLOR_MP];
 				}
 				else
 				{
-					// bad version
-					if (header.localPlayerIndex >= 0)
-					{
-						// MP
-						color = colors[COLOR_MP_CRC_MISMATCH];
-					}
-					else
-					{
-						// SP
-						color = colors[COLOR_SP_CRC_MISMATCH];
-					}
+					// SP
+					color = colors[COLOR_SP];
 				}
-				
-				Int insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
-				GadgetListBoxAddEntryText(listbox, displayTimeBuffer, color, insertionIndex, 1);
-				GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 2);
-				GadgetListBoxAddEntryText(listbox, mapStr, color, insertionIndex, 3);
-				//GadgetListBoxAddEntryText(listbox, extraStr, color, insertionIndex, 4);
+
+				if (hasMap)
+					mapColor = color;
+				else
+					mapColor = colors[COLOR_MISSING_MAP];
 			}
+			else
+			{
+				if (header.localPlayerIndex >= 0)
+				{
+					// MP
+					color = colors[COLOR_MP_CRC_MISMATCH];
+				}
+				else
+				{
+					// SP
+					color = colors[COLOR_SP_CRC_MISMATCH];
+				}
+
+				if (hasMap)
+					mapColor = color;
+				else
+					mapColor = colors[COLOR_MISSING_MAP_CRC_MISMATCH];
+			}
+
+			Int insertionIndex = GadgetListBoxAddEntryText(listbox, replayNameToShow, color, -1, 0);
+			GadgetListBoxAddEntryText(listbox, displayTimeBuffer, color, insertionIndex, 1);
+			GadgetListBoxAddEntryText(listbox, header.versionString, color, insertionIndex, 2);
+			GadgetListBoxAddEntryText(listbox, mapStr, mapColor, insertionIndex, 3);
+			//GadgetListBoxAddEntryText(listbox, extraStr, color, insertionIndex, 4);
 		}
 	}
 	GadgetListBoxSetSelected(listbox, 0);
@@ -444,6 +509,50 @@ void reallyLoadReplay(void)
 	}	
 }
 
+static void loadReplay(UnicodeString filename)
+{
+	AsciiString asciiFilename;
+	asciiFilename.translate(filename);
+
+	RecorderClass::ReplayHeader header;
+	ReplayGameInfo info;
+	const MapMetaData *mapData;
+
+	if(!readReplayMapInfo(asciiFilename, header, info, mapData))
+	{
+		// TheSuperHackers @bugfix Prompts a message box when the replay was deleted by the user while the Replay Menu was opened.
+
+		UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFoundTitle", L"REPLAY NOT FOUND");
+		UnicodeString body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayFileNotFound", L"This replay cannot be loaded because the file no longer exists on this device.");
+
+		MessageBoxOk(title, body, NULL);
+	}
+	else if(mapData == NULL)
+	{
+		// TheSuperHackers @bugfix Prompts a message box when the map used by the replay was not found.
+
+		UnicodeString title = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayMapNotFoundTitle", L"MAP NOT FOUND");
+		UnicodeString body = TheGameText->FETCH_OR_SUBSTITUTE("GUI:ReplayMapNotFound", L"This replay cannot be loaded because the map was not found on this device.");
+
+		MessageBoxOk(title, body, NULL);
+	}
+	else if(!TheRecorder->replayMatchesGameVersion(header))
+	{
+		// Pressing OK loads the replay.
+
+		MessageBoxOkCancel(TheGameText->fetch("GUI:OlderReplayVersionTitle"), TheGameText->fetch("GUI:OlderReplayVersion"), reallyLoadReplay, NULL);
+	}
+	else
+	{
+		TheRecorder->playbackFile(asciiFilename);
+
+		if(parentReplayMenu != NULL)
+		{
+			parentReplayMenu->winHide(TRUE);
+		}
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 /** single player menu window system callback */
 //-------------------------------------------------------------------------------------------------
@@ -475,7 +584,7 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 		case GWM_INPUT_FOCUS:
 		{
 
-			// if we're givin the opportunity to take the keyboard focus we must say we want it
+			// if we're given the opportunity to take the keyboard focus we must say we want it
 			if( mData1 == TRUE )
 				*(Bool *)mData2 = TRUE;
 
@@ -490,20 +599,11 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 				if( controlID == listboxReplayFilesID ) 
 				{
 					int rowSelected = mData2;
-				
+
 					if (rowSelected >= 0)
 					{
-						UnicodeString filename;
-						filename = GetReplayFilenameFromListbox(listboxReplayFiles, rowSelected);
-
-						AsciiString asciiFilename;
-						asciiFilename.translate(filename);
-						TheRecorder->playbackFile(asciiFilename);
-
-						if(parentReplayMenu != NULL)
-						{
-							parentReplayMenu->winHide(TRUE);
-						}
+						UnicodeString filename = GetReplayFilenameFromListbox(listboxReplayFiles, rowSelected);
+						loadReplay(filename);
 					}
 				}
 				break;
@@ -556,25 +656,8 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 					}
 
 					filename = GetReplayFilenameFromListbox(listboxReplayFiles, selected);
-
-					AsciiString asciiFilename;
-					asciiFilename.translate(filename);
-
-					if(TheRecorder->testVersionPlayback(asciiFilename))
-					{
-						MessageBoxOkCancel(TheGameText->fetch("GUI:OlderReplayVersionTitle"), TheGameText->fetch("GUI:OlderReplayVersion"),reallyLoadReplay ,NULL);
-					}
-					else
-					{
-						TheRecorder->playbackFile(asciiFilename);
-
-						if(parentReplayMenu != NULL)
-						{
-							parentReplayMenu->winHide(TRUE);
-						}	
-					}
-					
-				}				
+					loadReplay(filename);
+				}
 			}  // end else if
 			else if( controlID == buttonBackID )
 			{

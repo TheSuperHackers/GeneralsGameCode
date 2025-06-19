@@ -30,18 +30,18 @@
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#include "StdAfx.H"
-#include "W3DView.H"
-#include "EmitterPropertySheet.H"
-#include "Part_Emt.H"
-#include "Part_Ldr.H"
-#include "AssetMgr.H"
-#include "W3DViewDoc.H"
-#include "Utils.H"
-#include "DataTreeView.H"
-#include "AssetInfo.H"
+#include "StdAfx.h"
+#include "W3DView.h"
+#include "EmitterPropertySheet.h"
+#include "part_emt.h"
+#include "part_ldr.h"
+#include "assetmgr.h"
+#include "W3DViewDoc.h"
+#include "Utils.h"
+#include "DataTreeView.h"
+#include "AssetInfo.h"
 #include "texture.h"
-#include "EmitterInstanceList.H"
+#include "EmitterInstanceList.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

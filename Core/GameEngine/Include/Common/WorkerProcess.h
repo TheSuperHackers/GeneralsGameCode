@@ -26,17 +26,25 @@ class WorkerProcess
 public:
 	WorkerProcess();
 
-	bool StartProcess(UnicodeString command);
+	bool startProcess(UnicodeString command);
+	
+	void update();
 
-	bool IsRunning() const;
+	bool isRunning() const;
 
 	// returns true iff the process exited.
-	// Sets the parameters if return value is true.
-	bool IsDone(DWORD *exitcode, AsciiString *stdOutput) const;
-	void Update();
+	bool isDone() const;
+
+	DWORD getExitCode() const;
+	AsciiString getStdOutput() const;
 
 	// Terminate Process if it's running
-	void Kill();
+	void kill();
+
+private:
+	// returns true if all output has been received
+	// returns false if the worker is still running
+	bool fetchStdOutput();
 
 private:
 	HANDLE m_processHandle;

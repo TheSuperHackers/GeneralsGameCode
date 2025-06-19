@@ -99,7 +99,7 @@ GameWindow::GameWindow( void )
 	m_cursorX = 0;
 	m_cursorY = 0;
 
-	m_userData = 0;
+	m_userData = NULL;
 
 	m_inputData = NULL;
 

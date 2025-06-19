@@ -1464,7 +1464,7 @@ void W3DView::setViewFilterPos(const Coord3D *pos)
 //-------------------------------------------------------------------------------------------------
 /** Sets the view filter mode. */
 //-------------------------------------------------------------------------------------------------
-Bool W3DView::setViewFilterMode(enum FilterModes filterMode)
+Bool W3DView::setViewFilterMode(FilterModes filterMode)
 {
 	FilterModes oldMode = m_viewFilterMode;	//save previous mode in case setup fails.
 
@@ -1482,7 +1482,7 @@ Bool W3DView::setViewFilterMode(enum FilterModes filterMode)
 //-------------------------------------------------------------------------------------------------
 /** Sets the view filter. */
 //-------------------------------------------------------------------------------------------------
-Bool W3DView::setViewFilter(enum FilterTypes filter)
+Bool W3DView::setViewFilter(FilterTypes filter)
 {
 	FilterTypes oldFilter = m_viewFilter;	//save previous filter in case setup fails.
 

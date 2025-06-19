@@ -3126,7 +3126,7 @@ const ThingTemplate *InGameUI::getPendingPlaceType( void )
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-const ObjectID InGameUI::getPendingPlaceSourceObjectID( void )
+ObjectID InGameUI::getPendingPlaceSourceObjectID( void )
 {
 
 	return m_pendingPlaceSourceObjectID;

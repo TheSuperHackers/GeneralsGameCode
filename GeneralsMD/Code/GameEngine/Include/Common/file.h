@@ -131,15 +131,15 @@ class File : public MemoryPoolObject
 
 		virtual Int		read( void *buffer, Int bytes ) = NULL ;						/**< Read the specified number of bytes from the file in to the 
 																																			  *  memory pointed at by buffer. Returns the number of bytes read.
-																																			  *  Returns -1 if an error occured.
+																																			  *  Returns -1 if an error occurred.
 																																			  */
 		virtual Int		write( const void *buffer, Int bytes ) = NULL ;						/**< Write the specified number of bytes from the    
 																																			  *	 memory pointed at by buffer to the file. Returns the number of bytes written.
-																																			  *	 Returns -1 if an error occured.
+																																			  *	 Returns -1 if an error occurred.
 																																			  */
 		virtual Int		seek( Int bytes, seekMode mode = CURRENT ) = NULL;	/**< Sets the file position of the next read/write operation. Returns the new file
 																																				*  position as the number of bytes from the start of the file.
-																																				*  Returns -1 if an error occured.
+																																				*  Returns -1 if an error occurred.
 																																				*
 																																				*  seekMode determines how the seek is done:
 																																				*

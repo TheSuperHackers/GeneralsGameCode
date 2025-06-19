@@ -1042,7 +1042,7 @@ void Drawable::fadeIn( UnsignedInt frames )		///< decloak object
 
 
 //-------------------------------------------------------------------------------------------------
-const Real Drawable::getScale (void) const 
+Real Drawable::getScale (void) const
 { 
 	return m_instanceScale; 
 //	return getTemplate()->getAssetScale(); 

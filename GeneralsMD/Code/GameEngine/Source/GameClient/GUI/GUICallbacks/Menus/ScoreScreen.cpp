@@ -56,7 +56,6 @@
 #include "Common/AudioEventRTS.h"
 #include "Common/AudioHandleSpecialValues.h"
 #include "Common/BattleHonors.h"
-#include "Common/CopyProtection.h"
 #include "Common/GameEngine.h"
 #include "Common/GameLOD.h"
 #include "Common/GameState.h"
@@ -542,23 +541,35 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 			{
 				TheShell->pop();
 				TheCampaignManager->setCampaign(AsciiString::TheEmptyString);
+				if (!TheGlobalData->m_simulateReplays.empty())
+				{
+					TheWritableGlobalData->m_showReplayContinueButton = FALSE; // Tell GameEngine to quit.
+					TheGameEngine->setQuitting(TRUE);
+				}
 			}
 			else if ( controlID == buttonContinueID )	
 			{
-				if(!buttonIsFinishCampaign)
-					ReplayWasPressed = TRUE;
-				if( screenType == SCORESCREEN_SINGLEPLAYER)	
+				if (TheGlobalData->m_showReplayContinueButton)
 				{
-					AsciiString mapName = TheCampaignManager->getCurrentMap();
+					TheGameEngine->setQuitting(TRUE);
+				}
+				else
+				{
+					if(!buttonIsFinishCampaign)
+						ReplayWasPressed = TRUE;
+					if( screenType == SCORESCREEN_SINGLEPLAYER)	
+					{
+						AsciiString mapName = TheCampaignManager->getCurrentMap();
 
-					if( mapName.isEmpty() )
-					{
-						ReplayWasPressed = FALSE;
-						TheShell->pop();
-					}
-					else
-					{
-						CheckForCDAtGameStart( startNextCampaignGame );
+						if( mapName.isEmpty() )
+						{
+							ReplayWasPressed = FALSE;
+							TheShell->pop();
+						}
+						else
+						{
+							CheckForCDAtGameStart( startNextCampaignGame );
+						}
 					}
 				}
 			}
@@ -785,11 +796,7 @@ void displayChallengeWinLoss( const Image *imageGeneral, const UnicodeString str
 
 void finishSinglePlayerInit( void )
 {
-	Bool copyProtectOK = TRUE;
-#ifdef DO_COPY_PROTECTION
-	copyProtectOK = CopyProtect::validate();
-#endif
-	if(copyProtectOK && TheCampaignManager->isVictorious())
+	if(TheCampaignManager->isVictorious())
 	{
 		if (TheCampaignManager->getCurrentCampaign()
 		 && TheCampaignManager->getCurrentCampaign()->isChallengeCampaign())
@@ -989,7 +996,7 @@ void initReplaySinglePlayer( void )
 	if (chatBoxBorder)
 		chatBoxBorder->winHide(TRUE);
 	if (buttonContinue)
-		buttonContinue->winHide(TRUE);
+		buttonContinue->winHide(!TheGlobalData->m_showReplayContinueButton);
 	if (buttonBuddies)
 		buttonBuddies->winHide(TRUE);
 	if (listboxChatWindowScoreScreen)
@@ -1096,7 +1103,7 @@ void initReplayMultiPlayer(void)
 	if (chatBoxBorder)
 		chatBoxBorder->winHide(TRUE);
 	if (buttonContinue)
-		buttonContinue->winHide(TRUE);
+		buttonContinue->winHide(!TheGlobalData->m_showReplayContinueButton);
 	if (buttonBuddies)
 		buttonBuddies->winHide(TRUE);
 //	if (buttonRehost)

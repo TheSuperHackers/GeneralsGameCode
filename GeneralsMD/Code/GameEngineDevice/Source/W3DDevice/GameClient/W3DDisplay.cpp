@@ -163,9 +163,9 @@ StatDumpClass::StatDumpClass( const char *fname )
 		}
 		pEnd--;
 	}
-	AsciiString fullPath;
-	fullPath.format( "%s\\%s", buffer, fname );
-	m_fp = fopen( fullPath.str(), "wt" );
+	// TheSuperHackers @fix Caball009 03/06/2025 Don't use AsciiString here anymore because its memory allocator may not have been initialized yet.
+	const std::string fullPath = std::string(buffer) + "\\" + fname;
+	m_fp = fopen(fullPath.c_str(), "wt");
 }
 
 //=============================================================================
@@ -3012,32 +3012,37 @@ void W3DDisplay::takeScreenShot(void)
 			done = true;
 	}
 
-	// Lock front buffer and copy
+	// TheSuperHackers @bugfix xezon 21/05/2025 Get the back buffer and create a copy of the surface.
+	// Originally this code took the front buffer and tried to lock it. This does not work when the
+	// render view clips outside the desktop boundaries. It crashed the game.
+	SurfaceClass* surface = DX8Wrapper::_Get_DX8_Back_Buffer();
 
-	IDirect3DSurface8 *fb;
-	fb=DX8Wrapper::_Get_DX8_Front_Buffer();
-	D3DSURFACE_DESC desc;
-	fb->GetDesc(&desc);
+	SurfaceClass::SurfaceDescription surfaceDesc;
+	surface->Get_Description(surfaceDesc);
 
-	RECT bounds;
-	POINT point;
+	SurfaceClass* surfaceCopy = NEW_REF(SurfaceClass, (DX8Wrapper::_Create_DX8_Surface(surfaceDesc.Width, surfaceDesc.Height, surfaceDesc.Format)));
+	DX8Wrapper::_Copy_DX8_Rects(surface->Peek_D3D_Surface(), NULL, 0, surfaceCopy->Peek_D3D_Surface(), NULL);
 
-	GetClientRect(ApplicationHWnd,&bounds);
-	point.x=bounds.left; point.y=bounds.top;
-	ClientToScreen(ApplicationHWnd, &point);
-	bounds.left=point.x; bounds.top=point.y; 
-	point.x=bounds.right; point.y=bounds.bottom;
-	ClientToScreen(ApplicationHWnd, &point);
-	bounds.right=point.x; bounds.bottom=point.y;
- 
-	D3DLOCKED_RECT lrect;
+	surface->Release_Ref();
+	surface = NULL;
 
-	DX8_ErrorCode(fb->LockRect(&lrect,&bounds,D3DLOCK_READONLY));
+	struct Rect
+	{
+		int Pitch;
+		void* pBits;
+	} lrect;
+
+	lrect.pBits = surfaceCopy->Lock(&lrect.Pitch);
+	if (lrect.pBits == NULL)
+	{
+		surfaceCopy->Release_Ref();
+		return;
+	}
 
 	unsigned int x,y,index,index2,width,height;
 
-	width=bounds.right-bounds.left;
-	height=bounds.bottom-bounds.top;
+	width = surfaceDesc.Width;
+	height = surfaceDesc.Height;
 
 	char *image=NEW char[3*width*height];
 #ifdef CAPTURE_TO_TARGA
@@ -3057,7 +3062,9 @@ void W3DDisplay::takeScreenShot(void)
 		}
 	}
 
-	fb->Release();
+	surfaceCopy->Unlock();
+	surfaceCopy->Release_Ref();
+	surfaceCopy = NULL;
 
 	Targa targ;
 	memset(&targ.Header,0,sizeof(targ.Header));
@@ -3086,7 +3093,9 @@ void W3DDisplay::takeScreenShot(void)
 		}
 	}
 
-	fb->Release();
+	surfaceCopy->Unlock();
+	surfaceCopy->Release_Ref();
+	surfaceCopy = NULL;
 
 	//Flip the image
 	char *ptr,*ptr1;
@@ -3120,7 +3129,7 @@ void W3DDisplay::takeScreenShot(void)
 	TheInGameUI->message(TheGameText->fetch("GUI:ScreenCapture"), ufileName.str());
 }
 
-/** Start/Stop campturing an AVI movie*/
+/** Start/Stop capturing an AVI movie*/
 void W3DDisplay::toggleMovieCapture(void)
 {
 	WW3D::Toggle_Movie_Capture("Movie",30);
@@ -3148,7 +3157,7 @@ void dumpMeshAssets(MeshClass *mesh)
 					{
 						if ((texture=model->Peek_Texture(i,pass,stage)) != NULL)
 						{
-							fprintf(AssetDumpFile,"\t%s\n",texture->Get_Texture_Name());
+							fprintf(AssetDumpFile,"\t%s\n",texture->Get_Texture_Name().str());
 						}
 					}
 				}
@@ -3156,7 +3165,7 @@ void dumpMeshAssets(MeshClass *mesh)
 				{
 					if ((texture=model->Peek_Single_Texture(pass,stage)) != NULL)
 					{
-						fprintf(AssetDumpFile,"\t%s\n",texture->Get_Texture_Name());
+						fprintf(AssetDumpFile,"\t%s\n",texture->Get_Texture_Name().str());
 					}
 				}
 			}

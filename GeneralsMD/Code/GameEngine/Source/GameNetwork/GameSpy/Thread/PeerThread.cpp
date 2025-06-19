@@ -513,7 +513,7 @@ Int PeerThreadClass::findServer( SBServer server )
 	return addServerToMap(server);
 }
 
-static enum CallbackType
+enum CallbackType
 {
 	CALLBACK_CONNECT,
 	CALLBACK_ERROR,
@@ -2229,10 +2229,6 @@ static void listGroupRoomsCallback(PEER peer, PEERBool success,
 		{
 			resp.groupRoomName = name;
 			//t->setQMGroupRoom(groupID);
-		}
-		else
-		{
-			resp.groupRoomName.empty();
 		}
 		TheGameSpyPeerMessageQueue->addResponse(resp);
 #ifdef SERVER_DEBUGGING

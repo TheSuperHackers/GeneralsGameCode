@@ -36,16 +36,16 @@
 /**
  * This is the entry point for the game system.
  */
-Int GameMain( int argc, char *argv[] )
+Int GameMain()
 {
 	int exitcode = 0;
 	// initialize the game engine using factory function
 	TheGameEngine = CreateGameEngine();
-	TheGameEngine->init(argc, argv);
+	TheGameEngine->init();
 
-	if (!TheGlobalData->m_simulateReplayList.empty())
+	if (!TheGlobalData->m_simulateReplays.empty())
 	{
-		exitcode = SimulateReplayList(TheGlobalData->m_simulateReplayList, TheGlobalData->m_simulateReplayJobs);
+		exitcode = SimulateReplays(TheGlobalData->m_simulateReplays, TheGlobalData->m_simulateReplayJobs);
 	}
 	else if (!TheGlobalData->m_writeReplayList.isEmpty())
 	{

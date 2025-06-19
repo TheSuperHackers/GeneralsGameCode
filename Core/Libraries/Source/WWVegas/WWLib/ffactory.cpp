@@ -285,7 +285,7 @@ FileClass * SimpleFileFactoryClass::Get_File( char const *filename )
 				const char *tok;
 				while((tok=strtok(tokstart, ";")) != NULL) {
 					tokstart=NULL;
-					new_name.Format("%s%s",tok,stripped_name.Peek_Buffer());
+					new_name.Format("%s%s",tok,stripped_name.str());
 					file->Set_Name( new_name );	// Call Set_Name to force an allocated name
 					if (file->Open()) {
 						file->Close();
@@ -293,7 +293,7 @@ FileClass * SimpleFileFactoryClass::Get_File( char const *filename )
 					}
 				}
 			} else {
-				new_name.Format("%s%s",SubDirectory,stripped_name);
+				new_name.Format("%s%s",SubDirectory.str(),stripped_name.str());
 			}
 		}
 

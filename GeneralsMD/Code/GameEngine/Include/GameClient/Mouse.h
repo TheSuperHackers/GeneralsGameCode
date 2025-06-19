@@ -344,7 +344,7 @@ protected:
 	Int m_maxY;							///< mouse is locked to this region
 
 	UnsignedInt m_inputFrame;				///< frame input was gathered on
-	UnsignedInt m_deadInputFrame;		///< Frame which last input occured
+	UnsignedInt m_deadInputFrame;		///< Frame which last input occurred
 
 	Bool m_inputMovesAbsolute;			/**< if TRUE, when processing mouse position
 																	chanages the movement will be done treating

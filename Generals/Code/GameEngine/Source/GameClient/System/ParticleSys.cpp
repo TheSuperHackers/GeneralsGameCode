@@ -1737,8 +1737,8 @@ const Coord3D *ParticleSystem::computeParticlePosition( void )
 				newPos.x = GameClientRandomValueReal( -m_emissionVolume.box.halfSize.x, m_emissionVolume.box.halfSize.x );
 				newPos.y = GameClientRandomValueReal( -m_emissionVolume.box.halfSize.y, m_emissionVolume.box.halfSize.y );
 				newPos.z = GameClientRandomValueReal( -m_emissionVolume.box.halfSize.z, m_emissionVolume.box.halfSize.z );
-			break;
 			}
+			break;
 		}
 
 		case LINE:

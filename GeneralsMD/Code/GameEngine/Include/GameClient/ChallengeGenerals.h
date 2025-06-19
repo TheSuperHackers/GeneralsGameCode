@@ -86,7 +86,7 @@ public:
 	}
 //	~GeneralPersona( void );
 	
-	const Bool	isStartingEnabled() const { return m_bStartsEnabled; }
+	Bool isStartingEnabled() const { return m_bStartsEnabled; }
 	const AsciiString& getBioName() const { return m_strBioName; }
 	const AsciiString& getBioDOB() const { return m_strBioDOB; }
 	const AsciiString& getBioBirthplace() const { return m_strBioBirthplace; }
@@ -145,7 +145,7 @@ public:
 	Int getCurrentPlayerTemplateNum( void ) { return m_PlayerTemplateNum; }
 
 	void setCurrentDifficulty( GameDifficulty diff ) { m_currentDifficulty = diff; }
-	const GameDifficulty getCurrentDifficulty( void ) { return m_currentDifficulty; }
+	GameDifficulty getCurrentDifficulty( void ) { return m_currentDifficulty; }
 protected:
 	static const FieldParse s_fieldParseTable[];
 

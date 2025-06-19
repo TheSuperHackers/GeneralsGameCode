@@ -45,6 +45,7 @@
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
 struct FieldParse;
 enum _TerrainLOD CPP_11(: Int);
+class CommandLine;
 class GlobalData;
 class INI;
 class WeaponBonusSet;
@@ -54,6 +55,22 @@ enum AIDebugOptions CPP_11(: Int);
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 
 const Int MAX_GLOBAL_LIGHTS	= 3;
+const Int SIMULATE_REPLAYS_SEQUENTIAL = -1;
+
+//-------------------------------------------------------------------------------------------------
+class CommandLineData
+{
+	friend class CommandLine;
+	friend class GlobalData;
+
+	CommandLineData()
+		: m_hasParsedCommandLineForStartup(false)
+		, m_hasParsedCommandLineForEngineInit(false)
+	{}
+
+	Bool m_hasParsedCommandLineForStartup;
+	Bool m_hasParsedCommandLineForEngineInit;
+};
 
 //-------------------------------------------------------------------------------------------------
 /** Global data container class
@@ -70,9 +87,9 @@ public:
 	GlobalData();
 	virtual ~GlobalData();
 
-	void init();
-	void reset();
-	void update() { }
+	virtual void init();
+	virtual void reset();
+	virtual void update() { }
 
 	Bool setTimeOfDay( TimeOfDay tod );		///< Use this function to set the Time of day;
 
@@ -89,6 +106,8 @@ public:
 	//-----------------------------------------------------------------------------------------------
 	//-----------------------------------------------------------------------------------------------
 	//-----------------------------------------------------------------------------------------------
+
+	CommandLineData m_commandLineData;
 
 	AsciiString m_mapName;  ///< hack for now, this whole this is going away
 	AsciiString m_moveHintName;
@@ -329,11 +348,12 @@ public:
 	Real m_cameraAdjustSpeed;					///< Rate at which we adjust camera height
 	Bool m_enforceMaxCameraHeight;		///< Enfoce max camera height while scrolling?
 	Bool m_buildMapCache;
-	AsciiString m_initialFile;				///< If this is specified, load a specific map/replay from the command-line
+	AsciiString m_initialFile;				///< If this is specified, load a specific map from the command-line
 	AsciiString m_pendingFile;				///< If this is specified, use this map at the next game start
 	
-	std::vector<AsciiString> m_simulateReplayList; ///< If not empty, simulate this list of replays and exit. (TheSuperHackers @feature helmutbuhler 13/04/2025)
-	Int m_simulateReplayJobs; ///< Maximum number of processes to use for simulation, or -1 for sequential simulation
+	std::vector<AsciiString> m_simulateReplays; ///< If not empty, simulate this list of replays and exit.
+	Int m_simulateReplayJobs; ///< Maximum number of processes to use for simulation, or SIMULATE_REPLAYS_SEQUENTIAL for sequential simulation
+	Bool m_showReplayContinueButton;
 	AsciiString m_writeReplayList; ///< If not empty, write out list of replays in this subfolder into a csv file (TheSuperHackers @feature helmutbuhler 24/05/2025)
 
 	Int m_maxParticleCount;						///< maximum number of particles that can exist

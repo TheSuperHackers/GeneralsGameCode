@@ -49,6 +49,8 @@ class ViewLocation;
 class Thing;
 class Waypoint;
 class LookAtTranslator;
+enum FilterTypes CPP_11(: Int);
+enum FilterModes CPP_11(: Int);
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -145,11 +147,11 @@ public:
 	virtual void cameraModFinalLookToward(Coord3D *pLoc){}			///< Sets a look at point during camera movement.
 	virtual void cameraModFinalMoveTo(Coord3D *pLoc){ };			///< Sets a final move to.
 
-	virtual enum FilterModes getViewFilterMode(void) {return (enum FilterModes)0;}			///< Turns on viewport special effect (black & white mode)
-	virtual enum FilterTypes getViewFilterType(void) {return (enum FilterTypes)0;}			///< Turns on viewport special effect (black & white mode)
-	virtual Bool setViewFilterMode(enum FilterModes filterMode) { return FALSE; }			///< Turns on viewport special effect (black & white mode)
+	virtual FilterModes getViewFilterMode(void) {return (FilterModes)0;}			///< Turns on viewport special effect (black & white mode)
+	virtual FilterTypes getViewFilterType(void) {return (FilterTypes)0;}			///< Turns on viewport special effect (black & white mode)
+	virtual Bool setViewFilterMode(FilterModes filterMode) { return FALSE; }			///< Turns on viewport special effect (black & white mode)
 	virtual void setViewFilterPos(const Coord3D *pos) { };			///<  Passes a position to the special effect filter.
-	virtual Bool setViewFilter(	enum FilterTypes filter) { return FALSE;}			///< Turns on viewport special effect (black & white mode)
+	virtual Bool setViewFilter( FilterTypes filter) { return FALSE;}			///< Turns on viewport special effect (black & white mode)
 
 	virtual void setFadeParameters(Int fadeFrames, Int direction) { };
 	virtual void set3DWireFrameMode(Bool enable) { };

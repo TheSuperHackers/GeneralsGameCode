@@ -118,7 +118,7 @@ void SendStatsToOtherPlayers(const GameInfo *game)
 	subStats.locale = fullStats.locale;
 	subStats.gamesAsRandom = fullStats.gamesAsRandom;
 	GetAdditionalDisconnectsFromUserFile(&subStats);
-	fullStr.format("%d %s", TheGameSpyInfo->getLocalProfileID(), TheGameSpyPSMessageQueue->formatPlayerKVPairs( subStats ));
+	fullStr.format("%d %s", TheGameSpyInfo->getLocalProfileID(), TheGameSpyPSMessageQueue->formatPlayerKVPairs( subStats ).c_str());
 	req.options = fullStr.str();
 
 	Int localIndex = game->getLocalSlotNum();
@@ -1300,7 +1300,11 @@ void DeinitWOLGameGadgets( void )
 	listboxGameSetupChat = NULL;
 	textEntryChat = NULL;
 	textEntryMapDisplay = NULL;
-	windowMap = NULL;
+	if (windowMap)
+	{
+		windowMap->winSetUserData(NULL);
+		windowMap = NULL;
+	}
 	checkBoxUseStats = NULL;
   checkBoxLimitSuperweapons = NULL;
   comboBoxStartingCash = NULL;
@@ -2595,6 +2599,9 @@ WindowMsgHandledType WOLGameSetupMenuSystem( GameWindow *window, UnsignedInt msg
 		//-------------------------------------------------------------------------------------------------
 		case GWM_DESTROY:
 			{
+				if (windowMap)
+					windowMap->winSetUserData(NULL);
+
 				break;
 			} // case GWM_DESTROY:
 		//-------------------------------------------------------------------------------------------------

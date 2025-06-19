@@ -15,7 +15,6 @@ target_include_directories(corei_datgen INTERFACE
 
 target_link_libraries(corei_datgen INTERFACE
     core_config
-    safedisc
 )
 
 target_sources(corei_datgen INTERFACE ${DATGEN_SRC})

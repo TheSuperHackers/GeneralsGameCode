@@ -25,7 +25,7 @@
 // EmitterUserPropPage.h : header file
 //
 
-#include "Resource.H"
+#include "resource.h"
 
 // Forward delcarations
 class EmitterInstanceListClass;

@@ -209,6 +209,10 @@ GameEngine::~GameEngine()
 
 	TheGameResultsQueue->endThreads();
 
+	// TheSuperHackers @fix helmutbuhler 03/06/2025
+	// Reset all subsystems before deletion to prevent crashing due to cross dependencies.
+	reset();
+
 	TheSubsystemList->shutdownAll();
 	delete TheSubsystemList;
 	TheSubsystemList = NULL;
@@ -297,8 +301,9 @@ void GameEngine::init( int argc, char *argv[] )
 
 		initSubsystem(TheLocalFileSystem, "TheLocalFileSystem", createLocalFileSystem(), NULL);
 		initSubsystem(TheArchiveFileSystem, "TheArchiveFileSystem", createArchiveFileSystem(), NULL); // this MUST come after TheLocalFileSystem creation
-		initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", MSGNEW("GameEngineSubsystem") GlobalData(), &xferCRC, "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
-
+		
+		DEBUG_ASSERTCRASH(TheWritableGlobalData,("TheWritableGlobalData expected to be created\n"));
+		initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", TheWritableGlobalData, &xferCRC, "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
 		
 		// TheSuperHackers @bugfix helmutbuhler 14/04/2025
 		// Pump messages during startup to ensure that the application window is correctly
@@ -313,7 +318,9 @@ void GameEngine::init( int argc, char *argv[] )
 	#endif
 		
 		// special-case: parse command-line parameters after loading global data
-		parseCommandLine(argc, argv);
+		CommandLine::parseCommandLineForEngineInit();
+
+		TheArchiveFileSystem->loadMods();
 
 		// doesn't require resets so just create a single instance here.
 		TheGameLODManager = MSGNEW("GameEngineSubsystem") GameLODManager;
@@ -381,6 +388,8 @@ void GameEngine::init( int argc, char *argv[] )
 		AsciiString fname;
 		fname.format("Data\\%s\\CommandMap.ini", GetRegistryLanguage().str());
 		initSubsystem(TheMetaMap,"TheMetaMap", MSGNEW("GameEngineSubsystem") MetaMap(), NULL, fname.str(), "Data\\INI\\CommandMap.ini");
+
+		TheMetaMap->generateMetaMap();
 
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		ini.load("Data\\INI\\CommandMapDebug.ini", INI_LOAD_MULTIFILE, NULL);
@@ -575,6 +584,7 @@ void GameEngine::update( void )
 			TheCDManager->UPDATE();
 		}
 
+		TheGameLogic->preUpdate();
 
 		if ((TheNetwork == NULL && !TheGameLogic->isGamePaused()) || (TheNetwork && TheNetwork->isFrameDataReady()))
 		{

@@ -274,7 +274,7 @@ m_bridgeInfo(theInfo)
 	// get the template of the bridge
 	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge( bridgeTemplateName );
 	if( bridgeTemplate == NULL ) {
-		DEBUG_LOG(( "*** Bridge Template Not Found '%s'.", bridgeTemplateName ));
+		DEBUG_LOG(( "*** Bridge Template Not Found '%s'.", bridgeTemplateName.str() ));
 		return;
 	}
 
@@ -385,7 +385,7 @@ Bridge::Bridge(Object *bridgeObj)
 	AsciiString bridgeTemplateName = bridgeObj->getTemplate()->getName();
 	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge( bridgeTemplateName );
 	if( bridgeTemplate == NULL ) {
-		DEBUG_LOG(( "*** Bridge Template Not Found '%s'.", bridgeTemplateName ));
+		DEBUG_LOG(( "*** Bridge Template Not Found '%s'.", bridgeTemplateName.str() ));
 		return;
 	}
 
@@ -881,8 +881,8 @@ void Bridge::updateDamageState( void )
 	if (bridge) {
 		// get object damage state
 		{
-			enum BodyDamageType damageState = bridge->getBodyModule()->getDamageState(); 
-			enum BodyDamageType curState = m_bridgeInfo.curDamageState;
+			BodyDamageType damageState = bridge->getBodyModule()->getDamageState(); 
+			BodyDamageType curState = m_bridgeInfo.curDamageState;
 			if (damageState != curState) {
 				m_bridgeInfo.curDamageState = damageState;
 				if (damageState == BODY_RUBBLE) {
