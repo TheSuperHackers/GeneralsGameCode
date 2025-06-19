@@ -3397,6 +3397,7 @@ void DX8Wrapper::Get_DX8_Texture_Stage_State_Value_Name(StringClass& name, D3DTE
 
 	case D3DTSS_TEXTURETRANSFORMFLAGS:
 		name=Get_DX8_Texture_Transform_Flag_Name(value);
+		break;
 
 	// Floating point values
 	case D3DTSS_MIPMAPLODBIAS:
