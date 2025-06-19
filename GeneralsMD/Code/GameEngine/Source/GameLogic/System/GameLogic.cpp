@@ -839,9 +839,11 @@ static void populateRandomStartPosition( GameInfo *game )
 	Int i;
 	Int numPlayers = MAX_SLOTS;
 	const MapMetaData *md = TheMapCache->findMap( game->getMap() );
-  DEBUG_ASSERTCRASH( md , ("Could not find map %s in the mapcache", game->getMap().str()));
 	if (md)
 		numPlayers = md->m_numPlayers;
+	else
+		printf("Could not find map \"%s\"\n", game->getMap().str());
+	DEBUG_ASSERTCRASH( md , ("Could not find map %s in the mapcache", game->getMap().str()));
 
 	// generate a map of start spot distances
 	Real startSpotDistance[MAX_SLOTS][MAX_SLOTS];
