@@ -16,7 +16,6 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "PreRTS.h"
-#include "Common/CommandLine.h"
 #include "GameClient/ClientInstance.h"
 
 #define GENERALS_GUID "685EAFF2-3216-4265-B047-251C5F4B82F3"
@@ -39,8 +38,6 @@ bool ClientInstance::initialize()
 		return true;
 	}
 	
-	CommandLine::parseCommandLineForStartup();
-
 	if (s_avoidFirstInstance)
 		++s_instanceIndex;
 
