@@ -33,7 +33,6 @@ static int SimulateReplaysInThisProcess(const std::vector<AsciiString> &filename
 		// If we are not in headless mode, we need to run the replay in the engine.
 		for (size_t i = 0; i < filenames.size(); i++)
 		{
-			AsciiString filename = filenames[i];
 			TheRecorder->playbackFile(filenames[i]);
 			TheWritableGlobalData->m_showReplayContinueButton = i != filenames.size()-1;
 			TheGameEngine->execute();
