@@ -457,12 +457,6 @@ Int parseJobs(char *args[], int num)
 	return 1;
 }
 
-Int parseMultiInstance(char *args[], int num)
-{
-	rts::ClientInstance::s_multiInstance = TRUE;
-	return 1;
-}
-
 Int parseXRes(char *args[], int num)
 {
 	if (num > 1)
@@ -1168,9 +1162,6 @@ static CommandLineParam paramsForStartup[] =
 	// (If you have 4 cores, call it with -jobs 4)
 	// If you do not call this, all replays will be simulated in sequence in the same process.
 	{ "-jobs", parseJobs },
-
-	// Allows multiple instances to run
-	{ "-multiInstance", parseMultiInstance },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded
