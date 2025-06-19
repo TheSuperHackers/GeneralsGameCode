@@ -2027,8 +2027,9 @@ void ReverseSoundTransition::update( Int frame )
 			{
 				TheAudio->addAudioEvent( &buttonClick );
 			}  // end if		
-
 		}
+		break;
+
 	case REVERSESOUNDTRANSITION_END:
 		{
 			if(!m_isForward  )
