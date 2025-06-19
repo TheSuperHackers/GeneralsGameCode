@@ -97,7 +97,7 @@ class Runnable
 
    // So do the threadClassLaunchers
    #ifdef _WIN32
-      friend static unsigned __stdcall threadClassLauncher(void *temp);
+     friend unsigned __stdcall threadClassLauncher(void *temp);
    #else  // UNIX
      friend void *threadClassLauncher(void *temp);
    #endif
