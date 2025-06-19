@@ -1201,7 +1201,10 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					currentlySelectedGroup->groupOverrideSpecialPowerDestination( spType, loc, CMD_FROM_PLAYER );
 				}
 			}
-		}
+
+			break;
+
+		}  // end GameMessage::MSG_DO_SPECIAL_POWER_OVERRIDE_DESTINATION
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DO_ATTACK_OBJECT:
@@ -1223,7 +1226,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end GameMessage::MSG_DO_ATTACK_GROUND_OBJECT
+		}  // end GameMessage::MSG_DO_ATTACK_OBJECT
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DO_FORCE_ATTACK_OBJECT:
@@ -1243,7 +1246,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end GameMessage::MSG_DO_ATTACK_GROUND_OBJECT
+		}  // end GameMessage::MSG_DO_FORCE_ATTACK_OBJECT
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DO_FORCE_ATTACK_GROUND:
@@ -1282,7 +1285,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			break;
 
-		}  // end GameMessage::MSG_DO_ATTACK_GROUND_OBJECT
+		}  // end GameMessage::MSG_DO_FORCE_ATTACK_GROUND
 
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_QUEUE_UPGRADE:
