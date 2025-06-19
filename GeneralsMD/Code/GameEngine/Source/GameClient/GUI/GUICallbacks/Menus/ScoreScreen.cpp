@@ -543,7 +543,7 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 				TheCampaignManager->setCampaign(AsciiString::TheEmptyString);
 				if (!TheGlobalData->m_simulateReplays.empty())
 				{
-					TheWritableGlobalData->m_showReplayContinueButton = FALSE;
+					TheWritableGlobalData->m_showReplayContinueButton = FALSE; // Tell GameEngine to quit.
 					TheGameEngine->setQuitting(TRUE);
 				}
 			}
