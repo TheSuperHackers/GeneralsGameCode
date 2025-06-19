@@ -527,9 +527,10 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 						req.arg.addbuddy.text[MAX_BUDDY_CHAT_LEN-1] = 0;
 						TheGameSpyBuddyMessageQueue->addRequest(req);
 					}
-					break;
 				}
 			}
+
+			break;
 		}
 
 		case GEM_EDIT_DONE:
@@ -555,6 +556,8 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 					//add the gamespy chat request here
 
 			}// if ( controlID == textEntryChatID )
+
+			break;
 		}
 	}		
 	return MSG_HANDLED;
