@@ -132,6 +132,9 @@ bool WriteOutReplayList(AsciiString relativeFolder)
 			fprintf(fp, ",filename");
 		else
 			fprintf(fp, ",\"%s\"", filename.str());
+		
+		const char* mapName = info.getMap().reverseFind('\\');
+		fprintf(fp, ",%s", i == -1 ? "map" : mapName ? mapName+1 : "");
 
 		fprintf(fp, ",%s", i == -1 ? "mapExists" : md ? "1" : "0");
 		fprintf(fp, ",%s", i == -1 ? "mismatch"   : header.desyncGame ? "1" : "0");
