@@ -1048,6 +1048,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 					TheGameSpyInfo->reset();
 					TheShell->pop();
 				}
+				break;
 			case PeerResponse::PEERRESPONSE_CREATESTAGINGROOM:
 				{
 					sawImportantMessage = TRUE;

@@ -1781,6 +1781,7 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 					TheGameSpyInfo->reset();
 					TheShell->pop();
 				}
+				break;
 
 			case PeerResponse::PEERRESPONSE_ROOMUTM:
 				{
