@@ -445,10 +445,10 @@ Int parseReplay(char *args[], int num)
 
 Int parseSimReplayList(char *args[], int num)
 {
-	if (TheWritableGlobalData && num > 1)
+	if (num > 1)
 	{
 		AsciiString filename = args[1];
-		ReadReplayListFromCsv(filename, &TheWritableGlobalData->m_simulateReplayList);
+		ReadReplayListFromCsv(filename, &TheWritableGlobalData->m_simulateReplays);
 		TheWritableGlobalData->m_headless = TRUE;
 		return 2;
 	}
@@ -457,7 +457,7 @@ Int parseSimReplayList(char *args[], int num)
 
 Int parseWriteReplayList(char *args[], int num)
 {
-	if (TheWritableGlobalData && num > 1)
+	if (num > 1)
 	{
 		TheWritableGlobalData->m_writeReplayList = args[1];
 		TheWritableGlobalData->m_headless = TRUE;
@@ -1179,6 +1179,10 @@ static CommandLineParam paramsForStartup[] =
 	// You can pass this multiple times to play back multiple replays.
 	// You can also include wildcards. The file must be in the replay folder or in a subfolder.
 	{ "-replay", parseReplay },
+	
+	// TheSuperHackers @feature helmutbuhler 28/04/2025
+	// Pass in a csv file to play back multiple replays. The file must be in the replay folder.
+	{ "-replayList", parseSimReplayList },
 
 	// TheSuperHackers @feature helmutbuhler 23/05/2025
 	// Simulate each replay in a separate process and use up two N processes at the same time.

@@ -136,9 +136,9 @@ bool WriteOutReplayList(AsciiString relativeFolder)
 		fprintf(fp, ",%s", i == -1 ? "mapExists" : md ? "1" : "0");
 		fprintf(fp, ",%s", i == -1 ? "mismatch"   : header.desyncGame ? "1" : "0");
 		fprintf(fp, ",%s", i == -1 ? "crash"      : header.endTime == 0 ? "1" : "0");
-		fprintf(fp, i == -1 ? ",frames" : ",%d",    header.frameDuration);
+		fprintf(fp, i == -1 ? ",frames" : ",%d",    header.frameCount);
 
-		UnsignedInt gameTime = header.frameDuration / LOGICFRAMES_PER_SECOND;
+		UnsignedInt gameTime = header.frameCount / LOGICFRAMES_PER_SECOND;
 		fprintf(fp, i == -1 ? ",time" : ",%02d:%02d", gameTime/60, gameTime%60);
 
 		fprintf(fp, i == -1 ? ",numHumans" : ",%d", numHumans);
