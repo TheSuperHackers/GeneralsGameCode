@@ -422,20 +422,6 @@ void pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type m
 				break;
 			}
 
-			case GameMessage::MSG_DO_FORCE_ATTACK_GROUND:
-			{
-				soundToPlayPtr = templ->getPerUnitSound( "VoiceBombard" );
-				objectWithSound = obj;
-				skip = true;
-
-				if (TheAudio->isValidAudioEvent(soundToPlayPtr)) {
-					break;
-				} else {
-					// clear out the sound to play, and drop into the attack object logic.
-					soundToPlayPtr = NULL;
-				}
-			}
-			
 			case GameMessage::MSG_SWITCH_WEAPONS:
 			{
 				if( info && info->m_weaponSlot )
@@ -457,7 +443,21 @@ void pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type m
 				}
 				break;
 			}
-			
+
+			case GameMessage::MSG_DO_FORCE_ATTACK_GROUND:
+			{
+				soundToPlayPtr = templ->getPerUnitSound( "VoiceBombard" );
+				objectWithSound = obj;
+				skip = true;
+
+				if (TheAudio->isValidAudioEvent(soundToPlayPtr)) {
+					break;
+				} else {
+					// clear out the sound to play, and drop into the attack object logic.
+					soundToPlayPtr = NULL;
+					FALLTHROUGH;
+				}
+			}
 			case GameMessage::MSG_DO_FORCE_ATTACK_OBJECT:
 			case GameMessage::MSG_DO_ATTACK_OBJECT:
 			case GameMessage::MSG_DO_WEAPON_AT_OBJECT:
