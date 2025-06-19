@@ -31,6 +31,7 @@
 #include "Common/LocalFileSystem.h"
 #include "Common/Recorder.h"
 #include "Common/version.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
@@ -433,8 +434,8 @@ Int parseReplay(char *args[], int num)
 		TheWritableGlobalData->m_shellMapOn = FALSE;
 
 		// Make replay playback possible while other clients (possible retail) are running
-		TheWritableGlobalData->m_multiInstance = TRUE;
-		TheWritableGlobalData->m_avoidFirstInstance = TRUE;
+		rts::ClientInstance::s_multiInstance = TRUE;
+		rts::ClientInstance::s_avoidFirstInstance = TRUE;
 
 		return 2;
 	}
@@ -458,7 +459,7 @@ Int parseJobs(char *args[], int num)
 
 Int parseMultiInstance(char *args[], int num)
 {
-	TheWritableGlobalData->m_multiInstance = TRUE;
+	rts::ClientInstance::s_multiInstance = TRUE;
 	return 1;
 }
 

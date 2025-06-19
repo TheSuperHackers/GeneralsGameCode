@@ -25,6 +25,12 @@ namespace rts
 {
 HANDLE ClientInstance::s_mutexHandle = NULL;
 UnsignedInt ClientInstance::s_instanceIndex = 0;
+#if defined(RTS_MULTI_INSTANCE)
+Bool ClientInstance::s_multiInstance = TRUE;
+#else
+Bool ClientInstance::s_multiInstance = FALSE;
+#endif
+Bool ClientInstance::s_avoidFirstInstance = FALSE;
 
 bool ClientInstance::initialize()
 {
@@ -35,14 +41,14 @@ bool ClientInstance::initialize()
 	
 	CommandLine::parseCommandLineForStartup();
 
-	if (TheGlobalData->m_avoidFirstInstance)
+	if (s_avoidFirstInstance)
 		++s_instanceIndex;
 
 	// Create a mutex with a unique name to Generals in order to determine if our app is already running.
 	// WARNING: DO NOT use this number for any other application except Generals.
 	while (true)
 	{
-		if (TheGlobalData->m_multiInstance)
+		if (s_multiInstance)
 		{
 			std::string guidStr = getFirstInstanceName();
 			if (s_instanceIndex > 0u)

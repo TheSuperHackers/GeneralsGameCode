@@ -39,6 +39,9 @@ public:
 	// Returns the instance name of the first game client.
 	static const char* getFirstInstanceName();
 
+	static Bool s_multiInstance; // Allow multiple instances of the game
+	static Bool s_avoidFirstInstance; // Avoid mutex of original game
+
 private:
 	static HANDLE s_mutexHandle;
 	static UnsignedInt s_instanceIndex;

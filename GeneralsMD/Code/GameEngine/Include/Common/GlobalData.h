@@ -124,9 +124,6 @@ public:
 	// Run game without graphics, input or audio.
 	Bool m_headless;
 	
-	Bool m_multiInstance; ///< Allow multiple instances of the game
-	Bool m_avoidFirstInstance; ///< Avoid mutex of original game
-	
 	Bool m_windowed;
 	Int m_xResolution;
 	Int m_yResolution;
