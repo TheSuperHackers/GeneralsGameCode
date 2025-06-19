@@ -360,6 +360,7 @@ void BuddyThreadClass::Thread_Function()
 				{
 					gpDenyBuddyRequest( con, incomingRequest.arg.profile.id );
 				}
+				break;
 			case BuddyRequest::BUDDYREQUEST_SETSTATUS:
 				{
 					//don't blast our 'Loading' status with 'Online'.
