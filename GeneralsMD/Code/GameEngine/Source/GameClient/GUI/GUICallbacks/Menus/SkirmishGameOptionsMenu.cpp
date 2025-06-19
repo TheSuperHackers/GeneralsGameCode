@@ -1644,6 +1644,7 @@ WindowMsgHandledType SkirmishGameOptionsMenuSystem( GameWindow *window, Unsigned
 			{
 				setFPSTextBox(sliderPos);
 			}
+			break;
 		}
 		//-------------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
