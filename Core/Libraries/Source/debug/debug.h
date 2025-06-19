@@ -38,7 +38,6 @@
   Generally speaking there are four different library variants:
   - Internal: all asserts/checks/logs, full optimizations (RTS_INTERNAL macro defined)
   - %Debug: all asserts/checks/logs, no optimizations (RTS_DEBUG macro defined)
-  - Profile: all asserts/checks/logs, full optimizations, profiling active (RTS_PROFILE macro defined)
   - Release: no asserts/checks/logs, full optimizations
 
   These variants will be broken down into separate features which
@@ -49,7 +48,6 @@
     <td><b>HAS_ASSERTS</b></td>
     <td><b>HAS_LOGS</b></td>
     <td><b>HAS_OPT</b></td>
-    <td><b>HAS_PROFILE</b></td>
   </tr><tr>
     <td>Internal</td>
     <td><center>Y</center></td>
@@ -63,12 +61,6 @@
     <td><center></center></td>
     <td><center></center></td>
   </tr><tr>
-    <td>Profile</td>
-    <td><center>Y</center></td>
-    <td><center>Y</center></td>
-    <td><center>Y</center></td>
-    <td><center>Y</center></td>
-  </tr><tr>
     <td>Release</td>
     <td><center></center></td>
     <td><center></center></td>
@@ -80,7 +72,6 @@
   library variant:
   - Internal: XXXInternal.lib
   - %Debug: XXXDebug.lib
-  - Profile: XXXProfile.lib
   - Release: XXX.lib
 */
 
@@ -89,17 +80,13 @@
 #endif
 
 // Define which libraries to use. 
-#if defined(RTS_INTERNAL) || defined(RTS_DEBUG) || defined(RTS_PROFILE)
+#if defined(RTS_INTERNAL) || defined(RTS_DEBUG)
 #  define HAS_ASSERTS
 #  define HAS_LOGS
 #endif
 
 #if !defined(RTS_DEBUG)
 #  define HAS_OPT
-#endif
-
-#if defined(RTS_PROFILE)
-#  define HAS_PROFILE
 #endif
 
 // include all our public header files (use double quotes here)
