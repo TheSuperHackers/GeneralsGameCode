@@ -883,7 +883,13 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	WWASSERT(IsInitted);
 	WWASSERT(dev >= -1);
 	WWASSERT(dev < _RenderDeviceNameTable.Count());
+	DEBUG_LOG(("Render device number '%d' selected\n", dev));
 
+	if (dev >= _RenderDeviceNameTable.Count())
+	{
+		WWDEBUG_SAY(("Invalid render device number '%d' selected. \nDefaulting to primary render device\n", dev));
+		dev = 0;
+	}
 	/*
 	** If user has never selected a render device, start out with device 0
 	*/
