@@ -83,7 +83,8 @@ bool WorkerProcess::startProcess(UnicodeString command)
 	SECURITY_ATTRIBUTES saAttr = { sizeof(SECURITY_ATTRIBUTES) };
 	saAttr.bInheritHandle = TRUE;
 	HANDLE writeHandle = NULL;
-	CreatePipe(&m_readHandle, &writeHandle, &saAttr, 0);
+	if (!CreatePipe(&m_readHandle, &writeHandle, &saAttr, 0))
+		return false;
 	SetHandleInformation(m_readHandle, HANDLE_FLAG_INHERIT, 0);
 
 	STARTUPINFOW si = { sizeof(STARTUPINFOW) };
