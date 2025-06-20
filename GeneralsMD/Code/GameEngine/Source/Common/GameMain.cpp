@@ -44,7 +44,7 @@ Int GameMain()
 
 	if (!TheGlobalData->m_simulateReplays.empty())
 	{
-		exitcode = SimulateReplays(TheGlobalData->m_simulateReplays, TheGlobalData->m_simulateReplayJobs);
+		exitcode = ReplaySimulation::simulateReplays(TheGlobalData->m_simulateReplays, TheGlobalData->m_simulateReplayJobs);
 	}
 	else
 	{
