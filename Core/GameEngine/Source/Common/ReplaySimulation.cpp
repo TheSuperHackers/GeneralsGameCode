@@ -32,6 +32,20 @@ Bool ReplaySimulation::s_isRunning = false;
 UnsignedInt ReplaySimulation::s_replayIndex = 0;
 UnsignedInt ReplaySimulation::s_replayCount = 0;
 
+namespace
+{
+int countProcessesRunning(const std::vector<WorkerProcess>& processes)
+{
+	int numProcessesRunning = 0;
+	size_t i = 0;
+	for (; i < processes.size(); ++i)
+	{
+		if (processes[i].isRunning())
+			++numProcessesRunning;
+	}
+	return numProcessesRunning;
+}
+} // namespace
 
 int ReplaySimulation::simulateReplaysInThisProcess(const std::vector<AsciiString> &filenames)
 {
@@ -149,13 +163,7 @@ int ReplaySimulation::simulateReplaysInWorkerProcesses(const std::vector<AsciiSt
 			filenamePositionDone++;
 		}
 
-		// Count how many processes are running
-		int numProcessesRunning = 0;
-		for (i = 0; i < processes.size(); i++)
-		{
-			if (processes[i].isRunning())
-				numProcessesRunning++;
-		}
+		int numProcessesRunning = countProcessesRunning(processes);
 
 		// Add new processes when we are below the limit and there are replays left
 		while (numProcessesRunning < maxProcesses && filenamePositionStarted < filenames.size())

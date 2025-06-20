@@ -40,7 +40,6 @@ private:
 	static int simulateReplaysInWorkerProcesses(const std::vector<AsciiString> &filenames, int maxProcesses);
 	static std::vector<AsciiString> resolveFilenameWildcards(const std::vector<AsciiString> &filenames);
 
-
 private:
 
 	static Bool s_isRunning;
