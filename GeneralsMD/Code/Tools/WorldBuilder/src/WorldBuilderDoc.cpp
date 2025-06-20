@@ -1277,6 +1277,8 @@ BOOL CWorldBuilderDoc::OnNewDocument()
 	TheLayersList->enableUpdates();
 	TheLayersList->resetLayers();
 	TheLayersList->disableUpdates();
+
+	// TheSuperHackers @bugfix Caball009 20/06/2025 Must not delete polygon triggers before calling enableUpdates.
 	PolygonTrigger::deleteTriggers();
 
 	TheSidesList->clear();
