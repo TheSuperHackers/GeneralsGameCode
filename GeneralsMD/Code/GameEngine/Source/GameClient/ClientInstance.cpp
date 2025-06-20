@@ -108,7 +108,7 @@ void ClientInstance::skipPrimaryInstance()
 {
 	if (isInitialized())
 	{
-		DEBUG_CRASH(("ClientInstance::skipPrimaryInstance(%d) - cannot skip primary instance after initialization", (int)v));
+		DEBUG_CRASH(("ClientInstance::skipPrimaryInstance() - cannot skip primary instance after initialization"));
 		return;
 	}
 	s_instanceIndex = 1;
