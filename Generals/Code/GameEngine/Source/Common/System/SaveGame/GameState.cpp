@@ -936,6 +936,7 @@ AsciiString GameState::portableMapPathToRealMapPath(const AsciiString& in) const
 
 	if (!FileSystem::isPathInDirectory(prefix, containingBasePath))
 	{
+		DEBUG_LOG(("Normalized file path for '%s' was outside the expected base path of '%s'.\n", prefix.str(), containingBasePath.str()));
 		return AsciiString::TheEmptyString;
 	}
 
