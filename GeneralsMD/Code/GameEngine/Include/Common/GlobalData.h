@@ -54,8 +54,8 @@ enum AIDebugOptions CPP_11(: Int);
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 
-const Int MAX_GLOBAL_LIGHTS	= 3;
-const Int SIMULATE_REPLAYS_SEQUENTIAL = -1;
+CONSTEXPR const Int MAX_GLOBAL_LIGHTS = 3;
+CONSTEXPR const Int SIMULATE_REPLAYS_SEQUENTIAL = -1;
 
 //-------------------------------------------------------------------------------------------------
 class CommandLineData
