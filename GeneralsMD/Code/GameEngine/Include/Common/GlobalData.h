@@ -573,6 +573,11 @@ private:
 // singleton
 extern GlobalData* TheWritableGlobalData;
 
+// use TheGlobalData for all read-only accesses
+#if __cplusplus >= 201703L
+inline const GlobalData* const& TheGlobalData = TheWritableGlobalData;
+#else
 #define TheGlobalData ((const GlobalData*)TheWritableGlobalData)
+#endif
 
 #endif
