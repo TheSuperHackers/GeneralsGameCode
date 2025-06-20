@@ -434,8 +434,8 @@ Int parseReplay(char *args[], int num)
 		TheWritableGlobalData->m_shellMapOn = FALSE;
 
 		// Make replay playback possible while other clients (possible retail) are running
-		rts::ClientInstance::s_multiInstance = TRUE;
-		rts::ClientInstance::s_avoidFirstInstance = TRUE;
+		rts::ClientInstance::setMultiInstance(TRUE);
+		rts::ClientInstance::skipPrimaryInstance();
 
 		return 2;
 	}
