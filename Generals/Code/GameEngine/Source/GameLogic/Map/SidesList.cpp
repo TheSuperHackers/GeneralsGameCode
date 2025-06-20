@@ -1124,7 +1124,7 @@ void TeamsInfoRec::addTeam(const Dict* d)
 	if (m_numTeams >= m_numTeamsAllocated)
 	{
 	// pool[]ify
-		const Int newNumTeamsAllocated = max(m_numTeams, m_numTeamsAllocated + TEAM_ALLOC_CHUNK);
+		const Int newNumTeamsAllocated = m_numTeams + TEAM_ALLOC_CHUNK;
 		TeamsInfo* nti = NEW TeamsInfo[newNumTeamsAllocated];	// throws on failure
 		
 		Int i;
@@ -1132,9 +1132,6 @@ void TeamsInfoRec::addTeam(const Dict* d)
 		for (i = 0; i < m_numTeams; i++)
 			nti[i] = m_teams[i];
 
-		for ( ; i < newNumTeamsAllocated; i++)
-			nti[i].clear(); 
-		
 		delete [] m_teams;
 
 		m_teams = nti;
@@ -1152,7 +1149,7 @@ void TeamsInfoRec::removeTeam(Int i)
 	for ( ; i < m_numTeams-1; i++)
 		m_teams[i] = m_teams[i+1];
 
-	for ( ; i < m_numTeamsAllocated; i++)
+	for ( ; i < m_numTeams; i++)
 		m_teams[i].clear();
 
 	--m_numTeams;
