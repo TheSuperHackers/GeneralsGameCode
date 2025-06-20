@@ -37,7 +37,7 @@
   #define CONSTEXPR constexpr
 #else
   #define CPP_11(code)
-  #define CONSTEXPR constexpr
+  #define CONSTEXPR
 #endif
 
 #if __cplusplus >= 201703L
