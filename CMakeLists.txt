@@ -43,7 +43,6 @@ if((WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows") AND ${CMAKE_SIZEOF_VOID_P} EQU
     include(cmake/miles.cmake)
     include(cmake/bink.cmake)
     include(cmake/dx8.cmake)
-    include(cmake/dbghelp.cmake)
 endif()
 
 # Define a dummy stlport target when not on VC6.
