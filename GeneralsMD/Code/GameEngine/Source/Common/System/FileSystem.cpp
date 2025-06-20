@@ -384,7 +384,7 @@ Bool FileSystem::isPathInDirectory(const AsciiString& testPath, const AsciiStrin
 	if (!testPathNormalized.startsWith(basePathNormalized))
 #endif
 	{
-		DEBUG_CRASH(("Normalized file path for '%s': '%s' was outside the expected base path of '%s' (normalized: '%s').\n", testPath.str(), testPathNormalized.str(), basePath.str(), basePathNormalized.str()));
+		DEBUG_LOG(("Normalized file path for '%s': '%s' was outside the expected base path of '%s' (normalized: '%s').\n", testPath.str(), testPathNormalized.str(), basePath.str(), basePathNormalized.str()));
 		return false;
 	}
 
