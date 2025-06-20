@@ -150,6 +150,9 @@ public:
 	static MapObject *getSingleSelectedMapObject(void);
 	static void update(void);
 
+private:
+	Dict** getAllSelectedDictsData();
+
 };
 
 //{{AFX_INSERT_LOCATION}}
