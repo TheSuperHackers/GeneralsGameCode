@@ -60,13 +60,14 @@ UnsignedInt Money::withdraw(UnsignedInt amountToWithdraw, Bool playSound)
 	if (amountToWithdraw == 0)
 		return amountToWithdraw;
 
-	//@todo: Do we do this frequently enough that it is a performance hit?
-	AudioEventRTS event = TheAudio->getMiscAudio()->m_moneyWithdrawSound;
-	event.setPlayerIndex(m_playerIndex);
-
 	// Play a sound
 	if (playSound)
+	{
+		//@todo: Do we do this frequently enough that it is a performance hit?
+		AudioEventRTS event = TheAudio->getMiscAudio()->m_moneyWithdrawSound;
+		event.setPlayerIndex(m_playerIndex);
 		TheAudio->addAudioEvent(&event);
+	}
 
 	m_money -= amountToWithdraw;
 
@@ -79,13 +80,14 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound)
 	if (amountToDeposit == 0)
 		return;
 
-	//@todo: Do we do this frequently enough that it is a performance hit?
-	AudioEventRTS event = TheAudio->getMiscAudio()->m_moneyDepositSound;
-	event.setPlayerIndex(m_playerIndex);
-
 	// Play a sound
 	if (playSound)
+	{
+		//@todo: Do we do this frequently enough that it is a performance hit?
+		AudioEventRTS event = TheAudio->getMiscAudio()->m_moneyDepositSound;
+		event.setPlayerIndex(m_playerIndex);
 		TheAudio->addAudioEvent(&event);
+	}
 	
 	m_money += amountToDeposit;
 
