@@ -589,10 +589,12 @@ void PopulateLobbyPlayerListbox(void)
 			const size_t count = indicesToSelect.size();
 			size_t index = 0;
 			Int *newIndices = NEW Int[count];
-			for (; index < count; ++index, ++indexIt)
+			while (index < count)
 			{
 				newIndices[index] = *indexIt;
 				DEBUG_LOG(("Queueing up index %d to re-select\n", *indexIt));
+				++index;
+				++indexIt;
 			}
 			GadgetListBoxSetSelected(listboxLobbyPlayers, newIndices, count);
 			delete[] newIndices;
