@@ -5700,6 +5700,8 @@ WindowMsgHandledType IdleWorkerSystem( GameWindow *window, UnsignedInt msg,
 			// if we're givin the opportunity to take the keyboard focus we must say we don't want it
 			if( mData1 == TRUE )
 				*(Bool *)mData2 = FALSE;
+			break;
+
 		}
 		//---------------------------------------------------------------------------------------------
 		case GBM_SELECTED:
