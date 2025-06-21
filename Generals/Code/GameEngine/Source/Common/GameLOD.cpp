@@ -260,6 +260,7 @@ LODPresetInfo *GameLODManager::newLODPreset(StaticGameLODLevel index)
 			m_numLevelPresets[index]++;
 			return &m_lodPresets[index][m_numLevelPresets[index]-1];
 		}
+
 		DEBUG_CRASH(( "GameLODManager::newLODPreset - Too many presets defined for '%s'\n", TheGameLODManager->getStaticGameLODLevelName(index)));
 	}
 
