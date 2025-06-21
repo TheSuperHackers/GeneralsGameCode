@@ -1644,8 +1644,8 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	// populate resolution modes
 	GadgetComboBoxReset(comboBoxResolution);
 	Int numResolutions = TheDisplay->getDisplayModeCount();
-	UnsignedInt displayW = TheDisplay->getWidth();
-	UnsignedInt displayH = TheDisplay->getHeight();
+	UnsignedInt displayWidth = TheDisplay->getWidth();
+	UnsignedInt displayHeight = TheDisplay->getHeight();
 
 	for( i = 0; i < numResolutions; ++i )
 	{	Int xres,yres,bitDepth;
@@ -1655,7 +1655,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 		// TheSuperHackers @fix xezon 12/06/2025 Now makes a selection with the active display resolution
 		// instead of the resolution read from the Option Preferences, because the active display resolution
 		// is the most relevant to make a selection with and the Option Preferences could be wrong.
-		if ( xres == displayW && yres == displayH )
+		if ( xres == displayWidth && yres == displayHeight )
 			selectedResIndex=i;
 	}
 
@@ -1663,8 +1663,8 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	{
 		// TheSuperHackers @bugfix xezon 08/06/2025 Now adds the current resolution instead of defaulting to 800 x 600.
 		// This avoids force changing the resolution when the user has set a custom resolution in the Option Preferences.
-		Int xres = displayW;
-		Int yres = displayH;
+		Int xres = displayWidth;
+		Int yres = displayHeight;
 		str.format(L"%d x %d",xres,yres);
 		GadgetComboBoxAddEntry( comboBoxResolution, str, color );
 		selectedResIndex = GadgetComboBoxGetLength( comboBoxResolution ) - 1;
