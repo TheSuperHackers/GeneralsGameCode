@@ -5330,24 +5330,18 @@ void InGameUI::addWorldAnimation( Anim2DTemplate *animTemplate,
 // ------------------------------------------------------------------------------------------------
 void InGameUI::clearWorldAnimations( void )
 {
-	WorldAnimationData *wad;
-
 	// iterate through all entries and delete the animation data
 	for( WorldAnimationListIterator it = m_worldAnimationList.begin();	
 			 it != m_worldAnimationList.end(); /*empty*/ )
 	{
 
-		wad = *it;
-		if( wad )
-		{
+		WorldAnimationData *wad = *it;
 
-			// delete the animation instance
-			deleteInstance(wad->m_anim);
+		// delete the animation instance
+		deleteInstance(wad->m_anim);
 
-			// delete the world animation data
-			delete wad;
-
-		}  // end if
+		// delete the world animation data
+		delete wad;
 
 		it = m_worldAnimationList.erase( it );
 
@@ -5361,18 +5355,16 @@ static const UnsignedInt FRAMES_BEFORE_EXPIRE_TO_FADE = LOGICFRAMES_PER_SECOND *
 // ------------------------------------------------------------------------------------------------
 void InGameUI::updateAndDrawWorldAnimations( void )
 {
-	WorldAnimationData *wad;
-
 	// go through all animations
 	for( WorldAnimationListIterator it = m_worldAnimationList.begin();
 			 it != m_worldAnimationList.end(); /*empty*/ )
 	{
 
 		// get data
-		wad = *it;
+		WorldAnimationData *wad = *it;
 
 		// update portion ... only when the game is in motion
-		if( wad && TheGameLogic->isGamePaused() == FALSE )
+		if( TheGameLogic->isGamePaused() == FALSE )
 		{
 
 			//
