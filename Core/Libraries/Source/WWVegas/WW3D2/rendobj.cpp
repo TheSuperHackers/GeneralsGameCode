@@ -1221,6 +1221,7 @@ PersistClass *	RenderObjPersistFactoryClass::Load(ChunkLoadClass & cload) const
 	RenderObjClass * old_obj = NULL;
 	Matrix3D tm(1);
 	char name[64];
+	name[0] = '\0';
 
 	while (cload.Open_Chunk()) {
 		switch (cload.Cur_Chunk_ID()) {
