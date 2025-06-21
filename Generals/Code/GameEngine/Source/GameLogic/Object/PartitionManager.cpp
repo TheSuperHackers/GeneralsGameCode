@@ -2168,8 +2168,12 @@ Int PartitionData::calcMaxCoiForShape(GeometryType geom, Real majorRadius, Real 
 				Real diagonal = (Real)(sqrtf(majorRadius*majorRadius + minorRadius*minorRadius));
 				Int cells = ThePartitionManager->worldToCellDist(diagonal*2) + 1;
 				result = cells * cells;
+				break;
 			}
+			default:
+				return 4;
 		};
+		static_assert(GEOMETRY_NUM_TYPES == 3, "GEOMETRY_NUM_TYPES has changed");
 	}
 	if (result < 4)
 		result = 4;
