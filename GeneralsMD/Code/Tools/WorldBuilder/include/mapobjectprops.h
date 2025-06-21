@@ -206,6 +206,7 @@ private:
   MapObjectProps & operator=( const MapObjectProps & other ); // Deliberately undefined
 	void updateTheUI(MapObject *pMapObj);
 	void InitSound(void);
+	Dict** getAllSelectedDictsData();
 };
 
 //{{AFX_INSERT_LOCATION}}
