@@ -257,7 +257,7 @@ void UpgradeMuxData::muxDataProcessUpgradeRemoval(Object* obj) const
 					it++)
 		{
 			const UpgradeTemplate* theTemplate = TheUpgradeCenter->findUpgrade( *it );
-			if( !theTemplate && !it->isEmpty() && !it->isNone())
+			if( !theTemplate )
 			{
 				DEBUG_CRASH(("An upgrade module references %s, which is not an Upgrade", it->str()));
 				throw INI_INVALID_DATA;
