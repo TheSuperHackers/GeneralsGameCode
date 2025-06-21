@@ -480,7 +480,7 @@ void RecorderClass::stopPlayback() {
 
 	if (!m_doingAnalysis)
 	{
-		TheCommandList->appendMessage(newInstance(GameMessage)(GameMessage::MSG_CLEAR_GAME_DATA));
+		TheMessageStream->appendMessage(GameMessage::MSG_CLEAR_GAME_DATA);
 	}
 }
 
