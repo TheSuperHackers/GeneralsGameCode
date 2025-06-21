@@ -681,11 +681,11 @@ void CWorldBuilderDoc::OnJumpToGame()
 		CString filename;
 		DEBUG_LOG(("strTitle=%s strPathName=%s\n", m_strTitle, m_strPathName));
 		if (strstr(m_strPathName, TheGlobalData->getPath_UserData().str()) != NULL)
-			filename.Format("%sMaps\\%s", TheGlobalData->getPath_UserData().str(), m_strTitle);
+			filename.Format("%sMaps\\%s", TheGlobalData->getPath_UserData().str(), static_cast<const char*>(m_strTitle));
 		else
-			filename.Format("Maps\\%s", m_strTitle);
+			filename.Format("Maps\\%s", static_cast<const char*>(m_strTitle));
 
-		/*int retval =*/ _spawnl(_P_NOWAIT, "\\projects\\rts\\run\\rtsi.exe", "ignored", "-scriptDebug", "-win", "-file", filename, NULL);
+		/*int retval =*/ _spawnl(_P_NOWAIT, "\\projects\\rts\\run\\rtsi.exe", "ignored", "-scriptDebug", "-win", "-file", static_cast<const char*>(filename), NULL);
 	} catch (...) {
 	}
 }
@@ -1271,13 +1271,15 @@ BOOL CWorldBuilderDoc::OnNewDocument()
 	m_waypointTableNeedsUpdate = true;
 	m_curWaypointID = 0;
 	WbApp()->selectPointerTool();
-	PolygonTrigger::deleteTriggers();
 
 	// Make sure that all the old units are removed from the list.
 	// Bug fix by MLL 1/14/03
 	TheLayersList->enableUpdates();
 	TheLayersList->resetLayers();
 	TheLayersList->disableUpdates();
+
+	// TheSuperHackers @bugfix Caball009 20/06/2025 Must not delete polygon triggers before calling enableUpdates.
+	PolygonTrigger::deleteTriggers();
 
 	TheSidesList->clear();
 	TheSidesList->validateSides();

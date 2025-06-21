@@ -285,9 +285,12 @@ void PingThreadClass::Thread_Function()
 					//   callback.
 					IP = 0xFFFFFFFF;   // flag for IP resolve failed
 				}
-				hostNode = (in_addr *) hostStruct->h_addr;
-				IP = hostNode->s_addr;
-				DEBUG_LOG(("pinging %s IP = %s\n", hostnameBuffer, inet_ntoa(*hostNode) ));
+				else
+				{
+					hostNode = (in_addr *) hostStruct->h_addr;
+					IP = hostNode->s_addr;
+					DEBUG_LOG(("pinging %s IP = %s\n", hostnameBuffer, inet_ntoa(*hostNode) ));
+				}
 			}
 
 			// do ping

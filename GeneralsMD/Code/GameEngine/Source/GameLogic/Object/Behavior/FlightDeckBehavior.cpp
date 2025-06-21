@@ -1318,17 +1318,16 @@ void FlightDeckBehavior::exitObjectViaDoor( Object *newObj, ExitDoorType exitDoo
 				break;
 			}
 		}
-
-		if (!ppi)
-		{
-			DEBUG_CRASH(("could not find the space. what?"));
-			return;
-		}
-
-		ppi->m_objectInSpace = newObj->getID();
-		//validateAssignments();
 	}
 
+	if (!ppi)
+	{
+		DEBUG_CRASH(("could not find the space. what?"));
+		return;
+	}
+
+	ppi->m_objectInSpace = newObj->getID();
+	//validateAssignments();
 
 	/// @todo srj -- this is evil. fix.
 	static NameKeyType jetKey = TheNameKeyGenerator->nameToKey( "JetAIUpdate" );

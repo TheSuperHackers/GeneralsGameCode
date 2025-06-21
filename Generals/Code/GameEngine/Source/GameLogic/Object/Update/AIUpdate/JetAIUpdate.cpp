@@ -2216,7 +2216,7 @@ void JetAIUpdate::aiDoCommand(const AICommandParms* parms)
 				if (isParkedAt(parms->m_obj))
 					return;
 			
-				// else fall thru to the default case!
+				FALLTHROUGH; // else fall thru to the default case!
 
 			default:
 			{

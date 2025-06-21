@@ -3704,7 +3704,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 				break;
 			}
-			//intentional fall through
+			FALLTHROUGH; //intentional fall through
 		}
 		case GameMessage::MSG_MOUSE_RIGHT_CLICK:
 		{
@@ -3767,7 +3767,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 
 				break;
 			}
-			//intentional fall through
+			FALLTHROUGH; //intentional fall through
 		}
 		case GameMessage::MSG_MOUSE_LEFT_CLICK:
 		{

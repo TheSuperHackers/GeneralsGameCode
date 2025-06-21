@@ -21,8 +21,12 @@
 
 #if __cplusplus >= 201703L
 #define NOEXCEPT_17 noexcept
+#define REGISTER
+#define FALLTHROUGH [[fallthrough]]
 #else
 #define NOEXCEPT_17
+#define REGISTER register
+#define FALLTHROUGH
 #endif
 
 // noexcept for methods of IUNKNOWN interface
@@ -38,12 +42,6 @@
 #else
   #define CPP_11(code)
   #define CONSTEXPR
-#endif
-
-#if __cplusplus >= 201703L
-#define REGISTER
-#else
-#define REGISTER register
 #endif
 
 #if __cplusplus < 201103L

@@ -214,3 +214,23 @@ Bool Win32LocalFileSystem::createDirectory(AsciiString directory)
 	}
 	return FALSE;
 }
+
+AsciiString Win32LocalFileSystem::normalizePath(const AsciiString& filePath) const
+{
+	DWORD retval = GetFullPathNameA(filePath.str(), 0, NULL, NULL);
+	if (retval == 0)
+	{
+		DEBUG_LOG(("Unable to determine buffer size for normalized file path. Error=(%u).\n", GetLastError()));
+		return AsciiString::TheEmptyString;
+	}
+
+	AsciiString normalizedFilePath;
+	retval = GetFullPathNameA(filePath.str(), retval, normalizedFilePath.getBufferForRead(retval - 1), NULL);
+	if (retval == 0)
+	{
+		DEBUG_LOG(("Unable to normalize file path '%s'. Error=(%u).\n", filePath.str(), GetLastError()));
+		return AsciiString::TheEmptyString;
+	}
+
+	return normalizedFilePath;
+}

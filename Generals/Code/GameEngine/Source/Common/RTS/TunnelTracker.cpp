@@ -108,6 +108,13 @@ Int TunnelTracker::getContainMax() const
 }
 
 // ------------------------------------------------------------------------
+void TunnelTracker::swapContainedItemsList(ContainedItemsList& newList)
+{
+	m_containList.swap(newList);
+	m_containListSize = (Int)m_containList.size();
+}
+
+// ------------------------------------------------------------------------
 void TunnelTracker::updateNemesis(const Object *target)
 {
 	if (getCurNemesis()==NULL) {

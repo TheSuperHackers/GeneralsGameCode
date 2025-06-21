@@ -942,8 +942,10 @@ void PhysicsBehavior::addOverlap(Object *obj)
 void PhysicsBehavior::transferVelocityTo(PhysicsBehavior* that) const
 {
 	if (that != NULL)
+	{
 		that->m_vel.add(&m_vel);
-	that->m_velMag = INVALID_VEL_MAG;
+		that->m_velMag = INVALID_VEL_MAG;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------

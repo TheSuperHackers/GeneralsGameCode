@@ -142,6 +142,8 @@ void FlashTransition::update( Int frame )
 			}  // end if
 		
 		}
+		FALLTHROUGH;
+
 	case FLASHTRANSITION_FADE_IN_2:
 	case FLASHTRANSITION_FADE_IN_3:
 		{
@@ -810,8 +812,8 @@ void ScaleUpTransition::update( Int frame )
 				TheAudio->addAudioEvent( &buttonClick );
 			}  // end if
 
-			
 		}
+		FALLTHROUGH;
 
 	case SCALEUPTRANSITION_2:
 	case SCALEUPTRANSITION_3:
@@ -933,8 +935,8 @@ void ScoreScaleUpTransition::update( Int frame )
 				TheAudio->addAudioEvent( &buttonClick );
 			}  // end if
 
-			
 		}
+		FALLTHROUGH;
 
 	case SCORESCALEUPTRANSITION_2:
 	case SCORESCALEUPTRANSITION_3:

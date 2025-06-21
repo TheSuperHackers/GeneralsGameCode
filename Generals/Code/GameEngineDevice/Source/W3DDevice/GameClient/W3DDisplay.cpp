@@ -2525,6 +2525,7 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 			m_2DRender->Enable_Additive(false);
 			m_2DRender->Enable_Alpha(false);
 			doAlphaReset = TRUE;
+			break;
 		default:
 			break;
 	}

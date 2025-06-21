@@ -440,33 +440,25 @@ void OpenContain::killAllContained( void )
 	// to the host container, which then attempts to remove all remaining occupants
 	// on the death of the host container. This is reproducible by shooting with
 	// Neutron Shells on a GLA Technical containing GLA Terrorists.
+
 	ContainedItemsList list;
 	list.swap(m_containList);
 	m_containListSize = 0;
 
 	ContainedItemsList::iterator it = list.begin();
 
- 	while ( it != list.end() )
+	while ( it != list.end() )
 	{
-    Object *rider = *it;
+		Object *rider = *it++;
 
-    DEBUG_ASSERTCRASH( rider, ("Contain list must not contain NULL element"));
-    if ( rider )
-    {
-	    it = list.erase(it);
-
-      onRemoving( rider );
-	    rider->onRemovedFrom( getObject() );
-      rider->kill();
-
-    }
-    else
-      ++it;
-
-	}  // end while
-
-
-  DEBUG_ASSERTCRASH( m_containListSize == 0, ("killallcontain just made a booboo, list size != zero.") );
+		DEBUG_ASSERTCRASH( rider, ("Contain list must not contain NULL element"));
+		if ( rider )
+		{
+			onRemoving( rider );
+			rider->onRemovedFrom( getObject() );
+			rider->kill();
+		}
+	}
 
 }  // end killAllContained
 

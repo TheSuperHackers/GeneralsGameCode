@@ -1560,7 +1560,7 @@ MemoryPoolBlob* MemoryPool::createBlob(Int allocationCount)
 {
 	DEBUG_ASSERTCRASH(allocationCount > 0 && allocationCount%MEM_BOUND_ALIGNMENT==0, ("bad allocationCount (must be >0 and evenly divisible by %d)",MEM_BOUND_ALIGNMENT));
 
-	MemoryPoolBlob* blob = new (::sysAllocateDoNotZero(sizeof MemoryPoolBlob)) MemoryPoolBlob;	// will throw on failure
+	MemoryPoolBlob* blob = new (::sysAllocateDoNotZero(sizeof(MemoryPoolBlob))) MemoryPoolBlob;	// will throw on failure
 
 	blob->initBlob(this, allocationCount);	// will throw on failure
 
@@ -2665,7 +2665,7 @@ MemoryPool *MemoryPoolFactory::createMemoryPool(const char *poolName, Int alloca
 		throw ERROR_OUT_OF_MEMORY;
 	}
 
-	pool = new (::sysAllocateDoNotZero(sizeof MemoryPool)) MemoryPool;	// will throw on failure
+	pool = new (::sysAllocateDoNotZero(sizeof(MemoryPool))) MemoryPool;	// will throw on failure
 	pool->init(this, poolName, allocationSize, initialAllocationCount, overflowAllocationCount);	// will throw on failure
 
 	pool->addToList(&m_firstPoolInFactory);
@@ -2720,7 +2720,7 @@ DynamicMemoryAllocator *MemoryPoolFactory::createDynamicMemoryAllocator(Int numS
 {
 	DynamicMemoryAllocator *dma;
 
-	dma = new (::sysAllocateDoNotZero(sizeof DynamicMemoryAllocator)) DynamicMemoryAllocator;	// will throw on failure
+	dma = new (::sysAllocateDoNotZero(sizeof(DynamicMemoryAllocator))) DynamicMemoryAllocator;	// will throw on failure
 	dma->init(this, numSubPools, pParms);	// will throw on failure
 
 	dma->addToList(&m_firstDmaInFactory);
@@ -3415,7 +3415,7 @@ void initMemoryManager()
 		Int numSubPools;
 		const PoolInitRec *pParms;
 		userMemoryManagerGetDmaParms(&numSubPools, &pParms);
-		TheMemoryPoolFactory = new (::sysAllocateDoNotZero(sizeof MemoryPoolFactory)) MemoryPoolFactory;	// will throw on failure
+		TheMemoryPoolFactory = new (::sysAllocateDoNotZero(sizeof(MemoryPoolFactory))) MemoryPoolFactory;	// will throw on failure
 		TheMemoryPoolFactory->init();	// will throw on failure
 		TheDynamicMemoryAllocator = TheMemoryPoolFactory->createDynamicMemoryAllocator(numSubPools, pParms);	// will throw on failure
 		userMemoryManagerInitPools();
@@ -3461,7 +3461,6 @@ void initMemoryManager()
 #endif
 	{
 		DEBUG_CRASH(("Wrong operator new/delete linked in! Fix this...\n"));
-		exit(-1);
 	}
 
 	theMainInitFlag = true;
@@ -3490,7 +3489,7 @@ static void preMainInitMemoryManager()
 		Int numSubPools;
 		const PoolInitRec *pParms;
 		userMemoryManagerGetDmaParms(&numSubPools, &pParms);
-		TheMemoryPoolFactory = new (::sysAllocateDoNotZero(sizeof MemoryPoolFactory)) MemoryPoolFactory;	// will throw on failure
+		TheMemoryPoolFactory = new (::sysAllocateDoNotZero(sizeof(MemoryPoolFactory))) MemoryPoolFactory;	// will throw on failure
 		TheMemoryPoolFactory->init();	// will throw on failure
 
 		TheDynamicMemoryAllocator = TheMemoryPoolFactory->createDynamicMemoryAllocator(numSubPools, pParms);	// will throw on failure

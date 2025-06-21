@@ -1718,6 +1718,7 @@ void WaterRenderObjClass::Render(RenderInfoClass & rinfo)
 
 				renderWater();
 			}	//WATER_TYPE_1
+			break;
 
 		default:
 			break;

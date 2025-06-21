@@ -383,6 +383,7 @@ Real GameClientRandomVariable::getValue( void ) const
 			if (m_low == m_high) {
 				return m_low;
 			} // else return as though a UNIFORM.
+			FALLTHROUGH;
 
 		case UNIFORM:
 			return GameClientRandomValueReal( m_low, m_high );
@@ -427,6 +428,7 @@ Real GameLogicRandomVariable::getValue( void ) const
 			if (m_low == m_high) {
 				return m_low;
 			} // else return as though a UNIFORM.
+			FALLTHROUGH;
 
 		case UNIFORM:
 			return GameLogicRandomValueReal( m_low, m_high );

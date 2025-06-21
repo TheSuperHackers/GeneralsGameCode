@@ -48,7 +48,7 @@ unsigned _MipMapFilters[TextureFilterClass::FILTER_TYPE_COUNT];
 /*************************************************************************
 **                             TextureFilterClass
 *************************************************************************/
-TextureFilterClass::TextureFilterClass(MipCountType mip_level_count=MIP_LEVELS_1)
+TextureFilterClass::TextureFilterClass(MipCountType mip_level_count)
 :	TextureMinFilter(FILTER_TYPE_DEFAULT),
 	TextureMagFilter(FILTER_TYPE_DEFAULT),
 	UAddressMode(TEXTURE_ADDRESS_REPEAT),

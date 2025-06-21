@@ -132,11 +132,11 @@ static void Record_Texture_End()
 //				int percents=100-100*bytes/non_red_bytes;
 				working_string.Format("%4.4dkb         ",bytes/1024);
 				texture_statistics_string+=working_string;
+				texture_statistics_string+=t->Get_Texture_Name();//getTextureName();
 			}
 			else {
 				texture_statistics_string+="N/A  ";
 			}
-			texture_statistics_string+=t->Get_Texture_Name();//getTextureName();
 			texture_statistics_string+=error;
 			texture_statistics_string+="\n";
 		}

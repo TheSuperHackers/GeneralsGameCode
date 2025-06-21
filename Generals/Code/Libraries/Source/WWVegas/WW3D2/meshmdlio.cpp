@@ -344,7 +344,7 @@ WW3DErrorType MeshModelClass::Load_W3D(ChunkLoadClass & cload)
 					Set_Flag (PRELIT_LIGHTMAP_MULTI_TEXTURE, true);
 					break;
 				}
-				// Else fall thru...
+				FALLTHROUGH; // Else fall thru...
 
 			case WW3D::PRELIT_MODE_LIGHTMAP_MULTI_PASS:
 				if (context->Header.Attributes & W3D_MESH_FLAG_PRELIT_LIGHTMAP_MULTI_PASS) {
@@ -352,7 +352,7 @@ WW3DErrorType MeshModelClass::Load_W3D(ChunkLoadClass & cload)
 					Set_Flag (PRELIT_LIGHTMAP_MULTI_PASS, true);
 					break;
 				}
-				// Else fall thru...
+				FALLTHROUGH; // Else fall thru...
 
 			case WW3D::PRELIT_MODE_VERTEX:
 				if (context->Header.Attributes & W3D_MESH_FLAG_PRELIT_VERTEX) {
@@ -360,7 +360,7 @@ WW3DErrorType MeshModelClass::Load_W3D(ChunkLoadClass & cload)
 					Set_Flag (PRELIT_VERTEX, true);
 					break;
 				}
-				// Else fall thru...
+				FALLTHROUGH; // Else fall thru...
 
 			default:
 
