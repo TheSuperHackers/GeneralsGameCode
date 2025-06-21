@@ -2169,7 +2169,9 @@ Int PartitionData::calcMaxCoiForShape(GeometryType geom, Real majorRadius, Real 
 				// this actually allocates a few too many, but that's ok.
 				Int cells = ThePartitionManager->worldToCellDist(majorRadius*2) + 1;
 				result = cells * cells;
+#if !RETAIL_COMPATIBLE_CRC
 				break;
+#endif
 			}
 			case GEOMETRY_BOX:
 			{
