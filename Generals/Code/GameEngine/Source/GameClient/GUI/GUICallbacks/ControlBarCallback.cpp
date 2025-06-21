@@ -501,121 +501,114 @@ extern void toggleReplayControls( void );
 //-------------------------------------------------------------------------------------------------
 void ShowControlBar( Bool immediate )
 {
-	showReplayControls();
-	if(TheControlBar)
-		TheControlBar->showSpecialPowerShortcut();
-	if (TheWindowManager)
-	{
-		Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
-		GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
+	if (!TheWindowManager || !TheControlBar || !TheTacticalView)
+		return;
 
-		if (window)
-		{	
-			TheControlBar->switchControlBarStage(CONTROL_BAR_STAGE_DEFAULT);
-			TheTacticalView->setHeight((Int)(TheDisplay->getHeight() * 0.80f));
-			if (TheControlBar->m_animateWindowManager && !immediate)
-			{
-				TheControlBar->m_animateWindowManager->reset();
-				//TheControlBar->m_animateWindowManager->registerGameWindow(window, WIN_ANIMATION_SLIDE_BOTTOM_TIMED, TRUE, 1000, 0);
-				TheControlBar->m_animateWindowManager->registerGameWindow(window, WIN_ANIMATION_SLIDE_BOTTOM, TRUE, 500, 0);
-				TheControlBar->animateSpecialPowerShortcut(TRUE);
-			}
-			window->winHide(FALSE);
+	showReplayControls();
+
+	TheControlBar->showSpecialPowerShortcut();
+
+	Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
+	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
+
+	if (window)
+	{
+		TheControlBar->switchControlBarStage(CONTROL_BAR_STAGE_DEFAULT);
+		TheTacticalView->setHeight((Int)(TheDisplay->getHeight() * 0.80f));
+
+		if (TheControlBar->m_animateWindowManager && !immediate)
+		{
+			TheControlBar->m_animateWindowManager->reset();
+			//TheControlBar->m_animateWindowManager->registerGameWindow(window, WIN_ANIMATION_SLIDE_BOTTOM_TIMED, TRUE, 1000, 0);
+			TheControlBar->m_animateWindowManager->registerGameWindow(window, WIN_ANIMATION_SLIDE_BOTTOM, TRUE, 500, 0);
+			TheControlBar->animateSpecialPowerShortcut(TRUE);
 		}
 
-	}  
+		window->winHide(FALSE);
+	}
 
 	// We want to get everything recalced since this is a major state change.
-	if(TheControlBar)
-		TheControlBar->markUIDirty();
-
-}// void ShowControlBar(void)
+	TheControlBar->markUIDirty();
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Force the control bar to be hidden */
 //-------------------------------------------------------------------------------------------------
 void HideControlBar( Bool immediate )
 {
-	hideReplayControls();
-	if(TheControlBar)
-		TheControlBar->hideSpecialPowerShortcut();
-	if (TheWindowManager)
-	{
-		Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
-		GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
+	if (!TheWindowManager || !TheControlBar || !TheTacticalView)
+		return;
 
-		if (window)
-		{
+	hideReplayControls();
+
+	TheControlBar->hideSpecialPowerShortcut();
+
+	Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
+	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
+
+	if (window)
+	{
 #ifdef SLIDE_LETTERBOX
-				TheTacticalView->setHeight((Int)(TheDisplay->getHeight() * 0.80f)); 
+		TheTacticalView->setHeight((Int)(TheDisplay->getHeight() * 0.80f)); 
 #else
-				TheTacticalView->setHeight(TheDisplay->getHeight());
+		TheTacticalView->setHeight(TheDisplay->getHeight());
 #endif
-		}
 		if (immediate)
 		{
 			window->winHide(TRUE);
-			if(TheControlBar)
-				TheControlBar->hideSpecialPowerShortcut();
-	
 		}
-		else
-		{
-			TheControlBar->m_animateWindowManager->reverseAnimateWindow();
-			TheControlBar->animateSpecialPowerShortcut(FALSE);
-		}
+	}
 
-		//Always get rid of the purchase science screen!
-		if( TheControlBar )
-		{
-			TheControlBar->hidePurchaseScience();
-		}
-	}  
-}//void HideControlBar( void )
+	if (TheControlBar->m_animateWindowManager && !immediate)
+	{
+		TheControlBar->m_animateWindowManager->reverseAnimateWindow();
+		TheControlBar->animateSpecialPowerShortcut(FALSE);
+	}
+
+	//Always get rid of the purchase science screen!
+	TheControlBar->hidePurchaseScience();
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Toggle the control bar on or off */
 //-------------------------------------------------------------------------------------------------
 void ToggleControlBar( Bool immediate )
 {
+	if (!TheWindowManager || !TheControlBar || !TheTacticalView)
+		return;
+
 	toggleReplayControls();
 
-	if (TheWindowManager)
+	Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
+	GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
+
+	if (window)
 	{
-		Int id = (Int)TheNameKeyGenerator->nameToKey(AsciiString("ControlBar.wnd:ControlBarParent"));
-		GameWindow *window = TheWindowManager->winGetWindowFromId(NULL, id);
-
-		if (window)
+		if (window->winIsHidden())
 		{
-			if (window->winIsHidden())
-			{
-				if(TheControlBar)	
-					TheControlBar->showSpecialPowerShortcut();
+			TheControlBar->showSpecialPowerShortcut();
 
-				//now hidden, we're making it visible again so shrink viewport under the window
-				TheTacticalView->setHeight((Int)(TheDisplay->getHeight() * 0.80f)); 
-				window->winHide(!window->winIsHidden());
-				TheControlBar->switchControlBarStage(CONTROL_BAR_STAGE_DEFAULT);
-				if (TheControlBar->m_animateWindowManager && !immediate)
-				{
-					TheControlBar->m_animateWindowManager->reset();
-					//TheControlBar->m_animateWindowManager->registerGameWindow(window, WIN_ANIMATION_SLIDE_BOTTOM_TIMED, FALSE, 500, 0);
-					TheControlBar->m_animateWindowManager->registerGameWindow(window, WIN_ANIMATION_SLIDE_BOTTOM, TRUE, 500, 0);
-					TheControlBar->animateSpecialPowerShortcut(TRUE);
-				}
-			}
-			else
+			//now hidden, we're making it visible again so shrink viewport under the window
+			TheTacticalView->setHeight((Int)(TheDisplay->getHeight() * 0.80f));
+			window->winHide(FALSE);
+			TheControlBar->switchControlBarStage(CONTROL_BAR_STAGE_DEFAULT);
+
+			if (TheControlBar->m_animateWindowManager && !immediate)
 			{
-				if(TheControlBar)
-					TheControlBar->hideSpecialPowerShortcut();
-				TheTacticalView->setHeight(TheDisplay->getHeight());
-				window->winHide(!window->winIsHidden());
+				TheControlBar->m_animateWindowManager->reset();
+				//TheControlBar->m_animateWindowManager->registerGameWindow(window, WIN_ANIMATION_SLIDE_BOTTOM_TIMED, FALSE, 500, 0);
+				TheControlBar->m_animateWindowManager->registerGameWindow(window, WIN_ANIMATION_SLIDE_BOTTOM, TRUE, 500, 0);
+				TheControlBar->animateSpecialPowerShortcut(TRUE);
 			}
-			
 		}
-
+		else
+		{
+			TheControlBar->hideSpecialPowerShortcut();
+			TheTacticalView->setHeight(TheDisplay->getHeight());
+			window->winHide(TRUE);
+		}
 	}
-}// end void ToggleControlBar( void )
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Resize the control bar */
