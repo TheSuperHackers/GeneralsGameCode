@@ -30,6 +30,15 @@ public:
 
 	static bool isInitialized();
 
+	static bool isMultiInstance();
+
+	// Change multi instance on runtime. Must be called before initialize.
+	static void setMultiInstance(bool v);
+
+	// Skips using the primary instance. Must be called before initialize.
+	// Useful when the new process is not meant to collide with another normal Generals process.
+	static void skipPrimaryInstance();
+
 	// Returns the instance index of this game client. Starts at 0.
 	static UnsignedInt getInstanceIndex();
 
@@ -42,6 +51,7 @@ public:
 private:
 	static HANDLE s_mutexHandle;
 	static UnsignedInt s_instanceIndex;
+	static Bool s_isMultiInstance;
 };
 
 } // namespace rts

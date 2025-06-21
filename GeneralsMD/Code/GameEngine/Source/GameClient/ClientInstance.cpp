@@ -25,50 +25,59 @@ namespace rts
 HANDLE ClientInstance::s_mutexHandle = NULL;
 UnsignedInt ClientInstance::s_instanceIndex = 0;
 
+#if defined(RTS_MULTI_INSTANCE)
+Bool ClientInstance::s_isMultiInstance = true;
+#else
+Bool ClientInstance::s_isMultiInstance = false;
+#endif
+
 bool ClientInstance::initialize()
 {
 	if (isInitialized())
 	{
 		return true;
 	}
-
+	
 	// Create a mutex with a unique name to Generals in order to determine if our app is already running.
 	// WARNING: DO NOT use this number for any other application except Generals.
 	while (true)
 	{
-#if defined(RTS_MULTI_INSTANCE)
-		std::string guidStr = getFirstInstanceName();
-		if (s_instanceIndex > 0u)
+		if (isMultiInstance())
 		{
-			char idStr[33];
-			itoa(s_instanceIndex, idStr, 10);
-			guidStr.push_back('-');
-			guidStr.append(idStr);
-		}
-		s_mutexHandle = CreateMutex(NULL, FALSE, guidStr.c_str());
-		if (GetLastError() == ERROR_ALREADY_EXISTS)
-		{
-			if (s_mutexHandle != NULL)
+			std::string guidStr = getFirstInstanceName();
+			if (s_instanceIndex > 0u)
 			{
-				CloseHandle(s_mutexHandle);
-				s_mutexHandle = NULL;
+				char idStr[33];
+				itoa(s_instanceIndex, idStr, 10);
+				guidStr.push_back('-');
+				guidStr.append(idStr);
 			}
-			// Try again with a new instance.
-			++s_instanceIndex;
-			continue;
-		}
-#else
-		s_mutexHandle = CreateMutex(NULL, FALSE, getFirstInstanceName());
-		if (GetLastError() == ERROR_ALREADY_EXISTS)
-		{
-			if (s_mutexHandle != NULL)
+			s_mutexHandle = CreateMutex(NULL, FALSE, guidStr.c_str());
+			if (GetLastError() == ERROR_ALREADY_EXISTS)
 			{
-				CloseHandle(s_mutexHandle);
-				s_mutexHandle = NULL;
+				if (s_mutexHandle != NULL)
+				{
+					CloseHandle(s_mutexHandle);
+					s_mutexHandle = NULL;
+				}
+				// Try again with a new instance.
+				++s_instanceIndex;
+				continue;
 			}
-			return false;
 		}
-#endif
+		else
+		{
+			s_mutexHandle = CreateMutex(NULL, FALSE, getFirstInstanceName());
+			if (GetLastError() == ERROR_ALREADY_EXISTS)
+			{
+				if (s_mutexHandle != NULL)
+				{
+					CloseHandle(s_mutexHandle);
+					s_mutexHandle = NULL;
+				}
+				return false;
+			}
+		}
 		break;
 	}
 
@@ -78,6 +87,31 @@ bool ClientInstance::initialize()
 bool ClientInstance::isInitialized()
 {
 	return s_mutexHandle != NULL;
+}
+
+bool ClientInstance::isMultiInstance()
+{
+	return s_isMultiInstance;
+}
+
+void ClientInstance::setMultiInstance(bool v)
+{
+	if (isInitialized())
+	{
+		DEBUG_CRASH(("ClientInstance::setMultiInstance(%d) - cannot set multi instance after initialization", (int)v));
+		return;
+	}
+	s_isMultiInstance = v;
+}
+
+void ClientInstance::skipPrimaryInstance()
+{
+	if (isInitialized())
+	{
+		DEBUG_CRASH(("ClientInstance::skipPrimaryInstance() - cannot skip primary instance after initialization"));
+		return;
+	}
+	s_instanceIndex = 1;
 }
 
 UnsignedInt ClientInstance::getInstanceIndex()

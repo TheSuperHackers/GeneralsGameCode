@@ -29,23 +29,33 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
 #include "Common/GameEngine.h"
+#include "Common/ReplaySimulation.h"
 
 
 /**
  * This is the entry point for the game system.
  */
-void GameMain( int argc, char *argv[] )
+Int GameMain()
 {
+	int exitcode = 0;
 	// initialize the game engine using factory function
 	TheGameEngine = CreateGameEngine();
-	TheGameEngine->init(argc, argv);
+	TheGameEngine->init();
 
-	// run it
-	TheGameEngine->execute();
+	if (!TheGlobalData->m_simulateReplays.empty())
+	{
+		exitcode = ReplaySimulation::simulateReplays(TheGlobalData->m_simulateReplays, TheGlobalData->m_simulateReplayJobs);
+	}
+	else
+	{
+		// run it
+		TheGameEngine->execute();
+	}
 
 	// since execute() returned, we are exiting the game
 	delete TheGameEngine;
 	TheGameEngine = NULL;
 
+	return exitcode;
 }
 

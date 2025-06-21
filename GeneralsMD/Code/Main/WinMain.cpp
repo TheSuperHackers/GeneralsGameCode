@@ -762,6 +762,7 @@ static CriticalSection critSec1, critSec2, critSec3, critSec4, critSec5;
 Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
                       LPSTR lpCmdLine, Int nCmdShow )
 {
+	Int exitcode = 1;
 
 #ifdef RTS_PROFILE
   Profile::StartRange("init");
@@ -840,7 +841,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 		// register windows class and create application window
 		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
-			return 0;
+			return exitcode;
 		
 		// save our application instance for future use
 		ApplicationHInstance = hInstance;
@@ -881,14 +882,14 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			TheVersion = NULL;
 			shutdownMemoryManager();
 			DEBUG_SHUTDOWN();
-			return 0;
+			return exitcode;
 		}
 		DEBUG_LOG(("Create Generals Mutex okay.\n"));
 
 		DEBUG_LOG(("CRC message is %d\n", GameMessage::MSG_LOGIC_CRC));
 
 		// run the game main loop
-		GameMain(0, NULL);
+		exitcode = GameMain();
 
 		delete TheVersion;
 		TheVersion = NULL;
@@ -916,7 +917,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	TheDmaCriticalSection = NULL;
 	TheMemoryPoolCriticalSection = NULL;
 
-	return 0;
+	return exitcode;
 
 }  // end WinMain
 

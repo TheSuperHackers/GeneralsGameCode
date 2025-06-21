@@ -58,6 +58,7 @@
 #ifdef DEBUG_THREADSAFE
 #include "Common/CriticalSection.h"
 #endif
+#include "Common/CommandLine.h"
 #include "Common/Debug.h"
 #include "Common/CRCDebug.h"
 #include "Common/SystemInfo.h"
@@ -366,7 +367,8 @@ void DebugInit(int flags)
 	#ifdef DEBUG_LOGGING
 
 		// TheSuperHackers @info Debug initialization can happen very early.
-		// Therefore, initialize the client instance now.
+		// Therefore, parse initial commandline and initialize the client instance now.
+		CommandLine::parseCommandLineForStartup();
 		if (!rts::ClientInstance::initialize())
 			return;
 
