@@ -11,7 +11,6 @@ target_link_libraries(z_generals PRIVATE
     binkstub
     comctl32
     core_debug
-    core_profile
     d3d8
     d3dx8
     dbghelplib

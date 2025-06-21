@@ -49,7 +49,6 @@ target_link_libraries(z_guiedit PRIVATE
     benchmark
     comctl32
     core_debug
-    core_profile
     d3d8lib
     dbghelplib
     imm32

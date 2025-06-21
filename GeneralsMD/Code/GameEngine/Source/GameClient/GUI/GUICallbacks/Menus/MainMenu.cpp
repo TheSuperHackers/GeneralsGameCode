@@ -101,7 +101,7 @@ enum
 
 static Bool raiseMessageBoxes = TRUE;
 static Bool campaignSelected = FALSE;
-#if defined RTS_DEBUG || defined RTS_INTERNAL || defined RTS_PROFILE
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 static NameKeyType campaignID = NAMEKEY_INVALID;
 static GameWindow *buttonCampaign = NULL;
 #ifdef TEST_COMPRESSION
@@ -554,7 +554,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	
 	showSelectiveButtons(SHOW_NONE);
 	// Set up the version number
-#if defined RTS_DEBUG || defined RTS_INTERNAL || defined RTS_PROFILE
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	WinInstanceData instData;
 #ifdef TEST_COMPRESSION
 	instData.init();
@@ -1309,7 +1309,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 			
 			if(buttonPushed)
 				break;
-#if defined RTS_DEBUG || defined RTS_INTERNAL || defined RTS_PROFILE
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 			if( control == buttonCampaign )
 			{
 				buttonPushed = TRUE;
