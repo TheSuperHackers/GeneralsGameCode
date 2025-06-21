@@ -97,6 +97,10 @@ void PolygonTrigger::reallocate(void)
 {	
 	DEBUG_ASSERTCRASH(m_numPoints <= m_sizePoints, ("Invalid m_numPoints."));
 	if (m_numPoints == m_sizePoints) {
+		if (m_sizePoints > INT_MAX / 2) {
+			DEBUG_CRASH(("Too many points to allocate."));
+			return;
+		}
 		// Reallocate.
 		m_sizePoints += m_sizePoints;
 		ICoord3D *newPts = NEW ICoord3D[m_sizePoints];
