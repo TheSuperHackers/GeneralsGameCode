@@ -791,8 +791,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 
 					// save the game
 					AsciiString filename;
-					if( selectedGameInfo )
-						filename = selectedGameInfo->filename;
+					filename = selectedGameInfo->filename;
 					TheGameState->saveGame( filename, selectedGameInfo->saveGameInfo.description, fileType );
 
 /*
