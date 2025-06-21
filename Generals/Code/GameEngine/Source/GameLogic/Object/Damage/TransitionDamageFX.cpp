@@ -363,7 +363,7 @@ void TransitionDamageFX::onBodyDamageStateChange( const DamageInfo* damageInfo,
 			}  // end if
 					
 			// do any object creation list for our new state
-			if( modData->m_OCL[ newState ][ i ].ocl )
+			if( damageSource && modData->m_OCL[ newState ][ i ].ocl )
 			{
 
 				if( lastDamageInfo == NULL || 
