@@ -693,6 +693,9 @@ Int GameLODManager::getRecommendedTextureReduction(void)
 	if (!m_memPassed)	//if they have < 256 MB, force them to low res textures.
 		return m_staticGameLODInfo[STATIC_GAME_LOD_LOW].m_textureReduction;
 
+	if (m_idealDetailLevel < 0 || m_idealDetailLevel >= STATIC_GAME_LOD_COUNT)
+		return m_staticGameLODInfo[STATIC_GAME_LOD_LOW].m_textureReduction;
+
 	return m_staticGameLODInfo[m_idealDetailLevel].m_textureReduction;
 }
 
