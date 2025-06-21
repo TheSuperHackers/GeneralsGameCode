@@ -397,13 +397,13 @@ void Radar::newMap( TerrainLogic *terrain )
 /** Add an object to the radar list.  The object will be sorted in the list to be grouped
 	* using it's radar priority */
 //-------------------------------------------------------------------------------------------------
-void Radar::addObject( Object *obj )
+bool Radar::addObject( Object *obj )
 {
 
 	// get the radar priority for this object
 	RadarPriorityType newPriority = obj->getRadarPriority();
 	if( isPriorityVisible( newPriority ) == FALSE )
-		return;
+		return false;
 
 	// if this object is on the radar, remove it in favor of the new add
 	RadarObject **list;
@@ -547,6 +547,7 @@ void Radar::addObject( Object *obj )
 
 	}  // end else
 
+	return true;
 }  // end addObject
 
 //-------------------------------------------------------------------------------------------------
@@ -593,24 +594,24 @@ Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 //-------------------------------------------------------------------------------------------------
 /** Remove an object from the radar, the object may reside in any list */
 //-------------------------------------------------------------------------------------------------
-void Radar::removeObject( Object *obj )
+bool Radar::removeObject( Object *obj )
 {
 
 	// sanity
 	if( obj->friend_getRadarData() == NULL )
-		return;
+		return false;
 
 	if( deleteFromList( obj, &m_localObjectList ) == TRUE )
-		return;
+		return true;
 	else if( deleteFromList( obj, &m_objectList ) == TRUE )
-		return;
+		return true;
 	else
 	{
 
 		// sanity
 		DEBUG_ASSERTCRASH( 0, ("Radar: Tried to remove object '%s' which was not found\n",
 											 obj->getTemplate()->getName().str()) );
-
+		return false;
 	}  // end else
 
 }  // end removeObject

@@ -190,9 +190,8 @@ public:
  	Bool tryEvent( RadarEventType event, const Coord3D *pos );	///< try to make a "stealth" event
 
 	// adding and removing objects from the radar
-	void addObject( Object *obj );													///< add object to radar
-	void removeObject( Object *obj );												///< remove object from radar
-	void examineObject( Object *obj );											///< re-examine object and resort if needed
+	virtual bool addObject( Object *obj );									///< add object to radar
+	virtual bool removeObject( Object *obj );								///< remove object from radar
 
 	// radar options
 	void hide( Bool hide ) { m_radarHidden = hide; }				///< hide/unhide the radar
