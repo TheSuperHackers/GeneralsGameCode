@@ -871,6 +871,19 @@ const FieldParse InGameUI::s_fieldParseTable[] =
 	{ "ClearMinesRadiusCursor",			RadiusDecalTemplate::parseRadiusDecalTemplate, NULL, offsetof( InGameUI, m_radiusCursors[ RADIUSCURSOR_CLEARMINES] ) },
 	{ "AmbulanceRadiusCursor",			RadiusDecalTemplate::parseRadiusDecalTemplate, NULL, offsetof( InGameUI, m_radiusCursors[ RADIUSCURSOR_AMBULANCE] ) },
 
+	// TheSuperHackers @info ui enhancement configuration
+	{ "SystemTimeFont",         INI::parseAsciiString,  NULL, offsetof( InGameUI, m_systemTimeFont ) },
+	{ "SystemTimeBold",         INI::parseBool,         NULL, offsetof( InGameUI, m_systemTimeBold ) },
+	{ "SystemTimePosition",     INI::parseCoord2D,      NULL, offsetof( InGameUI, m_systemTimePosition ) },
+	{ "SystemTimeColor",        INI::parseColorInt,     NULL, offsetof( InGameUI, m_systemTimeColor ) },
+	{ "SystemTimeDropColor",    INI::parseColorInt,     NULL, offsetof( InGameUI, m_systemTimeDropColor ) },
+
+	{ "GameTimeFont",           INI::parseAsciiString,  NULL, offsetof( InGameUI, m_gameTimeFont ) },
+	{ "GameTimeBold",           INI::parseBool,         NULL, offsetof( InGameUI, m_gameTimeBold ) },
+	{ "GameTimePosition",       INI::parseCoord2D,      NULL, offsetof( InGameUI, m_gameTimePosition ) },
+	{ "GameTimeColor",          INI::parseColorInt,     NULL, offsetof( InGameUI, m_gameTimeColor ) },
+	{ "GameTimeDropColor",      INI::parseColorInt,     NULL, offsetof( InGameUI, m_gameTimeDropColor ) },
+
 	{ NULL,													NULL,										NULL,		0 }  // keep this last
 };
 
@@ -996,6 +1009,26 @@ InGameUI::InGameUI()
 	m_replayWindow = NULL;
 	m_messagesOn = TRUE;
 
+	// TheSuperHackers @info the default font, size and positions of the system and game times were chosen based on GenTools implementation
+	m_systemTimeString = NULL;
+	m_systemTimeFont = "Tahoma";
+	m_systemTimePointSize = TheGlobalData->m_systemTimeFontSize;
+	m_systemTimeBold = TRUE;
+	m_systemTimePosition.x = 3; // TheSuperHackers @info relative to the left of the screen
+	m_systemTimePosition.y = -1;
+	m_systemTimeColor = GameMakeColor( 255, 255, 255, 255 );
+	m_systemTimeDropColor = GameMakeColor( 0, 0, 0, 255 );
+
+	m_gameTimeString = NULL;
+	m_gameTimeFrameString = NULL;
+	m_gameTimeFont = "Tahoma";
+	m_gameTimePointSize = TheGlobalData->m_gameTimeFontSize;
+	m_gameTimeBold = TRUE;
+	m_gameTimePosition.x = 3; // TheSuperHackers @info relative to the right of the screen
+	m_gameTimePosition.y = -1;
+	m_gameTimeColor = GameMakeColor( 255, 255, 255, 255 );
+	m_gameTimeDropColor = GameMakeColor( 0, 0, 0, 255 );
+
 	m_superweaponPosition.x = 0.7f;
 	m_superweaponPosition.y = 0.7f;
 	m_superweaponFlashDuration = 1.0f;
@@ -1076,6 +1109,9 @@ InGameUI::~InGameUI()
 
 	// delete the message resources
 	freeMessageResources();
+
+	// free custom ui strings
+	freeCustomUiResources();
 
 	// delete the array for the drawbles
 	delete [] m_placeIcon;
@@ -1919,6 +1955,9 @@ void InGameUI::reset( void )
 	// free any message resources allocated
 	freeMessageResources();
 
+	// refresh custom ui strings - this will create the strings if required and update the fonts
+	refreshCustomUiResources();
+
 	Int i;
 	for (i=0; i<MAX_PLAYER_COUNT; ++i)
 	{
@@ -2003,6 +2042,16 @@ void InGameUI::freeMessageResources( void )
 	}  // end for i
 
 }  // end freeMessageResources
+
+void InGameUI::freeCustomUiResources( void )
+{
+	TheDisplayStringManager->freeDisplayString(m_systemTimeString);
+	m_systemTimeString = NULL;
+	TheDisplayStringManager->freeDisplayString(m_gameTimeString);
+	m_gameTimeString = NULL;
+	TheDisplayStringManager->freeDisplayString(m_gameTimeFrameString);
+	m_gameTimeFrameString = NULL;
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Same as the unicode message method, but this takes an ascii string which is assumed
@@ -3452,6 +3501,22 @@ void InGameUI::disregardDrawable( Drawable *draw )
 	// make sure drawable is no longer selected
 	deselectDrawable( draw );		
 
+}
+
+//-------------------------------------------------------------------------------------------------
+/** This is called after the WindowManager has drawn the menus. */
+//-------------------------------------------------------------------------------------------------
+void InGameUI::postWindowDraw( void )
+{
+	if (m_systemTimePointSize > 0)
+	{
+		drawSystemTime();
+	}
+
+	if ( (m_gameTimePointSize > 0) && !TheGameLogic->isInShellGame() && TheGameLogic->isInGame() )
+	{
+		drawGameTime();
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5659,6 +5724,44 @@ void InGameUI::recreateControlBar( void )
 
 }
 
+void InGameUI::refreshCustomUiResources(void)
+{
+	refreshSystemTimeResources();
+	refreshGameTimeResources();
+}
+
+void InGameUI::refreshSystemTimeResources(void)
+{
+	if (!m_systemTimeString)
+	{
+		m_systemTimeString = TheDisplayStringManager->newDisplayString();
+	}
+
+	m_systemTimePointSize = TheGlobalData->m_systemTimeFontSize;
+	Int adjustedSystemTimeFontSize = TheGlobalLanguageData->adjustFontSize(m_systemTimePointSize);
+	GameFont* systemTimeFont = TheWindowManager->winFindFont(m_systemTimeFont, adjustedSystemTimeFontSize, m_systemTimeBold);
+	m_systemTimeString->setFont(systemTimeFont);
+}
+
+void InGameUI::refreshGameTimeResources(void)
+{
+	if (!m_gameTimeString)
+	{
+		m_gameTimeString = TheDisplayStringManager->newDisplayString();
+	}
+
+	if (!m_gameTimeFrameString)
+	{
+		m_gameTimeFrameString = TheDisplayStringManager->newDisplayString();
+	}
+
+	m_gameTimePointSize = TheGlobalData->m_gameTimeFontSize;
+	Int adjustedGameTimeFontSize = TheGlobalLanguageData->adjustFontSize(m_gameTimePointSize);
+	GameFont* gameTimeFont = TheWindowManager->winFindFont(m_gameTimeFont, adjustedGameTimeFontSize, m_gameTimeBold);
+	m_gameTimeString->setFont(gameTimeFont);
+	m_gameTimeFrameString->setFont(gameTimeFont);
+}
+
 void InGameUI::disableTooltipsUntil(UnsignedInt frameNum)
 {
 	if (frameNum > m_tooltipsDisabledUntil) 
@@ -5713,4 +5816,40 @@ WindowMsgHandledType IdleWorkerSystem( GameWindow *window, UnsignedInt msg,
 
 }
 
+void InGameUI::drawSystemTime()
+{
+	// current system time
+	SYSTEMTIME systemTime;
+	GetLocalTime( &systemTime );
 
+    UnicodeString TimeString;
+    TimeString.format(L"%2.2d:%2.2d:%2.2d", systemTime.wHour, systemTime.wMinute, systemTime.wSecond);
+    m_systemTimeString->setText(TimeString);
+
+	m_systemTimeString->draw(m_systemTimePosition.x, m_systemTimePosition.y, m_systemTimeColor, m_systemTimeDropColor);
+}
+
+void InGameUI::drawGameTime()
+{
+	Int currentFrame = TheGameLogic->getFrame();
+	Int gameSeconds = (Int) (SECONDS_PER_LOGICFRAME_REAL * currentFrame );
+	Int hours = gameSeconds / 60 / 60;
+	Int minutes = (gameSeconds / 60) % 60;
+	Int seconds = gameSeconds % 60;
+	Int frame = currentFrame % 30;
+
+    UnicodeString gameTimeString;
+    gameTimeString.format(L"%2.2d:%2.2d:%2.2d", hours, minutes, seconds);
+    m_gameTimeString->setText(gameTimeString);
+
+	UnicodeString gameTimeFrameString;
+    gameTimeFrameString.format(L".%2.2d", frame);
+    m_gameTimeFrameString->setText(gameTimeFrameString);
+
+	// TheSuperHackers @info this implicitly offsets the game timer from the right instead of left of the screen
+	int horizontalTimerOffset = TheDisplay->getWidth() - (Int)m_gameTimePosition.x - m_gameTimeString->getWidth() - m_gameTimeFrameString->getWidth();
+	int horizontalFrameOffset = TheDisplay->getWidth() - (Int)m_gameTimePosition.x - m_gameTimeFrameString->getWidth();
+
+	m_gameTimeString->draw(horizontalTimerOffset, m_gameTimePosition.y, m_gameTimeColor, m_gameTimeDropColor);
+	m_gameTimeFrameString->draw(horizontalFrameOffset, m_gameTimePosition.y, GameMakeColor(180,180,180,255), m_gameTimeDropColor);
+}
