@@ -452,7 +452,7 @@ IDirect3DTexture8* TextureLoader::Load_Thumbnail(const StringClass& filename, co
 #endif
 
 	unsigned level=0;
-	D3DLOCKED_RECT locked_rects[12];
+	D3DLOCKED_RECT locked_rects[12]={0};
 	WWASSERT(sysmem_texture->GetLevelCount()<=12);
 
 	// Lock all surfaces
