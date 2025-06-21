@@ -195,7 +195,6 @@ target_link_libraries(g_gameenginedevice PRIVATE
 )
 
 target_link_libraries(g_gameenginedevice PUBLIC
-    benchmark
     binkstub
     d3d8lib
     g_gameengine
