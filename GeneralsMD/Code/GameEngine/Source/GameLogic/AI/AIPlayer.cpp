@@ -2301,7 +2301,7 @@ void AIPlayer::repairStructure(ObjectID structure)
 			return;
 		}
 	}
-	if (m_structuresInQueue==MAX_STRUCTURES_TO_REPAIR) {
+	if (m_structuresInQueue>=MAX_STRUCTURES_TO_REPAIR) {
 		DEBUG_LOG(("Structure repair queue is full, ignoring repair request. JBA\n"));
 		return;
 	}
