@@ -1132,7 +1132,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	//****************************//
 
 	// Get the m_loadScreen for this kind of game
-	if(!m_loadScreen)
+	if(!m_loadScreen && !(TheRecorder && TheRecorder->getMode() == RECORDERMODETYPE_SIMULATION_PLAYBACK))
 	{
 		m_loadScreen = getLoadScreen( saveGame );
 		if(m_loadScreen && !TheGlobalData->m_headless)
@@ -1916,7 +1916,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	}
 
 	// if we're in a load game, don't fade yet
-	if(saveGame == FALSE && TheTransitionHandler != NULL)
+	if(saveGame == FALSE && TheTransitionHandler != NULL && m_loadScreen)
 	{
 		TheTransitionHandler->setGroup("FadeWholeScreen");
 		while(!TheTransitionHandler->isFinished())

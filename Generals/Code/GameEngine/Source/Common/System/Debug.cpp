@@ -54,6 +54,7 @@
 // deterministic or the same on all peers in multiplayer games.
 //#define INCLUDE_DEBUG_LOG_IN_CRC_LOG
 
+#include "Common/CommandLine.h"
 #define DEBUG_THREADSAFE
 #ifdef DEBUG_THREADSAFE
 #include "Common/CriticalSection.h"
