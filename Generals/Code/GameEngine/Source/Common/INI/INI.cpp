@@ -725,6 +725,7 @@ AsciiString INI::getNextQuotedAsciiString()
 {
 	AsciiString result;
 	char buff[INI_MAX_CHARS_PER_LINE];
+	buff[0] = '\0';
 
 	const char *token = getNextTokenOrNull();	// if null, just leave an empty string
 	if (token != NULL)
