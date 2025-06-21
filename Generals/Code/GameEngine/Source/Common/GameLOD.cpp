@@ -577,9 +577,10 @@ void GameLODManager::applyStaticLODLevel(StaticGameLODLevel level)
 		TheWritableGlobalData->m_enableDynamicLOD = lodInfo->m_enableDynamicLOD;
 		TheWritableGlobalData->m_useFpsLimit = lodInfo->m_useFpsLimit;
 		TheWritableGlobalData->m_useTrees = requestedTrees;
-	}
-	if (!m_memPassed || isReallyLowMHz()) {
-		TheWritableGlobalData->m_shellMapOn = false;
+
+		if (!m_memPassed || isReallyLowMHz()) {
+			TheWritableGlobalData->m_shellMapOn = false;
+		}
 	}
 	if (TheTerrainVisual)
 		TheTerrainVisual->setTerrainTracksDetail();
