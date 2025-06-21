@@ -255,13 +255,16 @@ BenchProfile *GameLODManager::newBenchProfile(void)
 
 LODPresetInfo *GameLODManager::newLODPreset(StaticGameLODLevel index)
 {
-	if (m_numLevelPresets[index] < MAX_LOD_PRESETS_PER_LEVEL)
-	{	
-		m_numLevelPresets[index]++;
-		return &m_lodPresets[index][m_numLevelPresets[index]-1];
+	if (index >= 0 && index < STATIC_GAME_LOD_COUNT)
+	{
+		if (m_numLevelPresets[index] < MAX_LOD_PRESETS_PER_LEVEL)
+		{
+			m_numLevelPresets[index]++;
+			return &m_lodPresets[index][m_numLevelPresets[index]-1];
+		}
+		DEBUG_CRASH(( "GameLODManager::newLODPreset - Too many presets defined for '%s'\n", TheGameLODManager->getStaticGameLODLevelName(index)));
 	}
 
-	DEBUG_CRASH(( "GameLODManager::newLODPreset - Too many presets defined for '%s'\n", TheGameLODManager->getStaticGameLODLevelName(index)));
 	return NULL;
 }
 
