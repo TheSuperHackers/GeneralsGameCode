@@ -67,8 +67,8 @@ typedef int32_t replay_time_t;
 static time_t startTime;
 static const UnsignedInt startTimeOffset = 6;
 static const UnsignedInt endTimeOffset = startTimeOffset + sizeof(replay_time_t);
-static const UnsignedInt framesOffset = endTimeOffset + sizeof(replay_time_t);
-static const UnsignedInt desyncOffset = framesOffset + sizeof(UnsignedInt);
+static const UnsignedInt frameCountOffset = endTimeOffset + sizeof(replay_time_t);
+static const UnsignedInt desyncOffset = frameCountOffset + sizeof(UnsignedInt);
 static const UnsignedInt quitEarlyOffset = desyncOffset + sizeof(Bool);
 static const UnsignedInt disconOffset = quitEarlyOffset + sizeof(Bool);
 
@@ -232,7 +232,7 @@ void RecorderClass::logGameEnd( void )
 
 	time_t t;
 	time(&t);
-	UnsignedInt duration = TheGameLogic->getFrame();
+	UnsignedInt frameCount = TheGameLogic->getFrame();
 	UnsignedInt fileSize = ftell(m_file);
 	// move to appropriate offset
 	if (!fseek(m_file, endTimeOffset, SEEK_SET))
@@ -242,10 +242,10 @@ void RecorderClass::logGameEnd( void )
 		fwrite(&tmp, sizeof(replay_time_t), 1, m_file);
 	}
 	// move to appropriate offset
-	if (!fseek(m_file, framesOffset, SEEK_SET))
+	if (!fseek(m_file, frameCountOffset, SEEK_SET))
 	{
-		// save off duration
-		fwrite(&duration, sizeof(UnsignedInt), 1, m_file);
+		// save off frameCount
+		fwrite(&frameCount, sizeof(UnsignedInt), 1, m_file);
 	}
 	// move back to end of stream
 #ifdef DEBUG_CRASHING
@@ -272,7 +272,7 @@ void RecorderClass::logGameEnd( void )
 			if (logFP)
 			{
 				struct tm *t2 = localtime(&t);
-				duration = t - startTime;
+				time_t duration = t - startTime;
 				Int minutes = duration/60;
 				Int seconds = duration%60;
 				fprintf(logFP, "Game end at   %s(%d:%2.2d elapsed time)\n", asctime(t2), minutes, seconds);
@@ -408,6 +408,7 @@ void RecorderClass::init() {
 	m_gameInfo.setSeed(GetGameLogicRandomSeed());
 	m_wasDesync = FALSE;
 	m_doingAnalysis = FALSE;
+	m_playbackFrameCount = 0;
 }
 
 /**
@@ -430,7 +431,7 @@ void RecorderClass::reset() {
 void RecorderClass::update() {
 	if (m_mode == RECORDERMODETYPE_RECORD || m_mode == RECORDERMODETYPE_NONE) {
 		updateRecord();
-	} else if (m_mode == RECORDERMODETYPE_PLAYBACK) {
+	} else if (isPlaybackMode()) {
 		updatePlayback();
 	}
 }
@@ -476,11 +477,11 @@ void RecorderClass::stopPlayback() {
 		m_file = NULL;
 	}
 	m_fileName.clear();
-	// Don't clear the game data if the replay is over - let things continue
-//#ifdef DEBUG_CRC
+
 	if (!m_doingAnalysis)
-		TheMessageStream->appendMessage(GameMessage::MSG_CLEAR_GAME_DATA);
-//#endif
+	{
+		TheCommandList->appendMessage(newInstance(GameMessage)(GameMessage::MSG_CLEAR_GAME_DATA));
+	}
 }
 
 /**
@@ -852,7 +853,7 @@ Bool RecorderClass::readReplayHeader(ReplayHeader& header)
 	fread(&tmp, sizeof(replay_time_t), 1, m_file);
 	header.endTime = tmp;
 
-	fread(&header.frameDuration, sizeof(UnsignedInt), 1, m_file);
+	fread(&header.frameCount, sizeof(UnsignedInt), 1, m_file);
 
 	fread(&header.desyncGame, sizeof(Bool), 1, m_file);
 	fread(&header.quitEarly, sizeof(Bool), 1, m_file);
@@ -915,6 +916,14 @@ Bool RecorderClass::readReplayHeader(ReplayHeader& header)
 	return TRUE;
 }
 
+Bool RecorderClass::simulateReplay(AsciiString filename)
+{
+	Bool success = playbackFile(filename);
+	if (success)
+		m_mode = RECORDERMODETYPE_SIMULATION_PLAYBACK;
+	return success;
+}
+
 #if defined RTS_DEBUG || defined RTS_INTERNAL
 Bool RecorderClass::analyzeReplay( AsciiString filename )
 {
@@ -922,15 +931,18 @@ Bool RecorderClass::analyzeReplay( AsciiString filename )
 	return playbackFile(filename);
 }
 
-Bool RecorderClass::isAnalysisInProgress( void )
-{
-	return m_mode == RECORDERMODETYPE_PLAYBACK && m_nextFrame != -1;
-}
+
+
 #endif
+
+Bool RecorderClass::isPlaybackInProgress( void ) const
+{
+	return isPlaybackMode() && m_nextFrame != -1;
+}
 
 AsciiString RecorderClass::getCurrentReplayFilename( void )
 {
-	if (m_mode == RECORDERMODETYPE_PLAYBACK)
+	if (isPlaybackMode())
 	{
 		return m_currentReplayFilename;
 	}
@@ -964,7 +976,7 @@ public:
 	UnsignedInt getLocalPlayer(void) { return m_localPlayer; }
 
 	void setSawCRCMismatch(void) { m_sawCRCMismatch = TRUE; }
-	Bool sawCRCMismatch(void) { return m_sawCRCMismatch; }
+	Bool sawCRCMismatch(void) const { return m_sawCRCMismatch; }
 
 protected:
 
@@ -1012,6 +1024,11 @@ UnsignedInt CRCInfo::readCRC(void)
 	return val;
 }
 
+Bool RecorderClass::sawCRCMismatch() const
+{
+	return m_crcInfo->sawCRCMismatch();
+}
+
 void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool fromPlayback)
 {
 	if (fromPlayback)
@@ -1057,6 +1074,9 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 
 			DEBUG_LOG(("Replay has gone out of sync!\nInGame:%8.8X Replay:%8.8X\nFrame:%d\n",
 				playbackCRC, newCRC, mismatchFrame));
+
+			// Print Mismatch in case we are simulating replays from console.
+			printf("CRC Mismatch in Frame %d\n", mismatchFrame);
 
 			// TheSuperHackers @tweak Pause the game on mismatch.
 			Bool pause = TRUE;
@@ -1212,17 +1232,23 @@ Bool RecorderClass::playbackFile(AsciiString filename)
 	// send a message to the logic for a new game
 	if (!m_doingAnalysis)
 	{
-		GameMessage *msg = TheMessageStream->appendMessage( GameMessage::MSG_NEW_GAME );
+		// TheSuperHackers @info helmutbuhler 13/04/2025
+		// We send the New Game message here directly to the command list and bypass the TheMessageStream.
+		// That's ok because Multiplayer is disabled during replay playback and is actually required
+		// during replay simulation because we don't update TheMessageStream during simulation.
+		GameMessage *msg = newInstance(GameMessage)(GameMessage::MSG_NEW_GAME);
 		msg->appendIntegerArgument(GAME_REPLAY);
 		msg->appendIntegerArgument(difficulty);
 		msg->appendIntegerArgument(rankPoints);
 		if( maxFPS != 0 )
 			msg->appendIntegerArgument(maxFPS);
+		TheCommandList->appendMessage( msg );
 		//InitGameLogicRandom( m_gameInfo.getSeed());
 		InitRandom( m_gameInfo.getSeed() );
 	}
 
 	m_currentReplayFilename = filename;
+	m_playbackFrameCount = header.frameCount;
 	return TRUE;
 }
 
@@ -1660,7 +1686,7 @@ void RecorderClass::initControls()
 Bool RecorderClass::isMultiplayer( void )
 {
 
-	if (m_mode == RECORDERMODETYPE_PLAYBACK)
+	if (isPlaybackMode())
 	{
 		GameSlot *slot;
 		for (int i=0; i<MAX_SLOTS; ++i)
