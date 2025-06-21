@@ -258,6 +258,7 @@ AggregateDefClass::Find_Subobject
 				RenderObjClass *ptemp_obj = parent_model->Get_Sub_Object_On_Bone (subobj_index, bone_index);
 				if (ptemp_obj == NULL)
 					continue;
+
 				if (::lstrcmpi (ptemp_obj->Get_Name (), mesh_path[index]) == 0) {
 					sub_obj = ptemp_obj;
 				} else {
