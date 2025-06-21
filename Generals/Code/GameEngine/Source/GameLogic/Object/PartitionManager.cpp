@@ -2039,7 +2039,6 @@ void PartitionData::updateCellsTouched()
 
 
 	Object *obj = getObject();
-	DEBUG_ASSERTCRASH(obj != NULL || m_ghostObject != NULL, ("must be attached to an Object here 1"));
 
 	if (obj)
 	{	
@@ -2059,6 +2058,11 @@ void PartitionData::updateCellsTouched()
 		angle = m_ghostObject->getParentAngle();
 		majorRadius = m_ghostObject->getGeometryMajorRadius();
 		minorRadius = m_ghostObject->getGeometryMinorRadius();
+	}
+	else
+	{
+		DEBUG_CRASH(("must be attached to an Object here"));
+		return;
 	}
 
 	removeAllTouchedCells();
