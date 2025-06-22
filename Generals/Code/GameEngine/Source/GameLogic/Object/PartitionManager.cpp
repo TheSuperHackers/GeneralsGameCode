@@ -2039,7 +2039,6 @@ void PartitionData::updateCellsTouched()
 
 
 	Object *obj = getObject();
-	DEBUG_ASSERTCRASH(obj != NULL || m_ghostObject != NULL, ("must be attached to an Object here 1"));
 
 	if (obj)
 	{	
@@ -2059,6 +2058,11 @@ void PartitionData::updateCellsTouched()
 		angle = m_ghostObject->getParentAngle();
 		majorRadius = m_ghostObject->getGeometryMajorRadius();
 		minorRadius = m_ghostObject->getGeometryMinorRadius();
+	}
+	else
+	{
+		DEBUG_CRASH(("must be attached to an Object here"));
+		return;
 	}
 
 	removeAllTouchedCells();
@@ -2162,14 +2166,21 @@ Int PartitionData::calcMaxCoiForShape(GeometryType geom, Real majorRadius, Real 
 				// this actually allocates a few too many, but that's ok.
 				Int cells = ThePartitionManager->worldToCellDist(majorRadius*2) + 1;
 				result = cells * cells;
+#if !RETAIL_COMPATIBLE_CRC
+				break;
+#endif
 			}
 			case GEOMETRY_BOX:
 			{
 				Real diagonal = (Real)(sqrtf(majorRadius*majorRadius + minorRadius*minorRadius));
 				Int cells = ThePartitionManager->worldToCellDist(diagonal*2) + 1;
 				result = cells * cells;
+				break;
 			}
+			default:
+				return 4;
 		};
+		static_assert(GEOMETRY_NUM_TYPES == 3, "GEOMETRY_NUM_TYPES has changed");
 	}
 	if (result < 4)
 		result = 4;

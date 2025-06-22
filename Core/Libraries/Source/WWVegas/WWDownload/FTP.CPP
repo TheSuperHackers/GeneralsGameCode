@@ -659,7 +659,7 @@ HRESULT  Cftp::LogoffFromServer( void )
 HRESULT  Cftp::FindFile( LPCSTR szRemoteFileName, int * piSize )
 {
 	char command[ 256 ];
-	static char listline[ 256 ];
+	static char listline[ 256 ] = {0};
 
 	int i, iReply;
 	char ext[ 10 ];

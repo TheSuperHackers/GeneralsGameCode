@@ -261,9 +261,9 @@ void UpgradeMuxData::getUpgradeActivationMasks(UpgradeMaskType& activation, Upgr
 					it++)
 		{
 			const UpgradeTemplate* theTemplate = TheUpgradeCenter->findUpgrade( *it );
-			if( !theTemplate && !it->isEmpty() && !it->isNone())
+			if( !theTemplate )
 			{
-				DEBUG_CRASH(("An upgrade module references %s, which is not an Upgrade", it->str()));
+				DEBUG_CRASH(("An upgrade module references '%s', which is not an Upgrade", it->str()));
 				throw INI_INVALID_DATA;
 			}
 
@@ -275,11 +275,12 @@ void UpgradeMuxData::getUpgradeActivationMasks(UpgradeMaskType& activation, Upgr
 					it++)
 		{
 			const UpgradeTemplate* theTemplate = TheUpgradeCenter->findUpgrade( *it );
-			if( !theTemplate && !it->isEmpty() && !it->isNone())
+			if( !theTemplate )
 			{
-				DEBUG_CRASH(("An upgrade module references %s, which is not an Upgrade", it->str()));
+				DEBUG_CRASH(("An upgrade module references '%s', which is not an Upgrade", it->str()));
 				throw INI_INVALID_DATA;
 			}
+
 			m_conflictingMask.set( theTemplate->getUpgradeMask() );
 		}
 

@@ -182,7 +182,7 @@ Dict::DictPair *Dict::ensureUnique(int numPairsNeeded, Bool preserveData, DictPa
 		}
 	}
 
-	Int delta;
+	Int delta = 0;
 	if (pairToTranslate && m_data)
 		delta = pairToTranslate - m_data->peek();
 

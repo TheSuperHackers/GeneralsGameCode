@@ -255,13 +255,17 @@ BenchProfile *GameLODManager::newBenchProfile(void)
 
 LODPresetInfo *GameLODManager::newLODPreset(StaticGameLODLevel index)
 {
-	if (m_numLevelPresets[index] < MAX_LOD_PRESETS_PER_LEVEL)
-	{	
-		m_numLevelPresets[index]++;
-		return &m_lodPresets[index][m_numLevelPresets[index]-1];
+	if (index >= 0 && index < STATIC_GAME_LOD_COUNT)
+	{
+		if (m_numLevelPresets[index] < MAX_LOD_PRESETS_PER_LEVEL)
+		{
+			m_numLevelPresets[index]++;
+			return &m_lodPresets[index][m_numLevelPresets[index]-1];
+		}
+
+		DEBUG_CRASH(( "GameLODManager::newLODPreset - Too many presets defined for '%s'\n", TheGameLODManager->getStaticGameLODLevelName(index)));
 	}
 
-	DEBUG_CRASH(( "GameLODManager::newLODPreset - Too many presets defined for '%s'\n", TheGameLODManager->getStaticGameLODLevelName(index)));
 	return NULL;
 }
 
@@ -582,9 +586,10 @@ void GameLODManager::applyStaticLODLevel(StaticGameLODLevel level)
 		TheWritableGlobalData->m_enableDynamicLOD = lodInfo->m_enableDynamicLOD;
 		TheWritableGlobalData->m_useFpsLimit = lodInfo->m_useFpsLimit;
 		TheWritableGlobalData->m_useTrees = requestedTrees;
-	}
-	if (!m_memPassed || isReallyLowMHz()) {
-		TheWritableGlobalData->m_shellMapOn = false;
+
+		if (!m_memPassed || isReallyLowMHz()) {
+			TheWritableGlobalData->m_shellMapOn = false;
+		}
 	}
 	if (TheTerrainVisual)
 		TheTerrainVisual->setTerrainTracksDetail();
@@ -691,6 +696,9 @@ Int GameLODManager::getRecommendedTextureReduction(void)
 		findStaticLODLevel();	//it was never tested, so test now.
 
 	if (!m_memPassed)	//if they have < 256 MB, force them to low res textures.
+		return m_staticGameLODInfo[STATIC_GAME_LOD_LOW].m_textureReduction;
+
+	if (m_idealDetailLevel < 0 || m_idealDetailLevel >= STATIC_GAME_LOD_COUNT)
 		return m_staticGameLODInfo[STATIC_GAME_LOD_LOW].m_textureReduction;
 
 	return m_staticGameLODInfo[m_idealDetailLevel].m_textureReduction;

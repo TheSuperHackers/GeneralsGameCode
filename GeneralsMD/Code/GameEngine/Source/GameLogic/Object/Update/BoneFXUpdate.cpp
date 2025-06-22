@@ -511,9 +511,6 @@ void BoneFXUpdate::resolveBoneLocations() {
 	Drawable *drawable = building->getDrawable();
 	if (drawable == NULL) {
 		DEBUG_ASSERTCRASH(drawable != NULL, ("There is no drawable?"));
-	}
-
-	if (d == NULL) {
 		return;
 	}
 

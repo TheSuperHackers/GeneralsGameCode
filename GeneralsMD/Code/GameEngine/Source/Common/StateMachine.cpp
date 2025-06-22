@@ -865,19 +865,24 @@ void StateMachine::xfer( Xfer *xfer )
 		}
 		for( i = m_stateMap.begin(); i != m_stateMap.end(); ++i ) {
 			State *state = (*i).second;
-			StateID id = state->getID();
-			xfer->xferUnsignedInt(&id);
-			if (id!=state->getID()) {
-				DEBUG_CRASH(("State ID mismatch - %d expected, %d read", state->getID(), id));
-				throw SC_INVALID_DATA;
-			}
-			
-			if( state == NULL )
+			if( state != NULL )
 			{
-				DEBUG_ASSERTCRASH(state != NULL, ("state was NULL on xfer, trying to heal..."));
+				StateID id = state->getID();
+				xfer->xferUnsignedInt(&id);
+				if (id!=state->getID()) {
+					DEBUG_CRASH(("State ID mismatch - %d expected, %d read", state->getID(), id));
+					throw SC_INVALID_DATA;
+				}
+			}
+			else
+			{
+				DEBUG_CRASH(("state was NULL on xfer, trying to heal..."));
 				// Hmm... too late to find out why we are getting NULL in our state, but if we let it go, we will Throw in xferSnapshot.
 				state = internalGetState(m_defaultStateID);
+				StateID id = state->getID();
+				xfer->xferUnsignedInt(&id);
 			}
+			
 			xfer->xferSnapshot(state);
 		}
 
