@@ -727,7 +727,7 @@ void W3DDisplay::init( void )
 		WW3D::Enable_Static_Sort_Lists(true);
 		WW3D::Set_Thumbnail_Enabled(false);
 		WW3D::Set_Screen_UV_Bias( TRUE );  ///< this makes text look good :)
-		WW3D::Set_Texture_Bitdepth( DEFAULT_DISPLAY_BIT_DEPTH );
+		WW3D::Set_Texture_Bitdepth(32);
 			
 		setWindowed( TheGlobalData->m_windowed );
 
