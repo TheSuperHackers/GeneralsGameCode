@@ -443,6 +443,35 @@ Int parseReplay(char *args[], int num)
 	return 1;
 }
 
+Int parseSimReplayList(char *args[], int num)
+{
+	if (num > 1)
+	{
+		AsciiString filename = args[1];
+		ReadReplayListFromCsv(filename, &TheWritableGlobalData->m_simulateReplays);
+		TheWritableGlobalData->m_playIntro = FALSE;
+		TheWritableGlobalData->m_afterIntro = TRUE;
+		TheWritableGlobalData->m_playSizzle = FALSE;
+		TheWritableGlobalData->m_shellMapOn = FALSE;
+
+		// Make replay playback possible while other clients (possible retail) are running
+		rts::ClientInstance::setMultiInstance(TRUE);
+		rts::ClientInstance::skipPrimaryInstance();
+		return 2;
+	}
+	return 1;
+}
+
+Int parseWriteReplayList(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_writeReplayList = args[1];
+		TheWritableGlobalData->m_headless = TRUE;
+	}
+	return 1;
+}
+
 Int parseJobs(char *args[], int num)
 {
 	if (num > 1)
