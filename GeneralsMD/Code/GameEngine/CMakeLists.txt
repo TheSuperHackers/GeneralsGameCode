@@ -1156,6 +1156,7 @@ target_include_directories(z_gameengine PUBLIC
 
 target_include_directories(z_gameengine PRIVATE
     Include/Precompiled
+    ${CMAKE_BINARY_DIR}/GeneralsMD/Code/Main
 )
 
 target_link_libraries(z_gameengine PRIVATE

@@ -24,13 +24,33 @@ target_link_libraries(g_generals PRIVATE
     winmm
 )
 
+if(EXISTS "${CMAKE_SOURCE_DIR}/next_tag.txt")
+    file(READ "${CMAKE_SOURCE_DIR}/next_tag.txt" GAME_VERSION)
+    string(STRIP "${GAME_VERSION}" GAME_VERSION)
+    string(REGEX MATCH "^([0-9]+)\\.([0-9]+)\\.([0-9]+)" _ "${GAME_VERSION}")
+    set(VERSION_MAJOR "${CMAKE_MATCH_1}")
+    set(VERSION_MINOR "${CMAKE_MATCH_2}")
+    set(VERSION_BUILDNUM "${CMAKE_MATCH_3}")
+else()
+    set(GAME_VERSION "")
+    if (IS_VS6_BUILD)
+        set(VERSION_MAJOR "1")
+        set(VERSION_MINOR "7")
+        set(VERSION_BUILDNUM "601")
+    else()
+        set(VERSION_MAJOR "1")
+        set(VERSION_MINOR "8")
+        set(VERSION_BUILDNUM "601")
+    endif()
+endif()
+
 # TODO Originally referred to build host and user, replace with git info perhaps?
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/GeneratedVersion.h
 "#pragma once
 
-#define VERSION_LOCALBUILDNUM 0
-#define VERSION_BUILDUSER \"Someone\"
-#define VERSION_BUILDLOC \"Someplace\"
+#define VERSION_BUILDUSER \"TheSuperHackers\"
+#define VERSION_BUILDLOC \"GitHub\"
+#define SUPERHACKERS_VERSION_WIDE L\"${GAME_VERSION}\"
 "
 )
 
@@ -39,18 +59,20 @@ if (IS_VS6_BUILD)
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h
 "#pragma once
 
-#define VERSION_MAJOR 1
-#define VERSION_MINOR 7
-#define VERSION_BUILDNUM 601
+#define VERSION_MAJOR ${VERSION_MAJOR}
+#define VERSION_MINOR ${VERSION_MINOR}
+#define VERSION_BUILDNUM ${VERSION_BUILDNUM}
+#define VERSION_LOCALBUILDNUM 9001 // it's over 9000!
 "
 )
 else()
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/BuildVersion.h
 "#pragma once
 
-#define VERSION_MAJOR 1
-#define VERSION_MINOR 8
-#define VERSION_BUILDNUM 601
+#define VERSION_MAJOR ${VERSION_MAJOR}
+#define VERSION_MINOR ${VERSION_MINOR}
+#define VERSION_BUILDNUM ${VERSION_BUILDNUM}
+#define VERSION_LOCALBUILDNUM 602
 "
 )
 endif()

@@ -40,6 +40,7 @@
 #include "Common/GameLOD.h"
 #include "Common/Registry.h"
 #include "Common/version.h"
+#include "GeneratedVersion.h"
 
 #include "GameClient/ClientInstance.h"
 #include "GameClient/GameClient.h"
@@ -1440,7 +1441,9 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	}
 	else
 	{
-		GadgetStaticTextSetText( labelVersion, versionString );
+		UnicodeString fullVersion;
+		fullVersion.format(L"%s - TheSuperHackers %s", versionString.str(), SUPERHACKERS_VERSION_WIDE);
+		GadgetStaticTextSetText(labelVersion, fullVersion);
 	}
 
 
