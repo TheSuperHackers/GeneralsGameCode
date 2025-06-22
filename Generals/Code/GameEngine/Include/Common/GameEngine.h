@@ -67,7 +67,6 @@ public:
 	virtual ~GameEngine();
 
 	virtual void init( void );								///< Init engine by creating client and logic
-	virtual void init( int argc, char *argv[] );			///< Init engine by creating client and logic
 	virtual void reset( void );								///< reset system to starting state
 	virtual void update( void );							///< per frame update
 
@@ -115,6 +114,6 @@ extern GameEngine *TheGameEngine;
 extern GameEngine *CreateGameEngine( void );
 
 /// The entry point for the game system
-extern void GameMain( int argc, char *argv[] );
+extern Int GameMain();
 
 #endif // _GAME_ENGINE_H_

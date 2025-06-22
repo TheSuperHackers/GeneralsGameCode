@@ -149,7 +149,7 @@ Bool SabotageSupplyCenterCrateCollide::executeCrateBehavior( Object *other )
 				controller->getScoreKeeper()->addMoneyEarned( cash );
 
 			//Play the "cash stolen" EVA event if the local player is the victim!
-			if( other && other->isLocallyControlled() )
+			if( other->isLocallyControlled() )
 			{
 				TheEva->setShouldPlay( EVA_CashStolen );
 			}

@@ -959,7 +959,6 @@ GlobalData::GlobalData()
 	
 	m_simulateReplays.clear();
 	m_simulateReplayJobs = SIMULATE_REPLAYS_SEQUENTIAL;
-	m_showReplayContinueButton = FALSE;
 
 	m_writeReplayList = "";
 

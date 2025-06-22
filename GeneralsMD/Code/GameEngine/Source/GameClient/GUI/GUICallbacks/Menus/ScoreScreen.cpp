@@ -67,6 +67,7 @@
 #include "Common/PlayerTemplate.h"
 #include "Common/RandomValue.h"
 #include "Common/Recorder.h"
+#include "Common/ReplaySimulation.h"
 #include "Common/ScoreKeeper.h"
 #include "Common/SkirmishBattleHonors.h"
 #include "Common/ThingFactory.h"
@@ -503,6 +504,11 @@ WindowMsgHandledType ScoreScreenInput( GameWindow *window, UnsignedInt msg,
 
 }  // end MainMenuInput
 
+static Bool showButtonContinue()
+{
+	return ReplaySimulation::getCurrentReplayIndex() != ReplaySimulation::getReplayCount()-1;
+}
+
 /** System Function for the ScoreScreen */
 //-------------------------------------------------------------------------------------------------
 WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg, 
@@ -541,15 +547,16 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 			{
 				TheShell->pop();
 				TheCampaignManager->setCampaign(AsciiString::TheEmptyString);
-				if (!TheGlobalData->m_simulateReplays.empty())
+
+				if ( ReplaySimulation::getReplayCount() > 0 )
 				{
-					TheWritableGlobalData->m_showReplayContinueButton = FALSE; // Tell GameEngine to quit.
+					ReplaySimulation::stop();
 					TheGameEngine->setQuitting(TRUE);
 				}
 			}
 			else if ( controlID == buttonContinueID )	
 			{
-				if (TheGlobalData->m_showReplayContinueButton)
+				if( ReplaySimulation::getReplayCount() > 0 )
 				{
 					TheGameEngine->setQuitting(TRUE);
 				}
@@ -996,7 +1003,7 @@ void initReplaySinglePlayer( void )
 	if (chatBoxBorder)
 		chatBoxBorder->winHide(TRUE);
 	if (buttonContinue)
-		buttonContinue->winHide(!TheGlobalData->m_showReplayContinueButton);
+		buttonContinue->winHide(!showButtonContinue());
 	if (buttonBuddies)
 		buttonBuddies->winHide(TRUE);
 	if (listboxChatWindowScoreScreen)
@@ -1103,7 +1110,7 @@ void initReplayMultiPlayer(void)
 	if (chatBoxBorder)
 		chatBoxBorder->winHide(TRUE);
 	if (buttonContinue)
-		buttonContinue->winHide(!TheGlobalData->m_showReplayContinueButton);
+		buttonContinue->winHide(!showButtonContinue());
 	if (buttonBuddies)
 		buttonBuddies->winHide(TRUE);
 //	if (buttonRehost)
@@ -2157,20 +2164,23 @@ void grabSinglePlayerInfo( void )
 	{
 		Bool isFriend = TRUE;
 		
-		// set the string we'll be compairing to
+		// set the string we'll be comparing to
 		switch (j) {
 		case USA_ENEMY:
 			isFriend = FALSE;
+			FALLTHROUGH;
 		case USA_FRIEND:
 			side.set("USA");
 			break;
 		case CHINA_ENEMY:
 			isFriend = FALSE;
+			FALLTHROUGH;
 		case CHINA_FRIEND:
 			side.set("China");
 			break;
 		case GLA_ENEMY:
-			isFriend = FALSE;	
+			isFriend = FALSE;
+			FALLTHROUGH;
 		case GLA_FRIEND:
 			side.set("GLA");
 			break;

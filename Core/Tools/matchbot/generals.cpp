@@ -626,7 +626,7 @@ void GeneralsMatcher::checkMatchesInUserMap(UserMap& userMap, int ladderID, int 
 									{
 
 										i5 = i4;
-										for (++i5; i5 != userMap.end(); ++i3)
+										for (++i5; i5 != userMap.end(); ++i5)
 										{
 											u5 = i5->second;
 											if (u5->status != STATUS_WORKING)

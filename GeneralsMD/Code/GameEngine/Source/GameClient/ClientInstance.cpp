@@ -24,12 +24,12 @@ namespace rts
 {
 HANDLE ClientInstance::s_mutexHandle = NULL;
 UnsignedInt ClientInstance::s_instanceIndex = 0;
+
 #if defined(RTS_MULTI_INSTANCE)
-Bool ClientInstance::s_multiInstance = TRUE;
+Bool ClientInstance::s_isMultiInstance = true;
 #else
-Bool ClientInstance::s_multiInstance = FALSE;
+Bool ClientInstance::s_isMultiInstance = false;
 #endif
-Bool ClientInstance::s_avoidFirstInstance = FALSE;
 
 bool ClientInstance::initialize()
 {
@@ -38,14 +38,11 @@ bool ClientInstance::initialize()
 		return true;
 	}
 	
-	if (s_avoidFirstInstance)
-		++s_instanceIndex;
-
 	// Create a mutex with a unique name to Generals in order to determine if our app is already running.
 	// WARNING: DO NOT use this number for any other application except Generals.
 	while (true)
 	{
-		if (s_multiInstance)
+		if (isMultiInstance())
 		{
 			std::string guidStr = getFirstInstanceName();
 			if (s_instanceIndex > 0u)
@@ -90,6 +87,31 @@ bool ClientInstance::initialize()
 bool ClientInstance::isInitialized()
 {
 	return s_mutexHandle != NULL;
+}
+
+bool ClientInstance::isMultiInstance()
+{
+	return s_isMultiInstance;
+}
+
+void ClientInstance::setMultiInstance(bool v)
+{
+	if (isInitialized())
+	{
+		DEBUG_CRASH(("ClientInstance::setMultiInstance(%d) - cannot set multi instance after initialization", (int)v));
+		return;
+	}
+	s_isMultiInstance = v;
+}
+
+void ClientInstance::skipPrimaryInstance()
+{
+	if (isInitialized())
+	{
+		DEBUG_CRASH(("ClientInstance::skipPrimaryInstance() - cannot skip primary instance after initialization"));
+		return;
+	}
+	s_instanceIndex = 1;
 }
 
 UnsignedInt ClientInstance::getInstanceIndex()

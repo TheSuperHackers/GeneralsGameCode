@@ -18,6 +18,8 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 
+#include "Common/ReplaySimulation.h"
+
 #include "Common/GameEngine.h"
 #include "Common/LocalFileSystem.h"
 #include "Common/Recorder.h"
@@ -25,23 +27,50 @@
 #include "GameLogic/GameLogic.h"
 #include "GameClient/GameClient.h"
 
-static int SimulateReplaysInThisProcess(const std::vector<AsciiString> &filenames)
+
+Bool ReplaySimulation::s_isRunning = false;
+UnsignedInt ReplaySimulation::s_replayIndex = 0;
+UnsignedInt ReplaySimulation::s_replayCount = 0;
+
+namespace
+{
+int countProcessesRunning(const std::vector<WorkerProcess>& processes)
+{
+	int numProcessesRunning = 0;
+	size_t i = 0;
+	for (; i < processes.size(); ++i)
+	{
+		if (processes[i].isRunning())
+			++numProcessesRunning;
+	}
+	return numProcessesRunning;
+}
+} // namespace
+
+int ReplaySimulation::simulateReplaysInThisProcess(const std::vector<AsciiString> &filenames)
 {
 	int numErrors = 0;
+
 	if (!TheGlobalData->m_headless)
 	{
+		s_isRunning = true;
+		s_replayIndex = 0;
+		s_replayCount = static_cast<UnsignedInt>(filenames.size());
+
 		// If we are not in headless mode, we need to run the replay in the engine.
-		for (size_t i = 0; i < filenames.size(); i++)
+		for (; s_replayIndex < s_replayCount; ++s_replayIndex)
 		{
-			TheRecorder->playbackFile(filenames[i]);
-			TheWritableGlobalData->m_showReplayContinueButton = i != filenames.size()-1;
+			TheRecorder->playbackFile(filenames[s_replayIndex]);
 			TheGameEngine->execute();
 			if (TheRecorder->sawCRCMismatch())
 				numErrors++;
-			if (!TheGlobalData->m_showReplayContinueButton)
+			if (!s_isRunning)
 				break;
 			TheGameEngine->setQuitting(FALSE);
 		}
+		s_isRunning = false;
+		s_replayIndex = 0;
+		s_replayCount = 0;
 		return numErrors != 0 ? 1 : 0;
 	}
 	// Note that we use printf here because this is run from cmd.
@@ -100,7 +129,7 @@ static int SimulateReplaysInThisProcess(const std::vector<AsciiString> &filename
 	return numErrors != 0 ? 1 : 0;
 }
 
-static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &filenames, int maxProcesses)
+int ReplaySimulation::simulateReplaysInWorkerProcesses(const std::vector<AsciiString> &filenames, int maxProcesses)
 {
 	DWORD totalStartTimeMillis = GetTickCount();
 
@@ -134,13 +163,7 @@ static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &file
 			filenamePositionDone++;
 		}
 
-		// Count how many processes are running
-		int numProcessesRunning = 0;
-		for (i = 0; i < processes.size(); i++)
-		{
-			if (processes[i].isRunning())
-				numProcessesRunning++;
-		}
+		int numProcessesRunning = countProcessesRunning(processes);
 
 		// Add new processes when we are below the limit and there are replays left
 		while (numProcessesRunning < maxProcesses && filenamePositionStarted < filenames.size())
@@ -180,7 +203,7 @@ static int SimulateReplaysInWorkerProcesses(const std::vector<AsciiString> &file
 	return numErrors != 0 ? 1 : 0;
 }
 
-std::vector<AsciiString> ResolveFilenameWildcards(const std::vector<AsciiString> &filenames)
+std::vector<AsciiString> ReplaySimulation::resolveFilenameWildcards(const std::vector<AsciiString> &filenames)
 {
 	// If some filename contains wildcards, search for actual filenames.
 	// Note that we cannot do this in parseReplay because we require TheLocalFileSystem initialized.
@@ -222,11 +245,11 @@ std::vector<AsciiString> ResolveFilenameWildcards(const std::vector<AsciiString>
 	return filenamesResolved;
 }
 
-int SimulateReplays(const std::vector<AsciiString> &filenames, int maxProcesses)
+int ReplaySimulation::simulateReplays(const std::vector<AsciiString> &filenames, int maxProcesses)
 {
-	std::vector<AsciiString> filenamesResolved = ResolveFilenameWildcards(filenames);
+	std::vector<AsciiString> filenamesResolved = resolveFilenameWildcards(filenames);
 	if (maxProcesses == SIMULATE_REPLAYS_SEQUENTIAL)
-		return SimulateReplaysInThisProcess(filenamesResolved);
+		return simulateReplaysInThisProcess(filenamesResolved);
 	else
-		return SimulateReplaysInWorkerProcesses(filenamesResolved, maxProcesses);
+		return simulateReplaysInWorkerProcesses(filenamesResolved, maxProcesses);
 }

@@ -29,7 +29,9 @@
 #include "Common/CommandLine.h"
 #include "Common/CRCDebug.h"
 #include "Common/LocalFileSystem.h"
+#include "Common/Recorder.h"
 #include "Common/version.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/TerrainVisual.h" // for TERRAIN_LOD_MIN definition
 #include "GameClient/GameText.h"
 #include "GameNetwork/NetworkDefs.h"
@@ -401,6 +403,56 @@ Int parseMapName(char *args[], int num)
 	{
 		TheWritableGlobalData->m_mapName.set( args[ 1 ] );
 		ConvertShortMapPathToLongMapPath(TheWritableGlobalData->m_mapName);
+	}
+	return 1;
+}
+
+Int parseHeadless(char *args[], int num)
+{
+	TheWritableGlobalData->m_headless = TRUE;
+	TheWritableGlobalData->m_playIntro = FALSE;
+	TheWritableGlobalData->m_afterIntro = TRUE;
+	TheWritableGlobalData->m_playSizzle = FALSE;
+	return 1;
+}
+
+Int parseReplay(char *args[], int num)
+{
+	if (num > 1)
+	{
+		AsciiString filename = args[1];
+		if (!filename.endsWithNoCase(RecorderClass::getReplayExtention()))
+		{
+			printf("Invalid replay name \"%s\"\n", filename.str());
+			exit(1);
+		}
+		TheWritableGlobalData->m_simulateReplays.push_back(filename);
+
+		TheWritableGlobalData->m_playIntro = FALSE;
+		TheWritableGlobalData->m_afterIntro = TRUE;
+		TheWritableGlobalData->m_playSizzle = FALSE;
+		TheWritableGlobalData->m_shellMapOn = FALSE;
+
+		// Make replay playback possible while other clients (possible retail) are running
+		rts::ClientInstance::setMultiInstance(TRUE);
+		rts::ClientInstance::skipPrimaryInstance();
+
+		return 2;
+	}
+	return 1;
+}
+
+Int parseJobs(char *args[], int num)
+{
+	if (num > 1)
+	{
+		TheWritableGlobalData->m_simulateReplayJobs = atoi(args[1]);
+		if (TheGlobalData->m_simulateReplayJobs < SIMULATE_REPLAYS_SEQUENTIAL || TheGlobalData->m_simulateReplayJobs == 0)
+		{
+			printf("Invalid number of jobs: %d\n", TheGlobalData->m_simulateReplayJobs);
+			exit(1);
+		}
+		return 2;
 	}
 	return 1;
 }
@@ -782,13 +834,6 @@ Int parseQuickStart( char *args[], int num )
 	return 1;
 }
 
-Int parseHeadless( char *args[], int num )
-{
-	TheWritableGlobalData->m_headless = TRUE;
-
-	return 1;
-}
-
 Int parseConstantDebug( char *args[], int num )
 {
 	TheWritableGlobalData->m_constantDebugUpdate = TRUE;
@@ -1103,8 +1148,20 @@ static CommandLineParam paramsForStartup[] =
 	{ "-fullscreen", parseNoWin },
 
 	// TheSuperHackers @feature helmutbuhler 11/04/2025
-	// This runs the game without a window, graphics, input and audio. Used for testing.
+	// This runs the game without a window, graphics, input and audio. You can combine this with -replay
 	{ "-headless", parseHeadless },
+
+	// TheSuperHackers @feature helmutbuhler 13/04/2025
+	// Play back a replay. Pass the filename including .rep afterwards.
+	// You can pass this multiple times to play back multiple replays.
+	// You can also include wildcards. The file must be in the replay folder or in a subfolder.
+	{ "-replay", parseReplay },
+
+	// TheSuperHackers @feature helmutbuhler 23/05/2025
+	// Simulate each replay in a separate process and use 1..N processes at the same time.
+	// (If you have 4 cores, call it with -jobs 4)
+	// If you do not call this, all replays will be simulated in sequence in the same process.
+	{ "-jobs", parseJobs },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded

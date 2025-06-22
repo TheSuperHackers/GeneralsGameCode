@@ -97,15 +97,16 @@ EnumeratedIP * IPEnumeration::getAddresses( void )
 		return NULL;
 	}
 
-#if defined(RTS_MULTI_INSTANCE)
 	// TheSuperHackers @feature Add one unique local host IP address for each multi client instance.
-	const UnsignedInt id = rts::ClientInstance::getInstanceId();
-	addNewIP(
-		127,
-		(UnsignedByte)(id >> 16),
-		(UnsignedByte)(id >> 8),
-		(UnsignedByte)(id));
-#endif
+	if (rts::ClientInstance::isMultiInstance())
+	{
+		const UnsignedInt id = rts::ClientInstance::getInstanceId();
+		addNewIP(
+			127,
+			(UnsignedByte)(id >> 16),
+			(UnsignedByte)(id >> 8),
+			(UnsignedByte)(id));
+	}
 
 	// construct a list of addresses
 	int numAddresses = 0;

@@ -1032,56 +1032,6 @@ static void saveOptions( void )
 	}
 
 	//-------------------------------------------------------------------------------------------------
-	// Resolution
-	GadgetComboBoxGetSelectedPos( comboBoxResolution, &index );
-	Int xres, yres, bitDepth;
-	
-	oldDispSettings.xRes = TheDisplay->getWidth();
-	oldDispSettings.yRes = TheDisplay->getHeight();
-	oldDispSettings.bitDepth = TheDisplay->getBitDepth();
-	oldDispSettings.windowed = TheDisplay->getWindowed();
-	
-	if (comboBoxResolution && comboBoxResolution->winGetEnabled() && index < TheDisplay->getDisplayModeCount() && index >= 0)
-	{
-		TheDisplay->getDisplayModeDescription(index,&xres,&yres,&bitDepth);
-		if (TheGlobalData->m_xResolution != xres || TheGlobalData->m_yResolution != yres)
-		{
-			if (TheDisplay->setDisplayMode(xres,yres,bitDepth,TheDisplay->getWindowed()))
-			{
-				dispChanged = TRUE;
-				TheWritableGlobalData->m_xResolution = xres;
-				TheWritableGlobalData->m_yResolution = yres;
-
-				TheHeaderTemplateManager->headerNotifyResolutionChange();
-				TheMouse->mouseNotifyResolutionChange();
-				
-				//Save new settings for a dialog box confirmation after options are accepted
-				newDispSettings.xRes = xres;
-				newDispSettings.yRes = yres;
-				newDispSettings.bitDepth = bitDepth;
-				newDispSettings.windowed = TheDisplay->getWindowed();
-
-				AsciiString prefString;
-				prefString.format("%d %d", xres, yres );
-				(*pref)["Resolution"] = prefString;
-
-				// delete the shell
-				delete TheShell;
-				TheShell = NULL;
-
-				// create the shell
-				TheShell = MSGNEW("GameClientSubsystem") Shell;
-				if( TheShell )
-					TheShell->init();
-				
-				TheInGameUI->recreateControlBar();
-
-				TheShell->push( AsciiString("Menus/MainMenu.wnd") );
-			}
-		}
-	}
-
-	//-------------------------------------------------------------------------------------------------
 	// IP address
 	if (comboBoxLANIP && comboBoxLANIP->winGetEnabled())
 	{
@@ -1252,6 +1202,62 @@ static void saveOptions( void )
 		}
  	}
 
+	//-------------------------------------------------------------------------------------------------
+	// Resolution
+	//
+	// TheSuperHackers @bugfix xezon 12/06/2025 Now performs the resolution change at the very end of
+	// processing all the options. This is necessary, because recreating the Shell will destroy the
+	// Options Menu and therefore prevent any further ui gadget interactions afterwards.
+
+	GadgetComboBoxGetSelectedPos( comboBoxResolution, &index );
+	Int xres, yres, bitDepth;
+
+	oldDispSettings.xRes = TheDisplay->getWidth();
+	oldDispSettings.yRes = TheDisplay->getHeight();
+	oldDispSettings.bitDepth = TheDisplay->getBitDepth();
+	oldDispSettings.windowed = TheDisplay->getWindowed();
+
+	if (comboBoxResolution && comboBoxResolution->winGetEnabled() && index < TheDisplay->getDisplayModeCount() && index >= 0)
+	{
+		TheDisplay->getDisplayModeDescription(index,&xres,&yres,&bitDepth);
+		if (TheGlobalData->m_xResolution != xres || TheGlobalData->m_yResolution != yres)
+		{
+			if (TheDisplay->setDisplayMode(xres,yres,bitDepth,TheDisplay->getWindowed()))
+			{
+				dispChanged = TRUE;
+				TheWritableGlobalData->m_xResolution = xres;
+				TheWritableGlobalData->m_yResolution = yres;
+
+				TheHeaderTemplateManager->headerNotifyResolutionChange();
+				TheMouse->mouseNotifyResolutionChange();
+
+				//Save new settings for a dialog box confirmation after options are accepted
+				newDispSettings.xRes = xres;
+				newDispSettings.yRes = yres;
+				newDispSettings.bitDepth = bitDepth;
+				newDispSettings.windowed = TheDisplay->getWindowed();
+
+				AsciiString prefString;
+				prefString.format("%d %d", xres, yres );
+				(*pref)["Resolution"] = prefString;
+
+				// delete the shell
+				delete TheShell;
+				TheShell = NULL;
+
+				// create the shell
+				TheShell = MSGNEW("GameClientSubsystem") Shell;
+				if( TheShell )
+					TheShell->init();
+
+				TheInGameUI->recreateControlBar();
+
+				TheShell->push( AsciiString("Menus/MainMenu.wnd") );
+			}
+		}
+	}
+
+	// MUST NEVER ADD ANOTHER OPTION HERE AT THE END !
 }
 
 static void DestroyOptionsLayout() {
@@ -1572,21 +1578,27 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	// populate resolution modes
 	GadgetComboBoxReset(comboBoxResolution);
 	Int numResolutions = TheDisplay->getDisplayModeCount();
+	UnsignedInt displayWidth = TheDisplay->getWidth();
+	UnsignedInt displayHeight = TheDisplay->getHeight();
+
 	for( i = 0; i < numResolutions; ++i )
 	{	Int xres,yres,bitDepth;
 		TheDisplay->getDisplayModeDescription(i,&xres,&yres,&bitDepth);
 		str.format(L"%d x %d",xres,yres);
 		GadgetComboBoxAddEntry( comboBoxResolution, str, color);
-		if (xres == selectedXRes && yres == selectedYRes)
+		// TheSuperHackers @bugfix xezon 12/06/2025 Now makes a selection with the active display resolution
+		// instead of the resolution read from the Option Preferences, because the active display resolution
+		// is the most relevant to make a selection with and the Option Preferences could be wrong.
+		if ( xres == displayWidth && yres == displayHeight )
 			selectedResIndex=i;
 	}
 
-	if (selectedResIndex == -1)	//check if saved mode no longer available
+	if (selectedResIndex == -1)
 	{
 		// TheSuperHackers @bugfix xezon 08/06/2025 Now adds the current resolution instead of defaulting to 800 x 600.
 		// This avoids force changing the resolution when the user has set a custom resolution in the Option Preferences.
-		Int xres = TheDisplay->getWidth();
-		Int yres = TheDisplay->getHeight();
+		Int xres = displayWidth;
+		Int yres = displayHeight;
 		str.format(L"%d x %d",xres,yres);
 		GadgetComboBoxAddEntry( comboBoxResolution, str, color );
 		selectedResIndex = GadgetComboBoxGetLength( comboBoxResolution ) - 1;

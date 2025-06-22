@@ -98,7 +98,7 @@ EnumeratedIP * IPEnumeration::getAddresses( void )
 	}
 
 	// TheSuperHackers @feature Add one unique local host IP address for each multi client instance.
-	if (rts::ClientInstance::s_multiInstance)
+	if (rts::ClientInstance::isMultiInstance())
 	{
 		const UnsignedInt id = rts::ClientInstance::getInstanceId();
 		addNewIP(

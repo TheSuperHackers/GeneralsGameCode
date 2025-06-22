@@ -91,6 +91,7 @@ set(GAMEENGINE_SRC
     Include/Common/RAMFile.h
     Include/Common/RandomValue.h
     Include/Common/Recorder.h
+#    Include/Common/ReplaySimulation.h
     Include/Common/Registry.h
     Include/Common/ResourceGatheringManager.h
     Include/Common/Science.h
@@ -123,6 +124,7 @@ set(GAMEENGINE_SRC
     Include/Common/UserPreferences.h
     Include/Common/version.h
     Include/Common/WellKnownKeys.h
+#    Include/Common/WorkerProcess.h
 #    Include/Common/Xfer.h
 #    Include/Common/XferCRC.h
 #    Include/Common/XferDeepCRC.h
@@ -633,6 +635,7 @@ set(GAMEENGINE_SRC
     Source/Common/Thing/ThingTemplate.cpp
     Source/Common/UserPreferences.cpp
     Source/Common/version.cpp
+#    Source/Common/WorkerProcess.cpp
     Source/GameClient/ClientInstance.cpp
     Source/GameClient/Color.cpp
     Source/GameClient/Credits.cpp

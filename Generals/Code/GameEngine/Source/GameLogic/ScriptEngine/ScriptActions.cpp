@@ -2551,6 +2551,7 @@ void ScriptActions::doCameoFlash(const AsciiString& name, Int timeInSeconds)
 	if( button == NULL )
 	{
 		DEBUG_CRASH(( "ScriptActions::doCameoFlash can't find AsciiString cameoflash" ));
+		return;
 	}
 
 	Int frames = LOGICFRAMES_PER_SECOND * timeInSeconds;

@@ -435,8 +435,8 @@ Int parseReplay(char *args[], int num)
 		TheWritableGlobalData->m_shellMapOn = FALSE;
 
 		// Make replay playback possible while other clients (possible retail) are running
-		rts::ClientInstance::s_multiInstance = TRUE;
-		rts::ClientInstance::s_avoidFirstInstance = TRUE;
+		rts::ClientInstance::setMultiInstance(TRUE);
+		rts::ClientInstance::skipPrimaryInstance();
 
 		return 2;
 	}
@@ -1185,7 +1185,7 @@ static CommandLineParam paramsForStartup[] =
 	{ "-replayList", parseSimReplayList },
 
 	// TheSuperHackers @feature helmutbuhler 23/05/2025
-	// Simulate each replay in a separate process and use up two N processes at the same time.
+	// Simulate each replay in a separate process and use 1..N processes at the same time.
 	// (If you have 4 cores, call it with -jobs 4)
 	// If you do not call this, all replays will be simulated in sequence in the same process.
 	{ "-jobs", parseJobs },

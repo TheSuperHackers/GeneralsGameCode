@@ -57,8 +57,8 @@
 // GameSpyGameSlot -------------------------------------------
 
 GameSpyGameSlot::GameSpyGameSlot()
+	: GameSlot()
 {
-	GameSlot();
 	m_gameSpyLogin.clear();
 	m_gameSpyLocale.clear();
 	m_profileID = 0;

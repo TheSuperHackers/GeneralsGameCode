@@ -180,8 +180,8 @@ void EMPUpdate::doDisableAttack( void )
 	Real curVictimDistSqr;
 	const Coord3D *pos = object->getPosition();
 
-	SimpleObjectIterator *iter;
-	Object *curVictim;
+	SimpleObjectIterator *iter = NULL;
+	Object *curVictim = NULL;
 
 	if (radius > 0.0f)
 	{

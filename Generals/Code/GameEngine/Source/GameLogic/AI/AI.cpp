@@ -427,11 +427,10 @@ void AI::parseAiDataDefinition( INI* ini )
 		if( ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES )
 			TheAI->newOverride();
 
+		// parse the ini weapon definition
+		ini->initFromINI( TheAI->m_aiData, TheAIFieldParseTable );
+
 	}  // end if
-
-	// parse the ini weapon definition
-	ini->initFromINI( TheAI->m_aiData, TheAIFieldParseTable );
-
 }
 
 

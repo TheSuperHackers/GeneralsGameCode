@@ -54,8 +54,8 @@ enum AIDebugOptions CPP_11(: Int);
 
 // PUBLIC /////////////////////////////////////////////////////////////////////////////////////////
 
-const Int MAX_GLOBAL_LIGHTS	= 3;
-const Int SIMULATE_REPLAYS_SEQUENTIAL = -1;
+CONSTEXPR const Int MAX_GLOBAL_LIGHTS = 3;
+CONSTEXPR const Int SIMULATE_REPLAYS_SEQUENTIAL = -1;
 
 //-------------------------------------------------------------------------------------------------
 class CommandLineData
@@ -353,7 +353,6 @@ public:
 	
 	std::vector<AsciiString> m_simulateReplays; ///< If not empty, simulate this list of replays and exit.
 	Int m_simulateReplayJobs; ///< Maximum number of processes to use for simulation, or SIMULATE_REPLAYS_SEQUENTIAL for sequential simulation
-	Bool m_showReplayContinueButton;
 	AsciiString m_writeReplayList; ///< If not empty, write out list of replays in this subfolder into a csv file (TheSuperHackers @feature helmutbuhler 24/05/2025)
 
 	Int m_maxParticleCount;						///< maximum number of particles that can exist
@@ -579,6 +578,11 @@ private:
 // singleton
 extern GlobalData* TheWritableGlobalData;
 
+// use TheGlobalData for all read-only accesses
+#if __cplusplus >= 201703L
+inline const GlobalData* const& TheGlobalData = TheWritableGlobalData;
+#else
 #define TheGlobalData ((const GlobalData*)TheWritableGlobalData)
+#endif
 
 #endif

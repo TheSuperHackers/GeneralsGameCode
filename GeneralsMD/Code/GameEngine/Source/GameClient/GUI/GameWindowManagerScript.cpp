@@ -1629,7 +1629,7 @@ static GameWindow *createGadget( char *type,
 																 WinInstanceData *instData, 
 																 void *data )
 {
-  GameWindow *window;
+  GameWindow *window = NULL;
 
   instData->m_owner = parent;
 

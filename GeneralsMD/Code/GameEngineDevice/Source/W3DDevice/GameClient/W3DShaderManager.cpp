@@ -3043,11 +3043,11 @@ HRESULT W3DShaderManager::LoadAndCreateD3DShader(const char* strFilePath, const 
 		file->close();
 		file = NULL;
 
-		if (ShaderType == TRUE)//SHADERTYPE_VERTEX)
+		if (ShaderType) // SHADERTYPE_VERTEX
 		{
 			hr = DX8Wrapper::_Get_D3D_Device8()->CreateVertexShader(pDeclaration, pShader, pHandle, Usage);
 		}
-		else if (ShaderType == FALSE)//SHADERTYPE_PIXEL)
+		else // SHADERTYPE_PIXEL
 		{
 			hr = DX8Wrapper::_Get_D3D_Device8()->CreatePixelShader(pShader, pHandle);
 		}

@@ -192,6 +192,10 @@ UpdateSleepTime BridgeScaffoldBehavior::update( void )
 			end = &m_riseToPos;
 			break;
 
+		default:
+			DEBUG_CRASH(("Unhandled case in BridgeScaffoldBehavior::update()"));
+			return UPDATE_SLEEP_NONE;
+
 	}  // end switch
 
 	// adjust speed so it's slower at the end of motion
