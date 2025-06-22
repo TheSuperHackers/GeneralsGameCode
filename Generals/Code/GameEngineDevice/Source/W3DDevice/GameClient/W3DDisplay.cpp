@@ -688,7 +688,7 @@ void W3DDisplay::init( void )
 			{
 				// TheSuperHackers @bugfix xezon 11/06/2025 Now tries a safe default resolution
 				// if the custom resolution did not succeed. This is unlikely to happen but is possible
-				// if the user writes an unsupported resolution into to the Option Preferences or if the
+				// if the user writes an unsupported resolution in the Option Preferences or if the
 				// graphics adapter does not support 800 x 600 to begin with.
 				const Int minW = 800;
 				const Int minH = 600;
