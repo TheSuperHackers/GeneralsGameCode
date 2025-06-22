@@ -1493,6 +1493,7 @@ WindowMsgHandledType SkirmishGameOptionsMenuSystem( GameWindow *window, Unsigned
 				}
 				sandboxOk = FALSE;
         skirmishUpdateSlotList();
+        break;
 			}// case GCM_SELECTED:
 		//-------------------------------------------------------------------------------------------------
 		case GSM_SLIDER_TRACK:
