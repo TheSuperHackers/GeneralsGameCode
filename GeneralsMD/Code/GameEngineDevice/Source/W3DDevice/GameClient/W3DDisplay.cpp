@@ -116,6 +116,10 @@ static void drawFramerateBar(void);
 #endif
 
 // DEFINE AND ENUMS ///////////////////////////////////////////////////////////
+#define DEFAULT_DISPLAY_BIT_DEPTH 32
+#define MIN_DISPLAY_BIT_DEPTH 16
+#define MIN_DISPLAY_RESOLUTION_X 800
+#define MIN_DISPLAY_RESOLUTION_Y 600
 
 #define no_SAMPLE_DYNAMIC_LIGHT	1
 #ifdef SAMPLE_DYNAMIC_LIGHT
@@ -477,9 +481,6 @@ W3DDisplay::~W3DDisplay()
 
 }  // end ~W3DDisplay
 
-#define MIN_DISPLAY_RESOLUTION_X	800
-#define MIN_DISPLAY_RESOLUTOIN_Y	600
-
 
 Bool IS_FOUR_BY_THREE_ASPECT( Real x, Real y )
 {
@@ -726,7 +727,7 @@ void W3DDisplay::init( void )
 		WW3D::Enable_Static_Sort_Lists(true);
 		WW3D::Set_Thumbnail_Enabled(false);
 		WW3D::Set_Screen_UV_Bias( TRUE );  ///< this makes text look good :)
-		WW3D::Set_Texture_Bitdepth(32);
+		WW3D::Set_Texture_Bitdepth( DEFAULT_DISPLAY_BIT_DEPTH );
 			
 		setWindowed( TheGlobalData->m_windowed );
 
@@ -741,45 +742,44 @@ void W3DDisplay::init( void )
 			switch (attempt)
 			{
 			case 0:
+			{
 				// set our default width and height and bit depth
 				setWidth( TheGlobalData->m_xResolution );
 				setHeight( TheGlobalData->m_yResolution );
-				setBitDepth( 32 );
+				setBitDepth( DEFAULT_DISPLAY_BIT_DEPTH );
 				break;
+			}
 			case 1:
+			{
 				// Getting the device at the default bit depth (32) didn't work, so try
 				// getting a 16 bit display.  (Voodoo 1-3 only supported 16 bit.) jba.
-				setBitDepth( 16 );
+				setBitDepth( MIN_DISPLAY_BIT_DEPTH );
 				break;
+			}
 			case 2:
 			{
 				// TheSuperHackers @bugfix xezon 11/06/2025 Now tries a safe default resolution
 				// if the custom resolution did not succeed. This is unlikely to happen but is possible
 				// if the user writes an unsupported resolution in the Option Preferences or if the
-				// graphics adapter does not support 800 x 600 to begin with.
-				const Int minW = 800;
-				const Int minH = 600;
-				Int xres = minW;
-				Int yres = minH;
-				Int bitDepth = 32;
+				// graphics adapter does not support the minimum display resolution to begin with.
+				Int xres = MIN_DISPLAY_RESOLUTION_X;
+				Int yres = MIN_DISPLAY_RESOLUTION_Y;
+				Int bitDepth = DEFAULT_DISPLAY_BIT_DEPTH;
 				Int displayModeCount = getDisplayModeCount();
 				Int displayModeIndex = 0;
 				for (; displayModeIndex < displayModeCount; ++displayModeIndex)
 				{
-					getDisplayModeDescription(0, &xres, &yres, &bitDepth);
-					if (xres * yres >= minW * minH)
+					getDisplayModeDescription(displayModeIndex, &xres, &yres, &bitDepth);
+					if (xres * yres >= MIN_DISPLAY_RESOLUTION_X * MIN_DISPLAY_RESOLUTION_Y)
 						break; // Is good enough. Use it.
 				}
 				TheWritableGlobalData->m_xResolution = xres;
 				TheWritableGlobalData->m_yResolution = yres;
 				setWidth( xres );
 				setHeight( yres );
-				setBitDepth( 32 );
+				setBitDepth( bitDepth );
 				break;
 			}
-			case 3:
-				setBitDepth( 16 );
-				break;
 			}
 
 			renderDeviceError = WW3D::Set_Render_Device(
@@ -792,7 +792,7 @@ void W3DDisplay::init( void )
 
 			++attempt;
 		}
-		while (attempt < 4 && renderDeviceError != WW3D_ERROR_OK);
+		while (attempt < 3 && renderDeviceError != WW3D_ERROR_OK);
 
 		if (renderDeviceError != WW3D_ERROR_OK)
 		{
