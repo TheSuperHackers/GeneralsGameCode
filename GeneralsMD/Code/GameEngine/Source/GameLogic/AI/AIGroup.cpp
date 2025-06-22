@@ -422,6 +422,10 @@ void AIGroup::recompute( void )
 		if ((*i)->isKindOf(KINDOF_IMMOBILE))
 			continue;
 
+		// don't consider (chrono) teleporters (they are very fast, or currently disabled)
+		if ((*i)->isKindOf(KINDOF_TELEPORTER))
+			continue;
+
 		if( (*i)->isDisabledByType( DISABLED_HELD) ) 
 		{
 			continue; // don't bother counting riders in the max speed calculation.

@@ -48,6 +48,8 @@ const char* DisabledMaskType::s_bitNameList[] =
 	"DISABLED_SCRIPT_DISABLED",
 	"DISABLED_SCRIPT_UNDERPOWERED",
 
+	"DISABLED_TELEPORT",
+
 	NULL
 };
 

@@ -52,6 +52,7 @@
 #include "GameLogic/Module/CountermeasuresBehavior.h"
 #include "GameLogic/Module/DumbProjectileBehavior.h"
 #include "GameLogic/Module/FreeFallProjectileBehavior.h"
+#include "GameLogic/Module/TeleportMovementBehavior.h"
 #include "GameLogic/Module/InstantDeathBehavior.h"
 #include "GameLogic/Module/SlowDeathBehavior.h"
 #include "GameLogic/Module/HelicopterSlowDeathUpdate.h"
@@ -187,6 +188,7 @@
 #include "GameLogic/Module/ToppleUpdate.h"
 #include "GameLogic/Module/TransportAIUpdate.h"
 #include "GameLogic/Module/WanderAIUpdate.h"
+#include "GameLogic/Module/TeleporterAIUpdate.h"
 #include "GameLogic/Module/WaveGuideUpdate.h"
 #include "GameLogic/Module/WeaponBonusUpdate.h"
 #include "GameLogic/Module/ArmorDamageScalarUpdate.h"
@@ -340,6 +342,7 @@ void ModuleFactory::init( void )
 	addModule( CountermeasuresBehavior );
 	addModule( DumbProjectileBehavior );
 	addModule( FreeFallProjectileBehavior );
+	addModule( TeleportMovementBehavior );
 	addModule( PhysicsBehavior );
 	addModule( InstantDeathBehavior );
 	addModule( SlowDeathBehavior );
@@ -479,6 +482,7 @@ void ModuleFactory::init( void )
 	addModule( AnimationSteeringUpdate );
 	addModule( TransportAIUpdate );
 	addModule( WanderAIUpdate );
+	addModule( TeleporterAIUpdate );
 	addModule( WaveGuideUpdate );
 	addModule( WorkerAIUpdate );
 	addModule( PowerPlantUpdate );

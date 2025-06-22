@@ -2980,7 +2980,8 @@ Bool Object::isMobile() const
 	if (isKindOf(KINDOF_IMMOBILE))
 		return false;
 
-	if( isDisabled() )
+	// AW: This excemption is needed, because teleporters still need to listen to AI commands when disabled
+	if( isDisabled() && !isDisabledByType(DISABLED_TELEPORT) )
 		return false;
 
 	return true;

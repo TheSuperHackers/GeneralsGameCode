@@ -311,6 +311,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/DozerAIUpdate.h
     Include/GameLogic/Module/DumbProjectileBehavior.h
     Include/GameLogic/Module/FreeFallProjectileBehavior.h
+    Include/GameLogic/Module/TeleportMovementBehavior.h
     Include/GameLogic/Module/DynamicGeometryInfoUpdate.h
     Include/GameLogic/Module/DynamicShroudClearingRangeUpdate.h
     Include/GameLogic/Module/EjectPilotDie.h
@@ -473,6 +474,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/VeterancyCrateCollide.h
     Include/GameLogic/Module/VeterancyGainCreate.h
     Include/GameLogic/Module/WanderAIUpdate.h
+    Include/GameLogic/Module/TeleporterAIUpdate.h
     Include/GameLogic/Module/WaveGuideUpdate.h
     Include/GameLogic/Module/WeaponBonusUpdate.h
     Include/GameLogic/Module/ArmorDamageScalarUpdate.h
@@ -856,6 +858,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Behavior/CountermeasuresBehavior.cpp
     Source/GameLogic/Object/Behavior/DumbProjectileBehavior.cpp
     Source/GameLogic/Object/Behavior/FreeFallProjectileBehavior.cpp
+    Source/GameLogic/Object/Behavior/TeleportMovementBehavior.cpp
     Source/GameLogic/Object/Behavior/FireWeaponWhenDamagedBehavior.cpp
     Source/GameLogic/Object/Behavior/FireWeaponWhenDeadBehavior.cpp
     Source/GameLogic/Object/Behavior/FlightDeckBehavior.cpp
@@ -985,6 +988,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Update/AIUpdate/SupplyTruckAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/TransportAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/WanderAIUpdate.cpp
+    Source/GameLogic/Object/Update/AIUpdate/TeleporterAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/WorkerAIUpdate.cpp
     Source/GameLogic/Object/Update/AnimationSteeringUpdate.cpp
     Source/GameLogic/Object/Update/AssistedTargetingUpdate.cpp
