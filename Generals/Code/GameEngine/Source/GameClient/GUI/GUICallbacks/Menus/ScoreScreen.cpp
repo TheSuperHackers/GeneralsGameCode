@@ -1178,7 +1178,7 @@ static void updateChallengeMedals(Int& medals)
 //-------------------------------------------------------------------------------------------------
 void populatePlayerInfo( Player *player, Int pos)
 {
-	if(!player || pos > MAX_SLOTS)
+	if(!player || pos < 0 || pos >= MAX_SLOTS)
 		return;
 	Color color = player->getPlayerColor();
 	ScoreKeeper *scoreKpr = player->getScoreKeeper();
@@ -2071,7 +2071,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", i);
 //-------------------------------------------------------------------------------------------------
 void setObserverWindows( Player *player, Int i )
 {
-	if(i < 0 || i >= MAX_SLOTS)
+	if(!player || i < 0 || i >= MAX_SLOTS)
 		return;
 	AsciiString winName;
 	GameWindow *win;
@@ -2082,16 +2082,10 @@ void setObserverWindows( Player *player, Int i )
 	winName.format("ScoreScreen.wnd:StaticTextPlayer%d", i);
 	win =  TheWindowManager->winGetWindowFromId( parent, TheNameKeyGenerator->nameToKey( winName ) );
 	DEBUG_ASSERTCRASH(win,("Could not find window %s on the score screen", winName.str()));
-	if (player)
-	{
-		GadgetStaticTextSetText(win, player->getPlayerDisplayName());
-		win->winHide(FALSE);
-		win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
-	}
-	else
-	{
-		win->winHide(TRUE);
-	}
+
+	GadgetStaticTextSetText(win, player->getPlayerDisplayName());
+	win->winHide(FALSE);
+	win->winSetEnabledTextColors(color, win->winGetEnabledTextBorderColor());
 
 	// set the player name
 	winName.format("ScoreScreen.wnd:StaticTextObserver%d", i);

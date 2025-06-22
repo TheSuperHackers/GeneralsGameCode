@@ -938,6 +938,7 @@ void RecorderClass::stopAnalysis()
 {
 	m_doingAnalysis = FALSE;
 }
+
 #endif
 
 Bool RecorderClass::isPlaybackInProgress( void ) const
