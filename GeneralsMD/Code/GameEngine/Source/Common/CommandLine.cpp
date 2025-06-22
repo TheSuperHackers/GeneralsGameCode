@@ -460,8 +460,8 @@ Int parseSimReplayList(char *args[], int num)
 		TheWritableGlobalData->m_shellMapOn = FALSE;
 
 		// Make replay playback possible while other clients (possible retail) are running
-		rts::ClientInstance::s_multiInstance = TRUE;
-		rts::ClientInstance::s_avoidFirstInstance = TRUE;
+		rts::ClientInstance::setMultiInstance(TRUE);
+		rts::ClientInstance::skipPrimaryInstance();
 		return 2;
 	}
 	return 1;
@@ -1201,6 +1201,8 @@ static CommandLineParam paramsForStartup[] =
 	// TheSuperHackers @feature helmutbuhler 28/04/2025
 	// Pass in a csv file to play back multiple replays. The file must be in the replay folder.
 	{ "-replayList", parseSimReplayList },
+
+	{ "-writeReplayList", parseWriteReplayList },
 };
 
 // These Params are parsed during Engine Init before INI data is loaded
@@ -1217,8 +1219,6 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-noshaders", parseNoShaders },
 	{ "-quickstart", parseQuickStart },
 	{ "-useWaveEditor", parseUseWaveEditor },
-
-	{ "-writeReplayList", parseWriteReplayList },
 
 #if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 	{ "-noaudio", parseNoAudio },
