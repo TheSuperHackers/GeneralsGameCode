@@ -1807,6 +1807,16 @@ UnsignedInt PathfindCell::costSoFar( PathfindCell *parent )
 	Int numTurns = 0;
 	PathfindCell *prevCell = parent->getParentCell();
 	if (prevCell) {
+
+#if RETAIL_COMPATIBLE_PATHFINDING
+		// TheSuperHackers @info this is a possible crash point in the retail pathfinding, we just prevent the crash at this point
+		// External code should catch the issue in another block and cleanup the pathfinding before switching to the fixed pathfinding.
+		if (!prevCell->hasInfo())
+		{
+			return cost;
+		}
+#endif
+
 		ICoord2D dir;
 		dir.x = prevCell->getXIndex() - parent->getXIndex();
 		dir.y = prevCell->getYIndex() - parent->getYIndex();
