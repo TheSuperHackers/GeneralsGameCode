@@ -53,7 +53,6 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/BattleHonors.h"
-#include "Common/CopyProtection.h"
 #include "Common/GameEngine.h"
 #include "Common/GameLOD.h"
 #include "Common/GameState.h"
@@ -65,6 +64,7 @@
 #include "Common/PlayerTemplate.h"
 #include "Common/RandomValue.h"
 #include "Common/Recorder.h"
+#include "Common/ReplaySimulation.h"
 #include "Common/ScoreKeeper.h"
 #include "Common/SkirmishBattleHonors.h"
 #include "Common/ThingFactory.h"
@@ -412,6 +412,11 @@ WindowMsgHandledType ScoreScreenInput( GameWindow *window, UnsignedInt msg,
 
 }  // end MainMenuInput
 
+static Bool showButtonContinue()
+{
+	return ReplaySimulation::getCurrentReplayIndex() != ReplaySimulation::getReplayCount()-1;
+}
+
 /** System Function for the ScoreScreen */
 //-------------------------------------------------------------------------------------------------
 WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg, 
@@ -450,23 +455,36 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 			{
 				TheShell->pop();
 				TheCampaignManager->setCampaign(AsciiString::TheEmptyString);
+
+				if ( ReplaySimulation::getReplayCount() > 0 )
+				{
+					ReplaySimulation::stop();
+					TheGameEngine->setQuitting(TRUE);
+				}
 			}
 			else if ( controlID == buttonContinueID )	
 			{
-				if(!buttonIsFinishCampaign)
-					ReplayWasPressed = TRUE;
-				if( screenType == SCORESCREEN_SINGLEPLAYER)	
+				if( ReplaySimulation::getReplayCount() > 0 )
 				{
-					AsciiString mapName = TheCampaignManager->getCurrentMap();
+					TheGameEngine->setQuitting(TRUE);
+				}
+				else
+				{
+					if(!buttonIsFinishCampaign)
+						ReplayWasPressed = TRUE;
+					if( screenType == SCORESCREEN_SINGLEPLAYER)
+					{
+						AsciiString mapName = TheCampaignManager->getCurrentMap();
 
-					if( mapName.isEmpty() )
-					{
-						ReplayWasPressed = FALSE;
-						TheShell->pop();
-					}
-					else
-					{
-						CheckForCDAtGameStart( startNextCampaignGame );
+						if( mapName.isEmpty() )
+						{
+							ReplayWasPressed = FALSE;
+							TheShell->pop();
+						}
+						else
+						{
+							CheckForCDAtGameStart( startNextCampaignGame );
+						}
 					}
 				}
 			}
@@ -677,11 +695,7 @@ void initSinglePlayer( void )
 
 void finishSinglePlayerInit( void )
 {
-	Bool copyProtectOK = TRUE;
-#ifdef DO_COPY_PROTECTION
-	copyProtectOK = CopyProtect::validate();
-#endif
-	if(copyProtectOK && TheCampaignManager->isVictorious())
+	if(TheCampaignManager->isVictorious())
 	{
 		TheCampaignManager->gotoNextMission();
 
@@ -805,7 +819,7 @@ void initReplaySinglePlayer( void )
 	if (chatBoxBorder)
 		chatBoxBorder->winHide(TRUE);
 	if (buttonContinue)
-		buttonContinue->winHide(TRUE);
+		buttonContinue->winHide(!showButtonContinue());
 	if (buttonBuddies)
 		buttonBuddies->winHide(TRUE);
 	if (listboxChatWindowScoreScreen)
@@ -891,7 +905,7 @@ void initReplayMultiPlayer(void)
 	if (chatBoxBorder)
 		chatBoxBorder->winHide(TRUE);
 	if (buttonContinue)
-		buttonContinue->winHide(TRUE);
+		buttonContinue->winHide(!showButtonContinue());
 	if (buttonBuddies)
 		buttonBuddies->winHide(TRUE);
 //	if (buttonRehost)
@@ -1882,20 +1896,23 @@ void grabSinglePlayerInfo( void )
 	{
 		Bool isFriend = TRUE;
 		
-		// set the string we'll be compairing to
+		// set the string we'll be comparing to
 		switch (j) {
 		case USA_ENEMY:
 			isFriend = FALSE;
+			FALLTHROUGH;
 		case USA_FRIEND:
 			side.set("America");
 			break;
 		case CHINA_ENEMY:
 			isFriend = FALSE;
+			FALLTHROUGH;
 		case CHINA_FRIEND:
 			side.set("China");
 			break;
 		case GLA_ENEMY:
-			isFriend = FALSE;	
+			isFriend = FALSE;
+			FALLTHROUGH;
 		case GLA_FRIEND:
 			side.set("GLA");
 			break;

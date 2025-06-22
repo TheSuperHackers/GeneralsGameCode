@@ -82,7 +82,7 @@ public:
 			}
 		}
 		
-		if ( (m_dispatch == NULL) )
+		if ( m_dispatch == NULL )
 		{
 			DEBUG_LOG(("Error creating Dispatch for Web interface\n"));
 		}

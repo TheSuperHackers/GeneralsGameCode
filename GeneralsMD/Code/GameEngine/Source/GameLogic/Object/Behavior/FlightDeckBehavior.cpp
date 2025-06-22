@@ -195,7 +195,7 @@ void FlightDeckBehavior::buildInfo(Bool createUnits)
 			std::vector<AsciiString>::const_iterator it;
 
 			Int counter = 0; 
-			for( it = spaces.begin(); it != spaces.end(), counter < row;	it++, counter++ )
+			for( it = spaces.begin(); it != spaces.end() && counter < row; it++, counter++ )
 			{
 				//just iterate to the spaces.
 			}
@@ -1318,17 +1318,16 @@ void FlightDeckBehavior::exitObjectViaDoor( Object *newObj, ExitDoorType exitDoo
 				break;
 			}
 		}
-
-		if (!ppi)
-		{
-			DEBUG_CRASH(("could not find the space. what?"));
-			return;
-		}
-
-		ppi->m_objectInSpace = newObj->getID();
-		//validateAssignments();
 	}
 
+	if (!ppi)
+	{
+		DEBUG_CRASH(("could not find the space. what?"));
+		return;
+	}
+
+	ppi->m_objectInSpace = newObj->getID();
+	//validateAssignments();
 
 	/// @todo srj -- this is evil. fix.
 	static NameKeyType jetKey = TheNameKeyGenerator->nameToKey( "JetAIUpdate" );

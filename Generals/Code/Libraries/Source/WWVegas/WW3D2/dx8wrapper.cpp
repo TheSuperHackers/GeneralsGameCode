@@ -908,7 +908,7 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	DX8Wrapper_IsWindowed = IsWindowed;
 
 	WWDEBUG_SAY(("Attempting Set_Render_Device: name: %s (%s:%s), width: %d, height: %d, windowed: %d\n",
-		_RenderDeviceNameTable[CurRenderDevice],_RenderDeviceDescriptionTable[CurRenderDevice].Get_Driver_Name(),
+		_RenderDeviceNameTable[CurRenderDevice].str(),_RenderDeviceDescriptionTable[CurRenderDevice].Get_Driver_Name(),
 		_RenderDeviceDescriptionTable[CurRenderDevice].Get_Driver_Version(),ResolutionWidth,ResolutionHeight,(IsWindowed ? 1 : 0)));
 
 #ifdef _WINDOWS
@@ -1023,7 +1023,7 @@ bool DX8Wrapper::Set_Render_Device(int dev, int width, int height, int bits, int
 	Get_Format_Name(DisplayFormat,&displayFormat);
 	Get_Format_Name(_PresentParameters.BackBufferFormat,&backbufferFormat);
 
-	WWDEBUG_SAY(("Using Display/BackBuffer Formats: %s/%s\n",displayFormat,backbufferFormat));
+	WWDEBUG_SAY(("Using Display/BackBuffer Formats: %s/%s\n",displayFormat.str(),backbufferFormat.str()));
 	
 	bool ret;
 
@@ -2403,9 +2403,10 @@ IDirect3DSurface8 * DX8Wrapper::_Create_DX8_Surface(const char *filename_)
 			// If file not found, try the dds format
 			// else create a surface with missing texture in it
 			char compressed_name[200];
-			strncpy(compressed_name,filename_, 200);
+			strncpy(compressed_name,filename_, ARRAY_SIZE(compressed_name));
+			compressed_name[ARRAY_SIZE(compressed_name)-1] = '\0';
 			char *ext = strstr(compressed_name, ".");
-			if ( (strlen(ext)==4) && 
+			if ( ext && (strlen(ext)==4) &&
 				  ( (ext[1] == 't') || (ext[1] == 'T') ) && 
 				  ( (ext[2] == 'g') || (ext[2] == 'G') ) && 
 				  ( (ext[3] == 'a') || (ext[3] == 'A') ) ) {

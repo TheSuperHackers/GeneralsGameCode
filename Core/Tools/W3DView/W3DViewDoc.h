@@ -28,12 +28,12 @@
 #endif // _MSC_VER >= 1000
 
 #include "scene.h"
-#include "Chunkio.h"
-#include "HAnim.H"
-#include "HCAnim.H"
+#include "chunkio.h"
+#include "hanim.h"
+#include "hcanim.h"
 #include "dynamesh.h"
 #include "rendobj.h"
-#include "LODDefs.H"
+#include "LODDefs.h"
 
 
 ///////////////////////////////////////////////////////////

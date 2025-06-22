@@ -108,7 +108,7 @@ static const char* DeviceNamesNVidia[]={
 	"RIVA 128",
 	"TNT Vanta",
 	"NV1",
-	"GeForce2 MX"
+	"GeForce2 MX",
 	"GeForce4 Ti 4600",
 	"GeForce4 Ti 4400",
 	"GeForce4 Ti",

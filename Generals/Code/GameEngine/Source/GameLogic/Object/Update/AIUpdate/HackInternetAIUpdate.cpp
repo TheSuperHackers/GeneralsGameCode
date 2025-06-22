@@ -494,28 +494,28 @@ StateReturnType HackInternetState::update()
 						{
 							break;
 						}
-						//If entry missing, fall through!
+						FALLTHROUGH; //If entry missing, fall through!
 					case LEVEL_ELITE:
 						amount = ai->getEliteCashAmount();
 						if( amount )
 						{
 							break;
 						}
-						//If entry missing, fall through!
+						FALLTHROUGH; //If entry missing, fall through!
 					case LEVEL_VETERAN:
 						amount = ai->getVeteranCashAmount();
 						if( amount )
 						{
 							break;
 						}
-						//If entry missing, fall through!
+						FALLTHROUGH; //If entry missing, fall through!
 					case LEVEL_REGULAR:
 						amount = ai->getRegularCashAmount();
 						if( amount )
 						{
 							break;
 						}
-						//If entry missing, fall through!
+						FALLTHROUGH; //If entry missing, fall through!
 					default:
 						amount = 1;
 						break;

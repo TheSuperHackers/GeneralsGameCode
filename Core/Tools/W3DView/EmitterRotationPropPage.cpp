@@ -19,12 +19,12 @@
 // EmitterRotationPropPage.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "w3dview.h"
+#include "StdAfx.h"
+#include "W3DView.h"
 #include "EmitterRotationPropPage.h"
-#include "Utils.H"
-#include "ParticleRotationKeyDialog.H"
-#include "EmitterInstanceList.H"
+#include "Utils.h"
+#include "ParticleRotationKeyDialog.h"
+#include "EmitterInstanceList.h"
 
 #ifdef RTS_DEBUG
 #define new DEBUG_NEW

@@ -979,7 +979,7 @@ void TextureLoadTaskClass::Init(TextureBaseClass* tc,bool high_priority)
 {
 	// Make sure texture has a filename.
 	REF_PTR_SET(Texture,tc);
-	WWASSERT(Texture->Get_Full_Path() != NULL);
+	//WWASSERT(Texture->Get_Full_Path() != NULL);
 
 	Reduction=Texture->Get_Reduction();
 	HighPriorityRequested=high_priority;
@@ -1101,7 +1101,7 @@ void TextureLoadTaskClass::Begin_Texture_Load()
 			if (src_format!=WW3D_FORMAT_A8R8G8B8 &&
 				src_format!=WW3D_FORMAT_R8G8B8 &&
 				src_format!=WW3D_FORMAT_X8R8G8B8) {
-				WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!\n",Texture->Get_Full_Path()));
+				WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!\n",Texture->Get_Full_Path().str()));
 			}
 
 			// Destination size will be the next power of two square from the larger width and height...
@@ -1128,7 +1128,7 @@ void TextureLoadTaskClass::Begin_Texture_Load()
 			unsigned oh=height;
 			TextureLoader::Validate_Texture_Size(width,height);
 			if (width!=ow || height!=oh) {
-				WWDEBUG_SAY(("Invalid texture size, scaling required. Texture: %s, size: %d x %d -> %d x %d\n",Texture->Get_Full_Path(),ow,oh,width,height));
+				WWDEBUG_SAY(("Invalid texture size, scaling required. Texture: %s, size: %d x %d -> %d x %d\n",Texture->Get_Full_Path().str(),ow,oh,width,height));
 			}
 
 			IsLoading=true;

@@ -21,7 +21,7 @@
 
 #include "stdafx.h"
 #include "wdump.h"
-#include "WDEView.h"
+#include "wdeview.h"
 #include "wdumpdoc.h"
 #include "chunk_d.h"
 

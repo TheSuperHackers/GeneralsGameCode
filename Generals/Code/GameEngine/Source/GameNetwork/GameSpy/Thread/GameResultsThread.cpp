@@ -265,9 +265,12 @@ void GameResultsThreadClass::Thread_Function()
 					//   callback.
 					IP = 0xFFFFFFFF;   // flag for IP resolve failed
 				}
-				hostNode = (in_addr *) hostStruct->h_addr;
-				IP = hostNode->s_addr;
-				DEBUG_LOG(("sending game results to %s IP = %s\n", hostnameBuffer, inet_ntoa(*hostNode) ));
+				else
+				{
+					hostNode = (in_addr *) hostStruct->h_addr;
+					IP = hostNode->s_addr;
+					DEBUG_LOG(("sending game results to %s IP = %s\n", hostnameBuffer, inet_ntoa(*hostNode) ));
+				}
 			}
 
 			int result = sendGameResults( IP, req.port, req.results );

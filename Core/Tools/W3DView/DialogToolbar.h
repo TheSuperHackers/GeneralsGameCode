@@ -43,7 +43,7 @@
 #ifndef __DIALOGTOOLBAR_H
 #define __DIALOGTOOLBAR_H
 
-#include "Resource.H"
+#include "resource.h"
 
 /////////////////////////////////////////////////////////////////
 //

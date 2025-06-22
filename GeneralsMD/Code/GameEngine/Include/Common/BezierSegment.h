@@ -49,7 +49,7 @@ class BezierSegment
 									Real x2, Real y2, Real z2,
 									Real x3, Real y3, Real z3);
 
-		BezierSegment(Real cp[16]);
+		BezierSegment(Real cp[12]);
 
 
 		BezierSegment(const Coord3D& cp0, 

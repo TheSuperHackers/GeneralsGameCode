@@ -218,7 +218,7 @@ TextureClass *W3DAssetManager::Get_Texture(
 			FILE *logfile=fopen("PreloadedAssets.txt","a+");	//append to log
 			if (logfile)
 			{	
-				fprintf(logfile,"TX: %s\n",tex->Get_Texture_Name());
+				fprintf(logfile,"TX: %s\n",tex->Get_Texture_Name().str());
 				fclose(logfile);
 			}
 		}
@@ -977,7 +977,7 @@ bool W3DAssetManager::Load_3D_Assets( const char * filename )
 		{	
 			StringClass lower_case_name(filename,true);
 			_strlwr(lower_case_name.Peek_Buffer());
-			fprintf(logfile,"3D: %s\n",lower_case_name.Peek_Buffer());
+			fprintf(logfile,"3D: %s\n",lower_case_name.str());
 			fclose(logfile);
 		}
 	}
@@ -1197,7 +1197,7 @@ void W3DAssetManager::Report_Used_Textures(void)
 		}
 		else
 		{
-			DEBUG_LOG(("**Texture \"%s\" referenced %d times on map reset\n",tex->Get_Texture_Name(),tex->Num_Refs()-1));
+			DEBUG_LOG(("**Texture \"%s\" referenced %d times on map reset\n",tex->Get_Texture_Name().str(),tex->Num_Refs()-1));
 		}
 	}
 /*	for (unsigned i=0;i<count;++i) {

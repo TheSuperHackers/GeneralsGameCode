@@ -957,8 +957,8 @@ GlobalData::GlobalData()
 	m_initialFile.clear();
 	m_pendingFile.clear();
 	
-	m_simulateReplayList.clear();
-	m_simulateReplayJobs = -1;
+	m_simulateReplays.clear();
+	m_simulateReplayJobs = SIMULATE_REPLAYS_SEQUENTIAL;
 
 	for (i = LEVEL_FIRST; i <= LEVEL_LAST; ++i)
 		m_healthBonus[i] = 1.0f;
@@ -998,23 +998,42 @@ GlobalData::GlobalData()
 	
 	// lets CRC the executable!  Whee!
 	const Int blockSize = 65536;
-	Char buffer[ _MAX_PATH ];
 	CRC exeCRC;
-	GetModuleFileName( NULL, buffer, sizeof( buffer ) );
-	File *fp = TheFileSystem->openFile(buffer, File::READ | File::BINARY);
-	if (fp != NULL) {
-		unsigned char crcBlock[blockSize];
-		Int amtRead = 0;
-		while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
-		{
-			exeCRC.computeCRC(crcBlock, amtRead);
+	File *fp;
+	// TheSuperHackers @tweak SkyAero/xezon 27/05/2025
+	// Simulate the EXE's CRC value to force Network and Replay compatibility with another build.
+#if (defined(_MSC_VER) && _MSC_VER < 1300) && RETAIL_COMPATIBLE_CRC
+
+#define GENERALSMD_104_CD_EXE_CRC    0x3b6fb2cfu
+#define GENERALSMD_104_STEAM_EXE_CRC 0xf6a4221bu
+#define GENERALSMD_104_EAAPP_EXE_CRC 0xc4181eb9u
+
+	exeCRC.set(GENERALSMD_104_CD_EXE_CRC);
+	DEBUG_LOG(("Fake EXE CRC is 0x%8.8X\n", exeCRC.get()));
+
+#else
+	{
+		Char buffer[ _MAX_PATH ];
+		GetModuleFileName( NULL, buffer, sizeof( buffer ) );
+		fp = TheFileSystem->openFile(buffer, File::READ | File::BINARY);
+		if (fp != NULL) {
+			unsigned char crcBlock[blockSize];
+			Int amtRead = 0;
+			while ( (amtRead=fp->read(crcBlock, blockSize)) > 0 )
+			{
+				exeCRC.computeCRC(crcBlock, amtRead);
+			}
+			DEBUG_LOG(("EXE CRC is 0x%8.8X\n", exeCRC.get()));
+			fp->close();
+			fp = NULL;
 		}
-		fp->close();
-		fp = NULL;
 	}
+#endif
+
+	UnsignedInt version = 0;
 	if (TheVersion)
 	{
-		UnsignedInt version = TheVersion->getVersionNumber();
+		version = TheVersion->getVersionNumber();
 		exeCRC.computeCRC( &version, sizeof(UnsignedInt) );
 	}
 	// Add in MP scripts to the EXE CRC, since the game will go out of sync if they change
@@ -1042,7 +1061,7 @@ GlobalData::GlobalData()
 	}
 
 	m_exeCRC = exeCRC.get();
-	DEBUG_LOG(("EXE CRC: 0x%8.8X\n", m_exeCRC));
+	DEBUG_LOG(("EXE+Version(%d.%d)+SCB CRC is 0x%8.8X\n", version >> 16, version & 0xffff, m_exeCRC));
 	
 	m_movementPenaltyDamageState = BODY_REALLYDAMAGED;
 	

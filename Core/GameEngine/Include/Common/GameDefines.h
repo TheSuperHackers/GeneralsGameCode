@@ -18,8 +18,17 @@
 
 #pragma once
 
-// TheSuperHackers @feature helmutbuhler 13/04/2025
-// Simulate a list of replays without graphics.
-// Returns exitcode 1 if mismatch or other error occured
-// Returns exitcode 0 if all replays were successfully simulated without mismatches
-int SimulateReplayList(const std::vector<AsciiString> &filenames, int maxProcesses);
+// Note: Retail compatibility must not be broken before this project officially does.
+// Use RETAIL_COMPATIBLE_CRC and RETAIL_COMPATIBLE_XFER_SAVE to guard breaking changes.
+
+#ifndef RETAIL_COMPATIBLE_CRC
+#define RETAIL_COMPATIBLE_CRC (1) // Game is expected to be CRC compatible with retail Generals 1.08, Zero Hour 1.04
+#endif
+
+#ifndef RETAIL_COMPATIBLE_XFER_SAVE
+#define RETAIL_COMPATIBLE_XFER_SAVE (1) // Game is expected to be Xfer Save compatible with retail Generals 1.08, Zero Hour 1.04
+#endif
+
+#ifndef ENABLE_GAMETEXT_SUBSTITUTES
+#define ENABLE_GAMETEXT_SUBSTITUTES (1) // The code can provide substitute texts when labels and strings are missing in the STR or CSF translation file
+#endif

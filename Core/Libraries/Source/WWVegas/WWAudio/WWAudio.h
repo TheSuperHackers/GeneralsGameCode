@@ -386,7 +386,7 @@ public:
 	// Note:  The cache sizes are in kilo-bytes.  The default
 	// is currently set to 1MB.
 	//
-	bool					Set_Cache_Size (int kbytes = DEF_CACHE_SIZE)	{ m_MaxCacheSize = (kbytes * 1024); }
+	void					Set_Cache_Size (int kbytes = DEF_CACHE_SIZE)	{ m_MaxCacheSize = (kbytes * 1024); }
 	int					Get_Cache_Size (void) const						{ return m_MaxCacheSize / 1024; }
 	int					Get_Current_Cache_Size (void) const				{ return m_CurrentCacheSize; }
 

@@ -19,14 +19,14 @@
 // SceneLightDialog.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "W3DView.h"
 #include "SceneLightDialog.h"
-#include "Utils.H"
-#include "MainFrm.H"
-#include "W3DViewDoc.H"
-#include "Scene.H"
-#include "Light.H"
+#include "Utils.h"
+#include "MainFrm.h"
+#include "W3DViewDoc.h"
+#include "scene.h"
+#include "light.h"
 
 
 #ifdef RTS_DEBUG

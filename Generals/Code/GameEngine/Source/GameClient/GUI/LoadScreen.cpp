@@ -648,74 +648,10 @@ void ShellGameLoadScreen::init( GameInfo *game )
 		m_loadScreen->winSetEnabledImage(0, TheMappedImageCollection->findImageByName("TitleScreen"));
 		TheWritableGlobalData->m_breakTheMovie = FALSE;
 
-//		m_videoStream = TheVideoPlayer->open( "Sizzle" );
-//		if ( m_videoStream == NULL )
-//		{
-//			m_progressBar->winHide(FALSE);
-//			return;
-//		}
-//
-//		// Create the new buffer
-//		m_videoBuffer = TheDisplay->createVideoBuffer();
-//		if (	m_videoBuffer == NULL || 
-//					!m_videoBuffer->allocate(	m_videoStream->width(), 
-//														m_videoStream->height())
-//			)
-//		{
-//			delete m_videoBuffer;
-//			m_videoBuffer = NULL;
-//
-//			if ( m_videoStream )
-//				m_videoStream->close();
-//			m_videoStream = NULL;
-//
-//			return;
-//		}
-//		TheGlobalData->m_isBreakableMovie = TRUE;
-//		TheGlobalData->m_breakTheMovie = FALSE;
-//		while (m_videoStream->frameIndex() < m_videoStream->frameCount() - 1 )
-//		{
-//			if(TheGlobalData->m_breakTheMovie)
-//			{
-//				TheGlobalData->m_breakTheMovie = FALSE;
-//				m_videoStream->frameGoto(m_videoStream->frameCount() - 1);
-//			}
-//			if(m_videoStream->frameIndex() < m_videoStream->frameCount() - 1)
-//			{
-//				if(!m_videoStream->isFrameReady())
-//					continue;
-//
-//				m_videoStream->frameDecompress();
-//				m_videoStream->frameRender(m_videoBuffer);
-//				m_videoStream->frameNext();
-//				if(m_videoBuffer)
-//					m_loadScreen->winGetInstanceData()->setVideoBuffer(m_videoBuffer);
-//			}
-//
-//			TheWindowManager->update();
-//		//	TheShell->update();
-//			//TheDisplay->update();
-//			// redraw all views, update the GUI
-//			TheDisplay->draw();
-//		}
-//		TheGlobalData->m_isBreakableMovie = FALSE;
-//		TheGlobalData->m_breakTheMovie = FALSE;
-//		GameWindow *win = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( AsciiString( "ShellGameLoadScreen.wnd:EAGamesLogo" ) ));
-//		if(win)
-//			win->winHide(FALSE);
-
 		GameWindow *win = TheWindowManager->winGetWindowFromId( m_loadScreen,TheNameKeyGenerator->nameToKey( AsciiString( "ShellGameLoadScreen.wnd:StaticTextLegal" ) ));
 		if(win)
 			win->winHide(FALSE);
 		firstLoad = FALSE;
-
-		UnsignedInt showTime = timeGetTime();
-		while(showTime + 3000 > timeGetTime())
-		{	
-			LoadScreen::update(0);
-			Sleep(100);
-		}
-
 	}
 	m_progressBar->winHide(FALSE);	
 }
@@ -759,6 +695,11 @@ MultiPlayerLoadScreen::MultiPlayerLoadScreen( void )
 	
 MultiPlayerLoadScreen::~MultiPlayerLoadScreen( void )
 {
+	if(m_mapPreview)
+	{
+		m_mapPreview->winSetUserData(NULL);
+	}
+
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
 		m_progressBars[i] = NULL;
@@ -945,6 +886,7 @@ void MultiPlayerLoadScreen::processProgress(Int playerId, Int percentage)
 	if( percentage < 0 || percentage > 100 || playerId >= MAX_SLOTS || playerId < 0 || m_playerLookup[playerId] == -1)
 	{
 		DEBUG_ASSERTCRASH(FALSE, ("Percentage %d was passed in for Player %d\n", percentage, playerId));
+		return;
 	}
 	//DEBUG_LOG(("Percentage %d was passed in for Player %d (in loadscreen position %d)\n", percentage, playerId, m_playerLookup[playerId]));
 	if(m_progressBars[m_playerLookup[playerId]])
@@ -984,6 +926,11 @@ GameSpyLoadScreen::GameSpyLoadScreen( void )
 	
 GameSpyLoadScreen::~GameSpyLoadScreen( void )
 {
+	if(m_mapPreview)
+	{
+		m_mapPreview->winSetUserData(NULL);
+	}
+
 	for(Int i = 0; i < MAX_SLOTS; ++i)
 	{
 		m_progressBars[i] = NULL;
@@ -1267,6 +1214,7 @@ void GameSpyLoadScreen::processProgress(Int playerId, Int percentage)
 	if( percentage < 0 || percentage > 100 || playerId >= MAX_SLOTS || playerId < 0 || m_playerLookup[playerId] == -1)
 	{
 		DEBUG_ASSERTCRASH(FALSE, ("Percentage %d was passed in for Player %d\n", percentage, playerId));
+		return;
 	}
 	//DEBUG_LOG(("Percentage %d was passed in for Player %d (in loadscreen position %d)\n", percentage, playerId, m_playerLookup[playerId]));
 	if(m_progressBars[m_playerLookup[playerId]])
@@ -1419,6 +1367,7 @@ void MapTransferLoadScreen::processProgress(Int playerId, Int percentage, AsciiS
 	if( percentage < 0 || percentage > 100 || playerId >= MAX_SLOTS || playerId < 0 || m_playerLookup[playerId] == -1)
 	{
 		DEBUG_ASSERTCRASH(FALSE, ("Percentage %d was passed in for Player %d\n", percentage, playerId));
+		return;
 	}
 
 	if (m_oldProgress[playerId] == percentage)

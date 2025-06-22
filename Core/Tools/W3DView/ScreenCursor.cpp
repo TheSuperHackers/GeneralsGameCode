@@ -31,9 +31,9 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
-#include "StdAfx.H"
-#include "ScreenCursor.H"
-#include "Utils.H"
+#include "StdAfx.h"
+#include "ScreenCursor.h"
+#include "Utils.h"
 #include "ww3d.h"
 #include "vertmaterial.h"
 #include "shader.h"

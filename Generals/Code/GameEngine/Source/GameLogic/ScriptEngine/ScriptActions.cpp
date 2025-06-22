@@ -492,7 +492,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 
 	destination = *way->getLocation();
 	if (!theTeamProto) {
-		DEBUG_LOG(("***WARNING - Team %s not found.\n", team));
+		DEBUG_LOG(("***WARNING - Team %s not found.\n", team.str()));
 		return;
 	}
 	const TeamTemplateInfo *pInfo = theTeamProto->getTemplateInfo();
@@ -2551,6 +2551,7 @@ void ScriptActions::doCameoFlash(const AsciiString& name, Int timeInSeconds)
 	if( button == NULL )
 	{
 		DEBUG_CRASH(( "ScriptActions::doCameoFlash can't find AsciiString cameoflash" ));
+		return;
 	}
 
 	Int frames = LOGICFRAMES_PER_SECOND * timeInSeconds;
@@ -2874,7 +2875,7 @@ void ScriptActions::doCameraMotionBlur(Bool zoomIn, Bool saturate)
 {
 	if (TheTacticalView->setViewFilter(FT_VIEW_MOTION_BLUR_FILTER))
 	{
-		enum FilterModes mode;
+		FilterModes mode;
 		if (saturate) {
 			if (zoomIn) {
 				mode = FM_VIEW_MB_IN_SATURATE;
@@ -6429,7 +6430,7 @@ void ScriptActions::executeAction( ScriptAction *pAction )
 			doCameraMotionBlurJump(pAction->getParameter(0)->getString(), pAction->getParameter(1)->getInt());
 			return;
 		case ScriptAction::CAMERA_MOTION_BLUR_FOLLOW:
-			TheTacticalView->setViewFilterMode((enum FilterModes)(FM_VIEW_MB_PAN_ALPHA+pAction->getParameter(0)->getInt())); 						 
+			TheTacticalView->setViewFilterMode((FilterModes)(FM_VIEW_MB_PAN_ALPHA+pAction->getParameter(0)->getInt())); 						 
 			TheTacticalView->setViewFilter(FT_VIEW_MOTION_BLUR_FILTER);
 			return;
 		case ScriptAction::CAMERA_MOTION_BLUR_END_FOLLOW:

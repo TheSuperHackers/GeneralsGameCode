@@ -69,6 +69,7 @@ class MeshClass;
 class W3DTerrainLogic;
 class W3DAssetManager;
 class SimpleSceneClass;
+enum BodyDamageType CPP_11(: Int);
 
 //-----------------------------------------------------------------------------
 //           Type Defines
@@ -111,7 +112,7 @@ protected:
 	Int				m_numPolygons;		///< Number of polygons to draw.
 	Bool			m_visible;
 	AsciiString m_templateName;					///< Name of the bridge type.
-	enum BodyDamageType m_curDamageState;
+	BodyDamageType m_curDamageState;
 	Bool			m_enabled;
 
 protected:
@@ -130,9 +131,9 @@ public:
 	AsciiString getTemplateName(void) {return m_templateName;}
 	const Vector3* getStart(void) const {return &m_start;}
 	const Vector3* getEnd(void) const { return &m_end;}
-	Bool load(enum BodyDamageType curDamageState);
-	enum BodyDamageType getDamageState(void) {return m_curDamageState;};
-	void setDamageState(enum BodyDamageType state) { m_curDamageState = state;};
+	Bool load(BodyDamageType curDamageState);
+	BodyDamageType getDamageState(void) {return m_curDamageState;};
+	void setDamageState(BodyDamageType state) { m_curDamageState = state;};
 	void getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatXYZNDUV1 *destination_vb, Int *curIndexP, Int *curVertexP, RefRenderObjListIterator *pLightsIterator);
 	Bool cullBridge(CameraClass * camera);						 ///< Culls the bridges.  Returns true if visibility changed.
 	void clearBridge(void);		///< Frees all objects associated with a bridge.

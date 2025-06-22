@@ -1980,7 +1980,11 @@ WindowMsgHandledType GadgetListBoxSystem( GameWindow *window, UnsignedInt msg,
 				delete[]( list->columnWidthPercentage );
 			if( list->multiSelect )
 				delete[]( list->selections );
-			delete( list );
+
+			delete (ListboxData *)window->winGetUserData();
+			window->winSetUserData( NULL );
+			list = NULL;
+
 			break;
 
 		}  // end destroy

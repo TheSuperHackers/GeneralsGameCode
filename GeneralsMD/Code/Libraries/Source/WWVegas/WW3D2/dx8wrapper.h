@@ -882,7 +882,7 @@ WWINLINE void DX8Wrapper::Set_DX8_Render_State(D3DRENDERSTATETYPE state, unsigne
 		Get_DX8_Render_State_Value_Name(value_name,state,value);
 		SNAPSHOT_SAY(("DX8 - SetRenderState(state: %s, value: %s)\n",
 			Get_DX8_Render_State_Name(state),
-			value_name));
+			value_name.str()));
 	}
 #endif
 
@@ -912,7 +912,7 @@ WWINLINE void DX8Wrapper::Set_DX8_Texture_Stage_State(unsigned stage, D3DTEXTURE
 		SNAPSHOT_SAY(("DX8 - SetTextureStageState(stage: %d, state: %s, value: %s)\n",
 			stage,
 			Get_DX8_Texture_Stage_State_Name(state),
-			value_name));
+			value_name.str()));
 	}
 #endif
 
@@ -1210,7 +1210,7 @@ WWINLINE void DX8Wrapper::Set_Shader(const ShaderClass& shader)
 #ifdef MESH_RENDER_SNAPSHOT_ENABLED
 	StringClass str;
 #endif
-	SNAPSHOT_SAY(("DX8Wrapper::Set_Shader(%s)\n",shader.Get_Description(str)));
+	SNAPSHOT_SAY(("DX8Wrapper::Set_Shader(%s)\n",shader.Get_Description(str).str()));
 }
 
 WWINLINE void DX8Wrapper::Set_Projection_Transform_With_Z_Bias(const Matrix4x4& matrix, float znear, float zfar)

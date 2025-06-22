@@ -707,6 +707,8 @@ UpdateSleepTime MissileAIUpdate::update()
 			{
 				break;
 			}
+			FALLTHROUGH;
+
 		case IGNITION:
 			doIgnitionState();
 			break;

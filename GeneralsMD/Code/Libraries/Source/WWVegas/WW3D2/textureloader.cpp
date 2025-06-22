@@ -895,7 +895,7 @@ void TextureLoader::Process_Foreground_Thumbnail(TextureLoadTaskClass *task)
 	switch (task->Get_State()) {
 		case TextureLoadTaskClass::STATE_NONE:
 			Load_Thumbnail(task->Peek_Texture());
-			// NOTE: fall-through is intentional
+			FALLTHROUGH; // NOTE: fall-through is intentional
 
 		case TextureLoadTaskClass::STATE_COMPLETE:
 			task->Destroy();
@@ -1260,12 +1260,15 @@ void TextureLoadTaskClass::Finish_Load(void)
 				Apply_Missing_Texture();
 				break;
 			}
+			FALLTHROUGH;
 
 		case STATE_LOAD_BEGUN:
 			Load();
+			FALLTHROUGH;
 
 		case STATE_LOAD_MIPMAP:
 			End_Load();
+			FALLTHROUGH;
 
 		default:
 			break;
@@ -1565,7 +1568,7 @@ bool TextureLoadTaskClass::Begin_Uncompressed_Load(void)
    	&&	src_format != WW3D_FORMAT_R8G8B8 
   		&&	src_format != WW3D_FORMAT_X8R8G8B8 ) 
 	{
-		WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!\n", Texture->Get_Full_Path()));
+		WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!\n", Texture->Get_Full_Path().str()));
 	}
 
 	// Destination size will be the next power of two square from the larger width and height...
@@ -1574,7 +1577,7 @@ bool TextureLoadTaskClass::Begin_Uncompressed_Load(void)
 	TextureLoader::Validate_Texture_Size(width, height,depth);
 	if (width != ow || height != oh) 
 	{
-		WWDEBUG_SAY(("Invalid texture size, scaling required. Texture: %s, size: %d x %d -> %d x %d\n", Texture->Get_Full_Path(), ow, oh, width, height));
+		WWDEBUG_SAY(("Invalid texture size, scaling required. Texture: %s, size: %d x %d -> %d x %d\n", Texture->Get_Full_Path().str(), ow, oh, width, height));
 	}
 
 	Width		= width;
@@ -2347,7 +2350,7 @@ bool CubeTextureLoadTaskClass::Begin_Uncompressed_Load(void)
    		&&	src_format != WW3D_FORMAT_R8G8B8 
   			&&	src_format != WW3D_FORMAT_X8R8G8B8 ) 
 	{
-		WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!\n", Texture->Get_Full_Path()));
+		WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!\n", Texture->Get_Full_Path().str()));
 	}
 
 	// Destination size will be the next power of two square from the larger width and height...
@@ -2356,7 +2359,7 @@ bool CubeTextureLoadTaskClass::Begin_Uncompressed_Load(void)
 	TextureLoader::Validate_Texture_Size(width, height,depth);
 	if (width != ow || height != oh) 
 	{
-		WWDEBUG_SAY(("Invalid texture size, scaling required. Texture: %s, size: %d x %d -> %d x %d\n", Texture->Get_Full_Path(), ow, oh, width, height));
+		WWDEBUG_SAY(("Invalid texture size, scaling required. Texture: %s, size: %d x %d -> %d x %d\n", Texture->Get_Full_Path().str(), ow, oh, width, height));
 	}
 
 	Width		= width;
@@ -2713,7 +2716,7 @@ bool VolumeTextureLoadTaskClass::Begin_Uncompressed_Load(void)
    		&&	src_format != WW3D_FORMAT_R8G8B8 
   			&&	src_format != WW3D_FORMAT_X8R8G8B8 ) 
 	{
-		WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!\n", Texture->Get_Full_Path()));
+		WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!\n", Texture->Get_Full_Path().str()));
 	}
 
 	// Destination size will be the next power of two square from the larger width and height...
@@ -2723,7 +2726,7 @@ bool VolumeTextureLoadTaskClass::Begin_Uncompressed_Load(void)
 	TextureLoader::Validate_Texture_Size(width, height, depth);
 	if (width != ow || height != oh || depth != od) 
 	{
-		WWDEBUG_SAY(("Invalid texture size, scaling required. Texture: %s, size: %d x %d -> %d x %d\n", Texture->Get_Full_Path(), ow, oh, width, height));
+		WWDEBUG_SAY(("Invalid texture size, scaling required. Texture: %s, size: %d x %d -> %d x %d\n", Texture->Get_Full_Path().str(), ow, oh, width, height));
 	}
 
 	Width		= width;

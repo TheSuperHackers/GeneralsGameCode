@@ -224,7 +224,7 @@ Bool FileSystem::getFileInfo(const AsciiString& filename, FileInfo *fileInfo) co
 	if (fileInfo == NULL) {
 		return FALSE;
 	}
-	memset(fileInfo, 0, sizeof(fileInfo));
+	memset(fileInfo, 0, sizeof(*fileInfo));
 	
 	if (TheLocalFileSystem->getFileInfo(filename, fileInfo)) {
 		return TRUE;
@@ -321,4 +321,54 @@ void FileSystem::unloadMusicFilesFromCD()
 	}
 
 	TheArchiveFileSystem->closeArchiveFile( MUSIC_BIG );
+}
+
+//============================================================================
+// FileSystem::normalizePath
+//============================================================================
+AsciiString FileSystem::normalizePath(const AsciiString& path) const
+{
+	return TheLocalFileSystem->normalizePath(path);
+}
+
+//============================================================================
+// FileSystem::isPathInDirectory
+//============================================================================
+Bool FileSystem::isPathInDirectory(const AsciiString& testPath, const AsciiString& basePath)
+{
+	AsciiString testPathNormalized = TheFileSystem->normalizePath(testPath);
+	AsciiString basePathNormalized = TheFileSystem->normalizePath(basePath);
+
+	if (basePathNormalized.isEmpty())
+	{
+		DEBUG_CRASH(("Unable to normalize base directory path '%s'.\n", basePath.str()));
+		return false;
+	}
+	else if (testPathNormalized.isEmpty())
+	{
+		DEBUG_CRASH(("Unable to normalize file path '%s'.\n", testPath.str()));
+		return false;
+	}
+
+#ifdef _WIN32
+	const char* pathSep = "\\";
+#else
+	const char* pathSep = "/";
+#endif
+
+	if (!basePathNormalized.endsWith(pathSep))
+	{
+		basePathNormalized.concat(pathSep);
+	}
+
+#ifdef _WIN32
+	if (!testPathNormalized.startsWithNoCase(basePathNormalized))
+#else
+	if (!testPathNormalized.startsWith(basePathNormalized))
+#endif
+	{
+		return false;
+	}
+
+	return true;
 }

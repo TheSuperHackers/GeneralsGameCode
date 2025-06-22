@@ -74,16 +74,17 @@ WorkerProcess::WorkerProcess()
 	m_isDone = false;
 }
 
-bool WorkerProcess::StartProcess(UnicodeString command)
+bool WorkerProcess::startProcess(UnicodeString command)
 {
-	m_stdOutput = "";
+	m_stdOutput.clear();
 	m_isDone = false;
 
 	// Create pipe for reading console output
 	SECURITY_ATTRIBUTES saAttr = { sizeof(SECURITY_ATTRIBUTES) };
 	saAttr.bInheritHandle = TRUE;
 	HANDLE writeHandle = NULL;
-	CreatePipe(&m_readHandle, &writeHandle, &saAttr, 0);
+	if (!CreatePipe(&m_readHandle, &writeHandle, &saAttr, 0))
+		return false;
 	SetHandleInformation(m_readHandle, HANDLE_FLAG_INHERIT, 0);
 
 	STARTUPINFOW si = { sizeof(STARTUPINFOW) };
@@ -122,41 +123,47 @@ bool WorkerProcess::StartProcess(UnicodeString command)
 	return true;
 }
 
-bool WorkerProcess::IsRunning() const
+bool WorkerProcess::isRunning() const
 {
 	return m_processHandle != NULL;
 }
 
-bool WorkerProcess::IsDone(DWORD *exitcode, AsciiString *stdOutput) const
+bool WorkerProcess::isDone() const
 {
-	*exitcode = m_exitcode;
-	*stdOutput = m_stdOutput;
 	return m_isDone;
 }
 
-void WorkerProcess::Update()
+DWORD WorkerProcess::getExitCode() const
 {
-	if (!IsRunning())
-		return;
+	return m_exitcode;
+}
 
+AsciiString WorkerProcess::getStdOutput() const
+{
+	return m_stdOutput;
+}
+
+bool WorkerProcess::fetchStdOutput()
+{
 	while (true)
 	{
 		// Call PeekNamedPipe to make sure ReadFile won't block
 		DWORD bytesAvailable = 0;
+		DEBUG_ASSERTCRASH(m_readHandle != NULL, ("Is not expected NULL"));
 		BOOL success = PeekNamedPipe(m_readHandle, NULL, 0, NULL, &bytesAvailable, NULL);
 		if (!success)
-			break;
+			return true;
 		if (bytesAvailable == 0)
 		{
 			// Child process is still running and we have all output so far
-			return;
+			return false;
 		}
 
 		DWORD readBytes = 0;
 		char buffer[1024];
-		success = ReadFile(m_readHandle, buffer, 1024-1, &readBytes, NULL);
+		success = ReadFile(m_readHandle, buffer, ARRAY_SIZE(buffer)-1, &readBytes, NULL);
 		if (!success)
-			break;
+			return true;
 		DEBUG_ASSERTCRASH(readBytes != 0, ("expected readBytes to be non null"));
 		
 		// Remove \r, otherwise each new line is doubled when we output it again
@@ -165,6 +172,18 @@ void WorkerProcess::Update()
 				buffer[i] = ' ';
 		buffer[readBytes] = 0;
 		m_stdOutput.concat(buffer);
+	}
+}
+
+void WorkerProcess::update()
+{
+	if (!isRunning())
+		return;
+
+	if (!fetchStdOutput())
+	{
+		// There is still potential output pending
+		return;
 	}
 
 	// Pipe broke, that means the process already exited. But we call this just to make sure
@@ -182,9 +201,9 @@ void WorkerProcess::Update()
 	m_isDone = true;
 }
 
-void WorkerProcess::Kill()
+void WorkerProcess::kill()
 {
-	if (!IsRunning())
+	if (!isRunning())
 		return;
 
 	if (m_processHandle != NULL)
@@ -206,7 +225,7 @@ void WorkerProcess::Kill()
 		m_jobHandle = NULL;
 	}
 
-	m_stdOutput = "";
+	m_stdOutput.clear();
 	m_isDone = false;
 }
 

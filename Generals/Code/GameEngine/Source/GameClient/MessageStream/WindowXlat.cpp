@@ -204,7 +204,7 @@ GameMessageDisposition WindowTranslator::translateGameMessage(const GameMessage 
 				//If we release the button outside
 				forceKeepMessage = TRUE;
 			}
-			//FALL THROUGH INTENTIONALLY!
+			FALLTHROUGH; //FALL THROUGH INTENTIONALLY!
 		}
 		case GameMessage::MSG_RAW_MOUSE_POSITION:
 		case GameMessage::MSG_RAW_MOUSE_LEFT_BUTTON_DOWN:

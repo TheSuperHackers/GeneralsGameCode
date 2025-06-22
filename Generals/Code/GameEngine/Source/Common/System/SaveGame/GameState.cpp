@@ -783,7 +783,7 @@ AsciiString GameState::getFilePathInSaveDirectory(const AsciiString& leaf) const
 //-------------------------------------------------------------------------------------------------
 Bool GameState::isInSaveDirectory(const AsciiString& path) const
 {
-	return path.startsWithNoCase(getSaveDirectory());
+	return FileSystem::isPathInDirectory(path, getSaveDirectory());
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -902,10 +902,13 @@ AsciiString GameState::realMapPathToPortableMapPath(const AsciiString& in) const
 AsciiString GameState::portableMapPathToRealMapPath(const AsciiString& in) const
 {
 	AsciiString prefix;
+	// The directory where the real map path should be contained in.
+	AsciiString containingBasePath;
 	if (in.startsWithNoCase(PORTABLE_SAVE))
 	{
 		// the save dir ends with "\\"
 		prefix = getSaveDirectory();
+		containingBasePath = prefix;
 		prefix.concat(getMapLeafName(in));
 	}
 	else if (in.startsWithNoCase(PORTABLE_MAPS))
@@ -913,6 +916,7 @@ AsciiString GameState::portableMapPathToRealMapPath(const AsciiString& in) const
 		// the map dir DOES NOT end with "\\", must add it
 		prefix = TheMapCache->getMapDir();
 		prefix.concat("\\");
+		containingBasePath = prefix;
 		prefix.concat(getMapLeafAndDirName(in));
 	}
 	else if (in.startsWithNoCase(PORTABLE_USER_MAPS))
@@ -920,15 +924,22 @@ AsciiString GameState::portableMapPathToRealMapPath(const AsciiString& in) const
 		// the map dir DOES NOT end with "\\", must add it
 		prefix = TheMapCache->getUserMapDir();
 		prefix.concat("\\");
+		containingBasePath = prefix;
 		prefix.concat(getMapLeafAndDirName(in));
 	}
 	else
 	{
 		DEBUG_CRASH(("Map file was not found in any of the expected directories; this is impossible"));
-		//throw INI_INVALID_DATA;
-		// uncaught exceptions crash us. better to just use a bad path.
-		prefix = in;
+		// Empty string represents a failure, either caused by an invalid prefix or a relative path leading outside the base path
+		return AsciiString::TheEmptyString;
 	}
+
+	if (!FileSystem::isPathInDirectory(prefix, containingBasePath))
+	{
+		DEBUG_LOG(("Normalized file path for '%s' was outside the expected base path of '%s'.\n", prefix.str(), containingBasePath.str()));
+		return AsciiString::TheEmptyString;
+	}
+
 	prefix.toLower();
 	return prefix;
 }
@@ -1391,7 +1402,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 				{
 
 					DEBUG_CRASH(( "Error saving block '%s' in file '%s'\n",
-												blockName.str(), xfer->getIdentifier() ));
+												blockName.str(), xfer->getIdentifier().str() ));
 					throw;
 
 				}  // end catch
@@ -1468,7 +1479,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 				{
 
 					DEBUG_CRASH(( "Error loading block '%s' in file '%s'\n",
-												blockInfo->blockName.str(), xfer->getIdentifier() ));
+												blockInfo->blockName.str(), xfer->getIdentifier().str() ));
 					throw;
 
 				}  // end catch

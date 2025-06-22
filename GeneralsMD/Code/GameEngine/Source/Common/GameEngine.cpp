@@ -207,6 +207,10 @@ GameEngine::~GameEngine()
 
 	TheGameResultsQueue->endThreads();
 
+	// TheSuperHackers @fix helmutbuhler 03/06/2025
+	// Reset all subsystems before deletion to prevent crashing due to cross dependencies.
+	reset();
+
 	TheSubsystemList->shutdownAll();
 	delete TheSubsystemList;
 	TheSubsystemList = NULL;
@@ -247,8 +251,7 @@ void GameEngine::setFramesPerSecondLimit( Int fps )
 /** -----------------------------------------------------------------------------------------------
  * Initialize the game engine by initializing the GameLogic and GameClient.
  */
-void GameEngine::init( void ) {} /// @todo: I changed this to take argc & argv so we can parse those after the GDF is loaded.  We need to rethink this immediately as it is a nasty hack
-void GameEngine::init( int argc, char *argv[] )
+void GameEngine::init()
 {
 	try {
 		//create an INI object to use for loading stuff
@@ -360,7 +363,8 @@ void GameEngine::init( int argc, char *argv[] )
 	#endif/////////////////////////////////////////////////////////////////////////////////////////////
 
 
-		initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", MSGNEW("GameEngineSubsystem") GlobalData(), &xferCRC, "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
+		DEBUG_ASSERTCRASH(TheWritableGlobalData,("TheWritableGlobalData expected to be created\n"));
+		initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", TheWritableGlobalData, &xferCRC, "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
 
 
 	#ifdef DUMP_PERF_STATS///////////////////////////////////////////////////////////////////////////
@@ -384,7 +388,9 @@ void GameEngine::init( int argc, char *argv[] )
 	#endif
 		
 		// special-case: parse command-line parameters after loading global data
-		parseCommandLine(argc, argv);
+		CommandLine::parseCommandLineForEngineInit();
+
+		TheArchiveFileSystem->loadMods();
 
 		// doesn't require resets so just create a single instance here.
 		TheGameLODManager = MSGNEW("GameEngineSubsystem") GameLODManager;
@@ -530,6 +536,8 @@ void GameEngine::init( int argc, char *argv[] )
 		fname.format("Data\\%s\\CommandMap.ini", GetRegistryLanguage().str());
 		initSubsystem(TheMetaMap,"TheMetaMap", MSGNEW("GameEngineSubsystem") MetaMap(), NULL, fname.str(), "Data\\INI\\CommandMap.ini");
 
+		TheMetaMap->generateMetaMap();
+
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		ini.load("Data\\INI\\CommandMapDebug.ini", INI_LOAD_MULTIFILE, NULL);
 #endif
@@ -604,7 +612,7 @@ void GameEngine::init( int argc, char *argv[] )
 		// load the initial shell screen
 		//TheShell->push( AsciiString("Menus/MainMenu.wnd") );
 		
-		// This allows us to run a map/reply from the command line
+		// This allows us to run a map from the command line
 		if (TheGlobalData->m_initialFile.isEmpty() == FALSE)
 		{
 			AsciiString fname = TheGlobalData->m_initialFile;
@@ -625,10 +633,6 @@ void GameEngine::init( int argc, char *argv[] )
 				msg->appendIntegerArgument(DIFFICULTY_NORMAL);
 				msg->appendIntegerArgument(0);
 				InitRandom(0);
-			}
-			else if (fname.endsWithNoCase(".rep"))
-			{
-				TheRecorder->playbackFile(fname);
 			}
 		}
 
@@ -748,6 +752,7 @@ void GameEngine::update( void )
 			TheCDManager->UPDATE();
 		}
 
+		TheGameLogic->preUpdate();
 
 		if ((TheNetwork == NULL && !TheGameLogic->isGamePaused()) || (TheNetwork && TheNetwork->isFrameDataReady()))
 		{

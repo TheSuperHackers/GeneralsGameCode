@@ -21,7 +21,6 @@ set(GAMEENGINE_SRC
 #    Include/Common/CDManager.h
 #    Include/Common/ClientUpdateModule.h
 #    Include/Common/CommandLine.h
-#    Include/Common/CopyProtection.h
 #    Include/Common/crc.h
 #    Include/Common/CRCDebug.h
 #    Include/Common/CriticalSection.h
@@ -43,6 +42,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/FunctionLexicon.h
 #    Include/Common/GameAudio.h
 #    Include/Common/GameCommon.h
+    Include/Common/GameDefines.h
 #    Include/Common/GameEngine.h
 #    Include/Common/GameLOD.h
 #    Include/Common/GameMemory.h
@@ -95,6 +95,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/RandomValue.h
 #    Include/Common/Recorder.h
 #    Include/Common/Registry.h
+    Include/Common/ReplaySimulation.h
 #    Include/Common/ResourceGatheringManager.h
 #    Include/Common/Science.h
 #    Include/Common/ScopedMutex.h
@@ -129,6 +130,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/UserPreferences.h
 #    Include/Common/version.h
 #    Include/Common/WellKnownKeys.h
+    Include/Common/WorkerProcess.h
     Include/Common/Xfer.h
     Include/Common/XferCRC.h
     Include/Common/XferDeepCRC.h
@@ -607,6 +609,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/PerfTimer.cpp
 #    Source/Common/RandomValue.cpp
 #    Source/Common/Recorder.cpp
+    Source/Common/ReplaySimulation.cpp
 #    Source/Common/RTS/AcademyStats.cpp
 #    Source/Common/RTS/ActionManager.cpp
 #    Source/Common/RTS/Energy.cpp
@@ -631,7 +634,6 @@ set(GAMEENGINE_SRC
 #    Source/Common/System/AsciiString.cpp
 #    Source/Common/System/BuildAssistant.cpp
 #    Source/Common/System/CDManager.cpp
-#    Source/Common/System/CopyProtection.cpp
 #    Source/Common/System/CriticalSection.cpp
 #    Source/Common/System/DataChunk.cpp
 #    Source/Common/System/Debug.cpp
@@ -677,6 +679,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/Thing/ThingTemplate.cpp
 #    Source/Common/UserPreferences.cpp
 #    Source/Common/version.cpp
+    Source/Common/WorkerProcess.cpp
 #    Source/GameClient/ClientInstance.cpp
 #    Source/GameClient/Color.cpp
 #    Source/GameClient/Credits.cpp

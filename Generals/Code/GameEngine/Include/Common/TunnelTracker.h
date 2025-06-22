@@ -49,6 +49,7 @@ public:
 	UnsignedInt getContainCount() const { return m_containListSize; }
 	Int getContainMax() const;
 	const ContainedItemsList* getContainedItemsList() const { return &m_containList; }	
+	void swapContainedItemsList(ContainedItemsList& newList);
 
 	Bool isValidContainerFor(const Object* obj, Bool checkCapacity) const;
 	void addToContainList( Object *obj );				///< add 'obj' to contain list

@@ -1089,6 +1089,11 @@ void AIGroup::friend_moveFormationToPos( const Coord3D *pos, CommandSourceType c
 		}
 		Object *theUnit = (*i);
 		AIUpdateInterface *ai = theUnit->getAIUpdateInterface();
+		if (ai == NULL)
+		{
+			continue;
+		}
+
 		Bool isDifferentFormation = false;
 		Coord2D offset;
 		if (isDifferentFormation) {

@@ -38,8 +38,8 @@
 #define __EMITTER_INSTANCE_LIST_H
 
 #include "Vector.H"
-#include "Part_Ldr.H"
-#include "Part_Emt.H"
+#include "part_ldr.h"
+#include "part_emt.h"
 
 
 /////////////////////////////////////////////////////////////////////

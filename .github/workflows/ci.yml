@@ -69,24 +69,28 @@ jobs:
           - preset: "vc6-profile"
             tools: true
             extras: true
-          - preset: "vc6-internal"
-            tools: true
-            extras: true
           - preset: "vc6-debug"
             tools: true
             extras: true
-          - preset: "win32-vcpkg"
+          - preset: "win32"
             tools: true
             extras: true
-          - preset: "win32-vcpkg-profile"
+          - preset: "win32-profile"
             tools: true
             extras: true
-          - preset: "win32-vcpkg-internal"
+          - preset: "win32-debug"
             tools: true
             extras: true
-          - preset: "win32-vcpkg-debug"
-            tools: true
-            extras: true
+          # vcpkg builds have been disabled for now due to excessive build times of 30 minutes per preset
+          # - preset: "win32-vcpkg"
+          #   tools: true
+          #   extras: true
+          # - preset: "win32-vcpkg-profile"
+          #   tools: true
+          #   extras: true
+          # - preset: "win32-vcpkg-debug"
+          #   tools: true
+          #   extras: true
       fail-fast: false
     uses: ./.github/workflows/build-toolchain.yml
     with:
@@ -109,9 +113,6 @@ jobs:
           - preset: "vc6-profile"
             tools: true
             extras: true
-          - preset: "vc6-internal"
-            tools: true
-            extras: true
           - preset: "vc6-debug"
             tools: true
             extras: true
@@ -121,12 +122,19 @@ jobs:
           - preset: "win32-profile"
             tools: true
             extras: true
-          - preset: "win32-internal"
-            tools: true
-            extras: true
           - preset: "win32-debug"
             tools: true
             extras: true
+          # vcpkg builds have been disabled for now due to excessive build times of 30 minutes per preset
+          # - preset: "win32-vcpkg"
+          #   tools: true
+          #   extras: true
+          # - preset: "win32-vcpkg-profile"
+          #   tools: true
+          #   extras: true
+          # - preset: "win32-vcpkg-debug"
+          #   tools: true
+          #   extras: true
       fail-fast: false
     uses: ./.github/workflows/build-toolchain.yml
     with:

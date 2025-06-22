@@ -414,7 +414,12 @@ void W3DTankTruckDraw::updateTreadPositions(Real uvDelta)
 		else
 		if (pTread->m_type == TREAD_RIGHT)	//this tread needs to scroll backwards
 			offset_u = pTread->m_materialSettings.customUVOffset.X - uvDelta;
-				
+		else
+		{
+			DEBUG_CRASH(("Unhandled case in W3DTankTruckDraw::updateTreadPositions"));
+			offset_u = 0.0f;
+		}
+
 		// ensure coordinates of offset are in [0, 1] range:
 		offset_u = offset_u - WWMath::Floor(offset_u);
 		pTread->m_materialSettings.customUVOffset.Set(offset_u,0);

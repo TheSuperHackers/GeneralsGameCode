@@ -19,13 +19,13 @@
 // HierarchyPropPage.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "W3DView.h"
 #include "HierarchyPropPage.h"
-#include "AssetMgr.H"
-#include "RendObj.H"
-#include "AssetPropertySheet.H"
-#include "MeshPropPage.H"
+#include "assetmgr.h"
+#include "rendobj.h"
+#include "AssetPropertySheet.h"
+#include "MeshPropPage.h"
 
 
 #ifdef RTS_DEBUG
@@ -106,7 +106,7 @@ CHierarchyPropPage::OnInitDialog (void)
         if (pCHierarchy)
         {
             CString stringDesc;
-            stringDesc.Format (IDS_HIERARCHY_PROP_DESC, m_stringHierarchyName);
+            stringDesc.Format (IDS_HIERARCHY_PROP_DESC, static_cast<const char*>(m_stringHierarchyName));
 
             // Put the description onto the dialog
             SetDlgItemText (IDC_DESCRIPTION, stringDesc);

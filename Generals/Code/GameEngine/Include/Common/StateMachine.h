@@ -37,6 +37,8 @@
 #include "Common/Snapshot.h"
 #include "Common/Xfer.h"
 
+#include "refcount.h"
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -262,6 +264,10 @@ public:
 
 	virtual StateReturnType setState( StateID newStateID );			///< change the current state of the machine (which may cause further state changes, due to onEnter)
 
+	void Add_Ref() const { m_refCount.Add_Ref(); }
+	void Release_Ref() const { m_refCount.Release_Ref(MemoryPoolObject::deleteInstanceInternal, this); }
+	UnsignedByte Num_Refs() const { return m_refCount.Num_Refs(); }
+
 	StateID getCurrentStateID() const { return m_currentState ? m_currentState->getID() : INVALID_STATE_ID; }	///< return the id of the current state of the machine
 	Bool isInIdleState() const { return m_currentState ? m_currentState->isIdle() : true; }	// stateless things are considered 'idle'
 	Bool isInAttackState() const { return m_currentState ? m_currentState->isAttack() : true; }	// stateless things are considered 'idle'
@@ -376,6 +382,8 @@ private:
 	Bool					m_locked;													///< whether this machine is locked or not
 	Bool					m_defaultStateInited;							///< if initDefaultState has been called
 
+	RefCountValue<UnsignedByte> m_refCount;
+
 #ifdef STATE_MACHINE_DEBUG
 	Bool					m_debugOutput;
 	AsciiString		m_name;													///< Human readable name of this state - for debugging.  jba.
@@ -471,6 +479,15 @@ protected:
 	virtual void loadPostProcess(){};
 };
 EMPTY_DTOR(SleepState)
+
+
+//-----------------------------------------------------------------------------------------------------------
+// TheSuperHackers @info Misappropriates deleteInstance to call Release_Ref to keep the StateMachine fix small.
+// @todo Replace calls to deleteInstance with RefCountPtr<StateMachine> when so appropriate.
+inline void deleteInstance(StateMachine* machine)
+{
+	machine->Release_Ref();
+}
 
 
 #endif // _STATE_MACHINE_H_

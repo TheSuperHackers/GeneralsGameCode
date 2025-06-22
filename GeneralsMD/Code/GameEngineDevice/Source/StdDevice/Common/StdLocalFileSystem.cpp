@@ -262,7 +262,7 @@ void StdLocalFileSystem::getFileListInDirectory(const AsciiString& currentDirect
 		auto iter = std::filesystem::directory_iterator(fixedDirectory, ec);
 
 		if (ec) {
-			DEBUG_LOG(("StdLocalFileSystem::getFileListInDirectory - Error opening subdirectory %s\n", fixedDirectory));
+			DEBUG_LOG(("StdLocalFileSystem::getFileListInDirectory - Error opening subdirectory %s\n", fixedDirectory.c_str()));
 			return;
 		}
 
@@ -338,4 +338,15 @@ Bool StdLocalFileSystem::createDirectory(AsciiString directory)
 		}
 	}
 	return result;
+}
+
+AsciiString StdLocalFileSystem::normalizePath(const AsciiString& filePath) const
+{
+	std::string nonNormalized(filePath.str());
+#ifndef _WIN32
+	// Replace backslashes with forward slashes on non-Windows platforms
+	std::replace(unNormalized.begin(), unNormalized.end(), '\\', '/');
+#endif
+	std::filesystem::path pathNonNormalized(nonNormalized);
+	return AsciiString(pathNonNormalized.lexically_normal().string().c_str());
 }

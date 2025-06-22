@@ -25,8 +25,8 @@
 // EmitterSizePropPage.h : header file
 //
 
-#include "ColorBar.H"
-#include "Part_Emt.H"
+#include "ColorBar.h"
+#include "part_emt.h"
 
 // Forward delcarations
 class EmitterInstanceListClass;

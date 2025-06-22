@@ -580,10 +580,16 @@ Real WeaponTemplate::estimateWeaponTemplateDamage(
 		return 0.0f;
 	}
 
+	const Real damageAmount = getPrimaryDamage(bonus);
+	if ( victimObj == NULL )
+	{
+		return damageAmount;
+	}
+
 	DamageType damageType = getDamageType();
 	DeathType deathType = getDeathType();
 
-	if (victimObj && victimObj->isKindOf(KINDOF_SHRUBBERY))
+	if ( victimObj->isKindOf(KINDOF_SHRUBBERY) )
 	{
 		if (deathType == DEATH_BURNED)
 		{
@@ -610,7 +616,7 @@ Real WeaponTemplate::estimateWeaponTemplateDamage(
 
 
 
-	if (damageType == DAMAGE_SURRENDER || m_allowAttackGarrisonedBldgs)
+	if ( damageType == DAMAGE_SURRENDER || m_allowAttackGarrisonedBldgs )
 	{
 		ContainModuleInterface* contain = victimObj->getContain();
 		if( contain && contain->getContainCount() > 0 && contain->isGarrisonable() && !contain->isImmuneToClearBuildingAttacks() )
@@ -620,46 +626,29 @@ Real WeaponTemplate::estimateWeaponTemplateDamage(
 		}
 	}
 
-	if( victimObj )
+	if( damageType == DAMAGE_DISARM )
 	{
-		if( damageType == DAMAGE_DISARM )
+		if( victimObj->isKindOf( KINDOF_MINE ) || victimObj->isKindOf( KINDOF_BOOBY_TRAP ) || victimObj->isKindOf( KINDOF_DEMOTRAP ) )
 		{
-			if( victimObj->isKindOf( KINDOF_MINE ) || victimObj->isKindOf( KINDOF_BOOBY_TRAP ) || victimObj->isKindOf( KINDOF_DEMOTRAP ) )
-			{
-				// this is just a nonzero value, to ensure we can target mines with disarm weapons, regardless...
-				return 1.0f;
-			}
-			return 0.0f;
-		}
-		if( damageType == DAMAGE_DEPLOY && !victimObj->isAirborneTarget() )
-		{
+			// this is just a nonzero value, to ensure we can target mines with disarm weapons, regardless...
 			return 1.0f;
 		}
+		return 0.0f;
+	}
+	if( damageType == DAMAGE_DEPLOY && !victimObj->isAirborneTarget() )
+	{
+		return 1.0f;
 	}
 
 	//@todo Kris need to examine the DAMAGE_HACK type for damage estimation purposes.
 	//Likely this damage type will have threat implications that won't properly be dealt with until resolved.
 
-//	const Coord3D* sourcePos = sourceObj->getPosition();
-	if (victimPos == NULL)
-	{
-		victimPos = victimObj->getPosition();
-	}
-
-	Real damageAmount = getPrimaryDamage(bonus);
-	if (victimObj == NULL)
-	{
-		return damageAmount;
-	}
-	else
-	{
-		DamageInfoInput damageInfo;
-		damageInfo.m_damageType = damageType;
-		damageInfo.m_deathType = deathType;
-		damageInfo.m_sourceID = sourceObj->getID();
-		damageInfo.m_amount = damageAmount;
-		return victimObj->estimateDamage(damageInfo);
-	}
+	DamageInfoInput damageInfo;
+	damageInfo.m_damageType = damageType;
+	damageInfo.m_deathType = deathType;
+	damageInfo.m_sourceID = sourceObj->getID();
+	damageInfo.m_amount = damageAmount;
+	return victimObj->estimateDamage(damageInfo);
 }
 
 //-------------------------------------------------------------------------------------------------
