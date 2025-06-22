@@ -1202,6 +1202,12 @@ static CommandLineParam paramsForStartup[] =
 	// Pass in a csv file to play back multiple replays. The file must be in the replay folder.
 	{ "-replayList", parseSimReplayList },
 
+	// TheSuperHackers @feature helmutbuhler 28/04/2025
+	// Write out information about all replays in a folder to a csv file.
+	// Call it with -writeReplayList . for all replays in the replay folder.
+	// Call it with -writeReplayList folder for all replays in the folder subfolder.
+	// The result will be saved in replay_list.csv in that folder.
+	// todo: this is a bit unintuitive. Maybe use ReplaySimulation::resolveFilenameWildcards for this?
 	{ "-writeReplayList", parseWriteReplayList },
 };
 
