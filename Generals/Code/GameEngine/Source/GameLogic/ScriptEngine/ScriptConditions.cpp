@@ -1025,9 +1025,6 @@ Bool ScriptConditions::evaluateEnemySighted(Parameter *pItemParm, Parameter *pAl
 	// filter out appropriately based on alliances
 	Int relationDescriber;
 	switch (pAllianceParm->getInt()) {
-		default:
-			relationDescriber = 0;
-			break;
 		case Parameter::REL_NEUTRAL:
 			relationDescriber = PartitionFilterRelationship::ALLOW_NEUTRAL;
 			break;
@@ -1036,6 +1033,10 @@ Bool ScriptConditions::evaluateEnemySighted(Parameter *pItemParm, Parameter *pAl
 			break;
 		case Parameter::REL_ENEMY:
 			relationDescriber = PartitionFilterRelationship::ALLOW_ENEMIES;
+			break;
+		default:
+			DEBUG_CRASH("Unhandled case in ScriptConditions::evaluateEnemySighted()\n");
+			relationDescriber = 0;
 			break;
 	}
 	PartitionFilterRelationship	filterTeam(theObj, relationDescriber);
