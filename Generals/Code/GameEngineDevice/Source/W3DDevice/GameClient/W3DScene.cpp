@@ -399,7 +399,7 @@ void RTS3DScene::Visibility_Check(CameraClass * camera)
 	m_translucentObjectsCount=0;
 	m_numNonOccluderOrOccludee=0;
 
-	Int currentFrame=TheGameLogic->getFrame();
+	Int currentFrame = TheGameLogic ? TheGameLogic->getFrame() : 0;
 	if (currentFrame <= TheGlobalData->m_defaultOcclusionDelay)
 		currentFrame = TheGlobalData->m_defaultOcclusionDelay+1;	//make sure occlusion is enabled when game starts (frame 0).
 
@@ -471,7 +471,7 @@ void RTS3DScene::Visibility_Check(CameraClass * camera)
 							m_translucentObjectsBuffer[m_translucentObjectsCount++] = robj;
 						}
 						else
-						if (TheGlobalData->m_enableBehindBuildingMarkers && TheGameLogic->getShowBehindBuildingMarkers())
+						if (TheGlobalData->m_enableBehindBuildingMarkers && TheGameLogic && TheGameLogic->getShowBehindBuildingMarkers())
 						{
 							//visible drawable. Check if it's either an occluder or occludee
 							if (draw->isKindOf(KINDOF_STRUCTURE) && m_numPotentialOccluders < TheGlobalData->m_maxVisibleOccluderObjects)
