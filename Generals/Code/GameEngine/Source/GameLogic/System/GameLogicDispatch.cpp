@@ -166,6 +166,7 @@ static void doSetRallyPoint( Object *obj, const Coord3D& pos )
 			// play the no can do sound
 			static AudioEventRTS rallyNotSet("UnableToSetRallyPoint");
 			rallyNotSet.setPosition(&pos);
+			rallyNotSet.setPlayerIndex(obj->getControllingPlayer()->getPlayerIndex());
 			TheAudio->addAudioEvent(&rallyNotSet);
 
 		}  // end if
