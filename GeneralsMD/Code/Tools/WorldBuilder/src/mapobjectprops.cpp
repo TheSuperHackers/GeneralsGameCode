@@ -1740,15 +1740,6 @@ void MapObjectProps::InitSound(void)
 	
 } // end InitSound
 
-Dict** MapObjectProps::getAllSelectedDictsData()
-{
-#if defined(USING_STLPORT) || __cplusplus < 201103L
-	return !m_allSelectedDicts.empty() ? &m_allSelectedDicts.front() : NULL;
-#else
-	return m_allSelectedDicts.data();
-#endif
-}
-
 
 // Adds a series of Undoable's to the given MultipleUndoable which clears the
 // objectSoundAmbientCustomized flag and all the customization flags out of 
@@ -2878,6 +2869,14 @@ void MapObjectProps::getAllSelectedDicts(void)
 	}
 }
 
+Dict** MapObjectProps::getAllSelectedDictsData()
+{
+#if defined(USING_STLPORT) || __cplusplus < 201103L
+	return !m_allSelectedDicts.empty() ? &m_allSelectedDicts.front() : NULL;
+#else
+	return m_allSelectedDicts.data();
+#endif
+}
 
 /// Move data from dialog controls to object
 void MapObjectProps::OnScaleOn() 

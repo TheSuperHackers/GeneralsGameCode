@@ -65,6 +65,7 @@ public:
 // Implementation
 protected:
 	void getAllSelectedDicts(void);
+	Dict** getAllSelectedDictsData();
 
 	static MapObjectProps *TheMapObjectProps; 
 
@@ -149,9 +150,6 @@ public:
 
 	static MapObject *getSingleSelectedMapObject(void);
 	static void update(void);
-
-private:
-	Dict** getAllSelectedDictsData();
 
 };
 
