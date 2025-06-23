@@ -18,8 +18,9 @@ endif()
 # Make release builds have debug information too.
 if(MSVC)
     # Create PDB for Release as long as debug info was generated during compile.
-    string(APPEND CMAKE_EXE_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF")
-    string(APPEND CMAKE_SHARED_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF")
+    # /INCREMENTAL:NO prevents bloating PDB size in Debug configuration.
+    string(APPEND CMAKE_EXE_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF /INCREMENTAL:NO")
+    string(APPEND CMAKE_SHARED_LINKER_FLAGS_RELEASE " /DEBUG /OPT:REF /OPT:ICF /INCREMENTAL:NO")
 else()
     # We go a bit wild here and assume any other compiler we are going to use supports -g for debug info.
     string(APPEND CMAKE_CXX_FLAGS_RELEASE " -g")
