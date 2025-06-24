@@ -73,7 +73,7 @@ protected:
 
 	void doTeleport(Coord3D targetPos, Real angle, Real dist);
 
-	Bool findAttackLocation(Object* victim, Coord3D* victimPos, Coord3D* targetPos);
+	Bool findAttackLocation(Object* victim, const Coord3D* victimPos, Coord3D* targetPos, Real* targetAngle);
 
 	virtual UpdateSleepTime doLocomotor();
 

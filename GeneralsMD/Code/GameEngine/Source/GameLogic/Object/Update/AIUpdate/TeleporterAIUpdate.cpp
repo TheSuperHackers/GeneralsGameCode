@@ -34,6 +34,7 @@
 #include "Common/Xfer.h"
 #include "Common/DisabledTypes.h"
 #include "GameClient/Drawable.h"
+#include "GameClient/FXList.h"
 #include "GameLogic/AI.h"
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/Module/AIUpdate.h"
@@ -131,31 +132,106 @@ void TeleporterAIUpdate::doTeleport(Coord3D targetPos, Real angle, Real dist)
 
 //-------------------------------------------------------------------------------------------------
 
-Bool TeleporterAIUpdate::findAttackLocation(Object* victim, Coord3D* victimPos, Coord3D* targetPos)
+Bool TeleporterAIUpdate::findAttackLocation(Object* victim, const Coord3D* victimPos, Coord3D* targetPos, Real* targetAngle)
 {
 	Object* obj = getObject();
 	Weapon* weap = obj->getCurrentWeapon();
 	if (!weap)
-		return False;
+		return false;
 
-	bool viewBlocked;
-	bool inRange;
+	bool viewBlocked = TheAI->pathfinder()->isAttackViewBlockedByObstacle(obj, *targetPos, victim, *victimPos);
+	bool inRange = weap->isSourceObjectWithGoalPositionWithinAttackRange(obj, targetPos, victim, victimPos);
 
-	Coord3D newPos = *targetPos;
+	Real RANGE_MARGIN = 10.0f;
 
-	// TODO: use adjustTargetDestination, or replicate it (with included line of sight check)
+	// If the unit's current distance is lower than the attack range, we try to keep this distance
 
-	while (TRUE) {
 
-		// Maybe we can use a simpler check here?
-		viewBlocked = TheAI->pathfinder()->isAttackViewBlockedByObstacle(obj, *targetPos, victim, *victimPos);
-		inRange = weap->isSourceObjectWithGoalPositionWithinAttackRange(obj, targetPos, victim, victimPos);
+	Real maxRange = weap->getAttackRange(obj) - RANGE_MARGIN;
+	Real range = maxRange - weap->getTemplate()->getMinimumAttackRange();
 
-		if (!viewBlocked && inRange) {
-			targetPos* = newPos;
-			return true;
+	if (!viewBlocked && inRange) {
+		DEBUG_LOG((">>> TPAI - findAttackLocation: done with initial pos\n"));
+		return true;
+	}
+
+	// Calculate direction vector from victim to candidate position
+	Coord3D dir;
+	Real distSq = ThePartitionManager->getGoalDistanceSquared(obj, targetPos, victimPos, FROM_CENTER_2D, &dir);
+	Real dist = sqrt(distSq);
+	if (dist < maxRange) {
+		maxRange = dist;
+	}
+	
+	Coord2D direction;
+	direction.x = -dir.x;
+	direction.y = -dir.y;
+	Real initAngle = atan2(direction.y, direction.x);  // angle from victim to target
+
+	direction.normalize();
+	//distance = sqrt(distSq);
+
+	//if (distance > 0) {
+	//	direction.x = (targetPos->x - targetPos->x) / distance;
+	//	direction.y = (targetPos->y - targetPos->y) / distance;
+	//}
+	//else {
+	//	// if we are directly at the target, but are not actually in range, something went wrong
+	//	return false;
+	//}
+
+	// DEBUG:
+	const FXList* debug_fx1 = TheFXListStore->findFXList("FX_DEBUG_MARKER_GREEN");
+	const FXList* debug_fx2 = TheFXListStore->findFXList("FX_DEBUG_MARKER_RED");
+
+	Coord3D newPos;
+	newPos.x = targetPos->x;
+	newPos.y = targetPos->y;
+	newPos.z = targetPos->z;
+
+
+	const Real maxAngle = deg2rad(180.0f);
+	const Real step_size_angle = deg2rad(10.0f);
+	const Real step_size_length = 15.0f;
+	// const int max_steps = 500;
+
+	const int max_rings = REAL_TO_INT(range / step_size_length);
+	const int max_steps = REAL_TO_INT(maxAngle / step_size_angle);
+	DEBUG_LOG((">>> TPAI - findAttackLocation: range = %f, max_rings = %d\n", range, max_rings));
+	for (int ring = 0; ring < max_rings; ++ring) {
+
+		Real radius = maxRange - (ring * step_size_length);
+
+		for (int step = 0; step < max_steps; ++step) {
+			int sign = (step % 2) ? 1 : -1;
+			Real angle = initAngle + (step * sign * step_size_angle);
+
+			//polar offset
+			newPos.x = victimPos->x + radius * cos(angle);
+			newPos.y = victimPos->y + radius * sin(angle);
+			newPos.z = TheTerrainLogic->getGroundHeight(newPos.x, newPos.y);
+
+			if (sign == 1)
+				FXList::doFXPos(debug_fx1, &newPos);
+			else
+				FXList::doFXPos(debug_fx2, &newPos);
+
+			viewBlocked = TheAI->pathfinder()->isAttackViewBlockedByObstacle(obj, newPos, victim, *victimPos);
+			inRange = weap->isSourceObjectWithGoalPositionWithinAttackRange(obj, &newPos, victim, victimPos);
+
+			if (!viewBlocked && inRange) {
+				*targetPos = newPos;
+				*targetAngle = angle + PI;
+				DEBUG_LOG((">>> TPAI - findAttackLocation: done after ring=%d, step=%d\n", ring, step));
+
+				return true;
+			}
 		}
 	}
+
+	DEBUG_LOG((">>> TPAI - findAttackLocation: failed to find attack position\n"));
+
+	return false;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -221,23 +297,31 @@ UpdateSleepTime TeleporterAIUpdate::doLocomotor(void)
 		// requiredRange = obj->getLargestWeaponRange();
 		Weapon* weap = obj->getCurrentWeapon();
 		if (weap)
-			requiredRange = weap->getAttackRange(obj) -RANGE_MARGIN;
+			requiredRange = weap->getAttackRange(obj) - RANGE_MARGIN;
 
 		//Adjust target to required distance
 		if (requiredRange > 0) {
-			dir.scale(requiredRange - TELEPORT_DIST_MARGIN);
+			dir.scale(min(dist, requiredRange - TELEPORT_DIST_MARGIN));
 			targetPos.sub(&dir);
 			targetPos.z = TheTerrainLogic->getGroundHeight(targetPos.x, targetPos.y);
-			dist -= requiredRange;
+			
+			//if (dist > requiredRange)
+			//	dist -= requiredRange;
 		}
 
-		// TODO: Compute path from the adjusted position
+		DEBUG_LOG((">>> TPAI - doLoc: findAttackLocation targetPos (BEFORE) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
+		findAttackLocation(goalObj, goalPos, &targetPos, &targetAngle);
+		DEBUG_LOG((">>> TPAI - doLoc: findAttackLocation targetPos (AFTER) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
+		//recompute distance and angle
+		distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
+		//targetAngle = atan2(dir.y, dir.x);
+		dist = sqrt(distSq);
 
 		DEBUG_LOG((">>> TPAI - doLoc: isAttacking, dist = %f, reqRange = %f\n", dist, requiredRange));
 	}
-	else {
+	/*else {
 		TheAI->pathfinder()->adjustToPossibleDestination(obj, getLocomotorSet(), &targetPos);
-	}
+	}*/
 
 	// We are in range already
 	//if (dist <= requiredRange) {
