@@ -723,7 +723,7 @@ Int parseNoFX(char *args[], int)
 	return 1;
 }
 
-#if RTS_CONFIGURABLE_SHROUD && (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+#if ENABLE_CONFIGURABLE_SHROUD && (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 Int parseNoShroud(char *args[], int)
 {
 	TheWritableGlobalData->m_shroudOn = FALSE;
@@ -1245,7 +1245,7 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-ReplayCRCInterval", parseReplayCRCInterval },
 #endif
 
-#if RTS_CONFIGURABLE_SHROUD && (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+#if ENABLE_CONFIGURABLE_SHROUD && (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 	{ "-noshroud", parseNoShroud },
 #endif
 

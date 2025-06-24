@@ -488,7 +488,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "KeyboardCameraRotateSpeed", INI::parseReal, NULL, offsetof( GlobalData, m_keyboardCameraRotateSpeed ) },
 	{ "PlayStats",									INI::parseInt,				NULL,			offsetof( GlobalData, m_playStats ) },
 
-#if RTS_CONFIGURABLE_SHROUD && (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+#if ENABLE_CONFIGURABLE_SHROUD && (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 	{ "ShroudOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_shroudOn ) },
 #endif
 
@@ -551,7 +551,7 @@ GlobalData::GlobalData()
 #endif
   m_TiVOFastMode = FALSE;
 
-#if RTS_CONFIGURABLE_SHROUD
+#if ENABLE_CONFIGURABLE_SHROUD
 	m_shroudOn = TRUE;
 #endif
 
