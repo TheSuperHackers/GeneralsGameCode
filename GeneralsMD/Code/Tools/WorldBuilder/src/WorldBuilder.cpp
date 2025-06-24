@@ -433,7 +433,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	DEBUG_ASSERTCRASH(!TheGlobalData->m_useHalfHeightMap, ("TheGlobalData->m_useHalfHeightMap : Don't use this setting in WB."));
 	TheWritableGlobalData->m_useHalfHeightMap = false;
 
-#if RTS_CONFIGURABLE_SHROUD
+#if ENABLE_CONFIGURABLE_SHROUD
 	// WB never uses the shroud. With shroud, terrain is black.
 	TheWritableGlobalData->m_shroudOn = FALSE;
 #endif

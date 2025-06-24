@@ -657,7 +657,7 @@ void GameClient::update( void )
 
 	if (!freezeTime)
 	{
-#if RTS_CONFIGURABLE_SHROUD
+#if ENABLE_CONFIGURABLE_SHROUD
 		if (TheGlobalData->m_shroudOn)
 #else
 		if (true)
@@ -688,7 +688,7 @@ void GameClient::update( void )
 		while (draw)
 		{	// update() could free the Drawable, so go ahead and grab 'next'
 			Drawable* next = draw->getNextDrawable();
-#if RTS_CONFIGURABLE_SHROUD
+#if ENABLE_CONFIGURABLE_SHROUD
 			if (TheGlobalData->m_shroudOn)
 #else
 			if (true)

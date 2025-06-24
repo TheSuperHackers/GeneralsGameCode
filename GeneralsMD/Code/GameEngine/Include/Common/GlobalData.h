@@ -481,7 +481,7 @@ public:
   Bool m_TiVOFastMode;            ///< When true, the client speeds up the framerate... set by HOTKEY!
   
 
-#if RTS_CONFIGURABLE_SHROUD
+#if ENABLE_CONFIGURABLE_SHROUD
 	Bool m_shroudOn;
 #endif
 

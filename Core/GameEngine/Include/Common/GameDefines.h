@@ -34,8 +34,8 @@
 #endif
 
 // Originally the configurable shroud sat behind #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
-// Disable RTS_CONFIGURABLE_SHROUD to make shroud hacking a bit more difficult in Release game builds.
-// Enable RTS_CONFIGURABLE_SHROUD to properly draw the terrain in World Builder without RTS_DEBUG compiled in.
-#ifndef RTS_CONFIGURABLE_SHROUD
-#define RTS_CONFIGURABLE_SHROUD (1) // When enabled, the GlobalData contains a field to turn on/off the shroud, otherwise shroud is always enabled
+// Enable the configurable shroud to properly draw the terrain in World Builder without RTS_DEBUG compiled in.
+// Disable the configurable shroud to make shroud hacking a bit less accessible in Release game builds.
+#ifndef ENABLE_CONFIGURABLE_SHROUD
+#define ENABLE_CONFIGURABLE_SHROUD (1) // When enabled, the GlobalData contains a field to turn on/off the shroud, otherwise shroud is always enabled
 #endif
