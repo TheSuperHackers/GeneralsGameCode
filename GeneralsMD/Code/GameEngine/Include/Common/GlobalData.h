@@ -39,7 +39,6 @@
 #include "Common/SubsystemInterface.h"
 #include "GameClient/Color.h"
 #include "Common/STLTypedefs.h"
-#include "Common/GameCommon.h"
 #include "Common/Money.h"
 
 // FORWARD DECLARATIONS ///////////////////////////////////////////////////////////////////////////
@@ -482,12 +481,14 @@ public:
   Bool m_TiVOFastMode;            ///< When true, the client speeds up the framerate... set by HOTKEY!
   
 
+#if RTS_CONFIGURABLE_SHROUD
+	Bool m_shroudOn;
+#endif
 
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	Bool m_wireframe;
 	Bool m_stateMachineDebug;
 	Bool m_useCameraConstraints;
-	Bool m_shroudOn;
 	Bool m_fogOfWarOn;
 	Bool m_jabberOn;
 	Bool m_munkeeOn;

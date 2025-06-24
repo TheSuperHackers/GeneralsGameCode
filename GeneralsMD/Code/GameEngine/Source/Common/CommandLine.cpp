@@ -723,7 +723,7 @@ Int parseNoFX(char *args[], int)
 	return 1;
 }
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if RTS_CONFIGURABLE_SHROUD && (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 Int parseNoShroud(char *args[], int)
 {
 	TheWritableGlobalData->m_shroudOn = FALSE;
@@ -1244,6 +1244,11 @@ static CommandLineParam paramsForEngineInit[] =
 	// Number of frames between each CRC that is written to replay files in singleplayer games.
 	{ "-ReplayCRCInterval", parseReplayCRCInterval },
 #endif
+
+#if RTS_CONFIGURABLE_SHROUD && (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+	{ "-noshroud", parseNoShroud },
+#endif
+
 #if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 	{ "-saveAllStats", parseSaveAllStats },
 	{ "-noDraw", parseNoDraw },
@@ -1282,7 +1287,6 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-vTune", parseVTune },
 	{ "-selectTheUnselectable", parseSelectAll },
 	{ "-RunAhead", parseRunAhead },
-	{ "-noshroud", parseNoShroud },
 	{ "-forceBenchmark", parseForceBenchmark },
 	{ "-buildmapcache", parseBuildMapCache },
 	{ "-noshadowvolumes", parseNoShadows },
