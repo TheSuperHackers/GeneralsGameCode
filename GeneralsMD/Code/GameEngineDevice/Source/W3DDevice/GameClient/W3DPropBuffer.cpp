@@ -122,7 +122,7 @@ for the props. */
 //=============================================================================
 W3DPropBuffer::W3DPropBuffer(void)
 {
-	memset(this, sizeof(W3DPropBuffer), 0);
+	memset(this, 0, sizeof(W3DPropBuffer));
 	m_initialized = false;
 	clearAllProps();
 	m_light = NEW_REF( LightClass, (LightClass::DIRECTIONAL) );

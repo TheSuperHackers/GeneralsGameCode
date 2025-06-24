@@ -451,7 +451,7 @@ bool VectorChannelClass::SaveAdaptiveDelta(ChunkSaveClass & csave, BitChannelCla
 	chn->VectorLen = VectorLen;
 	chn->Flags = Flags;
 	chn->Scale = 0.0f;
-	memset(&chn->Data[0], channelsize - (sizeof(W3dAdaptiveDeltaAnimChannelStruct) - sizeof(char)), 0x00);
+	memset(&chn->Data[0], 0x00, channelsize - (sizeof(W3dAdaptiveDeltaAnimChannelStruct) - sizeof(char)));
 	
 	assert(VectorLen <= 4);	// otherwise temp vector won't have room
 
