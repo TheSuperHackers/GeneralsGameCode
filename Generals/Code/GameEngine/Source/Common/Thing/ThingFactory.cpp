@@ -194,6 +194,9 @@ ThingTemplate* ThingFactory::newOverride( ThingTemplate *thingTemplate )
 	newTemplate->markAsOverride();
 	child->setNextOverride(newTemplate);
 
+	// TheSuperHackers @bugfix Caball009 25/06/2025 Clear data that was valid for the 'parent' template but not for the override.
+	newTemplate->clearOnNewOverride();
+
 	// return the newly created override for us to set values with etc
 	return newTemplate;
 

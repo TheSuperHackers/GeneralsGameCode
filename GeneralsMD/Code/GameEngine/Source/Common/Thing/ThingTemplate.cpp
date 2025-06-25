@@ -1233,6 +1233,14 @@ void ThingTemplate::copyFrom(const ThingTemplate* that)
 }
 
 //-------------------------------------------------------------------------------------------------
+void ThingTemplate::clearOnNewOverride()
+{
+	// TheSuperHackers @info Clear containers that may contain pointers to data in the 'parent' template for memoization purposes.
+	m_weaponTemplateSetFinder.clear();
+	m_armorTemplateSetFinder.clear();
+}
+
+//-------------------------------------------------------------------------------------------------
 void ThingTemplate::setCopiedFromDefault()
 {
 	m_armorCopiedFromDefault = true;

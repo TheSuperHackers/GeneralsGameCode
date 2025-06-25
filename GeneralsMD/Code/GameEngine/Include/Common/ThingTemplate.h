@@ -369,6 +369,9 @@ public:
 	// copy the guts of that into this, but preserve this' name, id, and list-links.
 	void copyFrom(const ThingTemplate* that);
 
+	// clear data that's only valid for the 'parent' template but not the override.
+	void clearOnNewOverride();
+
 	/// called by ThingFactory after all templates have been loaded.
 	void resolveNames();
 
