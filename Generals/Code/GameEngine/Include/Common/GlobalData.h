@@ -74,7 +74,7 @@ class CommandLineData
 /** Global data container class
   *	Defines all global game data used by the system
 	* @todo Change this entire system. Otherwise this will end up a huge class containing tons of variables,
-	* and will cause re-compilation dependancies throughout the codebase. */
+	* and will cause re-compilation dependencies throughout the code base. */
 //-------------------------------------------------------------------------------------------------
 class GlobalData : public SubsystemInterface
 {
@@ -535,6 +535,8 @@ public:
 	AsciiString getPath_UserData() const;
 
 private:
+
+	static UnsignedInt generateExeCRC();
 
 	static const FieldParse s_GlobalDataFieldParseTable[];
 
