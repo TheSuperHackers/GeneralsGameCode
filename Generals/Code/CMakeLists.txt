@@ -6,6 +6,7 @@ add_library(gi_main INTERFACE)
 add_library(gi_always INTERFACE)
 
 target_include_directories(gi_gameengine_include INTERFACE "GameEngine/Include")
+target_link_libraries(gi_gameengine_include INTERFACE corei_gameengine_include)
 target_include_directories(gi_libraries_include INTERFACE "Libraries/Include")
 target_include_directories(gi_libraries_source_wwvegas INTERFACE "Libraries/Source/WWVegas")
 target_include_directories(gi_main INTERFACE "Main")

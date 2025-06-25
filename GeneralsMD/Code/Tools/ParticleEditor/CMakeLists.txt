@@ -39,7 +39,6 @@ target_include_directories(z_particleeditor PRIVATE
 target_link_libraries(z_particleeditor PRIVATE
     core_debug
     core_profile
-    corei_gameengine_include
     corei_libraries_source_wwvegas
     corei_libraries_source_wwvegas_wwlib
     d3d8lib

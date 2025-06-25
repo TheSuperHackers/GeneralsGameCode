@@ -6,6 +6,7 @@ add_library(zi_main INTERFACE)
 add_library(zi_always INTERFACE)
 
 target_include_directories(zi_gameengine_include INTERFACE "GameEngine/Include")
+target_link_libraries(zi_gameengine_include INTERFACE corei_gameengine_include)
 target_include_directories(zi_libraries_include INTERFACE "Libraries/Include")
 target_include_directories(zi_libraries_source_wwvegas INTERFACE "Libraries/Source/WWVegas")
 target_include_directories(zi_main INTERFACE "Main")
