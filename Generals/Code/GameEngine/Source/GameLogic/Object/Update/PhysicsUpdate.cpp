@@ -303,9 +303,8 @@ Real PhysicsBehavior::getZFriction() const
  */
 void PhysicsBehavior::applyForce( const Coord3D *force )
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
-	// TheSuperHackers @info helmutbuhler 06/05/2025
-	// This assert causes a mismatch on Release when DEBUG_CRASHING is enabled.
+// TheSuperHackers @info helmutbuhler 06/05/2025 This debug transforms the code to become not CRC compatible
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) || !RETAIL_COMPATIBLE_CRC
 	DEBUG_ASSERTCRASH(!(_isnan(force->x) || _isnan(force->y) || _isnan(force->z)), ("PhysicsBehavior::applyForce force NAN!\n"));
 #endif
 	if (_isnan(force->x) || _isnan(force->y) || _isnan(force->z)) {
