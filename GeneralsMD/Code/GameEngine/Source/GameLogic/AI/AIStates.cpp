@@ -4149,7 +4149,7 @@ StateReturnType AIFollowWaypointPathState::update()
 		if (getAdjustsDestination() && ai->isDoingGroundMovement()) {
 			if (!TheAI->pathfinder()->adjustDestination(obj, ai->getLocomotorSet(), &m_goalPosition)) {
 				if (m_currentWaypoint) {
-// TheSuperHackers @info helmutbuhler 05/05/2025 This debug mutates the code to become not CRC compatible
+// TheSuperHackers @info helmutbuhler 05/05/2025 This debug mutates the code to become CRC incompatible
 #if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) || !RETAIL_COMPATIBLE_CRC
 					DEBUG_LOG(("Breaking out of follow waypoint path %s of %s\n", 
 					m_currentWaypoint->getName().str(), m_currentWaypoint->getPathLabel1().str()));
@@ -4222,7 +4222,7 @@ StateReturnType AIFollowWaypointPathState::update()
 		if (getAdjustsDestination() && ai->isDoingGroundMovement()) {
 			if (!TheAI->pathfinder()->adjustDestination(obj, ai->getLocomotorSet(), &m_goalPosition)) {
 				if (m_currentWaypoint) {
-// TheSuperHackers @info helmutbuhler 05/05/2025 This debug mutates the code to become not CRC compatible
+// TheSuperHackers @info helmutbuhler 05/05/2025 This debug mutates the code to become CRC incompatible
 #if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) || !RETAIL_COMPATIBLE_CRC
 					DEBUG_LOG(("Breaking out of follow waypoint path %s of %s\n", 
 					m_currentWaypoint->getName().str(), m_currentWaypoint->getPathLabel1().str()));
