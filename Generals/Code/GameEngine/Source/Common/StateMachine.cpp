@@ -526,16 +526,8 @@ State *StateMachine::internalGetState( StateID id )
 
 	if (i == m_stateMap.end())
 	{
-		DEBUG_CRASH( ("StateMachine::internalGetState(): Invalid state for object %s using state %d", m_owner->getTemplate()->getName().str(), id) );
-		DEBUG_LOG(("Transitioning to state %d\n", (Int)id));
-		DEBUG_LOG(("Attempting to recover - locating default state...\n"));
-		i = m_stateMap.find(m_defaultStateID);
-		if (i == m_stateMap.end()) {
-			DEBUG_LOG(("Failed to located default state.  Aborting...\n"));
-			throw ERROR_BAD_ARG;
-		} else {
-			DEBUG_LOG(("Located default state to recover.\n"));
-		}
+		DEBUG_CRASH(( "StateMachine::internalGetState(): Invalid state" ));
+		throw ERROR_BAD_ARG;
 	}
 
 	return (*i).second;
