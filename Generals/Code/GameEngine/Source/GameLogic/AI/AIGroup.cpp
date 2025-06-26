@@ -2722,23 +2722,21 @@ void AIGroup::groupCheer( CommandSourceType cmdSource )
 	*/
 void AIGroup::groupSell( CommandSourceType cmdSource )
 {
-	std::list<Object *>::iterator i, thisIterator;
-	Object *obj;
+	std::list<Object *>::iterator i;
+	std::vector<Object *> groupObjectsCopy;
+	groupObjectsCopy.reserve(m_memberListSize);
 
+	// TheSuperHackers @bugfix Mauller 26/06/2025 when sellObject is called, the member list objects in this AIGroup get removed from it. This happens within the Object::deselectObject() function.
+	// This deletes the local AIGroup object from under the call to groupSell, therefore we need to make a local copy of the objects that need selling.
 	for( i = m_memberList.begin(); i != m_memberList.end(); /*empty*/ )
 	{
+		groupObjectsCopy.push_back( *i++ );
+	}
 
-		// work off of 'thisIterator' as we may change the contents of this list
-		thisIterator = i;
-		++i;
-
-		// get object
-		obj = *thisIterator;
-
-		// try to sell object
-		TheBuildAssistant->sellObject( obj );
-
-	}  // end for, i
+	for( size_t j = 0; j < groupObjectsCopy.size(); ++j )
+	{
+		TheBuildAssistant->sellObject( groupObjectsCopy[j] );
+	}
 
 }
 
