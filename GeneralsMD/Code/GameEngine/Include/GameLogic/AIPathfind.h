@@ -615,7 +615,7 @@ private:
 
 public:
 	Pathfinder( void );
-	~Pathfinder() ;
+	virtual ~Pathfinder();
 
 	void reset( void );														///< Reset system in preparation for new map
 
