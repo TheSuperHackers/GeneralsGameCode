@@ -615,7 +615,7 @@ public:
 	// returns false if we have no weaponsets, or they are all empty.
 	Bool canPossiblyHaveAnyWeapon() const;
 
-	Bool isEquivalentTo(const ThingTemplate* tt) const;
+	static Bool isEquivalentTo(const ThingTemplate* lhs, const ThingTemplate* rhs);
 
 	UnsignedByte getCrushableLevel() const { return m_crushableLevel; }
 	UnsignedByte getCrusherLevel() const { return m_crusherLevel; }

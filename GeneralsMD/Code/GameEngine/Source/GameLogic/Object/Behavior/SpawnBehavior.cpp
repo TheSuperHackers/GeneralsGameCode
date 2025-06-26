@@ -548,7 +548,7 @@ static void findClosestOrphan( Object *obj, void *userData )
 	OrphanData *orphanData = (OrphanData *)userData;
 
 	// if template doesn't match do nothing
-	if( obj->getTemplate()->isEquivalentTo( orphanData->m_matchTemplate ) == FALSE )
+	if( ThingTemplate::isEquivalentTo(obj->getTemplate(), orphanData->m_matchTemplate) == FALSE )
 		return;
 
 	// this object must be orphaned

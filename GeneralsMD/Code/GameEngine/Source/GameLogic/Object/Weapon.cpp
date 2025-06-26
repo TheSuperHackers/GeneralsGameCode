@@ -1355,7 +1355,7 @@ void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, co
 							//This means we probably are affecting allies, but don't want to kill nearby members that are the same type as us.
 							//A good example are a group of terrorists blowing themselves up. We don't want to cause a domino effect that kills
 							//all of them.
-							if( source->getTemplate()->isEquivalentTo(curVictim->getTemplate()) && source->getRelationship( curVictim ) == ALLIES )
+							if( ThingTemplate::isEquivalentTo(source->getTemplate(), curVictim->getTemplate()) && source->getRelationship(curVictim) == ALLIES )
 							{
 								continue;
 							}
@@ -2886,7 +2886,7 @@ static void makeAssistanceRequest( Object *requestOf, void *userData )
 		return;
 
 	// Only request of our kind of people
-	if( !requestOf->getTemplate()->isEquivalentTo( requestData->m_requestingObject->getTemplate() ) )
+	if( !ThingTemplate::isEquivalentTo(requestOf->getTemplate(), requestData->m_requestingObject->getTemplate()) )
 		return;
 
 	// Who are close enough

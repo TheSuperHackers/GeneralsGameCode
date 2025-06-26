@@ -153,10 +153,7 @@ void AIPlayer::onStructureProduced( Object *factory, Object *bldg )
 	for( info = m_player->getBuildList(); info; info = info->getNext() )
 	{
 		const ThingTemplate *bldgPlan = TheThingFactory->findTemplate( info->getTemplateName() );
-		if (!bldgPlan) {																											 
-			continue;
-		}		
-		if (!bldgPlan->isEquivalentTo(bldg->getTemplate())) {
+		if (!ThingTemplate::isEquivalentTo(bldgPlan, bldg->getTemplate())) {
 			continue; // not the same kind of building we're looking for.
 		}
 		// check for hole.
@@ -1069,7 +1066,7 @@ void AIPlayer::onUnitProduced( Object *factory, Object *unit )
 		if (found) break;
 		for( order = team->m_workOrders; order; order = order->m_next )
 		{
-			if (order->m_factoryID == factory->getID() && order->m_numCompleted < order->m_numRequired && unit->getTemplate()->isEquivalentTo(order->m_thing))
+			if (order->m_factoryID == factory->getID() && order->m_numCompleted < order->m_numRequired && ThingTemplate::isEquivalentTo(unit->getTemplate(), order->m_thing))
 			{
 				// found associated order, mark it complete.
 				order->m_numCompleted++;

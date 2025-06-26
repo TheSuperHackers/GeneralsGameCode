@@ -175,7 +175,7 @@ Bool RiderChangeContain::isValidContainerFor(const Object* rider, Bool checkCapa
 		for( int i = 0; i < MAX_RIDERS; i++ )
 		{
 			const ThingTemplate *thing = TheThingFactory->findTemplate( data->m_riders[ i ].m_templateName );
-			if( thing->isEquivalentTo( rider->getTemplate() ) )
+			if( ThingTemplate::isEquivalentTo(thing, rider->getTemplate()) )
 			{
 				//We found a valid rider, so return success.
 				return TRUE;
@@ -216,7 +216,7 @@ void RiderChangeContain::onContaining( Object *rider, Bool wasSelected )
 	for( int i = 0; i < MAX_RIDERS; i++ )
 	{
 		const ThingTemplate *thing = TheThingFactory->findTemplate( data->m_riders[ i ].m_templateName );
-		if( thing->isEquivalentTo( rider->getTemplate() ) )
+		if( ThingTemplate::isEquivalentTo(thing, rider->getTemplate()) )
 		{
 
 			//This is our rider, so set the correct model condition.
@@ -287,7 +287,7 @@ void RiderChangeContain::onRemoving( Object *rider )
 	for( int i = 0; i < MAX_RIDERS; i++ )
 	{
 		const ThingTemplate *thing = TheThingFactory->findTemplate( data->m_riders[ i ].m_templateName );
-		if( thing->isEquivalentTo( rider->getTemplate() ) )
+		if( ThingTemplate::isEquivalentTo(thing, rider->getTemplate()) )
 		{
 			//This is our rider, so clear the current model condition.
 			bike->clearModelConditionFlags( MAKE_MODELCONDITION_MASK2( data->m_riders[ i ].m_modelConditionFlagType, MODELCONDITION_DOOR_1_CLOSING ) );
