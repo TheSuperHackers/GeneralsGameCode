@@ -1225,6 +1225,9 @@ UnsignedInt GlobalData::generateExeCRC()
 			fp->close();
 			fp = NULL;
 		}
+		else {
+			DEBUG_CRASH(("Executable file has failed to open"));
+		}
 	}
 #endif
 
