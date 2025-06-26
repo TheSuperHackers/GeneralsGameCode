@@ -287,6 +287,7 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 		m_startAttackFrame = TheGameLogic->getFrame();
 		m_laserStatus = LASERSTATUS_NONE;
 		m_manualTargetMode = TRUE;
+		m_scriptedWaypointMode = FALSE;
 		m_initialTargetPosition.set( targetPos );
 		m_overrideTargetDestination.set( targetPos );
 		m_currentTargetPosition.set( targetPos );
@@ -306,6 +307,7 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 			pos.set( targetObj->getPosition() );
 		}
    	m_startAttackFrame = max( now, (UnsignedInt)1 );
+		m_manualTargetMode = FALSE;
 		m_scriptedWaypointMode = TRUE;
    	m_laserStatus = LASERSTATUS_NONE;
 		setLogicalStatus( STATUS_READY_TO_FIRE );
@@ -338,6 +340,8 @@ Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 		{
 			pos.set( targetObj->getPosition() );
 		}
+		m_manualTargetMode = FALSE;
+		m_scriptedWaypointMode = FALSE;
    	m_initialTargetPosition.set( &pos );
    	m_startAttackFrame = max( now, (UnsignedInt)1 );
    	m_laserStatus = LASERSTATUS_NONE;
