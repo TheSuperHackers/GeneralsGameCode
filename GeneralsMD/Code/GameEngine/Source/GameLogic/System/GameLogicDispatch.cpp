@@ -1373,6 +1373,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			// get the unit production interface
 			ProductionUpdateInterface *pu = producer->getProductionUpdateInterface();
 			if( pu == NULL )
+				LEAK_AIGROUP_IF_EMPTY(currentlySelectedGroup);
 				return;
 
 			// cancel the production

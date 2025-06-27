@@ -921,6 +921,7 @@ void AIPlayer::guardSupplyCenter( Team *team, Int minSupplies )
 		location.y -= offset.y*radius;
 		theGroup->groupGuardPosition( &location, GUARDMODE_NORMAL, CMD_FROM_SCRIPT );
 
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 	}
 }
 
@@ -2804,6 +2805,7 @@ void AIPlayer::checkReadyTeams( void )
 							team->m_frameStarted = TheGameLogic->getFrame();
 							continue;
 						}
+						LEAK_AIGROUP_IF_EMPTY(theGroup);
 					}
 					*/
 				}

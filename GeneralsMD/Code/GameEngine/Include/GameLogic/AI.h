@@ -1046,4 +1046,11 @@ private:
 };
 
 
+#if RETAIL_COMPATIBLE_CRC
+#define LEAK_AIGROUP_IF_EMPTY(theGroup) if (theGroup && theGroup->isEmpty()) { theGroup.Release(); }
+#else
+#define LEAK_AIGROUP_IF_EMPTY(theGroup)
+#endif
+
+
 #endif // _AI_H_

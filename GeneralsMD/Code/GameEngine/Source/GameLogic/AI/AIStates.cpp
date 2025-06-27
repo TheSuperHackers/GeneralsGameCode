@@ -4186,6 +4186,8 @@ StateReturnType AIFollowWaypointPathState::update()
 				// Consider ourselves close enough.
 				status = STATE_SUCCESS;
 			}
+
+			LEAK_AIGROUP_IF_EMPTY(group);
 		}
 	}
 

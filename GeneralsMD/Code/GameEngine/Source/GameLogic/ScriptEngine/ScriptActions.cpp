@@ -431,6 +431,8 @@ void ScriptActions::doMoveToWaypoint(const AsciiString& team, const AsciiString&
 			//DEBUG_LOG(("Moving team to waypoint %f, %f, %f\n", destination.x, destination.y, destination.z));
  			theGroup->groupMoveToPosition( &destination, false, CMD_FROM_SCRIPT );
 		}
+
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 	}
 }
 
@@ -790,6 +792,8 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 				}
 				theTeam->getTeamAsAIGroup(theGroup.Peek());
 				theGroup->groupMoveToPosition( &destination, false, CMD_FROM_SCRIPT );
+
+				LEAK_AIGROUP_IF_EMPTY(theGroup);
 			}
 		}
 	}
@@ -1050,14 +1054,15 @@ void ScriptActions::doAttack(const AsciiString& attackerName, const AsciiString&
 	if( attackingTeam == NULL || victimTeam == NULL )
 		return;
 
-	RefCountPtr<AIGroup> aiGroup = TheAI->createGroup();
-	if (!aiGroup) {
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
+	if (!theGroup) {
 		return;
 	}
 
-	attackingTeam->getTeamAsAIGroup(aiGroup.Peek());
-	aiGroup->groupAttackTeam(victimTeam, NO_MAX_SHOTS_LIMIT, CMD_FROM_SCRIPT);
+	attackingTeam->getTeamAsAIGroup(theGroup.Peek());
+	theGroup->groupAttackTeam(victimTeam, NO_MAX_SHOTS_LIMIT, CMD_FROM_SCRIPT);
 
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1308,13 +1313,15 @@ void ScriptActions::updateTeamSetAttitude(const AsciiString& teamName, Int attit
 		return;
 	}
 
-	RefCountPtr<AIGroup> pAIGroup = TheAI->createGroup();
-	if (!pAIGroup) {
+	RefCountPtr<AIGroup> theGroup = TheAI->createGroup();
+	if (!theGroup) {
 		return;
 	}
 
-	theSrcTeam->getTeamAsAIGroup(pAIGroup.Peek());
-	pAIGroup->setAttitude((AttitudeType) attitude);
+	theSrcTeam->getTeamAsAIGroup(theGroup.Peek());
+	theGroup->setAttitude((AttitudeType) attitude);
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1426,10 +1433,13 @@ void ScriptActions::doTeamAttackArea(const AsciiString& teamName, const AsciiStr
 
 	PolygonTrigger *pTrig = TheScriptEngine->getQualifiedTriggerAreaByName(areaName);
 	if (!pTrig) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
 	theGroup->groupAttackArea(pTrig, CMD_FROM_SCRIPT);
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1456,6 +1466,8 @@ void ScriptActions::doTeamAttackNamed(const AsciiString& teamName, const AsciiSt
 
 	theTeam->getTeamAsAIGroup(theGroup.Peek());
 	theGroup->groupAttackObject(theVictim, NO_MAX_SHOTS_LIMIT, CMD_FROM_SCRIPT);
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1560,6 +1572,8 @@ void ScriptActions::doTeamEnterNamed(const AsciiString& teamName, const AsciiStr
 	theSrcTeam->getTeamAsAIGroup(theGroup.Peek());
 
 	theGroup->groupEnter(theTransport, CMD_FROM_SCRIPT);
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1596,6 +1610,8 @@ void ScriptActions::doTeamExitAll(const AsciiString& teamName)
 	theTeamOfTransports->getTeamAsAIGroup(theGroup.Peek());
 
 	theGroup->groupEvacuate( CMD_FROM_SCRIPT );
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 
@@ -1707,19 +1723,26 @@ void ScriptActions::doTeamFollowSkirmishApproachPath(const AsciiString& teamName
 			firstUnit = obj;
 		}
 	}
-	if (count==0) return; // empty team.
+	if (count==0) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
+		return; // empty team.
+	}
 	pos.x /= count;
 	pos.y /= count;
 	pos.z /= count;
 
 	Player *enemyPlayer = TheScriptEngine->getSkirmishEnemyPlayer();
-	if (enemyPlayer==NULL) return;
+	if (enemyPlayer==NULL) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
+		return;
+	}
 	Int mpNdx = enemyPlayer->getMpStartIndex()+1;
 
 	AsciiString pathLabel;
 	pathLabel.format("%s%d", waypointPathLabel.str(), mpNdx);
 	Waypoint *way = TheTerrainLogic->getClosestWaypointOnPath( &pos, pathLabel );
 	if (!way) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
@@ -1735,6 +1758,8 @@ void ScriptActions::doTeamFollowSkirmishApproachPath(const AsciiString& teamName
 	}	else {
 		theGroup->groupFollowWaypointPath(way, CMD_FROM_SCRIPT);
 	}
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1766,23 +1791,32 @@ void ScriptActions::doTeamMoveToSkirmishApproachPath(const AsciiString& teamName
 		pos.z += objPos.z; // Not actually used by getClosestWaypointOnPath, but hey, might as well be correct.
 		count++;
 	}
-	if (count==0) return; // empty team.
+	if (count==0) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
+		return; // empty team.
+	}
 	pos.x /= count;
 	pos.y /= count;
 	pos.z /= count;
 
 	Player *enemyPlayer = TheScriptEngine->getSkirmishEnemyPlayer();
-	if (enemyPlayer==NULL) return;
+	if (enemyPlayer==NULL) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
+		return;
+	}
 	Int mpNdx = enemyPlayer->getMpStartIndex()+1;
 
 	AsciiString pathLabel;
 	pathLabel.format("%s%d", waypointPathLabel.str(), mpNdx);
 	Waypoint *way = TheTerrainLogic->getClosestWaypointOnPath( &pos, pathLabel );
 	if (!way) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, pathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
 	theGroup->groupMoveToPosition(way->getLocation(), false, CMD_FROM_SCRIPT);
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1814,13 +1848,17 @@ void ScriptActions::doTeamFollowWaypoints(const AsciiString& teamName, const Asc
 		pos.z += objPos.z; // Not actually used by getClosestWaypointOnPath, but hey, might as well be correct.
 		count++;
 	}
-	if (count==0) return; // empty team.
+	if (count==0) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
+		return; // empty team.
+	}
 	pos.x /= count;
 	pos.y /= count;
 	pos.z /= count;
 
 	Waypoint *way = TheTerrainLogic->getClosestWaypointOnPath( &pos, waypointPathLabel );
 	if (!way) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
@@ -1830,6 +1868,8 @@ void ScriptActions::doTeamFollowWaypoints(const AsciiString& teamName, const Asc
 	}	else {
 		theGroup->groupFollowWaypointPath(way, CMD_FROM_SCRIPT);
 	}
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1861,13 +1901,17 @@ void ScriptActions::doTeamFollowWaypointsExact(const AsciiString& teamName, cons
 		pos.z += objPos.z; // Not actually used by getClosestWaypointOnPath, but hey, might as well be correct.
 		count++;
 	}
-	if (count==0) return; // empty team.
+	if (count==0) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
+		return; // empty team.
+	}
 	pos.x /= count;
 	pos.y /= count;
 	pos.z /= count;
 
 	Waypoint *way = TheTerrainLogic->getClosestWaypointOnPath( &pos, waypointPathLabel );
 	if (!way) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
@@ -1877,6 +1921,8 @@ void ScriptActions::doTeamFollowWaypointsExact(const AsciiString& teamName, cons
 	}	else {
 		theGroup->groupFollowWaypointPathExact(way, CMD_FROM_SCRIPT);
 	}
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1942,6 +1988,8 @@ void ScriptActions::doTeamGuardPosition(const AsciiString& teamName, const Ascii
 	Coord3D position = *way->getLocation();
 
 	theGroup->groupGuardPosition( &position, GUARDMODE_NORMAL, CMD_FROM_SCRIPT );
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1962,6 +2010,8 @@ void ScriptActions::doTeamGuardObject(const AsciiString& teamName, const AsciiSt
 	theTeam->getTeamAsAIGroup(theGroup.Peek());
 
 	theGroup->groupGuardObject( theUnit, GUARDMODE_NORMAL, CMD_FROM_SCRIPT );
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1982,6 +2032,8 @@ void ScriptActions::doTeamGuardArea(const AsciiString& teamName, const AsciiStri
 	theTeam->getTeamAsAIGroup(theGroup.Peek());
 
 	theGroup->groupGuardArea( pTrig, GUARDMODE_NORMAL, CMD_FROM_SCRIPT );
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -2020,6 +2072,8 @@ void ScriptActions::doTeamHunt(const AsciiString& teamName)
 	theTeam->getTeamAsAIGroup(theGroup.Peek());
 
 	theGroup->groupHunt( CMD_FROM_SCRIPT );
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 //-------------------------------------------------------------------------------------------------
 /** doTeamHunt */
@@ -3345,6 +3399,8 @@ void ScriptActions::doTeamGarrisonSpecificBuilding(const AsciiString& teamName, 
 	
 	theTeam->getTeamAsAIGroup(theGroup.Peek());
 	theGroup->groupEnter(theBuilding, CMD_FROM_SCRIPT);
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4422,6 +4478,8 @@ void ScriptActions::doTeamUseCommandButtonAbility( const AsciiString& team, cons
 	theTeam->getTeamAsAIGroup( theGroup.Peek() );
 	
 	theGroup->groupDoCommandButton( commandButton, CMD_FROM_SCRIPT );
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4457,6 +4515,8 @@ void ScriptActions::doTeamUseCommandButtonAbilityOnNamed( const AsciiString& tea
 	theTeam->getTeamAsAIGroup( theGroup.Peek() );
 	
 	theGroup->groupDoCommandButtonAtObject( commandButton, theObj, CMD_FROM_SCRIPT );
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4492,6 +4552,8 @@ void ScriptActions::doTeamUseCommandButtonAbilityAtWaypoint( const AsciiString& 
 	theTeam->getTeamAsAIGroup( theGroup.Peek() );
 	
 	theGroup->groupDoCommandButtonAtPosition( commandButton, pWaypoint->getLocation(), CMD_FROM_SCRIPT );
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 		
@@ -4591,6 +4653,8 @@ void ScriptActions::doTeamStop(const AsciiString& teamName, Bool shouldDisband)
 
 		doMergeTeamIntoTeam(teamName, playerDefaultTeam->getName());
 	}
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4797,6 +4861,8 @@ void ScriptActions::doTeamStartSequentialScript(const AsciiString& teamName, con
 	TheScriptEngine->appendSequentialScript(seqScript);
 
 	deleteInstance(seqScript);
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -4898,6 +4964,8 @@ void ScriptActions::doTeamIdleForFramecount(const AsciiString& teamName, Int fra
 
 	theGroup->groupIdle(CMD_FROM_SCRIPT);
 	TheScriptEngine->setSequentialTimer(theTeam, framecount);
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5372,6 +5440,7 @@ void ScriptActions::doSkirmishAttackNearestGroupWithValue( const AsciiString& te
 	Player *player = team->getControllingPlayer();
 
 	if (!player)
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 
 	Coord3D loc;
@@ -5383,6 +5452,8 @@ void ScriptActions::doSkirmishAttackNearestGroupWithValue( const AsciiString& te
 	}
 
 	theGroup->groupAttackMoveToPosition( &loc, NO_MAX_SHOTS_LIMIT, CMD_FROM_SCRIPT );
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5400,10 +5471,12 @@ void ScriptActions::doSkirmishCommandButtonOnMostValuable( const AsciiString& te
 
 	Player *player = team->getControllingPlayer();
 	if (!player)
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton( ability );
 	if( !commandButton ) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
@@ -5415,6 +5488,7 @@ void ScriptActions::doSkirmishCommandButtonOnMostValuable( const AsciiString& te
 	}
 
 	if ( !srcObj ) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
@@ -5433,6 +5507,8 @@ void ScriptActions::doSkirmishCommandButtonOnMostValuable( const AsciiString& te
 	if (iter && iter->first()) {
 		theGroup->groupDoCommandButtonAtObject(commandButton, iter->first(), CMD_FROM_SCRIPT);
 	}
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5463,6 +5539,7 @@ void ScriptActions::doTeamUseCommandButtonOnNamed( const AsciiString& teamName, 
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if(!commandButton) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
@@ -5474,17 +5551,21 @@ void ScriptActions::doTeamUseCommandButtonOnNamed( const AsciiString& teamName, 
 	}
 
 	if (!srcObj) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
 	Object *obj = TheScriptEngine->getUnitNamed( unitName );
 	if (!obj) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
 	if (commandButton->isValidToUseOn(srcObj, obj, NULL, CMD_FROM_SCRIPT)) {
 		theGroup->groupDoCommandButtonAtObject(commandButton, obj, CMD_FROM_SCRIPT);
 	}
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5502,6 +5583,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestEnemy( const AsciiString& tea
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if(!commandButton) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
@@ -5513,6 +5595,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestEnemy( const AsciiString& tea
 	}
 
 	if (!srcObj) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
@@ -5526,11 +5609,14 @@ void ScriptActions::doTeamUseCommandButtonOnNearestEnemy( const AsciiString& tea
 	PartitionFilter *filters[] = { &f1, &f2, &filterMapStatus, 0 };
 	Object *obj = ThePartitionManager->getClosestObject(&pos, REALLY_FAR, FROM_CENTER_2D, filters);
 	if (!obj) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
 	// already been checked for validity
 	theGroup->groupDoCommandButtonAtObject(commandButton, obj, CMD_FROM_SCRIPT);
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5548,6 +5634,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestGarrisonedBuilding( const Asc
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if(!commandButton) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
@@ -5559,6 +5646,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestGarrisonedBuilding( const Asc
 	}
 
 	if (!srcObj) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
@@ -5574,11 +5662,14 @@ void ScriptActions::doTeamUseCommandButtonOnNearestGarrisonedBuilding( const Asc
 	PartitionFilter *filters[] = { &f1, &f2, &f3, &f4, &filterMapStatus, 0 };
 	Object *obj = ThePartitionManager->getClosestObject(&pos, REALLY_FAR, FROM_CENTER_2D, filters);
 	if (!obj) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
 	// already been checked for validity
 	theGroup->groupDoCommandButtonAtObject(commandButton, obj, CMD_FROM_SCRIPT);
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5596,6 +5687,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestKindof( const AsciiString& te
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if (!commandButton) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
@@ -5607,6 +5699,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestKindof( const AsciiString& te
 	}
 
 	if (!srcObj) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
@@ -5621,11 +5714,14 @@ void ScriptActions::doTeamUseCommandButtonOnNearestKindof( const AsciiString& te
 	PartitionFilter *filters[] = { &f1, &f2, &f3, &filterMapStatus, 0 };
 	Object *obj = ThePartitionManager->getClosestObject(&pos, REALLY_FAR, FROM_CENTER_2D, filters);
 	if (!obj) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
 	// already been checked for validity
 	theGroup->groupDoCommandButtonAtObject(commandButton, obj, CMD_FROM_SCRIPT);
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5643,6 +5739,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestBuilding( const AsciiString& 
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if (!commandButton) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
@@ -5654,6 +5751,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestBuilding( const AsciiString& 
 	}
 
 	if (!srcObj) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
@@ -5668,11 +5766,14 @@ void ScriptActions::doTeamUseCommandButtonOnNearestBuilding( const AsciiString& 
 	PartitionFilter *filters[] = { &f1, &f2, &f3, &filterMapStatus, 0 };
 	Object *obj = ThePartitionManager->getClosestObject(&pos, REALLY_FAR, FROM_CENTER_2D, filters);
 	if (!obj) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
 	// already been checked for validity
 	theGroup->groupDoCommandButtonAtObject(commandButton, obj, CMD_FROM_SCRIPT);
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5690,6 +5791,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestBuildingClass( const AsciiStr
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if (!commandButton) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
@@ -5701,6 +5803,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestBuildingClass( const AsciiStr
 	}
 
 	if (!srcObj) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
@@ -5716,11 +5819,14 @@ void ScriptActions::doTeamUseCommandButtonOnNearestBuildingClass( const AsciiStr
 	PartitionFilter *filters[] = { &f1, &f2, &f3, &f4, &filterMapStatus, 0 };
 	Object *obj = ThePartitionManager->getClosestObject(&pos, REALLY_FAR, FROM_CENTER_2D, filters);
 	if (!obj) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
 	// already been checked for validity
 	theGroup->groupDoCommandButtonAtObject(commandButton, obj, CMD_FROM_SCRIPT);
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5738,6 +5844,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 
 	const CommandButton *commandButton = TheControlBar->findCommandButton(commandAbility);
 	if (!commandButton) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
@@ -5749,6 +5856,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 	}
 
 	if (!srcObj) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
@@ -5770,6 +5878,7 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 		bestObj = ThePartitionManager->getClosestObject(&pos, REALLY_FAR, FROM_CENTER_2D, filters);
 		if( !bestObj ) 
 		{
+			LEAK_AIGROUP_IF_EMPTY(theGroup);
 			return;
 		}
 	}
@@ -5812,6 +5921,8 @@ void ScriptActions::doTeamUseCommandButtonOnNearestObjectType( const AsciiString
 
 	// already been checked for validity
 	theGroup->groupDoCommandButtonAtObject(commandButton, bestObj, CMD_FROM_SCRIPT);
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5876,10 +5987,13 @@ void ScriptActions::doTeamCaptureNearestUnownedFactionUnit( const AsciiString& t
 	PartitionFilter *filters[] = { &f1, &f2, &filterMapStatus, 0 };
 	Object *obj = ThePartitionManager->getClosestObject(&pos, REALLY_FAR, FROM_CENTER_2D, filters);
 	if (!obj) {
+		LEAK_AIGROUP_IF_EMPTY(theGroup);
 		return;
 	}
 
 	theGroup->groupEnter(obj, CMD_FROM_SCRIPT);
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5988,6 +6102,8 @@ void ScriptActions::doTeamEmoticon(const AsciiString& teamName, const AsciiStrin
 	
 	Int frames = (Int)( duration * LOGICFRAMES_PER_SECOND );
 	theGroup->groupSetEmoticon( emoticonName, frames );
+
+	LEAK_AIGROUP_IF_EMPTY(theGroup);
 }
 
 //-------------------------------------------------------------------------------------------------

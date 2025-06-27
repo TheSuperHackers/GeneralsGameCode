@@ -334,9 +334,24 @@ void AI::reset( void )
 		delete cur;
 	}
 
+#if RETAIL_COMPATIBLE_CRC
+	while (m_groupList.size())
+	{
+		AIGroup *groupToRemove = m_groupList.front();
+		if (groupToRemove)
+		{
+			destroyGroup(groupToRemove);
+		}
+		else
+		{
+			m_groupList.pop_front(); // NULL group, just kill from list.  Shouldn't really happen, but just in case.
+		}
+	}
+#else
 	DEBUG_ASSERTCRASH(m_groupList.empty(), ("AI::m_groupList is expected empty already\n"));
 
 	m_groupList.clear(); // Clear just in case...
+#endif
 
 	m_nextGroupID = 0;
 	m_nextFormationID = NO_FORMATION_ID;

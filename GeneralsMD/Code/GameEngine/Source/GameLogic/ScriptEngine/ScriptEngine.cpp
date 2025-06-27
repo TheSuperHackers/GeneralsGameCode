@@ -8060,6 +8060,8 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 		if (!itAdvanced) {
 			++it;
 		}
+
+		LEAK_AIGROUP_IF_EMPTY(aigroup);
 	}
 	m_currentPlayer = NULL;
 }
