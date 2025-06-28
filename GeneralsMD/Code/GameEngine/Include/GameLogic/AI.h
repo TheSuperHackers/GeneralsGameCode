@@ -37,6 +37,8 @@
 #include "Common/GameType.h"
 #include "GameLogic/Damage.h"
 #include "Common/STLTypedefs.h"
+#include "refcount.h"
+#include "ref_ptr.h"
 
 class AIGroup;
 class AttackPriorityInfo;
@@ -56,6 +58,12 @@ enum HackerAttackMode CPP_11(: Int);
 enum WeaponSetType CPP_11(: Int);
 enum WeaponLockType CPP_11(: Int);
 enum SpecialPowerType CPP_11(: Int);
+
+#if RETAIL_COMPATIBLE_AIGROUP
+typedef AIGroup* AIGroupPtr;
+#else
+typedef RefCountPtr<AIGroup> AIGroupPtr;
+#endif
 
 typedef std::vector<ObjectID> VecObjectID;
 typedef VecObjectID::iterator VecObjectIDIt;
@@ -272,7 +280,7 @@ public:
 	void loadPostProcess( void );
 
 	// AI Groups -----------------------------------------------------------------------------------------------
-	AIGroup *createGroup( void );					///< instantiate a new AI Group
+	AIGroupPtr createGroup( void ); ///< instantiate a new AI Group
 	void destroyGroup( AIGroup *group );	///< destroy the given AI Group
 	AIGroup *findGroup( UnsignedInt id );	///< return the AI Group with the given ID
 
@@ -892,6 +900,12 @@ public:
 	void xfer( Xfer *xfer );
 	void loadPostProcess( void );
 
+#if !RETAIL_COMPATIBLE_AIGROUP
+	void Add_Ref() const { m_refCount.Add_Ref(); }
+	void Release_Ref() const { m_refCount.Release_Ref(destroy, this); }
+	UnsignedShort Num_Refs() const { return m_refCount.Num_Refs(); }
+#endif
+
 	void groupMoveToPosition( const Coord3D *pos, Bool addWaypoint, CommandSourceType cmdSource );
 	void groupMoveToAndEvacuate( const Coord3D *pos, CommandSourceType cmdSource );			///< move to given position(s)
 	void groupMoveToAndEvacuateAndExit( const Coord3D *pos, CommandSourceType cmdSource );			///< move to given position & unload transport.
@@ -980,13 +994,15 @@ public:
 
 	void add( Object *obj );								///< add object to group
 	
-	// returns true if remove destroyed the group for us.
+	// Returns true if the group was emptied.
 	Bool remove( Object *obj);
+
+	void removeAll( void );
 	
 	// If the group contains any objects not owned by ownerPlayer, return TRUE.
 	Bool containsAnyObjectsNotOwnedByPlayer( const Player *ownerPlayer );
 
-	// Remove any objects that aren't owned by the player, and return true if the group was destroyed due to emptiness
+	// Removes any objects that aren't owned by the player, and returns true if the group was emptied.
 	Bool removeAnyObjectsNotOwnedByPlayer( const Player *ownerPlayer );
 	
 	UnsignedInt getID( void );
@@ -1016,6 +1032,13 @@ private:
 	friend class AI;
 	AIGroup( void );
 
+#if !RETAIL_COMPATIBLE_AIGROUP
+	static void destroy(AIGroup* self)
+	{
+		TheAI->destroyGroup(self);
+	}
+#endif
+
 	void recompute( void );									///< recompute various group info, such as speed, leader, etc
 
 	ListObjectPtr m_memberList;							///< the list of member Objects
@@ -1023,6 +1046,10 @@ private:
 
 	Real m_speed;														///< maximum speed of group (slowest member)
 	Bool m_dirty;														///< "dirty bit" - if true then group speed, leader, needs recompute
+
+#if !RETAIL_COMPATIBLE_AIGROUP
+	RefCountValue<UnsignedShort> m_refCount; ///< the reference counter
+#endif
 
 	UnsignedInt m_id;												///< the unique ID of this group
 	Path *m_groundPath;											///< Group ground path.

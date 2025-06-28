@@ -31,6 +31,7 @@
 #define _OBJECT_H_
 
 #include "Lib/BaseType.h"
+#include "ref_ptr.h"
 
 #include "Common/Geometry.h"
 #include "Common/Snapshot.h"
@@ -702,7 +703,11 @@ private:
 
 	GeometryInfo	m_geometryInfo;
 
+#if RETAIL_COMPATIBLE_AIGROUP
 	AIGroup*			m_group;								///< if non-NULL, we are part of this group of agents
+#else
+	RefCountPtr<AIGroup> m_group; ///< if non-NULL, we are part of this group of agents
+#endif
 
 	// These will last for my lifetime.  I will reuse them and reset them.  The truly dynamic ones are in PartitionManager
 	SightingInfo		*m_partitionLastLook;								///< Where and for whom I last looked, so I can undo its effects when I stop
