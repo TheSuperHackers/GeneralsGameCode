@@ -1997,6 +1997,14 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 	}  // end switch
 
+#if RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @bugfix xezon 28/06/2025 This hack avoids crashing when players are selected during Replay playback.
+	// It can read data from an already deleted AIGroup and return this function when its member size is 0, signifying that
+	// it is indeed deleted.
+	if (currentlySelectedGroup && currentlySelectedGroup->getCount() == 0)
+		return;
+#endif
+
 	/**/ /// @todo: multiplayer semantics
 	if (currentlySelectedGroup && TheRecorder->isPlaybackMode() && TheGlobalData->m_useCameraInReplay && TheControlBar->getObserverLookAtPlayer() == thisPlayer /*&& !TheRecorder->isMultiplayer()*/)
 	{
