@@ -4346,6 +4346,9 @@ void GameLogic::pauseGameMusic(Bool paused)
 // ------------------------------------------------------------------------------------------------
 void GameLogic::pauseGameInput(Bool paused)
 {
+	// unblock keyboard input if blocked by scripts
+	TheWindowManager->winSetFocus(NULL);
+
 	if(m_pauseInput == paused)
 		return;
 
