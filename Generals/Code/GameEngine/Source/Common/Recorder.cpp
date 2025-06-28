@@ -1079,16 +1079,10 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 			printf("CRC Mismatch in Frame %d\n", mismatchFrame);
 
 			// TheSuperHackers @tweak Pause the game on mismatch.
-			if (TheMouse->getVisibility())
-			{
-				Bool pause = TRUE;
-				Bool pauseMusic = FALSE;
-				Bool pauseInput = FALSE;
-				TheGameLogic->setGamePaused(pause, pauseMusic, pauseInput);
-			} else {
-				// Open menu if mouse is hidden by a script (and keyboard input is probably ignored).
-				TheMessageStream->appendMessage(GameMessage::MSG_META_OPTIONS);
-			}
+			Bool pause = TRUE;
+			Bool pauseMusic = FALSE;
+			Bool pauseInput = FALSE;
+			TheGameLogic->setGamePaused(pause, pauseMusic, pauseInput);
 		}
 		return;
 	}
