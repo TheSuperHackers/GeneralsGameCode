@@ -66,7 +66,7 @@ GameSpyGameSlot::GameSpyGameSlot()
 BOOL (__stdcall *SnmpExtensionInitPtr)(IN DWORD dwUpTimeReference, OUT HANDLE *phSubagentTrapEvent, OUT AsnObjectIdentifier *pFirstSupportedRegion);
 BOOL (__stdcall *SnmpExtensionQueryPtr)(IN BYTE bPduType, IN OUT RFC1157VarBindList *pVarBindList, OUT AsnInteger32 *pErrorStatus, OUT AsnInteger32 *pErrorIndex);
 LPVOID (__stdcall *SnmpUtilMemAllocPtr)(IN DWORD bytes);
-VOID (__stdcall *SnmpUtilMemFreePtr)(IN LPVOID pMem);
+VOID (__stdcall *SnmpUtilVarBindListFreePtr)(IN SnmpVarBindList *pVbl);
 
 typedef struct tConnInfoStruct {
 	unsigned int State;
@@ -207,17 +207,14 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	SnmpExtensionInitPtr = (int (__stdcall *)(unsigned long,void ** ,AsnObjectIdentifier *)) GetProcAddress(mib_ii_dll, "SnmpExtensionInit");
 	SnmpExtensionQueryPtr = (int (__stdcall *)(unsigned char,SnmpVarBindList *,long *,long *)) GetProcAddress(mib_ii_dll, "SnmpExtensionQuery");
 	SnmpUtilMemAllocPtr = (void *(__stdcall *)(unsigned long)) GetProcAddress(snmpapi_dll, "SnmpUtilMemAlloc");
-	SnmpUtilMemFreePtr = (void (__stdcall *)(void *)) GetProcAddress(snmpapi_dll, "SnmpUtilMemFree");
-	if (SnmpExtensionInitPtr == NULL || SnmpExtensionQueryPtr == NULL || SnmpUtilMemAllocPtr == NULL || SnmpUtilMemFreePtr == NULL) {
+	SnmpUtilVarBindListFreePtr = (void (__stdcall *)(SnmpVarBindList *)) GetProcAddress(snmpapi_dll, "SnmpUtilVarBindListFree");
+	if (SnmpExtensionInitPtr == NULL || SnmpExtensionQueryPtr == NULL || SnmpUtilMemAllocPtr == NULL || SnmpUtilVarBindListFreePtr == NULL) {
 		DEBUG_LOG(("Failed to get proc addresses for linked functions\n"));
 		FreeLibrary(snmpapi_dll);
 		FreeLibrary(mib_ii_dll);
 		return(false);
 	}
 
-
-	RFC1157VarBindList *bind_list_ptr = (RFC1157VarBindList *) SnmpUtilMemAllocPtr(sizeof(RFC1157VarBindList));
-	RFC1157VarBind *bind_ptr = (RFC1157VarBind *) SnmpUtilMemAllocPtr(sizeof(RFC1157VarBind));
 
 	/*
 	** OK, here we go. Try to initialise the .dll
@@ -230,8 +227,6 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 		** Aw crap.
 		*/
 		DEBUG_LOG(("Failed to init the .dll\n"));
-		SnmpUtilMemFreePtr(bind_list_ptr);
-		SnmpUtilMemFreePtr(bind_ptr);
 		FreeLibrary(snmpapi_dll);
 		FreeLibrary(mib_ii_dll);
 		return(false);
@@ -255,10 +250,12 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	/*
 	** Set up the bind list.
 	*/
+	RFC1157VarBindList bind_list;
+	RFC1157VarBind *bind_ptr = (RFC1157VarBind *) SnmpUtilMemAllocPtr(sizeof(RFC1157VarBind));
 	bind_ptr->name.idLength = ARRAY_SIZE(mib_ii_name);
-	bind_ptr->name.ids = mib_ii_name;
-	bind_list_ptr->list = bind_ptr;
-	bind_list_ptr->len = 1;
+	bind_ptr->name.ids = mib_ii_name_ptr; // mib_ii_name_ptr should be treated as a weak pointer after this point
+	bind_list.list = bind_ptr; // bind_ptr should be treated as a weak pointer after this point
+	bind_list.len = 1;
 
 
 	/*
@@ -276,14 +273,20 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	*/
 	while (true) {
 
-		if (!SnmpExtensionQueryPtr(SNMP_PDU_GETNEXT, bind_list_ptr, &error_status, &error_index)) {
+		if (!SnmpExtensionQueryPtr(SNMP_PDU_GETNEXT, &bind_list, &error_status, &error_index)) {
 		//if (!SnmpExtensionQueryPtr(ASN_RFC1157_GETNEXTREQUEST, bind_list_ptr, &error_status, &error_index)) {
 			DEBUG_LOG(("SnmpExtensionQuery returned false\n"));
-			SnmpUtilMemFreePtr(bind_list_ptr);
-			SnmpUtilMemFreePtr(bind_ptr);
+			SnmpUtilVarBindListFreePtr(&bind_list);
 			FreeLibrary(snmpapi_dll);
 			FreeLibrary(mib_ii_dll);
 			return(false);
+		}
+
+		bind_ptr = bind_list.list;
+		if (bind_ptr == NULL) {
+			DEBUG_LOG(("bind_ptr unexpectedly NULL\n"));
+			SnmpUtilVarBindListFreePtr(&bind_list);
+			return false;
 		}
 
 		/*
@@ -378,9 +381,7 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 		}
 	}
 
-	SnmpUtilMemFreePtr(bind_list_ptr);
-	SnmpUtilMemFreePtr(bind_ptr);
-	SnmpUtilMemFreePtr(mib_ii_name_ptr);
+	SnmpUtilVarBindListFreePtr(bind_list);
 
 	DEBUG_LOG(("Got %d connections in list, parsing...\n", connectionVector.size()));
 
