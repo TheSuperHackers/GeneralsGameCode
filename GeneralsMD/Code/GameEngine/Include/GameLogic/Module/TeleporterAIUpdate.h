@@ -33,6 +33,8 @@
 
 #include "GameLogic/Module/AIUpdate.h"
 
+class FXList;
+
 
 //-------------------------------------------------------------------------------------------------
 class TeleporterAIUpdateModuleData : public AIUpdateModuleData
@@ -40,6 +42,9 @@ class TeleporterAIUpdateModuleData : public AIUpdateModuleData
 public:
 	Real m_minDistance;
 	Real m_disabledDuration;
+
+	const FXList* m_sourceFX;
+	const FXList* m_targetFX;
 
 	TeleporterAIUpdateModuleData();
 
@@ -71,9 +76,11 @@ public:
 
 protected:
 
-	void doTeleport(Coord3D targetPos, Real angle, Real dist);
+	UpdateSleepTime doTeleport(Coord3D targetPos, Real angle, Real dist);
 
 	Bool findAttackLocation(Object* victim, const Coord3D* victimPos, Coord3D* targetPos, Real* targetAngle);
+
+	Bool isLocationValid(Object* obj, const Coord3D* targetPos, Object* victim, const Coord3D* victimPos, Weapon* weap);
 
 	virtual UpdateSleepTime doLocomotor();
 
@@ -92,6 +99,9 @@ protected:
 
 
 	 virtual AIStateMachine* makeStateMachine();
+
+//private:
+//	Bool m_inAttackPos;
 
 };
 

@@ -48,7 +48,8 @@
 //-------------------------------------------------------------------------------------------------
 TeleporterAIUpdateModuleData::TeleporterAIUpdateModuleData( void )
 {
-
+	m_sourceFX = NULL;
+	m_targetFX = NULL;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -60,6 +61,8 @@ TeleporterAIUpdateModuleData::TeleporterAIUpdateModuleData( void )
 	{
 		{ "MinDistanceForTeleport", INI::parseReal, NULL, offsetof(TeleporterAIUpdateModuleData, m_minDistance) },
 		{ "DisabledDurationPerDistance", INI::parseDurationReal, NULL, offsetof(TeleporterAIUpdateModuleData, m_disabledDuration) },
+		{ "TeleportStartFX", INI::parseFXList, NULL, offsetof(TeleporterAIUpdateModuleData, m_sourceFX) },
+		{ "TeleportEndFX", INI::parseFXList, NULL, offsetof(TeleporterAIUpdateModuleData, m_targetFX) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
@@ -75,7 +78,7 @@ AIStateMachine* TeleporterAIUpdate::makeStateMachine()
 //-------------------------------------------------------------------------------------------------
 TeleporterAIUpdate::TeleporterAIUpdate( Thing *thing, const ModuleData* moduleData ) : AIUpdateInterface( thing, moduleData )
 {
-
+	//m_inAttackPos = FALSE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -107,30 +110,45 @@ UpdateSleepTime TeleporterAIUpdate::update( void )
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 
-void TeleporterAIUpdate::doTeleport(Coord3D targetPos, Real angle, Real dist)
+UpdateSleepTime TeleporterAIUpdate::doTeleport(Coord3D targetPos, Real angle, Real dist)
 {
 	const TeleporterAIUpdateModuleData* d = getTeleporterAIUpdateModuleData();
 	Object* obj = getObject();
 
-	// TheAI->pathfinder()->adjustTargetDestination(source, target, pos, this, &approachTargetPos);
+	FXList::doFXObj(d->m_sourceFX, getObject());
+
 	//TODO: Handle line of sight?!
 
 	obj->setPosition(&targetPos);
 	obj->setOrientation(angle);
 
+	FXList::doFXObj(d->m_targetFX, getObject());
+
 	destroyPath();
-	setLocomotorGoalPositionExplicit(targetPos);
+	//friend_endingMove();
+	TheAI->pathfinder()->updateGoal(obj, &targetPos, TheTerrainLogic->getLayerForDestination(&targetPos));
+	// setLocomotorGoalPositionExplicit(targetPos);
 	setLocomotorGoalOrientation(angle);
 
-	UnsignedInt disabledFrame = TheGameLogic->getFrame() + REAL_TO_UNSIGNEDINT(dist * d->m_disabledDuration);
+	UnsignedInt disabledFrames = REAL_TO_UNSIGNEDINT(dist * d->m_disabledDuration);
 
-	obj->setDisabledUntil(DISABLED_TELEPORT, disabledFrame);
+	obj->setDisabledUntil(DISABLED_TELEPORT, TheGameLogic->getFrame() + disabledFrames);
 
-	//If we have a path, clear it?
+	return UPDATE_SLEEP(disabledFrames);
 
 }
 
 //-------------------------------------------------------------------------------------------------
+Bool TeleporterAIUpdate::isLocationValid(Object* obj, const Coord3D* targetPos, Object* victim, const Coord3D* victimPos, Weapon* weap)
+{
+	bool viewBlocked = TheAI->pathfinder()->isAttackViewBlockedByObstacle(obj, *targetPos, victim, *victimPos);
+	bool inRange = weap->isSourceObjectWithGoalPositionWithinAttackRange(obj, targetPos, victim, victimPos);
+	PathfindLayerEnum destinationLayer = TheTerrainLogic->getLayerForDestination(targetPos);
+	bool posValid = TheAI->pathfinder()->validMovementPosition(getObject()->getCrusherLevel() > 0, destinationLayer, getLocomotorSet(), targetPos);
+
+	return !viewBlocked && inRange && posValid;
+}
+
 
 Bool TeleporterAIUpdate::findAttackLocation(Object* victim, const Coord3D* victimPos, Coord3D* targetPos, Real* targetAngle)
 {
@@ -139,8 +157,45 @@ Bool TeleporterAIUpdate::findAttackLocation(Object* victim, const Coord3D* victi
 	if (!weap)
 		return false;
 
-	bool viewBlocked = TheAI->pathfinder()->isAttackViewBlockedByObstacle(obj, *targetPos, victim, *victimPos);
-	bool inRange = weap->isSourceObjectWithGoalPositionWithinAttackRange(obj, targetPos, victim, victimPos);
+	Coord3D newPos;
+	newPos.x = targetPos->x;
+	newPos.y = targetPos->y;
+	newPos.z = targetPos->z;
+
+	// Check if the current location is valid.
+	// This needs to be rechecked after the disabled timer.
+	if (isLocationValid(obj, targetPos, victim, victimPos, weap)) {
+
+		// After verifying the initial location
+		//if (!m_inAttackPos) { // Only adjust before a teleport
+			if (!TheAI->pathfinder()->adjustDestination(obj, getLocomotorSet(), &newPos)) {
+				DEBUG_LOG((">>> TPAI - findAttackLocation: AdjustDestination failed!\n"));
+			}
+			else {
+				DEBUG_LOG((">>> TPAI - findAttackLocation: AdjustDestination: %f, %f, %f\n", newPos.x, newPos.y, newPos.z));
+			}
+
+			if (isLocationValid(obj, &newPos, victim, victimPos, weap)) {
+				DEBUG_LOG((">>> TPAI - findAttackLocation: done with initial pos\n"));
+				*targetPos = newPos;
+				return true;
+			}
+		//}
+		//else {
+		//	DEBUG_LOG((">>> TPAI - findAttackLocation: done with initial pos\n"));
+		//	*targetPos = newPos;
+		//	return true;
+		//}
+	}
+
+	newPos.x = targetPos->x;
+	newPos.y = targetPos->y;
+	newPos.z = targetPos->z;
+
+	//bool viewBlocked = TheAI->pathfinder()->isAttackViewBlockedByObstacle(obj, *targetPos, victim, *victimPos);
+	//bool inRange = weap->isSourceObjectWithGoalPositionWithinAttackRange(obj, targetPos, victim, victimPos);
+	//PathfindLayerEnum destinationLayer = TheTerrainLogic->getLayerForDestination(targetPos);
+	//bool posValid = TheAI->pathfinder()->validMovementPosition(getObject()->getCrusherLevel() > 0, destinationLayer, getLocomotorSet(), targetPos);
 
 	Real RANGE_MARGIN = 10.0f;
 
@@ -150,10 +205,6 @@ Bool TeleporterAIUpdate::findAttackLocation(Object* victim, const Coord3D* victi
 	Real maxRange = weap->getAttackRange(obj) - RANGE_MARGIN;
 	Real range = maxRange - weap->getTemplate()->getMinimumAttackRange();
 
-	if (!viewBlocked && inRange) {
-		DEBUG_LOG((">>> TPAI - findAttackLocation: done with initial pos\n"));
-		return true;
-	}
 
 	// Calculate direction vector from victim to candidate position
 	Coord3D dir;
@@ -181,13 +232,8 @@ Bool TeleporterAIUpdate::findAttackLocation(Object* victim, const Coord3D* victi
 	//}
 
 	// DEBUG:
-	const FXList* debug_fx1 = TheFXListStore->findFXList("FX_DEBUG_MARKER_GREEN");
-	const FXList* debug_fx2 = TheFXListStore->findFXList("FX_DEBUG_MARKER_RED");
-
-	Coord3D newPos;
-	newPos.x = targetPos->x;
-	newPos.y = targetPos->y;
-	newPos.z = targetPos->z;
+	/*const FXList* debug_fx1 = TheFXListStore->findFXList("FX_DEBUG_MARKER_GREEN");
+	const FXList* debug_fx2 = TheFXListStore->findFXList("FX_DEBUG_MARKER_RED");*/
 
 
 	const Real maxAngle = deg2rad(180.0f);
@@ -211,15 +257,27 @@ Bool TeleporterAIUpdate::findAttackLocation(Object* victim, const Coord3D* victi
 			newPos.y = victimPos->y + radius * sin(angle);
 			newPos.z = TheTerrainLogic->getGroundHeight(newPos.x, newPos.y);
 
-			if (sign == 1)
+			//viewBlocked = TheAI->pathfinder()->isAttackViewBlockedByObstacle(obj, newPos, victim, *victimPos);
+			//inRange = weap->isSourceObjectWithGoalPositionWithinAttackRange(obj, &newPos, victim, victimPos);
+			//destinationLayer = TheTerrainLogic->getLayerForDestination(&newPos);
+			//posValid = TheAI->pathfinder()->validMovementPosition(getObject()->getCrusherLevel() > 0, destinationLayer, getLocomotorSet(), &newPos);
+
+			DEBUG_LOG((">>> TPAI - findAttackLocation: candidate Pos: %f, %f, %f\n", newPos.x, newPos.y, newPos.z));
+
+			// TheAI->pathfinder()->adjustTargetDestination(obj, victim, victimPos, weap, &newPos);
+			if (!TheAI->pathfinder()->adjustDestination(obj, getLocomotorSet(), &newPos)) {
+				DEBUG_LOG((">>> TPAI - findAttackLocation: AdjustDestination failed!\n"));
+			}
+			else {
+				DEBUG_LOG((">>> TPAI - findAttackLocation: AdjustDestination: %f, %f, %f\n", newPos.x, newPos.y, newPos.z));
+			}
+
+			/*if (sign == 1)
 				FXList::doFXPos(debug_fx1, &newPos);
 			else
-				FXList::doFXPos(debug_fx2, &newPos);
+				FXList::doFXPos(debug_fx2, &newPos);*/
 
-			viewBlocked = TheAI->pathfinder()->isAttackViewBlockedByObstacle(obj, newPos, victim, *victimPos);
-			inRange = weap->isSourceObjectWithGoalPositionWithinAttackRange(obj, &newPos, victim, victimPos);
-
-			if (!viewBlocked && inRange) {
+			if (isLocationValid(obj, &newPos, victim, victimPos, weap)) {
 				*targetPos = newPos;
 				*targetAngle = angle + PI;
 				DEBUG_LOG((">>> TPAI - findAttackLocation: done after ring=%d, step=%d\n", ring, step));
@@ -293,65 +351,58 @@ UpdateSleepTime TeleporterAIUpdate::doLocomotor(void)
 		return AIUpdateInterface::doLocomotor();
 	}
 
+	// TODO: IF object is already in attacking position and can fire, do not adjust any positions?!
+	// But still check if position is valid!
+
 	if (isAttacking()) {
 		// requiredRange = obj->getLargestWeaponRange();
 		Weapon* weap = obj->getCurrentWeapon();
-		if (weap)
-			requiredRange = weap->getAttackRange(obj) - RANGE_MARGIN;
+		if (!weap)
+			return AIUpdateInterface::doLocomotor();
+
+		// Check if current position is valid for attack
+		if (isLocationValid(obj, obj->getPosition(), goalObj, goalPos, weap)) {
+			return AIUpdateInterface::doLocomotor();
+		}
+
+		requiredRange = weap->getAttackRange(obj) - RANGE_MARGIN;
 
 		//Adjust target to required distance
 		if (requiredRange > 0) {
 			dir.scale(min(dist, requiredRange - TELEPORT_DIST_MARGIN));
 			targetPos.sub(&dir);
 			targetPos.z = TheTerrainLogic->getGroundHeight(targetPos.x, targetPos.y);
-			
-			//if (dist > requiredRange)
-			//	dist -= requiredRange;
 		}
 
-		DEBUG_LOG((">>> TPAI - doLoc: findAttackLocation targetPos (BEFORE) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
-		findAttackLocation(goalObj, goalPos, &targetPos, &targetAngle);
-		DEBUG_LOG((">>> TPAI - doLoc: findAttackLocation targetPos (AFTER) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
+		// Find proper attack position for adjusted target
+		if (!findAttackLocation(goalObj, goalPos, &targetPos, &targetAngle)) {
+			DEBUG_LOG((">>> TPAI - doLoc: isAttacking. FAILED TO FIND VALID LOCATION!\n"));
+
+			// This might happen if we try to attack e.g. a boat in water
+			// TODO: Should we move as close as we can?
+
+			return AIUpdateInterface::doLocomotor();
+		}
+		//DEBUG_LOG((">>> TPAI - doLoc: findAttackLocation targetPos (AFTER) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
+
 		//recompute distance and angle
 		distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
 		//targetAngle = atan2(dir.y, dir.x);
 		dist = sqrt(distSq);
 
 		DEBUG_LOG((">>> TPAI - doLoc: isAttacking, dist = %f, reqRange = %f\n", dist, requiredRange));
+		//m_inAttackPos = TRUE;
 	}
 	/*else {
-		TheAI->pathfinder()->adjustToPossibleDestination(obj, getLocomotorSet(), &targetPos);
+		m_inAttackPos = FALSE;
 	}*/
-
-	// We are in range already
-	//if (dist <= requiredRange) {
-	//	return AIUpdateInterface::doLocomotor();
-	//}
-
+	
 
 
 	DEBUG_LOG((">>> TPAI - doLoc: teleport with dist = %f\n", dist));
 	doTeleport(targetPos, targetAngle, dist);
 
-
-	//DEBUG: Distance after Teleport
-	//Coord3D targetPos_org;
-
-	//if (goalObj != NULL) {
-	//	targetPos_org = *goalObj->getPosition();
-	//}
-	//else if (goalPos != NULL) {
-	//	targetPos_org = *goalPos;
-	//}
-	//distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos_org, FROM_CENTER_2D);
-	//dist = sqrt(distSq);
-
-	//DEBUG_LOG((">>> TPAI - doLoc: goalPos(1) = %f, %f, %f\n", targetPos_org.x, targetPos_org.y, targetPos_org.z));
-	//DEBUG_LOG((">>> TPAI - doLoc: distance after teleport = %f\n", dist));
-
-
 	return AIUpdateInterface::doLocomotor();
-
 
 }
 
@@ -393,6 +444,8 @@ void TeleporterAIUpdate::xfer( Xfer *xfer )
  
    // extend base class
    AIUpdateInterface::xfer(xfer);
+
+   //xfer->xferBool(&m_inAttackPos);
 
 }  // end xfer
 
