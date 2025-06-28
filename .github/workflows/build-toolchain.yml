@@ -48,9 +48,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: build\${{ inputs.preset }}\_deps
-          key: cmake-deps-${{ inputs.preset }}-${{ hashFiles('cmake/**/*.cmake', '**/CMakeLists.txt') }}
-          restore-keys: |
-            cmake-deps-${{ inputs.preset }}-
+          key: cmake-deps-${{ inputs.preset }}-${{ hashFiles('CMakePresets.json','cmake/**/*.cmake','**/CMakeLists.txt') }}
 
       - name: Download VC6 Portable from Cloudflare R2
         if: ${{ startsWith(inputs.preset, 'vc6') && steps.cache-vc6.outputs.cache-hit != 'true' }}
