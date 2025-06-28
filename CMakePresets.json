@@ -9,13 +9,13 @@
         {
             "name": "vc6",
             "displayName": "Windows 32bit VC6 Release",
-            "generator": "NMake Makefiles",
+            "generator": "Ninja",
             "hidden": false,
             "binaryDir": "${sourceDir}/build/${presetName}",
             "cacheVariables": {
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
                 "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL",
-                "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "$<$<CONFIG:Release,Debug,RelWithDebInfo>:ProgramDatabase>",
+                "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "",
                 "CMAKE_BUILD_TYPE": "Release",
                 "RTS_FLAGS": "/W3"
             },
