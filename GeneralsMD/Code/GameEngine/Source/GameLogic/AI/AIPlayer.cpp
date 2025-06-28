@@ -900,11 +900,15 @@ void AIPlayer::guardSupplyCenter( Team *team, Int minSupplies )
 	}
 	if (warehouse) {
 
-		AIGroup* theGroup = TheAI->createGroup();
+		AIGroupPtr theGroup = TheAI->createGroup();
 		if (!theGroup) {
 			return;
 		}
+#if RETAIL_COMPATIBLE_AIGROUP
 		team->getTeamAsAIGroup(theGroup);
+#else
+		team->getTeamAsAIGroup(theGroup.Peek());
+#endif
 		Coord3D location = *warehouse->getPosition();
 		// It's probably a defensive move - position towards the enemy.
 		Region2D bounds;
