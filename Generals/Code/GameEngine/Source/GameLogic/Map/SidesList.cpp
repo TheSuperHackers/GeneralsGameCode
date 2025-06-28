@@ -1125,7 +1125,7 @@ void TeamsInfoRec::addTeam(const Dict* d)
 	{
 		// pool[]ify
 		const Int newNumTeamsAllocated = m_numTeams + TEAM_ALLOC_CHUNK;
-		TeamsInfo* nti = NEW TeamsInfo[newNumTeamsAllocated];	// throws on failure
+		TeamsInfo* nti = NEW TeamsInfo[newNumTeamsAllocated];
 		Int i;
 
 		for (i = 0; i < m_numTeams; ++i)
