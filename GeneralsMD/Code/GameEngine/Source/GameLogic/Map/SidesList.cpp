@@ -1100,7 +1100,7 @@ void TeamsInfoRec::clear()
 { 
 	Int i;
 
-	for (i = 0; i < m_numTeamsAllocated; i++) 
+	for (i = 0; i < m_numTeams; ++i) 
 		m_teams[i].clear(); 
 
 	m_numTeams = 0; 
@@ -1111,7 +1111,7 @@ void TeamsInfoRec::clear()
 
 TeamsInfo *TeamsInfoRec::findTeamInfo(AsciiString name, Int* index /*= NULL*/)
 {
-	for (int i = 0; i < m_numTeams; i++) 
+	for (int i = 0; i < m_numTeams; ++i) 
 	{
 		if (m_teams[i].getDict()->getAsciiString(TheKey_teamName) == name)
 		{
@@ -1133,22 +1133,22 @@ void TeamsInfoRec::addTeam(const Dict* d)
 	DEBUG_ASSERTCRASH(m_numTeams < 2048, ("%d teams have been allocated (so far). This seems excessive.", m_numTeams ));
 	if (m_numTeams >= m_numTeamsAllocated)
 	{
-	// pool[]ify
+		// pool[]ify
 		const Int newNumTeamsAllocated = m_numTeams + TEAM_ALLOC_CHUNK;
 		TeamsInfo* nti = NEW TeamsInfo[newNumTeamsAllocated];	// throws on failure
-		
 		Int i;
 
-		for (i = 0; i < m_numTeams; i++)
+		for (i = 0; i < m_numTeams; ++i)
 			nti[i] = m_teams[i];
 
 		delete [] m_teams;
-
 		m_teams = nti;
 		m_numTeamsAllocated = newNumTeamsAllocated;
 	}
 
-	m_teams[m_numTeams++].init(d);
+	m_teams[m_numTeams].init(d);
+
+	++m_numTeams;
 }
 
 void TeamsInfoRec::removeTeam(Int i)
@@ -1156,11 +1156,10 @@ void TeamsInfoRec::removeTeam(Int i)
 	if (i < 0 || i >= m_numTeams || m_numTeams <= 1)
 		return;
 
-	for ( ; i < m_numTeams-1; i++)
+	--m_numTeams;
+
+	for ( ; i < m_numTeams; ++i)
 		m_teams[i] = m_teams[i+1];
 
-	for ( ; i < m_numTeams; i++)
-		m_teams[i].clear();
-
-	--m_numTeams;
+	m_teams[m_numTeams].clear();
 }
