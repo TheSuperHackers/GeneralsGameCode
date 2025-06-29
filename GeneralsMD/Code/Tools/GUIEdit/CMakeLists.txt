@@ -48,7 +48,6 @@ target_include_directories(z_guiedit PRIVATE
 target_link_libraries(z_guiedit PRIVATE
     comctl32
     core_debug
-    core_profile
     d3d8lib
     dbghelplib
     imm32

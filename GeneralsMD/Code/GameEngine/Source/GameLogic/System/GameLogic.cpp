@@ -109,8 +109,6 @@
 #include "GameNetwork/NetworkInterface.h"
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 
-#include <rts/profile.h>
-
 DECLARE_PERF_TIMER(SleepyMaintenance)
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.		 
@@ -3636,14 +3634,7 @@ void GameLogic::update( void )
 		Total_Create_Render_Obj_Time=0;
 		Total_Load_3D_Assets=0;
 	#endif
-
-#ifdef RTS_PROFILE
-    Profile::StartRange("map_load");
-#endif
 		startNewGame( FALSE );
-#ifdef RTS_PROFILE
-    Profile::StopRange("map_load");
-#endif
 		m_startNewGame = FALSE;
 
 	#ifdef DUMP_PERF_STATS

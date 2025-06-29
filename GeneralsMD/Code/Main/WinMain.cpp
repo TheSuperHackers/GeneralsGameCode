@@ -66,8 +66,6 @@
 #include "GeneratedVersion.h"
 #include "resource.h"
 
-#include <rts/profile.h>
-
 #ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
@@ -764,10 +762,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 {
 	Int exitcode = 1;
 
-#ifdef RTS_PROFILE
-  Profile::StartRange("init");
-#endif
-
 	try {
 
 		_set_se_translator( DumpExceptionInfo ); // Hook that allows stack trace.
@@ -817,7 +811,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 
 // Force "splash image" to be loaded from a file, not a resource so same exe can be used in different localizations.
-#if defined RTS_DEBUG || defined RTS_INTERNAL || defined RTS_PROFILE
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 
 			// check both localized directory and root dir
 		char filePath[_MAX_PATH];

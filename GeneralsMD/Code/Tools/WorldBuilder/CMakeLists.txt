@@ -211,7 +211,6 @@ target_include_directories(z_worldbuilder PRIVATE
 
 target_link_libraries(z_worldbuilder PRIVATE
     core_debug
-    core_profile
     d3d8lib
     dbghelplib
     imm32
