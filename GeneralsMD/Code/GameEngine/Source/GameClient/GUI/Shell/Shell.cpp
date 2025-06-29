@@ -58,6 +58,21 @@ Shell *TheShell = NULL;  ///< the shell singleton definition
 //-------------------------------------------------------------------------------------------------
 Shell::Shell( void )
 {
+	construct();
+
+}  // end Shell
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+Shell::~Shell( void )
+{
+	deconstruct();
+
+}  // end ~Shell
+
+//-------------------------------------------------------------------------------------------------
+void Shell::construct( void )
+{
 	Int i;
 
 	m_screenCount = 0;
@@ -80,12 +95,10 @@ Shell::Shell( void )
 	m_optionsLayout = NULL;
 	m_screenCount = 0;
 	//
-
-}  // end Shell
+}
 
 //-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-Shell::~Shell( void )
+void Shell::deconstruct( void )
 {
 	WindowLayout *newTop = top();
 	while(newTop)
@@ -101,12 +114,10 @@ Shell::~Shell( void )
 		m_background = NULL;
 	}
 
-	if(m_animateWindowManager)
-		delete m_animateWindowManager;
+	delete m_animateWindowManager;
 	m_animateWindowManager = NULL;
 
-	if(m_schemeManager)
-		delete m_schemeManager;
+	delete m_schemeManager;
 	m_schemeManager = NULL;
 
 	// delete the save/load menu if present
@@ -135,8 +146,7 @@ Shell::~Shell( void )
 		deleteInstance(m_optionsLayout);
 		m_optionsLayout = NULL;
 	}
-
-}  // end ~Shell
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Initialize the shell system */
@@ -165,7 +175,7 @@ void Shell::reset( void )
 
 	// pop all screens
 	while( m_screenCount )
-		pop();
+		popImmediate();
 
 	m_animateWindowManager->reset();
 
@@ -218,6 +228,53 @@ void Shell::update( void )
 }  // end update
 
 //-------------------------------------------------------------------------------------------------
+namespace
+{
+	struct ScreenInfo
+	{
+		ScreenInfo() : isHidden(false) {}
+		AsciiString filename;
+		bool isHidden;
+	};
+}
+
+//-------------------------------------------------------------------------------------------------
+void Shell::recreateWindowLayouts( void )
+{
+		// collect state of the current shell
+	const Int screenCount = getScreenCount();
+	std::vector<ScreenInfo> screenStackInfos;
+
+	{
+		screenStackInfos.resize(screenCount);
+		Int screenIndex = 0;
+		for (; screenIndex < screenCount; ++screenIndex)
+		{
+			const WindowLayout* layout = getScreenLayout(screenIndex);
+			ScreenInfo& screenInfo = screenStackInfos[screenIndex];
+			screenInfo.filename = layout->getFilename();
+			screenInfo.isHidden = layout->isHidden();
+		}
+	}
+
+	// reconstruct the shell now
+	deconstruct();
+	construct();
+	init();
+
+	// restore the screen stack
+	Int screenIndex = 0;
+	for (; screenIndex < screenCount; ++screenIndex)
+	{
+		const ScreenInfo& screenInfo = screenStackInfos[screenIndex];
+		push(screenInfo.filename);
+
+		WindowLayout* layout = getScreenLayout(screenIndex);
+		layout->hide(screenInfo.isHidden);
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Find a screen via the .wnd script filename loaded */
 //-------------------------------------------------------------------------------------------------
 WindowLayout *Shell::findScreenByFilename( AsciiString filename )
@@ -241,6 +298,15 @@ WindowLayout *Shell::findScreenByFilename( AsciiString filename )
 	return NULL;
 
 }  // end findScreenByFilename
+
+//-------------------------------------------------------------------------------------------------
+WindowLayout *Shell::getScreenLayout( Int index ) const
+{
+	if (index >= 0 && index < m_screenCount)
+		return m_screenStack[index];
+
+	return NULL;
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Hide or unhide all window layouts loaded */
@@ -464,7 +530,7 @@ void Shell::showShell( Bool runInit )
     Profile::StopRange("init");
 #endif
 	//else
-		TheShell->push( AsciiString("Menus/MainMenu.wnd") );
+		push( AsciiString("Menus/MainMenu.wnd") );
   }
 	m_isShellActive = TRUE;
 }  // end showShell
