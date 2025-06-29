@@ -1393,7 +1393,8 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 	// Kris: Now that we can select non-controllable units/structures, don't allow any actions to be performed.
 	const CommandButton *command = TheInGameUI->getGUICommand();
 	if( TheInGameUI->areSelectedObjectsControllable() 
-			|| (command && command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER))
+			|| (command && (command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER
+			|| command->getCommandType() == GUICOMMANDMODE_PLACE_BEACON)))
 	{
 		GameMessage *hintMessage;
 
@@ -1421,7 +1422,8 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 		if(command && 
 			(command->isContextCommand() 
 				|| command->getCommandType() == GUI_COMMAND_SPECIAL_POWER
-				|| command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER))
+				|| command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER
+				|| command->getCommandType() == GUICOMMANDMODE_PLACE_BEACON))
 		{
 			if( obj && obj->isKindOf( KINDOF_SHRUBBERY ) && !BitIsSet( command->getOptions(), ALLOW_SHRUBBERY_TARGET ) )
 			{
@@ -1492,6 +1494,9 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 					currentlyValid = TheInGameUI->canSelectedObjectsDoAction( InGameUI::ACTIONTYPE_PICK_UP_PRISONER, obj, InGameUI::SELECTION_ANY );
 					break;
 #endif
+				case GUICOMMANDMODE_PLACE_BEACON:
+					currentlyValid = true;
+					break;
 				case GUI_COMMAND_SPECIAL_POWER_FROM_COMMAND_CENTER:
 				{
 					Object* cmdCenter = ThePlayerList->getLocalPlayer()->findNaturalCommandCenter();
