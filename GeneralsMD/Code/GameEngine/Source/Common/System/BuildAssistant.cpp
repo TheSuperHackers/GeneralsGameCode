@@ -1531,17 +1531,29 @@ void BuildAssistant::sellObject( Object *obj )
 	// set the model condition in the drawable for this object that will show the buildup
 	// scaffold and adjust the model height by construction percent
 	//
-	obj->setModelConditionFlags( MAKE_MODELCONDITION_MASK2( MODELCONDITION_PARTIALLY_CONSTRUCTED, 
-																													MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED) );
+	obj->setModelConditionFlags( MAKE_MODELCONDITION_MASK2( MODELCONDITION_PARTIALLY_CONSTRUCTED, MODELCONDITION_ACTIVELY_BEING_CONSTRUCTED) );
 
+#if RETAIL_COMPATIBLE_AIGROUP
 	//
 	// set this object as under de-construction (sold).  It is still a legal target, since you get the money at 
 	// the completion of sale.
 	//
 	obj->setStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_SOLD, OBJECT_STATUS_UNSELECTABLE ) );
+#endif
+
+	// TheSuperHackers @bugfix Mauller 27/06/2025 we need to deselect the object before setting it as unselectable
+	// If the object is set unselectable too soon, it fails to be removed from the selection group
 
 	// for everybody, unselect them at this time.  You can't just deselect a drawable.  Selection is a logic property.
 	TheGameLogic->deselectObject(obj, PLAYERMASK_ALL, TRUE);
+
+#if !RETAIL_COMPATIBLE_AIGROUP
+	//
+	// set this object as under de-construction (sold).  It is still a legal target, since you get the money at 
+	// the completion of sale.
+	//
+	obj->setStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_SOLD, OBJECT_STATUS_UNSELECTABLE ) );
+#endif
 
 	//
 	// set the animation durations so that the regular build up loop animations can be
