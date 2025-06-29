@@ -899,7 +899,49 @@ Bool GameInfo::isSandbox(void)
 
 static const char slotListID		= 'S';
 
-AsciiString GameInfoToAsciiString( const GameInfo *game )
+static void BuildPlayerNames(AsciiStringVec& playerNames, const GameInfo& game)
+{
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		const GameSlot* slot = game.getConstSlot(i);
+		if (slot && slot->isHuman())
+		{
+			playerNames[i] = WideCharStringToMultiByte(slot->getName().str()).c_str();
+		}
+		else
+		{
+			playerNames[i] = AsciiString::TheEmptyString;
+		}
+	}
+}
+
+static Bool TruncatePlayerNames(AsciiStringVec& playerNames, UnsignedInt truncateAmount)
+{
+	while (truncateAmount > 0)
+	{
+		Bool didTruncate = false;
+		for (Int i = 0; i < playerNames.size() && truncateAmount > 0; ++i)
+		{
+			// we won't truncate any names to shorter than 2 characters
+			if (playerNames[i].getLength() > 2)
+			{
+				playerNames[i].removeLastChar();
+				truncateAmount--;
+				didTruncate = true;
+			}
+		}
+
+		if (!didTruncate)
+		{
+			// iterated through all names without finding any to truncate.
+			return false;
+		}
+	}
+
+	return true;
+}
+
+AsciiString GameInfoToAsciiString(const GameInfo *game, const AsciiStringVec& playerNames)
 {
 	if (!game)
 		return AsciiString::TheEmptyString;
@@ -925,7 +967,7 @@ AsciiString GameInfoToAsciiString( const GameInfo *game )
 			newMapName.concat(token);
 			mapName.nextToken(&token, "\\/");
 		}
-		DEBUG_LOG(("Map name is %s\n", mapName.str()));
+		DEBUG_LOG(("Map name is %s\n", newMapName.str()));
 	}
 
 	AsciiString optionsString;
@@ -943,23 +985,13 @@ AsciiString GameInfoToAsciiString( const GameInfo *game )
 		AsciiString str;
 		if (slot && slot->isHuman())
 		{
-			AsciiString tmp;  //all this data goes after name
-			tmp.format( ",%X,%d,%c%c,%d,%d,%d,%d,%d:",
-				slot->getIP(), slot->getPort(),
-				(slot->isAccepted()?'T':'F'),
-				(slot->hasMap()?'T':'F'),
+			str.format( "H%s,%X,%d,%c%c,%d,%d,%d,%d,%d:",
+				playerNames[i].str(), slot->getIP(),
+				slot->getPort(), (slot->isAccepted() ? 'T' : 'F'),
+				(slot->hasMap() ? 'T' : 'F'),
 				slot->getColor(), slot->getPlayerTemplate(),
 				slot->getStartPos(), slot->getTeamNumber(),
-				slot->getNATBehavior() );
-			//make sure name doesn't cause overflow of m_lanMaxOptionsLength
-			int lenCur = tmp.getLength() + optionsString.getLength() + 2;  //+2 for H and trailing ;
-			int lenRem = m_lanMaxOptionsLength - lenCur;  //length remaining before overflowing
-			int lenMax = lenRem / (MAX_SLOTS-i);  //share lenRem with all remaining slots
-			AsciiString name = WideCharStringToMultiByte(slot->getName().str()).c_str();
-			while( name.getLength() > lenMax )
-				name.removeLastChar();  //what a horrible way to truncate.  I hate AsciiString.
-			
-			str.format( "H%s%s", name.str(), tmp.str() );
+				slot->getNATBehavior());
 		}
 		else if (slot && slot->isAI())
 		{
@@ -991,11 +1023,39 @@ AsciiString GameInfoToAsciiString( const GameInfo *game )
 	}
 	optionsString.concat(';');
 
-	DEBUG_ASSERTCRASH(!TheLAN || (optionsString.getLength() < m_lanMaxOptionsLength),
-		("WARNING: options string is longer than expected!  Length is %d, but max is %d!\n",
-		optionsString.getLength(), m_lanMaxOptionsLength));
-	
 	return optionsString;
+}
+
+AsciiString GameInfoToAsciiString(const GameInfo* game)
+{
+	if (!game)
+	{
+		return AsciiString::TheEmptyString;
+	}
+
+	AsciiStringVec playerNames(MAX_SLOTS);
+	BuildPlayerNames(playerNames, *game);
+	AsciiString infoString = GameInfoToAsciiString(game, playerNames);
+
+	// TheSuperHackers @bugfix Safely truncate the game info string by
+	// scrapping characters off of player names if the overall length is too large.
+	if (infoString.getLength() > m_lanMaxOptionsLength)
+	{
+		const UnsignedInt truncateAmount = infoString.getLength() - m_lanMaxOptionsLength;
+		if (!TruncatePlayerNames(playerNames, truncateAmount))
+		{
+			DEBUG_LOG(("GameInfoToAsciiString - unable to truncate player names by %u characters.\n", truncateAmount));
+			return AsciiString::TheEmptyString;
+		}
+
+		infoString = GameInfoToAsciiString(game, playerNames);
+	}
+
+	DEBUG_ASSERTCRASH(!TheLAN || (infoString.getLength() < m_lanMaxOptionsLength),
+		("WARNING: options string is longer than expected!  Length is %d, but max is %d!\n",
+			infoString.getLength(), m_lanMaxOptionsLength));
+
+	return infoString;
 }
 
 static Int grabHexInt(const char *s)
