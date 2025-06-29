@@ -12,6 +12,12 @@
             "generator": "NMake Makefiles",
             "hidden": false,
             "binaryDir": "${sourceDir}/build/${presetName}",
+            "environment": {
+                "VS6_DIR": "$env{ProgramFiles(x86)}\\Microsoft Visual Studio",
+                "PATH": "$env{VS6_DIR}\\VC98\\BIN;$env{VS6_DIR}\\Common\\Tools;$env{VS6_DIR}\\Common\\Tools\\WinNT;$env{VS6_DIR}\\Common\\MSDev98\\Bin;$penv{PATH}",
+                "INCLUDE": "$env{VS6_DIR}\\VC98\\INCLUDE;$env{VS6_DIR}\\VC98\\MFC\\INCLUDE;$env{VS6_DIR}\\VC98\\ATL\\INCLUDE;$penv{INCLUDE}",
+                "LIB":  "$env{VS6_DIR}\\VC98\\LIB;$env{VS6_DIR}\\VC98\\MFC\\LIB;$penv{LIB}"
+            },
             "cacheVariables": {
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
                 "CMAKE_MSVC_RUNTIME_LIBRARY": "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL",
