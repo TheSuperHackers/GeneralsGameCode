@@ -1080,6 +1080,7 @@ target_include_directories(g_gameengine PUBLIC
 
 target_include_directories(g_gameengine PRIVATE
     Include/Precompiled
+    ${CMAKE_BINARY_DIR}/Generals/Code/Main
 )
 
 target_link_libraries(g_gameengine PRIVATE
