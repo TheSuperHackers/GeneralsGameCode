@@ -99,10 +99,18 @@ BEGIN_MESSAGE_MAP(ObjectOptions, COptionsPanel)
 	ON_BN_CLICKED(IDC_OBJECT_SEARCH_RESET_BTN, OnReset)
 	ON_BN_CLICKED(IDC_TOGGLE_PREVIEW_SOUND, OnPreviewAmbientSound)
 	ON_BN_CLICKED(IDC_TOGGLE_PREV_FEEDBACK, OnPreviewBuildZone)
+	ON_BN_CLICKED(IDC_TOGGLE_WATER_HEIGHT, OnUseWaterHeight)
 	ON_WM_SHOWWINDOW()
 	ON_WM_CLOSE()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
+
+void ObjectOptions::OnUseWaterHeight()
+{
+	CButton *pButton = (CButton*)GetDlgItem(IDC_TOGGLE_WATER_HEIGHT);
+	m_bUseWaterHeight = (pButton->GetCheck() == 1);
+	::AfxGetApp()->WriteProfileInt(OBJECT_OPTION_PANEL, "UseWaterHeight", m_bUseWaterHeight ? 1 : 0);
+}
 
 void ObjectOptions::OnPreviewBuildZone()
 {
@@ -409,6 +417,10 @@ BOOL ObjectOptions::OnInitDialog()
 	pButton->SetCheck(m_bPreviewBuildZone ? 1:0);
 	OnPreviewBuildZone();
 
+	pButton = (CButton*)GetDlgItem(IDC_TOGGLE_WATER_HEIGHT);
+	m_bUseWaterHeight=::AfxGetApp()->GetProfileInt(OBJECT_OPTION_PANEL, "UseWaterHeight", 0);
+	pButton->SetCheck(m_bUseWaterHeight ? 1:0);
+	OnUseWaterHeight();
 
 	m_staticThis = this;
 	m_updating = false;

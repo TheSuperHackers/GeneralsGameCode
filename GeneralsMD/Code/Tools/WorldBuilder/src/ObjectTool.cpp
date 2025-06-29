@@ -164,7 +164,15 @@ void ObjectTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 
 	Coord3D loc = m_downPt3d;
 	pView->snapPoint(&loc);
-	loc.z = ObjectOptions::getCurObjectHeight();
+
+	// Use ghost preview height if valid
+	WbView3d* p3View = pDoc->GetActive3DView();
+	if (p3View && p3View->getLastTrackingZIsFromHighElev()) {
+		loc.z = p3View->getLastTrackingZ();
+		DEBUG_LOG(("terrainz: %.2f\n", loc.z));
+	} else {
+		loc.z = ObjectOptions::getCurObjectHeight();  // fallback
+	}
 	Real angle = justAClick ? 0 : calcAngle(loc, cpt, pView);
 	MapObject *pNew = ObjectOptions::duplicateCurMapObjectForPlace(&loc, angle, true);
 	if (pNew) {

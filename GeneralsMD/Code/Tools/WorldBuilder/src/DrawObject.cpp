@@ -68,6 +68,8 @@
 
 const Real LINE_THICKNESS = 2.0f;
 const Real HANDLE_SIZE = (2.0f) * LINE_THICKNESS;
+const Real LINE_THICKNESS_GRID = 1.5f;
+#define ADJUST_FROM_INDEX_TO_REAL(k) ((k-pMap->getBorderSize())*MAP_XY_FACTOR)
 
 
 // Texturing, no zbuffer, disabled zbuffer write, primary gradient, alpha blending
@@ -109,6 +111,7 @@ Bool	DrawObject::m_disableFeedback = false;
 Bool	DrawObject::m_meshFeedback = false;
 Bool	DrawObject::m_rampFeedback = false;
 Bool	DrawObject::m_boundaryFeedback = false;
+Bool	DrawObject::m_rulerGridFeedback = true;
 Bool	DrawObject::m_ambientSoundFeedback = false;
 Coord3D	DrawObject::m_feedbackPoint;
 CPoint DrawObject::m_cellCenter;
@@ -578,7 +581,7 @@ void DrawObject::updateRampVB(void)
 }
 
 /** Returns the water height if the point is underwater, or -FLT_MAX if not */
-Real GetWaterHeightIfUnderwater(Real x, Real y)
+Real getWaterHeightIfUnderwater(Real x, Real y)
 {
     ICoord3D iLoc;
     iLoc.x = (floor(x + 0.5f));
@@ -665,7 +668,7 @@ void DrawObject::updateBoundaryVB(void)
 				p1.y = startPt.y + (endPt.y - startPt.y) * t1;
 				p1.z = TheTerrainRenderObject->getHeightMapHeight(p1.x, p1.y, NULL);
 				if(m_showWater) {
-					Real waterHeight1 = GetWaterHeightIfUnderwater(p1.x, p1.y);
+					Real waterHeight1 = getWaterHeightIfUnderwater(p1.x, p1.y);
 					if (waterHeight1 != -FLT_MAX) {
 						p1.z = waterHeight1 + 4.5f; // Draw slightly above water
 					}
@@ -674,7 +677,7 @@ void DrawObject::updateBoundaryVB(void)
 				p2.y = startPt.y + (endPt.y - startPt.y) * t2;
 				p2.z = TheTerrainRenderObject->getHeightMapHeight(p2.x, p2.y, NULL);
 				if(m_showWater) {
-					Real waterHeight2 = GetWaterHeightIfUnderwater(p2.x, p2.y);
+					Real waterHeight2 = getWaterHeightIfUnderwater(p2.x, p2.y);
 					if (waterHeight2 != -FLT_MAX) {
 						p2.z = waterHeight2 + 4.5f;
 					}
@@ -708,11 +711,266 @@ void DrawObject::updateBoundaryVB(void)
 				*curIb++ = m_feedbackVertexCount - 2;
 				m_feedbackIndexCount += 6;
 			}
+			
 		}
 
 		// Optional: You can still draw the handles ("little nuggets") here if needed,
 		// but now the edges follow terrain better.
 
+	}
+}
+
+void DrawObject::updateGridVB(void)
+{
+	m_feedbackVertexCount = 0;
+	m_feedbackIndexCount = 0;
+
+	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexFeedback, D3DLOCK_DISCARD);
+	UnsignedShort *ib = lockIdxBuffer.Get_Index_Array();
+	UnsignedShort *curIb = ib;
+
+	DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexFeedback, D3DLOCK_DISCARD);
+	VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1 *)lockVtxBuffer.Get_Vertex_Array();
+	VertexFormatXYZDUV1 *curVb = vb;
+
+	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
+	WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
+
+	const float stepSize = 10.0f * MAP_XY_FACTOR;
+
+	// #define ADJUST_FROM_INDEX_TO_REAL(k) ((k - pMap->getBorderSize()) * MAP_XY_FACTOR)
+	const float worldX0 = ADJUST_FROM_INDEX_TO_REAL(1);
+	const float worldY0 = ADJUST_FROM_INDEX_TO_REAL(1);
+	const float worldX1 = ADJUST_FROM_INDEX_TO_REAL(pMap->getXExtent() - 2);
+	const float worldY1 = ADJUST_FROM_INDEX_TO_REAL(pMap->getYExtent() - 2);
+
+	const int targetLines = 10;
+
+	float mapWidth  = worldX1 - worldX0;
+	float mapHeight = worldY1 - worldY0;
+
+	float spacingX = mapWidth / targetLines;
+	float spacingY = mapHeight / targetLines;
+
+	const float Z_OFFSET = 1.0f;
+	const float centerX = (worldX0 + worldX1) * 0.5f;
+	const float centerY = (worldY0 + worldY1) * 0.5f;
+	const float epsilon = 0.1f;
+
+	#define ADD_GRID_VERT(px, py, pz, clr) \
+		curVb->x = px; curVb->y = py; curVb->z = pz; \
+		curVb->u1 = 0; curVb->v1 = 0; curVb->diffuse = clr; ++curVb; ++m_feedbackVertexCount;
+
+	int i;
+
+	// Vertical lines
+	for (i = 0;; ++i) {
+		bool didDraw = false;
+		float x1 = centerX + i * spacingX;
+		float x2 = centerX - i * spacingX;
+
+		if (x1 <= worldX1 + 0.001f) {
+			DWORD color = (fabs(x1 - centerX) < epsilon) ? 0xFFFF0000 : 0xFF808080;
+			float y;
+			for (y = worldY0; y < worldY1; y += stepSize) {
+				float nextY = y + stepSize;
+				if (nextY > worldY1) nextY = worldY1;
+
+				Real z1 = TheTerrainRenderObject->getHeightMapHeight(x1, y, NULL);
+				Real waterZ1 = getWaterHeightIfUnderwater(x1, y);
+				if (waterZ1 != -FLT_MAX && waterZ1 + 4.5f > z1 + Z_OFFSET)
+					z1 = waterZ1 + 4.5f;
+				else
+					z1 += Z_OFFSET;
+
+				Real z2 = TheTerrainRenderObject->getHeightMapHeight(x1, nextY, NULL);
+				Real waterZ2 = getWaterHeightIfUnderwater(x1, nextY);
+				if (waterZ2 != -FLT_MAX && waterZ2 + 4.5f > z2 + Z_OFFSET)
+					z2 = waterZ2 + 4.5f;
+				else
+					z2 += Z_OFFSET;
+
+				Coord3D a = { x1, y, z1 };
+				Coord3D b = { x1, nextY, z2 };
+
+				Vector3 dir(LINE_THICKNESS_GRID, 0, 0); // Extrude in +X and -X
+
+				if (m_feedbackVertexCount + 4 > NUM_FEEDBACK_VERTEX || m_feedbackIndexCount + 6 > NUM_FEEDBACK_INDEX)
+					return;
+
+				ADD_GRID_VERT(a.x + dir.X, a.y + dir.Y, a.z, color);
+				ADD_GRID_VERT(a.x - dir.X, a.y - dir.Y, a.z, color);
+				ADD_GRID_VERT(b.x + dir.X, b.y + dir.Y, b.z, color);
+				ADD_GRID_VERT(b.x - dir.X, b.y - dir.Y, b.z, color);
+
+				*curIb++ = m_feedbackVertexCount - 4; // v0
+				*curIb++ = m_feedbackVertexCount - 3; // v1
+				*curIb++ = m_feedbackVertexCount - 2; // v2
+
+				*curIb++ = m_feedbackVertexCount - 2; // v2
+				*curIb++ = m_feedbackVertexCount - 3; // v1
+				*curIb++ = m_feedbackVertexCount - 1; // v3
+				m_feedbackIndexCount += 6;
+			}
+			didDraw = true;
+		}
+
+		if (i != 0 && x2 >= worldX0 - 0.001f) {
+			DWORD color = (fabs(x2 - centerX) < epsilon) ? 0xFFFF0000 : 0xFF808080;
+			float y;
+			for (y = worldY0; y < worldY1; y += stepSize) {
+				float nextY = y + stepSize;
+				if (nextY > worldY1) nextY = worldY1;
+
+				Real z1 = TheTerrainRenderObject->getHeightMapHeight(x2, y, NULL);
+				Real waterZ1 = getWaterHeightIfUnderwater(x2, y);
+				if (waterZ1 != -FLT_MAX && waterZ1 + 4.5f > z1 + Z_OFFSET)
+					z1 = waterZ1 + 4.5f;
+				else
+					z1 += Z_OFFSET;
+
+				Real z2 = TheTerrainRenderObject->getHeightMapHeight(x2, nextY, NULL);
+				Real waterZ2 = getWaterHeightIfUnderwater(x2, nextY);
+				if (waterZ2 != -FLT_MAX && waterZ2 + 4.5f > z2 + Z_OFFSET)
+					z2 = waterZ2 + 4.5f;
+				else
+					z2 += Z_OFFSET;
+
+				Coord3D a = { x2, y, z1 };
+				Coord3D b = { x2, nextY, z2 };
+
+				Vector3 dir(b.x - a.x, b.y - a.y, b.z - a.z);
+				dir.Normalize();
+				dir *= LINE_THICKNESS_GRID;
+				dir.Rotate_Z(PI / 2);
+
+				if (m_feedbackVertexCount + 4 > NUM_FEEDBACK_VERTEX || m_feedbackIndexCount + 6 > NUM_FEEDBACK_INDEX)
+					return;
+
+				ADD_GRID_VERT(a.x + dir.X, a.y + dir.Y, a.z, color);
+				ADD_GRID_VERT(a.x - dir.X, a.y - dir.Y, a.z, color);
+				ADD_GRID_VERT(b.x + dir.X, b.y + dir.Y, b.z, color);
+				ADD_GRID_VERT(b.x - dir.X, b.y - dir.Y, b.z, color);
+
+				*curIb++ = m_feedbackVertexCount - 4; // v0
+				*curIb++ = m_feedbackVertexCount - 3; // v1
+				*curIb++ = m_feedbackVertexCount - 2; // v2
+
+				*curIb++ = m_feedbackVertexCount - 2; // v2
+				*curIb++ = m_feedbackVertexCount - 3; // v1
+				*curIb++ = m_feedbackVertexCount - 1; // v3
+				m_feedbackIndexCount += 6;
+			}
+			didDraw = true;
+		}
+
+		if (!didDraw)
+			break;
+	}
+
+	// Horizontal lines
+	for (i = 0;; ++i) {
+		bool didDraw = false;
+		float y1 = centerY + i * spacingY;
+		float y2 = centerY - i * spacingY;
+
+		if (y1 <= worldY1 + 0.001f) {
+			DWORD color = (fabs(y1 - centerY) < epsilon) ? 0xFFFF0000 : 0xFF808080;
+			float x;
+			for (x = worldX0; x < worldX1; x += stepSize) {
+				float nextX = x + stepSize;
+				if (nextX > worldX1) nextX = worldX1;
+
+				Real z1 = TheTerrainRenderObject->getHeightMapHeight(x, y1, NULL);
+				Real waterZ1 = getWaterHeightIfUnderwater(x, y1);
+				if (waterZ1 != -FLT_MAX && waterZ1 + 4.5f > z1 + Z_OFFSET)
+					z1 = waterZ1 + 4.5f;
+				else
+					z1 += Z_OFFSET;
+
+				Real z2 = TheTerrainRenderObject->getHeightMapHeight(nextX, y1, NULL);
+				Real waterZ2 = getWaterHeightIfUnderwater(nextX, y1);
+				if (waterZ2 != -FLT_MAX && waterZ2 + 4.5f > z2 + Z_OFFSET)
+					z2 = waterZ2 + 4.5f;
+				else
+					z2 += Z_OFFSET;
+
+				Coord3D a = { x, y1, z1 };
+				Coord3D b = { nextX, y1, z2 };
+
+				Vector3 dir(0, LINE_THICKNESS_GRID, 0); // Extrude in +Y and -Y
+
+				if (m_feedbackVertexCount + 4 > NUM_FEEDBACK_VERTEX || m_feedbackIndexCount + 6 > NUM_FEEDBACK_INDEX)
+					return;
+
+				ADD_GRID_VERT(a.x + dir.X, a.y + dir.Y, a.z, color);
+				ADD_GRID_VERT(a.x - dir.X, a.y - dir.Y, a.z, color);
+				ADD_GRID_VERT(b.x + dir.X, b.y + dir.Y, b.z, color);
+				ADD_GRID_VERT(b.x - dir.X, b.y - dir.Y, b.z, color);
+
+				*curIb++ = m_feedbackVertexCount - 4; // v0
+				*curIb++ = m_feedbackVertexCount - 3; // v1
+				*curIb++ = m_feedbackVertexCount - 2; // v2
+
+				*curIb++ = m_feedbackVertexCount - 2; // v2
+				*curIb++ = m_feedbackVertexCount - 3; // v1
+				*curIb++ = m_feedbackVertexCount - 1; // v3
+				m_feedbackIndexCount += 6;
+			}
+			didDraw = true;
+		}
+
+		if (i != 0 && y2 >= worldY0 - 0.001f) {
+			DWORD color = (fabs(y2 - centerY) < epsilon) ? 0xFFFF0000 : 0xFF808080;
+			float x;
+			for (x = worldX0; x < worldX1; x += stepSize) {
+				float nextX = x + stepSize;
+				if (nextX > worldX1) nextX = worldX1;
+
+				Real z1 = TheTerrainRenderObject->getHeightMapHeight(x, y2, NULL);
+				Real waterZ1 = getWaterHeightIfUnderwater(x, y2);
+				if (waterZ1 != -FLT_MAX && waterZ1 + 4.5f > z1 + Z_OFFSET)
+					z1 = waterZ1 + 4.5f;
+				else
+					z1 += Z_OFFSET;
+
+				Real z2 = TheTerrainRenderObject->getHeightMapHeight(nextX, y2, NULL);
+				Real waterZ2 = getWaterHeightIfUnderwater(nextX, y2);
+				if (waterZ2 != -FLT_MAX && waterZ2 + 4.5f > z2 + Z_OFFSET)
+					z2 = waterZ2 + 4.5f;
+				else
+					z2 += Z_OFFSET;
+
+				Coord3D a = { x, y2, z1 };
+				Coord3D b = { nextX, y2, z2 };
+
+				Vector3 dir(b.x - a.x, b.y - a.y, b.z - a.z);
+				dir.Normalize();
+				dir *= LINE_THICKNESS_GRID;
+				dir.Rotate_Z(PI / 2);
+
+				if (m_feedbackVertexCount + 4 > NUM_FEEDBACK_VERTEX || m_feedbackIndexCount + 6 > NUM_FEEDBACK_INDEX)
+					return;
+
+				ADD_GRID_VERT(a.x + dir.X, a.y + dir.Y, a.z, color);
+				ADD_GRID_VERT(a.x - dir.X, a.y - dir.Y, a.z, color);
+				ADD_GRID_VERT(b.x + dir.X, b.y + dir.Y, b.z, color);
+				ADD_GRID_VERT(b.x - dir.X, b.y - dir.Y, b.z, color);
+
+				*curIb++ = m_feedbackVertexCount - 4; // v0
+				*curIb++ = m_feedbackVertexCount - 3; // v1
+				*curIb++ = m_feedbackVertexCount - 2; // v2
+
+				*curIb++ = m_feedbackVertexCount - 2; // v2
+				*curIb++ = m_feedbackVertexCount - 3; // v1
+				*curIb++ = m_feedbackVertexCount - 1; // v3
+				m_feedbackIndexCount += 6;
+			}
+			didDraw = true;
+		}
+
+		if (!didDraw)
+			break;
 	}
 }
 
@@ -1207,7 +1465,6 @@ void DrawObject::updateFeedbackVB(void)
 
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
 	WorldHeightMapEdit *pMap = pDoc->GetHeightMap();
-#define ADJUST_FROM_INDEX_TO_REAL(k) ((k-pMap->getBorderSize())*MAP_XY_FACTOR)
 
 	if (radius > MAX_RADIUS) radius = MAX_RADIUS;
 	Real offset = 0;
@@ -1864,33 +2121,47 @@ void DrawObject::updateVBWithBoundingBox(MapObject *pMapObj, CameraClass* camera
 /** Draw a "circle" into the m_lineRenderer, e.g. to visualize weapon range, sight range, sound range **/
 void DrawObject::addCircleToLineRenderer( const Coord3D & center, Real radius, Real width, unsigned long color, CameraClass* camera )
 {
-  Real angle, inc = PI/4.0f;
-  Coord3D pnt, lastPnt;
-  ICoord2D start, end;
-  Real z = center.z;
-  
-  // Draw the circle.
-  angle = 0.0f;
-  lastPnt.x = center.x + radius * (Real)cos(angle);
-  lastPnt.y = center.y + radius * (Real)sin(angle);
-  lastPnt.z = z;
-  bool shouldEnd = worldToScreen(&lastPnt, &end, camera);
-  
-  for( angle = inc; angle <= 2.0f * PI; angle += inc ) {
-    pnt.x = center.x + radius * (Real)cos(angle);
-    pnt.y = center.y + radius * (Real)sin(angle);
-    pnt.z = z;
-    
-    bool shouldStart = worldToScreen(&pnt, &start, camera);
-    if (shouldStart && shouldEnd) {
-      m_lineRenderer->Add_Line(Vector2(start.x, start.y), Vector2(end.x, end.y), width, color);
-    }
-    
-    lastPnt = pnt;
-    end = start;
-    shouldEnd = shouldStart;
-  }
+    Real angle, inc = PI / 24.0f; // smoother circle with more segments
+    Coord3D pnt, lastPnt;
+    ICoord2D screenStart, screenEnd;
 
+    // First point
+    angle = 0.0f;
+    lastPnt.x = center.x + radius * (Real)cos(angle);
+    lastPnt.y = center.y + radius * (Real)sin(angle);
+
+    // Adjust Z using terrain and optionally water height
+    lastPnt.z = TheTerrainRenderObject->getHeightMapHeight(lastPnt.x, lastPnt.y, NULL);
+    if (m_showWater) {
+        Real waterZ = getWaterHeightIfUnderwater(lastPnt.x, lastPnt.y);
+        if (waterZ != -FLT_MAX) {
+            lastPnt.z = waterZ + 4.5f;
+        }
+    }
+
+    bool shouldEnd = worldToScreen(&lastPnt, &screenEnd, camera);
+
+    for (angle = inc; angle <= 2.0f * PI + 0.001f; angle += inc) {
+        pnt.x = center.x + radius * (Real)cos(angle);
+        pnt.y = center.y + radius * (Real)sin(angle);
+
+        pnt.z = TheTerrainRenderObject->getHeightMapHeight(pnt.x, pnt.y, NULL);
+        if (m_showWater) {
+            Real waterZ = getWaterHeightIfUnderwater(pnt.x, pnt.y);
+            if (waterZ != -FLT_MAX) {
+                pnt.z = waterZ + 4.5f;
+            }
+        }
+
+        bool shouldStart = worldToScreen(&pnt, &screenStart, camera);
+        if (shouldStart && shouldEnd) {
+            m_lineRenderer->Add_Line(Vector2(screenStart.x, screenStart.y), Vector2(screenEnd.x, screenEnd.y), width, color);
+        }
+
+        lastPnt = pnt;
+        screenEnd = screenStart;
+        shouldEnd = shouldStart;
+    }
 }
 
 #define SIGHT_RANGE_LINE_WIDTH 2.0f
@@ -2585,6 +2856,23 @@ if (pMapObj->isSelected()) {
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE,D3DFILL_SOLID);	// we want a solid ramp
 			DX8Wrapper::Set_DX8_Render_State(D3DRS_LIGHTING, FALSE);				// disable lighting
 			DX8Wrapper::Draw_Triangles(	0, m_feedbackIndexCount/3, 0,	m_feedbackVertexCount);
+		}
+	}
+
+	if (m_rulerGridFeedback) {
+		updateGridVB();
+		if (m_feedbackIndexCount > 0) {
+			DX8Wrapper::Set_DX8_Render_State(D3DRS_ZENABLE, TRUE);
+			DX8Wrapper::Set_DX8_Render_State(D3DRS_ZWRITEENABLE, TRUE);
+			DX8Wrapper::Set_DX8_Render_State(D3DRS_ALPHABLENDENABLE, FALSE);
+
+			DX8Wrapper::Set_Vertex_Buffer(m_vertexFeedback);
+			DX8Wrapper::Set_Index_Buffer(m_indexFeedback, 0);
+			DX8Wrapper::Set_Shader(SC_OPAQUE_Z); // or any shader that fits
+			DX8Wrapper::Set_DX8_Render_State(D3DRS_CULLMODE, D3DCULL_NONE);
+			DX8Wrapper::Set_DX8_Render_State(D3DRS_FILLMODE, D3DFILL_SOLID); // or D3DFILL_WIREFRAME if you prefer
+			DX8Wrapper::Set_DX8_Render_State(D3DRS_LIGHTING, FALSE);
+			DX8Wrapper::Draw_Triangles(0, m_feedbackIndexCount / 3, 0, m_feedbackVertexCount);
 		}
 	}
 #endif

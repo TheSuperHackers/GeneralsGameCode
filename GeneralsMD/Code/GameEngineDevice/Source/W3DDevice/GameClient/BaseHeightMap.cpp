@@ -1283,26 +1283,63 @@ Bool BaseHeightMapRenderObjClass::isCliffCell(Real x, Real y)
  * Adriane [Deathscythe] 
  * -- Start new functions...
  */
-Bool BaseHeightMapRenderObjClass::pleaseHelpMeIamUnderTheWata(Real x, Real y)
-{
-	ICoord3D iLoc;
-	iLoc.x = (floor(x+0.5f));
-	iLoc.y = (floor(y+0.5f));
-	iLoc.z = 0;
-	// Look for water areas.
-	for (PolygonTrigger *pTrig=PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
-		if (!pTrig->isWaterArea()) {
-			continue;
-		}
-		// See if point is in a water area
-		if (pTrig->pointInTrigger(iLoc)) {
-			Real wZ = pTrig->getPoint(0)->z;
-			// See if the ground height is less than the water level.
-			Real curHeight = TheTerrainRenderObject->getHeightMapHeight(x, y, NULL);
-			return (curHeight<wZ);
-		}
+
+ 
+//=============================================================================
+// BaseHeightMapRenderObjClass::loadRoadsOnly
+//=============================================================================
+/** Loads the roads from the map objects. */
+//=============================================================================
+void BaseHeightMapRenderObjClass::loadRoadsOnly()
+{	
+	if (DX8Wrapper::_Get_D3D_Device8() && (DX8Wrapper::_Get_D3D_Device8()->TestCooperativeLevel()) != D3D_OK)
+		return;	//device not ready to render anything
+
+#ifdef DO_ROADS
+	if (m_roadBuffer) {
+		m_roadBuffer->loadRoads();
 	}
-	return false;
+#endif
+}
+
+
+//=============================================================================
+// BaseHeightMapRenderObjClass::removeAllRoads
+//=============================================================================
+void BaseHeightMapRenderObjClass::removeAllRoads()
+{
+	if (m_roadBuffer) {
+		m_roadBuffer->clearAllRoads(); 
+	}
+};
+
+
+Bool BaseHeightMapRenderObjClass::pleaseHelpMeIamUnderTheWata(Real x, Real y) {
+    return getWaterHeightIfUnderwater(x, y) != -FLT_MAX;
+}
+
+Real BaseHeightMapRenderObjClass::getWaterHeightIfUnderwater(Real x, Real y)
+{
+    ICoord3D iLoc;
+    iLoc.x = (floor(x + 0.5f));
+    iLoc.y = (floor(y + 0.5f));
+    iLoc.z = 0;
+
+    for (PolygonTrigger *pTrig = PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
+        if (!pTrig->isWaterArea()) {
+            continue;
+        }
+
+        if (pTrig->pointInTrigger(iLoc)) {
+            Real waterZ = pTrig->getPoint(0)->z;
+            Real terrainZ = TheTerrainRenderObject->getHeightMapHeight(x, y, NULL);
+            if (terrainZ < waterZ) {
+                return waterZ;
+            }
+        }
+    }
+
+    return -FLT_MAX; // Not underwater
 }
 
 Bool BaseHeightMapRenderObjClass::isBadBuildLocation(Real x, Real y, Real angle, Real halfSizeX, Real halfSizeY)

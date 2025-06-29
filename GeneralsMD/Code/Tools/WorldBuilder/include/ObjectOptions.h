@@ -72,6 +72,7 @@ protected:
 	afx_msg void OnReset();
 	afx_msg void OnPreviewAmbientSound();
 	afx_msg void OnPreviewBuildZone();
+	afx_msg void OnUseWaterHeight();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -83,9 +84,10 @@ protected:
 	static char				m_currentObjectName[NAME_MAX_LEN];
 	static AsciiString	m_curOwnerName;
 
-	Bool m_isObjectOptsWindowOpen ;
+	Bool m_isObjectOptsWindowOpen;
 	Bool m_bPreviewAmbient;
 	Bool m_bPreviewBuildZone;
+	Bool m_bUseWaterHeight;
 
 	CTreeCtrl					m_objectTreeView;
 	MapObject					*m_objectsList;

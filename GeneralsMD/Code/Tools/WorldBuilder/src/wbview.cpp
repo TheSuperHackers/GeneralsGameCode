@@ -59,6 +59,8 @@ WbView::WbView() :
 {
 	Int showWater = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowWater", 1);
 	m_showWater = (showWater!=0);
+	Int showRoads = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowRoads", 1);
+	m_showRoads = (showRoads!=0);
 	Int showWay = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowWaypoints", 1);
 	m_showWaypoints = (showWay!=0);
 	Int showPoly = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowPolygonTriggers", 1);
@@ -113,6 +115,8 @@ BEGIN_MESSAGE_MAP(WbView, CView)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWWAYPOINTS, OnUpdateViewShowwaypoints)
 	ON_COMMAND(ID_VIEW_SHOWWATER, OnViewShowWater)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWWATER, OnUpdateViewShowWater)
+	ON_COMMAND(ID_VIEW_SHOWROADS, OnViewShowRoads)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWROADS, OnUpdateViewShowRoads)
 	ON_COMMAND(ID_VIEW_SHOWPOLYGONTRIGGERS, OnViewShowpolygontriggers)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWPOLYGONTRIGGERS, OnUpdateViewShowpolygontriggers)
 	ON_COMMAND(ID_EDIT_PLAYERLIST, OnEditPlayerlist)
@@ -807,6 +811,24 @@ void WbView::OnViewShowWater()
 void WbView::OnUpdateViewShowWater(CCmdUI* pCmdUI) 
 {
 	pCmdUI->SetCheck(m_showWater?1:0);
+}
+
+void WbView::OnViewShowRoads() 
+{
+	m_showRoads = !m_showRoads;
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowRoads", m_showRoads?1:0);
+	if(TheTerrainRenderObject){
+		if(!m_showRoads){
+			TheTerrainRenderObject->removeAllRoads();
+		} else {
+			TheTerrainRenderObject->loadRoadsOnly();
+		}
+	}
+}
+
+void WbView::OnUpdateViewShowRoads(CCmdUI* pCmdUI) 
+{
+	pCmdUI->SetCheck(m_showRoads?1:0);
 }
 
 

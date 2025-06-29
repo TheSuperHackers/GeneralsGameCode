@@ -969,6 +969,35 @@ static void updateTowerPos( RenderObjClass* tower,
 
 }
 
+// Adriane [Deathscythe] Used for getting the width of the bridge
+BridgeInfo W3DBridgeBuffer::getBridgeInfoFromMapObject(MapObject *bridgePoint1, MapObject *bridgePoint2)
+{
+	BridgeInfo emptyInfo; // default return if not found
+
+	if (!bridgePoint1 || !bridgePoint1->getFlag(FLAG_BRIDGE_POINT1))
+		return emptyInfo;
+
+	if (!bridgePoint2 || !bridgePoint2->getFlag(FLAG_BRIDGE_POINT2))
+		return emptyInfo;
+
+	for (Int i = 0; i < m_numBridges; ++i)
+	{
+
+			if( m_bridges[ i ].getTemplateName() == bridgePoint1->getName() &&
+					m_bridges[ i ].getStart()->X == bridgePoint1->getLocation()->x &&
+					m_bridges[ i ].getStart()->Y == bridgePoint1->getLocation()->y &&
+					m_bridges[ i ].getEnd()->X == bridgePoint2->getLocation()->x &&
+					m_bridges[ i ].getEnd()->Y == bridgePoint2->getLocation()->y )
+			{
+			BridgeInfo result;
+			m_bridges[ i ].getBridgeInfo( &result );
+			return result;
+		}
+	}
+
+	return emptyInfo;
+}
+
 //=============================================================================
 // W3DBridgeBuffer::worldBuilderUpdateBridgeTowers
 //=============================================================================

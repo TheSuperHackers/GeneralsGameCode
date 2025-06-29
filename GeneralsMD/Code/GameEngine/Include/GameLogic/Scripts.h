@@ -644,6 +644,11 @@ protected:	// Note - If you add any member vars, you must take them into account
 	Real				m_conditionTime;		///< Amount of time (cum) to evaluate conditions.
 	Real				m_curTime;		///< Amount of time (cum) to evaluate conditions.
 	Int					m_conditionExecutedCount; ///< Number of times conditions evaluated.
+	
+	// Adriane [Deathscythe] Required for faster script validation
+	Bool m_dirty;
+	Bool m_warningUpdateToDate;
+
 
 public:
 	Script();
@@ -653,6 +658,11 @@ public:
 			const AsciiString& playerTemplateName, const AsciiString& newPlayerName) const;		
 
 public:
+	void setDirty(Bool value) { m_dirty = value; }
+	Bool isDirty() const { return m_dirty; }
+	void setWarningsUpToDate(Bool value) { m_warningUpdateToDate = value; }
+	Bool areWarningsUpToDate() const { return m_warningUpdateToDate; }
+
 	void setName(AsciiString name) { m_scriptName = name;}
 	void setWarnings(Bool warnings) { m_hasWarnings = warnings;}
 	void setComment(AsciiString comment) { m_comment = comment;}

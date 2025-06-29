@@ -344,6 +344,7 @@
 #define IDC_PLAYERNAME                  1151
 #define IDC_MOVEDOWNTEAM                1151
 #define IDC_PLAYERFACTION               1152
+#define IDC_EXPAND_SHRINK_TEAM          1152
 #define IDC_GROUP_NAME                  1153
 #define IDC_ANGLE_POPUP                 1154
 #define IDC_RAISE                       1155
@@ -750,6 +751,7 @@
 #define ID_VIEW_GARRISONED              33326
 #define ID_EDIT_PICKROADS               33327
 #define ID_SCRIPTACTIVATE               33328
+#define ID_VIEW_RULERGRID               33329
 #define ID_BORDERTOOL                   33330
 #define ID_VIEW_SHOWMAPBOUNDARIES       33331
 #define ID_TOGGLE_PITCH_AND_ROTATE      33332
@@ -826,12 +828,15 @@
 #define IDC_DECREASE                    61496
 #define IDC_SHRINK                      61496
 #define IDC_TOGGLE_PREV_FEEDBACK        61497
+#define IDC_OPEN_LINK_DISCORD           61497
 #define IDC_TERRAIN_COPY_SELECT         61498
+#define IDC_TOGGLE_WATER_HEIGHT         61498
 #define IDC_TERRAIN_COPY_APPLY          61499
 #define IDC_TERRAIN_ROTATE1             61500
 #define IDC_TERRAIN_ROTATE2             61501
 #define IDC_TERRAIN_ROTATE3             61502
 #define IDC_TERRAIN_ROTATE4             61503
+#define ID_VIEW_SHOWROADS               61504
 
 // Next default values for new objects
 // 

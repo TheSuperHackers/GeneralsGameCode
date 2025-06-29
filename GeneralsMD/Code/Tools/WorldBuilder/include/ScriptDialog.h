@@ -138,6 +138,7 @@ protected:
 	void setIconGroup(HTREEITEM item);
 	Bool updateIcons(HTREEITEM hItem);
 	void markWaypoint(MapObject *pObj);
+	void SetItemIconIfDifferent(CTreeCtrl* pTree, HTREEITEM hItem, int desiredIndex);
 
 	static Bool ParseObjectsDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);
 	static Bool ParseObjectDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData);

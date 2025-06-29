@@ -28,6 +28,7 @@
 #include "WorldBuilderView.h"
 #include "wbview3d.h"
 #include "ObjectTool.h"
+#include "DrawObject.h"
 
 
 // Saved off so that static functions can access its members.
@@ -53,6 +54,8 @@ void RulerTool::activate()
 {
 	Tool::activate();
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_RULER_OPTIONS);
+	DrawObject::setDoGridFeedback(TRUE);
+
 	if (m_View != NULL) {
 		// Is it dangerous to assume that the pointer is still good?
 		m_View->doRulerFeedback(m_rulerType);
@@ -68,6 +71,8 @@ void RulerTool::deactivate()
 		m_View->doRulerFeedback(RULER_NONE);
 	}
 
+	WbView3d *p3View = CWorldBuilderDoc::GetActive3DView();
+	DrawObject::setDoGridFeedback(p3View->getShowGridFeedback());
 }
 
 /** Set the cursor. */
@@ -106,6 +111,9 @@ void RulerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 
 	Coord3D cpt;
 	pView->viewToDocCoords(viewPt, &cpt, false);
+
+	// Snap point to world geometry
+	pView->snapPoint(&cpt);
 
 	if (m_rulerType == RULER_CIRCLE) {
 		Coord3D pt;

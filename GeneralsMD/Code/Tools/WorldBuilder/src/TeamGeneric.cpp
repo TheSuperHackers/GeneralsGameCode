@@ -72,12 +72,19 @@ void TeamGeneric::_fillComboBoxesWithScripts()
 	while (s_allControls[i][1]) {
 		CComboBox *pCombo = (CComboBox*) GetDlgItem(s_allControls[i][1]);
 		if (!pCombo) {
+			++i;
 			continue;
 		}
+
+		pCombo->SetRedraw(FALSE);
 
 		// Load all the scripts, then add the NONE string.
 		EditParameter::loadScripts(pCombo, true);
 		pCombo->InsertString(0, NONE_STRING);
+
+		pCombo->SetRedraw(TRUE);  
+		pCombo->Invalidate();    
+
 		++i;
 	}
 }

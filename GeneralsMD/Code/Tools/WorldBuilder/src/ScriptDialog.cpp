@@ -520,13 +520,19 @@ void ScriptDialog::updateWarnings(Bool forceUpdate)
 		ScriptList *pSL = sidesListP->getSideInfo(i)->getScriptList();
 		Script *pScr;
 		for (pScr = pSL->getScript(); pScr; pScr=pScr->getNext()) {
-			updateScriptWarning(pScr);
+			if (pScr->isDirty()) {
+				updateScriptWarning(pScr);
+				pScr->setDirty(false);
+			}
 		}
 		ScriptGroup *pGroup;
 		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup=pGroup->getNext()) {
 			pGroup->setWarnings(false);
 			for (pScr = pGroup->getScript(); pScr; pScr=pScr->getNext()) {
-				updateScriptWarning(pScr);
+				if (pScr->isDirty()) {
+					updateScriptWarning(pScr);
+					pScr->setDirty(false);
+				}
 				if (pScr->hasWarnings()) {
 					pGroup->setWarnings(true);
 				}
@@ -777,6 +783,14 @@ void ScriptDialog::setIconScript(HTREEITEM item)
 	return;
 }
 
+void ScriptDialog::SetItemIconIfDifferent(CTreeCtrl* pTree, HTREEITEM hItem, int desiredIndex)
+{
+	int currentState = (pTree->GetItemState(hItem, TVIS_STATEIMAGEMASK) & TVIS_STATEIMAGEMASK) >> 12;
+	if (currentState != desiredIndex) {
+		pTree->SetItemState(hItem, INDEXTOSTATEIMAGEMASK(desiredIndex), TVIS_STATEIMAGEMASK);
+	}
+}
+
 Bool ScriptDialog::updateIcons(HTREEITEM hItem)
 {
 	const ListType saveList = m_curSelection;
@@ -792,9 +806,11 @@ Bool ScriptDialog::updateIcons(HTREEITEM hItem)
 		if (lt.m_objType == ListType::PLAYER_TYPE)
 		{
 			if (updateIcons(child)) {
-				pTree->SetItemState(child, INDEXTOSTATEIMAGEMASK(3), TVIS_STATEIMAGEMASK);
+				// pTree->SetItemState(child, INDEXTOSTATEIMAGEMASK(3), TVIS_STATEIMAGEMASK);
+				SetItemIconIfDifferent(pTree, child, 3);
 			} else {
-					pTree->SetItemState(child, INDEXTOSTATEIMAGEMASK(1), TVIS_STATEIMAGEMASK);
+				// pTree->SetItemState(child, INDEXTOSTATEIMAGEMASK(1), TVIS_STATEIMAGEMASK);
+				SetItemIconIfDifferent(pTree, child, 1);
 			}
 		}
 
@@ -803,7 +819,8 @@ Bool ScriptDialog::updateIcons(HTREEITEM hItem)
 		{
 			m_curSelection = lt;
 			if (updateIcons(child)) {
-				pTree->SetItemState(child, INDEXTOSTATEIMAGEMASK(3), TVIS_STATEIMAGEMASK);
+				// pTree->SetItemState(child, INDEXTOSTATEIMAGEMASK(3), TVIS_STATEIMAGEMASK);
+				SetItemIconIfDifferent(pTree, child, 3);
 				warnings = true;
 			} else {
 					setIconGroup(child);
@@ -818,7 +835,8 @@ Bool ScriptDialog::updateIcons(HTREEITEM hItem)
 			DEBUG_ASSERTCRASH(pScr, ("Unexpected."));
 			if (pScr) {
 				if (pScr->hasWarnings()) {
-					pTree->SetItemState(child, INDEXTOSTATEIMAGEMASK(4), TVIS_STATEIMAGEMASK);
+					// pTree->SetItemState(child, INDEXTOSTATEIMAGEMASK(4), TVIS_STATEIMAGEMASK);
+					SetItemIconIfDifferent(pTree, child, 4);
 					warnings = true;
 				} else {
 						setIconScript(child);
@@ -931,10 +949,13 @@ void ScriptDialog::addScriptList(HTREEITEM hPlayer, Int playerIndex, ScriptList 
 
 void ScriptDialog::reloadPlayer(Int playerIndex, ScriptList *pSL)
 {
-//	Dict *d = m_sides.getSideInfo(playerIndex)->getDict();
 	updateWarnings();
 	
 	CTreeCtrl *pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
+
+	// Disable redraw to prevent flickering
+	pTree->SetRedraw(FALSE);
+
 	HTREEITEM player = pTree->GetChildItem(TVI_ROOT);
 	while (player != NULL) {
 		TVITEM item;
@@ -950,22 +971,31 @@ void ScriptDialog::reloadPlayer(Int playerIndex, ScriptList *pSL)
 		player = pTree->GetNextSiblingItem(player);
 	}
 	DEBUG_ASSERTCRASH(player, ("Couldn't find player."));
-	if (!player) return;
-	HTREEITEM child;
-	ListType currentSel = m_curSelection;
-	
-	if (currentSel.m_objType == ListType::SCRIPT_IN_GROUP_TYPE) {
-		if (currentSel.m_scriptIndex > 0) {
-			--currentSel.m_scriptIndex;
-		}
+	if (!player) {
+		pTree->SetRedraw(TRUE);
+		return;
 	}
 
+	ListType currentSel = m_curSelection;
+	if (currentSel.m_objType == ListType::SCRIPT_IN_GROUP_TYPE && currentSel.m_scriptIndex > 0) {
+		--currentSel.m_scriptIndex;
+	}
+
+	// Delete all children under the player item
+	HTREEITEM child;
 	do {
 		child = pTree->GetChildItem(player);
 		if (child) pTree->DeleteItem(child);
 	} while (child);
+
+	// Restore selection and add scripts
 	m_curSelection = currentSel;
 	addScriptList(player, playerIndex, pSL);
+
+	// Re-enable redraw
+	pTree->SetRedraw(TRUE);
+	pTree->Invalidate();
+	pTree->UpdateWindow();
 }
 
 void ScriptDialog::updateSelection(ListType sel)
@@ -1206,6 +1236,7 @@ void ScriptDialog::OnEditScript()
 		if (item) {
 			pTree->SetItemText(item, formatScriptLabel(pScript).str());
 			pTree->SelectItem(NULL);
+			pScript->setDirty(true);
 			updateWarnings();
 			pTree->SelectItem(item); // Updates the comment field & text field.
 		}

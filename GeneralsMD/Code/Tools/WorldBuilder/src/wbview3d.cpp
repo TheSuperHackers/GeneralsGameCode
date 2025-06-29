@@ -30,6 +30,7 @@
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 #include "W3DDevice/GameClient/Module/W3DTreeDraw.h"
+#include "W3DDevice/GameClient/W3DBridgeBuffer.h"
 #include "agg_def.h"
 #include "part_ldr.h"
 #include "rendobj.h"
@@ -118,6 +119,7 @@ class SkeletonSceneClass;
 #define MOUSE_WHEEL_FACTOR	32
 
 #define ICON_COLOR_SECTION "EntityIconColor"
+#define BRIDGE_FLOAT_AMT (0.25f)
 
 #define SAMPLE_DYNAMIC_LIGHT	1
 #ifdef SAMPLE_DYNAMIC_LIGHT
@@ -422,7 +424,6 @@ void WbView3d::setObjTracking(MapObject *pMapObj,  Coord3D pos, Real angle, Bool
 		return;
 	}
 	
-	// DEBUG_LOG(("getShowBuildZoneFeedBack", getShowBuildZoneFeedBack()));
 
 	m_validTerrain = true; // always true
 	if(getShowBuildZoneFeedBack()){
@@ -491,7 +492,71 @@ void WbView3d::setObjTracking(MapObject *pMapObj,  Coord3D pos, Real angle, Bool
 		m_validTerrain = !anyCliff && !anyBadBuild;
 	}
 
-	pos.z += m_heightMapRenderObj->getHeightMapHeight(pos.x, pos.y, NULL);
+	bool usedBridgeHeight = false;
+	MapObject *prevBridge = NULL;
+	if(getUseWaterHeight()){
+		for (MapObject *cur = MapObject::getFirstMapObject(); cur; cur = cur->getNext()) {
+			if (cur->getFlag(FLAG_BRIDGE_POINT1)) {
+				prevBridge = cur;
+				continue;
+			}
+			if (cur->getFlag(FLAG_BRIDGE_POINT2) && prevBridge) {
+				Vector3 pt1, pt2;
+
+				pt1.Set(prevBridge->getLocation()->x, prevBridge->getLocation()->y, 0);
+				pt2.Set(cur->getLocation()->x, cur->getLocation()->y, 0);
+
+				pt1.Z = TheTerrainRenderObject->getHeightMapHeight(pt1.X, pt1.Y, NULL) + BRIDGE_FLOAT_AMT;
+				pt2.Z = TheTerrainRenderObject->getHeightMapHeight(pt2.X, pt2.Y, NULL) + BRIDGE_FLOAT_AMT;
+
+				Vector3 bridgeVec = pt2 - pt1;
+				Vector3 toObj = Vector3(pos.x, pos.y, 0) - pt1;
+
+				float bridgeLenSq = bridgeVec.X * bridgeVec.X + bridgeVec.Y * bridgeVec.Y;
+				float t = (bridgeLenSq > 0.0001f) ? ((toObj.X * bridgeVec.X + toObj.Y * bridgeVec.Y) / bridgeLenSq) : 0.0f;
+				t = clamp(t, 0.0f, 1.0f);
+
+				Vector3 closestPt = pt1 + bridgeVec * t;
+				Vector3 delta = Vector3(pos.x, pos.y, 0) - closestPt;
+				float distSq = delta.X * delta.X + delta.Y * delta.Y;
+
+				W3DBridgeBuffer* bridgeBuffer = m_heightMapRenderObj->getBridgeBuffer();
+				BridgeInfo info;  // Declare here
+
+				if (bridgeBuffer) {
+					info = bridgeBuffer->getBridgeInfoFromMapObject(prevBridge, cur);
+					DEBUG_LOG(("Bridge Width: %.0f", info.bridgeWidth));
+				}
+
+				const float maxBridgeHalfWidth = info.bridgeWidth * 0.5f;
+				if (distSq <= maxBridgeHalfWidth * maxBridgeHalfWidth) {
+					float bridgeZ = pt1.Z + t * (pt2.Z - pt1.Z);
+					pos.z = bridgeZ;
+					m_lastTrackingZ = pos.z - TheTerrainRenderObject->getHeightMapHeight(pos.x, pos.y, NULL);
+					m_lastTrackingZIsFromHighElev = true;
+					usedBridgeHeight = true;
+					break;  // Stop after first valid match
+				}
+
+				prevBridge = NULL; // Only pair once
+			} else {
+				prevBridge = NULL;
+			}
+		}
+	}
+	if (!usedBridgeHeight) {
+		Real terrainZ = m_heightMapRenderObj->getHeightMapHeight(pos.x, pos.y, NULL);
+		Real waterZ = m_heightMapRenderObj->getWaterHeightIfUnderwater(pos.x, pos.y);
+
+		if (waterZ != -FLT_MAX && getUseWaterHeight()) {
+			pos.z = waterZ;
+			m_lastTrackingZ = pos.z - terrainZ;
+			m_lastTrackingZIsFromHighElev = true;
+		} else {
+			pos.z = terrainZ;
+			m_lastTrackingZIsFromHighElev = false;
+		}
+	}
 	Matrix3D renderObjPos(true);	// init to identity
 	renderObjPos.Translate(pos.x, pos.y, pos.z);
 	renderObjPos.Rotate_Z(angle);
@@ -513,6 +578,8 @@ WbView3d::WbView3d() :
 	m_transparentObjectsScene(NULL),
 	m_baseBuildScene(NULL),	 
 	m_objectToolTrackingObj(NULL),
+	m_lastTrackingZIsFromHighElev(false),
+	m_lastTrackingZ(0.0),
 	m_showObjToolTrackingObj(false),
 	m_camera(NULL),
 	m_heightMapRenderObj(NULL),
@@ -1823,7 +1890,11 @@ void WbView3d::invalObjectInView(MapObject *pMapObjIn)
 	}
 
 	if (isRoad) {
-		m_needToLoadRoads = true; // load roads next time we redraw.
+		if(!m_showRoads){
+			TheTerrainRenderObject->removeAllRoads();
+		} else {
+			m_needToLoadRoads = true; // load roads next time we redraw.
+		}
 	}
 	if (updateAllTrees) {
 		updateTrees();	
@@ -2397,9 +2468,9 @@ void WbView3d::redraw(void)
 
 	DEBUG_ASSERTCRASH((m_heightMapRenderObj),("oops"));
 	if (m_heightMapRenderObj) {
-		if (m_needToLoadRoads) {
+		if (m_needToLoadRoads && m_showRoads) {
 			m_heightMapRenderObj->loadRoadsAndBridges(NULL,FALSE);
-			m_heightMapRenderObj->worldBuilderUpdateBridgeTowers( m_assetManager, m_scene );
+			// m_heightMapRenderObj->worldBuilderUpdateBridgeTowers( m_assetManager, m_scene );
 			m_needToLoadRoads = false;
 		}
 		++m_updateCount;
@@ -2587,6 +2658,8 @@ BEGIN_MESSAGE_MAP(WbView3d, WbView)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_LAYERS_LIST, OnUpdateViewLayersList)
 	ON_COMMAND(ID_VIEW_SHOWMAPBOUNDARIES, OnViewShowMapBoundaries)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWMAPBOUNDARIES, OnUpdateViewShowMapBoundaries)
+	ON_COMMAND(ID_VIEW_RULERGRID, OnViewShowRulerGrid)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_RULERGRID, OnUpdateViewShowRulerGrid)
 	ON_COMMAND(ID_VIEW_SHOWAMBIENTSOUNDS, OnViewShowAmbientSounds)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOWAMBIENTSOUNDS, OnUpdateViewShowAmbientSounds)
   ON_COMMAND(ID_VIEW_SHOW_SOUND_CIRCLES, OnViewShowSoundCircles)
@@ -2734,9 +2807,11 @@ int WbView3d::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_showLayersList = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowLayersList", 0);
 	m_showMapBoundaries = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowMapBoundaries", 0);
 	m_showAmbientSounds = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowAmbientSounds", 0);
-  m_showSoundCircles = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowSoundCircles", 0);
+	m_showSoundCircles = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowSoundCircles", 0);
+	m_showRulerGrid = AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowRulerGrid", 1);
 
 	DrawObject::setDoBoundaryFeedback(m_showMapBoundaries);
+	DrawObject::setDoGridFeedback(m_showRulerGrid);
 	DrawObject::setDoAmbientSoundFeedback(m_showAmbientSounds);
 	return 0;
 }
@@ -2760,46 +2835,85 @@ void WbView3d::OnPaint()
 	
 }
 
-//////////////////////////////////////////////////////////////////////////
-/// Draw a (not very good) circle into the hdc
-void WbView3d::drawCircle( HDC hdc, const Coord3D & centerPoint, Real radius, COLORREF color )
+Real getWaterHeightIfUnderwaterx(Real x, Real y)
 {
-  CPoint rulerPoints[2];
-  Coord3D pnt;
-  Real angle = 0.0f;
-  Real inc = PI/4.0f;
+    ICoord3D iLoc;
+    iLoc.x = (floor(x + 0.5f));
+    iLoc.y = (floor(y + 0.5f));
+    iLoc.z = 0;
 
-  // Create and select a correctly colored pen. Remember the old one so that it can be restored.
-  HPEN pen = CreatePen(PS_SOLID, 2, color);
-  HPEN penOld = (HPEN)SelectObject(hdc, pen); 
-  
-  
-  // Get the starting point on the circumference of the circle.
-  pnt.x = centerPoint.x + radius * (Real)cosf(angle);
-  pnt.y = centerPoint.y + radius * (Real)sinf(angle);
-  pnt.z = centerPoint.z;
-  docToViewCoords(pnt, &rulerPoints[0]);
-  
-  angle += inc;
-  for(; angle <= 2.0f * PI; angle += inc) {
-		// Get a new point on the circumference of the circle.
-		pnt.x = centerPoint.x + radius * (Real)cosf(angle);
-    pnt.y = centerPoint.y + radius * (Real)sinf(angle);
-    pnt.z = centerPoint.z;
-    
-    docToViewCoords(pnt, &rulerPoints[1]);
-    
-    ::Polyline(hdc, rulerPoints, 2);
-    
-    // Remember the last point to use as the starting point for the next line.
-    rulerPoints[0].x = rulerPoints[1].x; 
-    rulerPoints[0].y = rulerPoints[1].y;
-  }
+    for (PolygonTrigger *pTrig = PolygonTrigger::getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
+        if (!pTrig->isWaterArea()) {
+            continue;
+        }
 
-  // Restore previous pen.
-  SelectObject(hdc, penOld);	
-  // Delete new pen.
-  DeleteObject(pen);	
+        if (pTrig->pointInTrigger(iLoc)) {
+            Real waterZ = pTrig->getPoint(0)->z;
+            Real terrainZ = TheTerrainRenderObject->getHeightMapHeight(x, y, NULL);
+            if (terrainZ < waterZ) {
+                return waterZ;
+            }
+        }
+    }
+
+    return -FLT_MAX; // Not underwater
+}
+
+void WbView3d::drawCircle(HDC hdc, const Coord3D& centerPoint, Real radius, COLORREF color)
+{
+    CPoint rulerPoints[2];
+    Coord3D pnt;
+    Real angle = 0.0f;
+    Real inc = PI / 24.0f; // smoother circle
+
+    // Create and select a correctly colored pen. Remember the old one so that it can be restored.
+    HPEN pen = CreatePen(PS_SOLID, 2, color);
+    HPEN penOld = (HPEN)SelectObject(hdc, pen);
+
+    // Get the starting point on the circumference of the circle.
+    pnt.x = centerPoint.x + radius * cosf(angle);
+    pnt.y = centerPoint.y + radius * sinf(angle);
+
+    // Sample terrain height
+    pnt.z = TheTerrainRenderObject->getHeightMapHeight(pnt.x, pnt.y, NULL);
+
+    // Optional: Adjust for water if enabled
+    if (m_showWater) {
+        Real waterHeight = getWaterHeightIfUnderwaterx(pnt.x, pnt.y);
+        if (waterHeight != -FLT_MAX) {
+            pnt.z = waterHeight + 4.5f;
+        }
+    }
+
+    docToViewCoords(pnt, &rulerPoints[0]);
+
+    angle += inc;
+    for (; angle <= 2.0f * PI + 0.001f; angle += inc) {
+        // Calculate next point on circle
+        pnt.x = centerPoint.x + radius * cosf(angle);
+        pnt.y = centerPoint.y + radius * sinf(angle);
+
+        // Sample terrain height
+        pnt.z = TheTerrainRenderObject->getHeightMapHeight(pnt.x, pnt.y, NULL);
+
+        // Optional: Adjust for water if needed
+        if (m_showWater) {
+            Real waterHeight = getWaterHeightIfUnderwaterx(pnt.x, pnt.y) - 30.0f;
+            if (waterHeight != -FLT_MAX) {
+                pnt.z = waterHeight + 4.5f;
+            }
+        }
+
+        docToViewCoords(pnt, &rulerPoints[1]);
+
+        ::Polyline(hdc, rulerPoints, 2); // draw the segment
+
+        // Prepare next segment
+        rulerPoints[0] = rulerPoints[1];
+    }
+
+    SelectObject(hdc, penOld);
+    DeleteObject(pen);
 }
 
 
@@ -2997,23 +3111,55 @@ void WbView3d::drawLabels(HDC hdc)
 
 	if (hdc && m_doRulerFeedback) {
 		if (m_doRulerFeedback == RULER_LINE) {
-      // Change world coords to screen viewport coords.
-      CPoint rulerPoints[2];
-      docToViewCoords(m_rulerPoints[0], &rulerPoints[0]);
-      docToViewCoords(m_rulerPoints[1], &rulerPoints[1]);
-      
-      // Create and select a green pen. Remember the old one so that it can be restored.
-      HPEN pen = CreatePen(PS_SOLID, 2, RGB(0,255,0));
-      HPEN penOld = (HPEN)SelectObject(hdc, pen); 
-      // Draw the line ruler.
-			::Polyline(hdc, rulerPoints, 2);
+			// Create and select a green pen. Remember the old one so that it can be restored.
+			HPEN pen = CreatePen(PS_SOLID, 2, RGB(0,255,0));
+			HPEN penOld = (HPEN)SelectObject(hdc, pen); 
 
-      // Restore previous pen.
-      SelectObject(hdc, penOld);	
-      // Delete new pen.
-      DeleteObject(pen);	
+			const Coord3D& p0 = m_rulerPoints[0];
+			const Coord3D& p1 = m_rulerPoints[1];
+
+			const int numSteps = 64; // Controls resolution of the curve
+			CPoint lastPt;
+			bool hasLast = false;
+
+			for (int i = 0; i <= numSteps; ++i) {
+				float t = (float)i / numSteps;
+
+				Coord3D wp;
+				wp.x = p0.x + t * (p1.x - p0.x);
+				wp.y = p0.y + t * (p1.y - p0.y);
+
+				// Get terrain height at this position
+				wp.z = TheTerrainRenderObject->getHeightMapHeight(wp.x, wp.y, NULL);
+				wp.z -= 30.0f;  // tune this value
+
+				// Optional: lift above water if needed
+				if (m_showWater) {
+					Real waterHeight = getWaterHeightIfUnderwaterx(wp.x, wp.y);
+					waterHeight -= 30.0f;  // tune this value
+					if (waterHeight != -FLT_MAX) {
+						wp.z = waterHeight;
+					}
+				}
+
+				CPoint screenPt;
+				docToViewCoords(wp, &screenPt);
+
+				if (hasLast) {
+				// Draw line segment manually
+				::MoveToEx(hdc, lastPt.x, lastPt.y, NULL);
+				::LineTo(hdc, screenPt.x, screenPt.y);
+				}
+
+				lastPt = screenPt;
+				hasLast = true;
+			}
+
+			// Restore previous pen.
+			SelectObject(hdc, penOld);
+			DeleteObject(pen);
 		} else if (m_doRulerFeedback == RULER_CIRCLE) {
-      drawCircle( hdc, m_rulerPoints[0], m_rulerLength, RGB( 0, 255, 0 ) );
+      		drawCircle( hdc, m_rulerPoints[0], m_rulerLength, RGB( 0, 255, 0 ) );
 		}  
 	}
 
@@ -3699,6 +3845,18 @@ void WbView3d::OnViewShowMapBoundaries()
 void WbView3d::OnUpdateViewShowMapBoundaries(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetCheck(m_showMapBoundaries ? 1 : 0);
+}
+
+void WbView3d::OnViewShowRulerGrid()
+{
+	m_showRulerGrid = !m_showRulerGrid;
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowRulerGrid", m_showRulerGrid ? 1 : 0);
+	DrawObject::setDoGridFeedback(m_showRulerGrid);
+}
+
+void WbView3d::OnUpdateViewShowRulerGrid(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(m_showRulerGrid ? 1 : 0);
 }
 
 

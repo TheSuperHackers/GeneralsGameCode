@@ -168,6 +168,8 @@ public:
 	void removeTree(DrawableID id);
 	Bool updateTreePosition(DrawableID id, Coord3D location, Real angle);
 	void renderTrees(CameraClass * camera); ///< renders the tree buffer.
+	
+	void removeAllRoads(void);
 
 	void addProp(Int id, Coord3D location, Real angle, Real scale, const AsciiString &modelName);
 	void removeProp(Int id);
@@ -200,6 +202,7 @@ public:
 	void updateViewImpassableAreas(Bool partial = FALSE, Int minX = 0, Int maxX = 0, Int minY = 0, Int maxY = 0);
 	void clearAllScorches(void);
 	void setTimeOfDay( TimeOfDay tod );
+	void loadRoadsOnly(); ///< Load the roads from the map objects.
 	void loadRoadsAndBridges(W3DTerrainLogic *pTerrainLogic, Bool saveGame); ///< Load the roads from the map objects.
 	void worldBuilderUpdateBridgeTowers( W3DAssetManager *assetManager, SimpleSceneClass *scene );							///< for the editor updating of bridge tower visuals
 	Int  getStaticDiffuse(Int x, Int y); ///< Gets the diffuse terrain lighting value for a point on the mesh.
@@ -212,6 +215,8 @@ public:
 	Bool isCliffCell(Real x, Real y);	///<return height and normal at given point
 	Bool isBadBuildLocation(Real x, Real y, Real angle, Real halfSizeX, Real halfSizeY);
 	Bool pleaseHelpMeIamUnderTheWata(Real x, Real y);
+	Real getWaterHeightIfUnderwater(Real x, Real y);
+	W3DBridgeBuffer* getBridgeBuffer() const { return m_bridgeBuffer; }
 	Real getMinHeight(void) const {return m_minHeight;}	///<return minimum height of entire terrain
 	Real getMaxHeight(void) const {return m_maxHeight;}	///<return maximum height of entire terrain
 	Real getMaxCellHeight(Real x, Real y) const;	///< returns maximum height of the 4 cell corners.

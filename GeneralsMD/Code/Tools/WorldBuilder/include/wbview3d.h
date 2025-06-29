@@ -153,6 +153,8 @@ protected:
 	afx_msg void OnUpdateViewGarrisoned(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowMapBoundaries();
 	afx_msg void OnUpdateViewShowMapBoundaries(CCmdUI* pCmdUI);
+	afx_msg void OnViewShowRulerGrid();
+	afx_msg void OnUpdateViewShowRulerGrid(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowAmbientSounds();
 	afx_msg void OnUpdateViewShowAmbientSounds(CCmdUI* pCmdUI);
   afx_msg void OnViewShowSoundCircles();
@@ -218,6 +220,7 @@ private:
 	Bool										m_showWeaponRanges;
 	Bool										m_highlightTestArt;
 	Bool										m_showLetterbox;
+	Bool										m_showRulerGrid;
 
 	Bool m_showBuildZoneFeedback;
 
@@ -225,7 +228,8 @@ private:
 	ID3DXFont*							m3DFont;
 	Int											m_pickPixels;
 	Int											m_partialMapSize;
-
+	Real m_lastTrackingZ;     // stores last used ghost placement height
+	Bool m_lastTrackingZIsFromHighElev;
 protected:
 
 	UINT getLastDrawTime();
@@ -284,6 +288,8 @@ public:
 	Real getCameraAngle(void) { return m_cameraAngle; }
 	CPoint getActualWinSize(void) {return m_actualWinSize;}
 
+	Real getLastTrackingZ(void) { return m_lastTrackingZ; }
+	Bool getLastTrackingZIsFromHighElev(void) { return m_lastTrackingZIsFromHighElev; }
 	virtual MapObject *picked3dObjectInView(CPoint viewPt);
 	virtual BuildListInfo *pickedBuildObjectInView(CPoint viewPt);
 
@@ -316,6 +322,7 @@ public:
 
 	// void setShowBuildZoneFeedBack(Bool toggle) {m_showBuildZoneFeedback = toggle;}
 	Bool getShowBuildZoneFeedBack(void) { return ::AfxGetApp()->GetProfileInt(OBJECT_OPTION_PANEL, "PreviewBuildZone", 0);}
+	Bool getUseWaterHeight(void) { return ::AfxGetApp()->GetProfileInt(OBJECT_OPTION_PANEL, "UseWaterHeight", 0);}
 	Bool getShowBuildListObjects(void) { return ::AfxGetApp()->GetProfileInt(BUILDLIST_OPTION_PANEL, "ForceShowBuildListObjects", 0);}
 
 	void setObjTracking(MapObject *pMapObj, Coord3D pos, Real angle, Bool show);
@@ -323,6 +330,8 @@ public:
 
 	Bool getShowMapBoundaryFeedback(void) const { return m_showMapBoundaries; }
 	Bool getShowAmbientSoundsFeedback(void) const { return m_showAmbientSounds; }
+
+	Bool getShowGridFeedback(void) const { return m_showRulerGrid; }
 
 	void togglePitchAndRotation( void ) { m_doPitch = !m_doPitch; }
 	virtual Bool isDoingPitch( void ) { return m_doPitch; }

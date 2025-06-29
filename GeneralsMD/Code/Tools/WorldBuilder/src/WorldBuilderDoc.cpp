@@ -22,6 +22,9 @@
 #include "StdAfx.h"
 #include "WorldBuilder.h"
 
+#include <shlwapi.h> // for PathFileExists
+#pragma comment(lib, "shlwapi.lib")
+
 #include <direct.h>
 #include <windows.h>
 #include <process.h>
@@ -835,6 +838,12 @@ void CWorldBuilderDoc::OnJumpToGame(Bool withDebug, Bool waveEdit)
 {
 	try {
 		CString gameDir = AfxGetApp()->GetProfileString("WorldbuilderApp", "GameDirectory", "");
+
+		if (gameDir.IsEmpty()) {
+			// Try fallback
+			gameDir = AfxGetApp()->GetProfileString("WorldbuilderApp", "OpenDirectory", "");
+		}
+
 		if (gameDir.IsEmpty()) {
 			AfxMessageBox(
 				"Unable to launch the game because the game directory has not been set in your worldbuilder settings."
@@ -843,7 +852,6 @@ void CWorldBuilderDoc::OnJumpToGame(Bool withDebug, Bool waveEdit)
 				"Example:\nGameDirectory=C:\\Program Files (x86)\\Command and Conquer Generals Zero Hour",
 				MB_ICONEXCLAMATION | MB_OK
 			);
-
 			OnOpenWorldbuilderSettings();
 			return;
 		}
@@ -863,7 +871,6 @@ void CWorldBuilderDoc::OnJumpToGame(Bool withDebug, Bool waveEdit)
 			}
 		}
 
-		// Warn the user and ask for confirmation before saving and launching
 		int result = AfxMessageBox(
 			"Hold up!\nMonsieur, do you want us to save your map first?\nIf you only want to preview your current map file, then hit No.",
 			MB_ICONWARNING | MB_YESNO
@@ -873,8 +880,6 @@ void CWorldBuilderDoc::OnJumpToGame(Bool withDebug, Bool waveEdit)
 			DoFileSave();
 		}
 
-		// force to save the file 
-		// DoFileSave();
 		CString filename;
 		DEBUG_LOG(("strTitle=%s strPathName=%s\n", m_strTitle, m_strPathName));
 		if (strstr(m_strPathName, TheGlobalData->getPath_UserData().str()) != NULL)
@@ -882,40 +887,50 @@ void CWorldBuilderDoc::OnJumpToGame(Bool withDebug, Bool waveEdit)
 		else
 			filename.Format("Maps\\%s", m_strTitle);
 
-		/** 
-		 * Adriane [Deathscythe] : spawnl cant read spaces sadly,
-		 * Shellexcute fortunately does the job 
-		*/
-		CString gameExePath;
-		gameExePath.Format("\"%s\\generals.exe\"", gameDir);
-
-		DEBUG_LOG(("Loading gameExePath=%s\n", gameExePath)); 
-		// 	/*int retval =*/ _spawnl(_P_NOWAIT, "\\projects\\rts\\run\\rtsi.exe", "ignored", "-scriptDebug", "-win", "-file", filename, NULL);
-
-
-		CString args = CString("-win -file \"" + filename + "\"");
-        if (withDebug) {
-            args = CString("-scriptDebug ") + args;
-        }
-
-		if (waveEdit){
-			AfxMessageBox(
-				"You are about to run the game with wave edit mode ON, Please take notes:\n\n"
-				"Hotkeys:\n Tab : Toggle Wave Edit Mode\n Ctrl + R : Reload/Clear\n Ctrl + Z : Undo (max of 15)\n LMB : Start placing waves\n"
-				" 2nd LMB : Add the end of the wave point\n Space : Cycle Wave type",
-				MB_ICONEXCLAMATION | MB_OK
-			);
-			args = CString("-useWaveEditor ") + args;
+		CString args = CString("-win -file \"") + filename + "\"";
+		if (withDebug) {
+			args = CString("-scriptDebug ") + args;
 		}
 
-        ShellExecute(NULL, "open", 
-            gameExePath, 
-            args, // Arguments
-            NULL, 
-            SW_SHOWNORMAL
+		CString gameExePath;
+		if (waveEdit) {
+			args = CString("-useWaveEditor ") + args;
+			gameExePath.Format("%s\\generals_wave.exe", gameDir);
+
+			AfxMessageBox(
+				"You are about to run the game with wave edit mode ON. Please take note:\n\n"
+				"Hotkeys:\n"
+				" 1           : Toggle Wave Edit Mode\n"
+				" Ctrl + R    : Reload/Clear\n"
+				" Ctrl + Z    : Undo (max of 15)\n"
+				" LMB         : Start placing waves\n"
+				" 2nd LMB     : Add end of wave point\n"
+				" Space       : Cycle Wave Type",
+				MB_ICONEXCLAMATION | MB_OK
+			);
+		} else {
+			gameExePath.Format("%s\\generals.exe", gameDir);
+		}
+
+		// Check if the executable exists
+		if (!PathFileExists(gameExePath)) {
+			CString msg;
+			msg.Format("The game executable was not found:\n%s\n\nPlease verify your game directory setting.", gameExePath);
+			AfxMessageBox(msg, MB_ICONEXCLAMATION | MB_OK);
+			return;
+		}
+
+		DEBUG_LOG(("Loading gameExePath=%s\n", gameExePath)); 
+
+		ShellExecute(NULL, "open", 
+			gameExePath, 
+			args, 
+			NULL, 
+			SW_SHOWNORMAL
 		);
 		
 	} catch (...) {
+		// Optional: log or handle exception
 	}
 }
 

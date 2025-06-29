@@ -72,6 +72,8 @@ BEGIN_MESSAGE_MAP(CTeamsDialog, CDialog)
 	ON_BN_CLICKED(IDC_SelectTeamMembers, OnSelectTeamMembers)
 	ON_BN_CLICKED(IDC_MOVEDOWNTEAM, OnMoveDownTeam)
 	ON_BN_CLICKED(IDC_MOVEUPTEAM, OnMoveUpTeam)
+	ON_BN_CLICKED(IDC_EXPAND_SHRINK_TEAM, OnExpandOrShrink)
+	ON_WM_SIZING()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -188,6 +190,81 @@ void CTeamsDialog::updateUI(Int whatToRebuild)
 	--m_updating;
 }
 
+void CTeamsDialog::OnExpandOrShrink()
+{
+    const int expandBy = 200;
+    const int maxHeight = 800;
+    const int minHeight = 400;
+
+    CRect wndRect;
+    GetWindowRect(&wndRect);
+    ScreenToClient(&wndRect);
+
+    CWnd* pTeamsList = GetDlgItem(IDC_TEAMS_LIST);
+    CRect teamsRect;
+    pTeamsList->GetWindowRect(&teamsRect);
+    ScreenToClient(&teamsRect);
+
+    CWnd* pPlayerList = GetDlgItem(IDC_PLAYER_LIST);
+    CRect playerRect;
+    pPlayerList->GetWindowRect(&playerRect);
+    ScreenToClient(&playerRect);
+
+    int oldHeight = wndRect.Height();
+    int newHeight;
+
+    if (!m_expanded)
+    {
+        newHeight = min(oldHeight + expandBy, maxHeight);
+        m_expanded = TRUE;
+        GetDlgItem(IDC_EXPAND_SHRINK_TEAM)->SetWindowText("Shrink Window");
+    }
+    else
+    {
+        newHeight = max(oldHeight - expandBy, minHeight);
+        m_expanded = FALSE;
+        GetDlgItem(IDC_EXPAND_SHRINK_TEAM)->SetWindowText("Expand Window");
+    }
+
+    int deltaHeight = newHeight - oldHeight;
+
+    // Resize window
+    SetWindowPos(NULL, 0, 0, wndRect.Width(), newHeight, SWP_NOMOVE | SWP_NOZORDER);
+
+    // Compute spacing between list bottom and window bottom
+    int bottomMarginTeams = oldHeight - teamsRect.bottom;
+    int newTeamsBottom = newHeight - bottomMarginTeams;
+    int newTeamsHeight = newTeamsBottom - teamsRect.top;
+
+    int bottomMarginPlayers = oldHeight - playerRect.bottom;
+    int newPlayersBottom = newHeight - bottomMarginPlayers;
+    int newPlayersHeight = newPlayersBottom - playerRect.top;
+
+    // Resize both lists
+    pTeamsList->SetWindowPos(NULL, teamsRect.left, teamsRect.top, teamsRect.Width(), newTeamsHeight, SWP_NOZORDER);
+    pPlayerList->SetWindowPos(NULL, playerRect.left, playerRect.top, playerRect.Width(), newPlayersHeight, SWP_NOZORDER);
+}
+
+// void CTeamsDialog::OnSizing(UINT fwSide, LPRECT pRect)
+// {
+//     RECT rcOriginal;
+//     GetWindowRect(&rcOriginal);
+    
+//     switch (fwSide)
+//     {
+//         case WMSZ_LEFT:
+//         case WMSZ_RIGHT:
+//         case WMSZ_TOPLEFT:
+//         case WMSZ_BOTTOMLEFT:
+//         case WMSZ_TOPRIGHT:
+//         case WMSZ_BOTTOMRIGHT:
+//             // Prevent horizontal resizing by resetting left and right
+//             pRect->left = rcOriginal.left;
+//             pRect->right = rcOriginal.right;
+//             break;
+//     }
+// }
+
 BOOL CTeamsDialog::OnInitDialog() 
 {
 	CRect rect;
@@ -200,12 +277,12 @@ BOOL CTeamsDialog::OnInitDialog()
 	m_curTeam = thePrevCurTeam;
 
 	CListCtrl *pList = (CListCtrl *)GetDlgItem(IDC_TEAMS_LIST);
-	pList->InsertColumn(0, "Team Name", LVCFMT_LEFT, 150, 0);
-	pList->InsertColumn(1, "Priority", LVCFMT_LEFT, 50, 1);
-	pList->InsertColumn(2, "Script", LVCFMT_LEFT, 150, 2);
-	pList->InsertColumn(3, "Trigger", LVCFMT_LEFT, 150, 3);
+	pList->InsertColumn(0, "Team Name", LVCFMT_LEFT, 200, 0);
+	pList->InsertColumn(1, "Script", LVCFMT_LEFT, 200, 2);
+	pList->InsertColumn(2, "Trigger", LVCFMT_LEFT, 200, 3);
+	pList->InsertColumn(3, "Priority", LVCFMT_LEFT, 50, 1);
 	pList->InsertColumn(4, "Origin", LVCFMT_LEFT, 50, 4);
-	pList->InsertColumn(5, "Index", LVCFMT_LEFT, 150, 5); // required to hold our proper indexes - Adriane
+	pList->InsertColumn(5, "Index", LVCFMT_LEFT, 50, 5); // required to hold our proper indexes - Adriane [Deathscythe]
 
 
 	CListBox *players = (CListBox*)GetDlgItem(IDC_PLAYER_LIST);
@@ -363,9 +440,9 @@ void CTeamsDialog::UpdateTeamsList()
 
 			pList->InsertItem(LVIF_TEXT, inserted, teamName.str(), 0, 0, 0, 0);
 			
-			pList->SetItemText(inserted, 1, pri);
-			pList->SetItemText(inserted, 2, script.str());
-			pList->SetItemText(inserted, 3, trigger.str());
+			pList->SetItemText(inserted, 1, script.str());
+			pList->SetItemText(inserted, 2, trigger.str());
+			pList->SetItemText(inserted, 3, pri);
 			pList->SetItemText(inserted, 4, waypoint.str());
 
 			CString indexStr;

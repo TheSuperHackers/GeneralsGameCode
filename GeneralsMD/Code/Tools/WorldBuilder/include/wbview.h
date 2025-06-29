@@ -74,6 +74,7 @@ protected:
 	Bool					m_showGarrisoned;
 	Bool					m_showWaypoints;
 	Bool					m_showWater;
+	Bool					m_showRoads;
 	Bool					m_showPolygonTriggers;
  	Bool					m_showTerrain;			  ///< Flag whether terrain is rendered or not. (Useful for debugging)
 
@@ -153,6 +154,7 @@ public:
 	void setShowModels(Bool show) {m_showModels = show;}
 	Bool getShowModels(void) { return m_showModels;}
 	Bool getShowTerrain(void) { return m_showTerrain;}
+	Bool isLockedAngle(void) {return m_lockAngle;}
 
 	void setShowGarrisoned(Bool show) {m_showGarrisoned = show;}
 	Bool getShowGarrisoned(void) { return m_showGarrisoned;}
@@ -215,6 +217,8 @@ protected:
 	afx_msg void OnUpdateViewShowwaypoints(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowWater();
 	afx_msg void OnUpdateViewShowWater(CCmdUI* pCmdUI);
+	afx_msg void OnViewShowRoads();
+	afx_msg void OnUpdateViewShowRoads(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowpolygontriggers();
 	afx_msg void OnUpdateViewShowpolygontriggers(CCmdUI* pCmdUI);
 	afx_msg void OnEditPlayerlist();

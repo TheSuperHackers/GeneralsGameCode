@@ -507,6 +507,16 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	selectPointerTool();   
 
+	AfxMessageBox(
+		"WARNING: This build of WorldBuilder is a work in progress.\n"
+		"Unauthorized use or distribution without notifying Adriane [Deathscythe] is discouraged.\n\n"
+		"This version is still in testing and may corrupt or break your map, so please make a backup before using it.\n\n"
+		"Build Version: 159dc6ad\n"
+		"If you find a bug or do want to suggest a feature, please report it on our WorldBuilder Discord server:\nhttps://discord.gg/tJ6zyGb",
+		MB_ICONEXCLAMATION | MB_OK
+	);
+
+
 	// Load GameDirectory
 	CString gameDir = this->GetProfileString(APP_SECTION, GAME_DIR);
 	m_gameDirectory = gameDir;
@@ -659,6 +669,7 @@ protected:
 	afx_msg void OnLaunchOnStartup();
 	void OnCenterOnSelected(Bool findObject); 
 	afx_msg void OnRefreshQueryObject();
+	afx_msg void OnOpenLinkDiscord();
 	afx_msg void OnRefreshQueryWaypoint();
 	afx_msg void OnWindowPosChanging(WINDOWPOS* lpwndpos);
 
@@ -681,6 +692,8 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 
 	ON_BN_CLICKED(IDC_FIND_OBJ_BUTTON, OnCenterOnSelectedButtonObject)
 	ON_BN_CLICKED(IDC_REFRESH_OBJ_BUTTON, OnRefreshQueryObject)
+
+	ON_BN_CLICKED(IDC_OPEN_LINK_DISCORD, OnOpenLinkDiscord)
 
 	ON_BN_CLICKED(IDC_FIND_WP_BUTTON, OnCenterOnSelectedButtonWP)
 	ON_BN_CLICKED(IDC_REFRESH_WP_BUTTON, OnRefreshQueryWaypoint)
@@ -734,6 +747,11 @@ CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
 	m_bLaunchOnStartUpAbout = true;
 	//{{AFX_DATA_INIT(CAboutDlg)
 	//}}AFX_DATA_INIT
+}
+
+void CAboutDlg::OnOpenLinkDiscord() 
+{
+	ShellExecute(NULL, "open", "https://discord.gg/tJ6zyGb", NULL, NULL, SW_SHOWNORMAL);
 }
 
 void CAboutDlg::OnRefreshQueryObject()

@@ -68,6 +68,8 @@ protected:
 	afx_msg void OnSelectTeamMembers();
 	afx_msg void OnMoveDownTeam();
 	afx_msg void OnMoveUpTeam();
+	// afx_msg void OnSizing(UINT fwSide, LPRECT pRect);
+	afx_msg void OnExpandOrShrink();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -84,6 +86,8 @@ protected:
 		REBUILD_NONE = 0x00,
 		REBUILD_ALL = 0xff
 	};
+
+	Bool m_expanded;
 
 	void updateUI(Int whatToRebuild);
 	void validateTeamOwners( void );

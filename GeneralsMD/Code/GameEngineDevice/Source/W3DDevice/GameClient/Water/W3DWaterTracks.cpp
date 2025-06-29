@@ -1150,7 +1150,7 @@ static void TestWaterUpdate(void)
 //		track->init(1.5f,8.0f,Vector2(139.0f,66.0f),Vector2(138.8f,67.6f),"wave2.tga");
 	}
 
-	if (GetAsyncKeyState(0x31) & 0x8001)	//check if F5 pressed since last call
+	if (GetAsyncKeyState(0x31) & 0x8001)	//check if 1 pressed since last call
 	{	
 		if (trackEditModeReset)
 		{

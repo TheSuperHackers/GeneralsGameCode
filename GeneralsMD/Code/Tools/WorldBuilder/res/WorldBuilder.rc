@@ -245,9 +245,7 @@ BEGIN
     END
     POPUP "&View"
     BEGIN
-        // MENUITEM "Show Grid\tCtrl+G",           IDM_ShowGrid
-        // MENUITEM "Show Texture\tCtrl+T",        ID_VIEW_SHOWTEXTURE
-        // MENUITEM SEPARATOR
+        MENUITEM "Show Roads",                  ID_VIEW_SHOWROADS
         MENUITEM "Show Water Mesh",             ID_VIEW_SHOWWATER
         MENUITEM "Show Terrain",                ID_VIEW_SHOW_TERRAIN
         MENUITEM "Show Object Icons\tCtrl+B",   ID_VIEW_SHOW_OBJECTS
@@ -261,6 +259,7 @@ BEGIN
         MENUITEM "Show Weapon Ranges",          ID_VIEW_WEAPONRANGES
         MENUITEM "Show Garrisoned",             ID_VIEW_GARRISONED
         MENUITEM "Show Map Boundaries",         ID_VIEW_SHOWMAPBOUNDARIES
+        MENUITEM "Show Ruler Grid",             ID_VIEW_RULERGRID
         MENUITEM "Show Letterbox",              ID_SHOW_LETTERBOX
         MENUITEM "Show Sound Flags",            ID_VIEW_SHOWAMBIENTSOUNDS
         MENUITEM "Show Sound Circles",          ID_VIEW_SHOW_SOUND_CIRCLES
@@ -496,12 +495,12 @@ END
 IDD_ABOUTBOX DIALOGEX 0, 0, 456, 192
 STYLE WS_MINIMIZEBOX | WS_CAPTION | WS_SYSMENU
 CAPTION "About Generals World Builder"
-FONT 8, "MS Sans Serif", 0, 0, 0x1
+FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "Adriane [ Deathscythe ] Community Worldbuilder V3.0",
                     IDC_STATIC,4,3,216,11,SS_NOPREFIX | SS_CENTERIMAGE | 
                     WS_BORDER
-    GROUPBOX        "Collaborators / Testers:",IDC_STATIC,55,43,164,44
+    GROUPBOX        "Collaborators / Testers:",IDC_STATIC,55,40,164,44
     LTEXT           "This is a fan-modified tool of the original ZH worldbuilder. All trademarks belong to their respective owners.",
                     IDC_STATIC,55,14,164,25
     EDITTEXT        IDC_HOTKEYLIST,237,21,215,151,ES_MULTILINE | 
@@ -511,25 +510,29 @@ BEGIN
     EDITTEXT        IDC_FIND_QUERY,312,3,110,14
     PUSHBUTTON      "Find",IDC_FIND_HKEY_BUTTON,428,3,24,14
     LTEXT           "Kabuse [Hotkey layout] | Gramantio [Tester] | Veloxious [Tester] | Muska [Tester]",
-                    IDC_STATIC,62,55,152,31
+                    IDC_STATIC,62,52,152,31
     CONTROL         "Launch this window on app startup",IDC_LAUNCH_ONSTARTUP,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,173,147,14
-    COMBOBOX        IDC_FIND_QUERY_OBJ,15,107,135,329,CBS_DROPDOWN | 
+    COMBOBOX        IDC_FIND_QUERY_OBJ,15,116,135,329,CBS_DROPDOWN | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Find",IDC_FIND_OBJ_BUTTON,153,106,22,14
-    PUSHBUTTON      "Refresh",IDC_REFRESH_OBJ_BUTTON,177,106,29,14
-    GROUPBOX        "Object Finder:",IDC_STATIC,4,93,216,35
-    GROUPBOX        "Waypoint Finder:",IDC_STATIC,4,132,216,35
-    COMBOBOX        IDC_FIND_QUERY_WP,15,145,135,294,CBS_DROPDOWN | CBS_SORT | 
+    PUSHBUTTON      "Find",IDC_FIND_OBJ_BUTTON,153,115,22,14
+    PUSHBUTTON      "Refresh",IDC_REFRESH_OBJ_BUTTON,177,115,29,14
+    GROUPBOX        "Object Finder:",IDC_STATIC,4,102,216,35
+    GROUPBOX        "Waypoint Finder:",IDC_STATIC,4,137,216,35
+    COMBOBOX        IDC_FIND_QUERY_WP,15,150,135,294,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Find",IDC_FIND_WP_BUTTON,153,143,21,14
-    PUSHBUTTON      "Refresh",IDC_REFRESH_WP_BUTTON,178,143,28,14
-    CONTROL         28727,IDC_STATIC,"Static",SS_BITMAP,4,47,44,41,
+    PUSHBUTTON      "Find",IDC_FIND_WP_BUTTON,153,148,21,14
+    PUSHBUTTON      "Refresh",IDC_REFRESH_WP_BUTTON,178,148,28,14
+    CONTROL         28727,IDC_STATIC,"Static",SS_BITMAP,4,44,44,41,
                     WS_EX_DLGMODALFRAME
     CONTROL         251,IDC_STATIC,"Static",SS_BITMAP,4,16,46,23,
                     WS_EX_DLGMODALFRAME
     PUSHBUTTON      "EXPAND >>",IDC_EXPAND,159,173,61,14
     PUSHBUTTON      "<< SHRINK",IDC_SHRINK,391,173,61,14
+    LTEXT           "https://discord.gg/tJ6zyGb",IDC_STATIC,55,88,92,11,
+                    SS_NOPREFIX | SS_CENTERIMAGE | WS_BORDER
+    LTEXT           "Discord Server:",IDC_STATIC,4,89,50,11
+    PUSHBUTTON      "Open Link",IDC_OPEN_LINK_DISCORD,151,88,67,11
 END
 
 IDD_CellWidth DIALOG DISCARDABLE  0, 0, 186, 95
@@ -614,47 +617,47 @@ CAPTION "Terrain Material Options"
 FONT 8, "MS Sans Serif"
 BEGIN
     CONTROL         "",IDC_TERRAIN_TREEVIEW,"Static",SS_BLACKFRAME | 
-                    SS_SUNKEN,5,5,190,134
-    PUSHBUTTON      "Swap",IDC_SWAP_TEXTURES,170,273,25,16
+                    SS_SUNKEN,5,5,190,175
+    PUSHBUTTON      "Swap",IDC_SWAP_TEXTURES,95,267,25,16
     CONTROL         "",IDC_TERRAIN_SWATCHES,"Static",SS_BLACKFRAME | 
-                    SS_SUNKEN,130,215,65,55
-    LTEXT           "Gravel",IDC_TERRAIN_NAME,5,222,121,9
-    EDITTEXT        IDC_SIZE_EDIT,53,246,17,12,ES_AUTOHSCROLL
-    RTEXT           "Size in cells:",IDC_STATIC,11,247,40,8
-    PUSHBUTTON      "1",IDC_SIZE_POPUP,72,246,8,12,BS_BITMAP
-    GROUPBOX        "Brush Width",IDC_STATIC,5,236,123,34
-    LTEXT           "35 FT.",IDC_WIDTH_LABEL,59,258,43,8
+                    SS_SUNKEN,130,244,65,55
+    LTEXT           "Gravel",IDC_TERRAIN_NAME,5,247,123,9
+    EDITTEXT        IDC_SIZE_EDIT,53,267,17,12,ES_AUTOHSCROLL
+    RTEXT           "Size in cells:",IDC_STATIC,11,268,40,8
+    PUSHBUTTON      "1",IDC_SIZE_POPUP,72,267,8,12,BS_BITMAP
+    GROUPBOX        "Brush Width",IDC_STATIC,5,258,83,34
+    LTEXT           "35 FT.",IDC_WIDTH_LABEL,41,281,43,8
     CONTROL         "Paint passable/impassable terrain",IDC_PASSABLE_CHECK,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,274,122,12
-    CONTROL         "Passable",IDC_PASSABLE,"Button",BS_AUTORADIOBUTTON,27,
-                    289,55,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,292,122,12
+    CONTROL         "Passable",IDC_PASSABLE,"Button",BS_AUTORADIOBUTTON,29,
+                    306,55,10
     CONTROL         "Impassable",IDC_IMPASSABLE,"Button",BS_AUTORADIOBUTTON,
-                    27,300,61,10
+                    115,306,61,10
     CONTROL         "Copy Texture",IDC_TERRAIN_COPY_SELECT,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP,27,327,58,10
+                    BS_AUTORADIOBUTTON | WS_GROUP,27,335,58,10
     CONTROL         "Paste Texture",IDC_TERRAIN_COPY_APPLY,"Button",
-                    BS_AUTORADIOBUTTON,27,338,57,10
+                    BS_AUTORADIOBUTTON,27,346,57,10
     CONTROL         "Toggle Texture Copy",IDC_COPY_MODE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,5,316,89,8
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,5,311,
-                    189,1
+                    BS_AUTOCHECKBOX | WS_TABSTOP,5,325,89,8
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,5,319,
+                    188,1
     CONTROL         "0",IDC_TERRAIN_ROTATE1,"Button",BS_AUTORADIOBUTTON | 
-                    WS_GROUP,115,327,28,10
+                    WS_GROUP,115,335,28,10
     CONTROL         "90",IDC_TERRAIN_ROTATE2,"Button",BS_AUTORADIOBUTTON,115,
-                    338,28,10
+                    346,28,10
     CONTROL         "180",IDC_TERRAIN_ROTATE3,"Button",BS_AUTORADIOBUTTON,
-                    150,327,28,10
+                    150,335,28,10
     CONTROL         "270",IDC_TERRAIN_ROTATE4,"Button",BS_AUTORADIOBUTTON,
-                    150,338,28,10
-    LTEXT           "Hold shift key to swap textures",IDC_DEV_NOTE,11,360,
-                    176,13
-    GROUPBOX        "Developer Note:",IDC_STATIC,5,350,190,29
+                    150,346,28,10
+    LTEXT           "Hold shift key to swap textures",IDC_DEV_NOTE,12,364,
+                    176,9
+    GROUPBOX        "Developer Note:",IDC_STATIC,5,355,190,24
     CONTROL         "",IDC_TERRAIN_TREEVIEW_FAV,"Static",SS_BLACKFRAME | 
-                    SS_SUNKEN,5,152,190,57
-    LTEXT           "Favorites:",IDC_STATIC,5,142,36,8
-    PUSHBUTTON      "Set as favorite",IDC_SET_FAV,54,140,52,10
-    PUSHBUTTON      "Delete favorite",IDC_DEL_FAV,110,140,52,10
-    PUSHBUTTON      "Import",IDC_REL_FAV,165,140,30,10
+                    SS_SUNKEN,5,193,190,49
+    LTEXT           "Favorites:",IDC_STATIC,5,183,36,8
+    PUSHBUTTON      "Set as favorite",IDC_SET_FAV,54,181,52,10
+    PUSHBUTTON      "Delete favorite",IDC_DEL_FAV,110,181,52,10
+    PUSHBUTTON      "Import",IDC_REL_FAV,165,181,30,10
 END
 
 IDD_MOUND_OPTIONS DIALOG DISCARDABLE  0, 0, 200, 146
@@ -688,15 +691,15 @@ BEGIN
     EDITTEXT        IDC_OBJECT_SEARCH_EDIT,31,5,106,12,ES_AUTOHSCROLL
     PUSHBUTTON      "Find",IDC_OBJECT_SEARCH_BUTTON,141,5,26,12
     CONTROL         "",IDC_TERRAIN_TREEVIEW,"Static",SS_BLACKFRAME | 
-                    SS_SUNKEN,3,21,193,230
+                    SS_SUNKEN,3,21,193,242
     CONTROL         "",IDC_TERRAIN_SWATCHES,"Static",SS_BLACKFRAME | 
-                    SS_SUNKEN,139,263,57,49
-    LTEXT           "Light Tank",IDC_OBJECT_NAME,52,254,144,9
-    EDITTEXT        IDC_OBJECT_HEIGHT_EDIT,97,263,26,12,ES_AUTOHSCROLL
-    LTEXT           "Height (0==on terrain)",IDC_STATIC,3,265,74,8
-    LTEXT           "Object Name:",IDC_STATIC,3,253,48,9
-    LTEXT           "Default Owner:",IDC_STATIC,3,303,48,8
-    COMBOBOX        IDC_OWNINGTEAM,3,315,193,104,CBS_DROPDOWNLIST | 
+                    SS_SUNKEN,139,268,57,49
+    LTEXT           "Light Tank",IDC_OBJECT_NAME,3,268,130,9
+    EDITTEXT        IDC_OBJECT_HEIGHT_EDIT,78,280,26,12,ES_AUTOHSCROLL
+    LTEXT           "Height (0==on terrain):",IDC_STATIC,3,281,74,8
+    LTEXT           "Object Name:",IDC_STATIC,148,265,48,9,NOT WS_VISIBLE
+    LTEXT           "Default Owner:",IDC_STATIC,3,324,48,8
+    COMBOBOX        IDC_OWNINGTEAM,54,321,142,104,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "Reset",IDC_OBJECT_SEARCH_RESET_BTN,170,5,26,12
     CONTROL         "Preview Ambient Sound on Selection (if available)",
@@ -705,6 +708,9 @@ BEGIN
     CONTROL         "Show Build Zone Feedback",IDC_TOGGLE_PREV_FEEDBACK,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,358,175,12
     GROUPBOX        "Tool Options:",IDC_STATIC,3,335,193,39
+    CONTROL         "Align Object to Water or Bridge Level",
+                    IDC_TOGGLE_WATER_HEIGHT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,3,294,133,11
 END
 
 IDD_CONTOUR_OPTIONS DIALOG DISCARDABLE  0, 0, 148, 126
@@ -1279,24 +1285,25 @@ BEGIN
                     WS_TABSTOP,311,7,72,14
 END
 
-IDD_TEAMS_DIALOG DIALOG DISCARDABLE  0, 0, 515, 294
+IDD_TEAMS_DIALOG DIALOG DISCARDABLE  0, 0, 688, 351
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
 CAPTION "Team Builder"
 FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,404,273,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,458,273,50,14
-    PUSHBUTTON      "Add New Team",IDC_NEWTEAM,7,273,56,14
-    PUSHBUTTON      "Delete Team",IDC_DELETETEAM,121,273,54,14
-    LISTBOX         IDC_PLAYER_LIST,7,7,105,263,LBS_NOINTEGRALHEIGHT | 
+    DEFPUSHBUTTON   "OK",IDOK,631,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,578,7,50,14
+    PUSHBUTTON      "Add New Team",IDC_NEWTEAM,242,7,56,14
+    PUSHBUTTON      "Delete Team",IDC_DELETETEAM,356,7,54,14
+    LISTBOX         IDC_PLAYER_LIST,7,25,140,319,LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "List1",IDC_TEAMS_LIST,"SysListView32",LVS_REPORT | 
-                    LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,116,7,392,263
-    PUSHBUTTON      "Copy Team",IDC_COPYTEAM,67,273,50,14
-    PUSHBUTTON      "Select Team Members...",IDC_SelectTeamMembers,179,273,
-                    93,14
-    PUSHBUTTON      "Move Team Up",IDC_MOVEUPTEAM,275,273,54,14
-    PUSHBUTTON      "Move Team Down",IDC_MOVEDOWNTEAM,335,273,64,14
+                    LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,152,25,529,319
+    PUSHBUTTON      "Copy Team",IDC_COPYTEAM,302,7,50,14
+    PUSHBUTTON      "Select Team Members From The Map...",
+                    IDC_SelectTeamMembers,100,7,139,14
+    PUSHBUTTON      "Move Team Up",IDC_MOVEUPTEAM,412,7,54,14
+    PUSHBUTTON      "Move Team Down",IDC_MOVEDOWNTEAM,472,7,64,14
+    PUSHBUTTON      "Shrink Window",IDC_EXPAND_SHRINK_TEAM,7,7,64,14
 END
 
 IDD_EDIT_GROUP DIALOG DISCARDABLE  0, 0, 186, 95
@@ -1355,34 +1362,48 @@ BEGIN
     LTEXT           "Min:",IDC_STATIC,6,122,14,8
     LTEXT           "Max:",IDC_STATIC,24,122,16,8
     LTEXT           "Unit Type:",IDC_STATIC,50,122,91,8
-    EDITTEXT        IDC_MIN_UNIT1,2,131,17,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_MAX_UNIT1,24,131,17,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_MIN_UNIT1,2,131,17,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_MAX_UNIT1,24,131,17,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
     COMBOBOX        IDC_UNIT_TYPE1,47,131,144,210,CBS_DROPDOWNLIST | 
-                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_MIN_UNIT2,2,145,17,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_MAX_UNIT2,23,145,17,12,ES_AUTOHSCROLL
+                    CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_MIN_UNIT2,2,145,17,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_MAX_UNIT2,23,145,17,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
     COMBOBOX        IDC_UNIT_TYPE2,47,145,144,210,CBS_DROPDOWNLIST | 
-                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_MIN_UNIT3,2,159,17,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_MAX_UNIT3,24,159,17,12,ES_AUTOHSCROLL
+                    CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_MIN_UNIT3,2,159,17,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_MAX_UNIT3,24,159,17,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
     COMBOBOX        IDC_UNIT_TYPE3,47,159,144,210,CBS_DROPDOWNLIST | 
-                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_MIN_UNIT4,2,173,17,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_MAX_UNIT4,24,173,17,12,ES_AUTOHSCROLL
+                    CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_MIN_UNIT4,2,173,17,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_MAX_UNIT4,24,173,17,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
     COMBOBOX        IDC_UNIT_TYPE4,47,173,144,210,CBS_DROPDOWNLIST | 
-                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_MIN_UNIT5,2,187,17,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_MAX_UNIT5,24,187,17,12,ES_AUTOHSCROLL
+                    CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_MIN_UNIT5,2,187,17,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_MAX_UNIT5,24,187,17,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
     COMBOBOX        IDC_UNIT_TYPE5,47,187,144,210,CBS_DROPDOWNLIST | 
-                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_MIN_UNIT6,2,201,17,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_MAX_UNIT6,24,201,17,12,ES_AUTOHSCROLL
+                    CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_MIN_UNIT6,2,201,17,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_MAX_UNIT6,24,201,17,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
     COMBOBOX        IDC_UNIT_TYPE6,47,201,144,210,CBS_DROPDOWNLIST | 
-                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_MIN_UNIT7,2,215,17,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_MAX_UNIT7,24,215,17,12,ES_AUTOHSCROLL
+                    CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_MIN_UNIT7,2,215,17,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
+    EDITTEXT        IDC_MAX_UNIT7,24,215,17,12,ES_AUTOHSCROLL | NOT 
+                    WS_VISIBLE
     COMBOBOX        IDC_UNIT_TYPE7,47,215,144,210,CBS_DROPDOWNLIST | 
-                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+                    CBS_SORT | NOT WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
     GROUPBOX        "Team Description:",IDC_STATIC,0,285,213,38
     EDITTEXT        IDC_DESCRIPTION,8,294,195,27,ES_AUTOHSCROLL
     GROUPBOX        "Recruitment Options:",IDC_STATIC,0,232,213,36
@@ -1402,13 +1423,13 @@ BEGIN
     EDITTEXT        IDC_PRIORITY_INCREASE,177,87,18,12,ES_AUTOHSCROLL
     RTEXT           "Failure Priority Decrease:",IDC_STATIC,93,102,82,8
     EDITTEXT        IDC_PRIORITY_DECREASE,177,100,18,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "...",IDC_UNIT_TYPE1_BUTTON,197,131,12,12
-    PUSHBUTTON      "...",IDC_UNIT_TYPE2_BUTTON,197,145,12,12
-    PUSHBUTTON      "...",IDC_UNIT_TYPE3_BUTTON,197,159,12,12
-    PUSHBUTTON      "...",IDC_UNIT_TYPE4_BUTTON,197,173,12,12
-    PUSHBUTTON      "...",IDC_UNIT_TYPE5_BUTTON,197,187,12,12
-    PUSHBUTTON      "...",IDC_UNIT_TYPE6_BUTTON,197,201,12,12
-    PUSHBUTTON      "...",IDC_UNIT_TYPE7_BUTTON,197,215,12,12
+    PUSHBUTTON      "...",IDC_UNIT_TYPE1_BUTTON,197,131,12,12,NOT WS_VISIBLE
+    PUSHBUTTON      "...",IDC_UNIT_TYPE2_BUTTON,197,145,12,12,NOT WS_VISIBLE
+    PUSHBUTTON      "...",IDC_UNIT_TYPE3_BUTTON,197,159,12,12,NOT WS_VISIBLE
+    PUSHBUTTON      "...",IDC_UNIT_TYPE4_BUTTON,197,173,12,12,NOT WS_VISIBLE
+    PUSHBUTTON      "...",IDC_UNIT_TYPE5_BUTTON,197,187,12,12,NOT WS_VISIBLE
+    PUSHBUTTON      "...",IDC_UNIT_TYPE6_BUTTON,197,201,12,12,NOT WS_VISIBLE
+    PUSHBUTTON      "...",IDC_UNIT_TYPE7_BUTTON,197,215,12,12,NOT WS_VISIBLE
     EDITTEXT        IDC_TEAM_NAME,2,1,107,14,ES_AUTOHSCROLL
     COMBOBOX        IDC_TEAMOWNER,58,20,113,176,CBS_DROPDOWNLIST | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
@@ -2009,7 +2030,7 @@ BEGIN
                     BS_AUTOCHECKBOX | WS_TABSTOP,133,103,61,10
     CONTROL         "Powered",IDC_MAPOBJECT_Powered,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,133,113,44,10
-    CONTROL         "Selectable",IDC_MAPOBJECT_Selectable2,"Button",
+    CONTROL         "Selectable",IDC_MAPOBJECT_Selectable,"Button",
                     BS_AUTO3STATE | WS_TABSTOP,133,123,49,10
     EDITTEXT        IDC_MAPOBJECT_StoppingDistance,41,140,27,12,
                     ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
@@ -2388,9 +2409,9 @@ BEGIN
     IDD_TEAMS_DIALOG, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 508
+        RIGHTMARGIN, 681
         TOPMARGIN, 7
-        BOTTOMMARGIN, 287
+        BOTTOMMARGIN, 344
     END
 
     IDD_EDIT_GROUP, DIALOG

@@ -27,6 +27,7 @@
 #include "CUndoable.h"
 
 const long BOUNDARY_PICK_DISTANCE = 5.0f;
+static Bool g_messagePopped = false;
 
 BorderTool::BorderTool() : Tool(ID_BORDERTOOL, IDC_POINTER), 
 													 m_mouseDown(false),
@@ -50,6 +51,47 @@ void BorderTool::activate()
 {
 	CMainFrame::GetMainFrame()->showOptionsDialog(IDD_NO_OPTIONS);
 	DrawObject::setDoBoundaryFeedback(TRUE);
+
+	// Check for overlapping borders
+	bool overlapFound = false;
+	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
+	if (pDoc) {
+		const int count = pDoc->getNumBoundaries();
+		for (int i = 0; i < count; ++i) {
+			ICoord2D a;
+			pDoc->getBoundary(i, &a);
+			for (int j = i + 1; j < count; ++j) {
+				ICoord2D b;
+				pDoc->getBoundary(j, &b);
+				if (a.x == b.x && a.y == b.y) {
+					overlapFound = true;
+					break;
+				}
+			}
+			if (overlapFound)
+				break;
+		}
+	}
+
+	if (overlapFound) {
+		AfxMessageBox(
+			"Warning: Two or more map boundaries are overlapping. This may cause unexpected behavior.",
+			MB_ICONWARNING | MB_OK
+		);
+	}
+
+	if (!g_messagePopped) {
+		AfxMessageBox(
+			"Warning: The Border Tool has been in beta since release build 0.8. Please back up your map before using it.\n\n"
+			"The WorldBuilder 3.0 fan update introduces an experimental undo system, "
+			"which is not supported in the original version. This allows you to undo mistakenly placed borders.\n\n"
+			"Note: The undo system shares the same stack as the main editor. "
+			"If you perform additional actions and exceed the undo limit (maximum 15), "
+			"you may lose the ability to undo border changes. For this reason, we recommend using this tool only when your map is at least 80% complete.",
+			MB_ICONWARNING | MB_OK
+		);
+		g_messagePopped = true;
+	}
 }
 
 void BorderTool::deactivate()
@@ -82,8 +124,8 @@ void BorderTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 		current.x = REAL_TO_INT((new3DPoint.x / MAP_XY_FACTOR) + 0.5f);
 		current.y = REAL_TO_INT((new3DPoint.y / MAP_XY_FACTOR) + 0.5f);
 
-		// m_lastBoundaryPos = current; // save last position
-		// m_lastBoundaryPosValid = true;
+		m_lastBoundaryPos = current; // save last position
+		m_lastBoundaryPosValid = true;
 		pDoc->changeBoundary(count - 1, &current);
 		return;
 	}
@@ -129,64 +171,62 @@ void BorderTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorld
 		return;
 	}
 
-	//static Coord3D zero = {0.0f, 0.0f, 0.0f};
-	
 	Coord3D groundPt;
 	pView->viewToDocCoords(viewPt, &groundPt);
+
+	// Disallow adding new boundaries if we've reached the limit
+	const int MAX_BOUNDARIES = 8;
+	int boundaryCount = pDoc->getNumBoundaries();
+	if (boundaryCount >= MAX_BOUNDARIES) {
+		// Only allow modifying existing boundaries
+		Int motion;
+		pDoc->findBoundaryNear(&groundPt, BOUNDARY_PICK_DISTANCE, &m_modifyBorderNdx, &motion);
+		if (motion == 0 || motion == -1) {
+			m_modifyBorderNdx = -1; // can't modify bottom-left or no boundary near
+		} else {
+			m_modificationType = (ModificationType)motion;
+		}
+		return;
+	}
+
 	if (groundPt.length() < BOUNDARY_PICK_DISTANCE) {
 		m_addingNewBorder = true;
-		
-		ICoord2D initialBoundary = { 1, 1 };
-		pDoc->addBoundary(&initialBoundary);
 
-		// Commented for now -- need heavy testing before saving in actual
-		// if (m_lastBoundaryPosValid) {
-		// 	AddBoundaryUndoable *pUndo = new AddBoundaryUndoable(pDoc, &m_lastBoundaryPos);
-		// 	pDoc->AddAndDoUndoable(pUndo);
-		// 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-		// } else {
-		// 	ICoord2D initialBoundary = { 1, 1 };
-		// 	AddBoundaryUndoable *pUndo = new AddBoundaryUndoable(pDoc, &initialBoundary);
-		// 	pDoc->AddAndDoUndoable(pUndo);
-		// 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-		// }
-
+		if (m_lastBoundaryPosValid) {
+			AddBoundaryUndoable *pUndo = new AddBoundaryUndoable(pDoc, &m_lastBoundaryPos);
+			pDoc->AddAndDoUndoable(pUndo);
+			REF_PTR_RELEASE(pUndo);
+		} else {
+			ICoord2D initialBoundary = { 1, 1 };
+			AddBoundaryUndoable *pUndo = new AddBoundaryUndoable(pDoc, &initialBoundary);
+			pDoc->AddAndDoUndoable(pUndo);
+			REF_PTR_RELEASE(pUndo);
+		}
 		return;
 	}
 
 	Int motion;
 	pDoc->findBoundaryNear(&groundPt, BOUNDARY_PICK_DISTANCE, &m_modifyBorderNdx, &motion);
 	
-	// if bottom left boundary grabbed
-	if (motion == 0) 
-	{
-		// modifying the bottom left is not allowed.
+	if (motion == 0) {
 		m_modifyBorderNdx = -1;
-	}
-	// else if no boundary is near
-	else if (motion == -1)
-	{
-		// add a boundary
-		m_addingNewBorder = true;
-		
-		ICoord2D initialBoundary = { 1, 1 };
-		pDoc->addBoundary(&initialBoundary);
-
-		// Commented for now -- need heavy testing before saving in actual
-		// if (m_lastBoundaryPosValid) {
-		// 	AddBoundaryUndoable *pUndo = new AddBoundaryUndoable(pDoc, &m_lastBoundaryPos);
-		// 	pDoc->AddAndDoUndoable(pUndo);
-		// 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-		// } else {
-		// 	ICoord2D initialBoundary = { 1, 1 };
-		// 	AddBoundaryUndoable *pUndo = new AddBoundaryUndoable(pDoc, &initialBoundary);
-		// 	pDoc->AddAndDoUndoable(pUndo);
-		// 	REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
-		// }
-	} 
-	else
-	{
-		m_modificationType = (ModificationType) motion;
+	} else if (motion == -1) {
+		// Add only if boundary count is below max (already checked above, but safety)
+		if (boundaryCount < MAX_BOUNDARIES) {
+			m_addingNewBorder = true;
+			if (m_lastBoundaryPosValid) {
+				AddBoundaryUndoable *pUndo = new AddBoundaryUndoable(pDoc, &m_lastBoundaryPos);
+				pDoc->AddAndDoUndoable(pUndo);
+				REF_PTR_RELEASE(pUndo);
+			} else {
+				ICoord2D initialBoundary = { 1, 1 };
+				AddBoundaryUndoable *pUndo = new AddBoundaryUndoable(pDoc, &initialBoundary);
+				pDoc->AddAndDoUndoable(pUndo);
+				REF_PTR_RELEASE(pUndo);
+			}
+		}
+	} else {
+		m_modificationType = (ModificationType)motion;
 	}
 }
 

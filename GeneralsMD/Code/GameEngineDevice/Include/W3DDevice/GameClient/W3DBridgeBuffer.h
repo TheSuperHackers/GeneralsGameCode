@@ -61,6 +61,7 @@
 #include "Common/GameType.h"
 #include "Common/Dict.h"
 #include "Common/AsciiString.h"
+#include "Common/MapObject.h"
 
 //-----------------------------------------------------------------------------
 //           Forward References
@@ -167,6 +168,8 @@ public:
 	enum { MAX_BRIDGE_VERTEX=12000, //make sure it stays under 65535
 					MAX_BRIDGE_INDEX=2*MAX_BRIDGE_VERTEX,	//make sure it stays under 65535 
 					MAX_BRIDGES=200};
+
+	BridgeInfo getBridgeInfoFromMapObject(MapObject *bridgePoint1, MapObject *bridgePoint2);
 protected:
 	DX8VertexBufferClass	*m_vertexBridge;	///<Bridge vertex buffer.
 	DX8IndexBufferClass			*m_indexBridge;	///<indices defining a triangles for the bridge drawing.

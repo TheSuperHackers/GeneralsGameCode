@@ -90,7 +90,7 @@ BOOL TeamIdentity::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 	
     unitLoadIndex = 0; // Start loading from Unit 1
-    SetTimer(UNIT_LOAD_TIMER, 200, NULL); // 100ms delay for smooth UI
+    SetTimer(UNIT_LOAD_TIMER, 10, NULL); // 100ms delay for smooth UI
 
 	// loadUnitsInfo(IDC_MIN_UNIT1, TheKey_teamUnitMinCount1,
 	// 							IDC_MAX_UNIT1, TheKey_teamUnitMaxCount1,
@@ -173,26 +173,6 @@ BOOL TeamIdentity::OnInitDialog()
 	description = m_teamDict->getAsciiString(TheKey_teamName, &exists);
 	pWnd->SetWindowText(description.str());
 	
-	// Hide unit controls in a loop
-	int minIDs[]    = { IDC_MIN_UNIT1, IDC_MIN_UNIT2, IDC_MIN_UNIT3, IDC_MIN_UNIT4, IDC_MIN_UNIT5, IDC_MIN_UNIT6, IDC_MIN_UNIT7 };
-	int maxIDs[]    = { IDC_MAX_UNIT1, IDC_MAX_UNIT2, IDC_MAX_UNIT3, IDC_MAX_UNIT4, IDC_MAX_UNIT5, IDC_MAX_UNIT6, IDC_MAX_UNIT7 };
-	int typeIDs[]   = { IDC_UNIT_TYPE1, IDC_UNIT_TYPE2, IDC_UNIT_TYPE3, IDC_UNIT_TYPE4, IDC_UNIT_TYPE5, IDC_UNIT_TYPE6, IDC_UNIT_TYPE7 };
-	int buttonIDs[] = { IDC_UNIT_TYPE1_BUTTON, IDC_UNIT_TYPE2_BUTTON, IDC_UNIT_TYPE3_BUTTON, IDC_UNIT_TYPE4_BUTTON, 
-						IDC_UNIT_TYPE5_BUTTON, IDC_UNIT_TYPE6_BUTTON, IDC_UNIT_TYPE7_BUTTON };
-	
-	for (int unitIndex = 0; unitIndex < 7; ++unitIndex) {
-		pWnd = GetDlgItem(minIDs[unitIndex]);
-		if (pWnd) pWnd->ShowWindow(SW_HIDE);
-	
-		pWnd = GetDlgItem(maxIDs[unitIndex]);
-		if (pWnd) pWnd->ShowWindow(SW_HIDE);
-	
-		pWnd = GetDlgItem(typeIDs[unitIndex]);
-		if (pWnd) pWnd->ShowWindow(SW_HIDE);
-	
-		pWnd = GetDlgItem(buttonIDs[unitIndex]);
-		if (pWnd) pWnd->ShowWindow(SW_HIDE);
-	}
 		
 
 	pWnd = GetDlgItem(IDC_MAX);
@@ -316,6 +296,7 @@ void TeamIdentity::OnTimer(UINT nIDEvent)
     CDialog::OnTimer(nIDEvent);
 }
 
+std::vector<CString> m_unitComboCache;
 void TeamIdentity::loadUnitsInfo(int idcMinUnit, NameKeyType keyMinUnit, 
 								int idcMaxUnit, NameKeyType keyMaxUnit,
 								int idcUnitType, NameKeyType keyUnitType)
@@ -334,33 +315,36 @@ void TeamIdentity::loadUnitsInfo(int idcMinUnit, NameKeyType keyMinUnit,
 	if (type.isEmpty()) type = NONE_STRING;
 
 	CComboBox *pCombo = (CComboBox *)GetDlgItem(idcUnitType);
-	pCombo->ResetContent();
+	// pCombo->ResetContent();
 
 	Bool found = false;
 
 	// add entries from the thing factory as the available UNITS to use
 	const ThingTemplate *tTemplate;
-	for( tTemplate = TheThingFactory->firstTemplate();
-			 tTemplate;
-			 tTemplate = tTemplate->friend_getNextTemplate() ) {
-
-		// next tier uses the editor sorting bits that design can specify in the INI
-		// fuck this rules
-		EditorSortingType sort = tTemplate->getEditorSorting();
-		// if (( sort != ES_VEHICLE ) && (sort != ES_INFANTRY)) continue; // <<<--- fuck this line in particular
-
-		Int ndx = pCombo->AddString(tTemplate->getName().str());
-		if (type == tTemplate->getName()) {
-			found = true;
+	pCombo->SetRedraw(FALSE);
+	// pCombo->ResetContent();
+		if (m_unitComboCache.empty()) {
+			for (tTemplate = TheThingFactory->firstTemplate();
+					tTemplate;
+					tTemplate = tTemplate->friend_getNextTemplate()) {
+				m_unitComboCache.push_back(tTemplate->getName().str());
+			}
+			// m_unitComboCache.push_back(NONE_STRING);
+		}
+		pCombo->ResetContent();
+		for (int i = 0; i < m_unitComboCache.size(); ++i) {
+			Int ndx = pCombo->AddString(m_unitComboCache[i]);
+			if (type == m_unitComboCache[i]) {
+				pCombo->SetCurSel(ndx);
+				found = true;
+			}
+		}
+		Int ndx = pCombo->AddString(NONE_STRING);
+		if (!found) {
 			pCombo->SetCurSel(ndx);
 		}
-	}
-
-	Int ndx = pCombo->AddString(NONE_STRING);
-	if (!found) {
-		pCombo->SetCurSel(ndx);
-	}
-
+	pCombo->SetRedraw(TRUE);
+	pCombo->Invalidate();
 }
 
 
