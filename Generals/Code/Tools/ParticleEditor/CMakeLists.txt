@@ -42,7 +42,6 @@ target_link_libraries(g_particleeditor PRIVATE
     corei_libraries_source_wwvegas
     corei_libraries_source_wwvegas_wwlib
     d3d8lib
-    dbghelplib
     gi_gameengine_include
     gi_always
     gi_libraries_source_wwvegas
