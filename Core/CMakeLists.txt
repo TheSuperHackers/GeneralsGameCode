@@ -12,6 +12,7 @@ target_include_directories(corei_libraries_source_wwvegas_wwlib INTERFACE "Libra
 target_link_libraries(corei_always INTERFACE
     core_utility
     corei_libraries_include
+    resources
 )
 
 # Set where the build results will end up

@@ -31,7 +31,7 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/GeneratedVersion.h
 "#pragma once
 
 #define VERSION_LOCALBUILDNUM 0
-#define VERSION_BUILDUSER \"Someone\"
+#define VERSION_BUILDUSER \"The Super Hackers\"
 #define VERSION_BUILDLOC \"Someplace\"
 "
 )

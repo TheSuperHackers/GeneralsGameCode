@@ -31,6 +31,8 @@
 #ifndef __VERSION_H__
 #define __VERSION_H__
 
+#include <time.h>
+
 /** 
  * The Version class formats the version number into integer and string
  * values for different parts of the game.
@@ -40,16 +42,26 @@ class Version
 {
 public:
 	Version();
-	UnsignedInt getVersionNumber( void );						///< Return a 4-byte integer suitable for WOLAPI
-	AsciiString getAsciiVersion( void );						///< Return a human-readable version number
-	UnicodeString getUnicodeVersion( void );				///< Return a human-readable version number
-	UnicodeString getFullUnicodeVersion( void );		///< Return a human-readable version number
-	AsciiString getAsciiBuildTime( void );					///< Return a formated date/time string for build time
-	UnicodeString getUnicodeBuildTime( void );			///< Return a formated date/time string for build time
-	AsciiString getAsciiBuildLocation( void );			///< Return a string with the build location
-	UnicodeString getUnicodeBuildLocation( void );	///< Return a string with the build location
-	AsciiString getAsciiBuildUser( void );					///< Return a string with the build user
-	UnicodeString getUnicodeBuildUser( void );			///< Return a string with the build user
+
+	UnsignedInt getVersionNumber( void ) const;           ///< Return a 4-byte integer suitable for WOLAPI
+	AsciiString getAsciiVersion( void ) const;            ///< Return a human-readable version number
+	UnicodeString getUnicodeVersion( void ) const;        ///< Return a human-readable version number
+	AsciiString getAsciiBuildTime( void ) const;          ///< Return a formated date/time string for build time
+	UnicodeString getUnicodeBuildTime( void ) const;      ///< Return a formated date/time string for build time
+	AsciiString getAsciiBuildLocation( void ) const;      ///< Return a string with the build location
+	UnicodeString getUnicodeBuildLocation( void ) const;  ///< Return a string with the build location
+	AsciiString getAsciiBuildUser( void ) const;          ///< Return a string with the build user
+	UnicodeString getUnicodeBuildUser( void ) const;      ///< Return a string with the build user
+
+	static Int getGitRevision();
+	static time_t getGitCommitTime();
+	AsciiString getAsciiGitRevision( void ) const { return m_asciiGitRevision; }
+	AsciiString getAsciiGitVersion( void ) const { return m_asciiGitVersion; }
+	AsciiString getAsciiGitCommitTime( void ) const { return m_asciiGitCommitTime; }
+	UnicodeString getUnicodeGitRevision( void ) const { return m_unicodeGitRevision; }
+	UnicodeString getUnicodeGitVersion( void ) const { return m_unicodeGitVersion; }
+	UnicodeString getUnicodeGitCommitTime( void ) const { return m_unicodeGitCommitTime; }
+	UnicodeString getUnicodeGameAndGitVersion( void ) const;
 
 	Bool showFullVersion( void ) { return m_showFullVersion; }
 	void setShowFullVersion( Bool val ) { m_showFullVersion = val; }
@@ -57,6 +69,14 @@ public:
 	void setVersion(Int major, Int minor, Int buildNum,
 		Int localBuildNum, AsciiString user, AsciiString location,
 		AsciiString buildTime, AsciiString buildDate); ///< Set version info
+
+private:
+	static AsciiString buildAsciiGitRevision();
+	static AsciiString buildAsciiGitVersion();
+	static AsciiString buildAsciiGitCommitTime();
+	static UnicodeString buildUnicodeGitRevision();
+	static UnicodeString buildUnicodeGitVersion();
+	static UnicodeString buildUnicodeGitCommitTime();
 
 private:
 	Int m_major;
@@ -67,6 +87,12 @@ private:
 	AsciiString m_buildUser;
 	AsciiString m_buildTime;
 	AsciiString m_buildDate;
+	AsciiString m_asciiGitRevision;
+	AsciiString m_asciiGitVersion;
+	AsciiString m_asciiGitCommitTime;
+	UnicodeString m_unicodeGitRevision;
+	UnicodeString m_unicodeGitVersion;
+	UnicodeString m_unicodeGitCommitTime;
 	Bool m_showFullVersion;
 };
 
