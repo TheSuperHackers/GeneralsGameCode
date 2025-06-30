@@ -2488,7 +2488,7 @@ void InGameUI::createCommandHint( const GameMessage *msg )
 	{
 		const Object* obj = draw->getObject();
 		Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if ENABLE_CONFIGURABLE_SHROUD
 		ObjectShroudStatus ss = (!obj || !TheGlobalData->m_shroudOn) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
 #else
 		ObjectShroudStatus ss = (!obj) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
