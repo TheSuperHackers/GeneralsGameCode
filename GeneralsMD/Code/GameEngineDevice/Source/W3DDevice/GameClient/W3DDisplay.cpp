@@ -481,9 +481,7 @@ W3DDisplay::~W3DDisplay()
 
 }  // end ~W3DDisplay
 
-// TheSuperHackers @tweak valeronm 20/03/2025 There was slightly different code for checking supported resolutions
-// in Generals and Generals ZH but in both places it was only allowing resolutions with 4:3 aspect ratio. The tweaked
-// code is now the same in both codebases and doesn't check aspect ratio.
+// TheSuperHackers @tweak valeronm 20/03/2025 No longer filters resolutions by a 4:3 aspect ratio.
 inline Bool isResolutionSupported(const ResolutionDescClass &res)
 {
 	static const Int minBitDepth = 24;
