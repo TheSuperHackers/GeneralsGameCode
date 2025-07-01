@@ -238,9 +238,9 @@ Bool AIGroup::remove( Object *obj )
 	// list has changed, properties need recomputation
 	m_dirty = true;
 
-	// if the group is empty, no-one is using it any longer, so destroy it
 	if (isEmpty()) {
 #if RETAIL_COMPATIBLE_AIGROUP
+		// if the group is empty, no-one is using it any longer, so destroy it
 		TheAI->destroyGroup( this );
 #endif
 		return TRUE;
