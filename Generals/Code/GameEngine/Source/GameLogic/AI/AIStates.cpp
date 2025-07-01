@@ -4053,8 +4053,12 @@ StateReturnType AIFollowWaypointPathState::update()
 	if (m_moveAsGroup) {
 		if (obj->getControllingPlayer()->isSkirmishAIPlayer()) {
 			Team *team = obj->getTeam();
-			AIGroup *group = TheAI->createGroup();
+			AIGroupPtr group = TheAI->createGroup();
+#if RETAIL_COMPATIBLE_AIGROUP
 			team->getTeamAsAIGroup(group);
+#else
+			team->getTeamAsAIGroup(group.Peek());
+#endif
 
 			Coord3D pos;
 			group->getCenter(&pos);

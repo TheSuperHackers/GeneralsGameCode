@@ -92,6 +92,9 @@ AIGroup::~AIGroup()
 {
 //	DEBUG_LOG(("***AIGROUP %x is being destructed.\n", this));
 	// disassociate each member from the group
+
+#if RETAIL_COMPATIBLE_AIGROUP
+
 	std::list<Object *>::iterator i;
 	for( i = m_memberList.begin(); i != m_memberList.end(); /* empty */ )
 	{
@@ -106,6 +109,13 @@ AIGroup::~AIGroup()
 			i = m_memberList.erase(i);
 		}
 	}
+
+#else
+
+	removeAll();
+
+#endif
+
 	if (m_groundPath) {
 		deleteInstance(m_groundPath);
 		m_groundPath = NULL;
@@ -205,6 +215,11 @@ void AIGroup::add( Object *obj )
  */
 Bool AIGroup::remove( Object *obj )
 {
+#if !RETAIL_COMPATIBLE_AIGROUP
+	// Defer deletion until the end of this function.
+	AIGroupPtr refThis = AIGroupPtr::Create_AddRef(this);
+#endif
+
 //	DEBUG_LOG(("***AIGROUP %x is removing Object %x (%s).\n", this, obj, obj->getTemplate()->getName().str()));
 	std::list<Object *>::iterator i = std::find( m_memberList.begin(), m_memberList.end(), obj );
 
@@ -225,11 +240,38 @@ Bool AIGroup::remove( Object *obj )
 
 	// if the group is empty, no-one is using it any longer, so destroy it
 	if (isEmpty()) {
+#if RETAIL_COMPATIBLE_AIGROUP
 		TheAI->destroyGroup( this );
+#endif
 		return TRUE;
 	}
 
 	return FALSE;
+}
+
+/**
+ * Remove all objects from group
+ */
+void AIGroup::removeAll( void )
+{
+#if !RETAIL_COMPATIBLE_AIGROUP
+	// Defer deletion until the end of this function.
+	AIGroupPtr refThis = AIGroupPtr::Create_AddRef(this);
+#endif
+
+	std::list<Object *> memberList;
+	memberList.swap(m_memberList);
+	m_memberListSize = 0;
+
+	std::list<Object *>::iterator i;
+	for ( i = memberList.begin(); i != memberList.end(); ++i )
+	{
+		Object *member = *i;
+		if (member)
+			member->leaveGroup();
+	}
+
+	m_dirty = true;
 }
 
 /**
@@ -2722,6 +2764,11 @@ void AIGroup::groupCheer( CommandSourceType cmdSource )
 	*/
 void AIGroup::groupSell( CommandSourceType cmdSource )
 {
+#if !RETAIL_COMPATIBLE_AIGROUP
+	// Defer deletion until the end of this function.
+	AIGroupPtr refThis = AIGroupPtr::Create_AddRef(this);
+#endif
+
 	std::list<Object *>::iterator i;
 	std::vector<Object *> groupObjectsCopy;
 	groupObjectsCopy.reserve(m_memberListSize);
