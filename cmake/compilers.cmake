@@ -36,6 +36,13 @@ if (NOT IS_VS6_BUILD)
         # Enforce strict __cplusplus version
         add_compile_options(/Zc:__cplusplus)
     endif()
+else()
+    # Define two pools: 'compile' with plenty of slots, 'link' with just one
+    set_property(GLOBAL PROPERTY JOB_POOLS compile=0 link=1)
+    # Tell CMake that all compile steps go into 'compile'
+    set(CMAKE_JOB_POOL_COMPILE compile)
+    # and all link steps go into 'link' (so only one link ever runs since vc6 can't handle multithreaded linking)
+    set(CMAKE_JOB_POOL_LINK link)
 endif()
 
 if(RTS_BUILD_OPTION_ASAN)
