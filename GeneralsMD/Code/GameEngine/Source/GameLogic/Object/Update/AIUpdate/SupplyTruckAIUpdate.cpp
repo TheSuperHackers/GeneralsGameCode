@@ -244,6 +244,16 @@ Real SupplyTruckAIUpdate::getWarehouseScanDistance() const
 	return getSupplyTruckAIUpdateModuleData()->m_warehouseScanDistance;
 }
 
+void SupplyTruckAIUpdate::aiDoCommand(const AICommandParms* parms)
+{
+	if (parms->m_cmdSource == CMD_FROM_PLAYER)
+	{
+		setForceWantingState(FALSE);
+	}
+
+	AIUpdateInterface::aiDoCommand(parms);
+}
+
 // ------------------------------------------------------------------------------------------------
 /** CRC */
 // ------------------------------------------------------------------------------------------------

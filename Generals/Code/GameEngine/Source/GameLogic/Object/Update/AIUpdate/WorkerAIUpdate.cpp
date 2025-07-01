@@ -396,6 +396,7 @@ Object *WorkerAIUpdate::construct( const ThingTemplate *what,
 
 	// leave the supply truck state and now behave like a dozer.
 	exitingSupplyTruckState();
+	setForceWantingState(FALSE);
 
 	// take the required money away from the player
 	if( isRebuild == FALSE )
@@ -673,6 +674,7 @@ void WorkerAIUpdate::newTask( DozerTask task, Object* target )
 			getObject()->getAIUpdateInterface()->aiIdle(CMD_FROM_AI);
 		}
 		m_workerMachine->setState( AS_DOZER );
+		setForceWantingState(FALSE);
 		// To clarify, I leave supply truck mode when I notice I am doing something not supply
 		// truck related.  When given a construct command, I wait to do anything until I notice
 		// I'm not busy.  Both states are being polite, so I must force the switch.
@@ -1037,7 +1039,10 @@ void WorkerAIUpdate::aiDoCommand(const AICommandParms* parms)
 
 			// when a player issues commands, this will cause the dozer to re-evaluate what it's doing
 			if( parms->m_cmdSource == CMD_FROM_PLAYER )
+			{
 				m_dozerMachine->resetToDefaultState();
+				setForceWantingState(FALSE);
+			}
 			break;
 
 		}

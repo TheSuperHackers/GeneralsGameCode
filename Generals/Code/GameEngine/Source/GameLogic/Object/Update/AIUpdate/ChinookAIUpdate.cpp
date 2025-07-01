@@ -235,6 +235,7 @@ public:
 		{
 			// A chinook given transport duty loses his supplies.
 			while( ai->loseOneBox() );
+			ai->setForceWantingState(FALSE);
 		}
 
 		// kill any drift...
