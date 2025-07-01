@@ -328,22 +328,17 @@ UpdateSleepTime TeleporterAIUpdate::doLocomotor(void)
 	if (goalObj != NULL) {
 		targetPos = *goalObj->getPosition();
 		//goalPos = targetPos;  //This should be the same anyways
-		DEBUG_LOG((">>> TPAI - doLoc: goalOBJPos (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
-		distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_BOUNDINGSPHERE_2D, &dir);
+		//DEBUG_LOG((">>> TPAI - doLoc: goalOBJPos (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
+		//if (isAttacking())
+			distSq = ThePartitionManager->getDistanceSquared(obj, goalObj, FROM_BOUNDINGSPHERE_2D, &dir);
+		//else
+		//	distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
 	}
 	else if (goalPos != NULL && !(goalPos->x == 0 && goalPos->y == 0 && goalPos->z == 0)) {
 		targetPos = *goalPos;
-		DEBUG_LOG((">>> TPAI - doLoc: goalPOS (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
+		//DEBUG_LOG((">>> TPAI - doLoc: goalPOS (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
 		distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
 	}
-	//else if (getGuardLocation() != NULL && !(getGuardLocation()->x == 0 && getGuardLocation()->y == 0 && getGuardLocation()->z == 0)) {  // getStateMachine()->isInGuardIdleState()
-	//	targetPos = *getGuardLocation();
-	//	TheAI->pathfinder()->adjustDestination(obj, getLocomotorSet(), &targetPos);
-	//	distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
-	//	DEBUG_LOG((">>> TPAI - doLoc: goalPos GUARD (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
-	//	if (getStateMachine()->isInGuardIdleState()) {
-	//		requiredRange = 25.0f; // Allow extra range to give some room for large groups guarding
-	//	}
 	else if (getStateMachine()->getCurrentStateID() == AI_GUARD) {
 		if (isAttacking()) {
 			AIGuardMachine* guardMachine = getStateMachine()->getGuardMachine();
@@ -356,50 +351,49 @@ UpdateSleepTime TeleporterAIUpdate::doLocomotor(void)
 						goalPos = goalObj->getPosition();
 						targetPos = *goalPos;
 						
-						DEBUG_LOG((">>> TPAI - doLoc: goalPos GUARD NEMESIS (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
-						distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_BOUNDINGSPHERE_2D, &dir);
+						//DEBUG_LOG((">>> TPAI - doLoc: goalPos GUARD NEMESIS (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
+						//distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_BOUNDINGSPHERE_2D, &dir);
+						distSq = ThePartitionManager->getDistanceSquared(obj, goalObj, FROM_BOUNDINGSPHERE_2D, &dir);
 					}
 				}
 			}
 		}
 		else if (getGuardLocation() != NULL && !(getGuardLocation()->x == 0 && getGuardLocation()->y == 0 && getGuardLocation()->z == 0)) {  // getStateMachine()->isInGuardIdleState()
 			targetPos = *getGuardLocation();
-			TheAI->pathfinder()->adjustDestination(obj, getLocomotorSet(), &targetPos);
+			//TheAI->pathfinder()->adjustDestination(obj, getLocomotorSet(), &targetPos);
 			distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
-			DEBUG_LOG((">>> TPAI - doLoc: goalPos GUARD (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
+			//DEBUG_LOG((">>> TPAI - doLoc: goalPos GUARD (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
 			if (getStateMachine()->isInGuardIdleState()) {
 				requiredRange = 25.0f; // Allow extra range to give some room for large groups guarding
 			}
 		}
 	}
-	//else if (isAttackPath() && (path != NULL)) {
-	//	targetPos = *path->getFirstNode()->getPosition();
-	//	DEBUG_LOG((">>> TPAI - doLoc: PATH pos (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
-	//	distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_BOUNDINGSPHERE_2D, &dir);
 	else {
 		DEBUG_LOG((">>> TPAI - doLoc: GOAL POS AND OBJ ARE NULL??\n"));
 		return UPDATE_SLEEP_FOREVER;
 	}
 
-	Real targetAngle = atan2(dir.y, dir.x);
-	dir.normalize();
+	if (getStateMachine()->getCurrentStateID() == AI_ENTER) {
+		requiredRange = 15.0f;
+	}
 
-	Real dist = sqrt(distSq);
+	DEBUG_LOG((">>> TPAI - doLoc: LocomotorGoalType = %d, AI STATE = %s (%d)\n", getLocomotorGoalType(), getStateMachine()->getCurrentStateName(), getStateMachine()->getCurrentStateID()));
 
 	Real RANGE_MARGIN = 5.0f;   // We calculate distance this much shorter than weapon range
 	Real TELEPORT_DIST_MARGIN = 5.0f;  // We teleport this much closer than needed
 
-
-	DEBUG_LOG((">>> TPAI - doLoc: LocomotorGoalType = %d, AI STATE = %s (%d)\n", getLocomotorGoalType(), getStateMachine()->getCurrentStateName(), getStateMachine()->getCurrentStateID()));
+	// Get initial dist and dir
+	// distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
+	Real dist = sqrt(distSq);
+	Real targetAngle = atan2(dir.y, dir.x);
+	dir.normalize();
 
 	// We are within min range
 	if (dist <= d->m_minDistance || dist <= requiredRange) {
 		return AIUpdateInterface::doLocomotor();
 	}
 
-	// TODO: IF object is already in attacking position and can fire, do not adjust any positions?!
-	// But still check if position is valid!
-
+	//When we attack, we attempt to teleport into range
 	if (isAttacking()) {
 		// requiredRange = obj->getLargestWeaponRange();
 		Weapon* weap = obj->getCurrentWeapon();
@@ -433,17 +427,43 @@ UpdateSleepTime TeleporterAIUpdate::doLocomotor(void)
 
 		//recompute distance and angle
 		distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
-		//targetAngle = atan2(dir.y, dir.x);
+		////targetAngle = atan2(dir.y, dir.x);
 		dist = sqrt(distSq);
 
-		DEBUG_LOG((">>> TPAI - doLoc: isAttacking, dist = %f, reqRange = %f\n", dist, requiredRange));
+		//DEBUG_LOG((">>> TPAI - doLoc: isAttacking, dist = %f, reqRange = %f\n", dist, requiredRange));
 		//m_inAttackPos = TRUE;
 	}
-	/*else {
-		m_inAttackPos = FALSE;
-	}*/
-	
+	//else if( /*use special power?*/) {
+	//	//same as with attacks, try to get into range
+	//}
+	else if (getStateMachine()->getCurrentStateID() == AI_ENTER) {
+		// We need to correct the position to the outer bounding box of the structure
+		//Adjust target to required distance
+		requiredRange = goalObj->getGeometryInfo().getBoundingCircleRadius();
+		if (requiredRange > 0) {
+			dir.scale(min(dist, requiredRange));
+			targetPos.sub(&dir);
+			targetPos.z = TheTerrainLogic->getGroundHeight(targetPos.x, targetPos.y);
+		}
+		TheAI->pathfinder()->adjustDestination(obj, getLocomotorSet(), &targetPos);
 
+		//recompute distance and angle
+		distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
+		targetAngle = atan2(dir.y, dir.x);
+		dist = sqrt(distSq);
+	}
+	else {
+		TheAI->pathfinder()->adjustDestination(obj, getLocomotorSet(), &targetPos);
+
+		//recompute distance and angle
+		distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
+		targetAngle = atan2(dir.y, dir.x);
+		dist = sqrt(distSq);
+
+		//TODO: if we target an object, have the angle changed to look at the object
+	}
+
+	
 
 	DEBUG_LOG((">>> TPAI - doLoc: teleport with dist = %f\n", dist));
 	doTeleport(targetPos, targetAngle, dist);
