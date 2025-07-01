@@ -36,6 +36,7 @@
 #include "GameClient/Drawable.h"
 #include "GameClient/FXList.h"
 #include "GameLogic/AI.h"
+#include "GameLogic/AIGuard.h"
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/Module/AIUpdate.h"
 #include "GameLogic/Damage.h"
@@ -312,26 +313,71 @@ UpdateSleepTime TeleporterAIUpdate::doLocomotor(void)
 	Coord3D dir;
 	Real distSq;
 
+	// TODO: Check states
+	// - (generic) Moving
+	// - Attacking
+	// - Guard
+	// -- GuardAttack
+	// -- Move to Object
+	// - Enter
+
 	//Path* path = getPath();
 
 	// Get TargetPos
-	//if (isAttackPath() && (path != NULL)) {
-	//if (path != NULL) {
-	//	targetPos = *path->getFirstNode()->getPosition();
-	//	DEBUG_LOG((">>> TPAI - doLoc: PATH pos (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
-	//	distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_BOUNDINGSPHERE_2D, &dir);
-	//}else
+
 	if (goalObj != NULL) {
 		targetPos = *goalObj->getPosition();
+		//goalPos = targetPos;  //This should be the same anyways
 		DEBUG_LOG((">>> TPAI - doLoc: goalOBJPos (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
 		distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_BOUNDINGSPHERE_2D, &dir);
 	}
-	else if (goalPos != NULL) {
+	else if (goalPos != NULL && !(goalPos->x == 0 && goalPos->y == 0 && goalPos->z == 0)) {
 		targetPos = *goalPos;
 		DEBUG_LOG((">>> TPAI - doLoc: goalPOS (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
 		distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
 	}
+	//else if (getGuardLocation() != NULL && !(getGuardLocation()->x == 0 && getGuardLocation()->y == 0 && getGuardLocation()->z == 0)) {  // getStateMachine()->isInGuardIdleState()
+	//	targetPos = *getGuardLocation();
+	//	TheAI->pathfinder()->adjustDestination(obj, getLocomotorSet(), &targetPos);
+	//	distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
+	//	DEBUG_LOG((">>> TPAI - doLoc: goalPos GUARD (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
+	//	if (getStateMachine()->isInGuardIdleState()) {
+	//		requiredRange = 25.0f; // Allow extra range to give some room for large groups guarding
+	//	}
+	else if (getStateMachine()->getCurrentStateID() == AI_GUARD) {
+		if (isAttacking()) {
+			AIGuardMachine* guardMachine = getStateMachine()->getGuardMachine();
+			if (guardMachine != NULL) {
+				ObjectID nemID = guardMachine->getNemesisID();
+				if (nemID != INVALID_ID) {
+					Object* nemesis = TheGameLogic->findObjectByID(nemID);
+					if (nemesis != NULL) {
+						goalObj = nemesis;
+						goalPos = goalObj->getPosition();
+						targetPos = *goalPos;
+						
+						DEBUG_LOG((">>> TPAI - doLoc: goalPos GUARD NEMESIS (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
+						distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_BOUNDINGSPHERE_2D, &dir);
+					}
+				}
+			}
+		}
+		else if (getGuardLocation() != NULL && !(getGuardLocation()->x == 0 && getGuardLocation()->y == 0 && getGuardLocation()->z == 0)) {  // getStateMachine()->isInGuardIdleState()
+			targetPos = *getGuardLocation();
+			TheAI->pathfinder()->adjustDestination(obj, getLocomotorSet(), &targetPos);
+			distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
+			DEBUG_LOG((">>> TPAI - doLoc: goalPos GUARD (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
+			if (getStateMachine()->isInGuardIdleState()) {
+				requiredRange = 25.0f; // Allow extra range to give some room for large groups guarding
+			}
+		}
+	}
+	//else if (isAttackPath() && (path != NULL)) {
+	//	targetPos = *path->getFirstNode()->getPosition();
+	//	DEBUG_LOG((">>> TPAI - doLoc: PATH pos (0) = %f, %f, %f\n", targetPos.x, targetPos.y, targetPos.z));
+	//	distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_BOUNDINGSPHERE_2D, &dir);
 	else {
+		DEBUG_LOG((">>> TPAI - doLoc: GOAL POS AND OBJ ARE NULL??\n"));
 		return UPDATE_SLEEP_FOREVER;
 	}
 
@@ -344,10 +390,10 @@ UpdateSleepTime TeleporterAIUpdate::doLocomotor(void)
 	Real TELEPORT_DIST_MARGIN = 5.0f;  // We teleport this much closer than needed
 
 
-	DEBUG_LOG((">>> TPAI - doLoc: LocomotorGoalType = %d\n", getLocomotorGoalType()));
+	DEBUG_LOG((">>> TPAI - doLoc: LocomotorGoalType = %d, AI STATE = %s (%d)\n", getLocomotorGoalType(), getStateMachine()->getCurrentStateName(), getStateMachine()->getCurrentStateID()));
 
 	// We are within min range
-	if (dist <= d->m_minDistance) {
+	if (dist <= d->m_minDistance || dist <= requiredRange) {
 		return AIUpdateInterface::doLocomotor();
 	}
 
