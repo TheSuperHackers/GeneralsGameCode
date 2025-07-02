@@ -383,7 +383,7 @@ void GameTextManager::init( void )
 		UnicodeString version;
 		version.format(L" %s %s",
 			TheVersion->getUnicodeGameAndGitVersion().str(),
-			TheVersion->getUnicodeBuildUser().str()
+			TheVersion->getUnicodeBuildUserOrGitCommitAuthorName().str()
 		);
 		ourName.concat(version);
 	}

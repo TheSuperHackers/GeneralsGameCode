@@ -38,44 +38,61 @@
  * values for different parts of the game.
  * @todo: increment build number on compile, and stamp exe with username
  */
+// TheSuperHackers @tweak The Version class now also provides Git information
+// alongside the original Version information.
 class Version
 {
 public:
 	Version();
 
-	UnsignedInt getVersionNumber( void ) const;           ///< Return a 4-byte integer suitable for WOLAPI
-	AsciiString getAsciiVersion( void ) const;            ///< Return a human-readable version number
-	UnicodeString getUnicodeVersion( void ) const;        ///< Return a human-readable version number
-	AsciiString getAsciiBuildTime( void ) const;          ///< Return a formated date/time string for build time
-	UnicodeString getUnicodeBuildTime( void ) const;      ///< Return a formated date/time string for build time
-	AsciiString getAsciiBuildLocation( void ) const;      ///< Return a string with the build location
-	UnicodeString getUnicodeBuildLocation( void ) const;  ///< Return a string with the build location
-	AsciiString getAsciiBuildUser( void ) const;          ///< Return a string with the build user
-	UnicodeString getUnicodeBuildUser( void ) const;      ///< Return a string with the build user
+	UnsignedInt getVersionNumber() const;           ///< Return a 4-byte integer suitable for WOLAPI
 
-	static Int getGitRevision();
-	static time_t getGitCommitTime();
-	AsciiString getAsciiGitRevision( void ) const { return m_asciiGitRevision; }
-	AsciiString getAsciiGitVersion( void ) const { return m_asciiGitVersion; }
-	AsciiString getAsciiGitCommitTime( void ) const { return m_asciiGitCommitTime; }
-	UnicodeString getUnicodeGitRevision( void ) const { return m_unicodeGitRevision; }
-	UnicodeString getUnicodeGitVersion( void ) const { return m_unicodeGitVersion; }
-	UnicodeString getUnicodeGitCommitTime( void ) const { return m_unicodeGitCommitTime; }
-	UnicodeString getUnicodeGameAndGitVersion( void ) const;
+	AsciiString getAsciiVersion() const;            ///< Return a human-readable version number
+	UnicodeString getUnicodeVersion() const;        ///< Return a human-readable version number. Is decorated with localized string
 
-	Bool showFullVersion( void ) { return m_showFullVersion; }
+	AsciiString getAsciiBuildTime() const;          ///< Return a formated date/time string for build time
+	UnicodeString getUnicodeBuildTime() const;      ///< Return a formated date/time string for build time. Is decorated with localized string
+
+	AsciiString getAsciiBuildLocation() const;      ///< Return a string with the build location
+	UnicodeString getUnicodeBuildLocation() const;  ///< Return a string with the build location. Is decorated with localized string
+
+	AsciiString getAsciiBuildUser() const;          ///< Return a string with the build user
+	UnicodeString getUnicodeBuildUser() const;      ///< Return a string with the build user. Is decorated with localized string
+
+	static Int getGitRevision();                    ///< Returns the total git commit count as a number
+	static time_t getGitCommitTime();               ///< Returns the last git commit time as a UTC timestamp
+	static const char* getGitCommitAuthorName();    ///< Returns the last git commit author name
+
+	AsciiString getAsciiGitRevision() const;        ///< Returns the total git commit count. Is prefixed with ~ if there were uncommitted changes.
+	UnicodeString getUnicodeGitRevision() const;    ///< Returns the total git commit count. Is prefixed with ~ if there were uncommitted changes.
+
+	AsciiString getAsciiGitVersion() const;         ///< Returns the last git commit tag or hash. Is prefixed with ~ if there were uncommitted changes.
+	UnicodeString getUnicodeGitVersion() const;     ///< Returns the last git commit tag or hash. Is prefixed with ~ if there were uncommitted changes.
+
+	AsciiString getAsciiGitCommitTime() const;      ///< Returns the last git commit time in YYYY-mm-dd HH:MM:SS format
+	UnicodeString getUnicodeGitCommitTime() const;  ///< Returns the last git commit time in YYYY-mm-dd HH:MM:SS format
+
+	AsciiString getAsciiGameAndGitVersion() const;     ///< Returns the game and git version
+	UnicodeString getUnicodeGameAndGitVersion() const; ///< Returns the game and git version. Is decorated with localized string
+
+	AsciiString getAsciiBuildUserOrGitCommitAuthorName() const;
+	UnicodeString getUnicodeBuildUserOrGitCommitAuthorName() const; ///< Is decorated with localized string
+
+	Bool showFullVersion() const { return m_showFullVersion; }
 	void setShowFullVersion( Bool val ) { m_showFullVersion = val; }
 
 	void setVersion(Int major, Int minor, Int buildNum,
 		Int localBuildNum, AsciiString user, AsciiString location,
-		AsciiString buildTime, AsciiString buildDate); ///< Set version info
+		AsciiString buildTime, AsciiString buildDate);
 
 private:
 	static AsciiString buildAsciiGitRevision();
-	static AsciiString buildAsciiGitVersion();
-	static AsciiString buildAsciiGitCommitTime();
 	static UnicodeString buildUnicodeGitRevision();
+
+	static AsciiString buildAsciiGitVersion();
 	static UnicodeString buildUnicodeGitVersion();
+
+	static AsciiString buildAsciiGitCommitTime();
 	static UnicodeString buildUnicodeGitCommitTime();
 
 private:
@@ -96,6 +113,6 @@ private:
 	Bool m_showFullVersion;
 };
 
-extern Version *TheVersion;	///< The Version singleton
+extern Version *TheVersion;
 
 #endif // __VERSION_H__

@@ -1417,7 +1417,7 @@ static void initLabelVersion()
 				TheVersion->getUnicodeGitCommitTime().str(),
 				TheGlobalData->m_exeCRC,
 				TheGlobalData->m_iniCRC,
-				TheVersion->getUnicodeBuildUser().str()
+				TheVersion->getUnicodeBuildUserOrGitCommitAuthorName().str()
 			);
 			GadgetStaticTextSetText( labelVersion, version );
 		}
