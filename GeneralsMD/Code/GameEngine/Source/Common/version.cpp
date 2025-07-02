@@ -43,11 +43,11 @@ Version::Version()
 	m_localBuildNum = 0;
 	m_buildUser = AsciiString::TheEmptyString;
 	m_buildLocation = AsciiString::TheEmptyString;
-	m_asciiGitRevision = buildAsciiGitRevision();
-	m_asciiGitVersion = buildAsciiGitVersion();
+	m_asciiGitCommitCount = buildAsciiGitCommitCount();
+	m_asciiGitTagOrHash = buildAsciiGitTagOrHash();
 	m_asciiGitCommitTime = buildAsciiGitCommitTime();
-	m_unicodeGitRevision = buildUnicodeGitRevision();
-	m_unicodeGitVersion = buildUnicodeGitVersion();
+	m_unicodeGitCommitCount = buildUnicodeGitCommitCount();
+	m_unicodeGitTagOrHash = buildUnicodeGitTagOrHash();
 	m_unicodeGitCommitTime = buildUnicodeGitCommitTime();
 #if defined RTS_DEBUG || defined RTS_INTERNAL
 	m_showFullVersion = TRUE;
@@ -208,7 +208,7 @@ UnicodeString Version::getUnicodeBuildUser() const
 	return build;
 }
 
-Int Version::getGitRevision()
+Int Version::getGitCommitCount()
 {
 	return GitRevision;
 }
@@ -223,24 +223,24 @@ const char* Version::getGitCommitAuthorName()
 	return GitCommitAuthorName;
 }
 
-AsciiString Version::getAsciiGitRevision() const
+AsciiString Version::getAsciiGitCommitCount() const
 {
-	return m_asciiGitRevision;
+	return m_asciiGitCommitCount;
 }
 
-UnicodeString Version::getUnicodeGitRevision() const
+UnicodeString Version::getUnicodeGitCommitCount() const
 {
-	return m_unicodeGitRevision;
+	return m_unicodeGitCommitCount;
 }
 
-AsciiString Version::getAsciiGitVersion() const
+AsciiString Version::getAsciiGitTagOrHash() const
 {
-	return m_asciiGitVersion;
+	return m_asciiGitTagOrHash;
 }
 
-UnicodeString Version::getUnicodeGitVersion() const
+UnicodeString Version::getUnicodeGitTagOrHash() const
 {
-	return m_unicodeGitVersion;
+	return m_unicodeGitTagOrHash;
 }
 
 AsciiString Version::getAsciiGitCommitTime() const
@@ -260,14 +260,14 @@ AsciiString Version::getAsciiGameAndGitVersion() const
 	{
 		str.format("%s R %s %s",
 			getAsciiVersion().str(),
-			getAsciiGitRevision().str(),
-			getAsciiGitVersion().str());
+			getAsciiGitCommitCount().str(),
+			getAsciiGitTagOrHash().str());
 	}
 	else
 	{
 		str.format("%s R %s",
 			getAsciiVersion().str(),
-			getAsciiGitRevision().str());
+			getAsciiGitCommitCount().str());
 	}
 	return str;
 }
@@ -279,14 +279,14 @@ UnicodeString Version::getUnicodeGameAndGitVersion() const
 	{
 		str.format(L"%s R %s %s",
 			getUnicodeVersion().str(),
-			getUnicodeGitRevision().str(),
-			getUnicodeGitVersion().str());
+			getUnicodeGitCommitCount().str(),
+			getUnicodeGitTagOrHash().str());
 	}
 	else
 	{
 		str.format(L"%s R %s",
 			getUnicodeVersion().str(),
-			getUnicodeGitRevision().str());
+			getUnicodeGitCommitCount().str());
 	}
 	return str;
 }
@@ -318,7 +318,7 @@ UnicodeString Version::getUnicodeBuildUserOrGitCommitAuthorName() const
 	return str;
 }
 
-AsciiString Version::buildAsciiGitRevision()
+AsciiString Version::buildAsciiGitCommitCount()
 {
 	AsciiString str;
 	str.format("%s%d",
@@ -327,7 +327,7 @@ AsciiString Version::buildAsciiGitRevision()
 	return str;
 }
 
-UnicodeString Version::buildUnicodeGitRevision()
+UnicodeString Version::buildUnicodeGitCommitCount()
 {
 	UnicodeString str;
 	str.format(L"%s%d",
@@ -336,7 +336,7 @@ UnicodeString Version::buildUnicodeGitRevision()
 	return str;
 }
 
-AsciiString Version::buildAsciiGitVersion()
+AsciiString Version::buildAsciiGitTagOrHash()
 {
 	AsciiString str;
 	str.format("%s%s",
@@ -345,10 +345,10 @@ AsciiString Version::buildAsciiGitVersion()
 	return str;
 }
 
-UnicodeString Version::buildUnicodeGitVersion()
+UnicodeString Version::buildUnicodeGitTagOrHash()
 {
 	UnicodeString str;
-	str.translate(buildAsciiGitVersion());
+	str.translate(buildAsciiGitTagOrHash());
 	return str;
 }
 
