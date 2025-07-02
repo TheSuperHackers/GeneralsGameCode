@@ -1105,7 +1105,6 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				else
 				{
 
-					// TheSuperHackers @bugfix @ShizCalev 04/04/2025 - Backported Zero Hour 1.03 scud storm exploit fix
 					Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
 					if( draw && draw->isKindOf( KINDOF_STRUCTURE ) )
 					{
