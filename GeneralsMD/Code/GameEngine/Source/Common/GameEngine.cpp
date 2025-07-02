@@ -260,8 +260,8 @@ void GameEngine::init()
 			DEBUG_LOG(("Build date: %s", TheVersion->getAsciiBuildTime().str()));
 			DEBUG_LOG(("Build location: %s", TheVersion->getAsciiBuildLocation().str()));
 			DEBUG_LOG(("Build user: %s", TheVersion->getAsciiBuildUser().str()));
-			DEBUG_LOG(("Build git revision: %s", TheVersion->getAsciiGitRevision().str()));
-			DEBUG_LOG(("Build git version: %s", TheVersion->getAsciiGitVersion().str()));
+			DEBUG_LOG(("Build git revision: %s", TheVersion->getAsciiGitCommitCount().str()));
+			DEBUG_LOG(("Build git version: %s", TheVersion->getAsciiGitTagOrHash().str()));
 			DEBUG_LOG(("Build git commit time: %s", TheVersion->getAsciiGitCommitTime().str()));
 			DEBUG_LOG(("Build git commit author: %s", Version::getGitCommitAuthorName()));
 			DEBUG_LOG(("================================================================================"));

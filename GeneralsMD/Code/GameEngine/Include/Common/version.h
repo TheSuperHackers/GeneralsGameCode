@@ -59,18 +59,18 @@ public:
 	AsciiString getAsciiBuildUser() const;          ///< Return a string with the build user
 	UnicodeString getUnicodeBuildUser() const;      ///< Return a string with the build user. Is decorated with localized string
 
-	static Int getGitRevision();                    ///< Returns the total git commit count as a number
-	static time_t getGitCommitTime();               ///< Returns the last git commit time as a UTC timestamp
-	static const char* getGitCommitAuthorName();    ///< Returns the last git commit author name
+	static Int getGitCommitCount();                    ///< Returns the git commit count as a number
+	static time_t getGitCommitTime();                  ///< Returns the git head commit time as a UTC timestamp
+	static const char* getGitCommitAuthorName();       ///< Returns the git head commit author name
 
-	AsciiString getAsciiGitRevision() const;        ///< Returns the total git commit count. Is prefixed with ~ if there were uncommitted changes.
-	UnicodeString getUnicodeGitRevision() const;    ///< Returns the total git commit count. Is prefixed with ~ if there were uncommitted changes.
+	AsciiString getAsciiGitCommitCount() const;        ///< Returns the git commit count. Is prefixed with ~ if there were uncommitted changes.
+	UnicodeString getUnicodeGitCommitCount() const;    ///< Returns the git commit count. Is prefixed with ~ if there were uncommitted changes.
 
-	AsciiString getAsciiGitVersion() const;         ///< Returns the last git commit tag or hash. Is prefixed with ~ if there were uncommitted changes.
-	UnicodeString getUnicodeGitVersion() const;     ///< Returns the last git commit tag or hash. Is prefixed with ~ if there were uncommitted changes.
+	AsciiString getAsciiGitTagOrHash() const;          ///< Returns the git head commit tag or hash. Is prefixed with ~ if there were uncommitted changes.
+	UnicodeString getUnicodeGitTagOrHash() const;      ///< Returns the git head commit tag or hash. Is prefixed with ~ if there were uncommitted changes.
 
-	AsciiString getAsciiGitCommitTime() const;      ///< Returns the last git commit time in YYYY-mm-dd HH:MM:SS format
-	UnicodeString getUnicodeGitCommitTime() const;  ///< Returns the last git commit time in YYYY-mm-dd HH:MM:SS format
+	AsciiString getAsciiGitCommitTime() const;         ///< Returns the git head commit time in YYYY-mm-dd HH:MM:SS format
+	UnicodeString getUnicodeGitCommitTime() const;     ///< Returns the git head commit time in YYYY-mm-dd HH:MM:SS format
 
 	AsciiString getAsciiGameAndGitVersion() const;     ///< Returns the game and git version
 	UnicodeString getUnicodeGameAndGitVersion() const; ///< Returns the game and git version. Is decorated with localized string
@@ -86,11 +86,11 @@ public:
 		AsciiString buildTime, AsciiString buildDate);
 
 private:
-	static AsciiString buildAsciiGitRevision();
-	static UnicodeString buildUnicodeGitRevision();
+	static AsciiString buildAsciiGitCommitCount();
+	static UnicodeString buildUnicodeGitCommitCount();
 
-	static AsciiString buildAsciiGitVersion();
-	static UnicodeString buildUnicodeGitVersion();
+	static AsciiString buildAsciiGitTagOrHash();
+	static UnicodeString buildUnicodeGitTagOrHash();
 
 	static AsciiString buildAsciiGitCommitTime();
 	static UnicodeString buildUnicodeGitCommitTime();
@@ -104,11 +104,11 @@ private:
 	AsciiString m_buildUser;
 	AsciiString m_buildTime;
 	AsciiString m_buildDate;
-	AsciiString m_asciiGitRevision;
-	AsciiString m_asciiGitVersion;
+	AsciiString m_asciiGitCommitCount;
+	AsciiString m_asciiGitTagOrHash;
 	AsciiString m_asciiGitCommitTime;
-	UnicodeString m_unicodeGitRevision;
-	UnicodeString m_unicodeGitVersion;
+	UnicodeString m_unicodeGitCommitCount;
+	UnicodeString m_unicodeGitTagOrHash;
 	UnicodeString m_unicodeGitCommitTime;
 	Bool m_showFullVersion;
 };
