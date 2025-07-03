@@ -269,14 +269,37 @@ void UnicodeString::trim()
 // -----------------------------------------------------
 void UnicodeString::removeLastChar()
 {
+	truncateBy(1);
+}
+
+// -----------------------------------------------------
+void UnicodeString::truncateBy(const UnsignedInt charCount)
+{
 	validate();
-	if (m_data)
+	if (m_data && charCount > 0)
 	{
-		int len = wcslen(peek());
+		size_t len = wcslen(peek());
 		if (len > 0)
 		{
 			ensureUniqueBufferOfSize(len+1, true, NULL, NULL);
-			peek()[len - 1] = 0;
+			size_t count = min(charCount, len);
+			peek()[len - count] = 0;
+		}
+	}
+	validate();
+}
+
+// -----------------------------------------------------
+void UnicodeString::truncateTo(const UnsignedInt maxLength)
+{
+	validate();
+	if (m_data)
+	{
+		size_t len = wcslen(peek());
+		if (len > maxLength)
+		{
+			ensureUniqueBufferOfSize(len + 1, true, NULL, NULL);
+			peek()[maxLength] = 0;
 		}
 	}
 	validate();

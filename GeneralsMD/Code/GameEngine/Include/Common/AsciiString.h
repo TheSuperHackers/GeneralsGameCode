@@ -241,6 +241,19 @@ public:
 	void removeLastChar();
 
 	/**
+		Remove the final charCount characters in the string. If the string is empty,
+		do nothing.
+	*/
+	void truncateBy(const UnsignedInt charCount);
+
+	/**
+		Truncate the string to a length of maxLength characters, not including null termination,
+		by removing from the end.
+		If the string is empty or shorter than maxLength, do nothing.
+	*/
+	void truncateTo(const UnsignedInt maxLength);
+
+	/**
 		Analogous to sprintf() -- this formats a string according to the
 		given sprintf-style format string (and the variable argument list)
 		and stores the result in self.
