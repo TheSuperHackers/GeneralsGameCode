@@ -656,6 +656,7 @@
 #define ID_EDIT_LINK_CENTERS            32925
 #define ID_VIEW_SHOW_OBJECTS            32926
 #define ID_VIEW_SHOWTEXTURE             32927
+#define ID_VIEW_SHOW_OBJECTS_SELECTED   32928
 #define ID_TS_REMAP                     32929
 #define ID_VIEW_SHOWCONTOURS            32930
 #define ID_EDIT_DELETE                  32931

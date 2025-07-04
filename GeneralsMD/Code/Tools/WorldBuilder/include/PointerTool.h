@@ -45,7 +45,7 @@ protected:
 
 	Bool m_moving; ///< True if we are drag moving an object.
 	Bool m_rotating; ///< True if we are rotating an object.
-	Bool m_dragSelect; ///< True if we are drag selecting.
+	static Bool m_dragSelect; ///< True if we are drag selecting.
 
 	Bool m_doPolyTool; ///< True if we are using the polygon tool to modify a polygon triggter.
 	
@@ -56,6 +56,9 @@ protected:
 	Bool m_mouseUpMove;///< True if we are over the "move" hotspot.
 	HCURSOR m_moveCursor;
 
+	static Bool m_isMouseDown;
+	static CString m_lastPointerInfo;
+	static Bool m_pointerIsActive;
 protected:
 	void checkForPropertiesPanel(void);
 
@@ -76,6 +79,10 @@ public:
 public:
 	static void clearSelection(void); ///< Clears the selected objects selected flags.
 	static Bool allowPick(MapObject* pMapObj, WbView* pView);
+	static CString getLastPointerInfoString(void) { return m_lastPointerInfo; }
+	static Bool isMouseDown(void) { return m_isMouseDown; }
+	static Bool isDragSelecting(void) { return m_dragSelect; }
+	static Bool isActive(void) {return m_pointerIsActive; }
 };
 
 

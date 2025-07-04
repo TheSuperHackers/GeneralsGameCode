@@ -493,13 +493,14 @@ void WbView3d::setObjTracking(MapObject *pMapObj,  Coord3D pos, Real angle, Bool
 	}
 
 	bool usedBridgeHeight = false;
-	MapObject *prevBridge = NULL;
-	if(getUseWaterHeight()){
+	MapObject *prevBridge = NULL; 
+	if (getUseWaterHeight()) {
 		for (MapObject *cur = MapObject::getFirstMapObject(); cur; cur = cur->getNext()) {
 			if (cur->getFlag(FLAG_BRIDGE_POINT1)) {
 				prevBridge = cur;
 				continue;
 			}
+			
 			if (cur->getFlag(FLAG_BRIDGE_POINT2) && prevBridge) {
 				Vector3 pt1, pt2;
 
@@ -514,14 +515,13 @@ void WbView3d::setObjTracking(MapObject *pMapObj,  Coord3D pos, Real angle, Bool
 
 				float bridgeLenSq = bridgeVec.X * bridgeVec.X + bridgeVec.Y * bridgeVec.Y;
 				float t = (bridgeLenSq > 0.0001f) ? ((toObj.X * bridgeVec.X + toObj.Y * bridgeVec.Y) / bridgeLenSq) : 0.0f;
-				t = clamp(t, 0.0f, 1.0f);
 
-				Vector3 closestPt = pt1 + bridgeVec * t;
+				Vector3 closestPt = pt1 + bridgeVec * clamp(t, 0.0f, 1.0f);
 				Vector3 delta = Vector3(pos.x, pos.y, 0) - closestPt;
 				float distSq = delta.X * delta.X + delta.Y * delta.Y;
 
 				W3DBridgeBuffer* bridgeBuffer = m_heightMapRenderObj->getBridgeBuffer();
-				BridgeInfo info;  // Declare here
+				BridgeInfo info;
 
 				if (bridgeBuffer) {
 					info = bridgeBuffer->getBridgeInfoFromMapObject(prevBridge, cur);
@@ -529,7 +529,9 @@ void WbView3d::setObjTracking(MapObject *pMapObj,  Coord3D pos, Real angle, Bool
 				}
 
 				const float maxBridgeHalfWidth = info.bridgeWidth * 0.5f;
-				if (distSq <= maxBridgeHalfWidth * maxBridgeHalfWidth) {
+
+				// Only apply height if point is within bridge bounds AND width
+				if (t >= 0.0f && t <= 1.0f && distSq <= maxBridgeHalfWidth * maxBridgeHalfWidth) {
 					float bridgeZ = pt1.Z + t * (pt2.Z - pt1.Z);
 					pos.z = bridgeZ;
 					m_lastTrackingZ = pos.z - TheTerrainRenderObject->getHeightMapHeight(pos.x, pos.y, NULL);
@@ -538,7 +540,7 @@ void WbView3d::setObjTracking(MapObject *pMapObj,  Coord3D pos, Real angle, Bool
 					break;  // Stop after first valid match
 				}
 
-				prevBridge = NULL; // Only pair once
+				prevBridge = NULL;  // Only pair once
 			} else {
 				prevBridge = NULL;
 			}
@@ -2515,7 +2517,8 @@ void WbView3d::redraw(void)
 			m_showSoundCircles, 
 			m_highlightTestArt, 
 			m_showLetterbox,
-			m_showWater
+			m_showWater,
+			m_showObjectsSelected
 		);
 	}
 
@@ -2931,6 +2934,95 @@ void WbView3d::drawLabels(HDC hdc)
 	Real	selectedRadius=120.0f;	//default distance of lightfeeback model from object
 	selectedPos.x=0;selectedPos.y=0;selectedPos.z=0;
 
+	// === TEMPORARY DEBUG LABEL: Draw "test" near the mouse cursor with white text and black outline ===
+	// if (PointerTool::isMouseDown() && !PointerTool::isDragSelecting()) {
+	// 	CPoint pt;
+	// 	GetCursorPos(&pt);         // screen coords
+	// 	ScreenToClient(&pt);       // convert to client coords
+
+	// 	const int x = pt.x + 32;   // Increased offset to move text further right
+	// 	const int y = pt.y + 8;
+	// 	const CString text = _T(PointerTool::getLastPointerInfoString());
+	// 	const int len = text.GetLength();
+
+	// 	SetBkMode(hdc, TRANSPARENT);
+
+	// 	// Draw outline (black) around the text
+	// 	SetTextColor(hdc, RGB(0, 0, 0));
+	// 	::TextOut(hdc, x - 1, y,     text, len);
+	// 	::TextOut(hdc, x + 1, y,     text, len);
+	// 	::TextOut(hdc, x,     y - 1, text, len);
+	// 	::TextOut(hdc, x,     y + 1, text, len);
+	// 	::TextOut(hdc, x - 1, y - 1, text, len);
+	// 	::TextOut(hdc, x + 1, y - 1, text, len);
+	// 	::TextOut(hdc, x - 1, y + 1, text, len);
+	// 	::TextOut(hdc, x + 1, y + 1, text, len);
+
+	// 	// Draw main text (white)
+	// 	SetTextColor(hdc, RGB(255, 255, 255));
+	// 	::TextOut(hdc, x, y, text, len);
+	// }
+
+	//  BE WARNED -- DO NOT ENABLE THIS DUDE WHEN DRAGGING OR ELSE THE DRAG RECT WILL BE BROKEN UNDER POINTER TOOL
+	if (PointerTool::isMouseDown() && !PointerTool::isDragSelecting()) {
+		const CString text = _T(PointerTool::getLastPointerInfoString());
+		if (text.IsEmpty() || !m3DFont)
+			return;
+
+		// Get mouse position
+		CPoint pt;
+		GetCursorPos(&pt);
+		ScreenToClient(&pt);
+
+		const int offsetX = 16;
+		const int offsetY = 8;
+		const int width   = 300;
+		const int height  = 50;
+
+		// Base draw rect
+		RECT baseRect = {
+			pt.x + offsetX,
+			pt.y + offsetY,
+			pt.x + offsetX + width,
+			pt.y + offsetY + height
+		};
+
+		// Outline color (black)
+		const DWORD outlineColor = 0xFF000000;
+		// Main text color (white)
+		const DWORD mainColor = 0xFFFFFFFF;
+
+		// Offsets for outline (8 directions)
+		const int outlineOffsets[8][2] = {
+			{-1, -1}, { 1, -1}, {-1,  1}, { 1,  1},
+			{-1,  0}, { 1,  0}, { 0, -1}, { 0,  1}
+		};
+
+		// Draw outline
+		for (int i = 0; i < 8; ++i) {
+			RECT outlineRect = baseRect;
+			OffsetRect(&outlineRect, outlineOffsets[i][0], outlineOffsets[i][1]);
+			m3DFont->DrawText(
+				text,
+				text.GetLength(),
+				&outlineRect,
+				DT_LEFT | DT_TOP | DT_NOCLIP | DT_SINGLELINE,
+				outlineColor
+			);
+		}
+
+		// Draw main text
+		m3DFont->DrawText(
+			text,
+			text.GetLength(),
+			&baseRect,
+			DT_LEFT | DT_TOP | DT_NOCLIP | DT_SINGLELINE,
+			mainColor
+		);
+	}
+
+
+	
 	// Draw labels.
 	MapObject *pMapObj;
 	if (isNamesVisible()) 

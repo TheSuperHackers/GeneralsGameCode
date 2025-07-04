@@ -83,7 +83,7 @@ public:
 	Int freeMapResources(void);
 	int initData(void);
 
-    void setDrawObjects(Bool val, Bool waypoints, Bool poly, Bool bounding, Bool sight, Bool weapon, Bool sound, Bool testart, Bool letterbox, Bool water) { 
+    void setDrawObjects(Bool val, Bool waypoints, Bool poly, Bool bounding, Bool sight, Bool weapon, Bool sound, Bool testart, Bool letterbox, Bool water, Bool iconssel) { 
 		m_drawObjects = val; 
 		m_drawWaypoints=waypoints; 
 		m_drawPolygonAreas = poly; 
@@ -94,6 +94,7 @@ public:
 		m_drawTestArtHighlight = testart, 
 		m_drawLetterbox = letterbox;
 		m_showWater = water;
+		m_drawObjectsSelected = iconssel;
 	}
 
 	static void setDoBrushFeedback(Bool val) { m_toolWantsFeedback = val; m_meshFeedback=false;}	
@@ -141,6 +142,7 @@ protected:
 
 	WaterRenderObjClass				*m_waterDrawObject;
 
+	Bool											m_drawObjectsSelected;
 	Bool											m_drawObjects;
 	Bool											m_drawWaypoints;
 	Bool											m_drawPolygonAreas;

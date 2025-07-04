@@ -248,7 +248,8 @@ BEGIN
         MENUITEM "Show Roads",                  ID_VIEW_SHOWROADS
         MENUITEM "Show Water Mesh",             ID_VIEW_SHOWWATER
         MENUITEM "Show Terrain",                ID_VIEW_SHOW_TERRAIN
-        MENUITEM "Show Object Icons\tCtrl+B",   ID_VIEW_SHOW_OBJECTS
+        MENUITEM "Show Object Icons (All)\tCtrl+B",   ID_VIEW_SHOW_OBJECTS
+        MENUITEM "Show Object Icons (Selected Only)",   ID_VIEW_SHOW_OBJECTS_SELECTED
         MENUITEM "Show Waypoints",              ID_VIEW_SHOWWAYPOINTS
         MENUITEM "Show Trigger Areas",          ID_VIEW_SHOWPOLYGONTRIGGERS
         MENUITEM "Show Shadows",                ID_VIEW_SHOWSHADOWS

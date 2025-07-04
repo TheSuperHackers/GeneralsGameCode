@@ -36,6 +36,12 @@
 #include "wbview3d.h"
 #include "ObjectTool.h"
 
+
+CString PointerTool::m_lastPointerInfo = _T("");
+Bool PointerTool::m_isMouseDown = false;
+Bool PointerTool::m_dragSelect = false;
+Bool PointerTool::m_pointerIsActive = false;
+
 //
 // Static helper functions
 // This function spiders out and un/picks all Waypoints that have some form of indirect contact with this point
@@ -185,6 +191,7 @@ void PointerTool::activate()
 	Tool::activate();
 	m_mouseUpRotate = false;
 	m_mouseUpMove = false;
+	m_pointerIsActive = true;
 	checkForPropertiesPanel();
 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
 	if (pDoc==NULL) return;
@@ -196,6 +203,7 @@ void PointerTool::activate()
 void PointerTool::deactivate() 
 {
 	m_curObject = NULL;
+	m_pointerIsActive = false;
 	PolygonTool::deactivate();
 }
 
@@ -395,6 +403,8 @@ void PointerTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 	}	else {
 		m_dragSelect = true;
 	}
+
+	m_isMouseDown = true;
 }
 
 /// Left button move code.
@@ -478,16 +488,31 @@ void PointerTool::mouseMoved(TTrackingMode m, CPoint viewPt, WbView* pView, CWor
 		curMapObj = curMapObj->getNext();
 	}
 
+	CString text;
 	if (m_rotating) {
 		Coord3D center = *m_curObject->getLocation();
+		float angleDeg;
 		// Support Snap point for rotation similar to placing or dragging objects to the world - Adriane
+		// I hate coding this piece of shit
 		pView->snapPoint(&cpt); 
-		m_modifyUndoable->RotateTo(ObjectTool::calcAngle(center, cpt, pView));
+		if (pView->isLockedAngle()) {
+			m_modifyUndoable->RotateTo(ObjectTool::calcAngleSnapped(center, cpt, pView));
+			angleDeg = ObjectTool::getAngleDegreesSnapped15(center, cpt, pView);
+		} else {
+			m_modifyUndoable->RotateTo(ObjectTool::calcAngle(center, cpt, pView));
+			angleDeg = ObjectTool::getAngleDegrees360(center, cpt, pView);
+		}
+		text.Format(_T("Angle: %.2f"), angleDeg);
+		m_lastPointerInfo = text;
 	} else {
 		pView->snapPoint(&cpt);
 		Real xOffset = (cpt.x-m_downPt3d.x);
 		Real yOffset = (cpt.y-m_downPt3d.y);
 		m_modifyUndoable->SetOffset(xOffset, yOffset);
+
+		Coord3D center = *m_curObject->getLocation();
+		text.Format(_T("X: %.2f\nY: %.2f"), center.x, center.y);
+		m_lastPointerInfo = text;
 	}
 
 	curMapObj = MapObject::getFirstMapObject();
@@ -559,6 +584,8 @@ void PointerTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 		}
 
 	} 
+
+	m_isMouseDown = false;
 	checkForPropertiesPanel();
 }
 

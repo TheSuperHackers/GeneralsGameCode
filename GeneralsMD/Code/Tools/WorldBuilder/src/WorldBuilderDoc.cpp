@@ -901,6 +901,7 @@ void CWorldBuilderDoc::OnJumpToGame(Bool withDebug, Bool waveEdit)
 				"You are about to run the game with wave edit mode ON. Please take note:\n\n"
 				"Hotkeys:\n"
 				" 1           : Toggle Wave Edit Mode\n"
+				" Ctrl + S    : Save\n"
 				" Ctrl + R    : Reload/Clear\n"
 				" Ctrl + Z    : Undo (max of 15)\n"
 				" LMB         : Start placing waves\n"

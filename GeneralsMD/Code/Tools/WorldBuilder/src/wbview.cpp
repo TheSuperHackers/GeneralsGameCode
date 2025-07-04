@@ -67,6 +67,8 @@ WbView::WbView() :
 	m_showPolygonTriggers = (showPoly!=0);
 	Int showObj = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowObjectIcons", 1);
 	m_showObjects = (showObj!=0);
+	Int showObjSel = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowObjectIconsSelected", 1);
+	m_showObjectsSelected = (showObjSel!=0);
 	Int showNames = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "ShowNames", 1);
 	m_showNames = (showNames!=0);
 	Int snapToGrid = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "SnapToGrid", 0);
@@ -103,6 +105,8 @@ BEGIN_MESSAGE_MAP(WbView, CView)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SNAPTOGRID, OnUpdateViewSnaptogrid)
 	ON_COMMAND(ID_VIEW_SHOW_OBJECTS, OnViewShowObjects)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOW_OBJECTS, OnUpdateViewShowObjects)
+	ON_COMMAND(ID_VIEW_SHOW_OBJECTS_SELECTED, OnViewShowObjectsSelected)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_SHOW_OBJECTS_SELECTED, OnUpdateViewShowObjectsSelected)
 	ON_COMMAND(ID_EDIT_SELECTDUP, OnEditSelectdup)
 	ON_COMMAND(ID_EDIT_SELECTSIMILAR, OnEditSelectsimilar)
 	ON_COMMAND(ID_EDIT_REPLACE, OnEditReplace)
@@ -625,6 +629,23 @@ void WbView::OnViewShowObjects()
 void WbView::OnUpdateViewShowObjects(CCmdUI* pCmdUI) 
 {
 	pCmdUI->SetCheck(m_showObjects?1:0);
+}
+
+void WbView::OnViewShowObjectsSelected() 
+{
+	m_showObjectsSelected = !m_showObjectsSelected;
+	Invalidate(false);
+	WbView  *pView = (WbView *)WbDoc()->GetActive2DView();
+	if (pView != NULL && pView != this) {
+		pView->Invalidate(!m_showObjectsSelected);
+	}
+	::AfxGetApp()->WriteProfileInt(MAIN_FRAME_SECTION, "ShowObjectIconsSelected", m_showObjectsSelected?1:0);
+}
+
+/** Sets the check in the menu to match the show objects flag. */
+void WbView::OnUpdateViewShowObjectsSelected(CCmdUI* pCmdUI) 
+{
+	pCmdUI->SetCheck(m_showObjectsSelected?1:0);
 }
 
 void WbView::OnUpdateEditPaste(CCmdUI* pCmdUI) 

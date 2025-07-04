@@ -68,6 +68,7 @@ protected:
 
 	static Bool					m_snapToGrid;
 
+	Bool					m_showObjectsSelected;	
  	Bool					m_showObjects;			  ///< Flag whether object icons are drawn in the 2d and 3d view.
  	Bool					m_showModels;					///< Flag whether models are drawn in the 2d and 3d view.
  	Bool					m_showNames;					///< Flag whether names are drawn in the 2d and 3d view.
@@ -203,6 +204,8 @@ protected:
 	afx_msg void OnUpdateViewSnaptogrid(CCmdUI* pCmdUI);
 	afx_msg void OnViewShowObjects();
 	afx_msg void OnUpdateViewShowObjects(CCmdUI* pCmdUI);
+	afx_msg void OnViewShowObjectsSelected();
+	afx_msg void OnUpdateViewShowObjectsSelected(CCmdUI* pCmdUI);
 	afx_msg void OnEditSelectdup();
 	afx_msg void OnEditSelectsimilar();
 	afx_msg void OnEditSelectinvalidteam();

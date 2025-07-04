@@ -78,7 +78,80 @@ Real ObjectTool::calcAngle(Coord3D downPt, Coord3D curPt, WbView* pView)
 	return((Real)angle);
 }
 
+Real ObjectTool::calcAngleSnapped(Coord3D downPt, Coord3D curPt, WbView* pView)
+{
+    double dx = curPt.x - downPt.x;
+    double dy = curPt.y - downPt.y;
+    double dist = sqrt(dx*dx + dy*dy);
+    double angle = 0.0;
 
+    if (dist < 0.1) {
+        angle = 0.0;
+    } else if (abs(dx) > abs(dy)) {
+        angle = acos(dx / dist);
+        if (dy < 0) angle = -angle;
+    } else {
+        angle = asin(dy / dist);
+        if (dx < 0) angle = PI - angle;
+    }
+
+    // Snap angle in degrees to nearest 15° and convert back to radians
+    double angleDeg = angle * 180.0 / PI;
+
+    // Snap angle to nearest 15 degrees (VC6 compatible)
+    double snappedDeg = (angleDeg >= 0.0) 
+        ? floor(angleDeg / 15.0 + 0.5) * 15.0 
+        : ceil(angleDeg / 15.0 - 0.5) * 15.0;
+
+    // Wrap snapped angle between -180 and +180
+    if (snappedDeg > 180.0) snappedDeg -= 360.0;
+    else if (snappedDeg < -180.0) snappedDeg += 360.0;
+
+    angle = snappedDeg * PI / 180.0;
+
+#ifdef _DEBUG
+    CString buf;
+    buf.Format("Angle %f rad, %d degrees (snapped)\n", angle, (int)snappedDeg);
+    ::OutputDebugString(buf);
+#endif
+
+    return (Real)angle;
+}
+
+float ObjectTool::getAngleDegrees360(const Coord3D& downPt, const Coord3D& curPt, WbView* pView)
+{
+    Real radians = ObjectTool::calcAngle(downPt, curPt, pView);
+    float degrees = static_cast<float>(radians * 180.0 / PI);
+
+    if (degrees < 0.0f)
+        degrees += 360.0f;
+
+    // Convert 181-359 degrees to negative equivalents
+    if (degrees > 180.0f)
+        degrees -= 360.0f;
+
+    return degrees;
+}
+
+float ObjectTool::getAngleDegreesSnapped15(const Coord3D& downPt, const Coord3D& curPt, WbView* pView)
+{
+    // Raw angle in radians
+    Real radians = ObjectTool::calcAngle(downPt, curPt, pView);
+    float degrees = static_cast<float>(radians * 180.0 / PI);
+
+    // Normalize to [0, 360)
+    if (degrees < 0.0f)
+        degrees += 360.0f;
+
+    // Snap to nearest 15 degrees (VC6-safe rounding)
+    float snapped = floor(degrees / 15.0f + 0.5f) * 15.0f;
+
+    // Normalize to [-180, 180]
+    if (snapped > 180.0f)
+        snapped -= 360.0f;
+
+    return snapped;
+}
 
 /// Turn off object tracking.
 void ObjectTool::deactivate() 

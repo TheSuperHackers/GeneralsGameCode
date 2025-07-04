@@ -2533,7 +2533,7 @@ if (_skip_drawobject_render) {
 	}
 	m_waterDrawObject->update();
 	DX8Wrapper::Set_Vertex_Buffer(m_vertexBufferTile1);
-  if (m_drawObjects || m_drawWaypoints || m_drawBoundingBoxes || m_drawSightRanges || m_drawWeaponRanges || m_drawSoundRanges || m_drawTestArtHighlight) {
+  if (m_drawObjects || m_drawWaypoints || m_drawBoundingBoxes || m_drawSightRanges || m_drawWeaponRanges || m_drawSoundRanges || m_drawTestArtHighlight || m_drawObjectsSelected) {
 		//Apply the shader and material
 
 		//WST Variables below are for optimization to reduce VB updates which are extremely slow
@@ -2548,10 +2548,10 @@ if (_skip_drawobject_render) {
 				continue;
 			}
 
-// DEBUG!
-if (pMapObj->isSelected()) {
- Transform.Get_Translation();
-}
+			// DEBUG!
+			if (pMapObj->isSelected()) {
+				Transform.Get_Translation();
+			}
 			Coord3D loc = *pMapObj->getLocation();
 			if (TheTerrainRenderObject) {
 				loc.z += TheTerrainRenderObject->getHeightMapHeight(loc.x, loc.y, NULL);
@@ -2593,17 +2593,15 @@ if (pMapObj->isSelected()) {
 						linesToRender = true;
 						updateVBWithWeaponRange(pMapObj, &rinfo.Camera); 
 					}
-          if (doArrow && m_drawSoundRanges) {
-            linesToRender = true;
-            updateVBWithSoundRanges(pMapObj, &rinfo.Camera); 
-          }
-				}
-
+					if (doArrow && m_drawSoundRanges) {
+						linesToRender = true;
+						updateVBWithSoundRanges(pMapObj, &rinfo.Camera); 
+					}
+				} 
 				if (doArrow && m_drawTestArtHighlight) {
 					linesToRender = true;
 					updateVBWithTestArtHighlight(pMapObj, &rinfo.Camera); 
 				}
-
 				if (!m_drawObjects && !pMapObj->isSelected()) {
 					continue;
 				}

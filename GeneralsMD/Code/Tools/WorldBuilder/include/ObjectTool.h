@@ -44,7 +44,9 @@ public:
 
 public:
 	static Real calcAngle(Coord3D downPt, Coord3D curPt, WbView* pView);
-
+	static Real calcAngleSnapped(Coord3D downPt, Coord3D curPt, WbView* pView);
+	static float getAngleDegrees360(const Coord3D& downPt, const Coord3D& curPt, WbView* pView);
+    static float getAngleDegreesSnapped15(const Coord3D& downPt, const Coord3D& curPt, WbView* pView);
 public:
 	/// Perform tool on mouse down.
 	virtual void mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc);
