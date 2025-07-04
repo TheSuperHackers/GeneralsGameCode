@@ -507,7 +507,7 @@ static Bool doSingleBoneName(RenderObjClass* robj, const AsciiString& boneName, 
 	if (findSingleBone(robj, boneNameTmp, info.mtx, info.boneIndex))
 	{
 //DEBUG_LOG(("added bone %s",boneNameTmp.str()));
-		BONEPOS_LOG(("Caching bone %s (index %d)\n", boneNameTmp.str(), info.boneIndex));
+		BONEPOS_LOG(("Caching bone %s (index %d)", boneNameTmp.str(), info.boneIndex));
 		BONEPOS_DUMPMATRIX3D(&(info.mtx));
 
 		map[NAMEKEY(boneNameTmp)] = info;
@@ -520,7 +520,7 @@ static Bool doSingleBoneName(RenderObjClass* robj, const AsciiString& boneName, 
 		if (findSingleBone(robj, tmp, info.mtx, info.boneIndex))
 		{
 //DEBUG_LOG(("added bone %s",tmp.str()));
-			BONEPOS_LOG(("Caching bone %s (index %d)\n", tmp.str(), info.boneIndex));
+			BONEPOS_LOG(("Caching bone %s (index %d)", tmp.str(), info.boneIndex));
 			BONEPOS_DUMPMATRIX3D(&(info.mtx));
 			map[NAMEKEY(tmp)] = info;
 			foundAsBone = true;
@@ -536,7 +536,7 @@ static Bool doSingleBoneName(RenderObjClass* robj, const AsciiString& boneName, 
 		if (findSingleSubObj(robj, boneNameTmp, info.mtx, info.boneIndex))
 		{
 //DEBUG_LOG(("added subobj %s",boneNameTmp.str()));
-			BONEPOS_LOG(("Caching bone from subobject %s (index %d)\n", boneNameTmp.str(), info.boneIndex));
+			BONEPOS_LOG(("Caching bone from subobject %s (index %d)", boneNameTmp.str(), info.boneIndex));
 			BONEPOS_DUMPMATRIX3D(&(info.mtx));
 			map[NAMEKEY(boneNameTmp)] = info;
 			foundAsSubObj = true;
@@ -548,7 +548,7 @@ static Bool doSingleBoneName(RenderObjClass* robj, const AsciiString& boneName, 
 			if (findSingleSubObj(robj, tmp, info.mtx, info.boneIndex))
 			{
 //DEBUG_LOG(("added subobj %s",tmp.str()));
-				BONEPOS_LOG(("Caching bone from subobject %s (index %d)\n", tmp.str(), info.boneIndex));
+				BONEPOS_LOG(("Caching bone from subobject %s (index %d)", tmp.str(), info.boneIndex));
 				BONEPOS_DUMPMATRIX3D(&(info.mtx));
 				map[NAMEKEY(tmp)] = info;
 				foundAsSubObj = true;
@@ -601,7 +601,7 @@ void ModelConditionInfo::validateCachedBones(RenderObjClass* robj, Real scale) c
 	setFPMode();
 
 	BONEPOS_LOG(("Validating bones for %s: %s", m_modelName.str(), getDescription().str()));
-	//BONEPOS_LOG(("Passing in valid render obj: %d\n", (robj != 0)));
+	//BONEPOS_LOG(("Passing in valid render obj: %d", (robj != 0)));
 	BONEPOS_DUMPREAL(scale);
 
 	m_pristineBones.clear();
@@ -614,7 +614,7 @@ void ModelConditionInfo::validateCachedBones(RenderObjClass* robj, Real scale) c
 	{
 		if (m_modelName.isEmpty())
 		{
-			//BONEPOS_LOG(("Bailing: model name is empty\n"));
+			//BONEPOS_LOG(("Bailing: model name is empty"));
 			return;
 		}
 
@@ -622,7 +622,7 @@ void ModelConditionInfo::validateCachedBones(RenderObjClass* robj, Real scale) c
 		DEBUG_ASSERTCRASH(robj, ("*** ASSET ERROR: Model %s not found!",m_modelName.str()));
 		if (!robj)
 		{
-			//BONEPOS_LOG(("Bailing: could not load render object\n"));
+			//BONEPOS_LOG(("Bailing: could not load render object"));
 			return;
 		}
 		tossRobj = true;
@@ -779,7 +779,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 
 				CRCDEBUG_LOG(("validateWeaponBarrelInfo() - model name %s wslot %d", m_modelName.str(), wslot));
 				DUMPMATRIX3D(&(info.m_projectileOffsetMtx));
-				BONEPOS_LOG(("validateWeaponBarrelInfo() - model name %s wslot %d\n", m_modelName.str(), wslot));
+				BONEPOS_LOG(("validateWeaponBarrelInfo() - model name %s wslot %d", m_modelName.str(), wslot));
 				BONEPOS_DUMPMATRIX3D(&(info.m_projectileOffsetMtx));
 				m_weaponBarrelInfoVec[wslot].push_back(info);
 
@@ -817,7 +817,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				{
 					CRCDEBUG_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) wslot %d", m_modelName.str(), wslot));
 					DUMPMATRIX3D(&(info.m_projectileOffsetMtx));
-					BONEPOS_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) wslot %d\n", m_modelName.str(), wslot));
+					BONEPOS_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) wslot %d", m_modelName.str(), wslot));
 					BONEPOS_DUMPMATRIX3D(&(info.m_projectileOffsetMtx));
 					m_weaponBarrelInfoVec[wslot].push_back(info);
 					if (info.m_recoilBone != 0 || info.m_muzzleFlashBone != 0)
@@ -826,7 +826,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				else
 				{
 					CRCDEBUG_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) found nothing", m_modelName.str()));
-					BONEPOS_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) found nothing\n", m_modelName.str()));
+					BONEPOS_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) found nothing", m_modelName.str()));
 				}
 			}	// if empty
 
@@ -2980,7 +2980,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 			DEBUG_ASSERTCRASH(m_renderObject, ("*** ASSET ERROR: Model %s not found!",newState->m_modelName.str()));
 		}
 
-		//BONEPOS_LOG(("validateStuff() from within W3DModelDraw::setModelState()\n"));
+		//BONEPOS_LOG(("validateStuff() from within W3DModelDraw::setModelState()"));
 		//BONEPOS_DUMPREAL(draw->getScale());
 
 		newState->validateStuff(m_renderObject, draw->getScale(), getW3DModelDrawModuleData()->m_extraPublicBones);
@@ -3106,7 +3106,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 	else 
 	{
 
-		//BONEPOS_LOG(("validateStuff() from within W3DModelDraw::setModelState()\n"));
+		//BONEPOS_LOG(("validateStuff() from within W3DModelDraw::setModelState()"));
 		//BONEPOS_DUMPREAL(getDrawable()->getScale());
 
 		newState->validateStuff(m_renderObject, getDrawable()->getScale(), getW3DModelDrawModuleData()->m_extraPublicBones);
@@ -3216,7 +3216,7 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 	if (!stateToUse)
 	{
 		CRCDEBUG_LOG(("can't find best info"));
-		//BONEPOS_LOG(("can't find best info\n"));
+		//BONEPOS_LOG(("can't find best info"));
 		return false;
 	}
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
@@ -3240,7 +3240,7 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 	const W3DModelDrawModuleData* d = getW3DModelDrawModuleData();
 	//CRCDEBUG_LOG(("validateStuffs() from within W3DModelDraw::getProjectileLaunchOffset()"));
 	//DUMPREAL(getDrawable()->getScale());
-	//BONEPOS_LOG(("validateStuffs() from within W3DModelDraw::getProjectileLaunchOffset()\n"));
+	//BONEPOS_LOG(("validateStuffs() from within W3DModelDraw::getProjectileLaunchOffset()"));
 	//BONEPOS_DUMPREAL(getDrawable()->getScale());
 	stateToUse->validateStuff(NULL, getDrawable()->getScale(), d->m_extraPublicBones);
 
@@ -3271,7 +3271,7 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 	{
 		// Can't find the launch pos, but they might still want the other info they asked for
 		CRCDEBUG_LOG(("empty wbvec"));
-		//BONEPOS_LOG(("empty wbvec\n"));
+		//BONEPOS_LOG(("empty wbvec"));
 		launchPos = NULL;
 	}
 	else
@@ -3372,7 +3372,7 @@ Int W3DModelDraw::getPristineBonePositionsForConditionState(
 //		//CRCDEBUG_LOG(("renderObject == NULL: %d", (stateToUse==m_curState)?(m_renderObject == NULL):1));
 //	}
 
-	//BONEPOS_LOG(("validateStuff() from within W3DModelDraw::getPristineBonePositionsForConditionState()\n"));
+	//BONEPOS_LOG(("validateStuff() from within W3DModelDraw::getPristineBonePositionsForConditionState()"));
 	//BONEPOS_DUMPREAL(getDrawable()->getScale());
 	// we must call this every time we set m_nextState, to ensure cached bones are happy
 	stateToUse->validateStuff(
