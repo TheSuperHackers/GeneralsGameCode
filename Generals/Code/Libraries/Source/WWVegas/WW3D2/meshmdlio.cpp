@@ -473,17 +473,17 @@ WW3DErrorType MeshModelClass::read_chunks(ChunkLoadClass & cload,MeshLoadContext
 
 			case O_W3D_CHUNK_MATERIALS:
 			case O_W3D_CHUNK_MATERIALS2:		
-					WWDEBUG_SAY(( "Obsolete material chunk encountered in mesh: %s.%s\r", context->Header.ContainerName,context->Header.MeshName));
+					WWDEBUG_SAY(( "Obsolete material chunk encountered in mesh: %s.%s", context->Header.ContainerName,context->Header.MeshName));
 					WWASSERT(0);
 					break;
 
 			case W3D_CHUNK_MATERIALS3:
-					WWDEBUG_SAY(( "Obsolete material chunk encountered in mesh: %s.%s\r", context->Header.ContainerName,context->Header.MeshName));
+					WWDEBUG_SAY(( "Obsolete material chunk encountered in mesh: %s.%s", context->Header.ContainerName,context->Header.MeshName));
 					error = read_v3_materials(cload,context);
 					break;
 				
 			case O_W3D_CHUNK_SURRENDER_TRIANGLES:
-					WWASSERT_PRINT( 0, "Obsolete Triangle Chunk Encountered!\r" );
+					WWASSERT_PRINT( 0, "Obsolete Triangle Chunk Encountered!" );
 					break;
 			
 			case W3D_CHUNK_TRIANGLES:
@@ -535,11 +535,11 @@ WW3DErrorType MeshModelClass::read_chunks(ChunkLoadClass & cload,MeshLoadContext
 					break;
 
 			case W3D_CHUNK_DEFORM:
-					WWDEBUG_SAY(("Obsolete deform chunk encountered in mesh: %s.%s\r", context->Header.ContainerName,context->Header.MeshName));
+					WWDEBUG_SAY(("Obsolete deform chunk encountered in mesh: %s.%s", context->Header.ContainerName,context->Header.MeshName));
 					break;
 			
 			case W3D_CHUNK_DAMAGE:
-					WWDEBUG_SAY(("Obsolete damage chunk encountered in mesh: %s.%s\r", context->Header.ContainerName,context->Header.MeshName));
+					WWDEBUG_SAY(("Obsolete damage chunk encountered in mesh: %s.%s", context->Header.ContainerName,context->Header.MeshName));
 					break;
 
 			case W3D_CHUNK_PRELIT_UNLIT:
@@ -706,7 +706,7 @@ WW3DErrorType MeshModelClass::read_v3_materials(ChunkLoadClass & cload,MeshLoadC
 				if (!cload.Close_Chunk()) goto Error;
 
 				if ( mapinfo.FrameCount > 1 ) {
-					WWDEBUG_SAY(("ERROR: Obsolete Animated Texture detected in model: %s\r",context->Header.MeshName));
+					WWDEBUG_SAY(("ERROR: Obsolete Animated Texture detected in model: %s",context->Header.MeshName));
 				}
 
 				tex = WW3DAssetManager::Get_Instance()->Get_Texture(filename);
@@ -740,7 +740,7 @@ WW3DErrorType MeshModelClass::read_v3_materials(ChunkLoadClass & cload,MeshLoadC
 					if (!cload.Close_Chunk()) goto Error;
 			
 					if ( mapinfo.FrameCount > 1 ) {
-						WWDEBUG_SAY(("ERROR: Obsolete Animated Texture detected in model: %s\r",context->Header.MeshName));
+						WWDEBUG_SAY(("ERROR: Obsolete Animated Texture detected in model: %s",context->Header.MeshName));
 					}
 
 					tex = WW3DAssetManager::Get_Instance()->Get_Texture(filename);

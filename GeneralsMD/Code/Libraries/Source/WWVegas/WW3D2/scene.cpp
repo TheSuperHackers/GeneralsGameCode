@@ -301,7 +301,7 @@ void SceneClass::Load(ChunkLoadClass & cload)
 		}
 
 	} else {
-		WWDEBUG_SAY(("Unhandled Chunk: 0x%X in file: %s line: %d\r",cload.Cur_Chunk_ID(),__FILE__,__LINE__));
+		WWDEBUG_SAY(("Unhandled Chunk: 0x%X in file: %s line: %d",cload.Cur_Chunk_ID(),__FILE__,__LINE__));
 	}
 	cload.Close_Chunk();
 }

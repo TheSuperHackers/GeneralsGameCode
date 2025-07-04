@@ -1531,7 +1531,7 @@ bool DX8Wrapper::Find_Color_Mode(D3DFORMAT colorbuffer, int resx, int resy, UINT
 	{
 		D3DInterface->EnumAdapterModes(D3DADAPTER_DEFAULT, i, &dmode);
 		if (dmode.Width==rx && dmode.Height==ry && dmode.Format==colorbuffer) {
-			WWDEBUG_SAY(("Found valid color mode.  Width = %d Height = %d Format = %d\r",dmode.Width,dmode.Height,dmode.Format));
+			WWDEBUG_SAY(("Found valid color mode.  Width = %d Height = %d Format = %d",dmode.Width,dmode.Height,dmode.Format));
 			found=true;
 		}
 		i++;
@@ -1541,7 +1541,7 @@ bool DX8Wrapper::Find_Color_Mode(D3DFORMAT colorbuffer, int resx, int resy, UINT
 
 	// no match
 	if (!found) {
-		WWDEBUG_SAY(("Failed to find a valid color mode\r"));
+		WWDEBUG_SAY(("Failed to find a valid color mode"));
 		return false;
 	}
 
@@ -1611,7 +1611,7 @@ bool DX8Wrapper::Find_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORM
 	}
 
 	// can't find a match
-	WWDEBUG_SAY(("Failed to find a valid zbuffer mode\r"));
+	WWDEBUG_SAY(("Failed to find a valid zbuffer mode"));
 	return false;
 }
 
@@ -3218,7 +3218,7 @@ DX8Wrapper::Create_Render_Target (int width, int height, WW3DFormat format)
 
 	// If render target format isn't supported return NULL
 	if (!Get_Current_Caps()->Support_Render_To_Texture_Format(format)) {
-		WWDEBUG_SAY(("DX8Wrapper - Render target format is not supported\r"));
+		WWDEBUG_SAY(("DX8Wrapper - Render target format is not supported"));
 		return NULL;
 	}
 
@@ -3250,7 +3250,7 @@ DX8Wrapper::Create_Render_Target (int width, int height, WW3DFormat format)
 	// that they support render targets!
 	if (tex->Peek_D3D_Base_Texture() == NULL) 
 	{
-		WWDEBUG_SAY(("DX8Wrapper - Render target creation failed!\r"));
+		WWDEBUG_SAY(("DX8Wrapper - Render target creation failed!"));
 		REF_PTR_RELEASE(tex);
 	}
 
@@ -3290,7 +3290,7 @@ void DX8Wrapper::Create_Render_Target
 	if (!Get_Current_Caps()->Support_Render_To_Texture_Format(format) ||
 		 !Get_Current_Caps()->Support_Depth_Stencil_Format(zformat)) 
 	{
-		WWDEBUG_SAY(("DX8Wrapper - Render target with depth format is not supported\r"));
+		WWDEBUG_SAY(("DX8Wrapper - Render target with depth format is not supported"));
 		return;
 	}
 
@@ -3322,7 +3322,7 @@ void DX8Wrapper::Create_Render_Target
 	// that they support render targets!
 	if (tex->Peek_D3D_Base_Texture() == NULL) 
 	{
-		WWDEBUG_SAY(("DX8Wrapper - Render target creation failed!\r"));
+		WWDEBUG_SAY(("DX8Wrapper - Render target creation failed!"));
 		REF_PTR_RELEASE(tex);
 	}
 

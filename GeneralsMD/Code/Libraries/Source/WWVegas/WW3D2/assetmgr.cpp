@@ -731,7 +731,7 @@ bool WW3DAssetManager::Load_Prototype(ChunkLoadClass & cload)
 		/*
 		** Warn user about an unknown chunk type
 		*/
-		WWDEBUG_SAY(("Unknown chunk type encountered!  Chunk Id = %d\r",chunk_id));
+		WWDEBUG_SAY(("Unknown chunk type encountered!  Chunk Id = %d",chunk_id));
 		return false;
 	}
 
@@ -754,7 +754,7 @@ bool WW3DAssetManager::Load_Prototype(ChunkLoadClass & cload)
 			** Warn the user about a name collision with this prototype 
 			** and dump it
 			*/
-			WWDEBUG_SAY(("Render Object Name Collision: %s\r",newproto->Get_Name()));
+			WWDEBUG_SAY(("Render Object Name Collision: %s",newproto->Get_Name()));
 			newproto->DeleteSelf();
 			newproto = NULL;
 			return false;
@@ -766,7 +766,7 @@ bool WW3DAssetManager::Load_Prototype(ChunkLoadClass & cload)
 		** Warn user that a prototype was not generated from this 
 		** chunk type
 		*/
-		WWDEBUG_SAY(("Could not generate prototype!  Chunk  = %d\r",chunk_id));
+		WWDEBUG_SAY(("Could not generate prototype!  Chunk  = %d",chunk_id));
 		return false;
 	}
 	
@@ -824,7 +824,7 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 		// Note - objects named "#..." are scaled cached objects, so don't warn...
 		if (name[0] != '#') {
 			if (++warning_count <= 20) {
-				WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s\r",name));
+				WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s",name));
 			}
 			AssetStatusClass::Peek_Instance()->Report_Missing_RObj(name);
 		}

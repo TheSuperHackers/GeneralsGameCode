@@ -2051,7 +2051,7 @@ void DX8MeshRendererClass::Register_Mesh_Type(MeshModelClass* mmc)
 				_RegisteredMeshList.Add_Tail(mmc);
 			}
 			else {
-				WWDEBUG_SAY(("Error: Register_Mesh_Type failed! file: %s line: %d\r",__FILE__,__LINE__));
+				WWDEBUG_SAY(("Error: Register_Mesh_Type failed! file: %s line: %d",__FILE__,__LINE__));
 			}
 		}
 	}

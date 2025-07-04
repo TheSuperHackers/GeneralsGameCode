@@ -1017,7 +1017,7 @@ bool SkinDecalMeshClass::Create_Decal(DecalGeneratorClass * generator,
 	}
 #endif
 	
-	// WWDEBUG_SAY(("Decal mesh now has: %d polys\r",Polys.Count()));
+	// WWDEBUG_SAY(("Decal mesh now has: %d polys",Polys.Count()));
 	return true;
 }
 

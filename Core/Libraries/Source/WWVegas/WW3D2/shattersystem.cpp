@@ -620,7 +620,7 @@ bool PolygonClass::Is_Degenerate(void)
 	int i,j;
 
 	if (NumVerts <= 2) {
-		WWDEBUG_SAY(("Degenerate Poly - fewer than 3 vertices\r"));
+		WWDEBUG_SAY(("Degenerate Poly - fewer than 3 vertices"));
 		return true;
 	}
 
@@ -629,7 +629,7 @@ bool PolygonClass::Is_Degenerate(void)
 			
 			float delta = (Verts[i].Position - Verts[j].Position).Length();
 			if (delta < BPT_COINCIDENCE_EPSILON) {
-				WWDEBUG_SAY(("Degenerate Poly - coincident vertices!\r"));
+				WWDEBUG_SAY(("Degenerate Poly - coincident vertices!"));
 				return true;
 			}
 		}
@@ -643,7 +643,7 @@ bool PolygonClass::Is_Degenerate(void)
 			Compute_Plane();
 
 			if (Verts[i].Which_Side(Plane) != BPT_ON) {
-				WWDEBUG_SAY(("Degenerate Poly - invalid plane!\r"));
+				WWDEBUG_SAY(("Degenerate Poly - invalid plane!"));
 				return true;
 			}
 		}
