@@ -4236,7 +4236,7 @@ void GameLogic::prepareLogicForObjectLoad( void )
 
 	// there should be no objects anywhere
 	DEBUG_ASSERTCRASH( getFirstObject() == NULL,
-										 ("GameLogic::prepareLogicForObjectLoad - There are still objects loaded in the engine, but it should be empty (Top is '%s')\n",
+										 ("GameLogic::prepareLogicForObjectLoad - There are still objects loaded in the engine, but it should be empty (Top is '%s')",
 										 getFirstObject()->getTemplate()->getName().str()) );
 
 }  // end prepareLogicForObjectLoad
