@@ -1330,7 +1330,7 @@ void PathfindCell::setGoalUnit(ObjectID unitID, const ICoord2D &pos )
 			allocateInfo(pos);
 		}
 		if (!m_info) {
-			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba. "));
+			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba."));
 			return;
 		}
 		m_info->m_goalUnitID = unitID;
@@ -1366,7 +1366,7 @@ void PathfindCell::setGoalAircraft(ObjectID unitID, const ICoord2D &pos )
 			allocateInfo(pos);
 		}
 		if (!m_info) {
-			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba. "));
+			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba."));
 			return;
 		}
 		m_info->m_goalAircraftID = unitID;
@@ -1402,7 +1402,7 @@ void PathfindCell::setPosUnit(ObjectID unitID, const ICoord2D &pos )
 			allocateInfo(pos);
 		}
 		if (!m_info) {
-			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba. "));
+			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba."));
 			return;
 		}
 		if (m_info->m_goalUnitID!=INVALID_ID && (m_info->m_goalUnitID==m_info->m_posUnitID)) {

@@ -423,7 +423,7 @@ void W3DGhostObject::removeParentObject(void)
 			robj=w3dDraw->getRenderObject();
 			if (robj)
 			{
-				DEBUG_ASSERTCRASH(robj->Peek_Scene() != NULL, ("Removing GhostObject parent not in scene "));
+				DEBUG_ASSERTCRASH(robj->Peek_Scene() != NULL, ("Removing GhostObject parent not in scene"));
 				robj->Remove();
 			}
 		}
