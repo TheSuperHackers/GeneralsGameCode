@@ -947,11 +947,11 @@ not_equal2:
 
 	}
 /*
-	WWDEBUG_SAY(("{%2.2f, %2.2f, %2.2f, %2.2f}, {%2.2f, %2.2f, %2.2f, %2.2f}, {%2.2f, %2.2f, %2.2f, %2.2f}\n"
+	WWDEBUG_SAY(("{%2.2f, %2.2f, %2.2f, %2.2f}, {%2.2f, %2.2f, %2.2f, %2.2f}, {%2.2f, %2.2f, %2.2f, %2.2f}"
 		,res[0][0],res[0][1],res[0][2],res[0][3]
 		,res[1][0],res[1][1],res[1][2],res[1][3]
 		,res[2][0],res[2][1],res[2][2],res[2][3]));
-	WWDEBUG_SAY(("{%2.2f, %2.2f, %2.2f, %2.2f}, {%2.2f, %2.2f, %2.2f, %2.2f}, {%2.2f, %2.2f, %2.2f, %2.2f}\n"
+	WWDEBUG_SAY(("{%2.2f, %2.2f, %2.2f, %2.2f}, {%2.2f, %2.2f, %2.2f, %2.2f}, {%2.2f, %2.2f, %2.2f, %2.2f}"
 		,res2[0][0],res2[0][1],res2[0][2],res2[0][3]
 		,res2[1][0],res2[1][1],res2[1][2],res2[1][3]
 		,res2[2][0],res2[2][1],res2[2][2],res2[2][3]));
@@ -961,7 +961,7 @@ not_equal2:
 /*	for (int y=0;y<3;++y) {
 		for (int x=0;x<4;++x) {
 			if (fabs(res2[y][x]-res[y][x])>0.001f) {
-				WWDEBUG_SAY(("x: %d, y: %d, %f != %f\n",x,y,res2[y][x],res[y][x]));
+				WWDEBUG_SAY(("x: %d, y: %d, %f != %f",x,y,res2[y][x],res[y][x]));
 				__asm nop
 			}
 		}

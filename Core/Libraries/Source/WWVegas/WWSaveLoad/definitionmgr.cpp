@@ -227,7 +227,7 @@ DefinitionMgrClass::Find_Typed_Definition (const char *name, uint32 class_id, bo
 	//	Sanity check
 	//
 	if (DefinitionHash == NULL) {
-		WWDEBUG_SAY (("DefinitionMgrClass::Find_Typed_Definition () failed due to a NULL DefinitionHash.\n"));
+		WWDEBUG_SAY (("DefinitionMgrClass::Find_Typed_Definition () failed due to a NULL DefinitionHash."));
 		return NULL;
 	}
 
@@ -321,11 +321,11 @@ DefinitionMgrClass::List_Available_Definitions (void)
 	//
 	//	Loop through all the definitions and print the definition name
 	//
-	WWDEBUG_SAY(("Available definitions:\n"));
+	WWDEBUG_SAY(("Available definitions:"));
 	for (int index = 0; index < _DefinitionCount; index ++) {
 		DefinitionClass *curr_def = _SortedDefinitionArray[index];		
 		if (curr_def != NULL) {
-			WWDEBUG_SAY(("  >%s<\n", curr_def->Get_Name ()));
+			WWDEBUG_SAY(("  >%s<", curr_def->Get_Name ()));
 		}
 	}
 
@@ -344,13 +344,13 @@ DefinitionMgrClass::List_Available_Definitions (int superclass_id)
 	//
 	//	Loop through all the definitions and print the definition name
 	//
-	WWDEBUG_SAY(("Available superclass definitions for 0x%8X:\n", superclass_id));
+	WWDEBUG_SAY(("Available superclass definitions for 0x%8X:", superclass_id));
 	DefinitionClass *definition = NULL;
 	for (	definition = Get_First (superclass_id, DefinitionMgrClass::ID_SUPERCLASS);
 			definition != NULL;
 			definition = Get_Next (definition, superclass_id, DefinitionMgrClass::ID_SUPERCLASS))
 	{
-		WWDEBUG_SAY(("  >%s<\n", definition->Get_Name ()));
+		WWDEBUG_SAY(("  >%s<", definition->Get_Name ()));
 	}
 
 	return ;

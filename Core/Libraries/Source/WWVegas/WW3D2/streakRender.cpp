@@ -179,7 +179,7 @@ TextureClass * StreakRendererClass::Get_Texture(void) const
 // {
 // 	if (factor > 8.0f) {
 //		factor = 8.0f;
-//		WWDEBUG_SAY(("Texture Tile Factor too large in StreakRendererClass!\r\n"));
+//		WWDEBUG_SAY(("Texture Tile Factor too large in StreakRendererClass!\r"));
 //	} else {
 //		factor = MAX(factor, 0.0f);
 //	}

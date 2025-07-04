@@ -2831,7 +2831,7 @@ Bool W3DView::isCameraMovementFinished(void)
 
 Bool W3DView::isCameraMovementAtWaypointAlongPath(void)
 {
-	// WWDEBUG_SAY((( "MBL: Polling W3DView::isCameraMovementAtWaypointAlongPath\n" )));
+	// WWDEBUG_SAY((( "MBL: Polling W3DView::isCameraMovementAtWaypointAlongPath" )));
 	
 	Bool return_value = m_CameraArrivedAtWaypointOnPathFlag;
 	#pragma message( "MBL: Clearing variable after polling - for scripting - see Adam.\n" )
@@ -3138,7 +3138,7 @@ void W3DView::moveAlongWaypointPath(Int milliseconds)
 
 		if ( m_doingMoveCameraOnWaypointPath )
 		{
-			//WWDEBUG_SAY(( "MBL TEST: Camera waypoint along path reached!\n" ));
+			//WWDEBUG_SAY(( "MBL TEST: Camera waypoint along path reached!" ));
 			m_CameraArrivedAtWaypointOnPathFlag = true;
 		}
 
