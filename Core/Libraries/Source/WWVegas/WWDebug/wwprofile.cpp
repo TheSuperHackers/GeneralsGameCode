@@ -200,7 +200,7 @@ void WWProfileHierachyNodeClass::Write_To_File(FileClass* file,int recursion)
 		StringClass string;
 		StringClass work;
 		for (i=0;i<recursion;++i) { string+="\t"; }
-		work.Format("%s\t%d\t%f\r\n",Name,TotalCalls,TotalTime*1000.0f);
+		work.Format("%s\t%d\t%f\n",Name,TotalCalls,TotalTime*1000.0f);
 		string+=work;
 		file->Write(string.str(),string.Get_Length());
 	}
@@ -574,8 +574,8 @@ void	WWProfileManager::End_Collecting(const char* filename)
 			StringClass str;
 			float avg_frame_time=TotalFrameTimes/float(ProfileCollectVector.Count());
 			str.Format(
-				"Total frames: %d, average frame time: %fms\r\n"
-				"All frames taking more than twice the average frame time are marked with keyword SPIKE.\r\n\r\n",
+				"Total frames: %d, average frame time: %fms\n"
+				"All frames taking more than twice the average frame time are marked with keyword SPIKE.\n\n",
 				ProfileCollectVector.Count(),avg_frame_time*1000.0f);
 			file->Write(str.str(),str.Get_Length());
 
@@ -590,11 +590,11 @@ void	WWProfileManager::End_Collecting(const char* filename)
 					if (name[i]==',') name[i]='.';
 					if (name[i]==';') name[i]=':';
 				}
-				str.Format("ID: %d %s\r\n",ite.Peek_Value(),name.str());
+				str.Format("ID: %d %s\n",ite.Peek_Value(),name.str());
 				file->Write(str.str(),str.Get_Length());
 			}
 
-			str.Format("\r\n\r\n");
+			str.Format("\n\n");
 			file->Write(str.str(),str.Get_Length());
 
 			for (i=0;i<ProfileCollectVector.Count();++i) {

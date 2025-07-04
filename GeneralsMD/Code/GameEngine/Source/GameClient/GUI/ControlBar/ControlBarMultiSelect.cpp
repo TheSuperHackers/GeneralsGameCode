@@ -230,7 +230,7 @@ void ControlBar::populateMultiSelect( void )
 
 	// sanity
 	DEBUG_ASSERTCRASH( TheInGameUI->getSelectCount() > 1,
-										 ("populateMultiSelect: Can't populate multiselect context cause there are only '%d' things selected\n",
+										 ("populateMultiSelect: Can't populate multiselect context cause there are only '%d' things selected",
 										  TheInGameUI->getSelectCount()) );
 
 	// get the list of drawable IDs from the in game UI
@@ -311,7 +311,7 @@ void ControlBar::updateContextMultiSelect( void )
 
 	// santiy
 	DEBUG_ASSERTCRASH( TheInGameUI->getSelectCount() > 1,
-										 ("updateContextMultiSelect: TheInGameUI only has '%d' things selected\n",
+										 ("updateContextMultiSelect: TheInGameUI only has '%d' things selected",
 										  TheInGameUI->getSelectCount()) );
 
 	// get the list of drawable IDs from the in game UI

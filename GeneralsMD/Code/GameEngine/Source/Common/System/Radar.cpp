@@ -411,7 +411,7 @@ void Radar::addObject( Object *obj )
 
 	// sanity
 	DEBUG_ASSERTCRASH( obj->friend_getRadarData() == NULL,
-										 ("Radar: addObject - non NULL radar data for '%s'\n", 
+										 ("Radar: addObject - non NULL radar data for '%s'", 
 										 obj->getTemplate()->getName().str()) );
 
 	// allocate a new object

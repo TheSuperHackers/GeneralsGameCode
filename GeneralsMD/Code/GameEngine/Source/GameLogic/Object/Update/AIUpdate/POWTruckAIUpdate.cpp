@@ -510,7 +510,7 @@ static void putContainedInPrison( Object *obj, void *userData )
 
 	// sanity
 	DEBUG_ASSERTCRASH( returnData != NULL && returnData->source != NULL && returnData->dest != NULL,
-										 ("putContainedInPrison: Invalid arguments\n") );
+										 ("putContainedInPrison: Invalid arguments") );
 
 	// take 'obj' out of the source
 	ContainModuleInterface *sourceContain = returnData->source->getContain();
@@ -729,7 +729,7 @@ static void putPrisonersInPrison( Object *obj, void *userData )
 	// sanity
 	DEBUG_ASSERTCRASH( prison, ("putPrisonersInPrison: NULL user data") );
 	DEBUG_ASSERTCRASH( obj->getContainedBy() != NULL,
-										 ("putPrisonersInPrison: Prisoner '%s' is not contained by anything, it should be contained by a POW truck\n",
+										 ("putPrisonersInPrison: Prisoner '%s' is not contained by anything, it should be contained by a POW truck",
 										 obj->getTemplate()->getName().str()) );
 
 	// extra super sanity, just so that we don't crash ... this is in the assert above
@@ -774,12 +774,12 @@ void POWTruckAIUpdate::unloadPrisonersToPrison( Object *prison )
 	DEBUG_ASSERTCRASH( prison->getContain(), ("POWTruckAIUpdate::unloadPrisonersToPrison - '%s' has no contain",
 																		prison->getTemplate()->getName().str()) );
 	DEBUG_ASSERTCRASH( prison->getContain()->asOpenContain(), 
-										 ("POWTruckAIUpdate::unloadPrisonersToPrison - '%s' has no OPEN contain\n",
+										 ("POWTruckAIUpdate::unloadPrisonersToPrison - '%s' has no OPEN contain",
 										 prison->getTemplate()->getName().str()) );
 	DEBUG_ASSERTCRASH( truckContain, ("POWTruckAIUpdate::unloadPrisonersToPrison - '%s' has no contain",
 																	 us->getTemplate()->getName().str()) );
 	DEBUG_ASSERTCRASH( truckContain->asOpenContain(), 
-										 ("POWTruckAIUpdate::unloadPrisonersToPrison - '%s' has no OPEN contain\n",
+										 ("POWTruckAIUpdate::unloadPrisonersToPrison - '%s' has no OPEN contain",
 										 us->getTemplate()->getName().str()) );
 
 	// put the prisoners in the prison
