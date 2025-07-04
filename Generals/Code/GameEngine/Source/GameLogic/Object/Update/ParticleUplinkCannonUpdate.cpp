@@ -1456,7 +1456,7 @@ void ParticleUplinkCannonUpdate::loadPostProcess( void )
 		}
 		else
 		{
-			DEBUG_CRASH(( "ParticleUplinkCannonUpdate::loadPostProcess - Unable to find drawable for m_orbitToTargetBeamID\n" ));
+			DEBUG_CRASH(( "ParticleUplinkCannonUpdate::loadPostProcess - Unable to find drawable for m_orbitToTargetBeamID" ));
 		}
 	}
 #endif

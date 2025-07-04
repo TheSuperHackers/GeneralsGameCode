@@ -712,7 +712,7 @@ void ParkingPlaceBehavior::exitObjectViaDoor( Object *newObj, ExitDoorType exitD
 	DUMPCOORD3D(getObject()->getPosition());
 	if (producedAtHelipad)
 	{
-		CRCDEBUG_LOG(("Produced at helipad (door = %d)\n", exitDoor));
+		CRCDEBUG_LOG(("Produced at helipad (door = %d)", exitDoor));
 		DEBUG_ASSERTCRASH(exitDoor == DOOR_NONE_NEEDED, ("Hmm, unlikely"));
 		Matrix3D mtx;
 #ifdef DEBUG_CRASHING
@@ -727,7 +727,7 @@ void ParkingPlaceBehavior::exitObjectViaDoor( Object *newObj, ExitDoorType exitD
 	}
 	else
 	{
-		CRCDEBUG_LOG(("Produced at hangar (door = %d)\n", exitDoor));
+		CRCDEBUG_LOG(("Produced at hangar (door = %d)", exitDoor));
 		DEBUG_ASSERTCRASH(exitDoor != DOOR_NONE_NEEDED, ("Hmm, unlikely"));
 		if (!reserveSpace(newObj->getID(), parkingOffset, &ppinfo)) //&loc, &orient, NULL, NULL, NULL, NULL, &hangarInternal, &hangOrient))
 		{
@@ -776,14 +776,14 @@ void ParkingPlaceBehavior::unreserveDoorForExit( ExitDoorType exitDoor )
 		{
 			if (it->m_door == exitDoor)
 			{
-				//DEBUG_ASSERTCRASH(it->m_reservedForExit, ("ParkingPlaceBehavior::unreserveDoorForExit: door %d was not reserved\n",exitDoor));
+				//DEBUG_ASSERTCRASH(it->m_reservedForExit, ("ParkingPlaceBehavior::unreserveDoorForExit: door %d was not reserved",exitDoor));
 				it->m_objectInSpace = INVALID_ID;
 				it->m_reservedForExit = false;
 				return;
 			}
 		}
 
-		DEBUG_CRASH(("ParkingPlaceBehavior::unreserveDoorForExit: door %d was not found\n",exitDoor));
+		DEBUG_CRASH(("ParkingPlaceBehavior::unreserveDoorForExit: door %d was not found",exitDoor));
 	}
 }
 

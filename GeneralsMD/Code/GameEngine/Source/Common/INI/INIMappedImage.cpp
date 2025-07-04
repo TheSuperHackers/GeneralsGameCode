@@ -69,7 +69,7 @@ void INI::parseMappedImageDefinition( INI* ini )
   	image = newInstance(Image);
 		image->setName( name );
 		TheMappedImageCollection->addImage(image);
-		DEBUG_ASSERTCRASH( image, ("parseMappedImage: unable to allocate image for '%s'\n",
+		DEBUG_ASSERTCRASH( image, ("parseMappedImage: unable to allocate image for '%s'",
 															name.str()) );
 
 	}  // end if

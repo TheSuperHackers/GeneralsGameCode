@@ -190,7 +190,7 @@ void WbView::mouseMove(TTrackingMode m, CPoint viewPt)
 	while (::PeekMessage(&msg, m_hWnd, WM_MOUSEMOVE, WM_MOUSEMOVE, PM_REMOVE)) {
 		viewPt.x = (short)LOWORD(msg.lParam);  // horizontal position of cursor 
 		viewPt.y = (short)HIWORD(msg.lParam);  // vertical position of cursor 
-		DEBUG_LOG(("Peek mouse %d, %d\n", viewPt.x,  viewPt.y));
+		DEBUG_LOG(("Peek mouse %d, %d", viewPt.x,  viewPt.y));
 	}
 
 	if (m_trackingMode == TRACK_NONE) {

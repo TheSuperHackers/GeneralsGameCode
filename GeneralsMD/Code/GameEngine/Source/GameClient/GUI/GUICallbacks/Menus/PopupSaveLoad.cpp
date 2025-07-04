@@ -102,7 +102,7 @@ static void updateMenuActions( void )
 
 	// for loading only, disable the save button, otherwise enable it
 	GameWindow *saveButton = TheWindowManager->winGetWindowFromId( NULL, buttonSaveKey );
-	DEBUG_ASSERTCRASH( saveButton, ("SaveLoadMenuInit: Unable to find save button\n") );
+	DEBUG_ASSERTCRASH( saveButton, ("SaveLoadMenuInit: Unable to find save button") );
 	if( currentLayoutType == SLLT_LOAD_ONLY )
 		saveButton->winEnable( FALSE );
 	else
@@ -172,7 +172,7 @@ void SaveLoadMenuInit( WindowLayout *layout, void *userData )
 	editDesc = TheWindowManager->winGetWindowFromId( parent, NAMEKEY( "PopupSaveLoad.wnd:EntryDesc" ) );
 	// get the listbox that will have the save games in it
 	listboxGames = TheWindowManager->winGetWindowFromId( NULL, listboxGamesKey );
-	DEBUG_ASSERTCRASH( listboxGames != NULL, ("SaveLoadMenuInit - Unable to find games listbox\n") );
+	DEBUG_ASSERTCRASH( listboxGames != NULL, ("SaveLoadMenuInit - Unable to find games listbox") );
 
 	// populate the listbox with the save games on disk
 	TheGameState->populateSaveGameListbox( listboxGames, currentLayoutType );
@@ -235,7 +235,7 @@ void SaveLoadMenuFullScreenInit( WindowLayout *layout, void *userData )
 	deleteConfirm = TheWindowManager->winGetWindowFromId( parent, NAMEKEY( "SaveLoad.wnd:DeleteConfirmParent" ) );
 	// get the listbox that will have the save games in it
 	listboxGames = TheWindowManager->winGetWindowFromId( NULL, listboxGamesKey );
-	DEBUG_ASSERTCRASH( listboxGames != NULL, ("SaveLoadMenuInit - Unable to find games listbox\n") );
+	DEBUG_ASSERTCRASH( listboxGames != NULL, ("SaveLoadMenuInit - Unable to find games listbox") );
 
 	// populate the listbox with the save games on disk
 	TheGameState->populateSaveGameListbox( listboxGames, currentLayoutType );
@@ -367,7 +367,7 @@ static AvailableGameInfo *getSelectedSaveFileInfo( GameWindow *window )
 
 	// get the listbox
 	//GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( window, listboxGamesKey );
-	DEBUG_ASSERTCRASH( listboxGames != NULL, ("SaveLoadMenuInit - Unable to find games listbox\n") );
+	DEBUG_ASSERTCRASH( listboxGames != NULL, ("SaveLoadMenuInit - Unable to find games listbox") );
 
 	// which item is selected
 	Int selected;
@@ -388,11 +388,11 @@ static void doLoadGame( void )
 
 	// get listbox of games
 	//GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( parent, NAMEKEY( "PopupSaveLoad.wnd:ListboxGames" ) );
-	DEBUG_ASSERTCRASH( listboxGames, ("doLoadGame: Unable to find game listbox\n") );
+	DEBUG_ASSERTCRASH( listboxGames, ("doLoadGame: Unable to find game listbox") );
 
 	// get selected game info
 	AvailableGameInfo *selectedGameInfo = getSelectedSaveFileInfo( listboxGames );
-	DEBUG_ASSERTCRASH( selectedGameInfo, ("doLoadGame: No selected game info found\n") );
+	DEBUG_ASSERTCRASH( selectedGameInfo, ("doLoadGame: No selected game info found") );
 
 	// when loading a game we also close the quit/esc menu for the user when in-game
 	if( TheShell->isShellActive() == FALSE )
@@ -563,7 +563,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 			{
 				GameWindow *control = (GameWindow *)mData1;
 				GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( window, listboxGamesKey );
-				DEBUG_ASSERTCRASH( listboxGames != NULL, ("SaveLoadMenuInit - Unable to find games listbox\n") );
+				DEBUG_ASSERTCRASH( listboxGames != NULL, ("SaveLoadMenuInit - Unable to find games listbox") );
 
 				if (listboxGames != NULL) {
 					int rowSelected = mData2;
@@ -583,7 +583,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 			GameWindow *control = (GameWindow *)mData1;
 
 			GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( window, listboxGamesKey );
-			DEBUG_ASSERTCRASH( listboxGames != NULL, ("SaveLoadMenuInit - Unable to find games listbox\n") );
+			DEBUG_ASSERTCRASH( listboxGames != NULL, ("SaveLoadMenuInit - Unable to find games listbox") );
 
 			//
 			// handle games listbox, when certain items are selected in the listbox only some
@@ -761,7 +761,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 					// get the item data of the selection
 					AvailableGameInfo *selectedGameInfo;
 					selectedGameInfo = (AvailableGameInfo *)GadgetListBoxGetItemData( listboxGames, selected );
-					DEBUG_ASSERTCRASH( selectedGameInfo, ("SaveLoadMenuSystem: Internal error, listbox entry to overwrite game has no item data set into listbox element\n") );
+					DEBUG_ASSERTCRASH( selectedGameInfo, ("SaveLoadMenuSystem: Internal error, listbox entry to overwrite game has no item data set into listbox element") );
 
 					// enable the listbox of games
 					//GameWindow *listboxGames = TheWindowManager->winGetWindowFromId( parent, NAMEKEY( "PopupSaveLoad.wnd:ListboxGames" ) );

@@ -222,7 +222,7 @@ void OpenContain::addOrRemoveObjFromWorld(Object* obj, Bool add)
 	// check for it here and print a warning
 	//
 	if( obj->isKindOf( KINDOF_STRUCTURE ) )
-		DEBUG_LOG(( "WARNING: Containing/Removing structures like '%s' is potentially a very expensive and slow operation\n",
+		DEBUG_LOG(( "WARNING: Containing/Removing structures like '%s' is potentially a very expensive and slow operation",
 								obj->getTemplate()->getName().str() ));
 
 
@@ -305,7 +305,7 @@ void OpenContain::addToContain( Object *rider )
 	if( rider->getContainedBy() != NULL )
 	{
 
-		DEBUG_LOG(( "'%s' is trying to contain '%s', but '%s' is already contained by '%s'\n",
+		DEBUG_LOG(( "'%s' is trying to contain '%s', but '%s' is already contained by '%s'",
 								getObject()->getTemplate()->getName().str(),
 								rider->getTemplate()->getName().str(),
 								rider->getTemplate()->getName().str(),
@@ -372,7 +372,7 @@ void OpenContain::removeFromContain( Object *rider, Bool exposeStealthUnits )
 	if( containedBy != getObject() )
 	{
 
-		DEBUG_LOG(( "'%s' is trying to un-contain '%s', but '%s' is really contained by '%s'\n",
+		DEBUG_LOG(( "'%s' is trying to un-contain '%s', but '%s' is really contained by '%s'",
 								getObject()->getTemplate()->getName().str(),
 								rider->getTemplate()->getName().str(),
 								rider->getTemplate()->getName().str(),
@@ -1312,7 +1312,7 @@ void OpenContain::processDamageToContained()
 			// GLA Battle Bus with at least 2 half damaged GLA Terrorists inside.
 			if (listSize != items->size())
 			{
-				DEBUG_ASSERTCRASH( listSize == 0, ("List is expected empty\n") );
+				DEBUG_ASSERTCRASH( listSize == 0, ("List is expected empty") );
 				break;
 			}
 		}
@@ -1341,7 +1341,7 @@ void OpenContain::processDamageToContained()
 	{
 		Object *object = *it;
 
-		DEBUG_ASSERTCRASH( object, ("Contain list must not contain NULL element\n") );
+		DEBUG_ASSERTCRASH( object, ("Contain list must not contain NULL element") );
 
 		// Calculate the damage to be inflicted on each unit.
 		Real damage = object->getBodyModule()->getMaxHealth() * percentDamage;
@@ -1487,7 +1487,7 @@ void OpenContain::xfer( Xfer *xfer )
 			}
 			m_containList.clear();
 #else
-			DEBUG_CRASH(( "OpenContain::xfer - Contain list should be empty before load but is not\n" ));
+			DEBUG_CRASH(( "OpenContain::xfer - Contain list should be empty before load but is not" ));
 			throw SC_INVALID_DATA;
 #endif
 
@@ -1578,7 +1578,7 @@ void OpenContain::xfer( Xfer *xfer )
 		if( m_objectEnterExitInfo.empty() == FALSE )
 		{
 
-			DEBUG_CRASH(( "OpenContain::xfer - m_objectEnterExitInfo should be empty, but is not\n" ));
+			DEBUG_CRASH(( "OpenContain::xfer - m_objectEnterExitInfo should be empty, but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -1619,7 +1619,7 @@ void OpenContain::loadPostProcess( void )
 	if( m_containList.empty() == FALSE )
 	{
 
-		DEBUG_CRASH(( "OpenContain::loadPostProcess - Contain list should be empty before load but is not\n" ));
+		DEBUG_CRASH(( "OpenContain::loadPostProcess - Contain list should be empty before load but is not" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -1637,7 +1637,7 @@ void OpenContain::loadPostProcess( void )
 		if( obj == NULL )
 		{
 
-			DEBUG_CRASH(( "OpenContain::loadPostProcess - Unable to find object to put on contain list\n" ));
+			DEBUG_CRASH(( "OpenContain::loadPostProcess - Unable to find object to put on contain list" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if

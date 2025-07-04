@@ -111,7 +111,7 @@ void Anim2DTemplate::parseNumImages( INI *ini, void *instance, void *store, cons
 	if( numFrames < minimumFrames )
 	{
 
-		DEBUG_CRASH(( "Anim2DTemplate::parseNumImages - Invalid animation '%s', animations must have '%d' or more frames defined\n",
+		DEBUG_CRASH(( "Anim2DTemplate::parseNumImages - Invalid animation '%s', animations must have '%d' or more frames defined",
 									 animTemplate->getName().str(), minimumFrames ));
 		throw INI_INVALID_DATA;
 
@@ -155,7 +155,7 @@ void Anim2DTemplate::parseImage( INI *ini, void *instance, void *store, const vo
 	{
 
 		//We don't care if we're in the builder
-		//DEBUG_CRASH(( "Anim2DTemplate::parseImage - Image not found\n" ));
+		//DEBUG_CRASH(( "Anim2DTemplate::parseImage - Image not found" ));
 		//throw INI_INVALID_DATA;
 
 	}  // end if
@@ -194,7 +194,7 @@ void Anim2DTemplate::parseImage( INI *ini, void *instance, void *store, const vo
 	if( animTemplate->getNumFrames() == NUM_FRAMES_INVALID )
 	{
 
-		DEBUG_CRASH(( "Anim2DTemplate::parseImageSequence - You must specify the number of animation frames for animation '%s' *BEFORE* specifying the image sequence name\n",
+		DEBUG_CRASH(( "Anim2DTemplate::parseImageSequence - You must specify the number of animation frames for animation '%s' *BEFORE* specifying the image sequence name",
 									animTemplate->getName().str() ));
 		throw INI_INVALID_DATA;
 
@@ -220,7 +220,7 @@ void Anim2DTemplate::parseImage( INI *ini, void *instance, void *store, const vo
 		if( image == NULL )
 		{
 
-			DEBUG_CRASH(( "Anim2DTemplate::parseImageSequence - Image '%s' not found for animation '%s'.  Check the number of images specified in INI and also make sure all the actual images exist.\n",
+			DEBUG_CRASH(( "Anim2DTemplate::parseImageSequence - Image '%s' not found for animation '%s'.  Check the number of images specified in INI and also make sure all the actual images exist.",
 										imageName.str(), animTemplate->getName().str() ));
 			throw INI_INVALID_DATA;
 
@@ -258,7 +258,7 @@ void Anim2DTemplate::storeImage( const Image *image )
 	}  // end for i
 
 	// if we got here we tried to store an image in an array that was too small
-	DEBUG_CRASH(( "Anim2DTemplate::storeImage - Unable to store image '%s' into animation '%s' because the animation is setup to only support '%d' image frames\n",
+	DEBUG_CRASH(( "Anim2DTemplate::storeImage - Unable to store image '%s' into animation '%s' because the animation is setup to only support '%d' image frames",
 								image->getName().str(), getName().str(), m_numFrames ));
 	throw INI_INVALID_DATA;
 
@@ -279,7 +279,7 @@ const Image* Anim2DTemplate::getFrame( UnsignedShort frameNumber ) const
 	if( frameNumber < 0 || frameNumber >= m_numFrames )
 	{
 		
-		DEBUG_CRASH(( "Anim2DTemplate::getFrame - Illegal frame number '%d' for animation '%s'\n",
+		DEBUG_CRASH(( "Anim2DTemplate::getFrame - Illegal frame number '%d' for animation '%s'",
 									frameNumber, getName().str() ));
 		return NULL;
 
@@ -304,7 +304,7 @@ Anim2D::Anim2D( Anim2DTemplate *animTemplate, Anim2DCollection *collectionSystem
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( animTemplate != NULL, ("Anim2D::Anim2D - NULL template\n") );
+	DEBUG_ASSERTCRASH( animTemplate != NULL, ("Anim2D::Anim2D - NULL template") );
 
 	//Added By Sadullah Nader
 	//Initialization 
@@ -364,7 +364,7 @@ void Anim2D::setCurrentFrame( UnsignedShort frame )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_template != NULL, ("Anim2D::reset - No template for animation\n") );
+	DEBUG_ASSERTCRASH( m_template != NULL, ("Anim2D::reset - No template for animation") );
 
 	// sanity
 	DEBUG_ASSERTCRASH( TheGameLogic != NULL,	
@@ -391,7 +391,7 @@ void Anim2D::randomizeCurrentFrame( void )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_template != NULL, ("Anim2D::reset - No template for animation\n") );
+	DEBUG_ASSERTCRASH( m_template != NULL, ("Anim2D::reset - No template for animation") );
 
 	// set the current frame to a random frame
 	setCurrentFrame( GameClientRandomValue( 0, m_template->getNumFrames() - 1 ) );
@@ -405,7 +405,7 @@ void Anim2D::reset( void )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_template != NULL, ("Anim2D::reset - No template for animation\n") );
+	DEBUG_ASSERTCRASH( m_template != NULL, ("Anim2D::reset - No template for animation") );
 
 	switch( m_template->getAnimMode() )
 	{
@@ -426,7 +426,7 @@ void Anim2D::reset( void )
 
 		// --------------------------------------------------------------------------------------------
 		default:
-			DEBUG_CRASH(( "Anim2D::reset - Unknown animation mode '%d' for '%s'\n",
+			DEBUG_CRASH(( "Anim2D::reset - Unknown animation mode '%d' for '%s'",
 										m_template->getAnimMode(), m_template->getName().str() ));
 			break;
 
@@ -558,7 +558,7 @@ void Anim2D::tryNextFrame( void )
 			default:
 			{
 
-				DEBUG_CRASH(( "Anim2D::tryNextFrame - Unknown animation mode '%d' for '%s'\n",
+				DEBUG_CRASH(( "Anim2D::tryNextFrame - Unknown animation mode '%d' for '%s'",
 											m_template->getAnimMode(), m_template->getName().str() ));
 				break;
 
@@ -630,7 +630,7 @@ void Anim2D::draw( Int x, Int y )
 	const Image *image = m_template->getFrame( m_currentFrame );
 
 	// sanity
-	DEBUG_ASSERTCRASH( image != NULL, ("Anim2D::draw - Image not found for frame '%d' on animation '%s'\n",
+	DEBUG_ASSERTCRASH( image != NULL, ("Anim2D::draw - Image not found for frame '%d' on animation '%s'",
 										 m_currentFrame, m_template->getName().str()) );
 
 	// get the natural width and height of this image
@@ -660,7 +660,7 @@ void Anim2D::draw( Int x, Int y, Int width, Int height )
 	const Image *image = m_template->getFrame( m_currentFrame );
 	
 	// sanity
-	DEBUG_ASSERTCRASH( image != NULL, ("Anim2D::draw - Image not found for frame '%d' on animation '%s'\n",
+	DEBUG_ASSERTCRASH( image != NULL, ("Anim2D::draw - Image not found for frame '%d' on animation '%s'",
 										 m_currentFrame, m_template->getName().str()) );
 
 
@@ -733,7 +733,7 @@ Anim2DCollection::~Anim2DCollection( void )
 {
 
 	// there should not be any animation instances registered with us since we're being destroyed
-	DEBUG_ASSERTCRASH( m_instanceList == NULL, ("Anim2DCollection - instance list is not NULL\n") );
+	DEBUG_ASSERTCRASH( m_instanceList == NULL, ("Anim2DCollection - instance list is not NULL") );
 
 	// delete all the templates
 	Anim2DTemplate *nextTemplate;

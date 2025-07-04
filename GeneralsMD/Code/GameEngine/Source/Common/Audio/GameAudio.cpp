@@ -423,7 +423,7 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 	if (!eventToAdd->getAudioEventInfo()) {
 		getInfoForAudioEvent(eventToAdd);
 		if (!eventToAdd->getAudioEventInfo()) {
-			DEBUG_CRASH(("No info for requested audio event '%s'\n", eventToAdd->getEventName().str()));
+			DEBUG_CRASH(("No info for requested audio event '%s'", eventToAdd->getEventName().str()));
 			return AHSV_Error;
 		}
 	}
@@ -474,7 +474,7 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 	// cull muted audio
 	if (audioEvent->getVolume() < TheAudio->getAudioSettings()->m_minVolume) {
 #ifdef INTENSIVE_AUDIO_DEBUG
-		DEBUG_LOG((" - culled due to muting (%d).\n", audioEvent->getVolume()));
+		DEBUG_LOG((" - culled due to muting (%d).", audioEvent->getVolume()));
 #endif
 		releaseAudioEventRTS(audioEvent);
 		return AHSV_Muted;
@@ -844,7 +844,7 @@ AudioEventInfo *AudioManager::newAudioEventInfo( AsciiString audioName )
 {
 	AudioEventInfo *eventInfo = findAudioEventInfo(audioName);
 	if (eventInfo) {
-		DEBUG_CRASH(("Requested add of '%s' multiple times. Is this intentional? - jkmcd\n", audioName.str()));
+		DEBUG_CRASH(("Requested add of '%s' multiple times. Is this intentional? - jkmcd", audioName.str()));
 		return eventInfo;
 	}
 
@@ -860,7 +860,7 @@ void AudioManager::addAudioEventInfo( AudioEventInfo * newEvent )
   AudioEventInfo *eventInfo = findAudioEventInfo( newEvent->m_audioName );
   if (eventInfo) 
   {
-    DEBUG_CRASH(("Requested add of '%s' multiple times. Is this intentional? - jkmcd\n", newEvent->m_audioName.str()));
+    DEBUG_CRASH(("Requested add of '%s' multiple times. Is this intentional? - jkmcd", newEvent->m_audioName.str()));
     *eventInfo = *newEvent;
   }
   else
@@ -1035,7 +1035,7 @@ Bool AudioManager::shouldPlayLocally(const AudioEventRTS *audioEvent)
 	}
 
 	if (!BitIsSet(ei->m_type, (ST_PLAYER | ST_ALLIES | ST_ENEMIES | ST_EVERYONE))) {
-		DEBUG_CRASH(("No player restrictions specified for '%s'. Using Everyone.\n", ei->m_audioName.str()));
+		DEBUG_CRASH(("No player restrictions specified for '%s'. Using Everyone.", ei->m_audioName.str()));
 		return TRUE;
 	}
 
@@ -1046,12 +1046,12 @@ Bool AudioManager::shouldPlayLocally(const AudioEventRTS *audioEvent)
 	Player *owningPlayer = ThePlayerList->getNthPlayer(audioEvent->getPlayerIndex());
 
 	if (BitIsSet(ei->m_type, ST_PLAYER) && BitIsSet(ei->m_type, ST_UI) && owningPlayer == NULL) {
-		DEBUG_ASSERTCRASH(!TheGameLogic->isInGameLogicUpdate(), ("Playing %s sound -- player-based UI sound without specifying a player.\n"));
+		DEBUG_ASSERTCRASH(!TheGameLogic->isInGameLogicUpdate(), ("Playing %s sound -- player-based UI sound without specifying a player."));
 		return TRUE;
 	}
 
 	if (owningPlayer == NULL) {
-		DEBUG_CRASH(("Sound '%s' expects an owning player, but the audio event that created it didn't specify one.\n", ei->m_audioName.str()));
+		DEBUG_CRASH(("Sound '%s' expects an owning player, but the audio event that created it didn't specify one.", ei->m_audioName.str()));
 		return FALSE;
 	}
 
@@ -1102,7 +1102,7 @@ void AudioManager::releaseAudioEventRTS( AudioEventRTS *&eventToRelease )
 //-------------------------------------------------------------------------------------------------
 void AudioManager::loseFocus( void )
 {
-	DEBUG_ASSERTLOG(m_savedValues == NULL, ("AudioManager::loseFocus() - leak - jkmcd\n"));
+	DEBUG_ASSERTLOG(m_savedValues == NULL, ("AudioManager::loseFocus() - leak - jkmcd"));
 	// In this case, make all the audio go silent.
 	m_savedValues = NEW Real[NUM_VOLUME_TYPES];
 	m_savedValues[0] = m_systemMusicVolume;

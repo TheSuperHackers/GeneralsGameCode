@@ -649,7 +649,7 @@ Bool FunctionLexicon::validate( void )
 							if( sourceEntry->func == lookAtEntry->func )
 							{
 
-								DEBUG_LOG(( "WARNING! Function lexicon entries match same address! '%s' and '%s'\n", 
+								DEBUG_LOG(( "WARNING! Function lexicon entries match same address! '%s' and '%s'", 
 														sourceEntry->name, lookAtEntry->name ));
 								valid = FALSE;
 

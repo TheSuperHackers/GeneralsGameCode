@@ -1052,7 +1052,7 @@ GlobalData::GlobalData()
 //-------------------------------------------------------------------------------------------------
 GlobalData::~GlobalData( void )
 {
-	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("~GlobalData: theOriginal is not original\n") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("~GlobalData: theOriginal is not original") );
 
 	if (m_weaponBonusSet)
 		deleteInstance(m_weaponBonusSet);
@@ -1095,7 +1095,7 @@ GlobalData *GlobalData::newOverride( void )
 	GlobalData *override = NEW GlobalData;
 
 	// copy the data from the latest override (TheWritableGlobalData) to the newly created instance
-	DEBUG_ASSERTCRASH( TheWritableGlobalData, ("GlobalData::newOverride() - no existing data\n") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData, ("GlobalData::newOverride() - no existing data") );
 	*override = *TheWritableGlobalData;
 
 	//
@@ -1148,8 +1148,8 @@ void GlobalData::reset( void )
 	// we now have the one single global data in TheWritableGlobalData singleton, lets sanity check
 	// some of all that
 	//
-	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("ResetGlobalData: theOriginal is not original\n") );
-	DEBUG_ASSERTCRASH( TheWritableGlobalData == GlobalData::m_theOriginal, ("ResetGlobalData: oops\n") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData->m_next == NULL, ("ResetGlobalData: theOriginal is not original") );
+	DEBUG_ASSERTCRASH( TheWritableGlobalData == GlobalData::m_theOriginal, ("ResetGlobalData: oops") );
 
 }  // end ResetGlobalData
 
@@ -1235,7 +1235,7 @@ UnsignedInt GlobalData::generateExeCRC()
 #define GENERALSMD_104_EAAPP_EXE_CRC 0xc4181eb9u
 
 	exeCRC.set(GENERALSMD_104_CD_EXE_CRC);
-	DEBUG_LOG(("Fake EXE CRC is 0x%8.8X\n", exeCRC.get()));
+	DEBUG_LOG(("Fake EXE CRC is 0x%8.8X", exeCRC.get()));
 
 #else
 	{
@@ -1249,7 +1249,7 @@ UnsignedInt GlobalData::generateExeCRC()
 			{
 				exeCRC.computeCRC(crcBlock, amtRead);
 			}
-			DEBUG_LOG(("EXE CRC is 0x%8.8X\n", exeCRC.get()));
+			DEBUG_LOG(("EXE CRC is 0x%8.8X", exeCRC.get()));
 			fp->close();
 			fp = NULL;
 		}
@@ -1289,7 +1289,7 @@ UnsignedInt GlobalData::generateExeCRC()
 		fp = NULL;
 	}
 
-	DEBUG_LOG(("EXE+Version(%d.%d)+SCB CRC is 0x%8.8X\n", version >> 16, version & 0xffff, exeCRC.get()));
+	DEBUG_LOG(("EXE+Version(%d.%d)+SCB CRC is 0x%8.8X", version >> 16, version & 0xffff, exeCRC.get()));
 
 	return exeCRC.get();
 }

@@ -100,7 +100,7 @@ Bool DecompressFile		(char *infile, char *outfile)
 				break;
 		}
 
-		DEBUG_LOG(("Decompressed %s to %s, output size = %d\n", infile, outfile, rawSize));
+		DEBUG_LOG(("Decompressed %s to %s, output size = %d", infile, outfile, rawSize));
 
 		LZHLDestroyDecompressor(decompress);
 		outFilePtr = fopen(outfile, "wb");

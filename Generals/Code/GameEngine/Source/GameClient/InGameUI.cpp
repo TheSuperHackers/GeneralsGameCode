@@ -447,7 +447,7 @@ void InGameUI::xfer( Xfer *xfer )
 			}
 			else if (playerIndex < 0 || playerIndex >= MAX_PLAYER_COUNT)
 			{
-				DEBUG_CRASH(("SWInfo bad plyrindex\n"));
+				DEBUG_CRASH(("SWInfo bad plyrindex"));
 				throw INI_INVALID_DATA;
 			}
 
@@ -456,7 +456,7 @@ void InGameUI::xfer( Xfer *xfer )
 			const SpecialPowerTemplate* powerTemplate = TheSpecialPowerStore->findSpecialPowerTemplate(templateName);
 			if (powerTemplate == NULL)
 			{
-				DEBUG_CRASH(("power %s not found\n",templateName.str()));
+				DEBUG_CRASH(("power %s not found",templateName.str()));
 				throw INI_INVALID_DATA;
 			}
 
@@ -561,7 +561,7 @@ void InGameUI::addSuperweapon(Int playerIndex, const AsciiString& powerName, Obj
 	const Player* player = ThePlayerList->getNthPlayer(playerIndex);
 	Bool hiddenByScience = (powerTemplate->getRequiredScience() != SCIENCE_INVALID) && (player->hasScience(powerTemplate->getRequiredScience()) == false);
 
-	DEBUG_LOG(("Adding superweapon UI timer\n"));
+	DEBUG_LOG(("Adding superweapon UI timer"));
 	SuperweaponInfo *info = newInstance(SuperweaponInfo)(
 					id,
 					-1,			// timestamp
@@ -583,7 +583,7 @@ void InGameUI::addSuperweapon(Int playerIndex, const AsciiString& powerName, Obj
 // ------------------------------------------------------------------------------------------------
 Bool InGameUI::removeSuperweapon(Int playerIndex, const AsciiString& powerName, ObjectID id, const SpecialPowerTemplate *powerTemplate)
 {
-	DEBUG_LOG(("Removing superweapon UI timer\n"));
+	DEBUG_LOG(("Removing superweapon UI timer"));
 	SuperweaponMap::iterator mapIt = m_superweapons[playerIndex].find(powerName);
 	if (mapIt != m_superweapons[playerIndex].end())
 	{
@@ -1695,7 +1695,7 @@ void InGameUI::update( void )
 					{
 						// if we've exceeded the allocated number of display strings, this will force us to essentially truncate the remaining text
 						m_militarySubtitle->index = m_militarySubtitle->subtitle.getLength();
-						DEBUG_CRASH(("You're Only Allowed to use %d lines of subtitle text\n",MAX_SUBTITLE_LINES));
+						DEBUG_CRASH(("You're Only Allowed to use %d lines of subtitle text",MAX_SUBTITLE_LINES));
 					}
 				}
 				else
@@ -2434,7 +2434,7 @@ void InGameUI::createMouseoverHint( const GameMessage *msg )
 
 	if (oldID != m_mousedOverDrawableID)
 	{
-		//DEBUG_LOG(("Resetting tooltip delay\n"));
+		//DEBUG_LOG(("Resetting tooltip delay"));
 		TheMouse->resetTooltipDelay();
 	}
 
@@ -2834,7 +2834,7 @@ void InGameUI::setGUICommand( const CommandButton *command )
 		if( BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_TARGET ) == FALSE )
 		{
 
-			DEBUG_ASSERTCRASH( 0, ("setGUICommand: Command '%s' does not need additional user interaction\n",	
+			DEBUG_ASSERTCRASH( 0, ("setGUICommand: Command '%s' does not need additional user interaction",	
 														command->getName().str()) );
 			m_pendingGUICommand = NULL;
 			m_mouseMode = MOUSEMODE_DEFAULT;
@@ -2981,7 +2981,7 @@ void InGameUI::placeBuildAvailable( const ThingTemplate *build, Drawable *buildD
 				else
 					draw->setIndicatorColor(sourceObject->getControllingPlayer()->getPlayerColor());
 			}
-			DEBUG_ASSERTCRASH( draw, ("Unable to create icon at cursor for placement '%s'\n",
+			DEBUG_ASSERTCRASH( draw, ("Unable to create icon at cursor for placement '%s'",
 												 build->getName().str()) );
 
 			//
@@ -4887,7 +4887,7 @@ try_again:
 	
 	m_floatingTextList.push_front( newFTD ); // add to the list
 
-	//DEBUG_LOG(("%s\n",text.str()));
+	//DEBUG_LOG(("%s",text.str()));
 }
 #endif
 

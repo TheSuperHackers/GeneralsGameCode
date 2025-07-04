@@ -245,7 +245,7 @@ static void parseBitString( const char *inBuffer, UnsignedInt *bits, const char 
 		{
 			if ( !parseBitFlag( tok, bits, flagList ) )
 			{
-				DEBUG_LOG(( "ParseBitString: Invalid flag '%s'.\n", tok ));
+				DEBUG_LOG(( "ParseBitString: Invalid flag '%s'.", tok ));
 			}
 		}
 	}
@@ -292,7 +292,7 @@ static void readUntilSemicolon( File *fp, char *buffer, int maxBufLen )
 
 	}
 
-	DEBUG_LOG(( "ReadUntilSemicolon: ERROR - Read buffer overflow - input truncated.\n" ));
+	DEBUG_LOG(( "ReadUntilSemicolon: ERROR - Read buffer overflow - input truncated." ));
 
 	buffer[ maxBufLen - 1 ] = '\000';
 
@@ -395,7 +395,7 @@ static void pushWindow( GameWindow *window )
   if( stackPtr == &windowStack[ WIN_STACK_DEPTH - 1 ] ) 
 	{
 
-    DEBUG_LOG(( "pushWindow: Warning, stack overflow\n" ));
+    DEBUG_LOG(( "pushWindow: Warning, stack overflow" ));
     return;
 
   }  // end if
@@ -999,7 +999,7 @@ static Bool parseTooltipText( const char *token, WinInstanceData *instData,
 	if( strlen( c ) >= MAX_TEXT_LABEL )
 	{
 		
-		DEBUG_LOG(( "TextTooltip label '%s' is too long, max is '%d'\n", c, MAX_TEXT_LABEL ));
+		DEBUG_LOG(( "TextTooltip label '%s' is too long, max is '%d'", c, MAX_TEXT_LABEL ));
 		assert( 0 );
 		return FALSE;
 
@@ -1049,7 +1049,7 @@ static Bool parseText( const char *token, WinInstanceData *instData,
 	if( strlen( c ) >= MAX_TEXT_LABEL )
 	{
 		
-		DEBUG_LOG(( "Text label '%s' is too long, max is '%d'\n", c, MAX_TEXT_LABEL ));
+		DEBUG_LOG(( "Text label '%s' is too long, max is '%d'", c, MAX_TEXT_LABEL ));
 		assert( 0 );
 		return FALSE;
 
@@ -1088,7 +1088,7 @@ static Bool parseTextColor( const char *token, WinInstanceData *instData,
 		else
 		{
 
-			DEBUG_LOG(( "Undefined state for text color\n" ));
+			DEBUG_LOG(( "Undefined state for text color" ));
 			assert( 0 );
 			return FALSE;
 
@@ -1316,7 +1316,7 @@ static Bool parseDrawData( const char *token, WinInstanceData *instData,
 		else
 		{
 
-			DEBUG_LOG(( "ParseDrawData, undefined token '%s'\n", token ));
+			DEBUG_LOG(( "ParseDrawData, undefined token '%s'", token ));
 			assert( 0 );
 			return FALSE;
 
@@ -2246,7 +2246,7 @@ static Bool parseChildWindows( GameWindow *window,
   if( lastWindow != window ) 
 	{
 
-    DEBUG_LOG(( "parseChildWindows: unmatched window on stack.  Corrupt stack or bad source\n" ));
+    DEBUG_LOG(( "parseChildWindows: unmatched window on stack.  Corrupt stack or bad source" ));
     return FALSE;
 
   }
@@ -2416,7 +2416,7 @@ static GameWindow *parseWindow( File *inFile, char *buffer )
 
 				if (parse->parse( token, &instData, buffer, data ) == FALSE ) 
 				{
-					DEBUG_LOG(( "parseGameObject: Error parsing %s\n", parse->name ));
+					DEBUG_LOG(( "parseGameObject: Error parsing %s", parse->name ));
 					goto cleanupAndExit;
 				}
 
@@ -2439,7 +2439,7 @@ static GameWindow *parseWindow( File *inFile, char *buffer )
 
 				if( parseData( &data, type, buffer ) == FALSE ) 
 				{
-					DEBUG_LOG(( "parseGameWindow: Error parsing %s\n", parse->name ));
+					DEBUG_LOG(( "parseGameWindow: Error parsing %s", parse->name ));
 					goto cleanupAndExit;
 				}
 
@@ -2738,7 +2738,7 @@ GameWindow *GameWindowManager::winCreateFromScript( AsciiString filenameString,
 	inFile = TheFileSystem->openFile(filepath, File::READ);
 	if (inFile == NULL)
 	{
-		DEBUG_LOG(( "WinCreateFromScript: Cannot access file '%s'.\n", filename ));
+		DEBUG_LOG(( "WinCreateFromScript: Cannot access file '%s'.", filename ));
 		return NULL;
 	}
 
@@ -2758,7 +2758,7 @@ GameWindow *GameWindowManager::winCreateFromScript( AsciiString filenameString,
 		if( parseLayoutBlock( inFile, buffer, version, &scriptInfo ) == FALSE )
 		{
 
-			DEBUG_LOG(( "WinCreateFromScript: Error parsing layout block\n" ));
+			DEBUG_LOG(( "WinCreateFromScript: Error parsing layout block" ));
 			return FALSE;
 
 		}  // end if

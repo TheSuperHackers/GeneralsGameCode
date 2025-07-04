@@ -99,7 +99,7 @@ void ControlBar::populateInvDataCallback( Object *obj, void *userData )
 	if( data->currIndex > data->maxIndex )
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("There is not enough GUI slots to hold the # of items inside a '%s'\n", 
+		DEBUG_ASSERTCRASH( 0, ("There is not enough GUI slots to hold the # of items inside a '%s'", 
 													data->transport->getTemplate()->getName().str()) );
 		return;
 
@@ -107,7 +107,7 @@ void ControlBar::populateInvDataCallback( Object *obj, void *userData )
 
 	// get the window control that we're going to put our smiling faces in
 	GameWindow *control = data->controls[ data->currIndex ];
-	DEBUG_ASSERTCRASH( control, ("populateInvDataCallback: Control not found\n") );
+	DEBUG_ASSERTCRASH( control, ("populateInvDataCallback: Control not found") );
 
 	// assign our control and object id to the transport data
 	m_containData[ data->currIndex ].control = control;
@@ -792,7 +792,7 @@ void ControlBar::updateContextCommand( void )
 				static NameKeyType winID = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonQueue01" );
 				GameWindow *win = TheWindowManager->winGetWindowFromId( m_contextParent[ CP_BUILD_QUEUE ], winID );
 				
-				DEBUG_ASSERTCRASH( win, ("updateContextCommand: Unable to find first build queue button\n") );
+				DEBUG_ASSERTCRASH( win, ("updateContextCommand: Unable to find first build queue button") );
 				//				UnicodeString text;
 				//
 				//				text.format( L"%.0f%%", produce->getPercentComplete() );
@@ -1297,7 +1297,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 
 			// changed this to Log rather than Crash, because this can legitimately happen now for
 			// dozers and workers with mine-clearing stuff... (srj)
-			//DEBUG_ASSERTLOG( w, ("Unit %s's CommandButton %s is trying to access weaponslot %d, but doesn't have a weapon there in its FactionUnit ini entry.\n", 
+			//DEBUG_ASSERTLOG( w, ("Unit %s's CommandButton %s is trying to access weaponslot %d, but doesn't have a weapon there in its FactionUnit ini entry.", 
 			//	obj->getTemplate()->getName().str(), command->getName().str(), (Int)command->getWeaponSlot() ) );
 			
 			UnsignedInt now = TheGameLogic->getFrame();
@@ -1418,7 +1418,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			{
 				// sanity ... we must have a module for the special power, if we don't somebody probably
 				// forgot to put it in the object
-				DEBUG_CRASH(( "Object %s does not contain special power module (%s) to execute.  Did you forget to add it to the object INI?\n",
+				DEBUG_CRASH(( "Object %s does not contain special power module (%s) to execute.  Did you forget to add it to the object INI?",
 											obj->getTemplate()->getName().str(), command->getSpecialPowerTemplate()->getName().str() ));
 			} 
 			else if( mod->isReady() == FALSE )

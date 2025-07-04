@@ -349,7 +349,7 @@ static void populateGroupRoomListbox(GameWindow *lb)
 		GameSpyGroupRoom room = iter->second;
 		if (room.m_groupID != TheGameSpyConfig->getQMChannel())
 		{
-			DEBUG_LOG(("populateGroupRoomListbox(): groupID %d\n", room.m_groupID));
+			DEBUG_LOG(("populateGroupRoomListbox(): groupID %d", room.m_groupID));
 			if (room.m_groupID == TheGameSpyInfo->getCurrentGroupRoom())
 			{
 				Int selected = GadgetComboBoxAddEntry(lb, room.m_translatedName, GameSpyColor[GSCOLOR_CURRENTROOM]);
@@ -364,7 +364,7 @@ static void populateGroupRoomListbox(GameWindow *lb)
 		}
 		else
 		{
-			DEBUG_LOG(("populateGroupRoomListbox(): skipping QM groupID %d\n", room.m_groupID));
+			DEBUG_LOG(("populateGroupRoomListbox(): skipping QM groupID %d", room.m_groupID));
 		}
 	}
 
@@ -426,7 +426,7 @@ const Image* LookupSmallRankImage(Int side, Int rankPoints)
 	AsciiString fullImageName;
 	fullImageName.format("%s-%s", rankNames[rank], sideStr.str());
 	const Image *img = TheMappedImageCollection->findImageByName(fullImageName);
-	DEBUG_ASSERTLOG(img, ("*** Could not load small rank image '%s' from TheMappedImageCollection!\n", fullImageName.str()));
+	DEBUG_ASSERTLOG(img, ("*** Could not load small rank image '%s' from TheMappedImageCollection!", fullImageName.str()));
 	return img;
 }
 
@@ -521,7 +521,7 @@ void PopulateLobbyPlayerListbox(void)
 			uStr = GadgetListBoxGetText(listboxLobbyPlayers, selectedIndices[i], COLUMN_PLAYERNAME);
 			selectedName.translate(uStr);
 			selectedNames.insert(selectedName);
-			DEBUG_LOG(("Saving off old selection %d (%s)\n", selectedIndices[i], selectedName.str()));
+			DEBUG_LOG(("Saving off old selection %d (%s)", selectedIndices[i], selectedName.str()));
 		}
 
 		// save off old top entry
@@ -540,7 +540,7 @@ void PopulateLobbyPlayerListbox(void)
 				selIt = selectedNames.find(info.m_name);
 				if (selIt != selectedNames.end())
 				{
-					DEBUG_LOG(("Marking index %d (%s) to re-select\n", index, info.m_name.str()));
+					DEBUG_LOG(("Marking index %d (%s) to re-select", index, info.m_name.str()));
 					indicesToSelect.insert(index);
 				}
 			}
@@ -558,7 +558,7 @@ void PopulateLobbyPlayerListbox(void)
 				selIt = selectedNames.find(info.m_name);
 				if (selIt != selectedNames.end())
 				{
-					DEBUG_LOG(("Marking index %d (%s) to re-select\n", index, info.m_name.str()));
+					DEBUG_LOG(("Marking index %d (%s) to re-select", index, info.m_name.str()));
 					indicesToSelect.insert(index);
 				}
 			}
@@ -576,7 +576,7 @@ void PopulateLobbyPlayerListbox(void)
 				selIt = selectedNames.find(info.m_name);
 				if (selIt != selectedNames.end())
 				{
-					DEBUG_LOG(("Marking index %d (%s) to re-select\n", index, info.m_name.str()));
+					DEBUG_LOG(("Marking index %d (%s) to re-select", index, info.m_name.str()));
 					indicesToSelect.insert(index);
 				}
 			}
@@ -592,7 +592,7 @@ void PopulateLobbyPlayerListbox(void)
 			while (index < count)
 			{
 				newIndices[index] = *indexIt;
-				DEBUG_LOG(("Queueing up index %d to re-select\n", *indexIt));
+				DEBUG_LOG(("Queueing up index %d to re-select", *indexIt));
 				++index;
 				++indexIt;
 			}
@@ -673,19 +673,19 @@ void WOLLobbyMenuInit( WindowLayout *layout, void *userData )
 	{
 		if (groupRoomToJoin)
 		{
-			DEBUG_LOG(("WOLLobbyMenuInit() - rejoining group room %d\n", groupRoomToJoin));
+			DEBUG_LOG(("WOLLobbyMenuInit() - rejoining group room %d", groupRoomToJoin));
 			TheGameSpyInfo->joinGroupRoom(groupRoomToJoin);
 			groupRoomToJoin = 0;
 		}
 		else
 		{
-			DEBUG_LOG(("WOLLobbyMenuInit() - joining best group room\n"));
+			DEBUG_LOG(("WOLLobbyMenuInit() - joining best group room"));
 			TheGameSpyInfo->joinBestGroupRoom();
 		}
 	}
 	else
 	{
-		DEBUG_LOG(("WOLLobbyMenuInit() - not joining group room because we're already in one\n"));
+		DEBUG_LOG(("WOLLobbyMenuInit() - not joining group room because we're already in one"));
 	}
 
 	GrabWindowInfo();
@@ -877,15 +877,15 @@ static void refreshGameList( Bool forceRefresh )
 	{
 		if (TheGameSpyInfo->hasStagingRoomListChanged())
 		{
-			//DEBUG_LOG(("################### refreshing game list\n"));
-			//DEBUG_LOG(("gameRefreshTime=%d, refreshInterval=%d, now=%d\n", gameListRefreshTime, refreshInterval, timeGetTime()));
+			//DEBUG_LOG(("################### refreshing game list"));
+			//DEBUG_LOG(("gameRefreshTime=%d, refreshInterval=%d, now=%d", gameListRefreshTime, refreshInterval, timeGetTime()));
 			RefreshGameListBoxes();
 			gameListRefreshTime = timeGetTime();
 		} else {
 			//DEBUG_LOG(("-"));
 		}
 	} else {
-		//DEBUG_LOG(("gameListRefreshTime: %d refreshInterval: %d\n"));
+		//DEBUG_LOG(("gameListRefreshTime: %d refreshInterval: %d"));
 	}
 }
 //-------------------------------------------------------------------------------------------------
@@ -977,7 +977,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 				}
 				else
 				{
-					DEBUG_LOG(("WOLLobbyMenuUpdate() - joining best group room\n"));
+					DEBUG_LOG(("WOLLobbyMenuUpdate() - joining best group room"));
 					TheGameSpyInfo->joinBestGroupRoom();
 				}
 				populateGroupRoomListbox(comboLobbyGroupRooms);
@@ -1021,7 +1021,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 			case PeerResponse::PEERRESPONSE_PLAYERUTM:
 			case PeerResponse::PEERRESPONSE_ROOMUTM:
 				{
-					DEBUG_LOG(("Putting off a UTM in the lobby\n"));
+					DEBUG_LOG(("Putting off a UTM in the lobby"));
 					TheLobbyQueuedUTMs.push_back(resp);
 				}
 				break;
@@ -1090,7 +1090,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 								const char *firstPlayer = resp.stagingRoomPlayerNames[i].c_str();
 								if (!strcmp(hostName.str(), firstPlayer))
 								{
-									DEBUG_LOG(("Saw host %s == %s in slot %d\n", hostName.str(), firstPlayer, i));
+									DEBUG_LOG(("Saw host %s == %s in slot %d", hostName.str(), firstPlayer, i));
 									isHostPresent = TRUE;
 								}
 							}
@@ -1134,13 +1134,13 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 						GSMessageBoxOk(TheGameText->fetch("GUI:JoinFailedDefault"), s);
 						if (groupRoomToJoin)
 						{
-							DEBUG_LOG(("WOLLobbyMenuUpdate() - rejoining group room %d\n", groupRoomToJoin));
+							DEBUG_LOG(("WOLLobbyMenuUpdate() - rejoining group room %d", groupRoomToJoin));
 							TheGameSpyInfo->joinGroupRoom(groupRoomToJoin);
 							groupRoomToJoin = 0;
 						}
 						else
 						{
-							DEBUG_LOG(("WOLLobbyMenuUpdate() - joining best group room\n"));
+							DEBUG_LOG(("WOLLobbyMenuUpdate() - joining best group room"));
 							TheGameSpyInfo->joinBestGroupRoom();
 						}
 					}
@@ -1254,8 +1254,8 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 									}
 								}
 							}
-							DEBUG_ASSERTCRASH(numPlayers, ("Game had no players!\n"));
-							//DEBUG_LOG(("Saw room: hasPass=%d, allowsObservers=%d\n", room.getHasPassword(), room.getAllowObservers()));
+							DEBUG_ASSERTCRASH(numPlayers, ("Game had no players!"));
+							//DEBUG_LOG(("Saw room: hasPass=%d, allowsObservers=%d", room.getHasPassword(), room.getAllowObservers()));
 							if (resp.stagingRoom.action == PEER_ADD)
 							{
 								TheGameSpyInfo->addStagingRoom(room);
@@ -1317,15 +1317,15 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 		{
 			if (TheGameSpyInfo->hasStagingRoomListChanged())
 			{
-				//DEBUG_LOG(("################### refreshing game list\n"));
-				//DEBUG_LOG(("gameRefreshTime=%d, refreshInterval=%d, now=%d\n", gameListRefreshTime, refreshInterval, timeGetTime()));
+				//DEBUG_LOG(("################### refreshing game list"));
+				//DEBUG_LOG(("gameRefreshTime=%d, refreshInterval=%d, now=%d", gameListRefreshTime, refreshInterval, timeGetTime()));
 				RefreshGameListBoxes();
 				gameListRefreshTime = timeGetTime();
 			} else {
 				//DEBUG_LOG(("-"));
 			}
 		} else {
-			//DEBUG_LOG(("gameListRefreshTime: %d refreshInterval: %d\n"));
+			//DEBUG_LOG(("gameListRefreshTime: %d refreshInterval: %d"));
 		}
 #else
 	refreshGameList();
@@ -1575,7 +1575,7 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 								if (!roomToJoin || roomToJoin->getExeCRC() != TheGlobalData->m_exeCRC || roomToJoin->getIniCRC() != TheGlobalData->m_iniCRC)
 								{
 									// bad crc.  don't go.
-									DEBUG_LOG(("WOLLobbyMenuSystem - CRC mismatch with the game I'm trying to join. My CRC's - EXE:0x%08X INI:0x%08X  Their CRC's - EXE:0x%08x INI:0x%08x\n", TheGlobalData->m_exeCRC, TheGlobalData->m_iniCRC, roomToJoin->getExeCRC(), roomToJoin->getIniCRC()));
+									DEBUG_LOG(("WOLLobbyMenuSystem - CRC mismatch with the game I'm trying to join. My CRC's - EXE:0x%08X INI:0x%08X  Their CRC's - EXE:0x%08x INI:0x%08x", TheGlobalData->m_exeCRC, TheGlobalData->m_iniCRC, roomToJoin->getExeCRC(), roomToJoin->getIniCRC()));
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 									if (TheGlobalData->m_netMinPlayers)
 									{
@@ -1671,12 +1671,12 @@ WindowMsgHandledType WOLLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					int rowSelected = -1;
 					GadgetComboBoxGetSelectedPos(control, &rowSelected);
 				
-					DEBUG_LOG(("Row selected = %d\n", rowSelected));
+					DEBUG_LOG(("Row selected = %d", rowSelected));
 					if (rowSelected >= 0)
 					{
 						Int groupID;
 						groupID = (Int)GadgetComboBoxGetItemData(comboLobbyGroupRooms, rowSelected);
-						DEBUG_LOG(("ItemData was %d, current Group Room is %d\n", groupID, TheGameSpyInfo->getCurrentGroupRoom()));
+						DEBUG_LOG(("ItemData was %d, current Group Room is %d", groupID, TheGameSpyInfo->getCurrentGroupRoom()));
 						if (groupID && groupID != TheGameSpyInfo->getCurrentGroupRoom())
 						{
 							TheGameSpyInfo->leaveGroupRoom();

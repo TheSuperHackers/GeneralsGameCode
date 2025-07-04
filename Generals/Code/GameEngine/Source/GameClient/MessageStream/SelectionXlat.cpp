@@ -989,7 +989,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			Int group = t - GameMessage::MSG_META_CREATE_TEAM0;
 			if ( group >= 0 && group < 10 )
 			{
-				DEBUG_LOG(("META: create team %d\n",group));
+				DEBUG_LOG(("META: create team %d",group));
 				// Assign selected items to a group
 				GameMessage *newmsg = TheMessageStream->appendMessage((GameMessage::Type)(GameMessage::MSG_CREATE_TEAM0 + group));
 				Drawable *drawable = TheGameClient->getDrawableList();
@@ -1021,7 +1021,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			Int group = t - GameMessage::MSG_META_SELECT_TEAM0;
 			if ( group >= 0 && group < 10 )
 			{
-				DEBUG_LOG(("META: select team %d\n",group));
+				DEBUG_LOG(("META: select team %d",group));
 
 				UnsignedInt now = TheGameLogic->getFrame();
 				if ( m_lastGroupSelTime == 0 )
@@ -1032,7 +1032,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				// check for double-press to jump view
 				if ( now - m_lastGroupSelTime < 20 && group == m_lastGroupSelGroup )
 				{
-					DEBUG_LOG(("META: DOUBLETAP select team %d\n",group));
+					DEBUG_LOG(("META: DOUBLETAP select team %d",group));
 					Player *player = ThePlayerList->getLocalPlayer();
 					if (player)
 					{
@@ -1094,7 +1094,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			Int group = t - GameMessage::MSG_META_ADD_TEAM0;
 			if ( group >= 0 && group < 10 )
 			{
-				DEBUG_LOG(("META: select team %d\n",group));
+				DEBUG_LOG(("META: select team %d",group));
 
 				UnsignedInt now = TheGameLogic->getFrame();
 				if ( m_lastGroupSelTime == 0 )
@@ -1106,7 +1106,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 
 				if ( now - m_lastGroupSelTime < 20 && group == m_lastGroupSelGroup )
 				{
-					DEBUG_LOG(("META: DOUBLETAP select team %d\n",group));
+					DEBUG_LOG(("META: DOUBLETAP select team %d",group));
 					Player *player = ThePlayerList->getLocalPlayer();
 					if (player)
 					{
@@ -1166,7 +1166,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 			Int group = t - GameMessage::MSG_META_VIEW_TEAM0;
 			if ( group >= 1 && group <= 10 )
 			{
-				DEBUG_LOG(("META: view team %d\n",group));
+				DEBUG_LOG(("META: view team %d",group));
 				Player *player = ThePlayerList->getLocalPlayer();
 				if (player) 
 				{

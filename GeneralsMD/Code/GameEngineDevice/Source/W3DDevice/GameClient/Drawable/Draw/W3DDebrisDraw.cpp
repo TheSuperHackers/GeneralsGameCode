@@ -109,7 +109,7 @@ void W3DDebrisDraw::setModelName(AsciiString name, Color color, ShadowType t)
 		if (color != 0)
 			hexColor = color | 0xFF000000;
 		m_renderObject = W3DDisplay::m_assetManager->Create_Render_Obj(name.str(), getDrawable()->getScale(), hexColor);
-		DEBUG_ASSERTCRASH(m_renderObject, ("Debris model %s not found!\n",name.str()));
+		DEBUG_ASSERTCRASH(m_renderObject, ("Debris model %s not found!",name.str()));
 		if (m_renderObject)
 		{
 			if (W3DDisplay::m_3DScene != NULL)

@@ -106,7 +106,7 @@ void countObjects(Object *obj, void *userData)
 	if (!numObjects || !obj)
 		return;
 
-	DEBUG_LOG(("Looking at obj %d (%s) - isEffectivelyDead()==%d, isDestroyed==%d, numObjects==%d\n",
+	DEBUG_LOG(("Looking at obj %d (%s) - isEffectivelyDead()==%d, isDestroyed==%d, numObjects==%d",
 		obj->getID(), obj->getTemplate()->getName().str(), obj->isEffectivelyDead(), obj->isDestroyed(), *numObjects));
 
 	if (!obj->isEffectivelyDead() && !obj->isDestroyed() && !obj->isKindOf(KINDOF_INERT))
@@ -682,7 +682,7 @@ void pickAndPlayUnitVoiceResponse( const DrawableList *list, GameMessage::Type m
 				break;
 
 			default:
-				DEBUG_LOG(("Requested to add voice of message type %d, but don't know how - jkmcd\n", msgType));
+				DEBUG_LOG(("Requested to add voice of message type %d, but don't know how - jkmcd", msgType));
 				break;
 		}
 		if( skip )
@@ -977,7 +977,7 @@ GameMessage::Type CommandTranslator::issueAttackCommand( Drawable *target,
 	if( m_teamExists )
 	{
 
-		//DEBUG_LOG(("issuing team-attack cmd against %s\n",enemy->getTemplate()->getName().str()));
+		//DEBUG_LOG(("issuing team-attack cmd against %s",enemy->getTemplate()->getName().str()));
 
 		// insert team attack command message into stream
 		switch( command )
@@ -1011,7 +1011,7 @@ GameMessage::Type CommandTranslator::issueAttackCommand( Drawable *target,
 	}
 	else
 	{
-		DEBUG_LOG(("issuing NON-team-attack cmd against %s\n",target->getTemplate()->getName().str()));
+		DEBUG_LOG(("issuing NON-team-attack cmd against %s",target->getTemplate()->getName().str()));
 
 		// send single attack command for selected drawable
 		const DrawableList *selected = TheInGameUI->getAllSelectedDrawables();
@@ -1292,7 +1292,7 @@ GameMessage::Type CommandTranslator::createEnterMessage( Drawable *enter,
 		return msgType;
 
 	// sanity
-	DEBUG_ASSERTCRASH( commandType == DO_COMMAND, ("createEnterMessage - commandType is not DO_COMMAND\n") );
+	DEBUG_ASSERTCRASH( commandType == DO_COMMAND, ("createEnterMessage - commandType is not DO_COMMAND") );
 
 	if( m_teamExists )
 	{
@@ -3092,7 +3092,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				Int count;
 				const ThingTemplate *thing = TheThingFactory->findTemplate( ThePlayerList->getLocalPlayer()->getPlayerTemplate()->getBeaconTemplate() );
 				ThePlayerList->getLocalPlayer()->countObjectsByThingTemplate( 1, &thing, false, &count );
-				DEBUG_LOG(("MSG_META_PLACE_BEACON - Player already has %d beacons active\n", count));
+				DEBUG_LOG(("MSG_META_PLACE_BEACON - Player already has %d beacons active", count));
 				if (count < TheMultiplayerSettings->getMaxBeaconsPerPlayer())
 				{
 					const CommandButton *commandButton = TheControlBar->findCommandButton( "Command_PlaceBeacon" );
@@ -4367,7 +4367,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 						UnicodeString umsg;
 						umsg.translate(msg);
 						TheInGameUI->message(umsg);
-						DEBUG_LOG(("%ls\n", msg.str()));
+						DEBUG_LOG(("%ls", msg.str()));
 
 						pObject->setGeometryInfo( newGeometry );
 					}

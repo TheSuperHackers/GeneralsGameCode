@@ -98,7 +98,7 @@ void GhostObject::xfer( Xfer *xfer )
 		if( parentObjectID != INVALID_ID && m_parentObject == NULL )
 		{
 
-			DEBUG_CRASH(( "GhostObject::xfer - Unable to connect m_parentObject\n" ));
+			DEBUG_CRASH(( "GhostObject::xfer - Unable to connect m_parentObject" ));
 			throw INI_INVALID_DATA;
 
 		}  // end if
