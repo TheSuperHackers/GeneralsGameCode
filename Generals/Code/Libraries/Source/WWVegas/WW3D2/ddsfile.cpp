@@ -402,7 +402,7 @@ void DDSFileClass::Copy_Level_To_Surface
 
 	if (!DDSMemory || !Get_Memory_Pointer(level))
 	{
-		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing\n");
+		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing");
 		return;
 	}
 
@@ -557,7 +557,7 @@ void DDSFileClass::Copy_CubeMap_Level_To_Surface
 
 	if (!DDSMemory || !Get_CubeMap_Memory_Pointer(face,level))
 	{
-		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing\n");
+		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing");
 		return;
 	}
 
@@ -727,7 +727,7 @@ void DDSFileClass::Copy_Volume_Level_To_Surface
 
 	if (!DDSMemory || !Get_Volume_Memory_Pointer(level))
 	{
-		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing\n");
+		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing");
 		return;
 	}
 

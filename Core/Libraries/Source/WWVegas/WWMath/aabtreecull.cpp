@@ -698,7 +698,7 @@ void AABTreeCullSystemClass::Update_Bounding_Boxes_Recursive(AABTreeNodeClass * 
 
 void AABTreeCullSystemClass::Load(ChunkLoadClass & cload)
 {
-	WWASSERT_PRINT(Object_Count() == 0, "Remove all objects from AAB-Culling system before loading!\n"); 
+	WWASSERT_PRINT(Object_Count() == 0, "Remove all objects from AAB-Culling system before loading!"); 
 	
 	delete RootNode;
 	RootNode = new AABTreeNodeClass;

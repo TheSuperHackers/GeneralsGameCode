@@ -592,7 +592,7 @@ void PolygonClass::Split(const PlaneClass & plane,PolygonClass & front,PolygonCl
 				back.Verts[(back.NumVerts)++] = Verts[i];
 			}
 		} else {
-			WWASSERT_PRINT(0,"PolygonClass::Split : invalid side\n");
+			WWASSERT_PRINT(0,"PolygonClass::Split : invalid side");
 		}
 
 		sideprev = side;
