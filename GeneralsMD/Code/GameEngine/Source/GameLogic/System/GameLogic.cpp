@@ -3066,13 +3066,13 @@ void GameLogic::friend_awakenUpdateModule(Object* obj, UpdateModulePtr u, Unsign
 	{
 		if (idx < 0 || idx >= m_sleepyUpdates.size())
 		{
-			RELEASE_CRASH("fatal error! sleepy update module illegal index.\n");
+			RELEASE_CRASH("fatal error! sleepy update module illegal index.");
 			return;
 		}
 
 		if (m_sleepyUpdates[idx] != u)
 		{
-			RELEASE_CRASH("fatal error! sleepy update module index mismatch.\n");
+			RELEASE_CRASH("fatal error! sleepy update module index mismatch.");
 			return;
 		}
 
@@ -3091,7 +3091,7 @@ void GameLogic::friend_awakenUpdateModule(Object* obj, UpdateModulePtr u, Unsign
 	{
 		if (idx != -1)
 		{
-			RELEASE_CRASH("fatal error! sleepy update module index mismatch.\n");
+			RELEASE_CRASH("fatal error! sleepy update module index mismatch.");
 			return;
 		}
 

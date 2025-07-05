@@ -645,7 +645,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 	}
 	catch (...)
 	{
-		RELEASE_CRASH(("Uncaught exception in Main::WndProc... probably should not happen\n"));
+		RELEASE_CRASH(("Uncaught exception in Main::WndProc... probably should not happen"));
 		// no rethrow
 	}
 
