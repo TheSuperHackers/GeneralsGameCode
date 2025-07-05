@@ -314,7 +314,8 @@ bool DX8Wrapper::Init(void * hwnd, bool lite)
 		*/
 		WWDEBUG_SAY(("Create Direct3D8"));
 		{
-			// TheSuperHackers @bugfix xezon 13/06/2025 Temporarily unload dbghelp.dll and prevent it from loading.
+			// TheSuperHackers @bugfix xezon 13/06/2025 Front load the system dbghelp.dll
+			// to prevent the graphics driver from potentially loading the old game dbghelp.dll.
 			DbgHelpGuard dbgHelpGuard;
 
 			D3DInterface = Direct3DCreate8Ptr(D3D_SDK_VERSION);		// TODO: handle failure cases...
@@ -566,7 +567,8 @@ bool DX8Wrapper::Create_Device(void)
 
 	HRESULT hr;
 	{
-		// TheSuperHackers @bugfix xezon 13/06/2025 Temporarily unload dbghelp.dll and prevent it from loading.
+		// TheSuperHackers @bugfix xezon 13/06/2025 Front load the system dbghelp.dll
+		// to prevent the graphics driver from potentially loading the old game dbghelp.dll.
 		DbgHelpGuard dbgHelpGuard;
 
 		hr=D3DInterface->CreateDevice
