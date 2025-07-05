@@ -708,7 +708,7 @@ WW3DErrorType VertexMaterialClass::Load_W3D(ChunkLoadClass & cload)
 		break;
 
 		default:
-				WWDEBUG_SAY(("Unsupported mapper in %s\n",name));
+				WWDEBUG_SAY(("Unsupported mapper in %s",name));
 			break;
 	}
 
@@ -868,7 +868,7 @@ WW3DErrorType VertexMaterialClass::Load_W3D(ChunkLoadClass & cload)
 			break;
 
 		default:
-			WWDEBUG_SAY(("Unsupported mapper in %s\n",name));
+			WWDEBUG_SAY(("Unsupported mapper in %s",name));
 			break;
 	}
 

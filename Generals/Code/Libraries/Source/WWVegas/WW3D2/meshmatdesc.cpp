@@ -427,7 +427,7 @@ void MeshMatDescClass::Init_Alternate(MeshMatDescClass & default_materials,MeshM
 				Material[pass] = NEW_REF(VertexMaterialClass,(*(default_materials.Material[pass])));
 			} else {
 				if (default_materials.MaterialArray[pass]) {
-					WWDEBUG_SAY(("Unimplemented case: mesh has more than one default vertex material but no alternate vertex materials have been defined.\r\n"));
+					WWDEBUG_SAY(("Unimplemented case: mesh has more than one default vertex material but no alternate vertex materials have been defined."));
 				}
 				Material[pass] = NULL;
 			}

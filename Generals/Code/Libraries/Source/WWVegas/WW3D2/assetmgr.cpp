@@ -352,7 +352,7 @@ static void Log_Textures(bool inited,unsigned& total_count, unsigned& total_mem)
 		StringClass number;
 		Create_Number_String(number,texmem);
 
-		WWDEBUG_SAY(("%32s	%4d * %4d (%15s), init %d, size: %14s bytes, refs: %d\n",
+		WWDEBUG_SAY(("%32s	%4d * %4d (%15s), init %d, size: %14s bytes, refs: %d",
 			tex->Get_Texture_Name().str(),
 			desc.Width,
 			desc.Height,
@@ -372,19 +372,19 @@ void WW3DAssetManager::Log_Texture_Statistics()
 	unsigned total_uninitialized_count=0;
 	StringClass number;
 
-	WWDEBUG_SAY(("\nInitialized textures ------------------------------------------\n\n"));
+	WWDEBUG_SAY(("\nInitialized textures ------------------------------------------\n"));
 	Log_Textures(true,total_initialized_count,total_initialized_tex_mem);
 
 	Create_Number_String(number,total_initialized_tex_mem);
-	WWDEBUG_SAY(("\n%d initialized textures, totalling %14s bytes\n\n",
+	WWDEBUG_SAY(("\n%d initialized textures, totalling %14s bytes\n",
 		total_initialized_count,
 		number.str()));
 
-	WWDEBUG_SAY(("\nUn-initialized textures ---------------------------------------\n\n"));
+	WWDEBUG_SAY(("\nUn-initialized textures ---------------------------------------\n"));
 	Log_Textures(false,total_uninitialized_count,total_uninitialized_tex_mem);
 
 	Create_Number_String(number,total_uninitialized_tex_mem);
-	WWDEBUG_SAY(("\n%d un-initialized textures, totalling, totalling %14s bytes\n\n",
+	WWDEBUG_SAY(("\n%d un-initialized textures, totalling, totalling %14s bytes\n",
 		total_uninitialized_count,
 		number.str()));
 /*
@@ -397,7 +397,7 @@ void WW3DAssetManager::Log_Texture_Statistics()
 //				robj->Release_Ref();
 //			}
 			if (rite->Current_Item_Class_ID()==RenderObjClass::CLASSID_HMODEL) {
-				WWDEBUG_SAY(("robj: %s\n",rite->Current_Item_Name()));
+				WWDEBUG_SAY(("robj: %s",rite->Current_Item_Name()));
 			}
 		}
 
@@ -531,10 +531,10 @@ void WW3DAssetManager::Free_Assets_With_Exclusion_List(const DynamicVectorClass<
 
 			// If this prototype is excluded, copy the pointer, otherwise delete it.
 			if (exclusion_list.Is_Excluded(proto)) {
-				//WWDEBUG_SAY(("excluding %s\n",proto->Get_Name()));
+				//WWDEBUG_SAY(("excluding %s",proto->Get_Name()));
 				exclude_array.Add(proto);
 			} else {
-				//WWDEBUG_SAY(("deleting %s\n",proto->Get_Name()));
+				//WWDEBUG_SAY(("deleting %s",proto->Get_Name()));
 				proto->DeleteSelf();
 			}
 			Prototypes[i] = NULL;
@@ -621,7 +621,7 @@ bool WW3DAssetManager::Load_3D_Assets( const char * filename )
 		if ( file->Is_Available() ) {
 			result = WW3DAssetManager::Load_3D_Assets( *file );
 		} else {
-			WWDEBUG_SAY(("Missing asset '%s'.\n", filename));
+			WWDEBUG_SAY(("Missing asset '%s'.", filename));
 		}
 		_TheFileFactory->Return_File( file );
 	}
@@ -722,7 +722,7 @@ bool WW3DAssetManager::Load_Prototype(ChunkLoadClass & cload)
 		/*
 		** Warn user about an unknown chunk type
 		*/
-		WWDEBUG_SAY(("Unknown chunk type encountered!  Chunk Id = %d\r\n",chunk_id));
+		WWDEBUG_SAY(("Unknown chunk type encountered!  Chunk Id = %d",chunk_id));
 		return false;
 	}
 
@@ -745,7 +745,7 @@ bool WW3DAssetManager::Load_Prototype(ChunkLoadClass & cload)
 			** Warn the user about a name collision with this prototype 
 			** and dump it
 			*/
-			WWDEBUG_SAY(("Render Object Name Collision: %s\r\n",newproto->Get_Name()));
+			WWDEBUG_SAY(("Render Object Name Collision: %s",newproto->Get_Name()));
 			newproto->DeleteSelf();
 			newproto = NULL;
 			return false;
@@ -757,7 +757,7 @@ bool WW3DAssetManager::Load_Prototype(ChunkLoadClass & cload)
 		** Warn user that a prototype was not generated from this 
 		** chunk type
 		*/
-		WWDEBUG_SAY(("Could not generate prototype!  Chunk  = %d\r\n",chunk_id));
+		WWDEBUG_SAY(("Could not generate prototype!  Chunk  = %d",chunk_id));
 		return false;
 	}
 	
@@ -815,7 +815,7 @@ RenderObjClass * WW3DAssetManager::Create_Render_Obj(const char * name)
 		// Note - objects named "#..." are scaled cached objects, so don't warn...
 		if (name[0] != '#') {
 			if (++warning_count <= 20) {
-				WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s\r\n",name));
+				WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s",name));
 			}
 			AssetStatusClass::Peek_Instance()->Report_Missing_RObj(name);
 		}
@@ -977,7 +977,7 @@ HAnimClass *	WW3DAssetManager::Get_HAnim(const char * name)
 			if (animname != NULL) {
 				sprintf( filename, "%s.w3d", animname+1);
 			} else {
-				WWDEBUG_SAY(( "Animation %s has no . in the name\n", name ));
+				WWDEBUG_SAY(( "Animation %s has no . in the name", name ));
 				WWASSERT( 0 );
 				return NULL;
 			}
@@ -1281,7 +1281,7 @@ void WW3DAssetManager::Log_All_Textures(void)
 		else {
 			tmp+=" ";
 		}
-		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp.str(),t->Get_Texture_Name().str()));
+		WWDEBUG_SAY(("%4.4dkb %s%s",bytes/1024,tmp.str(),t->Get_Texture_Name().str()));
 	}
 
 	// Log procedural textures -------------------------------
@@ -1305,7 +1305,7 @@ void WW3DAssetManager::Log_All_Textures(void)
 		else {
 			tmp+=" ";
 		}
-		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp.str(),t->Get_Texture_Name().str()));
+		WWDEBUG_SAY(("%4.4dkb %s%s",bytes/1024,tmp.str(),t->Get_Texture_Name().str()));
 	}
 
 	// Log "ordinary" textures -------------------------------
@@ -1330,7 +1330,7 @@ void WW3DAssetManager::Log_All_Textures(void)
 		else {
 			tmp+=" ";
 		}
-		WWDEBUG_SAY(("%4.4dkb %s%s\n",bytes/1024,tmp.str(),t->Get_Texture_Name().str()));
+		WWDEBUG_SAY(("%4.4dkb %s%s",bytes/1024,tmp.str(),t->Get_Texture_Name().str()));
 	}
 
 }

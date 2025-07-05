@@ -388,7 +388,7 @@ AnimatedSoundMgrClass::Initialize (const char *ini_filename)
 				AnimSoundLists.Add (sound_list);
 
 			} else {
-				//WWDEBUG_SAY (("AnimatedSoundMgrClass::Initialize -- No sounds added for %d!\n", animation_name.Peek_Buffer ()));
+				//WWDEBUG_SAY (("AnimatedSoundMgrClass::Initialize -- No sounds added for %d!", animation_name.Peek_Buffer ()));
 				delete sound_list;
 			}
 		}
@@ -544,7 +544,7 @@ AnimatedSoundMgrClass::Trigger_Sound
 						}
 					}
 
-					//WWDEBUG_SAY (("Triggering Sound %d %s\n", GetTickCount (), sound_list->List[index]->SoundName));
+					//WWDEBUG_SAY (("Triggering Sound %d %s", GetTickCount (), sound_list->List[index]->SoundName));
 
 					retval = frame;
 

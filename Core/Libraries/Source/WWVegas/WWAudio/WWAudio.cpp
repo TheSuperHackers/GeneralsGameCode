@@ -246,7 +246,7 @@ WWAudioClass::Open_2D_Device (LPWAVEFORMAT format)
 		 (m_Driver2D->emulated_ds == TRUE)) {
 		::AIL_waveOutClose (m_Driver2D);
 		success = 2;
-		WWDEBUG_SAY (("WWAudio: Detected 2D DirectSound emulation, switching to WaveOut.\r\n"));
+		WWDEBUG_SAY (("WWAudio: Detected 2D DirectSound emulation, switching to WaveOut."));
    }
 
 	// If we couldn't open the direct sound device, then use the
@@ -269,7 +269,7 @@ WWAudioClass::Open_2D_Device (LPWAVEFORMAT format)
 		ReAssign_2D_Handles ();
 	} else {
 		Close_2D_Device ();
-		WWDEBUG_SAY (("WWAudio: Error initializing 2D device.\r\n"));
+		WWDEBUG_SAY (("WWAudio: Error initializing 2D device."));
 	}
 
 	// Return the opened device type
@@ -373,7 +373,7 @@ WWAudioClass::Get_Sound_Buffer (const char *filename, bool is_3d)
 		} else {
 			static int count = 0;
 			if ( ++count < 10 ) {
-				WWDEBUG_SAY(( "Sound \"%s\" not found\r\n", filename ));
+				WWDEBUG_SAY(( "Sound \"%s\" not found", filename ));
 			}
 		}
 		Return_File (file);
@@ -687,7 +687,7 @@ WWAudioClass::Create_Sound_Effect (const char *filename)
 			if (file && file->Is_Available()) {
 				sound_obj = Create_Sound_Effect (*file, filename);
 			} else {
-				WWDEBUG_SAY(( "Sound %s not found\r\n", filename ));
+				WWDEBUG_SAY(( "Sound %s not found", filename ));
 			}
 			Return_File (file);
 
@@ -808,7 +808,7 @@ WWAudioClass::Create_3D_Sound
 			} else {
 				static int count = 0;
 				if ( ++count < 10 ) {
-					WWDEBUG_SAY(( "Sound File not Found \"%s\"\r\n", filename ));
+					WWDEBUG_SAY(( "Sound File not Found \"%s\"", filename ));
 				}
 			}
 
@@ -975,7 +975,7 @@ WWAudioClass::Create_Continuous_Sound
 	if (sound != NULL) {
 
 		if (sound->Get_Loop_Count () != INFINITE_LOOPS) {
-			WWDEBUG_SAY (("Audio Error:  Creating a continuous sound with a finite loop count!\r\n"));
+			WWDEBUG_SAY (("Audio Error:  Creating a continuous sound with a finite loop count!"));
 		}
 	}
 
@@ -1007,7 +1007,7 @@ WWAudioClass::Create_Instant_Sound
 	if (sound != NULL) {
 
 		if (sound->Get_Loop_Count () == INFINITE_LOOPS) {
-			WWDEBUG_SAY (("Audio Error:  Creating an instant sound %s with an infinite loop count!\r\n",sound->Get_Definition()->Get_Name()));
+			WWDEBUG_SAY (("Audio Error:  Creating an instant sound %s with an infinite loop count!",sound->Get_Definition()->Get_Name()));
 		}
 
 		sound_id = sound->Get_ID ();
@@ -1041,7 +1041,7 @@ WWAudioClass::Create_Continuous_Sound
 	if (sound != NULL) {
 
 		if (sound->Get_Loop_Count () != INFINITE_LOOPS) {
-			WWDEBUG_SAY (("Audio Error:  Creating a continuous sound with a finite loop count!\r\n"));
+			WWDEBUG_SAY (("Audio Error:  Creating a continuous sound with a finite loop count!"));
 		}
 
 	}
@@ -1074,7 +1074,7 @@ WWAudioClass::Create_Instant_Sound
 	if (sound != NULL) {
 
 		if (sound->Get_Loop_Count () == INFINITE_LOOPS) {
-			WWDEBUG_SAY (("Audio Error:  Creating an instant sound %s with an infinite loop count!\r\n",sound->Get_Definition()->Get_Name()));
+			WWDEBUG_SAY (("Audio Error:  Creating an instant sound %s with an infinite loop count!",sound->Get_Definition()->Get_Name()));
 		}
 
 		sound_id = sound->Get_ID ();
@@ -1572,8 +1572,8 @@ WWAudioClass::Build_3D_Driver_List (void)
 			::AIL_close_3D_provider (provider);
 		} else {
 			char *error_info = ::AIL_last_error ();
-			WWDEBUG_SAY (("WWAudio: Unable to open %s.\r\n", name));
-			WWDEBUG_SAY (("WWAudio: Reason %s.\r\n", error_info));
+			WWDEBUG_SAY (("WWAudio: Unable to open %s.", name));
+			WWDEBUG_SAY (("WWAudio: Reason %s.", error_info));
 		}
 	}
 
@@ -1741,7 +1741,7 @@ WWAudioClass::Select_3D_Device (int index)
 	//
 	if ((index >= 0) && (index < m_Driver3DList.Count ())) {
 		Select_3D_Device (m_Driver3DList[index]->name, m_Driver3DList[index]->driver);
-		WWDEBUG_SAY (("WWAudio: Selecting 3D sound device: %s.\r\n", m_Driver3DList[index]->name));
+		WWDEBUG_SAY (("WWAudio: Selecting 3D sound device: %s.", m_Driver3DList[index]->name));
 		retval = true;
 	}
 
@@ -2072,7 +2072,7 @@ WWAudioClass::Is_Disabled (void) const
 		if (registry.Is_Valid ()) {
 			if (registry.Get_Int ("Disabled", 0) == 1) {
 				_disabled = true;
-				WWDEBUG_SAY (("WWAudio: Audio system disabled in registry.\r\n"));
+				WWDEBUG_SAY (("WWAudio: Audio system disabled in registry."));
 			}
 		}
 	}
