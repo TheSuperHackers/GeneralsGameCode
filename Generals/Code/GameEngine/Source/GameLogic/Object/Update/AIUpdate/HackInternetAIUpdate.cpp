@@ -131,6 +131,16 @@ void HackInternetAIUpdate::aiDoCommand(const AICommandParms* parms)
 	if (!isAllowedToRespondToAiCommands(parms))
 		return;
 
+	// TheSuperHackers @bugfix andrew-2e128 07/03/2025 Hackers pack and unpack unnecessary when selected in a group fixed. - issue #223
+	if (parms->m_cmd == AICMD_HACK_INTERNET)
+	{
+		if ( getStateMachine()->getCurrentStateID() == HACK_INTERNET || getStateMachine()->getCurrentStateID() == UNPACKING )
+		{
+			return;
+		}
+	}
+	// end @bugfix
+
 	//If our hacker is currently packing up his gear, we need to prevent him
 	//from moving until completed. In order to accomplish this, we'll detect,
 	//then 
