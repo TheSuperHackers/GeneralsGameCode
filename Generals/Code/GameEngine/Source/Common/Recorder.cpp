@@ -46,11 +46,6 @@
 #include "Common/CRCDebug.h"
 #include "Common/version.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 Int REPLAY_CRC_INTERVAL = 100;
 

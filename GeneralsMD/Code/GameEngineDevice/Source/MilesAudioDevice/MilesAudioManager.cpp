@@ -66,10 +66,6 @@
 
 #include "Common/file.h"
 
-#ifdef RTS_INTERNAL
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 enum { INFINITE_LOOP_COUNT = 1000000 };
 

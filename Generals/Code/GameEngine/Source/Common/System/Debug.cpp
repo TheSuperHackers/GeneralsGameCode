@@ -76,10 +76,6 @@ extern HWND ApplicationHWnd;
 
 extern const char *gAppPrefix; /// So WB can have a different log file name.
 
-#ifdef RTS_INTERNAL
-// this should ALWAYS be present
-#pragma optimize("", off)
-#endif
 
 // ----------------------------------------------------------------------------
 // DEFINES 

@@ -33,11 +33,6 @@
 #include "GameNetwork/IPEnumeration.h"
 #include <cstdarg>
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #ifdef DEBUG_CRC
 

@@ -46,11 +46,6 @@
 #include "GameClient/GameWindow.h"
 #include "GameClient/Display.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 /**
 	* OLEInitializer class - Init and shutdown OLE & COM as a global
