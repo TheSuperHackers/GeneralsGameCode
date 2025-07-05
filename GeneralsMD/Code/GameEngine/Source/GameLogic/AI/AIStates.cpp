@@ -1741,7 +1741,7 @@ void AIInternalMoveToState::onExit( StateExitType status )
 	// (This is why destructors should not do game logic)
 	if (ai) {
 		ai->friend_endingMove();
-		DEBUG_ASSERTLOG(obj->getTeam(), ("AIInternalMoveToState::onExit obj has NULL team.\n"));
+		DEBUG_ASSERTLOG(obj->getTeam(), ("AIInternalMoveToState::onExit obj has NULL team."));
 		if (obj->getTeam() && ai->isDoingGroundMovement() && ai->getCurLocomotor() && 
 								ai->getCurLocomotor()->isUltraAccurate()) {
 			Real dx = m_goalPosition.x-obj->getPosition()->x;
@@ -1926,7 +1926,7 @@ StateReturnType AIInternalMoveToState::update()
 		{
 			ai->setLocomotorGoalNone();
 		}
-		DEBUG_ASSERTLOG(!getMachine()->getWantsDebugOutput(), ("AIInternalMoveToState::update: reached end of path, exiting state with success\n"));
+		DEBUG_ASSERTLOG(!getMachine()->getWantsDebugOutput(), ("AIInternalMoveToState::update: reached end of path, exiting state with success"));
 		//Kris: 7/01/03 (Temporary debug hook for units not being able to leave maps)
 		if( blah )
 		{
@@ -5471,7 +5471,7 @@ Bool AIAttackState::chooseWeapon()
 //	if (victim) // Pardon?  We still need to pick a weapon if we are attacking the ground.
 //	{
 		found = source->chooseBestWeaponForTarget(victim, PREFER_MOST_DAMAGE, ai->getLastCommandSource());
-		//DEBUG_ASSERTLOG(found, ("unable to autochoose any weapon for %s\n",source->getTemplate()->getName().str()));
+		//DEBUG_ASSERTLOG(found, ("unable to autochoose any weapon for %s",source->getTemplate()->getName().str()));
 //	}
 
 	// Check if we need to update because of the weapon choice switch.

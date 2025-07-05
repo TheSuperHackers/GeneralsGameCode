@@ -866,7 +866,7 @@ void Locomotor::locoUpdate_moveTowardsAngle(Object* obj, Real goalAngle)
 	}
 
 #ifdef DEBUG_OBJECT_ID_EXISTS
-//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_moveTowardsAngle %f (%f deg), spd %f (%f)\n",goalAngle,goalAngle*180/PI,physics->getSpeed(),physics->getForwardSpeed2D()));
+//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_moveTowardsAngle %f (%f deg), spd %f (%f)",goalAngle,goalAngle*180/PI,physics->getSpeed(),physics->getForwardSpeed2D()));
 #endif
 
 	Real minSpeed = getMinSpeed();
@@ -953,7 +953,7 @@ void Locomotor::locoUpdate_moveTowardsPosition(Object* obj, const Coord3D& goalP
 	}
 
 #ifdef DEBUG_OBJECT_ID_EXISTS
-//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_moveTowardsPosition %f %f %f (dtg %f, spd %f), speed %f (%f)\n",goalPos.x,goalPos.y,goalPos.z,onPathDistToGoal,desiredSpeed,physics->getSpeed(),physics->getForwardSpeed2D()));
+//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_moveTowardsPosition %f %f %f (dtg %f, spd %f), speed %f (%f)",goalPos.x,goalPos.y,goalPos.z,onPathDistToGoal,desiredSpeed,physics->getSpeed(),physics->getForwardSpeed2D()));
 #endif
 
 	//
@@ -2334,7 +2334,7 @@ void Locomotor::moveTowardsPositionOther(Object* obj, PhysicsBehavior *physics, 
 	const Coord3D* pos =  obj->getPosition();
 	Coord3D dirToApplyForce = *obj->getUnitDirectionVector2D();
 
-//DEBUG_ASSERTLOG(!getFlag(ULTRA_ACCURATE),("thresh %f %f (%f %f)\n",
+//DEBUG_ASSERTLOG(!getFlag(ULTRA_ACCURATE),("thresh %f %f (%f %f)",
 //fabs(goalPos.y - pos->y),fabs(goalPos.x - pos->x),
 //fabs(goalPos.y - pos->y)/goalSpeed,fabs(goalPos.x - pos->x)/goalSpeed));
 	if (getFlag(ULTRA_ACCURATE) && 
@@ -2416,7 +2416,7 @@ Bool Locomotor::locoUpdate_maintainCurrentPosition(Object* obj)
 	}
 
 #ifdef DEBUG_OBJECT_ID_EXISTS
-//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_maintainCurrentPosition %f %f %f, speed %f (%f)\n",m_maintainPos.x,m_maintainPos.y,m_maintainPos.z,physics->getSpeed(),physics->getForwardSpeed2D()));
+//	DEBUG_ASSERTLOG(obj->getID() != TheObjectIDToDebug, ("locoUpdate_maintainCurrentPosition %f %f %f, speed %f (%f)",m_maintainPos.x,m_maintainPos.y,m_maintainPos.z,physics->getSpeed(),physics->getForwardSpeed2D()));
 #endif
 
 	Bool requiresConstantCalling = TRUE;	// assume the worst.

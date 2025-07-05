@@ -2346,7 +2346,7 @@ Bool AIUpdateInterface::isDoingGroundMovement(void) const
 	}
 
 	// After all exceptions, we must be doing ground movement.
-	//DEBUG_ASSERTLOG(getObject()->isSignificantlyAboveTerrain(), ("Object %s is significantly airborne but also doing ground movement. What?\n",getObject()->getTemplate()->getName().str()));
+	//DEBUG_ASSERTLOG(getObject()->isSignificantlyAboveTerrain(), ("Object %s is significantly airborne but also doing ground movement. What?",getObject()->getTemplate()->getName().str()));
 	return TRUE;
 }
 

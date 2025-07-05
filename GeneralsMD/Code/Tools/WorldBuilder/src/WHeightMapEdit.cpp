@@ -2637,7 +2637,7 @@ Bool WorldHeightMapEdit::adjustForTiling( TCliffInfo &cliffInfo, Real textureWid
 //	Bool doOffset = false;
 	Real offset;					 
 
-	DEBUG_ASSERTLOG(minU<-delta && maxU > delta, ("Oops, wrong.\n")) ;
+	DEBUG_ASSERTLOG(minU<-delta && maxU > delta, ("Oops, wrong.")) ;
 
 	// Straddles the 0 line.
 	if (maxU > -minU) {

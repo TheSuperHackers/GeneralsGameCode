@@ -300,7 +300,7 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 	{
 		if( ! set->isWeaponLockSharedAcrossSets() )
 		{
-			DEBUG_ASSERTLOG(!isCurWeaponLocked(), ("changing WeaponSet while Weapon is Locked... implicit unlock occurring!\n"));
+			DEBUG_ASSERTLOG(!isCurWeaponLocked(), ("changing WeaponSet while Weapon is Locked... implicit unlock occurring!"));
 			releaseWeaponLock(LOCKED_PERMANENTLY);	// release all locks. sorry!
 			m_curWeapon = PRIMARY_WEAPON;
 		}

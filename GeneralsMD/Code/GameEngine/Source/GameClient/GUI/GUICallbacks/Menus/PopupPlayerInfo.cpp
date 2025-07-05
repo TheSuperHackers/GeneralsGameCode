@@ -800,7 +800,7 @@ static GameWindow* findWindow(GameWindow *parent, AsciiString baseWindow, AsciiS
 	AsciiString fullPath;
 	fullPath.format("%s:%s", baseWindow.str(), gadgetName.str());
 	GameWindow *res = TheWindowManager->winGetWindowFromId(parent, NAMEKEY(fullPath));
-	DEBUG_ASSERTLOG(res, ("Cannot find window %s\n", fullPath.str()));
+	DEBUG_ASSERTLOG(res, ("Cannot find window %s", fullPath.str()));
 	return res;
 }
 

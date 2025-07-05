@@ -182,12 +182,12 @@ Bool Transport::update( void )
 	{
 		retval = FALSE;
 	}
-	DEBUG_ASSERTLOG(retval, ("WSA error is %s\n", GetWSAErrorString(WSAGetLastError()).str()));
+	DEBUG_ASSERTLOG(retval, ("WSA error is %s", GetWSAErrorString(WSAGetLastError()).str()));
 	if (doSend() == FALSE && m_udpsock && m_udpsock->GetStatus() == UDP::ADDRNOTAVAIL)
 	{
 		retval = FALSE;
 	}
-	DEBUG_ASSERTLOG(retval, ("WSA error is %s\n", GetWSAErrorString(WSAGetLastError()).str()));
+	DEBUG_ASSERTLOG(retval, ("WSA error is %s", GetWSAErrorString(WSAGetLastError()).str()));
 	return retval;
 }
 

@@ -2035,9 +2035,9 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 #ifdef DEBUG_LOGGING
 										UnsignedShort newPort = game->getConstSlot(i)->getPort();
 										UnsignedInt newIP = game->getConstSlot(i)->getIP();
-										DEBUG_ASSERTLOG(newIP == ips[i], ("IP was different for player %d (%X --> %X)\n",
+										DEBUG_ASSERTLOG(newIP == ips[i], ("IP was different for player %d (%X --> %X)",
 											i, ips[i], newIP));
-										DEBUG_ASSERTLOG(newPort == ports[i], ("Port was different for player %d (%d --> %d)\n",
+										DEBUG_ASSERTLOG(newPort == ports[i], ("Port was different for player %d (%d --> %d)",
 											i, ports[i], newPort));
 #endif
 										game->getSlot(i)->setPort(ports[i]);

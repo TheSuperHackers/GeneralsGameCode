@@ -448,7 +448,7 @@ void W3DView::setCameraTransform( void )
 			m_3DCamera->Set_Transform( cameraTransform );
 			calcCameraConstraints();
 		}
-		DEBUG_ASSERTLOG(m_cameraConstraintValid,("*** cam constraints are not valid!!!\n"));
+		DEBUG_ASSERTLOG(m_cameraConstraintValid,("*** cam constraints are not valid!!!"));
 
 		if (m_cameraConstraintValid)
 		{

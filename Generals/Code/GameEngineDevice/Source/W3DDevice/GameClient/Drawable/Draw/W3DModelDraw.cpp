@@ -2507,7 +2507,7 @@ void W3DModelDraw::handleClientRecoil()
 				Matrix3D gunXfrm;
 				gunXfrm.Make_Identity();
 				gunXfrm.Translate_X( -recoils[i].m_shift );
-				//DEBUG_ASSERTLOG(recoils[i].m_shift==0.0f,("adjust bone %d by %f\n",recoils[i].m_recoilBone,recoils[i].m_shift));
+				//DEBUG_ASSERTLOG(recoils[i].m_shift==0.0f,("adjust bone %d by %f",recoils[i].m_recoilBone,recoils[i].m_shift));
 
 				if (m_renderObject)
 				{

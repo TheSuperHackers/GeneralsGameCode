@@ -1164,7 +1164,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 
 			// changed this to Log rather than Crash, because this can legitimately happen now for
 			// dozers and workers with mine-clearing stuff... (srj)
-			//DEBUG_ASSERTLOG( w, ("Unit %s's CommandButton %s is trying to access weaponslot %d, but doesn't have a weapon there in its FactionUnit ini entry.\n", 
+			//DEBUG_ASSERTLOG( w, ("Unit %s's CommandButton %s is trying to access weaponslot %d, but doesn't have a weapon there in its FactionUnit ini entry.", 
 			//	obj->getTemplate()->getName().str(), command->getName().str(), (Int)command->getWeaponSlot() ) );
 			
 			UnsignedInt now = TheGameLogic->getFrame();

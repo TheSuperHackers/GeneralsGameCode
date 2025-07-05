@@ -1196,7 +1196,7 @@ Bool BuildAssistant::isPossibleToMakeUnit( Object *builder, const ThingTemplate 
 	if( commandSet == NULL )
 	{
 
-		DEBUG_ASSERTLOG( 0, ("Can't build a '%s' from the builder '%s' because '%s' doesn't have any command set defined\n",
+		DEBUG_ASSERTLOG( 0, ("Can't build a '%s' from the builder '%s' because '%s' doesn't have any command set defined",
 													whatToBuild->getName().str(),
 													builder->getTemplate()->getName().str(),
 													builder->getTemplate()->getName().str()) );

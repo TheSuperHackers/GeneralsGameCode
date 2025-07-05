@@ -924,7 +924,7 @@ void ThingTemplate::validateAudio()
 
 	#define AUDIO_TEST(y) \
 		if (!get##y()->getEventName().isEmpty() && get##y()->getEventName().compareNoCase("NoSound") != 0) { \
-			DEBUG_ASSERTLOG(TheAudio->isValidAudioEvent(get##y()), ("Invalid Sound '%s' in Object '%s'. (%s?)\n", #y, getName().str(), get##y()->getEventName().str())); \
+			DEBUG_ASSERTLOG(TheAudio->isValidAudioEvent(get##y()), ("Invalid Sound '%s' in Object '%s'. (%s?)", #y, getName().str(), get##y()->getEventName().str())); \
 		}
 
 	AUDIO_TEST(VoiceSelect)

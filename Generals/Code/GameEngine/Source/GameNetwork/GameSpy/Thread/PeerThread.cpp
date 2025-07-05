@@ -2557,9 +2557,9 @@ static void roomKeyChangedCallback(PEER peer, RoomType roomType, const char *nic
 	DEBUG_ASSERTCRASH(nick && key && val, ("Bad values %X %X %X\n", nick, key, val));
 	if (!t || !nick || !key || !val)
 	{
-		DEBUG_ASSERTLOG(!nick, ("nick = %s\n", nick));
-		DEBUG_ASSERTLOG(!key, ("key = %s\n", key));
-		DEBUG_ASSERTLOG(!val, ("val = %s\n", val));
+		DEBUG_ASSERTLOG(!nick, ("nick = %s", nick));
+		DEBUG_ASSERTLOG(!key, ("key = %s", key));
+		DEBUG_ASSERTLOG(!val, ("val = %s", val));
 		return;
 	}
 

@@ -1596,7 +1596,7 @@ void ScriptActions::doNamedFollowWaypoints(const AsciiString& unitName, const As
 		return;
 	}
 
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	
 	theUnit->leaveGroup();
 	aiUpdate->chooseLocomotorSet(LOCOMOTORSET_NORMAL);
@@ -1623,7 +1623,7 @@ void ScriptActions::doNamedFollowWaypointsExact(const AsciiString& unitName, con
 		return;
 	}
 
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	
 	theUnit->leaveGroup();
 	aiUpdate->chooseLocomotorSet(LOCOMOTORSET_NORMAL);
@@ -1688,7 +1688,7 @@ void ScriptActions::doTeamFollowSkirmishApproachPath(const AsciiString& teamName
 		aiPlayer->checkBridges(firstUnit, way);
 	}
 
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, pathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, pathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	if (asTeam) 
 	{
 		theGroup->groupFollowWaypointPathAsTeam(way, CMD_FROM_SCRIPT);
@@ -1745,7 +1745,7 @@ void ScriptActions::doTeamMoveToSkirmishApproachPath(const AsciiString& teamName
 	if (!way) {
 		return;
 	}
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, pathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, pathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	theGroup->groupMoveToPosition(way->getLocation(), false, CMD_FROM_SCRIPT);
 }
 
@@ -1791,7 +1791,7 @@ void ScriptActions::doTeamFollowWaypoints(const AsciiString& teamName, const Asc
 	if (!way) {
 		return;
 	}
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	if (asTeam) 
 	{
 		theGroup->groupFollowWaypointPathAsTeam(way, CMD_FROM_SCRIPT);
@@ -1842,7 +1842,7 @@ void ScriptActions::doTeamFollowWaypointsExact(const AsciiString& teamName, cons
 	if (!way) {
 		return;
 	}
-	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+	DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPathLabel), ("***Wrong waypoint purpose. Make jba fix this."));
 	if (asTeam) 
 	{
 		theGroup->groupFollowWaypointPathAsTeamExact(way, CMD_FROM_SCRIPT);
@@ -4495,7 +4495,7 @@ void ScriptActions::doNamedFireWeaponFollowingWaypointPath( const AsciiString& u
 		{
 			return;
 		}
-		DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPath), ("***Wrong waypoint purpose. Make jba fix this.\n"));
+		DEBUG_ASSERTLOG(TheTerrainLogic->isPurposeOfPath(way, waypointPath), ("***Wrong waypoint purpose. Make jba fix this."));
 		
 		projectile->leaveGroup();
 		aiUpdate->chooseLocomotorSet(LOCOMOTORSET_NORMAL);
