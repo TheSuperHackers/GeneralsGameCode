@@ -58,15 +58,6 @@ static const Int INVALID_PATH = -1;
 
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-//#pragma message("NO COMMENTS, PLEASE ABOUT THIS PRAGMA BEING LEFT ON... IT IS FOR A SPECIAL TEST...")
-//#pragma message("IF QA EVER REPRODUCES A DESYNC (BELIEVED FIXED) I'LL NEED TO DEBUG WHILE PLAYING AGAINST")
-//#pragma message("THAT MACHINE WITHOUT QUITTING TO START A DEBUGGABLE VERSION...")
-//#pragma message("THIS WILL BE CORRECTED IN GOOD TIME. JUST TRUST ME, -ML")
-#endif
 
 
 #define FRAMES_UNPULLED_LONG_ENOUGH_TO_UNHITCH (2)

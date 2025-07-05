@@ -71,11 +71,6 @@
 
 //-------------------------------------------------------------------------------------------------
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 static inline Bool IS_IMPASSABLE(PathfindCell::CellType type) {
 	// Return true if cell is impassable to ground units. jba. [8/18/2003]

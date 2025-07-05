@@ -94,11 +94,6 @@
 #include "WinMain.h"  /** @todo Remove this, it's only here because we
 													are using timeGetTime, but we can remove that
 													when we have our own timer */
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 

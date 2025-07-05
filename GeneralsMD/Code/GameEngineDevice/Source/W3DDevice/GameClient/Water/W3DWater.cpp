@@ -66,11 +66,6 @@
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #define MIPMAP_BUMP_TEXTURE
 

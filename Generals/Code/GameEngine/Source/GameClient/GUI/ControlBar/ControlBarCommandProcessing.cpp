@@ -56,11 +56,6 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/ProductionUpdate.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 /** Process a button transition message from the window system that should be for one of

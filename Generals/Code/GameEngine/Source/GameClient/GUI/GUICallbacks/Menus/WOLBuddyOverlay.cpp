@@ -57,11 +57,6 @@
 
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // window ids ------------------------------------------------------------------------------
 static NameKeyType parentID = NAMEKEY_INVALID;

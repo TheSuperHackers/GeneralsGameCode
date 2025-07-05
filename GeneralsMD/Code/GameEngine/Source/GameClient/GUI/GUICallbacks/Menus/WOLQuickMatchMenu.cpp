@@ -66,11 +66,6 @@
 #include "GameNetwork/GameSpy/PersistentStorageThread.h"
 #include "GameNetwork/RankPointValue.h"
 #include "GameNetwork/GameSpy/LadderDefs.h"
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #ifdef DEBUG_LOGGING
 #include "Common/MiniLog.h"

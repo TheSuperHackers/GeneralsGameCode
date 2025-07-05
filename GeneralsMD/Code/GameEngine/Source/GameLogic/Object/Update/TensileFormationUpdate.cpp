@@ -47,11 +47,6 @@
 
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 #define MAP_XY_FACTOR			(10.0f)	 //How wide and tall each height map square is in world space.

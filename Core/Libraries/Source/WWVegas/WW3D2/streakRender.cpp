@@ -35,11 +35,6 @@
 #include "RANDOM.H"
 #include "v3_rnd.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-// #pragma optimize("", off)
-// #pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 /* We have chunking logic which handles N segments at a time. To simplify the subdivision logic,
 ** we will ensure that N is a power of two and that N >= 2^MAX_STREAK_SUBDIV_LEVELS, so that the

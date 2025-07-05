@@ -52,11 +52,6 @@
 #include "Common/Recorder.h"
 #include "GameClient/MessageBox.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #if defined(DEBUG_CRC)
 Int NET_CRC_INTERVAL = 1;

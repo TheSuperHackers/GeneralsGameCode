@@ -86,11 +86,6 @@
 #include "GameLogic/VictoryConditions.h"
 #include "GameLogic/AIPathfind.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // Kind of hacky, but we need to dance on the guts of the terrain.
 extern void oversizeTheTerrain(Int amount);

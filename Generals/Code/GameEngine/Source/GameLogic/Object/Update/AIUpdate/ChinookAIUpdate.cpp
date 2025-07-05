@@ -48,11 +48,6 @@
 
 const Real BIGNUM = 99999.0f;
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 enum ChinookAIStateType CPP_11(: Int)
