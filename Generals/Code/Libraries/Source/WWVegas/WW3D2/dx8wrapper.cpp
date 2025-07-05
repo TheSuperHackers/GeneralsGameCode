@@ -1893,7 +1893,7 @@ void DX8Wrapper::Draw(
 	if (DrawPolygonLowBoundLimit && DrawPolygonLowBoundLimit>=polygon_count) return;
 
 	DX8_THREAD_ASSERT();
-	SNAPSHOT_SAY(("DX8 - draw\n"));
+	SNAPSHOT_SAY(("DX8 - draw"));
 
 	Apply_Render_State_Changes();
 
@@ -1907,51 +1907,51 @@ void DX8Wrapper::Draw(
 		HRESULT res=D3DDevice->ValidateDevice(&passes);
 		switch (res) {
 		case D3D_OK:
-			SNAPSHOT_SAY(("OK\n"));
+			SNAPSHOT_SAY(("OK"));
 			break;
 
 		case D3DERR_CONFLICTINGTEXTUREFILTER:
-			SNAPSHOT_SAY(("D3DERR_CONFLICTINGTEXTUREFILTER\n"));
+			SNAPSHOT_SAY(("D3DERR_CONFLICTINGTEXTUREFILTER"));
 			break;
 		case D3DERR_CONFLICTINGTEXTUREPALETTE:
-			SNAPSHOT_SAY(("D3DERR_CONFLICTINGTEXTUREPALETTE\n"));
+			SNAPSHOT_SAY(("D3DERR_CONFLICTINGTEXTUREPALETTE"));
 			break;
 		case D3DERR_DEVICELOST:
-			SNAPSHOT_SAY(("D3DERR_DEVICELOST\n"));
+			SNAPSHOT_SAY(("D3DERR_DEVICELOST"));
 			break;
 		case D3DERR_TOOMANYOPERATIONS:
-			SNAPSHOT_SAY(("D3DERR_TOOMANYOPERATIONS\n"));
+			SNAPSHOT_SAY(("D3DERR_TOOMANYOPERATIONS"));
 			break;
 		case D3DERR_UNSUPPORTEDALPHAARG:
-			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDALPHAARG\n"));
+			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDALPHAARG"));
 			break;
 		case D3DERR_UNSUPPORTEDALPHAOPERATION:
-			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDALPHAOPERATION\n"));
+			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDALPHAOPERATION"));
 			break;
 		case D3DERR_UNSUPPORTEDCOLORARG:
-			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDCOLORARG\n"));
+			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDCOLORARG"));
 			break;
 		case D3DERR_UNSUPPORTEDCOLOROPERATION:
-			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDCOLOROPERATION\n"));
+			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDCOLOROPERATION"));
 			break;
 		case D3DERR_UNSUPPORTEDFACTORVALUE:
-			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDFACTORVALUE\n"));
+			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDFACTORVALUE"));
 			break;
 		case D3DERR_UNSUPPORTEDTEXTUREFILTER:
-			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDTEXTUREFILTER\n"));
+			SNAPSHOT_SAY(("D3DERR_UNSUPPORTEDTEXTUREFILTER"));
 			break;
 		case D3DERR_WRONGTEXTUREFORMAT:
-			SNAPSHOT_SAY(("D3DERR_WRONGTEXTUREFORMAT\n"));
+			SNAPSHOT_SAY(("D3DERR_WRONGTEXTUREFORMAT"));
 			break;
 		default:
-			SNAPSHOT_SAY(("UNKNOWN Error\n"));
+			SNAPSHOT_SAY(("UNKNOWN Error"));
 			break;
 		}
 	}
 #endif	// MESH_RENDER_SHAPSHOT_ENABLED
 
 
-	SNAPSHOT_SAY(("DX8 - draw %d polygons (%d vertices)\n",polygon_count,vertex_count));
+	SNAPSHOT_SAY(("DX8 - draw %d polygons (%d vertices)",polygon_count,vertex_count));
 
 	if (vertex_count<3) {
 		min_vertex_index=0;
@@ -2079,11 +2079,11 @@ void DX8Wrapper::Draw_Strip(
 
 void DX8Wrapper::Apply_Render_State_Changes()
 {
-	SNAPSHOT_SAY(("DX8Wrapper::Apply_Render_State_Changes()\n"));
+	SNAPSHOT_SAY(("DX8Wrapper::Apply_Render_State_Changes()"));
 	
 	if (!render_state_changed) return;
 	if (render_state_changed&SHADER_CHANGED) {
-		SNAPSHOT_SAY(("DX8 - apply shader\n"));
+		SNAPSHOT_SAY(("DX8 - apply shader"));
 		render_state.shader.Apply();
 	}
 
@@ -2093,7 +2093,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 	{
 		if (render_state_changed&mask) 
 		{
-			SNAPSHOT_SAY(("DX8 - apply texture %d\n",i));
+			SNAPSHOT_SAY(("DX8 - apply texture %d",i));
 
 			if (render_state.Textures[i]) 
 			{
@@ -2108,7 +2108,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 
 	if (render_state_changed&MATERIAL_CHANGED) 
 	{
-		SNAPSHOT_SAY(("DX8 - apply material\n"));
+		SNAPSHOT_SAY(("DX8 - apply material"));
 		VertexMaterialClass* material=const_cast<VertexMaterialClass*>(render_state.material);
 		if (material) 
 		{
@@ -2122,7 +2122,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 		unsigned mask=LIGHT0_CHANGED;
 		for (unsigned index=0;index<4;++index,mask<<=1) {
 			if (render_state_changed&mask) {
-				SNAPSHOT_SAY(("DX8 - apply light %d\n",index));
+				SNAPSHOT_SAY(("DX8 - apply light %d",index));
 				if (render_state.LightEnable[index]) {
 #ifdef MESH_RENDER_SNAPSHOT_ENABLED		
 					if ( WW3D::Is_Snapshot_Activated() ) {
@@ -2130,12 +2130,12 @@ void DX8Wrapper::Apply_Render_State_Changes()
 						static const char * _light_types[] = { "Unknown", "Point","Spot", "Directional" };
 						WWASSERT((light->Type >= 0) && (light->Type <= 3));					
 
-						SNAPSHOT_SAY((" type = %s amb = %4.2f,%4.2f,%4.2f  diff = %4.2f,%4.2f,%4.2f spec = %4.2f, %4.2f, %4.2f\n",
+						SNAPSHOT_SAY((" type = %s amb = %4.2f,%4.2f,%4.2f  diff = %4.2f,%4.2f,%4.2f spec = %4.2f, %4.2f, %4.2f",
 							_light_types[light->Type],
 							light->Ambient.r,light->Ambient.g,light->Ambient.b,
 							light->Diffuse.r,light->Diffuse.g,light->Diffuse.b,
 							light->Specular.r,light->Specular.g,light->Specular.b ));
-						SNAPSHOT_SAY((" pos = %f, %f, %f  dir = %f, %f, %f\n",
+						SNAPSHOT_SAY((" pos = %f, %f, %f  dir = %f, %f, %f",
 							light->Position.x, light->Position.y, light->Position.z,
 							light->Direction.x, light->Direction.y, light->Direction.z ));
 					}
@@ -2145,22 +2145,22 @@ void DX8Wrapper::Apply_Render_State_Changes()
 				}
 				else {
 					Set_DX8_Light(index,NULL);
-					SNAPSHOT_SAY((" clearing light to NULL\n"));
+					SNAPSHOT_SAY((" clearing light to NULL"));
 				}
 			}
 		}
 	}
 
 	if (render_state_changed&WORLD_CHANGED) {
-		SNAPSHOT_SAY(("DX8 - apply world matrix\n"));
+		SNAPSHOT_SAY(("DX8 - apply world matrix"));
 		_Set_DX8_Transform(D3DTS_WORLD,render_state.world);
 	}
 	if (render_state_changed&VIEW_CHANGED) {
-		SNAPSHOT_SAY(("DX8 - apply view matrix\n"));
+		SNAPSHOT_SAY(("DX8 - apply view matrix"));
 		_Set_DX8_Transform(D3DTS_VIEW,render_state.view);
 	}
 	if (render_state_changed&VERTEX_BUFFER_CHANGED) {
-		SNAPSHOT_SAY(("DX8 - apply vb change\n"));
+		SNAPSHOT_SAY(("DX8 - apply vb change"));
 		if (render_state.vertex_buffer) {
 			switch (render_state.vertex_buffer_type) {//->Type()) {
 			case BUFFER_TYPE_DX8:
@@ -2184,7 +2184,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 		}
 	}
 	if (render_state_changed&INDEX_BUFFER_CHANGED) {
-		SNAPSHOT_SAY(("DX8 - apply ib change\n"));
+		SNAPSHOT_SAY(("DX8 - apply ib change"));
 		if (render_state.index_buffer) {
 			switch (render_state.index_buffer_type) {//->Type()) {
 			case BUFFER_TYPE_DX8:
@@ -2211,7 +2211,7 @@ void DX8Wrapper::Apply_Render_State_Changes()
 
 	render_state_changed&=((unsigned)WORLD_IDENTITY|(unsigned)VIEW_IDENTITY);
 
-	SNAPSHOT_SAY(("DX8Wrapper::Apply_Render_State_Changes() - finished\n"));
+	SNAPSHOT_SAY(("DX8Wrapper::Apply_Render_State_Changes() - finished"));
 }
 
 IDirect3DTexture8 * DX8Wrapper::_Create_DX8_Texture
@@ -2956,7 +2956,7 @@ void DX8Wrapper::Set_Gamma(float gamma,float bright,float contrast,bool calibrat
 */
 void DX8Wrapper::Apply_Default_State()
 {
-	SNAPSHOT_SAY(("DX8Wrapper::Apply_Default_State()\n"));
+	SNAPSHOT_SAY(("DX8Wrapper::Apply_Default_State()"));
 	
 	// only set states used in game
 	Set_DX8_Render_State(D3DRS_ZENABLE, TRUE);
@@ -3082,7 +3082,7 @@ void DX8Wrapper::Apply_Default_State()
 	VertexMaterialClass::Apply_Null();
 
 	for (unsigned index=0;index<4;++index) {
-		SNAPSHOT_SAY(("Clearing light %d to NULL\n",index));
+		SNAPSHOT_SAY(("Clearing light %d to NULL",index));
 		Set_DX8_Light(index,NULL);
 	}
 

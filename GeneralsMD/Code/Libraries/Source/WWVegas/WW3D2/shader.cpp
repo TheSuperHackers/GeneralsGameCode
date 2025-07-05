@@ -704,7 +704,7 @@ void ShaderClass::Apply()
 					SeccArg2 = D3DTA_CURRENT;
 				}
 				else {
-					SNAPSHOT_SAY(("Warning: Using unsupported texture op: SELECTARG1\n"));
+					SNAPSHOT_SAY(("Warning: Using unsupported texture op: SELECTARG1"));
 				}
 				break;
 
@@ -716,7 +716,7 @@ void ShaderClass::Apply()
 					SeccArg2 = D3DTA_CURRENT;
 				}
 				else {
-					SNAPSHOT_SAY(("Warning: Using unsupported texture op: MODULATE\n"));
+					SNAPSHOT_SAY(("Warning: Using unsupported texture op: MODULATE"));
 				}
 				break;
 
@@ -732,7 +732,7 @@ void ShaderClass::Apply()
 					SeccArg2 = D3DTA_CURRENT;
 				}
 				else {
-					SNAPSHOT_SAY(("Warning: Using unsupported texture op: ADDSMOOTH\n"));
+					SNAPSHOT_SAY(("Warning: Using unsupported texture op: ADDSMOOTH"));
 				}
 				break;
 
@@ -744,7 +744,7 @@ void ShaderClass::Apply()
 					SeccArg2 = D3DTA_CURRENT;
 				}
 				else {
-					SNAPSHOT_SAY(("Warning: Using unsupported texture op: ADD\n"));
+					SNAPSHOT_SAY(("Warning: Using unsupported texture op: ADD"));
 				}
 				break;
 
@@ -756,7 +756,7 @@ void ShaderClass::Apply()
 					SeccArg2 = D3DTA_CURRENT;
 				}
 				else {
-					SNAPSHOT_SAY(("Warning: Using unsupported texture op: SUBTRACT\n"));
+					SNAPSHOT_SAY(("Warning: Using unsupported texture op: SUBTRACT"));
 				}
 				break;
 
@@ -768,7 +768,7 @@ void ShaderClass::Apply()
 					SeccArg2 = D3DTA_TEXTURE;
 				}
 				else {
-					SNAPSHOT_SAY(("Warning: Using unsupported texture op: SUBTRACT\n"));
+					SNAPSHOT_SAY(("Warning: Using unsupported texture op: SUBTRACT"));
 				}
 				break;
 
@@ -780,7 +780,7 @@ void ShaderClass::Apply()
 					SeccArg2 = D3DTA_CURRENT;
 				}
 				else {
-					SNAPSHOT_SAY(("Warning: Using unsupported texture op: BLENDTEXTUREALPHA\n"));
+					SNAPSHOT_SAY(("Warning: Using unsupported texture op: BLENDTEXTUREALPHA"));
 				}
 				break;
 
@@ -792,7 +792,7 @@ void ShaderClass::Apply()
 					SeccArg2 = D3DTA_CURRENT;
 				}
 				else {
-					SNAPSHOT_SAY(("Warning: Using unsupported texture op: BLENDCURRENTALPHA\n"));
+					SNAPSHOT_SAY(("Warning: Using unsupported texture op: BLENDCURRENTALPHA"));
 				}
 				break;
 
@@ -806,7 +806,7 @@ void ShaderClass::Apply()
 					SeccArg1 = D3DTA_TEXTURE;
 					SeccArg2 = D3DTA_CURRENT;
 				} else {
-					SNAPSHOT_SAY(("Warning: Using unsupported texture op: ADDSIGNED\n"));
+					SNAPSHOT_SAY(("Warning: Using unsupported texture op: ADDSIGNED"));
 				}					
 				break;
 
@@ -824,7 +824,7 @@ void ShaderClass::Apply()
 					SeccArg1 = D3DTA_TEXTURE;
 					SeccArg2 = D3DTA_CURRENT;
 				} else {
-					SNAPSHOT_SAY(("Warning: Using unsupported texture op: ADDSIGNED2X\n"));
+					SNAPSHOT_SAY(("Warning: Using unsupported texture op: ADDSIGNED2X"));
 				}					
 				break;
 
@@ -839,7 +839,7 @@ void ShaderClass::Apply()
 					SeccArg2 = D3DTA_CURRENT;
 				}
 				else {
-					SNAPSHOT_SAY(("Warning: Using unsupported texture op: MODULATE2X\n"));
+					SNAPSHOT_SAY(("Warning: Using unsupported texture op: MODULATE2X"));
 				}				
 				break;
 
@@ -853,7 +853,7 @@ void ShaderClass::Apply()
 					SeccArg1 = D3DTA_TEXTURE;
 					SeccArg2 = D3DTA_CURRENT;
 				} else {
-					SNAPSHOT_SAY(("Warning: Using unsupported texture op: MODULATEALPHA_ADDCOLOR\n"));
+					SNAPSHOT_SAY(("Warning: Using unsupported texture op: MODULATEALPHA_ADDCOLOR"));
 				}
 				break;
 			} // color operations
@@ -872,7 +872,7 @@ void ShaderClass::Apply()
 					SecaArg2 = D3DTA_CURRENT;
 				}
 				else {
-					SNAPSHOT_SAY(("Warning: Using unsupported texture op: SELECTARG1\n"));
+					SNAPSHOT_SAY(("Warning: Using unsupported texture op: SELECTARG1"));
 				}
 				break;
 
@@ -884,7 +884,7 @@ void ShaderClass::Apply()
 					SecaArg2 = D3DTA_CURRENT;
 				}
 				else {
-					SNAPSHOT_SAY(("Warning: Using unsupported texture op: MODULATE\n"));
+					SNAPSHOT_SAY(("Warning: Using unsupported texture op: MODULATE"));
 				}
 				break;
 
@@ -896,7 +896,7 @@ void ShaderClass::Apply()
 					SecaArg2 = D3DTA_CURRENT;
 				}
 				else {
-					SNAPSHOT_SAY(("Warning: Using unsupported texture op: ADDSMOOTH\n"));
+					SNAPSHOT_SAY(("Warning: Using unsupported texture op: ADDSMOOTH"));
 				}
 				break;
 			} // alpha operations

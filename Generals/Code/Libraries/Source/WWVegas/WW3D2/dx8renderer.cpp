@@ -760,9 +760,9 @@ void DX8RigidFVFCategoryContainer::Render(void)
 	DX8Wrapper::Set_Vertex_Buffer(vertex_buffer);
 	DX8Wrapper::Set_Index_Buffer(index_buffer,0);
 
-	SNAPSHOT_SAY(("DX8RigidFVFCategoryContainer::Render()\n"));
+	SNAPSHOT_SAY(("DX8RigidFVFCategoryContainer::Render()"));
 	for (unsigned p=0;p<passes;++p) {
-		SNAPSHOT_SAY(("Pass: %d\n",p));
+		SNAPSHOT_SAY(("Pass: %d",p));
 		while (DX8TextureCategoryClass * tex = visible_texture_category_list[p].Remove_Head()) {
 			tex->Render();
 		}
@@ -1237,9 +1237,9 @@ void DX8SkinFVFCategoryContainer::Log(bool only_visible)
 
 void DX8SkinFVFCategoryContainer::Render(void)
 {
-	SNAPSHOT_SAY(("DX8SkinFVFCategoryContainer::Render()\n"));
+	SNAPSHOT_SAY(("DX8SkinFVFCategoryContainer::Render()"));
 	if (!Anything_To_Render()) {
-		SNAPSHOT_SAY(("Nothing to render\n"));
+		SNAPSHOT_SAY(("Nothing to render"));
 		return;
 	}
 	AnythingToRender=false;
@@ -1258,7 +1258,7 @@ void DX8SkinFVFCategoryContainer::Render(void)
 		sorting ? BUFFER_TYPE_DYNAMIC_SORTING : BUFFER_TYPE_DYNAMIC_DX8,
 		dynamic_fvf_type,
 		maxVertexCount);
-	SNAPSHOT_SAY(("DynamicVBAccess - %s - %d vertices\n",sorting ? "sorting" : "non-sorting",VisibleVertexCount));
+	SNAPSHOT_SAY(("DynamicVBAccess - %s - %d vertices",sorting ? "sorting" : "non-sorting",VisibleVertexCount));
 
 	unsigned int renderedVertexCount=0;
 
@@ -1347,14 +1347,14 @@ void DX8SkinFVFCategoryContainer::Render(void)
 			}	//while
 		}//lock
 
-		SNAPSHOT_SAY(("Set vb: %x ib: %x\n",&vb.FVF_Info(),index_buffer));
+		SNAPSHOT_SAY(("Set vb: %x ib: %x",&vb.FVF_Info(),index_buffer));
 
 		DX8Wrapper::Set_Vertex_Buffer(vb);
 		DX8Wrapper::Set_Index_Buffer(index_buffer,0);
 
 		//Flush the meshes which fit in the vertex buffer, applying all texture variations
 		for (unsigned pass=0;pass<passes;++pass) {
-			SNAPSHOT_SAY(("Pass: %d\n",pass));
+			SNAPSHOT_SAY(("Pass: %d",pass));
 
 			TextureCategoryListIterator it(&visible_texture_category_list[pass]);
 			while (!it.Is_Done()) {
@@ -1632,7 +1632,7 @@ void DX8TextureCategoryClass::Render(void)
 	#endif
 
 		for (unsigned i=0;i<MAX_TEXTURE_STAGES;++i) {
-			SNAPSHOT_SAY(("Set_Texture(%d,%s)\n",i,Peek_Texture(i) ? Peek_Texture(i)->Get_Texture_Name().str() : "NULL"));
+			SNAPSHOT_SAY(("Set_Texture(%d,%s)",i,Peek_Texture(i) ? Peek_Texture(i)->Get_Texture_Name().str() : "NULL"));
 			DX8Wrapper::Set_Texture(i,Peek_Texture(i));
 		}
 
@@ -1640,11 +1640,11 @@ void DX8TextureCategoryClass::Render(void)
 	}
 	#endif
 
-	SNAPSHOT_SAY(("Set_Material(%s)\n",Peek_Material() ? Peek_Material()->Get_Name() : "NULL"));
+	SNAPSHOT_SAY(("Set_Material(%s)",Peek_Material() ? Peek_Material()->Get_Name() : "NULL"));
 	VertexMaterialClass *vmaterial=(VertexMaterialClass *)Peek_Material();	//ugly cast from const but we'll restore it after changes so okay. -MW
 	DX8Wrapper::Set_Material(vmaterial);
 
-	SNAPSHOT_SAY(("Set_Shader(%x)\n",Get_Shader().Get_Bits()));
+	SNAPSHOT_SAY(("Set_Shader(%x)",Get_Shader().Get_Bits()));
 	ShaderClass theShader = Get_Shader();
 
 	//Setup an alpha blend version of this shader just in case it's needed. -MW
@@ -1690,7 +1690,7 @@ void DX8TextureCategoryClass::Render(void)
 			continue;
 		}
 
-		SNAPSHOT_SAY(("mesh = %s\n",mesh->Get_Name()));
+		SNAPSHOT_SAY(("mesh = %s",mesh->Get_Name()));
 
 		#ifdef WWDEBUG	
 		// Debug rendering: if it exists, expose prelighting on this mesh by disabling all base textures.
@@ -1745,11 +1745,11 @@ void DX8TextureCategoryClass::Render(void)
 		*/
 		LightEnvironmentClass * lenv = mesh->Get_Lighting_Environment();
 		if (lenv != NULL) {
-			SNAPSHOT_SAY(("LightEnvironment, lights: %d\n",lenv->Get_Light_Count()));
+			SNAPSHOT_SAY(("LightEnvironment, lights: %d",lenv->Get_Light_Count()));
 			DX8Wrapper::Set_Light_Environment(lenv);
 		}
 		else {
-			SNAPSHOT_SAY(("No light environment\n"));
+			SNAPSHOT_SAY(("No light environment"));
 		}
 
 		/*
@@ -1760,7 +1760,7 @@ void DX8TextureCategoryClass::Render(void)
 		Matrix3D tmp_world;
 
 		if (mesh->Peek_Model()->Get_Flag(MeshModelClass::ALIGNED)) {
-			SNAPSHOT_SAY(("Camera mode ALIGNED\n"));
+			SNAPSHOT_SAY(("Camera mode ALIGNED"));
 
 			Vector3 mesh_position;
 			Vector3 camera_z_vector;
@@ -1772,7 +1772,7 @@ void DX8TextureCategoryClass::Render(void)
 			world_transform = &tmp_world;
 
 		} else if (mesh->Peek_Model()->Get_Flag(MeshModelClass::ORIENTED)) {
-			SNAPSHOT_SAY(("Camera mode ORIENTED\n"));
+			SNAPSHOT_SAY(("Camera mode ORIENTED"));
 		
 			Vector3 mesh_position;
 			Vector3 camera_position;
@@ -1784,7 +1784,7 @@ void DX8TextureCategoryClass::Render(void)
 			world_transform = &tmp_world;
 		
 		} else if (mesh->Peek_Model()->Get_Flag(MeshModelClass::SKIN)) {
-			SNAPSHOT_SAY(("Set world identity (for skin)\n"));
+			SNAPSHOT_SAY(("Set world identity (for skin)"));
 			
 			tmp_world.Make_Identity();
 			world_transform = &tmp_world;
@@ -1793,11 +1793,11 @@ void DX8TextureCategoryClass::Render(void)
 
 
 		if (identity) {
-			SNAPSHOT_SAY(("Set_World_Identity\n"));
+			SNAPSHOT_SAY(("Set_World_Identity"));
 			DX8Wrapper::Set_World_Identity();
 		}
 		else {
-			SNAPSHOT_SAY(("Set_World_Transform\n"));
+			SNAPSHOT_SAY(("Set_World_Transform"));
 			DX8Wrapper::Set_Transform(D3DTS_WORLD,*world_transform);
 		}
 
