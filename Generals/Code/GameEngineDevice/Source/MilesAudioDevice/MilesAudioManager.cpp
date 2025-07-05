@@ -3151,7 +3151,7 @@ void *AudioFileCache::openFile( AudioEventRTS *eventToOpenFrom )
 	// Couldn't find the file, so actually open it.
 	File *file = TheFileSystem->openFile(strToFind.str());
 	if (!file) {
-		DEBUG_ASSERTLOG(strToFind.isEmpty(), ("Missing Audio File: '%s'\n", strToFind.str()));
+		DEBUG_ASSERTLOG(strToFind.isEmpty(), ("Missing Audio File: '%s'", strToFind.str()));
 		return NULL;
 	}
 

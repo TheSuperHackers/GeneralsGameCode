@@ -1078,7 +1078,7 @@ void AISkirmishPlayer::newMap( void )
 		}
 		build = build->m_next;
 	}
-	DEBUG_ASSERTLOG(build!=NULL, ("Couldn't find build list for skirmish player.\n"));
+	DEBUG_ASSERTLOG(build!=NULL, ("Couldn't find build list for skirmish player."));
 
 	// Build any with the initially built flag.
 	for( BuildListInfo *info = m_player->getBuildList(); info; info = info->getNext() )

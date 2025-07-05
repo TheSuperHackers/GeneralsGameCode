@@ -374,7 +374,7 @@ Real GameClientRandomVariable::getValue( void ) const
 	switch( m_type )
 	{
 		case CONSTANT:
-			DEBUG_ASSERTLOG(m_low == m_high, ("m_low != m_high for a CONSTANT GameClientRandomVariable\n"));
+			DEBUG_ASSERTLOG(m_low == m_high, ("m_low != m_high for a CONSTANT GameClientRandomVariable"));
 			if (m_low == m_high) {
 				return m_low;
 			} // else return as though a UNIFORM.

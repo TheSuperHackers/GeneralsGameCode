@@ -421,7 +421,7 @@ const Image* LookupSmallRankImage(Int side, Int rankPoints)
 	AsciiString fullImageName;
 	fullImageName.format("%s-%s", rankNames[rank], sideStr.str());
 	const Image *img = TheMappedImageCollection->findImageByName(fullImageName);
-	DEBUG_ASSERTLOG(img, ("*** Could not load small rank image '%s' from TheMappedImageCollection!\n", fullImageName.str()));
+	DEBUG_ASSERTLOG(img, ("*** Could not load small rank image '%s' from TheMappedImageCollection!", fullImageName.str()));
 	return img;
 }
 

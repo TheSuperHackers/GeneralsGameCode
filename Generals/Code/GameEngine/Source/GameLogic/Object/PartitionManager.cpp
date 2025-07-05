@@ -2450,7 +2450,7 @@ for (int ii = 0; ii < PartitionContactList_SOCKET_COUNT; ++ii)
 	}
 }
 aggcount += 1.0f;
-DEBUG_ASSERTLOG(((Int)aggcount)%1000!=0,("avg hash depth at %f is %f, fullness %f%%\n",
+DEBUG_ASSERTLOG(((Int)aggcount)%1000!=0,("avg hash depth at %f is %f, fullness %f%%",
 aggcount,aggtotal/(aggcount*PartitionContactList_SOCKET_COUNT),(aggfull*100)/(aggcount*PartitionContactList_SOCKET_COUNT)));
 #endif
 
@@ -2771,7 +2771,7 @@ void PartitionManager::update()
 		
 		ctList.processContactList();
 #ifdef INTENSE_DEBUG
-		DEBUG_ASSERTLOG(cc==0,("updated partition info for %d objects\n",cc));
+		DEBUG_ASSERTLOG(cc==0,("updated partition info for %d objects",cc));
 #endif
 		TheContactList = NULL;
 

@@ -237,7 +237,7 @@ VideoStreamInterface*	FFmpegVideoPlayer::open( AsciiString movieTitle )
 			char filePath[ _MAX_PATH ];
 			sprintf( filePath, "%s%s\\%s.%s", TheGlobalData->m_modDir.str(), VIDEO_PATH, pVideo->m_filename.str(), VIDEO_EXT );
 			File* file =  TheFileSystem->openFile(filePath);
-			DEBUG_ASSERTLOG(!file, ("opened bink file %s\n", filePath));
+			DEBUG_ASSERTLOG(!file, ("opened bink file %s", filePath));
 			if (file)
 			{
 				return createStream( file );
@@ -247,13 +247,13 @@ VideoStreamInterface*	FFmpegVideoPlayer::open( AsciiString movieTitle )
 		char localizedFilePath[ _MAX_PATH ];
 		sprintf( localizedFilePath, VIDEO_LANG_PATH_FORMAT, GetRegistryLanguage().str(), pVideo->m_filename.str(), VIDEO_EXT );
 		File* file =  TheFileSystem->openFile(localizedFilePath);
-		DEBUG_ASSERTLOG(!file, ("opened localized bink file %s\n", localizedFilePath));
+		DEBUG_ASSERTLOG(!file, ("opened localized bink file %s", localizedFilePath));
 		if (!file)
 		{
 			char filePath[ _MAX_PATH ];
 			sprintf( filePath, "%s\\%s.%s", VIDEO_PATH, pVideo->m_filename.str(), VIDEO_EXT );
 			file = TheFileSystem->openFile(filePath);
-			DEBUG_ASSERTLOG(!file, ("opened bink file %s\n", filePath));
+			DEBUG_ASSERTLOG(!file, ("opened bink file %s", filePath));
 		}
 
 		DEBUG_LOG(("FFmpegVideoPlayer::createStream() - About to create stream"));

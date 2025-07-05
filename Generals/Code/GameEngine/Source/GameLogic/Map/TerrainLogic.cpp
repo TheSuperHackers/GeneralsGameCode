@@ -330,7 +330,7 @@ Bridge::Bridge(Object *bridgeObj)
 	// save the template name
 	m_templateName = bridgeObj->getTemplate()->getName();
 
-	DEBUG_ASSERTLOG( bridgeObj->getGeometryInfo().getGeomType()==GEOMETRY_BOX, ("Bridges need to be rectangles.\n"));
+	DEBUG_ASSERTLOG( bridgeObj->getGeometryInfo().getGeomType()==GEOMETRY_BOX, ("Bridges need to be rectangles."));
 
 	const Coord3D *pos = bridgeObj->getPosition();
 	Real angle = bridgeObj->getOrientation();

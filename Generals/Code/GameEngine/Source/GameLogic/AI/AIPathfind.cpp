@@ -5157,7 +5157,7 @@ Bool Pathfinder::queueForPath(ObjectID id)
 			AIUpdateInterface *tmpAI = tmpObj->getAIUpdateInterface();
 			if (tmpAI) {
 				const Coord3D* pos = tmpAI->friend_getRequestedDestination();
-				DEBUG_ASSERTLOG(pos->x != 0.0 && pos->y != 0.0, ("Queueing pathfind to (0, 0), usually a bug. (Unit Name: '%s', Type: '%s' \n", tmpObj->getName().str(), tmpObj->getTemplate()->getName().str()));
+				DEBUG_ASSERTLOG(pos->x != 0.0 && pos->y != 0.0, ("Queueing pathfind to (0, 0), usually a bug. (Unit Name: '%s', Type: '%s' ", tmpObj->getName().str(), tmpObj->getTemplate()->getName().str()));
 			}
 		}
 	}
