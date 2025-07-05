@@ -112,6 +112,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/StateMachine.h
 #    Include/Common/StatsCollector.h
 #    Include/Common/STLTypedefs.h
+    Include/Common/STLUtils.h
 #    Include/Common/StreamingArchiveFile.h
 #    Include/Common/SubsystemInterface.h
 #    Include/Common/SystemInfo.h
