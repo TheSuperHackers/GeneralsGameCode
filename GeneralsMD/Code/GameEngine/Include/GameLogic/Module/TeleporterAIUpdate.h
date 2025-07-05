@@ -45,6 +45,14 @@ public:
 
 	const FXList* m_sourceFX;
 	const FXList* m_targetFX;
+	const FXList* m_recoverEndFX;
+
+	AudioEventRTS m_recoverSoundLoop;
+
+	TintStatus	m_tintStatus;  ///< tint color to apply when recovering from teleport
+
+	Real m_opacityStart;
+	Real m_opacityEnd;
 
 	TeleporterAIUpdateModuleData();
 
@@ -74,6 +82,9 @@ public:
 
 	virtual UpdateSleepTime update();
 
+	/// this is never disabled, since we want disabled things to continue recovering from teleport
+	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
+
 protected:
 
 	UpdateSleepTime doTeleport(Coord3D targetPos, Real angle, Real dist);
@@ -100,9 +111,14 @@ protected:
 
 	 virtual AIStateMachine* makeStateMachine();
 
-//private:
-//	Bool m_inAttackPos;
+private:
+	void applyRecoverEffects(Real dist);
+	void removeRecoverEffects(void);
 
+	AudioEventRTS m_recoverSoundLoop;  ///< Audio to play during recovering
+	UnsignedInt m_disabledUntil;  ///< frame we are done recovering
+	UnsignedInt m_disabledStart;  ///< frame we have started recovering
+	bool m_isDisabled;      ///< current recovering status
 };
 
 #endif

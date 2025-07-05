@@ -128,6 +128,7 @@ const char* TintStatusFlags::s_bitNameList[] =
 	"SHIELDED",
 	"DEMORALIZED",
 	"BOOST",
+	"TELEPORT_RECOVER",
 	"EXTRA1",
 	"EXTRA2",
 	"EXTRA3",

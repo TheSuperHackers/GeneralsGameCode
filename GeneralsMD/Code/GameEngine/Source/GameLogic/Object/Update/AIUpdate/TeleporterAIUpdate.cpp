@@ -28,11 +28,13 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
+#include "Common/GameAudio.h"
 #include "Common/RandomValue.h"
 #include "GameLogic/Module/TeleporterAIUpdate.h"
 #include "GameLogic/Object.h"
 #include "Common/Xfer.h"
 #include "Common/DisabledTypes.h"
+#include "Common/ModelState.h"
 #include "GameClient/Drawable.h"
 #include "GameClient/FXList.h"
 #include "GameLogic/AI.h"
@@ -44,6 +46,7 @@
 #include "GameLogic/Weapon.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/TerrainLogic.h"
+#include "GameClient/TintStatus.h"
 
 
 //-------------------------------------------------------------------------------------------------
@@ -51,6 +54,10 @@ TeleporterAIUpdateModuleData::TeleporterAIUpdateModuleData( void )
 {
 	m_sourceFX = NULL;
 	m_targetFX = NULL;
+	m_recoverEndFX = NULL;
+	m_tintStatus = TINT_STATUS_INVALID;
+	m_opacityStart = 1.0;
+	m_opacityEnd = 1.0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -63,7 +70,12 @@ TeleporterAIUpdateModuleData::TeleporterAIUpdateModuleData( void )
 		{ "MinDistanceForTeleport", INI::parseReal, NULL, offsetof(TeleporterAIUpdateModuleData, m_minDistance) },
 		{ "DisabledDurationPerDistance", INI::parseDurationReal, NULL, offsetof(TeleporterAIUpdateModuleData, m_disabledDuration) },
 		{ "TeleportStartFX", INI::parseFXList, NULL, offsetof(TeleporterAIUpdateModuleData, m_sourceFX) },
-		{ "TeleportEndFX", INI::parseFXList, NULL, offsetof(TeleporterAIUpdateModuleData, m_targetFX) },
+		{ "TeleportTargetFX", INI::parseFXList, NULL, offsetof(TeleporterAIUpdateModuleData, m_targetFX) },
+		{ "TeleportRecoverEndFX", INI::parseFXList, NULL, offsetof(TeleporterAIUpdateModuleData, m_recoverEndFX) },
+		{ "TeleportRecoverSoundAmbient", INI::parseAudioEventRTS, NULL, offsetof(TeleporterAIUpdateModuleData, m_recoverSoundLoop) },
+		{ "TeleportRecoverTint", TintStatusFlags::parseSingleBitFromINI, NULL, offsetof(TeleporterAIUpdateModuleData, m_tintStatus) },
+		{ "TeleportRecoverOpacityStart", INI::parseReal, NULL, offsetof(TeleporterAIUpdateModuleData, m_opacityStart) },
+		{ "TeleportRecoverOpacityEnd", INI::parseReal, NULL, offsetof(TeleporterAIUpdateModuleData, m_opacityEnd) },
 		{ 0, 0, 0, 0 }
 	};
 	p.add(dataFieldParse);
@@ -79,7 +91,9 @@ AIStateMachine* TeleporterAIUpdate::makeStateMachine()
 //-------------------------------------------------------------------------------------------------
 TeleporterAIUpdate::TeleporterAIUpdate( Thing *thing, const ModuleData* moduleData ) : AIUpdateInterface( thing, moduleData )
 {
-	//m_inAttackPos = FALSE;
+	m_disabledUntil = 0;
+	m_disabledStart = 0;
+	m_isDisabled = false;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -89,25 +103,104 @@ TeleporterAIUpdate::~TeleporterAIUpdate( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-UpdateSleepTime TeleporterAIUpdate::update( void )
+UpdateSleepTime TeleporterAIUpdate::update(void)
 {
-	//// If I'm standing still, move somewhere
-	//if (isIdle())
-	//{
-	//	Coord3D dest = *(getObject()->getPosition());
-	//	dest.x += GameLogicRandomValue( 5, 50 );
-	//	dest.y += GameLogicRandomValue( 5, 50 );
- //		aiMoveToPosition( &dest, CMD_FROM_AI );
-	//}
+	const TeleporterAIUpdateModuleData* d = getTeleporterAIUpdateModuleData();
+	Object* obj = getObject();
+
+	//UpdateSleepTime ret = UPDATE_SLEEP_FOREVER;
+
+	UnsignedInt now = TheGameLogic->getFrame();
+
+	if (m_isDisabled) {
+		if (m_disabledUntil > now) {
+			// We are currently disabled
+			Real progress = __max(__min(INT_TO_REAL(now - m_disabledStart) / INT_TO_REAL(m_disabledUntil - m_disabledStart), 1.0), 0.0);
+
+			Drawable* drw = obj->getDrawable();
+			if (drw)
+			{
+				// - set opacity
+				if (d->m_opacityStart < 1.0f || d->m_opacityEnd < 1.0f) {
+					Real curOpacity = (1.0 - progress) * d->m_opacityStart + progress * d->m_opacityEnd;
+					// DEBUG_LOG((">>> TPAI Update: opacity = %f\n", curOpacity));
+					drw->setDrawableOpacity(curOpacity);
+				}
+			}
+			// We actually need to stop here, because the default update would allow us to attack while disabled
+			return UPDATE_SLEEP_NONE;
+			//ret = UPDATE_SLEEP_NONE;
+		}
+		else {
+			// We are done
+			removeRecoverEffects();
+			m_isDisabled = false;
+		}
+	}
 
 	// extend
-	UpdateSleepTime ret = AIUpdateInterface::update();
-	//return (mine < ret) ? mine : ret;
-	/// @todo srj -- someday, make sleepy. for now, must not sleep.
-	return ret; // UPDATE_SLEEP_NONE;
+	// UpdateSleepTime ret2 = AIUpdateInterface::update();
+	// return (ret < ret2) ? ret : ret2;
+
+	return AIUpdateInterface::update();
+
 }  // end update
 
 
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+void TeleporterAIUpdate::applyRecoverEffects(Real dist)
+{
+	const TeleporterAIUpdateModuleData* d = getTeleporterAIUpdateModuleData();
+	Object* obj = getObject();
+
+	// - set conditionstate
+	obj->setModelConditionState(MODELCONDITION_TELEPORT_RECOVER);
+
+	// - add ambient sound
+	m_recoverSoundLoop = d->m_recoverSoundLoop;
+	m_recoverSoundLoop.setObjectID(obj->getID());
+	m_recoverSoundLoop.setPlayingHandle(TheAudio->addAudioEvent(&m_recoverSoundLoop));
+	
+	Drawable* drw = obj->getDrawable();
+	if (drw)
+	{
+		// - set color tint
+		if (d->m_tintStatus > TINT_STATUS_INVALID && d->m_tintStatus < TINT_STATUS_COUNT)
+		{
+			drw->setTintStatus(d->m_tintStatus);
+		}
+
+		// - set opacity
+		if (d->m_opacityStart < 1.0 || d->m_opacityEnd < 1.0) {
+			drw->setEffectiveOpacity(1.0);
+		}
+	}
+
+}
+
+// ------------------------------------------------------------------------------------------------
+void TeleporterAIUpdate::removeRecoverEffects()
+{
+	const TeleporterAIUpdateModuleData* d = getTeleporterAIUpdateModuleData();
+	Object* obj = getObject();
+
+	obj->clearModelConditionState(MODELCONDITION_TELEPORT_RECOVER);
+
+	TheAudio->removeAudioEvent(m_recoverSoundLoop.getPlayingHandle());
+
+	Drawable* drw = obj->getDrawable();
+	if (drw)
+	{
+		// - clear color tint
+		if (d->m_tintStatus > TINT_STATUS_INVALID && d->m_tintStatus < TINT_STATUS_COUNT)
+		{
+			drw->clearTintStatus(d->m_tintStatus);
+		}
+	}
+
+	FXList::doFXObj(d->m_recoverEndFX, getObject());
+}
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 
@@ -118,24 +211,28 @@ UpdateSleepTime TeleporterAIUpdate::doTeleport(Coord3D targetPos, Real angle, Re
 
 	FXList::doFXObj(d->m_sourceFX, getObject());
 
-	//TODO: Handle line of sight?!
-
 	obj->setPosition(&targetPos);
 	obj->setOrientation(angle);
 
 	FXList::doFXObj(d->m_targetFX, getObject());
 
 	destroyPath();
-	//friend_endingMove();
+
 	TheAI->pathfinder()->updateGoal(obj, &targetPos, TheTerrainLogic->getLayerForDestination(&targetPos));
-	// setLocomotorGoalPositionExplicit(targetPos);
 	setLocomotorGoalOrientation(angle);
 
 	UnsignedInt disabledFrames = REAL_TO_UNSIGNEDINT(dist * d->m_disabledDuration);
 
-	obj->setDisabledUntil(DISABLED_TELEPORT, TheGameLogic->getFrame() + disabledFrames);
+	m_disabledStart = TheGameLogic->getFrame();
+	m_disabledUntil = m_disabledStart + disabledFrames;
 
-	return UPDATE_SLEEP(disabledFrames);
+	m_isDisabled = true;
+	obj->setDisabledUntil(DISABLED_TELEPORT, m_disabledUntil);
+
+	applyRecoverEffects(dist);
+
+	// return UPDATE_SLEEP(disabledFrames);
+	return UPDATE_SLEEP_NONE;  // We can't actually sleep since we need to adjust some things dynamically
 
 }
 
@@ -150,7 +247,7 @@ Bool TeleporterAIUpdate::isLocationValid(Object* obj, const Coord3D* targetPos, 
 	return !viewBlocked && inRange && posValid;
 }
 
-
+//-------------------------------------------------------------------------------------------------
 Bool TeleporterAIUpdate::findAttackLocation(Object* victim, const Coord3D* victimPos, Coord3D* targetPos, Real* targetAngle)
 {
 	Object* obj = getObject();
@@ -166,37 +263,24 @@ Bool TeleporterAIUpdate::findAttackLocation(Object* victim, const Coord3D* victi
 	// Check if the current location is valid.
 	// This needs to be rechecked after the disabled timer.
 	if (isLocationValid(obj, targetPos, victim, victimPos, weap)) {
-
-		// After verifying the initial location
-		//if (!m_inAttackPos) { // Only adjust before a teleport
-			if (!TheAI->pathfinder()->adjustDestination(obj, getLocomotorSet(), &newPos)) {
-				DEBUG_LOG((">>> TPAI - findAttackLocation: AdjustDestination failed!\n"));
-			}
-			else {
-				DEBUG_LOG((">>> TPAI - findAttackLocation: AdjustDestination: %f, %f, %f\n", newPos.x, newPos.y, newPos.z));
-			}
-
-			if (isLocationValid(obj, &newPos, victim, victimPos, weap)) {
-				DEBUG_LOG((">>> TPAI - findAttackLocation: done with initial pos\n"));
-				*targetPos = newPos;
-				return true;
-			}
-		//}
+		if (!TheAI->pathfinder()->adjustDestination(obj, getLocomotorSet(), &newPos)) {
+			DEBUG_LOG((">>> TPAI - findAttackLocation: AdjustDestination failed!\n"));
+		}
 		//else {
-		//	DEBUG_LOG((">>> TPAI - findAttackLocation: done with initial pos\n"));
-		//	*targetPos = newPos;
-		//	return true;
+		//	DEBUG_LOG((">>> TPAI - findAttackLocation: AdjustDestination: %f, %f, %f\n", newPos.x, newPos.y, newPos.z));
 		//}
+
+		if (isLocationValid(obj, &newPos, victim, victimPos, weap)) {
+			// DEBUG_LOG((">>> TPAI - findAttackLocation: done with initial pos\n"));
+			*targetPos = newPos;
+			return true;
+		}
 	}
 
 	newPos.x = targetPos->x;
 	newPos.y = targetPos->y;
 	newPos.z = targetPos->z;
 
-	//bool viewBlocked = TheAI->pathfinder()->isAttackViewBlockedByObstacle(obj, *targetPos, victim, *victimPos);
-	//bool inRange = weap->isSourceObjectWithGoalPositionWithinAttackRange(obj, targetPos, victim, victimPos);
-	//PathfindLayerEnum destinationLayer = TheTerrainLogic->getLayerForDestination(targetPos);
-	//bool posValid = TheAI->pathfinder()->validMovementPosition(getObject()->getCrusherLevel() > 0, destinationLayer, getLocomotorSet(), targetPos);
 
 	Real RANGE_MARGIN = 10.0f;
 
@@ -221,21 +305,6 @@ Bool TeleporterAIUpdate::findAttackLocation(Object* victim, const Coord3D* victi
 	Real initAngle = atan2(direction.y, direction.x);  // angle from victim to target
 
 	direction.normalize();
-	//distance = sqrt(distSq);
-
-	//if (distance > 0) {
-	//	direction.x = (targetPos->x - targetPos->x) / distance;
-	//	direction.y = (targetPos->y - targetPos->y) / distance;
-	//}
-	//else {
-	//	// if we are directly at the target, but are not actually in range, something went wrong
-	//	return false;
-	//}
-
-	// DEBUG:
-	/*const FXList* debug_fx1 = TheFXListStore->findFXList("FX_DEBUG_MARKER_GREEN");
-	const FXList* debug_fx2 = TheFXListStore->findFXList("FX_DEBUG_MARKER_RED");*/
-
 
 	const Real maxAngle = deg2rad(180.0f);
 	const Real step_size_angle = deg2rad(10.0f);
@@ -244,7 +313,7 @@ Bool TeleporterAIUpdate::findAttackLocation(Object* victim, const Coord3D* victi
 
 	const int max_rings = REAL_TO_INT(range / step_size_length);
 	const int max_steps = REAL_TO_INT(maxAngle / step_size_angle);
-	DEBUG_LOG((">>> TPAI - findAttackLocation: range = %f, max_rings = %d\n", range, max_rings));
+	// DEBUG_LOG((">>> TPAI - findAttackLocation: range = %f, max_rings = %d\n", range, max_rings));
 	for (int ring = 0; ring < max_rings; ++ring) {
 
 		Real radius = maxRange - (ring * step_size_length);
@@ -263,15 +332,15 @@ Bool TeleporterAIUpdate::findAttackLocation(Object* victim, const Coord3D* victi
 			//destinationLayer = TheTerrainLogic->getLayerForDestination(&newPos);
 			//posValid = TheAI->pathfinder()->validMovementPosition(getObject()->getCrusherLevel() > 0, destinationLayer, getLocomotorSet(), &newPos);
 
-			DEBUG_LOG((">>> TPAI - findAttackLocation: candidate Pos: %f, %f, %f\n", newPos.x, newPos.y, newPos.z));
+			// DEBUG_LOG((">>> TPAI - findAttackLocation: candidate Pos: %f, %f, %f\n", newPos.x, newPos.y, newPos.z));
 
 			// TheAI->pathfinder()->adjustTargetDestination(obj, victim, victimPos, weap, &newPos);
 			if (!TheAI->pathfinder()->adjustDestination(obj, getLocomotorSet(), &newPos)) {
 				DEBUG_LOG((">>> TPAI - findAttackLocation: AdjustDestination failed!\n"));
 			}
-			else {
-				DEBUG_LOG((">>> TPAI - findAttackLocation: AdjustDestination: %f, %f, %f\n", newPos.x, newPos.y, newPos.z));
-			}
+			//else {
+			//	DEBUG_LOG((">>> TPAI - findAttackLocation: AdjustDestination: %f, %f, %f\n", newPos.x, newPos.y, newPos.z));
+			//}
 
 			/*if (sign == 1)
 				FXList::doFXPos(debug_fx1, &newPos);
@@ -281,7 +350,7 @@ Bool TeleporterAIUpdate::findAttackLocation(Object* victim, const Coord3D* victi
 			if (isLocationValid(obj, &newPos, victim, victimPos, weap)) {
 				*targetPos = newPos;
 				*targetAngle = angle + PI;
-				DEBUG_LOG((">>> TPAI - findAttackLocation: done after ring=%d, step=%d\n", ring, step));
+				//DEBUG_LOG((">>> TPAI - findAttackLocation: done after ring=%d, step=%d\n", ring, step));
 
 				return true;
 			}
@@ -374,7 +443,31 @@ UpdateSleepTime TeleporterAIUpdate::doLocomotor(void)
 	}
 
 	if (getStateMachine()->getCurrentStateID() == AI_ENTER) {
+		// If we want to enter and got this close, we just move normally
 		requiredRange = 15.0f;
+	//} else if (getStateMachine()->getCurrentStateID() == AI_DOCK) {
+	//	// Get the dock's approach position.
+	//	// If we are at least X distance away, teleport, otherwise, do normal movement
+	//	DockUpdateInterface* dock = goalObj->getDockUpdateInterface();
+	//	if (dock != NULL) {
+	//		int dockIndex;  // we don't really need this
+	//		Bool reserved = dock->reserveApproachPosition(obj, &targetPos, &dockIndex);
+	//		if (reserved) {
+	//			// Get dist to goal obj center
+	//			Real distSqObj = ThePartitionManager->getDistanceSquared(obj, goalObj, FROM_CENTER_2D, &dir);
+	//			// Get dist to approach pos
+	//			distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
+
+	//			DEBUG_LOG((">>> TPAI: DOCK distSq = %f, distSqObj = %f\n", distSq, distSqObj));
+
+	//			// If we are close to both the approach pos and the center pos, move normally
+	//			Real minDistSq = 25.0f * 25.0f;
+	//			if (distSqObj < minDistSq && distSqObj < minDistSq) {
+	//				return AIUpdateInterface::doLocomotor();
+	//			}
+	//			// otherwise teleport
+	//		}
+	//	}
 	}
 
 	DEBUG_LOG((">>> TPAI - doLoc: LocomotorGoalType = %d, AI STATE = %s (%d)\n", getLocomotorGoalType(), getStateMachine()->getCurrentStateName(), getStateMachine()->getCurrentStateID()));
@@ -436,9 +529,10 @@ UpdateSleepTime TeleporterAIUpdate::doLocomotor(void)
 	//else if( /*use special power?*/) {
 	//	//same as with attacks, try to get into range
 	//}
-	else if (getStateMachine()->getCurrentStateID() == AI_ENTER) {
+	// else if (getStateMachine()->getCurrentStateID() == AI_ENTER || getStateMachine()->getCurrentStateID() == AI_ENTER) {
+	else if (goalObj != NULL) {
 		// We need to correct the position to the outer bounding box of the structure
-		//Adjust target to required distance
+		// TODO: Respect actual geometry, not just radius
 		requiredRange = goalObj->getGeometryInfo().getBoundingCircleRadius();
 		if (requiredRange > 0) {
 			dir.scale(min(dist, requiredRange));
@@ -449,23 +543,22 @@ UpdateSleepTime TeleporterAIUpdate::doLocomotor(void)
 
 		//recompute distance and angle
 		distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
-		targetAngle = atan2(dir.y, dir.x);
+
+		// targetAngle = atan2(dir.y, dir.x);
+		targetAngle = atan2(goalPos->y - targetPos.y, goalPos->x - targetPos.x);
 		dist = sqrt(distSq);
 	}
 	else {
+		// TODO: if this doesn't find a location, 
 		TheAI->pathfinder()->adjustDestination(obj, getLocomotorSet(), &targetPos);
 
 		//recompute distance and angle
 		distSq = ThePartitionManager->getDistanceSquared(obj, &targetPos, FROM_CENTER_2D, &dir);
 		targetAngle = atan2(dir.y, dir.x);
 		dist = sqrt(distSq);
-
-		//TODO: if we target an object, have the angle changed to look at the object
 	}
 
-	
-
-	DEBUG_LOG((">>> TPAI - doLoc: teleport with dist = %f\n", dist));
+	// DEBUG_LOG((">>> TPAI - doLoc: teleport with dist = %f\n", dist));
 	doTeleport(targetPos, targetAngle, dist);
 
 	return AIUpdateInterface::doLocomotor();
@@ -511,7 +604,10 @@ void TeleporterAIUpdate::xfer( Xfer *xfer )
    // extend base class
    AIUpdateInterface::xfer(xfer);
 
-   //xfer->xferBool(&m_inAttackPos);
+   xfer->xferBool(&m_isDisabled);
+
+   xfer->xferUnsignedInt(&m_disabledUntil);
+   xfer->xferUnsignedInt(&m_disabledStart);
 
 }  // end xfer
 

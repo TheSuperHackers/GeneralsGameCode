@@ -210,6 +210,8 @@ const char* ModelConditionFlags::s_bitNameList[] =
 
 	"TAKEOFF",
 	"LANDING",
+
+	"TELEPORT_RECOVER",
 	
 	NULL
 };
