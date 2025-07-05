@@ -145,7 +145,7 @@ class TAiData : public Snapshot
 {
 public:
 	TAiData();
-	~TAiData();
+	virtual ~TAiData();
 
 	void addSideInfo(AISideInfo *info);
 	void addFactionBuildList(AISideBuildList *buildList);

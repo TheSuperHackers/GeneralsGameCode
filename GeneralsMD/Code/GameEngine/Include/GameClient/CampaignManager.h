@@ -118,7 +118,7 @@ class CampaignManager : public Snapshot
 {
 public:
 	CampaignManager( void );
-	~CampaignManager( void );
+	virtual ~CampaignManager( void );
 
 	// snapshot methods
 	virtual void crc( Xfer *xfer ) { }
