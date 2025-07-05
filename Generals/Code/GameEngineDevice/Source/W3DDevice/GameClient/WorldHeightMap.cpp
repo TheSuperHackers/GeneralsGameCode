@@ -1959,7 +1959,7 @@ TextureClass *WorldHeightMap::getTerrainTexture(void)
 		m_terrainTex = MSGNEW("WorldHeightMap_getTerrainTexture") TerrainTextureClass(pow2Height);
 		m_terrainTexHeight = m_terrainTex->update(this);
 		char buf[64];
-		sprintf(buf, "Base tex height %d\n", pow2Height);
+		sprintf(buf, "Base tex height %d", pow2Height);
 		DEBUG_LOG((buf));
 		REF_PTR_RELEASE(m_alphaTerrainTex);
 		m_alphaTerrainTex = MSGNEW("WorldHeightMap_getTerrainTexture") AlphaTerrainTextureClass(m_terrainTex);

@@ -593,7 +593,7 @@ WindowMsgHandledType SaveLoadMenuSystem( GameWindow *window, UnsignedInt msg,
 				// sanity
 				DEBUG_ASSERTCRASH( currentLayoutType == SLLT_SAVE_AND_LOAD ||
 													 currentLayoutType == SLLT_SAVE_ONLY,
-													 ("SaveLoadMenuSystem - layout type '%d' does not allow saving\n",
+													 ("SaveLoadMenuSystem - layout type '%d' does not allow saving",
 													 currentLayoutType) );
 													 	
 				// get save file info

@@ -2119,7 +2119,7 @@ UnsignedShort ConnectionManager::sendFileAnnounce(AsciiString path, UnsignedByte
 	if (!theFile || !theFile->size())
 	{
 		UnicodeString log;
-		log.format(L"Not sending file '%hs' to %X\n", path.str(), playerMask);
+		log.format(L"Not sending file '%hs' to %X", path.str(), playerMask);
 		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("%ls", log.str()));
 		if (TheLAN)
 			TheLAN->OnChat(UnicodeString(L"sendFile"), 0, log, LANAPI::LANCHAT_SYSTEM);
@@ -2157,7 +2157,7 @@ void ConnectionManager::sendFile(AsciiString path, UnsignedByte playerMask, Unsi
 	if (!theFile || !theFile->size())
 	{
 		UnicodeString log;
-		log.format(L"Not sending file '%hs' to %X\n", path.str(), playerMask);
+		log.format(L"Not sending file '%hs' to %X", path.str(), playerMask);
 		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("%ls", log.str()));
 		if (TheLAN)
 			TheLAN->OnChat(UnicodeString(L"sendFile"), 0, log, LANAPI::LANCHAT_SYSTEM);

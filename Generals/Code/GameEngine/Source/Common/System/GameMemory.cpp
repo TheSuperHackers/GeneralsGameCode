@@ -325,7 +325,7 @@ static void memset32(void* ptr, Int value, Int bytesToFill)
 static void doStackDumpOutput(const char* m)
 {
 	const char *PREPEND = "STACKTRACE";
-	if (*m == 0 || strcmp(m, "\n") == 0)
+	if (*m == 0)
 	{
 		DEBUG_LOG((m));
 	}
@@ -346,7 +346,6 @@ static void doStackDumpOutput(const char* m)
 static void doStackDump(void **stacktrace, int size)
 {
 	::doStackDumpOutput("Allocation Stack Trace:");
-	::doStackDumpOutput("\n");
 	::StackDumpFromAddresses(stacktrace, size, ::doStackDumpOutput);
 }
 #endif

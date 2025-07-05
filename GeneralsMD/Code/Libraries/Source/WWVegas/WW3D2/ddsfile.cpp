@@ -63,7 +63,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	int result=file->Open();
 	if (!result)
 	{
-		WWASSERT("File would not open\n");
+		WWASSERT("File would not open");
 		return;
 	}
 
@@ -73,7 +73,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	unsigned read_bytes=file->Read(header,4);
 	if (!read_bytes)
 	{
-		WWASSERT("File loading failed trying to read header\n");
+		WWASSERT("File loading failed trying to read header");
 		return;
 	}
 	// Now, we read DDSURFACEDESC2 defining the compressed data
@@ -82,7 +82,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	if (read_bytes==0 || read_bytes!=SurfaceDesc.Size) 
 	{
 		StringClass tmp(0,true);
-		tmp.Format("File %s loading failed.\nTried to read %d bytes, got %d. (SurfDesc.size=%d)\n",name,sizeof(LegacyDDSURFACEDESC2),read_bytes,SurfaceDesc.Size);
+		tmp.Format("File %s loading failed.\nTried to read %d bytes, got %d. (SurfDesc.size=%d)",name,sizeof(LegacyDDSURFACEDESC2),read_bytes,SurfaceDesc.Size);
 		WWASSERT_PRINT(0,tmp.str());
 		return;
 	}
