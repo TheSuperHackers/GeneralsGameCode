@@ -1086,7 +1086,7 @@ Real Path::computeFlightDistToGoal( const Coord3D *pos, Coord3D& goalPos )
 enum { PATHFIND_CELLS_PER_FRAME=5000}; // Number of cells we will search pathfinding per frame.
 enum {CELL_INFOS_TO_ALLOCATE = 30000};
 PathfindCellInfo *PathfindCellInfo::s_infoArray = NULL;
-PathfindCellInfo *PathfindCellInfo::s_firstFree = NULL;						
+PathfindCellInfo *PathfindCellInfo::s_firstFree = NULL;
 /**
  * Allocates a pool of pathfind cell infos.
  */
@@ -1094,13 +1094,7 @@ void PathfindCellInfo::allocateCellInfos(void)
 {
 	releaseCellInfos();
 	s_infoArray = MSGNEW("PathfindCellInfo") PathfindCellInfo[CELL_INFOS_TO_ALLOCATE];	// pool[]ify
-	s_infoArray[CELL_INFOS_TO_ALLOCATE-1].m_pathParent = NULL;
-	s_infoArray[CELL_INFOS_TO_ALLOCATE-1].m_isFree = true;
-	s_firstFree = s_infoArray;
-	for (Int i=0; i<CELL_INFOS_TO_ALLOCATE-1; i++) {
-		s_infoArray[i].m_pathParent = &s_infoArray[i+1];
-		s_infoArray[i].m_isFree = true; 
-	}
+	initializeCellInfos();
 }
 
 /**
@@ -1121,6 +1115,20 @@ void PathfindCellInfo::releaseCellInfos(void)
 	delete[] s_infoArray;
 	s_infoArray = NULL;
 	s_firstFree = NULL;
+}
+
+/**
+ * Initializes a pool of pathfind cell infos.
+ */
+void PathfindCellInfo::initializeCellInfos(void) 
+{
+	s_infoArray[CELL_INFOS_TO_ALLOCATE-1].m_pathParent = NULL;
+	s_infoArray[CELL_INFOS_TO_ALLOCATE-1].m_isFree = true;
+	s_firstFree = s_infoArray;
+	for (Int i=0; i<CELL_INFOS_TO_ALLOCATE-1; i++) {
+		s_infoArray[i].m_pathParent = &s_infoArray[i+1];
+		s_infoArray[i].m_isFree = true; 
+	}
 }
 
 /**
@@ -3460,6 +3468,9 @@ void Pathfinder::reset( void )
 		m_wallHeight = 0.0f;
 	}
 	m_zoneManager.reset();
+
+	// TheSuperHackers @fix Mauller 09/06/2025 Re-initialize pathfinding cell info objects so they are in a known clean state
+	PathfindCellInfo::initializeCellInfos();
 }
 
 /** 
