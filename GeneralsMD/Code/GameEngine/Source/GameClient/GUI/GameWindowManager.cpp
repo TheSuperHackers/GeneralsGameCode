@@ -1470,7 +1470,7 @@ Int GameWindowManager::winDestroy( GameWindow *window )
 	// completely handled by the editor ONLY
 	//
 	DEBUG_ASSERTCRASH( window->winGetEditData() == NULL,
-										 ("winDestroy(): edit data should NOT be present!\n") );
+										 ("winDestroy(): edit data should NOT be present!") );
 
 	if( BitIsSet( window->m_status, WIN_STATUS_DESTROYED ) )
 		return WIN_ERR_OK;

@@ -506,7 +506,7 @@ double GeneralsMatcher::computeMatchFitness(const std::string& i1, const General
 	//DBGMSG("Match fitness: "<<matchFitness);
 
 	/*
-	DBGMSG(i1->first << " vs " << i2->first << " has fitness " << matchFitness << ""
+	DBGMSG(i1->first << " vs " << i2->first << " has fitness " << matchFitness
 			   "\tpointPercent: " << pointPercent << "\n"
 			   "\tpingDelta: " << pingDelta << "\n"
 			   "\twidened: " << u1->widened << u2->widened << "\n"

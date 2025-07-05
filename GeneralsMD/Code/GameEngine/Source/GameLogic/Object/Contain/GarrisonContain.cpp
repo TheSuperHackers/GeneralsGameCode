@@ -415,7 +415,7 @@ void GarrisonContain::putObjectAtBestGarrisonPoint( Object *obj, Object *target,
 	// get the index of the garrison point that is closest to the target position
 	Int placeIndex = findClosestFreeGarrisonPointIndex( conditionIndex, targetPos );
 	DEBUG_ASSERTCRASH( placeIndex != GARRISON_INDEX_INVALID, 
-										 ("GarrisonContain::putObjectAtBestGarrisonPoint - Unable to find suitable garrison point for '%s'\n", 
+										 ("GarrisonContain::putObjectAtBestGarrisonPoint - Unable to find suitable garrison point for '%s'", 
 										 obj->getTemplate()->getName().str()) );
 
 	// put it here
@@ -961,7 +961,7 @@ UpdateSleepTime GarrisonContain::update( void )
 	{
 		// sanity information
 		DEBUG_ASSERTCRASH( getObject()->isMobile() == FALSE,
-		 ("GarrisonContain::update - Objects with garrison contain can be spec'd as 'mobile' in the INI. Do you really want to do this? \n") );
+		 ("GarrisonContain::update - Objects with garrison contain can be spec'd as 'mobile' in the INI. Do you really want to do this?") );
 	}
 
 	return UPDATE_SLEEP_NONE;

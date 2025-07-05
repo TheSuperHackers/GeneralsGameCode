@@ -621,7 +621,6 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 		eip_ptr++;
 	}
 
-	strcat (scrap, "\n");
 	DOUBLE_DEBUG ( ( (scrap)));
   DEBUG_LOG(( "********** END EXCEPTION DUMP ****************\n" ));
 }																									 

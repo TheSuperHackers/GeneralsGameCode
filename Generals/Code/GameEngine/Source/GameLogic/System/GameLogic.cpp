@@ -1170,7 +1170,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	#ifdef DUMP_PERF_STATS
 	GetPrecisionTimer(&endTime64);
 	char Buf[256];
-	sprintf(Buf,"After terrainlogic->loadmap=%f\n",((double)(endTime64-startTime64)/(double)(freq64)*1000.0));
+	sprintf(Buf,"After terrainlogic->loadmap=%f",((double)(endTime64-startTime64)/(double)(freq64)*1000.0));
 		//DEBUG_LOG(("Placed a starting building for %s at waypoint %s", playerName.str(), waypointName.str()));
 	DEBUG_LOG(("%s", Buf));
 	#endif
@@ -1529,7 +1529,7 @@ void GameLogic::startNewGame( Bool saveGame )
 
 	#ifdef DUMP_PERF_STATS
 	GetPrecisionTimer(&endTime64);
-	sprintf(Buf,"After terrainlogic->newmap=%f\n",((double)(endTime64-startTime64)/(double)(freq64)*1000.0));
+	sprintf(Buf,"After terrainlogic->newmap=%f",((double)(endTime64-startTime64)/(double)(freq64)*1000.0));
 	DEBUG_LOG(("%s", Buf));
 	#endif
 
@@ -1629,7 +1629,7 @@ void GameLogic::startNewGame( Bool saveGame )
 
 	#ifdef DUMP_PERF_STATS
 	GetPrecisionTimer(&endTime64);
-	sprintf(Buf,"Before loading objects=%f\n",((double)(endTime64-startTime64)/(double)(freq64)*1000.0));
+	sprintf(Buf,"Before loading objects=%f",((double)(endTime64-startTime64)/(double)(freq64)*1000.0));
 	DEBUG_LOG(("%s", Buf));
 	#endif
 
@@ -1735,7 +1735,7 @@ void GameLogic::startNewGame( Bool saveGame )
 
 	#ifdef DUMP_PERF_STATS
 	GetPrecisionTimer(&endTime64);
-	sprintf(Buf,"After loading objects=%f\n",((double)(endTime64-startTime64)/(double)(freq64)*1000.0));
+	sprintf(Buf,"After loading objects=%f",((double)(endTime64-startTime64)/(double)(freq64)*1000.0));
 	DEBUG_LOG(("%s", Buf));
 	#endif
 
@@ -1868,7 +1868,7 @@ void GameLogic::startNewGame( Bool saveGame )
 
 	#ifdef DUMP_PERF_STATS
 	GetPrecisionTimer(&endTime64);
-	sprintf(Buf,"After partition manager update=%f\n",((double)(endTime64-startTime64)/(double)(freq64)*1000.0));
+	sprintf(Buf,"After partition manager update=%f",((double)(endTime64-startTime64)/(double)(freq64)*1000.0));
 	DEBUG_LOG(("%s", Buf));
 	#endif
 
@@ -1945,7 +1945,7 @@ void GameLogic::startNewGame( Bool saveGame )
 	
 	#ifdef DUMP_PERF_STATS
 	GetPrecisionTimer(&endTime64);
-	sprintf(Buf,"After delete load screen=%f\n",((double)(endTime64-startTime64)/(double)(freq64)*1000.0));
+	sprintf(Buf,"After delete load screen=%f",((double)(endTime64-startTime64)/(double)(freq64)*1000.0));
 	DEBUG_LOG(("%s", Buf));
 	#endif
 
@@ -2076,7 +2076,7 @@ void GameLogic::startNewGame( Bool saveGame )
 
 #ifdef DUMP_PERF_STATS
 	GetPrecisionTimer(&endTime64);
-	sprintf(Buf,"Total startnewgame=%f\n",((double)(endTime64-startTime64)/(double)(freq64)*1000.0));
+	sprintf(Buf,"Total startnewgame=%f",((double)(endTime64-startTime64)/(double)(freq64)*1000.0));
 	DEBUG_LOG(("%s", Buf));
 #endif
 
@@ -3122,7 +3122,7 @@ void GameLogic::update( void )
 		__int64 freq64;
 		GetPrecisionTimerTicksPerSec(&freq64);
 
-		sprintf(Buf,"Texture=%f, Anim=%f, CreateRobj=%f, Load3DAssets=%f\n",
+		sprintf(Buf,"Texture=%f, Anim=%f, CreateRobj=%f, Load3DAssets=%f",
 			((double)Total_Get_Texture_Time/(double)(freq64)*1000.0),
 			((double)Total_Get_HAnim_Time/(double)(freq64)*1000.0),
 			((double)Total_Create_Render_Obj_Time/(double)(freq64)*1000.0),
@@ -4231,7 +4231,7 @@ void GameLogic::prepareLogicForObjectLoad( void )
 
 	// there should be no objects anywhere
 	DEBUG_ASSERTCRASH( getFirstObject() == NULL,
-										 ("GameLogic::prepareLogicForObjectLoad - There are still objects loaded in the engine, but it should be empty (Top is '%s')\n",
+										 ("GameLogic::prepareLogicForObjectLoad - There are still objects loaded in the engine, but it should be empty (Top is '%s')",
 										 getFirstObject()->getTemplate()->getName().str()) );
 
 }  // end prepareLogicForObjectLoad

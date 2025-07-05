@@ -296,7 +296,7 @@ void AttackPriorityInfo::xfer( Xfer *xfer )
 				thingTemplate = (*it).first;
 				thingTemplateName = thingTemplate->getName();
 				DEBUG_ASSERTCRASH( thingTemplateName.isEmpty() == FALSE, 
-													 ("AttackPriorityInfo::xfer - Writing an empty thing template name\n") );
+													 ("AttackPriorityInfo::xfer - Writing an empty thing template name") );
 				xfer->xferAsciiString( &thingTemplateName );
 
 				// write priority
@@ -307,7 +307,7 @@ void AttackPriorityInfo::xfer( Xfer *xfer )
 
 			// sanity
 			DEBUG_ASSERTCRASH( count == priorityMapCount, 
-												("AttackPriorityInfo::xfer - Mismatch in priority map size.  Size() method returned '%d' but actual iteration count was '%d'\n",
+												("AttackPriorityInfo::xfer - Mismatch in priority map size.  Size() method returned '%d' but actual iteration count was '%d'",
 												 priorityMapCount, count) );
 
 		}  // end if
@@ -6379,14 +6379,14 @@ void ScriptEngine::addObjectToCache(Object* pNewObject)
 		if (it->first == objName) {
 			if (it->second == NULL) {
 				AsciiString newNameForDead;
-				newNameForDead.format("Reassigning dead object's name '%s' to object (%d) of type '%s'\n", objName.str(), pNewObject->getID(), pNewObject->getTemplate()->getName().str());
+				newNameForDead.format("Reassigning dead object's name '%s' to object (%d) of type '%s'", objName.str(), pNewObject->getID(), pNewObject->getTemplate()->getName().str());
 				TheScriptEngine->AppendDebugMessage(newNameForDead, FALSE);
 				DEBUG_LOG((newNameForDead.str()));
 				it->second = pNewObject;
 				return;
 			} else {
 				DEBUG_CRASH(("Attempting to assign the name '%s' to object (%d) of type '%s'," 
-										 " but object (%d) of type '%s' already has that name\n",
+										 " but object (%d) of type '%s' already has that name",
 										 objName.str(), pNewObject->getID(), pNewObject->getTemplate()->getName().str(), 
 										 it->second->getID(), it->second->getTemplate()->getName().str()));
 				return;
@@ -7485,7 +7485,7 @@ void SequentialScript::xfer( Xfer *xfer )
 
 		// sanity	
 		DEBUG_ASSERTCRASH( m_scriptToExecuteSequentially != NULL,
-											 ("SequentialScript::xfer - m_scriptToExecuteSequentially is NULL but should not be\n") );
+											 ("SequentialScript::xfer - m_scriptToExecuteSequentially is NULL but should not be") );
 
 	}  // end else, load
 

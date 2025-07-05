@@ -160,10 +160,10 @@ void LogClass::dumpMatrix3D(const Matrix3D *m, AsciiString name, AsciiString fna
 	fname.toLower();
 	fname = fname.reverseFind('\\') + 1;
 	const Real *matrix = (const Real *)m;
-	log("dumpMatrix3D() %s:%d %s\n",
+	log("dumpMatrix3D() %s:%d %s",
 		fname.str(), line, name.str());
 	for (Int i=0; i<3; ++i)
-		log("      0x%08X 0x%08X 0x%08X 0x%08X\n",
+		log("      0x%08X 0x%08X 0x%08X 0x%08X",
 			AS_INT(matrix[(i<<2)+0]), AS_INT(matrix[(i<<2)+1]), AS_INT(matrix[(i<<2)+2]), AS_INT(matrix[(i<<2)+3]));
 }
 
@@ -173,7 +173,7 @@ void LogClass::dumpReal(Real r, AsciiString name, AsciiString fname, Int line)
 		return;
 	fname.toLower();
 	fname = fname.reverseFind('\\') + 1;
-	log("dumpReal() %s:%d %s %8.8X (%f)\n",
+	log("dumpReal() %s:%d %s %8.8X (%f)",
 		fname.str(), line, name.str(), AS_INT(r), r);
 }
 

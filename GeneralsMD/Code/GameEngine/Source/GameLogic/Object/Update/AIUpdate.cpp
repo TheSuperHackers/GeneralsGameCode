@@ -1930,7 +1930,7 @@ Bool AIUpdateInterface::computeAttackPath( PathfindServicesInterface *pathServic
 
 		weapon->computeApproachTarget(getObject(), victim, &localVictimPos, 0, localVictimPos);
 		//DEBUG_ASSERTCRASH(weapon->isGoalPosWithinAttackRange(getObject(), &localVictimPos, victim, victimPos, NULL),
-		//	("position we just calced is not acceptable\n"));
+		//	("position we just calced is not acceptable"));
 		
 		// First, see if our path already goes to the destination.
 		if (m_path) 

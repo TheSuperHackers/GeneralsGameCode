@@ -1985,7 +1985,7 @@ void AIPlayer::repairStructure(ObjectID structure)
 void AIPlayer::selectSkillset(Int skillset)
 {
 	DEBUG_ASSERTCRASH(m_skillsetSelector == INVALID_SKILLSET_SELECTION, 
-		("Selecting a skill set (%d) after one has already been chosen (%d) means some points have been incorrectly spent.\n", skillset + 1, m_skillsetSelector + 1));
+		("Selecting a skill set (%d) after one has already been chosen (%d) means some points have been incorrectly spent.", skillset + 1, m_skillsetSelector + 1));
 
 	m_skillsetSelector = skillset;
 }

@@ -1641,7 +1641,7 @@ Object *DozerAIUpdate::construct( const ThingTemplate *what,
 
 	// sanity
 	DEBUG_ASSERTCRASH( getObject()->getControllingPlayer() == owningPlayer,
-										 ("Dozer::Construct - The controlling player of the Dozer is not the owning player passed in\n") );
+										 ("Dozer::Construct - The controlling player of the Dozer is not the owning player passed in") );
 	
 	// if we're not rebuilding, we have a few checks to pass first for sanity
 	if( isRebuild == FALSE )

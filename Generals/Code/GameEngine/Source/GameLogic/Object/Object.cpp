@@ -3449,7 +3449,7 @@ void Object::crc( Xfer *xfer )
 #ifdef DEBUG_CRC
 	if (doLogging)
 	{
-		tmp.format("damage scalar: %g/%8.8X\n", scalar, AS_INT(scalar));
+		tmp.format("damage scalar: %g/%8.8X", scalar, AS_INT(scalar));
 		logString.concat(tmp);
 
 		CRCDEBUG_LOG(("%s", logString.str()));

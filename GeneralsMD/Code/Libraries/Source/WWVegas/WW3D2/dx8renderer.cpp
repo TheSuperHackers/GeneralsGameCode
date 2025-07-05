@@ -370,19 +370,18 @@ void DX8TextureCategoryClass::Log(bool only_visible)
 {
 #ifdef ENABLE_CATEGORY_LOG
 	StringClass work(255,true);
-	work.Format("	DX8TextureCategoryClass\n");
-	WWDEBUG_SAY((work));
+	work.Format("	DX8TextureCategoryClass");
 
 	StringClass work2(255,true);
 	for (int stage=0;stage<MeshMatDescClass::MAX_TEX_STAGES;++stage) {
-		work2.Format("	texture[%d]: %x (%s)\n", stage, textures[stage], textures[stage] ? textures[stage]->Get_Name() : "-");
+		work2.Format("\n	texture[%d]: %x (%s)", stage, textures[stage], textures[stage] ? textures[stage]->Get_Name() : "-");
 		work+=work2;
 	}
-	work2.Format("	material: %x (%s)\n	shader: %x\n", material, material ? material->Get_Name() : "-", shader);
+	work2.Format("\n	material: %x (%s)\n	shader: %x", material, material ? material->Get_Name() : "-", shader);
 	work+=work2;
 	WWDEBUG_SAY((work));
 
-	work.Format("	%8s %8s %6s %6s %6s %5s %s\n",
+	work.Format("	%8s %8s %6s %6s %6s %5s %s",
 		"idx_cnt",
 		"poly_cnt",
 		"i_offs",
@@ -762,19 +761,19 @@ void DX8RigidFVFCategoryContainer::Log(bool only_visible)
 {
 #ifdef ENABLE_CATEGORY_LOG
 	StringClass work(255,true);
-	work.Format("DX8RigidFVFCategoryContainer --------------\n");
+	work.Format("DX8RigidFVFCategoryContainer --------------");
 	WWDEBUG_SAY((work));
 	if (vertex_buffer) {
 		StringClass fvfname(255,true);
 		vertex_buffer->FVF_Info().Get_FVF_Name(fvfname);
-		work.Format("VB size (used/total): %d/%d FVF: %s\n",used_vertices,vertex_buffer->Get_Vertex_Count(),fvfname);
+		work.Format("VB size (used/total): %d/%d FVF: %s",used_vertices,vertex_buffer->Get_Vertex_Count(),fvfname);
 		WWDEBUG_SAY((work));
 	}
 	else {
 		WWDEBUG_SAY(("EMPTY VB"));
 	}
 	if (index_buffer) {
-		work.Format("IB size (used/total): %d/%d\n",used_indices,index_buffer->Get_Index_Count());
+		work.Format("IB size (used/total): %d/%d",used_indices,index_buffer->Get_Index_Count());
 		WWDEBUG_SAY((work));
 	}
 	else {
@@ -1271,11 +1270,11 @@ void DX8SkinFVFCategoryContainer::Log(bool only_visible)
 {
 #ifdef ENABLE_CATEGORY_LOG
 	StringClass work(255,true);
-	work.Format("DX8SkinFVFCategoryContainer --------------\n");
+	work.Format("DX8SkinFVFCategoryContainer --------------");
 	WWDEBUG_SAY((work));
 
 	if (index_buffer) {
-		work.Format("IB size (used/total): %d/%d\n",used_indices,index_buffer->Get_Index_Count());
+		work.Format("IB size (used/total): %d/%d",used_indices,index_buffer->Get_Index_Count());
 		WWDEBUG_SAY((work));
 	}
 	else {

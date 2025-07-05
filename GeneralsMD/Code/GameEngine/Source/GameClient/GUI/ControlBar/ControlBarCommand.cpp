@@ -884,7 +884,7 @@ void ControlBar::updateContextCommand( void )
 
 			// sanity, check like commands should have windows that are check like as well
 			DEBUG_ASSERTCRASH( BitIsSet( win->winGetStatus(), WIN_STATUS_CHECK_LIKE ),	
-												 ("updateContextCommand: Error, gadget window for command '%s' is not check-like!\n",
+												 ("updateContextCommand: Error, gadget window for command '%s' is not check-like!",
 												 command->getName().str()) );
 
 			if( availability == COMMAND_ACTIVE )
@@ -1405,7 +1405,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 		{
 			// sanity
 			DEBUG_ASSERTCRASH( command->getSpecialPowerTemplate() != NULL,
-												 ("The special power in the command '%s' is NULL\n", command->getName().str()) );
+												 ("The special power in the command '%s' is NULL", command->getName().str()) );
 			// get special power module from the object to execute it
 			SpecialPowerModuleInterface *mod = obj->getSpecialPowerModule( command->getSpecialPowerTemplate() );
 

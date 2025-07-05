@@ -279,7 +279,7 @@ void dumpVector3(const Vector3 *v, AsciiString name, AsciiString fname, Int line
 	if (!(IS_FRAME_OK_TO_LOG)) return;
 	fname.toLower();
 	fname = getFname(fname);
-	addCRCDebugLine("dumpVector3() %s:%d %s %8.8X %8.8X %8.8X\n",
+	addCRCDebugLine("dumpVector3() %s:%d %s %8.8X %8.8X %8.8X",
 		fname.str(), line, name.str(),
 		AS_INT(v->X), AS_INT(v->Y), AS_INT(v->Z));
 }
@@ -289,7 +289,7 @@ void dumpCoord3D(const Coord3D *c, AsciiString name, AsciiString fname, Int line
 	if (!(IS_FRAME_OK_TO_LOG)) return;
 	fname.toLower();
 	fname = getFname(fname);
-	addCRCDebugLine("dumpCoord3D() %s:%d %s %8.8X %8.8X %8.8X\n",
+	addCRCDebugLine("dumpCoord3D() %s:%d %s %8.8X %8.8X %8.8X",
 		fname.str(), line, name.str(),
 		AS_INT(c->x), AS_INT(c->y), AS_INT(c->z));
 }
@@ -300,10 +300,10 @@ void dumpMatrix3D(const Matrix3D *m, AsciiString name, AsciiString fname, Int li
 	fname.toLower();
 	fname = getFname(fname);
 	const Real *matrix = (const Real *)m;
-	addCRCDebugLine("dumpMatrix3D() %s:%d %s\n",
+	addCRCDebugLine("dumpMatrix3D() %s:%d %s",
 		fname.str(), line, name.str());
 	for (Int i=0; i<3; ++i)
-		addCRCDebugLine("      0x%08X 0x%08X 0x%08X 0x%08X\n",
+		addCRCDebugLine("      0x%08X 0x%08X 0x%08X 0x%08X",
 			AS_INT(matrix[(i<<2)+0]), AS_INT(matrix[(i<<2)+1]), AS_INT(matrix[(i<<2)+2]), AS_INT(matrix[(i<<2)+3]));
 }
 
@@ -312,7 +312,7 @@ void dumpReal(Real r, AsciiString name, AsciiString fname, Int line)
 	if (!(IS_FRAME_OK_TO_LOG)) return;
 	fname.toLower();
 	fname = getFname(fname);
-	addCRCDebugLine("dumpReal() %s:%d %s %8.8X (%f)\n",
+	addCRCDebugLine("dumpReal() %s:%d %s %8.8X (%f)",
 		fname.str(), line, name.str(), AS_INT(r), r);
 }
 

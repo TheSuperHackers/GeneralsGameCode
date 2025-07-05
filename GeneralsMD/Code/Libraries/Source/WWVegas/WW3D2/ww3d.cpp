@@ -799,7 +799,7 @@ WW3DErrorType WW3D::Begin_Render(bool clear,bool clearz,const Vector3 & color, f
 
 	SNAPSHOT_SAY(("=========================================="));
 	SNAPSHOT_SAY(("========== WW3D::Begin_Render ============"));
-	SNAPSHOT_SAY(("==========================================\r\n"));
+	SNAPSHOT_SAY(("==========================================\n"));
 
 	if (DX8Wrapper::_Get_D3D_Device8() && (hr=DX8Wrapper::_Get_D3D_Device8()->TestCooperativeLevel()) != D3D_OK)
 	{
@@ -1109,7 +1109,7 @@ WW3DErrorType WW3D::End_Render(bool flip_frame)
 
 	SNAPSHOT_SAY(("=========================================="));
 	SNAPSHOT_SAY(("========== WW3D::End_Render =============="));
-	SNAPSHOT_SAY(("==========================================\r\n"));
+	SNAPSHOT_SAY(("==========================================\n"));
 
 	Activate_Snapshot(false);
 	
