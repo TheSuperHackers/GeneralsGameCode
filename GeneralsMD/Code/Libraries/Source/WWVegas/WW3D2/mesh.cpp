@@ -856,7 +856,7 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 		pass->Install_Materials();
 		DX8Wrapper::Set_Index_Buffer(ib,0);
 
-		SNAPSHOT_SAY(("Set_World_Identity\n"));
+		SNAPSHOT_SAY(("Set_World_Identity"));
 		DX8Wrapper::Set_World_Identity();
 
 		DX8PolygonRendererListIterator it(&Model->PolygonRendererList);
@@ -982,7 +982,7 @@ void MeshClass::Render_Material_Pass(MaterialPassClass * pass,IndexBufferClass *
 		pass->Install_Materials();
 		DX8Wrapper::Set_Index_Buffer(ib,0);
 
-		SNAPSHOT_SAY(("Set_World_Transform\n"));
+		SNAPSHOT_SAY(("Set_World_Transform"));
 		DX8Wrapper::Set_Transform(D3DTS_WORLD,Transform);
 
 		DX8PolygonRendererListIterator it(&Model->PolygonRendererList);

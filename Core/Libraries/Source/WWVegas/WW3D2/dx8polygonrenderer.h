@@ -118,12 +118,12 @@ inline void DX8PolygonRendererClass::Set_Vertex_Index_Range(unsigned min_vertex_
 inline void DX8PolygonRendererClass::Render(/*const Matrix3D & tm,*/int base_vertex_offset)
 {
 //	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
-//	SNAPSHOT_SAY(("Set_Transform\n"));
-	SNAPSHOT_SAY(("Set_Index_Buffer_Index_Offset(%d)\n",base_vertex_offset));
+//	SNAPSHOT_SAY(("Set_Transform"));
+	SNAPSHOT_SAY(("Set_Index_Buffer_Index_Offset(%d)",base_vertex_offset));
 
 	DX8Wrapper::Set_Index_Buffer_Index_Offset(base_vertex_offset);
 	if (strip) {
-		SNAPSHOT_SAY(("Draw_Strip(%d,%d,%d,%d)\n",index_offset,index_count-2,min_vertex_index,vertex_index_range));
+		SNAPSHOT_SAY(("Draw_Strip(%d,%d,%d,%d)",index_offset,index_count-2,min_vertex_index,vertex_index_range));
 		DX8Wrapper::Draw_Strip(
 			index_offset,
 			index_count-2,
@@ -131,7 +131,7 @@ inline void DX8PolygonRendererClass::Render(/*const Matrix3D & tm,*/int base_ver
 			vertex_index_range);
 	}
 	else {
-		SNAPSHOT_SAY(("Draw_Triangles(%d,%d,%d,%d)\n",index_offset,index_count-2,min_vertex_index,vertex_index_range));
+		SNAPSHOT_SAY(("Draw_Triangles(%d,%d,%d,%d)",index_offset,index_count-2,min_vertex_index,vertex_index_range));
 		DX8Wrapper::Draw_Triangles(
 			index_offset,
 			index_count/3,
@@ -144,9 +144,9 @@ inline void DX8PolygonRendererClass::Render_Sorted(/*const Matrix3D & tm,*/int b
 {
 	WWASSERT(!strip);	// Strips can't be sorted for now
 //	DX8Wrapper::Set_Transform(D3DTS_WORLD,tm);
-//	SNAPSHOT_SAY(("Set_Transform\n"));
-	SNAPSHOT_SAY(("Set_Index_Buffer_Index_Offset(%d)\n",base_vertex_offset));
-	SNAPSHOT_SAY(("Insert_Sorting_Triangles(%d,%d,%d,%d)\n",index_offset,index_count-2,min_vertex_index,vertex_index_range));
+//	SNAPSHOT_SAY(("Set_Transform"));
+	SNAPSHOT_SAY(("Set_Index_Buffer_Index_Offset(%d)",base_vertex_offset));
+	SNAPSHOT_SAY(("Insert_Sorting_Triangles(%d,%d,%d,%d)",index_offset,index_count-2,min_vertex_index,vertex_index_range));
 
 	DX8Wrapper::Set_Index_Buffer_Index_Offset(base_vertex_offset);
 	SortingRendererClass::Insert_Triangles(

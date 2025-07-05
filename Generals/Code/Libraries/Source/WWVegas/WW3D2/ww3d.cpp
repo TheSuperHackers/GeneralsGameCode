@@ -804,9 +804,9 @@ WW3DErrorType WW3D::Begin_Render(bool clear,bool clearz,const Vector3 & color, f
 	WWASSERT(IsInitted);
 	HRESULT hr;
 
+	SNAPSHOT_SAY(("=========================================="));
+	SNAPSHOT_SAY(("========== WW3D::Begin_Render ============"));
 	SNAPSHOT_SAY(("==========================================\r\n"));
-	SNAPSHOT_SAY(("========== WW3D::Begin_Render ============\r\n"));
-	SNAPSHOT_SAY(("==========================================\r\n\r\n"));
 
 	if (DX8Wrapper::_Get_D3D_Device8() && (hr=DX8Wrapper::_Get_D3D_Device8()->TestCooperativeLevel()) != D3D_OK)
 	{
@@ -1112,9 +1112,9 @@ WW3DErrorType WW3D::End_Render(bool flip_frame)
 		Debug_Statistics::End_Statistics();
 	}
 
+	SNAPSHOT_SAY(("=========================================="));
+	SNAPSHOT_SAY(("========== WW3D::End_Render =============="));
 	SNAPSHOT_SAY(("==========================================\r\n"));
-	SNAPSHOT_SAY(("========== WW3D::End_Render ==============\r\n"));
-	SNAPSHOT_SAY(("==========================================\r\n\r\n"));
 
 	Activate_Snapshot(false);
 	
