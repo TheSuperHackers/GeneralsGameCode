@@ -358,7 +358,7 @@ Particle::Particle( ParticleSystem *system, const ParticleInfo *info )
 	// add this particle to the Particle System list, retaining local creation order
 	m_system->addParticle(this);
 
-	//DEBUG_ASSERTLOG(!(totalParticleCount % 100 == 0), ( "TotalParticleCount = %d\n", m_totalParticleCount ));
+	//DEBUG_ASSERTLOG(!(totalParticleCount % 100 == 0), ( "TotalParticleCount = %d", m_totalParticleCount ));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -384,7 +384,7 @@ Particle::~Particle()
 	// remove from the global list
 	TheParticleSystemManager->removeParticle(this);
 
-	//DEBUG_ASSERTLOG(!(totalParticleCount % 100 == 0), ( "TotalParticleCount = %d\n", m_totalParticleCount ));
+	//DEBUG_ASSERTLOG(!(totalParticleCount % 100 == 0), ( "TotalParticleCount = %d", m_totalParticleCount ));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1283,7 +1283,7 @@ ParticleSystem::ParticleSystem( const ParticleSystemTemplate *sysTemplate,
 
 	TheParticleSystemManager->friend_addParticleSystem(this);
 
-	//DEBUG_ASSERTLOG(!(m_totalParticleSystemCount % 10 == 0), ( "TotalParticleSystemCount = %d\n", m_totalParticleSystemCount ));
+	//DEBUG_ASSERTLOG(!(m_totalParticleSystemCount % 10 == 0), ( "TotalParticleSystemCount = %d", m_totalParticleSystemCount ));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1327,7 +1327,7 @@ ParticleSystem::~ParticleSystem()
 	m_controlParticle = NULL;
 	
 	TheParticleSystemManager->friend_removeParticleSystem(this);
-	//DEBUG_ASSERTLOG(!(m_totalParticleSystemCount % 10 == 0), ( "TotalParticleSystemCount = %d\n", m_totalParticleSystemCount ));
+	//DEBUG_ASSERTLOG(!(m_totalParticleSystemCount % 10 == 0), ( "TotalParticleSystemCount = %d", m_totalParticleSystemCount ));
 }
 
 // ------------------------------------------------------------------------------------------------
