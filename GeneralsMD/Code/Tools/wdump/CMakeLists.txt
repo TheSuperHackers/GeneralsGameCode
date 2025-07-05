@@ -21,7 +21,6 @@ target_link_libraries(z_wdump PRIVATE
     core_config
     core_utility
     core_wwstub # avoid linking GameEngine
-    dbghelplib
     imm32
     vfw32
     winmm
