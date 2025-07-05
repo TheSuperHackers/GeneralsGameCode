@@ -480,10 +480,12 @@ public:
 	Bool m_specialPowerUsesDelay ;
 #endif
   Bool m_TiVOFastMode;            ///< When true, the client speeds up the framerate... set by HOTKEY!
-  
 
+#if defined(RTS_PROFILE)
+	Bool m_vTune;
+#endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	Bool m_wireframe;
 	Bool m_stateMachineDebug;
 	Bool m_useCameraConstraints;
@@ -497,7 +499,6 @@ public:
 	Bool m_disableMilitaryCaption;					///< if true, military briefings go fast
 	Int m_benchmarkTimer;										///< how long to play the game in benchmark mode?
   Bool m_checkForLeaks;
-	Bool m_vTune;
 	Bool m_debugCamera;						///< Used to display Camera debug information
 	Bool m_debugVisibility;						///< Should we actively debug the visibility
 	Int m_debugVisibilityTileCount;		///< How many tiles we should show when debugging visibility

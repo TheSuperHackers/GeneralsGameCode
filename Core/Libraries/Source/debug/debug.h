@@ -35,8 +35,7 @@
 /** 
   \page lib_var Library variants
 
-  Generally speaking there are four different library variants:
-  - Internal: all asserts/checks/logs, full optimizations (RTS_INTERNAL macro defined)
+  Generally speaking there are three different library variants:
   - %Debug: all asserts/checks/logs, no optimizations (RTS_DEBUG macro defined)
   - Profile: all asserts/checks/logs, full optimizations, profiling active (RTS_PROFILE macro defined)
   - Release: no asserts/checks/logs, full optimizations
@@ -83,10 +82,6 @@
   - Profile: XXXProfile.lib
   - Release: XXX.lib
 */
-
-#if defined(RTS_DEBUG) && defined(RTS_INTERNAL)
-	#error "Only either RTS_DEBUG or RTS_INTERNAL should ever be defined"
-#endif
 
 // Define which libraries to use. 
 #if defined(RTS_DEBUG) || defined(RTS_PROFILE)

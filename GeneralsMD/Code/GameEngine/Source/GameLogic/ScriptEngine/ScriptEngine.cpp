@@ -100,7 +100,7 @@ Bool st_particleSystemNeedsStopping = FALSE; ///< Set along with st_particleSyst
 #define FORMAT_STRING_LEADING_STRING		"%s%.2f"
 // That's it for particle editor
 
-#if defined(RTS_INTERNAL)
+#if defined(RTS_PROFILE)
 	#define DO_VTUNE_STUFF
 #endif
 
@@ -598,7 +598,7 @@ void ScriptEngine::init( void )
 
 	curTemplate = &m_actionTemplates[ScriptAction::DEBUG_CRASH_BOX];
 	curTemplate->m_internalName = "DEBUG_CRASH_BOX";
-	curTemplate->m_uiName = "{INTERNAL}_/Debug/Display a crash box (debug/internal builds only).";
+	curTemplate->m_uiName = "{INTERNAL}_/Debug/Display a crash box (debug builds only).";
 	curTemplate->m_numParameters = 1;
 	curTemplate->m_parameters[0] = Parameter::TEXT_STRING;
 	curTemplate->m_numUiStrings = 1;

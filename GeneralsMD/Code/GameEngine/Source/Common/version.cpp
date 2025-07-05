@@ -101,10 +101,6 @@ UnicodeString Version::getUnicodeVersion( void )
 	version.concat(UnicodeString(L" Debug"));
 #endif
 
-#ifdef RTS_INTERNAL
-	version.concat(UnicodeString(L" Internal"));
-#endif
-
 	return version;
 }
 
@@ -120,10 +116,6 @@ UnicodeString Version::getFullUnicodeVersion( void )
 
 #ifdef RTS_DEBUG
 	version.concat(UnicodeString(L" Debug"));
-#endif
-
-#ifdef RTS_INTERNAL
-	version.concat(UnicodeString(L" Internal"));
 #endif
 
 	return version;

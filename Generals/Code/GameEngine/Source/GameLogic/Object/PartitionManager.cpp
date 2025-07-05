@@ -5362,10 +5362,8 @@ Bool PartitionFilterPossibleToAttack::allow(Object *objOther)
 //		return false;
 
 	// we should have already filtered out isAbleToAttack!
-#ifdef RTS_DEBUG
-	// disable this assert for INTERNAL builds (srj)
-	DEBUG_ASSERTCRASH(m_obj && m_obj->isAbleToAttack(), ("if the object is unable to attack at all, you should filter that out ahead of time!"));
-#endif
+	DEBUG_ASSERTCRASH(m_obj->isAbleToAttack(), ("if the object is unable to attack at all, you should filter that out ahead of time!"));
+
 	CanAttackResult result = m_obj->getAbleToAttackSpecificObject( m_attackType, objOther, m_commandSource );
 	if( result == ATTACKRESULT_POSSIBLE || result == ATTACKRESULT_POSSIBLE_AFTER_MOVING )
 	{
