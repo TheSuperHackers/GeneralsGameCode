@@ -562,7 +562,7 @@ void Xfer::xferScienceType( ScienceType *science )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( science != NULL, ("xferScienceType - Invalid parameters\n") );
+	DEBUG_ASSERTCRASH( science != NULL, ("xferScienceType - Invalid parameters") );
 
 	AsciiString scienceName;
 
@@ -611,7 +611,7 @@ void Xfer::xferScienceVec( ScienceVec *scienceVec )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( scienceVec != NULL, ("xferScienceVec - Invalid parameters\n") );
+	DEBUG_ASSERTCRASH( scienceVec != NULL, ("xferScienceVec - Invalid parameters") );
 
 	// this deserves a version number
 	const XferVersion currentVersion = 1;

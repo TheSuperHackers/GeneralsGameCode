@@ -258,7 +258,7 @@ public:
 		compressedLen = CompressionManager::compressData( compressionToUse, srcBuffer, m_totalBytes, destBuffer, compressedLen );
 		DEBUG_LOG(("Compressed %d bytes to %d bytes - compression of %g%%", m_totalBytes, compressedLen,
 			compressedLen/(Real)m_totalBytes*100.0f));
-		DEBUG_ASSERTCRASH(compressedLen, ("Failed to compress!\n"));
+		DEBUG_ASSERTCRASH(compressedLen, ("Failed to compress!"));
 		if (compressedLen)
 		{
 			m_file->Write(destBuffer, compressedLen);

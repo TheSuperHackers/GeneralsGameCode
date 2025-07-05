@@ -2829,7 +2829,7 @@ void InGameUI::setGUICommand( const CommandButton *command )
 		if( BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_TARGET ) == FALSE )
 		{
 
-			DEBUG_ASSERTCRASH( 0, ("setGUICommand: Command '%s' does not need additional user interaction\n",	
+			DEBUG_ASSERTCRASH( 0, ("setGUICommand: Command '%s' does not need additional user interaction",	
 														command->getName().str()) );
 			m_pendingGUICommand = NULL;
 			m_mouseMode = MOUSEMODE_DEFAULT;
@@ -2976,7 +2976,7 @@ void InGameUI::placeBuildAvailable( const ThingTemplate *build, Drawable *buildD
 				else
 					draw->setIndicatorColor(sourceObject->getControllingPlayer()->getPlayerColor());
 			}
-			DEBUG_ASSERTCRASH( draw, ("Unable to create icon at cursor for placement '%s'\n",
+			DEBUG_ASSERTCRASH( draw, ("Unable to create icon at cursor for placement '%s'",
 												 build->getName().str()) );
 
 			//

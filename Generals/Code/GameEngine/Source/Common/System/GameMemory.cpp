@@ -1605,7 +1605,7 @@ Int MemoryPool::freeBlob(MemoryPoolBlob* blob)
 	// save these for later...
 	Int totalBlocksInBlob = blob->getTotalBlockCount();
 	Int usedBlocksInBlob = blob->getUsedBlockCount();
-	DEBUG_ASSERTCRASH(usedBlocksInBlob == 0, ("freeing a nonempty blob (%d)\n",usedBlocksInBlob));
+	DEBUG_ASSERTCRASH(usedBlocksInBlob == 0, ("freeing a nonempty blob (%d)",usedBlocksInBlob));
 
 	// this is really just an estimate... will be too small in debug mode.
 	Int amtFreed = totalBlocksInBlob * getAllocationSize() + sizeof(MemoryPoolBlob);
@@ -3193,7 +3193,7 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 		{
 			any += dma->debugDmaReportLeaks();
 		}
-		DEBUG_ASSERTCRASH(!any, ("There were %d memory leaks. Please fix them.\n",any));
+		DEBUG_ASSERTCRASH(!any, ("There were %d memory leaks. Please fix them.",any));
 		DEBUG_LOG(("------------------------------------------"));
 		DEBUG_LOG(("End Simple Leak Report"));
 		DEBUG_LOG(("------------------------------------------"));
@@ -3539,7 +3539,7 @@ void shutdownMemoryManager()
 	#ifdef MEMORYPOOL_DEBUG
 		DEBUG_LOG(("Peak system allocation was %d bytes",thePeakSystemAllocationInBytes));
 		DEBUG_LOG(("Wasted DMA space (peak) was %d bytes",thePeakWastedDMA));
-		DEBUG_ASSERTCRASH(theTotalSystemAllocationInBytes == 0, ("Leaked a total of %d raw bytes\n", theTotalSystemAllocationInBytes));
+		DEBUG_ASSERTCRASH(theTotalSystemAllocationInBytes == 0, ("Leaked a total of %d raw bytes", theTotalSystemAllocationInBytes));
 	#endif
 	}
 
@@ -3559,7 +3559,7 @@ void* createW3DMemPool(const char *poolName, int allocationSize)
 //-----------------------------------------------------------------------------
 void* allocateFromW3DMemPool(void* pool, int allocationSize)
 {
-	DEBUG_ASSERTCRASH(pool, ("pool is null\n"));
+	DEBUG_ASSERTCRASH(pool, ("pool is null"));
 	DEBUG_ASSERTCRASH(pool && ((MemoryPool*)pool)->getAllocationSize() == allocationSize, ("bad w3d pool size %s",((MemoryPool*)pool)->getPoolName()));
 	return ((MemoryPool*)pool)->allocateBlock("allocateFromW3DMemPool");
 }
@@ -3567,7 +3567,7 @@ void* allocateFromW3DMemPool(void* pool, int allocationSize)
 //-----------------------------------------------------------------------------
 void* allocateFromW3DMemPool(void* pool, int allocationSize, const char* msg, int unused)
 {
-	DEBUG_ASSERTCRASH(pool, ("pool is null\n"));
+	DEBUG_ASSERTCRASH(pool, ("pool is null"));
 	DEBUG_ASSERTCRASH(pool && ((MemoryPool*)pool)->getAllocationSize() == allocationSize, ("bad w3d pool size %s",((MemoryPool*)pool)->getPoolName()));
 	return ((MemoryPool*)pool)->allocateBlock(msg);
 }
@@ -3575,6 +3575,6 @@ void* allocateFromW3DMemPool(void* pool, int allocationSize, const char* msg, in
 //-----------------------------------------------------------------------------
 void freeFromW3DMemPool(void* pool, void* p)
 {
-	DEBUG_ASSERTCRASH(pool, ("pool is null\n"));
+	DEBUG_ASSERTCRASH(pool, ("pool is null"));
 	((MemoryPool*)pool)->freeBlock(p);
 }

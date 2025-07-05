@@ -219,8 +219,8 @@ static Bool calcTrajectory(
 		pitches[0] = theta;	// shallower angle
 		pitches[1] = (theta >= 0.0) ? (PI/2 - theta) : (-PI/2 - theta);	// steeper angle
 		
-		DEBUG_ASSERTCRASH(pitches[0]<=PI/2&&pitches[0]>=-PI/2,("bad pitches[0] %f\n",rad2deg(pitches[0])));
-		DEBUG_ASSERTCRASH(pitches[1]<=PI/2&&pitches[1]>=-PI/2,("bad pitches[1] %f\n",rad2deg(pitches[1])));
+		DEBUG_ASSERTCRASH(pitches[0]<=PI/2&&pitches[0]>=-PI/2,("bad pitches[0] %f",rad2deg(pitches[0])));
+		DEBUG_ASSERTCRASH(pitches[1]<=PI/2&&pitches[1]>=-PI/2,("bad pitches[1] %f",rad2deg(pitches[1])));
 
 		// calc the horiz-speed & time for each.
 		// note that time can only be negative for 90<angle<270, and since we

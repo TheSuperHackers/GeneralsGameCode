@@ -299,7 +299,7 @@ Anim2D::Anim2D( Anim2DTemplate *animTemplate, Anim2DCollection *collectionSystem
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( animTemplate != NULL, ("Anim2D::Anim2D - NULL template\n") );
+	DEBUG_ASSERTCRASH( animTemplate != NULL, ("Anim2D::Anim2D - NULL template") );
 
 	//Added By Sadullah Nader
 	//Initialization 
@@ -359,7 +359,7 @@ void Anim2D::setCurrentFrame( UnsignedShort frame )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_template != NULL, ("Anim2D::reset - No template for animation\n") );
+	DEBUG_ASSERTCRASH( m_template != NULL, ("Anim2D::reset - No template for animation") );
 
 	// sanity
 	DEBUG_ASSERTCRASH( TheGameLogic != NULL,	
@@ -386,7 +386,7 @@ void Anim2D::randomizeCurrentFrame( void )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_template != NULL, ("Anim2D::reset - No template for animation\n") );
+	DEBUG_ASSERTCRASH( m_template != NULL, ("Anim2D::reset - No template for animation") );
 
 	// set the current frame to a random frame
 	setCurrentFrame( GameClientRandomValue( 0, m_template->getNumFrames() - 1 ) );
@@ -400,7 +400,7 @@ void Anim2D::reset( void )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_template != NULL, ("Anim2D::reset - No template for animation\n") );
+	DEBUG_ASSERTCRASH( m_template != NULL, ("Anim2D::reset - No template for animation") );
 
 	switch( m_template->getAnimMode() )
 	{
@@ -625,7 +625,7 @@ void Anim2D::draw( Int x, Int y )
 	const Image *image = m_template->getFrame( m_currentFrame );
 
 	// sanity
-	DEBUG_ASSERTCRASH( image != NULL, ("Anim2D::draw - Image not found for frame '%d' on animation '%s'\n",
+	DEBUG_ASSERTCRASH( image != NULL, ("Anim2D::draw - Image not found for frame '%d' on animation '%s'",
 										 m_currentFrame, m_template->getName().str()) );
 
 	// get the natural width and height of this image
@@ -655,7 +655,7 @@ void Anim2D::draw( Int x, Int y, Int width, Int height )
 	const Image *image = m_template->getFrame( m_currentFrame );
 	
 	// sanity
-	DEBUG_ASSERTCRASH( image != NULL, ("Anim2D::draw - Image not found for frame '%d' on animation '%s'\n",
+	DEBUG_ASSERTCRASH( image != NULL, ("Anim2D::draw - Image not found for frame '%d' on animation '%s'",
 										 m_currentFrame, m_template->getName().str()) );
 
 
@@ -728,7 +728,7 @@ Anim2DCollection::~Anim2DCollection( void )
 {
 
 	// there should not be any animation instances registered with us since we're being destroyed
-	DEBUG_ASSERTCRASH( m_instanceList == NULL, ("Anim2DCollection - instance list is not NULL\n") );
+	DEBUG_ASSERTCRASH( m_instanceList == NULL, ("Anim2DCollection - instance list is not NULL") );
 
 	// delete all the templates
 	Anim2DTemplate *nextTemplate;

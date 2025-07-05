@@ -256,7 +256,7 @@ void TransitionDamageFX::onDelete( void )
 static Coord3D getLocalEffectPos( const FXLocInfo *locInfo, Drawable *draw )
 {
 
-	DEBUG_ASSERTCRASH( locInfo, ("getLocalEffectPos: locInfo is NULL\n") );
+	DEBUG_ASSERTCRASH( locInfo, ("getLocalEffectPos: locInfo is NULL") );
 
 	if( locInfo->locType == FX_DAMAGE_LOC_TYPE_BONE && draw )
 	{

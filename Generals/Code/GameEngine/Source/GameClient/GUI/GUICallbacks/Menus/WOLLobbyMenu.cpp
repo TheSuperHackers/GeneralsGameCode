@@ -1230,7 +1230,7 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 									}
 								}
 							}
-							DEBUG_ASSERTCRASH(numPlayers, ("Game had no players!\n"));
+							DEBUG_ASSERTCRASH(numPlayers, ("Game had no players!"));
 							//DEBUG_LOG(("Saw room: hasPass=%d, allowsObservers=%d", room.getHasPassword(), room.getAllowObservers()));
 							if (resp.stagingRoom.action == PEER_ADD)
 							{

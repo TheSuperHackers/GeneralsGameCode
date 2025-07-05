@@ -286,7 +286,7 @@ public:
 	inline void setMaxLift(Real lift) { m_maxLift = lift; }
 	inline void setMaxSpeed(Real speed) 
 	{ 
-		DEBUG_ASSERTCRASH(!(speed <= 0.0f && m_template->m_appearance == LOCO_THRUST), ("THRUST locos may not have zero speeds!\n")); 
+		DEBUG_ASSERTCRASH(!(speed <= 0.0f && m_template->m_appearance == LOCO_THRUST), ("THRUST locos may not have zero speeds!")); 
 		m_maxSpeed = speed; 
 	}
 	inline void setMaxAcceleration(Real accel) { m_maxAccel = accel; }

@@ -467,7 +467,7 @@ void GameSpyStagingRoom::cleanUpSlotPointers( void )
 GameSpyGameSlot * GameSpyStagingRoom::getGameSpySlot( Int index )
 {
 	GameSlot *slot = getSlot(index);
-	DEBUG_ASSERTCRASH(slot && (slot == &(m_GameSpySlot[index])), ("Bad game slot pointer\n"));
+	DEBUG_ASSERTCRASH(slot && (slot == &(m_GameSpySlot[index])), ("Bad game slot pointer"));
 	return (GameSpyGameSlot *)slot;
 }
 

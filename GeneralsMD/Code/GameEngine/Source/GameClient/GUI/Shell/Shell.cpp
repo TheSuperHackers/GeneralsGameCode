@@ -197,7 +197,7 @@ void Shell::update( void )
 		for( Int i = m_screenCount - 1; i >= 0; i-- )
 		{
 
-			DEBUG_ASSERTCRASH( m_screenStack[ i ], ("Top of shell stack is NULL!\n") );
+			DEBUG_ASSERTCRASH( m_screenStack[ i ], ("Top of shell stack is NULL!") );
 			m_screenStack[ i ]->runUpdate( NULL );
 
 		}  // end for i
@@ -673,7 +673,7 @@ void Shell::doPush( AsciiString layoutFile )
 	
 	// create new layout and load from window manager
 	newScreen = TheWindowManager->winCreateLayout( layoutFile );
-	DEBUG_ASSERTCRASH( newScreen != NULL, ("Shell unable to load pending push layout\n") );
+	DEBUG_ASSERTCRASH( newScreen != NULL, ("Shell unable to load pending push layout") );
 
 	// link screen to the top
 	linkScreen( newScreen );
@@ -696,7 +696,7 @@ void Shell::doPop( Bool impendingPush )
 	WindowLayout *currentTop = top();
 
 	// there better be a top of the stack since we're popping
-	DEBUG_ASSERTCRASH( currentTop, ("Shell: No top of stack and we want to pop!\n") );
+	DEBUG_ASSERTCRASH( currentTop, ("Shell: No top of stack and we want to pop!") );
 
 	if (currentTop)
 	{
@@ -852,7 +852,7 @@ WindowLayout *Shell::getSaveLoadMenuLayout( void )
    m_saveLoadMenuLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/PopupSaveLoad.wnd" ) );
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_saveLoadMenuLayout, ("Unable to create save/load menu layout\n") );
+	DEBUG_ASSERTCRASH( m_saveLoadMenuLayout, ("Unable to create save/load menu layout") );
 
 	// return the layout
 	return m_saveLoadMenuLayout;
@@ -869,7 +869,7 @@ WindowLayout *Shell::getPopupReplayLayout( void )
    m_popupReplayLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/PopupReplay.wnd" ) );
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_popupReplayLayout, ("Unable to create replay save menu layout\n") );
+	DEBUG_ASSERTCRASH( m_popupReplayLayout, ("Unable to create replay save menu layout") );
 
 	// return the layout
 	return m_popupReplayLayout;
@@ -886,7 +886,7 @@ WindowLayout *Shell::getOptionsLayout( Bool create )
 		m_optionsLayout = TheWindowManager->winCreateLayout( AsciiString( "Menus/OptionsMenu.wnd" ) );
 
 		// sanity
-		DEBUG_ASSERTCRASH( m_optionsLayout, ("Unable to create options menu layout\n") );
+		DEBUG_ASSERTCRASH( m_optionsLayout, ("Unable to create options menu layout") );
 	}
 
 	// return the layout

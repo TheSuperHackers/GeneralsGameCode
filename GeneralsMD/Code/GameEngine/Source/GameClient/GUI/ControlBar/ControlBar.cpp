@@ -806,7 +806,7 @@ void CommandSet::parseCommandButton( INI* ini, void *instance, void *store, cons
 	Int buttonIndex = (Int)userData;
 
 	// sanity
-	DEBUG_ASSERTCRASH( buttonIndex < MAX_COMMANDS_PER_SET, ("parseCommandButton: button index '%d' out of range\n", 
+	DEBUG_ASSERTCRASH( buttonIndex < MAX_COMMANDS_PER_SET, ("parseCommandButton: button index '%d' out of range", 
 										 buttonIndex) );
 
 	// save it
@@ -1549,7 +1549,7 @@ void ControlBar::update( void )
 	{
 
 		// we better be in the default none context
-		DEBUG_ASSERTCRASH( m_currContext == CB_CONTEXT_NONE, ("ControlBar::update no selection, but not we're not showing the default NONE context\n") );
+		DEBUG_ASSERTCRASH( m_currContext == CB_CONTEXT_NONE, ("ControlBar::update no selection, but not we're not showing the default NONE context") );
 		return;
 
 	}  // end if
@@ -2010,7 +2010,7 @@ CommandButton *ControlBar::newCommandButtonOverride( CommandButton *buttonToOver
 	}
 
 	// sanity
-	DEBUG_ASSERTCRASH( commandSet, ("parseCommandSetDefinition: Unable to allocate set '%s'\n", name.str()) );
+	DEBUG_ASSERTCRASH( commandSet, ("parseCommandSetDefinition: Unable to allocate set '%s'", name.str()) );
 
 	// parse the ini definition
 	ini->initFromINI( commandSet, commandSet->friend_getFieldParse() );
@@ -2373,7 +2373,7 @@ void ControlBar::switchToContext( ControlBarContext context, Drawable *draw )
 		default:
 		{
 
-			DEBUG_ASSERTCRASH( 0, ("ControlBar::switchToContext, unknown context '%d'\n", context) );
+			DEBUG_ASSERTCRASH( 0, ("ControlBar::switchToContext, unknown context '%d'", context) );
 			break;
 
 		}  // end default
@@ -2434,7 +2434,7 @@ void ControlBar::setControlCommand( GameWindow *button, const CommandButton *com
 	if( button->winGetInputFunc() != GadgetPushButtonInput )
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("setControlCommand: Window is not a button\n") );
+		DEBUG_ASSERTCRASH( 0, ("setControlCommand: Window is not a button") );
 		return;
 
 	}  // end if
@@ -2443,7 +2443,7 @@ void ControlBar::setControlCommand( GameWindow *button, const CommandButton *com
 	if( commandButton == NULL )
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("setControlCommand: NULL commandButton passed in\n") );
+		DEBUG_ASSERTCRASH( 0, ("setControlCommand: NULL commandButton passed in") );
 		return;
 
 	}  // end if
@@ -2545,7 +2545,7 @@ void ControlBar::setControlCommand( const AsciiString& buttonWindowName, GameWin
 	if( win == NULL )
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("setControlCommand: Unable to find window '%s'\n", buttonWindowName.str()) );
+		DEBUG_ASSERTCRASH( 0, ("setControlCommand: Unable to find window '%s'", buttonWindowName.str()) );
 		return;
 
 	}  // end if
@@ -2716,7 +2716,7 @@ void ControlBar::showRallyPoint( const Coord3D *loc )
 
 			const ThingTemplate* ttn = TheThingFactory->findTemplate("RallyPointMarker");
 			marker = TheThingFactory->newDrawable( ttn );
-			DEBUG_ASSERTCRASH( marker, ("showRallyPoint: Unable to create rally point drawable\n") );
+			DEBUG_ASSERTCRASH( marker, ("showRallyPoint: Unable to create rally point drawable") );
 			if (marker)
 			{
 				marker->setDrawableStatus(DRAWABLE_STATUS_NO_SAVE);
@@ -2728,7 +2728,7 @@ void ControlBar::showRallyPoint( const Coord3D *loc )
 			marker = TheGameClient->findDrawableByID( m_rallyPointDrawableID );
 
 		// sanity
-		DEBUG_ASSERTCRASH( marker, ("showRallyPoint: No rally point marker found\n" ) );
+		DEBUG_ASSERTCRASH( marker, ("showRallyPoint: No rally point marker found" ) );
 
 		// set the position of the rally point drawble to the position passed in
 		marker->setPosition( loc );

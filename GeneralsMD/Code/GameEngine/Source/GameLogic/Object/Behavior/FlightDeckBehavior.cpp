@@ -1203,7 +1203,7 @@ UpdateSleepTime FlightDeckBehavior::update()
 				DEBUG_CRASH( ("MSG_QUEUE_UNIT_CREATE: Producer '%s' doesn't have a unit production interface", getObject()->getTemplate()->getName().str()) );
 				break;
 			}  // end if
-			DEBUG_ASSERTCRASH( m_thingTemplate != NULL, ("flightdeck has a null thingtemplate... no jets for you!\n") );
+			DEBUG_ASSERTCRASH( m_thingTemplate != NULL, ("flightdeck has a null thingtemplate... no jets for you!") );
 			if( !pu->getProductionCount() && now >= m_nextAllowedProductionFrame && m_thingTemplate != NULL )
 			{
 				//Queue the build

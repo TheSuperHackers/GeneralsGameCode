@@ -84,7 +84,7 @@ void INI::parseShellMenuSchemeDefinition( INI *ini )
 
 	// find existing item if present
 	SMSchemeManager = TheShell->getShellMenuSchemeManager();
-	DEBUG_ASSERTCRASH( SMSchemeManager, ("parseShellMenuSchemeDefinition: Unable to Get SMSchemeManager\n") );
+	DEBUG_ASSERTCRASH( SMSchemeManager, ("parseShellMenuSchemeDefinition: Unable to Get SMSchemeManager") );
 	if( !SMSchemeManager )
 		return;
 
@@ -93,7 +93,7 @@ void INI::parseShellMenuSchemeDefinition( INI *ini )
 	SMScheme = SMSchemeManager->newShellMenuScheme( name );
 
 	// sanity
-	DEBUG_ASSERTCRASH( SMScheme, ("parseControlBarSchemeDefinition: Unable to allocate Scheme '%s'\n", name.str()) );
+	DEBUG_ASSERTCRASH( SMScheme, ("parseControlBarSchemeDefinition: Unable to allocate Scheme '%s'", name.str()) );
 
 	// parse the ini definition
 	ini->initFromINI( SMScheme, SMSchemeManager->getFieldParse() );

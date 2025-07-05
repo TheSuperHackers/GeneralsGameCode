@@ -370,14 +370,14 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 		AIUpdateInterface* ai = newMod->getAIUpdateInterface();
 		if (ai)
 		{
-			DEBUG_ASSERTCRASH(m_ai == NULL, ("You should never have more than one AI module (srj)\n"));
+			DEBUG_ASSERTCRASH(m_ai == NULL, ("You should never have more than one AI module (srj)"));
 			m_ai = ai;
 		}
 
 		static NameKeyType key_PhysicsUpdate = NAMEKEY("PhysicsBehavior");
 		if (newMod->getModuleNameKey() == key_PhysicsUpdate)
 		{
-			DEBUG_ASSERTCRASH(m_physics == NULL, ("You should never have more than one Physics module (%s)\n",getTemplate()->getName().str()));
+			DEBUG_ASSERTCRASH(m_physics == NULL, ("You should never have more than one Physics module (%s)",getTemplate()->getName().str()));
 			m_physics = (PhysicsBehavior*)newMod;
 		}
 	}
@@ -1759,7 +1759,7 @@ void Object::kill()
 	damageInfo.in.m_amount = getBodyModule()->getMaxHealth();
 	attemptDamage( &damageInfo );
 
-	DEBUG_ASSERTCRASH(!damageInfo.out.m_noEffect, ("Attempting to kill an unKillable object (InactiveBody?)\n"));
+	DEBUG_ASSERTCRASH(!damageInfo.out.m_noEffect, ("Attempting to kill an unKillable object (InactiveBody?)"));
 
 }  // end kill
 
@@ -2216,7 +2216,7 @@ Bool Object::didEnter(const PolygonTrigger *pTrigger) const
 	if (!didEnterOrExit()) 
 		return false;
 
-	DEBUG_ASSERTCRASH(!isKindOf(KINDOF_INERT), ("Asking whether an inert object entered or exited. This is invalid.\n"));
+	DEBUG_ASSERTCRASH(!isKindOf(KINDOF_INERT), ("Asking whether an inert object entered or exited. This is invalid."));
 
 	for (Int i=0; i<m_numTriggerAreasActive; i++) 
 	{
@@ -2234,7 +2234,7 @@ Bool Object::didExit(const PolygonTrigger *pTrigger) const
 	if (!didEnterOrExit()) 
 		return false;
 
-	DEBUG_ASSERTCRASH(!isKindOf(KINDOF_INERT), ("Asking whether an inert object entered or exited. This is invalid.\n"));
+	DEBUG_ASSERTCRASH(!isKindOf(KINDOF_INERT), ("Asking whether an inert object entered or exited. This is invalid."));
 	for (Int i=0; i<m_numTriggerAreasActive; i++) 
 	{
 		if (m_triggerInfo[i].exited && m_triggerInfo[i].pTrigger == pTrigger) 
@@ -2248,7 +2248,7 @@ Bool Object::didExit(const PolygonTrigger *pTrigger) const
 //-------------------------------------------------------------------------------------------------
 Bool Object::isInside(const PolygonTrigger *pTrigger) const
 {
-	DEBUG_ASSERTCRASH(!isKindOf(KINDOF_INERT), ("Asking whether an inert is inside a trigger area. This is invalid.\n"));
+	DEBUG_ASSERTCRASH(!isKindOf(KINDOF_INERT), ("Asking whether an inert is inside a trigger area. This is invalid."));
 
 	for (Int i=0; i<m_numTriggerAreasActive; i++) 
 	{
@@ -2453,7 +2453,7 @@ void Object::setID( ObjectID id )
 {
 
 	// sanity 
-	DEBUG_ASSERTCRASH( id != INVALID_ID, ("Object::setID - Invalid id\n") );
+	DEBUG_ASSERTCRASH( id != INVALID_ID, ("Object::setID - Invalid id") );
 
 	// if id hasn't changed do nothing
 	if( m_id == id )
@@ -4747,7 +4747,7 @@ void Object::doCommandButton( const CommandButton *commandButton, CommandSourceT
 			case GUI_COMMAND_PLAYER_UPGRADE:
 				{
 					const UpgradeTemplate *upgradeT = commandButton->getUpgradeTemplate();
-					DEBUG_ASSERTCRASH( upgradeT, ("Undefined upgrade '%s' in player upgrade command\n", "UNKNOWN") );
+					DEBUG_ASSERTCRASH( upgradeT, ("Undefined upgrade '%s' in player upgrade command", "UNKNOWN") );
 					// sanity
 					if( upgradeT == NULL )
 						break;

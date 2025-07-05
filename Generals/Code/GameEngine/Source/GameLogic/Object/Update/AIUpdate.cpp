@@ -4452,7 +4452,7 @@ void AIUpdateInterface::evaluateMoraleBonus( void )
 	// do we have nationalism
 	///@todo Find a better way to represent nationalism without hardcoding here (CBD)
 	static const UpgradeTemplate *nationalismTemplate = TheUpgradeCenter->findUpgrade( "Upgrade_Nationalism" );
-	DEBUG_ASSERTCRASH( nationalismTemplate != NULL, ("AIUpdateInterface::evaluateMoraleBonus - Nationalism upgrade not found\n") );
+	DEBUG_ASSERTCRASH( nationalismTemplate != NULL, ("AIUpdateInterface::evaluateMoraleBonus - Nationalism upgrade not found") );
 	Player *player = us->getControllingPlayer();
 	if( player && player->hasUpgradeComplete( nationalismTemplate ) )
 		nationalism = TRUE;

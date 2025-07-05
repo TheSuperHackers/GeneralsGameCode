@@ -2567,7 +2567,7 @@ static void roomKeyChangedCallback(PEER peer, RoomType roomType, const char *nic
 	DEBUG_ASSERTCRASH(t, ("No Peer thread!"));
 	if (!t || !nick || !key || !val)
 	{
-		DEBUG_ASSERTCRASH(nick && strcmp(nick,"(END)")==0, ("roomKeyChangedCallback bad values = nick:%X:%s, key:%X:%s, val:%X:%s\n", nick, nick, key, key, val, val));
+		DEBUG_ASSERTCRASH(nick && strcmp(nick,"(END)")==0, ("roomKeyChangedCallback bad values = nick:%X:%s, key:%X:%s, val:%X:%s", nick, nick, key, key, val, val));
 		return;
 	}
 
@@ -2806,7 +2806,7 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 #endif // DEBUG_LOGGING
 
 //	PeerThreadClass *t = (PeerThreadClass *)param;
-	DEBUG_ASSERTCRASH(name || msg==PEER_CLEAR || msg==PEER_COMPLETE, ("Game has no name!\n"));
+	DEBUG_ASSERTCRASH(name || msg==PEER_CLEAR || msg==PEER_COMPLETE, ("Game has no name!"));
 	if (!t || !success || (!name && (msg == PEER_ADD || msg == PEER_UPDATE)))
 	{
 		DEBUG_LOG(("Bailing from listingGamesCallback() - success=%d, name=%X, server=%X, msg=%X", success, name, server, msg));

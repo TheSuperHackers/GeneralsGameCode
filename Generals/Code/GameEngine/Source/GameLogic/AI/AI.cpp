@@ -340,7 +340,7 @@ void AI::reset( void )
 		}
 	}
 #else
-	DEBUG_ASSERTCRASH(m_groupList.empty(), ("AI::m_groupList is expected empty already\n"));
+	DEBUG_ASSERTCRASH(m_groupList.empty(), ("AI::m_groupList is expected empty already"));
 
 	m_groupList.clear(); // Clear just in case...
 #endif

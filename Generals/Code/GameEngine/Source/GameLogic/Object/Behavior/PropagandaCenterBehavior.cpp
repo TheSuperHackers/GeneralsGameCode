@@ -157,7 +157,7 @@ UpdateSleepTime PropagandaCenterBehavior::update( void )
 
 					// place this object under the control of the player
 					Player *player = us->getControllingPlayer();
-					DEBUG_ASSERTCRASH( player, ("Brainwashing: No controlling player for '%s'\n", us->getTemplate()->getName().str()) );
+					DEBUG_ASSERTCRASH( player, ("Brainwashing: No controlling player for '%s'", us->getTemplate()->getName().str()) );
 					if( player )
 						brainwashingSubject->setTemporaryTeam( player->getDefaultTeam() );
 

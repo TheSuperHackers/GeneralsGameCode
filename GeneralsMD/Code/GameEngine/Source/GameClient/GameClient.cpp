@@ -847,7 +847,7 @@ void GameClient::destroyDrawable( Drawable *draw )
 	if( obj )
 	{
 
-		DEBUG_ASSERTCRASH( obj->getDrawable() == draw, ("Object/Drawable pointer mismatch!\n") );
+		DEBUG_ASSERTCRASH( obj->getDrawable() == draw, ("Object/Drawable pointer mismatch!") );
 		obj->friend_bindToDrawable( NULL );
 
 	}  // end if

@@ -77,7 +77,7 @@ Int Energy::getProduction() const
 //-----------------------------------------------------------------------------
 Real Energy::getEnergySupplyRatio() const 
 { 
-	DEBUG_ASSERTCRASH(m_energyProduction >= 0 && m_energyConsumption >= 0, ("neg Energy numbers\n"));
+	DEBUG_ASSERTCRASH(m_energyProduction >= 0 && m_energyConsumption >= 0, ("neg Energy numbers"));
 
 	if( TheGameLogic->getFrame() < m_powerSabotagedTillFrame )
 	{

@@ -104,7 +104,7 @@ void INI::parseWebpageURLDefinition( INI* ini )
 
 //	}  // end if
 
-//	DEBUG_ASSERTCRASH( track, ("parseMusicTrackDefinition: Unable to allocate track '%s'\n",
+//	DEBUG_ASSERTCRASH( track, ("parseMusicTrackDefinition: Unable to allocate track '%s'",
 //										 name.str()) );
 
 	// parse the ini definition

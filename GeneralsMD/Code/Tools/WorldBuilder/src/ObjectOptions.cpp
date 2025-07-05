@@ -481,7 +481,7 @@ void ObjectOptions::addObject( MapObject *mapObject, const char *pPath,
 	
 		// first sort by side, either create or find the tree item with matching side name
 		AsciiString side = thingTemplate->getDefaultOwningSide();
-		DEBUG_ASSERTCRASH( !side.isEmpty(), ("NULL default side in template\n") );
+		DEBUG_ASSERTCRASH( !side.isEmpty(), ("NULL default side in template") );
 		strcpy( buffer, side.str() );
 		parent = findOrAdd( parent, buffer );
 
