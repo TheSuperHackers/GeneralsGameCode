@@ -25,6 +25,10 @@ on:
         default: false
         type: boolean
         description: "Build extras"
+      release:
+        required: false
+        type: string
+        description: "Release build (true/false)"
 
 jobs:
   build:
@@ -34,6 +38,13 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+      - name: Download version file
+        if: inputs.release == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: version_files
 
       - name: Cache VC6 Installation
         if: startsWith(inputs.preset, 'vc6')
