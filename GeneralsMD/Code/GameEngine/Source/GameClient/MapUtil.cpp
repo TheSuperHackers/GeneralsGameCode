@@ -1141,7 +1141,7 @@ Image *getMapPreviewImage( AsciiString mapName )
 {
 	if(!TheGlobalData)
 		return NULL;
-	DEBUG_LOG(("%s Map Name ", mapName.str()));
+	DEBUG_LOG(("%s Map Name", mapName.str()));
 	AsciiString tgaName = mapName;
 	AsciiString name;
 	AsciiString tempName;

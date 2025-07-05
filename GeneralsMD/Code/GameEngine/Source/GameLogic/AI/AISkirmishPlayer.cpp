@@ -678,8 +678,8 @@ void AISkirmishPlayer::buildAIBaseDefenseStructure(const AsciiString &thingName,
 
 // TheSuperHackers @info helmutbuhler 21/04/2025 This debug mutates the code to become CRC incompatible
 #if defined(RTS_DEBUG) || !RETAIL_COMPATIBLE_CRC
-		DEBUG_LOG(("buildAIBaseDefenseStructure -- Angle is %f sin %f, cos %f ", 180*angle/PI, s, c));
-		DEBUG_LOG(("buildAIBaseDefenseStructure -- Offset is %f  %f, Final Position is %f, %f ", 
+		DEBUG_LOG(("buildAIBaseDefenseStructure -- Angle is %f sin %f, cos %f", 180*angle/PI, s, c));
+		DEBUG_LOG(("buildAIBaseDefenseStructure -- Offset is %f  %f, Final Position is %f, %f", 
 			offset.x, offset.y, 
 			offset.x*c - offset.y*s,
 			offset.y*c + offset.x*s

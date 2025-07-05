@@ -1290,7 +1290,7 @@ const FXList *ThingTemplate::getPerUnitFX(const AsciiString& fxName) const
 	PerUnitFXMap::const_iterator it = m_perUnitFX.find(fxName);
 	if (it == m_perUnitFX.end()) 
 	{
-		DEBUG_CRASH(("Unknown FX name (%s) asked for in ThingTemplate (%s). ", fxName.str(), m_nameString.str()));
+		DEBUG_CRASH(("Unknown FX name (%s) asked for in ThingTemplate (%s)", fxName.str(), m_nameString.str()));
 		return NULL;
 	}
 

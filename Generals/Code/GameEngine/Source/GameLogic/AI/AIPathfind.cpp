@@ -1325,7 +1325,7 @@ void PathfindCell::setGoalUnit(ObjectID unitID, const ICoord2D &pos )
 			allocateInfo(pos);
 		}
 		if (!m_info) {
-			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba. "));
+			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba."));
 			return;
 		}
 		m_info->m_goalUnitID = unitID;
@@ -1361,7 +1361,7 @@ void PathfindCell::setGoalAircraft(ObjectID unitID, const ICoord2D &pos )
 			allocateInfo(pos);
 		}
 		if (!m_info) {
-			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba. "));
+			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba."));
 			return;
 		}
 		m_info->m_goalAircraftID = unitID;
@@ -1397,7 +1397,7 @@ void PathfindCell::setPosUnit(ObjectID unitID, const ICoord2D &pos )
 			allocateInfo(pos);
 		}
 		if (!m_info) {
-			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba. "));
+			DEBUG_CRASH(("Ran out of pathfind cells - fatal error!!!!! jba."));
 			return;
 		}
 		if (m_info->m_goalUnitID!=INVALID_ID && (m_info->m_goalUnitID==m_info->m_posUnitID)) {
@@ -5157,7 +5157,7 @@ Bool Pathfinder::queueForPath(ObjectID id)
 			AIUpdateInterface *tmpAI = tmpObj->getAIUpdateInterface();
 			if (tmpAI) {
 				const Coord3D* pos = tmpAI->friend_getRequestedDestination();
-				DEBUG_ASSERTLOG(pos->x != 0.0 && pos->y != 0.0, ("Queueing pathfind to (0, 0), usually a bug. (Unit Name: '%s', Type: '%s' ", tmpObj->getName().str(), tmpObj->getTemplate()->getName().str()));
+				DEBUG_ASSERTLOG(pos->x != 0.0 && pos->y != 0.0, ("Queueing pathfind to (0, 0), usually a bug. (Unit Name: '%s', Type: '%s')", tmpObj->getName().str(), tmpObj->getTemplate()->getName().str()));
 			}
 		}
 	}
@@ -5433,9 +5433,8 @@ void Pathfinder::processPathfindQueue(void)
 		timeToUpdate = ((double)(endTime64-startTime64) / (double)(freq64));
 		if (timeToUpdate>0.01f) 
 		{
-			DEBUG_LOG(("%d Pathfind queue: %d paths, %d cells", TheGameLogic->getFrame(), pathsFound, m_cumulativeCellsAllocated));
-			DEBUG_LOG(("Time %f (%f)", timeToUpdate, (::GetTickCount()-startTimeMS)/1000.0f));
-			DEBUG_LOG((""));
+			DEBUG_LOG(("%d Pathfind queue: %d paths, %d cells --", TheGameLogic->getFrame(), pathsFound, m_cumulativeCellsAllocated));
+			DEBUG_LOG(("time %f (%f)", timeToUpdate, (::GetTickCount()-startTimeMS)/1000.0f));
 		}
 #endif
 #endif
@@ -6192,8 +6191,7 @@ Path *Pathfinder::internalFindPath( Object *obj, const LocomotorSet& locomotorSe
 		Bool valid;
 		valid = validMovementPosition( isCrusher, obj->getLayer(), locomotorSet, to ) ;
 
-		DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
-		DEBUG_LOG(("Pathfind failed from (%f,%f) to (%f,%f), OV %d", from->x, from->y, to->x, to->y, valid));
+		DEBUG_LOG(("%d Pathfind failed from (%f,%f) to (%f,%f), OV %d --", TheGameLogic->getFrame(), from->x, from->y, to->x, to->y, valid));
 		DEBUG_LOG(("Unit '%s', time %f, cells %d", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f,cellCount));
 	}
 #endif
@@ -6810,8 +6808,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 	}	
 #endif
 
-	DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
-	DEBUG_LOG(("FindGroundPath failed from (%f,%f) to (%f,%f)", from->x, from->y, to->x, to->y));
+	DEBUG_LOG(("%d FindGroundPath failed from (%f,%f) to (%f,%f) --", TheGameLogic->getFrame(), from->x, from->y, to->x, to->y));
 	DEBUG_LOG(("time %f", (::GetTickCount()-startTimeMS)/1000.0f));
 
 #ifdef DUMP_PERF_STATS
@@ -7426,8 +7423,7 @@ Path *Pathfinder::internal_findHierarchicalPath( Bool isHuman, const LocomotorSu
 	}	
 #endif
 
-	DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
-	DEBUG_LOG(("FindHierarchicalPath failed from (%f,%f) to (%f,%f)", from->x, from->y, to->x, to->y));
+	DEBUG_LOG(("%d FindHierarchicalPath failed from (%f,%f) to (%f,%f) --", TheGameLogic->getFrame(), from->x, from->y, to->x, to->y));
 	DEBUG_LOG(("time %f", (::GetTickCount()-startTimeMS)/1000.0f));
 
 #ifdef DUMP_PERF_STATS
@@ -8321,8 +8317,7 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 			}
 #endif
 
-			DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
-			DEBUG_LOG(("Pathfind(findClosestPath) chugged from (%f,%f) to (%f,%f), --", from->x, from->y, to->x, to->y));
+			DEBUG_LOG(("%d Pathfind(findClosestPath) chugged from (%f,%f) to (%f,%f) --", TheGameLogic->getFrame(), from->x, from->y, to->x, to->y));
 			DEBUG_LOG(("Unit '%s', time %f", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
 #ifdef INTENSE_DEBUG
 			TheScriptEngine->AppendDebugMessage("Big path FCP CC", false);
@@ -8347,8 +8342,7 @@ Path *Pathfinder::findClosestPath( Object *obj, const LocomotorSet& locomotorSet
 	Bool valid;
 	valid = validMovementPosition( isCrusher, obj->getLayer(), locomotorSet, to ) ;
 
-	DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
-	DEBUG_LOG(("Pathfind(findClosestPath) failed from (%f,%f) to (%f,%f), original valid %d --", from->x, from->y, to->x, to->y, valid));
+	DEBUG_LOG(("Pathfind(findClosestPath) failed from (%f,%f) to (%f,%f), original valid %d --", TheGameLogic->getFrame(), from->x, from->y, to->x, to->y, valid));
 	DEBUG_LOG(("Unit '%s', time %f", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
 #endif
 #if defined(RTS_DEBUG)
@@ -9741,8 +9735,7 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 	debugShowSearch(true);
 #endif
 
-	DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
-	DEBUG_LOG(("getMoveAwayFromPath pathfind failed  -- "));
+	DEBUG_LOG(("%d getMoveAwayFromPath pathfind failed --", TheGameLogic->getFrame()));
 	DEBUG_LOG(("Unit '%s', time %f", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
 
 	m_isTunneling = false;
@@ -9920,8 +9913,7 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 		}
 	}
 
-	DEBUG_LOG(("%d ", TheGameLogic->getFrame()));
-	DEBUG_LOG(("patchPath Pathfind failed  -- "));
+	DEBUG_LOG(("%d patchPath Pathfind failed --", TheGameLogic->getFrame()));
 	DEBUG_LOG(("Unit '%s', time %f", obj->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
 
 #if defined(RTS_DEBUG)
@@ -10221,8 +10213,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 		return path;
 	}
 #if defined(RTS_DEBUG)
-	DEBUG_LOG(("%d (%d cells)", TheGameLogic->getFrame(), cellCount));
-	DEBUG_LOG(("Attack Pathfind failed from (%f,%f) to (%f,%f) -- ", from->x, from->y, victim->getPosition()->x, victim->getPosition()->y));
+	DEBUG_LOG(("%d (%d cells) Attack Pathfind failed from (%f,%f) to (%f,%f) --", TheGameLogic->getFrame(), cellCount, from->x, from->y, victim->getPosition()->x, victim->getPosition()->y));
 	DEBUG_LOG(("Unit '%s', attacking '%s' time %f", obj->getTemplate()->getName().str(),  victim->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
 #endif
 #endif
@@ -10382,8 +10373,7 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 #endif
 #if 0
 #if defined(RTS_DEBUG)
-	DEBUG_LOG(("%d (%d cells)", TheGameLogic->getFrame(), cellCount));
-	DEBUG_LOG(("Attack Pathfind failed from (%f,%f) to (%f,%f) -- ", from->x, from->y, victim->getPosition()->x, victim->getPosition()->y));
+	DEBUG_LOG(("%d (%d cells) Attack Pathfind failed from (%f,%f) to (%f,%f) --", TheGameLogic->getFrame(), cellCount, from->x, from->y, victim->getPosition()->x, victim->getPosition()->y));
 	DEBUG_LOG(("Unit '%s', attacking '%s' time %f", obj->getTemplate()->getName().str(),  victim->getTemplate()->getName().str(), (::GetTickCount()-startTimeMS)/1000.0f));
 #endif
 #endif
