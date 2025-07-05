@@ -2133,7 +2133,7 @@ void PartitionData::invalidateShroudedStatusForAllPlayers()
 	}
 }
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 static AsciiString theObjName;
 #endif
 
@@ -2143,7 +2143,7 @@ Int PartitionData::calcMaxCoiForShape(GeometryType geom, Real majorRadius, Real 
 	Int result;
 	if (isSmall)
 	{
-		#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+		#if defined(RTS_DEBUG)
 		Int chk = calcMaxCoiForShape(geom, majorRadius, minorRadius, false);
 		(void)chk;
 		DEBUG_ASSERTCRASH(chk <= 4, ("Small objects should be <= 4 cells, but I calced %s as %d\n",theObjName.str(),chk));
@@ -2192,7 +2192,7 @@ Int PartitionData::calcMaxCoiForObject()
 	Real majorRadius = obj->getGeometryInfo().getMajorRadius();
 	Real minorRadius = obj->getGeometryInfo().getMinorRadius();
 	Bool isSmall = obj->getGeometryInfo().getIsSmall();
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 theObjName = obj->getTemplate()->getName();
 #endif
 	return calcMaxCoiForShape(geom, majorRadius, minorRadius, isSmall);
@@ -2778,7 +2778,7 @@ void PartitionManager::update()
 		processPendingUndoShroudRevealQueue();
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugThreatMap) 
 	{
 		if (TheGameLogic->getFrame() % TheGlobalData->m_debugThreatMapTileDuration)
@@ -2838,7 +2838,7 @@ void PartitionManager::update()
 			}			
 		}
 	}
-#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // defined(RTS_DEBUG)
 }  // end update
 
 //------------------------------------------------------------------------------
@@ -3167,7 +3167,7 @@ void PartitionManager::calcRadiusVec()
 		}
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	Int total = 0;
 	for (Int i = 0; i <= m_maxGcoRadius; ++i)
 	{

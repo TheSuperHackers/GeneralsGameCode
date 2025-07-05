@@ -42,7 +42,7 @@
 #include "GameClient/InGameUI.h"
 
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 #define NO_DEBUG_SUPPLY_STATE
 #endif
 

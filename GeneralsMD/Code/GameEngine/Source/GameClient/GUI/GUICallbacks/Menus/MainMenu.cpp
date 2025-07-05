@@ -96,7 +96,7 @@ enum
 
 static Bool raiseMessageBoxes = TRUE;
 static Bool campaignSelected = FALSE;
-#if defined RTS_DEBUG || defined RTS_INTERNAL || defined RTS_PROFILE
+#if defined(RTS_DEBUG) || defined RTS_PROFILE
 static NameKeyType campaignID = NAMEKEY_INVALID;
 static GameWindow *buttonCampaign = NULL;
 #ifdef TEST_COMPRESSION
@@ -549,7 +549,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	
 	showSelectiveButtons(SHOW_NONE);
 	// Set up the version number
-#if defined RTS_DEBUG || defined RTS_INTERNAL || defined RTS_PROFILE
+#if defined(RTS_DEBUG) || defined RTS_PROFILE
 	WinInstanceData instData;
 #ifdef TEST_COMPRESSION
 	instData.init();
@@ -1295,7 +1295,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 			
 			if(buttonPushed)
 				break;
-#if defined RTS_DEBUG || defined RTS_INTERNAL || defined RTS_PROFILE
+#if defined(RTS_DEBUG) || defined RTS_PROFILE
 			if( control == buttonCampaign )
 			{
 				buttonPushed = TRUE;
@@ -1513,7 +1513,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 			else if( controlID == exitID )
 			{
 				// If we ever want to add a dialog before we exit out of the game, uncomment this line and kill the quitCallback() line below.
-//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+//#if defined(RTS_DEBUG)
 				
 				//Added By Sadullah Nader
 				//Changed the preprocessing code to normal code

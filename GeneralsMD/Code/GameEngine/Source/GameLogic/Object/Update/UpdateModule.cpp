@@ -111,7 +111,7 @@ void UpdateModule::xfer( Xfer *xfer )
 	// extend base class
 	BehaviorModule::xfer( xfer );
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	/*
 		this is a fix for the following scenario:
 

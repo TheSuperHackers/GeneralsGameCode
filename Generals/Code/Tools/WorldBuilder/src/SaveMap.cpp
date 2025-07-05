@@ -32,7 +32,7 @@ SaveMap::SaveMap(TSaveMapInfo *pInfo, CWnd* pParent /*=NULL*/)
 	: CDialog(SaveMap::IDD, pParent),
 	m_pInfo(pInfo)
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	m_pInfo->usingSystemDir = m_usingSystemDir = ::AfxGetApp()->GetProfileInt(MAP_OPENSAVE_PANEL_SECTION, "UseSystemDir", TRUE);
 #else
 	m_pInfo->usingSystemDir = m_usingSystemDir = FALSE;
@@ -121,7 +121,7 @@ void SaveMap::OnBrowse()
 void SaveMap::populateMapListbox( Bool systemMaps )
 {
 	m_pInfo->usingSystemDir = m_usingSystemDir = systemMaps;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	::AfxGetApp()->WriteProfileInt(MAP_OPENSAVE_PANEL_SECTION, "UseSystemDir", m_usingSystemDir);
 #endif
 
@@ -225,7 +225,7 @@ BOOL SaveMap::OnInitDialog()
 	if (pUserMaps != NULL)
 		pUserMaps->SetCheck( !m_usingSystemDir );
 
-#if !defined(RTS_DEBUG) && !defined(RTS_INTERNAL)
+#if !defined(RTS_DEBUG)
 	if (pSystemMaps)
 		pSystemMaps->ShowWindow( FALSE );
 	if (pUserMaps)

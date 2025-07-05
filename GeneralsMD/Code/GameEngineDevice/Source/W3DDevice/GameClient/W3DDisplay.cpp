@@ -320,7 +320,7 @@ void StatDumpClass::dumpStats( Bool brief, Bool flagSpikes )
 
 	fprintf( m_fp, "\n" );
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
   if ( ! beBrief )
   {
     TheAudio->audioDebugDisplay( NULL, NULL, m_fp );
@@ -399,7 +399,7 @@ W3DDisplay::W3DDisplay()
 	m_2DScene = NULL;
 	m_3DInterfaceScene = NULL;
 	m_averageFPS = TheGlobalData->m_framesPerSecondLimit;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	m_timerAtCumuFPSStart = 0;
 #endif
 	for (i=0; i<LightEnvironmentClass::MAX_LIGHTS; i++)
@@ -659,7 +659,7 @@ void W3DDisplay::init( void )
 
 		// create our 3D scene
 		m_3DScene =NEW_REF( RTS3DScene, () );
-	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+	#if defined(RTS_DEBUG)
 		if( TheGlobalData->m_wireframe )
 			m_3DScene->Set_Polygon_Mode( SceneClass::LINE );
 	#endif
@@ -905,7 +905,7 @@ void W3DDisplay::updateAverageFPS(void)
 	Int64 freq64 = getPerformanceCounterFrequency();
 	Int64 time64 = getPerformanceCounter();
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGameLogic->getFrame() == START_CUMU_FRAME)
 	{
 		m_timerAtCumuFPSStart = time64;
@@ -947,7 +947,7 @@ void W3DDisplay::updateAverageFPS(void)
 	lastUpdateTime64 = time64;
 }
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	//debug hack to view object under mouse stats
+#if defined(RTS_DEBUG)	//debug hack to view object under mouse stats
 ICoord2D TheMousePos;
 #endif
 
@@ -1041,7 +1041,7 @@ void W3DDisplay::gatherDebugStats( void )
 		double ms = 1000.0f/fps;
 
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		double cumuTime = ((double)(time64 - m_timerAtCumuFPSStart) / (double)(freq64));
 		if (cumuTime < 0.0) cumuTime = 0.0;
 		Int numFrames = (Int)TheGameLogic->getFrame() - (Int)START_CUMU_FRAME;
@@ -1339,7 +1339,7 @@ void W3DDisplay::gatherDebugStats( void )
 		}
 
 		Object *object = NULL;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	//debug hack to view object under mouse stats
+#if defined(RTS_DEBUG)	//debug hack to view object under mouse stats
 		Drawable *draw = 	TheTacticalView->pickDrawable(&TheMousePos, FALSE, (PickType)0xffffffff );
 #else
 		Drawable *draw = TheGameClient->findDrawableByID( TheInGameUI->getMousedOverDrawableID() );
@@ -1467,7 +1467,7 @@ void W3DDisplay::gatherDebugStats( void )
 			
 
 			// (gth) compute some stats about the rendering cost of this drawable
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
+#if defined(RTS_DEBUG)	
 			RenderCost rcost;
 			for (DrawModule** dm = draw->getDrawModules(); *dm; ++dm)
 			{
@@ -1738,7 +1738,7 @@ AGAIN:
 
 	// compute debug statistics for display later
 	if ( m_debugDisplayCallback == StatDebugDisplay 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 				|| TheGlobalData->m_benchmarkTimer > 0
 #endif
 			)
@@ -1981,7 +1981,7 @@ AGAIN:
 					drawCurrentDebugDisplay();
 				}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 				if (TheGlobalData->m_benchmarkTimer > 0)
 				{
 					drawFPSStats();
@@ -1989,7 +1989,7 @@ AGAIN:
 #endif
 
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 				if (TheGlobalData->m_debugShowGraphicalFramerate)
 				{
 					drawFramerateBar();
@@ -3163,7 +3163,7 @@ void W3DDisplay::toggleMovieCapture(void)
 }
 
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 
 static FILE *AssetDumpFile=NULL;
 
@@ -3316,7 +3316,7 @@ void W3DDisplay::doSmartAssetPurgeAndPreload(const char* usageFileName)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 void W3DDisplay::dumpAssetUsage(const char* mapname)
 {
 	if (!m_assetManager || !mapname || !*mapname)

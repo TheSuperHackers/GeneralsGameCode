@@ -315,7 +315,7 @@ BaseHeightMapRenderObjClass::BaseHeightMapRenderObjClass(void)
 #ifdef DO_ROADS
 	m_roadBuffer = NEW W3DRoadBuffer;
 #endif
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_shroudOn)
 		m_shroud = NEW W3DShroud;
 #else

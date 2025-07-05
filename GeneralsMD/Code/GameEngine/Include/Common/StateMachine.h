@@ -327,7 +327,7 @@ public:
 	//
 	StateReturnType internalSetState( StateID newStateID );	///< for internal use only - change the current state of the machine
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	UnsignedInt peekSleepTill() const { return m_sleepTill; }
 #endif
 

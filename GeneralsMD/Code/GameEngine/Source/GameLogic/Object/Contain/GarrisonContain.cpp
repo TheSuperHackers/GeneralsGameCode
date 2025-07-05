@@ -91,7 +91,7 @@ Int GarrisonContain::findClosestFreeGarrisonPointIndex( Int conditionIndex,
 																												const Coord3D *targetPos )
 {
 // TheSuperHackers @info helmutbuhler 05/05/2025 This debug mutates the code to become CRC incompatible
-#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) || !RETAIL_COMPATIBLE_CRC
+#if defined(RTS_DEBUG) || !RETAIL_COMPATIBLE_CRC
 	DEBUG_ASSERTCRASH(m_garrisonPointsInitialized, ("garrisonPoints are not inited"));
 #endif
 

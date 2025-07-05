@@ -70,7 +70,7 @@ class AsciiString;
 #define MESSAGE(a) message (__FILE__ "(" TOKEN_IT(__LINE__) ") : " a)
 
 // by default, turn on ALLOW_DEBUG_UTILS if RTS_DEBUG is turned on.
-#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) && !defined(ALLOW_DEBUG_UTILS) && !defined(DISABLE_ALLOW_DEBUG_UTILS)
+#if defined(RTS_DEBUG) && !defined(ALLOW_DEBUG_UTILS) && !defined(DISABLE_ALLOW_DEBUG_UTILS)
 	#define ALLOW_DEBUG_UTILS 1
 #elif defined(DEBUG_LOGGING) || defined(DEBUG_CRASHING) || defined(DEBUG_STACKTRACE) || defined(DEBUG_PROFILE)
 	// TheSuperHackers @tweak also turn on when any of the above options is already set.

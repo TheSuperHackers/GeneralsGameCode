@@ -244,7 +244,7 @@ void AudioManager::init()
 				break;
 			}
 			// We loop infinitely on the splash screen if we don't allow breaking out of this loop.
-//#if !defined( RTS_DEBUG ) && !defined( RTS_INTERNAL )
+//#if !defined( RTS_DEBUG )
 			else
 			{
 				// Display the warning.

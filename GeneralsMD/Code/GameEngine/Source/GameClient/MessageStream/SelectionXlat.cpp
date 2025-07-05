@@ -62,11 +62,11 @@
 //-----------------------------------------------------------------------------
 // Lorenzen changed this to a member of SelectionTranslator, providing external access
 // name ly in rebuildholeexposedie, where we decide whether to create GLA Holes when hand-of-Godding
-//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+//#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 //static Bool TheHandOfGodSelectionMode = false;
 //#endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 static Bool TheHurtSelectionMode = false;
 static Bool TheDebugSelectionMode = false;
 #endif
@@ -279,7 +279,7 @@ SelectionTranslator::SelectionTranslator()
 
 	TheSelectionTranslator = this;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
   m_HandOfGodSelectionMode = FALSE;
 #endif
 }
@@ -830,7 +830,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 				{
 
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) 
+#if defined(RTS_DEBUG) 
 
 
           if (m_HandOfGodSelectionMode && draw)
@@ -1276,7 +1276,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		}
 
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) 
+#if defined(RTS_DEBUG) 
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_HAND_OF_GOD_MODE:
 		{
@@ -1304,7 +1304,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		}
 #endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_TOGGLE_HURT_ME_MODE:
 		{
@@ -1318,7 +1318,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 		}
 #endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_DEBUG_SELECTION:
 		{
