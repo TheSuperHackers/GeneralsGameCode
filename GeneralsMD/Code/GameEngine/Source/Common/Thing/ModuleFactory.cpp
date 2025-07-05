@@ -52,7 +52,6 @@
 #include "GameLogic/Module/CountermeasuresBehavior.h"
 #include "GameLogic/Module/DumbProjectileBehavior.h"
 #include "GameLogic/Module/FreeFallProjectileBehavior.h"
-#include "GameLogic/Module/TeleportMovementBehavior.h"
 #include "GameLogic/Module/InstantDeathBehavior.h"
 #include "GameLogic/Module/SlowDeathBehavior.h"
 #include "GameLogic/Module/HelicopterSlowDeathUpdate.h"
@@ -342,7 +341,6 @@ void ModuleFactory::init( void )
 	addModule( CountermeasuresBehavior );
 	addModule( DumbProjectileBehavior );
 	addModule( FreeFallProjectileBehavior );
-	addModule( TeleportMovementBehavior );
 	addModule( PhysicsBehavior );
 	addModule( InstantDeathBehavior );
 	addModule( SlowDeathBehavior );

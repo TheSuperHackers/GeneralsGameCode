@@ -311,7 +311,6 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/DozerAIUpdate.h
     Include/GameLogic/Module/DumbProjectileBehavior.h
     Include/GameLogic/Module/FreeFallProjectileBehavior.h
-    Include/GameLogic/Module/TeleportMovementBehavior.h
     Include/GameLogic/Module/DynamicGeometryInfoUpdate.h
     Include/GameLogic/Module/DynamicShroudClearingRangeUpdate.h
     Include/GameLogic/Module/EjectPilotDie.h
@@ -858,7 +857,6 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Behavior/CountermeasuresBehavior.cpp
     Source/GameLogic/Object/Behavior/DumbProjectileBehavior.cpp
     Source/GameLogic/Object/Behavior/FreeFallProjectileBehavior.cpp
-    Source/GameLogic/Object/Behavior/TeleportMovementBehavior.cpp
     Source/GameLogic/Object/Behavior/FireWeaponWhenDamagedBehavior.cpp
     Source/GameLogic/Object/Behavior/FireWeaponWhenDeadBehavior.cpp
     Source/GameLogic/Object/Behavior/FlightDeckBehavior.cpp
