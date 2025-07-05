@@ -53,7 +53,7 @@ void INI::parseTerrainRoadDefinition( INI* ini )
 	{
 
 		// sanity
-		DEBUG_ASSERTCRASH( road->isBridge() == FALSE, ("Redefining bridge '%s' as a road!\n", 
+		DEBUG_ASSERTCRASH( road->isBridge() == FALSE, ("Redefining bridge '%s' as a road!", 
 											 road->getName().str()) );
 		throw INI_INVALID_DATA;
 
@@ -62,7 +62,7 @@ void INI::parseTerrainRoadDefinition( INI* ini )
 	if( road == NULL )	
 		road = TheTerrainRoads->newRoad( name );
 
-	DEBUG_ASSERTCRASH( road, ("Unable to allocate road '%s'\n", name.str()) );
+	DEBUG_ASSERTCRASH( road, ("Unable to allocate road '%s'", name.str()) );
 
 	// parse the ini definition
 	ini->initFromINI( road, road->getRoadFieldParse() );

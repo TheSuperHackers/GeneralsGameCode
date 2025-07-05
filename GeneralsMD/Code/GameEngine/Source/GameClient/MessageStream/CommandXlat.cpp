@@ -1287,7 +1287,7 @@ GameMessage::Type CommandTranslator::createEnterMessage( Drawable *enter,
 		return msgType;
 
 	// sanity
-	DEBUG_ASSERTCRASH( commandType == DO_COMMAND, ("createEnterMessage - commandType is not DO_COMMAND\n") );
+	DEBUG_ASSERTCRASH( commandType == DO_COMMAND, ("createEnterMessage - commandType is not DO_COMMAND") );
 
 	if( m_teamExists )
 	{

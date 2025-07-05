@@ -95,7 +95,7 @@ static ParticleSystem* createParticleSystem( Drawable *draw )
 			templateName.format("BeaconSmoke%6.6X", (0xffffff & obj->getIndicatorColor()));
 			const ParticleSystemTemplate *particleTemplate = TheParticleSystemManager->findTemplate( templateName );
 
-			DEBUG_ASSERTCRASH(particleTemplate, ("Could not find particle system %s\n", templateName.str()));
+			DEBUG_ASSERTCRASH(particleTemplate, ("Could not find particle system %s", templateName.str()));
 			
 			if (particleTemplate)
 			{

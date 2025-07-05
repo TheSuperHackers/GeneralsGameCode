@@ -421,10 +421,10 @@ void DoCompressTest( void )
 				}
 				d.compressedSize[i] = compressedLen;
 				DEBUG_LOG(("Compressed len is %d (%g%% of original size)", compressedLen, (double)compressedLen/(double)origSize*100.0));
-				DEBUG_ASSERTCRASH(compressedLen, ("Failed to compress\n"));
+				DEBUG_ASSERTCRASH(compressedLen, ("Failed to compress"));
 				DEBUG_LOG(("Decompressed len is %d (%g%% of original size)", decompressedLen, (double)decompressedLen/(double)origSize*100.0));
 
-				DEBUG_ASSERTCRASH(decompressedLen == origSize, ("orig size does not match compressed+uncompressed output\n"));
+				DEBUG_ASSERTCRASH(decompressedLen == origSize, ("orig size does not match compressed+uncompressed output"));
 				if (decompressedLen == origSize)
 				{
 					Int ret = memcmp(buf, uncompressedBuf, origSize);

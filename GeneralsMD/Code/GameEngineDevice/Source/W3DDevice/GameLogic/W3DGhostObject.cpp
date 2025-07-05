@@ -187,7 +187,7 @@ void W3DRenderObjectSnapshot::xfer( Xfer *xfer )
 	xfer->xferVersion( &version, currentVersion );
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_robj, ("W3DRenderObjectSnapshot::xfer - invalid m_robj\n") );
+	DEBUG_ASSERTCRASH( m_robj, ("W3DRenderObjectSnapshot::xfer - invalid m_robj") );
 
 	// transform on the main render object
 	Matrix3D transform;

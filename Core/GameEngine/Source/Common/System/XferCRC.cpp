@@ -282,7 +282,7 @@ void XferDeepCRC::xferImplementation( void *data, Int dataSize )
 	}
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_fileFP != NULL, ("XferSave - file pointer for '%s' is NULL\n",
+	DEBUG_ASSERTCRASH( m_fileFP != NULL, ("XferSave - file pointer for '%s' is NULL",
 										 m_identifier.str()) );
 
 	// write data to file

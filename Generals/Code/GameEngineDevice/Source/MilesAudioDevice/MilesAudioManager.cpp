@@ -105,7 +105,7 @@ MilesAudioManager::~MilesAudioManager()
 	closeDevice();
 	delete m_audioCache;
 	
-	DEBUG_ASSERTCRASH(this == TheAudio, ("Umm...\n"));
+	DEBUG_ASSERTCRASH(this == TheAudio, ("Umm..."));
 	TheAudio = NULL;
 }
 
@@ -2909,7 +2909,7 @@ void MilesAudioManager::initSamplePools( void )
 	int i = 0;
 	for (i = 0; i < getAudioSettings()->m_sampleCount2D; ++i) {
 		HSAMPLE sample = AIL_allocate_sample_handle(m_digitalHandle);
-		DEBUG_ASSERTCRASH(sample, ("Couldn't get %d 2D samples\n", i + 1));
+		DEBUG_ASSERTCRASH(sample, ("Couldn't get %d 2D samples", i + 1));
 		if (sample) {
 			AIL_init_sample(sample);
 			AIL_set_sample_user_data(sample, 0, i + 1);
@@ -2920,7 +2920,7 @@ void MilesAudioManager::initSamplePools( void )
 
 	for (i = 0; i < getAudioSettings()->m_sampleCount3D; ++i) {
 		H3DSAMPLE sample = AIL_allocate_3D_sample_handle(m_provider3D[m_selectedProvider].id);
-		DEBUG_ASSERTCRASH(sample, ("Couldn't get %d 3D samples\n", i + 1));
+		DEBUG_ASSERTCRASH(sample, ("Couldn't get %d 3D samples", i + 1));
 		if (sample) {
 			AIL_set_3D_user_data(sample, 0, i + 1);
 			m_available3DSamples.push_back(sample);

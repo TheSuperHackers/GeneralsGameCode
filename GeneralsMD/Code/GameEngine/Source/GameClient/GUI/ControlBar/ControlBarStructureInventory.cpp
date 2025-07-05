@@ -117,7 +117,7 @@ void ControlBar::populateStructureInventory( Object *building )
 	
 	// get the contain module of the object
 	ContainModuleInterface *contain = building->getContain();
-	DEBUG_ASSERTCRASH( contain, ("Object in structure inventory does not contain a Contain Module\n") );
+	DEBUG_ASSERTCRASH( contain, ("Object in structure inventory does not contain a Contain Module") );
 	if (!contain)
 		return;
 
@@ -223,7 +223,7 @@ void ControlBar::updateContextStructureInventory( void )
 	// about we need to repopulate the buttons of the interface
 	//
 	ContainModuleInterface *contain = source->getContain();
-	DEBUG_ASSERTCRASH( contain, ("No contain module defined for object in the iventory bar\n") );
+	DEBUG_ASSERTCRASH( contain, ("No contain module defined for object in the iventory bar") );
 	if (!contain)
 		return;
 

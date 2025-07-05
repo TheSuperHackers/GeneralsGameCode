@@ -629,7 +629,7 @@ void BridgeBehavior::onBodyDamageStateChange( const DamageInfo* damageInfo,
 		return;
 
 	// sanity
-	DEBUG_ASSERTCRASH( oldState != newState, ("BridgeBehavior::onBodyDamageStateChange - oldState and newState should be different if this is getting called\n") );
+	DEBUG_ASSERTCRASH( oldState != newState, ("BridgeBehavior::onBodyDamageStateChange - oldState and newState should be different if this is getting called") );
 
 	Object *us = getObject();
 	Bridge *bridge = TheTerrainLogic->findBridgeAt( us->getPosition() );
@@ -650,7 +650,7 @@ void BridgeBehavior::onBodyDamageStateChange( const DamageInfo* damageInfo,
 	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge( bridgeTemplateName );
 
 	// sanity
-	DEBUG_ASSERTCRASH( bridgeTemplate, ("BridgeBehavior: Unable to find bridge template '%s' in bridge object '%s'\n",	
+	DEBUG_ASSERTCRASH( bridgeTemplate, ("BridgeBehavior: Unable to find bridge template '%s' in bridge object '%s'",	
 																		 bridgeTemplateName.str(),
 																		 us->getTemplate()->getName().str()) );
 
@@ -723,7 +723,7 @@ UpdateSleepTime BridgeBehavior::update( void )
 		TerrainRoadType *bridgeTemplate = NULL;
 		if ( bridge )
 		{
-			DEBUG_ASSERTCRASH( bridge, ("BridgeBehavior::update - Unable to find bridge\n") );
+			DEBUG_ASSERTCRASH( bridge, ("BridgeBehavior::update - Unable to find bridge") );
 
 			// get bridge info
 			bridgeInfo = bridge->peekBridgeInfo();
@@ -731,7 +731,7 @@ UpdateSleepTime BridgeBehavior::update( void )
 			// get the bridge template info
 			AsciiString bridgeTemplateName = bridge->getBridgeTemplateName();
 			bridgeTemplate = TheTerrainRoads->findBridge( bridgeTemplateName );
-			DEBUG_ASSERTCRASH( bridgeTemplate, ("BridgeBeahvior::getRandomSurfacePosition - Encountered a bridge with no template!\n") );
+			DEBUG_ASSERTCRASH( bridgeTemplate, ("BridgeBeahvior::getRandomSurfacePosition - Encountered a bridge with no template!") );
 		}
 
 		// how much time has passed between now and our destruction frame
@@ -973,7 +973,7 @@ void BridgeBehavior::setScaffoldData( Object *obj,
 	// get the scaffold behavior interface
 	BridgeScaffoldBehaviorInterface *scaffoldBehavior;
 	scaffoldBehavior = BridgeScaffoldBehavior::getBridgeScaffoldBehaviorInterfaceFromObject( obj );
-	DEBUG_ASSERTCRASH( scaffoldBehavior, ("Unable to find bridge scaffold behavior interface\n") );
+	DEBUG_ASSERTCRASH( scaffoldBehavior, ("Unable to find bridge scaffold behavior interface") );
 
 	// compute the sunken position that the object will initially start at
 	Real fudge = 8.0f;
@@ -1036,7 +1036,7 @@ void BridgeBehavior::createScaffolding( void )
 	// get the bridge template
 	AsciiString bridgeTemplateName = bridge->getBridgeTemplateName();
 	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge( bridgeTemplateName );
-	DEBUG_ASSERTCRASH( bridgeTemplate, ("Unable to find bridge template to create scaffolding\n") );
+	DEBUG_ASSERTCRASH( bridgeTemplate, ("Unable to find bridge template to create scaffolding") );
 
 	// get the thing template for the scaffold object we're going to use
 	AsciiString scaffoldObjectName = bridgeTemplate->getScaffoldObjectName();
@@ -1304,7 +1304,7 @@ void BridgeBehavior::removeScaffolding( void )
 
 		// get the scaffold behavior
 		scaffoldBehavior = BridgeScaffoldBehavior::getBridgeScaffoldBehaviorInterfaceFromObject( obj );
-		DEBUG_ASSERTCRASH( scaffoldBehavior, ("Unable to find bridge scaffold behavior interface\n") );
+		DEBUG_ASSERTCRASH( scaffoldBehavior, ("Unable to find bridge scaffold behavior interface") );
 		
 		// reverse the motion
 		scaffoldBehavior->reverseMotion();
@@ -1399,7 +1399,7 @@ void BridgeBehavior::xfer( Xfer *xfer )
 		Bridge *bridge = TheTerrainLogic->findBridgeAt( us->getPosition() );
 
 		// sanity
-		DEBUG_ASSERTCRASH( bridge, ("BridgeBehavior::xfer - Unable to find bridge\n" ));
+		DEBUG_ASSERTCRASH( bridge, ("BridgeBehavior::xfer - Unable to find bridge" ));
 
 		// set new object ID in bridge info to us
 		bridge->setBridgeObjectID( us->getID() );
@@ -1417,7 +1417,7 @@ void BridgeBehavior::xfer( Xfer *xfer )
 		Bridge *bridge = TheTerrainLogic->findBridgeAt( us->getPosition() );
 
 		// sanity
-		DEBUG_ASSERTCRASH( bridge, ("BridgeBehavior::xfer - Unable to find bridge\n" ));
+		DEBUG_ASSERTCRASH( bridge, ("BridgeBehavior::xfer - Unable to find bridge" ));
 
 		// set new object ID in bridge info to us
 		for( Int i = 0; i < BRIDGE_MAX_TOWERS; ++i )

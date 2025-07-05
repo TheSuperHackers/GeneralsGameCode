@@ -236,7 +236,7 @@ public:
 		
 		const MATCHABLE* info = findBestInfoSlow(v, bits);
 
-		DEBUG_ASSERTCRASH(info != NULL, ("no suitable match for criteria was found!\n"));
+		DEBUG_ASSERTCRASH(info != NULL, ("no suitable match for criteria was found!"));
 		if (info != NULL) {
 			m_bestMatches[bits] = info;
 		}

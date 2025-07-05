@@ -1307,7 +1307,7 @@ void OpenContain::processDamageToContained()
 			// GLA Battle Bus with at least 2 half damaged GLA Terrorists inside.
 			if (listSize != items->size())
 			{
-				DEBUG_ASSERTCRASH( listSize == 0, ("List is expected empty\n") );
+				DEBUG_ASSERTCRASH( listSize == 0, ("List is expected empty") );
 				break;
 			}
 		}
@@ -1336,7 +1336,7 @@ void OpenContain::processDamageToContained()
 	{
 		Object *object = *it;
 
-		DEBUG_ASSERTCRASH( object, ("Contain list must not contain NULL element\n") );
+		DEBUG_ASSERTCRASH( object, ("Contain list must not contain NULL element") );
 
 		// Calculate the damage to be inflicted on each unit.
 		Real damage = object->getBodyModule()->getMaxHealth() * percentDamage;

@@ -1577,7 +1577,7 @@ PartitionData::~PartitionData()
 	{
 		//DEBUG_LOG(("remove pd %08lx from dirty list (%08lx %08lx)",this,m_prevDirty,m_nextDirty));
 		ThePartitionManager->removeFromDirtyModules(this);
-		//DEBUG_ASSERTCRASH(!ThePartitionManager->isInListDirtyModules(this), ("hmm\n"));
+		//DEBUG_ASSERTCRASH(!ThePartitionManager->isInListDirtyModules(this), ("hmm"));
 	}
 } 
 
@@ -2153,7 +2153,7 @@ Int PartitionData::calcMaxCoiForShape(GeometryType geom, Real majorRadius, Real 
 //	{
 //		#if defined(RTS_DEBUG)
 //		Int chk = calcMaxCoiForShape(geom, majorRadius, minorRadius, false);
-//		DEBUG_ASSERTCRASH(chk <= 4, ("Small objects should be <= 4 cells, but I calced %s as %d\n",theObjName.str(),chk));
+//		DEBUG_ASSERTCRASH(chk <= 4, ("Small objects should be <= 4 cells, but I calced %s as %d",theObjName.str(),chk));
 //		#endif
 //		result = 4;
 //	}
@@ -3194,7 +3194,7 @@ void PartitionManager::calcRadiusVec()
 				contain objects that are <= (curRadius * cellSize) distance away from cell (0,0).
 			*/
 			Int curRadius = calcMinRadius(cur);
-			DEBUG_ASSERTCRASH(curRadius <= m_maxGcoRadius, ("expected max of %d but got %d\n",m_maxGcoRadius,curRadius));
+			DEBUG_ASSERTCRASH(curRadius <= m_maxGcoRadius, ("expected max of %d but got %d",m_maxGcoRadius,curRadius));
 			if (curRadius <= m_maxGcoRadius)
 				m_radiusVec[curRadius].push_back(cur);
 		}
@@ -3207,7 +3207,7 @@ void PartitionManager::calcRadiusVec()
 		total += m_radiusVec[i].size();
 		//DEBUG_LOG(("radius %d has %d entries",i,m_radiusVec[i].size()));
 	}
-	DEBUG_ASSERTCRASH(total == (cx*2-1)*(cy*2-1),("expected %d, got %d\n",(cx*2-1)*(cy*2-1),total));
+	DEBUG_ASSERTCRASH(total == (cx*2-1)*(cy*2-1),("expected %d, got %d",(cx*2-1)*(cy*2-1),total));
 #endif
 
 }

@@ -192,7 +192,7 @@ void GarrisonContain::putObjectAtGarrisonPoint( Object *obj,
 	// garrison point ready to shoot
 	//
 	static const ThingTemplate *muzzle = TheThingFactory->findTemplate( "GarrisonGun" );
-	DEBUG_ASSERTCRASH( muzzle, ("Warning, Object 'GarrisonGun' not found and is need for Garrison gun effects\n") );
+	DEBUG_ASSERTCRASH( muzzle, ("Warning, Object 'GarrisonGun' not found and is need for Garrison gun effects") );
 	if( muzzle )
 	{
 		Drawable *draw = TheThingFactory->newDrawable( muzzle );

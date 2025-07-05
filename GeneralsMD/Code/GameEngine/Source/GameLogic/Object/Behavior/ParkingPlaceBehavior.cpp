@@ -843,7 +843,7 @@ void ParkingPlaceBehavior::unreserveDoorForExit( ExitDoorType exitDoor )
 		{
 			if (it->m_door == exitDoor)
 			{
-				//DEBUG_ASSERTCRASH(it->m_reservedForExit, ("ParkingPlaceBehavior::unreserveDoorForExit: door %d was not reserved\n",exitDoor));
+				//DEBUG_ASSERTCRASH(it->m_reservedForExit, ("ParkingPlaceBehavior::unreserveDoorForExit: door %d was not reserved",exitDoor));
 				it->m_objectInSpace = INVALID_ID;
 				it->m_reservedForExit = false;
 				return;

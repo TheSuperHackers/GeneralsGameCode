@@ -250,7 +250,7 @@ void POWTruckAIUpdate::setTask( POWTruckTask task, Object *taskObject )
 		m_targetID = taskObject->getID();
 
 		// mark this target as slated for pickup
-		DEBUG_ASSERTCRASH( taskObject->getAIUpdateInterface(), ("POWTruckAIUpdate::setTask - '%s' has no ai module\n",
+		DEBUG_ASSERTCRASH( taskObject->getAIUpdateInterface(), ("POWTruckAIUpdate::setTask - '%s' has no ai module",
 													 taskObject->getTemplate()->getName().str()) );
 
 	}  // end if
@@ -358,7 +358,7 @@ void POWTruckAIUpdate::updateWaiting( void )
 	// get our info
 	Object *us = getObject();
 	AIUpdateInterface *ai = us->getAIUpdateInterface();
-	DEBUG_ASSERTCRASH( ai, ("POWTruckAIUpdate::updateWaiting - '%s' has no ai\n",
+	DEBUG_ASSERTCRASH( ai, ("POWTruckAIUpdate::updateWaiting - '%s' has no ai",
 													us->getTemplate()->getName().str()) );
 
 	//
@@ -385,7 +385,7 @@ void POWTruckAIUpdate::updateFindTarget( void )
 {
 
 	// we never find targets when in manual ai mode
-	DEBUG_ASSERTCRASH( m_aiMode != MANUAL, ("POWTruckAIUpdate::updateFindTarget - We shouldn't be here with a manual ai mode\n") );
+	DEBUG_ASSERTCRASH( m_aiMode != MANUAL, ("POWTruckAIUpdate::updateFindTarget - We shouldn't be here with a manual ai mode") );
 	if( m_aiMode == MANUAL )
 		return;
 
@@ -399,7 +399,7 @@ void POWTruckAIUpdate::updateFindTarget( void )
 	// get our info
 	Object *us = getObject();
 	AIUpdateInterface *ai = us->getAIUpdateInterface();
-	DEBUG_ASSERTCRASH( ai, ("POWTruckAIUpdate::updateFindTarget - '%s' has no ai\n",
+	DEBUG_ASSERTCRASH( ai, ("POWTruckAIUpdate::updateFindTarget - '%s' has no ai",
 													us->getTemplate()->getName().str()) );
 
 	// if we're full we should return to prison
@@ -534,7 +534,7 @@ void POWTruckAIUpdate::updateReturnPrisoners( void )
 {
 	Object *us = getObject();
 	AIUpdateInterface *ai = us->getAIUpdateInterface();
-	DEBUG_ASSERTCRASH( ai, ("POWTruckAIUpdate::updateReturnPrisoners - '%s' has no AI\n",
+	DEBUG_ASSERTCRASH( ai, ("POWTruckAIUpdate::updateReturnPrisoners - '%s' has no AI",
 												 us->getTemplate()->getName().str()) );
 
 	// get the prison we're returning to
@@ -586,7 +586,7 @@ void POWTruckAIUpdate::doReturnPrisoners( void )
 	// start the prisoner return process
 	Object *us = getObject();
 	AIUpdateInterface *ai = us->getAIUpdateInterface();
-	DEBUG_ASSERTCRASH( ai, ("POWTruckAIUpdate::doReturnPrisoners - '%s' has no AI\n",
+	DEBUG_ASSERTCRASH( ai, ("POWTruckAIUpdate::doReturnPrisoners - '%s' has no AI",
 												 us->getTemplate()->getName().str()) );
 	ai->aiReturnPrisoners( prison, CMD_FROM_AI );
 
@@ -657,7 +657,7 @@ Object *POWTruckAIUpdate::findBestTarget( void )
 
 	// get our info
 	const AIUpdateInterface *ai = us->getAIUpdateInterface();
-	DEBUG_ASSERTCRASH( ai, ("POWTruckAIUpdate::findBestTarget- '%s' has no AI\n",
+	DEBUG_ASSERTCRASH( ai, ("POWTruckAIUpdate::findBestTarget- '%s' has no AI",
 												 us->getTemplate()->getName().str()) );
 
 	// scan all objects, there is no range
@@ -727,7 +727,7 @@ static void putPrisonersInPrison( Object *obj, void *userData )
 	Object *prison = prisonUnloadData->destPrison;
 
 	// sanity
-	DEBUG_ASSERTCRASH( prison, ("putPrisonersInPrison: NULL user data\n") );
+	DEBUG_ASSERTCRASH( prison, ("putPrisonersInPrison: NULL user data") );
 	DEBUG_ASSERTCRASH( obj->getContainedBy() != NULL,
 										 ("putPrisonersInPrison: Prisoner '%s' is not contained by anything, it should be contained by a POW truck\n",
 										 obj->getTemplate()->getName().str()) );
@@ -771,12 +771,12 @@ void POWTruckAIUpdate::unloadPrisonersToPrison( Object *prison )
 	ContainModuleInterface *truckContain = us->getContain();
 
 	// sanity
-	DEBUG_ASSERTCRASH( prison->getContain(), ("POWTruckAIUpdate::unloadPrisonersToPrison - '%s' has no contain\n",
+	DEBUG_ASSERTCRASH( prison->getContain(), ("POWTruckAIUpdate::unloadPrisonersToPrison - '%s' has no contain",
 																		prison->getTemplate()->getName().str()) );
 	DEBUG_ASSERTCRASH( prison->getContain()->asOpenContain(), 
 										 ("POWTruckAIUpdate::unloadPrisonersToPrison - '%s' has no OPEN contain\n",
 										 prison->getTemplate()->getName().str()) );
-	DEBUG_ASSERTCRASH( truckContain, ("POWTruckAIUpdate::unloadPrisonersToPrison - '%s' has no contain\n",
+	DEBUG_ASSERTCRASH( truckContain, ("POWTruckAIUpdate::unloadPrisonersToPrison - '%s' has no contain",
 																	 us->getTemplate()->getName().str()) );
 	DEBUG_ASSERTCRASH( truckContain->asOpenContain(), 
 										 ("POWTruckAIUpdate::unloadPrisonersToPrison - '%s' has no OPEN contain\n",

@@ -494,7 +494,7 @@ WindowMsgHandledType ScoreScreenSystem( GameWindow *window, UnsignedInt msg,
 			{
 				ScoreScreenEnableControls(FALSE);
         WindowLayout *saveReplayLayout = TheShell->getPopupReplayLayout();
-				DEBUG_ASSERTCRASH( saveReplayLayout, ("Unable to get save replay menu layout.\n") );
+				DEBUG_ASSERTCRASH( saveReplayLayout, ("Unable to get save replay menu layout.") );
 				saveReplayLayout->runInit();
 				saveReplayLayout->hide( FALSE );
 				saveReplayLayout->bringForward();
@@ -1527,7 +1527,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 						gameResReq.hostname = TheGameSpyGame->getLadderIP().str();
 						gameResReq.port = TheGameSpyGame->getLadderPort();
 						gameResReq.results = TheGameSpyGame->generateLadderGameResultsPacket().str();
-						DEBUG_ASSERTCRASH(TheGameResultsQueue, ("No Game Results queue!\n"));
+						DEBUG_ASSERTCRASH(TheGameResultsQueue, ("No Game Results queue!"));
 						if (TheGameResultsQueue)
 						{
 							TheGameResultsQueue->addRequest(gameResReq);

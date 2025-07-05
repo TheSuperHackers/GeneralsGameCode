@@ -232,7 +232,7 @@ UpdateSleepTime JetSlowDeathBehavior::update( void )
 
 	// roll us around in the air
 	PhysicsBehavior *physics = us->getPhysics();
-	DEBUG_ASSERTCRASH( physics, ("JetSlowDeathBehavior::beginSlowDeath - '%s' has no physics\n",
+	DEBUG_ASSERTCRASH( physics, ("JetSlowDeathBehavior::beginSlowDeath - '%s' has no physics",
 															us->getTemplate()->getName().str()) );
 	if( physics )
 		physics->setRollRate( m_rollRate );

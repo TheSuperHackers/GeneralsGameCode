@@ -236,7 +236,7 @@ void TeamFactory::initTeam(const AsciiString& name, const AsciiString& owner, Bo
 {
 	DEBUG_ASSERTCRASH(findTeamPrototype(name)==NULL,("team already exists"));
 	Player *pOwner = ThePlayerList->findPlayerWithNameKey(NAMEKEY(owner));
-	DEBUG_ASSERTCRASH(pOwner, ("no owner found for team %s (%s)\n",name.str(),owner.str()));
+	DEBUG_ASSERTCRASH(pOwner, ("no owner found for team %s (%s)",name.str(),owner.str()));
 	if (!pOwner)
 		pOwner = ThePlayerList->getNeutralPlayer(); 
 	/*TeamPrototype *tp =*/ newInstance(TeamPrototype)(this, name, pOwner, isSingleton, d, ++m_uniqueTeamPrototypeID);

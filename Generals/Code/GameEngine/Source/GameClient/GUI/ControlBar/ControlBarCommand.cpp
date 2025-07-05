@@ -93,7 +93,7 @@ void ControlBar::populateInvDataCallback( Object *obj, void *userData )
 	if( data->currIndex > data->maxIndex )
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("There is not enough GUI slots to hold the # of items inside a '%s'\n", 
+		DEBUG_ASSERTCRASH( 0, ("There is not enough GUI slots to hold the # of items inside a '%s'", 
 													data->transport->getTemplate()->getName().str()) );
 		return;
 
@@ -101,7 +101,7 @@ void ControlBar::populateInvDataCallback( Object *obj, void *userData )
 
 	// get the window control that we're going to put our smiling faces in
 	GameWindow *control = data->controls[ data->currIndex ];
-	DEBUG_ASSERTCRASH( control, ("populateInvDataCallback: Control not found\n") );
+	DEBUG_ASSERTCRASH( control, ("populateInvDataCallback: Control not found") );
 
 	// assign our control and object id to the transport data
 	m_containData[ data->currIndex ].control = control;
@@ -717,7 +717,7 @@ void ControlBar::updateContextCommand( void )
 				static NameKeyType winID = TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonQueue01" );
 				GameWindow *win = TheWindowManager->winGetWindowFromId( m_contextParent[ CP_BUILD_QUEUE ], winID );
 				
-				DEBUG_ASSERTCRASH( win, ("updateContextCommand: Unable to find first build queue button\n") );
+				DEBUG_ASSERTCRASH( win, ("updateContextCommand: Unable to find first build queue button") );
 				//				UnicodeString text;
 				//
 				//				text.format( L"%.0f%%", produce->getPercentComplete() );

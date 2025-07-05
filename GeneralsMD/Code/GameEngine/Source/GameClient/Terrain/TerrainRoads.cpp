@@ -440,7 +440,7 @@ TerrainRoadType *TerrainRoadCollection::newBridge( AsciiString name )
 TerrainRoadType *TerrainRoadCollection::nextRoad( TerrainRoadType *road )
 {
 
-	DEBUG_ASSERTCRASH( road->isBridge() == FALSE, ("nextRoad: road not a road\n") );
+	DEBUG_ASSERTCRASH( road->isBridge() == FALSE, ("nextRoad: road not a road") );
 	return road->friend_getNext();
 
 }  // end nextRoad
@@ -451,7 +451,7 @@ TerrainRoadType *TerrainRoadCollection::nextRoad( TerrainRoadType *road )
 TerrainRoadType *TerrainRoadCollection::nextBridge( TerrainRoadType *bridge )
 {
 
-	DEBUG_ASSERTCRASH( bridge->isBridge() == TRUE, ("nextBridge, bridge is not a bridge\n") );
+	DEBUG_ASSERTCRASH( bridge->isBridge() == TRUE, ("nextBridge, bridge is not a bridge") );
 	return bridge->friend_getNext();
 
 }  // end nextBridge

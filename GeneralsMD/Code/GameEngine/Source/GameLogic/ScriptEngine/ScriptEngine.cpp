@@ -5386,7 +5386,7 @@ void ScriptEngine::reset( void )
 			m_allObjectTypeLists.erase(it);
 		}
 	}
-	DEBUG_ASSERTCRASH( m_allObjectTypeLists.empty() == TRUE, ("ScriptEngine::reset - m_allObjectTypeLists should be empty but is not!\n") );
+	DEBUG_ASSERTCRASH( m_allObjectTypeLists.empty() == TRUE, ("ScriptEngine::reset - m_allObjectTypeLists should be empty but is not!") );
 
 	// reset all the reveals that have taken place.
 	m_namedReveals.clear();
@@ -6134,7 +6134,7 @@ Int ScriptEngine::allocateCounter( const AsciiString& name)
 			return i;
 		}
 	}
-	DEBUG_ASSERTCRASH(m_numCounters<MAX_COUNTERS, ("Too many counters, failed to make '%s'.\n", name.str()));
+	DEBUG_ASSERTCRASH(m_numCounters<MAX_COUNTERS, ("Too many counters, failed to make '%s'.", name.str()));
 	if (m_numCounters < MAX_COUNTERS) {
 		m_counters[m_numCounters].name = name;
 		i = m_numCounters;
@@ -6272,7 +6272,7 @@ Int ScriptEngine::allocateFlag( const AsciiString& name)
 			return i;
 		}
 	}
-	DEBUG_ASSERTCRASH(m_numFlags < MAX_FLAGS, ("Too many flags, failed to make '%s'..\n", name.str()));
+	DEBUG_ASSERTCRASH(m_numFlags < MAX_FLAGS, ("Too many flags, failed to make '%s'..", name.str()));
 	if (m_numFlags < MAX_FLAGS) {
 		m_flags[m_numFlags].name = name;
 		i = m_numFlags;
@@ -6333,8 +6333,8 @@ Script  *ScriptEngine::findScript(const AsciiString& name)
 //-------------------------------------------------------------------------------------------------
 Bool ScriptEngine::evaluateCounter( Condition *pCondition )
 {
-	DEBUG_ASSERTCRASH(pCondition->getNumParameters() >= 3, ("Not enough parameters.\n"));
-	DEBUG_ASSERTCRASH(pCondition->getConditionType() == Condition::COUNTER, ("Wrong condition.\n"));
+	DEBUG_ASSERTCRASH(pCondition->getNumParameters() >= 3, ("Not enough parameters."));
+	DEBUG_ASSERTCRASH(pCondition->getConditionType() == Condition::COUNTER, ("Wrong condition."));
 	Int counterNdx = pCondition->getParameter(0)->getInt();
 	if (counterNdx == 0) {
 		counterNdx = allocateCounter(pCondition->getParameter(0)->getString());
@@ -6357,7 +6357,7 @@ Bool ScriptEngine::evaluateCounter( Condition *pCondition )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setCounter( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters."));
 	Int counterNdx = pAction->getParameter(0)->getInt();
 	if (counterNdx == 0) {
 		counterNdx = allocateCounter(pAction->getParameter(0)->getString());
@@ -6380,7 +6380,7 @@ void ScriptEngine::setFade( ScriptAction *pAction )
 	}
 #endif
 
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 5, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 5, ("Not enough parameters."));
 	switch (pAction->getActionType()) {
 		default:	m_fade = FADE_NONE; return;
 		case ScriptAction::CAMERA_FADE_ADD: m_fade = FADE_ADD; break;
@@ -6406,7 +6406,7 @@ void ScriptEngine::setFade( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setSway( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 5, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 5, ("Not enough parameters."));
 	++m_breezeInfo.m_breezeVersion;
 	m_breezeInfo.m_direction = pAction->getParameter(0)->getReal();
 	m_breezeInfo.m_directionVec.x = Sin(m_breezeInfo.m_direction);
@@ -6425,7 +6425,7 @@ void ScriptEngine::setSway( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::addCounter( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters."));
 	Int value = pAction->getParameter(0)->getInt();
 	Int counterNdx = pAction->getParameter(1)->getInt();
 	if (counterNdx == 0) {
@@ -6440,7 +6440,7 @@ void ScriptEngine::addCounter( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::subCounter( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters."));
 	Int value = pAction->getParameter(0)->getInt();
 	Int counterNdx = pAction->getParameter(1)->getInt();
 	if (counterNdx == 0) {
@@ -6455,8 +6455,8 @@ void ScriptEngine::subCounter( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 Bool ScriptEngine::evaluateFlag( Condition *pCondition )
 {
-	DEBUG_ASSERTCRASH(pCondition->getNumParameters() >= 2, ("Not enough parameters.\n"));
-	DEBUG_ASSERTCRASH(pCondition->getConditionType() == Condition::FLAG, ("Wrong condition.\n"));
+	DEBUG_ASSERTCRASH(pCondition->getNumParameters() >= 2, ("Not enough parameters."));
+	DEBUG_ASSERTCRASH(pCondition->getConditionType() == Condition::FLAG, ("Wrong condition."));
 	Int flagNdx = pCondition->getParameter(0)->getInt();
 	if (flagNdx == 0) {
 		flagNdx = allocateFlag(pCondition->getParameter(0)->getString());
@@ -6484,7 +6484,7 @@ Bool ScriptEngine::evaluateFlag( Condition *pCondition )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setFlag( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters."));
 	Int flagNdx = pAction->getParameter(0)->getInt();
 	if (flagNdx == 0) {
 		flagNdx = allocateFlag(pAction->getParameter(0)->getString());
@@ -6547,7 +6547,7 @@ const AttackPriorityInfo *ScriptEngine::getAttackInfo(const AsciiString& name)
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setPriorityThing( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 3, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 3, ("Not enough parameters."));
 	
 	AsciiString typeArgument = pAction->getParameter(1)->getString();
 
@@ -6623,7 +6623,7 @@ void ScriptEngine::setPriorityThing( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setPriorityKind( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 3, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 3, ("Not enough parameters."));
 	AttackPriorityInfo *info = findAttackInfo(pAction->getParameter(0)->getString(), true);
 	if (info==NULL) {
 		AppendDebugMessage("***Error allocating attack priority set - fix or raise limit. ***", false);
@@ -6647,7 +6647,7 @@ void ScriptEngine::setPriorityKind( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setPriorityDefault( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters."));
 	AttackPriorityInfo *info = findAttackInfo(pAction->getParameter(0)->getString(), true);
 	if (info==NULL) {
 		AppendDebugMessage("***Error allocating attack priority set - fix or raise limit. ***", false);
@@ -6712,8 +6712,8 @@ void ScriptEngine::removeObjectTypes(ObjectTypes *typesToRemove)
 //-------------------------------------------------------------------------------------------------
 Bool ScriptEngine::evaluateTimer( Condition *pCondition )
 {
-	DEBUG_ASSERTCRASH(pCondition->getNumParameters() >= 1, ("Not enough parameters.\n"));
-	DEBUG_ASSERTCRASH(pCondition->getConditionType() == Condition::TIMER_EXPIRED, ("Wrong condition.\n"));
+	DEBUG_ASSERTCRASH(pCondition->getNumParameters() >= 1, ("Not enough parameters."));
+	DEBUG_ASSERTCRASH(pCondition->getConditionType() == Condition::TIMER_EXPIRED, ("Wrong condition."));
 	Int counterNdx = pCondition->getParameter(0)->getInt();
 	if (counterNdx == 0) {
 		counterNdx = allocateCounter(pCondition->getParameter(0)->getString());
@@ -6732,7 +6732,7 @@ Bool ScriptEngine::evaluateTimer( Condition *pCondition )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setTimer( ScriptAction *pAction, Bool millisecondTimer, Bool random )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters."));
 	Int counterNdx = pAction->getParameter(0)->getInt();
 	if (counterNdx == 0) {
 		counterNdx = allocateCounter(pAction->getParameter(0)->getString());
@@ -6761,7 +6761,7 @@ void ScriptEngine::setTimer( ScriptAction *pAction, Bool millisecondTimer, Bool 
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::pauseTimer( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters."));
 	Int counterNdx = pAction->getParameter(0)->getInt();
 	if (counterNdx == 0) {
 		counterNdx = allocateCounter(pAction->getParameter(0)->getString());
@@ -6775,7 +6775,7 @@ void ScriptEngine::pauseTimer( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::restartTimer( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters."));
 	Int counterNdx = pAction->getParameter(0)->getInt();
 	if (counterNdx == 0) {
 		counterNdx = allocateCounter(pAction->getParameter(0)->getString());
@@ -6791,7 +6791,7 @@ void ScriptEngine::restartTimer( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::adjustTimer( ScriptAction *pAction, Bool millisecondTimer, Bool add)
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 2, ("Not enough parameters."));
 	Int counterNdx = pAction->getParameter(1)->getInt();
 	if (counterNdx == 0) {
 		counterNdx = allocateCounter(pAction->getParameter(1)->getString());
@@ -6815,7 +6815,7 @@ void ScriptEngine::adjustTimer( ScriptAction *pAction, Bool millisecondTimer, Bo
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::enableScript( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters."));
 	ScriptGroup *pGroup = findGroup(pAction->getParameter(0)->getString());
 	if (pGroup) {
 		pGroup->setActive(true);
@@ -6831,7 +6831,7 @@ void ScriptEngine::enableScript( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::disableScript( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters."));
 	Script *pScript = findScript(pAction->getParameter(0)->getString());
 	if (pScript) {
 		pScript->setActive(false);
@@ -6847,7 +6847,7 @@ void ScriptEngine::disableScript( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::callSubroutine( ScriptAction *pAction )
 {
-	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters.\n"));
+	DEBUG_ASSERTCRASH(pAction->getNumParameters() >= 1, ("Not enough parameters."));
 	AsciiString scriptName = pAction->getParameter(0)->getString();
 	Script  *pScript;
 	ScriptGroup *pGroup = findGroup(scriptName);
@@ -7688,9 +7688,9 @@ void ScriptEngine::executeScripts( Script *pScriptHead )
 //-------------------------------------------------------------------------------------------------
 const ActionTemplate * ScriptEngine::getActionTemplate( Int ndx )
 {
-	DEBUG_ASSERTCRASH(ndx >= 0 && ndx < ScriptAction::NUM_ITEMS, ("Out of range.\n"));
+	DEBUG_ASSERTCRASH(ndx >= 0 && ndx < ScriptAction::NUM_ITEMS, ("Out of range."));
 	if (ndx <0 || ndx >= ScriptAction::NUM_ITEMS) ndx = 0;
-	DEBUG_ASSERTCRASH (!m_actionTemplates[ndx].getName().isEmpty(), ("Need to initialize action enum=%d.\n", ndx));
+	DEBUG_ASSERTCRASH (!m_actionTemplates[ndx].getName().isEmpty(), ("Need to initialize action enum=%d.", ndx));
 	
 	return &m_actionTemplates[ndx];
 }  // end getActionTemplate
@@ -7700,9 +7700,9 @@ const ActionTemplate * ScriptEngine::getActionTemplate( Int ndx )
 //-------------------------------------------------------------------------------------------------
 const ConditionTemplate * ScriptEngine::getConditionTemplate( Int ndx )
 {
-	DEBUG_ASSERTCRASH(ndx >= 0 && ndx < ScriptAction::NUM_ITEMS, ("Out of range.\n"));
+	DEBUG_ASSERTCRASH(ndx >= 0 && ndx < ScriptAction::NUM_ITEMS, ("Out of range."));
 	if (ndx <0 || ndx >= Condition::NUM_ITEMS) ndx = 0;
-	DEBUG_ASSERTCRASH (!m_conditionTemplates[ndx].getName().isEmpty(), ("Need to initialize Condition enum=%d.\n", ndx));
+	DEBUG_ASSERTCRASH (!m_conditionTemplates[ndx].getName().isEmpty(), ("Need to initialize Condition enum=%d.", ndx));
 	return &m_conditionTemplates[ndx];
 }  // end getConditionTemplate
 
@@ -8201,7 +8201,7 @@ void SequentialScript::xfer( Xfer *xfer )
 		xfer->xferAsciiString( &scriptName );
 
 		// script pointer
-		DEBUG_ASSERTCRASH( m_scriptToExecuteSequentially == NULL, ("SequentialScript::xfer - m_scripttoExecuteSequentially\n") );
+		DEBUG_ASSERTCRASH( m_scriptToExecuteSequentially == NULL, ("SequentialScript::xfer - m_scripttoExecuteSequentially") );
 			
 		// find script
 		m_scriptToExecuteSequentially = const_cast<Script*>(TheScriptEngine->findScriptByName(scriptName));
@@ -8539,7 +8539,7 @@ static void xferListAsciiString( Xfer *xfer, ListAsciiString *list )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( list != NULL, ("xferListAsciiString - Invalid parameters\n") );
+	DEBUG_ASSERTCRASH( list != NULL, ("xferListAsciiString - Invalid parameters") );
 
 	// version
 	XferVersion currentVersion = 1;
@@ -8602,7 +8602,7 @@ static void xferListAsciiStringUINT( Xfer *xfer, ListAsciiStringUINT *list )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( list != NULL, ("xferListAsciiStringUINT - Invalid parameters\n") );
+	DEBUG_ASSERTCRASH( list != NULL, ("xferListAsciiStringUINT - Invalid parameters") );
 
 	// version
 	XferVersion currentVersion = 1;
@@ -8677,7 +8677,7 @@ static void xferListAsciiStringObjectID( Xfer *xfer, ListAsciiStringObjectID *li
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( list != NULL, ("xferListAsciiStringObjectID - Invalid parameters\n") );
+	DEBUG_ASSERTCRASH( list != NULL, ("xferListAsciiStringObjectID - Invalid parameters") );
 
 	// version
 	XferVersion currentVersion = 1;
@@ -8752,7 +8752,7 @@ static void xferListAsciiStringCoord3D( Xfer *xfer, ListAsciiStringCoord3D *list
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( list != NULL, ("xferListAsciiStringCoord3D - Invalid parameters\n") );
+	DEBUG_ASSERTCRASH( list != NULL, ("xferListAsciiStringCoord3D - Invalid parameters") );
 
 	// version
 	XferVersion currentVersion = 1;
@@ -10300,7 +10300,7 @@ static void _initVTune()
 	{
 		VTPause = (VTProc)::GetProcAddress(st_vTuneDLL, "VTPause");
 		VTResume = (VTProc)::GetProcAddress(st_vTuneDLL, "VTResume");
-		DEBUG_ASSERTCRASH(VTPause != NULL && VTResume != NULL, ("VTuneAPI procs not found!\n"));
+		DEBUG_ASSERTCRASH(VTPause != NULL && VTResume != NULL, ("VTuneAPI procs not found!"));
 	}
 	else
 	{
@@ -10315,7 +10315,7 @@ static void _initVTune()
 		if (VTPause)
 			VTPause();		
 		// only complain about it being missing if they were expecting it to be present
-		DEBUG_ASSERTCRASH(st_vTuneDLL != NULL, ("VTuneAPI DLL not found!\n"));
+		DEBUG_ASSERTCRASH(st_vTuneDLL != NULL, ("VTuneAPI DLL not found!"));
 	}
 	else
 	{

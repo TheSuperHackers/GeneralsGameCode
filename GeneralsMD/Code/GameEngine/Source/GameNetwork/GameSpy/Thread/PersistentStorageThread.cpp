@@ -545,7 +545,7 @@ void GameSpyPSMessageQueue::trackPlayerStats( PSPlayerStats stats )
 {
 #ifdef DEBUG_LOGGING
 	debugDumpPlayerStats( stats );
-	DEBUG_ASSERTCRASH(stats.id != 0, ("Tracking stats with ID of 0\n"));
+	DEBUG_ASSERTCRASH(stats.id != 0, ("Tracking stats with ID of 0"));
 #endif
 	PSPlayerStats newStats;
 	std::map<Int, PSPlayerStats>::iterator it = m_playerStats.find(stats.id);
@@ -1284,8 +1284,8 @@ PSPlayerStats GameSpyPSMessageQueueInterface::parsePlayerKVPairs( std::string kv
 			continue;
 		}
 
-		//DEBUG_ASSERTCRASH(generalMarker >= 0, ("Unknown KV Pair in persistent storage: [%s] = [%s]\n", k.c_str(), v.c_str()));
-		//DEBUG_ASSERTCRASH(generalMarker  < 0, ("Unknown KV Pair in persistent storage for PlayerTemplate %d: [%s] = [%s]\n", generalMarker, k.c_str(), v.c_str()));
+		//DEBUG_ASSERTCRASH(generalMarker >= 0, ("Unknown KV Pair in persistent storage: [%s] = [%s]", k.c_str(), v.c_str()));
+		//DEBUG_ASSERTCRASH(generalMarker  < 0, ("Unknown KV Pair in persistent storage for PlayerTemplate %d: [%s] = [%s]", generalMarker, k.c_str(), v.c_str()));
 	}
 
 	return s;

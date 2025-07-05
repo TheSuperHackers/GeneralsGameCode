@@ -788,7 +788,7 @@ void W3DDisplay::init( void )
 			WW3D::Shutdown();
 			WWMath::Shutdown();
 			throw ERROR_INVALID_D3D;	//failed to initialize.  User probably doesn't have DX 8.1
-			DEBUG_ASSERTCRASH( 0, ("Unable to set render device\n") );
+			DEBUG_ASSERTCRASH( 0, ("Unable to set render device") );
 			return;
 		}
 

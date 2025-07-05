@@ -64,14 +64,14 @@ void Keyboard::createStreamMessages( void )
 		{
 
 			msg = TheMessageStream->appendMessage( GameMessage::MSG_RAW_KEY_DOWN );
-			DEBUG_ASSERTCRASH( msg, ("Unable to append key down message to stream\n") );
+			DEBUG_ASSERTCRASH( msg, ("Unable to append key down message to stream") );
 
 		}  // end if
 		else if( BitIsSet( key->state, KEY_STATE_UP ) )
 		{
 
 			msg = TheMessageStream->appendMessage( GameMessage::MSG_RAW_KEY_UP );
-			DEBUG_ASSERTCRASH( msg, ("Unable to append key up message to stream\n") );
+			DEBUG_ASSERTCRASH( msg, ("Unable to append key up message to stream") );
 
 		}  // end else if
 		else

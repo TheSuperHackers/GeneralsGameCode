@@ -82,7 +82,7 @@ void INI::parseControlBarSchemeDefinition( INI *ini )
 
 	// find existing item if present
 	CBSchemeManager = TheControlBar->getControlBarSchemeManager();
-	DEBUG_ASSERTCRASH( CBSchemeManager, ("parseControlBarSchemeDefinition: Unable to Get CBSchemeManager\n") );
+	DEBUG_ASSERTCRASH( CBSchemeManager, ("parseControlBarSchemeDefinition: Unable to Get CBSchemeManager") );
 	if( !CBSchemeManager )
 		return;
 
@@ -91,7 +91,7 @@ void INI::parseControlBarSchemeDefinition( INI *ini )
 	CBScheme = CBSchemeManager->newControlBarScheme( name );
 
 	// sanity
-	DEBUG_ASSERTCRASH( CBScheme, ("parseControlBarSchemeDefinition: Unable to allocate Scheme '%s'\n", name.str()) );
+	DEBUG_ASSERTCRASH( CBScheme, ("parseControlBarSchemeDefinition: Unable to allocate Scheme '%s'", name.str()) );
 
 	// parse the ini definition
 	ini->initFromINI( CBScheme, CBSchemeManager->getFieldParse() );
