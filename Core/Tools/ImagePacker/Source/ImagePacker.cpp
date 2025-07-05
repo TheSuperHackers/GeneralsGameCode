@@ -83,7 +83,7 @@ TexturePage *ImagePacker::createNewTexturePage( void )
 	if( page == NULL )
 	{
 
-		DEBUG_ASSERTCRASH( page, ("Unable to allocate new texture page.\n") );
+		DEBUG_ASSERTCRASH( page, ("Unable to allocate new texture page.") );
 		return NULL;
 
 	}  // end if
@@ -1154,7 +1154,7 @@ Bool ImagePacker::init( void )
 	if( m_targa == NULL )
 	{
 		
-		DEBUG_ASSERTCRASH( m_targa, ("Unable to allocate targa header during init\n") );
+		DEBUG_ASSERTCRASH( m_targa, ("Unable to allocate targa header during init") );
 		MessageBox( NULL, "ImagePacker can't init, unable to create targa",
 								"Internal Error", MB_OK | MB_ICONERROR );
 		return FALSE;

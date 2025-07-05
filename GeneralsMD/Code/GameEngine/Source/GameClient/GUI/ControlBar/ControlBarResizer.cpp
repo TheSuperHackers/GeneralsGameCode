@@ -228,7 +228,7 @@ void INI::parseControlBarResizerDefinition( INI* ini )
 //
 //		// image not found, create a new one
 //		rWin = resizer->newResizerWindow(name);
-//		DEBUG_ASSERTCRASH( rWin, ("parseControlBarResizerDefinition: unable to allocate ResizerWindow for '%s'\n",
+//		DEBUG_ASSERTCRASH( rWin, ("parseControlBarResizerDefinition: unable to allocate ResizerWindow for '%s'",
 //															name.str()) );
 //
 //	}  // end if

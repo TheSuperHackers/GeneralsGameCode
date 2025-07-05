@@ -532,7 +532,7 @@ Bool TexturePage::addImageData( Byte *destBuffer,
 
 	// get the source image buffer
 	char *sourceBuffer = source.GetImage();
-	DEBUG_ASSERTCRASH( sourceBuffer, ("No Source buffer for source image\n") );
+	DEBUG_ASSERTCRASH( sourceBuffer, ("No Source buffer for source image") );
 
 	// get the source bytes per pixel
 	Int sourceBPP = TGA_BytesPerPixel( source.Header.PixelDepth );
@@ -863,7 +863,7 @@ TexturePage::TexturePage( Int width, Int height )
 	// create a "canvas" to represent used and unused areas
 	canvasSize = m_size.x * m_size.y;
 	m_canvas = new UnsignedByte[ canvasSize ];
-	DEBUG_ASSERTCRASH( m_canvas, ("Cannot allocate canvas for texture page\n") );
+	DEBUG_ASSERTCRASH( m_canvas, ("Cannot allocate canvas for texture page") );
 	memset( m_canvas, FREE, sizeof( UnsignedByte ) * canvasSize );
 
 }  // end TexturePage
@@ -899,7 +899,7 @@ Bool TexturePage::addImage( ImageInfo *image )
 	if( image == NULL )
 	{
 
-		DEBUG_ASSERTCRASH( image, ("TexturePage::addImage: NULL image!\n") );
+		DEBUG_ASSERTCRASH( image, ("TexturePage::addImage: NULL image!") );
 		return TRUE;  // say it was added
 
 	}  // end if
@@ -1181,8 +1181,8 @@ Bool TexturePage::generateTexture( void )
 		return FALSE;
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_packedImage == NULL, ("The packed image list must be NULL before generating texture\n") );
-	DEBUG_ASSERTCRASH( m_targa == NULL, ("The targa must be NULL before generating a new texture\n") );
+	DEBUG_ASSERTCRASH( m_packedImage == NULL, ("The packed image list must be NULL before generating texture") );
+	DEBUG_ASSERTCRASH( m_targa == NULL, ("The targa must be NULL before generating a new texture") );
 
 	// allocate targa to help us generate the final texture
 	m_targa = new Targa;

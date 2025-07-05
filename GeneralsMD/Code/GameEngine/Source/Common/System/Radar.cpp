@@ -336,7 +336,7 @@ void Radar::newMap( TerrainLogic *terrain )
 	// keep a pointer for our radar window
 	Int id = NAMEKEY( "ControlBar.wnd:LeftHUD" );
 	m_radarWindow = TheWindowManager->winGetWindowFromId( NULL, id );
-	DEBUG_ASSERTCRASH( m_radarWindow, ("Radar::newMap - Unable to find radar game window\n") );
+	DEBUG_ASSERTCRASH( m_radarWindow, ("Radar::newMap - Unable to find radar game window") );
 
 	// reset all the data in the radar
 	reset();
@@ -608,7 +608,7 @@ void Radar::removeObject( Object *obj )
 	{
 
 		// sanity
-		DEBUG_ASSERTCRASH( 0, ("Radar: Tried to remove object '%s' which was not found\n",
+		DEBUG_ASSERTCRASH( 0, ("Radar: Tried to remove object '%s' which was not found",
 											 obj->getTemplate()->getName().str()) );
 
 	}  // end else
@@ -1389,7 +1389,7 @@ static void xferRadarObjectList( Xfer *xfer, RadarObject **head )
 	RadarObject *radarObject;
 
 	// sanity
-	DEBUG_ASSERTCRASH( head != NULL, ("xferRadarObjectList - Invalid parameters\n" ));
+	DEBUG_ASSERTCRASH( head != NULL, ("xferRadarObjectList - Invalid parameters" ));
 
 	// version
 	XferVersion currentVersion = 1;

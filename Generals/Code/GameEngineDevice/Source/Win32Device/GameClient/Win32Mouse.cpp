@@ -408,7 +408,7 @@ void Win32Mouse::initCursorResources(void)
 
 				if (!loaded)
 					cursorResources[cursor][direction]=LoadCursorFromFile(resourcePath);
-				DEBUG_ASSERTCRASH(cursorResources[cursor][direction], ("MissingCursor %s\n",resourcePath));
+				DEBUG_ASSERTCRASH(cursorResources[cursor][direction], ("MissingCursor %s",resourcePath));
 			}
 		}
 //		SetCursor(cursorResources[cursor][m_directionFrame]);

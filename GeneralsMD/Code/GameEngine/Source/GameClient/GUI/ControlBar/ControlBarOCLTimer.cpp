@@ -54,7 +54,7 @@ void ControlBar::updateOCLTimerTextDisplay( UnsignedInt totalSeconds, Real perce
 	GameWindow *barWindow = TheWindowManager->winGetWindowFromId( NULL, barID );
 
 	// santiy
-	DEBUG_ASSERTCRASH( descWindow, ("Under construction window not found\n") );
+	DEBUG_ASSERTCRASH( descWindow, ("Under construction window not found") );
 
 	Int minutes = totalSeconds / 60;
 	Int seconds = totalSeconds - (minutes * 60);

@@ -340,7 +340,7 @@ Particle::Particle( ParticleSystem *system, const ParticleInfo *info )
 	if (system->isUsingDrawables())
 	{
 		const ThingTemplate *tmpl = TheThingFactory->findTemplate(system->getParticleTypeName());
-		DEBUG_ASSERTCRASH(tmpl, ("Drawable %s not found\n",system->getParticleTypeName().str()));
+		DEBUG_ASSERTCRASH(tmpl, ("Drawable %s not found",system->getParticleTypeName().str()));
 		if (tmpl)
 		{
 			m_drawable = TheThingFactory->newDrawable(tmpl);
@@ -1296,7 +1296,7 @@ ParticleSystem::~ParticleSystem()
 	if( m_slaveSystem )
 	{
 
-		DEBUG_ASSERTCRASH( m_slaveSystem->getMaster() == this, ("~ParticleSystem: Our slave doesn't have us as a master!\n") );
+		DEBUG_ASSERTCRASH( m_slaveSystem->getMaster() == this, ("~ParticleSystem: Our slave doesn't have us as a master!") );
 		m_slaveSystem->setMaster( NULL );
 		setSlave( NULL );
 
@@ -1306,7 +1306,7 @@ ParticleSystem::~ParticleSystem()
 	if( m_masterSystem )
 	{
 
-		DEBUG_ASSERTCRASH( m_masterSystem->getSlave() == this, ("~ParticleSystem: Our master doesn't have us as a slave!\n") );
+		DEBUG_ASSERTCRASH( m_masterSystem->getSlave() == this, ("~ParticleSystem: Our master doesn't have us as a slave!") );
 		m_masterSystem->setSlave( NULL );
 		setMaster( NULL );
 
@@ -2211,7 +2211,7 @@ void ParticleSystem::updateWindMotion( void )
 			Real endAngle = m_windMotionEndAngle;
 
 			// this only works when start angle is less than end angle
-			DEBUG_ASSERTCRASH( startAngle < endAngle, ("updateWindMotion: startAngle must be < endAngle\n") );
+			DEBUG_ASSERTCRASH( startAngle < endAngle, ("updateWindMotion: startAngle must be < endAngle") );
 
 			// how big is the total angle span
 			Real totalSpan = endAngle - startAngle;
@@ -2617,7 +2617,7 @@ void ParticleSystem::xfer( Xfer *xfer )
 			particle = createParticle( info, priority, TRUE );
 
 			// sanity
-			DEBUG_ASSERTCRASH( particle, ("ParticleSyste::xfer - Unable to create particle for loading\n") );
+			DEBUG_ASSERTCRASH( particle, ("ParticleSyste::xfer - Unable to create particle for loading") );
 
 			// read in the particle data
 			xfer->xferSnapshot( particle );
@@ -2976,8 +2976,8 @@ void ParticleSystemManager::init( void )
 	{
 
 		// sanity		
-		DEBUG_ASSERTCRASH( m_allParticlesHead[ i ] == NULL, ("INIT: ParticleSystem all particles head[%d] is not NULL!\n", i) );
-		DEBUG_ASSERTCRASH( m_allParticlesTail[ i ] == NULL, ("INIT: ParticleSystem all particles tail[%d] is not NULL!\n", i) );
+		DEBUG_ASSERTCRASH( m_allParticlesHead[ i ] == NULL, ("INIT: ParticleSystem all particles head[%d] is not NULL!", i) );
+		DEBUG_ASSERTCRASH( m_allParticlesTail[ i ] == NULL, ("INIT: ParticleSystem all particles tail[%d] is not NULL!", i) );
 
 		// just to be clean set them to NULL
 		m_allParticlesHead[ i ] = NULL;
@@ -3003,8 +3003,8 @@ void ParticleSystemManager::reset( void )
 	{
 
 		// sanity		
-		DEBUG_ASSERTCRASH( m_allParticlesHead[ i ] == NULL, ("RESET: ParticleSystem all particles head[%d] is not NULL!\n", i) );
-		DEBUG_ASSERTCRASH( m_allParticlesTail[ i ] == NULL, ("RESET: ParticleSystem all particles tail[%d] is not NULL!\n", i) );
+		DEBUG_ASSERTCRASH( m_allParticlesHead[ i ] == NULL, ("RESET: ParticleSystem all particles head[%d] is not NULL!", i) );
+		DEBUG_ASSERTCRASH( m_allParticlesTail[ i ] == NULL, ("RESET: ParticleSystem all particles tail[%d] is not NULL!", i) );
 
 		// just to be clean set them to NULL
 		m_allParticlesHead[ i ] = NULL;
