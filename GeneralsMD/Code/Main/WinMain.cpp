@@ -650,7 +650,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message,
 	}
 	catch (...)
 	{
-		RELEASE_CRASH(("Uncaught exception in Main::WndProc... probably should not happen\n"));
+		RELEASE_CRASH(("Uncaught exception in Main::WndProc... probably should not happen"));
 		// no rethrow
 	}
 
@@ -877,16 +877,16 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 				ShowWindow(ccwindow, SW_RESTORE);
 			}
 
-			DEBUG_LOG(("Generals is already running...Bail!\n"));
+			DEBUG_LOG(("Generals is already running...Bail!"));
 			delete TheVersion;
 			TheVersion = NULL;
 			shutdownMemoryManager();
 			DEBUG_SHUTDOWN();
 			return exitcode;
 		}
-		DEBUG_LOG(("Create Generals Mutex okay.\n"));
+		DEBUG_LOG(("Create Generals Mutex okay."));
 
-		DEBUG_LOG(("CRC message is %d\n", GameMessage::MSG_LOGIC_CRC));
+		DEBUG_LOG(("CRC message is %d", GameMessage::MSG_LOGIC_CRC));
 
 		// run the game main loop
 		exitcode = GameMain();

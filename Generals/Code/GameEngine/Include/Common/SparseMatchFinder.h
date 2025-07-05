@@ -172,7 +172,7 @@ private:
 		{
 			AsciiString curConditionStr;
 			bits.buildDescription(&curConditionStr); 
-			DEBUG_CRASH(("ambiguous model match in findBestInfoSlow \n\nbetween \n(%s)\n<and>\n(%s)\n\n(%d extra matches found)\n\ncurrent bits are (\n%s)\n",
+			DEBUG_CRASH(("ambiguous model match in findBestInfoSlow \n\nbetween \n(%s)\n<and>\n(%s)\n\n(%d extra matches found)\n\ncurrent bits are (\n%s)",
 					curBestMatchStr.str(),
 					dupMatchStr.str(),
 					numDupMatches,
@@ -208,7 +208,7 @@ public:
 		
 		const MATCHABLE* info = findBestInfoSlow(v, bits);
 
-		DEBUG_ASSERTCRASH(info != NULL, ("no suitable match for criteria was found!\n"));
+		DEBUG_ASSERTCRASH(info != NULL, ("no suitable match for criteria was found!"));
 		if (info != NULL) {
 			m_bestMatches[bits] = info;
 		}

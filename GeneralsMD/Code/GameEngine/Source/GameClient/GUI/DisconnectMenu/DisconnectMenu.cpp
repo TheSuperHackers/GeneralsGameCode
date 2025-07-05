@@ -294,7 +294,7 @@ void DisconnectMenu::removePlayer(Int slot, UnicodeString playerName) {
 }
 
 void DisconnectMenu::voteForPlayer(Int slot) {
-	DEBUG_LOG(("Casting vote for disconnect slot %d\n", slot));
+	DEBUG_LOG(("Casting vote for disconnect slot %d", slot));
 	TheNetwork->voteForPlayerDisconnect(slot); // Do this next.
 }
 

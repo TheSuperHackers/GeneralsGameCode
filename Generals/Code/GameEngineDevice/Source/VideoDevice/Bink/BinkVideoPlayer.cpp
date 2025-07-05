@@ -205,10 +205,10 @@ VideoStreamInterface* BinkVideoPlayer::createStream( HBINK handle )
 		// never let volume go to 0, as Bink will interpret that as "play at full volume".
 		Int mod = (Int) ((TheAudio->getVolume(AudioAffect_Speech) * 0.8f) * 100) + 1;
 		Int volume = (32768*mod)/100;
-		DEBUG_LOG(("BinkVideoPlayer::createStream() - About to set volume (%g -> %d -> %d\n",
+		DEBUG_LOG(("BinkVideoPlayer::createStream() - About to set volume (%g -> %d -> %d",
 			TheAudio->getVolume(AudioAffect_Speech), mod, volume));
 		BinkSetVolume( stream->m_handle,0, volume);
-		DEBUG_LOG(("BinkVideoPlayer::createStream() - set volume\n"));
+		DEBUG_LOG(("BinkVideoPlayer::createStream() - set volume"));
 	}
 
 	return stream;
@@ -224,14 +224,14 @@ VideoStreamInterface*	BinkVideoPlayer::open( AsciiString movieTitle )
 
 	const Video* pVideo = getVideo(movieTitle);
 	if (pVideo) {
-		DEBUG_LOG(("BinkVideoPlayer::createStream() - About to open bink file\n"));
+		DEBUG_LOG(("BinkVideoPlayer::createStream() - About to open bink file"));
 
 		if (TheGlobalData->m_modDir.isNotEmpty())
 		{
 			char filePath[ _MAX_PATH ];
 			sprintf( filePath, "%s%s\\%s.%s", TheGlobalData->m_modDir.str(), VIDEO_PATH, pVideo->m_filename.str(), VIDEO_EXT );
 			HBINK handle = BinkOpen(filePath , BINKPRELOADALL );
-			DEBUG_ASSERTLOG(!handle, ("opened bink file %s\n", filePath));
+			DEBUG_ASSERTLOG(!handle, ("opened bink file %s", filePath));
 			if (handle)
 			{
 				return createStream( handle );
@@ -241,16 +241,16 @@ VideoStreamInterface*	BinkVideoPlayer::open( AsciiString movieTitle )
 		char localizedFilePath[ _MAX_PATH ];
 		sprintf( localizedFilePath, VIDEO_LANG_PATH_FORMAT, GetRegistryLanguage().str(), pVideo->m_filename.str(), VIDEO_EXT );
 		HBINK handle = BinkOpen(localizedFilePath , BINKPRELOADALL );
-		DEBUG_ASSERTLOG(!handle, ("opened localized bink file %s\n", localizedFilePath));
+		DEBUG_ASSERTLOG(!handle, ("opened localized bink file %s", localizedFilePath));
 		if (!handle)
 		{
 			char filePath[ _MAX_PATH ];
 			sprintf( filePath, "%s\\%s.%s", VIDEO_PATH, pVideo->m_filename.str(), VIDEO_EXT );
 			handle = BinkOpen(filePath , BINKPRELOADALL );
-			DEBUG_ASSERTLOG(!handle, ("opened bink file %s\n", localizedFilePath));
+			DEBUG_ASSERTLOG(!handle, ("opened bink file %s", localizedFilePath));
 		}
 
-		DEBUG_LOG(("BinkVideoPlayer::createStream() - About to create stream\n"));
+		DEBUG_LOG(("BinkVideoPlayer::createStream() - About to create stream"));
 		stream = createStream( handle );
 	}
 

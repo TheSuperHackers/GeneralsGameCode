@@ -270,7 +270,7 @@ void PingThreadClass::Thread_Function()
 				IP = inet_addr(hostnameBuffer);
 				in_addr hostNode;
 				hostNode.s_addr = IP;
-				DEBUG_LOG(("pinging %s - IP = %s\n", hostnameBuffer, inet_ntoa(hostNode) ));
+				DEBUG_LOG(("pinging %s - IP = %s", hostnameBuffer, inet_ntoa(hostNode) ));
 			}
 			else
 			{
@@ -279,7 +279,7 @@ void PingThreadClass::Thread_Function()
 				hostStruct = gethostbyname(hostnameBuffer);
 				if (hostStruct == NULL)
 				{
-					DEBUG_LOG(("pinging %s - host lookup failed\n", hostnameBuffer));
+					DEBUG_LOG(("pinging %s - host lookup failed", hostnameBuffer));
 					
 					// Even though this failed to resolve IP, still need to send a
 					//   callback.
@@ -289,7 +289,7 @@ void PingThreadClass::Thread_Function()
 				{
 					hostNode = (in_addr *) hostStruct->h_addr;
 					IP = hostNode->s_addr;
-					DEBUG_LOG(("pinging %s IP = %s\n", hostnameBuffer, inet_ntoa(*hostNode) ));
+					DEBUG_LOG(("pinging %s IP = %s", hostnameBuffer, inet_ntoa(*hostNode) ));
 				}
 			}
 
@@ -459,7 +459,7 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
    hICMP_DLL = LoadLibrary("ICMP.DLL");
    if (hICMP_DLL == 0)
    {
-      DEBUG_LOG(("LoadLibrary() failed: Unable to locate ICMP.DLL!\n"));
+      DEBUG_LOG(("LoadLibrary() failed: Unable to locate ICMP.DLL!"));
       goto cleanup;
    }
 
@@ -475,7 +475,7 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
          (!lpfnIcmpCloseHandle) ||
          (!lpfnIcmpSendEcho))
    {
-      DEBUG_LOG(("GetProcAddr() failed for at least one function.\n"));
+      DEBUG_LOG(("GetProcAddr() failed for at least one function."));
       goto cleanup;
    }
 
@@ -541,13 +541,13 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
       dwStatus = *(DWORD *) & (achRepData[4]);
       if (dwStatus != IP_SUCCESS)
       {
-         DEBUG_LOG(("ICMPERR: %d\n", dwStatus));
+         DEBUG_LOG(("ICMPERR: %d", dwStatus));
       }
 
    }
    else
    {
-      DEBUG_LOG(("IcmpSendEcho() failed: %d\n", dwReplyCount));
+      DEBUG_LOG(("IcmpSendEcho() failed: %d", dwReplyCount));
       // Ok we didn't get a packet, just say everything's OK
       //  and the time was -1
       pingTime = -1;
@@ -561,7 +561,7 @@ Int PingThreadClass::doPing(UnsignedInt IP, Int timeout)
    fRet = lpfnIcmpCloseHandle(hICMP);
    if (fRet == FALSE)
    {
-      DEBUG_LOG(("Error closing ICMP handle\n"));
+      DEBUG_LOG(("Error closing ICMP handle"));
    }
 
    // Say what you will about goto's but it's handy for stuff like this

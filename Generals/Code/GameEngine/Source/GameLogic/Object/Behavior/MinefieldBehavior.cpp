@@ -223,7 +223,7 @@ UpdateSleepTime MinefieldBehavior::update()
 		if (TheGameLogic->findObjectByID(m_immunes[i].id) == NULL ||
 				now > m_immunes[i].collideTime + 2)
 		{
-			//DEBUG_LOG(("expiring an immunity %d\n",m_immunes[i].id));
+			//DEBUG_LOG(("expiring an immunity %d",m_immunes[i].id));
 			m_immunes[i].id = INVALID_ID;	// he's dead, jim.
 			m_immunes[i].collideTime = 0;
 		}
@@ -352,7 +352,7 @@ void MinefieldBehavior::onCollide( Object *other, const Coord3D *loc, const Coor
 	{
 		if (m_immunes[i].id == other->getID())
 		{
-			//DEBUG_LOG(("ignoring due to immunity %d\n",m_immunes[i].id));
+			//DEBUG_LOG(("ignoring due to immunity %d",m_immunes[i].id));
 			m_immunes[i].collideTime = now;
 			return;
 		}
@@ -392,7 +392,7 @@ void MinefieldBehavior::onCollide( Object *other, const Coord3D *loc, const Coor
 		{
 			if (m_immunes[i].id == INVALID_ID || m_immunes[i].id == other->getID())
 			{
-				//DEBUG_LOG(("add/update immunity %d\n",m_immunes[i].id));
+				//DEBUG_LOG(("add/update immunity %d",m_immunes[i].id));
 				m_immunes[i].id = other->getID();
 				m_immunes[i].collideTime = now;
 
@@ -667,7 +667,7 @@ void MinefieldBehavior::xfer( Xfer *xfer )
 	if( maxImmunity != MAX_IMMUNITY )
 	{
 
-		DEBUG_CRASH(( "MinefieldBehavior::xfer - MAX_IMMUNITY has changed size, you must version this code and then you can remove this error message\n" ));
+		DEBUG_CRASH(( "MinefieldBehavior::xfer - MAX_IMMUNITY has changed size, you must version this code and then you can remove this error message" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if

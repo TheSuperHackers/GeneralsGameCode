@@ -601,7 +601,7 @@ void BoneFXUpdate::xfer( Xfer *xfer )
 		if( m_particleSystemIDs.empty() == FALSE )
 		{
 
-			DEBUG_CRASH(( "BoneFXUpdate::xfer - m_particleSystemIDs should be empty but is not\n" ));
+			DEBUG_CRASH(( "BoneFXUpdate::xfer - m_particleSystemIDs should be empty but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if

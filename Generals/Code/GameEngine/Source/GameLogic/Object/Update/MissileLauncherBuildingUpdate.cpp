@@ -78,7 +78,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 	switch (dst)
 	{
 		case DOOR_CLOSED:
-			DEBUG_LOG(("switch to state DOOR_CLOSED at %d\n",now));
+			DEBUG_LOG(("switch to state DOOR_CLOSED at %d",now));
 			/// @todo srj -- for now, this assumes at most one door
 			clr.set(MODELCONDITION_DOOR_1_WAITING_TO_CLOSE);
 			clr.set(MODELCONDITION_DOOR_1_CLOSING);
@@ -98,7 +98,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 			break;
 
 		case DOOR_OPENING:
-			DEBUG_LOG(("switch to state DOOR_OPENING at %d\n",now));
+			DEBUG_LOG(("switch to state DOOR_OPENING at %d",now));
 			/// @todo srj -- for now, this assumes at most one door
 			clr.set(MODELCONDITION_DOOR_1_WAITING_TO_CLOSE);
 			clr.set(MODELCONDITION_DOOR_1_CLOSING);
@@ -120,7 +120,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 			break;
 
 		case DOOR_OPEN:
-			DEBUG_LOG(("switch to state DOOR_OPEN at %d\n",now));
+			DEBUG_LOG(("switch to state DOOR_OPEN at %d",now));
 			/// @todo srj -- for now, this assumes at most one door
 			clr.set(MODELCONDITION_DOOR_1_WAITING_TO_CLOSE);
 			clr.set(MODELCONDITION_DOOR_1_CLOSING);
@@ -140,7 +140,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 			break;
 
 		case DOOR_WAITING_TO_CLOSE:
-			DEBUG_LOG(("switch to state DOOR_WAITING_TO_CLOSE at %d\n",now));
+			DEBUG_LOG(("switch to state DOOR_WAITING_TO_CLOSE at %d",now));
 			/// @todo srj -- for now, this assumes at most one door
 			clr.set(MODELCONDITION_DOOR_1_CLOSING);
 			clr.set(MODELCONDITION_DOOR_1_OPENING);
@@ -160,7 +160,7 @@ void MissileLauncherBuildingUpdate::switchToState(DoorStateType dst)
 			break;
 
 		case DOOR_CLOSING:
-			DEBUG_LOG(("switch to state DOOR_CLOSING at %d\n",now));
+			DEBUG_LOG(("switch to state DOOR_CLOSING at %d",now));
 			/// @todo srj -- for now, this assumes at most one door
 			clr.set(MODELCONDITION_DOOR_1_WAITING_TO_CLOSE);
 			clr.set(MODELCONDITION_DOOR_1_WAITING_OPEN);
@@ -257,7 +257,7 @@ UpdateSleepTime MissileLauncherBuildingUpdate::update( void )
 
 		if (m_doorState != DOOR_OPEN && m_specialPowerModule->isReady())
 		{
-			DEBUG_LOG(("*** had to POP the door open!\n"));
+			DEBUG_LOG(("*** had to POP the door open!"));
 			switchToState(DOOR_OPEN);
 		}
 		else if (m_doorState == DOOR_CLOSED && now >= whenToStartOpening)

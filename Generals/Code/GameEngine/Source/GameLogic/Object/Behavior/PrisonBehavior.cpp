@@ -437,7 +437,7 @@ void PrisonBehavior::xfer( Xfer *xfer )
 		if( m_visualList != NULL )
 		{
 
-			DEBUG_CRASH(( "PrisonBehavior::xfer - the visual list should be empty but is not\n" ));
+			DEBUG_CRASH(( "PrisonBehavior::xfer - the visual list should be empty but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if

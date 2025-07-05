@@ -44,14 +44,14 @@ static int doCrashBox(const char *buffer, bool logResult)
 		case IDABORT:
 #ifdef DEBUG_LOGGING
 			if (logResult)
-				DebugLog("[Abort]\n");
+				DebugLog("[Abort]");
 #endif
 			_exit(1);
 			break;
 		case IDRETRY:
 #ifdef DEBUG_LOGGING
 			if (logResult)
-				DebugLog("[Retry]\n");
+				DebugLog("[Retry]");
 #endif
 			::DebugBreak();
 			break;
@@ -59,7 +59,7 @@ static int doCrashBox(const char *buffer, bool logResult)
 #ifdef DEBUG_LOGGING
 			// do nothing, just keep going
 			if (logResult)
-				DebugLog("[Ignore]\n");
+				DebugLog("[Ignore]");
 #endif
 			break;
 	}
@@ -77,7 +77,8 @@ void DebugLog(const char *fmt, ...)
 	va_end( va );
 
 	OutputDebugString(theBuffer);
-	printf( "%s", theBuffer );
+	OutputDebugString("\n");
+	printf( "%s\n", theBuffer );
 }
 
 #endif // defined(DEBUG) || defined(DEBUG_LOGGING)
@@ -98,9 +99,10 @@ void DebugCrash(const char *format, ...)
 		::MessageBox(NULL, "String too long for debug buffers", "", MB_OK|MB_APPLMODAL);
 
 	OutputDebugString(theBuffer);
-	printf( "%s", theBuffer );
+	OutputDebugString("\n");
+	printf( "%s\n", theBuffer );
 
-	strcat(theBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue\n");
+	strcat(theBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue");
 
 	int result = doCrashBox(theBuffer, true);
 

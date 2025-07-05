@@ -579,7 +579,7 @@ void TexProjectClass::Init_Multiplicative(void)
 			MaterialPass->Set_Texture(grad_tex,1);
 			grad_tex->Release_Ref();
 		} else {
-			WWDEBUG_SAY(("Could not find texture: MultProjectorGradient.tga!\n"));
+			WWDEBUG_SAY(("Could not find texture: MultProjectorGradient.tga!"));
 		}
 
 	} else {
@@ -681,7 +681,7 @@ void TexProjectClass::Init_Additive(void)
 		MaterialPass->Set_Texture(grad_tex,1);
 		grad_tex->Release_Ref();
 	} else {
-		WWDEBUG_SAY(("Could not find texture: AddProjectorGradient.tga!\n"));
+		WWDEBUG_SAY(("Could not find texture: AddProjectorGradient.tga!"));
 	}
 
 #if (DEBUG_SHADOW_RENDERING)
@@ -870,7 +870,7 @@ bool TexProjectClass::Compute_Perspective_Projection
 )
 {
 	if (model == NULL) {
-		WWDEBUG_SAY(("Attempting to generate projection for a NULL model\r\n"));
+		WWDEBUG_SAY(("Attempting to generate projection for a NULL model"));
 		return false;
 	}
 
@@ -997,7 +997,7 @@ bool TexProjectClass::Compute_Ortho_Projection
 )
 {
 	if (model == NULL) {
-		WWDEBUG_SAY(("Attempting to generate projection for a NULL model\r\n"));
+		WWDEBUG_SAY(("Attempting to generate projection for a NULL model"));
 		return false;
 	}
 

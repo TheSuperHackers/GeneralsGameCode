@@ -2178,7 +2178,7 @@ ImageAndColorInfo *LayoutScheme::findEntry( StateIdentifier id )
 	if( id < 0 || id >= NUM_STATE_IDENTIFIERS )
 	{
 
-		DEBUG_LOG(( "Illegal state to to layout 'findEntry' '%d'\n", id ));
+		DEBUG_LOG(( "Illegal state to to layout 'findEntry' '%d'", id ));
 		assert( 0 );
 		return NULL;
 
@@ -2207,7 +2207,7 @@ ImageAndColorInfo *LayoutScheme::getImageAndColor( StateIdentifier id )
 	if( id < 0 || id >= NUM_STATE_IDENTIFIERS )
 	{
 
-		DEBUG_LOG(( "getImageAndColor: Illegal state '%d'\n", id ));
+		DEBUG_LOG(( "getImageAndColor: Illegal state '%d'", id ));
 		assert( 0 );
 		return NULL;
 
@@ -2229,7 +2229,7 @@ void LayoutScheme::storeImageAndColor( StateIdentifier id, const Image *image,
 	if( id < 0 || id >= NUM_STATE_IDENTIFIERS )
 	{
 
-		DEBUG_LOG(( "Illegal state identifier in layout scheme store image and color '%d'\n", id ));
+		DEBUG_LOG(( "Illegal state identifier in layout scheme store image and color '%d'", id ));
 		assert( 0 );
 		return;
 
@@ -2262,7 +2262,7 @@ Bool LayoutScheme::saveScheme( char *filename )
 	if( fp == NULL )
 	{
 
-		DEBUG_LOG(( "saveScheme: Unable to open file '%s'\n", filename ));
+		DEBUG_LOG(( "saveScheme: Unable to open file '%s'", filename ));
 		MessageBox( TheEditor->getWindowHandle(),
 								"Unable to open scheme for for saving.  Read only?", "Save Error", MB_OK );
 		return FALSE;
@@ -2354,7 +2354,7 @@ Bool LayoutScheme::loadScheme( char *filename )
 		if( version != SCHEME_VERSION )
 		{
 
-			DEBUG_LOG(( "loadScheme: Old layout file version '%d'\n", version ));
+			DEBUG_LOG(( "loadScheme: Old layout file version '%d'", version ));
 			MessageBox( TheEditor->getWindowHandle(),
 									"Old layout version, cannot open.", "Old File", MB_OK );
 			return FALSE;

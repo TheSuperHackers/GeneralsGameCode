@@ -52,7 +52,7 @@ void ControlBar::updateConstructionTextDisplay( Object *obj )
 	GameWindow *descWindow = TheWindowManager->winGetWindowFromId( NULL, descID );
 
 	// santiy
-	DEBUG_ASSERTCRASH( descWindow, ("Under construction window not found\n") );
+	DEBUG_ASSERTCRASH( descWindow, ("Under construction window not found") );
 
 	// format the message
 	text.format( TheGameText->fetch( "CONTROLBAR:UnderConstructionDesc" ), 

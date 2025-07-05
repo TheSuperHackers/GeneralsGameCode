@@ -57,9 +57,9 @@ struct UnicodeStringsEqual
 		Bool retval = (a.compareNoCase(b) == 0);
 		DEBUG_LOG(("Comparing %ls with %ls, return value is ", a.str(), b.str()));
 		if (retval) {
-			DEBUG_LOG(("true.\n"));
+			DEBUG_LOG(("true."));
 		} else {
-			DEBUG_LOG(("false.\n"));
+			DEBUG_LOG(("false."));
 		}
 		return retval;
 	}

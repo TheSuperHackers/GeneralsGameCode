@@ -352,13 +352,13 @@ void HAnimManagerClass::Free_All_Anims_With_Exclusion_List(const W3DExclusionLis
 		HAnimClass *anim = it.Get_Current_Anim();
 
 		if ((anim->Num_Refs() == 1) && (exclusion_list.Is_Excluded(anim) == false)) {
-			//WWDEBUG_SAY(("deleting HAnim %s\n",anim->Get_Name()));
+			//WWDEBUG_SAY(("deleting HAnim %s",anim->Get_Name()));
 			AnimPtrTable->Remove(anim);
 			anim->Release_Ref();
 		}
 		//else
 		//{
-		//	WWDEBUG_SAY(("keeping HAnim %s (ref %d)\n",anim->Get_Name(),anim->Num_Refs()));
+		//	WWDEBUG_SAY(("keeping HAnim %s (ref %d)",anim->Get_Name(),anim->Num_Refs()));
 		//}
 	}
 }

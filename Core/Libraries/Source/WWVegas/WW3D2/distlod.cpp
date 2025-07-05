@@ -116,7 +116,7 @@ RenderObjClass * DistLODPrototypeClass::Create(void)
 	}
 	dist->Release_Ref();
 	
-	WWDEBUG_SAY(("OBSOLETE Dist-LOD model found! Please re-export %s!\r\n",name));
+	WWDEBUG_SAY(("OBSOLETE Dist-LOD model found! Please re-export %s!",name));
 	HLodClass * hlod = NEW_REF(HLodClass , (name,robj,count));
 
 	// Now, release the temporary refs and memory for the name

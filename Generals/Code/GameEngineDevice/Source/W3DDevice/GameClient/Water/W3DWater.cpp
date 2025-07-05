@@ -1342,7 +1342,7 @@ void WaterRenderObjClass::loadSetting( Setting *setting, TimeOfDay timeOfDay )
 	SurfaceClass::SurfaceDescription surfaceDesc;
 
 	// sanity
-	DEBUG_ASSERTCRASH( setting, ("WaterRenderObjClass::loadSetting, NULL setting\n") );
+	DEBUG_ASSERTCRASH( setting, ("WaterRenderObjClass::loadSetting, NULL setting") );
 	
 	// textures
 	setting->skyTexture = WW3DAssetManager::Get_Instance()->Get_Texture( WaterSettings[ timeOfDay ].m_skyTextureFile.str() );
@@ -2437,7 +2437,7 @@ void WaterRenderObjClass::renderWaterMesh(void)
 
 inline void WaterRenderObjClass::setGridVertexHeight(Int x, Int y, Real value)
 {
-	DEBUG_ASSERTCRASH( x < (m_gridCellsX+1) && y < (m_gridCellsY+1), ("Invalid Water Mesh Coordinates\n") );
+	DEBUG_ASSERTCRASH( x < (m_gridCellsX+1) && y < (m_gridCellsY+1), ("Invalid Water Mesh Coordinates") );
 
 	if (m_meshData)
 	{
@@ -3425,7 +3425,7 @@ void WaterRenderObjClass::xfer( Xfer *xfer )
 	if( cellsX != m_gridCellsX )
 	{
 
-		DEBUG_CRASH(( "WaterRenderObjClass::xfer - cells X mismatch\n" ));
+		DEBUG_CRASH(( "WaterRenderObjClass::xfer - cells X mismatch" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -3436,7 +3436,7 @@ void WaterRenderObjClass::xfer( Xfer *xfer )
 	if( cellsY != m_gridCellsY )
 	{
 	
-		DEBUG_CRASH(( "WaterRenderObjClass::xfer - cells Y mismatch\n" ));
+		DEBUG_CRASH(( "WaterRenderObjClass::xfer - cells Y mismatch" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if

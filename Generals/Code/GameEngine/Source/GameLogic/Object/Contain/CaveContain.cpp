@@ -411,7 +411,7 @@ void CaveContain::xfer( Xfer *xfer )
 			if( m_originalTeam == NULL )
 			{
 
-				DEBUG_CRASH(( "CaveContain::xfer - Unable to find original team by id\n" ));
+				DEBUG_CRASH(( "CaveContain::xfer - Unable to find original team by id" ));
 				throw SC_INVALID_DATA;
 
 			}  // end if

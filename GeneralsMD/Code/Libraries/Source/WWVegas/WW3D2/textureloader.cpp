@@ -509,7 +509,7 @@ IDirect3DTexture8* TextureLoader::Load_Thumbnail(const StringClass& filename, co
 	DX8CALL(UpdateTexture(sysmem_texture,d3d_texture));
 	sysmem_texture->Release();
 
-	WWDEBUG_SAY(("Created non-managed texture (%s)\n",filename));
+	WWDEBUG_SAY(("Created non-managed texture (%s)",filename));
 	return d3d_texture;
 #endif
 }
@@ -1568,7 +1568,7 @@ bool TextureLoadTaskClass::Begin_Uncompressed_Load(void)
    	&&	src_format != WW3D_FORMAT_R8G8B8 
   		&&	src_format != WW3D_FORMAT_X8R8G8B8 ) 
 	{
-		WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!\n", Texture->Get_Full_Path().str()));
+		WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!", Texture->Get_Full_Path().str()));
 	}
 
 	// Destination size will be the next power of two square from the larger width and height...
@@ -1577,7 +1577,7 @@ bool TextureLoadTaskClass::Begin_Uncompressed_Load(void)
 	TextureLoader::Validate_Texture_Size(width, height,depth);
 	if (width != ow || height != oh) 
 	{
-		WWDEBUG_SAY(("Invalid texture size, scaling required. Texture: %s, size: %d x %d -> %d x %d\n", Texture->Get_Full_Path().str(), ow, oh, width, height));
+		WWDEBUG_SAY(("Invalid texture size, scaling required. Texture: %s, size: %d x %d -> %d x %d", Texture->Get_Full_Path().str(), ow, oh, width, height));
 	}
 
 	Width		= width;
@@ -1722,7 +1722,7 @@ bool TextureLoadTaskClass::Begin_Uncompressed_Load(void)
 	if (	src_format != WW3D_FORMAT_A8R8G8B8 
 		&&	src_format != WW3D_FORMAT_R8G8B8 
 		&&	src_format != WW3D_FORMAT_X8R8G8B8) {
-		WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!\n", Texture->Get_Full_Path()));
+		WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!", Texture->Get_Full_Path()));
 	}
 
 	// Destination size will be the next power of two square from the larger width and height...
@@ -1749,7 +1749,7 @@ bool TextureLoadTaskClass::Begin_Uncompressed_Load(void)
 	unsigned oh = height;
 	TextureLoader::Validate_Texture_Size(width, height);
 	if (width != ow || height != oh) {
-		WWDEBUG_SAY(("Invalid texture size, scaling required. Texture: %s, size: %d x %d -> %d x %d\n", Texture->Get_Full_Path(), ow, oh, width, height));
+		WWDEBUG_SAY(("Invalid texture size, scaling required. Texture: %s, size: %d x %d -> %d x %d", Texture->Get_Full_Path(), ow, oh, width, height));
 	}
 
 	Width		= width;
@@ -1818,7 +1818,7 @@ void TextureLoadTaskClass::Unlock_Surfaces(void)
 	DX8CALL(UpdateTexture(Peek_D3D_Texture(),tex));
 	Peek_D3D_Texture()->Release();
 	D3DTexture=tex;
-	WWDEBUG_SAY(("Created non-managed texture (%s)\n",Texture->Get_Full_Path()));
+	WWDEBUG_SAY(("Created non-managed texture (%s)",Texture->Get_Full_Path()));
 #endif
 
 }
@@ -2213,7 +2213,7 @@ void CubeTextureLoadTaskClass::Unlock_Surfaces(void)
 	DX8CALL(UpdateTexture(Peek_D3D_Volume_Texture(),tex));
 	Peek_D3D_Volume_Texture()->Release();
 	D3DTexture=tex;
-	WWDEBUG_SAY(("Created non-managed texture (%s)\n",Texture->Get_Full_Path()));
+	WWDEBUG_SAY(("Created non-managed texture (%s)",Texture->Get_Full_Path()));
 #endif
 
 }
@@ -2350,7 +2350,7 @@ bool CubeTextureLoadTaskClass::Begin_Uncompressed_Load(void)
    		&&	src_format != WW3D_FORMAT_R8G8B8 
   			&&	src_format != WW3D_FORMAT_X8R8G8B8 ) 
 	{
-		WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!\n", Texture->Get_Full_Path().str()));
+		WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!", Texture->Get_Full_Path().str()));
 	}
 
 	// Destination size will be the next power of two square from the larger width and height...
@@ -2359,7 +2359,7 @@ bool CubeTextureLoadTaskClass::Begin_Uncompressed_Load(void)
 	TextureLoader::Validate_Texture_Size(width, height,depth);
 	if (width != ow || height != oh) 
 	{
-		WWDEBUG_SAY(("Invalid texture size, scaling required. Texture: %s, size: %d x %d -> %d x %d\n", Texture->Get_Full_Path().str(), ow, oh, width, height));
+		WWDEBUG_SAY(("Invalid texture size, scaling required. Texture: %s, size: %d x %d -> %d x %d", Texture->Get_Full_Path().str(), ow, oh, width, height));
 	}
 
 	Width		= width;
@@ -2573,7 +2573,7 @@ void VolumeTextureLoadTaskClass::Unlock_Surfaces()
 	DX8CALL(UpdateTexture(Peek_D3D_Volume_Texture(),tex));
 	Peek_D3D_Volume_Texture()->Release();
 	D3DTexture=tex;
-	WWDEBUG_SAY(("Created non-managed texture (%s)\n",Texture->Get_Full_Path()));
+	WWDEBUG_SAY(("Created non-managed texture (%s)",Texture->Get_Full_Path()));
 #endif
 
 }
@@ -2716,7 +2716,7 @@ bool VolumeTextureLoadTaskClass::Begin_Uncompressed_Load(void)
    		&&	src_format != WW3D_FORMAT_R8G8B8 
   			&&	src_format != WW3D_FORMAT_X8R8G8B8 ) 
 	{
-		WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!\n", Texture->Get_Full_Path().str()));
+		WWDEBUG_SAY(("Invalid TGA format used in %s - only 24 and 32 bit formats should be used!", Texture->Get_Full_Path().str()));
 	}
 
 	// Destination size will be the next power of two square from the larger width and height...
@@ -2726,7 +2726,7 @@ bool VolumeTextureLoadTaskClass::Begin_Uncompressed_Load(void)
 	TextureLoader::Validate_Texture_Size(width, height, depth);
 	if (width != ow || height != oh || depth != od) 
 	{
-		WWDEBUG_SAY(("Invalid texture size, scaling required. Texture: %s, size: %d x %d -> %d x %d\n", Texture->Get_Full_Path().str(), ow, oh, width, height));
+		WWDEBUG_SAY(("Invalid texture size, scaling required. Texture: %s, size: %d x %d -> %d x %d", Texture->Get_Full_Path().str(), ow, oh, width, height));
 	}
 
 	Width		= width;

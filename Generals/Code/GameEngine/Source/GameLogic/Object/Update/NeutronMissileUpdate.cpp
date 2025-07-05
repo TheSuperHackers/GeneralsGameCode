@@ -215,7 +215,7 @@ void NeutronMissileUpdate::doLaunch( void )
 		if (!launcher->getDrawable() ||
 			!launcher->getDrawable()->getProjectileLaunchOffset(m_attach_wslot, m_attach_specificBarrelToUse, &attachTransform, TURRET_INVALID, NULL))
 		{
-			DEBUG_CRASH(("ProjectileLaunchPos %d %d not found!\n",m_attach_wslot, m_attach_specificBarrelToUse));
+			DEBUG_CRASH(("ProjectileLaunchPos %d %d not found!",m_attach_wslot, m_attach_specificBarrelToUse));
 			attachTransform.Make_Identity();
 		}
 
@@ -417,9 +417,9 @@ void NeutronMissileUpdate::doAttack( void )
 	pos.y += m_vel.y;
 	pos.z += m_vel.z;
 
-//DEBUG_LOG(("vel %f accel %f z %f\n",m_vel.length(),m_accel.length(), pos.z));
+//DEBUG_LOG(("vel %f accel %f z %f",m_vel.length(),m_accel.length(), pos.z));
 //Real vm = sqrt(m_vel.x*m_vel.x+m_vel.y*m_vel.y+m_vel.z*m_vel.z);
-//DEBUG_LOG(("vel is %f %f %f (%f)\n",m_vel.x,m_vel.y,m_vel.z,vm));
+//DEBUG_LOG(("vel is %f %f %f (%f)",m_vel.x,m_vel.y,m_vel.z,vm));
 	getObject()->setTransformMatrix( &mx );
 	getObject()->setPosition( &pos );
 
@@ -513,7 +513,7 @@ UpdateSleepTime NeutronMissileUpdate::update( void )
 	{
 		Coord3D newPos = *getObject()->getPosition();
 		Real distThisTurn = sqrt(sqr(newPos.x-oldPos.x) + sqr(newPos.y-oldPos.y) + sqr(newPos.z-oldPos.z));
-		//DEBUG_LOG(("noTurnDist goes from %f to %f\n",m_noTurnDistLeft,m_noTurnDistLeft-distThisTurn));
+		//DEBUG_LOG(("noTurnDist goes from %f to %f",m_noTurnDistLeft,m_noTurnDistLeft-distThisTurn));
 		m_noTurnDistLeft -= distThisTurn;
 	}
 
@@ -619,7 +619,7 @@ void NeutronMissileUpdate::xfer( Xfer *xfer )
 			if( m_exhaustSysTmpl == NULL )
 			{
 
-				DEBUG_CRASH(( "NeutronMissileUpdate::xfer - Unable to find particle system '%s'\n", name.str() ));
+				DEBUG_CRASH(( "NeutronMissileUpdate::xfer - Unable to find particle system '%s'", name.str() ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
