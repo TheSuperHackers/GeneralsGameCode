@@ -173,7 +173,7 @@ ThingTemplate* ThingFactory::newOverride( ThingTemplate *thingTemplate )
 
 	// sanity just for debuging, the weapon must be in the master list to do overrides
 	DEBUG_ASSERTCRASH( findTemplate( thingTemplate->getName() ) != NULL,
-										 ("newOverride(): Thing template '%s' not in master list\n", 
+										 ("newOverride(): Thing template '%s' not in master list",
 										 thingTemplate->getName().str()) );
 
 	// find final override of the 'parent' template

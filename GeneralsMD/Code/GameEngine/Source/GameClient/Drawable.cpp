@@ -216,7 +216,7 @@ static const char *drawableIconIndexToName( DrawableIconType iconIndex )
 {
 
 	DEBUG_ASSERTCRASH( iconIndex >= ICON_FIRST && iconIndex < MAX_ICONS,
-										 ("drawableIconIndexToName - Illegal index '%d'\n", iconIndex) );
+										 ("drawableIconIndexToName - Illegal index '%d'", iconIndex) );
 
 	return TheDrawableIconNames[ iconIndex ];
 
@@ -4827,7 +4827,7 @@ void Drawable::xferDrawableModules( Xfer *xfer )
 				// write module identifier
 				moduleIdentifier = TheNameKeyGenerator->keyToName( (*m)->getModuleTagNameKey() );
 				DEBUG_ASSERTCRASH( moduleIdentifier != AsciiString::TheEmptyString,
-													 ("Drawable::xferDrawableModules - module name key does not translate to a string!\n") );
+													 ("Drawable::xferDrawableModules - module name key does not translate to a string!") );
 				xfer->xferAsciiString( &moduleIdentifier );
 
 				// begin data block
@@ -5188,7 +5188,7 @@ void Drawable::xfer( Xfer *xfer )
 
 		// sanity, we don't write old versions we can only read them
 		DEBUG_ASSERTCRASH( xfer->getXferMode() == XFER_LOAD, 
-											 ("Drawable::xfer - Writing an old format!!!\n") );
+											 ("Drawable::xfer - Writing an old format!!!") );
 
 		// condition state, note that when we're loading we need to force a replace of these flags
 		m_conditionState.xfer( xfer );

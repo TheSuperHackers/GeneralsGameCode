@@ -3155,7 +3155,7 @@ void InGameUI::deselectDrawable( Drawable *draw )
 
 		// sanity
 		DEBUG_ASSERTCRASH( findIt != m_selectedDrawables.end(),
-											 ("deselectDrawable: Drawable not found in the selected drawable list '%s'\n",
+											 ("deselectDrawable: Drawable not found in the selected drawable list '%s'",
 											 draw->getTemplate()->getName().str()) );
 
 		// remove it from the selected drawable list		

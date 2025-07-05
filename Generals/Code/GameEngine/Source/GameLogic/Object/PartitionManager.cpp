@@ -1614,7 +1614,7 @@ ObjectShroudStatus PartitionData::getShroudedStatus(Int playerIndex)
 {
 	// sanity
 	DEBUG_ASSERTCRASH( playerIndex >= 0 && playerIndex < MAX_PLAYER_COUNT, 
-										 ("PartitionData::getShroudedStatus - Invalid player index '%d'\n", playerIndex) );
+										 ("PartitionData::getShroudedStatus - Invalid player index '%d'", playerIndex) );
 
 	if (!ThePartitionManager->getUpdatedSinceLastReset()) 
 	{
@@ -3887,7 +3887,7 @@ Bool PartitionManager::findPositionAround( const Coord3D *center,
 	// sanity, FPF_IGNORE_WATER and FPF_WATER_ONLY are mutually exclusive
 	DEBUG_ASSERTCRASH( !(BitIsSet( options->flags, FPF_IGNORE_WATER ) == TRUE &&
 										   BitIsSet( options->flags, FPF_WATER_ONLY ) == TRUE),
-										 ("PartitionManager::findPositionAround - The options FPF_WATER_ONLY and FPF_IGNORE_WATER are mutually exclusive.  You cannot use them together\n") );
+										 ("PartitionManager::findPositionAround - The options FPF_WATER_ONLY and FPF_IGNORE_WATER are mutually exclusive.  You cannot use them together") );
 
 	// pick a random angle from the center location to start at
 	Real startAngle;

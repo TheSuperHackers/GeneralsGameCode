@@ -654,7 +654,7 @@ void Shell::unlinkScreen( WindowLayout *screen )
 		return;
 
 	DEBUG_ASSERTCRASH( m_screenStack[ m_screenCount - 1 ] == screen, 
-										 ("Screen not on top of stack\n") );
+										 ("Screen not on top of stack") );
 
 	// remove reference to screen and decrease count
 	if( m_screenStack[ m_screenCount - 1 ] == screen )
@@ -738,7 +738,7 @@ void Shell::shutdownComplete( WindowLayout *screen, Bool impendingPush )
 
 	// there should never be a pending push AND pop operation
 	DEBUG_ASSERTCRASH( m_pendingPush == FALSE || m_pendingPop == FALSE,
-										 ("There is a pending push AND pop in the shell.  Not allowed!\n") );	
+										 ("There is a pending push AND pop in the shell.  Not allowed!") );	
 
 	// Reset the AnimateWindowManager
 	m_animateWindowManager->reset();

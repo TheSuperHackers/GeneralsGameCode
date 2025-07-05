@@ -247,7 +247,7 @@ UpdateSleepTime StructureToppleUpdate::update( void )
 				m_structuralIntegrity = 0.0f;
 			}
 		}
-//		DEBUG_LOG(("m_structuralIntegrity = %f\n", m_structuralIntegrity));
+//		DEBUG_LOG(("m_structuralIntegrity = %f", m_structuralIntegrity));
 
 		doAngleFX(m_accumulatedAngle, m_accumulatedAngle + m_toppleVelocity);
 

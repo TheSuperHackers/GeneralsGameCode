@@ -267,7 +267,7 @@ const Image* Anim2DTemplate::getFrame( UnsignedShort frameNumber ) const
 
 	// sanity
 	DEBUG_ASSERTCRASH( m_images != NULL, 
-										 ("Anim2DTemplate::getFrame - Image data is NULL for animation '%s'\n",
+										 ("Anim2DTemplate::getFrame - Image data is NULL for animation '%s'",
 										  getName().str()) );
 	
 	// sanity										
@@ -363,12 +363,12 @@ void Anim2D::setCurrentFrame( UnsignedShort frame )
 
 	// sanity
 	DEBUG_ASSERTCRASH( TheGameLogic != NULL,	
-										 ("Anim2D::setCurrentFrame - TheGameLogic must exist to use animation instances (%s)\n",
+										 ("Anim2D::setCurrentFrame - TheGameLogic must exist to use animation instances (%s)",
 										  m_template->getName().str()) );
 
 	// sanity
 	DEBUG_ASSERTCRASH( frame >= 0 && frame < m_template->getNumFrames(),
-										 ("Anim2D::setCurrentFrame - Illegal frame number '%d' in animation\n", 
+										 ("Anim2D::setCurrentFrame - Illegal frame number '%d' in animation", 
 										 frame, m_template->getName().str()) );
 
 	// set the frame
@@ -438,7 +438,7 @@ void Anim2D::tryNextFrame( void )
 
 	// sanity
 	DEBUG_ASSERTCRASH( TheGameLogic != NULL,	
-										 ("Anim2D::tryNextFrame - TheGameLogic must exist to use animation instances (%s)\n",
+										 ("Anim2D::tryNextFrame - TheGameLogic must exist to use animation instances (%s)",
 										  m_template->getName().str()) );
 
 	// how many frames have passed since our last update
@@ -841,7 +841,7 @@ void Anim2DCollection::registerAnimation( Anim2D *anim )
 	// sanity
 	DEBUG_ASSERTCRASH( anim->m_collectionSystemNext == NULL &&
 										 anim->m_collectionSystemPrev == NULL,
-										 ("Registering animation instance, instance '%s' is already in a system\n",
+										 ("Registering animation instance, instance '%s' is already in a system",
 										 anim->getAnimTemplate()->getName().str()) );
 
 	// tie to our list

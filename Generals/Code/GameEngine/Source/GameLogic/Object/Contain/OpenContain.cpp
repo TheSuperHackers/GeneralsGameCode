@@ -164,12 +164,12 @@ OpenContain::~OpenContain()
 
 	// sanity, the system should be cleaning these up itself if all is going well
 	DEBUG_ASSERTCRASH( m_containList.empty(), 
-										 ("OpenContain %s: destroying a container that still has items in it!\n", 
+										 ("OpenContain %s: destroying a container that still has items in it!",
 										  getObject()->getTemplate()->getName().str() ) );
 
 	// sanity
 	DEBUG_ASSERTCRASH( m_xferContainIDList.empty(),
-										 ("OpenContain %s: m_xferContainIDList is not empty but should be\n", 
+										 ("OpenContain %s: m_xferContainIDList is not empty but should be",
 											getObject()->getTemplate()->getName().str() ) );
 
 }
@@ -1651,7 +1651,7 @@ void OpenContain::loadPostProcess( void )
 
 	// sanity
 	DEBUG_ASSERTCRASH( m_containListSize == m_containList.size(),
-										 ("OpenContain::loadPostProcess - contain list count mismatch\n") );
+										 ("OpenContain::loadPostProcess - contain list count mismatch") );
 
 	// clear the list as we don't need it anymore
 	m_xferContainIDList.clear();

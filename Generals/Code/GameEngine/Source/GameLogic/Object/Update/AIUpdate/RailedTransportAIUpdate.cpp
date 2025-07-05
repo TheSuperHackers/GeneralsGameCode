@@ -171,7 +171,7 @@ void RailedTransportAIUpdate::pickAndMoveToInitialLocation( void )
 
 	// a path must have been found
 	DEBUG_ASSERTCRASH( closestPath != INVALID_PATH,
-										 ("No suitable starting waypoint path could be found for '%s'\n",
+										 ("No suitable starting waypoint path could be found for '%s'",
 										 us->getTemplate()->getName().str()) );
 
 	// follow the waypoint path to its destination end point
@@ -221,7 +221,7 @@ UpdateSleepTime RailedTransportAIUpdate::update( void )
 	
 		// sanity
 		DEBUG_ASSERTCRASH( m_currentPath != INVALID_PATH,
-											 ("RailedTransportAIUpdate: Invalid current path '%s'\n", m_currentPath) );
+											 ("RailedTransportAIUpdate: Invalid current path '%s'", m_currentPath) );
 
 		// get our target waypoint
 		Waypoint *waypoint = TheTerrainLogic->getWaypointByID( m_path[ m_currentPath ].endWaypointID );

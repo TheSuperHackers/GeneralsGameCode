@@ -960,7 +960,7 @@ AsciiString GameInfoToAsciiString( const GameInfo *game )
 	optionsString.concat(';');
 
 	DEBUG_ASSERTCRASH(!TheLAN || (optionsString.getLength() < m_lanMaxOptionsLength),
-		("WARNING: options string is longer than expected!  Length is %d, but max is %d!\n",
+		("WARNING: options string is longer than expected!  Length is %d, but max is %d!",
 		optionsString.getLength(), m_lanMaxOptionsLength));
 	
 	return optionsString;

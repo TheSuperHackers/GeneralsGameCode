@@ -1242,7 +1242,7 @@ void WW3DAssetManager::Log_All_Textures(void)
 	WWDEBUG_SAY((
 		"Lightmap textures: %d\n\n"
 		"size     name\n"
-		"--------------------------------------\n"
+		"--------------------------------------"
 		,
 		TextureClass::_Get_Total_Lightmap_Texture_Count()));
 
@@ -1266,7 +1266,7 @@ void WW3DAssetManager::Log_All_Textures(void)
 	WWDEBUG_SAY((
 		"Procedural textures: %d\n\n"
 		"size     name\n"
-		"--------------------------------------\n"
+		"--------------------------------------"
 		,
 		TextureClass::_Get_Total_Procedural_Texture_Count()));
 
@@ -1290,7 +1290,7 @@ void WW3DAssetManager::Log_All_Textures(void)
 	WWDEBUG_SAY((
 		"Ordinary textures: %d\n\n"
 		"size     name\n"
-		"--------------------------------------\n"
+		"--------------------------------------"
 		,
 		TextureClass::_Get_Total_Texture_Count()-TextureClass::_Get_Total_Lightmap_Texture_Count()-TextureClass::_Get_Total_Procedural_Texture_Count()));
 

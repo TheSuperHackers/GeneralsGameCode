@@ -604,7 +604,7 @@ void PerfTimer::outputInfo( void )
 								 "Average Time (per frame): %.4f ms\n"
 								 "Average calls per frame: %.2f\n"
 								 "Number of calls: %d\n"
-								 "Max possible FPS: %.4f\n",
+								 "Max possible FPS: %.4f",
 								 m_identifier, 
 								 avgTimePerCall,
 								 avgTimePerFrame,
@@ -617,7 +617,7 @@ void PerfTimer::outputInfo( void )
 								 "Average Time (per frame): %.4f ms\n"
 								 "Average calls per frame: %.2f\n"
 								 "Number of calls: %d\n"
-								 "Max possible FPS: %.4f\n",
+								 "Max possible FPS: %.4f",
 								 m_identifier, 
 								 avgTimePerCall,
 								 avgTimePerFrame,

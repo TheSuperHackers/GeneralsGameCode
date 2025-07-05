@@ -1145,7 +1145,7 @@ void BridgeBehavior::createScaffolding( void )
 
 		// sanity
 		DEBUG_ASSERTCRASH( scaffoldObjectsCreated < numObjects, 
-											 ("Creating too many scaffold objects\n") );
+											 ("Creating too many scaffold objects") );
 
 		// create object
 		obj = TheThingFactory->newObject( scaffoldTemplate, us->getTeam() );
@@ -1213,7 +1213,7 @@ void BridgeBehavior::createScaffolding( void )
 
 			// sanity
 			DEBUG_ASSERTCRASH( scaffoldObjectsCreated < numObjects, 
-												 ("Creating too many scaffold objects\n") );
+												 ("Creating too many scaffold objects") );
 
 			// create new object
 			obj = TheThingFactory->newObject( scaffoldTemplate, us->getTeam() );
@@ -1452,7 +1452,7 @@ void BridgeBehavior::xfer( Xfer *xfer )
 
 		// read all object IDs
 		DEBUG_ASSERTCRASH( m_scaffoldObjectIDList.size() == 0,
-											 ("BridgeBehavior::xfer - scaffold object list should be empty\n") );
+											 ("BridgeBehavior::xfer - scaffold object list should be empty") );
 		for( Int i = 0; i < scaffoldObjectCount; ++i )
 		{
 
