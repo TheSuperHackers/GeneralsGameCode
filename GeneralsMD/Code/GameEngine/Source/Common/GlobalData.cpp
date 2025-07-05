@@ -543,7 +543,7 @@ GlobalData::GlobalData()
 		m_theOriginal = this;
 	m_next = NULL;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 	m_specialPowerUsesDelay = TRUE;
 #endif
   m_TiVOFastMode = FALSE;

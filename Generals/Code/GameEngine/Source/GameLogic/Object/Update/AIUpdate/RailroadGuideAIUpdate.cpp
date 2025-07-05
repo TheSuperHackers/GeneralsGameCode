@@ -862,7 +862,7 @@ public:
 
 	PartitionFilterIsValidCarriage(Object* obj, const RailroadBehaviorModuleData* data) : m_obj(obj), m_data(data) { }
 	
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual const char* debugGetName() { return "PartitionFilterIsValidCarriage"; }
 #endif
 

@@ -575,7 +575,7 @@ void GameSpyStagingRoom::startGame(Int gameID)
 		}
 	}
 
-//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+//#if defined(RTS_DEBUG)
 	if (numHumans < 2)
 	{
 		launchGame();
@@ -583,7 +583,7 @@ void GameSpyStagingRoom::startGame(Int gameID)
 			TheGameSpyInfo->leaveStagingRoom();
 	}
 	else
-//#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+//#endif // defined(RTS_DEBUG)
 	{
 		TheNAT = NEW NAT();
 		TheNAT->attachSlotList(m_slot, getLocalSlotNum(), m_localIP);

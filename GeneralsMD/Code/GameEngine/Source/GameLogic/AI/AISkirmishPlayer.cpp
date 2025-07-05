@@ -677,7 +677,7 @@ void AISkirmishPlayer::buildAIBaseDefenseStructure(const AsciiString &thingName,
 		Real c = cos(angle);
 
 // TheSuperHackers @info helmutbuhler 21/04/2025 This debug mutates the code to become CRC incompatible
-#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) || !RETAIL_COMPATIBLE_CRC
+#if defined(RTS_DEBUG) || !RETAIL_COMPATIBLE_CRC
 		DEBUG_LOG(("buildAIBaseDefenseStructure -- Angle is %f sin %f, cos %f \n", 180*angle/PI, s, c));
 		DEBUG_LOG(("buildAIBaseDefenseStructure -- Offset is %f  %f, Final Position is %f, %f \n", 
 			offset.x, offset.y, 
@@ -808,7 +808,7 @@ void AISkirmishPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recr
 						AIUpdateInterface *ai = unit->getAIUpdateInterface();
 						if (ai) 
 						{
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 							Coord3D pos = *unit->getPosition();
 							Coord3D to = teamProto->getTemplateInfo()->m_homeLocation;
 							DEBUG_LOG(("Moving unit from %f,%f to %f,%f\n", pos.x, pos.y , to.x, to.y ));

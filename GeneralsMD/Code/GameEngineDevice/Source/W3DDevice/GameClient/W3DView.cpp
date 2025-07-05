@@ -582,7 +582,7 @@ void W3DView::setCameraTransform( void )
 	}
 
 	m_3DCamera->Set_Clip_Planes(nearZ, farZ);
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_useCameraConstraints)
 #endif
 	{
@@ -605,7 +605,7 @@ void W3DView::setCameraTransform( void )
 		}
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	m_3DCamera->Set_View_Plane( m_FOV, -1 );
 #endif
 
@@ -723,7 +723,7 @@ static void drawTerrainNormal( Drawable *draw, void *userData )
   }
 }
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 // ------------------------------------------------------------------------------------------------
 // Draw a crude circle. Appears on top of any world geometry
 // ------------------------------------------------------------------------------------------------
@@ -989,7 +989,7 @@ static void drawablePostDraw( Drawable *draw, void *userData )
 
 	Object* obj = draw->getObject();
 	Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	ObjectShroudStatus ss = (!obj || !TheGlobalData->m_shroudOn) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
 #else
 	ObjectShroudStatus ss = (!obj) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
@@ -1007,7 +1007,7 @@ static void drawablePostDraw( Drawable *draw, void *userData )
 			draw->drawIconUI();
 	//}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	// debug collision extents
 	if( TheGlobalData->m_showCollisionExtents )
 	  drawDrawableExtents( draw, userData );
@@ -1684,7 +1684,7 @@ void W3DView::draw( void )
 
 	}  // end if, show debug AI
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if( TheGlobalData->m_debugCamera )
 	{
 		UnsignedInt c = 0xaaffffff;
@@ -1754,7 +1754,7 @@ void W3DView::draw( void )
       drawable = drawable->getNextDrawable();
     }
   }
-#endif // DEBUG or INTERNAL
+#endif // RTS_DEBUG
 
 	Region3D axisAlignedRegion;
 	getAxisAlignedViewRegion(axisAlignedRegion);
@@ -2003,7 +2003,7 @@ void W3DView::setFieldOfView( Real angle )
 {
 	View::setFieldOfView( angle );
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	// this is only for testing, and recalculating the 
 	// camera every frame is wasteful
 	setCameraTransform();

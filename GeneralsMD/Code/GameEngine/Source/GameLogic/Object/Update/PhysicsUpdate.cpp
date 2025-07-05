@@ -317,7 +317,7 @@ Real PhysicsBehavior::getZFriction() const
 void PhysicsBehavior::applyForce( const Coord3D *force )
 {
 // TheSuperHackers @info helmutbuhler 06/05/2025 This debug mutates the code to become CRC incompatible
-#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) || !RETAIL_COMPATIBLE_CRC
+#if defined(RTS_DEBUG) || !RETAIL_COMPATIBLE_CRC
 	DEBUG_ASSERTCRASH(!(_isnan(force->x) || _isnan(force->y) || _isnan(force->z)), ("PhysicsBehavior::applyForce force NAN!\n"));
 #endif
 	if (_isnan(force->x) || _isnan(force->y) || _isnan(force->z)) {

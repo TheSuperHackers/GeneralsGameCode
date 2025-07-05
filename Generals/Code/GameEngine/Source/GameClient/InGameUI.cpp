@@ -2176,7 +2176,7 @@ void InGameUI::createGarrisonHint( const GameMessage *msg )
 	}
 }
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 #define AI_DEBUG_TOOLTIPS		1
 
 #ifdef AI_DEBUG_TOOLTIPS
@@ -2185,7 +2185,7 @@ void InGameUI::createGarrisonHint( const GameMessage *msg )
 #include "GameLogic/AIPathfind.h"
 #endif // AI_DEBUG_TOOLTIPS
 
-#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // defined(RTS_DEBUG)
 
 //-------------------------------------------------------------------------------------------------
 /** Details of what is mouse hovered over right now are in this message.  Terrain might result
@@ -2257,7 +2257,7 @@ void InGameUI::createMouseoverHint( const GameMessage *msg )
  			else
  				m_mousedOverDrawableID = draw->getID();
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) //Extra hacky, sorry, but I need to use this in constantdebug report
+#if defined(RTS_DEBUG) //Extra hacky, sorry, but I need to use this in constantdebug report
 			if ( TheGlobalData->m_constantDebugUpdate == TRUE )
 				m_mousedOverDrawableID = draw->getID();
 #endif
@@ -2483,7 +2483,7 @@ void InGameUI::createCommandHint( const GameMessage *msg )
 	{
 		const Object* obj = draw->getObject();
 		Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		ObjectShroudStatus ss = (!obj || !TheGlobalData->m_shroudOn) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
 #else
 		ObjectShroudStatus ss = (!obj) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
@@ -4839,7 +4839,7 @@ void InGameUI::addFloatingText(const UnicodeString& text,const Coord3D *pos, Col
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 inline Bool isClose(Real a, Real b) { return fabs(a-b) <= 1.0f; }
 inline Bool isClose(const Coord3D& a, const Coord3D& b) 
 {

@@ -70,7 +70,7 @@ static Int	initialGadgetDelay = 2;
 static Bool justEntered = FALSE;
 
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 static GameWindow *buttonAnalyzeReplay = NULL;
 #endif
 
@@ -354,7 +354,7 @@ void ReplayMenuInit( WindowLayout *layout, void *userData )
 	GadgetListBoxReset(listboxReplayFiles);
 	PopulateReplayFileListbox(listboxReplayFiles);
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	WinInstanceData instData;
 	instData.init();
 	BitSet( instData.m_style, GWS_PUSH_BUTTON | GWS_MOUSE_TRACK );
@@ -610,7 +610,7 @@ WindowMsgHandledType ReplayMenuSystem( GameWindow *window, UnsignedInt msg,
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 			if( controlID == buttonAnalyzeReplay->winGetWindowId() )
 			{
 				if(listboxReplayFiles)

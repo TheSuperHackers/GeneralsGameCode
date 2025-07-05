@@ -760,7 +760,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 {
 
 	//-extraLogging 
-	#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+	#if defined(RTS_DEBUG)
 		AsciiString targetStr;
 		if( TheGlobalData->m_extraLogging )
 		{
@@ -783,7 +783,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 	if (sourceObj == NULL || (victimObj == NULL && victimPos == NULL))
 	{
 		//-extraLogging 
-		#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+		#if defined(RTS_DEBUG)
 			if( TheGlobalData->m_extraLogging )
 				DEBUG_LOG( ("FAIL 1 (sourceObj %d == NULL || (victimObj %d == NULL && victimPos %d == NULL)\n", sourceObj != 0, victimObj != 0, victimPos != 0) );
 		#endif
@@ -862,7 +862,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			//DEBUG_ASSERTCRASH(distSqr < 5*5 || distSqr < attackRangeSqr*1.2f, ("*** victim is out of range (%f vs %f) of this weapon -- why did we attempt to fire?\n",sqrtf(distSqr),sqrtf(attackRangeSqr)));
 			
 			//-extraLogging 
-			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+			#if defined(RTS_DEBUG)
 				if( TheGlobalData->m_extraLogging )
 					DEBUG_LOG( ("FAIL 2 (distSqr %.2f > attackRangeSqr %.2f)\n", distSqr, attackRangeSqr ) );
 			#endif
@@ -884,7 +884,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			DEBUG_ASSERTCRASH(distSqr > minAttackRangeSqr*0.8f, ("*** victim is closer than min attack range (%f vs %f) of this weapon -- why did we attempt to fire?\n",sqrtf(distSqr),sqrtf(minAttackRangeSqr)));
 
 			//-extraLogging 
-			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+			#if defined(RTS_DEBUG)
 				if( TheGlobalData->m_extraLogging )
 					DEBUG_LOG( ("FAIL 3 (distSqr %.2f< minAttackRangeSqr %.2f - 0.5f && !isProjectileDetonation %d)\n", distSqr, minAttackRangeSqr, isProjectileDetonation ) );
 			#endif
@@ -1051,7 +1051,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			}
 
 			//-extraLogging 
-			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+			#if defined(RTS_DEBUG)
 				if( TheGlobalData->m_extraLogging )
 					DEBUG_LOG( ("EARLY 4 (delayed damage applied now)\n") );
 			#endif
@@ -1072,7 +1072,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			}
 
 			//-extraLogging 
-			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+			#if defined(RTS_DEBUG)
 				if( TheGlobalData->m_extraLogging )
 					DEBUG_LOG( ("EARLY 5 (delaying damage applied until frame %d)\n", when ) );
 			#endif
@@ -1163,7 +1163,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			
 		}
 		//-extraLogging 
-		#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+		#if defined(RTS_DEBUG)
 			if( TheGlobalData->m_extraLogging )
 				DEBUG_LOG( ("DONE\n") );
 		#endif
@@ -1715,7 +1715,7 @@ void WeaponStore::postProcessLoad()
 	if (weapon->m_projectileName.isNone())
 		weapon->m_projectileName.clear();
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (!weapon->getFireSound().getEventName().isEmpty() && weapon->getFireSound().getEventName().compareNoCase("NoSound") != 0) 
 	{ 
 		DEBUG_ASSERTCRASH(TheAudio->isValidAudioEvent(&weapon->getFireSound()), ("Invalid FireSound %s in Weapon '%s'.", weapon->getFireSound().getEventName().str(), weapon->getName().str())); 
@@ -2989,7 +2989,7 @@ void Weapon::processRequestAssistance( const Object *requestingObject, Object *v
 #endif
 	}
 
-//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+//#if defined(RTS_DEBUG)
 //  Real muzzleHeight = attachTransform.Get_Z_Translation();
 //  DEBUG_ASSERTCRASH( muzzleHeight > 0.001f, ("YOUR TURRET HAS A VERY LOW PROJECTILE LAUNCH POSITION, BUT FOUND A VALID BONE. DID YOU PICK THE WRONG ONE? %s", launcher->getTemplate()->getName().str()));
 //#endif

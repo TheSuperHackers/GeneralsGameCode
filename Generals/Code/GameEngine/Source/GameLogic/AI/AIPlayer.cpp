@@ -621,7 +621,7 @@ Object *AIPlayer::buildStructureWithDozer(const ThingTemplate *bldgPlan, BuildLi
 
 
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugAI == AI_DEBUG_PATHS)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);

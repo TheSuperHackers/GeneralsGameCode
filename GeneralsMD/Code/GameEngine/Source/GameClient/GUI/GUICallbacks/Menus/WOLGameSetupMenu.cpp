@@ -72,7 +72,7 @@ extern std::list<PeerResponse> TheLobbyQueuedUTMs;
 extern void MapSelectorTooltip(GameWindow *window, WinInstanceData *instData,	UnsignedInt mouse);
 
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 extern Bool g_debugSlots;
 void slotListDebugLog(const char *fmt, ...)
 {
@@ -1959,7 +1959,7 @@ void WOLGameSetupMenuUpdate( WindowLayout * layout, void *userData)
 			case PeerResponse::PEERRESPONSE_ROOMUTM:
 				{
 					sawImportantMessage = TRUE;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 					if (g_debugSlots)
 					{
 						DEBUG_LOG(("About to process a room UTM.  Command is '%s', command options is '%s'\n",
@@ -2523,7 +2523,7 @@ Bool handleGameSetupSlashCommands(UnicodeString uText)
 		TheGameSpyInfo->sendChat(UnicodeString(uText.str()+4), TRUE, NULL);
 		return TRUE; // was a slash command
 	}
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	else if (token == "slots")
 	{
 		g_debugSlots = !g_debugSlots;
@@ -2537,7 +2537,7 @@ Bool handleGameSetupSlashCommands(UnicodeString uText)
 		TheGameSpyPeerMessageQueue->addRequest( req );
 		return TRUE;
 	}
-#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // defined(RTS_DEBUG)
 
 	return FALSE; // not a slash command
 }

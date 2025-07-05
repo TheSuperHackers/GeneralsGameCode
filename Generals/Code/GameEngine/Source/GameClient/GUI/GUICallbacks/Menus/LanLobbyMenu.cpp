@@ -312,7 +312,7 @@ static void playerTooltip(GameWindow *window,
 	}
 	UnicodeString tooltip;
 	tooltip.format(TheGameText->fetch("TOOLTIP:LANPlayer"), player->getLogin().str(), player->getHost().str());
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	UnicodeString ip;
 	ip.format(L" - %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(player->getIP()));
 	tooltip.concat(ip);
@@ -405,7 +405,7 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 	{
 		IPSource = L"Default local IP";
 	}
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	UnicodeString str;
 	str.format(L"%s: %d.%d.%d.%d", IPSource, PRINTF_IP_AS_4_INTS(IP));
 	GadgetListBoxAddEntryText(listboxChatWindow, str, chatSystemColor, -1, 0);

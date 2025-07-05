@@ -294,7 +294,7 @@ void ModuleInfo::addModuleInfo(ThingTemplate *thingTemplate,
 	// there must be a module tag present, and it must be unique across all module infos
 	// for this thing template
 	//
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	// get module info
 	const Nugget *nugget;
 	
@@ -797,7 +797,7 @@ void ThingTemplate::parseArmorTemplateSet( INI* ini, void *instance, void * /*st
 
 	ArmorTemplateSet ws;
 	ws.parseArmorTemplateSet(ini);
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES)
 	{
 		for (ArmorTemplateSetVector::const_iterator it = self->m_armorTemplateSets.begin(); it != self->m_armorTemplateSets.end(); ++it)
@@ -825,7 +825,7 @@ void ThingTemplate::parseWeaponTemplateSet( INI* ini, void *instance, void * /*s
 
 	WeaponTemplateSet ws;
 	ws.parseWeaponTemplateSet(ini, self);
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES)
 	{
 		for (WeaponTemplateSetVector::const_iterator it = self->m_weaponTemplateSets.begin(); it != self->m_weaponTemplateSets.end(); ++it)
@@ -920,7 +920,7 @@ AIUpdateModuleData *ThingTemplate::friend_getAIModuleInfo(void)
 //-------------------------------------------------------------------------------------------------
 void ThingTemplate::validateAudio()
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 
 	#define AUDIO_TEST(y) \
 		if (!get##y()->getEventName().isEmpty() && get##y()->getEventName().compareNoCase("NoSound") != 0) { \
@@ -1014,7 +1014,7 @@ void ThingTemplate::validate()
 
 	validateAudio();
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	
 	if (getName() == "DefaultThingTemplate")
 		return;
@@ -1394,7 +1394,7 @@ Int ThingTemplate::calcTimeToBuild( const Player* player) const
 	Real factionModifier = 1 + player->getProductionTimeChangePercent( getName() );
 	buildTime *= factionModifier;
 
-#if defined (RTS_DEBUG) || defined (RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if( player->buildsInstantly() )
 	{
 		buildTime = 1;

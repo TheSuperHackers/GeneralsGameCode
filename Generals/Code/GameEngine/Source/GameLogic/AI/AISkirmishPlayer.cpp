@@ -668,7 +668,7 @@ void AISkirmishPlayer::buildAIBaseDefenseStructure(const AsciiString &thingName,
 		Real c = cos(angle);
 
 // TheSuperHackers @info helmutbuhler 21/04/2025 This debug mutates the code to become CRC incompatible
-#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) || !RETAIL_COMPATIBLE_CRC
+#if defined(RTS_DEBUG) || !RETAIL_COMPATIBLE_CRC
 		DEBUG_LOG(("Angle is %f sin %f, cos %f \n", 180*angle/PI, s, c));
 		DEBUG_LOG(("Offset is %f  %f, new is %f, %f \n", 
 			offset.x, offset.y, 

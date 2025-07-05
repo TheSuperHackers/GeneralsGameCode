@@ -76,7 +76,7 @@ public:
 	TransportMessage m_outBuffer[MAX_MESSAGES];
 	TransportMessage m_inBuffer[MAX_MESSAGES];
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	DelayedTransportMessage m_delayedInBuffer[MAX_MESSAGES];
 #endif
 

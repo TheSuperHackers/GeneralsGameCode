@@ -206,7 +206,7 @@ TextureClass *W3DAssetManager::Get_Texture(
 //			extern std::vector<std::string>	preloadTextureNamesGlobalHack;
 //			preloadTextureNamesGlobalHack.push_back(tex->Get_Texture_Name());
 //		}
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		if (TheGlobalData->m_preloadReport)
 		{	
 			//loading a new asset and app is requesting a log of all loaded assets.
@@ -963,7 +963,7 @@ bool W3DAssetManager::Load_3D_Assets( const char * filename )
 
 	bool result = WW3DAssetManager::Load_3D_Assets(filename);
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (result && TheGlobalData->m_preloadReport)
 	{	
 		//loading a new asset and app is requesting a log of all loaded assets.

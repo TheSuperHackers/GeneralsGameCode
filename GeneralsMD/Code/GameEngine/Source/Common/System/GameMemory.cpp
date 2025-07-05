@@ -2243,7 +2243,7 @@ void *DynamicMemoryAllocator::allocateBytesDoNotZeroImplementation(Int numBytes 
 	#endif
 #endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
   // check alignment
   if (unsigned(result)&3)
     throw ERROR_OUT_OF_MEMORY;

@@ -2099,7 +2099,7 @@ void W3DProjectedShadowManager::removeAllShadows(void)
 	}  // end for
 }
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
+#if defined(RTS_DEBUG)	
 void W3DProjectedShadow::getRenderCost(RenderCost & rc) const
 {
 	if (TheGlobalData->m_useShadowDecals && m_isEnabled && !m_isInvisibleEnabled)

@@ -198,7 +198,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	m_formationID(NO_FORMATION_ID),
 	m_isReceivingDifficultyBonus(FALSE)
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	m_hasDiedAlready = false;
 #endif
 	//Modules have not been created yet!
@@ -492,7 +492,7 @@ void Object::initObject()
 
 	// Kris -- All missiles must be projectiles! This is the perfect place to assert them!
 	// srj: yes, but only in debug...
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if( !isKindOf( KINDOF_PROJECTILE ) )
 	{
 		if( isKindOf( KINDOF_SMALL_MISSILE ) || isKindOf( KINDOF_BALLISTIC_MISSILE ) )
@@ -3850,7 +3850,7 @@ void Object::xfer( Xfer *xfer )
 	//m_body;
 	//m_ai;
 	//m_physics;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	//m_hasDiedAlready;
 #endif
 
@@ -4014,7 +4014,7 @@ void Object::onCapture( Player *oldOwner, Player *newOwner )
 void Object::onDie( DamageInfo *damageInfo )
 {
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	DEBUG_ASSERTCRASH(m_hasDiedAlready == false, ("Object::onDie has been called multiple times. This is invalid. jkmcd"));
 	m_hasDiedAlready = true;
 #endif
@@ -4476,7 +4476,7 @@ void Object::unshroud()
 //-------------------------------------------------------------------------------------------------
 Real Object::getVisionRange() const
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(m_visionRange, 0, 0);
@@ -4512,7 +4512,7 @@ Real Object::getShroudClearingRange() const
 		shroudClearingRange = getGeometryInfo().getBoundingCircleRadius();
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(shroudClearingRange, 0, 0);
@@ -4569,7 +4569,7 @@ void Object::setShroudClearingRange( Real newShroudClearingRange )
 //-------------------------------------------------------------------------------------------------
 Real Object::getShroudRange() const
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(m_shroudRange, 0, 0);

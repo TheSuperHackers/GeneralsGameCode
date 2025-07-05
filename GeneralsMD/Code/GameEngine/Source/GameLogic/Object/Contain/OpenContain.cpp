@@ -301,7 +301,7 @@ void OpenContain::addToContain( Object *rider )
 		wasSelected = TRUE;
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if( !isValidContainerFor( rider, false ) )
 	{
 		Object *reportObject = rider;

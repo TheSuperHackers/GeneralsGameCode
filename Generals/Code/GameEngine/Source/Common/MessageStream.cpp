@@ -342,7 +342,7 @@ AsciiString GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
 	CHECK_IF(MSG_META_CHAT_EVERYONE)
 	CHECK_IF(MSG_META_DIPLOMACY)
 	CHECK_IF(MSG_META_OPTIONS)
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	CHECK_IF(MSG_META_HELP)
 #endif
 	CHECK_IF(MSG_META_TOGGLE_LOWER_DETAILS)
@@ -375,7 +375,7 @@ AsciiString GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
     CHECK_IF(MSG_META_TOGGLE_PAUSE)
     CHECK_IF(MSG_META_STEP_FRAME)
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	CHECK_IF(MSG_META_DEMO_TOGGLE_BEHIND_BUILDINGS)
 	CHECK_IF(MSG_META_DEMO_TOGGLE_LETTERBOX)
 	CHECK_IF(MSG_META_DEMO_TOGGLE_MESSAGE_TEXT)
@@ -484,12 +484,12 @@ AsciiString GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
 	CHECK_IF(MSG_META_DEBUG_DUMP_ALL_PLAYER_OBJECTS)
 	CHECK_IF(MSG_META_DEBUG_WIN)
 	CHECK_IF(MSG_META_DEMO_TOGGLE_DEBUG_STATS)
-#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // defined(RTS_DEBUG)
 
 
-#if defined(RTS_INTERNAL) || defined(RTS_DEBUG)
+#if defined(RTS_DEBUG)
 	CHECK_IF(MSG_META_DEMO_TOGGLE_AUDIODEBUG)
-#endif//defined(RTS_INTERNAL) || defined(RTS_DEBUG)
+#endif//defined(RTS_DEBUG)
 #ifdef DUMP_PERF_STATS
 	CHECK_IF(MSG_META_DEMO_PERFORM_STATISTICAL_DUMP)
 #endif//DUMP_PERF_STATS
@@ -631,7 +631,7 @@ AsciiString GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
 	CHECK_IF(MSG_SELF_DESTRUCT)
 	CHECK_IF(MSG_CREATE_FORMATION)
 	CHECK_IF(MSG_LOGIC_CRC)
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	CHECK_IF(MSG_DEBUG_KILL_SELECTION)
 	CHECK_IF(MSG_DEBUG_HURT_OBJECT)
 	CHECK_IF(MSG_DEBUG_KILL_OBJECT)
@@ -962,7 +962,7 @@ void MessageStream::removeTranslator( TranslatorID id )
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 
 Bool isInvalidDebugCommand( GameMessage::Type t )
 {
@@ -1051,7 +1051,7 @@ void MessageStream::propagateMessages( void )
 		for( msg=m_firstMessage; msg; msg=next )
 		{			
 			if (ss->m_translator 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 				&& !isInvalidDebugCommand(msg->getType())
 #endif
 				)
