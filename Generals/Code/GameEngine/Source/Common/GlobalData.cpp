@@ -488,6 +488,10 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "KeyboardCameraRotateSpeed", INI::parseReal, NULL, offsetof( GlobalData, m_keyboardCameraRotateSpeed ) },
 	{ "PlayStats",									INI::parseInt,				NULL,			offsetof( GlobalData, m_playStats ) },
 
+#if ENABLE_CONFIGURABLE_SHROUD && (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+	{ "ShroudOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_shroudOn ) },
+#endif
+
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	{ "DisableCameraFade",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableCameraFade ) },
 	{ "DisableScriptedInputDisabling",			INI::parseBool,		NULL,			offsetof( GlobalData, m_disableScriptedInputDisabling ) },
@@ -497,7 +501,6 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "Wireframe",								INI::parseBool,				NULL,			offsetof( GlobalData, m_wireframe ) },
 	{ "StateMachineDebug",				INI::parseBool,				NULL,			offsetof( GlobalData, m_stateMachineDebug ) },
 	{ "UseCameraConstraints",				INI::parseBool,				NULL,			offsetof( GlobalData, m_useCameraConstraints ) },
-	{ "ShroudOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_shroudOn ) },
 	{ "FogOfWarOn",										INI::parseBool,				NULL,			offsetof( GlobalData, m_fogOfWarOn ) },
 	{ "ShowCollisionExtents",				INI::parseBool,				NULL,			offsetof( GlobalData, m_showCollisionExtents ) },
   { "ShowAudioLocations",  				INI::parseBool,				NULL,			offsetof( GlobalData, m_showAudioLocations ) },
@@ -545,11 +548,14 @@ GlobalData::GlobalData()
 
   m_TiVOFastMode = FALSE;
 
+#if ENABLE_CONFIGURABLE_SHROUD
+	m_shroudOn = TRUE;
+#endif
+
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_wireframe = 0;
 	m_stateMachineDebug = FALSE;
 	m_useCameraConstraints = TRUE;
-	m_shroudOn = TRUE;
 	m_fogOfWarOn = FALSE;
 	m_jabberOn = FALSE;
 	m_munkeeOn = FALSE;
