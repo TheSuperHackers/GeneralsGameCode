@@ -192,7 +192,7 @@ TextureClass::TextureClass
 	default:	break;
 	}
 
-	WWASSERT_PRINT(name && name[0], "TextureClass CTor: NULL or empty texture name\n");
+	WWASSERT_PRINT(name && name[0], "TextureClass CTor: NULL or empty texture name");
 	int len=strlen(name);
 	for (int i=0;i<len;++i) 
 	{
@@ -437,7 +437,7 @@ void TextureClass::Set_Texture_Name(const char * name)
 unsigned int TextureClass::Get_Mip_Level_Count(void)
 {
 	if (!D3DTexture) {
-		WWASSERT_PRINT(0, "Get_Mip_Level_Count: D3DTexture is NULL!\n");
+		WWASSERT_PRINT(0, "Get_Mip_Level_Count: D3DTexture is NULL!");
 		return 0;
 	}
 
@@ -449,7 +449,7 @@ unsigned int TextureClass::Get_Mip_Level_Count(void)
 void TextureClass::Get_Level_Description(SurfaceClass::SurfaceDescription &surface_desc, unsigned int level)
 {
 	if (!D3DTexture) {
-		WWASSERT_PRINT(0, "Get_Surface_Description: D3DTexture is NULL!\n");
+		WWASSERT_PRINT(0, "Get_Surface_Description: D3DTexture is NULL!");
 	}
 
 	D3DSURFACE_DESC d3d_surf_desc;
@@ -475,7 +475,7 @@ SurfaceClass *TextureClass::Get_Surface_Level(unsigned int level)
 unsigned int TextureClass::Get_Priority(void)
 {
 	if (!D3DTexture) {
-		WWASSERT_PRINT(0, "Get_Priority: D3DTexture is NULL!\n");
+		WWASSERT_PRINT(0, "Get_Priority: D3DTexture is NULL!");
 		return 0;
 	}
 
@@ -487,7 +487,7 @@ unsigned int TextureClass::Get_Priority(void)
 unsigned int TextureClass::Set_Priority(unsigned int priority)
 {
 	if (!D3DTexture) {
-		WWASSERT_PRINT(0, "Set_Priority: D3DTexture is NULL!\n");
+		WWASSERT_PRINT(0, "Set_Priority: D3DTexture is NULL!");
 		return 0;
 	}
 

@@ -483,7 +483,7 @@ WW3DErrorType MeshModelClass::read_chunks(ChunkLoadClass & cload,MeshLoadContext
 					break;
 				
 			case O_W3D_CHUNK_SURRENDER_TRIANGLES:
-					WWASSERT_PRINT( 0, "Obsolete Triangle Chunk Encountered!\r\n" );
+					WWASSERT_PRINT( 0, "Obsolete Triangle Chunk Encountered!" );
 					break;
 			
 			case W3D_CHUNK_TRIANGLES:
