@@ -3062,7 +3062,7 @@ U32 AILCALLBACK streamingFileOpen(char const *fileName, U32 *file_handle)
 {
 #if defined(RTS_DEBUG)
 	if (sizeof(U32) != sizeof(File*)) {
-		RELEASE_CRASH(("streamingFileOpen - This function requires work in order to compile on non 32-bit platforms.\n"));
+		RELEASE_CRASH(("streamingFileOpen - This function requires work in order to compile on non 32-bit platforms."));
 	}
 #endif
 
