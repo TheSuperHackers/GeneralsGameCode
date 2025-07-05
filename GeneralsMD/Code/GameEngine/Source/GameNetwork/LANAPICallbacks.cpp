@@ -50,11 +50,6 @@
 LANAPI *TheLAN = NULL;
 extern Bool LANbuttonPushed;
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //Colors used for the chat dialogs
 const Color playerColor =  GameMakeColor(255,255,255,255);

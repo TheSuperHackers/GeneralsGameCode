@@ -59,11 +59,6 @@
 #include "WorldBuilderView.h"
 #include "MapPreview.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // Can't currently have multiple open... jba.
 #define notONLY_ONE_AT_A_TIME

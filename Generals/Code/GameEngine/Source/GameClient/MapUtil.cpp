@@ -61,11 +61,6 @@
 #include "GameNetwork/GameInfo.h"
 #include "GameNetwork/NetworkDefs.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------
 // PRIVATE DATA ///////////////////////////////////////////////////////////////////////////////////
@@ -465,7 +460,7 @@ void MapCache::updateCache( void )
 		writeCacheINI( TRUE );
 	}
 	loadStandardMaps();	// we shall overwrite info from matching user maps to prevent munkees from getting rowdy :)
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheLocalFileSystem->doesFileExist(getMapDir().str()))
 	{
 		// only create the map cache file if "Maps" exist
@@ -504,7 +499,7 @@ void MapCache::loadStandardMaps(void)
 	INI ini;
 	AsciiString fname;
 	fname.format("%s\\%s", getMapDir().str(), m_mapCacheName);
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	File *fp = TheFileSystem->openFile(fname.str(), File::READ);
 	if (fp != NULL)
 	{
@@ -512,7 +507,7 @@ void MapCache::loadStandardMaps(void)
 		fp = NULL;
 #endif
 		ini.load( fname, INI_LOAD_OVERWRITE, NULL );
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	}
 #endif
 }

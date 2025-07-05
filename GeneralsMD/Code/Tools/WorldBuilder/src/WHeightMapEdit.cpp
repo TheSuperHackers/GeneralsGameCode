@@ -43,11 +43,6 @@
 
 #include "Common/DataChunk.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 int WorldHeightMapEdit::m_numGlobalTextureClasses=0;
 TGlobalTextureClass WorldHeightMapEdit::m_globalTextureClasses[NUM_TEXTURE_CLASSES];
@@ -394,7 +389,7 @@ void WorldHeightMapEdit::loadBaseImages(void)
 {
  
  	/// @todo - take this out when we are done evaluating terrain textures. 
-#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+#if defined(RTS_DEBUG)
  	loadDirectoryOfImages("..\\TestArt\\TestTerrain");
 #endif
 

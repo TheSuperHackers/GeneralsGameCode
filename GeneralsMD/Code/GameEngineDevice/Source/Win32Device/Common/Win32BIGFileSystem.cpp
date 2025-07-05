@@ -38,11 +38,6 @@
 #include "Common/Registry.h"
 #include "Utility/endian_compat.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 static const char *BIGFileIdentifier = "BIGF";
 
@@ -64,8 +59,8 @@ void Win32BIGFileSystem::init() {
     AsciiString installPath;
     GetStringFromGeneralsRegistry("", "InstallPath", installPath );
     //@todo this will need to be ramped up to a crash for release
-#ifndef RTS_INTERNAL
-    // had to make this non-internal only, otherwise we can't autobuild
+#ifndef RTS_DEBUG
+    // had to make this non-debug only, otherwise we can't autobuild
     // GeneralsZH...
     DEBUG_ASSERTCRASH(installPath != "", ("Be 1337! Go install Generals!"));
 #endif

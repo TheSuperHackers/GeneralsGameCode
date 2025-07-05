@@ -99,7 +99,7 @@ struct TransportMessage
 };
 #pragma pack(pop)
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 #pragma pack(push, 1)
 struct DelayedTransportMessage
 {

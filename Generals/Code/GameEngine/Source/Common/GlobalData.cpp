@@ -488,7 +488,11 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "KeyboardCameraRotateSpeed", INI::parseReal, NULL, offsetof( GlobalData, m_keyboardCameraRotateSpeed ) },
 	{ "PlayStats",									INI::parseInt,				NULL,			offsetof( GlobalData, m_playStats ) },
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_PROFILE)
+	{ "VTune", INI::parseBool,	NULL,			offsetof( GlobalData, m_vTune ) },
+#endif
+
+#if defined(RTS_DEBUG)
 	{ "DisableCameraFade",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableCameraFade ) },
 	{ "DisableScriptedInputDisabling",			INI::parseBool,		NULL,			offsetof( GlobalData, m_disableScriptedInputDisabling ) },
 	{ "DisableMilitaryCaption",			INI::parseBool,				NULL,			offsetof( GlobalData, m_disableMilitaryCaption ) },
@@ -514,7 +518,6 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "MaxDebugThreatMapValue",							INI::parseUnsignedInt,			NULL,	offsetof( GlobalData, m_maxDebugThreat) },
 	{ "DebugCashValueMapTileDuration",			INI::parseInt,							NULL,	offsetof( GlobalData, m_debugCashValueMapTileDuration) },
 	{ "MaxDebugCashValueMapValue",					INI::parseUnsignedInt,			NULL,	offsetof( GlobalData, m_maxDebugValue) },
-	{ "VTune", INI::parseBool,	NULL,			offsetof( GlobalData, m_vTune ) },
 	{ "SaveStats",									INI::parseBool,				NULL,			offsetof( GlobalData, m_saveStats ) },
 	{ "UseLocalMOTD",								INI::parseBool,				NULL,			offsetof( GlobalData, m_useLocalMOTD ) },
 	{ "BaseStatsDir",								INI::parseAsciiString,NULL,			offsetof( GlobalData, m_baseStatsDir ) },
@@ -545,7 +548,11 @@ GlobalData::GlobalData()
 
   m_TiVOFastMode = FALSE;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_PROFILE)
+	m_vTune = false;
+#endif
+
+#if defined(RTS_DEBUG)
 	m_wireframe = 0;
 	m_stateMachineDebug = FALSE;
 	m_useCameraConstraints = TRUE;
@@ -569,7 +576,6 @@ GlobalData::GlobalData()
 	m_debugCashValueMap = FALSE;
 	m_maxDebugValue = 10000;
 	m_debugCashValueMapTileDuration = LOGICFRAMES_PER_SECOND; // Changed By Sadullah Nader
-	m_vTune = false;
 	m_checkForLeaks = TRUE;
 	m_benchmarkTimer = -1;
 	m_allowUnselectableSelection = FALSE;

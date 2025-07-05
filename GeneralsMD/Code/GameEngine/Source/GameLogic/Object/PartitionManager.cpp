@@ -96,11 +96,6 @@
 	UnsignedInt s_gcoPerfFrame = 0xffffffff;
 #endif 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 
@@ -2142,7 +2137,7 @@ void PartitionData::invalidateShroudedStatusForAllPlayers()
 	}
 }
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 static AsciiString theObjName;
 #endif
 
@@ -2156,7 +2151,7 @@ Int PartitionData::calcMaxCoiForShape(GeometryType geom, Real majorRadius, Real 
   //M Lorenzen 8/26/03
 //	if (isSmall)
 //	{
-//		#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+//		#if defined(RTS_DEBUG)
 //		Int chk = calcMaxCoiForShape(geom, majorRadius, minorRadius, false);
 //		DEBUG_ASSERTCRASH(chk <= 4, ("Small objects should be <= 4 cells, but I calced %s as %d\n",theObjName.str(),chk));
 //		#endif
@@ -2204,7 +2199,7 @@ Int PartitionData::calcMaxCoiForObject()
 	Real majorRadius = obj->getGeometryInfo().getMajorRadius();
 	Real minorRadius = obj->getGeometryInfo().getMinorRadius();
 	Bool isSmall = obj->getGeometryInfo().getIsSmall();
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 theObjName = obj->getTemplate()->getName();
 #endif
 	return calcMaxCoiForShape(geom, majorRadius, minorRadius, isSmall);
@@ -2790,7 +2785,7 @@ void PartitionManager::update()
 		processPendingUndoShroudRevealQueue();
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugThreatMap) 
 	{
 		if (TheGameLogic->getFrame() % TheGlobalData->m_debugThreatMapTileDuration)
@@ -2850,7 +2845,7 @@ void PartitionManager::update()
 			}			
 		}
 	}
-#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#endif // defined(RTS_DEBUG)
 }  // end update
 
 //------------------------------------------------------------------------------
@@ -3205,7 +3200,7 @@ void PartitionManager::calcRadiusVec()
 		}
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	Int total = 0;
 	for (Int i = 0; i <= m_maxGcoRadius; ++i)
 	{

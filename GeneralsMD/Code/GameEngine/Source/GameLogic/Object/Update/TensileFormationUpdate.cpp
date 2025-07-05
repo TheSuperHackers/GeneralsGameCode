@@ -47,11 +47,6 @@
 
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 #define MAP_XY_FACTOR			(10.0f)	 //How wide and tall each height map square is in world space.
@@ -76,7 +71,7 @@ private:
 
 public:
 	PartitionFilterTensileFormationMember( Object* obj ) : m_obj( obj ) { }
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual const char* debugGetName() { return "PartitionFilterTensileFormationMember"; }
 #endif
 	virtual Bool allow( Object *objOther )

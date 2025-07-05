@@ -26,11 +26,6 @@
 #include "NoxCompress.h"
 #include "CompLibHeader/lzhl.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #define BLOCKSIZE 500000
 #define NoxRead fread

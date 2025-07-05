@@ -91,11 +91,6 @@
 #include "Common/PerfTimer.h"
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.		 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #define no_OPTIMIZED_HEIGHTMAP_LIGHTING	01
 // Doesn't work well.  jba.
@@ -1375,7 +1370,7 @@ HeightMapRenderObjClass::HeightMapRenderObjClass(void)
 	m_roadBuffer = NEW W3DRoadBuffer;
 #endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_shroudOn)
 		m_shroud = NEW W3DShroud;
 #else

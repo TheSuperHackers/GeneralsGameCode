@@ -36,11 +36,6 @@
 #include "GameClient/GraphDraw.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -517,7 +512,7 @@ void PerfTimer::outputInfo( void )
 		return;
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	double totalTimeInMS = 1000.0 * m_runningTime / s_ticksPerSec;
 	double avgTimePerFrame = totalTimeInMS / (m_lastFrame - m_startFrame + 1);
 	double avgTimePerCall = totalTimeInMS / m_callCount;
@@ -555,7 +550,7 @@ void PerfTimer::outputInfo( void )
 //-------------------------------------------------------------------------------------------------
 void PerfTimer::showMetrics( void )
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	double totalTimeInMS = 1000.0 * m_runningTime / s_ticksPerSec;
 	double avgTimePerFrame = totalTimeInMS / (m_lastFrame - m_startFrame + 1);
 	double avgTimePerCall = totalTimeInMS / m_callCount;

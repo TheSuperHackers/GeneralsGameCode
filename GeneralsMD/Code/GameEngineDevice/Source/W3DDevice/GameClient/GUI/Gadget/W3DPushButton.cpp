@@ -58,11 +58,6 @@
 #include "W3DDevice/GameClient/W3DGadget.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off) 
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 // DEFINES ////////////////////////////////////////////////////////////////////

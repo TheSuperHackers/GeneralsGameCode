@@ -35,14 +35,6 @@
             }
         },
         {
-            "name": "vc6-internal",
-            "displayName": "Windows 32bit VC6 Internal",
-            "inherits": "vc6",
-            "cacheVariables": {
-                "RTS_BUILD_OPTION_INTERNAL": "ON"
-            }
-        },
-        {
             "name": "vc6-debug",
             "displayName": "Windows 32bit VC6 Debug",
             "hidden": false,
@@ -104,14 +96,6 @@
             }
         },
         {
-            "name": "win32-internal",
-            "inherits": "win32",
-            "displayName": "Windows 32bit Internal",
-            "cacheVariables": {
-                "RTS_BUILD_OPTION_INTERNAL": "ON"
-            }
-        },
-        {
             "name": "win32-debug",
             "inherits": "win32",
             "displayName": "Windows 32bit Debug",
@@ -146,14 +130,6 @@
             }
         },
         {
-            "name": "win32-vcpkg-internal",
-            "inherits": "win32-vcpkg",
-            "displayName": "Windows 32bit VCPKG Internal",
-            "cacheVariables": {
-                "RTS_BUILD_OPTION_INTERNAL": "ON"
-            }
-        },
-        {
             "name": "win32-vcpkg-debug",
             "inherits": "win32-vcpkg",
             "displayName": "Windows 32bit VCPKG Debug",
@@ -176,12 +152,6 @@
             "description": "Build Windows 32bit VC6 Release"
         },
         {
-            "name": "vc6-internal",
-            "configurePreset": "vc6-internal",
-            "displayName": "Build Windows 32bit VC6 Internal",
-            "description": "Build Windows 32bit VC6 Internal"
-        },
-        {
             "name": "vc6-profile",
             "configurePreset": "vc6-profile",
             "displayName": "Build Windows 32bit VC6 Profile",
@@ -198,13 +168,6 @@
             "configurePreset": "win32",
             "displayName": "Build Windows 32bit Release",
             "description": "Build Windows 32bit Release",
-            "configuration": "Release"
-        },
-        {
-            "name": "win32-internal",
-            "configurePreset": "win32-internal",
-            "displayName": "Build Windows 32bit Internal",
-            "description": "Build Windows 32bit Internal",
             "configuration": "Release"
         },
         {
@@ -226,13 +189,6 @@
             "configurePreset": "win32-vcpkg",
             "displayName": "Build Windows 32bit VCPKG Release",
             "description": "Build Windows 32bit VCPKG Release",
-            "configuration": "Release"
-        },
-        {
-            "name": "win32-vcpkg-internal",
-            "configurePreset": "win32-vcpkg-internal",
-            "displayName": "Build Windows 32bit VCPKG Internal",
-            "description": "Build Windows 32bit VCPKG Internal",
             "configuration": "Release"
         },
         {
@@ -285,19 +241,6 @@
             ]
         },
         {
-            "name": "vc6-internal",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "vc6-internal"
-                },
-                {
-                    "type": "build",
-                    "name": "vc6-internal"
-                }
-            ]
-        },
-        {
             "name": "vc6-profile",
             "steps": [
                 {
@@ -320,19 +263,6 @@
                 {
                     "type": "build",
                     "name": "win32"
-                }
-            ]
-        },
-        {
-            "name": "win32-internal",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "win32-internal"
-                },
-                {
-                    "type": "build",
-                    "name": "win32-internal"
                 }
             ]
         },
@@ -372,19 +302,6 @@
                 {
                     "type": "build",
                     "name": "win32-vcpkg"
-                }
-            ]
-        },
-        {
-            "name": "win32-vcpkg-internal",
-            "steps": [
-                {
-                    "type": "configure",
-                    "name": "win32-vcpkg-internal"
-                },
-                {
-                    "type": "build",
-                    "name": "win32-vcpkg-internal"
                 }
             ]
         },
