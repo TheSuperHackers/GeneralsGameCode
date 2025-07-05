@@ -1295,13 +1295,13 @@ void WOLLobbyMenuUpdate( WindowLayout * layout, void *userData)
 #ifdef PERF_TEST
 		// check performance
 		end = timeGetTime();
-		PERF_LOG(("Frame time was %d ms\n", end-start));
+		PERF_LOG(("Frame time was %d ms", end-start));
 		std::list<Int>::const_iterator it;
 		for (it = responses.begin(); it != responses.end(); ++it)
 		{
-			PERF_LOG(("  %s\n", getMessageString(*it)));
+			PERF_LOG(("  %s", getMessageString(*it)));
 		}
-		PERF_LOG(("\n"));
+		PERF_LOG((""));
 #endif // PERF_TEST
 
 #if 0

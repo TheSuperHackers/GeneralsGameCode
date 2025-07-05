@@ -1449,12 +1449,12 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 			UnicodeString munkee;
 			munkee.format(L"inQM:%d %d ms, %d messages", s_inQM, frameTime, responses.size());
 			TheGameSpyInfo->addText(munkee, GameSpyColor[GSCOLOR_DEFAULT], quickmatchTextWindow);
-			PERF_LOG(("%ls\n", munkee.str()));
+			PERF_LOG(("%ls", munkee.str()));
 
 			std::list<Int>::const_iterator it;
 			for (it = responses.begin(); it != responses.end(); ++it)
 			{
-				PERF_LOG(("  %s\n", getMessageString(*it)));
+				PERF_LOG(("  %s", getMessageString(*it)));
 			}
 		}
 #endif // PERF_TEST

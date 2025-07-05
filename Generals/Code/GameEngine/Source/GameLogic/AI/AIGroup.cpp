@@ -3234,22 +3234,22 @@ void AIGroup::crc( Xfer *xfer )
 		if (*it)
 			id = (*it)->getID();
 		xfer->xferUser(&id, sizeof(ObjectID));
-		CRCGEN_LOG(("CRC after AI AIGroup m_memberList for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+		CRCGEN_LOG(("CRC after AI AIGroup m_memberList for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 	}
 
 	xfer->xferUnsignedInt( &m_memberListSize );
-	CRCGEN_LOG(("CRC after AI AIGroup m_memberListSize for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI AIGroup m_memberListSize for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 
 	id = INVALID_ID;	// Used to be leader id, unused now. jba.
 	xfer->xferObjectID( &id );
-	CRCGEN_LOG(("CRC after AI AIGroup m_leader for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI AIGroup m_leader for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 	xfer->xferReal( &m_speed );
-	CRCGEN_LOG(("CRC after AI AIGroup m_speed for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI AIGroup m_speed for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 	xfer->xferBool( &m_dirty );
-	CRCGEN_LOG(("CRC after AI AIGroup m_dirty for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI AIGroup m_dirty for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 
 	xfer->xferUnsignedInt( &m_id );
-	CRCGEN_LOG(("CRC after AI AIGroup m_id (%d) for frame %d is 0x%8.8X\n", m_id, TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI AIGroup m_id (%d) for frame %d is 0x%8.8X", m_id, TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 
 }  // end crc
 

@@ -1521,7 +1521,7 @@ void PeerThreadClass::Thread_Function()
 					UnsignedInt diff = now - prev;
 					prev = now;
 #endif
-					STATECHANGED_LOG(("peerStateChanged() at time %d (difference of %d ms)\n", now, diff));
+					STATECHANGED_LOG(("peerStateChanged() at time %d (difference of %d ms)", now, diff));
 					*/
 
 					peerUTMRoom( peer, StagingRoom, "SL/", incomingRequest.options.c_str(), PEERFalse ); // send the full string to people in the room
@@ -1723,7 +1723,7 @@ void PeerThreadClass::Thread_Function()
 				UnsignedInt diff = now - prev;
 				prev = now;
 #endif
-				STATECHANGED_LOG(("peerStateChanged() at time %d (difference of %d ms)\n", now, diff));
+				STATECHANGED_LOG(("peerStateChanged() at time %d (difference of %d ms)", now, diff));
 			}
 		}
 
@@ -2894,7 +2894,7 @@ static void listingGamesCallback(PEER peer, PEERBool success, const char * name,
 		DEBUG_LOG(("Raw stuff: [%s] [%s] [%d]", pingStr, ladIPStr, ladPort));
 		DEBUG_LOG(("Saw game with stuff %s %d %X %X %X %s", resp.stagingRoomMapName.c_str(), hasPassword, verVal, exeVal, iniVal, SBServerGetStringValue(server, "password", "missing")));
 #ifdef PING_TEST
-	PING_LOG(("%s\n", pingStr));
+	PING_LOG(("%s", pingStr));
 #endif
 	}
 
