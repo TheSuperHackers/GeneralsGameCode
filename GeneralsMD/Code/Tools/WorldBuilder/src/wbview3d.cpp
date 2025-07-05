@@ -135,6 +135,7 @@ static void WWDebug_Message_Callback(DebugType type, const char * message)
 {
 #ifdef RTS_DEBUG
 	::OutputDebugString(message);
+	::OutputDebugString("\n");
 #endif
 }
 
@@ -143,6 +144,7 @@ static void WWAssert_Callback(const char * message)
 {
 #ifdef RTS_DEBUG
 	::OutputDebugString(message);
+	::OutputDebugString("\n");
 	::DebugBreak();
 #endif
 }

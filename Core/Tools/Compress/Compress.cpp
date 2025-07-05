@@ -17,13 +17,24 @@
 */
 
 #include <string>
-#include <cstdio>
+#include <Utility/stdio_adapter.h>
+#include <cstdarg>
 #include "Lib/BaseTypeCore.h"
 #include "Compression.h"
 
 
 // TheSuperHackers @todo Streamline and simplify the logging approach for tools
-#define DEBUG_LOG(x) printf x
+static void DebugLog(const char* format, ...)
+{
+	char buffer[1024];
+	buffer[0] = 0;
+	va_list args;
+	va_start(args, format);
+	vsnprintf(buffer, 1024, format, args);
+	va_end(args);
+	printf("%s\n", buffer);
+}
+#define DEBUG_LOG(x) DebugLog x
 
 
 void dumpHelp(const char *exe)
