@@ -976,9 +976,9 @@ void ShatterSystem::Shatter_Mesh(MeshClass * mesh,const Vector3 & point,const Ve
 	MeshMtlParamsClass mtl_params(model);
 
 	
-	SHATTER_DEBUG_SAY(("****************************************************\n"));
-	SHATTER_DEBUG_SAY((" Clipping model: %s\n",model->Get_Name()));
-	SHATTER_DEBUG_SAY(("****************************************************\n"));
+	SHATTER_DEBUG_SAY(("****************************************************"));
+	SHATTER_DEBUG_SAY((" Clipping model: %s",model->Get_Name()));
+	SHATTER_DEBUG_SAY(("****************************************************"));
 
 	/*
 	** Pass each polygon of the source model through the BSP clipper
@@ -988,7 +988,7 @@ void ShatterSystem::Shatter_Mesh(MeshClass * mesh,const Vector3 & point,const Ve
 		/*
 		** Set up a PolygonClass for polygon 'i' in the mesh
 		*/
-		SHATTER_DEBUG_SAY(("Passing polygon %d to clipper.\n",ipoly));
+		SHATTER_DEBUG_SAY(("Passing polygon %d to clipper.",ipoly));
 		PolygonClass polygon;
 		for (ivert=0; ivert<3; ivert++) { 
 			
@@ -996,31 +996,31 @@ void ShatterSystem::Shatter_Mesh(MeshClass * mesh,const Vector3 & point,const Ve
 			polygon.Verts[ivert].PassCount = mtl_params.PassCount;
 			polygon.Verts[ivert].Position = verts[vert_index];
 			polygon.Verts[ivert].Normal = src_vnorms[vert_index];
-			SHATTER_DEBUG_SAY(("position: %f %f %f\n",verts[vert_index].X,verts[vert_index].Y,verts[vert_index].Z));
-			SHATTER_DEBUG_SAY(("normal: %f %f %f\n",src_vnorms[vert_index].X,src_vnorms[vert_index].Y,src_vnorms[vert_index].Z));
+			SHATTER_DEBUG_SAY(("position: %f %f %f",verts[vert_index].X,verts[vert_index].Y,verts[vert_index].Z));
+			SHATTER_DEBUG_SAY(("normal: %f %f %f",src_vnorms[vert_index].X,src_vnorms[vert_index].Y,src_vnorms[vert_index].Z));
 			
 			for (ipass=0; ipass<MeshMatDescClass::MAX_PASSES; ipass++) {
 				if (mtl_params.DCG[ipass] != NULL) {
 					polygon.Verts[ivert].DCG[ipass] = mtl_params.DCG[ipass][vert_index];
-					SHATTER_DEBUG_SAY(("DCG: pass: %d : %f %f %f\n",ipass,mtl_params.DCG[ipass][vert_index].X,mtl_params.DCG[ipass][vert_index].Y,mtl_params.DCG[ipass][vert_index].Z));
+					SHATTER_DEBUG_SAY(("DCG: pass: %d : %f %f %f",ipass,mtl_params.DCG[ipass][vert_index].X,mtl_params.DCG[ipass][vert_index].Y,mtl_params.DCG[ipass][vert_index].Z));
 				}
 				
 				if (mtl_params.DIG[ipass] != NULL) {
 					polygon.Verts[ivert].DIG[ipass] = mtl_params.DIG[ipass][vert_index];
-					SHATTER_DEBUG_SAY(("DIG: pass: %d : %f %f %f\n",ipass,mtl_params.DIG[ipass][vert_index].X,mtl_params.DIG[ipass][vert_index].Y,mtl_params.DIG[ipass][vert_index].Z));
+					SHATTER_DEBUG_SAY(("DIG: pass: %d : %f %f %f",ipass,mtl_params.DIG[ipass][vert_index].X,mtl_params.DIG[ipass][vert_index].Y,mtl_params.DIG[ipass][vert_index].Z));
 				}
 
 				for (istage=0; istage<MeshMatDescClass::MAX_TEX_STAGES; istage++) {
 					if (mtl_params.UV[ipass][istage] != NULL) {
 						polygon.Verts[ivert].TexCoord[ipass][istage] = mtl_params.UV[ipass][istage][vert_index];
-						SHATTER_DEBUG_SAY(("UV pass: %d stage: %d: %f %f\n",ipass,istage,mtl_params.UV[ipass][istage][vert_index].X,mtl_params.UV[ipass][istage][vert_index].Y));
+						SHATTER_DEBUG_SAY(("UV pass: %d stage: %d: %f %f",ipass,istage,mtl_params.UV[ipass][istage][vert_index].X,mtl_params.UV[ipass][istage][vert_index].Y));
 					}
 				}
 
 /*				if (mtl_params.UVIndexArray[ipass] != NULL) {
 					int uv_index = mtl_params.UVIndexArray[ipass][ipoly][ivert];
 					polygon.Verts[ivert].TexCoord[ipass][0] = mtl_params.UV[ipass][0][uv_index];
-					SHATTER_DEBUG_SAY(("Per-Face UV pass: %d: %f %f\n",ipass,polygon.Verts[ivert].TexCoord[ipass][0].X,polygon.Verts[ivert].TexCoord[ipass][0].Y));
+					SHATTER_DEBUG_SAY(("Per-Face UV pass: %d: %f %f",ipass,polygon.Verts[ivert].TexCoord[ipass][0].X,polygon.Verts[ivert].TexCoord[ipass][0].Y));
 				}
 */			}
 		}
@@ -1119,10 +1119,10 @@ void ShatterSystem::Process_Clip_Pools
 				pcount += poly_vert_count-2;
 			}
 
-			SHATTER_DEBUG_SAY(("****************************************************\n"));
-			SHATTER_DEBUG_SAY((" Reassembling fragment %d of model: %s\n",ipool,model->Get_Name()));
-			SHATTER_DEBUG_SAY((" polycount = %d   vertexcount = %d\n",pcount,vcount));
-			SHATTER_DEBUG_SAY(("****************************************************\n"));
+			SHATTER_DEBUG_SAY(("****************************************************"));
+			SHATTER_DEBUG_SAY((" Reassembling fragment %d of model: %s",ipool,model->Get_Name()));
+			SHATTER_DEBUG_SAY((" polycount = %d   vertexcount = %d",pcount,vcount));
+			SHATTER_DEBUG_SAY(("****************************************************"));
 
 			/*
 			** Create the new mesh, install materials
@@ -1173,7 +1173,7 @@ void ShatterSystem::Process_Clip_Pools
 				PolygonClass & poly = ClipPools[ipool][ipoly];
 				
 				new_mesh->Begin_Tri_Fan();
-				SHATTER_DEBUG_SAY(("Begin Tri Fan\n"));
+				SHATTER_DEBUG_SAY(("Begin Tri Fan"));
 
 				for(ivert=0; ivert<poly.Get_Vertex_Count(); ivert++) {
 
@@ -1183,9 +1183,9 @@ void ShatterSystem::Process_Clip_Pools
 					Matrix3D::Transform_Vector(Mshatter_to_mesh,vert.Position,&pos);
 					norm = vert.Normal;
 
-					SHATTER_DEBUG_SAY(("Begin Vertex:\n"));
+					SHATTER_DEBUG_SAY(("Begin Vertex:"));
 					new_mesh->Begin_Vertex();
-					SHATTER_DEBUG_SAY(("postion: %f %f %f\n",pos.X,pos.Y,pos.Z));
+					SHATTER_DEBUG_SAY(("postion: %f %f %f",pos.X,pos.Y,pos.Z));
 					new_mesh->Location_Inline(pos);
 					new_mesh->Normal(norm);
 
@@ -1198,7 +1198,7 @@ void ShatterSystem::Process_Clip_Pools
 						** copy the color out of the vertex into the new mesh.
 						*/
 						if (mtl_params.DCG[ipass] != NULL) {
-							SHATTER_DEBUG_SAY(("DCG: pass:%d: %f %f %f\n",ipass,vert.DCG[ipass].X,vert.DCG[ipass].Y,vert.DCG[ipass].Z));
+							SHATTER_DEBUG_SAY(("DCG: pass:%d: %f %f %f",ipass,vert.DCG[ipass].X,vert.DCG[ipass].Y,vert.DCG[ipass].Z));
 							/* OLD CODE
 							new_mesh->DCG(Vector3(vert.DCG[ipass].X,vert.DCG[ipass].Y,vert.DCG[ipass].Z),ipass);
 							new_mesh->Alpha(vert.DCG[ipass].W,ipass);
@@ -1208,7 +1208,7 @@ void ShatterSystem::Process_Clip_Pools
 						
 						// HY- Multiplying DIG with DCG as in meshmdlio
 						if (mtl_params.DIG[ipass] != NULL) {
-							SHATTER_DEBUG_SAY(("DIG: pass:%d: %f %f %f\n",ipass,vert.DIG[ipass].X,vert.DIG[ipass].Y,vert.DIG[ipass].Z));
+							SHATTER_DEBUG_SAY(("DIG: pass:%d: %f %f %f",ipass,vert.DIG[ipass].X,vert.DIG[ipass].Y,vert.DIG[ipass].Z));
 							Vector4 mc=DX8Wrapper::Convert_Color(mycolor);
 							Vector4 dc=DX8Wrapper::Convert_Color(vert.DIG[ipass]);
 							mc=Vector4(mc.X*dc.X,mc.Y*dc.Y,mc.Z*dc.Z,mc.W);
@@ -1224,7 +1224,7 @@ void ShatterSystem::Process_Clip_Pools
 //						#pragma MESSAGE("HY- Naty, will dynamesh support multiple stages of UV?")
 						for (istage=0; istage<MeshMatDescClass::MAX_TEX_STAGES; istage++) {
 							if (mtl_params.UV[ipass][istage] != NULL) {
-								SHATTER_DEBUG_SAY(("UV: pass:%d stage: %d: %f %f\n",ipass,istage,vert.TexCoord[ipass][istage].X,vert.TexCoord[ipass][istage].Y));
+								SHATTER_DEBUG_SAY(("UV: pass:%d stage: %d: %f %f",ipass,istage,vert.TexCoord[ipass][istage].X,vert.TexCoord[ipass][istage].Y));
 								new_mesh->UV(vert.TexCoord[ipass][istage],istage);
 							}
 						}

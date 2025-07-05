@@ -544,16 +544,16 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 
 	if ( e_info->ExceptionRecord->ExceptionCode == EXCEPTION_ACCESS_VIOLATION )
 	{
-		DOUBLE_DEBUG (("Exception is access violation\n"));
+		DOUBLE_DEBUG (("Exception is access violation"));
 		access_read_write = e_info->ExceptionRecord->ExceptionInformation[0];  // 0=read, 1=write
 		access_address = e_info->ExceptionRecord->ExceptionInformation[1];
 	}
 	else
 	{
-		DOUBLE_DEBUG (("Exception code is %x\n", e_info->ExceptionRecord->ExceptionCode));
+		DOUBLE_DEBUG (("Exception code is %x", e_info->ExceptionRecord->ExceptionCode));
 	}
 	Int *winMainAddr = (Int *)WinMain;
-	DOUBLE_DEBUG(("WinMain at %x\n", winMainAddr));
+	DOUBLE_DEBUG(("WinMain at %x", winMainAddr));
 	/*
 	** Match the exception type with the error string and print it out
 	*/
@@ -566,42 +566,42 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 			break;
 		}
 	}
-	DOUBLE_DEBUG( ("%s\n", _code_txt[i]));
+	DOUBLE_DEBUG( ("%s", _code_txt[i]));
 	/** For access violations, print out the violation address and if it was read or write.
 	*/
 	if ( e_info->ExceptionRecord->ExceptionCode == EXCEPTION_ACCESS_VIOLATION )
 	{
 		if ( access_read_write )
 		{
-			DOUBLE_DEBUG( ("Access address:%08X was written to.\n", access_address));
+			DOUBLE_DEBUG( ("Access address:%08X was written to.", access_address));
 		}
 		else
 		{
-			DOUBLE_DEBUG( ("Access address:%08X was read from.\n", access_address));
+			DOUBLE_DEBUG( ("Access address:%08X was read from.", access_address));
 		}
 	}
 
-	DOUBLE_DEBUG (("\nStack Dump:\n"));
+	DOUBLE_DEBUG (("\nStack Dump:"));
 	StackDumpFromContext(context->Eip, context->Esp, context->Ebp, NULL);
 
-	DOUBLE_DEBUG (("\nDetails:\n"));
+	DOUBLE_DEBUG (("\nDetails:"));
 
-	DOUBLE_DEBUG (("Register dump...\n"));
+	DOUBLE_DEBUG (("Register dump..."));
 
 	/*
 	** Dump the registers.
 	*/
-	DOUBLE_DEBUG ( ( "Eip:%08X\tEsp:%08X\tEbp:%08X\n", context->Eip, context->Esp, context->Ebp));
-	DOUBLE_DEBUG ( ( "Eax:%08X\tEbx:%08X\tEcx:%08X\n", context->Eax, context->Ebx, context->Ecx));
-	DOUBLE_DEBUG ( ( "Edx:%08X\tEsi:%08X\tEdi:%08X\n", context->Edx, context->Esi, context->Edi));
-	DOUBLE_DEBUG ( ( "EFlags:%08X \n", context->EFlags));
-	DOUBLE_DEBUG ( ( "CS:%04x  SS:%04x  DS:%04x  ES:%04x  FS:%04x  GS:%04x\n", context->SegCs, context->SegSs, context->SegDs, context->SegEs, context->SegFs, context->SegGs));
+	DOUBLE_DEBUG ( ( "Eip:%08X\tEsp:%08X\tEbp:%08X", context->Eip, context->Esp, context->Ebp));
+	DOUBLE_DEBUG ( ( "Eax:%08X\tEbx:%08X\tEcx:%08X", context->Eax, context->Ebx, context->Ecx));
+	DOUBLE_DEBUG ( ( "Edx:%08X\tEsi:%08X\tEdi:%08X", context->Edx, context->Esi, context->Edi));
+	DOUBLE_DEBUG ( ( "EFlags:%08X ", context->EFlags));
+	DOUBLE_DEBUG ( ( "CS:%04x  SS:%04x  DS:%04x  ES:%04x  FS:%04x  GS:%04x", context->SegCs, context->SegSs, context->SegDs, context->SegEs, context->SegFs, context->SegGs));
 
 	/*
 	** Dump the bytes at EIP. This will make it easier to match the crash address with later versions of the game.
 	*/
 	char scrap[512];
-	DOUBLE_DEBUG ( ("EIP bytes dump...\n"));
+	DOUBLE_DEBUG ( ("EIP bytes dump..."));
 	wsprintf (scrap, "\nBytes at CS:EIP (%08X)  : ", context->Eip);
 
 	unsigned char *eip_ptr = (unsigned char *) (context->Eip);
