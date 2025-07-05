@@ -274,7 +274,7 @@ int HRawAnimClass::Load_W3D(ChunkLoadClass & cload)
 				if (newchan->Get_Pivot() < NumNodes) {
 					add_channel(newchan);
 				} else {
-					WWDEBUG_SAY(("Animation %s referring to missing Bone! Please re-export.\n",Name));
+					WWDEBUG_SAY(("Animation %s referring to missing Bone! Please re-export.",Name));
 					delete newchan;
 				}
 				break;
@@ -290,7 +290,7 @@ int HRawAnimClass::Load_W3D(ChunkLoadClass & cload)
 				if (newbitchan->Get_Pivot() < NumNodes) {
 					add_bit_channel(newbitchan);
 				} else {
-					WWDEBUG_SAY(("Animation %s referring to missing Bone! Please re-export.\n",Name));
+					WWDEBUG_SAY(("Animation %s referring to missing Bone! Please re-export.",Name));
 					delete newbitchan;
 				}
 				break;

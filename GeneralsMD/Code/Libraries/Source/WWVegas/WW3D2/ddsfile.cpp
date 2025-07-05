@@ -500,7 +500,7 @@ void DDSFileClass::Copy_Level_To_Surface
 					}
 				}
 				if (Format==WW3D_FORMAT_DXT1 && contains_alpha) {
-					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s\n",Name));
+					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s",Name));
 				}
 			}
 		}
@@ -674,7 +674,7 @@ void DDSFileClass::Copy_CubeMap_Level_To_Surface
 				}
 				if (Format==WW3D_FORMAT_DXT1 && contains_alpha) 
 				{
-					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s\n",Name));
+					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s",Name));
 				}
 			}
 		}
@@ -851,7 +851,7 @@ void DDSFileClass::Copy_Volume_Level_To_Surface
 					}
 					if (Format==WW3D_FORMAT_DXT1 && contains_alpha) 
 					{
-						WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s\n",Name));
+						WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s",Name));
 					}
 				}*/
 			}

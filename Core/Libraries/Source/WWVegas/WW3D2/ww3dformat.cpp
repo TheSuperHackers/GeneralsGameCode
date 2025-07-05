@@ -296,7 +296,7 @@ void Get_WW3D_Format(WW3DFormat& src_format,unsigned& src_bpp,const Targa& targa
 			else src_format = WW3D_FORMAT_A8;
 			break;
 		default:
-			WWDEBUG_SAY(("TextureClass: Targa has unsupported bitdepth(%i)\n",targa.Header.PixelDepth));
+			WWDEBUG_SAY(("TextureClass: Targa has unsupported bitdepth(%i)",targa.Header.PixelDepth));
 //			WWASSERT(0);
 			break;
 	}

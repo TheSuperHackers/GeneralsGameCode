@@ -793,7 +793,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(
 		static int warning_count = 0;
 		if (++warning_count <= 20) 
 		{
-			WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s\r\n",name));
+			WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s",name));
 		}
 	#ifdef DUMP_PERF_STATS
 		GetPrecisionTimer(&endTime64);
@@ -1399,7 +1399,7 @@ RenderObjClass * W3DAssetManager::Create_Render_Obj(const char * name,float scal
 	if (proto == NULL) {
 		static int warning_count = 0;
 		if (++warning_count <= 20) {
-			WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s\r\n",name));
+			WWDEBUG_SAY(("WARNING: Failed to create Render Object: %s",name));
 		}
 		return NULL;		// Failed to find a prototype
 	}

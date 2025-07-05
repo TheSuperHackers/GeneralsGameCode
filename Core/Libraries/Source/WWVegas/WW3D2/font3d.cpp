@@ -142,7 +142,7 @@ SurfaceClass *Font3DDataClass::Minimize_Font_Image( SurfaceClass *surface )
 				// we assert because we have already modified tables for some of the chars
 				if (new_y + height > new_height) {
 					new_y -= height;
-					WWDEBUG_SAY(( "Font doesn't fit texture 2 on char %c\n", char_index ));
+					WWDEBUG_SAY(( "Font doesn't fit texture 2 on char %c", char_index ));
 				}
 			}
 
@@ -288,7 +288,7 @@ bool	Font3DDataClass::Load_Font_Image( const char *filename )
 				int end = column;
 				
 				if ( end <= start ) {
-					WWDEBUG_SAY(( "Error Char %d start %d end %d width %d\n", char_index, start, end, width ));
+					WWDEBUG_SAY(( "Error Char %d start %d end %d width %d", char_index, start, end, width ));
 				}
 
 //				WWASSERT( end > start );
