@@ -234,7 +234,7 @@ static void doLogOutput(const char *buffer)
 	{
 		if (theLogFile)
 		{
-			fprintf(theLogFile, "%s", buffer);	// note, no \n (should be there already)
+			fprintf(theLogFile, "%s\n", buffer);
 			fflush(theLogFile);
 		}
 	}
@@ -243,10 +243,11 @@ static void doLogOutput(const char *buffer)
 	if (theDebugFlags & DEBUG_FLAG_LOG_TO_CONSOLE)
 	{
 		::OutputDebugString(buffer);
+		::OutputDebugString("\n");
 	}
 
 #ifdef INCLUDE_DEBUG_LOG_IN_CRC_LOG
-	addCRCDebugLineNoCounter("%s", buffer);
+	addCRCDebugLineNoCounter("%s\n", buffer);
 #endif
 }
 #endif
@@ -275,14 +276,14 @@ static int doCrashBox(const char *buffer, Bool logResult)
 		case IDABORT:
 #ifdef DEBUG_LOGGING
 			if (logResult)
-				DebugLog("[Abort]\n");
+				DebugLog("[Abort]");
 #endif
 			_exit(1);
 			break;
 		case IDRETRY:
 #ifdef DEBUG_LOGGING
 			if (logResult)
-				DebugLog("[Retry]\n");
+				DebugLog("[Retry]");
 #endif
 			::DebugBreak();
 			break;
@@ -290,7 +291,7 @@ static int doCrashBox(const char *buffer, Bool logResult)
 #ifdef DEBUG_LOGGING
 			// do nothing, just keep going
 			if (logResult)
-				DebugLog("[Ignore]\n");
+				DebugLog("[Ignore]");
 #endif
 			break;
 	}
@@ -309,7 +310,7 @@ static void doStackDump()
 	const int STACKTRACE_SKIP = 2;
 	void* stacktrace[STACKTRACE_SIZE];
 
-	doLogOutput("\nStack Dump:\n");
+	doLogOutput("\nStack Dump:");
 	::FillStackAddresses(stacktrace, STACKTRACE_SIZE, STACKTRACE_SKIP);
 	::StackDumpFromAddresses(stacktrace, STACKTRACE_SIZE, doLogOutput);
 }
@@ -397,7 +398,7 @@ void DebugInit(int flags)
 		theLogFile = fopen(theLogFileName, "w");
 		if (theLogFile != NULL)
 		{
-			DebugLog("Log %s opened: %s\n", theLogFileName, getCurrentTimeString());
+			DebugLog("Log %s opened: %s", theLogFileName, getCurrentTimeString());
 		} 
 	#endif
 	}
@@ -495,7 +496,7 @@ void DebugCrash(const char *format, ...)
 #ifdef DEBUG_LOGGING
 	if (ignoringAsserts()) 
 	{
-		doLogOutput("**** CRASH IN FULL SCREEN - Auto-ignored, CHECK THIS LOG!\n");
+		doLogOutput("**** CRASH IN FULL SCREEN - Auto-ignored, CHECK THIS LOG!");
 	}
 	whackFunnyCharacters(theCrashBuffer);
 	doLogOutput(theCrashBuffer);
@@ -507,7 +508,7 @@ void DebugCrash(const char *format, ...)
 	}
 #endif
 
-	strcat(theCrashBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue\n");
+	strcat(theCrashBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue");
 
 	int result = doCrashBox(theCrashBuffer, true);
 
@@ -547,7 +548,7 @@ void DebugShutdown()
 #ifdef DEBUG_LOGGING
 	if (theLogFile)
 	{
-		DebugLog("Log closed: %s\n", getCurrentTimeString());
+		DebugLog("Log closed: %s", getCurrentTimeString());
 		fclose(theLogFile);
 	}
 	theLogFile = NULL;
@@ -624,9 +625,9 @@ void SimpleProfiler::stopAndLog(const char *msg, int howOftenToLog, int howOften
 	{
 		m_numSessions = 0;
 		m_totalAllSessions = 0;
-		DEBUG_LOG(("%s: reset averages\n",msg));
+		DEBUG_LOG(("%s: reset averages",msg));
 	}
-	DEBUG_ASSERTLOG(m_numSessions % howOftenToLog != 0, ("%s: %f msec, total %f msec, avg %f msec\n",msg,getTime(),getTotalTime(),getAverageTime()));
+	DEBUG_ASSERTLOG(m_numSessions % howOftenToLog != 0, ("%s: %f msec, total %f msec, avg %f msec",msg,getTime(),getTotalTime(),getAverageTime()));
 }
 
 // ----------------------------------------------------------------------------
@@ -683,7 +684,7 @@ double SimpleProfiler::getAverageTime()
 	{
 		if (theReleaseCrashLogFile)
 		{
-			fprintf(theReleaseCrashLogFile, "%s", buffer);	// note, no \n (should be there already)
+			fprintf(theReleaseCrashLogFile, "%s\n", buffer);
 			fflush(theReleaseCrashLogFile);
 		}
 	}
