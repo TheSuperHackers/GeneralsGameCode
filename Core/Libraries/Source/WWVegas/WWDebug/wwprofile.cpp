@@ -1039,7 +1039,7 @@ WWMemoryAndTimeLog::WWMemoryAndTimeLog(const char* name)
 	IntermediateAllocSizeStart=AllocSizeStart;
 	StringClass tmp(0,true);
 	for (unsigned i=0;i<TabCount;++i) tmp+="\t";
-	WWRELEASE_SAY(("%s%s {\n",tmp.str(),name));
+	WWRELEASE_SAY(("%s%s {",tmp.str(),name));
 	TabCount++;
 }
 
@@ -1053,12 +1053,12 @@ WWMemoryAndTimeLog::~WWMemoryAndTimeLog()
 	unsigned current_time=WWProfile_Get_System_Time();
 	int current_alloc_count=FastAllocatorGeneral::Get_Allocator()->Get_Total_Allocation_Count();
 	int current_alloc_size=FastAllocatorGeneral::Get_Allocator()->Get_Total_Allocated_Size();
-	WWRELEASE_SAY(("IN TOTAL %s took %d.%3.3d s, did %d memory allocations of %d bytes\n",
+	WWRELEASE_SAY(("IN TOTAL %s took %d.%3.3d s, did %d memory allocations of %d bytes",
 		Name.str(),
 		(current_time - TimeStart)/1000, (current_time - TimeStart)%1000,
 		current_alloc_count - AllocCountStart,
 		current_alloc_size - AllocSizeStart));
-	WWRELEASE_SAY(("\n"));
+	WWRELEASE_SAY((""));
 
 }
 
@@ -1070,7 +1070,7 @@ void WWMemoryAndTimeLog::Log_Intermediate(const char* text)
 	int current_alloc_size=FastAllocatorGeneral::Get_Allocator()->Get_Total_Allocated_Size();
 	StringClass tmp(0,true);
 	for (unsigned i=0;i<TabCount;++i) tmp+="\t";
-	WWRELEASE_SAY(("%s%s took %d.%3.3d s, did %d memory allocations of %d bytes\n",
+	WWRELEASE_SAY(("%s%s took %d.%3.3d s, did %d memory allocations of %d bytes",
 		tmp.str(),
 		text,
 		(current_time - IntermediateTimeStart)/1000, (current_time - IntermediateTimeStart)%1000,
