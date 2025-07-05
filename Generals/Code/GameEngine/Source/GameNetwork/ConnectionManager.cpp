@@ -677,7 +677,7 @@ void ConnectionManager::processChat(NetChatCommandMsg *msg)
 
 void ConnectionManager::processFile(NetFileCommandMsg *msg) 
 {
-#ifdef RTS_INTERNAL
+#ifdef DEBUG_LOGGING
 	UnicodeString log;
 	log.format(L"Saw file transfer: '%hs' of %d bytes from %d", msg->getPortableFilename().str(), msg->getFileLength(), msg->getPlayerID());
 	DEBUG_LOG(("%ls\n", log.str()));

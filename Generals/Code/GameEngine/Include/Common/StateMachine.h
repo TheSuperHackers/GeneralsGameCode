@@ -51,9 +51,6 @@ class Object;
 #if defined(RTS_DEBUG)
 	#define STATE_MACHINE_DEBUG
 #endif
-#if defined(RTS_INTERNAL)
-	#define STATE_MACHINE_DEBUG	//uncomment to debug state machines in internal.  jba.
-#endif
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

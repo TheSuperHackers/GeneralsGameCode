@@ -290,9 +290,6 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	DEBUG_LOG(("starting Worldbuilder.\n"));
 
-#ifdef RTS_INTERNAL
-	DEBUG_LOG(("RTS_INTERNAL defined.\n"));
-#endif
 #ifdef RTS_DEBUG
 	DEBUG_LOG(("RTS_DEBUG defined.\n"));
 #endif
@@ -355,9 +352,6 @@ BOOL CWorldBuilderApp::InitInstance()
 	TheWritableGlobalData->m_debugIgnoreAsserts = false;
 #endif
 
-#if defined(RTS_INTERNAL)
-	// leave on asserts for a while. jba. [4/15/2003] TheWritableGlobalData->m_debugIgnoreAsserts = true;
-#endif
 	DEBUG_LOG(("TheWritableGlobalData %x\n", TheWritableGlobalData));
 #if 1
 	// srj sez: put INI into our user data folder, not the ap dir

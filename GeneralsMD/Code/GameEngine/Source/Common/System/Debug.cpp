@@ -84,10 +84,7 @@ extern const char *gAppPrefix; /// So WB can have a different log file name.
 
 #ifdef DEBUG_LOGGING
 
-#if defined(RTS_INTERNAL)
-	#define DEBUG_FILE_NAME				"DebugLogFileI"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevI"
-#elif defined(RTS_DEBUG)
+#if defined(RTS_DEBUG)
 	#define DEBUG_FILE_NAME				"DebugLogFileD"
 	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevD"
 #else

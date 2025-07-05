@@ -83,10 +83,6 @@
   - Release: XXX.lib
 */
 
-#if defined(RTS_DEBUG) && defined(RTS_INTERNAL)
-	#error "Only either RTS_DEBUG or RTS_INTERNAL should ever be defined"
-#endif
-
 // Define which libraries to use. 
 #if defined(RTS_DEBUG) || defined(RTS_PROFILE)
 #  define HAS_ASSERTS

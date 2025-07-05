@@ -50,10 +50,6 @@
 
 class AsciiString;
 
-#if defined(RTS_DEBUG) && defined(RTS_INTERNAL)
-	#error "Only one at a time of these should ever be defined"
-#endif
-
 #define NO_RELEASE_DEBUG_LOGGING
 
 #ifdef RELEASE_DEBUG_LOGGING  ///< Creates a DebugLogFile.txt (No I or D) with all the debug log goodness.  Good for startup problems.
@@ -126,8 +122,8 @@ class AsciiString;
 		DEBUG_FLAG_LOG_TO_FILE = 0x01,	
 		DEBUG_FLAG_LOG_TO_CONSOLE = 0x02,
 		DEBUG_FLAG_PREPEND_TIME = 0x04,
-#ifdef RTS_INTERNAL
-		// by default, RTS_INTERNAL builds log to file, but not to console, in the interest
+#ifdef RTS_PROFILE
+		// by default, RTS_PROFILE builds log to file, but not to console, in the interest
 		// of speed. want console output? just change this line:
 		DEBUG_FLAGS_DEFAULT = (DEBUG_FLAG_LOG_TO_FILE)
 #else

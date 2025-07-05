@@ -258,8 +258,6 @@ void GameEngine::init()
 			DEBUG_LOG(("================================================================================\n"));
 	#if defined RTS_DEBUG
 			const char *buildType = "Debug";
-	#elif defined RTS_INTERNAL
-			const char *buildType = "Internal";
 	#else
 			const char *buildType = "Release";
 	#endif

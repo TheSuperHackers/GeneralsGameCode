@@ -277,9 +277,6 @@ BOOL CWorldBuilderApp::InitInstance()
 	// start the log
 	DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
 	DEBUG_LOG(("starting Worldbuilder.\n"));
-#ifdef RTS_INTERNAL
-	DEBUG_LOG(("RTS_INTERNAL defined.\n"));
-#endif
 #ifdef RTS_DEBUG
 	DEBUG_LOG(("RTS_DEBUG defined.\n"));
 #endif
