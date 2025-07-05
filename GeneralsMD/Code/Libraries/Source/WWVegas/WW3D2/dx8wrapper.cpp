@@ -938,7 +938,7 @@ void DX8Wrapper::Resize_And_Position_Window()
 		{
 			::SetWindowPos(_Hwnd, HWND_TOPMOST, 0, 0, width, height, SWP_NOSIZE | SWP_NOMOVE);
 
-			DEBUG_LOG(("Window resized to w:%d h:%d\n", width, height));
+			DEBUG_LOG(("Window resized to w:%d h:%d", width, height));
 		}
 		else
 		{
@@ -961,7 +961,7 @@ void DX8Wrapper::Resize_And_Position_Window()
 
 			::SetWindowPos (_Hwnd, NULL, left, top, width, height, SWP_NOZORDER);
 
-			DEBUG_LOG(("Window positioned to x:%d y:%d, resized to w:%d h:%d\n", left, top, width, height));
+			DEBUG_LOG(("Window positioned to x:%d y:%d, resized to w:%d h:%d", left, top, width, height));
 		}
 	}
 }

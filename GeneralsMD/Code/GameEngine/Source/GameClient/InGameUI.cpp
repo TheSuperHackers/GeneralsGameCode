@@ -458,7 +458,7 @@ void InGameUI::xfer( Xfer *xfer )
 			}
 			else if (playerIndex < 0 || playerIndex >= MAX_PLAYER_COUNT)
 			{
-				DEBUG_CRASH(("SWInfo bad plyrindex\n"));
+				DEBUG_CRASH(("SWInfo bad plyrindex"));
 				throw INI_INVALID_DATA;
 			}
 
@@ -467,7 +467,7 @@ void InGameUI::xfer( Xfer *xfer )
 			const SpecialPowerTemplate* powerTemplate = TheSpecialPowerStore->findSpecialPowerTemplate(templateName);
 			if (powerTemplate == NULL)
 			{
-				DEBUG_CRASH(("power %s not found\n",templateName.str()));
+				DEBUG_CRASH(("power %s not found",templateName.str()));
 				throw INI_INVALID_DATA;
 			}
 
@@ -1751,7 +1751,7 @@ void InGameUI::update( void )
 					{
 						// if we've exceeded the allocated number of display strings, this will force us to essentially truncate the remaining text
 						m_militarySubtitle->index = m_militarySubtitle->subtitle.getLength();
-						DEBUG_CRASH(("You're Only Allowed to use %d lines of subtitle text\n",MAX_SUBTITLE_LINES));
+						DEBUG_CRASH(("You're Only Allowed to use %d lines of subtitle text",MAX_SUBTITLE_LINES));
 					}
 				}
 				else

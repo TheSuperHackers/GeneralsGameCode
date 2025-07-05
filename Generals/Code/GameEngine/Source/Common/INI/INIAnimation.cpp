@@ -73,7 +73,7 @@ void INI::parseAnim2DDefinition( INI* ini )
 	{
 
 		// we're loading over an existing animation template ... something is probably wrong
-		DEBUG_CRASH(( "INI::parseAnim2DDefinition - Animation template '%s' already exists\n",
+		DEBUG_CRASH(( "INI::parseAnim2DDefinition - Animation template '%s' already exists",
 									animTemplate->getName().str() ));
 		return;
 

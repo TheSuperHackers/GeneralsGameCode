@@ -3351,7 +3351,7 @@ void AIPlayer::xfer( Xfer *xfer )
 		if( getFirstItemIn_TeamBuildQueue() != NULL )
 		{
 		
-			DEBUG_CRASH(( "AIPlayer::xfer - TeamBuildQueue head is not NULL, you should delete it or something before loading a new list\n" ));
+			DEBUG_CRASH(( "AIPlayer::xfer - TeamBuildQueue head is not NULL, you should delete it or something before loading a new list" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -3410,7 +3410,7 @@ void AIPlayer::xfer( Xfer *xfer )
 		if( getFirstItemIn_TeamReadyQueue() != NULL )
 		{
 		
-			DEBUG_CRASH(( "AIPlayer::xfer - TeamReadyQueue head is not NULL, you should delete it or something before loading a new list\n" ));
+			DEBUG_CRASH(( "AIPlayer::xfer - TeamReadyQueue head is not NULL, you should delete it or something before loading a new list" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -3441,7 +3441,7 @@ void AIPlayer::xfer( Xfer *xfer )
 	if( playerIndex != m_player->getPlayerIndex() )
 	{
 
-		DEBUG_CRASH(( "AIPlayer::xfer - player index mismatch\n" ));
+		DEBUG_CRASH(( "AIPlayer::xfer - player index mismatch" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -3649,7 +3649,7 @@ void TeamInQueue::xfer( Xfer *xfer )
 		if( m_workOrders != NULL )
 		{
 
-			DEBUG_CRASH(( "TeamInQueue::xfer - m_workOrders should be NULL but isn't.  Perhaps you should blow it away before loading\n" ));
+			DEBUG_CRASH(( "TeamInQueue::xfer - m_workOrders should be NULL but isn't.  Perhaps you should blow it away before loading" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if

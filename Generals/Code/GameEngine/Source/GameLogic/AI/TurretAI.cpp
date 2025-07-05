@@ -1053,7 +1053,7 @@ StateReturnType TurretAIAimTurretState::update()
 	Weapon *curWeapon = obj->getCurrentWeapon( &slot );
 	if (!curWeapon) 
 	{
-		DEBUG_CRASH(("TurretAIAimTurretState::update - curWeapon is NULL.\n"));
+		DEBUG_CRASH(("TurretAIAimTurretState::update - curWeapon is NULL."));
 		return STATE_FAILURE;
 	}
 

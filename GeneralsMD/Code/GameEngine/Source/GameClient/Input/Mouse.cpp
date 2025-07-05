@@ -1152,7 +1152,7 @@ Int Mouse::getCursorIndex(const AsciiString& name)
 			return i;
 	}
 
-	DEBUG_CRASH(( "Mouse::getCursorIndex - Invalid cursor name '%s'\n", name.str() ));
+	DEBUG_CRASH(( "Mouse::getCursorIndex - Invalid cursor name '%s'", name.str() ));
 	return INVALID_MOUSE_CURSOR;
 
 }

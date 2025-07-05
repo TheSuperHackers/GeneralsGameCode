@@ -676,7 +676,7 @@ void ModelConditionInfo::validateCachedBones(RenderObjClass* robj, Real scale) c
 			if (!doSingleBoneName(robj, *it, m_pristineBones))
 			{
 				// don't crash here, since these are catch-all global bones and won't be present in most models.
-				//DEBUG_CRASH(("public bone %s (and variations thereof) not found in model %s!\n",it->str(),m_modelName.str()));
+				//DEBUG_CRASH(("public bone %s (and variations thereof) not found in model %s!",it->str(),m_modelName.str()));
 			}
 			//else
 			//{
@@ -689,7 +689,7 @@ void ModelConditionInfo::validateCachedBones(RenderObjClass* robj, Real scale) c
 		if (!doSingleBoneName(robj, *it, m_pristineBones))
 		{
 			// DO crash here, since we specifically requested this bone for this model
-			DEBUG_CRASH(("*** ASSET ERROR: public bone '%s' (and variations thereof) not found in model %s!\n",it->str(),m_modelName.str()));
+			DEBUG_CRASH(("*** ASSET ERROR: public bone '%s' (and variations thereof) not found in model %s!",it->str(),m_modelName.str()));
 		}
 		//else
 		//{
@@ -859,7 +859,7 @@ void ModelConditionInfo::validateTurretInfo() const
 		{
 			if (findPristineBone(tur.m_turretAngleNameKey, &tur.m_turretAngleBone) == NULL)
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: TurretBone %s not found! (%s)\n",KEYNAME(tur.m_turretAngleNameKey).str(),m_modelName.str()));
+				DEBUG_CRASH(("*** ASSET ERROR: TurretBone %s not found! (%s)",KEYNAME(tur.m_turretAngleNameKey).str(),m_modelName.str()));
 				tur.m_turretAngleBone = 0;
 			}
 		}
@@ -872,7 +872,7 @@ void ModelConditionInfo::validateTurretInfo() const
 		{
 			if (findPristineBone(tur.m_turretPitchNameKey, &tur.m_turretPitchBone) == NULL)
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: TurretBone %s not found! (%s)\n",KEYNAME(tur.m_turretPitchNameKey).str(),m_modelName.str()));
+				DEBUG_CRASH(("*** ASSET ERROR: TurretBone %s not found! (%s)",KEYNAME(tur.m_turretPitchNameKey).str(),m_modelName.str()));
 				tur.m_turretPitchBone = 0;
 			}
 		}
@@ -1428,19 +1428,19 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 		{
 			if (self->m_defaultState >= 0)
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: you may have only one default state!\n"));
+				DEBUG_CRASH(("*** ASSET ERROR: you may have only one default state!"));
 				throw INI_INVALID_DATA;
 			}
 			else if (ini->getNextTokenOrNull())
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: unknown keyword\n"));
+				DEBUG_CRASH(("*** ASSET ERROR: unknown keyword"));
 				throw INI_INVALID_DATA;
 			}
 			else
 			{
 				if (!self->m_conditionStates.empty())
 				{
-					DEBUG_CRASH(("*** ASSET ERROR: when using DefaultConditionState, it must be the first state listed (%s)\n",TheThingTemplateBeingParsedName.str()));
+					DEBUG_CRASH(("*** ASSET ERROR: when using DefaultConditionState, it must be the first state listed (%s)",TheThingTemplateBeingParsedName.str()));
 					throw INI_INVALID_DATA;
 				}
 
@@ -1471,7 +1471,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 
 			if (firstKey == secondKey)
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: You may not declare a transition between two identical states\n"));
+				DEBUG_CRASH(("*** ASSET ERROR: You may not declare a transition between two identical states"));
 				throw INI_INVALID_DATA;
 			}
 
@@ -1500,7 +1500,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 		{
 			if (self->m_conditionStates.empty())
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: AliasConditionState must refer to the previous state!\n"));
+				DEBUG_CRASH(("*** ASSET ERROR: AliasConditionState must refer to the previous state!"));
 				throw INI_INVALID_DATA;
 			}
 			
@@ -1520,7 +1520,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 			
 			if (conditionsYes.anyIntersectionWith(self->m_ignoreConditionStates))
 			{
-				DEBUG_CRASH(("You should not specify bits in a state once they are used in IgnoreConditionStates (%s)\n", TheThingTemplateBeingParsedName.str()));
+				DEBUG_CRASH(("You should not specify bits in a state once they are used in IgnoreConditionStates (%s)", TheThingTemplateBeingParsedName.str()));
 				throw INI_INVALID_DATA;
 			}
 
@@ -1555,7 +1555,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 	// files too badly. maybe someday.
 	//	else
 	//	{
-	//		DEBUG_CRASH(("*** ASSET ERROR: you must specify a default state\n"));
+	//		DEBUG_CRASH(("*** ASSET ERROR: you must specify a default state"));
 	//		throw INI_INVALID_DATA;
 	//	}
 			
@@ -1574,14 +1574,14 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 
 			if (conditionsYes.anyIntersectionWith(self->m_ignoreConditionStates))
 			{
-				DEBUG_CRASH(("You should not specify bits in a state once they are used in IgnoreConditionStates (%s)\n", TheThingTemplateBeingParsedName.str()));
+				DEBUG_CRASH(("You should not specify bits in a state once they are used in IgnoreConditionStates (%s)", TheThingTemplateBeingParsedName.str()));
 				throw INI_INVALID_DATA;
 			}
 
 			if (self->m_defaultState < 0 && self->m_conditionStates.empty() && conditionsYes.any())
 			{
 				// it doesn't actually NEED to be first, but it does need to be present, and this is the simplest way to enforce...
-				DEBUG_CRASH(("*** ASSET ERROR: when not using DefaultConditionState, the first ConditionState must be for NONE (%s)\n",TheThingTemplateBeingParsedName.str()));
+				DEBUG_CRASH(("*** ASSET ERROR: when not using DefaultConditionState, the first ConditionState must be for NONE (%s)",TheThingTemplateBeingParsedName.str()));
 				throw INI_INVALID_DATA;
 			}
 
@@ -1624,7 +1624,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 
 	if ((info.m_iniReadFlags & (1<<GOT_IDLE_ANIMS)) && (info.m_mode != RenderObjClass::ANIM_MODE_ONCE && info.m_mode != RenderObjClass::ANIM_MODE_ONCE_BACKWARDS))
 	{
-		DEBUG_CRASH(("*** ASSET ERROR: Idle Anims should always use ONCE or ONCE_BACKWARDS (%s)\n",TheThingTemplateBeingParsedName.str()));
+		DEBUG_CRASH(("*** ASSET ERROR: Idle Anims should always use ONCE or ONCE_BACKWARDS (%s)",TheThingTemplateBeingParsedName.str()));
 		throw INI_INVALID_DATA;
 	}
 
@@ -1724,7 +1724,7 @@ W3DModelDraw::W3DModelDraw(Thing *thing, const ModuleData* moduleData) : DrawMod
 	const ModelConditionInfo* info = findBestInfo(emptyFlags);
 	if (!info)
 	{
-		DEBUG_CRASH(("*** ASSET ERROR: all draw modules must have an IDLE state\n"));
+		DEBUG_CRASH(("*** ASSET ERROR: all draw modules must have an IDLE state"));
 		throw INI_INVALID_DATA;
 	}
 
@@ -2291,7 +2291,7 @@ void ModelConditionInfo::WeaponBarrelInfo::setMuzzleFlashHidden(RenderObjClass *
 		}
 		else
 		{
-			DEBUG_CRASH(("*** ASSET ERROR: childObject %s not found in setMuzzleFlashHidden()\n",m_muzzleFlashBoneName.str()));
+			DEBUG_CRASH(("*** ASSET ERROR: childObject %s not found in setMuzzleFlashHidden()",m_muzzleFlashBoneName.str()));
 		}
 	}
 }
@@ -2325,7 +2325,7 @@ void W3DModelDraw::doHideShowSubObjs(const std::vector<ModelConditionInfo::HideS
 			}
 			else
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: SubObject %s not found (%s)!\n",it->subObjName.str(),getDrawable()->getTemplate()->getName().str()));
+				DEBUG_CRASH(("*** ASSET ERROR: SubObject %s not found (%s)!",it->subObjName.str(),getDrawable()->getTemplate()->getName().str()));
 			}
 		}
 	}
@@ -3314,7 +3314,7 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 			if (turInfo.m_turretAngleNameKey != NAMEKEY_INVALID &&
 					!stateToUse->findPristineBonePos(turInfo.m_turretAngleNameKey, *turretRotPos))
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: TurretBone %s not found!\n",KEYNAME(turInfo.m_turretAngleNameKey).str()));
+				DEBUG_CRASH(("*** ASSET ERROR: TurretBone %s not found!",KEYNAME(turInfo.m_turretAngleNameKey).str()));
 			}
 #ifdef CACHE_ATTACH_BONE
 			if (offset)
@@ -3330,7 +3330,7 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 			if (turInfo.m_turretPitchNameKey != NAMEKEY_INVALID &&
 					!stateToUse->findPristineBonePos(turInfo.m_turretPitchNameKey, *turretPitchPos))
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: TurretBone %s not found!\n",KEYNAME(turInfo.m_turretPitchNameKey).str()));
+				DEBUG_CRASH(("*** ASSET ERROR: TurretBone %s not found!",KEYNAME(turInfo.m_turretPitchNameKey).str()));
 			}
 #ifdef CACHE_ATTACH_BONE
 			if (offset)
@@ -3419,7 +3419,7 @@ Int W3DModelDraw::getPristineBonePositionsForConditionState(
 		}
 		else
 		{
-			//DEBUG_CRASH(("*** ASSET ERROR: Bone %s not found!\n",buffer));
+			//DEBUG_CRASH(("*** ASSET ERROR: Bone %s not found!",buffer));
 			const Object *obj = getDrawable()->getObject();
 			if (obj)
 				transforms[posCount] = *obj->getTransformMatrix();
@@ -3897,7 +3897,7 @@ void W3DModelDraw::updateSubObjects()
 			}
 			else
 			{
-				DEBUG_CRASH(("*** ASSET ERROR: SubObject %s not found (%s)!\n",it->subObjName.str(),getDrawable()->getTemplate()->getName().str()));
+				DEBUG_CRASH(("*** ASSET ERROR: SubObject %s not found (%s)!",it->subObjName.str(),getDrawable()->getTemplate()->getName().str()));
 			}
 		}
 	}

@@ -198,7 +198,7 @@ UpdateSleepTime POWTruckAIUpdate::update( void )
 			updateReturnPrisoners();
 			break;
 		default:
-			DEBUG_CRASH(( "POWTruckAIUpdate::update - Unknown current task '%d'\n", m_currentTask ));
+			DEBUG_CRASH(( "POWTruckAIUpdate::update - Unknown current task '%d'", m_currentTask ));
 			break;
 
 	}  // end switch, current task
@@ -223,7 +223,7 @@ void POWTruckAIUpdate::setTask( POWTruckTask task, Object *taskObject )
 			taskObject == NULL )
 	{
 
-		DEBUG_CRASH(( "POWTruckAIUpdate::setTask - Illegal arguments\n" ));
+		DEBUG_CRASH(( "POWTruckAIUpdate::setTask - Illegal arguments" ));
 		setTask( POW_TRUCK_TASK_WAITING );
 		return;
 

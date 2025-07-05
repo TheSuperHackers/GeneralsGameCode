@@ -809,13 +809,13 @@ void Object::restoreOriginalTeam()
 	Team* origTeam = TheTeamFactory->findTeam(m_originalTeamName);
 	if (origTeam == NULL)
 	{
-		DEBUG_CRASH(("Object original team (%s) could not be found or created! (srj)\n",m_originalTeamName.str()));
+		DEBUG_CRASH(("Object original team (%s) could not be found or created! (srj)",m_originalTeamName.str()));
 		return;
 	}
 
 	if (m_team == origTeam)
 	{
-		DEBUG_CRASH(("Object appears to still be on its original team, so why are we attempting to restore it? (srj)\n"));
+		DEBUG_CRASH(("Object appears to still be on its original team, so why are we attempting to restore it? (srj)"));
 		return;
 	}
 
@@ -2880,7 +2880,7 @@ Module* Object::findModule(NameKeyType key) const
 			}
 			else
 			{
-				DEBUG_CRASH(("Duplicate modules found for name %s!\n",TheNameKeyGenerator->keyToName(key).str()));
+				DEBUG_CRASH(("Duplicate modules found for name %s!",TheNameKeyGenerator->keyToName(key).str()));
 			}
 #else
 			m = *b;
@@ -4105,7 +4105,7 @@ void Object::xfer( Xfer *xfer )
 		Team *team = TheTeamFactory->findTeamByID( teamID );
 		if( team == NULL )
 		{
-			DEBUG_CRASH(( "Object::xfer - Unable to load team\n" ));
+			DEBUG_CRASH(( "Object::xfer - Unable to load team" ));
 			throw SC_INVALID_DATA;
 		}
 		const Bool restoring = true;
@@ -4335,7 +4335,7 @@ void Object::xfer( Xfer *xfer )
 			{
 
 				// for testing purposes, this module better be found
-//				DEBUG_CRASH(( "Object::xfer - Module '%s' was indicated in file, but not found on object '%s'(%d)\n",
+//				DEBUG_CRASH(( "Object::xfer - Module '%s' was indicated in file, but not found on object '%s'(%d)",
 //											moduleIdentifier.str(), getTemplate()->getName().str(), getID() ));
 
 				// skip this data in the file

@@ -1104,7 +1104,7 @@ Bool MemoryPoolSingleBlock::debugCheckUnderrun()
 	{
 		if (*p != m_wallPattern+i)
 		{
-			DEBUG_CRASH(("memory underrun for block \"%s\" (expected %08x, got %08x)\n",m_debugLiteralTagString,m_wallPattern+i,*p));
+			DEBUG_CRASH(("memory underrun for block \"%s\" (expected %08x, got %08x)",m_debugLiteralTagString,m_wallPattern+i,*p));
 			return true;
 		}
 	}
@@ -1129,7 +1129,7 @@ Bool MemoryPoolSingleBlock::debugCheckOverrun()
 	{
 		if (*p != m_wallPattern-i)
 		{
-			DEBUG_CRASH(("memory overrun for block \"%s\" (expected %08x, got %08x)\n",m_debugLiteralTagString,m_wallPattern+i,*p));
+			DEBUG_CRASH(("memory overrun for block \"%s\" (expected %08x, got %08x)",m_debugLiteralTagString,m_wallPattern+i,*p));
 			return true;
 		}
 	}
@@ -2166,7 +2166,7 @@ void DynamicMemoryAllocator::debugIgnoreLeaksForThisBlock(void* pBlockPtr)
 	}
 	else
 	{
-		DEBUG_CRASH(("cannot currently ignore leaks for raw blocks (allocation too large)\n"));
+		DEBUG_CRASH(("cannot currently ignore leaks for raw blocks (allocation too large)"));
 	}
 }
 #endif
@@ -2670,7 +2670,7 @@ MemoryPool *MemoryPoolFactory::createMemoryPool(const char *poolName, Int alloca
 
 	if (initialAllocationCount <= 0 || overflowAllocationCount < 0)
 	{
-		DEBUG_CRASH(("illegal pool size: %d %d\n",initialAllocationCount,overflowAllocationCount));
+		DEBUG_CRASH(("illegal pool size: %d %d",initialAllocationCount,overflowAllocationCount));
 		throw ERROR_OUT_OF_MEMORY;
 	}
 
@@ -3470,7 +3470,7 @@ void initMemoryManager()
 	if (theLinkTester != 6)
 #endif
 	{
-		DEBUG_CRASH(("Wrong operator new/delete linked in! Fix this...\n"));
+		DEBUG_CRASH(("Wrong operator new/delete linked in! Fix this..."));
 	}
 
 	theMainInitFlag = true;

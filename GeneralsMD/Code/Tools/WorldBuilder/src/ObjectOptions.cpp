@@ -101,7 +101,7 @@ static Int findSideListEntryWithPlayerOfSide(AsciiString side)
 		}
 	}
 
-	// DEBUG_CRASH(("no SideList entry found for %s!\n",side.str()));
+	// DEBUG_CRASH(("no SideList entry found for %s!",side.str()));
 	return -1;
 }
 
@@ -218,7 +218,7 @@ static const PlayerTemplate* findFirstPlayerTemplateOnSide(AsciiString side)
 		}
 	}
 
-	DEBUG_CRASH(("no player found for %s!\n",side.str()));
+	DEBUG_CRASH(("no player found for %s!",side.str()));
 	return NULL;
 }
 #endif

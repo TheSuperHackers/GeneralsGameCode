@@ -1164,7 +1164,7 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 		if (TheGameState->isInSaveDirectory(TheGlobalData->m_mapName))
 		{
 
-			DEBUG_CRASH(( "FATAL SAVE/LOAD ERROR! - Setting a pristine map name that refers to a map in the save directory.  The pristine map should always refer to the ORIGINAL map in the Maps directory, if the pristine map string is corrupt then map.ini files will not load correctly.\n" ));
+			DEBUG_CRASH(( "FATAL SAVE/LOAD ERROR! - Setting a pristine map name that refers to a map in the save directory.  The pristine map should always refer to the ORIGINAL map in the Maps directory, if the pristine map string is corrupt then map.ini files will not load correctly." ));
 
 		}  // end if
 
@@ -3049,7 +3049,7 @@ void GameLogic::friend_awakenUpdateModule(Object* obj, UpdateModulePtr u, Unsign
 
 	if (u == m_curUpdateModule)
 	{
-		DEBUG_CRASH(("You should not call setWakeFrame() from inside your update(), because it will be ignored, in favor of the return code from update.\n"));
+		DEBUG_CRASH(("You should not call setWakeFrame() from inside your update(), because it will be ignored, in favor of the return code from update."));
 		return;
 	}
 
@@ -4867,7 +4867,7 @@ void GameLogic::xfer( Xfer *xfer )
 			if( tocEntry == NULL )
 			{
 
-				DEBUG_CRASH(( "GameLogic::xfer - Object TOC entry not found for '%s'\n", obj->getTemplate()->getName().str() ));
+				DEBUG_CRASH(( "GameLogic::xfer - Object TOC entry not found for '%s'", obj->getTemplate()->getName().str() ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -4907,7 +4907,7 @@ void GameLogic::xfer( Xfer *xfer )
 			if( tocEntry == NULL )
 			{
 
-				DEBUG_CRASH(( "GameLogic::xfer - No TOC entry match for id '%d'\n", tocID ));
+				DEBUG_CRASH(( "GameLogic::xfer - No TOC entry match for id '%d'", tocID ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -4920,7 +4920,7 @@ void GameLogic::xfer( Xfer *xfer )
 			if( thingTemplate == NULL )
 			{
 
-				DEBUG_CRASH(( "GameLogic::xfer - Unrecognized thing template name '%s', skipping.  ENGINEERS - Are you *sure* it's OK to be ignoring this object from the save file???  Think hard about it!\n",
+				DEBUG_CRASH(( "GameLogic::xfer - Unrecognized thing template name '%s', skipping.  ENGINEERS - Are you *sure* it's OK to be ignoring this object from the save file???  Think hard about it!",
 											tocEntry->name.str() ));
 				xfer->skip( objectDataSize );
 				continue;
@@ -4977,7 +4977,7 @@ void GameLogic::xfer( Xfer *xfer )
 		if( sanityTriggerCount != triggerCount )
 		{
 
-			DEBUG_CRASH(( "GameLogic::xfer - Polygon trigger count mismatch.  Save file has a count of '%d', but map had '%d' triggers\n",
+			DEBUG_CRASH(( "GameLogic::xfer - Polygon trigger count mismatch.  Save file has a count of '%d', but map had '%d' triggers",
 										sanityTriggerCount, triggerCount ));
 			throw SC_INVALID_DATA;
 
@@ -5019,7 +5019,7 @@ void GameLogic::xfer( Xfer *xfer )
 				if( poly == NULL )
 				{
 
-					DEBUG_CRASH(( "GameLogic::xfer - Unable to find polygon trigger with id '%d'\n",
+					DEBUG_CRASH(( "GameLogic::xfer - Unable to find polygon trigger with id '%d'",
 												triggerID ));
 					throw SC_INVALID_DATA;
 
@@ -5070,7 +5070,7 @@ void GameLogic::xfer( Xfer *xfer )
 		{
 			if (m_thingTemplateBuildableOverrides.empty() == false)
 			{
-				DEBUG_CRASH(( "GameLogic::xfer - m_thingTemplateBuildableOverrides should be empty, but is not\n"));
+				DEBUG_CRASH(( "GameLogic::xfer - m_thingTemplateBuildableOverrides should be empty, but is not"));
 				throw SC_INVALID_DATA;
 			}
 			
@@ -5110,7 +5110,7 @@ void GameLogic::xfer( Xfer *xfer )
 		{
 			if (m_controlBarOverrides.empty() == false)
 			{
-				DEBUG_CRASH(( "GameLogic::xfer - m_controlBarOverrides should be empty, but is not\n"));
+				DEBUG_CRASH(( "GameLogic::xfer - m_controlBarOverrides should be empty, but is not"));
 				throw SC_INVALID_DATA;
 			}
 			

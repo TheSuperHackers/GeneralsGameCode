@@ -384,7 +384,7 @@ void GameState::addSnapshotBlock( AsciiString blockName, Snapshot *snapshot, Sna
 	if( blockName.isEmpty() || snapshot == NULL )
 	{
 
-		DEBUG_CRASH(( "addSnapshotBlock: Invalid parameters\n" ));
+		DEBUG_CRASH(( "addSnapshotBlock: Invalid parameters" ));
 		return;
 
 	}  // end if
@@ -524,7 +524,7 @@ AsciiString GameState::findNextSaveFilename( UnicodeString desc )
 	else
 	{
 
-		DEBUG_CRASH(( "GameState::findNextSaveFilename - Unknown file search type '%d'\n", searchType ));
+		DEBUG_CRASH(( "GameState::findNextSaveFilename - Unknown file search type '%d'", searchType ));
 		return AsciiString::TheEmptyString;
 
 	}  // end else
@@ -549,7 +549,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 	if( filename.isEmpty() )
 	{
 
-		DEBUG_CRASH(( "GameState::saveGame - Unable to find valid filename for save game\n" ));
+		DEBUG_CRASH(( "GameState::saveGame - Unable to find valid filename for save game" ));
 		return SC_NO_FILE_AVAILABLE;
 
 	}  // end if
@@ -991,7 +991,7 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 	if( filename.isEmpty() == TRUE || saveGameInfo == NULL )
 	{
 
-		DEBUG_CRASH(( "GameState::getSaveGameInfoFromFile - Illegal parameters\n" ));
+		DEBUG_CRASH(( "GameState::getSaveGameInfoFromFile - Illegal parameters" ));
 		return;
 
 	}  // end if
@@ -1018,7 +1018,7 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 		{
 
 			// we should never get here, if we did, we didn't find block of data we needed
-			DEBUG_CRASH(( "GameState::getSaveGameInfoFromFile - Game info not found in file '%s'\n", filename.str() ));
+			DEBUG_CRASH(( "GameState::getSaveGameInfoFromFile - Game info not found in file '%s'", filename.str() ));
 			done = TRUE;
 
 		}  // end if
@@ -1049,7 +1049,7 @@ void GameState::getSaveGameInfoFromFile( AsciiString filename, SaveGameInfo *sav
 				catch( ... )
 				{
 
-					DEBUG_CRASH(( "GameState::getSaveGameInfoFromFile - Error loading block '%s' in file '%s'\n",
+					DEBUG_CRASH(( "GameState::getSaveGameInfoFromFile - Error loading block '%s' in file '%s'",
 												blockInfo->blockName.str(), filename.str() ));
 					throw;
 
@@ -1401,7 +1401,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 				catch( ... )
 				{
 
-					DEBUG_CRASH(( "Error saving block '%s' in file '%s'\n",
+					DEBUG_CRASH(( "Error saving block '%s' in file '%s'",
 												blockName.str(), xfer->getIdentifier().str() ));
 					throw;
 
@@ -1478,7 +1478,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 				catch( ... )
 				{
 
-					DEBUG_CRASH(( "Error loading block '%s' in file '%s'\n",
+					DEBUG_CRASH(( "Error loading block '%s' in file '%s'",
 												blockInfo->blockName.str(), xfer->getIdentifier().str() ));
 					throw;
 
@@ -1502,7 +1502,7 @@ void GameState::addPostProcessSnapshot( Snapshot *snapshot )
 	if( snapshot == NULL )
 	{
 
-		DEBUG_CRASH(( "GameState::addPostProcessSnapshot - invalid parameters\n" ));
+		DEBUG_CRASH(( "GameState::addPostProcessSnapshot - invalid parameters" ));
 		return;
 
 	}  // end if
@@ -1521,7 +1521,7 @@ void GameState::addPostProcessSnapshot( Snapshot *snapshot )
 		if( (*it) == snapshot )
 		{
 
-			DEBUG_CRASH(( "GameState::addPostProcessSnapshot - snapshot is already in list!\n" ));
+			DEBUG_CRASH(( "GameState::addPostProcessSnapshot - snapshot is already in list!" ));
 			return;
 
 		}  // end if

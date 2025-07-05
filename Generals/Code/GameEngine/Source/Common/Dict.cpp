@@ -350,7 +350,7 @@ Bool Dict::getNthBool(Int n) const
 		if (pair && pair->getType() == DICT_BOOL)
 			return *pair->asBool();
 	}
-	DEBUG_CRASH(("dict key missing, or of wrong type\n"));
+	DEBUG_CRASH(("dict key missing, or of wrong type"));
 	return false;
 }
 
@@ -365,7 +365,7 @@ Int Dict::getNthInt(Int n) const
 		if (pair && pair->getType() == DICT_INT)
 			return *pair->asInt();
 	}
-	DEBUG_CRASH(("dict key missing, or of wrong type\n"));
+	DEBUG_CRASH(("dict key missing, or of wrong type"));
 	return 0;
 }
 
@@ -380,7 +380,7 @@ Real Dict::getNthReal(Int n) const
 		if (pair && pair->getType() == DICT_REAL)
 			return *pair->asReal();
 	}
-	DEBUG_CRASH(("dict key missing, or of wrong type\n"));
+	DEBUG_CRASH(("dict key missing, or of wrong type"));
 	return 0.0f;
 }
 
@@ -395,7 +395,7 @@ AsciiString Dict::getNthAsciiString(Int n) const
 		if (pair && pair->getType() == DICT_ASCIISTRING)
 			return *pair->asAsciiString();
 	}
-	DEBUG_CRASH(("dict key missing, or of wrong type\n"));
+	DEBUG_CRASH(("dict key missing, or of wrong type"));
 	return AsciiString::TheEmptyString;
 }
 
@@ -410,7 +410,7 @@ UnicodeString Dict::getNthUnicodeString(Int n) const
 		if (pair && pair->getType() == DICT_UNICODESTRING)
 			return *pair->asUnicodeString();
 	}
-	DEBUG_CRASH(("dict key missing, or of wrong type\n"));
+	DEBUG_CRASH(("dict key missing, or of wrong type"));
 	return UnicodeString::TheEmptyString;
 }
 
@@ -525,7 +525,7 @@ Bool Dict::remove(NameKeyType key)
 		validate();
 		return true;
 	}
-	DEBUG_CRASH(("dict key missing in remove\n"));
+	DEBUG_CRASH(("dict key missing in remove"));
 	return false;
 }
 

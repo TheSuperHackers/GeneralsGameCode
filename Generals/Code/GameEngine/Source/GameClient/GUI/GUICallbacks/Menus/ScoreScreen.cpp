@@ -1596,7 +1596,7 @@ winName.format("ScoreScreen.wnd:StaticTextScore%d", pos);
 							req.lastHouse = ptIdx;
 							TheGameSpyPSMessageQueue->addRequest(req);
 						}
-						DEBUG_CRASH(("populatePlayerInfo() - not tracking stats - we haven't gotten the original stuff yet\n"));
+						DEBUG_CRASH(("populatePlayerInfo() - not tracking stats - we haven't gotten the original stuff yet"));
 						return;
 					}
 

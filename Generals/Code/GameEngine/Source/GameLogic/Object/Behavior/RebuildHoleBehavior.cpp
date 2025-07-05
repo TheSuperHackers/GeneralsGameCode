@@ -436,7 +436,7 @@ void RebuildHoleBehavior::xfer( Xfer *xfer )
 			if( m_workerTemplate == NULL )
 			{
 
-				DEBUG_CRASH(( "RebuildHoleBehavior::xfer - Unable to find template '%s'\n",
+				DEBUG_CRASH(( "RebuildHoleBehavior::xfer - Unable to find template '%s'",
 											workerName.str() ));
 				throw SC_INVALID_DATA;
 
@@ -461,7 +461,7 @@ void RebuildHoleBehavior::xfer( Xfer *xfer )
 			if( m_rebuildTemplate == NULL )
 			{
 
-				DEBUG_CRASH(( "RebuildHoleBehavior::xfer - Unable to find template '%s'\n",
+				DEBUG_CRASH(( "RebuildHoleBehavior::xfer - Unable to find template '%s'",
 											rebuildName.str() ));
 				throw SC_INVALID_DATA;
 

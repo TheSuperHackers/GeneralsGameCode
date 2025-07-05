@@ -109,7 +109,7 @@ static void parseTimeAndLocationInfo( INI *ini, void *instance,
 	if( stricmp( token, "Delay" ) != 0 )
 	{
 
-		DEBUG_CRASH(( "Expected 'Delay' token, found '%s'\n", token ));
+		DEBUG_CRASH(( "Expected 'Delay' token, found '%s'", token ));
 		throw INI_INVALID_DATA;
 
 	}  // end if
@@ -126,7 +126,7 @@ static void parseTimeAndLocationInfo( INI *ini, void *instance,
 		if( stricmp( token, "Bone" ) != 0 )
 		{
 
-			DEBUG_CRASH(( "Expected 'Bone' token, found '%s'\n", token ));
+			DEBUG_CRASH(( "Expected 'Bone' token, found '%s'", token ));
 			throw INI_INVALID_DATA;
 
 		}  // end if
@@ -159,7 +159,7 @@ static void parseTimeAndLocationInfo( INI *ini, void *instance,
 	if( stricmp( token, "FX" ) != 0 )
 	{
 
-		DEBUG_CRASH(( "Expected 'FX' token, found '%s'\n", token ));
+		DEBUG_CRASH(( "Expected 'FX' token, found '%s'", token ));
 		throw INI_INVALID_DATA;
 
 	}  // end if
@@ -200,7 +200,7 @@ static void parseTimeAndLocationInfo( INI *ini, void *instance,
 	if( stricmp( token, "OCL" ) != 0 )
 	{
 
-		DEBUG_CRASH(( "Expected 'OCL' token, found '%s'\n", token ));
+		DEBUG_CRASH(( "Expected 'OCL' token, found '%s'", token ));
 		throw INI_INVALID_DATA;
 
 	}  // end if
@@ -352,22 +352,22 @@ void BridgeBehavior::resolveFX( void )
 			name = bridgeTemplate->getDamageToOCLString( (BodyDamageType)bodyState, i );
 			m_damageToOCL[ bodyState ][ i ] = TheObjectCreationListStore->findObjectCreationList( name.str() );
 			if( name.isEmpty() == FALSE && m_damageToOCL[ bodyState ][ i ] == NULL )
-				DEBUG_CRASH(( "OCL list '%s' not found\n", name.str() ));
+				DEBUG_CRASH(( "OCL list '%s' not found", name.str() ));
 
 			name = bridgeTemplate->getDamageToFXString( (BodyDamageType)bodyState, i );
 			m_damageToFX[ bodyState ][ i ] = TheFXListStore->findFXList( name.str() );
 			if( name.isEmpty() == FALSE && m_damageToFX[ bodyState ][ i ] == NULL )
-				DEBUG_CRASH(( "FX list '%s' not found\n", name.str() ));
+				DEBUG_CRASH(( "FX list '%s' not found", name.str() ));
 
 			name = bridgeTemplate->getRepairedToOCLString( (BodyDamageType)bodyState, i );
 			m_repairToOCL[ bodyState ][ i ] = TheObjectCreationListStore->findObjectCreationList( name.str() );
 			if( name.isEmpty() == FALSE && m_repairToOCL[ bodyState ][ i ] == NULL )
-				DEBUG_CRASH(( "OCL list '%s' not found\n", name.str() ));
+				DEBUG_CRASH(( "OCL list '%s' not found", name.str() ));
 
 			name = bridgeTemplate->getRepairedToFXString( (BodyDamageType)bodyState, i );
 			m_repairToFX[ bodyState ][ i ] = TheFXListStore->findFXList( name.str() );;
 			if( name.isEmpty() == FALSE && m_repairToFX[ bodyState ][ i ] == NULL )
-				DEBUG_CRASH(( "FX list '%s' not found\n", name.str() ));
+				DEBUG_CRASH(( "FX list '%s' not found", name.str() ));
 
 		}  // end for i
 
@@ -396,7 +396,7 @@ void BridgeBehavior::setTower( BridgeTowerType towerType, Object *tower )
 	if( towerType < 0 || towerType >= BRIDGE_MAX_TOWERS )
 	{
 
-		DEBUG_CRASH(( "BridgeBehavior::setTower - Invalid tower type index '%d'\n", towerType ));
+		DEBUG_CRASH(( "BridgeBehavior::setTower - Invalid tower type index '%d'", towerType ));
 		return;
 
 	}  // end if
@@ -418,7 +418,7 @@ ObjectID BridgeBehavior::getTowerID( BridgeTowerType towerType )
 	if( towerType < 0 || towerType >= BRIDGE_MAX_TOWERS )
 	{
 
-		DEBUG_CRASH(( "BridgeBehavior::setTower - Invalid tower type index '%d'\n", towerType ));
+		DEBUG_CRASH(( "BridgeBehavior::setTower - Invalid tower type index '%d'", towerType ));
 		return INVALID_ID;
 
 	}  // end if
@@ -638,7 +638,7 @@ void BridgeBehavior::onBodyDamageStateChange( const DamageInfo* damageInfo,
 	if( bridge == NULL )
 	{
 
-		DEBUG_CRASH(( "BridgeBehavior - Unable to find bridge\n" ));
+		DEBUG_CRASH(( "BridgeBehavior - Unable to find bridge" ));
 		return;
 
 	}  // end if
@@ -1044,7 +1044,7 @@ void BridgeBehavior::createScaffolding( void )
 	if( scaffoldTemplate == NULL )
 	{
 
-		DEBUG_CRASH(( "Unable to find bridge scaffold template\n" ));
+		DEBUG_CRASH(( "Unable to find bridge scaffold template" ));
 		return;
 
 	}  // end if
@@ -1055,7 +1055,7 @@ void BridgeBehavior::createScaffolding( void )
 	if( scaffoldSupportTemplate == NULL )
 	{
 
-		DEBUG_CRASH(( "Unable to find bridge support scaffold template\n" ));
+		DEBUG_CRASH(( "Unable to find bridge support scaffold template" ));
 		return;
 
 	}  // end if

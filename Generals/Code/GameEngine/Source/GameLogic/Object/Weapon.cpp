@@ -1085,7 +1085,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 		}
 		else
 		{
-			//DEBUG_CRASH(("Projectiles should implement ProjectileUpdateInterface!\n"));
+			//DEBUG_CRASH(("Projectiles should implement ProjectileUpdateInterface!"));
 			// actually, this is ok, for things like Firestorm.... (srj)
 			projectile->setPosition(&projectileDestination);
 		}
@@ -1342,7 +1342,7 @@ void WeaponTemplate::dealDamageInternal(ObjectID sourceID, ObjectID victimID, co
 	}
 	else
 	{
-		DEBUG_CRASH(("projectile weapons should never get dealDamage called directly\n"));
+		DEBUG_CRASH(("projectile weapons should never get dealDamage called directly"));
 	}
 }
 
@@ -2750,7 +2750,7 @@ void Weapon::processRequestAssistance( const Object *requestingObject, Object *v
 	if (!draw || !draw->getProjectileLaunchOffset(wslot, specificBarrelToUse, &attachTransform, tur, &turretRotPos, &turretPitchPos))
 	{
 		//CRCDEBUG_LOG(("ProjectileLaunchPos %d %d not found!",wslot, specificBarrelToUse));
-		DEBUG_CRASH(("ProjectileLaunchPos %d %d not found!\n",wslot, specificBarrelToUse));
+		DEBUG_CRASH(("ProjectileLaunchPos %d %d not found!",wslot, specificBarrelToUse));
 		attachTransform.Make_Identity();
 		turretRotPos.zero();
 		turretPitchPos.zero();
