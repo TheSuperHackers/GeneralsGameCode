@@ -1969,7 +1969,7 @@ void WbView3d::redraw(void)
 
 		curTicks = GetTickCount()-curTicks;
 //		if (curTicks>2) {
-//			WWDEBUG_SAY(("%d ms for updateCenter, %d FPS\n", curTicks, 1000/curTicks));
+//			WWDEBUG_SAY(("%d ms for updateCenter, %d FPS", curTicks, 1000/curTicks));
 //		}
 	}
 	if (m_drawObject) {

@@ -724,18 +724,18 @@ void DX8RigidFVFCategoryContainer::Log(bool only_visible)
 		WWDEBUG_SAY((work));
 	}
 	else {
-		WWDEBUG_SAY(("EMPTY VB\n"));
+		WWDEBUG_SAY(("EMPTY VB"));
 	}
 	if (index_buffer) {
 		work.Format("IB size (used/total): %d/%d\n",used_indices,index_buffer->Get_Index_Count());
 		WWDEBUG_SAY((work));
 	}
 	else {
-		WWDEBUG_SAY(("EMPTY IB\n"));
+		WWDEBUG_SAY(("EMPTY IB"));
 	}
 
 	for (unsigned p=0;p<passes;++p) {
-		WWDEBUG_SAY(("Pass: %d\n",p));
+		WWDEBUG_SAY(("Pass: %d",p));
 
 		TextureCategoryListIterator it(&texture_category_list[p]);
 		while (!it.Is_Done()) {
@@ -1220,7 +1220,7 @@ void DX8SkinFVFCategoryContainer::Log(bool only_visible)
 		WWDEBUG_SAY((work));
 	}
 	else {
-		WWDEBUG_SAY(("EMPTY IB\n"));
+		WWDEBUG_SAY(("EMPTY IB"));
 	}
 
 	for (unsigned pass=0;pass<passes;++pass) {
@@ -1606,7 +1606,7 @@ unsigned DX8TextureCategoryClass::Add_Mesh(
 					vmin=MIN(vmin,idx);
 					vmax=MAX(vmax,idx);
 					*dst_indices++=idx;
-//					WWDEBUG_SAY(("%d\n",idx));
+//					WWDEBUG_SAY(("%d",idx));
 				}
 			}
 
@@ -1980,7 +1980,7 @@ void DX8MeshRendererClass::Register_Mesh_Type(MeshModelClass* mmc)
 {
 	WWMEMLOG(MEM_GEOMETRY);
 #ifdef ENABLE_CATEGORY_LOG
-	WWDEBUG_SAY(("Registering mesh: %s (%d polys, %d verts + %d gap polygons)\n",mmc->Get_Name(),mmc->Get_Polygon_Count(),mmc->Get_Vertex_Count(),mmc->Get_Gap_Filler_Polygon_Count()));
+	WWDEBUG_SAY(("Registering mesh: %s (%d polys, %d verts + %d gap polygons)",mmc->Get_Name(),mmc->Get_Polygon_Count(),mmc->Get_Vertex_Count(),mmc->Get_Gap_Filler_Polygon_Count()));
 #endif
 	bool skin=(mmc->Get_Flag(MeshModelClass::SKIN) && mmc->VertexBoneLink);
 	bool sorting=((!!mmc->Get_Flag(MeshModelClass::SORT)) && WW3D::Is_Sorting_Enabled());
@@ -2051,7 +2051,7 @@ void DX8MeshRendererClass::Register_Mesh_Type(MeshModelClass* mmc)
 				_RegisteredMeshList.Add_Tail(mmc);
 			}
 			else {
-				WWDEBUG_SAY(("Error: Register_Mesh_Type failed! file: %s line: %d\r\n",__FILE__,__LINE__));
+				WWDEBUG_SAY(("Error: Register_Mesh_Type failed! file: %s line: %d",__FILE__,__LINE__));
 			}
 		}
 	}

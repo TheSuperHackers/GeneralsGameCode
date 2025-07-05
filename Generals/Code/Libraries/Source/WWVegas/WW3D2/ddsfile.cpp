@@ -189,7 +189,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	// be a problem. The new version of ddsfile from Vegas actually has removed this check entirely.
 	int expected_size=level_offset+SurfaceDesc.Size+4;
 	if (expected_size!=file->Size()) {
-		WWDEBUG_SAY(("Warning: file % size is not consistent with the data (file size should be %d but was %d)\n",Name,expected_size,file->Size()));
+		WWDEBUG_SAY(("Warning: file % size is not consistent with the data (file size should be %d but was %d)",Name,expected_size,file->Size()));
 	}
 #endif
 	file->Close();
@@ -518,7 +518,7 @@ void DDSFileClass::Copy_Level_To_Surface
 					}
 				}
 				if (Format==WW3D_FORMAT_DXT1 && contains_alpha) {
-					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s\n",Name));
+					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s",Name));
 				}
 			}
 		}
@@ -696,7 +696,7 @@ void DDSFileClass::Copy_CubeMap_Level_To_Surface
 				}
 				if (Format==WW3D_FORMAT_DXT1 && contains_alpha) 
 				{
-					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s\n",Name));
+					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s",Name));
 				}
 			}
 		}
@@ -873,7 +873,7 @@ void DDSFileClass::Copy_Volume_Level_To_Surface
 					}
 					if (Format==WW3D_FORMAT_DXT1 && contains_alpha) 
 					{
-						WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s\n",Name));
+						WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s",Name));
 					}
 				}*/
 			}

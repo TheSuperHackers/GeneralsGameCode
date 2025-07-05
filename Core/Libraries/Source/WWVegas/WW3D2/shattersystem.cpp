@@ -620,7 +620,7 @@ bool PolygonClass::Is_Degenerate(void)
 	int i,j;
 
 	if (NumVerts <= 2) {
-		WWDEBUG_SAY(("Degenerate Poly - fewer than 3 vertices\r\n"));
+		WWDEBUG_SAY(("Degenerate Poly - fewer than 3 vertices"));
 		return true;
 	}
 
@@ -629,7 +629,7 @@ bool PolygonClass::Is_Degenerate(void)
 			
 			float delta = (Verts[i].Position - Verts[j].Position).Length();
 			if (delta < BPT_COINCIDENCE_EPSILON) {
-				WWDEBUG_SAY(("Degenerate Poly - coincident vertices!\r\n"));
+				WWDEBUG_SAY(("Degenerate Poly - coincident vertices!"));
 				return true;
 			}
 		}
@@ -643,7 +643,7 @@ bool PolygonClass::Is_Degenerate(void)
 			Compute_Plane();
 
 			if (Verts[i].Which_Side(Plane) != BPT_ON) {
-				WWDEBUG_SAY(("Degenerate Poly - invalid plane!\r\n"));
+				WWDEBUG_SAY(("Degenerate Poly - invalid plane!"));
 				return true;
 			}
 		}
@@ -878,20 +878,20 @@ void ShatterSystem::Shatter_Mesh(MeshClass * mesh,const Vector3 & point,const Ve
 	*/
 	MeshModelClass * model = mesh->Get_Model();
 	if (model->Get_Pass_Count() > MeshMatDescClass::MAX_PASSES) {
-		WWDEBUG_SAY(("Failed to shatter model: %s.  Too many passes (%d)\n",model->Get_Name(),model->Get_Pass_Count()));
+		WWDEBUG_SAY(("Failed to shatter model: %s.  Too many passes (%d)",model->Get_Name(),model->Get_Pass_Count()));
 		REF_PTR_RELEASE(model);
 		return;
 	}
 	for (ipass=0; ipass<model->Get_Pass_Count(); ipass++) {
 		if (model->Has_Material_Array(ipass) || model->Has_Shader_Array(ipass)) {
-			WWDEBUG_SAY(("Failed to shatter model: %s.  It has shader or material arrays\n",model->Get_Name()));
+			WWDEBUG_SAY(("Failed to shatter model: %s.  It has shader or material arrays",model->Get_Name()));
 			REF_PTR_RELEASE(model);
 			return;
 		}
 		
 		for (istage=0; istage<MeshMatDescClass::MAX_TEX_STAGES; istage++) {
 			if (model->Has_Texture_Array(ipass,istage)) {
-				WWDEBUG_SAY(("Failed to shatter model: %s.  Texture array in pass: %d stage: %d\n",model->Get_Name(),ipass,istage));
+				WWDEBUG_SAY(("Failed to shatter model: %s.  Texture array in pass: %d stage: %d",model->Get_Name(),ipass,istage));
 				REF_PTR_RELEASE(model);
 				return;
 			}

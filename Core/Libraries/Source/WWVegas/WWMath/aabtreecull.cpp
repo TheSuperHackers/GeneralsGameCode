@@ -1421,7 +1421,7 @@ void AABTreeNodeClass::Select_Splitting_Plane_Brute_Force
 	*/
 #ifdef WWDEBUG
 	if (sc->Cost == FLT_MAX) {		
-		WWDEBUG_SAY(("Unable to split node!  objcount = %d. (%.2f,%.2f,%.2f)\r\n",objcount,Box.Center.X, Box.Center.Y, Box.Center.Z));
+		WWDEBUG_SAY(("Unable to split node!  objcount = %d. (%.2f,%.2f,%.2f)",objcount,Box.Center.X, Box.Center.Y, Box.Center.Z));
 	}
 #endif
 }

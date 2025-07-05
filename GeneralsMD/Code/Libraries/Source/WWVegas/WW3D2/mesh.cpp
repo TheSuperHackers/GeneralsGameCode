@@ -571,7 +571,7 @@ void MeshClass::Create_Decal(DecalGeneratorClass * generator)
 
 	} else {
 		
-		WWDEBUG_SAY(("PERFORMANCE WARNING: Decal being applied to a SKIN mesh!\r\n"));
+		WWDEBUG_SAY(("PERFORMANCE WARNING: Decal being applied to a SKIN mesh!"));
 
 		// Skin
 		// The deformed worldspace vertices are used both for the APT and in Create_Decal() to
@@ -1147,7 +1147,7 @@ WW3DErrorType MeshClass::Load_W3D(ChunkLoadClass & cload)
 	*/
 	Model = NEW_REF(MeshModelClass,());
 	if (Model == NULL) {
-		WWDEBUG_SAY(("MeshClass::Load - Failed to allocate model\r\n"));
+		WWDEBUG_SAY(("MeshClass::Load - Failed to allocate model"));
 		return WW3D_ERROR_LOAD_FAILED;
 	}
 

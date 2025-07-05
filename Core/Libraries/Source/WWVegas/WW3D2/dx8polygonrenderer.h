@@ -104,7 +104,7 @@ public:
 
 inline void DX8PolygonRendererClass::Set_Vertex_Index_Range(unsigned min_vertex_index_,unsigned vertex_index_range_)
 {
-//	WWDEBUG_SAY(("Set_Vertex_Index_Range - min: %d, range: %d\n",min_vertex_index_,vertex_index_range_));
+//	WWDEBUG_SAY(("Set_Vertex_Index_Range - min: %d, range: %d",min_vertex_index_,vertex_index_range_));
 //	if (vertex_index_range_>30000) {
 //		int a=0;
 //		a++;

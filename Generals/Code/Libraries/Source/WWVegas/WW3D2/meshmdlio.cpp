@@ -246,7 +246,7 @@ WW3DErrorType MeshModelClass::Load_W3D(ChunkLoadClass & cload)
 	cload.Open_Chunk();
 	
 	if (cload.Cur_Chunk_ID() != W3D_CHUNK_MESH_HEADER3) {
-		WWDEBUG_SAY(("Old format mesh mesh, no longer supported.\n"));
+		WWDEBUG_SAY(("Old format mesh mesh, no longer supported."));
 		goto Error;
 	}
 	
@@ -473,12 +473,12 @@ WW3DErrorType MeshModelClass::read_chunks(ChunkLoadClass & cload,MeshLoadContext
 
 			case O_W3D_CHUNK_MATERIALS:
 			case O_W3D_CHUNK_MATERIALS2:		
-					WWDEBUG_SAY(( "Obsolete material chunk encountered in mesh: %s.%s\r\n", context->Header.ContainerName,context->Header.MeshName));
+					WWDEBUG_SAY(( "Obsolete material chunk encountered in mesh: %s.%s", context->Header.ContainerName,context->Header.MeshName));
 					WWASSERT(0);
 					break;
 
 			case W3D_CHUNK_MATERIALS3:
-					WWDEBUG_SAY(( "Obsolete material chunk encountered in mesh: %s.%s\r\n", context->Header.ContainerName,context->Header.MeshName));
+					WWDEBUG_SAY(( "Obsolete material chunk encountered in mesh: %s.%s", context->Header.ContainerName,context->Header.MeshName));
 					error = read_v3_materials(cload,context);
 					break;
 				
@@ -535,11 +535,11 @@ WW3DErrorType MeshModelClass::read_chunks(ChunkLoadClass & cload,MeshLoadContext
 					break;
 
 			case W3D_CHUNK_DEFORM:
-					WWDEBUG_SAY(("Obsolete deform chunk encountered in mesh: %s.%s\r\n", context->Header.ContainerName,context->Header.MeshName));
+					WWDEBUG_SAY(("Obsolete deform chunk encountered in mesh: %s.%s", context->Header.ContainerName,context->Header.MeshName));
 					break;
 			
 			case W3D_CHUNK_DAMAGE:
-					WWDEBUG_SAY(("Obsolete damage chunk encountered in mesh: %s.%s\r\n", context->Header.ContainerName,context->Header.MeshName));
+					WWDEBUG_SAY(("Obsolete damage chunk encountered in mesh: %s.%s", context->Header.ContainerName,context->Header.MeshName));
 					break;
 
 			case W3D_CHUNK_PRELIT_UNLIT:
@@ -706,7 +706,7 @@ WW3DErrorType MeshModelClass::read_v3_materials(ChunkLoadClass & cload,MeshLoadC
 				if (!cload.Close_Chunk()) goto Error;
 
 				if ( mapinfo.FrameCount > 1 ) {
-					WWDEBUG_SAY(("ERROR: Obsolete Animated Texture detected in model: %s\r\n",context->Header.MeshName));
+					WWDEBUG_SAY(("ERROR: Obsolete Animated Texture detected in model: %s",context->Header.MeshName));
 				}
 
 				tex = WW3DAssetManager::Get_Instance()->Get_Texture(filename);
@@ -740,7 +740,7 @@ WW3DErrorType MeshModelClass::read_v3_materials(ChunkLoadClass & cload,MeshLoadC
 					if (!cload.Close_Chunk()) goto Error;
 			
 					if ( mapinfo.FrameCount > 1 ) {
-						WWDEBUG_SAY(("ERROR: Obsolete Animated Texture detected in model: %s\r\n",context->Header.MeshName));
+						WWDEBUG_SAY(("ERROR: Obsolete Animated Texture detected in model: %s",context->Header.MeshName));
 					}
 
 					tex = WW3DAssetManager::Get_Instance()->Get_Texture(filename);
@@ -1646,7 +1646,7 @@ void MeshModelClass::post_process()
 	// we want to allow this now due to usage of the static sort 
 	// Ensure no sorting, multipass meshes (for they are abomination...)
 	if (DefMatDesc->Get_Pass_Count() > 1 && Get_Flag(SORT)) {
-		WWDEBUG_SAY(( "Turning SORT off for multipass mesh %s\n",Get_Name() ));
+		WWDEBUG_SAY(( "Turning SORT off for multipass mesh %s",Get_Name() ));
 		Set_Flag(SORT, false);
 	}
 #endif
