@@ -4727,13 +4727,13 @@ AIGroup *AIUpdateInterface::getGroup(void)
 // ------------------------------------------------------------------------------------------------
 void AIUpdateInterface::crc( Xfer *x )
 {
-	CRCGEN_LOG(("AIUpdateInterface::crc() begin - %8.8X\n", ((XferCRC *)x)->getCRC()));
+	CRCGEN_LOG(("AIUpdateInterface::crc() begin - %8.8X", ((XferCRC *)x)->getCRC()));
 	// extend base class
 	UpdateModule::crc( x );
 
 	xfer(x);
 
-	CRCGEN_LOG(("AIUpdateInterface::crc() end - %8.8X\n", ((XferCRC *)x)->getCRC()));
+	CRCGEN_LOG(("AIUpdateInterface::crc() end - %8.8X", ((XferCRC *)x)->getCRC()));
 
 }  // end crc
 

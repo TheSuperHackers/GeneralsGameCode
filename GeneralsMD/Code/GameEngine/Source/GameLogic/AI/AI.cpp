@@ -986,7 +986,7 @@ void TAiData::crc( Xfer *xfer )
 	xfer->xferReal( &m_skirmishBaseDefenseExtraDistance );
 	xfer->xferReal( &m_repulsedDistance );
 	xfer->xferBool( &m_enableRepulsors );
-	CRCGEN_LOG(("CRC after AI TAiData for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI TAiData for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 
 }  // end crc
 
@@ -1012,7 +1012,7 @@ void AI::crc( Xfer *xfer )
 {
 
 	xfer->xferSnapshot( m_pathfinder );
-	CRCGEN_LOG(("CRC after AI pathfinder for frame %d is 0x%8.8X\n", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
+	CRCGEN_LOG(("CRC after AI pathfinder for frame %d is 0x%8.8X", TheGameLogic->getFrame(), ((XferCRC *)xfer)->getCRC()));
 
 	AsciiString marker;
 	TAiData *aiData = m_aiData;

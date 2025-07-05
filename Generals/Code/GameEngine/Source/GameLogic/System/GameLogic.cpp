@@ -2350,7 +2350,7 @@ void GameLogic::selectObject(Object *obj, Bool createNewSelection, PlayerMaskTyp
 			return;
 		}
 
-		CRCGEN_LOG(( "Creating AIGroup in GameLogic::selectObject()\n" ));
+		CRCGEN_LOG(( "Creating AIGroup in GameLogic::selectObject()" ));
 		AIGroupPtr group = TheAI->createGroup();
 		group->add(obj);
 
@@ -2398,7 +2398,7 @@ void GameLogic::deselectObject(Object *obj, PlayerMaskType playerMask, Bool affe
 			return;
 		}
 
-		CRCGEN_LOG(( "Removing a unit from a selected group in GameLogic::deselectObject()\n" ));
+		CRCGEN_LOG(( "Removing a unit from a selected group in GameLogic::deselectObject()" ));
 		AIGroupPtr group = TheAI->createGroup();
 #if RETAIL_COMPATIBLE_AIGROUP
 		player->getCurrentSelectionAsAIGroup(group);
@@ -3555,7 +3555,7 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	DEBUG_ASSERTCRASH(this == TheGameLogic, ("Not in GameLogic"));
 	if (isInGameLogicUpdate())
 	{
-		CRCGEN_LOG(("CRC at start of frame %d is 0x%8.8X\n", m_frame, xferCRC->getCRC()));
+		CRCGEN_LOG(("CRC at start of frame %d is 0x%8.8X", m_frame, xferCRC->getCRC()));
 	}
 
 	marker = "MARKER:Objects";
@@ -3567,12 +3567,12 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	UnsignedInt seed = GetGameLogicRandomSeedCRC();
 	if (isInGameLogicUpdate())
 	{
-		CRCGEN_LOG(("CRC after objects for frame %d is 0x%8.8X\n", m_frame, xferCRC->getCRC()));
+		CRCGEN_LOG(("CRC after objects for frame %d is 0x%8.8X", m_frame, xferCRC->getCRC()));
 	}
 
 	if (isInGameLogicUpdate())
 	{
-		CRCGEN_LOG(("RandomSeed: %d\n", seed));
+		CRCGEN_LOG(("RandomSeed: %d", seed));
 	}
 	if (xferCRC->getXferMode() == XFER_CRC)
 	{
@@ -3583,7 +3583,7 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	xferCRC->xferSnapshot( ThePartitionManager );
 	if (isInGameLogicUpdate())
 	{
-		CRCGEN_LOG(("CRC after partition manager for frame %d is 0x%8.8X\n", m_frame, xferCRC->getCRC()));
+		CRCGEN_LOG(("CRC after partition manager for frame %d is 0x%8.8X", m_frame, xferCRC->getCRC()));
 	}
 
 #ifdef DEBUG_CRC
@@ -3595,7 +3595,7 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 		xferCRC->xferSnapshot( TheModuleFactory );
 		if (isInGameLogicUpdate())
 		{
-			CRCGEN_LOG(("CRC after module factory for frame %d is 0x%8.8X\n", m_frame, xferCRC->getCRC()));
+			CRCGEN_LOG(("CRC after module factory for frame %d is 0x%8.8X", m_frame, xferCRC->getCRC()));
 		}
 	}
 #endif //DEBUG_CRC
@@ -3605,7 +3605,7 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	xferCRC->xferSnapshot( ThePlayerList );
 	if (isInGameLogicUpdate())
 	{
-		CRCGEN_LOG(("CRC after PlayerList for frame %d is 0x%8.8X\n", m_frame, xferCRC->getCRC()));
+		CRCGEN_LOG(("CRC after PlayerList for frame %d is 0x%8.8X", m_frame, xferCRC->getCRC()));
 	}
 
 	marker = "MARKER:TheAI";
@@ -3613,7 +3613,7 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 	xferCRC->xferSnapshot( TheAI );
 	if (isInGameLogicUpdate())
 	{
-		CRCGEN_LOG(("CRC after AI for frame %d is 0x%8.8X\n", m_frame, xferCRC->getCRC()));
+		CRCGEN_LOG(("CRC after AI for frame %d is 0x%8.8X", m_frame, xferCRC->getCRC()));
 	}
 
 	if (xferCRC->getXferMode() == XFER_SAVE)
@@ -3632,7 +3632,7 @@ UnsignedInt GameLogic::getCRC( Int mode, AsciiString deepCRCFileName )
 
 	if (isInGameLogicUpdate())
 	{
-		CRCGEN_LOG(("CRC for frame %d is 0x%8.8X\n", m_frame, theCRC));
+		CRCGEN_LOG(("CRC for frame %d is 0x%8.8X", m_frame, theCRC));
 	}
 	return theCRC;
 }
