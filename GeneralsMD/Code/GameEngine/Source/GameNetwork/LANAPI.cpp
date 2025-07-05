@@ -837,7 +837,7 @@ void LANAPI::RequestGameStartTimer( Int seconds )
 
 void LANAPI::RequestGameOptions( AsciiString gameOptions, Bool isPublic, UnsignedInt ip /* = 0 */ )
 {
-	DEBUG_ASSERTCRASH(gameOptions.getLength() < m_lanMaxOptionsLength, ("Game options string is too long!"));
+	DEBUG_ASSERTCRASH(gameOptions.getLength() <= m_lanMaxOptionsLength, ("Game options string is too long!"));
 
 	if (!m_currentGame)
 		return;

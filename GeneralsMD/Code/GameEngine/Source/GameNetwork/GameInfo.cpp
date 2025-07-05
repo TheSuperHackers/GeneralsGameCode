@@ -44,6 +44,8 @@
 #include "GameNetwork/LANAPI.h"						// for testing packet size
 #include "GameNetwork/LANAPICallbacks.h"	// for testing packet size
 #include "strtok_r.h"
+#include <algorithm>
+#include <utility>
 
 #ifdef RTS_INTERNAL
 // for occasional debugging...
@@ -899,7 +901,97 @@ Bool GameInfo::isSandbox(void)
 
 static const char slotListID		= 'S';
 
-AsciiString GameInfoToAsciiString( const GameInfo *game )
+static AsciiStringVec BuildPlayerNames(const GameInfo& game)
+{
+	AsciiStringVec playerNames;
+	playerNames.resize(MAX_SLOTS);
+
+	for (Int i = 0; i < MAX_SLOTS; ++i)
+	{
+		const GameSlot* slot = game.getConstSlot(i);
+		if (slot->isHuman())
+		{
+			playerNames[i] = WideCharStringToMultiByte(slot->getName().str()).c_str();
+		}
+	}
+
+	return playerNames;
+}
+
+static Bool TruncatePlayerNames(AsciiStringVec& playerNames, UnsignedInt truncateAmount)
+{
+	// wont truncate any name to below this length
+	CONSTEXPR const Int MinimumNameLength = 2;
+	UnsignedInt availableForTruncation = 0;
+
+	// make length+index pairs for the player names
+	std::vector<LengthIndexPair> lengthIndex;
+	lengthIndex.resize(playerNames.size());
+	for (size_t pi = 0; pi < playerNames.size(); ++pi)
+	{
+		Int playerNameLength = playerNames[pi].getLength();
+		lengthIndex[pi].Length = playerNameLength;
+		lengthIndex[pi].Index = pi;
+		availableForTruncation += std::max(0, playerNameLength - MinimumNameLength);
+	}
+
+	if (truncateAmount > availableForTruncation)
+	{
+		DEBUG_LOG(("TruncatePlayerNames - Requested to truncate %u chars from player names, but only %u were available for truncation.\n", truncateAmount, availableForTruncation));
+		return false;
+	}
+
+	// sort based on length in descending order
+	std::sort(lengthIndex.begin(), lengthIndex.end(), std::greater<LengthIndexPair>());
+
+	// determine how long each of the player names should be
+	Int currentTargetLength = lengthIndex[0].Length - 1;
+	while (truncateAmount > 0)
+	{
+		for (size_t i = 0; i < lengthIndex.size(); ++i)
+		{
+			if (lengthIndex[i].Length > currentTargetLength)
+			{
+				Int truncateCurrent = std::min<Int>(truncateAmount, lengthIndex[i].Length - currentTargetLength);
+				lengthIndex[i].Length -= truncateCurrent;
+				truncateAmount -= truncateCurrent;
+			}
+
+			if (truncateAmount == 0)
+			{
+				break;
+			}
+
+			if (lengthIndex[i].Length < currentTargetLength)
+			{
+				// set target length to either the length of position i, or the remaining amount to truncate divided across all the previous entries, rounding upwards.
+				currentTargetLength = std::max(static_cast<UnsignedInt>(lengthIndex[i].Length), lengthIndex[0].Length - ((truncateAmount + i) / (i + 1)));
+				// start over again with new target length
+				i = -1;
+				continue;
+			}
+		}
+
+		// All entries are of equal length, or we're finished. Figure out the length of all entries if truncated by the same amount, rounding upwards.
+		currentTargetLength = lengthIndex[0].Length - ((truncateAmount + lengthIndex.size() - 1) / lengthIndex.size());
+	}
+
+	// truncate each name to its new length
+	for (size_t ti = 0; ti < lengthIndex.size(); ++ti)
+	{
+		int charsToRemove = playerNames[lengthIndex[ti].Index].getLength() - lengthIndex[ti].Length;
+		if (charsToRemove > 0)
+		{
+			DEBUG_LOG(("TruncatePlayerNames - truncating '%s' by %d chars to ", playerNames[lengthIndex[ti].Index].str(), charsToRemove));
+			playerNames[lengthIndex[ti].Index].truncate(charsToRemove);
+			DEBUG_LOG(("'%s' (target length=%d).\n", playerNames[lengthIndex[ti].Index].str(), lengthIndex[ti].Length));
+		}
+	}
+
+	return true;
+}
+
+AsciiString GameInfoToAsciiString(const GameInfo *game, const AsciiStringVec& playerNames)
 {
 	if (!game)
 		return AsciiString::TheEmptyString;
@@ -925,7 +1017,7 @@ AsciiString GameInfoToAsciiString( const GameInfo *game )
 			newMapName.concat(token);
 			mapName.nextToken(&token, "\\/");
 		}
-		DEBUG_LOG(("Map name is %s\n", mapName.str()));
+		DEBUG_LOG(("Map name is %s\n", newMapName.str()));
 	}
 
 	AsciiString optionsString;
@@ -943,23 +1035,13 @@ AsciiString GameInfoToAsciiString( const GameInfo *game )
 		AsciiString str;
 		if (slot && slot->isHuman())
 		{
-			AsciiString tmp;  //all this data goes after name
-			tmp.format( ",%X,%d,%c%c,%d,%d,%d,%d,%d:",
-				slot->getIP(), slot->getPort(),
-				(slot->isAccepted()?'T':'F'),
-				(slot->hasMap()?'T':'F'),
+			str.format( "H%s,%X,%d,%c%c,%d,%d,%d,%d,%d:",
+				playerNames[i].str(), slot->getIP(),
+				slot->getPort(), (slot->isAccepted() ? 'T' : 'F'),
+				(slot->hasMap() ? 'T' : 'F'),
 				slot->getColor(), slot->getPlayerTemplate(),
 				slot->getStartPos(), slot->getTeamNumber(),
-				slot->getNATBehavior() );
-			//make sure name doesn't cause overflow of m_lanMaxOptionsLength
-			int lenCur = tmp.getLength() + optionsString.getLength() + 2;  //+2 for H and trailing ;
-			int lenRem = m_lanMaxOptionsLength - lenCur;  //length remaining before overflowing
-			int lenMax = lenRem / (MAX_SLOTS-i);  //share lenRem with all remaining slots
-			AsciiString name = WideCharStringToMultiByte(slot->getName().str()).c_str();
-			while( name.getLength() > lenMax )
-				name.removeLastChar();  //what a horrible way to truncate.  I hate AsciiString.
-			
-			str.format( "H%s%s", name.str(), tmp.str() );
+				slot->getNATBehavior());
 		}
 		else if (slot && slot->isAI())
 		{
@@ -991,11 +1073,35 @@ AsciiString GameInfoToAsciiString( const GameInfo *game )
 	}
 	optionsString.concat(';');
 
-	DEBUG_ASSERTCRASH(!TheLAN || (optionsString.getLength() < m_lanMaxOptionsLength),
-		("WARNING: options string is longer than expected!  Length is %d, but max is %d!\n",
-		optionsString.getLength(), m_lanMaxOptionsLength));
-	
 	return optionsString;
+}
+
+AsciiString GameInfoToAsciiString(const GameInfo* game)
+{
+	if (!game)
+	{
+		return AsciiString::TheEmptyString;
+	}
+
+	AsciiStringVec playerNames = BuildPlayerNames(*game);
+	AsciiString infoString = GameInfoToAsciiString(game, playerNames);
+
+	// TheSuperHackers @bugfix Safely truncate the game info string by
+	// stripping characters off of player names if the overall length is too large.
+	if (TheLAN && (infoString.getLength() > m_lanMaxOptionsLength))
+	{
+		const UnsignedInt truncateAmount = infoString.getLength() - m_lanMaxOptionsLength;
+		if (!TruncatePlayerNames(playerNames, truncateAmount))
+		{
+			DEBUG_CRASH(("WARNING: options string is longer than expected! Length is %d, but max is %d. Attempted to truncate player names by %u characters, but was unsuccessful!\n",
+					infoString.getLength(), m_lanMaxOptionsLength, truncateAmount));
+			return AsciiString::TheEmptyString;
+		}
+
+		infoString = GameInfoToAsciiString(game, playerNames);
+	}
+
+	return infoString;
 }
 
 static Int grabHexInt(const char *s)

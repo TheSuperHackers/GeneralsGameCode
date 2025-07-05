@@ -332,14 +332,21 @@ void AsciiString::toLower()
 // -----------------------------------------------------
 void AsciiString::removeLastChar()
 {
+	truncate(1U);
+}
+
+// -----------------------------------------------------
+void AsciiString::truncate(UnsignedInt charCount)
+{
 	validate();
-	if (m_data)
+	if (m_data && charCount > 0)
 	{
-		int len = strlen(peek());
+		size_t len = strlen(peek());
 		if (len > 0)
 		{
 			ensureUniqueBufferOfSize(len+1, true, NULL, NULL);
-			peek()[len - 1] = 0;
+			charCount = min(charCount, len);
+			peek()[len - charCount] = 0;
 		}
 	}
 	validate();
