@@ -518,7 +518,7 @@ void SortingRendererClass::Flush_Sorting_Pool()
 {
 	if (!overlapping_node_count) return;
 
-	SNAPSHOT_SAY(("SortingSystem - Flush "));
+	SNAPSHOT_SAY(("SortingSystem - Flush"));
 
 	unsigned node_id;
 	// Fill dynamic index buffer with sorting index buffer vertices
