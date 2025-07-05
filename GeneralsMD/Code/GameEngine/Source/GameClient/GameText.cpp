@@ -56,6 +56,7 @@
 #include "Common/GlobalData.h"
 #include "Common/file.h"
 #include "Common/FileSystem.h"
+#include "Common/version.h"
 
 
 #ifdef RTS_INTERNAL
@@ -379,6 +380,17 @@ void GameTextManager::init( void )
 		UnicodeString s;
 		s.format(L"Instance:%.2u - %s", rts::ClientInstance::getInstanceId(), ourName.str());
 		ourName = s;
+	}
+
+	if (TheVersion != NULL)
+	{
+		// TheSuperHackers @tweak Now prints version information in the Window title.
+		UnicodeString version;
+		version.format(L" %s %s",
+			TheVersion->getUnicodeGameAndGitVersion().str(),
+			TheVersion->getUnicodeBuildUserOrGitCommitAuthorName().str()
+		);
+		ourName.concat(version);
 	}
 
 	AsciiString ourNameA;
