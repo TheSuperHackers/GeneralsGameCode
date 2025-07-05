@@ -64,7 +64,7 @@ void ParticlePanelParticle::InitPanel( void )
 	findString = PATH;
 	findString += PREFIX;
 	findString += POSTFIX;
-//	DEBUG_LOG(("ParticlePanedParticle::InitPanel - looking for textures, search string is '%s'\n", findString.begin()));
+//	DEBUG_LOG(("ParticlePanedParticle::InitPanel - looking for textures, search string is '%s'", findString.begin()));
 	BOOL bWorkin = finder.FindFile(findString.c_str());
 	while (bWorkin) {
 		bWorkin = finder.FindNextFile();

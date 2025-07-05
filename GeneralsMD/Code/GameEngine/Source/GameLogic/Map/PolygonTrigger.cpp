@@ -191,7 +191,7 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 			pTrig->addPoint(loc);
 		}
 		if (numPoints<2) {
-			DEBUG_LOG(("Deleting polygon trigger '%s' with %d points.\n", 
+			DEBUG_LOG(("Deleting polygon trigger '%s' with %d points.", 
 					pTrig->getTriggerName().str(), numPoints));
 			deleteInstance(pTrig);
 			continue;

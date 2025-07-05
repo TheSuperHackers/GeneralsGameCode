@@ -382,7 +382,7 @@ void SlowDeathBehavior::doPhaseStuff(SlowDeathPhaseType sdphase)
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime SlowDeathBehavior::update()
 {
-	//DEBUG_LOG(("updating SlowDeathBehavior %08lx\n",this));
+	//DEBUG_LOG(("updating SlowDeathBehavior %08lx",this));
 	DEBUG_ASSERTCRASH(isSlowDeathActivated(), ("hmm, this should not be possible"));
 
 	const SlowDeathBehaviorModuleData* d = getSlowDeathBehaviorModuleData();

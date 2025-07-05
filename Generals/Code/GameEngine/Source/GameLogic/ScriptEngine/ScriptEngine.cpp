@@ -198,13 +198,13 @@ Int AttackPriorityInfo::getPriority(const ThingTemplate *tThing) const
 //-------------------------------------------------------------------------------------------------
 void AttackPriorityInfo::dumpPriorityInfo(void)
 {
-	DEBUG_LOG(("Attack priority '%s', default %d\n", m_name.str(), m_defaultPriority));
+	DEBUG_LOG(("Attack priority '%s', default %d", m_name.str(), m_defaultPriority));
 	if (m_priorityMap==NULL) return;
 	for (AttackPriorityMap::const_iterator it = m_priorityMap->begin(); it != m_priorityMap->end(); ++it) {
 		const ThingTemplate *tThing = (*it).first;
 		Int priority = (*it).second;
 		(void)tThing; (void)priority;
-		DEBUG_LOG(("  Thing '%s' priority %d\n",tThing->getName().str(), priority));
+		DEBUG_LOG(("  Thing '%s' priority %d",tThing->getName().str(), priority));
 	}
 }
 #endif
@@ -4593,9 +4593,9 @@ void ScriptEngine::reset( void )
 #ifdef SPECIAL_SCRIPT_PROFILING
 #ifdef DEBUG_LOGGING
 	if (m_numFrames > 1) {
-		DEBUG_LOG(("\n***SCRIPT ENGINE STATS %.0f frames:\n", m_numFrames));
-		DEBUG_LOG(("Avg time to update %.3f milisec\n", 1000*m_totalUpdateTime/m_numFrames));
-		DEBUG_LOG(("  Max time to update %.3f miliseconds.\n", m_maxUpdateTime*1000));
+		DEBUG_LOG(("\n***SCRIPT ENGINE STATS %.0f frames:", m_numFrames));
+		DEBUG_LOG(("Avg time to update %.3f milisec", 1000*m_totalUpdateTime/m_numFrames));
+		DEBUG_LOG(("  Max time to update %.3f miliseconds.", m_maxUpdateTime*1000));
 	}
 	m_numFrames=0;
 	m_totalUpdateTime=0;
@@ -4629,14 +4629,14 @@ void ScriptEngine::reset( void )
 				}
 			}
 			if (maxScript) {
-				DEBUG_LOG(("   SCRIPT %s total time %f seconds,\n        evaluated %d times, avg execution %2.3f msec (Goal less than 0.05)\n",
+				DEBUG_LOG(("   SCRIPT %s total time %f seconds,\n        evaluated %d times, avg execution %2.3f msec (Goal less than 0.05)",
 					maxScript->getName().str(),
 					maxScript->getConditionTime(), maxScript->getConditionCount(), 1000*maxScript->getConditionTime()/maxScript->getConditionCount()) );
 				maxScript->addToConditionTime(-2*maxTime); // reset to negative.
 			}
 
 		}
-		DEBUG_LOG(("***\n"));
+		DEBUG_LOG(("***"));
 	}
 #endif
 #endif
@@ -4780,9 +4780,9 @@ void ScriptEngine::update( void )
 		AsciiString name = it->first;
 		Object * obj = it->second;
 		if (obj && obj->getAIUpdateInterface())
-			DEBUG_LOG(("%s=%x('%s'), isDead%d\n", name.str(), obj, obj->getName().str(), obj->getAIUpdateInterface()->isDead()));
+			DEBUG_LOG(("%s=%x('%s'), isDead%d", name.str(), obj, obj->getName().str(), obj->getAIUpdateInterface()->isDead()));
 	}
-	DEBUG_LOG(("\n\n"));
+	DEBUG_LOG(("\n"));
 */
 #endif
 #endif
@@ -5337,7 +5337,7 @@ void ScriptEngine::runScript(const AsciiString& scriptName, Team *pThisTeam)
 		}	else {
 				AppendDebugMessage("***Attempting to call script that is not a subroutine:***", false);
 				AppendDebugMessage(scriptName, false);
-				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.\n", scriptName.str()));
+				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.", scriptName.str()));
 		}
 	}	else {
 		pScript = findScript(scriptName);
@@ -5347,12 +5347,12 @@ void ScriptEngine::runScript(const AsciiString& scriptName, Team *pThisTeam)
 			} else {
 				AppendDebugMessage("***Attempting to call script that is not a subroutine:***", false);
 				AppendDebugMessage(scriptName, false);
-				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.\n", scriptName.str()));
+				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.", scriptName.str()));
 			}
 		} else {
 			AppendDebugMessage("***Script not defined:***", false);
 			AppendDebugMessage(scriptName, false);
-			DEBUG_LOG(("WARNING: Script '%s' not defined.\n", scriptName.str()));
+			DEBUG_LOG(("WARNING: Script '%s' not defined.", scriptName.str()));
 		}
 	}
 	// m_callingTeam is restored automatically via LatchRestore
@@ -5384,7 +5384,7 @@ void ScriptEngine::runObjectScript(const AsciiString& scriptName, Object *pThisO
 		}	else {
 				AppendDebugMessage("***Attempting to call script that is not a subroutine:***", false);
 				AppendDebugMessage(scriptName, false);
-				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.\n", scriptName.str()));
+				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.", scriptName.str()));
 		}
 	}	else {
 		pScript = findScript(scriptName);
@@ -5394,12 +5394,12 @@ void ScriptEngine::runObjectScript(const AsciiString& scriptName, Object *pThisO
 			} else {
 				AppendDebugMessage("***Attempting to call script that is not a subroutine:***", false);
 				AppendDebugMessage(scriptName, false);
-				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.\n", scriptName.str()));
+				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.", scriptName.str()));
 			}
 		} else {
 			AppendDebugMessage("***Script not defined:***", false);
 			AppendDebugMessage(scriptName, false);
-			DEBUG_LOG(("WARNING: Script '%s' not defined.\n", scriptName.str()));
+			DEBUG_LOG(("WARNING: Script '%s' not defined.", scriptName.str()));
 		}
 	}
 	m_callingObject = pSavCallingObject;
@@ -6143,7 +6143,7 @@ void ScriptEngine::callSubroutine( ScriptAction *pAction )
 		}	else {
 				AppendDebugMessage("***Attempting to call script that is not a subroutine:***", false);
 				AppendDebugMessage(scriptName, false);
-				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.\n", scriptName.str()));
+				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.", scriptName.str()));
 		}
 	}	else {
 		pScript = findScript(scriptName);
@@ -6153,12 +6153,12 @@ void ScriptEngine::callSubroutine( ScriptAction *pAction )
 			} else {
 				AppendDebugMessage("***Attempting to call script that is not a subroutine:***", false);
 				AppendDebugMessage(scriptName, false);
-				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.\n", scriptName.str()));
+				DEBUG_LOG(("Attempting to call script '%s' that is not a subroutine.", scriptName.str()));
 			}
 		} else {
 			AppendDebugMessage("***Script not defined:***", false);
 			AppendDebugMessage(scriptName, false);
-			DEBUG_LOG(("WARNING: Script '%s' not defined.\n", scriptName.str()));
+			DEBUG_LOG(("WARNING: Script '%s' not defined.", scriptName.str()));
 		}
 	}
 }
@@ -6205,7 +6205,7 @@ void ScriptEngine::checkConditionsForTeamNames(Script *pScript)
 							AppendDebugMessage(scriptName, false);
 							AppendDebugMessage(multiTeamName, false);
 							AppendDebugMessage(teamName, false);
-							DEBUG_LOG(("WARNING: Script '%s' contains multiple non-singleton team conditions: %s & %s.\n", scriptName.str(), 
+							DEBUG_LOG(("WARNING: Script '%s' contains multiple non-singleton team conditions: %s & %s.", scriptName.str(), 
 								multiTeamName.str(), teamName.str()));
 						}
 					}
@@ -7175,7 +7175,7 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 		if (spinCount > MAX_SPIN_COUNT) {
 			SequentialScript *seqScript = (*it);
 			if (seqScript) {
-				DEBUG_LOG(("Sequential script %s appears to be in an infinite loop.\n", 
+				DEBUG_LOG(("Sequential script %s appears to be in an infinite loop.", 
 					seqScript->m_scriptToExecuteSequentially->getName().str()));
 			}
 			++it;
@@ -7777,7 +7777,7 @@ void ScriptEngine::forceUnfreezeTime(void)
 void ScriptEngine::AppendDebugMessage(const AsciiString& strToAdd, Bool forcePause)
 {
 #ifdef INTENSE_DEBUG
-	DEBUG_LOG(("-SCRIPT- %d %s\n", TheGameLogic->getFrame(), strToAdd.str()));
+	DEBUG_LOG(("-SCRIPT- %d %s", TheGameLogic->getFrame(), strToAdd.str()));
 #endif
 	typedef void (*funcptr)(const char*);
 	if (!st_DebugDLL) {
@@ -8105,7 +8105,7 @@ static void xferListAsciiStringCoord3D( Xfer *xfer, ListAsciiStringCoord3D *list
 // ------------------------------------------------------------------------------------------------
 void ScriptEngine::setGlobalDifficulty( GameDifficulty difficulty )
 {
-	DEBUG_LOG(("ScriptEngine::setGlobalDifficulty(%d)\n", ((Int)difficulty)));
+	DEBUG_LOG(("ScriptEngine::setGlobalDifficulty(%d)", ((Int)difficulty)));
 	m_gameDifficulty = difficulty;
 }
 
@@ -8653,7 +8653,7 @@ void _appendMessage(const AsciiString& str, Bool isTrueMessage, Bool shouldPause
 	msg.concat(str);
 
 #ifdef INTENSE_DEBUG
-	DEBUG_LOG(("-SCRIPT- %s\n", msg.str()));
+	DEBUG_LOG(("-SCRIPT- %s", msg.str()));
 #endif
 	if (!st_DebugDLL) {
 		return;

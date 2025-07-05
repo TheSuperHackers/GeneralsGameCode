@@ -506,7 +506,7 @@ static Bool doSingleBoneName(RenderObjClass* robj, const AsciiString& boneName, 
 
 	if (findSingleBone(robj, boneNameTmp, info.mtx, info.boneIndex))
 	{
-//DEBUG_LOG(("added bone %s\n",boneNameTmp.str()));
+//DEBUG_LOG(("added bone %s",boneNameTmp.str()));
 		BONEPOS_LOG(("Caching bone %s (index %d)\n", boneNameTmp.str(), info.boneIndex));
 		BONEPOS_DUMPMATRIX3D(&(info.mtx));
 
@@ -519,7 +519,7 @@ static Bool doSingleBoneName(RenderObjClass* robj, const AsciiString& boneName, 
 		tmp.format("%s%02d", boneNameTmp.str(), i);
 		if (findSingleBone(robj, tmp, info.mtx, info.boneIndex))
 		{
-//DEBUG_LOG(("added bone %s\n",tmp.str()));
+//DEBUG_LOG(("added bone %s",tmp.str()));
 			BONEPOS_LOG(("Caching bone %s (index %d)\n", tmp.str(), info.boneIndex));
 			BONEPOS_DUMPMATRIX3D(&(info.mtx));
 			map[NAMEKEY(tmp)] = info;
@@ -535,7 +535,7 @@ static Bool doSingleBoneName(RenderObjClass* robj, const AsciiString& boneName, 
 	{
 		if (findSingleSubObj(robj, boneNameTmp, info.mtx, info.boneIndex))
 		{
-//DEBUG_LOG(("added subobj %s\n",boneNameTmp.str()));
+//DEBUG_LOG(("added subobj %s",boneNameTmp.str()));
 			BONEPOS_LOG(("Caching bone from subobject %s (index %d)\n", boneNameTmp.str(), info.boneIndex));
 			BONEPOS_DUMPMATRIX3D(&(info.mtx));
 			map[NAMEKEY(boneNameTmp)] = info;
@@ -547,7 +547,7 @@ static Bool doSingleBoneName(RenderObjClass* robj, const AsciiString& boneName, 
 			tmp.format("%s%02d", boneNameTmp.str(), i);
 			if (findSingleSubObj(robj, tmp, info.mtx, info.boneIndex))
 			{
-//DEBUG_LOG(("added subobj %s\n",tmp.str()));
+//DEBUG_LOG(("added subobj %s",tmp.str()));
 				BONEPOS_LOG(("Caching bone from subobject %s (index %d)\n", tmp.str(), info.boneIndex));
 				BONEPOS_DUMPMATRIX3D(&(info.mtx));
 				map[NAMEKEY(tmp)] = info;
@@ -680,7 +680,7 @@ void ModelConditionInfo::validateCachedBones(RenderObjClass* robj, Real scale) c
 			}
 			//else
 			//{
-			//	DEBUG_LOG(("global bone %s (or variations thereof) found in model %s\n",it->str(),m_modelName.str()));
+			//	DEBUG_LOG(("global bone %s (or variations thereof) found in model %s",it->str(),m_modelName.str()));
 			//}
 		}
 	}
@@ -693,7 +693,7 @@ void ModelConditionInfo::validateCachedBones(RenderObjClass* robj, Real scale) c
 		}
 		//else
 		//{
-		//	DEBUG_LOG(("extra bone %s (or variations thereof) found in model %s\n",it->str(),m_modelName.str()));
+		//	DEBUG_LOG(("extra bone %s (or variations thereof) found in model %s",it->str(),m_modelName.str()));
 		//}
 	}
 
@@ -777,7 +777,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				if (info.m_fxBone == 0 && info.m_recoilBone == 0 && info.m_muzzleFlashBone == 0 && plbBoneIndex == 0)
 					break;
 
-				CRCDEBUG_LOG(("validateWeaponBarrelInfo() - model name %s wslot %d\n", m_modelName.str(), wslot));
+				CRCDEBUG_LOG(("validateWeaponBarrelInfo() - model name %s wslot %d", m_modelName.str(), wslot));
 				DUMPMATRIX3D(&(info.m_projectileOffsetMtx));
 				BONEPOS_LOG(("validateWeaponBarrelInfo() - model name %s wslot %d\n", m_modelName.str(), wslot));
 				BONEPOS_DUMPMATRIX3D(&(info.m_projectileOffsetMtx));
@@ -815,7 +815,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				
 				if (info.m_fxBone != 0 || info.m_recoilBone != 0 || info.m_muzzleFlashBone != 0 || plbMtx != NULL)
 				{
-					CRCDEBUG_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) wslot %d\n", m_modelName.str(), wslot));
+					CRCDEBUG_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) wslot %d", m_modelName.str(), wslot));
 					DUMPMATRIX3D(&(info.m_projectileOffsetMtx));
 					BONEPOS_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) wslot %d\n", m_modelName.str(), wslot));
 					BONEPOS_DUMPMATRIX3D(&(info.m_projectileOffsetMtx));
@@ -825,7 +825,7 @@ void ModelConditionInfo::validateWeaponBarrelInfo() const
 				}
 				else
 				{
-					CRCDEBUG_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) found nothing\n", m_modelName.str()));
+					CRCDEBUG_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) found nothing", m_modelName.str()));
 					BONEPOS_LOG(("validateWeaponBarrelInfo() - model name %s (unadorned) found nothing\n", m_modelName.str()));
 				}
 			}	// if empty
@@ -1446,7 +1446,7 @@ void W3DModelDrawModuleData::parseConditionState(INI* ini, void *instance, void 
 
 				// note, this is size(), not size()-1, since we haven't actually modified the list yet
 				self->m_defaultState = self->m_conditionStates.size();
-				//DEBUG_LOG(("set default state to %d\n",self->m_defaultState));
+				//DEBUG_LOG(("set default state to %d",self->m_defaultState));
 
 				// add an empty conditionstateflag set
 				ModelConditionFlags blankConditions;
@@ -1980,7 +1980,7 @@ void W3DModelDraw::adjustTransformMtx(Matrix3D& mtx) const
 		}
 		else
 		{
-			DEBUG_LOG(("m_attachToDrawableBone %s not found\n",getW3DModelDrawModuleData()->m_attachToDrawableBone.str()));
+			DEBUG_LOG(("m_attachToDrawableBone %s not found",getW3DModelDrawModuleData()->m_attachToDrawableBone.str()));
 		}
 	}
 #endif
@@ -2021,7 +2021,7 @@ void W3DModelDraw::doDrawModule(const Matrix3D* transformMtx)
 	{
 		if (m_curState != NULL && m_nextState != NULL)
 		{
-			//DEBUG_LOG(("transition %s is complete\n",m_curState->m_description.str()));
+			//DEBUG_LOG(("transition %s is complete",m_curState->m_description.str()));
 			const ModelConditionInfo* nextState = m_nextState;
 			UnsignedInt nextDuration = m_nextStateAnimLoopDuration;
 			m_nextState = NULL;
@@ -2029,7 +2029,7 @@ void W3DModelDraw::doDrawModule(const Matrix3D* transformMtx)
 			setModelState(nextState);
 			if (nextDuration != NO_NEXT_DURATION)
 			{
-				//DEBUG_LOG(("restoring pending duration of %d frames\n",nextDuration));
+				//DEBUG_LOG(("restoring pending duration of %d frames",nextDuration));
 				setAnimationLoopDuration(nextDuration);
 			}
 		}
@@ -2040,7 +2040,7 @@ void W3DModelDraw::doDrawModule(const Matrix3D* transformMtx)
 		{
 			if (m_curState->m_animations[m_whichAnimInCurState].isIdleAnim())
 			{
-				//DEBUG_LOG(("randomly switching to new idle state!\n"));
+				//DEBUG_LOG(("randomly switching to new idle state!"));
 
 				// state hasn't changed, if it's been awhile, switch the idle anim
 				// (yes, that's right: pass curState for prevState)
@@ -2471,7 +2471,7 @@ void W3DModelDraw::handleClientRecoil()
 			if (barrels[i].m_muzzleFlashBone != 0)
 			{
 				Bool hidden = recoils[i].m_state != WeaponRecoilInfo::RECOIL_START;
-				//DEBUG_LOG(("adjust muzzleflash %08lx for Draw %08lx state %s to %d at frame %d\n",subObjToHide,this,m_curState->m_description.str(),hidden?1:0,TheGameLogic->getFrame()));
+				//DEBUG_LOG(("adjust muzzleflash %08lx for Draw %08lx state %s to %d at frame %d",subObjToHide,this,m_curState->m_description.str(),hidden?1:0,TheGameLogic->getFrame()));
 				barrels[i].setMuzzleFlashHidden(m_renderObject, hidden);
 			}
 
@@ -2523,7 +2523,7 @@ void W3DModelDraw::handleClientRecoil()
 			else
 			{
 				recoils[i].m_state = WeaponRecoilInfo::IDLE;
-				//DEBUG_LOG(("reset Draw %08lx state %08lx\n",this,m_curState));
+				//DEBUG_LOG(("reset Draw %08lx state %08lx",this,m_curState));
 			}
 		}
 	}
@@ -2860,7 +2860,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 #ifdef DEBUG_OBJECT_ID_EXISTS
 	if (getDrawable() && getDrawable()->getObject() && getDrawable()->getObject()->getID() == TheObjectIDToDebug)
 	{
-		DEBUG_LOG(("REQUEST switching to state %s for obj %s %d\n",newState->m_description.str(),getDrawable()->getObject()->getTemplate()->getName().str(),getDrawable()->getObject()->getID()));
+		DEBUG_LOG(("REQUEST switching to state %s for obj %s %d",newState->m_description.str(),getDrawable()->getObject()->getTemplate()->getName().str(),getDrawable()->getObject()->getID()));
 	}
 #endif
 	const ModelConditionInfo* nextState = NULL;
@@ -2891,7 +2891,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 #ifdef DEBUG_OBJECT_ID_EXISTS
 			if (getDrawable() && getDrawable()->getObject() && getDrawable()->getObject()->getID() == TheObjectIDToDebug)
 			{
-				DEBUG_LOG(("IGNORE duplicate state %s for obj %s %d\n",newState->m_description.str(),getDrawable()->getObject()->getTemplate()->getName().str(),getDrawable()->getObject()->getID()));
+				DEBUG_LOG(("IGNORE duplicate state %s for obj %s %d",newState->m_description.str(),getDrawable()->getObject()->getTemplate()->getName().str(),getDrawable()->getObject()->getID()));
 			}
 #endif
 			// I don't think he'll be interested...
@@ -2908,7 +2908,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 #ifdef DEBUG_OBJECT_ID_EXISTS
 			if (getDrawable() && getDrawable()->getObject() && getDrawable()->getObject()->getID() == TheObjectIDToDebug)
 			{
-				DEBUG_LOG(("ALLOW_TO_FINISH state %s for obj %s %d\n",newState->m_description.str(),getDrawable()->getObject()->getTemplate()->getName().str(),getDrawable()->getObject()->getID()));
+				DEBUG_LOG(("ALLOW_TO_FINISH state %s for obj %s %d",newState->m_description.str(),getDrawable()->getObject()->getTemplate()->getName().str(),getDrawable()->getObject()->getID()));
 			}
 #endif
 			m_nextState = newState;
@@ -2927,7 +2927,7 @@ void W3DModelDraw::setModelState(const ModelConditionInfo* newState)
 #ifdef DEBUG_OBJECT_ID_EXISTS
 				if (getDrawable() && getDrawable()->getObject() && getDrawable()->getObject()->getID() == TheObjectIDToDebug)
 				{
-					DEBUG_LOG(("using TRANSITION state %s before requested state %s for obj %s %d\n",transState->m_description.str(),newState->m_description.str(),getDrawable()->getObject()->getTemplate()->getName().str(),getDrawable()->getObject()->getID()));
+					DEBUG_LOG(("using TRANSITION state %s before requested state %s for obj %s %d",transState->m_description.str(),newState->m_description.str(),getDrawable()->getObject()->getTemplate()->getName().str(),getDrawable()->getObject()->getID()));
 				}
 #endif
 				nextState = newState;
@@ -3215,12 +3215,12 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 	const ModelConditionInfo* stateToUse = findBestInfo(condition);
 	if (!stateToUse)
 	{
-		CRCDEBUG_LOG(("can't find best info\n"));
+		CRCDEBUG_LOG(("can't find best info"));
 		//BONEPOS_LOG(("can't find best info\n"));
 		return false;
 	}
 #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
-	CRCDEBUG_LOG(("W3DModelDraw::getProjectileLaunchOffset() for %s\n",
+	CRCDEBUG_LOG(("W3DModelDraw::getProjectileLaunchOffset() for %s",
 		stateToUse->getDescription().str()));
 #endif
 
@@ -3238,7 +3238,7 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 #endif // INTENSE_DEBUG
 
 	const W3DModelDrawModuleData* d = getW3DModelDrawModuleData();
-	//CRCDEBUG_LOG(("validateStuffs() from within W3DModelDraw::getProjectileLaunchOffset()\n"));
+	//CRCDEBUG_LOG(("validateStuffs() from within W3DModelDraw::getProjectileLaunchOffset()"));
 	//DUMPREAL(getDrawable()->getScale());
 	//BONEPOS_LOG(("validateStuffs() from within W3DModelDraw::getProjectileLaunchOffset()\n"));
 	//BONEPOS_DUMPREAL(getDrawable()->getScale());
@@ -3265,12 +3265,12 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 	}
 #endif
 
-	CRCDEBUG_LOG(("wslot = %d\n", wslot));
+	CRCDEBUG_LOG(("wslot = %d", wslot));
 	const ModelConditionInfo::WeaponBarrelInfoVec& wbvec = stateToUse->m_weaponBarrelInfoVec[wslot];	
 	if( wbvec.empty() )
 	{
 		// Can't find the launch pos, but they might still want the other info they asked for
-		CRCDEBUG_LOG(("empty wbvec\n"));
+		CRCDEBUG_LOG(("empty wbvec"));
 		//BONEPOS_LOG(("empty wbvec\n"));
 		launchPos = NULL;
 	}
@@ -3281,7 +3281,7 @@ Bool W3DModelDraw::getProjectileLaunchOffset(
 
 		if (launchPos)
 		{
-			CRCDEBUG_LOG(("specificBarrelToUse = %d\n", specificBarrelToUse));
+			CRCDEBUG_LOG(("specificBarrelToUse = %d", specificBarrelToUse));
 			*launchPos = wbvec[specificBarrelToUse].m_projectileOffsetMtx;
 
 			if (tur != TURRET_INVALID)
@@ -3367,9 +3367,9 @@ Int W3DModelDraw::getPristineBonePositionsForConditionState(
 
 //	if (isValidTimeToCalcLogicStuff())
 //	{
-//		CRCDEBUG_LOG(("W3DModelDraw::getPristineBonePositionsForConditionState() - state = '%s'\n",
+//		CRCDEBUG_LOG(("W3DModelDraw::getPristineBonePositionsForConditionState() - state = '%s'",
 //			stateToUse->getDescription().str()));
-//		//CRCDEBUG_LOG(("renderObject == NULL: %d\n", (stateToUse==m_curState)?(m_renderObject == NULL):1));
+//		//CRCDEBUG_LOG(("renderObject == NULL: %d", (stateToUse==m_curState)?(m_renderObject == NULL):1));
 //	}
 
 	//BONEPOS_LOG(("validateStuff() from within W3DModelDraw::getPristineBonePositionsForConditionState()\n"));
@@ -3450,7 +3450,7 @@ Int W3DModelDraw::getPristineBonePositionsForConditionState(
 
 //	if (isValidTimeToCalcLogicStuff())
 //	{
-//		CRCDEBUG_LOG(("end of W3DModelDraw::getPristineBonePositionsForConditionState()\n"));
+//		CRCDEBUG_LOG(("end of W3DModelDraw::getPristineBonePositionsForConditionState()"));
 //	}
 
 	return posCount;
@@ -3657,13 +3657,13 @@ Bool W3DModelDraw::handleWeaponFireFX(WeaponSlotType wslot, Int specificBarrelTo
 		}
 		else
 		{
-			DEBUG_LOG(("*** no FXBone found for a non-null FXL\n"));
+			DEBUG_LOG(("*** no FXBone found for a non-null FXL"));
 		}
 	}
 
 	if (info.m_recoilBone || info.m_muzzleFlashBone)
 	{
-		//DEBUG_LOG(("START muzzleflash %08lx for Draw %08lx state %s at frame %d\n",info.m_muzzleFlashBone,this,m_curState->m_description.str(),TheGameLogic->getFrame()));
+		//DEBUG_LOG(("START muzzleflash %08lx for Draw %08lx state %s at frame %d",info.m_muzzleFlashBone,this,m_curState->m_description.str(),TheGameLogic->getFrame()));
 		WeaponRecoilInfo& recoil = m_weaponRecoilInfoVec[wslot][specificBarrelToUse];
 		recoil.m_state = WeaponRecoilInfo::RECOIL_START;
 		recoil.m_recoilRate = getW3DModelDrawModuleData()->m_initialRecoil;
@@ -3682,7 +3682,7 @@ void W3DModelDraw::setAnimationLoopDuration(UnsignedInt numFrames)
 	if (m_curState != NULL && m_curState->m_transition != NO_TRANSITION && 
 			m_nextState != NULL && m_nextState->m_transition == NO_TRANSITION)
 	{
-		DEBUG_LOG(("deferring pending duration of %d frames\n",numFrames));
+		DEBUG_LOG(("deferring pending duration of %d frames",numFrames));
 		m_nextStateAnimLoopDuration = numFrames;
 		return;
 	}

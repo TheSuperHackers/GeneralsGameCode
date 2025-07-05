@@ -36,8 +36,8 @@ Int FRAMES_TO_KEEP = (MAX_FRAMES_AHEAD/2) + 1;
 
 void dumpBufferToLog(const void *vBuf, Int len, const char *fname, Int line)
 {
-	DEBUG_LOG(("======= dumpBufferToLog() %d bytes =======\n", len));
-	DEBUG_LOG(("Source: %s:%d\n", fname, line));
+	DEBUG_LOG(("======= dumpBufferToLog() %d bytes =======", len));
+	DEBUG_LOG(("Source: %s:%d", fname, line));
 	const char *buf = (const char *)vBuf;
 	Int numLines = len / 8;
 	if ((len % 8) != 0)
@@ -65,9 +65,9 @@ void dumpBufferToLog(const void *vBuf, Int len, const char *fname, Int line)
 			char c = buf[offset + dumpindex2];
 			DEBUG_LOG(("%c", (isprint(c)?c:'.')));
 		}
-		DEBUG_LOG(("\n"));
+		DEBUG_LOG((""));
 	}
-	DEBUG_LOG(("End of packet dump\n"));
+	DEBUG_LOG(("End of packet dump"));
 }
 
 #endif // DEBUG_LOGGING
@@ -83,7 +83,7 @@ UnsignedInt ResolveIP(AsciiString host)
 
   if (host.getLength() == 0)
   {
-	  DEBUG_LOG(("ResolveIP(): Can't resolve NULL\n"));
+	  DEBUG_LOG(("ResolveIP(): Can't resolve NULL"));
 	  return 0;
   }
 
@@ -97,7 +97,7 @@ UnsignedInt ResolveIP(AsciiString host)
   hostStruct = gethostbyname(host.str());
   if (hostStruct == NULL)
   {
-	  DEBUG_LOG(("ResolveIP(): Can't resolve %s\n", host.str()));
+	  DEBUG_LOG(("ResolveIP(): Can't resolve %s", host.str()));
 	  return 0;
   }
   hostNode = (struct in_addr *) hostStruct->h_addr;

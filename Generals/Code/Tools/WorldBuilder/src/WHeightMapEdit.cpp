@@ -2208,7 +2208,7 @@ Bool WorldHeightMapEdit::selectInvalidTeam(void)
 
 	if (anySelected)
 	{
-		DEBUG_LOG(("%s\n", report.str()));
+		DEBUG_LOG(("%s", report.str()));
 		MessageBox(NULL, report.str(), "Missing team report", MB_OK);
 	}
 
@@ -2472,7 +2472,7 @@ Bool WorldHeightMapEdit::doCliffAdjustment(Int xIndex, Int yIndex)
  					ndx = (j*m_width)+i;
 					if (pProcessed[ndx]) continue;
 					CProcessNode *pNewNode = new CProcessNode(i,j);
-					DEBUG_LOG(("Adding node %d, %d\n", i, j));
+					DEBUG_LOG(("Adding node %d, %d", i, j));
 					pNodes[k++]	= pNewNode;
 					Real dx, dy;
 					if (i<pCurNode->m_x) {
@@ -3273,7 +3273,7 @@ void WorldHeightMapEdit::updateFlatCellForAdjacentCliffs(Int xIndex, Int yIndex,
 	}
 
 	if (!gotXVec && !gotYVec) {
-		DEBUG_LOG(("Unexpected.  jba\n"));
+		DEBUG_LOG(("Unexpected.  jba"));
 		return; 
 	}
 	if (gotXVec && !gotYVec) {

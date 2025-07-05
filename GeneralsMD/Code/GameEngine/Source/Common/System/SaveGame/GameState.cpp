@@ -570,7 +570,7 @@ SaveCode GameState::saveGame( AsciiString filename, UnicodeString desc,
 	} catch(...) {
 		// print error message to the user
 		TheInGameUI->message( "GUI:Error" );
-		DEBUG_LOG(( "Error opening file '%s'\n", filepath.str() ));
+		DEBUG_LOG(( "Error opening file '%s'", filepath.str() ));
 		return SC_ERROR;
 	}
 
@@ -936,7 +936,7 @@ AsciiString GameState::portableMapPathToRealMapPath(const AsciiString& in) const
 
 	if (!FileSystem::isPathInDirectory(prefix, containingBasePath))
 	{
-		DEBUG_LOG(("Normalized file path for '%s' was outside the expected base path of '%s'.\n", prefix.str(), containingBasePath.str()));
+		DEBUG_LOG(("Normalized file path for '%s' was outside the expected base path of '%s'.", prefix.str(), containingBasePath.str()));
 		return AsciiString::TheEmptyString;
 	}
 
@@ -1332,7 +1332,7 @@ void GameState::iterateSaveFiles( IterateSaveFileCallback callback, void *userDa
 // ------------------------------------------------------------------------------------------------
 void GameState::friend_xferSaveDataForCRC( Xfer *xfer, SnapshotType which )
 {
-	DEBUG_LOG(("GameState::friend_xferSaveDataForCRC() - SnapshotType %d\n", which));
+	DEBUG_LOG(("GameState::friend_xferSaveDataForCRC() - SnapshotType %d", which));
 	SaveGameInfo *gameInfo = getSaveGameInfo();
 	gameInfo->description.clear();
 	gameInfo->saveFileType = SAVE_FILE_TYPE_NORMAL;
@@ -1355,7 +1355,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 	// save or load all blocks
 	if( xfer->getXferMode() == XFER_SAVE )
 	{
-		DEBUG_LOG(("GameState::xferSaveData() - XFER_SAVE\n"));
+		DEBUG_LOG(("GameState::xferSaveData() - XFER_SAVE"));
 
 		// save all blocks
 		AsciiString blockName;
@@ -1370,7 +1370,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 			// get block name
 			blockName = blockInfo->blockName;
 
-			DEBUG_LOG(("Looking at block '%s'\n", blockName.str()));
+			DEBUG_LOG(("Looking at block '%s'", blockName.str()));
 
 			//
 			// for mission save files, we only save the game state block and campaign manager
@@ -1418,7 +1418,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 	}  // end if, save
 	else
 	{
-		DEBUG_LOG(("GameState::xferSaveData() - not XFER_SAVE\n"));
+		DEBUG_LOG(("GameState::xferSaveData() - not XFER_SAVE"));
 		AsciiString token;
 		Int blockSize;
 		Bool done = FALSE;
@@ -1448,7 +1448,7 @@ void GameState::xferSaveData( Xfer *xfer, SnapshotType which )
 				{
 
 					// log the block not found
-					DEBUG_LOG(( "GameState::xferSaveData - Skipping unknown block '%s'\n", token.str() ));
+					DEBUG_LOG(( "GameState::xferSaveData - Skipping unknown block '%s'", token.str() ));
 
 					//
 					// block was not found, this could have been a block from an older file

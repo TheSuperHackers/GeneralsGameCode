@@ -580,7 +580,7 @@ void LanLobbyMenuUpdate( WindowLayout * layout, void *userData)
 
 	if (LANSocketErrorDetected == TRUE) {
 		LANSocketErrorDetected = FALSE;
-		DEBUG_LOG(("SOCKET ERROR!  BAILING!\n"));
+		DEBUG_LOG(("SOCKET ERROR!  BAILING!"));
 		MessageBoxOk(TheGameText->fetch("GUI:NetworkError"), TheGameText->fetch("GUI:SocketError"), NULL);
 
 		// we have a socket problem, back out to the main menu.
@@ -727,7 +727,7 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 				{
 					//shellmapOn = TRUE;
 					LANbuttonPushed = true;
-					DEBUG_LOG(("Back was hit - popping to main menu\n"));
+					DEBUG_LOG(("Back was hit - popping to main menu"));
 					TheShell->pop();
 					delete TheLAN;
 					TheLAN = NULL;

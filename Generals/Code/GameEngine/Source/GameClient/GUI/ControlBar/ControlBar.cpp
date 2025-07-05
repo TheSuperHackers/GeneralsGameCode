@@ -2748,7 +2748,7 @@ void ControlBar::setControlBarSchemeByPlayer(Player *p)
 	{
 		m_isObserverCommandBar = TRUE;
 		switchToContext( CB_CONTEXT_OBSERVER_LIST, NULL );
-		DEBUG_LOG(("We're loading the Observer Command Bar\n"));
+		DEBUG_LOG(("We're loading the Observer Command Bar"));
 
 		if (buttonPlaceBeacon)
 			buttonPlaceBeacon->winHide(TRUE);
@@ -2793,7 +2793,7 @@ void ControlBar::setControlBarSchemeByPlayerTemplate( const PlayerTemplate *pt)
 	{
 		m_isObserverCommandBar = TRUE;
 		switchToContext( CB_CONTEXT_OBSERVER_LIST, NULL );
-		DEBUG_LOG(("We're loading the Observer Command Bar\n"));
+		DEBUG_LOG(("We're loading the Observer Command Bar"));
 
 		if (buttonPlaceBeacon)
 			buttonPlaceBeacon->winHide(TRUE);

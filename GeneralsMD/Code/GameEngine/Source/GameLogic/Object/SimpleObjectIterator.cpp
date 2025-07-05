@@ -134,10 +134,10 @@ void SimpleObjectIterator::sort(IterOrderType order)
 
 #ifdef INTENSE_DEBUG
 {
-	DEBUG_LOG(("\n\n---------- BEFORE sort for %d -----------\n",order));
+	DEBUG_LOG(("\n\n---------- BEFORE sort for %d -----------",order));
 	for (Clump *p = m_firstClump; p; p = p->m_nextClump)
 	{
-		DEBUG_LOG(("    obj %08lx numeric %f\n",p->m_obj,p->m_numeric));
+		DEBUG_LOG(("    obj %08lx numeric %f",p->m_obj,p->m_numeric));
 	}
 }
 #endif
@@ -233,10 +233,10 @@ void SimpleObjectIterator::sort(IterOrderType order)
 
 #ifdef INTENSE_DEBUG
 {
-	DEBUG_LOG(("\n\n---------- sort for %d -----------\n",order));
+	DEBUG_LOG(("\n\n---------- sort for %d -----------",order));
 	for (Clump *p = m_firstClump; p; p = p->m_nextClump)
 	{
-		DEBUG_LOG(("    obj %08lx numeric %f\n",p->m_obj,p->m_numeric));
+		DEBUG_LOG(("    obj %08lx numeric %f",p->m_obj,p->m_numeric));
 	}
 }
 #endif

@@ -257,7 +257,7 @@ static void joinGame( AsciiString password )
 	req.stagingRoom.id = ourRoom->getID();
 	req.password = password.str();
 	TheGameSpyPeerMessageQueue->addRequest(req);
-	DEBUG_LOG(("Attempting to join game %d(%ls) with password [%s]\n", ourRoom->getID(), ourRoom->getGameName().str(), password.str()));
+	DEBUG_LOG(("Attempting to join game %d(%ls) with password [%s]", ourRoom->getID(), ourRoom->getGameName().str(), password.str()));
 	GameSpyCloseOverlay(GSOVERLAY_GAMEPASSWORD);
 	parentPopup = NULL;
 }

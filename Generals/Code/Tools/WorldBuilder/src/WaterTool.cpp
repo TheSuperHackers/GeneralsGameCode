@@ -260,13 +260,13 @@ void WaterTool::fillTheArea(TTrackingMode m, CPoint viewPt, WbView* pView, CWorl
 		intMapHeight = pMap->getHeight(i, j);
 #ifdef INTENSE_DEBUG
 		if (bottom) {
-			DEBUG_LOG(("Bottom %d,%d\n", i, j));
+			DEBUG_LOG(("Bottom %d,%d", i, j));
 		} else if (left) {
-			DEBUG_LOG(("Left %d,%d\n", i, j));
+			DEBUG_LOG(("Left %d,%d", i, j));
 		} else if (right) {
-			DEBUG_LOG(("Right %d,%d\n", i, j));
+			DEBUG_LOG(("Right %d,%d", i, j));
 		} else if (top) {
-			DEBUG_LOG(("Top %d,%d\n", i, j));
+			DEBUG_LOG(("Top %d,%d", i, j));
 		}
 #endif
 		if (bottom) {

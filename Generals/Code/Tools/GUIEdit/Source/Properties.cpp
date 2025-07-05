@@ -432,7 +432,7 @@ void InitPropertiesDialog( GameWindow *window, Int x, Int y )
 	if( dialog == NULL )
 	{
 
-		DEBUG_LOG(( "Error creating properties dialog\n" ));
+		DEBUG_LOG(( "Error creating properties dialog" ));
 		MessageBox( TheEditor->getWindowHandle(), "Error creating property dialog!", "Error", MB_OK );
 		assert( 0 );
 		return;
@@ -983,7 +983,7 @@ static void adjustGadgetDrawMethods( Bool useImages, GameWindow *window )
 			else
 			{
 
-				DEBUG_LOG(( "Unable to adjust draw method, undefined gadget\n" ));
+				DEBUG_LOG(( "Unable to adjust draw method, undefined gadget" ));
 				assert( 0 );
 				return;
 
@@ -1021,7 +1021,7 @@ static void adjustGadgetDrawMethods( Bool useImages, GameWindow *window )
 			else
 			{
 
-				DEBUG_LOG(( "Unable to adjust draw method, undefined gadget\n" ));
+				DEBUG_LOG(( "Unable to adjust draw method, undefined gadget" ));
 				assert( 0 );
 				return;
 
@@ -1351,7 +1351,7 @@ void SwitchToState( StateIdentifier id, HWND dialog )
 	if( info == NULL )
 	{
 
-		DEBUG_LOG(( "Invalid state request\n" ));
+		DEBUG_LOG(( "Invalid state request" ));
 		assert( 0 );
 		return;
 

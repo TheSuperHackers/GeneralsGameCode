@@ -445,7 +445,7 @@ void MilesAudioManager::init()
 {
 	AudioManager::init();
 #ifdef INTENSE_DEBUG
-	DEBUG_LOG(("Sound has temporarily been disabled in debug builds only. jkmcd\n"));
+	DEBUG_LOG(("Sound has temporarily been disabled in debug builds only. jkmcd"));
 	// for now, RTS_DEBUG builds only should have no sound. ask jkmcd or srj about this.
 	return;
 #endif
@@ -681,7 +681,7 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 		case AT_Streaming:
 		{
 		#ifdef INTENSIVE_AUDIO_DEBUG
-			DEBUG_LOG(("- Stream\n"));
+			DEBUG_LOG(("- Stream"));
 		#endif
 			
 			if ((info->m_soundType == AT_Streaming) && event->getUninterruptable()) {
@@ -807,14 +807,14 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 				{
 					m_playing3DSounds.pop_back();
 					#ifdef INTENSIVE_AUDIO_DEBUG
-						DEBUG_LOG((" Killed (no handles available)\n"));
+						DEBUG_LOG((" Killed (no handles available)"));
 					#endif
 				} 
 				else 
 				{
 					audio = NULL;
 					#ifdef INTENSIVE_AUDIO_DEBUG
-						DEBUG_LOG((" Playing.\n"));
+						DEBUG_LOG((" Playing."));
 					#endif
 				}
 			} 
@@ -876,7 +876,7 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 
 				if (!audio->m_file) {
 					#ifdef INTENSIVE_AUDIO_DEBUG
-						DEBUG_LOG((" Killed (no handles available)\n"));
+						DEBUG_LOG((" Killed (no handles available)"));
 					#endif
 					m_playingSounds.pop_back();
 				} else {
@@ -884,7 +884,7 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 				}
 
 				#ifdef INTENSIVE_AUDIO_DEBUG
-					DEBUG_LOG((" Playing.\n"));
+					DEBUG_LOG((" Playing."));
 				#endif
 			}
 			break;
@@ -902,7 +902,7 @@ void MilesAudioManager::playAudioEvent( AudioEventRTS *event )
 void MilesAudioManager::stopAudioEvent( AudioHandle handle )
 {
 #ifdef INTENSIVE_AUDIO_DEBUG
-	DEBUG_LOG(("MILES (%d) - Processing stop request: %d\n", TheGameLogic->getFrame(), handle));
+	DEBUG_LOG(("MILES (%d) - Processing stop request: %d", TheGameLogic->getFrame(), handle));
 #endif
 
 	std::list<PlayingAudio *>::iterator it;
@@ -965,7 +965,7 @@ void MilesAudioManager::stopAudioEvent( AudioHandle handle )
 
 		if (audio->m_audioEventRTS->getPlayingHandle() == handle) {
 		#ifdef INTENSIVE_AUDIO_DEBUG
-			DEBUG_LOG((" (%s)\n", audio->m_audioEventRTS->getEventName()));
+			DEBUG_LOG((" (%s)", audio->m_audioEventRTS->getEventName()));
 		#endif
 			audio->m_requestStop = true;
 			break;

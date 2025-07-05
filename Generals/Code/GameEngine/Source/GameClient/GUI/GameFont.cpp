@@ -208,7 +208,7 @@ GameFont *FontLibrary::getFont( AsciiString name, Int pointSize, Bool bold )
 	font->bold = bold;
 	font->fontData = NULL;
 
-	//DEBUG_LOG(("Font: Loading font '%s' %d point\n", font->nameString.str(), font->pointSize));
+	//DEBUG_LOG(("Font: Loading font '%s' %d point", font->nameString.str(), font->pointSize));
 	// load the device specific data pointer
 	if( loadFontData( font ) == FALSE )
 	{

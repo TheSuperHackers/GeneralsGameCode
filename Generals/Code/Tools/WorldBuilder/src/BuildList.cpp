@@ -117,7 +117,7 @@ void BuildList::loadSides(void)
 {
 	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_SIDES_COMBO);
 	if (!pCombo) {
-		DEBUG_LOG(("*** BuildList::loadSides Missing resource!!!\n"));
+		DEBUG_LOG(("*** BuildList::loadSides Missing resource!!!"));
 		return;
 	}
 	pCombo->ResetContent();
@@ -144,7 +144,7 @@ void BuildList::updateCurSide(void)
 
 	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_SIDES_COMBO);
 	if (!pCombo) {
-		DEBUG_LOG(("*** BuildList::updateCurSide Missing resource!!!\n"));
+		DEBUG_LOG(("*** BuildList::updateCurSide Missing resource!!!"));
 		return;
 	}
 	if (m_curSide<0 || m_curSide >= TheSidesList->getNumSides()) {
@@ -157,7 +157,7 @@ void BuildList::updateCurSide(void)
 
 	CListBox *pList = (CListBox*)GetDlgItem(IDC_BUILD_LIST);
 	if (!pList) {
-		DEBUG_LOG(("*** BuildList::updateCurSide Missing resource!!! IDC_BUILD_LIST\n"));
+		DEBUG_LOG(("*** BuildList::updateCurSide Missing resource!!! IDC_BUILD_LIST"));
 		return;
 	}
 	pList->ResetContent();
@@ -178,7 +178,7 @@ void BuildList::OnSelchangeSidesCombo()
 
 	CComboBox *pCombo = (CComboBox*)GetDlgItem(IDC_SIDES_COMBO);
 	if (!pCombo) {
-		DEBUG_LOG(("*** BuildList::OnSelchangeSidesCombo Missing resource!!!\n"));
+		DEBUG_LOG(("*** BuildList::OnSelchangeSidesCombo Missing resource!!!"));
 		return;
 	}
 
@@ -198,7 +198,7 @@ void BuildList::OnMoveUp()
 {
 	CListBox *pList = (CListBox*)GetDlgItem(IDC_BUILD_LIST);
 	if (!pList) {
-		DEBUG_LOG(("*** BuildList::updateCurSide Missing resource!!! IDC_BUILD_LIST\n"));
+		DEBUG_LOG(("*** BuildList::updateCurSide Missing resource!!! IDC_BUILD_LIST"));
 		return;
 	}
 	m_curBuildList = pList->GetCurSel();
@@ -231,7 +231,7 @@ void BuildList::OnMoveDown()
 {
 	CListBox *pList = (CListBox*)GetDlgItem(IDC_BUILD_LIST);
 	if (!pList) {
-		DEBUG_LOG(("*** BuildList::updateCurSide Missing resource!!! IDC_BUILD_LIST\n"));
+		DEBUG_LOG(("*** BuildList::updateCurSide Missing resource!!! IDC_BUILD_LIST"));
 		return;
 	}
 	if (m_curBuildList < 0) return;
@@ -330,7 +330,7 @@ void BuildList::OnSelchangeBuildList()
 
 	CListBox *pList = (CListBox*)GetDlgItem(IDC_BUILD_LIST);
 	if (!pList) {
-		DEBUG_LOG(("*** BuildList::updateCurSide Missing resource!!! IDC_BUILD_LIST\n"));
+		DEBUG_LOG(("*** BuildList::updateCurSide Missing resource!!! IDC_BUILD_LIST"));
 		return;
 	}
 	m_curBuildList = pList->GetCurSel();
@@ -419,7 +419,7 @@ void BuildList::OnSelchangeBuildList()
 	{
 		energyUsed = 1.0f;
 	}
-	//DEBUG_LOG(("Energy: %d/%d - %g\n", energyConsumption, energyProduction, energyUsed));
+	//DEBUG_LOG(("Energy: %d/%d - %g", energyConsumption, energyProduction, energyUsed));
 	CProgressCtrl *progressWnd = (CProgressCtrl *)GetDlgItem(IDC_POWER);
 	if (progressWnd)
 	{
@@ -485,7 +485,7 @@ void BuildList::OnAlreadyBuild()
 {
 	CListBox *pList = (CListBox*)GetDlgItem(IDC_BUILD_LIST);
 	if (!pList) {
-		DEBUG_LOG(("*** BuildList::updateCurSide Missing resource!!! IDC_BUILD_LIST\n"));
+		DEBUG_LOG(("*** BuildList::updateCurSide Missing resource!!! IDC_BUILD_LIST"));
 		return;
 	}
 	SidesInfo *pSide = TheSidesList->getSideInfo(m_curSide); 
@@ -508,7 +508,7 @@ void BuildList::OnDeleteBuilding()
 {
 	CListBox *pList = (CListBox*)GetDlgItem(IDC_BUILD_LIST);
 	if (!pList) {
-		DEBUG_LOG(("*** BuildList::updateCurSide Missing resource!!! IDC_BUILD_LIST\n"));
+		DEBUG_LOG(("*** BuildList::updateCurSide Missing resource!!! IDC_BUILD_LIST"));
 		return;
 	}
 	m_curBuildList = pList->GetCurSel();

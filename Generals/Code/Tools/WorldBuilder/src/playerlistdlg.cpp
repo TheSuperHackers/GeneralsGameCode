@@ -53,7 +53,7 @@ static void fixDefaultTeamName(SidesList& sides, AsciiString oldpname, AsciiStri
 	{
 		tname.set("team");
 		tname.concat(newpname);
-		DEBUG_LOG(("rename team %s -> %s\n",ti->getDict()->getAsciiString(TheKey_teamName).str(),tname.str()));
+		DEBUG_LOG(("rename team %s -> %s",ti->getDict()->getAsciiString(TheKey_teamName).str(),tname.str()));
 		ti->getDict()->setAsciiString(TheKey_teamName, tname);
 		ti->getDict()->setAsciiString(TheKey_teamOwner, newpname);
 	}
@@ -159,7 +159,7 @@ static AsciiString extractFromAlliesList(CListBox *alliesList, SidesList& sides)
 			allies.concat(UIToInternal(sides, nm));
 		}
 	}
-//DEBUG_LOG(("a/e is (%s)\n",allies.str()));
+//DEBUG_LOG(("a/e is (%s)",allies.str()));
 	return allies;
 }
 

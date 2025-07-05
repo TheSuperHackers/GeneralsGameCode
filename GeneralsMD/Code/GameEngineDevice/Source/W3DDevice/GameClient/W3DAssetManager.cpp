@@ -1158,7 +1158,7 @@ void W3DAssetManager::Report_Used_Prototypes(void)
 		PrototypeClass * proto = Prototypes[count];
 		if (proto->Get_Class_ID() == RenderObjClass::CLASSID_HLOD || proto->Get_Class_ID() == RenderObjClass::CLASSID_MESH)
 		{
-			DEBUG_LOG(("**Unfreed Prototype On Map Reset: %s\n",proto->Get_Name()));
+			DEBUG_LOG(("**Unfreed Prototype On Map Reset: %s",proto->Get_Name()));
 		}
 	}
 }
@@ -1188,7 +1188,7 @@ void W3DAssetManager::Report_Used_FontChars(void)
 	{
 		if (FontCharsList[count]->Num_Refs() >= 1)
 		{
-			DEBUG_LOG(("**Unfreed FontChar On Map Reset: %s\n",FontCharsList[count]->Get_Name()));
+			DEBUG_LOG(("**Unfreed FontChar On Map Reset: %s",FontCharsList[count]->Get_Name()));
 			//FontCharsList[count]->Release_Ref();
 			//FontCharsList.Delete(count);
 		}
@@ -1224,7 +1224,7 @@ void W3DAssetManager::Report_Used_Textures(void)
 		}
 		else
 		{
-			DEBUG_LOG(("**Texture \"%s\" referenced %d times on map reset\n",tex->Get_Texture_Name().str(),tex->Num_Refs()-1));
+			DEBUG_LOG(("**Texture \"%s\" referenced %d times on map reset",tex->Get_Texture_Name().str(),tex->Num_Refs()-1));
 		}
 	}
 /*	for (unsigned i=0;i<count;++i) {
@@ -1251,7 +1251,7 @@ void W3DAssetManager::Report_Used_Font3DDatas( void )
 		}
 		else
 		{
-			DEBUG_LOG(("**Unfreed Font3DDatas On Map Reset: %s\n",font->Name));
+			DEBUG_LOG(("**Unfreed Font3DDatas On Map Reset: %s",font->Name));
 		}
 	}
 }
