@@ -48,6 +48,7 @@
 #include "Common/version.h"
 
 CONSTEXPR const char s_genrep[] = "GENREP";
+CONSTEXPR const UnsignedInt replayBufferBytes = 8192;
 
 Int REPLAY_CRC_INTERVAL = 100;
 
@@ -847,7 +848,9 @@ Bool RecorderClass::readReplayHeader(ReplayHeader& header)
 	AsciiString filepath = getReplayDir();
 	filepath.concat(header.filename.str());
 
-	m_file = TheFileSystem->openFile(filepath.str(), File::READ | File::BINARY );
+	// TheSuperHackers @performance More buffered data reduces disk overhead and will improve fast forward playback
+	const UnsignedInt buffersize = header.forPlayback ? replayBufferBytes : File::BUFFERSIZE;
+	m_file = TheFileSystem->openFile(filepath.str(), File::READ | File::BINARY, buffersize);
 
 	if (m_file == NULL)
 	{
