@@ -1399,7 +1399,7 @@ char *nextParam(char *newSource, const char *seps)
 
 static void parseCommandLine(const CommandLineParam* params, int numParams)
 {
-	std::vector<char*, stl::malloc_allocator<char*>> argv;
+	std::vector<char*, stl::malloc_allocator<char*> > argv;
 
 	stl::malloc_string cmdLine = GetCommandLineA();
 	char *token = nextParam(&cmdLine[0], "\" ");
