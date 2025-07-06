@@ -28,6 +28,8 @@
 #include "Common/MessageStream.h"
 #include "GameNetwork/GameInfo.h"
 
+class File;
+
 /**
   * The ReplayGameInfo class holds information about the replay game and
 	* the contents of its slot list for reconstructing multiplayer games.
@@ -89,7 +91,7 @@ protected:
 	CRCInfo *m_crcInfo;
 public:
 
-	// read in info relating to a replay, conditionally setting up m_file for playback
+	// read in info relating to a replay, conditionally setting up m_replayFile for playback
 	struct ReplayHeader
 	{
 		AsciiString filename;
@@ -139,8 +141,8 @@ protected:
 	void logGameStart(AsciiString options);
 	void logGameEnd( void );
 
-	AsciiString readAsciiString();										///< Read the next string from m_file using ascii characters.
-	UnicodeString readUnicodeString();								///< Read the next string from m_file using unicode characters.
+	AsciiString readAsciiString();										///< Read the next string from m_replayFile using ascii characters.
+	UnicodeString readUnicodeString();								///< Read the next string from m_replayFile using unicode characters.
 	void readNextFrame();															///< Read the next frame number to execute a command on.
 	void appendNextCommand();													///< Read the next GameMessage and append it to TheCommandList.
 	void writeArgument(GameMessageArgumentDataType type, const GameMessageArgumentType arg);
@@ -154,6 +156,7 @@ protected:
 
 	CullBadCommandsResult cullBadCommands(); ///< prevent the user from giving mouse commands that he shouldn't be able to do during playback.
 
+	File* m_replayFile;
 	FILE *m_file;
 	AsciiString m_fileName;
 	Int m_currentFilePosition;
