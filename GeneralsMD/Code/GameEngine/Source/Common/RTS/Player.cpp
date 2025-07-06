@@ -2090,6 +2090,7 @@ void Player::killPlayer(void)
 	if (isLocalPlayer() && !TheGameLogic->isInShellGame())
 	{
 #if 0
+		// TheSuperHackers @bugfix helmutbuhler 29/03/2025
 		// This calls recalcApparentControllingPlayer on all objects with a contain,
 		// which basically does two things:
 		// - Reset the teams of all objects with empty contains.
