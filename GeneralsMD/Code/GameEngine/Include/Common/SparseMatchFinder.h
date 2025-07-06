@@ -204,9 +204,12 @@ public:
 	//-------------------------------------------------------------------------------------------------
 	SparseMatchFinder& operator=(const SparseMatchFinder& other)
 	{
-		if ((FLAGS & SparseMatchFinderFlags_NoCopy) == 0 && this != &other)
+		if CONSTEXPR ((FLAGS & SparseMatchFinderFlags_NoCopy) == 0)
 		{
-			m_bestMatches = other.m_bestMatches;
+			if (this != &other)
+			{
+				m_bestMatches = other.m_bestMatches;
+			}
 		}
 		return *this;
 	}
