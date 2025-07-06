@@ -83,14 +83,14 @@ void W3DGadgetVerticalSliderDraw( GameWindow *window,
 	window->winGetSize( &size.x, &size.y );
 
 	// get the right colors
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 
 		backBorder		= GadgetSliderGetDisabledBorderColor( window );
 		backColor			= GadgetSliderGetDisabledColor( window );
 
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
 		backBorder		= GadgetSliderGetHiliteBorderColor( window );
@@ -153,7 +153,7 @@ void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
 	yOffset = instData->m_imageOffset.y;
 
 	// get the right images
-	if( BitTest( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
+	if( BitIsSet( window->winGetStatus(), WIN_STATUS_ENABLED ) == FALSE )
 	{
 
 		topImage					= GadgetSliderGetDisabledImageTop( window );
@@ -162,7 +162,7 @@ void W3DGadgetVerticalSliderImageDraw( GameWindow *window,
 		smallCenterImage	= GadgetSliderGetDisabledImageSmallCenter( window );
 
 	}  // end if, disabled
-	else if( BitTest( instData->getState(), WIN_STATE_HILITED ) )
+	else if( BitIsSet( instData->getState(), WIN_STATE_HILITED ) )
 	{
 
 		topImage					= GadgetSliderGetHiliteImageTop( window );

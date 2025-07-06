@@ -25,7 +25,7 @@
 #include <list>			// for std::list
 
 #define		DEFINE_PARTICLE_SYSTEM_NAMES	1
-#include "Gameclient/ParticleSys.h"
+#include "GameClient/ParticleSys.h"
 
 #include "CColorAlphaDialog.h"
 #include "CSwitchesDialog.h"

@@ -22,16 +22,17 @@
  *                                                                                             *
  *                 Project Name : WW3D                                                         *
  *                                                                                             *
- *                     $Archive:: /VSS_Sync/ww3d2/dazzle.cpp                                  $*
+ *                     $Archive:: /Commando/Code/ww3d2/dazzle.cpp                             $*
  *                                                                                             *
  *              Original Author:: Jani Penttinen                                               *
  *                                                                                             *
- *                      $Author:: Vss_sync                                                    $*
+ *                       $Author:: Kenny Mitchell                                               * 
+ *                                                                                             * 
+ *                     $Modtime:: 06/26/02 4:04p                                             $*
  *                                                                                             *
- *                     $Modtime:: 8/29/01 9:47p                                               $*
+ *                    $Revision:: 32                                                          $*
  *                                                                                             *
- *                    $Revision:: 19                                                          $*
- *                                                                                             *
+ * 06/26/02 KM Matrix name change to avoid MAX conflicts                                       *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -45,14 +46,14 @@
 #include "wwstring.h"
 #include "wwdebug.h"
 #include "assetmgr.h"
-#include "vector3i.h"
+#include "Vector3i.h"
 #include "quat.h"
-#include "ini.h"
-#include "point.h"
+#include "INI.H"
+#include "Point.h"
 #include "rinfo.h"
 #include "vertmaterial.h"
 #include "chunkio.h"
-#include "wwfile.h"
+#include "WWFILE.H"
 #include "inisup.h"
 #include "persistfactory.h"
 #include "ww3dids.h"
@@ -65,7 +66,6 @@
 #include "wwprofile.h"
 #include <cstdio>
 #include <limits.h>
-
 
 
 // All dazzle types appear under Dazzles_List in the dazzle.ini file.
@@ -303,14 +303,14 @@ const Vector2 DazzleINIClass::Get_Vector2(char const *section, char const *entry
 		INIEntry * entryptr = Find_Entry(section, entry);
 		if (entryptr && entryptr->Value != NULL) {
 			Vector2	ret;
-			if ( sscanf( entryptr->Value, "%f,%f", &ret[0], &ret[1], &ret[2] ) == 2 ) {
+			if ( sscanf( entryptr->Value, "%f,%f", &ret[0], &ret[1] ) == 2 ) {
 				return ret;
 			}
 		}
 	}
 	return defvalue;
 }
-	
+
 const Vector3 DazzleINIClass::Get_Vector3(char const *section, char const * entry, const Vector3 & defvalue ) 
 {
 	if (section != NULL && entry != NULL) {
@@ -493,8 +493,8 @@ TextureClass* DazzleTypeClass::Get_Halo_Texture()
 // ----------------------------------------------------------------------------
 
 void DazzleTypeClass::Calculate_Intensities(
-	float& dazzle_intensity, 
-	float& dazzle_size, 
+	float& dazzle_intensity,
+	float& dazzle_size,
 	float& halo_intensity,
 	const Vector3& camera_dir,
 	const Vector3& dazzle_dir,
@@ -538,6 +538,7 @@ void DazzleTypeClass::Calculate_Intensities(
 			halo_intensity*=1.0f-distance;	// Scale down intensity
 		}
 	}
+
 	return;
 }
 
@@ -555,7 +556,7 @@ void DazzleRenderObjClass::Init_From_INI(const INIClass* ini)
 	for ( entry = 0; entry < count; entry++ )	{
 		char	section_name[80];
 		ini->Get_String(
-			LENSFLARE_LIST_STRING, 
+			LENSFLARE_LIST_STRING,
 			ini->Get_Entry( LENSFLARE_LIST_STRING, entry),
 			"",
 			section_name,
@@ -563,7 +564,7 @@ void DazzleRenderObjClass::Init_From_INI(const INIClass* ini)
 
 		LensflareInitClass lic;
 
-		lic.texture_name=ini->Get_String(section_name,LENSFLARE_TEXTURE_STRING);
+		ini->Get_String(lic.texture_name,section_name,LENSFLARE_TEXTURE_STRING);
 		lic.flare_count=ini->Get_Int(section_name,FLARE_COUNT_STRING,0);
 		if (lic.flare_count) {
 			lic.flare_locations=W3DNEWARRAY float[lic.flare_count];	// Flare location is 1D
@@ -604,7 +605,7 @@ void DazzleRenderObjClass::Init_From_INI(const INIClass* ini)
 	for ( entry = 0; entry < count; entry++ )	{
 		char	section_name[80];
 		ini->Get_String(
-			DAZZLE_LIST_STRING, 
+			DAZZLE_LIST_STRING,
 			ini->Get_Entry( DAZZLE_LIST_STRING, entry),
 			"",
 			section_name,
@@ -612,8 +613,8 @@ void DazzleRenderObjClass::Init_From_INI(const INIClass* ini)
 
 		DazzleInitClass dic;
 
-		dic.primary_texture_name=ini->Get_String(section_name,DAZZLE_TEXTURE_STRING);
-		dic.secondary_texture_name=ini->Get_String(section_name,HALO_TEXTURE_STRING);
+		ini->Get_String(dic.primary_texture_name,section_name,DAZZLE_TEXTURE_STRING);
+		ini->Get_String(dic.secondary_texture_name,section_name,HALO_TEXTURE_STRING);
 		dic.halo_intensity=ini->Get_Float(section_name,HALO_INTENSITY_STRING,0.95f);
 		dic.halo_intensity_pow=ini->Get_Float(section_name,HALO_INTENSITY_POW_STRING,0.95f);
 		dic.halo_size_pow=ini->Get_Float(section_name,HALO_SIZE_POW_STRING,0.95f);
@@ -632,7 +633,7 @@ void DazzleRenderObjClass::Init_From_INI(const INIClass* ini)
 		dic.size_optimization_limit=ini->Get_Float(section_name,SIZE_OPTIMIZATION_LIMIT_STRING,0.05f);
 		dic.history_weight=ini->Get_Float(section_name,HISTORY_WEIGHT_STRING,0.5f);
 		dic.use_camera_translation=!!ini->Get_Int(section_name,USE_CAMERA_TRANSLATION,1);
-		dic.lensflare_name=ini->Get_String(section_name,DAZZLE_LENSFLARE_STRING);
+		ini->Get_String(dic.lensflare_name,section_name,DAZZLE_LENSFLARE_STRING);
 		dic.type=entry;
 
 		TPoint3D<float> tp=ini->Get_Point(section_name,DAZZLE_DIRECTION_STRING,TPoint3D<float>(0.0f,0.0f,0.0f));
@@ -667,7 +668,9 @@ void DazzleRenderObjClass::Init_Type(const DazzleInitClass& i)
 	if (i.type>=type_count) {
 		unsigned new_count=i.type+1;
 		DazzleTypeClass** new_types=W3DNEWARRAY DazzleTypeClass*[new_count];
-		for (unsigned a=0;a<type_count;++a) {
+		unsigned a=0;
+		unsigned copy_count = min(type_count, new_count);
+		for (;a<copy_count;++a) {
 			new_types[a]=types[a];
 		}
 		for (;a<new_count;++a) {
@@ -690,7 +693,9 @@ void DazzleRenderObjClass::Init_Lensflare(const LensflareInitClass& i)
 	if (i.type>=lensflare_count) {
 		unsigned new_count=i.type+1;
 		LensflareTypeClass** new_lensflares=W3DNEWARRAY LensflareTypeClass*[new_count];
-		for (unsigned a=0;a<lensflare_count;++a) {
+		unsigned a=0;
+		unsigned copy_count = min(lensflare_count, new_count);
+		for (;a<copy_count;++a) {
 			new_lensflares[a]=lensflares[a];
 		}
 		for (;a<new_count;++a) {
@@ -863,7 +868,7 @@ void DazzleRenderObjClass::Set_Current_Dazzle_Layer(DazzleLayerClass *layer)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// Render Object Interface 
+// Render Object Interface
 /////////////////////////////////////////////////////////////////////////////
 
 RenderObjClass* DazzleRenderObjClass::Clone(void) const
@@ -896,7 +901,7 @@ void DazzleRenderObjClass::Render(RenderInfoClass & rinfo)
 				is_on = false;
 			}
 		}
-		
+
 		// Next, check visibility
 		visibility = 1.0f;
 
@@ -907,7 +912,7 @@ void DazzleRenderObjClass::Render(RenderInfoClass & rinfo)
 //			Get_Transform().Get_Translation(&position);
 //			visibility = _VisibilityHandler->Compute_Dazzle_Visibility(rinfo,this,position);
 
-			Matrix4 view_transform,projection_transform;
+			Matrix4x4 view_transform,projection_transform;
 			DX8Wrapper::Get_Transform(D3DTS_VIEW,view_transform);
 			DX8Wrapper::Get_Transform(D3DTS_PROJECTION,projection_transform);
 			Vector3 camera_loc(rinfo.Camera.Get_Position());
@@ -941,12 +946,12 @@ void DazzleRenderObjClass::Render(RenderInfoClass & rinfo)
 
 			if (dazzle_intensity>0.0f) {
 				visibility = _VisibilityHandler->Compute_Dazzle_Visibility(rinfo,this,loc);
+//visibility=1.0f;
 				dazzle_intensity*=visibility;
 			}
 			else {
 				visibility=0.0f;
 			}
-
 			if (visibility == 0.0f) {
 
 				float i=dazzle_intensity*(1.0f-weight)+current_dazzle_intensity*weight;
@@ -957,7 +962,7 @@ void DazzleRenderObjClass::Render(RenderInfoClass & rinfo)
 				float s=dazzle_size*(1.0f-weight)+current_dazzle_size*weight;
 				current_dazzle_size=s;
 				dazzle_size=s;
-			
+
 			} else {
 				current_dazzle_intensity = dazzle_intensity;
 				current_dazzle_size = dazzle_size;
@@ -978,12 +983,12 @@ void DazzleRenderObjClass::Render(RenderInfoClass & rinfo)
 
 void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 {
-	Matrix4 old_view_transform;
-	Matrix4 old_world_transform;
-	Matrix4 old_projection_transform;
-	Matrix4 view_transform;
-	Matrix4 world_transform;
-	Matrix4 projection_transform;
+	Matrix4x4 old_view_transform;
+	Matrix4x4 old_world_transform;
+	Matrix4x4 old_projection_transform;
+	Matrix4x4 view_transform;
+	Matrix4x4 world_transform;
+	Matrix4x4 projection_transform;
 	DX8Wrapper::Get_Transform(D3DTS_VIEW,view_transform);
 	DX8Wrapper::Get_Transform(D3DTS_WORLD,world_transform);
 	DX8Wrapper::Get_Transform(D3DTS_PROJECTION,projection_transform);
@@ -1105,28 +1110,28 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 
 			unsigned color=DX8Wrapper::Convert_Color(col,1.0f);
 
-			dl=current_vloc+(halo_dxt-halo_dyt)*halo_size;
+			dl=current_vloc+(halo_dxt - halo_dyt) * halo_size;
 			reinterpret_cast<Vector3&>(vertex->x)=dl;
 			vertex->u1=0.0f;
 			vertex->v1=0.0f;
 			vertex->diffuse=color;
 			vertex++;
 
-			dl=current_vloc+(halo_dxt+halo_dyt)*halo_size;
+			dl=current_vloc+(halo_dxt + halo_dyt) * halo_size;
 			reinterpret_cast<Vector3&>(vertex->x)=dl;
 			vertex->u1=1.0f;
 			vertex->v1=0.0f;
 			vertex->diffuse=color;
 			vertex++;
 
-			dl=current_vloc-(halo_dxt-halo_dyt)*halo_size;
+			dl=current_vloc-(halo_dxt - halo_dyt) * halo_size;
 			reinterpret_cast<Vector3&>(vertex->x)=dl;
 			vertex->u1=1.0f;
 			vertex->v1=1.0f;
 			vertex->diffuse=color;
 			vertex++;
 
-			dl=current_vloc-(halo_dxt+halo_dyt)*halo_size;
+			dl=current_vloc-(halo_dxt + halo_dyt) * halo_size;
 			reinterpret_cast<Vector3&>(vertex->x)=dl;
 			vertex->u1=0.0f;
 			vertex->v1=1.0f;
@@ -1176,7 +1181,7 @@ void DazzleRenderObjClass::Render_Dazzle(CameraClass* camera)
 
 	DX8Wrapper::Set_World_Identity();
 	DX8Wrapper::Set_View_Identity();
-	DX8Wrapper::Set_Transform(D3DTS_PROJECTION,Matrix4(true));
+	DX8Wrapper::Set_Transform(D3DTS_PROJECTION,Matrix4x4(true));
 
 	if (halo_poly_count) {
 		DX8Wrapper::Set_Index_Buffer(ib_access,dazzle_vertex_count);
@@ -1237,7 +1242,7 @@ unsigned DazzleRenderObjClass::Get_Type_ID(const char* name)
 // ----------------------------------------------------------------------------
 //
 // Return the type name of a dazzle class with given id. If the id is out
-// of range, return "DEFAULT" which by convention is always defined and is 
+// of range, return "DEFAULT" which by convention is always defined and is
 // id 0.
 //
 // ----------------------------------------------------------------------------
@@ -1331,7 +1336,7 @@ class DazzlePersistFactoryClass : public PersistFactoryClass
 	virtual PersistClass *	Load(ChunkLoadClass & cload) const;
 	virtual void				Save(ChunkSaveClass & csave,PersistClass * obj)	const;
 
-	enum 
+	enum
 	{
 		DAZZLEFACTORY_CHUNKID_VARIABLES		= 1212000336,
 		DAZZLEFACTORY_VARIABLE_OBJPOINTER	= 0x00,
@@ -1362,14 +1367,14 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 		switch (cload.Cur_Chunk_ID()) {
 
 			case DAZZLEFACTORY_CHUNKID_VARIABLES:
-			
+
 				while (cload.Open_Micro_Chunk()) {
 					switch(cload.Cur_Micro_Chunk_ID()) {
 						READ_MICRO_CHUNK(cload,DAZZLEFACTORY_VARIABLE_OBJPOINTER,old_obj);
 						READ_MICRO_CHUNK(cload,DAZZLEFACTORY_VARIABLE_TRANSFORM,tm);
 						READ_MICRO_CHUNK_STRING(cload,DAZZLEFACTORY_VARIABLE_TYPENAME,dazzle_type,sizeof(dazzle_type));
 					}
-					cload.Close_Micro_Chunk();	
+					cload.Close_Micro_Chunk();
 				}
 				break;
 
@@ -1379,7 +1384,7 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 		};
 		cload.Close_Chunk();
 	}
-	
+
 	/*
 	** Create a new dazzle object
 	*/
@@ -1388,7 +1393,7 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 		type_index = DazzleRenderObjClass::Get_Type_ID(dazzle_type);
 	}
 	RenderObjClass * new_obj = NEW_REF(DazzleRenderObjClass,(dazzle_type));
-	
+
 	/*
 	** If we failed to create it, replace it with a NULL
 	*/
@@ -1405,7 +1410,7 @@ PersistClass *	DazzlePersistFactoryClass::Load(ChunkLoadClass & cload) const
 	if (new_obj) {
 		new_obj->Set_Transform(tm);
 	}
-	
+
 	/*
 	** Register the old pointer for re-mapping to the new pointer
 	*/
@@ -1430,11 +1435,11 @@ void DazzlePersistFactoryClass::Save(ChunkSaveClass & csave,PersistClass * obj)	
 
 
 /*
-** DazzleRenderObj save-load. 
+** DazzleRenderObj save-load.
 */
 const PersistFactoryClass & DazzleRenderObjClass::Get_Factory (void) const
 {
-	return _DazzleFactory;	
+	return _DazzleFactory;
 }
 
 
@@ -1540,12 +1545,12 @@ void DazzleLayerClass::Clear_Visible_List(unsigned int type)
 **
 ** DazzleVisibilityClass Implementation
 ** The default dazzle visibility handler asks the scene to determine whether the dazzle
-** is occluded.  
+** is occluded.
 **
 **********************************************************************************************/
 
 float DazzleVisibilityClass::Compute_Dazzle_Visibility
-(	
+(
 	RenderInfoClass & rinfo,
 	DazzleRenderObjClass * dazzle,
 	const Vector3 & point
@@ -1560,7 +1565,7 @@ float DazzleVisibilityClass::Compute_Dazzle_Visibility
 		scene = container->Get_Scene();
 		container = container->Get_Container();
 	}
-	
+
 	/*
 	** If we found the scene (we SHOULD!) then ask it to compute the visibility
 	*/
@@ -1591,7 +1596,7 @@ WW3DErrorType DazzlePrototypeClass::Load_W3D(ChunkLoadClass & cload)
 	StringClass dazzle_type;
 
 	while (cload.Open_Chunk()) {
-		switch (cload.Cur_Chunk_ID()) 
+		switch (cload.Cur_Chunk_ID())
 		{
 			READ_WWSTRING_CHUNK(cload,W3D_CHUNK_DAZZLE_NAME,Name);
 			READ_WWSTRING_CHUNK(cload,W3D_CHUNK_DAZZLE_TYPENAME,dazzle_type);
@@ -1600,7 +1605,7 @@ WW3DErrorType DazzlePrototypeClass::Load_W3D(ChunkLoadClass & cload)
 		}
 		cload.Close_Chunk();
 	}
-	
+
 	DazzleType = DazzleRenderObjClass::Get_Type_ID(dazzle_type);
 	if (DazzleType == UINT_MAX) {
 		DazzleType = 0;
@@ -1622,4 +1627,3 @@ PrototypeClass * DazzleLoaderClass::Load_W3D(ChunkLoadClass & cload)
 	new_proto->Load_W3D(cload);
 	return new_proto;
 }
-

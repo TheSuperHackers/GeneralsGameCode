@@ -19,8 +19,8 @@
 // ScriptConditions.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "worldbuilder.h"
+#include "StdAfx.h"
+#include "WorldBuilder.h"
 #include "ScriptConditions.h"
 #include "GameLogic/Scripts.h"
 #include "EditCondition.h"
@@ -258,7 +258,7 @@ void ScriptConditionsDlg::OnNew()
 		loadList();
 		setSel(pSavOr, pCond);
 	} else {
-		pCond->deleteInstance();
+		deleteInstance(pCond);
 	}
 }
 

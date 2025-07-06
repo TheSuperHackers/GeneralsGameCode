@@ -18,7 +18,7 @@
 
 #include "StdAfx.h"
 
-#include "Gameclient/ParticleSys.h"
+#include "GameClient/ParticleSys.h"
 #include "CButtonShowColor.h"
 
 // CButtonShowColor ///////////////////////////////////////////////////////////////////////////////

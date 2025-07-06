@@ -85,11 +85,11 @@ SidesInfo::~SidesInfo(void)
 
 void SidesInfo::init(const Dict* d)
 {
-	m_pBuildList->deleteInstance();
+	deleteInstance(m_pBuildList);
 	m_pBuildList = NULL;
 	m_dict.clear();
 	if (m_scripts) 
-		m_scripts->deleteInstance();
+		deleteInstance(m_scripts);
 	m_scripts = NULL;
 	if (d)
 		m_dict = *d;
@@ -303,12 +303,12 @@ Bool SidesList::ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, v
 	for (i=0; i<count; i++) {
 		if (i<TheSidesList->getNumSides()) {
 			ScriptList *pSL = TheSidesList->getSideInfo(i)->getScriptList();
-			pSL->deleteInstance();
+			deleteInstance(pSL);
 			TheSidesList->getSideInfo(i)->setScriptList(scripts[i]);
 			scripts[i] = NULL;
 		} else {
 			// Read in more players worth than we have.
-			scripts[i]->deleteInstance();
+			deleteInstance(scripts[i]);
 			scripts[i] = NULL;
 		}
 	}
@@ -539,7 +539,7 @@ void SidesList::prepareForMP_or_Skirmish(void)
 					getSkirmishSideInfo(curSide)->setScriptList(scripts[i]);
 					scripts[i] = NULL;
 					if (pSL) 
-						pSL->deleteInstance();
+						deleteInstance(pSL);
 					scripts[i] = NULL;
 				}
 				for (i=0; i<MAX_PLAYER_COUNT; i++) {
@@ -945,7 +945,7 @@ BuildListInfo::~BuildListInfo(void)
 		while (cur) {
 			next = cur->getNext();
 			cur->setNextBuildList(NULL); // prevents recursion. 
-			cur->deleteInstance();
+			deleteInstance(cur);
 			cur = next; 
 		}
 	}
@@ -1090,7 +1090,7 @@ void TeamsInfoRec::clear()
 { 
 	Int i;
 
-	for (i = 0; i < m_numTeamsAllocated; i++) 
+	for (i = 0; i < m_numTeams; ++i)
 		m_teams[i].clear(); 
 
 	m_numTeams = 0; 
@@ -1101,7 +1101,7 @@ void TeamsInfoRec::clear()
 
 TeamsInfo *TeamsInfoRec::findTeamInfo(AsciiString name, Int* index /*= NULL*/)
 {
-	for (int i = 0; i < m_numTeams; i++) 
+	for (int i = 0; i < m_numTeams; ++i)
 	{
 		if (m_teams[i].getDict()->getAsciiString(TheKey_teamName) == name)
 		{
@@ -1123,24 +1123,22 @@ void TeamsInfoRec::addTeam(const Dict* d)
 	DEBUG_ASSERTCRASH(m_numTeams < 1024, ("hmm, seems like an awful lot of teams..."));
 	if (m_numTeams >= m_numTeamsAllocated)
 	{
-	// pool[]ify
-		TeamsInfo* nti = NEW TeamsInfo[m_numTeamsAllocated + TEAM_ALLOC_CHUNK];	// throws on failure
-		
+		// pool[]ify
+		const Int newNumTeamsAllocated = m_numTeams + TEAM_ALLOC_CHUNK;
+		TeamsInfo* nti = NEW TeamsInfo[newNumTeamsAllocated];
 		Int i;
 
-		for (i = 0; i < m_numTeams; i++)
+		for (i = 0; i < m_numTeams; ++i)
 			nti[i] = m_teams[i];
 
-		for ( ; i < m_numTeamsAllocated + TEAM_ALLOC_CHUNK; i++) 
-			nti[i].clear(); 
-		
 		delete [] m_teams;
-
 		m_teams = nti;
-		m_numTeamsAllocated += TEAM_ALLOC_CHUNK;
+		m_numTeamsAllocated = newNumTeamsAllocated;
 	}
 
-	m_teams[m_numTeams++].init(d);
+	m_teams[m_numTeams].init(d);
+
+	++m_numTeams;
 }
 
 void TeamsInfoRec::removeTeam(Int i)
@@ -1148,11 +1146,10 @@ void TeamsInfoRec::removeTeam(Int i)
 	if (i < 0 || i >= m_numTeams || m_numTeams <= 1)
 		return;
 
-	for ( ; i < m_numTeams-1; i++)
+	--m_numTeams;
+
+	for ( ; i < m_numTeams; ++i)
 		m_teams[i] = m_teams[i+1];
 
-	for ( ; i < m_numTeamsAllocated; i++)
-		m_teams[i].clear();
-
-	--m_numTeams;
+	m_teams[m_numTeams].clear();
 }

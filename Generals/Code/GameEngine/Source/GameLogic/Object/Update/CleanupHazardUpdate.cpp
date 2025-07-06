@@ -32,21 +32,21 @@
 
 #define DEFINE_WEAPONSLOTTYPE_NAMES
 
-#include "Common\RandomValue.h"
-#include "Common\ThingTemplate.h"
-#include "Common\Xfer.h"
-#include "GameClient\Drawable.h"
-#include "GameLogic\GameLogic.h"
-#include "GameLogic\PartitionManager.h"
-#include "GameLogic\Object.h"
-#include "GameLogic\ObjectIter.h"
-#include "GameLogic\Module\CleanupHazardUpdate.h"
-#include "GameLogic\Module\PhysicsUpdate.h"
-#include "GameLogic\Weapon.h"
-#include "GameLogic\WeaponSet.h"
-#include "GameLogic\Module\AIUpdate.h"
+#include "Common/RandomValue.h"
+#include "Common/ThingTemplate.h"
+#include "Common/Xfer.h"
+#include "GameClient/Drawable.h"
+#include "GameLogic/GameLogic.h"
+#include "GameLogic/PartitionManager.h"
+#include "GameLogic/Object.h"
+#include "GameLogic/ObjectIter.h"
+#include "GameLogic/Module/CleanupHazardUpdate.h"
+#include "GameLogic/Module/PhysicsUpdate.h"
+#include "GameLogic/Weapon.h"
+#include "GameLogic/WeaponSet.h"
+#include "GameLogic/Module/AIUpdate.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")

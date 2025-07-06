@@ -45,7 +45,6 @@ Win32LocalFileSystem::~Win32LocalFileSystem() {
 File * Win32LocalFileSystem::openFile(const Char *filename, Int access /* = 0 */) 
 {
 	//USE_PERF_TIMER(Win32LocalFileSystem_openFile)
-	Win32LocalFile *file = newInstance( Win32LocalFile );	
 
 	// sanity check
 	if (strlen(filename) <= 0) {
@@ -69,9 +68,12 @@ File * Win32LocalFileSystem::openFile(const Char *filename, Int access /* = 0 */
 		}
 	}
 
+	// TheSuperHackers @fix Mauller 21/04/2025 Create new file handle when necessary to prevent memory leak
+	Win32LocalFile *file = newInstance( Win32LocalFile );	
+
 	if (file->open(filename, access) == FALSE) {
 		file->close();
-		file->deleteInstance();
+		deleteInstance(file);
 		file = NULL;
 	} else {
 		file->deleteOnClose();
@@ -92,7 +94,7 @@ File * Win32LocalFileSystem::openFile(const Char *filename, Int access /* = 0 */
 //			return ramFile;
 //		}	else {
 //			ramFile->close();
-//			ramFile->deleteInstance();
+//			deleteInstance(ramFile);
 //		}
 //	}
 
@@ -211,4 +213,24 @@ Bool Win32LocalFileSystem::createDirectory(AsciiString directory)
 		return (CreateDirectory(directory.str(), NULL) != 0);
 	}
 	return FALSE;
+}
+
+AsciiString Win32LocalFileSystem::normalizePath(const AsciiString& filePath) const
+{
+	DWORD retval = GetFullPathNameA(filePath.str(), 0, NULL, NULL);
+	if (retval == 0)
+	{
+		DEBUG_LOG(("Unable to determine buffer size for normalized file path. Error=(%u).\n", GetLastError()));
+		return AsciiString::TheEmptyString;
+	}
+
+	AsciiString normalizedFilePath;
+	retval = GetFullPathNameA(filePath.str(), retval, normalizedFilePath.getBufferForRead(retval - 1), NULL);
+	if (retval == 0)
+	{
+		DEBUG_LOG(("Unable to normalize file path '%s'. Error=(%u).\n", filePath.str(), GetLastError()));
+		return AsciiString::TheEmptyString;
+	}
+
+	return normalizedFilePath;
 }

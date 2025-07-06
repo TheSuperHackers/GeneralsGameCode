@@ -41,7 +41,7 @@
 /** Kind of flags for determining groups of things that belong together
 	* NOTE: You *MUST* keep this in the same order as the KindOfNames[] below */
 //-------------------------------------------------------------------------------------------------
-enum KindOfType
+enum KindOfType CPP_11(: Int)
 {
 	KINDOF_INVALID = -1,
 	KINDOF_FIRST = 0,

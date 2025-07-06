@@ -53,9 +53,10 @@
 #include "GameLogic/Module/SpawnBehavior.h"
 #include "GameLogic/Module/SpecialPowerModule.h"
 #include "GameLogic/Module/StealthUpdate.h"
+#include "GameLogic/Module/SpecialPowerUpdateModule.h"
 #include "GameLogic/ObjectIter.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -91,6 +92,9 @@ AIGroup::~AIGroup()
 {
 //	DEBUG_LOG(("***AIGROUP %x is being destructed.\n", this));
 	// disassociate each member from the group
+
+#if RETAIL_COMPATIBLE_AIGROUP
+
 	std::list<Object *>::iterator i;
 	for( i = m_memberList.begin(); i != m_memberList.end(); /* empty */ )
 	{
@@ -105,8 +109,15 @@ AIGroup::~AIGroup()
 			i = m_memberList.erase(i);
 		}
 	}
+
+#else
+
+	removeAll();
+
+#endif
+
 	if (m_groundPath) {
-		m_groundPath->deleteInstance();
+		deleteInstance(m_groundPath);
 		m_groundPath = NULL;
 	}
 	//DEBUG_LOG(( "AIGroup #%d destroyed\n", m_id ));
@@ -204,6 +215,11 @@ void AIGroup::add( Object *obj )
  */
 Bool AIGroup::remove( Object *obj )
 {
+#if !RETAIL_COMPATIBLE_AIGROUP
+	// Defer deletion until the end of this function.
+	AIGroupPtr refThis = AIGroupPtr::Create_AddRef(this);
+#endif
+
 //	DEBUG_LOG(("***AIGROUP %x is removing Object %x (%s).\n", this, obj, obj->getTemplate()->getName().str()));
 	std::list<Object *>::iterator i = std::find( m_memberList.begin(), m_memberList.end(), obj );
 
@@ -222,13 +238,40 @@ Bool AIGroup::remove( Object *obj )
 	// list has changed, properties need recomputation
 	m_dirty = true;
 
-	// if the group is empty, no-one is using it any longer, so destroy it
 	if (isEmpty()) {
+#if RETAIL_COMPATIBLE_AIGROUP
+		// if the group is empty, no-one is using it any longer, so destroy it
 		TheAI->destroyGroup( this );
+#endif
 		return TRUE;
 	}
 
 	return FALSE;
+}
+
+/**
+ * Remove all objects from group
+ */
+void AIGroup::removeAll( void )
+{
+#if !RETAIL_COMPATIBLE_AIGROUP
+	// Defer deletion until the end of this function.
+	AIGroupPtr refThis = AIGroupPtr::Create_AddRef(this);
+#endif
+
+	std::list<Object *> memberList;
+	memberList.swap(m_memberList);
+	m_memberListSize = 0;
+
+	std::list<Object *>::iterator i;
+	for ( i = memberList.begin(); i != memberList.end(); ++i )
+	{
+		Object *member = *i;
+		if (member)
+			member->leaveGroup();
+	}
+
+	m_dirty = true;
 }
 
 /**
@@ -408,7 +451,7 @@ void AIGroup::recompute( void )
 	getCenter( &center );
 
 	if (m_groundPath) {
-		m_groundPath->deleteInstance();
+		deleteInstance(m_groundPath);
 		m_groundPath = NULL;
 	}
 
@@ -639,6 +682,39 @@ Bool AIGroup::friend_computeGroundPath( const Coord3D *pos, CommandSourceType cm
 
 }
 
+static void clampToMap(Coord3D *dest, PlayerType pt)
+// Clamps to the player's current visible map area. jba. [8/28/2003] 
+{
+	Region3D extent;
+	if (pt==PLAYER_COMPUTER) {
+		// AI gets to operate inside the pathable shrouded area. [8/28/2003]
+		TheTerrainLogic->getMaximumPathfindExtent(&extent);
+	} else {
+		// Human player has to stay within the visible map.
+		TheTerrainLogic->getExtent(&extent);
+	}
+
+	extent.hi.x -= PATHFIND_CELL_SIZE_F;
+	extent.hi.y -= PATHFIND_CELL_SIZE_F;
+	extent.lo.x += PATHFIND_CELL_SIZE_F;
+	extent.lo.y += PATHFIND_CELL_SIZE_F;
+	if (!extent.isInRegionNoZ(dest)) {
+		// clamp to in region. [8/28/2003]	
+		if (dest->x < extent.lo.x) {
+			dest->x = extent.lo.x;
+		}
+		if (dest->y < extent.lo.y) {
+			dest->y = extent.lo.y;
+		}
+		if (dest->x > extent.hi.x) {
+			dest->x = extent.hi.x;
+		}
+		if (dest->y > extent.hi.y) {
+			dest->y = extent.hi.y;
+		}
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 // Internal function for moving a group of infantry as a column.
 //
@@ -680,7 +756,7 @@ Bool AIGroup::friend_moveInfantryToPos( const Coord3D *pos, CommandSourceType cm
 		}
 	}
 	if (startNode==NULL || endNode==NULL) {
-		m_groundPath->deleteInstance();
+		deleteInstance(m_groundPath);
 		m_groundPath = NULL;
 		return false;
 	}
@@ -1037,7 +1113,7 @@ void AIGroup::friend_moveFormationToPos( const Coord3D *pos, CommandSourceType c
 			tmpNode = tmpNode->getNextOptimized();
 		}
 		if (startNode==NULL || endNode==NULL) {
-			m_groundPath->deleteInstance();
+			deleteInstance(m_groundPath);
 			m_groundPath = NULL;
 			startNode = NULL;
 			endNode = NULL;
@@ -1055,6 +1131,11 @@ void AIGroup::friend_moveFormationToPos( const Coord3D *pos, CommandSourceType c
 		}
 		Object *theUnit = (*i);
 		AIUpdateInterface *ai = theUnit->getAIUpdateInterface();
+		if (ai == NULL)
+		{
+			continue;
+		}
+
 		Bool isDifferentFormation = false;
 		Coord2D offset;
 		if (isDifferentFormation) {
@@ -1144,7 +1225,7 @@ Bool AIGroup::friend_moveVehicleToPos( const Coord3D *pos, CommandSourceType cmd
 		endNode = NULL;
 	}
 	if (startNode==NULL || endNode==NULL) {
-		m_groundPath->deleteInstance();
+		deleteInstance(m_groundPath);
 		m_groundPath = NULL;
 		return false;
 	}
@@ -1471,6 +1552,36 @@ Bool AIGroup::friend_moveVehicleToPos( const Coord3D *pos, CommandSourceType cmd
 //-------------------------------------------------------------------------------------------------
 // AI Command Interface implementation for AIGroup
 //
+const Int STD_WAYPOINT_CLAMP_MARGIN = ( PATHFIND_CELL_SIZE_F * 4.0f );
+const Int STD_AIRCRAFT_EXTRA_MARGIN = ( PATHFIND_CELL_SIZE_F * 10.0f );
+
+void clampWaypointPosition( Coord3D &position, Int margin )
+{
+	Region3D mapExtent;
+	TheTerrainLogic->getExtent(&mapExtent);
+  
+  // trim some fat off of all sides,
+  mapExtent.hi.x -= margin;
+  mapExtent.hi.y -= margin;
+  mapExtent.lo.x += margin;
+  mapExtent.lo.y += margin;
+
+	if ( mapExtent.isInRegionNoZ( &position ) == FALSE )
+  {
+    if ( position.x > mapExtent.hi.x )
+      position.x = mapExtent.hi.x;
+    else if ( position.x < mapExtent.lo.x )
+      position.x = mapExtent.lo.x;
+
+    if ( position.y > mapExtent.hi.y )
+      position.y = mapExtent.hi.y;
+    else if ( position.y < mapExtent.lo.y )
+      position.y = mapExtent.lo.y;
+
+    position.z = TheTerrainLogic->getGroundHeight( position.x, position.y );
+  }
+}
+
 
 /**
  * Move to given position(s)
@@ -1609,19 +1720,18 @@ void AIGroup::groupMoveToPosition( const Coord3D *pos, Bool addWaypoint, Command
 		}
 		computeIndividualDestination( &dest, &goalPos, theUnit, &center, isFormation );
 
-		if( cmdSource == CMD_FROM_PLAYER && BitTest( theUnit->getStatusBits(), OBJECT_STATUS_CAN_STEALTH ) && ai->canAutoAcquire() )
+		if( cmdSource == CMD_FROM_PLAYER && theUnit->getStatusBits().test( OBJECT_STATUS_CAN_STEALTH ) && ai->canAutoAcquire() )
 		{
 			//When ordering a combat stealth unit to move, there is a single special case we want to handle.
 			//When a stealth unit is currently not stealthed and doesn't autoacquire while stealthed,
 			//then when the player specifically orders the unit to stop, we want to not autoacquire until
 			//he is able to stealth again. Of course, if he's detected, then don't bother trying.
-			if( !BitTest( theUnit->getStatusBits(), OBJECT_STATUS_STEALTHED ) && !BitTest( theUnit->getStatusBits(), OBJECT_STATUS_DETECTED ) )
+			if( !theUnit->getStatusBits().test( OBJECT_STATUS_STEALTHED ) && !theUnit->getStatusBits().test( OBJECT_STATUS_DETECTED ) )
 			{
 				//Not stealthed, not detected -- so do auto-acquire while stealthed?
 				if( !ai->canAutoAcquireWhileStealthed() )
 				{
-					static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-					StealthUpdate* stealth = (StealthUpdate*)theUnit->findUpdateModule( key_StealthUpdate );
+					StealthUpdate* stealth = theUnit->getStealth();
 					if( stealth )
 					{
 						//Delay the mood check time (for autoacquire) until after the unit can stealth again.
@@ -1709,6 +1819,39 @@ void AIGroup::groupScatter( CommandSourceType cmdSource )
 		ai->aiMoveToPosition( &dest, cmdSource );
 	}
 }
+
+
+const Real CIRCLE = ( 2.0f * PI );
+
+void getHelicopterOffset( Coord3D& posOut, Int idx )
+{
+  if (idx == 0)
+    return;
+  
+  Real assumedHeliDiameter = 70.0f;
+  Real radius = assumedHeliDiameter;
+  Real circumference = radius * CIRCLE;
+  Real angle = 0;
+  Real angleBetweenEachChopper = assumedHeliDiameter / circumference * CIRCLE;
+  for (Int h = 1; h < idx; ++h )
+  {
+    angle += angleBetweenEachChopper;
+
+    if ( angle > CIRCLE )
+    {
+      radius += assumedHeliDiameter;
+      circumference = radius * CIRCLE;
+      angleBetweenEachChopper = assumedHeliDiameter / circumference * CIRCLE;
+      angle -= CIRCLE;
+    }
+  }
+
+  Coord3D tempCtr = posOut;
+  posOut.x = tempCtr.x + (sin(angle) * radius);
+  posOut.y = tempCtr.y + (cos(angle) * radius);
+
+}
+
 
 /**
  * Move to given position(s), tightening the formation
@@ -1904,19 +2047,18 @@ void AIGroup::groupIdle(CommandSourceType cmdSource)
 		{
 			ai->aiIdle(cmdSource);
 
-			if( cmdSource == CMD_FROM_PLAYER && BitTest( obj->getStatusBits(), OBJECT_STATUS_CAN_STEALTH ) && ai->canAutoAcquire() )
+			if( cmdSource == CMD_FROM_PLAYER && obj->getStatusBits().test( OBJECT_STATUS_CAN_STEALTH ) && ai->canAutoAcquire() )
 			{
 				//When ordering a combat stealth unit to stop, there is a single special case we want to handle.
 				//When a stealth unit is currently not stealthed and doesn't autoacquire while stealthed,
 				//then when the player specifically orders the unit to stop, we want to not autoacquire until
 				//he is able to stealth again. Of course, if he's detected, then don't bother trying.
-				if( !BitTest( obj->getStatusBits(), OBJECT_STATUS_STEALTHED ) && !BitTest( obj->getStatusBits(), OBJECT_STATUS_DETECTED ) )
+				if( !obj->getStatusBits().test( OBJECT_STATUS_STEALTHED ) && !obj->getStatusBits().test( OBJECT_STATUS_DETECTED ) )
 				{
 					//Not stealthed, not detected -- so do auto-acquire while stealthed?
 					if( !ai->canAutoAcquireWhileStealthed() )
 					{
-						static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-						StealthUpdate* stealth = (StealthUpdate*)obj->findUpdateModule( key_StealthUpdate );
+						StealthUpdate* stealth = obj->getStealth();
 						if( stealth )
 						{
 							//Delay the mood check time (for autoacquire) until after the unit can stealth again.
@@ -2515,7 +2657,7 @@ void AIGroup::groupDoSpecialPower( UnsignedInt specialPowerID, UnsignedInt comma
  * don't use AIUpdateInterfaces!!! No special power uses an AIUpdateInterface immediately, but special
  * abilities, which are derived from special powers do... and are unit triggered. Those do have AI.
  */
-void AIGroup::groupDoSpecialPowerAtLocation( UnsignedInt specialPowerID, const Coord3D *location, const Object *objectInWay, UnsignedInt commandOptions )
+void AIGroup::groupDoSpecialPowerAtLocation( UnsignedInt specialPowerID, const Coord3D *location, Real angle, const Object *objectInWay, UnsignedInt commandOptions )
 {
 	//This one requires a position
 	std::list<Object *>::iterator i;
@@ -2540,7 +2682,7 @@ void AIGroup::groupDoSpecialPowerAtLocation( UnsignedInt specialPowerID, const C
 			{
 				if( TheActionManager->canDoSpecialPowerAtLocation( object, location, CMD_FROM_PLAYER, spTemplate, objectInWay, commandOptions ) )
 				{
-					mod->doSpecialPowerAtLocation( location, commandOptions );
+					mod->doSpecialPowerAtLocation( location, angle, commandOptions );
 
 					object->friend_setUndetectedDefector( FALSE );// My secret is out
 				}
@@ -2622,23 +2764,26 @@ void AIGroup::groupCheer( CommandSourceType cmdSource )
 	*/
 void AIGroup::groupSell( CommandSourceType cmdSource )
 {
-	std::list<Object *>::iterator i, thisIterator;
-	Object *obj;
+#if !RETAIL_COMPATIBLE_AIGROUP
+	// Defer deletion until the end of this function.
+	AIGroupPtr refThis = AIGroupPtr::Create_AddRef(this);
+#endif
 
+	std::list<Object *>::iterator i;
+	std::vector<Object *> groupObjectsCopy;
+	groupObjectsCopy.reserve(m_memberListSize);
+
+	// TheSuperHackers @bugfix Mauller 26/06/2025 when sellObject is called, the member list objects in this AIGroup get removed from it. This happens within the Object::deselectObject() function.
+	// This deletes the local AIGroup object from under the call to groupSell, therefore we need to make a local copy of the objects that need selling.
 	for( i = m_memberList.begin(); i != m_memberList.end(); /*empty*/ )
 	{
+		groupObjectsCopy.push_back( *i++ );
+	}
 
-		// work off of 'thisIterator' as we may change the contents of this list
-		thisIterator = i;
-		++i;
-
-		// get object
-		obj = *thisIterator;
-
-		// try to sell object
-		TheBuildAssistant->sellObject( obj );
-
-	}  // end for, i
+	for( size_t j = 0; j < groupObjectsCopy.size(); ++j )
+	{
+		TheBuildAssistant->sellObject( groupObjectsCopy[j] );
+	}
 
 }
 
@@ -2820,7 +2965,7 @@ void AIGroup::setAttitude( AttitudeType tude )
  */
 AttitudeType AIGroup::getAttitude( void ) const
 {
-	return AI_PASSIVE;
+	return ATTITUDE_PASSIVE;
 }
 
 void AIGroup::setMineClearingDetail( Bool set )
@@ -2900,10 +3045,10 @@ void AIGroup::queueUpgrade( const UpgradeTemplate *upgrade )
 			if( thisMember->hasUpgrade( upgrade )  || !thisMember->affectedByUpgrade( upgrade ) )
 				continue;
 		}
-
- 		// Ever think to check if this thing can actually build the upgrade to "stop cheaters"?
- 		if( !thisMember->canProduceUpgrade(upgrade) )
- 			continue;// They have faked their button; go out of sync. (Cheater will execute it, non cheater will not execute it.)
+		
+		// Ever think to check if this thing can actually build the upgrade to "stop cheaters"?
+		if( !thisMember->canProduceUpgrade(upgrade) )
+			continue;// They have faked their button; go out of sync. (Cheater will execute it, non cheater will not execute it.)
 
 		// producer must have a production update
 		ProductionUpdateInterface *pu = thisMember->getProductionUpdateInterface();

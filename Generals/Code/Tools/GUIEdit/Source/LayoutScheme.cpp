@@ -57,7 +57,7 @@
 #include "GameClient/GadgetRadioButton.h"
 #include "GameClient/GadgetProgressBar.h"
 #include "GameClient/GadgetSlider.h"
-#include "GameClient/GadgetListbox.h"
+#include "GameClient/GadgetListBox.h"
 #include "GameClient/GadgetComboBox.h"
 #include "GameClient/GadgetTabControl.h"
 #include "GameClient/GadgetTextEntry.h"
@@ -65,7 +65,7 @@
 #include "GUIEdit.h"
 #include "EditWindow.h"
 #include "GUIEditWindowManager.h"
-#include "Resource.h"
+#include "resource.h"
 #include "Properties.h"
 #include "LayoutScheme.h"
 
@@ -448,7 +448,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 	// apply changes to this window
 	ImageAndColorInfo *info;
 
-	if( BitTest( root->winGetStyle(), GWS_PUSH_BUTTON ) )
+	if( BitIsSet( root->winGetStyle(), GWS_PUSH_BUTTON ) )
 	{
 
 		info = GetStateInfo( BUTTON_ENABLED );
@@ -479,7 +479,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetButtonSetHiliteSelectedBorderColor( root, info->borderColor );
 
 	}  // end if
-	else if( BitTest( root->winGetStyle(), GWS_RADIO_BUTTON ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_RADIO_BUTTON ) )
 	{
 
 		info = GetStateInfo( RADIO_ENABLED );
@@ -522,7 +522,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetRadioSetHiliteCheckedBoxBorderColor( root, info->borderColor );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_CHECK_BOX ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_CHECK_BOX ) )
 	{
 
 		info = GetStateInfo( CHECK_BOX_ENABLED );
@@ -565,7 +565,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetCheckBoxSetHiliteCheckedBoxBorderColor( root, info->borderColor );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_VERT_SLIDER ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_VERT_SLIDER ) )
 	{
 
 		info = GetStateInfo( VSLIDER_ENABLED_TOP );
@@ -629,7 +629,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetSliderSetHiliteSelectedThumbBorderColor( root, info->borderColor );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_HORZ_SLIDER ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_HORZ_SLIDER ) )
 	{
 
 		info = GetStateInfo( HSLIDER_ENABLED_LEFT );
@@ -693,7 +693,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetSliderSetHiliteSelectedThumbBorderColor( root, info->borderColor );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_SCROLL_LISTBOX ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_SCROLL_LISTBOX ) )
 	{
 
 		info = GetStateInfo( LISTBOX_ENABLED );
@@ -874,7 +874,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		}  // end if
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_COMBO_BOX ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_COMBO_BOX ) )
 	{
 		info = GetStateInfo( COMBOBOX_ENABLED );
 		GadgetListBoxSetEnabledImage( root, info->image );
@@ -1170,7 +1170,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 			}  // end if
 		}// end if (combo listbox)
 	}// end if
-	else if( BitTest( root->winGetStyle(), GWS_ENTRY_FIELD ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_ENTRY_FIELD ) )
 	{
 
 		info = GetStateInfo( TEXT_ENTRY_ENABLED_LEFT );
@@ -1207,7 +1207,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetTextEntrySetHiliteImageSmallCenter( root, info->image );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_STATIC_TEXT ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_STATIC_TEXT ) )
 	{
 
 		info = GetStateInfo( STATIC_TEXT_ENABLED );
@@ -1226,7 +1226,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetStaticTextSetHiliteBorderColor( root, info->borderColor );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_PROGRESS_BAR ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_PROGRESS_BAR ) )
 	{
 
 		info = GetStateInfo( PROGRESS_BAR_ENABLED_LEFT );
@@ -1293,7 +1293,7 @@ void LayoutScheme::applyPropertyTablesToWindow( GameWindow *root )
 		GadgetProgressBarSetHiliteBarImageSmallCenter( root, info->image );
 
 	}  // end else if
-	else if( BitTest( root->winGetStyle(), GWS_TAB_CONTROL ) )
+	else if( BitIsSet( root->winGetStyle(), GWS_TAB_CONTROL ) )
 	{
 		info = GetStateInfo( TC_TAB_0_ENABLED );
 		GadgetTabControlSetEnabledImageTabZero( root, info->image );
@@ -1504,10 +1504,11 @@ LayoutScheme::~LayoutScheme( void )
 	for( i = 0; i < NUM_STATE_IDENTIFIERS; i++ )
 	{
 
-		if( m_imageAndColorTable[ i ].stateName )
+		if( m_imageAndColorTable[ i ].stateNameBuffer )
 		{
 			
-			delete [] m_imageAndColorTable[ i ].stateName;
+			delete [] m_imageAndColorTable[ i ].stateNameBuffer;
+			m_imageAndColorTable[ i ].stateNameBuffer = NULL;
 			m_imageAndColorTable[ i ].stateName = NULL;
 
 		}  // end if
@@ -1536,8 +1537,9 @@ void LayoutScheme::init( void )
 		m_imageAndColorTable[ i ].image = info->image;
 		m_imageAndColorTable[ i ].color = info->color;
 		m_imageAndColorTable[ i ].borderColor = info->borderColor;
-		m_imageAndColorTable[ i ].stateName = new char[strlen( info->stateName ) + 1];
-		strcpy(m_imageAndColorTable[ i ].stateName, info->stateName );
+		m_imageAndColorTable[ i ].stateNameBuffer = new char[strlen( info->stateName ) + 1];
+		m_imageAndColorTable[ i ].stateName = m_imageAndColorTable[ i ].stateNameBuffer;
+		strcpy(m_imageAndColorTable[ i ].stateNameBuffer, info->stateName );
 
 	}  // end for i
 
@@ -2347,32 +2349,43 @@ Bool LayoutScheme::loadScheme( char *filename )
 
 	// write header
 	Int version;
-	fscanf( fp, "Window Layout Scheme: Version '%d'\n", &version );
-	if( version != SCHEME_VERSION )
+	if (fscanf( fp, "Window Layout Scheme: Version '%d'\n", &version ) == 1)
 	{
+		if( version != SCHEME_VERSION )
+		{
 
-		DEBUG_LOG(( "loadScheme: Old layout file version '%d'\n", version ));
-		MessageBox( TheEditor->getWindowHandle(),
-								"Old layout version, cannot open.", "Old File", MB_OK );
-		return FALSE;
+			DEBUG_LOG(( "loadScheme: Old layout file version '%d'\n", version ));
+			MessageBox( TheEditor->getWindowHandle(),
+									"Old layout version, cannot open.", "Old File", MB_OK );
+			return FALSE;
 
-	}  // end if
-
+		}  // end if
+	}
 	// default text colors
-	fscanf( fp, "Enabled Text: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
-	m_enabledText.color = GameMakeColor( colorR, colorG, colorB, colorA );
-	fscanf( fp, "Enabled Text Border: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
-	m_enabledText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
-
-	fscanf( fp, "Disabled Text: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
-	m_disabledText.color = GameMakeColor( colorR, colorG, colorB, colorA );
-	fscanf( fp, "Disabled Text Border: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
-	m_disabledText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
-
-	fscanf( fp, "Hilite Text: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
-	m_hiliteText.color = GameMakeColor( colorR, colorG, colorB, colorA );
-	fscanf( fp, "Hilite Text Border: (%d,%d,%d,%d)\n", &colorR, &colorG, &colorB, &colorA );
-	m_hiliteText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
+	if (fscanf( fp, "Enabled Text: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	{
+		m_enabledText.color = GameMakeColor( colorR, colorG, colorB, colorA );
+	}
+	if (fscanf( fp, "Enabled Text Border: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	{
+		m_enabledText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
+	}
+	if (fscanf( fp, "Disabled Text: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	{
+		m_disabledText.color = GameMakeColor( colorR, colorG, colorB, colorA );
+	}
+	if (fscanf( fp, "Disabled Text Border: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	{
+		m_disabledText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
+	}
+	if (fscanf( fp, "Hilite Text: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	{
+		m_hiliteText.color = GameMakeColor( colorR, colorG, colorB, colorA );
+	}
+	if (fscanf( fp, "Hilite Text Border: (%hhu,%hhu,%hhu,%hhu)\n", &colorR, &colorG, &colorB, &colorA ) == 4)
+	{
+		m_hiliteText.borderColor = GameMakeColor( colorR, colorG, colorB, colorA );
+	}
 
 	// default font
 	char fontBuffer[ 256 ];
@@ -2397,34 +2410,36 @@ Bool LayoutScheme::loadScheme( char *filename )
 	c = fgetc( fp );  // the end quite itself
 
 	// read the size and bold data elements
-	fscanf( fp, " Size: %d Bold: %d\n", &size, &bold );
-
-	// set the font
-	m_font = TheFontLibrary->getFont( AsciiString(fontBuffer), size, bold );
+	if(fscanf( fp, " Size: %i Bold: %i\n", &size, &bold ) == 2)
+	{
+		// set the font
+		m_font = TheFontLibrary->getFont( AsciiString(fontBuffer), size, bold );
+	}
 
 	// all the data for all the states
 	Int numStates, state;
 	char imageBuffer[ 128 ];
-	fscanf( fp, "Number of states: %d\n", &numStates );
-	for( Int i = 0; i < numStates; i++ )
+	if (fscanf( fp, "Number of states: %i\n", &numStates ) == 1)
 	{
+		for( Int i = 0; i < numStates; i++ )
+		{
 
-		// read all the data
-		fscanf( fp, "%d: Image: %s Color: (%d,%d,%d,%d) Border: (%d,%d,%d,%d)\n",
-						&state, imageBuffer, &colorR, &colorG, &colorB, &colorA,
-						&bColorR, &bColorG, &bColorB, &bColorA );
+			// read all the data
+			if( fscanf( fp, "%d: Image: %s Color: (%hhu,%hhu,%hhu,%hhu) Border: (%hhu,%hhu,%hhu,%hhu)\n",
+							&state, imageBuffer, &colorR, &colorG, &colorB, &colorA,
+							&bColorR, &bColorG, &bColorB, &bColorA ) == 10)
+			{
+				// sanity
+				assert( state == i );
 
-		// sanity
-		assert( state == i );
-
-		// store the info
-		storeImageAndColor( (StateIdentifier)state,
-												TheMappedImageCollection->findImageByName( AsciiString(  imageBuffer ) ),
-												GameMakeColor( colorR, colorG, colorB, colorA ),
-												GameMakeColor( bColorR, bColorG, bColorB, bColorA ) );
-
-	}  // end for i
-
+				// store the info
+				storeImageAndColor( (StateIdentifier)state,
+														TheMappedImageCollection->findImageByName( AsciiString(  imageBuffer ) ),
+														GameMakeColor( colorR, colorG, colorB, colorA ),
+														GameMakeColor( bColorR, bColorG, bColorB, bColorA ) );
+			}
+		}  // end for i
+	}
 	// close the file
 	fclose( fp );
 

@@ -49,7 +49,7 @@
 #include "GameLogic/Weapon.h"
 #include "GameLogic/WeaponSet.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -138,7 +138,7 @@ DeliverPayloadAIUpdate::~DeliverPayloadAIUpdate( void )
 	m_deliveryDecal.clear();
 
 	if (m_deliverPayloadStateMachine)
-		m_deliverPayloadStateMachine->deleteInstance();
+		deleteInstance(m_deliverPayloadStateMachine);
 } 
 
 //-------------------------------------------------------------------------------------------------
@@ -261,7 +261,7 @@ void DeliverPayloadAIUpdate::deliverPayload(
 	//****************************************************
 	
 	if (m_deliverPayloadStateMachine)
-		m_deliverPayloadStateMachine->deleteInstance();
+		deleteInstance(m_deliverPayloadStateMachine);
 	m_deliverPayloadStateMachine = NULL;
 
 	m_moveToPos = *moveToPos;
@@ -304,7 +304,7 @@ void DeliverPayloadAIUpdate::deliverPayload(
 	// must make the state machine AFTER initing the other stuff, since it may inquire of its values...
 	m_deliverPayloadStateMachine = newInstance(DeliverPayloadStateMachine)( getObject() );
 	m_deliverPayloadStateMachine->initDefaultState();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	m_deliverPayloadStateMachine->setName("DeliverPayloadSpecificAI");
 #endif
 }

@@ -56,7 +56,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/Module/ProductionUpdate.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -188,7 +188,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 	//@todo Kris -- Special case code so convoy trucks can detonate nuke trucks -- if other things need this,
 	//rethink it.
-	if( obj && BitTest( commandButton->getOptions(), SINGLE_USE_COMMAND ) )
+	if( obj && BitIsSet( commandButton->getOptions(), SINGLE_USE_COMMAND ) )
 	{
 		/** @todo Added obj check because Single Use and Multi Select crash when used together, but with this check
 			* they just won't work.  When the "rethinking" occurs, this can get fixed.  Right now it is unused.
@@ -213,7 +213,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 		TheAudio->addAudioEvent( &sound );
 	}
 
-	if( BitTest( commandButton->getOptions(), COMMAND_OPTION_NEED_TARGET ) )
+	if( BitIsSet( commandButton->getOptions(), COMMAND_OPTION_NEED_TARGET ) )
 	{
 		if (commandButton->getOptions() & USES_MINE_CLEARING_WEAPONSET)
 		{
@@ -681,20 +681,29 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 		case GUI_COMMAND_EXIT_CONTAINER:
 		{
 			Int i;
-			ObjectID objID;
+			// TheSuperHackers @fix Caball009/Mauller 23/05/2025 Fix uninitialized variable and control lookup behaviour to prevent a buffer-overflow when the control container is empty
+			ObjectID objID = INVALID_ID;
 
 			//
 			// find the object ID that wants to exit by scanning through the transport data and looking
 			// for the matching control button
 			//
-			for( i = 0; i < MAX_COMMANDS_PER_SET; i++ )
-				if( m_containData[ i ].control == control )
+			for (i = 0; i < MAX_COMMANDS_PER_SET; i++)
+			{
+				if (m_containData[i].control == control)
+				{
 					objID = m_containData[ i ].objectID;
+					break;
+				}
+			}
+
+			if (objID == INVALID_ID)
+				break;
 
 			// get the actual object
 			Object *objWantingExit = TheGameLogic->findObjectByID( objID );
 			
-			// if object is not found remove inventory entry and exit
+			// if the control container returns an object ID but the object is not found, remove the control entry and exit
 			if( objWantingExit == NULL )
 			{
 
@@ -725,7 +734,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 			// Cancel GUI command mode.
 			TheInGameUI->setGUICommand( NULL );
 
-			if (BitTest(commandButton->getOptions(), NEED_TARGET_POS) == FALSE) {
+			if (BitIsSet(commandButton->getOptions(), NEED_TARGET_POS) == FALSE) {
 				pickAndPlayUnitVoiceResponse( TheInGameUI->getAllSelectedDrawables(), GameMessage::MSG_EVACUATE );
 				TheMessageStream->appendMessage( GameMessage::MSG_EVACUATE );
 			}
@@ -869,7 +878,7 @@ CBCommandStatus ControlBar::processCommandUI( GameWindow *control,
 
 			ScienceType	st = SCIENCE_INVALID; 
 			Player *player = ThePlayerList->getLocalPlayer();
-			for(Int i = 0; i < commandButton->getScienceVec().size(); ++i)
+			for(size_t i = 0; i < commandButton->getScienceVec().size(); ++i)
 			{
 				st = commandButton->getScienceVec()[ i ];
 				if(!player->hasScience(st) && TheScienceStore->playerHasPrereqsForScience(player, st) && TheScienceStore->getSciencePurchaseCost(st) <= player->getSciencePurchasePoints())

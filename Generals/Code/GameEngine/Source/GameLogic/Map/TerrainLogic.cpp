@@ -59,7 +59,7 @@
 #include "WWMath/plane.h"
 #include "WWMath/tri.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -136,7 +136,7 @@ Object *Bridge::createTower( Coord3D *worldPos,
 	if( towerTemplate == NULL || bridge == NULL )
 	{
 
-		DEBUG_CRASH(( "createTower: Invalid params\n" ));
+		DEBUG_CRASH(( "Bridge::createTower(): Invalid params\n" ));
 		return NULL;
 
 	}  // end if
@@ -274,7 +274,7 @@ m_bridgeInfo(theInfo)
 	// get the template of the bridge
 	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge( bridgeTemplateName );
 	if( bridgeTemplate == NULL ) {
-		DEBUG_LOG(( "*** Bridge Template Not Found '%s'.", bridgeTemplateName ));
+		DEBUG_LOG(( "*** Bridge Template Not Found '%s'.", bridgeTemplateName.str() ));
 		return;
 	}
 
@@ -385,7 +385,7 @@ Bridge::Bridge(Object *bridgeObj)
 	AsciiString bridgeTemplateName = bridgeObj->getTemplate()->getName();
 	TerrainRoadType *bridgeTemplate = TheTerrainRoads->findBridge( bridgeTemplateName );
 	if( bridgeTemplate == NULL ) {
-		DEBUG_LOG(( "*** Bridge Template Not Found '%s'.", bridgeTemplateName ));
+		DEBUG_LOG(( "*** Bridge Template Not Found '%s'.", bridgeTemplateName.str() ));
 		return;
 	}
 
@@ -430,9 +430,11 @@ Bridge::Bridge(Object *bridgeObj)
 
 		}  // end switch
 		tower = createTower( &pos, type, towerTemplate, bridgeObj );
-
-		// store the tower object ID
-		m_bridgeInfo.towerObjectID[ i ] = tower->getID();
+		if( tower )
+		{
+			// store the tower object ID
+			m_bridgeInfo.towerObjectID[ i ] = tower->getID();
+		}
 
 	}  // end for, i
 
@@ -879,8 +881,8 @@ void Bridge::updateDamageState( void )
 	if (bridge) {
 		// get object damage state
 		{
-			enum BodyDamageType damageState = bridge->getBodyModule()->getDamageState(); 
-			enum BodyDamageType curState = m_bridgeInfo.curDamageState;
+			BodyDamageType damageState = bridge->getBodyModule()->getDamageState(); 
+			BodyDamageType curState = m_bridgeInfo.curDamageState;
 			if (damageState != curState) {
 				m_bridgeInfo.curDamageState = damageState;
 				if (damageState == BODY_RUBBLE) {
@@ -1183,7 +1185,7 @@ void TerrainLogic::enableWaterGrid( Bool enable )
 			//
 			AsciiString strippedMapNameOnly;
 			AsciiString strippedCompareMapNameOnly;
-			char *c;
+			const char *c;
 
 			// create stripped map name
 			c = strrchr( TheGlobalData->m_mapName.str(), '\\' );
@@ -1418,7 +1420,7 @@ void TerrainLogic::deleteWaypoints(void)
 	for (pWay = getFirstWaypoint(); pWay; pWay = pNext) {
 		pNext = pWay->getNext();
 		pWay->setNext(NULL);
-		pWay->deleteInstance();
+		deleteInstance(pWay);
 	}
 	m_waypointListHead = NULL;
 }
@@ -1992,7 +1994,7 @@ void TerrainLogic::deleteBridges(void)
 	for (pBridge = getFirstBridge(); pBridge; pBridge = pNext) {
 		pNext = pBridge->getNext();
 		pBridge->setNext(NULL);
-		pBridge->deleteInstance();
+		deleteInstance(pBridge);
 	}
 	m_bridgeListHead = NULL;
 }
@@ -2048,7 +2050,7 @@ void TerrainLogic::deleteBridge( Bridge *bridge )
 		TheGameLogic->destroyObject( bridgeObj );
 
 	// delete the bridge in question
-	bridge->deleteInstance();
+	deleteInstance(bridge);
 
 }  // end deleteBridge
 
@@ -2211,6 +2213,8 @@ const WaterHandle* TerrainLogic::getWaterHandle( Real x, Real y )
 
 	/**@todo: Remove this after we have all water types included
 		in water triggers.  For now do special check for water grid mesh. */
+	// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+	// We shouldn't depend on TerrainVisual here.
 	Real meshZ;
 	if( TheTerrainVisual->getWaterGridHeight( x, y, &meshZ ) )
 	{	

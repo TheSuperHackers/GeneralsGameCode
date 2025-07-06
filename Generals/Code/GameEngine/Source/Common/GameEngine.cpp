@@ -42,7 +42,7 @@
 #include "Common/INIException.h"
 #include "Common/MessageStream.h"
 #include "Common/ThingFactory.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/ArchiveFileSystem.h"
 #include "Common/LocalFileSystem.h"
@@ -108,9 +108,9 @@
 #include "Common/Player.h"
 
 
-#include "Common/Version.h"
+#include "Common/version.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -192,7 +192,7 @@ GameEngine::GameEngine( void )
 	m_quitting = FALSE;
 	m_isActive = FALSE;
 
-	_Module.Init(NULL, ApplicationHInstance);
+	_Module.Init(NULL, ApplicationHInstance, NULL);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -208,6 +208,10 @@ GameEngine::~GameEngine()
 //	TheShell = NULL;
 
 	TheGameResultsQueue->endThreads();
+
+	// TheSuperHackers @fix helmutbuhler 03/06/2025
+	// Reset all subsystems before deletion to prevent crashing due to cross dependencies.
+	reset();
 
 	TheSubsystemList->shutdownAll();
 	delete TheSubsystemList;
@@ -246,8 +250,7 @@ void GameEngine::setFramesPerSecondLimit( Int fps )
 /** -----------------------------------------------------------------------------------------------
  * Initialize the game engine by initializing the GameLogic and GameClient.
  */
-void GameEngine::init( void ) {} /// @todo: I changed this to take argc & argv so we can parse those after the GDF is loaded.  We need to rethink this immediately as it is a nasty hack
-void GameEngine::init( int argc, char *argv[] )
+void GameEngine::init()
 {
 	try {
 		//create an INI object to use for loading stuff
@@ -257,12 +260,12 @@ void GameEngine::init( int argc, char *argv[] )
 		{
 			DEBUG_LOG(("================================================================================\n"));
 #ifdef DEBUG_LOGGING
-	#if defined _DEBUG
+	#if defined RTS_DEBUG
 			const char *buildType = "Debug";
-	#elif defined _INTERNAL
+	#elif defined RTS_INTERNAL
 			const char *buildType = "Internal";
 	#else
-	//	const char *buildType = "Release";
+			const char *buildType = "Release";
 	#endif
 #endif // DEBUG_LOGGING
 			DEBUG_LOG(("Generals version %s (%s)\n", TheVersion->getAsciiVersion().str(), buildType));
@@ -297,15 +300,26 @@ void GameEngine::init( int argc, char *argv[] )
 
 		initSubsystem(TheLocalFileSystem, "TheLocalFileSystem", createLocalFileSystem(), NULL);
 		initSubsystem(TheArchiveFileSystem, "TheArchiveFileSystem", createArchiveFileSystem(), NULL); // this MUST come after TheLocalFileSystem creation
-		initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", MSGNEW("GameEngineSubsystem") GlobalData(), &xferCRC, "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
+		
+		DEBUG_ASSERTCRASH(TheWritableGlobalData,("TheWritableGlobalData expected to be created\n"));
+		initSubsystem(TheWritableGlobalData, "TheWritableGlobalData", TheWritableGlobalData, &xferCRC, "Data\\INI\\Default\\GameData.ini", "Data\\INI\\GameData.ini");
+		
+		// TheSuperHackers @bugfix helmutbuhler 14/04/2025
+		// Pump messages during startup to ensure that the application window is correctly
+		// positioned on slower computers and in debug builds by a later call to SetWindowPos.
+		// It is unclear what the issue with SetWindowPos is when it fails to reposition the window.
+		serviceWindowsOS();
 
-	#if defined(_DEBUG) || defined(_INTERNAL)
+
+	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		// If we're in Debug or Internal, load the Debug info as well.
 		ini.load( AsciiString( "Data\\INI\\GameDataDebug.ini" ), INI_LOAD_OVERWRITE, NULL );
 	#endif
 		
 		// special-case: parse command-line parameters after loading global data
-		parseCommandLine(argc, argv);
+		CommandLine::parseCommandLineForEngineInit();
+
+		TheArchiveFileSystem->loadMods();
 
 		// doesn't require resets so just create a single instance here.
 		TheGameLODManager = MSGNEW("GameEngineSubsystem") GameLODManager;
@@ -339,7 +353,7 @@ void GameEngine::init( int argc, char *argv[] )
 		initSubsystem(TheTerrainRoads,"TheTerrainRoads", MSGNEW("GameEngineSubsystem") TerrainRoadCollection(), &xferCRC, "Data\\INI\\Default\\Roads.ini", "Data\\INI\\Roads.ini");
 		initSubsystem(TheGlobalLanguageData,"TheGlobalLanguageData",MSGNEW("GameEngineSubsystem") GlobalLanguage, NULL); // must be before the game text
 		initSubsystem(TheCDManager,"TheCDManager", CreateCDManager(), NULL);
-		initSubsystem(TheAudio,"TheAudio", createAudioManager(), NULL);
+		initSubsystem(TheAudio,"TheAudio", TheGlobalData->m_headless ? NEW AudioManagerDummy : createAudioManager(), NULL);
 		if (!TheAudio->isMusicAlreadyLoaded())
 			setQuitting(TRUE);
 		initSubsystem(TheFunctionLexicon,"TheFunctionLexicon", createFunctionLexicon(), NULL);
@@ -367,14 +381,16 @@ void GameEngine::init( int argc, char *argv[] )
 		initSubsystem(TheCrateSystem,"TheCrateSystem", MSGNEW("GameEngineSubsystem") CrateSystem(), &xferCRC, "Data\\INI\\Default\\Crate.ini", "Data\\INI\\Crate.ini");
 		initSubsystem(ThePlayerList,"ThePlayerList", MSGNEW("GameEngineSubsystem") PlayerList(), NULL);
 		initSubsystem(TheRecorder,"TheRecorder", createRecorder(), NULL);
-		initSubsystem(TheRadar,"TheRadar", createRadar(), NULL);
+		initSubsystem(TheRadar,"TheRadar", TheGlobalData->m_headless ? NEW RadarDummy : createRadar(), NULL);
 		initSubsystem(TheVictoryConditions,"TheVictoryConditions", createVictoryConditions(), NULL);
 
 		AsciiString fname;
 		fname.format("Data\\%s\\CommandMap.ini", GetRegistryLanguage().str());
 		initSubsystem(TheMetaMap,"TheMetaMap", MSGNEW("GameEngineSubsystem") MetaMap(), NULL, fname.str(), "Data\\INI\\CommandMap.ini");
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+		TheMetaMap->generateMetaMap();
+
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		ini.load("Data\\INI\\CommandMapDebug.ini", INI_LOAD_MULTIFILE, NULL);
 #endif
 
@@ -411,27 +427,6 @@ void GameEngine::init( int argc, char *argv[] )
 		// load music dialog will still cause the game to quit.
 		// m_quitting = FALSE;
 
-		// for fingerprinting, we need to ensure the presence of these files
-		AsciiString dirName;
-		dirName = TheArchiveFileSystem->getArchiveFilenameForFile("generalsb.sec");
-		if (dirName.compareNoCase("gensec.big") != 0)
-		{
-			DEBUG_LOG(("generalsb.sec was not found in gensec.big - it was in '%s'\n", dirName.str()));
-			m_quitting = TRUE;
-		}
-		
-		dirName = TheArchiveFileSystem->getArchiveFilenameForFile("generalsa.sec");
-		const char *noPath = dirName.reverseFind('\\');
-		if (noPath) {
-			dirName = noPath + 1;
-		}
-
-		if (dirName.compareNoCase("music.big") != 0)
-		{
-			DEBUG_LOG(("generalsa.sec was not found in music.big - it was in '%s'\n", dirName.str()));
-			m_quitting = TRUE;
-		}
-
 		// initialize the MapCache
 		TheMapCache = MSGNEW("GameEngineSubsystem") MapCache;
 		TheMapCache->updateCache();
@@ -446,8 +441,7 @@ void GameEngine::init( int argc, char *argv[] )
 		// load the initial shell screen
 		//TheShell->push( AsciiString("Menus/MainMenu.wnd") );
 		
-#if !defined(_PLAYTEST)
-		// This allows us to run a map/reply from the command line
+		// This allows us to run a map from the command line
 		if (TheGlobalData->m_initialFile.isEmpty() == FALSE)
 		{
 			AsciiString fname = TheGlobalData->m_initialFile;
@@ -469,12 +463,7 @@ void GameEngine::init( int argc, char *argv[] )
 				msg->appendIntegerArgument(0);
 				InitRandom(0);
 			}
-			else if (fname.endsWithNoCase(".rep"))
-			{
-				TheRecorder->playbackFile(fname);
-			}
 		}
-#endif
 
 		// 
 		if (TheMapCache && TheGlobalData->m_shellMapOn)
@@ -520,7 +509,8 @@ void GameEngine::init( int argc, char *argv[] )
 
 	initDisabledMasks();
 
-	TheSubsystemList->resetAll();
+	resetSubsystems();
+
 	HideControlBar();
 }  // end init
 
@@ -539,7 +529,7 @@ void GameEngine::reset( void )
 	if (TheGameLogic->isInMultiplayerGame())
 		deleteNetwork = true;
 
-	TheSubsystemList->resetAll();
+	resetSubsystems();
 
 	if (deleteNetwork)
 	{
@@ -551,9 +541,19 @@ void GameEngine::reset( void )
 	if(background)
 	{
 		background->destroyWindows();
-		background->deleteInstance();
+		deleteInstance(background);
 		background = NULL;
 	}
+}
+
+/// -----------------------------------------------------------------------------------------------
+void GameEngine::resetSubsystems( void )
+{
+	// TheSuperHackers @fix xezon 09/06/2025 Reset GameLogic first to purge all world objects early.
+	// This avoids potentially catastrophic issues when objects and subsystems have cross dependencies.
+	TheGameLogic->reset();
+
+	TheSubsystemList->resetAll();
 }
 
 /// -----------------------------------------------------------------------------------------------
@@ -590,6 +590,7 @@ void GameEngine::update( void )
 			TheCDManager->UPDATE();
 		}
 
+		TheGameLogic->preUpdate();
 
 		if ((TheNetwork == NULL && !TheGameLogic->isGamePaused()) || (TheNetwork && TheNetwork->isFrameDataReady()))
 		{
@@ -611,7 +612,7 @@ void GameEngine::execute( void )
 {
 	
 	DWORD prevTime = timeGetTime();
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	DWORD startTime = timeGetTime() / 1000;
 #endif
 
@@ -628,7 +629,7 @@ void GameEngine::execute( void )
 
 		{
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 			{
 				// enter only if in benchmark mode
 				if (TheGlobalData->m_benchmarkTimer > 0)
@@ -686,23 +687,33 @@ void GameEngine::execute( void )
 
 		// I'm disabling this in internal because many people need alt-tab capability.  If you happen to be
 		// doing performance tuning, please just change this on your local system. -MDC
-		#if defined(_DEBUG) || defined(_INTERNAL)
+		#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 					::Sleep(1); // give everyone else a tiny time slice.
 		#endif
 
-					// limit the framerate
-					DWORD now = timeGetTime();
-					DWORD limit = (1000.0f/m_maxFPS)-1;
-					while (TheGlobalData->m_useFpsLimit && (now - prevTime) < limit) 
-					{
-						::Sleep(0);
-						now = timeGetTime();
-					}
-					//Int slept = now - prevTime;
-					//DEBUG_LOG(("delayed %d\n",slept));
 
-					prevTime = now;
-				}
+		#if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+          if ( ! TheGlobalData->m_TiVOFastMode )
+		#else	//always allow this cheatkey if we're in a replaygame.
+		  if ( ! (TheGlobalData->m_TiVOFastMode && TheGameLogic->isInReplayGame()))
+		#endif
+          {
+            // limit the framerate
+					  DWORD now = timeGetTime();
+					  DWORD limit = (1000.0f/m_maxFPS)-1;
+					  while (TheGlobalData->m_useFpsLimit && (now - prevTime) < limit) 
+					  {
+						  ::Sleep(0);
+						  now = timeGetTime();
+					  }
+					  //Int slept = now - prevTime;
+					  //DEBUG_LOG(("delayed %d\n",slept));
+
+					  prevTime = now;
+
+          }        
+        
+        }
 			}
 
 		}	// perfgather for execute_loop

@@ -47,23 +47,23 @@
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/Common/W3DConvert.h"
-#include "WW3D2/WW3D.h"
-#include "WW3D2/HAnim.h"
+#include "WW3D2/ww3d.h"
+#include "WW3D2/hanim.h"
 
 #include "Common/UnitTimings.h" //Contains the DO_UNIT_TIMINGS define jba.		 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
 
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #include "W3DDevice/GameClient/HeightMap.h"
-#include "WW3D2/DX8IndexBuffer.h"
-#include "WW3D2/DX8VertexBuffer.h"
-#include "WW3D2/VertMaterial.h"
+#include "WW3D2/dx8indexbuffer.h"
+#include "WW3D2/dx8vertexbuffer.h"
+#include "WW3D2/vertmaterial.h"
 class DebugHintObject : public RenderObjClass
 {	
 
@@ -194,7 +194,7 @@ void DebugHintObject::initData(void)
 	m_vertexMaterialClass = VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 
 	//use a multi-texture shader: (text1*diffuse)*text2.
-	m_shaderClass = ShaderClass::ShaderClass(SC_ALPHA);
+	m_shaderClass = ShaderClass(SC_ALPHA);
 }
 
 void DebugHintObject::setLocAndColorAndSize(const Coord3D *loc, Int argb, Int size)
@@ -259,7 +259,7 @@ void DebugHintObject::Render(RenderInfoClass & rinfo)
 		DX8Wrapper::Draw_Triangles(	0, 1, 0, 3);
 	}
 }
-#endif // _DEBUG
+#endif // RTS_DEBUG
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

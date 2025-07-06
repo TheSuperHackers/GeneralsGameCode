@@ -52,7 +52,7 @@
 #include "GameClient/GameWindowManager.h"
 #include "GUIEdit.h"
 #include "Properties.h"
-#include "Resource.h"
+#include "resource.h"
 #include "GameClient/GadgetRadioButton.h"
 #include "GameClient/Gadget.h"
 
@@ -240,7 +240,7 @@ static void loadExistingGroupsCombo( HWND combo, GameWindow *window )
 		return;
 
 	// if this is a radio button get the group
-	if( BitTest( window->winGetStyle(), GWS_RADIO_BUTTON ) )
+	if( BitIsSet( window->winGetStyle(), GWS_RADIO_BUTTON ) )
 	{
 		RadioButtonData *radioData = (RadioButtonData *)window->winGetUserData();
 		char buffer[ 64 ];

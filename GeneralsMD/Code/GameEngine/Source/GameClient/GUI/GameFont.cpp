@@ -123,7 +123,7 @@ void FontLibrary::deleteAllFonts( void )
 		releaseFontData( font );
 
 		// delete the font list element
-		font->deleteInstance();
+		deleteInstance(font);
 
 	}  // end while
 
@@ -213,8 +213,8 @@ GameFont *FontLibrary::getFont( AsciiString name, Int pointSize, Bool bold )
 	if( loadFontData( font ) == FALSE )
 	{
 
-		DEBUG_CRASH(( "getFont: Unable to load font data pointer '%s'\n", name ));
-		font->deleteInstance();
+		DEBUG_CRASH(( "getFont: Unable to load font data pointer '%s'\n", name.str() ));
+		deleteInstance(font);
 		return NULL;
 
 	}  // end if

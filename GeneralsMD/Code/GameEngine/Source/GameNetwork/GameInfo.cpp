@@ -29,7 +29,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 #include "Common/CRCDebug.h"
-#include "Common/File.h"
+#include "Common/file.h"
 #include "Common/FileSystem.h"
 #include "Common/GameState.h"
 #include "GameClient/GameText.h"
@@ -45,7 +45,7 @@
 #include "GameNetwork/LANAPICallbacks.h"	// for testing packet size
 #include "strtok_r.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -445,7 +445,7 @@ void GameInfo::setSlot( Int slotNum, GameSlot slotInfo )
 #endif
 
 	DEBUG_LOG(("GameInfo::setSlot - setting slot %d to be player %ls with IP %d.%d.%d.%d\n", slotNum, slotInfo.getName().str(),
-							ip >> 24, (ip >> 16) & 0xff, (ip >> 8) & 0xff, ip & 0xff));
+							PRINTF_IP_AS_4_INTS(ip)));
 }
 
 GameSlot* GameInfo::getSlot( Int slotNum )
@@ -454,6 +454,7 @@ GameSlot* GameInfo::getSlot( Int slotNum )
 	if (slotNum < 0 || slotNum >= MAX_SLOTS)
 		return NULL;
 
+	DEBUG_ASSERTCRASH( m_slot[slotNum], ("NULL slot pointer") );
 	return m_slot[slotNum];
 }
 
@@ -463,6 +464,7 @@ const GameSlot* GameInfo::getConstSlot( Int slotNum ) const
 	if (slotNum < 0 || slotNum >= MAX_SLOTS)
 		return NULL;
 
+	DEBUG_ASSERTCRASH( m_slot[slotNum], ("NULL slot pointer") );
 	return m_slot[slotNum];
 }
 
@@ -770,7 +772,8 @@ void GameInfo::adjustSlotsForMap()
 		Int numPlayerSlots = 0;
 
 		// first get the number of occupied slots.
-		for (Int i = 0; i < MAX_SLOTS; ++i)
+		Int i = 0;
+		for (; i < MAX_SLOTS; ++i)
 		{
 			GameSlot *tempSlot = getSlot(i);
 			if (tempSlot->isOccupied())
@@ -1080,7 +1083,17 @@ Bool ParseAsciiStringToGameInfo(GameInfo *game, AsciiString options)
 			mapName.concat(token);
 			mapName.concat('.');
 			mapName.concat(TheMapCache->getMapExtension());
-			mapName = TheGameState->portableMapPathToRealMapPath(mapName);
+			AsciiString realMapName = TheGameState->portableMapPathToRealMapPath(mapName);
+			if (realMapName.isEmpty())
+			{
+				// TheSuperHackers @security slurmlord 18/06/2025 As the map file name/path from the AsciiString failed to normalize,
+				// in other words is bogus and points outside of the approved target directory for maps, avoid an arbitrary file overwrite vulnerability
+				// if the save or network game embeds a custom map to store at the location, by flagging the options as not OK and rejecting the game.
+				optionsOk = FALSE;
+				DEBUG_LOG(("ParseAsciiStringToGameInfo - saw bogus map name ('%s'); quitting\n", mapName.str()));
+				break;
+			}
+			mapName = realMapName;
 			sawMap = true;
 			DEBUG_LOG(("ParseAsciiStringToGameInfo - map name is %s\n", mapName.str()));
 		}

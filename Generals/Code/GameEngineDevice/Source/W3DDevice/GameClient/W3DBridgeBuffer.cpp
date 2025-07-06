@@ -51,8 +51,8 @@
 #include <string.h>
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include <texture.h>
-#include "common/GlobalData.h"
-#include "common/RandomValue.h"
+#include "Common/GlobalData.h"
+#include "Common/RandomValue.h"
 #include "Common/ThingFactory.h"
 #include "Common/ThingTemplate.h"
 #include "GameClient/TerrainRoads.h"
@@ -65,12 +65,18 @@
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
-#include "WW3D2/Camera.h"
-#include "WW3D2/DX8Wrapper.h"
-#include "WW3D2/DX8Renderer.h"
-#include "WW3D2/Mesh.h"
-#include "WW3D2/MeshMdl.h"
-#include "WW3D2/Scene.h"
+#include "WW3D2/camera.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/dx8renderer.h"
+#include "WW3D2/mesh.h"
+#include "WW3D2/meshmdl.h"
+#include "WW3D2/scene.h"
+
+#ifdef RTS_INTERNAL
+// for occasional debugging...
+//#pragma optimize("", off)
+//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
 
 //-----------------------------------------------------------------------------
 //         Private Data                                                     
@@ -130,7 +136,7 @@ are already set.  */
 //=============================================================================
 void W3DBridge::renderBridge(Bool wireframe)
 {
-	if (m_visible) {
+	if (m_visible && m_numPolygons && m_numVertex) {
 		if (!wireframe) DX8Wrapper::Set_Texture(0,m_bridgeTexture);
 		// Draw all the bridges.
 		DX8Wrapper::Draw_Triangles(	m_firstIndex, m_numPolygons, m_firstVertex,	m_numVertex);
@@ -188,7 +194,7 @@ void W3DBridge::init(Vector3 fromLoc, Vector3 toLoc, AsciiString bridgeTemplateN
 /** Loads a bridge model(if not already loaded) and gets meshes for use at 
 specified location.  */
 //=============================================================================
-Bool W3DBridge::load(enum BodyDamageType curDamageState)
+Bool W3DBridge::load(BodyDamageType curDamageState)
 {
 	REF_PTR_RELEASE(m_bridgeTexture);
 	REF_PTR_RELEASE(m_leftMesh);
@@ -242,7 +248,7 @@ Bool W3DBridge::load(enum BodyDamageType curDamageState)
 	strcpy(right, modelName);
 	strcat(right, ".BRIDGE_RIGHT");
 
-	m_bridgeTexture = pMgr->Get_Texture(textureFile,  TextureClass::MIP_LEVELS_3); 
+	m_bridgeTexture = pMgr->Get_Texture(textureFile,  MIP_LEVELS_3); 
 	m_leftMtx.Make_Identity();
 	m_rightMtx.Make_Identity();
 	m_sectionMtx.Make_Identity();
@@ -514,7 +520,17 @@ void W3DBridge::getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatX
 	m_numPolygons = 0;
 	if (m_sectionMesh == NULL) {
 		numV = getModelVerticesFixed(destination_vb, *curVertexP, m_leftMtx, m_leftMesh, pLightsIterator);
+		if (!numV)
+		{	//not enough room for vertices
+			DEBUG_ASSERTCRASH( numV, ("W3DBridge::GetIndicesNVertices(). Vertex overflow.\n") );
+			return;
+		}
 		numI = getModelIndices( destination_ib, *curIndexP, *curVertexP, m_leftMesh);
+		if (!numI)
+		{	//not enough room for indices
+			DEBUG_ASSERTCRASH( numI, ("W3DBridge::GetIndicesNVertices(). Index overflow.\n") );
+			return;
+		}
 		*curIndexP += numI;
 		*curVertexP += numV;
 		m_numVertex += numV;
@@ -554,7 +570,17 @@ void W3DBridge::getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatX
 	vec /= bridgeLength;
 	numV = getModelVertices(destination_vb, *curVertexP, xOffset, vec, vecNormal, vecZ, m_start, 
 		m_leftMtx, m_leftMesh, pLightsIterator);
+	if (!numV)
+	{	//not enough room for vertices
+		DEBUG_ASSERTCRASH( numV, ("W3DBridge::GetIndicesNVertices(). Vertex overflow.\n") );
+		return;
+	}
 	numI = getModelIndices( destination_ib, *curIndexP, *curVertexP, m_leftMesh);
+	if (!numI)
+	{	//not enough room for indices
+		DEBUG_ASSERTCRASH( numI, ("W3DBridge::GetIndicesNVertices(). Index overflow.\n") );
+		return;
+	}
 	*curIndexP += numI;
 	*curVertexP += numV;
 	m_numVertex += numV;
@@ -565,7 +591,17 @@ void W3DBridge::getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatX
 	for (i=0; i<numSpans; i++) {
 		numV = getModelVertices(destination_vb, *curVertexP, xOffset+i*spanLength, vec, vecNormal, vecZ, m_start, 
 			m_sectionMtx, m_sectionMesh, pLightsIterator);
+		if (!numV)
+		{	//not enough room for vertices
+			DEBUG_ASSERTCRASH( numV, ("W3DBridge::GetIndicesNVertices(). Vertex overflow.\n") );
+			return;
+		}
 		numI = getModelIndices( destination_ib, *curIndexP, *curVertexP, m_sectionMesh);
+		if (!numI)
+		{	//not enough room for indices
+			DEBUG_ASSERTCRASH( numI, ("W3DBridge::GetIndicesNVertices(). Index overflow.\n") );
+			return;
+		}
 		*curIndexP += numI;
 		*curVertexP += numV;
 		m_numVertex += numV;
@@ -575,7 +611,17 @@ void W3DBridge::getIndicesNVertices(UnsignedShort *destination_ib, VertexFormatX
 	// Draw the right end.
 	numV = getModelVertices(destination_vb, *curVertexP, xOffset+(numSpans-1)*spanLength, vec, vecNormal, vecZ, m_start,
 		m_rightMtx, m_rightMesh, pLightsIterator);
+	if (!numV)
+	{	//not enough room for vertices
+		DEBUG_ASSERTCRASH( numV, ("W3DBridge::GetIndicesNVertices(). Vertex overflow.\n") );
+		return;
+	}
 	numI = getModelIndices( destination_ib, *curIndexP, *curVertexP, m_rightMesh);
+	if (!numI)
+	{	//not enough room for indices
+		DEBUG_ASSERTCRASH( numI, ("W3DBridge::GetIndicesNVertices(). Index overflow.\n") );
+		return;
+	}
 	*curIndexP += numI;
 	*curVertexP += numV;
 	m_numVertex += numV;
@@ -593,7 +639,7 @@ Int W3DBridge::getModelIndices(UnsignedShort *destination_ib, Int curIndex, Int 
 	if (pMesh == NULL) 
 		return(0);
 	Int numPoly = pMesh->Peek_Model()->Get_Polygon_Count();
-	const Vector3i *pPoly =pMesh->Peek_Model()->Get_Polygon_Array();
+	const TriIndex *pPoly =pMesh->Peek_Model()->Get_Polygon_Array();
 	if (curIndex+3*numPoly+6 >= W3DBridgeBuffer::MAX_BRIDGE_INDEX) {
 		return(0);
 	}
@@ -719,6 +765,8 @@ void W3DBridgeBuffer::freeBridgeBuffers(void)
 //=============================================================================
 void W3DBridgeBuffer::allocateBridgeBuffers(void)
 {
+	if (TheGlobalData->m_headless)
+		return;
 	m_vertexBridge=NEW_REF(DX8VertexBufferClass,(DX8_FVF_XYZNDUV1,MAX_BRIDGE_VERTEX+4,DX8VertexBufferClass::USAGE_DYNAMIC));
 	m_indexBridge=NEW_REF(DX8IndexBufferClass,(MAX_BRIDGE_INDEX+4, DX8IndexBufferClass::USAGE_DYNAMIC));
 	m_vertexMaterial=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
@@ -759,6 +807,8 @@ void W3DBridgeBuffer::clearAllBridges(void)
 //=============================================================================
 void W3DBridgeBuffer::loadBridges(W3DTerrainLogic *pTerrainLogic, Bool saveGame)
 {
+	// TheSuperHackers @logic-client-separation helmutbuhler 26/4/2025
+	// W3DBridgeBuffer shouldn't add objects to W3DTerrainLogic
 	clearAllBridges();
 	MapObject *pMapObj;
 	MapObject *pMapObj2;
@@ -1078,7 +1128,7 @@ void W3DBridgeBuffer::drawBridges(CameraClass * camera, Bool wireframe, TextureC
 			m_bridges[info.bridgeIndex].setEnabled(true);
 			if (m_bridges[info.bridgeIndex].getDamageState() != info.curDamageState) {
 				changed = true;
-				enum BodyDamageType curState = m_bridges[info.bridgeIndex].getDamageState();
+				BodyDamageType curState = m_bridges[info.bridgeIndex].getDamageState();
 				m_bridges[info.bridgeIndex].setDamageState(info.curDamageState);
 				if (!m_bridges[info.bridgeIndex].load(info.curDamageState)) {
 					// put the old model back.
@@ -1108,7 +1158,7 @@ void W3DBridgeBuffer::drawBridges(CameraClass * camera, Bool wireframe, TextureC
 	DX8Wrapper::Set_Index_Buffer(m_indexBridge,0);
 	DX8Wrapper::Set_Vertex_Buffer(m_vertexBridge);
 	DX8Wrapper::Set_Shader(detailAlphaShader);
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	//DX8Wrapper::Set_Shader(detailShader); // shows alpha clipping.
 #endif
 

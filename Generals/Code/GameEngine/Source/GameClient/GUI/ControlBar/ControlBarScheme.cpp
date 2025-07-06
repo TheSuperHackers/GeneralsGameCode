@@ -62,7 +62,7 @@
 #include "GameClient/Image.h"
 #include "GameClient/GameWindowManager.h"
 #include "GameClient/GadgetPushButton.h"
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -991,7 +991,7 @@ void ControlBarSchemeManager::preloadAssets( TimeOfDay timeOfDay )
 
 		if (CBScheme->m_rightHUDImage)
 		{
-			TheDisplay->preloadTextureAssets(CBScheme->m_buttonQueueImage->getFilename());
+			TheDisplay->preloadTextureAssets(CBScheme->m_rightHUDImage->getFilename());
 		}
 
 		for (Int layer = 0; layer < MAX_CONTROL_BAR_SCHEME_IMAGE_LAYERS; ++layer)

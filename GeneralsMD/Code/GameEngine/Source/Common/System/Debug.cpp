@@ -46,14 +46,24 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
 
-// USER INCLUDES 
+// USER INCLUDES
+
+// TheSuperHackers @feature helmutbuhler 04/10/2025
+// Uncomment this to show normal logging stuff in the crc logging.
+// This can be helpful for context, but can also clutter diffs because normal logs aren't necessarily
+// deterministic or the same on all peers in multiplayer games.
+//#define INCLUDE_DEBUG_LOG_IN_CRC_LOG
+
 #define DEBUG_THREADSAFE
 #ifdef DEBUG_THREADSAFE
 #include "Common/CriticalSection.h"
 #endif
+#include "Common/CommandLine.h"
 #include "Common/Debug.h"
+#include "Common/CRCDebug.h"
 #include "Common/SystemInfo.h"
 #include "Common/UnicodeString.h"
+#include "GameClient/ClientInstance.h"
 #include "GameClient/GameText.h"
 #include "GameClient/Keyboard.h"
 #include "GameClient/Mouse.h"
@@ -65,9 +75,9 @@
 extern bool DX8Wrapper_IsWindowed;
 extern HWND ApplicationHWnd;
 
-extern char *gAppPrefix; /// So WB can have a different log file name.
+extern const char *gAppPrefix; /// So WB can have a different log file name.
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // this should ALWAYS be present
 #pragma optimize("", off)
 #endif
@@ -78,15 +88,15 @@ extern char *gAppPrefix; /// So WB can have a different log file name.
 
 #ifdef DEBUG_LOGGING
 
-#if defined(_INTERNAL)
-	#define DEBUG_FILE_NAME				"DebugLogFileI.txt"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevI.txt"
-#elif defined(_DEBUG)
-	#define DEBUG_FILE_NAME				"DebugLogFileD.txt"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevD.txt"
+#if defined(RTS_INTERNAL)
+	#define DEBUG_FILE_NAME				"DebugLogFileI"
+	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevI"
+#elif defined(RTS_DEBUG)
+	#define DEBUG_FILE_NAME				"DebugLogFileD"
+	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevD"
 #else
-	#define DEBUG_FILE_NAME				"DebugLogFile.txt"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrev.txt"
+	#define DEBUG_FILE_NAME				"DebugLogFile"
+	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrev"
 #endif
 
 #endif
@@ -98,8 +108,12 @@ extern char *gAppPrefix; /// So WB can have a different log file name.
 // ----------------------------------------------------------------------------
 // PRIVATE DATA 
 // ----------------------------------------------------------------------------
+// TheSuperHackers @info Must not use static RAII types when set in DebugInit,
+// because DebugInit can be called during static module initialization before the main function is called.
 #ifdef DEBUG_LOGGING
 static FILE *theLogFile = NULL;
+static char theLogFileName[ _MAX_PATH ];
+static char theLogFileNamePrev[ _MAX_PATH ];
 #endif
 #define LARGE_BUFFER	8192
 static char theBuffer[ LARGE_BUFFER ];	// make it big to avoid weird overflow bugs in debug mode
@@ -110,6 +124,12 @@ static DWORD theMainThreadID = 0;
 // ----------------------------------------------------------------------------
 
 char* TheCurrentIgnoreCrashPtr = NULL;
+#ifdef DEBUG_LOGGING
+UnsignedInt DebugLevelMask = 0;
+const char *TheDebugLevels[DEBUG_LEVEL_MAX] = {
+	"NET"
+};
+#endif
 
 // ----------------------------------------------------------------------------
 // PRIVATE PROTOTYPES 
@@ -120,7 +140,9 @@ static const char *prepBuffer(const char* format, char *buffer);
 #ifdef DEBUG_LOGGING
 static void doLogOutput(const char *buffer);
 #endif
+#ifdef DEBUG_CRASHING
 static int doCrashBox(const char *buffer, Bool logResult);
+#endif
 static void whackFunnyCharacters(char *buf);
 #ifdef DEBUG_STACKTRACE
 static void doStackDump();
@@ -133,7 +155,7 @@ static void doStackDump();
 // ----------------------------------------------------------------------------
 inline Bool ignoringAsserts()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#ifdef DEBUG_CRASHING
 	return !DX8Wrapper_IsWindowed || (TheGlobalData&&TheGlobalData->m_debugIgnoreAsserts);
 #else
 	return !DX8Wrapper_IsWindowed;
@@ -229,6 +251,10 @@ static void doLogOutput(const char *buffer)
 	{
 		::OutputDebugString(buffer);
 	}
+
+#ifdef INCLUDE_DEBUG_LOG_IN_CRC_LOG
+	addCRCDebugLineNoCounter("%s", buffer);
+#endif
 }
 #endif
 
@@ -239,6 +265,7 @@ static void doLogOutput(const char *buffer)
 	we exit the app, break into debugger, or continue execution. 
 */
 // ----------------------------------------------------------------------------
+#ifdef DEBUG_CRASHING
 static int doCrashBox(const char *buffer, Bool logResult)
 {
 	int result;
@@ -276,6 +303,7 @@ static int doCrashBox(const char *buffer, Bool logResult)
 	}
 	return result;
 }
+#endif
 
 #ifdef DEBUG_STACKTRACE
 // ----------------------------------------------------------------------------
@@ -338,6 +366,12 @@ void DebugInit(int flags)
 
 	#ifdef DEBUG_LOGGING
 
+		// TheSuperHackers @info Debug initialization can happen very early.
+		// Therefore, parse initial commandline and initialize the client instance now.
+		CommandLine::parseCommandLineForStartup();
+		if (!rts::ClientInstance::initialize())
+			return;
+
 		char dirbuf[ _MAX_PATH ];
 		::GetModuleFileName( NULL, dirbuf, sizeof( dirbuf ) );
 		char *pEnd = dirbuf + strlen( dirbuf );
@@ -351,22 +385,26 @@ void DebugInit(int flags)
 			pEnd--;
 		}
 
-		char prevbuf[ _MAX_PATH ];
-		char curbuf[ _MAX_PATH ];
+		strcpy(theLogFileNamePrev, dirbuf);
+		strcat(theLogFileNamePrev, gAppPrefix);
+		strcat(theLogFileNamePrev, DEBUG_FILE_NAME_PREV);
+		if (rts::ClientInstance::getInstanceId() > 1u)
+			sprintf(theLogFileNamePrev + strlen(theLogFileNamePrev), "_Instance%.2u", rts::ClientInstance::getInstanceId());
+		strcat(theLogFileNamePrev, ".txt");
 
-		strcpy(prevbuf, dirbuf);
-		strcat(prevbuf, gAppPrefix);
-		strcat(prevbuf, DEBUG_FILE_NAME_PREV);
-		strcpy(curbuf, dirbuf);
-		strcat(curbuf, gAppPrefix);
-		strcat(curbuf, DEBUG_FILE_NAME);
+		strcpy(theLogFileName, dirbuf);
+		strcat(theLogFileName, gAppPrefix);
+		strcat(theLogFileName, DEBUG_FILE_NAME);
+		if (rts::ClientInstance::getInstanceId() > 1u)
+			sprintf(theLogFileName + strlen(theLogFileName), "_Instance%.2u", rts::ClientInstance::getInstanceId());
+		strcat(theLogFileName, ".txt");
 
- 		remove(prevbuf);
-		rename(curbuf, prevbuf);
-		theLogFile = fopen(curbuf, "w");
+		remove(theLogFileNamePrev);
+		rename(theLogFileName, theLogFileNamePrev);
+		theLogFile = fopen(theLogFileName, "w");
 		if (theLogFile != NULL)
 		{
-			DebugLog("Log %s opened: %s\n", curbuf, getCurrentTimeString());
+			DebugLog("Log %s opened: %s\n", theLogFileName, getCurrentTimeString());
 		} 
 	#endif
 	}
@@ -403,6 +441,17 @@ void DebugLog(const char *format, ...)
 	whackFunnyCharacters(theBuffer);
 	doLogOutput(theBuffer);
 } 
+
+const char* DebugGetLogFileName()
+{
+	return theLogFileName;
+}
+
+const char* DebugGetLogFileNamePrev()
+{
+	return theLogFileNamePrev;
+}
+
 #endif
 
 // ----------------------------------------------------------------------------
@@ -621,7 +670,7 @@ double SimpleProfiler::getAverageTime()
 	return (double)m_totalAllSessions * 1000.0 / ((double)m_freq * (double)m_numSessions);
 }
 
-#endif	// ALLOW_DEBUG_UTILS
+#endif	// DEBUG_PROFILE
 
 // ----------------------------------------------------------------------------
 // ReleaseCrash
@@ -655,10 +704,9 @@ void ReleaseCrash(const char *reason)
 			ShowWindow(ApplicationHWnd, SW_HIDE);
 		}
 	}
-//#if defined(_DEBUG) || defined(_INTERNAL)
+//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 //	/* static */ char buff[8192]; // not so static so we can be threadsafe
-//	_snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);/
-//	buff[8191] = 0;
+//	snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);/
 //	::MessageBox(NULL, buff, "Technical Difficulties...", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
 //#else
 //	::MessageBox(NULL, "Sorry, a serious error occurred.", "Technical Difficulties...", MB_OK|MB_TASKMODAL|MB_ICONERROR);
@@ -700,10 +748,9 @@ void ReleaseCrash(const char *reason)
 			ShowWindow(ApplicationHWnd, SW_HIDE);
 		}
 	}
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	/* static */ char buff[8192]; // not so static so we can be threadsafe
-	_snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);
-	buff[8191] = 0;
+	snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);
 	::MessageBox(NULL, buff, "Technical Difficulties...", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
 #else
 // crash error messaged changed 3/6/03 BGC
@@ -771,7 +818,7 @@ void ReleaseCrashLocalized(const AsciiString& p, const AsciiString& m)
 	theReleaseCrashLogFile = fopen(curbuf, "w");
 	if (theReleaseCrashLogFile)
 	{
-		fprintf(theReleaseCrashLogFile, "Release Crash at %s; Reason %s\n", getCurrentTimeString(), mesg.str());
+		fprintf(theReleaseCrashLogFile, "Release Crash at %s; Reason %ls\n", getCurrentTimeString(), mesg.str());
 
 		const int STACKTRACE_SIZE	= 12;
 		const int STACKTRACE_SKIP = 6;

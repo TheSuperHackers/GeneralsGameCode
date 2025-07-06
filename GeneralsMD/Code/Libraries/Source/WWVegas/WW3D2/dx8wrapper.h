@@ -81,7 +81,6 @@ const unsigned MAX_SHADOW_MAPS=1;
 
 #define prevVer
 #define nextVer
-#define __volatile unsigned
 
 
 enum {
@@ -613,6 +612,7 @@ protected:
 	/*
 	** Internal functions
 	*/
+	static void Resize_And_Position_Window();
 	static bool Find_Color_And_Z_Mode(int resx,int resy,int bitdepth,D3DFORMAT * set_colorbuffer,D3DFORMAT * set_backbuffer, D3DFORMAT * set_zmode);
 	static bool Find_Color_Mode(D3DFORMAT colorbuffer, int resx, int resy, UINT *mode);
 	static bool Find_Z_Mode(D3DFORMAT colorbuffer,D3DFORMAT backbuffer, D3DFORMAT *zmode);
@@ -882,7 +882,7 @@ WWINLINE void DX8Wrapper::Set_DX8_Render_State(D3DRENDERSTATETYPE state, unsigne
 		Get_DX8_Render_State_Value_Name(value_name,state,value);
 		SNAPSHOT_SAY(("DX8 - SetRenderState(state: %s, value: %s)\n",
 			Get_DX8_Render_State_Name(state),
-			value_name));
+			value_name.str()));
 	}
 #endif
 
@@ -912,7 +912,7 @@ WWINLINE void DX8Wrapper::Set_DX8_Texture_Stage_State(unsigned stage, D3DTEXTURE
 		SNAPSHOT_SAY(("DX8 - SetTextureStageState(stage: %d, state: %s, value: %s)\n",
 			stage,
 			Get_DX8_Texture_Stage_State_Name(state),
-			value_name));
+			value_name.str()));
 	}
 #endif
 
@@ -1004,6 +1004,7 @@ WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector4& color)
 
 WWINLINE unsigned int DX8Wrapper::Convert_Color(const Vector3& color,float alpha)
 {
+#if defined(_MSC_VER) && _MSC_VER < 1300
 	const float scale = 255.0;
 	unsigned int col;
 
@@ -1070,24 +1071,21 @@ not_changed:
 		mov	col,eax
 	}
 	return col;
+#else
+	return color.Convert_To_ARGB(alpha);
+#endif // defined(_MSC_VER) && _MSC_VER < 1300
 }
 
 // ----------------------------------------------------------------------------
 //
-// Clamp color vertor to [0...1] range
+// Clamp color vector to [0...1] range
 //
 // ----------------------------------------------------------------------------
 
 WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
 {
-	if (!CPUDetectClass::Has_CMOV_Instruction()) {
-		for (int i=0;i<4;++i) {
-			float f=(color[i]<0.0f) ? 0.0f : color[i];
-			color[i]=(f>1.0f) ? 1.0f : f;
-		}
-		return;
-	}
-
+#if defined(_MSC_VER) && _MSC_VER < 1300
+	if (CPUDetectClass::Has_CMOV_Instruction()) {
 	__asm
 	{
 		mov	esi,dword ptr color
@@ -1129,6 +1127,14 @@ WWINLINE void DX8Wrapper::Clamp_Color(Vector4& color)
 		cmp edi,edx		// if no less than 1.0 set to 1.0
 		cmovnb edi,edx
 		mov dword ptr[esi+12],edi
+	}
+	return;
+	}
+#endif // defined(_MSC_VER) && _MSC_VER < 1300
+
+	for (int i=0;i<4;++i) {
+		float f=(color[i]<0.0f) ? 0.0f : color[i];
+		color[i]=(f>1.0f) ? 1.0f : f;
 	}
 }
 
@@ -1204,7 +1210,7 @@ WWINLINE void DX8Wrapper::Set_Shader(const ShaderClass& shader)
 #ifdef MESH_RENDER_SNAPSHOT_ENABLED
 	StringClass str;
 #endif
-	SNAPSHOT_SAY(("DX8Wrapper::Set_Shader(%s)\n",shader.Get_Description(str)));
+	SNAPSHOT_SAY(("DX8Wrapper::Set_Shader(%s)\n",shader.Get_Description(str).str()));
 }
 
 WWINLINE void DX8Wrapper::Set_Projection_Transform_With_Z_Bias(const Matrix4x4& matrix, float znear, float zfar)
@@ -1443,7 +1449,7 @@ WWINLINE RenderStateStruct::~RenderStateStruct()
 WWINLINE unsigned flimby( char* name, unsigned crib )
 {
   unsigned lnt prevVer = 0x00000000;  
-  __volatile D3D2_BASE_VEC nextVer = 0;
+  unsigned D3D2_BASE_VEC nextVer = 0;
   for( unsigned t = 0; t < crib; ++t )
   {
     (D3D2_BASE_VEC)nextVer += name[t];

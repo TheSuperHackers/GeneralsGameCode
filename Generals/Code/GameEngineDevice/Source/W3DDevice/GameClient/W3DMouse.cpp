@@ -29,10 +29,10 @@
 
 
 #include "Common/GameMemory.h"
-#include "WW3D2/DX8Wrapper.h"
-#include "WW3D2/RendObj.h"
-#include "WW3D2/HAnim.h"
-#include "WW3D2/Camera.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/rendobj.h"
+#include "WW3D2/hanim.h"
+#include "WW3D2/camera.h"
 
 #include "assetmgr.h"
 
@@ -47,7 +47,7 @@
 #include "mutex.h"
 #include "thread.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
@@ -66,7 +66,7 @@ static class MouseThreadClass : public ThreadClass
 {
 
 public:
-	MouseThreadClass::MouseThreadClass() : ThreadClass() {}
+	MouseThreadClass() : ThreadClass() {}
 
 	void Thread_Function();
 
@@ -235,16 +235,19 @@ void W3DMouse::initD3DAssets(void)
 			for (Int j=0; j < MAX_2D_CURSOR_ANIM_FRAMES; j++)
 			{
 				cursorTextures[i][j]=NULL;//am->Get_Texture(m_cursorInfo[i].textureName.str());
-				m_currentD3DSurface[i]=NULL;
 			}
 		}
+
+		for (Int x = 0; x < MAX_2D_CURSOR_ANIM_FRAMES; x++)
+			m_currentD3DSurface[x]=NULL;
 	}
 }
 
 void W3DMouse::freeD3DAssets(void)
 {
 	//free pointers to texture surfaces.
-	for (Int i=0; i<MAX_2D_CURSOR_ANIM_FRAMES; i++)
+	Int i=0;
+	for (; i<MAX_2D_CURSOR_ANIM_FRAMES; i++)
 		REF_PTR_RELEASE(m_currentD3DSurface[i]);
 
 	//free textures.

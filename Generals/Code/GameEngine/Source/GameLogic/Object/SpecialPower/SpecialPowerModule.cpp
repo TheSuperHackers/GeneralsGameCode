@@ -46,6 +46,7 @@
 #include "GameLogic/Module/DeletionUpdate.h"
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/SpecialPowerModule.h"
+#include "GameLogic/Module/SpecialPowerUpdateModule.h"
 #include "GameLogic/ScriptEngine.h"
 
 #include "GameClient/Eva.h"
@@ -53,7 +54,7 @@
 #include "GameClient/ControlBar.h"
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -98,7 +99,11 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 									: BehaviorModule( thing, moduleData )
 {
 
+#if RETAIL_COMPATIBLE_CRC
 	m_availableOnFrame = 0;
+#else
+	m_availableOnFrame = 0xFFFFFFFF;
+#endif
 	m_pausedCount = 0;
 	m_pausedOnFrame = 0;
 	m_pausedPercent = 0.0f;
@@ -106,7 +111,7 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 	// we won't be able to use the power for X number of frames now
 
 	// if we're pre-built, start counting down
-	if( BitTest( getObject()->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == FALSE )
+	if( !getObject()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 	{
 		//A sharedNSync special only startPowerRecharges when first scienced or when executed,
 		//Since a new modue with same SPTemplates may construct at any time.
@@ -269,7 +274,7 @@ Bool SpecialPowerModule::isModuleForPower( const SpecialPowerTemplate *specialPo
 //-------------------------------------------------------------------------------------------------
 Bool SpecialPowerModule::isReady() const
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	// this is a cheat ... remove this for release!
 	if( TheGlobalData->m_specialPowerUsesDelay == FALSE )
 		return TRUE;
@@ -301,7 +306,7 @@ Bool SpecialPowerModule::isReady() const
 //-------------------------------------------------------------------------------------------------
 Real SpecialPowerModule::getPercentReady() const
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if( TheGlobalData->m_specialPowerUsesDelay == FALSE )
 		return 1.0f;
 #endif
@@ -349,7 +354,7 @@ Real SpecialPowerModule::getPercentReady() const
 //-------------------------------------------------------------------------------------------------
 void SpecialPowerModule::startPowerRecharge()
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	// this is a cheat ... remove this for release!
 	if( TheGlobalData->m_specialPowerUsesDelay == FALSE )
 		return;
@@ -388,7 +393,7 @@ void SpecialPowerModule::startPowerRecharge()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerModule::initiateIntentToDoSpecialPower( const Object *targetObj, const Coord3D *targetPos, UnsignedInt commandOptions, Int locationCount )
+Bool SpecialPowerModule::initiateIntentToDoSpecialPower( const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions )
 {
 	Bool valid = false;
 	// tell our update modules that we intend to do this special power.
@@ -400,7 +405,7 @@ void SpecialPowerModule::initiateIntentToDoSpecialPower( const Object *targetObj
 			//Validate that we are calling the correct module!
 			if( isModuleForPower( getSpecialPowerModuleData()->m_specialPowerTemplate ) )
 			{
-				spu->initiateIntentToDoSpecialPower( getSpecialPowerModuleData()->m_specialPowerTemplate, targetObj, targetPos, commandOptions, locationCount );
+				spu->initiateIntentToDoSpecialPower( getSpecialPowerModuleData()->m_specialPowerTemplate, targetObj, targetPos, way, commandOptions );
 				valid = true;
 			}
 		}
@@ -414,6 +419,8 @@ void SpecialPowerModule::initiateIntentToDoSpecialPower( const Object *targetObj
 		//DEBUG_CRASH(( "Object does not contain special power module (%s) to execute.  Did you forget to add it to the object INI?\n",
 		//							command->m_specialPower->getName().str() ));
 	}
+
+	return valid;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -537,7 +544,7 @@ void SpecialPowerModule::doSpecialPower( UnsignedInt commandOptions )
 
 	//This tells the update module that we want to do our special power. The update modules
 	//will then start processing each frame.
-	initiateIntentToDoSpecialPower( NULL, NULL, commandOptions );
+	initiateIntentToDoSpecialPower( NULL, NULL, NULL, commandOptions );
 
 	//Only trigger the special power immediately if the updatemodule doesn't start the attack.
 	//An example of a case that wouldn't trigger immediately is for a unit that needs to 
@@ -559,7 +566,7 @@ void SpecialPowerModule::doSpecialPowerAtObject( Object *obj, UnsignedInt comman
 
 	//This tells the update module that we want to do our special power. The update modules
 	//will then start processing each frame.
-	initiateIntentToDoSpecialPower( obj, NULL, commandOptions );
+	initiateIntentToDoSpecialPower( obj, NULL, NULL, commandOptions );
 
 	//Only trigger the special power immediately if the updatemodule doesn't start the attack.
 	//An example of a case that wouldn't trigger immediately is for a unit that needs to 
@@ -573,7 +580,7 @@ void SpecialPowerModule::doSpecialPowerAtObject( Object *obj, UnsignedInt comman
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerModule::doSpecialPowerAtLocation( const Coord3D *loc, UnsignedInt commandOptions )
+void SpecialPowerModule::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
 {
 	if (m_pausedCount > 0 || getObject()->isDisabled()) {
 		return;
@@ -581,7 +588,7 @@ void SpecialPowerModule::doSpecialPowerAtLocation( const Coord3D *loc, UnsignedI
 
 	//This tells the update module that we want to do our special power. The update modules
 	//will then start processing each frame.
-	initiateIntentToDoSpecialPower( NULL, loc, commandOptions );
+	initiateIntentToDoSpecialPower( NULL, loc, NULL, commandOptions );
 
 	//Only trigger the special power immediately if the updatemodule doesn't start the attack.
 	//An example of a case that wouldn't trigger immediately is for a unit that needs to 
@@ -595,7 +602,7 @@ void SpecialPowerModule::doSpecialPowerAtLocation( const Coord3D *loc, UnsignedI
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void SpecialPowerModule::doSpecialPowerAtMultipleLocations( const Coord3D *locations, Int locCount, UnsignedInt commandOptions )
+void SpecialPowerModule::doSpecialPowerUsingWaypoints( const Waypoint *way, UnsignedInt commandOptions )
 {
 	if (m_pausedCount > 0 || getObject()->isDisabled()) {
 		return;
@@ -603,7 +610,7 @@ void SpecialPowerModule::doSpecialPowerAtMultipleLocations( const Coord3D *locat
 
 	//This tells the update module that we want to do our special power. The update modules
 	//will then start processing each frame.
-	initiateIntentToDoSpecialPower( NULL, locations, commandOptions, locCount );
+	initiateIntentToDoSpecialPower( NULL, NULL, way, commandOptions );
 
 	//Only trigger the special power immediately if the updatemodule doesn't start the attack.
 	//An example of a case that wouldn't trigger immediately is for a unit that needs to 

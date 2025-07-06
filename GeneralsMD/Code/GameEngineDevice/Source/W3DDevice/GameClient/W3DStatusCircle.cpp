@@ -34,10 +34,10 @@
 #include <coltest.h>
 #include <rinfo.h>
 #include <camera.h>
-#include "WW3D2/DX8Wrapper.h"
-#include "WW3D2/Shader.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/shader.h"
 #include "Common/GlobalData.h"
-#include "common/MapObject.h"
+#include "Common/MapObject.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/ScriptEngine.h"
 
@@ -174,7 +174,7 @@ Int W3DStatusCircle::initData(void)
 	//go with a preset material for now.
 	m_vertexMaterialClass=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 
-	m_shaderClass = ShaderClass::ShaderClass(SC_ALPHA);// _PresetOpaque2DShader;//; //_PresetOpaqueShader;
+	m_shaderClass = ShaderClass(SC_ALPHA);// _PresetOpaque2DShader;//; //_PresetOpaqueShader;
 
 
 	return 0;

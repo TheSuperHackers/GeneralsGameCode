@@ -58,8 +58,8 @@
 //-----------------------------------------------------------------------------
 #include "Common/GameMemory.h"
 #include "Common/KindOf.h"
-#include "Common/OVERRIDE.h"
-#include "WWMath/Matrix3D.h"							///< @todo Decide if we're keeping the WWMath libs (MSB)
+#include "Common/Override.h"
+#include "WWMath/matrix3d.h"							///< @todo Decide if we're keeping the WWMath libs (MSB)
 
 //-----------------------------------------------------------------------------
 //           Forward References
@@ -161,7 +161,7 @@ private:
 	// since ThingTemplates are shared between many, many Things, the Thing
 	// should never be able to change it.
 	OVERRIDE<ThingTemplate> m_template;	///< reference back to template database
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	AsciiString m_templateName;
 #endif
 	/*

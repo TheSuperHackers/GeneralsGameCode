@@ -47,7 +47,7 @@
 
 extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -69,11 +69,11 @@ void TAiData::addFactionBuildList(AISideBuildList *buildList)
 	while (info) {
 		if (buildList->m_side == info->m_side) {
 			if (info->m_buildList)
-				info->m_buildList->deleteInstance();
+				deleteInstance(info->m_buildList);
 			info->m_buildList = buildList->m_buildList;
 			buildList->m_buildList = NULL;
 			buildList->m_next = NULL;
-			buildList->deleteInstance();
+			deleteInstance(buildList);
 			return;
 		}
 		info = info->m_next;
@@ -89,7 +89,7 @@ TAiData::~TAiData()
 	while (info) { 
 		AISideInfo *cur = info;
 		info = info->m_next;
-		cur->deleteInstance();
+		deleteInstance(cur);
 	}
 
 	AISideBuildList *build = m_sideBuildLists;
@@ -97,7 +97,7 @@ TAiData::~TAiData()
 	while (build) { 
 		AISideBuildList *cur = build;
 		build = build->m_next;
-		cur->deleteInstance();
+		deleteInstance(cur);
 	}
 
 }
@@ -115,7 +115,7 @@ AISideBuildList::AISideBuildList( AsciiString side ) :
 AISideBuildList::~AISideBuildList()
 {
 	if (m_buildList) {
-		m_buildList->deleteInstance(); // note - deletes all in the list.
+		deleteInstance(m_buildList); // note - deletes all in the list.
 	}
 	m_buildList = NULL;
 }
@@ -330,6 +330,8 @@ void AI::reset( void )
 		m_aiData = m_aiData->m_next;
 		delete cur;
 	}
+
+#if RETAIL_COMPATIBLE_AIGROUP
 	while (m_groupList.size())
 	{
 		AIGroup *groupToRemove = m_groupList.front();
@@ -342,6 +344,12 @@ void AI::reset( void )
 			m_groupList.pop_front(); // NULL group, just kill from list.  Shouldn't really happen, but just in case.
 		}
 	}
+#else
+	DEBUG_ASSERTCRASH(m_groupList.empty(), ("AI::m_groupList is expected empty already\n"));
+
+	m_groupList.clear(); // Clear just in case...
+#endif
+
 	m_nextGroupID = 0;
 	m_nextFormationID = NO_FORMATION_ID;
 	getNextFormationID(); // increment once past NO_FORMATION_ID.  jba.
@@ -427,11 +435,10 @@ void AI::parseAiDataDefinition( INI* ini )
 		if( ini->getLoadType() == INI_LOAD_CREATE_OVERRIDES )
 			TheAI->newOverride();
 
+		// parse the ini weapon definition
+		ini->initFromINI( TheAI->m_aiData, TheAIFieldParseTable );
+
 	}  // end if
-
-	// parse the ini weapon definition
-	ini->initFromINI( TheAI->m_aiData, TheAIFieldParseTable );
-
 }
 
 
@@ -441,14 +448,22 @@ void AI::parseAiDataDefinition( INI* ini )
 /**
  * Create a new AI Group
  */
-AIGroup *AI::createGroup( void )
+AIGroupPtr AI::createGroup( void )
 {
 	// create a new instance
+#if RETAIL_COMPATIBLE_AIGROUP
 	AIGroup *group = newInstance(AIGroup);
+#else
+	AIGroupPtr group = AIGroupPtr::Create_NoAddRef(newInstance(AIGroup));
+#endif
 
 	// add it to the list
 //	DEBUG_LOG(("***AIGROUP %x is being added to m_groupList.\n", group ));
+#if RETAIL_COMPATIBLE_AIGROUP
 	m_groupList.push_back( group );
+#else
+	m_groupList.push_back( group.Peek() );
+#endif
 
 	return group;
 }
@@ -471,7 +486,7 @@ void AI::destroyGroup( AIGroup *group )
 	m_groupList.erase( i );
 
 	// destroy group
-	group->deleteInstance();
+	deleteInstance(group);
 }
 
 /**
@@ -524,7 +539,7 @@ public:
 		return true;
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterLiveMapEnemies"; }
 #endif
 };
@@ -554,7 +569,7 @@ public:
 		return false;
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	virtual const char* debugGetName() { return "PartitionFilterWithinAttackRange"; }
 #endif
 };
@@ -784,7 +799,8 @@ Object *AI::findClosestRepulsor( const Object *me, Real range)
 
 	// and only stuff that isn't stealthed (and not detected)
 	// (note that stealthed allies aren't hidden from us, but that's ok. jba.)
-	PartitionFilterRejectByObjectStatus filterStealth(OBJECT_STATUS_STEALTHED, OBJECT_STATUS_DETECTED);
+	PartitionFilterRejectByObjectStatus filterStealth( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_STEALTHED ), 
+																										 MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DETECTED ) );
 
 	PartitionFilter *filters[16];
 	Int numFilters = 0;
@@ -859,7 +875,7 @@ Real AI::getAdjustedVisionRangeForObject(const Object *object, Int factorsToCons
 		}
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		// ICK. This really nasty statement is used so that we only initialize this color once.

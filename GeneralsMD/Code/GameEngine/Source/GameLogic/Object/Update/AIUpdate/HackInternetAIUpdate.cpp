@@ -42,7 +42,7 @@
 #include "GameLogic/Object.h"
 //#include "GameLogic/PartitionManager.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -158,13 +158,13 @@ void HackInternetAIUpdate::aiDoCommand(const AICommandParms* parms)
 void HackInternetAIUpdate::hackInternet()
 {
 	//if (m_hackInternetStateMachine)
-	//	m_hackInternetStateMachine->deleteInstance();
+	//	deleteInstance(m_hackInternetStateMachine);
 	//m_hackInternetStateMachine = NULL;
 
 	// must make the state machine AFTER initing the other stuff, since it may inquire of its values...
 	//m_hackInternetStateMachine = newInstance(HackInternetStateMachine)( getObject() );
 	//m_hackInternetStateMachine->initDefaultState();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	//m_hackInternetStateMachine->setName("HackInternetSpecificAI");
 #endif
 		getStateMachine()->setState(UNPACKING);
@@ -506,28 +506,28 @@ StateReturnType HackInternetState::update()
 						{
 							break;
 						}
-						//If entry missing, fall through!
+						FALLTHROUGH; //If entry missing, fall through!
 					case LEVEL_ELITE:
 						amount = ai->getEliteCashAmount();
 						if( amount )
 						{
 							break;
 						}
-						//If entry missing, fall through!
+						FALLTHROUGH; //If entry missing, fall through!
 					case LEVEL_VETERAN:
 						amount = ai->getVeteranCashAmount();
 						if( amount )
 						{
 							break;
 						}
-						//If entry missing, fall through!
+						FALLTHROUGH; //If entry missing, fall through!
 					case LEVEL_REGULAR:
 						amount = ai->getRegularCashAmount();
 						if( amount )
 						{
 							break;
 						}
-						//If entry missing, fall through!
+						FALLTHROUGH; //If entry missing, fall through!
 					default:
 						amount = 1;
 						break;

@@ -62,7 +62,7 @@
 #include "GameLogic/Module/SupplyWarehouseDockUpdate.h"
 #include "GameLogic/PartitionManager.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -436,7 +436,7 @@ static void deleteQueue(TeamInQueue* o)
 {
 	if (o)
 	{
-		o->deleteInstance();
+		deleteInstance(o);
 	}
 }
 
@@ -633,7 +633,7 @@ Object *AIPlayer::buildStructureWithDozer(const ThingTemplate *bldgPlan, BuildLi
 
 
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	if (TheGlobalData->m_debugAI == AI_DEBUG_PATHS)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -866,7 +866,7 @@ void AIPlayer::aiPreTeamDestroy( const Team *deletedTeam )
 			if (team->m_team == deletedTeam) {
 				// The members of the team all got killed before we could finish building the team.
 				removeFrom_TeamBuildQueue(team);
-				team->deleteInstance();
+				deleteInstance(team);
 				iter = iterate_TeamBuildQueue();
 			}
 		}
@@ -878,7 +878,7 @@ void AIPlayer::aiPreTeamDestroy( const Team *deletedTeam )
 			if (team->m_team == deletedTeam) {
 				// The members of the team all got killed before we could activate the team.
 				removeFrom_TeamReadyQueue(team);
-				team->deleteInstance();
+				deleteInstance(team);
 				iter = iterate_TeamReadyQueue();
 			}
 		}
@@ -900,11 +900,15 @@ void AIPlayer::guardSupplyCenter( Team *team, Int minSupplies )
 	}
 	if (warehouse) {
 
-		AIGroup* theGroup = TheAI->createGroup();
+		AIGroupPtr theGroup = TheAI->createGroup();
 		if (!theGroup) {
 			return;
 		}
+#if RETAIL_COMPATIBLE_AIGROUP
 		team->getTeamAsAIGroup(theGroup);
+#else
+		team->getTeamAsAIGroup(theGroup.Peek());
+#endif
 		Coord3D location = *warehouse->getPosition();
 		// It's probably a defensive move - position towards the enemy.
 		Region2D bounds;
@@ -1048,7 +1052,13 @@ Bool AIPlayer::isLocationSafe(const Coord3D *pos, const ThingTemplate *tthing )
 void AIPlayer::onUnitProduced( Object *factory, Object *unit )
 {
 	Bool found = false;
-	Bool supplyTruck;
+	// TheSuperHackers @fix Mauller 26/04/2025 Fixes uninitialized variable.
+	// To keep retail compatibility it needs to be set true in VS6 builds.
+#if defined(_MSC_VER) && _MSC_VER < 1300
+	Bool supplyTruck = true;
+#else
+	Bool supplyTruck = false;
+#endif
 
 	// factory could be NULL at the start of the game.
 	if (factory == NULL) {
@@ -2281,7 +2291,7 @@ void AIPlayer::repairStructure(ObjectID structure)
 	if (structureObj==NULL) return;
 	if (structureObj->getBodyModule()==NULL) return;
 	// If the structure is not noticably damaged, don't bother.
-	enum BodyDamageType structureState = structureObj->getBodyModule()->getDamageState(); 
+	BodyDamageType structureState = structureObj->getBodyModule()->getDamageState(); 
 	if (structureState==BODY_PRISTINE) {
 		return; 
 	}
@@ -2295,7 +2305,7 @@ void AIPlayer::repairStructure(ObjectID structure)
 			return;
 		}
 	}
-	if (m_structuresInQueue==MAX_STRUCTURES_TO_REPAIR) {
+	if (m_structuresInQueue>=MAX_STRUCTURES_TO_REPAIR) {
 		DEBUG_LOG(("Structure repair queue is full, ignoring repair request. JBA\n"));
 		return;
 	}
@@ -2340,7 +2350,7 @@ void AIPlayer::updateBridgeRepair(void)
 	// Got a bridge to repair.
 	Object *dozer = NULL;
 	Coord3D bridgePos = *bridgeObj->getPosition();
-	enum BodyDamageType bridgeState = bridgeObj->getBodyModule()->getDamageState(); 
+	BodyDamageType bridgeState = bridgeObj->getBodyModule()->getDamageState(); 
 	if (m_repairDozer==INVALID_ID) {
 		m_dozerIsRepairing = false;
 		// Need a dozer.
@@ -2598,7 +2608,7 @@ void AIPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadiu
 						AIUpdateInterface *ai = unit->getAIUpdateInterface();
 						if (ai) 
 						{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 							Coord3D pos = *unit->getPosition();
 							Coord3D to = teamProto->getTemplateInfo()->m_homeLocation;
 							DEBUG_LOG(("Moving unit from %f,%f to %f,%f\n", pos.x, pos.y , to.x, to.y ));
@@ -2628,7 +2638,7 @@ void AIPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadiu
 		}	else {
 			//disband.
 			if (!theTeam->getPrototype()->getIsSingleton()) {
-				theTeam->deleteInstance();
+				deleteInstance(theTeam);
 				theTeam = NULL;
 			}
 			AsciiString teamName = teamProto->getName();
@@ -2790,9 +2800,9 @@ void AIPlayer::checkReadyTeams( void )
 					/*
 					if (team->m_team->getPrototype()->getTemplateInfo()->m_hasHomeLocation && 
 							!team->m_reinforcement) {
- 						AIGroup* theGroup = TheAI->createGroup();
+ 						AIGroupPtr theGroup = TheAI->createGroup();
 						if (theGroup) {
-							team->m_team->getTeamAsAIGroup(theGroup);
+							team->m_team->getTeamAsAIGroup(theGroup.Peek());
 							Coord3D destination = team->m_team->getPrototype()->getTemplateInfo()->m_homeLocation;
 							theGroup->groupTightenToPosition( &destination, false, CMD_FROM_AI );
 							team->m_frameStarted = TheGameLogic->getFrame();
@@ -2820,7 +2830,7 @@ void AIPlayer::checkReadyTeams( void )
 						TheScriptEngine->AppendDebugMessage(teamName, false);
 					}
 				}
-				team->deleteInstance();
+				deleteInstance(team);
 				iter = iterate_TeamReadyQueue();
 			}																		 
 		}
@@ -2852,7 +2862,7 @@ void AIPlayer::checkQueuedTeams( void )
 					// Disband.
 					removeFrom_TeamBuildQueue(team);
 					team->disband();
-					team->deleteInstance();
+					deleteInstance(team);
 					if (isSkirmishAI()) {
 						TheScriptEngine->clearTeamFlags();
 					}
@@ -3483,7 +3493,7 @@ TeamInQueue::~TeamInQueue()
 	for( order = m_workOrders; order; order = next )
 	{
 		next = order->m_next;
-		order->deleteInstance();
+		deleteInstance(order);
 	}
 	// If we have a team, activate it.  If it is empty, Team.cpp will remove empty active teams.
 	if (m_team) m_team->setActive();
@@ -3584,7 +3594,7 @@ void TeamInQueue::disband()
 	if (m_team != newTeam) {
 		m_team->transferUnitsTo(newTeam);
 		if (!m_team->getPrototype()->getIsSingleton()) {
-			m_team->deleteInstance();
+			deleteInstance(m_team);
 		}
 		m_team = NULL;
 	}

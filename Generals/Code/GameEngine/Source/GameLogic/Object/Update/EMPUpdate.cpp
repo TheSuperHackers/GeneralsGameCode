@@ -48,7 +48,7 @@
 
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -180,8 +180,8 @@ void EMPUpdate::doDisableAttack( void )
 	Real curVictimDistSqr;
 	const Coord3D *pos = object->getPosition();
 
-	SimpleObjectIterator *iter;
-	Object *curVictim;
+	SimpleObjectIterator *iter = NULL;
+	Object *curVictim = NULL;
 
 	if (radius > 0.0f)
 	{
@@ -238,7 +238,7 @@ void EMPUpdate::doDisableAttack( void )
 
 					UnsignedInt emitterCount = MAX(15, REAL_TO_INT_CEIL(data->m_sparksPerCubicFoot * victimVolume));
 
-					for (Int e = 0 ; e < emitterCount; ++e)
+					for (UnsignedInt e = 0 ; e < emitterCount; ++e)
 					{
 
 						ParticleSystem *sys = TheParticleSystemManager->createParticleSystem(tmp);

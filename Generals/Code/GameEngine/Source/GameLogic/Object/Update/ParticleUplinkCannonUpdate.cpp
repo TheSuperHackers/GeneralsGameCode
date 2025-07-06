@@ -33,33 +33,32 @@
 #define DEFINE_DEATH_NAMES
 
 // INCLUDES ///////////////////////////////////////////////////////////////////////////////////////
-#include "Common\ThingTemplate.h"
-#include "Common\ThingFactory.h"
-#include "Common\Player.h"
-#include "Common\PlayerList.h"
-#include "Common\Xfer.h"
-#include "Common\ClientUpdateModule.h"
+#include "Common/ThingTemplate.h"
+#include "Common/ThingFactory.h"
+#include "Common/Player.h"
+#include "Common/PlayerList.h"
+#include "Common/Xfer.h"
+#include "Common/ClientUpdateModule.h"
 
-#include "GameClient\ControlBar.h"
-#include "GameClient\GameClient.h"
-#include "GameClient\Drawable.h"
-#include "GameClient\ParticleSys.h"
-#include "GameClient\FXList.h"
+#include "GameClient/ControlBar.h"
+#include "GameClient/GameClient.h"
+#include "GameClient/Drawable.h"
+#include "GameClient/ParticleSys.h"
+#include "GameClient/FXList.h"
 
-#include "GameLogic\GameLogic.h"
-#include "GameLogic\PartitionManager.h"
-#include "GameLogic\Object.h"
-#include "GameLogic\ObjectIter.h"
-#include "GameLogic\Weaponset.h"
-#include "GameLogic\Weapon.h"
-#include "GameLogic\TerrainLogic.h"
-#include "GameLogic\Module\SpecialPowerModule.h"
-#include "GameLogic\Module\ParticleUplinkCannonUpdate.h"
-#include "GameLogic\Module\PhysicsUpdate.h"
-#include "GameLogic\Module\LaserUpdate.h"
-#include "GameLogic\Module\ActiveBody.h"
+#include "GameLogic/GameLogic.h"
+#include "GameLogic/PartitionManager.h"
+#include "GameLogic/Object.h"
+#include "GameLogic/ObjectIter.h"
+#include "GameLogic/WeaponSet.h"
+#include "GameLogic/Weapon.h"
+#include "GameLogic/TerrainLogic.h"
+#include "GameLogic/Module/SpecialPowerModule.h"
+#include "GameLogic/Module/ParticleUplinkCannonUpdate.h"
+#include "GameLogic/Module/PhysicsUpdate.h"
+#include "GameLogic/Module/ActiveBody.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -212,7 +211,7 @@ void ParticleUplinkCannonUpdate::killEverything()
 	removeAllEffects();
 
 	//This laser is independent from the other effects and needs to be specially handled.
-	if( m_orbitToTargetBeamID )
+	if( m_orbitToTargetBeamID != INVALID_DRAWABLE_ID )
 	{
 		Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
 		if( beam )
@@ -221,6 +220,7 @@ void ParticleUplinkCannonUpdate::killEverything()
 		}
 		m_orbitToTargetBeamID = INVALID_DRAWABLE_ID;
 	}
+	m_orbitToTargetLaserRadius = LaserRadiusUpdate();
 
 	TheAudio->removeAudioEvent( m_powerupSound.getPlayingHandle() );
 	TheAudio->removeAudioEvent( m_unpackToReadySound.getPlayingHandle() );
@@ -268,17 +268,17 @@ void ParticleUplinkCannonUpdate::onObjectCreated()
 }
 
 //-------------------------------------------------------------------------------------------------
-void ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, UnsignedInt commandOptions, Int locationCount )
+Bool ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPowerTemplate *specialPowerTemplate, const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions )
 {
 	const ParticleUplinkCannonUpdateModuleData *data = getParticleUplinkCannonUpdateModuleData();
 
 	if( m_specialPowerModule->getSpecialPowerTemplate() != specialPowerTemplate )
 	{
 		//Check to make sure our modules are connected.
-		return;
+		return FALSE;
 	}
 
-	if( !BitTest( commandOptions, COMMAND_FIRED_BY_SCRIPT ) )
+	if( !BitIsSet( commandOptions, COMMAND_FIRED_BY_SCRIPT ) )
 	{
 		//All human players have manual control and must "drive" the beam around!
 		m_startAttackFrame = TheGameLogic->getFrame();
@@ -306,6 +306,7 @@ void ParticleUplinkCannonUpdate::initiateIntentToDoSpecialPower(const SpecialPow
 		SpecialPowerModule *spModule = (SpecialPowerModule*)spmInterface;
 		spModule->markSpecialPowerTriggered( &m_initialTargetPosition );
 	}
+	return TRUE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -409,38 +410,43 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				break;
 			case LASERSTATUS_BORN:
 			{
-				Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
-				if( beam )
+				if( orbitalDecayStart <= now )
 				{
-					//m_annihilationSound.setPosition( beam->getPosition() );
-					if( orbitalDecayStart <= now )
+					Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
+					if( beam )
 					{
+						//m_annihilationSound.setPosition( beam->getPosition() );
 						static NameKeyType nameKeyClientUpdate = NAMEKEY( "LaserUpdate" );
 						LaserUpdate *update = (LaserUpdate*)beam->findClientUpdateModule( nameKeyClientUpdate );
 						if( update )
 						{
 							update->setDecayFrames( data->m_widthGrowFrames );
 						}
-						m_laserStatus = LASERSTATUS_DECAYING;
 					}
+					m_orbitToTargetLaserRadius.setDecayFrames( data->m_widthGrowFrames );
+					m_laserStatus = LASERSTATUS_DECAYING;
 				}
 				break;
 			}
 			case LASERSTATUS_DECAYING:
 			{
-				Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
-				if( beam )
+				if( orbitalDeathFrame <= now )
 				{
-					//m_annihilationSound.setPosition( beam->getPosition() );
 					TheAudio->removeAudioEvent( m_annihilationSound.getPlayingHandle() );
-					if( orbitalDeathFrame <= now )
+					if ( m_orbitToTargetBeamID != INVALID_DRAWABLE_ID )
 					{
-						TheGameClient->destroyDrawable( beam );
+						Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
+						if( beam )
+						{
+							//m_annihilationSound.setPosition( beam->getPosition() );
+							TheGameClient->destroyDrawable( beam );
+						}
 						m_orbitToTargetBeamID = INVALID_DRAWABLE_ID;
-						m_laserStatus = LASERSTATUS_DEAD;
-						m_startAttackFrame = 0;
-						setLogicalStatus( STATUS_IDLE );
 					}
+					m_orbitToTargetLaserRadius = LaserRadiusUpdate();
+					m_laserStatus = LASERSTATUS_DEAD;
+					m_startAttackFrame = 0;
+					setLogicalStatus( STATUS_IDLE );
 				}
 				break;
 			}
@@ -449,8 +455,13 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 				break;
 		}
 
-		Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
-		if( beam && orbitalBirthFrame <= now && now <= orbitalDeathFrame )
+#if RETAIL_COMPATIBLE_CRC
+		// TheSuperHackers @info helmutbuhler 12/06/2025
+		// Note that this code is very brittle for retail compatibility. Inlining isFiring
+		// can cause incompatibility in some circumstances.
+#endif
+		const Bool isFiring = orbitalBirthFrame <= now && now < orbitalDeathFrame;
+		if ( isFiring )
 		{
 		
 			if( !m_manualTargetMode )
@@ -545,16 +556,35 @@ UpdateSleepTime ParticleUplinkCannonUpdate::update()
 
 			Real scorchRadius = 0.0f;
 			Real damageRadius = 0.0f;
+			Real templateLaserRadius = 13.0f;
+			Real visualLaserRadius = 0.0f;
 
 			//Reset the laser position
-			static NameKeyType nameKeyClientUpdate = NAMEKEY( "LaserUpdate" );
-			LaserUpdate *update = (LaserUpdate*)beam->findClientUpdateModule( nameKeyClientUpdate );
-			if( update )
+			Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
+			if ( beam )
 			{
-				update->initLaser( NULL, &orbitPosition, &m_currentTargetPosition );
-				scorchRadius = update->getCurrentLaserRadius() * data->m_scorchMarkScalar;
-				damageRadius = update->getCurrentLaserRadius() * data->m_damageRadiusScalar;
+				static NameKeyType nameKeyClientUpdate = NAMEKEY( "LaserUpdate" );
+				LaserUpdate *update = (LaserUpdate*)beam->findClientUpdateModule( nameKeyClientUpdate );
+				if( update )
+				{
+					update->initLaser( NULL, &orbitPosition, &m_currentTargetPosition );
+					// TheSuperHackers @logic-client-separation The GameLogic has a dependency on this drawable.
+					// The logical laser radius for the damage should probably be part of ParticleUplinkCannonUpdateModuleData.
+					templateLaserRadius = update->getTemplateLaserRadius();
+					visualLaserRadius = update->getCurrentLaserRadius();
+				}
 			}
+			// TheSuperHackers @refactor helmutbuhler/xezon 17/05/2025
+			// Originally the damageRadius was calculated with a value updated by LaserUpdate::clientUpdate.
+			// To no longer rely on GameClient updates, this class now maintains a copy of the LaserRadiusUpdate.
+			m_orbitToTargetLaserRadius.updateRadius();
+			const Real logicalLaserRadius = templateLaserRadius * m_orbitToTargetLaserRadius.getWidthScale();
+			damageRadius = logicalLaserRadius * data->m_damageRadiusScalar;
+			scorchRadius = logicalLaserRadius * data->m_scorchMarkScalar;
+#if defined(RETAIL_COMPATIBLE_CRC)
+			DEBUG_ASSERTCRASH(logicalLaserRadius == visualLaserRadius,
+				("ParticleUplinkCannonUpdate's laser radius does not match LaserUpdate's laser radius - will cause mismatch in VS6 retail compatible builds\n"));
+#endif
 
 			//Create scorch marks periodically
 			if( m_nextScorchMarkFrame <= now )
@@ -727,7 +757,7 @@ void ParticleUplinkCannonUpdate::createOuterNodeParticleSystems( IntensityTypes 
 		if( tmp )
 		{
 			ParticleSystem *system;
-			for( int i = 0; i < data->m_outerEffectNumBones; i++ )
+			for( UnsignedInt i = 0; i < data->m_outerEffectNumBones; i++ )
 			{
 				system = TheParticleSystemManager->createParticleSystem( tmp );
 				if( system )
@@ -772,7 +802,7 @@ void ParticleUplinkCannonUpdate::createConnectorLasers( IntensityTypes intensity
 		const ThingTemplate *thingTemplate = TheThingFactory->findTemplate( str );
 		if( thingTemplate )
 		{
-			for( int i = 0; i < data->m_outerEffectNumBones; i++ )
+			for( UnsignedInt i = 0; i < data->m_outerEffectNumBones; i++ )
 			{
 				Drawable *beam = TheThingFactory->newDrawable( thingTemplate );
 				if( beam )
@@ -870,7 +900,8 @@ void ParticleUplinkCannonUpdate::createGroundToOrbitLaser( UnsignedInt growthFra
 	if( beam )
 	{
 		TheGameClient->destroyDrawable( beam );
-		m_orbitToTargetBeamID = INVALID_DRAWABLE_ID;
+		// TheSuperHackers @fix helmutbuhler 19/04/2025 Invalidate the relevant drawable ID.
+		m_groundToOrbitBeamID = INVALID_DRAWABLE_ID;
 	}
 
 	if( data->m_particleBeamLaserName.isNotEmpty() )
@@ -902,11 +933,14 @@ void ParticleUplinkCannonUpdate::createOrbitToTargetLaser( UnsignedInt growthFra
 {
 	const ParticleUplinkCannonUpdateModuleData *data = getParticleUplinkCannonUpdateModuleData();
 
-	Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
-	if( beam )
+	if ( m_orbitToTargetBeamID != INVALID_DRAWABLE_ID )
 	{
-		TheAudio->removeAudioEvent( m_annihilationSound.getPlayingHandle() );
-		TheGameClient->destroyDrawable( beam );
+		Drawable *beam = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
+		if( beam )
+		{
+			TheAudio->removeAudioEvent( m_annihilationSound.getPlayingHandle() );
+			TheGameClient->destroyDrawable( beam );
+		}
 		m_orbitToTargetBeamID = INVALID_DRAWABLE_ID;
 	}
 
@@ -937,6 +971,9 @@ void ParticleUplinkCannonUpdate::createOrbitToTargetLaser( UnsignedInt growthFra
 			m_annihilationSound.setPlayingHandle( TheAudio->addAudioEvent( &m_annihilationSound ) );
 		}
 	}
+
+	m_orbitToTargetLaserRadius = LaserRadiusUpdate();
+	m_orbitToTargetLaserRadius.initRadius( growthFrames );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -948,7 +985,7 @@ void ParticleUplinkCannonUpdate::createGroundHitParticleSystem( IntensityTypes i
 void ParticleUplinkCannonUpdate::removeAllEffects()
 {
 	const ParticleUplinkCannonUpdateModuleData *data = getParticleUplinkCannonUpdateModuleData();
-	for( int i = 0; i < data->m_outerEffectNumBones; i++ )
+	for( UnsignedInt i = 0; i < data->m_outerEffectNumBones; i++ )
 	{
 		if( m_outerSystemIDs && m_outerSystemIDs[ i ] )
 		{
@@ -1001,7 +1038,7 @@ Bool ParticleUplinkCannonUpdate::calculateDefaultInformation()
 		return false;
 	}
 
-	for( int i = 0; i < data->m_outerEffectNumBones; i++ )
+	for( UnsignedInt i = 0; i < data->m_outerEffectNumBones; i++ )
 	{
 		m_laserBeamIDs[ i ] = INVALID_DRAWABLE_ID;
 		m_outerSystemIDs[ i ] = INVALID_PARTICLE_SYSTEM_ID;
@@ -1280,7 +1317,11 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 	const ParticleUplinkCannonUpdateModuleData *data = getParticleUplinkCannonUpdateModuleData();
 
 	// version
-	XferVersion currentVersion = 2;
+#if RETAIL_COMPATIBLE_XFER_SAVE
+	const XferVersion currentVersion = 2;
+#else
+	const XferVersion currentVersion = 4;
+#endif
 	XferVersion version = currentVersion;
 	xfer->xferVersion( &version, currentVersion );
 
@@ -1381,6 +1422,11 @@ void ParticleUplinkCannonUpdate::xfer( Xfer *xfer )
 	// the time of the 2nd last manual target click
 	xfer->xferUnsignedInt( &m_2ndLastDrivingClickFrame );
 
+	if( version >= 4 )
+	{
+		m_orbitToTargetLaserRadius.xfer( xfer );
+	}
+
 }  // end xfer
 
 // ------------------------------------------------------------------------------------------------
@@ -1391,5 +1437,28 @@ void ParticleUplinkCannonUpdate::loadPostProcess( void )
 
 	// extend base class
 	UpdateModule::loadPostProcess();
+
+#if RETAIL_COMPATIBLE_XFER_SAVE
+	// TheSuperHackers @info xezon 17/05/2025
+	// For retail game compatibility, this transfers the loaded visual laser radius
+	// settings from the Drawable's LaserUpdate to the local LaserRadiusUpdate.
+	if( m_orbitToTargetBeamID != INVALID_DRAWABLE_ID )
+	{
+		Drawable* drawable = TheGameClient->findDrawableByID( m_orbitToTargetBeamID );
+		if( drawable != NULL )
+		{
+			static NameKeyType nameKeyClientUpdate = NAMEKEY( "LaserUpdate" );
+			LaserUpdate *update = (LaserUpdate*)drawable->findClientUpdateModule( nameKeyClientUpdate );
+			if( update != NULL )
+			{
+				m_orbitToTargetLaserRadius = update->getLaserRadiusUpdate();
+			}
+		}
+		else
+		{
+			DEBUG_CRASH(( "ParticleUplinkCannonUpdate::loadPostProcess - Unable to find drawable for m_orbitToTargetBeamID\n" ));
+		}
+	}
+#endif
 
 }  // end loadPostProcess

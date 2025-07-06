@@ -56,16 +56,13 @@
 #include "GameLogic/Module/ProductionUpdate.h"
 #include "GameClient/TerrainVisual.h"	
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
 
 #define USE_DOZER 1	 
-
-
-#if !defined(_PLAYTEST)
 
 
 
@@ -151,8 +148,10 @@ void AISkirmishPlayer::processBaseBuilding( void )
 				}	else {
 					if (bldg->getControllingPlayer() == m_player) {
 						// Check for built or dozer missing.
-						if( BitTest( bldg->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE) {
-							if (bldg->isKindOf(KINDOF_FS_POWER) && !bldg->isKindOf(KINDOF_CASH_GENERATOR)) {
+						if( bldg->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ) 
+						{
+							if (bldg->isKindOf(KINDOF_FS_POWER) && !bldg->isKindOf(KINDOF_CASH_GENERATOR)) 
+							{
 								powerUnderConstruction = true;
 							}
 							// make sure dozer is working on him.
@@ -673,12 +672,15 @@ void AISkirmishPlayer::buildAIBaseDefenseStructure(const AsciiString &thingName,
 		Real s = sin(angle);
 		Real c = cos(angle);
 
-	  DEBUG_LOG(("Angle is %f sin %f, cos %f \n", 180*angle/PI, s, c));
+// TheSuperHackers @info helmutbuhler 21/04/2025 This debug mutates the code to become CRC incompatible
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) || !RETAIL_COMPATIBLE_CRC
+		DEBUG_LOG(("Angle is %f sin %f, cos %f \n", 180*angle/PI, s, c));
 		DEBUG_LOG(("Offset is %f  %f, new is %f, %f \n", 
 			offset.x, offset.y, 
 			offset.x*c - offset.y*s,
 			offset.y*c + offset.x*s
-			));	
+			));
+#endif
 		Coord3D buildPos = m_baseCenter;
 		buildPos.x += offset.x*c - offset.y*s;
 		buildPos.y += offset.y*c + offset.x*s;
@@ -832,7 +834,7 @@ void AISkirmishPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recr
 		}	else {
 			//disband.
 			if (!theTeam->getPrototype()->getIsSingleton()) {
-				theTeam->deleteInstance();
+				deleteInstance(theTeam);
 				theTeam = NULL;
 			}
 			AsciiString teamName = teamProto->getName();
@@ -1226,4 +1228,3 @@ void AISkirmishPlayer::loadPostProcess( void )
 
 }  // end loadPostProcess
 
-#endif

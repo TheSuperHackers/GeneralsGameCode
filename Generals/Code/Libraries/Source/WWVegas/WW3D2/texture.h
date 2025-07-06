@@ -48,9 +48,12 @@
 #include "surfaceclass.h"
 #include "ww3dformat.h"
 #include "wwstring.h"
+#include "texturefilter.h"
+
+struct IDirect3DBaseTexture8;
+struct IDirect3DTexture8;
 
 class DX8Wrapper;
-struct IDirect3DTexture8;
 class TextureLoader;
 class LoaderThreadClass;
 class DX8TextureManagerClass;
@@ -68,6 +71,8 @@ class TextureClass : public W3DMPO, public RefCountClass
 {
 	W3DMPO_GLUE(TextureClass)
 
+	friend class DX8TextureTrackerClass;  //(gth) so it can call Poke_Texture, 
+
 	friend DX8Wrapper;
 	friend TextureLoader;
 	friend LoaderThreadClass;
@@ -81,33 +86,9 @@ class TextureClass : public W3DMPO, public RefCountClass
 			POOL_SYSTEMMEM
 		};
 
-		enum FilterType {
-			FILTER_TYPE_NONE,
-			FILTER_TYPE_FAST,
-			FILTER_TYPE_BEST,
-			FILTER_TYPE_DEFAULT,
-			FILTER_TYPE_COUNT
-		};
-
-		enum TxtAddrMode {
-			TEXTURE_ADDRESS_REPEAT=0,
-			TEXTURE_ADDRESS_CLAMP
-		};
-
-		enum MipCountType {
-			MIP_LEVELS_ALL=0,		// generate all mipmap levels down to 1x1 size
-			MIP_LEVELS_1,			// no mipmapping at all (just one mip level)
-			MIP_LEVELS_2,
-			MIP_LEVELS_3,
-			MIP_LEVELS_4,
-			MIP_LEVELS_5,
-			MIP_LEVELS_6,
-			MIP_LEVELS_7,
-			MIP_LEVELS_8,
-			MIP_LEVELS_10,
-			MIP_LEVELS_11,
-			MIP_LEVELS_12,
-			MIP_LEVELS_MAX			// This isn't to be used (use MIP_LEVELS_ALL instead), it is just an enum for creating static tables etc.
+		enum TexAssetType
+		{
+			TEX_REGULAR,
 		};
 
 		// Create texture with desired height, width and format.
@@ -136,21 +117,35 @@ class TextureClass : public W3DMPO, public RefCountClass
 
 		TextureClass(IDirect3DTexture8* d3d_texture);
 
+		virtual TexAssetType Get_Asset_Type() const { return TEX_REGULAR; }
+
 		virtual ~TextureClass(void);
 
 		// Names
 		void	Set_Texture_Name(const char * name);
 		void	Set_Full_Path(const char * path)			{ FullPath = path; }
-		const char * Get_Texture_Name(void) const		{ return Name; }
-		const char * Get_Full_Path(void) const			{ if (FullPath.Is_Empty ()) return Name; return FullPath; }
+		const StringClass& Get_Texture_Name(void) const		{ return Name; }
+		const StringClass& Get_Full_Path(void) const			{ if (FullPath.Is_Empty ()) return Name; return FullPath; }
 
 		unsigned Get_ID() const { return texture_id; }	// Each textrure has a unique id
 
 		// The number of Mip levels in the texture
 		unsigned int Get_Mip_Level_Count(void);
+	
+		// Note! Width and Height may be zero and may change if texture uses mipmaps
+		int Get_Width() const
+		{
+			return Width;
+		}
+		int Get_Height() const
+		{
+			return Height; 
+		}
 
 		// Get surface description of a Mip level (defaults to the highest-resolution one)
 		void Get_Level_Description(SurfaceClass::SurfaceDescription &surface_desc, unsigned int level = 0);
+
+		TextureFilterClass& Get_Filter() { return Filter; }
 
 		// Get the surface of one of the mipmap levels (defaults to highest-resolution one)
 		SurfaceClass *Get_Surface_Level(unsigned int level = 0);
@@ -158,20 +153,6 @@ class TextureClass : public W3DMPO, public RefCountClass
 		// Texture priority affects texture management and caching.
 		unsigned int Get_Priority(void);
 		unsigned int Set_Priority(unsigned int priority);	// Returns previous priority
-
-		// Filter and MIPmap settings:
-		FilterType Get_Min_Filter(void) const { return TextureMinFilter; }
-		FilterType Get_Mag_Filter(void) const { return TextureMagFilter; }
-		FilterType Get_Mip_Mapping(void) const { return MipMapFilter; }
-		void Set_Min_Filter(FilterType filter) { TextureMinFilter=filter; }
-		void Set_Mag_Filter(FilterType filter) { TextureMagFilter=filter; }
-		void Set_Mip_Mapping(FilterType mipmap);
-
-		// Texture address mode
-		TxtAddrMode Get_U_Addr_Mode(void) const { return UAddressMode; }
-		TxtAddrMode Get_V_Addr_Mode(void) const { return VAddressMode; }
-		void Set_U_Addr_Mode(TxtAddrMode mode) { UAddressMode=mode; }
-		void Set_V_Addr_Mode(TxtAddrMode mode) { VAddressMode=mode; }
 
 		// Debug utility functions for returning the texture memory usage
 		unsigned Get_Texture_Memory_Usage() const;
@@ -188,25 +169,26 @@ class TextureClass : public W3DMPO, public RefCountClass
 		static int _Get_Total_Lightmap_Texture_Count();
 		static int _Get_Total_Procedural_Texture_Count();
 
-		// This needs to be called after device has been created
-		static void _Init_Filters();
-
-		static void _Set_Default_Min_Filter(FilterType filter);
-		static void _Set_Default_Mag_Filter(FilterType filter);
-		static void _Set_Default_Mip_Filter(FilterType filter);
+		static void _Set_Default_Min_Filter(TextureFilterClass::FilterType filter);
+		static void _Set_Default_Mag_Filter(TextureFilterClass::FilterType filter);
+		static void _Set_Default_Mip_Filter(TextureFilterClass::FilterType filter);
 
 		// This utility function processes the texture reduction (used during rendering)
 		void Invalidate();
 
-		IDirect3DTexture8 *Peek_DX8_Texture()
-		{
-			return D3DTexture;
-		}
+		IDirect3DTexture8 *Peek_D3D_Texture() const { return (IDirect3DTexture8 *)Peek_D3D_Base_Texture(); }
+
+		// texture accessors (dx8)
+		IDirect3DBaseTexture8 *Peek_D3D_Base_Texture() const;
+		void Set_D3D_Base_Texture(IDirect3DBaseTexture8* tex);
+
+		PoolType Get_Pool() const { return Pool; }
 
 		bool Is_Missing_Texture();
 
 		// Support for self managed textures
 		bool Is_Dirty() { WWASSERT(Pool==POOL_DEFAULT); return Dirty; };
+		void Set_Dirty() { WWASSERT(Pool==POOL_DEFAULT); Dirty=true; }
 		void Clean() { Dirty=false; };
 
 		unsigned Get_Reduction() const;
@@ -214,6 +196,8 @@ class TextureClass : public W3DMPO, public RefCountClass
 		bool Is_Compression_Allowed() const { return IsCompressionAllowed; }
 
 	protected:
+		void Poke_Texture(IDirect3DBaseTexture8* tex) { D3DTexture = tex; }
+
 		// Apply this texture's settings into D3D
 		virtual void Apply(unsigned int stage);
 		void Load_Locked_Surface();
@@ -224,14 +208,10 @@ class TextureClass : public W3DMPO, public RefCountClass
 		static void Apply_Null(unsigned int stage);
 
 		// State not contained in the Direct3D texture object:
-		FilterType TextureMinFilter;
-		FilterType TextureMagFilter;
-		FilterType MipMapFilter;
-		TxtAddrMode UAddressMode;
-		TxtAddrMode VAddressMode;
+		TextureFilterClass Filter;
 
 		// Direct3D texture object
-		IDirect3DTexture8 *D3DTexture;
+		IDirect3DBaseTexture8 *D3DTexture;
 		bool Initialized;
 
 		// Name
@@ -252,8 +232,11 @@ class TextureClass : public W3DMPO, public RefCountClass
 		bool IsProcedural;
 		bool IsCompressionAllowed;
 
-		unsigned LastAccessed;
+		mutable unsigned LastAccessed;
 		WW3DFormat TextureFormat;
+
+		int Width;
+		int Height;
 
 		// Support for self-managed textures
 
@@ -278,5 +261,8 @@ public:
 // Utility functions for loading and saving texture descriptions from/to W3D files
 TextureClass *Load_Texture(ChunkLoadClass & cload);
 void Save_Texture(TextureClass * texture, ChunkSaveClass & csave);
+
+// TheSuperHackers @todo TextureBaseClass abstraction
+typedef TextureClass TextureBaseClass;
 
 #endif //TEXTURE_H

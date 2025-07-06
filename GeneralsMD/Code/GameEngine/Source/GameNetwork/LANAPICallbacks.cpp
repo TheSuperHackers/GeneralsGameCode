@@ -45,12 +45,12 @@
 #include "GameLogic/GameLogic.h"
 #include "GameNetwork/FileTransfer.h"
 #include "GameNetwork/LANAPICallbacks.h"
-#include "GameNetwork/NetworkUtil.h"
+#include "GameNetwork/networkutil.h"
 
 LANAPI *TheLAN = NULL;
 extern Bool LANbuttonPushed;
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -104,8 +104,8 @@ void LANAPI::OnAccept( UnsignedInt playerIP, Bool status )
 { 
 	if( AmIHost() )
 	{
-		
-		for (Int i = 0; i < MAX_SLOTS; i++)
+		Int i = 0;
+		for (; i < MAX_SLOTS; i++)
 		{
 			if (m_currentGame->getIP(i) == playerIP)
 			{
@@ -138,8 +138,8 @@ void LANAPI::OnHasMap( UnsignedInt playerIP, Bool status )
 { 
 	if( AmIHost() )
 	{
-		
-		for (Int i = 0; i < MAX_SLOTS; i++)
+		Int i = 0;
+		for (; i < MAX_SLOTS; i++)
 		{
 			if (m_currentGame->getIP(i) == playerIP)
 			{

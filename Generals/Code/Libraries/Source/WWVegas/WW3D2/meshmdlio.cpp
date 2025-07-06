@@ -98,7 +98,6 @@
 
 #define MESH_SINGLE_MATERIAL_HACK		0		// (gth) forces all multi-material meshes to use their first material only. (NOT RECOMMENDED, TESTING ONLY!)
 #define MESH_FORCE_STATIC_SORT_HACK	0		// (gth) forces all sorting meshes to use static sort level 1 instead.
-
 /**
 ** MeshLoadContextClass
 ** This class is just used as a temporary scratchpad while a mesh is being
@@ -162,11 +161,11 @@ private:
 
 	struct LegacyMaterialClass
 	{
-		LegacyMaterialClass(void) : Name(NULL),VertexMaterialIdx(0),ShaderIdx(0),TextureIdx(0)	{ }
-		~LegacyMaterialClass(void)	{ if (Name) free(Name); }		
-		void		Set_Name(const char * name) { if (Name) free(Name); Name = NULL; if (name) Name = strdup(name); }
+		LegacyMaterialClass(void) : VertexMaterialIdx(0),ShaderIdx(0),TextureIdx(0)	{ }
+		~LegacyMaterialClass(void)	{ }		
+		void		Set_Name(const char * name) { Name=name; }
 		
-		char *	Name;
+		StringClass Name;
 		int		VertexMaterialIdx;
 		int		ShaderIdx;
 		int		TextureIdx;
@@ -345,7 +344,7 @@ WW3DErrorType MeshModelClass::Load_W3D(ChunkLoadClass & cload)
 					Set_Flag (PRELIT_LIGHTMAP_MULTI_TEXTURE, true);
 					break;
 				}
-				// Else fall thru...
+				FALLTHROUGH; // Else fall thru...
 
 			case WW3D::PRELIT_MODE_LIGHTMAP_MULTI_PASS:
 				if (context->Header.Attributes & W3D_MESH_FLAG_PRELIT_LIGHTMAP_MULTI_PASS) {
@@ -353,7 +352,7 @@ WW3DErrorType MeshModelClass::Load_W3D(ChunkLoadClass & cload)
 					Set_Flag (PRELIT_LIGHTMAP_MULTI_PASS, true);
 					break;
 				}
-				// Else fall thru...
+				FALLTHROUGH; // Else fall thru...
 
 			case WW3D::PRELIT_MODE_VERTEX:
 				if (context->Header.Attributes & W3D_MESH_FLAG_PRELIT_VERTEX) {
@@ -361,7 +360,7 @@ WW3DErrorType MeshModelClass::Load_W3D(ChunkLoadClass & cload)
 					Set_Flag (PRELIT_VERTEX, true);
 					break;
 				}
-				// Else fall thru...
+				FALLTHROUGH; // Else fall thru...
 
 			default:
 
@@ -672,15 +671,6 @@ WW3DErrorType MeshModelClass::read_v3_materials(ChunkLoadClass & cload,MeshLoadC
 			vmat->Set_Name(name);
 			shader.Init_From_Material3(mat);
 
-#if 0 // TODO... ummmm...
-			if (MeshClass::Legacy_Meshes_Fogged) {
-				shader.Set_Fog_Func( ShaderClass::FOG_ENABLE );
-			} else {
-				shader.Set_Fog_Func( ShaderClass::FOG_DISABLE );
-			}
-#endif
-
-
 			/*
 			** If this shader does alpha blending, the mesh must be sorted.
 			*/
@@ -826,7 +816,7 @@ WW3DErrorType MeshModelClass::read_per_tri_materials(ChunkLoadClass & cload,Mesh
 {
 	if (context->Header.NumMaterials == 1) return WW3D_ERROR_OK;
 
-	Vector3i * polys = get_polys();
+	TriIndex * polys = get_polys();
 
 	bool multi_mtl = (context->Vertex_Material_Count() > 1);
 	bool multi_tex = (context->Texture_Count() > 1);
@@ -1114,7 +1104,6 @@ WW3DErrorType MeshModelClass::read_vertex_material_ids(ChunkLoadClass & cload,Me
 	** with the length equal to the vertex count.
 	*/
 	uint32 vmat;
-
 #if (!MESH_SINGLE_MATERIAL_HACK)
 	if (cload.Cur_Chunk_Length() == 1*sizeof(uint32)) {
 		
@@ -1128,13 +1117,10 @@ WW3DErrorType MeshModelClass::read_vertex_material_ids(ChunkLoadClass & cload,Me
 			matdesc->Set_Material(i,context->Peek_Vertex_Material(vmat),context->CurPass);
 		}
 	}
-
 #else
-
 #pragma message ("(gth) Hacking to make Generals behave as if all meshes have 1 material")
 		cload.Read(&vmat,sizeof(uint32));
 		matdesc->Set_Single_Material(context->Peek_Vertex_Material(vmat),context->CurPass);
-
 #endif //0
 
 	return WW3D_ERROR_OK;
@@ -1168,7 +1154,6 @@ WW3DErrorType MeshModelClass::read_shader_ids(ChunkLoadClass & cload,MeshLoadCon
 	** Read in the shader id's and plug in the appropriate shader
 	*/
 	uint32 shaderid;
-
 #if (!MESH_SINGLE_MATERIAL_HACK)
 	if (cload.Cur_Chunk_Length() == 1*sizeof(uint32)) {
 		
@@ -1231,7 +1216,6 @@ WW3DErrorType MeshModelClass::read_shader_ids(ChunkLoadClass & cload,MeshLoadCon
 		}
 
 #endif //0
-
 	return WW3D_ERROR_OK;
 }
 
@@ -2060,7 +2044,8 @@ void MeshLoadContextClass::Add_Legacy_Material(ShaderClass shader,VertexMaterial
 	LegacyMaterialClass * mat = W3DNEW LegacyMaterialClass;
 
 	// add the shader if it is unique
-	for (int si=0; si<Shaders.Count(); si++) {
+	int si=0;
+	for (; si<Shaders.Count(); si++) {
 		if (Shaders[si] == shader) break;
 	}
 	if (si == Shaders.Count()) {
@@ -2074,7 +2059,8 @@ void MeshLoadContextClass::Add_Legacy_Material(ShaderClass shader,VertexMaterial
 		mat->VertexMaterialIdx = -1;
 	} else {
 		unsigned long crc = vmat->Get_CRC();	
-		for (int vi=0; vi<VertexMaterialCrcs.Count(); vi++) {
+		int vi=0;
+		for (; vi<VertexMaterialCrcs.Count(); vi++) {
 			if (VertexMaterialCrcs[vi] == crc) break;
 		}
 		if (vi == VertexMaterials.Count()) {
@@ -2090,7 +2076,8 @@ void MeshLoadContextClass::Add_Legacy_Material(ShaderClass shader,VertexMaterial
 	if (tex == NULL) {
 		mat->TextureIdx = -1;
 	} else {
-		for (int ti=0; ti<Textures.Count(); ti++) {
+		int ti=0;
+		for (; ti<Textures.Count(); ti++) {
 			if (Textures[ti] == tex) break;
 			if (stricmp(Textures[ti]->Get_Texture_Name(),tex->Get_Texture_Name()) == 0) break;
 		}
@@ -2350,7 +2337,7 @@ WW3DErrorType MeshModelClass::write_triangles(ChunkSaveClass & csave,MeshSaveCon
 		return WW3D_ERROR_LOAD_FAILED;
 	}
 
-	Vector3i	* poly_verts = Poly->Get_Array();
+	TriIndex	* poly_verts = Poly->Get_Array();
 	Vector4 * poly_eq = (PlaneEq ? PlaneEq->Get_Array() : NULL);
 
 	for (int i=0; i<Get_Polygon_Count(); i++) {

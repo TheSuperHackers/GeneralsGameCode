@@ -38,6 +38,7 @@
 #include "Common/ThingFactory.h"
 #include "Common/Team.h"
 #include "Common/Player.h"
+#include "Common/ObjectStatusTypes.h"
 
 #include "GameClient/ControlBar.h"
 #include "GameClient/Drawable.h"
@@ -60,7 +61,7 @@
 #include "GameLogic/Scripts.h"
 #include "GameLogic/VictoryConditions.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -79,7 +80,7 @@ public:
 	~ObjectTypesTemp()
 	{
 		if (m_types)
-			m_types->deleteInstance();
+			deleteInstance(m_types);
 	}
 };
 
@@ -90,7 +91,7 @@ namespace rts
 		T sum(std::vector<T>& vecOfValues )
 	{
 		T retVal = 0;
-		std::vector<T>::iterator it;
+		typename std::vector<T>::iterator it;
 		for (it = vecOfValues.begin(); it != vecOfValues.end(); ++it) {
 			retVal += (*it);
 		}
@@ -119,7 +120,7 @@ public:
 TransportStatus::~TransportStatus() 
 { 
 	if (m_nextStatus) 
-		m_nextStatus->deleteInstance(); 
+		deleteInstance(m_nextStatus); 
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -155,7 +156,7 @@ void ScriptConditions::init( void )
 void ScriptConditions::reset( void )
 {
 
-	s_transportStatuses->deleteInstance();
+	deleteInstance(s_transportStatuses);
 	s_transportStatuses = NULL;
 	// Empty for now.  jba.
 }  // end reset
@@ -719,7 +720,7 @@ Bool ScriptConditions::evaluateTeamAttackedByType(Parameter *pTeamParm, Paramete
 {
 	Team *theTeam = TheScriptEngine->getTeamNamed(pTeamParm->getString());
 	if (!theTeam) {
-		return false;
+		return FALSE;
 	}
 
 	ObjectTypesTemp types;
@@ -1033,6 +1034,10 @@ Bool ScriptConditions::evaluateEnemySighted(Parameter *pItemParm, Parameter *pAl
 		case Parameter::REL_ENEMY:
 			relationDescriber = PartitionFilterRelationship::ALLOW_ENEMIES;
 			break;
+		default:
+			DEBUG_CRASH(("Unhandled case in ScriptConditions::evaluateEnemySighted()\n"));
+			relationDescriber = 0;
+			break;
 	}
 	PartitionFilterRelationship	filterTeam(theObj, relationDescriber);
 
@@ -1040,7 +1045,8 @@ Bool ScriptConditions::evaluateEnemySighted(Parameter *pItemParm, Parameter *pAl
 	PartitionFilterAlive filterAlive;
 
 	// and only nonstealthed items.
-	PartitionFilterRejectByObjectStatus filterStealth(OBJECT_STATUS_STEALTHED, OBJECT_STATUS_DETECTED);
+	PartitionFilterRejectByObjectStatus filterStealth( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_STEALTHED ), 
+																										 MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DETECTED ) );
 	
 	// and only on-map (or not)
 	PartitionFilterSameMapStatus filterMapStatus(theObj);
@@ -1084,7 +1090,8 @@ Bool ScriptConditions::evaluateTypeSighted(Parameter *pItemParm, Parameter *pTyp
 	PartitionFilterAlive filterAlive;
 
 	// and only nonstealthed items.
-	PartitionFilterRejectByObjectStatus filterStealth(OBJECT_STATUS_STEALTHED, OBJECT_STATUS_DETECTED);
+	PartitionFilterRejectByObjectStatus filterStealth( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_STEALTHED ), 
+																										 MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DETECTED ) );
 
 	// and only on-map (or not)
 	PartitionFilterSameMapStatus filterMapStatus(theObj);
@@ -1128,8 +1135,9 @@ Bool ScriptConditions::evaluateNamedDiscovered(Parameter *pItemParm, Parameter* 
 	}
 
 	// If we are stealthed we are not visible.
-	if (BitTest( theObj->getStatusBits(), OBJECT_STATUS_STEALTHED) && 
-		!BitTest( theObj->getStatusBits(), OBJECT_STATUS_DETECTED)) {
+	if( theObj->getStatusBits().test( OBJECT_STATUS_STEALTHED ) && 
+			!theObj->getStatusBits().test( OBJECT_STATUS_DETECTED ) ) 
+	{
 		return false;
 	}
 	ObjectShroudStatus shroud = theObj->getShroudedStatus(pPlayer->getPlayerIndex());
@@ -1164,8 +1172,9 @@ Bool ScriptConditions::evaluateTeamDiscovered(Parameter *pTeamParm, Parameter *p
 		}
 		
 		// If we are stealthed we are not visible.
-		if (BitTest( pObj->getStatusBits(), OBJECT_STATUS_STEALTHED) && 
-			!BitTest( pObj->getStatusBits(), OBJECT_STATUS_DETECTED)) {
+		if( pObj->getStatusBits().test( OBJECT_STATUS_STEALTHED ) && 
+				!pObj->getStatusBits().test( OBJECT_STATUS_DETECTED ) )
+		{
 			continue;
 		}
 		ObjectShroudStatus shroud = pObj->getShroudedStatus(pPlayer->getPlayerIndex());
@@ -1826,7 +1835,7 @@ Bool ScriptConditions::evaluateSkirmishSpecialPowerIsReady(Parameter *pSkirmishP
 			for (DLINK_ITERATOR<Object> iter = team->iterate_TeamMemberList(); !iter.done(); iter.advance()) {
 				Object *pObj = iter.cur();
 				if (!pObj) continue;
-				if ( BitTest( pObj->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) || pObj->isDisabled() )
+				if( pObj->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) || pObj->isDisabled() )
 				{
 					continue; // can't fire if under construction or disabled.
 				}
@@ -1969,7 +1978,7 @@ Bool ScriptConditions::evaluateUnitHasObjectStatus(Parameter *pUnitParm, Paramet
 		return false;
 	}
 
-	return ((object->getStatusBits() & pObjectStatus->getInt()) != 0);
+	return( object->getStatusBits().testForAny( pObjectStatus->getStatus() ) );
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1986,13 +1995,18 @@ Bool ScriptConditions::evaluateTeamHasObjectStatus(Parameter *pTeamParm, Paramet
 			return false;
 		}
 
-		Bool currObj = pObj->getStatusBits() & pObjectStatus->getInt();
+		ObjectStatusMaskType objStatus = pObjectStatus->getStatus();
+		Bool currObjHasStatus = pObj->getStatusBits().testForAny( objStatus );
 
-		if (entireTeam && !currObj) {
+		if( entireTeam && !currObjHasStatus ) 
+		{
 			return false;
-		} else if (!entireTeam && currObj) {
+		} 
+		else if( !entireTeam && currObjHasStatus )
+		{
 			return true;
 		}
+
 	}
 
 	if (entireTeam) {

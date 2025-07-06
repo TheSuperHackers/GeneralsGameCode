@@ -108,6 +108,13 @@ Int TunnelTracker::getContainMax() const
 }
 
 // ------------------------------------------------------------------------
+void TunnelTracker::swapContainedItemsList(ContainedItemsList& newList)
+{
+	m_containList.swap(newList);
+	m_containListSize = (Int)m_containList.size();
+}
+
+// ------------------------------------------------------------------------
 void TunnelTracker::updateNemesis(const Object *target)
 {
 	if (getCurNemesis()==NULL) {
@@ -136,8 +143,9 @@ Object *TunnelTracker::getCurNemesis(void)
 	Object *target = TheGameLogic->findObjectByID(m_curNemesisID);
 	if (target) {
 		//If the enemy unit is stealthed and not detected, then we can't attack it!
-		UnsignedInt status = target->getStatusBits();
-		if( (status & OBJECT_STATUS_STEALTHED) && !(status & OBJECT_STATUS_DETECTED) ) {
+	if( target->testStatus( OBJECT_STATUS_STEALTHED ) && 
+			!target->testStatus( OBJECT_STATUS_DETECTED ) )
+		{
 			target = NULL;
 		}
 	}

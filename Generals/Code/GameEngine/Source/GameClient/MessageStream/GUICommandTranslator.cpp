@@ -47,14 +47,14 @@
 #include "GameClient/GUICommandTranslator.h"
 #include "GameClient/CommandXlat.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
 
 // PRIVATE ////////////////////////////////////////////////////////////////////////////////////////
-static enum CommandStatus
+enum CommandStatus
 {
 	COMMAND_INCOMPLETE = 0,
 	COMMAND_COMPLETE
@@ -141,7 +141,7 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 
 	// create message and send to the logic
 	GameMessage *msg;
-	if( BitTest( command->getOptions(), NEED_TARGET_POS ) )
+	if( BitIsSet( command->getOptions(), NEED_TARGET_POS ) )
 	{
 		Coord3D world;
 
@@ -161,16 +161,16 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 
 
 	}  // end if
-	else if( BitTest( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
+	else if( BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
 	{
 
 		// setup the pick type ... some commands allow us to target shrubbery
 		PickType pickType = PICK_TYPE_SELECTABLE;
 
-		if( BitTest( command->getOptions(), ALLOW_SHRUBBERY_TARGET ) == TRUE )
+		if( BitIsSet( command->getOptions(), ALLOW_SHRUBBERY_TARGET ) == TRUE )
 			pickType = (PickType)((Int)pickType | (Int)PICK_TYPE_SHRUBBERY);
 
-		if( BitTest( command->getOptions(), ALLOW_MINE_TARGET ) == TRUE )
+		if( BitIsSet( command->getOptions(), ALLOW_MINE_TARGET ) == TRUE )
 			pickType = (PickType)((Int)pickType | (Int)PICK_TYPE_MINES);
 
 		// get the target object under the cursor
@@ -219,7 +219,7 @@ static CommandStatus doGuardCommand( const CommandButton *command, GuardMode gua
 
 	GameMessage *msg = NULL;
 
-	if ( msg == NULL && BitTest( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
+	if ( msg == NULL && BitIsSet( command->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
 	{
 		// get the target object under the cursor
 		Object* target = validUnderCursor( mouse, command, PICK_TYPE_SELECTABLE );
@@ -235,7 +235,7 @@ static CommandStatus doGuardCommand( const CommandButton *command, GuardMode gua
 	if(  msg == NULL )
 	{
 		Coord3D world;
-		if (BitTest( command->getOptions(), NEED_TARGET_POS ))
+		if (BitIsSet( command->getOptions(), NEED_TARGET_POS ))
 		{
 			// translate the mouse location into world coords
 			TheTacticalView->screenToTerrain( mouse, &world );
@@ -416,7 +416,7 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 					//---------------------------------------------------------------------------------------
 					case GUI_COMMAND_EVACUATE:
 					{
-						if (BitTest(command->getOptions(), NEED_TARGET_POS)) {
+						if (BitIsSet(command->getOptions(), NEED_TARGET_POS)) {
 							Coord3D worldPos;
 
 							TheTacticalView->screenToTerrain(&mouse, &worldPos);
@@ -492,7 +492,10 @@ GameMessageDisposition GUICommandTranslator::translateGameMessage(const GameMess
 
 				// get out of GUI command mode if we completed the command one way or another
 				if( commandStatus == COMMAND_COMPLETE )
+				{
+					TheInGameUI->setPreventLeftClickDeselectionInAlternateMouseModeForOneClick( TRUE );
 					TheInGameUI->setGUICommand( NULL );
+				}
 			}  // end if
 
 			break;

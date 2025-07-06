@@ -54,7 +54,7 @@
 #include "GameClient/InGameUI.h"
 #include "GameClient/View.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
@@ -94,7 +94,10 @@ inline Real calcDistSqr(const Coord3D& a, const Coord3D& b)
 Int GarrisonContain::findClosestFreeGarrisonPointIndex( Int conditionIndex, 
 																												const Coord3D *targetPos )
 {
+// TheSuperHackers @info helmutbuhler 05/05/2025 This debug mutates the code to become CRC incompatible
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) || !RETAIL_COMPATIBLE_CRC
 	DEBUG_ASSERTCRASH(m_garrisonPointsInitialized, ("garrisonPoints are not inited"));
+#endif
 
 	// sanity
 	if( targetPos == NULL || m_garrisonPointsInUse == MAX_GARRISON_POINTS )
@@ -283,7 +286,7 @@ Bool GarrisonContain::calcBestGarrisonPosition( Coord3D *sourcePos, const Coord3
 	if( !sourcePos || !targetPos )
 		return FALSE;
 
-#if defined __DEBUG || defined _INTERNAL
+#ifdef DEBUG_CRASHING
   const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
   DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("calcBestGarrisonPosition... SHOULD NOT GET HERE, since this container is non-enclosing") );
 #endif
@@ -317,7 +320,7 @@ Bool GarrisonContain::attemptBestFirePointPosition( Object *source, Weapon *weap
 		return FALSE;
 	}
 
-#if defined __DEBUG || defined _INTERNAL
+#ifdef DEBUG_CRASHING
   const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
   DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("calcBestGarrisonPosition... SHOULD NOT GET HERE, since this container is non-enclosing") );
 #endif
@@ -357,7 +360,7 @@ Bool GarrisonContain::attemptBestFirePointPosition( Object *source, Weapon *weap
 	{
 		return FALSE;
 	}
-#if defined __DEBUG || defined _INTERNAL
+#ifdef DEBUG_CRASHING
   const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
   DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("calcBestGarrisonPosition... SHOULD NOT GET HERE, since this container is non-enclosing") );
 #endif
@@ -398,7 +401,7 @@ void GarrisonContain::putObjectAtBestGarrisonPoint( Object *obj, Object *target,
 	if( obj == NULL || (target == NULL && targetPos == NULL) )
 		return;
 
-#if defined __DEBUG || defined _INTERNAL
+#ifdef DEBUG_CRASHING
   const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
   DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("calcBestGarrisonPosition... SHOULD NOT GET HERE, since this container is non-enclosing") );
 #endif
@@ -433,7 +436,7 @@ void GarrisonContain::removeObjectFromGarrisonPoint( Object *obj, Int index )
   if ( ! isEnclosingContainerFor(obj) )
     return;// since I am not enclosed, I am not at a garrison point!
 
-#if defined __DEBUG || defined _INTERNAL
+#ifdef DEBUG_CRASHING
   const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
   DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("calcBestGarrisonPosition... SHOULD NOT GET HERE, since this container is non-enclosing") );
 #endif
@@ -587,7 +590,7 @@ Bool GarrisonContain::isValidContainerFor(const Object* obj, Bool checkCapacity)
 // ------------------------------------------------------------------------------------------------
 void GarrisonContain::removeInvalidObjectsFromGarrisonPoints( void )
 {
-#if defined __DEBUG || defined _INTERNAL
+#ifdef DEBUG_CRASHING
   const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
   DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("removeinvalidobjFromGarrisonPoint... SHOULD NOT GET HERE, since this container is non-enclosing") );
 #endif
@@ -638,7 +641,7 @@ void GarrisonContain::addValidObjectsToGarrisonPoints( void )
 {
 
 
-#if defined __DEBUG || defined _INTERNAL
+#ifdef DEBUG_CRASHING
   const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
   DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("addvalidobjtoGarrisonPoint... SHOULD NOT GET HERE, since this container is non-enclosing") );
 #endif
@@ -833,7 +836,7 @@ void GarrisonContain::updateEffects( void )
 {
 
 
-#if defined __DEBUG || defined _INTERNAL
+#ifdef DEBUG_CRASHING
   const GarrisonContainModuleData *modData = getGarrisonContainModuleData();
   DEBUG_ASSERTCRASH(modData->m_isEnclosingContainer, ("updateeffects... SHOULD NOT GET HERE, since this container is non-enclosing") );
 #endif
@@ -2013,7 +2016,8 @@ void GarrisonContain::loadStationGarrisonPoints( void )
 
 
     Coord3D tempBuffer[MAX_GARRISON_POINTS];
-  	for( int t = 0; t < MAX_GARRISON_POINTS; ++t )
+		int t = 0;
+		for( ; t < MAX_GARRISON_POINTS; ++t )
 		  tempBuffer[ t ] = *(structure->getPosition());
 
 		count = structure->getMultiLogicalBonePosition("STATION", modData->m_containMax, tempBuffer, NULL);

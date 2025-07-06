@@ -42,7 +42,7 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////////////////////////
 #include "Common/STLTypedefs.h"
 #include "GameClient/View.h"
-#include "WW3D2/Camera.h"
+#include "WW3D2/camera.h"
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Drawable;
@@ -186,7 +186,7 @@ public:
 
 	virtual void setFieldOfView( Real angle );							///< Set the horizontal field of view angle
 
-	virtual Bool worldToScreen( const Coord3D *w, ICoord2D *s );	///< Transform world coordinate "w" into screen coordinate "s"
+  virtual WorldToScreenReturn worldToScreenTriReturn( const Coord3D *w, ICoord2D *s );	///< Transform world coordinate "w" into screen coordinate "s"
 	virtual void screenToWorld( const ICoord2D *s, Coord3D *w );	///< Transform screen coordinate "s" into world coordinate "w"
 	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world );  ///< transform screen coord to a point on the 3D terrain
 	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z );  ///< transform screen point to world point at the specified world Z value
@@ -203,11 +203,11 @@ public:
 	
 	virtual Real getFXPitch( void ) const { return m_FXPitch; }					///< returns the FX pitch angle
 
-	virtual Bool setViewFilterMode(enum FilterModes filterMode);			///< Turns on viewport special effect (black & white mode)
-	virtual Bool setViewFilter(enum FilterTypes filter);			///< Turns on viewport special effect (black & white mode)
+	virtual Bool setViewFilterMode(FilterModes filterMode);			///< Turns on viewport special effect (black & white mode)
+	virtual Bool setViewFilter(FilterTypes filter);			///< Turns on viewport special effect (black & white mode)
 	virtual void setViewFilterPos(const Coord3D *pos);			///<  Passes a position to the special effect filter.
-	virtual enum FilterModes getViewFilterMode(void) {return m_viewFilterMode;}			///< Turns on viewport special effect (black & white mode)
-	virtual enum FilterTypes getViewFilterType(void) {return m_viewFilter;}			///< Turns on viewport special effect (black & white mode)
+	virtual FilterModes getViewFilterMode(void) {return m_viewFilterMode;}			///< Turns on viewport special effect (black & white mode)
+	virtual FilterTypes getViewFilterType(void) {return m_viewFilter;}			///< Turns on viewport special effect (black & white mode)
 	virtual void setFadeParameters(Int fadeFrames, Int direction);
 	virtual void set3DWireFrameMode(Bool enable);	///<enables custom wireframe rendering of 3D viewport
 
@@ -221,8 +221,8 @@ private:
 
 	CameraClass *m_3DCamera;												///< camera representation for 3D scene
 	CameraClass *m_2DCamera;												///< camera for UI overlayed on top of 3D scene
-	enum FilterModes m_viewFilterMode;
-	enum FilterTypes m_viewFilter;
+	FilterModes m_viewFilterMode;
+	FilterTypes m_viewFilter;
 	Bool m_isWireFrameEnabled;
 	Bool m_nextWireFrameEnabled;											///< used to delay wireframe changes by 1 frame (needed for transitions).
 

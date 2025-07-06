@@ -105,6 +105,7 @@ public:
 	void load(void);	///< load/setup any map dependent features
 	void update( void ); ///< update phase of the water
 	void enableWaterGrid(Bool state);	///< used to active custom water for special maps. (i.e DAM).
+	void updateMapOverrides(void);	///< used to update any map specific map overrides for water appearance.
 	void setTimeOfDay(TimeOfDay tod); ///<change sky/water for time of day
 	void toggleCloudLayer(Bool state)	{	m_useCloudLayer=state;}	///<enables/disables the cloud layer
 	void updateRenderTargetTextures(CameraClass *cam);	///< renders into any required textures.	
@@ -257,8 +258,8 @@ protected:
 	void cleanupJbaWaterShader(void);
 
 	//Methods used for GeForce3 specific water
-	HRESULT WaterRenderObjClass::generateIndexBuffer(int sizeX, int sizeY);	///<Generate static index buufer
-	HRESULT WaterRenderObjClass::generateVertexBuffer( Int sizeX, Int sizeY, Int vertexSize, Bool doFill);///<Generate static vertex buffer
+	HRESULT generateIndexBuffer(int sizeX, int sizeY);	///<Generate static index buufer
+	HRESULT generateVertexBuffer( Int sizeX, Int sizeY, Int vertexSize, Bool doFill);///<Generate static vertex buffer
 
 	// snapshot methods for save/load
 	virtual void crc( Xfer *xfer );
@@ -267,7 +268,7 @@ protected:
 
 };
 
-//Public inline function declerations
+//Public inline function declarations
 inline Bool WaterRenderObjClass::worldToGridSpace(Real worldX, Real worldY, Real &gridX, Real &gridY)
 {
 	Real dx,dy;

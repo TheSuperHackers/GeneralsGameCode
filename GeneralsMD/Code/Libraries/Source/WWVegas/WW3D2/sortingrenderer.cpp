@@ -45,12 +45,12 @@
 #include "vertmaterial.h"
 #include "texture.h"
 #include "d3d8.h"
-#include "D3dx8math.h"
+#include "d3dx8math.h"
 #include "statistics.h"
 #include <wwprofile.h>
 #include <algorithm>
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 // #pragma optimize("", off)
 // #pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -344,6 +344,7 @@ void SortingRendererClass::Insert_To_Sorting_Pool(SortingNodeStruct* state)
 {
 	if (overlapping_node_count>=MAX_OVERLAPPING_NODES) {
 		Release_Refs(state);
+		delete state;
 		WWASSERT(0);
 		return;
 	}
@@ -359,9 +360,6 @@ void SortingRendererClass::Insert_To_Sorting_Pool(SortingNodeStruct* state)
 
 static void Apply_Render_State(RenderStateStruct& render_state)
 {
-
-
-
 	DX8Wrapper::Set_Shader(render_state.shader);
 
 	DX8Wrapper::Set_Material(render_state.material);
@@ -375,34 +373,34 @@ static void Apply_Render_State(RenderStateStruct& render_state)
 	DX8Wrapper::_Set_DX8_Transform(D3DTS_VIEW,render_state.view);
 
 
-
-  if (!render_state.material->Get_Lighting())
-    return;
+	if (!render_state.material->Get_Lighting())
+		return;	//no point changing lights if they are ignored.
   //prevLight = render_state.lightsHash;
 
-	if (render_state.LightEnable[0]) 
-  {
-    
-    DX8Wrapper::Set_DX8_Light(0,&render_state.Lights[0]);
-		if (render_state.LightEnable[1]) 
-    {
+	if (render_state.LightEnable[0]) {
+		DX8Wrapper::Set_DX8_Light(0,&render_state.Lights[0]);
+		if (render_state.LightEnable[1]) {
 			DX8Wrapper::Set_DX8_Light(1,&render_state.Lights[1]);
-			if (render_state.LightEnable[2]) 
-      {
+			if (render_state.LightEnable[2]) {
 				DX8Wrapper::Set_DX8_Light(2,&render_state.Lights[2]);
-				if (render_state.LightEnable[3]) 
+				if (render_state.LightEnable[3]) {
 					DX8Wrapper::Set_DX8_Light(3,&render_state.Lights[3]);
-				else 
+				}
+				else {
 					DX8Wrapper::Set_DX8_Light(3,NULL);
+				}
 			}
-			else 
+			else {
 				DX8Wrapper::Set_DX8_Light(2,NULL);
+			}
 		}
-		else 
+		else {
 			DX8Wrapper::Set_DX8_Light(1,NULL);
+		}
 	}
-	else 
+	else {
 		DX8Wrapper::Set_DX8_Light(0,NULL);
+	}
 
 
 }
@@ -543,13 +541,8 @@ void SortingRendererClass::Flush_Sorting_Pool()
 		DynamicIBAccessClass::WriteLockClass lock(&dyn_ib_access);
 		ShortVectorIStruct* sorted_polygon_index_array=(ShortVectorIStruct*)lock.Get_Index_Array();
 
-		try {
 		for (unsigned a=0;a<overlapping_polygon_count;++a) {
 			sorted_polygon_index_array[a]=tis[a].tri;
-		}
-		IndexBufferExceptionFunc();
-		} catch(...) {
-			IndexBufferExceptionFunc();
 		}
 	}
 
@@ -705,7 +698,7 @@ void SortingRendererClass::Insert_VolumeParticle(
 	SortingNodeStruct* state=Get_Sorting_Struct();
 	DX8Wrapper::Get_Render_State(state->sorting_state);
 
- 	WWASSERT(
+	WWASSERT(
 		((state->sorting_state.index_buffer_type==BUFFER_TYPE_SORTING || state->sorting_state.index_buffer_type==BUFFER_TYPE_DYNAMIC_SORTING) &&
 		(state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_SORTING || state->sorting_state.vertex_buffer_types[0]==BUFFER_TYPE_DYNAMIC_SORTING)));
 

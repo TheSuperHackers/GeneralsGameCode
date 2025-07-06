@@ -68,10 +68,10 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/TerrainLogic.h"
 
-#include "WWMath/Matrix3D.h"
+#include "WWMath/matrix3d.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
@@ -188,7 +188,7 @@ AudioManager::~AudioManager()
 	for (it = m_allAudioEventInfo.begin(); it != m_allAudioEventInfo.end(); ++it) {
 		AudioEventInfo *eventInfo = (*it).second;
 		if (eventInfo) {
-			eventInfo->deleteInstance();
+			deleteInstance(eventInfo);
 			eventInfo = NULL;
 		}
 	}
@@ -248,7 +248,7 @@ void AudioManager::init()
 				break;
 			}
 			// We loop infinitely on the splash screen if we don't allow breaking out of this loop.
-//#if !defined( _DEBUG ) && !defined( _INTERNAL )
+//#if !defined( RTS_DEBUG ) && !defined( RTS_INTERNAL )
 			else
 			{
 				// Display the warning.
@@ -390,6 +390,7 @@ void AudioManager::update()
 			m_zoomVolume = 1.0f - scalar * maxBoostScalar;
 		}
 	}
+
 	set3DVolumeAdjustment( m_zoomVolume );
 
 }
@@ -780,8 +781,8 @@ void AudioManager::set3DVolumeAdjustment( Real volumeAdjustment )
 	if (m_sound3DVolume > 1.0f) 
 		m_sound3DVolume = 1.0f;
 
-
-	m_volumeHasChanged = TRUE;
+  if ( ! has3DSensitiveStreamsPlaying() )
+  	m_volumeHasChanged = TRUE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -810,7 +811,7 @@ AudioRequest *AudioManager::allocateAudioRequest( Bool useAudioEvent )
 void AudioManager::releaseAudioRequest( AudioRequest *requestToRelease )
 {
 	if (requestToRelease) {
-		requestToRelease->deleteInstance();
+		deleteInstance(requestToRelease);
 	}
 }
 
@@ -818,6 +819,18 @@ void AudioManager::releaseAudioRequest( AudioRequest *requestToRelease )
 void AudioManager::appendAudioRequest( AudioRequest *m_request )
 {
 	m_audioRequests.push_back(m_request);
+}
+
+//-------------------------------------------------------------------------------------------------
+// Remove all pending audio requests
+void AudioManager::removeAllAudioRequests( void )
+{
+  std::list<AudioRequest*>::iterator it;
+  for ( it = m_audioRequests.begin(); it != m_audioRequests.end(); it++ ) {
+    releaseAudioRequest( *it );
+  }
+
+  m_audioRequests.clear();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -840,6 +853,23 @@ AudioEventInfo *AudioManager::newAudioEventInfo( AsciiString audioName )
 }
 
 //-------------------------------------------------------------------------------------------------
+// Add an AudioEventInfo structure allocated elsewhere to the audio event list
+void AudioManager::addAudioEventInfo( AudioEventInfo * newEvent )
+{
+  // Warning: Don't try to copy the structure. It may be a derived class
+  AudioEventInfo *eventInfo = findAudioEventInfo( newEvent->m_audioName );
+  if (eventInfo) 
+  {
+    DEBUG_CRASH(("Requested add of '%s' multiple times. Is this intentional? - jkmcd\n", newEvent->m_audioName.str()));
+    *eventInfo = *newEvent;
+  }
+  else
+  {
+    m_allAudioEventInfo[newEvent->m_audioName] = newEvent;
+  }
+}
+
+//-------------------------------------------------------------------------------------------------
 AudioEventInfo *AudioManager::findAudioEventInfo( AsciiString eventName ) const
 {
 	AudioEventInfoHash::const_iterator it;
@@ -849,6 +879,28 @@ AudioEventInfo *AudioManager::findAudioEventInfo( AsciiString eventName ) const
 	}
 
 	return (*it).second;
+}
+
+//-------------------------------------------------------------------------------------------------
+// Remove all AudioEventInfo's with the m_isLevelSpecific flag
+void AudioManager::removeLevelSpecificAudioEventInfos(void)
+{
+  AudioEventInfoHash::iterator it = m_allAudioEventInfo.begin();
+
+  while ( it != m_allAudioEventInfo.end() )
+  {
+    AudioEventInfoHash::iterator next = it; // Make sure erase doesn't cause problems
+    next++;
+
+    if ( it->second->isLevelSpecific() )
+    {
+      deleteInstance(it->second);
+      m_allAudioEventInfo.erase( it );
+    }
+
+    it = next;
+  }
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -982,18 +1034,18 @@ Bool AudioManager::shouldPlayLocally(const AudioEventRTS *audioEvent)
 		return TRUE;
 	}
 
-	if (!BitTest(ei->m_type, (ST_PLAYER | ST_ALLIES | ST_ENEMIES | ST_EVERYONE))) {
+	if (!BitIsSet(ei->m_type, (ST_PLAYER | ST_ALLIES | ST_ENEMIES | ST_EVERYONE))) {
 		DEBUG_CRASH(("No player restrictions specified for '%s'. Using Everyone.\n", ei->m_audioName.str()));
 		return TRUE;
 	}
 
-	if (BitTest(ei->m_type, ST_EVERYONE)) {
+	if (BitIsSet(ei->m_type, ST_EVERYONE)) {
 		return TRUE;
 	}
 
 	Player *owningPlayer = ThePlayerList->getNthPlayer(audioEvent->getPlayerIndex());
 
-	if (BitTest(ei->m_type, ST_PLAYER) && BitTest(ei->m_type, ST_UI) && owningPlayer == NULL) {
+	if (BitIsSet(ei->m_type, ST_PLAYER) && BitIsSet(ei->m_type, ST_UI) && owningPlayer == NULL) {
 		DEBUG_ASSERTCRASH(!TheGameLogic->isInGameLogicUpdate(), ("Playing %s sound -- player-based UI sound without specifying a player.\n"));
 		return TRUE;
 	}
@@ -1013,17 +1065,17 @@ Bool AudioManager::shouldPlayLocally(const AudioEventRTS *audioEvent)
 		return FALSE;
 	}
 
-	if (BitTest(ei->m_type, ST_PLAYER))  {
+	if (BitIsSet(ei->m_type, ST_PLAYER))  {
 		return owningPlayer == localPlayer;
 	}
 
-	if (BitTest(ei->m_type, ST_ALLIES)) { 
+	if (BitIsSet(ei->m_type, ST_ALLIES)) { 
 		// We have to also check that the owning player isn't the local player, because PLAYER 
 		// wasn't specified, or we wouldn't have gotten here.
 		return (owningPlayer != localPlayer) && owningPlayer->getRelationship(localTeam) == ALLIES;
 	}
 
-	if (BitTest(ei->m_type, ST_ENEMIES)) {
+	if (BitIsSet(ei->m_type, ST_ENEMIES)) {
 		return owningPlayer->getRelationship(localTeam) == ENEMIES;
 	}
 	
@@ -1038,7 +1090,7 @@ AudioHandle AudioManager::allocateNewHandle( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-void AudioManager::releaseAudioEventRTS( AudioEventRTS *eventToRelease )
+void AudioManager::releaseAudioEventRTS( AudioEventRTS *&eventToRelease )
 {
 	if( eventToRelease )
 	{

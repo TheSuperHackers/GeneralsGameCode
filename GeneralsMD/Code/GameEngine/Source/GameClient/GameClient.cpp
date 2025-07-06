@@ -83,7 +83,7 @@
 #include "GameLogic/GhostObject.h"
 #include "GameLogic/Object.h"
 #include "GameLogic/ScriptEngine.h"		// For TheScriptEngine - jkmcd
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -218,7 +218,7 @@ GameClient::~GameClient()
 	TheVideoPlayer = NULL;
 
 	// destroy all translators
-	for( Int i = 0; i < m_numTranslators; i++ )
+	for( UnsignedInt i = 0; i < m_numTranslators; i++ )
 		TheMessageStream->removeTranslator( m_translators[ i ] );	
 	m_numTranslators = 0;
 	m_commandTranslator = NULL;
@@ -270,10 +270,13 @@ void GameClient::init( void )
 		TheDisplayStringManager->setName("TheDisplayStringManager");
 	}
 	
-	// create the keyboard
-	TheKeyboard = createKeyboard();
-	TheKeyboard->init();
-	TheKeyboard->setName("TheKeyboard");
+	if (!TheGlobalData->m_headless)
+	{
+		// create the keyboard
+		TheKeyboard = createKeyboard();
+		TheKeyboard->init();
+		TheKeyboard->setName("TheKeyboard");
+	}
 
 	// allocate and load image collection for the GUI and just load the 256x256 ones for now
 	TheMappedImageCollection = MSGNEW("GameClientSubsystem") ImageCollection;
@@ -322,7 +325,7 @@ void GameClient::init( void )
 		TheFontLibrary->init();
 
 	// create the mouse
-	TheMouse = createMouse();
+	TheMouse = TheGlobalData->m_headless ? NEW MouseDummy : createMouse();
 	TheMouse->parseIni();
 	TheMouse->initCursorResources();
  	TheMouse->setName("TheMouse");
@@ -340,7 +343,7 @@ void GameClient::init( void )
 	}
 
 	// create the window manager
-	TheWindowManager = createWindowManager();
+	TheWindowManager = TheGlobalData->m_headless ? NEW GameWindowManagerDummy : createWindowManager();
 	if( TheWindowManager )
 	{
 
@@ -478,6 +481,9 @@ void GameClient::reset( void )
 	// clear any drawable TOC we might have
 	m_drawableTOC.clear();
 
+	// TheSuperHackers @fix Mauller 13/04/2025 Reset the drawable id so it does not keep growing over the lifetime of the game.
+	m_nextDrawableID = (DrawableID)1;
+
 }  // end reset
 
 /** -----------------------------------------------------------------------------------------------
@@ -567,7 +573,7 @@ void GameClient::update( void )
 
 
 					legal->destroyWindows();
-					legal->deleteInstance();
+					deleteInstance(legal);
 
 				}
 				TheWritableGlobalData->m_breakTheMovie = TRUE;
@@ -623,12 +629,8 @@ void GameClient::update( void )
 	if(TheGlobalData->m_playIntro || TheGlobalData->m_afterIntro)
 	{
 		// redraw all views, update the GUI
-		{
-			TheDisplay->DRAW();
-		}
-		{
-			TheDisplay->UPDATE();
-		}
+		TheDisplay->DRAW();
+		TheDisplay->UPDATE();
 		return;
 	}
 
@@ -655,7 +657,7 @@ void GameClient::update( void )
 
 	if (!freezeTime)
 	{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		if (TheGlobalData->m_shroudOn)
 #else
 		if (true)
@@ -686,7 +688,7 @@ void GameClient::update( void )
 		while (draw)
 		{	// update() could free the Drawable, so go ahead and grab 'next'
 			Drawable* next = draw->getNextDrawable();
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 			if (TheGlobalData->m_shroudOn)
 #else
 			if (true)
@@ -723,7 +725,7 @@ void GameClient::update( void )
 		}
 	}
 
-#if defined(_INTERNAL) || defined(_DEBUG)
+#if defined(RTS_INTERNAL) || defined(RTS_DEBUG)
 	// need to draw the first frame, then don't draw again until TheGlobalData->m_noDraw
 	if (TheGlobalData->m_noDraw > TheGameLogic->getFrame() && TheGameLogic->getFrame() > 0) 
 	{
@@ -774,6 +776,18 @@ void GameClient::update( void )
 		TheInGameUI->UPDATE();
 	}
 }  // end update
+
+void GameClient::updateHeadless()
+{
+	// TheSuperHackers @info helmutbuhler 03/05/2025
+	// When we play a replay back in headless mode, we want to skip the update of GameClient
+	// because it's not necessary for CRC checking.
+	// But we do reset the particles. The problem is that particles can be generated during
+	// GameLogic and are only cleaned up during rendering. If we don't clean this up here,
+	// the particles accumulate and slow things down a lot and can even cause a crash on
+	// longer replays.
+	TheParticleSystemManager->reset();
+}
 
 /** -----------------------------------------------------------------------------------------------
  * Call the given callback function for each object contained within the given region.
@@ -847,7 +861,7 @@ void GameClient::destroyDrawable( Drawable *draw )
 	removeDrawableFromLookupTable( draw );
 
 	// free storage
-	draw->deleteInstance();
+	deleteInstance(draw);
 
 }
 
@@ -878,7 +892,8 @@ void GameClient::removeDrawableFromLookupTable( Drawable *draw )
 {
 
 	// sanity
-	if( draw == NULL )
+	// TheSuperHackers @fix Mauller/Xezon 24/04/2025 Prevent out of range access to vector lookup table
+	if( draw == NULL || static_cast<size_t>(draw->getID()) >= m_drawableVector.size() )
 		return;
 
 	// remove from table
@@ -1120,7 +1135,8 @@ void GameClient::preloadAssets( TimeOfDay timeOfDay )
 
 	GlobalMemoryStatus(&before);
 	extern std::vector<AsciiString>	debrisModelNamesGlobalHack;
-	for (Int i=0; i<debrisModelNamesGlobalHack.size(); ++i)
+	size_t i=0;
+	for (; i<debrisModelNamesGlobalHack.size(); ++i)
 	{
 		TheDisplay->preloadModelAssets(debrisModelNamesGlobalHack[i]);
 	}
@@ -1147,7 +1163,7 @@ void GameClient::preloadAssets( TimeOfDay timeOfDay )
 	DEBUG_LOG(("Preloading memory dwAvailVirtual  %d --> %d : %d\n",
 		before.dwAvailVirtual, after.dwAvailVirtual, before.dwAvailVirtual - after.dwAvailVirtual));
 
-	char *textureNames[] = {
+	const char *textureNames[] = {
 		"ptspruce01.tga",
 		"exrktflame.tga",
 		"cvlimo3_d2.tga",

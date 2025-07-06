@@ -19,7 +19,7 @@
 // wbview3d.cpp : implementation file
 //
 
-#include "stdafx.h"
+#include "StdAfx.h"
 #include "resource.h"
 #include "wwmath.h"
 #include "ww3d.h"
@@ -30,7 +30,6 @@
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 #include "agg_def.h"
-#include "msgloop.h"
 #include "part_ldr.h"
 #include "rendobj.h"
 #include "hanim.h"
@@ -58,7 +57,6 @@
 #include "shattersystem.h"
 #include "light.h"
 #include "texproject.h"
-#include "keyboard.h"
 #include "MapSettings.h"
 #include "predlod.h"
 #include "SelectMacrotexture.h"
@@ -74,10 +72,10 @@
 #include "W3DDevice/Common/W3DConvert.h"
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "DrawObject.h"
-#include "common/MapObject.h"
-#include "common/GlobalData.h"
+#include "Common/MapObject.h"
+#include "Common/GlobalData.h"
 #include "ShadowOptions.h"
-#include "worldbuilder.h"
+#include "WorldBuilder.h"
 #include "wbview3d.h"
 #include "Common/Debug.h"
 #include "Common/ThingFactory.h"
@@ -97,7 +95,7 @@
 
 #include <d3dx8.h>
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -140,7 +138,7 @@ static void		Debug_Refs(void);
 // ----------------------------------------------------------------------------
 static void WWDebug_Message_Callback(DebugType type, const char * message)
 {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	::OutputDebugString(message);
 #endif
 }
@@ -148,7 +146,7 @@ static void WWDebug_Message_Callback(DebugType type, const char * message)
 // ----------------------------------------------------------------------------
 static void WWAssert_Callback(const char * message)
 {
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	::OutputDebugString(message);
 	::DebugBreak();
 #endif
@@ -178,7 +176,7 @@ public:
 	virtual Int iterateDrawablesInRegion( IRegion2D *screenRegion,
 																				Bool (*callback)( Drawable *draw, void *userData ),
 																				void *userData ) {return 0;};
-	virtual Bool worldToScreen( const Coord3D *w, ICoord2D *s ) { return FALSE; };	///< Transform world coordinate "w" into screen coordinate "s"
+  virtual WorldToScreenReturn worldToScreenTriReturn( const Coord3D *w, ICoord2D *s ) { return WTS_INVALID; };	///< Transform world coordinate "w" into screen coordinate "s"
 	virtual void screenToWorld( const ICoord2D *s, Coord3D *w ) {};	///< Transform screen coordinate "s" into world coordinate "w"
 	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world ) {};  ///< transform screen coord to a point on the 3D terrain
 	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) {};  ///< transform screen point to world point at the specified world Z value
@@ -2130,7 +2128,7 @@ void WbView3d::OnDraw(CDC* pDC)
 // ----------------------------------------------------------------------------
 // WbView3d diagnostics
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 // ----------------------------------------------------------------------------
 void WbView3d::AssertValid() const
 {
@@ -2142,7 +2140,7 @@ void WbView3d::Dump(CDumpContext& dc) const
 {
 	WbView::Dump(dc);
 }
-#endif //_DEBUG
+#endif //RTS_DEBUG
 
 // ----------------------------------------------------------------------------
 void WbView3d::initWW3D()
@@ -2209,8 +2207,7 @@ void WbView3d::initWW3D()
 		}
 
 		WW3D::Enable_Static_Sort_Lists(true);
-		WW3D::Set_Texture_Compression_Mode(WW3D::TEXTURE_COMPRESSION_ENABLE);
-		WW3D::Set_Texture_Thumbnail_Mode(WW3D::TEXTURE_THUMBNAIL_MODE_OFF);
+		WW3D::Set_Thumbnail_Enabled(false);
 		WW3D::Set_Screen_UV_Bias( TRUE );  ///< this makes text look good :)
 
 		W3DShaderManager::init();

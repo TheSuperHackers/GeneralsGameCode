@@ -61,9 +61,7 @@
 #include "GameLogic/Module/SupplyWarehouseDockUpdate.h"
 #include "GameLogic/PartitionManager.h"
 
-#if !defined(_PLAYTEST)
-
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -134,8 +132,8 @@ void AIPlayer::onStructureProduced( Object *factory, Object *bldg )
 		info->setUnderConstruction(false);
 		bldg->updateObjValuesFromMapProperties(&d);
 		// clear the under construction status
-		bldg->clearStatus( OBJECT_STATUS_UNDER_CONSTRUCTION );
-		bldg->clearStatus( OBJECT_STATUS_RECONSTRUCTING );
+		bldg->clearStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_RECONSTRUCTING ) );
+
 		TheScriptEngine->addObjectToCache(bldg);
 		TheScriptEngine->runObjectScript(info->getScript(), bldg);
 		if (TheGlobalData->m_debugAI) {
@@ -434,7 +432,7 @@ static void deleteQueue(TeamInQueue* o)
 {
 	if (o)
 	{
-		o->deleteInstance();
+		deleteInstance(o);
 	}
 }
 
@@ -474,8 +472,7 @@ Object *AIPlayer::buildStructureNow(const ThingTemplate *bldgPlan, BuildListInfo
 		info->setObjectTimestamp( TheGameLogic->getFrame()+1 );	// has to be non-zero, so just add 1.
 
 		// clear the under construction status
-		bldg->clearStatus( OBJECT_STATUS_UNDER_CONSTRUCTION );
-		bldg->clearStatus( OBJECT_STATUS_RECONSTRUCTING );
+		bldg->clearStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_UNDER_CONSTRUCTION, OBJECT_STATUS_RECONSTRUCTING ) );
 
 		if (TheGlobalData->m_debugAI) {
 			AsciiString bldgName = bldgPlan->getName();
@@ -629,7 +626,7 @@ Object *AIPlayer::buildStructureWithDozer(const ThingTemplate *bldgPlan, BuildLi
 
 
 
-#if defined _DEBUG || defined _INTERNAL
+#if defined RTS_DEBUG || defined RTS_INTERNAL
 	if (TheGlobalData->m_debugAI == AI_DEBUG_PATHS)
 	{
 		extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);
@@ -743,7 +740,8 @@ void AIPlayer::processBaseBuilding( void )
 				}	else {
 					if (bldg->getControllingPlayer() == m_player) {
 						// Check for built or dozer missing.
-						if( BitTest( bldg->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE) {
+						if( bldg->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) ) 
+						{
 							// make sure dozer is working on him.
 							ObjectID builder = bldg->getBuilderID();
 							Object* myDozer = TheGameLogic->findObjectByID(builder);
@@ -861,7 +859,7 @@ void AIPlayer::aiPreTeamDestroy( const Team *deletedTeam )
 			if (team->m_team == deletedTeam) {
 				// The members of the team all got killed before we could finish building the team.
 				removeFrom_TeamBuildQueue(team);
-				team->deleteInstance();
+				deleteInstance(team);
 				iter = iterate_TeamBuildQueue();
 			}
 		}
@@ -873,7 +871,7 @@ void AIPlayer::aiPreTeamDestroy( const Team *deletedTeam )
 			if (team->m_team == deletedTeam) {
 				// The members of the team all got killed before we could activate the team.
 				removeFrom_TeamReadyQueue(team);
-				team->deleteInstance();
+				deleteInstance(team);
 				iter = iterate_TeamReadyQueue();
 			}
 		}
@@ -895,11 +893,15 @@ void AIPlayer::guardSupplyCenter( Team *team, Int minSupplies )
 	}
 	if (warehouse) {
 
-		AIGroup* theGroup = TheAI->createGroup();
+		AIGroupPtr theGroup = TheAI->createGroup();
 		if (!theGroup) {
 			return;
 		}
+#if RETAIL_COMPATIBLE_AIGROUP
 		team->getTeamAsAIGroup(theGroup);
+#else
+		team->getTeamAsAIGroup(theGroup.Peek());
+#endif
 		Coord3D location = *warehouse->getPosition();
 		// It's probably a defensive move - position towards the enemy.
 		Region2D bounds;
@@ -1006,7 +1008,8 @@ Bool AIPlayer::isLocationSafe(const Coord3D *pos, const ThingTemplate *tthing )
 
 	// and only stuff that isn't stealthed (and not detected)
 	// (note that stealthed allies aren't hidden from us, but we're only looking for enemies here)
-	PartitionFilterRejectByObjectStatus filterStealth(OBJECT_STATUS_STEALTHED, OBJECT_STATUS_DETECTED);
+	PartitionFilterRejectByObjectStatus filterStealth( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_STEALTHED ), 
+																										 MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_DETECTED ) );
 
 	// (optional) only stuff that is significant
 	PartitionFilterInsignificantBuildings filterInsignificant(true, false);
@@ -1042,7 +1045,13 @@ Bool AIPlayer::isLocationSafe(const Coord3D *pos, const ThingTemplate *tthing )
 void AIPlayer::onUnitProduced( Object *factory, Object *unit )
 {
 	Bool found = false;
-	Bool supplyTruck;
+	// TheSuperHackers @fix Mauller 26/04/2025 Fixes uninitialized variable.
+	// To keep retail compatibility it needs to be set true in VS6 builds.
+#if defined(_MSC_VER) && _MSC_VER < 1300
+	Bool supplyTruck = true;
+#else
+	Bool supplyTruck = false;
+#endif
 
 	// factory could be NULL at the start of the game.
 	if (factory == NULL) {
@@ -1682,9 +1691,9 @@ void AIPlayer::buildUpgrade(const AsciiString &upgrade)
 		Object *factory = TheGameLogic->findObjectByID( info->getObjectID() );
 		if( factory )
 		{
-			if( BitTest( factory->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION ) == TRUE )
+			if( factory->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 				continue;
-			if( BitTest( factory->getStatusBits(), OBJECT_STATUS_SOLD ) == TRUE )
+			if( factory->getStatusBits().test( OBJECT_STATUS_SOLD ) )
 				continue;
 			Bool canUpgradeHere = false;
 			const CommandSet *commandSet = TheControlBar->findCommandSet( factory->getCommandSetString() );
@@ -1771,9 +1780,16 @@ void AIPlayer::buildBySupplies(Int minimumCash, const AsciiString& thingName)
 																									 BuildAssistant::NO_OBJECT_OVERLAP,
 																									 NULL, m_player ) != LBC_OK ) {
 			// Warn. 
-			AsciiString bldgName = tTemplate->getName();
-			bldgName.concat(" - buildAISupplyCenter unable to place.  Attempting to adjust position.");
-			TheScriptEngine->AppendDebugMessage(bldgName, false);
+			const Coord3D *warehouseLocation = bestSupplyWarehouse->getPosition();
+			AsciiString debugMessage;
+			debugMessage.format(" %s - buildBySupplies unable to place near dock at (%.2f,%.2f).  Attempting to adjust position.",
+													tTemplate->getName().str(),
+													warehouseLocation->x,
+													warehouseLocation->y
+													);
+			TheScriptEngine->AppendDebugMessage(debugMessage, false);
+			if( TheGlobalData->m_debugSupplyCenterPlacement )
+				DEBUG_LOG(("%s", debugMessage.str()));
 			// try to fix.
 			Real posOffset;
 			// Wiggle it a little :)
@@ -1790,12 +1806,16 @@ void AIPlayer::buildBySupplies(Int minimumCash, const AsciiString& thingName)
 																							 BuildAssistant::NO_OBJECT_OVERLAP,
 																							 NULL, m_player ) == LBC_OK;
 					if (valid) break;
+					if( TheGlobalData->m_debugSupplyCenterPlacement )
+						DEBUG_LOG(("buildBySupplies -- Fail at (%.2f,%.2f)\n", newPos.x, newPos.y));
 					newPos.y = yPos+posOffset;
 					valid = TheBuildAssistant->isLocationLegalToBuild( &newPos, tTemplate, angle,
 																							 BuildAssistant::CLEAR_PATH |
 																							 BuildAssistant::TERRAIN_RESTRICTIONS |
 																							 BuildAssistant::NO_OBJECT_OVERLAP,
 																							 NULL, m_player ) == LBC_OK;
+					if( !valid && TheGlobalData->m_debugSupplyCenterPlacement )
+						DEBUG_LOG(("buildBySupplies -- Fail at (%.2f,%.2f)\n", newPos.x, newPos.y));
 				}
 				if (valid) break;
 				xPos = location.x-offset;
@@ -1808,17 +1828,26 @@ void AIPlayer::buildBySupplies(Int minimumCash, const AsciiString& thingName)
 																							 BuildAssistant::NO_OBJECT_OVERLAP,
 																							 NULL, m_player ) == LBC_OK;
 					if (valid) break;
+					if( TheGlobalData->m_debugSupplyCenterPlacement )
+						DEBUG_LOG(("buildBySupplies -- Fail at (%.2f,%.2f)\n", newPos.x, newPos.y));
 					newPos.x = xPos+posOffset;
 					valid = TheBuildAssistant->isLocationLegalToBuild( &newPos, tTemplate, angle,
 																							 BuildAssistant::CLEAR_PATH |
 																							 BuildAssistant::TERRAIN_RESTRICTIONS |
 																							 BuildAssistant::NO_OBJECT_OVERLAP,
 																							 NULL, m_player ) == LBC_OK;
+					if( !valid && TheGlobalData->m_debugSupplyCenterPlacement )
+						DEBUG_LOG(("buildBySupplies -- Fail at (%.2f,%.2f)\n", newPos.x, newPos.y));
 				}
 				if (valid) break;
 			}
 		}
-		if (valid) location = newPos;
+		if (valid) 
+		{
+			if( TheGlobalData->m_debugSupplyCenterPlacement )
+				DEBUG_LOG(("buildAISupplyCenter -- SUCCESS at (%.2f,%.2f)\n", newPos.x, newPos.y));
+			location = newPos;
+		}
 		TheTerrainVisual->removeAllBibs();	// isLocationLegalToBuild adds bib feedback, turn it off.  jba.
 		location.z = 0; // All build list locations are ground relative.
 		m_player->addToPriorityBuildList(thingName, &location, angle);
@@ -1933,7 +1962,7 @@ void AIPlayer::repairStructure(ObjectID structure)
 	if (structureObj==NULL) return;
 	if (structureObj->getBodyModule()==NULL) return;
 	// If the structure is not noticably damaged, don't bother.
-	enum BodyDamageType structureState = structureObj->getBodyModule()->getDamageState(); 
+	BodyDamageType structureState = structureObj->getBodyModule()->getDamageState(); 
 	if (structureState==BODY_PRISTINE) {
 		return; 
 	}
@@ -1947,7 +1976,7 @@ void AIPlayer::repairStructure(ObjectID structure)
 			return;
 		}
 	}
-	if (m_structuresInQueue==MAX_STRUCTURES_TO_REPAIR) {
+	if (m_structuresInQueue>=MAX_STRUCTURES_TO_REPAIR) {
 		DEBUG_LOG(("Structure repair queue is full, ignoring repair request. JBA\n"));
 		return;
 	}
@@ -1992,7 +2021,7 @@ void AIPlayer::updateBridgeRepair(void)
 	// Got a bridge to repair.
 	Object *dozer = NULL;
 	Coord3D bridgePos = *bridgeObj->getPosition();
-	enum BodyDamageType bridgeState = bridgeObj->getBodyModule()->getDamageState(); 
+	BodyDamageType bridgeState = bridgeObj->getBodyModule()->getDamageState(); 
 	if (m_repairDozer==INVALID_ID) {
 		m_dozerIsRepairing = false;
 		// Need a dozer.
@@ -2280,7 +2309,7 @@ void AIPlayer::recruitSpecificAITeam(TeamPrototype *teamProto, Real recruitRadiu
 		}	else {
 			//disband.
 			if (!theTeam->getPrototype()->getIsSingleton()) {
-				theTeam->deleteInstance();
+				deleteInstance(theTeam);
 				theTeam = NULL;
 			}
 			AsciiString teamName = teamProto->getName();
@@ -2442,9 +2471,9 @@ void AIPlayer::checkReadyTeams( void )
 					/*
 					if (team->m_team->getPrototype()->getTemplateInfo()->m_hasHomeLocation && 
 							!team->m_reinforcement) {
- 						AIGroup* theGroup = TheAI->createGroup();
+ 						AIGroupPtr theGroup = TheAI->createGroup();
 						if (theGroup) {
-							team->m_team->getTeamAsAIGroup(theGroup);
+							team->m_team->getTeamAsAIGroup(theGroup.Peek());
 							Coord3D destination = team->m_team->getPrototype()->getTemplateInfo()->m_homeLocation;
 							theGroup->groupTightenToPosition( &destination, false, CMD_FROM_AI );
 							team->m_frameStarted = TheGameLogic->getFrame();
@@ -2472,7 +2501,7 @@ void AIPlayer::checkReadyTeams( void )
 						TheScriptEngine->AppendDebugMessage(teamName, false);
 					}
 				}
-				team->deleteInstance();
+				deleteInstance(team);
 				iter = iterate_TeamReadyQueue();
 			}																		 
 		}
@@ -2504,7 +2533,7 @@ void AIPlayer::checkQueuedTeams( void )
 					// Disband.
 					removeFrom_TeamBuildQueue(team);
 					team->disband();
-					team->deleteInstance();
+					deleteInstance(team);
 					if (isSkirmishAI()) {
 						TheScriptEngine->clearTeamFlags();
 					}
@@ -3126,8 +3155,6 @@ void AIPlayer::loadPostProcess( void )
 
 }  // end loadPostProcess
 
-#endif
-
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 TeamInQueue::~TeamInQueue()
@@ -3137,7 +3164,7 @@ TeamInQueue::~TeamInQueue()
 	for( order = m_workOrders; order; order = next )
 	{
 		next = order->m_next;
-		order->deleteInstance();
+		deleteInstance(order);
 	}
 	// If we have a team, activate it.  If it is empty, Team.cpp will remove empty active teams.
 	if (m_team) m_team->setActive();
@@ -3238,7 +3265,7 @@ void TeamInQueue::disband()
 	if (m_team != newTeam) {
 		m_team->transferUnitsTo(newTeam);
 		if (!m_team->getPrototype()->getIsSingleton()) {
-			m_team->deleteInstance();
+			deleteInstance(m_team);
 		}
 		m_team = NULL;
 	}

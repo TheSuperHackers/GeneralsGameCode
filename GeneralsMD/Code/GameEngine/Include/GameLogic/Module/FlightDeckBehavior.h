@@ -50,7 +50,7 @@ enum
 
 struct RunwayDefinition
 {
-	RunwayDefinition::RunwayDefinition()
+	RunwayDefinition()
 	{
 		m_catapultParticleSystem = NULL;
 	}

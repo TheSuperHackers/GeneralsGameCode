@@ -49,9 +49,9 @@
 // USER INCLUDES //////////////////////////////////////////////////////////////
 #include "Common/Debug.h"
 #include "W3DDevice/GameClient/W3DGameFont.h"
-#include "WW3D2/WW3D.h"
-#include "WW3D2/AssetMgr.h"
-#include "WW3D2/Render2DSentence.h"
+#include "WW3D2/ww3d.h"
+#include "WW3D2/assetmgr.h"
+#include "WW3D2/render2dsentence.h"
 #include "GameClient/GlobalLanguage.h"
 
 // DEFINES ////////////////////////////////////////////////////////////////////
@@ -137,10 +137,11 @@ void W3DFontLibrary::releaseFontData( GameFont *font )
 		if(((FontCharsClass *)(font->fontData))->AlternateUnicodeFont)
 			((FontCharsClass *)(font->fontData))->AlternateUnicodeFont->Release_Ref();
 		((FontCharsClass *)(font->fontData))->Release_Ref();
+
+		font->fontData = NULL;
 	}
-	font->fontData = NULL;
-	
-}  // end releaseFont
+
+}  // end releaseFontData
 
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////
 

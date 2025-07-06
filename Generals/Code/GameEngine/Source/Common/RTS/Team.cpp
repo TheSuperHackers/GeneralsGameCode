@@ -51,7 +51,7 @@
 #include "GameLogic/ScriptActions.h"
 #include "GameLogic/ScriptEngine.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -165,7 +165,7 @@ void TeamRelationMap::loadPostProcess( void )
 // STATIC FUNCTIONS ///////////////////////////////////////////////////////////
 static Bool locoSetMatches(LocomotorSurfaceTypeMask lstm, UnsignedInt surfaceBitFlags)
 {
-	surfaceBitFlags = surfaceBitFlags & 0x01 | ((surfaceBitFlags & 0x02) << 2);
+	surfaceBitFlags = (surfaceBitFlags & 0x01) | ((surfaceBitFlags & 0x02) << 2);
 	return (surfaceBitFlags & lstm) != 0;
 }
 
@@ -214,7 +214,7 @@ void TeamFactory::clear()
 	m_prototypes.clear();
 	for (TeamPrototypeMap::iterator it = tmp.begin(); it != tmp.end(); ++it)
 	{
-		it->second->deleteInstance();
+		deleteInstance(it->second);
 	}
 }
 
@@ -258,7 +258,7 @@ void TeamFactory::addTeamPrototypeToList(TeamPrototype* team)
 	TeamPrototypeMap::iterator it = m_prototypes.find(nk);
 	if (it != m_prototypes.end())
 	{
-		DEBUG_ASSERTCRASH((*it).second==team, ("uh oh, mismatch"));
+		DEBUG_ASSERTCRASH((*it).second==team, ("TeamFactory::addTeamPrototypeToList: Team %s already exists... skipping.", team->getName().str()));
 		return;	// already present
 	}
 
@@ -713,7 +713,7 @@ TeamTemplateInfo::TeamTemplateInfo(Dict *d) :
 	m_automaticallyReinforce = d->getBool(TheKey_teamAutoReinforce, &exists);
 
 	Int interact	= d->getInt(TheKey_teamAggressiveness, &exists);
-	m_initialTeamAttitude = AI_NORMAL;
+	m_initialTeamAttitude = ATTITUDE_NORMAL;
 	if (exists) {
 		m_initialTeamAttitude = (AttitudeType) interact;
 	}
@@ -836,7 +836,7 @@ TeamPrototype::TeamPrototype( TeamFactory *tf,
 		if (o)
 		{
 			TheTeamFactory->teamAboutToBeDeleted(o);
-			o->deleteInstance();
+			deleteInstance(o);
 		}
 	}
 
@@ -852,7 +852,7 @@ TeamPrototype::~TeamPrototype()
 
 	if (m_productionConditionScript) 
 	{
-		m_productionConditionScript->deleteInstance();
+		deleteInstance(m_productionConditionScript);
 	}
 	m_productionConditionScript = NULL;
 
@@ -860,7 +860,7 @@ TeamPrototype::~TeamPrototype()
 	{
 		if (m_genericScriptsToRun[i]) 
 		{
-			m_genericScriptsToRun[i]->deleteInstance();
+			deleteInstance(m_genericScriptsToRun[i]);
 			m_genericScriptsToRun[i] = NULL;
 		}
 	}
@@ -1086,7 +1086,7 @@ void TeamPrototype::updateState(void)
 
 				// So remove it
 				TheTeamFactory->teamAboutToBeDeleted(iter.cur());
-				iter.cur()->deleteInstance();
+				deleteInstance(iter.cur());
 
 				done = false;
 				break; // Not sure what state the iterator is in after deleting a member of the list. jba
@@ -1385,8 +1385,8 @@ Team::~Team()
 		m_proto->removeFrom_TeamInstanceList(this);
 
 	// delete the relation maps (the destructor clears the actual map if any data is present)
-	m_teamRelations->deleteInstance();
-	m_playerRelations->deleteInstance();
+	deleteInstance(m_teamRelations);
+	deleteInstance(m_playerRelations);
 
 	// make sure the xfer list is clear
 	m_xferMemberIDList.clear();
@@ -1523,8 +1523,9 @@ Object *Team::getTeamTargetObject(void)
 	Object *target = TheGameLogic->findObjectByID(m_commonAttackTarget);
 	if (target) {
 		//If the enemy unit is stealthed and not detected, then we can't attack it!
-		UnsignedInt status = target->getStatusBits();
-		if( (status & OBJECT_STATUS_STEALTHED) && !(status & OBJECT_STATUS_DETECTED) ) {
+	if( target->testStatus( OBJECT_STATUS_STEALTHED ) && 
+			!target->testStatus( OBJECT_STATUS_DETECTED ) )
+		{
 			target = NULL;
 		}
 	}
@@ -1623,7 +1624,7 @@ void Team::countObjectsByThingTemplate(Int numTmplates, const ThingTemplate* con
 			if (ignoreDead && iter.cur()->isEffectivelyDead())
 				continue;
 
-			if( ignoreUnderConstruction && (BitTest(iter.cur()->getStatusBits(), OBJECT_STATUS_UNDER_CONSTRUCTION) == TRUE) )
+			if( ignoreUnderConstruction && iter.cur()->getStatusBits().test( OBJECT_STATUS_UNDER_CONSTRUCTION ) )
 				continue;
 
 			counts[i] += 1;

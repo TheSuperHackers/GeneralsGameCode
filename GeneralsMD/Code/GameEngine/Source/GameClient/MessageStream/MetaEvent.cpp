@@ -57,12 +57,12 @@
 
 
 #ifdef DUMP_ALL_KEYS_TO_LOG
-#include "GameClient\Keyboard.h"
+#include "GameClient/Keyboard.h"
 #endif
 
 MetaMap *TheMetaMap = NULL;
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -181,7 +181,9 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "END_CAMERA_ZOOM_OUT",											GameMessage::MSG_META_END_CAMERA_ZOOM_OUT },
 	{ "CAMERA_RESET",															GameMessage::MSG_META_CAMERA_RESET },
 	{ "TOGGLE_CAMERA_TRACKING_DRAWABLE",					GameMessage::MSG_META_TOGGLE_CAMERA_TRACKING_DRAWABLE },
-	{ "TOGGLE_FAST_FORWARD_REPLAY",              GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY },
+	{ "TOGGLE_FAST_FORWARD_REPLAY",								GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY },
+	{ "TOGGLE_PAUSE",															GameMessage::MSG_META_TOGGLE_PAUSE },
+	{ "STEP_FRAME",																GameMessage::MSG_META_STEP_FRAME },
   	{ "DEMO_INSTANT_QUIT",												GameMessage::MSG_META_DEMO_INSTANT_QUIT },
 
 #if defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)//may be defined in GameCommon.h
@@ -208,7 +210,7 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 
 #endif
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	{ "HELP",																			GameMessage::MSG_META_HELP },
 
 	{ "DEMO_TOGGLE_BEHIND_BUILDINGS",							GameMessage::MSG_META_DEMO_TOGGLE_BEHIND_BUILDINGS },
@@ -333,12 +335,12 @@ static const LookupListRec GameMessageMetaTypeNames[] =
 	{ "DEBUG_OBJECT_ID_PERFORMANCE",							GameMessage::MSG_META_DEBUG_OBJECT_ID_PERFORMANCE },
 	{ "DEBUG_DRAWABLE_ID_PERFORMANCE",						GameMessage::MSG_META_DEBUG_DRAWABLE_ID_PERFORMANCE },
 	{ "DEBUG_SLEEPY_UPDATE_PERFORMANCE",					GameMessage::MSG_META_DEBUG_SLEEPY_UPDATE_PERFORMANCE },
-#endif // defined(_DEBUG) || defined(_INTERNAL)
+#endif // defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 
-#if defined(_INTERNAL) || defined(_DEBUG) 
+#if defined(RTS_INTERNAL) || defined(RTS_DEBUG) 
 	{ "DEMO_TOGGLE_AUDIODEBUG",										GameMessage::MSG_META_DEMO_TOGGLE_AUDIODEBUG },
-#endif//defined(_INTERNAL) || defined(_DEBUG)
+#endif//defined(RTS_INTERNAL) || defined(RTS_DEBUG)
 #ifdef DUMP_PERF_STATS
 	{ "DEMO_PERFORM_STATISTICAL_DUMP",						GameMessage::MSG_META_DEMO_PERFORM_STATISTICAL_DUMP },
 #endif//DUMP_PERF_STATS
@@ -660,7 +662,7 @@ MetaMap::~MetaMap()
 	while (m_metaMaps)
 	{
 		MetaMapRec *next = m_metaMaps->m_next;
-		m_metaMaps->deleteInstance();
+		deleteInstance(m_metaMaps);
 		m_metaMaps = next;
 	}
 }
@@ -716,6 +718,47 @@ MetaMapRec *MetaMap::getMetaMapRec(GameMessage::Type t)
 		throw INI_INVALID_DATA;
 
 	ini->initFromINI(map, TheMetaMapFieldParseTable);
+}
+
+//-------------------------------------------------------------------------------------------------
+/*static */ void MetaMap::generateMetaMap()
+{
+	// TheSuperHackers @info A default mapping for MSG_META_SELECT_ALL_AIRCRAFT would be useful for Generals
+	// but is not recommended, because it will cause key mapping conflicts with original game languages.
+
+	{
+		// Is mostly useful for Generals.
+		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_TOGGLE_FAST_FORWARD_REPLAY);
+		if (map->m_key == MK_NONE)
+		{
+			map->m_key = MK_F;
+			map->m_transition = DOWN;
+			map->m_modState = NONE;
+			map->m_usableIn = COMMANDUSABLE_GAME;
+		}
+	}
+	{
+		// Is useful for Generals and Zero Hour.
+		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_TOGGLE_PAUSE);
+		if (map->m_key == MK_NONE)
+		{
+			map->m_key = MK_P;
+			map->m_transition = DOWN;
+			map->m_modState = NONE;
+			map->m_usableIn = COMMANDUSABLE_GAME;
+		}
+	}
+	{
+		// Is useful for Generals and Zero Hour.
+		MetaMapRec *map = TheMetaMap->getMetaMapRec(GameMessage::MSG_META_STEP_FRAME);
+		if (map->m_key == MK_NONE)
+		{
+			map->m_key = MK_O;
+			map->m_transition = DOWN;
+			map->m_modState = NONE;
+			map->m_usableIn = COMMANDUSABLE_GAME;
+		}
+	}
 }
 
 //-------------------------------------------------------------------------------------------------

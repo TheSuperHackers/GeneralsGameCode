@@ -31,6 +31,8 @@
 #ifndef _OVERRIDABLE_H_
 #define _OVERRIDABLE_H_
 
+#include "Common/GameMemory.h"
+
 /*
 	In order for something to live in an OVERRIDE<> object, it must be derived from Overridable 
 	(publicly). 
@@ -106,7 +108,7 @@ class Overridable : public MemoryPoolObject
 		{
 			if ( m_isOverride )
 			{
-				deleteInstance();
+				deleteInstance(this);
 				return NULL;
 			}
 			else if ( m_nextOverride )
@@ -121,7 +123,7 @@ class Overridable : public MemoryPoolObject
 __inline Overridable::~Overridable() 
 {
 	if (m_nextOverride) 
-		m_nextOverride->deleteInstance();
+		deleteInstance(m_nextOverride);
 }
 
 

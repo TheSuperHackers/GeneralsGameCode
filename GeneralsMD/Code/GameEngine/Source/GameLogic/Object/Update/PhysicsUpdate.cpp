@@ -71,7 +71,7 @@ const Int MOTIVE_FRAMES = LOGICFRAMES_PER_SECOND / 3;
 
 #define SLEEPY_PHYSICS
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -262,7 +262,7 @@ PhysicsBehavior::~PhysicsBehavior()
 {
 	if (m_bounceSound)
 	{
-		m_bounceSound->deleteInstance();
+		deleteInstance(m_bounceSound);
 		m_bounceSound = NULL;
 	}
 }
@@ -321,7 +321,10 @@ Real PhysicsBehavior::getZFriction() const
  */
 void PhysicsBehavior::applyForce( const Coord3D *force )
 {
+// TheSuperHackers @info helmutbuhler 06/05/2025 This debug mutates the code to become CRC incompatible
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) || !RETAIL_COMPATIBLE_CRC
 	DEBUG_ASSERTCRASH(!(_isnan(force->x) || _isnan(force->y) || _isnan(force->z)), ("PhysicsBehavior::applyForce force NAN!\n"));
+#endif
 	if (_isnan(force->x) || _isnan(force->y) || _isnan(force->z)) {
 		return;
 	}
@@ -611,7 +614,7 @@ void PhysicsBehavior::setBounceSound(const AudioEventRTS* bounceSound)
 	{
 		if (m_bounceSound)
 		{
-			m_bounceSound->deleteInstance();
+			deleteInstance(m_bounceSound);
 			m_bounceSound = NULL;
 		}
 	}
@@ -1067,8 +1070,10 @@ void PhysicsBehavior::addOverlap(Object *obj)
 void PhysicsBehavior::transferVelocityTo(PhysicsBehavior* that) const
 {
 	if (that != NULL)
+	{
 		that->m_vel.add(&m_vel);
-	that->m_velMag = INVALID_VEL_MAG;
+		that->m_velMag = INVALID_VEL_MAG;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------

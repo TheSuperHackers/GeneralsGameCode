@@ -25,11 +25,11 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#include "Common/CRC.h"
+#include "Common/crc.h"
 #include "GameNetwork/Transport.h"
 #include "GameNetwork/NetworkInterface.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -131,11 +131,12 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 	}
 
 	// ------- Clear buffers --------
-	for (int i=0; i<MAX_MESSAGES; ++i)
+	int i=0;
+	for (; i<MAX_MESSAGES; ++i)
 	{
 		m_outBuffer[i].length = 0;
 		m_inBuffer[i].length = 0;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		m_delayedInBuffer[i].message.length = 0;
 #endif
 	}
@@ -153,7 +154,7 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 
 	m_port = port;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_latencyAverage > 0 || TheGlobalData->m_latencyNoise)
 		m_useLatency = true;
 
@@ -225,19 +226,20 @@ Bool Transport::doSend() {
 		if (m_outBuffer[i].length != 0)
 		{
 			int bytesSent = 0;
+			int bytesToSend = m_outBuffer[i].length + sizeof(TransportMessageHeader);
 			// Send this message
-			if ((bytesSent = m_udpsock->Write((unsigned char *)(&m_outBuffer[i]), m_outBuffer[i].length + sizeof(TransportMessageHeader), m_outBuffer[i].addr, m_outBuffer[i].port)) > 0)
+			if ((bytesSent = m_udpsock->Write((unsigned char *)(&m_outBuffer[i]), bytesToSend, m_outBuffer[i].addr, m_outBuffer[i].port)) > 0)
 			{
-				//DEBUG_LOG(("Sending %d bytes to %d:%d\n", m_outBuffer[i].length + sizeof(TransportMessageHeader), m_outBuffer[i].addr, m_outBuffer[i].port));
+				//DEBUG_LOG(("Sending %d bytes to %d.%d.%d.%d:%d\n", bytesToSend, PRINTF_IP_AS_4_INTS(m_outBuffer[i].addr), m_outBuffer[i].port));
 				m_outgoingPackets[m_statisticsSlot]++;
 				m_outgoingBytes[m_statisticsSlot] += m_outBuffer[i].length + sizeof(TransportMessageHeader);
 				m_outBuffer[i].length = 0;  // Remove from queue
-//				DEBUG_LOG(("Transport::doSend - sent %d butes to %d.%d.%d.%d:%d\n", bytesSent,
-//					(m_outBuffer[i].addr >> 24) & 0xff,
-//					(m_outBuffer[i].addr >> 16) & 0xff,
-//					(m_outBuffer[i].addr >> 8) & 0xff,
-//					m_outBuffer[i].addr & 0xff,
-//					m_outBuffer[i].port));
+				if (bytesSent != bytesToSend)
+				{
+					DEBUG_LOG(("Transport::doSend - wanted to send %d bytes, only sent %d bytes to %d.%d.%d.%d:%d\n",
+						bytesToSend, bytesSent,
+						PRINTF_IP_AS_4_INTS(m_outBuffer[i].addr), m_outBuffer[i].port));
+				}
 			}
 			else
 			{
@@ -248,7 +250,7 @@ Bool Transport::doSend() {
 		}
 	} // for (i=0; i<MAX_MESSAGES; ++i)
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	// Latency simulation - deliver anything we're holding on to that is ready
 	if (m_useLatency)
 	{
@@ -285,7 +287,7 @@ Bool Transport::doRecv()
 
 	// Read in anything on our socket
 	sockaddr_in from;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	UnsignedInt now = timeGetTime();
 #endif
 
@@ -295,7 +297,7 @@ Bool Transport::doRecv()
 //	DEBUG_LOG(("Transport::doRecv - checking\n"));
 	while ( (len=m_udpsock->Read(buf, MAX_MESSAGE_LEN, &from)) > 0 )
 	{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		// Packet loss simulation
 		if (m_usePacketLoss)
 		{
@@ -319,6 +321,7 @@ Bool Transport::doRecv()
 
 		if (len <= sizeof(TransportMessageHeader) || !isGeneralsPacket( &incomingMessage ))
 		{
+			DEBUG_LOG(("Transport::doRecv - unknownPacket! len = %d\n", len));
 			m_unknownPackets[m_statisticsSlot]++;
 			m_unknownBytes[m_statisticsSlot] += len;
 			continue;
@@ -331,7 +334,7 @@ Bool Transport::doRecv()
 
 		for (int i=0; i<MAX_MESSAGES; ++i)
 		{
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 			// Latency simulation
 			if (m_useLatency)
 			{
@@ -361,7 +364,7 @@ Bool Transport::doRecv()
 					memcpy(&m_inBuffer[i], buf, len);
 					break;
 				}
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 			}
 #endif
 		}
@@ -384,6 +387,7 @@ Bool Transport::queueSend(UnsignedInt addr, UnsignedShort port, const UnsignedBy
 
 	if (len < 1 || len > MAX_PACKET_SIZE)
 	{
+		DEBUG_LOG(("Transport::queueSend - Invalid Packet size\n"));
 		return false;
 	}
 
@@ -413,6 +417,7 @@ Bool Transport::queueSend(UnsignedInt addr, UnsignedShort port, const UnsignedBy
 			return true;
 		}
 	}
+	DEBUG_LOG(("Send Queue is getting full, dropping packets\n"));
 	return false;
 }
 

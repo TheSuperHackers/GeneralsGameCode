@@ -47,6 +47,12 @@
 #include "GameLogic/Module/UpdateModule.h"
 #include "GameLogic/Module/UpgradeModule.h"
 
+#ifdef RTS_INTERNAL
+// for occasional debugging...
+//#pragma optimize("", off)
+//#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC FUNCTIONS ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -241,13 +247,13 @@ void UpgradeMuxData::performUpgradeFX(Object* obj) const
 }
 
 //-------------------------------------------------------------------------------------------------
-void UpgradeMuxData::getUpgradeActivationMasks(Int64& activation, Int64& conflicting) const
+void UpgradeMuxData::getUpgradeActivationMasks(UpgradeMaskType& activation, UpgradeMaskType& conflicting) const
 {
 	// already computed.
 	if (!m_activationUpgradeNames.empty() || !m_conflictingUpgradeNames.empty())
 	{
-		m_activationMask = 0;
-		m_conflictingMask = 0;
+		m_activationMask.clear();
+		m_conflictingMask.clear();
 		
 		std::vector<AsciiString>::const_iterator it;
 		for( it = m_activationUpgradeNames.begin();
@@ -255,13 +261,13 @@ void UpgradeMuxData::getUpgradeActivationMasks(Int64& activation, Int64& conflic
 					it++)
 		{
 			const UpgradeTemplate* theTemplate = TheUpgradeCenter->findUpgrade( *it );
-			if( !theTemplate && !it->isEmpty() && !it->isNone())
+			if( !theTemplate )
 			{
-				DEBUG_CRASH(("An upgrade module references %s, which is not an Upgrade", it->str()));
+				DEBUG_CRASH(("An upgrade module references '%s', which is not an Upgrade", it->str()));
 				throw INI_INVALID_DATA;
 			}
 
-			m_activationMask |= theTemplate->getUpgradeMask();
+			m_activationMask.set( theTemplate->getUpgradeMask() );
 		}
 
 		for( it = m_conflictingUpgradeNames.begin();
@@ -269,12 +275,13 @@ void UpgradeMuxData::getUpgradeActivationMasks(Int64& activation, Int64& conflic
 					it++)
 		{
 			const UpgradeTemplate* theTemplate = TheUpgradeCenter->findUpgrade( *it );
-			if( !theTemplate && !it->isEmpty() && !it->isNone())
+			if( !theTemplate )
 			{
-				DEBUG_CRASH(("An upgrade module references %s, which is not an Upgrade", it->str()));
+				DEBUG_CRASH(("An upgrade module references '%s', which is not an Upgrade", it->str()));
 				throw INI_INVALID_DATA;
 			}
-			m_conflictingMask |= theTemplate->getUpgradeMask();
+
+			m_conflictingMask.set( theTemplate->getUpgradeMask() );
 		}
 
 		m_activationUpgradeNames.clear();

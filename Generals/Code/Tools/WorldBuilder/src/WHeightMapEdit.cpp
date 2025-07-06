@@ -28,7 +28,7 @@
 #include "W3DDevice/GameClient/TerrainTex.h"
 #include "TerrainModal.h"
 #include "Common/Debug.h"
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 #include "Common/MapReaderWriterInfo.h"
 #include "Common/FileSystem.h"
 #include "Common/TerrainTypes.h"
@@ -41,7 +41,7 @@
 #include "mapobjectprops.h"
 #include "LayersList.h"
 
-#include "common/DataChunk.h"
+#include "Common/DataChunk.h"
 
 int WorldHeightMapEdit::m_numGlobalTextureClasses=0;
 TGlobalTextureClass WorldHeightMapEdit::m_globalTextureClasses[NUM_TEXTURE_CLASSES];
@@ -298,7 +298,7 @@ WorldHeightMapEdit::WorldHeightMapEdit(ChunkInputStream *pStrm):
 		optimizeTiles();
 	}
 	selectDuplicates();
-#ifdef _DEBUG
+#ifdef DEBUG_CRASHING
 	if (didCancel) {
 		return; // won't check out right.
 	}
@@ -388,7 +388,7 @@ void WorldHeightMapEdit::loadBaseImages(void)
 {
  
  	/// @todo - take this out when we are done evaluating terrain textures. 
-#if (defined(_DEBUG) || defined(_INTERNAL))
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
  	loadDirectoryOfImages("..\\TestArt\\TestTerrain");
 #endif
 
@@ -411,7 +411,7 @@ void WorldHeightMapEdit::loadBaseImages(void)
 }
 
 /// Loads all the images in a directory (including subdirectories)
-void WorldHeightMapEdit::loadDirectoryOfImages(char *pFilePath) 
+void WorldHeightMapEdit::loadDirectoryOfImages(const char *pFilePath)
 {
 	char				dirBuf[_MAX_PATH];
 	char				findBuf[_MAX_PATH];
@@ -780,7 +780,8 @@ void WorldHeightMapEdit::saveToFile(DataChunkOutput &chunkWriter)
 			chunkWriter.writeReal(TheGlobalData->m_terrainObjectsLighting[i+TIME_OF_DAY_FIRST][0].lightPos.y);
 			chunkWriter.writeReal(TheGlobalData->m_terrainObjectsLighting[i+TIME_OF_DAY_FIRST][0].lightPos.z);
 
-			for (Int j=1; j<MAX_GLOBAL_LIGHTS; j++)
+			Int j=1;
+			for (; j<MAX_GLOBAL_LIGHTS; j++)
 			{	//save state of new lights added in version 3.
 				chunkWriter.writeReal(TheGlobalData->m_terrainObjectsLighting[i+TIME_OF_DAY_FIRST][j].ambient.red);
 				chunkWriter.writeReal(TheGlobalData->m_terrainObjectsLighting[i+TIME_OF_DAY_FIRST][j].ambient.green);
@@ -809,7 +810,7 @@ void WorldHeightMapEdit::saveToFile(DataChunkOutput &chunkWriter)
 
 	chunkWriter.closeDataChunk();
 
-#ifdef _DEBUG
+#ifdef DEBUG_CRASHING
 	for (i=0; i<m_dataSize; i++) {
 		Int texNdx = this->m_tileNdxes[i];
 		DEBUG_ASSERTCRASH((texNdx>>2) < m_numBitmapTiles,("oops"));
@@ -1345,7 +1346,7 @@ void WorldHeightMapEdit::autoBlendOut(Int xIndex, Int yIndex, Int globalEdgeClas
 		delete pCurNode;
 	}
 
-	if (pProcessed) delete pProcessed;
+	if (pProcessed) delete[] pProcessed;
 	pProcessed = NULL;
 }
 
@@ -1948,7 +1949,7 @@ Int WorldHeightMapEdit::getFirstTile(Int textureClass)
 */	 
 void WorldHeightMapEdit::dbgVerifyAfterUndo(void)
 {
-#ifdef _DEBUG
+#ifdef DEBUG_CRASHING
 	Int i, j;
 	for (i=0; i<m_numGlobalTextureClasses; i++) {
 		m_globalTextureClasses[i].forDebugOnly_fileTextureClass = -1;
@@ -2013,7 +2014,7 @@ void WorldHeightMapEdit::removeFirstObject(void)
 	MapObject *firstObj = MapObject::TheMapObjectListPtr;
 	MapObject::TheMapObjectListPtr = firstObj->getNext();
 	firstObj->setNextMap(NULL); // so we don't delete the whole list.
-	firstObj->deleteInstance();
+	deleteInstance(firstObj);
 }
 
 //=============================================================================
@@ -3385,7 +3386,7 @@ void WorldHeightMapEdit::removeLastBoundary(void)
 		return;
 	}
 	
-	m_boundaries.erase(&m_boundaries.back());
+	m_boundaries.pop_back();
 }
 
 void WorldHeightMapEdit::findBoundaryNear(Coord3D *pt, float okDistance, Int *outNdx, Int *outHandle)

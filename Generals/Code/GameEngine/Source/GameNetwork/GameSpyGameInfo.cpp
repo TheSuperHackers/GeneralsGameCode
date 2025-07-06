@@ -32,13 +32,13 @@
 #include "Common/Player.h"
 #include "Common/PlayerList.h"
 #include "Common/RandomValue.h"
-#include "Common/Scorekeeper.h"
+#include "Common/ScoreKeeper.h"
 #include "GameClient/Shell.h"
 #include "GameClient/GameText.h"
 #include "GameNetwork/GameSpy/PeerDefs.h"
 #include "GameNetwork/GameSpyGameInfo.h"
 #include "GameNetwork/NetworkInterface.h"
-#include "GameNetwork/NetworkUtil.h"
+#include "GameNetwork/networkutil.h"
 #include "GameNetwork/NetworkDefs.h"
 #include "GameNetwork/NAT.h"
 #include "GameLogic/GameLogic.h"
@@ -537,10 +537,7 @@ void GameSpyLaunchGame( void )
 				*/
 				{
 				user.format(",%s@%d.%d.%d.%d:%d", tmpUserName.str(),
-					((ip & 0xff000000) >> 24),
-					((ip & 0xff0000) >> 16),
-					((ip & 0xff00) >> 8),
-					((ip & 0xff)),
+					PRINTF_IP_AS_4_INTS(ip),
 					TheNAT->getSlotPort(i)
 					);
 				}

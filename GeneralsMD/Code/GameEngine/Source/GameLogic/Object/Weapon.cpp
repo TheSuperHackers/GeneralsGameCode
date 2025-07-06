@@ -38,7 +38,7 @@
 #define DEFINE_WEAPONRELOAD_NAMES
 #define DEFINE_WEAPONPREFIRE_NAMES
 
-#include "Common/CRC.h"
+#include "Common/crc.h"
 #include "Common/CRCDebug.h"
 #include "Common/GameAudio.h"
 #include "Common/GameState.h"
@@ -85,7 +85,7 @@
 	const DistanceCalculationType ATTACK_RANGE_CALC_TYPE = FROM_BOUNDINGSPHERE_3D;
 #endif
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -333,12 +333,12 @@ WeaponTemplate::WeaponTemplate() : m_nextTemplate(NULL)
 WeaponTemplate::~WeaponTemplate()
 {
 	if (m_nextTemplate) {
-		m_nextTemplate->deleteInstance();
+		deleteInstance(m_nextTemplate);
 	}
 
 	// delete any extra-bonus that's present
 	if (m_extraBonus)
-		m_extraBonus->deleteInstance();
+		deleteInstance(m_extraBonus);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -580,10 +580,16 @@ Real WeaponTemplate::estimateWeaponTemplateDamage(
 		return 0.0f;
 	}
 
+	const Real damageAmount = getPrimaryDamage(bonus);
+	if ( victimObj == NULL )
+	{
+		return damageAmount;
+	}
+
 	DamageType damageType = getDamageType();
 	DeathType deathType = getDeathType();
 
-	if (victimObj && victimObj->isKindOf(KINDOF_SHRUBBERY))
+	if ( victimObj->isKindOf(KINDOF_SHRUBBERY) )
 	{
 		if (deathType == DEATH_BURNED)
 		{
@@ -610,7 +616,7 @@ Real WeaponTemplate::estimateWeaponTemplateDamage(
 
 
 
-	if (damageType == DAMAGE_SURRENDER || m_allowAttackGarrisonedBldgs)
+	if ( damageType == DAMAGE_SURRENDER || m_allowAttackGarrisonedBldgs )
 	{
 		ContainModuleInterface* contain = victimObj->getContain();
 		if( contain && contain->getContainCount() > 0 && contain->isGarrisonable() && !contain->isImmuneToClearBuildingAttacks() )
@@ -620,46 +626,29 @@ Real WeaponTemplate::estimateWeaponTemplateDamage(
 		}
 	}
 
-	if( victimObj )
+	if( damageType == DAMAGE_DISARM )
 	{
-		if( damageType == DAMAGE_DISARM )
+		if( victimObj->isKindOf( KINDOF_MINE ) || victimObj->isKindOf( KINDOF_BOOBY_TRAP ) || victimObj->isKindOf( KINDOF_DEMOTRAP ) )
 		{
-			if( victimObj->isKindOf( KINDOF_MINE ) || victimObj->isKindOf( KINDOF_BOOBY_TRAP ) || victimObj->isKindOf( KINDOF_DEMOTRAP ) )
-			{
-				// this is just a nonzero value, to ensure we can target mines with disarm weapons, regardless...
-				return 1.0f;
-			}
-			return 0.0f;
-		}
-		if( damageType == DAMAGE_DEPLOY && !victimObj->isAirborneTarget() )
-		{
+			// this is just a nonzero value, to ensure we can target mines with disarm weapons, regardless...
 			return 1.0f;
 		}
+		return 0.0f;
+	}
+	if( damageType == DAMAGE_DEPLOY && !victimObj->isAirborneTarget() )
+	{
+		return 1.0f;
 	}
 
 	//@todo Kris need to examine the DAMAGE_HACK type for damage estimation purposes.
 	//Likely this damage type will have threat implications that won't properly be dealt with until resolved.
 
-//	const Coord3D* sourcePos = sourceObj->getPosition();
-	if (victimPos == NULL)
-	{
-		victimPos = victimObj->getPosition();
-	}
-
-	Real damageAmount = getPrimaryDamage(bonus);
-	if (victimObj == NULL)
-	{
-		return damageAmount;
-	}
-	else
-	{
-		DamageInfoInput damageInfo;
-		damageInfo.m_damageType = damageType;
-		damageInfo.m_deathType = deathType;
-		damageInfo.m_sourceID = sourceObj->getID();
-		damageInfo.m_amount = damageAmount;
-		return victimObj->estimateDamage(damageInfo);
-	}
+	DamageInfoInput damageInfo;
+	damageInfo.m_damageType = damageType;
+	damageInfo.m_deathType = deathType;
+	damageInfo.m_sourceID = sourceObj->getID();
+	damageInfo.m_amount = damageAmount;
+	return victimObj->estimateDamage(damageInfo);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -776,7 +765,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 {
 
 	//-extraLogging 
-	#if (defined(_DEBUG) || defined(_INTERNAL))
+	#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 		AsciiString targetStr;
 		if( TheGlobalData->m_extraLogging )
 		{
@@ -799,7 +788,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 	if (sourceObj == NULL || (victimObj == NULL && victimPos == NULL))
 	{
 		//-extraLogging 
-		#if (defined(_DEBUG) || defined(_INTERNAL))
+		#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 			if( TheGlobalData->m_extraLogging )
 				DEBUG_LOG( ("FAIL 1 (sourceObj %d == NULL || (victimObj %d == NULL && victimPos %d == NULL)\n", sourceObj != 0, victimObj != 0, victimPos != 0) );
 		#endif
@@ -878,7 +867,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			//DEBUG_ASSERTCRASH(distSqr < 5*5 || distSqr < attackRangeSqr*1.2f, ("*** victim is out of range (%f vs %f) of this weapon -- why did we attempt to fire?\n",sqrtf(distSqr),sqrtf(attackRangeSqr)));
 			
 			//-extraLogging 
-			#if (defined(_DEBUG) || defined(_INTERNAL))
+			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 				if( TheGlobalData->m_extraLogging )
 					DEBUG_LOG( ("FAIL 2 (distSqr %.2f > attackRangeSqr %.2f)\n", distSqr, attackRangeSqr ) );
 			#endif
@@ -900,7 +889,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			DEBUG_ASSERTCRASH(distSqr > minAttackRangeSqr*0.8f, ("*** victim is closer than min attack range (%f vs %f) of this weapon -- why did we attempt to fire?\n",sqrtf(distSqr),sqrtf(minAttackRangeSqr)));
 
 			//-extraLogging 
-			#if (defined(_DEBUG) || defined(_INTERNAL))
+			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 				if( TheGlobalData->m_extraLogging )
 					DEBUG_LOG( ("FAIL 3 (distSqr %.2f< minAttackRangeSqr %.2f - 0.5f && !isProjectileDetonation %d)\n", distSqr, minAttackRangeSqr, isProjectileDetonation ) );
 			#endif
@@ -1067,7 +1056,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			}
 
 			//-extraLogging 
-			#if (defined(_DEBUG) || defined(_INTERNAL))
+			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 				if( TheGlobalData->m_extraLogging )
 					DEBUG_LOG( ("EARLY 4 (delayed damage applied now)\n") );
 			#endif
@@ -1088,7 +1077,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			}
 
 			//-extraLogging 
-			#if (defined(_DEBUG) || defined(_INTERNAL))
+			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 				if( TheGlobalData->m_extraLogging )
 					DEBUG_LOG( ("EARLY 5 (delaying damage applied until frame %d)\n", when ) );
 			#endif
@@ -1179,7 +1168,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			
 		}
 		//-extraLogging 
-		#if (defined(_DEBUG) || defined(_INTERNAL))
+		#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
 			if( TheGlobalData->m_extraLogging )
 				DEBUG_LOG( ("DONE\n") );
 		#endif
@@ -1515,11 +1504,11 @@ WeaponStore::~WeaponStore()
 {
 	deleteAllDelayedDamage();
 
-	for (Int i = 0; i < m_weaponTemplateVector.size(); i++)
+	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
 	{
 		WeaponTemplate* wt = m_weaponTemplateVector[i];
 		if (wt)
-			wt->deleteInstance();
+			deleteInstance(wt);
 	}
 	m_weaponTemplateVector.clear();
 }
@@ -1530,7 +1519,7 @@ void WeaponStore::handleProjectileDetonation(const WeaponTemplate* wt, const Obj
 	Weapon* w = TheWeaponStore->allocateNewWeapon(wt, PRIMARY_WEAPON);
 	w->loadAmmoNow(source);
 	w->fireProjectileDetonationWeapon( source, pos, extraBonusFlags, inflictDamage );
-	w->deleteInstance();
+	deleteInstance(w);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1541,7 +1530,7 @@ void WeaponStore::createAndFireTempWeapon(const WeaponTemplate* wt, const Object
 	Weapon* w = TheWeaponStore->allocateNewWeapon(wt, PRIMARY_WEAPON);
 	w->loadAmmoNow(source);
 	w->fireWeapon(source, pos);
-	w->deleteInstance();
+	deleteInstance(w);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1553,7 +1542,7 @@ void WeaponStore::createAndFireTempWeapon(const WeaponTemplate* wt, const Object
 	Weapon* w = TheWeaponStore->allocateNewWeapon(wt, PRIMARY_WEAPON);
 	w->loadAmmoNow(source);
 	w->fireWeapon(source, target);
-	w->deleteInstance();
+	deleteInstance(w);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -1570,7 +1559,7 @@ const WeaponTemplate *WeaponStore::findWeaponTemplate( AsciiString name ) const
 WeaponTemplate *WeaponStore::findWeaponTemplatePrivate( NameKeyType key ) const
 {
 	// search weapon list for name
-	for (Int i = 0; i < m_weaponTemplateVector.size(); i++)
+	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
 		if( m_weaponTemplateVector[ i ]->getNameKey() == key )
 			return m_weaponTemplateVector[i];
 
@@ -1618,7 +1607,7 @@ void WeaponStore::update()
 		if (curFrame >= ddi->m_delayDamageFrame)
 		{
 			// we never do projectile-detonation-damage via this code path.
-			const isProjectileDetonation = false;
+			const Bool isProjectileDetonation = false;
 			ddi->m_delayedWeapon->dealDamageInternal(ddi->m_delaySourceID, ddi->m_delayIntendedVictimID, &ddi->m_delayDamagePos, ddi->m_bonus, isProjectileDetonation);
 			ddi = m_weaponDDI.erase(ddi);
 		}
@@ -1639,7 +1628,7 @@ void WeaponStore::deleteAllDelayedDamage()
 void WeaponStore::resetWeaponTemplates( void )
 {
 
-	for (Int i = 0; i < m_weaponTemplateVector.size(); i++)
+	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
 	{
 		WeaponTemplate* wt = m_weaponTemplateVector[i];
 		wt->reset();
@@ -1651,14 +1640,14 @@ void WeaponStore::resetWeaponTemplates( void )
 void WeaponStore::reset()
 {
 	// clean up any overriddes.
-	for (Int i = 0; i < m_weaponTemplateVector.size(); ++i)
+	for (size_t i = 0; i < m_weaponTemplateVector.size(); ++i)
 	{
 		WeaponTemplate *wt = m_weaponTemplateVector[i];
 		if (wt->isOverride()) 
 		{
 			WeaponTemplate *override = wt;
 			wt = wt->friend_clearNextTemplate();
-			override->deleteInstance();
+			deleteInstance(override);
 		}
 	}
 
@@ -1688,7 +1677,7 @@ void WeaponStore::postProcessLoad()
 		return;
 	}
 
-	for (Int i = 0; i < m_weaponTemplateVector.size(); i++)
+	for (size_t i = 0; i < m_weaponTemplateVector.size(); i++)
 	{
 		WeaponTemplate* wt = m_weaponTemplateVector[i];
 		if (wt)
@@ -1731,7 +1720,7 @@ void WeaponStore::postProcessLoad()
 	if (weapon->m_projectileName.isNone())
 		weapon->m_projectileName.clear();
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (!weapon->getFireSound().getEventName().isEmpty() && weapon->getFireSound().getEventName().compareNoCase("NoSound") != 0) 
 	{ 
 		DEBUG_ASSERTCRASH(TheAudio->isValidAudioEvent(&weapon->getFireSound()), ("Invalid FireSound %s in Weapon '%s'.", weapon->getFireSound().getEventName().str(), weapon->getName().str())); 
@@ -2598,6 +2587,8 @@ Bool Weapon::privateFireWeapon(
 	Bool reloaded = false;
 	if (m_ammoInClip > 0)
 	{
+		// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+		// barrelCount shouln't depend on Drawable, which belongs to client.
 		Int barrelCount = sourceObj->getDrawable()->getBarrelCount(m_wslot);
 		if (m_curBarrel >= barrelCount)
 		{
@@ -3003,7 +2994,7 @@ void Weapon::processRequestAssistance( const Object *requestingObject, Object *v
 #endif
 	}
 
-//#if defined(_DEBUG) || defined(_INTERNAL)
+//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 //  Real muzzleHeight = attachTransform.Get_Z_Translation();
 //  DEBUG_ASSERTCRASH( muzzleHeight > 0.001f, ("YOUR TURRET HAS A VERY LOW PROJECTILE LAUNCH POSITION, BUT FOUND A VALID BONE. DID YOU PICK THE WRONG ONE? %s", launcher->getTemplate()->getName().str()));
 //#endif
@@ -3169,7 +3160,7 @@ void Weapon::crc( Xfer *xfer )
 		tmp.format("CRC of weapon %s: ", m_template->getName().str());
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	AsciiString tmplName = m_template->getName();
 	xfer->xferAsciiString(&tmplName);

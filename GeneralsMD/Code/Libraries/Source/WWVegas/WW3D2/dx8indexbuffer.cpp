@@ -142,14 +142,14 @@ void IndexBufferClass::Copy(unsigned int* indices,unsigned first_index,unsigned 
 		DX8IndexBufferClass::AppendLockClass l(this,first_index,count);
 		unsigned short* inds=l.Get_Index_Array();
 		for (unsigned v=0;v<count;++v) {
-			*inds++=unsigned short(*indices++);
+			*inds++=(unsigned short)(*indices++);
 		}
 	}
 	else {
 		DX8IndexBufferClass::WriteLockClass l(this);
 		unsigned short* inds=l.Get_Index_Array();
 		for (unsigned v=0;v<count;++v) {
-			*inds++=unsigned short(*indices++);
+			*inds++=(unsigned short)(*indices++);
 		}
 	}
 }
@@ -538,14 +538,4 @@ void DynamicIBAccessClass::_Reset(bool frame_changed)
 unsigned short DynamicIBAccessClass::Get_Default_Index_Count(void)
 {
 	return _DynamicDX8IndexBufferSize;
-}
-
-/*Added so that VisualC++ doesn't remove our try/catch blocks around index buffer access.
-This is needed because of a Windows 2000 Kernal bug as explained in the DX 9.0b readme file.*/
-int IndexBufferExceptionFunc(void)
-{
-	int b=1;
-
-	b += _IndexBufferTotalIndices;
-	return b;
 }

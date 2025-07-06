@@ -42,7 +42,7 @@
 #include "Common/ThingTemplate.h"
 #include "Common/ThingFactory.h"
 #include "Common/Xfer.h"
-#include "Common/XFerCRC.h"
+#include "Common/XferCRC.h"
 
 #include "GameClient/ControlBar.h"
 #include "GameClient/FXList.h"
@@ -54,11 +54,6 @@
 #include "GameLogic/AIStateMachine.h"
 #include "GameLogic/AIPathfind.h"
 #include "GameLogic/Locomotor.h"
-#include "GameLogic/Module/AIUpdate.h"
-#include "GameLogic/Module/BodyModule.h"
-#include "GameLogic/Module/ContainModule.h"
-#include "GameLogic/Module/PhysicsUpdate.h"
-#include "GameLogic/Module/StealthUpdate.h"
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/PolygonTrigger.h"
 #include "GameLogic/ScriptEngine.h"
@@ -66,7 +61,12 @@
 #include "GameLogic/TurretAI.h"
 #include "GameLogic/Weapon.h"
 
-#ifdef _INTERNAL
+#include "GameLogic/Module/AIUpdate.h"
+#include "GameLogic/Module/BodyModule.h"
+#include "GameLogic/Module/ContainModule.h"
+#include "GameLogic/Module/PhysicsUpdate.h"
+#include "GameLogic/Module/StealthUpdate.h"
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -673,8 +673,8 @@ void AIRappelState::onExit( StateExitType status )
 */
 AIStateMachine::AIStateMachine( Object *obj, AsciiString name ) : StateMachine( obj, name )
 {
-	DEBUG_ASSERTCRASH(getOwner(), ("An AI State Machine '%s' was constructed without an owner, please tell JKMCD", name));
-	DEBUG_ASSERTCRASH(getOwner()->getAI(), ("An AI State Machine '%s' was constructed without an AIUpdateInterface, please tell JKMCD", name));
+	DEBUG_ASSERTCRASH(getOwner(), ("An AI State Machine '%s' was constructed without an owner, please tell JKMCD", name.str()));
+	DEBUG_ASSERTCRASH(getOwner()->getAI(), ("An AI State Machine '%s' was constructed without an AIUpdateInterface, please tell JKMCD", name.str()));
 
 	m_goalPath.clear();
 	m_goalWaypoint = NULL;
@@ -733,7 +733,7 @@ AIStateMachine::~AIStateMachine()
 {
 	if (m_goalSquad) 
 	{
-		m_goalSquad->deleteInstance();
+		deleteInstance(m_goalSquad);
 	}
 }
 
@@ -852,6 +852,14 @@ AsciiString AIStateMachine::getCurrentStateName(void) const
  */
 StateReturnType AIStateMachine::updateStateMachine()
 {
+	//-extraLogging
+	#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+		Bool idle = getOwner()->getAI()->isIdle();
+		if( !idle && TheGlobalData->m_extraLogging )
+			DEBUG_LOG( ("%d - %s::update() start - %s", TheGameLogic->getFrame(), getCurrentStateName().str(), getOwner()->getTemplate()->getName().str() ) );
+	#endif
+	//end -extraLogging 
+
 	if (m_temporaryState)
 	{
 		// execute this state
@@ -862,13 +870,49 @@ StateReturnType AIStateMachine::updateStateMachine()
 				status = STATE_SUCCESS;
 			}
 		}
-		if (status==STATE_CONTINUE)	{
+		if (status==STATE_CONTINUE)	
+		{
+			//-extraLogging
+			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+				if( !idle && TheGlobalData->m_extraLogging )
+					DEBUG_LOG( (" - RETURN EARLY STATE_CONTINUE\n") );
+			#endif
+			//end -extraLogging 
+
 			return status;
 		}
 		m_temporaryState->onExit(EXIT_NORMAL);
 		m_temporaryState = NULL;
 	}
-	return StateMachine::updateStateMachine();
+	StateReturnType retType = StateMachine::updateStateMachine();
+
+	//-extraLogging 
+	#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+		AsciiString result;
+		if( TheGlobalData->m_extraLogging )
+		{
+			switch( retType )
+			{
+				case STATE_CONTINUE:
+					result.format( "CONTINUE" );
+					break;
+				case STATE_SUCCESS:
+					result.format( "SUCCESS" );
+					break;
+				case STATE_FAILURE:
+					result.format( "FAILURE" );
+					break;
+				default:
+					result.format( "UNKNOWN %d", retType );
+					break;
+			}	
+			if( !idle )
+				DEBUG_LOG( (" - RETURNING %s\n", result.str() ) );
+		}
+	#endif
+	//end -extraLogging 
+
+	return retType;
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -2558,7 +2602,8 @@ StateReturnType AIAttackApproachTargetState::updateInternal()
 	Object *victim = getMachineGoalObject();
 	if (victim) 
 	{ 
-		if( victim->testStatus( OBJECT_STATUS_STEALTHED ) && !victim->testStatus( OBJECT_STATUS_DETECTED ) ) {
+		if( victim->testStatus( OBJECT_STATUS_STEALTHED ) && !victim->testStatus( OBJECT_STATUS_DETECTED ) ) 
+		{
 			return STATE_FAILURE;	// If obj is stealthed, can no longer approach.
 		}
 		ai->setCurrentVictim(victim);
@@ -2899,7 +2944,8 @@ StateReturnType AIAttackPursueTargetState::updateInternal()
  	Object *victim = getMachineGoalObject();
 	if (victim) 
 	{ 
-		if( victim->testStatus( OBJECT_STATUS_STEALTHED ) && !victim->testStatus( OBJECT_STATUS_DETECTED ) ){
+		if( victim->testStatus( OBJECT_STATUS_STEALTHED ) && !victim->testStatus( OBJECT_STATUS_DETECTED ) )
+		{
 			return STATE_FAILURE;	// If obj is stealthed, can no longer pursue.
 		}
 		ai->setCurrentVictim(victim);
@@ -3382,7 +3428,7 @@ AIAttackMoveToState::AIAttackMoveToState( StateMachine *machine ) : AIMoveToStat
 //----------------------------------------------------------------------------------------------------------
 AIAttackMoveToState::~AIAttackMoveToState()
 {
-	m_attackMoveMachine->deleteInstance();
+	deleteInstance(m_attackMoveMachine);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -3982,8 +4028,11 @@ StateReturnType AIFollowWaypointPathState::update()
 		if (getAdjustsDestination() && ai->isDoingGroundMovement()) {
 			if (!TheAI->pathfinder()->adjustDestination(obj, ai->getLocomotorSet(), &m_goalPosition)) {
 				if (m_currentWaypoint) {
+// TheSuperHackers @info helmutbuhler 05/05/2025 This debug mutates the code to become CRC incompatible
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) || !RETAIL_COMPATIBLE_CRC
 					DEBUG_LOG(("Breaking out of follow waypoint path %s of %s\n", 
 					m_currentWaypoint->getName().str(), m_currentWaypoint->getPathLabel1().str()));
+#endif
 				}
 				return STATE_FAILURE;
 			}
@@ -4004,8 +4053,12 @@ StateReturnType AIFollowWaypointPathState::update()
 	if (m_moveAsGroup) {
 		if (obj->getControllingPlayer()->isSkirmishAIPlayer()) {
 			Team *team = obj->getTeam();
-			AIGroup *group = TheAI->createGroup();
+			AIGroupPtr group = TheAI->createGroup();
+#if RETAIL_COMPATIBLE_AIGROUP
 			team->getTeamAsAIGroup(group);
+#else
+			team->getTeamAsAIGroup(group.Peek());
+#endif
 
 			Coord3D pos;
 			group->getCenter(&pos);
@@ -4052,8 +4105,11 @@ StateReturnType AIFollowWaypointPathState::update()
 		if (getAdjustsDestination() && ai->isDoingGroundMovement()) {
 			if (!TheAI->pathfinder()->adjustDestination(obj, ai->getLocomotorSet(), &m_goalPosition)) {
 				if (m_currentWaypoint) {
+// TheSuperHackers @info helmutbuhler 05/05/2025 This debug mutates the code to become CRC incompatible
+#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) || !RETAIL_COMPATIBLE_CRC
 					DEBUG_LOG(("Breaking out of follow waypoint path %s of %s\n", 
 					m_currentWaypoint->getName().str(), m_currentWaypoint->getPathLabel1().str()));
+#endif
 				}
 				return STATE_FAILURE;
 			}
@@ -4210,7 +4266,7 @@ AIFollowWaypointPathState ( machine, asGroup, false )
 //-------------------------------------------------------------------------------------------------
 AIAttackFollowWaypointPathState::~AIAttackFollowWaypointPathState()
 {
-	m_attackFollowMachine->deleteInstance();
+	deleteInstance(m_attackFollowMachine);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -4806,7 +4862,7 @@ StateReturnType AIAttackAimAtTargetState::onEnter()
 	}
 	m_setLocomotor = false;
 
-	source->setStatus( OBJECT_STATUS_IS_AIMING_WEAPON, true );
+	source->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_AIMING_WEAPON ) );
 	return STATE_CONTINUE;
 }
 
@@ -4944,7 +5000,7 @@ void AIAttackAimAtTargetState::onExit( StateExitType status )
 		// don't do the loco call, or else we will "wiggle"... we already have an appropriate goal
 	}
 
-	getMachineOwner()->setStatus( OBJECT_STATUS_IS_AIMING_WEAPON, false );
+	getMachineOwner()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_AIMING_WEAPON ) );
 
 	//getMachineOwner()->clearModelConditionState( MODELCONDITION_PREATTACK );
 }
@@ -4979,7 +5035,7 @@ StateReturnType AIAttackFireWeaponState::onEnter()
 		}
 	}
 
-	obj->setStatus( OBJECT_STATUS_IS_FIRING_WEAPON, true );
+	obj->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_FIRING_WEAPON ) );
 	obj->preFireCurrentWeapon( getMachineGoalObject() );
 	return STATE_CONTINUE;	
 }
@@ -5037,7 +5093,7 @@ StateReturnType AIAttackFireWeaponState::update()
 	{
 		obj->fireCurrentWeapon(victim);
 		// clear this, just in case.
-		obj->setStatus( OBJECT_STATUS_IGNORING_STEALTH, false );
+		obj->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IGNORING_STEALTH ) );
 		Real continueRange = weapon->getContinueAttackRange();
 		if (
 			continueRange > 0.0f &&
@@ -5071,7 +5127,7 @@ StateReturnType AIAttackFireWeaponState::update()
 	{
 		obj->fireCurrentWeapon(getMachineGoalPosition());
 		// clear this, just in case.
-		obj->setStatus( OBJECT_STATUS_IGNORING_STEALTH, false );
+		obj->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IGNORING_STEALTH ) );
 	}
 		
 	m_att->notifyFired();
@@ -5087,9 +5143,7 @@ void AIAttackFireWeaponState::onExit( StateExitType status )
 {
 	// contained by AIAttackState, so no separate timer
 	Object *obj = getMachineOwner();
-	obj->setStatus( OBJECT_STATUS_IS_FIRING_WEAPON, false );
-	// clear this, just in case.
-	obj->setStatus( OBJECT_STATUS_IGNORING_STEALTH, false );
+	obj->clearStatus( MAKE_OBJECT_STATUS_MASK2( OBJECT_STATUS_IS_FIRING_WEAPON, OBJECT_STATUS_IGNORING_STEALTH ) );
 
 	// this can occur if we start a preattack (eg, bayonet)
 	// and the target moves out range before we can actually "fire"...
@@ -5146,7 +5200,7 @@ AIAttackState::~AIAttackState()
 	if (m_attackMachine) 
 	{
 		m_attackMachine->halt();
-		m_attackMachine->deleteInstance();
+		deleteInstance(m_attackMachine);
 	}
 }
 
@@ -5298,7 +5352,7 @@ StateReturnType AIAttackState::onEnter()
 		curWeapon->setMaxShotCount(NO_MAX_SHOTS_LIMIT);
 		// icky special case for ignoring stealth units we might be targeting, that are currently stealthed. (srj)
 		if (curWeapon->getContinueAttackRange() > 0.0f)
-			source->setStatus(OBJECT_STATUS_IGNORING_STEALTH, true);
+			source->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IGNORING_STEALTH ) );
 	}
 
 	m_lockedWeaponOnEnter = source->isCurWeaponLocked() ? curWeapon : NULL;
@@ -5306,7 +5360,7 @@ StateReturnType AIAttackState::onEnter()
 	StateReturnType retType = m_attackMachine->initDefaultState();
 	if( retType == STATE_CONTINUE )
 	{
-		source->setStatus( OBJECT_STATUS_IS_ATTACKING, true );
+		source->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_ATTACKING ) );
 		source->setModelConditionState( MODELCONDITION_ATTACKING );
 	}
 	return retType;
@@ -5359,7 +5413,7 @@ StateReturnType AIAttackState::update()
 			AIUpdateInterface *ai = source->getAI();
 			if (ai)
 			{
-				if ( (victim->getStatusBits() & OBJECT_STATUS_CAN_ATTACK) == 0 )
+				if( !victim->getStatusBits().test( OBJECT_STATUS_CAN_ATTACK ) )
 				{
 					if ( victim->getContain() != NULL )
 					{
@@ -5436,15 +5490,15 @@ void AIAttackState::onExit( StateExitType status )
 	// destroy the attack machine
 	if (m_attackMachine)
 	{
-		m_attackMachine->deleteInstance();
+		deleteInstance(m_attackMachine);
 		m_attackMachine = NULL;
 	}
 
 	Object *obj = getMachineOwner();
-	obj->setStatus( OBJECT_STATUS_IS_FIRING_WEAPON, false );
-	obj->setStatus( OBJECT_STATUS_IS_AIMING_WEAPON, false );
-	obj->setStatus( OBJECT_STATUS_IS_ATTACKING, false );
-	obj->setStatus( OBJECT_STATUS_IGNORING_STEALTH, false );
+	obj->clearStatus( MAKE_OBJECT_STATUS_MASK4( OBJECT_STATUS_IS_FIRING_WEAPON, 
+																							OBJECT_STATUS_IS_AIMING_WEAPON, 
+																							OBJECT_STATUS_IS_ATTACKING, 
+																							OBJECT_STATUS_IGNORING_STEALTH ) );
 	obj->clearModelConditionState( MODELCONDITION_ATTACKING );
 
 	obj->clearLeechRangeModeForAllWeapons();
@@ -5530,7 +5584,7 @@ AIAttackSquadState::~AIAttackSquadState()
 {
 	if (m_attackSquadMachine)	{
 		m_attackSquadMachine->halt();
-		m_attackSquadMachine->deleteInstance();
+		deleteInstance(m_attackSquadMachine);
 	}
 }
 
@@ -5655,7 +5709,7 @@ void AIAttackSquadState::onExit( StateExitType status )
 	if( m_attackSquadMachine )
 	{
 		// destroy the attack machine
-		m_attackSquadMachine->deleteInstance();
+		deleteInstance(m_attackSquadMachine);
 		m_attackSquadMachine = NULL;
 	}
 }
@@ -5767,7 +5821,7 @@ AIDockState::~AIDockState()
 {
 	if (m_dockMachine) {
 		m_dockMachine->halt();
-		m_dockMachine->deleteInstance();
+		deleteInstance(m_dockMachine);
 	}
 }
 
@@ -5871,7 +5925,7 @@ void AIDockState::onExit( StateExitType status )
 	// destroy the dock machine
 	if (m_dockMachine) {
 		m_dockMachine->halt();// GS, you have to halt before you delete to do cleanup.
-		m_dockMachine->deleteInstance();
+		deleteInstance(m_dockMachine);
 		m_dockMachine = NULL;
 	}	else {
 		DEBUG_LOG(("Dock exited immediately\n"));
@@ -6251,7 +6305,7 @@ AIGuardState::~AIGuardState()
 {
 	if (m_guardMachine)	{
 		m_guardMachine->halt();
-		m_guardMachine->deleteInstance();
+		deleteInstance(m_guardMachine);
 	}
 }
 
@@ -6336,7 +6390,7 @@ StateReturnType AIGuardState::onEnter()
 //----------------------------------------------------------------------------------------------------------
 void AIGuardState::onExit( StateExitType status )
 {
-	m_guardMachine->deleteInstance();
+	deleteInstance(m_guardMachine);
 	m_guardMachine = NULL;
 
 	Object *obj = getMachineOwner();
@@ -6377,7 +6431,7 @@ AITunnelNetworkGuardState::~AITunnelNetworkGuardState()
 {
 	if (m_guardMachine)	{
 		m_guardMachine->halt();
-		m_guardMachine->deleteInstance();
+		deleteInstance(m_guardMachine);
 	}
 }
 
@@ -6457,7 +6511,7 @@ StateReturnType AITunnelNetworkGuardState::onEnter()
 //----------------------------------------------------------------------------------------------------------
 void AITunnelNetworkGuardState::onExit( StateExitType status )
 {
-	m_guardMachine->deleteInstance();
+	deleteInstance(m_guardMachine);
 	m_guardMachine = NULL;
 
 	Object *obj = getMachineOwner();
@@ -6503,7 +6557,7 @@ AIHuntState::~AIHuntState()
 	if (m_huntMachine) 
 	{
 		m_huntMachine->halt();
-		m_huntMachine->deleteInstance();
+		deleteInstance(m_huntMachine);
 	}
 }
 
@@ -6570,7 +6624,7 @@ StateReturnType AIHuntState::onEnter()
 void AIHuntState::onExit( StateExitType status )
 {
 	// destroy the hunt machine
-	m_huntMachine->deleteInstance();
+	deleteInstance(m_huntMachine);
 	m_huntMachine = NULL;
 
 	Object *obj = getMachineOwner();
@@ -6699,7 +6753,7 @@ AIAttackAreaState::~AIAttackAreaState()
 {
 	if (m_attackMachine) {
 		m_attackMachine->halt();
-		m_attackMachine->deleteInstance();
+		deleteInstance(m_attackMachine);
 	}
 }
 
@@ -6774,7 +6828,7 @@ StateReturnType AIAttackAreaState::onEnter()
 void AIAttackAreaState::onExit( StateExitType status )
 {
 	// destroy the hunt machine
-	m_attackMachine->deleteInstance();
+	deleteInstance(m_attackMachine);
 	m_attackMachine = NULL;
 }
 

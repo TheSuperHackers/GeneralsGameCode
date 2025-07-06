@@ -80,15 +80,15 @@ enum
 #include "W3DDevice/GameClient/W3DShadow.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
 #include "W3DDevice/GameClient/W3DProjectedShadow.h"
-#include "WW3D2/Camera.h"
-#include "WW3D2/DX8Wrapper.h"
-#include "WW3D2/DX8Renderer.h"
-#include "WW3D2/Matinfo.h"
-#include "WW3D2/Mesh.h"
-#include "WW3D2/MeshMdl.h"
+#include "WW3D2/camera.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/dx8renderer.h"
+#include "WW3D2/matinfo.h"
+#include "WW3D2/mesh.h"
+#include "WW3D2/meshmdl.h"
 #include "d3dx8tex.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -146,7 +146,7 @@ int W3DTreeBuffer::W3DTreeTextureClass::update(W3DTreeBuffer *buffer)
 
 	Int tilePixelExtent = TILE_PIXEL_EXTENT;		 
 //	Int numRows = surface_desc.Height/(tilePixelExtent+TILE_OFFSET);
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	//DASSERT_MSG(tilesPerRow*numRows >= htMap->m_numBitmapTiles,Debug::Format ("Too many tiles.")); 
 	//DEBUG_ASSERTCRASH((Int)surface_desc.Width >= tilePixelExtent*tilesPerRow, ("Bitmap too small."));
 #endif
@@ -968,7 +968,6 @@ void W3DTreeBuffer::loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *p
 				m_curNumTreeVertices[bNdx]++;
 			}
 
-			try {
 			for (i=0; i<numIndex; i++) {
 				if (m_curNumTreeIndices[bNdx]+4 > MAX_TREE_INDEX) 
 					break;
@@ -976,10 +975,6 @@ void W3DTreeBuffer::loadTreesInVertexAndIndexBuffers(RefRenderObjListIterator *p
 				*curIb++ = startVertex + pPoly[i].J;
 				*curIb++ = startVertex + pPoly[i].K;
 				m_curNumTreeIndices[bNdx]+=3;
-			}
-			IndexBufferExceptionFunc();
-			} catch(...) {
-				IndexBufferExceptionFunc();
 			}
 		}		
 	}
@@ -1291,6 +1286,8 @@ void W3DTreeBuffer::clearAllTrees(void)
 		m_areaPartition[i] = END_OF_PARTITION;
 	}
 	m_numTreeTypes = 0;
+
+	m_lastLogicFrame = 0;
 }
 
 //=============================================================================
@@ -1556,6 +1553,16 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 	if (TheGameLogic && TheGameLogic->isGamePaused()) {
 		pause = true;
 	}
+
+	// TheSuperHackers @bugfix Mauller 04/07/2025 decouple the tree sway position updates from the client fps
+	if (TheGameLogic) {
+		UnsignedInt currentFrame = TheGameLogic->getFrame();
+		if (m_lastLogicFrame == currentFrame) {
+			pause = true;
+		}
+		m_lastLogicFrame = currentFrame;
+	}
+
 	Int i;
 	if (!pause) {
 		if (info.m_breezeVersion != m_curSwayVersion) 
@@ -1906,7 +1913,7 @@ void W3DTreeBuffer::updateTopplingTree(TTree *tree)
 		// Hit so either bounce or stop if too little remaining velocity.
 		tree->m_angularVelocity *= -d->m_bounceVelocityPercent;
 
-		if( BitTest( tree->m_options, W3D_TOPPLE_OPTIONS_NO_BOUNCE ) == TRUE || 
+		if( BitIsSet( tree->m_options, W3D_TOPPLE_OPTIONS_NO_BOUNCE ) == TRUE || 
 				fabs(tree->m_angularVelocity) < VELOCITY_BOUNCE_LIMIT )
 		{
 			// too slow, just stop
@@ -1919,7 +1926,7 @@ void W3DTreeBuffer::updateTopplingTree(TTree *tree)
 		else if( fabs(tree->m_angularVelocity) >= VELOCITY_BOUNCE_SOUND_LIMIT )
 		{
 			// fast enough bounce to warrant the bounce fx
-			if( BitTest( tree->m_options, W3D_TOPPLE_OPTIONS_NO_FX ) == FALSE ) {
+			if( BitIsSet( tree->m_options, W3D_TOPPLE_OPTIONS_NO_FX ) == FALSE ) {
 				Vector3 loc(0, 0, 3*TREE_RADIUS_APPROX); // Kinda towards the top of the tree. jba. [7/11/2003]
 				Vector3 xloc;
 				tree->m_mtx.Transform_Vector(tree->m_mtx, loc, &xloc);

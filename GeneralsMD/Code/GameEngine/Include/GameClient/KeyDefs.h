@@ -63,6 +63,7 @@
 #endif
 
 #include <dinput.h>
+#include <Lib/BaseType.h>
 
 // USER INCLUDES //////////////////////////////////////////////////////////////
 
@@ -104,7 +105,7 @@
 /** The key tables */
 //=============================================================================
 
-enum KeyDefType
+enum KeyDefType CPP_11(: Int)
 {
 	// keypad keys ---------------------------------------------------------------- 
 	KEY_KP0 								= DIK_NUMPAD0,

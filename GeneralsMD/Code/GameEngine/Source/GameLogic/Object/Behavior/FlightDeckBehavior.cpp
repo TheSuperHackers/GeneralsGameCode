@@ -52,7 +52,7 @@
 #include "GameLogic/Module/JetAIUpdate.h"
 #include "GameLogic/Module/ProductionUpdate.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -195,7 +195,7 @@ void FlightDeckBehavior::buildInfo(Bool createUnits)
 			std::vector<AsciiString>::const_iterator it;
 
 			Int counter = 0; 
-			for( it = spaces.begin(); it != spaces.end(), counter < row;	it++, counter++ )
+			for( it = spaces.begin(); it != spaces.end() && counter < row; it++, counter++ )
 			{
 				//just iterate to the spaces.
 			}
@@ -405,7 +405,7 @@ FlightDeckBehavior::FlightDeckInfo* FlightDeckBehavior::findPPI(ObjectID id)
 	for (std::vector<FlightDeckInfo>::iterator it = m_spaces.begin(); it != m_spaces.end(); ++it)
 	{
 		if (it->m_objectInSpace == id)
-			return it;
+			return &(*it);
 	}
 
 	return NULL; 
@@ -420,7 +420,7 @@ FlightDeckBehavior::FlightDeckInfo* FlightDeckBehavior::findEmptyPPI()
 	for (std::vector<FlightDeckInfo>::iterator it = m_spaces.begin(); it != m_spaces.end(); ++it)
 	{
 		if( it->m_objectInSpace == INVALID_ID )
-			return it;
+			return &(*it);
 	}
 
 	return NULL;
@@ -853,7 +853,8 @@ Bool FlightDeckBehavior::calcBestParkingAssignment( ObjectID id, Coord3D *pos, I
 	//Find the runway the object is assigned to.
 	Int runway = -1;
 	Int myIndex = 0;
-	for( std::vector<FlightDeckInfo>::iterator myIt = m_spaces.begin(); myIt != m_spaces.end(); myIt++, myIndex++ )
+	std::vector<FlightDeckInfo>::iterator myIt = m_spaces.begin();
+	for( ; myIt != m_spaces.end(); myIt++, myIndex++ )
 	{
 		if( myIt->m_objectInSpace == id )
 		{
@@ -879,7 +880,7 @@ Bool FlightDeckBehavior::calcBestParkingAssignment( ObjectID id, Coord3D *pos, I
 	//the back and keep looking at empty spaces until we find one with a plane blocking.
 
 	Bool checkForPlaneInWay = FALSE;
-	std::vector<FlightDeckInfo>::iterator bestIt = NULL;
+	std::vector<FlightDeckInfo>::iterator bestIt = m_spaces.end();
 	Object *bestJet = NULL;
 	Int bestIndex = 0, index = 0;
 	for( std::vector<FlightDeckInfo>::iterator thatIt = m_spaces.begin(); thatIt != m_spaces.end(); thatIt++, index++ )
@@ -888,7 +889,7 @@ Bool FlightDeckBehavior::calcBestParkingAssignment( ObjectID id, Coord3D *pos, I
 		if( myIt == thatIt )
 		{
 			//Done, don't look at my spot, nor spots behind me.
-			if( bestIt )
+			if( bestIt != m_spaces.end() )
 			{
 				myIt->m_objectInSpace = bestJet ? bestJet->getID() : INVALID_ID;
 				bestIt->m_objectInSpace = id;
@@ -940,7 +941,7 @@ Bool FlightDeckBehavior::calcBestParkingAssignment( ObjectID id, Coord3D *pos, I
 				if( pos )
 				{
 					pos->set( &myIt->m_prep ); //reset the original position.
-					bestIt = NULL;
+					bestIt = m_spaces.end();
 				}
 			}
 		}
@@ -1193,7 +1194,8 @@ UpdateSleepTime FlightDeckBehavior::update()
 		m_startedProductionFrame = FOREVER;
 	}
 
-	for( std::vector<FlightDeckInfo>::iterator it = m_spaces.begin(); it != m_spaces.end(); it++ )
+	std::vector<FlightDeckInfo>::iterator it = m_spaces.begin();
+	for( ; it != m_spaces.end(); it++ )
 	{
 		//Unassigned space?... so we can build a replacement. 
 		if( it->m_objectInSpace == INVALID_ID )
@@ -1316,17 +1318,16 @@ void FlightDeckBehavior::exitObjectViaDoor( Object *newObj, ExitDoorType exitDoo
 				break;
 			}
 		}
-
-		if (!ppi)
-		{
-			DEBUG_CRASH(("could not find the space. what?"));
-			return;
-		}
-
-		ppi->m_objectInSpace = newObj->getID();
-		//validateAssignments();
 	}
 
+	if (!ppi)
+	{
+		DEBUG_CRASH(("could not find the space. what?"));
+		return;
+	}
+
+	ppi->m_objectInSpace = newObj->getID();
+	//validateAssignments();
 
 	/// @todo srj -- this is evil. fix.
 	static NameKeyType jetKey = TheNameKeyGenerator->nameToKey( "JetAIUpdate" );
@@ -1354,7 +1355,7 @@ void FlightDeckBehavior::exitObjectViaDoor( Object *newObj, ExitDoorType exitDoo
 		return;
 	}
 
-	newObj->setPosition( pCreationLocations->begin() );
+	newObj->setPosition( &(*pCreationLocations)[0] );
 	newObj->setOrientation( m_runways[ ppi->m_runway ].m_startOrient );
 	TheAI->pathfinder()->addObjectToPathfindMap( newObj );
 

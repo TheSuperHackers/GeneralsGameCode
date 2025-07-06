@@ -36,7 +36,7 @@
 #include "Common/GameType.h"
 #include "Common/Snapshot.h"
 #include "Lib/BaseType.h"
-#include "WW3D2/ColType.h"			///< we don't generally do this, but we need the W3D collision types
+#include "WW3D2/coltype.h"			///< we don't generally do this, but we need the W3D collision types
 
 #define DEFAULT_VIEW_WIDTH 640
 #define DEFAULT_VIEW_HEIGHT 480
@@ -49,17 +49,19 @@ class ViewLocation;
 class Thing;
 class Waypoint;
 class LookAtTranslator;
+enum FilterTypes CPP_11(: Int);
+enum FilterModes CPP_11(: Int);
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
-enum PickType
+enum PickType CPP_11(: Int)
 {
-	PICK_TYPE_TERRAIN						= COLLISION_TYPE_0,
-	PICK_TYPE_SELECTABLE				= COLLISION_TYPE_1,
-	PICK_TYPE_SHRUBBERY					= COLLISION_TYPE_2,
-	PICK_TYPE_MINES							= COLLISION_TYPE_3,	// mines aren't normally selectable, but workers/dozers need to
-	PICK_TYPE_FORCEATTACKABLE		= COLLISION_TYPE_4,
+	PICK_TYPE_TERRAIN						= COLL_TYPE_0,
+	PICK_TYPE_SELECTABLE				= COLL_TYPE_1,
+	PICK_TYPE_SHRUBBERY					= COLL_TYPE_2,
+	PICK_TYPE_MINES							= COLL_TYPE_3,	// mines aren't normally selectable, but workers/dozers need to
+	PICK_TYPE_FORCEATTACKABLE		= COLL_TYPE_4,
 	PICK_TYPE_ALL_DRAWABLES			= (PICK_TYPE_SELECTABLE | PICK_TYPE_SHRUBBERY | PICK_TYPE_MINES | PICK_TYPE_FORCEATTACKABLE)
 };
 
@@ -82,6 +84,16 @@ public:
 		SHAKE_CINE_INSANE,		//Added for cinematics ONLY
 		SHAKE_COUNT 
 	};
+
+  // Return values for worldToScreenTriReturn
+  enum WorldToScreenReturn CPP_11(: Int)
+  {
+    WTS_INSIDE_FRUSTUM = 0, // On the screen (inside frustum of camera)
+    WTS_OUTSIDE_FRUSTUM,    // Return is valid but off the screen (outside frustum of camera)
+    WTS_INVALID,            // No transform possible
+
+    WTS_COUNT
+  };
 
 public:
 
@@ -135,11 +147,11 @@ public:
 	virtual void cameraModFinalLookToward(Coord3D *pLoc){}			///< Sets a look at point during camera movement.
 	virtual void cameraModFinalMoveTo(Coord3D *pLoc){ };			///< Sets a final move to.
 
-	virtual enum FilterModes getViewFilterMode(void) {return (enum FilterModes)0;}			///< Turns on viewport special effect (black & white mode)
-	virtual enum FilterTypes getViewFilterType(void) {return (enum FilterTypes)0;}			///< Turns on viewport special effect (black & white mode)
-	virtual Bool setViewFilterMode(enum FilterModes filterMode) { return FALSE; }			///< Turns on viewport special effect (black & white mode)
+	virtual FilterModes getViewFilterMode(void) {return (FilterModes)0;}			///< Turns on viewport special effect (black & white mode)
+	virtual FilterTypes getViewFilterType(void) {return (FilterTypes)0;}			///< Turns on viewport special effect (black & white mode)
+	virtual Bool setViewFilterMode(FilterModes filterMode) { return FALSE; }			///< Turns on viewport special effect (black & white mode)
 	virtual void setViewFilterPos(const Coord3D *pos) { };			///<  Passes a position to the special effect filter.
-	virtual Bool setViewFilter(	enum FilterTypes filter) { return FALSE;}			///< Turns on viewport special effect (black & white mode)
+	virtual Bool setViewFilter( FilterTypes filter) { return FALSE;}			///< Turns on viewport special effect (black & white mode)
 
 	virtual void setFadeParameters(Int fadeFrames, Int direction) { };
 	virtual void set3DWireFrameMode(Bool enable) { };
@@ -183,7 +195,8 @@ public:
 	virtual void setFieldOfView( Real angle ) { m_FOV = angle; }				///< Set the horizontal field of view angle
 	virtual Real getFieldOfView( void ) { return m_FOV; }								///< Get the horizontal field of view angle
 
-	virtual Bool worldToScreen( const Coord3D *w, ICoord2D *s ) = 0;										///< Transform world coordinate "w" into screen coordinate "s"
+  Bool worldToScreen( const Coord3D *w, ICoord2D *s ) { return worldToScreenTriReturn( w, s ) == WTS_INSIDE_FRUSTUM; }	///< Transform world coordinate "w" into screen coordinate "s"
+  virtual WorldToScreenReturn worldToScreenTriReturn(const Coord3D *w, ICoord2D *s ) = 0; ///< Like worldToScreen(), but with a more informative return value
 	virtual void screenToWorld( const ICoord2D *s, Coord3D *w ) = 0;										///< Transform screen coordinate "s" into world coordinate "w"
 	virtual void screenToTerrain( const ICoord2D *screen, Coord3D *world ) = 0;  ///< transform screen coord to a point on the 3D terrain
 	virtual void screenToWorldAtZ( const ICoord2D *s, Coord3D *w, Real z ) = 0;  ///< transform screen point to world point at the specified world Z value

@@ -31,10 +31,10 @@
 #ifndef __PEERTHREAD_H__
 #define __PEERTHREAD_H__
 
-#include "GameSpy/Peer/Peer.h"
+#include "gamespy/peer/peer.h"
 #include "GameNetwork/NetworkDefs.h"
 
-enum SerialAuthResult
+enum SerialAuthResult CPP_11(: Int)
 {
 	SERIAL_NONEXISTENT,
 	SERIAL_AUTHFAILED,
@@ -175,7 +175,7 @@ public:
 
 //-------------------------------------------------------------------------
 
-enum DisconnectReason
+enum DisconnectReason CPP_11(: Int)
 {
 	DISCONNECT_NICKTAKEN = 1,
 	DISCONNECT_BADNICK,
@@ -199,7 +199,7 @@ enum DisconnectReason
 	DISCONNECT_MAX,
 };
 
-enum QMStatus
+enum QMStatus CPP_11(: Int)
 {
 	QM_IDLE,
 	QM_JOININGQMCHANNEL,

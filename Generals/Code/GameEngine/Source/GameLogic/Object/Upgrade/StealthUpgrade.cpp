@@ -51,7 +51,7 @@ void StealthUpgrade::upgradeImplementation( )
 {
 	// The logic that does the stealthupdate will notice this and start stealthing
 	Object *me = getObject();
-	me->setStatus( OBJECT_STATUS_CAN_STEALTH );
+	me->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_CAN_STEALTH ) );
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -47,7 +47,7 @@
 
 const UnsignedInt WAIT_INDEFINITELY = 0xffffffff;
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -308,7 +308,7 @@ TurretAI::TurretAI(Object* owner, const TurretAIData* data, WhichTurretType tur)
 	m_angle = getNaturalTurretAngle();
 	m_pitch = getNaturalTurretPitch();
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	char smbuf[256];
 	sprintf(smbuf, "TurretStateMachine for tur %08lx slot %d",this,tur);
 	const char* smname = smbuf;
@@ -327,7 +327,7 @@ TurretAI::~TurretAI()
 	stopRotOrPitchSound();
 
 	if (m_turretStateMachine)
-		m_turretStateMachine->deleteInstance();
+		deleteInstance(m_turretStateMachine);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -689,7 +689,7 @@ UpdateSleepTime TurretAI::updateTurretAI()
 {
 	USE_PERF_TIMER(TurretAI)
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	DEBUG_ASSERTCRASH(!m_enabled ||
 							m_turretStateMachine->peekSleepTill() == 0 || 
 							m_turretStateMachine->peekSleepTill() >= m_sleepUntil, ("Turret Machine is less sleepy than turret"));
@@ -721,7 +721,7 @@ UpdateSleepTime TurretAI::updateTurretAI()
 		if (m_didFire)
 		{
 			// if we fired, enable sweeping for a few frames.
-			const ENABLE_SWEEP_FRAME_COUNT = 3;
+			const Int ENABLE_SWEEP_FRAME_COUNT = 3;
 			m_enableSweepUntil = now + ENABLE_SWEEP_FRAME_COUNT;
 			m_continuousFireExpirationFrame = now + ENABLE_SWEEP_FRAME_COUNT;// so the recent firing will not interrupt the moving sound
 		}
@@ -748,7 +748,7 @@ UpdateSleepTime TurretAI::updateTurretAI()
 
 	m_sleepUntil = now + subMachineSleep;
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	DEBUG_ASSERTCRASH(!m_enabled ||
 							m_turretStateMachine->peekSleepTill() == 0 || 
 							m_turretStateMachine->peekSleepTill() >= m_sleepUntil, ("Turret Machine is less sleepy than turret"));

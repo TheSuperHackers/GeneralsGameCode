@@ -57,7 +57,7 @@
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/Weapon.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -306,7 +306,7 @@ void OpenContain::addToContain( Object *rider )
 		wasSelected = TRUE;
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if( !isValidContainerFor( rider, false ) )
 	{
 		Object *reportObject = rider;
@@ -434,32 +434,33 @@ void OpenContain::removeAllContained( Bool exposeStealthUnits )
 //-------------------------------------------------------------------------------------------------
 void OpenContain::killAllContained( void )
 {
-	ContainedItemsList::iterator it = m_containList.begin();
+	// TheSuperHackers @bugfix xezon 23/05/2025 Empty m_containList straight away
+	// to prevent a potential child call to catastrophically modify the m_containList as well.
+	// This scenario can happen if the killed occupant(s) apply deadly damage on death
+	// to the host container, which then attempts to remove all remaining occupants
+	// on the death of the host container. This is reproducible by shooting with
+	// Neutron Shells on a GLA Technical containing GLA Terrorists.
 
- 	while ( it != m_containList.end() )
+	ContainedItemsList list;
+	list.swap(m_containList);
+	m_containListSize = 0;
+
+	ContainedItemsList::iterator it = list.begin();
+
+	while ( it != list.end() )
 	{
-    Object *rider = *it;
+		Object *rider = *it++;
 
+		DEBUG_ASSERTCRASH( rider, ("Contain list must not contain NULL element"));
+		if ( rider )
+		{
+			onRemoving( rider );
+			rider->onRemovedFrom( getObject() );
+			rider->kill();
+		}
+	}
 
-    if ( rider )
-    {
-	    it = m_containList.erase(it);
-	    m_containListSize--;
-
-      onRemoving( rider );
-	    rider->onRemovedFrom( getObject() );
-      rider->kill();
-
-    }
-    else
-      ++it;
-
-	}  // end while
-
-
-  DEBUG_ASSERTCRASH( m_containListSize == 0, ("killallcontain just made a booboo, list size != zero.") );
-
-}  // end removeAllContained
+}  // end killAllContained
 
 //--------------------------------------------------------------------------------------------------------
 /** Force all contained objects in the contained list to exit, and kick them in the pants on the way out*/
@@ -472,6 +473,7 @@ void OpenContain::harmAndForceExitAllContained( DamageInfo *info )
 	{
 		Object *rider = *it;
 
+		DEBUG_ASSERTCRASH( rider, ("Contain list must not contain NULL element"));
 		if ( rider )
 		{
 		  removeFromContain( rider, true );
@@ -490,7 +492,7 @@ void OpenContain::harmAndForceExitAllContained( DamageInfo *info )
 
   DEBUG_ASSERTCRASH( m_containListSize == 0, ("harmAndForceExitAllContained just made a booboo, list size != zero.") );
 
-}  // end removeAllContained
+}  // end harmAndForceExitAllContained
 
 
 //-------------------------------------------------------------------------------------------------
@@ -631,7 +633,7 @@ void OpenContain::removeFromContainViaIterator( ContainedItemsList::iterator it,
 {
 
 /*
-	#ifdef _DEBUG
+	#ifdef RTS_DEBUG
 		TheInGameUI->message( UnicodeString( L"'%S(%d)' no longer contains '%S(%d)'" ), 
 													getObject()->getTemplate()->getName().str(),
 													getObject()->getID(),
@@ -1442,20 +1444,17 @@ void OpenContain::processDamageToContained(Real percentDamage)
 {
 	const OpenContainModuleData *data = getOpenContainModuleData();
 
+#if RETAIL_COMPATIBLE_CRC
+
 	const ContainedItemsList* items = getContainedItemsList();
 	if( items )
 	{
-		ContainedItemsList::const_iterator it;
-		it = items->begin();
+		ContainedItemsList::const_iterator it = items->begin();
+		const size_t listSize = items->size();
 
-		while( *it )
+		while( it != items->end() )
 		{
-			Object *object = *it;
-
-			//Advance to the next iterator before we apply the damage.
-			//It's possible that the damage will kill the unit and foobar
-			//the iterator list.
-			++it;
+			Object *object = *it++;
 
 			//Calculate the damage to be inflicted on each unit.
 			Real damage = object->getBodyModule()->getMaxHealth() * percentDamage;
@@ -1468,9 +1467,82 @@ void OpenContain::processDamageToContained(Real percentDamage)
 			object->attemptDamage( &damageInfo );
 
 			if( !object->isEffectivelyDead() && percentDamage == 1.0f )
-				object->kill(); // in case we are carrying flame proof troops we have been asked to kill			
+				object->kill(); // in case we are carrying flame proof troops we have been asked to kill
+
+			// TheSuperHackers @info Calls to Object::attemptDamage and Object::kill will not remove
+			// the occupant from the host container straight away. Instead it will be removed when the
+			// Object deletion is finalized in a Game Logic update. This will lead to strange behavior
+			// where the occupant will be removed after death with a delay. This behavior cannot be
+			// changed without breaking retail compatibility.
+
+			// TheSuperHackers @bugfix xezon 05/06/2025 Stop iterating when the list was cleared.
+			// This scenario can happen if the killed occupant(s) apply deadly damage on death
+			// to the host container, which then attempts to remove all remaining occupants
+			// on the death of the host container. This is reproducible by destroying a
+			// GLA Battle Bus with at least 2 half damaged GLA Terrorists inside.
+			if (listSize != items->size())
+			{
+				DEBUG_ASSERTCRASH( listSize == 0, ("List is expected empty\n") );
+				break;
+			}
 		}
 	}
+
+#else
+
+	// TheSuperHackers @bugfix xezon 05/06/2025 Temporarily empty the m_containList
+	// to prevent a potential child call to catastrophically modify the m_containList.
+	// This scenario can happen if the killed occupant(s) apply deadly damage on death
+	// to the host container, which then attempts to remove all remaining occupants
+	// on the death of the host container. This is reproducible by destroying a
+	// GLA Battle Bus with at least 2 half damaged GLA Terrorists inside.
+
+	// Caveat: While the m_containList is empty, it will not be possible to apply damage
+	// on death of a unit to another unit in the host container. If this functionality
+	// is desired, then this implementation needs to be revisited.
+
+	ContainedItemsList list;
+	m_containList.swap(list);
+	m_containListSize = 0;
+
+	ContainedItemsList::iterator it = list.begin();
+
+	while ( it != list.end() )
+	{
+		Object *object = *it;
+
+		DEBUG_ASSERTCRASH( object, ("Contain list must not contain NULL element\n") );
+
+		// Calculate the damage to be inflicted on each unit.
+		Real damage = object->getBodyModule()->getMaxHealth() * percentDamage;
+
+		DamageInfo damageInfo;
+		damageInfo.in.m_damageType = DAMAGE_UNRESISTABLE;
+		damageInfo.in.m_deathType = data->m_isBurnedDeathToUnits ? DEATH_BURNED : DEATH_NORMAL;
+		damageInfo.in.m_sourceID = getObject()->getID();
+		damageInfo.in.m_amount = damage;
+		object->attemptDamage( &damageInfo );
+
+		if( !object->isEffectivelyDead() && percentDamage == 1.0f )
+			object->kill(); // in case we are carrying flame proof troops we have been asked to kill
+
+		if ( object->isEffectivelyDead() )
+		{
+			onRemoving( object );
+			object->onRemovedFrom( getObject() );
+			it = list.erase( it );
+		}
+		else
+		{
+			++it;
+		}
+	}
+
+	// Swap the list back where it belongs.
+	m_containList.swap(list);
+	m_containListSize = (UnsignedInt)m_containList.size();
+
+#endif // RETAIL_COMPATIBLE_CRC
 }
 
 //-------------------------------------------------------------------------------------------------

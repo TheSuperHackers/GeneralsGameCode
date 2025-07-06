@@ -19,8 +19,8 @@
 // ScriptActionsTrue.cpp : implementation file
 //
 
-#include "stdafx.h"
-#include "worldbuilder.h"
+#include "StdAfx.h"
+#include "WorldBuilder.h"
 #include "ScriptActionsTrue.h"
 #include "GameLogic/Scripts.h"
 #include "EditAction.h"	
@@ -190,7 +190,7 @@ void ScriptActionsTrue::OnNew()
 		m_index++;
 		loadList();
 	} else {
-		pAct->deleteInstance();
+		deleteInstance(pAct);
 	}
 }
 

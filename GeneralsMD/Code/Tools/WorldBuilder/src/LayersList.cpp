@@ -33,7 +33,7 @@
 
 #include "StdAfx.h"
 #include "Common/STLTypedefs.h"
-#include "Resource.h"
+#include "resource.h"
 #include "LayersList.h"
 
 #include "Common/Dict.h"

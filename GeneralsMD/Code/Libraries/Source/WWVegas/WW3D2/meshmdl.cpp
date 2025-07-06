@@ -106,8 +106,6 @@ MeshModelClass::MeshModelClass(const MeshModelClass & that) :
 
 MeshModelClass::~MeshModelClass(void)
 {
-//	WWDEBUG_SAY(("Note: Mesh %s was never used\n",Get_Name()));
-	TheDX8MeshRenderer.Unregister_Mesh_Type(this);
 
 	Reset(0,0,0);
 	REF_PTR_RELEASE(MatInfo);
@@ -665,7 +663,8 @@ void MeshModelClass::Init_For_NPatch_Rendering()
 	DuplicateLocationHash.Remove_All();
 	SideHash.Remove_All();
 
-	for (unsigned i=0;i<vertex_count;++i) {
+	unsigned i=0;
+	for (;i<vertex_count;++i) {
 		if (LocationHash.Exists(locations[i])) {
 			if (!DuplicateLocationHash.Exists(locations[i])) {
 				DuplicateLocationHash.Insert(locations[i],i);

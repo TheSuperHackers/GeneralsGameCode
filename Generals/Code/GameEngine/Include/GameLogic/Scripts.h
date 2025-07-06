@@ -34,6 +34,7 @@
 
 #include "Common/Snapshot.h"
 #include "GameNetwork/NetworkDefs.h"
+#include "Common/ObjectStatusTypes.h"
 
 #define THIS_TEAM "<This Team>"
 #define ANY_TEAM "<Any Team>"
@@ -755,7 +756,7 @@ public:
 		SHAKE_INTENSITY,		// Int, specifies which Intensity to use (Intensity in 10 cities!)
 		COMMAND_BUTTON,  		// String
 		FONT_NAME,       		// String, the name of the desired font
-		OBJECT_STATUS,			// String, specifies ObjectStatusBits name. However, translated to an int on read.
+		OBJECT_STATUS,			// String, specifies ObjectStatusTypes name. However, translated to an ObjectStatusMaskType on read
 		COMMANDBUTTON_ALL_ABILITIES, // String, refers to all command buttons
 		SKIRMISH_WAYPOINT_PATH, // String, name of a predefined skirmish waypoint path.
 		COLOR,							// color (as int) in ARGB format.
@@ -799,18 +800,21 @@ private:
 	Real					m_real;
 	AsciiString		m_string;
 	Coord3D				m_coord;
+	ObjectStatusMaskType m_objectStatus;
 
 protected:
 	void setInt(Int i) {m_int = i;}
 	void setReal(Real r) {m_real = r;}
 	void setCoord3D(const Coord3D *pLoc);
 	void setString(AsciiString s) {m_string = s;}
+	void setStatus( ObjectStatusMaskType objectStatus ) { m_objectStatus.set( objectStatus ); }
 
 public:
 	Int getInt(void) const {return m_int;}
 	Real getReal(void) const {return m_real;}
 	void getCoord3D(Coord3D *pLoc) const;
 	ParameterType getParameterType(void) const {return m_paramType;}
+	ObjectStatusMaskType getStatus() const { return m_objectStatus; }
 
 	void friend_setInt(Int i) {m_int = i;}
 	void friend_setReal(Real r) {m_real = r;}

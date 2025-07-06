@@ -42,6 +42,7 @@
 #include "Common/Module.h"
 #include "Common/RandomValue.h"
 #include "Common/ThingTemplate.h"
+#include "Common/ThingSort.h"
 #include "Common/PerfTimer.h"
 #include "Common/PlayerList.h"
 #include "Common/Player.h"
@@ -70,6 +71,7 @@
 #include "GameLogic/Object.h"
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/TerrainLogic.h"									///< @todo This should be TerrainVisual (client side)
+#include "Common/AudioEventInfo.h"
 
 #include "W3DDevice/Common/W3DConvert.h"
 #include "W3DDevice/GameClient/HeightMap.h"
@@ -77,22 +79,22 @@
 #include "W3DDevice/GameClient/W3DDisplay.h"
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/GameClient/W3DView.h"
-#include "D3dx8math.h"
+#include "d3dx8math.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "W3DDevice/GameClient/Module/W3DModelDraw.h"
 #include "W3DDevice/GameClient/W3DCustomScene.h"
 
-#include "WW3D2/DX8Renderer.h"
-#include "WW3D2/Light.h"
-#include "WW3D2/Camera.h"
-#include "WW3D2/Coltype.h"
-#include "WW3D2/PredLod.h"
-#include "WW3D2/WW3D.h"
+#include "WW3D2/dx8renderer.h"
+#include "WW3D2/light.h"
+#include "WW3D2/camera.h"
+#include "WW3D2/coltype.h"
+#include "WW3D2/predlod.h"
+#include "WW3D2/ww3d.h"
 
 #include "WinMain.h"  /** @todo Remove this, it's only here because we
 													are using timeGetTime, but we can remove that
 													when we have our own timer */
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -424,6 +426,8 @@ void W3DView::getPickRay(const ICoord2D *screen, Vector3 *rayStart, Vector3 *ray
 //-------------------------------------------------------------------------------------------------
 void W3DView::setCameraTransform( void )
 {
+	if (TheGlobalData->m_headless)
+		return;
 	m_cameraHasMovedSinceRequest = true;
 	Matrix3D cameraTransform( 1 );
 	
@@ -439,7 +443,7 @@ void W3DView::setCameraTransform( void )
 	}
 
 	m_3DCamera->Set_Clip_Planes(nearZ, farZ);
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_useCameraConstraints)
 #endif
 	{
@@ -462,7 +466,7 @@ void W3DView::setCameraTransform( void )
 		}
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_3DCamera->Set_View_Plane( m_FOV, -1 );
 #endif
 
@@ -470,7 +474,7 @@ void W3DView::setCameraTransform( void )
 	buildCameraTransform( &cameraTransform );
 	m_3DCamera->Set_Transform( cameraTransform );
 
-	if (TheTerrainRenderObject) 
+	if (TheTerrainRenderObject)
 	{
 		RefRenderObjListIterator *it = W3DDisplay::m_3DScene->createLightsIterator();
 		TheTerrainRenderObject->updateCenter(m_3DCamera, it);
@@ -543,7 +547,7 @@ void W3DView::reset( void )
 	// anyways.
 	resetCamera(&arbitraryPos, 1);
 
-	setViewFilter((enum FilterTypes)0);
+	setViewFilter((FilterTypes)0);
 
 	Coord2D gb = { 0,0 };
 	setGuardBandBias( &gb );
@@ -580,7 +584,39 @@ static void drawTerrainNormal( Drawable *draw, void *userData )
   }
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+// ------------------------------------------------------------------------------------------------
+// Draw a crude circle. Appears on top of any world geometry
+// ------------------------------------------------------------------------------------------------
+void drawDebugCircle( const Coord3D & center, Real radius, Real width, Color color )
+{
+  const Real inc = PI/4.0f;
+  Real angle = 0.0f;
+  Coord3D pnt, lastPnt;
+  ICoord2D start, end;
+  Bool endValid, startValid;
+
+  lastPnt.x = center.x + radius * (Real)cos(angle);
+  lastPnt.y = center.y + radius * (Real)sin(angle);
+  lastPnt.z = center.z;
+  endValid = ( TheTacticalView->worldToScreenTriReturn( &lastPnt, &end ) != View::WTS_INVALID );
+  
+  for( angle = inc; angle <= 2.0f * PI; angle += inc )
+  {
+    pnt.x = center.x + radius * (Real)cos(angle);
+    pnt.y = center.y + radius * (Real)sin(angle);
+    pnt.z = center.z;
+    startValid = ( TheTacticalView->worldToScreenTriReturn( &pnt, &start ) != View::WTS_INVALID );
+    
+    if ( startValid && endValid ) 
+      TheDisplay->drawLine( start.x, start.y, end.x, end.y, width, color );
+    
+    lastPnt = pnt;
+    end = start;
+    endValid = startValid;
+  }
+}
+
 void drawDrawableExtents( Drawable *draw, void *userData );  // FORWARD DECLARATION
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -651,47 +687,24 @@ static void drawDrawableExtents( Drawable *draw, void *userData )
 		case GEOMETRY_SPHERE:	// not quite right, but close enough
 		case GEOMETRY_CYLINDER:
 		{ 
-			Real angle, inc = PI/4.0f;
-			Real radius = draw->getDrawableGeometryInfo().getMajorRadius();
-			Coord3D pnt, lastPnt;
-			ICoord2D start, end;
-			Real z = draw->getPosition()->z;
+      Coord3D center = *draw->getPosition();
+      const Real radius = draw->getDrawableGeometryInfo().getMajorRadius();
 
 			// draw cylinder
 			for( int i=0; i<2; i++ )
 			{
+        drawDebugCircle( center, radius, 1.0f, color );
 
-				angle = 0.0f;
-				lastPnt.x = draw->getPosition()->x + radius * (Real)cos(angle);
-				lastPnt.y = draw->getPosition()->y + radius * (Real)sin(angle);
-				lastPnt.z = z;
-				TheTacticalView->worldToScreen( &lastPnt, &end );
-
-				for( angle = inc; angle <= 2.0f * PI; angle += inc )
-				{
-					pnt.x = draw->getPosition()->x + radius * (Real)cos(angle);
-					pnt.y = draw->getPosition()->y + radius * (Real)sin(angle);
-					pnt.z = z;
-					TheTacticalView->worldToScreen( &pnt, &start );
-
-					TheDisplay->drawLine( start.x, start.y, end.x, end.y, 1.0f, color );
-
-					lastPnt = pnt;
-					end = start;
-				}
-
-				// next time 'round, draw the top of the cylinder
-				z += draw->getDrawableGeometryInfo().getMaxHeightAbovePosition();
-
+        // next time 'round, draw the top of the cylinder
+        center.z += draw->getDrawableGeometryInfo().getMaxHeightAbovePosition();
 			}	// end for i
 
 			// draw centerline
-			pnt.x = draw->getPosition()->x;
-			pnt.y = draw->getPosition()->y;
-			pnt.z = draw->getPosition()->z;
-			TheTacticalView->worldToScreen( &pnt, &start );
-			pnt.z = draw->getPosition()->z + draw->getDrawableGeometryInfo().getMaxHeightAbovePosition();
-			TheTacticalView->worldToScreen( &pnt, &end );
+      ICoord2D start, end;
+      center = *draw->getPosition();
+      TheTacticalView->worldToScreen( &center, &start );
+      center.z += draw->getDrawableGeometryInfo().getMaxHeightAbovePosition();
+      TheTacticalView->worldToScreen( &center, &end );
 			TheDisplay->drawLine( start.x, start.y, end.x, end.y, 1.0f, color );
 
 			break;
@@ -712,6 +725,118 @@ static void drawDrawableExtents( Drawable *draw, void *userData )
 	}  // end if
 
 }  // end drawDrawableExtents
+
+
+void drawAudioLocations( Drawable *draw, void *userData );
+// ------------------------------------------------------------------------------------------------
+// Helper for drawAudioLocations
+// ------------------------------------------------------------------------------------------------
+static void drawContainedAudioLocations( Object *obj, void *userData )
+{
+  Drawable *draw = obj->getDrawable();
+  
+  if( draw )
+    drawAudioLocations( draw, userData );
+  
+}  // end drawContainedAudio
+
+
+//-------------------------------------------------------------------------------------------------
+// Draw the location of audio objects in the world
+//-------------------------------------------------------------------------------------------------
+static void drawAudioLocations( Drawable *draw, void *userData )
+{
+  // draw audio for things that are contained by this
+  Object *obj = draw->getObject();
+  if( obj )
+  {
+    ContainModuleInterface *contain = obj->getContain();
+    
+    if( contain )
+      contain->iterateContained( drawContainedAudioLocations, userData, FALSE );
+    
+  }  // end if
+
+  const ThingTemplate * thingTemplate = draw->getTemplate();
+
+  if ( thingTemplate == NULL || thingTemplate->getEditorSorting() != ES_AUDIO )
+  {
+    return; // All done
+  }
+
+  // Copied in hideously inappropriate code copying ways from DrawObject.cpp
+  // Should definately be a global, probably read in from an INI file <gasp>
+  static const Int poleHeight = 20;
+  static const Int flagHeight = 10;
+  static const Int flagWidth = 10;
+  const Color color = GameMakeColor(0x25, 0x25, 0xEF, 0xFF);
+
+  // Draw flag for audio-only objects:
+  //  *
+  //  * *
+  //  *   *
+  //  *     *
+  //  *   *
+  //  * *
+  //  *
+  //  *
+  //  *
+  //  *
+  //  *
+
+  Coord3D worldPoint;
+  ICoord2D start, end;
+
+  worldPoint = *draw->getPosition();
+  TheTacticalView->worldToScreen( &worldPoint, &start );
+  worldPoint.z += poleHeight;
+  TheTacticalView->worldToScreen( &worldPoint, &end );
+  TheDisplay->drawLine( start.x, start.y, end.x, end.y, 1.0f, color );
+  
+  worldPoint.z -= flagHeight / 2;
+  worldPoint.x += flagWidth;
+  TheTacticalView->worldToScreen( &worldPoint, &start );
+  TheDisplay->drawLine( start.x, start.y, end.x, end.y, 1.0f, color );
+
+  worldPoint.z -= flagHeight / 2;
+  worldPoint.x -= flagWidth;
+  TheTacticalView->worldToScreen( &worldPoint, &end );
+  TheDisplay->drawLine( start.x, start.y, end.x, end.y, 1.0f, color );
+}
+
+//-------------------------------------------------------------------------------------------------
+// Draw the radii of sounds attached to any type of object. 
+//-------------------------------------------------------------------------------------------------
+static void drawAudioRadii( const Drawable * drawable )
+{
+  
+  // Draw radii, if sound is playing
+  const AudioEventRTS * ambientSound = drawable->getAmbientSound();
+  
+  if ( ambientSound && ambientSound->isCurrentlyPlaying() )
+  {
+    const AudioEventInfo * ambientInfo = ambientSound->getAudioEventInfo();
+    
+    if ( ambientInfo == NULL )
+    {
+      // I don't think that's right...
+      OutputDebugString( ("Playing sound has NULL AudioEventInfo?\n" ) );
+      
+      if ( TheAudio != NULL )
+      {
+        ambientInfo = TheAudio->findAudioEventInfo( ambientSound->getEventName() );
+      }
+    }
+    
+    if ( ambientInfo != NULL )
+    {
+      // Colors match those used in WorldBuilder
+      drawDebugCircle( *drawable->getPosition(), ambientInfo->m_minDistance, 1.0f, GameMakeColor(0x00, 0x00, 0xFF, 0xFF) );
+      drawDebugCircle( *drawable->getPosition(), ambientInfo->m_maxDistance, 1.0f, GameMakeColor(0xFF, 0x00, 0xFF, 0xFF) );
+    }
+  }
+}
+
 #endif
 
 //-------------------------------------------------------------------------------------------------
@@ -725,7 +850,7 @@ static void drawablePostDraw( Drawable *draw, void *userData )
 
 	Object* obj = draw->getObject();
 	Int localPlayerIndex = ThePlayerList ? ThePlayerList->getLocalPlayer()->getPlayerIndex() : 0;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	ObjectShroudStatus ss = (!obj || !TheGlobalData->m_shroudOn) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
 #else
 	ObjectShroudStatus ss = (!obj) ? OBJECTSHROUD_CLEAR : obj->getShroudedStatus(localPlayerIndex);
@@ -743,10 +868,13 @@ static void drawablePostDraw( Drawable *draw, void *userData )
 			draw->drawIconUI();
 	//}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	// debug collision extents
 	if( TheGlobalData->m_showCollisionExtents )
 	  drawDrawableExtents( draw, userData );
+
+  if ( TheGlobalData->m_showAudioLocations )
+    drawAudioLocations( draw, userData );
 #endif
 
 	// debug terrain normals at object positions
@@ -1057,11 +1185,7 @@ void W3DView::update(void)
 	{
 		Real desiredHeight = (m_terrainHeightUnderCamera + m_heightAboveGround);
 		Real desiredZoom = desiredHeight / m_cameraOffset.z;
-#if !defined(_PLAYTEST)
   	if (didScriptedMovement || (TheGameLogic->isInReplayGame() && TheGlobalData->m_useCameraInReplay))
-#else
-  	if (didScriptedMovement)
-#endif
   	{
   		// if we are in a scripted camera movement, take its height above ground as our desired height.
   		m_heightAboveGround = m_currentHeightAboveGround;
@@ -1179,7 +1303,7 @@ void W3DView::setViewFilterPos(const Coord3D *pos)
 //-------------------------------------------------------------------------------------------------
 /** Sets the view filter mode. */
 //-------------------------------------------------------------------------------------------------
-Bool W3DView::setViewFilterMode(enum FilterModes filterMode)
+Bool W3DView::setViewFilterMode(FilterModes filterMode)
 {
 	FilterModes oldMode = m_viewFilterMode;	//save previous mode in case setup fails.
 
@@ -1197,7 +1321,7 @@ Bool W3DView::setViewFilterMode(enum FilterModes filterMode)
 //-------------------------------------------------------------------------------------------------
 /** Sets the view filter. */
 //-------------------------------------------------------------------------------------------------
-Bool W3DView::setViewFilter(enum FilterTypes filter)
+Bool W3DView::setViewFilter(FilterTypes filter)
 {
 	FilterTypes oldFilter = m_viewFilter;	//save previous filter in case setup fails.
 
@@ -1402,7 +1526,7 @@ void W3DView::draw( void )
 
 	}  // end if, show debug AI
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if( TheGlobalData->m_debugCamera )
 	{
 		UnsignedInt c = 0xaaffffff;
@@ -1460,7 +1584,19 @@ void W3DView::draw( void )
 		TheDisplay->drawLine(s1.x, s1.y, s2.x, s2.y, 1.0f, c);
 
 	}
-#endif
+
+  if ( TheGlobalData->m_showAudioLocations )
+  {
+    // Draw audio radii for ALL drawables, not just those on screen
+    const Drawable * drawable = TheGameClient->getDrawableList();
+
+    while ( drawable != NULL )
+    {
+      drawAudioRadii( drawable );
+      drawable = drawable->getNextDrawable();
+    }
+  }
+#endif // DEBUG or INTERNAL
 
 	Region3D axisAlignedRegion;
 	getAxisAlignedViewRegion(axisAlignedRegion);
@@ -1520,7 +1656,7 @@ void W3DView::scrollBy( Coord2D *delta )
 													  
 		start.X = getWidth();
 		start.Y = getHeight();
-		Real aspect = getWidth()/getHeight();
+		Real aspect = getHeight() == 0 ? 1 : getWidth()/getHeight();
 		end.X = start.X + delta->x * SCROLL_RESOLUTION;
 		end.Y = start.Y + delta->y * SCROLL_RESOLUTION*aspect;
 
@@ -1705,7 +1841,7 @@ void W3DView::setFieldOfView( Real angle )
 {
 	View::setFieldOfView( angle );
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	// this is only for testing, and recalculating the 
 	// camera every frame is wasteful
 	setCameraTransform();
@@ -1714,14 +1850,14 @@ void W3DView::setFieldOfView( Real angle )
 
 //-------------------------------------------------------------------------------------------------
 /** Using the W3D camera translate the world coordinate to a screen coord.
-	Screen coordinates returned in absolute values relative to full display resolution.  */
+	Screen coordinates returned in absolute values relative to full display resolution.  
+  Returns if the point is on screen, off screen, or not transformable */
 //-------------------------------------------------------------------------------------------------
-Bool W3DView::worldToScreen( const Coord3D *w, ICoord2D *s )
+View::WorldToScreenReturn W3DView::worldToScreenTriReturn( const Coord3D *w, ICoord2D *s )
 {
-	
 	// sanity
 	if( w == NULL || s == NULL )
-		return FALSE;
+    return WTS_INVALID;
 
 	if( m_3DCamera )
 	{
@@ -1735,7 +1871,7 @@ Bool W3DView::worldToScreen( const Coord3D *w, ICoord2D *s )
 			// Can't get a valid number if it's beyond the clip planes.  jba
 			s->x = 0;
 			s->y = 0;
-			return FALSE;
+      return WTS_INVALID;
 		}
 
 		//
@@ -1754,15 +1890,15 @@ Bool W3DView::worldToScreen( const Coord3D *w, ICoord2D *s )
 //		s->y = (getHeight() * (-screen.Y + 1.0f)) / 2.0f;
 		if (projection != CameraClass::INSIDE_FRUSTUM)
 		{
-			return FALSE;
+      return WTS_OUTSIDE_FRUSTUM;
 		}
 
-		return TRUE;
+    return WTS_INSIDE_FRUSTUM;
 
 	}  // end if
 
-	return FALSE;
-}  // end worldToScreen
+  return WTS_INVALID;
+}  // end worldToScreenTriReturn
 
 //-------------------------------------------------------------------------------------------------
 /** Using the W3D camera translate the screen coord to world coord */
@@ -1921,7 +2057,7 @@ Drawable *W3DView::pickDrawable( const ICoord2D *screen, Bool forceAttack, PickT
 	while (window)
 	{
 		// check to see if it or any of its parents are opaque.  If so, we can't select anything.
-		if (!BitTest( window->winGetStatus(), WIN_STATUS_SEE_THRU ))
+		if (!BitIsSet( window->winGetStatus(), WIN_STATUS_SEE_THRU ))
 			return NULL;
 
 		window = window->winGetParent();
@@ -1939,7 +2075,7 @@ Drawable *W3DView::pickDrawable( const ICoord2D *screen, Bool forceAttack, PickT
 		result.ComputeContactPoint = true;
 
 	//Don't check against translucent or hidden objects
-	RayCollisionTestClass raytest(lineseg,&result,COLLISION_TYPE_ALL,false,false);
+	RayCollisionTestClass raytest(lineseg,&result,COLL_TYPE_ALL,false,false);
 
 	if( W3DDisplay::m_3DScene->castRay( raytest, false, (Int)pickType ) )
 		renderObj = raytest.CollidedRenderObj;

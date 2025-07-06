@@ -40,7 +40,7 @@
 /** Kind of flags for determining groups of things that belong together
 	* NOTE: You *MUST* keep this in the same order as the DisabledNames[] below */
 //-------------------------------------------------------------------------------------------------
-enum DisabledType
+enum DisabledType CPP_11(: Int)
 {
 	DISABLED_DEFAULT,     //Typical disable -- like systems, things that don't need to run.
 	DISABLED_HACKED,      //This unit has been hacked

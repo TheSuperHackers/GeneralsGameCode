@@ -52,7 +52,9 @@ RenderInfoClass::RenderInfoClass(CameraClass & cam) :
 	fog_scale(0.0f),
 	light_environment(0),
 	AdditionalMaterialPassCount(0),
+	RejectedMaterialPasses(0),
 	OverrideFlagLevel(0),
+	Texture_Projector(NULL),
 	alphaOverride(1.0f),
 	materialPassAlphaOverride(1.0f),
 	materialPassEmissiveOverride(1.0f)
@@ -99,7 +101,7 @@ MaterialPassClass * RenderInfoClass::Peek_Additional_Pass(int i)
 void RenderInfoClass::Push_Override_Flags(RINFO_OVERRIDE_FLAGS flg)
 {
 	// copy to the end of the array
-	WWASSERT(OverrideFlagLevel<MAX_OVERRIDE_FLAG_LEVEL);
+	WWASSERT(OverrideFlagLevel<MAX_OVERRIDE_FLAG_LEVEL - 1);
 	OverrideFlagLevel++;
 	OverrideFlag[OverrideFlagLevel]=flg;
 }

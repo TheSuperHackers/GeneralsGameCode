@@ -47,7 +47,7 @@
 #include "W3DDevice/GameClient/Module/W3DTankDraw.h"
 #include "WW3D2/matinfo.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -163,6 +163,9 @@ void W3DTankDraw::createEmitters( void )
 //-------------------------------------------------------------------------------------------------
 W3DTankDraw::~W3DTankDraw()
 {
+	// TheSuperHackers @fix Mauller 16/04/2025 Delete particle systems
+	tossEmitters();
+
 	for (Int i=0; i<MAX_TREADS_PER_TANK; i++)
 		if (m_treads[i].m_robj)
 			REF_PTR_RELEASE(m_treads[i].m_robj);
@@ -231,7 +234,12 @@ void W3DTankDraw::updateTreadPositions(Real uvDelta)
 		else
 		if (pTread->m_type == TREAD_RIGHT)	//this tread needs to scroll backwards
 			offset_u = pTread->m_materialSettings.customUVOffset.X - uvDelta;
-				
+		else
+		{
+			DEBUG_CRASH(("Unhandled case in W3DTankDraw::updateTreadPositions"));
+			offset_u = 0.0f;
+		}
+
 		// ensure coordinates of offset are in [0, 1] range:
 		offset_u = offset_u - WWMath::Floor(offset_u);
 		pTread->m_materialSettings.customUVOffset.Set(offset_u,0);

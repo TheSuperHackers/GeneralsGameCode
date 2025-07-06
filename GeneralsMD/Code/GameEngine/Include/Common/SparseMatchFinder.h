@@ -36,7 +36,7 @@
 #include "Common/BitFlags.h"
 #include "Common/STLTypedefs.h"
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	#define SPARSEMATCH_DEBUG
 #else
 	#undef SPARSEMATCH_DEBUG
@@ -131,7 +131,7 @@ private:
 		AsciiString curBestMatchStr, dupMatchStr;
 	#endif
 
-		for (std::vector<MATCHABLE>::const_iterator it = v.begin(); it != v.end(); ++it)
+		for (typename std::vector<MATCHABLE>::const_iterator it = v.begin(); it != v.end(); ++it)
 		{
 			for (Int i = it->getConditionsYesCount()-1; i >= 0; --i)
 			{
@@ -197,7 +197,7 @@ public:
 	//-------------------------------------------------------------------------------------------------
 	const MATCHABLE* findBestInfo(const std::vector<MATCHABLE>& v, const BITSET& bits) const
 	{
-		MatchMap::const_iterator it = m_bestMatches.find(bits);
+		typename MatchMap::const_iterator it = m_bestMatches.find(bits);
 
 		const MATCHABLE *first = NULL;
 		if (it != m_bestMatches.end())

@@ -55,7 +55,7 @@
 
 
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -402,7 +402,7 @@ void MobMemberSlavedUpdate::stopSlavedEffects()
 	m_slaver = INVALID_ID;
 
 	/// @todo Just a thought.  Our Status bits on objects really need to be reference counts so you don't clear someone else's flag
-	getObject()->clearStatus( OBJECT_STATUS_UNSELECTABLE );
+	getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNSELECTABLE ) );
 	getObject()->clearDisabled( DISABLED_HELD );
 }
 

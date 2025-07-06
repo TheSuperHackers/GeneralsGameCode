@@ -24,11 +24,9 @@
 
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 
-#if defined(_DEBUG) || defined(_INTERNAL) || defined(IG_DEBUG_STACKTRACE)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(IG_DEBUG_STACKTRACE)
 
 #pragma pack(push, 8)
-
-#pragma comment(linker, "/defaultlib:Dbghelp.lib")
 
 #include "Common/StackDump.h"
 #include "Common/Debug.h"
@@ -560,7 +558,8 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 	/*
 	** Match the exception type with the error string and print it out
 	*/
-	for ( int i=0 ; _codes[i] != 0xffffffff ; i++ )
+	int i=0;
+	for ( ; _codes[i] != 0xffffffff ; i++ )
 	{
 		if ( _codes[i] == e_info->ExceptionRecord->ExceptionCode )
 		{

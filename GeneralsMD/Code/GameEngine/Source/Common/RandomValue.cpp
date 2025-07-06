@@ -31,13 +31,13 @@
 
 #include "Lib/BaseType.h"
 #include "Common/RandomValue.h"
-#include "Common/CRC.h"
+#include "Common/crc.h"
 #include "Common/Debug.h"
 #include "GameLogic/GameLogic.h"
 
 //#define DETERMINISTIC				// to allow repetition for debugging
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -200,7 +200,7 @@ DEBUG_LOG(( "InitRandom Logic %08lx\n",seed));
 //
 // Integer random value
 //
-Int GetGameLogicRandomValue( int lo, int hi, char *file, int line )
+Int GetGameLogicRandomValue( int lo, int hi, const char *file, int line )
 {
 	//Int delta = hi - lo + 1;
 	//Int rval;
@@ -236,7 +236,7 @@ DEBUG_LOG(( "%d: GetGameLogicRandomValue = %d (%d - %d), %s line %d\n",
 //
 // Integer random value
 //
-Int GetGameClientRandomValue( int lo, int hi, char *file, int line )
+Int GetGameClientRandomValue( int lo, int hi, const char *file, int line )
 {
 	UnsignedInt delta = hi - lo + 1;
 	Int rval;
@@ -249,7 +249,7 @@ Int GetGameClientRandomValue( int lo, int hi, char *file, int line )
 /**/
 #ifdef DEBUG_RANDOM_CLIENT
 DEBUG_LOG(( "%d: GetGameClientRandomValue = %d (%d - %d), %s line %d\n",
-				TheGameLogic->getFrame(), rval, lo, hi, file, line ));
+				TheGameLogic ? TheGameLogic->getFrame() : -1, rval, lo, hi, file, line ));
 #endif
 /**/
 
@@ -259,7 +259,7 @@ DEBUG_LOG(( "%d: GetGameClientRandomValue = %d (%d - %d), %s line %d\n",
 //
 // Integer random value
 //
-Int GetGameAudioRandomValue( int lo, int hi, char *file, int line )
+Int GetGameAudioRandomValue( int lo, int hi, const char *file, int line )
 {
 	UnsignedInt delta = hi - lo + 1;
 	Int rval;
@@ -282,7 +282,7 @@ DEBUG_LOG(( "%d: GetGameAudioRandomValue = %d (%d - %d), %s line %d\n",
 //
 // Real valued random value
 //
-Real GetGameLogicRandomValueReal( Real lo, Real hi, char *file, int line )
+Real GetGameLogicRandomValueReal( Real lo, Real hi, const char *file, int line )
 {
 	Real delta = hi - lo;
 	Real rval;
@@ -306,7 +306,7 @@ DEBUG_LOG(( "%d: GetGameLogicRandomValueReal = %f, %s line %d\n",
 //
 // Real valued random value
 //
-Real GetGameClientRandomValueReal( Real lo, Real hi, char *file, int line )
+Real GetGameClientRandomValueReal( Real lo, Real hi, const char *file, int line )
 {
 	Real delta = hi - lo;
 	Real rval;
@@ -330,7 +330,7 @@ DEBUG_LOG(( "%d: GetGameClientRandomValueReal = %f, %s line %d\n",
 //
 // Real valued random value
 //
-Real GetGameAudioRandomValueReal( Real lo, Real hi, char *file, int line )
+Real GetGameAudioRandomValueReal( Real lo, Real hi, const char *file, int line )
 {
 	Real delta = hi - lo;
 	Real rval;
@@ -383,6 +383,7 @@ Real GameClientRandomVariable::getValue( void ) const
 			if (m_low == m_high) {
 				return m_low;
 			} // else return as though a UNIFORM.
+			FALLTHROUGH;
 
 		case UNIFORM:
 			return GameClientRandomValueReal( m_low, m_high );
@@ -427,6 +428,7 @@ Real GameLogicRandomVariable::getValue( void ) const
 			if (m_low == m_high) {
 				return m_low;
 			} // else return as though a UNIFORM.
+			FALLTHROUGH;
 
 		case UNIFORM:
 			return GameLogicRandomValueReal( m_low, m_high );

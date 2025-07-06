@@ -208,7 +208,7 @@ Bool GameResultsQueue::areGameResultsBeingSent( void )
 
 //-------------------------------------------------------------------------
 // Wrap ladder results in HTTP POST
-static WrapHTTP( const std::string& hostname, std::string& results )
+static void WrapHTTP( const std::string& hostname, std::string& results )
 {
 	const char HEADER[] =
 		"PUT / HTTP/1.1\r\n"
@@ -217,8 +217,8 @@ static WrapHTTP( const std::string& hostname, std::string& results )
 		"Content-Length: %d\r\n"
 		"\r\n";
 
-	char szHdr[256] = {0};
-	_snprintf( szHdr, 255, HEADER, hostname.c_str(), results.length() );
+	char szHdr[256];
+	snprintf( szHdr, 256, HEADER, hostname.c_str(), results.length() );
 	results = szHdr + results;
 } //WrapHTTP
 
@@ -265,9 +265,12 @@ void GameResultsThreadClass::Thread_Function()
 					//   callback.
 					IP = 0xFFFFFFFF;   // flag for IP resolve failed
 				}
-				hostNode = (in_addr *) hostStruct->h_addr;
-				IP = hostNode->s_addr;
-				DEBUG_LOG(("sending game results to %s IP = %s\n", hostnameBuffer, inet_ntoa(*hostNode) ));
+				else
+				{
+					hostNode = (in_addr *) hostStruct->h_addr;
+					IP = hostNode->s_addr;
+					DEBUG_LOG(("sending game results to %s IP = %s\n", hostnameBuffer, inet_ntoa(*hostNode) ));
+				}
 			}
 
 			int result = sendGameResults( IP, req.port, req.results );

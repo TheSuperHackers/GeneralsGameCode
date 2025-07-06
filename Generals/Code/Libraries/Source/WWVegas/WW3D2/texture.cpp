@@ -39,9 +39,9 @@
 
 #include <d3d8.h>
 #include <stdio.h>
-#include <D3dx8core.h>
+#include <d3dx8core.h>
 #include "dx8wrapper.h"
-#include "targa.h"
+#include "TARGA.H"
 #include <nstrdup.h>
 #include "w3d_file.h"
 #include "assetmgr.h"
@@ -59,10 +59,6 @@
 
 static unsigned unused_texture_id;
 
-unsigned _MinTextureFilters[TextureClass::FILTER_TYPE_COUNT];
-unsigned _MagTextureFilters[TextureClass::FILTER_TYPE_COUNT];
-unsigned _MipMapFilters[TextureClass::FILTER_TYPE_COUNT];
-
 // ----------------------------------------------------------------------------
 
 static int Calculate_Texture_Memory_Usage(const TextureClass* texture,int red_factor=0)
@@ -70,7 +66,7 @@ static int Calculate_Texture_Memory_Usage(const TextureClass* texture,int red_fa
 	// Set performance statistics
 
 	int size=0;
-	IDirect3DTexture8* d3d_texture=const_cast<TextureClass*>(texture)->Peek_DX8_Texture();
+	IDirect3DTexture8* d3d_texture=const_cast<TextureClass*>(texture)->Peek_D3D_Texture();
 	if (!d3d_texture) return 0;
 	for (unsigned i=red_factor;i<d3d_texture->GetLevelCount();++i) {
 		D3DSURFACE_DESC desc;
@@ -89,11 +85,7 @@ TextureClass::TextureClass(unsigned width, unsigned height, WW3DFormat format, M
 	D3DTexture(NULL),
 	texture_id(unused_texture_id++),
 	Initialized(true),
-	TextureMinFilter(FILTER_TYPE_DEFAULT),
-	TextureMagFilter(FILTER_TYPE_DEFAULT),
-	MipMapFilter((mip_level_count!=MIP_LEVELS_1) ? FILTER_TYPE_DEFAULT : FILTER_TYPE_NONE),
-	UAddressMode(TEXTURE_ADDRESS_REPEAT),
-	VAddressMode(TEXTURE_ADDRESS_REPEAT),
+	Filter(mip_level_count),
 	MipLevelCount(mip_level_count),
 	Pool(pool),
 	Dirty(false),
@@ -102,9 +94,12 @@ TextureClass::TextureClass(unsigned width, unsigned height, WW3DFormat format, M
 	Name(""),
 	TextureFormat(format),
 	IsCompressionAllowed(false),
-	TextureLoadTask(NULL)
+	TextureLoadTask(NULL),
+	Width(width),
+	Height(height)
 {
-	switch (format) {
+	switch (format) 
+	{
 	case WW3D_FORMAT_DXT1:
 	case WW3D_FORMAT_DXT2:
 	case WW3D_FORMAT_DXT3:
@@ -112,31 +107,30 @@ TextureClass::TextureClass(unsigned width, unsigned height, WW3DFormat format, M
 	case WW3D_FORMAT_DXT5:
 		IsCompressionAllowed=true;
 		break;
-	default:
-		break;
+	default : break;
 	}
-	D3DPOOL d3dpool=(D3DPOOL) 0;
+		
+	D3DPOOL d3dpool=(D3DPOOL)0;
 	switch(pool)
 	{
-	case POOL_DEFAULT:
-		d3dpool=D3DPOOL_DEFAULT;		
-		break;
-	case POOL_MANAGED:
-		d3dpool=D3DPOOL_MANAGED;
-		break;
-	case POOL_SYSTEMMEM:
-		d3dpool=D3DPOOL_SYSTEMMEM;
-		break;
-	default:
-		WWASSERT(0);		
+	case POOL_DEFAULT		: d3dpool=D3DPOOL_DEFAULT; break;
+	case POOL_MANAGED		: d3dpool=D3DPOOL_MANAGED; break;
+	case POOL_SYSTEMMEM	: d3dpool=D3DPOOL_SYSTEMMEM; break;
+	default: WWASSERT(0);
 	}
 	D3DTexture = DX8Wrapper::_Create_DX8_Texture(width, height, format, mip_level_count,d3dpool,rendertarget);
 	if (pool==POOL_DEFAULT)
 	{
 		Dirty=true;
-		DX8TextureTrackerClass *track=W3DNEW
-		DX8TextureTrackerClass(width, height, format, mip_level_count,rendertarget,
-		this);
+		DX8TextureTrackerClass *track=W3DNEW DX8TextureTrackerClass
+		(
+			width, 
+			height, 
+			format, 
+			mip_level_count,
+			this,
+			rendertarget
+		);
 		DX8TextureManagerClass::Add(track);
 	}
 	LastAccessed=WW3D::Get_Sync_Time();
@@ -144,9 +138,10 @@ TextureClass::TextureClass(unsigned width, unsigned height, WW3DFormat format, M
 
 // ----------------------------------------------------------------------------
 
-TextureClass::TextureClass(
-	const char *name, 
-	const char *full_path, 
+TextureClass::TextureClass
+(
+	const char *name,
+	const char *full_path,
 	MipCountType mip_level_count,
 	WW3DFormat texture_format,
 	bool allow_compression)
@@ -154,11 +149,7 @@ TextureClass::TextureClass(
 	D3DTexture(NULL),
 	texture_id(unused_texture_id++),
 	Initialized(false),
-	TextureMinFilter(FILTER_TYPE_DEFAULT),
-	TextureMagFilter(FILTER_TYPE_DEFAULT),
-	MipMapFilter((mip_level_count!=MIP_LEVELS_1) ? FILTER_TYPE_DEFAULT : FILTER_TYPE_NONE),
-	UAddressMode(TEXTURE_ADDRESS_REPEAT),
-	VAddressMode(TEXTURE_ADDRESS_REPEAT),
+	Filter(mip_level_count),
 	MipLevelCount(mip_level_count),
 	Pool(POOL_MANAGED),
 	Dirty(false),
@@ -166,9 +157,12 @@ TextureClass::TextureClass(
 	IsProcedural(false),
 	TextureFormat(texture_format),
 	IsCompressionAllowed(allow_compression),
-	TextureLoadTask(NULL)
+	TextureLoadTask(NULL),
+	Width(0),
+	Height(0)
 {
-	switch (TextureFormat) {
+	switch (TextureFormat) 
+	{
 	case WW3D_FORMAT_DXT1:
 	case WW3D_FORMAT_DXT2:
 	case WW3D_FORMAT_DXT3:
@@ -182,44 +176,47 @@ TextureClass::TextureClass(
 		// If requesting bumpmap format that isn't available we'll just return the surface in whatever color
 		// format the texture file is in. (This is illegal case, the format support should always be queried
 		// before creating a bump texture!)
-		if (!DX8Caps::Support_Texture_Format(TextureFormat)) {
+		if (!DX8Wrapper::Get_Current_Caps()->Support_Texture_Format(TextureFormat)) 
+		{
 			TextureFormat=WW3D_FORMAT_UNKNOWN;
 		}
 		// If bump format is valid, make sure compression is not allowed so that we don't even attempt to load
 		// from a compressed file (quality isn't good enough for bump map). Also disable mipmapping.
-		else {
+		else 
+		{
 			IsCompressionAllowed=false;
 			MipLevelCount=MIP_LEVELS_1;
-			MipMapFilter=FILTER_TYPE_NONE;
+			Filter.Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_NONE);
 		}
 		break;
-
-	default:
-		break;
+	default:	break;
 	}
 
 	WWASSERT_PRINT(name && name[0], "TextureClass CTor: NULL or empty texture name\n");
 	int len=strlen(name);
-	for (int i=0;i<len;++i) {
-		if (name[i]=='+') {
+	for (int i=0;i<len;++i) 
+	{
+		if (name[i]=='+') 
+		{
 			IsLightmap=true;
 
 			// Set bilinear filtering for lightmaps (they are very stretched and
 			// low detail so we don't care for anisotropic or trilinear filtering...)
-			TextureMinFilter=FILTER_TYPE_FAST;
-			TextureMagFilter=FILTER_TYPE_FAST;
-			if (mip_level_count!=MIP_LEVELS_1) MipMapFilter=FILTER_TYPE_FAST;
+			Filter.Set_Min_Filter(TextureFilterClass::FILTER_TYPE_FAST);
+			Filter.Set_Mag_Filter(TextureFilterClass::FILTER_TYPE_FAST);
+			if (mip_level_count!=MIP_LEVELS_1) Filter.Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_FAST);
 			break;
 		}
 	}
 	Set_Texture_Name(name);
 	Set_Full_Path(full_path);
 	WWASSERT(name[0]!='\0');
-	if (!WW3D::Is_Texturing_Enabled()) {
+	if (!WW3D::Is_Texturing_Enabled()) 
+	{
 		Initialized=true;
 		D3DTexture=0;
 	}
-	else if (WW3D::Get_Texture_Thumbnail_Mode()==WW3D::TEXTURE_THUMBNAIL_MODE_OFF || mip_level_count==MIP_LEVELS_1)
+	else if (WW3D::Get_Thumbnail_Enabled()==false || mip_level_count==MIP_LEVELS_1)
 	{
 		Initialized=true;
 		D3DTexture=0;
@@ -239,11 +236,7 @@ TextureClass::TextureClass(SurfaceClass *surface, MipCountType mip_level_count)
 	D3DTexture(NULL),
 	texture_id(unused_texture_id++),
 	Initialized(true),
-	TextureMinFilter(FILTER_TYPE_DEFAULT),
-	TextureMagFilter(FILTER_TYPE_DEFAULT),
-	MipMapFilter((mip_level_count!=MIP_LEVELS_1) ? FILTER_TYPE_DEFAULT : FILTER_TYPE_NONE),
-	UAddressMode(TEXTURE_ADDRESS_REPEAT),
-	VAddressMode(TEXTURE_ADDRESS_REPEAT),
+	Filter(mip_level_count),
 	MipLevelCount(mip_level_count),
 	Pool(POOL_MANAGED),
 	Dirty(false),
@@ -252,11 +245,16 @@ TextureClass::TextureClass(SurfaceClass *surface, MipCountType mip_level_count)
 	IsProcedural(true),
 	TextureFormat(surface->Get_Surface_Format()),
 	IsCompressionAllowed(false),
-	TextureLoadTask(NULL)
+	TextureLoadTask(NULL),
+	Width(0),
+	Height(0)
 {
 	SurfaceClass::SurfaceDescription sd;
 	surface->Get_Description(sd);
-	switch (sd.Format) {
+	Width=sd.Width;
+	Height=sd.Height;
+	switch (sd.Format) 
+	{
 	case WW3D_FORMAT_DXT1:
 	case WW3D_FORMAT_DXT2:
 	case WW3D_FORMAT_DXT3:
@@ -264,8 +262,7 @@ TextureClass::TextureClass(SurfaceClass *surface, MipCountType mip_level_count)
 	case WW3D_FORMAT_DXT5:
 		IsCompressionAllowed=true;
 		break;
-	default:
-		break;
+	default: break;
 	}
 	
 	D3DTexture = DX8Wrapper::_Create_DX8_Texture(surface->Peek_D3D_Surface(), mip_level_count);
@@ -279,11 +276,7 @@ TextureClass::TextureClass(IDirect3DTexture8* d3d_texture)
 	D3DTexture(d3d_texture),
 	texture_id(unused_texture_id++),
 	Initialized(true),
-	TextureMinFilter(FILTER_TYPE_DEFAULT),
-	TextureMagFilter(FILTER_TYPE_DEFAULT),
-	MipMapFilter((d3d_texture->GetLevelCount()!=1) ? FILTER_TYPE_DEFAULT : FILTER_TYPE_NONE),
-	UAddressMode(TEXTURE_ADDRESS_REPEAT),
-	VAddressMode(TEXTURE_ADDRESS_REPEAT),
+	Filter((MipCountType)d3d_texture->GetLevelCount()),
 	MipLevelCount((MipCountType)d3d_texture->GetLevelCount()),
 	Pool(POOL_MANAGED),
 	Dirty(false),
@@ -291,16 +284,21 @@ TextureClass::TextureClass(IDirect3DTexture8* d3d_texture)
 	Name(""),
 	IsProcedural(true),
 	IsCompressionAllowed(false),
-	TextureLoadTask(NULL)
+	TextureLoadTask(NULL),
+	Width(0),
+	Height(0)
 {
 	D3DTexture->AddRef();
 	IDirect3DSurface8* surface;
-	DX8_ErrorCode(D3DTexture->GetSurfaceLevel(0,&surface));
+	DX8_ErrorCode(Peek_D3D_Texture()->GetSurfaceLevel(0,&surface));
 	D3DSURFACE_DESC d3d_desc;
 	::ZeroMemory(&d3d_desc, sizeof(D3DSURFACE_DESC));
 	DX8_ErrorCode(surface->GetDesc(&d3d_desc));
+	Width=d3d_desc.Width;
+	Height=d3d_desc.Height;
 	TextureFormat=D3DFormat_To_WW3DFormat(d3d_desc.Format);
-	switch (TextureFormat) {
+	switch (TextureFormat) 
+	{
 	case WW3D_FORMAT_DXT1:
 	case WW3D_FORMAT_DXT2:
 	case WW3D_FORMAT_DXT3:
@@ -308,10 +306,9 @@ TextureClass::TextureClass(IDirect3DTexture8* d3d_texture)
 	case WW3D_FORMAT_DXT5:
 		IsCompressionAllowed=true;
 		break;
-	default:
-		break;
+	default: break;
 	}
-	
+
 	LastAccessed=WW3D::Get_Sync_Time();
 }
 
@@ -323,7 +320,7 @@ TextureClass::~TextureClass(void)
 	TextureLoadTask=NULL;
 
 	if (!Initialized) {
-		WWDEBUG_SAY(("Warning: Texture %s was loaded but never used\n",Get_Texture_Name()));
+		WWDEBUG_SAY(("Warning: Texture %s was loaded but never used\n",Get_Texture_Name().str()));
 	}
 
 	if (D3DTexture) {
@@ -361,7 +358,7 @@ void TextureClass::Invalidate()
 		Initialized=true;
 		D3DTexture=0;
 	}
-	else if (WW3D::Get_Texture_Thumbnail_Mode()==WW3D::TEXTURE_THUMBNAIL_MODE_OFF || MipLevelCount==MIP_LEVELS_1)
+	else if (WW3D::Get_Thumbnail_Enabled()==false || MipLevelCount==MIP_LEVELS_1)
 	{
 		Initialized=true;
 		D3DTexture=0;
@@ -370,6 +367,35 @@ void TextureClass::Invalidate()
 	else {
 		Initialized=false;
 		Load_Locked_Surface();
+	}
+}
+
+//**********************************************************************************************
+//! Returns a pointer to the d3d texture
+/*! 
+*/
+IDirect3DBaseTexture8 * TextureClass::Peek_D3D_Base_Texture() const 
+{ 	
+	LastAccessed=WW3D::Get_Sync_Time(); 
+	return D3DTexture; 
+}
+
+//**********************************************************************************************
+//! Set the d3d texture pointer.  Handles ref counts properly.
+/*! 
+*/
+void TextureClass::Set_D3D_Base_Texture(IDirect3DBaseTexture8* tex) 
+{ 
+	// (gth) Generals does stuff directly with the D3DTexture pointer so lets
+	// reset the access timer whenever someon messes with this pointer.
+	LastAccessed=WW3D::Get_Sync_Time();
+	
+	if (D3DTexture != NULL) {
+		D3DTexture->Release();
+	}
+	D3DTexture = tex;
+	if (D3DTexture != NULL) {
+		D3DTexture->AddRef();
 	}
 }
 
@@ -427,7 +453,7 @@ void TextureClass::Get_Level_Description(SurfaceClass::SurfaceDescription &surfa
 	}
 
 	D3DSURFACE_DESC d3d_surf_desc;
-	DX8_ErrorCode(D3DTexture->GetLevelDesc(level, &d3d_surf_desc));
+	DX8_ErrorCode(Peek_D3D_Texture()->GetLevelDesc(level, &d3d_surf_desc));
 	surface_desc.Format = D3DFormat_To_WW3DFormat(d3d_surf_desc.Format);
 	surface_desc.Height = d3d_surf_desc.Height; 
 	surface_desc.Width = d3d_surf_desc.Width;
@@ -438,7 +464,7 @@ void TextureClass::Get_Level_Description(SurfaceClass::SurfaceDescription &surfa
 SurfaceClass *TextureClass::Get_Surface_Level(unsigned int level)
 {
 	IDirect3DSurface8 *d3d_surface = NULL;
-	DX8_ErrorCode(D3DTexture->GetSurfaceLevel(level, &d3d_surface));
+	DX8_ErrorCode(Peek_D3D_Texture()->GetSurfaceLevel(level, &d3d_surface));
 	SurfaceClass *surface = W3DNEW SurfaceClass(d3d_surface);
 	d3d_surface->Release();
 	return surface;
@@ -468,17 +494,6 @@ unsigned int TextureClass::Set_Priority(unsigned int priority)
 	return D3DTexture->SetPriority(priority);
 }
 
-// ----------------------------------------------------------------------------
-
-void TextureClass::Set_Mip_Mapping(FilterType mipmap)
-{
-	if (mipmap != FILTER_TYPE_NONE && Get_Mip_Level_Count() <= 1) {
-		WWASSERT_PRINT(0, "Trying to enable MipMapping on texture w/o Mip levels!\n");
-		return;
-	}
-	MipMapFilter=mipmap;
-}
-
 unsigned TextureClass::Get_Reduction() const
 {
 	if (MipLevelCount==MIP_LEVELS_1) return 0;
@@ -494,7 +509,8 @@ unsigned TextureClass::Get_Reduction() const
 
 void TextureClass::Apply(unsigned int stage)
 {
-	if (!Initialized) {
+	if (!Initialized) 
+	{
 		Init();
 	}
 	LastAccessed=WW3D::Get_Sync_Time();
@@ -502,39 +518,16 @@ void TextureClass::Apply(unsigned int stage)
 	DX8_RECORD_TEXTURE(this);
 
 	// Set texture itself
-	if (WW3D::Is_Texturing_Enabled()) {
+	if (WW3D::Is_Texturing_Enabled()) 
+	{
 		DX8Wrapper::Set_DX8_Texture(stage, D3DTexture);
-	} else {
+	}
+	else 
+	{
 		DX8Wrapper::Set_DX8_Texture(stage, NULL);
 	}
 
-	DX8Wrapper::Set_DX8_Texture_Stage_State(stage,D3DTSS_MINFILTER,_MinTextureFilters[TextureMinFilter]);
-	DX8Wrapper::Set_DX8_Texture_Stage_State(stage,D3DTSS_MAGFILTER,_MagTextureFilters[TextureMagFilter]);
-	DX8Wrapper::Set_DX8_Texture_Stage_State(stage,D3DTSS_MIPFILTER,_MipMapFilters[MipMapFilter]);
-
-	switch (Get_U_Addr_Mode()) {
-
-		case TEXTURE_ADDRESS_REPEAT:
-			DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
-			break;
-
-		case TEXTURE_ADDRESS_CLAMP:
-			DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
-			break;
-
-	}
-
-	switch (Get_V_Addr_Mode()) {
-
-		case TEXTURE_ADDRESS_REPEAT:
-			DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
-			break;
-
-		case TEXTURE_ADDRESS_CLAMP:
-			DX8Wrapper::Set_DX8_Texture_Stage_State(stage, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
-			break;
-
-	}
+	Filter.Apply(stage);
 }
 
 // ----------------------------------------------------------------------------
@@ -556,12 +549,14 @@ void TextureClass::Apply_New_Surface(bool initialized)
 
 	WWASSERT(D3DTexture);
 	IDirect3DSurface8* surface;
-	DX8_ErrorCode(D3DTexture->GetSurfaceLevel(0,&surface));
+	DX8_ErrorCode(Peek_D3D_Texture()->GetSurfaceLevel(0,&surface));
 	D3DSURFACE_DESC d3d_desc;
 	::ZeroMemory(&d3d_desc, sizeof(D3DSURFACE_DESC));
 	DX8_ErrorCode(surface->GetDesc(&d3d_desc));
 //	if (TextureFormat==WW3D_FORMAT_UNKNOWN) {
 		TextureFormat=D3DFormat_To_WW3DFormat(d3d_desc.Format);
+		Width=d3d_desc.Width;
+		Height=d3d_desc.Height;
 //	}
 //	else {
 //		WWASSERT(D3DFormat_To_WW3DFormat(d3d_desc.Format)==TextureFormat);
@@ -732,78 +727,17 @@ bool Validate_Filters(unsigned type)
 	return !FAILED(hres);
 }
 */
-void TextureClass::_Init_Filters()
-{
-	const D3DCAPS8& dx8caps=DX8Caps::Get_Default_Caps();
 
-	_MinTextureFilters[FILTER_TYPE_NONE]=D3DTEXF_POINT;
-	_MagTextureFilters[FILTER_TYPE_NONE]=D3DTEXF_POINT;
-	_MipMapFilters[FILTER_TYPE_NONE]=D3DTEXF_NONE;
-
-	_MinTextureFilters[FILTER_TYPE_FAST]=D3DTEXF_LINEAR;
-	_MagTextureFilters[FILTER_TYPE_FAST]=D3DTEXF_LINEAR;
-	_MipMapFilters[FILTER_TYPE_FAST]=D3DTEXF_POINT;
-
-	// Jani: Disabling anisotropic filtering as it doesn't seem to work with the latest nVidia drivers.
-	if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFAFLATCUBIC) _MagTextureFilters[FILTER_TYPE_BEST]=D3DTEXF_FLATCUBIC;
-	else if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFANISOTROPIC) _MagTextureFilters[FILTER_TYPE_BEST]=D3DTEXF_ANISOTROPIC;
-	else if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFGAUSSIANCUBIC) _MagTextureFilters[FILTER_TYPE_BEST]=D3DTEXF_GAUSSIANCUBIC;
-	else if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFLINEAR) _MagTextureFilters[FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
-	else if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MAGFPOINT) _MagTextureFilters[FILTER_TYPE_BEST]=D3DTEXF_POINT;
-	else {
-		WWASSERT_PRINT(0,("No magnification filter found!"));
-	}
-
-	if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MINFANISOTROPIC) _MinTextureFilters[FILTER_TYPE_BEST]=D3DTEXF_ANISOTROPIC;
-	else if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MINFLINEAR) _MinTextureFilters[FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
-	else if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MINFPOINT) _MinTextureFilters[FILTER_TYPE_BEST]=D3DTEXF_POINT;
-	else {
-		WWASSERT_PRINT(0,("No minification filter found!"));
-	}
-
-	if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MIPFLINEAR) _MipMapFilters[FILTER_TYPE_BEST]=D3DTEXF_LINEAR;
-	else if (dx8caps.TextureFilterCaps&D3DPTFILTERCAPS_MIPFPOINT) _MipMapFilters[FILTER_TYPE_BEST]=D3DTEXF_POINT;
-	else {
-		WWASSERT_PRINT(0,("No mip filter found!"));
-	}
-
-//_MagTextureFilters[FILTER_TYPE_BEST]=D3DTEXF_FLATCUBIC;
-//	WWASSERT(Validate_Filters(FILTER_TYPE_BEST));
-
-	_MinTextureFilters[FILTER_TYPE_DEFAULT]=_MinTextureFilters[FILTER_TYPE_BEST];
-	_MagTextureFilters[FILTER_TYPE_DEFAULT]=_MagTextureFilters[FILTER_TYPE_BEST];
-	_MipMapFilters[FILTER_TYPE_DEFAULT]=_MipMapFilters[FILTER_TYPE_BEST];
-
-	for (int stage=0;stage<MeshMatDescClass::MAX_TEX_STAGES;++stage) {
-		DX8Wrapper::Set_DX8_Texture_Stage_State(stage,D3DTSS_MAXANISOTROPY,2);
-	}
-
-
-}
-
-void TextureClass::_Set_Default_Min_Filter(FilterType filter)
-{
-	_MinTextureFilters[FILTER_TYPE_DEFAULT]=_MinTextureFilters[filter];
-}
-
-void TextureClass::_Set_Default_Mag_Filter(FilterType filter)
-{
-	_MagTextureFilters[FILTER_TYPE_DEFAULT]=_MagTextureFilters[filter];
-}
-
-void TextureClass::_Set_Default_Mip_Filter(FilterType filter)
-{
-	_MipMapFilters[FILTER_TYPE_DEFAULT]=_MipMapFilters[filter];
-}
 
 // Utility functions
-TextureClass *Load_Texture(ChunkLoadClass & cload)
+TextureClass* Load_Texture(ChunkLoadClass & cload)
 {
 	// Assume failure
 	TextureClass *newtex = NULL;
 
 	char name[256];
-	if (cload.Open_Chunk () && (cload.Cur_Chunk_ID () == W3D_CHUNK_TEXTURE)) {
+	if (cload.Open_Chunk () && (cload.Cur_Chunk_ID () == W3D_CHUNK_TEXTURE)) 
+	{
 
 		W3dTextureInfoStruct texinfo;
 		bool hastexinfo = false;
@@ -829,52 +763,58 @@ TextureClass *Load_Texture(ChunkLoadClass & cload)
 		/*
 		** Get the texture from the asset manager
 		*/
-		if (hastexinfo) {
-			
-			TextureClass::MipCountType mipcount;
+		if (hastexinfo) 
+		{
+
+			MipCountType mipcount;
 
 			bool no_lod = ((texinfo.Attributes & W3DTEXTURE_NO_LOD) == W3DTEXTURE_NO_LOD);
-			
-			if (no_lod) {
-				mipcount = TextureClass::MIP_LEVELS_1;
-			} else {
+
+			if (no_lod) 
+			{
+				mipcount = MIP_LEVELS_1;
+			} 
+			else 
+			{
 				switch (texinfo.Attributes & W3DTEXTURE_MIP_LEVELS_MASK) {
 
 					case W3DTEXTURE_MIP_LEVELS_ALL:
-						mipcount = TextureClass::MIP_LEVELS_ALL;
+						mipcount = MIP_LEVELS_ALL;
 						break;
 
 					case W3DTEXTURE_MIP_LEVELS_2:
-						mipcount = TextureClass::MIP_LEVELS_2;
+						mipcount = MIP_LEVELS_2;
 						break;
 
 					case W3DTEXTURE_MIP_LEVELS_3:
-						mipcount = TextureClass::MIP_LEVELS_3;
+						mipcount = MIP_LEVELS_3;
 						break;
 
 					case W3DTEXTURE_MIP_LEVELS_4:
-						mipcount = TextureClass::MIP_LEVELS_4;
+						mipcount = MIP_LEVELS_4;
 						break;
 
 					default:
 						WWASSERT (false);
-						mipcount = TextureClass::MIP_LEVELS_ALL;
+						mipcount = MIP_LEVELS_ALL;
 						break;
 				}
 			}
 			newtex = WW3DAssetManager::Get_Instance()->Get_Texture (name, mipcount);
 
-			if (no_lod) {
-				newtex->Set_Mip_Mapping(TextureClass::FILTER_TYPE_NONE);
+			if (no_lod) 
+			{
+				newtex->Get_Filter().Set_Mip_Mapping(TextureFilterClass::FILTER_TYPE_NONE);
 			}
 			bool u_clamp = ((texinfo.Attributes & W3DTEXTURE_CLAMP_U) != 0);
-			newtex->Set_U_Addr_Mode(u_clamp ? TextureClass::TEXTURE_ADDRESS_CLAMP : TextureClass::TEXTURE_ADDRESS_REPEAT);
+			newtex->Get_Filter().Set_U_Addr_Mode(u_clamp ? TextureFilterClass::TEXTURE_ADDRESS_CLAMP : TextureFilterClass::TEXTURE_ADDRESS_REPEAT);
 			bool v_clamp = ((texinfo.Attributes & W3DTEXTURE_CLAMP_V) != 0);
-			newtex->Set_V_Addr_Mode(v_clamp ? TextureClass::TEXTURE_ADDRESS_CLAMP : TextureClass::TEXTURE_ADDRESS_REPEAT);
+			newtex->Get_Filter().Set_V_Addr_Mode(v_clamp ? TextureFilterClass::TEXTURE_ADDRESS_CLAMP : TextureFilterClass::TEXTURE_ADDRESS_REPEAT);
 
-			switch (texinfo.Attributes & W3DTEXTURE_TYPE_MASK) {
+			switch (texinfo.Attributes & W3DTEXTURE_TYPE_MASK) 
+			{
 
-				case W3DTEXTURE_TYPE_COLORMAP: 
+				case W3DTEXTURE_TYPE_COLORMAP:
 					// Do nothing.
 					break;
 
@@ -909,9 +849,9 @@ void setup_texture_attributes(TextureClass * tex, W3dTextureInfoStruct * texinfo
 {
 	texinfo->Attributes = 0;
 
-	if (tex->Get_Mip_Mapping() == TextureClass::FILTER_TYPE_NONE) texinfo->Attributes |= W3DTEXTURE_NO_LOD;
-	if (tex->Get_U_Addr_Mode() == TextureClass::TEXTURE_ADDRESS_CLAMP) texinfo->Attributes |= W3DTEXTURE_CLAMP_U;
-	if (tex->Get_V_Addr_Mode() == TextureClass::TEXTURE_ADDRESS_CLAMP) texinfo->Attributes |= W3DTEXTURE_CLAMP_V;
+	if (tex->Get_Filter().Get_Mip_Mapping() == TextureFilterClass::FILTER_TYPE_NONE) texinfo->Attributes |= W3DTEXTURE_NO_LOD;
+	if (tex->Get_Filter().Get_U_Addr_Mode() == TextureFilterClass::TEXTURE_ADDRESS_CLAMP) texinfo->Attributes |= W3DTEXTURE_CLAMP_U;
+	if (tex->Get_Filter().Get_V_Addr_Mode() == TextureFilterClass::TEXTURE_ADDRESS_CLAMP) texinfo->Attributes |= W3DTEXTURE_CLAMP_V;
 }
 
 

@@ -64,7 +64,7 @@
 #include "GameLogic/Module/StealthUpdate.h"
 #include "GameLogic/Module/ContainModule.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -280,7 +280,7 @@ UpdateSleepTime SpecialAbilityUpdate::update( void )
             // it's been captured by a colleague! we should stop.
             shouldAbort = TRUE;
           }
-          //deliberately falling through...
+          FALLTHROUGH; //deliberately falling through...
         }
         case SPECIAL_BLACKLOTUS_STEAL_CASH_HACK:
         case SPECIAL_BOOBY_TRAP:
@@ -309,7 +309,7 @@ UpdateSleepTime SpecialAbilityUpdate::update( void )
         {
           if ( target->isKindOf( KINDOF_STRUCTURE ) )
             shouldAbort = TRUE;
-          //deliberately falling through
+          FALLTHROUGH; //deliberately falling through
         }
         case SPECIAL_BLACKLOTUS_DISABLE_VEHICLE_HACK:
         {
@@ -573,7 +573,7 @@ Bool SpecialAbilityUpdate::isPowerCurrentlyInUse( const CommandButton *command )
   {
     if( command->getSpecialPowerTemplate() && command->getSpecialPowerTemplate()->getSpecialPowerType() == SPECIAL_REMOTE_CHARGES )
     {
-      if( !BitTest( command->getOptions(), CONTEXTMODE_COMMAND ) )
+      if( !BitIsSet( command->getOptions(), CONTEXTMODE_COMMAND ) )
       {
         //This is the detonate charge button. Treat it backwards saying it's in use when we don't have any special objects (charges).
         //That way, the button will be grayed out.
@@ -880,6 +880,7 @@ Bool SpecialAbilityUpdate::isWithinStartAbilityRange() const
       PartitionFilterLineOfSight  filterLOS( self );
       PartitionFilter *filters[] = { &filterLOS, NULL };
       ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( self, range, FROM_BOUNDINGSPHERE_2D, filters, ITER_SORTED_NEAR_TO_FAR );
+      MemoryPoolObjectHolder hold(iter);
       for( Object *theTarget = iter->first(); theTarget; theTarget = iter->next() ) 
       {
         //LOS check succeeded.

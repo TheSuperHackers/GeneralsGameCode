@@ -30,7 +30,7 @@
 #include "ObjectTool.h"
 #include "PointerTool.h"
 #include "PickUnitDialog.h"
-#include "WbView3D.h"
+#include "wbview3d.h"
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
 #include "WorldBuilderView.h"
@@ -50,7 +50,7 @@ BuildListTool::BuildListTool(void) :
 	m_moveCursor(NULL),
 	m_created(false)
 {
-	m_curObject = false;
+	m_curObject = NULL;
 }
 	
 /// Destructor

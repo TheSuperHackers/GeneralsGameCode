@@ -79,7 +79,7 @@ PolygonTrigger::~PolygonTrigger(void)
 		while (cur) {
 			next = cur->getNext();
 			cur->setNextPoly(NULL); // prevents recursion. 
-			cur->deleteInstance();
+			deleteInstance(cur);
 			cur = next; 
 		}
 	}
@@ -95,6 +95,10 @@ void PolygonTrigger::reallocate(void)
 {	
 	DEBUG_ASSERTCRASH(m_numPoints <= m_sizePoints, ("Invalid m_numPoints."));
 	if (m_numPoints == m_sizePoints) {
+		if (m_sizePoints > INT_MAX / 2) {
+			DEBUG_CRASH(("Too many points to allocate."));
+			return;
+		}
 		// Reallocate.
 		m_sizePoints += m_sizePoints;
 		ICoord3D *newPts = NEW ICoord3D[m_sizePoints];
@@ -189,7 +193,7 @@ Bool PolygonTrigger::ParsePolygonTriggersDataChunk(DataChunkInput &file, DataChu
 		// before water areas existed, so create a default one.
 		PolygonTrigger *pTrig = newInstance(PolygonTrigger)(4);
 		pTrig->setWaterArea(true);
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		pTrig->setTriggerName("AutoAddedWaterAreaTrigger");
 #endif
 		pTrig->m_triggerID = maxTriggerId++;
@@ -294,7 +298,8 @@ void PolygonTrigger::addPolygonTrigger(PolygonTrigger *pTrigger)
 void PolygonTrigger::removePolygonTrigger(PolygonTrigger *pTrigger)
 {	
 	PolygonTrigger *pPrev = NULL;
-	for (PolygonTrigger *pTrig=getFirstPolygonTrigger(); pTrig; pTrig = pTrig->getNext()) {
+	PolygonTrigger *pTrig=getFirstPolygonTrigger();
+	for (; pTrig; pTrig = pTrig->getNext()) {
 		if (pTrig==pTrigger) break;
 		pPrev = pTrig;
 	}
@@ -319,7 +324,7 @@ void PolygonTrigger::deleteTriggers(void)
 	PolygonTrigger *pList = ThePolygonTriggerListPtr;	
 	ThePolygonTriggerListPtr = NULL;
 	s_currentID = 1;
-	pList->deleteInstance();
+	deleteInstance(pList);
 }
 
 /**

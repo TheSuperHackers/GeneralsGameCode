@@ -53,7 +53,7 @@
 #include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/Module/StealthUpdate.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -83,7 +83,7 @@ void Radar::deleteListResources( void )
 		m_localObjectList->friend_getObject()->friend_setRadarData( NULL );
 
 		// delete the head of the list
-		m_localObjectList->deleteInstance();
+		deleteInstance(m_localObjectList);
 
 		// set head of the list to the next object
 		m_localObjectList = nextObject;
@@ -101,7 +101,7 @@ void Radar::deleteListResources( void )
 		m_objectList->friend_getObject()->friend_setRadarData( NULL );
 
 		// delete the head of the list
-		m_objectList->deleteInstance();
+		deleteInstance(m_objectList);
 
 		// set head of the list to the next object
 		m_objectList = nextObject;
@@ -394,13 +394,13 @@ void Radar::newMap( TerrainLogic *terrain )
 /** Add an object to the radar list.  The object will be sorted in the list to be grouped
 	* using it's radar priority */
 //-------------------------------------------------------------------------------------------------
-void Radar::addObject( Object *obj )
+bool Radar::addObject( Object *obj )
 {
 
 	// get the radar priority for this object
 	RadarPriorityType newPriority = obj->getRadarPriority();
 	if( isPriorityVisible( newPriority ) == FALSE )
-		return;
+		return false;
 
 	// if this object is on the radar, remove it in favor of the new add
 	RadarObject **list;
@@ -426,8 +426,7 @@ void Radar::addObject( Object *obj )
 		//Because we have support for disguised units pretending to be units from another
 		//team, we need to intercept it here and make sure it's rendered appropriately
 		//based on which client is rendering it.
-		static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-		StealthUpdate *update = (StealthUpdate*)obj->findUpdateModule( key_StealthUpdate );
+		StealthUpdate *update = obj->getStealth();
 		if( update )
 		{
 			if( update->isDisguised() )
@@ -545,6 +544,7 @@ void Radar::addObject( Object *obj )
 
 	}  // end else
 
+	return true;
 }  // end addObject
 
 //-------------------------------------------------------------------------------------------------
@@ -571,7 +571,7 @@ Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 			obj->friend_setRadarData( NULL );
 
 			// delete the object instance
-			radarObject->deleteInstance();
+			deleteInstance(radarObject);
 
 			// all done, object found and deleted
 			return TRUE;
@@ -591,35 +591,35 @@ Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 //-------------------------------------------------------------------------------------------------
 /** Remove an object from the radar, the object may reside in any list */
 //-------------------------------------------------------------------------------------------------
-void Radar::removeObject( Object *obj )
+bool Radar::removeObject( Object *obj )
 {
 
 	// sanity
 	if( obj->friend_getRadarData() == NULL )
-		return;
+		return false;
 
 	if( deleteFromList( obj, &m_localObjectList ) == TRUE )
-		return;
+		return true;
 	else if( deleteFromList( obj, &m_objectList ) == TRUE )
-		return;
+		return true;
 	else
 	{
 
 		// sanity
 		DEBUG_ASSERTCRASH( 0, ("Radar: Tried to remove object '%s' which was not found\n",
 											 obj->getTemplate()->getName().str()) );
-
+		return false;
 	}  // end else
 
 }  // end removeObject
 
 //-------------------------------------------------------------------------------------------------
 /** Translate a 2D spot on the radar (from (0,0) to (RADAR_CELL_WIDTH,RADAR_CELL_HEIGHT)
-	* to a 3D spot in the world on the terrain
+	* to a 3D spot in the world. Does not determine Z value!
 	* Return TRUE if the radar points translates to a valid world position
 	* Return FALSE if the radar point is not a valid world position */
 //-------------------------------------------------------------------------------------------------		
-Bool Radar::radarToWorld( const ICoord2D *radar, Coord3D *world )
+Bool Radar::radarToWorld2D( const ICoord2D *radar, Coord3D *world )
 {
 	Int x, y;
 
@@ -644,6 +644,19 @@ Bool Radar::radarToWorld( const ICoord2D *radar, Coord3D *world )
 	// translate to world
 	world->x = x * m_xSample;
 	world->y = y * m_ySample;
+  return TRUE;
+}
+
+//-------------------------------------------------------------------------------------------------
+/** Translate a 2D spot on the radar (from (0,0) to (RADAR_CELL_WIDTH,RADAR_CELL_HEIGHT)
+	* to a 3D spot in the world on the terrain
+	* Return TRUE if the radar points translates to a valid world position
+	* Return FALSE if the radar point is not a valid world position */
+//-------------------------------------------------------------------------------------------------		
+Bool Radar::radarToWorld( const ICoord2D *radar, Coord3D *world )
+{
+  if (!radarToWorld2D(radar,world))
+    return FALSE;
 
 	// find the terrain height here
 	world->z = TheTerrainLogic->getGroundHeight( world->x, world->y );
@@ -1010,7 +1023,8 @@ void Radar::createEvent( const Coord3D *world, RadarEventType type, Real seconds
 
 	// lookup the colors we are to used based on the event 
 	RGBAColorInt color[ 2 ];
-	for( Int i = 0; radarColorLookupTable[ i ].event != RADAR_EVENT_INVALID; ++i )
+	Int i = 0;
+	for( ; radarColorLookupTable[ i ].event != RADAR_EVENT_INVALID; ++i )
 	{
 
 		if( radarColorLookupTable[ i ].event == type )
@@ -1241,8 +1255,15 @@ void Radar::tryUnderAttackEvent( const Object *obj )
 // ------------------------------------------------------------------------------------------------
 void Radar::tryInfiltrationEvent( const Object *obj )
 {
+
+	//Sanity!
+	if( !obj )
+	{
+		return;
+	}
+
 	// We should only be warned against infiltrations that are taking place against us.
-	if (obj->getControllingPlayer() != ThePlayerList->getLocalPlayer())
+	if( obj->getControllingPlayer() != ThePlayerList->getLocalPlayer() )
 		return;
 
 	// create the radar event

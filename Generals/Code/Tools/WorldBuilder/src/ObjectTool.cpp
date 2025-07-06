@@ -27,7 +27,7 @@
 #include "CUndoable.h"
 #include "DrawObject.h"
 #include "MainFrm.h"
-#include "WbView3d.h"
+#include "wbview3d.h"
 #include "WHeightMapEdit.h"
 #include "WorldBuilderDoc.h"
 #include "WorldBuilderView.h"
@@ -70,7 +70,7 @@ Real ObjectTool::calcAngle(Coord3D downPt, Coord3D curPt, WbView* pView)
 		if (dx<0) angle = PI-angle;
 	}
 	if (angle > PI) angle -= 2*PI;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	CString buf;
 	buf.Format("Angle %f rad, %d degrees\n", angle, (int)(angle*180/PI));
 	::OutputDebugString(buf);

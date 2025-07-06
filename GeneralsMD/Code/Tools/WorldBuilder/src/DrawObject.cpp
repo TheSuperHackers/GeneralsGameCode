@@ -16,7 +16,7 @@
 **	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stdafx.h"
+#include "StdAfx.h"
 
 #include "DrawObject.h"
 
@@ -30,21 +30,21 @@
 #include <coltest.h>
 #include <rinfo.h>
 #include <camera.h>
-#include "common/GlobalData.h"
+#include "Common/GlobalData.h"
 #include "W3DDevice/GameClient/WorldHeightMap.h"
 #include "W3DDevice/GameClient/TerrainTex.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DAssetManager.h"
 #include "W3DDevice/GameClient/W3DWater.h"
-#include "WW3D2/DX8Wrapper.h"
-#include "WW3D2/Mesh.h"
-#include "WW3D2/MeshMdl.h"
-#include "WW3D2/Shader.h"
-#include "common/MapObject.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/mesh.h"
+#include "WW3D2/meshmdl.h"
+#include "WW3D2/shader.h"
+#include "Common/MapObject.h"
 #include "GameLogic/PolygonTrigger.h"
 #include "GameLogic/SidesList.h"
 #include "resource.h"
-#include "WBView3d.h"
+#include "wbview3d.h"
 #include "WorldBuilderDoc.h"
 #include "WHeightMapEdit.h"
 #include "MeshMoldOptions.h"
@@ -59,7 +59,7 @@
 #include "GameLogic/Weapon.h"
 #include "Common/AudioEventInfo.h"
 
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 #define NO_INTENSE_DEBUG 1
 #endif
 
@@ -279,7 +279,7 @@ Int DrawObject::initData(void)
 	m_vertexMaterialClass=VertexMaterialClass::Get_Preset(VertexMaterialClass::PRELIT_DIFFUSE);
 
 	//use a multi-texture shader: (text1*diffuse)*text2.
-	m_shaderClass = ShaderClass::ShaderClass(SC_OPAQUE);//_PresetOpaque2DShader;//ShaderClass(SC_OPAQUE); //_PresetOpaqueShader;
+	m_shaderClass = ShaderClass(SC_OPAQUE);//_PresetOpaque2DShader;//ShaderClass(SC_OPAQUE); //_PresetOpaqueShader;
 
 	m_shaderClass = ShaderClass::_PresetOpaque2DShader;
 	updateForWater();			 

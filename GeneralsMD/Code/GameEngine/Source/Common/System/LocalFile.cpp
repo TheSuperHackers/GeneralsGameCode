@@ -61,7 +61,7 @@
 #include "Common/PerfTimer.h"
 			
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -592,14 +592,14 @@ File* LocalFile::convertToRAMFile()
 		else
 		{
 			this->close();
-			this->deleteInstance();
+			deleteInstance(this);
 		}
 		return ramFile;
 	}	
 	else 
 	{
 		ramFile->close();
-		ramFile->deleteInstance();
+		deleteInstance(ramFile);
 		return this;
 	}
 }

@@ -63,7 +63,7 @@
 #include "GameLogic/Module/StealthUpdate.h"
 #include "GameLogic/Module/ContainModule.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -380,11 +380,11 @@ UpdateSleepTime SpecialAbilityUpdate::update( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-void SpecialAbilityUpdate::initiateIntentToDoSpecialPower( const SpecialPowerTemplate *specialPowerTemplate, 
+Bool SpecialAbilityUpdate::initiateIntentToDoSpecialPower( const SpecialPowerTemplate *specialPowerTemplate, 
 																													 const Object *targetObj, 
 																													 const Coord3D *targetPos, 
-																													 UnsignedInt commandOptions, 
-																													 Int locationCount )
+																													 const Waypoint *way, 
+																													 UnsignedInt commandOptions )
 {
 	const SpecialAbilityUpdateModuleData* data = getSpecialAbilityUpdateModuleData();
 	const SpecialPowerTemplate *spTemplate = data->m_specialPowerTemplate;
@@ -392,7 +392,7 @@ void SpecialAbilityUpdate::initiateIntentToDoSpecialPower( const SpecialPowerTem
 	if( spTemplate != specialPowerTemplate )
 	{
 		//Check to make sure our modules are connected.
-		return;
+		return FALSE;
 	}
 
 	//Clear target values
@@ -418,13 +418,12 @@ void SpecialAbilityUpdate::initiateIntentToDoSpecialPower( const SpecialPowerTem
 	{
 		//Get the position!
 		m_targetPos = *targetPos;
-		m_locationCount = locationCount;
 	}
 	
 	//Clear any old AI before starting this special ability.
 	if( !getObject()->getAIUpdateInterface() )
 	{
-		return;
+		return FALSE;
 	}
 	getObject()->getAIUpdateInterface()->aiIdle( CMD_FROM_AI );
 
@@ -459,6 +458,8 @@ void SpecialAbilityUpdate::initiateIntentToDoSpecialPower( const SpecialPowerTem
 
 
 	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
+
+	return TRUE;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -468,7 +469,7 @@ Bool SpecialAbilityUpdate::isPowerCurrentlyInUse( const CommandButton *command )
 	{
 		if( command->getSpecialPowerTemplate() && command->getSpecialPowerTemplate()->getSpecialPowerType() == SPECIAL_REMOTE_CHARGES )
 		{
-			if( !BitTest( command->getOptions(), CONTEXTMODE_COMMAND ) )
+			if( !BitIsSet( command->getOptions(), CONTEXTMODE_COMMAND ) )
 			{
 				//This is the detonate charge button. Treat it backwards saying it's in use when we don't have any special objects (charges).
 				//That way, the button will be grayed out.
@@ -501,7 +502,7 @@ void SpecialAbilityUpdate::onExit( Bool cleanup )
 
 	getObject()->clearModelConditionFlags( 
 		MAKE_MODELCONDITION_MASK4( MODELCONDITION_UNPACKING, MODELCONDITION_PACKING, MODELCONDITION_FIRING_A, MODELCONDITION_RAISING_FLAG ) );
-	getObject()->clearStatus( OBJECT_STATUS_IS_USING_ABILITY );
+	getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_USING_ABILITY ) );
 
 	TheAudio->removeAudioEvent( m_prepSoundLoop.getPlayingHandle() );
 	endPreparation();
@@ -580,8 +581,7 @@ Bool SpecialAbilityUpdate::handlePackingProcessing()
 		if( getSpecialAbilityUpdateModuleData()->m_loseStealthOnTrigger &&
 			m_animFrames < getSpecialAbilityUpdateModuleData()->m_preTriggerUnstealthFrames)
 		{
-			static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-			StealthUpdate* stealth = (StealthUpdate*)getObject()->findUpdateModule( key_StealthUpdate );
+			StealthUpdate* stealth = getObject()->getStealth();
 			if( stealth )
 			{
 				stealth->markAsDetected();
@@ -776,6 +776,7 @@ Bool SpecialAbilityUpdate::isWithinStartAbilityRange() const
 			PartitionFilterLineOfSight	filterLOS( self );
 			PartitionFilter *filters[] = { &filterLOS, NULL };
 			ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( self, range, FROM_BOUNDINGSPHERE_2D, filters, ITER_SORTED_NEAR_TO_FAR );
+			MemoryPoolObjectHolder hold(iter);
 			for( Object *theTarget = iter->first(); theTarget; theTarget = iter->next() ) 
 			{
 				//LOS check succeeded.
@@ -978,7 +979,7 @@ void SpecialAbilityUpdate::startPreparation()
 	if (getObject()->getAI()) {
 		getObject()->getAI()->aiIdle( CMD_FROM_AI ); // just in case.  jba.
 	}
-	getObject()->setStatus( OBJECT_STATUS_IS_USING_ABILITY );
+	getObject()->setStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_USING_ABILITY ) );
 
 	m_prepSoundLoop = data->m_prepSoundLoop;
 	m_prepSoundLoop.setObjectID( getObject()->getID() );
@@ -1440,10 +1441,9 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
 		case SPECIAL_DISGUISE_AS_VEHICLE:
 		{
 			Object *target = TheGameLogic->findObjectByID( m_targetID );
-			static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
 			if( target )
 			{
-				StealthUpdate *update = (StealthUpdate*)object->findUpdateModule( key_StealthUpdate );
+				StealthUpdate *update = object->getStealth();
 				if( update )
 				{
 					update->disguiseAsObject( target );
@@ -1456,8 +1456,7 @@ void SpecialAbilityUpdate::triggerAbilityEffect()
 
 	if( data->m_loseStealthOnTrigger && okToLoseStealth)
 	{
-		static NameKeyType key_StealthUpdate = NAMEKEY( "StealthUpdate" );
-		StealthUpdate* stealth = (StealthUpdate*)object->findUpdateModule( key_StealthUpdate );
+		StealthUpdate* stealth = object->getStealth();
 		if( stealth )
 		{
 			stealth->markAsDetected();
@@ -1784,7 +1783,7 @@ Object* SpecialAbilityUpdate::findSpecialObjectWithProducerID( const Object *tar
 //-------------------------------------------------------------------------------------------------
 void SpecialAbilityUpdate::endPreparation()
 {
-	getObject()->clearStatus( OBJECT_STATUS_IS_USING_ABILITY );
+	getObject()->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_IS_USING_ABILITY ) );
 	TheAudio->removeAudioEvent( m_prepSoundLoop.getPlayingHandle() );
 
 	// Based on the special that we just finished preparing (either by failure or success),

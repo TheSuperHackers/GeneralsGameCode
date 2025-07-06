@@ -55,7 +55,7 @@
 #include "GameLogic/Module/DozerAIUpdate.h"
 #include "GameClient/InGameUI.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -74,7 +74,7 @@ static const Real MIN_ACTION_TOLERANCE = 70.0f;
 //-------------------------------------------------------------------------------------------------
 /** Available Dozer actions */
 //-------------------------------------------------------------------------------------------------
-enum DozerActionType
+enum DozerActionType CPP_11(: Int)
 {
 	DOZER_ACTION_PICK_ACTION_POS,		///< pick a location "around" the target to do our action
 	DOZER_ACTION_MOVE_TO_ACTION_POS,///< move to our action pos we've picked
@@ -561,8 +561,8 @@ StateReturnType DozerActionDoActionState::update( void )
 				{
 
 					// clear the under construction status
-					goalObject->clearStatus( OBJECT_STATUS_UNDER_CONSTRUCTION );
-					goalObject->clearStatus( OBJECT_STATUS_RECONSTRUCTING );
+					goalObject->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNDER_CONSTRUCTION ) );
+					goalObject->clearStatus( MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_RECONSTRUCTING ) );
 
 					// stop playing the construction sound!
 					dozerAI->finishBuildingSound();
@@ -1178,7 +1178,7 @@ protected:
 	StateMachine *m_actionMachine;
 
 };
-inline DozerActionState::~DozerActionState( void ) { if (m_actionMachine) m_actionMachine->deleteInstance(); }
+inline DozerActionState::~DozerActionState( void ) { if (m_actionMachine) deleteInstance(m_actionMachine); }
 
 // ------------------------------------------------------------------------------------------------
 /** CRC */
@@ -1478,7 +1478,7 @@ DozerAIUpdate::~DozerAIUpdate( void )
 
 	// delete our behavior state machine
 	if( m_dozerMachine )
-		m_dozerMachine->deleteInstance();
+		deleteInstance(m_dozerMachine);
 
 	// no orders
 	for( Int i = 0; i < DOZER_NUM_TASKS; i++ )
@@ -1684,13 +1684,12 @@ Object *DozerAIUpdate::construct( const ThingTemplate *what,
 	// what will our initial status bits be, it is important to do this early
 	// before the hooks add/subtract power from a player are executed
 	//
-	UnsignedInt statusBits = OBJECT_STATUS_UNDER_CONSTRUCTION;
+	ObjectStatusMaskType statusBits = MAKE_OBJECT_STATUS_MASK( OBJECT_STATUS_UNDER_CONSTRUCTION );
 	if( isRebuild )
-		BitSet( statusBits, OBJECT_STATUS_RECONSTRUCTING );
+		statusBits.set( OBJECT_STATUS_RECONSTRUCTING );
 
 	// create an object at the destination location
-	Object *obj = TheThingFactory->newObject( what, owningPlayer->getDefaultTeam(), 
-																						(ObjectStatusBits)statusBits );
+	Object *obj = TheThingFactory->newObject( what, owningPlayer->getDefaultTeam(), statusBits );
 
 	// even though we haven't actually built anything yet, this keeps things tidy
 	obj->setProducer( getObject() );
@@ -1828,7 +1827,7 @@ void DozerAIUpdate::privateRepair( Object *obj, CommandSourceType cmdSource )
   //
 	//	Object *bridge = TheGameLogic->findObjectByID( btbi->getBridgeID() );
 	//	DEBUG_ASSERTCRASH( bridge, ("Unable to find bridge object\n") );
-	//	if( BitTest( bridge->getStatusBits(), OBJECT_STATUS_UNDERGOING_REPAIR ) == TRUE )
+	//	if( BitIsSet( bridge->getStatusBits(), OBJECT_STATUS_UNDERGOING_REPAIR ) == TRUE )
 	//		return;
   //
 	//}  // end if
@@ -2115,6 +2114,9 @@ void DozerAIUpdate::internalCancelTask( DozerTask task )
 
 	// sanity
 	DEBUG_ASSERTCRASH( task >= 0 && task < DOZER_NUM_TASKS, ("Illegal dozer task '%d'\n", task) );
+	
+	if(task < 0 || task >= DOZER_NUM_TASKS)
+		return;  //DAMNIT!  You CANNOT assert and then not handle the damn error!  The.  Code.  Must.  Not.  Crash.
 
 	// call the single method that gets called for completing and canceling tasks
 	internalTaskCompleteOrCancelled( task );

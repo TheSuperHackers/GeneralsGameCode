@@ -45,9 +45,9 @@
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class ObjectCreationList;
 class Object;
-enum ScienceType;
+enum ScienceType CPP_11(: Int);
 struct FieldParse;
-enum AcademyClassificationType;
+enum AcademyClassificationType CPP_11(: Int);
 
 // For SpecialPowerType and SpecialPowerMaskType::s_bitNameList. Part of detangling.
 #include "Common/SpecialPowerType.h"

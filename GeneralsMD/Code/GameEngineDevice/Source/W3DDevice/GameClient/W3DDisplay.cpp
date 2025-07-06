@@ -75,30 +75,30 @@ static void drawFramerateBar(void);
 #include "W3DDevice/GameClient/W3DScene.h"
 #include "W3DDevice/GameClient/W3DTerrainTracks.h"
 #include "W3DDevice/GameClient/W3DWater.h"
-#include "W3DDevice/GameClient/W3DVideoBuffer.h"
+#include "W3DDevice/GameClient/W3DVideobuffer.h"
 #include "W3DDevice/GameClient/W3DShaderManager.h"
 #include "W3DDevice/GameClient/W3DDebugDisplay.h"
 #include "W3DDevice/GameClient/W3DProjectedShadow.h"
 #include "W3DDevice/GameClient/W3DShroud.h"
-#include "WWMath/WWMath.h"
-#include "WWLib/Registry.h"
-#include "WW3D2/WW3D.h"
-#include "WW3D2/PredLod.h"
-#include "WW3D2/Part_Emt.h"
-#include "WW3D2/Part_Ldr.h"
-#include "WW3D2/DX8Caps.h"
-#include "WW3D2/WW3DFormat.h"
+#include "WWMath/wwmath.h"
+#include "WWLib/registry.h"
+#include "WW3D2/ww3d.h"
+#include "WW3D2/predlod.h"
+#include "WW3D2/part_emt.h"
+#include "WW3D2/part_ldr.h"
+#include "WW3D2/dx8caps.h"
+#include "WW3D2/ww3dformat.h"
 #include "WW3D2/agg_def.h"
-#include "WW3D2/Render2DSentence.h"
-#include "WW3D2/SortingRenderer.h"
-#include "WW3D2/Textureloader.h"
-#include "WW3D2/DX8WebBrowser.h"
-#include "WW3D2/Mesh.h"
-#include "WW3D2/HLOD.h"
-#include "WW3D2/Meshmatdesc.h"
-#include "WW3D2/Meshmdl.h"
+#include "WW3D2/render2dsentence.h"
+#include "WW3D2/sortingrenderer.h"
+#include "WW3D2/textureloader.h"
+#include "WW3D2/dx8webbrowser.h"
+#include "WW3D2/mesh.h"
+#include "WW3D2/hlod.h"
+#include "WW3D2/meshmatdesc.h"
+#include "WW3D2/meshmdl.h"
 #include "WW3D2/rddesc.h"
-#include "targa.h"
+#include "TARGA.H"
 #include "Lib/BaseType.h"
 
 #include "GameLogic/ScriptEngine.h"		// For TheScriptEngine - jkmcd
@@ -109,14 +109,17 @@ static void drawFramerateBar(void);
 
 #include "WinMain.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
 
 // DEFINE AND ENUMS ///////////////////////////////////////////////////////////
-#define W3D_DISPLAY_DEFAULT_BIT_DEPTH 32
+#define DEFAULT_DISPLAY_BIT_DEPTH 32
+#define MIN_DISPLAY_BIT_DEPTH 16
+#define MIN_DISPLAY_RESOLUTION_X 800
+#define MIN_DISPLAY_RESOLUTION_Y 600
 
 #define no_SAMPLE_DYNAMIC_LIGHT	1
 #ifdef SAMPLE_DYNAMIC_LIGHT
@@ -163,9 +166,9 @@ StatDumpClass::StatDumpClass( const char *fname )
 		}
 		pEnd--;
 	}
-	AsciiString fullPath;
-	fullPath.format( "%s\\%s", buffer, fname );
-	m_fp = fopen( fullPath.str(), "wt" );
+	// TheSuperHackers @fix Caball009 03/06/2025 Don't use AsciiString here anymore because its memory allocator may not have been initialized yet.
+	const std::string fullPath = std::string(buffer) + "\\" + fname;
+	m_fp = fopen(fullPath.c_str(), "wt");
 }
 
 //=============================================================================
@@ -322,7 +325,7 @@ void StatDumpClass::dumpStats( Bool brief, Bool flagSpikes )
 
 	fprintf( m_fp, "\n" );
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
   if ( ! beBrief )
   {
     TheAudio->audioDebugDisplay( NULL, NULL, m_fp );
@@ -401,7 +404,7 @@ W3DDisplay::W3DDisplay()
 	m_2DScene = NULL;
 	m_3DInterfaceScene = NULL;
 	m_averageFPS = TheGlobalData->m_framesPerSecondLimit;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_timerAtCumuFPSStart = 0;
 #endif
 	for (i=0; i<LightEnvironmentClass::MAX_LIGHTS; i++)
@@ -426,10 +429,17 @@ W3DDisplay::~W3DDisplay()
 
 	// get rid of the debug display
 	delete m_debugDisplay;
+	m_debugDisplay = NULL;
+	m_nativeDebugDisplay = NULL;
 
 	// delete the display strings
 	for (int i = 0; i < DisplayStringCount; i++)
 		TheDisplayStringManager->freeDisplayString(m_displayStrings[i]);
+
+	// TheSuperHackers @fix Mauller/Tomsons26 28/04/2025 Free benchmark display string
+	if( m_benchmarkDisplayString ) {
+		TheDisplayStringManager->freeDisplayString(m_benchmarkDisplayString);
+	}
 
 	// delete 2D renderer
 	if( m_2DRender )
@@ -457,31 +467,27 @@ W3DDisplay::~W3DDisplay()
 
 	// shutdown
 	Debug_Statistics::Shutdown_Statistics();
-	W3DShaderManager::shutdown();
+	if (!TheGlobalData->m_headless)
+		W3DShaderManager::shutdown();
 	m_assetManager->Free_Assets();
 	delete m_assetManager;
-	WW3D::Shutdown();
+	if (!TheGlobalData->m_headless)
+		WW3D::Shutdown();
 	WWMath::Shutdown();
-	DX8WebBrowser::Shutdown();
+	if (!TheGlobalData->m_headless)
+		DX8WebBrowser::Shutdown();
 	delete TheW3DFileSystem;
 	TheW3DFileSystem = NULL;
 
 }  // end ~W3DDisplay
 
-#define MIN_DISPLAY_RESOLUTION_X	800
-#define MIN_DISPLAY_RESOLUTOIN_Y	600
-
-
-Bool IS_FOUR_BY_THREE_ASPECT( Real x, Real y )
+// TheSuperHackers @tweak valeronm 20/03/2025 No longer filters resolutions by a 4:3 aspect ratio.
+inline Bool isResolutionSupported(const ResolutionDescClass &res)
 {
-  if ( y == 0 )
-    return FALSE;
-  
-  Real aspectRatio = fabs( x / y ); 
-  return (( aspectRatio > 1.332f) && ( aspectRatio < 1.334f));
-  
-}
+	static const Int minBitDepth = 24;
 
+	return res.Width >= MIN_DISPLAY_RESOLUTION_X && res.BitDepth >= minBitDepth;
+}
 
 /*Return number of screen modes supported by the current device*/
 Int W3DDisplay::getDisplayModeCount(void)
@@ -506,8 +512,7 @@ Int W3DDisplay::getDisplayModeCount(void)
 	for (int res = 0; res < resolutions.Count ();  res ++)
 	{
 		// Is this the resolution we are looking for?
-		if (resolutions[res].BitDepth >= 24 && resolutions[res].Width >= MIN_DISPLAY_RESOLUTION_X 
-      && IS_FOUR_BY_THREE_ASPECT( (Real)resolutions[res].Width, (Real)resolutions[res].Height ) )	//only accept 4:3 aspect ratio modes.
+		if (isResolutionSupported(resolutions[res]))
 		{	
 			numResolutions++;
 		}
@@ -525,8 +530,7 @@ void W3DDisplay::getDisplayModeDescription(Int modeIndex, Int *xres, Int *yres, 
 	for (int res = 0; res < resolutions.Count ();  res ++)
 	{
 		// Is this the resolution we are looking for?
-		if ( resolutions[res].BitDepth >= 24 && resolutions[res].Width >= MIN_DISPLAY_RESOLUTION_X 
-      && IS_FOUR_BY_THREE_ASPECT( (Real)resolutions[res].Width, (Real)resolutions[res].Height ) )	//only accept 4:3 aspect ratio modes.
+		if (isResolutionSupported(resolutions[res]))
 		{	
 			if (numResolutions == modeIndex)
 			{	//found the mode
@@ -546,34 +550,6 @@ void W3DDisplay::setGamma(Real gamma, Real bright, Real contrast, Bool calibrate
 		return;	//we don't allow gamma to change in window because it would affect desktop.
 
 	DX8Wrapper::Set_Gamma(gamma,bright,contrast,calibrate, false);
-}
-
-/*Giant hack in order to keep the game from getting stuck when alt-tabbing*/
-void Reset_D3D_Device(bool active)
-{
-	if (TheDisplay && WW3D::Is_Initted() && !TheDisplay->getWindowed())
-	{
-		if (active)
-		{	
-			//switch back to desired mode when user alt-tabs back into game
-			WW3D::Set_Render_Device( WW3D::Get_Render_Device(),TheDisplay->getWidth(),TheDisplay->getHeight(),TheDisplay->getBitDepth(),TheDisplay->getWindowed(),true, true);
-			OSVERSIONINFO	osvi;
-			osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFO);
-			if (GetVersionEx(&osvi))
-			{	//check if we're running Win9x variant since they have buggy alt-tab that requires
-				//reloading all textures.
-				if (osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
-				{	//only do this on Win9x boxes because it makes alt-tab very slow.
-						WW3D::_Invalidate_Textures();
-				}
-			}
-		}
-		else
-		{
-			//switch to windowed mode whenever the user alt-tabs out of game. Don't restore assets after reset since we'll do it when returning.
-			WW3D::Set_Render_Device( WW3D::Get_Render_Device(),TheDisplay->getWidth(),TheDisplay->getHeight(),TheDisplay->getBitDepth(),TheDisplay->getWindowed(),true, true, false);
-		}
-	}
 }
 
 /** Set resolution of display */
@@ -675,49 +651,54 @@ void W3DDisplay::init( void )
 	// init the Westwood math library
 	WWMath::Init();
 
-	// create our 3D interface scene
-	m_3DInterfaceScene = NEW_REF( RTS3DInterfaceScene, () );
-	m_3DInterfaceScene->Set_Ambient_Light( Vector3( 1, 1, 1 ) );
+	if (!TheGlobalData->m_headless)
+	{
 
-	// create our 2D scene
-	m_2DScene = NEW_REF( RTS2DScene, () );
-	m_2DScene->Set_Ambient_Light( Vector3( 1, 1, 1 ) );
+		// create our 3D interface scene
+		m_3DInterfaceScene = NEW_REF( RTS3DInterfaceScene, () );
+		m_3DInterfaceScene->Set_Ambient_Light( Vector3( 1, 1, 1 ) );
 
-	// create our 3D scene
-	m_3DScene =NEW_REF( RTS3DScene, () );
-#if defined(_DEBUG) || defined(_INTERNAL)
-	if( TheGlobalData->m_wireframe )
-		m_3DScene->Set_Polygon_Mode( SceneClass::LINE );
-#endif
-//============================================================================
-	// m_myLight = NEW_REF
-//============================================================================
-	Int lindex;
-	for (lindex=0; lindex<TheGlobalData->m_numGlobalLights; lindex++) 
-	{	m_myLight[lindex] = NEW_REF( LightClass, (LightClass::DIRECTIONAL) );
+		// create our 2D scene
+		m_2DScene = NEW_REF( RTS2DScene, () );
+		m_2DScene->Set_Ambient_Light( Vector3( 1, 1, 1 ) );
+
+		// create our 3D scene
+		m_3DScene =NEW_REF( RTS3DScene, () );
+	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+		if( TheGlobalData->m_wireframe )
+			m_3DScene->Set_Polygon_Mode( SceneClass::LINE );
+	#endif
+	//============================================================================
+		// m_myLight = NEW_REF
+	//============================================================================
+		Int lindex;
+		for (lindex=0; lindex<TheGlobalData->m_numGlobalLights; lindex++) 
+		{	m_myLight[lindex] = NEW_REF( LightClass, (LightClass::DIRECTIONAL) );
+		}
+
+		setTimeOfDay( TheGlobalData->m_timeOfDay );	//set each light to correct values for given time
+
+		for (lindex=0; lindex<TheGlobalData->m_numGlobalLights; lindex++) 
+		{	m_3DScene->setGlobalLight( m_myLight[lindex], lindex );
+		}
+
+	#ifdef SAMPLE_DYNAMIC_LIGHT
+		theDynamicLight = NEW_REF(W3DDynamicLight, ());
+		Real red = 1;
+		Real green = 1;
+		Real blue = 0;
+		if(red==0 && blue==0 && green==0) {
+			red = green = blue = 1;
+		}
+		theDynamicLight->Set_Ambient( Vector3( red, green, blue ) );
+		theDynamicLight->Set_Diffuse( Vector3( red, green, blue) );
+		theDynamicLight->Set_Position(Vector3(0, 0, 4));
+		theDynamicLight->Set_Far_Attenuation_Range(1, 8);
+		// Note: Don't Add_Render_Object dynamic lights. 
+		m_3DScene->addDynamicLight( theDynamicLight );
+	#endif
+
 	}
-
-	setTimeOfDay( TheGlobalData->m_timeOfDay );	//set each light to correct values for given time
-
-	for (lindex=0; lindex<TheGlobalData->m_numGlobalLights; lindex++) 
-	{	m_3DScene->setGlobalLight( m_myLight[lindex], lindex );
-	}
-
-#ifdef SAMPLE_DYNAMIC_LIGHT
-	theDynamicLight = NEW_REF(W3DDynamicLight, ());
-	Real red = 1;
-	Real green = 1;
-	Real blue = 0;
-	if(red==0 && blue==0 && green==0) {
-		red = green = blue = 1;
-	}
-	theDynamicLight->Set_Ambient( Vector3( red, green, blue ) );
-	theDynamicLight->Set_Diffuse( Vector3( red, green, blue) );
-	theDynamicLight->Set_Position(Vector3(0, 0, 4));
-	theDynamicLight->Set_Far_Attenuation_Range(1, 8);
-	// Note: Don't Add_Render_Object dynamic lights. 
-	m_3DScene->addDynamicLight( theDynamicLight );
-#endif
 
 	// create a new asset manager
 	m_assetManager = NEW W3DAssetManager;	
@@ -725,51 +706,90 @@ void W3DDisplay::init( void )
 	m_assetManager->Register_Prototype_Loader(&_AggregateLoader);
 	m_assetManager->Set_WW3D_Load_On_Demand( true );
 
-
-	if (TheGlobalData->m_incrementalAGPBuf)
+	if (!TheGlobalData->m_headless)
 	{
-		SortingRendererClass::SetMinVertexBufferSize(1);
-	}
-	if (WW3D::Init( ApplicationHWnd ) != WW3D_ERROR_OK)
-		throw ERROR_INVALID_D3D;	//failed to initialize.  User probably doesn't have DX 8.1
 
-	WW3D::Set_Prelit_Mode( WW3D::PRELIT_MODE_LIGHTMAP_MULTI_PASS );
-	WW3D::Set_Collision_Box_Display_Mask(0x00);	///<set to 0xff to make collision boxes visible
-	WW3D::Enable_Static_Sort_Lists(true);
-	WW3D::Set_Thumbnail_Enabled(false);
-	WW3D::Set_Screen_UV_Bias( TRUE );  ///< this makes text look good :)
-	WW3D::Set_Texture_Bitdepth(32);
-			
-	setWindowed( TheGlobalData->m_windowed );
-
-	// create a 2D renderer helper
-	m_2DRender = NEW Render2DClass;
-	DEBUG_ASSERTCRASH( m_2DRender, ("Cannot create Render2DClass") );
-
-	// set our default width and height and bit depth
-	/// @todo we should set this according to options read from a file
-	setWidth( TheGlobalData->m_xResolution );
-	setHeight( TheGlobalData->m_yResolution );
-	setBitDepth( W3D_DISPLAY_DEFAULT_BIT_DEPTH );
-
-	if( WW3D::Set_Render_Device( 0, 
-															 getWidth(), 
-															 getHeight(), 
-															 getBitDepth(), 
-															 getWindowed(), 
-															 true ) != WW3D_ERROR_OK ) 
-	{
-		// Getting the device at the default bit depth (32) didn't work, so try
-		// getting a 16 bit display.  (Voodoo 1-3 only supported 16 bit.) jba.
-		setBitDepth( 16 );
-		if( WW3D::Set_Render_Device( 0, 
-																 getWidth(), 
-																 getHeight(), 
-																 getBitDepth(), 
-																 getWindowed(), 
-																 true ) != WW3D_ERROR_OK ) 
+		if (TheGlobalData->m_incrementalAGPBuf)
 		{
+			SortingRendererClass::SetMinVertexBufferSize(1);
+		}
+		if (WW3D::Init( ApplicationHWnd ) != WW3D_ERROR_OK)
+			throw ERROR_INVALID_D3D;	//failed to initialize.  User probably doesn't have DX 8.1
 
+		WW3D::Set_Prelit_Mode( WW3D::PRELIT_MODE_LIGHTMAP_MULTI_PASS );
+		WW3D::Set_Collision_Box_Display_Mask(0x00);	///<set to 0xff to make collision boxes visible
+		WW3D::Enable_Static_Sort_Lists(true);
+		WW3D::Set_Thumbnail_Enabled(false);
+		WW3D::Set_Screen_UV_Bias( TRUE );  ///< this makes text look good :)
+		WW3D::Set_Texture_Bitdepth(32);
+			
+		setWindowed( TheGlobalData->m_windowed );
+
+		// create a 2D renderer helper
+		m_2DRender = NEW Render2DClass;
+		DEBUG_ASSERTCRASH( m_2DRender, ("Cannot create Render2DClass") );
+
+		WW3DErrorType renderDeviceError;
+		Int attempt = 0;
+		do
+		{
+			switch (attempt)
+			{
+			case 0:
+			{
+				// set our default width and height and bit depth
+				setWidth( TheGlobalData->m_xResolution );
+				setHeight( TheGlobalData->m_yResolution );
+				setBitDepth( DEFAULT_DISPLAY_BIT_DEPTH );
+				break;
+			}
+			case 1:
+			{
+				// Getting the device at the default bit depth (32) didn't work, so try
+				// getting a 16 bit display.  (Voodoo 1-3 only supported 16 bit.) jba.
+				setBitDepth( MIN_DISPLAY_BIT_DEPTH );
+				break;
+			}
+			case 2:
+			{
+				// TheSuperHackers @bugfix xezon 11/06/2025 Now tries a safe default resolution
+				// if the custom resolution did not succeed. This is unlikely to happen but is possible
+				// if the user writes an unsupported resolution in the Option Preferences or if the
+				// graphics adapter does not support the minimum display resolution to begin with.
+				Int xres = MIN_DISPLAY_RESOLUTION_X;
+				Int yres = MIN_DISPLAY_RESOLUTION_Y;
+				Int bitDepth = DEFAULT_DISPLAY_BIT_DEPTH;
+				Int displayModeCount = getDisplayModeCount();
+				Int displayModeIndex = 0;
+				for (; displayModeIndex < displayModeCount; ++displayModeIndex)
+				{
+					getDisplayModeDescription(displayModeIndex, &xres, &yres, &bitDepth);
+					if (xres * yres >= MIN_DISPLAY_RESOLUTION_X * MIN_DISPLAY_RESOLUTION_Y)
+						break; // Is good enough. Use it.
+				}
+				TheWritableGlobalData->m_xResolution = xres;
+				TheWritableGlobalData->m_yResolution = yres;
+				setWidth( xres );
+				setHeight( yres );
+				setBitDepth( bitDepth );
+				break;
+			}
+			}
+
+			renderDeviceError = WW3D::Set_Render_Device(
+				0,
+				getWidth(),
+				getHeight(),
+				getBitDepth(),
+				getWindowed(),
+				true );
+
+			++attempt;
+		}
+		while (attempt < 3 && renderDeviceError != WW3D_ERROR_OK);
+
+		if (renderDeviceError != WW3D_ERROR_OK)
+		{
 			WW3D::Shutdown();
 			WWMath::Shutdown();
 			throw ERROR_INVALID_D3D;	//failed to initialize.  User probably doesn't have DX 8.1
@@ -777,54 +797,57 @@ void W3DDisplay::init( void )
 			return;
 		}
 
-	}  // end if
-
-	//Check if level was never set and default to setting most suitable for system.
-	if (TheGameLODManager->getStaticLODLevel() == STATIC_GAME_LOD_UNKNOWN)
-		TheGameLODManager->setStaticLODLevel(TheGameLODManager->findStaticLODLevel());
-	else
-	{	//Static LOD level was applied during GameLOD manager init except for texture reduction
-		//which needs to be applied here.
-		Int txtReduction=TheWritableGlobalData->m_textureReductionFactor;
-		if (txtReduction > 0)
-		{		WW3D::Set_Texture_Reduction(txtReduction,32);
-				//Tell LOD manager that texture reduction was applied.
-				TheGameLODManager->setCurrentTextureReduction(txtReduction);
+		//Check if level was never set and default to setting most suitable for system.
+		if (TheGameLODManager->getStaticLODLevel() == STATIC_GAME_LOD_UNKNOWN)
+			TheGameLODManager->setStaticLODLevel(TheGameLODManager->findStaticLODLevel());
+		else
+		{	//Static LOD level was applied during GameLOD manager init except for texture reduction
+			//which needs to be applied here.
+			Int txtReduction=TheWritableGlobalData->m_textureReductionFactor;
+			if (txtReduction > 0)
+			{		WW3D::Set_Texture_Reduction(txtReduction,32);
+					//Tell LOD manager that texture reduction was applied.
+					TheGameLODManager->setCurrentTextureReduction(txtReduction);
+			}
 		}
-	}
 
-	if (TheGlobalData->m_displayGamma != 1.0f)
-		setGamma(TheGlobalData->m_displayGamma,0.0f,1.0f,FALSE);
+		if (TheGlobalData->m_displayGamma != 1.0f)
+			setGamma(TheGlobalData->m_displayGamma,0.0f,1.0f,FALSE);
+	}
 
 	initAssets();
-	init2DScene();
-	init3DScene();
-	W3DShaderManager::init();
 
-	// Create and initialize the debug display
-	m_nativeDebugDisplay = NEW W3DDebugDisplay();
-	m_debugDisplay = m_nativeDebugDisplay;
-	if ( m_nativeDebugDisplay )
+	if (!TheGlobalData->m_headless)
 	{
-		m_nativeDebugDisplay->init();
-		GameFont *font;
+		init2DScene();
+		init3DScene();
+		W3DShaderManager::init();
 
-		if (TheGlobalLanguageData && TheGlobalLanguageData->m_nativeDebugDisplay.name.isNotEmpty())
+		// Create and initialize the debug display
+		m_nativeDebugDisplay = NEW W3DDebugDisplay();
+		m_debugDisplay = m_nativeDebugDisplay;
+		if ( m_nativeDebugDisplay )
 		{
-			font=TheFontLibrary->getFont(
-				TheGlobalLanguageData->m_nativeDebugDisplay.name,
-				TheGlobalLanguageData->m_nativeDebugDisplay.size,
-				TheGlobalLanguageData->m_nativeDebugDisplay.bold);
+			m_nativeDebugDisplay->init();
+			GameFont *font;
+
+			if (TheGlobalLanguageData && TheGlobalLanguageData->m_nativeDebugDisplay.name.isNotEmpty())
+			{
+				font=TheFontLibrary->getFont(
+					TheGlobalLanguageData->m_nativeDebugDisplay.name,
+					TheGlobalLanguageData->m_nativeDebugDisplay.size,
+					TheGlobalLanguageData->m_nativeDebugDisplay.bold);
+			}
+			else
+				font=TheFontLibrary->getFont( AsciiString("FixedSys"), 8, FALSE );
+
+			m_nativeDebugDisplay->setFont( font );
+			m_nativeDebugDisplay->setFontHeight( 13 );
+			m_nativeDebugDisplay->setFontWidth( 9 );
 		}
-		else
-			font=TheFontLibrary->getFont( AsciiString("FixedSys"), 8, FALSE );
 
-		m_nativeDebugDisplay->setFont( font );
-		m_nativeDebugDisplay->setFontHeight( 13 );
-		m_nativeDebugDisplay->setFontWidth( 9 );
+		DX8WebBrowser::Initialize();
 	}
-
-	DX8WebBrowser::Initialize();
 
 	// we're now online
 	m_initialized = true;
@@ -845,16 +868,19 @@ void W3DDisplay::reset( void )
 
 	// Remove all render objects.
 
-	SceneIterator *sceneIter = m_3DScene->Create_Iterator();
-	sceneIter->First();
-	while(!sceneIter->Is_Done()) {
-		RenderObjClass * robj = sceneIter->Current_Item();
-		robj->Add_Ref();
-		m_3DScene->Remove_Render_Object(robj);
-		robj->Release_Ref();
-		sceneIter->Next();
+	if (m_3DScene != NULL)
+	{
+		SceneIterator *sceneIter = m_3DScene->Create_Iterator();
+		sceneIter->First();
+		while(!sceneIter->Is_Done()) {
+			RenderObjClass * robj = sceneIter->Current_Item();
+			robj->Add_Ref();
+			m_3DScene->Remove_Render_Object(robj);
+			robj->Release_Ref();
+			sceneIter->Next();
+		}
+		m_3DScene->Destroy_Iterator(sceneIter);
 	}
-	m_3DScene->Destroy_Iterator(sceneIter);
 
 	m_isClippedEnabled = FALSE;
 
@@ -884,7 +910,7 @@ void W3DDisplay::updateAverageFPS(void)
 	Int64 freq64 = getPerformanceCounterFrequency();
 	Int64 time64 = getPerformanceCounter();
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGameLogic->getFrame() == START_CUMU_FRAME)
 	{
 		m_timerAtCumuFPSStart = time64;
@@ -926,7 +952,7 @@ void W3DDisplay::updateAverageFPS(void)
 	lastUpdateTime64 = time64;
 }
 
-#if defined(_DEBUG) || defined(_INTERNAL)	//debug hack to view object under mouse stats
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	//debug hack to view object under mouse stats
 ICoord2D TheMousePos;
 #endif
 
@@ -1020,7 +1046,7 @@ void W3DDisplay::gatherDebugStats( void )
 		double ms = 1000.0f/fps;
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 		double cumuTime = ((double)(time64 - m_timerAtCumuFPSStart) / (double)(freq64));
 		if (cumuTime < 0.0) cumuTime = 0.0;
 		Int numFrames = (Int)TheGameLogic->getFrame() - (Int)START_CUMU_FRAME;
@@ -1191,7 +1217,7 @@ void W3DDisplay::gatherDebugStats( void )
 		if (debugD3D) {
 			unibuffer.concat(L", DEBUG D3D");
 		}
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 		unibuffer.concat(L", DEBUG app");
 #endif
 
@@ -1318,7 +1344,7 @@ void W3DDisplay::gatherDebugStats( void )
 		}
 
 		Object *object = NULL;
-#if defined(_DEBUG) || defined(_INTERNAL)	//debug hack to view object under mouse stats
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	//debug hack to view object under mouse stats
 		Drawable *draw = 	TheTacticalView->pickDrawable(&TheMousePos, FALSE, (PickType)0xffffffff );
 #else
 		Drawable *draw = TheGameClient->findDrawableByID( TheInGameUI->getMousedOverDrawableID() );
@@ -1446,7 +1472,7 @@ void W3DDisplay::gatherDebugStats( void )
 			
 
 			// (gth) compute some stats about the rendering cost of this drawable
-#if defined(_DEBUG) || defined(_INTERNAL)	
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
 			RenderCost rcost;
 			for (DrawModule** dm = draw->getDrawModules(); *dm; ++dm)
 			{
@@ -1461,7 +1487,7 @@ void W3DDisplay::gatherDebugStats( void )
 
 			unibuffer.concat( L"\nModelStates: " );
 			ModelConditionFlags mcFlags = draw->getModelConditionFlags();
-			const numEntriesPerLine = 4;
+			const int numEntriesPerLine = 4;
 			int lineCount = 0;
 
 			for( int i = 0; i < MODELCONDITION_COUNT; i++ )
@@ -1557,7 +1583,7 @@ void W3DDisplay::drawCurrentDebugDisplay( void )
 		if ( m_debugDisplay && m_debugDisplayCallback )
 		{
 			m_debugDisplay->reset();
-			m_debugDisplayCallback( m_debugDisplay, m_debugDisplayUserData );
+			m_debugDisplayCallback( m_debugDisplay, m_debugDisplayUserData, NULL );
 		}
 	}
 }  // end drawCurrentDebugDisplay
@@ -1578,7 +1604,7 @@ void W3DDisplay::calculateTerrainLOD( void )
 	TerrainLOD goodLOD = TERRAIN_LOD_MIN;
 	TerrainLOD curLOD = TERRAIN_LOD_AUTOMATIC;
 	Int count = 0;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	// just go to TERRAIN_LOD_NO_WATER, mirror off.
 	TheWritableGlobalData->m_terrainLOD = TERRAIN_LOD_NO_WATER;
 	m_3DScene->drawTerrainOnly(false);
@@ -1638,7 +1664,7 @@ void W3DDisplay::calculateTerrainLOD( void )
 	TheWritableGlobalData->m_terrainLOD = goodLOD;
 	m_3DScene->drawTerrainOnly(false);
 	TheTerrainRenderObject->adjustTerrainLOD(0);
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	DEBUG_ASSERTCRASH(count<10, ("calculateTerrainLOD") );
 #endif
 
@@ -1671,6 +1697,8 @@ void W3DDisplay::draw( void )
 		return;
 	}
 
+	if (TheGlobalData->m_headless)
+		return;
 
 	updateAverageFPS();
 	if (TheGlobalData->m_enableDynamicLOD && TheGameLogic->getShowDynamicLOD())
@@ -1715,7 +1743,7 @@ AGAIN:
 
 	// compute debug statistics for display later
 	if ( m_debugDisplayCallback == StatDebugDisplay 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 				|| TheGlobalData->m_benchmarkTimer > 0
 #endif
 			)
@@ -1958,7 +1986,7 @@ AGAIN:
 					drawCurrentDebugDisplay();
 				}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 				if (TheGlobalData->m_benchmarkTimer > 0)
 				{
 					drawFPSStats();
@@ -1966,7 +1994,7 @@ AGAIN:
 #endif
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 				if (TheGlobalData->m_debugShowGraphicalFramerate)
 				{
 					drawFramerateBar();
@@ -2082,6 +2110,8 @@ void W3DDisplay::createLightPulse( const Coord3D *pos, const RGBColor *color,
 																	 UnsignedInt decayFrameTime//, Bool donut
 																	 )
 {
+	if (m_3DScene == NULL)
+		return;
 	if (innerRadius+attenuationWidth<2.0*PATHFIND_CELL_SIZE_F + 1.0f) {
 		return; // it basically won't make any visual difference.  jba.
 	}
@@ -2661,12 +2691,13 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 			m_2DRender->Enable_Additive(false);
 			m_2DRender->Enable_Alpha(false);
 			doAlphaReset = TRUE;
+			break;
 		default:
 			break;
 	}
 
 	// if we have raw texture data we will use it, otherwise we are referencing filenames
-	if( BitTest( image->getStatus(), IMAGE_STATUS_RAW_TEXTURE ) )
+	if( BitIsSet( image->getStatus(), IMAGE_STATUS_RAW_TEXTURE ) )
 		m_2DRender->Set_Texture( (TextureClass *)(image->getRawTextureData()) );
 	else
 		m_2DRender->Set_Texture( image->getFilename().str() );
@@ -2688,7 +2719,7 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 			RectClass clipped_rect;
 			RectClass clipped_uv_rect;
 
-			if( BitTest( image->getStatus(), IMAGE_STATUS_ROTATED_90_CLOCKWISE ) )
+			if( BitIsSet( image->getStatus(), IMAGE_STATUS_ROTATED_90_CLOCKWISE ) )
 			{
 
 	
@@ -2756,7 +2787,7 @@ void W3DDisplay::drawImage( const Image *image, Int startX, Int startY,
 	}
 
 	// if rotated 90 degrees clockwise we have to adjust the uv coords
-	if( BitTest( image->getStatus(), IMAGE_STATUS_ROTATED_90_CLOCKWISE ) )
+	if( BitIsSet( image->getStatus(), IMAGE_STATUS_ROTATED_90_CLOCKWISE ) )
 	{
 
 		m_2DRender->Add_Tri( Vector2( screen_rect.Left, screen_rect.Top ), 
@@ -2918,75 +2949,77 @@ void W3DDisplay::setShroudLevel( Int x, Int y, CellShroudStatus setting )
 //=============================================================================
 ///Utility function to dump data into a .BMP file
 static void CreateBMPFile(LPTSTR pszFile, char *image, Int width, Int height)
-{ 
-     HANDLE hf;                 // file handle 
-    BITMAPFILEHEADER hdr;       // bitmap file-header 
-    PBITMAPINFOHEADER pbih;     // bitmap info-header 
-    LPBYTE lpBits;              // memory pointer 
-    DWORD dwTotal;              // total count of bytes 
-    DWORD cb;                   // incremental count of bytes 
-    BYTE *hp;                   // byte pointer 
-    DWORD dwTmp; 
+{
+	HANDLE hf;                  // file handle 
+	BITMAPFILEHEADER hdr;       // bitmap file-header 
+	PBITMAPINFOHEADER pbih;     // bitmap info-header 
+	LPBYTE lpBits;              // memory pointer 
+	DWORD dwTotal;              // total count of bytes 
+	DWORD cb;                   // incremental count of bytes 
+	BYTE *hp;                   // byte pointer 
+	DWORD dwTmp;
 
-    PBITMAPINFO pbmi; 
+	PBITMAPINFO pbmi;
 
-    pbmi = (PBITMAPINFO) LocalAlloc(LPTR,sizeof(BITMAPINFOHEADER));
-    pbmi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER); 
-    pbmi->bmiHeader.biWidth = width; 
-    pbmi->bmiHeader.biHeight = height; 
-    pbmi->bmiHeader.biPlanes = 1; 
-    pbmi->bmiHeader.biBitCount = 24;
-    pbmi->bmiHeader.biCompression = BI_RGB;
-    pbmi->bmiHeader.biSizeImage = (pbmi->bmiHeader.biWidth + 7) /8 * pbmi->bmiHeader.biHeight * 24;
-    pbmi->bmiHeader.biClrImportant = 0; 
-
-
-    pbih = (PBITMAPINFOHEADER) pbmi; 
-    lpBits = (LPBYTE) image;
-
-    // Create the .BMP file. 
-    hf = CreateFile(pszFile, 
-                   GENERIC_READ | GENERIC_WRITE, 
-                   (DWORD) 0, 
-                    NULL, 
-                   CREATE_ALWAYS, 
-                   FILE_ATTRIBUTE_NORMAL, 
-                   (HANDLE) NULL); 
-    if (hf == INVALID_HANDLE_VALUE) 
-		return;
-    hdr.bfType = 0x4d42;        // 0x42 = "B" 0x4d = "M" 
-    // Compute the size of the entire file. 
-    hdr.bfSize = (DWORD) (sizeof(BITMAPFILEHEADER) + 
-                 pbih->biSize + pbih->biClrUsed 
-                 * sizeof(RGBQUAD) + pbih->biSizeImage); 
-    hdr.bfReserved1 = 0; 
-    hdr.bfReserved2 = 0; 
-
-    // Compute the offset to the array of color indices. 
-    hdr.bfOffBits = (DWORD) sizeof(BITMAPFILEHEADER) + 
-                    pbih->biSize + pbih->biClrUsed 
-                    * sizeof (RGBQUAD); 
-
-    // Copy the BITMAPFILEHEADER into the .BMP file. 
-    if (!WriteFile(hf, (LPVOID) &hdr, sizeof(BITMAPFILEHEADER), 
-        (LPDWORD) &dwTmp,  NULL)) 
+	pbmi = (PBITMAPINFO) LocalAlloc(LPTR,sizeof(BITMAPINFOHEADER));
+	if (pbmi == NULL)
 		return;
 
-    // Copy the BITMAPINFOHEADER and RGBQUAD array into the file. 
-    if (!WriteFile(hf, (LPVOID) pbih, sizeof(BITMAPINFOHEADER) + pbih->biClrUsed * sizeof (RGBQUAD),(LPDWORD) &dwTmp, NULL)) 
-		return;
+	pbmi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER); 
+	pbmi->bmiHeader.biWidth = width; 
+	pbmi->bmiHeader.biHeight = height; 
+	pbmi->bmiHeader.biPlanes = 1; 
+	pbmi->bmiHeader.biBitCount = 24;
+	pbmi->bmiHeader.biCompression = BI_RGB;
+	pbmi->bmiHeader.biSizeImage = (pbmi->bmiHeader.biWidth + 7) /8 * pbmi->bmiHeader.biHeight * 24;
+	pbmi->bmiHeader.biClrImportant = 0; 
 
-    // Copy the array of color indices into the .BMP file. 
-    dwTotal = cb = pbih->biSizeImage; 
-    hp = lpBits; 
-    if (!WriteFile(hf, (LPSTR) hp, (int) cb, (LPDWORD) &dwTmp,NULL)) 
-		return;
+	pbih = (PBITMAPINFOHEADER) pbmi; 
+	lpBits = (LPBYTE) image;
 
-    // Close the .BMP file. 
-     if (!CloseHandle(hf))
-		 return;
+	// Create the .BMP file. 
+	hf = CreateFile(pszFile, 
+		GENERIC_READ | GENERIC_WRITE, 
+		(DWORD) 0, 
+		NULL, 
+		CREATE_ALWAYS, 
+		FILE_ATTRIBUTE_NORMAL, 
+		(HANDLE) NULL); 
 
-    // Free memory. 
+	if (hf != INVALID_HANDLE_VALUE) 
+	{
+		hdr.bfType = 0x4d42;        // 0x42 = "B" 0x4d = "M" 
+		// Compute the size of the entire file. 
+		hdr.bfSize = (DWORD) (sizeof(BITMAPFILEHEADER) + 
+									pbih->biSize + pbih->biClrUsed 
+									* sizeof(RGBQUAD) + pbih->biSizeImage); 
+		hdr.bfReserved1 = 0; 
+		hdr.bfReserved2 = 0; 
+
+		// Compute the offset to the array of color indices. 
+		hdr.bfOffBits = (DWORD) sizeof(BITMAPFILEHEADER) + 
+										pbih->biSize + pbih->biClrUsed 
+										* sizeof (RGBQUAD); 
+
+		// Copy the BITMAPFILEHEADER into the .BMP file. 
+		if (WriteFile(hf, (LPVOID) &hdr, sizeof(BITMAPFILEHEADER), 
+				(LPDWORD) &dwTmp,  NULL))
+		{
+			// Copy the BITMAPINFOHEADER and RGBQUAD array into the file. 
+			if (WriteFile(hf, (LPVOID) pbih, sizeof(BITMAPINFOHEADER) + pbih->biClrUsed * sizeof (RGBQUAD),(LPDWORD) &dwTmp, NULL)) 
+			{
+				// Copy the array of color indices into the .BMP file. 
+				dwTotal = cb = pbih->biSizeImage; 
+				hp = lpBits; 
+				WriteFile(hf, (LPSTR) hp, (int) cb, (LPDWORD) &dwTmp, NULL);
+			}
+		}
+
+		// Close the .BMP file. 
+		CloseHandle(hf);
+	}
+
+	// Free memory.
 	LocalFree( (HLOCAL) pbmi);
 }
 
@@ -3011,32 +3044,37 @@ void W3DDisplay::takeScreenShot(void)
 			done = true;
 	}
 
-	// Lock front buffer and copy
+	// TheSuperHackers @bugfix xezon 21/05/2025 Get the back buffer and create a copy of the surface.
+	// Originally this code took the front buffer and tried to lock it. This does not work when the
+	// render view clips outside the desktop boundaries. It crashed the game.
+	SurfaceClass* surface = DX8Wrapper::_Get_DX8_Back_Buffer();
 
-	IDirect3DSurface8 *fb;
-	fb=DX8Wrapper::_Get_DX8_Front_Buffer();
-	D3DSURFACE_DESC desc;
-	fb->GetDesc(&desc);
+	SurfaceClass::SurfaceDescription surfaceDesc;
+	surface->Get_Description(surfaceDesc);
 
-	RECT bounds;
-	POINT point;
+	SurfaceClass* surfaceCopy = NEW_REF(SurfaceClass, (DX8Wrapper::_Create_DX8_Surface(surfaceDesc.Width, surfaceDesc.Height, surfaceDesc.Format)));
+	DX8Wrapper::_Copy_DX8_Rects(surface->Peek_D3D_Surface(), NULL, 0, surfaceCopy->Peek_D3D_Surface(), NULL);
 
-	GetClientRect(ApplicationHWnd,&bounds);
-	point.x=bounds.left; point.y=bounds.top;
-	ClientToScreen(ApplicationHWnd, &point);
-	bounds.left=point.x; bounds.top=point.y; 
-	point.x=bounds.right; point.y=bounds.bottom;
-	ClientToScreen(ApplicationHWnd, &point);
-	bounds.right=point.x; bounds.bottom=point.y;
- 
-	D3DLOCKED_RECT lrect;
+	surface->Release_Ref();
+	surface = NULL;
 
-	DX8_ErrorCode(fb->LockRect(&lrect,&bounds,D3DLOCK_READONLY));
+	struct Rect
+	{
+		int Pitch;
+		void* pBits;
+	} lrect;
+
+	lrect.pBits = surfaceCopy->Lock(&lrect.Pitch);
+	if (lrect.pBits == NULL)
+	{
+		surfaceCopy->Release_Ref();
+		return;
+	}
 
 	unsigned int x,y,index,index2,width,height;
 
-	width=bounds.right-bounds.left;
-	height=bounds.bottom-bounds.top;
+	width = surfaceDesc.Width;
+	height = surfaceDesc.Height;
 
 	char *image=NEW char[3*width*height];
 #ifdef CAPTURE_TO_TARGA
@@ -3056,7 +3094,9 @@ void W3DDisplay::takeScreenShot(void)
 		}
 	}
 
-	fb->Release();
+	surfaceCopy->Unlock();
+	surfaceCopy->Release_Ref();
+	surfaceCopy = NULL;
 
 	Targa targ;
 	memset(&targ.Header,0,sizeof(targ.Header));
@@ -3085,7 +3125,9 @@ void W3DDisplay::takeScreenShot(void)
 		}
 	}
 
-	fb->Release();
+	surfaceCopy->Unlock();
+	surfaceCopy->Release_Ref();
+	surfaceCopy = NULL;
 
 	//Flip the image
 	char *ptr,*ptr1;
@@ -3119,14 +3161,14 @@ void W3DDisplay::takeScreenShot(void)
 	TheInGameUI->message(TheGameText->fetch("GUI:ScreenCapture"), ufileName.str());
 }
 
-/** Start/Stop campturing an AVI movie*/
+/** Start/Stop capturing an AVI movie*/
 void W3DDisplay::toggleMovieCapture(void)
 {
 	WW3D::Toggle_Movie_Capture("Movie",30);
 }
 
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 
 static FILE *AssetDumpFile=NULL;
 
@@ -3147,7 +3189,7 @@ void dumpMeshAssets(MeshClass *mesh)
 					{
 						if ((texture=model->Peek_Texture(i,pass,stage)) != NULL)
 						{
-							fprintf(AssetDumpFile,"\t%s\n",texture->Get_Texture_Name());
+							fprintf(AssetDumpFile,"\t%s\n",texture->Get_Texture_Name().str());
 						}
 					}
 				}
@@ -3155,7 +3197,7 @@ void dumpMeshAssets(MeshClass *mesh)
 				{
 					if ((texture=model->Peek_Single_Texture(pass,stage)) != NULL)
 					{
-						fprintf(AssetDumpFile,"\t%s\n",texture->Get_Texture_Name());
+						fprintf(AssetDumpFile,"\t%s\n",texture->Get_Texture_Name().str());
 					}
 				}
 			}
@@ -3279,7 +3321,7 @@ void W3DDisplay::doSmartAssetPurgeAndPreload(const char* usageFileName)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 void W3DDisplay::dumpAssetUsage(const char* mapname)
 {
 	if (!m_assetManager || !mapname || !*mapname)

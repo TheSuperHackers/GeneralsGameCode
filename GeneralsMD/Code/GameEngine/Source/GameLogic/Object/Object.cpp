@@ -111,7 +111,7 @@
 #include "Common/AudioEventInfo.h"
 #include "Common/DynamicAudioEventInfo.h"
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -152,8 +152,7 @@ extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBCo
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-#ifdef DEBUG_LOGGING
-AsciiString DescribeObject(const Object *obj)
+AsciiString DebugDescribeObject(const Object *obj)
 {
 	if (!obj)
 		return "<No Object>";
@@ -177,7 +176,6 @@ AsciiString DescribeObject(const Object *obj)
 
 	return ret;
 }
-#endif // DEBUG_LOGGING
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -224,7 +222,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	m_visionSpiedMask (PLAYERMASK_NONE),
 	m_numTriggerAreasActive(0)
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	m_hasDiedAlready = false;
 #endif
 	//Modules have not been created yet!
@@ -571,7 +569,7 @@ void Object::initObject()
 
 	// Kris -- All missiles must be projectiles! This is the perfect place to assert them!
 	// srj: yes, but only in debug...
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if( !isKindOf( KINDOF_PROJECTILE ) )
 	{
 		if( isKindOf( KINDOF_SMALL_MISSILE ) || isKindOf( KINDOF_BALLISTIC_MISSILE ) )
@@ -631,15 +629,15 @@ Object::~Object()
 	setTeam( NULL );
 
 	// Object's set of these persist for the life of the object.
-	m_partitionLastLook->deleteInstance();
+	deleteInstance(m_partitionLastLook);
 	m_partitionLastLook = NULL;
-	m_partitionRevealAllLastLook->deleteInstance();
+	deleteInstance(m_partitionRevealAllLastLook);
 	m_partitionRevealAllLastLook = NULL;
-	m_partitionLastShroud->deleteInstance();
+	deleteInstance(m_partitionLastShroud);
 	m_partitionLastShroud = NULL;
-	m_partitionLastThreat->deleteInstance();
+	deleteInstance(m_partitionLastThreat);
 	m_partitionLastThreat = NULL;
-	m_partitionLastValue->deleteInstance();
+	deleteInstance(m_partitionLastValue);
 	m_partitionLastValue = NULL;
 
 	// remove the object from the partition system if present
@@ -647,8 +645,7 @@ Object::~Object()
 		ThePartitionManager->unRegisterObject( this );
 
 	// if we are in a group, remove us
-	if (m_group)
-		m_group->remove( this );
+	leaveGroup();
 	
 	// note, do NOT free these, there are just a shadow copy!
 	m_ai = NULL;
@@ -657,7 +654,7 @@ Object::~Object()
 	// delete any modules present
 	for (BehaviorModule** b = m_behaviors; *b; ++b)
 	{
-		(*b)->deleteInstance();
+		deleteInstance(*b);
 		*b = NULL;	// in case other modules call findModule from their dtor!
 	}
 
@@ -665,7 +662,7 @@ Object::~Object()
 	m_behaviors = NULL;
 
 	if( m_experienceTracker )
-		m_experienceTracker->deleteInstance();
+		deleteInstance(m_experienceTracker);
 
 	m_experienceTracker = NULL;
 
@@ -1872,7 +1869,7 @@ void Object::attemptDamage( DamageInfo *damageInfo )
 			damageInfo->in.m_damageType != DAMAGE_PENALTY &&
 			damageInfo->in.m_damageType != DAMAGE_HEALING &&
 			getControllingPlayer() &&
-			!BitTest(damageInfo->in.m_sourcePlayerMask, getControllingPlayer()->getPlayerMask()) && 
+			!BitIsSet(damageInfo->in.m_sourcePlayerMask, getControllingPlayer()->getPlayerMask()) && 
 			m_radarData != NULL &&
 			getControllingPlayer() == ThePlayerList->getLocalPlayer() )
 		TheRadar->tryUnderAttackEvent( this );
@@ -2628,7 +2625,7 @@ void Object::setTriggerAreaFlagsForChangeInPosition()
 			if (m_team) 
 				m_team->setEnteredExited();
 			TheGameLogic->updateObjectsChangedTriggerAreas();
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 			//TheScriptEngine->AppendDebugMessage("Object exited.", false);
 #endif
 		}
@@ -2663,7 +2660,7 @@ void Object::setTriggerAreaFlagsForChangeInPosition()
 					m_team->setEnteredExited();
 				TheGameLogic->updateObjectsChangedTriggerAreas();
 				++m_numTriggerAreasActive;
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 				//TheScriptEngine->AppendDebugMessage("Object entered.", false);
 #endif
 			} 
@@ -3685,7 +3682,7 @@ void Object::updateObjValuesFromMapProperties(Dict* properties)
           }
 
           valInt = properties->getInt( TheKey_objectSoundAmbientLoopCount, &exists );
-          if ( exists && BitTest( audioToModify->m_control, AC_LOOP ) )
+          if ( exists && BitIsSet( audioToModify->m_control, AC_LOOP ) )
           {
             audioToModify->overrideLoopCount( valInt );
             infoModified = true;
@@ -3773,7 +3770,7 @@ void Object::updateObjValuesFromMapProperties(Dict* properties)
 
     if ( audioToModify != NULL )
     {
-      audioToModify->deleteInstance();
+      deleteInstance(audioToModify);
       audioToModify = NULL;
     }
 
@@ -3884,10 +3881,6 @@ void Object::onDisabledEdge(Bool becomingDisabled)
 //-------------------------------------------------------------------------------------------------
 void Object::crc( Xfer *xfer )
 {
-	// This is evil - we cast the const Matrix3D * to a Matrix3D * because the XferCRC class must use
-	// the same interface as the XferLoad class for save game restore.  This only works because
-	// XferCRC does not modify its data.
-
 #ifdef DEBUG_CRC
 //	g_logObjectCRCs = TRUE;
 //	Bool g_logAllObjects = TRUE;
@@ -3896,10 +3889,10 @@ void Object::crc( Xfer *xfer )
 	Bool doLogging = g_logObjectCRCs /* && getControllingPlayer()->getPlayerType() == PLAYER_HUMAN */;
 	if (doLogging)
 	{
-		tmp.format("CRC of Object %d (%s), owned by player %d, ", m_id, getTemplate()->getName().str(), getControllingPlayer()->getPlayerIndex());
+		tmp.format("CRC of Object %d (%s), owned by player %d, team: %d, ", m_id, getTemplate()->getName().str(), getControllingPlayer()->getPlayerIndex(), this->getTeam() ? this->getTeam()->getID() : TEAM_ID_INVALID);
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	xfer->xferUnsignedByte(&m_privateStatus);
 #ifdef DEBUG_CRC
@@ -3910,6 +3903,9 @@ void Object::crc( Xfer *xfer )
 	}
 #endif // DEBUG_CRC
 
+	// This is evil - we cast the const Matrix3D * to a Matrix3D * because the XferCRC class must use
+	// the same interface as the XferLoad class for save game restore.  This only works because
+	// XferCRC does not modify its data.
 	xfer->xferUser((Matrix3D *)getTransformMatrix(),	sizeof(Matrix3D));
 #ifdef DEBUG_CRC
 	if (doLogging)
@@ -3921,27 +3917,8 @@ void Object::crc( Xfer *xfer )
 		tmpXfer.close();
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 	
-
-#ifdef DEBUG_CRC
-	if (doLogging)
-	{
-		const Matrix3D *mtx = getTransformMatrix();
-		CRCDEBUG_LOG(("CRC of Object %d (%s), owned by player %d, ", m_id, getTemplate()->getName().str(), getControllingPlayer()->getPlayerIndex()));
-		DUMPMATRIX3D(mtx);
-	}
-#endif DEBUG_CRC
-
-
-
-
-
-
-
-
-
-
 
 	xfer->xferUser(&m_id,															sizeof(m_id));
 #ifdef DEBUG_CRC
@@ -3950,7 +3927,7 @@ void Object::crc( Xfer *xfer )
 		tmp.format("m_id: %d, ", m_id);
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 	xfer->xferUser(&m_objectUpgradesCompleted,				sizeof(Int64));
 #ifdef DEBUG_CRC
 	if (doLogging)
@@ -3958,7 +3935,7 @@ void Object::crc( Xfer *xfer )
 		tmp.format("m_objectUpgradesCompleted: %I64X, ", m_objectUpgradesCompleted);
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 	if (m_experienceTracker)
 		xfer->xferSnapshot( m_experienceTracker );
 #ifdef DEBUG_CRC
@@ -3971,7 +3948,7 @@ void Object::crc( Xfer *xfer )
 		tmpXfer.close();
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	Real health = getBodyModule()->getHealth();
 	xfer->xferUser(&health,														sizeof(health));
@@ -3981,7 +3958,7 @@ void Object::crc( Xfer *xfer )
 		tmp.format("health: %g/%8.8X, ", health, AS_INT(health));
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	xfer->xferUnsignedInt(&m_weaponBonusCondition);
 #ifdef DEBUG_CRC
@@ -3990,7 +3967,7 @@ void Object::crc( Xfer *xfer )
 		tmp.format("m_weaponBonusCondition: %8.8X, ", m_weaponBonusCondition);
 		logString.concat(tmp);
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	Real scalar = getBodyModule()->getDamageScalar();
 	xfer->xferUser(&scalar,														sizeof(scalar));
@@ -4002,7 +3979,7 @@ void Object::crc( Xfer *xfer )
 
 		CRCDEBUG_LOG(("%s", logString.str()));
 	}
-#endif DEBUG_CRC
+#endif // DEBUG_CRC
 
 	for (Int i=0; i<WEAPONSLOT_COUNT; ++i)
 	{
@@ -4393,7 +4370,7 @@ void Object::xfer( Xfer *xfer )
 	}
 
 	// Doesn't need to be saved.  These are created as needed.  jba.
-	//AIGroup*		m_group;															///< if non-NULL, we are part of this group of agents
+	//m_group;
 
 	// don't need to save m_partitionData.
 	DEBUG_ASSERTCRASH(!(xfer->getXferMode() == XFER_LOAD && m_partitionData == NULL), ("should not be in partitionmgr yet"));
@@ -4408,7 +4385,7 @@ void Object::xfer( Xfer *xfer )
 	//m_body;
 	//m_ai;
 	//m_physics;
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	//m_hasDiedAlready;
 #endif
 
@@ -4574,7 +4551,7 @@ void Object::onDie( DamageInfo *damageInfo )
 
 	checkAndDetonateBoobyTrap(NULL);// Already dying, so no need to handle death case of explosion
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	DEBUG_ASSERTCRASH(m_hasDiedAlready == false, ("Object::onDie has been called multiple times. This is invalid. jkmcd"));
 	m_hasDiedAlready = true;
 #endif
@@ -5124,7 +5101,7 @@ void Object::unshroud()
 //-------------------------------------------------------------------------------------------------
 Real Object::getVisionRange() const
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(m_visionRange, 0, 0);
@@ -5160,7 +5137,7 @@ Real Object::getShroudClearingRange() const
 		shroudClearingRange = getGeometryInfo().getBoundingCircleRadius();
 	}
 
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(shroudClearingRange, 0, 0);
@@ -5217,7 +5194,7 @@ void Object::setShroudClearingRange( Real newShroudClearingRange )
 //-------------------------------------------------------------------------------------------------
 Real Object::getShroudRange() const
 {
-#if defined(_DEBUG) || defined(_INTERNAL)
+#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(m_shroudRange, 0, 0);
@@ -5453,7 +5430,7 @@ void Object::doCommandButton( const CommandButton *commandButton, CommandSourceT
 			case GUI_COMMAND_FIRE_WEAPON:
 				if( ai )
 				{
-					if( !BitTest( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) && !BitTest( commandButton->getOptions(), NEED_TARGET_POS ) )
+					if( !BitIsSet( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) && !BitIsSet( commandButton->getOptions(), NEED_TARGET_POS ) )
 					{
 						setWeaponLock( commandButton->getWeaponSlot(), LOCKED_TEMPORARILY );
 						//LOCATION BASED FIRE WEAPON
@@ -5581,7 +5558,7 @@ void Object::doCommandButtonAtObject( const CommandButton *commandButton, Object
 			case GUI_COMMAND_FIRE_WEAPON:
 				if( ai )
 				{
-					if( BitTest( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
+					if( BitIsSet( commandButton->getOptions(), COMMAND_OPTION_NEED_OBJECT_TARGET ) )
 					{
 						//OBJECT BASED FIRE WEAPON
 						if( !obj )
@@ -5596,7 +5573,7 @@ void Object::doCommandButtonAtObject( const CommandButton *commandButton, Object
 
 						setWeaponLock( commandButton->getWeaponSlot(), LOCKED_TEMPORARILY );
 
-						if( BitTest( commandButton->getOptions(), ATTACK_OBJECTS_POSITION ) )
+						if( BitIsSet( commandButton->getOptions(), ATTACK_OBJECTS_POSITION ) )
 						{
 							//Actually, you know what.... we want to attack the object's location instead.
 							ai->aiAttackPosition( obj->getPosition(), commandButton->getMaxShotsToFire(), cmdSource );
@@ -5702,7 +5679,7 @@ void Object::doCommandButtonAtPosition( const CommandButton *commandButton, cons
 			case GUI_COMMAND_FIRE_WEAPON:
 				if( ai )
 				{
-					if( BitTest( commandButton->getOptions(), NEED_TARGET_POS ) )
+					if( BitIsSet( commandButton->getOptions(), NEED_TARGET_POS ) )
 					{
 						//LOCATION BASED FIRE WEAPON
 						if( !pos )
@@ -5765,7 +5742,7 @@ void Object::doCommandButtonUsingWaypoints( const CommandButton *commandButton, 
 	
 	if( commandButton )
 	{
-		if( !BitTest( commandButton->getOptions(), CAN_USE_WAYPOINTS ) )
+		if( !BitIsSet( commandButton->getOptions(), CAN_USE_WAYPOINTS ) )
 		{
 			//Our button doesn't support waypoints.
 			DEBUG_CRASH( ("WARNING: Script doCommandButtonUsingWaypoints for button %s lacks CAN_USE_WAYPOINTS option. Doing nothing.", commandButton->getName().str()) );
@@ -6116,6 +6093,9 @@ const AsciiString& Object::getCommandSetString() const
 //=============================================================================
 Bool Object::canProduceUpgrade( const UpgradeTemplate *upgrade )
 {
+	// TheSuperHackers @logic-client-separation helmutbuhler 11/04/2025
+	// TheControlBar belongs to the client, we shouldn't depend on that to check this.
+
 	// We need to have the button to make the upgrade.  CommandSets are a weird Logic/Client hybrid.
 	const CommandSet *set = TheControlBar->findCommandSet(getCommandSetString());
 
@@ -6303,7 +6283,11 @@ RadarPriorityType Object::getRadarPriority( void ) const
 // ------------------------------------------------------------------------------------------------
 AIGroup *Object::getGroup(void)
 {
+#if RETAIL_COMPATIBLE_AIGROUP
 	return m_group;
+#else
+	return m_group.Peek();
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -6313,7 +6297,11 @@ void Object::enterGroup( AIGroup *group )
 	// if we are in another group, remove ourselves from it first
 	leaveGroup();
 
+#if RETAIL_COMPATIBLE_AIGROUP
 	m_group = group;
+#else
+	m_group = AIGroupPtr::Create_AddRef(group);
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -6324,7 +6312,7 @@ void Object::leaveGroup( void )
 	if (m_group)
 	{
 		// to avoid recursion, set m_group to NULL before removing
-		AIGroup *group = m_group;
+		AIGroupPtr group = m_group;
 		m_group = NULL;
 		group->remove( this );
 	}

@@ -52,7 +52,7 @@ class Matrix3D;
 class WaterHandle;
 class Xfer;
 
-enum WaypointID
+enum WaypointID CPP_11(: Int)
 {
 	INVALID_WAYPOINT_ID = 0x7FFFFFFF
 };

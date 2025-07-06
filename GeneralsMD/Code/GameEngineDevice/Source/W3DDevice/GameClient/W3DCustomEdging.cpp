@@ -51,16 +51,16 @@
 #include <string.h>
 #include <assetmgr.h>
 #include <texture.h>
-#include "common/GlobalData.h"
-#include "common/RandomValue.h"
+#include "Common/GlobalData.h"
+#include "Common/RandomValue.h"
 #include "W3DDevice/GameClient/TerrainTex.h"
 #include "W3DDevice/GameClient/HeightMap.h"
 #include "W3DDevice/GameClient/W3DDynamicLight.h"
-#include "WW3D2/Camera.h"
-#include "WW3D2/DX8Wrapper.h"
-#include "WW3D2/DX8Renderer.h"
-#include "WW3D2/Mesh.h"
-#include "WW3D2/MeshMdl.h"
+#include "WW3D2/camera.h"
+#include "WW3D2/dx8wrapper.h"
+#include "WW3D2/dx8renderer.h"
+#include "WW3D2/mesh.h"
+#include "WW3D2/meshmdl.h"
 
 //-----------------------------------------------------------------------------
 //         Private Data                                                     
@@ -141,7 +141,6 @@ void W3DCustomEdging::loadEdgingsInVertexAndIndexBuffers(WorldHeightMap *pMap, I
 	if (maxY >= pMap->getYExtent()) maxY = pMap->getYExtent()-1;
 	Int row;
 	Int column;
-	try {
 	for (row=minY; row<maxY-1; row++) {
 		for (column = minX; column < maxX-1; column++) {
 			Int cellNdx = column+row*pMap->getXExtent();
@@ -262,10 +261,6 @@ void W3DCustomEdging::loadEdgingsInVertexAndIndexBuffers(WorldHeightMap *pMap, I
 			m_curNumEdgingIndices+=6;
 		}
 	}
-	IndexBufferExceptionFunc();
-	} catch(...) {
-		IndexBufferExceptionFunc();
-	}
 	m_anythingChanged = false;
 }
 
@@ -322,7 +317,7 @@ void W3DCustomEdging::allocateEdgingBuffers(void)
 	m_indexEdging=NEW_REF(DX8IndexBufferClass,(2*MAX_EDGE_INDEX+4, DX8IndexBufferClass::USAGE_DYNAMIC));
 	m_curNumEdgingVertices=0;
 	m_curNumEdgingIndices=0;
-	//m_edgeTexture = MSGNEW("TextureClass") TextureClass("EdgingTemplate.tga","EdgingTemplate.tga", TextureClass::MIP_LEVELS_3);
+	//m_edgeTexture = MSGNEW("TextureClass") TextureClass("EdgingTemplate.tga","EdgingTemplate.tga", MIP_LEVELS_3);
 }
 
 //=============================================================================
@@ -363,7 +358,7 @@ void W3DCustomEdging::drawEdging(WorldHeightMap *pMap, Int minX, Int maxX, Int m
 	DX8Wrapper::Set_Index_Buffer(m_indexEdging,0);
 	DX8Wrapper::Set_Vertex_Buffer(m_vertexEdging);
 	DX8Wrapper::Set_Shader(detailAlphaTestShader);
-#ifdef _DEBUG
+#ifdef RTS_DEBUG
 	//DX8Wrapper::Set_Shader(detailShader); // shows clipping.
 #endif	
 	

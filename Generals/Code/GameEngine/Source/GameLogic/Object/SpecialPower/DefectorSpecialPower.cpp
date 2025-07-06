@@ -90,7 +90,7 @@ DefectorSpecialPower::~DefectorSpecialPower( void )
  
 // ------------------------------------------------------------------------------------------------
 
-void DefectorSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, UnsignedInt commandOptions )
+void DefectorSpecialPower::doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions )
 {
 	if (getObject()->isDisabled())
 		return;

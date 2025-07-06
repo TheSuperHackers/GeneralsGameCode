@@ -113,7 +113,8 @@ void UndeadBody::startSecondLife(DamageInfo *damageInfo)
 
 	// Fire the Slow Death module.  The fact that this is not the result of an onDie will cause the special behavior
 	Int total = 0;
-	for( BehaviorModule** update = getObject()->getBehaviorModules(); *update; ++update )
+	BehaviorModule** update = getObject()->getBehaviorModules();
+	for( ; *update; ++update )
 	{
 		SlowDeathBehaviorInterface* sdu = (*update)->getSlowDeathBehaviorInterface();
 		if (sdu != NULL  && sdu->isDieApplicable(damageInfo) )

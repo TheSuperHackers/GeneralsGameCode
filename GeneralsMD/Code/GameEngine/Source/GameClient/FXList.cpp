@@ -54,7 +54,7 @@
 // PUBLIC DATA ////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef _INTERNAL
+#ifdef RTS_INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
@@ -797,7 +797,7 @@ void FXList::clear()
 	for (FXNuggetList::iterator it = m_nuggets.begin(); it != m_nuggets.end(); ++it)
 	{
 		if (*it)
-			(*it)->deleteInstance();
+			deleteInstance(*it);
 	}
 	m_nuggets.clear();
 }
