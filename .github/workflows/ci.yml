@@ -41,8 +41,7 @@ jobs:
             generalsmd:
               - 'GeneralsMD/**'
             shared:
-              - '.github/workflows/build-toolchain.yml'
-              - '.github/workflows/ci.yml'
+              - '.github/workflows/**'
               - 'CMakeLists.txt'
               - 'CMakePresets.json'
               - 'cmake/**'
@@ -125,6 +124,9 @@ jobs:
           - preset: "win32-debug"
             tools: true
             extras: true
+          - preset: "win32-debuglog"
+            tools: true
+            extras: true
           # vcpkg builds have been disabled for now due to excessive build times of 30 minutes per preset
           # - preset: "win32-vcpkg"
           #   tools: true
@@ -143,3 +145,59 @@ jobs:
       tools: ${{ matrix.tools }}
       extras: ${{ matrix.extras }}
     secrets: inherit
+
+  replay-test:
+    name: Replay Compatibility Test${{ matrix.preset && '' }}
+    needs: build-generalsmd
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        include:
+          - preset: "win32"
+          - preset: "win32-profile"
+          - preset: "win32-debug"
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Download Game Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: GeneralsMD-${{ matrix.preset }}+t+e
+          path: build
+      - name: Run Replay Compatibility Tests
+        shell: pwsh
+        run: |
+          $exePath = "build\generalszh.exe"
+          $replayPattern = "GeneralsMD\Replays\*.rep"
+          $args = "-jobs", "2", "-headless", "-replay", "$replayPattern"
+
+          Write-Host "Checking if executable exists at: $exePath"
+          if (-not (Test-Path $exePath)) {
+            Write-Host "ERROR: Executable not found at $exePath"
+            exit 1
+          }
+
+          $commandLine = "$exePath $($args -join ' ')"
+          Write-Host "Running: $commandLine"
+
+          try {
+            & $exePath @args
+            if (-not $?) {
+              Write-Host "ERROR: Process failed to start or exited with an error."
+              exit 1
+            }
+
+            $exitCode = $LASTEXITCODE
+            if ($null -eq $exitCode) {
+              Write-Host "WARNING: Process did not return an exit code. Assuming failure."
+              exit 1
+            }
+
+            Write-Host "Process exited with code $exitCode"
+            exit $exitCode
+          } catch {
+            Write-Host "ERROR: Exception occurred while running the process."
+            Write-Host $_
+            exit 1
+          }

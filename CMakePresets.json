@@ -120,6 +120,15 @@
             }
         },
         {
+            "name": "win32-debuglog",
+            "inherits": "win32",
+            "displayName": "Windows 32bit Debug Logging",
+            "cacheVariables": {
+                "RTS_DEBUG_LOGGING": "ON",
+                "RTS_DEBUG_CRASHING": "ON"
+            }
+        },
+        {
             "name": "win32-vcpkg",
             "inherits": "default-vcpkg",
             "hidden": false,
@@ -219,6 +228,13 @@
             "configurePreset": "win32-debug",
             "displayName": "Build Windows 32bit Debug",
             "description": "Build Windows 32bit Debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "win32-debuglog",
+            "configurePreset": "win32-debuglog",
+            "displayName": "Build Windows 32bit Debug Logging",
+            "description": "Build Windows 32bit Debug Logging",
             "configuration": "Debug"
         },
         {
@@ -359,6 +375,19 @@
                 {
                     "type": "build",
                     "name": "win32-debug"
+                }
+            ]
+        },
+        {
+            "name": "win32-debuglog",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "win32-debuglog"
+                },
+                {
+                    "type": "build",
+                    "name": "win32-debuglog"
                 }
             ]
         },
