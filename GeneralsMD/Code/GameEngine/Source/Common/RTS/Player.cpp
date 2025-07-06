@@ -2089,6 +2089,7 @@ void Player::killPlayer(void)
 	}
 	if (isLocalPlayer() && !TheGameLogic->isInShellGame())
 	{
+#if 0
 		// This calls recalcApparentControllingPlayer of all objects with a contain,
 		// which basically does two things:
 		// - Reset the teams of all objects with empty contains.
@@ -2103,7 +2104,8 @@ void Player::killPlayer(void)
 		// the local player a mismatch results.
 		// So for now we just comment it out. When we try to show disguises correctly for an observer
 		// or we fix the team bug in the Contain classes, we can include this again.
-		//becomingLocalPlayer(TRUE); // recalc disguises, etc
+		becomingLocalPlayer(TRUE); // recalc disguises, etc
+#endif
 		if (TheControlBar )
 		{
 			if (isPlayerActive())
