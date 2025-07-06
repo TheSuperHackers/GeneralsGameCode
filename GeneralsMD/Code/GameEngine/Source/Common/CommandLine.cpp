@@ -427,15 +427,27 @@ Int parseReplay(char *args[], int num)
 			exit(1);
 		}
 		TheWritableGlobalData->m_simulateReplays.push_back(filename);
-		
+
 		TheWritableGlobalData->m_playIntro = FALSE;
 		TheWritableGlobalData->m_afterIntro = TRUE;
 		TheWritableGlobalData->m_playSizzle = FALSE;
 		TheWritableGlobalData->m_shellMapOn = FALSE;
 
-		// Make replay playback possible while other clients (possible retail) are running
-		rts::ClientInstance::setMultiInstance(TRUE);
-		rts::ClientInstance::skipPrimaryInstance();
+		return 2;
+	}
+	return 1;
+}
+
+Int parseReplayForClientInstance(char *args[], int num)
+{
+	if (num > 1)
+	{
+		if (!rts::ClientInstance::isInitialized())
+		{
+			// Make replay playback possible while other clients (possible retail) are running
+			rts::ClientInstance::setMultiInstance(TRUE);
+			rts::ClientInstance::skipPrimaryInstance();
+		}
 
 		return 2;
 	}
@@ -1140,6 +1152,11 @@ Int parseClearDebugLevel(char *args[], int num)
 }
 #endif
 
+static CommandLineParam paramsForClientInstance[] =
+{
+	{ "-replay", parseReplayForClientInstance },
+};
+
 // Initial Params are parsed before Windows Creation.
 // Note that except for TheGlobalData, no other global objects exist yet when these are parsed.
 static CommandLineParam paramsForStartup[] =
@@ -1382,9 +1399,9 @@ char *nextParam(char *newSource, const char *seps)
 
 static void parseCommandLine(const CommandLineParam* params, int numParams)
 {
-	std::vector<char*> argv;
+	std::vector<char*, stl::malloc_allocator<char*>> argv;
 
-	std::string cmdLine = GetCommandLineA();
+	stl::malloc_string cmdLine = GetCommandLineA();
 	char *token = nextParam(&cmdLine[0], "\" ");
 	while (token != NULL)
 	{
@@ -1412,7 +1429,7 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 	// and functions to handle them.  Comparisons can be case-(in)sensitive, and
 	// can check the entire string (for testing the presence of a flag) or check
 	// just the start (for a key=val argument).  The handling function can also
-	// look at the next argument(s), to accomodate multi-arg parameters, e.g. "-p 1234".
+	// look at the next argument(s), to accommodate multi-arg parameters, e.g. "-p 1234".
 	while (arg<argc)
 	{
 		// Look at arg #i
@@ -1437,18 +1454,28 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 	}
 }
 
-void createGlobalData()
+void createTheGlobalData()
 {
 	if (TheGlobalData == NULL)
 		TheWritableGlobalData = NEW GlobalData;
 }
 
+void CommandLine::parseCommandLineForClientInstance()
+{
+	// TheSuperHackers @info This function must not allocate using 'new' because it can be called before the Memory Manager is initialized.
+	// This function is potentially called multiple times.
+
+	parseCommandLine(paramsForClientInstance, ARRAY_SIZE(paramsForClientInstance));
+}
+
 void CommandLine::parseCommandLineForStartup()
 {
-	// We need the GlobalData initialized before parsing the command line.
-	// Note that this function is potentially called multiple times and only initializes the first time.
-	createGlobalData();
+	assert(TheDynamicMemoryAllocator != NULL);
 
+	// TheSuperHackers @info TheGlobalData needs to be initialized before parsing the command line.
+	createTheGlobalData();
+
+	// This function is potentially called multiple times and only initializes the first time.
 	if (TheGlobalData->m_commandLineData.m_hasParsedCommandLineForStartup)
 		return;
 	TheWritableGlobalData->m_commandLineData.m_hasParsedCommandLineForStartup = true;
@@ -1458,7 +1485,9 @@ void CommandLine::parseCommandLineForStartup()
 
 void CommandLine::parseCommandLineForEngineInit()
 {
-	createGlobalData();
+	assert(TheDynamicMemoryAllocator != NULL);
+
+	createTheGlobalData();
 
 	DEBUG_ASSERTCRASH(TheGlobalData->m_commandLineData.m_hasParsedCommandLineForStartup,
 		("parseCommandLineForStartup is expected to be called before parseCommandLineForEngineInit\n"));

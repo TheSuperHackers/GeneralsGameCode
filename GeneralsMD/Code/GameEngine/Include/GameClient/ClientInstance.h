@@ -21,6 +21,7 @@ namespace rts
 {
 
 // TheSuperHackers @feature Adds support for launching multiple game clients and keeping track of their instance id.
+// This class must not allocate using 'new' because it can be used before the Memory Manager is initialized.
 
 class ClientInstance
 {

@@ -799,7 +799,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		}
 		::SetCurrentDirectory(buffer);
 
-		CommandLine::parseCommandLineForStartup();
 
 		#ifdef RTS_DEBUG
 			// Turn on Memory heap tracking
@@ -839,6 +838,12 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp", IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
 #endif
 
+		// start the log
+		DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
+		initMemoryManager();
+
+		CommandLine::parseCommandLineForStartup();
+
 		// register windows class and create application window
 		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
 			return exitcode;
@@ -855,11 +860,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// BGC - initialize COM
 	//	OleInitialize(NULL);
 
-		// start the log
-		DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
-		initMemoryManager();
 
- 
 		// Set up version info
 		TheVersion = NEW Version;
 		TheVersion->setVersion(VERSION_MAJOR, VERSION_MINOR, VERSION_BUILDNUM, VERSION_LOCALBUILDNUM,
@@ -867,6 +868,8 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 			AsciiString(__TIME__), AsciiString(__DATE__));
 
 		// TheSuperHackers @refactor The instance mutex now lives in its own class.
+
+		CommandLine::parseCommandLineForClientInstance();
 
 		if (!rts::ClientInstance::initialize())
 		{
