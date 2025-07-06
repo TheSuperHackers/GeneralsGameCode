@@ -2090,14 +2090,14 @@ void Player::killPlayer(void)
 	if (isLocalPlayer() && !TheGameLogic->isInShellGame())
 	{
 #if 0
-		// This calls recalcApparentControllingPlayer of all objects with a contain,
+		// This calls recalcApparentControllingPlayer on all objects with a contain,
 		// which basically does two things:
 		// - Reset the teams of all objects with empty contains.
 		// - Update m_hideGarrisonedStateFromNonallies.
 		// The purpose originally probably was the latter so that the player who was killed,
 		// who is now observing, can see the hidden garrinsoned buildings. But that doesn't seem to work
 		// anyway, so this call is pointless.
-		// Unfortunately, there is another bug. The contains keep track of the team of the object
+		// Unfortunately, there is another bug. The contains keep track of the object's team
 		// before any units got inside. And that team doesn't get updated when a player gets killed
 		// and the units transfer to another team.
 		// In the end that means resetting the team sets it to neutral, and when this is done only for
