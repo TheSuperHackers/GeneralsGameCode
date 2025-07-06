@@ -843,7 +843,12 @@ Bool RecorderClass::readReplayHeader(ReplayHeader& header)
 	AsciiString filepath = getReplayDir();
 	filepath.concat(header.filename.str());
 
-	m_replayFile = TheFileSystem->openFile(filepath.str(), File::READ);
+	if (header.forPlayback) {
+		m_replayFile = TheFileSystem->openFile(filepath.str(), File::READ, replayBufferSize);
+	}
+	else {
+		m_replayFile = TheFileSystem->openFile(filepath.str(), File::READ);
+	}
 
 	if (m_replayFile == NULL)
 	{

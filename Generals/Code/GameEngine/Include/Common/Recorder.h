@@ -54,6 +54,8 @@ enum RecorderModeType CPP_11(: Int) {
 	RECORDERMODETYPE_NONE // this is a valid state to be in on the shell map, or in saved games
 };
 
+CONSTEXPR const UnsignedInt replayBufferSize = 8192;	// TheSuperHackers @info buffersize is in bytes
+
 class CRCInfo;
 
 class RecorderClass : public SubsystemInterface {
