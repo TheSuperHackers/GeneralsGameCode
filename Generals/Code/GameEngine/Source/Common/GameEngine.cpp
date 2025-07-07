@@ -509,7 +509,8 @@ void GameEngine::init()
 
 	initDisabledMasks();
 
-	TheSubsystemList->resetAll();
+	resetSubsystems();
+
 	HideControlBar();
 }  // end init
 
@@ -528,7 +529,7 @@ void GameEngine::reset( void )
 	if (TheGameLogic->isInMultiplayerGame())
 		deleteNetwork = true;
 
-	TheSubsystemList->resetAll();
+	resetSubsystems();
 
 	if (deleteNetwork)
 	{
@@ -543,6 +544,16 @@ void GameEngine::reset( void )
 		deleteInstance(background);
 		background = NULL;
 	}
+}
+
+/// -----------------------------------------------------------------------------------------------
+void GameEngine::resetSubsystems( void )
+{
+	// TheSuperHackers @fix xezon 09/06/2025 Reset GameLogic first to purge all world objects early.
+	// This avoids potentially catastrophic issues when objects and subsystems have cross dependencies.
+	TheGameLogic->reset();
+
+	TheSubsystemList->resetAll();
 }
 
 /// -----------------------------------------------------------------------------------------------

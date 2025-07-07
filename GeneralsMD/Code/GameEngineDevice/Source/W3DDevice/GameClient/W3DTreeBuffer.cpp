@@ -1286,6 +1286,8 @@ void W3DTreeBuffer::clearAllTrees(void)
 		m_areaPartition[i] = END_OF_PARTITION;
 	}
 	m_numTreeTypes = 0;
+
+	m_lastLogicFrame = 0;
 }
 
 //=============================================================================
@@ -1551,6 +1553,16 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 	if (TheGameLogic && TheGameLogic->isGamePaused()) {
 		pause = true;
 	}
+
+	// TheSuperHackers @bugfix Mauller 04/07/2025 decouple the tree sway position updates from the client fps
+	if (TheGameLogic) {
+		UnsignedInt currentFrame = TheGameLogic->getFrame();
+		if (m_lastLogicFrame == currentFrame) {
+			pause = true;
+		}
+		m_lastLogicFrame = currentFrame;
+	}
+
 	Int i;
 	if (!pause) {
 		if (info.m_breezeVersion != m_curSwayVersion) 

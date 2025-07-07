@@ -1474,7 +1474,13 @@ GameMessage::Type CommandTranslator::evaluateContextCommand( Drawable *draw,
 
 	// Kris: Now that we can select non-controllable units/structures, don't allow any actions to be performed.
 	const CommandButton *command = TheInGameUI->getGUICommand();
-	if( TheInGameUI->areSelectedObjectsControllable() 
+
+	if (command && command->getCommandType() == GUICOMMANDMODE_PLACE_BEACON)
+	{
+		msgType = GameMessage::MSG_VALID_GUICOMMAND_HINT;
+		TheMessageStream->appendMessage(msgType);
+	}
+	else if( TheInGameUI->areSelectedObjectsControllable() 
 			|| (command && command->getCommandType() == GUI_COMMAND_SPECIAL_POWER_FROM_SHORTCUT))
 	{
 		GameMessage *hintMessage;

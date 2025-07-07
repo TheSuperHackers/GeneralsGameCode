@@ -62,17 +62,17 @@ public:
 	// ~WindowLayout( void );												///< defined by memory pool glue
 
 	// manipulating screen properties ---------------------------------------------------------------
-	AsciiString getFilename( void );											///< return source window filename
-	Bool load( AsciiString filename );										///< create windows and load from .wnd file
-	void hide( Bool hide );													///< hide/unhide all windows on this screen
-	Bool isHidden( void );													///< return visible state of screen
+	AsciiString getFilename( void ) const;					///< return source window filename
+	Bool load( AsciiString filename );							///< create windows and load from .wnd file
+	void hide( Bool hide );													///< hide/show all windows on this screen
+	Bool isHidden( void ) const;										///< return visible state of screen
 	void bringForward( void );											///< bring all windows in this screen forward
 
 	// manipulating window lists --------------------------------------------------------------------
 	void addWindow( GameWindow *window );						///< add window to screen
 	void removeWindow( GameWindow *window );				///< remove window from screen
 	void destroyWindows( void );										///< destroy all windows in this screen
-	GameWindow *getFirstWindow( void );							///< get first window in list for screen
+	GameWindow *getFirstWindow( void ) const;				///< get first window in list for screen
 
 	// accessing layout callbacks  ------------------------------------------------------------------
 	void runInit( void *userData = NULL );									///< run the init method if available
@@ -110,9 +110,9 @@ protected:
 };  // end class WindowLayout
 
 // INLINING ///////////////////////////////////////////////////////////////////////////////////////
-inline AsciiString WindowLayout::getFilename( void ) { return m_filenameString; }
-inline GameWindow *WindowLayout::getFirstWindow( void ) { return m_windowList; }
-inline Bool WindowLayout::isHidden( void ) { return m_hidden; }
+inline AsciiString WindowLayout::getFilename( void ) const { return m_filenameString; }
+inline GameWindow *WindowLayout::getFirstWindow( void ) const { return m_windowList; }
+inline Bool WindowLayout::isHidden( void ) const { return m_hidden; }
 
 inline void WindowLayout::runInit( void *userData ) { if( m_init ) m_init( this, userData ); }
 inline void WindowLayout::runUpdate( void *userData ) { if( m_update ) m_update( this, userData ); }

@@ -101,7 +101,11 @@ SpecialPowerModule::SpecialPowerModule( Thing *thing, const ModuleData *moduleDa
 									: BehaviorModule( thing, moduleData )
 {
 
+#if RETAIL_COMPATIBLE_CRC
 	m_availableOnFrame = 0;
+#else
+	m_availableOnFrame = 0xFFFFFFFF;
+#endif
 	m_pausedCount = 0;
 	m_pausedOnFrame = 0;
 	m_pausedPercent = 0.0f;
@@ -455,6 +459,15 @@ Bool SpecialPowerModule::initiateIntentToDoSpecialPower( const Object *targetObj
 		}
 	}
 
+#if RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @info we need to leave early if we are in the MissileLauncherBuildingUpdate crash fix codepath
+	if (m_availableOnFrame == 0xFFFFFFFF)
+	{
+		DEBUG_ASSERTCRASH(!valid, ("Using MissileLauncherBuildingUpdate escape path when valid is set to true"));
+		return false;
+	}
+#endif
+
 	getObject()->getControllingPlayer()->getAcademyStats()->recordSpecialPowerUsed( getSpecialPowerModuleData()->m_specialPowerTemplate );
 	
 	//If we depend on our update module to trigger the special power, make sure we have the
@@ -714,6 +727,12 @@ void SpecialPowerModule::doSpecialPowerAtLocation( const Coord3D *loc, Real angl
 	//This tells the update module that we want to do our special power. The update modules
 	//will then start processing each frame.
 	initiateIntentToDoSpecialPower( NULL, loc, NULL, commandOptions );
+
+#if RETAIL_COMPATIBLE_CRC
+	// TheSuperHackers @info we need to leave early if we are in the MissileLauncherBuildingUpdate crash fix codepath
+	if (m_availableOnFrame == 0xFFFFFFFF)
+		return;
+#endif
 
 	//Only trigger the special power immediately if the updatemodule doesn't start the attack.
 	//An example of a case that wouldn't trigger immediately is for a unit that needs to 

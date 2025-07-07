@@ -2434,7 +2434,7 @@ UnsignedByte * WorldHeightMap::getPointerToTileData(Int xIndex, Int yIndex, Int 
 					Int r,g,b,a;
 					b = *pBlendData++;
 					g = *pBlendData++;
-					r = *pBlendData++; *pBlendData++;
+					r = *pBlendData++; pBlendData++;
 					a = *pAlpha; pAlpha += 4;
 					*pDestData++ = ((b*a)/255) + (((*pDestData)*(255-a))/255);
 					*pDestData++ = ((g*a)/255) + (((*pDestData)*(255-a))/255);

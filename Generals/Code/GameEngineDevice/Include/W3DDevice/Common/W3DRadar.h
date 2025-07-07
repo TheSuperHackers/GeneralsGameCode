@@ -59,6 +59,9 @@ public:
 	virtual void update( void );																	///< subsystem update
 	virtual void reset( void );																		///< subsystem reset
 
+	virtual bool addObject( Object *obj );									///< add object to radar
+	virtual bool removeObject( Object *obj );								///< remove object from radar
+
 	virtual void newMap( TerrainLogic *terrain );				///< reset radar for new map
 
 	void draw( Int pixelX, Int pixelY, Int width, Int height );		///< draw the radar
@@ -80,7 +83,7 @@ protected:
 	void drawViewBox( Int pixelX, Int pixelY, Int width, Int height );  ///< draw view box
 	void buildTerrainTexture( TerrainLogic *terrain );	 ///< create the terrain texture of the radar
 	void drawIcons( Int pixelX, Int pixelY, Int width, Int height );	///< draw all of the radar icons
-	void renderObjectList( const RadarObject *listHead, TextureClass *texture, Bool calcHero = FALSE );			 ///< render an object list to the texture
+	void renderObjectList( const RadarObject *listHead, TextureClass *texture );			 ///< render an object list to the texture
 	void interpolateColorForHeight( RGBColor *color, 
 																	Real height, 
 																	Real hiZ, 
@@ -118,7 +121,7 @@ protected:
 	Real m_viewZoom;															///< camera zoom used for the view box we have	
 	ICoord2D m_viewBox[ 4 ];											///< radar cell points for the 4 corners of view box
 
-	std::list<const Coord3D *> m_cachedHeroPosList;					//< cache of hero positions for drawing icons in radar overlay
+	std::vector<const Object *> m_cachedHeroObjectList; //< cache of hero objects for drawing icons in radar overlay
 };
 
 

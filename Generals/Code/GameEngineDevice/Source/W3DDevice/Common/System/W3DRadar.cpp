@@ -608,10 +608,10 @@ void W3DRadar::drawEvents( Int pixelX, Int pixelY, Int width, Int height )
 void W3DRadar::drawIcons( Int pixelX, Int pixelY, Int width, Int height )
 {
 	// draw the hero icons
-	std::list<const Coord3D *>::const_iterator iter = m_cachedHeroPosList.begin();
-	while (iter != m_cachedHeroPosList.end())
+	std::vector<const Object *>::const_iterator iter = m_cachedHeroObjectList.begin();
+	while (iter != m_cachedHeroObjectList.end())
 	{
-		drawHeroIcon( pixelX, pixelY, width, height, (*iter) );
+		drawHeroIcon( pixelX, pixelY, width, height, (*iter)->getPosition() );
 		++iter;
 	}
 }
@@ -619,7 +619,7 @@ void W3DRadar::drawIcons( Int pixelX, Int pixelY, Int width, Int height )
 //-------------------------------------------------------------------------------------------------
 /** Render an object list into the texture passed in */
 //-------------------------------------------------------------------------------------------------
-void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *texture, Bool calcHero )
+void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *texture )
 {
 
 	// sanity
@@ -637,12 +637,6 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 	if (player)
 		playerIndex=player->getPlayerIndex();
 
-	if( calcHero )
-	{
-		// clear all entries from the cached hero object list
-		m_cachedHeroPosList.clear();
-	}
-
 	for( const RadarObject *rObj = listHead; rObj; rObj = rObj->friend_getNext() )
 	{
 
@@ -652,11 +646,6 @@ void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *text
 		// get object
 		const Object *obj = rObj->friend_getObject();
 
-		// cache hero object positions for drawing in icon layer
-		if( calcHero && obj->isHero() )
-		{
-			m_cachedHeroPosList.push_back(obj->getPosition());
-		}
     Bool skip = FALSE;
 
 		// check for shrouded status
@@ -1000,6 +989,34 @@ void W3DRadar::update( void )
 	Radar::update();
 
 }  // end update
+
+//-------------------------------------------------------------------------------------------------
+bool W3DRadar::addObject( Object *obj )
+{
+	if (Radar::addObject(obj))
+	{
+		if (obj->isHero())
+		{
+			m_cachedHeroObjectList.push_back(obj);
+		}
+		return true;
+	}
+	return false;
+}
+
+//-------------------------------------------------------------------------------------------------
+bool W3DRadar::removeObject( Object *obj )
+{
+	if (Radar::removeObject(obj))
+	{
+		if (obj->isHero())
+		{
+			stl::find_and_erase_unordered(m_cachedHeroObjectList, obj);
+		}
+		return true;
+	}
+	return false;
+}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset the radar for the new map data being given to it */
@@ -1416,7 +1433,7 @@ void W3DRadar::draw( Int pixelX, Int pixelY, Int width, Int height )
 
 		// rebuild the object overlay
 		renderObjectList( getObjectList(), m_overlayTexture );
-		renderObjectList( getLocalObjectList(), m_overlayTexture, TRUE );
+		renderObjectList( getLocalObjectList(), m_overlayTexture );
 		
 	}  // end if
 
@@ -1475,7 +1492,7 @@ void W3DRadar::refreshTerrain( TerrainLogic *terrain )
 
 /*
  *
-	void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *texture, Bool calcHero )
+	void W3DRadar::renderObjectList( const RadarObject *listHead, TextureClass *texture )
 {
 
 	// sanity
@@ -1495,12 +1512,6 @@ void W3DRadar::refreshTerrain( TerrainLogic *terrain )
 
 	UnsignedByte minAlpha = 8;
 
-	if( calcHero )
-	{
-		// clear all entries from the cached hero object list
-		m_cachedHeroPosList.clear();
-	}
-
 	for( const RadarObject *rObj = listHead; rObj; rObj = rObj->friend_getNext() )
 	{
     UnsignedByte h = (UnsignedByte)(rObj->isTemporarilyHidden());
@@ -1512,12 +1523,6 @@ void W3DRadar::refreshTerrain( TerrainLogic *terrain )
 		// get object
 		const Object *obj = rObj->friend_getObject();
 		UnsignedByte r = 1;   // all decoys
-
-		// cache hero object positions for drawing in icon layer
-		if( calcHero && obj->isHero() )
-		{
-			m_cachedHeroPosList.push_back(obj->getPosition());
-		}
 
 		// get the color we're going to draw in
 		UnsignedInt c = 0xfe000000;// this is a decoy

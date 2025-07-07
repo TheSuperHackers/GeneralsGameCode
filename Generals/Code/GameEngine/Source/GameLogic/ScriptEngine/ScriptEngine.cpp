@@ -7210,9 +7210,13 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 		}
 
 		AIUpdateInterface *ai = obj ? obj->getAIUpdateInterface() : NULL;
-		AIGroup *aigroup = (team ? TheAI->createGroup() : NULL);
+		AIGroupPtr aigroup = (team ? TheAI->createGroup() : NULL);
 		if (aigroup) {
+#if RETAIL_COMPATIBLE_AIGROUP
 			team->getTeamAsAIGroup(aigroup);
+#else
+			team->getTeamAsAIGroup(aigroup.Peek());
+#endif
 		}
 
 		if( ai || aigroup ) {
@@ -7297,7 +7301,11 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 					} else if (team) {
 						// attempt to rebuild the aigroup, as it probably expired during the action execution
 						aigroup = (team ? TheAI->createGroup() : NULL);
+#if RETAIL_COMPATIBLE_AIGROUP
 						team->getTeamAsAIGroup(aigroup);
+#else
+						team->getTeamAsAIGroup(aigroup.Peek());
+#endif
 					}
 
 					if (aigroup && aigroup->isIdle()) {
