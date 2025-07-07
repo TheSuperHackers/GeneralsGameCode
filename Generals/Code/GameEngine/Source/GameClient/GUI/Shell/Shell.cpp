@@ -626,7 +626,7 @@ void Shell::linkScreen( WindowLayout *screen )
 	if( m_screenCount == MAX_SHELL_STACK )
 	{
 
-		DEBUG_CRASH(( "No room in shell stack for screen\n" ));
+		DEBUG_CRASH(( "No room in shell stack for screen" ));
 		return;
 
 	}  // end if

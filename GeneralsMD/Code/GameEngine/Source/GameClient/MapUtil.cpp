@@ -104,7 +104,7 @@ static UnsignedInt calcCRC( AsciiString dirName, AsciiString fname )
 	fp = TheFileSystem->openFile(asciiFile.str(), File::READ);
 	if( !fp )
 	{
-		DEBUG_CRASH(("Couldn't open '%s'\n", fname.str()));
+		DEBUG_CRASH(("Couldn't open '%s'", fname.str()));
 		return 0;
 	}
 
@@ -1095,7 +1095,7 @@ static void copyFromBigToDir( const AsciiString& infile, const AsciiString& outf
 	File *file = TheFileSystem->openFile( infile.str(), File::READ | File::BINARY );
 	if( file == NULL )
 	{
-		DEBUG_CRASH(( "copyFromBigToDir - Error opening source file '%s'\n", infile.str() ));
+		DEBUG_CRASH(( "copyFromBigToDir - Error opening source file '%s'", infile.str() ));
 		throw SC_INVALID_DATA;
 	} // end if
 
@@ -1110,14 +1110,14 @@ static void copyFromBigToDir( const AsciiString& infile, const AsciiString& outf
 	char *buffer = NEW char[ fileSize ];
 	if( buffer == NULL )
 	{
-		DEBUG_CRASH(( "copyFromBigToDir - Unable to allocate buffer for file '%s'\n", infile.str() ));
+		DEBUG_CRASH(( "copyFromBigToDir - Unable to allocate buffer for file '%s'", infile.str() ));
 		throw SC_INVALID_DATA;
 	} // end if
 
 	// copy the file to the buffer
 	if( file->read( buffer, fileSize ) < fileSize )
 	{
-		DEBUG_CRASH(( "copyFromBigToDir - Error reading from file '%s'\n", infile.str() ));
+		DEBUG_CRASH(( "copyFromBigToDir - Error reading from file '%s'", infile.str() ));
 		throw SC_INVALID_DATA;
 	} // end if
 	// close the BIG file
@@ -1127,7 +1127,7 @@ static void copyFromBigToDir( const AsciiString& infile, const AsciiString& outf
 	
 	if( !filenew || filenew->write(buffer, fileSize) < fileSize)
 	{
-		DEBUG_CRASH(( "copyFromBigToDir - Error writing to file '%s'\n", outfile.str() ));
+		DEBUG_CRASH(( "copyFromBigToDir - Error writing to file '%s'", outfile.str() ));
 		throw SC_INVALID_DATA;
 	} // end if
 

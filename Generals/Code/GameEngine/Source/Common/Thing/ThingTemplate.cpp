@@ -443,7 +443,7 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 	catch( ... )
 	{
 
-		DEBUG_CRASH(( "[LINE: %d - FILE: '%s'] Module tag not found for module '%s' on thing template '%s'.  Module tags are required and must be unique for all modules within an object definition\n",
+		DEBUG_CRASH(( "[LINE: %d - FILE: '%s'] Module tag not found for module '%s' on thing template '%s'.  Module tags are required and must be unique for all modules within an object definition",
 									ini->getLineNum(), ini->getFilename().str(), 
 									tokenStr.str(), self->getName().str() ));
 		throw;
@@ -483,7 +483,7 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 		}
 		else
 		{
-			DEBUG_CRASH(("[LINE: %d - FILE: '%s'] You must use AddModule to add modules in override INI files.\n",
+			DEBUG_CRASH(("[LINE: %d - FILE: '%s'] You must use AddModule to add modules in override INI files.",
 				ini->getLineNum(), ini->getFilename().str(), self->getName().str()));
 			throw INI_INVALID_DATA;
 		}
@@ -499,7 +499,7 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 			&& self->m_moduleBeingReplacedName.isNotEmpty()
 			&& self->m_moduleBeingReplacedName != tokenStr)
 	{
-		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule must replace modules with another module of the same type, but you are attempting to replace a %s with a %s for Object %s.\n",
+		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule must replace modules with another module of the same type, but you are attempting to replace a %s with a %s for Object %s.",
 			ini->getLineNum(), ini->getFilename().str(), self->m_moduleBeingReplacedName.str(), tokenStr.str(), self->getName().str()));
 		throw INI_INVALID_DATA;
 	}
@@ -508,7 +508,7 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 			&& self->m_moduleBeingReplacedTag.isNotEmpty()
 			&& self->m_moduleBeingReplacedTag == moduleTagStr)
 	{
-		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule must specify a new, unique tag for the replaced module, but you are not doing so for %s (%s) for Object %s.\n",
+		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule must specify a new, unique tag for the replaced module, but you are not doing so for %s (%s) for Object %s.",
 			ini->getLineNum(), ini->getFilename().str(), moduleTagStr.str(), self->m_moduleBeingReplacedName.str(), self->getName().str()));
 		throw INI_INVALID_DATA;
 	}
@@ -708,7 +708,7 @@ void ThingTemplate::parseReplaceModule(INI *ini, void *instance, void *store, co
 	Bool removed = self->removeModuleInfo(modToRemove, removedModuleName);
 	if (!removed)
 	{
-		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule %s was not found for %s; cannot continue.\n",
+		DEBUG_CRASH(("[LINE: %d - FILE: '%s'] ReplaceModule %s was not found for %s; cannot continue.",
 															ini->getLineNum(), ini->getFilename().str(), modToRemove, self->getName().str()));
 		throw INI_INVALID_DATA;
 	}
@@ -804,7 +804,7 @@ void ThingTemplate::parseArmorTemplateSet( INI* ini, void *instance, void * /*st
 		{
 			if (it->getNthConditionsYes(0) == ws.getNthConditionsYes(0))
 			{
-				DEBUG_CRASH(("dup armorset condition in %s\n",self->getName().str()));
+				DEBUG_CRASH(("dup armorset condition in %s",self->getName().str()));
 			}
 		}
 	}
@@ -832,7 +832,7 @@ void ThingTemplate::parseWeaponTemplateSet( INI* ini, void *instance, void * /*s
 		{
 			if (it->getNthConditionsYes(0) == ws.getNthConditionsYes(0))
 			{
-				DEBUG_CRASH(("dup weaponset condition in %s\n",self->getName().str()));
+				DEBUG_CRASH(("dup weaponset condition in %s",self->getName().str()));
 			}
 		}
 	}
@@ -1044,25 +1044,25 @@ void ThingTemplate::validate()
 
 	if (isKindOf(KINDOF_STRUCTURE) && !isImmobile)
 	{
-		DEBUG_CRASH(("Structure %s is not marked immobile, but probably should be -- please fix it. (If we ever add mobile structures, this debug sniffer will need to be revised.)\n",getName().str()));
+		DEBUG_CRASH(("Structure %s is not marked immobile, but probably should be -- please fix it. (If we ever add mobile structures, this debug sniffer will need to be revised.)",getName().str()));
 	}
 
 	if (isKindOf(KINDOF_STICK_TO_TERRAIN_SLOPE) && !isImmobile)
 	{
-		DEBUG_CRASH(("item %s is marked STICK_TO_TERRAIN_SLOPE but not IMMOBILE -- please fix it.\n",getName().str()));
+		DEBUG_CRASH(("item %s is marked STICK_TO_TERRAIN_SLOPE but not IMMOBILE -- please fix it.",getName().str()));
 	}
 
 	if (isKindOf(KINDOF_STRUCTURE))
 	{
 		if (m_armorTemplateSets.empty() || (m_armorTemplateSets.size() == 1 && m_armorTemplateSets[0].getArmorTemplate() == NULL))
 		{
-			DEBUG_CRASH(("Structure %s has no armor, but probably should (StructureArmor) -- please fix it.)\n",getName().str()));
+			DEBUG_CRASH(("Structure %s has no armor, but probably should (StructureArmor) -- please fix it.)",getName().str()));
 		}
 		for (ArmorTemplateSetVector::const_iterator it = m_armorTemplateSets.begin(); it != m_armorTemplateSets.end(); ++it)
 		{
 			if (it->getDamageFX() == NULL)
 			{
-				DEBUG_CRASH(("Structure %s has no ArmorDamageFX, and really should.\n",getName().str()));
+				DEBUG_CRASH(("Structure %s has no ArmorDamageFX, and really should.",getName().str()));
 			}
 		}
 	}

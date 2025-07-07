@@ -329,7 +329,7 @@ void AttackPriorityInfo::xfer( Xfer *xfer )
 			if( thingTemplate == NULL )
 			{
 
-				DEBUG_CRASH(( "AttackPriorityInfo::xfer - Unable to find thing template '%s'\n",
+				DEBUG_CRASH(( "AttackPriorityInfo::xfer - Unable to find thing template '%s'",
 											thingTemplateName.str() ));
 				throw SC_INVALID_DATA;
 
@@ -6168,7 +6168,7 @@ void ScriptEngine::createNamedMapReveal(const AsciiString& revealName, const Asc
 	// Will fail if there's already one in existence of the same name.
 	for (it = m_namedReveals.begin(); it != m_namedReveals.end(); ++it) {
 		if (it->m_revealName == revealName) {
-			DEBUG_CRASH(("ScriptEngine::createNamedMapReveal: Attempted to redefine named Reveal '%s', so I won't change it.\n", revealName.str()));
+			DEBUG_CRASH(("ScriptEngine::createNamedMapReveal: Attempted to redefine named Reveal '%s', so I won't change it.", revealName.str()));
 			return;
 		}
 	}
@@ -8173,7 +8173,7 @@ void SequentialScript::xfer( Xfer *xfer )
 		if( teamID != TEAM_ID_INVALID && m_teamToExecOn == NULL )
 		{
 
-			DEBUG_CRASH(( "SequentialScript::xfer - Unable to find team by ID (#%d) for m_teamToExecOn\n", 
+			DEBUG_CRASH(( "SequentialScript::xfer - Unable to find team by ID (#%d) for m_teamToExecOn", 
 										teamID ));
 			throw SC_INVALID_DATA;
 
@@ -8573,7 +8573,7 @@ static void xferListAsciiString( Xfer *xfer, ListAsciiString *list )
 		if( list->empty() == FALSE )
 		{
 
-			DEBUG_CRASH(( "xferListAsciiString - list should be empty upon loading but is not\n" ));
+			DEBUG_CRASH(( "xferListAsciiString - list should be empty upon loading but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -8643,7 +8643,7 @@ static void xferListAsciiStringUINT( Xfer *xfer, ListAsciiStringUINT *list )
 		if( list->empty() == FALSE )
 		{
 
-			DEBUG_CRASH(( "xferListAsciiStringUINT - list should be empty upon loading but is not\n" ));
+			DEBUG_CRASH(( "xferListAsciiStringUINT - list should be empty upon loading but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -8718,7 +8718,7 @@ static void xferListAsciiStringObjectID( Xfer *xfer, ListAsciiStringObjectID *li
 		if( list->empty() == FALSE )
 		{
 
-			DEBUG_CRASH(( "xferListAsciiStringObjectID - list should be empty upon loading but is not\n" ));
+			DEBUG_CRASH(( "xferListAsciiStringObjectID - list should be empty upon loading but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -8793,7 +8793,7 @@ static void xferListAsciiStringCoord3D( Xfer *xfer, ListAsciiStringCoord3D *list
 		if( list->empty() == FALSE )
 		{
 
-			DEBUG_CRASH(( "xferListAsciiStringCoord3D - list should be empty upon loading but is not\n" ));
+			DEBUG_CRASH(( "xferListAsciiStringCoord3D - list should be empty upon loading but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -8874,7 +8874,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 		if( m_sequentialScripts.size() != 0 )
 		{
 
-			DEBUG_CRASH(( "ScriptEngine::xfer - m_sequentialScripts should be empty but is not\n" ));
+			DEBUG_CRASH(( "ScriptEngine::xfer - m_sequentialScripts should be empty but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -8902,7 +8902,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	if( countersSize > MAX_COUNTERS )
 	{
 
-		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_COUNTERS has changed size, need to version this\n" ));
+		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_COUNTERS has changed size, need to version this" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -8929,7 +8929,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	if( flagsSize > MAX_FLAGS )
 	{
 	
-		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_FLAGS has changed size, need to version this\n" ));
+		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_FLAGS has changed size, need to version this" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -8953,7 +8953,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	if( attackPriorityInfoSize > MAX_ATTACK_PRIORITIES )
 	{
 
-		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_ATTACK_PRIORITIES size has changed, need to version this\n" ));
+		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_ATTACK_PRIORITIES size has changed, need to version this" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -9021,7 +9021,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 			if( obj == NULL && objectID != INVALID_ID )
 			{
 
-				DEBUG_CRASH(( "ScriptEngine::xfer - Unable to find object by ID for m_namedObjects\n" ));
+				DEBUG_CRASH(( "ScriptEngine::xfer - Unable to find object by ID for m_namedObjects" ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -9080,7 +9080,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	if( triggeredSpecialPowersSize != MAX_PLAYER_COUNT )
 	{
 	
-		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_triggeredSpecialPowers size is now different and we must version this\n" ));
+		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_triggeredSpecialPowers size is now different and we must version this" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -9093,7 +9093,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	if( midwaySpecialPowersSize != MAX_PLAYER_COUNT )
 	{
 	
-		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_midwaySpecialPowers size is now different and we must version this\n" ));
+		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_midwaySpecialPowers size is now different and we must version this" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -9106,7 +9106,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	if( finishedSpecialPowersSize != MAX_PLAYER_COUNT )
 	{
 	
-		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_finishedSpecialPowers size is now different and we must version this\n" ));
+		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_finishedSpecialPowers size is now different and we must version this" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -9119,7 +9119,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	if( completedUpgradesSize != MAX_PLAYER_COUNT )
 	{
 	
-		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_completedUpgrades size is now different and we must version this\n" ));
+		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_completedUpgrades size is now different and we must version this" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -9132,7 +9132,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 	if( acquiredSciencesSize != MAX_PLAYER_COUNT )
 	{
 	
-		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_acquiredSciences size is now different and we must version this\n" ));
+		DEBUG_CRASH(( "ScriptEngine::xfer - MAX_PLAYER_COUNT has changed, m_acquiredSciences size is now different and we must version this" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -9197,7 +9197,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 			if( m_namedReveals.empty() == FALSE )
 			{
 
-				DEBUG_CRASH(( "ScriptEngine::xfer - m_namedReveals should be empty but is not!\n" ));
+				DEBUG_CRASH(( "ScriptEngine::xfer - m_namedReveals should be empty but is not!" ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -9256,7 +9256,7 @@ void ScriptEngine::xfer( Xfer *xfer )
 			if( m_allObjectTypeLists.empty() == FALSE )
 			{
 
-				DEBUG_CRASH(( "ScriptEngine::xfer - m_allObjectTypeLists should be empty but is not!\n" ));
+				DEBUG_CRASH(( "ScriptEngine::xfer - m_allObjectTypeLists should be empty but is not!" ));
 				throw SC_INVALID_DATA;
 
 			}  // end if

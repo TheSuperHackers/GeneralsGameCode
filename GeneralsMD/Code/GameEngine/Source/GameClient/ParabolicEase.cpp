@@ -49,18 +49,18 @@ ParabolicEase::setEaseTimes(Real easeInTime, Real easeOutTime)
 {
 	m_in = easeInTime;
 	if (m_in < 0.0f || m_in > 1.0f) {
-		DEBUG_CRASH(("Ease-in out of range (in = %g)\n", m_in));
+		DEBUG_CRASH(("Ease-in out of range (in = %g)", m_in));
 		m_in = clamp(m_in);
 	}
 
 	m_out = 1.0f - easeOutTime;
 	if (m_out < 0.0f || m_out > 1.0f) {
-		DEBUG_CRASH(("Ease-out out of range (out = %g)\n", m_out));
+		DEBUG_CRASH(("Ease-out out of range (out = %g)", m_out));
 		m_out = clamp(m_out);
 	}
 
 	if (m_in > m_out) {
-		DEBUG_CRASH(("Ease-in and ease-out overlap (in = %g, out = %g)\n", m_in, m_out));
+		DEBUG_CRASH(("Ease-in and ease-out overlap (in = %g, out = %g)", m_in, m_out));
 		m_in = m_out;
 	}
 }
@@ -70,7 +70,7 @@ Real
 ParabolicEase::operator ()(Real param) const
 {
 	if (param < 0.0f || param > 1.0f) {
-		DEBUG_CRASH(("Ease-in/ease-out parameter out of range (param = %g)\n", param));
+		DEBUG_CRASH(("Ease-in/ease-out parameter out of range (param = %g)", param));
 		param = clamp(param);
 	}
 #if 0

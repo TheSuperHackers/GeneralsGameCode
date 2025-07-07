@@ -203,7 +203,7 @@ XferDeepCRC::~XferDeepCRC( void )
 	if( m_fileFP != NULL )
 	{
 
-		DEBUG_CRASH(( "Warning: Xfer file '%s' was left open\n", m_identifier.str() ));
+		DEBUG_CRASH(( "Warning: Xfer file '%s' was left open", m_identifier.str() ));
 		close();
 
 	}  // end if
@@ -222,7 +222,7 @@ void XferDeepCRC::open( AsciiString identifier )
 	if( m_fileFP != NULL )
 	{
 
-		DEBUG_CRASH(( "Cannot open file '%s' cause we've already got '%s' open\n",
+		DEBUG_CRASH(( "Cannot open file '%s' cause we've already got '%s' open",
 									identifier.str(), m_identifier.str() ));
 		throw XFER_FILE_ALREADY_OPEN;
 
@@ -236,7 +236,7 @@ void XferDeepCRC::open( AsciiString identifier )
 	if( m_fileFP == NULL )
 	{
 		
-		DEBUG_CRASH(( "File '%s' not found\n", identifier.str() ));
+		DEBUG_CRASH(( "File '%s' not found", identifier.str() ));
 		throw XFER_FILE_NOT_FOUND;
 
 	}  // end if
@@ -256,7 +256,7 @@ void XferDeepCRC::close( void )
 	if( m_fileFP == NULL )
 	{
 
-		DEBUG_CRASH(( "Xfer close called, but no file was open\n" ));
+		DEBUG_CRASH(( "Xfer close called, but no file was open" ));
 		throw XFER_FILE_NOT_OPEN;
 
 	}  // end if
@@ -289,7 +289,7 @@ void XferDeepCRC::xferImplementation( void *data, Int dataSize )
 	if( fwrite( data, dataSize, 1, m_fileFP ) != 1 )
 	{
 
-		DEBUG_CRASH(( "XferSave - Error writing to file '%s'\n", m_identifier.str() ));
+		DEBUG_CRASH(( "XferSave - Error writing to file '%s'", m_identifier.str() ));
 		throw XFER_WRITE_ERROR;
 
 	}  // end if
@@ -316,7 +316,7 @@ void XferDeepCRC::xferAsciiString( AsciiString *asciiStringData )
 	if( asciiStringData->getLength() > 16385 )
 	{
 
-		DEBUG_CRASH(( "XferSave cannot save this ascii string because it's too long.  Change the size of the length header (but be sure to preserve save file compatability\n" ));
+		DEBUG_CRASH(( "XferSave cannot save this ascii string because it's too long.  Change the size of the length header (but be sure to preserve save file compatability" ));
 		throw XFER_STRING_ERROR;
 
 	}  // end if
@@ -341,7 +341,7 @@ void XferDeepCRC::xferUnicodeString( UnicodeString *unicodeStringData )
 	if( unicodeStringData->getLength() > 255 )
 	{
 
-		DEBUG_CRASH(( "XferSave cannot save this unicode string because it's too long.  Change the size of the length header (but be sure to preserve save file compatability\n" ));
+		DEBUG_CRASH(( "XferSave cannot save this unicode string because it's too long.  Change the size of the length header (but be sure to preserve save file compatability" ));
 		throw XFER_STRING_ERROR;
 
 	}  // end if

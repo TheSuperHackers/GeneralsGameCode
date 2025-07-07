@@ -233,7 +233,7 @@ DisplayString *W3DDisplayStringManager::getGroupNumeralString( Int numeral )
 {
 	if (numeral < 0 || numeral > MAX_GROUPS - 1 ) 
 	{
-		DEBUG_CRASH(("Numeral '%d' out of range.\n", numeral));
+		DEBUG_CRASH(("Numeral '%d' out of range.", numeral));
 		return m_groupNumeralStrings[0];
 	}
 

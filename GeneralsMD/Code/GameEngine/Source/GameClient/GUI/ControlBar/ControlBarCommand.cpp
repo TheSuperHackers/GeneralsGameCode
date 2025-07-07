@@ -1413,7 +1413,7 @@ CommandAvailability ControlBar::getCommandAvailability( const CommandButton *com
 			{
 				// sanity ... we must have a module for the special power, if we don't somebody probably
 				// forgot to put it in the object
-				DEBUG_CRASH(( "Object %s does not contain special power module (%s) to execute.  Did you forget to add it to the object INI?\n",
+				DEBUG_CRASH(( "Object %s does not contain special power module (%s) to execute.  Did you forget to add it to the object INI?",
 											obj->getTemplate()->getName().str(), command->getSpecialPowerTemplate()->getName().str() ));
 			} 
 			else if( mod->isReady() == FALSE )

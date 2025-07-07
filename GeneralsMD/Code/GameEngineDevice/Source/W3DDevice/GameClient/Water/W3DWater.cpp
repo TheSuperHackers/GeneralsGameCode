@@ -3452,7 +3452,7 @@ void WaterRenderObjClass::xfer( Xfer *xfer )
 	if( cellsX != m_gridCellsX )
 	{
 
-		DEBUG_CRASH(( "WaterRenderObjClass::xfer - cells X mismatch\n" ));
+		DEBUG_CRASH(( "WaterRenderObjClass::xfer - cells X mismatch" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -3463,7 +3463,7 @@ void WaterRenderObjClass::xfer( Xfer *xfer )
 	if( cellsY != m_gridCellsY )
 	{
 	
-		DEBUG_CRASH(( "WaterRenderObjClass::xfer - cells Y mismatch\n" ));
+		DEBUG_CRASH(( "WaterRenderObjClass::xfer - cells Y mismatch" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if

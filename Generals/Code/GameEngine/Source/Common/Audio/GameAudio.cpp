@@ -419,7 +419,7 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 	if (!eventToAdd->getAudioEventInfo()) {
 		getInfoForAudioEvent(eventToAdd);
 		if (!eventToAdd->getAudioEventInfo()) {
-			DEBUG_CRASH(("No info for requested audio event '%s'\n", eventToAdd->getEventName().str()));
+			DEBUG_CRASH(("No info for requested audio event '%s'", eventToAdd->getEventName().str()));
 			return AHSV_Error;
 		}
 	}
@@ -840,7 +840,7 @@ AudioEventInfo *AudioManager::newAudioEventInfo( AsciiString audioName )
 {
 	AudioEventInfo *eventInfo = findAudioEventInfo(audioName);
 	if (eventInfo) {
-		DEBUG_CRASH(("Requested add of '%s' multiple times. Is this intentional? - jkmcd\n", audioName.str()));
+		DEBUG_CRASH(("Requested add of '%s' multiple times. Is this intentional? - jkmcd", audioName.str()));
 		return eventInfo;
 	}
 
@@ -856,7 +856,7 @@ void AudioManager::addAudioEventInfo( AudioEventInfo * newEvent )
   AudioEventInfo *eventInfo = findAudioEventInfo( newEvent->m_audioName );
   if (eventInfo) 
   {
-    DEBUG_CRASH(("Requested add of '%s' multiple times. Is this intentional? - jkmcd\n", newEvent->m_audioName.str()));
+    DEBUG_CRASH(("Requested add of '%s' multiple times. Is this intentional? - jkmcd", newEvent->m_audioName.str()));
     *eventInfo = *newEvent;
   }
   else
@@ -1031,7 +1031,7 @@ Bool AudioManager::shouldPlayLocally(const AudioEventRTS *audioEvent)
 	}
 
 	if (!BitIsSet(ei->m_type, (ST_PLAYER | ST_ALLIES | ST_ENEMIES | ST_EVERYONE))) {
-		DEBUG_CRASH(("No player restrictions specified for '%s'. Using Everyone.\n", ei->m_audioName.str()));
+		DEBUG_CRASH(("No player restrictions specified for '%s'. Using Everyone.", ei->m_audioName.str()));
 		return TRUE;
 	}
 
@@ -1047,7 +1047,7 @@ Bool AudioManager::shouldPlayLocally(const AudioEventRTS *audioEvent)
 	}
 
 	if (owningPlayer == NULL) {
-		DEBUG_CRASH(("Sound '%s' expects an owning player, but the audio event that created it didn't specify one.\n", ei->m_audioName.str()));
+		DEBUG_CRASH(("Sound '%s' expects an owning player, but the audio event that created it didn't specify one.", ei->m_audioName.str()));
 		return FALSE;
 	}
 

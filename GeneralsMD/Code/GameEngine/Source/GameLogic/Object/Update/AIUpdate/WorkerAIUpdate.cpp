@@ -513,7 +513,7 @@ Bool WorkerAIUpdate::canAcceptNewRepair( Object *obj )
 			if( currentTowerInterface == NULL || newTowerInterface == NULL )
 			{
 
-				DEBUG_CRASH(( "Unable to find bridge tower interface on object\n" ));
+				DEBUG_CRASH(( "Unable to find bridge tower interface on object" ));
 				return FALSE;
 
 			}  // end if
@@ -867,7 +867,7 @@ void WorkerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 		default:
 		{
 
-			DEBUG_CRASH(( "internalTaskCompleteOrCancelled: Unknown Dozer task '%d'\n", task ));
+			DEBUG_CRASH(( "internalTaskCompleteOrCancelled: Unknown Dozer task '%d'", task ));
 			break;
 
 		}  // end default

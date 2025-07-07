@@ -358,12 +358,12 @@ Bool FileSystem::isPathInDirectory(const AsciiString& testPath, const AsciiStrin
 
 	if (basePathNormalized.isEmpty())
 	{
-		DEBUG_CRASH(("Unable to normalize base directory path '%s'.\n", basePath.str()));
+		DEBUG_CRASH(("Unable to normalize base directory path '%s'.", basePath.str()));
 		return false;
 	}
 	else if (testPathNormalized.isEmpty())
 	{
-		DEBUG_CRASH(("Unable to normalize file path '%s'.\n", testPath.str()));
+		DEBUG_CRASH(("Unable to normalize file path '%s'.", testPath.str()));
 		return false;
 	}
 

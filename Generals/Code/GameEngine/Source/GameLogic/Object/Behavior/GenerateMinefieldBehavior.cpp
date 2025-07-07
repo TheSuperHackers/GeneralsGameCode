@@ -366,7 +366,7 @@ void GenerateMinefieldBehavior::placeMines()
 	const ThingTemplate* mineTemplate = TheThingFactory->findTemplate(d->m_mineName);
 	if (!mineTemplate)
 	{
-		DEBUG_CRASH(("mine %s not found\n",d->m_mineName.str()));
+		DEBUG_CRASH(("mine %s not found",d->m_mineName.str()));
 		return;
 	}
 

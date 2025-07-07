@@ -70,7 +70,7 @@ XferSave::~XferSave( void )
 	if( m_fileFP != NULL )
 	{
 
-		DEBUG_CRASH(( "Warning: Xfer file '%s' was left open\n", m_identifier.str() ));
+		DEBUG_CRASH(( "Warning: Xfer file '%s' was left open", m_identifier.str() ));
 		close();
 
 	}  // end if
@@ -83,7 +83,7 @@ XferSave::~XferSave( void )
 	{
 
 		// tell the user there is an error
-		DEBUG_CRASH(( "Warning: XferSave::~XferSave - m_blockStack was not NULL!\n" ));
+		DEBUG_CRASH(( "Warning: XferSave::~XferSave - m_blockStack was not NULL!" ));
 
 		// delete the block stack
 		XferBlockData *next;
@@ -110,7 +110,7 @@ void XferSave::open( AsciiString identifier )
 	if( m_fileFP != NULL )
 	{
 
-		DEBUG_CRASH(( "Cannot open file '%s' cause we've already got '%s' open\n",
+		DEBUG_CRASH(( "Cannot open file '%s' cause we've already got '%s' open",
 									identifier.str(), m_identifier.str() ));
 		throw XFER_FILE_ALREADY_OPEN;
 
@@ -124,7 +124,7 @@ void XferSave::open( AsciiString identifier )
 	if( m_fileFP == NULL )
 	{
 		
-		DEBUG_CRASH(( "File '%s' not found\n", identifier.str() ));
+		DEBUG_CRASH(( "File '%s' not found", identifier.str() ));
 		throw XFER_FILE_NOT_FOUND;
 
 	}  // end if
@@ -141,7 +141,7 @@ void XferSave::close( void )
 	if( m_fileFP == NULL )
 	{
 
-		DEBUG_CRASH(( "Xfer close called, but no file was open\n" ));
+		DEBUG_CRASH(( "Xfer close called, but no file was open" ));
 		throw XFER_FILE_NOT_OPEN;
 
 	}  // end if
@@ -177,7 +177,7 @@ Int XferSave::beginBlock( void )
 	if( fwrite( &blockSize, sizeof( XferBlockSize ), 1, m_fileFP ) != 1 )
 	{
 		
-		DEBUG_CRASH(( "XferSave::beginBlock - Error writing block size in '%s'\n",
+		DEBUG_CRASH(( "XferSave::beginBlock - Error writing block size in '%s'",
 									m_identifier.str() ));
 		return XFER_WRITE_ERROR;
 
@@ -189,7 +189,7 @@ Int XferSave::beginBlock( void )
 //	if( top == NULL )
 //	{
 //
-//		DEBUG_CRASH(( "XferSave - Begin block, out of memory - can't save block stack data\n" ));
+//		DEBUG_CRASH(( "XferSave - Begin block, out of memory - can't save block stack data" ));
 //		return XFER_OUT_OF_MEMORY;
 //
 //	}  // end if
@@ -218,7 +218,7 @@ void XferSave::endBlock( void )
 	if( m_blockStack == NULL )
 	{
 
-		DEBUG_CRASH(( "Xfer end block called, but no matching begin block was found\n" ));
+		DEBUG_CRASH(( "Xfer end block called, but no matching begin block was found" ));
 		throw XFER_BEGIN_END_MISMATCH;
 
 	}  // end if
@@ -238,7 +238,7 @@ void XferSave::endBlock( void )
 	if( fwrite( &blockSize, sizeof( XferBlockSize ), 1, m_fileFP ) != 1 )
 	{
 
-		DEBUG_CRASH(( "Error writing block size to file '%s'\n", m_identifier.str() ));
+		DEBUG_CRASH(( "Error writing block size to file '%s'", m_identifier.str() ));
 		throw XFER_WRITE_ERROR;
 
 	}  // end if
@@ -276,7 +276,7 @@ void XferSave::xferSnapshot( Snapshot *snapshot )
 	if( snapshot == NULL )
 	{
 
-		DEBUG_CRASH(( "XferSave::xferSnapshot - Invalid parameters\n" ));
+		DEBUG_CRASH(( "XferSave::xferSnapshot - Invalid parameters" ));
 		throw XFER_INVALID_PARAMETERS;
 
 	}  // end if
@@ -296,7 +296,7 @@ void XferSave::xferAsciiString( AsciiString *asciiStringData )
 	if( asciiStringData->getLength() > 255 )
 	{
 
-		DEBUG_CRASH(( "XferSave cannot save this unicode string because it's too long.  Change the size of the length header (but be sure to preserve save file compatability\n" ));
+		DEBUG_CRASH(( "XferSave cannot save this unicode string because it's too long.  Change the size of the length header (but be sure to preserve save file compatability" ));
 		throw XFER_STRING_ERROR;
 
 	}  // end if
@@ -321,7 +321,7 @@ void XferSave::xferUnicodeString( UnicodeString *unicodeStringData )
 	if( unicodeStringData->getLength() > 255 )
 	{
 
-		DEBUG_CRASH(( "XferSave cannot save this unicode string because it's too long.  Change the size of the length header (but be sure to preserve save file compatability\n" ));
+		DEBUG_CRASH(( "XferSave cannot save this unicode string because it's too long.  Change the size of the length header (but be sure to preserve save file compatability" ));
 		throw XFER_STRING_ERROR;
 
 	}  // end if
@@ -350,7 +350,7 @@ void XferSave::xferImplementation( void *data, Int dataSize )
 	if( fwrite( data, dataSize, 1, m_fileFP ) != 1 )
 	{
 
-		DEBUG_CRASH(( "XferSave - Error writing to file '%s'\n", m_identifier.str() ));
+		DEBUG_CRASH(( "XferSave - Error writing to file '%s'", m_identifier.str() ));
 		throw XFER_WRITE_ERROR;
 
 	}  // end if

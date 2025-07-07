@@ -77,7 +77,7 @@ void Keyboard::createStreamMessages( void )
 		else
 		{
 
-			DEBUG_CRASH(( "Unknown key state when creating msg stream\n" ));
+			DEBUG_CRASH(( "Unknown key state when creating msg stream" ));
 			
 		}  // end else
 

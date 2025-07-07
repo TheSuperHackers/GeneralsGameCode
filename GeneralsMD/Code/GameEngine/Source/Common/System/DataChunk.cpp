@@ -461,7 +461,7 @@ UnsignedInt DataChunkTableOfContents::getID( const AsciiString& name )
 	if (m)
 		return m->id;
 
-	DEBUG_CRASH(("name not found in DataChunkTableOfContents::getName for name %s\n",name.str()));
+	DEBUG_CRASH(("name not found in DataChunkTableOfContents::getName for name %s",name.str()));
 	return 0;
 }
 
@@ -474,7 +474,7 @@ AsciiString DataChunkTableOfContents::getName( UnsignedInt id )
 		if (m->id == id)
 			return m->name;
 
-	DEBUG_CRASH(("name not found in DataChunkTableOfContents::getName for id %d\n",id));
+	DEBUG_CRASH(("name not found in DataChunkTableOfContents::getName for id %d",id));
 	return AsciiString::TheEmptyString;
 }
 

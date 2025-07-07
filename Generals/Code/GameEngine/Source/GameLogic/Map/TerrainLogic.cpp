@@ -131,7 +131,7 @@ Object *Bridge::createTower( Coord3D *worldPos,
 	if( towerTemplate == NULL || bridge == NULL )
 	{
 
-		DEBUG_CRASH(( "Bridge::createTower(): Invalid params\n" ));
+		DEBUG_CRASH(( "Bridge::createTower(): Invalid params" ));
 		return NULL;
 
 	}  // end if
@@ -166,7 +166,7 @@ Object *Bridge::createTower( Coord3D *worldPos,
 
 		// --------------------------------------------------------------------------------------------
 		default:
-			DEBUG_CRASH(( "Bridge::createTower - Unknown bridge tower type '%d'\n", towerType )); 
+			DEBUG_CRASH(( "Bridge::createTower - Unknown bridge tower type '%d'", towerType )); 
 			return NULL;
 
 	}  // end switch
@@ -1211,7 +1211,7 @@ void TerrainLogic::enableWaterGrid( Bool enable )
 		if( waterSettingIndex == -1 )
 		{
 
-			DEBUG_CRASH(( "!!!!!! Deformable water won't work because there was no group of vertex water data defined in GameData.INI for this map name '%s' !!!!!! (C. Day)\n",
+			DEBUG_CRASH(( "!!!!!! Deformable water won't work because there was no group of vertex water data defined in GameData.INI for this map name '%s' !!!!!! (C. Day)",
 										TheGlobalData->m_mapName.str() ));
 			return;
 
@@ -2268,7 +2268,7 @@ Real TerrainLogic::getWaterHeight( const WaterHandle *water )
 	if( water == &m_gridWaterHandle )
 	{
 
-		DEBUG_CRASH(( "TerrainLogic::getWaterHeight( WaterHandle *water ) - water is a grid handle, cannot make this query\n" ));
+		DEBUG_CRASH(( "TerrainLogic::getWaterHeight( WaterHandle *water ) - water is a grid handle, cannot make this query" ));
 		return 0.0f;
 
 	}  //  end if
@@ -2417,7 +2417,7 @@ void TerrainLogic::changeWaterHeightOverTime( const WaterHandle *water,
 	if( m_numWaterToUpdate >= MAX_DYNAMIC_WATER )
 	{
 
-		DEBUG_CRASH(( "Only '%d' simultaneous water table changes are supported\n", MAX_DYNAMIC_WATER ));
+		DEBUG_CRASH(( "Only '%d' simultaneous water table changes are supported", MAX_DYNAMIC_WATER ));
 		return;
 
 	}  // end if
@@ -2909,7 +2909,7 @@ void TerrainLogic::xfer( Xfer *xfer )
 				if( poly == NULL )
 				{
 				
-					DEBUG_CRASH(( "TerrainLogic::xfer - Unable to find polygon trigger for water table with trigger ID '%d'\n",
+					DEBUG_CRASH(( "TerrainLogic::xfer - Unable to find polygon trigger for water table with trigger ID '%d'",
 												triggerID ));
 					throw SC_INVALID_DATA;
 
@@ -2922,7 +2922,7 @@ void TerrainLogic::xfer( Xfer *xfer )
 				if( m_waterToUpdate[ i ].waterTable == NULL )
 				{
 
-					DEBUG_CRASH(( "TerrainLogic::xfer - Polygon trigger to use for water handle has no water handle!\n" ));
+					DEBUG_CRASH(( "TerrainLogic::xfer - Polygon trigger to use for water handle has no water handle!" ));
 					throw SC_INVALID_DATA;
 
 				}  // end if

@@ -1887,7 +1887,7 @@ void PartitionData::doSmallFill(
 	Real halfCellSize = ThePartitionManager->getCellSize() * 0.5f;
 	if (radius > halfCellSize)
 	{
-		DEBUG_CRASH(("object is too large to use a 'small' geometry, truncating size to cellsize\n"));
+		DEBUG_CRASH(("object is too large to use a 'small' geometry, truncating size to cellsize"));
 		radius = halfCellSize;
 	}
 
@@ -4626,7 +4626,7 @@ void PartitionManager::xfer( Xfer *xfer )
 	if( cellSize != m_cellSize )
 	{
 
-		DEBUG_CRASH(( "Partition cell size has changed, this save game file is invalid\n" ));
+		DEBUG_CRASH(( "Partition cell size has changed, this save game file is invalid" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -4639,7 +4639,7 @@ void PartitionManager::xfer( Xfer *xfer )
 	if( totalCellCount != m_totalCellCount )
 	{
 
-		DEBUG_CRASH(( "Partition total cell count mismatch %d, should be %d\n",
+		DEBUG_CRASH(( "Partition total cell count mismatch %d, should be %d",
 									totalCellCount, m_totalCellCount ));
 		throw SC_INVALID_DATA;
 

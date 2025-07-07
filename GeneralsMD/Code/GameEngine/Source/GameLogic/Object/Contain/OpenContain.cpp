@@ -1709,7 +1709,7 @@ void OpenContain::xfer( Xfer *xfer )
 			}
 			m_containList.clear();
 #else
-			DEBUG_CRASH(( "OpenContain::xfer - Contain list should be empty before load but is not\n" ));
+			DEBUG_CRASH(( "OpenContain::xfer - Contain list should be empty before load but is not" ));
 			throw SC_INVALID_DATA;
 #endif
 
@@ -1800,7 +1800,7 @@ void OpenContain::xfer( Xfer *xfer )
 		if( m_objectEnterExitInfo.empty() == FALSE )
 		{
 
-			DEBUG_CRASH(( "OpenContain::xfer - m_objectEnterExitInfo should be empty, but is not\n" ));
+			DEBUG_CRASH(( "OpenContain::xfer - m_objectEnterExitInfo should be empty, but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -1848,7 +1848,7 @@ void OpenContain::loadPostProcess( void )
 	if( m_containList.empty() == FALSE )
 	{
 
-		DEBUG_CRASH(( "OpenContain::loadPostProcess - Contain list should be empty before load but is not\n" ));
+		DEBUG_CRASH(( "OpenContain::loadPostProcess - Contain list should be empty before load but is not" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -1866,7 +1866,7 @@ void OpenContain::loadPostProcess( void )
 		if( obj == NULL )
 		{
 
-			DEBUG_CRASH(( "OpenContain::loadPostProcess - Unable to find object to put on contain list\n" ));
+			DEBUG_CRASH(( "OpenContain::loadPostProcess - Unable to find object to put on contain list" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if

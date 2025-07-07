@@ -211,7 +211,7 @@ void HordeUpdate::joinOrLeaveHorde(SimpleObjectIterator *iter, Bool join)
 					if( ai )
 						ai->evaluateMoraleBonus();
 					else
-						DEBUG_CRASH(( "HordeUpdate::joinOrLeaveHorde - We (%s) must have an AI to benefit from horde\n",
+						DEBUG_CRASH(( "HordeUpdate::joinOrLeaveHorde - We (%s) must have an AI to benefit from horde",
 													getObject()->getTemplate()->getName().str() ));
 				}  // end if
 

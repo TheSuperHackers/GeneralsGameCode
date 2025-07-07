@@ -778,7 +778,7 @@ void ParkingPlaceBehavior::unreserveDoorForExit( ExitDoorType exitDoor )
 			}
 		}
 
-		DEBUG_CRASH(("ParkingPlaceBehavior::unreserveDoorForExit: door %d was not found\n",exitDoor));
+		DEBUG_CRASH(("ParkingPlaceBehavior::unreserveDoorForExit: door %d was not found",exitDoor));
 	}
 }
 

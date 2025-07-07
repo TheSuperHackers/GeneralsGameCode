@@ -91,7 +91,7 @@ Player *PlayerList::getNthPlayer(Int i)
 { 
 	if( i < 0 || i >= MAX_PLAYER_COUNT )
 	{
-//		DEBUG_CRASH( ("Illegal player index\n") );
+//		DEBUG_CRASH( ("Illegal player index") );
 		return NULL;
 	}
 	return m_players[i]; 
@@ -294,7 +294,7 @@ Team *PlayerList::validateTeam( AsciiString owner )
 	}	
 	else
 	{
-		DEBUG_CRASH(("no team or player named %s could be found!\n", owner.str()));
+		DEBUG_CRASH(("no team or player named %s could be found!", owner.str()));
 		t = getNeutralPlayer()->getDefaultTeam();
 	}
 	return t;
@@ -358,7 +358,7 @@ Player *PlayerList::getPlayerFromMask( PlayerMaskType mask )
 
 	}  // end for i
 
-	DEBUG_CRASH( ("Player does not exist for mask\n") );
+	DEBUG_CRASH( ("Player does not exist for mask") );
 	return NULL; // mask not found
 
 }  // end getPlayerFromMask
@@ -380,7 +380,7 @@ Player *PlayerList::getEachPlayerFromMask( PlayerMaskType& maskToAdjust )
 		}
 	}  // end for i
 
-	DEBUG_CRASH( ("No players found that contain any matching masks.\n") );
+	DEBUG_CRASH( ("No players found that contain any matching masks.") );
 	maskToAdjust = 0;
 	return NULL; // mask not found
 }
@@ -465,7 +465,7 @@ void PlayerList::xfer( Xfer *xfer )
 	if( playerCount != m_playerCount )
 	{
 
-		DEBUG_CRASH(( "Invalid player count '%d', should be '%d'\n", playerCount, m_playerCount ));
+		DEBUG_CRASH(( "Invalid player count '%d', should be '%d'", playerCount, m_playerCount ));
 		throw SC_INVALID_DATA;
 
 	}  // end if

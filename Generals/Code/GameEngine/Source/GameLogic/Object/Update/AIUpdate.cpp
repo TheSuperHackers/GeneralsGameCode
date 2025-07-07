@@ -167,7 +167,7 @@ const LocomotorTemplateVector* AIUpdateModuleData::findLocomotorTemplateVector(L
 	{
 		if (ini->getLoadType() != INI_LOAD_CREATE_OVERRIDES)
 		{
-			DEBUG_CRASH(("re-specifying a LocomotorSet is no longer allowed\n"));
+			DEBUG_CRASH(("re-specifying a LocomotorSet is no longer allowed"));
 			throw INI_INVALID_DATA;
 		}
 	}
@@ -182,7 +182,7 @@ const LocomotorTemplateVector* AIUpdateModuleData::findLocomotorTemplateVector(L
 		const LocomotorTemplate* lt = TheLocomotorStore->findLocomotorTemplate(locoKey);
 		if (!lt)
 		{
-			DEBUG_CRASH(("Locomotor %s not found!\n",locoName));
+			DEBUG_CRASH(("Locomotor %s not found!",locoName));
 			throw INI_INVALID_DATA;
 		}
 		self->m_locomotorTemplates[set].push_back(lt);

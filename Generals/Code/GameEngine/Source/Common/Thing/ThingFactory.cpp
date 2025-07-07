@@ -84,7 +84,7 @@ void ThingFactory::addTemplate( ThingTemplate *tmplate )
 	ThingTemplateHashMapIt tIt = m_templateHashMap.find(tmplate->getName());
 
 	if (tIt != m_templateHashMap.end()) {
-		DEBUG_CRASH(("Duplicate Thing Template name found: %s\n", tmplate->getName().str()));
+		DEBUG_CRASH(("Duplicate Thing Template name found: %s", tmplate->getName().str()));
 	}
 
 	// Link it to the list
@@ -258,7 +258,7 @@ const ThingTemplate *ThingFactory::findByTemplateID( UnsignedShort id )
 		if (tmpl->getTemplateID() == id)
 			return tmpl;
 	}
-	DEBUG_CRASH(("template %d not found\n",(Int)id));
+	DEBUG_CRASH(("template %d not found",(Int)id));
 	return NULL;
 }
 
@@ -410,7 +410,7 @@ AsciiString TheThingTemplateBeingParsedName;
 		}
 		else
 		{
-			DEBUG_CRASH(("ObjectReskin must come after the original Object (%s, %s).\n",reskinFrom.str(),name.str()));
+			DEBUG_CRASH(("ObjectReskin must come after the original Object (%s, %s).",reskinFrom.str(),name.str()));
 			throw INI_INVALID_DATA;
 		}
 	}

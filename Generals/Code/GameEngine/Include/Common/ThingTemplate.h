@@ -355,7 +355,7 @@ private:
 #if defined(_MSC_VER) && _MSC_VER < 1300
 	ThingTemplate(const ThingTemplate& that) : m_geometryInfo(that.m_geometryInfo) 
 	{ 
-		DEBUG_CRASH(("This should never be called\n")); 
+		DEBUG_CRASH(("This should never be called")); 
 	}
 #else
 	ThingTemplate(const ThingTemplate& that) = delete;

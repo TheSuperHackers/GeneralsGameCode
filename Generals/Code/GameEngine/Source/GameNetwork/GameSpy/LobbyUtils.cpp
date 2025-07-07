@@ -294,7 +294,7 @@ static void gameTooltip(GameWindow *window,
 		GameSpyGameSlot *slot = room->getGameSpySlot(i);
 		if (i == 0 && (!slot || !slot->isHuman()))
 		{
-			DEBUG_CRASH(("About to tooltip a non-hosted game!\n"));
+			DEBUG_CRASH(("About to tooltip a non-hosted game!"));
 		}
 		if (slot && slot->isHuman())
 		{
