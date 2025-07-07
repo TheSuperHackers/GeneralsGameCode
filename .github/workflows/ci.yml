@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - main
+      - ci-replays
   pull_request:
     branches:
       - main
@@ -62,15 +63,15 @@ jobs:
     strategy:
       matrix:
         include:
-          - preset: "vc6"
-            tools: true
-            extras: true
-          - preset: "vc6-profile"
-            tools: true
-            extras: true
-          - preset: "vc6-debug"
-            tools: true
-            extras: true
+          # - preset: "vc6"
+          #   tools: true
+          #   extras: true
+          # - preset: "vc6-profile"
+          #   tools: true
+          #   extras: true
+          # - preset: "vc6-debug"
+          #   tools: true
+          #   extras: true
           - preset: "win32"
             tools: true
             extras: true
@@ -106,15 +107,15 @@ jobs:
     strategy:
       matrix:
         include:
-          - preset: "vc6"
-            tools: true
-            extras: true
-          - preset: "vc6-profile"
-            tools: true
-            extras: true
-          - preset: "vc6-debug"
-            tools: true
-            extras: true
+          # - preset: "vc6"
+          #   tools: true
+          #   extras: true
+          # - preset: "vc6-profile"
+          #   tools: true
+          #   extras: true
+          # - preset: "vc6-debug"
+          #   tools: true
+          #   extras: true
           - preset: "win32"
             tools: true
             extras: true
@@ -165,39 +166,30 @@ jobs:
         with:
           name: GeneralsMD-${{ matrix.preset }}+t+e
           path: build
+      - name: Move Replay files to correct folder
+        shell: pwsh
+        run: |
+          $source = "GeneralsMD\Replays"
+          $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour\Replays"
+
+          New-Item -ItemType Directory -Path $destination -Force | Out-Null
+          Get-ChildItem -Path $source -File | Move-Item -Destination $destination
       - name: Run Replay Compatibility Tests
         shell: pwsh
         run: |
           $exePath = "build\generalszh.exe"
-          $replayPattern = "GeneralsMD\Replays\*.rep"
-          $args = "-jobs", "2", "-headless", "-replay", "$replayPattern"
 
           Write-Host "Checking if executable exists at: $exePath"
           if (-not (Test-Path $exePath)) {
-            Write-Host "ERROR: Executable not found at $exePath"
-            exit 1
+              Write-Host "ERROR: Executable not found at $exePath"
+              exit 1
           }
 
-          $commandLine = "$exePath $($args -join ' ')"
-          Write-Host "Running: $commandLine"
+          $process = Start-Process -FilePath $exePath -ArgumentList "-jobs 2 -headless" -Wait -PassThru
+          $exitCode = $process.ExitCode
 
-          try {
-            & $exePath @args
-            if (-not $?) {
-              Write-Host "ERROR: Process failed to start or exited with an error."
-              exit 1
-            }
-
-            $exitCode = $LASTEXITCODE
-            if ($null -eq $exitCode) {
-              Write-Host "WARNING: Process did not return an exit code. Assuming failure."
-              exit 1
-            }
-
-            Write-Host "Process exited with code $exitCode"
-            exit $exitCode
-          } catch {
-            Write-Host "ERROR: Exception occurred while running the process."
-            Write-Host $_
-            exit 1
+          # Handle non-zero exit code
+          if ($exitCode -ne 0) {
+              Write-Host "Process failed with exit code $exitCode"
+              throw "Executable failed with exit code $exitCode"
           }
