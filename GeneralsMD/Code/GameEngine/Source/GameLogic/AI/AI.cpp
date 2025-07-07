@@ -456,7 +456,7 @@ AIGroupPtr AI::createGroup( void )
 #endif
 
 	// add it to the list
-//	DEBUG_LOG(("***AIGROUP %x is being added to m_groupList.\n", group ));
+//	DEBUG_LOG(("***AIGROUP %x is being added to m_groupList.", group ));
 #if RETAIL_COMPATIBLE_AIGROUP
 	m_groupList.push_back( group );
 #else
@@ -480,7 +480,7 @@ void AI::destroyGroup( AIGroup *group )
 	DEBUG_ASSERTCRASH(group != NULL, ("A NULL group made its way into the AIGroup list.. jkmcd"));
 
 	// remove it
-//	DEBUG_LOG(("***AIGROUP %x is being removed from m_groupList.\n", group ));
+//	DEBUG_LOG(("***AIGROUP %x is being removed from m_groupList.", group ));
 	m_groupList.erase( i );
 
 	// destroy group
@@ -732,7 +732,7 @@ Object *AI::findClosestEnemy( const Object *me, Real range, UnsignedInt qualifie
 		}
 	}	
 	if (bestEnemy) {
-		//DEBUG_LOG(("Find closest found %s, hunter %s, info %s\n", bestEnemy->getTemplate()->getName().str(), 
+		//DEBUG_LOG(("Find closest found %s, hunter %s, info %s", bestEnemy->getTemplate()->getName().str(), 
 		//	me->getTemplate()->getName().str(), info->getName().str()));
 	}
 	return bestEnemy;

@@ -2088,7 +2088,7 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 			strcpy(newName, "GLA");
 			strcat(newName, oldName+strlen("Fundamentalist"));
 			pParm->m_string.set(newName);
-			DEBUG_LOG(("Changing Script Ref from %s to %s\n", oldName, newName));
+			DEBUG_LOG(("Changing Script Ref from %s to %s", oldName, newName));
 		}
 	}
 

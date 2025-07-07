@@ -275,14 +275,14 @@ Bool FileSystem::areMusicFilesOnCD()
     return TRUE;
 #else
 	if (!TheCDManager) {
-		DEBUG_LOG(("FileSystem::areMusicFilesOnCD() - No CD Manager; returning false\n"));
+		DEBUG_LOG(("FileSystem::areMusicFilesOnCD() - No CD Manager; returning false"));
 		return FALSE;
 	}
 
 	AsciiString cdRoot;
 	Int dc = TheCDManager->driveCount();
 	for (Int i = 0; i < dc; ++i) {
-		DEBUG_LOG(("FileSystem::areMusicFilesOnCD() - checking drive %d\n", i));
+		DEBUG_LOG(("FileSystem::areMusicFilesOnCD() - checking drive %d", i));
 		CDDriveInterface *cdi = TheCDManager->getDrive(i);
 		if (!cdi) {
 			continue;
@@ -292,11 +292,11 @@ Bool FileSystem::areMusicFilesOnCD()
 		if (!cdRoot.endsWith("\\"))
 			cdRoot.concat("\\");
 		cdRoot.concat("genseczh.big");
-		DEBUG_LOG(("FileSystem::areMusicFilesOnCD() - checking for %s\n", cdRoot.str()));
+		DEBUG_LOG(("FileSystem::areMusicFilesOnCD() - checking for %s", cdRoot.str()));
 		File *musicBig = TheLocalFileSystem->openFile(cdRoot.str());
 		if (musicBig)
 		{
-			DEBUG_LOG(("FileSystem::areMusicFilesOnCD() - found it!\n"));
+			DEBUG_LOG(("FileSystem::areMusicFilesOnCD() - found it!"));
 			musicBig->close();
 			return TRUE;
 		}

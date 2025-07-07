@@ -208,10 +208,10 @@ void Connection::sendNetCommandMsg(NetCommandMsg *msg, UnsignedByte relay) {
 /*
 #if defined(RTS_DEBUG)
 			if (msg->getNetCommandType() == NETCOMMANDTYPE_GAMECOMMAND) {
-				DEBUG_LOG(("Connection::sendNetCommandMsg - added game command %d to net command list for frame %d.\n",
+				DEBUG_LOG(("Connection::sendNetCommandMsg - added game command %d to net command list for frame %d.",
 					msg->getID(), msg->getExecutionFrame()));
 			} else if (msg->getNetCommandType() == NETCOMMANDTYPE_FRAMEINFO) {
-				DEBUG_LOG(("Connection::sendNetCommandMsg - added frame info for frame %d\n", msg->getExecutionFrame()));
+				DEBUG_LOG(("Connection::sendNetCommandMsg - added frame info for frame %d", msg->getExecutionFrame()));
 			}
 #endif // RTS_DEBUG
 */
@@ -229,7 +229,7 @@ void Connection::clearCommandsExceptFrom( Int playerIndex )
 		NetCommandMsg *msg = tmp->getCommand();
 		if (msg->getPlayerID() != playerIndex)
 		{
-			DEBUG_LOG(("Connection::clearCommandsExceptFrom(%d) - clearing a command from %d for frame %d\n",
+			DEBUG_LOG(("Connection::clearCommandsExceptFrom(%d) - clearing a command from %d for frame %d",
 				playerIndex, tmp->getCommand()->getPlayerID(), tmp->getCommand()->getExecutionFrame()));
 			m_netCommandList->removeMessage(tmp);
 			NetCommandRef *toDelete = tmp;
@@ -252,7 +252,7 @@ void Connection::setQuitting( void )
 {
 	m_isQuitting = TRUE;
 	m_quitTime = timeGetTime();
-	DEBUG_LOG(("Connection::setQuitting() at time %d\n", m_quitTime));
+	DEBUG_LOG(("Connection::setQuitting() at time %d", m_quitTime));
 }
 
 /**
@@ -267,13 +267,13 @@ UnsignedInt Connection::doSend() {
 	// Do this check first, since it's an important fail-safe
 	if (m_isQuitting && curtime > m_quitTime + MaxQuitFlushTime)
 	{
-		DEBUG_LOG(("Timed out a quitting connection.  Deleting all %d messages\n", m_netCommandList->length()));
+		DEBUG_LOG(("Timed out a quitting connection.  Deleting all %d messages", m_netCommandList->length()));
 		m_netCommandList->reset();
 		return 0;
 	}
 
 	if ((curtime - m_lastTimeSent) < m_frameGrouping) {
-//		DEBUG_LOG(("not sending packet, time = %d, m_lastFrameSent = %d, m_frameGrouping = %d\n", curtime, m_lastTimeSent, m_frameGrouping));
+//		DEBUG_LOG(("not sending packet, time = %d, m_lastFrameSent = %d, m_frameGrouping = %d", curtime, m_lastTimeSent, m_frameGrouping));
 		return 0;
 	}
 	
@@ -313,7 +313,7 @@ UnsignedInt Connection::doSend() {
 		}
 
 		if (msg != NULL) {
-			DEBUG_LOG(("didn't finish sending all commands in connection\n"));
+			DEBUG_LOG(("didn't finish sending all commands in connection"));
 		}
 
 		++numpackets;
@@ -386,7 +386,7 @@ NetCommandRef * Connection::processAck(UnsignedShort commandID, UnsignedByte ori
 
 #if defined(RTS_DEBUG)
 	if (doDebug == TRUE) {
-		DEBUG_LOG(("Connection::processAck - disconnect frame command %d found, removing from command list.\n", commandID));
+		DEBUG_LOG(("Connection::processAck - disconnect frame command %d found, removing from command list.", commandID));
 	}
 #endif
 	m_netCommandList->removeMessage(temp);
@@ -405,7 +405,7 @@ void Connection::doRetryMetrics() {
 	if ((curTime - m_retryMetricsTime) > 10000) {
 		m_retryMetricsTime = curTime;
 		++numSeconds;
-//		DEBUG_LOG(("Retries in the last 10 seconds = %d, average latency = %fms\n", m_numRetries, m_averageLatency));
+//		DEBUG_LOG(("Retries in the last 10 seconds = %d, average latency = %fms", m_numRetries, m_averageLatency));
 		m_numRetries = 0;
 //		m_retryTime = m_averageLatency * 1.5;
 	}
@@ -415,7 +415,7 @@ void Connection::doRetryMetrics() {
 void Connection::debugPrintCommands() {
 	NetCommandRef *ref = m_netCommandList->getFirstMessage();
 	while (ref != NULL) {
-		DEBUG_LOG(("Connection::debugPrintCommands - ID: %d\tType: %s\tRelay: 0x%X for frame %d\n",
+		DEBUG_LOG(("Connection::debugPrintCommands - ID: %d\tType: %s\tRelay: 0x%X for frame %d",
 			ref->getCommand()->getID(), GetAsciiNetCommandType(ref->getCommand()->getNetCommandType()).str(),
 			ref->getRelay(), ref->getCommand()->getExecutionFrame()));
 		ref = ref->getNext();

@@ -148,7 +148,7 @@ static Bool ParseObjectDataChunk(DataChunkInput &file, DataChunkInfo *info, void
 	pThisOne = newInstance( MapObject )( loc, name, angle, flags, &d, 
 														TheThingFactory->findTemplate( name, FALSE ) );
 
-//DEBUG_LOG(("obj %s owner %s\n",name.str(),d.getAsciiString(TheKey_originalOwner).str()));
+//DEBUG_LOG(("obj %s owner %s",name.str(),d.getAsciiString(TheKey_originalOwner).str()));
 
 	if (pThisOne->getProperties()->getType(TheKey_waypointID) == Dict::DICT_INT)
 	{
@@ -443,7 +443,7 @@ void MapCache::writeCacheINI( Bool userDir )
 		}
 		else
 		{
-			//DEBUG_LOG(("%s does not start %s\n", mapDir.str(), it->first.str()));
+			//DEBUG_LOG(("%s does not start %s", mapDir.str(), it->first.str()));
 		}
 		++it;
 	}
@@ -585,12 +585,12 @@ Bool MapCache::loadUserMaps()
 				std::set<AsciiString>::const_iterator sit = m_allowedMaps.find(fname);
 				if (m_allowedMaps.size() != 0 && sit == m_allowedMaps.end())
 				{
-					//DEBUG_LOG(("Skipping map: '%s'\n", fname.str()));
+					//DEBUG_LOG(("Skipping map: '%s'", fname.str()));
 					skipMap = TRUE;
 				}
 				else
 				{
-					//DEBUG_LOG(("Parsing map: '%s'\n", fname.str()));
+					//DEBUG_LOG(("Parsing map: '%s'", fname.str()));
 				}
 			}
 
@@ -680,19 +680,19 @@ Bool MapCache::addMap( AsciiString dirName, AsciiString fname, FileInfo *fileInf
 					(*this)[lowerFname].m_displayName.concat(extension);
 				}
 			}
-//			DEBUG_LOG(("MapCache::addMap - found match for map %s\n", lowerFname.str()));
+//			DEBUG_LOG(("MapCache::addMap - found match for map %s", lowerFname.str()));
 			return FALSE;	// OK, it checks out.
 		}
-		DEBUG_LOG(("%s didn't match file in MapCache\n", fname.str()));
-		DEBUG_LOG(("size: %d / %d\n", filesize, md.m_filesize));
-		DEBUG_LOG(("time1: %d / %d\n", fileInfo->timestampHigh, md.m_timestamp.m_highTimeStamp));
-		DEBUG_LOG(("time2: %d / %d\n", fileInfo->timestampLow, md.m_timestamp.m_lowTimeStamp));
-//		DEBUG_LOG(("size: %d / %d\n", filesize, md.m_filesize));
-//		DEBUG_LOG(("time1: %d / %d\n", timestamp.m_highTimeStamp, md.m_timestamp.m_highTimeStamp));
-//		DEBUG_LOG(("time2: %d / %d\n", timestamp.m_lowTimeStamp, md.m_timestamp.m_lowTimeStamp));
+		DEBUG_LOG(("%s didn't match file in MapCache", fname.str()));
+		DEBUG_LOG(("size: %d / %d", filesize, md.m_filesize));
+		DEBUG_LOG(("time1: %d / %d", fileInfo->timestampHigh, md.m_timestamp.m_highTimeStamp));
+		DEBUG_LOG(("time2: %d / %d", fileInfo->timestampLow, md.m_timestamp.m_lowTimeStamp));
+//		DEBUG_LOG(("size: %d / %d", filesize, md.m_filesize));
+//		DEBUG_LOG(("time1: %d / %d", timestamp.m_highTimeStamp, md.m_timestamp.m_highTimeStamp));
+//		DEBUG_LOG(("time2: %d / %d", timestamp.m_lowTimeStamp, md.m_timestamp.m_lowTimeStamp));
 	}
 
-	DEBUG_LOG(("MapCache::addMap(): caching '%s' because '%s' was not found\n", fname.str(), lowerFname.str()));
+	DEBUG_LOG(("MapCache::addMap(): caching '%s' because '%s' was not found", fname.str(), lowerFname.str()));
 
 	loadMap(fname); // Just load for querying the data, since we aren't playing this map.
 
@@ -714,7 +714,7 @@ Bool MapCache::addMap( AsciiString dirName, AsciiString fname, FileInfo *fileInf
 	md.m_nameLookupTag = munkee;
 	if (!exists || munkee.isEmpty())
 	{
-		DEBUG_LOG(("Missing TheKey_mapName!\n"));
+		DEBUG_LOG(("Missing TheKey_mapName!"));
 		AsciiString tempdisplayname;
 		tempdisplayname = fname.reverseFind('\\') + 1;
 		md.m_displayName.translate(tempdisplayname);
@@ -741,7 +741,7 @@ Bool MapCache::addMap( AsciiString dirName, AsciiString fname, FileInfo *fileInf
 			extension.format(L" (%d)", md.m_numPlayers);
 			md.m_displayName.concat(extension);
 		}
-		DEBUG_LOG(("Map name is now '%ls'\n", md.m_displayName.str()));
+		DEBUG_LOG(("Map name is now '%ls'", md.m_displayName.str()));
 		TheGameText->reset();
 	}
 
@@ -749,16 +749,16 @@ Bool MapCache::addMap( AsciiString dirName, AsciiString fname, FileInfo *fileInf
 
 	(*this)[lowerFname] = md;
 
-	DEBUG_LOG(("  filesize = %d bytes\n", md.m_filesize));
-	DEBUG_LOG(("  displayName = %ls\n", md.m_displayName.str()));
-	DEBUG_LOG(("  CRC = %X\n", md.m_CRC));
-	DEBUG_LOG(("  timestamp = %d\n", md.m_timestamp));
-	DEBUG_LOG(("  isOfficial = %s\n", (md.m_isOfficial)?"yes":"no"));
+	DEBUG_LOG(("  filesize = %d bytes", md.m_filesize));
+	DEBUG_LOG(("  displayName = %ls", md.m_displayName.str()));
+	DEBUG_LOG(("  CRC = %X", md.m_CRC));
+	DEBUG_LOG(("  timestamp = %d", md.m_timestamp));
+	DEBUG_LOG(("  isOfficial = %s", (md.m_isOfficial)?"yes":"no"));
 
-	DEBUG_LOG(("  isMultiplayer = %s\n", (md.m_isMultiplayer)?"yes":"no"));
-	DEBUG_LOG(("  numPlayers = %d\n", md.m_numPlayers));
+	DEBUG_LOG(("  isMultiplayer = %s", (md.m_isMultiplayer)?"yes":"no"));
+	DEBUG_LOG(("  numPlayers = %d", md.m_numPlayers));
 
-	DEBUG_LOG(("  extent = (%2.2f,%2.2f) -> (%2.2f,%2.2f)\n",
+	DEBUG_LOG(("  extent = (%2.2f,%2.2f) -> (%2.2f,%2.2f)",
 		md.m_extent.lo.x, md.m_extent.lo.y,
 		md.m_extent.hi.x, md.m_extent.hi.y));
 
@@ -767,7 +767,7 @@ Bool MapCache::addMap( AsciiString dirName, AsciiString fname, FileInfo *fileInf
 	while (itw != md.m_waypoints.end())
 	{
 		pos = itw->second;
-		DEBUG_LOG(("    waypoint %s: (%2.2f,%2.2f)\n", itw->first.str(), pos.x, pos.y));
+		DEBUG_LOG(("    waypoint %s: (%2.2f,%2.2f)", itw->first.str(), pos.x, pos.y));
 		++itw;
 	}
 
@@ -850,7 +850,7 @@ typedef MapDisplayToFileNameList::iterator MapDisplayToFileNameListIter;
 
 	while (numMapsListed < TheMapCache->size()) {
 
-		DEBUG_LOG(("Adding maps with %d players\n", curNumPlayersInMap));
+		DEBUG_LOG(("Adding maps with %d players", curNumPlayersInMap));
 		it = TheMapCache->begin();
 		while (it != TheMapCache->end()) {
 			const MapMetaData *md = &(it->second);
@@ -858,7 +858,7 @@ typedef MapDisplayToFileNameList::iterator MapDisplayToFileNameListIter;
 				if (md->m_numPlayers == curNumPlayersInMap) {
 					tempCache.insert(it->second.m_displayName);
 					filenameMap[it->second.m_displayName] = it->first;
-					DEBUG_LOG(("Adding map %s to temp cache.\n", it->first.str()));
+					DEBUG_LOG(("Adding map %s to temp cache.", it->first.str()));
 					++numMapsListed;
 				}
 			}
@@ -876,7 +876,7 @@ typedef MapDisplayToFileNameList::iterator MapDisplayToFileNameListIter;
 			/*
 			if (it != TheMapCache->end())
 			{
-				DEBUG_LOG(("populateMapListbox(): looking at %s (displayName = %ls), mp = %d (== %d?) mapDir=%s (ok=%d)\n",
+				DEBUG_LOG(("populateMapListbox(): looking at %s (displayName = %ls), mp = %d (== %d?) mapDir=%s (ok=%d)",
 					it->first.str(), it->second.m_displayName.str(), it->second.m_isMultiplayer, isMultiplayer,
 					mapDir.str(), it->first.startsWith(mapDir.str())));
 			}
@@ -1141,7 +1141,7 @@ Image *getMapPreviewImage( AsciiString mapName )
 {
 	if(!TheGlobalData)
 		return NULL;
-	DEBUG_LOG(("%s Map Name \n", mapName.str()));
+	DEBUG_LOG(("%s Map Name ", mapName.str()));
 	AsciiString tgaName = mapName;
 	AsciiString name;
 	AsciiString tempName;
@@ -1294,7 +1294,7 @@ Bool parseMapPreviewChunk(DataChunkInput &file, DataChunkInfo *info, void *userD
 	surface = (TextureClass *)mapPreviewImage->getRawTextureData()->Get_Surface_Level();
 	//texture->Get_Surface_Level();
 	
-	DEBUG_LOG(("BeginMapPreviewInfo\n"));
+	DEBUG_LOG(("BeginMapPreviewInfo"));
 	UnsignedInt *buffer = new UnsignedInt[size.x * size.y];
 	Int x,y;
 	for (y=0; y<size.y; y++) {
@@ -1302,12 +1302,12 @@ Bool parseMapPreviewChunk(DataChunkInput &file, DataChunkInfo *info, void *userD
 		{
 			surface->DrawPixel( x, y, file.readInt() );
 			buffer[y + x] = file.readInt();
-			DEBUG_LOG(("x:%d, y:%d, %X\n", x, y, buffer[y + x]));
+			DEBUG_LOG(("x:%d, y:%d, %X", x, y, buffer[y + x]));
 		}
 	}
 	mapPreviewImage->setRawTextureData(buffer);
 	DEBUG_ASSERTCRASH(file.atEndOfChunk(), ("Unexpected data left over."));
-	DEBUG_LOG(("EndMapPreviewInfo\n"));
+	DEBUG_LOG(("EndMapPreviewInfo"));
 	REF_PTR_RELEASE(surface);
 	return true;
 */

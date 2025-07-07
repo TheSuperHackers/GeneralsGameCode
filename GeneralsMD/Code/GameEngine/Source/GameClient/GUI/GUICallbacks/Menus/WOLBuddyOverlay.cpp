@@ -273,14 +273,14 @@ WindowMsgHandledType BuddyControlSystem( GameWindow *window, UnsignedInt msg,
 					if (recipIt == m->end())
 						break;
 
-					DEBUG_LOG(("Trying to send a buddy message to %d.\n", selectedProfile));
+					DEBUG_LOG(("Trying to send a buddy message to %d.", selectedProfile));
 					if (TheGameSpyGame && TheGameSpyGame->isInGame() && TheGameSpyGame->isGameInProgress() &&
 						!ThePlayerList->getLocalPlayer()->isPlayerActive())
 					{
-						DEBUG_LOG(("I'm dead - gotta look for cheats.\n"));
+						DEBUG_LOG(("I'm dead - gotta look for cheats."));
 						for (Int i=0; i<MAX_SLOTS; ++i)
 						{
-							DEBUG_LOG(("Slot[%d] profile is %d\n", i, TheGameSpyGame->getGameSpySlot(i)->getProfileID()));
+							DEBUG_LOG(("Slot[%d] profile is %d", i, TheGameSpyGame->getGameSpySlot(i)->getProfileID()));
 							if (TheGameSpyGame->getGameSpySlot(i)->getProfileID() == selectedProfile)
 							{
 								// can't send to someone in our game if we're dead/observing.  security breach and all that.  no seances for you.
@@ -537,7 +537,7 @@ void HandleBuddyResponses( void )
 					message.m_senderNick = nick;
 					messages->push_back(message);
 
-					DEBUG_LOG(("Inserting buddy chat from '%s'/'%s'\n", nick.str(), resp.arg.message.nick));
+					DEBUG_LOG(("Inserting buddy chat from '%s'/'%s'", nick.str(), resp.arg.message.nick));
 
 					// put message on screen
 					insertChat(message);
@@ -1213,7 +1213,7 @@ void RequestBuddyAdd(Int profileID, AsciiString nick)
 	// insert status into box
 	messages->push_back(message);
 
-	DEBUG_LOG(("Inserting buddy add request\n"));
+	DEBUG_LOG(("Inserting buddy add request"));
 
 	// put message on screen
 	insertChat(message);
@@ -1286,7 +1286,7 @@ WindowMsgHandledType WOLBuddyOverlayRCMenuSystem( GameWindow *window, UnsignedIn
 				{
 					if(!isGameSpyUser)
 						break;
-					DEBUG_LOG(("ButtonAdd was pushed\n"));
+					DEBUG_LOG(("ButtonAdd was pushed"));
 					if (isRequest)
 					{
 						// ok the request
@@ -1335,12 +1335,12 @@ WindowMsgHandledType WOLBuddyOverlayRCMenuSystem( GameWindow *window, UnsignedIn
 					BuddyInfoMap *buddies = (isBuddy)?TheGameSpyInfo->getBuddyMap():TheGameSpyInfo->getBuddyRequestMap();
 					buddies->erase(profileID);
 					updateBuddyInfo();
-					DEBUG_LOG(("ButtonDelete was pushed\n"));
+					DEBUG_LOG(("ButtonDelete was pushed"));
 					PopulateLobbyPlayerListbox();
 				}
 				else if( controlID == buttonPlayID )
 				{
-					DEBUG_LOG(("buttonPlayID was pushed\n"));
+					DEBUG_LOG(("buttonPlayID was pushed"));
 				}
 				else if( controlID == buttonIgnoreID )
 				{
@@ -1374,7 +1374,7 @@ WindowMsgHandledType WOLBuddyOverlayRCMenuSystem( GameWindow *window, UnsignedIn
 				}
 				else if( controlID == buttonStatsID )
 				{
-					DEBUG_LOG(("buttonStatsID was pushed\n"));
+					DEBUG_LOG(("buttonStatsID was pushed"));
 					GameSpyCloseOverlay(GSOVERLAY_PLAYERINFO);
 					SetLookAtPlayer(profileID,nick );
 					GameSpyOpenOverlay(GSOVERLAY_PLAYERINFO);

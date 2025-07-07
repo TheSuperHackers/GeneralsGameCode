@@ -411,15 +411,15 @@ void GameTextManager::deinit( void )
 
 	NoString *noString = m_noStringList;
 
-	DEBUG_LOG(("\n*** Missing strings ***\n"));
+	DEBUG_LOG(("\n*** Missing strings ***"));
 	while ( noString )
 	{
-		DEBUG_LOG(("*** %ls ***\n", noString->text.str()));
+		DEBUG_LOG(("*** %ls ***", noString->text.str()));
 		NoString *next = noString->next;
 		delete noString;
 		noString = next;
 	}
-	DEBUG_LOG(("*** End missing strings ***\n\n"));
+	DEBUG_LOG(("*** End missing strings ***\n"));
 
 	m_noStringList = NULL;
 
@@ -834,7 +834,7 @@ Bool GameTextManager::getStringCount( const char *filename, Int& textCount )
 
 	File *file;
 	file = TheFileSystem->openFile(filename, File::READ | File::TEXT);
-	DEBUG_LOG(("Looking in %s for string file\n", filename));
+	DEBUG_LOG(("Looking in %s for string file", filename));
 	
 	if ( file == NULL )
 	{
@@ -875,7 +875,7 @@ Bool GameTextManager::getCSFInfo ( const Char *filename )
 	CSFHeader header;
 	Int ok = FALSE;
 	File *file = TheFileSystem->openFile(filename, File::READ | File::BINARY);
-	DEBUG_LOG(("Looking in %s for compiled string file\n", filename));
+	DEBUG_LOG(("Looking in %s for compiled string file", filename));
 
 	if ( file != NULL )
 	{
@@ -1318,7 +1318,7 @@ UnicodeString GameTextManager::fetch( const Char *label, Bool *exists )
 			noString = noString->next;
 		}
 
-		//DEBUG_LOG(("*** MISSING:'%s' ***\n", label));
+		//DEBUG_LOG(("*** MISSING:'%s' ***", label));
 		// Remember file could have been altered at this point.
 		noString = NEW NoString;
 		noString->text = missingString;

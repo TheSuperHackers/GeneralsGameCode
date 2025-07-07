@@ -262,7 +262,7 @@ Int CompressionManager::compressData( CompressionType compType, void *srcVoid, I
 		}
 		else
 		{
-			DEBUG_LOG(("ZLib compression error (level is %d, src len is %d) %d\n", level, srcLen, err));
+			DEBUG_LOG(("ZLib compression error (level is %d, src len is %d) %d", level, srcLen, err));
 			return 0;
 		}
 	}
@@ -327,7 +327,7 @@ Int CompressionManager::decompressData( void *srcVoid, Int srcLen, void *destVoi
 		}
 		else
 		{
-			DEBUG_LOG(("ZLib decompression error (src is level %d, %d bytes long) %d\n",
+			DEBUG_LOG(("ZLib decompression error (src is level %d, %d bytes long) %d",
 				compType - COMPRESSION_ZLIB1 + 1 /* 1-9 */, srcLen, err));
 			return 0;
 		}
@@ -387,7 +387,7 @@ void DoCompressTest( void )
 		File *f = TheFileSystem->openFile(it->first.str());
 		if (f)
 		{
-			DEBUG_LOG(("***************************\nTesting '%s'\n\n", it->first.str()));
+			DEBUG_LOG(("***************************\nTesting '%s'\n", it->first.str()));
 			Int origSize = f->size();
 			UnsignedByte *buf = (UnsignedByte *)f->readEntireAndClose();
 			UnsignedByte *uncompressedBuf = NEW UnsignedByte[origSize];
@@ -398,11 +398,11 @@ void DoCompressTest( void )
 
 			for (i=COMPRESSION_MIN; i<=COMPRESSION_MAX; ++i)
 			{
-				DEBUG_LOG(("=================================================\n"));
-				DEBUG_LOG(("Compression Test %d\n", i));
+				DEBUG_LOG(("================================================="));
+				DEBUG_LOG(("Compression Test %d", i));
 
 				Int maxCompressedSize = CompressionManager::getMaxCompressedSize( origSize, (CompressionType)i );
-				DEBUG_LOG(("Orig size is %d, max compressed size is %d bytes\n", origSize, maxCompressedSize));
+				DEBUG_LOG(("Orig size is %d, max compressed size is %d bytes", origSize, maxCompressedSize));
 
 				UnsignedByte *compressedBuf = NEW UnsignedByte[maxCompressedSize];
 				memset(compressedBuf, 0, maxCompressedSize);
@@ -420,9 +420,9 @@ void DoCompressTest( void )
 					s_decompressGathers[i]->stopTimer();
 				}
 				d.compressedSize[i] = compressedLen;
-				DEBUG_LOG(("Compressed len is %d (%g%% of original size)\n", compressedLen, (double)compressedLen/(double)origSize*100.0));
+				DEBUG_LOG(("Compressed len is %d (%g%% of original size)", compressedLen, (double)compressedLen/(double)origSize*100.0));
 				DEBUG_ASSERTCRASH(compressedLen, ("Failed to compress\n"));
-				DEBUG_LOG(("Decompressed len is %d (%g%% of original size)\n", decompressedLen, (double)decompressedLen/(double)origSize*100.0));
+				DEBUG_LOG(("Decompressed len is %d (%g%% of original size)", decompressedLen, (double)decompressedLen/(double)origSize*100.0));
 
 				DEBUG_ASSERTCRASH(decompressedLen == origSize, ("orig size does not match compressed+uncompressed output\n"));
 				if (decompressedLen == origSize)
@@ -438,9 +438,9 @@ void DoCompressTest( void )
 				compressedBuf = NULL;
 			}
 
-			DEBUG_LOG(("d = %d -> %d\n", d.origSize, d.compressedSize[i]));
+			DEBUG_LOG(("d = %d -> %d", d.origSize, d.compressedSize[i]));
 			s_sizes[it->first] = d;
-			DEBUG_LOG(("s_sizes[%s] = %d -> %d\n", it->first.str(), s_sizes[it->first].origSize, s_sizes[it->first].compressedSize[i]));
+			DEBUG_LOG(("s_sizes[%s] = %d -> %d", it->first.str(), s_sizes[it->first].origSize, s_sizes[it->first].compressedSize[i]));
 
 			delete[] buf;
 			buf = NULL;
@@ -469,13 +469,13 @@ void DoCompressTest( void )
 			totalUncompressedBytes += d.origSize;
 			totalCompressedBytes += d.compressedSize[i];
 		}
-		DEBUG_LOG(("***************************************************\n"));
-		DEBUG_LOG(("Compression method %s:\n", CompressionManager::getCompressionNameByType((CompressionType)i)));
-		DEBUG_LOG(("%d bytes compressed to %d (%g%%)\n", totalUncompressedBytes, totalCompressedBytes,
+		DEBUG_LOG(("***************************************************"));
+		DEBUG_LOG(("Compression method %s:", CompressionManager::getCompressionNameByType((CompressionType)i)));
+		DEBUG_LOG(("%d bytes compressed to %d (%g%%)", totalUncompressedBytes, totalCompressedBytes,
 			totalCompressedBytes/(Real)totalUncompressedBytes*100.0f));
-		DEBUG_LOG(("Min ratio: %g%%, Max ratio: %g%%\n",
+		DEBUG_LOG(("Min ratio: %g%%, Max ratio: %g%%",
 			minCompression*100.0f, maxCompression*100.0f));
-		DEBUG_LOG(("\n"));
+		DEBUG_LOG((""));
 	}
 
 	PerfGather::dumpAll(10000);

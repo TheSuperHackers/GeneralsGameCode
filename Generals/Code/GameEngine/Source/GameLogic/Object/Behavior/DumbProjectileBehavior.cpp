@@ -305,7 +305,7 @@ static Bool calcTrajectory(
 		}
 	}
 
-//DEBUG_LOG(("took %d loops to find a match\n",numLoops));
+//DEBUG_LOG(("took %d loops to find a match",numLoops));
 	if (exactTarget)
 		return true;
 
@@ -467,7 +467,7 @@ Bool DumbProjectileBehavior::projectileHandleCollision( Object *other )
 			// if it's not the specific thing we were targeting, see if we should incidentally collide...
 		if (!m_detonationWeaponTmpl->shouldProjectileCollideWith(projectileLauncher, getObject(), other, m_victimID))
 		{
-			//DEBUG_LOG(("ignoring projectile collision with %s at frame %d\n",other->getTemplate()->getName().str(),TheGameLogic->getFrame()));
+			//DEBUG_LOG(("ignoring projectile collision with %s at frame %d",other->getTemplate()->getName().str(),TheGameLogic->getFrame()));
 			return true;
 		}
 
@@ -487,7 +487,7 @@ Bool DumbProjectileBehavior::projectileHandleCollision( Object *other )
 						Object* thingToKill = *it++;
 						if (!thingToKill->isEffectivelyDead() && thingToKill->isKindOfMulti(d->m_garrisonHitKillKindof, d->m_garrisonHitKillKindofNot))
 						{
-							//DEBUG_LOG(("Killed a garrisoned unit (%08lx %s) via Flash-Bang!\n",thingToKill,thingToKill->getTemplate()->getName().str()));
+							//DEBUG_LOG(("Killed a garrisoned unit (%08lx %s) via Flash-Bang!",thingToKill,thingToKill->getTemplate()->getName().str()));
 							if (projectileLauncher)
 								projectileLauncher->scoreTheKill( thingToKill );
 							thingToKill->kill();

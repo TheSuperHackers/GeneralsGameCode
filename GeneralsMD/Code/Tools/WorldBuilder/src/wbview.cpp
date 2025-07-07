@@ -195,7 +195,7 @@ void WbView::mouseMove(TTrackingMode m, CPoint viewPt)
 	while (::PeekMessage(&msg, m_hWnd, WM_MOUSEMOVE, WM_MOUSEMOVE, PM_REMOVE)) {
 		viewPt.x = (short)LOWORD(msg.lParam);  // horizontal position of cursor 
 		viewPt.y = (short)HIWORD(msg.lParam);  // vertical position of cursor 
-		DEBUG_LOG(("Peek mouse %d, %d\n", viewPt.x,  viewPt.y));
+		DEBUG_LOG(("Peek mouse %d, %d", viewPt.x,  viewPt.y));
 	}
 
 	if (m_trackingMode == TRACK_NONE) {
@@ -1002,7 +1002,7 @@ void WbView::OnValidationFixTeams()
 				SidesInfo* pSide = TheSidesList->findSideInfo(teamOwner);
 				if (!pSide) {
 					teamExists = false;
-					DEBUG_LOG(("Side '%s' could not be found in sides list!\n", teamOwner.str()));
+					DEBUG_LOG(("Side '%s' could not be found in sides list!", teamOwner.str()));
 				}
 			} else {
 				// Couldn't find team. [8/8/2003]

@@ -205,10 +205,10 @@ VideoStreamInterface* BinkVideoPlayer::createStream( HBINK handle )
 		// never let volume go to 0, as Bink will interpret that as "play at full volume".
 		Int mod = (Int) ((TheAudio->getVolume(AudioAffect_Speech) * 0.8f) * 100) + 1;
 		Int volume = (32768*mod)/100;
-		DEBUG_LOG(("BinkVideoPlayer::createStream() - About to set volume (%g -> %d -> %d\n",
+		DEBUG_LOG(("BinkVideoPlayer::createStream() - About to set volume (%g -> %d -> %d",
 			TheAudio->getVolume(AudioAffect_Speech), mod, volume));
 		BinkSetVolume( stream->m_handle,0, volume);
-		DEBUG_LOG(("BinkVideoPlayer::createStream() - set volume\n"));
+		DEBUG_LOG(("BinkVideoPlayer::createStream() - set volume"));
 	}
 
 	return stream;
@@ -224,7 +224,7 @@ VideoStreamInterface*	BinkVideoPlayer::open( AsciiString movieTitle )
 
 	const Video* pVideo = getVideo(movieTitle);
 	if (pVideo) {
-		DEBUG_LOG(("BinkVideoPlayer::createStream() - About to open bink file\n"));
+		DEBUG_LOG(("BinkVideoPlayer::createStream() - About to open bink file"));
 		
 		if (TheGlobalData->m_modDir.isNotEmpty())
 		{
@@ -250,7 +250,7 @@ VideoStreamInterface*	BinkVideoPlayer::open( AsciiString movieTitle )
 			DEBUG_ASSERTLOG(!handle, ("opened bink file %s\n", localizedFilePath));
 		}
 
-		DEBUG_LOG(("BinkVideoPlayer::createStream() - About to create stream\n"));
+		DEBUG_LOG(("BinkVideoPlayer::createStream() - About to create stream"));
 		stream = createStream( handle );
 	}
 

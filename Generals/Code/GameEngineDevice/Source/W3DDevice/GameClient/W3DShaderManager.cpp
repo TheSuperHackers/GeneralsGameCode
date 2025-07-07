@@ -2413,7 +2413,7 @@ void W3DShaderManager::init(void)
 		}
 	}
 
-	DEBUG_LOG(("ShaderManager ChipsetID %d\n", res));
+	DEBUG_LOG(("ShaderManager ChipsetID %d", res));
 }
 
 // W3DShaderManager::shutdown =======================================================

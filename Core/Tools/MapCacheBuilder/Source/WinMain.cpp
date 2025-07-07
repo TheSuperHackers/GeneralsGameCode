@@ -245,7 +245,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	while (token != NULL) {
 		char * str = strtrim(token);
 		argvSet.push_back(str);
-		DEBUG_LOG(("Adding '%s'\n", str));
+		DEBUG_LOG(("Adding '%s'", str));
 		token = nextParam(NULL, "\" ");	   
 	}
 
@@ -294,7 +294,7 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	// add in allowed maps
 	for (std::list<std::string>::const_iterator cit = argvSet.begin(); cit != argvSet.end(); ++cit)
 	{
-		DEBUG_LOG(("Adding shipping map: '%s'\n", cit->c_str()));
+		DEBUG_LOG(("Adding shipping map: '%s'", cit->c_str()));
 		TheMapCache->addShippingMap((*cit).c_str());
 	}
 

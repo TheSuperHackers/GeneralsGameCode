@@ -64,7 +64,7 @@ void LanguageFilter::init() {
 		}
 		UnicodeString uniword(word);
 		unHaxor(uniword);
-		//DEBUG_LOG(("Just read %ls from the bad word file.  Entered as %ls\n", word, uniword.str()));
+		//DEBUG_LOG(("Just read %ls from the bad word file.  Entered as %ls", word, uniword.str()));
 		m_wordList[uniword] = true;
 	}
 
@@ -101,7 +101,7 @@ void LanguageFilter::filterLine(UnicodeString &line)
 		unHaxor(token);
 		LangMapIter iter = m_wordList.find(token);
 		if (iter != m_wordList.end()) {
-			DEBUG_LOG(("Found word %ls in bad word list. Token was %ls\n", (*iter).first.str(), token.str()));
+			DEBUG_LOG(("Found word %ls in bad word list. Token was %ls", (*iter).first.str(), token.str()));
 			for (Int i = 0; i < len; ++i) {
 				*pos = L'*';
 				++pos;

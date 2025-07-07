@@ -578,7 +578,7 @@ void InGameUI::addSuperweapon(Int playerIndex, const AsciiString& powerName, Obj
 	Bool hiddenByScience = (powerTemplate->getRequiredScience() != SCIENCE_INVALID) && (player->hasScience(powerTemplate->getRequiredScience()) == false);
 
 #ifndef DO_UNIT_TIMINGS
-  DEBUG_LOG(("Adding superweapon UI timer\n"));
+  DEBUG_LOG(("Adding superweapon UI timer"));
 #endif
 	SuperweaponInfo *info = newInstance(SuperweaponInfo)(
 					id,
@@ -602,7 +602,7 @@ void InGameUI::addSuperweapon(Int playerIndex, const AsciiString& powerName, Obj
 // ------------------------------------------------------------------------------------------------
 Bool InGameUI::removeSuperweapon(Int playerIndex, const AsciiString& powerName, ObjectID id, const SpecialPowerTemplate *powerTemplate)
 {
-	DEBUG_LOG(("Removing superweapon UI timer\n"));
+	DEBUG_LOG(("Removing superweapon UI timer"));
 	SuperweaponMap::iterator mapIt = m_superweapons[playerIndex].find(powerName);
 	if (mapIt != m_superweapons[playerIndex].end())
 	{
@@ -2489,7 +2489,7 @@ void InGameUI::createMouseoverHint( const GameMessage *msg )
 
 	if (oldID != m_mousedOverDrawableID)
 	{
-		//DEBUG_LOG(("Resetting tooltip delay\n"));
+		//DEBUG_LOG(("Resetting tooltip delay"));
 		TheMouse->resetTooltipDelay();
 	}
 
@@ -5054,7 +5054,7 @@ try_again:
 	
 	m_floatingTextList.push_front( newFTD ); // add to the list
 
-	//DEBUG_LOG(("%s\n",text.str()));
+	//DEBUG_LOG(("%s",text.str()));
 }
 #endif
 

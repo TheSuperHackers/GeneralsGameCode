@@ -191,7 +191,7 @@ public:
 		c.pData = tmp;
 		c.size = numBytes;
 		m_cachedChunks.push_back(c);
-		DEBUG_LOG(("Caching %d bytes in chunk %d\n", numBytes, m_cachedChunks.size()));
+		DEBUG_LOG(("Caching %d bytes in chunk %d", numBytes, m_cachedChunks.size()));
 		m_totalBytes += numBytes;
 		return(numBytes);
 	};
@@ -201,7 +201,7 @@ public:
 			CachedChunk c = m_cachedChunks.front();
 			m_cachedChunks.pop_front();
 			try {
-				DEBUG_LOG(("Flushing %d bytes\n", c.size));
+				DEBUG_LOG(("Flushing %d bytes", c.size));
 				m_file->Write(c.pData, c.size);
 			} catch(...) {}
 			delete[] c.pData;
@@ -225,7 +225,7 @@ public:
 		c.pData = tmp;
 		c.size = numBytes;
 		m_cachedChunks.push_back(c);
-		//DEBUG_LOG(("Caching %d bytes in chunk %d\n", numBytes, m_cachedChunks.size()));
+		//DEBUG_LOG(("Caching %d bytes in chunk %d", numBytes, m_cachedChunks.size()));
 		m_totalBytes += numBytes;
 		return(numBytes);
 	};
@@ -239,7 +239,7 @@ public:
 			CachedChunk c = m_cachedChunks.front();
 			m_cachedChunks.pop_front();
 			try {
-				//DEBUG_LOG(("Flushing %d bytes\n", c.size));
+				//DEBUG_LOG(("Flushing %d bytes", c.size));
 				memcpy(insertPos, c.pData, c.size);
 				insertPos += c.size;
 			} catch(...) {}
@@ -258,7 +258,7 @@ public:
 		Int compressedLen = CompressionManager::getMaxCompressedSize( m_totalBytes, compressionToUse );
 		UnsignedByte *destBuffer = NEW UnsignedByte[compressedLen];
 		compressedLen = CompressionManager::compressData( compressionToUse, srcBuffer, m_totalBytes, destBuffer, compressedLen );
-		DEBUG_LOG(("Compressed %d bytes to %d bytes - compression of %g%%\n", m_totalBytes, compressedLen,
+		DEBUG_LOG(("Compressed %d bytes to %d bytes - compression of %g%%", m_totalBytes, compressedLen,
 			compressedLen/(Real)m_totalBytes*100.0f));
 		DEBUG_ASSERTCRASH(compressedLen, ("Failed to compress!\n"));
 		if (compressedLen)
@@ -485,7 +485,7 @@ AsciiString ConvertFaction(AsciiString name)
 
 void CWorldBuilderDoc::validate(void)
 {
-	DEBUG_LOG(("Validating\n"));
+	DEBUG_LOG(("Validating"));
 
 	Dict swapDict;
 	Bool changed = false;
@@ -504,11 +504,11 @@ void CWorldBuilderDoc::validate(void)
 		}
 		const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
 		if (!pt) {
-			DEBUG_LOG(("Player '%s' Faction '%s' could not be found in sides list!\n", playername.str(), tmplname.str()));
+			DEBUG_LOG(("Player '%s' Faction '%s' could not be found in sides list!", playername.str(), tmplname.str()));
 			if (tmplname.startsWith("FactionFundamentalist")) {
 				swapName = ConvertFaction(tmplname);
 				if (swapName != AsciiString::TheEmptyString) {
-					DEBUG_LOG(("Changing Faction from %s to %s\n", tmplname.str(), swapName.str()));
+					DEBUG_LOG(("Changing Faction from %s to %s", tmplname.str(), swapName.str()));
 					pSide->getDict()->setAsciiString(TheKey_playerFaction, swapName);
 				}
 			}
@@ -520,7 +520,7 @@ void CWorldBuilderDoc::validate(void)
 			if (name.startsWith("Fundamentalist")) {
 				swapName = ConvertName(name);
 				if (swapName != AsciiString::TheEmptyString) {
-					DEBUG_LOG(("Changing BuildList from %s to %s\n", name.str(), swapName.str()));
+					DEBUG_LOG(("Changing BuildList from %s to %s", name.str(), swapName.str()));
 					pBuild->setTemplateName(swapName);
 				}
 			}
@@ -535,7 +535,7 @@ void CWorldBuilderDoc::validate(void)
 		if (type.startsWith("Fundamentalist")) {					\
 			swapName = ConvertName(type);										\
 			if (swapName != AsciiString::TheEmptyString) {	\
-				DEBUG_LOG(("Changing Team Ref from %s to %s\n", type.str(), swapName.str())); \
+				DEBUG_LOG(("Changing Team Ref from %s to %s", type.str(), swapName.str())); \
 				teamDict->setAsciiString(key, swapName);			\
 			}																								\
 		}																									\
@@ -619,7 +619,7 @@ void CWorldBuilderDoc::validate(void)
 					changed = true;
 					pMapObj->setName(swapName);
 					pMapObj->setThingTemplate(tt);
-					DEBUG_LOG(("Changing Map Object from %s to %s\n", name.str(), swapName.str()));
+					DEBUG_LOG(("Changing Map Object from %s to %s", name.str(), swapName.str()));
 				}
 			}
 		}
@@ -642,26 +642,26 @@ void CWorldBuilderDoc::validate(void)
 					}
 					const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
 					if (!pt) {
-						DEBUG_LOG(("Player '%s' Faction '%s' could not be found in sides list!\n", playername.str(), tmplname.str()));
+						DEBUG_LOG(("Player '%s' Faction '%s' could not be found in sides list!", playername.str(), tmplname.str()));
 						if (tmplname.startsWith("FactionFundamentalist")) {
 							swapName = ConvertFaction(tmplname);
 							if (swapName != AsciiString::TheEmptyString) {
-								DEBUG_LOG(("Changing Faction from %s to %s\n", tmplname.str(), swapName.str()));
+								DEBUG_LOG(("Changing Faction from %s to %s", tmplname.str(), swapName.str()));
 								pSide->getDict()->setAsciiString(TheKey_playerFaction, swapName);
 							}
 						}
 					}
 				} else {
 					needToFixTeams = true;
-					DEBUG_LOG(("Side '%s' could not be found in sides list!\n", teamOwner.str()));
+					DEBUG_LOG(("Side '%s' could not be found in sides list!", teamOwner.str()));
 				}
 			} else {
 				needToFixTeams = true;
-				DEBUG_LOG(("Team '%s' could not be found in sides list!\n", teamName.str()));
+				DEBUG_LOG(("Team '%s' could not be found in sides list!", teamName.str()));
 			}
 		} else {
 			needToFixTeams = true;
-			DEBUG_LOG(("Object '%s' does not have a team at all!\n", name.str()));
+			DEBUG_LOG(("Object '%s' does not have a team at all!", name.str()));
 		}
 	}
 	if (needToFixTeams) {
@@ -674,7 +674,7 @@ void CWorldBuilderDoc::OnJumpToGame()
 	try {
 		DoFileSave();
 		CString filename;
-		DEBUG_LOG(("strTitle=%s strPathName=%s\n", m_strTitle, m_strPathName));
+		DEBUG_LOG(("strTitle=%s strPathName=%s", m_strTitle, m_strPathName));
 		if (strstr(m_strPathName, TheGlobalData->getPath_UserData().str()) != NULL)
 			filename.Format("%sMaps\\%s", TheGlobalData->getPath_UserData().str(), static_cast<const char*>(m_strTitle));
 		else
@@ -843,7 +843,7 @@ Bool CWorldBuilderDoc::ParseWaypointData(DataChunkInput &file, DataChunkInfo *in
 	for (i=0; i<m_numWaypointLinks; i++) {
 		this->m_waypointLinks[i].waypoint1 = file.readInt();
 		this->m_waypointLinks[i].waypoint2 = file.readInt();
-		//DEBUG_LOG(("Waypoint link from %d to %d\n", m_waypointLinks[i].waypoint1, m_waypointLinks[i].waypoint2));
+		//DEBUG_LOG(("Waypoint link from %d to %d", m_waypointLinks[i].waypoint1, m_waypointLinks[i].waypoint2));
 	}
 	DEBUG_ASSERTCRASH(file.atEndOfChunk(), ("Unexpected data left over."));
 	return true;
@@ -1408,7 +1408,7 @@ BOOL CWorldBuilderDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	while (s.getLength() && s.getCharAt(s.getLength()-1) != '\\')
 		s.removeLastChar();
 	s.concat("map.str");
-	DEBUG_LOG(("Looking for map-specific text in [%s]\n", s.str()));
+	DEBUG_LOG(("Looking for map-specific text in [%s]", s.str()));
 	TheGameText->initMapStringFile(s);
 
 	WbApp()->setCurrentDirectory(AsciiString(buf));

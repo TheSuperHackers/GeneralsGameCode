@@ -235,28 +235,28 @@ void GameSpyCloseOverlay( GSOverlayType overlay )
 	switch(overlay)
 	{
 		case GSOVERLAY_PLAYERINFO:
-			DEBUG_LOG(("Closing overlay GSOVERLAY_PLAYERINFO\n"));
+			DEBUG_LOG(("Closing overlay GSOVERLAY_PLAYERINFO"));
 			break;
 		case GSOVERLAY_MAPSELECT:
-			DEBUG_LOG(("Closing overlay GSOVERLAY_MAPSELECT\n"));
+			DEBUG_LOG(("Closing overlay GSOVERLAY_MAPSELECT"));
 			break;
 		case GSOVERLAY_BUDDY:
-			DEBUG_LOG(("Closing overlay GSOVERLAY_BUDDY\n"));
+			DEBUG_LOG(("Closing overlay GSOVERLAY_BUDDY"));
 			break;
 		case GSOVERLAY_PAGE:
-			DEBUG_LOG(("Closing overlay GSOVERLAY_PAGE\n"));
+			DEBUG_LOG(("Closing overlay GSOVERLAY_PAGE"));
 			break;
 		case GSOVERLAY_GAMEOPTIONS:
-			DEBUG_LOG(("Closing overlay GSOVERLAY_GAMEOPTIONS\n"));
+			DEBUG_LOG(("Closing overlay GSOVERLAY_GAMEOPTIONS"));
 			break;
 		case GSOVERLAY_GAMEPASSWORD:
-			DEBUG_LOG(("Closing overlay GSOVERLAY_GAMEPASSWORD\n"));
+			DEBUG_LOG(("Closing overlay GSOVERLAY_GAMEPASSWORD"));
 			break;
 		case GSOVERLAY_LADDERSELECT:
-			DEBUG_LOG(("Closing overlay GSOVERLAY_LADDERSELECT\n"));
+			DEBUG_LOG(("Closing overlay GSOVERLAY_LADDERSELECT"));
 			break;
 		case GSOVERLAY_OPTIONS:
-			DEBUG_LOG(("Closing overlay GSOVERLAY_OPTIONS\n"));
+			DEBUG_LOG(("Closing overlay GSOVERLAY_OPTIONS"));
 			if( overlayLayouts[overlay] )
 			{
 				SignalUIInteraction(SHELL_SCRIPT_HOOK_OPTIONS_CLOSED);

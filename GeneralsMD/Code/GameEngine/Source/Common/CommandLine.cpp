@@ -1065,11 +1065,11 @@ Int parseMod(char *args[], Int num)
 		{
 			modPath.format("%s%s", TheGlobalData->getPath_UserData().str(), args[1]);
 		}
-		DEBUG_LOG(("Looking for mod '%s'\n", modPath.str()));
+		DEBUG_LOG(("Looking for mod '%s'", modPath.str()));
 
 		if (!TheLocalFileSystem->doesFileExist(modPath.str()))
 		{
-			DEBUG_LOG(("Mod does not exist.\n"));
+			DEBUG_LOG(("Mod does not exist."));
 			return 2; // no such file/dir.
 		}
 
@@ -1077,7 +1077,7 @@ Int parseMod(char *args[], Int num)
 		struct _stat statBuf;
 		if (_stat(modPath.str(), &statBuf) != 0)
 		{
-			DEBUG_LOG(("Could not _stat() mod.\n"));
+			DEBUG_LOG(("Could not _stat() mod."));
 			return 2; // could not stat the file/dir.
 		}
 
@@ -1085,12 +1085,12 @@ Int parseMod(char *args[], Int num)
 		{
 			if (!modPath.endsWith("\\") && !modPath.endsWith("/"))
 				modPath.concat('\\');
-			DEBUG_LOG(("Mod dir is '%s'.\n", modPath.str()));
+			DEBUG_LOG(("Mod dir is '%s'.", modPath.str()));
 			TheWritableGlobalData->m_modDir = modPath;
 		}
 		else
 		{
-			DEBUG_LOG(("Mod file is '%s'.\n", modPath.str()));
+			DEBUG_LOG(("Mod file is '%s'.", modPath.str()));
 			TheWritableGlobalData->m_modBIG = modPath;
 		}
 
@@ -1400,7 +1400,7 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 	{
 		DEBUG_LOG((" %s", argv[arg]));
 	}
-	DEBUG_LOG(("\n"));
+	DEBUG_LOG((""));
 	DebugSetFlags(debugFlags); // turn timestamps back on iff they were on before
 	arg = 1;
 #endif // DEBUG_LOGGING

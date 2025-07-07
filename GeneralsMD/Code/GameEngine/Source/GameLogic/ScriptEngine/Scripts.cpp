@@ -1699,7 +1699,7 @@ Bool Condition::ParseConditionDataChunk(DataChunkInput &file, DataChunkInfo *inf
 				ct = TheScriptEngine->getConditionTemplate(i);
 				if (key == ct->m_internalNameKey) {
 					match = true;
-					DEBUG_LOG(("Rematching script condition %s\n", KEYNAME(key).str()));
+					DEBUG_LOG(("Rematching script condition %s", KEYNAME(key).str()));
 					pCondition->m_conditionType = (enum ConditionType)i;
 					break;
 				}
@@ -2163,7 +2163,7 @@ Parameter *Parameter::ReadParameter(DataChunkInput &file)
 			strcpy(newName, "GLA");
 			strcat(newName, oldName+strlen("Fundamentalist"));
 			pParm->m_string.set(newName);
-			DEBUG_LOG(("Changing Script Ref from %s to %s\n", oldName, newName));
+			DEBUG_LOG(("Changing Script Ref from %s to %s", oldName, newName));
 		}
 	}
 
@@ -2461,7 +2461,7 @@ ScriptAction *ScriptAction::ParseAction(DataChunkInput &file, DataChunkInfo *inf
 				at = TheScriptEngine->getActionTemplate(i);
 				if (key == at->m_internalNameKey) {
 					match = true;
-					DEBUG_LOG(("Rematching script action %s\n", KEYNAME(key).str()));
+					DEBUG_LOG(("Rematching script action %s", KEYNAME(key).str()));
 					pScriptAction->m_actionType = (enum ScriptActionType)i;
 					break;
 				}

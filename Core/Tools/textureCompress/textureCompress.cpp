@@ -190,7 +190,7 @@ void FileInfo::set( const WIN32_FIND_DATA& info )
 	stat( filename.c_str(), &origStat);
 	modTime = origStat.st_mtime; // use stat(), since the LONGLONG code is unpredictable
 
-	//DEBUG_LOG(("FileInfo::set(): fname=%s, size=%d, modTime=%d\n", filename.c_str(), filesize, modTime));
+	//DEBUG_LOG(("FileInfo::set(): fname=%s, size=%d, modTime=%d", filename.c_str(), filesize, modTime));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -280,7 +280,7 @@ void eraseCachedFiles(const std::string& sourceDirName, const std::string& targe
 		src.append("\\");
 		src.append(*sit);
 
-		DEBUG_LOG(("Erasing cached file: %s\n", src.c_str()));
+		DEBUG_LOG(("Erasing cached file: %s", src.c_str()));
 		DeleteFile(src.c_str());
 	}
 }
@@ -300,10 +300,10 @@ void copyCachedFiles(const std::string& sourceDirName, const std::string& target
 		dest.append("\\");
 		dest.append(*sit);
 
-		DEBUG_LOG(("Copying cached file: %s\n", src.c_str()));
+		DEBUG_LOG(("Copying cached file: %s", src.c_str()));
 		if (_chmod(dest.c_str(), _S_IWRITE | _S_IREAD) == -1)
 		{
-			DEBUG_LOG(("Cannot chmod '%s'\n", dest.c_str()));
+			DEBUG_LOG(("Cannot chmod '%s'", dest.c_str()));
 		}
 		CopyFile(src.c_str(), dest.c_str(), FALSE);
 	}
@@ -320,7 +320,7 @@ void compressOrigFiles(const std::string& sourceDirName, const std::string& targ
 	HANDLE h = CreateFile(tmpFname, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_TEMPORARY, NULL);
 	if (!h)
 	{
-		DEBUG_LOG(("Could not create temp file '%s'!  Unable to compress textures!\n", tmpFname));
+		DEBUG_LOG(("Could not create temp file '%s'!  Unable to compress textures!", tmpFname));
 	}
 
 	StringSet::const_iterator sit;
@@ -344,9 +344,9 @@ void compressOrigFiles(const std::string& sourceDirName, const std::string& targ
 	commandLine.append(" > ");
 	commandLine.append(dxtOutFname);
 
-	DEBUG_LOG(("Compressing textures with command line of '%s'\n", commandLine.c_str()));
+	DEBUG_LOG(("Compressing textures with command line of '%s'", commandLine.c_str()));
 	int ret = system(commandLine.c_str());
-	DEBUG_LOG(("system(%s) returned %d\n", commandLine.c_str(), ret));
+	DEBUG_LOG(("system(%s) returned %d", commandLine.c_str(), ret));
 	DeleteFile(tmpFname);
 
 	// now copy compressed file to target dir
@@ -375,16 +375,16 @@ void compressOrigFiles(const std::string& sourceDirName, const std::string& targ
 		dest.append(*sit);
 		dest.replace(dest.size()-4, 4, ".dds");
 
-		DEBUG_LOG(("Copying new file from %s to %s\n", src.c_str(), dest.c_str()));
+		DEBUG_LOG(("Copying new file from %s to %s", src.c_str(), dest.c_str()));
 
 		if (_chmod(dest.c_str(), _S_IWRITE | _S_IREAD) == -1)
 		{
-			DEBUG_LOG(("Cannot chmod '%s'\n", dest.c_str()));
+			DEBUG_LOG(("Cannot chmod '%s'", dest.c_str()));
 		}
 		BOOL ret = CopyFile(src.c_str(), dest.c_str(), FALSE);
 		if (!ret)
 		{
-			DEBUG_LOG(("Could not copy file!\n"));
+			DEBUG_LOG(("Could not copy file!"));
 		}
 
 		_utime(dest.c_str(), &utb);
@@ -408,23 +408,23 @@ void copyOrigFiles(const std::string& sourceDirName, const std::string& targetDi
 
 		if (_chmod(dest.c_str(), _S_IWRITE | _S_IREAD) == -1)
 		{
-			DEBUG_LOG(("Cannot chmod '%s'\n", dest.c_str()));
+			DEBUG_LOG(("Cannot chmod '%s'", dest.c_str()));
 		}
 		BOOL res = CopyFile(src.c_str(), dest.c_str(), FALSE);
-		DEBUG_LOG(("Copying file: %s returns %d\n", src.c_str(), res));
+		DEBUG_LOG(("Copying file: %s returns %d", src.c_str(), res));
 	}
 }
 
 //-------------------------------------------------------------------------------------------------
 static void scanDir( const std::string& sourceDirName, const std::string& targetDirName, const std::string& cacheDirName, const std::string& dxtOutFname )
 {
-	DEBUG_LOG(("Scanning '%s'\n", sourceDirName.c_str()));
+	DEBUG_LOG(("Scanning '%s'", sourceDirName.c_str()));
 	Directory sourceDir(sourceDirName);
 
-	DEBUG_LOG(("Scanning '%s'\n", targetDirName.c_str()));
+	DEBUG_LOG(("Scanning '%s'", targetDirName.c_str()));
 	Directory targetDir(targetDirName);
 
-	DEBUG_LOG(("Scanning '%s'\n", cacheDirName.c_str()));
+	DEBUG_LOG(("Scanning '%s'", cacheDirName.c_str()));
 	Directory cacheDir(cacheDirName);
 
 	FileInfoSet *sourceFiles = sourceDir.getFiles();
@@ -436,7 +436,7 @@ static void scanDir( const std::string& sourceDirName, const std::string& target
 	StringSet origFilesToCompress;
 	StringSet origFilesToCopy;
 
-	DEBUG_LOG(("Emptying targetDir\n"));
+	DEBUG_LOG(("Emptying targetDir"));
 	for (FileInfoSet::iterator targetIt = targetFiles->begin(); targetIt != targetFiles->end(); ++targetIt)
 	{
 		FileInfo f = *targetIt;
@@ -452,7 +452,7 @@ static void scanDir( const std::string& sourceDirName, const std::string& target
 			{
 				fname.insert(0, "\\");
 				fname.insert(0, targetDirName);
-				DEBUG_LOG(("Deleting now-removed file '%s'\n", fname.c_str()));
+				DEBUG_LOG(("Deleting now-removed file '%s'", fname.c_str()));
 				DeleteFile(fname.c_str());
 			}
 		}

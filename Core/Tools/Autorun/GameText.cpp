@@ -357,15 +357,15 @@ void GameTextManager::deinit( void )
 
 	NoString *noString = m_noStringList;
 
-	DEBUG_LOG(("\n*** Missing strings ***\n"));
+	DEBUG_LOG(("\n*** Missing strings ***"));
 	while ( noString )
 	{
-		DEBUG_LOG(("*** %ls ***\n", noString->text.str()));
+		DEBUG_LOG(("*** %ls ***", noString->text.str()));
 		NoString *next = noString->next;
 		delete noString;
 		noString = next;
 	}
-	DEBUG_LOG(("*** End missing strings ***\n\n"));
+	DEBUG_LOG(("*** End missing strings ***\n"));
 
 	m_noStringList = NULL;
 
@@ -1085,7 +1085,7 @@ const wchar_t * GameTextManager::fetch( const Char *label )
 			noString = noString->next;
 		}
 
-		//DEBUG_LOG(("*** MISSING:'%s' ***\n", label));
+		//DEBUG_LOG(("*** MISSING:'%s' ***", label));
 		// Remember file could have been altered at this point.
 		noString = new NoString;
 		noString->text = missingString;

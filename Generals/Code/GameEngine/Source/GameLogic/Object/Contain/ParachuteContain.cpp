@@ -172,7 +172,7 @@ void ParachuteContain::updateBonePositions()
 				m_paraAttachBone.zero();
 			}
 		}
-		//DEBUG_LOG(("updating para bone positions %d...\n",TheGameLogic->getFrame()));
+		//DEBUG_LOG(("updating para bone positions %d...",TheGameLogic->getFrame()));
 	}
 
 	if (m_needToUpdateRiderBones)
@@ -186,13 +186,13 @@ void ParachuteContain::updateBonePositions()
 		{
 			if (riderDraw->getPristineBonePositions( "PARA_MAN", 0, &m_riderAttachBone, NULL, 1) != 1)
 			{
-				//DEBUG_LOG(("*** No parachute-attach bone... using object height!\n"));
+				//DEBUG_LOG(("*** No parachute-attach bone... using object height!"));
 				m_riderAttachBone.zero();
 				m_riderAttachBone.z += riderDraw->getDrawableGeometryInfo().getMaxHeightAbovePosition();
 			}
 		}
 
-		//DEBUG_LOG(("updating rider bone positions %d...\n",TheGameLogic->getFrame()));
+		//DEBUG_LOG(("updating rider bone positions %d...",TheGameLogic->getFrame()));
 	}
 }
 

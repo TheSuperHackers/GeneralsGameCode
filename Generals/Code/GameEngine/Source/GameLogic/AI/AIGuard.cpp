@@ -357,7 +357,7 @@ StateReturnType AIGuardInnerState::onEnter( void )
 	Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
 	if (nemesis == NULL) 
 	{
-		DEBUG_LOG(("Unexpected NULL nemesis in AIGuardInnerState.\n"));
+		DEBUG_LOG(("Unexpected NULL nemesis in AIGuardInnerState."));
 		return STATE_SUCCESS;
 	}
 	m_exitConditions.m_center = pos;
@@ -451,7 +451,7 @@ StateReturnType AIGuardOuterState::onEnter( void )
 	Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
 	if (nemesis == NULL) 
 	{
-		DEBUG_LOG(("Unexpected NULL nemesis in AIGuardInnerState.\n"));
+		DEBUG_LOG(("Unexpected NULL nemesis in AIGuardInnerState."));
 		return STATE_SUCCESS;
 	}
 	Object *obj = getMachineOwner();
@@ -643,7 +643,7 @@ StateReturnType AIGuardIdleState::onEnter( void )
 //--------------------------------------------------------------------------------------
 StateReturnType AIGuardIdleState::update( void )
 {
-	//DEBUG_LOG(("AIGuardIdleState frame %d: %08lx\n",TheGameLogic->getFrame(),getMachineOwner()));
+	//DEBUG_LOG(("AIGuardIdleState frame %d: %08lx",TheGameLogic->getFrame(),getMachineOwner()));
 
 	UnsignedInt now = TheGameLogic->getFrame();
 	if (now < m_nextEnemyScanTime)
@@ -753,7 +753,7 @@ StateReturnType AIGuardAttackAggressorState::onEnter( void )
 	Object *nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID());
 	if (nemesis == NULL) 
 	{
-		DEBUG_LOG(("Unexpected NULL nemesis in AIGuardAttackAggressorState.\n"));
+		DEBUG_LOG(("Unexpected NULL nemesis in AIGuardAttackAggressorState."));
 		return STATE_SUCCESS;
 	}
 

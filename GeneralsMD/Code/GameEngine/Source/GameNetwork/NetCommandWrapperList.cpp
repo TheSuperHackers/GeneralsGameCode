@@ -98,7 +98,7 @@ void NetCommandWrapperListNode::copyChunkData(NetWrapperCommandMsg *msg) {
 	if (msg->getChunkNumber() >= m_numChunks)
 		return;
 
-	DEBUG_LOG(("NetCommandWrapperListNode::copyChunkData() - copying chunk %d\n",
+	DEBUG_LOG(("NetCommandWrapperListNode::copyChunkData() - copying chunk %d",
 		msg->getChunkNumber()));
 
 	if (m_chunksPresent[msg->getChunkNumber()] == TRUE) {

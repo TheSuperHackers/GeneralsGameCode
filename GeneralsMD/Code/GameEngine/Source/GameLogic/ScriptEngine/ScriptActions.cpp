@@ -426,7 +426,7 @@ void ScriptActions::doMoveToWaypoint(const AsciiString& team, const AsciiString&
 		Waypoint *way = TheTerrainLogic->getWaypointByName(waypoint);
 		if (way) {
 			Coord3D destination = *way->getLocation();
-			//DEBUG_LOG(("Moving team to waypoint %f, %f, %f\n", destination.x, destination.y, destination.z));
+			//DEBUG_LOG(("Moving team to waypoint %f, %f, %f", destination.x, destination.y, destination.z));
  			theGroup->groupMoveToPosition( &destination, false, CMD_FROM_SCRIPT );
 		}
 	}
@@ -515,7 +515,7 @@ void ScriptActions::doCreateReinforcements(const AsciiString& team, const AsciiS
 
 	destination = *way->getLocation();
 	if (!theTeamProto) {
-		DEBUG_LOG(("***WARNING - Team %s not found.\n", team.str()));
+		DEBUG_LOG(("***WARNING - Team %s not found.", team.str()));
 		return;
 	}
 	const TeamTemplateInfo *pInfo = theTeamProto->getTemplateInfo();
@@ -1002,7 +1002,7 @@ void ScriptActions::doCreateObject(const AsciiString& objectName, const AsciiStr
 	if (!theTeam) {
 		TheScriptEngine->AppendDebugMessage("***WARNING - Team not found:***", false);
 		TheScriptEngine->AppendDebugMessage(teamName, true);
-		DEBUG_LOG(("WARNING - Team %s not found.\n", teamName.str()));
+		DEBUG_LOG(("WARNING - Team %s not found.", teamName.str()));
 		return;
 	}
 	const ThingTemplate *thingTemplate;
@@ -1034,7 +1034,7 @@ void ScriptActions::doCreateObject(const AsciiString& objectName, const AsciiStr
 
 		}  // end if
 	} else {
-		DEBUG_LOG(("WARNING - ThingTemplate '%s' not found.\n", thingName.str()));
+		DEBUG_LOG(("WARNING - ThingTemplate '%s' not found.", thingName.str()));
 	}
 }
 
@@ -1193,7 +1193,7 @@ void ScriptActions::createUnitOnTeamAt(const AsciiString& unitName, const AsciiS
 	if (!theTeam) {
 		TheScriptEngine->AppendDebugMessage("***WARNING - Team not found:***", false);
 		TheScriptEngine->AppendDebugMessage(teamName, true);
-		DEBUG_LOG(("WARNING - Team %s not found.\n", teamName.str()));
+		DEBUG_LOG(("WARNING - Team %s not found.", teamName.str()));
 		return;
 	}
 	const ThingTemplate *thingTemplate;
@@ -1221,7 +1221,7 @@ void ScriptActions::createUnitOnTeamAt(const AsciiString& unitName, const AsciiS
 			}
 		}  // end if
 	} else {
-		DEBUG_LOG(("WARNING - ThingTemplate '%s' not found.\n", objType.str()));
+		DEBUG_LOG(("WARNING - ThingTemplate '%s' not found.", objType.str()));
 	}
 }
 
@@ -3057,7 +3057,7 @@ static PlayerMaskType getHumanPlayerMask( void )
 			mask &= player->getPlayerMask();
 	}
 
-	//DEBUG_LOG(("getHumanPlayerMask(): mask was %4.4X\n", mask));
+	//DEBUG_LOG(("getHumanPlayerMask(): mask was %4.4X", mask));
 	return mask;
 }
 
@@ -3116,22 +3116,22 @@ void ScriptActions::doShroudMapAtWaypoint(const AsciiString& waypointName, Real 
 //-------------------------------------------------------------------------------------------------
 void ScriptActions::doRevealMapEntire(const AsciiString& playerName)
 {
-	DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player named '%s'\n", playerName.str()));
+	DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player named '%s'", playerName.str()));
 	Player* player = TheScriptEngine->getPlayerFromAsciiString(playerName);
 	if (player && playerName.isNotEmpty())
 	{
-		DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player named '%ls' in position %d\n", player->getPlayerDisplayName().str(), player->getPlayerIndex()));
+		DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player named '%ls' in position %d", player->getPlayerDisplayName().str(), player->getPlayerIndex()));
 		ThePartitionManager->revealMapForPlayer( player->getPlayerIndex() );
 	}
 	else
 	{
-		DEBUG_LOG(("ScriptActions::doRevealMapEntire() - no player, so doing all human players\n"));
+		DEBUG_LOG(("ScriptActions::doRevealMapEntire() - no player, so doing all human players"));
 		for (Int i=0; i<ThePlayerList->getPlayerCount(); ++i)
 		{
 			Player *player = ThePlayerList->getNthPlayer(i);
 			if (player->getPlayerType() == PLAYER_HUMAN)
 			{
-				DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player %d\n", i));
+				DEBUG_LOG(("ScriptActions::doRevealMapEntire() for player %d", i));
 				ThePartitionManager->revealMapForPlayer( i );
 			}
 		}
@@ -3155,7 +3155,7 @@ void ScriptActions::doRevealMapEntirePermanently( Bool reveal, const AsciiString
 			Player *player = ThePlayerList->getNthPlayer(i);
 			if (player->getPlayerType() == PLAYER_HUMAN)
 			{
-				DEBUG_LOG(("ScriptActions::doRevealMapEntirePermanently() for player %d\n", i));
+				DEBUG_LOG(("ScriptActions::doRevealMapEntirePermanently() for player %d", i));
 				if( reveal )
 					ThePartitionManager->revealMapForPlayerPermanently( i );
 				else
@@ -3182,7 +3182,7 @@ void ScriptActions::doShroudMapEntire(const AsciiString& playerName)
 			Player *player = ThePlayerList->getNthPlayer(i);
 			if (player->getPlayerType() == PLAYER_HUMAN)
 			{
-				DEBUG_LOG(("ScriptActions::doShroudMapEntire() for player %d\n", i));
+				DEBUG_LOG(("ScriptActions::doShroudMapEntire() for player %d", i));
 				ThePartitionManager->shroudMapForPlayer( i );
 			}
 		}
@@ -3307,7 +3307,7 @@ void ScriptActions::doIdleAllPlayerUnits(const AsciiString& playerName)
 			Player *player = ThePlayerList->getNthPlayer(i);
 			if (player->getPlayerType() == PLAYER_HUMAN)
 			{
-				DEBUG_LOG(("ScriptActions::doIdleAllPlayerUnits() for player %d\n", i));
+				DEBUG_LOG(("ScriptActions::doIdleAllPlayerUnits() for player %d", i));
 				player->setUnitsShouldIdleOrResume(true);
 			}
 		}
@@ -3331,7 +3331,7 @@ void ScriptActions::doResumeSupplyTruckingForIdleUnits(const AsciiString& player
 			Player *player = ThePlayerList->getNthPlayer(i);
 			if (player->getPlayerType() == PLAYER_HUMAN)
 			{
-				DEBUG_LOG(("ScriptActions::doResumeSupplyTruckingForIdleUnits() for player %d\n", i));
+				DEBUG_LOG(("ScriptActions::doResumeSupplyTruckingForIdleUnits() for player %d", i));
 				player->setUnitsShouldIdleOrResume(false);
 			}
 		}

@@ -82,7 +82,7 @@ CRCVerification::~CRCVerification()
 		{
 			TheInGameUI->message(UnicodeString(L"GameLogic changed outside of GameLogic::update() - call Matt (x36804)!"));
 		}
-		CRCDEBUG_LOG(("GameLogic changed outside of GameLogic::update()!!!\n"));
+		CRCDEBUG_LOG(("GameLogic changed outside of GameLogic::update()!!!"));
 	}
 /**/
 #endif
@@ -102,7 +102,7 @@ void outputCRCDebugLines( void )
 	for (Int i=start; i<end; ++i)
 	{
 		const char *line = DebugStrings[ (i + MaxStrings) % MaxStrings ];
-		DEBUG_LOG(("%s\n", line));
+		DEBUG_LOG(("%s", line));
 		if (fp) fprintf(fp, "%s\n", line);
 	}
 
@@ -158,7 +158,7 @@ static void outputCRCDebugLinesPerFrame()
 	for (Int i=start; i<end; ++i)
 	{
 		const char *line = DebugStrings[ (i + MaxStrings) % MaxStrings ];
-		//DEBUG_LOG(("%s\n", line));
+		//DEBUG_LOG(("%s", line));
 		fprintf(fp, "%s\n", line);
 	}
 
@@ -216,7 +216,7 @@ static void addCRCDebugLineInternal(bool count, const char *fmt, va_list args)
 		++tmp;
 	}
 
-	//DEBUG_LOG(("%s\n", DebugStrings[nextDebugString]));
+	//DEBUG_LOG(("%s", DebugStrings[nextDebugString]));
 
 	++nextDebugString;
 	++numDebugStrings;

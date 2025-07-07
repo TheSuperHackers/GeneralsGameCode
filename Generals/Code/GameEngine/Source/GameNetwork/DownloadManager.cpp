@@ -164,27 +164,27 @@ HRESULT DownloadManager::OnError( Int error )
 			break;
 	}
 	m_errorString = TheGameText->fetch(s);
-	DEBUG_LOG(("DownloadManager::OnError(): %s(%d)\n", s.str(), error));
+	DEBUG_LOG(("DownloadManager::OnError(): %s(%d)", s.str(), error));
 	return S_OK;
 }
 
 HRESULT DownloadManager::OnEnd()
 {
 	m_sawEnd = true;
-	DEBUG_LOG(("DownloadManager::OnEnd()\n"));
+	DEBUG_LOG(("DownloadManager::OnEnd()"));
 	return S_OK;
 }
 
 HRESULT DownloadManager::OnQueryResume()
 {
-	DEBUG_LOG(("DownloadManager::OnQueryResume()\n"));
+	DEBUG_LOG(("DownloadManager::OnQueryResume()"));
 	//return DOWNLOADEVENT_DONOTRESUME;
 	return DOWNLOADEVENT_RESUME;
 }
 
 HRESULT DownloadManager::OnProgressUpdate( Int bytesread, Int totalsize, Int timetaken, Int timeleft )
 {
-	DEBUG_LOG(("DownloadManager::OnProgressUpdate(): %d/%d %d/%d\n", bytesread, totalsize, timetaken, timeleft));
+	DEBUG_LOG(("DownloadManager::OnProgressUpdate(): %d/%d %d/%d", bytesread, totalsize, timetaken, timeleft));
 	return S_OK;
 }
 
@@ -219,6 +219,6 @@ HRESULT DownloadManager::OnStatusUpdate( Int status )
 			break;
 	}
 	m_statusString = TheGameText->fetch(s);
-	DEBUG_LOG(("DownloadManager::OnStatusUpdate(): %s(%d)\n", s.str(), status));
+	DEBUG_LOG(("DownloadManager::OnStatusUpdate(): %s(%d)", s.str(), status));
 	return S_OK;
 }

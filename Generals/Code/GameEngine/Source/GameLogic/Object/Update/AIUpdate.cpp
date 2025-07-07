@@ -394,7 +394,7 @@ void AIUpdateInterface::doPathfind( PathfindServicesInterface *pathfinder )
 	if (!m_waitingForPath) {
 		return;
 	}
-	//CRCDEBUG_LOG(("AIUpdateInterface::doPathfind() for object %d\n", getObject()->getID()));
+	//CRCDEBUG_LOG(("AIUpdateInterface::doPathfind() for object %d", getObject()->getID()));
 	m_waitingForPath = FALSE;	 
 	if (m_isSafePath) {
 		destroyPath();
@@ -438,11 +438,11 @@ void AIUpdateInterface::doPathfind( PathfindServicesInterface *pathfinder )
 				TheAI->pathfinder()->updateGoal(getObject(), getPath()->getLastNode()->getPosition(),
 					getPath()->getLastNode()->getLayer());
 			}
-			//CRCDEBUG_LOG(("AIUpdateInterface::doPathfind() - m_isAttackPath = TRUE after computeAttackPath\n"));
+			//CRCDEBUG_LOG(("AIUpdateInterface::doPathfind() - m_isAttackPath = TRUE after computeAttackPath"));
 			m_isAttackPath = TRUE; 
 			return;
 		}
-		//CRCDEBUG_LOG(("AIUpdateInterface::doPathfind() - m_isAttackPath = FALSE after computeAttackPath()\n"));
+		//CRCDEBUG_LOG(("AIUpdateInterface::doPathfind() - m_isAttackPath = FALSE after computeAttackPath()"));
 		m_isAttackPath = FALSE;
 		if (victim) {
 			m_requestedDestination = *victim->getPosition();
@@ -479,10 +479,10 @@ void AIUpdateInterface::requestPath( Coord3D *destination, Bool isFinalGoal )
 		DEBUG_CRASH(("Attempting to path immobile unit."));
 	}
 
-	//DEBUG_LOG(("Request Frame %d, obj %s %x\n", TheGameLogic->getFrame(), getObject()->getTemplate()->getName().str(), getObject()));
+	//DEBUG_LOG(("Request Frame %d, obj %s %x", TheGameLogic->getFrame(), getObject()->getTemplate()->getName().str(), getObject()));
 	m_requestedDestination = *destination;
 	m_isFinalGoal = isFinalGoal;
-	CRCDEBUG_LOG(("AIUpdateInterface::requestPath() - m_isAttackPath = FALSE for object %d\n", getObject()->getID()));
+	CRCDEBUG_LOG(("AIUpdateInterface::requestPath() - m_isAttackPath = FALSE for object %d", getObject()->getID()));
 	m_isAttackPath = FALSE;	
 	m_requestedVictimID = INVALID_ID;	
 	m_isApproachPath = FALSE;
@@ -494,12 +494,12 @@ void AIUpdateInterface::requestPath( Coord3D *destination, Bool isFinalGoal )
 	m_waitingForPath = TRUE;
 	if (m_pathTimestamp > TheGameLogic->getFrame()-3) {
 		/* Requesting path very quickly.  Can cause a spin. */
-		//DEBUG_LOG(("%d Pathfind - repathing in less than 3 frames.  Waiting 1 second\n",
+		//DEBUG_LOG(("%d Pathfind - repathing in less than 3 frames.  Waiting 1 second",
 			//TheGameLogic->getFrame()));
 		setQueueForPathTime(LOGICFRAMES_PER_SECOND);
 		// See if it has been too soon.
 		// jba intense debug
-		//DEBUG_LOG(("Info - RePathing very quickly %d, %d.\n", m_pathTimestamp, TheGameLogic->getFrame()));
+		//DEBUG_LOG(("Info - RePathing very quickly %d, %d.", m_pathTimestamp, TheGameLogic->getFrame()));
 		if (m_path && m_isBlockedAndStuck) {
 			setIgnoreCollisionTime(2*LOGICFRAMES_PER_SECOND);
 			m_blockedFrames = 0;
@@ -518,7 +518,7 @@ void AIUpdateInterface::requestAttackPath( ObjectID victimID, const Coord3D* vic
 	if (m_locomotorSet.getValidSurfaces() == 0) {
 		DEBUG_CRASH(("Attempting to path immobile unit."));
 	}
-	CRCDEBUG_LOG(("AIUpdateInterface::requestAttackPath() - m_isAttackPath = TRUE for object %d\n", getObject()->getID()));
+	CRCDEBUG_LOG(("AIUpdateInterface::requestAttackPath() - m_isAttackPath = TRUE for object %d", getObject()->getID()));
 	m_requestedDestination = *victimPos;
 	m_requestedVictimID = victimID;	
 	m_isAttackPath = TRUE;
@@ -527,7 +527,7 @@ void AIUpdateInterface::requestAttackPath( ObjectID victimID, const Coord3D* vic
 	m_waitingForPath = TRUE;
 	if (m_pathTimestamp > TheGameLogic->getFrame()-3) {
 		/* Requesting path very quickly.  Can cause a spin. */
-		//DEBUG_LOG(("%d Pathfind - repathing in less than 3 frames.  Waiting 2 second\n",TheGameLogic->getFrame()));
+		//DEBUG_LOG(("%d Pathfind - repathing in less than 3 frames.  Waiting 2 second",TheGameLogic->getFrame()));
 		setQueueForPathTime(2*LOGICFRAMES_PER_SECOND);
 		return;
 	}
@@ -542,7 +542,7 @@ void AIUpdateInterface::requestApproachPath( Coord3D *destination )
 	}
 	m_requestedDestination = *destination;
 	m_isFinalGoal = TRUE;
-	CRCDEBUG_LOG(("AIUpdateInterface::requestApproachPath() - m_isAttackPath = FALSE for object %d\n", getObject()->getID()));
+	CRCDEBUG_LOG(("AIUpdateInterface::requestApproachPath() - m_isAttackPath = FALSE for object %d", getObject()->getID()));
 	m_isAttackPath = FALSE;	
 	m_requestedVictimID = INVALID_ID;	
 	m_isApproachPath = TRUE;
@@ -550,7 +550,7 @@ void AIUpdateInterface::requestApproachPath( Coord3D *destination )
 	m_waitingForPath = TRUE;
 	if (m_pathTimestamp > TheGameLogic->getFrame()-3) {
 		/* Requesting path very quickly.  Can cause a spin. */
-		//DEBUG_LOG(("%d Pathfind - repathing in less than 3 frames.  Waiting 2 second\n",TheGameLogic->getFrame()));
+		//DEBUG_LOG(("%d Pathfind - repathing in less than 3 frames.  Waiting 2 second",TheGameLogic->getFrame()));
 		setQueueForPathTime(2*LOGICFRAMES_PER_SECOND);
 		return;
 	}
@@ -566,7 +566,7 @@ void AIUpdateInterface::requestSafePath( ObjectID repulsor )
 	}
 	m_repulsor1 = repulsor;	
 	m_isFinalGoal = FALSE;
-	CRCDEBUG_LOG(("AIUpdateInterface::requestSafePath() - m_isAttackPath = FALSE for object %d\n", getObject()->getID()));
+	CRCDEBUG_LOG(("AIUpdateInterface::requestSafePath() - m_isAttackPath = FALSE for object %d", getObject()->getID()));
 	m_isAttackPath = FALSE;	
 	m_requestedVictimID = INVALID_ID;	
 	m_isApproachPath = FALSE;
@@ -574,7 +574,7 @@ void AIUpdateInterface::requestSafePath( ObjectID repulsor )
 	m_waitingForPath = TRUE;
 	if (m_pathTimestamp > TheGameLogic->getFrame()-3) {
 		/* Requesting path very quickly.  Can cause a spin. */
-		//DEBUG_LOG(("%d Pathfind - repathing in less than 3 frames.  Waiting 2 second\n",TheGameLogic->getFrame()));
+		//DEBUG_LOG(("%d Pathfind - repathing in less than 3 frames.  Waiting 2 second",TheGameLogic->getFrame()));
 		setQueueForPathTime(2*LOGICFRAMES_PER_SECOND);
 		return;
 	}
@@ -997,7 +997,7 @@ void AIUpdateInterface::friend_notifyStateMachineChanged()
 DECLARE_PERF_TIMER(AIUpdateInterface_update)
 UpdateSleepTime AIUpdateInterface::update( void )	 
 {
-	//DEBUG_LOG(("AIUpdateInterface frame %d: %08lx\n",TheGameLogic->getFrame(),getObject()));
+	//DEBUG_LOG(("AIUpdateInterface frame %d: %08lx",TheGameLogic->getFrame(),getObject()));
 
 	USE_PERF_TIMER(AIUpdateInterface_update)
 	
@@ -1344,7 +1344,7 @@ Bool AIUpdateInterface::blockedBy(Object *other)
 
 	Real collisionAngle = ThePartitionManager->getRelativeAngle2D( obj, &otherPos );
 	Real otherAngle = ThePartitionManager->getRelativeAngle2D( other, &pos );
-	//DEBUG_LOG(("Collision angle %.2f, %.2f, %s, %x %s\n", collisionAngle*180/PI, otherAngle*180/PI, obj->getTemplate()->getName().str(), obj, other->getTemplate()->getName().str()));
+	//DEBUG_LOG(("Collision angle %.2f, %.2f, %s, %x %s", collisionAngle*180/PI, otherAngle*180/PI, obj->getTemplate()->getName().str(), obj, other->getTemplate()->getName().str()));
 	Real angleLimit = PI/4; // 45 degrees.
 	if (collisionAngle>PI/2 || collisionAngle<-PI/2) {
 		return FALSE; // we're moving away.
@@ -1364,7 +1364,7 @@ Bool AIUpdateInterface::blockedBy(Object *other)
 					return FALSE;
 				}
 			}	else {
-				//DEBUG_LOG(("Moving Away From EachOther\n"));
+				//DEBUG_LOG(("Moving Away From EachOther"));
 				return FALSE;  // moving away, so no need for corrective action.
 			}
 		} else {
@@ -1395,7 +1395,7 @@ Bool AIUpdateInterface::needToRotate(void)
 	if (getPath())
 	{
 		ClosestPointOnPathInfo info;
-		CRCDEBUG_LOG(("AIUpdateInterface::needToRotate() - calling computePointOnPath() for object %d\n", getObject()->getID()));
+		CRCDEBUG_LOG(("AIUpdateInterface::needToRotate() - calling computePointOnPath() for object %d", getObject()->getID()));
 		getPath()->computePointOnPath(getObject(), m_locomotorSet, *getObject()->getPosition(), info);
 		deltaAngle = ThePartitionManager->getRelativeAngle2D( getObject(), &info.posOnPath );
 	}	
@@ -1480,7 +1480,7 @@ Bool AIUpdateInterface::processCollision(PhysicsBehavior *physics, Object *other
 #endif
 			}
 
-			//DEBUG_LOG(("Blocked %s, %x, %s\n", getObject()->getTemplate()->getName().str(), getObject(), other->getTemplate()->getName().str()));
+			//DEBUG_LOG(("Blocked %s, %x, %s", getObject()->getTemplate()->getName().str(), getObject(), other->getTemplate()->getName().str()));
 			if (m_blockedFrames==0) m_blockedFrames = 1;
 			if (!needToRotate()) 
 			{
@@ -1488,7 +1488,7 @@ Bool AIUpdateInterface::processCollision(PhysicsBehavior *physics, Object *other
 				if (!otherMoving) 
 				{
 					// Intense logging jba
-					// DEBUG_LOG(("Blocked&Stuck !otherMoving\n"));
+					// DEBUG_LOG(("Blocked&Stuck !otherMoving"));
 					m_isBlockedAndStuck = TRUE;
 					return FALSE;
 				}
@@ -1505,7 +1505,7 @@ Bool AIUpdateInterface::processCollision(PhysicsBehavior *physics, Object *other
 							aiMoveAwayFromUnit(aiOther->getObject(), CMD_FROM_AI);
 							//m_isBlockedAndStuck = TRUE;
 							// Intense logging jba.
-							// DEBUG_LOG(("Blocked&Stuck other is blockedByUs, has higher priority\n"));
+							// DEBUG_LOG(("Blocked&Stuck other is blockedByUs, has higher priority"));
 						}
 					}
 				}	
@@ -1545,7 +1545,7 @@ Bool AIUpdateInterface::processCollision(PhysicsBehavior *physics, Object *other
 				return false;  // we are doing a special ability.  Shouldn't move at this time.  jba.
 			}
 			// jba intense debug
-			//DEBUG_LOG(("*****Units ended up on top of each other.  Shouldn't happen.\n"));
+			//DEBUG_LOG(("*****Units ended up on top of each other.  Shouldn't happen."));
 			if (isIdle()) {
 				Coord3D safePosition = *getObject()->getPosition();
 				
@@ -1762,12 +1762,12 @@ Bool AIUpdateInterface::computePath( PathfindServicesInterface *pathServices, Co
  */
 Bool AIUpdateInterface::computeAttackPath( PathfindServicesInterface *pathServices, const Object *victim, const Coord3D* victimPos )
 {
-	//CRCDEBUG_LOG(("AIUpdateInterface::computeAttackPath() for object %d\n", getObject()->getID()));
+	//CRCDEBUG_LOG(("AIUpdateInterface::computeAttackPath() for object %d", getObject()->getID()));
 	// See if it has been too soon.
 	if (m_pathTimestamp >= TheGameLogic->getFrame()-2) 
 	{
 		// jba intense debug
-		//CRCDEBUG_LOG(("Info - RePathing very quickly %d, %d.\n", m_pathTimestamp, TheGameLogic->getFrame()));
+		//CRCDEBUG_LOG(("Info - RePathing very quickly %d, %d.", m_pathTimestamp, TheGameLogic->getFrame()));
 		if (m_path && m_isBlockedAndStuck) 
 		{
 			setIgnoreCollisionTime(2*LOGICFRAMES_PER_SECOND);
@@ -1788,7 +1788,7 @@ Bool AIUpdateInterface::computeAttackPath( PathfindServicesInterface *pathServic
 	Object* source = getObject();
 	if (!victim && !victimPos) 
 	{
-		//CRCDEBUG_LOG(("AIUpdateInterface::computeAttackPath() - victim is NULL\n"));
+		//CRCDEBUG_LOG(("AIUpdateInterface::computeAttackPath() - victim is NULL"));
 		return FALSE;
 	}
 
@@ -1818,7 +1818,7 @@ Bool AIUpdateInterface::computeAttackPath( PathfindServicesInterface *pathServic
 			if (!viewBlocked) 
 			{
 				destroyPath();
-				//CRCDEBUG_LOG(("AIUpdateInterface::computeAttackPath() - target is in range and visible\n"));
+				//CRCDEBUG_LOG(("AIUpdateInterface::computeAttackPath() - target is in range and visible"));
 				return TRUE;
 			}
 			
@@ -1835,7 +1835,7 @@ Bool AIUpdateInterface::computeAttackPath( PathfindServicesInterface *pathServic
 			}
 			if (!viewBlocked) {
 				destroyPath();
-				//CRCDEBUG_LOG(("AIUpdateInterface::computeAttackPath() target pos is in range and visible\n"));
+				//CRCDEBUG_LOG(("AIUpdateInterface::computeAttackPath() target pos is in range and visible"));
 				return TRUE;
 			}
 		}
@@ -1870,7 +1870,7 @@ Bool AIUpdateInterface::computeAttackPath( PathfindServicesInterface *pathServic
 			destroyPath();
 			return false;
 		}
-		//CRCDEBUG_LOG(("AIUpdateInterface::computeAttackPath() is contact weapon\n"));
+		//CRCDEBUG_LOG(("AIUpdateInterface::computeAttackPath() is contact weapon"));
 		return ok;
 	}
 
@@ -1964,7 +1964,7 @@ Bool AIUpdateInterface::computeAttackPath( PathfindServicesInterface *pathServic
 
 	m_blockedFrames = 0;
 	m_isBlockedAndStuck = FALSE;
-	//CRCDEBUG_LOG(("AIUpdateInterface::computeAttackPath() done\n"));
+	//CRCDEBUG_LOG(("AIUpdateInterface::computeAttackPath() done"));
 	if (m_path)
 		return TRUE;
 
@@ -1983,7 +1983,7 @@ void AIUpdateInterface::destroyPath( void )
 
 	m_path = NULL;
 	m_waitingForPath = FALSE; // we no longer need it.
-	//CRCDEBUG_LOG(("AIUpdateInterface::destroyPath() - m_isAttackPath = FALSE for object %d\n", getObject()->getID()));
+	//CRCDEBUG_LOG(("AIUpdateInterface::destroyPath() - m_isAttackPath = FALSE for object %d", getObject()->getID()));
 	m_isAttackPath = FALSE;
 	setLocomotorGoalNone();
 }
@@ -2137,9 +2137,9 @@ UpdateSleepTime AIUpdateInterface::doLocomotor( void )
 							{
 								return UPDATE_SLEEP_FOREVER;  // Can't move till we get our path.
 							}
-							DEBUG_LOG(("Dead %d, obj %s %x\n", isAiInDeadState(), getObject()->getTemplate()->getName().str(), getObject()));
+							DEBUG_LOG(("Dead %d, obj %s %x", isAiInDeadState(), getObject()->getTemplate()->getName().str(), getObject()));
 #ifdef STATE_MACHINE_DEBUG
-							DEBUG_LOG(("Waiting %d, state %s\n", m_waitingForPath, getStateMachine()->getCurrentStateName().str()));
+							DEBUG_LOG(("Waiting %d, state %s", m_waitingForPath, getStateMachine()->getCurrentStateName().str()));
 							m_stateMachine->setDebugOutput(1);
 #endif
 							DEBUG_CRASH(("must have a path here (doLocomotor)"));
@@ -2157,7 +2157,7 @@ UpdateSleepTime AIUpdateInterface::doLocomotor( void )
 							// Compute the actual goal position along the path to move towards.  Consider
 							// obstacles, and follow the intermediate path points.
 							ClosestPointOnPathInfo info;
-							CRCDEBUG_LOG(("AIUpdateInterface::doLocomotor() - calling computePointOnPath() for %s\n",
+							CRCDEBUG_LOG(("AIUpdateInterface::doLocomotor() - calling computePointOnPath() for %s",
 								DebugDescribeObject(getObject()).str()));
 							getPath()->computePointOnPath(getObject(), m_locomotorSet, *getObject()->getPosition(), info);
 							onPathDistToGoal = info.distAlongPath;
@@ -2412,7 +2412,7 @@ Real AIUpdateInterface::getLocomotorDistanceToGoal()
 			}
 			else if (!m_curLocomotor) 
 			{
-				//DEBUG_LOG(("no locomotor here, so no dist. (this is ok.)\n"));
+				//DEBUG_LOG(("no locomotor here, so no dist. (this is ok.)"));
 				return 0.0f;
 			}	
 			else if( m_curLocomotor->isCloseEnoughDist3D() || getObject()->isKindOf(KINDOF_PROJECTILE))
@@ -2437,7 +2437,7 @@ Real AIUpdateInterface::getLocomotorDistanceToGoal()
 				}	else {
 					// Ground based locomotor.
 					ClosestPointOnPathInfo info;
-					CRCDEBUG_LOG(("AIUpdateInterface::getLocomotorDistanceToGoal() - calling computePointOnPath() for object %d\n", getObject()->getID()));
+					CRCDEBUG_LOG(("AIUpdateInterface::getLocomotorDistanceToGoal() - calling computePointOnPath() for object %d", getObject()->getID()));
 					getPath()->computePointOnPath(getObject(), m_locomotorSet, *getObject()->getPosition(), info);
 					goalPos = info.posOnPath;	 
 					dist = info.distAlongPath;
@@ -4398,7 +4398,7 @@ Object* AIUpdateInterface::getNextMoodTarget( Bool calledByAI, Bool calledDuring
 	Object *newVictim = TheAI->findClosestEnemy(obj, rangeToFindWithin, flags, getAttackInfo());
 
 /*
-DEBUG_LOG(("GNMT frame %d: %s %08lx (con %s %08lx) uses range %f, flags %08lx, %s finds %s %08lx\n",
+DEBUG_LOG(("GNMT frame %d: %s %08lx (con %s %08lx) uses range %f, flags %08lx, %s finds %s %08lx",
 	now,
 	obj->getTemplate()->getName().str(),
 	obj,
@@ -4414,7 +4414,7 @@ DEBUG_LOG(("GNMT frame %d: %s %08lx (con %s %08lx) uses range %f, flags %08lx, %
 
 	if (newVictim)
 	{
-		CRCDEBUG_LOG(("AIUpdateInterface::getNextMoodTarget() - %d is attacking %d\n", obj->getID(), newVictim->getID()));
+		CRCDEBUG_LOG(("AIUpdateInterface::getNextMoodTarget() - %d is attacking %d", obj->getID(), newVictim->getID()));
 /*
 srj debug hack. ignore.
 Int ot = getTmpValue();

@@ -1366,7 +1366,7 @@ void W3DRoadBuffer::moveRoadSegTo(Int fromNdx, Int toNdx)
 {
 	if (fromNdx<0 || fromNdx>=m_numRoads || toNdx<0 || toNdx>=m_numRoads) {
 #ifdef RTS_DEBUG
-		DEBUG_LOG(("bad moveRoadSegTo\n"));
+		DEBUG_LOG(("bad moveRoadSegTo"));
 #endif
 		return;
 	}
@@ -1494,7 +1494,7 @@ void W3DRoadBuffer::checkLinkAfter(Int ndx)
 }
 
 static Bool warnSegments = true;
-#define CHECK_SEGMENTS {if (m_numRoads >= m_maxRoadSegments) { if (warnSegments) DEBUG_LOG(("****** Too many road segments.  Need to increase ini values.  See john a.\n")); warnSegments = false; return;}}
+#define CHECK_SEGMENTS {if (m_numRoads >= m_maxRoadSegments) { if (warnSegments) DEBUG_LOG(("****** Too many road segments.  Need to increase ini values.  See john a.")); warnSegments = false; return;}}
 
 //=============================================================================
 // W3DRoadBuffer::addMapObject
@@ -3358,7 +3358,7 @@ void W3DRoadBuffer::drawRoads(CameraClass * camera, TextureClass *cloudTexture, 
 	}
 #ifdef LOG_STATS
 	if (loadBuffers) {
-		DEBUG_LOG(("Road poly count %d\n", polys));
+		DEBUG_LOG(("Road poly count %d", polys));
 	}
 #endif
 

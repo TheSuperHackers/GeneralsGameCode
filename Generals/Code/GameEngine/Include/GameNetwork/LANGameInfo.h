@@ -151,7 +151,7 @@ public:
 	/// Set the last time we heard from the player
 	inline void setPlayerLastHeard( int who, UnsignedInt lastHeard ) 	
 	{
-		DEBUG_LOG(("LANGameInfo::setPlayerLastHeard - changing player %d last heard from %d to %d\n", who, getPlayerLastHeard(who), lastHeard));
+		DEBUG_LOG(("LANGameInfo::setPlayerLastHeard - changing player %d last heard from %d to %d", who, getPlayerLastHeard(who), lastHeard));
 		if (m_LANSlot[who].isHuman())
 			m_LANSlot[who].setLastHeard(lastHeard);
 	}

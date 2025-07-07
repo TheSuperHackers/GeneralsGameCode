@@ -470,7 +470,7 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 	// cull muted audio
 	if (audioEvent->getVolume() < TheAudio->getAudioSettings()->m_minVolume) {
 #ifdef INTENSIVE_AUDIO_DEBUG
-		DEBUG_LOG((" - culled due to muting (%d).\n", audioEvent->getVolume()));
+		DEBUG_LOG((" - culled due to muting (%d).", audioEvent->getVolume()));
 #endif
 		releaseAudioEventRTS(audioEvent);
 		return AHSV_Muted;

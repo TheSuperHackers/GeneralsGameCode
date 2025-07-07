@@ -71,7 +71,7 @@ static Bool AddToNetCommandList(GameMessage *msg, UnsignedInt timestamp, Command
 	CommandMsg *cmdMsg = NEW CommandMsg(timestamp, msg);
 	if (!cmdMsg)
 	{
-		DEBUG_LOG(("Alloc failed!\n"));
+		DEBUG_LOG(("Alloc failed!"));
 		return false;
 	}
 
@@ -98,7 +98,7 @@ Bool AddToNetCommandList(Int playerNum, GameMessage *msg, UnsignedInt timestamp)
 	if (playerNum < 0 || playerNum >= MAX_SLOTS)
 		return false;
 
-	DEBUG_LOG(("Adding msg to NetCommandList %d\n", playerNum));
+	DEBUG_LOG(("Adding msg to NetCommandList %d", playerNum));
 	return AddToNetCommandList(msg, timestamp, CommandHead[playerNum], CommandTail[playerNum]);
 }
 
@@ -113,7 +113,7 @@ static GameMessage * GetCommandMsg(UnsignedInt timestamp, CommandMsg *& CommandH
 
 	if (CommandHead->GetTimestamp() < timestamp)
 	{
-		DEBUG_LOG(("Time is %d, yet message timestamp is %d!\n", timestamp, CommandHead->GetTimestamp()));
+		DEBUG_LOG(("Time is %d, yet message timestamp is %d!", timestamp, CommandHead->GetTimestamp()));
 		return NULL;
 	}
 
@@ -145,7 +145,7 @@ GameMessage * GetCommandMsg(UnsignedInt timestamp, Int playerNum)
 	if (playerNum < 0 || playerNum >= MAX_SLOTS)
 		return NULL;
 
-	//DEBUG_LOG(("Adding msg to NetCommandList %d\n", playerNum));
+	//DEBUG_LOG(("Adding msg to NetCommandList %d", playerNum));
 	return GetCommandMsg(timestamp, CommandHead[playerNum], CommandTail[playerNum]);
 }
 

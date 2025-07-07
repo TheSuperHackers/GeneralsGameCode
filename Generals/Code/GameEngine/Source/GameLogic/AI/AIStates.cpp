@@ -578,13 +578,13 @@ StateReturnType AIRappelState::update()
 			{
 				const FXList* fx = obj->getTemplate()->getPerUnitFX("CombatDropKillFX");
 				FXList::doFXObj(fx, bldg, NULL);
-				DEBUG_LOG(("Killing %d enemies in combat drop!\n",numKilled));
+				DEBUG_LOG(("Killing %d enemies in combat drop!",numKilled));
 			}
 
 			if (numKilled == MAX_TO_KILL)
 			{
 				obj->kill();
-				DEBUG_LOG(("Killing SELF in combat drop!\n"));
+				DEBUG_LOG(("Killing SELF in combat drop!"));
 			}
 			else
 			{
@@ -870,7 +870,7 @@ StateReturnType AIStateMachine::updateStateMachine()
 			//-extraLogging
 			#if defined(RTS_DEBUG)
 				if( !idle && TheGlobalData->m_extraLogging )
-					DEBUG_LOG( (" - RETURN EARLY STATE_CONTINUE\n") );
+					DEBUG_LOG( (" - RETURN EARLY STATE_CONTINUE") );
 			#endif
 			//end -extraLogging 
 
@@ -902,7 +902,7 @@ StateReturnType AIStateMachine::updateStateMachine()
 					break;
 			}	
 			if( !idle )
-				DEBUG_LOG( (" - RETURNING %s\n", result.str() ) );
+				DEBUG_LOG( (" - RETURNING %s", result.str() ) );
 		}
 	#endif
 	//end -extraLogging 
@@ -933,9 +933,9 @@ StateReturnType AIStateMachine::setTemporaryState( StateID newStateID, Int frame
 			DEBUG_LOG((" INVALID_STATE_ID "));
 		}
 		if (newState) {
-			DEBUG_LOG(("enter '%s' \n", newState->getName().str()));
+			DEBUG_LOG(("enter '%s' ", newState->getName().str()));
 		} else {
-			DEBUG_LOG(("to INVALID_STATE\n"));
+			DEBUG_LOG(("to INVALID_STATE"));
 		}
 	}
 #endif
@@ -1096,7 +1096,7 @@ Bool outOfWeaponRangeObject( State *thisState, void* userData )
 	Object *victim = thisState->getMachineGoalObject();
 	Weapon *weapon = obj->getCurrentWeapon();
 
-	CRCDEBUG_LOG(("outOfWeaponRangeObject()\n"));
+	CRCDEBUG_LOG(("outOfWeaponRangeObject()"));
 	if (victim && weapon)
 	{
 		Bool viewBlocked = false;
@@ -1129,14 +1129,14 @@ Bool outOfWeaponRangeObject( State *thisState, void* userData )
 		// A weapon with leech range temporarily has unlimited range and is locked onto its target.
 		if (!weapon->hasLeechRange() && viewBlocked) 
 		{
-			//CRCDEBUG_LOG(("outOfWeaponRangeObject() - object %d (%s) view is blocked for attacking %d (%s)\n",
+			//CRCDEBUG_LOG(("outOfWeaponRangeObject() - object %d (%s) view is blocked for attacking %d (%s)",
 			//	obj->getID(), obj->getTemplate()->getName().str(),
 			//	victim->getID(), victim->getTemplate()->getName().str()));
 			return true;
 		}
 		if (!weapon->hasLeechRange() && !weapon->isWithinAttackRange(obj, victim))
 		{
-			//CRCDEBUG_LOG(("outOfWeaponRangeObject() - object %d (%s) is out of range for attacking %d (%s)\n",
+			//CRCDEBUG_LOG(("outOfWeaponRangeObject() - object %d (%s) is out of range for attacking %d (%s)",
 			//	obj->getID(), obj->getTemplate()->getName().str(),
 			//	victim->getID(), victim->getTemplate()->getName().str()));
 			return true;
@@ -1788,7 +1788,7 @@ StateReturnType AIInternalMoveToState::update()
 		blocked = true;
 		m_blockedRepathTimestamp = TheGameLogic->getFrame();
 		// Intense debug logging jba.
-		//DEBUG_LOG(("Info - Blocked - recomputing.\n"));
+		//DEBUG_LOG(("Info - Blocked - recomputing."));
 	}
 
 	//Determine if we are on a cliff cell... if so, use the climbing model condition
@@ -1863,7 +1863,7 @@ StateReturnType AIInternalMoveToState::update()
 	// Check if we have reached our destination
 	//
 	Real onPathDistToGoal = ai->getLocomotorDistanceToGoal();
-	//DEBUG_LOG(("onPathDistToGoal = %f %s\n",onPathDistToGoal, obj->getTemplate()->getName().str()));
+	//DEBUG_LOG(("onPathDistToGoal = %f %s",onPathDistToGoal, obj->getTemplate()->getName().str()));
 	if (ai->getCurLocomotor() && (onPathDistToGoal < ai->getCurLocomotor()->getCloseEnoughDist()))
 	{
 		if (ai->isDoingGroundMovement()) {
@@ -1877,7 +1877,7 @@ StateReturnType AIInternalMoveToState::update()
 			delta.y = obj->getPosition()->y - goalPos.y;
 			delta.z = 0;
 			if (delta.length() > 4*PATHFIND_CELL_SIZE_F) {
-				//DEBUG_LOG(("AIInternalMoveToState Trying to finish early.  Continuing...\n"));
+				//DEBUG_LOG(("AIInternalMoveToState Trying to finish early.  Continuing..."));
 				onPathDistToGoal = ai->getLocomotorDistanceToGoal();
 				return STATE_CONTINUE;
 			}
@@ -2058,7 +2058,7 @@ StateReturnType AIMoveToState::update()
 			m_goalPosition.y += dir.y*leadDistance;
 			m_goalPosition.z += dir.z*leadDistance;
 		}
-		//DEBUG_LOG(("update goal pos to %f %f %f\n",m_goalPosition.x,m_goalPosition.y,m_goalPosition.z));
+		//DEBUG_LOG(("update goal pos to %f %f %f",m_goalPosition.x,m_goalPosition.y,m_goalPosition.z));
 	} else {
 		Bool isMissile = obj->isKindOf(KINDOF_PROJECTILE);
 		if (isMissile) {
@@ -2206,7 +2206,7 @@ Bool AIMoveAndTightenState::computePath()
 			ai->requestPath(&m_goalPosition, true);
 			return true;
 		}
-		//DEBUG_LOG(("AIMoveAndTightenState::computePath - stuck, failing.\n"));
+		//DEBUG_LOG(("AIMoveAndTightenState::computePath - stuck, failing."));
 		return false;		 // don't repath for now.  jba.
 	}
 	return true; // just use the existing path.  See above.
@@ -2349,7 +2349,7 @@ Bool AIAttackApproachTargetState::computePath()
 	if( getMachineOwner()->isMobile() == false )
 		return false;
 
-	//CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - begin for object %d\n", getMachineOwner()->getID()));
+	//CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - begin for object %d", getMachineOwner()->getID()));
 
 	AIUpdateInterface *ai = getMachineOwner()->getAI();
 
@@ -2357,7 +2357,7 @@ Bool AIAttackApproachTargetState::computePath()
 	{
 		forceRepath = true;
 		// Intense logging. jba
-		//CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - stuck, recomputing for object %d\n", getMachineOwner()->getID()));
+		//CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - stuck, recomputing for object %d", getMachineOwner()->getID()));
 	}
 	if (m_waitingForPath) return true;
 
@@ -2370,7 +2370,7 @@ Bool AIAttackApproachTargetState::computePath()
 	/// @todo Unify recomputation conditions & account for obj ID so everyone doesnt compute on the same frame (MSB)
 	if (!forceRepath && TheGameLogic->getFrame() - m_approachTimestamp < MIN_RECOMPUTE_TIME)
 	{
-		//CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - bailing because of min time for object %d\n", getMachineOwner()->getID()));
+		//CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - bailing because of min time for object %d", getMachineOwner()->getID()));
 		return true;
 	}
 
@@ -2384,14 +2384,14 @@ Bool AIAttackApproachTargetState::computePath()
 		// if our victim's position hasn't changed, don't re-path
 		if (!forceRepath && isSamePosition(source->getPosition(), &m_prevVictimPos, getMachineGoalObject()->getPosition() ))
 		{
-			CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - bailing because victim in same place for object %d\n", getMachineOwner()->getID()));
+			CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - bailing because victim in same place for object %d", getMachineOwner()->getID()));
 			return true;
 		}
 
 		Weapon* weapon = source->getCurrentWeapon();
 		if (!weapon) 
 		{
-			CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - bailing because of no weapon for object %d\n", getMachineOwner()->getID()));
+			CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - bailing because of no weapon for object %d", getMachineOwner()->getID()));
 			return false;
 		}
 
@@ -2415,7 +2415,7 @@ Bool AIAttackApproachTargetState::computePath()
 		{
 			m_waitingForPath = true;
 			m_goalPosition = m_prevVictimPos;
-			CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - requestPath() for object %d\n", getMachineOwner()->getID()));
+			CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - requestPath() for object %d", getMachineOwner()->getID()));
 			ai->requestPath(&m_goalPosition, getAdjustsDestination());
 		} 
 		else 
@@ -2426,11 +2426,11 @@ Bool AIAttackApproachTargetState::computePath()
 			Coord3D pos;
 			victim->getGeometryInfo().getCenterPosition( *victim->getPosition(), pos );
 			
-			CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - requestAttackPath() for object %d\n", getMachineOwner()->getID()));
+			CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - requestAttackPath() for object %d", getMachineOwner()->getID()));
 			ai->requestAttackPath(victim->getID(), &pos );
 			m_stopIfInRange = false; // we have calculated a position to shoot from, so go there.
 		}
-		CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - bailing after repathing for object %d\n", getMachineOwner()->getID()));
+		CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - bailing after repathing for object %d", getMachineOwner()->getID()));
 		return true;
 	} 
 	else 
@@ -2441,18 +2441,18 @@ Bool AIAttackApproachTargetState::computePath()
 		m_goalPosition = *getMachineGoalPosition();
 		if (!forceRepath) 
 		{
-			CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - bailing because we're aiming for a fixed position for object %d\n", getMachineOwner()->getID()));
+			CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - bailing because we're aiming for a fixed position for object %d", getMachineOwner()->getID()));
 			return true; // fixed positions don't move.
 		}
 		// must use computeAttackPath so that min ranges are considered.
 		m_waitingForPath = true;
 		ai->requestAttackPath(INVALID_ID, &m_goalPosition);
-		CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - bailing after repathing at a fixed position for object %d\n", getMachineOwner()->getID()));
+		CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - bailing after repathing at a fixed position for object %d", getMachineOwner()->getID()));
 		return true;
 	}
 
 
-	CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - bailing at end of function for object %d\n", getMachineOwner()->getID()));
+	CRCDEBUG_LOG(("AIAttackApproachTargetState::computePath - bailing at end of function for object %d", getMachineOwner()->getID()));
 	return true;
 }
 
@@ -2499,7 +2499,7 @@ StateReturnType AIAttackApproachTargetState::onEnter()
 {
 	// contained by AIAttackState, so no separate timer
 	// urg. hacky. if we are a projectile, turn on precise z-pos.
-	//CRCDEBUG_LOG(("AIAttackApproachTargetState::onEnter() - object %d\n", getMachineOwner()->getID()));
+	//CRCDEBUG_LOG(("AIAttackApproachTargetState::onEnter() - object %d", getMachineOwner()->getID()));
 	Object* source = getMachineOwner();
 	AIUpdateInterface* ai = source->getAI();
 	if (source->isKindOf(KINDOF_PROJECTILE))
@@ -2571,7 +2571,7 @@ StateReturnType AIAttackApproachTargetState::onEnter()
 	}
 
 	// find a good spot to shoot from
-	//CRCDEBUG_LOG(("AIAttackApproachTargetState::onEnter() - calling computePath() for object %d\n", getMachineOwner()->getID()));
+	//CRCDEBUG_LOG(("AIAttackApproachTargetState::onEnter() - calling computePath() for object %d", getMachineOwner()->getID()));
 	if (computePath() == false)
 		return STATE_FAILURE;
 
@@ -2582,7 +2582,7 @@ StateReturnType AIAttackApproachTargetState::onEnter()
 StateReturnType AIAttackApproachTargetState::updateInternal()
 {
 	AIUpdateInterface* ai = getMachineOwner()->getAI();
-	//CRCDEBUG_LOG(("AIAttackApproachTargetState::updateInternal() - object %d\n", getMachineOwner()->getID()));
+	//CRCDEBUG_LOG(("AIAttackApproachTargetState::updateInternal() - object %d", getMachineOwner()->getID()));
 	if (getMachine()->isGoalObjectDestroyed()) 
 	{
 		ai->notifyVictimIsDead();
@@ -2620,7 +2620,7 @@ StateReturnType AIAttackApproachTargetState::updateInternal()
 			}
 		}
 		// find a good spot to shoot from
-		//CRCDEBUG_LOG(("AIAttackApproachTargetState::updateInternal() - calling computePath() to victim for object %d\n", getMachineOwner()->getID()));
+		//CRCDEBUG_LOG(("AIAttackApproachTargetState::updateInternal() - calling computePath() to victim for object %d", getMachineOwner()->getID()));
 		if (computePath() == false)
 			return STATE_SUCCESS;
 		code = AIInternalMoveToState::update();
@@ -2636,7 +2636,7 @@ StateReturnType AIAttackApproachTargetState::updateInternal()
 	{
 		// Attacking a position.
 		// find a good spot to shoot from
-		//CRCDEBUG_LOG(("AIAttackApproachTargetState::updateInternal() - calling computePath() to position for object %d\n", getMachineOwner()->getID()));
+		//CRCDEBUG_LOG(("AIAttackApproachTargetState::updateInternal() - calling computePath() to position for object %d", getMachineOwner()->getID()));
 		if (m_stopIfInRange && weapon && weapon->isWithinAttackRange(source, &m_goalPosition)) 
 		{
 			Bool viewBlocked = false;
@@ -2859,17 +2859,17 @@ StateReturnType AIAttackPursueTargetState::onEnter()
 
 	if (source->isKindOf(KINDOF_PROJECTILE))
 	{
-		//CRCDEBUG_LOG(("AIAttackPursueTargetState::onEnter() - is a projectile for object %d (%s)\n", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
+		//CRCDEBUG_LOG(("AIAttackPursueTargetState::onEnter() - is a projectile for object %d (%s)", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
 		return STATE_SUCCESS;	 // Projectiles go directly to AIAttackApproachTargetState.
 	}
 
 	if (getMachine()->isGoalObjectDestroyed()) 
 	{
-		//CRCDEBUG_LOG(("AIAttackPursueTargetState::onEnter() - goal object is destroyed for object %d (%s)\n", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
+		//CRCDEBUG_LOG(("AIAttackPursueTargetState::onEnter() - goal object is destroyed for object %d (%s)", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
 		return STATE_SUCCESS; // Already killed victim.
 	}
 	if (!m_isAttackingObject)	{
-		//CRCDEBUG_LOG(("AIAttackPursueTargetState::onEnter() - not attacking for object %d (%s)\n", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
+		//CRCDEBUG_LOG(("AIAttackPursueTargetState::onEnter() - not attacking for object %d (%s)", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
 		return STATE_SUCCESS; // only pursue objects - positions don't move.
 	}
 
@@ -2898,11 +2898,11 @@ StateReturnType AIAttackPursueTargetState::onEnter()
 		}
 		if (!canPursue(source, weapon, victim) ) 
 		{
-			//CRCDEBUG_LOG(("AIAttackPursueTargetState::onEnter() - can't pursue for object %d (%s)\n", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
+			//CRCDEBUG_LOG(("AIAttackPursueTargetState::onEnter() - can't pursue for object %d (%s)", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
 			return STATE_SUCCESS;
 		}
 	}	else {
-		//CRCDEBUG_LOG(("AIAttackPursueTargetState::onEnter() - no victim for object %d (%s)\n", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
+		//CRCDEBUG_LOG(("AIAttackPursueTargetState::onEnter() - no victim for object %d (%s)", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
 		return STATE_SUCCESS; // gotta have a victim.
 	}
 	// If we have a turret, start aiming.
@@ -2911,7 +2911,7 @@ StateReturnType AIAttackPursueTargetState::onEnter()
 	{
 		ai->setTurretTargetObject(tur, victim, m_isForceAttacking);
 	} else {
-		//CRCDEBUG_LOG(("AIAttackPursueTargetState::onEnter() - no turret for object %d (%s)\n", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
+		//CRCDEBUG_LOG(("AIAttackPursueTargetState::onEnter() - no turret for object %d (%s)", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
 		return STATE_SUCCESS; // we only pursue with turrets, as non-turreted weapons can't fire on the run.
 	}
 
@@ -2951,7 +2951,7 @@ StateReturnType AIAttackPursueTargetState::updateInternal()
 		code = AIInternalMoveToState::update();
 		if (code != STATE_CONTINUE) 
 		{
-			//CRCDEBUG_LOG(("AIAttackPursueTargetState::updateInternal() - failed internal update() for object %d (%s)\n", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
+			//CRCDEBUG_LOG(("AIAttackPursueTargetState::updateInternal() - failed internal update() for object %d (%s)", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
 			return STATE_SUCCESS;	// Always return state success, as state failure exits the attack.
 			// we may need to aim & do another approach if the target moved.  jba.
 		}
@@ -2962,7 +2962,7 @@ StateReturnType AIAttackPursueTargetState::updateInternal()
 		WhichTurretType tur = ai->getWhichTurretForCurWeapon();
 		if (tur == TURRET_INVALID)
 		{
-			//CRCDEBUG_LOG(("AIAttackPursueTargetState::updateInternal() - no turret for object %d (%s)\n", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
+			//CRCDEBUG_LOG(("AIAttackPursueTargetState::updateInternal() - no turret for object %d (%s)", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
 			return STATE_SUCCESS; // We currently only pursue with a turret weapon.
 		}
 
@@ -2985,7 +2985,7 @@ StateReturnType AIAttackPursueTargetState::updateInternal()
 			}
 			ai->setDesiredSpeed(victimSpeed);
 			// Really intense debug info.  jba.
-			// DEBUG_LOG(("VS %f, OS %f, goal %f\n", victim->getPhysics()->getForwardSpeed2D(), source->getPhysics()->getForwardSpeed2D(), victimSpeed));
+			// DEBUG_LOG(("VS %f, OS %f, goal %f", victim->getPhysics()->getForwardSpeed2D(), source->getPhysics()->getForwardSpeed2D(), victimSpeed));
 		}	else {
 			ai->setDesiredSpeed(FAST_AS_POSSIBLE);
 		}
@@ -3022,7 +3022,7 @@ StateReturnType AIAttackPursueTargetState::update()
 void AIAttackPursueTargetState::onExit( StateExitType status )
 {
 	// contained by AIAttackState, so no separate timer
-	//CRCDEBUG_LOG(("AIAttackPursueTargetState::onExit() for object %d (%s)\n", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
+	//CRCDEBUG_LOG(("AIAttackPursueTargetState::onExit() for object %d (%s)", getMachineOwner()->getID(), getMachineOwner()->getTemplate()->getName().str()));
 	AIInternalMoveToState::onExit( status );
 
 	m_isInitialApproach = false;	// We only want to allow turreted things to fire at enemies during their
@@ -3565,7 +3565,7 @@ StateReturnType AIAttackMoveToState::update()
 		if (distSqr < sqr(ATTACK_CLOSE_ENOUGH_CELLS*PATHFIND_CELL_SIZE_F)) {
 			return ret;
 		}
-		DEBUG_LOG(("AIAttackMoveToState::update Distance from goal %f, retrying.\n", sqrt(distSqr)));
+		DEBUG_LOG(("AIAttackMoveToState::update Distance from goal %f, retrying.", sqrt(distSqr)));
 
 		ret = STATE_CONTINUE;
 		m_retryCount--;
@@ -3951,7 +3951,7 @@ StateReturnType AIFollowWaypointPathState::onEnter()
 		setAdjustsDestination(ai->isDoingGroundMovement());
 		if (getAdjustsDestination()) {
 			if (!TheAI->pathfinder()->adjustDestination(getMachineOwner(), ai->getLocomotorSet(), &m_goalPosition)) {
-				DEBUG_LOG(("Breaking out of follow waypoint path\n"));
+				DEBUG_LOG(("Breaking out of follow waypoint path"));
 				return STATE_FAILURE;
 			}
 			TheAI->pathfinder()->updateGoal(getMachineOwner(), &m_goalPosition, m_goalLayer);
@@ -3964,7 +3964,7 @@ StateReturnType AIFollowWaypointPathState::onEnter()
 		}
 	}
 	if (ret != STATE_CONTINUE) {
-		DEBUG_LOG(("Breaking out of follow waypoint path\n"));
+		DEBUG_LOG(("Breaking out of follow waypoint path"));
 	}
 	return ret;
 }
@@ -4025,7 +4025,7 @@ StateReturnType AIFollowWaypointPathState::update()
 				if (m_currentWaypoint) {
 // TheSuperHackers @info helmutbuhler 05/05/2025 This debug mutates the code to become CRC incompatible
 #if defined(RTS_DEBUG) || !RETAIL_COMPATIBLE_CRC
-					DEBUG_LOG(("Breaking out of follow waypoint path %s of %s\n", 
+					DEBUG_LOG(("Breaking out of follow waypoint path %s of %s", 
 					m_currentWaypoint->getName().str(), m_currentWaypoint->getPathLabel1().str()));
 #endif
 				}
@@ -4102,7 +4102,7 @@ StateReturnType AIFollowWaypointPathState::update()
 				if (m_currentWaypoint) {
 // TheSuperHackers @info helmutbuhler 05/05/2025 This debug mutates the code to become CRC incompatible
 #if defined(RTS_DEBUG) || !RETAIL_COMPATIBLE_CRC
-					DEBUG_LOG(("Breaking out of follow waypoint path %s of %s\n", 
+					DEBUG_LOG(("Breaking out of follow waypoint path %s of %s", 
 					m_currentWaypoint->getName().str(), m_currentWaypoint->getPathLabel1().str()));
 #endif
 				}
@@ -4118,7 +4118,7 @@ StateReturnType AIFollowWaypointPathState::update()
 		return STATE_CONTINUE;
 	}
 	if (status != STATE_CONTINUE) {
-		DEBUG_LOG(("Breaking out of follow waypoint path\n"));
+		DEBUG_LOG(("Breaking out of follow waypoint path"));
 	}
 	return status;
 }
@@ -4923,7 +4923,7 @@ StateReturnType AIAttackAimAtTargetState::update()
 
 		if (aimDelta < REL_THRESH) aimDelta = REL_THRESH;
 
-		//DEBUG_LOG(("AIM: desired %f, actual %f, delta %f, aimDelta %f, goalpos %f %f\n",rad2deg(obj->getOrientation() + relAngle),rad2deg(obj->getOrientation()),rad2deg(relAngle),rad2deg(aimDelta),victim->getPosition()->x,victim->getPosition()->y));
+		//DEBUG_LOG(("AIM: desired %f, actual %f, delta %f, aimDelta %f, goalpos %f %f",rad2deg(obj->getOrientation() + relAngle),rad2deg(obj->getOrientation()),rad2deg(relAngle),rad2deg(aimDelta),victim->getPosition()->x,victim->getPosition()->y));
 		if (m_canTurnInPlace)
 		{
 			if (fabs(relAngle) > aimDelta) 
@@ -5301,7 +5301,7 @@ DECLARE_PERF_TIMER(AIAttackState)
 StateReturnType AIAttackState::onEnter()
 {
 	USE_PERF_TIMER(AIAttackState)
-	//CRCDEBUG_LOG(("AIAttackState::onEnter() - start for object %d\n", getMachineOwner()->getID()));
+	//CRCDEBUG_LOG(("AIAttackState::onEnter() - start for object %d", getMachineOwner()->getID()));
 	Object* source = getMachineOwner();
 	AIUpdateInterface *ai = source->getAI();
 	// if we are in sleep mode, we will not attack
@@ -5318,7 +5318,7 @@ StateReturnType AIAttackState::onEnter()
 		return STATE_FAILURE;
 
 	// create new state machine for attack behavior
-	//CRCDEBUG_LOG(("AIAttackState::onEnter() - constructing state machine for object %d\n", getMachineOwner()->getID()));
+	//CRCDEBUG_LOG(("AIAttackState::onEnter() - constructing state machine for object %d", getMachineOwner()->getID()));
 	m_attackMachine = newInstance(AttackStateMachine)(source, this, "AIAttackMachine", m_follow, m_isAttackingObject, m_isForceAttacking  );
 
 	// tell the attack machine who the victim of the attack is
@@ -5883,7 +5883,7 @@ StateReturnType AIDockState::onEnter()
 	if (dockWithMe == NULL)
 	{
 		// we have nothing to dock with!
-		DEBUG_LOG(("No goal in AIDockState::onEnter - exiting.\n"));
+		DEBUG_LOG(("No goal in AIDockState::onEnter - exiting."));
 		return STATE_FAILURE;
 	}
   DockUpdateInterface *dock = NULL;
@@ -5891,7 +5891,7 @@ StateReturnType AIDockState::onEnter()
 
 	// if we have nothing to dock with, fail
 	if (dock == NULL)	{
-		DEBUG_LOG(("Goal is not a dock in AIDockState::onEnter - exiting.\n"));
+		DEBUG_LOG(("Goal is not a dock in AIDockState::onEnter - exiting."));
 		return STATE_FAILURE;
 	}
 
@@ -5923,7 +5923,7 @@ void AIDockState::onExit( StateExitType status )
 		deleteInstance(m_dockMachine);
 		m_dockMachine = NULL;
 	}	else {
-		DEBUG_LOG(("Dock exited immediately\n"));
+		DEBUG_LOG(("Dock exited immediately"));
 	}
 
 	// stop ignoring our goal object
@@ -5954,10 +5954,10 @@ StateReturnType AIDockState::update()
 	{
 		ai->setCanPathThroughUnits(true);
 		//if (ai->isBlockedAndStuck()) {
-			//DEBUG_LOG(("Blocked and stuck.\n"));
+			//DEBUG_LOG(("Blocked and stuck."));
 		//}
 		//if (ai->getNumFramesBlocked()>5) {
-			//DEBUG_LOG(("Blocked %d frames\n", ai->getNumFramesBlocked()));
+			//DEBUG_LOG(("Blocked %d frames", ai->getNumFramesBlocked()));
 		//}
 	}
 	/* 
@@ -6395,7 +6395,7 @@ void AIGuardState::onExit( StateExitType status )
 //----------------------------------------------------------------------------------------------------------
 StateReturnType AIGuardState::update()
 {
-	//DEBUG_LOG(("AIGuardState frame %d: %08lx\n",TheGameLogic->getFrame(),getMachineOwner()));
+	//DEBUG_LOG(("AIGuardState frame %d: %08lx",TheGameLogic->getFrame(),getMachineOwner()));
 
 	if (m_guardMachine == NULL) 
 	{
@@ -6516,7 +6516,7 @@ void AITunnelNetworkGuardState::onExit( StateExitType status )
 //----------------------------------------------------------------------------------------------------------
 StateReturnType AITunnelNetworkGuardState::update()
 {
-	//DEBUG_LOG(("AITunnelNetworkGuardState frame %d: %08lx\n",TheGameLogic->getFrame(),getMachineOwner()));
+	//DEBUG_LOG(("AITunnelNetworkGuardState frame %d: %08lx",TheGameLogic->getFrame(),getMachineOwner()));
 
 	if (m_guardMachine == NULL) 
 	{

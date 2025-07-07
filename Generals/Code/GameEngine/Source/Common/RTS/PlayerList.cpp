@@ -147,7 +147,7 @@ void PlayerList::newGame()
 		Bool exists;	// throwaway, since we don't care if it exists
 		if (d->getBool(TheKey_multiplayerIsLocal, &exists))
 		{
-			DEBUG_LOG(("Player %s is multiplayer local\n", pname.str()));
+			DEBUG_LOG(("Player %s is multiplayer local", pname.str()));
 			setLocalPlayer(p);
 			setLocal = true;
 		}
@@ -200,7 +200,7 @@ void PlayerList::newGame()
 			}
 			else
 			{
-				DEBUG_LOG(("unknown enemy %s\n",tok.str()));
+				DEBUG_LOG(("unknown enemy %s",tok.str()));
 			}
 		}
 
@@ -214,7 +214,7 @@ void PlayerList::newGame()
 			}
 			else
 			{
-				DEBUG_LOG(("unknown ally %s\n",tok.str()));
+				DEBUG_LOG(("unknown ally %s",tok.str()));
 			}
 		}
 
@@ -290,7 +290,7 @@ Team *PlayerList::validateTeam( AsciiString owner )
 	Team *t = TheTeamFactory->findTeam(owner);
 	if (t)
 	{
-		//DEBUG_LOG(("assigned obj %08lx to team %s\n",obj,owner.str()));
+		//DEBUG_LOG(("assigned obj %08lx to team %s",obj,owner.str()));
 	}	
 	else
 	{
@@ -322,9 +322,9 @@ void PlayerList::setLocalPlayer(Player *player)
 #ifdef INTENSE_DEBUG
 	if (player)
 	{
-		DEBUG_LOG(("\n----------\n"));
+		DEBUG_LOG(("\n----------"));
 		// did you know? you can use "%ls" to print a doublebyte string, even in a single-byte printf...
-		DEBUG_LOG(("Switching local players. The new player is named '%ls' (%s) and owns the following objects:\n",
+		DEBUG_LOG(("Switching local players. The new player is named '%ls' (%s) and owns the following objects:",
 			player->getPlayerDisplayName().str(),
 			TheNameKeyGenerator->keyToName(player->getPlayerNameKey()).str()
 		));
@@ -335,9 +335,9 @@ void PlayerList::setLocalPlayer(Player *player)
 			{
 				DEBUG_LOG((" (NOT BUILDABLE)"));
 			}
-			DEBUG_LOG(("\n"));
+			DEBUG_LOG((""));
 		}
-		DEBUG_LOG(("\n----------\n"));
+		DEBUG_LOG(("\n----------"));
 	}
 #endif
 

@@ -474,7 +474,7 @@ void WriteStackLine(void*address, void (*callback)(const char*))
 //*****************************************************************************
 void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 {
-   DEBUG_LOG(( "\n********** EXCEPTION DUMP ****************\n" ));
+   DEBUG_LOG(( "\n********** EXCEPTION DUMP ****************" ));
 	/*
 	** List of possible exceptions
 	*/
@@ -531,7 +531,7 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 		"Error code: ?????\nDescription: Unknown exception."
 	};
 
-	DEBUG_LOG( ("Dump exception info\n") );
+	DEBUG_LOG( ("Dump exception info") );
 	CONTEXT *context = e_info->ContextRecord;
 	/*
 	** The following are set for access violation only
@@ -563,7 +563,7 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 	{
 		if ( _codes[i] == e_info->ExceptionRecord->ExceptionCode )
 		{
-			DEBUG_LOG ( ("Found exception description\n") );
+			DEBUG_LOG ( ("Found exception description") );
 			break;
 		}
 	}
@@ -624,7 +624,7 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 
 	strcat (scrap, "\n");
 	DOUBLE_DEBUG ( ( (scrap)));
-  DEBUG_LOG(( "********** END EXCEPTION DUMP ****************\n\n" ));
+  DEBUG_LOG(( "********** END EXCEPTION DUMP ****************\n" ));
 }																									 
 
 

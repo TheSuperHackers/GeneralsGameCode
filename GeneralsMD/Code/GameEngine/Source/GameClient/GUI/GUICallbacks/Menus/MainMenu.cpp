@@ -607,7 +607,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 		{
 			// wohoo - we're connected!  fire off a check for updates
 			checkedForUpdate = TRUE;
-			DEBUG_LOG(("Looking for a patch for productID=%d, versionStr=%s, distribution=%d\n",
+			DEBUG_LOG(("Looking for a patch for productID=%d, versionStr=%s, distribution=%d",
 				gameProductID, gameVersionUniqueIDStr, gameDistributionID));
 			ptCheckForPatch( gameProductID, gameVersionUniqueIDStr, gameDistributionID, patchAvailableCallback, PTFalse, NULL );
 			//ptCheckForPatch( productID, versionUniqueIDStr, distributionID, mapPackAvailableCallback, PTFalse, NULL );
@@ -622,7 +622,7 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 
 	if (TheGameSpyPeerMessageQueue && !TheGameSpyPeerMessageQueue->isConnected())
 	{
-		DEBUG_LOG(("Tearing down GameSpy from MainMenuInit()\n"));
+		DEBUG_LOG(("Tearing down GameSpy from MainMenuInit()"));
 		TearDownGameSpy();
 	}
 	if (TheMapCache)
@@ -808,7 +808,7 @@ void ResolutionDialogUpdate()
 	//------------------------------------------------------------------------------------------------------
 	// Used for debugging purposes
 	//------------------------------------------------------------------------------------------------------
-	DEBUG_LOG(("Resolution Timer :  started at %d,  current time at %d, frameTicker is %d\n", timeStarted, 
+	DEBUG_LOG(("Resolution Timer :  started at %d,  current time at %d, frameTicker is %d", timeStarted, 
 							time(NULL) , currentTime));
 }
 */
@@ -989,7 +989,7 @@ WindowMsgHandledType MainMenuInput( GameWindow *window, UnsignedInt msg,
 			if(abs(mouse.x - mousePosX) > 20 || abs(mouse.y - mousePosY) > 20)
 			{
 			
-				DEBUG_LOG(("Mouse X:%d, Y:%d\n", mouse.x, mouse.y));
+				DEBUG_LOG(("Mouse X:%d, Y:%d", mouse.x, mouse.y));
 				if(notShown)
 				{
 					initialGadgetDelay = 1;
@@ -1049,7 +1049,7 @@ WindowMsgHandledType MainMenuSystem( GameWindow *window, UnsignedInt msg,
 		case GWM_DESTROY:
 		{
 			ghttpCleanup();
-			DEBUG_LOG(("Tearing down GameSpy from MainMenuSystem(GWM_DESTROY)\n"));
+			DEBUG_LOG(("Tearing down GameSpy from MainMenuSystem(GWM_DESTROY)"));
 			TearDownGameSpy();
 			StopAsyncDNSCheck(); // kill off the async DNS check thread in case it is still running
 			break;

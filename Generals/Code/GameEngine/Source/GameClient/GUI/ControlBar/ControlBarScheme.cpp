@@ -586,7 +586,7 @@ void ControlBarScheme::init(void)
 		}
 		win->winSetPosition(x,y );
 		win->winSetSize((m_powerBarLR.x - m_powerBarUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_powerBarLR.y - m_powerBarUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET);
-		DEBUG_LOG(("Power Bar UL X:%d Y:%d LR X:%d Y:%d size X:%d Y:%d\n",m_powerBarUL.x, m_powerBarUL.y,m_powerBarLR.x, m_powerBarLR.y, (m_powerBarLR.x - m_powerBarUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_powerBarLR.y - m_powerBarUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET  ));
+		DEBUG_LOG(("Power Bar UL X:%d Y:%d LR X:%d Y:%d size X:%d Y:%d",m_powerBarUL.x, m_powerBarUL.y,m_powerBarLR.x, m_powerBarLR.y, (m_powerBarLR.x - m_powerBarUL.x)*resMultiplier.x+ COMMAND_BAR_SIZE_OFFSET,(m_powerBarLR.y - m_powerBarUL.y)*resMultiplier.y+ COMMAND_BAR_SIZE_OFFSET  ));
 	}	
 
 	win= TheWindowManager->winGetWindowFromId( NULL, TheNameKeyGenerator->nameToKey( "ControlBar.wnd:ButtonGeneral" ) );
@@ -1092,14 +1092,14 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayerTemplate( const PlayerT
 	{
 		m_currentScheme->init();
 
-		DEBUG_LOG(("setControlBarSchemeByPlayer already is using %s as its side\n", side.str()));
+		DEBUG_LOG(("setControlBarSchemeByPlayer already is using %s as its side", side.str()));
 		return;
 	}
 
 	// if we don't have a side, set it to Observer shell
 	if(side.isEmpty())
 		side.set("Observer");
-	DEBUG_LOG(("setControlBarSchemeByPlayer used %s as its side\n", side.str()));
+	DEBUG_LOG(("setControlBarSchemeByPlayer used %s as its side", side.str()));
 	ControlBarScheme *tempScheme = NULL;
 
 	ControlBarSchemeList::iterator it = m_schemeList.begin();
@@ -1160,14 +1160,14 @@ void ControlBarSchemeManager::setControlBarSchemeByPlayer(Player *p)
 	{
 		m_currentScheme->init();
 
-		DEBUG_LOG(("setControlBarSchemeByPlayer already is using %s as its side\n", side.str()));
+		DEBUG_LOG(("setControlBarSchemeByPlayer already is using %s as its side", side.str()));
 		return;
 	}
 
 	// if we don't have a side, set it to Observer shell
 	if(side.isEmpty())
 		side.set("Observer");
-	DEBUG_LOG(("setControlBarSchemeByPlayer used %s as its side\n", side.str()));
+	DEBUG_LOG(("setControlBarSchemeByPlayer used %s as its side", side.str()));
 	ControlBarScheme *tempScheme = NULL;
 
 	ControlBarSchemeList::iterator it = m_schemeList.begin();

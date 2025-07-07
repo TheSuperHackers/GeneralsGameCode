@@ -136,7 +136,7 @@ void DeepCRCSanityCheck::reset(void)
 	fname.format("%sCRCAfter%dMaps.dat", TheGlobalData->getPath_UserData().str(), timesThrough);
 	UnsignedInt thisCRC = TheGameLogic->getCRC( CRC_RECALC, fname );
 
-	DEBUG_LOG(("DeepCRCSanityCheck: CRC is %X\n", thisCRC));
+	DEBUG_LOG(("DeepCRCSanityCheck: CRC is %X", thisCRC));
 	DEBUG_ASSERTCRASH(timesThrough == 0 || thisCRC == lastCRC,
 		("CRC after reset did not match beginning CRC!\nNetwork games won't work after this.\nOld: 0x%8.8X, New: 0x%8.8X",
 		lastCRC, thisCRC));
@@ -239,7 +239,7 @@ GameEngine::~GameEngine()
 
 void GameEngine::setFramesPerSecondLimit( Int fps )
 {
-	DEBUG_LOG(("GameEngine::setFramesPerSecondLimit() - setting max fps to %d (TheGlobalData->m_useFpsLimit == %d)\n", fps, TheGlobalData->m_useFpsLimit));
+	DEBUG_LOG(("GameEngine::setFramesPerSecondLimit() - setting max fps to %d (TheGlobalData->m_useFpsLimit == %d)", fps, TheGlobalData->m_useFpsLimit));
 	m_maxFPS = fps;
 }
 
@@ -255,22 +255,22 @@ void GameEngine::init()
 #ifdef DEBUG_LOGGING
 		if (TheVersion)
 		{
-			DEBUG_LOG(("================================================================================\n"));
+			DEBUG_LOG(("================================================================================"));
 	#if defined RTS_DEBUG
 			const char *buildType = "Debug";
 	#else
 			const char *buildType = "Release";
 	#endif
-			DEBUG_LOG(("Generals version %s (%s)\n", TheVersion->getAsciiVersion().str(), buildType));
-			DEBUG_LOG(("Build date: %s\n", TheVersion->getAsciiBuildTime().str()));
-			DEBUG_LOG(("Build location: %s\n", TheVersion->getAsciiBuildLocation().str()));
-			DEBUG_LOG(("Built by: %s\n", TheVersion->getAsciiBuildUser().str()));
-			DEBUG_LOG(("================================================================================\n"));
+			DEBUG_LOG(("Generals version %s (%s)", TheVersion->getAsciiVersion().str(), buildType));
+			DEBUG_LOG(("Build date: %s", TheVersion->getAsciiBuildTime().str()));
+			DEBUG_LOG(("Build location: %s", TheVersion->getAsciiBuildLocation().str()));
+			DEBUG_LOG(("Built by: %s", TheVersion->getAsciiBuildUser().str()));
+			DEBUG_LOG(("================================================================================"));
 		}
 #endif
 
 	#if defined(PERF_TIMERS) || defined(DUMP_PERF_STATS)
-		DEBUG_LOG(("Calculating CPU frequency for performance timers.\n"));
+		DEBUG_LOG(("Calculating CPU frequency for performance timers."));
 		InitPrecisionTimer();
 	#endif
 	#ifdef PERF_TIMERS
@@ -559,7 +559,7 @@ void GameEngine::init()
 
 		xferCRC.close();
 		TheWritableGlobalData->m_iniCRC = xferCRC.getCRC();
-		DEBUG_LOG(("INI CRC is 0x%8.8X\n", TheGlobalData->m_iniCRC));
+		DEBUG_LOG(("INI CRC is 0x%8.8X", TheGlobalData->m_iniCRC));
 
 		TheSubsystemList->postProcessLoadAll();
 
@@ -873,7 +873,7 @@ void GameEngine::execute( void )
 						  now = timeGetTime();
 					  }
 					  //Int slept = now - prevTime;
-					  //DEBUG_LOG(("delayed %d\n",slept));
+					  //DEBUG_LOG(("delayed %d",slept));
 
 					  prevTime = now;
 

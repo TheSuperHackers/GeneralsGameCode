@@ -730,7 +730,7 @@ void WOLQuickMatchMenuInit( WindowLayout *layout, void *userData )
 			GameSpyCloseAllOverlays();
 			GSMessageBoxOk( title, body );
 			TheGameSpyInfo->reset();
-			DEBUG_LOG(("WOLQuickMatchMenuInit() - game was in progress, and we were disconnected, so pop immediate back to main menu\n"));
+			DEBUG_LOG(("WOLQuickMatchMenuInit() - game was in progress, and we were disconnected, so pop immediate back to main menu"));
 			TheShell->popImmediate();
 			return;
 		}
@@ -1137,17 +1137,17 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 				{
 					if (!stricmp(resp.command.c_str(), "STATS"))
 					{
-						DEBUG_LOG(("Saw STATS from %s, data was '%s'\n", resp.nick.c_str(), resp.commandOptions.c_str()));
+						DEBUG_LOG(("Saw STATS from %s, data was '%s'", resp.nick.c_str(), resp.commandOptions.c_str()));
 						AsciiString data = resp.commandOptions.c_str();
 						AsciiString idStr;
 						data.nextToken(&idStr, " ");
 						Int id = atoi(idStr.str());
-						DEBUG_LOG(("data: %d(%s) - '%s'\n", id, idStr.str(), data.str()));
+						DEBUG_LOG(("data: %d(%s) - '%s'", id, idStr.str(), data.str()));
 
 						PSPlayerStats stats = TheGameSpyPSMessageQueue->parsePlayerKVPairs(data.str());
 						PSPlayerStats oldStats = TheGameSpyPSMessageQueue->findPlayerStatsByID(id);
 						stats.id = id;
-						DEBUG_LOG(("Parsed ID is %d, old ID is %d\n", stats.id, oldStats.id));
+						DEBUG_LOG(("Parsed ID is %d, old ID is %d", stats.id, oldStats.id));
 						if (stats.id && (oldStats.id == 0))
 							TheGameSpyPSMessageQueue->trackPlayerStats(stats);
 
@@ -1178,12 +1178,12 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 								(val <= FirewallHelperClass::FIREWALL_TYPE_DESTINATION_PORT_DELTA))
 						{
 							slot->setNATBehavior((FirewallHelperClass::FirewallBehaviorType)val);
-							DEBUG_LOG(("Setting NAT behavior to %d for player %d\n", val, slotNum));
+							DEBUG_LOG(("Setting NAT behavior to %d for player %d", val, slotNum));
 							change = true;
 						}
 						else
 						{
-							DEBUG_LOG(("Rejecting invalid NAT behavior %d from player %d\n", val, slotNum));
+							DEBUG_LOG(("Rejecting invalid NAT behavior %d from player %d", val, slotNum));
 						}
 					}
 					*/
@@ -1324,7 +1324,7 @@ void WOLQuickMatchMenuUpdate( WindowLayout * layout, void *userData)
 								}
 							}
 
-							DEBUG_LOG(("Starting a QM game: options=[%s]\n", GameInfoToAsciiString(TheGameSpyGame).str()));
+							DEBUG_LOG(("Starting a QM game: options=[%s]", GameInfoToAsciiString(TheGameSpyGame).str()));
 							SendStatsToOtherPlayers(TheGameSpyGame);
 							TheGameSpyGame->startGame(0);
 							GameWindow *buttonBuddies = TheWindowManager->winGetWindowFromId(NULL, buttonBuddiesID);
@@ -1661,7 +1661,7 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 					if (ladderInfo && ladderInfo->randomFactions)
 					{
 						Int sideNum = GameClientRandomValue(0, ladderInfo->validFactions.size()-1);
-						DEBUG_LOG(("Looking for %d out of %d random sides\n", sideNum, ladderInfo->validFactions.size()));
+						DEBUG_LOG(("Looking for %d out of %d random sides", sideNum, ladderInfo->validFactions.size()));
 						AsciiStringListConstIterator cit = ladderInfo->validFactions.begin();
 						while (sideNum)
 						{
@@ -1672,13 +1672,13 @@ WindowMsgHandledType WOLQuickMatchMenuSystem( GameWindow *window, UnsignedInt ms
 						{
 							Int numPlayerTemplates = ThePlayerTemplateStore->getPlayerTemplateCount();
 							AsciiString sideStr = *cit;
-							DEBUG_LOG(("Chose %s as our side... finding\n", sideStr.str()));
+							DEBUG_LOG(("Chose %s as our side... finding", sideStr.str()));
 							for (Int c=0; c<numPlayerTemplates; ++c)
 							{
 								const PlayerTemplate *fac = ThePlayerTemplateStore->getNthPlayerTemplate(c);
 								if (fac && fac->getSide() == sideStr)
 								{
-									DEBUG_LOG(("Found %s in index %d\n", sideStr.str(), c));
+									DEBUG_LOG(("Found %s in index %d", sideStr.str(), c));
 									req.QM.side = c;
 									break;
 								}

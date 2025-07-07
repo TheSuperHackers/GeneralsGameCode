@@ -281,7 +281,7 @@ static void updateNumPlayersOnline(void)
 				g = grabUByte(aLine.str()+5);
 				b = grabUByte(aLine.str()+7);
 				c = GameMakeColor(r, g, b, a);
-				DEBUG_LOG(("MOTD line '%s' has color %X\n", aLine.str(), c));
+				DEBUG_LOG(("MOTD line '%s' has color %X", aLine.str(), c));
 				aLine = aLine.str() + 9;
 			}
 			line = UnicodeString(MultiByteToWideCharSingleLine(aLine.str()).c_str());
@@ -346,7 +346,7 @@ static void updateOverallStats(void)
 	usa = calcPercent(s_statsUSA, STATS_LASTWEEK, TheGameText->fetch("SIDE:America"));
 	china = calcPercent(s_statsChina, STATS_LASTWEEK, TheGameText->fetch("SIDE:China"));
 	gla = calcPercent(s_statsGLA, STATS_LASTWEEK, TheGameText->fetch("SIDE:GLA"));
-	DEBUG_LOG(("Last Week: %ls %ls %ls\n", usa.str(), china.str(), gla.str()));
+	DEBUG_LOG(("Last Week: %ls %ls %ls", usa.str(), china.str(), gla.str()));
 	win = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY("WOLWelcomeMenu.wnd:StaticTextUSALastWeek") );
 	GadgetStaticTextSetText(win, usa);
 	win = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY("WOLWelcomeMenu.wnd:StaticTextChinaLastWeek") );
@@ -357,7 +357,7 @@ static void updateOverallStats(void)
 	usa = calcPercent(s_statsUSA, STATS_TODAY, TheGameText->fetch("SIDE:America"));
 	china = calcPercent(s_statsChina, STATS_TODAY, TheGameText->fetch("SIDE:China"));
 	gla = calcPercent(s_statsGLA, STATS_TODAY, TheGameText->fetch("SIDE:GLA"));
-	DEBUG_LOG(("Today: %ls %ls %ls\n", usa.str(), china.str(), gla.str()));
+	DEBUG_LOG(("Today: %ls %ls %ls", usa.str(), china.str(), gla.str()));
 	win = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY("WOLWelcomeMenu.wnd:StaticTextUSAToday") );
 	GadgetStaticTextSetText(win, usa);
 	win = TheWindowManager->winGetWindowFromId( NULL, NAMEKEY("WOLWelcomeMenu.wnd:StaticTextChinaToday") );
@@ -779,7 +779,7 @@ WindowMsgHandledType WOLWelcomeMenuSystem( GameWindow *window, UnsignedInt msg,
 					breq.buddyRequestType = BuddyRequest::BUDDYREQUEST_LOGOUT;
 					TheGameSpyBuddyMessageQueue->addRequest( breq );
 
-					DEBUG_LOG(("Tearing down GameSpy from WOLWelcomeMenuSystem(GBM_SELECTED)\n"));
+					DEBUG_LOG(("Tearing down GameSpy from WOLWelcomeMenuSystem(GBM_SELECTED)"));
 					TearDownGameSpy();
 
 					/*

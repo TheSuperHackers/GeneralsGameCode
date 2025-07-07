@@ -292,7 +292,7 @@ ThingTemplate *ThingFactory::findTemplateInternal( const AsciiString& name )
 	
 #endif
 	
-	//DEBUG_LOG(("*** Object template %s not found\n",name.str()));
+	//DEBUG_LOG(("*** Object template %s not found",name.str()));
 	return NULL;
 
 }  // end getTemplate

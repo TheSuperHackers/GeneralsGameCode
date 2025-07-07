@@ -145,7 +145,7 @@ void W3DDependencyModelDraw::adjustTransformMtx(Matrix3D& mtx) const
 			else
 			{
         mtx = *theirDrawable->getTransformMatrix();//TransformMatrix();
-				DEBUG_LOG(("m_attachToDrawableBoneInContainer %s not found\n",getW3DDependencyModelDrawModuleData()->m_attachToDrawableBoneInContainer.str()));
+				DEBUG_LOG(("m_attachToDrawableBoneInContainer %s not found",getW3DDependencyModelDrawModuleData()->m_attachToDrawableBoneInContainer.str()));
 			}
 		}
 	}

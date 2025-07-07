@@ -120,7 +120,7 @@ Bool GetStringFromRegistry(AsciiString path, AsciiString key, AsciiString& val)
 	AsciiString fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Generals";
 
 	fullPath.concat(path);
-	DEBUG_LOG(("GetStringFromRegistry - looking in %s for key %s\n", fullPath.str(), key.str()));
+	DEBUG_LOG(("GetStringFromRegistry - looking in %s for key %s", fullPath.str(), key.str()));
 	if (getStringFromRegistry(HKEY_LOCAL_MACHINE, fullPath.str(), key.str(), val))
 	{
 		return TRUE;
@@ -134,7 +134,7 @@ Bool GetUnsignedIntFromRegistry(AsciiString path, AsciiString key, UnsignedInt& 
 	AsciiString fullPath = "SOFTWARE\\Electronic Arts\\EA Games\\Generals";
 
 	fullPath.concat(path);
-	DEBUG_LOG(("GetUnsignedIntFromRegistry - looking in %s for key %s\n", fullPath.str(), key.str()));
+	DEBUG_LOG(("GetUnsignedIntFromRegistry - looking in %s for key %s", fullPath.str(), key.str()));
 	if (getUnsignedIntFromRegistry(HKEY_LOCAL_MACHINE, fullPath.str(), key.str(), val))
 	{
 		return TRUE;

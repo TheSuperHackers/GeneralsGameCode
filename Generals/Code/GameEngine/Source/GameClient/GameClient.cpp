@@ -131,17 +131,17 @@ GameClient::~GameClient()
 	// clear any drawable TOC we might have
 	m_drawableTOC.clear();
 
-	//DEBUG_LOG(("Preloaded texture files ------------------------------------------\n"));
+	//DEBUG_LOG(("Preloaded texture files ------------------------------------------"));
 	//for (Int oog=0; oog<preloadTextureNamesGlobalHack2.size(); ++oog)
 	//{
-	//	DEBUG_LOG(("%s\n", preloadTextureNamesGlobalHack2[oog]));
+	//	DEBUG_LOG(("%s", preloadTextureNamesGlobalHack2[oog]));
 	//}
-	//DEBUG_LOG(("------------------------------------------------------------------\n"));
+	//DEBUG_LOG(("------------------------------------------------------------------"));
 	//for (oog=0; oog<preloadTextureNamesGlobalHack.size(); ++oog)
 	//{
-	//	DEBUG_LOG(("%s\n", preloadTextureNamesGlobalHack[oog]));
+	//	DEBUG_LOG(("%s", preloadTextureNamesGlobalHack[oog]));
 	//}
-	//DEBUG_LOG(("End Texture files ------------------------------------------------\n"));
+	//DEBUG_LOG(("End Texture files ------------------------------------------------"));
 	if(TheCampaignManager)
 		delete TheCampaignManager;
 	TheCampaignManager = NULL;
@@ -1064,22 +1064,22 @@ void GameClient::preloadAssets( TimeOfDay timeOfDay )
 	}  // end for
 	GlobalMemoryStatus(&after);
 
-	DEBUG_LOG(("Preloading memory dwAvailPageFile %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailPageFile %d --> %d : %d",
 		before.dwAvailPageFile, after.dwAvailPageFile, before.dwAvailPageFile - after.dwAvailPageFile));
-	DEBUG_LOG(("Preloading memory dwAvailPhys     %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailPhys     %d --> %d : %d",
 		before.dwAvailPhys, after.dwAvailPhys, before.dwAvailPhys - after.dwAvailPhys));
-	DEBUG_LOG(("Preloading memory dwAvailVirtual  %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailVirtual  %d --> %d : %d",
 		before.dwAvailVirtual, after.dwAvailVirtual, before.dwAvailVirtual - after.dwAvailVirtual));
 	/*
-	DEBUG_LOG(("Preloading memory dwLength        %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwLength        %d --> %d : %d",
 		before.dwLength, after.dwLength, before.dwLength - after.dwLength));
-	DEBUG_LOG(("Preloading memory dwMemoryLoad    %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwMemoryLoad    %d --> %d : %d",
 		before.dwMemoryLoad, after.dwMemoryLoad, before.dwMemoryLoad - after.dwMemoryLoad));
-	DEBUG_LOG(("Preloading memory dwTotalPageFile %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwTotalPageFile %d --> %d : %d",
 		before.dwTotalPageFile, after.dwTotalPageFile, before.dwTotalPageFile - after.dwTotalPageFile));
-	DEBUG_LOG(("Preloading memory dwTotalPhys     %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwTotalPhys     %d --> %d : %d",
 		before.dwTotalPhys , after.dwTotalPhys, before.dwTotalPhys - after.dwTotalPhys));
-	DEBUG_LOG(("Preloading memory dwTotalVirtual  %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwTotalVirtual  %d --> %d : %d",
 		before.dwTotalVirtual , after.dwTotalVirtual, before.dwTotalVirtual - after.dwTotalVirtual));
 	*/
 
@@ -1093,11 +1093,11 @@ void GameClient::preloadAssets( TimeOfDay timeOfDay )
 	GlobalMemoryStatus(&after);
 	debrisModelNamesGlobalHack.clear();
 
-	DEBUG_LOG(("Preloading memory dwAvailPageFile %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailPageFile %d --> %d : %d",
 		before.dwAvailPageFile, after.dwAvailPageFile, before.dwAvailPageFile - after.dwAvailPageFile));
-	DEBUG_LOG(("Preloading memory dwAvailPhys     %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailPhys     %d --> %d : %d",
 		before.dwAvailPhys, after.dwAvailPhys, before.dwAvailPhys - after.dwAvailPhys));
-	DEBUG_LOG(("Preloading memory dwAvailVirtual  %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailVirtual  %d --> %d : %d",
 		before.dwAvailVirtual, after.dwAvailVirtual, before.dwAvailVirtual - after.dwAvailVirtual));
 
 	TheControlBar->preloadAssets( timeOfDay );
@@ -1106,11 +1106,11 @@ void GameClient::preloadAssets( TimeOfDay timeOfDay )
 	TheParticleSystemManager->preloadAssets( timeOfDay );
 	GlobalMemoryStatus(&after);
 
-	DEBUG_LOG(("Preloading memory dwAvailPageFile %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailPageFile %d --> %d : %d",
 		before.dwAvailPageFile, after.dwAvailPageFile, before.dwAvailPageFile - after.dwAvailPageFile));
-	DEBUG_LOG(("Preloading memory dwAvailPhys     %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailPhys     %d --> %d : %d",
 		before.dwAvailPhys, after.dwAvailPhys, before.dwAvailPhys - after.dwAvailPhys));
-	DEBUG_LOG(("Preloading memory dwAvailVirtual  %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailVirtual  %d --> %d : %d",
 		before.dwAvailVirtual, after.dwAvailVirtual, before.dwAvailVirtual - after.dwAvailVirtual));
 
 	const char *textureNames[] = {
@@ -1160,11 +1160,11 @@ void GameClient::preloadAssets( TimeOfDay timeOfDay )
 		TheDisplay->preloadTextureAssets(textureNames[i]);
 	GlobalMemoryStatus(&after);
 
-	DEBUG_LOG(("Preloading memory dwAvailPageFile %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailPageFile %d --> %d : %d",
 		before.dwAvailPageFile, after.dwAvailPageFile, before.dwAvailPageFile - after.dwAvailPageFile));
-	DEBUG_LOG(("Preloading memory dwAvailPhys     %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailPhys     %d --> %d : %d",
 		before.dwAvailPhys, after.dwAvailPhys, before.dwAvailPhys - after.dwAvailPhys));
-	DEBUG_LOG(("Preloading memory dwAvailVirtual  %d --> %d : %d\n",
+	DEBUG_LOG(("Preloading memory dwAvailVirtual  %d --> %d : %d",
 		before.dwAvailVirtual, after.dwAvailVirtual, before.dwAvailVirtual - after.dwAvailVirtual));
 
 //	preloadTextureNamesGlobalHack2 = preloadTextureNamesGlobalHack;
@@ -1526,11 +1526,11 @@ void GameClient::xfer( Xfer *xfer )
 			BriefingList *bList = GetBriefingTextList();
 			Int numEntries = bList->size();
 			xfer->xferInt(&numEntries);
-			DEBUG_LOG(("Saving %d briefing lines\n", numEntries));
+			DEBUG_LOG(("Saving %d briefing lines", numEntries));
 			for (BriefingList::const_iterator bIt = bList->begin(); bIt != bList->end(); ++bIt)
 			{
 				AsciiString tempStr = *bIt;
-				DEBUG_LOG(("'%s'\n", tempStr.str()));
+				DEBUG_LOG(("'%s'", tempStr.str()));
 				xfer->xferAsciiString(&tempStr);
 			}
 		}
@@ -1538,13 +1538,13 @@ void GameClient::xfer( Xfer *xfer )
 		{
 			Int numEntries = 0;
 			xfer->xferInt(&numEntries);
-			DEBUG_LOG(("Loading %d briefing lines\n", numEntries));
+			DEBUG_LOG(("Loading %d briefing lines", numEntries));
 			UpdateDiplomacyBriefingText(AsciiString::TheEmptyString, TRUE); // clear out briefing list first
 			while (numEntries-- > 0)
 			{
 				AsciiString tempStr;
 				xfer->xferAsciiString(&tempStr);
-				DEBUG_LOG(("'%s'\n", tempStr.str()));
+				DEBUG_LOG(("'%s'", tempStr.str()));
 				UpdateDiplomacyBriefingText(tempStr, FALSE);
 			}
 		}

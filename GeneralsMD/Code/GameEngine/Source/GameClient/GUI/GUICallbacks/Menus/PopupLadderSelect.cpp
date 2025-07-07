@@ -408,7 +408,7 @@ WindowMsgHandledType PopupLadderSelectSystem( GameWindow *window, UnsignedInt ms
 				if ( pass.isNotEmpty() ) // password ok
 				{
 					AsciiString cryptPass = EncryptString(pass.str());
-					DEBUG_LOG(("pass is %s, crypted pass is %s, comparing to %s\n",
+					DEBUG_LOG(("pass is %s, crypted pass is %s, comparing to %s",
 						pass.str(), cryptPass.str(), li->cryptedPassword.str()));
 					if (cryptPass == li->cryptedPassword)
 						ladderSelectedCallback();

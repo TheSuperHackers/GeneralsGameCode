@@ -231,7 +231,7 @@ WindowMsgHandledType DisconnectControlSystem( GameWindow *window, UnsignedInt ms
 
 		case GEM_EDIT_DONE:
 		{
-//			DEBUG_LOG(("DisconnectControlSystem - got GEM_EDIT_DONE.\n"));
+//			DEBUG_LOG(("DisconnectControlSystem - got GEM_EDIT_DONE."));
 			GameWindow *control = (GameWindow *)mData1;
 			Int controlID = control->winGetWindowId();
 
@@ -241,7 +241,7 @@ WindowMsgHandledType DisconnectControlSystem( GameWindow *window, UnsignedInt ms
 			{
 				UnicodeString txtInput;
 
-//				DEBUG_LOG(("DisconnectControlSystem - GEM_EDIT_DONE was from the text entry control.\n"));
+//				DEBUG_LOG(("DisconnectControlSystem - GEM_EDIT_DONE was from the text entry control."));
 
 				// read the user's input
 				txtInput.set(GadgetTextEntryGetText( textEntryWindow ));
@@ -251,7 +251,7 @@ WindowMsgHandledType DisconnectControlSystem( GameWindow *window, UnsignedInt ms
 				txtInput.trim();
 				// Echo the user's input to the chat window
 				if (!txtInput.isEmpty()) {
-//					DEBUG_LOG(("DisconnectControlSystem - sending string %ls\n", txtInput.str()));
+//					DEBUG_LOG(("DisconnectControlSystem - sending string %ls", txtInput.str()));
 					TheDisconnectMenu->sendChat(txtInput);
 				}
 

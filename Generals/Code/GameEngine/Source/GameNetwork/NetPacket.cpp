@@ -206,7 +206,7 @@ NetPacketList NetPacket::ConstructBigCommandPacketList(NetCommandRef *ref) {
 		ref->setRelay(ref->getRelay());
 
 		if (packet->addCommand(ref) == FALSE) {
-			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::BeginBigCommandPacketList - failed to add a wrapper command to the packet\n")); // I still have a drinking problem.
+			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::BeginBigCommandPacketList - failed to add a wrapper command to the packet")); // I still have a drinking problem.
 		}
 
 		packetList.push_back(packet);
@@ -822,7 +822,7 @@ void NetPacket::FillBufferWithGameCommand(UnsignedByte *buffer, NetCommandRef *m
 	// get the game message from the NetCommandMsg
 	GameMessage *gmsg = cmdMsg->constructGameMessage();
 
-	//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::FillBufferWithGameCommand for command ID %d\n", cmdMsg->getID()));
+	//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::FillBufferWithGameCommand for command ID %d", cmdMsg->getID()));
 
 	// If necessary, put the NetCommandType into the packet.
 	buffer[offset] = 'T';
@@ -929,7 +929,7 @@ void NetPacket::FillBufferWithGameCommand(UnsignedByte *buffer, NetCommandRef *m
 	deleteInstance(parser);
 	parser = NULL;
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addGameMessage - added game message, frame %d, player %d, command ID %d\n", m_lastFrame, m_lastPlayerID, m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addGameMessage - added game message, frame %d, player %d, command ID %d", m_lastFrame, m_lastPlayerID, m_lastCommandID));
 
 	if (gmsg)
 		deleteInstance(gmsg);
@@ -937,7 +937,7 @@ void NetPacket::FillBufferWithGameCommand(UnsignedByte *buffer, NetCommandRef *m
 }
 
 void NetPacket::FillBufferWithAckCommand(UnsignedByte *buffer, NetCommandRef *msg) {
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::FillBufferWithAckCommand - adding ack for command %d for player %d\n", cmdMsg->getCommandID(), msg->getCommand()->getPlayerID()));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::FillBufferWithAckCommand - adding ack for command %d for player %d", cmdMsg->getCommandID(), msg->getCommand()->getPlayerID()));
 
 	NetCommandMsg *cmdMsg = msg->getCommand();
 	UnsignedShort offset = 0;
@@ -977,13 +977,13 @@ void NetPacket::FillBufferWithAckCommand(UnsignedByte *buffer, NetCommandRef *ms
 	memcpy(buffer + offset, &originalPlayerID, sizeof(UnsignedByte));
 	offset += sizeof(UnsignedByte);
 
-	//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("outgoing - added ACK, original player %d, command id %d\n", origPlayerID, cmdID));
+	//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("outgoing - added ACK, original player %d, command id %d", origPlayerID, cmdID));
 }
 
 void NetPacket::FillBufferWithFrameCommand(UnsignedByte *buffer, NetCommandRef *msg) {
 	NetFrameCommandMsg *cmdMsg = (NetFrameCommandMsg *)(msg->getCommand());
 	UnsignedShort offset = 0;
-	//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addFrameCommand - adding frame command for frame %d, command count = %d, command id = %d\n", cmdMsg->getExecutionFrame(), cmdMsg->getCommandCount(), cmdMsg->getID()));
+	//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addFrameCommand - adding frame command for frame %d, command count = %d, command id = %d", cmdMsg->getExecutionFrame(), cmdMsg->getCommandCount(), cmdMsg->getID()));
 
 // If necessary, put the NetCommandType into the packet.
 	buffer[offset] = 'T';
@@ -1021,7 +1021,7 @@ void NetPacket::FillBufferWithFrameCommand(UnsignedByte *buffer, NetCommandRef *
 	memcpy(buffer + offset, &newID, sizeof(UnsignedShort));
 	offset += sizeof(UnsignedShort);
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d\n", m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d", m_lastCommandID));
 
 	buffer[offset] = 'D';
 	++offset;
@@ -1030,13 +1030,13 @@ void NetPacket::FillBufferWithFrameCommand(UnsignedByte *buffer, NetCommandRef *
 	offset += sizeof(UnsignedShort);
 
 	// frameinfodebug
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("outgoing - added frame %d, player %d, command count = %d, command id = %d\n", cmdMsg->getExecutionFrame(), cmdMsg->getPlayerID(), cmdMsg->getCommandCount(), cmdMsg->getID()));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("outgoing - added frame %d, player %d, command count = %d, command id = %d", cmdMsg->getExecutionFrame(), cmdMsg->getPlayerID(), cmdMsg->getCommandCount(), cmdMsg->getID()));
 }
 
 void NetPacket::FillBufferWithPlayerLeaveCommand(UnsignedByte *buffer, NetCommandRef *msg) {
 	NetPlayerLeaveCommandMsg *cmdMsg = (NetPlayerLeaveCommandMsg *)(msg->getCommand());
 	UnsignedShort offset = 0;
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addPlayerLeaveCommand - adding player leave command for player %d\n", cmdMsg->getLeavingPlayerID()));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addPlayerLeaveCommand - adding player leave command for player %d", cmdMsg->getLeavingPlayerID()));
 
 	// If necessary, put the NetCommandType into the packet.
 	buffer[offset] = 'T';
@@ -1074,7 +1074,7 @@ void NetPacket::FillBufferWithPlayerLeaveCommand(UnsignedByte *buffer, NetComman
 	memcpy(buffer + offset, &newID, sizeof(UnsignedShort));
 	offset += sizeof(UnsignedShort);
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d\n", m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d", m_lastCommandID));
 
 	buffer[offset] = 'D';
 	++offset;
@@ -1086,7 +1086,7 @@ void NetPacket::FillBufferWithPlayerLeaveCommand(UnsignedByte *buffer, NetComman
 void NetPacket::FillBufferWithRunAheadMetricsCommand(UnsignedByte *buffer, NetCommandRef *msg) {
 	NetRunAheadMetricsCommandMsg *cmdMsg = (NetRunAheadMetricsCommandMsg *)(msg->getCommand());
 	UnsignedShort offset = 0;
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addRunAheadMetricsCommand - adding run ahead metrics for player %d, fps = %d, latency = %f\n", cmdMsg->getPlayerID(), cmdMsg->getAverageFps(), cmdMsg->getAverageLatency()));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addRunAheadMetricsCommand - adding run ahead metrics for player %d, fps = %d, latency = %f", cmdMsg->getPlayerID(), cmdMsg->getAverageFps(), cmdMsg->getAverageLatency()));
 
 	// If necessary, put the NetCommandType into the packet.
 	buffer[offset] = 'T';
@@ -1117,7 +1117,7 @@ void NetPacket::FillBufferWithRunAheadMetricsCommand(UnsignedByte *buffer, NetCo
 	memcpy(buffer + offset, &newID, sizeof(UnsignedShort));
 	offset += sizeof(UnsignedShort);
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d\n", m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d", m_lastCommandID));
 
 	buffer[offset] = 'D';
 	++offset;
@@ -1134,7 +1134,7 @@ void NetPacket::FillBufferWithRunAheadMetricsCommand(UnsignedByte *buffer, NetCo
 void NetPacket::FillBufferWithRunAheadCommand(UnsignedByte *buffer, NetCommandRef *msg) {
 	NetRunAheadCommandMsg *cmdMsg = (NetRunAheadCommandMsg *)(msg->getCommand());
 	UnsignedShort offset = 0;
-	//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::FillBufferWithRunAheadCommand - adding run ahead command\n"));
+	//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::FillBufferWithRunAheadCommand - adding run ahead command"));
 
 	// If necessary, put the NetCommandType into the packet.
 	buffer[offset] = 'T';
@@ -1172,7 +1172,7 @@ void NetPacket::FillBufferWithRunAheadCommand(UnsignedByte *buffer, NetCommandRe
 	memcpy(buffer + offset, &newID, sizeof(UnsignedShort));
 	offset += sizeof(UnsignedShort);
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d\n", m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d", m_lastCommandID));
 
 	buffer[offset] = 'D';
 	++offset;
@@ -1184,13 +1184,13 @@ void NetPacket::FillBufferWithRunAheadCommand(UnsignedByte *buffer, NetCommandRe
 	memcpy(buffer + offset, &newFrameRate, sizeof(UnsignedByte));
 	offset += sizeof(UnsignedByte);
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket - added run ahead command, frame %d, player id %d command id %d\n", m_lastFrame, m_lastPlayerID, m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket - added run ahead command, frame %d, player id %d command id %d", m_lastFrame, m_lastPlayerID, m_lastCommandID));
 }
 
 void NetPacket::FillBufferWithDestroyPlayerCommand(UnsignedByte *buffer, NetCommandRef *msg) {
 	NetDestroyPlayerCommandMsg *cmdMsg = (NetDestroyPlayerCommandMsg *)(msg->getCommand());
 	UnsignedShort offset = 0;
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addRunAheadCommand - adding run ahead command\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addRunAheadCommand - adding run ahead command"));
 
 // If necessary, put the NetCommandType into the packet.
 	buffer[offset] = 'T';
@@ -1228,7 +1228,7 @@ void NetPacket::FillBufferWithDestroyPlayerCommand(UnsignedByte *buffer, NetComm
 	memcpy(buffer + offset, &newID, sizeof(UnsignedShort));
 	offset += sizeof(UnsignedShort);
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d\n", m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d", m_lastCommandID));
 
 	buffer[offset] = 'D';
 	++offset;
@@ -1293,7 +1293,7 @@ void NetPacket::FillBufferWithDisconnectKeepAliveCommand(UnsignedByte *buffer, N
 void NetPacket::FillBufferWithDisconnectPlayerCommand(UnsignedByte *buffer, NetCommandRef *msg) {
 	NetDisconnectPlayerCommandMsg *cmdMsg = (NetDisconnectPlayerCommandMsg *)(msg->getCommand());
 	UnsignedShort offset = 0;
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectPlayerCommand - adding run ahead command\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectPlayerCommand - adding run ahead command"));
 
 	// If necessary, put the NetCommandType into the packet.
 	buffer[offset] = 'T';
@@ -1324,7 +1324,7 @@ void NetPacket::FillBufferWithDisconnectPlayerCommand(UnsignedByte *buffer, NetC
 	memcpy(buffer + offset, &newID, sizeof(UnsignedShort));
 	offset += sizeof(UnsignedShort);
 
-	//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d\n", m_lastCommandID));
+	//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d", m_lastCommandID));
 
 	buffer[offset] = 'D';
 	++offset;
@@ -1340,7 +1340,7 @@ void NetPacket::FillBufferWithDisconnectPlayerCommand(UnsignedByte *buffer, NetC
 void NetPacket::FillBufferWithPacketRouterQueryCommand(UnsignedByte *buffer, NetCommandRef *msg) {
 	NetPacketRouterQueryCommandMsg *cmdMsg = (NetPacketRouterQueryCommandMsg *)(msg->getCommand());
 	UnsignedShort offset = 0;
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addPacketRouterQueryCommand - adding packet router query command\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addPacketRouterQueryCommand - adding packet router query command"));
 
 	// If necessary, put the NetCommandType into the packet.
 	buffer[offset] = 'T';
@@ -1370,7 +1370,7 @@ void NetPacket::FillBufferWithPacketRouterQueryCommand(UnsignedByte *buffer, Net
 void NetPacket::FillBufferWithPacketRouterAckCommand(UnsignedByte *buffer, NetCommandRef *msg) {
 	NetPacketRouterAckCommandMsg *cmdMsg = (NetPacketRouterAckCommandMsg *)(msg->getCommand());
 	UnsignedShort offset = 0;
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addPacketRouterAckCommand - adding packet router query command\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addPacketRouterAckCommand - adding packet router query command"));
 
 	// If necessary, put the NetCommandType into the packet.
 	buffer[offset] = 'T';
@@ -1401,7 +1401,7 @@ void NetPacket::FillBufferWithPacketRouterAckCommand(UnsignedByte *buffer, NetCo
 void NetPacket::FillBufferWithDisconnectChatCommand(UnsignedByte *buffer, NetCommandRef *msg) {
 	NetDisconnectChatCommandMsg *cmdMsg = (NetDisconnectChatCommandMsg *)(msg->getCommand());
 	UnsignedShort offset = 0;
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectChatCommand - adding run ahead command\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectChatCommand - adding run ahead command"));
 
 // If necessary, put the NetCommandType into the packet.
 	buffer[offset] = 'T';
@@ -1439,7 +1439,7 @@ void NetPacket::FillBufferWithDisconnectChatCommand(UnsignedByte *buffer, NetCom
 void NetPacket::FillBufferWithDisconnectVoteCommand(UnsignedByte *buffer, NetCommandRef *msg) {
 	NetDisconnectVoteCommandMsg *cmdMsg = (NetDisconnectVoteCommandMsg *)(msg->getCommand());
 	UnsignedShort offset = 0;
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectVoteCommand - adding run ahead command\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectVoteCommand - adding run ahead command"));
 
 // If necessary, put the NetCommandType into the packet.
 	buffer[offset] = 'T';
@@ -1470,7 +1470,7 @@ void NetPacket::FillBufferWithDisconnectVoteCommand(UnsignedByte *buffer, NetCom
 	memcpy(buffer + offset, &newID, sizeof(UnsignedShort));
 	offset += sizeof(UnsignedShort);
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d\n", m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d", m_lastCommandID));
 
 	buffer[offset] = 'D';
 	++offset;
@@ -1486,7 +1486,7 @@ void NetPacket::FillBufferWithDisconnectVoteCommand(UnsignedByte *buffer, NetCom
 void NetPacket::FillBufferWithChatCommand(UnsignedByte *buffer, NetCommandRef *msg) {
 	NetChatCommandMsg *cmdMsg = (NetChatCommandMsg *)(msg->getCommand());
 	UnsignedShort offset = 0;
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectChatCommand - adding run ahead command\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectChatCommand - adding run ahead command"));
 
 // If necessary, put the NetCommandType into the packet.
 	buffer[offset] = 'T';
@@ -1524,7 +1524,7 @@ void NetPacket::FillBufferWithChatCommand(UnsignedByte *buffer, NetCommandRef *m
 	memcpy(buffer + offset, &newID, sizeof(UnsignedShort));
 	offset += sizeof(UnsignedShort);
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d\n", m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d", m_lastCommandID));
 
 	buffer[offset] = 'D';
 	++offset;
@@ -2107,7 +2107,7 @@ Bool NetPacket::addFrameResendRequestCommand(NetCommandRef *msg) {
 		memcpy(m_packet + m_packetLen, &frameToResend, sizeof(frameToResend));
 		m_packetLen += sizeof(frameToResend);
 
-		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addFrameResendRequest - added frame resend request command from player %d for frame %d, command id = %d\n", m_lastPlayerID, frameToResend, m_lastCommandID));
+		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addFrameResendRequest - added frame resend request command from player %d for frame %d, command id = %d", m_lastPlayerID, frameToResend, m_lastCommandID));
 
 		++m_numCommands;
 		if (m_lastCommand != NULL) {
@@ -2218,7 +2218,7 @@ Bool NetPacket::addDisconnectScreenOffCommand(NetCommandRef *msg) {
 		memcpy(m_packet + m_packetLen, &newFrame, sizeof(newFrame));
 		m_packetLen += sizeof(newFrame);
 
-		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectScreenOff - added disconnect screen off command from player %d for frame %d, command id = %d\n", m_lastPlayerID, newFrame, m_lastCommandID));
+		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectScreenOff - added disconnect screen off command from player %d for frame %d, command id = %d", m_lastPlayerID, newFrame, m_lastCommandID));
 
 		++m_numCommands;
 		if (m_lastCommand != NULL) {
@@ -2337,7 +2337,7 @@ Bool NetPacket::addDisconnectFrameCommand(NetCommandRef *msg) {
 		m_lastCommand = NEW_NETCOMMANDREF(msg->getCommand());
 		m_lastCommand->setRelay(msg->getRelay());
 
-		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectFrame - added disconnect frame command from player %d for frame %d, command id = %d\n", m_lastPlayerID, disconnectFrame, m_lastCommandID));
+		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectFrame - added disconnect frame command from player %d for frame %d, command id = %d", m_lastPlayerID, disconnectFrame, m_lastCommandID));
 
 		return TRUE;
 	}
@@ -2550,11 +2550,11 @@ Bool NetPacket::addFileAnnounceCommand(NetCommandRef *msg) {
 		m_lastCommand = NEW_NETCOMMANDREF(msg->getCommand());
 		m_lastCommand->setRelay(msg->getRelay());
 
-		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Adding file announce message for fileID %d, ID %d to packet\n",
+		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Adding file announce message for fileID %d, ID %d to packet",
 			cmdMsg->getFileID(), cmdMsg->getID()));
 		return TRUE;
 	}
-	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("No room to add file announce message to packet\n"));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("No room to add file announce message to packet"));
 	return FALSE;
 }
 
@@ -2886,7 +2886,7 @@ Bool NetPacket::addTimeOutGameStartMessage(NetCommandRef *msg) {
 		m_lastCommand = NEW_NETCOMMANDREF(msg->getCommand());
 		m_lastCommand->setRelay(msg->getRelay());
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Added keep alive command to packet.\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Added keep alive command to packet."));
 
 		return TRUE;
 	}
@@ -2980,7 +2980,7 @@ Bool NetPacket::addLoadCompleteMessage(NetCommandRef *msg) {
 		m_lastCommand = NEW_NETCOMMANDREF(msg->getCommand());
 		m_lastCommand->setRelay(msg->getRelay());
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Added keep alive command to packet.\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Added keep alive command to packet."));
 
 		return TRUE;
 	}
@@ -3066,7 +3066,7 @@ Bool NetPacket::addProgressMessage(NetCommandRef *msg) {
 		m_lastCommand = NEW_NETCOMMANDREF(msg->getCommand());
 		m_lastCommand->setRelay(msg->getRelay());
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Added keep alive command to packet.\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Added keep alive command to packet."));
 
 		return TRUE;
 	}
@@ -3104,11 +3104,11 @@ Bool NetPacket::isRoomForProgressMessage(NetCommandRef *msg) {
 Bool NetPacket::addDisconnectVoteCommand(NetCommandRef *msg) {
 	Bool needNewCommandID = FALSE;
 
-//	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectVoteCommand - entering...\n"));
+//	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectVoteCommand - entering..."));
 	//  need type, player id, relay, command id, slot number
 	if (isRoomForDisconnectVoteMessage(msg)) {
 		NetDisconnectVoteCommandMsg *cmdMsg = (NetDisconnectVoteCommandMsg *)(msg->getCommand());
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectVoteCommand - adding run ahead command\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectVoteCommand - adding run ahead command"));
 
 		// If necessary, put the NetCommandType into the packet.
 		if (m_lastCommandType != cmdMsg->getNetCommandType()) {
@@ -3155,7 +3155,7 @@ Bool NetPacket::addDisconnectVoteCommand(NetCommandRef *msg) {
 		}
 		m_lastCommandID = cmdMsg->getID();
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d\n", m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d", m_lastCommandID));
 
 		m_packet[m_packetLen] = 'D';
 		++m_packetLen;
@@ -3167,7 +3167,7 @@ Bool NetPacket::addDisconnectVoteCommand(NetCommandRef *msg) {
 		memcpy(m_packet + m_packetLen, &voteFrame, sizeof(voteFrame));
 		m_packetLen += sizeof(voteFrame);
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectVoteCommand - added disconnect vote command, player id %d command id %d, voted slot %d\n", m_lastPlayerID, m_lastCommandID, slot));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectVoteCommand - added disconnect vote command, player id %d command id %d, voted slot %d", m_lastPlayerID, m_lastCommandID, slot));
 
 		++m_numCommands;
 		if (m_lastCommand != NULL) {
@@ -3217,10 +3217,10 @@ Bool NetPacket::isRoomForDisconnectVoteMessage(NetCommandRef *msg) {
 Bool NetPacket::addDisconnectChatCommand(NetCommandRef *msg) {
 	// type, player, id, relay, data
 	// data format: 1 byte string length, string (two bytes per character)
-//	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectChatCommand - Entering...\n"));
+//	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectChatCommand - Entering..."));
 	if (isRoomForDisconnectChatMessage(msg)) {
 		NetDisconnectChatCommandMsg *cmdMsg = (NetDisconnectChatCommandMsg *)(msg->getCommand());
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectChatCommand - adding run ahead command\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectChatCommand - adding run ahead command"));
 
 		// If necessary, put the NetCommandType into the packet.
 		if (m_lastCommandType != cmdMsg->getNetCommandType()) {
@@ -3266,7 +3266,7 @@ Bool NetPacket::addDisconnectChatCommand(NetCommandRef *msg) {
 		memcpy(m_packet + m_packetLen, unitext.str(), length * sizeof(UnsignedShort));
 		m_packetLen += length * sizeof(UnsignedShort);
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket - added disconnect chat command\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket - added disconnect chat command"));
 
 		++m_numCommands;
 		if (m_lastCommand != NULL) {
@@ -3309,7 +3309,7 @@ Bool NetPacket::addChatCommand(NetCommandRef *msg) {
 	Bool needNewCommandID = FALSE;
 	if (isRoomForChatMessage(msg)) {
 		NetChatCommandMsg *cmdMsg = (NetChatCommandMsg *)(msg->getCommand());
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectChatCommand - adding run ahead command\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectChatCommand - adding run ahead command"));
 
 		// If necessary, put the NetCommandType into the packet.
 		if (m_lastCommandType != cmdMsg->getNetCommandType()) {
@@ -3367,7 +3367,7 @@ Bool NetPacket::addChatCommand(NetCommandRef *msg) {
 		}
 		m_lastCommandID = cmdMsg->getID();
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d\n", m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d", m_lastCommandID));
 
 		m_packet[m_packetLen] = 'D';
 		++m_packetLen;
@@ -3383,7 +3383,7 @@ Bool NetPacket::addChatCommand(NetCommandRef *msg) {
 		memcpy(m_packet + m_packetLen, &playerMask, sizeof(Int));
 		m_packetLen += sizeof(Int);
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket - added chat command\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket - added chat command"));
 
 		++m_numCommands;
 		if (m_lastCommand != NULL) {
@@ -3435,7 +3435,7 @@ Bool NetPacket::addPacketRouterAckCommand(NetCommandRef *msg) {
 	//  need type, player id, relay, command id, slot number
 	if (isRoomForPacketRouterAckMessage(msg)) {
 		NetPacketRouterAckCommandMsg *cmdMsg = (NetPacketRouterAckCommandMsg *)(msg->getCommand());
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addPacketRouterAckCommand - adding packet router query command\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addPacketRouterAckCommand - adding packet router query command"));
 
 		// If necessary, put the NetCommandType into the packet.
 		if (m_lastCommandType != cmdMsg->getNetCommandType()) {
@@ -3474,7 +3474,7 @@ Bool NetPacket::addPacketRouterAckCommand(NetCommandRef *msg) {
 		m_packet[m_packetLen] = 'D';
 		++m_packetLen;
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket - added packet router ack command, player id %d\n", m_lastPlayerID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket - added packet router ack command, player id %d", m_lastPlayerID));
 
 		++m_numCommands;
 		if (m_lastCommand != NULL) {
@@ -3517,7 +3517,7 @@ Bool NetPacket::addPacketRouterQueryCommand(NetCommandRef *msg) {
 	//  need type, player id, relay, command id, slot number
 	if (isRoomForPacketRouterQueryMessage(msg)) {
 		NetPacketRouterQueryCommandMsg *cmdMsg = (NetPacketRouterQueryCommandMsg *)(msg->getCommand());
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addPacketRouterQueryCommand - adding packet router query command\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addPacketRouterQueryCommand - adding packet router query command"));
 
 		// If necessary, put the NetCommandType into the packet.
 		if (m_lastCommandType != cmdMsg->getNetCommandType()) {
@@ -3556,7 +3556,7 @@ Bool NetPacket::addPacketRouterQueryCommand(NetCommandRef *msg) {
 		m_packet[m_packetLen] = 'D';
 		++m_packetLen;
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket - added packet router query command, player id %d\n", m_lastPlayerID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket - added packet router query command, player id %d", m_lastPlayerID));
 
 		++m_numCommands;
 		if (m_lastCommand != NULL) {
@@ -3598,11 +3598,11 @@ Bool NetPacket::isRoomForPacketRouterQueryMessage(NetCommandRef *msg) {
 Bool NetPacket::addDisconnectPlayerCommand(NetCommandRef *msg) {
 	Bool needNewCommandID = FALSE;
 
-//	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectPlayerCommand - entering...\n"));
+//	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectPlayerCommand - entering..."));
 	//  need type, player id, relay, command id, slot number
 	if (isRoomForDisconnectPlayerMessage(msg)) {
 		NetDisconnectPlayerCommandMsg *cmdMsg = (NetDisconnectPlayerCommandMsg *)(msg->getCommand());
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectPlayerCommand - adding run ahead command\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectPlayerCommand - adding run ahead command"));
 
 		// If necessary, put the NetCommandType into the packet.
 		if (m_lastCommandType != cmdMsg->getNetCommandType()) {
@@ -3649,7 +3649,7 @@ Bool NetPacket::addDisconnectPlayerCommand(NetCommandRef *msg) {
 		}
 		m_lastCommandID = cmdMsg->getID();
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d\n", m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d", m_lastCommandID));
 
 		m_packet[m_packetLen] = 'D';
 		++m_packetLen;
@@ -3661,7 +3661,7 @@ Bool NetPacket::addDisconnectPlayerCommand(NetCommandRef *msg) {
 		memcpy(m_packet + m_packetLen, &disconnectFrame, sizeof(disconnectFrame));
 		m_packetLen += sizeof(disconnectFrame);
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectPlayerCommand - added disconnect player command, player id %d command id %d, disconnecting slot %d\n", m_lastPlayerID, m_lastCommandID, slot));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addDisconnectPlayerCommand - added disconnect player command, player id %d command id %d, disconnecting slot %d", m_lastPlayerID, m_lastCommandID, slot));
 
 		++m_numCommands;
 		if (m_lastCommand != NULL) {
@@ -3756,7 +3756,7 @@ Bool NetPacket::addDisconnectKeepAliveCommand(NetCommandRef *msg) {
 		m_lastCommand = NEW_NETCOMMANDREF(msg->getCommand());
 		m_lastCommand->setRelay(msg->getRelay());
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Added keep alive command to packet.\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Added keep alive command to packet."));
 
 		return TRUE;
 	}
@@ -3836,7 +3836,7 @@ Bool NetPacket::addKeepAliveCommand(NetCommandRef *msg) {
 		m_lastCommand = NEW_NETCOMMANDREF(msg->getCommand());
 		m_lastCommand->setRelay(msg->getRelay());
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Added keep alive command to packet.\n"));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Added keep alive command to packet."));
 
 		return TRUE;
 	}
@@ -3875,7 +3875,7 @@ Bool NetPacket::addRunAheadCommand(NetCommandRef *msg) {
 	Bool needNewCommandID = FALSE;
 	if (isRoomForRunAheadMessage(msg)) {
 		NetRunAheadCommandMsg *cmdMsg = (NetRunAheadCommandMsg *)(msg->getCommand());
-		//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addRunAheadCommand - adding run ahead command\n"));
+		//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addRunAheadCommand - adding run ahead command"));
 
 		// If necessary, put the NetCommandType into the packet.
 		if (m_lastCommandType != cmdMsg->getNetCommandType()) {
@@ -3933,7 +3933,7 @@ Bool NetPacket::addRunAheadCommand(NetCommandRef *msg) {
 		}
 		m_lastCommandID = cmdMsg->getID();
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d\n", m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d", m_lastCommandID));
 
 		m_packet[m_packetLen] = 'D';
 		++m_packetLen;
@@ -3945,7 +3945,7 @@ Bool NetPacket::addRunAheadCommand(NetCommandRef *msg) {
 		memcpy(m_packet + m_packetLen, &newFrameRate, sizeof(UnsignedByte));
 		m_packetLen += sizeof(UnsignedByte);
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket - added run ahead command, frame %d, player id %d command id %d\n", m_lastFrame, m_lastPlayerID, m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket - added run ahead command, frame %d, player id %d command id %d", m_lastFrame, m_lastPlayerID, m_lastCommandID));
 
 		++m_numCommands;
 		if (m_lastCommand != NULL) {
@@ -4058,7 +4058,7 @@ Bool NetPacket::addDestroyPlayerCommand(NetCommandRef *msg) {
 		}
 		m_lastCommandID = cmdMsg->getID();
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d\n", m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d", m_lastCommandID));
 
 		m_packet[m_packetLen] = 'D';
 		++m_packetLen;
@@ -4066,7 +4066,7 @@ Bool NetPacket::addDestroyPlayerCommand(NetCommandRef *msg) {
 		memcpy(m_packet + m_packetLen, &newVal, sizeof(UnsignedInt));
 		m_packetLen += sizeof(UnsignedInt);
 
-		//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket - added CRC:0x%8.8X info command, frame %d, player id %d command id %d\n", newCRC, m_lastFrame, m_lastPlayerID, m_lastCommandID));
+		//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket - added CRC:0x%8.8X info command, frame %d, player id %d command id %d", newCRC, m_lastFrame, m_lastPlayerID, m_lastCommandID));
 
 		++m_numCommands;
 		if (m_lastCommand != NULL) {
@@ -4121,7 +4121,7 @@ Bool NetPacket::addRunAheadMetricsCommand(NetCommandRef *msg) {
 	Bool needNewCommandID = FALSE;
 	if (isRoomForRunAheadMetricsMessage(msg)) {
 		NetRunAheadMetricsCommandMsg *cmdMsg = (NetRunAheadMetricsCommandMsg *)(msg->getCommand());
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addRunAheadMetricsCommand - adding run ahead metrics for player %d, fps = %d, latency = %f\n", cmdMsg->getPlayerID(), cmdMsg->getAverageFps(), cmdMsg->getAverageLatency()));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addRunAheadMetricsCommand - adding run ahead metrics for player %d, fps = %d, latency = %f", cmdMsg->getPlayerID(), cmdMsg->getAverageFps(), cmdMsg->getAverageLatency()));
 
 		// If necessary, put the NetCommandType into the packet.
 		if (m_lastCommandType != cmdMsg->getNetCommandType()) {
@@ -4168,7 +4168,7 @@ Bool NetPacket::addRunAheadMetricsCommand(NetCommandRef *msg) {
 		}
 		m_lastCommandID = cmdMsg->getID();
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d\n", m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d", m_lastCommandID));
 
 		m_packet[m_packetLen] = 'D';
 		++m_packetLen;
@@ -4234,7 +4234,7 @@ Bool NetPacket::addPlayerLeaveCommand(NetCommandRef *msg) {
 	Bool needNewCommandID = FALSE;
 	if (isRoomForPlayerLeaveMessage(msg)) {
 		NetPlayerLeaveCommandMsg *cmdMsg = (NetPlayerLeaveCommandMsg *)(msg->getCommand());
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addPlayerLeaveCommand - adding player leave command for player %d\n", cmdMsg->getLeavingPlayerID()));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addPlayerLeaveCommand - adding player leave command for player %d", cmdMsg->getLeavingPlayerID()));
 
 		// If necessary, put the NetCommandType into the packet.
 		if (m_lastCommandType != cmdMsg->getNetCommandType()) {
@@ -4292,7 +4292,7 @@ Bool NetPacket::addPlayerLeaveCommand(NetCommandRef *msg) {
 		}
 		m_lastCommandID = cmdMsg->getID();
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d\n", m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d", m_lastCommandID));
 
 		m_packet[m_packetLen] = 'D';
 		++m_packetLen;
@@ -4365,12 +4365,12 @@ Bool NetPacket::addFrameCommand(NetCommandRef *msg) {
 		++m_lastFrame;		// need this cause we're actually advancing to the next frame by adding this command.
 		++m_numCommands;
 		// frameinfodebug
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("outgoing - added frame %d, player %d, command count = %d, command id = %d, repeat\n", m_lastFrame, m_lastPlayerID, 0, m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("outgoing - added frame %d, player %d, command count = %d, command id = %d, repeat", m_lastFrame, m_lastPlayerID, 0, m_lastCommandID));
 		return TRUE;
 	}
 	if (isRoomForFrameMessage(msg)) {
 		NetFrameCommandMsg *cmdMsg = (NetFrameCommandMsg *)(msg->getCommand());
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addFrameCommand - adding frame command for frame %d, command count = %d, command id = %d\n", cmdMsg->getExecutionFrame(), cmdMsg->getCommandCount(), cmdMsg->getID()));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addFrameCommand - adding frame command for frame %d, command count = %d, command id = %d", cmdMsg->getExecutionFrame(), cmdMsg->getCommandCount(), cmdMsg->getID()));
 
 		// If necessary, put the NetCommandType into the packet.
 		if (m_lastCommandType != cmdMsg->getNetCommandType()) {
@@ -4428,7 +4428,7 @@ Bool NetPacket::addFrameCommand(NetCommandRef *msg) {
 		}
 		m_lastCommandID = cmdMsg->getID();
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d\n", m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("command id = %d", m_lastCommandID));
 
 		m_packet[m_packetLen] = 'D';
 		++m_packetLen;
@@ -4437,7 +4437,7 @@ Bool NetPacket::addFrameCommand(NetCommandRef *msg) {
 		m_packetLen += sizeof(UnsignedShort);
 
 		// frameinfodebug
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("outgoing - added frame %d, player %d, command count = %d, command id = %d\n", cmdMsg->getExecutionFrame(), cmdMsg->getPlayerID(), cmdMsg->getCommandCount(), cmdMsg->getID()));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("outgoing - added frame %d, player %d, command count = %d, command id = %d", cmdMsg->getExecutionFrame(), cmdMsg->getPlayerID(), cmdMsg->getCommandCount(), cmdMsg->getID()));
 
 		if (m_lastCommand != NULL) {
 			deleteInstance(m_lastCommand);
@@ -4554,7 +4554,7 @@ Bool NetPacket::addAckCommand(NetCommandRef *msg, UnsignedShort commandID, Unsig
 	}
 	if (isRoomForAckMessage(msg)) {
 		NetCommandMsg *cmdMsg = msg->getCommand();
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addAckCommand - adding ack for command %d for player %d\n", cmdMsg->getCommandID(), msg->getCommand()->getPlayerID()));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addAckCommand - adding ack for command %d for player %d", cmdMsg->getCommandID(), msg->getCommand()->getPlayerID()));
 		// If necessary, put the NetCommandType into the packet.
 		if (m_lastCommandType != cmdMsg->getNetCommandType()) {
 			m_packet[m_packetLen] = 'T';
@@ -4589,7 +4589,7 @@ Bool NetPacket::addAckCommand(NetCommandRef *msg, UnsignedShort commandID, Unsig
 		m_lastCommand = NEW_NETCOMMANDREF(msg->getCommand());
 		m_lastCommand->setRelay(msg->getRelay());
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("outgoing - added ACK, original player %d, command id %d\n", origPlayerID, cmdID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("outgoing - added ACK, original player %d, command id %d", origPlayerID, cmdID));
 		++m_numCommands;
 		return TRUE;
 	}
@@ -4693,7 +4693,7 @@ Bool NetPacket::addGameCommand(NetCommandRef *msg) {
 	// get the game message from the NetCommandMsg
 	GameMessage *gmsg = cmdMsg->constructGameMessage();
 
-//	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addGameCommand for command ID %d\n", cmdMsg->getID()));
+//	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addGameCommand for command ID %d", cmdMsg->getID()));
 
 	if (isRoomForGameMessage(msg, gmsg)) {
 		// Now we know there is enough room, put the new game message into the packet.
@@ -4791,7 +4791,7 @@ Bool NetPacket::addGameCommand(NetCommandRef *msg) {
 		deleteInstance(parser);
 		parser = NULL;
 
-//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addGameMessage - added game message, frame %d, player %d, command ID %d\n", m_lastFrame, m_lastPlayerID, m_lastCommandID));
+//		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::addGameMessage - added game message, frame %d, player %d, command ID %d", m_lastFrame, m_lastPlayerID, m_lastCommandID));
 
 		++m_numCommands;
 
@@ -4929,7 +4929,7 @@ Bool NetPacket::isRoomForGameMessage(NetCommandRef *msg, GameMessage *gmsg) {
  */
 NetCommandList * NetPacket::getCommandList() {
 	NetCommandList *retval = newInstance(NetCommandList);
-//	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::getCommandList, packet length = %d\n", m_packetLen));
+//	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::getCommandList, packet length = %d", m_packetLen));
 	retval->init();
 
 	// These need to be the same as the default values for m_lastPlayerID, m_lastFrame, etc.
@@ -4967,13 +4967,13 @@ NetCommandList * NetPacket::getCommandList() {
 
 			NetCommandMsg *msg = NULL;
 
-			//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::getCommandList() - command of type %d(%s)\n", commandType, GetAsciiNetCommandType((NetCommandType)commandType).str()));
+			//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::getCommandList() - command of type %d(%s)", commandType, GetAsciiNetCommandType((NetCommandType)commandType).str()));
 
 			switch((NetCommandType)commandType)
 			{
 			case NETCOMMANDTYPE_GAMECOMMAND:
 				msg = readGameMessage(m_packet, i);
-				//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read game command from player %d for frame %d\n", playerID, frame));
+				//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read game command from player %d for frame %d", playerID, frame));
 				break;
 			case NETCOMMANDTYPE_ACKBOTH:
 				msg = readAckBothMessage(m_packet, i);
@@ -4987,95 +4987,95 @@ NetCommandList * NetPacket::getCommandList() {
 			case NETCOMMANDTYPE_FRAMEINFO:
 				msg = readFrameMessage(m_packet, i);
 				// frameinfodebug
-				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read frame %d from player %d, command count = %d, relay = 0x%X\n", frame, playerID, ((NetFrameCommandMsg *)msg)->getCommandCount(), relay));
+				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read frame %d from player %d, command count = %d, relay = 0x%X", frame, playerID, ((NetFrameCommandMsg *)msg)->getCommandCount(), relay));
 				break;
 			case NETCOMMANDTYPE_PLAYERLEAVE:
 				msg = readPlayerLeaveMessage(m_packet, i);
-//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read player leave message from player %d for execution on frame %d\n", playerID, frame));
+//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read player leave message from player %d for execution on frame %d", playerID, frame));
 				break;
 			case NETCOMMANDTYPE_RUNAHEADMETRICS:
 				msg = readRunAheadMetricsMessage(m_packet, i);
 				break;
 			case NETCOMMANDTYPE_RUNAHEAD:
 				msg = readRunAheadMessage(m_packet, i);
-//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read run ahead message from player %d for execution on frame %d\n", playerID, frame));
+//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read run ahead message from player %d for execution on frame %d", playerID, frame));
 				break;
 			case NETCOMMANDTYPE_DESTROYPLAYER:
 				msg = readDestroyPlayerMessage(m_packet, i);
-//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read CRC info message from player %d for execution on frame %d\n", playerID, frame));
+//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read CRC info message from player %d for execution on frame %d", playerID, frame));
 				break;
 			case NETCOMMANDTYPE_KEEPALIVE:
 				msg = readKeepAliveMessage(m_packet, i);
-//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read keep alive message from player %d\n", playerID));
+//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read keep alive message from player %d", playerID));
 				break;
 			case NETCOMMANDTYPE_DISCONNECTKEEPALIVE:
 				msg = readDisconnectKeepAliveMessage(m_packet, i);
-//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read keep alive message from player %d\n", playerID));
+//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read keep alive message from player %d", playerID));
 				break;
 			case NETCOMMANDTYPE_DISCONNECTPLAYER:
 				msg = readDisconnectPlayerMessage(m_packet, i);
-//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read disconnect player message from player %d\n", playerID));
+//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read disconnect player message from player %d", playerID));
 				break;
 			case NETCOMMANDTYPE_PACKETROUTERQUERY:
 				msg = readPacketRouterQueryMessage(m_packet, i);
-//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read packet router query message from player %d\n", playerID));
+//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read packet router query message from player %d", playerID));
 				break;
 			case NETCOMMANDTYPE_PACKETROUTERACK:
 				msg = readPacketRouterAckMessage(m_packet, i);
-//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read packet router ack message from player %d\n", playerID));
+//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read packet router ack message from player %d", playerID));
 				break;
 			case NETCOMMANDTYPE_DISCONNECTCHAT:
 				msg = readDisconnectChatMessage(m_packet, i);
-//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read disconnect chat message from player %d\n", playerID));
+//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read disconnect chat message from player %d", playerID));
 				break;
 			case NETCOMMANDTYPE_DISCONNECTVOTE:
 				msg = readDisconnectVoteMessage(m_packet, i);
-//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read disconnect vote message from player %d\n", playerID));
+//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read disconnect vote message from player %d", playerID));
 				break;
 			case NETCOMMANDTYPE_CHAT:
 				msg = readChatMessage(m_packet, i);
-//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read chat message from player %d\n", playerID));
+//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read chat message from player %d", playerID));
 				break;
 			case NETCOMMANDTYPE_PROGRESS:
 				msg = readProgressMessage(m_packet, i);
-//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read Progress message from player %d\n", playerID));
+//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read Progress message from player %d", playerID));
 				break;
 			case NETCOMMANDTYPE_LOADCOMPLETE:
 				msg = readLoadCompleteMessage(m_packet, i);
-//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read LoadComplete message from player %d\n", playerID));
+//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read LoadComplete message from player %d", playerID));
 				break;
 			case NETCOMMANDTYPE_TIMEOUTSTART:
 				msg = readTimeOutGameStartMessage(m_packet, i);
-//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read TimeOutGameStart message from player %d\n", playerID));
+//				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read TimeOutGameStart message from player %d", playerID));
 				break;
 			case NETCOMMANDTYPE_WRAPPER:
-				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read Wrapper message from player %d\n", playerID));
+				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read Wrapper message from player %d", playerID));
 				msg = readWrapperMessage(m_packet, i);
-				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Done reading Wrapper message from player %d - wrapped command was %d\n", playerID,
+				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Done reading Wrapper message from player %d - wrapped command was %d", playerID,
 					((NetWrapperCommandMsg *)msg)->getWrappedCommandID()));
 				break;
 			case NETCOMMANDTYPE_FILE:
-				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read file message from player %d\n", playerID));
+				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read file message from player %d", playerID));
 				msg = readFileMessage(m_packet, i);
 				break;
 			case NETCOMMANDTYPE_FILEANNOUNCE:
-				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read file announce message from player %d\n", playerID));
+				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read file announce message from player %d", playerID));
 				msg = readFileAnnounceMessage(m_packet, i);
 				break;
 			case NETCOMMANDTYPE_FILEPROGRESS:
-				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read file progress message from player %d\n", playerID));
+				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read file progress message from player %d", playerID));
 				msg = readFileProgressMessage(m_packet, i);
 				break;
 			case NETCOMMANDTYPE_DISCONNECTFRAME:
-				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read disconnect frame message from player %d\n", playerID));
+				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read disconnect frame message from player %d", playerID));
 				msg = readDisconnectFrameMessage(m_packet, i);
 				break;
 			case NETCOMMANDTYPE_DISCONNECTSCREENOFF:
-				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read disconnect screen off message from player %d\n", playerID));
+				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read disconnect screen off message from player %d", playerID));
 				msg = readDisconnectScreenOffMessage(m_packet, i);
 				break;
 			case NETCOMMANDTYPE_FRAMERESENDREQUEST:
-				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read frame resend request message from player %d\n", playerID));
+				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("read frame resend request message from player %d", playerID));
 				msg = readFrameResendRequestMessage(m_packet, i);
 				break;
 			}
@@ -5091,7 +5091,7 @@ NetCommandList * NetPacket::getCommandList() {
 			msg->setNetCommandType((NetCommandType)commandType);
 			msg->setID(commandID);
 
-//			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("frame = %d, player = %d, command type = %d, id = %d\n", frame, playerID, commandType, commandID));
+//			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("frame = %d, player = %d, command type = %d, id = %d", frame, playerID, commandType, commandID));
 
 			// increment to the next command ID.
 			if (DoesCommandRequireACommandID((NetCommandType)commandType)) {
@@ -5103,7 +5103,7 @@ NetCommandList * NetPacket::getCommandList() {
 			if (ref != NULL) {
 				ref->setRelay(relay);
 			} else {
-				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::getCommandList - failed to set relay for message %d\n", msg->getID()));
+				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::getCommandList - failed to set relay for message %d", msg->getID()));
 			}
 
 			if (lastCommand != NULL) {
@@ -5142,7 +5142,7 @@ NetCommandList * NetPacket::getCommandList() {
 				msg = newInstance(NetFrameCommandMsg)();
 				++frame; // this is set below.
 				((NetFrameCommandMsg *)msg)->setCommandCount(0);
-				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Read a repeated frame command, frame = %d, player = %d, commandID = %d\n", frame, playerID, commandID));
+				DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Read a repeated frame command, frame = %d, player = %d, commandID = %d", frame, playerID, commandID));
 			} else {
 				DEBUG_CRASH(("Trying to repeat a command that shouldn't be repeated."));
 				continue;
@@ -5153,7 +5153,7 @@ NetCommandList * NetPacket::getCommandList() {
 			msg->setNetCommandType((NetCommandType)commandType);
 			msg->setID(commandID);
 
-//			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("frame = %d, player = %d, command type = %d, id = %d\n", frame, playerID, commandType, commandID));
+//			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("frame = %d, player = %d, command type = %d, id = %d", frame, playerID, commandType, commandID));
 
 			// increment to the next command ID.
 			if (DoesCommandRequireACommandID((NetCommandType)commandType)) {
@@ -5178,7 +5178,7 @@ NetCommandList * NetPacket::getCommandList() {
 		} else {
 			// we don't recognize this command, but we have to increment i so we don't fall into an infinite loop.
 			DEBUG_CRASH(("Unrecognized packet entry, ignoring."));
-			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::getCommandList - Unrecognized packet entry at index %d\n", i));
+			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::getCommandList - Unrecognized packet entry at index %d", i));
 			dumpPacketToLog();
 			++i;
 		}
@@ -5198,7 +5198,7 @@ NetCommandMsg * NetPacket::readGameMessage(UnsignedByte *data, Int &i)
 {
 	NetGameCommandMsg *msg = newInstance(NetGameCommandMsg);
 
-//	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readGameMessage\n"));
+//	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readGameMessage"));
 
 	// Get the GameMessage command type.
 	GameMessage::Type newType;
@@ -5359,7 +5359,7 @@ NetCommandMsg * NetPacket::readAckBothMessage(UnsignedByte *data, Int &i) {
 	memcpy(&origPlayerID, data + i, sizeof(UnsignedByte));
 	i += sizeof(UnsignedByte);
 	msg->setOriginalPlayerID(origPlayerID);
-	//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("original player id = %d\n", origPlayerID));
+	//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("original player id = %d", origPlayerID));
 
 	return msg;
 }
@@ -5382,7 +5382,7 @@ NetCommandMsg * NetPacket::readAckStage1Message(UnsignedByte *data, Int &i) {
 	memcpy(&origPlayerID, data + i, sizeof(UnsignedByte));
 	i += sizeof(UnsignedByte);
 	msg->setOriginalPlayerID(origPlayerID);
-//	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("original player id = %d\n", origPlayerID));
+//	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("original player id = %d", origPlayerID));
 
 	return msg;
 }
@@ -5405,7 +5405,7 @@ NetCommandMsg * NetPacket::readAckStage2Message(UnsignedByte *data, Int &i) {
 	memcpy(&origPlayerID, data + i, sizeof(UnsignedByte));
 	i += sizeof(UnsignedByte);
 	msg->setOriginalPlayerID(origPlayerID);
-//	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("original player id = %d\n", origPlayerID));
+//	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("original player id = %d", origPlayerID));
 
 	return msg;
 }
@@ -5490,7 +5490,7 @@ NetCommandMsg * NetPacket::readDestroyPlayerMessage(UnsignedByte *data, Int &i) 
 	memcpy(&newVal, data + i, sizeof(UnsignedInt));
 	i += sizeof(UnsignedInt);
 	msg->setPlayerIndex(newVal);
-	//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Saw CRC of 0x%8.8X\n", newCRC));
+	//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("Saw CRC of 0x%8.8X", newCRC));
 
 	return msg;
 }
@@ -5567,7 +5567,7 @@ NetCommandMsg * NetPacket::readDisconnectChatMessage(UnsignedByte *data, Int &i)
 	UnicodeString unitext;
 	unitext.set(text);
 
-	//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readDisconnectChatMessage - read message, message is %ls\n", unitext.str()));
+	//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readDisconnectChatMessage - read message, message is %ls", unitext.str()));
 
 	msg->setText(unitext);
 	return msg;
@@ -5594,7 +5594,7 @@ NetCommandMsg * NetPacket::readChatMessage(UnsignedByte *data, Int &i) {
 	UnicodeString unitext;
 	unitext.set(text);
 
-	//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readChatMessage - read message, message is %ls\n", unitext.str()));
+	//DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readChatMessage - read message, message is %ls", unitext.str()));
 
 	msg->setText(unitext);
 	msg->setPlayerMask(playerMask);
@@ -5652,40 +5652,40 @@ NetCommandMsg * NetPacket::readWrapperMessage(UnsignedByte *data, Int &i) {
 	memcpy(&wrappedCommandID, data + i, sizeof(wrappedCommandID));
 	msg->setWrappedCommandID(wrappedCommandID);
 	i += sizeof(wrappedCommandID);
-	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readWrapperMessage - wrapped command ID == %d\n", wrappedCommandID));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readWrapperMessage - wrapped command ID == %d", wrappedCommandID));
 
 	// get the chunk number.
 	UnsignedInt chunkNumber = 0;
 	memcpy(&chunkNumber, data + i, sizeof(chunkNumber));
 	msg->setChunkNumber(chunkNumber);
 	i += sizeof(chunkNumber);
-	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readWrapperMessage - chunk number = %d\n", chunkNumber));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readWrapperMessage - chunk number = %d", chunkNumber));
 
 	// get the number of chunks
 	UnsignedInt numChunks = 0;
 	memcpy(&numChunks, data + i, sizeof(numChunks));
 	msg->setNumChunks(numChunks);
 	i += sizeof(numChunks);
-	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readWrapperMessage - number of chunks = %d\n", numChunks));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readWrapperMessage - number of chunks = %d", numChunks));
 
 	// get the total data length
 	UnsignedInt totalDataLength = 0;
 	memcpy(&totalDataLength, data + i, sizeof(totalDataLength));
 	msg->setTotalDataLength(totalDataLength);
 	i += sizeof(totalDataLength);
-	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readWrapperMessage - total data length = %d\n", totalDataLength));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readWrapperMessage - total data length = %d", totalDataLength));
 
 	// get the data length for this chunk
 	UnsignedInt dataLength = 0;
 	memcpy(&dataLength, data + i, sizeof(dataLength));
 	i += sizeof(dataLength);
-	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readWrapperMessage - data length = %d\n", dataLength));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readWrapperMessage - data length = %d", dataLength));
 
 	UnsignedInt dataOffset = 0;
 	memcpy(&dataOffset, data + i, sizeof(dataOffset));
 	msg->setDataOffset(dataOffset);
 	i += sizeof(dataOffset);
-	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readWrapperMessage - data offset = %d\n", dataOffset));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readWrapperMessage - data offset = %d", dataOffset));
 
 	msg->setData(data + i, dataLength);
 	i += dataLength;
@@ -5771,7 +5771,7 @@ NetCommandMsg * NetPacket::readDisconnectFrameMessage(UnsignedByte *data, Int &i
 	i += sizeof(disconnectFrame);
 	msg->setDisconnectFrame(disconnectFrame);
 
-	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readDisconnectFrameMessage - read disconnect frame for frame %d\n", disconnectFrame));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::readDisconnectFrameMessage - read disconnect frame for frame %d", disconnectFrame));
 
 	return msg;
 }
@@ -5837,7 +5837,7 @@ Int NetPacket::getLength() {
  * Dumps the packet to the debug log file
  */
 void NetPacket::dumpPacketToLog() {
-	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::dumpPacketToLog() - packet is %d bytes\n", m_packetLen));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("NetPacket::dumpPacketToLog() - packet is %d bytes", m_packetLen));
 	Int numLines = m_packetLen / 8;
 	if ((m_packetLen % 8) != 0) {
 		++numLines;
@@ -5847,7 +5847,7 @@ void NetPacket::dumpPacketToLog() {
 		for (Int dumpindex2 = 0; (dumpindex2 < 8) && ((dumpindex*8 + dumpindex2) < m_packetLen); ++dumpindex2) {
 			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("%02x '%c' ", m_packet[dumpindex*8 + dumpindex2], m_packet[dumpindex*8 + dumpindex2]));
 		}
-		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("\n"));
+		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, (""));
 	}
-	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("End of packet dump\n"));
+	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("End of packet dump"));
 }

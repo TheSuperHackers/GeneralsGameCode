@@ -2429,7 +2429,7 @@ void GadgetListBoxAddMultiSelect( GameWindow *listbox )
 
 	DEBUG_ASSERTCRASH(listboxData && listboxData->selections == NULL, ("selections is not NULL"));
 	listboxData->selections = NEW Int [listboxData->listLength];
-	DEBUG_LOG(( "Enable list box multi select: listLength (select) = %d * %d = %d bytes;\n",
+	DEBUG_LOG(( "Enable list box multi select: listLength (select) = %d * %d = %d bytes;",
 					 listboxData->listLength, sizeof(Int), 
 					 listboxData->listLength *sizeof(Int) ));
 
@@ -2569,7 +2569,7 @@ void GadgetListBoxSetListLength( GameWindow *listbox, Int newLength )
 	if( listboxData->listData == NULL )
 	{
 
-		DEBUG_LOG(( "Unable to allocate listbox data pointer\n" ));
+		DEBUG_LOG(( "Unable to allocate listbox data pointer" ));
 		assert( 0 );
 		return;
 

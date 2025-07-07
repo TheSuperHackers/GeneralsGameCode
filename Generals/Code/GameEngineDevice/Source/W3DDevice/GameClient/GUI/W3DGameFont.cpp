@@ -91,7 +91,7 @@ Bool W3DFontLibrary::loadFontData( GameFont *font )
 	if( fontChar == NULL )
 	{
 
-		DEBUG_LOG(( "W3D load font: unable to find font '%s' from asset manager\n",
+		DEBUG_LOG(( "W3D load font: unable to find font '%s' from asset manager",
 						 font->nameString.str() ));
 		DEBUG_ASSERTCRASH(fontChar, ("Missing or Corrupted Font.  Pleas see log for details"));
 		return FALSE;

@@ -236,9 +236,9 @@ UpdateSleepTime StructureToppleUpdate::update( void )
 	if (m_toppleState == TOPPLESTATE_TOPPLING) {
 		UnsignedInt now = TheGameLogic->getFrame();
 		Real toppleAcceleration = TOPPLE_ACCELERATION_FACTOR * (Sin(m_accumulatedAngle) * (1.0 - m_structuralIntegrity));
-//		DEBUG_LOG(("toppleAcceleration = %f\n", toppleAcceleration));
+//		DEBUG_LOG(("toppleAcceleration = %f", toppleAcceleration));
 		m_toppleVelocity += toppleAcceleration;
-//		DEBUG_LOG(("m_toppleVelocity = %f\n", m_toppleVelocity));
+//		DEBUG_LOG(("m_toppleVelocity = %f", m_toppleVelocity));
 
 		// doesn't make sense to have a structural integrity less than zero.
 		if (m_structuralIntegrity > 0.0f) {
@@ -247,7 +247,7 @@ UpdateSleepTime StructureToppleUpdate::update( void )
 				m_structuralIntegrity = 0.0f;
 			}
 		}
-//		DEBUG_LOG(("m_structuralIntegrity = %f\n\n", m_structuralIntegrity));
+//		DEBUG_LOG(("m_structuralIntegrity = %f\n", m_structuralIntegrity));
 
 		doAngleFX(m_accumulatedAngle, m_accumulatedAngle + m_toppleVelocity);
 
@@ -478,7 +478,7 @@ void StructureToppleUpdate::doToppleDelayBurstFX()
 	const StructureToppleUpdateModuleData *d = getStructureToppleUpdateModuleData();
 	const DamageInfo *lastDamageInfo = getObject()->getBodyModule()->getLastDamageInfo();
 
-	DEBUG_LOG(("Doing topple delay burst on frame %d\n", TheGameLogic->getFrame()));
+	DEBUG_LOG(("Doing topple delay burst on frame %d", TheGameLogic->getFrame()));
 	if( lastDamageInfo == NULL || getDamageTypeFlag( d->m_damageFXTypes, lastDamageInfo->in.m_damageType ) )
 		FXList::doFXPos(d->m_toppleDelayFXList, &m_delayBurstLocation);
 

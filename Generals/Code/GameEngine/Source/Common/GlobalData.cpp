@@ -1210,7 +1210,7 @@ UnsignedInt GlobalData::generateExeCRC()
 #define GENERALS_108_EAAPP_EXE_CRC 0xb07fbd50u
 
 	exeCRC.set(GENERALS_108_CD_EXE_CRC);
-	DEBUG_LOG(("Fake EXE CRC is 0x%8.8X\n", exeCRC.get()));
+	DEBUG_LOG(("Fake EXE CRC is 0x%8.8X", exeCRC.get()));
 
 #else
 	{
@@ -1224,7 +1224,7 @@ UnsignedInt GlobalData::generateExeCRC()
 			{
 				exeCRC.computeCRC(crcBlock, amtRead);
 			}
-			DEBUG_LOG(("EXE CRC is 0x%8.8X\n", exeCRC.get()));
+			DEBUG_LOG(("EXE CRC is 0x%8.8X", exeCRC.get()));
 			fp->close();
 			fp = NULL;
 		}
@@ -1264,7 +1264,7 @@ UnsignedInt GlobalData::generateExeCRC()
 		fp = NULL;
 	}
 
-	DEBUG_LOG(("EXE+Version(%d.%d)+SCB CRC is 0x%8.8X\n", version >> 16, version & 0xffff, exeCRC.get()));
+	DEBUG_LOG(("EXE+Version(%d.%d)+SCB CRC is 0x%8.8X", version >> 16, version & 0xffff, exeCRC.get()));
 
 	return exeCRC.get();
 }

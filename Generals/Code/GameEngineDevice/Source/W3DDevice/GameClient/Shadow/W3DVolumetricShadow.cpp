@@ -969,7 +969,7 @@ void W3DShadowGeometryMesh::buildPolygonNeighbors( void )
 					pv[0] /= 3.0f;	//find center of polygon
 
 //					sprintf(errorText,"%s: Shadow Polygon with too many neighbors at %f,%f,%f",m_parentGeometry->Get_Name(),pv[0].X,pv[0].Y,pv[0].Z);
-//					DEBUG_LOG(("****%s Shadow Polygon with too many neighbors at %f,%f,%f\n",m_parentGeometry->Get_Name(),pv[0].X,pv[0].Y,pv[0].Z));
+//					DEBUG_LOG(("****%s Shadow Polygon with too many neighbors at %f,%f,%f",m_parentGeometry->Get_Name(),pv[0].X,pv[0].Y,pv[0].Z));
 //					DEBUG_ASSERTCRASH(a != MAX_POLYGON_NEIGHBORS,(errorText));
 				}
 
@@ -3888,7 +3888,7 @@ int W3DShadowGeometryManager::Load_Geom(RenderObjClass *robj, const char *name)
 	if (res != TRUE)
 	{	// load failed!
 		newgeom->Release_Ref();
-		//DEBUG_LOG(("****Shadow Volume Creation Failed on %s\n",name));
+		//DEBUG_LOG(("****Shadow Volume Creation Failed on %s",name));
 		goto Error;
 	} else if (Peek_Geom(newgeom->Get_Name()) != NULL)
 	{	// duplicate exists!
