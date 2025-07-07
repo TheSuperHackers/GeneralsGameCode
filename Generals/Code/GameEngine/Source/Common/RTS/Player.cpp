@@ -2195,7 +2195,7 @@ Bool Player::attemptToPurchaseScience(ScienceType science)
 {
 	if (!isCapableOfPurchasingScience(science))
 	{
-		DEBUG_CRASH(("isCapableOfPurchasingScience: need other prereqs/points to purchase, request is ignored!\n"));
+		DEBUG_CRASH(("isCapableOfPurchasingScience: need other prereqs/points to purchase, request is ignored!"));
 		return false;
 	}
 
@@ -2210,7 +2210,7 @@ Bool Player::grantScience(ScienceType science)
 {
 	if (!TheScienceStore->isScienceGrantable(science))
 	{
-		DEBUG_CRASH(("Cannot grant science %s, since it is marked as nonGrantable.\n",TheScienceStore->getInternalNameForScience(science).str()));
+		DEBUG_CRASH(("Cannot grant science %s, since it is marked as nonGrantable.",TheScienceStore->getInternalNameForScience(science).str()));
 		return false;	// it's not grantable, so tough, can't have it, even via this method.
 	}
 
@@ -3587,7 +3587,7 @@ void Player::xfer( Xfer *xfer )
 			if( upgradeTemplate == NULL )
 			{
 
-				DEBUG_CRASH(( "Player::xfer - Unable to find upgrade '%s'\n", upgradeName.str() ));
+				DEBUG_CRASH(( "Player::xfer - Unable to find upgrade '%s'", upgradeName.str() ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -3659,7 +3659,7 @@ void Player::xfer( Xfer *xfer )
 			if( prototype == NULL )
 			{
 
-				DEBUG_CRASH(( "Player::xfer - Unable to find team prototype by id\n" ));
+				DEBUG_CRASH(( "Player::xfer - Unable to find team prototype by id" ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -3731,7 +3731,7 @@ void Player::xfer( Xfer *xfer )
 	if( (aiPlayerPresent == TRUE && m_ai == NULL) || (aiPlayerPresent == FALSE && m_ai != NULL) )
 	{
 
-		DEBUG_CRASH(( "Player::xfer - m_ai present/missing mismatch\n" ));
+		DEBUG_CRASH(( "Player::xfer - m_ai present/missing mismatch" ));
 		throw SC_INVALID_DATA;;
 
 	}  // end if
@@ -3745,7 +3745,7 @@ void Player::xfer( Xfer *xfer )
 			(resourceGatheringManagerPresent == FALSE && m_resourceGatheringManager != NULL ) )
 	{
 
-		DEBUG_CRASH(( "Player::xfer - m_resourceGatheringManager present/missing mismatch\n" ));
+		DEBUG_CRASH(( "Player::xfer - m_resourceGatheringManager present/missing mismatch" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -3759,7 +3759,7 @@ void Player::xfer( Xfer *xfer )
 			(tunnelTrackerPresent == FALSE && m_tunnelSystem != NULL) )
 	{
 
-		DEBUG_CRASH(( "Player::xfer - m_tunnelSystem present/missing mismatch\n" ));
+		DEBUG_CRASH(( "Player::xfer - m_tunnelSystem present/missing mismatch" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -3922,7 +3922,7 @@ void Player::xfer( Xfer *xfer )
 		if( m_kindOfPercentProductionChangeList.size() != 0 )
 		{
 
-			DEBUG_CRASH(( "Player::xfer - m_kindOfPercentProductionChangeList should be empty but is not\n" ));
+			DEBUG_CRASH(( "Player::xfer - m_kindOfPercentProductionChangeList should be empty but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -3974,7 +3974,7 @@ void Player::xfer( Xfer *xfer )
 		{
 			if( m_specialPowerReadyTimerList.size() != 0 ) // sanity, list must be empty right now
 			{
-				DEBUG_CRASH(( "Player::xfer - m_specialPowerReadyTimerList should be empty but is not\n" ));
+				DEBUG_CRASH(( "Player::xfer - m_specialPowerReadyTimerList should be empty but is not" ));
 				throw SC_INVALID_DATA;
 			}  // end if
 
@@ -4004,7 +4004,7 @@ void Player::xfer( Xfer *xfer )
 	if( squadCount != NUM_HOTKEY_SQUADS )
 	{
 
-		DEBUG_CRASH(( "Player::xfer - size of m_squadCount array has changed\n" ));
+		DEBUG_CRASH(( "Player::xfer - size of m_squadCount array has changed" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -4014,7 +4014,7 @@ void Player::xfer( Xfer *xfer )
 		if( m_squads[ i ] == NULL )
 		{
 
-			DEBUG_CRASH(( "Player::xfer - NULL squad at index '%d'\n", i ));
+			DEBUG_CRASH(( "Player::xfer - NULL squad at index '%d'", i ));
 			throw SC_INVALID_DATA;
 
 		}  // end if

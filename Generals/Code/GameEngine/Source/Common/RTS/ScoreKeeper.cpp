@@ -413,7 +413,7 @@ void ScoreKeeper::xferObjectCountMap( Xfer *xfer, ObjectCountMap *map )
 	if( map == NULL )
 	{
 
-		DEBUG_CRASH(( "xferObjectCountMap - Invalid map parameter\n" ));
+		DEBUG_CRASH(( "xferObjectCountMap - Invalid map parameter" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -464,7 +464,7 @@ void ScoreKeeper::xferObjectCountMap( Xfer *xfer, ObjectCountMap *map )
 			if( thingTemplate == NULL )
 			{
 
-				DEBUG_CRASH(( "xferObjectCountMap - Unknown thing template '%s'\n", thingTemplateName.str() ));
+				DEBUG_CRASH(( "xferObjectCountMap - Unknown thing template '%s'", thingTemplateName.str() ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -539,7 +539,7 @@ void ScoreKeeper::xfer( Xfer *xfer )
 	if( destroyedArraySize != MAX_PLAYER_COUNT )
 	{
 
-		DEBUG_CRASH(( "ScoreKeeper::xfer - size of objects destroyed array has changed\n" ));
+		DEBUG_CRASH(( "ScoreKeeper::xfer - size of objects destroyed array has changed" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if

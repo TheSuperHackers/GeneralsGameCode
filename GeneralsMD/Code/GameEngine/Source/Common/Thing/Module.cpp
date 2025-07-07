@@ -108,7 +108,7 @@ ObjectModule::ObjectModule( Thing *thing, const ModuleData* moduleData ) : Modul
 { 
 	if (!moduleData)
 	{
-		DEBUG_CRASH(("module data may not be null\n"));
+		DEBUG_CRASH(("module data may not be null"));
 		throw INI_INVALID_DATA;
 	}
 
@@ -171,7 +171,7 @@ DrawableModule::DrawableModule( Thing *thing, const ModuleData* moduleData ) : M
 { 
 	if (!moduleData)
 	{
-		DEBUG_CRASH(("module data may not be null\n"));
+		DEBUG_CRASH(("module data may not be null"));
 		throw INI_INVALID_DATA;
 	}
 

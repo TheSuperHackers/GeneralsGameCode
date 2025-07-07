@@ -1224,7 +1224,7 @@ static Bool shouldSaveDrawable(const Drawable* draw)
 		}
 		else
 		{
-			DEBUG_CRASH(("You should not ever set DRAWABLE_STATUS_NO_SAVE for a Drawable with an object. (%s)\n",draw->getTemplate()->getName().str()));
+			DEBUG_CRASH(("You should not ever set DRAWABLE_STATUS_NO_SAVE for a Drawable with an object. (%s)",draw->getTemplate()->getName().str()));
 		}
 	}
 	return true;
@@ -1377,7 +1377,7 @@ void GameClient::xfer( Xfer *xfer )
 			if( tocEntry == NULL )
 			{
 
-				DEBUG_CRASH(( "GameClient::xfer - Drawable TOC entry not found for '%s'\n", draw->getTemplate()->getName().str() ));
+				DEBUG_CRASH(( "GameClient::xfer - Drawable TOC entry not found for '%s'", draw->getTemplate()->getName().str() ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -1419,7 +1419,7 @@ void GameClient::xfer( Xfer *xfer )
 			if( tocEntry == NULL )
 			{
 
-				DEBUG_CRASH(( "GameClient::xfer - No TOC entry match for id '%d'\n", tocID ));
+				DEBUG_CRASH(( "GameClient::xfer - No TOC entry match for id '%d'", tocID ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -1432,7 +1432,7 @@ void GameClient::xfer( Xfer *xfer )
 			if( thingTemplate == NULL )
 			{
 
-				DEBUG_CRASH(( "GameClient::xfer - Unrecognized thing template '%s', skipping.  ENGINEERS - Are you *sure* it's OK to be ignoring this object from the save file???  Think hard about it!\n",
+				DEBUG_CRASH(( "GameClient::xfer - Unrecognized thing template '%s', skipping.  ENGINEERS - Are you *sure* it's OK to be ignoring this object from the save file???  Think hard about it!",
 											tocEntry->name.str() ));
 				xfer->skip( dataSize );
 				continue;
@@ -1454,7 +1454,7 @@ void GameClient::xfer( Xfer *xfer )
 				if( object == NULL )
 				{
 
-					DEBUG_CRASH(( "GameClient::xfer - Cannot find object '%d' that is supposed to be attached to this drawable '%s'\n",
+					DEBUG_CRASH(( "GameClient::xfer - Cannot find object '%d' that is supposed to be attached to this drawable '%s'",
 												objectID, thingTemplate->getName().str() ));
 					throw SC_INVALID_DATA;
 
@@ -1465,7 +1465,7 @@ void GameClient::xfer( Xfer *xfer )
 				if( draw == NULL )
 				{
 
-					DEBUG_CRASH(( "GameClient::xfer - There is no drawable attached to the object '%s' (%d) and there should be\n",
+					DEBUG_CRASH(( "GameClient::xfer - There is no drawable attached to the object '%s' (%d) and there should be",
 												object->getTemplate()->getName().str(), object->getID() ));
 					throw SC_INVALID_DATA;
 
@@ -1500,7 +1500,7 @@ void GameClient::xfer( Xfer *xfer )
 				if( draw == NULL )
 				{
 
-					DEBUG_CRASH(( "GameClient::xfer - Unable to create drawable for '%s'\n",
+					DEBUG_CRASH(( "GameClient::xfer - Unable to create drawable for '%s'",
 												thingTemplate->getName().str() ));
 					throw SC_INVALID_DATA;
 

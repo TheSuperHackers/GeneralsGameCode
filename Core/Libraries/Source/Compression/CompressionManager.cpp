@@ -430,7 +430,7 @@ void DoCompressTest( void )
 					Int ret = memcmp(buf, uncompressedBuf, origSize);
 					if (ret != 0)
 					{
-						DEBUG_CRASH(("orig buffer does not match compressed+uncompressed output - ret was %d\n", ret));
+						DEBUG_CRASH(("orig buffer does not match compressed+uncompressed output - ret was %d", ret));
 					}
 				}
 

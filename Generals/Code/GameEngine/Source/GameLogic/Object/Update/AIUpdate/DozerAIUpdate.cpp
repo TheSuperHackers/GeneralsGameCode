@@ -748,7 +748,7 @@ StateReturnType DozerActionDoActionState::update( void )
 		default:
 		{
 
-			DEBUG_CRASH(( "Unknown task for the dozer action do action state\n" ));
+			DEBUG_CRASH(( "Unknown task for the dozer action do action state" ));
 			return STATE_FAILURE;
 
 		}  // end default
@@ -1772,7 +1772,7 @@ Bool DozerAIUpdate::canAcceptNewRepair( Object *obj )
 			if( currentTowerInterface == NULL || newTowerInterface == NULL )
 			{
 
-				DEBUG_CRASH(( "Unable to find bridge tower interface on object\n" ));
+				DEBUG_CRASH(( "Unable to find bridge tower interface on object" ));
 				return FALSE;
 
 			}  // end if
@@ -2217,7 +2217,7 @@ void DozerAIUpdate::internalTaskCompleteOrCancelled( DozerTask task )
 		default:
 		{
 
-			DEBUG_CRASH(( "internalTaskCompleteOrCancelled: Unknown Dozer task '%d'\n", task ));
+			DEBUG_CRASH(( "internalTaskCompleteOrCancelled: Unknown Dozer task '%d'", task ));
 			break;
 
 		}  // end default

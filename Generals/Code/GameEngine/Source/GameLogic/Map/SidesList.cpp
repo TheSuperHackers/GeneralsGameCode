@@ -799,7 +799,7 @@ validate_team_names:
 		AsciiString tname = tdict->getAsciiString(TheKey_teamName);
 		if (findSideInfo(tname))
 		{
-			DEBUG_CRASH(("name %s is duplicate between player and team, removing...\n",tname.str()));
+			DEBUG_CRASH(("name %s is duplicate between player and team, removing...",tname.str()));
 			removeTeam(i);
 			modified = true;
 			goto validate_team_names;
@@ -855,7 +855,7 @@ void SidesList::xfer( Xfer *xfer )
 	if( sideCount != getNumSides() )
 	{
 
-		DEBUG_CRASH(( "SidesList::xfer - The sides list size has changed, this was not supposed to happen, you must version this method and figure out how to translate between old and new versions now\n" ));
+		DEBUG_CRASH(( "SidesList::xfer - The sides list size has changed, this was not supposed to happen, you must version this method and figure out how to translate between old and new versions now" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -874,7 +874,7 @@ void SidesList::xfer( Xfer *xfer )
 				(scriptList != NULL && scriptListPresent == FALSE) )
 		{
 
-			DEBUG_CRASH(( "SidesList::xfer - script list missing/present mismatch\n" ));
+			DEBUG_CRASH(( "SidesList::xfer - script list missing/present mismatch" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if

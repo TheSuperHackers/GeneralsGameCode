@@ -257,7 +257,7 @@ void INI::prepFile( AsciiString filename, INILoadType loadType )
 	if( m_file != NULL )
 	{
 
-		DEBUG_CRASH(( "INI::load, cannot open file '%s', file already open\n", filename.str() ));
+		DEBUG_CRASH(( "INI::load, cannot open file '%s', file already open", filename.str() ));
 		throw INI_FILE_ALREADY_OPEN;
 
 	}  // end if
@@ -267,7 +267,7 @@ void INI::prepFile( AsciiString filename, INILoadType loadType )
 	if( m_file == NULL )
 	{
 
-		DEBUG_CRASH(( "INI::load, cannot open file '%s'\n", filename.str() ));
+		DEBUG_CRASH(( "INI::load, cannot open file '%s'", filename.str() ));
 		throw INI_CANT_OPEN_FILE;
 
 	}  // end if
@@ -370,7 +370,7 @@ void INI::load( AsciiString filename, INILoadType loadType, Xfer *pXfer )
 						(*parse)( this );
 
 					} catch (...) {
-						DEBUG_CRASH(("Error parsing block '%s' in INI file '%s'\n", token, m_filename.str()) );
+						DEBUG_CRASH(("Error parsing block '%s' in INI file '%s'", token, m_filename.str()) );
 						char buff[1024];
 						sprintf(buff, "Error parsing INI file '%s' (Line: '%s')\n", m_filename.str(), currentLine.str());
 
@@ -575,7 +575,7 @@ void INI::parsePositiveNonZeroReal( INI* ini, void * /*instance*/, void *store, 
 	*(Real *)store = scanReal(token);
 	if (*(Real *)store <= 0.0f)
 	{
-		DEBUG_CRASH(("invalid Real value %f -- expected > 0\n",*(Real*)store));
+		DEBUG_CRASH(("invalid Real value %f -- expected > 0",*(Real*)store));
 		throw INI_INVALID_DATA;
 	}
 
@@ -644,7 +644,7 @@ void INI::parseBitInInt32( INI *ini, void *instance, void *store, const void* us
 		return FALSE;
 	else
 	{
-		DEBUG_CRASH(("invalid boolean token %s -- expected Yes or No\n",token));
+		DEBUG_CRASH(("invalid boolean token %s -- expected Yes or No",token));
 		throw INI_INVALID_DATA;
 		return false;	// keep compiler happy
 	}
@@ -857,7 +857,7 @@ void INI::parseMappedImage( INI *ini, void * /*instance*/, void *store, const vo
 	else
 	{
 
-		DEBUG_CRASH(( "INI::parseAnim2DTemplate - TheAnim2DCollection is NULL\n" ));
+		DEBUG_CRASH(( "INI::parseAnim2DTemplate - TheAnim2DCollection is NULL" ));
 		throw INI_UNKNOWN_ERROR;
 
 	}  // end else
@@ -1509,7 +1509,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 						(*parse)( this, what, (char *)what + offset + parseTableList.getNthExtraOffset(ptIdx), userData );
 
 						} catch (...) {
-							DEBUG_CRASH( ("[LINE: %d - FILE: '%s'] Error reading field '%s' of block '%s'\n",
+							DEBUG_CRASH( ("[LINE: %d - FILE: '%s'] Error reading field '%s' of block '%s'",
 																 INI::getLineNum(), INI::getFilename().str(), field, m_curBlockStart) );
 
 
@@ -1631,7 +1631,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 		}
 	}
 
-	DEBUG_CRASH(("token %s is not a valid member of the index list\n",token));
+	DEBUG_CRASH(("token %s is not a valid member of the index list",token));
 	throw INI_INVALID_DATA;
 	return 0;	// never executed, but keeps compiler happy
 
@@ -1657,7 +1657,7 @@ void INI::initFromINIMulti( void *what, const MultiIniFieldParse& parseTableList
 		}
 	}
 
-	DEBUG_CRASH(("token %s is not a valid member of the lookup list\n",token));
+	DEBUG_CRASH(("token %s is not a valid member of the lookup list",token));
 	throw INI_INVALID_DATA;
 	return 0;	// never executed, but keeps compiler happy
 

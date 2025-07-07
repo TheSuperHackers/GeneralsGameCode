@@ -767,7 +767,7 @@ void DumbProjectileBehavior::xfer( Xfer *xfer )
 			if( m_detonationWeaponTmpl == NULL )
 			{
 
-				DEBUG_CRASH(( "DumbProjectileBehavior::xfer - Unknown weapon template '%s'\n",
+				DEBUG_CRASH(( "DumbProjectileBehavior::xfer - Unknown weapon template '%s'",
 											weaponTemplateName.str() ));
 				throw SC_INVALID_DATA;
 

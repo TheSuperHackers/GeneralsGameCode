@@ -203,7 +203,7 @@ void GameSlot::setState( SlotState state, UnicodeString name, UnsignedInt IP )
 
 		if (state == SLOT_OPEN && TheGameSpyGame && TheGameSpyGame->getConstSlot(0) == this)
 		{
-			DEBUG_CRASH(("Game Is Hosed!\n"));
+			DEBUG_CRASH(("Game Is Hosed!"));
 		}
 	}
 	if (state == SLOT_PLAYER)

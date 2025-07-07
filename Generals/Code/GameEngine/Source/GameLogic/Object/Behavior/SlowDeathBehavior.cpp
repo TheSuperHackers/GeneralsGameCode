@@ -159,7 +159,7 @@ SlowDeathBehavior::SlowDeathBehavior( Thing *thing, const ModuleData* moduleData
 
 	if (getSlowDeathBehaviorModuleData()->m_probabilityModifier < 1)
 	{
-		DEBUG_CRASH(("ProbabilityModifer must be >= 1.\n"));
+		DEBUG_CRASH(("ProbabilityModifer must be >= 1."));
 		throw INI_INVALID_DATA;
 	}
 

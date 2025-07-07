@@ -118,7 +118,7 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 	}
 
 	if (retval != 0) {
-		DEBUG_CRASH(("Could not bind to 0x%8.8X:%d\n", ip, port));
+		DEBUG_CRASH(("Could not bind to 0x%8.8X:%d", ip, port));
 		DEBUG_LOG(("Transport::init - Failure to bind socket with error code %x", retval));
 		delete m_udpsock;
 		m_udpsock = NULL;

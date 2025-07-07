@@ -772,7 +772,7 @@ void CommandSet::parseCommandButton( INI* ini, void *instance, void *store, cons
 	if( commandButton == NULL )
 	{
 
-		DEBUG_CRASH(( "[LINE: %d - FILE: '%s'] Unknown command '%s' found in command set\n",
+		DEBUG_CRASH(( "[LINE: %d - FILE: '%s'] Unknown command '%s' found in command set",
 								  ini->getLineNum(), ini->getFilename().str(), token ));
 		throw INI_INVALID_DATA;
 

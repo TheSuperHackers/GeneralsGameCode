@@ -79,7 +79,7 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 	if( file == NULL )
 	{
 
-		DEBUG_CRASH(( "embedPristineMap - Error opening source file '%s'\n", map.str() ));
+		DEBUG_CRASH(( "embedPristineMap - Error opening source file '%s'", map.str() ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -95,7 +95,7 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 	if( buffer == NULL )
 	{
 
-		DEBUG_CRASH(( "embedPristineMap - Unable to allocate buffer for file '%s'\n", map.str() ));
+		DEBUG_CRASH(( "embedPristineMap - Unable to allocate buffer for file '%s'", map.str() ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -104,7 +104,7 @@ static void embedPristineMap( AsciiString map, Xfer *xfer )
 	if( file->read( buffer, fileSize ) != fileSize )
 	{
 
-		DEBUG_CRASH(( "embeddPristineMap - Error reading from file '%s'\n", map.str() ));
+		DEBUG_CRASH(( "embeddPristineMap - Error reading from file '%s'", map.str() ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -135,7 +135,7 @@ static void embedInUseMap( AsciiString map, Xfer *xfer )
 	if( fp == NULL )
 	{
 
-		DEBUG_CRASH(( "embedInUseMap - Unable to open file '%s'\n", map.str() ));
+		DEBUG_CRASH(( "embedInUseMap - Unable to open file '%s'", map.str() ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -152,7 +152,7 @@ static void embedInUseMap( AsciiString map, Xfer *xfer )
 	if( buffer == NULL )
 	{
 
-		DEBUG_CRASH(( "embedInUseMap - Unable to allocate buffer for file '%s'\n", map.str() ));
+		DEBUG_CRASH(( "embedInUseMap - Unable to allocate buffer for file '%s'", map.str() ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -161,7 +161,7 @@ static void embedInUseMap( AsciiString map, Xfer *xfer )
 	if( fread( buffer, 1, fileSize, fp ) != fileSize )
 	{
 
-		DEBUG_CRASH(( "embedInUseMap - Error reading from file '%s'\n", map.str() ));
+		DEBUG_CRASH(( "embedInUseMap - Error reading from file '%s'", map.str() ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -191,7 +191,7 @@ static void extractAndSaveMap( AsciiString mapToSave, Xfer *xfer )
 	if( fp == NULL )
 	{
 
-		DEBUG_CRASH(( "extractAndSaveMap - Unable to open file '%s'\n", mapToSave.str() ));
+		DEBUG_CRASH(( "extractAndSaveMap - Unable to open file '%s'", mapToSave.str() ));
 		throw SC_INVALID_DATA;
 
 	}  // en
@@ -204,7 +204,7 @@ static void extractAndSaveMap( AsciiString mapToSave, Xfer *xfer )
 	if( buffer == NULL )
 	{
 
-		DEBUG_CRASH(( "extractAndSaveMap - Unable to allocate buffer for file '%s'\n", mapToSave.str() ));
+		DEBUG_CRASH(( "extractAndSaveMap - Unable to allocate buffer for file '%s'", mapToSave.str() ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -216,7 +216,7 @@ static void extractAndSaveMap( AsciiString mapToSave, Xfer *xfer )
 	if( fwrite( buffer, 1, dataSize, fp ) != dataSize )
 	{
 
-		DEBUG_CRASH(( "extractAndSaveMap - Error writing to file '%s'\n", mapToSave.str() ));
+		DEBUG_CRASH(( "extractAndSaveMap - Error writing to file '%s'", mapToSave.str() ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -328,7 +328,7 @@ void GameStateMap::xfer( Xfer *xfer )
 
 		if (!TheGameState->isInSaveDirectory(saveGameInfo->saveGameMapName))
 		{
-			DEBUG_CRASH(("GameState::xfer - The map filename read from the file '%s' is not in the SAVE directory, but should be\n",
+			DEBUG_CRASH(("GameState::xfer - The map filename read from the file '%s' is not in the SAVE directory, but should be",
 												 saveGameInfo->saveGameMapName.str()) );
 			throw SC_INVALID_DATA;
 		}

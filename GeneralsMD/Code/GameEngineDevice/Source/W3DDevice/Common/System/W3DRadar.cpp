@@ -86,7 +86,7 @@ static WW3DFormat findFormat(const WW3DFormat formats[])
 		}  // end if
 
 	}  // end for i
-	DEBUG_CRASH(("WW3DRadar: No appropriate texture format\n") );
+	DEBUG_CRASH(("WW3DRadar: No appropriate texture format") );
 	return WW3D_FORMAT_UNKNOWN;
 }
 

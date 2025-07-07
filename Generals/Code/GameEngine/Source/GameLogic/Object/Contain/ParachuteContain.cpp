@@ -162,13 +162,13 @@ void ParachuteContain::updateBonePositions()
 		{
 			if (parachuteDraw->getPristineBonePositions( "PARA_COG", 0, &m_paraSwayBone, NULL, 1) != 1)
 			{
-				DEBUG_CRASH(("PARA_COG not found\n"));
+				DEBUG_CRASH(("PARA_COG not found"));
 				m_paraSwayBone.zero();
 			}
 
 			if (parachuteDraw->getPristineBonePositions( "PARA_ATTCH", 0, &m_paraAttachBone, NULL, 1 ) != 1)
 			{
-				DEBUG_CRASH(("PARA_ATTCH not found\n"));
+				DEBUG_CRASH(("PARA_ATTCH not found"));
 				m_paraAttachBone.zero();
 			}
 		}

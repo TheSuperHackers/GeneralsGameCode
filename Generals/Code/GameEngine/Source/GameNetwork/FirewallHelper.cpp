@@ -1175,7 +1175,7 @@ Bool FirewallHelperClass::detectionTest4Stage2Update() {
 			DEBUG_LOG(("FirewallHelperClass::detectionTest4Stage2Update - NAT uses the same source port for different destination ports"));
 		} else {
 			DEBUG_LOG(("FirewallHelperClass::detectionTest4Stage2Update - Unable to complete destination port mangling test"));
-			DEBUG_CRASH(("Unable to complete destination port mangling test\n"));
+			DEBUG_CRASH(("Unable to complete destination port mangling test"));
 		}
 	}
 

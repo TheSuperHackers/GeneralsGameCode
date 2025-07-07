@@ -1927,7 +1927,7 @@ void ConnectionManager::parseUserList(const GameInfo *game)
 	/*
 	if ( numUsers < 2 || m_localSlot == -1 )
 	{
-		DEBUG_CRASH(("FAILED parseUserList - network game won't work as expected\n"));
+		DEBUG_CRASH(("FAILED parseUserList - network game won't work as expected"));
 		return;
 	}
 

@@ -599,7 +599,7 @@ void PerfTimer::outputInfo( void )
 #endif
 
 	if (m_crashWithInfo) {
-		DEBUG_CRASH(("%s\n"
+		DEBUG_CRASH(("%s"
 								 "Average Time (per call): %.4f ms\n" 
 								 "Average Time (per frame): %.4f ms\n"
 								 "Average calls per frame: %.2f\n"

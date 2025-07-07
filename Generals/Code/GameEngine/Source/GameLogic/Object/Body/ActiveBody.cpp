@@ -1270,7 +1270,7 @@ void ActiveBody::xfer( Xfer *xfer )
 		if( m_particleSystems != NULL )
 		{
 
-			DEBUG_CRASH(( "ActiveBody::xfer - m_particleSystems should be empty, but is not\n" ));
+			DEBUG_CRASH(( "ActiveBody::xfer - m_particleSystems should be empty, but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if

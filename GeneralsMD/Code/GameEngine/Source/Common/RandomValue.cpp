@@ -385,7 +385,7 @@ Real GameClientRandomVariable::getValue( void ) const
 
 		default:
 			/// @todo fill in support for nonuniform GameClientRandomVariables.
-			DEBUG_CRASH(("unsupported DistributionType in GameClientRandomVariable::getValue\n"));
+			DEBUG_CRASH(("unsupported DistributionType in GameClientRandomVariable::getValue"));
 			return 0.0f;
 	}
 }
@@ -430,7 +430,7 @@ Real GameLogicRandomVariable::getValue( void ) const
 
 		default:
 			/// @todo fill in support for nonuniform GameLogicRandomVariables.
-			DEBUG_CRASH(("unsupported DistributionType in GameLogicRandomVariable::getValue\n"));
+			DEBUG_CRASH(("unsupported DistributionType in GameLogicRandomVariable::getValue"));
 			return 0.0f;
 	}
 }

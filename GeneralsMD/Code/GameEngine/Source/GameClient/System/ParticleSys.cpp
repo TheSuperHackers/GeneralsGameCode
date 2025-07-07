@@ -707,7 +707,7 @@ void Particle::loadPostProcess( void )
 		if( m_systemUnderControlID == NULL )
 		{
 
-			DEBUG_CRASH(( "Particle::loadPostProcess - Unable to find system under control pointer\n" ));
+			DEBUG_CRASH(( "Particle::loadPostProcess - Unable to find system under control pointer" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -2546,7 +2546,7 @@ void ParticleSystem::loadPostProcess( void )
 		if( m_slaveSystem != NULL )
 		{
 
-			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_slaveSystem is not NULL but should be\n" ));
+			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_slaveSystem is not NULL but should be" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -2558,7 +2558,7 @@ void ParticleSystem::loadPostProcess( void )
 		if( m_slaveSystem == NULL || m_slaveSystem->isDestroyed() == TRUE )
 		{
 
-			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_slaveSystem is NULL or destroyed\n" ));
+			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_slaveSystem is NULL or destroyed" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -2573,7 +2573,7 @@ void ParticleSystem::loadPostProcess( void )
 		if( m_masterSystem != NULL )
 		{
 
-			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_masterSystem is not NULL but should be\n" ));
+			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_masterSystem is not NULL but should be" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -2585,7 +2585,7 @@ void ParticleSystem::loadPostProcess( void )
 		if( m_masterSystem == NULL || m_masterSystem->isDestroyed() == TRUE )
 		{
 
-			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_masterSystem is NULL or destroyed\n" ));
+			DEBUG_CRASH(( "ParticleSystem::loadPostProcess - m_masterSystem is NULL or destroyed" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -3315,7 +3315,7 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 			if( systemTemplate == NULL )
 			{
 
-				DEBUG_CRASH(( "ParticleSystemManager::xfer - Unknown particle system template '%s'\n",
+				DEBUG_CRASH(( "ParticleSystemManager::xfer - Unknown particle system template '%s'",
 											systemName.str() ));
 				throw SC_INVALID_DATA;
 
@@ -3327,7 +3327,7 @@ void ParticleSystemManager::xfer( Xfer *xfer )
 			if( system == NULL )
 			{
 
-				DEBUG_CRASH(( "ParticleSystemManager::xfer - Unable to allocate particle system '%s'\n",
+				DEBUG_CRASH(( "ParticleSystemManager::xfer - Unable to allocate particle system '%s'",
 											systemName.str() ));
 				throw SC_INVALID_DATA;
 

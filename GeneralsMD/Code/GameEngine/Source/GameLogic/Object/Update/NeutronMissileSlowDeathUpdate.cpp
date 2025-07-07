@@ -497,7 +497,7 @@ void NeutronMissileSlowDeathBehavior::xfer( Xfer *xfer )
 	if( maxNeutronBlasts != MAX_NEUTRON_BLASTS )
 	{
 
-		DEBUG_CRASH(( "NeutronMissileSlowDeathBehavior::xfer - Size of MAX_NEUTRON_BLASTS has changed, you must version this xfer code and then you can remove this error message\n" ));
+		DEBUG_CRASH(( "NeutronMissileSlowDeathBehavior::xfer - Size of MAX_NEUTRON_BLASTS has changed, you must version this xfer code and then you can remove this error message" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if

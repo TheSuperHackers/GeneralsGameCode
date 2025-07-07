@@ -614,7 +614,7 @@ const ModuleFactory::ModuleTemplate* ModuleFactory::findModuleTemplate(const Asc
   ModuleTemplateMap::const_iterator it = m_moduleTemplateMap.find(namekey);
   if (it == m_moduleTemplateMap.end()) 
 	{
-		DEBUG_CRASH(( "Module name '%s' not found\n", name.str() ));
+		DEBUG_CRASH(( "Module name '%s' not found", name.str() ));
 		return NULL;
 	}
 	else
@@ -631,7 +631,7 @@ Module *ModuleFactory::newModule( Thing *thing, const AsciiString& name, const M
 	// sanity
 	if( name.isEmpty() )
 	{
-		DEBUG_CRASH(("attempting to create module with empty name\n"));
+		DEBUG_CRASH(("attempting to create module with empty name"));
 		return NULL;
 	}
 	const ModuleTemplate* mt = findModuleTemplate(name, type);

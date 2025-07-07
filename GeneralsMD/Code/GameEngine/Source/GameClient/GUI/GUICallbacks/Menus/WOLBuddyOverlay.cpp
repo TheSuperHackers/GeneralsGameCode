@@ -514,7 +514,7 @@ void HandleBuddyResponses( void )
 
 					if (TheGameSpyInfo->isSavedIgnored(resp.profile))
 					{
-						//DEBUG_CRASH(("Player is ignored!\n"));
+						//DEBUG_CRASH(("Player is ignored!"));
 						break; // no buddy messages from ignored people
 					}
 
@@ -637,7 +637,7 @@ void HandleBuddyResponses( void )
 	}
 	else
 	{
-		DEBUG_CRASH(("No buddy message queue!\n"));
+		DEBUG_CRASH(("No buddy message queue!"));
 	}
 	if(noticeLayout && timeGetTime() > noticeExpires)
 	{

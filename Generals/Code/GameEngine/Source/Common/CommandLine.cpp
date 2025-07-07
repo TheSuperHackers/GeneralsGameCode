@@ -112,7 +112,7 @@ static void ConvertShortMapPathToLongMapPath(AsciiString &mapName)
 //=============================================================================
 Int parseNoLogOrCrash(char *args[], int)
 {
-	DEBUG_CRASH(("-NoLogOrCrash not supported in this build\n"));
+	DEBUG_CRASH(("-NoLogOrCrash not supported in this build"));
 	return 1;
 }
 

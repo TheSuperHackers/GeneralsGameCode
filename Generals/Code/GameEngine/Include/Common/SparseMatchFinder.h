@@ -178,7 +178,7 @@ private:
 		{
 			AsciiString curConditionStr;
 			bits.buildDescription(&curConditionStr); 
-			DEBUG_CRASH(("ambiguous model match in findBestInfoSlow \n\nbetween \n(%s)\n<and>\n(%s)\n\n(%d extra matches found)\n\ncurrent bits are (\n%s)\n",
+			DEBUG_CRASH(("ambiguous model match in findBestInfoSlow \n\nbetween \n(%s)\n<and>\n(%s)\n\n(%d extra matches found)\n\ncurrent bits are (\n%s)",
 					curBestMatchStr.str(),
 					dupMatchStr.str(),
 					numDupMatches,

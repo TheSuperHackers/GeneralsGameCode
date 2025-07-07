@@ -2993,7 +2993,7 @@ void MilesAudioManager::friend_forcePlayAudioEventRTS(const AudioEventRTS* event
 	if (!eventToPlay->getAudioEventInfo()) {
 		getInfoForAudioEvent(eventToPlay);
 		if (!eventToPlay->getAudioEventInfo()) {
-			DEBUG_CRASH(("No info for forced audio event '%s'\n", eventToPlay->getEventName().str()));
+			DEBUG_CRASH(("No info for forced audio event '%s'", eventToPlay->getEventName().str()));
 			return;
 		}
 	}
@@ -3106,7 +3106,7 @@ AudioFileCache::~AudioFileCache()
 		OpenFilesHashIt it;
 		for ( it = m_openFiles.begin(); it != m_openFiles.end(); ++it ) {
 			if (it->second.m_openCount > 0) {
-				DEBUG_CRASH(("Sample '%s' is still playing, and we're trying to quit.\n", it->second.m_eventInfo->m_audioName.str()));
+				DEBUG_CRASH(("Sample '%s' is still playing, and we're trying to quit.", it->second.m_eventInfo->m_audioName.str()));
 			}
 
 			releaseOpenAudioFile(&it->second);
@@ -3188,7 +3188,7 @@ void *AudioFileCache::openFile( AudioEventRTS *eventToOpenFrom )
 		openedAudioFile.m_soundInfo = soundInfo;
 		openedAudioFile.m_openCount = 1;
 	} else {
-		DEBUG_CRASH(("Unexpected compression type in '%s'\n", strToFind.str()));
+		DEBUG_CRASH(("Unexpected compression type in '%s'", strToFind.str()));
 		// prevent leaks
 		delete [] buffer;
 		return NULL;

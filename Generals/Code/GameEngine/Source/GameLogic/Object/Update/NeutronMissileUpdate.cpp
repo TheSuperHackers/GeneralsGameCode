@@ -215,7 +215,7 @@ void NeutronMissileUpdate::doLaunch( void )
 		if (!launcher->getDrawable() ||
 			!launcher->getDrawable()->getProjectileLaunchOffset(m_attach_wslot, m_attach_specificBarrelToUse, &attachTransform, TURRET_INVALID, NULL))
 		{
-			DEBUG_CRASH(("ProjectileLaunchPos %d %d not found!\n",m_attach_wslot, m_attach_specificBarrelToUse));
+			DEBUG_CRASH(("ProjectileLaunchPos %d %d not found!",m_attach_wslot, m_attach_specificBarrelToUse));
 			attachTransform.Make_Identity();
 		}
 
@@ -619,7 +619,7 @@ void NeutronMissileUpdate::xfer( Xfer *xfer )
 			if( m_exhaustSysTmpl == NULL )
 			{
 
-				DEBUG_CRASH(( "NeutronMissileUpdate::xfer - Unable to find particle system '%s'\n", name.str() ));
+				DEBUG_CRASH(( "NeutronMissileUpdate::xfer - Unable to find particle system '%s'", name.str() ));
 				throw SC_INVALID_DATA;
 
 			}  // end if

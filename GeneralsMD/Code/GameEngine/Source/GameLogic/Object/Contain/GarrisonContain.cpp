@@ -161,7 +161,7 @@ void GarrisonContain::putObjectAtGarrisonPoint( Object *obj,
 			conditionIndex < 0 || conditionIndex >= MAX_GARRISON_POINT_CONDITIONS )
 	{
 
-		DEBUG_CRASH(( "GarrisionContain::putObjectAtGarrisionPoint - Invalid arguments\n" ));
+		DEBUG_CRASH(( "GarrisionContain::putObjectAtGarrisionPoint - Invalid arguments" ));
 		return;
 
 	}  // end if
@@ -170,7 +170,7 @@ void GarrisonContain::putObjectAtGarrisonPoint( Object *obj,
 	if( m_garrisonPointData[ pointIndex ].object != NULL )
 	{
 
-		DEBUG_CRASH(( "GarrisonContain::putObjectAtGarrisonPoint - Garrison Point '%d' is not empty\n", 
+		DEBUG_CRASH(( "GarrisonContain::putObjectAtGarrisonPoint - Garrison Point '%d' is not empty", 
 									pointIndex ));
 		return;
 
@@ -262,7 +262,7 @@ Int GarrisonContain::findConditionIndex( void )
 		// --------------------------------------------------------------------------------------------
 		default:
 
-			DEBUG_CRASH(( "GarrisonContain::findConditionIndex - Unknown body damage type '%d'\n",
+			DEBUG_CRASH(( "GarrisonContain::findConditionIndex - Unknown body damage type '%d'",
 										bodyDamage ));
 			break;
 
@@ -296,7 +296,7 @@ Bool GarrisonContain::calcBestGarrisonPosition( Coord3D *sourcePos, const Coord3
 	Int placeIndex = findClosestFreeGarrisonPointIndex( conditionIndex, targetPos );
 	if( placeIndex == GARRISON_INDEX_INVALID )
 	{
-		DEBUG_CRASH( ("GarrisonContain::calcBestGarrisonPosition - Unable to find suitable garrison point.\n") );
+		DEBUG_CRASH( ("GarrisonContain::calcBestGarrisonPosition - Unable to find suitable garrison point.") );
 		return FALSE;
 	}
 
@@ -1822,7 +1822,7 @@ void GarrisonContain::xfer( Xfer *xfer )
 			if( m_originalTeam == NULL )
 			{
 
-				DEBUG_CRASH(( "GarrisonContain::xfer - Unable to find original team by id\n" ));
+				DEBUG_CRASH(( "GarrisonContain::xfer - Unable to find original team by id" ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -1941,7 +1941,7 @@ void GarrisonContain::loadPostProcess( void )
 			if( m_garrisonPointData[ i ].object == NULL )
 			{
 
-				DEBUG_CRASH(( "GarrisonContain::loadPostProcess - Unable to find object for point data\n" ));
+				DEBUG_CRASH(( "GarrisonContain::loadPostProcess - Unable to find object for point data" ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -1958,7 +1958,7 @@ void GarrisonContain::loadPostProcess( void )
 			if( m_garrisonPointData[ i ].effect == NULL )
 			{
 
-				DEBUG_CRASH(( "GarrisonContain::loadPostProcess - Unable to find effect for point data\n" ));
+				DEBUG_CRASH(( "GarrisonContain::loadPostProcess - Unable to find effect for point data" ));
 				throw SC_INVALID_DATA;
 
 			}  // end if

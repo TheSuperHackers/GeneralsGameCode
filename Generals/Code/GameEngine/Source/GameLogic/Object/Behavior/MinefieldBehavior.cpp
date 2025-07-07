@@ -662,7 +662,7 @@ void MinefieldBehavior::xfer( Xfer *xfer )
 	if( maxImmunity != MAX_IMMUNITY )
 	{
 
-		DEBUG_CRASH(( "MinefieldBehavior::xfer - MAX_IMMUNITY has changed size, you must version this code and then you can remove this error message\n" ));
+		DEBUG_CRASH(( "MinefieldBehavior::xfer - MAX_IMMUNITY has changed size, you must version this code and then you can remove this error message" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if

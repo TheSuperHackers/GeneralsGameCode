@@ -393,7 +393,7 @@ void LocomotorTemplate::validate()
 				m_lift != 0.0f ||
 				m_liftDamaged != 0.0f)
 		{
-			DEBUG_CRASH(("THRUST locos may not use ZAxisBehavior or lift!\n"));
+			DEBUG_CRASH(("THRUST locos may not use ZAxisBehavior or lift!"));
 			throw INI_INVALID_DATA;
 		}
 		if (m_maxSpeed <= 0.0f)
@@ -2643,7 +2643,7 @@ void LocomotorSet::xfer( Xfer *xfer )
 		// vector should be empty at this point
 		if (m_locomotors.empty() == FALSE)
 		{
-			DEBUG_CRASH(( "LocomotorSet::xfer - vector is not empty, but should be\n" ));
+			DEBUG_CRASH(( "LocomotorSet::xfer - vector is not empty, but should be" ));
 			throw XFER_LIST_NOT_EMPTY;
 		}
 
@@ -2655,7 +2655,7 @@ void LocomotorSet::xfer( Xfer *xfer )
 			const LocomotorTemplate* lt = TheLocomotorStore->findLocomotorTemplate(NAMEKEY(name));
 			if (lt == NULL)
 			{
-				DEBUG_CRASH(( "LocomotorSet::xfer - template %s not found\n", name.str() ));
+				DEBUG_CRASH(( "LocomotorSet::xfer - template %s not found", name.str() ));
 				throw XFER_UNKNOWN_STRING;
 			}
 
@@ -2710,7 +2710,7 @@ void LocomotorSet::xferSelfAndCurLocoPtr(Xfer *xfer, Locomotor** loco)
 				}
 			}
 
-			DEBUG_CRASH(( "LocomotorSet::xfer - template %s not found\n", name.str() ));
+			DEBUG_CRASH(( "LocomotorSet::xfer - template %s not found", name.str() ));
 			throw XFER_UNKNOWN_STRING;
 		}
 	}
