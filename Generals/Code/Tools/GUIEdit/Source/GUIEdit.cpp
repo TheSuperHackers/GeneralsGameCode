@@ -757,7 +757,7 @@ Bool GUIEdit::writeConfigFile( const char *filename )
 	if( fp == NULL )
 	{
 
-		DEBUG_LOG(( "writeConfigFile: Unable to open file '%s'\n", filename ));
+		DEBUG_LOG(( "writeConfigFile: Unable to open file '%s'", filename ));
 		assert( 0 );
 		return FALSE;
 
@@ -3389,7 +3389,7 @@ void GUIEdit::statusMessage( StatusPart part, const char *message )
 	if( part < 0 || part >= STATUS_NUM_PARTS )
 	{
 	
-		DEBUG_LOG(( "Status message part out of range '%d', '%s'\n", part, message ));
+		DEBUG_LOG(( "Status message part out of range '%d', '%s'", part, message ));
 		assert( 0 );
 		return;
 
@@ -3890,7 +3890,7 @@ void GUIEdit::selectWindow( GameWindow *window )
 	if( entry == NULL )
 	{
 
-		DEBUG_LOG(( "Unable to allocate selection entry for window\n" ));
+		DEBUG_LOG(( "Unable to allocate selection entry for window" ));
 		assert( 0 );
 		return;
 
@@ -4029,7 +4029,7 @@ void GUIEdit::deleteSelected( void )
 	if( deleteList == NULL )
 	{
 	
-		DEBUG_LOG(( "Cannot allocate delete list!\n" ));
+		DEBUG_LOG(( "Cannot allocate delete list!" ));
 		assert( 0 );
 		return;
 
@@ -4072,7 +4072,7 @@ void GUIEdit::bringSelectedToTop( void )
 	if( snapshot == NULL )
 	{
 
-		DEBUG_LOG(( "bringSelectedToTop: Unabled to allocate selectList\n" ));
+		DEBUG_LOG(( "bringSelectedToTop: Unabled to allocate selectList" ));
 		assert( 0 );
 		return;
 

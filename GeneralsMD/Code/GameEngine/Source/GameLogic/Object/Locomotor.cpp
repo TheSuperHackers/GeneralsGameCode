@@ -406,19 +406,19 @@ void LocomotorTemplate::validate()
 		if (m_maxSpeed <= 0.0f)
 		{
 			// if one of these was omitted, it defaults to zero... just quietly heal it here, rather than crashing
-			DEBUG_LOG(("THRUST locos may not have zero m_maxSpeed; healing...\n"));
+			DEBUG_LOG(("THRUST locos may not have zero m_maxSpeed; healing..."));
 			m_maxSpeed = 0.01f;
 		}
 		if (m_maxSpeedDamaged <= 0.0f)
 		{
 			// if one of these was omitted, it defaults to zero... just quietly heal it here, rather than crashing
-			DEBUG_LOG(("THRUST locos may not have zero m_maxSpeedDamaged; healing...\n"));
+			DEBUG_LOG(("THRUST locos may not have zero m_maxSpeedDamaged; healing..."));
 			m_maxSpeedDamaged = 0.01f;
 		}
 		if (m_minSpeed <= 0.0f)
 		{
 			// if one of these was omitted, it defaults to zero... just quietly heal it here, rather than crashing
-			DEBUG_LOG(("THRUST locos may not have zero m_minSpeed; healing...\n"));
+			DEBUG_LOG(("THRUST locos may not have zero m_minSpeed; healing..."));
 			m_minSpeed = 0.01f;
 		}
 	}
@@ -1240,7 +1240,7 @@ void Locomotor::moveTowardsPositionTreads(Object* obj, PhysicsBehavior *physics,
 	}
 
 
-	//DEBUG_LOG(("Actual speed %f, Braking factor %f, slowDownDist %f, Pathdist %f, goalSpeed %f\n", 
+	//DEBUG_LOG(("Actual speed %f, Braking factor %f, slowDownDist %f, Pathdist %f, goalSpeed %f", 
 	//	actualSpeed, m_brakingFactor, slowDownDist, onPathDistToGoal, goalSpeed));
 
 	//
@@ -1449,7 +1449,7 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 	}
 
 
-	//DEBUG_LOG(("Actual speed %f, Braking factor %f, slowDownDist %f, Pathdist %f, goalSpeed %f\n", 
+	//DEBUG_LOG(("Actual speed %f, Braking factor %f, slowDownDist %f, Pathdist %f, goalSpeed %f", 
 	//	actualSpeed, m_brakingFactor, slowDownDist, onPathDistToGoal, goalSpeed));
 
 
@@ -1500,7 +1500,7 @@ void Locomotor::moveTowardsPositionWheels(Object* obj, PhysicsBehavior *physics,
 		if (fabs(accelForce) > fabs(maxForceNeeded))
 			accelForce = maxForceNeeded;
 
-		//DEBUG_LOG(("Braking %d, actualSpeed %f, goalSpeed %f, delta %f, accel %f\n", getFlag(IS_BRAKING),
+		//DEBUG_LOG(("Braking %d, actualSpeed %f, goalSpeed %f, delta %f, accel %f", getFlag(IS_BRAKING),
 			//actualSpeed, goalSpeed, speedDelta, accelForce));
 
 		const Coord3D *dir = obj->getUnitDirectionVector2D();
@@ -2008,7 +2008,7 @@ void Locomotor::moveTowardsPositionThrust(Object* obj, PhysicsBehavior *physics,
 		Vector3 curVel(physics->getVelocity()->x, physics->getVelocity()->y, physics->getVelocity()->z);
 
 		Vector3 accelVec = thrustDir * maxAccel - curVel * damping;
-		//DEBUG_LOG(("accel %f (max %f) vel %f (max %f) damping %f\n",accelVec.Length(),maxAccel,curVel.Length(),maxForwardSpeed,damping));
+		//DEBUG_LOG(("accel %f (max %f) vel %f (max %f) damping %f",accelVec.Length(),maxAccel,curVel.Length(),maxForwardSpeed,damping));
 
 		Real mass = physics->getMass();
 
@@ -2291,7 +2291,7 @@ Bool Locomotor::handleBehaviorZ(Object* obj, PhysicsBehavior *physics, const Coo
 
 					Real liftToUse = calcLiftToUseAtPt(obj, physics, pos.z, surfaceHt, preferredHeight);
 
-					//DEBUG_LOG(("HandleBZ %d LiftToUse %f\n",TheGameLogic->getFrame(),liftToUse));
+					//DEBUG_LOG(("HandleBZ %d LiftToUse %f",TheGameLogic->getFrame(),liftToUse));
 					if (liftToUse != 0.0f)
 					{
 						Coord3D force;
@@ -2324,7 +2324,7 @@ Bool Locomotor::handleBehaviorZ(Object* obj, PhysicsBehavior *physics, const Coo
 
 					Real liftToUse = calcLiftToUseAtPt(obj, physics, pos.z, surfaceHt, preferredHeight);
 
-					//DEBUG_LOG(("HandleBZ %d LiftToUse %f\n",TheGameLogic->getFrame(),liftToUse));
+					//DEBUG_LOG(("HandleBZ %d LiftToUse %f",TheGameLogic->getFrame(),liftToUse));
 					if (liftToUse != 0.0f)
 					{
 						Coord3D force;

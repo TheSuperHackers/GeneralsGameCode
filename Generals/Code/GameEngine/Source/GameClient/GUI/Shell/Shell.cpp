@@ -331,10 +331,10 @@ void Shell::push( AsciiString filename, Bool shutdownImmediate )
 
 
 #ifdef DEBUG_LOGGING
-	DEBUG_LOG(("Shell:push(%s) - stack was\n", filename.str()));
+	DEBUG_LOG(("Shell:push(%s) - stack was", filename.str()));
 	for (Int i=0; i<m_screenCount; ++i)
 	{
-		DEBUG_LOG(("\t\t%s\n", m_screenStack[i]->getFilename().str()));
+		DEBUG_LOG(("\t\t%s", m_screenStack[i]->getFilename().str()));
 	}
 #endif
 
@@ -342,7 +342,7 @@ void Shell::push( AsciiString filename, Bool shutdownImmediate )
 	if( m_screenCount >= MAX_SHELL_STACK )
 	{
 	
-		DEBUG_LOG(( "Unable to load screen '%s', max '%d' reached\n",
+		DEBUG_LOG(( "Unable to load screen '%s', max '%d' reached",
 								filename.str(), MAX_SHELL_STACK ));
 		return;
 
@@ -398,10 +398,10 @@ void Shell::pop( void )
 		return;
 
 #ifdef DEBUG_LOGGING
-	DEBUG_LOG(("Shell:pop() - stack was\n"));
+	DEBUG_LOG(("Shell:pop() - stack was"));
 	for (Int i=0; i<m_screenCount; ++i)
 	{
-		DEBUG_LOG(("\t\t%s\n", m_screenStack[i]->getFilename().str()));
+		DEBUG_LOG(("\t\t%s", m_screenStack[i]->getFilename().str()));
 	}
 #endif
 
@@ -437,10 +437,10 @@ void Shell::popImmediate( void )
 		return;
 
 #ifdef DEBUG_LOGGING
-	DEBUG_LOG(("Shell:popImmediate() - stack was\n"));
+	DEBUG_LOG(("Shell:popImmediate() - stack was"));
 	for (Int i=0; i<m_screenCount; ++i)
 	{
-		DEBUG_LOG(("\t\t%s\n", m_screenStack[i]->getFilename().str()));
+		DEBUG_LOG(("\t\t%s", m_screenStack[i]->getFilename().str()));
 	}
 #endif
 
@@ -467,7 +467,7 @@ void Shell::popImmediate( void )
 //-------------------------------------------------------------------------------------------------
 void Shell::showShell( Bool runInit )
 {
-	DEBUG_LOG(("Shell:showShell() - %s (%s)\n", TheGlobalData->m_initialFile.str(), (top())?top()->getFilename().str():"no top screen"));
+	DEBUG_LOG(("Shell:showShell() - %s (%s)", TheGlobalData->m_initialFile.str(), (top())?top()->getFilename().str():"no top screen"));
 
 	if(!TheGlobalData->m_initialFile.isEmpty() || !TheGlobalData->m_simulateReplays.empty())
 	{
@@ -576,7 +576,7 @@ void Shell::hideShell( void )
 	// If we have the 3d background running, mark it to close
 	m_clearBackground = TRUE;
 
-	DEBUG_LOG(("Shell:hideShell() - %s\n", (top())?top()->getFilename().str():"no top screen"));
+	DEBUG_LOG(("Shell:hideShell() - %s", (top())?top()->getFilename().str():"no top screen"));
 
 	WindowLayout *layout = top();
 

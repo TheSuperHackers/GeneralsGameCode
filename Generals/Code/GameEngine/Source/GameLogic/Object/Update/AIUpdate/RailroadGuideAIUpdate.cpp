@@ -952,7 +952,7 @@ void RailroadBehavior::createCarriages( void )
 				else // or else let's use the defualt template list prvided in the INI
 				{
 					firstCarriage = TheThingFactory->newObject( temp, self->getTeam() ); 
-					DEBUG_LOG(("%s Added a carriage, %s \n", self->getTemplate()->getName().str(),firstCarriage->getTemplate()->getName().str()));
+					DEBUG_LOG(("%s Added a carriage, %s ", self->getTemplate()->getName().str(),firstCarriage->getTemplate()->getName().str()));
 				}
 				
 				if ( firstCarriage )

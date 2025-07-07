@@ -486,7 +486,7 @@ void INI::readLine( void )
 	if (s_xfer)
 	{
 		s_xfer->xferUser( m_buffer, sizeof( char ) * strlen( m_buffer ) );
-		//DEBUG_LOG(("Xfer val is now 0x%8.8X in %s, line %s\n", ((XferCRC *)s_xfer)->getCRC(),
+		//DEBUG_LOG(("Xfer val is now 0x%8.8X in %s, line %s", ((XferCRC *)s_xfer)->getCRC(),
 			//m_filename.str(), m_buffer));
 	}
 }

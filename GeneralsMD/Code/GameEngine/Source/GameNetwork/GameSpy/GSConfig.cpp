@@ -403,12 +403,12 @@ m_qmChannel(0)
 				}
 				else
 				{
-					DEBUG_LOG(("Unknown key '%s' = '%s' in NAT block of GameSpy Config\n", key.str(), val.str()));
+					DEBUG_LOG(("Unknown key '%s' = '%s' in NAT block of GameSpy Config", key.str(), val.str()));
 				}
 			}
 			else
 			{
-				DEBUG_LOG(("Key '%s' missing val in NAT block of GameSpy Config\n", key.str()));
+				DEBUG_LOG(("Key '%s' missing val in NAT block of GameSpy Config", key.str()));
 			}
 		}
 		else if (inCustom)
@@ -423,12 +423,12 @@ m_qmChannel(0)
 				}
 				else
 				{
-					DEBUG_LOG(("Unknown key '%s' = '%s' in Custom block of GameSpy Config\n", key.str(), val.str()));
+					DEBUG_LOG(("Unknown key '%s' = '%s' in Custom block of GameSpy Config", key.str(), val.str()));
 				}
 			}
 			else
 			{
-				DEBUG_LOG(("Key '%s' missing val in Custom block of GameSpy Config\n", key.str()));
+				DEBUG_LOG(("Key '%s' missing val in Custom block of GameSpy Config", key.str()));
 			}
 		}
 		else

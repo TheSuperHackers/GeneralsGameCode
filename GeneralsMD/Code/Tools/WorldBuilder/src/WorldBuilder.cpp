@@ -288,10 +288,10 @@ BOOL CWorldBuilderApp::InitInstance()
 	DebugSetFlags(DebugGetFlags() | DEBUG_FLAG_LOG_TO_CONSOLE);
 #endif
 
-	DEBUG_LOG(("starting Worldbuilder.\n"));
+	DEBUG_LOG(("starting Worldbuilder."));
 
 #ifdef RTS_DEBUG
-	DEBUG_LOG(("RTS_DEBUG defined.\n"));
+	DEBUG_LOG(("RTS_DEBUG defined."));
 #endif
 	initMemoryManager();
 #ifdef MEMORYPOOL_CHECKPOINTING
@@ -352,7 +352,7 @@ BOOL CWorldBuilderApp::InitInstance()
 	TheWritableGlobalData->m_debugIgnoreAsserts = false;
 #endif
 
-	DEBUG_LOG(("TheWritableGlobalData %x\n", TheWritableGlobalData));
+	DEBUG_LOG(("TheWritableGlobalData %x", TheWritableGlobalData));
 #if 1
 	// srj sez: put INI into our user data folder, not the ap dir
 	free((void*)m_pszProfileName);

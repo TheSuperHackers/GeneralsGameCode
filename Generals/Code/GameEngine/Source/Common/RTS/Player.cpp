@@ -174,7 +174,7 @@ AsciiString kindofMaskAsAsciiString(KindOfMaskType m)
 }
 void dumpBattlePlanBonuses(const BattlePlanBonuses *b, AsciiString name, const Player *p, const Object *o, AsciiString fname, Int line, Bool doDebugLog)
 {
-	CRCDEBUG_LOG(("dumpBattlePlanBonuses() %s:%d %s\n  Player %d(%ls) object %d(%s) armor:%g/%8.8X bombardment:%d, holdTheLine:%d, searchAndDestroy:%d sight:%g/%8.8X, valid:%s invalid:%s\n",
+	CRCDEBUG_LOG(("dumpBattlePlanBonuses() %s:%d %s\n  Player %d(%ls) object %d(%s) armor:%g/%8.8X bombardment:%d, holdTheLine:%d, searchAndDestroy:%d sight:%g/%8.8X, valid:%s invalid:%s",
 		fname.str(), line, name.str(),
 		(p)?p->getPlayerIndex():-1, (p)?((Player *)p)->getPlayerDisplayName().str():L"<No Name>", (o)?o->getID():-1, (o)?o->getTemplate()->getName().str():"<No Name>",
 		b->m_armorScalar, AS_INT(b->m_armorScalar),
@@ -184,7 +184,7 @@ void dumpBattlePlanBonuses(const BattlePlanBonuses *b, AsciiString name, const P
 		kindofMaskAsAsciiString(b->m_invalidKindOf).str()));
 	if (!doDebugLog)
 		return;
-	DEBUG_LOG(("dumpBattlePlanBonuses() %s:%d %s\n  Player %d(%ls) object %d(%s) armor:%g/%8.8X bombardment:%d, holdTheLine:%d, searchAndDestroy:%d sight:%g/%8.8X, valid:%s invalid:%s\n",
+	DEBUG_LOG(("dumpBattlePlanBonuses() %s:%d %s\n  Player %d(%ls) object %d(%s) armor:%g/%8.8X bombardment:%d, holdTheLine:%d, searchAndDestroy:%d sight:%g/%8.8X, valid:%s invalid:%s",
 		fname.str(), line, name.str(),
 		(p)?p->getPlayerIndex():-1, (p)?((Player *)p)->getPlayerDisplayName().str():L"<No Name>", (o)?o->getID():-1, (o)?o->getTemplate()->getName().str():"<No Name>",
 		b->m_armorScalar, AS_INT(b->m_armorScalar),
@@ -2130,7 +2130,7 @@ Bool Player::addScience(ScienceType science)
 	if (hasScience(science))
 		return false;
 
-	//DEBUG_LOG(("Adding Science %s\n",TheScienceStore->getInternalNameForScience(science).str()));
+	//DEBUG_LOG(("Adding Science %s",TheScienceStore->getInternalNameForScience(science).str()));
 
 	m_sciences.push_back(science);
 
@@ -2179,7 +2179,7 @@ Bool Player::addScience(ScienceType science)
 //=============================================================================
 void Player::addSciencePurchasePoints(Int delta)
 {
-	//DEBUG_LOG(("Adding SciencePurchasePoints %d -> %d\n",m_sciencePurchasePoints,m_sciencePurchasePoints+delta));
+	//DEBUG_LOG(("Adding SciencePurchasePoints %d -> %d",m_sciencePurchasePoints,m_sciencePurchasePoints+delta));
 	Int oldSPP = m_sciencePurchasePoints;
 	m_sciencePurchasePoints += delta;
 	if (m_sciencePurchasePoints < 0)
@@ -2281,7 +2281,7 @@ Bool Player::setRankLevel(Int newLevel)
 	if (newLevel == m_rankLevel)
 		return false;
 
-	//DEBUG_LOG(("Set Rank Level %d -> %d\n",m_rankLevel,newLevel));
+	//DEBUG_LOG(("Set Rank Level %d -> %d",m_rankLevel,newLevel));
 
 	Int oldSPP = m_sciencePurchasePoints;
 
@@ -2320,7 +2320,7 @@ Bool Player::setRankLevel(Int newLevel)
 	m_rankLevel = newLevel;
 
 	DEBUG_ASSERTCRASH(m_skillPoints >= m_levelDown && m_skillPoints < m_levelUp, ("hmm, wrong"));
-	//DEBUG_LOG(("Rank %d, Skill %d, down %d, up %d\n",m_rankLevel,m_skillPoints, m_levelDown, m_levelUp));
+	//DEBUG_LOG(("Rank %d, Skill %d, down %d, up %d",m_rankLevel,m_skillPoints, m_levelDown, m_levelUp));
 
 	if (TheControlBar != NULL)
 	{
@@ -3022,7 +3022,7 @@ static void localApplyBattlePlanBonusesToObject( Object *obj, void *userData )
 	Object *objectToValidate = obj;
 	Object *objectToModify = obj;
 
-	DEBUG_LOG(("localApplyBattlePlanBonusesToObject() - looking at object %d (%s)\n",
+	DEBUG_LOG(("localApplyBattlePlanBonusesToObject() - looking at object %d (%s)",
 		(objectToValidate)?objectToValidate->getID():INVALID_ID,
 		(objectToValidate)?objectToValidate->getTemplate()->getName().str():"<No Object>"));
 
@@ -3032,30 +3032,30 @@ static void localApplyBattlePlanBonusesToObject( Object *obj, void *userData )
 	if( isProjectile )
 	{
 		objectToValidate = TheGameLogic->findObjectByID( obj->getProducerID() );
-		DEBUG_LOG(("Object is a projectile - looking at object %d (%s) instead\n",
+		DEBUG_LOG(("Object is a projectile - looking at object %d (%s) instead",
 			(objectToValidate)?objectToValidate->getID():INVALID_ID,
 			(objectToValidate)?objectToValidate->getTemplate()->getName().str():"<No Object>"));
 	}
 	if( objectToValidate && objectToValidate->isAnyKindOf( bonus->m_validKindOf ) )
 	{
-		DEBUG_LOG(("Is valid kindof\n"));
+		DEBUG_LOG(("Is valid kindof"));
 		if( !objectToValidate->isAnyKindOf( bonus->m_invalidKindOf ) )
 		{
-			DEBUG_LOG(("Is not invalid kindof\n"));
+			DEBUG_LOG(("Is not invalid kindof"));
 			//Quite the trek eh? Now we can apply the bonuses!
 			if( !isProjectile )
 			{
-				DEBUG_LOG(("Is not projectile.  Armor scalar is %g\n", bonus->m_armorScalar));
+				DEBUG_LOG(("Is not projectile.  Armor scalar is %g", bonus->m_armorScalar));
 				//Really important to not apply certain bonuses like health augmentation to projectiles!
 				if( bonus->m_armorScalar != 1.0f )
 				{
 					BodyModuleInterface *body = objectToModify->getBodyModule();
 					body->applyDamageScalar( bonus->m_armorScalar );
-					CRCDEBUG_LOG(("Applying armor scalar of %g (%8.8X) to object %d (%ls) owned by player %d\n",
+					CRCDEBUG_LOG(("Applying armor scalar of %g (%8.8X) to object %d (%ls) owned by player %d",
 						bonus->m_armorScalar, AS_INT(bonus->m_armorScalar), objectToModify->getID(),
 						objectToModify->getTemplate()->getDisplayName().str(),
 						objectToModify->getControllingPlayer()->getPlayerIndex()));
-					DEBUG_LOG(("After apply, armor scalar is %g\n", body->getDamageScalar()));
+					DEBUG_LOG(("After apply, armor scalar is %g", body->getDamageScalar()));
 				}
 				if( bonus->m_sightRangeScalar != 1.0f )
 				{
@@ -3130,13 +3130,13 @@ void Player::applyBattlePlanBonusesForPlayerObjects( const BattlePlanBonuses *bo
 	//Only allocate the battle plan bonuses if we actually use it!
 	if( !m_battlePlanBonuses )
 	{
-		DEBUG_LOG(("Allocating new m_battlePlanBonuses\n"));
+		DEBUG_LOG(("Allocating new m_battlePlanBonuses"));
 		m_battlePlanBonuses = newInstance( BattlePlanBonuses );	
 		*m_battlePlanBonuses = *bonus;
 	}
 	else
 	{
-		DEBUG_LOG(("Adding bonus into existing m_battlePlanBonuses\n"));
+		DEBUG_LOG(("Adding bonus into existing m_battlePlanBonuses"));
 		DUMPBATTLEPLANBONUSES(m_battlePlanBonuses, this, NULL);
 		//Just apply the differences by multiplying the scalars together (kindofs won't change)
 		//These bonuses are used for new objects that are created or objects that are transferred
@@ -3488,7 +3488,7 @@ void Player::crc( Xfer *xfer )
 	// Player battle plan bonuses
 	Bool battlePlanBonus = m_battlePlanBonuses != NULL;
 	xfer->xferBool( &battlePlanBonus );
-	CRCDEBUG_LOG(("Player %d[%ls] %s battle plans\n", m_playerIndex, m_playerDisplayName.str(), (battlePlanBonus)?"has":"doesn't have"));
+	CRCDEBUG_LOG(("Player %d[%ls] %s battle plans", m_playerIndex, m_playerDisplayName.str(), (battlePlanBonus)?"has":"doesn't have"));
 	if( m_battlePlanBonuses )
 	{
 		CRCDUMPBATTLEPLANBONUSES(m_battlePlanBonuses, this, NULL);

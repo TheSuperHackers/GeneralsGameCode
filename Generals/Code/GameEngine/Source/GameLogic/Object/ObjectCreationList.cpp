@@ -999,7 +999,7 @@ protected:
 
 		if (m_inheritsVeterancy && sourceObj && obj->getExperienceTracker()->isTrainable())
 		{
-			DEBUG_LOG(("Object %s inherits veterancy level %d from %s\n",
+			DEBUG_LOG(("Object %s inherits veterancy level %d from %s",
 				obj->getTemplate()->getName().str(), sourceObj->getVeterancyLevel(), sourceObj->getTemplate()->getName().str()));
 			VeterancyLevel v = sourceObj->getVeterancyLevel();
 			obj->getExperienceTracker()->setVeterancyLevel(v);

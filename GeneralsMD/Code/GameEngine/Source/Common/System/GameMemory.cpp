@@ -126,7 +126,7 @@ DECLARE_PERF_TIMER(MemoryPoolInitFilling)
 			s_initFillerValue |= (~(s_initFillerValue << 4)) & 0xf0;
 			s_initFillerValue |= (s_initFillerValue << 8);
 			s_initFillerValue |= (s_initFillerValue << 16);
-			DEBUG_LOG(("Setting MemoryPool initFillerValue to %08x (index %d)\n",s_initFillerValue,index));
+			DEBUG_LOG(("Setting MemoryPool initFillerValue to %08x (index %d)",s_initFillerValue,index));
 		}
 	#endif
 
@@ -762,7 +762,7 @@ Bool BlockCheckpointInfo::shouldBeInReport(Int flags, Int startCheckpoint, Int e
 
 	if (!bi)
 	{
-		DEBUG_LOG(("%s,%32s,%6s,%6s,%6s,%s\n",PREPEND,"POOLNAME","BLKSZ","ALLOC","FREED","BLOCKNAME"));
+		DEBUG_LOG(("%s,%32s,%6s,%6s,%6s,%s",PREPEND,"POOLNAME","BLKSZ","ALLOC","FREED","BLOCKNAME"));
 	}
 	else
 	{
@@ -772,7 +772,7 @@ Bool BlockCheckpointInfo::shouldBeInReport(Int flags, Int startCheckpoint, Int e
 
 		if (bi->shouldBeInReport(flags, startCheckpoint, endCheckpoint))
 		{
-			DEBUG_LOG(("%s,%32s,%6d,%6d,%6d,%s\n",PREPEND,poolName,bi->m_blockSize,bi->m_allocCheckpoint,bi->m_freeCheckpoint,bi->m_debugLiteralTagString));
+			DEBUG_LOG(("%s,%32s,%6d,%6d,%6d,%s",PREPEND,poolName,bi->m_blockSize,bi->m_allocCheckpoint,bi->m_freeCheckpoint,bi->m_debugLiteralTagString));
 	#ifdef MEMORYPOOL_STACKTRACE
 			if (flags & REPORT_CP_STACKTRACE)
 			{
@@ -1013,7 +1013,7 @@ Int MemoryPoolSingleBlock::debugSingleBlockReportLeak(const char* owner)
 	}
 	else
 	{
-		DEBUG_LOG(("Leaked a block of size %d, tagstring %s, from pool/dma %s\n",m_logicalSize,m_debugLiteralTagString,owner));
+		DEBUG_LOG(("Leaked a block of size %d, tagstring %s, from pool/dma %s",m_logicalSize,m_debugLiteralTagString,owner));
 	}
 
 	#ifdef MEMORYPOOL_SINGLEBLOCK_GETS_STACKTRACE
@@ -1462,7 +1462,7 @@ void Checkpointable::debugCheckpointReport( Int flags, Int startCheckpoint, Int 
 
 	if (m_cpiEverFailed)
 	{
-		DEBUG_LOG(("  *** WARNING *** info on freed blocks may be inaccurate or incomplete!\n"));
+		DEBUG_LOG(("  *** WARNING *** info on freed blocks may be inaccurate or incomplete!"));
 	}
 
 	for (BlockCheckpointInfo *bi = m_firstCheckpointInfo; bi; bi = bi->getNext())
@@ -1857,13 +1857,13 @@ void MemoryPool::removeFromList(MemoryPool **pHead)
 
 	if (!pool)
 	{
-		DEBUG_LOG(("%s,%32s,%6s,%6s,%6s,%6s,%6s,%6s\n",PREPEND,"POOLNAME","BLKSZ","INIT","OVRFL","USED","TOTAL","PEAK"));
+		DEBUG_LOG(("%s,%32s,%6s,%6s,%6s,%6s,%6s,%6s",PREPEND,"POOLNAME","BLKSZ","INIT","OVRFL","USED","TOTAL","PEAK"));
 		if( fp )
 			fprintf( fp, "%s,%32s,%6s,%6s,%6s,%6s,%6s,%6s\n",PREPEND,"POOLNAME","BLKSZ","INIT","OVRFL","USED","TOTAL","PEAK" );
 	}
 	else
 	{
-		DEBUG_LOG(("%s,%32s,%6d,%6d,%6d,%6d,%6d,%6d\n",PREPEND,
+		DEBUG_LOG(("%s,%32s,%6d,%6d,%6d,%6d,%6d,%6d",PREPEND,
 			pool->m_poolName,pool->m_allocationSize,pool->m_initialAllocationCount,pool->m_overflowAllocationCount,
 			pool->m_usedBlocksInPool,pool->m_totalBlocksInPool,pool->m_peakUsedBlocksInPool));
 		if( fp )
@@ -2547,10 +2547,10 @@ void DynamicMemoryAllocator::debugDmaInfoReport( FILE *fp )
 
 	Int numBlocks;
 	Int bytes = debugCalcRawBlockBytes(&numBlocks);
-	DEBUG_LOG(("%s,Total Raw Blocks = %d\n",PREPEND,numBlocks));
-	DEBUG_LOG(("%s,Total Raw Block Bytes = %d\n",PREPEND,bytes));
-	DEBUG_LOG(("%s,Average Raw Block Size = %d\n",PREPEND,numBlocks?bytes/numBlocks:0));
-	DEBUG_LOG(("%s,Raw Blocks:\n",PREPEND));
+	DEBUG_LOG(("%s,Total Raw Blocks = %d",PREPEND,numBlocks));
+	DEBUG_LOG(("%s,Total Raw Block Bytes = %d",PREPEND,bytes));
+	DEBUG_LOG(("%s,Average Raw Block Size = %d",PREPEND,numBlocks?bytes/numBlocks:0));
+	DEBUG_LOG(("%s,Raw Blocks:",PREPEND));
 	if( fp )
 	{
 		fprintf( fp, "%s,Total Raw Blocks = %d\n",PREPEND,numBlocks );
@@ -2560,7 +2560,7 @@ void DynamicMemoryAllocator::debugDmaInfoReport( FILE *fp )
 	}
 	for (MemoryPoolSingleBlock *b = m_rawBlocks; b; b = b->getNextRawBlock())
 	{
-		DEBUG_LOG(("%s,  Blocksize=%d\n",PREPEND,b->debugGetLogicalSize()));
+		DEBUG_LOG(("%s,  Blocksize=%d",PREPEND,b->debugGetLogicalSize()));
 		//if( fp )
 		//{
 		//	fprintf( fp, "%s,  Blocksize=%d\n",PREPEND,b->debugGetLogicalSize() );
@@ -3079,16 +3079,16 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 
 	if (flags & REPORT_FACTORYINFO)
 	{
-		DEBUG_LOG(("------------------------------------------\n"));
-		DEBUG_LOG(("Begin Factory Info Report\n"));
-		DEBUG_LOG(("------------------------------------------\n"));
-		DEBUG_LOG(("Bytes in use (logical) = %d\n",m_usedBytes));
-		DEBUG_LOG(("Bytes in use (physical) = %d\n",m_physBytes));
-		DEBUG_LOG(("PEAK Bytes in use (logical) = %d\n",m_peakUsedBytes));
-		DEBUG_LOG(("PEAK Bytes in use (physical) = %d\n",m_peakPhysBytes));
-		DEBUG_LOG(("------------------------------------------\n"));
-		DEBUG_LOG(("End Factory Info Report\n"));
-		DEBUG_LOG(("------------------------------------------\n"));
+		DEBUG_LOG(("------------------------------------------"));
+		DEBUG_LOG(("Begin Factory Info Report"));
+		DEBUG_LOG(("------------------------------------------"));
+		DEBUG_LOG(("Bytes in use (logical) = %d",m_usedBytes));
+		DEBUG_LOG(("Bytes in use (physical) = %d",m_physBytes));
+		DEBUG_LOG(("PEAK Bytes in use (logical) = %d",m_peakUsedBytes));
+		DEBUG_LOG(("PEAK Bytes in use (physical) = %d",m_peakPhysBytes));
+		DEBUG_LOG(("------------------------------------------"));
+		DEBUG_LOG(("End Factory Info Report"));
+		DEBUG_LOG(("------------------------------------------"));
 		if( fp )
 		{
 			fprintf( fp, "------------------------------------------\n" );
@@ -3106,9 +3106,9 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 
 	if (flags & REPORT_POOLINFO)
 	{
-		DEBUG_LOG(("------------------------------------------\n"));
-		DEBUG_LOG(("Begin Pool Info Report\n"));
-		DEBUG_LOG(("------------------------------------------\n"));
+		DEBUG_LOG(("------------------------------------------"));
+		DEBUG_LOG(("Begin Pool Info Report"));
+		DEBUG_LOG(("------------------------------------------"));
 		if( fp )
 		{
 			fprintf( fp, "------------------------------------------\n" );
@@ -3124,9 +3124,9 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 		{
 			dma->debugDmaInfoReport( fp );
 		}
-		DEBUG_LOG(("------------------------------------------\n"));
-		DEBUG_LOG(("End Pool Info Report\n"));
-		DEBUG_LOG(("------------------------------------------\n"));
+		DEBUG_LOG(("------------------------------------------"));
+		DEBUG_LOG(("End Pool Info Report"));
+		DEBUG_LOG(("------------------------------------------"));
 		if( fp )
 		{
 			fprintf( fp, "------------------------------------------\n" );
@@ -3137,43 +3137,43 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 
 	if (flags & REPORT_POOL_OVERFLOW)
 	{
-		DEBUG_LOG(("------------------------------------------\n"));
-		DEBUG_LOG(("Begin Pool Overflow Report\n"));
-		DEBUG_LOG(("------------------------------------------\n"));
+		DEBUG_LOG(("------------------------------------------"));
+		DEBUG_LOG(("Begin Pool Overflow Report"));
+		DEBUG_LOG(("------------------------------------------"));
 		MemoryPool *pool = m_firstPoolInFactory;
 		for (; pool; pool = pool->getNextPoolInList())
 		{
 			if (pool->getPeakBlockCount() > pool->getInitialBlockCount())
 			{
-				DEBUG_LOG(("*** Pool %s overflowed initial allocation of %d (peak allocation was %d)\n",pool->getPoolName(),pool->getInitialBlockCount(),pool->getPeakBlockCount()));
+				DEBUG_LOG(("*** Pool %s overflowed initial allocation of %d (peak allocation was %d)",pool->getPoolName(),pool->getInitialBlockCount(),pool->getPeakBlockCount()));
 			}
 		}
-		DEBUG_LOG(("------------------------------------------\n"));
-		DEBUG_LOG(("End Pool Overflow Report\n"));
-		DEBUG_LOG(("------------------------------------------\n"));
-		DEBUG_LOG(("------------------------------------------\n"));
-		DEBUG_LOG(("Begin Pool Underflow Report\n"));
-		DEBUG_LOG(("------------------------------------------\n"));
+		DEBUG_LOG(("------------------------------------------"));
+		DEBUG_LOG(("End Pool Overflow Report"));
+		DEBUG_LOG(("------------------------------------------"));
+		DEBUG_LOG(("------------------------------------------"));
+		DEBUG_LOG(("Begin Pool Underflow Report"));
+		DEBUG_LOG(("------------------------------------------"));
 		for (pool = m_firstPoolInFactory; pool; pool = pool->getNextPoolInList())
 		{
 			Int peak = pool->getPeakBlockCount()*pool->getAllocationSize();
 			Int initial = pool->getInitialBlockCount()*pool->getAllocationSize();
 			if (peak < initial/2 && (initial - peak) > 4096)
 			{
-				DEBUG_LOG(("*** Pool %s used less than half its initial allocation of %d (peak allocation was %d, wasted %dk)\n",
+				DEBUG_LOG(("*** Pool %s used less than half its initial allocation of %d (peak allocation was %d, wasted %dk)",
 					pool->getPoolName(),pool->getInitialBlockCount(),pool->getPeakBlockCount(),(initial - peak)/1024));
 			}
 		}
-		DEBUG_LOG(("------------------------------------------\n"));
-		DEBUG_LOG(("End Pool Underflow Report\n"));
-		DEBUG_LOG(("------------------------------------------\n"));
+		DEBUG_LOG(("------------------------------------------"));
+		DEBUG_LOG(("End Pool Underflow Report"));
+		DEBUG_LOG(("------------------------------------------"));
 	}
 
 	if( flags & REPORT_SIMPLE_LEAKS )
 	{
-		DEBUG_LOG(("------------------------------------------\n"));
-		DEBUG_LOG(("Begin Simple Leak Report\n"));
-		DEBUG_LOG(("------------------------------------------\n"));
+		DEBUG_LOG(("------------------------------------------"));
+		DEBUG_LOG(("Begin Simple Leak Report"));
+		DEBUG_LOG(("------------------------------------------"));
 		Int any = 0;
 		for (MemoryPool *pool = m_firstPoolInFactory; pool; pool = pool->getNextPoolInList())
 		{
@@ -3184,9 +3184,9 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 			any += dma->debugDmaReportLeaks();
 		}
 		DEBUG_ASSERTCRASH(!any, ("There were %d memory leaks. Please fix them.\n",any));
-		DEBUG_LOG(("------------------------------------------\n"));
-		DEBUG_LOG(("End Simple Leak Report\n"));
-		DEBUG_LOG(("------------------------------------------\n"));
+		DEBUG_LOG(("------------------------------------------"));
+		DEBUG_LOG(("End Simple Leak Report"));
+		DEBUG_LOG(("------------------------------------------"));
 	}
 
 #ifdef MEMORYPOOL_CHECKPOINTING
@@ -3194,18 +3194,18 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 	{
 		const char* nm = (this == TheMemoryPoolFactory) ? "TheMemoryPoolFactory" : "*** UNKNOWN *** MemoryPoolFactory";
 
-		DEBUG_LOG(("\n"));
-		DEBUG_LOG(("------------------------------------------\n"));
-		DEBUG_LOG(("Begin Block Report for %s\n", nm));
-		DEBUG_LOG(("------------------------------------------\n"));
+		DEBUG_LOG((""));
+		DEBUG_LOG(("------------------------------------------"));
+		DEBUG_LOG(("Begin Block Report for %s", nm));
+		DEBUG_LOG(("------------------------------------------"));
 		char buf[256] = "";
 		if (flags & _REPORT_CP_ALLOCATED_BEFORE) strcat(buf, "AllocBefore ");
 		if (flags & _REPORT_CP_ALLOCATED_BETWEEN) strcat(buf, "AllocBetween ");
 		if (flags & _REPORT_CP_FREED_BEFORE) strcat(buf, "FreedBefore ");
 		if (flags & _REPORT_CP_FREED_BETWEEN) strcat(buf, "FreedBetween ");
 		if (flags & _REPORT_CP_FREED_NEVER) strcat(buf, "StillExisting ");
-		DEBUG_LOG(("Options: Between checkpoints %d and %d, report on (%s)\n",startCheckpoint,endCheckpoint,buf));
-		DEBUG_LOG(("------------------------------------------\n"));
+		DEBUG_LOG(("Options: Between checkpoints %d and %d, report on (%s)",startCheckpoint,endCheckpoint,buf));
+		DEBUG_LOG(("------------------------------------------"));
 
 		BlockCheckpointInfo::doBlockCheckpointReport( NULL, "", 0, 0, 0 );
 		for (MemoryPool *pool = m_firstPoolInFactory; pool; pool = pool->getNextPoolInList())
@@ -3217,9 +3217,9 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 			dma->debugCheckpointReport(flags, startCheckpoint, endCheckpoint, "(Oversized)");
 		}
 
-		DEBUG_LOG(("------------------------------------------\n"));
-		DEBUG_LOG(("End Block Report for %s\n", nm));
-		DEBUG_LOG(("------------------------------------------\n"));
+		DEBUG_LOG(("------------------------------------------"));
+		DEBUG_LOG(("End Block Report for %s", nm));
+		DEBUG_LOG(("------------------------------------------"));
 	}
 #endif
 
@@ -3479,7 +3479,7 @@ static void preMainInitMemoryManager()
 	if (TheMemoryPoolFactory == NULL)
 	{
 		DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
-		DEBUG_LOG(("*** Initing Memory Manager prior to main!\n"));
+		DEBUG_LOG(("*** Initing Memory Manager prior to main!"));
 
 		Int numSubPools;
 		const PoolInitRec *pParms;
@@ -3503,7 +3503,7 @@ void shutdownMemoryManager()
 	if (thePreMainInitFlag)
 	{
 	#ifdef MEMORYPOOL_DEBUG
-		DEBUG_LOG(("*** Memory Manager was inited prior to main -- skipping shutdown!\n"));
+		DEBUG_LOG(("*** Memory Manager was inited prior to main -- skipping shutdown!"));
 	#endif
 	}
 	else
@@ -3527,8 +3527,8 @@ void shutdownMemoryManager()
 		}
 
 	#ifdef MEMORYPOOL_DEBUG
-		DEBUG_LOG(("Peak system allocation was %d bytes\n",thePeakSystemAllocationInBytes));
-		DEBUG_LOG(("Wasted DMA space (peak) was %d bytes\n",thePeakWastedDMA));
+		DEBUG_LOG(("Peak system allocation was %d bytes",thePeakSystemAllocationInBytes));
+		DEBUG_LOG(("Wasted DMA space (peak) was %d bytes",thePeakWastedDMA));
 		DEBUG_ASSERTCRASH(theTotalSystemAllocationInBytes == 0, ("Leaked a total of %d raw bytes\n", theTotalSystemAllocationInBytes));
 	#endif
 	}

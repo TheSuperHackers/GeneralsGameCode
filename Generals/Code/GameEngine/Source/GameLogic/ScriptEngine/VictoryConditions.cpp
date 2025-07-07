@@ -203,7 +203,7 @@ void VictoryConditions::update( void )
 					GameSlot *slot = (TheGameInfo)?TheGameInfo->getSlot(idx):NULL;
 					if (slot && slot->isAI())
 					{
-						DEBUG_LOG(("Marking AI player %s as defeated\n", pName.str()));
+						DEBUG_LOG(("Marking AI player %s as defeated", pName.str()));
 						slot->setLastFrameInGame(TheGameLogic->getFrame());
 					}
 				}
@@ -308,10 +308,10 @@ void VictoryConditions::cachePlayerPtrs( void )
 	for (Int i=0; i<MAX_PLAYER_COUNT; ++i)
 	{
 		Player *player = ThePlayerList->getNthPlayer(i);
-		DEBUG_LOG(("Checking whether to cache player %d - [%ls], house [%ls]\n", i, player?player->getPlayerDisplayName().str():L"<NOBODY>", (player&&player->getPlayerTemplate())?player->getPlayerTemplate()->getDisplayName().str():L"<NONE>"));
+		DEBUG_LOG(("Checking whether to cache player %d - [%ls], house [%ls]", i, player?player->getPlayerDisplayName().str():L"<NOBODY>", (player&&player->getPlayerTemplate())?player->getPlayerTemplate()->getDisplayName().str():L"<NONE>"));
 		if (player && player != ThePlayerList->getNeutralPlayer() && player->getPlayerTemplate() && player->getPlayerTemplate() != civTemplate && !player->isPlayerObserver())
 		{
-			DEBUG_LOG(("Caching player\n"));
+			DEBUG_LOG(("Caching player"));
 			m_players[playerCount] = player;
 			if (m_players[playerCount]->isLocalPlayer())
 				m_localSlotNum = playerCount;

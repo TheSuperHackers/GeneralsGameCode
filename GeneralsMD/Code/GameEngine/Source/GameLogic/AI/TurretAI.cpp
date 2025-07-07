@@ -696,7 +696,7 @@ UpdateSleepTime TurretAI::updateTurretAI()
 		return UPDATE_SLEEP(m_sleepUntil - now);
 	}
 
-	//DEBUG_LOG(("updateTurretAI frame %d: %08lx\n",TheGameLogic->getFrame(),getOwner()));
+	//DEBUG_LOG(("updateTurretAI frame %d: %08lx",TheGameLogic->getFrame(),getOwner()));
 	UpdateSleepTime subMachineSleep = UPDATE_SLEEP_FOREVER;	// assume the best!
 
 	// either we don't care about continuous fire stuff, or we care, but time has elapsed
@@ -962,7 +962,7 @@ StateReturnType TurretAIAimTurretState::onEnter()
  */
 StateReturnType TurretAIAimTurretState::update()
 {
-	//DEBUG_LOG(("TurretAIAimTurretState frame %d: %08lx\n",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
+	//DEBUG_LOG(("TurretAIAimTurretState frame %d: %08lx",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
 
 	TurretAI* turret = getTurretAI();
 	Object* obj = turret->getOwner();
@@ -1220,7 +1220,7 @@ StateReturnType TurretAIRecenterTurretState::onEnter()
 
 StateReturnType TurretAIRecenterTurretState::update()
 {
-	//DEBUG_LOG(("TurretAIRecenterTurretState frame %d: %08lx\n",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
+	//DEBUG_LOG(("TurretAIRecenterTurretState frame %d: %08lx",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
 
 
   if( getMachineOwner()->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION))
@@ -1304,7 +1304,7 @@ StateReturnType TurretAIIdleState::onEnter()
 //----------------------------------------------------------------------------------------------------------
 StateReturnType TurretAIIdleState::update()
 {
-	//DEBUG_LOG(("TurretAIIdleState frame %d: %08lx\n",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
+	//DEBUG_LOG(("TurretAIIdleState frame %d: %08lx",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
 
 	UnsignedInt now = TheGameLogic->getFrame();
 	if (now >= m_nextIdleScan)
@@ -1375,7 +1375,7 @@ StateReturnType TurretAIIdleScanState::onEnter()
 
 StateReturnType TurretAIIdleScanState::update()
 {
-	//DEBUG_LOG(("TurretAIIdleScanState frame %d: %08lx\n",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
+	//DEBUG_LOG(("TurretAIIdleScanState frame %d: %08lx",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
 
   if( getMachineOwner()->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION))
     return STATE_CONTINUE;//ML so that under-construction base-defenses do not idle-scan while under construction
@@ -1449,7 +1449,7 @@ void TurretAIHoldTurretState::onExit( StateExitType status )
 
 StateReturnType TurretAIHoldTurretState::update()
 {
-	//DEBUG_LOG(("TurretAIHoldTurretState frame %d: %08lx\n",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
+	//DEBUG_LOG(("TurretAIHoldTurretState frame %d: %08lx",TheGameLogic->getFrame(),getTurretAI()->getOwner()));
 
 	if (TheGameLogic->getFrame() >= m_timestamp)
 		return STATE_SUCCESS;

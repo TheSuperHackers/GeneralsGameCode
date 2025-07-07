@@ -119,7 +119,7 @@ Bool Transport::init( UnsignedInt ip, UnsignedShort port )
 
 	if (retval != 0) {
 		DEBUG_CRASH(("Could not bind to 0x%8.8X:%d\n", ip, port));
-		DEBUG_LOG(("Transport::init - Failure to bind socket with error code %x\n", retval));
+		DEBUG_LOG(("Transport::init - Failure to bind socket with error code %x", retval));
 		delete m_udpsock;
 		m_udpsock = NULL;
 		return false;
@@ -194,7 +194,7 @@ Bool Transport::update( void )
 Bool Transport::doSend() {
 	if (!m_udpsock)
 	{
-		DEBUG_LOG(("Transport::doSend() - m_udpSock is NULL!\n"));
+		DEBUG_LOG(("Transport::doSend() - m_udpSock is NULL!"));
 		return FALSE;
 	}
 
@@ -225,22 +225,22 @@ Bool Transport::doSend() {
 			// Send this message
 			if ((bytesSent = m_udpsock->Write((unsigned char *)(&m_outBuffer[i]), bytesToSend, m_outBuffer[i].addr, m_outBuffer[i].port)) > 0)
 			{
-				//DEBUG_LOG(("Sending %d bytes to %d.%d.%d.%d:%d\n", bytesToSend, PRINTF_IP_AS_4_INTS(m_outBuffer[i].addr), m_outBuffer[i].port));
+				//DEBUG_LOG(("Sending %d bytes to %d.%d.%d.%d:%d", bytesToSend, PRINTF_IP_AS_4_INTS(m_outBuffer[i].addr), m_outBuffer[i].port));
 				m_outgoingPackets[m_statisticsSlot]++;
 				m_outgoingBytes[m_statisticsSlot] += m_outBuffer[i].length + sizeof(TransportMessageHeader);
 				m_outBuffer[i].length = 0;  // Remove from queue
 				if (bytesSent != bytesToSend)
 				{
-					DEBUG_LOG(("Transport::doSend - wanted to send %d bytes, only sent %d bytes to %d.%d.%d.%d:%d\n",
+					DEBUG_LOG(("Transport::doSend - wanted to send %d bytes, only sent %d bytes to %d.%d.%d.%d:%d",
 						bytesToSend, bytesSent,
 						PRINTF_IP_AS_4_INTS(m_outBuffer[i].addr), m_outBuffer[i].port));
 				}
 			}
 			else
 			{
-				//DEBUG_LOG(("Could not write to socket!!!  Not discarding message!\n"));
+				//DEBUG_LOG(("Could not write to socket!!!  Not discarding message!"));
 				retval = FALSE;
-				//DEBUG_LOG(("Transport::doSend returning FALSE\n"));
+				//DEBUG_LOG(("Transport::doSend returning FALSE"));
 			}
 		}
 	} // for (i=0; i<MAX_MESSAGES; ++i)
@@ -274,7 +274,7 @@ Bool Transport::doRecv()
 {
 	if (!m_udpsock)
 	{
-		DEBUG_LOG(("Transport::doRecv() - m_udpSock is NULL!\n"));
+		DEBUG_LOG(("Transport::doRecv() - m_udpSock is NULL!"));
 		return FALSE;
 	}
 
@@ -289,7 +289,7 @@ Bool Transport::doRecv()
 	TransportMessage incomingMessage;
 	unsigned char *buf = (unsigned char *)&incomingMessage;
 	int len = MAX_MESSAGE_LEN;
-//	DEBUG_LOG(("Transport::doRecv - checking\n"));
+//	DEBUG_LOG(("Transport::doRecv - checking"));
 	while ( (len=m_udpsock->Read(buf, MAX_MESSAGE_LEN, &from)) > 0 )
 	{
 #if defined(RTS_DEBUG)
@@ -303,27 +303,27 @@ Bool Transport::doRecv()
 		}
 #endif
 
-//		DEBUG_LOG(("Transport::doRecv - Got something! len = %d\n", len));
+//		DEBUG_LOG(("Transport::doRecv - Got something! len = %d", len));
 		// Decrypt the packet
 //		DEBUG_LOG(("buffer = "));
 //		for (Int munkee = 0; munkee < len; ++munkee) {
 //			DEBUG_LOG(("%02x", *(buf + munkee)));
 //		}
-//		DEBUG_LOG(("\n"));
+//		DEBUG_LOG((""));
 		decryptBuf(buf, len);
 
 		incomingMessage.length = len - sizeof(TransportMessageHeader);
 
 		if (len <= sizeof(TransportMessageHeader) || !isGeneralsPacket( &incomingMessage ))
 		{
-			DEBUG_LOG(("Transport::doRecv - unknownPacket! len = %d\n", len));
+			DEBUG_LOG(("Transport::doRecv - unknownPacket! len = %d", len));
 			m_unknownPackets[m_statisticsSlot]++;
 			m_unknownBytes[m_statisticsSlot] += len;
 			continue;
 		}
 
 		// Something there; stick it somewhere
-//		DEBUG_LOG(("Saw %d bytes from %d:%d\n", len, ntohl(from.sin_addr.S_un.S_addr), ntohs(from.sin_port)));
+//		DEBUG_LOG(("Saw %d bytes from %d:%d", len, ntohl(from.sin_addr.S_un.S_addr), ntohs(from.sin_port)));
 		m_incomingPackets[m_statisticsSlot]++;
 		m_incomingBytes[m_statisticsSlot] += len;
 
@@ -368,7 +368,7 @@ Bool Transport::doRecv()
 
 	if (len == -1) {
 		// there was a socket error trying to perform a read.
-		//DEBUG_LOG(("Transport::doRecv returning FALSE\n"));
+		//DEBUG_LOG(("Transport::doRecv returning FALSE"));
 		retval = FALSE;
 	}
 
@@ -382,7 +382,7 @@ Bool Transport::queueSend(UnsignedInt addr, UnsignedShort port, const UnsignedBy
 
 	if (len < 1 || len > MAX_PACKET_SIZE)
 	{
-		DEBUG_LOG(("Transport::queueSend - Invalid Packet size\n"));
+		DEBUG_LOG(("Transport::queueSend - Invalid Packet size"));
 		return false;
 	}
 
@@ -401,18 +401,18 @@ Bool Transport::queueSend(UnsignedInt addr, UnsignedShort port, const UnsignedBy
 
 			CRC crc;
 			crc.computeCRC( (unsigned char *)(&(m_outBuffer[i].header.magic)), m_outBuffer[i].length + sizeof(TransportMessageHeader) - sizeof(UnsignedInt) );
-//			DEBUG_LOG(("About to assign the CRC for the packet\n"));
+//			DEBUG_LOG(("About to assign the CRC for the packet"));
 			m_outBuffer[i].header.crc = crc.get();
 
 			// Encrypt packet
 //			DEBUG_LOG(("buffer: "));
 			encryptBuf((unsigned char *)&m_outBuffer[i], len + sizeof(TransportMessageHeader));
-//			DEBUG_LOG(("\n"));
+//			DEBUG_LOG((""));
 
 			return true;
 		}
 	}
-	DEBUG_LOG(("Send Queue is getting full, dropping packets\n"));
+	DEBUG_LOG(("Send Queue is getting full, dropping packets"));
 	return false;
 }
 

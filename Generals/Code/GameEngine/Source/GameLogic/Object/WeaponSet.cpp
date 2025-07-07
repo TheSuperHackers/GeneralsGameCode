@@ -328,7 +328,7 @@ void WeaponSet::updateWeaponSet(const Object* obj)
 			}
 		}
 		m_curWeaponTemplateSet = set;
-		//DEBUG_LOG(("WeaponSet::updateWeaponSet -- changed curweapon to %s\n",getCurWeapon()->getName().str()));
+		//DEBUG_LOG(("WeaponSet::updateWeaponSet -- changed curweapon to %s",getCurWeapon()->getName().str()));
 	}
 }
 
@@ -919,7 +919,7 @@ Bool WeaponSet::chooseBestWeaponForTarget(const Object* obj, const Object* victi
 		m_curWeapon = PRIMARY_WEAPON;
 	}
 
-	//DEBUG_LOG(("WeaponSet::chooseBestWeaponForTarget -- changed curweapon to %s\n",getCurWeapon()->getName().str()));
+	//DEBUG_LOG(("WeaponSet::chooseBestWeaponForTarget -- changed curweapon to %s",getCurWeapon()->getName().str()));
 
 	return found;
 }
@@ -1003,13 +1003,13 @@ Bool WeaponSet::setWeaponLock( WeaponSlotType weaponSlot, WeaponLockType lockTyp
 		{
 			m_curWeapon = weaponSlot;
 			m_curWeaponLockedStatus = lockType;
-			//DEBUG_LOG(("WeaponSet::setWeaponLock permanently -- changed curweapon to %s\n",getCurWeapon()->getName().str()));
+			//DEBUG_LOG(("WeaponSet::setWeaponLock permanently -- changed curweapon to %s",getCurWeapon()->getName().str()));
 		}
 		else if( lockType == LOCKED_TEMPORARILY && m_curWeaponLockedStatus != LOCKED_PERMANENTLY )
 		{
 			m_curWeapon = weaponSlot;
 			m_curWeaponLockedStatus = lockType;
-			//DEBUG_LOG(("WeaponSet::setWeaponLock temporarily -- changed curweapon to %s\n",getCurWeapon()->getName().str()));
+			//DEBUG_LOG(("WeaponSet::setWeaponLock temporarily -- changed curweapon to %s",getCurWeapon()->getName().str()));
 		}
 
 		return true;

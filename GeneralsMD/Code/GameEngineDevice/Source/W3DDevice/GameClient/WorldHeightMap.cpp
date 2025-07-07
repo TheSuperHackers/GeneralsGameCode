@@ -1269,7 +1269,7 @@ Bool WorldHeightMap::ParseObjectData(DataChunkInput &file, DataChunkInfo *info, 
 	}		 
 
 	if (loc.z<minZ || loc.z>maxZ) {
-		DEBUG_LOG(("Removing object at z height %f\n", loc.z));
+		DEBUG_LOG(("Removing object at z height %f", loc.z));
 		return true;
 	}
 
@@ -1279,7 +1279,7 @@ Bool WorldHeightMap::ParseObjectData(DataChunkInput &file, DataChunkInfo *info, 
 	pThisOne = newInstance( MapObject )( loc, name, angle, flags, &d, 
 														TheThingFactory->findTemplate( name, FALSE ) );
 
-//DEBUG_LOG(("obj %s owner %s\n",name.str(),d.getAsciiString(TheKey_originalOwner).str()));
+//DEBUG_LOG(("obj %s owner %s",name.str(),d.getAsciiString(TheKey_originalOwner).str()));
 
 	if (pThisOne->getProperties()->getType(TheKey_waypointID) == Dict::DICT_INT)
 		pThisOne->setIsWaypoint();

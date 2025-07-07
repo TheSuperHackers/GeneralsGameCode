@@ -330,7 +330,7 @@ void GameLogic::prepareNewGame( Int gameMode, GameDifficulty diff, Int rankPoint
 	}
 
 	m_rankPointsToAddAtGameStart = rankPoints;
-	DEBUG_LOG(("GameLogic::prepareNewGame() - m_rankPointsToAddAtGameStart = %d\n", m_rankPointsToAddAtGameStart));
+	DEBUG_LOG(("GameLogic::prepareNewGame() - m_rankPointsToAddAtGameStart = %d", m_rankPointsToAddAtGameStart));
 
 	// If we're about to start a game, hide the shell.
 	if(!TheGameLogic->isInShellGame())
@@ -408,7 +408,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 #if 0
 	if (commandName.isNotEmpty() /*&& msg->getType() != GameMessage::MSG_FRAME_TICK*/)
 	{
-		DEBUG_LOG(("Frame %d: GameLogic::logicMessageDispatcher() saw a %s from player %d (%ls)\n", getFrame(), commandName.str(),
+		DEBUG_LOG(("Frame %d: GameLogic::logicMessageDispatcher() saw a %s from player %d (%ls)", getFrame(), commandName.str(),
 			msg->getPlayerIndex(), thisPlayer->getPlayerDisplayName().str()));
 	}
 #endif
@@ -435,7 +435,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				Int maxFPS = msg->getArgument( 3 )->integer;
 				if (maxFPS < 1 || maxFPS > 1000)
 					maxFPS = TheGlobalData->m_framesPerSecondLimit;
-				DEBUG_LOG(("Setting max FPS limit to %d FPS\n", maxFPS));
+				DEBUG_LOG(("Setting max FPS limit to %d FPS", maxFPS));
 				TheGameEngine->setFramesPerSecondLimit(maxFPS);
 				TheWritableGlobalData->m_useFpsLimit = true;
 			}
@@ -476,7 +476,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_BEGIN_PATH_BUILD:
 		{
-			DEBUG_LOG(("META: begin path build\n"));
+			DEBUG_LOG(("META: begin path build"));
 			DEBUG_ASSERTCRASH(!theBuildPlan, ("mismatched theBuildPlan"));
 
 			if (theBuildPlan == false)
@@ -491,7 +491,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_END_PATH_BUILD:
 		{
-			DEBUG_LOG(("META: end path build\n"));
+			DEBUG_LOG(("META: end path build"));
 			DEBUG_ASSERTCRASH(theBuildPlan, ("mismatched theBuildPlan"));
 
 			// tell everyone who participated in the plan to move
@@ -827,7 +827,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			if( currentlySelectedGroup )
 			{
-				//DEBUG_LOG(("GameLogicDispatch - got a MSG_DO_MOVETO command\n"));
+				//DEBUG_LOG(("GameLogicDispatch - got a MSG_DO_MOVETO command"));
 				currentlySelectedGroup->releaseWeaponLockForGroup(LOCKED_TEMPORARILY);	// release any temporary locks.
 				currentlySelectedGroup->groupMoveToPosition( &dest, false, CMD_FROM_PLAYER );
 			}
@@ -842,7 +842,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 			if( currentlySelectedGroup )
 			{
-				//DEBUG_LOG(("GameLogicDispatch - got a MSG_DO_MOVETO command\n"));
+				//DEBUG_LOG(("GameLogicDispatch - got a MSG_DO_MOVETO command"));
 				currentlySelectedGroup->releaseWeaponLockForGroup(LOCKED_TEMPORARILY);	// release any temporary locks.
 				currentlySelectedGroup->groupMoveToPosition( &dest, true, CMD_FROM_PLAYER );
 			}
@@ -1669,7 +1669,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 				// how many does this player have active?
 				Int count;
 				thisPlayer->countObjectsByThingTemplate( 1, &thing, false, &count );
-				DEBUG_LOG(("Player already has %d beacons active\n", count));
+				DEBUG_LOG(("Player already has %d beacons active", count));
 				if (count >= TheMultiplayerSettings->getMaxBeaconsPerPlayer())
 				{
 					if (thisPlayer == ThePlayerList->getLocalPlayer())
@@ -2015,14 +2015,14 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 				//UnsignedInt oldCRC = m_cachedCRCs[msg->getPlayerIndex()];
 				UnsignedInt newCRC = msg->getArgument(0)->integer;
-				//DEBUG_LOG(("Recieved CRC of %8.8X from %ls on frame %d\n", newCRC,
+				//DEBUG_LOG(("Recieved CRC of %8.8X from %ls on frame %d", newCRC,
 					//thisPlayer->getPlayerDisplayName().str(), m_frame));
 				m_cachedCRCs[msg->getPlayerIndex()] = newCRC; // to mask problem: = (oldCRC < newCRC)?newCRC:oldCRC;
 			}
 			else if (TheRecorder && TheRecorder->isPlaybackMode())
 			{
 				UnsignedInt newCRC = msg->getArgument(0)->integer;
-				//DEBUG_LOG(("Saw CRC of %X from player %d.  Our CRC is %X.  Arg count is %d\n",
+				//DEBUG_LOG(("Saw CRC of %X from player %d.  Our CRC is %X.  Arg count is %d",
 					//newCRC, thisPlayer->getPlayerIndex(), getCRC(), msg->getArgumentCount()));
 
 				TheRecorder->handleCRCMessage(newCRC, thisPlayer->getPlayerIndex(), (msg->getArgument(1)->boolean));

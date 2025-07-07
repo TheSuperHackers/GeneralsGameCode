@@ -880,7 +880,7 @@ UpdateSleepTime PhysicsBehavior::update()
 				damageInfo.in.m_amount = damageAmt;	
         damageInfo.in.m_shockWaveAmount = 0.0f;
 				obj->attemptDamage( &damageInfo );
-				//DEBUG_LOG(("Dealing %f (%f %f) points of falling damage to %s!\n",damageAmt,damageInfo.out.m_actualDamageDealt, damageInfo.out.m_actualDamageClipped,obj->getTemplate()->getName().str()));
+				//DEBUG_LOG(("Dealing %f (%f %f) points of falling damage to %s!",damageAmt,damageInfo.out.m_actualDamageDealt, damageInfo.out.m_actualDamageClipped,obj->getTemplate()->getName().str()));
 
 				// if this killed us, add SPLATTED to get a cool death.
 				if (obj->isEffectivelyDead())

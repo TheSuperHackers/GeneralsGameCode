@@ -128,11 +128,11 @@ static const Image* lookupRankImage(AsciiString side, Int rank)
 	const Image *img = TheMappedImageCollection->findImageByName(fullImageName);
 	if (img)
 	{
-		DEBUG_LOG(("*** Loaded rank image '%s' from TheMappedImageCollection!\n", fullImageName.str()));
+		DEBUG_LOG(("*** Loaded rank image '%s' from TheMappedImageCollection!", fullImageName.str()));
 	}
 	else
 	{
-		DEBUG_LOG(("*** Could not load rank image '%s' from TheMappedImageCollection!\n", fullImageName.str()));
+		DEBUG_LOG(("*** Could not load rank image '%s' from TheMappedImageCollection!", fullImageName.str()));
 	}
 	return img;
 }
@@ -148,7 +148,7 @@ static Int getTotalDisconnectsFromFile(Int playerID)
 	UserPreferences pref;
 	AsciiString userPrefFilename;
 	userPrefFilename.format("GeneralsOnline\\MiscPref%d.ini", playerID);
-	DEBUG_LOG(("setPersistentDataCallback - reading stats from file %s\n", userPrefFilename.str()));
+	DEBUG_LOG(("setPersistentDataCallback - reading stats from file %s", userPrefFilename.str()));
 	pref.load(userPrefFilename);
 
 	// if there is a file override, use that data instead.
@@ -184,7 +184,7 @@ Int GetAdditionalDisconnectsFromUserFile(Int playerID)
 
 	if (TheGameSpyInfo->getAdditionalDisconnects() > 0 && !retval)
 	{
-		DEBUG_LOG(("Clearing additional disconnects\n"));
+		DEBUG_LOG(("Clearing additional disconnects"));
 		TheGameSpyInfo->clearAdditionalDisconnects();
 	}
 
@@ -204,7 +204,7 @@ void GetAdditionalDisconnectsFromUserFile(PSPlayerStats *stats)
 
 	if (TheGameSpyInfo->getAdditionalDisconnects() > 0 && !getTotalDisconnectsFromFile(stats->id))
 	{
-		DEBUG_LOG(("Clearing additional disconnects\n"));
+		DEBUG_LOG(("Clearing additional disconnects"));
 		TheGameSpyInfo->clearAdditionalDisconnects();
 	}
 
@@ -216,7 +216,7 @@ void GetAdditionalDisconnectsFromUserFile(PSPlayerStats *stats)
 	UserPreferences pref;
 	AsciiString userPrefFilename;
 	userPrefFilename.format("GeneralsOnline\\MiscPref%d.ini", stats->id);
-	DEBUG_LOG(("setPersistentDataCallback - reading stats from file %s\n", userPrefFilename.str()));
+	DEBUG_LOG(("setPersistentDataCallback - reading stats from file %s", userPrefFilename.str()));
 	pref.load(userPrefFilename);
 
 	// if there is a file override, use that data instead.
@@ -1043,7 +1043,7 @@ void HandlePersistentStorageResponses( void )
 				break;
 			case PSResponse::PSRESPONSE_PLAYERSTATS:
 				{
-					DEBUG_LOG(("LocalProfileID %d, resp.player.id %d, resp.player.locale %d\n", TheGameSpyInfo->getLocalProfileID(), resp.player.id, resp.player.locale));
+					DEBUG_LOG(("LocalProfileID %d, resp.player.id %d, resp.player.locale %d", TheGameSpyInfo->getLocalProfileID(), resp.player.id, resp.player.locale));
 					/*
 					if(resp.player.id == TheGameSpyInfo->getLocalProfileID() && resp.player.locale < LOC_MIN)
 					{
@@ -1092,7 +1092,7 @@ void HandlePersistentStorageResponses( void )
 						Bool isPreorder = TheGameSpyInfo->didPlayerPreorder( TheGameSpyInfo->getLocalProfileID() );
 						req.statsToPush.preorder = isPreorder;
 
-						DEBUG_LOG(("PEERREQUEST_PUSHSTATS: stats will be %d,%d,%d,%d,%d,%d\n",
+						DEBUG_LOG(("PEERREQUEST_PUSHSTATS: stats will be %d,%d,%d,%d,%d,%d",
 							req.statsToPush.locale, req.statsToPush.wins, req.statsToPush.losses, req.statsToPush.rankPoints, req.statsToPush.side, req.statsToPush.preorder));
 						TheGameSpyPeerMessageQueue->addRequest(req);
 					}
@@ -1101,7 +1101,7 @@ void HandlePersistentStorageResponses( void )
 					{
 						UpdateLocalPlayerStats();
 					}
-					DEBUG_LOG(("PopulatePlayerInfoWindows() - lookAtPlayerID is %d, got %d\n", lookAtPlayerID, resp.player.id));
+					DEBUG_LOG(("PopulatePlayerInfoWindows() - lookAtPlayerID is %d, got %d", lookAtPlayerID, resp.player.id));
 					PopulatePlayerInfoWindows("PopupPlayerInfo.wnd");
 					//GadgetListBoxAddEntryText(listboxInfo, UnicodeString(L"Got info!"), GameSpyColor[GSCOLOR_DEFAULT], -1);
 					

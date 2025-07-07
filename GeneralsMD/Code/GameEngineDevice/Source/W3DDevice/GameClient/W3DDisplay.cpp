@@ -2013,7 +2013,7 @@ AGAIN:
 				if (couldRender)
 				{
 					couldRender = false;
-					DEBUG_LOG(("Could not do WW3D::Begin_Render()!  Are we ALT-Tabbed out?\n"));
+					DEBUG_LOG(("Could not do WW3D::Begin_Render()!  Are we ALT-Tabbed out?"));
 				}
 			}
 		}

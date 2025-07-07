@@ -152,7 +152,7 @@ void BeaconClientUpdate::hideBeacon( void )
 
 	}  // end if
 	
-//	DEBUG_LOG(("in hideBeacon(): draw=%d, m_particleSystemID=%d\n", draw, m_particleSystemID));
+//	DEBUG_LOG(("in hideBeacon(): draw=%d, m_particleSystemID=%d", draw, m_particleSystemID));
 
 }
 

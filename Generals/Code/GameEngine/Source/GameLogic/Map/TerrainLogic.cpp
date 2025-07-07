@@ -856,7 +856,7 @@ Drawable *Bridge::pickBridge(const Vector3 &from, const Vector3 &to, Vector3 *po
 
 	if (isPointOnBridge(&loc)) {
 		*pos = intersectPos;
-		//DEBUG_LOG(("Picked bridge %.2f, %.2f, %.2f\n", intersectPos.X, intersectPos.Y, intersectPos.Z));
+		//DEBUG_LOG(("Picked bridge %.2f, %.2f, %.2f", intersectPos.X, intersectPos.Y, intersectPos.Z));
 		Object *bridge = TheGameLogic->findObjectByID(m_bridgeInfo.bridgeObjectID);
 		if (bridge) {
 			return bridge->getDrawable();
@@ -1304,9 +1304,9 @@ Bool TerrainLogic::loadMap( AsciiString filename, Bool query )
 		} else {
 			DEBUG_LOG(("No links."));
 		}
-		DEBUG_LOG(("\n"));
+		DEBUG_LOG((""));
 	}
-	DEBUG_LOG(("Total of %d waypoints.\n", count));
+	DEBUG_LOG(("Total of %d waypoints.", count));
 #endif
 
 	if (!query) {
@@ -1586,7 +1586,7 @@ Waypoint *TerrainLogic::getClosestWaypointOnPath( const Coord3D *pos, AsciiStrin
 	Real distSqr = 0;
 	Waypoint *pClosestWay = NULL;
 	if (label.isEmpty()) {
-		DEBUG_LOG(("***Warning - asking for empty path label.\n"));
+		DEBUG_LOG(("***Warning - asking for empty path label."));
 		return NULL;
 	}
 
@@ -1617,7 +1617,7 @@ Waypoint *TerrainLogic::getClosestWaypointOnPath( const Coord3D *pos, AsciiStrin
 Bool TerrainLogic::isPurposeOfPath( Waypoint *pWay, AsciiString label )
 {
 	if (label.isEmpty() || pWay==NULL) {
-		DEBUG_LOG(("***Warning - asking for empth path label.\n"));
+		DEBUG_LOG(("***Warning - asking for empth path label."));
 		return false;
 	}
 

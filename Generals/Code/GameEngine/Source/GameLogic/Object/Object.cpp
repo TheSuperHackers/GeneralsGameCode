@@ -2116,12 +2116,12 @@ void Object::onCollide( Object *other, const Coord3D *loc, const Coord3D *normal
 		if( getStatusBits().test( OBJECT_STATUS_NO_COLLISIONS ) )
 		{
 #ifdef DEBUG_CRC
-			//DEBUG_LOG(("Object::onCollide() - OBJECT_STATUS_NO_COLLISIONS set\n"));
+			//DEBUG_LOG(("Object::onCollide() - OBJECT_STATUS_NO_COLLISIONS set"));
 #endif
 			break;
 		}
 #ifdef DEBUG_CRC
-		//DEBUG_LOG(("Object::onCollide() - calling collide module\n"));
+		//DEBUG_LOG(("Object::onCollide() - calling collide module"));
 #endif
 		collide->onCollide(other, loc, normal);
 	}
@@ -2424,7 +2424,7 @@ void Object::setLayer(PathfindLayerEnum layer)
 	if (layer!=m_layer) {
 #define no_SET_LAYER_INTENSE_DEBUG
 #ifdef SET_LAYER_INTENSE_DEBUG
-		DEBUG_LOG(("Changing layer from %d to %d\n", m_layer, layer));
+		DEBUG_LOG(("Changing layer from %d to %d", m_layer, layer));
 		if (m_layer != LAYER_GROUND) {
 			if (TheTerrainLogic->objectInteractsWithBridgeLayer(this, m_layer)) {
 				DEBUG_CRASH(("Probably shouldn't be chaging layer. jba."));
@@ -3493,7 +3493,7 @@ void Object::xfer( Xfer *xfer )
 	xfer->xferObjectID( &id );
 	setID( id );
 
-	DEBUG_LOG(("Xfer Object %s id=%d\n",getTemplate()->getName().str(),id));
+	DEBUG_LOG(("Xfer Object %s id=%d",getTemplate()->getName().str(),id));
 
 	if (version >= 7)
 	{
@@ -4379,7 +4379,7 @@ void Object::look()
 			m_partitionLastLook->m_forWhom = lookingMask;
 			m_partitionLastLook->m_howFar = getShroudClearingRange();
 
-//			DEBUG_LOG(( "A %s looks at %f, %f for %x at range %f\n",
+//			DEBUG_LOG(( "A %s looks at %f, %f for %x at range %f",
 //									getTemplate()->getName().str(),
 //									pos.x,
 //									pos.y,
@@ -4406,7 +4406,7 @@ void Object::unlook()
 																				m_partitionLastLook->m_forWhom
 																				);
 
-//			DEBUG_LOG(( "A %s queues an unlook at %f, %f for %x at range %f\n",
+//			DEBUG_LOG(( "A %s queues an unlook at %f, %f for %x at range %f",
 //									getTemplate()->getName().str(),
 //									m_partitionLastLook.m_where.x,
 //									m_partitionLastLook.m_where.y,
@@ -5450,7 +5450,7 @@ AIGroup *Object::getGroup(void)
 //-------------------------------------------------------------------------------------------------
 void Object::enterGroup( AIGroup *group )
 {
-//	DEBUG_LOG(("***AIGROUP %x involved in enterGroup on %x\n", group, this));
+//	DEBUG_LOG(("***AIGROUP %x involved in enterGroup on %x", group, this));
 	// if we are in another group, remove ourselves from it first
 	leaveGroup();
 
@@ -5464,7 +5464,7 @@ void Object::enterGroup( AIGroup *group )
 //-------------------------------------------------------------------------------------------------
 void Object::leaveGroup( void )
 {
-//	DEBUG_LOG(("***AIGROUP %x involved in leaveGroup on %x\n", m_group, this));
+//	DEBUG_LOG(("***AIGROUP %x involved in leaveGroup on %x", m_group, this));
 	// if we are in a group, remove ourselves from it
 	if (m_group)
 	{

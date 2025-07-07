@@ -320,7 +320,7 @@ void Mouse::processMouseEvent( Int index )
 
 	m_currMouse.deltaPos.x = m_currMouse.pos.x - m_prevMouse.pos.x;
 	m_currMouse.deltaPos.y = m_currMouse.pos.y - m_prevMouse.pos.y;
-//	DEBUG_LOG(("Mouse dx %d, dy %d, index %d, frame %d\n", m_currMouse.deltaPos.x, m_currMouse.deltaPos.y, index, m_inputFrame));
+//	DEBUG_LOG(("Mouse dx %d, dy %d, index %d, frame %d", m_currMouse.deltaPos.x, m_currMouse.deltaPos.y, index, m_inputFrame));
 //	// check if mouse is still and flag tooltip
 //	if( ((dx*dx) + (dy*dy)) < CURSOR_MOVE_TOL_SQ )
 //	{
@@ -695,7 +695,7 @@ void Mouse::createStreamMessages( void )
 	}
 	else
 	{
-		//DEBUG_LOG(("%d %d %d %d\n", TheGameClient->getFrame(), delay, now, m_stillTime));
+		//DEBUG_LOG(("%d %d %d %d", TheGameClient->getFrame(), delay, now, m_stillTime));
 		m_displayTooltip = FALSE;
 	}
 	
@@ -829,7 +829,7 @@ void Mouse::createStreamMessages( void )
 void Mouse::setCursorTooltip( UnicodeString tooltip, Int delay, const RGBColor *color, Real width )
 {
 
-	//DEBUG_LOG(("%d Tooltip: %ls\n", TheGameClient->getFrame(), tooltip.str()));
+	//DEBUG_LOG(("%d Tooltip: %ls", TheGameClient->getFrame(), tooltip.str()));
 
 	m_isTooltipEmpty = tooltip.isEmpty();
   m_tooltipDelay = delay;
@@ -847,7 +847,7 @@ void Mouse::setCursorTooltip( UnicodeString tooltip, Int delay, const RGBColor *
 		{
 			widthInPixels = TheDisplay->getWidth();
 		}
-		//DEBUG_LOG(("Setting tooltip width to %d pixels (%g%% of the normal tooltip width)\n", widthInPixels, width*100));
+		//DEBUG_LOG(("Setting tooltip width to %d pixels (%g%% of the normal tooltip width)", widthInPixels, width*100));
 		m_tooltipDisplayString->setWordWrap( widthInPixels );
 		m_lastTooltipWidth = width;
 	}
@@ -855,7 +855,7 @@ void Mouse::setCursorTooltip( UnicodeString tooltip, Int delay, const RGBColor *
 	if (forceRecalc || !m_isTooltipEmpty && tooltip.compare(m_tooltipDisplayString->getText()))
 	{
 		m_tooltipDisplayString->setText(tooltip);
-		//DEBUG_LOG(("Tooltip: %ls\n", tooltip.str()));
+		//DEBUG_LOG(("Tooltip: %ls", tooltip.str()));
 	}
 	if (color)
 	{

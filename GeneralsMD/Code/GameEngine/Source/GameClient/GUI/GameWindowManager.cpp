@@ -1374,7 +1374,7 @@ void GameWindowManager::dumpWindow( GameWindow *window )
 	if( window == NULL )
 		return;
 
-	DEBUG_LOG(( "ID: %d\tRedraw: 0x%08X\tUser Data: %d\n",
+	DEBUG_LOG(( "ID: %d\tRedraw: 0x%08X\tUser Data: %d",
 				 	 window->winGetWindowId(), window->m_draw, window->m_userData ));
 	
 	for( child = window->m_child; child; child = child->m_next )
@@ -1401,7 +1401,7 @@ GameWindow *GameWindowManager::winCreate( GameWindow *parent,
 	if( window == NULL )
 	{
 
-		DEBUG_LOG(( "WinCreate error: Could not allocate new window\n" ));
+		DEBUG_LOG(( "WinCreate error: Could not allocate new window" ));
 #ifndef FINAL
 		{
 			GameWindow *win;
@@ -1602,7 +1602,7 @@ Int GameWindowManager::winUnsetModal( GameWindow *window )
 	{
 
 		// return error if not
-		DEBUG_LOG(( "WinUnsetModal: Invalid window attempting to unset modal (%d)\n", 
+		DEBUG_LOG(( "WinUnsetModal: Invalid window attempting to unset modal (%d)", 
 								window->winGetWindowId() ));
 		return WIN_ERR_GENERAL_FAILURE;
 
@@ -1849,7 +1849,7 @@ GameWindow *GameWindowManager::gogoGadgetPushButton( GameWindow *parent,
 	if( BitIsSet( instData->getStyle(), GWS_PUSH_BUTTON ) == FALSE )
 	{
 
-		DEBUG_LOG(( "Cann't create button gadget, instance data not button type\n" ));
+		DEBUG_LOG(( "Cann't create button gadget, instance data not button type" ));
 		assert( 0 );
 		return NULL;
 
@@ -1863,7 +1863,7 @@ GameWindow *GameWindowManager::gogoGadgetPushButton( GameWindow *parent,
 	if( button == NULL )
 	{
 	
-		DEBUG_LOG(( "Unable to create button for push button gadget\n" ));
+		DEBUG_LOG(( "Unable to create button for push button gadget" ));
 		assert( 0 );
 		return NULL;
 
@@ -1917,7 +1917,7 @@ GameWindow *GameWindowManager::gogoGadgetCheckbox( GameWindow *parent,
 	if( BitIsSet( instData->getStyle(), GWS_CHECK_BOX ) == FALSE )
 	{
 
-		DEBUG_LOG(( "Cann't create checkbox gadget, instance data not checkbox type\n" ));
+		DEBUG_LOG(( "Cann't create checkbox gadget, instance data not checkbox type" ));
 		assert( 0 );
 		return NULL;
 
@@ -1931,7 +1931,7 @@ GameWindow *GameWindowManager::gogoGadgetCheckbox( GameWindow *parent,
 	if( checkbox == NULL )
 	{
 	
-		DEBUG_LOG(( "Unable to create checkbox window\n" ));
+		DEBUG_LOG(( "Unable to create checkbox window" ));
 		assert( 0 );
 		return NULL;
 
@@ -1984,7 +1984,7 @@ GameWindow *GameWindowManager::gogoGadgetRadioButton( GameWindow *parent,
 	if( BitIsSet( instData->getStyle(), GWS_RADIO_BUTTON ) == FALSE )
 	{
 
-		DEBUG_LOG(( "Cann't create radioButton gadget, instance data not radioButton type\n" ));
+		DEBUG_LOG(( "Cann't create radioButton gadget, instance data not radioButton type" ));
 		assert( 0 );
 		return NULL;
 
@@ -1998,7 +1998,7 @@ GameWindow *GameWindowManager::gogoGadgetRadioButton( GameWindow *parent,
 	if( radioButton == NULL )
 	{
 	
-		DEBUG_LOG(( "Unable to create radio button window\n" ));
+		DEBUG_LOG(( "Unable to create radio button window" ));
 		assert( 0 );
 		return NULL;
 
@@ -2056,7 +2056,7 @@ GameWindow *GameWindowManager::gogoGadgetTabControl( GameWindow *parent,
 	if( BitIsSet( instData->getStyle(), GWS_TAB_CONTROL ) == FALSE )
 	{
 
-		DEBUG_LOG(( "Cann't create tabControl gadget, instance data not tabControl type\n" ));
+		DEBUG_LOG(( "Cann't create tabControl gadget, instance data not tabControl type" ));
 		assert( 0 );
 		return NULL;
 
@@ -2070,7 +2070,7 @@ GameWindow *GameWindowManager::gogoGadgetTabControl( GameWindow *parent,
 	if( tabControl == NULL )
 	{
 	
-		DEBUG_LOG(( "Unable to create tab control window\n" ));
+		DEBUG_LOG(( "Unable to create tab control window" ));
 		assert( 0 );
 		return NULL;
 
@@ -2128,7 +2128,7 @@ GameWindow *GameWindowManager::gogoGadgetListBox( GameWindow *parent,
 	if( BitIsSet( instData->getStyle(), GWS_SCROLL_LISTBOX ) == FALSE )
 	{
 
-		DEBUG_LOG(( "Cann't create listbox gadget, instance data not listbox type\n" ));
+		DEBUG_LOG(( "Cann't create listbox gadget, instance data not listbox type" ));
 		assert( 0 );
 		return NULL;
 
@@ -2141,7 +2141,7 @@ GameWindow *GameWindowManager::gogoGadgetListBox( GameWindow *parent,
 	if( listbox == NULL )
 	{
 
-		DEBUG_LOG(( "Unable to create listbox window\n" ));
+		DEBUG_LOG(( "Unable to create listbox window" ));
 		assert( 0 );
 		return NULL;
 
@@ -2307,7 +2307,7 @@ GameWindow *GameWindowManager::gogoGadgetSlider( GameWindow *parent,
 	else 
 	{
 
-		DEBUG_LOG(( "gogoGadgetSlider warning: unrecognized slider style.\n" ));
+		DEBUG_LOG(( "gogoGadgetSlider warning: unrecognized slider style." ));
 		assert( 0 );
 		return NULL;
 		
@@ -2317,7 +2317,7 @@ GameWindow *GameWindowManager::gogoGadgetSlider( GameWindow *parent,
 	if( slider == NULL )
 	{
 
-		DEBUG_LOG(( "Unable to create slider control window\n" ));
+		DEBUG_LOG(( "Unable to create slider control window" ));
 		assert( 0 );
 		return NULL;
 
@@ -2396,7 +2396,7 @@ GameWindow *GameWindowManager::gogoGadgetComboBox( GameWindow *parent,
 	if( BitIsSet( instData->getStyle(), GWS_COMBO_BOX) == FALSE )
 	{
 
-		DEBUG_LOG(( "Cann't create ComboBox gadget, instance data not ComboBox type\n" ));
+		DEBUG_LOG(( "Cann't create ComboBox gadget, instance data not ComboBox type" ));
 		assert( 0 );
 		return NULL;
 
@@ -2409,7 +2409,7 @@ GameWindow *GameWindowManager::gogoGadgetComboBox( GameWindow *parent,
 	if( comboBox == NULL )
 	{
 
-		DEBUG_LOG(( "Unable to create ComboBox window\n" ));
+		DEBUG_LOG(( "Unable to create ComboBox window" ));
 		assert( 0 );
 		return NULL;
 
@@ -2600,7 +2600,7 @@ GameWindow *GameWindowManager::gogoGadgetProgressBar( GameWindow *parent,
 	if( BitIsSet( instData->getStyle(), GWS_PROGRESS_BAR ) == FALSE )
 	{
 
-		DEBUG_LOG(( "Cann't create progressBar gadget, instance data not progressBar type\n" ));
+		DEBUG_LOG(( "Cann't create progressBar gadget, instance data not progressBar type" ));
 		assert( 0 );
 		return NULL;
 
@@ -2614,7 +2614,7 @@ GameWindow *GameWindowManager::gogoGadgetProgressBar( GameWindow *parent,
 	if( progressBar == NULL )
 	{
 
-		DEBUG_LOG(( "Unable to create progress bar control\n" ));
+		DEBUG_LOG(( "Unable to create progress bar control" ));
 		assert( 0 );
 		return NULL;
 
@@ -2666,7 +2666,7 @@ GameWindow *GameWindowManager::gogoGadgetStaticText( GameWindow *parent,
   } 
 	else 
 	{
-    DEBUG_LOG(( "gogoGadgetText warning: unrecognized text style.\n" ));
+    DEBUG_LOG(( "gogoGadgetText warning: unrecognized text style." ));
     return NULL;
   }
   
@@ -2728,7 +2728,7 @@ GameWindow *GameWindowManager::gogoGadgetTextEntry( GameWindow *parent,
 	if( BitIsSet( instData->getStyle(), GWS_ENTRY_FIELD ) == FALSE )
 	{
 
-		DEBUG_LOG(( "Unable to create text entry, style not entry type\n" ));
+		DEBUG_LOG(( "Unable to create text entry, style not entry type" ));
 		assert( 0 );
 		return NULL;
 
@@ -2740,7 +2740,7 @@ GameWindow *GameWindowManager::gogoGadgetTextEntry( GameWindow *parent,
 	if( entry == NULL )
 	{
 
-		DEBUG_LOG(( "Unable to create text entry window\n" ));
+		DEBUG_LOG(( "Unable to create text entry window" ));
 		assert( 0 );
 		return NULL;
 
@@ -2834,7 +2834,7 @@ GameWindow *GameWindowManager::gogoGadgetTextEntry( GameWindow *parent,
 		if( data->constructList == NULL )
 		{
 
-			DEBUG_LOG(( "gogoGadgetEntry warning: Failed to create listbox.\n" ));
+			DEBUG_LOG(( "gogoGadgetEntry warning: Failed to create listbox." ));
 			assert( 0 );
 			winDestroy( entry );
 			return NULL;

@@ -244,7 +244,7 @@ void W3DTankTruckDraw::createEmitters( void )
 				m_dustEffect->setSaveable(FALSE);
 			}	else {
 				if (!getW3DTankTruckDrawModuleData()->m_dustEffectName.isEmpty()) {
-					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'\n", 
+					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'", 
 						getW3DTankTruckDrawModuleData()->m_dustEffectName.str(), getDrawable()->getObject()->getTemplate()->getName().str()));
 				}
 			}
@@ -260,7 +260,7 @@ void W3DTankTruckDraw::createEmitters( void )
 				m_dirtEffect->setSaveable(FALSE);
 			}	else {
 				if (!getW3DTankTruckDrawModuleData()->m_dirtEffectName.isEmpty()) {
-					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'\n", 
+					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'", 
 						getW3DTankTruckDrawModuleData()->m_dirtEffectName.str(), getDrawable()->getObject()->getTemplate()->getName().str()));
 				}
 			}
@@ -275,7 +275,7 @@ void W3DTankTruckDraw::createEmitters( void )
 				m_powerslideEffect->setSaveable(FALSE);
 			}	else {
 				if (!getW3DTankTruckDrawModuleData()->m_powerslideEffectName.isEmpty()) {
-					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'\n", 
+					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'", 
 						getW3DTankTruckDrawModuleData()->m_powerslideEffectName.str(), getDrawable()->getObject()->getTemplate()->getName().str()));
 				}
 			}
@@ -488,7 +488,7 @@ void W3DTankTruckDraw::updateTreadObjects(void)
 //-------------------------------------------------------------------------------------------------
 void W3DTankTruckDraw::onRenderObjRecreated(void)
 {
-	//DEBUG_LOG(("Old obj %x, newObj %x, new bones %d, old bones %d\n",
+	//DEBUG_LOG(("Old obj %x, newObj %x, new bones %d, old bones %d",
 	//	m_prevRenderObj, getRenderObject(), getRenderObject()->Get_Num_Bones(), 
 	//	m_prevNumBones));
 	m_prevRenderObj = NULL;
@@ -623,7 +623,7 @@ void W3DTankTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 		Coord3D accel = *physics->getAcceleration();
 		accel.z = 0; // ignore gravitational force.
 		Bool accelerating = accel.length()>ACCEL_THRESHOLD;
-		//DEBUG_LOG(("Accel %f, speed %f\n", accel.length(), speed));
+		//DEBUG_LOG(("Accel %f, speed %f", accel.length(), speed));
 		if (accelerating)	{
 			Real dot = accel.x*vel->x + accel.y*vel->y;
 			if (dot<0) {

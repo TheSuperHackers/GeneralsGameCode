@@ -158,7 +158,7 @@ void ArchiveFileSystem::loadIntoDirectoryTree(const ArchiveFile *archiveFile, co
 			AsciiString path2;
 			path2 = debugpath;
 			path2.concat(token);
-//			DEBUG_LOG(("ArchiveFileSystem::loadIntoDirectoryTree - adding file %s, archived in %s\n", path2.str(), archiveFilename.str()));
+//			DEBUG_LOG(("ArchiveFileSystem::loadIntoDirectoryTree - adding file %s, archived in %s", path2.str(), archiveFilename.str()));
 			dirInfo->m_files[token] = archiveFilename;
 		}
 
@@ -172,14 +172,14 @@ void ArchiveFileSystem::loadMods() {
 		ArchiveFile *archiveFile = openArchiveFile(TheGlobalData->m_modBIG.str());
 
 		if (archiveFile != NULL) {
-			DEBUG_LOG(("ArchiveFileSystem::loadMods - loading %s into the directory tree.\n", TheGlobalData->m_modBIG.str()));
+			DEBUG_LOG(("ArchiveFileSystem::loadMods - loading %s into the directory tree.", TheGlobalData->m_modBIG.str()));
 			loadIntoDirectoryTree(archiveFile, TheGlobalData->m_modBIG, TRUE);
 			m_archiveFileMap[TheGlobalData->m_modBIG] = archiveFile;
-			DEBUG_LOG(("ArchiveFileSystem::loadMods - %s inserted into the archive file map.\n", TheGlobalData->m_modBIG.str()));
+			DEBUG_LOG(("ArchiveFileSystem::loadMods - %s inserted into the archive file map.", TheGlobalData->m_modBIG.str()));
 		}
 		else
 		{
-			DEBUG_LOG(("ArchiveFileSystem::loadMods - could not openArchiveFile(%s)\n", TheGlobalData->m_modBIG.str()));
+			DEBUG_LOG(("ArchiveFileSystem::loadMods - could not openArchiveFile(%s)", TheGlobalData->m_modBIG.str()));
 		}
 	}
 
@@ -283,14 +283,14 @@ AsciiString ArchiveFileSystem::getArchiveFilenameForFile(const AsciiString& file
 			// the directory doesn't exist, so return NULL
 
 			// dump the directories;
-			//DEBUG_LOG(("directory %s not found in %s in archive file system\n", token.str(), debugpath.str()));
-			//DEBUG_LOG(("directories in %s in archive file system are:\n", debugpath.str()));
+			//DEBUG_LOG(("directory %s not found in %s in archive file system", token.str(), debugpath.str()));
+			//DEBUG_LOG(("directories in %s in archive file system are:", debugpath.str()));
 			//ArchivedDirectoryInfoMap::const_iterator it = dirInfo->m_directories.begin();
 			//while (it != dirInfo->m_directories.end()) {
-			//	DEBUG_LOG(("\t%s\n", it->second.m_directoryName.str()));
+			//	DEBUG_LOG(("\t%s", it->second.m_directoryName.str()));
 			//	it++;
 			//}
-			//DEBUG_LOG(("end of directory list.\n"));
+			//DEBUG_LOG(("end of directory list."));
 			return AsciiString::TheEmptyString;
 		}
 

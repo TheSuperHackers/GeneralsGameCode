@@ -1164,7 +1164,7 @@ static void saveOptions( void )
 	if(val != -1)
 	{
 		TheWritableGlobalData->m_keyboardScrollFactor = val/100.0f;
-		DEBUG_LOG(("Scroll Spped val %d, keyboard scroll factor %f\n", val, TheGlobalData->m_keyboardScrollFactor));
+		DEBUG_LOG(("Scroll Spped val %d, keyboard scroll factor %f", val, TheGlobalData->m_keyboardScrollFactor));
 		AsciiString prefString;
 		prefString.format("%d", val);
 		(*pref)["ScrollFactor"] = prefString;
@@ -1753,7 +1753,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 
 	//set scroll options
 	AsciiString test = (*pref)["DrawScrollAnchor"];
-	DEBUG_LOG(("DrawScrollAnchor == [%s]\n", test.str()));
+	DEBUG_LOG(("DrawScrollAnchor == [%s]", test.str()));
 	if (test == "Yes" || (test.isEmpty() && TheInGameUI->getDrawRMBScrollAnchor()))
 	{
 		GadgetCheckBoxSetChecked( checkDrawAnchor, true);
@@ -1765,7 +1765,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 		TheInGameUI->setDrawRMBScrollAnchor(false);
 	}
 	test = (*pref)["MoveScrollAnchor"];
-	DEBUG_LOG(("MoveScrollAnchor == [%s]\n", test.str()));
+	DEBUG_LOG(("MoveScrollAnchor == [%s]", test.str()));
 	if (test == "Yes" || (test.isEmpty() && TheInGameUI->getMoveRMBScrollAnchor()))
 	{
 		GadgetCheckBoxSetChecked( checkMoveAnchor, true);
@@ -1789,7 +1789,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	// set scroll speed slider
 	Int scrollPos = (Int)(TheGlobalData->m_keyboardScrollFactor*100.0f);
 	GadgetSliderSetPosition( sliderScrollSpeed, scrollPos );
-	DEBUG_LOG(("Scroll SPeed %d\n", scrollPos));
+	DEBUG_LOG(("Scroll SPeed %d", scrollPos));
 
 	// set the send delay check box
 	GadgetCheckBoxSetChecked(checkSendDelay, TheGlobalData->m_firewallSendDelay);

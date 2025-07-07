@@ -171,7 +171,7 @@ StateReturnType State::friend_checkForTransitions( StateReturnType status )
 	#ifdef STATE_MACHINE_DEBUG
 						if (getMachine()->getWantsDebugOutput()) 
 						{
-							DEBUG_LOG(("%d '%s' -- '%s' condition '%s' returned true!\n", TheGameLogic->getFrame(), getMachineOwner()->getTemplate()->getName().str(),
+							DEBUG_LOG(("%d '%s' -- '%s' condition '%s' returned true!", TheGameLogic->getFrame(), getMachineOwner()->getTemplate()->getName().str(),
 											getMachine()->getName().str(), it->description ? it->description : "[no description]"));
 						}
 	#endif
@@ -229,7 +229,7 @@ StateReturnType State::friend_checkForSleepTransitions( StateReturnType status )
 #ifdef STATE_MACHINE_DEBUG
 		if (getMachine()->getWantsDebugOutput()) 
 		{
-			DEBUG_LOG(("%d '%s' -- '%s' condition '%s' returned true!\n", TheGameLogic->getFrame(), getMachineOwner()->getTemplate()->getName().str(),
+			DEBUG_LOG(("%d '%s' -- '%s' condition '%s' returned true!", TheGameLogic->getFrame(), getMachineOwner()->getTemplate()->getName().str(),
 							getMachine()->getName().str(), it->description ? it->description : "[no description]"));
 		}
 #endif
@@ -335,7 +335,7 @@ void StateMachine::internalClear()
 #ifdef STATE_MACHINE_DEBUG
 	if (getWantsDebugOutput())
 	{
-		DEBUG_LOG(("%d '%s' -- '%s' %x internalClear()\n", TheGameLogic->getFrame(), m_owner->getTemplate()->getName().str(), m_name.str(), this));
+		DEBUG_LOG(("%d '%s' -- '%s' %x internalClear()", TheGameLogic->getFrame(), m_owner->getTemplate()->getName().str(), m_name.str(), this));
 	}
 #endif
 }
@@ -350,8 +350,8 @@ void StateMachine::clear()
 	if (m_locked)
 	{
 #ifdef STATE_MACHINE_DEBUG
-		if (m_currentState) DEBUG_LOG((" cur state '%s'\n", m_currentState->getName().str()));
-		DEBUG_LOG(("machine is locked (by %s), cannot be cleared (Please don't ignore; this generally indicates a potential logic flaw)\n",m_lockedby));
+		if (m_currentState) DEBUG_LOG((" cur state '%s'", m_currentState->getName().str()));
+		DEBUG_LOG(("machine is locked (by %s), cannot be cleared (Please don't ignore; this generally indicates a potential logic flaw)",m_lockedby));
 #endif
 		return;
 	}
@@ -375,8 +375,8 @@ StateReturnType StateMachine::resetToDefaultState()
 	if (m_locked)
 	{
 #ifdef STATE_MACHINE_DEBUG
-		if (m_currentState) DEBUG_LOG((" cur state '%s'\n", m_currentState->getName().str()));
-		DEBUG_LOG(("machine is locked (by %s), cannot be cleared (Please don't ignore; this generally indicates a potential logic flaw)\n",m_lockedby));
+		if (m_currentState) DEBUG_LOG((" cur state '%s'", m_currentState->getName().str()));
+		DEBUG_LOG(("machine is locked (by %s), cannot be cleared (Please don't ignore; this generally indicates a potential logic flaw)",m_lockedby));
 #endif
 		return STATE_FAILURE;
 	}
@@ -539,8 +539,8 @@ StateReturnType StateMachine::setState( StateID newStateID )
 	if (m_locked)
 	{
 #ifdef STATE_MACHINE_DEBUG
-		if (m_currentState) DEBUG_LOG((" cur state '%s'\n", m_currentState->getName().str()));
-		DEBUG_LOG(("machine is locked (by %s), cannot be cleared (Please don't ignore; this generally indicates a potential logic flaw)\n",m_lockedby));
+		if (m_currentState) DEBUG_LOG((" cur state '%s'", m_currentState->getName().str()));
+		DEBUG_LOG(("machine is locked (by %s), cannot be cleared (Please don't ignore; this generally indicates a potential logic flaw)",m_lockedby));
 #endif
 		return STATE_CONTINUE;
 	}
@@ -592,9 +592,9 @@ StateReturnType StateMachine::internalSetState( StateID newStateID )
 				DEBUG_LOG((" INVALID_STATE_ID "));
 			}
 			if (newState) {
-				DEBUG_LOG(("enter '%s' \n", newState->getName().str()));
+				DEBUG_LOG(("enter '%s' ", newState->getName().str()));
 			} else {
-				DEBUG_LOG(("to INVALID_STATE\n"));
+				DEBUG_LOG(("to INVALID_STATE"));
 			}
 		}
 #endif
@@ -695,8 +695,8 @@ StateReturnType StateMachine::initDefaultState()
 
 				if (i == m_stateMap.end()) {
 					DEBUG_LOG(("\nState %s(%d) : ", state->getName().str(), id));
-					DEBUG_LOG(("Transition %d not found\n", curID));
-					DEBUG_LOG(("This MUST BE FIXED!!!jba\n"));
+					DEBUG_LOG(("Transition %d not found", curID));
+					DEBUG_LOG(("This MUST BE FIXED!!!jba"));
 					DEBUG_CRASH(("Invalid transition."));
 				} else {
 					State *st = (*i).second;
@@ -753,7 +753,7 @@ void StateMachine::halt()
 #ifdef STATE_MACHINE_DEBUG
 	if (getWantsDebugOutput())
 	{
-		DEBUG_LOG(("%d '%s' -- '%s' %x halt()\n", TheGameLogic->getFrame(), m_owner->getTemplate()->getName().str(), m_name.str(), this));
+		DEBUG_LOG(("%d '%s' -- '%s' %x halt()", TheGameLogic->getFrame(), m_owner->getTemplate()->getName().str(), m_name.str(), this));
 	}	
 #endif
 }

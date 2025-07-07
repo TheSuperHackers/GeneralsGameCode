@@ -466,9 +466,9 @@ static Bool ParseTeamsDataChunk(DataChunkInput &file, DataChunkInfo *info, void 
 		if (sides->findSkirmishSideInfo(player)) {
 			// player exists, so just add it.
 			sides->addSkirmishTeam(&teamDict);
-			//DEBUG_LOG(("Adding team %s\n", teamName.str()));
+			//DEBUG_LOG(("Adding team %s", teamName.str()));
 		} else {
-			//DEBUG_LOG(("Couldn't add team %s, no player %s\n", teamName.str(), player.str()));
+			//DEBUG_LOG(("Couldn't add team %s, no player %s", teamName.str(), player.str()));
 		}
 	}
 	DEBUG_ASSERTCRASH(file.atEndOfChunk(), ("Unexpected data left over."));
@@ -517,7 +517,7 @@ void SidesList::prepareForMP_or_Skirmish(void)
 	}
 	if (!gotScripts) {
 		AsciiString path = "data\\Scripts\\SkirmishScripts.scb";
-		DEBUG_LOG(("Skirmish map using standard scripts\n"));
+		DEBUG_LOG(("Skirmish map using standard scripts"));
 		m_skirmishTeamrec.clear();
 		CachedFileInputStream theInputStream;
 		if (theInputStream.open(path)) { 
@@ -527,7 +527,7 @@ void SidesList::prepareForMP_or_Skirmish(void)
 				file.registerParser( AsciiString("ScriptsPlayers"), AsciiString::TheEmptyString, ParsePlayersDataChunk );
 				file.registerParser( AsciiString("ScriptTeams"), AsciiString::TheEmptyString, ParseTeamsDataChunk );
 				if (!file.parse(this)) {
-					DEBUG_LOG(("ERROR - Unable to read in skirmish scripts.\n"));
+					DEBUG_LOG(("ERROR - Unable to read in skirmish scripts."));
 					return;
 				}
 				ScriptList *scripts[MAX_PLAYER_COUNT];
@@ -771,7 +771,7 @@ Bool SidesList::validateSides()
 		}
 		else
 		{
-			DEBUG_LOG(("*** default team for player %s missing (should not be possible), adding it...\n",tname.str()));
+			DEBUG_LOG(("*** default team for player %s missing (should not be possible), adding it...",tname.str()));
 			Dict d;
 			d.setAsciiString(TheKey_teamName, tname);
 			d.setAsciiString(TheKey_teamOwner, pname);
@@ -787,14 +787,14 @@ Bool SidesList::validateSides()
 		// (note that owners can be teams or players, but allies/enemies can only be teams.)
 		if (validateAllyEnemyList(pname, allies))
 		{
-			DEBUG_LOG(("bad allies...\n"));
+			DEBUG_LOG(("bad allies..."));
 			pdict->setAsciiString(TheKey_playerAllies, allies);
 			modified = true;
 		}
 
 		if (validateAllyEnemyList(pname, enemies))
 		{
-			DEBUG_LOG(("bad enemies...\n"));
+			DEBUG_LOG(("bad enemies..."));
 			pdict->setAsciiString(TheKey_playerEnemies, enemies);
 			modified = true;
 		}
@@ -824,7 +824,7 @@ validate_team_names:
 		SidesInfo* si = findSideInfo(towner);
 		if (si == NULL || towner == tname)
 		{
-			DEBUG_LOG(("bad owner %s; reparenting to neutral...\n",towner.str()));
+			DEBUG_LOG(("bad owner %s; reparenting to neutral...",towner.str()));
 			tdict->setAsciiString(TheKey_teamOwner, AsciiString::TheEmptyString);
 			modified = true;
 		}

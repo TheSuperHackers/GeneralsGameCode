@@ -577,7 +577,7 @@ static Bool saveDrawData( const char *token, GameWindow *window,
 		else
 		{
 
-			DEBUG_LOG(( "Save draw data, unknown token '%s'\n", token ));
+			DEBUG_LOG(( "Save draw data, unknown token '%s'", token ));
 			assert( 0 );
 			return FALSE;
 
@@ -616,7 +616,7 @@ static Bool saveListboxData( GameWindow *window, FILE *fp, Int dataIndent )
 	if( listData == NULL )
 	{
 
-		DEBUG_LOG(( "No listbox data to save for window '%d'\n", 
+		DEBUG_LOG(( "No listbox data to save for window '%d'", 
 						 window->winGetWindowId() ));
 		assert( 0 );
 		return FALSE;
@@ -702,7 +702,7 @@ static Bool saveComboBoxData( GameWindow *window, FILE *fp, Int dataIndent )
 	if( comboData == NULL )
 	{
 
-		DEBUG_LOG(( "No comboData data to save for window '%d'\n", 
+		DEBUG_LOG(( "No comboData data to save for window '%d'", 
 						 window->winGetWindowId() ));
 		assert( 0 );
 		return FALSE;
@@ -802,7 +802,7 @@ static Bool saveRadioButtonData( GameWindow *window, FILE *fp, Int dataIndent )
 	{
 
 
-		DEBUG_LOG(( "No radio button data to save for window '%d'\n", 
+		DEBUG_LOG(( "No radio button data to save for window '%d'", 
 						 window->winGetWindowId() ));
 		assert( 0 );
 		return FALSE;
@@ -827,7 +827,7 @@ static Bool saveSliderData( GameWindow *window, FILE *fp, Int dataIndent )
 	if( sliderData == NULL )
 	{
 
-		DEBUG_LOG(( "No slider data in window to save for window %d\n", 
+		DEBUG_LOG(( "No slider data in window to save for window %d", 
 							window->winGetWindowId() ));
 		assert( 0 );
 		return FALSE;
@@ -865,7 +865,7 @@ static Bool saveStaticTextData( GameWindow *window, FILE *fp, Int dataIndent )
 	if( textData == NULL )
 	{
 
-		DEBUG_LOG(( "No text data in window to save for window %d\n", 
+		DEBUG_LOG(( "No text data in window to save for window %d", 
 							window->winGetWindowId() ));
 		assert( 0 );
 		return FALSE;
@@ -890,7 +890,7 @@ static Bool saveTextEntryData( GameWindow *window, FILE *fp, Int dataIndent )
 	if( entryData == NULL )
 	{
 
-		DEBUG_LOG(( "No text entry data in window to save for window %d\n", 
+		DEBUG_LOG(( "No text entry data in window to save for window %d", 
 							window->winGetWindowId() ));
 		assert( 0 );
 		return FALSE;
@@ -923,7 +923,7 @@ static Bool saveTabControlData( GameWindow *window, FILE *fp, Int dataIndent )
 	if( tabControlData == NULL )
 	{
 
-		DEBUG_LOG(( "No text entry data in window to save for window %d\n", 
+		DEBUG_LOG(( "No text entry data in window to save for window %d", 
 							window->winGetWindowId() ));
 		assert( 0 );
 		return FALSE;

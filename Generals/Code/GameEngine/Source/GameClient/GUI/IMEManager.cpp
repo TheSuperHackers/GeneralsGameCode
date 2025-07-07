@@ -396,7 +396,7 @@ void		IMEManager::printMessageInfo( Int message, Int wParam, Int lParam )
 		{
 			Char *notifyName = getMessageName( m_notifyInfo, wParam );
 			if ( notifyName == NULL ) notifyName = "unknown";
-			DEBUG_LOG(( "IMM: %s(0x%04x) - %s(0x%04x) - 0x%08x\n",  messageText, message, notifyName, wParam, lParam )); 
+			DEBUG_LOG(( "IMM: %s(0x%04x) - %s(0x%04x) - 0x%08x",  messageText, message, notifyName, wParam, lParam )); 
 			break;
 		}
 		case WM_IME_CONTROL:
@@ -404,7 +404,7 @@ void		IMEManager::printMessageInfo( Int message, Int wParam, Int lParam )
 			Char *controlName = getMessageName( m_controlInfo, wParam );
 			if ( controlName == NULL ) controlName = "unknown";
 
-			DEBUG_LOG(( "IMM: %s(0x%04x) - %s(0x%04x) - 0x%08x\n",  messageText, message, controlName, wParam, lParam )); 
+			DEBUG_LOG(( "IMM: %s(0x%04x) - %s(0x%04x) - 0x%08x",  messageText, message, controlName, wParam, lParam )); 
 			break;
 		}
 		#ifdef WM_IME_REQUEST
@@ -413,7 +413,7 @@ void		IMEManager::printMessageInfo( Int message, Int wParam, Int lParam )
 			Char *requestName = getMessageName( m_requestInfo, wParam );
 			if ( requestName == NULL ) requestName = "unknown";
 
-			DEBUG_LOG(( "IMM: %s(0x%04x) - %s(0x%04x) - 0x%08x\n",  messageText, message, requestName, wParam, lParam )); 
+			DEBUG_LOG(( "IMM: %s(0x%04x) - %s(0x%04x) - 0x%08x",  messageText, message, requestName, wParam, lParam )); 
 			break;
 		}
 		#endif
@@ -423,13 +423,13 @@ void		IMEManager::printMessageInfo( Int message, Int wParam, Int lParam )
 
 			buildFlagsString( m_setContextInfo, lParam, flags );
 
-			DEBUG_LOG(( "IMM: %s(0x%04x) - 0x%08x - %s(0x%04x)\n",  messageText, message, wParam, flags.str(), lParam )); 
+			DEBUG_LOG(( "IMM: %s(0x%04x) - 0x%08x - %s(0x%04x)",  messageText, message, wParam, flags.str(), lParam )); 
 			break;
 		}
 		default:
 			if ( messageText )
 			{
-				DEBUG_LOG(( "IMM: %s(0x%04x) - 0x%08x - 0x%08x\n",  messageText, message, wParam, lParam )); 
+				DEBUG_LOG(( "IMM: %s(0x%04x) - 0x%08x - 0x%08x",  messageText, message, wParam, lParam )); 
 			}
 			break;
 	}
@@ -450,7 +450,7 @@ void IMEManager::printConversionStatus( void )
 
 		buildFlagsString( m_setCmodeInfo, mode, flags );
 
-		DEBUG_LOG(( "IMM: Conversion mode = (%s)\n", flags.str()));
+		DEBUG_LOG(( "IMM: Conversion mode = (%s)", flags.str()));
 	}
 }
 
@@ -469,7 +469,7 @@ void IMEManager::printSentenceStatus( void )
 
 		buildFlagsString( m_setSmodeInfo, mode, flags );
 
-		DEBUG_LOG(( "IMM: Sentence mode = (%s)\n", flags.str()));
+		DEBUG_LOG(( "IMM: Sentence mode = (%s)", flags.str()));
 	}
 }
 #endif // DEBUG_IME
@@ -681,7 +681,7 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 			{
 				WideChar wchar = convertCharToWide(wParam);
 				#ifdef DEBUG_IME
-				DEBUG_LOG(("IMM: WM_IME_CHAR - '%hc'0x%04x\n", wchar, wchar ));
+				DEBUG_LOG(("IMM: WM_IME_CHAR - '%hc'0x%04x", wchar, wchar ));
 				#endif
 																	 
 				if ( m_window && (wchar > 32 || wchar == VK_RETURN ))
@@ -699,7 +699,7 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 					WideChar wchar = (WideChar) (wParam & 0xffff);
 
 				#ifdef DEBUG_IME
-				DEBUG_LOG(("IMM: WM_CHAR - '%hc'0x%04x\n", wchar, wchar ));
+				DEBUG_LOG(("IMM: WM_CHAR - '%hc'0x%04x", wchar, wchar ));
 				#endif
 
 				if ( m_window && (wchar >= 32 || wchar == VK_RETURN) )
@@ -713,7 +713,7 @@ Bool IMEManager::serviceIMEMessage(	void *windowsHandle, UnsignedInt message,	In
 
 			// --------------------------------------------------------------------
       case WM_IME_SELECT:
-					DEBUG_LOG(("IMM: WM_IME_SELECT\n"));
+					DEBUG_LOG(("IMM: WM_IME_SELECT"));
 				return FALSE;
       case WM_IME_STARTCOMPOSITION:
         //The WM_IME_STARTCOMPOSITION message is sent immediately before an 
@@ -1421,7 +1421,7 @@ void IMEManager::updateCandidateList( Int candidateFlags  )
 				m_selectedIndex = clist->dwSelection;
 
 				#ifdef DEBUG_IME
-				DEBUG_LOG(("IME: Candidate Update: Candidates = %d, pageSize = %d pageStart = %d, selected = %d\n", m_candidateCount, m_pageStart, m_pageSize, m_selectedIndex ));
+				DEBUG_LOG(("IME: Candidate Update: Candidates = %d, pageSize = %d pageStart = %d, selected = %d", m_candidateCount, m_pageStart, m_pageSize, m_selectedIndex ));
 				#endif
 
 				if ( m_candidateUpArrow )

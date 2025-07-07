@@ -335,7 +335,7 @@ void W3DView::calcCameraConstraints()
 {
 //	const Matrix3D& cameraTransform = m_3DCamera->Get_Transform();
 
-//	DEBUG_LOG(("*** rebuilding cam constraints\n"));
+//	DEBUG_LOG(("*** rebuilding cam constraints"));
 
 	// ok, now check to ensure that we can't see outside the map region,
 	// and twiddle the camera if needed
@@ -1184,7 +1184,7 @@ void W3DView::update(void)
   	{
   		// if we are in a scripted camera movement, take its height above ground as our desired height.
   		m_heightAboveGround = m_currentHeightAboveGround;
-			//DEBUG_LOG(("Frame %d: height above ground: %g %g %g %g\n", TheGameLogic->getFrame(), m_heightAboveGround,
+			//DEBUG_LOG(("Frame %d: height above ground: %g %g %g %g", TheGameLogic->getFrame(), m_heightAboveGround,
 			//	m_cameraOffset.z, m_zoom, m_terrainHeightUnderCamera));
   	}
 		if (TheInGameUI->isScrolling())
@@ -1207,7 +1207,7 @@ void W3DView::update(void)
 			Real zoomAdjAbs = fabs(zoomAdj);
 			if (zoomAdjAbs >= 0.0001 && !didScriptedMovement)
 			{
-				//DEBUG_LOG(("W3DView::update() - m_zoom=%g, desiredHeight=%g\n", m_zoom, desiredZoom));
+				//DEBUG_LOG(("W3DView::update() - m_zoom=%g, desiredHeight=%g", m_zoom, desiredZoom));
 				m_zoom -= zoomAdj;
 				recalcCamera = true;
 			}
@@ -1666,7 +1666,7 @@ void W3DView::scrollBy( Coord2D *delta )
 		Coord3D pos = *getPosition();
 		pos.x += world.X;
 		pos.y += world.Y;
-		//DEBUG_LOG(("Delta %.2f, %.2f\n", world.X, world.Z));
+		//DEBUG_LOG(("Delta %.2f, %.2f", world.X, world.Z));
 		// no change to z
 		setPosition(&pos);
 
@@ -1815,7 +1815,7 @@ void W3DView::setZoomToDefault( void )
 	Real desiredZoom = desiredHeight / m_cameraOffset.z;
 
 	m_mcwpInfo.cameraZoom[2] = desiredZoom;//m_maxZoom;
-	DEBUG_LOG(("W3DView::setZoomToDefault() Current zoom: %g  Desired zoom: %g\n", m_zoom, desiredZoom));
+	DEBUG_LOG(("W3DView::setZoomToDefault() Current zoom: %g  Desired zoom: %g", m_zoom, desiredZoom));
 
 	m_zoom = desiredZoom;
 	m_heightAboveGround = m_maxHeightAboveGround;
@@ -2613,7 +2613,7 @@ void W3DView::resetCamera(const Coord3D *location, Int milliseconds)
 	zoomCamera( desiredZoom, milliseconds );	// this isn't right... or is it?
 
 	pitchCamera( 1.0, milliseconds );
-	DEBUG_LOG(("W3DView::resetCamera() Current zoom: %g  Desired zoom: %g  Current pitch: %g  Desired pitch: %g\n",
+	DEBUG_LOG(("W3DView::resetCamera() Current zoom: %g  Desired zoom: %g  Current pitch: %g  Desired pitch: %g",
 		m_zoom, desiredZoom, m_pitchAngle, m_defaultPitchAngle));
 }
 
@@ -2701,7 +2701,7 @@ void W3DView::setupWaypointPath(Bool orient)
 			angle -= PI/2;
 			normAngle(angle);
 		}
-		//DEBUG_LOG(("Original Index %d, angle %.2f\n", i, angle*180/PI));
+		//DEBUG_LOG(("Original Index %d, angle %.2f", i, angle*180/PI));
 		m_mcwpInfo.cameraAngle[i] = angle;
 	}
 	m_mcwpInfo.cameraAngle[1] = getAngle();	
@@ -2725,7 +2725,7 @@ void W3DView::setupWaypointPath(Bool orient)
 		m_mcwpInfo.timeMultiplier[i] = m_timeMultiplier;
 		m_mcwpInfo.groundHeight[i] = m_groundLevel*factor1 + newGround*factor2;
 		curDistance += m_mcwpInfo.waySegLength[i];
-		//DEBUG_LOG(("New Index %d, angle %.2f\n", i, m_mcwpInfo.cameraAngle[i]*180/PI));
+		//DEBUG_LOG(("New Index %d, angle %.2f", i, m_mcwpInfo.cameraAngle[i]*180/PI));
 	}
 
 	// Pad the end.
@@ -2819,7 +2819,7 @@ void W3DView::rotateCameraOneFrame(void)
 		//m_zoom = m_rcInfo.startZoom + (m_rcInfo.endZoom-m_rcInfo.startZoom)*factor;
 		//m_FXPitch = m_rcInfo.startPitch + (m_rcInfo.endPitch-m_rcInfo.startPitch)*factor;
 		normAngle(m_angle);
-		//DEBUG_LOG(("\tm_angle:%g\n", m_angle));
+		//DEBUG_LOG(("\tm_angle:%g", m_angle));
 		m_timeMultiplier = m_rcInfo.startTimeMultiplier + REAL_TO_INT_FLOOR(0.5 + (m_rcInfo.endTimeMultiplier-m_rcInfo.startTimeMultiplier)*factor);
 	}
 	else if (m_rcInfo.curFrame <= m_rcInfo.numFrames + m_rcInfo.numHoldFrames && m_rcInfo.trackObject)
@@ -2878,7 +2878,7 @@ void W3DView::zoomCameraOneFrame(void)
 		m_zoom = m_zcInfo.endZoom;
 	}
 
-	//DEBUG_LOG(("W3DView::zoomCameraOneFrame() - m_zoom = %g\n", m_zoom));
+	//DEBUG_LOG(("W3DView::zoomCameraOneFrame() - m_zoom = %g", m_zoom));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -2978,7 +2978,7 @@ void W3DView::moveAlongWaypointPath(Int milliseconds)
 	Real deltaAngle = angle-m_angle;
 	normAngle(deltaAngle);
 	if (fabs(deltaAngle) > PI/10) {
-		DEBUG_LOG(("Huh.\n"));
+		DEBUG_LOG(("Huh."));
 	}
 	m_angle += avgFactor*(deltaAngle);
 	normAngle(m_angle);
@@ -3040,7 +3040,7 @@ void W3DView::moveAlongWaypointPath(Int milliseconds)
 	result.z = 0;
 /*
 	static Real prevGround = 0;
-	DEBUG_LOG(("Dx %.2f, dy %.2f, DeltaANgle = %.2f, %.2f DeltaGround %.2f\n", m_pos.x-result.x, m_pos.y-result.y, deltaAngle, m_groundLevel, m_groundLevel-prevGround));
+	DEBUG_LOG(("Dx %.2f, dy %.2f, DeltaANgle = %.2f, %.2f DeltaGround %.2f", m_pos.x-result.x, m_pos.y-result.y, deltaAngle, m_groundLevel, m_groundLevel-prevGround));
 	prevGround = m_groundLevel;
 */
 	setPosition(&result);

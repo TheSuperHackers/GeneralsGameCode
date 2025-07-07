@@ -115,7 +115,7 @@ void AsciiString::debugIgnoreLeaks()
 	}
 	else
 	{
-		DEBUG_LOG(("cannot ignore the leak (no data)\n"));
+		DEBUG_LOG(("cannot ignore the leak (no data)"));
 	}
 #endif
 }

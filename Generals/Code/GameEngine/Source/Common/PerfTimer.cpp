@@ -110,7 +110,7 @@ void InitPrecisionTimer()
 		GetPrecisionTimer(&bogus[7]);
 	}
 	TheTicksToGetTicks = (bogus[7] - start) / (ITERS*8);
-	DEBUG_LOG(("TheTicksToGetTicks is %d (%f usec)\n",(int)TheTicksToGetTicks,TheTicksToGetTicks/s_ticksPerUSec));
+	DEBUG_LOG(("TheTicksToGetTicks is %d (%f usec)",(int)TheTicksToGetTicks,TheTicksToGetTicks/s_ticksPerUSec));
 #endif
 
 }
@@ -303,7 +303,7 @@ void PerfGather::reset()
 		}
 		GetPrecisionTimer(&end);
 		s_stopStartOverhead = (end - start) / (ITERS*8);
-		DEBUG_LOG(("s_stopStartOverhead is %d (%f usec)\n",(int)s_stopStartOverhead,s_stopStartOverhead/s_ticksPerUSec));
+		DEBUG_LOG(("s_stopStartOverhead is %d (%f usec)",(int)s_stopStartOverhead,s_stopStartOverhead/s_ticksPerUSec));
 	}
 }
 
@@ -532,7 +532,7 @@ void PerfTimer::outputInfo( void )
 								 m_callCount,								 
 								 1000.0f / avgTimePerFrame));
 	} else {
-		DEBUG_LOG(("%s\n"
+		DEBUG_LOG(("%s"
 								 "Average Time (per call): %.4f ms\n" 
 								 "Average Time (per frame): %.4f ms\n"
 								 "Average calls per frame: %.2f\n"

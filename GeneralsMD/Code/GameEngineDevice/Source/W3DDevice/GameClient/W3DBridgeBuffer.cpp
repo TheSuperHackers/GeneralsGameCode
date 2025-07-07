@@ -267,7 +267,7 @@ Bool W3DBridge::load(BodyDamageType curDamageState)
 			strcpy(right, pSub->Get_Name());
 		}
 		REF_PTR_RELEASE(pSub);
-		//DEBUG_LOG(("Sub obj name %s\n", pSub->Get_Name()));
+		//DEBUG_LOG(("Sub obj name %s", pSub->Get_Name()));
 	}
 
 	REF_PTR_RELEASE(pObj);
@@ -814,7 +814,7 @@ void W3DBridgeBuffer::loadBridges(W3DTerrainLogic *pTerrainLogic, Bool saveGame)
 		if (pMapObj->getFlag(FLAG_BRIDGE_POINT1)) {
 			pMapObj2 = pMapObj->getNext();
 			if ( !pMapObj2 || !pMapObj2->getFlag(FLAG_BRIDGE_POINT2)) {
-				DEBUG_LOG(("Missing second bridge point.  Ignoring first.\n"));
+				DEBUG_LOG(("Missing second bridge point.  Ignoring first."));
 			}
 			if (pMapObj2==NULL) break;
 			if (!pMapObj2->getFlag(FLAG_BRIDGE_POINT2)) continue;
@@ -987,7 +987,7 @@ void W3DBridgeBuffer::worldBuilderUpdateBridgeTowers( W3DAssetManager *assetMana
 
 			pMapObj2 = pMapObj->getNext();
 			if( !pMapObj2 || !pMapObj2->getFlag( FLAG_BRIDGE_POINT2 ) ) 
-				DEBUG_LOG(("Missing second bridge point.  Ignoring first.\n"));
+				DEBUG_LOG(("Missing second bridge point.  Ignoring first."));
 
 			if( pMapObj2 == NULL ) 
 				break;

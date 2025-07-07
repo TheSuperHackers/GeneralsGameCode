@@ -185,7 +185,7 @@ void W3DTruckDraw::createEmitters( void )
 				m_dustEffect->setSaveable(FALSE);
 			}	else {
 				if (!getW3DTruckDrawModuleData()->m_dustEffectName.isEmpty()) {
-					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'\n", 
+					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'", 
 						getW3DTruckDrawModuleData()->m_dustEffectName.str(), getDrawable()->getObject()->getTemplate()->getName().str()));
 				}
 			}
@@ -201,7 +201,7 @@ void W3DTruckDraw::createEmitters( void )
 				m_dirtEffect->setSaveable(FALSE);
 			}	else {
 				if (!getW3DTruckDrawModuleData()->m_dirtEffectName.isEmpty()) {
-					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'\n", 
+					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'", 
 						getW3DTruckDrawModuleData()->m_dirtEffectName.str(), getDrawable()->getObject()->getTemplate()->getName().str()));
 				}
 			}
@@ -216,7 +216,7 @@ void W3DTruckDraw::createEmitters( void )
 				m_powerslideEffect->setSaveable(FALSE);
 			}	else {
 				if (!getW3DTruckDrawModuleData()->m_powerslideEffectName.isEmpty()) {
-					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'\n", 
+					DEBUG_LOG(("*** ERROR - Missing particle system '%s' in thing '%s'", 
 						getW3DTruckDrawModuleData()->m_powerslideEffectName.str(), getDrawable()->getObject()->getTemplate()->getName().str()));
 				}
 			}
@@ -361,7 +361,7 @@ void W3DTruckDraw::setHidden(Bool h)
 //-------------------------------------------------------------------------------------------------
 void W3DTruckDraw::onRenderObjRecreated(void)
 {
-	//DEBUG_LOG(("Old obj %x, newObj %x, new bones %d, old bones %d\n",
+	//DEBUG_LOG(("Old obj %x, newObj %x, new bones %d, old bones %d",
 	//	m_prevRenderObj, getRenderObject(), getRenderObject()->Get_Num_Bones(), 
 	//	m_prevNumBones));
 	m_prevRenderObj = NULL;
@@ -405,7 +405,7 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 
 	if (getRenderObject()==NULL) return;
 	if (getRenderObject() != m_prevRenderObj) {
-		DEBUG_LOG(("W3DTruckDraw::doDrawModule - shouldn't update bones. jba\n"));
+		DEBUG_LOG(("W3DTruckDraw::doDrawModule - shouldn't update bones. jba"));
 		updateBones();
 	}
 	
@@ -577,7 +577,7 @@ void W3DTruckDraw::doDrawModule(const Matrix3D* transformMtx)
 		Coord3D accel = *physics->getAcceleration();
 		accel.z = 0; // ignore gravitational force.
 		Bool accelerating = accel.length()>ACCEL_THRESHOLD;
-		//DEBUG_LOG(("Accel %f, speed %f\n", accel.length(), speed));
+		//DEBUG_LOG(("Accel %f, speed %f", accel.length(), speed));
 		if (accelerating)	{
 			Real dot = accel.x*vel->x + accel.y*vel->y;
 			if (dot<0) {

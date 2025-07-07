@@ -187,7 +187,7 @@ void W3DDebugIcons::addIcon(const Coord3D *pos, Real width, Int numFramesDuratio
 {
 	if (pos==NULL) {
 		if (m_numDebugIcons > maxIcons) {
-			DEBUG_LOG(("Max icons %d\n", m_numDebugIcons));
+			DEBUG_LOG(("Max icons %d", m_numDebugIcons));
 			maxIcons = m_numDebugIcons;
 		}
 		m_numDebugIcons = 0;

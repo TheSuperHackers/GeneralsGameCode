@@ -601,7 +601,7 @@ void ThingTemplate::parseModuleName(INI* ini, void *instance, void* store, const
 		if (replaced)
 		{
 			//Kris: Commented this out for SPAM reasons. Do we really need this?
-			//DEBUG_LOG(("replaced an AI for %s!\n",self->getName().str()));
+			//DEBUG_LOG(("replaced an AI for %s!",self->getName().str()));
 		}
 	}
 
@@ -1281,7 +1281,7 @@ void ThingTemplate::resolveNames()
 			// but ThingTemplate can muck with stuff with gleeful abandon. (srj)
 			if( tmpls[ j ] )
 				const_cast<ThingTemplate*>(tmpls[j])->m_isBuildFacility = true;
-			// DEBUG_LOG(("BF: %s is a buildfacility for %s\n",tmpls[j]->m_nameString.str(),this->m_nameString.str()));
+			// DEBUG_LOG(("BF: %s is a buildfacility for %s",tmpls[j]->m_nameString.str(),this->m_nameString.str()));
 		}
 	}
 	
@@ -1448,7 +1448,7 @@ const AudioEventRTS *ThingTemplate::getPerUnitSound(const AsciiString& soundName
 	if (it == m_perUnitSounds.end()) 
 	{
 #ifndef DO_UNIT_TIMINGS
-    DEBUG_LOG(("Unknown Audio name (%s) asked for in ThingTemplate (%s).\n", soundName.str(), m_nameString.str()));
+    DEBUG_LOG(("Unknown Audio name (%s) asked for in ThingTemplate (%s).", soundName.str(), m_nameString.str()));
 #endif
     return &s_audioEventNoSound;
 	}

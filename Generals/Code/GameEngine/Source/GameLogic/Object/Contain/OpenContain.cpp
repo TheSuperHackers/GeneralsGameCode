@@ -217,7 +217,7 @@ void OpenContain::addOrRemoveObjFromWorld(Object* obj, Bool add)
 	// check for it here and print a warning
 	//
 	if( obj->isKindOf( KINDOF_STRUCTURE ) )
-		DEBUG_LOG(( "WARNING: Containing/Removing structures like '%s' is potentially a very expensive and slow operation\n",
+		DEBUG_LOG(( "WARNING: Containing/Removing structures like '%s' is potentially a very expensive and slow operation",
 								obj->getTemplate()->getName().str() ));
 
 
@@ -300,7 +300,7 @@ void OpenContain::addToContain( Object *rider )
 	if( rider->getContainedBy() != NULL )
 	{
 
-		DEBUG_LOG(( "'%s' is trying to contain '%s', but '%s' is already contained by '%s'\n",
+		DEBUG_LOG(( "'%s' is trying to contain '%s', but '%s' is already contained by '%s'",
 								getObject()->getTemplate()->getName().str(),
 								rider->getTemplate()->getName().str(),
 								rider->getTemplate()->getName().str(),
@@ -367,7 +367,7 @@ void OpenContain::removeFromContain( Object *rider, Bool exposeStealthUnits )
 	if( containedBy != getObject() )
 	{
 
-		DEBUG_LOG(( "'%s' is trying to un-contain '%s', but '%s' is really contained by '%s'\n",
+		DEBUG_LOG(( "'%s' is trying to un-contain '%s', but '%s' is really contained by '%s'",
 								getObject()->getTemplate()->getName().str(),
 								rider->getTemplate()->getName().str(),
 								rider->getTemplate()->getName().str(),
