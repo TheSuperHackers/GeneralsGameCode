@@ -187,6 +187,7 @@
 #include "GameLogic/Module/ToppleUpdate.h"
 #include "GameLogic/Module/TransportAIUpdate.h"
 #include "GameLogic/Module/WanderAIUpdate.h"
+#include "GameLogic/Module/TeleporterAIUpdate.h"
 #include "GameLogic/Module/WaveGuideUpdate.h"
 #include "GameLogic/Module/WeaponBonusUpdate.h"
 #include "GameLogic/Module/ArmorDamageScalarUpdate.h"
@@ -479,6 +480,7 @@ void ModuleFactory::init( void )
 	addModule( AnimationSteeringUpdate );
 	addModule( TransportAIUpdate );
 	addModule( WanderAIUpdate );
+	addModule( TeleporterAIUpdate );
 	addModule( WaveGuideUpdate );
 	addModule( WorkerAIUpdate );
 	addModule( PowerPlantUpdate );

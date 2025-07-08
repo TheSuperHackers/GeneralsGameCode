@@ -1095,6 +1095,20 @@ Squad *AIStateMachine::getGoalSquad( void )
 	return m_goalSquad;
 }
 
+
+//----------------------------------------------------------------------------------------------------------
+AIGuardMachine* AIStateMachine::getGuardMachine(void)
+{
+	if (getCurrentStateID() == AI_GUARD) {
+		AIGuardState* guardState = (AIGuardState*)(StateMachine::internalGetState(getCurrentStateID()));
+		if (guardState != NULL) {
+			return guardState->getGuardMachine();
+		}
+	}
+
+	return NULL;
+}
+
 // State transition conditions ----------------------------------------------------------------------------
 /**
  * Return true if the machine's owner's current weapon's range 

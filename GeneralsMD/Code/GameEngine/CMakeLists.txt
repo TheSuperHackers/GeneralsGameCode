@@ -473,6 +473,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/VeterancyCrateCollide.h
     Include/GameLogic/Module/VeterancyGainCreate.h
     Include/GameLogic/Module/WanderAIUpdate.h
+    Include/GameLogic/Module/TeleporterAIUpdate.h
     Include/GameLogic/Module/WaveGuideUpdate.h
     Include/GameLogic/Module/WeaponBonusUpdate.h
     Include/GameLogic/Module/ArmorDamageScalarUpdate.h
@@ -985,6 +986,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Update/AIUpdate/SupplyTruckAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/TransportAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/WanderAIUpdate.cpp
+    Source/GameLogic/Object/Update/AIUpdate/TeleporterAIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/WorkerAIUpdate.cpp
     Source/GameLogic/Object/Update/AnimationSteeringUpdate.cpp
     Source/GameLogic/Object/Update/AssistedTargetingUpdate.cpp
