@@ -488,7 +488,7 @@ GlobalData* GlobalData::m_theOriginal = NULL;
 	{ "KeyboardCameraRotateSpeed", INI::parseReal, NULL, offsetof( GlobalData, m_keyboardCameraRotateSpeed ) },
 	{ "PlayStats",									INI::parseInt,				NULL,			offsetof( GlobalData, m_playStats ) },
 
-#if defined(RTS_PROFILE)
+#if defined(RTS_DEBUG) || defined(RTS_PROFILE)
 	{ "VTune", INI::parseBool,	NULL,			offsetof( GlobalData, m_vTune ) },
 #endif
 
@@ -551,7 +551,7 @@ GlobalData::GlobalData()
 #endif
   m_TiVOFastMode = FALSE;
 
-#if defined(RTS_PROFILE)
+#if defined(RTS_DEBUG) || defined(RTS_PROFILE)
 	m_vTune = false;
 #endif
 

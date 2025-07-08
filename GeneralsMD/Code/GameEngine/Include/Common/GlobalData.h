@@ -481,7 +481,7 @@ public:
 #endif
   Bool m_TiVOFastMode;            ///< When true, the client speeds up the framerate... set by HOTKEY!
 
-#if defined(RTS_PROFILE)
+#if defined(RTS_DEBUG) || defined(RTS_PROFILE)
 	Bool m_vTune;
 #endif
 
