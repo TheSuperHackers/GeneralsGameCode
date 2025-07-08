@@ -55,12 +55,11 @@ public:
 	W3DRadar( void );
 	~W3DRadar( void );
 
+	virtual void xfer( Xfer *xfer );
+
 	virtual void init( void );																		///< subsystem init
 	virtual void update( void );																	///< subsystem update
 	virtual void reset( void );																		///< subsystem reset
-
-	virtual bool addObject( Object *obj );									///< add object to radar
-	virtual bool removeObject( Object *obj );								///< remove object from radar
 
 	virtual void newMap( TerrainLogic *terrain );				///< reset radar for new map
 
@@ -72,6 +71,11 @@ public:
 	virtual void refreshTerrain( TerrainLogic *terrain );
 
 protected:
+
+	virtual void onLocalRadarObjectAdded( const RadarObject* radarObject );
+	virtual void onLocalRadarObjectRemoved( const RadarObject* radarObject );
+
+	void rebuildCachedHeroObjectList();
 
 	void drawSingleBeaconEvent( Int pixelX, Int pixelY, Int width, Int height, Int index );
 	void drawSingleGenericEvent( Int pixelX, Int pixelY, Int width, Int height, Int index );

@@ -71,6 +71,8 @@ void Radar::deleteListResources( void )
 	while( m_localObjectList )
 	{
 
+		onLocalRadarObjectRemoved( m_localObjectList );
+
 		// get next object
 		nextObject = m_localObjectList->friend_getNext();
 
@@ -539,6 +541,11 @@ bool Radar::addObject( Object *obj )
 
 	}  // end else
 
+	if (list == &m_localObjectList)
+	{
+		onLocalRadarObjectAdded(newObj);
+	}
+
 	return true;
 }  // end addObject
 
@@ -555,6 +562,10 @@ Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 		
 		if( radarObject->friend_getObject() == obj )
 		{
+			if (list == &m_localObjectList)
+			{
+				onLocalRadarObjectRemoved( radarObject );
+			}
 
 			// unlink the object from list
 			if( prevObject == NULL )

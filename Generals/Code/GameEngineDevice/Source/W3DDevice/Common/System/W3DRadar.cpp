@@ -852,6 +852,18 @@ W3DRadar::~W3DRadar( void )
 }  // end ~W3DRadar
 
 //-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void W3DRadar::xfer( Xfer *xfer )
+{
+	Radar::xfer(xfer);
+
+	if (xfer->getXferMode() == XFER_LOAD)
+	{
+		rebuildCachedHeroObjectList();
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
 /** Radar initialization */
 //-------------------------------------------------------------------------------------------------
 void W3DRadar::init( void )
@@ -984,34 +996,6 @@ void W3DRadar::update( void )
 	Radar::update();
 
 }  // end update
-
-//-------------------------------------------------------------------------------------------------
-bool W3DRadar::addObject( Object *obj )
-{
-	if (Radar::addObject(obj))
-	{
-		if (obj->isHero())
-		{
-			m_cachedHeroObjectList.push_back(obj);
-		}
-		return true;
-	}
-	return false;
-}
-
-//-------------------------------------------------------------------------------------------------
-bool W3DRadar::removeObject( Object *obj )
-{
-	if (Radar::removeObject(obj))
-	{
-		if (obj->isHero())
-		{
-			stl::find_and_erase_unordered(m_cachedHeroObjectList, obj);
-		}
-		return true;
-	}
-	return false;
-}
 
 //-------------------------------------------------------------------------------------------------
 /** Reset the radar for the new map data being given to it */
@@ -1478,7 +1462,41 @@ void W3DRadar::refreshTerrain( TerrainLogic *terrain )
 
 }  // end refreshTerrain
 
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void W3DRadar::onLocalRadarObjectAdded( const RadarObject* radarObject )
+{
+	const Object* obj = radarObject->friend_getObject();
+	if (obj->isHero())
+	{
+		m_cachedHeroObjectList.push_back(obj);
+	}
+}
 
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void W3DRadar::onLocalRadarObjectRemoved( const RadarObject* radarObject )
+{
+	const Object* obj = radarObject->friend_getObject();
+	if (obj->isHero())
+	{
+		stl::find_and_erase_unordered(m_cachedHeroObjectList, obj);
+	}
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void W3DRadar::rebuildCachedHeroObjectList()
+{
+	m_cachedHeroObjectList.clear();
+	const RadarObject* radarObject = getLocalObjectList();
+
+	while (radarObject != NULL)
+	{
+		onLocalRadarObjectAdded(radarObject);
+		radarObject = radarObject->friend_getNext();
+	}
+}
 
 
 
