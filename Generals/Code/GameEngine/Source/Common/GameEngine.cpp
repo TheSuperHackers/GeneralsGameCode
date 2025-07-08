@@ -305,7 +305,7 @@ void GameEngine::init()
 
 
 	#if defined(RTS_DEBUG)
-		// If we're in Debug or Internal, load the Debug info as well.
+		// If we're in Debug, load the Debug settings as well.
 		ini.load( AsciiString( "Data\\INI\\GameDataDebug.ini" ), INI_LOAD_OVERWRITE, NULL );
 	#endif
 		

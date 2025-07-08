@@ -99,7 +99,7 @@ Bool st_particleSystemNeedsStopping = FALSE; ///< Set along with st_particleSyst
 #define FORMAT_STRING_LEADING_STRING		"%s%.2f"
 // That's it for particle editor
 
-#if defined(RTS_PROFILE)
+#if defined(RTS_DEBUG)
 	#define DO_VTUNE_STUFF
 #endif
 

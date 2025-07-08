@@ -697,10 +697,6 @@ Int parseLogAssets( char *args[], int num )
 	return 1;
 }
 
-#endif // defined(RTS_DEBUG)
-
-#if defined(RTS_PROFILE)
-
 /// begin stuff for VTUNE
 Int parseVTune ( char *args[], int num )
 {
@@ -710,7 +706,7 @@ Int parseVTune ( char *args[], int num )
 }
 /// end stuff for VTUNE
 
-#endif // defined(RTS_PROFILE)
+#endif // defined(RTS_DEBUG)
 
 //=============================================================================
 //=============================================================================
@@ -1278,6 +1274,7 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-DemoLoadScreen", parseDemoLoadScreen },
 	{ "-cameraDebug", parseCameraDebug },
 	{ "-logToCon", parseLogToConsole },
+	{ "-vTune", parseVTune },
 	{ "-selectTheUnselectable", parseSelectAll },
 	{ "-RunAhead", parseRunAhead },
 	{ "-noshroud", parseNoShroud },
@@ -1300,10 +1297,6 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-showTeamDot", parseShowTeamDot },
 	{ "-extraLogging", parseExtraLogging },
 
-#endif
-
-#if defined(RTS_PROFILE)
-	{ "-vTune", parseVTune },
 #endif
 
 #ifdef DEBUG_LOGGING
