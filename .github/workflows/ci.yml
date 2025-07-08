@@ -185,7 +185,7 @@ jobs:
               exit 1
           }
 
-          $process = Start-Process -FilePath $exePath -ArgumentList "-jobs 2 -headless" -Wait -PassThru
+          $process = Start-Process -FilePath $exePath -ArgumentList "-jobs 2 -headless -replay *.rep" -Wait -PassThru
           $exitCode = $process.ExitCode
 
           # Handle non-zero exit code
