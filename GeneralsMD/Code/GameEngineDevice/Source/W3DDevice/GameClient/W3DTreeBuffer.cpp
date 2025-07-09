@@ -88,11 +88,6 @@ enum
 #include "WW3D2/meshmdl.h"
 #include "d3dx8tex.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // If TEST_AND_BLEND is defined, it will do an alpha test and blend.  Otherwise just alpha test. jba. [5/30/2003]
 #define dontTEST_AND_BLEND 1
@@ -1286,6 +1281,8 @@ void W3DTreeBuffer::clearAllTrees(void)
 		m_areaPartition[i] = END_OF_PARTITION;
 	}
 	m_numTreeTypes = 0;
+
+	m_lastLogicFrame = 0;
 }
 
 //=============================================================================
@@ -1551,6 +1548,16 @@ void W3DTreeBuffer::drawTrees(CameraClass * camera, RefRenderObjListIterator *pD
 	if (TheGameLogic && TheGameLogic->isGamePaused()) {
 		pause = true;
 	}
+
+	// TheSuperHackers @bugfix Mauller 04/07/2025 decouple the tree sway position updates from the client fps
+	if (TheGameLogic) {
+		UnsignedInt currentFrame = TheGameLogic->getFrame();
+		if (m_lastLogicFrame == currentFrame) {
+			pause = true;
+		}
+		m_lastLogicFrame = currentFrame;
+	}
+
 	Int i;
 	if (!pause) {
 		if (info.m_breezeVersion != m_curSwayVersion) 

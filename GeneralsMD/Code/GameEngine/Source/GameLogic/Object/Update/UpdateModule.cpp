@@ -33,11 +33,6 @@
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/UpdateModule.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -116,7 +111,7 @@ void UpdateModule::xfer( Xfer *xfer )
 	// extend base class
 	BehaviorModule::xfer( xfer );
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	/*
 		this is a fix for the following scenario:
 

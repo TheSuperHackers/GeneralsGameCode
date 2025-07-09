@@ -60,11 +60,6 @@ static const Int INVALID_PATH = -1;
 
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 #define FRAMES_UNPULLED_LONG_ENOUGH_TO_UNHITCH (2)
@@ -907,7 +902,7 @@ public:
 
 	PartitionFilterIsValidCarriage(Object* obj, const RailroadBehaviorModuleData* data) : m_obj(obj), m_data(data) { }
 	
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual const char* debugGetName() { return "PartitionFilterIsValidCarriage"; }
 #endif
 

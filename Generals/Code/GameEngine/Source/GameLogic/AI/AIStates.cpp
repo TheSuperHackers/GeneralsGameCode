@@ -66,11 +66,6 @@
 #include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/Module/PhysicsUpdate.h"
 #include "GameLogic/Module/StealthUpdate.h"
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 static Bool cannotPossiblyAttackObject( State *thisState, void* userData );
 
@@ -853,7 +848,7 @@ AsciiString AIStateMachine::getCurrentStateName(void) const
 StateReturnType AIStateMachine::updateStateMachine()
 {
 	//-extraLogging
-	#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+	#if defined(RTS_DEBUG)
 		Bool idle = getOwner()->getAI()->isIdle();
 		if( !idle && TheGlobalData->m_extraLogging )
 			DEBUG_LOG( ("%d - %s::update() start - %s", TheGameLogic->getFrame(), getCurrentStateName().str(), getOwner()->getTemplate()->getName().str() ) );
@@ -873,7 +868,7 @@ StateReturnType AIStateMachine::updateStateMachine()
 		if (status==STATE_CONTINUE)	
 		{
 			//-extraLogging
-			#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+			#if defined(RTS_DEBUG)
 				if( !idle && TheGlobalData->m_extraLogging )
 					DEBUG_LOG( (" - RETURN EARLY STATE_CONTINUE\n") );
 			#endif
@@ -887,7 +882,7 @@ StateReturnType AIStateMachine::updateStateMachine()
 	StateReturnType retType = StateMachine::updateStateMachine();
 
 	//-extraLogging 
-	#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+	#if defined(RTS_DEBUG)
 		AsciiString result;
 		if( TheGlobalData->m_extraLogging )
 		{
@@ -4029,7 +4024,7 @@ StateReturnType AIFollowWaypointPathState::update()
 			if (!TheAI->pathfinder()->adjustDestination(obj, ai->getLocomotorSet(), &m_goalPosition)) {
 				if (m_currentWaypoint) {
 // TheSuperHackers @info helmutbuhler 05/05/2025 This debug mutates the code to become CRC incompatible
-#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) || !RETAIL_COMPATIBLE_CRC
+#if defined(RTS_DEBUG) || !RETAIL_COMPATIBLE_CRC
 					DEBUG_LOG(("Breaking out of follow waypoint path %s of %s\n", 
 					m_currentWaypoint->getName().str(), m_currentWaypoint->getPathLabel1().str()));
 #endif
@@ -4106,7 +4101,7 @@ StateReturnType AIFollowWaypointPathState::update()
 			if (!TheAI->pathfinder()->adjustDestination(obj, ai->getLocomotorSet(), &m_goalPosition)) {
 				if (m_currentWaypoint) {
 // TheSuperHackers @info helmutbuhler 05/05/2025 This debug mutates the code to become CRC incompatible
-#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) || !RETAIL_COMPATIBLE_CRC
+#if defined(RTS_DEBUG) || !RETAIL_COMPATIBLE_CRC
 					DEBUG_LOG(("Breaking out of follow waypoint path %s of %s\n", 
 					m_currentWaypoint->getName().str(), m_currentWaypoint->getPathLabel1().str()));
 #endif

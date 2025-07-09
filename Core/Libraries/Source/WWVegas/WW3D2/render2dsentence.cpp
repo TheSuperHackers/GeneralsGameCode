@@ -41,11 +41,6 @@
 #include "wwmemlog.h"
 #include "dx8wrapper.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////////
 //	Local constants
