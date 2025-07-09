@@ -166,9 +166,6 @@ inline HWND getThreadHWND()
 int MessageBoxWrapper( LPCSTR lpText, LPCSTR lpCaption, UINT uType )
 {
 	HWND threadHWND = getThreadHWND();
-	if (!threadHWND)
-		return (uType & MB_ABORTRETRYIGNORE)?IDIGNORE:IDYES;
-
 	return ::MessageBox(threadHWND, lpText, lpCaption, uType);
 }
 
@@ -418,8 +415,10 @@ void DebugLog(const char *format, ...)
 	ScopedCriticalSection scopedCriticalSection(TheDebugLogCriticalSection);
 #endif
 
+#ifdef DEBUG_LOGGING
 	if (theDebugFlags == 0)
-		MessageBoxWrapper("DebugLog - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
+		doLogOutput("DebugCrash - Debug not inited properly");
+#endif
 
 	format = prepBuffer(format, theBuffer);
 
@@ -471,7 +470,9 @@ void DebugCrash(const char *format, ...)
 				ShowWindow(ApplicationHWnd, SW_HIDE);
 			}
 		}
-		MessageBoxWrapper("DebugCrash - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
+#ifdef DEBUG_LOGGING
+		doLogOutput("DebugCrash - Debug not inited properly");
+#endif
 	}
 
 	format = prepBuffer(format, theCrashBuffer);
@@ -489,7 +490,7 @@ void DebugCrash(const char *format, ...)
 				ShowWindow(ApplicationHWnd, SW_HIDE);
 			}
 		}
-		MessageBoxWrapper("String too long for debug buffers", "", MB_OK|MB_TASKMODAL);
+		MessageBoxWrapper("String too long for debug buffer", "", MB_OK|MB_TASKMODAL);
 	}
 
 #ifdef DEBUG_LOGGING
