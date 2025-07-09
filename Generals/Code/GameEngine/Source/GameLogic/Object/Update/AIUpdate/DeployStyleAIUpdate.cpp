@@ -264,7 +264,7 @@ UpdateSleepTime DeployStyleAIUpdate::update( void )
 			break;
 
 		case READY_TO_ATTACK:
-			if( !remainDeployed && (!inRange && isAttacking || !isAttacking && (isWaitingForPath() || getPath())) )
+			if( !remainDeployed && ((!inRange && isAttacking) || (!isAttacking && (isWaitingForPath() || getPath()))) )
 			{
 				WhichTurretType tur = getWhichTurretForCurWeapon();
 				if( tur != TURRET_INVALID )

@@ -5850,7 +5850,7 @@ SpecialPowerModuleInterface* Object::findSpecialPowerModuleInterface( SpecialPow
 			continue;
 
 		const SpecialPowerTemplate *spTemplate = sp->getSpecialPowerTemplate();
-		if (spTemplate && spTemplate->getSpecialPowerType() == type || type == SPECIAL_INVALID )
+		if ((spTemplate && spTemplate->getSpecialPowerType() == type) || type == SPECIAL_INVALID )
 		{
 			return sp; 
 		}

@@ -3388,8 +3388,8 @@ void ScriptActions::doTeamGarrisonSpecificBuilding(const AsciiString& teamName, 
 	}
 	PlayerMaskType player = theBuilding->getContain()->getPlayerWhoEntered();
 
-	if (!(theBuilding->isKindOf(KINDOF_STRUCTURE) && 
-		(player == 0) || (player == theTeam->getControllingPlayer()->getPlayerMask()))) {
+	if (!theBuilding->isKindOf(KINDOF_STRUCTURE) || player == 0
+		|| player == theTeam->getControllingPlayer()->getPlayerMask()) {
 		return;
 	}
 	
@@ -3554,8 +3554,8 @@ void ScriptActions::doUnitGarrisonSpecificBuilding(const AsciiString& unitName, 
 	}
 	PlayerMaskType player = theBuilding->getContain()->getPlayerWhoEntered();
 
-	if (!(theBuilding->isKindOf(KINDOF_STRUCTURE) && 
-		(player == 0) || (player == theUnit->getControllingPlayer()->getPlayerMask()))) {
+	if (!theBuilding->isKindOf(KINDOF_STRUCTURE) || player == 0
+		|| player == theUnit->getControllingPlayer()->getPlayerMask()) {
 		return;
 	}
 	AIUpdateInterface *ai = theUnit->getAIUpdateInterface();
