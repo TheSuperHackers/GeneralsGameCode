@@ -1692,7 +1692,8 @@ void Player::killPlayer(void)
 	if (isLocalPlayer() && !TheGameLogic->isInShellGame())
 	{
 		// TheSuperHackers @bugfix helmutbuhler 29/03/2025
-		// Avoid multiplayer mismatch on surrender in team games by disabling the bugged logic here.
+		// Avoid multiplayer mismatch on surrender in team games when owning a base structure that has
+		// been cleared of infantry before, by disabling this bugged logic.
 		// 
 		// Note that becomingLocalPlayer calls recalcApparentControllingPlayer on all objects with a
 		// contain, which does two things:
