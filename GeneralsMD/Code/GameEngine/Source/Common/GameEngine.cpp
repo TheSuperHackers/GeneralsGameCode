@@ -108,11 +108,6 @@
 
 #include "Common/version.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-------------------------------------------------------------------------------------------------
 
@@ -263,8 +258,6 @@ void GameEngine::init()
 			DEBUG_LOG(("================================================================================\n"));
 	#if defined RTS_DEBUG
 			const char *buildType = "Debug";
-	#elif defined RTS_INTERNAL
-			const char *buildType = "Internal";
 	#else
 			const char *buildType = "Release";
 	#endif
@@ -382,8 +375,8 @@ void GameEngine::init()
 		serviceWindowsOS();
 
 
-	#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
-		// If we're in Debug or Internal, load the Debug info as well.
+	#if defined(RTS_DEBUG)
+		// If we're in Debug, load the Debug settings as well.
 		ini.load( AsciiString( "Data\\INI\\GameDataDebug.ini" ), INI_LOAD_OVERWRITE, NULL );
 	#endif
 		
@@ -538,7 +531,7 @@ void GameEngine::init()
 
 		TheMetaMap->generateMetaMap();
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		ini.load("Data\\INI\\CommandMapDebug.ini", INI_LOAD_MULTIFILE, NULL);
 #endif
 
@@ -785,7 +778,7 @@ void GameEngine::execute( void )
 {
 	
 	DWORD prevTime = timeGetTime();
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	DWORD startTime = timeGetTime() / 1000;
 #endif
 
@@ -802,7 +795,7 @@ void GameEngine::execute( void )
 
 		{
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 			{
 				// enter only if in benchmark mode
 				if (TheGlobalData->m_benchmarkTimer > 0)
@@ -860,7 +853,7 @@ void GameEngine::execute( void )
 
 		// I'm disabling this in internal because many people need alt-tab capability.  If you happen to be
 		// doing performance tuning, please just change this on your local system. -MDC
-		#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+		#if defined(RTS_DEBUG)
 					::Sleep(1); // give everyone else a tiny time slice.
 		#endif
 

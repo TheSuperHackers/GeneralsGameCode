@@ -32,11 +32,6 @@
 #include "EAC/huffcodex.h"
 #include "EAC/refcodex.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma message("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // TheSuperHackers @todo Recover debug logging in this file?
 #define DEBUG_LOG(x) {}

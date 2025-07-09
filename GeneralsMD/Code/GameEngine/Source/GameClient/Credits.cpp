@@ -56,11 +56,6 @@
 #include "GameClient/Display.h"
 #include "GameClient/GameText.h"
 #include "GameClient/GlobalLanguage.h"
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 //-----------------------------------------------------------------------------

@@ -50,11 +50,6 @@
 #include <wwprofile.h>
 #include <algorithm>
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-// #pragma optimize("", off)
-// #pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 bool SortingRendererClass::_EnableTriangleDraw=true;
 static unsigned DEFAULT_SORTING_POLY_COUNT = 16384;	// (count * 3) must be less than 65536

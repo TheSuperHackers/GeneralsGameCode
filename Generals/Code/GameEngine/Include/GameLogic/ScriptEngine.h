@@ -50,7 +50,7 @@ class Player;
 class PolygonTrigger;
 class ObjectTypes;
 
-#ifdef RTS_INTERNAL
+#ifdef RTS_PROFILE
 #define SPECIAL_SCRIPT_PROFILING
 #endif
 
@@ -352,7 +352,7 @@ public:
 	void setEnableVTune(Bool value);
 	Bool getEnableVTune() const;
 	///End VTUNE
-//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+//#if defined(RTS_DEBUG)
 	void debugVictory( void );
 //#endif
 protected:

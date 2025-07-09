@@ -37,11 +37,6 @@
 
 //#define DETERMINISTIC				// to allow repetition for debugging
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #undef DEBUG_RANDOM_CLIENT
 #undef DEBUG_RANDOM_LOGIC

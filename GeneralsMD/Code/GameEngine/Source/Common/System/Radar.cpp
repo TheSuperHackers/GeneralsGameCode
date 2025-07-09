@@ -53,11 +53,6 @@
 #include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/Module/StealthUpdate.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // GLOBALS ////////////////////////////////////////////////////////////////////////////////////////
 Radar *TheRadar = NULL;  ///< the radar global singleton
@@ -75,6 +70,8 @@ void Radar::deleteListResources( void )
 	// delete entries from the local object list
 	while( m_localObjectList )
 	{
+
+		onLocalRadarObjectRemoved( m_localObjectList );
 
 		// get next object
 		nextObject = m_localObjectList->friend_getNext();
@@ -547,6 +544,11 @@ bool Radar::addObject( Object *obj )
 
 	}  // end else
 
+	if (list == &m_localObjectList)
+	{
+		onLocalRadarObjectAdded(newObj);
+	}
+
 	return true;
 }  // end addObject
 
@@ -563,6 +565,10 @@ Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 		
 		if( radarObject->friend_getObject() == obj )
 		{
+			if (list == &m_localObjectList)
+			{
+				onLocalRadarObjectRemoved( radarObject );
+			}
 
 			// unlink the object from list
 			if( prevObject == NULL )

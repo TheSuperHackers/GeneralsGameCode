@@ -52,11 +52,6 @@
 #include "Common/Recorder.h"
 #include "GameClient/MessageBox.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #if defined(DEBUG_CRC)
 Int NET_CRC_INTERVAL = 1;
@@ -152,7 +147,7 @@ public:
 	void loadProgressComplete( void );
 	void sendTimeOutGameStart( void );
 
-#if defined(RTS_INTERNAL) || defined(RTS_DEBUG)
+#if defined(RTS_DEBUG)
 	// Disconnect screen testing
 	virtual void toggleNetworkOn();
 #endif
@@ -219,7 +214,7 @@ protected:
 	std::list<Int> m_playersToDisconnect;
 	GameWindow *m_messageWindow;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	Bool m_networkOn;
 #endif
 };
@@ -279,7 +274,7 @@ Network::Network()
 	m_conMgr = NULL;
 	m_messageWindow = NULL;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	m_networkOn = TRUE;
 #endif
 }
@@ -362,7 +357,7 @@ void Network::init()
 	DEBUG_LOG(("FRAMES_TO_KEEP = %d\n", FRAMES_TO_KEEP));
 
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	m_networkOn = TRUE;
 #endif
 
@@ -692,7 +687,7 @@ void Network::update( void )
 //
 	m_frameDataReady = FALSE;
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (m_networkOn == FALSE) {
 		return;
 	}
@@ -726,7 +721,7 @@ void Network::update( void )
 
 void Network::liteupdate() {
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (m_networkOn == FALSE) {
 		return;
 	}
@@ -750,7 +745,7 @@ void Network::endOfGameCheck() {
 
 			DEBUG_LOG(("Network::endOfGameCheck - about to show the shell\n"));
 		}
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 		else {
 			m_conMgr->debugPrintConnectionCommands();
 		}
@@ -1012,7 +1007,7 @@ Int Network::getSlotAverageFPS(Int slot) {
 	return -1;
 }
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 void Network::toggleNetworkOn() {
 	if (m_networkOn == TRUE) {
 		m_networkOn = FALSE;

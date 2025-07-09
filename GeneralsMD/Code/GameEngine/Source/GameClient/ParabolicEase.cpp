@@ -26,11 +26,6 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file in the GameEngine
 #include "GameClient/ParabolicEase.h"
 // ============================================================================
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-// #pragma optimize("", off)
-// #pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif // RTS_INTERNAL
 // ============================================================================
 namespace {
 // ============================================================================
