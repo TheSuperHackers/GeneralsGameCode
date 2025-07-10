@@ -66,7 +66,7 @@ public:
 	virtual void doSpecialPowerAtObject( Object *obj, UnsignedInt commandOptions ) = 0;
 	virtual void doSpecialPowerAtLocation( const Coord3D *loc, Real angle, UnsignedInt commandOptions ) = 0;
 	virtual void doSpecialPowerUsingWaypoints( const Waypoint *way, UnsignedInt commandOptions ) = 0;
-	virtual void markSpecialPowerTriggered( const Coord3D *location ) = 0;
+	virtual void markSpecialPowerTriggered( const Coord3D *location, bool makeSelectable ) = 0;
 	virtual void startPowerRecharge() = 0;	
 	virtual const AudioEventRTS& getInitiateSound() const = 0;
 	virtual Bool isScriptOnly() const = 0;
@@ -153,7 +153,7 @@ public:
 	 module. The update module then orders the unit to move within range, and it isn't until the 
 	 hacker start the physical attack, that the timer is reset and the attack technically begins.
 	*/
-	virtual void markSpecialPowerTriggered( const Coord3D *location );
+	virtual void markSpecialPowerTriggered( const Coord3D *location, bool makeSelectable );
 
 	/** start the recharge process for this special power. public because some powers call it repeatedly.
 	*/
@@ -168,8 +168,8 @@ public:
 protected:
 
 	Bool initiateIntentToDoSpecialPower( const Object *targetObj, const Coord3D *targetPos, const Waypoint *way, UnsignedInt commandOptions );
-	void triggerSpecialPower( const Coord3D *location );
-	void createViewObject( const Coord3D *location );
+	void triggerSpecialPower( const Coord3D *location, bool makeSelectable );
+	void createViewObject( const Coord3D *location, bool makeSelectable );
 	void resolveSpecialPower( void );
 	void aboutToDoSpecialPower( const Coord3D *location );
 

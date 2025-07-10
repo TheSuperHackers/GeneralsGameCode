@@ -1083,7 +1083,7 @@ void SpecialAbilityUpdate::startPreparation()
   SpecialPowerModuleInterface *spmInterface = getMySPM();
   if( spmInterface )
   {
-    spmInterface->markSpecialPowerTriggered(NULL);// Null for not creating a view object
+    spmInterface->markSpecialPowerTriggered(NULL, false);// Null for not creating a view object
   }
   
   if (getObject()->getAI()) {
