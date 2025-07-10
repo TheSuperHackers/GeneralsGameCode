@@ -148,7 +148,10 @@ class GameTextManager : public GameTextInterface
 
 		virtual UnicodeString fetch( const Char *label, Bool *exists = NULL );		///< Returns the associated labeled unicode text
 		virtual UnicodeString fetch( AsciiString label, Bool *exists = NULL );		///< Returns the associated labeled unicode text
+		virtual UnicodeString fetchFormat( const Char *label, ... );
 		virtual UnicodeString fetchOrSubstitute( const Char *label, const WideChar *substituteText );
+		virtual UnicodeString fetchOrSubstituteFormat( const Char *label, const WideChar *substituteFormat, ... );
+		virtual UnicodeString fetchOrSubstituteFormatVA( const Char *label, const WideChar *substituteFormat, va_list args );
 
 		virtual AsciiStringVec& getStringsWithLabelPrefix(AsciiString label);
 
@@ -1355,6 +1358,28 @@ UnicodeString GameTextManager::fetch( AsciiString label, Bool *exists )
 }
 
 //============================================================================
+// *GameTextManager::fetchFormat
+//============================================================================
+
+UnicodeString GameTextManager::fetchFormat( const Char *label, ... )
+{
+	Bool exists;
+	UnicodeString str = fetch(label, &exists);
+	if (exists)
+	{
+		UnicodeString strFormat;
+
+		va_list args;
+		va_start(args, label);
+		strFormat.format_va(str.str(), args);
+		va_end(args);
+
+		str = strFormat;
+	}
+	return str;
+}
+
+//============================================================================
 // GameTextManager::fetchOrSubstitute
 //============================================================================
 
@@ -1364,6 +1389,42 @@ UnicodeString GameTextManager::fetchOrSubstitute( const Char *label, const WideC
 	UnicodeString str = fetch(label, &exists);
 	if (!exists)
 		str = substituteText;
+	return str;
+}
+
+//============================================================================
+// GameTextManager::fetchOrSubstituteFormat
+//============================================================================
+
+UnicodeString GameTextManager::fetchOrSubstituteFormat( const Char *label, const WideChar *substituteFormat, ... )
+{
+	va_list args;
+	va_start(args, substituteFormat);
+	UnicodeString str = fetchOrSubstituteFormatVA(label, substituteFormat, args);
+	va_end(args);
+
+	return str;
+}
+
+//============================================================================
+// GameTextManager::fetchOrSubstituteFormatVA
+//============================================================================
+
+UnicodeString GameTextManager::fetchOrSubstituteFormatVA( const Char *label, const WideChar *substituteFormat, va_list args )
+{
+	Bool exists;
+	UnicodeString str = fetch(label, &exists);
+	if (exists)
+	{
+		UnicodeString strFormat;
+		strFormat.format_va(strFormat.str(), args);
+		str = strFormat;
+	}
+	else
+	{
+		str.format_va(substituteFormat, args);
+	}
+
 	return str;
 }
 
