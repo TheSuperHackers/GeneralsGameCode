@@ -293,16 +293,15 @@ void AsciiString::trim()
 		{
 			//	Clip trailing white space from the string.
 			int len = strlen(peek());
-			for (int index = len-1; index >= 0; index--)
+			int index = len - 1;
+			while (index >= 0 && isspace(getCharAt(index)))
 			{
-				if (isspace(getCharAt(index)))
-				{
-					removeLastChar();
-				}
-				else
-				{
-					break;
-				}
+				--index;
+			}
+
+			if (index < len - 1)
+			{
+				truncateTo(index + 1);
 			}
 		}
 	}

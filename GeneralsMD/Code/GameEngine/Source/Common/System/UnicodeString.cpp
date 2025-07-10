@@ -245,16 +245,15 @@ void UnicodeString::trim()
 		{
 			//	Clip trailing white space from the string.
 			int len = wcslen(peek());
-			for (int index = len-1; index >= 0; index--)
+			int index = len - 1;
+			while (index >= 0 && iswspace(getCharAt(index)))
 			{
-				if (iswspace(getCharAt(index)))
-				{
-					removeLastChar();
-				}
-				else
-				{
-					break;
-				}
+				--index;
+			}
+
+			if (index < len - 1)
+			{
+				truncateTo(index + 1);
 			}
 		}
 	}
