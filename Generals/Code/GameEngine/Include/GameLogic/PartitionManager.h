@@ -1090,7 +1090,9 @@ private:
 	Bool  m_match;
 
 public:
-	PartitionFilterThing(const ThingTemplate *thing, Bool match) : m_tThing(thing), m_match(match) {}
+	PartitionFilterThing(const ThingTemplate *thing, Bool match) : m_tThing(thing), m_match(match) {
+		DEBUG_ASSERTCRASH(m_tThing != NULL, ("ThingTemplate for PartitionFilterThing is NULL"));
+	}
 protected:
 	virtual Bool allow( Object *other );
 #if defined(RTS_DEBUG)
