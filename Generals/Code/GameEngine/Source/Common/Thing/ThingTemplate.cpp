@@ -1319,7 +1319,7 @@ const AudioEventRTS *ThingTemplate::getPerUnitSound(const AsciiString& soundName
 Bool ThingTemplate::isEquivalentTo(const ThingTemplate* tt) const
 {
 	// sanity
-	if (!(this && tt)) 
+	if (!tt)
 		return false;
 
 	// sanity

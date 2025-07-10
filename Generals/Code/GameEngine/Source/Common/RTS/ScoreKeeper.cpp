@@ -174,7 +174,7 @@ Int ScoreKeeper::getTotalObjectsBuilt( const ThingTemplate *pTemplate )
 	for (ObjectCountMapIt it = m_objectsBuilt.begin(); it != m_objectsBuilt.end(); ++it)
 	{
 		const ThingTemplate *theTemplate = it->first;
-		if (theTemplate->isEquivalentTo(pTemplate))
+		if (theTemplate && theTemplate->isEquivalentTo(pTemplate))
 			++count;
 	}
 	return count;
