@@ -1377,7 +1377,7 @@ static void doFindMostReadyWeaponForThing( Object *obj, void *userData )
 		return;
 	}
 	
-	if( info->thing->isEquivalentTo( obj->getTemplate() ) )
+	if( info->thing && info->thing->isEquivalentTo( obj->getTemplate() ) )
 	{
 		if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) 
 				&& !obj->testStatus( OBJECT_STATUS_SOLD ) 
@@ -1409,7 +1409,7 @@ static void doFindMostReadySpecialPowerForThing( Object *obj, void *userData )
 		return;
 	}
 	
-	if( info->thing->isEquivalentTo( obj->getTemplate() ) )
+	if( info->thing && info->thing->isEquivalentTo( obj->getTemplate() ) )
 	{
 		if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) 
 				&& !obj->testStatus( OBJECT_STATUS_SOLD ) 
@@ -1445,7 +1445,7 @@ static void doFindExistingObjectWithThingTemplate( Object *obj, void *userData )
 		return;
 	}
 	
-	if( info->thing->isEquivalentTo( obj->getTemplate() ) )
+	if( info->thing && info->thing->isEquivalentTo( obj->getTemplate() ) )
 	{
 		if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) 
 				&& !obj->testStatus( OBJECT_STATUS_SOLD ) 
@@ -2863,7 +2863,7 @@ static void countExisting( Object *obj, void *userData )
   TypeCountData *typeCountData = (TypeCountData *)userData;
   
   // Compare templates
-  if ( typeCountData->type->isEquivalentTo( obj->getTemplate() ) ||
+  if ( ( typeCountData->type && typeCountData->type->isEquivalentTo( obj->getTemplate() ) ) ||
        ( typeCountData->linkKey != NAMEKEY_INVALID && obj->getTemplate() != NULL && typeCountData->linkKey == obj->getTemplate()->getMaxSimultaneousLinkKey() ) )
   {
     typeCountData->count++;
