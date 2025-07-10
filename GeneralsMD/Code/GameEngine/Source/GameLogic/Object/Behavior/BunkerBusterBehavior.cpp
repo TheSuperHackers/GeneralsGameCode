@@ -204,7 +204,7 @@ void BunkerBusterBehavior::bustTheBunker( void )
     objectForFX = target;
 
     ContainModuleInterface *contain = target->getContain();
-    if ( contain && contain->isBustable() ) // Was that object something that bunkerbusters bust?
+    if ( contain && contain->isBustable() && !target->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION)) // Was that object something that bunkerbusters bust?
     {
 
       if ( modData->m_occupantDamageWeaponTemplate )
