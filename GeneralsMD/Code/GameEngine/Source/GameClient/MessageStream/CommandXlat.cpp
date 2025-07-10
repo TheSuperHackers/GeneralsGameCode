@@ -3304,6 +3304,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 					AsciiString scriptName;
 					scriptName.format("KEY_F%d", script);
 					TheScriptEngine->runScript(scriptName);
+					TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:DebugRunScript", L"Run script %d", script) );
 				}
 				disp = DESTROY_MESSAGE;
 			}
@@ -3391,6 +3392,12 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				// Doesn't make a valid network message
 				Player *localPlayer = ThePlayerList->getLocalPlayer();
 				localPlayer->toggleInstantBuild();
+
+				if (localPlayer->buildsInstantly())
+					TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugInstantBuildOn", L"Instant Build is ON") );
+				else
+					TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugInstantBuildOff", L"Instant Build is OFF") );
+
 				disp = DESTROY_MESSAGE;
 			}
 			break;
@@ -3402,6 +3409,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				Player *localPlayer = ThePlayerList->getLocalPlayer();
 				Money *money = localPlayer->getMoney();
 				money->deposit( 10000 );
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugAddCash", L"Add Cash") );
 			}
 			break;
 		}
@@ -3944,6 +3952,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEMO_LOD_DECREASE:
 		{
 			TheGameClient->adjustLOD(-1);
+			TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:DebugDecreaseLOD", L"Decrease LOD") );
 			disp = DESTROY_MESSAGE;
 			break;
 		}  
@@ -3953,6 +3962,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEMO_LOD_INCREASE:
 		{
 			TheGameClient->adjustLOD(1);
+			TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:DebugIncreaseLOD", L"Increase LOD") );
 			disp = DESTROY_MESSAGE;
 			break;
 		}  
@@ -4200,6 +4210,12 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		{
 			TheWritableGlobalData->m_useShadowVolumes = !TheGlobalData->m_useShadowVolumes;
 			TheWritableGlobalData->m_useShadowDecals = !TheGlobalData->m_useShadowDecals;
+
+			if (TheWritableGlobalData->m_useShadowVolumes)
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugShadowVolumesOn", L"Shadow Volumes is ON") );
+			else
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugShadowVolumesOff", L"Shadow Volumes is OFF") );
+
 			disp = DESTROY_MESSAGE;
 			break;
 		}  
@@ -4209,6 +4225,12 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEMO_TOGGLE_FOGOFWAR:
 		{
 			TheWritableGlobalData->m_fogOfWarOn = !TheGlobalData->m_fogOfWarOn;
+
+			if (TheWritableGlobalData->m_fogOfWarOn)
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugFogOfWarOn", L"Fog of War is ON") );
+			else
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugFogOfWarOff", L"Fog of War is OFF") );
+
 			disp = DESTROY_MESSAGE;
 			break;
 		}  
@@ -4428,10 +4450,12 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				TheDisplay->stopMovie();
 				TheInGameUI->stopMovie();
 				TheAudio->setOn(false, AudioAffect_All);
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugSoundOff", L"Sound is OFF") );
 			}
 			else
 			{
 				TheAudio->setOn(true, AudioAffect_All);
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugSoundOn", L"Sound is ON") );
 			}
 			disp = DESTROY_MESSAGE;
 			break;
@@ -4442,6 +4466,12 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEMO_TOGGLE_TRACKMARKS:
 		{
 			TheWritableGlobalData->m_makeTrackMarks = !TheGlobalData->m_makeTrackMarks;
+
+			if (TheGlobalData->m_makeTrackMarks)
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugTrackMarksOn", L"Track Marks is ON") );
+			else
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugTrackMarksOff", L"Track Marks is OFF") );
+
 			disp = DESTROY_MESSAGE;
 			break;
 		}  
@@ -4451,6 +4481,12 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEMO_TOGGLE_WATERPLANE:
 		{
 			TheWritableGlobalData->m_useWaterPlane = !TheGlobalData->m_useWaterPlane;
+
+			if (TheGlobalData->m_useWaterPlane)
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugWaterPlaneOn", L"Water Plane is ON") );
+			else
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugWaterPlaneOff", L"Water Plane is OFF") );
+
 			disp = DESTROY_MESSAGE;
 			break;
 		}  
@@ -4460,7 +4496,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEMO_TIME_OF_DAY:
 		{
 			TimeOfDay tod = TimeOfDay((Int) TheGlobalData->m_timeOfDay + 1);
-			if (tod >= TIME_OF_DAY_COUNT)
+			if (tod < TIME_OF_DAY_FIRST || tod >= TIME_OF_DAY_COUNT)
 				tod = TIME_OF_DAY_FIRST;
 			if (TheWritableGlobalData->setTimeOfDay(tod))
 			{
@@ -4477,7 +4513,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 							d->clearAndSetModelConditionFlags(empty, empty);
 						}
 					}
-        } 
+				}
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:DebugTimeOfDay", L"Time of Day set to %hs", TimeOfDayNames[tod]) );
 			}
 			disp = DESTROY_MESSAGE;
 			break;
@@ -4490,6 +4527,12 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			// Doesn't make a valid network message
 			Player *localPlayer = ThePlayerList->getLocalPlayer();
 			localPlayer->toggleIgnorePrereqs();
+
+			if (localPlayer->ignoresPrereqs())
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugIgnorePrereqOn", L"Ignore Prerequisites is ON") );
+			else
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugIgnorePrereqOff", L"Ignore Prerequisites is OFF") );
+
 			disp = DESTROY_MESSAGE;
 			break;
     } 
@@ -4501,6 +4544,12 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			// Doesn't make a valid network message
 			Player *localPlayer = ThePlayerList->getLocalPlayer();
 			localPlayer->toggleInstantBuild();
+
+			if (localPlayer->buildsInstantly())
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugInstantBuildOn", L"Instant Build is ON") );
+			else
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugInstantBuildOff", L"Instant Build is OFF") );
+
 			disp = DESTROY_MESSAGE;
 			break;
 		}
@@ -4512,6 +4561,12 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			// Doesn't make a valid network message
 			Player *localPlayer = ThePlayerList->getLocalPlayer();
 			localPlayer->toggleFreeBuild();
+
+			if (localPlayer->buildsForFree())
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugFreeBuildOn", L"Free Build is ON") );
+			else
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugFreeBuildOff", L"Free Build is OFF") );
+
 			disp = DESTROY_MESSAGE;
 			break;
 		}
@@ -4533,6 +4588,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				Player *localPlayer = ThePlayerList->getLocalPlayer();
 				Money *money = localPlayer->getMoney();
 				money->deposit( 10000 );
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugAddCash", L"Add Cash") );
 			}
 			break;
 		}
@@ -4555,6 +4611,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				AsciiString scriptName;
 				scriptName.format("KEY_F%d", script);
 				TheScriptEngine->runScript(scriptName);
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:DebugRunScript", L"Run script %d", script) );
 			}
 			disp = DESTROY_MESSAGE;
 			break;
@@ -4600,6 +4657,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 				AsciiString name;
 				name.format("DemoObjective%02d", m_objective);
 				TheInGameUI->playMovie(name);
+				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE_FORMAT("GUI:DebugObjectiveMove", L"Objective Movie %d", m_objective) );
 			}
 			disp = DESTROY_MESSAGE;
 			break;
