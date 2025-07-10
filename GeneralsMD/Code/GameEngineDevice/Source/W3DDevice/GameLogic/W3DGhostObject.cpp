@@ -59,7 +59,7 @@ class W3DRenderObjectSnapshot : public Snapshot
 	friend W3DGhostObject;
 
 	W3DRenderObjectSnapshot(RenderObjClass *m_parentRobj, DrawableInfo *drawInfo, Bool cloneParentRobj = TRUE);
-	~W3DRenderObjectSnapshot() {REF_PTR_RELEASE(m_robj);}
+	virtual ~W3DRenderObjectSnapshot() {REF_PTR_RELEASE(m_robj);}
 	inline void update(RenderObjClass *robj, DrawableInfo *drawInfo, Bool cloneParentRobj=TRUE);	///<refresh the current snapshot with latest state
 	inline void addToScene(void);	///< add this fogged renderobject to the scene.
 protected:

@@ -171,7 +171,7 @@ public:
 public:
  
 	W3DTreeBuffer(void);
-	~W3DTreeBuffer(void); 
+	virtual ~W3DTreeBuffer(void); 
 	/// Add a tree at location.  Name is the w3d model name.
 	void addTree(DrawableID id, Coord3D location, Real scale, Real angle,
 								Real randomScaleAmount, const W3DTreeDrawModuleData *data);
