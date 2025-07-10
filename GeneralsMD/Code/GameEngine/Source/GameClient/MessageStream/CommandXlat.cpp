@@ -3064,7 +3064,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			if (TheGameLogic->isInMultiplayerGame() && !TheGameLogic->isInReplayGame())
 			{
 				Player *localPlayer = ThePlayerList->getLocalPlayer();
-				if (localPlayer && localPlayer->isPlayerActive() || !TheGlobalData->m_netMinPlayers)
+				if (localPlayer || !TheGlobalData->m_netMinPlayers)
 				{
 					ToggleInGameChat();
 					SetInGameChatType( INGAME_CHAT_EVERYONE );

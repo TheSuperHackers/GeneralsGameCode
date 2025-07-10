@@ -199,7 +199,8 @@ void ToggleInGameChat( Bool immediate )
 	if (TheGameLogic->isInReplayGame())
 		return;
 
-	if (!TheGameInfo->isMultiPlayer() && TheGlobalData->m_netMinPlayers)
+	Player* localPlayer = ThePlayerList->getLocalPlayer();
+	if ((localPlayer && localPlayer->isPlayerObserver() && !TheGameInfo->isMultiPlayer()) && TheGlobalData->m_netMinPlayers)
 		return;
 
 	if (chatWindow)
