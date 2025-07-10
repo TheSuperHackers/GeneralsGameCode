@@ -59,11 +59,6 @@
 #include "WW3D2/dx8renderer.h"
 #include "WW3D2/camera.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 //         Private Data                                                     

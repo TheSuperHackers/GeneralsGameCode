@@ -46,11 +46,6 @@
 #include "Lib/trig.h"
 #include "GameLogic/TerrainLogic.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //=============================================================================
 /** Constructor */
@@ -68,7 +63,7 @@ Thing::Thing( const ThingTemplate *thingTemplate )
 	}  // end if
 		
 	m_template = thingTemplate;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	m_templateName = thingTemplate->getName();
 #endif
 	m_transform.Make_Identity();

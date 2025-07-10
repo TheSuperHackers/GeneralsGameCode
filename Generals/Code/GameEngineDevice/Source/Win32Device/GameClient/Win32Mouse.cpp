@@ -37,11 +37,6 @@
 #include "Win32Device/GameClient/Win32Mouse.h"
 #include "WinMain.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // EXTERN /////////////////////////////////////////////////////////////////////////////////////////
 extern Win32Mouse *TheWin32Mouse;

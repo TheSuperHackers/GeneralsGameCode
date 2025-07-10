@@ -593,7 +593,7 @@ public:
 													Real durationInSeconds,
 													Real zRisePerSecond );
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual void DEBUG_addFloatingText(const AsciiString& text,const Coord3D * pos, Color color);
 #endif
 

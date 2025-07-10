@@ -32,11 +32,6 @@
 #include "GameNetwork/networkutil.h"
 #include "GameNetwork/GameMessageParser.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // This function assumes that all of the fields are either of default value or are
 // present in the raw data.

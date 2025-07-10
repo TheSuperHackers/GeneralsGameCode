@@ -38,11 +38,6 @@
 #include "Common/UserPreferences.h"
 #include "GameLogic/GameLogic.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 static const UnsignedShort lobbyPort = 8086; ///< This is the UDP port used by all LANAPI communication
 
@@ -263,7 +258,7 @@ AsciiString GetMessageTypeString(UnsignedInt type)
 
 void LANAPI::checkMOTD( void )
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_useLocalMOTD)
 	{
 		// for a playtest, let's log some play statistics, eh?

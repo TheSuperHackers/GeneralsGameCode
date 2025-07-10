@@ -79,11 +79,6 @@
 /** Get the RGB color comonents of a color */
 //=============================================================================
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 //Put on ice until later M Lorenzen

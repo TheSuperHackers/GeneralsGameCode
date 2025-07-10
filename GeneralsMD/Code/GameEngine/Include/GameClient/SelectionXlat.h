@@ -74,7 +74,7 @@ public:
 	void setDragSelecting(Bool dragSelect);
 	void setLeftMouseButton(Bool state);
   
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
   Bool m_HandOfGodSelectionMode;
   Bool isHandOfGodSelectionMode( void) { return m_HandOfGodSelectionMode; };
 #endif
