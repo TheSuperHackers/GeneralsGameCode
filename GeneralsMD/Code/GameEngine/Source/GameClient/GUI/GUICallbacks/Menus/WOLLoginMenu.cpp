@@ -1467,18 +1467,17 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 									UnicodeString uniLine;
 									uniLine = UnicodeString(MultiByteToWideCharSingleLine(asciiLine.str()).c_str());
 									int len = uniLine.getLength();
-									for (int index = len-1; index >= 0; index--)
+									int index = len - 1;
+									while (index >= 0 && iswspace(uniLine.getCharAt(index)))
 									{
-										if (iswspace(uniLine.getCharAt(index)))
-										{
-											uniLine.removeLastChar();
-										}
-										else
-										{
-											break;
-										}
+										--index;
 									}
-									//uniLine.trim();
+
+									if (index < len - 1)
+									{
+										uniLine.truncateTo(index + 1);
+									}
+
 									DEBUG_LOG(("adding TOS line: [%ls]\n", uniLine.str()));
 									GadgetListBoxAddEntryText(listboxTOS, uniLine, tosColor, -1);
 								}

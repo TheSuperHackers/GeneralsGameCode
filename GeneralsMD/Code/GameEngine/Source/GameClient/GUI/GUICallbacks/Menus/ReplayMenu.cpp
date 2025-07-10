@@ -124,8 +124,7 @@ static Bool readReplayMapInfo(const AsciiString& filename, RecorderClass::Replay
 static void removeReplayExtension(UnicodeString& replayName)
 {
 	const Int extensionLength = TheRecorder->getReplayExtention().getLength();
-		for (Int k=0; k < extensionLength; ++k)
-			replayName.removeLastChar();
+	replayName.truncateBy(extensionLength);
 }
 
 //-------------------------------------------------------------------------------------------------
