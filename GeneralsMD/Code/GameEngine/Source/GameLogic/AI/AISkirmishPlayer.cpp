@@ -239,7 +239,7 @@ void AISkirmishPlayer::processBaseBuilding( void )
 				}
 			}
 		}
-		if (powerPlan && powerInfo && !powerPlan->isEquivalentTo(bldgPlan)) {
+		if (powerInfo && powerPlan && !powerPlan->isEquivalentTo(bldgPlan)) {
 			if (!powerUnderConstruction) {
 				bldgPlan = powerPlan;
 				bldgInfo = powerInfo;
