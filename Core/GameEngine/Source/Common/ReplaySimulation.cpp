@@ -224,7 +224,7 @@ std::vector<AsciiString> ReplaySimulation::resolveFilenameWildcards(const std::v
 			if (lastSep != NULL)
 			{
 				// include one extra char so the separator itself gets included
-				int lenToLastSep = lastSep - dir2.str() + sizeof(char);
+				int lenToLastSep = lastSep - dir2.str() + 1;
 				dir2.truncateTo(lenToLastSep);
 				wildcard.set(wildcard.str() + lenToLastSep);
 			}
