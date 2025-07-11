@@ -480,14 +480,13 @@ public:
 #endif
   Bool m_TiVOFastMode;            ///< When true, the client speeds up the framerate... set by HOTKEY!
 
-#if ENABLE_CONFIGURABLE_SHROUD
-	Bool m_shroudOn;
-#endif
+
 
 #if defined(RTS_DEBUG)
 	Bool m_wireframe;
 	Bool m_stateMachineDebug;
 	Bool m_useCameraConstraints;
+	Bool m_shroudOn;
 	Bool m_fogOfWarOn;
 	Bool m_jabberOn;
 	Bool m_munkeeOn;
