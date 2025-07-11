@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - main
+      - ci-replays
   pull_request:
     branches:
       - main
@@ -41,8 +42,7 @@ jobs:
             generalsmd:
               - 'GeneralsMD/**'
             shared:
-              - '.github/workflows/build-toolchain.yml'
-              - '.github/workflows/ci.yml'
+              - '.github/workflows/**'
               - 'CMakeLists.txt'
               - 'CMakePresets.json'
               - 'cmake/**'
@@ -63,15 +63,15 @@ jobs:
     strategy:
       matrix:
         include:
-          - preset: "vc6"
-            tools: true
-            extras: true
-          - preset: "vc6-profile"
-            tools: true
-            extras: true
-          - preset: "vc6-debug"
-            tools: true
-            extras: true
+          # - preset: "vc6"
+          #   tools: true
+          #   extras: true
+          # - preset: "vc6-profile"
+          #   tools: true
+          #   extras: true
+          # - preset: "vc6-debug"
+          #   tools: true
+          #   extras: true
           - preset: "win32"
             tools: true
             extras: true
@@ -107,15 +107,15 @@ jobs:
     strategy:
       matrix:
         include:
-          - preset: "vc6"
-            tools: true
-            extras: true
-          - preset: "vc6-profile"
-            tools: true
-            extras: true
-          - preset: "vc6-debug"
-            tools: true
-            extras: true
+          # - preset: "vc6"
+          #   tools: true
+          #   extras: true
+          # - preset: "vc6-profile"
+          #   tools: true
+          #   extras: true
+          # - preset: "vc6-debug"
+          #   tools: true
+          #   extras: true
           - preset: "win32"
             tools: true
             extras: true
@@ -123,6 +123,9 @@ jobs:
             tools: true
             extras: true
           - preset: "win32-debug"
+            tools: true
+            extras: true
+          - preset: "win32-debuglog"
             tools: true
             extras: true
           # vcpkg builds have been disabled for now due to excessive build times of 30 minutes per preset
@@ -143,3 +146,50 @@ jobs:
       tools: ${{ matrix.tools }}
       extras: ${{ matrix.extras }}
     secrets: inherit
+
+  replay-test:
+    name: Replay Compatibility Test${{ matrix.preset && '' }}
+    needs: build-generalsmd
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        include:
+          - preset: "win32"
+          - preset: "win32-profile"
+          - preset: "win32-debug"
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Download Game Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: GeneralsMD-${{ matrix.preset }}+t+e
+          path: build
+      - name: Move Replay files to correct folder
+        shell: pwsh
+        run: |
+          $source = "GeneralsMD\Replays"
+          $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour\Replays"
+
+          New-Item -ItemType Directory -Path $destination -Force | Out-Null
+          Get-ChildItem -Path $source -File | Move-Item -Destination $destination
+      - name: Run Replay Compatibility Tests
+        shell: pwsh
+        run: |
+          $exePath = "build\generalszh.exe"
+
+          Write-Host "Checking if executable exists at: $exePath"
+          if (-not (Test-Path $exePath)) {
+              Write-Host "ERROR: Executable not found at $exePath"
+              exit 1
+          }
+
+          $process = Start-Process -FilePath $exePath -ArgumentList "-jobs 2 -headless -replay *.rep" -Wait -PassThru
+          $exitCode = $process.ExitCode
+
+          # Handle non-zero exit code
+          if ($exitCode -ne 0) {
+              Write-Host "Process failed with exit code $exitCode"
+              throw "Executable failed with exit code $exitCode"
+          }
