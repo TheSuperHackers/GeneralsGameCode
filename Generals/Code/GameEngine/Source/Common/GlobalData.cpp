@@ -545,7 +545,6 @@ GlobalData::GlobalData()
 
   m_TiVOFastMode = FALSE;
 
-
 #if defined(RTS_DEBUG)
 	m_wireframe = 0;
 	m_stateMachineDebug = FALSE;
