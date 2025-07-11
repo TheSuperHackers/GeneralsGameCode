@@ -121,11 +121,6 @@ FILE *g_UT_commaLog=NULL;
 #endif
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // I'm making this larger now that we know how big our maps are going to be. 
 enum { OBJ_HASH_SIZE	= 8192 };
@@ -2355,19 +2350,30 @@ void GameLogic::selectObject(Object *obj, Bool createNewSelection, PlayerMaskTyp
 			return;
 		}
 
-		AIGroup *group = NULL;
 		CRCGEN_LOG(( "Creating AIGroup in GameLogic::selectObject()\n" ));
-		group = TheAI->createGroup();
+		AIGroupPtr group = TheAI->createGroup();
 		group->add(obj);
 
 		// add all selected agents to the AI group
 		if (createNewSelection)	{
+#if RETAIL_COMPATIBLE_AIGROUP
 			player->setCurrentlySelectedAIGroup(group);
+#else
+			player->setCurrentlySelectedAIGroup(group.Peek());
+#endif
 		} else {
+#if RETAIL_COMPATIBLE_AIGROUP
 			player->addAIGroupToCurrentSelection(group);
+#else
+			player->addAIGroupToCurrentSelection(group.Peek());
+#endif
 		}
 
+#if RETAIL_COMPATIBLE_AIGROUP
 		TheAI->destroyGroup(group);
+#else
+		group->removeAll();
+#endif
 
 		if (affectClient) {
 			Drawable *draw = obj->getDrawable();
@@ -2392,25 +2398,28 @@ void GameLogic::deselectObject(Object *obj, PlayerMaskType playerMask, Bool affe
 			return;
 		}
 
-		AIGroup *group = NULL;
 		CRCGEN_LOG(( "Removing a unit from a selected group in GameLogic::deselectObject()\n" ));
-		group = TheAI->createGroup();
+		AIGroupPtr group = TheAI->createGroup();
+#if RETAIL_COMPATIBLE_AIGROUP
 		player->getCurrentSelectionAsAIGroup(group);
-		
-		Bool deleted = FALSE;
-		Bool actuallyRemoved = FALSE;
-		
+#else
+		player->getCurrentSelectionAsAIGroup(group.Peek());
+#endif
+
 		if (group) {
-			deleted = group->remove(obj);
-			actuallyRemoved = TRUE;
-		}
-		
-		if (actuallyRemoved) {
+			Bool emptied = group->remove(obj);
+
 			// Set this to be the currently selected group.
-			if (!deleted) {
+			if (!emptied) {
+#if RETAIL_COMPATIBLE_AIGROUP
 				player->setCurrentlySelectedAIGroup(group);
 				// Then, cleanup the group.
 				TheAI->destroyGroup(group);
+#else
+				player->setCurrentlySelectedAIGroup(group.Peek());
+				// Then, cleanup the group.
+				group->removeAll();
+#endif
 			} else {
 				// NULL will clear the group.
 				player->setCurrentlySelectedAIGroup(NULL);

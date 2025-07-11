@@ -101,11 +101,6 @@
 #include "Common/CRCDebug.h"
 #include "Common/MiscAudio.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #ifdef DEBUG_OBJECT_ID_EXISTS
 ObjectID TheObjectIDToDebug = INVALID_ID;
@@ -203,7 +198,7 @@ Object::Object( const ThingTemplate *tt, const ObjectStatusMaskType &objectStatu
 	m_formationID(NO_FORMATION_ID),
 	m_isReceivingDifficultyBonus(FALSE)
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	m_hasDiedAlready = false;
 #endif
 	//Modules have not been created yet!
@@ -497,7 +492,7 @@ void Object::initObject()
 
 	// Kris -- All missiles must be projectiles! This is the perfect place to assert them!
 	// srj: yes, but only in debug...
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if( !isKindOf( KINDOF_PROJECTILE ) )
 	{
 		if( isKindOf( KINDOF_SMALL_MISSILE ) || isKindOf( KINDOF_BALLISTIC_MISSILE ) )
@@ -563,8 +558,7 @@ Object::~Object()
 		ThePartitionManager->unRegisterObject( this );
 
 	// if we are in a group, remove us
-	if (m_group)
-		m_group->remove( this );
+	leaveGroup();
 	
 	// note, do NOT free these, there are just a shadow copy!
 	m_ai = NULL;
@@ -3841,7 +3835,7 @@ void Object::xfer( Xfer *xfer )
 	}
 
 	// Doesn't need to be saved.  These are created as needed.  jba.
-	//AIGroup*		m_group;															///< if non-NULL, we are part of this group of agents
+	//m_group;
 
 	// don't need to save m_partitionData.
 	DEBUG_ASSERTCRASH(!(xfer->getXferMode() == XFER_LOAD && m_partitionData == NULL), ("should not be in partitionmgr yet"));
@@ -3856,7 +3850,7 @@ void Object::xfer( Xfer *xfer )
 	//m_body;
 	//m_ai;
 	//m_physics;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	//m_hasDiedAlready;
 #endif
 
@@ -4020,7 +4014,7 @@ void Object::onCapture( Player *oldOwner, Player *newOwner )
 void Object::onDie( DamageInfo *damageInfo )
 {
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	DEBUG_ASSERTCRASH(m_hasDiedAlready == false, ("Object::onDie has been called multiple times. This is invalid. jkmcd"));
 	m_hasDiedAlready = true;
 #endif
@@ -4482,7 +4476,7 @@ void Object::unshroud()
 //-------------------------------------------------------------------------------------------------
 Real Object::getVisionRange() const
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(m_visionRange, 0, 0);
@@ -4518,7 +4512,7 @@ Real Object::getShroudClearingRange() const
 		shroudClearingRange = getGeometryInfo().getBoundingCircleRadius();
 	}
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(shroudClearingRange, 0, 0);
@@ -4575,7 +4569,7 @@ void Object::setShroudClearingRange( Real newShroudClearingRange )
 //-------------------------------------------------------------------------------------------------
 Real Object::getShroudRange() const
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_debugVisibility) 
 	{
 		Vector3 pos(m_shroudRange, 0, 0);
@@ -5446,7 +5440,11 @@ RadarPriorityType Object::getRadarPriority( void ) const
 // ------------------------------------------------------------------------------------------------
 AIGroup *Object::getGroup(void)
 {
+#if RETAIL_COMPATIBLE_AIGROUP
 	return m_group;
+#else
+	return m_group.Peek();
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5456,7 +5454,11 @@ void Object::enterGroup( AIGroup *group )
 	// if we are in another group, remove ourselves from it first
 	leaveGroup();
 
+#if RETAIL_COMPATIBLE_AIGROUP
 	m_group = group;
+#else
+	m_group = AIGroupPtr::Create_AddRef(group);
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -5467,7 +5469,7 @@ void Object::leaveGroup( void )
 	if (m_group)
 	{
 		// to avoid recursion, set m_group to NULL before removing
-		AIGroup *group = m_group;
+		AIGroupPtr group = m_group;
 		m_group = NULL;
 		group->remove( this );
 	}

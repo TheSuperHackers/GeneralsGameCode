@@ -76,11 +76,6 @@
 // This is for non-RC builds only!!!
 #define VERBOSE_VERSION L"Release"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 static NameKeyType		comboBoxOnlineIPID	= NAMEKEY_INVALID;
@@ -1301,18 +1296,9 @@ static void saveOptions( void )
 				prefString.format("%d %d", xres, yres );
 				(*pref)["Resolution"] = prefString;
 
-				// delete the shell
-				delete TheShell;
-				TheShell = NULL;
+				TheShell->recreateWindowLayouts();
 
-				// create the shell
-				TheShell = MSGNEW("GameClientSubsystem") Shell;
-				if( TheShell )
-					TheShell->init();
-				
 				TheInGameUI->recreateControlBar();
-
-				TheShell->push( AsciiString("Menus/MainMenu.wnd") );
 			}
 		}
 	}

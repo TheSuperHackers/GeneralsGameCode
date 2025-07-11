@@ -58,11 +58,7 @@ void StdBIGFileSystem::init() {
     AsciiString installPath;
     GetStringFromGeneralsRegistry("", "InstallPath", installPath );
     //@todo this will need to be ramped up to a crash for release
-#ifndef RTS_INTERNAL
-    // had to make this non-internal only, otherwise we can't autobuild
-    // GeneralsZH...
     DEBUG_ASSERTCRASH(installPath != "", ("Be 1337! Go install Generals!"));
-#endif
     if (installPath!="")
       loadBigFilesFromDirectory(installPath, "*.big");
 }

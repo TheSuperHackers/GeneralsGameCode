@@ -286,7 +286,7 @@ public:
 		return m_info.size(); 
 	}
 	
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	Bool containsPartialName(const char* n) const
 	{
 		for (size_t i = 0; i < m_info.size(); i++)
@@ -697,6 +697,11 @@ private:
 	
 	//Code renderer handles these states now.
 	//AsciiString							m_inventoryImage[ INV_IMAGE_NUM_IMAGES ];  ///< portrait inventory pictures
+
+	// TheSuperHackers @bugfix Caball009/xezon 06/07/2025 No longer copy SparseMatchFinder to prevent copied instances linking to unrelated data.
+	// This avoids mismatching in certain maps, for example those that spawn units with veterancy.
+	typedef SparseMatchFinder<WeaponTemplateSet, WeaponSetFlags, SparseMatchFinderFlags_NoCopy> WeaponTemplateSetFinder;
+	typedef SparseMatchFinder<ArmorTemplateSet, ArmorSetFlags, SparseMatchFinderFlags_NoCopy> ArmorTemplateSetFinder;
 
 	// ---- STL-sized things
 	std::vector<ProductionPrerequisite>	m_prereqInfo;				///< the unit Prereqs for this tech

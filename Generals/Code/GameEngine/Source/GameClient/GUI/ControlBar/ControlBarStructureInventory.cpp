@@ -44,11 +44,6 @@
 #include "GameClient/GadgetPushButton.h"
 #include "GameClient/HotKey.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #define STOP_ID			10
 #define EVACUATE_ID	11

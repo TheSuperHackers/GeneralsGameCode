@@ -55,6 +55,8 @@ public:
 	W3DRadar( void );
 	~W3DRadar( void );
 
+	virtual void xfer( Xfer *xfer );
+
 	virtual void init( void );																		///< subsystem init
 	virtual void update( void );																	///< subsystem update
 	virtual void reset( void );																		///< subsystem reset
@@ -70,6 +72,11 @@ public:
 
 protected:
 
+	virtual void onLocalRadarObjectAdded( const RadarObject* radarObject );
+	virtual void onLocalRadarObjectRemoved( const RadarObject* radarObject );
+
+	void rebuildCachedHeroObjectList();
+
 	void drawSingleBeaconEvent( Int pixelX, Int pixelY, Int width, Int height, Int index );
 	void drawSingleGenericEvent( Int pixelX, Int pixelY, Int width, Int height, Int index );
 
@@ -80,7 +87,7 @@ protected:
 	void drawViewBox( Int pixelX, Int pixelY, Int width, Int height );  ///< draw view box
 	void buildTerrainTexture( TerrainLogic *terrain );	 ///< create the terrain texture of the radar
 	void drawIcons( Int pixelX, Int pixelY, Int width, Int height );	///< draw all of the radar icons
-	void renderObjectList( const RadarObject *listHead, TextureClass *texture, Bool calcHero = FALSE );			 ///< render an object list to the texture
+	void renderObjectList( const RadarObject *listHead, TextureClass *texture );			 ///< render an object list to the texture
 	void interpolateColorForHeight( RGBColor *color, 
 																	Real height, 
 																	Real hiZ, 
@@ -118,7 +125,7 @@ protected:
 	Real m_viewZoom;															///< camera zoom used for the view box we have	
 	ICoord2D m_viewBox[ 4 ];											///< radar cell points for the 4 corners of view box
 
-	std::list<const Coord3D *> m_cachedHeroPosList;					//< cache of hero positions for drawing icons in radar overlay
+	std::vector<const Object *> m_cachedHeroObjectList; //< cache of hero objects for drawing icons in radar overlay
 };
 
 

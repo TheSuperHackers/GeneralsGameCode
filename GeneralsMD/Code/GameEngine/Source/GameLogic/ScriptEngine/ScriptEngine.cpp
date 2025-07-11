@@ -57,11 +57,6 @@
 #include "GameLogic/ScriptEngine.h"
 #include "GameLogic/SidesList.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // These are for debugger window
 static int st_LastCurrentFrame;
@@ -105,7 +100,7 @@ Bool st_particleSystemNeedsStopping = FALSE; ///< Set along with st_particleSyst
 #define FORMAT_STRING_LEADING_STRING		"%s%.2f"
 // That's it for particle editor
 
-#if defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	#define DO_VTUNE_STUFF
 #endif
 
@@ -603,7 +598,7 @@ void ScriptEngine::init( void )
 
 	curTemplate = &m_actionTemplates[ScriptAction::DEBUG_CRASH_BOX];
 	curTemplate->m_internalName = "DEBUG_CRASH_BOX";
-	curTemplate->m_uiName = "{INTERNAL}_/Debug/Display a crash box (debug/internal builds only).";
+	curTemplate->m_uiName = "{INTERNAL}_/Debug/Display a crash box (debug builds only).";
 	curTemplate->m_numParameters = 1;
 	curTemplate->m_parameters[0] = Parameter::TEXT_STRING;
 	curTemplate->m_numUiStrings = 1;
@@ -6377,7 +6372,7 @@ void ScriptEngine::setCounter( ScriptAction *pAction )
 //-------------------------------------------------------------------------------------------------
 void ScriptEngine::setFade( ScriptAction *pAction )
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (TheGlobalData->m_disableCameraFade)
 	{
 		m_fade = FADE_NONE;
@@ -7933,9 +7928,13 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 		}
 
 		AIUpdateInterface *ai = obj ? obj->getAIUpdateInterface() : NULL;
-		AIGroup *aigroup = (team ? TheAI->createGroup() : NULL);
+		AIGroupPtr aigroup = (team ? TheAI->createGroup() : NULL);
 		if (aigroup) {
+#if RETAIL_COMPATIBLE_AIGROUP
 			team->getTeamAsAIGroup(aigroup);
+#else
+			team->getTeamAsAIGroup(aigroup.Peek());
+#endif
 		}
 
 		if( ai || aigroup ) {
@@ -8020,7 +8019,11 @@ void ScriptEngine::evaluateAndProgressAllSequentialScripts( void )
 					} else if (team) {
 						// attempt to rebuild the aigroup, as it probably expired during the action execution
 						aigroup = (team ? TheAI->createGroup() : NULL);
+#if RETAIL_COMPATIBLE_AIGROUP
 						team->getTeamAsAIGroup(aigroup);
+#else
+						team->getTeamAsAIGroup(aigroup.Peek());
+#endif
 					}
 
 					if (aigroup && aigroup->isIdle()) {
@@ -9332,7 +9335,7 @@ void ScriptEngine::loadPostProcess( void )
 
 }  // end loadPostProcess
 
-//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+//#if defined(RTS_DEBUG)
 void ScriptEngine::debugVictory( void )
 {
 	ScriptAction *action = newInstance(ScriptAction)(ScriptAction::VICTORY);

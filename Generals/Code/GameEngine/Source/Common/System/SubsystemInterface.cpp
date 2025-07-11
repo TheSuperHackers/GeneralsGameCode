@@ -29,11 +29,6 @@
 #include "Common/SubsystemInterface.h"
 #include "Common/Xfer.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 #ifdef DUMP_PERF_STATS
 #include "GameLogic/GameLogic.h"

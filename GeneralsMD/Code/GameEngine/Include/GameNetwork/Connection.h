@@ -79,7 +79,7 @@ public:
 	void setQuitting( void );
 	Bool isQuitting( void ) { return m_isQuitting; }
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	void debugPrintCommands();
 #endif
 

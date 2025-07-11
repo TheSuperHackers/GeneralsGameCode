@@ -138,16 +138,13 @@ public:
 
 	inline Int getConditionsYesCount() const { return 1; }
 	inline const WeaponSetFlags& getNthConditionsYes(Int i) const { return m_types; }
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	inline AsciiString getDescription() const { return AsciiString("ArmorTemplateSet"); }
 #endif
 };
 
 //-------------------------------------------------------------------------------------------------
 typedef std::vector<WeaponTemplateSet> WeaponTemplateSetVector;
-
-//-------------------------------------------------------------------------------------------------
-typedef SparseMatchFinder<WeaponTemplateSet, WeaponSetFlags> WeaponTemplateSetFinder;
 
 //-------------------------------------------------------------------------------------------------
 enum WeaponChoiceCriteria CPP_11(: Int)

@@ -53,11 +53,6 @@
 #include "GameLogic/Module/ContainModule.h"
 #include "GameLogic/Module/StealthUpdate.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // GLOBALS ////////////////////////////////////////////////////////////////////////////////////////
 Radar *TheRadar = NULL;  ///< the radar global singleton
@@ -75,6 +70,8 @@ void Radar::deleteListResources( void )
 	// delete entries from the local object list
 	while( m_localObjectList )
 	{
+
+		onLocalRadarObjectRemoved( m_localObjectList );
 
 		// get next object
 		nextObject = m_localObjectList->friend_getNext();
@@ -397,13 +394,13 @@ void Radar::newMap( TerrainLogic *terrain )
 /** Add an object to the radar list.  The object will be sorted in the list to be grouped
 	* using it's radar priority */
 //-------------------------------------------------------------------------------------------------
-void Radar::addObject( Object *obj )
+bool Radar::addObject( Object *obj )
 {
 
 	// get the radar priority for this object
 	RadarPriorityType newPriority = obj->getRadarPriority();
 	if( isPriorityVisible( newPriority ) == FALSE )
-		return;
+		return false;
 
 	// if this object is on the radar, remove it in favor of the new add
 	RadarObject **list;
@@ -547,6 +544,12 @@ void Radar::addObject( Object *obj )
 
 	}  // end else
 
+	if (list == &m_localObjectList)
+	{
+		onLocalRadarObjectAdded(newObj);
+	}
+
+	return true;
 }  // end addObject
 
 //-------------------------------------------------------------------------------------------------
@@ -562,6 +565,10 @@ Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 		
 		if( radarObject->friend_getObject() == obj )
 		{
+			if (list == &m_localObjectList)
+			{
+				onLocalRadarObjectRemoved( radarObject );
+			}
 
 			// unlink the object from list
 			if( prevObject == NULL )
@@ -593,24 +600,24 @@ Bool Radar::deleteFromList( Object *obj, RadarObject **list )
 //-------------------------------------------------------------------------------------------------
 /** Remove an object from the radar, the object may reside in any list */
 //-------------------------------------------------------------------------------------------------
-void Radar::removeObject( Object *obj )
+bool Radar::removeObject( Object *obj )
 {
 
 	// sanity
 	if( obj->friend_getRadarData() == NULL )
-		return;
+		return false;
 
 	if( deleteFromList( obj, &m_localObjectList ) == TRUE )
-		return;
+		return true;
 	else if( deleteFromList( obj, &m_objectList ) == TRUE )
-		return;
+		return true;
 	else
 	{
 
 		// sanity
 		DEBUG_ASSERTCRASH( 0, ("Radar: Tried to remove object '%s' which was not found\n",
 											 obj->getTemplate()->getName().str()) );
-
+		return false;
 	}  // end else
 
 }  // end removeObject
