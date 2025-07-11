@@ -1239,11 +1239,6 @@ static CommandLineParam paramsForEngineInit[] =
 	// Number of frames between each CRC that is written to replay files in singleplayer games.
 	{ "-ReplayCRCInterval", parseReplayCRCInterval },
 #endif
-
-#if ENABLE_CONFIGURABLE_SHROUD && defined(RTS_DEBUG)
-	{ "-noshroud", parseNoShroud },
-#endif
-
 #if defined(RTS_DEBUG)
 	{ "-saveAllStats", parseSaveAllStats },
 	{ "-noDraw", parseNoDraw },
@@ -1282,6 +1277,9 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-vTune", parseVTune },
 	{ "-selectTheUnselectable", parseSelectAll },
 	{ "-RunAhead", parseRunAhead },
+#if ENABLE_CONFIGURABLE_SHROUD
+	{ "-noshroud", parseNoShroud },
+#endif
 	{ "-forceBenchmark", parseForceBenchmark },
 	{ "-buildmapcache", parseBuildMapCache },
 	{ "-noshadowvolumes", parseNoShadows },
