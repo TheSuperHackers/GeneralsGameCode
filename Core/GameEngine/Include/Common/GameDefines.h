@@ -41,7 +41,7 @@
 #define ENABLE_GAMETEXT_SUBSTITUTES (1) // The code can provide substitute texts when labels and strings are missing in the STR or CSF translation file
 #endif
 
-// Originally the configurable shroud sat behind #if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+// Previously the configurable shroud sat behind #if defined(RTS_DEBUG)
 // Enable the configurable shroud to properly draw the terrain in World Builder without RTS_DEBUG compiled in.
 // Disable the configurable shroud to make shroud hacking a bit less accessible in Release game builds.
 #ifndef ENABLE_CONFIGURABLE_SHROUD
