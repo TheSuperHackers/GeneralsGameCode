@@ -45,11 +45,6 @@
 #include "GameLogic/Module/PhysicsUpdate.h"
 #include "GameLogic/Weapon.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -451,7 +446,7 @@ Bool DumbProjectileBehavior::calcFlightPath(Bool recalcNumSegments)
 	flightCurve.getSegmentPoints( m_flightPathSegments, &m_flightPath );
 	DEBUG_ASSERTCRASH(m_flightPathSegments == m_flightPath.size(), ("m_flightPathSegments mismatch"));
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if( TheGlobalData->m_debugProjectilePath )
 		displayFlightPath();
 #endif
@@ -674,7 +669,7 @@ UpdateSleepTime DumbProjectileBehavior::update()
 // ------------------------------------------------------------------------------------------------
 /** displayFlightPath for debugging */
 // ------------------------------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 void DumbProjectileBehavior::displayFlightPath()
 {
 	extern void addIcon(const Coord3D *pos, Real width, Int numFramesDuration, RGBColor color);

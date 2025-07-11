@@ -388,7 +388,7 @@ void WorldHeightMapEdit::loadBaseImages(void)
 {
  
  	/// @todo - take this out when we are done evaluating terrain textures. 
-#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL))
+#if defined(RTS_DEBUG)
  	loadDirectoryOfImages("..\\TestArt\\TestTerrain");
 #endif
 
@@ -1346,7 +1346,7 @@ void WorldHeightMapEdit::autoBlendOut(Int xIndex, Int yIndex, Int globalEdgeClas
 		delete pCurNode;
 	}
 
-	if (pProcessed) delete pProcessed;
+	if (pProcessed) delete[] pProcessed;
 	pProcessed = NULL;
 }
 

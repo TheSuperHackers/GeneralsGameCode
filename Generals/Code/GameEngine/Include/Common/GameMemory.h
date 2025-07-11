@@ -53,12 +53,12 @@
 	#define DISABLE_MEMORYPOOL_CHECKPOINTING 1
 #endif
 
-#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) && !defined(MEMORYPOOL_DEBUG_CUSTOM_NEW) && !defined(DISABLE_MEMORYPOOL_DEBUG_CUSTOM_NEW)
+#if defined(RTS_DEBUG) && !defined(MEMORYPOOL_DEBUG_CUSTOM_NEW) && !defined(DISABLE_MEMORYPOOL_DEBUG_CUSTOM_NEW)
 	#define MEMORYPOOL_DEBUG_CUSTOM_NEW
 #endif
 
-//#if (defined(RTS_DEBUG) || defined(RTS_INTERNAL)) && !defined(MEMORYPOOL_DEBUG) && !defined(DISABLE_MEMORYPOOL_DEBUG)
-#if (defined(RTS_DEBUG)) && !defined(MEMORYPOOL_DEBUG) && !defined(DISABLE_MEMORYPOOL_DEBUG)
+//#if defined(RTS_DEBUG) && !defined(MEMORYPOOL_DEBUG) && !defined(DISABLE_MEMORYPOOL_DEBUG)
+#if defined(RTS_DEBUG) && !defined(MEMORYPOOL_DEBUG) && !defined(DISABLE_MEMORYPOOL_DEBUG)
 	#define MEMORYPOOL_DEBUG
 #endif
 

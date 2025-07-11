@@ -38,11 +38,6 @@
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/AIPathfind.h"
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
 SupplyWarehouseDockUpdateModuleData::SupplyWarehouseDockUpdateModuleData( void )

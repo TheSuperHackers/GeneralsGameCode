@@ -472,7 +472,7 @@ CAboutDlg::OnInitDialog (void)
 				version_minor = pversion_info->dwFileVersionLS;
 			}
 		}
-		SAFE_DELETE (pblock);
+		SAFE_DELETE_ARRAY(pblock);
 	}
 	
 	// Put the version string into the dialog

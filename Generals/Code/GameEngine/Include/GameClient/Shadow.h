@@ -116,7 +116,7 @@ public:
 
 		};
 
-		#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)	
+		#if defined(RTS_DEBUG)	
 		virtual void getRenderCost(RenderCost & rc) const = 0;
 		#endif
 

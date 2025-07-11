@@ -832,9 +832,6 @@ void WaterTracksRenderSystem::update()
 	Int timeDiff = timeGetTime()-iLastTime;
 	iLastTime += timeDiff;
 
-	//Lock framerate to 30 fps
-	timeDiff = 1.0f/30.0f*1000.0f;
-
 	//first update all the tracks
 	while( mod )
 	{

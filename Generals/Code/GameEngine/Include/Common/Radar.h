@@ -190,9 +190,8 @@ public:
  	Bool tryEvent( RadarEventType event, const Coord3D *pos );	///< try to make a "stealth" event
 
 	// adding and removing objects from the radar
-	void addObject( Object *obj );													///< add object to radar
-	void removeObject( Object *obj );												///< remove object from radar
-	void examineObject( Object *obj );											///< re-examine object and resort if needed
+	virtual bool addObject( Object *obj );									///< add object to radar
+	virtual bool removeObject( Object *obj );								///< remove object from radar
 
 	// radar options
 	void hide( Bool hide ) { m_radarHidden = hide; }				///< hide/unhide the radar
@@ -226,6 +225,9 @@ protected:
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess( void );
+
+	virtual void onLocalRadarObjectAdded( const RadarObject* radarObject ) = 0;
+	virtual void onLocalRadarObjectRemoved( const RadarObject* radarObject ) = 0;
 
 	/// internal method for creating a radar event with specific colors
 	void internalCreateEvent( const Coord3D *world, RadarEventType type, Real secondsToLive,
@@ -299,6 +301,8 @@ public:
 	virtual void draw(Int pixelX, Int pixelY, Int width, Int height) { }
 	virtual void clearShroud() { }
 	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting) { }
+	virtual void onLocalRadarObjectAdded(const RadarObject*) { }
+	virtual void onLocalRadarObjectRemoved(const RadarObject*) { }
 };
 
 #endif  // __RADAR_H_

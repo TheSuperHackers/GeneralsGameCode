@@ -93,11 +93,6 @@
 #include "intersec.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off) 
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 // Definitions of static members:
 const float	RenderObjClass::AT_MIN_LOD = FLT_MAX;

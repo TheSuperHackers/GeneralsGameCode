@@ -161,7 +161,7 @@ private:
 	// since ThingTemplates are shared between many, many Things, the Thing
 	// should never be able to change it.
 	OVERRIDE<ThingTemplate> m_template;	///< reference back to template database
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	AsciiString m_templateName;
 #endif
 	/*

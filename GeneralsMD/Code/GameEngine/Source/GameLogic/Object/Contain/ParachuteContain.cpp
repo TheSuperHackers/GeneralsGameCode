@@ -50,11 +50,6 @@
 const Real NO_START_Z = 1e10;
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 // PRIVATE ////////////////////////////////////////////////////////////////////////////////////////

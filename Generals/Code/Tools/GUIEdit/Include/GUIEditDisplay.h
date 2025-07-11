@@ -117,15 +117,16 @@ public:
 	virtual void preloadTextureAssets( AsciiString texture ) {}
 	virtual void toggleLetterBox(void) {}
 	virtual void enableLetterBox(Bool enable) {}
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual void dumpModelAssets(const char *path) {}
 #endif
 	virtual void doSmartAssetPurgeAndPreload(const char* usageFileName) {}
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	virtual void dumpAssetUsage(const char* mapname) {}
 #endif
 
 	virtual Real getAverageFPS(void) { return 0; }
+	virtual Real getCurrentFPS(void) { return 0; }
 	virtual Int getLastFrameDrawCalls( void ) { return 0; }
 
 protected:

@@ -86,11 +86,6 @@
 #include "GameNetwork/NetworkInterface.h"
 
 
-#ifdef RTS_INTERNAL
-// for occasional debugging...
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 
 #define MAX_PATH_SUBJECTS 64
@@ -348,7 +343,7 @@ void GameLogic::prepareNewGame( Int gameMode, GameDifficulty diff, Int rankPoint
 //-------------------------------------------------------------------------------------------------
 /** This message handles dispatches object command messages to the
   * appropriate objects.
-	* @todo Rename this to "CommandProcessor", or similiar. */
+	* @todo Rename this to "CommandProcessor", or similar. */
 //-------------------------------------------------------------------------------------------------
 void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 {
@@ -360,7 +355,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 	DEBUG_ASSERTCRASH( thisPlayer, ("logicMessageDispatcher: Processing message from unknown player (player index '%d')\n", 
 																	msg->getPlayerIndex()) );
 	
-	AIGroup *currentlySelectedGroup = NULL;
+	AIGroupPtr currentlySelectedGroup = NULL;
 
 	if (isInGame())
 	{
@@ -369,15 +364,21 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			if (msg->getType() != GameMessage::MSG_LOGIC_CRC && msg->getType() != GameMessage::MSG_SET_REPLAY_CAMERA)
 			{
 				currentlySelectedGroup = TheAI->createGroup(); // can't do this outside a game - it'll cause sync errors galore.
-				CRCGEN_LOG(( "Creating AIGroup %d in GameLogic::logicMessageDispatcher()\n", (currentlySelectedGroup)?currentlySelectedGroup->getID():0 ));
+				CRCGEN_LOG(( "Creating AIGroup %d in GameLogic::logicMessageDispatcher()\n", currentlySelectedGroup?currentlySelectedGroup->getID():0 ));
+#if RETAIL_COMPATIBLE_AIGROUP
 				thisPlayer->getCurrentSelectionAsAIGroup(currentlySelectedGroup);
+#else
+				thisPlayer->getCurrentSelectionAsAIGroup(currentlySelectedGroup.Peek());
+#endif
 
-				// We can't issue commands to groups that contain units that don't belong the issuing player, so pretend like 
+				// We can't issue commands to groups that contain units that don't belong to the issuing player, so pretend like 
 				// there's nothing selected. Also, if currentlySelectedGroup is empty, go ahead and delete it, so that we can skip
 				// any processing on it.
 				if (currentlySelectedGroup->isEmpty())
 				{
+#if RETAIL_COMPATIBLE_AIGROUP
 					TheAI->destroyGroup(currentlySelectedGroup);
+#endif
 					currentlySelectedGroup = NULL;
 				}
 
@@ -453,13 +454,19 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_CLEAR_GAME_DATA:
 		{
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 			if (TheDisplay && TheGlobalData->m_dumpAssetUsage)
 				TheDisplay->dumpAssetUsage(TheGlobalData->m_mapName.str());
 #endif
 
 			if (currentlySelectedGroup)
+			{
+#if RETAIL_COMPATIBLE_AIGROUP
 				TheAI->destroyGroup(currentlySelectedGroup);
+#else
+				currentlySelectedGroup->removeAll();
+#endif
+			}
 			currentlySelectedGroup = NULL;
 			TheGameLogic->clearGameData();
 			break;
@@ -675,10 +682,14 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = TheGameLogic->findObjectByID(sourceID);
 			if (source != NULL)
 			{
-				AIGroup* theGroup = TheAI->createGroup();
+				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupDoSpecialPower( specialPowerID, options );
+#if RETAIL_COMPATIBLE_AIGROUP
 				TheAI->destroyGroup(theGroup);
+#else
+				theGroup->removeAll();
+#endif
 			}
 			else
 			{
@@ -716,10 +727,14 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = TheGameLogic->findObjectByID(sourceID);
 			if (source != NULL)
 			{
-				AIGroup* theGroup = TheAI->createGroup();
+				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupDoSpecialPowerAtLocation( specialPowerID, &targetCoord, angle, objectInWay, options );
+#if RETAIL_COMPATIBLE_AIGROUP
 				TheAI->destroyGroup(theGroup);
+#else
+				theGroup->removeAll();
+#endif
 			}
 			else
 			{
@@ -755,10 +770,14 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = TheGameLogic->findObjectByID(sourceID);
 			if (source != NULL)
 			{
-				AIGroup* theGroup = TheAI->createGroup();
+				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupDoSpecialPowerAtObject( specialPowerID, target, options );
+#if RETAIL_COMPATIBLE_AIGROUP
 				TheAI->destroyGroup(theGroup);
+#else
+				theGroup->removeAll();
+#endif
 			}
 			else
 			{
@@ -915,7 +934,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			break;
 		}
 		
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL) || defined (_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+#if defined(RTS_DEBUG) || defined (_ALLOW_DEBUG_CHEATS_IN_RELEASE)
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_DEBUG_KILL_SELECTION:
 		{
@@ -1003,7 +1022,11 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		case GameMessage::MSG_EXIT:
 		{
 			Object *objectWantingToExit = TheGameLogic->findObjectByID( msg->getArgument( 0 )->objectID );
+#if RETAIL_COMPATIBLE_AIGROUP
 			Object *objectContainingExiter = getSingleObjectFromSelection(currentlySelectedGroup);
+#else
+			Object *objectContainingExiter = getSingleObjectFromSelection(currentlySelectedGroup.Peek());
+#endif
 
 			// sanity
 			if( objectWantingToExit == NULL )
@@ -1190,10 +1213,14 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Object* source = TheGameLogic->findObjectByID(sourceID);
 			if (source != NULL)
 			{
-				AIGroup* theGroup = TheAI->createGroup();
+				AIGroupPtr theGroup = TheAI->createGroup();
 				theGroup->add(source);
 				theGroup->groupOverrideSpecialPowerDestination( spType, loc, CMD_FROM_PLAYER );
+#if RETAIL_COMPATIBLE_AIGROUP
 				TheAI->destroyGroup(theGroup);
+#else
+				theGroup->removeAll();
+#endif
 			}
 			else
 			{
@@ -1305,7 +1332,11 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_CANCEL_UPGRADE:
 		{
+#if RETAIL_COMPATIBLE_AIGROUP
 			Object *producer = getSingleObjectFromSelection(currentlySelectedGroup);
+#else
+			Object *producer = getSingleObjectFromSelection(currentlySelectedGroup.Peek());
+#endif
 			const UpgradeTemplate *upgradeT = TheUpgradeCenter->findUpgradeByKey( (NameKeyType)(msg->getArgument( 0 )->integer) );
 
 			// sanity
@@ -1331,7 +1362,11 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		//---------------------------------------------------------------------------------------------
 		case GameMessage::MSG_QUEUE_UNIT_CREATE:
 		{
+#if RETAIL_COMPATIBLE_AIGROUP
 			Object *producer = getSingleObjectFromSelection(currentlySelectedGroup);
+#else
+			Object *producer = getSingleObjectFromSelection(currentlySelectedGroup.Peek());
+#endif
 			const ThingTemplate *whatToCreate;
 			ProductionID productionID;
 
@@ -1364,7 +1399,11 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		//-------------------------------------------------------------------------------------------------
 		case GameMessage::MSG_CANCEL_UNIT_CREATE:
 		{
+#if RETAIL_COMPATIBLE_AIGROUP
 			Object *producer = getSingleObjectFromSelection(currentlySelectedGroup);
+#else
+			Object *producer = getSingleObjectFromSelection(currentlySelectedGroup.Peek());
+#endif
 			ProductionID productionID = (ProductionID)msg->getArgument( 0 )->integer;
 			
 			// sanity
@@ -1396,7 +1435,11 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 			Real angle;
 
 			// get player, what to place, and location
+#if RETAIL_COMPATIBLE_AIGROUP
 			Object *constructorObject = getSingleObjectFromSelection(currentlySelectedGroup);
+#else
+			Object *constructorObject = getSingleObjectFromSelection(currentlySelectedGroup.Peek());
+#endif
 			place = TheThingFactory->findByTemplateID( msg->getArgument( 0 )->integer );
 			loc = msg->getArgument( 1 )->location;
 			angle = msg->getArgument( 2 )->real;
@@ -1443,7 +1486,11 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		{
 
 			// get the building to cancel construction on
+#if RETAIL_COMPATIBLE_AIGROUP
 			Object *building = getSingleObjectFromSelection(currentlySelectedGroup);
+#else
+			Object *building = getSingleObjectFromSelection(currentlySelectedGroup.Peek());
+#endif
 			if( building == NULL )
 				break;
 
@@ -1704,10 +1751,12 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 		// --------------------------------------------------------------------------------------------
 		case GameMessage::MSG_REMOVE_BEACON:
 		{
-	
-			AIGroup *allSelectedObjects = NULL;
-			allSelectedObjects = TheAI->createGroup();
+			AIGroupPtr allSelectedObjects = TheAI->createGroup();
+#if RETAIL_COMPATIBLE_AIGROUP
 			thisPlayer->getCurrentSelectionAsAIGroup(allSelectedObjects); // need to act on all objects, so we can hide teammates' beacons.
+#else
+			thisPlayer->getCurrentSelectionAsAIGroup(allSelectedObjects.Peek()); // need to act on all objects, so we can hide teammates' beacons.
+#endif
 			if( allSelectedObjects )
 			{
 				const VecObjectID& selectedObjects = allSelectedObjects->getAllIDs();
@@ -1748,11 +1797,13 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 						}
 					}
 				}
+#if RETAIL_COMPATIBLE_AIGROUP
 				if (allSelectedObjects->isEmpty())
 				{
 					TheAI->destroyGroup(allSelectedObjects);
 					allSelectedObjects = NULL;
 				}
+#endif
 			}
 			break;
 		} // end beacon removal
@@ -1951,13 +2002,13 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 				if (thisPlayer->isLocalPlayer())
 				{
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 					// don't even put this in release, cause someone might hack it.
 					if (!TheDebugIgnoreSyncErrors)
 					{
 #endif
 						m_shouldValidateCRCs = TRUE;
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 					}
 #endif
 				}
@@ -1997,6 +2048,14 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 	}  // end switch
 
+#if RETAIL_COMPATIBLE_AIGROUP
+	// TheSuperHackers @bugfix xezon 28/06/2025 This hack avoids crashing when players are selected during Replay playback.
+	// It can read data from an already deleted AIGroup and return this function when its member size is 0, signifying that
+	// it is indeed deleted.
+	if (currentlySelectedGroup && currentlySelectedGroup->getCount() == 0)
+		return;
+#endif
+
 	/**/ /// @todo: multiplayer semantics
 	if (currentlySelectedGroup && TheRecorder->isPlaybackMode() && TheGlobalData->m_useCameraInReplay && TheControlBar->getObserverLookAtPlayer() == thisPlayer /*&& !TheRecorder->isMultiplayer()*/)
 	{
@@ -2017,7 +2076,11 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 
 	if( currentlySelectedGroup != NULL )
 	{
+#if RETAIL_COMPATIBLE_AIGROUP
 		TheAI->destroyGroup(currentlySelectedGroup);
+#else
+		currentlySelectedGroup->removeAll();
+#endif
 	}
 
 }  // end logicMessageDispatches

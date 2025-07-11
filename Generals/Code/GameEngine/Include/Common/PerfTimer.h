@@ -33,7 +33,7 @@
 
 #include "Utility/intrin_compat.h"
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	/*
 		NOTE NOTE NOTE: never check this in with this enabled, since there is a nonzero time penalty
 		for running in this mode. Only enable it for local builds for testing purposes! (srj)

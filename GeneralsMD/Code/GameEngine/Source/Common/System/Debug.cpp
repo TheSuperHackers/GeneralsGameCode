@@ -77,10 +77,6 @@ extern HWND ApplicationHWnd;
 
 extern const char *gAppPrefix; /// So WB can have a different log file name.
 
-#ifdef RTS_INTERNAL
-// this should ALWAYS be present
-#pragma optimize("", off)
-#endif
 
 // ----------------------------------------------------------------------------
 // DEFINES 
@@ -88,10 +84,7 @@ extern const char *gAppPrefix; /// So WB can have a different log file name.
 
 #ifdef DEBUG_LOGGING
 
-#if defined(RTS_INTERNAL)
-	#define DEBUG_FILE_NAME				"DebugLogFileI"
-	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevI"
-#elif defined(RTS_DEBUG)
+#if defined(RTS_DEBUG)
 	#define DEBUG_FILE_NAME				"DebugLogFileD"
 	#define DEBUG_FILE_NAME_PREV	"DebugLogFilePrevD"
 #else
@@ -704,7 +697,7 @@ void ReleaseCrash(const char *reason)
 			ShowWindow(ApplicationHWnd, SW_HIDE);
 		}
 	}
-//#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+//#if defined(RTS_DEBUG)
 //	/* static */ char buff[8192]; // not so static so we can be threadsafe
 //	snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);/
 //	::MessageBox(NULL, buff, "Technical Difficulties...", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);
@@ -748,7 +741,7 @@ void ReleaseCrash(const char *reason)
 			ShowWindow(ApplicationHWnd, SW_HIDE);
 		}
 	}
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	/* static */ char buff[8192]; // not so static so we can be threadsafe
 	snprintf(buff, 8192, "Sorry, a serious error occurred. (%s)", reason);
 	::MessageBox(NULL, buff, "Technical Difficulties...", MB_OK|MB_SYSTEMMODAL|MB_ICONERROR);

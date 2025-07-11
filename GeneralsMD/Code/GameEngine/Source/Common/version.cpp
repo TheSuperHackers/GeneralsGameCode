@@ -49,7 +49,7 @@ Version::Version()
 	m_unicodeGitCommitCount = buildUnicodeGitCommitCount();
 	m_unicodeGitTagOrHash = buildUnicodeGitTagOrHash();
 	m_unicodeGitCommitTime = buildUnicodeGitCommitTime();
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	m_showFullVersion = TRUE;
 #else
 	m_showFullVersion = FALSE;
@@ -105,10 +105,6 @@ AsciiString Version::getAsciiVersion() const
 	version.concat(" Debug");
 #endif
 
-#ifdef RTS_INTERNAL
-	version.concat(" Internal");
-#endif
-
 	return version;
 }
 
@@ -140,10 +136,6 @@ UnicodeString Version::getUnicodeVersion() const
 
 #ifdef RTS_DEBUG
 	version.concat(L" Debug");
-#endif
-
-#ifdef RTS_INTERNAL
-	version.concat(L" Internal");
 #endif
 
 	return version;

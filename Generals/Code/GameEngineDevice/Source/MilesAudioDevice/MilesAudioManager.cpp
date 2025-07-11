@@ -66,10 +66,6 @@
 
 #include "Common/file.h"
 
-#ifdef RTS_INTERNAL
-//#pragma optimize("", off)
-//#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
-#endif
 
 enum { INFINITE_LOOP_COUNT = 1000000 };
 
@@ -114,7 +110,7 @@ MilesAudioManager::~MilesAudioManager()
 }
 
 //-------------------------------------------------------------------------------------------------
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 AudioHandle MilesAudioManager::addAudioEvent( const AudioEventRTS *eventToAdd )
 {
 	if (TheGlobalData->m_preloadReport) {
@@ -127,7 +123,7 @@ AudioHandle MilesAudioManager::addAudioEvent( const AudioEventRTS *eventToAdd )
 }
 #endif
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::audioDebugDisplay(DebugDisplayInterface *dd, void *, FILE *fp )
 {
@@ -467,7 +463,7 @@ void MilesAudioManager::postProcessLoad()
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::reset()
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	dumpAllAssetsUsed();
 	m_allEventsLoaded.clear();
 #endif
@@ -3064,7 +3060,7 @@ void AILCALLBACK setStreamCompleted( HSTREAM streamCompleted )
 //-------------------------------------------------------------------------------------------------
 U32 AILCALLBACK streamingFileOpen(char const *fileName, U32 *file_handle)
 {
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 	if (sizeof(U32) != sizeof(File*)) {
 		RELEASE_CRASH(("streamingFileOpen - This function requires work in order to compile on non 32-bit platforms.\n"));
 	}
@@ -3324,7 +3320,7 @@ Bool AudioFileCache::freeEnoughSpaceForSample(const OpenAudioFile& sampleThatNee
 }
 
 
-#if defined(RTS_DEBUG) || defined(RTS_INTERNAL)
+#if defined(RTS_DEBUG)
 //-------------------------------------------------------------------------------------------------
 void MilesAudioManager::dumpAllAssetsUsed()
 {

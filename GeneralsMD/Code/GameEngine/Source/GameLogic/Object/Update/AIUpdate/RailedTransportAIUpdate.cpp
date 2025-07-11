@@ -229,21 +229,28 @@ UpdateSleepTime RailedTransportAIUpdate::update( void )
 		// sanity
 		DEBUG_ASSERTCRASH( waypoint, ("RailedTransportAIUpdate: Invalid target waypoint\n") );
 
-		// how far away are we from the target waypoint
-		const Coord3D *start = us->getPosition();
-		const Coord3D *end = waypoint->getLocation();
-		Coord3D v;
-		v.x = end->x - start->x;
-		v.y = end->y - start->y;
-		v.z = end->z - start->z;
-		Real dist = v.length();
-		if( dist <= 5.0f || isIdle() )
+		if (waypoint)
 		{
+			// how far away are we from the target waypoint
+			const Coord3D *start = us->getPosition();
+			const Coord3D *end = waypoint->getLocation();
+			Coord3D v;
+			v.x = end->x - start->x;
+			v.y = end->y - start->y;
+			v.z = end->z - start->z;
+			Real dist = v.length();
+			if( dist <= 5.0f || isIdle() )
+			{
 
-			// we are no longer in transit
+				// we are no longer in transit
+				setInTransit( FALSE );
+
+			}  // end if
+		}
+		else
+		{
 			setInTransit( FALSE );
-
-		}  // end if
+		}
 
 	}  // end if
 

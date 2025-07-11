@@ -73,6 +73,7 @@ public:
 	{
 		m_energyProduction = 0;
 		m_energyConsumption = 0;
+		m_powerSabotagedTillFrame = 0;
 		m_owner = owner;
 	}
 

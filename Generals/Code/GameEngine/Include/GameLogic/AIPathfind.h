@@ -409,7 +409,7 @@ public:
 	Bool connectsZones(PathfindZoneManager *zm, const LocomotorSet& locomotorSet,Int zone1, Int zone2);
 	Bool isPointOnWall(ObjectID *wallPieces, Int numPieces, const Coord3D *pt);
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	void doDebugIcons(void) ;
 #endif
 protected:
@@ -819,7 +819,7 @@ protected:
 
 	void checkChangeLayers(PathfindCell *parentCell);
 
-#if defined RTS_DEBUG || defined RTS_INTERNAL
+#if defined(RTS_DEBUG)
 	void doDebugIcons(void) ;
 #endif
 

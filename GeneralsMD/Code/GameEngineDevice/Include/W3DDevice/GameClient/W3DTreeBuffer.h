@@ -254,6 +254,7 @@ private:
 	Real		m_curSwayOffset[MAX_SWAY_TYPES];
 	Real		m_curSwayStep[MAX_SWAY_TYPES];
 	Real		m_curSwayFactor[MAX_SWAY_TYPES];
+	Int			m_lastLogicFrame;
 
 	W3DProjectedShadow *m_shadow;
 	
