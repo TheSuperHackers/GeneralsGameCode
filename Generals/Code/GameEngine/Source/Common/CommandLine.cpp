@@ -718,7 +718,7 @@ Int parseNoFX(char *args[], int)
 	return 1;
 }
 
-#if ENABLE_CONFIGURABLE_SHROUD && defined(RTS_DEBUG)
+#if defined(RTS_DEBUG) && ENABLE_CONFIGURABLE_SHROUD
 Int parseNoShroud(char *args[], int)
 {
 	TheWritableGlobalData->m_shroudOn = FALSE;
