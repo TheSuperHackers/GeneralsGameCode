@@ -469,10 +469,7 @@ static void setEditDescription( GameWindow *editControl )
 		//Keep the extension out of the descriptive name.
 		if( (defaultDesc.getLength() >= 4)  &&  (defaultDesc.getCharAt(defaultDesc.getLength()-4) == '.') )
 		{
-			for( Int stripIndex = 0; stripIndex < 4; stripIndex++ )
-			{
-				defaultDesc.removeLastChar();
-			}
+			defaultDesc.truncateBy(4);
 		}
 
 	}  // end else

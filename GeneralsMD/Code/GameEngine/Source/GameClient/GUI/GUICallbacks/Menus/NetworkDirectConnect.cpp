@@ -197,8 +197,7 @@ void HostDirectConnectGame()
 	prefs["UserName"] = UnicodeStringToQuotedPrintable(name);
 	prefs.write();
 
-	while (name.getLength() > g_lanPlayerNameLength)
-		name.removeLastChar();
+	name.truncateTo(g_lanPlayerNameLength);
 	TheLAN->RequestSetName(name);
 	TheLAN->RequestGameCreate(localIPString, TRUE);
 }
@@ -241,8 +240,7 @@ void JoinDirectConnectGame()
 	UpdateRemoteIPList();
 	PopulateRemoteIPComboBox();
 
-	while (name.getLength() > g_lanPlayerNameLength)
-		name.removeLastChar();
+	name.truncateTo(g_lanPlayerNameLength);
 	TheLAN->RequestSetName(name);
 
 	TheLAN->RequestGameJoinDirectConnect(ipaddress);
@@ -500,8 +498,7 @@ WindowMsgHandledType NetworkDirectConnectSystem( GameWindow *window, UnsignedInt
 					prefs["UserName"] = UnicodeStringToQuotedPrintable(name);
 					prefs.write();
 
-					while (name.getLength() > g_lanPlayerNameLength)
-						name.removeLastChar();
+					name.truncateTo(g_lanPlayerNameLength);
 					TheLAN->RequestSetName(name);
 
 					buttonPushed = true;

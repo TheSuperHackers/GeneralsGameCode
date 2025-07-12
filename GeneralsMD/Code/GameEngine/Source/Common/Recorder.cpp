@@ -297,9 +297,7 @@ void RecorderClass::cleanUpReplayFile( void )
 			return;
 
 		AsciiString debugFname = fname;
-		debugFname.removeLastChar();
-		debugFname.removeLastChar();
-		debugFname.removeLastChar();
+		debugFname.truncateBy(3);
 		debugFname.concat("txt");
 		UnsignedInt fileSize = 0;
 		FILE *fp = fopen(logFileName, "rb");

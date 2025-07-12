@@ -95,10 +95,7 @@ static void ConvertShortMapPathToLongMapPath(AsciiString &mapName)
 		DEBUG_CRASH(("Invalid map name %s", mapName.str()));
 	}
 	// remove the .map from the end.
-	token.removeLastChar();
-	token.removeLastChar();
-	token.removeLastChar();
-	token.removeLastChar();
+	token.truncateBy(4);
 
 	actualpath.concat(token);
 	actualpath.concat('\\');
