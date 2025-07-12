@@ -572,8 +572,7 @@ Bool MapCache::loadUserMaps()
 		{
 			AsciiString endingStr;
 			AsciiString fname = s+1;
-			for (size_t i=0; i<strlen(mapExtension); ++i)
-				fname.removeLastChar();
+			fname.truncateBy(strlen(mapExtension));
 
 			endingStr.format("%s\\%s%s", fname.str(), fname.str(), mapExtension);
 
@@ -702,8 +701,7 @@ Bool MapCache::addMap( AsciiString dirName, AsciiString fname, FileInfo *fileInf
 	{
 		AsciiString stringFileName;
 		stringFileName.format("%s\\%s", dirName.str(), fname.str());
-		for (Int i=0; i<4; ++i)
-			stringFileName.removeLastChar();
+		stringFileName.truncateBy(4);
 		stringFileName.concat("\\map.str");
 		TheGameText->initMapStringFile(stringFileName);
 		md.m_displayName = TheGameText->fetch(munkee);
@@ -1066,10 +1064,7 @@ Image *getMapPreviewImage( AsciiString mapName )
 	AsciiString name;
 	AsciiString tempName;
 	AsciiString filename;
-	tgaName.removeLastChar(); // p
-	tgaName.removeLastChar(); // a
-	tgaName.removeLastChar(); // m
-	tgaName.removeLastChar(); // .
+	tgaName.truncateBy(4); // ".map"
 	name = tgaName;//.reverseFind('\\') + 1;
 	filename = tgaName.reverseFind('\\') + 1;
 	//tgaName = name;

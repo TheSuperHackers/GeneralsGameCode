@@ -897,9 +897,7 @@ void updateTGAtoDDS()
 		}
 
 		// replace tga with dds
-		filenameDDS.removeLastChar();	// a
-		filenameDDS.removeLastChar();	// g
-		filenameDDS.removeLastChar();	// t
+		filenameDDS.truncateBy(3);	// "tga"
 		filenameDDS.concat("dds");
 
 		Bool needsToBeUpdated = FALSE;

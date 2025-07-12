@@ -802,11 +802,7 @@ Bool LadderPreferences::loadProfile( Int profileID )
 			continue;
 
 		p.port = atoi( ptr + 1 );
-		Int i=0;
-		for (; i<strlen(ptr); ++i)
-		{
-			ladName.removeLastChar();
-		}
+		ladName.truncateBy(strlen(ptr));
 		p.address = QuotedPrintableToAsciiString(ladName);
 
 		ptr = ladData.reverseFind(':');
@@ -815,10 +811,7 @@ Bool LadderPreferences::loadProfile( Int profileID )
 			continue;
 
 		p.lastPlayDate = atoi( ptr + 1 );
-		for (i=0; i<strlen(ptr); ++i)
-		{
-			ladData.removeLastChar();
-		}
+		ladData.truncateBy(strlen(ptr));
 		p.name = QuotedPrintableToUnicodeString(ladData);
 
 		m_ladders[p.lastPlayDate] = p;

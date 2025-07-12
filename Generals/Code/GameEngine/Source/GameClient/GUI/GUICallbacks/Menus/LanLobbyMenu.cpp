@@ -422,8 +422,8 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 	//txtInput.translate(IPs.getMachineName());
 	LANPreferences prefs;
 	defaultName = prefs.getUserName();
-	while (defaultName.getLength() > g_lanPlayerNameLength)
-		defaultName.removeLastChar();
+	defaultName.truncateTo(g_lanPlayerNameLength);
+
 	GadgetTextEntrySetText( textEntryPlayerName, defaultName);
 	// Clear the text entry line
 	GadgetTextEntrySetText(textEntryChat, UnicodeString::TheEmptyString);
@@ -431,8 +431,7 @@ void LanLobbyMenuInit( WindowLayout *layout, void *userData )
 	GadgetListBoxReset(listboxPlayers);
 	GadgetListBoxReset(listboxGames);
 
-	while (defaultName.getLength() > g_lanPlayerNameLength)
-		defaultName.removeLastChar();
+	defaultName.truncateTo(g_lanPlayerNameLength);
 	TheLAN->RequestSetName(defaultName);
 	TheLAN->RequestLocations();
 
@@ -815,8 +814,7 @@ WindowMsgHandledType LanLobbyMenuSystem( GameWindow *window, UnsignedInt msg,
 					else
 						txtInput = UnicodeString::TheEmptyString;
 
-					while (txtInput.getLength() > g_lanPlayerNameLength)
-						txtInput.removeLastChar();
+					txtInput.truncateTo(g_lanPlayerNameLength);
 					
 					if (!txtInput.isEmpty() && txtInput.getCharAt(txtInput.getLength()-1) == L',')
 						txtInput.removeLastChar(); // we use , for strtok's so we can't allow them in names.  :(
