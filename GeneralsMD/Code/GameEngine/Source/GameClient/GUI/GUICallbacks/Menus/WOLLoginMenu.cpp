@@ -1066,17 +1066,13 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 				trimmedEmail.trim();
 				if (!trimmedNick.isEmpty())
 				{
-					if (trimmedNick.getCharAt(trimmedNick.getLength()-1) == L'\\')
-						trimmedNick.removeLastChar();
-					if (trimmedNick.getCharAt(trimmedNick.getLength()-1) == L'/')
-						trimmedNick.removeLastChar();
+					trimmedNick.trimEnd(L'\\');
+					trimmedNick.trimEnd(L'/');
 				}
 				if (!trimmedEmail.isEmpty())
 				{
-					if (trimmedEmail.getCharAt(trimmedEmail.getLength()-1) == L'\\')
-						trimmedEmail.removeLastChar();
-					if (trimmedEmail.getCharAt(trimmedEmail.getLength()-1) == L'/')
-						trimmedEmail.removeLastChar();
+					trimmedEmail.trimEnd(L'\\');
+					trimmedEmail.trimEnd(L'/');
 				}
 				if (trimmedEmail.getLength() != uEmail.getLength())
 				{
@@ -1466,18 +1462,7 @@ WindowMsgHandledType WOLLoginMenuSystem( GameWindow *window, UnsignedInt msg,
 								{
 									UnicodeString uniLine;
 									uniLine = UnicodeString(MultiByteToWideCharSingleLine(asciiLine.str()).c_str());
-									int len = uniLine.getLength();
-									int index = len - 1;
-									while (index >= 0 && iswspace(uniLine.getCharAt(index)))
-									{
-										--index;
-									}
-
-									if (index < len - 1)
-									{
-										uniLine.truncateTo(index + 1);
-									}
-
+									uniLine.trimEnd();
 									DEBUG_LOG(("adding TOS line: [%ls]\n", uniLine.str()));
 									GadgetListBoxAddEntryText(listboxTOS, uniLine, tosColor, -1);
 								}
