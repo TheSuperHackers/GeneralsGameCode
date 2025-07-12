@@ -57,6 +57,9 @@
 static const Int K_SIDES_DATA_VERSION_1 = 1;
 static const Int K_SIDES_DATA_VERSION_2 = 2;	// includes Team list.
 static const Int K_SIDES_DATA_VERSION_3 = 3;	// includes Team list.
+static const Int K_SIDES_DATA_VERSION_4 = 4;
+static const Int K_SIDES_DATA_VERSION_5 = 5;	// teams and scripts are separate now
+static const Int K_SIDES_DATA_VERSION_6 = 6;
 
 /* ********* SidesInfo class ****************************/
 /**
@@ -242,11 +245,18 @@ void SidesList::clear(void)
 */
 Bool SidesList::ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, void *userData)
 {
+	DEBUG_ASSERTCRASH(info->version <= K_SIDES_DATA_VERSION_6, ("Sides chunk version newer than supported."));
 	DEBUG_ASSERTCRASH(TheSidesList, ("TheSidesList is null"));
 
 	if (TheSidesList==NULL) 
 		return false;
 
+	// TheSuperHackers @info feliwir 21/4/2025 this is a boolean we don't know about, added in BFME
+	if (info->version >= K_SIDES_DATA_VERSION_6)
+	{
+		MAYBE_UNUSED Bool unknown = file.readByte();
+		(void)unknown;
+	}
 	TheSidesList->clear();
 	Int count = file.readInt();
 	Int i, j;
@@ -271,6 +281,12 @@ Bool SidesList::ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, v
 			pBuildList->setLocation(loc);
 			pBuildList->setAngle(file.readReal());
 			pBuildList->setInitiallyBuilt(file.readByte());
+			// TheSuperHackers @info feliwir 21/4/2025 this is a boolean we don't know about, added in BFME
+			if (info->version >= K_SIDES_DATA_VERSION_6)
+			{
+				MAYBE_UNUSED Bool unknown = file.readByte();
+				(void)unknown;
+			}
 			pBuildList->setNumRebuilds(file.readInt());
 			if (info->version >= K_SIDES_DATA_VERSION_3)
 			{
@@ -283,6 +299,12 @@ Bool SidesList::ParseSidesDataChunk(DataChunkInput &file, DataChunkInfo *info, v
 			TheSidesList->getSideInfo(i)->addToBuildList(pBuildList, j);
 		}
 	}	
+	// TheSuperHackers @info feliwir 21/4/2025 After version 5 everything below became toplevel-chunks
+	if (info->version >= K_SIDES_DATA_VERSION_5)
+	{
+		return true;
+	}
+
 	if (info->version >= K_SIDES_DATA_VERSION_2)
 	{
 		count = file.readInt();
