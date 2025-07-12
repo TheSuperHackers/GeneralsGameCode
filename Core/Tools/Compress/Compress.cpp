@@ -17,7 +17,7 @@
 */
 
 #include <string>
-#include <cstdio>
+#include <Utility/stdio_adapter.h>
 #include <cstdarg>
 #include "Lib/BaseTypeCore.h"
 #include "Compression.h"
