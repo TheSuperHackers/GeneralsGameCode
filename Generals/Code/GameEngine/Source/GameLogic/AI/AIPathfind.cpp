@@ -5607,10 +5607,10 @@ Int Pathfinder::examineNeighboringCells(PathfindCell *parentCell, PathfindCell *
 																				 const Object *obj, Int attackDistance)
 {
 		Bool canPathThroughUnits = false;
-		if (obj && obj->getAIUpdateInterface()) {
+		if (obj->getAIUpdateInterface()) {
 			canPathThroughUnits = obj->getAIUpdateInterface()->canPathThroughUnits();
 		}
-		Bool isCrusher = obj ? obj->getCrusherLevel() > 0 : false;
+		Bool isCrusher = obj->getCrusherLevel() > 0;
 		if (attackDistance==NO_ATTACK && !m_isTunneling && !locomotorSet.isDownhillOnly() && goalCell) {
 			ExamineCellsStruct info;
 			info.thePathfinder = this;
@@ -8772,7 +8772,7 @@ Bool Pathfinder::isViewBlockedByObstacle(const Object* obj, const Object* objOth
 	ViewBlockedStruct info;
 	info.obj = obj;
 	info.objOther = objOther;
-	if (objOther && objOther->isSignificantlyAboveTerrain()) {
+	if (objOther->isSignificantlyAboveTerrain()) {
 		return false; // We don't check los to flying objects.  jba.
 	}
 #if 1
@@ -9587,14 +9587,14 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 	Int startTimeMS = ::GetTickCount();
 #endif
 	Bool isHuman = true;
-	if (obj && obj->getControllingPlayer() && (obj->getControllingPlayer()->getPlayerType()==PLAYER_COMPUTER)) {
+	if (obj->getControllingPlayer() && (obj->getControllingPlayer()->getPlayerType()==PLAYER_COMPUTER)) {
 		isHuman = false; // computer gets to cheat.
 	}
 	Bool otherCenter;
 	Int otherRadius;
 	getRadiusAndCenter(otherObj, otherRadius, otherCenter);
 
-	Bool isCrusher = obj ? obj->getCrusherLevel() > 0 : false;
+	Bool isCrusher = obj->getCrusherLevel() > 0;
 
 	m_zoneManager.setAllPassable();
 
@@ -9672,12 +9672,12 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 		bounds.hi.y = cellCenter.y+boxHalfWidth;
 		PathNode *node;
 		Bool overlap = false;
-		if (obj) {
-			if (bounds.lo.x<obj->getPosition()->x && bounds.hi.x>obj->getPosition()->x &&
-				bounds.lo.y<obj->getPosition()->y && bounds.hi.y>obj->getPosition()->y)	{
-					//overlap = true;
-				}
+
+		if (bounds.lo.x<obj->getPosition()->x && bounds.hi.x>obj->getPosition()->x &&
+			bounds.lo.y<obj->getPosition()->y && bounds.hi.y>obj->getPosition()->y)	{
+				//overlap = true;
 		}
+
 		for( node = pathToAvoid->getFirstNode(); node && node->getNextOptimized(); node = node->getNextOptimized() )	{
 			Coord2D start, end;
 			start.x = node->getPosition()->x;
@@ -9689,12 +9689,12 @@ Path *Pathfinder::getMoveAwayFromPath(Object* obj, Object *otherObj,
 				break;
 			}
 		}
-		if (otherObj) {
-			if (bounds.lo.x<otherObj->getPosition()->x && bounds.hi.x>otherObj->getPosition()->x &&
-				bounds.lo.y<otherObj->getPosition()->y && bounds.hi.y>otherObj->getPosition()->y)	{
-					//overlap = true;
-				}
+
+		if (bounds.lo.x<otherObj->getPosition()->x && bounds.hi.x>otherObj->getPosition()->x &&
+			bounds.lo.y<otherObj->getPosition()->y && bounds.hi.y>otherObj->getPosition()->y)	{
+				//overlap = true;
 		}
+
 		if (!overlap && pathToAvoid2) {
 			for( node = pathToAvoid2->getFirstNode(); node && node->getNextOptimized(); node = node->getNextOptimized() )	{
 				Coord2D start, end;
@@ -9766,7 +9766,7 @@ Path *Pathfinder::patchPath( const Object *obj, const LocomotorSet& locomotorSet
 	Int radius;
 	getRadiusAndCenter(obj, radius, centerInCell);
 	Bool isHuman = true;
-	if (obj && obj->getControllingPlayer() && (obj->getControllingPlayer()->getPlayerType()==PLAYER_COMPUTER)) {
+	if (obj->getControllingPlayer() && (obj->getControllingPlayer()->getPlayerType()==PLAYER_COMPUTER)) {
 		isHuman = false; // computer gets to cheat.
 	}
 
@@ -9978,7 +9978,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 //	Int startTimeMS = ::GetTickCount();
 #endif
 
-	Bool isCrusher = obj ? obj->getCrusherLevel() > 0 : false;
+	Bool isCrusher = obj->getCrusherLevel() > 0;
 	Int radius;
 	Bool centerInCell;
 	getRadiusAndCenter(obj, radius, centerInCell);
@@ -10029,7 +10029,7 @@ Path *Pathfinder::findAttackPath( const Object *obj, const LocomotorSet& locomot
 	const Int ATTACK_CELL_LIMIT = 2500; // this is a rather expensive operation, so limit the search.
 
 	Bool isHuman = true;
-	if (obj && obj->getControllingPlayer() && (obj->getControllingPlayer()->getPlayerType()==PLAYER_COMPUTER)) {
+	if (obj->getControllingPlayer() && (obj->getControllingPlayer()->getPlayerType()==PLAYER_COMPUTER)) {
 		isHuman = false; // computer gets to cheat.
 	}
 	m_zoneManager.clearPassableFlags();
@@ -10255,7 +10255,7 @@ Path *Pathfinder::findSafePath( const Object *obj, const LocomotorSet& locomotor
 	Real repulsorDistSqr = repulsorRadius*repulsorRadius;
 	Int cellCount = 0;
 	Bool isHuman = true;
-	if (obj && obj->getControllingPlayer() && (obj->getControllingPlayer()->getPlayerType()==PLAYER_COMPUTER)) {
+	if (obj->getControllingPlayer() && (obj->getControllingPlayer()->getPlayerType()==PLAYER_COMPUTER)) {
 		isHuman = false; // computer gets to cheat.
 	}
 
