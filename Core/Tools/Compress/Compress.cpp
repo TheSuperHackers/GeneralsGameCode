@@ -39,8 +39,10 @@ static void DebugLog(const char* format, ...)
 
 void dumpHelp(const char *exe)
 {
-	DEBUG_LOG(("Usage:\n  To print the compression type of an existing file: %s -in infile", exe));
-	DEBUG_LOG(("  To compress a file: %s -in infile -out outfile <-type compressionmode>\n", exe));
+	DEBUG_LOG(("Usage:"));
+	DEBUG_LOG(("  To print the compression type of an existing file: %s -in infile", exe));
+	DEBUG_LOG(("  To compress a file: %s -in infile -out outfile <-type compressionmode>", exe));
+	DEBUG_LOG((""));
 	DEBUG_LOG(("Compression modes:"));
 	for (int i=COMPRESSION_MIN; i<=COMPRESSION_MAX; ++i)
 	{
