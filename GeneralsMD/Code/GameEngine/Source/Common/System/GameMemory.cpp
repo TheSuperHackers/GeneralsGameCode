@@ -3407,6 +3407,8 @@ void initMemoryManager()
 {
 	if (TheMemoryPoolFactory == NULL) 
 	{
+		DEBUG_LOG(("*** Initing Memory Manager"));
+
 		Int numSubPools;
 		const PoolInitRec *pParms;
 		userMemoryManagerGetDmaParms(&numSubPools, &pParms);

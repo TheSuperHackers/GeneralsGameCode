@@ -79,6 +79,7 @@ enum DrawableID CPP_11(: Int);
 #include <stack>
 #include <string>
 #include <vector>
+#include "MallocAllocator.h"
 
 // List of AsciiStrings to allow list of ThingTemplate names from INI and such
 typedef std::list< AsciiString >													AsciiStringList;
@@ -112,6 +113,13 @@ typedef std::vector<Bool>::iterator												BoolVectorIterator;
 
 typedef std::map< NameKeyType, Real, std::less<NameKeyType> > ProductionChangeMap;
 typedef std::map< NameKeyType, VeterancyLevel, std::less<NameKeyType> > ProductionVeterancyMap;
+
+namespace stl
+{
+typedef std::basic_string<char, std::char_traits<char>, malloc_allocator<char> > malloc_string;
+typedef std::basic_string<wchar_t, std::char_traits<wchar_t>, malloc_allocator<wchar_t> > malloc_wstring;
+
+} // namespace stl
 
 // Some useful, common hash and equal_to functors for use with hash_map
 namespace rts 

@@ -66,6 +66,7 @@ set(WWLIB_SRC
     #lzostraw.cpp
     #lzostraw.h
     #lzo_conf.h
+    MallocAllocator.h
     #md5.cpp
     #md5.h
     mempool.h

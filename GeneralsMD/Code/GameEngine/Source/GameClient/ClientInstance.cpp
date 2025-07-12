@@ -37,14 +37,14 @@ bool ClientInstance::initialize()
 	{
 		return true;
 	}
-	
+
 	// Create a mutex with a unique name to Generals in order to determine if our app is already running.
 	// WARNING: DO NOT use this number for any other application except Generals.
 	while (true)
 	{
 		if (isMultiInstance())
 		{
-			std::string guidStr = getFirstInstanceName();
+			stl::malloc_string guidStr = getFirstInstanceName();
 			if (s_instanceIndex > 0u)
 			{
 				char idStr[33];
