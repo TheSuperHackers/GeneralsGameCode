@@ -1,5 +1,8 @@
 # Created with python 3.11.4
 
+# This script helps removing trailing CR LF characters from game debug log messages in the various CPP files.
+# Just run it.
+
 import glob
 import os
 
