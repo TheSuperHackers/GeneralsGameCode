@@ -116,7 +116,7 @@ DisplayString *W3DDisplayStringManager::newDisplayString( void )
 	if( newString == NULL )
 	{
 
-		DEBUG_LOG(( "newDisplayString: Could not allcoate new W3D display string\n" ));
+		DEBUG_LOG(( "newDisplayString: Could not allcoate new W3D display string" ));
 		assert( 0 );
 		return NULL;
 
@@ -233,7 +233,7 @@ DisplayString *W3DDisplayStringManager::getGroupNumeralString( Int numeral )
 {
 	if (numeral < 0 || numeral > MAX_GROUPS - 1 ) 
 	{
-		DEBUG_CRASH(("Numeral '%d' out of range.\n", numeral));
+		DEBUG_CRASH(("Numeral '%d' out of range.", numeral));
 		return m_groupNumeralStrings[0];
 	}
 

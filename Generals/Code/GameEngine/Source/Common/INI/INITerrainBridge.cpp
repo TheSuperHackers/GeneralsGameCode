@@ -53,7 +53,7 @@ void INI::parseTerrainBridgeDefinition( INI* ini )
 	{
 
 		// sanity
-		DEBUG_ASSERTCRASH( bridge->isBridge(), ("Redefining road '%s' as a bridge!\n", 
+		DEBUG_ASSERTCRASH( bridge->isBridge(), ("Redefining road '%s' as a bridge!", 
 											 bridge->getName().str()) );
 		throw INI_INVALID_DATA;
 
@@ -62,7 +62,7 @@ void INI::parseTerrainBridgeDefinition( INI* ini )
 	if( bridge == NULL )	
 		bridge = TheTerrainRoads->newBridge( name );
 
-	DEBUG_ASSERTCRASH( bridge, ("Unable to allcoate bridge '%s'\n", name.str()) );
+	DEBUG_ASSERTCRASH( bridge, ("Unable to allcoate bridge '%s'", name.str()) );
 
 	// parse the ini definition
 	ini->initFromINI( bridge, bridge->getBridgeFieldParse() );

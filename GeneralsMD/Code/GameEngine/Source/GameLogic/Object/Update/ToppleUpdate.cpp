@@ -145,7 +145,7 @@ void ToppleUpdate::applyTopplingForce( const Coord3D* toppleDirection, Real topp
 	if (getObject()->isEffectivelyDead())
 		return;
 
-	//DEBUG_LOG(("awaking ToppleUpdate %08lx\n",this));
+	//DEBUG_LOG(("awaking ToppleUpdate %08lx",this));
 	setWakeFrame(getObject(), UPDATE_SLEEP_NONE);
 
 	const ToppleUpdateModuleData* d = getToppleUpdateModuleData();
@@ -267,7 +267,7 @@ static void deathByToppling(Object* obj)
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime ToppleUpdate::update()
 {
-	//DEBUG_LOG(("updating ToppleUpdate %08lx\n",this));
+	//DEBUG_LOG(("updating ToppleUpdate %08lx",this));
 	DEBUG_ASSERTCRASH(m_toppleState != TOPPLE_UPRIGHT, ("hmm, we should be sleeping here"));
 	if ( (m_toppleState == TOPPLE_UPRIGHT)  ||  (m_toppleState == TOPPLE_DOWN) )
 		return UPDATE_SLEEP_FOREVER;

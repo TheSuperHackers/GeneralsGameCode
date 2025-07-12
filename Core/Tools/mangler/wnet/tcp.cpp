@@ -559,7 +559,7 @@ sint32 TCP::TimedRead(uint8 *msg,uint32 len,int seconds,sint32 whichFD)
     retval=Read(msg+bytes_read,len-bytes_read,whichFD);
     if (retval==0)    // they closed
     {
-      DBGMSG("Remote close!\n");
+      DBGMSG("Remote close!");
       return(bytes_read);
     }
     else if (retval>0)

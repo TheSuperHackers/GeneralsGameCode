@@ -276,9 +276,9 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	// start the log
 	DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
-	DEBUG_LOG(("starting Worldbuilder.\n"));
+	DEBUG_LOG(("starting Worldbuilder."));
 #ifdef RTS_DEBUG
-	DEBUG_LOG(("RTS_DEBUG defined.\n"));
+	DEBUG_LOG(("RTS_DEBUG defined."));
 #endif
 	initMemoryManager();
 #ifdef MEMORYPOOL_CHECKPOINTING

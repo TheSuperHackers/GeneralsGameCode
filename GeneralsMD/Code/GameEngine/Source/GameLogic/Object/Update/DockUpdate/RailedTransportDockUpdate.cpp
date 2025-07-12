@@ -466,7 +466,7 @@ void RailedTransportDockUpdate::unloadNext( void )
 	// better be an open container
 	ContainModuleInterface *contain = us->getContain();
 	OpenContain *openContain = contain ? contain->asOpenContain() : NULL;
-	DEBUG_ASSERTCRASH( openContain, ("Unloading next from railed transport, but '%s' has no open container\n",
+	DEBUG_ASSERTCRASH( openContain, ("Unloading next from railed transport, but '%s' has no open container",
 										 us->getTemplate()->getName().str()) );
 
 	// get the first contained object

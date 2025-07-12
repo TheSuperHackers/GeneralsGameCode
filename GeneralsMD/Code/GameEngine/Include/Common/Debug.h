@@ -144,6 +144,7 @@ class AsciiString;
 #ifdef DEBUG_LOGGING
 
 	DEBUG_EXTERN_C void DebugLog(const char *format, ...);
+	DEBUG_EXTERN_C void DebugLogRaw(const char *format, ...);
 	DEBUG_EXTERN_C const char* DebugGetLogFileName();
 	DEBUG_EXTERN_C const char* DebugGetLogFileNamePrev();
 
@@ -158,14 +159,18 @@ class AsciiString;
 	};
 	extern const char *TheDebugLevels[DEBUG_LEVEL_MAX];
 
-	#define DEBUG_LOG(m)						do { { DebugLog m ; } } while (0)
+	#define DEBUG_LOG(m)						do { { DebugLog m ; } } while (0) // Log message with trailing new line character (LF)
+	#define DEBUG_LOG_RAW(m)				do { { DebugLogRaw m ; } } while (0) // Log message without trailing new line character (LF)
 	#define DEBUG_LOG_LEVEL(l, m)		do { if (l & DebugLevelMask) { DebugLog m ; } } while (0)
+	#define DEBUG_LOG_LEVEL_RAW(l, m)	do { if (l & DebugLevelMask) { DebugLogRaw m ; } } while (0)
 	#define DEBUG_ASSERTLOG(c, m)		do { { if (!(c)) DebugLog m ; } } while (0)
 
 #else
 
 	#define DEBUG_LOG(m)						((void)0)
+	#define DEBUG_LOG_RAW(m)				((void)0)
 	#define DEBUG_LOG_LEVEL(l, m)		((void)0)
+	#define DEBUG_LOG_LEVEL_RAW(l, m)	((void)0)
 	#define DEBUG_ASSERTLOG(c, m)		((void)0)
 
 #endif

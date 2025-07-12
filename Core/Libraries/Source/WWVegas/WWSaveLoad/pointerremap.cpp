@@ -119,7 +119,7 @@ void PointerRemapClass::Process_Request_Table(DynamicVectorClass<PtrRemapStruct>
 #ifdef WWDEBUG			
 			const char * file = request_table[pointer_index].File;
 			int line = request_table[pointer_index].Line;
-			WWDEBUG_SAY(("Warning! Failed to re-map pointer! old_ptr = 0x%X  file = %s  line = %d\r\n",(unsigned int)pointer_to_remap,file,line));
+			WWDEBUG_SAY(("Warning! Failed to re-map pointer! old_ptr = 0x%X  file = %s  line = %d",(unsigned int)pointer_to_remap,file,line));
 			WWASSERT( 0 );
 #endif
 		}

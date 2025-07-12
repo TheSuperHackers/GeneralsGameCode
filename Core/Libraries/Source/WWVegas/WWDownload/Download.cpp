@@ -373,9 +373,9 @@ HRESULT CDownload::PumpMessages()
 
 			DEBUG_LOG(("About to OnProgressUpdate() - m_FileSize=%d, m_BytesRead=%d, timetaken=%d, numerator=%d",
 				m_FileSize, m_BytesRead, timetaken, ( ( m_FileSize - m_BytesRead )  * timetaken )));
-			DEBUG_LOG((", m_startPosition=%d, denominator=%d, predictionTime=%d\n",
+			DEBUG_LOG((", m_startPosition=%d, denominator=%d, predictionTime=%d",
 				m_StartPosition, ( m_BytesRead - m_StartPosition ), predictionIndex));
-			DEBUG_LOG(("vals are %d %d %d %d %d %d %d %d\n",
+			DEBUG_LOG(("vals are %d %d %d %d %d %d %d %d",
 				m_predictionTimes[ 0 ], m_predictionTimes[ 1 ], m_predictionTimes[ 2 ], m_predictionTimes[ 3 ],
 				m_predictionTimes[ 4 ], m_predictionTimes[ 5 ], m_predictionTimes[ 6 ], m_predictionTimes[ 7 ]));
 

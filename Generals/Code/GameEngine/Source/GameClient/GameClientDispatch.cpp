@@ -49,7 +49,7 @@ GameMessageDisposition GameClientMessageDispatcher::translateGameMessage(const G
 	if (msg->getType() == GameMessage::MSG_FRAME_TICK)
 		return KEEP_MESSAGE;
 
-	//DEBUG_LOG(("GameClientMessageDispatcher::translateGameMessage() - eating a %s on frame %d\n",
+	//DEBUG_LOG(("GameClientMessageDispatcher::translateGameMessage() - eating a %s on frame %d",
 		//((GameMessage *)msg)->getCommandAsAsciiString().str(), TheGameClient->getFrame()));
 
 	return DESTROY_MESSAGE;

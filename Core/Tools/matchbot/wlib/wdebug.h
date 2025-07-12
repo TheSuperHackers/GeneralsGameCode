@@ -197,6 +197,7 @@ extern CritSec DebugLibSemaphore;
   __s << __FILE__ << "[" << __LINE__ << \
        "]: " << ##V << " = " << V << '\n' << '\0';\
   OutputDebugString(STRSTREAM_CSTR(__s));\
+  OutputDebugString("\n");\
   DEBUGUNLOCK; \
 }
 
@@ -211,6 +212,7 @@ extern CritSec DebugLibSemaphore;
   __s << "DBG [" << __FILE__ <<  \
     " " << __LINE__ << "] " << X << '\n' << '\0';\
   OutputDebugString(STRSTREAM_CSTR(__s));\
+  OutputDebugString("\n");\
   DEBUGUNLOCK; \
 }
 
@@ -223,6 +225,7 @@ extern CritSec DebugLibSemaphore;
   strstream __s;\
   __s << X << '\0';\
   OutputDebugString(STRSTREAM_CSTR(__s));\
+  OutputDebugString("\n");\
   DEBUGUNLOCK; \
 }    
 
@@ -237,6 +240,7 @@ extern CritSec DebugLibSemaphore;
   __s  << __FILE__ << "[" << __LINE__ << \
      "]: " << ##X << '\n' << '\0';\
   OutputDebugString(STRSTREAM_CSTR(__s));\
+  OutputDebugString("\n");\
   DEBUGUNLOCK; \
 }
 

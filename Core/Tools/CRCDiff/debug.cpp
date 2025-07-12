@@ -37,8 +37,9 @@ void DebugLog(const char *fmt, ...)
 	buffer[1023] = 0;
 	va_end( va );
 
-	printf( "%s", buffer );
+	printf( "%s\n", buffer );
 	OutputDebugString( buffer );
+	OutputDebugString( "\n" );
 }
 
 #endif // DEBUG

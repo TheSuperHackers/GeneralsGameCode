@@ -100,7 +100,7 @@ static void printReturnCode( char *label, HRESULT hr )
 
 		if( error->error == hr )
 		{
-			DEBUG_LOG(( "%s: '%s' - '0x%08x'\n", label, error->string, hr ));
+			DEBUG_LOG(( "%s: '%s' - '0x%08x'", label, error->string, hr ));
 			break;
 		}
 		error++;
@@ -125,7 +125,7 @@ void DirectInputKeyboard::openKeyboard( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: DirectInputCreate failed\r\n" ));
+		DEBUG_LOG(( "ERROR - openKeyboard: DirectInputCreate failed" ));
 		assert( 0 );
 		closeKeyboard();
 		return;
@@ -139,7 +139,7 @@ void DirectInputKeyboard::openKeyboard( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to create keyboard device\n" ));
+		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to create keyboard device" ));
 		assert( 0 );
 		closeKeyboard();
 		return;
@@ -151,7 +151,7 @@ void DirectInputKeyboard::openKeyboard( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to set data format for keyboard\n" ));
+		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to set data format for keyboard" ));
 		assert( 0 );
 		closeKeyboard();
 		return;
@@ -169,7 +169,7 @@ void DirectInputKeyboard::openKeyboard( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to set cooperative level\n" ));
+		DEBUG_LOG(( "ERROR - openKeyboard: Unabled to set cooperative level" ));
 		assert( 0 );
 		closeKeyboard();
 		return;
@@ -187,7 +187,7 @@ void DirectInputKeyboard::openKeyboard( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: Unable to set keyboard buffer size property\n" ));
+		DEBUG_LOG(( "ERROR - openKeyboard: Unable to set keyboard buffer size property" ));
 		assert( 0 );
 		closeKeyboard();
 		return;
@@ -199,7 +199,7 @@ void DirectInputKeyboard::openKeyboard( void )
 	if( FAILED( hr ) )
 	{
 
-		DEBUG_LOG(( "ERROR - openKeyboard: Unable to acquire keyboard device\n" ));
+		DEBUG_LOG(( "ERROR - openKeyboard: Unable to acquire keyboard device" ));
 		// Note - This can happen in windowed mode, and we can re-acquire later.  So don't 
 		// close the keyboard. jba.
 		// closeKeyboard();
@@ -207,7 +207,7 @@ void DirectInputKeyboard::openKeyboard( void )
 
 	}  // end if
 
-	DEBUG_LOG(( "OK - Keyboard initialized successfully.\n" ));
+	DEBUG_LOG(( "OK - Keyboard initialized successfully." ));
 
 }  // end openKeyboard
 
@@ -223,7 +223,7 @@ void DirectInputKeyboard::closeKeyboard( void )
 		m_pKeyboardDevice->Unacquire();
 		m_pKeyboardDevice->Release();
 		m_pKeyboardDevice = NULL;
-		DEBUG_LOG(( "OK - Keyboard deviced closed\n" ));
+		DEBUG_LOG(( "OK - Keyboard deviced closed" ));
 
 	}  // end if
 	if( m_pDirectInput )
@@ -231,11 +231,11 @@ void DirectInputKeyboard::closeKeyboard( void )
 
 		m_pDirectInput->Release();
 		m_pDirectInput = NULL;
-		DEBUG_LOG(( "OK - Keyboard direct input interface closed\n" ));
+		DEBUG_LOG(( "OK - Keyboard direct input interface closed" ));
 
 	}  // end if
 
-	DEBUG_LOG(( "OK - Keyboard shutdown complete\n" ));
+	DEBUG_LOG(( "OK - Keyboard shutdown complete" ));
 
 }  // end closeKeyboard
 

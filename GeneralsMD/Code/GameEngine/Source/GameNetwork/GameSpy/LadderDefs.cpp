@@ -58,7 +58,7 @@ LadderInfo::LadderInfo()
 
 static LadderInfo *parseLadder(AsciiString raw)
 {
-	DEBUG_LOG(("Looking at ladder:\n%s\n", raw.str()));
+	DEBUG_LOG(("Looking at ladder:\n%s", raw.str()));
 	LadderInfo *lad = NULL;
 	AsciiString line;
 	while (raw.nextToken(&line, "\n"))
@@ -158,7 +158,7 @@ static LadderInfo *parseLadder(AsciiString raw)
 		}
 		else if ( lad && line.compare("</Ladder>") == 0 )
 		{
-			DEBUG_LOG(("Saw a ladder: name=%ls, addr=%s:%d, players=%dv%d, pass=%s, replay=%d, homepage=%s\n",
+			DEBUG_LOG(("Saw a ladder: name=%ls, addr=%s:%d, players=%dv%d, pass=%s, replay=%d, homepage=%s",
 				lad->name.str(), lad->address.str(), lad->port, lad->playersPerTeam, lad->playersPerTeam, lad->cryptedPassword.str(),
 				lad->submitReplay, lad->homepageURL.str()));
 			// end of a ladder
@@ -166,7 +166,7 @@ static LadderInfo *parseLadder(AsciiString raw)
 			{
 				if (lad->validFactions.size() == 0)
 				{
-					DEBUG_LOG(("No factions specified.  Using all.\n"));
+					DEBUG_LOG(("No factions specified.  Using all."));
 					lad->validFactions.clear();
 					Int numTemplates = ThePlayerTemplateStore->getPlayerTemplateCount();
 					for ( Int i = 0; i < numTemplates; ++i ) 
@@ -187,13 +187,13 @@ static LadderInfo *parseLadder(AsciiString raw)
 						AsciiString faction = *it;
 						AsciiString marker;
 						marker.format("INI:Faction%s", faction.str());
-						DEBUG_LOG(("Faction %s has marker %s corresponding to str %ls\n", faction.str(), marker.str(), TheGameText->fetch(marker).str()));
+						DEBUG_LOG(("Faction %s has marker %s corresponding to str %ls", faction.str(), marker.str(), TheGameText->fetch(marker).str()));
 					}
 				}
 
 				if (lad->validMaps.size() == 0)
 				{
-					DEBUG_LOG(("No maps specified.  Using all.\n"));
+					DEBUG_LOG(("No maps specified.  Using all."));
 					std::list<AsciiString> qmMaps = TheGameSpyConfig->getQMMaps();
 					for (std::list<AsciiString>::const_iterator it = qmMaps.begin(); it != qmMaps.end(); ++it)
 					{
@@ -313,12 +313,12 @@ LadderList::LadderList()
 					lad->index = index++;
 					if (inLadders)
 					{
-						DEBUG_LOG(("Adding to standard ladders\n"));
+						DEBUG_LOG(("Adding to standard ladders"));
 						m_standardLadders.push_back(lad);
 					}
 					else
 					{
-						DEBUG_LOG(("Adding to special ladders\n"));
+						DEBUG_LOG(("Adding to special ladders"));
 						m_specialLadders.push_back(lad);
 					}
 				}
@@ -335,7 +335,7 @@ LadderList::LadderList()
 	// look for local ladders
 	loadLocalLadders();
 
-	DEBUG_LOG(("After looking for ladders, we have %d local, %d special && %d normal\n", m_localLadders.size(), m_specialLadders.size(), m_standardLadders.size()));
+	DEBUG_LOG(("After looking for ladders, we have %d local, %d special && %d normal", m_localLadders.size(), m_specialLadders.size(), m_standardLadders.size()));
 }
 
 LadderList::~LadderList()
@@ -457,7 +457,7 @@ void LadderList::loadLocalLadders( void )
 	while (it != filenameList.end())
 	{
 		AsciiString filename = *it;
-		DEBUG_LOG(("Looking at possible ladder info file '%s'\n", filename.str()));
+		DEBUG_LOG(("Looking at possible ladder info file '%s'", filename.str()));
 		filename.toLower();
 		checkLadder( filename, index-- );
 		++it;
@@ -483,7 +483,7 @@ void LadderList::checkLadder( AsciiString fname, Int index )
 		fp = NULL;
 	}
 
-	DEBUG_LOG(("Read %d bytes from '%s'\n", rawData.getLength(), fname.str()));
+	DEBUG_LOG(("Read %d bytes from '%s'", rawData.getLength(), fname.str()));
 	if (rawData.isEmpty())
 		return;
 
@@ -496,21 +496,21 @@ void LadderList::checkLadder( AsciiString fname, Int index )
 	// sanity check
 	if (li->address.isEmpty())
 	{
-		DEBUG_LOG(("Bailing because of li->address.isEmpty()\n"));
+		DEBUG_LOG(("Bailing because of li->address.isEmpty()"));
 		delete li;
 		return;
 	}
 
 	if (!li->port)
 	{
-		DEBUG_LOG(("Bailing because of !li->port\n"));
+		DEBUG_LOG(("Bailing because of !li->port"));
 		delete li;
 		return;
 	}
 
 	if (li->validMaps.size() == 0)
 	{
-		DEBUG_LOG(("Bailing because of li->validMaps.size() == 0\n"));
+		DEBUG_LOG(("Bailing because of li->validMaps.size() == 0"));
 		delete li;
 		return;
 	}
@@ -525,6 +525,6 @@ void LadderList::checkLadder( AsciiString fname, Int index )
 	//	fname.removeLastChar(); // remove .lad
 	//li->name = UnicodeString(MultiByteToWideCharSingleLine(fname.reverseFind('\\')+1).c_str());
 
-	DEBUG_LOG(("Adding local ladder %ls\n", li->name.str()));
+	DEBUG_LOG(("Adding local ladder %ls", li->name.str()));
 	m_localLadders.push_back(li);
 }

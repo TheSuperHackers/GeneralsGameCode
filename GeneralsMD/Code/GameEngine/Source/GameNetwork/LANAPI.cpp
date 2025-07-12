@@ -67,7 +67,7 @@ LANGame::LANGame( void )
 
 LANAPI::LANAPI( void ) : m_transport(NULL)
 {
-	DEBUG_LOG(("LANAPI::LANAPI() - max game option size is %d, sizeof(LANMessage)=%d, MAX_PACKET_SIZE=%d\n",
+	DEBUG_LOG(("LANAPI::LANAPI() - max game option size is %d, sizeof(LANMessage)=%d, MAX_PACKET_SIZE=%d",
 		m_lanMaxOptionsLength, sizeof(LANMessage), MAX_PACKET_SIZE));
 
 	m_lastResendTime = 0;
@@ -348,49 +348,49 @@ void LANAPI::update( void )
 			}
 
 			LANMessage *msg = (LANMessage *)(m_transport->m_inBuffer[i].data);
-			//DEBUG_LOG(("LAN message type %s from %ls (%s@%s)\n", GetMessageTypeString(msg->LANMessageType).str(),
+			//DEBUG_LOG(("LAN message type %s from %ls (%s@%s)", GetMessageTypeString(msg->LANMessageType).str(),
 			//	msg->name, msg->userName, msg->hostName));
 			switch (msg->LANMessageType)
 			{
 				// Location specification
 			case LANMessage::MSG_REQUEST_LOCATIONS:		// Hey, where is everybody?
-				DEBUG_LOG(("LANAPI::update - got a MSG_REQUEST_LOCATIONS from %d.%d.%d.%d\n", PRINTF_IP_AS_4_INTS(senderIP)));
+				DEBUG_LOG(("LANAPI::update - got a MSG_REQUEST_LOCATIONS from %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(senderIP)));
 				handleRequestLocations( msg, senderIP );
 				break;
 			case LANMessage::MSG_GAME_ANNOUNCE:				// Here someone is, and here's his game info!
-				DEBUG_LOG(("LANAPI::update - got a MSG_GAME_ANNOUNCE from %d.%d.%d.%d\n", PRINTF_IP_AS_4_INTS(senderIP)));
+				DEBUG_LOG(("LANAPI::update - got a MSG_GAME_ANNOUNCE from %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(senderIP)));
 				handleGameAnnounce( msg, senderIP );
 				break;
 			case LANMessage::MSG_LOBBY_ANNOUNCE:			// Hey, I'm in the lobby!
-				DEBUG_LOG(("LANAPI::update - got a MSG_LOBBY_ANNOUNCE from %d.%d.%d.%d\n", PRINTF_IP_AS_4_INTS(senderIP)));
+				DEBUG_LOG(("LANAPI::update - got a MSG_LOBBY_ANNOUNCE from %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(senderIP)));
 				handleLobbyAnnounce( msg, senderIP );
 				break;
 			case LANMessage::MSG_REQUEST_GAME_INFO:
-				DEBUG_LOG(("LANAPI::update - got a MSG_REQUEST_GAME_INFO from %d.%d.%d.%d\n", PRINTF_IP_AS_4_INTS(senderIP)));
+				DEBUG_LOG(("LANAPI::update - got a MSG_REQUEST_GAME_INFO from %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(senderIP)));
 				handleRequestGameInfo( msg, senderIP );
 				break;
 
 				// Joining games
 			case LANMessage::MSG_REQUEST_JOIN:				// Let me in!  Let me in!
-				DEBUG_LOG(("LANAPI::update - got a MSG_REQUEST_JOIN from %d.%d.%d.%d\n", PRINTF_IP_AS_4_INTS(senderIP)));
+				DEBUG_LOG(("LANAPI::update - got a MSG_REQUEST_JOIN from %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(senderIP)));
 				handleRequestJoin( msg, senderIP );
 				break;
 			case LANMessage::MSG_JOIN_ACCEPT:					// Okay, you can join.
-				DEBUG_LOG(("LANAPI::update - got a MSG_JOIN_ACCEPT from %d.%d.%d.%d\n", PRINTF_IP_AS_4_INTS(senderIP)));
+				DEBUG_LOG(("LANAPI::update - got a MSG_JOIN_ACCEPT from %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(senderIP)));
 				handleJoinAccept( msg, senderIP );
 				break;
 			case LANMessage::MSG_JOIN_DENY:						// Go away!  We don't want any!
-				DEBUG_LOG(("LANAPI::update - got a MSG_JOIN_DENY from %d.%d.%d.%d\n", PRINTF_IP_AS_4_INTS(senderIP)));
+				DEBUG_LOG(("LANAPI::update - got a MSG_JOIN_DENY from %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(senderIP)));
 				handleJoinDeny( msg, senderIP );
 				break;
 
 				// Leaving games, lobby
 			case LANMessage::MSG_REQUEST_GAME_LEAVE:				// I'm outa here!
-				DEBUG_LOG(("LANAPI::update - got a MSG_REQUEST_GAME_LEAVE from %d.%d.%d.%d\n", PRINTF_IP_AS_4_INTS(senderIP)));
+				DEBUG_LOG(("LANAPI::update - got a MSG_REQUEST_GAME_LEAVE from %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(senderIP)));
 				handleRequestGameLeave( msg, senderIP );
 				break;
 			case LANMessage::MSG_REQUEST_LOBBY_LEAVE:				// I'm outa here!
-				DEBUG_LOG(("LANAPI::update - got a MSG_REQUEST_LOBBY_LEAVE from %d.%d.%d.%d\n", PRINTF_IP_AS_4_INTS(senderIP)));
+				DEBUG_LOG(("LANAPI::update - got a MSG_REQUEST_LOBBY_LEAVE from %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(senderIP)));
 				handleRequestLobbyLeave( msg, senderIP );
 				break;
 
@@ -411,7 +411,7 @@ void LANAPI::update( void )
 				handleGameStartTimer( msg, senderIP );
 				break;
 			case LANMessage::MSG_GAME_OPTIONS:				// Here's some info about the game.
-				DEBUG_LOG(("LANAPI::update - got a MSG_GAME_OPTIONS from %d.%d.%d.%d\n", PRINTF_IP_AS_4_INTS(senderIP)));
+				DEBUG_LOG(("LANAPI::update - got a MSG_GAME_OPTIONS from %d.%d.%d.%d", PRINTF_IP_AS_4_INTS(senderIP)));
 				handleGameOptions( msg, senderIP );
 				break;
 			case LANMessage::MSG_INACTIVE:		// someone is telling us that we're inactive.
@@ -419,7 +419,7 @@ void LANAPI::update( void )
 				break;
 
 			default:
-				DEBUG_LOG(("Unknown LAN message type %d\n", msg->LANMessageType));
+				DEBUG_LOG(("Unknown LAN message type %d", msg->LANMessageType));
 			}
 
 			// Mark it as read
@@ -586,7 +586,7 @@ void LANAPI::update( void )
 	}
 	else if (m_gameStartTime && m_gameStartTime <= now)
 	{
-//		DEBUG_LOG(("m_gameStartTime=%d, now=%d, m_gameStartSeconds=%d\n", m_gameStartTime, now, m_gameStartSeconds));
+//		DEBUG_LOG(("m_gameStartTime=%d, now=%d, m_gameStartSeconds=%d", m_gameStartTime, now, m_gameStartSeconds));
 		ResetGameStartTimer();
 		RequestGameStart();
 	}
@@ -897,7 +897,7 @@ void LANAPI::RequestGameCreate( UnicodeString gameName, Bool isDirectConnect )
 	while (s.getLength() > g_lanGameNameLength)
 		s.removeLastChar();
 
-	DEBUG_LOG(("Setting local game name to '%ls'\n", s.str()));
+	DEBUG_LOG(("Setting local game name to '%ls'", s.str()));
 
 	myGame->setName(s);
 
@@ -1276,16 +1276,16 @@ Bool LANAPI::AmIHost( void )
 }
 
 void LANAPI::setIsActive(Bool isActive) {
-	DEBUG_LOG(("LANAPI::setIsActive - entering\n"));
+	DEBUG_LOG(("LANAPI::setIsActive - entering"));
 	if (isActive != m_isActive) {
-		DEBUG_LOG(("LANAPI::setIsActive - m_isActive changed to %s\n", isActive ? "TRUE" : "FALSE"));
+		DEBUG_LOG(("LANAPI::setIsActive - m_isActive changed to %s", isActive ? "TRUE" : "FALSE"));
 		if (isActive == FALSE) {
 			if ((m_inLobby == FALSE) && (m_currentGame != NULL)) {
 				LANMessage msg;
 				fillInLANMessage( &msg );
 				msg.LANMessageType = LANMessage::MSG_INACTIVE;
 				sendMessage(&msg);
-				DEBUG_LOG(("LANAPI::setIsActive - sent an IsActive message\n"));
+				DEBUG_LOG(("LANAPI::setIsActive - sent an IsActive message"));
 			}
 		}
 	}

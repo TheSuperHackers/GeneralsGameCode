@@ -82,7 +82,7 @@ ArchiveFile * StdBIGFileSystem::openArchiveFile(const Char *filename) {
 
 	ArchiveFile *archiveFile = NEW StdBIGFile;
 
-	DEBUG_LOG(("StdBIGFileSystem::openArchiveFile - opening BIG file %s\n", filename));
+	DEBUG_LOG(("StdBIGFileSystem::openArchiveFile - opening BIG file %s", filename));
 
 	if (fp == NULL) {
 		DEBUG_CRASH(("Could not open archive file %s for parsing", filename));
@@ -103,7 +103,7 @@ ArchiveFile * StdBIGFileSystem::openArchiveFile(const Char *filename) {
 	// read in the file size.
 	fp->read(&archiveFileSize, 4);
 
-	DEBUG_LOG(("StdBIGFileSystem::openArchiveFile - size of archive file is %d bytes\n", archiveFileSize));
+	DEBUG_LOG(("StdBIGFileSystem::openArchiveFile - size of archive file is %d bytes", archiveFileSize));
 
 //	char t;
 
@@ -112,7 +112,7 @@ ArchiveFile * StdBIGFileSystem::openArchiveFile(const Char *filename) {
 	fp->read(&numLittleFiles, 4);
 	numLittleFiles = betoh(numLittleFiles);
 
-	DEBUG_LOG(("StdBIGFileSystem::openArchiveFile - %d are contained in archive\n", numLittleFiles));
+	DEBUG_LOG(("StdBIGFileSystem::openArchiveFile - %d are contained in archive", numLittleFiles));
 //	for (Int i = 0; i < 2; ++i) {
 //		t = buffer[i];
 //		buffer[i] = buffer[(4-i)-1];
@@ -159,7 +159,7 @@ ArchiveFile * StdBIGFileSystem::openArchiveFile(const Char *filename) {
 		AsciiString debugpath;
 		debugpath = path;
 		debugpath.concat(fileInfo->m_filename);
-//		DEBUG_LOG(("StdBIGFileSystem::openArchiveFile - adding file %s to archive file %s, file number %d\n", debugpath.str(), fileInfo->m_archiveFilename.str(), i));
+//		DEBUG_LOG(("StdBIGFileSystem::openArchiveFile - adding file %s to archive file %s, file number %d", debugpath.str(), fileInfo->m_archiveFilename.str(), i));
 
 		archiveFile->addFile(path, fileInfo);
 	}
@@ -212,10 +212,10 @@ Bool StdBIGFileSystem::loadBigFilesFromDirectory(AsciiString dir, AsciiString fi
 		ArchiveFile *archiveFile = openArchiveFile((*it).str());
 
 		if (archiveFile != NULL) {
-			DEBUG_LOG(("StdBIGFileSystem::loadBigFilesFromDirectory - loading %s into the directory tree.\n", (*it).str()));
+			DEBUG_LOG(("StdBIGFileSystem::loadBigFilesFromDirectory - loading %s into the directory tree.", (*it).str()));
 			loadIntoDirectoryTree(archiveFile, *it, overwrite);
 			m_archiveFileMap[(*it)] = archiveFile;
-			DEBUG_LOG(("StdBIGFileSystem::loadBigFilesFromDirectory - %s inserted into the archive file map.\n", (*it).str()));
+			DEBUG_LOG(("StdBIGFileSystem::loadBigFilesFromDirectory - %s inserted into the archive file map.", (*it).str()));
 			actuallyAdded = TRUE;
 		}
 

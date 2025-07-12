@@ -53,7 +53,7 @@ Bool W3DWebBrowser::createBrowserWindow(const char *tag, GameWindow *win)
 	WebBrowserURL *url = findURL( AsciiString(tag) );
 
 	if (url == NULL) {
-		DEBUG_LOG(("W3DWebBrowser::createBrowserWindow - couldn't find URL for page %s\n", tag));
+		DEBUG_LOG(("W3DWebBrowser::createBrowserWindow - couldn't find URL for page %s", tag));
 		return FALSE;
 	}
 

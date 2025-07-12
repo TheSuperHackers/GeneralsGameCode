@@ -1613,18 +1613,18 @@ HRESULT  Cftp::GetNextFileBlock( LPCSTR szLocalFileName, int * piTotalRead )
 		char curdir[256];
 		_getcwd(curdir,256);
 		Prepare_Directories(curdir, m_szLocalFileName);
-		DEBUG_LOG(("CWD: %s\n", curdir));
+		DEBUG_LOG(("CWD: %s", curdir));
 
 		if( rename( downloadfilename, m_szLocalFileName ) != 0 )	{
-			DEBUG_LOG(("First rename of %s to %s failed with errno of %d\n", downloadfilename, m_szLocalFileName, errno));
+			DEBUG_LOG(("First rename of %s to %s failed with errno of %d", downloadfilename, m_szLocalFileName, errno));
 			/* Error moving file - remove file that's already there and try again. */
 			_chmod( m_szLocalFileName, _S_IWRITE | _S_IREAD);	// make sure it's not readonly
-			DEBUG_LOG(("_chmod of %s failed with errno of %d\n", m_szLocalFileName, errno));
+			DEBUG_LOG(("_chmod of %s failed with errno of %d", m_szLocalFileName, errno));
 			remove( m_szLocalFileName );
-			DEBUG_LOG(("remove of %s failed with errno of %d\n", m_szLocalFileName, errno));
+			DEBUG_LOG(("remove of %s failed with errno of %d", m_szLocalFileName, errno));
 
 			if( rename( downloadfilename, m_szLocalFileName ) != 0 )	{
-				DEBUG_LOG(("Second rename of %s to %s failed with errno of %d\n", downloadfilename, m_szLocalFileName, errno));
+				DEBUG_LOG(("Second rename of %s to %s failed with errno of %d", downloadfilename, m_szLocalFileName, errno));
 				return( FTP_FAILED );
 			}
 		}

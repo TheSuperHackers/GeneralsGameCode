@@ -1205,7 +1205,7 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
 	if( gridEnabled != m_isWaterGridRenderingEnabled )
 	{
 
-		DEBUG_CRASH(( "W3DTerrainVisual::xfer - m_isWaterGridRenderingEnabled mismatch\n" ));
+		DEBUG_CRASH(( "W3DTerrainVisual::xfer - m_isWaterGridRenderingEnabled mismatch" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -1225,7 +1225,7 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
 		if( width != getGridWidth() )
 		{
 
-			DEBUG_CRASH(( "W3DTerainVisual::xfer - grid width mismatch '%d' should be '%d'\n",
+			DEBUG_CRASH(( "W3DTerainVisual::xfer - grid width mismatch '%d' should be '%d'",
 										width, getGridWidth() ));
 			throw SC_INVALID_DATA;
 
@@ -1233,7 +1233,7 @@ void W3DTerrainVisual::xfer( Xfer *xfer )
 		if( height != getGridHeight() )
 		{
 
-			DEBUG_CRASH(( "W3DTerainVisual::xfer - grid height mismatch '%d' should be '%d'\n",
+			DEBUG_CRASH(( "W3DTerainVisual::xfer - grid height mismatch '%d' should be '%d'",
 										height, getGridHeight() ));
 			throw SC_INVALID_DATA;
 

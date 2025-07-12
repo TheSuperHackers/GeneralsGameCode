@@ -375,7 +375,7 @@ void RoomMessageCallback(PEER peer, RoomType roomType,
 												 const char * nick, const char * message,
 												 MessageType messageType, void * param)
 {
-	DEBUG_LOG(("RoomMessageCallback\n"));
+	DEBUG_LOG(("RoomMessageCallback"));
 	handleUnicodeMessage(nick, QuotedPrintableToUnicodeString(message), true, (messageType == ActionMessage));
 }
 
@@ -383,7 +383,7 @@ void PlayerMessageCallback(PEER peer,
 												 const char * nick, const char * message,
 												 MessageType messageType, void * param)
 {
-	DEBUG_LOG(("PlayerMessageCallback\n"));
+	DEBUG_LOG(("PlayerMessageCallback"));
 	handleUnicodeMessage(nick, QuotedPrintableToUnicodeString(message), false, (messageType == ActionMessage));
 }
 

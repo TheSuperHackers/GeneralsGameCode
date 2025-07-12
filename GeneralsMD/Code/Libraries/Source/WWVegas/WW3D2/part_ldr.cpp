@@ -406,7 +406,7 @@ ParticleEmitterDefClass::Load_W3D (ChunkLoadClass &chunk_load)
 				break;
 				
 			default: 
-				WWDEBUG_SAY(("Unhandled Chunk! File: %s Line: %d\r\n",__FILE__,__LINE__));
+				WWDEBUG_SAY(("Unhandled Chunk! File: %s Line: %d",__FILE__,__LINE__));
 				break;
 		}
 		

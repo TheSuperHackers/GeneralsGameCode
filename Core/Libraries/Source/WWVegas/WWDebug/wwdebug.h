@@ -107,7 +107,7 @@ void					WWDebug_DBWin32_Message_Handler( const char * message);
 /*
 ** Use the following #define so that all of the debugging messages
 ** and strings go away when the release version is built.  
-** WWDEBUG_SAY(("dir = %f\n",dir));
+** WWDEBUG_SAY(("dir = %f",dir));
 */
 
 // TheSuperHackers @compile feliwir 12/04/2025 Both Debug headers are identical. Use ZH.

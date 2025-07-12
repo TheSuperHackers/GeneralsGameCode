@@ -250,7 +250,7 @@ void GameResultsThreadClass::Thread_Function()
 				IP = inet_addr(hostnameBuffer);
 				in_addr hostNode;
 				hostNode.s_addr = IP;
-				DEBUG_LOG(("sending game results to %s - IP = %s\n", hostnameBuffer, inet_ntoa(hostNode) ));
+				DEBUG_LOG(("sending game results to %s - IP = %s", hostnameBuffer, inet_ntoa(hostNode) ));
 			}
 			else
 			{
@@ -259,7 +259,7 @@ void GameResultsThreadClass::Thread_Function()
 				hostStruct = gethostbyname(hostnameBuffer);
 				if (hostStruct == NULL)
 				{
-					DEBUG_LOG(("sending game results to %s - host lookup failed\n", hostnameBuffer));
+					DEBUG_LOG(("sending game results to %s - host lookup failed", hostnameBuffer));
 					
 					// Even though this failed to resolve IP, still need to send a
 					//   callback.
@@ -269,7 +269,7 @@ void GameResultsThreadClass::Thread_Function()
 				{
 					hostNode = (in_addr *) hostStruct->h_addr;
 					IP = hostNode->s_addr;
-					DEBUG_LOG(("sending game results to %s IP = %s\n", hostnameBuffer, inet_ntoa(*hostNode) ));
+					DEBUG_LOG(("sending game results to %s IP = %s", hostnameBuffer, inet_ntoa(*hostNode) ));
 				}
 			}
 
@@ -368,7 +368,7 @@ Int GameResultsThreadClass::sendGameResults( UnsignedInt IP, UnsignedShort port,
 	Int sock = socket( AF_INET, SOCK_STREAM, 0 );
 	if (sock < 0)
 	{
-		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - socket() returned %d(%s)\n", sock, getWSAErrorString(sock)));
+		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - socket() returned %d(%s)", sock, getWSAErrorString(sock)));
 		return sock;
 	}
 
@@ -383,7 +383,7 @@ Int GameResultsThreadClass::sendGameResults( UnsignedInt IP, UnsignedShort port,
 	if( connect( sock, (struct sockaddr *)&sockAddr, sizeof( sockAddr ) ) == -1 )
 	{
 		error = WSAGetLastError();
-		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - connect() returned %d(%s)\n", error, getWSAErrorString(error)));
+		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - connect() returned %d(%s)", error, getWSAErrorString(error)));
 		if( ( error == WSAEWOULDBLOCK ) || ( error == WSAEINVAL ) || ( error == WSAEALREADY ) )
 		{
 			return( -1 );
@@ -399,7 +399,7 @@ Int GameResultsThreadClass::sendGameResults( UnsignedInt IP, UnsignedShort port,
 	if (send( sock, results.c_str(), results.length(), 0 ) == SOCKET_ERROR)
 	{
 		error = WSAGetLastError();
-		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - send() returned %d(%s)\n", error, getWSAErrorString(error)));
+		DEBUG_LOG(("GameResultsThreadClass::sendGameResults() - send() returned %d(%s)", error, getWSAErrorString(error)));
 		closesocket(sock);
 		return WSAGetLastError();
 	}

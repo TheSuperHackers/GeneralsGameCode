@@ -93,12 +93,12 @@ void NetCommandWrapperListNode::copyChunkData(NetWrapperCommandMsg *msg) {
 		return;
 	}
 
-	DEBUG_ASSERTCRASH(msg->getChunkNumber() < m_numChunks, ("MunkeeChunk %d of %d\n",
+	DEBUG_ASSERTCRASH(msg->getChunkNumber() < m_numChunks, ("MunkeeChunk %d of %d",
 		msg->getChunkNumber(), m_numChunks));
 	if (msg->getChunkNumber() >= m_numChunks)
 		return;
 
-	DEBUG_LOG(("NetCommandWrapperListNode::copyChunkData() - copying chunk %d\n",
+	DEBUG_LOG(("NetCommandWrapperListNode::copyChunkData() - copying chunk %d",
 		msg->getChunkNumber()));
 
 	if (m_chunksPresent[msg->getChunkNumber()] == TRUE) {

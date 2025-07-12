@@ -56,7 +56,7 @@ void RadiusDecalTemplate::createRadiusDecal(const Coord3D& pos, Real radius, con
 	
 	if (owningPlayer == NULL)
 	{
-		DEBUG_CRASH(("You MUST specify a non-NULL owningPlayer to createRadiusDecal. (srj)\n"));
+		DEBUG_CRASH(("You MUST specify a non-NULL owningPlayer to createRadiusDecal. (srj)"));
 		return;
 	}
 
@@ -87,7 +87,7 @@ void RadiusDecalTemplate::createRadiusDecal(const Coord3D& pos, Real radius, con
 		}
 		else
 		{
-			DEBUG_CRASH(("Unable to add decal %s\n",decalInfo.m_ShadowName));
+			DEBUG_CRASH(("Unable to add decal %s",decalInfo.m_ShadowName));
 		}
 	}
 }

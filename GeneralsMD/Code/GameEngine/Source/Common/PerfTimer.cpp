@@ -188,7 +188,7 @@ void InitPrecisionTimer()
 			GetPrecisionTimer(&bogus[7]);
 		}
 		TheTicksToGetTicks = (bogus[7] - start) / (ITERS*8);
-		DEBUG_LOG(("TheTicksToGetTicks is %d (%f usec)\n",(int)TheTicksToGetTicks,TheTicksToGetTicks/s_ticksPerUSec));
+		DEBUG_LOG(("TheTicksToGetTicks is %d (%f usec)",(int)TheTicksToGetTicks,TheTicksToGetTicks/s_ticksPerUSec));
 	#endif
 		
 #endif
@@ -383,7 +383,7 @@ void PerfGather::reset()
 		}
 		GetPrecisionTimer(&end);
 		s_stopStartOverhead = (end - start) / (ITERS*8);
-		DEBUG_LOG(("s_stopStartOverhead is %d (%f usec)\n",(int)s_stopStartOverhead,s_stopStartOverhead/s_ticksPerUSec));
+		DEBUG_LOG(("s_stopStartOverhead is %d (%f usec)",(int)s_stopStartOverhead,s_stopStartOverhead/s_ticksPerUSec));
 	}
 }
 
@@ -604,7 +604,7 @@ void PerfTimer::outputInfo( void )
 								 "Average Time (per frame): %.4f ms\n"
 								 "Average calls per frame: %.2f\n"
 								 "Number of calls: %d\n"
-								 "Max possible FPS: %.4f\n",
+								 "Max possible FPS: %.4f",
 								 m_identifier, 
 								 avgTimePerCall,
 								 avgTimePerFrame,
@@ -617,7 +617,7 @@ void PerfTimer::outputInfo( void )
 								 "Average Time (per frame): %.4f ms\n"
 								 "Average calls per frame: %.2f\n"
 								 "Number of calls: %d\n"
-								 "Max possible FPS: %.4f\n",
+								 "Max possible FPS: %.4f",
 								 m_identifier, 
 								 avgTimePerCall,
 								 avgTimePerFrame,

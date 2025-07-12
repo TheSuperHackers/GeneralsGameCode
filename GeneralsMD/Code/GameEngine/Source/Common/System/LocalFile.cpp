@@ -272,7 +272,7 @@ Bool LocalFile::open( const Char *filename, Int access )
 #endif
 
 	++s_totalOpen;
-///	DEBUG_LOG(("LocalFile::open %s (total %d)\n",filename,s_totalOpen));
+///	DEBUG_LOG(("LocalFile::open %s (total %d)",filename,s_totalOpen));
 	if ( m_access & APPEND )
 	{
 		if ( seek ( 0, END ) < 0 )

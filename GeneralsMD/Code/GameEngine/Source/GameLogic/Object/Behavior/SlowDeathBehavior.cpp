@@ -159,7 +159,7 @@ SlowDeathBehavior::SlowDeathBehavior( Thing *thing, const ModuleData* moduleData
 
 	if (getSlowDeathBehaviorModuleData()->m_probabilityModifier < 1)
 	{
-		DEBUG_CRASH(("ProbabilityModifer must be >= 1.\n"));
+		DEBUG_CRASH(("ProbabilityModifer must be >= 1."));
 		throw INI_INVALID_DATA;
 	}
 
@@ -377,7 +377,7 @@ void SlowDeathBehavior::doPhaseStuff(SlowDeathPhaseType sdphase)
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime SlowDeathBehavior::update()
 {
-	//DEBUG_LOG(("updating SlowDeathBehavior %08lx\n",this));
+	//DEBUG_LOG(("updating SlowDeathBehavior %08lx",this));
 	DEBUG_ASSERTCRASH(isSlowDeathActivated(), ("hmm, this should not be possible"));
 
 	const SlowDeathBehaviorModuleData* d = getSlowDeathBehaviorModuleData();
