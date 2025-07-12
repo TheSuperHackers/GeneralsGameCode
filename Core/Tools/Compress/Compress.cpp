@@ -26,11 +26,11 @@
 // TheSuperHackers @todo Streamline and simplify the logging approach for tools
 static void DebugLog(const char* format, ...)
 {
-	char buffer[4096];
+	char buffer[1024];
 	buffer[0] = 0;
 	va_list args;
 	va_start(args, format);
-	vsprintf_s(buffer, format, args);
+	vsnprintf(buffer, 1024, format, args);
 	va_end(args);
 	printf("%s\n", buffer);
 }
