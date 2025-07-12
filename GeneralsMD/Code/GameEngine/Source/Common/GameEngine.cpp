@@ -256,15 +256,14 @@ void GameEngine::init()
 		if (TheVersion)
 		{
 			DEBUG_LOG(("================================================================================\n"));
-	#if defined RTS_DEBUG
-			const char *buildType = "Debug";
-	#else
-			const char *buildType = "Release";
-	#endif
-			DEBUG_LOG(("Generals version %s (%s)\n", TheVersion->getAsciiVersion().str(), buildType));
+			DEBUG_LOG(("Generals version %s\n", TheVersion->getAsciiVersion().str()));
 			DEBUG_LOG(("Build date: %s\n", TheVersion->getAsciiBuildTime().str()));
 			DEBUG_LOG(("Build location: %s\n", TheVersion->getAsciiBuildLocation().str()));
-			DEBUG_LOG(("Built by: %s\n", TheVersion->getAsciiBuildUser().str()));
+			DEBUG_LOG(("Build user: %s\n", TheVersion->getAsciiBuildUser().str()));
+			DEBUG_LOG(("Build git revision: %s\n", TheVersion->getAsciiGitCommitCount().str()));
+			DEBUG_LOG(("Build git version: %s\n", TheVersion->getAsciiGitTagOrHash().str()));
+			DEBUG_LOG(("Build git commit time: %s\n", TheVersion->getAsciiGitCommitTime().str()));
+			DEBUG_LOG(("Build git commit author: %s\n", Version::getGitCommitAuthorName()));
 			DEBUG_LOG(("================================================================================\n"));
 		}
 #endif
