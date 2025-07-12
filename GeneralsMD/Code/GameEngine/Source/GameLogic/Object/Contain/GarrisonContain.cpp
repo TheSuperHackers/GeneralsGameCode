@@ -692,11 +692,10 @@ void GarrisonContain::trackTargets( void )
 	AIUpdateInterface *ai;
 	Object *obj;
 
+	DEBUG_ASSERTCRASH(m_garrisonPointsInitialized, ("garrisonPoints are not inited"));
+
 	for( ContainedItemsList::const_iterator it = containList.begin(); it != containList.end(); ++it )
 	{
-
-		DEBUG_ASSERTCRASH(m_garrisonPointsInitialized, ("garrisonPoints are not inited"));
-
 		// get the object
 		obj = *it;
 
