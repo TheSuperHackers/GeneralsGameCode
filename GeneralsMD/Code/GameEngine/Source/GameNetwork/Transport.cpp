@@ -305,11 +305,11 @@ Bool Transport::doRecv()
 
 //		DEBUG_LOG(("Transport::doRecv - Got something! len = %d", len));
 		// Decrypt the packet
-//		DEBUG_LOG(("buffer = "));
+//		DEBUG_LOG_RAW(("buffer = "));
 //		for (Int munkee = 0; munkee < len; ++munkee) {
-//			DEBUG_LOG(("%02x", *(buf + munkee)));
+//			DEBUG_LOG_RAW(("%02x", *(buf + munkee)));
 //		}
-//		DEBUG_LOG((""));
+//		DEBUG_LOG_RAW(("\n"));
 		decryptBuf(buf, len);
 
 		incomingMessage.length = len - sizeof(TransportMessageHeader);

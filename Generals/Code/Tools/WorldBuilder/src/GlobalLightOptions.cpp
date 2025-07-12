@@ -192,9 +192,9 @@ static void SpitLights()
 			DEBUG_LOG(("TerrainObjectsLighting%sDiffuse%s = R:%d G:%d B:%d", times[time], lights[light], redD, greenD, blueD));
 			DEBUG_LOG(("TerrainObjectsLighting%sLightPos%s = X:%0.2f Y:%0.2f Z:%0.2f", times[time], lights[light], x, y, z));
 
-			DEBUG_LOG((""));
+			DEBUG_LOG_RAW(("\n"));
 		}
-		DEBUG_LOG((""));
+		DEBUG_LOG_RAW(("\n"));
 	}
 
 	DEBUG_LOG(("GlobalLighting Code\n"));
@@ -229,9 +229,9 @@ static void SpitLights()
 			DEBUG_LOG(("TheGlobalData->m_terrainObjectsLighting[%d][%d].lightPos.y = %0.4ff;", theTime, light, tl.lightPos.y));
 			DEBUG_LOG(("TheGlobalData->m_terrainObjectsLighting[%d][%d].lightPos.z = %0.4ff;", theTime, light, tl.lightPos.z));
 
-			DEBUG_LOG((""));
+			DEBUG_LOG_RAW(("\n"));
 		}
-		DEBUG_LOG((""));
+		DEBUG_LOG_RAW(("\n"));
 	}
 #endif
 }

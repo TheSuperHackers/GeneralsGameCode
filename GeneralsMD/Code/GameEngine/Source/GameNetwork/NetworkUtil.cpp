@@ -47,25 +47,25 @@ void dumpBufferToLog(const void *vBuf, Int len, const char *fname, Int line)
 	for (Int dumpindex = 0; dumpindex < numLines; ++dumpindex)
 	{
 		Int offset = dumpindex*8;
-		DEBUG_LOG(("\t%5.5d\t", offset));
+		DEBUG_LOG_RAW(("\t%5.5d\t", offset));
 		Int dumpindex2;
 		Int numBytesThisLine = min(8, len - offset);
 		for (dumpindex2 = 0; dumpindex2 < numBytesThisLine; ++dumpindex2)
 		{
 			Int c = (buf[offset + dumpindex2] & 0xff);
-			DEBUG_LOG(("%02X ", c));
+			DEBUG_LOG_RAW(("%02X ", c));
 		}
 		for (; dumpindex2 < 8; ++dumpindex2)
 		{
-			DEBUG_LOG(("   "));
+			DEBUG_LOG_RAW(("   "));
 		}
-		DEBUG_LOG((" | "));
+		DEBUG_LOG_RAW((" | "));
 		for (dumpindex2 = 0; dumpindex2 < numBytesThisLine; ++dumpindex2)
 		{
 			char c = buf[offset + dumpindex2];
-			DEBUG_LOG(("%c", (isprint(c)?c:'.')));
+			DEBUG_LOG_RAW(("%c", (isprint(c)?c:'.')));
 		}
-		DEBUG_LOG((""));
+		DEBUG_LOG_RAW(("\n"));
 	}
 	DEBUG_LOG(("End of packet dump"));
 }

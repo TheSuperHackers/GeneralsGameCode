@@ -411,7 +411,8 @@ void GameTextManager::deinit( void )
 
 	NoString *noString = m_noStringList;
 
-	DEBUG_LOG(("\n*** Missing strings ***"));
+	DEBUG_LOG_RAW(("\n"));
+	DEBUG_LOG(("*** Missing strings ***"));
 	while ( noString )
 	{
 		DEBUG_LOG(("*** %ls ***", noString->text.str()));
@@ -419,7 +420,8 @@ void GameTextManager::deinit( void )
 		delete noString;
 		noString = next;
 	}
-	DEBUG_LOG(("*** End missing strings ***\n"));
+	DEBUG_LOG(("*** End missing strings ***"));
+	DEBUG_LOG_RAW(("\n"));
 
 	m_noStringList = NULL;
 

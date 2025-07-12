@@ -1400,7 +1400,7 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 	{
 		DEBUG_LOG((" %s", argv[arg]));
 	}
-	DEBUG_LOG((""));
+	DEBUG_LOG_RAW(("\n"));
 	DebugSetFlags(debugFlags); // turn timestamps back on iff they were on before
 	arg = 1;
 #endif // DEBUG_LOGGING

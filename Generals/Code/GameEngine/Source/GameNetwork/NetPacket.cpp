@@ -5843,11 +5843,11 @@ void NetPacket::dumpPacketToLog() {
 		++numLines;
 	}
 	for (Int dumpindex = 0; dumpindex < numLines; ++dumpindex) {
-		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("\t%d\t", dumpindex*8));
+		DEBUG_LOG_LEVEL_RAW(DEBUG_LEVEL_NET, ("\t%d\t", dumpindex*8));
 		for (Int dumpindex2 = 0; (dumpindex2 < 8) && ((dumpindex*8 + dumpindex2) < m_packetLen); ++dumpindex2) {
-			DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("%02x '%c' ", m_packet[dumpindex*8 + dumpindex2], m_packet[dumpindex*8 + dumpindex2]));
+			DEBUG_LOG_LEVEL_RAW(DEBUG_LEVEL_NET, ("%02x '%c' ", m_packet[dumpindex*8 + dumpindex2], m_packet[dumpindex*8 + dumpindex2]));
 		}
-		DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, (""));
+		DEBUG_LOG_LEVEL_RAW(DEBUG_LEVEL_NET, ("\n"));
 	}
 	DEBUG_LOG_LEVEL(DEBUG_LEVEL_NET, ("End of packet dump"));
 }

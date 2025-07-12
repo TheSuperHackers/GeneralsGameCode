@@ -1292,19 +1292,19 @@ Bool TerrainLogic::loadMap( AsciiString filename, Bool query )
 		count++;
 		Coord3D loc;
 		pWay->getLocation(&loc);
-		DEBUG_LOG(("Waypoint %d - '%s' id=%d ", count, pWay->getName().str(), pWay->getID()));
-		DEBUG_LOG(("{%.2f, %.2f, %.2f} ", loc.x, loc.y, loc.z));
+		DEBUG_LOG_RAW(("Waypoint %d - '%s' id=%d ", count, pWay->getName().str(), pWay->getID()));
+		DEBUG_LOG_RAW(("{%.2f, %.2f, %.2f} ", loc.x, loc.y, loc.z));
 		Int i;
 		if (pWay->getNumLinks()) {
-			DEBUG_LOG(("Links to: "));
+			DEBUG_LOG_RAW(("Links to: "));
 			for (i=0; i<pWay->getNumLinks(); i++) {
 				Waypoint *pLink = pWay->getLink(i);
-				DEBUG_LOG(("'%s' id=%d ", pLink->getName().str(), pLink->getID()));
+				DEBUG_LOG_RAW(("'%s' id=%d ", pLink->getName().str(), pLink->getID()));
 			}
 		} else {
-			DEBUG_LOG(("No links."));
+			DEBUG_LOG_RAW(("No links."));
 		}
-		DEBUG_LOG((""));
+		DEBUG_LOG_RAW(("\n"));
 	}
 	DEBUG_LOG(("Total of %d waypoints.", count));
 #endif

@@ -926,14 +926,14 @@ StateReturnType AIStateMachine::setTemporaryState( StateID newStateID, Int frame
 		if (m_temporaryState) {
 			curState = m_temporaryState->getID();
 		}
-		DEBUG_LOG(("%d '%s' -(TEMP)- '%s' %x exit ", TheGameLogic->getFrame(), getOwner()->getTemplate()->getName().str(), getName().str(), this));
+		DEBUG_LOG_RAW(("%d '%s' -(TEMP)- '%s' %x exit ", TheGameLogic->getFrame(), getOwner()->getTemplate()->getName().str(), getName().str(), this));
 		if (m_temporaryState) {
-			DEBUG_LOG((" '%s' ", m_temporaryState->getName().str()));
+			DEBUG_LOG_RAW((" '%s' ", m_temporaryState->getName().str()));
 		} else {
-			DEBUG_LOG((" INVALID_STATE_ID "));
+			DEBUG_LOG_RAW((" INVALID_STATE_ID "));
 		}
 		if (newState) {
-			DEBUG_LOG(("enter '%s' ", newState->getName().str()));
+			DEBUG_LOG(("enter '%s'", newState->getName().str()));
 		} else {
 			DEBUG_LOG(("to INVALID_STATE"));
 		}

@@ -7294,7 +7294,7 @@ Path *Pathfinder::findGroundPath( const Coord3D *from,
 			}
 			//DEBUG_LOG(("CELL(%d,%d)L%d CD%d CSF %d, CR%d // ",newCell->getXIndex(), newCell->getYIndex(), 
 			//	newCell->getLayer(), clearDiameter, newCostSoFar, costRemaining));
-			//if ((cellCount&7)==0) DEBUG_LOG((""));
+			//if ((cellCount&7)==0) DEBUG_LOG_RAW(("\n"));
 			newCell->setCostSoFar(newCostSoFar);
 			// keep track of path we're building - point back to cell we moved here from
 			newCell->setParentCell(parentCell) ;

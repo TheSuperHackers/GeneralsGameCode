@@ -3193,7 +3193,7 @@ void MemoryPoolFactory::debugMemoryReport(Int flags, Int startCheckpoint, Int en
 	{
 		const char* nm = (this == TheMemoryPoolFactory) ? "TheMemoryPoolFactory" : "*** UNKNOWN *** MemoryPoolFactory";
 
-		DEBUG_LOG((""));
+		DEBUG_LOG_RAW(("\n"));
 		DEBUG_LOG(("------------------------------------------"));
 		DEBUG_LOG(("Begin Block Report for %s", nm));
 		DEBUG_LOG(("------------------------------------------"));
