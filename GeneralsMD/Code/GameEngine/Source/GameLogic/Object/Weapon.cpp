@@ -771,7 +771,7 @@ UnsignedInt WeaponTemplate::fireWeaponTemplate
 			else
 				targetStr.format( "SELF." );
 
-			DEBUG_LOG( ("%d - WeaponTemplate::fireWeaponTemplate() begin - %s attacking %s - ", 
+			DEBUG_LOG( ("%d - WeaponTemplate::fireWeaponTemplate() begin - %s attacking %s", 
 				TheGameLogic->getFrame(), sourceObj->getTemplate()->getName().str(), targetStr.str() ) );
 		}
 	#endif

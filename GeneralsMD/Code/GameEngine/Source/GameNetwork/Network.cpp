@@ -767,9 +767,9 @@ Bool Network::timeForNewFrame() {
 		Real cushion = m_conMgr->getMinimumCushion();
 		Real runAheadPercentage = m_runAhead * (TheGlobalData->m_networkRunAheadSlack / (Real)100.0); // If we are at least 50% into our slack, we need to slow down.
 		if (cushion < runAheadPercentage) {
-//			DEBUG_LOG(("Average cushion = %f, run ahead percentage = %f.  Adjusting frameDelay from %I64d to ", cushion, runAheadPercentage, frameDelay));
-			frameDelay += frameDelay / 10; // temporarily decrease the frame rate by 20%.
-//			DEBUG_LOG(("%I64d", frameDelay));
+			__int64 oldFrameDelay = frameDelay;
+			frameDelay += oldFrameDelay / 10; // temporarily decrease the frame rate by 20%.
+//			DEBUG_LOG(("Average cushion = %f, run ahead percentage = %f.  Adjusting frameDelay from %I64d to %I64d", cushion, runAheadPercentage, oldFrameDelay, frameDelay));
 			m_didSelfSlug = TRUE;
 //		} else {
 //			DEBUG_LOG(("Average cushion = %f, run ahead percentage = %f", cushion, runAheadPercentage));

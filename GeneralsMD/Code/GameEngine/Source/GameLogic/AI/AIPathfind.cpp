@@ -2779,12 +2779,12 @@ void PathfindZoneManager::calculateZones( PathfindCell **map, PathfindLayer laye
   {
     averageTimeToUpdate = ((averageTimeToUpdate * updateSamples) + timeToUpdate) / (updateSamples + 1.0f);
     updateSamples++;
-  	DEBUG_LOG(("computing...: %f, ", averageTimeToUpdate));
+  	DEBUG_LOG(("computing...: %f", averageTimeToUpdate));
   }
   else if ( updateSamples == 400 )
   {
-  	DEBUG_LOG((" =============DONE============= Average time to calculate zones: %f, ", averageTimeToUpdate));
-  	DEBUG_LOG(("                                           Percent of baseline : %f, ", averageTimeToUpdate/0.003335f));
+  	DEBUG_LOG((" =============DONE============= Average time to calculate zones: %f", averageTimeToUpdate));
+  	DEBUG_LOG(("                                           Percent of baseline : %f", averageTimeToUpdate/0.003335f));
     updateSamples = 777;
 #ifdef forceRefreshCalling
     s_stopForceCalling = TRUE;
@@ -5656,7 +5656,7 @@ Bool Pathfinder::queueForPath(ObjectID id)
 			AIUpdateInterface *tmpAI = tmpObj->getAIUpdateInterface();
 			if (tmpAI) {
 				const Coord3D* pos = tmpAI->friend_getRequestedDestination();
-				DEBUG_ASSERTLOG(pos->x != 0.0 && pos->y != 0.0, ("Queueing pathfind to (0, 0), usually a bug. (Unit Name: '%s', Type: '%s' ", tmpObj->getName().str(), tmpObj->getTemplate()->getName().str()));
+				DEBUG_ASSERTLOG(pos->x != 0.0 && pos->y != 0.0, ("Queueing pathfind to (0, 0), usually a bug. (Unit Name: '%s', Type: '%s')", tmpObj->getName().str(), tmpObj->getTemplate()->getName().str()));
 			}
 		}
 	}

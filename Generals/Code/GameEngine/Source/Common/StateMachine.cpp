@@ -694,8 +694,7 @@ StateReturnType StateMachine::initDefaultState()
 				i = m_stateMap.find( curID );
 
 				if (i == m_stateMap.end()) {
-					DEBUG_LOG(("\nState %s(%d) : ", state->getName().str(), id));
-					DEBUG_LOG(("Transition %d not found", curID));
+					DEBUG_LOG(("\nState %s(%d) : Transition %d not found", state->getName().str(), id, curID));
 					DEBUG_LOG(("This MUST BE FIXED!!!jba"));
 					DEBUG_CRASH(("Invalid transition."));
 				} else {

@@ -894,10 +894,9 @@ void ConnectionManager::processAckStage2(NetCommandMsg *msg) {
 	ref = m_relayedCommands->findMessage(commandID, playerID);
 	if (ref != NULL) {
 		//DEBUG_LOG(("ConnectionManager::processAckStage2 - found command ID %d from player %d in the relayed commands list.", commandID, playerID));
-		UnsignedByte relay = ref->getRelay();
-		//DEBUG_LOG(("ConnectionManager::processAckStage2 - relay was %d and is now ", relay));
-		relay = relay & ~(1 << msg->getPlayerID());
-		//DEBUG_LOG(("%d", relay));
+		UnsignedByte prevRelay = ref->getRelay();
+		UnsignedByte relay = prevRelay & ~(1 << msg->getPlayerID());
+		//DEBUG_LOG(("ConnectionManager::processAckStage2 - relay was %d and is now %d", relay, prevRelay));
 		if (relay == 0) {
 			//DEBUG_LOG(("ConnectionManager::processAckStage2 - relay is 0, removing command from the relayed commands list."));
 			m_relayedCommands->removeMessage(ref);
