@@ -133,10 +133,10 @@ public:
 	Bool sawCRCMismatch() const;
 	void cleanUpReplayFile( void );										///< after a crash, send replay/debug info to a central repository
 
-	void stopRecording();															///< Stop recording and close m_file.
+	void stopRecording();															///< Stop recording and close m_recordingFile.
 protected:
-	void startRecording(GameDifficulty diff, Int originalGameMode, Int rankPoints, Int maxFPS);					///< Start recording to m_file.
-	void writeToFile(GameMessage *msg);								///< Write this GameMessage to m_file.
+	void startRecording(GameDifficulty diff, Int originalGameMode, Int rankPoints, Int maxFPS);					///< Start recording to m_recordingFile.
+	void writeToFile(GameMessage *msg);								///< Write this GameMessage to m_recordingFile.
 
 	void logGameStart(AsciiString options);
 	void logGameEnd( void );
@@ -157,7 +157,7 @@ protected:
 	CullBadCommandsResult cullBadCommands(); ///< prevent the user from giving mouse commands that he shouldn't be able to do during playback.
 
 	File* m_replayFile;
-	FILE *m_file;
+	FILE *m_recordingFile;
 	AsciiString m_fileName;
 	Int m_currentFilePosition;
 	RecorderModeType m_mode;

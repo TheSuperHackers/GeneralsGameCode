@@ -70,23 +70,23 @@ static const UnsignedInt disconOffset = quitEarlyOffset + sizeof(Bool);
 
 void RecorderClass::logGameStart(AsciiString options)
 {
-	if (!m_file)
+	if (!m_recordingFile)
 		return;
 
 	time(&startTime);
-	UnsignedInt fileSize = ftell(m_file);
+	UnsignedInt fileSize = ftell(m_recordingFile);
 	// move to appropriate offset
-	if (!fseek(m_file, startTimeOffset, SEEK_SET))
+	if (!fseek(m_recordingFile, startTimeOffset, SEEK_SET))
 	{
 		// save off start time
 		replay_time_t tmp = (replay_time_t)startTime;
-		fwrite(&tmp, sizeof(replay_time_t), 1, m_file);
+		fwrite(&tmp, sizeof(replay_time_t), 1, m_recordingFile);
 	}
 	// move back to end of stream
 #ifdef DEBUG_CRASHING
 	Int res =
 #endif
-		fseek(m_file, fileSize, SEEK_SET);
+		fseek(m_recordingFile, fileSize, SEEK_SET);
 	DEBUG_ASSERTCRASH(res == 0, ("Could not seek to end of file!"));
 
 #if defined(RTS_DEBUG)
@@ -127,7 +127,7 @@ void RecorderClass::logGameStart(AsciiString options)
 
 void RecorderClass::logPlayerDisconnect(UnicodeString player, Int slot)
 {
-	if (!m_file)
+	if (!m_recordingFile)
 		return;
 
 	DEBUG_ASSERTCRASH((slot >= 0) && (slot < MAX_SLOTS), ("Attempting to disconnect an invalid slot number"));
@@ -135,19 +135,19 @@ void RecorderClass::logPlayerDisconnect(UnicodeString player, Int slot)
 	{
 		return;
 	}
-	UnsignedInt fileSize = ftell(m_file);
+	UnsignedInt fileSize = ftell(m_recordingFile);
 	// move to appropriate offset
-	if (!fseek(m_file, disconOffset + slot*sizeof(Bool), SEEK_SET))
+	if (!fseek(m_recordingFile, disconOffset + slot*sizeof(Bool), SEEK_SET))
 	{
 		// save off discon status
 		Bool b = TRUE;
-		fwrite(&b, sizeof(Bool), 1, m_file);
+		fwrite(&b, sizeof(Bool), 1, m_recordingFile);
 	}
 	// move back to end of stream
 #ifdef DEBUG_CRASHING
 	Int res =
 #endif
-		fseek(m_file, fileSize, SEEK_SET);
+		fseek(m_recordingFile, fileSize, SEEK_SET);
 	DEBUG_ASSERTCRASH(res == 0, ("Could not seek to end of file!"));
 
 #if defined(RTS_DEBUG)
@@ -177,22 +177,22 @@ void RecorderClass::logPlayerDisconnect(UnicodeString player, Int slot)
 
 void RecorderClass::logCRCMismatch( void )
 {
-	if (!m_file)
+	if (!m_recordingFile)
 		return;
 
-	UnsignedInt fileSize = ftell(m_file);
+	UnsignedInt fileSize = ftell(m_recordingFile);
 	// move to appropriate offset
-	if (!fseek(m_file, desyncOffset, SEEK_SET))
+	if (!fseek(m_recordingFile, desyncOffset, SEEK_SET))
 	{
 		// save off desync status
 		Bool b = TRUE;
-		fwrite(&b, sizeof(Bool), 1, m_file);
+		fwrite(&b, sizeof(Bool), 1, m_recordingFile);
 	}
 	// move back to end of stream
 #ifdef DEBUG_CRASHING
 	Int res =
 #endif
-		fseek(m_file, fileSize, SEEK_SET);
+		fseek(m_recordingFile, fileSize, SEEK_SET);
 	DEBUG_ASSERTCRASH(res == 0, ("Could not seek to end of file!"));
 
 #if defined(RTS_DEBUG)
@@ -223,31 +223,31 @@ void RecorderClass::logCRCMismatch( void )
 
 void RecorderClass::logGameEnd( void )
 {
-	if (!m_file)
+	if (!m_recordingFile)
 		return;
 
 	time_t t;
 	time(&t);
 	UnsignedInt frameCount = TheGameLogic->getFrame();
-	UnsignedInt fileSize = ftell(m_file);
+	UnsignedInt fileSize = ftell(m_recordingFile);
 	// move to appropriate offset
-	if (!fseek(m_file, endTimeOffset, SEEK_SET))
+	if (!fseek(m_recordingFile, endTimeOffset, SEEK_SET))
 	{
 		// save off end time
 		replay_time_t tmp = (replay_time_t)t;
-		fwrite(&tmp, sizeof(replay_time_t), 1, m_file);
+		fwrite(&tmp, sizeof(replay_time_t), 1, m_recordingFile);
 	}
 	// move to appropriate offset
-	if (!fseek(m_file, frameCountOffset, SEEK_SET))
+	if (!fseek(m_recordingFile, frameCountOffset, SEEK_SET))
 	{
 		// save off frameCount
-		fwrite(&frameCount, sizeof(UnsignedInt), 1, m_file);
+		fwrite(&frameCount, sizeof(UnsignedInt), 1, m_recordingFile);
 	}
 	// move back to end of stream
 #ifdef DEBUG_CRASHING
 	Int res =
 #endif
-		fseek(m_file, fileSize, SEEK_SET);
+		fseek(m_recordingFile, fileSize, SEEK_SET);
 	DEBUG_ASSERTCRASH(res == 0, ("Could not seek to end of file!"));
 
 #if defined(RTS_DEBUG)
@@ -361,7 +361,7 @@ RecorderClass::RecorderClass()
 {
 	m_originalGameMode = GAME_NONE;
 	m_mode = RECORDERMODETYPE_RECORD;
-	m_file = NULL;
+	m_recordingFile = NULL;
 	m_replayFile = NULL;
 	m_fileName.clear();
 	m_currentFilePosition = 0;
@@ -391,7 +391,7 @@ RecorderClass::~RecorderClass() {
 void RecorderClass::init() {
 	m_originalGameMode = GAME_NONE;
 	m_mode = RECORDERMODETYPE_NONE;
-	m_file = NULL;
+	m_recordingFile = NULL;
 	m_replayFile = NULL;
 	m_fileName.clear();
 	m_currentFilePosition = 0;
@@ -411,9 +411,9 @@ void RecorderClass::init() {
  * Reset the recorder to the "initialized state."
  */
 void RecorderClass::reset() {
-	if (m_file != NULL) {
-		fclose(m_file);
-		m_file = NULL;
+	if (m_recordingFile != NULL) {
+		fclose(m_recordingFile);
+		m_recordingFile = NULL;
 	}
 	if (m_replayFile != NULL) {
 		m_replayFile->close();
@@ -512,7 +512,7 @@ void RecorderClass::updateRecord()
 
 			startRecording(diff, m_originalGameMode, rankPoints, maxFPS);
 		} else if (msg->getType() == GameMessage::MSG_CLEAR_GAME_DATA) {
-			if (m_file != NULL) {
+			if (m_recordingFile != NULL) {
 				lastFrame = -1;
 				writeToFile(msg);
 				stopRecording();
@@ -520,7 +520,7 @@ void RecorderClass::updateRecord()
 			}
 			m_fileName.clear();
 		} else {
-			if (m_file != NULL) {
+			if (m_recordingFile != NULL) {
 				if ((msg->getType() > GameMessage::MSG_BEGIN_NETWORK_MESSAGES) &&
 						(msg->getType() < GameMessage::MSG_END_NETWORK_MESSAGES)) {
 					// Only write the important messages to the file.
@@ -533,8 +533,8 @@ void RecorderClass::updateRecord()
 	}
 
 	if (needFlush) {
-		DEBUG_ASSERTCRASH(m_file != NULL, ("RecorderClass::updateRecord() - unexpected call to fflush(m_file)"));
-		fflush(m_file);
+		DEBUG_ASSERTCRASH(m_recordingFile != NULL, ("RecorderClass::updateRecord() - unexpected call to fflush(m_recordingFile)"));
+		fflush(m_recordingFile);
 	}
 }
 
@@ -543,7 +543,7 @@ void RecorderClass::updateRecord()
  * So don't call this unless you really mean it.
  */
 void RecorderClass::startRecording(GameDifficulty diff, Int originalGameMode, Int rankPoints, Int maxFPS) {
-	DEBUG_ASSERTCRASH(m_file == NULL, ("Starting to record game while game is in progress."));
+	DEBUG_ASSERTCRASH(m_recordingFile == NULL, ("Starting to record game while game is in progress."));
 
 	reset();
 
@@ -557,12 +557,12 @@ void RecorderClass::startRecording(GameDifficulty diff, Int originalGameMode, In
 	m_fileName = getLastReplayFileName();
 	m_fileName.concat(getReplayExtention());
 	filepath.concat(m_fileName);
-	m_file = fopen(filepath.str(), "wb");
-	if (m_file == NULL) {
-		DEBUG_ASSERTCRASH(m_file != NULL, ("Failed to create replay file"));
+	m_recordingFile = fopen(filepath.str(), "wb");
+	if (m_recordingFile == NULL) {
+		DEBUG_ASSERTCRASH(m_recordingFile != NULL, ("Failed to create replay file"));
 		return;
 	}
-	fprintf(m_file, "GENREP");
+	fprintf(m_recordingFile, "GENREP");
 
 	//
 	// save space for stats to be filled in.
@@ -570,47 +570,47 @@ void RecorderClass::startRecording(GameDifficulty diff, Int originalGameMode, In
 	// **** if this changes, change the LAN Playtest code above ****
 	//
 	replay_time_t t = 0;
-	fwrite(&t, sizeof(replay_time_t), 1, m_file);	// reserve space for start time
-	fwrite(&t, sizeof(replay_time_t), 1, m_file);	// reserve space for end time
+	fwrite(&t, sizeof(replay_time_t), 1, m_recordingFile);	// reserve space for start time
+	fwrite(&t, sizeof(replay_time_t), 1, m_recordingFile);	// reserve space for end time
 
 	UnsignedInt frames = 0;
-	fwrite(&frames, sizeof(UnsignedInt), 1, m_file);	// reserve space for duration in frames
+	fwrite(&frames, sizeof(UnsignedInt), 1, m_recordingFile);	// reserve space for duration in frames
 
 	Bool b = FALSE;
-	fwrite(&b, sizeof(Bool), 1, m_file);	// reserve space for flag (true if we desync)
-	fwrite(&b, sizeof(Bool), 1, m_file);	// reserve space for flag (true if we quit early)
+	fwrite(&b, sizeof(Bool), 1, m_recordingFile);	// reserve space for flag (true if we desync)
+	fwrite(&b, sizeof(Bool), 1, m_recordingFile);	// reserve space for flag (true if we quit early)
 	for (Int i=0; i<MAX_SLOTS; ++i)
 	{
-		fwrite(&b, sizeof(Bool), 1, m_file);	// reserve space for flag (true if player i disconnects)
+		fwrite(&b, sizeof(Bool), 1, m_recordingFile);	// reserve space for flag (true if player i disconnects)
 	}
 
 	// Print out the name of the replay.
 	UnicodeString replayName;
 	replayName = TheGameText->fetch("GUI:LastReplay");
-	fwprintf(m_file, L"%ws", replayName.str());
-	fputwc(0, m_file);
+	fwprintf(m_recordingFile, L"%ws", replayName.str());
+	fputwc(0, m_recordingFile);
 
 	// Date and Time
 	SYSTEMTIME systemTime;
 	GetLocalTime( &systemTime );
-	fwrite(&systemTime, sizeof(SYSTEMTIME), 1, m_file);
+	fwrite(&systemTime, sizeof(SYSTEMTIME), 1, m_recordingFile);
 
 	// write out version info
 	UnicodeString versionString = TheVersion->getUnicodeVersion();
 	UnicodeString versionTimeString = TheVersion->getUnicodeBuildTime();
 	UnsignedInt versionNumber = TheVersion->getVersionNumber();
-	fwprintf(m_file, L"%ws", versionString.str());
-	fputwc(0, m_file);
-	fwprintf(m_file, L"%ws", versionTimeString.str());
-	fputwc(0, m_file);
-	fwrite(&versionNumber, sizeof(UnsignedInt), 1, m_file);
-	fwrite(&(TheGlobalData->m_exeCRC), sizeof(UnsignedInt), 1, m_file);
-	fwrite(&(TheGlobalData->m_iniCRC), sizeof(UnsignedInt), 1, m_file);
+	fwprintf(m_recordingFile, L"%ws", versionString.str());
+	fputwc(0, m_recordingFile);
+	fwprintf(m_recordingFile, L"%ws", versionTimeString.str());
+	fputwc(0, m_recordingFile);
+	fwrite(&versionNumber, sizeof(UnsignedInt), 1, m_recordingFile);
+	fwrite(&(TheGlobalData->m_exeCRC), sizeof(UnsignedInt), 1, m_recordingFile);
+	fwrite(&(TheGlobalData->m_iniCRC), sizeof(UnsignedInt), 1, m_recordingFile);
 
 	// Number of players
 	/*
 	Int numPlayers = ThePlayerList->getPlayerCount();
-	fwrite(&numPlayers, sizeof(numPlayers), 1, m_file);
+	fwrite(&numPlayers, sizeof(numPlayers), 1, m_recordingFile);
 	*/
 
 	// Write the slot list.
@@ -659,9 +659,9 @@ void RecorderClass::startRecording(GameDifficulty diff, Int originalGameMode, In
 	DEBUG_LOG(("RecorderClass::startRecording - theSlotList = %s", theSlotList.str()));
 
 	// write slot list (starting spots, color, alliances, etc
-	fwrite(theSlotList.str(), theSlotList.getLength() + 1, 1, m_file);
-	fprintf(m_file, "%d", localIndex);
-	fputc(0, m_file);
+	fwrite(theSlotList.str(), theSlotList.getLength() + 1, 1, m_recordingFile);
+	fprintf(m_recordingFile, "%d", localIndex);
+	fputc(0, m_recordingFile);
 
 	/*
 	/// @todo fix this to use starting spots and player alliances when those are put in the game.
@@ -671,38 +671,38 @@ void RecorderClass::startRecording(GameDifficulty diff, Int originalGameMode, In
 			continue;
 		}
 		UnicodeString name = player->getPlayerDisplayName();
-		fwprintf(m_file, L"%s", name.str());
-		fputwc(0, m_file);
+		fwprintf(m_recordingFile, L"%s", name.str());
+		fputwc(0, m_recordingFile);
 		UnicodeString faction = player->getFaction()->getFactionDisplayName();
-		fwprintf(m_file, L"%s", faction.str());
-		fputwc(0, m_file);
+		fwprintf(m_recordingFile, L"%s", faction.str());
+		fputwc(0, m_recordingFile);
 		Int color = player->getColor()->getAsInt();
-		fwrite(&color, sizeof(color), 1, m_file);
+		fwrite(&color, sizeof(color), 1, m_recordingFile);
 		Int team = 0;
 		Int startingSpot = 0;
-		fwrite(&startingSpot, sizeof(Int), 1, m_file);
-		fwrite(&team, sizeof(Int), 1, m_file);
+		fwrite(&startingSpot, sizeof(Int), 1, m_recordingFile);
+		fwrite(&team, sizeof(Int), 1, m_recordingFile);
 	}
 	*/
 
 	// Write the game difficulty.
-	fwrite(&diff, sizeof(Int), 1, m_file);
+	fwrite(&diff, sizeof(Int), 1, m_recordingFile);
 
 	// Write original game mode
-	fwrite(&originalGameMode, sizeof(originalGameMode), 1, m_file);
+	fwrite(&originalGameMode, sizeof(originalGameMode), 1, m_recordingFile);
 
 	// Write rank points to add at game start
-	fwrite(&rankPoints, sizeof(rankPoints), 1, m_file);
+	fwrite(&rankPoints, sizeof(rankPoints), 1, m_recordingFile);
 
 	// Write maxFPS chosen
-	fwrite(&maxFPS, sizeof(maxFPS), 1, m_file);
+	fwrite(&maxFPS, sizeof(maxFPS), 1, m_recordingFile);
 
 	DEBUG_LOG(("RecorderClass::startRecording() - diff=%d, mode=%d, FPS=%d", diff, originalGameMode, maxFPS));
 
 	/*
 	// Write the map name.
-	fprintf(m_file, "%s", (TheGlobalData->m_mapName).str());
-	fputc(0, m_file);
+	fprintf(m_recordingFile, "%s", (TheGlobalData->m_mapName).str());
+	fputc(0, m_recordingFile);
 	*/
 
 	/// @todo Need to write game options when there are some to be written.
@@ -723,9 +723,9 @@ void RecorderClass::stopRecording() {
 			m_wasDesync = FALSE;
 		}
 	}
-	if (m_file != NULL) {
-		fclose(m_file);
-		m_file = NULL;
+	if (m_recordingFile != NULL) {
+		fclose(m_recordingFile);
+		m_recordingFile = NULL;
 	}
 	m_fileName.clear();
 }
@@ -736,15 +736,15 @@ void RecorderClass::stopRecording() {
 void RecorderClass::writeToFile(GameMessage * msg) {
 	// Write the frame number for this command.
 	UnsignedInt frame = TheGameLogic->getFrame();
-	fwrite(&frame, sizeof(frame), 1, m_file);
+	fwrite(&frame, sizeof(frame), 1, m_recordingFile);
 
 	// Write the command type
 	GameMessage::Type type = msg->getType();
-	fwrite(&type, sizeof(type), 1, m_file);
+	fwrite(&type, sizeof(type), 1, m_recordingFile);
 
 	// Write the player index
 	Int playerIndex = msg->getPlayerIndex();
-	fwrite(&playerIndex, sizeof(playerIndex), 1, m_file);
+	fwrite(&playerIndex, sizeof(playerIndex), 1, m_recordingFile);
 
 #ifdef DEBUG_LOGGING
 	AsciiString commandName = msg->getCommandAsString();
@@ -765,15 +765,15 @@ void RecorderClass::writeToFile(GameMessage * msg) {
 
 	GameMessageParser *parser = newInstance(GameMessageParser)(msg);
 	UnsignedByte numTypes = parser->getNumTypes();
-	fwrite(&numTypes, sizeof(numTypes), 1, m_file);
+	fwrite(&numTypes, sizeof(numTypes), 1, m_recordingFile);
 
 	GameMessageParserArgumentType *argType = parser->getFirstArgumentType();
 	while (argType != NULL) {
 		UnsignedByte type = (UnsignedByte)(argType->getType());
-		fwrite(&type, sizeof(type), 1, m_file);
+		fwrite(&type, sizeof(type), 1, m_recordingFile);
 
 		UnsignedByte argTypeCount = (UnsignedByte)(argType->getArgCount());
-		fwrite(&argTypeCount, sizeof(argTypeCount), 1, m_file);
+		fwrite(&argTypeCount, sizeof(argTypeCount), 1, m_recordingFile);
 
 		argType = argType->getNext();
 	}
@@ -783,7 +783,7 @@ void RecorderClass::writeToFile(GameMessage * msg) {
 	for (Int i = 0; i < numArgs; ++i) {
 //		UnsignedByte type = (UnsignedByte)(msg->getArgumentDataType(i));
 //		if (lasttype != type) {
-//			fwrite(&type, sizeof(type), 1, m_file);
+//			fwrite(&type, sizeof(type), 1, m_recordingFile);
 //			lasttype = type;
 //		}
 		writeArgument(msg->getArgumentDataType(i), *(msg->getArgument(i)));
@@ -796,33 +796,33 @@ void RecorderClass::writeToFile(GameMessage * msg) {
 
 void RecorderClass::writeArgument(GameMessageArgumentDataType type, const GameMessageArgumentType arg) {
 	if (type == ARGUMENTDATATYPE_INTEGER) {
-		fwrite(&(arg.integer), sizeof(arg.integer), 1, m_file);
+		fwrite(&(arg.integer), sizeof(arg.integer), 1, m_recordingFile);
 	} else if (type == ARGUMENTDATATYPE_REAL) {
-		fwrite(&(arg.real), sizeof(arg.real), 1, m_file);
+		fwrite(&(arg.real), sizeof(arg.real), 1, m_recordingFile);
 	} else if (type == ARGUMENTDATATYPE_BOOLEAN) {
-		fwrite(&(arg.boolean), sizeof(arg.boolean), 1, m_file);
+		fwrite(&(arg.boolean), sizeof(arg.boolean), 1, m_recordingFile);
 	} else if (type == ARGUMENTDATATYPE_OBJECTID) {
-		fwrite(&(arg.objectID), sizeof(arg.objectID), 1, m_file);
+		fwrite(&(arg.objectID), sizeof(arg.objectID), 1, m_recordingFile);
 	} else if (type == ARGUMENTDATATYPE_DRAWABLEID) {
-		fwrite(&(arg.drawableID), sizeof(arg.drawableID), 1, m_file);
+		fwrite(&(arg.drawableID), sizeof(arg.drawableID), 1, m_recordingFile);
 	} else if (type == ARGUMENTDATATYPE_TEAMID) {
-		fwrite(&(arg.teamID), sizeof(arg.teamID), 1, m_file);
+		fwrite(&(arg.teamID), sizeof(arg.teamID), 1, m_recordingFile);
 	} else if (type == ARGUMENTDATATYPE_LOCATION) {
-		fwrite(&(arg.location), sizeof(arg.location), 1, m_file);
+		fwrite(&(arg.location), sizeof(arg.location), 1, m_recordingFile);
 	} else if (type == ARGUMENTDATATYPE_PIXEL) {
-		fwrite(&(arg.pixel), sizeof(arg.pixel), 1, m_file);
+		fwrite(&(arg.pixel), sizeof(arg.pixel), 1, m_recordingFile);
 	} else if (type == ARGUMENTDATATYPE_PIXELREGION) {
-		fwrite(&(arg.pixelRegion), sizeof(arg.pixelRegion), 1, m_file);
+		fwrite(&(arg.pixelRegion), sizeof(arg.pixelRegion), 1, m_recordingFile);
 	} else if (type == ARGUMENTDATATYPE_TIMESTAMP) {
-		fwrite(&(arg.timestamp), sizeof(arg.timestamp), 1, m_file);
+		fwrite(&(arg.timestamp), sizeof(arg.timestamp), 1, m_recordingFile);
 	} else if (type == ARGUMENTDATATYPE_WIDECHAR) {
-		fwrite(&(arg.wChar), sizeof(arg.wChar), 1, m_file);
+		fwrite(&(arg.wChar), sizeof(arg.wChar), 1, m_recordingFile);
 	}
 }
 
 /**
  * Read in a replay header, for (1) populating a replay listbox or (2) starting playback.  In
- * case (2), set FILE *m_file.
+ * case (2), set FILE *m_recordingFile.
  */
 Bool RecorderClass::readReplayHeader(ReplayHeader& header)
 {
