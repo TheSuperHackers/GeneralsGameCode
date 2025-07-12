@@ -663,7 +663,7 @@ StateReturnType StateMachine::initDefaultState()
 #define REALLY_VERBOSE_LOG(x) /* */
 	// Run through all the transitions and make sure there aren't any transitions to undefined states. jba. [8/18/2003]
 	std::map<StateID, State *>::iterator i;
-	REALLY_VERBOSE_LOG(("SM_BEGIN"));
+	REALLY_VERBOSE_LOG(("SM_BEGIN\n"));
 	for( i = m_stateMap.begin(); i != m_stateMap.end(); ++i ) {
 		State *state = (*i).second;
 		StateID id = state->getID();
@@ -705,11 +705,11 @@ StateReturnType StateMachine::initDefaultState()
 				}
 			}
 		}
-		REALLY_VERBOSE_LOG((""));
+		REALLY_VERBOSE_LOG(("\n"));
 		delete ids;
 		ids = NULL;
 	}
-	REALLY_VERBOSE_LOG(("SM_END\n"));
+	REALLY_VERBOSE_LOG(("SM_END\n\n"));
 #endif	
 #endif
 	DEBUG_ASSERTCRASH(!m_locked, ("Machine is locked here, but probably should not be"));
