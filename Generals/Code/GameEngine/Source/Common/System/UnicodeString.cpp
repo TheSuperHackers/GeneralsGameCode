@@ -241,21 +241,52 @@ void UnicodeString::trim()
 			set(c);
 		}
 
-		if (m_data) // another check, because the previous set() could erase m_data
+		trimEnd();
+	}
+	validate();
+}
+
+// -----------------------------------------------------
+void UnicodeString::trimEnd()
+{
+	validate();
+
+	if (m_data)
+	{
+		//	Clip trailing white space from the string.
+		const int len = wcslen(peek());
+		int index = len;
+		while (index > 0 && iswspace(getCharAt(index - 1)))
 		{
-			//	Clip trailing white space from the string.
-			int len = wcslen(peek());
-			for (int index = len-1; index >= 0; index--)
-			{
-				if (iswspace(getCharAt(index)))
-				{
-					removeLastChar();
-				}
-				else
-				{
-					break;
-				}
-			}
+			--index;
+		}
+
+		if (index < len)
+		{
+			truncateTo(index);
+		}
+	}
+	validate();
+}
+
+// -----------------------------------------------------
+void UnicodeString::trimEnd(const WideChar c)
+{
+	validate();
+
+	if (m_data)
+	{
+		// Clip trailing consecutive occurances of c from the string.
+		const int len = wcslen(peek());
+		int index = len;
+		while (index > 0 && getCharAt(index - 1) == c)
+		{
+			--index;
+		}
+
+		if (index < len)
+		{
+			truncateTo(index);
 		}
 	}
 	validate();
@@ -264,14 +295,41 @@ void UnicodeString::trim()
 // -----------------------------------------------------
 void UnicodeString::removeLastChar()
 {
+	truncateBy(1);
+}
+
+// -----------------------------------------------------
+void UnicodeString::truncateBy(const Int charCount)
+{
+	validate();
+	if (m_data && charCount > 0)
+	{
+		const size_t len = wcslen(peek());
+		if (len > 0)
+		{
+			ensureUniqueBufferOfSize(len + 1, true, NULL, NULL);
+			size_t count = charCount;
+			if (charCount > len)
+			{
+				count = len;
+			}
+			peek()[len - count] = 0;
+		}
+	}
+	validate();
+}
+
+// -----------------------------------------------------
+void UnicodeString::truncateTo(const Int maxLength)
+{
 	validate();
 	if (m_data)
 	{
-		int len = wcslen(peek());
-		if (len > 0)
+		const size_t len = wcslen(peek());
+		if (len > maxLength)
 		{
-			ensureUniqueBufferOfSize(len+1, true, NULL, NULL);
-			peek()[len - 1] = 0;
+			ensureUniqueBufferOfSize(len + 1, true, NULL, NULL);
+			peek()[maxLength] = 0;
 		}
 	}
 	validate();

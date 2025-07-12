@@ -289,21 +289,52 @@ void AsciiString::trim()
 			set(c);
 		}
 
-		if (m_data) // another check, because the previous set() could erase m_data
+		trimEnd();
+	}
+	validate();
+}
+
+// -----------------------------------------------------
+void AsciiString::trimEnd()
+{
+	validate();
+
+	if (m_data)
+	{
+		// Clip trailing white space from the string.
+		const int len = strlen(peek());
+		int index = len;
+		while (index > 0 && isspace(getCharAt(index - 1)))
 		{
-			//	Clip trailing white space from the string.
-			int len = strlen(peek());
-			for (int index = len-1; index >= 0; index--)
-			{
-				if (isspace(getCharAt(index)))
-				{
-					removeLastChar();
-				}
-				else
-				{
-					break;
-				}
-			}
+			--index;
+		}
+
+		if (index < len)
+		{
+			truncateTo(index);
+		}
+	}
+	validate();
+}
+
+// -----------------------------------------------------
+void AsciiString::trimEnd(const char c)
+{
+	validate();
+
+	if (m_data)
+	{
+		// Clip trailing consecutive occurances of c from the string.
+		const int len = strlen(peek());
+		int index = len;
+		while (index > 0 && getCharAt(index - 1) == c)
+		{
+			--index;
+		}
+
+		if (index < len)
+		{
+			truncateTo(index);
 		}
 	}
 	validate();
@@ -332,14 +363,41 @@ void AsciiString::toLower()
 // -----------------------------------------------------
 void AsciiString::removeLastChar()
 {
+	truncateBy(1);
+}
+
+// -----------------------------------------------------
+void AsciiString::truncateBy(const Int charCount)
+{
+	validate();
+	if (m_data && charCount > 0)
+	{
+		const size_t len = strlen(peek());
+		if (len > 0)
+		{
+			ensureUniqueBufferOfSize(len + 1, true, NULL, NULL);
+			size_t count = charCount;
+			if (charCount > len)
+			{
+				count = len;
+			}
+			peek()[len - count] = 0;
+		}
+	}
+	validate();
+}
+
+// -----------------------------------------------------
+void AsciiString::truncateTo(const Int maxLength)
+{
 	validate();
 	if (m_data)
 	{
-		int len = strlen(peek());
-		if (len > 0)
+		const size_t len = strlen(peek());
+		if (len > maxLength)
 		{
-			ensureUniqueBufferOfSize(len+1, true, NULL, NULL);
-			peek()[len - 1] = 0;
+			ensureUniqueBufferOfSize(len + 1, true, NULL, NULL);
+			peek()[maxLength] = 0;
 		}
 	}
 	validate();
