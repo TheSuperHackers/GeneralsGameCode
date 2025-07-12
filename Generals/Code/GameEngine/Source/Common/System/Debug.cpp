@@ -128,9 +128,10 @@ const char *TheDebugLevels[DEBUG_LEVEL_MAX] = {
 // ----------------------------------------------------------------------------
 static const char *getCurrentTimeString(void);
 static const char *getCurrentTickString(void);
-static const char *prepBuffer(const char* format, char *buffer);
+static void prepBuffer(char *buffer);
 #ifdef DEBUG_LOGGING
 static void doLogOutput(const char *buffer);
+static void doLogOutput(const char *buffer, const char *endline);
 #endif
 #ifdef DEBUG_CRASHING
 static int doCrashBox(const char *buffer, Bool logResult);
@@ -206,7 +207,7 @@ static const char *getCurrentTickString(void)
 	Empty the buffer passed in, then optionally prepend the current TickCount
 	value in string form, depending on the setting of theDebugFlags.
 */
-static const char *prepBuffer(const char* format, char *buffer)
+static void prepBuffer(char *buffer)
 {
 	buffer[0] = 0;
 #ifdef ALLOW_DEBUG_UTILS
@@ -216,7 +217,6 @@ static const char *prepBuffer(const char* format, char *buffer)
 		strcat(buffer, " ");
 	}
 #endif
-	return format;
 }
 
 // ----------------------------------------------------------------------------
@@ -228,12 +228,17 @@ static const char *prepBuffer(const char* format, char *buffer)
 #ifdef DEBUG_LOGGING
 static void doLogOutput(const char *buffer)
 {
+		doLogOutput(buffer, "\n");
+}
+
+static void doLogOutput(const char *buffer, const char *endline)
+{
 	// log message to file
 	if (theDebugFlags & DEBUG_FLAG_LOG_TO_FILE)
 	{
 		if (theLogFile)
 		{
-			fprintf(theLogFile, "%s\n", buffer);
+			fprintf(theLogFile, "%s%s", buffer, endline);
 			fflush(theLogFile);
 		}
 	}
@@ -242,14 +247,14 @@ static void doLogOutput(const char *buffer)
 	if (theDebugFlags & DEBUG_FLAG_LOG_TO_CONSOLE)
 	{
 		::OutputDebugString(buffer);
-		::OutputDebugString("\n");
+		::OutputDebugString(endline);
 	}
 
 #ifdef INCLUDE_DEBUG_LOG_IN_CRC_LOG
-	addCRCDebugLineNoCounter("%s\n", buffer);
+	addCRCDebugLineNoCounter("%s%s", buffer, endline);
 #endif
 }
-#endif
+#endif // DEBUG_LOGGING
 
 // ----------------------------------------------------------------------------
 // doCrashBox
@@ -410,7 +415,7 @@ void DebugInit(int flags)
 // ----------------------------------------------------------------------------
 #ifdef DEBUG_LOGGING
 /**
-	Print a character string to the logfile and/or console.
+	Print a string to the log file and/or console.
 */
 void DebugLog(const char *format, ...)
 {
@@ -421,19 +426,44 @@ void DebugLog(const char *format, ...)
 	if (theDebugFlags == 0)
 		MessageBoxWrapper("DebugLog - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
 
-	format = prepBuffer(format, theBuffer);
+	prepBuffer(theBuffer);
 
-	va_list arg;
-  va_start(arg, format);
-  vsprintf(theBuffer + strlen(theBuffer), format, arg);
-  va_end(arg);
+	va_list args;
+	va_start(args, format);
+	vsprintf(theBuffer + strlen(theBuffer), format, args);
+	va_end(args);
 
 	if (strlen(theBuffer) >= sizeof(theBuffer))
 		MessageBoxWrapper("String too long for debug buffer", "", MB_OK|MB_TASKMODAL);
 
 	whackFunnyCharacters(theBuffer);
 	doLogOutput(theBuffer);
-} 
+}
+
+/**
+	Print a string with no modifications to the log file and/or console.
+*/
+void DebugLogRaw(const char *format, ...)
+{
+#ifdef DEBUG_THREADSAFE
+	ScopedCriticalSection scopedCriticalSection(TheDebugLogCriticalSection);
+#endif
+
+	if (theDebugFlags == 0)
+		MessageBoxWrapper("DebugLogRaw - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
+
+	theBuffer[0] = 0;
+
+	va_list args;
+	va_start(args, format);
+	vsprintf(theBuffer, format, args);
+	va_end(args);
+
+	if (strlen(theBuffer) >= sizeof(theBuffer))
+		MessageBoxWrapper("String too long for debug buffer", "", MB_OK|MB_TASKMODAL);
+
+	doLogOutput(theBuffer, "");
+}
 
 const char* DebugGetLogFileName()
 {
@@ -474,7 +504,7 @@ void DebugCrash(const char *format, ...)
 		MessageBoxWrapper("DebugCrash - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
 	}
 
-	format = prepBuffer(format, theCrashBuffer);
+	prepBuffer(theCrashBuffer);
 	strcat(theCrashBuffer, "ASSERTION FAILURE: ");
 
 	va_list arg;

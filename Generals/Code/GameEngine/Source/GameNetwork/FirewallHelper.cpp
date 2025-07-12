@@ -338,19 +338,19 @@ Bool FirewallHelperClass::sendToManglerFromPort(UnsignedInt address, UnsignedSho
 	packet.data.magic = GENERALS_MAGIC_NUMBER;
 	packet.data.OriginalPortNumber = port;
 /*
-	DEBUG_LOG(("Pre-Adjust Buffer = "));
+	DEBUG_LOG_RAW(("Pre-Adjust Buffer = "));
 	for (Int i = 0; i < sizeof(ManglerData); ++i) {
-		DEBUG_LOG(("%02x", *(((unsigned char *)(&(packet.data))) + i)));
+		DEBUG_LOG_RAW(("%02x", *(((unsigned char *)(&(packet.data))) + i)));
 	}
-	DEBUG_LOG((""));
+	DEBUG_LOG_RAW(("\n"));
 */
 	byteAdjust(&(packet.data));
 /*
-	DEBUG_LOG(("Pre-CRC Buffer = "));
+	DEBUG_LOG_RAW(("Pre-CRC Buffer = "));
 	for (i = 0; i < sizeof(ManglerData); ++i) {
-		DEBUG_LOG(("%02x", *(((unsigned char *)(&(packet.data))) + i)));
+		DEBUG_LOG_RAW(("%02x", *(((unsigned char *)(&(packet.data))) + i)));
 	}
-	DEBUG_LOG((""));
+	DEBUG_LOG_RAW(("\n"));
 */
 	CRC crc;
 	crc.computeCRC((unsigned char *)(&(packet.data.magic)), sizeof(ManglerData) - sizeof(unsigned int));
@@ -361,11 +361,11 @@ Bool FirewallHelperClass::sendToManglerFromPort(UnsignedInt address, UnsignedSho
 	DEBUG_LOG(("FirewallHelperClass::sendToManglerFromPort - Sending from port %d to %d.%d.%d.%d:%d", (UnsignedInt)port,
 		PRINTF_IP_AS_4_INTS(address), MANGLER_PORT));
 /*
-	DEBUG_LOG(("Buffer = "));
+	DEBUG_LOG_RAW(("Buffer = "));
 	for (i = 0; i < sizeof(ManglerData); ++i) {
-		DEBUG_LOG(("%02x", *(((unsigned char *)(&(packet.data))) + i)));
+		DEBUG_LOG_RAW(("%02x", *(((unsigned char *)(&(packet.data))) + i)));
 	}
-	DEBUG_LOG((""));
+	DEBUG_LOG_RAW(("\n"));
 */
 	SpareSocketStruct *spareSocket = findSpareSocketByPort(port);
 //	DEBUG_LOG(("PacketID = %u", packetID));
@@ -1210,31 +1210,31 @@ Bool FirewallHelperClass::detectionTest5Update() {
 	}
 #endif // #if (0)
 
-	DEBUG_LOG(("FirewallHelperClass::detectionTest5Update - All done, behavior is: "));
+	DEBUG_LOG_RAW(("FirewallHelperClass::detectionTest5Update - All done, behavior is: "));
 
 	if ((m_behavior & FIREWALL_TYPE_SIMPLE) != 0) {
-		DEBUG_LOG((" FIREWALL_TYPE_SIMPLE "));
+		DEBUG_LOG_RAW((" FIREWALL_TYPE_SIMPLE "));
 	}
 	if ((m_behavior & FIREWALL_TYPE_DUMB_MANGLING) != 0) {
-		DEBUG_LOG((" FIREWALL_TYPE_DUMB_MANGLING "));
+		DEBUG_LOG_RAW((" FIREWALL_TYPE_DUMB_MANGLING "));
 	}
 	if ((m_behavior & FIREWALL_TYPE_SMART_MANGLING) != 0) {
-		DEBUG_LOG((" FIREWALL_TYPE_SMART_MANGLING "));
+		DEBUG_LOG_RAW((" FIREWALL_TYPE_SMART_MANGLING "));
 	}
 	if ((m_behavior & FIREWALL_TYPE_NETGEAR_BUG) != 0) {
-		DEBUG_LOG((" FIREWALL_TYPE_NETGEAR_BUG "));
+		DEBUG_LOG_RAW((" FIREWALL_TYPE_NETGEAR_BUG "));
 	}
 	if ((m_behavior & FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION) != 0) {
-		DEBUG_LOG((" FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION "));
+		DEBUG_LOG_RAW((" FIREWALL_TYPE_SIMPLE_PORT_ALLOCATION "));
 	}
 	if ((m_behavior & FIREWALL_TYPE_RELATIVE_PORT_ALLOCATION) != 0) {
-		DEBUG_LOG((" FIREWALL_TYPE_RELATIVE_PORT_ALLOCATION "));
+		DEBUG_LOG_RAW((" FIREWALL_TYPE_RELATIVE_PORT_ALLOCATION "));
 	}
 	if ((m_behavior & FIREWALL_TYPE_DESTINATION_PORT_DELTA) != 0) {
-		DEBUG_LOG((" FIREWALL_TYPE_DESTINATION_PORT_DELTA "));
+		DEBUG_LOG_RAW((" FIREWALL_TYPE_DESTINATION_PORT_DELTA "));
 	}
 
-	DEBUG_LOG((""));
+	DEBUG_LOG_RAW(("\n"));
 
 	m_currentState = DETECTIONSTATE_DONE;
 	return TRUE;

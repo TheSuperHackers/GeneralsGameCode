@@ -322,7 +322,6 @@ void PlayerList::setLocalPlayer(Player *player)
 #ifdef INTENSE_DEBUG
 	if (player)
 	{
-		DEBUG_LOG(("\n----------"));
 		// did you know? you can use "%ls" to print a doublebyte string, even in a single-byte printf...
 		DEBUG_LOG(("Switching local players. The new player is named '%ls' (%s) and owns the following objects:",
 			player->getPlayerDisplayName().str(),
@@ -330,14 +329,13 @@ void PlayerList::setLocalPlayer(Player *player)
 		));
 		for (Object *obj = player->getFirstOwnedObject(); obj; obj = obj->getNextOwnedObject())
 		{
-			DEBUG_LOG(("Obj %08lx is of type %s",obj,obj->getTemplate()->getName().str()));
+			DEBUG_LOG_RAW(("Obj %08lx is of type %s",obj,obj->getTemplate()->getName().str()));
 			if (!player->canBuild(obj->getTemplate()))
 			{
-				DEBUG_LOG((" (NOT BUILDABLE)"));
+				DEBUG_LOG_RAW((" (NOT BUILDABLE)"));
 			}
-			DEBUG_LOG((""));
+			DEBUG_LOG_RAW(("\n"));
 		}
-		DEBUG_LOG(("\n----------"));
 	}
 #endif
 

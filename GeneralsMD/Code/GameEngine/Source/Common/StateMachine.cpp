@@ -593,14 +593,14 @@ StateReturnType StateMachine::internalSetState( StateID newStateID )
 			if (m_currentState) {
 				curState = m_currentState->getID();
 			}
-			DEBUG_LOG(("%d '%s'%x -- '%s' %x exit ", TheGameLogic->getFrame(), m_owner->getTemplate()->getName().str(), m_owner, m_name.str(), this));
+			DEBUG_LOG_RAW(("%d '%s'%x -- '%s' %x exit ", TheGameLogic->getFrame(), m_owner->getTemplate()->getName().str(), m_owner, m_name.str(), this));
 			if (m_currentState) {
-				DEBUG_LOG((" '%s' ", m_currentState->getName().str()));
+				DEBUG_LOG_RAW((" '%s' ", m_currentState->getName().str()));
 			} else {
-				DEBUG_LOG((" INVALID_STATE_ID "));
+				DEBUG_LOG_RAW((" INVALID_STATE_ID "));
 			}
 			if (newState) {
-				DEBUG_LOG(("enter '%s' ", newState->getName().str()));
+				DEBUG_LOG(("enter '%s'", newState->getName().str()));
 			} else {
 				DEBUG_LOG(("to INVALID_STATE"));
 			}
@@ -668,7 +668,7 @@ StateReturnType StateMachine::initDefaultState()
 {
 #ifdef DEBUG_LOGGING
 #ifdef STATE_MACHINE_DEBUG
-#define REALLY_VERBOSE_LOG(x) /* */
+#define REALLY_VERBOSE_LOG(x) /* DEBUG_LOG_RAW(x) */
 	// Run through all the transitions and make sure there aren't any transitions to undefined states. jba. [8/18/2003]
 	std::map<StateID, State *>::iterator i;
 	REALLY_VERBOSE_LOG(("SM_BEGIN\n"));

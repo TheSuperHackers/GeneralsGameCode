@@ -1384,10 +1384,10 @@ Real ConnectionManager::getMaximumLatency() {
 void ConnectionManager::getMinimumFps(Int &minFps, Int &minFpsPlayer) {
 	minFps = -1;
 	minFpsPlayer = -1;
-//	DEBUG_LOG(("ConnectionManager::getMinimumFps -"));
+//	DEBUG_LOG_RAW(("ConnectionManager::getMinimumFps -"));
 	for (Int i = 0; i < MAX_SLOTS; ++i) {
 		if ((m_connections[i] != NULL) || (i == m_localSlot)) {
-//			DEBUG_LOG((" %d: %d,", i, m_fpsAverages[i]));
+//			DEBUG_LOG_RAW((" %d: %d,", i, m_fpsAverages[i]));
 			if (m_fpsAverages[i] != -1) {
 				if ((minFps == -1) || (m_fpsAverages[i] < minFps)) {
 					minFps = m_fpsAverages[i];
@@ -1396,7 +1396,7 @@ void ConnectionManager::getMinimumFps(Int &minFps, Int &minFpsPlayer) {
 			}
 		}
 	}
-//	DEBUG_LOG((""));
+//	DEBUG_LOG_RAW(("\n"));
 }
 
 UnsignedInt ConnectionManager::getMinimumCushion() {

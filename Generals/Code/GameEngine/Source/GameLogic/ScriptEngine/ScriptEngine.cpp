@@ -4588,7 +4588,8 @@ void ScriptEngine::reset( void )
 #ifdef SPECIAL_SCRIPT_PROFILING
 #ifdef DEBUG_LOGGING
 	if (m_numFrames > 1) {
-		DEBUG_LOG(("\n***SCRIPT ENGINE STATS %.0f frames:", m_numFrames));
+		DEBUG_LOG_RAW(("\n"));
+		DEBUG_LOG(("***SCRIPT ENGINE STATS %.0f frames:", m_numFrames));
 		DEBUG_LOG(("Avg time to update %.3f milisec", 1000*m_totalUpdateTime/m_numFrames));
 		DEBUG_LOG(("  Max time to update %.3f miliseconds.", m_maxUpdateTime*1000));
 	}

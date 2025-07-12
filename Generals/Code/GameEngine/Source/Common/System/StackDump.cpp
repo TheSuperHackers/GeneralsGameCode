@@ -473,7 +473,8 @@ void WriteStackLine(void*address, void (*callback)(const char*))
 //*****************************************************************************
 void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 {
-   DEBUG_LOG(( "\n********** EXCEPTION DUMP ****************" ));
+	DEBUG_LOG_RAW(("\n"));
+	DEBUG_LOG(( "********** EXCEPTION DUMP ****************" ));
 	/*
 	** List of possible exceptions
 	*/
@@ -622,8 +623,9 @@ void DumpExceptionInfo( unsigned int u, EXCEPTION_POINTERS* e_info )
 	}
 
 	DOUBLE_DEBUG ( ( (scrap)));
-  DEBUG_LOG(( "********** END EXCEPTION DUMP ****************\n" ));
-}																									 
+	DEBUG_LOG(( "********** END EXCEPTION DUMP ****************" ));
+	DEBUG_LOG_RAW(("\n"));
+}
 
 
 #pragma pack(pop)

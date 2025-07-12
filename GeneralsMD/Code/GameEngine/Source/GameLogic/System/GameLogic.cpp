@@ -3120,7 +3120,7 @@ void drawGraph( const char* style, Real scale, double value )
       DEBUG_LOG(("..."));
   }
 
-  DEBUG_LOG((""));
+  DEBUG_LOG_RAW(("\n"));
 
 }
 
