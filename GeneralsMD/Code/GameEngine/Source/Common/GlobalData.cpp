@@ -931,6 +931,8 @@ GlobalData::GlobalData()
 	m_saveCameraInReplay = FALSE;
 	m_useCameraInReplay = FALSE;
 
+	m_systemTimeFontSize = 8;
+	m_gameTimeFontSize = 8;
 
 	m_debugShowGraphicalFramerate = FALSE;
 
@@ -1199,6 +1201,9 @@ void GlobalData::parseGameDataDefinition( INI* ini )
 	
 	TheWritableGlobalData->m_saveCameraInReplay = optionPref.saveCameraInReplays();
 	TheWritableGlobalData->m_useCameraInReplay = optionPref.useCameraInReplays();
+
+	TheWritableGlobalData->m_systemTimeFontSize = optionPref.getSystemTimeFontSize();
+	TheWritableGlobalData->m_gameTimeFontSize = optionPref.getGameTimeFontSize();
 	
 	Int val=optionPref.getGammaValue();
 	//generate a value between 0.6 and 2.0.
