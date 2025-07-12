@@ -289,20 +289,52 @@ void AsciiString::trim()
 			set(c);
 		}
 
-		if (m_data) // another check, because the previous set() could erase m_data
-		{
-			//	Clip trailing white space from the string.
-			int len = strlen(peek());
-			int index = len - 1;
-			while (index >= 0 && isspace(getCharAt(index)))
-			{
-				--index;
-			}
+		trimEnd();
+	}
+	validate();
+}
 
-			if (index < len - 1)
-			{
-				truncateTo(index + 1);
-			}
+// -----------------------------------------------------
+void AsciiString::trimEnd()
+{
+	validate();
+
+	if (m_data)
+	{
+		// Clip trailing white space from the string.
+		const int len = strlen(peek());
+		int index = len;
+		while (index > 0 && isspace(getCharAt(index - 1)))
+		{
+			--index;
+		}
+
+		if (index < len)
+		{
+			truncateTo(index);
+		}
+	}
+	validate();
+}
+
+// -----------------------------------------------------
+void AsciiString::trimEnd(const char c)
+{
+	validate();
+
+	if (m_data)
+	{
+		// Clip trailing consecutive occurances of c from the string.
+		const int len = strlen(peek());
+		int index = len;
+		while (index > 0 && getCharAt(index - 1) == c)
+		{
+			--index;
+		}
+
+		if (index < len)
+		{
+			truncateTo(index);
 		}
 	}
 	validate();
@@ -335,16 +367,20 @@ void AsciiString::removeLastChar()
 }
 
 // -----------------------------------------------------
-void AsciiString::truncateBy(const UnsignedInt charCount)
+void AsciiString::truncateBy(const Int charCount)
 {
 	validate();
 	if (m_data && charCount > 0)
 	{
-		size_t len = strlen(peek());
+		const size_t len = strlen(peek());
 		if (len > 0)
 		{
 			ensureUniqueBufferOfSize(len+1, true, NULL, NULL);
-			size_t count = min(charCount, len);
+			size_t count = charCount;
+			if (charCount > len)
+			{
+				count = len;
+			}
 			peek()[len - count] = 0;
 		}
 	}
@@ -352,12 +388,12 @@ void AsciiString::truncateBy(const UnsignedInt charCount)
 }
 
 // -----------------------------------------------------
-void AsciiString::truncateTo(const UnsignedInt maxLength)
+void AsciiString::truncateTo(const Int maxLength)
 {
 	validate();
 	if (m_data)
 	{
-		size_t len = strlen(peek());
+		const size_t len = strlen(peek());
 		if (len > maxLength)
 		{
 			ensureUniqueBufferOfSize(len + 1, true, NULL, NULL);

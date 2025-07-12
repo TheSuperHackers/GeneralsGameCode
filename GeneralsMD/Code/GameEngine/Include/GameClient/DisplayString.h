@@ -100,8 +100,8 @@ public:
 	virtual void setClipRegion( IRegion2D *region );  ///< clip text in this region
 
 	virtual void removeLastChar( void );			///< remove the last character
-	virtual void truncateBy(const UnsignedInt charCount);	///< remove the last charCount characters
-	virtual void truncateTo(const UnsignedInt maxLength);	///< remove characters, if needed, until the string is maxLength long excluding null terminator
+	virtual void truncateBy(const Int charCount);	///< remove the last charCount characters
+	virtual void truncateTo(const Int maxLength);	///< remove characters, if needed, until the string is maxLength long excluding null terminator
 
 	virtual void appendChar( WideChar c );		///< append character to end
 

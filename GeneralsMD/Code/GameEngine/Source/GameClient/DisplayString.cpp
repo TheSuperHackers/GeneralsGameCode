@@ -136,7 +136,7 @@ void DisplayString::removeLastChar( void )
 // DisplayString::truncateBy ==================================================
 /** Remove the last charCount characters from the string text */
 //=============================================================================
-void DisplayString::truncateBy( const UnsignedInt charCount )
+void DisplayString::truncateBy( const Int charCount )
 {
 	m_textString.truncateBy(charCount);
 
@@ -149,7 +149,7 @@ void DisplayString::truncateBy( const UnsignedInt charCount )
 /** Remove the last characters from the string text so it's at the most
 	* maxLength characters long */
 //=============================================================================
-void DisplayString::truncateTo( const UnsignedInt maxLength )
+void DisplayString::truncateTo( const Int maxLength )
 {
 	m_textString.truncateTo(maxLength);
 
