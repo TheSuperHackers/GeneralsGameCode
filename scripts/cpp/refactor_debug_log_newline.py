@@ -26,7 +26,7 @@ def modifyLine(line: str) -> str:
         "SNAPSHOT_SAY",
         "SHATTER_DEBUG_SAY",
         "DBGMSG",
-        "REALLY_VERBOSE_LOG",
+        ### "REALLY_VERBOSE_LOG",
         "DOUBLE_DEBUG",
         "PERF_LOG",
         "CRCGEN_LOG",
