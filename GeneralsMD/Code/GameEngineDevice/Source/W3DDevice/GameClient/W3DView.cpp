@@ -221,10 +221,48 @@ void W3DView::setWidth(Int width)
  	m_3DCamera->Get_Viewport(vMin,vMax);
  	vMax.X=(Real)(m_originX+width)/(Real)TheDisplay->getWidth();
  	m_3DCamera->Set_Viewport(vMin,vMax);
+}
 
-	//we want to maintain the same scale, so we'll need to adjust the fov.
-	//default W3D fov for full-screen is 50 degrees.
-	m_3DCamera->Set_View_Plane((Real)width/(Real)TheDisplay->getWidth()*DEG_TO_RADF(50.0f),-1);
+// TheSuperHackers @tweak valeronm 25/03/2025 Adjusting FOV to look similar to what we have in in 4:3 (hFOV: 50, vFOV 38.55)
+void W3DView::adjustFovToAspectRatio(const Int width, const Int height)
+{
+	static const Real fixedHFOV = 50.00f;
+	static const Real fixedVFOV = 38.55f;
+
+	const Real aspectRatio = static_cast<Real>(width)/ static_cast<Real>(height);
+	Real vFOVRad, hFOVRad;
+	Bool drawEntireTerrain = false;
+	if (aspectRatio >= 4.0f / 3.0f)
+	{
+		// Wider than 4:3 resolutions get fixed vFOV 38.55
+		vFOVRad = DEG_TO_RADF(fixedVFOV);
+		hFOVRad = 2.0f * atan(tan(vFOVRad / 2.0f) * aspectRatio);
+		drawEntireTerrain = true;
+	}
+	else if (aspectRatio >= 1.0)
+	{
+		// Narrower than 4:3 but not yet portrait resolutions get fixed hFOV 50.0
+		hFOVRad = DEG_TO_RADF(fixedHFOV);
+		vFOVRad = 2.0f * atan(tan(hFOVRad / 2.0f) / aspectRatio);
+	}
+	else
+	{
+		// Portrait resolutions get fixed vFOV adjusted to aspect ratio
+		// vFOV increases from 50.0 for 1:1 to 60.0 for 9:21 and then fixed 60.0
+		static const Real adjMinRatio = 9.0f / 21.0f;
+		static const Real adjValue = 10.0f;
+
+		Real adjustment;
+		if (aspectRatio < adjMinRatio)
+			adjustment = adjValue;
+		else
+			adjustment = (1 - aspectRatio) * adjValue / (1 - adjMinRatio);
+		vFOVRad = DEG_TO_RADF(50 + adjustment);
+		hFOVRad = 2.0f * atan(tan(vFOVRad / 2.0f) * aspectRatio);
+		drawEntireTerrain = true;
+	}
+	TheWritableGlobalData->m_drawEntireTerrain = drawEntireTerrain;
+	m_3DCamera->Set_View_Plane(hFOVRad, vFOVRad);
 }
 
 //-------------------------------------------------------------------------------------------------
