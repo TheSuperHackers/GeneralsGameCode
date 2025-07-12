@@ -279,6 +279,20 @@ void        GameInfo::setOldFactionsOnly( Bool oldFactionsOnly ) { m_oldFactions
 AsciiString GameInfoToAsciiString( const GameInfo *game );
 Bool ParseAsciiStringToGameInfo( GameInfo *game, AsciiString options );
 
+struct LengthIndexPair
+{
+	Int Length;
+	size_t Index;
+	friend bool operator<(const LengthIndexPair& lhs, const LengthIndexPair& rhs)
+	{
+		if (lhs.Length == rhs.Length)
+			return lhs.Index < rhs.Index;
+		return lhs.Length < rhs.Length;
+	}
+	friend bool operator>(const LengthIndexPair& lhs, const LengthIndexPair& rhs) { return rhs < lhs; }
+	friend bool operator<=(const LengthIndexPair& lhs, const LengthIndexPair& rhs) { return !(lhs > rhs); }
+	friend bool operator>=(const LengthIndexPair& lhs, const LengthIndexPair& rhs) { return !(lhs < rhs); }
+};
 
 /**
   * The SkirmishGameInfo class holds information about the skirmish game and
