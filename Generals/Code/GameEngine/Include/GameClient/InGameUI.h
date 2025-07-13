@@ -367,6 +367,7 @@ public:  // ********************************************************************
 	virtual void toggleMessages( void ) { m_messagesOn = 1 - m_messagesOn; }	///< toggle messages on/off
 	virtual Bool isMessagesOn( void ) { return m_messagesOn; }	///< are the display messages on
 	void freeMessageResources( void );				///< free resources for the ui messages
+	void freeCustomUiResources( void );				///< free resources for custom ui elements
 	Color getMessageColor(Bool altColor) { return (altColor)?m_messageColor2:m_messageColor1; }
 	
 	// interface for military style messages
@@ -451,6 +452,7 @@ public:  // ********************************************************************
 	virtual void preDraw( void );														///< Logic which needs to occur before the UI renders
 	virtual void draw( void ) = 0;													///< Render the in-game user interface
 	virtual void postDraw( void );													///< Logic which needs to occur after the UI renders
+	virtual void postWindowDraw( void );											///< Logic which needs to occur after the WindowManager has repainted the menus
 
 	/// Ingame video playback 
 	virtual void playMovie( const AsciiString& movieName );
@@ -542,6 +544,9 @@ public:  // ********************************************************************
 	virtual void selectNextIdleWorker( void );
 
 	virtual void recreateControlBar( void );
+	virtual void refreshCustomUiResources( void );
+	virtual void refreshSystemTimeResources( void );
+	virtual void refreshGameTimeResources( void );
 
 	virtual void disableTooltipsUntil(UnsignedInt frameNum);
 	virtual void clearTooltipsDisabled();
@@ -560,6 +565,9 @@ private:
 	virtual void hideIdleWorkerLayout( void );
 	virtual void updateIdleWorker( void );
 	virtual void resetIdleWorker( void );
+
+	void drawSystemTime();
+	void drawGameTime();
 
 public:
 	void registerWindowLayout(WindowLayout *layout); // register a layout for updates
@@ -718,6 +726,25 @@ protected:
 	// Video playback data
 	VideoBuffer*								m_cameoVideoBuffer;///< video playback buffer
 	VideoStreamInterface*				m_cameoVideoStream;///< Video stream;
+
+	// System Time
+	DisplayString *										m_systemTimeString;
+	AsciiString											m_systemTimeFont;
+	Int													m_systemTimePointSize;
+	Bool												m_systemTimeBold;
+	Coord2D												m_systemTimePosition;
+	Color												m_systemTimeColor;
+	Color												m_systemTimeDropColor;
+
+	// Game Time
+	DisplayString *										m_gameTimeString;
+	DisplayString *										m_gameTimeFrameString;
+	AsciiString											m_gameTimeFont;
+	Int													m_gameTimePointSize;
+	Bool												m_gameTimeBold;
+	Coord2D												m_gameTimePosition;
+	Color												m_gameTimeColor;
+	Color												m_gameTimeDropColor;
 
 	// message data
 	UIMessage										m_uiMessages[ MAX_UI_MESSAGES ];/**< messages to display to the user, the

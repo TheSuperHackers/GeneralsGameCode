@@ -723,6 +723,34 @@ Real OptionPreferences::getMusicVolume(void)
 	return volume;
 }
 
+Int OptionPreferences::getSystemTimeFontSize(void)
+{
+	OptionPreferences::const_iterator it = find("SystemTimeFontSize");
+	if (it == end())
+		return 8;
+
+	Int fontSize = atoi(it->second.str());
+	if (fontSize < 0)
+	{
+		fontSize = 0;
+	}
+	return fontSize;
+}
+
+Int OptionPreferences::getGameTimeFontSize(void)
+{
+	OptionPreferences::const_iterator it = find("GameTimeFontSize");
+	if (it == end())
+		return 8;
+
+	Int fontSize = atoi(it->second.str());
+	if (fontSize < 0)
+	{
+		fontSize = 0;
+	}
+	return fontSize;
+}
+
 static OptionPreferences *pref = NULL;
 
 static void setDefaults( void )
@@ -1198,6 +1226,28 @@ static void saveOptions( void )
  	}
 
 	//-------------------------------------------------------------------------------------------------
+	// Set System Time Font Size
+	val = TheWritableGlobalData->m_systemTimeFontSize; // TheSuperHackers @todo replace with options input when applicable
+	if (val)
+	{
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["SystemTimeFontSize"] = prefString;
+		TheInGameUI->refreshSystemTimeResources();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Set Game Time Font Size
+	val = TheWritableGlobalData->m_gameTimeFontSize; // TheSuperHackers @todo replace with options input when applicable
+	if (val)
+	{
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["GameTimeFontSize"] = prefString;
+		TheInGameUI->refreshGameTimeResources();
+	}
+
+	//-------------------------------------------------------------------------------------------------
 	// Resolution
 	//
 	// TheSuperHackers @bugfix xezon 12/06/2025 Now performs the resolution change at the very end of
@@ -1239,6 +1289,7 @@ static void saveOptions( void )
 				TheShell->recreateWindowLayouts();
 
 				TheInGameUI->recreateControlBar();
+				TheInGameUI->refreshCustomUiResources();
 			}
 		}
 	}
