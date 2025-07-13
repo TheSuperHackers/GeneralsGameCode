@@ -33,9 +33,13 @@
 #include "Common/GameAudio.h"
 #include "Common/GameMemory.h"
 #include "Common/LocalFileSystem.h"
+
+#if RTS_ZEROHOUR
+#include "Common/Registry.h"
+#endif
+
 #include "StdDevice/Common/StdBIGFile.h"
 #include "StdDevice/Common/StdBIGFileSystem.h"
-#include "Common/Registry.h"
 #include "Utility/endian_compat.h"
 
 static const char *BIGFileIdentifier = "BIGF";
@@ -54,6 +58,7 @@ void StdBIGFileSystem::init() {
 
 	loadBigFilesFromDirectory("", "*.big");
 
+#if RTS_ZEROHOUR
     // load original Generals assets
     AsciiString installPath;
     GetStringFromGeneralsRegistry("", "InstallPath", installPath );
@@ -61,6 +66,7 @@ void StdBIGFileSystem::init() {
     DEBUG_ASSERTCRASH(installPath != "", ("Be 1337! Go install Generals!"));
     if (installPath!="")
       loadBigFilesFromDirectory(installPath, "*.big");
+#endif
 }
 
 void StdBIGFileSystem::reset() {

@@ -272,7 +272,7 @@ Bool FileSystem::createDirectory(AsciiString directory)
 Bool FileSystem::areMusicFilesOnCD()
 {
 #if 1
-    return TRUE;
+	return TRUE;
 #else
 	if (!TheCDManager) {
 		DEBUG_LOG(("FileSystem::areMusicFilesOnCD() - No CD Manager; returning false"));
@@ -291,7 +291,11 @@ Bool FileSystem::areMusicFilesOnCD()
 		cdRoot = cdi->getPath();
 		if (!cdRoot.endsWith("\\"))
 			cdRoot.concat("\\");
+#if RTS_GENERALS
+		cdRoot.concat("gensec.big");
+#elif RTS_ZEROHOUR
 		cdRoot.concat("genseczh.big");
+#endif
 		DEBUG_LOG(("FileSystem::areMusicFilesOnCD() - checking for %s", cdRoot.str()));
 		File *musicBig = TheLocalFileSystem->openFile(cdRoot.str());
 		if (musicBig)

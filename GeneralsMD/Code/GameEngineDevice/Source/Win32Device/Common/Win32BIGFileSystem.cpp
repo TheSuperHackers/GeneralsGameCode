@@ -33,9 +33,13 @@
 #include "Common/GameAudio.h"
 #include "Common/GameMemory.h"
 #include "Common/LocalFileSystem.h"
+
+#if RTS_ZEROHOUR
+#include "Common/Registry.h"
+#endif
+
 #include "Win32Device/Common/Win32BIGFile.h"
 #include "Win32Device/Common/Win32BIGFileSystem.h"
-#include "Common/Registry.h"
 #include "Utility/endian_compat.h"
 
 
@@ -55,6 +59,7 @@ void Win32BIGFileSystem::init() {
 
 	loadBigFilesFromDirectory("", "*.big");
 
+#if RTS_ZEROHOUR
     // load original Generals assets
     AsciiString installPath;
     GetStringFromGeneralsRegistry("", "InstallPath", installPath );
@@ -62,6 +67,7 @@ void Win32BIGFileSystem::init() {
     DEBUG_ASSERTCRASH(installPath != "", ("Be 1337! Go install Generals!"));
     if (installPath!="")
       loadBigFilesFromDirectory(installPath, "*.big");
+#endif
 }
 
 void Win32BIGFileSystem::reset() {

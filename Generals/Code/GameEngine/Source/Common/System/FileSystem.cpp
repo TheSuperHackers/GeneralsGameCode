@@ -179,6 +179,11 @@ File*		FileSystem::openFile( const Char *filename, Int access )
 	if ( TheLocalFileSystem != NULL )
 	{
 		file = TheLocalFileSystem->openFile( filename, access );
+		if (file != NULL && (file->getAccess() & File::CREATE))
+		{
+			unsigned key = TheNameKeyGenerator->nameToLowercaseKey(filename);
+			m_fileExist[key] = true;
+		}
 	}
 
 	if ( (TheArchiveFileSystem != NULL) && (file == NULL) )
@@ -196,12 +201,24 @@ File*		FileSystem::openFile( const Char *filename, Int access )
 Bool FileSystem::doesFileExist(const Char *filename) const
 {
 	USE_PERF_TIMER(FileSystem)
-	if (TheLocalFileSystem->doesFileExist(filename)) {
+
+  unsigned key=TheNameKeyGenerator->nameToLowercaseKey(filename);
+  std::map<unsigned,bool>::iterator i=m_fileExist.find(key);
+  if (i!=m_fileExist.end())
+    return i->second;
+
+	if (TheLocalFileSystem->doesFileExist(filename)) 
+  {
+    m_fileExist[key]=true;
 		return TRUE;
 	}
-	if (TheArchiveFileSystem->doesFileExist(filename)) {
+	if (TheArchiveFileSystem->doesFileExist(filename)) 
+  {
+    m_fileExist[key]=true;
 		return TRUE;
 	}
+
+  m_fileExist[key]=false;
 	return FALSE;
 }
 
@@ -274,7 +291,11 @@ Bool FileSystem::areMusicFilesOnCD()
 		cdRoot = cdi->getPath();
 		if (!cdRoot.endsWith("\\"))
 			cdRoot.concat("\\");
+#if RTS_GENERALS
 		cdRoot.concat("gensec.big");
+#elif RTS_ZEROHOUR
+		cdRoot.concat("genseczh.big");
+#endif
 		DEBUG_LOG(("FileSystem::areMusicFilesOnCD() - checking for %s", cdRoot.str()));
 		File *musicBig = TheLocalFileSystem->openFile(cdRoot.str());
 		if (musicBig)
