@@ -33,6 +33,11 @@
 #include "WorldBuilderView.h"
 
 #include "ScriptDialog.h"
+#define ADJUST_VIEW_TIMER 6969
+#define COUNTDOWN_TIMER 6910
+
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
 
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame
@@ -305,7 +310,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	autoSave = ::AfxGetApp()->GetProfileInt(MAIN_FRAME_SECTION, "AutoSaveIntervalSeconds", 120);
 	m_autoSaveInterval = autoSave;
 	m_hAutoSaveTimer = this->SetTimer(1, m_autoSaveInterval*1000, NULL);
-
+	if (m_autoSave) {
+		m_nextAutoSaveTime = CTime::GetCurrentTime() + CTimeSpan(0, 0, 0, m_autoSaveInterval);
+		SetTimer(COUNTDOWN_TIMER, 1000, NULL);
+	}
 #if USE_STREAMING_AUDIO
 	StartMusic();
 #endif
@@ -390,8 +398,8 @@ void CMainFrame::adjustWindowSize(Bool forcedResolution, Bool dynamicResolution)
 
 	// DEBUG_LOG(("Client Width: %d, Client Height: %d\n", client.Width(), client.Height()));
 	// DEBUG_LOG(("widthDelta: %d, heightDelta: %d\n", widthDelta, heightDelta));
-	DEBUG_LOG(("OLD viewWidth: %d, OLD viewHeight: %d\n", viewWidth, viewHeight));
-	DEBUG_LOG(("New Width: %d, New Height: %d\n", newWidth, newHeight));
+	// DEBUG_LOG(("OLD viewWidth: %d, OLD viewHeight: %d\n", viewWidth, viewHeight));
+	// DEBUG_LOG(("New Width: %d, New Height: %d\n", newWidth, newHeight));
 }
 
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
@@ -579,21 +587,78 @@ void CMainFrame::OnDestroy()
 		KillTimer(m_hAutoSaveTimer);
 	}
 	m_hAutoSaveTimer = NULL;
+
+	KillTimer(ADJUST_VIEW_TIMER);
 	CFrameWnd::OnDestroy();
+}
+
+void CMainFrame::ScheduleAdjustViewAfterResize(void) 
+{
+    KillTimer(ADJUST_VIEW_TIMER);
+    SetTimer(ADJUST_VIEW_TIMER, 300, NULL);  // 300ms delay to detect when resizing stops
 }
 
 void CMainFrame::OnTimer(UINT nIDEvent) 
 {
-	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
-	if (pDoc && pDoc->needAutoSave()) {
-		m_autoSaving = true;
-		HCURSOR old = SetCursor(::LoadCursor(0, IDC_WAIT));
-		SetMessageText("Auto Saving map...");
-		pDoc->autoSave();
-		if (old) SetCursor(old);
-		SetMessageText("Auto Save Complete.");
-		m_autoSaving = false;
+    if (nIDEvent == ADJUST_VIEW_TIMER)
+    {
+        KillTimer(ADJUST_VIEW_TIMER);
+        adjustWindowSize(false, true);
+        return;
+    }
+	if (nIDEvent == COUNTDOWN_TIMER) // UI update timer
+	{
+		CTime currentTime = CTime::GetCurrentTime();
+		CTimeSpan diff = m_nextAutoSaveTime - currentTime;
+		double secondsRemaining = diff.GetTotalSeconds();
+
+		// DEBUG_LOG(("Countdown timer active. Seconds until auto-save: %.0f\n", secondsRemaining));
+
+		CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
+        if (pDoc && pDoc->needAutoSave() && secondsRemaining <= 10 && secondsRemaining > 0)
+		{
+			CString msg;
+			msg.Format("Auto-saving in %.0f seconds...", secondsRemaining);
+			// DEBUG_LOG(("SetMessageText: %s", msg));
+
+			SetMessageText(msg);
+
+			// Play a system sound as a cue (only once at 10 seconds)
+			if ((int)secondsRemaining == 10)
+			{
+				PlaySound((LPCTSTR)SND_ALIAS_SYSTEMASTERISK, NULL, SND_ALIAS_ID | SND_ASYNC);
+			}
+		}
+
+		// Ensure view refresh
+		CView* pView = GetActiveView();
+		if (pView) pView->Invalidate(); // force redraw if needed
+
+		return;
 	}
+
+    if (nIDEvent == 1) // Auto-save timer
+    {
+        CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
+        if (pDoc && pDoc->needAutoSave()) {
+            m_autoSaving = true;
+
+            HCURSOR old = SetCursor(::LoadCursor(0, IDC_WAIT));
+            SetMessageText("Auto Saving map...");
+            pDoc->autoSave();
+
+            if (old) SetCursor(old);
+            SetMessageText("Auto Save Complete.");
+            m_autoSaving = false;
+
+            CView* pView = GetActiveView();
+            if (pView) pView->Invalidate();
+        }
+
+		// 🔁 Set the next expected save time first
+		m_nextAutoSaveTime = CTime::GetCurrentTime() + CTimeSpan(0, 0, 0, m_autoSaveInterval);
+        return;
+    }
 }
 
 void CMainFrame::OnEditCameraoptions() 

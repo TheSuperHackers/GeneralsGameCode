@@ -1099,55 +1099,75 @@ Bool CWorldBuilderDoc::ParseWaypointData(DataChunkInput &file, DataChunkInfo *in
 	return true;
 }
 
+static AsciiString IntToAsciiString(int value)
+{
+	char buffer[16];
+	::wsprintf(buffer, "%d", value);
+	return AsciiString(buffer);
+}
+
 void CWorldBuilderDoc::autoSave(void)
 {
-	// srj sez: put autosave into our user data folder, not the ap dir
-	AsciiString autosave1 = TheGlobalData->getPath_UserData();
-	AsciiString autosave2 = TheGlobalData->getPath_UserData();
-	AsciiString autosave3 = TheGlobalData->getPath_UserData();
-	autosave1.concat("WorldBuilderAutoSave1.map");
-	autosave2.concat("WorldBuilderAutoSave2.map");
-	autosave3.concat("WorldBuilderAutoSave3.map");
+	// DEBUG_LOG(("AUTOSAVING...\n"));
+
+	// Build autosave file paths
+	const int NUM_SLOTS = 10;
+	AsciiString autosavePaths[NUM_SLOTS + 1]; // 1-based indexing for simplicity
+
+	AsciiString autosaveDir = TheGlobalData->getPath_UserData();
+	autosaveDir.concat("AutoSaves\\");
+	::CreateDirectory(autosaveDir.str(), NULL);
+
+	for (int i = 1; i <= NUM_SLOTS; ++i) {
+		autosavePaths[i] = autosaveDir;
+		autosavePaths[i].concat("WorldBuilderAutoSave");
+		autosavePaths[i].concat(IntToAsciiString(i));
+		autosavePaths[i].concat(".map");
+	}
 
 	if (m_heightMap) try {
 		CFileStatus status;
+
+		// Remove oldest autosave (slot 10)
 		try {
-			if (CFile::GetStatus(autosave3.str(), status)) {
-				CFile::Remove(autosave3.str());
+			if (CFile::GetStatus(autosavePaths[NUM_SLOTS].str(), status)) {
+				CFile::Remove(autosavePaths[NUM_SLOTS].str());
 			}
 		} catch(...) {}
-		try {
-			if (CFile::GetStatus(autosave2.str(), status)) {
-				CFile::Rename(autosave2.str(), autosave3.str());
-			}
-		} catch(...){}
-		try {
-			if (CFile::GetStatus(autosave1.str(), status)) {
-				CFile::Rename(autosave1.str(), autosave2.str());
-			}
-		} catch(...){}
 
-		CFile theFile(autosave1.str(), CFile::modeCreate|CFile::modeWrite|CFile::shareDenyWrite|CFile::typeBinary);
+		// Shift autosaves: 9->10, 8->9, ..., 1->2
+		for (int i = NUM_SLOTS - 1; i >= 1; --i) {
+			try {
+				if (CFile::GetStatus(autosavePaths[i].str(), status)) {
+					CFile::Rename(autosavePaths[i].str(), autosavePaths[i + 1].str());
+				}
+			} catch(...) {}
+		}
+
+		// Create the new autosave1.map
+		CFile theFile(autosavePaths[1].str(), CFile::modeCreate | CFile::modeWrite | CFile::shareDenyWrite | CFile::typeBinary);
 		try {
-			Int i;
 			MFCFileOutputStream theStream(&theFile);
 			DataChunkOutput chunkWriter(&theStream);
 
 			m_heightMap->saveToFile(chunkWriter);
- 			/***************WAYPOINTS DATA ***************/
-			chunkWriter.openDataChunk("WaypointsList", 	K_WAYPOINTS_VERSION_1);
+
+			// Save waypoint data
+			chunkWriter.openDataChunk("WaypointsList", K_WAYPOINTS_VERSION_1);
 			chunkWriter.writeInt(this->m_numWaypointLinks);
-			for (i=0; i<m_numWaypointLinks; i++) {
+			for (int i = 0; i < m_numWaypointLinks; ++i) {
 				chunkWriter.writeInt(this->m_waypointLinks[i].waypoint1);
 				chunkWriter.writeInt(this->m_waypointLinks[i].waypoint2);
 			}
 			chunkWriter.closeDataChunk();
+		} catch(...) {}
 
-		} catch(...) {
-		}
 		theFile.Close();
 		m_needAutosave = false;
-	}	catch(...) {
+
+		// DEBUG_LOG(("AUTOSAVED...\n"));
+	} catch(...) {
+		// DEBUG_LOG(("AUTOSAVE FAILED...\n"));
 		::AfxMessageBox(IDS_NO_AUTOSAVE);
 	}
 }
@@ -1196,6 +1216,7 @@ void CWorldBuilderDoc::AddAndDoUndoable(Undoable *pUndo)
 		pCurUndo = pCurUndo->GetNext();
 	}
 	m_needAutosave = true;
+	// DEBUG_LOG(("NEED AUTOSAVE AddAndDoUndoable ...\n"));
 	m_waypointTableNeedsUpdate=true;
 	m_curRedo = 0;
 	pUndo->LinkNext(pCurUndo);
@@ -1218,6 +1239,7 @@ void CWorldBuilderDoc::OnEditRedo()
 {
 	Undoable *pUndo = m_undoList;
 	m_needAutosave = true;
+	// DEBUG_LOG(("NEED AUTOSAVE OnEditRedo ...\n"));
 	m_waypointTableNeedsUpdate=true;
 	if (m_curRedo>0) {
 		Int count = m_curRedo-1;
@@ -1243,6 +1265,7 @@ void CWorldBuilderDoc::OnEditUndo()
 {
 	Undoable *pUndo = m_undoList;
 	m_needAutosave = true;
+	// DEBUG_LOG(("NEED AUTOSAVE OnEditUndo ...\n"));
 	m_waypointTableNeedsUpdate=true;
 	Int count = m_curRedo;
 	while(count>0 && pUndo != NULL) {
@@ -1294,6 +1317,11 @@ void CWorldBuilderDoc::OnTsInfo()
 
 
 void CWorldBuilderDoc::OnTsCanonical() 
+{
+	OptimizeTiles();	
+}
+
+void CWorldBuilderDoc::OptimizeTiles() 
 {
 	if (m_heightMap) {
 
@@ -1659,8 +1687,8 @@ BOOL CWorldBuilderDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	DEBUG_LOG(("Looking for map-specific text in [%s]\n", s.str()));
 	TheGameText->initMapStringFile(s);
 
-	// TODO: make the copy passable into new document
-	TileTool::clearCopiedTiles();
+	// TODO: this dude brick the texures when host textures are not in the map...
+	// TileTool::clearCopiedTiles();
 	// TerrainMaterial::OnImportFavoritesFromMapFolder();
 
 	// // use same logic to construct map.ini path -- doesnt work -- look like the worldbuilder doesnt have the parser for map inis

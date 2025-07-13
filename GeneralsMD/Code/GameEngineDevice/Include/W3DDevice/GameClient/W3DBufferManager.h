@@ -39,12 +39,12 @@
 #define MAX_VB_SIZES 128	//number of different sized VB slots allowed.
 #define MIN_SLOT_SIZE	32	//minimum number of vertices allocated per slot (power of 2). See also MIN_SLOT_SIZE_SHIFT.
 #define	MIN_SLOT_SIZE_SHIFT	5 //used for division by MIN_SLOT_SIZE
-#define MAX_VERTEX_BUFFERS_CREATED	32	//maximum number of D3D vertex buffers allowed to create per vertex type.
+#define MAX_VERTEX_BUFFERS_CREATED	32 * 2 //maximum number of D3D vertex buffers allowed to create per vertex type.
 #define DEFAULT_VERTEX_BUFFER_SIZE	8192	//this size ends up generating VB's of about 256Kbytes
-#define MAX_NUMBER_SLOTS	4096			//maximum number of slots that can be allocated.
+#define MAX_NUMBER_SLOTS	4096 * 2		//maximum number of slots that can be allocated.
 
 #define MAX_IB_SIZES 128 //number of different sized IB slots allowed (goes all the way up to 65536)
-#define MAX_INDEX_BUFFERS_CREATED	32
+#define MAX_INDEX_BUFFERS_CREATED	32 * 2
 #define DEFAULT_INDEX_BUFFER_SIZE	32768	
 
 class W3DBufferManager

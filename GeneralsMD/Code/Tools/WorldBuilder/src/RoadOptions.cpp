@@ -245,7 +245,6 @@ BOOL RoadOptions::OnInitDialog()
 
 	// Load saved snap distance from profile
 	CString roadSnappingDistance = ::AfxGetApp()->GetProfileString("RoadOptionPanel", "RoadSnappingDistance", "1.0");
-	DEBUG_LOG(("Snapping Disntance %s",roadSnappingDistance));
 	// Set the snap distance to the edit box
 	pWnd = GetDlgItem(IDC_ROAD_SNAP_POINT_EDIT);
 	if (pWnd) {

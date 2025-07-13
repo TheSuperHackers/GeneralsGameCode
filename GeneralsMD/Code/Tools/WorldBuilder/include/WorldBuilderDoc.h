@@ -107,6 +107,7 @@ public: // overridden
 
 // Attributes
 public:
+	void OptimizeTiles();
 
 	WorldHeightMapEdit *GetHeightMap() {return m_heightMap;}
 	void SetHeightMap(WorldHeightMapEdit *pMap, Bool doUpdate);

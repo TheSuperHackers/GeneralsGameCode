@@ -84,7 +84,8 @@ protected:
 protected:
 	static TerrainMaterial	*m_staticThis;
 	Bool										m_updating;
-	Bool m_forceUpdatingWidth;
+	Bool m_suppressWidthEditSave;
+	CString m_lastTool;
 	static Int							m_currentFgTexture;
 	static Int							m_currentBgTexture;
 	CTreeCtrl								m_terrainTreeView;

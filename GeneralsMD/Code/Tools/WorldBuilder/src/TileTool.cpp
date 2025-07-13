@@ -99,6 +99,61 @@ void TileTool::clearCopiedTiles() {
     m_copiedTileTextures.clear();
 }
 
+
+// Unused -- Adriane
+// uint8_t rotateBlend(uint8_t original, int rotationSteps) {
+// 	// Normalize to 0–3
+// 	rotationSteps = (rotationSteps % 4 + 4) % 4;
+
+// 	// Define the rotation array pointer
+// 	const uint8_t* rotationArray = NULL;
+
+// 	// Match blend tile to its rotation sequence
+// 	switch (original) {
+// 		case 0x01: { // SW
+// 			static const uint8_t seq[] = { 0x01, 0x06, 0x08, 0x09 }; // SW → NW → NE → SE
+// 			rotationArray = seq;
+// 			break;
+// 		}
+// 		case 0x02: // W
+// 		case 0x03: { // W duplicate
+// 			static const uint8_t seq[] = { 0x02, 0x05, 0x04, 0x08 };
+// 			rotationArray = seq;
+// 			break;
+// 		}
+// 		case 0x04: { // E
+// 			static const uint8_t seq[] = { 0x04, 0x06, 0x02, 0x09 };
+// 			rotationArray = seq;
+// 			break;
+// 		}
+// 		case 0x05:
+// 		case 0x07: { // S / S duplicate
+// 			static const uint8_t seq[] = { 0x05, 0x04, 0x06, 0x02 };
+// 			rotationArray = seq;
+// 			break;
+// 		}
+// 		case 0x06: { // NW
+// 			static const uint8_t seq[] = { 0x06, 0x01, 0x09, 0x04 };
+// 			rotationArray = seq;
+// 			break;
+// 		}
+// 		case 0x08: { // NE
+// 			static const uint8_t seq[] = { 0x08, 0x06, 0x01, 0x05 };
+// 			rotationArray = seq;
+// 			break;
+// 		}
+// 		case 0x09: { // SE
+// 			static const uint8_t seq[] = { 0x09, 0x08, 0x06, 0x01 };
+// 			rotationArray = seq;
+// 			break;
+// 		}
+// 		default:
+// 			return original; // fallback for 0x00, 0x10, etc.
+// 	}
+
+// 	return rotationArray[rotationSteps];
+// }
+
 /// Common mouse down code for left and right clicks.
 void TileTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBuilderDoc *pDoc) 
 {
@@ -116,11 +171,16 @@ void TileTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
     // Check if we are in copy select mode (we'll copy the texture at the selected tile)
     if (TerrainMaterial::isCopySelectMode()) {
 		DEBUG_LOG(("Selected...\n"));
-		int halfWidth = getWidth() / 2;
+		// int halfWidth = getWidth() / 2;
 		m_copiedTileTextures.clear();
 
-		for (int dy = -halfWidth; dy <= halfWidth; ++dy) {
-			for (int dx = -halfWidth; dx <= halfWidth; ++dx) {
+		int width = getWidth();
+		int halfWidth = width / 2;
+		int startOffset = -halfWidth;
+		int endOffset = width % 2 == 0 ? halfWidth - 1 : halfWidth;  // adjust for even widths
+
+		for (int dy = startOffset; dy <= endOffset; ++dy) {
+			for (int dx = startOffset; dx <= endOffset; ++dx) {
 				int x = ndx.x + dx;
 				int y = ndx.y + dy;
 
@@ -173,10 +233,20 @@ void TileTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 
 		// If any texture class is missing, show an error and abort the operation
 		if (!allTexturesValid) {
-			AfxMessageBox(_T("One or more of the copied texture classes are no longer on the map. Aborting the operation. Please Select a new set of tiles."), MB_OK | MB_ICONWARNING);
+			// AfxMessageBox(_T("One or more of the copied texture classes are no longer on the map. Aborting the operation. Please Select a new set of tiles."), MB_OK | MB_ICONWARNING);
 			
-			clearCopiedTiles();
-			return;
+			int result = AfxMessageBox(
+			_T("One or more of the copied texture classes are no longer on the map. Do you wish to continue?\nYou will have to hit the Optimize Tile button to fix the visual bug."),
+				MB_YESNO | MB_ICONQUESTION
+			);
+
+			if (result == IDNO)
+			{
+				return;
+			}
+
+			// clearCopiedTiles();
+			// return;
 		}
 
 		REF_PTR_RELEASE(m_htMapEditCopy);
@@ -208,10 +278,44 @@ void TileTool::mouseDown(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldBu
 
 				int mapNdx = ty * workingMap->getStoredWidth() + tx;
 
+
+				// Initial rotation as basis texture facing north
+				// then changed to :
+				// Texture direction
+				// 0x00 - Invisible
+				// 0x01 - SW
+				// 0x02 - W
+				// 0x03 - W Same as 0x02 The fuck
+				// 0x04 - E
+				// 0x05 - S
+				// 0x06 - NW
+				// 0x07 - S Sasme as 0x05
+				// 0x08 - NE
+				// 0x09 - SE
+				// 0x10 - Invisible
+
 				// Adriane [Deathscythe] TODO: support rotation for all
-				// if(rotation == 0){
-				// 	workingMap->m_blendTileNdxes[mapNdx] = tile.blendTileNdx;
-				// 	workingMap->m_extraBlendTileNdxes[mapNdx] = tile.extraBlendTileNdx;	
+				if (rotation == 0) {
+					// Keep original tile orientation
+					workingMap->m_blendTileNdxes[mapNdx] = tile.blendTileNdx;
+					workingMap->m_extraBlendTileNdxes[mapNdx] = tile.extraBlendTileNdx;
+
+					// DEBUG_LOG((
+					// 	"TileBlend (no rotation) = 0x%02X\n",
+					// 	tile.blendTileNdx
+					// ));
+				} 
+				
+				// else {
+				// 	// Apply rotated direction
+				// 	uint8_t rotatedBlend = rotateBlend(tile.blendTileNdx, rotation);
+				// 	workingMap->m_blendTileNdxes[mapNdx] = rotatedBlend;
+				// 	workingMap->m_extraBlendTileNdxes[mapNdx] = tile.extraBlendTileNdx;
+
+				// 	DEBUG_LOG((
+				// 		"TileBlend rotated: orig=0x%02X rot=%d -> new=0x%02X\n",
+				// 		tile.blendTileNdx, rotation, rotatedBlend
+				// 	));
 				// }
 			}
 		}

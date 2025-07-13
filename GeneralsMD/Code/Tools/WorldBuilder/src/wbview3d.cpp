@@ -3025,118 +3025,108 @@ void WbView3d::drawLabels(HDC hdc)
 	
 	// Draw labels.
 	MapObject *pMapObj;
-	if (isNamesVisible()) 
-	{
+	if (isNamesVisible()) {
 		for (pMapObj = MapObject::getFirstMapObject(); pMapObj; pMapObj = pMapObj->getNext()) {
-			AsciiString name;
-			Coord3D pos;
+			if (pMapObj->getFlags() & FLAG_DONT_RENDER) continue;
 
-			if (pMapObj->getFlags() & FLAG_DONT_RENDER) {
-				continue;
-			}
+			Coord3D pos = *pMapObj->getLocation();
+			float terrainZ = m_heightMapRenderObj->getHeightMapHeight(pos.x, pos.y, NULL);
+			pos.z += terrainZ;
 
-			if (m_doLightFeedback && pMapObj->isSelected())
-			{	//find out position of selected object in order to use it for light feedback tracking.
-				selectedPos=*pMapObj->getLocation();
-				selectedPos.z = m_heightMapRenderObj->getHeightMapHeight(selectedPos.x, selectedPos.y, NULL);
-				RenderObjClass *selRobj=pMapObj->getRenderObj();
-				if (selRobj)
-				{
+			// Light feedback logic
+			if (m_doLightFeedback && pMapObj->isSelected()) {
+				selectedPos = pos;
+				selectedPos.z = terrainZ;
+
+				if (RenderObjClass *selRobj = pMapObj->getRenderObj()) {
 					SphereClass sphere;
 					selRobj->Get_Obj_Space_Bounding_Sphere(sphere);
-					selectedRadius=sphere.Radius + sphere.Center.Length()+20.0f;
+					selectedRadius = sphere.Radius + sphere.Center.Length() + 20.0f;
 				}
-
 			}
+
+			// Get base name from object properties
 			Bool exists;
-			AsciiString objectDictName = pMapObj->getProperties()->getAsciiString(TheKey_objectName, &exists);			
-			if (!pMapObj->getProperties()->getAsciiString(TheKey_objectName, &exists).isEmpty() && !(pMapObj->getFlags() & (FLAG_ROAD_FLAGS|FLAG_BRIDGE_FLAGS))) { 
+			AsciiString objectDictName = pMapObj->getProperties()->getAsciiString(TheKey_objectName, &exists);
+			AsciiString name;
+
+			Bool isRenderableObject = !(pMapObj->getFlags() & (FLAG_ROAD_FLAGS | FLAG_BRIDGE_FLAGS));
+			if (!objectDictName.isEmpty() && isRenderableObject) {
 				name = objectDictName;
-				pos = *pMapObj->getLocation();
-				pos.z += m_heightMapRenderObj->getHeightMapHeight(pos.x, pos.y, NULL);
 			} else if (pMapObj->isWaypoint() && m_showWaypoints) {
 				name = pMapObj->getWaypointName();
-				pos = *pMapObj->getLocation();
-				pos.z = m_heightMapRenderObj->getHeightMapHeight(pos.x, pos.y, NULL);
-			} else if (pMapObj->getThingTemplate() && !(pMapObj->getFlags() & (FLAG_ROAD_FLAGS|FLAG_BRIDGE_FLAGS)) &&
-				pMapObj->getRenderObj() == NULL && !pMapObj->getThingTemplate()->isKindOf(KINDOF_OPTIMIZED_TREE)) { 
+			} else if (pMapObj->getThingTemplate() && isRenderableObject &&
+				!pMapObj->getRenderObj() && !pMapObj->getThingTemplate()->isKindOf(KINDOF_OPTIMIZED_TREE)) {
 				name = pMapObj->getThingTemplate()->getName();
-				pos = *pMapObj->getLocation();
-				pos.z += m_heightMapRenderObj->getHeightMapHeight(pos.x, pos.y, NULL);
 			}
-			Int i;
-			for (i=0; i<4; i++) {
-				Bool exists;
-				switch(i) {
-					case 0 : break;
-					case 1: name = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel1, &exists); break;
-					case 2: name = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel2, &exists);; break;
-					case 3: name = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel3, &exists);; break;
-					default: name.clear();
+
+			// Skip projection if object has no name and no waypoint labels
+			if (name.isEmpty() && !m_showWaypoints && objectDictName.isEmpty()) continue;
+
+			Vector3 world(pos.x + MAP_XY_FACTOR / 2, pos.y, pos.z);
+			Vector3 screen;
+			if (CameraClass::INSIDE_FRUSTUM != m_camera->Project(screen, world)) continue;
+
+			CRect rClient;
+			GetClientRect(&rClient);
+
+			Int sx, sy;
+			W3DLogicalScreenToPixelScreenHackedForWBLabels(
+				screen.X, screen.Y,
+				&sx, &sy,
+				rClient.Width(), rClient.Height()
+			);
+
+			CPoint pt(rClient.left + sx, rClient.top + sy - 5);
+
+			// Skip Projection if not visible to this area
+			// CPoint center(rClient.Width() / 2, rClient.Height() / 2);
+			// int dx = pt.x - center.x;
+			// int dy = pt.y - center.y;
+			// int distSq = dx * dx + dy * dy;
+			// if (distSq > 300 * 300) continue;
+
+			// Loop through all name labels: base + waypoint path labels
+			for (Int i = 0; i < 4; i++) {
+				AsciiString label;
+				if (i == 0) {
+					label = name;
+				} else if (m_showWaypoints) {
+					switch (i) {
+						case 1: label = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel1, &exists); break;
+						case 2: label = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel2, &exists); break;
+						case 3: label = pMapObj->getProperties()->getAsciiString(TheKey_waypointPathLabel3, &exists); break;
+					}
 				}
-				if (!name.isEmpty() && m_showWaypoints || !objectDictName.isEmpty()) {
-					CPoint pt;
-					Vector3 world, screen;
-					world.Set( pos.x+MAP_XY_FACTOR/2, pos.y, pos.z );
-					if (CameraClass::INSIDE_FRUSTUM != m_camera->Project( screen, world )) {
-						continue;
+
+				if (label.isEmpty()) continue;
+
+				Int red = 255, green = 255, blue = 255;
+
+				if (i == 0) {
+					if (!objectDictName.isEmpty()) {
+						red = 255;
+						green = 255;
+						blue = 0; // Yellow-ish
+					} else {
+						red = 0;
+						green = 255;
+						blue = 0; // Green
 					}
-					if (!name.isEmpty()) {
-						CPoint pt;
-						Vector3 world, screen;
-						world.Set( pos.x+MAP_XY_FACTOR/2, pos.y, pos.z );
-						if (CameraClass::INSIDE_FRUSTUM != m_camera->Project( screen, world )) {
-							continue;
-						}
+				}
 
-						CRect rClient;
-						GetClientRect(&rClient);
+				CPoint labelPt = pt;
+				labelPt.y += i * 15;
 
-						//
-						// note that the screen coord returned from the project W3D camera 
-						// gave us a screen coords that range from (-1,-1) bottom left to
-						// (1,1) top right ... we are turning that into (0,0) upper left
-						// coords now
-						//
-						Int sx, sy;
-						W3DLogicalScreenToPixelScreenHackedForWBLabels( screen.X, screen.Y,
-																					 &sx, &sy,
-																					 rClient.right-rClient.left, rClient.bottom-rClient.top );
-						pt.x = rClient.left+sx;
-						pt.y = rClient.top+sy;
-						pt.y += i*15;
-
-						Int red, green;
-						if (i==0) {
-							red = 0; green = 255;
-						} else {
-							red = 255, green = 0;
-						}
-
-						// Modify color for 'objectDictName' if it's not empty
-						if (!objectDictName.isEmpty()) {
-							red = 255;
-							green = 255;
-						}
-
-						if (m3DFont && !hdc) {
-							RECT rct;
-							pt.y -= 5;
-							pt.x += 1;
-							rct.top = rct.bottom = pt.y;
-							rct.left = rct.right = pt.x;
-							m3DFont->DrawText(name.str(), name.getLength(), &rct, 
-								DT_LEFT | DT_NOCLIP | DT_TOP | DT_SINGLELINE, 0xAF000000 + (red<<16) + (green<<8)); 
-
-						} else if (!m3DFont) {
-							//docToViewCoords(pos, &pt);
-							::SetBkMode(hdc, TRANSPARENT);
-							pt.y -= 5;
-							pt.x += 1;
-							::SetTextColor(hdc, RGB(red,green,0));
-							::TextOut(hdc, pt.x, pt.y, name.str(), name.getLength());
-						}
-					}
+				if (m3DFont && !hdc) {
+					DWORD textColor = 0xFF000000 | (red << 16) | (green << 8) | blue;
+					RECT rct = { labelPt.x + 1, labelPt.y, labelPt.x + 1, labelPt.y };
+					m3DFont->DrawText(label.str(), label.getLength(), &rct,
+						DT_LEFT | DT_NOCLIP | DT_TOP | DT_SINGLELINE, textColor);
+				} else if (!m3DFont) {
+					::SetBkMode(hdc, TRANSPARENT);
+					::SetTextColor(hdc, RGB(red, green, blue));
+					::TextOut(hdc, labelPt.x + 1, labelPt.y, label.str(), label.getLength());
 				}
 			}
 		}

@@ -92,10 +92,12 @@ public:
 	void showOptionsDialog(Int dialogID);
 	void OnEditGloballightoptions();
 	void ResetWindowPositions(void);
+	void ScheduleAdjustViewAfterResize(void);
 	void adjustWindowSize(Bool forcedResolution = false, Bool dynamicResolution = false);
 	Bool isAutoSaving(void) {return m_autoSaving;};
 	void handleCameraChange(void);
 	void onEditScripts();
+	CString getPointerText(void) {return m_pointerText;};
 
 protected:  // control bar embedded members
 	CStatusBar					m_wndStatusBar;
@@ -143,6 +145,9 @@ protected:  // control bar embedded members
 	Int								m_autoSaveInterval;  ///< Time between autosaves in seconds.
 
 	static CMainFrame *TheMainFrame;
+
+	CTime m_nextAutoSaveTime;
+	CString m_pointerText;
 
 // Generated message map functions
 protected:

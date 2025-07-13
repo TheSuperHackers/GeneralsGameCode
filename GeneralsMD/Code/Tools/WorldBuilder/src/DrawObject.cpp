@@ -1097,34 +1097,35 @@ void DrawObject::updateAmbientSoundVB(void)
 
 void DrawObject::updateWaypointVB(void)
 {
-//	const Int theAlpha = 64;
-
 	m_feedbackVertexCount = 0;
 	m_feedbackIndexCount = 0;
 	DX8IndexBufferClass::WriteLockClass lockIdxBuffer(m_indexFeedback, D3DLOCK_DISCARD);
-	UnsignedShort *ib=lockIdxBuffer.Get_Index_Array();
+	UnsignedShort *ib = lockIdxBuffer.Get_Index_Array();
 	UnsignedShort *curIb = ib;
 
 	DX8VertexBufferClass::WriteLockClass lockVtxBuffer(m_vertexFeedback, D3DLOCK_DISCARD);
 	VertexFormatXYZDUV1 *vb = (VertexFormatXYZDUV1*)lockVtxBuffer.Get_Vertex_Array();
 	VertexFormatXYZDUV1 *curVb = vb;
 
- 	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
-	Int i;
-	for (i = 0; i<=pDoc->getNumWaypointLinks(); i++) {
-		Bool gotLocation=false;
+	CWorldBuilderDoc *pDoc = CWorldBuilderDoc::GetActiveDoc();
+
+	// Map group label to color
+	std::map<AsciiString, uint32> groupColorMap;
+	int colorSeed = 0;
+
+	for (Int i = 0; i <= pDoc->getNumWaypointLinks(); i++) {
+		Bool gotLocation = false;
 		Coord3D loc1;
 		Coord3D loc2;
- 		Bool exists;
+		Bool exists;
 		Int waypointID1, waypointID2;
 
-		Int k;
-		for (k=0; k<2; k++) {
+		for (Int k = 0; k < 2; k++) {
 			Bool ok = false;
 			pDoc->getWaypointLink(i, &waypointID1, &waypointID2);
-			if (k==0 || i==pDoc->getNumWaypointLinks()) {
-				ok = (k==0);
-			}	else {
+			if (k == 0 || i == pDoc->getNumWaypointLinks()) {
+				ok = (k == 0);
+			} else {
 				MapObject *pWay = pDoc->getWaypointByID(waypointID1);
 				if (pWay) {
 					Bool biDirectional = pWay->getProperties()->getBool(TheKey_waypointPathBiDirectional, &exists);
@@ -1135,192 +1136,149 @@ void DrawObject::updateWaypointVB(void)
 				}
 			}
 
-			if (i==pDoc->getNumWaypointLinks()) {
+			if (i == pDoc->getNumWaypointLinks()) {
 				if (m_dragWaypointFeedback) {
 					loc1 = m_dragWayStart;
 					loc2 = m_dragWayEnd;
 					gotLocation = true;
 				}
 			} else {
-				MapObject *pWay1, *pWay2;
-				pWay1 = pDoc->getWaypointByID(waypointID1);
-				pWay2 = pDoc->getWaypointByID(waypointID2);
+				MapObject *pWay1 = pDoc->getWaypointByID(waypointID1);
+				MapObject *pWay2 = pDoc->getWaypointByID(waypointID2);
 				if (pWay1 && pWay2) {
 					gotLocation = true;
 					loc1 = *pWay1->getLocation();
 					loc2 = *pWay2->getLocation();
 					AsciiString wayLayer;
+
 					wayLayer = pWay1->getProperties()->getAsciiString(TheKey_objectLayer, &exists);
-					if (exists && TheLayersList->isLayerHidden(wayLayer)) {
-						gotLocation = false;
-					}
+					if (exists && TheLayersList->isLayerHidden(wayLayer)) gotLocation = false;
 
 					wayLayer = pWay2->getProperties()->getAsciiString(TheKey_objectLayer, &exists);
-					if (exists && TheLayersList->isLayerHidden(wayLayer)) {
-						gotLocation = false;
-					}
+					if (exists && TheLayersList->isLayerHidden(wayLayer)) gotLocation = false;
 				}
 			}
-			if (gotLocation) {
 
-				Vector3 normal(loc2.x-loc1.x, loc2.y-loc1.y, loc2.z-loc1.z);
+			if (gotLocation) {
+				// Get group label and assign color
+				AsciiString groupLabel = "default";
+				MapObject* pWay1 = pDoc->getWaypointByID(waypointID1);
+				if (pWay1) {
+					groupLabel = pWay1->getProperties()->getAsciiString(TheKey_waypointPathLabel1, &exists);
+					if (!exists) groupLabel = "default";
+				}
+
+				uint32 groupColor;
+				if (groupLabel == "default") {
+					// Force "default" group to be green
+					groupColor = 0xFF00FF00; // ARGB: opaque green
+					groupColorMap[groupLabel] = groupColor;
+				} else if (groupColorMap.find(groupLabel) == groupColorMap.end()) {
+					// Use colorSeed to generate spaced hues
+					uint32 hue = (colorSeed * 137) % 360; // 137 is a good prime for spreading values
+					float s = 0.6f; // Saturation
+					float v = 0.95f; // Brightness
+
+					// Convert HSV to RGB
+					float c = v * s;
+					float x = c * (1 - fabs(fmod(hue / 60.0f, 2) - 1));
+					float m = v - c;
+
+					float rf, gf, bf;
+					if (hue < 60) { rf = c; gf = x; bf = 0; }
+					else if (hue < 120) { rf = x; gf = c; bf = 0; }
+					else if (hue < 180) { rf = 0; gf = c; bf = x; }
+					else if (hue < 240) { rf = 0; gf = x; bf = c; }
+					else if (hue < 300) { rf = x; gf = 0; bf = c; }
+					else { rf = c; gf = 0; bf = x; }
+
+					uint32 r = static_cast<uint32>((rf + m) * 255);
+					uint32 g = static_cast<uint32>((gf + m) * 255);
+					uint32 b = static_cast<uint32>((bf + m) * 255);
+
+					groupColor = (0xFF << 24) | (r << 16) | (g << 8) | b;
+					groupColorMap[groupLabel] = groupColor;
+					colorSeed++;
+				} else {
+					groupColor = groupColorMap[groupLabel];
+				}
+								
+
+				Vector3 normal(loc2.x - loc1.x, loc2.y - loc1.y, loc2.z - loc1.z);
 				normal.Normalize();
 				normal *= 0.5f;
-				// Rotate the normal 90 degrees.
-				normal.Rotate_Z(PI/2);
+				normal.Rotate_Z(PI / 2);
 				loc1.z = TheTerrainRenderObject->getHeightMapHeight(loc1.x, loc1.y, NULL);
 				loc2.z = TheTerrainRenderObject->getHeightMapHeight(loc2.x, loc2.y, NULL);
 
-				if (m_feedbackVertexCount+9>= NUM_FEEDBACK_VERTEX) {
-					return;
-				}
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc1.x+normal.X;
-				curVb->y = loc1.y+normal.Y;
-				curVb->z = loc1.z;
-				curVb->diffuse = 0xFF000000;  // black.
-				curVb++;
-				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc1.x-normal.X;
-				curVb->y = loc1.y-normal.Y;
-				curVb->z = loc1.z;
-				curVb->diffuse = 0xFF000000;  // black.
-				curVb++;
-				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc2.x+normal.X;
-				curVb->y = loc2.y+normal.Y;
-				curVb->z = loc2.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
-				curVb++;
-				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc2.x-normal.X;
-				curVb->y = loc2.y-normal.Y;
-				curVb->z = loc2.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
-				curVb++;
-				m_feedbackVertexCount++;
+				if (m_feedbackVertexCount + 9 >= NUM_FEEDBACK_VERTEX) return;
 
-				if (m_feedbackIndexCount+12 >= NUM_FEEDBACK_INDEX) {
-					return;
-				}
-				*curIb++ = m_feedbackVertexCount-3;
-				*curIb++ = m_feedbackVertexCount-1;
-				*curIb++ = m_feedbackVertexCount-2;
-				*curIb++ = m_feedbackVertexCount-4;
-				*curIb++ = m_feedbackVertexCount-3;
-				*curIb++ = m_feedbackVertexCount-2;
-				m_feedbackIndexCount+=6;
+				// Stem vertices - use group color
+				curVb->u1 = 0; curVb->v1 = 0;
+				curVb->x = loc1.x + normal.X; curVb->y = loc1.y + normal.Y; curVb->z = loc1.z;
+				curVb->diffuse = groupColor; curVb++; m_feedbackVertexCount++;
 
-				// Do arrowhead.
-				Vector3 vec(loc2.x-loc1.x, loc2.y-loc1.y, loc2.z-loc1.z);
+				curVb->u1 = 0; curVb->v1 = 0;
+				curVb->x = loc1.x - normal.X; curVb->y = loc1.y - normal.Y; curVb->z = loc1.z;
+				curVb->diffuse = groupColor; curVb++; m_feedbackVertexCount++;
+
+				// End vertices - stay red
+				curVb->u1 = 0; curVb->v1 = 0;
+				curVb->x = loc2.x + normal.X; curVb->y = loc2.y + normal.Y; curVb->z = loc2.z;
+				curVb->diffuse = groupColor; curVb++; m_feedbackVertexCount++;
+
+				curVb->u1 = 0; curVb->v1 = 0;
+				curVb->x = loc2.x - normal.X; curVb->y = loc2.y - normal.Y; curVb->z = loc2.z;
+				curVb->diffuse = groupColor; curVb++; m_feedbackVertexCount++;
+
+				if (m_feedbackIndexCount + 12 >= NUM_FEEDBACK_INDEX) return;
+
+				*curIb++ = m_feedbackVertexCount - 3;
+				*curIb++ = m_feedbackVertexCount - 1;
+				*curIb++ = m_feedbackVertexCount - 2;
+				*curIb++ = m_feedbackVertexCount - 4;
+				*curIb++ = m_feedbackVertexCount - 3;
+				*curIb++ = m_feedbackVertexCount - 2;
+				m_feedbackIndexCount += 6;
+
+				// Arrowhead
+				Vector3 vec(loc2.x - loc1.x, loc2.y - loc1.y, loc2.z - loc1.z);
 				vec.Normalize();
-				const Real ARROWHEAD_LEN = 10.0f;
-				const Real NORMAL_SHIFT = 6.0f;
+				const Real ARROWHEAD_LEN = 16.0f;
+				const Real NORMAL_SHIFT = 10.0f;
+				vec *= ARROWHEAD_LEN;
+				Coord3D arrowBase;
+				arrowBase.x = loc2.x - vec.X;
+				arrowBase.y = loc2.y - vec.Y;
+				arrowBase.z = loc2.z - vec.Z;
 
-				vec *=ARROWHEAD_LEN;
-				loc1.x = loc2.x - vec.X;
-				loc1.y = loc2.y - vec.Y;
-				loc1.z = loc2.z - vec.Z;
-				if (m_feedbackVertexCount+9>= NUM_FEEDBACK_VERTEX) {
-					return;
-				}
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc1.x+NORMAL_SHIFT*normal.X+normal.X;
-				curVb->y = loc1.y+NORMAL_SHIFT*normal.Y+normal.Y;
-				curVb->z = loc1.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
-				curVb++;
-				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc1.x+NORMAL_SHIFT*normal.X;
-				curVb->y = loc1.y+NORMAL_SHIFT*normal.Y;
-				curVb->z = loc1.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
-				curVb++;
-				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc2.x+normal.X;
-				curVb->y = loc2.y+normal.Y;
-				curVb->z = loc2.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
-				curVb++;
-				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc2.x-normal.X;
-				curVb->y = loc2.y-normal.Y;
-				curVb->z = loc2.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
-				curVb++;
-				m_feedbackVertexCount++;
+				if (m_feedbackVertexCount + 3 >= NUM_FEEDBACK_VERTEX) return;
 
-				if (m_feedbackIndexCount+12 >= NUM_FEEDBACK_INDEX) {
-					return;
-				}
-				*curIb++ = m_feedbackVertexCount-3;
-				*curIb++ = m_feedbackVertexCount-1;
-				*curIb++ = m_feedbackVertexCount-2;
-				*curIb++ = m_feedbackVertexCount-4;
-				*curIb++ = m_feedbackVertexCount-3;
-				*curIb++ = m_feedbackVertexCount-2;
-				m_feedbackIndexCount+=6;
+				// Arrow base vertex 1
+				curVb->u1 = 0; curVb->v1 = 0;
+				curVb->x = arrowBase.x + NORMAL_SHIFT * normal.X;
+				curVb->y = arrowBase.y + NORMAL_SHIFT * normal.Y;
+				curVb->z = arrowBase.z;
+				curVb->diffuse = groupColor; curVb++; m_feedbackVertexCount++;
 
-				if (m_feedbackVertexCount+9>= NUM_FEEDBACK_VERTEX) {
-					return;
-				}
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc1.x-NORMAL_SHIFT*normal.X;
-				curVb->y = loc1.y-NORMAL_SHIFT*normal.Y;
-				curVb->z = loc1.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
-				curVb++;
-				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc1.x-NORMAL_SHIFT*normal.X-normal.X;
-				curVb->y = loc1.y-NORMAL_SHIFT*normal.Y-normal.Y;
-				curVb->z = loc1.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
-				curVb++;
-				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc2.x+normal.X;
-				curVb->y = loc2.y+normal.Y;
-				curVb->z = loc2.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
-				curVb++;
-				m_feedbackVertexCount++;
-				curVb->u1 = 0;
-				curVb->v1 = 0;
-				curVb->x = loc2.x-normal.X;
-				curVb->y = loc2.y-normal.Y;
-				curVb->z = loc2.z;
-				curVb->diffuse = 0xFFFF0000;  // red.
-				curVb++;
-				m_feedbackVertexCount++;
+				// Arrow base vertex 2
+				curVb->u1 = 0; curVb->v1 = 0;
+				curVb->x = arrowBase.x - NORMAL_SHIFT * normal.X;
+				curVb->y = arrowBase.y - NORMAL_SHIFT * normal.Y;
+				curVb->z = arrowBase.z;
+				curVb->diffuse = groupColor; curVb++; m_feedbackVertexCount++;
 
-				if (m_feedbackIndexCount+12 >= NUM_FEEDBACK_INDEX) {
-					return;
-				}
-				*curIb++ = m_feedbackVertexCount-3;
-				*curIb++ = m_feedbackVertexCount-1;
-				*curIb++ = m_feedbackVertexCount-2;
-				*curIb++ = m_feedbackVertexCount-4;
-				*curIb++ = m_feedbackVertexCount-3;
-				*curIb++ = m_feedbackVertexCount-2;
-				m_feedbackIndexCount+=6;
+				// Arrow tip vertex
+				curVb->u1 = 0; curVb->v1 = 0;
+				curVb->x = loc2.x; curVb->y = loc2.y; curVb->z = loc2.z;
+				curVb->diffuse = groupColor; curVb++; m_feedbackVertexCount++;
+
+				if (m_feedbackIndexCount + 3 >= NUM_FEEDBACK_INDEX) return;
+
+				*curIb++ = m_feedbackVertexCount - 3;
+				*curIb++ = m_feedbackVertexCount - 2;
+				*curIb++ = m_feedbackVertexCount - 1;
+				m_feedbackIndexCount += 3;
 			}
 		}
 	}

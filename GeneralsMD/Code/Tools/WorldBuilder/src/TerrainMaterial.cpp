@@ -52,7 +52,8 @@ Int TerrainMaterial::m_copyRotation(0);
 
 TerrainMaterial::TerrainMaterial(CWnd* pParent /*=NULL*/) :
 	m_updating(false),
-	m_currentWidth(3)
+	m_lastTool(""),
+	m_currentWidth(BigTileTool::getTileToolWidth())
 {
 	//{{AFX_DATA_INIT(TerrainMaterial)
 		// NOTE: the ClassWizard will add member initialization here
@@ -138,10 +139,34 @@ void TerrainMaterial::setToolOptions(Bool singleCell, Bool floodfill)
 	if (m_staticThis ) {
 		m_staticThis->m_updating = true;
 
+		/**
+		 * Adriane [Deathscythe]
+		 * We want to suppress saving if the value is already saved but not yet initialized in the UI.
+		 * Since changes in the UI are monitored by OnChangeSizeEdit(), we want to avoid triggering too many write actions.
+		 * 
+		 * This is similar to how we suppress saving the width to the World Builder settings 
+		 * when switching between the single tile tool and the big tile tool,
+		 * as that transition is considered part of the initialization process.
+		 */
+		m_staticThis->m_suppressWidthEditSave = true;
+
+		CString newTool = singleCell ? "tile" : "bigtile";
+		if (m_staticThis->m_lastTool.IsEmpty()) {
+			m_staticThis->m_lastTool = newTool;
+		}
+
+		if (m_staticThis->m_lastTool != newTool) {
+			m_staticThis->m_lastTool = newTool;
+			BigTileTool::setWidth(BigTileTool::getTileToolWidth());
+			m_staticThis->m_suppressWidthEditSave = false;
+		}
+
 		CButton* pCheckBox = (CButton*)m_staticThis->GetDlgItem(IDC_COPY_MODE);
 		Bool isChecked = (pCheckBox->GetCheck() != 0);
 		if(isChecked && singleCell){
-			pCheckBox->SetCheck(false);
+			pCheckBox->SetCheck(FALSE);
+			m_staticThis->m_terrainSwatches.EnableWindow(TRUE);
+			m_staticThis->m_terrainTreeView.EnableWindow(TRUE);
 		}
 		pCheckBox->EnableWindow(!singleCell);
 		
@@ -673,7 +698,7 @@ void TerrainMaterial::OnChangeSizeEdit()
 			m_updating = true;
 			if (1==sscanf(buffer, "%d", &width)) {
 				m_currentWidth = width;
-				if(!m_forceUpdatingWidth){
+				if(!m_suppressWidthEditSave){
 					if( isCopySelectMode() || isCopyApplyMode() ){
 						BigTileTool::setCopyModeWidth(width);
 					} else {
@@ -895,12 +920,9 @@ void TerrainMaterial::OnCopyMode()
 	m_terrainSwatches.EnableWindow(!isChecked);
 	m_terrainTreeView.EnableWindow(!isChecked);
 
-
+	m_suppressWidthEditSave = true;
 	if (isChecked) {
-		m_forceUpdatingWidth = true;
-		// BigTileTool::setWidth(BigTileTool::getTileToolWidth());
 		TerrainMaterial::setWidth(BigTileTool::getCopyModeWidth());
-		m_forceUpdatingWidth = false;
 
 		// Default to "Select" mode when Copy Mode is enabled
 		CButton* selectBtn = (CButton*)GetDlgItem(IDC_TERRAIN_COPY_SELECT);
@@ -911,23 +933,9 @@ void TerrainMaterial::OnCopyMode()
 
 		OnCopySelect(); // Activate select mode logic
 	} else {
-		m_forceUpdatingWidth = true;
-		// BigTileTool::setWidth(BigTileTool::getTileToolWidth());
 		TerrainMaterial::setWidth(BigTileTool::getTileToolWidth());
-		m_forceUpdatingWidth = false;
-		// int width = BigTileTool::getCopyModeWidth();
-		// CString str;
-		// str.Format(_T("%d"), width); // or %f if it's float/double
-
-		// if (m_staticThis) {
-		// 	m_staticThis->m_updating = true;
-		// 	CWnd *pEdit = m_staticThis->GetDlgItem(IDC_SIZE_EDIT);
-		// 	if (pEdit) {
-		// 		pEdit->SetWindowText(str);
-		// 	}
-		// 	m_staticThis->m_updating = false;
-		// }
 	}
+	m_suppressWidthEditSave = false;
 
 	button = (CButton *)GetDlgItem(IDC_TERRAIN_ROTATE1);
 	// button->SetCheck(true);

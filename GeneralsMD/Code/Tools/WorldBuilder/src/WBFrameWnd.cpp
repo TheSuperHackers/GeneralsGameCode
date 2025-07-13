@@ -108,7 +108,7 @@ BEGIN_MESSAGE_MAP(CWB3dFrameWnd, CMainFrame)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
 	ON_WM_MOVE()
 	ON_WM_SIZE()
-	ON_WM_TIMER()
+	// ON_WM_TIMER() // Bugs out main frame timer beware
 	ON_COMMAND(ID_WINDOW_PREVIEW1024X768, OnWindowPreview1024x768)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_PREVIEW1024X768, OnUpdateWindowPreview1024x768)
 	ON_COMMAND(ID_WINDOW_PREVIEW640X480, OnWindowPreview640x480)
@@ -160,8 +160,9 @@ void CWB3dFrameWnd::OnSize(UINT nType, int cx, int cy)
     // m_newHeight = cy;
 
 	// Kill any existing timer and start a new one
-    KillTimer(1);
-    SetTimer(1, 300, NULL);  // 300ms delay to detect when resizing stops
+	ScheduleAdjustViewAfterResize();
+    // KillTimer(1);
+    // SetTimer(1, 300, NULL);  // 300ms delay to detect when resizing stops
 	// DEBUG_LOG(("OnSize Width: %d\n", m_newWidth));
 	// DEBUG_LOG(("OnSize Height: %d\n", m_newHeight));
 }
