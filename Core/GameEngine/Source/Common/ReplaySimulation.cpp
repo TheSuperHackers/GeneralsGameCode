@@ -215,18 +215,19 @@ std::vector<AsciiString> ReplaySimulation::resolveFilenameWildcards(const std::v
 			AsciiString dir1 = TheRecorder->getReplayDir();
 			AsciiString dir2 = *filename;
 			AsciiString wildcard = *filename;
-			const char* lastSep = dir2.reverseFind('\\');
-			if (lastSep == NULL)
 			{
-				lastSep = dir2.reverseFind('/');
-			}
-
-			if (lastSep != NULL)
-			{
-				// include one extra char so the separator itself gets included
-				int lenToLastSep = lastSep - dir2.str() + 1;
-				dir2.truncateTo(lenToLastSep);
-				wildcard.set(wildcard.str() + lenToLastSep);
+				int len = dir2.getLength();
+				while (len)
+				{
+					char c = dir2.getCharAt(len - 1);
+					if (c == '/' || c == '\\')
+					{
+						wildcard.set(wildcard.str() + dir2.getLength());
+						break;
+					}
+					dir2.removeLastChar();
+					len--;
+				}
 			}
 
 			FilenameList files;
