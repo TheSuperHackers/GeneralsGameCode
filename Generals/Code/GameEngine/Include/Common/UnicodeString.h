@@ -253,8 +253,7 @@ public:
 
 	/**
 		Truncate the string to a length of maxLength characters, not including null termination,
-		by removing from the end.
-		If the string is empty or shorter than maxLength, do nothing.
+		by removing from the end. If the string is empty or shorter than maxLength, do nothing.
 	*/
 	void truncateTo(const Int maxLength);
 

@@ -219,10 +219,10 @@ std::vector<AsciiString> ReplaySimulation::resolveFilenameWildcards(const std::v
 				int len = dir2.getLength();
 				while (len)
 				{
-					char c = dir2.getCharAt(len - 1);
+					char c = dir2.getCharAt(len-1);
 					if (c == '/' || c == '\\')
 					{
-						wildcard.set(wildcard.str() + dir2.getLength());
+						wildcard.set(wildcard.str()+dir2.getLength());
 						break;
 					}
 					dir2.removeLastChar();
