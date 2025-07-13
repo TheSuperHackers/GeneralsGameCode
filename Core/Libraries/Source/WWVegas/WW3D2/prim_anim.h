@@ -45,6 +45,14 @@
 #include "simplevec.h"
 #include "chunkio.h"
 
+// TheSuperHackers VS 2019 and earlier require a hack in order to compile this
+#if defined(_MSC_VER) && _MSC_VER <= 1929
+#define TYPENAME_HACK1 typename
+#define TYPENAME_HACK2
+#else
+#define TYPENAME_HACK1
+#define TYPENAME_HACK2 typename
+#endif
 
 // Forward declarations
 class ChunkSaveClass;
@@ -163,7 +171,7 @@ class LERPAnimationChannelClass : public PrimitiveAnimationChannelClass<T>
 	using PrimitiveAnimationChannelClass<T>::m_Data;
 	using PrimitiveAnimationChannelClass<T>::m_LastIndex;
 public:
-	using typename PrimitiveAnimationChannelClass<T>::KeyClass;
+	using TYPENAME_HACK2 PrimitiveAnimationChannelClass<T>::KeyClass;
 
 public:
 
@@ -187,7 +195,7 @@ int PrimitiveAnimationChannelClass<T>::Get_Key_Count (void) const
 //	Set_Key_Value
 /////////////////////////////////////////////////////////
 template<class T>
-const PrimitiveAnimationChannelClass<T>::KeyClass &PrimitiveAnimationChannelClass<T>::Get_Key (int index) const
+TYPENAME_HACK1 const PrimitiveAnimationChannelClass<T>::KeyClass &PrimitiveAnimationChannelClass<T>::Get_Key (int index) const
 {
 	return m_Data[index];
 }
@@ -387,5 +395,8 @@ LERPAnimationChannelClass<T>::Evaluate (float time)
 
 	return value;
 }
+
+#undef TYPENAME_HACK1
+#undef TYPENAME_HACK2
 
 #endif //__PRIM_ANIM_H
