@@ -167,9 +167,6 @@ inline HWND getThreadHWND()
 int MessageBoxWrapper( LPCSTR lpText, LPCSTR lpCaption, UINT uType )
 {
 	HWND threadHWND = getThreadHWND();
-	if (!threadHWND)
-		return (uType & MB_ABORTRETRYIGNORE)?IDIGNORE:IDYES;
-
 	return ::MessageBox(threadHWND, lpText, lpCaption, uType);
 }
 
@@ -366,8 +363,9 @@ void DebugInit(int flags)
 	#ifdef DEBUG_LOGGING
 
 		// TheSuperHackers @info Debug initialization can happen very early.
-		// Therefore, parse initial commandline and initialize the client instance now.
+		// Determine the client instance id before creating the log file with an instance specific name.
 		CommandLine::parseCommandLineForStartup();
+
 		if (!rts::ClientInstance::initialize())
 			return;
 
@@ -483,9 +481,11 @@ const char* DebugGetLogFileNamePrev()
 // ----------------------------------------------------------------------------
 #ifdef DEBUG_CRASHING
 /**
-	Print a character string to the logfile and/or console, then halt execution
+	Print a character string to the log file and/or console, then halt execution
 	while presenting the user with an exit/debug/ignore dialog containing the same
 	text message.
+
+	TheSuperHackers @tweak Now shows a message box without any logging when debug was not yet initialized.
 */
 void DebugCrash(const char *format, ...)
 {
@@ -494,53 +494,40 @@ void DebugCrash(const char *format, ...)
 
 	// make it not static so that it'll be thread-safe.
 	// make it big to avoid weird overflow bugs in debug mode
-	char theCrashBuffer[ LARGE_BUFFER ];	
-	if (theDebugFlags == 0)
-	{
-		if (!DX8Wrapper_IsWindowed) {
-			if (ApplicationHWnd) {
-				ShowWindow(ApplicationHWnd, SW_HIDE);
-			}
-		}
-		MessageBoxWrapper("DebugCrash - Debug not inited properly", "", MB_OK|MB_TASKMODAL);
-	}
+	char theCrashBuffer[ LARGE_BUFFER ];
 
 	prepBuffer(theCrashBuffer);
 	strcat(theCrashBuffer, "ASSERTION FAILURE: ");
 
 	va_list arg;
   va_start(arg, format);
-  vsprintf(theCrashBuffer + strlen(theCrashBuffer), format, arg);
+  vsnprintf(theCrashBuffer + strlen(theCrashBuffer), LARGE_BUFFER, format, arg);
   va_end(arg);
 
-	if (strlen(theCrashBuffer) >= sizeof(theCrashBuffer))
-	{
-		if (!DX8Wrapper_IsWindowed) {
-			if (ApplicationHWnd) {
-				ShowWindow(ApplicationHWnd, SW_HIDE);
-			}
-		}
-		MessageBoxWrapper("String too long for debug buffers", "", MB_OK|MB_TASKMODAL);
-	}
-
-#ifdef DEBUG_LOGGING
-	if (ignoringAsserts()) 
-	{
-		doLogOutput("**** CRASH IN FULL SCREEN - Auto-ignored, CHECK THIS LOG!");
-	}
 	whackFunnyCharacters(theCrashBuffer);
-	doLogOutput(theCrashBuffer);
+
+	const bool useLogging = theDebugFlags != 0;
+
+	if (useLogging)
+	{
+#ifdef DEBUG_LOGGING
+		if (ignoringAsserts()) 
+		{
+			doLogOutput("**** CRASH IN FULL SCREEN - Auto-ignored, CHECK THIS LOG!");
+		}
+		doLogOutput(theCrashBuffer);
 #endif
 #ifdef DEBUG_STACKTRACE
-	if (!(TheGlobalData && TheGlobalData->m_debugIgnoreStackTrace))
-	{
-		doStackDump();
-	}
+		if (!(TheGlobalData && TheGlobalData->m_debugIgnoreStackTrace))
+		{
+			doStackDump();
+		}
 #endif
+	}
 
 	strcat(theCrashBuffer, "\n\nAbort->exception; Retry->debugger; Ignore->continue");
 
-	int result = doCrashBox(theCrashBuffer, true);
+	const int result = doCrashBox(theCrashBuffer, useLogging);
 
 	if (result == IDIGNORE && TheCurrentIgnoreCrashPtr != NULL) 
 	{
