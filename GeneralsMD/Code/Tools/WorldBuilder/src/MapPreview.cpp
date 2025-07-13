@@ -82,17 +82,17 @@ void MapPreview::save( CString mapName )
 	chunkWriter.openDataChunk("MapPreview", K_MAPPREVIEW_VERSION_1);
 	chunkWriter.writeInt(MAP_PREVIEW_WIDTH);
 	chunkWriter.writeInt(MAP_PREVIEW_HEIGHT);
-	DEBUG_LOG(("BeginMapPreviewInfo\n"));
+	DEBUG_LOG(("BeginMapPreviewInfo"));
 	for(Int i = 0; i < MAP_PREVIEW_HEIGHT; ++i)
 	{
 		for(Int j = 0; j < MAP_PREVIEW_WIDTH; ++j)
 		{
 			chunkWriter.writeInt(m_pixelBuffer[i][j]);
-			DEBUG_LOG(("x:%d, y:%d, %X\n", j, i, m_pixelBuffer[i][j]));
+			DEBUG_LOG(("x:%d, y:%d, %X", j, i, m_pixelBuffer[i][j]));
 		}
 	}
 	chunkWriter.closeDataChunk();
-	DEBUG_LOG(("EndMapPreviewInfo\n"));
+	DEBUG_LOG(("EndMapPreviewInfo"));
 */
 }
 

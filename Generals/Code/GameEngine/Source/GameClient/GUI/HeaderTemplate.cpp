@@ -186,7 +186,7 @@ GameFont *HeaderTemplateManager::getFontFromTemplate( AsciiString name )
 	HeaderTemplate *ht = findHeaderTemplate( name );
 	if(!ht)
 	{
-		//DEBUG_LOG(("HeaderTemplateManager::getFontFromTemplate - Could not find header %s\n", name.str()));
+		//DEBUG_LOG(("HeaderTemplateManager::getFontFromTemplate - Could not find header %s", name.str()));
 		return NULL;
 	}
 	

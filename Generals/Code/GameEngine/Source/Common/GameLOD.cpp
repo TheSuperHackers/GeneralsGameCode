@@ -242,7 +242,7 @@ BenchProfile *GameLODManager::newBenchProfile(void)
 		return &m_benchProfiles[m_numBenchProfiles-1];
 	}
 
-	DEBUG_CRASH(( "GameLODManager::newBenchProfile - Too many profiles defined\n"));
+	DEBUG_CRASH(( "GameLODManager::newBenchProfile - Too many profiles defined"));
 	return NULL;
 }
 
@@ -256,7 +256,7 @@ LODPresetInfo *GameLODManager::newLODPreset(StaticGameLODLevel index)
 			return &m_lodPresets[index][m_numLevelPresets[index]-1];
 		}
 
-		DEBUG_CRASH(( "GameLODManager::newLODPreset - Too many presets defined for '%s'\n", TheGameLODManager->getStaticGameLODLevelName(index)));
+		DEBUG_CRASH(( "GameLODManager::newLODPreset - Too many presets defined for '%s'", TheGameLODManager->getStaticGameLODLevelName(index)));
 	}
 
 	return NULL;
@@ -389,7 +389,7 @@ Int GameLODManager::getStaticGameLODIndex(AsciiString name)
 			return i;
 	}
 
-	DEBUG_CRASH(( "GameLODManager::getGameLODIndex - Invalid LOD name '%s'\n", name.str() ));
+	DEBUG_CRASH(( "GameLODManager::getGameLODIndex - Invalid LOD name '%s'", name.str() ));
 	return STATIC_GAME_LOD_UNKNOWN;
 }
 
@@ -426,7 +426,7 @@ void INI::parseStaticGameLODLevel( INI* ini, void * , void *store, const void*)
 			return;
 		}
 
-	DEBUG_CRASH(("invalid GameLODLevel token %s -- expected LOW/MEDIUM/HIGH\n",tok));
+	DEBUG_CRASH(("invalid GameLODLevel token %s -- expected LOW/MEDIUM/HIGH",tok));
 	throw INI_INVALID_DATA;
 }
 
@@ -619,7 +619,7 @@ void INI::parseDynamicGameLODLevel( INI* ini, void * , void *store, const void*)
 			return;
 		}
 
-	DEBUG_CRASH(("invalid GameLODLevel token %s -- expected LOW/MEDIUM/HIGH\n",tok));
+	DEBUG_CRASH(("invalid GameLODLevel token %s -- expected LOW/MEDIUM/HIGH",tok));
 	throw INI_INVALID_DATA;
 }
 
@@ -632,7 +632,7 @@ Int GameLODManager::getDynamicGameLODIndex(AsciiString name)
 			return i;
 	}
 
-	DEBUG_CRASH(( "GameLODManager::getGameLODIndex - Invalid LOD name '%s'\n", name.str() ));
+	DEBUG_CRASH(( "GameLODManager::getGameLODIndex - Invalid LOD name '%s'", name.str() ));
 	return STATIC_GAME_LOD_UNKNOWN;
 }
 

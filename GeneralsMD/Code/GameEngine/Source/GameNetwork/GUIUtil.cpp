@@ -137,7 +137,7 @@ void ShowUnderlyingGUIElements( Bool show, const char *layoutFilename, const cha
 	GameWindow *parent = TheWindowManager->winGetWindowFromId( NULL, parentID );
 	if (!parent)
 	{
-		DEBUG_CRASH(("Window %s not found\n", parentNameStr.str()));
+		DEBUG_CRASH(("Window %s not found", parentNameStr.str()));
 		return;
 	}
 

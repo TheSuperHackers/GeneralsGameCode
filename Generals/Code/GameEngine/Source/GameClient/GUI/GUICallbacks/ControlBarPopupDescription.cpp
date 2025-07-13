@@ -140,7 +140,7 @@ void ControlBar::showBuildTooltipLayout( GameWindow *cmdButton )
 		m_showBuildToolTipLayout = TRUE;
 		if(!isInitialized &&  beginWaitTime + cmdButton->getTooltipDelay() < timeGetTime())
 		{
-			//DEBUG_LOG(("%d beginwaittime, %d tooltipdelay, %dtimegettime\n", beginWaitTime, cmdButton->getTooltipDelay(), timeGetTime()));
+			//DEBUG_LOG(("%d beginwaittime, %d tooltipdelay, %dtimegettime", beginWaitTime, cmdButton->getTooltipDelay(), timeGetTime()));
 			passedWaitTime = TRUE;
 		}
 		

@@ -97,7 +97,4 @@ public:
 //-------------------------------------------------------------------------------------------------
 typedef std::vector<ArmorTemplateSet> ArmorTemplateSetVector;
 
-//-------------------------------------------------------------------------------------------------
-typedef SparseMatchFinder<ArmorTemplateSet, ArmorSetFlags> ArmorTemplateSetFinder;
-
 #endif	// _ArmorSet_H_

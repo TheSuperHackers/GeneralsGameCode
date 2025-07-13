@@ -355,7 +355,7 @@ private:
 #if defined(_MSC_VER) && _MSC_VER < 1300
 	ThingTemplate(const ThingTemplate& that) : m_geometryInfo(that.m_geometryInfo) 
 	{ 
-		DEBUG_CRASH(("This should never be called\n")); 
+		DEBUG_CRASH(("This should never be called")); 
 	}
 #else
 	ThingTemplate(const ThingTemplate& that) = delete;
@@ -697,6 +697,11 @@ private:
 	
 	//Code renderer handles these states now.
 	//AsciiString							m_inventoryImage[ INV_IMAGE_NUM_IMAGES ];  ///< portrait inventory pictures
+
+	// TheSuperHackers @bugfix Caball009/xezon 06/07/2025 No longer copy SparseMatchFinder to prevent copied instances linking to unrelated data.
+	// This avoids mismatching in certain maps, for example those that spawn units with veterancy.
+	typedef SparseMatchFinder<WeaponTemplateSet, WeaponSetFlags, SparseMatchFinderFlags_NoCopy> WeaponTemplateSetFinder;
+	typedef SparseMatchFinder<ArmorTemplateSet, ArmorSetFlags, SparseMatchFinderFlags_NoCopy> ArmorTemplateSetFinder;
 
 	// ---- STL-sized things
 	std::vector<ProductionPrerequisite>	m_prereqInfo;				///< the unit Prereqs for this tech

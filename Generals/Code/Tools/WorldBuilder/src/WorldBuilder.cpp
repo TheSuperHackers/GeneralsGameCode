@@ -276,9 +276,9 @@ BOOL CWorldBuilderApp::InitInstance()
 
 	// start the log
 	DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
-	DEBUG_LOG(("starting Worldbuilder.\n"));
+	DEBUG_LOG(("starting Worldbuilder."));
 #ifdef RTS_DEBUG
-	DEBUG_LOG(("RTS_DEBUG defined.\n"));
+	DEBUG_LOG(("RTS_DEBUG defined."));
 #endif
 	initMemoryManager();
 #ifdef MEMORYPOOL_CHECKPOINTING
@@ -403,8 +403,8 @@ BOOL CWorldBuilderApp::InitInstance()
 	DEBUG_ASSERTCRASH(!TheGlobalData->m_useHalfHeightMap, ("TheGlobalData->m_useHalfHeightMap : Don't use this setting in WB."));
 	TheWritableGlobalData->m_useHalfHeightMap = false;
 
-#if defined(RTS_DEBUG)
-	// WB never uses the shroud.
+#if ENABLE_CONFIGURABLE_SHROUD
+	// WB never uses the shroud. With shroud, terrain is black.
 	TheWritableGlobalData->m_shroudOn = FALSE;
 #endif
 

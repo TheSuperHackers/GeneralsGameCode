@@ -85,7 +85,7 @@ void SaveCallbacks( GameWindow *window, HWND dialog )
 
 	// get edit data for window
 	GameWindowEditData *editData = window->winGetEditData();
-	DEBUG_ASSERTCRASH( editData, ("No edit data for window saving callbacks!\n") );
+	DEBUG_ASSERTCRASH( editData, ("No edit data for window saving callbacks!") );
 
 	// get the currently selected item from each of the combos and save
 	Int index;

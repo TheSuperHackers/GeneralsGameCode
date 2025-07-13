@@ -191,7 +191,7 @@ static CommandStatus doFireWeaponCommand( const CommandButton *command, const IC
 
 		//This could be legit now -- think of firing a self destruct weapon
 		//-----------------------------------------------------------------
-		//DEBUG_ASSERTCRASH( 0, ("doFireWeaponCommand: Command options say it doesn't need additional user input '%s'\n", 
+		//DEBUG_ASSERTCRASH( 0, ("doFireWeaponCommand: Command options say it doesn't need additional user input '%s'", 
 		//											command->m_name.str()) );
 		//return COMMAND_COMPLETE;
 
@@ -269,7 +269,7 @@ static CommandStatus doAttackMoveCommand( const CommandButton *command, const IC
 	// so we must be sure there is only one thing selected (that thing we will set the point on)
 	//
 	Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
-	DEBUG_ASSERTCRASH( draw, ("doAttackMoveCommand: No selected object(s)\n") );
+	DEBUG_ASSERTCRASH( draw, ("doAttackMoveCommand: No selected object(s)") );
 
 	// sanity
 	if( draw == NULL || draw->getObject() == NULL )
@@ -308,7 +308,7 @@ static CommandStatus doSetRallyPointCommand( const CommandButton *command, const
 	DEBUG_ASSERTCRASH( TheInGameUI->getSelectCount() == 1,
 										 ("doSetRallyPointCommand: The selected count is not 1, we can only set a rally point on a *SINGLE* building\n") );
 	Drawable *draw = TheInGameUI->getFirstSelectedDrawable();
-	DEBUG_ASSERTCRASH( draw, ("doSetRallyPointCommand: No selected object\n") );
+	DEBUG_ASSERTCRASH( draw, ("doSetRallyPointCommand: No selected object") );
 
 	// sanity
 	if( draw == NULL || draw->getObject() == NULL )

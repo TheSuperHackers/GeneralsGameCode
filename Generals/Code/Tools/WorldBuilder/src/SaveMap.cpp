@@ -32,11 +32,7 @@ SaveMap::SaveMap(TSaveMapInfo *pInfo, CWnd* pParent /*=NULL*/)
 	: CDialog(SaveMap::IDD, pParent),
 	m_pInfo(pInfo)
 {
-#if defined(RTS_DEBUG)
 	m_pInfo->usingSystemDir = m_usingSystemDir = ::AfxGetApp()->GetProfileInt(MAP_OPENSAVE_PANEL_SECTION, "UseSystemDir", TRUE);
-#else
-	m_pInfo->usingSystemDir = m_usingSystemDir = FALSE;
-#endif
 
 	//{{AFX_DATA_INIT(SaveMap)
 		// NOTE: the ClassWizard will add member initialization here
@@ -121,9 +117,7 @@ void SaveMap::OnBrowse()
 void SaveMap::populateMapListbox( Bool systemMaps )
 {
 	m_pInfo->usingSystemDir = m_usingSystemDir = systemMaps;
-#if defined(RTS_DEBUG)
 	::AfxGetApp()->WriteProfileInt(MAP_OPENSAVE_PANEL_SECTION, "UseSystemDir", m_usingSystemDir);
-#endif
 
 	HANDLE			hFindFile = 0;
 	WIN32_FIND_DATA			findData; 
@@ -225,12 +219,9 @@ BOOL SaveMap::OnInitDialog()
 	if (pUserMaps != NULL)
 		pUserMaps->SetCheck( !m_usingSystemDir );
 
-#if !defined(RTS_DEBUG)
-	if (pSystemMaps)
-		pSystemMaps->ShowWindow( FALSE );
-	if (pUserMaps)
-		pUserMaps->ShowWindow( FALSE );
-#endif
+	// TheSuperHackers @tweak Originally World Builder has hidden the System Maps tab button in Release builds,
+	// perhaps with the intention to only show User Maps to community users. However, World Builder did release
+	// as a Debug build and always had the System Maps tab, therefore this now shows it always for simplicity.
 
 	populateMapListbox( m_usingSystemDir );
 

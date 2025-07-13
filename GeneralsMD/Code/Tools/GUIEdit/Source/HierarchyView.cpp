@@ -705,7 +705,7 @@ void HierarchyView::addWindowToTree( GameWindow *window,
 		if( newItem == NULL )
 		{
 
-			DEBUG_LOG(( "Error adding window to tree\n" ));
+			DEBUG_LOG(( "Error adding window to tree" ));
 			assert( 0 );
 			return;
 
@@ -986,7 +986,7 @@ void HierarchyView::bringWindowToTop( GameWindow *window )
 	if( item == NULL )
 	{
 
-		DEBUG_LOG(( "Cannot bring window to top, no entry in tree!\n" ));
+		DEBUG_LOG(( "Cannot bring window to top, no entry in tree!" ));
 		assert( 0 );
 		return;
 
@@ -1019,7 +1019,7 @@ void HierarchyView::updateWindowName( GameWindow *window )
 	if( item == NULL )
 	{
 
-		DEBUG_LOG(( "updateWindowName: No hierarchy entry for window!\n" ));
+		DEBUG_LOG(( "updateWindowName: No hierarchy entry for window!" ));
 		assert( 0 );
 		return;
 
@@ -1123,7 +1123,7 @@ void HierarchyView::moveWindowAheadOf( GameWindow *window,
 	if( aheadOfItem == NULL )
 	{
 
-		DEBUG_LOG(( "moveWindowAheadOf: aheadOf has no hierarchy entry!\n" ));
+		DEBUG_LOG(( "moveWindowAheadOf: aheadOf has no hierarchy entry!" ));
 		assert( 0 );
 		return;
 
@@ -1159,7 +1159,7 @@ void HierarchyView::moveWindowAheadOf( GameWindow *window,
 	if( newItem == NULL )
 	{
 
-		DEBUG_LOG(( "moveWindowAheadOf: Error adding window to tree\n" ));
+		DEBUG_LOG(( "moveWindowAheadOf: Error adding window to tree" ));
 		assert( 0 );
 		return;
 
@@ -1207,7 +1207,7 @@ void HierarchyView::moveWindowChildOf( GameWindow *window, GameWindow *parent )
 	if( parentItem == NULL )
 	{
 
-		DEBUG_LOG(( "moveWindowChildOf: No parent entry\n" ));
+		DEBUG_LOG(( "moveWindowChildOf: No parent entry" ));
 		assert( 0 );
 		return;
 

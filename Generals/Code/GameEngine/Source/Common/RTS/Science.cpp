@@ -215,7 +215,7 @@ const ScienceInfo* ScienceStore::findScienceInfo(ScienceType st) const
 		{
 			if (info != NULL)
 			{
-				DEBUG_CRASH(("duplicate science %s!\n",c));
+				DEBUG_CRASH(("duplicate science %s!",c));
 				throw INI_INVALID_DATA;
 			}
 			info = newInstance(ScienceInfo);

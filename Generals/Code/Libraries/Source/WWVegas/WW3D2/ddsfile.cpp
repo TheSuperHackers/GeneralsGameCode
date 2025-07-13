@@ -63,7 +63,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	int result=file->Open();
 	if (!result)
 	{
-		WWASSERT("File would not open\n");
+		WWASSERT("File would not open");
 		return;
 	}
 
@@ -73,7 +73,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	unsigned read_bytes=file->Read(header,4);
 	if (!read_bytes)
 	{
-		WWASSERT("File loading failed trying to read header\n");
+		WWASSERT("File loading failed trying to read header");
 		return;
 	}
 	// Now, we read DDSURFACEDESC2 defining the compressed data
@@ -82,7 +82,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	if (read_bytes==0 || read_bytes!=SurfaceDesc.Size) 
 	{
 		StringClass tmp(0,true);
-		tmp.Format("File %s loading failed.\nTried to read %d bytes, got %d. (SurfDesc.size=%d)\n",name,sizeof(LegacyDDSURFACEDESC2),read_bytes,SurfaceDesc.Size);
+		tmp.Format("File %s loading failed.\nTried to read %d bytes, got %d. (SurfDesc.size=%d)",name,sizeof(LegacyDDSURFACEDESC2),read_bytes,SurfaceDesc.Size);
 		WWASSERT_PRINT(0,tmp.str());
 		return;
 	}
@@ -189,7 +189,7 @@ DDSFileClass::DDSFileClass(const char* name,unsigned reduction_factor)
 	// be a problem. The new version of ddsfile from Vegas actually has removed this check entirely.
 	int expected_size=level_offset+SurfaceDesc.Size+4;
 	if (expected_size!=file->Size()) {
-		WWDEBUG_SAY(("Warning: file % size is not consistent with the data (file size should be %d but was %d)\n",Name,expected_size,file->Size()));
+		WWDEBUG_SAY(("Warning: file % size is not consistent with the data (file size should be %d but was %d)",Name,expected_size,file->Size()));
 	}
 #endif
 	file->Close();
@@ -402,7 +402,7 @@ void DDSFileClass::Copy_Level_To_Surface
 
 	if (!DDSMemory || !Get_Memory_Pointer(level))
 	{
-		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing\n");
+		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing");
 		return;
 	}
 
@@ -518,7 +518,7 @@ void DDSFileClass::Copy_Level_To_Surface
 					}
 				}
 				if (Format==WW3D_FORMAT_DXT1 && contains_alpha) {
-					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s\n",Name));
+					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s",Name));
 				}
 			}
 		}
@@ -557,7 +557,7 @@ void DDSFileClass::Copy_CubeMap_Level_To_Surface
 
 	if (!DDSMemory || !Get_CubeMap_Memory_Pointer(face,level))
 	{
-		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing\n");
+		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing");
 		return;
 	}
 
@@ -696,7 +696,7 @@ void DDSFileClass::Copy_CubeMap_Level_To_Surface
 				}
 				if (Format==WW3D_FORMAT_DXT1 && contains_alpha) 
 				{
-					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s\n",Name));
+					WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s",Name));
 				}
 			}
 		}
@@ -727,7 +727,7 @@ void DDSFileClass::Copy_Volume_Level_To_Surface
 
 	if (!DDSMemory || !Get_Volume_Memory_Pointer(level))
 	{
-		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing\n");
+		WWASSERT_PRINT(DDSMemory,"Surface mip level pointer is missing");
 		return;
 	}
 
@@ -873,7 +873,7 @@ void DDSFileClass::Copy_Volume_Level_To_Surface
 					}
 					if (Format==WW3D_FORMAT_DXT1 && contains_alpha) 
 					{
-						WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s\n",Name));
+						WWDEBUG_SAY(("Warning: DXT1 format should not contain alpha information - file %s",Name));
 					}
 				}*/
 			}

@@ -162,7 +162,7 @@ NameKeyType NameKeyGenerator::nameToKey(const char* nameString)
 	// if more than a small percent of the sockets are getting deep, probably want to increase the socket count.
 	if (numOverThresh > SOCKET_COUNT/20)
 	{
-		DEBUG_CRASH(("hmm, might need to increase the number of bucket-sockets for NameKeyGenerator (numOverThresh %d = %f%%)\n",numOverThresh,(Real)numOverThresh/(Real)(SOCKET_COUNT/20)));
+		DEBUG_CRASH(("hmm, might need to increase the number of bucket-sockets for NameKeyGenerator (numOverThresh %d = %f%%)",numOverThresh,(Real)numOverThresh/(Real)(SOCKET_COUNT/20)));
 	}
 #endif
 
@@ -210,7 +210,7 @@ NameKeyType NameKeyGenerator::nameToLowercaseKey(const char* nameString)
 	// if more than a small percent of the sockets are getting deep, probably want to increase the socket count.
 	if (numOverThresh > SOCKET_COUNT/20)
 	{
-		DEBUG_CRASH(("hmm, might need to increase the number of bucket-sockets for NameKeyGenerator (numOverThresh %d = %f%%)\n",numOverThresh,(Real)numOverThresh/(Real)(SOCKET_COUNT/20)));
+		DEBUG_CRASH(("hmm, might need to increase the number of bucket-sockets for NameKeyGenerator (numOverThresh %d = %f%%)",numOverThresh,(Real)numOverThresh/(Real)(SOCKET_COUNT/20)));
 	}
 #endif
 

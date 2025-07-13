@@ -50,7 +50,7 @@ const char *TheRelationshipNames[] =
 //-------------------------------------------------------------------------------------------------
 Real normalizeAngle(Real angle)
 {
-	DEBUG_ASSERTCRASH(!_isnan(angle), ("Angle is NAN in normalizeAngle!\n"));
+	DEBUG_ASSERTCRASH(!_isnan(angle), ("Angle is NAN in normalizeAngle!"));
 
 	if( _isnan(angle) )
 		return 0;// ARGH!!!! Don't assert and then not handle it!  Error bad!  Fix error!

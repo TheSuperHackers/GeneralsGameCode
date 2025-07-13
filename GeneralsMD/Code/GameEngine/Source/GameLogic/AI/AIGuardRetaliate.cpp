@@ -368,7 +368,7 @@ StateReturnType AIGuardRetaliateInnerState::onEnter( void )
 		Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
 		if (nemesis == NULL) 
 		{
-			DEBUG_LOG(("Unexpected NULL nemesis in AIGuardRetaliateInnerState.\n"));
+			DEBUG_LOG(("Unexpected NULL nemesis in AIGuardRetaliateInnerState."));
 			return STATE_SUCCESS;
 		}
 		m_enterState = newInstance(AIEnterState)(getMachine());
@@ -387,7 +387,7 @@ StateReturnType AIGuardRetaliateInnerState::onEnter( void )
 		Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
 		if (nemesis == NULL) 
 		{
-			DEBUG_LOG(("Unexpected NULL nemesis in AIGuardRetaliateInnerState.\n"));
+			DEBUG_LOG(("Unexpected NULL nemesis in AIGuardRetaliateInnerState."));
 			return STATE_SUCCESS;
 		}
 		m_exitConditions.m_center = pos;
@@ -489,7 +489,7 @@ StateReturnType AIGuardRetaliateOuterState::onEnter( void )
 	Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
 	if (nemesis == NULL) 
 	{
-		DEBUG_LOG(("Unexpected NULL nemesis in AIGuardRetaliateOuterState.\n"));
+		DEBUG_LOG(("Unexpected NULL nemesis in AIGuardRetaliateOuterState."));
 		return STATE_SUCCESS;
 	}
 	Object *obj = getMachineOwner();
@@ -661,7 +661,7 @@ StateReturnType AIGuardRetaliateIdleState::onEnter( void )
 //--------------------------------------------------------------------------------------
 StateReturnType AIGuardRetaliateIdleState::update( void )
 {
-	//DEBUG_LOG(("AIGuardRetaliateIdleState frame %d: %08lx\n",TheGameLogic->getFrame(),getMachineOwner()));
+	//DEBUG_LOG(("AIGuardRetaliateIdleState frame %d: %08lx",TheGameLogic->getFrame(),getMachineOwner()));
 
 	UnsignedInt now = TheGameLogic->getFrame();
 	if (now < m_nextEnemyScanTime)
@@ -779,7 +779,7 @@ StateReturnType AIGuardRetaliateAttackAggressorState::onEnter( void )
 
 	if( !nemesis )
 	{
-		DEBUG_LOG(("Unexpected NULL nemesis in AIGuardRetaliateAttackAggressorState.\n"));
+		DEBUG_LOG(("Unexpected NULL nemesis in AIGuardRetaliateAttackAggressorState."));
 		return STATE_SUCCESS;
 	}
 

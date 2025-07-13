@@ -69,7 +69,7 @@ Int Energy::getProduction() const
 //-----------------------------------------------------------------------------
 Real Energy::getEnergySupplyRatio() const 
 { 
-	DEBUG_ASSERTCRASH(m_energyProduction >= 0 && m_energyConsumption >= 0, ("neg Energy numbers\n"));
+	DEBUG_ASSERTCRASH(m_energyProduction >= 0 && m_energyConsumption >= 0, ("neg Energy numbers"));
 
 	if (m_energyConsumption == 0)
 		return (Real)m_energyProduction;

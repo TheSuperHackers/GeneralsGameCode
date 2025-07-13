@@ -781,7 +781,7 @@ void SkinDecalMeshClass::Render(void)
 	*/
 	MeshModelClass * model = Parent->Peek_Model();
 	if (model->Get_Flag(MeshModelClass::SORT)) {
-		WWDEBUG_SAY(("ERROR: decals applied to a sorted mesh!\n"));
+		WWDEBUG_SAY(("ERROR: decals applied to a sorted mesh!"));
 		return;
 	}
 
@@ -1017,7 +1017,7 @@ bool SkinDecalMeshClass::Create_Decal(DecalGeneratorClass * generator,
 	}
 #endif
 	
-	// WWDEBUG_SAY(("Decal mesh now has: %d polys\r\n",Polys.Count()));
+	// WWDEBUG_SAY(("Decal mesh now has: %d polys",Polys.Count()));
 	return true;
 }
 

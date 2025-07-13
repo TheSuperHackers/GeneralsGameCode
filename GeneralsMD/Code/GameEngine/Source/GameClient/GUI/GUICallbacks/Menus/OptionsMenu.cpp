@@ -368,11 +368,13 @@ Real OptionPreferences::getScrollFactor(void)
 		return TheGlobalData->m_keyboardDefaultScrollFactor;
 
 	Int factor = atoi(it->second.str());
-	if (factor < 0)
-		factor = 0;
-	if (factor > 100)
-		factor = 100;
-	
+
+	// TheSuperHackers @tweak xezon 11/07/2025
+	// No longer caps the upper limit to 100, because the options setting can go beyond that.
+	// No longer caps the lower limit to 0, because that would mean standstill.
+	if (factor < 1)
+		factor = 1;
+
 	return factor/100.0f;
 }
 
@@ -767,6 +769,34 @@ Real OptionPreferences::getMusicVolume(void)
 	return volume;
 }
 
+Int OptionPreferences::getSystemTimeFontSize(void)
+{
+	OptionPreferences::const_iterator it = find("SystemTimeFontSize");
+	if (it == end())
+		return 8;
+
+	Int fontSize = atoi(it->second.str());
+	if (fontSize < 0)
+	{
+		fontSize = 0;
+	}
+	return fontSize;
+}
+
+Int OptionPreferences::getGameTimeFontSize(void)
+{
+	OptionPreferences::const_iterator it = find("GameTimeFontSize");
+	if (it == end())
+		return 8;
+
+	Int fontSize = atoi(it->second.str());
+	if (fontSize < 0)
+	{
+		fontSize = 0;
+	}
+	return fontSize;
+}
+
 static OptionPreferences *pref = NULL;
 
 static void setDefaults( void )
@@ -836,12 +866,11 @@ static void setDefaults( void )
 
 	//-------------------------------------------------------------------------------------------------
 //	// scroll speed val
-	Int valMin, valMax;
-//	GadgetSliderGetMinMax(sliderScrollSpeed,&valMin, &valMax);
-//	GadgetSliderSetPosition(sliderScrollSpeed, ((valMax - valMin) / 2 + valMin));
 	Int scrollPos = (Int)(TheGlobalData->m_keyboardDefaultScrollFactor*100.0f);
 	GadgetSliderSetPosition( sliderScrollSpeed, scrollPos );
 
+
+	Int valMin, valMax;
 
 	//-------------------------------------------------------------------------------------------------
 	// slider music volume
@@ -1161,10 +1190,10 @@ static void saveOptions( void )
 	//-------------------------------------------------------------------------------------------------
 	// scroll speed val
 	val = GadgetSliderGetPosition(sliderScrollSpeed);
-	if(val != -1)
+	if(val > 0)
 	{
 		TheWritableGlobalData->m_keyboardScrollFactor = val/100.0f;
-		DEBUG_LOG(("Scroll Spped val %d, keyboard scroll factor %f\n", val, TheGlobalData->m_keyboardScrollFactor));
+		DEBUG_LOG(("Scroll Spped val %d, keyboard scroll factor %f", val, TheGlobalData->m_keyboardScrollFactor));
 		AsciiString prefString;
 		prefString.format("%d", val);
 		(*pref)["ScrollFactor"] = prefString;
@@ -1258,6 +1287,28 @@ static void saveOptions( void )
  	}
 
 	//-------------------------------------------------------------------------------------------------
+	// Set System Time Font Size
+	val = TheWritableGlobalData->m_systemTimeFontSize; // TheSuperHackers @todo replace with options input when applicable
+	if (val)
+	{
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["SystemTimeFontSize"] = prefString;
+		TheInGameUI->refreshSystemTimeResources();
+	}
+
+	//-------------------------------------------------------------------------------------------------
+	// Set Game Time Font Size
+	val = TheWritableGlobalData->m_gameTimeFontSize; // TheSuperHackers @todo replace with options input when applicable
+	if (val)
+	{
+		AsciiString prefString;
+		prefString.format("%d", val);
+		(*pref)["GameTimeFontSize"] = prefString;
+		TheInGameUI->refreshGameTimeResources();
+	}
+
+	//-------------------------------------------------------------------------------------------------
 	// Resolution
 	//
 	// TheSuperHackers @bugfix xezon 12/06/2025 Now performs the resolution change at the very end of
@@ -1299,6 +1350,7 @@ static void saveOptions( void )
 				TheShell->recreateWindowLayouts();
 
 				TheInGameUI->recreateControlBar();
+				TheInGameUI->refreshCustomUiResources();
 			}
 		}
 	}
@@ -1753,7 +1805,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 
 	//set scroll options
 	AsciiString test = (*pref)["DrawScrollAnchor"];
-	DEBUG_LOG(("DrawScrollAnchor == [%s]\n", test.str()));
+	DEBUG_LOG(("DrawScrollAnchor == [%s]", test.str()));
 	if (test == "Yes" || (test.isEmpty() && TheInGameUI->getDrawRMBScrollAnchor()))
 	{
 		GadgetCheckBoxSetChecked( checkDrawAnchor, true);
@@ -1765,7 +1817,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 		TheInGameUI->setDrawRMBScrollAnchor(false);
 	}
 	test = (*pref)["MoveScrollAnchor"];
-	DEBUG_LOG(("MoveScrollAnchor == [%s]\n", test.str()));
+	DEBUG_LOG(("MoveScrollAnchor == [%s]", test.str()));
 	if (test == "Yes" || (test.isEmpty() && TheInGameUI->getMoveRMBScrollAnchor()))
 	{
 		GadgetCheckBoxSetChecked( checkMoveAnchor, true);
@@ -1787,9 +1839,17 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
 	GadgetCheckBoxSetChecked( checkDoubleClickAttackMove, TheGlobalData->m_doubleClickAttackMove );
 
 	// set scroll speed slider
+	// TheSuperHackers @tweak xezon 11/07/2025 No longer sets the slider position if the user setting
+	// is set beyond the slider limits. This gives the user more freedom to customize the scroll
+	// speed. The slider value remains 0.
 	Int scrollPos = (Int)(TheGlobalData->m_keyboardScrollFactor*100.0f);
-	GadgetSliderSetPosition( sliderScrollSpeed, scrollPos );
-	DEBUG_LOG(("Scroll SPeed %d\n", scrollPos));
+	Int scrollMin, scrollMax;
+	GadgetSliderGetMinMax( sliderScrollSpeed, &scrollMin, &scrollMax );
+	if (scrollPos >= scrollMin && scrollPos <= scrollMax)
+	{
+		GadgetSliderSetPosition( sliderScrollSpeed, scrollPos );
+	}
+	DEBUG_LOG(("Scroll Speed %d", scrollPos));
 
 	// set the send delay check box
 	GadgetCheckBoxSetChecked(checkSendDelay, TheGlobalData->m_firewallSendDelay);

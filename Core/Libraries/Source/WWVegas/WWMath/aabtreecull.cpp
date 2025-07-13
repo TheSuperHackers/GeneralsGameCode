@@ -698,7 +698,7 @@ void AABTreeCullSystemClass::Update_Bounding_Boxes_Recursive(AABTreeNodeClass * 
 
 void AABTreeCullSystemClass::Load(ChunkLoadClass & cload)
 {
-	WWASSERT_PRINT(Object_Count() == 0, "Remove all objects from AAB-Culling system before loading!\n"); 
+	WWASSERT_PRINT(Object_Count() == 0, "Remove all objects from AAB-Culling system before loading!"); 
 	
 	delete RootNode;
 	RootNode = new AABTreeNodeClass;
@@ -1421,7 +1421,7 @@ void AABTreeNodeClass::Select_Splitting_Plane_Brute_Force
 	*/
 #ifdef WWDEBUG
 	if (sc->Cost == FLT_MAX) {		
-		WWDEBUG_SAY(("Unable to split node!  objcount = %d. (%.2f,%.2f,%.2f)\r\n",objcount,Box.Center.X, Box.Center.Y, Box.Center.Z));
+		WWDEBUG_SAY(("Unable to split node!  objcount = %d. (%.2f,%.2f,%.2f)",objcount,Box.Center.X, Box.Center.Y, Box.Center.Z));
 	}
 #endif
 }

@@ -208,7 +208,7 @@ Bool WindowLayout::load( AsciiString filename )
 	{
 
 		DEBUG_ASSERTCRASH( target, ("WindowLayout::load - Failed to load layout") );
-		DEBUG_LOG(( "WindowLayout::load - Unable to load layout file '%s'\n", filename.str() ));
+		DEBUG_LOG(( "WindowLayout::load - Unable to load layout file '%s'", filename.str() ));
 		return FALSE;
 
 	}  // end if

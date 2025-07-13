@@ -325,7 +325,7 @@ StateReturnType AITNGuardInnerState::onEnter( void )
 	Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
 	if (nemesis == NULL) 
 	{
-		DEBUG_LOG(("Unexpected NULL nemesis in AITNGuardInnerState.\n"));
+		DEBUG_LOG(("Unexpected NULL nemesis in AITNGuardInnerState."));
 		return STATE_SUCCESS;
 	}
 	m_exitConditions.m_attackGiveUpFrame = TheGameLogic->getFrame() + TheAI->getAiData()->m_guardChaseUnitFrames;
@@ -469,7 +469,7 @@ StateReturnType AITNGuardOuterState::onEnter( void )
 	Object* nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID()) ;
 	if (nemesis == NULL) 
 	{
-		DEBUG_LOG(("Unexpected NULL nemesis in AITNGuardOuterState.\n"));
+		DEBUG_LOG(("Unexpected NULL nemesis in AITNGuardOuterState."));
 		return STATE_SUCCESS;
 	}
 
@@ -664,7 +664,7 @@ StateReturnType AITNGuardIdleState::onEnter( void )
 //--------------------------------------------------------------------------------------
 StateReturnType AITNGuardIdleState::update( void )
 {
-	//DEBUG_LOG(("AITNGuardIdleState frame %d: %08lx\n",TheGameLogic->getFrame(),getMachineOwner()));
+	//DEBUG_LOG(("AITNGuardIdleState frame %d: %08lx",TheGameLogic->getFrame(),getMachineOwner()));
 
 	UnsignedInt now = TheGameLogic->getFrame();
 	if (now < m_nextEnemyScanTime)
@@ -692,7 +692,7 @@ StateReturnType AITNGuardIdleState::update( void )
 		Object *nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID());
 		if (nemesis == NULL) 
 		{
-			DEBUG_LOG(("Unexpected NULL nemesis in AITNGuardAttackAggressorState.\n"));
+			DEBUG_LOG(("Unexpected NULL nemesis in AITNGuardAttackAggressorState."));
 			return STATE_SLEEP(0);
 		}
 		if (getMachineOwner()->getContainedBy()) {
@@ -781,7 +781,7 @@ StateReturnType AITNGuardAttackAggressorState::onEnter( void )
 	Object *nemesis = TheGameLogic->findObjectByID(getGuardMachine()->getNemesisID());
 	if (nemesis == NULL) 
 	{
-		DEBUG_LOG(("Unexpected NULL nemesis in AITNGuardAttackAggressorState.\n"));
+		DEBUG_LOG(("Unexpected NULL nemesis in AITNGuardAttackAggressorState."));
 		return STATE_SUCCESS;
 	}
 

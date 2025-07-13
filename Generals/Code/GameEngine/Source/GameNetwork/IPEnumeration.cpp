@@ -77,23 +77,23 @@ EnumeratedIP * IPEnumeration::getAddresses( void )
 	char hostname[256];
 	if (gethostname(hostname, sizeof(hostname)))
 	{
-		DEBUG_LOG(("Failed call to gethostname; WSAGetLastError returned %d\n", WSAGetLastError()));
+		DEBUG_LOG(("Failed call to gethostname; WSAGetLastError returned %d", WSAGetLastError()));
 		return NULL;
 	}
-	DEBUG_LOG(("Hostname is '%s'\n", hostname));
+	DEBUG_LOG(("Hostname is '%s'", hostname));
 	
 	// get host information from the host name
 	HOSTENT* hostEnt = gethostbyname(hostname);
 	if (hostEnt == NULL)
 	{
-		DEBUG_LOG(("Failed call to gethostbyname; WSAGetLastError returned %d\n", WSAGetLastError()));
+		DEBUG_LOG(("Failed call to gethostbyname; WSAGetLastError returned %d", WSAGetLastError()));
 		return NULL;
 	}
 	
 	// sanity-check the length of the IP adress
 	if (hostEnt->h_length != 4)
 	{
-		DEBUG_LOG(("gethostbyname returns oddly-sized IP addresses!\n"));
+		DEBUG_LOG(("gethostbyname returns oddly-sized IP addresses!"));
 		return NULL;
 	}
 
@@ -135,7 +135,7 @@ void IPEnumeration::addNewIP( UnsignedByte a, UnsignedByte b, UnsignedByte c, Un
 	newIP->setIPstring(str);
 	newIP->setIP(ip);
 
-	DEBUG_LOG(("IP: 0x%8.8X (%s)\n", ip, str.str()));
+	DEBUG_LOG(("IP: 0x%8.8X (%s)", ip, str.str()));
 
 	// Add the IP to the list in ascending order
 	if (!m_IPlist)
@@ -186,7 +186,7 @@ AsciiString IPEnumeration::getMachineName( void )
 	char hostname[256];
 	if (gethostname(hostname, sizeof(hostname)))
 	{
-		DEBUG_LOG(("Failed call to gethostname; WSAGetLastError returned %d\n", WSAGetLastError()));
+		DEBUG_LOG(("Failed call to gethostname; WSAGetLastError returned %d", WSAGetLastError()));
 		return NULL;
 	}
 

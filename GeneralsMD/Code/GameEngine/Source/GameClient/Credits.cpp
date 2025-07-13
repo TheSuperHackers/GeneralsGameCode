@@ -87,7 +87,7 @@ const FieldParse CreditsManager::m_creditsFieldParseTable[] =
 void INI::parseCredits( INI *ini )
 {
 	// find existing item if present
-	DEBUG_ASSERTCRASH( TheCredits, ("parseCredits: TheCredits has not been ininialized yet.\n") );
+	DEBUG_ASSERTCRASH( TheCredits, ("parseCredits: TheCredits has not been ininialized yet.") );
 	if( !TheCredits )
 		return;
 
@@ -460,7 +460,7 @@ void CreditsManager::addText( AsciiString text )
 			}
 			break;
 		default:
-			DEBUG_ASSERTCRASH( FALSE, ("CreditsManager::addText we tried to add a credit text with the wrong style before it.  Style is %d\n", m_currentStyle) );
+			DEBUG_ASSERTCRASH( FALSE, ("CreditsManager::addText we tried to add a credit text with the wrong style before it.  Style is %d", m_currentStyle) );
 			delete cLine;
 	}
 

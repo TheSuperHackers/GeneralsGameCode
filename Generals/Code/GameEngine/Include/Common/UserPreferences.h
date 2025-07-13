@@ -124,6 +124,9 @@ public:
 
 	Int	 getCampaignDifficulty(void);
 	void setCampaignDifficulty( Int diff );
+
+	Int getSystemTimeFontSize(void);
+	Int getGameTimeFontSize(void);
 };
 
 //-----------------------------------------------------------------------------

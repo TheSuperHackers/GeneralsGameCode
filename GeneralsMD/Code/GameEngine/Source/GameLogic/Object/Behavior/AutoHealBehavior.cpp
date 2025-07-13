@@ -194,7 +194,7 @@ UpdateSleepTime AutoHealBehavior::update( void )
 		return UPDATE_SLEEP_FOREVER;
 	}
 
-//DEBUG_LOG(("doing auto heal %d\n",TheGameLogic->getFrame()));
+//DEBUG_LOG(("doing auto heal %d",TheGameLogic->getFrame()));
 
 	if( d->m_affectsWholePlayer )
 	{

@@ -270,7 +270,7 @@ Bool ParseGameOptionsString(LANGameInfo *game, AsciiString options)
 		LANGameSlot *slot = game->getLANSlot(i);
 		if (slot && slot->isHuman())
 		{
-			//DEBUG_LOG(("Saving off %ls@%ls for %ls\n", slot->getUser()->getLogin().str(), slot->getUser()->getHost().str(), slot->getName().str()));
+			//DEBUG_LOG(("Saving off %ls@%ls for %ls", slot->getUser()->getLogin().str(), slot->getUser()->getHost().str(), slot->getName().str()));
 			oldLogins[slot->getName()] = slot->getUser()->getLogin();
 			oldMachines[slot->getName()] = slot->getUser()->getHost();
 		}
@@ -284,7 +284,7 @@ Bool ParseGameOptionsString(LANGameInfo *game, AsciiString options)
 		{
 //			Int hasMap = game->getSlot(newLocalSlotNum)->hasMap();
 			newMapCRC = game->getMapCRC();
-			//DEBUG_LOG(("wasInGame:%d isInGame:%d hadMap:%d hasMap:%d oldMap:%s newMap:%s\n", wasInGame, isInGame, hadMap, hasMap, oldMap.str(), game->getMap().str()));
+			//DEBUG_LOG(("wasInGame:%d isInGame:%d hadMap:%d hasMap:%d oldMap:%s newMap:%s", wasInGame, isInGame, hadMap, hasMap, oldMap.str(), game->getMap().str()));
 			if ( (oldMapCRC ^ newMapCRC)/*(hasMap ^ hadMap)*/ || (!wasInGame && isInGame) )
 			{
 				// it changed.  send it
@@ -308,7 +308,7 @@ Bool ParseGameOptionsString(LANGameInfo *game, AsciiString options)
 				mapIt = oldMachines.find(slot->getName());
 				if (mapIt != oldMachines.end())
 					slot->setHost(mapIt->second);
-				//DEBUG_LOG(("Restored %ls@%ls for %ls\n", slot->getUser()->getLogin().str(), slot->getUser()->getHost().str(), slot->getName().str()));
+				//DEBUG_LOG(("Restored %ls@%ls for %ls", slot->getUser()->getLogin().str(), slot->getUser()->getHost().str(), slot->getName().str()));
 			}
 		}
 

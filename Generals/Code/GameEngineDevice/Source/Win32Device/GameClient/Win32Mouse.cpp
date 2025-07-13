@@ -248,7 +248,7 @@ void Win32Mouse::translateEvent( UnsignedInt eventIndex, MouseIO *result )
 		default:
 		{
 
-			DEBUG_CRASH(( "translateEvent: Unknown Win32 mouse event [%d,%d,%d]\n",
+			DEBUG_CRASH(( "translateEvent: Unknown Win32 mouse event [%d,%d,%d]",
 							 msg, wParam, lParam ));
 			return;
 
@@ -403,7 +403,7 @@ void Win32Mouse::initCursorResources(void)
 
 				if (!loaded)
 					cursorResources[cursor][direction]=LoadCursorFromFile(resourcePath);
-				DEBUG_ASSERTCRASH(cursorResources[cursor][direction], ("MissingCursor %s\n",resourcePath));
+				DEBUG_ASSERTCRASH(cursorResources[cursor][direction], ("MissingCursor %s",resourcePath));
 			}
 		}
 //		SetCursor(cursorResources[cursor][m_directionFrame]);

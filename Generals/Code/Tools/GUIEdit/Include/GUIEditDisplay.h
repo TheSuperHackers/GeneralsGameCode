@@ -126,6 +126,7 @@ public:
 #endif
 
 	virtual Real getAverageFPS(void) { return 0; }
+	virtual Real getCurrentFPS(void) { return 0; }
 	virtual Int getLastFrameDrawCalls( void ) { return 0; }
 
 protected:

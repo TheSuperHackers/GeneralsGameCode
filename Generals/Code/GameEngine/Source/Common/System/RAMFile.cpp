@@ -495,7 +495,7 @@ char* RAMFile::readEntireAndClose()
 
 	if (m_data == NULL)
 	{
-		DEBUG_CRASH(("m_data is NULL in RAMFile::readEntireAndClose -- should not happen!\n"));
+		DEBUG_CRASH(("m_data is NULL in RAMFile::readEntireAndClose -- should not happen!"));
 		return NEW char[1];	// just to avoid crashing...
 	}
 

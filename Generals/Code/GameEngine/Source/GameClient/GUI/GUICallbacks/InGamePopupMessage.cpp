@@ -101,7 +101,7 @@ void InGamePopupMessageInit( WindowLayout *layout, void *userData )
 	
 	if(!pMData)
 	{
-		DEBUG_ASSERTCRASH(pMData, ("We're in InGamePopupMessage without a pointer to pMData\n") );
+		DEBUG_ASSERTCRASH(pMData, ("We're in InGamePopupMessage without a pointer to pMData") );
 		///< @todo: add a call to the close this bitch method when I implement it CLH
 		return;
 	}

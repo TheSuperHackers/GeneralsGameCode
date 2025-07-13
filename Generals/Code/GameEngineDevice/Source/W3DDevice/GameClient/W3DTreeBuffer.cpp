@@ -561,7 +561,7 @@ W3DTreeBuffer::W3DTreeBuffer(void)
 	}
 	if (m_typeMesh[0] == NULL) {
 
-		//DEBUG_LOG("!!!!!!!!!!!!*************** W3DTreeBuffer failed to initialize.\n");
+		//DEBUG_LOG("!!!!!!!!!!!!*************** W3DTreeBuffer failed to initialize.");
 		return;  // didn't initialize.
 	}
 	m_initialized = true;

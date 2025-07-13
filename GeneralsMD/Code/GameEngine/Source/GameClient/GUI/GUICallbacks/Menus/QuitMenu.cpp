@@ -233,7 +233,7 @@ static void restartMissionMenu()
 		msg->appendIntegerArgument(diff);
 		msg->appendIntegerArgument(rankPointsStartedWith);
 		msg->appendIntegerArgument(fps);
-		DEBUG_LOG(("Restarting game mode %d, Diff=%d, RankPoints=%d\n", gameMode, 
+		DEBUG_LOG(("Restarting game mode %d, Diff=%d, RankPoints=%d", gameMode, 
 																																		TheScriptEngine->getGlobalDifficulty(), 
 																																		rankPointsStartedWith)
 							);
