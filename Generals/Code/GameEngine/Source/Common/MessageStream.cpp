@@ -225,10 +225,10 @@ void GameMessage::appendWideCharArgument( const WideChar& arg )
 
 AsciiString GameMessage::getCommandAsAsciiString( void )
 {
-	return getCommandTypeAsAsciiString(m_type);
+	return getCommandTypeAsString(m_type);
 }
 
-const char* GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
+const char *GameMessage::getCommandTypeAsString(GameMessage::Type t)
 {
 #define CASE_LABEL(x) case x: return #x;
 
