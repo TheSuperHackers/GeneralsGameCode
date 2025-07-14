@@ -56,9 +56,6 @@ public:
 	void attach();
 	void detach();
 
-	// For debugging purposes
-	virtual AsciiString getContentsAsAsciiString(void) { return AsciiString::TheEmptyString; }
-
 protected:
 	UnsignedInt m_timestamp;
 	UnsignedInt m_executionFrame;
@@ -85,9 +82,6 @@ public:
 	GameMessage *constructGameMessage();
 	void addArgument(const GameMessageArgumentDataType type, GameMessageArgumentType arg);
 	void setGameMessageType(GameMessage::Type type);
-
-	// For debugging purposes
-	virtual AsciiString getContentsAsAsciiString(void);
 
 protected:
 	Int m_numArgs;
