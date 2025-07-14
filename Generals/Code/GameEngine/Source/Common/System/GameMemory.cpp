@@ -899,16 +899,17 @@ void MemoryPoolSingleBlock::initBlock(Int logicalSize, MemoryPoolBlob *owningBlo
 #ifdef MEMORYPOOL_CHECKPOINTING
 	m_checkpointInfo = NULL;
 #endif
-#ifdef MEMORYPOOL_BOUNDINGWALL
-	m_wallPattern = theBoundingWallPattern++;
-	debugFillInWalls();
-#endif
 
 	m_nextBlock = NULL;
 #ifdef MPSB_DLINK
 	m_prevBlock = NULL;
 #endif
 	m_owningBlob = owningBlob;	// could be NULL
+
+#ifdef MEMORYPOOL_BOUNDINGWALL
+	m_wallPattern = theBoundingWallPattern++;
+	debugFillInWalls();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1056,9 +1057,13 @@ void MemoryPoolSingleBlock::debugVerifyBlock()
 	DEBUG_ASSERTCRASH(m_debugLiteralTagString != NULL, ("bad tagstring"));
 	/// @todo Put this check back in after the AI memory usage is under control (MSB)
 	//DEBUG_ASSERTCRASH(m_logicalSize>0 && m_logicalSize < 0x00ffffff, ("unlikely value for m_logicalSize"));
-	DEBUG_ASSERTCRASH(!m_nextBlock || m_nextBlock->m_owningBlob == m_owningBlob, ("owning blob mismatch..."));
+	DEBUG_ASSERTCRASH(m_nextBlock == NULL
+		|| memcmp(&m_nextBlock->m_owningBlob, &s_initFillerValue, sizeof(s_initFillerValue)) == 0
+		|| m_nextBlock->m_owningBlob == m_owningBlob, ("owning blob mismatch..."));
 #ifdef MPSB_DLINK
-	DEBUG_ASSERTCRASH(!m_prevBlock || m_prevBlock->m_owningBlob == m_owningBlob, ("owning blob mismatch..."));
+	DEBUG_ASSERTCRASH(m_prevBlock == NULL
+		|| memcmp(&m_prevBlock->m_owningBlob, &s_initFillerValue, sizeof(s_initFillerValue)) == 0
+		|| m_prevBlock->m_owningBlob == m_owningBlob, ("owning blob mismatch..."));
 #endif
 	debugCheckUnderrun();
 	debugCheckOverrun();
