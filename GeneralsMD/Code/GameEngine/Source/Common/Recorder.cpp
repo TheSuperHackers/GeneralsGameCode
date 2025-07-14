@@ -744,7 +744,7 @@ void RecorderClass::writeToFile(GameMessage * msg) {
 	fwrite(&playerIndex, sizeof(playerIndex), 1, m_file);
 
 #ifdef DEBUG_LOGGING
-	AsciiString commandName = msg->getCommandAsAsciiString();
+	AsciiString commandName = msg->getCommandAsString();
 	if (type < GameMessage::MSG_BEGIN_NETWORK_MESSAGES || type > GameMessage::MSG_END_NETWORK_MESSAGES)
 	{
 		commandName.concat(" (Non-Network message!)");
@@ -1333,7 +1333,7 @@ void RecorderClass::appendNextCommand() {
 	GameMessage *msg = newInstance(GameMessage)(type);
 
 #ifdef DEBUG_LOGGING
-	AsciiString commandName = msg->getCommandAsAsciiString();
+	AsciiString commandName = msg->getCommandAsString();
 	if (type < GameMessage::MSG_BEGIN_NETWORK_MESSAGES || type > GameMessage::MSG_END_NETWORK_MESSAGES)
 	{
 		commandName.concat(" (Non-Network message!)");

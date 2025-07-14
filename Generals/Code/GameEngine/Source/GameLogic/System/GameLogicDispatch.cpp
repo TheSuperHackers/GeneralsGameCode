@@ -387,7 +387,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 #ifdef DEBUG_LOGGING
 	AsciiString commandName;
 
-	commandName = msg->getCommandAsAsciiString();
+	commandName = msg->getCommandAsString();
 	if (msg->getType() < GameMessage::MSG_BEGIN_NETWORK_MESSAGES || msg->getType() > GameMessage::MSG_END_NETWORK_MESSAGES)
 	{
 		commandName.concat(" (NON-LOGIC-MESSAGE!!!)");

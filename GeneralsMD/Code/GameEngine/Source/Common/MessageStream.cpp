@@ -223,7 +223,7 @@ void GameMessage::appendWideCharArgument( const WideChar& arg )
 	a->m_type = ARGUMENTDATATYPE_WIDECHAR;
 }
 
-AsciiString GameMessage::getCommandAsAsciiString( void )
+const char *GameMessage::getCommandAsString( void ) const
 {
 	return getCommandTypeAsString(m_type);
 }

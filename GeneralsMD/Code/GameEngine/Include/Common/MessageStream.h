@@ -631,7 +631,7 @@ public:
 	Type getType( void ) const { return m_type; }					///< Return the message type
 	UnsignedByte getArgumentCount( void ) const { return m_argCount; }	///< Return the number of arguments for this msg
 
-	AsciiString getCommandAsAsciiString( void ); ///< returns a string representation of the command type.
+	const char *getCommandAsString( void ) const; ///< returns a string representation of the command type.
 	static const char *getCommandTypeAsString(GameMessage::Type t);
 
 	Int getPlayerIndex( void ) const { return m_playerIndex; }		///< Return the originating player
