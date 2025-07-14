@@ -509,7 +509,7 @@ void W3DTreeBuffer::updateTexture(void)
 			}
 			theFile->close();
 		} else {
-			DEBUG_CRASH(("Could not find texture %s\n", m_treeTypes[i].m_data->m_textureName.str()));
+			DEBUG_CRASH(("Could not find texture %s", m_treeTypes[i].m_data->m_textureName.str()));
 			m_treeTypes[i].m_firstTile = 0;
 			m_treeTypes[i].m_tileWidth = 0;
 			m_treeTypes[i].m_numTiles = 0;
@@ -1348,7 +1348,7 @@ Int W3DTreeBuffer::addTreeType(const W3DTreeDrawModuleData *data)
 	RenderObjClass *robj=WW3DAssetManager::Get_Instance()->Create_Render_Obj(data->m_modelName.str());
 
 	if (robj==NULL) {
-		DEBUG_CRASH(("Unable to find model for tree %s\n", data->m_modelName.str()));
+		DEBUG_CRASH(("Unable to find model for tree %s", data->m_modelName.str()));
 		return 0;
 	}
 	AABoxClass box;
@@ -1367,7 +1367,7 @@ Int W3DTreeBuffer::addTreeType(const W3DTreeDrawModuleData *data)
 		m_treeTypes[m_numTreeTypes].m_mesh = (MeshClass*)robj;
 
 	if (m_treeTypes[m_numTreeTypes].m_mesh==NULL) {
-		DEBUG_CRASH(("Tree %s is not simple mesh. Tell artist to re-export. Don't Ignore!!!\n", data->m_modelName.str()));
+		DEBUG_CRASH(("Tree %s is not simple mesh. Tell artist to re-export. Don't Ignore!!!", data->m_modelName.str()));
 		return 0;
 	}
 

@@ -395,7 +395,7 @@ Sound3DClass::Set_Velocity (const Vector3 &velocity)
 	//
 	if (m_SoundHandle != NULL) {		
 		
-		//WWDEBUG_SAY (("Current Velocity: %.2f %.2f %.2f\n", m_CurrentVelocity.X, m_CurrentVelocity.Y, m_CurrentVelocity.Z));
+		//WWDEBUG_SAY (("Current Velocity: %.2f %.2f %.2f", m_CurrentVelocity.X, m_CurrentVelocity.Y, m_CurrentVelocity.Z));
 		::AIL_set_3D_velocity_vector (m_SoundHandle->Get_H3DSAMPLE (),
 												-m_CurrentVelocity.Y,
 												m_CurrentVelocity.Z,

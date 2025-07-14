@@ -157,7 +157,7 @@ void Thing::setPositionZ( Real z )
 		TheTerrainLogic->alignOnTerrain(getOrientation(), pos, stickToGround, mtx );
 		setTransformMatrix(&mtx);
 	}
-	DEBUG_ASSERTCRASH(!(_isnan(getPosition()->x) || _isnan(getPosition()->y) || _isnan(getPosition()->z)), ("Drawable/Object position NAN! '%s'\n", m_template->getName().str() ));
+	DEBUG_ASSERTCRASH(!(_isnan(getPosition()->x) || _isnan(getPosition()->y) || _isnan(getPosition()->z)), ("Drawable/Object position NAN! '%s'", m_template->getName().str() ));
 }
 
 //=============================================================================
@@ -170,7 +170,7 @@ void Thing::setPosition( const Coord3D *pos )
 		Coord3D oldPos = m_cachedPos;
 		Matrix3D oldMtx = m_transform;
 
-		//DEBUG_ASSERTCRASH(!(_isnan(pos->x) || _isnan(pos->y) || _isnan(pos->z)), ("Drawable/Object position NAN! '%s'\n", m_template->getName().str() ));
+		//DEBUG_ASSERTCRASH(!(_isnan(pos->x) || _isnan(pos->y) || _isnan(pos->z)), ("Drawable/Object position NAN! '%s'", m_template->getName().str() ));
 		m_transform.Set_X_Translation( pos->x );
 		m_transform.Set_Y_Translation( pos->y );
 		m_transform.Set_Z_Translation( pos->z );
@@ -186,7 +186,7 @@ void Thing::setPosition( const Coord3D *pos )
 		TheTerrainLogic->alignOnTerrain(getOrientation(), *pos, stickToGround, mtx );
 		setTransformMatrix(&mtx);
 	}
-	DEBUG_ASSERTCRASH(!(_isnan(getPosition()->x) || _isnan(getPosition()->y) || _isnan(getPosition()->z)), ("Drawable/Object position NAN! '%s'\n", m_template->getName().str() ));
+	DEBUG_ASSERTCRASH(!(_isnan(getPosition()->x) || _isnan(getPosition()->y) || _isnan(getPosition()->z)), ("Drawable/Object position NAN! '%s'", m_template->getName().str() ));
 }
 
 //=============================================================================
@@ -230,13 +230,13 @@ void Thing::setOrientation( Real angle )
 											x.z, y.z, z.z, pos.z );
 	}
 
-	//DEBUG_ASSERTCRASH(-PI <= angle && angle <= PI, ("Please pass only normalized (-PI..PI) angles to setOrientation (%f).\n", angle));
+	//DEBUG_ASSERTCRASH(-PI <= angle && angle <= PI, ("Please pass only normalized (-PI..PI) angles to setOrientation (%f).", angle));
 	m_cachedAngle = normalizeAngle(angle);
 	m_cachedPos = pos;
 	m_cacheFlags &= ~VALID_DIRVECTOR;	// but don't clear the altitude flags.
 
 	reactToTransformChange(&oldMtx, &oldPos, oldAngle);
-	DEBUG_ASSERTCRASH(!(_isnan(getPosition()->x) || _isnan(getPosition()->y) || _isnan(getPosition()->z)), ("Drawable/Object position NAN! '%s'\n", m_template->getName().str() ));
+	DEBUG_ASSERTCRASH(!(_isnan(getPosition()->x) || _isnan(getPosition()->y) || _isnan(getPosition()->z)), ("Drawable/Object position NAN! '%s'", m_template->getName().str() ));
 }
 
 //=============================================================================
@@ -257,7 +257,7 @@ void Thing::setTransformMatrix( const Matrix3D *mx )
 	m_cacheFlags = 0;
 
 	reactToTransformChange(&oldMtx, &oldPos, oldAngle);
-	DEBUG_ASSERTCRASH(!(_isnan(getPosition()->x) || _isnan(getPosition()->y) || _isnan(getPosition()->z)), ("Drawable/Object position NAN! '%s'\n", m_template->getName().str() ));
+	DEBUG_ASSERTCRASH(!(_isnan(getPosition()->x) || _isnan(getPosition()->y) || _isnan(getPosition()->z)), ("Drawable/Object position NAN! '%s'", m_template->getName().str() ));
 }
 
 //-------------------------------------------------------------------------------------------------

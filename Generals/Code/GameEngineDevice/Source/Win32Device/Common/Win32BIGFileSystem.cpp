@@ -72,7 +72,7 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 	Int archiveFileSize = 0;
 	Int numLittleFiles = 0;
 
-	DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - opening BIG file %s\n", filename));
+	DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - opening BIG file %s", filename));
 
 	if (fp == NULL) {
 		DEBUG_CRASH(("Could not open archive file %s for parsing", filename));
@@ -93,7 +93,7 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 	// read in the file size.
 	fp->read(&archiveFileSize, 4);
 
-	DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - size of archive file is %d bytes\n", archiveFileSize));
+	DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - size of archive file is %d bytes", archiveFileSize));
 
 //	char t;
 
@@ -102,7 +102,7 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 	fp->read(&numLittleFiles, 4);
 	numLittleFiles = betoh(numLittleFiles);
 
-	DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - %d are contained in archive\n", numLittleFiles));
+	DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - %d are contained in archive", numLittleFiles));
 //	for (Int i = 0; i < 2; ++i) {
 //		t = buffer[i];
 //		buffer[i] = buffer[(4-i)-1];
@@ -151,7 +151,7 @@ ArchiveFile * Win32BIGFileSystem::openArchiveFile(const Char *filename) {
 		AsciiString debugpath;
 		debugpath = path;
 		debugpath.concat(fileInfo->m_filename);
-//		DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - adding file %s to archive file %s, file number %d\n", debugpath.str(), fileInfo->m_archiveFilename.str(), i));
+//		DEBUG_LOG(("Win32BIGFileSystem::openArchiveFile - adding file %s to archive file %s, file number %d", debugpath.str(), fileInfo->m_archiveFilename.str(), i));
 
 		archiveFile->addFile(path, fileInfo);
 	}
@@ -204,10 +204,10 @@ Bool Win32BIGFileSystem::loadBigFilesFromDirectory(AsciiString dir, AsciiString 
 		ArchiveFile *archiveFile = openArchiveFile((*it).str());
 
 		if (archiveFile != NULL) {
-			DEBUG_LOG(("Win32BIGFileSystem::loadBigFilesFromDirectory - loading %s into the directory tree.\n", (*it).str()));
+			DEBUG_LOG(("Win32BIGFileSystem::loadBigFilesFromDirectory - loading %s into the directory tree.", (*it).str()));
 			loadIntoDirectoryTree(archiveFile, *it, overwrite);
 			m_archiveFileMap[(*it)] = archiveFile;
-			DEBUG_LOG(("Win32BIGFileSystem::loadBigFilesFromDirectory - %s inserted into the archive file map.\n", (*it).str()));
+			DEBUG_LOG(("Win32BIGFileSystem::loadBigFilesFromDirectory - %s inserted into the archive file map.", (*it).str()));
 			actuallyAdded = TRUE;
 		}
 

@@ -35,6 +35,7 @@ void DebugLog(const char *format, ...)
 	va_start(arg, format);
 	vprintf(format, arg);
 	va_end(arg);
+	printf("\n");
 }
 
 #endif
@@ -49,6 +50,7 @@ void DebugCrash(const char *format, ...)
 	va_start(arg, format);
 	vprintf(format, arg);
 	va_end(arg);
+	printf("\n");
 
 	// No exit in this stub
 }

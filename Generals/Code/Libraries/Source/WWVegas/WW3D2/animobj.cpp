@@ -114,7 +114,7 @@ Animatable3DObjClass::Animatable3DObjClass(const char * htree_name) :
 		if (source != NULL) {
 			HTree = W3DNEW HTreeClass(*source);
 		} else {
-			WWDEBUG_SAY(("Unable to find HTree: %s\r\n",htree_name));
+			WWDEBUG_SAY(("Unable to find HTree: %s",htree_name));
 			HTree = W3DNEW HTreeClass;
 			HTree->Init_Default();
 		}

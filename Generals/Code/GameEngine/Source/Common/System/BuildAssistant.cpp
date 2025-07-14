@@ -590,7 +590,7 @@ void BuildAssistant::iterateFootprint( const ThingTemplate *build,
 	else
 	{
 
-		DEBUG_ASSERTCRASH( 0, ("iterateFootprint: Undefined geometry '%d' for '%s'\n",
+		DEBUG_ASSERTCRASH( 0, ("iterateFootprint: Undefined geometry '%d' for '%s'",
 											     build->getTemplateGeometryInfo().getGeomType(), build->getName().str()) );
 		return;
 
@@ -1196,7 +1196,7 @@ Bool BuildAssistant::isPossibleToMakeUnit( Object *builder, const ThingTemplate 
 	if( commandSet == NULL )
 	{
 
-		DEBUG_ASSERTLOG( 0, ("Can't build a '%s' from the builder '%s' because '%s' doesn't have any command set defined\n",
+		DEBUG_ASSERTLOG( 0, ("Can't build a '%s' from the builder '%s' because '%s' doesn't have any command set defined",
 													whatToBuild->getName().str(),
 													builder->getTemplate()->getName().str(),
 													builder->getTemplate()->getName().str()) );
@@ -1218,9 +1218,8 @@ Bool BuildAssistant::isPossibleToMakeUnit( Object *builder, const ThingTemplate 
 		// get this button
 		commandButton = commandSet->getCommandButton(i);
 		if( commandButton &&
-				(commandButton->getCommandType() == GUI_COMMAND_UNIT_BUILD ||
-				 commandButton->getCommandType() == GUI_COMMAND_DOZER_CONSTRUCT) &&
-				commandButton->getThingTemplate()->isEquivalentTo(whatToBuild) )
+				(commandButton->getCommandType() == GUI_COMMAND_UNIT_BUILD || commandButton->getCommandType() == GUI_COMMAND_DOZER_CONSTRUCT) &&
+				commandButton->getThingTemplate() && commandButton->getThingTemplate()->isEquivalentTo(whatToBuild) )
 			foundCommand = commandButton;
 
 	}  // end for i

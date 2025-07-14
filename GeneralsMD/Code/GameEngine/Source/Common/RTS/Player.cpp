@@ -176,7 +176,7 @@ AsciiString kindofMaskAsAsciiString(KindOfMaskType m)
 }
 void dumpBattlePlanBonuses(const BattlePlanBonuses *b, AsciiString name, const Player *p, const Object *o, AsciiString fname, Int line, Bool doDebugLog)
 {
-	CRCDEBUG_LOG(("dumpBattlePlanBonuses() %s:%d %s\n  Player %d(%ls) object %d(%s) armor:%g/%8.8X bombardment:%d, holdTheLine:%d, searchAndDestroy:%d sight:%g/%8.8X, valid:%s invalid:%s\n",
+	CRCDEBUG_LOG(("dumpBattlePlanBonuses() %s:%d %s\n  Player %d(%ls) object %d(%s) armor:%g/%8.8X bombardment:%d, holdTheLine:%d, searchAndDestroy:%d sight:%g/%8.8X, valid:%s invalid:%s",
 		fname.str(), line, name.str(),
 		(p)?p->getPlayerIndex():-1, (p)?((Player *)p)->getPlayerDisplayName().str():L"<No Name>", (o)?o->getID():-1, (o)?o->getTemplate()->getName().str():"<No Name>",
 		b->m_armorScalar, AS_INT(b->m_armorScalar),
@@ -186,7 +186,7 @@ void dumpBattlePlanBonuses(const BattlePlanBonuses *b, AsciiString name, const P
 		kindofMaskAsAsciiString(b->m_invalidKindOf).str()));
 	if (!doDebugLog)
 		return;
-	DEBUG_LOG(("dumpBattlePlanBonuses() %s:%d %s\n  Player %d(%ls) object %d(%s) armor:%g/%8.8X bombardment:%d, holdTheLine:%d, searchAndDestroy:%d sight:%g/%8.8X, valid:%s invalid:%s\n",
+	DEBUG_LOG(("dumpBattlePlanBonuses() %s:%d %s\n  Player %d(%ls) object %d(%s) armor:%g/%8.8X bombardment:%d, holdTheLine:%d, searchAndDestroy:%d sight:%g/%8.8X, valid:%s invalid:%s",
 		fname.str(), line, name.str(),
 		(p)?p->getPlayerIndex():-1, (p)?((Player *)p)->getPlayerDisplayName().str():L"<No Name>", (o)?o->getID():-1, (o)?o->getTemplate()->getName().str():"<No Name>",
 		b->m_armorScalar, AS_INT(b->m_armorScalar),
@@ -355,7 +355,7 @@ Player::Player( Int playerIndex )
 void Player::init(const PlayerTemplate* pt)
 {
 
-	DEBUG_ASSERTCRASH(m_playerTeamPrototypes.size() == 0, ("Player::m_playerTeamPrototypes is not empty at game start!\n"));
+	DEBUG_ASSERTCRASH(m_playerTeamPrototypes.size() == 0, ("Player::m_playerTeamPrototypes is not empty at game start!"));
 	m_skillPointsModifier = 1.0f;
 	m_attackedFrame = 0;
 
@@ -804,7 +804,7 @@ void Player::initFromDict(const Dict* d)
 {
 	AsciiString tmplname = d->getAsciiString(TheKey_playerFaction);
 	const PlayerTemplate* pt = ThePlayerTemplateStore->findPlayerTemplate(NAMEKEY(tmplname));
-	DEBUG_ASSERTCRASH(pt != NULL, ("PlayerTemplate %s not found -- this is an obsolete map (please open and resave in WB)\n",tmplname.str()));
+	DEBUG_ASSERTCRASH(pt != NULL, ("PlayerTemplate %s not found -- this is an obsolete map (please open and resave in WB)",tmplname.str()));
 	
 	init(pt);
 
@@ -1377,7 +1377,7 @@ static void doFindMostReadyWeaponForThing( Object *obj, void *userData )
 		return;
 	}
 	
-	if( info->thing->isEquivalentTo( obj->getTemplate() ) )
+	if( info->thing && info->thing->isEquivalentTo( obj->getTemplate() ) )
 	{
 		if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) 
 				&& !obj->testStatus( OBJECT_STATUS_SOLD ) 
@@ -1409,7 +1409,7 @@ static void doFindMostReadySpecialPowerForThing( Object *obj, void *userData )
 		return;
 	}
 	
-	if( info->thing->isEquivalentTo( obj->getTemplate() ) )
+	if( info->thing && info->thing->isEquivalentTo( obj->getTemplate() ) )
 	{
 		if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) 
 				&& !obj->testStatus( OBJECT_STATUS_SOLD ) 
@@ -1445,7 +1445,7 @@ static void doFindExistingObjectWithThingTemplate( Object *obj, void *userData )
 		return;
 	}
 	
-	if( info->thing->isEquivalentTo( obj->getTemplate() ) )
+	if( info->thing && info->thing->isEquivalentTo( obj->getTemplate() ) )
 	{
 		if( !obj->testStatus( OBJECT_STATUS_UNDER_CONSTRUCTION ) 
 				&& !obj->testStatus( OBJECT_STATUS_SOLD ) 
@@ -2084,7 +2084,29 @@ void Player::killPlayer(void)
 	}
 	if (isLocalPlayer() && !TheGameLogic->isInShellGame())
 	{
+		// TheSuperHackers @bugfix helmutbuhler 29/03/2025
+		// Avoid multiplayer mismatch on surrender in team games when owning a base structure that has
+		// been cleared of infantry before, by disabling this bugged logic.
+		// 
+		// Note that becomingLocalPlayer calls recalcApparentControllingPlayer on all objects with a
+		// contain, which does two things:
+		//   1. Reset the teams of all objects with empty contains
+		//   2. Update m_hideGarrisonedStateFromNonallies
+		// 
+		// Likely, the original intent was to reveal hidden garrisoned buildings for the new observer.
+		// But this does not appear to work anyway, so this call is useless.
+		// 
+		// There is another bug: The Contain modules keep track of the object's team before any units
+		// got inside. And that team does not get updated when the player is killed and the units
+		// transfer to another team. That means resetting the team sets it to neutral, and when this
+		// is done only for the local player, then a mismatch occurs.
+		// 
+		// When fixing disguises for observers or fixing the team bug in the Contain classes, then this
+		// code can be used again.
+#if 0
 		becomingLocalPlayer(TRUE); // recalc disguises, etc
+#endif
+
 		if (TheControlBar )
 		{
 			if (isPlayerActive())
@@ -2537,7 +2559,7 @@ Bool Player::addScience(ScienceType science)
 	if (hasScience(science))
 		return false;
 
-	//DEBUG_LOG(("Adding Science %s\n",TheScienceStore->getInternalNameForScience(science).str()));
+	//DEBUG_LOG(("Adding Science %s",TheScienceStore->getInternalNameForScience(science).str()));
 
 	m_sciences.push_back(science);
 
@@ -2586,7 +2608,7 @@ Bool Player::addScience(ScienceType science)
 //=============================================================================
 void Player::addSciencePurchasePoints(Int delta)
 {
-	//DEBUG_LOG(("Adding SciencePurchasePoints %d -> %d\n",m_sciencePurchasePoints,m_sciencePurchasePoints+delta));
+	//DEBUG_LOG(("Adding SciencePurchasePoints %d -> %d",m_sciencePurchasePoints,m_sciencePurchasePoints+delta));
 	Int oldSPP = m_sciencePurchasePoints;
 	m_sciencePurchasePoints += delta;
 	if (m_sciencePurchasePoints < 0)
@@ -2602,7 +2624,7 @@ Bool Player::attemptToPurchaseScience(ScienceType science)
 {
 	if (!isCapableOfPurchasingScience(science))
 	{
-		DEBUG_CRASH(("isCapableOfPurchasingScience: need other prereqs/points to purchase, request is ignored!\n"));
+		DEBUG_CRASH(("isCapableOfPurchasingScience: need other prereqs/points to purchase, request is ignored!"));
 		return false;
 	}
 
@@ -2625,7 +2647,7 @@ Bool Player::grantScience(ScienceType science)
 {
 	if (!TheScienceStore->isScienceGrantable(science))
 	{
-		DEBUG_CRASH(("Cannot grant science %s, since it is marked as nonGrantable.\n",TheScienceStore->getInternalNameForScience(science).str()));
+		DEBUG_CRASH(("Cannot grant science %s, since it is marked as nonGrantable.",TheScienceStore->getInternalNameForScience(science).str()));
 		return false;	// it's not grantable, so tough, can't have it, even via this method.
 	}
 
@@ -2696,7 +2718,7 @@ Bool Player::setRankLevel(Int newLevel)
 	if (newLevel == m_rankLevel)
 		return false;
 
-	//DEBUG_LOG(("Set Rank Level %d -> %d\n",m_rankLevel,newLevel));
+	//DEBUG_LOG(("Set Rank Level %d -> %d",m_rankLevel,newLevel));
 
 	Int oldSPP = m_sciencePurchasePoints;
 
@@ -2735,7 +2757,7 @@ Bool Player::setRankLevel(Int newLevel)
 	m_rankLevel = newLevel;
 
 	DEBUG_ASSERTCRASH(m_skillPoints >= m_levelDown && m_skillPoints < m_levelUp, ("hmm, wrong"));
-	//DEBUG_LOG(("Rank %d, Skill %d, down %d, up %d\n",m_rankLevel,m_skillPoints, m_levelDown, m_levelUp));
+	//DEBUG_LOG(("Rank %d, Skill %d, down %d, up %d",m_rankLevel,m_skillPoints, m_levelDown, m_levelUp));
 
 	if (TheControlBar != NULL)
 	{
@@ -2863,7 +2885,7 @@ static void countExisting( Object *obj, void *userData )
   TypeCountData *typeCountData = (TypeCountData *)userData;
   
   // Compare templates
-  if ( typeCountData->type->isEquivalentTo( obj->getTemplate() ) ||
+  if ( ( typeCountData->type && typeCountData->type->isEquivalentTo( obj->getTemplate() ) ) ||
        ( typeCountData->linkKey != NAMEKEY_INVALID && obj->getTemplate() != NULL && typeCountData->linkKey == obj->getTemplate()->getMaxSimultaneousLinkKey() ) )
   {
     typeCountData->count++;
@@ -3188,7 +3210,7 @@ void Player::removeRadar( Bool disableProof )
 	Bool hadRadar = hasRadar();
 
 	// decrement count
-	DEBUG_ASSERTCRASH( m_radarCount > 0, ("removeRadar: An Object is taking its radar away, but the player radar count says they don't have radar!\n") );
+	DEBUG_ASSERTCRASH( m_radarCount > 0, ("removeRadar: An Object is taking its radar away, but the player radar count says they don't have radar!") );
 	--m_radarCount;
 
 	if( disableProof )
@@ -3521,7 +3543,7 @@ static void localApplyBattlePlanBonusesToObject( Object *obj, void *userData )
 	Object *objectToValidate = obj;
 	Object *objectToModify = obj;
 
-	DEBUG_LOG(("localApplyBattlePlanBonusesToObject() - looking at object %d (%s)\n",
+	DEBUG_LOG(("localApplyBattlePlanBonusesToObject() - looking at object %d (%s)",
 		(objectToValidate)?objectToValidate->getID():INVALID_ID,
 		(objectToValidate)?objectToValidate->getTemplate()->getName().str():"<No Object>"));
 
@@ -3531,30 +3553,30 @@ static void localApplyBattlePlanBonusesToObject( Object *obj, void *userData )
 	if( isProjectile )
 	{
 		objectToValidate = TheGameLogic->findObjectByID( obj->getProducerID() );
-		DEBUG_LOG(("Object is a projectile - looking at object %d (%s) instead\n",
+		DEBUG_LOG(("Object is a projectile - looking at object %d (%s) instead",
 			(objectToValidate)?objectToValidate->getID():INVALID_ID,
 			(objectToValidate)?objectToValidate->getTemplate()->getName().str():"<No Object>"));
 	}
 	if( objectToValidate && objectToValidate->isAnyKindOf( bonus->m_validKindOf ) )
 	{
-		DEBUG_LOG(("Is valid kindof\n"));
+		DEBUG_LOG(("Is valid kindof"));
 		if( !objectToValidate->isAnyKindOf( bonus->m_invalidKindOf ) )
 		{
-			DEBUG_LOG(("Is not invalid kindof\n"));
+			DEBUG_LOG(("Is not invalid kindof"));
 			//Quite the trek eh? Now we can apply the bonuses!
 			if( !isProjectile )
 			{
-				DEBUG_LOG(("Is not projectile.  Armor scalar is %g\n", bonus->m_armorScalar));
+				DEBUG_LOG(("Is not projectile.  Armor scalar is %g", bonus->m_armorScalar));
 				//Really important to not apply certain bonuses like health augmentation to projectiles!
 				if( bonus->m_armorScalar != 1.0f )
 				{
 					BodyModuleInterface *body = objectToModify->getBodyModule();
 					body->applyDamageScalar( bonus->m_armorScalar );
-					CRCDEBUG_LOG(("Applying armor scalar of %g (%8.8X) to object %d (%ls) owned by player %d\n",
+					CRCDEBUG_LOG(("Applying armor scalar of %g (%8.8X) to object %d (%ls) owned by player %d",
 						bonus->m_armorScalar, AS_INT(bonus->m_armorScalar), objectToModify->getID(),
 						objectToModify->getTemplate()->getDisplayName().str(),
 						objectToModify->getControllingPlayer()->getPlayerIndex()));
-					DEBUG_LOG(("After apply, armor scalar is %g\n", body->getDamageScalar()));
+					DEBUG_LOG(("After apply, armor scalar is %g", body->getDamageScalar()));
 				}
 				if( bonus->m_sightRangeScalar != 1.0f )
 				{
@@ -3629,13 +3651,13 @@ void Player::applyBattlePlanBonusesForPlayerObjects( const BattlePlanBonuses *bo
 	//Only allocate the battle plan bonuses if we actually use it!
 	if( !m_battlePlanBonuses )
 	{
-		DEBUG_LOG(("Allocating new m_battlePlanBonuses\n"));
+		DEBUG_LOG(("Allocating new m_battlePlanBonuses"));
 		m_battlePlanBonuses = newInstance( BattlePlanBonuses );	
 		*m_battlePlanBonuses = *bonus;
 	}
 	else
 	{
-		DEBUG_LOG(("Adding bonus into existing m_battlePlanBonuses\n"));
+		DEBUG_LOG(("Adding bonus into existing m_battlePlanBonuses"));
 		DUMPBATTLEPLANBONUSES(m_battlePlanBonuses, this, NULL);
 		//Just apply the differences by multiplying the scalars together (kindofs won't change)
 		//These bonuses are used for new objects that are created or objects that are transferred
@@ -3973,7 +3995,7 @@ void Player::crc( Xfer *xfer )
 	// Player battle plan bonuses
 	Bool battlePlanBonus = m_battlePlanBonuses != NULL;
 	xfer->xferBool( &battlePlanBonus );
-	CRCDEBUG_LOG(("Player %d[%ls] %s battle plans\n", m_playerIndex, m_playerDisplayName.str(), (battlePlanBonus)?"has":"doesn't have"));
+	CRCDEBUG_LOG(("Player %d[%ls] %s battle plans", m_playerIndex, m_playerDisplayName.str(), (battlePlanBonus)?"has":"doesn't have"));
 	if( m_battlePlanBonuses )
 	{
 		CRCDUMPBATTLEPLANBONUSES(m_battlePlanBonuses, this, NULL);
@@ -4069,7 +4091,7 @@ void Player::xfer( Xfer *xfer )
 			if( upgradeTemplate == NULL )
 			{
 
-				DEBUG_CRASH(( "Player::xfer - Unable to find upgrade '%s'\n", upgradeName.str() ));
+				DEBUG_CRASH(( "Player::xfer - Unable to find upgrade '%s'", upgradeName.str() ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -4141,7 +4163,7 @@ void Player::xfer( Xfer *xfer )
 			if( prototype == NULL )
 			{
 
-				DEBUG_CRASH(( "Player::xfer - Unable to find team prototype by id\n" ));
+				DEBUG_CRASH(( "Player::xfer - Unable to find team prototype by id" ));
 				throw SC_INVALID_DATA;
 
 			}  // end if
@@ -4213,7 +4235,7 @@ void Player::xfer( Xfer *xfer )
 	if( (aiPlayerPresent == TRUE && m_ai == NULL) || (aiPlayerPresent == FALSE && m_ai != NULL) )
 	{
 
-		DEBUG_CRASH(( "Player::xfer - m_ai present/missing mismatch\n" ));
+		DEBUG_CRASH(( "Player::xfer - m_ai present/missing mismatch" ));
 		throw SC_INVALID_DATA;;
 
 	}  // end if
@@ -4227,7 +4249,7 @@ void Player::xfer( Xfer *xfer )
 			(resourceGatheringManagerPresent == FALSE && m_resourceGatheringManager != NULL ) )
 	{
 
-		DEBUG_CRASH(( "Player::xfer - m_resourceGatheringManager present/missing mismatch\n" ));
+		DEBUG_CRASH(( "Player::xfer - m_resourceGatheringManager present/missing mismatch" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -4241,7 +4263,7 @@ void Player::xfer( Xfer *xfer )
 			(tunnelTrackerPresent == FALSE && m_tunnelSystem != NULL) )
 	{
 
-		DEBUG_CRASH(( "Player::xfer - m_tunnelSystem present/missing mismatch\n" ));
+		DEBUG_CRASH(( "Player::xfer - m_tunnelSystem present/missing mismatch" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -4393,7 +4415,7 @@ void Player::xfer( Xfer *xfer )
 		if( m_kindOfPercentProductionChangeList.size() != 0 )
 		{
 
-			DEBUG_CRASH(( "Player::xfer - m_kindOfPercentProductionChangeList should be empty but is not\n" ));
+			DEBUG_CRASH(( "Player::xfer - m_kindOfPercentProductionChangeList should be empty but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end if
@@ -4445,7 +4467,7 @@ void Player::xfer( Xfer *xfer )
 		{
 			if( m_specialPowerReadyTimerList.size() != 0 ) // sanity, list must be empty right now
 			{
-				DEBUG_CRASH(( "Player::xfer - m_specialPowerReadyTimerList should be empty but is not\n" ));
+				DEBUG_CRASH(( "Player::xfer - m_specialPowerReadyTimerList should be empty but is not" ));
 				throw SC_INVALID_DATA;
 			}  // end if
 
@@ -4475,7 +4497,7 @@ void Player::xfer( Xfer *xfer )
 	if( squadCount != NUM_HOTKEY_SQUADS )
 	{
 
-		DEBUG_CRASH(( "Player::xfer - size of m_squadCount array has changed\n" ));
+		DEBUG_CRASH(( "Player::xfer - size of m_squadCount array has changed" ));
 		throw SC_INVALID_DATA;
 
 	}  // end if
@@ -4485,7 +4507,7 @@ void Player::xfer( Xfer *xfer )
 		if( m_squads[ i ] == NULL )
 		{
 
-			DEBUG_CRASH(( "Player::xfer - NULL squad at index '%d'\n", i ));
+			DEBUG_CRASH(( "Player::xfer - NULL squad at index '%d'", i ));
 			throw SC_INVALID_DATA;
 
 		}  // end if

@@ -159,18 +159,18 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 		"DELETE_TCB"
 	};
 
-	DEBUG_LOG(("Finding local address used to talk to the chat server\n"));
-	DEBUG_LOG(("Current chat server name is %s\n", serverName.str()));
-	DEBUG_LOG(("Chat server port is %d\n", serverPort));
+	DEBUG_LOG(("Finding local address used to talk to the chat server"));
+	DEBUG_LOG(("Current chat server name is %s", serverName.str()));
+	DEBUG_LOG(("Chat server port is %d", serverPort));
 
 	/*
 	** Get the address of the chat server.
 	*/
-	DEBUG_LOG( ("About to call gethostbyname\n"));
+	DEBUG_LOG( ("About to call gethostbyname"));
 	struct hostent *host_info = gethostbyname(serverName.str());
 
 	if (!host_info) {
-		DEBUG_LOG( ("gethostbyname failed! Error code %d\n", WSAGetLastError()));
+		DEBUG_LOG( ("gethostbyname failed! Error code %d", WSAGetLastError()));
 		return(false);
 	}
 
@@ -179,24 +179,24 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	temp = ntohl(temp);
 	*((unsigned long*)(&serverAddress[0])) = temp;
 
-	DEBUG_LOG(("Host address is %d.%d.%d.%d\n", serverAddress[3], serverAddress[2], serverAddress[1], serverAddress[0]));
+	DEBUG_LOG(("Host address is %d.%d.%d.%d", serverAddress[3], serverAddress[2], serverAddress[1], serverAddress[0]));
 
 	/*
 	** Load the MIB-II SNMP DLL.
 	*/
-	DEBUG_LOG(("About to load INETMIB1.DLL\n"));
+	DEBUG_LOG(("About to load INETMIB1.DLL"));
 
 	HINSTANCE mib_ii_dll = LoadLibrary("inetmib1.dll");
 	if (mib_ii_dll == NULL) {
-		DEBUG_LOG(("Failed to load INETMIB1.DLL\n"));
+		DEBUG_LOG(("Failed to load INETMIB1.DLL"));
 		return(false);
 	}
 
-	DEBUG_LOG(("About to load SNMPAPI.DLL\n"));
+	DEBUG_LOG(("About to load SNMPAPI.DLL"));
 
 	HINSTANCE snmpapi_dll = LoadLibrary("snmpapi.dll");
 	if (snmpapi_dll == NULL) {
-		DEBUG_LOG(("Failed to load SNMPAPI.DLL\n"));
+		DEBUG_LOG(("Failed to load SNMPAPI.DLL"));
 		FreeLibrary(mib_ii_dll);
 		return(false);
 	}
@@ -209,7 +209,7 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	SnmpUtilMemAllocPtr = (void *(__stdcall *)(unsigned long)) GetProcAddress(snmpapi_dll, "SnmpUtilMemAlloc");
 	SnmpUtilMemFreePtr = (void (__stdcall *)(void *)) GetProcAddress(snmpapi_dll, "SnmpUtilMemFree");
 	if (SnmpExtensionInitPtr == NULL || SnmpExtensionQueryPtr == NULL || SnmpUtilMemAllocPtr == NULL || SnmpUtilMemFreePtr == NULL) {
-		DEBUG_LOG(("Failed to get proc addresses for linked functions\n"));
+		DEBUG_LOG(("Failed to get proc addresses for linked functions"));
 		FreeLibrary(snmpapi_dll);
 		FreeLibrary(mib_ii_dll);
 		return(false);
@@ -222,14 +222,14 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	/*
 	** OK, here we go. Try to initialise the .dll
 	*/
-	DEBUG_LOG(("About to init INETMIB1.DLL\n"));
+	DEBUG_LOG(("About to init INETMIB1.DLL"));
 	int ok = SnmpExtensionInitPtr(GetCurrentTime(), &trap_handle, &first_supported_region);
 
 	if (!ok) {
 		/*
 		** Aw crap.
 		*/
-		DEBUG_LOG(("Failed to init the .dll\n"));
+		DEBUG_LOG(("Failed to init the .dll"));
 		SnmpUtilMemFreePtr(bind_list_ptr);
 		SnmpUtilMemFreePtr(bind_ptr);
 		FreeLibrary(snmpapi_dll);
@@ -278,7 +278,7 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 
 		if (!SnmpExtensionQueryPtr(SNMP_PDU_GETNEXT, bind_list_ptr, &error_status, &error_index)) {
 		//if (!SnmpExtensionQueryPtr(ASN_RFC1157_GETNEXTREQUEST, bind_list_ptr, &error_status, &error_index)) {
-			DEBUG_LOG(("SnmpExtensionQuery returned false\n"));
+			DEBUG_LOG(("SnmpExtensionQuery returned false"));
 			SnmpUtilMemFreePtr(bind_list_ptr);
 			SnmpUtilMemFreePtr(bind_ptr);
 			FreeLibrary(snmpapi_dll);
@@ -382,7 +382,7 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 	SnmpUtilMemFreePtr(bind_ptr);
 	SnmpUtilMemFreePtr(mib_ii_name_ptr);
 
-	DEBUG_LOG(("Got %d connections in list, parsing...\n", connectionVector.size()));
+	DEBUG_LOG(("Got %d connections in list, parsing...", connectionVector.size()));
 
 	/*
 	** Right, we got the lot. Lets see if any of them have the same address as the chat
@@ -399,29 +399,29 @@ Bool GetLocalChatConnectionAddress(AsciiString serverName, UnsignedShort serverP
 		** See if this connection has the same address as our server.
 		*/
 		if (!found && memcmp(remoteAddress, serverAddress, 4) == 0) {
-			DEBUG_LOG(("Found connection with same remote address as server\n"));
+			DEBUG_LOG(("Found connection with same remote address as server"));
 
 			if (serverPort == 0 || serverPort == (unsigned int)connection.RemotePort) {
 
-				DEBUG_LOG(("Connection has same port\n"));
+				DEBUG_LOG(("Connection has same port"));
 				/*
 				** Make sure the connection is current.
 				*/
 				if (connection.State == ESTABLISHED) {
-					DEBUG_LOG(("Connection is ESTABLISHED\n"));
+					DEBUG_LOG(("Connection is ESTABLISHED"));
 					localIP = connection.LocalIP;
 					found = true;
 				} else {
-					DEBUG_LOG(("Connection is not ESTABLISHED - skipping\n"));
+					DEBUG_LOG(("Connection is not ESTABLISHED - skipping"));
 				}
 			} else {
-				DEBUG_LOG(("Connection has different port. Port is %d, looking for %d\n", connection.RemotePort, serverPort));
+				DEBUG_LOG(("Connection has different port. Port is %d, looking for %d", connection.RemotePort, serverPort));
 			}
 		}
 	}
 
 	if (found) {
-		DEBUG_LOG(("Using address 0x%8.8X to talk to chat server\n", localIP));
+		DEBUG_LOG(("Using address 0x%8.8X to talk to chat server", localIP));
 	}
 
 	FreeLibrary(snmpapi_dll);
@@ -564,7 +564,7 @@ void GameSpyLaunchGame( void )
 
 		// Set the random seed
 		InitGameLogicRandom( TheGameSpyGame->getSeed() );
-		DEBUG_LOG(("InitGameLogicRandom( %d )\n", TheGameSpyGame->getSeed()));
+		DEBUG_LOG(("InitGameLogicRandom( %d )", TheGameSpyGame->getSeed()));
 
 		if (TheNAT != NULL) {
 			delete TheNAT;
@@ -588,7 +588,7 @@ void GameSpyGameInfo::resetAccepted( void )
 	{
 		// ANCIENTMUNKEE peerStateChanged(TheGameSpyChat->getPeer());
 		m_hasBeenQueried = false;
-		DEBUG_LOG(("resetAccepted() called peerStateChange()\n"));
+		DEBUG_LOG(("resetAccepted() called peerStateChange()"));
 	}
 }
 
@@ -614,13 +614,13 @@ Int GameSpyGameInfo::getLocalSlotNum( void ) const
 
 void GameSpyGameInfo::gotGOACall( void )
 {
-	DEBUG_LOG(("gotGOACall()\n"));
+	DEBUG_LOG(("gotGOACall()"));
 	m_hasBeenQueried = true;
 }
 
 void GameSpyGameInfo::startGame(Int gameID)
 {
-	DEBUG_LOG(("GameSpyGameInfo::startGame - game id = %d\n", gameID));
+	DEBUG_LOG(("GameSpyGameInfo::startGame - game id = %d", gameID));
 	DEBUG_ASSERTCRASH(m_transport == NULL, ("m_transport is not NULL when it should be"));
 	DEBUG_ASSERTCRASH(TheNAT == NULL, ("TheNAT is not NULL when it should be"));
 

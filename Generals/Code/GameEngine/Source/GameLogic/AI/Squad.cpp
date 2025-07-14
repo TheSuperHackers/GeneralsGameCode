@@ -236,7 +236,7 @@ void Squad::xfer( Xfer *xfer )
 		if( m_objectsCached.size() != 0 )
 		{
 
-			DEBUG_CRASH(( "Squad::xfer - m_objectsCached should be emtpy, but is not\n" ));
+			DEBUG_CRASH(( "Squad::xfer - m_objectsCached should be emtpy, but is not" ));
 			throw SC_INVALID_DATA;
 
 		}  // end of

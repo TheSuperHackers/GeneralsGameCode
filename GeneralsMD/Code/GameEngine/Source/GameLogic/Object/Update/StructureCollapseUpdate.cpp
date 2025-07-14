@@ -303,7 +303,7 @@ static void buildNonDupRandomIndexList(Int range, Int count, Int idxList[])
 //-------------------------------------------------------------------------------------------------
 void StructureCollapseUpdate::doPhaseStuff(StructureCollapsePhaseType scphase, const Coord3D *target)
 {
-	DEBUG_LOG(("Firing phase %d on frame %d\n", scphase, TheGameLogic->getFrame()));
+	DEBUG_LOG(("Firing phase %d on frame %d", scphase, TheGameLogic->getFrame()));
 
 	const StructureCollapseUpdateModuleData* d = getStructureCollapseUpdateModuleData();
 	Int i, idx, count, listSize;

@@ -173,7 +173,7 @@ void InitRandom( UnsignedInt seed )
 	seedRandom(seed, theGameLogicSeed);
 	theGameLogicBaseSeed = seed;
 #ifdef DEBUG_RANDOM_LOGIC
-DEBUG_LOG(( "InitRandom %08lx\n",seed));
+DEBUG_LOG(( "InitRandom %08lx",seed));
 #endif
 }
 
@@ -188,7 +188,7 @@ void InitGameLogicRandom( UnsignedInt seed )
 	theGameLogicBaseSeed = seed;
 #endif
 #ifdef DEBUG_RANDOM_LOGIC
-DEBUG_LOG(( "InitRandom Logic %08lx\n",seed));
+DEBUG_LOG(( "InitRandom Logic %08lx",seed));
 #endif
 }
 
@@ -220,7 +220,7 @@ Int GetGameLogicRandomValue( int lo, int hi, const char *file, int line )
 
 /**/
 #ifdef DEBUG_RANDOM_LOGIC
-DEBUG_LOG(( "%d: GetGameLogicRandomValue = %d (%d - %d), %s line %d\n",
+DEBUG_LOG(( "%d: GetGameLogicRandomValue = %d (%d - %d), %s line %d",
 				 TheGameLogic->getFrame(), rval, lo, hi, file, line ));
 #endif
 /**/
@@ -243,7 +243,7 @@ Int GetGameClientRandomValue( int lo, int hi, const char *file, int line )
 
 /**/
 #ifdef DEBUG_RANDOM_CLIENT
-DEBUG_LOG(( "%d: GetGameClientRandomValue = %d (%d - %d), %s line %d\n",
+DEBUG_LOG(( "%d: GetGameClientRandomValue = %d (%d - %d), %s line %d",
 				TheGameLogic ? TheGameLogic->getFrame() : -1, rval, lo, hi, file, line ));
 #endif
 /**/
@@ -266,7 +266,7 @@ Int GetGameAudioRandomValue( int lo, int hi, const char *file, int line )
 
 /**/
 #ifdef DEBUG_RANDOM_AUDIO
-DEBUG_LOG(( "%d: GetGameAudioRandomValue = %d (%d - %d), %s line %d\n",
+DEBUG_LOG(( "%d: GetGameAudioRandomValue = %d (%d - %d), %s line %d",
 				TheGameLogic->getFrame(), rval, lo, hi, file, line ));
 #endif
 /**/
@@ -290,7 +290,7 @@ Real GetGameLogicRandomValueReal( Real lo, Real hi, const char *file, int line )
 	DEBUG_ASSERTCRASH( rval >= lo && rval <= hi, ("Bad random val"));
 /**/
 #ifdef DEBUG_RANDOM_LOGIC
-DEBUG_LOG(( "%d: GetGameLogicRandomValueReal = %f, %s line %d\n",
+DEBUG_LOG(( "%d: GetGameLogicRandomValueReal = %f, %s line %d",
 					TheGameLogic->getFrame(), rval, file, line ));
 #endif
 /**/
@@ -314,7 +314,7 @@ Real GetGameClientRandomValueReal( Real lo, Real hi, const char *file, int line 
 	DEBUG_ASSERTCRASH( rval >= lo && rval <= hi, ("Bad random val"));
 /**/
 #ifdef DEBUG_RANDOM_CLIENT
-DEBUG_LOG(( "%d: GetGameClientRandomValueReal = %f, %s line %d\n",
+DEBUG_LOG(( "%d: GetGameClientRandomValueReal = %f, %s line %d",
 					TheGameLogic->getFrame(), rval, file, line ));
 #endif
 /**/
@@ -338,7 +338,7 @@ Real GetGameAudioRandomValueReal( Real lo, Real hi, const char *file, int line )
 	DEBUG_ASSERTCRASH( rval >= lo && rval <= hi, ("Bad random val"));
 /**/
 #ifdef DEBUG_RANDOM_AUDIO
-DEBUG_LOG(( "%d: GetGameAudioRandomValueReal = %f, %s line %d\n",
+DEBUG_LOG(( "%d: GetGameAudioRandomValueReal = %f, %s line %d",
 					TheGameLogic->getFrame(), rval, file, line ));
 #endif
 /**/
@@ -374,7 +374,7 @@ Real GameClientRandomVariable::getValue( void ) const
 	switch( m_type )
 	{
 		case CONSTANT:
-			DEBUG_ASSERTLOG(m_low == m_high, ("m_low != m_high for a CONSTANT GameClientRandomVariable\n"));
+			DEBUG_ASSERTLOG(m_low == m_high, ("m_low != m_high for a CONSTANT GameClientRandomVariable"));
 			if (m_low == m_high) {
 				return m_low;
 			} // else return as though a UNIFORM.
@@ -385,7 +385,7 @@ Real GameClientRandomVariable::getValue( void ) const
 
 		default:
 			/// @todo fill in support for nonuniform GameClientRandomVariables.
-			DEBUG_CRASH(("unsupported DistributionType in GameClientRandomVariable::getValue\n"));
+			DEBUG_CRASH(("unsupported DistributionType in GameClientRandomVariable::getValue"));
 			return 0.0f;
 	}
 }
@@ -430,7 +430,7 @@ Real GameLogicRandomVariable::getValue( void ) const
 
 		default:
 			/// @todo fill in support for nonuniform GameLogicRandomVariables.
-			DEBUG_CRASH(("unsupported DistributionType in GameLogicRandomVariable::getValue\n"));
+			DEBUG_CRASH(("unsupported DistributionType in GameLogicRandomVariable::getValue"));
 			return 0.0f;
 	}
 }

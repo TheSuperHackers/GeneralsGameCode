@@ -1493,7 +1493,7 @@ void CountUpTransition::init( GameWindow *win )
 	AsciiString tempStr;
 	tempStr.translate(m_fullText);
 	m_intValue = atoi(tempStr.str());
-	DEBUG_LOG(("CountUpTransition::init %hs %s %d\n", m_fullText.str(), tempStr.str(), m_intValue));
+	DEBUG_LOG(("CountUpTransition::init %hs %s %d", m_fullText.str(), tempStr.str(), m_intValue));
 	if(m_intValue < COUNTUPTRANSITION_END)
 	{
 		m_countState = COUNT_ONES;

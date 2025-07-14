@@ -431,7 +431,7 @@ protected:
 			{
 				if (!m_ropes.empty())
 				{
-					DEBUG_CRASH(( "ChinookCombatDropState - ropes should be empty\n" ));
+					DEBUG_CRASH(( "ChinookCombatDropState - ropes should be empty" ));
 					throw SC_INVALID_DATA;
 				}
 				m_ropes.resize(numRopes);

@@ -75,7 +75,7 @@ void FontLibrary::unlinkFont( GameFont *font )
 	if( other == NULL )
 	{
 
-		DEBUG_CRASH(( "Font '%s' not found in library\n", font->nameString.str() ));
+		DEBUG_CRASH(( "Font '%s' not found in library", font->nameString.str() ));
 		return;
 
 	}  // end if
@@ -197,7 +197,7 @@ GameFont *FontLibrary::getFont( AsciiString name, Int pointSize, Bool bold )
 	if( font == NULL )
 	{
 
-		DEBUG_CRASH(( "getFont: Unable to allocate new font list element\n" ));
+		DEBUG_CRASH(( "getFont: Unable to allocate new font list element" ));
 		return NULL;
 
 	}  // end if
@@ -208,12 +208,12 @@ GameFont *FontLibrary::getFont( AsciiString name, Int pointSize, Bool bold )
 	font->bold = bold;
 	font->fontData = NULL;
 
-	//DEBUG_LOG(("Font: Loading font '%s' %d point\n", font->nameString.str(), font->pointSize));
+	//DEBUG_LOG(("Font: Loading font '%s' %d point", font->nameString.str(), font->pointSize));
 	// load the device specific data pointer
 	if( loadFontData( font ) == FALSE )
 	{
 
-		DEBUG_CRASH(( "getFont: Unable to load font data pointer '%s'\n", name.str() ));
+		DEBUG_CRASH(( "getFont: Unable to load font data pointer '%s'", name.str() ));
 		deleteInstance(font);
 		return NULL;
 

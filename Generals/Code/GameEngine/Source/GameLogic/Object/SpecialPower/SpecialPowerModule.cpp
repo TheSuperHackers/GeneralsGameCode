@@ -410,8 +410,8 @@ Bool SpecialPowerModule::initiateIntentToDoSpecialPower( const Object *targetObj
 	//appropriate update module!
 	if( !valid && getSpecialPowerModuleData()->m_updateModuleStartsAttack )
 	{
-		DEBUG_CRASH( ("Object does not contain a special power module to execute.  Did you forget to add it to the object INI?\n"));
-		//DEBUG_CRASH(( "Object does not contain special power module (%s) to execute.  Did you forget to add it to the object INI?\n",
+		DEBUG_CRASH( ("Object does not contain a special power module to execute.  Did you forget to add it to the object INI?"));
+		//DEBUG_CRASH(( "Object does not contain special power module (%s) to execute.  Did you forget to add it to the object INI?",
 		//							command->m_specialPower->getName().str() ));
 	}
 

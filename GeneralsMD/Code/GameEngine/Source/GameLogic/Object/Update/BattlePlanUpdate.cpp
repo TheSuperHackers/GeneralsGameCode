@@ -410,7 +410,7 @@ void BattlePlanUpdate::createVisionObject()
 
 	// get template of object to create
 	const ThingTemplate *tt = TheThingFactory->findTemplate( data->m_visionObjectName );
-	DEBUG_ASSERTCRASH( tt, ("BattlePlanUpdate::setStatus - Invalid vision object name '%s'\n",
+	DEBUG_ASSERTCRASH( tt, ("BattlePlanUpdate::setStatus - Invalid vision object name '%s'",
 													data->m_visionObjectName.str()) );
 
 	if (!tt)

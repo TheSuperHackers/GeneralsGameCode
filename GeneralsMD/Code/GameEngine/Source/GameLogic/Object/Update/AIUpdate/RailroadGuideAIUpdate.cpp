@@ -992,7 +992,7 @@ void RailroadBehavior::createCarriages( void )
 				else // or else let's use the defualt template list prvided in the INI
 				{
 					firstCarriage = TheThingFactory->newObject( temp, self->getTeam() ); 
-					DEBUG_LOG(("%s Added a carriage, %s \n", self->getTemplate()->getName().str(),firstCarriage->getTemplate()->getName().str()));
+					DEBUG_LOG(("%s Added a carriage, %s ", self->getTemplate()->getName().str(),firstCarriage->getTemplate()->getName().str()));
 				}
 				
 				if ( firstCarriage )
@@ -1233,7 +1233,7 @@ void alignToTerrain( Real angle, const Coord3D& pos, const Coord3D& normal, Matr
 		x.normalize();
 	}
 
-	DEBUG_ASSERTCRASH(fabs(x.x*z.x + x.y*z.y + x.z*z.z)<0.0001,("dot is not zero\n"));
+	DEBUG_ASSERTCRASH(fabs(x.x*z.x + x.y*z.y + x.z*z.z)<0.0001,("dot is not zero"));
 
 	// now computing the y vector is trivial.
 	y.crossProduct( &z, &x, &y );

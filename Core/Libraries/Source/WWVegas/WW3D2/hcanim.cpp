@@ -318,7 +318,7 @@ int HCompressedAnimClass::Load_W3D(ChunkLoadClass & cload)
 							// gonna trash memory.  Boy will we trash memory.
 							// GTH 09-25-2000: print a warning and survive this error
 							delete tc_chan;
-							WWDEBUG_SAY(("ERROR! animation %s indexes a bone not present in the model. Please re-export!\r\n",Name));
+							WWDEBUG_SAY(("ERROR! animation %s indexes a bone not present in the model. Please re-export!",Name));
 						}
 
 						break;
@@ -335,7 +335,7 @@ int HCompressedAnimClass::Load_W3D(ChunkLoadClass & cload)
 							// gonna trash memory.  Boy will we trash memory.
 							// GTH 09-25-2000: print a warning and survive this error
 							delete ad_chan;
-							WWDEBUG_SAY(("ERROR! animation %s indexes a bone not present in the model. Please re-export!\r\n",Name));
+							WWDEBUG_SAY(("ERROR! animation %s indexes a bone not present in the model. Please re-export!",Name));
 						}
 						break;
 				}
@@ -353,7 +353,7 @@ int HCompressedAnimClass::Load_W3D(ChunkLoadClass & cload)
 					// gonna trash memory.  Boy will we trash memory.
 					// GTH 09-25-2000: print a warning and survive this error
 					delete newbitchan;
-					WWDEBUG_SAY(("ERROR! animation %s indexes a bone not present in the model. Please re-export!\r\n",Name));
+					WWDEBUG_SAY(("ERROR! animation %s indexes a bone not present in the model. Please re-export!",Name));
 				}
 
 				break;

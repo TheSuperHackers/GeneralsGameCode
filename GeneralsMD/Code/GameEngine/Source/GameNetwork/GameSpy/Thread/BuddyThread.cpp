@@ -313,7 +313,7 @@ void BuddyThreadClass::Thread_Function()
 			case BuddyRequest::BUDDYREQUEST_MESSAGE:
 				{
 					std::string s = WideCharStringToMultiByte( incomingRequest.arg.message.text );
-					DEBUG_LOG(("Sending a buddy message to %d [%s]\n", incomingRequest.arg.message.recipient, s.c_str()));
+					DEBUG_LOG(("Sending a buddy message to %d [%s]", incomingRequest.arg.message.recipient, s.c_str()));
 					gpSendBuddyMessage( con, incomingRequest.arg.message.recipient, s.c_str() );
 				}
 				break;
@@ -362,7 +362,7 @@ void BuddyThreadClass::Thread_Function()
 					if (lastStatus == GP_PLAYING && lastStatusString == "Loading" && incomingRequest.arg.status.status == GP_ONLINE)
 						break;
 
-					DEBUG_LOG(("BUDDYREQUEST_SETSTATUS: status is now %d:%s/%s\n",
+					DEBUG_LOG(("BUDDYREQUEST_SETSTATUS: status is now %d:%s/%s",
 						incomingRequest.arg.status.status, incomingRequest.arg.status.statusString, incomingRequest.arg.status.locationString));
 					gpSetStatus( con, incomingRequest.arg.status.status, incomingRequest.arg.status.statusString,
 						incomingRequest.arg.status.locationString );
@@ -393,7 +393,7 @@ void BuddyThreadClass::Thread_Function()
 void BuddyThreadClass::errorCallback( GPConnection *con, GPErrorArg *arg )
 {
 	// log the error
-	DEBUG_LOG(("GPErrorCallback\n"));
+	DEBUG_LOG(("GPErrorCallback"));
 	m_lastErrorCode = arg->errorCode;
 
 	char errorCodeString[256];
@@ -467,19 +467,19 @@ void BuddyThreadClass::errorCallback( GPConnection *con, GPErrorArg *arg )
 
 	if(arg->fatal)
 	{
-		DEBUG_LOG(( "-----------\n"));
-		DEBUG_LOG(( "GP FATAL ERROR\n"));
-		DEBUG_LOG(( "-----------\n"));
+		DEBUG_LOG(( "-----------"));
+		DEBUG_LOG(( "GP FATAL ERROR"));
+		DEBUG_LOG(( "-----------"));
 	}
 	else
 	{
-		DEBUG_LOG(( "-----\n"));
-		DEBUG_LOG(( "GP ERROR\n"));
-		DEBUG_LOG(( "-----\n"));
+		DEBUG_LOG(( "-----"));
+		DEBUG_LOG(( "GP ERROR"));
+		DEBUG_LOG(( "-----"));
 	}
-	DEBUG_LOG(( "RESULT: %s (%d)\n", resultString, arg->result));
-	DEBUG_LOG(( "ERROR CODE: %s (0x%X)\n", errorCodeString, arg->errorCode));
-	DEBUG_LOG(( "ERROR STRING: %s\n", arg->errorString));
+	DEBUG_LOG(( "RESULT: %s (%d)", resultString, arg->result));
+	DEBUG_LOG(( "ERROR CODE: %s (0x%X)", errorCodeString, arg->errorCode));
+	DEBUG_LOG(( "ERROR STRING: %s", arg->errorString));
 
 	if (arg->fatal == GP_FATAL)
 	{
@@ -521,7 +521,7 @@ void BuddyThreadClass::messageCallback( GPConnection *con, GPRecvBuddyMessageArg
 	wcsncpy(messageResponse.arg.message.text, s.c_str(), MAX_BUDDY_CHAT_LEN);
 	messageResponse.arg.message.text[MAX_BUDDY_CHAT_LEN-1] = 0;
 	messageResponse.arg.message.date = arg->date;
-	DEBUG_LOG(("Got a buddy message from %d [%ls]\n", arg->profile, s.c_str()));
+	DEBUG_LOG(("Got a buddy message from %d [%ls]", arg->profile, s.c_str()));
 	TheGameSpyBuddyMessageQueue->addResponse( messageResponse );
 }
 
@@ -538,7 +538,7 @@ void BuddyThreadClass::connectCallback( GPConnection *con, GPConnectResponseArg 
 
 		if (!TheGameSpyPeerMessageQueue->isConnected() && !TheGameSpyPeerMessageQueue->isConnecting())
 		{
-			DEBUG_LOG(("Buddy connect: trying chat connect\n"));
+			DEBUG_LOG(("Buddy connect: trying chat connect"));
 			PeerRequest req;
 			req.peerRequestType = PeerRequest::PEERREQUEST_LOGIN;
 			req.nick = m_nick;
@@ -556,7 +556,7 @@ void BuddyThreadClass::connectCallback( GPConnection *con, GPConnectResponseArg 
 			{
 				m_isNewAccount = FALSE;
 				// they just hit 'create account' instead of 'log in'.  Fix them.
-				DEBUG_LOG(("User Error: Create Account instead of Login.  Fixing them...\n"));
+				DEBUG_LOG(("User Error: Create Account instead of Login.  Fixing them..."));
 				BuddyRequest req;
 				req.buddyRequestType = BuddyRequest::BUDDYREQUEST_LOGIN;
 				strcpy(req.arg.login.nick, m_nick.c_str());
@@ -566,7 +566,7 @@ void BuddyThreadClass::connectCallback( GPConnection *con, GPConnectResponseArg 
 				TheGameSpyBuddyMessageQueue->addRequest( req );
 				return;
 			}
-			DEBUG_LOG(("Buddy connect failed (%d/%d): posting a failed chat connect\n", arg->result, m_lastErrorCode));
+			DEBUG_LOG(("Buddy connect failed (%d/%d): posting a failed chat connect", arg->result, m_lastErrorCode));
 			PeerResponse resp;
 			resp.peerResponseType = PeerResponse::PEERRESPONSE_DISCONNECT;
 			resp.discon.reason = DISCONNECT_COULDNOTCONNECT;
@@ -666,7 +666,7 @@ void BuddyThreadClass::statusCallback( GPConnection *con, GPRecvBuddyStatusArg *
 	strcpy(response.arg.status.location, status.locationString);
 	strcpy(response.arg.status.statusString, status.statusString);
 	response.arg.status.status = status.status;
-	DEBUG_LOG(("Got buddy status for %d(%s) - status %d\n", status.profile, response.arg.status.nick, status.status));
+	DEBUG_LOG(("Got buddy status for %d(%s) - status %d", status.profile, response.arg.status.nick, status.status));
 
 	// relay to UI
 	TheGameSpyBuddyMessageQueue->addResponse( response );

@@ -135,6 +135,7 @@ static void WWDebug_Message_Callback(DebugType type, const char * message)
 {
 #ifdef RTS_DEBUG
 	::OutputDebugString(message);
+	::OutputDebugString("\n");
 #endif
 }
 
@@ -143,6 +144,7 @@ static void WWAssert_Callback(const char * message)
 {
 #ifdef RTS_DEBUG
 	::OutputDebugString(message);
+	::OutputDebugString("\n");
 	::DebugBreak();
 #endif
 }
@@ -633,7 +635,7 @@ void WbView3d::setupCamera()
 		Real zAbs = zOffset + zPos;
 		if (zAbs<0) zAbs = -zAbs;
 		if (zAbs<0.01) zAbs = 0.01f;
-		//DEBUG_LOG(("zOffset = %.2f, zAbs = %.2f, zPos = %.2f\n", zOffset, zAbs, zPos));	
+		//DEBUG_LOG(("zOffset = %.2f, zAbs = %.2f, zPos = %.2f", zOffset, zAbs, zPos));	
 		if (zOffset > 0) {
 			zOffset *= zAbs;
 		}	else if (zOffset < -0.3f) {
@@ -642,7 +644,7 @@ void WbView3d::setupCamera()
 		if (zOffset < -0.6f) {
 			zOffset = -0.3f + zOffset/2.0f;
 		}
-		//DEBUG_LOG(("zOffset = %.2f\n", zOffset));
+		//DEBUG_LOG(("zOffset = %.2f", zOffset));
 		zoom = zAbs;
 	}
 
@@ -712,7 +714,7 @@ void WbView3d::setupCamera()
 	m_cameraSource = sourcePos;
 	m_cameraTarget = targetPos;
 	/*
-	DEBUG_LOG(("Camera: pos=(%g,%g) height=%g pitch=%g FXPitch=%g yaw=%g groundLevel=%g\n",
+	DEBUG_LOG(("Camera: pos=(%g,%g) height=%g pitch=%g FXPitch=%g yaw=%g groundLevel=%g",
 		targetPos.X, targetPos.Y,
 		m_actualHeightAboveGround,
 		pitch,
@@ -2044,7 +2046,7 @@ void WbView3d::redraw(void)
 
 		curTicks = GetTickCount()-curTicks;
 //		if (curTicks>2) {
-//			WWDEBUG_SAY(("%d ms for updateCenter, %d FPS\n", curTicks, 1000/curTicks));
+//			WWDEBUG_SAY(("%d ms for updateCenter, %d FPS", curTicks, 1000/curTicks));
 //		}
 	}
 	if (m_drawObject) {
@@ -2780,7 +2782,7 @@ Real WbView3d::getCurrentZoom(void)
 		Real zAbs = zOffset + zPos;
 		if (zAbs<0) zAbs = -zAbs;
 		if (zAbs<0.01) zAbs = 0.01f;
-		//DEBUG_LOG(("zOffset = %.2f, zAbs = %.2f, zPos = %.2f\n", zOffset, zAbs, zPos));	
+		//DEBUG_LOG(("zOffset = %.2f, zAbs = %.2f, zPos = %.2f", zOffset, zAbs, zPos));	
 		if (zOffset > 0) {
 			zOffset *= zAbs;
 		}	else if (zOffset < -0.3f) {
@@ -2789,7 +2791,7 @@ Real WbView3d::getCurrentZoom(void)
 		if (zOffset < -0.6f) {
 			zOffset = -0.3f + zOffset/2.0f;
 		}
-		//DEBUG_LOG(("zOffset = %.2f\n", zOffset));
+		//DEBUG_LOG(("zOffset = %.2f", zOffset));
 		zoom = zAbs;
 	}
 	return zoom;

@@ -229,6 +229,16 @@ public:
 	void trim( void );
 
 	/**
+	  Remove trailing whitespace from the string.
+	*/
+	void trimEnd(void);
+
+	/**
+	  Remove all consecutive occurances of c from the end of the string.
+	*/
+	void trimEnd(const char c);
+
+	/**
 	  Make the string lowercase
 	*/
 	void toLower( void );
@@ -239,6 +249,18 @@ public:
 		text editing, thus its presence here.)
 	*/
 	void removeLastChar();
+
+	/**
+		Remove the final charCount characters in the string. If the string is empty,
+		do nothing.
+	*/
+	void truncateBy(const Int charCount);
+
+	/**
+		Truncate the string to a length of maxLength characters, not including null termination,
+		by removing from the end. If the string is empty or shorter than maxLength, do nothing.
+	*/
+	void truncateTo(const Int maxLength);
 
 	/**
 		Analogous to sprintf() -- this formats a string according to the

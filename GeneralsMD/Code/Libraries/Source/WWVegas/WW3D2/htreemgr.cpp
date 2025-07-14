@@ -156,13 +156,13 @@ void HTreeManagerClass::Free_All_Trees_With_Exclusion_List(const W3DExclusionLis
 			
 			if (exclusion_list.Is_Excluded(TreePtr[treeidx])) {
 
-				//WWDEBUG_SAY(("excluding tree %s\n",TreePtr[treeidx]->Get_Name()));
+				//WWDEBUG_SAY(("excluding tree %s",TreePtr[treeidx]->Get_Name()));
 				TreePtr[new_tail] = TreePtr[treeidx];
 				new_tail++;
 
 			} else {
 				
-				//WWDEBUG_SAY(("deleting tree %s\n",TreePtr[treeidx]->Get_Name()));
+				//WWDEBUG_SAY(("deleting tree %s",TreePtr[treeidx]->Get_Name()));
 				delete TreePtr[treeidx];
 				TreePtr[treeidx] = NULL;
 			}

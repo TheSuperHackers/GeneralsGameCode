@@ -53,7 +53,7 @@ XferLoad::~XferLoad( void )
 	if( m_fileFP != NULL )
 	{
 
-		DEBUG_CRASH(( "Warning: Xfer file '%s' was left open\n", m_identifier.str() ));
+		DEBUG_CRASH(( "Warning: Xfer file '%s' was left open", m_identifier.str() ));
 		close();
 
 	}  // end if
@@ -70,7 +70,7 @@ void XferLoad::open( AsciiString identifier )
 	if( m_fileFP != NULL )
 	{
 
-		DEBUG_CRASH(( "Cannot open file '%s' cause we've already got '%s' open\n",
+		DEBUG_CRASH(( "Cannot open file '%s' cause we've already got '%s' open",
 									identifier.str(), m_identifier.str() ));
 		throw XFER_FILE_ALREADY_OPEN;
 
@@ -84,7 +84,7 @@ void XferLoad::open( AsciiString identifier )
 	if( m_fileFP == NULL )
 	{
 		
-		DEBUG_CRASH(( "File '%s' not found\n", identifier.str() ));
+		DEBUG_CRASH(( "File '%s' not found", identifier.str() ));
 		throw XFER_FILE_NOT_FOUND;
 
 	}  // end if
@@ -101,7 +101,7 @@ void XferLoad::close( void )
 	if( m_fileFP == NULL )
 	{
 
-		DEBUG_CRASH(( "Xfer close called, but no file was open\n" ));
+		DEBUG_CRASH(( "Xfer close called, but no file was open" ));
 		throw XFER_FILE_NOT_OPEN;
 
 	}  // end if
@@ -122,7 +122,7 @@ Int XferLoad::beginBlock( void )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_fileFP != NULL, ("Xfer begin block - file pointer for '%s' is NULL\n",
+	DEBUG_ASSERTCRASH( m_fileFP != NULL, ("Xfer begin block - file pointer for '%s' is NULL",
 										 m_identifier.str()) );
 
 	// read block size
@@ -130,7 +130,7 @@ Int XferLoad::beginBlock( void )
 	if( fread( &blockSize, sizeof( XferBlockSize ), 1, m_fileFP ) != 1 )
 	{
 		
-		DEBUG_CRASH(( "Xfer - Error reading block size for '%s'\n", m_identifier.str() ));
+		DEBUG_CRASH(( "Xfer - Error reading block size for '%s'", m_identifier.str() ));
 		return 0;
 
 	}  // end if
@@ -155,11 +155,11 @@ void XferLoad::skip( Int dataSize )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_fileFP != NULL, ("XferLoad::skip - file pointer for '%s' is NULL\n",
+	DEBUG_ASSERTCRASH( m_fileFP != NULL, ("XferLoad::skip - file pointer for '%s' is NULL",
 										 m_identifier.str()) );
 
 	// sanity
-	DEBUG_ASSERTCRASH( dataSize >=0, ("XferLoad::skip - dataSize '%d' must be greater than 0\n",
+	DEBUG_ASSERTCRASH( dataSize >=0, ("XferLoad::skip - dataSize '%d' must be greater than 0",
 										 dataSize) );
 
 	// skip datasize in the file from the current position
@@ -177,7 +177,7 @@ void XferLoad::xferSnapshot( Snapshot *snapshot )
 	if( snapshot == NULL )
 	{
 
-		DEBUG_CRASH(( "XferLoad::xferSnapshot - Invalid parameters\n" ));
+		DEBUG_CRASH(( "XferLoad::xferSnapshot - Invalid parameters" ));
 		throw XFER_INVALID_PARAMETERS;
 
 	}  // end if
@@ -244,14 +244,14 @@ void XferLoad::xferImplementation( void *data, Int dataSize )
 {
 
 	// sanity
-	DEBUG_ASSERTCRASH( m_fileFP != NULL, ("XferLoad - file pointer for '%s' is NULL\n",
+	DEBUG_ASSERTCRASH( m_fileFP != NULL, ("XferLoad - file pointer for '%s' is NULL",
 										 m_identifier.str()) );
 
 	// read data from file
 	if( fread( data, dataSize, 1, m_fileFP ) != 1 )
 	{
 
-		DEBUG_CRASH(( "XferLoad - Error reading from file '%s'\n", m_identifier.str() ));
+		DEBUG_CRASH(( "XferLoad - Error reading from file '%s'", m_identifier.str() ));
 		throw XFER_READ_ERROR;
 
 	}  // end if

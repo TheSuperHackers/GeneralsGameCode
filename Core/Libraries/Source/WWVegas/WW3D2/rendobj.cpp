@@ -1234,7 +1234,7 @@ PersistClass *	RenderObjPersistFactoryClass::Load(ChunkLoadClass & cload) const
 				break;
 
 			default:
-				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d\r\n",__FILE__,__LINE__));
+				WWDEBUG_SAY(("Unhandled Chunk: 0x%X File: %s Line: %d",__FILE__,__LINE__));
 				break;
 		};
 		cload.Close_Chunk();
@@ -1244,8 +1244,8 @@ PersistClass *	RenderObjPersistFactoryClass::Load(ChunkLoadClass & cload) const
 	if (strlen(name) == 0) {
 		static int count = 0;
 		if ( ++count < 10 ) {
-			WWDEBUG_SAY(("RenderObjPersistFactory attempted to load an un-named render object!\r\n"));
-			WWDEBUG_SAY(("Replacing it with a NULL render object!\r\n"));
+			WWDEBUG_SAY(("RenderObjPersistFactory attempted to load an un-named render object!"));
+			WWDEBUG_SAY(("Replacing it with a NULL render object!"));
 		}
 		strcpy(name,"NULL");
 	}
@@ -1255,9 +1255,9 @@ PersistClass *	RenderObjPersistFactoryClass::Load(ChunkLoadClass & cload) const
 	if (new_obj == NULL) {
 		static int count = 0;
 		if ( ++count < 10 ) {
-			WWDEBUG_SAY(("RenderObjPersistFactory failed to create object: %s!!\r\n",name));
-			WWDEBUG_SAY(("Either the asset for this object is gone or you tried to save a procedural object.\r\n"));
-			WWDEBUG_SAY(("Replacing it with a NULL render object!\r\n"));
+			WWDEBUG_SAY(("RenderObjPersistFactory failed to create object: %s!!",name));
+			WWDEBUG_SAY(("Either the asset for this object is gone or you tried to save a procedural object."));
+			WWDEBUG_SAY(("Replacing it with a NULL render object!"));
 		}
 		strcpy(name,"NULL");
 		new_obj = WW3DAssetManager::Get_Instance()->Create_Render_Obj(name);

@@ -95,10 +95,7 @@ static void ConvertShortMapPathToLongMapPath(AsciiString &mapName)
 		DEBUG_CRASH(("Invalid map name %s", mapName.str()));
 	}
 	// remove the .map from the end.
-	token.removeLastChar();
-	token.removeLastChar();
-	token.removeLastChar();
-	token.removeLastChar();
+	token.truncateBy(4);
 
 	actualpath.concat(token);
 	actualpath.concat('\\');
@@ -112,7 +109,7 @@ static void ConvertShortMapPathToLongMapPath(AsciiString &mapName)
 //=============================================================================
 Int parseNoLogOrCrash(char *args[], int)
 {
-	DEBUG_CRASH(("-NoLogOrCrash not supported in this build\n"));
+	DEBUG_CRASH(("-NoLogOrCrash not supported in this build"));
 	return 1;
 }
 
@@ -718,7 +715,7 @@ Int parseNoFX(char *args[], int)
 	return 1;
 }
 
-#if defined(RTS_DEBUG)
+#if defined(RTS_DEBUG) && ENABLE_CONFIGURABLE_SHROUD
 Int parseNoShroud(char *args[], int)
 {
 	TheWritableGlobalData->m_shroudOn = FALSE;
@@ -1065,11 +1062,11 @@ Int parseMod(char *args[], Int num)
 		{
 			modPath.format("%s%s", TheGlobalData->getPath_UserData().str(), args[1]);
 		}
-		DEBUG_LOG(("Looking for mod '%s'\n", modPath.str()));
+		DEBUG_LOG(("Looking for mod '%s'", modPath.str()));
 
 		if (!TheLocalFileSystem->doesFileExist(modPath.str()))
 		{
-			DEBUG_LOG(("Mod does not exist.\n"));
+			DEBUG_LOG(("Mod does not exist."));
 			return 2; // no such file/dir.
 		}
 
@@ -1077,7 +1074,7 @@ Int parseMod(char *args[], Int num)
 		struct _stat statBuf;
 		if (_stat(modPath.str(), &statBuf) != 0)
 		{
-			DEBUG_LOG(("Could not _stat() mod.\n"));
+			DEBUG_LOG(("Could not _stat() mod."));
 			return 2; // could not stat the file/dir.
 		}
 
@@ -1085,12 +1082,12 @@ Int parseMod(char *args[], Int num)
 		{
 			if (!modPath.endsWith("\\") && !modPath.endsWith("/"))
 				modPath.concat('\\');
-			DEBUG_LOG(("Mod dir is '%s'.\n", modPath.str()));
+			DEBUG_LOG(("Mod dir is '%s'.", modPath.str()));
 			TheWritableGlobalData->m_modDir = modPath;
 		}
 		else
 		{
-			DEBUG_LOG(("Mod file is '%s'.\n", modPath.str()));
+			DEBUG_LOG(("Mod file is '%s'.", modPath.str()));
 			TheWritableGlobalData->m_modBIG = modPath;
 		}
 
@@ -1277,7 +1274,9 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-vTune", parseVTune },
 	{ "-selectTheUnselectable", parseSelectAll },
 	{ "-RunAhead", parseRunAhead },
+#if ENABLE_CONFIGURABLE_SHROUD
 	{ "-noshroud", parseNoShroud },
+#endif
 	{ "-forceBenchmark", parseForceBenchmark },
 	{ "-buildmapcache", parseBuildMapCache },
 	{ "-noshadowvolumes", parseNoShadows },
@@ -1398,7 +1397,7 @@ static void parseCommandLine(const CommandLineParam* params, int numParams)
 	{
 		DEBUG_LOG((" %s", argv[arg]));
 	}
-	DEBUG_LOG(("\n"));
+	DEBUG_LOG_RAW(("\n"));
 	DebugSetFlags(debugFlags); // turn timestamps back on iff they were on before
 	arg = 1;
 #endif // DEBUG_LOGGING

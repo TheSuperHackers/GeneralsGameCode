@@ -103,10 +103,10 @@ void POWTruckBehavior::onCollide( Object *other, const Coord3D *loc, const Coord
 
 	// get our AI info
 	AIUpdateInterface *ourAI = us->getAIUpdateInterface();
-	DEBUG_ASSERTCRASH( ourAI, ("POWTruckBehavior::onCollide - '%s' has no AI\n",
+	DEBUG_ASSERTCRASH( ourAI, ("POWTruckBehavior::onCollide - '%s' has no AI",
 														us->getTemplate()->getName().str()) );
 	POWTruckAIUpdateInterface *powTruckAI = ourAI->getPOWTruckAIUpdateInterface();
-	DEBUG_ASSERTCRASH( powTruckAI, ("POWTruckBehavior::onCollide - '%s' has no POWTruckAI\n",
+	DEBUG_ASSERTCRASH( powTruckAI, ("POWTruckBehavior::onCollide - '%s' has no POWTruckAI",
 																 us->getTemplate()->getName().str()) );
 
 	// pick up the prisoner
