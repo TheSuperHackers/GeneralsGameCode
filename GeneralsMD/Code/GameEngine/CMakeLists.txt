@@ -1,8 +1,8 @@
 set(GAMEENGINE_SRC
     Include/Common/AcademyStats.h
     Include/Common/ActionManager.h
-    Include/Common/ArchiveFile.h
-    Include/Common/ArchiveFileSystem.h
+#    Include/Common/ArchiveFile.h
+#    Include/Common/ArchiveFileSystem.h
     Include/Common/AsciiString.h
     Include/Common/AudioAffect.h
     Include/Common/AudioEventInfo.h
@@ -37,8 +37,8 @@ set(GAMEENGINE_SRC
     Include/Common/encrypt.h
     Include/Common/Energy.h
     Include/Common/Errors.h
-    Include/Common/file.h
-    Include/Common/FileSystem.h
+#    Include/Common/file.h
+#    Include/Common/FileSystem.h
     Include/Common/FunctionLexicon.h
     Include/Common/GameAudio.h
     Include/Common/GameCommon.h
@@ -63,8 +63,8 @@ set(GAMEENGINE_SRC
     Include/Common/Language.h
     Include/Common/LatchRestore.h
     Include/Common/List.h
-    Include/Common/LocalFile.h
-    Include/Common/LocalFileSystem.h
+#    Include/Common/LocalFile.h
+#    Include/Common/LocalFileSystem.h
     Include/Common/MapObject.h
     Include/Common/MapReaderWriterInfo.h
     Include/Common/MessageStream.h
@@ -91,7 +91,7 @@ set(GAMEENGINE_SRC
     Include/Common/QuickmatchPreferences.h
     Include/Common/QuotedPrintable.h
     Include/Common/Radar.h
-    Include/Common/RAMFile.h
+#    Include/Common/RAMFile.h
     Include/Common/RandomValue.h
     Include/Common/Recorder.h
 #    Include/Common/ReplaySimulation.h
@@ -112,7 +112,7 @@ set(GAMEENGINE_SRC
     Include/Common/StateMachine.h
     Include/Common/StatsCollector.h
     Include/Common/STLTypedefs.h
-    Include/Common/StreamingArchiveFile.h
+#    Include/Common/StreamingArchiveFile.h
     Include/Common/SubsystemInterface.h
     Include/Common/SystemInfo.h
     Include/Common/Team.h
@@ -629,8 +629,8 @@ set(GAMEENGINE_SRC
     Source/Common/SkirmishBattleHonors.cpp
     Source/Common/StateMachine.cpp
     Source/Common/StatsCollector.cpp
-    Source/Common/System/ArchiveFile.cpp
-    Source/Common/System/ArchiveFileSystem.cpp
+#    Source/Common/System/ArchiveFile.cpp
+#    Source/Common/System/ArchiveFileSystem.cpp
     Source/Common/System/AsciiString.cpp
     Source/Common/System/BuildAssistant.cpp
     Source/Common/System/CDManager.cpp
@@ -640,8 +640,8 @@ set(GAMEENGINE_SRC
     Source/Common/System/Directory.cpp
     Source/Common/System/DisabledTypes.cpp
     Source/Common/System/encrypt.cpp
-    Source/Common/System/File.cpp
-    Source/Common/System/FileSystem.cpp
+#    Source/Common/System/File.cpp
+#    Source/Common/System/FileSystem.cpp
     Source/Common/System/FunctionLexicon.cpp
     Source/Common/System/GameCommon.cpp
     #Source/Common/System/GameMemory.cpp
@@ -649,19 +649,19 @@ set(GAMEENGINE_SRC
     Source/Common/System/Geometry.cpp
     Source/Common/System/KindOf.cpp
     Source/Common/System/List.cpp
-    Source/Common/System/LocalFile.cpp
-    Source/Common/System/LocalFileSystem.cpp
+#    Source/Common/System/LocalFile.cpp
+#    Source/Common/System/LocalFileSystem.cpp
     #Source/Common/System/MemoryInit.cpp
     Source/Common/System/ObjectStatusTypes.cpp
     Source/Common/System/QuotedPrintable.cpp
     Source/Common/System/Radar.cpp
-    Source/Common/System/RAMFile.cpp
+#    Source/Common/System/RAMFile.cpp
     Source/Common/System/registry.cpp
     Source/Common/System/SaveGame/GameState.cpp
     Source/Common/System/SaveGame/GameStateMap.cpp
     Source/Common/System/Snapshot.cpp
     Source/Common/System/StackDump.cpp
-    Source/Common/System/StreamingArchiveFile.cpp
+#    Source/Common/System/StreamingArchiveFile.cpp
     Source/Common/System/SubsystemInterface.cpp
     Source/Common/System/Trig.cpp
     Source/Common/System/UnicodeString.cpp
