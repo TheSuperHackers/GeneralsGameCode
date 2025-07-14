@@ -1340,6 +1340,34 @@ static void cancelAdvancedOptions()
 	WinAdvancedDisplay->winHide(TRUE);
 }
 
+// TheSuperHackers @tweak Now prints additional version information in the version label.
+static void initLabelVersion()
+{
+	NameKeyType versionID = TheNameKeyGenerator->nameToKey( AsciiString("OptionsMenu.wnd:LabelVersion") );
+	GameWindow *labelVersion = TheWindowManager->winGetWindowFromId( NULL, versionID );
+
+	if (labelVersion)
+	{
+		if (TheVersion && TheGlobalData)
+		{
+			UnicodeString version;
+			version.format(
+				L"%s %s exe:%08X ini:%08X %s",
+				TheVersion->getUnicodeGameAndGitVersion().str(),
+				TheVersion->getUnicodeGitCommitTime().str(),
+				TheGlobalData->m_exeCRC,
+				TheGlobalData->m_iniCRC,
+				TheVersion->getUnicodeBuildUserOrGitCommitAuthorName().str()
+			);
+			GadgetStaticTextSetText( labelVersion, version );
+		}
+		else
+		{
+			labelVersion->winHide( TRUE );
+		}
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Initialize the options menu */
 //-------------------------------------------------------------------------------------------------
@@ -1464,29 +1492,7 @@ void OptionsMenuInit( WindowLayout *layout, void *userData )
     NUM_ALIASING_MODES
   };
 
-	NameKeyType versionID = TheNameKeyGenerator->nameToKey( AsciiString("OptionsMenu.wnd:LabelVersion") );
-	GameWindow *labelVersion = TheWindowManager->winGetWindowFromId( NULL, versionID );
-	UnicodeString versionString;
-	versionString.format(TheGameText->fetch("Version:Format2").str(), (GetRegistryVersion() >> 16), (GetRegistryVersion() & 0xffff));
-	
-	if (TheVersion->showFullVersion())
-	{
-		if (TheVersion)
-		{
-			UnicodeString version;
-			version.format(L"(%s) %s -- %s", versionString.str(), TheVersion->getFullUnicodeVersion().str(), TheVersion->getUnicodeBuildTime().str());
-			GadgetStaticTextSetText( labelVersion, version );
-		}
-		else
-		{
-			labelVersion->winHide( TRUE );
-		}
-	}
-	else
-	{
-		GadgetStaticTextSetText( labelVersion, versionString );
-	}
-
+	initLabelVersion();
 
 	// Choose an IP address, then initialize the IP combo box
 	UnsignedInt selectedIP = pref->getLANIPAddress();

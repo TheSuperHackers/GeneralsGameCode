@@ -407,6 +407,36 @@ GameWindow *win = NULL;
 		win->winHide(TRUE);
 
 }
+
+// TheSuperHackers @tweak Now prints version information in an optional version label.
+// Originally this label does not exist in the Main Menu. It can be copied from the Options Menu.
+static void initLabelVersion()
+{
+	NameKeyType versionID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:LabelVersion") );
+	GameWindow *labelVersion = TheWindowManager->winGetWindowFromId( NULL, versionID );
+
+	if (labelVersion)
+	{
+		if (TheVersion && TheGlobalData)
+		{
+			UnicodeString version;
+			version.format(
+				L"%s %s exe:%08X ini:%08X %s",
+				TheVersion->getUnicodeGameAndGitVersion().str(),
+				TheVersion->getUnicodeGitCommitTime().str(),
+				TheGlobalData->m_exeCRC,
+				TheGlobalData->m_iniCRC,
+				TheVersion->getUnicodeBuildUserOrGitCommitAuthorName().str()
+			);
+			GadgetStaticTextSetText( labelVersion, version );
+		}
+		else
+		{
+			labelVersion->winHide( TRUE );
+		}
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 /** Initialize the main menu */
 //-------------------------------------------------------------------------------------------------
@@ -436,7 +466,6 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	exitID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonExit") );
 	motdID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonMOTD") );
 	worldBuilderID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonWorldBuilder") );
-//	NameKeyType versionID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:LabelVersion") );
 	getUpdateID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonGetUpdate") );
 	buttonTRAININGID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonTRAINING") );
 	buttonUSAID = TheNameKeyGenerator->nameToKey( AsciiString("MainMenu.wnd:ButtonUSA") );
@@ -485,9 +514,6 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 	buttonHard = TheWindowManager->winGetWindowFromId( parentMainMenu, buttonHardID );
 	buttonDiffBack = TheWindowManager->winGetWindowFromId( parentMainMenu, buttonDiffBackID );
 
-
-//	GameWindow *labelVersion = TheWindowManager->winGetWindowFromId( parentMainMenu, versionID );
-	
 	getUpdate = TheWindowManager->winGetWindowFromId( parentMainMenu, getUpdateID );
 	buttonTRAINING = TheWindowManager->winGetWindowFromId( parentMainMenu, buttonTRAININGID );
 	buttonUSA = TheWindowManager->winGetWindowFromId( parentMainMenu, buttonUSAID );
@@ -536,21 +562,9 @@ void MainMenuInit( WindowLayout *layout, void *userData )
 																									 25, 54, 
 																									 180, 26, 
 																									 &instData, NULL, TRUE );
-	
-//	if (TheVersion)
-//	{
-//		UnicodeString version;
-//		version.format(L"%s\n%s", TheVersion->getUnicodeVersion().str(), TheVersion->getUnicodeBuildTime().str());
-//		GadgetStaticTextSetText( labelVersion, version );
-//	}
-//	else
-//	{
-//		labelVersion->winHide( TRUE );
-//	}
-//#else
-	
-//	GadgetStaticTextSetText( labelVersion, TheVersion->getUnicodeVersion() );
 #endif
+
+	initLabelVersion();
 
 	//TheShell->registerWithAnimateManager(buttonCampaign, WIN_ANIMATION_SLIDE_LEFT, TRUE, 800);
 	//TheShell->registerWithAnimateManager(buttonSkirmish, WIN_ANIMATION_SLIDE_LEFT, TRUE, 600);
