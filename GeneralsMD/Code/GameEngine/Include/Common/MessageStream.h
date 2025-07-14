@@ -632,7 +632,7 @@ public:
 	UnsignedByte getArgumentCount( void ) const { return m_argCount; }	///< Return the number of arguments for this msg
 
 	AsciiString getCommandAsAsciiString( void ); ///< returns a string representation of the command type.
-	static AsciiString getCommandTypeAsAsciiString(GameMessage::Type t);
+	static const char* getCommandTypeAsAsciiString(GameMessage::Type t);
 
 	Int getPlayerIndex( void ) const { return m_playerIndex; }		///< Return the originating player
 

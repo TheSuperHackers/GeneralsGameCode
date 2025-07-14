@@ -228,7 +228,7 @@ AsciiString GameMessage::getCommandAsAsciiString( void )
 	return getCommandTypeAsAsciiString(m_type);
 }
 
-AsciiString GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
+const char* GameMessage::getCommandTypeAsAsciiString(GameMessage::Type t)
 {
 #define CASE_LABEL(x) case x: return #x;
 

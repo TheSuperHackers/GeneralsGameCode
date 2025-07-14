@@ -220,7 +220,7 @@ AsciiString NetGameCommandMsg::getContentsAsAsciiString(void)
 {
 	AsciiString ret;
 	//AsciiString tmp;
-	ret.format("Type:%s", GameMessage::getCommandTypeAsAsciiString((GameMessage::Type)m_type).str());
+	ret.format("Type:%s", GameMessage::getCommandTypeAsAsciiString((GameMessage::Type)m_type));
 
 	return ret;
 }
