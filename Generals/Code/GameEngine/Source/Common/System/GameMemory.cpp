@@ -3502,7 +3502,7 @@ static void preMainInitMemoryManager()
 		thePreMainInitFlag = true;
 
 		DEBUG_INIT(DEBUG_FLAGS_DEFAULT);
-		DEBUG_LOG(("*** Intialized the Memory Manager prior to main!"));
+		DEBUG_LOG(("*** Initialized the Memory Manager prior to main!"));
 	}
 }
 
