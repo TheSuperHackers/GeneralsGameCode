@@ -779,6 +779,9 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		TheMemoryPoolCriticalSection = &critSec4;
 		TheDebugLogCriticalSection = &critSec5;
 
+		// initialize the memory manager early
+		initMemoryManager();
+
 		/// @todo remove this force set of working directory later
 		Char buffer[ _MAX_PATH ];
 		GetModuleFileName( NULL, buffer, sizeof( buffer ) );
@@ -832,9 +835,6 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// in release, the file only ever lives in the root dir
 		gLoadScreenBitmap = (HBITMAP)LoadImage(hInstance, "Install_Final.bmp", IMAGE_BITMAP, 0, 0, LR_SHARED|LR_LOADFROMFILE);
 #endif
-
-		// initialize the memory manager early
-		initMemoryManager();
 
 		CommandLine::parseCommandLineForStartup();
 
