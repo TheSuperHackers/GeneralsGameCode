@@ -129,10 +129,12 @@ Bool VeterancyCrateCollide::executeCrateBehavior( Object *other )
  	AIUpdateInterface *ai = (AIUpdateInterface*)getObject()->getAIUpdateInterface();
 	const VeterancyCrateCollideModuleData *md = getVeterancyCrateCollideModuleData();
 
- 	if( !ai || ai->getGoalObject() != other )
- 	{
- 		return false;
- 	}
+	if (md->m_isPilot) {
+		if (!ai || ai->getGoalObject() != other)
+		{
+			return false;
+		}
+	}
 
 	Int levelsToGain = getLevelsToGain();
 	Real range = md->m_rangeOfEffect;
@@ -149,7 +151,8 @@ Bool VeterancyCrateCollide::executeCrateBehavior( Object *other )
 		PartitionFilterSamePlayer othersPlayerFilter( other->getControllingPlayer() );
 		PartitionFilterSameMapStatus filterMapStatus(other);
 		PartitionFilter *filters[] = { &othersPlayerFilter, &filterMapStatus, NULL };
-		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( other, range, FROM_CENTER_2D, filters, ITER_FASTEST );
+		// ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( other, range, FROM_CENTER_2D, filters, ITER_FASTEST );
+		ObjectIterator *iter = ThePartitionManager->iterateObjectsInRange( other->getPosition(), range, FROM_CENTER_2D, filters, ITER_FASTEST);
 		MemoryPoolObjectHolder hold(iter);
 
 		for( Object *potentialObject = iter->first(); potentialObject; potentialObject = iter->next() )

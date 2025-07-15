@@ -98,6 +98,21 @@ ArmorUpgrade::~ArmorUpgrade( void )
 {
 }
 
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+Bool ArmorUpgrade::attemptUpgrade(UpgradeMaskType keyMask)
+{
+	if (isTriggeredBy("Upgrade_AmericaChemicalSuits"))
+	{
+		Drawable* draw = getObject()->getDrawable();
+		if (!draw) {
+			return false;
+		}
+	}
+
+	return UpgradeMux::attemptUpgrade(keyMask);
+}
+
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 void ArmorUpgrade::upgradeImplementation( )

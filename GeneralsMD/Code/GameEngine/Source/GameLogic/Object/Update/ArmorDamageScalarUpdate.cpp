@@ -191,7 +191,7 @@ void ArmorDamageScalarUpdate::applyEffect(void) {
 	
 	for( Object *currentObj = iter->first(); currentObj != NULL; currentObj = iter->next() )
 	{
-		if (data->m_isAffectAirborne || (!currentObj->isKindOf(KINDOF_AIRCRAFT) && !currentObj->isAirborneTarget())) {
+		if (data->m_isAffectAirborne || !currentObj->isAirborneTarget()) {
 
 			if (currentObj->isAnyKindOf(data->m_allowAffectKindOf) && !currentObj->isAnyKindOf(data->m_forbiddenAffectKindOf))
 			{
