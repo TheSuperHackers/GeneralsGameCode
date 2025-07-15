@@ -2834,7 +2834,8 @@ Bool Weapon::privateFireWeapon(
 			Coord2D scatterOffset = m_template->getScatterTargetsVector().at( targetIndex );
 
 			// Scale scatter target based on range
-			if (Real minScale = m_template->getScatterTargetMinScalar() > 0) {
+			Real minScale = m_template->getScatterTargetMinScalar();
+			if (minScale > 0.0) {
 				Real minRange = m_template->getMinimumAttackRange();
 				Real maxRange = m_template->getUnmodifiedAttackRange();
 				Real range = sqrt(ThePartitionManager->getDistanceSquared(sourceObj, victimPos, FROM_CENTER_2D));
