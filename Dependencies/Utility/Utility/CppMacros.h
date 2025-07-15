@@ -29,6 +29,12 @@
 #define FALLTHROUGH
 #endif
 
+#if __cplusplus >= 201703L
+#define MAYBE_UNUSED [[maybe_unused]]
+#else
+#define MAYBE_UNUSED
+#endif
+
 // noexcept for methods of IUNKNOWN interface
 #if defined(_MSC_VER)
 #define IUNKNOWN_NOEXCEPT NOEXCEPT_17
