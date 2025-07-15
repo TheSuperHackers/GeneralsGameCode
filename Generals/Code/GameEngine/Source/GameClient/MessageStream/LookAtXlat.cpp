@@ -62,7 +62,10 @@ enum
 
 static Bool scrollDir[4] = { false, false, false, false };
 
-Int SCROLL_AMT = 100;
+// TheSuperHackers @info the scroll multiplier is used to rescale scroll settings so keyboard scrolling is faster and RMB scrolling matches 30FPS behaviour
+// The value 2.0 was chosen as the default scroll factor of 50 sets m_keyboardscrollfactor to 0.5f.
+CONSTEXPR const Real SCROLL_MULTIPLIER = 2.0f;
+CONSTEXPR const Real SCROLL_AMT = 100.0f * SCROLL_MULTIPLIER;
 
 static const Int edgeScrollSize = 3;
 
@@ -430,8 +433,9 @@ GameMessageDisposition LookAtTranslator::translateGameMessage(const GameMessage 
 						// TheSuperHackers @info calculate the length of the vector to obtain the movement speed before the vector is normalized
 						float vecLength = vec.length();
 						vec.normalize();
-						offset.x = TheGlobalData->m_horizontalScrollSpeedFactor * logicToFpsRatio * vecLength * vec.x * TheGlobalData->m_keyboardScrollFactor;
-						offset.y = TheGlobalData->m_verticalScrollSpeedFactor * logicToFpsRatio * vecLength * vec.y * TheGlobalData->m_keyboardScrollFactor;
+						// TheSuperHackers @tweak Rescale the scroll factor so the default scroll speed at 50 will result in the RMB scrolling being identical to the original 30FPS retail behavior
+						offset.x = TheGlobalData->m_horizontalScrollSpeedFactor * logicToFpsRatio * vecLength * vec.x * SCROLL_MULTIPLIER * TheGlobalData->m_keyboardScrollFactor;
+						offset.y = TheGlobalData->m_verticalScrollSpeedFactor * logicToFpsRatio * vecLength * vec.y * SCROLL_MULTIPLIER * TheGlobalData->m_keyboardScrollFactor;
 					}
 					break;
 				case SCROLL_KEY:
