@@ -1075,10 +1075,14 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 			printf("CRC Mismatch in Frame %d\n", mismatchFrame);
 
 			// TheSuperHackers @tweak Pause the game on mismatch.
-			Bool pause = TRUE;
-			Bool pauseMusic = FALSE;
-			Bool pauseInput = FALSE;
-			TheGameLogic->setGamePaused(pause, pauseMusic, pauseInput);
+			// But not when a window with focus is opened, because that can make resuming difficult.
+			if (TheWindowManager->winGetFocus() == NULL)
+			{
+				Bool pause = TRUE;
+				Bool pauseMusic = FALSE;
+				Bool pauseInput = FALSE;
+				TheGameLogic->setGamePaused(pause, pauseMusic, pauseInput);
+			}
 		}
 		return;
 	}
