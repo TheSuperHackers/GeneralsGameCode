@@ -80,6 +80,13 @@ enum RadarEventType CPP_11(: Int)
  	
 };
 
+enum RadarObjectType CPP_11(: Int)
+{
+	RadarObjectType_None = 0,
+	RadarObjectType_Regular,
+	RadarObjectType_Local,
+};
+
 // PROTOTYPES /////////////////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------------------------------
@@ -109,6 +116,7 @@ public:
 	inline const RadarObject *friend_getNext( void ) const { return m_next; }
 
 	Bool isTemporarilyHidden() const;
+	static Bool isTemporarilyHidden(const Object* obj);
 
 protected:
 
@@ -178,7 +186,7 @@ public:
 													ICoord2D *ul, ICoord2D *lr );					///< make translation for screen area of radar square to scaled aspect ratio preserving points inside the radar area
 
 	// priority inquiry
-	Bool isPriorityVisible( RadarPriorityType priority ) const;		///< is the priority passed in a "visible" one on the radar
+	static Bool isPriorityVisible( RadarPriorityType priority );		///< is the priority passed in a "visible" one on the radar
 
 	// radar events
 	void createEvent( const Coord3D *world, RadarEventType type, Real secondsToLive = 4.0f );	///< create radar event at location in world
@@ -190,8 +198,8 @@ public:
  	Bool tryEvent( RadarEventType event, const Coord3D *pos );	///< try to make a "stealth" event
 
 	// adding and removing objects from the radar
-	virtual bool addObject( Object *obj );									///< add object to radar
-	virtual bool removeObject( Object *obj );								///< remove object from radar
+	virtual RadarObjectType addObject( Object *obj );									///< add object to radar
+	virtual RadarObjectType removeObject( Object *obj );								///< remove object from radar
 
 	// radar options
 	void hide( Bool hide ) { m_radarHidden = hide; }				///< hide/unhide the radar
@@ -225,9 +233,6 @@ protected:
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );
 	virtual void loadPostProcess( void );
-
-	virtual void onLocalRadarObjectAdded( const RadarObject* radarObject ) = 0;
-	virtual void onLocalRadarObjectRemoved( const RadarObject* radarObject ) = 0;
 
 	/// internal method for creating a radar event with specific colors
 	void internalCreateEvent( const Coord3D *world, RadarEventType type, Real secondsToLive,
@@ -301,8 +306,6 @@ public:
 	virtual void draw(Int pixelX, Int pixelY, Int width, Int height) { }
 	virtual void clearShroud() { }
 	virtual void setShroudLevel(Int x, Int y, CellShroudStatus setting) { }
-	virtual void onLocalRadarObjectAdded(const RadarObject*) { }
-	virtual void onLocalRadarObjectRemoved(const RadarObject*) { }
 };
 
 #endif  // __RADAR_H_
