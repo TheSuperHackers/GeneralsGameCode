@@ -1047,8 +1047,6 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 		//	playbackCRC, newCRC, TheGameLogic->getFrame()-m_crcInfo->GetQueueSize()-1, playerIndex));
 		if (TheGameLogic->getFrame() > 0 && newCRC != playbackCRC && !m_crcInfo->sawCRCMismatch())
 		{
-			m_crcInfo->setSawCRCMismatch();
-
 			//Kris: Patch 1.01 November 10, 2003 (integrated changes from Matt Campbell)
 			// Since we don't seem to have any *visible* desyncs when replaying games, but get this warning
 			// virtually every replay, the assumption is our CRC checking is faulty.  Since we're at the
@@ -1082,6 +1080,9 @@ void RecorderClass::handleCRCMessage(UnsignedInt newCRC, Int playerIndex, Bool f
 				Bool pauseMusic = FALSE;
 				Bool pauseInput = FALSE;
 				TheGameLogic->setGamePaused(pause, pauseMusic, pauseInput);
+
+				// Mark this mismatch as seen when we had the chance to pause once.
+				m_crcInfo->setSawCRCMismatch();
 			}
 		}
 		return;
