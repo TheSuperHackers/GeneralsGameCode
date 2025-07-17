@@ -42,7 +42,7 @@ Win32LocalFileSystem::~Win32LocalFileSystem() {
 }
 
 //DECLARE_PERF_TIMER(Win32LocalFileSystem_openFile)
-File * Win32LocalFileSystem::openFile(const Char *filename, Int access /* = 0 */) 
+File * Win32LocalFileSystem::openFile(const Char *filename, Int access, size_t bufferSize)
 {
 	//USE_PERF_TIMER(Win32LocalFileSystem_openFile)
 
@@ -71,7 +71,7 @@ File * Win32LocalFileSystem::openFile(const Char *filename, Int access /* = 0 */
 	// TheSuperHackers @fix Mauller 21/04/2025 Create new file handle when necessary to prevent memory leak
 	Win32LocalFile *file = newInstance( Win32LocalFile );	
 
-	if (file->open(filename, access) == FALSE) {
+	if (file->open(filename, access, bufferSize) == FALSE) {
 		deleteInstance(file);
 		file = NULL;
 	} else {
