@@ -1642,6 +1642,11 @@ static void saveOptions( void )
 
 				TheInGameUI->recreateControlBar();
 				TheInGameUI->refreshCustomUiResources();
+
+				// TheSuperHackers @info Only update the camera limits and set the zoom to max to not interfere with the scripted camera on the shellmap
+				// The tactical view gets reset at game start, this is here so the shell map looks correct once the resolution is adjusted
+				TheTacticalView->setCameraHeightAboveGroundLimitsToDefault();
+				TheTacticalView->setZoomToMax();
 			}
 		}
 	}

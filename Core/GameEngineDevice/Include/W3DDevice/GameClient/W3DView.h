@@ -192,12 +192,14 @@ public:
 	virtual Int	 getTimeMultiplier(void) {return m_timeMultiplier;};///< Get the time multiplier.
 	virtual void setTimeMultiplier(Int multiple) {m_timeMultiplier = multiple;}; ///< Set the time multiplier.
 	virtual void setDefaultView(Real pitch, Real angle, Real maxHeight);
+	virtual void setCameraHeightAboveGroundLimitsToDefault(Real heightScale = 1.0f);
 	virtual void zoomCamera( Real finalZoom, Int milliseconds, Real easeIn, Real easeOut );
 	virtual void pitchCamera( Real finalPitch, Int milliseconds, Real easeIn, Real easeOut );
 
 	virtual void setHeightAboveGround(Real z);
 	virtual void setZoom(Real z);
-	virtual void setZoomToDefault( void );									///< Set zoom to default value
+	virtual void setZoomToMax();
+	virtual void setZoomToDefault(); ///< Set zoom to default value - TheSuperHackers @info This function resets the camera so will cause scripted cameras to halt
 
 	virtual void setFieldOfView( Real angle );							///< Set the horizontal field of view angle
 
