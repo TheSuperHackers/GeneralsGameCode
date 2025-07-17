@@ -907,6 +907,13 @@ static void saveOptions()
 
 				TheInGameUI->recreateControlBar();
 				TheInGameUI->refreshCustomUiResources();
+
+				// TheSuperHackers @info Update the view so the shellmap looks correct when changing resolution
+				TheTacticalView->setDefaultView(
+					DEG_TO_RADF(TheGlobalData->m_cameraPitch),
+					DEG_TO_RADF(TheGlobalData->m_cameraYaw),
+					1.0f);
+				TheTacticalView->setZoomToDefault();
 			}
 		}
 	}
