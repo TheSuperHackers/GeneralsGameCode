@@ -86,7 +86,8 @@ File* Win32BIGFile::openFile( const Char *filename, Int access )
 	// whoever is opening this file wants write access, so copy the file to the local disk
 	// and return that file pointer.
 
-	File *localFile = TheLocalFileSystem->openFile(filename, access);
+	CONSTEXPR size_t bufferSize = 0;
+	File *localFile = TheLocalFileSystem->openFile(filename, access, bufferSize);
 	if (localFile != NULL) {
 		ramFile->copyDataToFile(localFile);
 	}
