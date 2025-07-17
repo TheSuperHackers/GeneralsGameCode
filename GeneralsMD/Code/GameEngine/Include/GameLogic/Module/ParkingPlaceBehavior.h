@@ -140,6 +140,7 @@ public:
 	virtual Bool reserveSpace(ObjectID id, Real parkingOffset, PPInfo* info);
 	virtual void releaseSpace(ObjectID id); 
 	virtual Bool reserveRunway(ObjectID id, Bool forLanding);
+	Bool deferUnsequencedRunwayReservationForTakeoff(UnsignedInt index, Bool forLanding);
 	virtual void releaseRunway(ObjectID id); 
 	virtual void calcPPInfo( ObjectID id, PPInfo *info );
 	virtual Int getRunwayCount() const { return m_runways.size(); }
@@ -158,15 +159,16 @@ private:
 
 	struct ParkingPlaceInfo
 	{
-		Coord3D				m_hangarStart;
-		Real					m_hangarStartOrient;
-		Coord3D				m_location;
-		Coord3D				m_prep;
-		Real					m_orientation;
-		Int						m_runway;
+		Coord3D			m_hangarStart;
+		Real			m_hangarStartOrient;
+		Coord3D			m_location;
+		Coord3D			m_prep;
+		Real			m_orientation;
+		Int				m_runway;
 		ExitDoorType	m_door;
-		ObjectID			m_objectInSpace;
-		Bool					m_reservedForExit;
+		ObjectID		m_objectInSpace;
+		Bool			m_reservedForExit;
+		Bool			m_deferredRunwayReservationForTakeoff;
 
 		ParkingPlaceInfo()
 		{
@@ -179,6 +181,7 @@ private:
 			m_door = DOOR_NONE_AVAILABLE;
 			m_objectInSpace = INVALID_ID;
 			m_reservedForExit = false;
+			m_deferredRunwayReservationForTakeoff = false;
 		} 
 	};
 
