@@ -177,12 +177,12 @@ Bool LocalFile::open( const Char *filename, Int access )
 	//      If file exists deletes content and overwrites the file, otherwise creates an empty new file.
 	// a+   open for reading and writing (append if file exists).
 
-	const bool readwrite = (m_access & READWRITE) == READWRITE;
-	const bool write     = (m_access & WRITE) != 0;
-	const bool append    = (m_access & APPEND) != 0;
-	const bool truncate  = (m_access & TRUNCATE) != 0;
-	const bool create    = (m_access & CREATE) != 0;
-	const bool binary    = (m_access & BINARY) != 0;
+	const Bool write     = (m_access & WRITE) != 0;
+	const Bool readwrite = (m_access & READWRITE) == READWRITE;
+	const Bool append    = (m_access & APPEND) != 0;
+	const Bool create    = (m_access & CREATE) != 0;
+	const Bool truncate  = (m_access & TRUNCATE) != 0;
+	const Bool binary    = (m_access & BINARY) != 0;
 
 	const Char *mode = NULL;
 
