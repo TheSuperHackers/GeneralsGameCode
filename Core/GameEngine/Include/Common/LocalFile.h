@@ -54,12 +54,7 @@
 
 #include "Common/file.h"
 
-// srj sez: this was purely an experiment in optimization.
-// at the present time, it doesn't appear to be a good one.
-// but I am leaving the code in for now.
-// if still present in 2003, please nuke.
-#define NO_USE_BUFFERED_IO
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 #include <stdio.h>
 #endif
 
@@ -85,11 +80,12 @@ class LocalFile : public File
 	MEMORY_POOL_GLUE_ABC(LocalFile)		
 	private:
 
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
+		// srj sez: this was purely an experiment in optimization.
+		// at the present time, it doesn't appear to be a good one.
+		// TheSuperHackers @info It is a good optimization and will be
+		// significantly faster than unbuffered IO with small reads and writes.
 		FILE* m_file;
-
-		enum { BUF_SIZE = 32768 };
-		char m_vbuf[BUF_SIZE];	
 #else
 		int m_handle;											///< Local C file handle
 #endif

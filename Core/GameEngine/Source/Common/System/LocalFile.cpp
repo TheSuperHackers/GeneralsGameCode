@@ -107,7 +107,7 @@ static Int s_totalOpen = 0;
 //=================================================================
 
 LocalFile::LocalFile()
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 	: m_file(NULL)
 #else
 	: m_handle(-1)
@@ -127,7 +127,7 @@ LocalFile::LocalFile()
 
 LocalFile::~LocalFile()
 {
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 	if (m_file)
 	{
 		fclose(m_file);
@@ -167,61 +167,58 @@ Bool LocalFile::open( const Char *filename, Int access )
 	}
 
 	/* here we translate WSYS file access to the std C equivalent */
-#ifdef USE_BUFFERED_IO
-	char mode[32];
-	char* m = mode;
+#if USE_BUFFERED_IO
 
-	if (m_access & APPEND)
-	{
-		DEBUG_CRASH(("not yet supported by buffered mode"));
-	}
+	// r    open for reading (The file must exist)
+	// w    open for writing (creates file if it doesn't exist). Deletes content and overwrites the file.
+	// a    open for appending (creates file if it doesn't exist).
+	// r+   open for reading and writing (The file must exist).
+	// w+   open for reading and writing.
+	//      If file exists deletes content and overwrites the file, otherwise creates an empty new file.
+	// a+   open for reading and writing (append if file exists).
 
-	if (m_access & TRUNCATE)
-	{
-		DEBUG_CRASH(("not yet supported by buffered mode"));
-	}
+	const bool readwrite = (m_access & READWRITE) == READWRITE;
+	const bool write     = (m_access & WRITE) != 0;
+	const bool append    = (m_access & APPEND) != 0;
+	const bool truncate  = (m_access & TRUNCATE) != 0;
+	const bool create    = (m_access & CREATE) != 0;
+	const bool binary    = (m_access & BINARY) != 0;
 
-	if((m_access & READWRITE ) == READWRITE )
+	const Char *mode = NULL;
+
+	// Mode string selection (mimics _open flag combinations)
+	// TEXT is implicit for fopen if 'b' is not present
+	// READ is implicit here if not READWRITE or WRITE
+	if (readwrite)
 	{
-		if (m_access & CREATE)
-		{
-			*m++ = 'w';
-			*m++ = '+';
-		}
+		if (append)
+			mode = binary ? "a+b" : "a+";
+		else if (truncate || create)
+			mode = binary ? "w+b" : "w+";
 		else
-		{
-			*m++ = 'r';
-			*m++ = '+';
-		}
+			mode = binary ? "r+b" : "r+";
 	}
-	else if(m_access & WRITE)
+	else if (write)
 	{
-		*m++ = 'w';
+		if (append)
+			mode = binary ? "ab" : "a";
+		else
+			mode = binary ? "wb" : "w";
 	}
-	else
+	else // implicitly read-only
 	{
-		*m++ = 'r';
-		DEBUG_ASSERTCRASH(!(m_access & TRUNCATE), ("cannot truncate with read-only"));
+		mode = binary ? "rb" : "r";
 	}
-
-	if (m_access & TEXT)
-	{
-		*m++ = 't';
-	}
-	if (m_access & BINARY)
-	{
-		*m++ = 'b';
-	}
-
-	*m++ = 0;
 
 	m_file = fopen(filename, mode);
 	if (m_file == NULL)
 	{
 		goto error;
 	}
-	
-	//setvbuf(m_file, m_vbuf, _IOFBF, sizeof(BUF_SIZE));
+
+	// Currently uses default buffer size. 512 bytes on Windows.
+
+	//setvbuf(m_file, NULL, _IOFBF, 1024);
 
 #else
 
@@ -257,7 +254,7 @@ Bool LocalFile::open( const Char *filename, Int access )
 		flags |= _O_WRONLY;
 		flags |= _O_CREAT;
 	}
-	else
+	else // implicitly read-only
 	{
 		flags |= _O_RDONLY;
 	}
@@ -272,7 +269,7 @@ Bool LocalFile::open( const Char *filename, Int access )
 #endif
 
 	++s_totalOpen;
-///	DEBUG_LOG(("LocalFile::open %s (total %d)",filename,s_totalOpen));
+	DEBUG_LOG(("LocalFile::open %s (total %d)",filename,s_totalOpen));
 	if ( m_access & APPEND )
 	{
 		if ( seek ( 0, END ) < 0 )
@@ -318,7 +315,7 @@ Int LocalFile::read( void *buffer, Int bytes )
 
 	if (buffer == NULL) 
 	{
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 		fseek(m_file, bytes, SEEK_CUR);
 #else
 		_lseek(m_handle, bytes, SEEK_CUR);
@@ -326,7 +323,7 @@ Int LocalFile::read( void *buffer, Int bytes )
 		return bytes;
 	}
 
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 	Int ret = fread(buffer, 1, bytes, m_file);
 #else
 	Int ret = _read( m_handle, buffer, bytes );
@@ -347,7 +344,7 @@ Int LocalFile::write( const void *buffer, Int bytes )
 		return -1;
 	}
 
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 	Int ret = fwrite(buffer, 1, bytes, m_file);
 #else
 	Int ret = _write( m_handle, buffer, bytes );
@@ -366,21 +363,21 @@ Int LocalFile::seek( Int pos, seekMode mode)
 	switch( mode )
 	{
 		case START:
+			DEBUG_ASSERTCRASH(pos >= 0, ("LocalFile::seek - pos must be >= 0 when seeking from the beginning of the file"));
 			lmode = SEEK_SET;
 			break;
 		case CURRENT:
 			lmode = SEEK_CUR;
 			break;
 		case END:
-			DEBUG_ASSERTCRASH(pos <= 0, ("LocalFile::seek - pos should be <= 0 for a seek starting at the end of the file"));
 			lmode = SEEK_END;
 			break;
 		default:
-			// bad seek mode
+			DEBUG_CRASH(("LocalFile::seek - bad seek mode"));
 			return -1;
 	}
 
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 	Int ret = fseek(m_file, pos, lmode);
 	if (ret == 0)
 		return ftell(m_file);
@@ -406,7 +403,7 @@ Bool LocalFile::scanInt(Int &newInt)
 
 	// skip preceding non-numeric characters
 	do {
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 		val = fread(&c, 1, 1, m_file);
 #else
 		val = _read( m_handle, &c, 1);
@@ -419,7 +416,7 @@ Bool LocalFile::scanInt(Int &newInt)
 
 	do {
 		tempstr.concat(c);
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 		val = fread(&c, 1, 1, m_file);
 #else
 		val = _read( m_handle, &c, 1);
@@ -428,7 +425,7 @@ Bool LocalFile::scanInt(Int &newInt)
 
 	// put the last read char back, since we didn't use it.
 	if (val != 0) {
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 		fseek(m_file, -1, SEEK_CUR);
 #else
 		_lseek(m_handle, -1, SEEK_CUR);
@@ -454,7 +451,7 @@ Bool LocalFile::scanReal(Real &newReal)
 
 	// skip the preceding white space
 	do {
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 		val = fread(&c, 1, 1, m_file);
 #else
 		val = _read( m_handle, &c, 1);
@@ -470,7 +467,7 @@ Bool LocalFile::scanReal(Real &newReal)
 		if (c == '.') {
 			sawDec = TRUE;
 		}
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 		val = fread(&c, 1, 1, m_file);
 #else
 		val = _read(m_handle, &c, 1);
@@ -478,7 +475,7 @@ Bool LocalFile::scanReal(Real &newReal)
 	} while ((val != 0) && (((c >= '0') && (c <= '9')) || ((c == '.') && !sawDec)));
 
 	if (val != 0) {
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 		fseek(m_file, -1, SEEK_CUR);
 #else
 		_lseek(m_handle, -1, SEEK_CUR);
@@ -503,7 +500,7 @@ Bool LocalFile::scanString(AsciiString &newString)
 
 	// skip the preceding whitespace
 	do {
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 		val = fread(&c, 1, 1, m_file);
 #else
 		val = _read(m_handle, &c, 1);
@@ -516,7 +513,7 @@ Bool LocalFile::scanString(AsciiString &newString)
 
 	do {
 		newString.concat(c);
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 		val = fread(&c, 1, 1, m_file);
 #else
 		val = _read(m_handle, &c, 1);
@@ -524,7 +521,7 @@ Bool LocalFile::scanString(AsciiString &newString)
 	} while ((val != 0) && (!isspace(c)));
 
 	if (val != 0) {
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 		fseek(m_file, -1, SEEK_CUR);
 #else
 		_lseek(m_handle, -1, SEEK_CUR);
@@ -547,13 +544,13 @@ void LocalFile::nextLine(Char *buf, Int bufSize)
 	// seek to the next new-line.
 	do {
 		if ((buf == NULL) || (i >= (bufSize-1))) {
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 			val = fread(&c, 1, 1, m_file);
 #else
 			val = _read(m_handle, &c, 1);
 #endif
 		} else {
-#ifdef USE_BUFFERED_IO
+#if USE_BUFFERED_IO
 			val = fread(buf + i, 1, 1, m_file);
 #else
 			val = _read(m_handle, buf + i, 1);

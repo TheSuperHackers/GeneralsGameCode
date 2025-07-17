@@ -47,3 +47,9 @@
 #ifndef ENABLE_CONFIGURABLE_SHROUD
 #define ENABLE_CONFIGURABLE_SHROUD (1) // When enabled, the GlobalData contains a field to turn on/off the shroud, otherwise shroud is always enabled
 #endif
+
+// Enable buffered IO in File System. Was disabled in retail game.
+// Buffered IO generally is much faster than unbuffered for small reads and writes.
+#ifndef USE_BUFFERED_IO
+#define USE_BUFFERED_IO (1)
+#endif
