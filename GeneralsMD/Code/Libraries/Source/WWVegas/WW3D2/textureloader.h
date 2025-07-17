@@ -207,7 +207,7 @@ class TextureLoadTaskClass : public TextureLoadTaskListNodeClass
 
 
 		TextureLoadTaskClass(void);
-		~TextureLoadTaskClass(void);
+		virtual ~TextureLoadTaskClass(void);
 
 		static TextureLoadTaskClass *	Create			(TextureBaseClass *tc, TaskType type, PriorityType priority);
 		static void				Delete_Free_Pool			(void);
