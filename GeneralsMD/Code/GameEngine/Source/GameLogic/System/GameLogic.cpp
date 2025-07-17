@@ -2063,6 +2063,8 @@ void GameLogic::startNewGame( Bool loadingSaveGame )
 	// update the loadscreen
 	updateLoadProgress(LOAD_PROGRESS_POST_PRELOAD_ASSETS);
 
+	// TheSuperHackers @info initialise the default view to update the max height if resolution was changed
+	TheTacticalView->setDefaultView(0.0f, 0.0f, 1.0f);
 	TheTacticalView->setAngleAndPitchToDefault();
 	TheTacticalView->setZoomToDefault();
 

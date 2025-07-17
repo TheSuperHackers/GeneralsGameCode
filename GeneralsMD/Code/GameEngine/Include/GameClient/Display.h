@@ -82,6 +82,7 @@ public:
 	virtual void setHeight( UnsignedInt height );									///< Sets the height of the display
 	virtual UnsignedInt getWidth( void ) { return m_width; }			///< Returns the width of the display
 	virtual UnsignedInt getHeight( void ) { return m_height; }		///< Returns the height of the display
+	virtual Real getAspectRatio() { return (Real)m_width / (Real)m_height; }
 	virtual void setBitDepth( UnsignedInt bitDepth ) { m_bitDepth = bitDepth; }
 	virtual UnsignedInt getBitDepth( void ) { return m_bitDepth; }
 	virtual void setWindowed( Bool windowed ) { m_windowed = windowed; }  ///< set windowd/fullscreen flag
