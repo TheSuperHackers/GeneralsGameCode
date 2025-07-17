@@ -129,6 +129,11 @@ void View::zoom( Real height )
 	setHeightAboveGround(getHeightAboveGround() + height);
 }
 
+void View::setZoomToMax()
+{
+	setHeightAboveGround(getHeightAboveGround() + m_maxHeightAboveGround);
+}
+
 /**
  * Center the view on the given coordinate.
  */

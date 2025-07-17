@@ -1896,6 +1896,31 @@ void W3DView::setPitchToDefault()
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
+void W3DView::setCameraHeightAboveGroundLimitsToDefault(Real heightScale)
+{
+	// TheSuperHackers @fix Mauller Adjust the camera height to compensate for the screen aspect ratio
+	Real baseAspectRatio = (Real)DEFAULT_DISPLAY_WIDTH / (Real)DEFAULT_DISPLAY_HEIGHT;
+	Real currentAspectRatio = (Real)TheTacticalView->getWidth() / (Real)TheTacticalView->getHeight();
+	Real aspectRatioScale = 0.0f;
+
+	if (currentAspectRatio > baseAspectRatio)
+	{
+		aspectRatioScale = fabs(( 1 + ( currentAspectRatio - baseAspectRatio) ));
+	}
+	else
+	{
+		aspectRatioScale = fabs(( 1 - ( baseAspectRatio - currentAspectRatio) ));
+	}
+
+	m_maxHeightAboveGround = TheGlobalData->m_maxCameraHeight * aspectRatioScale * heightScale;
+	m_minHeightAboveGround = TheGlobalData->m_minCameraHeight * aspectRatioScale;
+
+	if (m_minHeightAboveGround > m_maxHeightAboveGround)
+		m_maxHeightAboveGround = m_minHeightAboveGround;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 void W3DView::setDefaultView(Real pitch, Real angle, Real maxHeight)
 {
 	// MDC - we no longer want to rotate maps (design made all of them right to begin with)
@@ -1937,10 +1962,8 @@ void W3DView::setZoom(Real z)
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-void W3DView::setZoomToDefault()
+void W3DView::setZoomToMax()
 {
-	// default zoom has to be max, otherwise players will just zoom to max always
-
 	// terrain height + desired height offset == cameraOffset * actual zoom
 	// find best approximation of max terrain height we can see
 	Real terrainHeightMax = getHeightAroundPos(m_pos.x, m_pos.y);
@@ -1953,6 +1976,15 @@ void W3DView::setZoomToDefault()
 	m_zoom = desiredZoom;
 	m_heightAboveGround = m_maxHeightAboveGround;
 
+	m_cameraAreaConstraintsValid = false; // recalc it.
+	m_recalcCamera = true;
+}
+
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+void W3DView::setZoomToDefault()
+{
+	// default zoom has to be max, otherwise players will just zoom to max always
 	stopDoingScriptedCamera();
 	m_CameraArrivedAtWaypointOnPathFlag = false;
 	m_cameraAreaConstraintsValid = false;
