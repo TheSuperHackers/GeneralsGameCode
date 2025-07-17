@@ -3049,12 +3049,20 @@ void ScriptActions::doCameraMotionBlur(Bool zoomIn, Bool saturate)
 
 static PlayerMaskType getHumanPlayerMask( void )
 {
+#if RETAIL_COMPATIBLE_CRC
 	PlayerMaskType mask;
+#else
+	PlayerMaskType mask = 0;
+#endif
 	for (Int i=0; i<ThePlayerList->getPlayerCount(); ++i)
 	{
 		const Player *player = ThePlayerList->getNthPlayer(i);
 		if (player->getPlayerType() == PLAYER_HUMAN)
+#if RETAIL_COMPATIBLE_CRC
 			mask &= player->getPlayerMask();
+#else
+			mask |= player->getPlayerMask();
+#endif
 	}
 
 	//DEBUG_LOG(("getHumanPlayerMask(): mask was %4.4X", mask));
