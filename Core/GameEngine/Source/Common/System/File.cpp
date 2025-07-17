@@ -134,7 +134,7 @@ File::~File()
 	*/
 //=================================================================
 
-Bool File::open( const Char *filename, Int access )
+Bool File::open( const Char *filename, Int access, size_t bufferSize )
 {
 	if( m_open )
 	{
@@ -160,7 +160,7 @@ Bool File::open( const Char *filename, Int access )
 		access |= READ;
 	}
 
-	if ( !(access & (READ|APPEND)) )
+	if ( (access & (READ|APPEND)) == 0 )
 	{
 		access |= TRUNCATE;
 	}

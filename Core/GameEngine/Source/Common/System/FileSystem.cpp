@@ -171,14 +171,14 @@ void		FileSystem::reset( void )
 // FileSystem::open
 //============================================================================
 
-File*		FileSystem::openFile( const Char *filename, Int access ) 
+File*		FileSystem::openFile( const Char *filename, Int access, size_t bufferSize )
 {
 	USE_PERF_TIMER(FileSystem)
 	File *file = NULL;
 
 	if ( TheLocalFileSystem != NULL )
 	{
-		file = TheLocalFileSystem->openFile( filename, access );
+		file = TheLocalFileSystem->openFile( filename, access, bufferSize );
 
 #if ENABLE_FILESYSTEM_EXISTENCE_CACHE
 		if (file != NULL && (file->getAccess() & File::CREATE))
