@@ -32,6 +32,10 @@ set(WWLIB_SRC
     #crcstraw.h
     cstraw.cpp
     cstraw.h
+    DbgHelpGuard.cpp
+    DbgHelpGuard.h
+    DbgHelpLoader.cpp
+    DbgHelpLoader.h
     Except.cpp
     Except.h
     FastAllocator.cpp
@@ -66,6 +70,7 @@ set(WWLIB_SRC
     #lzostraw.cpp
     #lzostraw.h
     #lzo_conf.h
+    MallocAllocator.h
     #md5.cpp
     #md5.h
     mempool.h
