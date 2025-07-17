@@ -216,10 +216,6 @@ Bool LocalFile::open( const Char *filename, Int access )
 		goto error;
 	}
 
-	// Currently uses default buffer size. 512 bytes on Windows.
-
-	//setvbuf(m_file, NULL, _IOFBF, 1024);
-
 #else
 
 	int flags = 0;
