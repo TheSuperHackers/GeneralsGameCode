@@ -1737,7 +1737,12 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					Object *beacon = findObjectByID(*it);
 					if (beacon)
 					{
-						const ThingTemplate *thing = TheThingFactory->findTemplate( beacon->getControllingPlayer()->getPlayerTemplate()->getBeaconTemplate() );
+						// sometimes beacons are not associated with any player (anymore)
+						const PlayerTemplate *playerTemplate = beacon->getControllingPlayer()->getPlayerTemplate();
+						if (!playerTemplate)
+							continue;
+
+						const ThingTemplate *thing = TheThingFactory->findTemplate( playerTemplate->getBeaconTemplate() );
 						if (thing && thing->isEquivalentTo(beacon->getTemplate()))
 						{
 							if (beacon->getControllingPlayer() == thisPlayer)
