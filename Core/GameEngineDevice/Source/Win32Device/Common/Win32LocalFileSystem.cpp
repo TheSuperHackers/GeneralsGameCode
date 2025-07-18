@@ -72,7 +72,6 @@ File * Win32LocalFileSystem::openFile(const Char *filename, Int access /* = 0 */
 	Win32LocalFile *file = newInstance( Win32LocalFile );	
 
 	if (file->open(filename, access) == FALSE) {
-		file->close();
 		deleteInstance(file);
 		file = NULL;
 	} else {
