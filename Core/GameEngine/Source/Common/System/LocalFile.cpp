@@ -203,7 +203,7 @@ Bool LocalFile::open( const Char *filename, Int access, size_t bufferSize )
 
 		if (bufferSize == 0)
 		{
-			result = setvbuf(m_file, NULL, _IONBF, 0); // Uses no buffering.
+			result = setvbuf(m_file, NULL, _IONBF, 0); // Uses no buffering
 		}
 		else
 		{
@@ -211,7 +211,7 @@ Bool LocalFile::open( const Char *filename, Int access, size_t bufferSize )
 				? _IOLBF // Uses line buffering
 				: _IOFBF; // Uses full buffering
 
-			// Buffer is expected to lazy allocate on first read or write later.
+			// Buffer is expected to lazy allocate on first read or write later
 			result = setvbuf(m_file, NULL, bufferMode, bufferSize);
 		}
 
