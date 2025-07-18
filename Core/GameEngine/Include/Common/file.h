@@ -76,6 +76,8 @@
 	*
 	* All code should use the File class and not its derivatives, unless
 	* absolutely necessary. Also FS::Open should be used to create File objects and open files.
+	* 
+	* TheSuperHackers @feature Adds LINEBUF and FULLBUF modes and buffer size argument for file open.
 	*/
 //===============================
 
@@ -99,14 +101,18 @@ class File : public MemoryPoolObject
 			CREATE		= 0x00000008,				///< Create file if it does not exist
 			TRUNCATE	= 0x00000010,				///< Delete all data in file when opened
 
-			// NOTE: accesses file as text data (with full buffering) if neither TEXT and BINARY are set
-			TEXT			= 0x00000020,				///< Access file as text data (with line buffering)
-			BINARY		= 0x00000040,				///< Access file as binary data (with full buffering)
+			// NOTE: accesses file as text data if neither TEXT and BINARY are set
+			TEXT			= 0x00000020,				///< Access file as text data
+			BINARY		= 0x00000040,				///< Access file as binary data
 
 			ONLYNEW		= 0x00000080,				///< Only create file if it does not exist
 			
 			// NOTE: STREAMING is Mutually exclusive with WRITE
-			STREAMING = 0x00000100				///< Do not read this file into a ram file, read it as requested.
+			STREAMING = 0x00000100,				///< Do not read this file into a ram file, read it as requested.
+
+			// NOTE: accesses file with full buffering if neither LINEBUF and FULLBUF are set
+			LINEBUF   = 0x00000200,				///< Access file with line buffering
+			FULLBUF   = 0x00000400,				///< Access file with full buffering
 		};
 
 		enum seekMode

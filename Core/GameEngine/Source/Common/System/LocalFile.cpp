@@ -165,14 +165,12 @@ Bool LocalFile::open( const Char *filename, Int access, size_t bufferSize )
 	const Bool append    = (m_access & APPEND) != 0;
 	const Bool create    = (m_access & CREATE) != 0;
 	const Bool truncate  = (m_access & TRUNCATE) != 0;
-	const Bool text      = (m_access & TEXT) != 0;
 	const Bool binary    = (m_access & BINARY) != 0;
 
 	const Char *mode = NULL;
 
 	// Mode string selection (mimics _open flag combinations)
 	// TEXT is implicit for fopen if 'b' is not present
-	// READ is implicit here if not READWRITE or WRITE
 	if (readwrite)
 	{
 		if (append)
@@ -209,7 +207,7 @@ Bool LocalFile::open( const Char *filename, Int access, size_t bufferSize )
 		}
 		else
 		{
-			const Int bufferMode = text
+			const Int bufferMode = (m_access & LINEBUF)
 				? _IOLBF // Uses line buffering
 				: _IOFBF; // Uses full buffering
 
