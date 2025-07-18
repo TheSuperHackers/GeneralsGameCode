@@ -1737,7 +1737,7 @@ void GameLogic::logicMessageDispatcher( GameMessage *msg, void *userData )
 					Object *beacon = findObjectByID(*it);
 					if (beacon)
 					{
-						// sometimes beacons are not associated with any player (anymore)
+						// TheSuperHackers @bugfix Prevent runtime crashing when a beacon is no longer associated with a player.
 						const PlayerTemplate *playerTemplate = beacon->getControllingPlayer()->getPlayerTemplate();
 						if (!playerTemplate)
 							continue;
