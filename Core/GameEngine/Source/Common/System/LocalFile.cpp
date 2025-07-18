@@ -127,7 +127,7 @@ LocalFile::LocalFile()
 
 LocalFile::~LocalFile()
 {
-	closeWithoutDelete();
+	closeFile();
 }
 
 //=================================================================
@@ -590,14 +590,11 @@ File* LocalFile::convertToRAMFile()
 		{
 			ramFile->deleteOnClose();
 		}
-		this->closeWithoutDelete();
 		deleteInstance(this);
-
 		return ramFile;
 	}	
 	else 
 	{
-		//ramFile->close();
 		deleteInstance(ramFile);
 		return this;
 	}

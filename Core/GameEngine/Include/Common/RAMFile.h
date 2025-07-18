@@ -114,7 +114,7 @@ class RAMFile : public File
 
 	protected:
 
-		void closeWithoutDelete();
+		void closeFile();
 };
 
 
