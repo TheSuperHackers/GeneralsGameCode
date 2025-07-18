@@ -3318,6 +3318,12 @@ void Object::onDisabledEdge(Bool becomingDisabled)
 		}
 	}
 
+	// TheSuperHackers @bugfix Caball009 18/07/2025 Don't adjust the power for power plants that are still under construction.
+#if !RETAIL_COMPATIBLE_CRC
+	if (testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+		return;
+#endif
+
 	// We will need to adjust power ... somehow ...
 	Int powerToAdjust = getTemplate()->getEnergyProduction();
 	
