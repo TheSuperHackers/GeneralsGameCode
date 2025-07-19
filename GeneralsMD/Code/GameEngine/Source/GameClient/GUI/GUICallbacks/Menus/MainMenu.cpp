@@ -454,16 +454,39 @@ static void initLabelVersion()
 	{
 		if (TheVersion && TheGlobalData)
 		{
-			UnicodeString version;
-			version.format(
-				L"%s %s exe:%08X ini:%08X %s",
-				TheVersion->getUnicodeGameAndGitVersion().str(),
-				TheVersion->getUnicodeGitCommitTime().str(),
-				TheGlobalData->m_exeCRC,
-				TheGlobalData->m_iniCRC,
-				TheVersion->getUnicodeBuildUserOrGitCommitAuthorName().str()
-			);
-			GadgetStaticTextSetText( labelVersion, version );
+			UnicodeString productTitle = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductTitle", TheVersion->getUnicodeProductTitle().str());
+			UnicodeString productVersion = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductVersion", TheVersion->getUnicodeProductVersion().str());
+			UnicodeString productAuthor = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductAuthor", TheVersion->getUnicodeProductAuthor().str());
+
+			UnicodeString gameVersion = TheVersion->getUnicodeVersion();
+			UnicodeString gameHash;
+			gameHash.format(L"exe:%08X ini:%08X", TheGlobalData->m_exeCRC, TheGlobalData->m_iniCRC);
+
+			UnicodeString text;
+			text.concat(gameVersion);
+
+			if (!productTitle.isEmpty())
+			{
+				text.concat(L" ");
+				text.concat(productTitle);
+
+				if (!productVersion.isEmpty())
+				{
+					text.concat(L" ");
+					text.concat(productVersion);
+				}
+			}
+
+			text.concat(L" ");
+			text.concat(gameHash);
+
+			if (!productAuthor.isEmpty())
+			{
+				text.concat(L" ");
+				text.concat(productAuthor);
+			}
+
+			GadgetStaticTextSetText( labelVersion, text );
 		}
 		else
 		{

@@ -141,8 +141,8 @@ class GameTextManager : public GameTextInterface
 		GameTextManager();
 		virtual ~GameTextManager();
 
-		virtual void					init( void );						///< Initlaizes the text system
-		virtual void					deinit( void );					///< De-initlaizes the text system
+		virtual void					init( void );						///< Initializes the text system
+		virtual void					deinit( void );					///< Shuts down the text system
 		virtual void					update( void ) {};			///< update text manager
 		virtual void					reset( void );					///< Resets the text system
 
@@ -198,6 +198,8 @@ class GameTextManager : public GameTextInterface
 		Bool						parseMapStringFile( const char *filename );
 		Bool						readLine( char *buffer, Int max, File *file );
 		Char						readChar( File *file );
+
+		void						updateWindowTitle();
 };
 
 static int _cdecl			compareLUT ( const void *,  const void*);
@@ -371,35 +373,7 @@ void GameTextManager::init( void )
 
 	qsort( m_stringLUT, m_textCount, sizeof(StringLookUp), compareLUT  );
 
-	UnicodeString ourName = fetch("GUI:Command&ConquerGenerals");
-
-	if (rts::ClientInstance::getInstanceId() > 1u)
-	{
-		UnicodeString s;
-		s.format(L"Instance:%.2u - %s", rts::ClientInstance::getInstanceId(), ourName.str());
-		ourName = s;
-	}
-
-	if (TheVersion != NULL)
-	{
-		// TheSuperHackers @tweak Now prints version information in the Window title.
-		UnicodeString version;
-		version.format(L" %s %s",
-			TheVersion->getUnicodeGameAndGitVersion().str(),
-			TheVersion->getUnicodeBuildUserOrGitCommitAuthorName().str()
-		);
-		ourName.concat(version);
-	}
-
-	AsciiString ourNameA;
-	ourNameA.translate(ourName);	//get ASCII version for Win 9x
-
-	extern HWND ApplicationHWnd;  ///< our application window handle
-	if (ApplicationHWnd) {
-		//Set it twice because Win 9x does not support SetWindowTextW.
-		::SetWindowText(ApplicationHWnd, ourNameA.str());
-		::SetWindowTextW(ApplicationHWnd, ourName.str());
-	}
+	updateWindowTitle();
 
 }
 
@@ -1495,7 +1469,90 @@ Char	GameTextManager::readChar( File *file )
 }
 
 //============================================================================
-// GameTextManager::compareLUT 
+// GameTextManager::updateWindowTitle
+//============================================================================
+
+void GameTextManager::updateWindowTitle()
+{
+	// TheSuperHackers @tweak Now prints product and version information in the Window title.
+
+	DEBUG_ASSERTCRASH(TheVersion != NULL, ("TheVersion is NULL"));
+
+	UnicodeString title;
+
+	if (rts::ClientInstance::getInstanceId() > 1u)
+	{
+		UnicodeString text;
+		text.format(L"Instance:%.2u", rts::ClientInstance::getInstanceId());
+		title.concat(text);
+	}
+
+	UnicodeString productTitle = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductTitle", TheVersion->getUnicodeProductTitle().str());
+	UnicodeString productVersion = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductVersion", TheVersion->getUnicodeProductVersion().str());
+	UnicodeString productAuthor = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductAuthor", TheVersion->getUnicodeProductAuthor().str());
+
+	if (!productTitle.isEmpty())
+	{
+		title.concat(L" ");
+		title.concat(productTitle.str());
+
+		if (!productVersion.isEmpty())
+		{
+			title.concat(L" ");
+			title.concat(productVersion.str());
+		}
+
+		if (!productAuthor.isEmpty())
+		{
+			title.concat(L" ");
+			title.concat(productAuthor.str());
+		}
+	}
+
+#if RTS_GENERALS
+	const WideChar* defaultGameTitle = L"Command and Conquer Generals";
+#elif RTS_ZEROHOUR
+	const WideChar* defaultGameTitle = L"Command and Conquer Generals Zero Hour";
+#endif
+	UnicodeString gameTitle = FETCH_OR_SUBSTITUTE("GUI:Command&ConquerGenerals", defaultGameTitle);
+
+	if (!gameTitle.isEmpty())
+	{
+		UnicodeString gameVersion = TheVersion->getUnicodeVersion();
+		UnicodeString gameTitleFormat = FETCH_OR_SUBSTITUTE("Version:GameTitle", L"for %ls");
+		UnicodeString gameTitleFinal;
+
+		if (productTitle.isEmpty())
+		{
+			gameTitleFinal = gameTitle;
+		}
+		else
+		{
+			gameTitleFinal.format(gameTitleFormat.str(), gameTitle.str());
+		}
+
+		title.concat(L" ");
+		title.concat(gameTitleFinal.str());
+		title.concat(L" ");
+		title.concat(gameVersion.str());
+	}
+
+	if (!title.isEmpty())
+	{
+		AsciiString titleA;
+		titleA.translate(title);	//get ASCII version for Win 9x
+
+		extern HWND ApplicationHWnd;  ///< our application window handle
+		if (ApplicationHWnd) {
+			//Set it twice because Win 9x does not support SetWindowTextW.
+			::SetWindowText(ApplicationHWnd, titleA.str());
+			::SetWindowTextW(ApplicationHWnd, title.str());
+		}
+	}
+}
+
+//============================================================================
+// compareLUT 
 //============================================================================
 
 static int __cdecl compareLUT ( const void *i1,  const void*i2)
@@ -1505,3 +1562,4 @@ static int __cdecl compareLUT ( const void *i1,  const void*i2)
 
 	return stricmp( lut1->label->str(), lut2->label->str());
 }
+

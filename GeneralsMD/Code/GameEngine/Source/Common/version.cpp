@@ -245,39 +245,35 @@ UnicodeString Version::getUnicodeGitCommitTime() const
 	return m_unicodeGitCommitTime;
 }
 
-AsciiString Version::getAsciiGameAndGitVersion() const
+AsciiString Version::getAsciiGitVersion() const
 {
 	AsciiString str;
 	if (m_showFullVersion)
 	{
-		str.format("%s R %s %s",
-			getAsciiVersion().str(),
+		str.format("%s %s",
 			getAsciiGitCommitCount().str(),
 			getAsciiGitTagOrHash().str());
 	}
 	else
 	{
-		str.format("%s R %s",
-			getAsciiVersion().str(),
+		str.format("%s",
 			getAsciiGitCommitCount().str());
 	}
 	return str;
 }
 
-UnicodeString Version::getUnicodeGameAndGitVersion() const
+UnicodeString Version::getUnicodeGitVersion() const
 {
 	UnicodeString str;
 	if (m_showFullVersion)
 	{
-		str.format(L"%s R %s %s",
-			getUnicodeVersion().str(),
+		str.format(L"%s %s",
 			getUnicodeGitCommitCount().str(),
 			getUnicodeGitTagOrHash().str());
 	}
 	else
 	{
-		str.format(L"%s R %s",
-			getUnicodeVersion().str(),
+		str.format(L"%s",
 			getUnicodeGitCommitCount().str());
 	}
 	return str;
@@ -308,6 +304,22 @@ UnicodeString Version::getUnicodeBuildUserOrGitCommitAuthorName() const
 	}
 
 	return str;
+}
+
+UnicodeString Version::getUnicodeProductTitle() const
+{
+	// @todo Make configurable
+	return UnicodeString(L"Community Patch");
+}
+
+UnicodeString Version::getUnicodeProductVersion() const
+{
+	return getUnicodeGitVersion();
+}
+
+UnicodeString Version::getUnicodeProductAuthor() const
+{
+	return getUnicodeBuildUserOrGitCommitAuthorName();
 }
 
 AsciiString Version::buildAsciiGitCommitCount()
