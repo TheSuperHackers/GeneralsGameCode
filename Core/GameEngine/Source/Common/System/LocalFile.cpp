@@ -127,24 +127,7 @@ LocalFile::LocalFile()
 
 LocalFile::~LocalFile()
 {
-#if USE_BUFFERED_IO
-	if (m_file)
-	{
-		fclose(m_file);
-		m_file = NULL;
-		--s_totalOpen;
-	}
-#else
-	if( m_handle != -1 )
-	{
-		_close( m_handle );
-		m_handle = -1;
-		--s_totalOpen;
-	}
-#endif
-
-	File::close();
-
+	closeFile();
 }
 
 //=================================================================
@@ -278,7 +261,8 @@ Bool LocalFile::open( const Char *filename, Int access )
 
 error:
 
-	close();
+	// TheSuperHackers @fix Instance must never delete itself in this function.
+	closeWithoutDelete();
 
 	return FALSE;
 }
@@ -294,7 +278,37 @@ error:
 
 void LocalFile::close( void )
 {
+	closeFile();
 	File::close();
+}
+
+//=================================================================
+
+void LocalFile::closeWithoutDelete()
+{
+	closeFile();
+	File::closeWithoutDelete();
+}
+
+//=================================================================
+
+void LocalFile::closeFile()
+{
+#if USE_BUFFERED_IO
+	if (m_file)
+	{
+		fclose(m_file);
+		m_file = NULL;
+		--s_totalOpen;
+	}
+#else
+	if( m_handle != -1 )
+	{
+		_close( m_handle );
+		m_handle = -1;
+		--s_totalOpen;
+	}
+#endif
 }
 
 //=================================================================
@@ -575,18 +589,12 @@ File* LocalFile::convertToRAMFile()
 		if (this->m_deleteOnClose)
 		{
 			ramFile->deleteOnClose();
-			this->close(); // is deleteonclose, so should delete.
 		}
-		else
-		{
-			this->close();
-			deleteInstance(this);
-		}
+		deleteInstance(this);
 		return ramFile;
 	}	
 	else 
 	{
-		ramFile->close();
 		deleteInstance(ramFile);
 		return this;
 	}

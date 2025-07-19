@@ -122,6 +122,8 @@ class File : public MemoryPoolObject
 		File();											///< This class can only used as a base class
 		//virtual				~File();
 
+		void closeWithoutDelete();
+
 	public:
 		
 

@@ -126,12 +126,7 @@ RAMFile::RAMFile()
 
 RAMFile::~RAMFile()
 {
-	if (m_data != NULL) {
-		delete [] m_data;
-	}
-
-	File::close();
-
+	closeFile();
 }
 
 //=================================================================
@@ -247,13 +242,16 @@ Bool RAMFile::openFromArchive(File *archiveFile, const AsciiString& filename, In
 
 void RAMFile::close( void )
 {
-	if ( m_data )
-	{
-		delete [] m_data;
-		m_data = NULL;
-	}
-
+	closeFile();
 	File::close();
+}
+
+//=================================================================
+
+void RAMFile::closeFile()
+{
+	delete [] m_data;
+	m_data = NULL;
 }
 
 //=================================================================

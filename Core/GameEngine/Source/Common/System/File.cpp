@@ -122,7 +122,6 @@ File::File()
 
 File::~File()
 {
-	close();
 }
 
 //=================================================================
@@ -194,6 +193,17 @@ void File::close( void )
 		{
 			deleteInstance(this); // on special cases File object will delete itself when closing
 		}
+	}
+}
+
+//=================================================================
+
+void File::closeWithoutDelete()
+{
+	if( m_open )
+	{
+		setName( "<no file>" );
+		m_open = FALSE;
 	}
 }
 

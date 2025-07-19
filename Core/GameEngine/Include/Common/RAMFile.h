@@ -111,6 +111,10 @@ class RAMFile : public File
 		*/
 		virtual char* readEntireAndClose();
 		virtual File* convertToRAMFile();
+
+	protected:
+
+		void closeFile();
 };
 
 

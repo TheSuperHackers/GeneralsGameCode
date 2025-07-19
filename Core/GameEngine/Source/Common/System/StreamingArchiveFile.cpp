@@ -124,7 +124,6 @@ StreamingArchiveFile::StreamingArchiveFile()
 
 StreamingArchiveFile::~StreamingArchiveFile()
 {
-	File::close();
 }
 
 //=================================================================
