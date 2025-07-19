@@ -4473,17 +4473,17 @@ void AIUpdateInterface::evaluateMoraleBonus( void )
 		//if ( draw && !us->isKindOf( KINDOF_PORTABLE_STRUCTURE ) )
 		//	draw->setTerrainDecal(TERRAIN_DECAL_NONE);
 
-		// horde
 		if( horde )
-		{
 			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
-
-		}  // end if
 		else
 			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_HORDE );
 
-		// nationalism
+#if RETAIL_COMPATIBLE_CRC
 		if( nationalism )
+#else
+		//TheSuperHackers @bugfix GeneralCamo/Mauller nationalism should only be applied when within a horde
+		if( horde && nationalism )
+#endif
 			us->setWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
 		else
 			us->clearWeaponBonusCondition( WEAPONBONUSCONDITION_NATIONALISM );
