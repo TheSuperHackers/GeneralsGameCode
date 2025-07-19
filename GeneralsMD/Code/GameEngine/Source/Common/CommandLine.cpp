@@ -402,6 +402,7 @@ Int parseMapName(char *args[], int num)
 Int parseHeadless(char *args[], int num)
 {
 	TheWritableGlobalData->m_headless = TRUE;
+	TheWritableGlobalData->m_quickstart = TRUE;
 	TheWritableGlobalData->m_playIntro = FALSE;
 	TheWritableGlobalData->m_afterIntro = TRUE;
 	TheWritableGlobalData->m_playSizzle = FALSE;
@@ -823,6 +824,8 @@ Int parseQuickStart( char *args[], int num )
 #endif
 	parseNoShellMap( args, num );
 	parseNoWindowAnimation( args, num );
+	TheWritableGlobalData->m_quickstart = TRUE;
+
 	return 1;
 }
 
@@ -1138,6 +1141,7 @@ static CommandLineParam paramsForStartup[] =
 {
 	{ "-win", parseWin },
 	{ "-fullscreen", parseNoWin },
+	{ "-quickstart", parseQuickStart },
 
 	// TheSuperHackers @feature helmutbuhler 11/04/2025
 	// This runs the game without a window, graphics, input and audio. You can combine this with -replay
@@ -1168,7 +1172,6 @@ static CommandLineParam paramsForEngineInit[] =
 	{ "-playStats", parsePlayStats },
 	{ "-mod", parseMod },
 	{ "-noshaders", parseNoShaders },
-	{ "-quickstart", parseQuickStart },
 	{ "-useWaveEditor", parseUseWaveEditor },
 
 #if defined(RTS_DEBUG)

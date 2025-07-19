@@ -841,7 +841,10 @@ Int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		// register windows class and create application window
 		if(!TheGlobalData->m_headless && initializeAppWindows(hInstance, nCmdShow, TheGlobalData->m_windowed) == false)
 			return exitcode;
-		
+
+		// set game start time after window is visible for the first time
+		TheGameStartTime = timeGetTime();
+
 		// save our application instance for future use
 		ApplicationHInstance = hInstance;
 
