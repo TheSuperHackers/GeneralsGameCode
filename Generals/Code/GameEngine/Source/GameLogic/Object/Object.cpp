@@ -3321,7 +3321,12 @@ void Object::onDisabledEdge(Bool becomingDisabled)
 	// We will need to adjust power ... somehow ...
 	Int powerToAdjust = getTemplate()->getEnergyProduction();
 	
-	if( powerToAdjust > 0 )
+	// TheSuperHackers @bugfix Caball009 18/07/2025 Don't adjust the power for power plants that are still under construction.
+#if !RETAIL_COMPATIBLE_CRC
+	if ( powerToAdjust > 0 && !testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION) )
+#else
+	if ( powerToAdjust > 0 )
+#endif
 	{
 		// We can't affect something that consumes, or else we go low power which removes the consumption
 		// which makes us not low power so we add the consumption so we go low power...
