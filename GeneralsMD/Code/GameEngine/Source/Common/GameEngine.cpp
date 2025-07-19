@@ -146,6 +146,8 @@ void DeepCRCSanityCheck::reset(void)
 }
 #endif // DEBUG_CRC
 
+UnsignedInt TheGameStartTime = timeGetTime();
+
 //-------------------------------------------------------------------------------------------------
 /// The GameEngine singleton instance
 GameEngine *TheGameEngine = NULL;

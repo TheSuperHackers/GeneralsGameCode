@@ -32,6 +32,16 @@
 #include "Common/ReplaySimulation.h"
 
 
+static void delayGameInit()
+{
+	const UnsignedInt showTime = TheGameStartTime + 3000;
+	while (showTime > timeGetTime())
+	{
+		TheGameEngine->serviceWindowsOS();
+		Sleep(100);
+	}
+}
+
 /**
  * This is the entry point for the game system.
  */
@@ -40,6 +50,11 @@ Int GameMain()
 	int exitcode = 0;
 	// initialize the game engine using factory function
 	TheGameEngine = CreateGameEngine();
+
+	// TheSuperHackers @tweak Delay the game launch for a moment to present the game splash screen.
+	if (!TheGlobalData->m_quickstart)
+		delayGameInit();
+
 	TheGameEngine->init();
 
 	if (!TheGlobalData->m_simulateReplays.empty())
@@ -48,7 +63,6 @@ Int GameMain()
 	}
 	else
 	{
-		// run it
 		TheGameEngine->execute();
 	}
 

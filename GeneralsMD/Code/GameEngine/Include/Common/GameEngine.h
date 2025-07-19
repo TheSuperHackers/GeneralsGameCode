@@ -108,6 +108,8 @@ protected:
 inline void GameEngine::setQuitting( Bool quitting ) { m_quitting = quitting; }
 inline Bool GameEngine::getQuitting(void) { return m_quitting; }
 
+extern UnsignedInt TheGameStartTime;
+
 // the game engine singleton
 extern GameEngine *TheGameEngine;
 
