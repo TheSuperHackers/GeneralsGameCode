@@ -452,14 +452,14 @@ void Player::init(const PlayerTemplate* pt)
 
 		if( m_money.countMoney() == 0 )
 		{
-      if ( TheGameInfo )
-      {
-        m_money = TheGameInfo->getStartingCash();
-      }
-      else
-      {
-  			m_money = TheGlobalData->m_defaultStartingCash;
-      }
+			if ( TheGameInfo )
+			{
+				m_money.deposit( TheGameInfo->getStartingCash().countMoney(), FALSE );
+			}
+			else
+			{
+				m_money.deposit( TheGlobalData->m_defaultStartingCash.countMoney(), FALSE );
+			}
 		}
 
 		m_playerDisplayName.clear();
