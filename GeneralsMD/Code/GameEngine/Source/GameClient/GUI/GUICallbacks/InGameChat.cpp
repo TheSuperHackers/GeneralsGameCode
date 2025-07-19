@@ -199,7 +199,13 @@ void ToggleInGameChat( Bool immediate )
 	if (TheGameLogic->isInReplayGame())
 		return;
 
-	if (!TheGameInfo->isMultiPlayer() && TheGlobalData->m_netMinPlayers)
+	// TheSuperHackers @info skyaero 19/07/2025
+	// If the player surrenders, its player template is changed to observer
+	// This resets a number of data entries related to network information,
+	// causing player->IsMultiplayer() to return false, causing the chat window to not show.
+	// This is resolved by adding an entry that checks if the player is dead.
+	Player* localPlayer = ThePlayerList->getLocalPlayer();
+	if ((localPlayer && !localPlayer->isPlayerDead() && !TheGameInfo->isMultiPlayer()) && TheGlobalData->m_netMinPlayers)
 		return;
 
 	if (chatWindow)
