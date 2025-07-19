@@ -140,7 +140,7 @@ public:
 	virtual Bool reserveSpace(ObjectID id, Real parkingOffset, PPInfo* info);
 	virtual void releaseSpace(ObjectID id); 
 	virtual Bool reserveRunway(ObjectID id, Bool forLanding);
-	Bool deferUnsequencedRunwayReservationForTakeoff(UnsignedInt index, Bool forLanding);
+	Bool deferUnsequencedRunwayReservationForTakeoff(UnsignedInt spaceIndex, Bool forLanding);
 	virtual void releaseRunway(ObjectID id); 
 	virtual void calcPPInfo( ObjectID id, PPInfo *info );
 	virtual Int getRunwayCount() const { return m_runways.size(); }
