@@ -472,9 +472,7 @@ void ParkingPlaceBehavior::transferRunwayReservationToNextInLineForTakeoff(Objec
 //-------------------------------------------------------------------------------------------------
 Bool ParkingPlaceBehavior::deferUnsequencedRunwayReservationForTakeoff(UnsignedInt index, Bool forLanding)
 {
-	CONSTEXPR const UnsignedInt INDEX_A = 2, INDEX_B = 3;
-
-	if (index == INDEX_A || index == INDEX_B)
+	if (index == 2 || index == 3)
 	{
 		Bool& deferred = m_spaces[index].m_deferredRunwayReservationForTakeoff;
 		if (forLanding)
