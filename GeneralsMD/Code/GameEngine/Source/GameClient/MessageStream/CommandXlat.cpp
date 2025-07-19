@@ -68,6 +68,7 @@
 #include "GameLogic/ExperienceTracker.h"
 #include "GameLogic/GameLogic.h"
 #include "GameLogic/Module/BodyModule.h"
+#include "GameLogic/Module/ProductionUpdate.h"
 #include "GameLogic/Object.h"						
 #include "GameLogic/PartitionManager.h"
 #include "GameLogic/ScriptEngine.h"
@@ -127,7 +128,65 @@ void printObjects(Object *obj, void *userData)
 	TheScriptEngine->AppendDebugMessage(line, FALSE);
 }
 
-#endif
+#endif // defined(RTS_DEBUG)
+
+
+#if defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+
+void giveAllSciences(Player* player)
+{
+	// cheese festival: do NOT imitate this code. it is for debug purposes only.
+	std::vector<AsciiString> v = TheScienceStore->friend_getScienceNames();
+	for (size_t i = 0; i < v.size(); ++i) 
+	{
+		ScienceType st = TheScienceStore->getScienceFromInternalName(v[i]);
+		if (st != SCIENCE_INVALID && TheScienceStore->isScienceGrantable(st))
+		{
+			player->grantScience(st);
+		}
+	}
+}
+
+void objectUnderConstruction(Object* obj, void *userData)
+{
+	if (obj->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
+	{
+		*(Bool*)userData = true;
+		return;
+	}
+
+	ProductionUpdateInterface *pui = ProductionUpdate::getProductionUpdateInterfaceFromObject(obj);
+	if(pui != NULL && pui->getProductionCount() > 0)
+	{
+		*(Bool*)userData = true;
+		return;
+	}
+}
+
+Bool hasThingsInProduction(Player* player)
+{
+	Bool hasThingInProduction = false;
+	player->iterateObjects( objectUnderConstruction, &hasThingInProduction );
+	return hasThingInProduction;
+}
+
+Bool hasThingsInProduction(PlayerType playerType)
+{
+	for (Int n = 0; n < ThePlayerList->getPlayerCount(); ++n)
+	{
+		Player* player = ThePlayerList->getNthPlayer(n);
+		if (player->getPlayerType() == playerType)
+		{
+			if (hasThingsInProduction(player))
+				return true;
+		}
+	}
+	return false;
+}
+
+#endif // defined(RTS_DEBUG) || defined(_ALLOW_DEBUG_CHEATS_IN_RELEASE)
+
+
 static Bool isSystemMessage( const GameMessage *msg );
 
 enum{ DROPPED_MAX_PARTICLE_COUNT = 1000};
@@ -3420,17 +3479,8 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 			{
 				Player *player = ThePlayerList->getLocalPlayer();
 				if (player)
-				{ 
-					// cheese festival: do NOT imitate this code. it is for debug purposes only.
-					std::vector<AsciiString> v = TheScienceStore->friend_getScienceNames();
-					for (int i = 0; i < v.size(); ++i) 
-					{
-						ScienceType st = TheScienceStore->getScienceFromInternalName(v[i]);
-						if (st != SCIENCE_INVALID && TheScienceStore->isScienceGrantable(st))
-						{
-							player->grantScience(st);
-						}
-					}
+				{
+					giveAllSciences(player);
 				}
 				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugGiveAllSciences", L"Granting all sciences!" ) );
 				disp = DESTROY_MESSAGE;
@@ -4526,10 +4576,17 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEMO_REMOVE_PREREQ:
 		{
 			// Doesn't make a valid network message
-			Player *localPlayer = ThePlayerList->getLocalPlayer();
-			localPlayer->toggleIgnorePrereqs();
+			// In multiplayer, all clients need to enable this cheat at the same time, otherwise game will mismatch
+			Bool enable = !ThePlayerList->getLocalPlayer()->ignoresPrereqs();
 
-			if (localPlayer->ignoresPrereqs())
+			for (Int n = 0; n < ThePlayerList->getPlayerCount(); ++n)
+			{
+				Player* player = ThePlayerList->getNthPlayer(n);
+				if (player->getPlayerType() == PLAYER_HUMAN)
+					player->enableIgnorePrereqs(enable);
+			}
+
+			if (enable)
 				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugIgnorePrereqOn", L"Ignore Prerequisites is ON") );
 			else
 				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugIgnorePrereqOff", L"Ignore Prerequisites is OFF") );
@@ -4543,15 +4600,25 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEMO_INSTANT_BUILD:
 		{
 			// Doesn't make a valid network message
-			Player *localPlayer = ThePlayerList->getLocalPlayer();
-			localPlayer->toggleInstantBuild();
+			// In multiplayer, all clients need to enable this cheat at the same time, otherwise game will mismatch
+			if (!TheGameLogic->isInMultiplayerGame() || !hasThingsInProduction(PLAYER_HUMAN))
+			{
+				Bool enable = !ThePlayerList->getLocalPlayer()->buildsInstantly();
 
-			if (localPlayer->buildsInstantly())
-				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugInstantBuildOn", L"Instant Build is ON") );
-			else
-				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugInstantBuildOff", L"Instant Build is OFF") );
+				for (Int n = 0; n < ThePlayerList->getPlayerCount(); ++n)
+				{
+					Player* player = ThePlayerList->getNthPlayer(n);
+					if (player->getPlayerType() == PLAYER_HUMAN)
+						player->enableInstantBuild(enable);
+				}
 
-			disp = DESTROY_MESSAGE;
+				if (enable)
+					TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugInstantBuildOn", L"Instant Build is ON") );
+				else
+					TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugInstantBuildOff", L"Instant Build is OFF") );
+
+				disp = DESTROY_MESSAGE;
+			}
 			break;
 		}
 
@@ -4560,10 +4627,17 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEMO_FREE_BUILD:
 		{
 			// Doesn't make a valid network message
-			Player *localPlayer = ThePlayerList->getLocalPlayer();
-			localPlayer->toggleFreeBuild();
+			// In multiplayer, all clients need to enable this cheat at the same time, otherwise game will mismatch
+			Bool enable = !ThePlayerList->getLocalPlayer()->buildsForFree();
 
-			if (localPlayer->buildsForFree())
+			for (Int n = 0; n < ThePlayerList->getPlayerCount(); ++n)
+			{
+				Player* player = ThePlayerList->getNthPlayer(n);
+				if (player->getPlayerType() == PLAYER_HUMAN)
+					player->enableFreeBuild(enable);
+			}
+
+			if (enable)
 				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugFreeBuildOn", L"Free Build is ON") );
 			else
 				TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugFreeBuildOff", L"Free Build is OFF") );
@@ -4777,20 +4851,14 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_GIVE_ALL_SCIENCES:
 		{
-			Player *player = ThePlayerList->getLocalPlayer();
-			if (player)
+			// In multiplayer, all clients need to enable this cheat at the same time, otherwise game will mismatch
+			for (Int n = 0; n < ThePlayerList->getPlayerCount(); ++n)
 			{
-				// cheese festival: do NOT imitate this code. it is for debug purposes only.
-				std::vector<AsciiString> v = TheScienceStore->friend_getScienceNames();
-				for (size_t i = 0; i < v.size(); ++i) 
-				{
-					ScienceType st = TheScienceStore->getScienceFromInternalName(v[i]);
-					if (st != SCIENCE_INVALID && TheScienceStore->isScienceGrantable(st))
-					{
-						player->grantScience(st);
-					}
-				}
+				Player* player = ThePlayerList->getNthPlayer(n);
+				if (player->getPlayerType() == PLAYER_HUMAN)
+					giveAllSciences(player);
 			}
+
 			TheInGameUI->messageNoFormat( TheGameText->FETCH_OR_SUBSTITUTE("GUI:DebugGiveAllSciences", L"Granting all sciences!") );
 			disp = DESTROY_MESSAGE;
 			break;
