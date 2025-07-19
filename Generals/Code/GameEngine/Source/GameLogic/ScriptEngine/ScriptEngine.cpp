@@ -5129,7 +5129,8 @@ Player *ScriptEngine::getPlayerFromAsciiString(const AsciiString& playerString)
 	else if (playerString == THIS_PLAYER_ENEMY)	{
 		return getSkirmishEnemyPlayer();
 	}
-	else {
+	// TheSuperHackers @bugfix Mauller 01/07/2025 we need to ignore empty player strings as they can return an invalid and uninitialized player from the player list
+	else if (playerString.isNotEmpty()){
 		NameKeyType key = NAMEKEY(playerString);
 		Player *pPlayer = ThePlayerList->findPlayerWithNameKey(key);
 		if (pPlayer!=NULL) {
