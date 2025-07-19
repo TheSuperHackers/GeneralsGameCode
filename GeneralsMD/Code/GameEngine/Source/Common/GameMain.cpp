@@ -38,7 +38,7 @@ static void delayGameInit()
 	while (showTime > timeGetTime())
 	{
 		TheGameEngine->serviceWindowsOS();
-		Sleep(100);
+		Sleep(5);
 	}
 }
 
