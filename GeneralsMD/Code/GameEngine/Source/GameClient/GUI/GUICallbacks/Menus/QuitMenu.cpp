@@ -127,6 +127,15 @@ void destroyQuitMenu()
 	}
 	quitMenuLayout = NULL;
 	isVisible = FALSE;
+
+	// TheSuperHackers @fix skyaero 19/07/2025
+	// EA previously assumed that destroyQuitMenu() is only called when the 
+	// player exits the current game. However, this function is also triggered when
+	// a player surrenders.
+	// Since surrendered players may continue observing the match as spectators,
+	// we need to invoke the following function to prevent suppression of other windows,
+	// such as chat and diplomacy interfaces.
+	TheInGameUI->setQuitMenuVisible(FALSE);
 }
 
 /**
