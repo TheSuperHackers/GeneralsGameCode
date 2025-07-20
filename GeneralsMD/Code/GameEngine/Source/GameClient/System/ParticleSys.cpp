@@ -2299,7 +2299,6 @@ ParticleInfo ParticleSystem::mergeRelatedParticleSystems( ParticleSystem *master
 	if (!masterParticleSystem || !slaveParticleSystem) {
 		DEBUG_CRASH(("masterParticleSystem or slaveParticleSystem was NULL. Should not happen. JKMCD"));
 		ParticleInfo bogus;
-		memset( &bogus, 0, sizeof( bogus ) );
 		return bogus;
 	}
 
