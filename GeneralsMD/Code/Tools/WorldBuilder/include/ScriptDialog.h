@@ -91,6 +91,10 @@ public:
 	static void patchScriptParametersForGC(Script *pScript);
 	static void checkParametersForGC(void);
 
+	static void appendWarningHintLazy(Script* pScript);
+	static void SaveScriptWarningsState();
+	static Bool LoadScriptWarningsState();
+
 
 	/// To allow CSDTreeCtrl access to these member functions of ScriptDialog
 	Script *friend_getCurScript(void);
@@ -121,6 +125,8 @@ protected:
 	CFont* m_pOldFont;
 	BOOL m_bCompressed;
 	BOOL m_bNewIcons;
+
+	BOOL m_bDisableDeepScan;
 
 protected:
 	HTREEITEM addPlayer(Int playerIndx);
@@ -159,10 +165,12 @@ protected:
 	afx_msg void OnCopyScript();
 	afx_msg void OnDelete();
 	afx_msg void OnVerify();
+	afx_msg void OnVerifyAll();
 	afx_msg void OnPatchGC();
 	afx_msg void OnFindNext();
 	afx_msg void OnAutoVerify();
 	afx_msg void OnCompress();
+	afx_msg void OnDisableDeepScan();
 	afx_msg void OnNewIcons();
 	afx_msg void OnSave();
 	afx_msg void OnLoad();

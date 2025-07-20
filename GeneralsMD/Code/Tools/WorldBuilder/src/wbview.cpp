@@ -291,6 +291,14 @@ void WbView::mouseMove(TTrackingMode m, CPoint viewPt)
 	}
 	str2.Format("%d waypoint(s), ", totalWaypoints);
 
+	// On Hold Edit
+	// 	CString pointerText = CMainFrame::GetMainFrame()->getPointerText();
+	// DEBUG_LOG(("pointer text %s\n",pointerText));
+	// if (!pointerText.IsEmpty()) {
+	// 	str += " | ";
+	// 	str += pointerText;
+	// }
+
 	// Adriane [Deathscythe] -- Semi precise cell calc , todo fix it still sometimes off by something
 	str3.Format("(%.2f,%.2f), height (Feet): %.2f Height (Cell): %.2f ", cpt.x, cpt.y, height, heightCell);
 	str += str2;

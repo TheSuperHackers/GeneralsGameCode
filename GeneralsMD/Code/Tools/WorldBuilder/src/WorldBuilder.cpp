@@ -511,7 +511,7 @@ BOOL CWorldBuilderApp::InitInstance()
 		"WARNING: This build of WorldBuilder is a work in progress.\n"
 		"Unauthorized use or distribution without notifying Adriane [Deathscythe] is discouraged.\n\n"
 		"This version is still in testing and may corrupt or break your map, so please make a backup before using it.\n\n"
-		"Build Version: 159dc6ad\n"
+		"Build Version: c84fcc39\n"
 		"If you find a bug or do want to suggest a feature, please report it on our WorldBuilder Discord server:\nhttps://discord.gg/tJ6zyGb",
 		MB_ICONEXCLAMATION | MB_OK
 	);
@@ -623,7 +623,7 @@ void CWorldBuilderApp::updateCurTool(Bool forceHand)
 		} else if (0x8000 & ::GetAsyncKeyState(VK_MENU)) {
 			// Alt key gives eyedropper.
 			m_curTool = &m_eyedropperTool;
-		} else if (0x8000 & ::GetAsyncKeyState(VK_CONTROL)) {
+		} else if (0x8000 & ::GetAsyncKeyState(VK_CONTROL) && m_curTool != &m_fenceTool) {
 			// Control key gives pointer.
 			m_curTool = &m_pointerTool;
 		} else {

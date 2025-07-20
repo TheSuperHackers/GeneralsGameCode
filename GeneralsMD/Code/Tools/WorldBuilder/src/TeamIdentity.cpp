@@ -90,7 +90,9 @@ BOOL TeamIdentity::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 	
     unitLoadIndex = 0; // Start loading from Unit 1
-    SetTimer(UNIT_LOAD_TIMER, 10, NULL); // 100ms delay for smooth UI
+	// Disabled for now but we can use this for smooth loading later
+    // SetTimer(UNIT_LOAD_TIMER, 10, NULL); // 100ms delay for smooth UI
+	LoadAllUnitsInfo();
 
 	// loadUnitsInfo(IDC_MIN_UNIT1, TheKey_teamUnitMinCount1,
 	// 							IDC_MAX_UNIT1, TheKey_teamUnitMaxCount1,
@@ -229,6 +231,60 @@ BOOL TeamIdentity::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
+void TeamIdentity::LoadAllUnitsInfo()
+{
+    static const int minUnitIDs[] = {
+        IDC_MIN_UNIT1, IDC_MIN_UNIT2, IDC_MIN_UNIT3, IDC_MIN_UNIT4,
+        IDC_MIN_UNIT5, IDC_MIN_UNIT6, IDC_MIN_UNIT7
+    };
+    static const int maxUnitIDs[] = {
+        IDC_MAX_UNIT1, IDC_MAX_UNIT2, IDC_MAX_UNIT3, IDC_MAX_UNIT4,
+        IDC_MAX_UNIT5, IDC_MAX_UNIT6, IDC_MAX_UNIT7
+    };
+    static const int typeUnitIDs[] = {
+        IDC_UNIT_TYPE1, IDC_UNIT_TYPE2, IDC_UNIT_TYPE3, IDC_UNIT_TYPE4,
+        IDC_UNIT_TYPE5, IDC_UNIT_TYPE6, IDC_UNIT_TYPE7
+    };
+    static const int typeUnitButtonIDs[] = {
+        IDC_UNIT_TYPE1_BUTTON, IDC_UNIT_TYPE2_BUTTON, IDC_UNIT_TYPE3_BUTTON, IDC_UNIT_TYPE4_BUTTON,
+        IDC_UNIT_TYPE5_BUTTON, IDC_UNIT_TYPE6_BUTTON, IDC_UNIT_TYPE7_BUTTON
+    };
+    static const NameKeyType minCounts[] = {
+        TheKey_teamUnitMinCount1, TheKey_teamUnitMinCount2, TheKey_teamUnitMinCount3,
+        TheKey_teamUnitMinCount4, TheKey_teamUnitMinCount5, TheKey_teamUnitMinCount6,
+        TheKey_teamUnitMinCount7
+    };
+    static const NameKeyType maxCounts[] = {
+        TheKey_teamUnitMaxCount1, TheKey_teamUnitMaxCount2, TheKey_teamUnitMaxCount3,
+        TheKey_teamUnitMaxCount4, TheKey_teamUnitMaxCount5, TheKey_teamUnitMaxCount6,
+        TheKey_teamUnitMaxCount7
+    };
+    static const NameKeyType unitTypes[] = {
+        TheKey_teamUnitType1, TheKey_teamUnitType2, TheKey_teamUnitType3,
+        TheKey_teamUnitType4, TheKey_teamUnitType5, TheKey_teamUnitType6,
+        TheKey_teamUnitType7
+    };
+
+    for (int i = 0; i < 7; ++i)
+    {
+        loadUnitsInfo(minUnitIDs[i], minCounts[i],
+                      maxUnitIDs[i], maxCounts[i],
+                      typeUnitIDs[i], unitTypes[i]);
+
+        CWnd* pWnd = GetDlgItem(minUnitIDs[i]);
+        if (pWnd) pWnd->EnableWindow(TRUE);
+
+        pWnd = GetDlgItem(maxUnitIDs[i]);
+        if (pWnd) pWnd->EnableWindow(TRUE);
+
+        pWnd = GetDlgItem(typeUnitIDs[i]);
+        if (pWnd) pWnd->EnableWindow(TRUE);
+
+        pWnd = GetDlgItem(typeUnitButtonIDs[i]);
+        if (pWnd) pWnd->EnableWindow(TRUE);
+    }
+}
+
 void TeamIdentity::OnTimer(UINT nIDEvent)
 {
     if (nIDEvent == UNIT_LOAD_TIMER)
@@ -272,16 +328,16 @@ void TeamIdentity::OnTimer(UINT nIDEvent)
                             typeUnitIDs[unitLoadIndex], unitTypes[unitLoadIndex]);
 
             CWnd* pWnd = GetDlgItem(minUnitIDs[unitLoadIndex]);
-            if (pWnd) pWnd->ShowWindow(SW_SHOW);
+            if (pWnd) pWnd->EnableWindow(TRUE);
 
             pWnd = GetDlgItem(maxUnitIDs[unitLoadIndex]);
-            if (pWnd) pWnd->ShowWindow(SW_SHOW);
+            if (pWnd) pWnd->EnableWindow(TRUE);
 
             pWnd = GetDlgItem(typeUnitIDs[unitLoadIndex]);
-            if (pWnd) pWnd->ShowWindow(SW_SHOW);
+            if (pWnd) pWnd->EnableWindow(TRUE);
 
 			pWnd = GetDlgItem(typeUnitButtonIDs[unitLoadIndex]);
-			if (pWnd) pWnd->ShowWindow(SW_SHOW);
+			if (pWnd) pWnd->EnableWindow(TRUE);
         
         }
 

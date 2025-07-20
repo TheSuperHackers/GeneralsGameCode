@@ -57,6 +57,7 @@ protected:
 	SidesList	*m_sides;
 	int 		unitLoadIndex; // Tracks which unit is being loaded
 protected:
+	void LoadAllUnitsInfo();
 	void loadUnitsInfo(int idcMinUnit, NameKeyType keyMinUnit, 
 								int idcMaxUnit, NameKeyType keyMaxUnit,
 								int idcUnitType, NameKeyType keyUnitType);

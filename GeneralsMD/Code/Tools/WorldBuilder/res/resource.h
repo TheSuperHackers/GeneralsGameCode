@@ -311,6 +311,7 @@
 #define IDC_SCRIPT_NAME                 1127
 #define IDC_VERIFY                      1127
 #define IDC_RICH_EDIT_HERE              1128
+#define IDC_VERIFYALL                   1128
 #define IDC_PATCH_GC                    1129
 #define IDC_CONDITION_TREE              1130
 #define IDC_CONDITION_LIST              1130
@@ -389,6 +390,7 @@
 #define IDC_NEWICONS                    1168
 #define IDC_GROUP_ACTIVE                1169
 #define IDC_MAPOBJECT_Selectable2       1169
+#define IDC_DEEPSCAN                    1169
 #define IDC_PLAYERDISPLAYNAME           1170
 #define IDC_CHECK4                      1170
 #define IDC_TRANSPORTS_RETURN           1170

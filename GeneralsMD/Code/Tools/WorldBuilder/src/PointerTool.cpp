@@ -574,7 +574,8 @@ void PointerTool::mouseUp(TTrackingMode m, CPoint viewPt, WbView* pView, CWorldB
 				picked = (viewPt.x>=box.left && viewPt.x<=box.right && viewPt.y>=box.top && viewPt.y<=box.bottom) ;
 				if (picked) {
 					if ((0x8000 && ::GetAsyncKeyState(VK_SHIFT))) {
-						pObj->setSelected(!pObj->isSelected());
+						// !pObj->isSelected() is the original value -- its a bit annoying so we use true always (Adriane[Deathscythe])
+						pObj->setSelected(true);
 					}	else {
 						pObj->setSelected(true);
 					}

@@ -42,11 +42,15 @@
 #include "WaypointOptions.h"
 #include "Common/UnicodeString.h"
 
+#include "Common/GlobalData.h"
+
 #ifdef _INTERNAL
 // for occasional debugging...
 //#pragma optimize("", off)
 //#pragma MESSAGE("************************************** WARNING, optimization disabled for debugging purposes")
 #endif
+
+// static Bool g_didScriptWarningsUpdate = false;
 
 static const Int K_LOCAL_TEAMS_VERSION_1 = 1;
 
@@ -193,10 +197,12 @@ BEGIN_MESSAGE_MAP(ScriptDialog, CDialog)
 	ON_BN_CLICKED(IDC_COPY_SCRIPT, OnCopyScript)
 	ON_BN_CLICKED(IDC_DELETE, OnDelete)
 	ON_BN_CLICKED(IDC_VERIFY, OnVerify)
+	ON_BN_CLICKED(IDC_VERIFYALL, OnVerifyAll)
 	ON_BN_CLICKED(IDC_PATCH_GC, OnPatchGC)
 	ON_BN_CLICKED(IDC_AUTO_VERIFY, OnAutoVerify)
 	ON_BN_CLICKED(IDC_COMPRESS, OnCompress)
 	ON_BN_CLICKED(IDC_NEWICONS, OnNewIcons)
+	ON_BN_CLICKED(IDC_DEEPSCAN, OnDisableDeepScan)
 	ON_BN_CLICKED(IDC_FIND_NEXT, OnFindNext)
 	ON_BN_CLICKED(IDC_SAVE, OnSave)
 	ON_BN_CLICKED(IDC_LOAD, OnLoad)
@@ -211,6 +217,51 @@ END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // ScriptDialog message handlers
+
+inline bool asciiStringContains(const AsciiString& haystack, const char* needle)
+{
+	if (!needle || !haystack.str()) return false;
+	return strstr(haystack.str(), needle) != NULL;
+}
+
+AsciiString parseLineBreaks(const AsciiString& input)
+{
+	AsciiString output = input;
+	const char* p = output.str();
+	AsciiString result;
+
+	while (*p) {
+		if (*p == '\n') {
+			result.concat("\r\n");
+		} else {
+			char temp[2] = {*p, '\0'};
+			result.concat(temp);
+		}
+		++p;
+	}
+	return result;
+}
+
+bool alreadyListed(const AsciiString& usedByTag, const AsciiString& scriptName)
+{
+	const char* tagStr = usedByTag.str();
+	const char* nameStr = scriptName.str();
+
+	// simple substring search with comma or bracket after
+	AsciiString pattern(", ");
+	pattern.concat(scriptName);
+
+	if (strstr(tagStr, pattern.str()) != NULL)
+		return true;
+
+	// also check start-of-line case
+	pattern = "[Referenced in:";
+	pattern.concat(scriptName);
+	if (strstr(tagStr, pattern.str()) != NULL)
+		return true;
+
+	return false;
+}
 
 void ScriptDialog::OnSelchangedScriptTree(NMHDR* pNMHDR, LRESULT* pResult) 
 {
@@ -244,6 +295,110 @@ void ScriptDialog::OnSelchangedScriptTree(NMHDR* pNMHDR, LRESULT* pResult)
 	if (pScript) {
 		scriptComment = pScript->getComment();
 		scriptText = pScript->getUiText();
+
+		AsciiString usedByTag;
+		usedByTag.concat("[Referenced in:");
+
+		AsciiString targetScriptName = pScript->getName();
+		Bool foundUse = false;
+
+		for (int i = 0; i < m_sides.getNumSides(); ++i) {
+			ScriptList* pSL = m_sides.getSideInfo(i)->getScriptList();
+			if (!pSL) continue;
+
+			// --- Check non-grouped scripts
+			for (Script* s = pSL->getScript(); s; s = s->getNext()) {
+				if (s == pScript) continue;
+				bool referenced = false;
+
+				// Check conditions
+				for (OrCondition* pOr = s->getOrCondition(); pOr && !referenced; pOr = pOr->getNextOrCondition()) {
+					for (Condition* c = pOr->getFirstAndCondition(); c && !referenced; c = c->getNext()) {
+						for (int p = 0; p < c->getNumParameters(); ++p) {
+							Parameter* param = c->getParameter(p);
+							if (param && param->getParameterType() == Parameter::SCRIPT &&
+								param->getString() == targetScriptName) {
+								referenced = true;
+								break;
+							}
+						}
+					}
+				}
+
+				// Check actions if not already found
+				for (ScriptAction* a = s->getAction(); a && !referenced; a = a->getNext()) {
+					for (int p = 0; p < a->getNumParameters(); ++p) {
+						Parameter* param = a->getParameter(p);
+						if (param && param->getParameterType() == Parameter::SCRIPT &&
+							param->getString() == targetScriptName) {
+							referenced = true;
+							break;
+						}
+					}
+				}
+
+				if (referenced && !alreadyListed(usedByTag, s->getName())) {
+					if (foundUse) {
+						usedByTag.concat(", ");
+					} else {
+						foundUse = true;
+					}
+					usedByTag.concat(s->getName());
+				}
+			}
+
+			// --- Check grouped scripts
+			for (ScriptGroup* g = pSL->getScriptGroup(); g; g = g->getNext()) {
+				for (Script* s = g->getScript(); s; s = s->getNext()) {
+					if (s == pScript) continue;
+					bool referenced = false;
+
+					// Conditions
+					for (OrCondition* pOr = s->getOrCondition(); pOr && !referenced; pOr = pOr->getNextOrCondition()) {
+						for (Condition* c = pOr->getFirstAndCondition(); c && !referenced; c = c->getNext()) {
+							for (int p = 0; p < c->getNumParameters(); ++p) {
+								Parameter* param = c->getParameter(p);
+								if (param && param->getParameterType() == Parameter::SCRIPT &&
+									param->getString() == targetScriptName) {
+									referenced = true;
+									break;
+								}
+							}
+						}
+					}
+
+					// Actions
+					for (ScriptAction* a = s->getAction(); a && !referenced; a = a->getNext()) {
+						for (int p = 0; p < a->getNumParameters(); ++p) {
+							Parameter* param = a->getParameter(p);
+							if (param && param->getParameterType() == Parameter::SCRIPT &&
+								param->getString() == targetScriptName) {
+								referenced = true;
+								break;
+							}
+						}
+					}
+
+					if (referenced && !alreadyListed(usedByTag, s->getName())) {
+						if (foundUse) {
+							usedByTag.concat(", ");
+						} else {
+							foundUse = true;
+						}
+						usedByTag.concat(s->getName());
+					}
+				}
+			}
+		}
+
+		usedByTag.concat(foundUse ? "]" : " None]");
+
+		if(!scriptComment.isEmpty()){
+			scriptComment.concat("\n\n");
+		}
+		scriptComment.concat(usedByTag);
+
+		scriptComment = parseLineBreaks(scriptComment);
 	}
 
 	pWnd = GetDlgItem(IDC_SCRIPT_COMMENT);
@@ -413,7 +568,34 @@ void ScriptDialog::OnFindNext()
 to user control because this function is VERY slow. 7-15-03 -MW*/
 void ScriptDialog::OnVerify()
 {
-	updateWarnings(true);	//force an update of warnings
+	// Flag to indicate if cache was successfully loaded
+	Bool loadedFromCache = false;
+
+	if(m_autoUpdateWarnings){
+		// Try loading cached warning state first
+		if (LoadScriptWarningsState()) {
+			DEBUG_LOG(("ScriptDialog: Loaded script warning state from cache.\n"));
+			loadedFromCache = true;
+		} else {
+			DEBUG_LOG(("ScriptDialog: No valid cache found. Will update warnings normally.\n"));
+		}
+
+		// If cache didn't load, fall back to the expensive update
+		// if (!g_didScriptWarningsUpdate) {
+			if (!loadedFromCache) {
+				updateWarnings(true);
+				DEBUG_LOG(("ScriptDialog: Ran updateWarnings(true) due to missing cache.\n"));
+			}
+			// g_didScriptWarningsUpdate = true;
+		// }
+	}
+
+	updateIcons(TVI_ROOT);
+}
+
+void ScriptDialog::OnVerifyAll()
+{
+	updateWarnings(true);
 	updateIcons(TVI_ROOT);
 }
 
@@ -449,6 +631,13 @@ void ScriptDialog::OnNewIcons()
 
 		pTree->SetImageList(&m_imageList, TVSIL_STATE);
 	}
+}
+
+void ScriptDialog::OnDisableDeepScan()
+{
+	CButton *pButton = (CButton*)GetDlgItem(IDC_DEEPSCAN);
+	m_bDisableDeepScan = (pButton->GetCheck() == 1);
+    ::AfxGetApp()->WriteProfileInt(SCRIPT_DIALOG_SECTION, "DisableDeepScan", m_bDisableDeepScan ? 1 : 0);
 }
 
 void ScriptDialog::OnCompress()
@@ -504,6 +693,206 @@ void ScriptDialog::OnCompress()
     // Force redraw
     pTree->Invalidate();
     pTree->UpdateWindow();
+}
+
+// Load em cached status baby Adriane [Deathscythe]
+Bool ScriptDialog::LoadScriptWarningsState()
+{
+	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
+	if (!pDoc) {
+		DEBUG_LOG(("LoadScriptWarningsState: No active doc!\n"));
+		return false;
+	}
+
+	DEBUG_LOG(("LoadScriptWarningsState: Map Path = %s\n", pDoc->getMapPath()));
+
+	CString path = pDoc->getMapPath();
+	if (path.IsEmpty()) {
+		DEBUG_LOG(("LoadScriptWarningsState: Empty map path.\n"));
+		return false;
+	}
+
+	int lastSlash = path.ReverseFind('\\');
+	if (lastSlash != -1)
+		path = path.Left(lastSlash + 1);
+	else {
+		DEBUG_LOG(("LoadScriptWarningsState: Malformed path - no backslash found.\n"));
+		return false;
+	}
+
+	CString cacheFile = path + "AdrianeScriptWarningsCache.txt";
+	DEBUG_LOG(("LoadScriptWarningsState: Final cache file = %s\n", cacheFile));
+
+	CStdioFile file;
+	if (!file.Open(cacheFile, CFile::modeRead | CFile::typeText)) {
+		DEBUG_LOG(("LoadScriptWarningsState: Failed to open file for reading.\n"));
+		return false;
+	}
+
+	CString line;
+	std::map<std::string, Bool> warningMap;
+
+	while (file.ReadString(line))
+	{
+		int delim = line.Find(',');
+		if (delim > 0)
+		{
+			CString key = line.Left(delim);
+			CString value = line.Mid(delim + 1);
+			value.TrimLeft(); value.TrimRight();
+
+			warningMap[(const char*)key] = (value == "1");
+		}
+		else {
+			DEBUG_LOG(("LoadScriptWarningsState: Malformed line: %s\n", line));
+		}
+	}
+	file.Close();
+
+	SidesList* sidesListP = TheSidesList;
+	if (m_staticThis) sidesListP = &m_staticThis->m_sides;
+
+	for (int i = 0; i < sidesListP->getNumSides(); ++i)
+	{
+		ScriptList* pSL = sidesListP->getSideInfo(i)->getScriptList();
+		if (!pSL) continue;
+
+		char sideIndexStr[16];
+		sprintf(sideIndexStr, "%d", i);
+
+		Script* pScr;
+		for (pScr = pSL->getScript(); pScr; pScr = pScr->getNext())
+		{
+			std::string key = std::string(sideIndexStr) + "|" + pScr->getName().str();
+			if (warningMap.find(key) != warningMap.end())
+			{
+				pScr->setWarnings(warningMap[key]);
+				pScr->setDirty(false);
+
+				if(m_staticThis && m_staticThis->m_bDisableDeepScan != 1){
+					appendWarningHintLazy(pScr);
+				}
+
+				// Expensive 
+				// if (pScr->hasWarnings()) {
+				// // 	updateScriptWarning(pScr);  // Force regen of warning messages like [???]
+				// }
+			}
+		}
+
+		ScriptGroup* pGroup;
+		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup = pGroup->getNext())
+		{
+			for (pScr = pGroup->getScript(); pScr; pScr = pScr->getNext())
+			{
+				std::string key = std::string(sideIndexStr) + "|" + pScr->getName().str();
+				if (warningMap.find(key) != warningMap.end())
+				{
+					pScr->setWarnings(warningMap[key]);
+					pScr->setDirty(false);
+
+					if(m_staticThis && m_staticThis->m_bDisableDeepScan != 1){
+						appendWarningHintLazy(pScr);
+					}
+
+
+					// Expensive
+					// if (pScr->hasWarnings()) {
+					// 	// updateScriptWarning(pScr);  // Force regen of warning messages like [???]
+					// }
+				}
+			}
+		}
+	}
+
+	DEBUG_LOG(("LoadScriptWarningsState: Finished loading.\n"));
+	return true;
+}
+
+
+void ScriptDialog::appendWarningHintLazy(Script* pScript)
+{
+	if (!pScript || !pScript->hasWarnings()) return;
+
+	for (OrCondition* pOr = pScript->getOrCondition(); pOr; pOr = pOr->getNextOrCondition()) {
+		for (Condition* pCond = pOr->getFirstAndCondition(); pCond; pCond = pCond->getNext()) {
+			for (int i = 0; i < pCond->getNumParameters(); ++i) {
+				Parameter* param = pCond->getParameter(i);
+				AsciiString warn = EditParameter::getWarningText(param, FALSE);
+				if (!warn.isEmpty()) {
+					pCond->setWarnings(true);
+					break; // one warning is enough
+				}
+			}
+		}
+	}
+
+	for (ScriptAction* pAct = pScript->getAction(); pAct; pAct = pAct->getNext()) {
+		for (int i = 0; i < pAct->getNumParameters(); ++i) {
+			Parameter* param = pAct->getParameter(i);
+			AsciiString warn = EditParameter::getWarningText(param, TRUE);
+			if (!warn.isEmpty()) {
+				pAct->setWarnings(true);
+				break;
+			}
+		}
+	}
+}
+
+void ScriptDialog::SaveScriptWarningsState()
+{
+	CWorldBuilderDoc* pDoc = CWorldBuilderDoc::GetActiveDoc();
+	if (!pDoc) return;
+
+	DEBUG_LOG(("Map Path %s\n", pDoc->getMapPath()));
+
+	CString path = pDoc->getMapPath();
+	if (path.IsEmpty()) return;
+
+	int lastSlash = path.ReverseFind('\\');
+	if (lastSlash != -1)
+		path = path.Left(lastSlash + 1);
+	else
+		return;
+
+	CString cacheFile = path + "AdrianeScriptWarningsCache.txt";
+
+	CStdioFile file;
+	if (!file.Open(cacheFile, CFile::modeCreate | CFile::modeWrite | CFile::typeText))
+		return;
+
+	SidesList* sidesListP = TheSidesList;
+	if (m_staticThis) sidesListP = &m_staticThis->m_sides;
+
+	for (int i = 0; i < sidesListP->getNumSides(); ++i)
+	{
+		ScriptList* pSL = sidesListP->getSideInfo(i)->getScriptList();
+		if (!pSL) continue;
+
+		char sideIndexStr[16];
+		sprintf(sideIndexStr, "%d", i);
+
+		Script* pScr;
+		for (pScr = pSL->getScript(); pScr; pScr = pScr->getNext())
+		{
+			CString line;
+			line.Format("%s|%s,%d\n", sideIndexStr, pScr->getName().str(), pScr->hasWarnings() ? 1 : 0);
+			file.WriteString(line);
+		}
+
+		ScriptGroup* pGroup;
+		for (pGroup = pSL->getScriptGroup(); pGroup; pGroup = pGroup->getNext())
+		{
+			for (pScr = pGroup->getScript(); pScr; pScr = pScr->getNext())
+			{
+				CString line;
+				line.Format("%s|%s,%d\n", sideIndexStr, pScr->getName().str(), pScr->hasWarnings() ? 1 : 0);
+				file.WriteString(line);
+			}
+		}
+	}
+
+	file.Close();
 }
 
 
@@ -660,6 +1049,12 @@ BOOL ScriptDialog::OnInitDialog()
 	pWnd->EnableWindow(!m_autoUpdateWarnings);
 
 	m_staticThis = this;
+
+	m_bDisableDeepScan=::AfxGetApp()->GetProfileInt(SCRIPT_DIALOG_SECTION, "DisableDeepScan", 1);
+	pButton = (CButton*)GetDlgItem(IDC_DEEPSCAN);
+	pButton->SetCheck(m_bDisableDeepScan ? 1:0);
+	OnDisableDeepScan();
+
 	CTreeCtrl *pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
 
 	// replace current Tree Dialog with CSDTreeCtrl
@@ -681,7 +1076,31 @@ BOOL ScriptDialog::OnInitDialog()
 	m_sides = *TheSidesList;
 	EditParameter::setCurSidesList(&m_sides);
 	Int i;
-	updateWarnings(true);
+
+	// Flag to indicate if cache was successfully loaded
+	Bool loadedFromCache = false;
+
+	if(m_autoUpdateWarnings){
+		// Try loading cached warning state first
+		if (LoadScriptWarningsState()) {
+			DEBUG_LOG(("ScriptDialog: Loaded script warning state from cache.\n"));
+			loadedFromCache = true;
+			updateWarnings(true);
+			updateIcons(TVI_ROOT);
+		} else {
+			DEBUG_LOG(("ScriptDialog: No valid cache found. Will update warnings normally.\n"));
+		}
+
+		// If cache didn't load, fall back to the expensive update
+		// if (!g_didScriptWarningsUpdate) {
+			if (!loadedFromCache) {
+				updateWarnings(true);
+				DEBUG_LOG(("ScriptDialog: Ran updateWarnings(true) due to missing cache.\n"));
+			}
+			// g_didScriptWarningsUpdate = true;
+		// }
+	}
+
 	if (pTree) {
 		m_imageList.Create(IDB_FOLDERSCRIPT, 16, 2, ILC_COLOR4);
 		pTree->SetImageList(&m_imageList, TVSIL_STATE);
@@ -754,33 +1173,35 @@ HTREEITEM ScriptDialog::addPlayer(Int playerIndx)
 void ScriptDialog::setIconGroup(HTREEITEM item)
 {
 	CTreeCtrl *pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
+	int iconIndex = 0;
 
-	if (getCurGroup()->isActive())
-		pTree->SetItemState(item, INDEXTOSTATEIMAGEMASK(1), TVIS_STATEIMAGEMASK);
-	
-	if (!getCurGroup()->isActive())
-		pTree->SetItemState(item, INDEXTOSTATEIMAGEMASK(5), TVIS_STATEIMAGEMASK);
+	if (getCurGroup()->hasWarnings() && getCurGroup()->isActive() == FALSE )
+		iconIndex = 7;
+	else if (getCurGroup()->hasWarnings())
+		iconIndex = 3;
+	else if (getCurGroup()->isActive())
+		iconIndex = 1;
+	else
+		iconIndex = 5;
 
-	if (getCurGroup()->hasWarnings())
-		pTree->SetItemState(item, INDEXTOSTATEIMAGEMASK(3), TVIS_STATEIMAGEMASK);
-
-	return;
+	pTree->SetItemState(item, INDEXTOSTATEIMAGEMASK(iconIndex), TVIS_STATEIMAGEMASK);
 }
 
 void ScriptDialog::setIconScript(HTREEITEM item)
 {
 	CTreeCtrl *pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
+	int iconIndex = 0;
 
-	if (getCurScript()->isActive())
-		pTree->SetItemState(item, INDEXTOSTATEIMAGEMASK(2), TVIS_STATEIMAGEMASK);
+	if (getCurScript()->hasWarnings() && getCurScript()->isActive() == FALSE)
+		iconIndex = 8;
+	else if (getCurScript()->hasWarnings())
+		iconIndex = 4;
+	else if (getCurScript()->isActive())
+		iconIndex = 2;
+	else
+		iconIndex = 6;
 
-	if (!getCurScript()->isActive())
-		pTree->SetItemState(item, INDEXTOSTATEIMAGEMASK(6), TVIS_STATEIMAGEMASK);
-
-	if (getCurScript()->hasWarnings())
-		pTree->SetItemState(item, INDEXTOSTATEIMAGEMASK(4), TVIS_STATEIMAGEMASK);
-
-	return;
+	pTree->SetItemState(item, INDEXTOSTATEIMAGEMASK(iconIndex), TVIS_STATEIMAGEMASK);
 }
 
 void ScriptDialog::SetItemIconIfDifferent(CTreeCtrl* pTree, HTREEITEM hItem, int desiredIndex)
@@ -820,10 +1241,9 @@ Bool ScriptDialog::updateIcons(HTREEITEM hItem)
 			m_curSelection = lt;
 			if (updateIcons(child)) {
 				// pTree->SetItemState(child, INDEXTOSTATEIMAGEMASK(3), TVIS_STATEIMAGEMASK);
-				SetItemIconIfDifferent(pTree, child, 3);
+				// SetItemIconIfDifferent(pTree, child, 3);
 				warnings = true;
-			} else {
-					setIconGroup(child);
+				setIconGroup(child);
 			}
 		}
 
@@ -836,10 +1256,9 @@ Bool ScriptDialog::updateIcons(HTREEITEM hItem)
 			if (pScr) {
 				if (pScr->hasWarnings()) {
 					// pTree->SetItemState(child, INDEXTOSTATEIMAGEMASK(4), TVIS_STATEIMAGEMASK);
-					SetItemIconIfDifferent(pTree, child, 4);
+					// SetItemIconIfDifferent(pTree, child, 4);
 					warnings = true;
-				} else {
-						setIconScript(child);
+					setIconScript(child);
 				}
 			}
 		}
@@ -2130,6 +2549,8 @@ void ScriptDialog::OnOK()
 		SidesListUndoable *pUndo = new SidesListUndoable(m_sides, pDoc);
 		pDoc->AddAndDoUndoable(pUndo);
 		REF_PTR_RELEASE(pUndo); // belongs to pDoc now.
+
+		SaveScriptWarningsState();
         CDialog::OnOK();  // Call the default OK behavior if the search box isn't focused
     }
 }
@@ -2301,49 +2722,31 @@ void ScriptDialog::OnScriptActivate()
 	Bool active;
 	CTreeCtrl *pTree = (CTreeCtrl*)GetDlgItem(IDC_SCRIPT_TREE);
 	HTREEITEM item = findItem(m_curSelection);
-	
+
 	if (getCurScript() != NULL)
 	{
-		/// Updates attributes
+		// Toggle active state
 		active = getCurScript()->isActive();
 		getCurScript()->setActive(!active);
-		
-		/// Updates screen to reflect change
+
+		// Update label
 		Script *pScript = getCurScript();
 		pTree->SetItemText(item, formatScriptLabel(pScript).str());
-		
-		if (getCurScript()->hasWarnings())
-		{
-			pTree->SetItemState(item, INDEXTOSTATEIMAGEMASK(4), TVIS_STATEIMAGEMASK);
-		}
-		else
-		{
-			if (getCurScript()->isActive())
-				pTree->SetItemState(item, INDEXTOSTATEIMAGEMASK(2), TVIS_STATEIMAGEMASK);
-			else
-				pTree->SetItemState(item, INDEXTOSTATEIMAGEMASK(6), TVIS_STATEIMAGEMASK);
-		}
+
+		// Set icon using centralized logic
+		setIconScript(item);
 	}
 	else if (getCurGroup() != NULL)
 	{
-		/// Updates attributes
+		// Toggle active state
 		active = getCurGroup()->isActive();
 		getCurGroup()->setActive(!active);
 
-		/// Updates screen to reflect change
+		// Update label
 		ScriptGroup *pScriptGroup = getCurGroup();
 		pTree->SetItemText(item, formatScriptLabel(pScriptGroup).str());
 
-		if (getCurGroup()->hasWarnings())
-		{
-			pTree->SetItemState(item, INDEXTOSTATEIMAGEMASK(3), TVIS_STATEIMAGEMASK);
-		}
-		else
-		{
-			if (getCurGroup()->isActive())
-				pTree->SetItemState(item, INDEXTOSTATEIMAGEMASK(1), TVIS_STATEIMAGEMASK);
-			else
-				pTree->SetItemState(item, INDEXTOSTATEIMAGEMASK(5), TVIS_STATEIMAGEMASK);
-		}
+		// Set icon using centralized logic
+		setIconGroup(item);
 	}
 }

@@ -587,7 +587,7 @@ void FenceOptions::ExpandAllItems(CTreeCtrl& treeCtrl, HTREEITEM hItem)
 void FenceOptions::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	CDialog::OnShowWindow(bShow, nStatus);
-	if (!bShow)
+	if (!bShow && m_showAllObjectTypes)
 	{
 		/** We are required to do a reset everytime we hide this window or 
 		 * 	else there will be a fuck up with object options

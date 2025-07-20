@@ -410,13 +410,49 @@ void CTeamsDialog::OnEditTemplate()
 	updateUI(REBUILD_ALL);
 }
 
+// Center the selected item vertically in the list -- this works but feels janky (Adriane)
+// void CenterItemInListCtrl(CListCtrl* pList, int index)
+// {
+// 	if (!pList || index < 0)
+// 		return;
+
+// 	CRect itemRect;
+// 	if (!pList->GetItemRect(index, &itemRect, LVIR_BOUNDS))
+// 		return;
+
+// 	CRect clientRect;
+// 	pList->GetClientRect(&clientRect);
+
+// 	int itemHeight = itemRect.Height();
+// 	if (itemHeight <= 0)
+// 		return;
+
+// 	// Get top visible item
+// 	int topIndex = pList->GetTopIndex();
+// 	int visibleCount = pList->GetCountPerPage();
+
+// 	// Desired top index to center the target item
+// 	int targetTopIndex = max(index - visibleCount / 2, 0);
+
+// 	// Scroll by the delta
+// 	int delta = targetTopIndex - topIndex;
+// 	if (delta != 0)
+// 	{
+// 		CSize scrollAmount(0, delta * itemHeight);
+// 		pList->Scroll(scrollAmount);
+// 	}
+// }
+
 void CTeamsDialog::UpdateTeamsList() 
 {
 	CListCtrl *pList = (CListCtrl *)GetDlgItem(IDC_TEAMS_LIST);
+	
 	pList->SetRedraw(FALSE);  // Stop redrawing
 	pList->DeleteAllItems();  // Clear items
+
 	CListBox *players = (CListBox*)GetDlgItem(IDC_PLAYER_LIST);
 
+	Int selectedListIndex = -1;
 	Int which = players->GetCurSel();
 	if (which < 0)
 		return;
@@ -452,23 +488,30 @@ void CTeamsDialog::UpdateTeamsList()
 			pList->SetItemData(inserted, i);
 			if (m_curTeam == i) {
 				selected = true;
+				selectedListIndex = inserted;
 				pList->SetItemState(inserted, LVIS_SELECTED, LVIS_SELECTED);
 				pList->EnsureVisible(inserted, false);
 			}
 			inserted++;
 		}
 	}
+
+	pList->SetRedraw(TRUE);   // Enable redrawing
+	pList->Invalidate();      // Force a redraw
+
 	if (!selected) {
 		m_curTeam = -1;
 		if (inserted > 0) {
 			m_curTeam = pList->GetItemData(0);
 			pList->SetItemState(0, LVIS_SELECTED, LVIS_SELECTED);
 			pList->EnsureVisible(0, false);
+			selectedListIndex = 0;
 		} 
 	}
 
-	pList->SetRedraw(TRUE);   // Enable redrawing
-	pList->Invalidate();      // Force a redraw
+	// if (selectedListIndex >= 0) {
+	// 	CenterItemInListCtrl(pList, selectedListIndex);
+	// }
 }
 
 void CTeamsDialog::OnSelchangePlayerList() 
