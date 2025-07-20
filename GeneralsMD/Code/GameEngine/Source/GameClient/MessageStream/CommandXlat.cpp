@@ -147,18 +147,18 @@ void giveAllSciences(Player* player)
 	}
 }
 
-void objectUnderConstruction(Object* obj, void *userData)
+void objectUnderConstruction(Object* obj, void *underConstruction)
 {
 	if (obj->testStatus(OBJECT_STATUS_UNDER_CONSTRUCTION))
 	{
-		*(Bool*)userData = true;
+		*(Bool*)underConstruction = true;
 		return;
 	}
 
 	ProductionUpdateInterface *pui = ProductionUpdate::getProductionUpdateInterfaceFromObject(obj);
 	if(pui != NULL && pui->getProductionCount() > 0)
 	{
-		*(Bool*)userData = true;
+		*(Bool*)underConstruction = true;
 		return;
 	}
 }
