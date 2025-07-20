@@ -62,7 +62,7 @@ enum
 
 static Bool scrollDir[4] = { false, false, false, false };
 
-// TheSuperHackers @info Introduces the SCROLL_MULTIPLIER for all scrolling to
+// TheSuperHackers @tweak Introduces the SCROLL_MULTIPLIER for all scrolling to
 // 
 //  1. bring the RMB scroll speed back to how it was at 30 FPS in the retail game version
 //  2. increase the upper limit of the Scroll Factor when set from the Options Menu (0.20 to 2.90 instead of 0.10 to 1.45)
