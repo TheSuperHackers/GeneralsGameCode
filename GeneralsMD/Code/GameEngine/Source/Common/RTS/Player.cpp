@@ -452,6 +452,8 @@ void Player::init(const PlayerTemplate* pt)
 
 		if( m_money.countMoney() == 0 )
 		{
+			// TheSuperHacker @bugfix Now correctly deposits the money and fixes its audio and academy issues.
+			// Note that copying the entire Money class instead would also copy the player index inside of it.
 			if ( TheGameInfo )
 			{
 				m_money.deposit( TheGameInfo->getStartingCash().countMoney(), FALSE );
