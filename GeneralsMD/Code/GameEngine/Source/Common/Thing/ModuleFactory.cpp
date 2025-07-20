@@ -79,6 +79,7 @@
 #include "GameLogic/Module/BunkerBusterBehavior.h"
 #include "GameLogic/Module/FireWeaponWhenDamagedBehavior.h"
 #include "GameLogic/Module/FireWeaponWhenDeadBehavior.h"
+#include "GameLogic/Module/DelayedUpgradeBehavior.h"
 #include "GameLogic/Module/GenerateMinefieldBehavior.h"
 #include "GameLogic/Module/ParkingPlaceBehavior.h"
 #include "GameLogic/Module/FlightDeckBehavior.h"
@@ -369,6 +370,7 @@ void ModuleFactory::init( void )
 	addModule( BunkerBusterBehavior );
 	addModule( FireWeaponWhenDamagedBehavior );
 	addModule( FireWeaponWhenDeadBehavior );
+	addModule( DelayedUpgradeBehavior );
 	addModule( GenerateMinefieldBehavior );
 	addModule( ParkingPlaceBehavior );
 	addModule( FlightDeckBehavior );

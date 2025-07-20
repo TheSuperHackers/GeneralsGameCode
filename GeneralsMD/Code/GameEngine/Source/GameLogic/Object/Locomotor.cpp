@@ -672,6 +672,8 @@ Locomotor::Locomotor(const LocomotorTemplate* tmpl)
 	m_offsetIncrement = (PI/40) * (GameLogicRandomValueReal(0.8f, 1.2f)/m_template->m_wanderLengthFactor);
 	setFlag(OFFSET_INCREASING, GameLogicRandomValue(0,1));
 	m_donutTimer = TheGameLogic->getFrame()+DONUT_TIME_DELAY_SECONDS*LOGICFRAMES_PER_SECOND;
+
+	m_speedMultiplier = 1.0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -771,6 +773,8 @@ void Locomotor::xfer( Xfer *xfer )
 	xfer->xferReal(&m_angleOffset);
 	xfer->xferReal(&m_offsetIncrement);
 
+	xfer->xferReal(&m_speedMultiplier);
+
 }  // end xfer
 
 // ------------------------------------------------------------------------------------------------
@@ -798,6 +802,8 @@ Real Locomotor::getMaxSpeedForCondition(BodyDamageType condition) const
 	else
 		speed = m_template->m_maxSpeedDamaged;
 
+	speed *= m_speedMultiplier;
+
 	if (speed > m_maxSpeed)
 		speed = m_maxSpeed;
 
@@ -813,6 +819,8 @@ Real Locomotor::getMaxTurnRate(BodyDamageType condition) const
 		turn = m_template->m_maxTurnRate;
 	else
 		turn = m_template->m_maxTurnRateDamaged;
+
+	turn *= m_speedMultiplier;
 
 	if (turn > m_maxTurnRate)
 		turn = m_maxTurnRate;
@@ -834,6 +842,8 @@ Real Locomotor::getMaxAcceleration(BodyDamageType condition) const
 	else
 		accel = m_template->m_accelerationDamaged;
 
+	accel *= m_speedMultiplier;
+
 	if (accel > m_maxAccel)
 		accel = m_maxAccel;
 
@@ -844,6 +854,8 @@ Real Locomotor::getMaxAcceleration(BodyDamageType condition) const
 Real Locomotor::getBraking() const
 {
 	Real braking = m_template->m_braking;
+
+	braking *= m_speedMultiplier;
 
 	if (braking > m_maxBraking)
 		braking = m_maxBraking;
@@ -860,6 +872,8 @@ Real Locomotor::getMaxLift(BodyDamageType condition) const
 		lift = m_template->m_lift;
 	else
 		lift = m_template->m_liftDamaged;
+
+	lift *= m_speedMultiplier;
 
 	if (lift > m_maxLift)
 		lift = m_maxLift;

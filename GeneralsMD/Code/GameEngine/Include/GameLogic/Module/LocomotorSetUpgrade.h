@@ -37,6 +37,7 @@
 
 // FORWARD REFERENCES /////////////////////////////////////////////////////////////////////////////
 class Thing;
+enum LocomotorSetType CPP_11(: Int);
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------
@@ -47,8 +48,11 @@ public:
 	LocomotorSetUpgradeModuleData(void);
 
 	static void buildFieldParse(MultiIniFieldParse& p);
+	static void parseLocomotorType(INI* ini, void* instance, void* store, const void* /*userData*/);
 
-	Bool m_setUpgraded;   ///< Enable or Disable upgraded locomotor 
+	Bool m_setUpgraded;   ///< Enable or Disable upgraded locomotor
+	Bool m_useLocomotorType;  ///< Use explicit locomotor type
+	LocomotorSetType m_LocomotorType;  ///< explicit lomotor type
 	//Bool m_needsParkedAircraft;   ///< Aircraft attempting this upgrade needs to be stationary in hangar
 };
 //-------------------------------------------------------------------------------------------------
