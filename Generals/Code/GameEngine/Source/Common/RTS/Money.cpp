@@ -48,6 +48,7 @@
 #include "Common/GameAudio.h"
 #include "Common/MiscAudio.h"
 #include "Common/Player.h"
+#include "Common/PlayerList.h"
 #include "Common/Xfer.h"
 
 // ------------------------------------------------------------------------------------------------
