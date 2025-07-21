@@ -3,13 +3,13 @@ set(GAMEENGINE_SRC
 #    Include/Common/ArchiveFile.h
 #    Include/Common/ArchiveFileSystem.h
 #    Include/Common/AsciiString.h
-    Include/Common/AudioAffect.h
-    Include/Common/AudioEventInfo.h
-    Include/Common/AudioEventRTS.h
-    Include/Common/AudioHandleSpecialValues.h
-    Include/Common/AudioRandomValue.h
-    Include/Common/AudioRequest.h
-    Include/Common/AudioSettings.h
+#    Include/Common/AudioAffect.h
+#    Include/Common/AudioEventInfo.h
+#    Include/Common/AudioEventRTS.h
+#    Include/Common/AudioHandleSpecialValues.h
+#    Include/Common/AudioRandomValue.h
+#    Include/Common/AudioRequest.h
+#    Include/Common/AudioSettings.h
     Include/Common/BattleHonors.h
     Include/Common/BezFwdIterator.h
     Include/Common/BezierSegment.h
@@ -37,14 +37,14 @@ set(GAMEENGINE_SRC
 #    Include/Common/file.h
 #    Include/Common/FileSystem.h
     Include/Common/FunctionLexicon.h
-    Include/Common/GameAudio.h
+#    Include/Common/GameAudio.h
     Include/Common/GameCommon.h
 #    Include/Common/GameDefines.h
     Include/Common/GameEngine.h
     Include/Common/GameLOD.h
     Include/Common/GameMemory.h
-    Include/Common/GameMusic.h
-    Include/Common/GameSounds.h
+#    Include/Common/GameMusic.h
+#    Include/Common/GameSounds.h
     Include/Common/GameSpyMiscPreferences.h
     Include/Common/GameState.h
     Include/Common/GameStateMap.h
@@ -66,7 +66,7 @@ set(GAMEENGINE_SRC
     Include/Common/MapReaderWriterInfo.h
     Include/Common/MessageStream.h
     Include/Common/MiniLog.h
-    Include/Common/MiscAudio.h
+#    Include/Common/MiscAudio.h
     Include/Common/MissionStats.h
     Include/Common/ModelState.h
     Include/Common/Module.h
@@ -512,11 +512,13 @@ set(GAMEENGINE_SRC
     Include/GameNetwork/WOLBrowser/FEBDispatch.h
     Include/GameNetwork/WOLBrowser/WebBrowser.h
     Include/Precompiled/PreRTS.h
-    Source/Common/Audio/AudioEventRTS.cpp
-    Source/Common/Audio/AudioRequest.cpp
-    Source/Common/Audio/GameAudio.cpp
-    Source/Common/Audio/GameMusic.cpp
-    Source/Common/Audio/GameSounds.cpp
+#    Source/Common/Audio/AudioEventRTS.cpp
+#    Source/Common/Audio/AudioRequest.cpp
+#    Source/Common/Audio/GameAudio.cpp
+#    Source/Common/Audio/GameMusic.cpp
+#    Source/Common/Audio/GameSounds.cpp
+    #Source/Common/Audio/simpleplayer.cpp # unused
+    #Source/Common/Audio/urllaunch.cpp # unused
     Source/Common/Bezier/BezFwdIterator.cpp
     Source/Common/Bezier/BezierSegment.cpp
     Source/Common/BitFlags.cpp
@@ -533,7 +535,7 @@ set(GAMEENGINE_SRC
     Source/Common/INI/INI.cpp
     Source/Common/INI/INIAiData.cpp
     Source/Common/INI/INIAnimation.cpp
-    Source/Common/INI/INIAudioEventInfo.cpp
+#    Source/Common/INI/INIAudioEventInfo.cpp
     Source/Common/INI/INICommandButton.cpp
     Source/Common/INI/INICommandSet.cpp
     Source/Common/INI/INIControlBarScheme.cpp
@@ -544,7 +546,7 @@ set(GAMEENGINE_SRC
     Source/Common/INI/INIMapCache.cpp
     Source/Common/INI/INIMapData.cpp
     Source/Common/INI/INIMappedImage.cpp
-    Source/Common/INI/INIMiscAudio.cpp
+#    Source/Common/INI/INIMiscAudio.cpp
     Source/Common/INI/INIModel.cpp
     Source/Common/INI/INIMultiplayer.cpp
     Source/Common/INI/INIObject.cpp
@@ -766,7 +768,7 @@ set(GAMEENGINE_SRC
     Source/GameClient/Statistics.cpp
     Source/GameClient/System/Anim2D.cpp
     Source/GameClient/System/CampaignManager.cpp
-    "Source/GameClient/System/Debug Displayers/AudioDebugDisplay.cpp"
+#    "Source/GameClient/System/Debug Displayers/AudioDebugDisplay.cpp"
     Source/GameClient/System/DebugDisplay.cpp
     Source/GameClient/System/Image.cpp
     Source/GameClient/System/ParticleSys.cpp
