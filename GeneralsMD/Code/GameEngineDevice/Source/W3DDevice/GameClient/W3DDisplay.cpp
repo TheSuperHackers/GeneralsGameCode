@@ -1938,7 +1938,8 @@ AGAIN:
 
 				if ( m_videoStream && m_videoBuffer )
 				{
-					drawVideoBuffer( m_videoBuffer, 0, 0, getWidth(), getHeight() );
+					// TheSuperHackers @bugfix Mauller 20/07/2025 scale videos based on screen size so they are shown in their original aspect
+					drawScaledVideoBuffer( m_videoBuffer, m_videoStream );
 				}
 				if( m_copyrightDisplayString )
 				{
@@ -2876,6 +2877,43 @@ VideoBuffer*	W3DDisplay::createVideoBuffer( void )
 	return buffer;
 }
 
+//============================================================================
+// W3DDisplay::drawScaledVideoBuffer
+//============================================================================
+
+void W3DDisplay::drawScaledVideoBuffer( VideoBuffer *buffer, VideoStreamInterface *stream )
+{
+	// TheSuperHackers @bugfix Mauller 20/07/2025 scale videos based on screen size so they are shown in their original aspect
+	Real videoAspect = (Real)stream->width() / (Real)stream->height();
+	Real displayAspect = (Real)getWidth() / (Real)getHeight();
+	Bool wideAspect = displayAspect >= videoAspect;
+
+	Int startX = 0;
+	Int endX = 0;
+	Int startY = 0;
+	Int endY = 0;
+
+	if (wideAspect)
+	{
+		// TheSuperHackers @info if we are in a wide aspect, we scale the videos width and fill the height
+		Real heightScale = (Real)getHeight() / (Real)stream->height();
+		startX = (getWidth() / 2.0f) - (stream->width() * heightScale / 2.0f);
+		endX = (getWidth() / 2.0f) + (stream->width() * heightScale / 2.0f);
+
+		endY = getHeight();
+	}
+	else
+	{
+		// TheSuperHackers @info if we are in a narrow aspect, we scale the videos height and fill the width
+		Real widthScale = (Real)getWidth() / (Real)stream->width();
+		startY = (getHeight() / 2.0f) - (stream->height() * widthScale / 2.0f);
+		endY = (getHeight() / 2.0f) + (stream->height() * widthScale / 2.0f);
+
+		endX = getWidth();
+	}
+
+	drawVideoBuffer( buffer, startX, startY, endX, endY );
+}
 
 //============================================================================
 // W3DDisplay::drawVideoBuffer
