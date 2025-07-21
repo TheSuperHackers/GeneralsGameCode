@@ -69,8 +69,11 @@ struct MiscAudio
 	AudioEventRTS m_crateMoney;														///< When money crate is picked up.
 	AudioEventRTS m_unitPromoted;													///< Unit is promoted.
 	AudioEventRTS m_repairSparks;													///< Battle drone repairs unit.
+	AudioEventRTS m_sabotageShutDownBuilding;											///< When Saboteur hits a building 
+	AudioEventRTS m_sabotageResetTimerBuilding;											///< When Saboteur hits a building 
 	AudioEventRTS m_aircraftWheelScreech;									///< When a jet lands on a runway.
 };
 
 
 #endif /* _MISCAUDIO_H_ */
+
