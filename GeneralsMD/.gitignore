@@ -1,7 +1,3 @@
-
-# Ignore RUNable folder
-[Rr]un
-
 # Build output folders
 [Rr]elease*
 #[Pp]rofile*
