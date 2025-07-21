@@ -3,7 +3,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/ActionManager.h
     Include/Common/ArchiveFile.h
     Include/Common/ArchiveFileSystem.h
-#    Include/Common/AsciiString.h
+    Include/Common/AsciiString.h
 #    Include/Common/AudioAffect.h
 #    Include/Common/AudioEventInfo.h
 #    Include/Common/AudioEventRTS.h
@@ -124,7 +124,7 @@ set(GAMEENGINE_SRC
 #    Include/Common/ThingSort.h
 #    Include/Common/ThingTemplate.h
 #    Include/Common/TunnelTracker.h
-#    Include/Common/UnicodeString.h
+    Include/Common/UnicodeString.h
 #    Include/Common/UnitTimings.h
 #    Include/Common/Upgrade.h
 #    Include/Common/urllaunch.h
@@ -632,7 +632,7 @@ set(GAMEENGINE_SRC
 #    Source/Common/StatsCollector.cpp
     Source/Common/System/ArchiveFile.cpp
     Source/Common/System/ArchiveFileSystem.cpp
-#    Source/Common/System/AsciiString.cpp
+    Source/Common/System/AsciiString.cpp
 #    Source/Common/System/BuildAssistant.cpp
 #    Source/Common/System/CDManager.cpp
 #    Source/Common/System/CriticalSection.cpp
@@ -665,7 +665,7 @@ set(GAMEENGINE_SRC
     Source/Common/System/StreamingArchiveFile.cpp
 #    Source/Common/System/SubsystemInterface.cpp
 #    Source/Common/System/Trig.cpp
-#    Source/Common/System/UnicodeString.cpp
+    Source/Common/System/UnicodeString.cpp
 #    Source/Common/System/Upgrade.cpp
     Source/Common/System/Xfer.cpp
     Source/Common/System/XferCRC.cpp
