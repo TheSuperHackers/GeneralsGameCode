@@ -1042,7 +1042,7 @@ Bool AudioManager::shouldPlayLocally(const AudioEventRTS *audioEvent)
 	Player *owningPlayer = ThePlayerList->getNthPlayer(audioEvent->getPlayerIndex());
 
 	if (BitIsSet(ei->m_type, ST_PLAYER) && BitIsSet(ei->m_type, ST_UI) && owningPlayer == NULL) {
-		DEBUG_ASSERTCRASH(!TheGameLogic->isInGameLogicUpdate(), ("Playing %s sound -- player-based UI sound without specifying a player."));
+		DEBUG_ASSERTCRASH(!TheGameLogic->isInGameLogicUpdate(), ("Playing %s sound -- player-based UI sound without specifying a player.", ei->m_audioName.str()));
 		return TRUE;
 	}
 
