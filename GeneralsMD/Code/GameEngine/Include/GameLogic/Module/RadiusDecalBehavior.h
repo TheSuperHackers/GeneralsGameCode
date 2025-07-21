@@ -79,6 +79,8 @@ public:
 	// UpdateModuleInterface
 	virtual UpdateSleepTime update();
 
+	virtual DisabledMaskType getDisabledTypesToProcess() const { return MAKE_DISABLED_MASK(DISABLED_HELD); }
+
 protected:
 
 

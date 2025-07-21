@@ -436,6 +436,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/SpecialPowerUpdateModule.h
     Include/GameLogic/Module/SpectreGunshipDeploymentUpdate.h
     Include/GameLogic/Module/SpectreGunshipUpdate.h
+    Include/GameLogic/Module/UpgradeSpecialPower.h
     Include/GameLogic/Module/SpyVisionSpecialPower.h
     Include/GameLogic/Module/SpyVisionUpdate.h
     Include/GameLogic/Module/SquishCollide.h
@@ -972,6 +973,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/SpecialPower/OCLSpecialPower.cpp
     Source/GameLogic/Object/SpecialPower/SpecialAbility.cpp
     Source/GameLogic/Object/SpecialPower/SpecialPowerModule.cpp
+    Source/GameLogic/Object/SpecialPower/UpgradeSpecialPower.cpp
     Source/GameLogic/Object/SpecialPower/SpyVisionSpecialPower.cpp
     Source/GameLogic/Object/Update/AIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/AssaultTransportAIUpdate.cpp

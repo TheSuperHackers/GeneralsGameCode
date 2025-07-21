@@ -23,8 +23,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // FILE: DelayedUpgradeBehavior.h /////////////////////////////////////////////////////////////////////////
-// Author: Colin Day, December 2001
-// Desc:   Update that will count down a lifetime and destroy object when it reaches zero
+// Author: Andi W, July 2025
+// Desc:   Update that will trigger an upgrade after some time
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -48,14 +48,14 @@ public:
 	Bool						m_initiallyActive;
 	AsciiString				    m_upgradeToTrigger;
 	UnsignedInt                 m_triggerDelay;
-	UnsignedInt                 m_triggerNumShots;
+	//UnsignedInt                 m_triggerNumShots;
 
 	DelayedUpgradeBehaviorModuleData()
 	{
 		m_initiallyActive = false;
 		m_upgradeToTrigger.clear();
 		m_triggerDelay = 0;
-		m_triggerNumShots = 0;
+		//m_triggerNumShots = 0;
 	}
 
 	static void buildFieldParse(MultiIniFieldParse& p)
@@ -65,7 +65,7 @@ public:
 			{ "StartsActive",	INI::parseBool, NULL, offsetof(DelayedUpgradeBehaviorModuleData, m_initiallyActive) },
 			{ "UpgradeToTrigger", INI::parseAsciiString,	NULL, offsetof(DelayedUpgradeBehaviorModuleData, m_upgradeToTrigger) },
 			{ "TriggerAfterTime",	INI::parseDurationUnsignedInt, NULL, offsetof(DelayedUpgradeBehaviorModuleData, m_triggerDelay) },
-			{ "TriggerAfterShotsFired",	INI::parseUnsignedInt, NULL, offsetof(DelayedUpgradeBehaviorModuleData, m_triggerNumShots) },
+			//{ "TriggerAfterShotsFired",	INI::parseUnsignedInt, NULL, offsetof(DelayedUpgradeBehaviorModuleData, m_triggerNumShots) },
 			{ 0, 0, 0, 0 }
 		};
 
@@ -102,6 +102,9 @@ public:
 
 	// UpdateModule
 	virtual UpdateSleepTime update();
+
+	// This should be active while disabled
+	virtual DisabledMaskType getDisabledTypesToProcess() const { return DISABLEDMASK_ALL; }
 
 protected:
 

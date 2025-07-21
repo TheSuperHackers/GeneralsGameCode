@@ -277,6 +277,7 @@
 #include "GameLogic/Module/OCLSpecialPower.h"
 #include "GameLogic/Module/SpecialAbility.h"
 #include "GameLogic/Module/SpyVisionSpecialPower.h"
+#include "GameLogic/Module/UpgradeSpecialPower.h"
 #include "GameLogic/Module/CashBountyPower.h"
 #include "GameLogic/Module/CleanupAreaPower.h"
 #include "GameLogic/Module/FireWeaponPower.h"
@@ -569,6 +570,7 @@ void ModuleFactory::init( void )
 	addModule( FireWeaponPower );
 	addModule( SpecialAbility );
 	addModule( SpyVisionSpecialPower );
+	addModule( UpgradeSpecialPower );
 	addModule( CashBountyPower );
 	addModule( CleanupAreaPower );
 

@@ -401,6 +401,7 @@ static PoolSizeRec sizes[] =
 	{ "GrantScienceUpgrade", 256, 32 },
 	{ "ReplaceObjectUpgrade", 32, 32 },
 	{ "ModelConditionUpgrade", 32, 32 },
+	{ "UpgradeSpecialPower", 64, 32 },
 	{ "SpyVisionSpecialPower", 256, 32 },
 	{ "StealthDetectorUpdate", 256, 32 },
 	{ "StealthUpdate", 512, 128 },
