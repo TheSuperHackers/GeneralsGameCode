@@ -1482,31 +1482,18 @@ void GameTextManager::updateWindowTitle()
 
 	if (rts::ClientInstance::getInstanceId() > 1u)
 	{
-		UnicodeString text;
-		text.format(L"Instance:%.2u", rts::ClientInstance::getInstanceId());
-		title.concat(text);
+		UnicodeString str;
+		str.format(L"Instance:%.2u", rts::ClientInstance::getInstanceId());
+		title.concat(str);
 	}
 
-	UnicodeString productTitle = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductTitle", TheVersion->getUnicodeProductTitle().str());
-	UnicodeString productVersion = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductVersion", TheVersion->getUnicodeProductVersion().str());
-	UnicodeString productAuthor = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductAuthor", TheVersion->getUnicodeProductAuthor().str());
+	UnicodeString productString = TheVersion->getUnicodeProductString();
 
-	if (!productTitle.isEmpty())
+	if (!productString.isEmpty())
 	{
-		title.concat(L" ");
-		title.concat(productTitle.str());
-
-		if (!productVersion.isEmpty())
-		{
+		if (!title.isEmpty())
 			title.concat(L" ");
-			title.concat(productVersion.str());
-		}
-
-		if (!productAuthor.isEmpty())
-		{
-			title.concat(L" ");
-			title.concat(productAuthor.str());
-		}
+		title.concat(productString);
 	}
 
 #if RTS_GENERALS
@@ -1518,20 +1505,21 @@ void GameTextManager::updateWindowTitle()
 
 	if (!gameTitle.isEmpty())
 	{
-		UnicodeString gameVersion = TheVersion->getUnicodeVersion();
-		UnicodeString gameTitleFormat = FETCH_OR_SUBSTITUTE("Version:GameTitle", L"for %ls");
 		UnicodeString gameTitleFinal;
+		UnicodeString gameVersion = TheVersion->getUnicodeVersion();
 
-		if (productTitle.isEmpty())
+		if (productString.isEmpty())
 		{
 			gameTitleFinal = gameTitle;
 		}
 		else
 		{
+			UnicodeString gameTitleFormat = FETCH_OR_SUBSTITUTE("Version:GameTitle", L"for %ls");
 			gameTitleFinal.format(gameTitleFormat.str(), gameTitle.str());
 		}
 
-		title.concat(L" ");
+		if (!title.isEmpty())
+			title.concat(L" ");
 		title.concat(gameTitleFinal.str());
 		title.concat(L" ");
 		title.concat(gameVersion.str());

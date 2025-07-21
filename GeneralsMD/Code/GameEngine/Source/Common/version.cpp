@@ -322,6 +322,54 @@ UnicodeString Version::getUnicodeProductAuthor() const
 	return getUnicodeBuildUserOrGitCommitAuthorName();
 }
 
+UnicodeString Version::getUnicodeProductString() const
+{
+	UnicodeString str;
+	UnicodeString productTitle = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductTitle", getUnicodeProductTitle().str());
+
+	if (!productTitle.isEmpty())
+	{
+		UnicodeString productVersion = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductVersion", getUnicodeProductVersion().str());
+		UnicodeString productAuthor = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductAuthor", getUnicodeProductAuthor().str());
+
+		str.concat(productTitle);
+
+		if (!productVersion.isEmpty())
+		{
+			str.concat(L" ");
+			str.concat(productVersion);
+		}
+
+		if (!productAuthor.isEmpty())
+		{
+			str.concat(L" ");
+			str.concat(productAuthor);
+		}
+	}
+
+	return str;
+}
+
+UnicodeString Version::getUnicodeProductVersionHashString() const
+{
+	UnicodeString str;
+	UnicodeString productString = getUnicodeProductString();
+	UnicodeString gameVersion = getUnicodeVersion();
+	UnicodeString gameHash;
+	gameHash.format(L"exe:%08X ini:%08X", TheGlobalData->m_exeCRC, TheGlobalData->m_iniCRC);
+
+	if (!productString.isEmpty())
+	{
+		str.concat(productString);
+		str.concat(L" | ");
+	}
+	str.concat(gameHash);
+	str.concat(L" ");
+	str.concat(gameVersion);
+
+	return str;
+}
+
 AsciiString Version::buildAsciiGitCommitCount()
 {
 	AsciiString str;
