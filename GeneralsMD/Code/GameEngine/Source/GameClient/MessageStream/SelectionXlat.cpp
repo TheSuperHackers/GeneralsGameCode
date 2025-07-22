@@ -954,6 +954,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 						if( !TheInGameUI->getPreventLeftClickDeselectionInAlternateMouseModeForOneClick() )
 						{
 							deselectAll();
+							m_lastGroupSelGroup = -1;
 						}
 						else
 						{
