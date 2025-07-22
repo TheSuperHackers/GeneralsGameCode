@@ -4576,7 +4576,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEMO_REMOVE_PREREQ:
 		{
 			// Doesn't make a valid network message
-			// In multiplayer, all clients need to enable this cheat at the same time, otherwise game will mismatch
+			// TheSuperHackers @info In multiplayer, all clients need to enable this cheat at the same time, otherwise game will mismatch
 			Bool enable = !ThePlayerList->getLocalPlayer()->ignoresPrereqs();
 
 			for (Int n = 0; n < ThePlayerList->getPlayerCount(); ++n)
@@ -4600,7 +4600,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEMO_INSTANT_BUILD:
 		{
 			// Doesn't make a valid network message
-			// In multiplayer, all clients need to enable this cheat at the same time, otherwise game will mismatch
+			// TheSuperHackers @info In multiplayer, all clients need to enable this cheat at the same time, otherwise game will mismatch
 			if (!TheGameLogic->isInMultiplayerGame() || !hasThingsInProduction(PLAYER_HUMAN))
 			{
 				Bool enable = !ThePlayerList->getLocalPlayer()->buildsInstantly();
@@ -4627,7 +4627,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		case GameMessage::MSG_META_DEMO_FREE_BUILD:
 		{
 			// Doesn't make a valid network message
-			// In multiplayer, all clients need to enable this cheat at the same time, otherwise game will mismatch
+			// TheSuperHackers @info In multiplayer, all clients need to enable this cheat at the same time, otherwise game will mismatch
 			Bool enable = !ThePlayerList->getLocalPlayer()->buildsForFree();
 
 			for (Int n = 0; n < ThePlayerList->getPlayerCount(); ++n)
@@ -4851,7 +4851,7 @@ GameMessageDisposition CommandTranslator::translateGameMessage(const GameMessage
 		//-----------------------------------------------------------------------------------------
 		case GameMessage::MSG_META_DEMO_GIVE_ALL_SCIENCES:
 		{
-			// In multiplayer, all clients need to enable this cheat at the same time, otherwise game will mismatch
+			// TheSuperHackers @info In multiplayer, all clients need to enable this cheat at the same time, otherwise game will mismatch
 			for (Int n = 0; n < ThePlayerList->getPlayerCount(); ++n)
 			{
 				Player* player = ThePlayerList->getNthPlayer(n);

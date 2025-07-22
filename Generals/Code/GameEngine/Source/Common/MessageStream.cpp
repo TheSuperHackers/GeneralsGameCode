@@ -991,7 +991,7 @@ Bool isInvalidDebugCommand( GameMessage::Type t )
 		case GameMessage::MSG_META_DEMO_INSTANT_BUILD:
 		case GameMessage::MSG_META_DEMO_FREE_BUILD:
 		case GameMessage::MSG_META_DEMO_GIVE_ALL_SCIENCES:
-			// Usable in multiplayer!
+			// TheSuperHackers @tweak Debug cheats are now multiplayer compatible. Happy cheating Munkees :)
 			return false;
 
 		case GameMessage::MSG_META_DEMO_INSTANT_QUIT:
