@@ -179,13 +179,14 @@ File*		FileSystem::openFile( const Char *filename, Int access )
 	if ( TheLocalFileSystem != NULL )
 	{
 		file = TheLocalFileSystem->openFile( filename, access );
+
+#if ENABLE_FILESYSTEM_EXISTENCE_CACHE
 		if (file != NULL && (file->getAccess() & File::CREATE))
 		{
-#if ENABLE_FILESYSTEM_EXISTENCE_CACHE
 			unsigned key = TheNameKeyGenerator->nameToLowercaseKey(filename);
 			m_fileExist[key] = true;
-#endif
 		}
+#endif
 	}
 
 	if ( (TheArchiveFileSystem != NULL) && (file == NULL) )
