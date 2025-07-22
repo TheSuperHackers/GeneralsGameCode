@@ -962,6 +962,7 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
  					if (! TheGlobalData->m_useAlternateMouse || TheInGameUI->getPendingPlaceSourceObjectID() != INVALID_ID)
  					{
  						deselectAll();
+						m_lastGroupSelGroup = -1;
  					}
  				}
 			}
