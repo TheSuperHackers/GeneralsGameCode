@@ -106,6 +106,20 @@ void TunnelContain::removeFromContain( Object *obj, Bool exposeStealthUnits )
 
 	owningPlayer->getTunnelSystem()->removeFromContain( obj, exposeStealthUnits );
 
+#if !RETAIL_COMPATIBLE_CRC
+	if (obj->getContain())
+	{
+		const ContainedItemsList* items = obj->getContain()->getContainedItemsList();
+		if (items)
+		{
+			for (ContainedItemsList::const_iterator it = items->begin(); it != items->end(); ++it)
+			{
+				if (!obj->getContain()->isEnclosingContainerFor(*it))
+					ThePartitionManager->registerObject(*it);
+			}
+		}
+	}
+#endif
 }
 
 
