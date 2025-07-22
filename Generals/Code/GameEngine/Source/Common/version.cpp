@@ -245,39 +245,35 @@ UnicodeString Version::getUnicodeGitCommitTime() const
 	return m_unicodeGitCommitTime;
 }
 
-AsciiString Version::getAsciiGameAndGitVersion() const
+AsciiString Version::getAsciiGitVersion() const
 {
 	AsciiString str;
 	if (m_showFullVersion)
 	{
-		str.format("%s R %s %s",
-			getAsciiVersion().str(),
+		str.format("%s %s",
 			getAsciiGitCommitCount().str(),
 			getAsciiGitTagOrHash().str());
 	}
 	else
 	{
-		str.format("%s R %s",
-			getAsciiVersion().str(),
+		str.format("%s",
 			getAsciiGitCommitCount().str());
 	}
 	return str;
 }
 
-UnicodeString Version::getUnicodeGameAndGitVersion() const
+UnicodeString Version::getUnicodeGitVersion() const
 {
 	UnicodeString str;
 	if (m_showFullVersion)
 	{
-		str.format(L"%s R %s %s",
-			getUnicodeVersion().str(),
+		str.format(L"%s %s",
 			getUnicodeGitCommitCount().str(),
 			getUnicodeGitTagOrHash().str());
 	}
 	else
 	{
-		str.format(L"%s R %s",
-			getUnicodeVersion().str(),
+		str.format(L"%s",
 			getUnicodeGitCommitCount().str());
 	}
 	return str;
@@ -306,6 +302,70 @@ UnicodeString Version::getUnicodeBuildUserOrGitCommitAuthorName() const
 		unicodeUser.translate(asciiUser);
 		str.format(TheGameText->fetch("Version:BuildUser").str(), unicodeUser.str());
 	}
+
+	return str;
+}
+
+UnicodeString Version::getUnicodeProductTitle() const
+{
+	// @todo Make configurable
+	return UnicodeString(L"Community Patch");
+}
+
+UnicodeString Version::getUnicodeProductVersion() const
+{
+	return getUnicodeGitVersion();
+}
+
+UnicodeString Version::getUnicodeProductAuthor() const
+{
+	return getUnicodeBuildUserOrGitCommitAuthorName();
+}
+
+UnicodeString Version::getUnicodeProductString() const
+{
+	UnicodeString str;
+	UnicodeString productTitle = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductTitle", getUnicodeProductTitle().str());
+
+	if (!productTitle.isEmpty())
+	{
+		UnicodeString productVersion = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductVersion", getUnicodeProductVersion().str());
+		UnicodeString productAuthor = TheGameText->FETCH_OR_SUBSTITUTE("Version:ProductAuthor", getUnicodeProductAuthor().str());
+
+		str.concat(productTitle);
+
+		if (!productVersion.isEmpty())
+		{
+			str.concat(L" ");
+			str.concat(productVersion);
+		}
+
+		if (!productAuthor.isEmpty())
+		{
+			str.concat(L" ");
+			str.concat(productAuthor);
+		}
+	}
+
+	return str;
+}
+
+UnicodeString Version::getUnicodeProductVersionHashString() const
+{
+	UnicodeString str;
+	UnicodeString productString = getUnicodeProductString();
+	UnicodeString gameVersion = getUnicodeVersion();
+	UnicodeString gameHash;
+	gameHash.format(L"exe:%08X ini:%08X", TheGlobalData->m_exeCRC, TheGlobalData->m_iniCRC);
+
+	if (!productString.isEmpty())
+	{
+		str.concat(productString);
+		str.concat(L" | ");
+	}
+	str.concat(gameHash);
+	str.concat(L" ");
+	str.concat(gameVersion);
 
 	return str;
 }
