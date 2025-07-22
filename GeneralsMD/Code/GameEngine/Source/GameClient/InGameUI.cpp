@@ -5600,21 +5600,33 @@ void InGameUI::selectNextIdleWorker( void )
 	else
 	{
 		Drawable *selectedDrawable = TheInGameUI->getFirstSelectedDrawable();	
-		
-		ObjectListIt it = m_idleWorkers[index].begin();
-		while(it != m_idleWorkers[index].end())
+		ObjectList uniqueIdleWorkers;
+
+		// Find unique selectables to avoid selecting the same or a previous container if multiple idle workers are contained
+		for (ObjectListIt it = m_idleWorkers[index].begin(); it != m_idleWorkers[index].end(); ++it)
 		{
-			Object *itObj = *it;
+			Object* itObj = *it;
+			while (itObj->getContainedBy())
+				itObj = itObj->getContainedBy(); // Treat containers as a single idle selectable
+
+			if (std::find(uniqueIdleWorkers.begin(), uniqueIdleWorkers.end(), itObj) == uniqueIdleWorkers.end())
+				uniqueIdleWorkers.push_back(itObj);
+		}
+		
+		ObjectListIt uit = uniqueIdleWorkers.begin();
+		while(uit != uniqueIdleWorkers.end())
+		{
+			Object *itObj = *uit;
 			if(itObj == selectedDrawable->getObject())
 			{
-				++it;
-				if(it != m_idleWorkers[index].end())
-					selectThisObject = *it;
+				++uit;
+				if(uit != uniqueIdleWorkers.end())
+					selectThisObject = *uit;
 				else
-					selectThisObject = *m_idleWorkers[index].begin();
+					selectThisObject = *uniqueIdleWorkers.begin();
 				break;
 			}
-			++it;
+			++uit;
 		}
 		// if we had something selected that wasn't a worker, we'll get here
 		if(!selectThisObject)
@@ -5626,10 +5638,8 @@ void InGameUI::selectNextIdleWorker( void )
 	{	
 		
 		//If our idle worker is contained by anything, we need to select the container instead.
-		Object *containedBy = selectThisObject->getContainedBy();
-		if( containedBy )
-		{
-			selectThisObject = containedBy;
+		while (selectThisObject->getContainedBy()) {
+			selectThisObject = selectThisObject->getContainedBy();
 		}
 
 		deselectAllDrawables();
