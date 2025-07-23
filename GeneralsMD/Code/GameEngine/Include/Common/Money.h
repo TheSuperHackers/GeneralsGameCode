@@ -51,6 +51,8 @@
 #include "Common/Debug.h"
 #include "Common/Snapshot.h"
 
+enum MiscAudioEvent CPP_11(: Int);
+
 // ----------------------------------------------------------------------------------------------
 /**
 	How much "money" (Tiberium, Gems, Magic Resource Boxes, whatever) the Player has.
@@ -91,6 +93,9 @@ public:
   }
 
 protected:
+
+	void triggerAudioEvent(MiscAudioEvent audioEvent);
+
 	// snapshot methods
 	virtual void crc( Xfer *xfer );
 	virtual void xfer( Xfer *xfer );

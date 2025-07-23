@@ -37,6 +37,15 @@ enum { MAX_HW_PROVIDERS = 4 };
 
 struct AudioSettings
 {
+	AudioSettings()
+#if RTS_GENERALS
+		: m_defaultMoneyTickVolume(1.0f)
+#elif RTS_ZEROHOUR
+		: m_defaultMoneyTickVolume(0.0f)
+#endif
+	{
+	}
+
 	AsciiString m_audioRoot;
 	AsciiString m_soundsFolder;
 	AsciiString m_musicFolder;
@@ -66,6 +75,7 @@ struct AudioSettings
 	Real m_default3DSoundVolume;
 	Real m_defaultSpeechVolume;
 	Real m_defaultMusicVolume;
+	Real m_defaultMoneyTickVolume; // TheSuperHackers @tweak New setting for money deposit and withdraw audio
 	UnsignedInt m_defaultSpeakerType2D;
 	UnsignedInt m_defaultSpeakerType3D;
 
@@ -74,6 +84,7 @@ struct AudioSettings
 	Real m_preferred3DSoundVolume;
 	Real m_preferredSpeechVolume;
 	Real m_preferredMusicVolume;
+	Real m_preferredMoneyTickVolume; // TheSuperHackers @tweak New setting for money deposit and withdraw audio
 
 	//The desired altitude of the microphone to improve panning relative to terrain.
 	Real m_microphoneDesiredHeightAboveTerrain;

@@ -45,6 +45,7 @@
 #include "PreRTS.h"	// This must go first in EVERY cpp file int the GameEngine
 #include "Common/Money.h"
 
+#include "Common/AudioSettings.h"
 #include "Common/GameAudio.h"
 #include "Common/MiscAudio.h"
 #include "Common/Player.h"
@@ -66,13 +67,9 @@ UnsignedInt Money::withdraw(UnsignedInt amountToWithdraw, Bool playSound)
 	if (amountToWithdraw == 0)
 		return amountToWithdraw;
 
-	// Play a sound
 	if (playSound)
 	{
-		//@todo: Do we do this frequently enough that it is a performance hit?
-		AudioEventRTS event = TheAudio->getMiscAudio()->m_moneyWithdrawSound;
-		event.setPlayerIndex(m_playerIndex);
-		TheAudio->addAudioEvent(&event);
+		triggerAudioEvent(MiscAudioEvent_MoneyWithdraw);
 	}
 
 	m_money -= amountToWithdraw;
@@ -86,13 +83,9 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound)
 	if (amountToDeposit == 0)
 		return;
 
-	// Play a sound
 	if (playSound)
 	{
-		//@todo: Do we do this frequently enough that it is a performance hit?
-		AudioEventRTS event = TheAudio->getMiscAudio()->m_moneyDepositSound;
-		event.setPlayerIndex(m_playerIndex);
-		TheAudio->addAudioEvent(&event);
+		triggerAudioEvent(MiscAudioEvent_MoneyDeposit);
 	}
 	
 	m_money += amountToDeposit;
@@ -105,6 +98,19 @@ void Money::deposit(UnsignedInt amountToDeposit, Bool playSound)
 			player->getAcademyStats()->recordIncome();
 		}
 	}
+}
+
+void Money::triggerAudioEvent(MiscAudioEvent audioEvent)
+{
+	Real volume = TheAudio->getAudioSettings()->m_preferredMoneyTickVolume;
+	if (volume <= 0.0f)
+		return;
+	
+	//@todo: Do we do this frequently enough that it is a performance hit?
+	AudioEventRTS event = TheAudio->getMiscAudio()->m_events[audioEvent];
+	event.setPlayerIndex(m_playerIndex);
+	event.setVolume(volume * event.getVolume());
+	TheAudio->addAudioEvent(&event);
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -126,6 +126,7 @@ static const FieldParse audioSettingsFieldParseTable[] =
 	{ "Default3DSoundVolume",	INI::parsePercentToReal,						NULL,							offsetof( AudioSettings, m_default3DSoundVolume) },
 	{ "DefaultSpeechVolume",	INI::parsePercentToReal,						NULL,							offsetof( AudioSettings, m_defaultSpeechVolume) },
 	{ "DefaultMusicVolume",		INI::parsePercentToReal,						NULL,							offsetof( AudioSettings, m_defaultMusicVolume) },
+	{ "DefaultMoneyTickVolume",	INI::parsePercentToReal,					NULL,							offsetof( AudioSettings, m_defaultMoneyTickVolume) },
 	{ "MicrophoneDesiredHeightAboveTerrain",	INI::parseReal,			NULL,							offsetof( AudioSettings, m_microphoneDesiredHeightAboveTerrain ) },
 	{ "MicrophoneMaxPercentageBetweenGroundAndCamera", INI::parsePercentToReal,	NULL,	offsetof( AudioSettings, m_microphoneMaxPercentageBetweenGroundAndCamera ) },
   { "ZoomMinDistance",		INI::parseReal,									NULL,							offsetof( AudioSettings, m_zoomMinDistance ) },
@@ -1150,6 +1151,7 @@ void INI::parseAudioSettingsDefinition( INI *ini )
 	TheAudio->friend_getAudioSettings()->m_preferred3DSoundVolume	= prefs.get3DSoundVolume() / 100.0f;
 	TheAudio->friend_getAudioSettings()->m_preferredSpeechVolume	= prefs.getSpeechVolume() / 100.0f;
 	TheAudio->friend_getAudioSettings()->m_preferredMusicVolume		= prefs.getMusicVolume() / 100.0f;
+	TheAudio->friend_getAudioSettings()->m_preferredMoneyTickVolume = prefs.getMoneyTickVolume() / 100.0f;
 }
 
 //-------------------------------------------------------------------------------------------------
