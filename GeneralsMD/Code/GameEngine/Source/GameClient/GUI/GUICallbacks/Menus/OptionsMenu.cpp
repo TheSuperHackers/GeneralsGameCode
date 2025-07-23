@@ -1288,8 +1288,8 @@ static void saveOptions( void )
 
 	//-------------------------------------------------------------------------------------------------
 	// Set System Time Font Size
-	val = TheWritableGlobalData->m_systemTimeFontSize; // TheSuperHackers @todo replace with options input when applicable
-	if (val)
+	val = pref->getSystemTimeFontSize(); // TheSuperHackers @todo replace with options input when applicable
+	if (val >= 0)
 	{
 		AsciiString prefString;
 		prefString.format("%d", val);
@@ -1299,8 +1299,8 @@ static void saveOptions( void )
 
 	//-------------------------------------------------------------------------------------------------
 	// Set Game Time Font Size
-	val = TheWritableGlobalData->m_gameTimeFontSize; // TheSuperHackers @todo replace with options input when applicable
-	if (val)
+	val = pref->getGameTimeFontSize(); // TheSuperHackers @todo replace with options input when applicable
+	if (val >= 0)
 	{
 		AsciiString prefString;
 		prefString.format("%d", val);
