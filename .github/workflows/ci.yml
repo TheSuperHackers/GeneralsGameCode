@@ -102,7 +102,7 @@ jobs:
     secrets: inherit
 
   build-generalsmd:
-    name: Build GeneralsMD
+    name: Build GeneralsMD${{ matrix.preset && '' }}
     needs: detect-changes
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     strategy:
@@ -276,9 +276,16 @@ jobs:
 
           $process.Start() | Out-Null
 
+          # Async output handling
+          $process.BeginOutputReadLine()
+          $process.BeginErrorReadLine()
+
+          $process.add_OutputDataReceived({ Write-Host $_.Data })
+          $process.add_ErrorDataReceived({ Write-Host "STDERR: $($_.Data)" })
+
           # Async read output while waiting (prevents hanging on long stdout)
-          $stdoutJob = Start-Job { param($p) $p.StandardOutput.ReadToEnd() } -ArgumentList $process
-          $stderrJob = Start-Job { param($p) $p.StandardError.ReadToEnd() } -ArgumentList $process
+          #$stdoutJob = Start-Job { param($p) $p.StandardOutput.ReadToEnd() } -ArgumentList $process
+          #$stderrJob = Start-Job { param($p) $p.StandardError.ReadToEnd() } -ArgumentList $process
 
           Write-Host "Waiting up to $timeoutSeconds seconds for the process to finish"
           if (-not $process.WaitForExit($timeoutSeconds * 1000)) {
@@ -289,16 +296,16 @@ jobs:
               $timedOut = $false
           }
 
-          $stdout = Receive-Job $stdoutJob
-          $stderr = Receive-Job $stderrJob
+          #$stdout = Receive-Job $stdoutJob
+          #$stderr = Receive-Job $stderrJob
 
-          Remove-Job $stdoutJob, $stderrJob
+          #Remove-Job $stdoutJob, $stderrJob
 
-          $stdout | Out-File -FilePath $logPath -Encoding utf8
-          if ($stderr) {
-              "`n=== STDERR ===`n" | Out-File -FilePath $logPath -Append -Encoding utf8
-              $stderr | Out-File -FilePath $logPath -Append -Encoding utf8
-          }
+          #$stdout | Out-File -FilePath $logPath -Encoding utf8
+          #if ($stderr) {
+          #    "`n=== STDERR ===`n" | Out-File -FilePath $logPath -Append -Encoding utf8
+          #    $stderr | Out-File -FilePath $logPath -Append -Encoding utf8
+          #}
 
           if ($timedOut) {
               Write-Host "ERROR: Replay test timed out after $timeoutSeconds seconds"
@@ -310,9 +317,3 @@ jobs:
               Write-Host "Executable failed with exit code $exitCode"
               exit $exitCode
           }
-      - name: Upload Replay Test Log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: Replay-Test-Log-${{ matrix.preset }}
-          path: replay_test_output.txt
