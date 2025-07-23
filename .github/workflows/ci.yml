@@ -59,7 +59,8 @@ jobs:
   build-generals:
     name: Build Generals${{ matrix.preset && '' }}
     needs: detect-changes
-    if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generals == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    if: ${{ 'false' == 'true' }}
+    #if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generals == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     strategy:
       matrix:
         include:
@@ -107,15 +108,15 @@ jobs:
     strategy:
       matrix:
         include:
-          # - preset: "vc6"
-          #   tools: true
-          #   extras: true
-          # - preset: "vc6-profile"
-          #   tools: true
-          #   extras: true
-          # - preset: "vc6-debug"
-          #   tools: true
-          #   extras: true
+          - preset: "vc6"
+            tools: true
+            extras: true
+          - preset: "vc6-profile"
+            tools: true
+            extras: true
+          - preset: "vc6-debug"
+            tools: true
+            extras: true
           - preset: "win32"
             tools: true
             extras: true
@@ -155,9 +156,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - preset: "win32"
-          - preset: "win32-profile"
-          - preset: "win32-debug"
+          - preset: "vc6"
+          - preset: "vc6-debug"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
