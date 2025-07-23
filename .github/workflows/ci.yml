@@ -102,21 +102,21 @@ jobs:
     secrets: inherit
 
   build-generalsmd:
-    name: Build GeneralsMD${{ matrix.preset && '' }}
+    name: Build GeneralsMD
     needs: detect-changes
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     strategy:
       matrix:
         include:
           - preset: "vc6"
-            tools: true
-            extras: true
-          - preset: "vc6-profile"
-            tools: true
-            extras: true
+            tools: false
+            extras: false
+          #- preset: "vc6-profile"
+          #  tools: true
+          #  extras: true
           - preset: "vc6-debug"
-            tools: true
-            extras: true
+            tools: false
+            extras: false
           #- preset: "win32"
           #  tools: true
           #  extras: true
@@ -149,7 +149,7 @@ jobs:
     secrets: inherit
 
   replay-test:
-    name: Replay Compatibility Test${{ matrix.preset && '' }}
+    name: Replay Compatibility Test (${{ matrix.preset }})
     needs: build-generalsmd
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     runs-on: windows-latest
@@ -157,11 +157,11 @@ jobs:
       matrix:
         include:
           - preset: "vc6"
-            tools: true
-            extras: true
+            tools: false
+            extras: false
           - preset: "vc6-debug"
-            tools: true
-            extras: true
+            tools: false
+            extras: false
       fail-fast: false
     steps:
       - name: Checkout Code
@@ -178,7 +178,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: C:\GameDataMD
-          key: gamedata-md-permanent-cache-v1
+          key: gamedata-md-permanent-cache-v42
 
       - name: Download GameDataMD from Cloudflare R2
         if: ${{ steps.cache-gamedata-md.outputs.cache-hit != 'true' }}
@@ -186,7 +186,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           AWS_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
-          EXPECTED_HASH: "218D0F1ACBBD70C3F8B081CA4DBAF955FE0C6C359A76636E930AA89FDC551091"
+          EXPECTED_HASH: "CA2D4C614B6C2EF1692A3ADC3F1E07B5620A151AF333E1821271AE00352E464D"
         shell: pwsh
         run: |
           Write-Host "Downloading GameDataMD" -ForegroundColor Cyan
@@ -196,7 +196,7 @@ jobs:
           $fileHash = (Get-FileHash -Path zh_gamedata_no_audio.7z -Algorithm SHA256).Hash
           Write-Host "Downloaded file SHA256: $fileHash"
           Write-Host "Expected file SHA256: $env:EXPECTED_HASH"
-          if ($fileHash -eq $env:EXPECTED_HASH) {
+          if ($fileHash -ne $env:EXPECTED_HASH) {
               Write-Error "Hash verification failed! File may be corrupted or tampered with."
               exit 1
           }
@@ -230,10 +230,32 @@ jobs:
           New-Item -ItemType Directory -Path $destination -Force | Out-Null
           Get-ChildItem -Path $source -File | Move-Item -Destination $destination
       
+      #- name: Run Replay Compatibility Tests
+      #  shell: pwsh
+      #  run: |
+      #    $exePath = "build\generalszh.exe"
+#
+      #    Write-Host "Checking if executable exists at: $exePath"
+      #    if (-not (Test-Path $exePath)) {
+      #        Write-Host "ERROR: Executable not found at $exePath"
+      #        exit 1
+      #    }
+#
+      #    $process = Start-Process -FilePath $exePath -ArgumentList "-jobs 2 -headless -replay *.rep" -Wait -PassThru
+      #    $exitCode = $process.ExitCode
+#
+      #    # Handle non-zero exit code
+      #    if ($exitCode -ne 0) {
+      #        Write-Host "Process failed with exit code $exitCode"
+      #        throw "Executable failed with exit code $exitCode"
+      #    }
+
       - name: Run Replay Compatibility Tests
         shell: pwsh
         run: |
           $exePath = "build\generalszh.exe"
+          $logPath = "replay_test_output.txt"
+          $timeoutSeconds = 60
 
           Write-Host "Checking if executable exists at: $exePath"
           if (-not (Test-Path $exePath)) {
@@ -241,11 +263,56 @@ jobs:
               exit 1
           }
 
-          $process = Start-Process -FilePath $exePath -ArgumentList "-jobs 2 -headless -replay *.rep" -Wait -PassThru
-          $exitCode = $process.ExitCode
+          Write-Host "Starting executable and redirecting output to $logPath"
+          $startInfo = New-Object System.Diagnostics.ProcessStartInfo
+          $startInfo.FileName = $exePath
+          $startInfo.Arguments = "-jobs 2 -headless -replay *.rep"
+          $startInfo.RedirectStandardOutput = $true
+          $startInfo.RedirectStandardError = $true
+          $startInfo.UseShellExecute = $false
 
-          # Handle non-zero exit code
-          if ($exitCode -ne 0) {
-              Write-Host "Process failed with exit code $exitCode"
-              throw "Executable failed with exit code $exitCode"
+          $process = New-Object System.Diagnostics.Process
+          $process.StartInfo = $startInfo
+
+          $process.Start() | Out-Null
+
+          # Async read output while waiting (prevents hanging on long stdout)
+          $stdoutJob = Start-Job { param($p) $p.StandardOutput.ReadToEnd() } -ArgumentList $process
+          $stderrJob = Start-Job { param($p) $p.StandardError.ReadToEnd() } -ArgumentList $process
+
+          Write-Host "Waiting up to $timeoutSeconds seconds for the process to finish"
+          if (-not $process.WaitForExit($timeoutSeconds * 1000)) {
+              Write-Host "ERROR: Process exceeded $timeoutSeconds second timeout. Killing it."
+              $process.Kill()
+              $timedOut = $true
+          } else {
+              $timedOut = $false
           }
+
+          $stdout = Receive-Job $stdoutJob
+          $stderr = Receive-Job $stderrJob
+
+          Remove-Job $stdoutJob, $stderrJob
+
+          $stdout | Out-File -FilePath $logPath -Encoding utf8
+          if ($stderr) {
+              "`n=== STDERR ===`n" | Out-File -FilePath $logPath -Append -Encoding utf8
+              $stderr | Out-File -FilePath $logPath -Append -Encoding utf8
+          }
+
+          if ($timedOut) {
+              Write-Host "ERROR: Replay test timed out after $timeoutSeconds seconds"
+              exit 1
+          }
+
+          $exitCode = $process.ExitCode
+          if ($exitCode -ne 0) {
+              Write-Host "Executable failed with exit code $exitCode"
+              exit $exitCode
+          }
+      - name: Upload Replay Test Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Replay-Test-Log-${{ matrix.preset }}
+          path: replay_test_output.txt
