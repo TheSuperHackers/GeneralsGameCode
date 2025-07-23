@@ -151,7 +151,7 @@ jobs:
   replay-test:
     name: Replay Compatibility Test${{ matrix.preset && '' }}
     needs: build-generalsmd
-    if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || 'true' == 'true' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     runs-on: windows-latest
     strategy:
       matrix:
