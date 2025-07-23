@@ -157,7 +157,12 @@ jobs:
       matrix:
         include:
           - preset: "vc6"
+            tools: true
+            extras: true
           - preset: "vc6-debug"
+            tools: true
+            extras: true
+      fail-fast: false
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -191,7 +196,7 @@ jobs:
           $fileHash = (Get-FileHash -Path zh_gamedata_no_audio.7z -Algorithm SHA256).Hash
           Write-Host "Downloaded file SHA256: $fileHash"
           Write-Host "Expected file SHA256: $env:EXPECTED_HASH"
-          if ($fileHash -e $env:EXPECTED_HASH) {
+          if ($fileHash -eq $env:EXPECTED_HASH) {
               Write-Error "Hash verification failed! File may be corrupted or tampered with."
               exit 1
           }
@@ -244,3 +249,4 @@ jobs:
               Write-Host "Process failed with exit code $exitCode"
               throw "Executable failed with exit code $exitCode"
           }
+    secrets: inherit
