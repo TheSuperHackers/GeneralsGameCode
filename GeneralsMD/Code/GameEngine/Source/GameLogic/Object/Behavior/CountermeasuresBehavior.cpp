@@ -180,6 +180,11 @@ ObjectID CountermeasuresBehavior::calculateCountermeasureToDivertTo( const Objec
 			}
 			else
 			{
+				if (it == m_counterMeasures.begin())
+				{
+					break;
+				}
+
 				--it;
 			}
 		}
