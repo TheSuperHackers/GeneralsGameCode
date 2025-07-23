@@ -170,7 +170,7 @@ jobs:
       - name: Download Game Artifact
         uses: actions/download-artifact@v4
         with:
-          name: GeneralsMD-${{ matrix.preset }}+t+e
+          name: GeneralsMD-${{ matrix.preset }}
           path: build
 
       - name: Cache GameDataMD files
