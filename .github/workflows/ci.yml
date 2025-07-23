@@ -5,10 +5,10 @@ permissions:
   pull-requests: write
 
 on:
-  push:
-    branches:
-      - main
-      - ci-replays
+  #push:
+  #  branches:
+  #    - main
+  #    - ci-replays
   pull_request:
     branches:
       - main
@@ -161,11 +161,61 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
       - name: Download Game Artifact
         uses: actions/download-artifact@v4
         with:
           name: GeneralsMD-${{ matrix.preset }}+t+e
           path: build
+
+      - name: Cache GameDataMD files
+        id: cache-gamedata-md
+        uses: actions/cache@v4
+        with:
+          path: C:\GameDataMD
+          key: gamedata-md-permanent-cache-v1
+
+      - name: Download GameDataMD from Cloudflare R2
+        if: ${{ steps.cache-gamedata-md.outputs.cache-hit != 'true' }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
+          EXPECTED_HASH: "218D0F1ACBBD70C3F8B081CA4DBAF955FE0C6C359A76636E930AA89FDC551091"
+        shell: pwsh
+        run: |
+          Write-Host "Downloading GameDataMD" -ForegroundColor Cyan
+          aws s3 cp s3://github-ci/zh_gamedata_no_audio.7z zh_gamedata_no_audio.7z --endpoint-url $env:AWS_ENDPOINT_URL
+
+          Write-Host "Verifying File Integrity" -ForegroundColor Cyan
+          $fileHash = (Get-FileHash -Path zh_gamedata_no_audio.7z -Algorithm SHA256).Hash
+          Write-Host "Downloaded file SHA256: $fileHash"
+          Write-Host "Expected file SHA256: $env:EXPECTED_HASH"
+          if ($fileHash -e $env:EXPECTED_HASH) {
+              Write-Error "Hash verification failed! File may be corrupted or tampered with."
+              exit 1
+          }
+
+          Write-Host "Extracting Archive" -ForegroundColor Cyan
+          & 7z x zh_gamedata_no_audio.7z -oC:\GameDataMD
+          Remove-Item zh_gamedata_no_audio.7z -Verbose
+
+      - name: Set Up GameDataMD
+        shell: pwsh
+        run: |
+          $source = "C:\GameDataMD"
+          $destination = "build"
+          Get-ChildItem -Path $source -File | Move-Item -Destination $destination
+
+      - name: List All Files in Directory (Recursive)
+        shell: pwsh
+        run: |
+          $dir = "."
+          Write-Host "Listing all files in $dir recursively:"
+          Get-ChildItem -Path $dir -Recurse -File | ForEach-Object {
+            Write-Host $_.FullName
+          }
+
       - name: Move Replay files to correct folder
         shell: pwsh
         run: |
@@ -174,6 +224,7 @@ jobs:
 
           New-Item -ItemType Directory -Path $destination -Force | Out-Null
           Get-ChildItem -Path $source -File | Move-Item -Destination $destination
+      
       - name: Run Replay Compatibility Tests
         shell: pwsh
         run: |
