@@ -262,10 +262,10 @@ void AudioManager::init()
 	m_sound = NEW SoundManager;
 
 	// Set our system volumes from the user's preferred settings, not the defaults.
-	m_systemMusicVolume = getAudioSettings() ? getAudioSettings()->m_preferredMusicVolume : 0.55f;
-	m_systemSoundVolume = getAudioSettings() ? getAudioSettings()->m_preferredSoundVolume : 0.75f;
-	m_systemSound3DVolume = getAudioSettings() ? getAudioSettings()->m_preferred3DSoundVolume: 0.75f;
-	m_systemSpeechVolume = getAudioSettings() ? getAudioSettings()->m_preferredSpeechVolume : 0.55f;
+	m_systemMusicVolume = m_audioSettings->m_preferredMusicVolume;
+	m_systemSoundVolume = m_audioSettings->m_preferredSoundVolume;
+	m_systemSound3DVolume = m_audioSettings->m_preferred3DSoundVolume;
+	m_systemSpeechVolume = m_audioSettings->m_preferredSpeechVolume;
 
 	m_scriptMusicVolume = 1.0f;
 	m_scriptSoundVolume = 1.0f;
@@ -316,8 +316,8 @@ void AudioManager::update()
 	Vector3 forward( 0, 1, 0 );
 	rot.mulVector3( forward );
 
-	Real desiredHeight = TheAudio->getAudioSettings()->m_microphoneDesiredHeightAboveTerrain;
-	Real maxPercentage = TheAudio->getAudioSettings()->m_microphoneMaxPercentageBetweenGroundAndCamera;
+	Real desiredHeight = m_audioSettings->m_microphoneDesiredHeightAboveTerrain;
+	Real maxPercentage = m_audioSettings->m_microphoneMaxPercentageBetweenGroundAndCamera;
 
 	Coord3D lookTo;
 	lookTo.set(forward.X, forward.Y, forward.Z);
@@ -359,9 +359,9 @@ void AudioManager::update()
 
 
 	//Now determine if we would like to boost the volume based on the camera being close to the microphone!
-	Real maxBoostScalar = TheAudio->getAudioSettings()->m_zoomSoundVolumePercentageAmount;
-	Real minDist = TheAudio->getAudioSettings()->m_zoomMinDistance;
-	Real maxDist = TheAudio->getAudioSettings()->m_zoomMaxDistance;
+	Real maxBoostScalar = m_audioSettings->m_zoomSoundVolumePercentageAmount;
+	Real minDist = m_audioSettings->m_zoomMinDistance;
+	Real maxDist = m_audioSettings->m_zoomMaxDistance;
 
 	//We can't boost a sound above 100%, instead reduce the normal sound level.
 	m_zoomVolume = 1.0f - maxBoostScalar;
@@ -468,7 +468,7 @@ AudioHandle AudioManager::addAudioEvent(const AudioEventRTS *eventToAdd)
 	}
 
 	// cull muted audio
-	if (audioEvent->getVolume() < TheAudio->getAudioSettings()->m_minVolume) {
+	if (audioEvent->getVolume() < m_audioSettings->m_minVolume) {
 #ifdef INTENSIVE_AUDIO_DEBUG
 		DEBUG_LOG((" - culled due to muting (%d).", audioEvent->getVolume()));
 #endif
@@ -998,7 +998,7 @@ void AudioManager::findAllAudioEventsOfType( AudioType audioType, std::vector<Au
 Bool AudioManager::isCurrentProviderHardwareAccelerated()
 {
 	for (Int i = 0; i < MAX_HW_PROVIDERS; ++i) {
-		if (getProviderName(getSelectedProvider()) == TheAudio->getAudioSettings()->m_preferred3DProvider[i]) {
+		if (getProviderName(getSelectedProvider()) == m_audioSettings->m_preferred3DProvider[i]) {
 			return TRUE;
 		}
 	}
@@ -1009,7 +1009,7 @@ Bool AudioManager::isCurrentProviderHardwareAccelerated()
 //-------------------------------------------------------------------------------------------------
 Bool AudioManager::isCurrentSpeakerTypeSurroundSound()
 {
-	return (getSpeakerType() == TheAudio->getAudioSettings()->m_defaultSpeakerType3D);
+	return (getSpeakerType() == m_audioSettings->m_defaultSpeakerType3D);
 }
 
 //-------------------------------------------------------------------------------------------------
