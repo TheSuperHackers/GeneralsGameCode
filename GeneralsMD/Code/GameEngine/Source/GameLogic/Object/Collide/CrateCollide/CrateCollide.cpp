@@ -214,7 +214,7 @@ void CrateCollide::doSabotageFeedbackFX( const Object *other, SabotageVictimType
     case 	CrateCollide::SAB_VICTIM_DROP_ZONE:
     case 	CrateCollide::SAB_VICTIM_SUPPLY_CENTER:
     {
-      soundToPlay = TheAudio->getMiscAudio()->m_moneyWithdrawSound;
+      soundToPlay = TheAudio->getMiscAudio()->m_events[MiscAudioEvent_MoneyWithdraw];
       break;
     }
     case 	CrateCollide::SAB_VICTIM_INTERNET_CENTER:
