@@ -363,6 +363,10 @@ public:
 
 	static Real getSurfaceHtAtPt(Real x, Real y);
 
+	inline void applySpeedMultiplier(Real scalar) { m_speedMultiplier *= scalar; }
+	// inline void setSpeedMultiplier(Real value) { m_speedMultiplier = value; }
+	inline Real getSpeedMultiplier(void) const { return m_speedMultiplier; }
+
 protected:
 	void moveTowardsPositionLegs(Object* obj, PhysicsBehavior *physics, const Coord3D& goalPos, Real onPathDistToGoal, Real desiredSpeed);
 	void moveTowardsPositionLegsWander(Object* obj, PhysicsBehavior *physics, const Coord3D& goalPos, Real onPathDistToGoal, Real desiredSpeed);
@@ -456,6 +460,7 @@ private:
 	Real				m_offsetIncrement;
 	UnsignedInt m_donutTimer;				///< Frame time to keep units from doing the donut. jba.
 
+	Real			    m_speedMultiplier;  ///< scalar to max speed and acceleration
 
 };
 

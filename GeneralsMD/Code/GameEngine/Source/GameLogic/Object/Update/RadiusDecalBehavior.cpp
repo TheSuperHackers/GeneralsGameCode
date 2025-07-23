@@ -120,6 +120,12 @@ void RadiusDecalBehavior::clearDecal()
 //-------------------------------------------------------------------------------------------------
 UpdateSleepTime RadiusDecalBehavior::update( void )
 {
+	if (getObject()->isDisabledByType(DISABLED_HELD)) {
+		if (!m_radiusDecal.isEmpty())
+			clearDecal();
+		return UPDATE_SLEEP_NONE;  // We wait to be re-enabled
+	}
+
 	// Upgrade has not been triggered, or it might have been removed.
 	if (!isUpgradeActive()) {
 		clearDecal();
@@ -139,8 +145,12 @@ UpdateSleepTime RadiusDecalBehavior::update( void )
 		return UPDATE_SLEEP_NONE;
 	}
 
+	// We get here if we were disabled
+	createRadiusDecal();
+	return UPDATE_SLEEP_NONE;
+
 	// Something probably went wrong if we reach this point
-	return UPDATE_SLEEP_FOREVER;
+	//return UPDATE_SLEEP_FOREVER;
 }
 
 // ------------------------------------------------------------------------------------------------

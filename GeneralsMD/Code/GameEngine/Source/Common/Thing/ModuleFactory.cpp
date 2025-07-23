@@ -79,6 +79,7 @@
 #include "GameLogic/Module/BunkerBusterBehavior.h"
 #include "GameLogic/Module/FireWeaponWhenDamagedBehavior.h"
 #include "GameLogic/Module/FireWeaponWhenDeadBehavior.h"
+#include "GameLogic/Module/DelayedUpgradeBehavior.h"
 #include "GameLogic/Module/GenerateMinefieldBehavior.h"
 #include "GameLogic/Module/ParkingPlaceBehavior.h"
 #include "GameLogic/Module/FlightDeckBehavior.h"
@@ -276,6 +277,7 @@
 #include "GameLogic/Module/OCLSpecialPower.h"
 #include "GameLogic/Module/SpecialAbility.h"
 #include "GameLogic/Module/SpyVisionSpecialPower.h"
+#include "GameLogic/Module/UpgradeSpecialPower.h"
 #include "GameLogic/Module/CashBountyPower.h"
 #include "GameLogic/Module/CleanupAreaPower.h"
 #include "GameLogic/Module/FireWeaponPower.h"
@@ -369,6 +371,7 @@ void ModuleFactory::init( void )
 	addModule( BunkerBusterBehavior );
 	addModule( FireWeaponWhenDamagedBehavior );
 	addModule( FireWeaponWhenDeadBehavior );
+	addModule( DelayedUpgradeBehavior );
 	addModule( GenerateMinefieldBehavior );
 	addModule( ParkingPlaceBehavior );
 	addModule( FlightDeckBehavior );
@@ -567,6 +570,7 @@ void ModuleFactory::init( void )
 	addModule( FireWeaponPower );
 	addModule( SpecialAbility );
 	addModule( SpyVisionSpecialPower );
+	addModule( UpgradeSpecialPower );
 	addModule( CashBountyPower );
 	addModule( CleanupAreaPower );
 

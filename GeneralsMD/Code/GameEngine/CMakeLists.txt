@@ -325,6 +325,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/FireWeaponUpdate.h
     Include/GameLogic/Module/FireWeaponWhenDamagedBehavior.h
     Include/GameLogic/Module/FireWeaponWhenDeadBehavior.h
+    Include/GameLogic/Module/DelayedUpgradeBehavior.h
     Include/GameLogic/Module/FlammableUpdate.h
     Include/GameLogic/Module/FlightDeckBehavior.h
     Include/GameLogic/Module/FloatUpdate.h
@@ -435,6 +436,7 @@ set(GAMEENGINE_SRC
     Include/GameLogic/Module/SpecialPowerUpdateModule.h
     Include/GameLogic/Module/SpectreGunshipDeploymentUpdate.h
     Include/GameLogic/Module/SpectreGunshipUpdate.h
+    Include/GameLogic/Module/UpgradeSpecialPower.h
     Include/GameLogic/Module/SpyVisionSpecialPower.h
     Include/GameLogic/Module/SpyVisionUpdate.h
     Include/GameLogic/Module/SquishCollide.h
@@ -859,6 +861,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/Behavior/FreeFallProjectileBehavior.cpp
     Source/GameLogic/Object/Behavior/FireWeaponWhenDamagedBehavior.cpp
     Source/GameLogic/Object/Behavior/FireWeaponWhenDeadBehavior.cpp
+    Source/GameLogic/Object/Behavior/DelayedUpgradeBehavior.cpp
     Source/GameLogic/Object/Behavior/FlightDeckBehavior.cpp
     Source/GameLogic/Object/Behavior/GenerateMinefieldBehavior.cpp
     Source/GameLogic/Object/Behavior/GrantStealthBehavior.cpp
@@ -970,6 +973,7 @@ set(GAMEENGINE_SRC
     Source/GameLogic/Object/SpecialPower/OCLSpecialPower.cpp
     Source/GameLogic/Object/SpecialPower/SpecialAbility.cpp
     Source/GameLogic/Object/SpecialPower/SpecialPowerModule.cpp
+    Source/GameLogic/Object/SpecialPower/UpgradeSpecialPower.cpp
     Source/GameLogic/Object/SpecialPower/SpyVisionSpecialPower.cpp
     Source/GameLogic/Object/Update/AIUpdate.cpp
     Source/GameLogic/Object/Update/AIUpdate/AssaultTransportAIUpdate.cpp
