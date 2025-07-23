@@ -142,8 +142,8 @@ class AIGuardInnerState : public State
 public:
 	AIGuardInnerState( StateMachine *machine ) : State( machine, "AIGuardInner" ) 
 	{ 
-		m_attackState = 0;
-		m_enterState = 0;
+		m_attackState = NULL;
+		m_enterState = NULL;
 	}
 	virtual Bool isAttack() const { return m_attackState ? m_attackState->isAttack() : FALSE; }
 	virtual StateReturnType onEnter( void );
@@ -161,7 +161,6 @@ private:
 	AIAttackState *m_attackState;
 	AIEnterState *m_enterState;
 };
-EMPTY_DTOR(AIGuardInnerState)
 
 //--------------------------------------------------------------------------------------
 class AIGuardIdleState : public State
@@ -211,7 +210,6 @@ private:
 	ExitConditions m_exitConditions; 
 	AIAttackState *m_attackState;
 };
-EMPTY_DTOR(AIGuardOuterState)
 
 //--------------------------------------------------------------------------------------
 class AIGuardReturnState : public AIInternalMoveToState
@@ -272,8 +270,6 @@ private:
 	ExitConditions m_exitConditions; 
 	AIAttackState *m_attackState;
 };
-
-EMPTY_DTOR(AIGuardAttackAggressorState)
 
 //--------------------------------------------------------------------------------------
 
