@@ -249,4 +249,3 @@ jobs:
               Write-Host "Process failed with exit code $exitCode"
               throw "Executable failed with exit code $exitCode"
           }
-    secrets: inherit
