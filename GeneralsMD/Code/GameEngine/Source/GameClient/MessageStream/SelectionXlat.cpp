@@ -1099,50 +1099,48 @@ GameMessageDisposition SelectionTranslator::translateGameMessage(const GameMessa
 					m_lastGroupSelTime = now;
 				}
 
-				// check for double-press to jump view
-				if ( now - m_lastGroupSelTime < 20 && group == m_lastGroupSelGroup )
+				// TheSuperHackers @fix skyaero 22/07/2025
+				// Always select the units, even when double press, to prevent accidental deselect.
+
+				TheInGameUI->deselectAllDrawables(false); //No need to post message because we're just creating a new group!
+				bool isDoubleTap = (now - m_lastGroupSelTime < 20) && (group == m_lastGroupSelGroup);
+
+				if (!isDoubleTap)
 				{
-					DEBUG_LOG(("META: DOUBLETAP select team %d",group));
-					Player *player = ThePlayerList->getLocalPlayer();
-					if (player)
+					// no need to send two messages for selecting the same group.
+					TheMessageStream->appendMessage((GameMessage::Type)(GameMessage::MSG_SELECT_TEAM0 + group));
+				}
+
+				Player* player = ThePlayerList->getLocalPlayer();
+				if (player)
+				{
+					Squad* selectedSquad = player->getHotkeySquad(group);
+					if (selectedSquad != NULL)
 					{
-						Squad *selectedSquad = player->getHotkeySquad(group);
-						if (selectedSquad != NULL)
+						VecObjectPtr objlist = selectedSquad->getLiveObjects();
+						Int numObjs = objlist.size();
+
+						for (Int i = 0; i < numObjs; ++i)
 						{
-							VecObjectPtr objlist = selectedSquad->getLiveObjects();
-							Int numObjs = objlist.size();
+							if (objlist[i]->getControllingPlayer() == player)
+							{
+								TheInGameUI->selectDrawable(objlist[i]->getDrawable());
+							}
+						}
+
+						if (isDoubleTap)
+						{
+							DEBUG_LOG(("META: DOUBLETAP select team %d", group));
+
 							if (numObjs > 0)
 							{
 								// if theres someone in the group, center the camera on them.
-								TheTacticalView->lookAt( objlist[numObjs-1]->getDrawable()->getPosition() );
-							}
-						}
-					}
-				} 
-				else 
-				{
-					TheInGameUI->deselectAllDrawables( false ); //No need to post message because we're just creating a new group!
-
-					// no need to send two messages for selecting the same group.
-					TheMessageStream->appendMessage((GameMessage::Type)(GameMessage::MSG_SELECT_TEAM0 + group));
-					Player *player = ThePlayerList->getLocalPlayer();
-					if (player)
-					{
-						Squad *selectedSquad = player->getHotkeySquad(group);
-						if (selectedSquad != NULL)
-						{
-							VecObjectPtr objlist = selectedSquad->getLiveObjects();
-							Int numObjs = objlist.size();
-							for (Int i = 0; i < numObjs; ++i)
-							{
-								if( objlist[i]->getControllingPlayer() == player )
-								{
-									TheInGameUI->selectDrawable(objlist[i]->getDrawable());
-								}
+								TheTacticalView->lookAt(objlist[numObjs - 1]->getDrawable()->getPosition());
 							}
 						}
 					}
 				}
+
 				m_lastGroupSelTime = now;
 				m_lastGroupSelGroup = group;
 			}
