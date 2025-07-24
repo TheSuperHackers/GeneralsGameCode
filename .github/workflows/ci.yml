@@ -216,9 +216,10 @@ jobs:
       - name: Set Generals InstallPath in Registry
         shell: pwsh
         run: |
-          $installPath = "C:\GameData\Generals"
-
+          # Zero Hour loads some Generals files and needs this registry key to point to the
+          # Generals data files.
           $regPath = "HKCU:\SOFTWARE\Electronic Arts\EA Games\Generals"
+          $installPath = "C:\GameData\Generals"
 
           # Ensure the key exists
           if (-not (Test-Path $regPath)) {
