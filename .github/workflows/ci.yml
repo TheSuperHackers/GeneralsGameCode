@@ -149,7 +149,7 @@ jobs:
     secrets: inherit
 
   replay-test:
-    name: Replay Compatibility Test (${{ matrix.preset }})
+    name: Replay Compatibility Test
     needs: build-generalsmd
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     runs-on: windows-latest
@@ -310,6 +310,7 @@ jobs:
           }
 
       - name: List All Files in Directory (Recursive)
+        if: always()
         shell: pwsh
         run: |
           $dir = "."
