@@ -149,7 +149,7 @@ jobs:
     secrets: inherit
 
   replay-test:
-    name: Replay Compatibility Test
+    name: Replay Compatibility Test (${{ matrix.preset }})
     needs: build-generalsmd
     if: ${{ github.event_name == 'workflow_dispatch' || needs.detect-changes.outputs.generalsmd == 'true' || needs.detect-changes.outputs.shared == 'true' }}
     runs-on: windows-latest
@@ -178,7 +178,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: C:\GameDataMD
-          key: gamedata-md-permanent-cache-v42
+          key: gamedata-md-permanent-cache-v1
 
       - name: Download GameDataMD from Cloudflare R2
         if: ${{ steps.cache-gamedata-md.outputs.cache-hit != 'true' }}
@@ -210,7 +210,7 @@ jobs:
         run: |
           $source = "C:\GameDataMD"
           $destination = "build"
-          Get-ChildItem -Path $source -File | Move-Item -Destination $destination
+          Get-ChildItem -Path $source | Move-Item -Destination $destination
 
       - name: Move Replay files to correct folder
         shell: pwsh
