@@ -237,10 +237,13 @@ jobs:
         run: |
           $source = "GeneralsMD\Replays"
           $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour\Replays"
+          Write-Host "Move replays to $destination"
 
           New-Item -ItemType Directory -Path $destination -Force | Out-Null
-          Get-ChildItem -Path $source -File | Move-Item -Destination $destination
-      
+          Get-ChildItem -Path $source -File | ForEach-Object {
+            Move-Item -Path $_.FullName -Destination (Join-Path $destination $_.Name) -Force
+          }
+
       #- name: Run Replay Compatibility Tests
       #  shell: pwsh
       #  run: |
@@ -315,10 +318,11 @@ jobs:
           }
 
           # Check exit code
-          #$exitCode = $process.ExitCode # This doesn't work, Powershell is so stupid (see https://stackoverflow.com/a/16018287)
-          $process.HasExited | Out-Null # Needs to be called for the command below to work correctly
+          $exitCode = $process.ExitCode # This doesn't work, Powershell is so stupid (see https://stackoverflow.com/a/16018287)
+          #$process.HasExited | Out-Null # Needs to be called for the command below to work correctly
           # This will get out the actual exit code of the process
-          $exitCode = $process.GetType().GetField('exitCode', 'NonPublic, Instance').GetValue($process)
+          #$exitCode = $process.GetType().GetField('exitCode', 'NonPublic, Instance').GetValue($process)
+          Write-Host "exit code $exitCode"
 
           if ($exitCode -ne 0) {
               Write-Host "ERROR: Process failed with exit code $exitCode"
@@ -343,6 +347,16 @@ jobs:
         shell: pwsh
         run: |
           $dir = "C:\GameData"
+          Write-Host "Listing all files in $dir recursively:"
+          Get-ChildItem -Path $dir -Recurse -File | ForEach-Object {
+            Write-Host $_.FullName
+          }
+
+      - name: List All Files in Directory (replays)
+        if: always()
+        shell: pwsh
+        run: |
+          $dir = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour\Replays"
           Write-Host "Listing all files in $dir recursively:"
           Get-ChildItem -Path $dir -Recurse -File | ForEach-Object {
             Write-Host $_.FullName
