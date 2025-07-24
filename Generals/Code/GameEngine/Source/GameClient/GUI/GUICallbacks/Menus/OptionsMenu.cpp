@@ -1144,7 +1144,6 @@ static void saveOptions( void )
 	val = GadgetSliderGetPosition(sliderMusicVolume);
 	if(val != -1)
 	{
-	  TheWritableGlobalData->m_musicVolumeFactor = val;
     AsciiString prefString;
     prefString.format("%d", val);
     (*pref)["MusicVolume"] = prefString;
@@ -1178,7 +1177,6 @@ static void saveOptions( void )
 		TheAudio->setVolume( sound3DVolume, (AudioAffect) (AudioAffect_Sound3D | AudioAffect_SystemSetting) );
 
 		//Save the settings in the options.ini.
-    TheWritableGlobalData->m_SFXVolumeFactor = val;
     AsciiString prefString;
     prefString.format("%d", REAL_TO_INT( sound2DVolume * 100.0f ) );
     (*pref)["SFXVolume"] = prefString;
@@ -1191,7 +1189,6 @@ static void saveOptions( void )
 	val = GadgetSliderGetPosition(sliderVoiceVolume);
 	if(val != -1)
 	{
-    TheWritableGlobalData->m_voiceVolumeFactor = val;
     AsciiString prefString;
     prefString.format("%d", val);
     (*pref)["VoiceVolume"] = prefString;

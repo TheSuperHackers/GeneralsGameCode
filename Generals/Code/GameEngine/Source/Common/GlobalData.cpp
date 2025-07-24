@@ -977,10 +977,6 @@ GlobalData::GlobalData()
 	m_afterIntro = FALSE;
 	m_allowExitOutOfMovies = FALSE;
 	m_loadScreenRender = FALSE;
-  m_musicVolumeFactor = 0.5f;
- 	m_SFXVolumeFactor = 0.5f;
-  m_voiceVolumeFactor = 0.5f;
-  m_3DSoundPref = false;
 
 	m_keyboardDefaultScrollFactor = m_keyboardScrollFactor = 0.5f;
 	m_scrollAmountCutoff = 10.0f;
