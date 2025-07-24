@@ -236,7 +236,7 @@ jobs:
         shell: pwsh
         run: |
           $source = "GeneralsMD\Replays"
-          $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour\Replays"
+          $destination = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Replays"
           Write-Host "Move replays to $destination"
 
           New-Item -ItemType Directory -Path $destination -Force | Out-Null
@@ -269,7 +269,8 @@ jobs:
         run: |
           $exePath = "build/generalszh.exe"
           #$arguments = "-jobs -1 -headless -replay 00vs2019_debug_short.rep"
-          $arguments = "-jobs -1 -headless -replay 05-01-50_2v2_amoor123_beshr_HardAI_HardAI.rep"
+          #$arguments = "-jobs -1 -headless -replay 05-01-50_2v2_amoor123_beshr_HardAI_HardAI.rep"
+          $arguments = "-jobs -1 -headless -replay *.rep"
           $timeoutSeconds = 60
           $stdoutPath = "stdout.log"
           $stderrPath = "stderr.log"
@@ -356,10 +357,11 @@ jobs:
         if: always()
         shell: pwsh
         run: |
-          $dir = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour\Replays"
+          $dir = "$env:USERPROFILE\Documents\Command and Conquer Generals Zero Hour Data\Replays"
           Write-Host "Listing all files in $dir recursively:"
           Get-ChildItem -Path $dir -Recurse -File | ForEach-Object {
-            Write-Host $_.FullName
+            $sizeKB = "{0:N1}" -f ($_.Length / 1KB)
+            Write-Host "$($_.FullName) [$sizeKB KB]"
           }
 
       - name: Upload Replay Test Log
